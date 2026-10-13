@@ -92,5 +92,11 @@ func NewScenario(seed uint64, catalog content.Catalog) (_ *Game, err error) {
 	if _, err = world.AddSystem(&movementSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
 		return nil, err
 	}
+	if _, err = world.AddSystem(&combatSystem{positions: stores.Positions, intents: stores.Intents, combat: stores.Combat, health: stores.Health, levels: g.levels, rng: g.rng, turn: &g.turn, player: g.player}); err != nil {
+		return nil, err
+	}
+	if _, err = world.AddSystem(&deathSystem{health: stores.Health, player: g.player, turn: &g.turn}); err != nil {
+		return nil, err
+	}
 	return g, nil
 }
