@@ -7,19 +7,20 @@ Content import policy for the whole Go port: every imported DCSS content categor
 | Domain | Source anchor | Go owner | Status |
 | --- | --- | --- | --- |
 | Rat fixture ID, glyph, speed, bite base damage | `crawl-ref/source/mon-data.h:1994-2001` | `content.Catalog` | Fixture only |
-| Species definitions (40 YAML and three tag-34 legacy records) | `crawl-ref/source/dat/species/*.yaml`, `util/species-gen/*deprecated-species.txt`, `species-type.h`, `util/species-gen.py` | `speciesimport` build tool, checked-in `generated/species.json`, `content.Catalog` | All 43 concrete tag-34 IDs imported with source revision, file hashes, selection metadata, aptitudes, mutations, and recommendations; no species gameplay yet |
-| Human/Fighter scenario IDs | `crawl-ref/source/species-data.h:483`, `job-data.h:191` | `content.Catalog` | Human definition imported; Fighter and scenario HP/damage remain fixtures; character generation unported |
+| Species definitions (40 YAML and three tag-34 legacy records) | `crawl-ref/source/dat/species/*.yaml`, `util/species-gen/*deprecated-species.txt`, `species-type.h`, `util/species-gen.py` | `speciesimport` developer tool, checked-in `generated/species.json`, `content.Catalog` | All 43 concrete tag-34 IDs imported with source revision, file hashes, selection metadata, aptitudes, mutations, and recommendations; base attributes now used by the fixed Human/Fighter scenario |
+| Job definitions and normal Dungeon choice | `crawl-ref/source/job-data.h`, `job-type.h`, `ng-restr.cc` | `jobimport` developer tool, checked-in `generated/jobs.json`, `content.Catalog`, `character` | All 31 concrete tag-34 jobs imported, with 25 selectable and six retained removed jobs; directional recommendations and 664 legal normal Dungeon pairs implemented. Starting effects and character-selection UI unported |
+| Human/Fighter scenario | `crawl-ref/source/species-data.h:483`, `job-data.h:191` | `character`, ECS player attributes, `game` | Source-derived base Strength 16, Intelligence 8, Dexterity 12; scenario HP 20 and base damage 4 remain fixtures |
 | Potion of curing ID/name | `crawl-ref/source/potion-type.h:11`, `item-name.cc:671` | `content.Catalog` | Fixture only; potion effect unported |
 | Fixed Dungeon terrain and stairs | This plan's test scenario | `game.Level` | Fixed two-floor slice; procedural generation unported |
 | Movement and logical turns | `crawl-ref/source` movement and scheduler paths | `game.Game`, `game.TurnScheduler` | Playable slice; full energy rules unported |
 | Melee and death | `crawl-ref/source/melee-attack.cc`, `mon-data.h:1998` | `game` and `rules` | Narrow fixture damage roll, rat AI and death; hit, AC, EV, weapons, skills unported |
 | Inventory and equipment | `crawl-ref/source/items.cc` | ECS item components, `game` | Floor pickup and inventory view; equipment and item use unported |
 | Visibility and exploration | `crawl-ref/source/los.cc` | Future visibility domain | Unported |
-| Species gameplay, backgrounds, skills, mutations, advancement | `species-data.h`, `job-data.h`, `mutation-data.h`, character rules | Future character domain | Unported; imported definitions are not applied to character creation, progression, or combat |
+| Character starting effects and advancement | `species-data.h`, `job-data.h`, `mutation-data.h`, character rules | Future character domain | Starting equipment and weapon choice, spells, skill grants/reassessment, innate mutations, religion, HP/MP, `_unfocus_stats`, Wanderer randomization, Sprint choices, and complete character creation unported |
 | Spells and religion | `spl-data.h`, religion code | Future spell/religion domains | Unported |
 | Branches, vaults, shops, runes, endgame | `branch-data.h`, `dat/`, generation code | Future world/content domains | Unported |
 | Terminal client | New Go implementation | Bubble Tea and Lip Gloss | ASCII slice, keyboard commands and resize |
-| Saved runs | New Go format | `save` and `game` | Versioned JSON for this slice; C++ saves unported |
+| Saved runs | New Go format | `save` and `game` | Version-2 JSON saves include player attributes; version-1 and C++ saves are not loaded |
 | C++ save compatibility, tiles, network client | C++ save/client code | Outside Go slice | Excluded from slice |
 
 Every broad category needs a follow-up feature/content inventory before a full-port completion claim. The fixture entries do not count as a port of their categories.
