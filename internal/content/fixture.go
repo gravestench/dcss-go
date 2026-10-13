@@ -2,12 +2,12 @@ package content
 
 const sourceRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 
-// DefaultFixture contains only the content required by the fixed Dungeon slice.
+// scenarioCatalog contains only the non-species content required by the fixed Dungeon slice.
 // Rat glyph, speed, and bite damage: crawl-ref/source/mon-data.h:1994-2001.
 // Human ID: species-data.h:483; Fighter ID: job-data.h:191.
 // Potion ID: potion-type.h:11; name: item-name.cc:671.
 // HP and player damage are controlled scenario values, not DCSS generation parity.
-func DefaultFixture() Catalog {
+func scenarioCatalog() Catalog {
 	return Catalog{
 		version:        1,
 		sourceRevision: sourceRevision,

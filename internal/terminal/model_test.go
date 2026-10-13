@@ -16,7 +16,11 @@ import (
 
 func newModel(t *testing.T) *Model {
 	t.Helper()
-	g, err := game.NewScenario(1, content.DefaultFixture())
+	catalog, err := content.LoadDefault()
+	if err != nil {
+		t.Fatal(err)
+	}
+	g, err := game.NewScenario(1, catalog)
 	if err != nil {
 		t.Fatal(err)
 	}

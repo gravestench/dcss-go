@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/save"
 )
@@ -21,7 +20,7 @@ func TestSaveContinuationMatches(t *testing.T) {
 	if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
 		t.Fatal(err)
 	}
-	restored, err := Restore(g.Snapshot(), content.DefaultFixture())
+	restored, err := Restore(g.Snapshot(), testCatalog(t))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -47,7 +46,7 @@ func TestRejectUnknownCatalogID(t *testing.T) {
 			snapshot.Entities[i].Actor.KindID = "MONS_NOT_IN_CATALOG"
 		}
 	}
-	if _, err := Restore(snapshot, content.DefaultFixture()); err == nil || !strings.Contains(err.Error(), "MONS_NOT_IN_CATALOG") {
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "MONS_NOT_IN_CATALOG") {
 		t.Fatalf("unknown catalog ID error = %v", err)
 	}
 	snapshot = g.Snapshot()
@@ -56,7 +55,7 @@ func TestRejectUnknownCatalogID(t *testing.T) {
 			snapshot.Entities[i].Item.KindID = "POT_NOT_IN_CATALOG"
 		}
 	}
-	if _, err := Restore(snapshot, content.DefaultFixture()); err == nil || !strings.Contains(err.Error(), "POT_NOT_IN_CATALOG") {
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "POT_NOT_IN_CATALOG") {
 		t.Fatalf("unknown item ID error = %v", err)
 	}
 }
@@ -69,7 +68,7 @@ func TestRejectDoubleLocatedItem(t *testing.T) {
 			snapshot.Entities[i].CarriedBy = &ecs.CarriedBy{Holder: g.player}
 		}
 	}
-	if _, err := Restore(snapshot, content.DefaultFixture()); err == nil || !strings.Contains(err.Error(), "both") {
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "both") {
 		t.Fatalf("double location error = %v", err)
 	}
 }
@@ -82,7 +81,7 @@ func TestRejectDuplicateOccupancy(t *testing.T) {
 			*snapshot.Entities[i].Position = ecs.Position{LevelID: 1, X: 1, Y: 1}
 		}
 	}
-	if _, err := Restore(snapshot, content.DefaultFixture()); err == nil || !strings.Contains(err.Error(), "occupied") {
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "occupied") {
 		t.Fatalf("duplicate occupancy error = %v", err)
 	}
 }
@@ -92,7 +91,7 @@ func TestFailedLoadLeavesLiveGame(t *testing.T) {
 	before := g.Snapshot()
 	invalid := g.Snapshot()
 	invalid.Version = 2
-	if _, err := Restore(invalid, content.DefaultFixture()); err == nil {
+	if _, err := Restore(invalid, testCatalog(t)); err == nil {
 		t.Fatal("invalid save accepted")
 	}
 	if !reflect.DeepEqual(before, g.Snapshot()) {
@@ -124,7 +123,7 @@ func TestRestoreRejectsCorruptComponents(t *testing.T) {
 			g := newStepGame(t)
 			snapshot := g.Snapshot()
 			test.mutate(&snapshot)
-			if restored, err := Restore(snapshot, content.DefaultFixture()); err == nil {
+			if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
 				restored.Close()
 				t.Fatal("corrupt components accepted")
 			}
@@ -136,7 +135,7 @@ func TestRestoreRejectsClockMismatch(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
 	snapshot.CurrentAut = 100
-	if restored, err := Restore(snapshot, content.DefaultFixture()); err == nil {
+	if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
 		restored.Close()
 		t.Fatal("clock mismatch accepted")
 	}
@@ -157,7 +156,7 @@ func TestRestoreAcceptsDeadPlayerClock(t *testing.T) {
 	if !g.playerDead() {
 		t.Fatal("rat did not kill the low-health player")
 	}
-	restored, err := Restore(g.Snapshot(), content.DefaultFixture())
+	restored, err := Restore(g.Snapshot(), testCatalog(t))
 	if err != nil {
 		t.Fatalf("valid dead-player snapshot rejected: %v", err)
 	}

@@ -2,8 +2,17 @@ package content
 
 import "testing"
 
+func mustLoadDefault(t *testing.T) Catalog {
+	t.Helper()
+	catalog, err := LoadDefault()
+	if err != nil {
+		t.Fatal(err)
+	}
+	return catalog
+}
+
 func TestRatFixture(t *testing.T) {
-	catalog := DefaultFixture()
+	catalog := mustLoadDefault(t)
 	if err := catalog.Validate(); err != nil {
 		t.Fatal(err)
 	}
@@ -27,7 +36,7 @@ func TestRatFixture(t *testing.T) {
 }
 
 func TestCatalogRejectsUnknownID(t *testing.T) {
-	if _, err := DefaultFixture().Item("POT_NOT_REAL"); err == nil {
+	if _, err := mustLoadDefault(t).Item("POT_NOT_REAL"); err == nil {
 		t.Fatal("unknown item ID was accepted")
 	}
 }

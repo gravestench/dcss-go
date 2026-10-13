@@ -3,13 +3,12 @@ package game
 import (
 	"testing"
 
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"github.com/gravestench/akara"
 )
 
 func TestScenarioHasTwoFloors(t *testing.T) {
-	game, err := NewScenario(1, content.DefaultFixture())
+	game, err := NewScenario(1, testCatalog(t))
 	if err != nil {
 		t.Fatal(err)
 	}

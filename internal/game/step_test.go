@@ -5,13 +5,12 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 )
 
 func newStepGame(t *testing.T) *Game {
 	t.Helper()
-	g, err := NewScenario(1, content.DefaultFixture())
+	g, err := NewScenario(1, testCatalog(t))
 	if err != nil {
 		t.Fatal(err)
 	}

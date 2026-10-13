@@ -15,7 +15,11 @@ func run() error {
 	seed := flag.Uint64("seed", 1, "deterministic scenario seed")
 	savePath := flag.String("save", "dcrawl-save.json", "save file path")
 	flag.Parse()
-	g, err := game.NewScenario(*seed, content.DefaultFixture())
+	catalog, err := content.LoadDefault()
+	if err != nil {
+		return fmt.Errorf("load content: %w", err)
+	}
+	g, err := game.NewScenario(*seed, catalog)
 	if err != nil {
 		return fmt.Errorf("start game: %w", err)
 	}
