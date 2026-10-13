@@ -42,6 +42,24 @@ func TestTag34LinesRejectsUnsupportedDirective(t *testing.T) {
 	}
 }
 
+func TestTag34LinesSelectsElifTag34Branch(t *testing.T) {
+	input := `#if TAG_MAJOR_VERSION > 34
+future
+#elif TAG_MAJOR_VERSION == 34
+current
+#else
+other
+#endif`
+	lines, err := Tag34Lines("item-prop-enum.h", []byte(input))
+	if err != nil {
+		t.Fatal(err)
+	}
+	joined := strings.Join(lines, "\n")
+	if !strings.Contains(joined, "current") || strings.Contains(joined, "future") || strings.Contains(joined, "other") {
+		t.Fatalf("wrong active branch: %q", joined)
+	}
+}
+
 func TestActiveEnumIDsRetainsConcreteTag34Members(t *testing.T) {
 	ids, err := ActiveEnumIDs("job-type.h", []byte("enum job_type {\n JOB_FIGHTER,\n#if TAG_MAJOR_VERSION == 34\n JOB_PRIEST,\n#else\n JOB_FUTURE,\n#endif\n NUM_JOBS,\n JOB_UNKNOWN = 100,\n};\n"), "JOB_")
 	if err != nil {

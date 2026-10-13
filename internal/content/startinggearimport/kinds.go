@@ -60,7 +60,7 @@ func activeItemIDs(path string, data []byte) (map[string]bool, error) {
 			continue
 		}
 		id := match[1]
-		if !(strings.HasPrefix(id, "ARM_") || strings.HasPrefix(id, "WPN_") || strings.HasPrefix(id, "MI_") || strings.HasPrefix(id, "SCR_") || strings.HasPrefix(id, "WAND_") || strings.HasPrefix(id, "MISC_")) {
+		if !(strings.HasPrefix(id, "ARM_") || strings.HasPrefix(id, "WPN_") || strings.HasPrefix(id, "MI_") || strings.HasPrefix(id, "SCR_") || strings.HasPrefix(id, "WAND_") || strings.HasPrefix(id, "MISC_") || strings.HasPrefix(id, "SPMSL_")) {
 			continue
 		}
 		if ids[id] {

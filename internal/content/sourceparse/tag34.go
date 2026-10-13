@@ -12,9 +12,20 @@ var blockComment = regexp.MustCompile(`(?s)/\*.*?\*/`)
 var enumEntry = regexp.MustCompile(`^([A-Z][A-Z0-9_]*)\s*(=\s*[^,]+)?\s*,?`)
 
 type tagBranch struct {
-	parent    bool
-	condition bool
-	elseSeen  bool
+	parent   bool
+	matched  bool
+	elseSeen bool
+}
+
+func tag34Condition(directive string) (bool, bool) {
+	switch directive {
+	case "TAG_MAJOR_VERSION == 34":
+		return true, true
+	case "TAG_MAJOR_VERSION > 34":
+		return false, true
+	default:
+		return false, false
+	}
 }
 
 // Tag34Lines resolves only the conditional forms present in the pinned source.
@@ -28,24 +39,31 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 		trimmed := strings.TrimSpace(line)
 		switch {
 		case strings.HasPrefix(trimmed, "#if "):
-			condition := false
-			switch trimmed {
-			case "#if TAG_MAJOR_VERSION == 34":
-				condition = true
-			case "#if TAG_MAJOR_VERSION > 34":
-				condition = false
-			default:
+			condition, supported := tag34Condition(strings.TrimPrefix(trimmed, "#if "))
+			if !supported {
 				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 			}
-			stack = append(stack, tagBranch{parent: active, condition: condition})
+			stack = append(stack, tagBranch{parent: active, matched: condition})
 			active = active && condition
+		case strings.HasPrefix(trimmed, "#elif "):
+			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
+				return nil, fmt.Errorf("%s:%d: unexpected #elif", path, n+1)
+			}
+			condition, supported := tag34Condition(strings.TrimPrefix(trimmed, "#elif "))
+			if !supported {
+				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
+			}
+			top := &stack[len(stack)-1]
+			active = top.parent && !top.matched && condition
+			top.matched = top.matched || condition
 		case trimmed == "#else":
 			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
 				return nil, fmt.Errorf("%s:%d: unexpected #else", path, n+1)
 			}
 			top := &stack[len(stack)-1]
 			top.elseSeen = true
-			active = top.parent && !top.condition
+			active = top.parent && !top.matched
+			top.matched = true
 		case trimmed == "#endif":
 			if len(stack) == 0 {
 				return nil, fmt.Errorf("%s:%d: unexpected #endif", path, n+1)
