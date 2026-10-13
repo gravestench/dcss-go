@@ -1,5 +1,7 @@
 package game
 
+import "dcrawl-go/internal/ecs"
+
 type EntityView struct {
 	ID    uint64
 	X, Y  int
@@ -20,6 +22,8 @@ type View struct {
 	CurrentAut            Aut
 	Messages              []string
 	Inventory             []ItemView
+	CharacterName         string
+	Attributes            ecs.Attributes
 }
 
 func (g *Game) View() View {
@@ -32,6 +36,16 @@ func (g *Game) View() View {
 		Messages: append([]string(nil), g.messages...)}
 	if health, ok := g.stores.Health.Get(g.player); ok {
 		view.PlayerHP, view.PlayerMaxHP = health.Current, health.Max
+	}
+	if player, ok := g.stores.Players.Get(g.player); ok {
+		species, speciesErr := g.catalog.Species(player.SpeciesID)
+		job, jobErr := g.catalog.Job(player.JobID)
+		if speciesErr == nil && jobErr == nil {
+			view.CharacterName = species.Name + " " + job.Name
+		}
+	}
+	if attributes, ok := g.stores.Attributes.Get(g.player); ok {
+		view.Attributes = *attributes
 	}
 	for _, entity := range g.stores.Positions.Entities() {
 		location, _ := g.stores.Positions.Get(entity)

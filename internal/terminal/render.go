@@ -37,7 +37,9 @@ func Render(view game.View, width, height int) tea.View {
 		mapRows[y] = string(row)
 	}
 	header := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("6")).Render("DCrawl · Dungeon slice")
-	status := fmt.Sprintf("D:%d  HP:%d/%d  Aut:%d", view.LevelID, view.PlayerHP, view.PlayerMaxHP, view.CurrentAut)
+	status := fmt.Sprintf("%s  Str:%d Int:%d Dex:%d  D:%d HP:%d/%d Aut:%d", view.CharacterName,
+		view.Attributes.Strength, view.Attributes.Intelligence, view.Attributes.Dexterity,
+		view.LevelID, view.PlayerHP, view.PlayerMaxHP, view.CurrentAut)
 	mapText := lipgloss.NewStyle().Foreground(lipgloss.Color("7")).Render(strings.Join(mapRows, "\n"))
 	lines := []string{header, status, mapText}
 	if len(view.Messages) > 0 {

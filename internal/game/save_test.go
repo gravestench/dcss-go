@@ -90,12 +90,85 @@ func TestFailedLoadLeavesLiveGame(t *testing.T) {
 	g := newStepGame(t)
 	before := g.Snapshot()
 	invalid := g.Snapshot()
-	invalid.Version = 2
+	invalid.Version = 3
 	if _, err := Restore(invalid, testCatalog(t)); err == nil {
 		t.Fatal("invalid save accepted")
 	}
 	if !reflect.DeepEqual(before, g.Snapshot()) {
 		t.Fatal("failed restore changed live game")
+	}
+}
+
+func TestScenarioAttributesAndView(t *testing.T) {
+	g := newStepGame(t)
+	attributes, found := g.stores.Attributes.Get(g.player)
+	if !found || *attributes != (ecs.Attributes{Strength: 16, Intelligence: 8, Dexterity: 12}) {
+		t.Fatalf("player attributes = %+v, found %v", attributes, found)
+	}
+	view := g.View()
+	if view.CharacterName != "Human Fighter" || view.Attributes != *attributes || view.PlayerHP != 20 {
+		t.Fatalf("view = %+v", view)
+	}
+	if snapshot := g.Snapshot(); snapshot.Version != 2 {
+		t.Fatalf("save version = %d, want 2", snapshot.Version)
+	}
+}
+
+func TestRestoreRejectsCorruptAttributesWithoutChangingLiveGame(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		mutate func(*save.Snapshot)
+	}{
+		{"missing player attributes", func(snapshot *save.Snapshot) {
+			for i := range snapshot.Entities {
+				if snapshot.Entities[i].Player != nil {
+					snapshot.Entities[i].Attributes = nil
+				}
+			}
+		}},
+		{"mismatched attributes", func(snapshot *save.Snapshot) {
+			for i := range snapshot.Entities {
+				if snapshot.Entities[i].Player != nil {
+					snapshot.Entities[i].Attributes.Strength++
+				}
+			}
+		}},
+		{"nonpositive attributes", func(snapshot *save.Snapshot) {
+			for i := range snapshot.Entities {
+				if snapshot.Entities[i].Player != nil {
+					snapshot.Entities[i].Attributes.Dexterity = 0
+				}
+			}
+		}},
+		{"monster attributes", func(snapshot *save.Snapshot) {
+			for i := range snapshot.Entities {
+				if snapshot.Entities[i].AI != nil {
+					snapshot.Entities[i].Attributes = &ecs.Attributes{Strength: 8, Intelligence: 8, Dexterity: 8}
+				}
+			}
+		}},
+		{"item attributes", func(snapshot *save.Snapshot) {
+			for i := range snapshot.Entities {
+				if snapshot.Entities[i].Item != nil {
+					snapshot.Entities[i].Attributes = &ecs.Attributes{Strength: 8, Intelligence: 8, Dexterity: 8}
+				}
+			}
+		}},
+		{"version 1", func(snapshot *save.Snapshot) { snapshot.Version = 1 }},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			g := newStepGame(t)
+			before := g.Snapshot()
+			invalid := g.Snapshot()
+			tc.mutate(&invalid)
+			if restored, err := Restore(invalid, testCatalog(t)); err == nil {
+				restored.Close()
+				t.Fatal("corrupt attributes accepted")
+			}
+			if !reflect.DeepEqual(before, g.Snapshot()) {
+				t.Fatal("failed restore modified live game")
+			}
+		})
 	}
 }
 

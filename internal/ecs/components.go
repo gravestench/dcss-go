@@ -30,6 +30,12 @@ type PlayerControlled struct {
 	JobID     string
 }
 
+type Attributes struct {
+	Strength     int
+	Intelligence int
+	Dexterity    int
+}
+
 type MonsterAI struct {
 	Behavior string
 }

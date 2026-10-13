@@ -9,7 +9,7 @@ import (
 
 func TestRejectUnsupportedVersion(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "run.json")
-	if err := os.WriteFile(path, []byte(`{"version":2}`), 0600); err != nil {
+	if err := os.WriteFile(path, []byte(`{"version":1}`), 0600); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := Read(path); err == nil || !strings.Contains(err.Error(), "version") {
@@ -19,10 +19,10 @@ func TestRejectUnsupportedVersion(t *testing.T) {
 
 func TestFailedWritePreservesOldSave(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "run.json")
-	if err := Write(path, Snapshot{Version: 1, SourceRevision: "old"}); err != nil {
+	if err := Write(path, Snapshot{Version: 2, SourceRevision: "old"}); err != nil {
 		t.Fatal(err)
 	}
-	if err := Write(path, Snapshot{Version: 2}); err == nil {
+	if err := Write(path, Snapshot{Version: 1}); err == nil {
 		t.Fatal("unsupported snapshot accepted")
 	}
 	snapshot, err := Read(path)

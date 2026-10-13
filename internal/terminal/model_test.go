@@ -79,12 +79,22 @@ func TestSaveLoadKeys(t *testing.T) {
 		t.Fatal("load key did not restore saved state")
 	}
 	before := m.game
-	if err := os.WriteFile(m.savePath, []byte(`{"version":2}`), 0600); err != nil {
+	if err := os.WriteFile(m.savePath, []byte(`{"version":1}`), 0600); err != nil {
 		t.Fatal(err)
 	}
 	press(m, "L")
 	if m.game != before || !strings.Contains(m.notice, "version") {
 		t.Fatalf("failed load replaced game or hid error: %q", m.notice)
+	}
+}
+
+func TestRenderShowsCharacterAttributes(t *testing.T) {
+	m := newModel(t)
+	view := m.View()
+	for _, want := range []string{"Human Fighter", "Str:16", "Int:8", "Dex:12"} {
+		if !strings.Contains(view.Content, want) {
+			t.Fatalf("render missing %q: %s", want, view.Content)
+		}
 	}
 }
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/save"
@@ -32,7 +33,8 @@ func (g *Game) Snapshot() save.Snapshot {
 			ID: uint64(entity), Position: copyComponent(g.stores.Positions, entity),
 			Actor: copyComponent(g.stores.Actors, entity), Health: copyComponent(g.stores.Health, entity),
 			Combatant: copyComponent(g.stores.Combat, entity), Player: copyComponent(g.stores.Players, entity),
-			AI: copyComponent(g.stores.AI, entity), Item: copyComponent(g.stores.Items, entity),
+			Attributes: copyComponent(g.stores.Attributes, entity),
+			AI:         copyComponent(g.stores.AI, entity), Item: copyComponent(g.stores.Items, entity),
 			CarriedBy: copyComponent(g.stores.CarriedBy, entity),
 		})
 	}
@@ -100,7 +102,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Item.Quantity <= 0 || (record.Position == nil) == (record.CarriedBy == nil) || record.Actor != nil {
 				return nil, fmt.Errorf("item %d must have exactly one of position or carrier, never both", record.ID)
 			}
-			if record.Health != nil || record.Combatant != nil || record.Player != nil || record.AI != nil {
+			if record.Health != nil || record.Combatant != nil || record.Player != nil || record.AI != nil || record.Attributes != nil {
 				return nil, fmt.Errorf("item %d has actor components", record.ID)
 			}
 		} else if record.CarriedBy != nil {
@@ -116,11 +118,21 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			playerCount++
 			definition := catalog.Player()
 			if record.ID != snapshot.PlayerID || record.Actor == nil || record.Position == nil || record.Health == nil ||
-				record.Player.SpeciesID != definition.SpeciesID || record.Player.JobID != definition.JobID {
+				record.Player.SpeciesID != definition.SpeciesID || record.Player.JobID != definition.JobID || record.Attributes == nil {
 				return nil, fmt.Errorf("invalid player entity %d", record.ID)
+			}
+			stats, statsErr := character.BaseStatSum(catalog, record.Player.SpeciesID, record.Player.JobID)
+			if statsErr != nil {
+				return nil, fmt.Errorf("invalid player choice: %w", statsErr)
+			}
+			if record.Attributes.Strength <= 0 || record.Attributes.Intelligence <= 0 || record.Attributes.Dexterity <= 0 ||
+				*record.Attributes != (ecs.Attributes{Strength: stats.Strength, Intelligence: stats.Intelligence, Dexterity: stats.Dexterity}) {
+				return nil, fmt.Errorf("invalid player attributes for entity %d", record.ID)
 			}
 			playerNext = record.Actor.NextAut
 			playerAlive = record.Health.Current > 0
+		} else if record.Attributes != nil {
+			return nil, fmt.Errorf("non-player entity %d has attributes", record.ID)
 		}
 		if record.AI != nil {
 			if record.Actor == nil || record.Health == nil || record.Position == nil {
@@ -181,6 +193,11 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		}
 		if record.Player != nil {
 			if _, err := stores.Players.Set(entity, *record.Player); err != nil {
+				return nil, err
+			}
+		}
+		if record.Attributes != nil {
+			if _, err := stores.Attributes.Set(entity, *record.Attributes); err != nil {
 				return nil, err
 			}
 		}

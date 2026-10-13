@@ -1,6 +1,7 @@
 package game
 
 import (
+	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"github.com/gravestench/akara"
@@ -29,6 +30,10 @@ func NewScenario(seed uint64, catalog content.Catalog) (_ *Game, err error) {
 		rng: NewRNGStreams(seed), scheduler: TurnScheduler{actors: stores.Actors}}
 
 	playerDef := catalog.Player()
+	baseStats, err := character.BaseStatSum(catalog, playerDef.SpeciesID, playerDef.JobID)
+	if err != nil {
+		return nil, err
+	}
 	g.player, err = world.CreateEntity()
 	if err != nil {
 		return nil, err
@@ -43,6 +48,9 @@ func NewScenario(seed uint64, catalog content.Catalog) (_ *Game, err error) {
 		return nil, err
 	}
 	if _, err = stores.Players.Set(g.player, ecs.PlayerControlled{SpeciesID: playerDef.SpeciesID, JobID: playerDef.JobID}); err != nil {
+		return nil, err
+	}
+	if _, err = stores.Attributes.Set(g.player, ecs.Attributes{Strength: baseStats.Strength, Intelligence: baseStats.Intelligence, Dexterity: baseStats.Dexterity}); err != nil {
 		return nil, err
 	}
 	if err = first.PlaceActor(g.player, 1, 1); err != nil {
