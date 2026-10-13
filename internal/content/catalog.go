@@ -32,6 +32,7 @@ type Catalog struct {
 	monsters       map[string]MonsterDef
 	items          map[string]ItemDef
 	species        map[string]SpeciesDef
+	jobs           map[string]JobDef
 	player         PlayerDef
 }
 
@@ -73,6 +74,19 @@ func (c Catalog) Validate() error {
 				return fmt.Errorf("mismatched species key %q", id)
 			}
 			if err := species.validate(); err != nil {
+				return err
+			}
+		}
+	}
+	if len(c.jobs) > 0 {
+		if _, found := c.jobs[c.player.JobID]; !found {
+			return fmt.Errorf("catalog has no player job %q", c.player.JobID)
+		}
+		for id, job := range c.jobs {
+			if job.ID != id {
+				return fmt.Errorf("mismatched job key %q", id)
+			}
+			if err := job.validate(); err != nil {
 				return err
 			}
 		}
