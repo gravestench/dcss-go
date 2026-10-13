@@ -66,6 +66,9 @@ func (g StartingGrant) validate(kind ItemDef) error {
 	if g.Raw == "" || g.KindID != kind.ID || g.Quantity <= 0 {
 		return fmt.Errorf("grant %q has invalid raw spec, kind, or quantity", g.Raw)
 	}
+	if g.Raw != kind.Name && !strings.HasPrefix(g.Raw, kind.Name+" ") {
+		return fmt.Errorf("grant %q does not name item kind %s (%s)", g.Raw, kind.ID, kind.Name)
+	}
 	if g.Charges < 0 || (g.Charges != 0 && kind.Class != "OBJ_WANDS") {
 		return fmt.Errorf("grant %q has invalid charges", g.Raw)
 	}

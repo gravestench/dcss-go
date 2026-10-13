@@ -122,12 +122,12 @@ func TestLoadDefaultRejectsBadArtifact(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if _, err := loadDefault(encoded, defaultJobsJSON); err == nil {
+			if _, err := loadDefault(encoded, defaultJobsJSON, defaultStartingGearJSON); err == nil {
 				t.Fatal("bad embedded artifact accepted")
 			}
 		})
 	}
-	if _, err := loadDefault([]byte(`{"species":`), defaultJobsJSON); err == nil || !strings.Contains(err.Error(), "decode") {
+	if _, err := loadDefault([]byte(`{"species":`), defaultJobsJSON, defaultStartingGearJSON); err == nil || !strings.Contains(err.Error(), "decode") {
 		t.Fatalf("malformed artifact error = %v", err)
 	}
 }
@@ -157,7 +157,7 @@ func TestLoadDefaultRejectsMissingAptitudes(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if _, err := loadDefault(encoded, defaultJobsJSON); err == nil || !strings.Contains(err.Error(), "aptitude") {
+			if _, err := loadDefault(encoded, defaultJobsJSON, defaultStartingGearJSON); err == nil || !strings.Contains(err.Error(), "aptitude") {
 				t.Fatalf("missing %s aptitudes accepted: %v", missing, err)
 			}
 		})

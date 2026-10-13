@@ -15,9 +15,12 @@ var defaultSpeciesJSON []byte
 //go:embed generated/jobs.json
 var defaultJobsJSON []byte
 
+//go:embed generated/starting-gear.json
+var defaultStartingGearJSON []byte
+
 // LoadDefault builds a fresh catalog from the checked-in source-traced artifacts.
 func LoadDefault() (Catalog, error) {
-	return loadDefault(defaultSpeciesJSON, defaultJobsJSON)
+	return loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultStartingGearJSON)
 }
 
 func decodeArtifact(data []byte, name string, target any) error {
@@ -49,7 +52,7 @@ func validSourceFiles(files []JobSourceFile, name string) (map[string]string, er
 	return paths, nil
 }
 
-func loadDefault(speciesData, jobData []byte) (Catalog, error) {
+func loadDefault(speciesData, jobData, gearData []byte) (Catalog, error) {
 	var artifact SpeciesArtifact
 	if err := decodeArtifact(speciesData, "species", &artifact); err != nil {
 		return Catalog{}, err
@@ -122,6 +125,77 @@ func loadDefault(speciesData, jobData []byte) (Catalog, error) {
 			if _, ok := catalog.jobs[jobID]; !ok {
 				return Catalog{}, fmt.Errorf("species %s recommends missing job %s", species.ID, jobID)
 			}
+		}
+	}
+	var gear StartingGearArtifact
+	if err := decodeArtifact(gearData, "starting gear", &gear); err != nil {
+		return Catalog{}, err
+	}
+	if gear.SchemaVersion != 1 || gear.SourceRevision != artifact.SourceRevision || gear.TagMajorVersion != artifact.TagMajorVersion {
+		return Catalog{}, fmt.Errorf("unsupported or mismatched starting gear artifact schema/revision/tag")
+	}
+	if len(gear.Jobs) != 25 || len(gear.SourceFiles) != 14 {
+		return Catalog{}, fmt.Errorf("starting gear artifact has incomplete records or provenance")
+	}
+	if err := gear.Validate(); err != nil {
+		return Catalog{}, err
+	}
+	gearPaths, err := validSourceFiles(gear.SourceFiles, "starting gear")
+	if err != nil {
+		return Catalog{}, err
+	}
+	for path, hash := range gearPaths {
+		if speciesHash, shared := hashedPaths[path]; shared && speciesHash != hash {
+			return Catalog{}, fmt.Errorf("shared species/gear source hash differs for %s", path)
+		}
+		if jobHash, shared := jobPaths[path]; shared && jobHash != hash {
+			return Catalog{}, fmt.Errorf("shared job/gear source hash differs for %s", path)
+		}
+	}
+	for path := range jobPaths {
+		if _, found := gearPaths[path]; !found {
+			return Catalog{}, fmt.Errorf("starting gear artifact lacks job source %s", path)
+		}
+	}
+	catalog.items = make(map[string]ItemDef, len(gear.Kinds))
+	previous = ""
+	for _, kind := range gear.Kinds {
+		if kind.ID <= previous {
+			return Catalog{}, fmt.Errorf("starting item kinds are not sorted by ID")
+		}
+		catalog.items[kind.ID] = kind
+		previous = kind.ID
+	}
+	for _, id := range []string{"POT_CURING", "WPN_SHORT_SWORD", "WPN_MACE", "WPN_HAND_AXE", "WPN_SPEAR", "WPN_FALCHION", "WPN_QUARTERSTAFF", "WPN_RAPIER", "WPN_FLAIL", "WPN_WAR_AXE", "WPN_TRIDENT", "WPN_LONG_SWORD"} {
+		if _, found := catalog.items[id]; !found {
+			return Catalog{}, fmt.Errorf("starting gear artifact lacks required item kind %s", id)
+		}
+	}
+	if _, found := catalog.items["WPN_UNARMED"]; found {
+		return Catalog{}, fmt.Errorf("unarmed choice must not be an item kind")
+	}
+	catalog.startingGear = make(map[string][]StartingGrant, len(gear.Jobs))
+	previous = ""
+	for _, entry := range gear.Jobs {
+		if entry.JobID <= previous {
+			return Catalog{}, fmt.Errorf("starting gear jobs are not sorted by ID")
+		}
+		job, found := catalog.jobs[entry.JobID]
+		if !found || !job.Selectable || len(entry.Grants) != len(job.Equipment) {
+			return Catalog{}, fmt.Errorf("starting gear job %s disagrees with committed jobs", entry.JobID)
+		}
+		for i, grant := range entry.Grants {
+			if grant.Raw != job.Equipment[i] {
+				return Catalog{}, fmt.Errorf("starting gear job %s grant %d raw spec/order differs from jobs", entry.JobID, i)
+			}
+		}
+		catalog.startingGear[entry.JobID] = append([]StartingGrant(nil), entry.Grants...)
+		previous = entry.JobID
+	}
+	for id, job := range catalog.jobs {
+		_, found := catalog.startingGear[id]
+		if job.Selectable != found {
+			return Catalog{}, fmt.Errorf("starting gear coverage differs for job %s", id)
 		}
 	}
 	if err := catalog.Validate(); err != nil {
