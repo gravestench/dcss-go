@@ -19,7 +19,7 @@ func TestRejectUnsupportedVersion(t *testing.T) {
 
 func TestFailedWritePreservesOldSave(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "run.json")
-	if err := Write(path, Snapshot{Version: 2, SourceRevision: "old"}); err != nil {
+	if err := Write(path, Snapshot{Version: 3, SourceRevision: "old"}); err != nil {
 		t.Fatal(err)
 	}
 	if err := Write(path, Snapshot{Version: 1}); err == nil {

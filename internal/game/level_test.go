@@ -8,7 +8,7 @@ import (
 )
 
 func TestScenarioHasTwoFloors(t *testing.T) {
-	game, err := NewScenario(1, testCatalog(t))
+	game, err := NewScenario(1, testCatalog(t), "WPN_RAPIER")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,10 +27,10 @@ func TestScenarioHasTwoFloors(t *testing.T) {
 		t.Fatal("stair terrain is wrong")
 	}
 	items := game.stores.Items.Entities()
-	if len(items) != 1 {
-		t.Fatalf("item count = %d, want 1", len(items))
+	if len(items) != 5 {
+		t.Fatalf("item count = %d, want 5", len(items))
 	}
-	itemPosition, ok := game.stores.Positions.Get(items[0])
+	itemPosition, ok := game.stores.Positions.Get(potionID(t, game))
 	if !ok || *itemPosition != (ecs.Position{LevelID: 1, X: 4, Y: 2}) {
 		t.Fatalf("potion position = %+v", itemPosition)
 	}

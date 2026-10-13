@@ -12,6 +12,10 @@ type ItemView struct {
 	KindID   string
 	Name     string
 	Quantity int
+	Plus     int
+	Charges  int
+	Ego      string
+	Slot     string
 }
 
 type View struct {
@@ -80,7 +84,11 @@ func (g *Game) View() View {
 		}
 		definition, err := g.catalog.Item(item.KindID)
 		if err == nil {
-			view.Inventory = append(view.Inventory, ItemView{KindID: item.KindID, Name: definition.Name, Quantity: item.Quantity})
+			entry := ItemView{KindID: item.KindID, Name: definition.Name, Quantity: item.Quantity, Plus: item.Plus, Charges: item.Charges, Ego: item.Ego}
+			if equipped, found := g.stores.Equipped.Get(entity); found {
+				entry.Slot = equipped.Slot
+			}
+			view.Inventory = append(view.Inventory, entry)
 		}
 	}
 	return view

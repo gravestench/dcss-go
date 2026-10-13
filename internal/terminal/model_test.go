@@ -20,7 +20,7 @@ func newModel(t *testing.T) *Model {
 	if err != nil {
 		t.Fatal(err)
 	}
-	g, err := game.NewScenario(1, catalog)
+	g, err := game.NewScenario(1, catalog, "WPN_RAPIER")
 	if err != nil {
 		t.Fatal(err)
 	}

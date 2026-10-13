@@ -26,8 +26,9 @@ type Combatant struct {
 }
 
 type PlayerControlled struct {
-	SpeciesID string
-	JobID     string
+	SpeciesID        string
+	JobID            string
+	StartingWeaponID string
 }
 
 type Attributes struct {
@@ -43,11 +44,19 @@ type MonsterAI struct {
 type Item struct {
 	KindID   string
 	Quantity int
+	Plus     int
+	Charges  int
+	Ego      string
 }
 
 // CarriedBy and Position are mutually exclusive on an item.
 type CarriedBy struct {
 	Holder akara.Entity
+}
+
+// Equipped records an inventory item's active slot; CarriedBy owns it.
+type Equipped struct {
+	Slot string
 }
 
 type IntentKind uint8

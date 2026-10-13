@@ -7,7 +7,6 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"dcrawl-go/internal/content"
-	"dcrawl-go/internal/game"
 	"dcrawl-go/internal/terminal"
 )
 
@@ -19,11 +18,10 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("load content: %w", err)
 	}
-	g, err := game.NewScenario(*seed, catalog)
+	model, err := terminal.NewStartModel(catalog, *seed, *savePath)
 	if err != nil {
-		return fmt.Errorf("start game: %w", err)
+		return fmt.Errorf("prepare start: %w", err)
 	}
-	model := terminal.NewModel(g, *savePath)
 	defer model.Close()
 	_, err = tea.NewProgram(model).Run()
 	if err != nil {

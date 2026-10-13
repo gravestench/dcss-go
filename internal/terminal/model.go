@@ -78,7 +78,20 @@ func (m *Model) View() tea.View {
 	if m.showInventory {
 		rows := []string{"Inventory"}
 		for _, item := range view.Inventory {
-			rows = append(rows, fmt.Sprintf("%d %s", item.Quantity, item.Name))
+			row := fmt.Sprintf("%d %s", item.Quantity, item.Name)
+			if item.Plus != 0 {
+				row += fmt.Sprintf(" %+d", item.Plus)
+			}
+			if item.Charges != 0 {
+				row += fmt.Sprintf(" · %d charges", item.Charges)
+			}
+			if item.Ego != "" {
+				row += " · " + item.Ego
+			}
+			if item.Slot != "" {
+				row += " (equipped: " + item.Slot + ")"
+			}
+			rows = append(rows, row)
 		}
 		if len(rows) == 1 {
 			rows = append(rows, "(empty)")

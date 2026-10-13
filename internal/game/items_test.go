@@ -9,7 +9,10 @@ import (
 func potionID(t *testing.T, g *Game) akara.Entity {
 	t.Helper()
 	for _, id := range g.stores.Items.Entities() {
-		return id
+		item, _ := g.stores.Items.Get(id)
+		if item.KindID == "POT_CURING" {
+			return id
+		}
 	}
 	t.Fatal("potion missing")
 	return 0
@@ -26,7 +29,7 @@ func TestPickupTransfersLocation(t *testing.T) {
 	}
 	item := potionID(t, g)
 	carrier, carried := g.stores.CarriedBy.Get(item)
-	if result.Spent != 10 || g.stores.Positions.Has(item) || !carried || carrier.Holder != g.player || len(result.View.Inventory) != 1 {
+	if result.Spent != 10 || g.stores.Positions.Has(item) || !carried || carrier.Holder != g.player || len(result.View.Inventory) != 5 || result.View.Inventory[4].KindID != "POT_CURING" {
 		t.Fatalf("pickup = %+v, located=%v, carried=%+v, inventory=%+v", result, g.stores.Positions.Has(item), carrier, result.View.Inventory)
 	}
 }

@@ -90,7 +90,7 @@ func TestFailedLoadLeavesLiveGame(t *testing.T) {
 	g := newStepGame(t)
 	before := g.Snapshot()
 	invalid := g.Snapshot()
-	invalid.Version = 3
+	invalid.Version = 2
 	if _, err := Restore(invalid, testCatalog(t)); err == nil {
 		t.Fatal("invalid save accepted")
 	}
@@ -109,8 +109,8 @@ func TestScenarioAttributesAndView(t *testing.T) {
 	if view.CharacterName != "Human Fighter" || view.Attributes != *attributes || view.PlayerHP != 20 {
 		t.Fatalf("view = %+v", view)
 	}
-	if snapshot := g.Snapshot(); snapshot.Version != 2 {
-		t.Fatalf("save version = %d, want 2", snapshot.Version)
+	if snapshot := g.Snapshot(); snapshot.Version != 3 {
+		t.Fatalf("save version = %d, want 3", snapshot.Version)
 	}
 }
 

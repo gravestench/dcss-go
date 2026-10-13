@@ -13,6 +13,7 @@ type Stores struct {
 	AI         *akara.Store[MonsterAI]
 	Items      *akara.Store[Item]
 	CarriedBy  *akara.Store[CarriedBy]
+	Equipped   *akara.Store[Equipped]
 	Intents    *akara.Store[Intent]
 }
 
@@ -27,6 +28,7 @@ func Register(world *akara.World) Stores {
 		AI:         akara.Register[MonsterAI](world),
 		Items:      akara.Register[Item](world),
 		CarriedBy:  akara.Register[CarriedBy](world),
+		Equipped:   akara.Register[Equipped](world),
 		Intents:    akara.Register[Intent](world),
 	}
 }

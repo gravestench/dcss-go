@@ -20,6 +20,50 @@ func copyComponent[T any](store *akara.Store[T], entity akara.Entity) *T {
 	return &copy
 }
 
+func validateSavedItem(record save.EntityRecord, catalog content.Catalog, player akara.Entity, occupied map[string]string) error {
+	item := record.Item
+	kind, err := catalog.Item(item.KindID)
+	if err != nil {
+		return err
+	}
+	if item.Quantity <= 0 || (!kind.Stackable && item.Quantity != 1) {
+		return fmt.Errorf("item %d has impossible quantity", record.ID)
+	}
+	if (record.Position == nil) == (record.CarriedBy == nil) || record.Actor != nil {
+		return fmt.Errorf("item %d must have exactly one of position or carrier, never both", record.ID)
+	}
+	if record.Health != nil || record.Combatant != nil || record.Player != nil || record.AI != nil || record.Attributes != nil {
+		return fmt.Errorf("item %d has actor components", record.ID)
+	}
+	if item.Charges < 0 || (item.Charges != 0 && kind.Class != "OBJ_WANDS") {
+		return fmt.Errorf("item %d has impossible charges", record.ID)
+	}
+	if item.Plus != 0 && kind.Class != "OBJ_WEAPONS" && kind.Class != "OBJ_ARMOUR" {
+		return fmt.Errorf("item %d has impossible enchantment", record.ID)
+	}
+	if item.Ego != "" {
+		switch item.Ego {
+		case "poisoned", "curare", "dispersal":
+			if kind.Class != "OBJ_MISSILES" {
+				return fmt.Errorf("item %d has incompatible ego", record.ID)
+			}
+		default:
+			return fmt.Errorf("item %d has unknown ego %q", record.ID, item.Ego)
+		}
+	}
+	if record.Equipped == nil {
+		return nil
+	}
+	if record.CarriedBy == nil || record.CarriedBy.Holder != player || record.Position != nil || kind.Slot == "" || record.Equipped.Slot != kind.Slot {
+		return fmt.Errorf("item %d has invalid equipped slot or carrier", record.ID)
+	}
+	if _, duplicate := occupied[kind.Slot]; duplicate {
+		return fmt.Errorf("duplicate equipped slot %s", kind.Slot)
+	}
+	occupied[kind.Slot] = kind.ID
+	return nil
+}
+
 func (g *Game) Snapshot() save.Snapshot {
 	snapshot := save.Snapshot{Version: save.Version, SourceRevision: g.catalog.SourceRevision(),
 		PlayerID: uint64(g.player), CurrentAut: int64(g.currentAut), Seed: g.seed,
@@ -36,6 +80,7 @@ func (g *Game) Snapshot() save.Snapshot {
 			Attributes: copyComponent(g.stores.Attributes, entity),
 			AI:         copyComponent(g.stores.AI, entity), Item: copyComponent(g.stores.Items, entity),
 			CarriedBy: copyComponent(g.stores.CarriedBy, entity),
+			Equipped:  copyComponent(g.stores.Equipped, entity),
 		})
 	}
 	sort.Slice(snapshot.Entities, func(i, j int) bool { return snapshot.Entities[i].ID < snapshot.Entities[j].ID })
@@ -86,6 +131,8 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 	seen := make(map[uint64]bool)
 	playerCount := 0
+	selectedWeaponID := ""
+	equippedSlots := map[string]string{}
 	var playerNext int64
 	var playerAlive bool
 	var earliestID uint64
@@ -96,17 +143,11 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		}
 		seen[record.ID] = true
 		if record.Item != nil {
-			if _, err := catalog.Item(record.Item.KindID); err != nil {
+			if err := validateSavedItem(record, catalog, g.player, equippedSlots); err != nil {
 				return nil, err
 			}
-			if record.Item.Quantity <= 0 || (record.Position == nil) == (record.CarriedBy == nil) || record.Actor != nil {
-				return nil, fmt.Errorf("item %d must have exactly one of position or carrier, never both", record.ID)
-			}
-			if record.Health != nil || record.Combatant != nil || record.Player != nil || record.AI != nil || record.Attributes != nil {
-				return nil, fmt.Errorf("item %d has actor components", record.ID)
-			}
-		} else if record.CarriedBy != nil {
-			return nil, fmt.Errorf("non-item %d has carrier", record.ID)
+		} else if record.CarriedBy != nil || record.Equipped != nil {
+			return nil, fmt.Errorf("non-item %d has carrier or equipment slot", record.ID)
 		}
 		if record.Actor == nil && record.Item == nil {
 			return nil, fmt.Errorf("entity %d has no actor or item role", record.ID)
@@ -116,6 +157,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		}
 		if record.Player != nil {
 			playerCount++
+			selectedWeaponID = record.Player.StartingWeaponID
 			definition := catalog.Player()
 			if record.ID != snapshot.PlayerID || record.Actor == nil || record.Position == nil || record.Health == nil ||
 				record.Player.SpeciesID != definition.SpeciesID || record.Player.JobID != definition.JobID || record.Attributes == nil {
@@ -124,6 +166,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			stats, statsErr := character.BaseStatSum(catalog, record.Player.SpeciesID, record.Player.JobID)
 			if statsErr != nil {
 				return nil, fmt.Errorf("invalid player choice: %w", statsErr)
+			}
+			if err := character.ValidateWeaponChoice(catalog, record.Player.SpeciesID, record.Player.JobID, selectedWeaponID); err != nil {
+				return nil, fmt.Errorf("invalid selected starting weapon: %w", err)
 			}
 			if record.Attributes.Strength <= 0 || record.Attributes.Intelligence <= 0 || record.Attributes.Dexterity <= 0 ||
 				*record.Attributes != (ecs.Attributes{Strength: stats.Strength, Intelligence: stats.Intelligence, Dexterity: stats.Dexterity}) {
@@ -168,6 +213,16 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 	if playerCount != 1 {
 		return nil, fmt.Errorf("save requires exactly one player, found %d", playerCount)
+	}
+	if equippedSlots["body"] != "ARM_SCALE_MAIL" || equippedSlots["shield"] != "ARM_BUCKLER" {
+		return nil, fmt.Errorf("save is missing required Human/Fighter armour slots")
+	}
+	if selectedWeaponID == "WPN_UNARMED" {
+		if equippedSlots["weapon"] != "" {
+			return nil, fmt.Errorf("unarmed start has an equipped weapon")
+		}
+	} else if equippedSlots["weapon"] != selectedWeaponID {
+		return nil, fmt.Errorf("selected starting weapon %s disagrees with equipped weapon %s", selectedWeaponID, equippedSlots["weapon"])
 	}
 	// Between live turns the player is next at the displayed clock. A dead
 	// player can retain a later deadline after a monster's killing action.
@@ -229,6 +284,11 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 				return nil, fmt.Errorf("item %d has unsupported carrier %d", record.ID, record.CarriedBy.Holder)
 			}
 			if _, err := stores.CarriedBy.Set(entity, *record.CarriedBy); err != nil {
+				return nil, err
+			}
+		}
+		if record.Equipped != nil {
+			if _, err := stores.Equipped.Set(entity, *record.Equipped); err != nil {
 				return nil, err
 			}
 		}
