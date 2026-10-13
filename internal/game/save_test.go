@@ -106,7 +106,7 @@ func TestScenarioAttributesAndView(t *testing.T) {
 		t.Fatalf("player attributes = %+v, found %v", attributes, found)
 	}
 	view := g.View()
-	if view.CharacterName != "Human Fighter" || view.Attributes != *attributes || view.PlayerHP != 20 {
+	if view.CharacterName != "Human Fighter" || view.Attributes != *attributes || view.PlayerHP != 18 {
 		t.Fatalf("view = %+v", view)
 	}
 	if snapshot := g.Snapshot(); snapshot.Version != 3 {

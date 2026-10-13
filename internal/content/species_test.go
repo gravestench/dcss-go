@@ -59,7 +59,7 @@ func TestSpeciesCatalogRejectsDuplicateOrInvalidRecord(t *testing.T) {
 	if err := artifact.Validate(); err == nil {
 		t.Fatal("species without name accepted")
 	}
-	if err := (Catalog{species: map[string]SpeciesDef{"SP_HUMAN": invalid}, version: 1, sourceRevision: sourceRevision, player: PlayerDef{SpeciesID: "SP_HUMAN", JobID: "JOB_FIGHTER", ScenarioHP: 20, Speed: 10}}).Validate(); err == nil {
+	if err := (Catalog{species: map[string]SpeciesDef{"SP_HUMAN": invalid}, version: 1, sourceRevision: sourceRevision, player: PlayerDef{SpeciesID: "SP_HUMAN", JobID: "JOB_FIGHTER", Speed: 10}}).Validate(); err == nil {
 		t.Fatal("invalid catalog species accepted")
 	}
 }

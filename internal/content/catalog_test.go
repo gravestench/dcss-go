@@ -27,7 +27,7 @@ func TestRatFixture(t *testing.T) {
 		t.Fatalf("unexpected rat fixture: %+v", rat)
 	}
 	player := catalog.Player()
-	if player.SpeciesID != "SP_HUMAN" || player.JobID != "JOB_FIGHTER" || player.ScenarioHP != 20 || player.BaseDamage != 4 {
+	if player.SpeciesID != "SP_HUMAN" || player.JobID != "JOB_FIGHTER" || player.BaseDamage != 4 {
 		t.Fatalf("unexpected player fixture: %+v", player)
 	}
 	if _, err := catalog.Item("POT_CURING"); err != nil {

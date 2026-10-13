@@ -1,6 +1,9 @@
 package game
 
-import "dcrawl-go/internal/ecs"
+import (
+	"dcrawl-go/internal/character"
+	"dcrawl-go/internal/ecs"
+)
 
 type EntityView struct {
 	ID    uint64
@@ -23,11 +26,13 @@ type View struct {
 	Terrain               []string
 	Entities              []EntityView
 	PlayerHP, PlayerMaxHP int
+	PlayerMP, PlayerMaxMP int
 	CurrentAut            Aut
 	Messages              []string
 	Inventory             []ItemView
 	CharacterName         string
 	Attributes            ecs.Attributes
+	Skills                []character.Skill
 }
 
 func (g *Game) View() View {
@@ -40,6 +45,12 @@ func (g *Game) View() View {
 		Messages: append([]string(nil), g.messages...)}
 	if health, ok := g.stores.Health.Get(g.player); ok {
 		view.PlayerHP, view.PlayerMaxHP = health.Current, health.Max
+	}
+	if magic, ok := g.stores.Magic.Get(g.player); ok {
+		view.PlayerMP, view.PlayerMaxMP = magic.Current, magic.Max
+	}
+	if skills, ok := g.stores.Skills.Get(g.player); ok {
+		view.Skills = append([]character.Skill(nil), skills.Entries...)
 	}
 	if player, ok := g.stores.Players.Get(g.player); ok {
 		species, speciesErr := g.catalog.Species(player.SpeciesID)

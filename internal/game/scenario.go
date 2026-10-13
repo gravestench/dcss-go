@@ -33,18 +33,11 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID string) (_ *Game
 	g := &Game{world: world, stores: stores, levels: map[int]*Level{1: first, 2: second}, catalog: catalog, seed: seed,
 		rng: NewRNGStreams(seed), scheduler: TurnScheduler{actors: stores.Actors}}
 
-	baseStats, err := character.BaseStatSum(catalog, playerDef.SpeciesID, playerDef.JobID)
-	if err != nil {
-		return nil, err
-	}
 	g.player, err = world.CreateEntity()
 	if err != nil {
 		return nil, err
 	}
 	if _, err = stores.Actors.Set(g.player, ecs.Actor{KindID: "player", Speed: playerDef.Speed}); err != nil {
-		return nil, err
-	}
-	if _, err = stores.Health.Set(g.player, ecs.Health{Current: playerDef.ScenarioHP, Max: playerDef.ScenarioHP}); err != nil {
 		return nil, err
 	}
 	if _, err = stores.Combat.Set(g.player, ecs.Combatant{BaseDamage: playerDef.BaseDamage}); err != nil {
@@ -53,13 +46,26 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID string) (_ *Game
 	if _, err = stores.Players.Set(g.player, ecs.PlayerControlled{SpeciesID: playerDef.SpeciesID, JobID: playerDef.JobID, StartingWeaponID: weaponID}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Attributes.Set(g.player, ecs.Attributes{Strength: baseStats.Strength, Intelligence: baseStats.Intelligence, Dexterity: baseStats.Dexterity}); err != nil {
-		return nil, err
-	}
 	if err = first.PlaceActor(g.player, 1, 1); err != nil {
 		return nil, err
 	}
 	if err = g.createStartingGear(playerDef.JobID, weaponID); err != nil {
+		return nil, err
+	}
+	profile, err := character.BuildStartProfile(catalog, playerDef.SpeciesID, playerDef.JobID, weaponID)
+	if err != nil {
+		return nil, err
+	}
+	if _, err = stores.Attributes.Set(g.player, ecs.Attributes{Strength: profile.Attributes.Strength, Intelligence: profile.Attributes.Intelligence, Dexterity: profile.Attributes.Dexterity}); err != nil {
+		return nil, err
+	}
+	if _, err = stores.Skills.Set(g.player, ecs.Skills{Entries: append([]character.Skill(nil), profile.Skills...)}); err != nil {
+		return nil, err
+	}
+	if _, err = stores.Health.Set(g.player, ecs.Health{Current: profile.MaxHP, Max: profile.MaxHP}); err != nil {
+		return nil, err
+	}
+	if _, err = stores.Magic.Set(g.player, ecs.Magic{Current: profile.MaxMP, Max: profile.MaxMP}); err != nil {
 		return nil, err
 	}
 

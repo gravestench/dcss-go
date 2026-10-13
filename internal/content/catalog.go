@@ -24,7 +24,6 @@ type ItemDef struct {
 type PlayerDef struct {
 	SpeciesID  string
 	JobID      string
-	ScenarioHP int
 	Speed      int
 	BaseDamage int
 }
@@ -67,7 +66,7 @@ func (c Catalog) Validate() error {
 	if c.version <= 0 || c.sourceRevision == "" {
 		return fmt.Errorf("catalog has no version or source revision")
 	}
-	if c.player.SpeciesID == "" || c.player.JobID == "" || c.player.ScenarioHP <= 0 || c.player.Speed <= 0 {
+	if c.player.SpeciesID == "" || c.player.JobID == "" || c.player.Speed <= 0 {
 		return fmt.Errorf("catalog has an invalid player fixture")
 	}
 	if len(c.species) > 0 {

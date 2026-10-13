@@ -43,7 +43,7 @@ func TestNewScenarioStartingGear(t *testing.T) {
 			if !slices.Equal(gotKinds, wantKinds) || !slices.Equal(gotSlots, wantSlots) {
 				t.Fatalf("loadout kinds/slots = %v/%v, want %v/%v", gotKinds, gotSlots, wantKinds, wantSlots)
 			}
-			if view.CurrentAut != 0 || view.PlayerHP != 20 || view.PlayerMaxHP != 20 {
+			if view.CurrentAut != 0 || view.PlayerHP != 18 || view.PlayerMaxHP != 18 {
 				t.Fatalf("scenario start changed time or HP: %+v", view)
 			}
 			combat, found := g.stores.Combat.Get(g.player)

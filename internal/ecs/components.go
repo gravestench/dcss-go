@@ -1,6 +1,9 @@
 package ecs
 
-import "github.com/gravestench/akara"
+import (
+	"dcrawl-go/internal/character"
+	"github.com/gravestench/akara"
+)
 
 // Position is the authoritative location of an entity on a level.
 type Position struct {
@@ -19,6 +22,17 @@ type Actor struct {
 type Health struct {
 	Current int
 	Max     int
+}
+
+// Magic is the player's current and maximum MP.
+type Magic struct {
+	Current int
+	Max     int
+}
+
+// Skills records level and training points for each starting skill.
+type Skills struct {
+	Entries []character.Skill
 }
 
 type Combatant struct {
