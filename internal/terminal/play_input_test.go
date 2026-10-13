@@ -126,4 +126,8 @@ func TestDeathTransitionAfterStep(t *testing.T) {
 	if m.screen != ScreenDeath || !strings.Contains(plainApp(m), "You die") {
 		t.Fatal("death did not enter terminal state")
 	}
+	m.handleKey("enter")
+	if m.screen != ScreenStartup || m.game != nil {
+		t.Fatal("death could not return to startup")
+	}
 }

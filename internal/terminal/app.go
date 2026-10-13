@@ -94,7 +94,7 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 		return m.handleConfirmKey(key)
 	case ScreenDeath:
 		if key == "esc" || key == "enter" {
-			return tea.Quit
+			m.returnToStartup()
 		}
 	case ScreenHelp:
 		if key == "esc" {
@@ -143,7 +143,7 @@ func (m *AppModel) renderCanvas() *Canvas {
 		m.drawConfirm(canvas)
 	case ScreenDeath:
 		canvas.Write(0, 0, "You die...", LightRed, Black)
-		canvas.Write(0, 2, "Press Enter to exit.", LightGrey, Black)
+		canvas.Write(0, 2, "Press Enter to return to startup.", LightGrey, Black)
 	}
 	return canvas
 }
@@ -183,4 +183,15 @@ func (m *AppModel) loadSavedRun() {
 	m.game = restored
 	m.screen = ScreenPlay
 	m.notice = ""
+}
+
+func (m *AppModel) returnToStartup() {
+	if m.game != nil {
+		_ = m.game.Close()
+	}
+	m.game = nil
+	m.screen, m.previous, m.weaponReturn = ScreenStartup, ScreenStartup, ScreenStartup
+	m.name, m.speciesID, m.jobID, m.weaponID = "", "", "", ""
+	m.options = nil
+	m.focus, m.notice, m.confirm = 0, "", confirmNone
 }

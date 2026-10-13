@@ -46,6 +46,8 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 		}
 	case "ctrl+u":
 		m.name = ""
+	case "ctrl+p":
+		m.notice = "RC file information is unavailable in the Go port."
 	case "?":
 		m.previous, m.screen = m.screen, ScreenHelp
 	default:
@@ -259,6 +261,7 @@ func (m *AppModel) drawStartup(canvas *Canvas) {
 		canvas.Write(1, 15, "Saved games:", LightGrey, Black)
 		canvas.Write(2, 16, "Continue saved game", White, Black)
 	}
+	canvas.Write(1, 18, "[ctrl-p] view rc file information and log", LightGrey, Black)
 	if m.focus < len(m.presentation.StartupModes) {
 		writeClipped(canvas, 1, 20, m.width-2, m.presentation.StartupModes[m.focus].Description, Brown)
 	}

@@ -55,6 +55,13 @@ func TestPregameStartupBannerAndSourceModes(t *testing.T) {
 	if m.screen != ScreenStartup || m.game != nil {
 		t.Fatal("startup created a run")
 	}
+	if !strings.Contains(view, "[ctrl-p] view rc file information and log") {
+		t.Fatal("source startup footer missing")
+	}
+	m.handleKey("ctrl+p")
+	if m.screen != ScreenStartup || !strings.Contains(m.notice, "unavailable") {
+		t.Fatal("unported rc-file control lacked explanation")
+	}
 	pressApp(m, "down")
 	pressApp(m, "enter")
 	if m.screen != ScreenStartup || !strings.Contains(m.notice, "unavailable") {
