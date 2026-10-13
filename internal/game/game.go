@@ -8,12 +8,17 @@ import (
 
 // Game owns one run. Other packages interact with it through commands and views.
 type Game struct {
-	world   *akara.World
-	stores  ecs.Stores
-	levels  map[int]*Level
-	player  akara.Entity
-	catalog content.Catalog
-	seed    uint64
+	world      *akara.World
+	stores     ecs.Stores
+	levels     map[int]*Level
+	player     akara.Entity
+	catalog    content.Catalog
+	seed       uint64
+	rng        *RNGStreams
+	scheduler  TurnScheduler
+	currentAut Aut
+	turn       TurnContext
+	messages   []string
 }
 
 func (g *Game) Close() error {

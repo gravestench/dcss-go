@@ -25,7 +25,8 @@ func NewScenario(seed uint64, catalog content.Catalog) (_ *Game, err error) {
 	if err != nil {
 		return nil, err
 	}
-	g := &Game{world: world, stores: stores, levels: map[int]*Level{1: first, 2: second}, catalog: catalog, seed: seed}
+	g := &Game{world: world, stores: stores, levels: map[int]*Level{1: first, 2: second}, catalog: catalog, seed: seed,
+		rng: NewRNGStreams(seed), scheduler: TurnScheduler{actors: stores.Actors}}
 
 	playerDef := catalog.Player()
 	g.player, err = world.CreateEntity()
@@ -83,6 +84,12 @@ func NewScenario(seed uint64, catalog content.Catalog) (_ *Game, err error) {
 		return nil, err
 	}
 	if _, err = stores.Positions.Set(potion, ecs.Position{LevelID: 1, X: 4, Y: 2}); err != nil {
+		return nil, err
+	}
+	if _, err = world.AddSystem(&stairSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
+		return nil, err
+	}
+	if _, err = world.AddSystem(&movementSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
 		return nil, err
 	}
 	return g, nil
