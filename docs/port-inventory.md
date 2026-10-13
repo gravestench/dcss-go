@@ -5,14 +5,15 @@ Reference: `/Users/dylanknuth/src/crawl` at `e60ba3568b0c26447ad36ec5c7b963eb04b
 | Domain | Source anchor | Go owner | Status |
 | --- | --- | --- | --- |
 | Rat fixture ID, glyph, speed, bite base damage | `crawl-ref/source/mon-data.h:1994-2001` | `content.Catalog` | Fixture only |
-| Human/Fighter IDs | `crawl-ref/source/species-data.h:483`, `job-data.h:191` | `content.Catalog` | Fixture only; character generation unported |
+| Species definitions (40 YAML and three tag-34 legacy records) | `crawl-ref/source/dat/species/*.yaml`, `util/species-gen/*deprecated-species.txt`, `species-type.h`, `util/species-gen.py` | `speciesimport` build tool, checked-in `generated/species.json`, `content.Catalog` | All 43 concrete tag-34 IDs imported with source revision, file hashes, selection metadata, aptitudes, mutations, and recommendations; no species gameplay yet |
+| Human/Fighter scenario IDs | `crawl-ref/source/species-data.h:483`, `job-data.h:191` | `content.Catalog` | Human definition imported; Fighter and scenario HP/damage remain fixtures; character generation unported |
 | Potion of curing ID/name | `crawl-ref/source/potion-type.h:11`, `item-name.cc:671` | `content.Catalog` | Fixture only; potion effect unported |
 | Fixed Dungeon terrain and stairs | This plan's test scenario | `game.Level` | Fixed two-floor slice; procedural generation unported |
 | Movement and logical turns | `crawl-ref/source` movement and scheduler paths | `game.Game`, `game.TurnScheduler` | Playable slice; full energy rules unported |
 | Melee and death | `crawl-ref/source/melee-attack.cc`, `mon-data.h:1998` | `game` and `rules` | Narrow fixture damage roll, rat AI and death; hit, AC, EV, weapons, skills unported |
 | Inventory and equipment | `crawl-ref/source/items.cc` | ECS item components, `game` | Floor pickup and inventory view; equipment and item use unported |
 | Visibility and exploration | `crawl-ref/source/los.cc` | Future visibility domain | Unported |
-| Species, backgrounds, skills, mutations | `species-data.h`, `job-data.h`, `mutation-data.h` | Future character domain | Unported |
+| Species gameplay, backgrounds, skills, mutations, advancement | `species-data.h`, `job-data.h`, `mutation-data.h`, character rules | Future character domain | Unported; imported definitions are not applied to character creation, progression, or combat |
 | Spells and religion | `spl-data.h`, religion code | Future spell/religion domains | Unported |
 | Branches, vaults, shops, runes, endgame | `branch-data.h`, `dat/`, generation code | Future world/content domains | Unported |
 | Terminal client | New Go implementation | Bubble Tea and Lip Gloss | ASCII slice, keyboard commands and resize |
