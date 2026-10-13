@@ -18,9 +18,18 @@ var defaultJobsJSON []byte
 //go:embed generated/starting-gear.json
 var defaultStartingGearJSON []byte
 
+//go:embed generated/presentation.json
+var defaultPresentationJSON []byte
+
 // LoadDefault builds a fresh catalog from the checked-in source-traced artifacts.
 func LoadDefault() (Catalog, error) {
-	return loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultStartingGearJSON)
+	return loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultStartingGearJSON, defaultPresentationJSON)
+}
+
+// LoadDefinitionsForImport reads committed gameplay definitions without needing
+// the presentation artifact that the refresh tool is about to regenerate.
+func LoadDefinitionsForImport() (Catalog, error) {
+	return loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultStartingGearJSON, nil)
 }
 
 func decodeArtifact(data []byte, name string, target any) error {
@@ -52,7 +61,7 @@ func validSourceFiles(files []JobSourceFile, name string) (map[string]string, er
 	return paths, nil
 }
 
-func loadDefault(speciesData, jobData, gearData []byte) (Catalog, error) {
+func loadDefault(speciesData, jobData, gearData, presentationData []byte) (Catalog, error) {
 	var artifact SpeciesArtifact
 	if err := decodeArtifact(speciesData, "species", &artifact); err != nil {
 		return Catalog{}, err
@@ -197,6 +206,31 @@ func loadDefault(speciesData, jobData, gearData []byte) (Catalog, error) {
 		if job.Selectable != found {
 			return Catalog{}, fmt.Errorf("starting gear coverage differs for job %s", id)
 		}
+	}
+	if len(presentationData) > 0 {
+		var presentation PresentationArtifact
+		if err := decodeArtifact(presentationData, "presentation", &presentation); err != nil {
+			return Catalog{}, err
+		}
+		if err := presentation.validate(catalog); err != nil {
+			return Catalog{}, err
+		}
+		presentationPaths, err := validSourceFiles(presentation.SourceFiles, "presentation")
+		if err != nil {
+			return Catalog{}, err
+		}
+		for path, hash := range presentationPaths {
+			if previous, shared := hashedPaths[path]; shared && previous != hash {
+				return Catalog{}, fmt.Errorf("shared species/presentation source hash differs for %s", path)
+			}
+			if previous, shared := jobPaths[path]; shared && previous != hash {
+				return Catalog{}, fmt.Errorf("shared job/presentation source hash differs for %s", path)
+			}
+			if previous, shared := gearPaths[path]; shared && previous != hash {
+				return Catalog{}, fmt.Errorf("shared gear/presentation source hash differs for %s", path)
+			}
+		}
+		catalog.presentation = presentation
 	}
 	if err := catalog.Validate(); err != nil {
 		return Catalog{}, err

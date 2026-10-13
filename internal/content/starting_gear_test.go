@@ -143,12 +143,12 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if _, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, data); err == nil {
+			if _, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, data, defaultPresentationJSON); err == nil {
 				t.Fatal("invalid starting gear artifact accepted")
 			}
 		})
 	}
-	if _, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, []byte(`{"jobs":`)); err == nil || !strings.Contains(err.Error(), "decode") {
+	if _, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, []byte(`{"jobs":`), defaultPresentationJSON); err == nil || !strings.Contains(err.Error(), "decode") {
 		t.Fatalf("malformed starting gear artifact: %v", err)
 	}
 }

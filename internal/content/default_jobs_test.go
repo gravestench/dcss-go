@@ -93,12 +93,12 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if _, err := loadDefault(defaultSpeciesJSON, data, defaultStartingGearJSON); err == nil {
+			if _, err := loadDefault(defaultSpeciesJSON, data, defaultStartingGearJSON, defaultPresentationJSON); err == nil {
 				t.Fatal("invalid job artifact accepted")
 			}
 		})
 	}
-	if _, err := loadDefault(defaultSpeciesJSON, []byte(`{"jobs":`), defaultStartingGearJSON); err == nil || !strings.Contains(err.Error(), "decode") {
+	if _, err := loadDefault(defaultSpeciesJSON, []byte(`{"jobs":`), defaultStartingGearJSON, defaultPresentationJSON); err == nil || !strings.Contains(err.Error(), "decode") {
 		t.Fatalf("malformed job artifact error = %v", err)
 	}
 }
@@ -118,7 +118,7 @@ func TestLoadDefaultRejectsBadSpeciesJobReference(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := loadDefault(data, defaultJobsJSON, defaultStartingGearJSON); err == nil {
+	if _, err := loadDefault(data, defaultJobsJSON, defaultStartingGearJSON, defaultPresentationJSON); err == nil {
 		t.Fatal("unknown recommended job accepted")
 	}
 }

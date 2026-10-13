@@ -1,0 +1,235 @@
+// Package presentationimport refreshes committed console menu content from the pinned DCSS source.
+package presentationimport
+
+import (
+	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"regexp"
+	"sort"
+	"strings"
+
+	"dcrawl-go/internal/content"
+)
+
+const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
+
+var sourceGroup = regexp.MustCompile(`(?s)\{\s*"([^"]+)"\s*,\s*coord_def\([^)]*\)\s*,\s*\d+\s*,\s*\{([^}]*)\}\s*\}`)
+var sourceID = regexp.MustCompile(`[A-Z]+_[A-Z_]+`)
+var tagMajor = regexp.MustCompile(`(?m)^#define\s+TAG_MAJOR_VERSION\s+(\d+)\s*$`)
+
+func parseGroups(path string, data []byte, variable, prefix string) ([]content.MenuGroup, error) {
+	marker := variable + "[]"
+	start := bytes.Index(data, []byte(marker))
+	if start < 0 {
+		return nil, fmt.Errorf("%s: missing %s", path, marker)
+	}
+	text := string(data[start:])
+	end := strings.Index(text, "};")
+	if end < 0 {
+		return nil, fmt.Errorf("%s: unterminated %s", path, marker)
+	}
+	text = text[:end]
+	var groups []content.MenuGroup
+	for _, match := range sourceGroup.FindAllStringSubmatch(text, -1) {
+		group := content.MenuGroup{Label: match[1]}
+		for _, id := range sourceID.FindAllString(match[2], -1) {
+			if !strings.HasPrefix(id, prefix) {
+				return nil, fmt.Errorf("%s: unexpected menu ID %s", path, id)
+			}
+			group.IDs = append(group.IDs, id)
+		}
+		if len(group.IDs) == 0 {
+			return nil, fmt.Errorf("%s: empty group %s", path, group.Label)
+		}
+		groups = append(groups, group)
+	}
+	if len(groups) == 0 {
+		return nil, fmt.Errorf("%s: no %s groups", path, variable)
+	}
+	return groups, nil
+}
+
+func parseDescriptions(path string, data []byte) (map[string]string, error) {
+	records := make(map[string]string)
+	for _, part := range strings.Split(string(data), "%%%%") {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
+		}
+		line, body, found := strings.Cut(part, "\n")
+		name := strings.TrimSpace(line)
+		body = strings.TrimSpace(body)
+		if !found || name == "" || body == "" {
+			return nil, fmt.Errorf("%s: malformed description %q", path, name)
+		}
+		if _, duplicate := records[name]; duplicate {
+			return nil, fmt.Errorf("%s: duplicate description %s", path, name)
+		}
+		records[name] = body
+	}
+	if len(records) == 0 {
+		return nil, fmt.Errorf("%s: no descriptions", path)
+	}
+	return records, nil
+}
+
+func readSource(root, relative string, files *[]content.JobSourceFile) ([]byte, error) {
+	data, err := os.ReadFile(filepath.Join(root, relative))
+	if err != nil {
+		return nil, fmt.Errorf("source %s: %w", relative, err)
+	}
+	sum := sha256.Sum256(data)
+	*files = append(*files, content.JobSourceFile{Path: filepath.ToSlash(filepath.Join("crawl-ref", "source", relative)), SHA256: hex.EncodeToString(sum[:])})
+	return data, nil
+}
+
+func generateFromSource(sourceDir string) (content.PresentationArtifact, error) {
+	catalog, err := content.LoadDefinitionsForImport()
+	if err != nil {
+		return content.PresentationArtifact{}, fmt.Errorf("load committed definitions: %w", err)
+	}
+	artifact := content.PresentationArtifact{
+		SchemaVersion: 1, SourceRevision: pinnedRevision, TagMajorVersion: 34,
+		SpeciesDescriptions: map[string]string{}, JobDescriptions: map[string]string{},
+	}
+	version, err := readSource(sourceDir, "tag-version.h", &artifact.SourceFiles)
+	if err != nil {
+		return artifact, err
+	}
+	if match := tagMajor.FindSubmatch(version); match == nil || string(match[1]) != "34" {
+		return artifact, fmt.Errorf("tag-version.h: expected TAG_MAJOR_VERSION 34")
+	}
+	speciesGroups, err := readSource(sourceDir, "species-groups.h", &artifact.SourceFiles)
+	if err != nil {
+		return artifact, err
+	}
+	artifact.SpeciesGroups, err = parseGroups("species-groups.h", speciesGroups, "species_groups", "SP_")
+	if err != nil {
+		return artifact, err
+	}
+	jobGroups, err := readSource(sourceDir, "newgame.cc", &artifact.SourceFiles)
+	if err != nil {
+		return artifact, err
+	}
+	artifact.JobGroups, err = parseGroups("newgame.cc", jobGroups, "jobs_order", "JOB_")
+	if err != nil {
+		return artifact, err
+	}
+	speciesText, err := readSource(sourceDir, "dat/descript/species.txt", &artifact.SourceFiles)
+	if err != nil {
+		return artifact, err
+	}
+	speciesDescriptions, err := parseDescriptions("species.txt", speciesText)
+	if err != nil {
+		return artifact, err
+	}
+	jobText, err := readSource(sourceDir, "dat/descript/backgrounds.txt", &artifact.SourceFiles)
+	if err != nil {
+		return artifact, err
+	}
+	jobDescriptions, err := parseDescriptions("backgrounds.txt", jobText)
+	if err != nil {
+		return artifact, err
+	}
+	for _, group := range artifact.SpeciesGroups {
+		for _, id := range group.IDs {
+			definition, err := catalog.Species(id)
+			if err != nil {
+				return artifact, err
+			}
+			if !definition.Selectable {
+				return artifact, fmt.Errorf("nonselectable species %s in menu", id)
+			}
+			text := speciesDescriptions[definition.Name]
+			if text == "" {
+				return artifact, fmt.Errorf("missing species description %s (%s)", id, definition.Name)
+			}
+			artifact.SpeciesDescriptions[id] = text
+		}
+	}
+	for _, group := range artifact.JobGroups {
+		for _, id := range group.IDs {
+			definition, err := catalog.Job(id)
+			if err != nil {
+				return artifact, err
+			}
+			if !definition.Selectable {
+				return artifact, fmt.Errorf("nonselectable job %s in menu", id)
+			}
+			text := jobDescriptions[definition.Name]
+			if text == "" {
+				return artifact, fmt.Errorf("missing job description %s (%s)", id, definition.Name)
+			}
+			artifact.JobDescriptions[id] = text
+		}
+	}
+	sort.Slice(artifact.SourceFiles, func(i, j int) bool { return artifact.SourceFiles[i].Path < artifact.SourceFiles[j].Path })
+	return artifact, nil
+}
+
+// Generate reads the pinned, clean C++ source only during an intentional content refresh.
+func Generate(sourceDir string) (content.PresentationArtifact, error) {
+	if sourceDir == "" {
+		return content.PresentationArtifact{}, fmt.Errorf("source directory is required")
+	}
+	output, err := exec.Command("git", "-C", sourceDir, "rev-parse", "HEAD").Output()
+	if err != nil {
+		return content.PresentationArtifact{}, fmt.Errorf("read source revision: %w", err)
+	}
+	if strings.TrimSpace(string(output)) != pinnedRevision {
+		return content.PresentationArtifact{}, fmt.Errorf("source revision differs from pinned %s", pinnedRevision)
+	}
+	if err := exec.Command("git", "-C", sourceDir, "diff", "--quiet", "HEAD", "--", ".").Run(); err != nil {
+		return content.PresentationArtifact{}, fmt.Errorf("source checkout has modified tracked files: %w", err)
+	}
+	return generateFromSource(sourceDir)
+}
+
+// Write atomically refreshes or checks the committed presentation artifact.
+func Write(sourceDir, out string, check bool) error {
+	if out == "" {
+		return fmt.Errorf("output path is required")
+	}
+	artifact, err := Generate(sourceDir)
+	if err != nil {
+		return err
+	}
+	data, err := json.MarshalIndent(artifact, "", "  ")
+	if err != nil {
+		return err
+	}
+	data = append(data, '\n')
+	if check {
+		current, err := os.ReadFile(out)
+		if err != nil {
+			return err
+		}
+		if !bytes.Equal(current, data) {
+			return fmt.Errorf("presentation artifact %s is stale", out)
+		}
+		return nil
+	}
+	file, err := os.CreateTemp(filepath.Dir(out), ".presentation-*.tmp")
+	if err != nil {
+		return err
+	}
+	defer os.Remove(file.Name())
+	if _, err := file.Write(data); err != nil {
+		file.Close()
+		return err
+	}
+	if err := file.Sync(); err != nil {
+		file.Close()
+		return err
+	}
+	if err := file.Close(); err != nil {
+		return err
+	}
+	return os.Rename(file.Name(), out)
+}

@@ -37,6 +37,7 @@ type Catalog struct {
 	species        map[string]SpeciesDef
 	jobs           map[string]JobDef
 	startingGear   map[string][]StartingGrant
+	presentation   PresentationArtifact
 	player         PlayerDef
 }
 
@@ -103,6 +104,11 @@ func (c Catalog) Validate() error {
 	for id, item := range c.items {
 		if id == "" || item.ID != id || item.validate() != nil {
 			return fmt.Errorf("invalid item definition %q", id)
+		}
+	}
+	if c.presentation.SchemaVersion != 0 {
+		if err := c.presentation.validate(c); err != nil {
+			return err
 		}
 	}
 	return nil
