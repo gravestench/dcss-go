@@ -6,14 +6,18 @@ import (
 )
 
 type EntityView struct {
-	ID    uint64
-	X, Y  int
-	Glyph rune
+	ID     uint64
+	X, Y   int
+	Glyph  rune
+	KindID string
+	Name   string
+	Role   string
 }
 
 type ItemView struct {
 	KindID   string
 	Name     string
+	Class    string
 	Quantity int
 	Plus     int
 	Charges  int
@@ -76,21 +80,27 @@ func (g *Game) View() View {
 			continue
 		}
 		glyph := rune('?')
+		kindID, name, role := "", "", ""
 		switch {
 		case entity == g.player:
 			glyph = '@'
+			kindID, name, role = "player", view.PlayerName, "player"
 		case g.stores.AI.Has(entity):
 			actor, _ := g.stores.Actors.Get(entity)
+			kindID, role = actor.KindID, "monster"
 			if definition, err := g.catalog.Monster(actor.KindID); err == nil {
 				glyph = definition.Glyph
+				name = definition.Name
 			}
 		case g.stores.Items.Has(entity):
 			item, _ := g.stores.Items.Get(entity)
+			kindID, role = item.KindID, "item"
 			if definition, err := g.catalog.Item(item.KindID); err == nil {
 				glyph = definition.Glyph
+				name = definition.Name
 			}
 		}
-		view.Entities = append(view.Entities, EntityView{ID: uint64(entity), X: location.X, Y: location.Y, Glyph: glyph})
+		view.Entities = append(view.Entities, EntityView{ID: uint64(entity), X: location.X, Y: location.Y, Glyph: glyph, KindID: kindID, Name: name, Role: role})
 	}
 	for _, entity := range g.stores.CarriedBy.Entities() {
 		carrier, _ := g.stores.CarriedBy.Get(entity)
@@ -103,7 +113,7 @@ func (g *Game) View() View {
 		}
 		definition, err := g.catalog.Item(item.KindID)
 		if err == nil {
-			entry := ItemView{KindID: item.KindID, Name: definition.Name, Quantity: item.Quantity, Plus: item.Plus, Charges: item.Charges, Ego: item.Ego}
+			entry := ItemView{KindID: item.KindID, Name: definition.Name, Class: definition.Class, Quantity: item.Quantity, Plus: item.Plus, Charges: item.Charges, Ego: item.Ego}
 			if equipped, found := g.stores.Equipped.Get(entity); found {
 				entry.Slot = equipped.Slot
 			}
