@@ -26,4 +26,6 @@ Content import policy for the whole Go port: every imported DCSS content categor
 
 Every broad category needs a follow-up feature/content inventory before a full-port completion claim. The fixture entries do not count as a port of their categories.
 
+Review follow-up: the Human/Fighter starting-skill resolver checks that a weapon skill has a species aptitude but does not independently reject a non-weapon skill ID in malformed future weapon metadata. The committed starter catalog uses valid weapon skills. Add that membership check when extending the importer or supporting more starts.
+
 Run the slice with `go run ./cmd/dcrawl -seed 1 -save dcrawl-save.json` from this repository. Choose a starting weapon with `1`–`6` (or load a version-4 save with `L`), then move with `h/j/k/l` or arrows, wait with `.`, pick up with `g`, take stairs with `<` or `>`, inspect inventory with `i`, inspect skills with `c`, save with `S`, load with `L`, and quit with `q`. Selection and inspection do not spend auts. Weapon damage, item effects, identification, ranged ammunition, species-specific equipment restrictions, and procedural starts remain later slices.
