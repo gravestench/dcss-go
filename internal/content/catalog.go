@@ -31,6 +31,7 @@ type Catalog struct {
 	sourceRevision string
 	monsters       map[string]MonsterDef
 	items          map[string]ItemDef
+	species        map[string]SpeciesDef
 	player         PlayerDef
 }
 
@@ -62,6 +63,19 @@ func (c Catalog) Validate() error {
 	}
 	if c.player.SpeciesID == "" || c.player.JobID == "" || c.player.ScenarioHP <= 0 || c.player.Speed <= 0 {
 		return fmt.Errorf("catalog has an invalid player fixture")
+	}
+	if len(c.species) > 0 {
+		if _, found := c.species[c.player.SpeciesID]; !found {
+			return fmt.Errorf("catalog has no player species %q", c.player.SpeciesID)
+		}
+		for id, species := range c.species {
+			if species.ID != id {
+				return fmt.Errorf("mismatched species key %q", id)
+			}
+			if err := species.validate(); err != nil {
+				return err
+			}
+		}
 	}
 	for id, monster := range c.monsters {
 		if id == "" || monster.ID != id || monster.Name == "" || monster.Glyph == 0 || monster.Speed <= 0 || monster.ScenarioHP <= 0 {
