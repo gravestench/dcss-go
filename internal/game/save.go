@@ -167,6 +167,11 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		}
 		if record.Player != nil {
 			playerCount++
+			if record.Player.Name != "" {
+				if nameErr := character.ValidateName(record.Player.Name); nameErr != nil {
+					return nil, fmt.Errorf("invalid saved player name: %w", nameErr)
+				}
+			}
 			selectedWeaponID = record.Player.StartingWeaponID
 			definition := catalog.Player()
 			if record.ID != snapshot.PlayerID || record.Actor == nil || record.Position == nil || record.Health == nil ||

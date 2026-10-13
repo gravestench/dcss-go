@@ -75,7 +75,7 @@ func (m *StartModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 			m.notice = fmt.Sprintf("Start failed: %v", err)
 			return m, nil
 		}
-		started, err := game.NewScenario(m.seed, m.catalog, weaponID)
+		started, err := game.NewScenario(m.seed, m.catalog, weaponID, "Adventurer")
 		if err != nil {
 			m.notice = fmt.Sprintf("Start failed: %v", err)
 			return m, nil

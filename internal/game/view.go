@@ -23,6 +23,9 @@ type ItemView struct {
 
 type View struct {
 	LevelID               int
+	PlayerX, PlayerY      int
+	PlayerDead            bool
+	PlayerName            string
 	Terrain               []string
 	Entities              []EntityView
 	PlayerHP, PlayerMaxHP int
@@ -41,10 +44,11 @@ func (g *Game) View() View {
 		return View{}
 	}
 	level := g.levels[position.LevelID]
-	view := View{LevelID: position.LevelID, Terrain: append([]string(nil), level.terrain...), CurrentAut: g.currentAut,
+	view := View{LevelID: position.LevelID, PlayerX: position.X, PlayerY: position.Y, Terrain: append([]string(nil), level.terrain...), CurrentAut: g.currentAut,
 		Messages: append([]string(nil), g.messages...)}
 	if health, ok := g.stores.Health.Get(g.player); ok {
 		view.PlayerHP, view.PlayerMaxHP = health.Current, health.Max
+		view.PlayerDead = health.Current <= 0
 	}
 	if magic, ok := g.stores.Magic.Get(g.player); ok {
 		view.PlayerMP, view.PlayerMaxMP = magic.Current, magic.Max
@@ -53,6 +57,10 @@ func (g *Game) View() View {
 		view.Skills = append([]character.Skill(nil), skills.Entries...)
 	}
 	if player, ok := g.stores.Players.Get(g.player); ok {
+		view.PlayerName = player.Name
+		if view.PlayerName == "" {
+			view.PlayerName = "Adventurer"
+		}
 		species, speciesErr := g.catalog.Species(player.SpeciesID)
 		job, jobErr := g.catalog.Job(player.JobID)
 		if speciesErr == nil && jobErr == nil {

@@ -7,8 +7,11 @@ import (
 	"github.com/gravestench/akara"
 )
 
-func NewScenario(seed uint64, catalog content.Catalog, weaponID string) (_ *Game, err error) {
+func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_ *Game, err error) {
 	if err := catalog.Validate(); err != nil {
+		return nil, err
+	}
+	if err := character.ValidateName(name); err != nil {
 		return nil, err
 	}
 	playerDef := catalog.Player()
@@ -43,7 +46,7 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID string) (_ *Game
 	if _, err = stores.Combat.Set(g.player, ecs.Combatant{BaseDamage: playerDef.BaseDamage}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Players.Set(g.player, ecs.PlayerControlled{SpeciesID: playerDef.SpeciesID, JobID: playerDef.JobID, StartingWeaponID: weaponID}); err != nil {
+	if _, err = stores.Players.Set(g.player, ecs.PlayerControlled{Name: name, SpeciesID: playerDef.SpeciesID, JobID: playerDef.JobID, StartingWeaponID: weaponID}); err != nil {
 		return nil, err
 	}
 	if err = first.PlaceActor(g.player, 1, 1); err != nil {

@@ -8,7 +8,7 @@ import (
 )
 
 func TestScenarioHasTwoFloors(t *testing.T) {
-	game, err := NewScenario(1, testCatalog(t), "WPN_RAPIER")
+	game, err := NewScenario(1, testCatalog(t), "WPN_RAPIER", "Tester")
 	if err != nil {
 		t.Fatal(err)
 	}

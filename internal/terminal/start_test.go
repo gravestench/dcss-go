@@ -71,7 +71,7 @@ func TestLoadV4BeforeWeaponChoice(t *testing.T) {
 	if m.play != nil || !strings.Contains(m.View().Content, "Load failed") {
 		t.Fatal("invalid save left menu or hid error")
 	}
-	g, err := game.NewScenario(17, catalog, "WPN_UNARMED")
+	g, err := game.NewScenario(17, catalog, "WPN_UNARMED", "Tester")
 	if err != nil {
 		t.Fatal(err)
 	}

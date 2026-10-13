@@ -40,6 +40,7 @@ type Combatant struct {
 }
 
 type PlayerControlled struct {
+	Name             string `json:"Name,omitempty"`
 	SpeciesID        string
 	JobID            string
 	StartingWeaponID string

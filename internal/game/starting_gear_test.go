@@ -17,7 +17,7 @@ func TestNewScenarioStartingGear(t *testing.T) {
 	}
 	for _, weaponID := range []string{"WPN_RAPIER", "WPN_FLAIL", "WPN_WAR_AXE", "WPN_TRIDENT", "WPN_LONG_SWORD", "WPN_UNARMED"} {
 		t.Run(weaponID, func(t *testing.T) {
-			g, err := NewScenario(7, catalog, weaponID)
+			g, err := NewScenario(7, catalog, weaponID, "Tester")
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -73,14 +73,14 @@ func TestNewScenarioStartingGear(t *testing.T) {
 			}
 		})
 	}
-	if g, err := NewScenario(7, catalog, "WPN_QUARTERSTAFF"); err == nil {
+	if g, err := NewScenario(7, catalog, "WPN_QUARTERSTAFF", "Tester"); err == nil {
 		g.Close()
 		t.Fatal("banned weapon accepted")
 	}
 }
 
 func TestSaveStartingGearContinuation(t *testing.T) {
-	g, err := NewScenario(19, testCatalog(t), "WPN_RAPIER")
+	g, err := NewScenario(19, testCatalog(t), "WPN_RAPIER", "Tester")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -199,7 +199,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 		{"version two", func(s *save.Snapshot) { s.Version = 2 }},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			g, err := NewScenario(23, testCatalog(t), "WPN_RAPIER")
+			g, err := NewScenario(23, testCatalog(t), "WPN_RAPIER", "Tester")
 			if err != nil {
 				t.Fatal(err)
 			}

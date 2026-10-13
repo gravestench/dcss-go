@@ -10,7 +10,7 @@ import (
 
 func newStepGame(t *testing.T) *Game {
 	t.Helper()
-	g, err := NewScenario(1, testCatalog(t), "WPN_RAPIER")
+	g, err := NewScenario(1, testCatalog(t), "WPN_RAPIER", "Tester")
 	if err != nil {
 		t.Fatal(err)
 	}

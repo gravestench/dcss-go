@@ -17,7 +17,7 @@ func TestScenarioInstallsStartingProfile(t *testing.T) {
 		{"WPN_UNARMED", "SK_UNARMED_COMBAT"},
 	} {
 		t.Run(tc.weapon, func(t *testing.T) {
-			g, err := NewScenario(37, testCatalog(t), tc.weapon)
+			g, err := NewScenario(37, testCatalog(t), tc.weapon, "Tester")
 			if err != nil {
 				t.Fatal(err)
 			}
