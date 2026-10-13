@@ -86,20 +86,28 @@ func NewScenario(seed uint64, catalog content.Catalog) (_ *Game, err error) {
 	if _, err = stores.Positions.Set(potion, ecs.Position{LevelID: 1, X: 4, Y: 2}); err != nil {
 		return nil, err
 	}
-	if _, err = world.AddSystem(&stairSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
-		return nil, err
-	}
-	if _, err = world.AddSystem(&pickupSystem{positions: stores.Positions, items: stores.Items, carried: stores.CarriedBy, intents: stores.Intents, turn: &g.turn}); err != nil {
-		return nil, err
-	}
-	if _, err = world.AddSystem(&movementSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
-		return nil, err
-	}
-	if _, err = world.AddSystem(&combatSystem{positions: stores.Positions, intents: stores.Intents, combat: stores.Combat, health: stores.Health, levels: g.levels, rng: g.rng, turn: &g.turn, player: g.player}); err != nil {
-		return nil, err
-	}
-	if _, err = world.AddSystem(&deathSystem{health: stores.Health, player: g.player, turn: &g.turn}); err != nil {
+	if err = registerSystems(g); err != nil {
 		return nil, err
 	}
 	return g, nil
+}
+
+func registerSystems(g *Game) error {
+	world, stores := g.world, g.stores
+	if _, err := world.AddSystem(&stairSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
+		return err
+	}
+	if _, err := world.AddSystem(&pickupSystem{positions: stores.Positions, items: stores.Items, carried: stores.CarriedBy, intents: stores.Intents, turn: &g.turn}); err != nil {
+		return err
+	}
+	if _, err := world.AddSystem(&movementSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
+		return err
+	}
+	if _, err := world.AddSystem(&combatSystem{positions: stores.Positions, intents: stores.Intents, combat: stores.Combat, health: stores.Health, levels: g.levels, rng: g.rng, turn: &g.turn, player: g.player}); err != nil {
+		return err
+	}
+	if _, err := world.AddSystem(&deathSystem{health: stores.Health, player: g.player, turn: &g.turn}); err != nil {
+		return err
+	}
+	return nil
 }
