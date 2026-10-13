@@ -12,9 +12,13 @@ type MonsterDef struct {
 }
 
 type ItemDef struct {
-	ID    string
-	Name  string
-	Glyph rune
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Glyph       rune   `json:"glyph"`
+	Class       string `json:"class"`
+	Slot        string `json:"slot,omitempty"`
+	WeaponSkill string `json:"weapon_skill,omitempty"`
+	Stackable   bool   `json:"stackable"`
 }
 
 type PlayerDef struct {
@@ -33,6 +37,7 @@ type Catalog struct {
 	items          map[string]ItemDef
 	species        map[string]SpeciesDef
 	jobs           map[string]JobDef
+	startingGear   map[string][]StartingGrant
 	player         PlayerDef
 }
 
@@ -97,7 +102,7 @@ func (c Catalog) Validate() error {
 		}
 	}
 	for id, item := range c.items {
-		if id == "" || item.ID != id || item.Name == "" || item.Glyph == 0 {
+		if id == "" || item.ID != id || item.validate() != nil {
 			return fmt.Errorf("invalid item definition %q", id)
 		}
 	}

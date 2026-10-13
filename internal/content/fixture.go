@@ -15,7 +15,7 @@ func scenarioCatalog() Catalog {
 			"MONS_RAT": {ID: "MONS_RAT", Name: "rat", Glyph: 'r', Speed: 10, BaseDamage: 3, ScenarioHP: 4},
 		},
 		items: map[string]ItemDef{
-			"POT_CURING": {ID: "POT_CURING", Name: "potion of curing", Glyph: '!'},
+			"POT_CURING": {ID: "POT_CURING", Name: "potion of curing", Glyph: '!', Class: "OBJ_POTIONS", Stackable: true},
 		},
 		player: PlayerDef{SpeciesID: "SP_HUMAN", JobID: "JOB_FIGHTER", ScenarioHP: 20, Speed: 10, BaseDamage: 4},
 	}
