@@ -41,6 +41,7 @@ type TurnContext struct {
 	Actor  akara.Entity
 	Events []Event
 	Deaths []akara.Entity
+	Pickup akara.Entity
 }
 
 func (g *Game) Step(command Command) (StepResult, error) {
@@ -79,7 +80,10 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	case CommandWait:
 		intent = ecs.Intent{Kind: ecs.IntentWait}
 	case CommandPickup:
-		return g.noTime("There is nothing to pick up here."), nil
+		if _, found := g.floorItemAt(*position); !found {
+			return g.noTime("There is nothing to pick up here."), nil
+		}
+		intent = ecs.Intent{Kind: ecs.IntentPickup}
 	default:
 		return g.noTime("Unknown command."), nil
 	}
@@ -130,10 +134,20 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	g.turn.Actor = actor
 	g.turn.Events = nil
 	g.turn.Deaths = nil
+	g.turn.Pickup = 0
 	err := g.world.Update(time.Duration(cost))
 	g.stores.Intents.Remove(actor)
 	if err != nil {
 		return nil, fmt.Errorf("%s actor %d: %w", phase, actor, err)
+	}
+	if item := g.turn.Pickup; item != 0 {
+		// World.Update has completed; this is the structural pickup barrier.
+		if !g.stores.Positions.Remove(item) {
+			return nil, fmt.Errorf("%s actor %d pickup item %d lost its position", phase, actor, item)
+		}
+		if _, err := g.stores.CarriedBy.Set(item, ecs.CarriedBy{Holder: actor}); err != nil {
+			return nil, fmt.Errorf("%s actor %d pickup item %d: %w", phase, actor, item, err)
+		}
 	}
 	buffer := akara.NewCommandBuffer()
 	for _, dead := range g.turn.Deaths {

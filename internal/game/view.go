@@ -55,5 +55,19 @@ func (g *Game) View() View {
 		}
 		view.Entities = append(view.Entities, EntityView{ID: uint64(entity), X: location.X, Y: location.Y, Glyph: glyph})
 	}
+	for _, entity := range g.stores.CarriedBy.Entities() {
+		carrier, _ := g.stores.CarriedBy.Get(entity)
+		if carrier.Holder != g.player {
+			continue
+		}
+		item, found := g.stores.Items.Get(entity)
+		if !found {
+			continue
+		}
+		definition, err := g.catalog.Item(item.KindID)
+		if err == nil {
+			view.Inventory = append(view.Inventory, ItemView{KindID: item.KindID, Name: definition.Name, Quantity: item.Quantity})
+		}
+	}
 	return view
 }
