@@ -77,6 +77,9 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *AppModel) handleKey(key string) tea.Cmd {
+	if _, valid := ComputeLayout(m.width, m.height); !valid {
+		return nil
+	}
 	switch m.screen {
 	case ScreenStartup:
 		return m.handleStartupKey(key)
@@ -144,6 +147,7 @@ func (m *AppModel) renderCanvas() *Canvas {
 	case ScreenDeath:
 		canvas.Write(0, 0, "You die...", LightRed, Black)
 		canvas.Write(0, 2, "Press Enter to return to startup.", LightGrey, Black)
+		canvas.Write(0, 4, "Morgue and high scores are unavailable in the Go port.", Brown, Black)
 	}
 	return canvas
 }

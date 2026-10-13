@@ -25,6 +25,41 @@ var sourceID = regexp.MustCompile(`[A-Z]+_[A-Z_]+`)
 var tagMajor = regexp.MustCompile(`(?m)^#define\s+TAG_MAJOR_VERSION\s+(\d+)\s*$`)
 var startupModeEntry = regexp.MustCompile(`(?s)\{\s*(GAME_TYPE_[A-Z_]+)\s*,\s*((?:"[^"]*"\s*)+)\s*,\s*((?:"[^"]*"\s*)+)\s*\}`)
 var quotedString = regexp.MustCompile(`"(?:\\.|[^"\\])*"`)
+var skillID = regexp.MustCompile(`SK_[A-Z_]+`)
+
+func parseSkillColumns(path string, data []byte) ([][]string, error) {
+	marker := "static const skill_type skill_display_order[]"
+	start := bytes.Index(data, []byte(marker))
+	if start < 0 {
+		return nil, fmt.Errorf("%s: skill display order missing", path)
+	}
+	text := string(data[start:])
+	end := strings.Index(text, "};")
+	if end < 0 {
+		return nil, fmt.Errorf("%s: skill display order unterminated", path)
+	}
+	var columns [][]string
+	var column []string
+	for _, id := range skillID.FindAllString(text[:end], -1) {
+		switch id {
+		case "SK_TITLE":
+			continue
+		case "SK_BLANK_LINE":
+			column = append(column, "")
+		case "SK_COLUMN_BREAK":
+			if len(column) > 0 {
+				columns = append(columns, column)
+				column = nil
+			}
+		default:
+			column = append(column, id)
+		}
+	}
+	if len(columns) == 0 || len(column) != 0 {
+		return nil, fmt.Errorf("%s: invalid skill columns", path)
+	}
+	return columns, nil
+}
 
 func parseStartupModes(path string, data []byte) ([]content.StartupMode, error) {
 	marker := "static const game_modes_menu_item entries[]"
@@ -185,6 +220,14 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 		return artifact, err
 	}
 	artifact.StartupModes, err = parseStartupModes("startup.cc", startupText)
+	if err != nil {
+		return artifact, err
+	}
+	skillText, err := readSource(sourceDir, "skills.h", &artifact.SourceFiles)
+	if err != nil {
+		return artifact, err
+	}
+	artifact.SkillColumns, err = parseSkillColumns("skills.h", skillText)
 	if err != nil {
 		return artifact, err
 	}

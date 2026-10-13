@@ -61,17 +61,36 @@ func skillName(id string) string {
 	return strings.Title(strings.ToLower(strings.ReplaceAll(name, "_", " ")))
 }
 
-// DrawSkills uses the source skill columns; unported training is explicit.
+// DrawSkills uses the source's two columns and labels for unavailable controls.
 func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
 	canvas.Write(0, 0, "Skills", White, Black)
-	canvas.Write(1, 2, "Skill                      Level  Apt  Train", LightBlue, Black)
-	species, _ := catalog.Species("SP_HUMAN")
-	for i, skill := range view.Skills {
-		apt := species.Aptitudes[skill.ID]
-		writeClipped(canvas, 1, 3+i, canvas.width-1, fmt.Sprintf("%c - %-24s %5.1f  %+2d    --", menuLetter(i), skillName(skill.ID), float64(skill.Level), apt.Value), LightGrey)
+	for _, x := range []int{1, 40} {
+		writeClipped(canvas, x, 2, 38, "Skill                 Level Apt Train", LightBlue)
 	}
-	canvas.Write(0, canvas.height-3, "Training controls are unavailable in the Go port.", Brown, Black)
-	canvas.Write(0, canvas.height-2, "Esc - Return    ? - Help", Brown, Black)
+	species, _ := catalog.Species("SP_HUMAN")
+	levels := make(map[string]int, len(view.Skills))
+	for _, skill := range view.Skills {
+		levels[skill.ID] = skill.Level
+	}
+	letter := 0
+	for col, skills := range catalog.Presentation().SkillColumns {
+		x := 1 + col*39
+		for row, id := range skills {
+			if id == "" {
+				continue
+			}
+			apt := species.Aptitudes[id]
+			color := DarkGrey
+			if levels[id] > 0 {
+				color = LightGrey
+			}
+			writeClipped(canvas, x, 3+row, 38, fmt.Sprintf("%c - %-19s %4.1f %+2d  --", menuLetter(letter), skillName(id), float64(levels[id]), apt.Value), color)
+			letter++
+		}
+	}
+	writeClipped(canvas, 0, canvas.height-5, canvas.width, "/ - mode    | - skill    * - skills    ! - view", Brown)
+	writeClipped(canvas, 0, canvas.height-4, canvas.width, "= - target    ? - help    Esc - Return", Brown)
+	writeClipped(canvas, 0, canvas.height-3, canvas.width, "Training controls are unavailable in the Go port.", Brown)
 }
 
 // DrawHelp keeps the source command meanings visible for supported and stubbed actions.

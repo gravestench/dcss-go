@@ -51,3 +51,18 @@ func TestParseStartupModesJoinsSourceStringLiterals(t *testing.T) {
 		t.Fatalf("source modes: %+v", modes)
 	}
 }
+
+func TestParseSkillColumnsPreservesBreaks(t *testing.T) {
+	source := `static const skill_type skill_display_order[] = {
+SK_TITLE, SK_FIGHTING, SK_BLANK_LINE, SK_ARMOUR,
+SK_COLUMN_BREAK, SK_TITLE, SK_SPELLCASTING, SK_INVOCATIONS,
+SK_COLUMN_BREAK,
+};`
+	columns, err := parseSkillColumns("skills.h", []byte(source))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(columns) != 2 || !slices.Equal(columns[0], []string{"SK_FIGHTING", "", "SK_ARMOUR"}) || !slices.Equal(columns[1], []string{"SK_SPELLCASTING", "SK_INVOCATIONS"}) {
+		t.Fatalf("source skill columns: %+v", columns)
+	}
+}

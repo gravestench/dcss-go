@@ -22,6 +22,9 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 	if len(p.StartupModes) != 8 || p.StartupModes[0].ID != "GAME_TYPE_NORMAL" || p.StartupModes[0].Label != "Dungeon Crawl" || p.StartupModes[7].ID != "GAME_TYPE_HIGH_SCORES" {
 		t.Fatalf("source startup mode order: %+v", p.StartupModes)
 	}
+	if len(p.SkillColumns) != 2 || len(p.SkillColumns[0]) != 16 || len(p.SkillColumns[1]) != 16 || p.SkillColumns[0][0] != "SK_FIGHTING" || p.SkillColumns[1][0] != "SK_SPELLCASTING" {
+		t.Fatalf("source skill display columns: %+v", p.SkillColumns)
+	}
 	if !strings.Contains(p.StartupModes[0].Description, "monsters, items") {
 		t.Fatalf("startup description: %+v", p.StartupModes[0])
 	}
@@ -51,6 +54,7 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 		"crawl-ref/source/dat/descript/backgrounds.txt": "1263736a450652589bbeb6a4cd3d6e57a092059ff34040263af7a33333803570",
 		"crawl-ref/source/tag-version.h":                "2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa",
 		"crawl-ref/source/startup.cc":                   "82aef31832467f8797e0fd2d5f2818974fe1ddc2213c70445a062f2493282d2f",
+		"crawl-ref/source/skills.h":                     "6e43be85f9d80827d8a2a92229751d991069c8e8dd574b51a90edf078972f4c7",
 	}
 	if len(p.SourceFiles) != len(wantHashes) {
 		t.Fatalf("source files: %+v", p.SourceFiles)
@@ -68,8 +72,9 @@ func TestPresentationReturnedAsDefensiveCopy(t *testing.T) {
 	first.SpeciesGroups[0].IDs[0] = "SP_BOGUS"
 	first.SpeciesDescriptions["SP_HUMAN"] = "changed"
 	first.SourceFiles[0].SHA256 = "changed"
+	first.SkillColumns[0][0] = "SK_FAKE"
 	again := catalog.Presentation()
-	if again.SpeciesGroups[0].IDs[0] != "SP_HILL_ORC" || again.SpeciesDescriptions["SP_HUMAN"] == "changed" || again.SourceFiles[0].SHA256 == "changed" {
+	if again.SpeciesGroups[0].IDs[0] != "SP_HILL_ORC" || again.SpeciesDescriptions["SP_HUMAN"] == "changed" || again.SourceFiles[0].SHA256 == "changed" || again.SkillColumns[0][0] == "SK_FAKE" {
 		t.Fatal("caller mutated catalog presentation")
 	}
 }
@@ -87,6 +92,8 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 		{"missing description", func(a *PresentationArtifact) { delete(a.SpeciesDescriptions, "SP_HUMAN") }, "SP_HUMAN"},
 		{"duplicate menu ID", func(a *PresentationArtifact) { a.SpeciesGroups[0].IDs = append(a.SpeciesGroups[0].IDs, "SP_HILL_ORC") }, "SP_HILL_ORC"},
 		{"unknown catalog ID", func(a *PresentationArtifact) { a.JobGroups[0].IDs[0] = "JOB_NOT_REAL" }, "JOB_NOT_REAL"},
+		{"unknown skill ID", func(a *PresentationArtifact) { a.SkillColumns[0][0] = "SK_NOT_REAL" }, "SK_NOT_REAL"},
+		{"duplicate skill ID", func(a *PresentationArtifact) { a.SkillColumns[1][0] = "SK_FIGHTING" }, "SK_FIGHTING"},
 		{"nonselectable catalog ID", func(a *PresentationArtifact) {
 			a.SpeciesGroups[0].IDs[0] = "SP_HIGH_ELF"
 			delete(a.SpeciesDescriptions, "SP_HILL_ORC")

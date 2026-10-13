@@ -41,6 +41,20 @@ func drawMeter(canvas *Canvas, x, y, width, current, maximum int, filled Color) 
 	}
 }
 
+func statusValueColor(current, maximum, yellowAt, redAt int) Color {
+	if maximum <= 0 {
+		return LightGrey
+	}
+	percent := current * 100 / maximum
+	if percent <= redAt {
+		return Red
+	}
+	if percent <= yellowAt {
+		return Yellow
+	}
+	return LightGrey
+}
+
 func drawDungeon(canvas *Canvas, region Region, view game.View) {
 	centerX, centerY := region.X+region.W/2, region.Y+region.H/2
 	for y, row := range view.Terrain {
@@ -90,16 +104,39 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	hud := func(x, y int, value string, color Color) { writeClipped(canvas, h.X+x, h.Y+y, h.W-x, value, color) }
 	hud(0, 0, view.PlayerName+" the Shield-Bearer", Yellow) // source/skills.cc:91; current Fighter only
 	hud(0, 1, "Human", Yellow)
-	hud(0, 2, fmt.Sprintf("Health: %d/%d", view.PlayerHP, view.PlayerMaxHP), LightGrey)
-	hud(0, 3, fmt.Sprintf("Magic:  %d/%d", view.PlayerMP, view.PlayerMaxMP), LightGrey)
+	for _, stat := range []struct {
+		y                                 int
+		label                             string
+		current, maximum, yellowAt, redAt int
+	}{
+		{2, "Health: ", view.PlayerHP, view.PlayerMaxHP, 70, 40},
+		{3, "Magic:  ", view.PlayerMP, view.PlayerMaxMP, 50, 25},
+	} {
+		hud(0, stat.y, stat.label, Brown)
+		hud(len(stat.label), stat.y, fmt.Sprintf("%d", stat.current), statusValueColor(stat.current, stat.maximum, stat.yellowAt, stat.redAt))
+		hud(len(stat.label)+len(fmt.Sprintf("%d", stat.current)), stat.y, fmt.Sprintf("/%d", stat.maximum), LightGrey)
+	}
 	drawMeter(canvas, h.X+18, h.Y+2, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
 	drawMeter(canvas, h.X+18, h.Y+3, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
 	for i, label := range []string{"AC: --", "EV: --", "SH: --"} {
 		hud(0, 4+i, label, Brown)
 	}
-	hud(18, 4, fmt.Sprintf("Str: %d", view.Attributes.Strength), Brown)
-	hud(18, 5, fmt.Sprintf("Int: %d", view.Attributes.Intelligence), Brown)
-	hud(18, 6, fmt.Sprintf("Dex: %d", view.Attributes.Dexterity), Brown)
+	for _, stat := range []struct {
+		y     int
+		label string
+		value int
+	}{
+		{4, "Str: ", view.Attributes.Strength},
+		{5, "Int: ", view.Attributes.Intelligence},
+		{6, "Dex: ", view.Attributes.Dexterity},
+	} {
+		hud(18, stat.y, stat.label, Brown)
+		color := LightGrey
+		if stat.value < 3 {
+			color = Red
+		}
+		hud(18+len(stat.label), stat.y, fmt.Sprintf("%d", stat.value), color)
+	}
 	hud(0, 7, "XL: -- Next: --", Brown)
 	hud(18, 7, fmt.Sprintf("Place: D:%d", view.LevelID), Brown)
 	hud(0, 8, "Noise: --", Brown)

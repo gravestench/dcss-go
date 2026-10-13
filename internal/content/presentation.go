@@ -22,6 +22,7 @@ type PresentationArtifact struct {
 	TagMajorVersion     int               `json:"tag_major_version"`
 	SourceFiles         []JobSourceFile   `json:"source_files"`
 	StartupModes        []StartupMode     `json:"startup_modes"`
+	SkillColumns        [][]string        `json:"skill_columns"`
 	SpeciesGroups       []MenuGroup       `json:"species_groups"`
 	JobGroups           []MenuGroup       `json:"job_groups"`
 	SpeciesDescriptions map[string]string `json:"species_descriptions"`
@@ -31,6 +32,13 @@ type PresentationArtifact struct {
 func (a PresentationArtifact) clone() PresentationArtifact {
 	a.SourceFiles = append([]JobSourceFile(nil), a.SourceFiles...)
 	a.StartupModes = append([]StartupMode(nil), a.StartupModes...)
+	if a.SkillColumns != nil {
+		columns := make([][]string, len(a.SkillColumns))
+		for i, column := range a.SkillColumns {
+			columns[i] = append([]string(nil), column...)
+		}
+		a.SkillColumns = columns
+	}
 	a.SpeciesGroups = cloneGroups(a.SpeciesGroups)
 	a.JobGroups = cloneGroups(a.JobGroups)
 	a.SpeciesDescriptions = cloneDescriptions(a.SpeciesDescriptions)
@@ -60,8 +68,24 @@ func (a PresentationArtifact) validate(c Catalog) error {
 	if a.SchemaVersion != 1 || a.SourceRevision != sourceRevision || a.SourceVersion == "" || a.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported presentation artifact schema/revision/tag")
 	}
-	if len(a.SpeciesGroups) != 3 || len(a.JobGroups) != 5 || len(a.SourceFiles) != 6 || len(a.StartupModes) != 8 {
+	if len(a.SpeciesGroups) != 3 || len(a.JobGroups) != 5 || len(a.SourceFiles) != 7 || len(a.StartupModes) != 8 || len(a.SkillColumns) != 2 || len(a.SkillColumns[0]) != 16 || len(a.SkillColumns[1]) != 16 {
 		return fmt.Errorf("presentation has incomplete groups or provenance")
+	}
+	seenSkills := map[string]bool{}
+	human, found := c.species["SP_HUMAN"]
+	if !found {
+		return fmt.Errorf("presentation lacks Human skill catalog")
+	}
+	for _, column := range a.SkillColumns {
+		for _, id := range column {
+			if id == "" {
+				continue
+			}
+			if _, ok := human.Aptitudes[id]; !ok || seenSkills[id] {
+				return fmt.Errorf("unknown or duplicate skill menu ID %s", id)
+			}
+			seenSkills[id] = true
+		}
 	}
 	seenModes := map[string]bool{}
 	for _, mode := range a.StartupModes {
