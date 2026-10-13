@@ -1,0 +1,1299 @@
+{
+  "schema_version": 1,
+  "source_revision": "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
+  "tag_major_version": 34,
+  "source_files": [
+    {
+      "path": "crawl-ref/source/job-data.h",
+      "sha256": "1a7da93427bdab2e45baf83495748af60d0e7d89797035127923cfdfb622c7db"
+    },
+    {
+      "path": "crawl-ref/source/job-type.h",
+      "sha256": "49346fb46b4f1a68bf88db6a46c1c32eac7d81e3c074880cda840b50ca6c62ad"
+    },
+    {
+      "path": "crawl-ref/source/skill-type.h",
+      "sha256": "41db7cbdd07c188228a007d3769cd20a68cce42fe0f5b2ae6023c1e677a243ee"
+    },
+    {
+      "path": "crawl-ref/source/species-type.h",
+      "sha256": "45a610e690e3c02f0a091c0e78647d128636ecb0c02dffe0cbe9f9951f42bdb7"
+    },
+    {
+      "path": "crawl-ref/source/spell-type.h",
+      "sha256": "91be664ef01f81d4401e4fd4ef0aff709a96f464c7035558435fb1bc135da2e1"
+    },
+    {
+      "path": "crawl-ref/source/tag-version.h",
+      "sha256": "2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "JOB_ABYSSAL_KNIGHT",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "AK",
+      "name": "Abyssal Knight",
+      "strength": 5,
+      "intelligence": 2,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_HILL_ORC",
+        "SP_PALENTONGA",
+        "SP_TROLL",
+        "SP_MERFOLK",
+        "SP_BASE_DRACONIAN",
+        "SP_DEMONSPAWN",
+        "SP_METEORAN"
+      ],
+      "spells": null,
+      "equipment": [
+        "leather armour"
+      ],
+      "weapon_choice": "WCHOICE_PLAIN",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 3
+        },
+        {
+          "id": "SK_ARMOUR",
+          "level": 1
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 1
+        },
+        {
+          "id": "SK_INVOCATIONS",
+          "level": 2
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_AIR_ELEMENTALIST",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "AE",
+      "name": "Air Elementalist",
+      "strength": 0,
+      "intelligence": 7,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_DEEP_ELF",
+        "SP_TENGU",
+        "SP_BASE_DRACONIAN",
+        "SP_NAGA",
+        "SP_VINE_STALKER",
+        "SP_DJINNI"
+      ],
+      "spells": [
+        "SPELL_SHOCK",
+        "SPELL_DISCHARGE",
+        "SPELL_SWIFTNESS",
+        "SPELL_AIRSTRIKE"
+      ],
+      "equipment": [
+        "robe",
+        "potion of magic"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_CONJURATIONS",
+          "level": 1
+        },
+        {
+          "id": "SK_AIR_MAGIC",
+          "level": 3
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 2
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_ARCANE_MARKSMAN",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "AM",
+      "name": "Arcane Marksman",
+      "strength": 2,
+      "intelligence": 5,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_FORMICID",
+        "SP_DEEP_ELF",
+        "SP_KOBOLD",
+        "SP_SPRIGGAN",
+        "SP_GNOLL"
+      ],
+      "spells": [
+        "SPELL_SLOW",
+        "SPELL_INNER_FLAME",
+        "SPELL_PORTAL_PROJECTILE",
+        "SPELL_CAUSE_FEAR"
+      ],
+      "equipment": [
+        "robe",
+        "scroll of poison",
+        "sling plus:1"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 1
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 1
+        },
+        {
+          "id": "SK_HEXES",
+          "level": 3
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_ARTIFICER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Ar",
+      "name": "Artificer",
+      "strength": 4,
+      "intelligence": 3,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_METEORAN",
+        "SP_KOBOLD",
+        "SP_SPRIGGAN",
+        "SP_BASE_DRACONIAN",
+        "SP_DEMONSPAWN"
+      ],
+      "spells": null,
+      "equipment": [
+        "club",
+        "leather armour",
+        "wand of flame charges:15",
+        "wand of charming charges:15 no_exclude",
+        "wand of iceblast charges:5 no_exclude"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_EVOCATIONS",
+          "level": 3
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 1
+        },
+        {
+          "id": "SK_FIGHTING",
+          "level": 1
+        },
+        {
+          "id": "SK_ARMOUR",
+          "level": 1
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 1
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_BERSERKER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Be",
+      "name": "Berserker",
+      "strength": 9,
+      "intelligence": -1,
+      "dexterity": 4,
+      "recommended_species": [
+        "SP_HILL_ORC",
+        "SP_OGRE",
+        "SP_MERFOLK",
+        "SP_MINOTAUR",
+        "SP_GARGOYLE",
+        "SP_PALENTONGA"
+      ],
+      "spells": null,
+      "equipment": [
+        "animal skin"
+      ],
+      "weapon_choice": "WCHOICE_PLAIN",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 3
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 3
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_BRIGAND",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Br",
+      "name": "Brigand",
+      "strength": 3,
+      "intelligence": 3,
+      "dexterity": 6,
+      "recommended_species": [
+        "SP_TROLL",
+        "SP_SPRIGGAN",
+        "SP_DEMONSPAWN",
+        "SP_VAMPIRE",
+        "SP_VINE_STALKER"
+      ],
+      "spells": null,
+      "equipment": [
+        "dagger plus:2",
+        "robe",
+        "cloak",
+        "dart ego:poisoned q:9",
+        "dart ego:curare q:3"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 2
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 1
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 4
+        },
+        {
+          "id": "SK_THROWING",
+          "level": 2
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_CHAOS_KNIGHT",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "CK",
+      "name": "Chaos Knight",
+      "strength": 4,
+      "intelligence": 4,
+      "dexterity": 4,
+      "recommended_species": [
+        "SP_HILL_ORC",
+        "SP_TROLL",
+        "SP_GNOLL",
+        "SP_MERFOLK",
+        "SP_MINOTAUR",
+        "SP_BASE_DRACONIAN",
+        "SP_DEMONSPAWN"
+      ],
+      "spells": null,
+      "equipment": [
+        "leather armour plus:2",
+        "piece from Xom's chessboard"
+      ],
+      "weapon_choice": "WCHOICE_PLAIN",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 3
+        },
+        {
+          "id": "SK_ARMOUR",
+          "level": 1
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 1
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 3
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_CINDER_ACOLYTE",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "CA",
+      "name": "Cinder Acolyte",
+      "strength": 6,
+      "intelligence": 6,
+      "dexterity": 0,
+      "recommended_species": [
+        "SP_HILL_ORC",
+        "SP_BASE_DRACONIAN",
+        "SP_OGRE",
+        "SP_DJINNI",
+        "SP_GNOLL",
+        "SP_METEORAN"
+      ],
+      "spells": [
+        "SPELL_SCORCH"
+      ],
+      "equipment": [
+        "robe"
+      ],
+      "weapon_choice": "WCHOICE_PLAIN",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 3
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 3
+        },
+        {
+          "id": "SK_FIRE_MAGIC",
+          "level": 3
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 1
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_CONJURER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Cj",
+      "name": "Conjurer",
+      "strength": -1,
+      "intelligence": 10,
+      "dexterity": 3,
+      "recommended_species": [
+        "SP_DEEP_ELF",
+        "SP_NAGA",
+        "SP_TENGU",
+        "SP_BASE_DRACONIAN",
+        "SP_DEMIGOD",
+        "SP_DJINNI"
+      ],
+      "spells": [
+        "SPELL_MAGIC_DART",
+        "SPELL_SEARING_RAY",
+        "SPELL_DAZZLING_FLASH",
+        "SPELL_FULMINANT_PRISM",
+        "SPELL_ISKENDERUNS_MYSTIC_BLAST"
+      ],
+      "equipment": [
+        "robe",
+        "potion of magic"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_CONJURATIONS",
+          "level": 4
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 2
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_DEATH_KNIGHT",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "DK",
+      "name": "Death Knight",
+      "strength": 0,
+      "intelligence": 0,
+      "dexterity": 0,
+      "recommended_species": null,
+      "spells": null,
+      "equipment": null,
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": null,
+      "selectable": false
+    },
+    {
+      "id": "JOB_DELVER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "De",
+      "name": "Delver",
+      "strength": 4,
+      "intelligence": 2,
+      "dexterity": 6,
+      "recommended_species": [
+        "SP_FELID",
+        "SP_SPRIGGAN",
+        "SP_KOBOLD",
+        "SP_VAMPIRE",
+        "SP_GNOLL"
+      ],
+      "spells": null,
+      "equipment": [
+        "leather armour",
+        "scroll of fog no_exclude",
+        "scroll of magic mapping",
+        "scroll of fear",
+        "potion of haste",
+        "wand of digging charges:3"
+      ],
+      "weapon_choice": "WCHOICE_PLAIN",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 3
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 5
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_EARTH_ELEMENTALIST",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "EE",
+      "name": "Earth Elementalist",
+      "strength": 0,
+      "intelligence": 7,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_DEEP_ELF",
+        "SP_SPRIGGAN",
+        "SP_GARGOYLE",
+        "SP_DEMIGOD",
+        "SP_GHOUL",
+        "SP_OCTOPODE"
+      ],
+      "spells": [
+        "SPELL_SANDBLAST",
+        "SPELL_PASSWALL",
+        "SPELL_STONE_ARROW",
+        "SPELL_PETRIFY"
+      ],
+      "equipment": [
+        "robe",
+        "potion of magic"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_TRANSMUTATIONS",
+          "level": 1
+        },
+        {
+          "id": "SK_EARTH_MAGIC",
+          "level": 3
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 2
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_ENCHANTER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "En",
+      "name": "Enchanter",
+      "strength": 0,
+      "intelligence": 7,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_DEEP_ELF",
+        "SP_FELID",
+        "SP_KOBOLD",
+        "SP_SPRIGGAN",
+        "SP_NAGA",
+        "SP_VAMPIRE"
+      ],
+      "spells": [
+        "SPELL_HIBERNATION",
+        "SPELL_CONFUSING_TOUCH",
+        "SPELL_TUKIMAS_DANCE",
+        "SPELL_DAZZLING_FLASH"
+      ],
+      "equipment": [
+        "dagger plus:1",
+        "robe",
+        "potion of invisibility q:2"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_WEAPON",
+          "level": 1
+        },
+        {
+          "id": "SK_HEXES",
+          "level": 3
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 2
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 3
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_FIGHTER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Fi",
+      "name": "Fighter",
+      "strength": 8,
+      "intelligence": 0,
+      "dexterity": 4,
+      "recommended_species": [
+        "SP_METEORAN",
+        "SP_HILL_ORC",
+        "SP_TROLL",
+        "SP_MINOTAUR",
+        "SP_GARGOYLE",
+        "SP_PALENTONGA"
+      ],
+      "spells": null,
+      "equipment": [
+        "scale mail",
+        "buckler",
+        "potion of might"
+      ],
+      "weapon_choice": "WCHOICE_GOOD",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 3
+        },
+        {
+          "id": "SK_SHIELDS",
+          "level": 3
+        },
+        {
+          "id": "SK_ARMOUR",
+          "level": 3
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_FIRE_ELEMENTALIST",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "FE",
+      "name": "Fire Elementalist",
+      "strength": 0,
+      "intelligence": 7,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_DEEP_ELF",
+        "SP_HILL_ORC",
+        "SP_NAGA",
+        "SP_TENGU",
+        "SP_DEMIGOD",
+        "SP_GARGOYLE",
+        "SP_DJINNI"
+      ],
+      "spells": [
+        "SPELL_FOXFIRE",
+        "SPELL_SCORCH",
+        "SPELL_CONJURE_FLAME",
+        "SPELL_INNER_FLAME",
+        "SPELL_FLAME_WAVE"
+      ],
+      "equipment": [
+        "robe",
+        "potion of magic"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_CONJURATIONS",
+          "level": 1
+        },
+        {
+          "id": "SK_FIRE_MAGIC",
+          "level": 3
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 2
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_GLADIATOR",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Gl",
+      "name": "Gladiator",
+      "strength": 6,
+      "intelligence": 0,
+      "dexterity": 6,
+      "recommended_species": [
+        "SP_METEORAN",
+        "SP_HILL_ORC",
+        "SP_MERFOLK",
+        "SP_TROLL",
+        "SP_GARGOYLE",
+        "SP_GNOLL"
+      ],
+      "spells": null,
+      "equipment": [
+        "leather armour",
+        "helmet",
+        "throwing net q:3"
+      ],
+      "weapon_choice": "WCHOICE_GOOD",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 2
+        },
+        {
+          "id": "SK_THROWING",
+          "level": 2
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 3
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 3
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_HEALER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "He",
+      "name": "Healer",
+      "strength": 0,
+      "intelligence": 0,
+      "dexterity": 0,
+      "recommended_species": null,
+      "spells": null,
+      "equipment": null,
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": null,
+      "selectable": false
+    },
+    {
+      "id": "JOB_HEDGE_WIZARD",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "HW",
+      "name": "Hedge Wizard",
+      "strength": 2,
+      "intelligence": 6,
+      "dexterity": 4,
+      "recommended_species": [
+        "SP_DEEP_ELF",
+        "SP_NAGA",
+        "SP_BASE_DRACONIAN",
+        "SP_OCTOPODE",
+        "SP_HUMAN",
+        "SP_DJINNI",
+        "SP_METEORAN"
+      ],
+      "spells": [
+        "SPELL_MAGIC_DART",
+        "SPELL_BLINK",
+        "SPELL_CALL_IMP",
+        "SPELL_SLOW",
+        "SPELL_CONJURE_FLAME",
+        "SPELL_MEPHITIC_CLOUD"
+      ],
+      "equipment": [
+        "dagger",
+        "robe",
+        "hat",
+        "potion of magic"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 2
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 3
+        },
+        {
+          "id": "SK_TRANSLOCATIONS",
+          "level": 1
+        },
+        {
+          "id": "SK_CONJURATIONS",
+          "level": 1
+        },
+        {
+          "id": "SK_SUMMONINGS",
+          "level": 1
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_HUNTER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Hu",
+      "name": "Hunter",
+      "strength": 3,
+      "intelligence": 1,
+      "dexterity": 8,
+      "recommended_species": [
+        "SP_HILL_ORC",
+        "SP_MINOTAUR",
+        "SP_GNOLL",
+        "SP_KOBOLD",
+        "SP_SPRIGGAN"
+      ],
+      "spells": null,
+      "equipment": [
+        "leather armour",
+        "scroll of immolation",
+        "shortbow"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 2
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 1
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 4
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_ICE_ELEMENTALIST",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "IE",
+      "name": "Ice Elementalist",
+      "strength": 0,
+      "intelligence": 7,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_MERFOLK",
+        "SP_NAGA",
+        "SP_BASE_DRACONIAN",
+        "SP_DEMIGOD",
+        "SP_GARGOYLE",
+        "SP_DJINNI"
+      ],
+      "spells": [
+        "SPELL_FREEZE",
+        "SPELL_FROZEN_RAMPARTS",
+        "SPELL_OZOCUBUS_ARMOUR",
+        "SPELL_HAILSTORM"
+      ],
+      "equipment": [
+        "robe",
+        "potion of magic"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_ICE_MAGIC",
+          "level": 4
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 2
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_JESTER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Jr",
+      "name": "Jester",
+      "strength": 0,
+      "intelligence": 0,
+      "dexterity": 0,
+      "recommended_species": null,
+      "spells": null,
+      "equipment": null,
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": null,
+      "selectable": false
+    },
+    {
+      "id": "JOB_MONK",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Mo",
+      "name": "Monk",
+      "strength": 3,
+      "intelligence": 2,
+      "dexterity": 7,
+      "recommended_species": [
+        "SP_METEORAN",
+        "SP_HILL_ORC",
+        "SP_TROLL",
+        "SP_PALENTONGA",
+        "SP_MERFOLK",
+        "SP_GARGOYLE",
+        "SP_DEMONSPAWN"
+      ],
+      "spells": null,
+      "equipment": [
+        "robe",
+        "potion of ambrosia"
+      ],
+      "weapon_choice": "WCHOICE_PLAIN",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 3
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 3
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 3
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_NECROMANCER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Ne",
+      "name": "Necromancer",
+      "strength": 0,
+      "intelligence": 7,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_DEEP_ELF",
+        "SP_DJINNI",
+        "SP_HILL_ORC",
+        "SP_DEMONSPAWN",
+        "SP_MUMMY",
+        "SP_VAMPIRE"
+      ],
+      "spells": [
+        "SPELL_NECROTISE",
+        "SPELL_VAMPIRIC_DRAINING",
+        "SPELL_ANIMATE_DEAD",
+        "SPELL_AGONY"
+      ],
+      "equipment": [
+        "robe",
+        "potion of magic"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 2
+        },
+        {
+          "id": "SK_NECROMANCY",
+          "level": 4
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_PRIEST",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Pr",
+      "name": "Priest",
+      "strength": 0,
+      "intelligence": 0,
+      "dexterity": 0,
+      "recommended_species": null,
+      "spells": null,
+      "equipment": null,
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": null,
+      "selectable": false
+    },
+    {
+      "id": "JOB_SKALD",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Sk",
+      "name": "Skald",
+      "strength": 0,
+      "intelligence": 0,
+      "dexterity": 0,
+      "recommended_species": null,
+      "spells": null,
+      "equipment": null,
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": null,
+      "selectable": false
+    },
+    {
+      "id": "JOB_STALKER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "St",
+      "name": "Stalker",
+      "strength": 0,
+      "intelligence": 0,
+      "dexterity": 0,
+      "recommended_species": null,
+      "spells": null,
+      "equipment": null,
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": null,
+      "selectable": false
+    },
+    {
+      "id": "JOB_SUMMONER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Su",
+      "name": "Summoner",
+      "strength": 0,
+      "intelligence": 7,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_DEEP_ELF",
+        "SP_HILL_ORC",
+        "SP_VINE_STALKER",
+        "SP_MERFOLK",
+        "SP_TENGU",
+        "SP_VAMPIRE"
+      ],
+      "spells": [
+        "SPELL_SUMMON_SMALL_MAMMAL",
+        "SPELL_CALL_IMP",
+        "SPELL_CALL_CANINE_FAMILIAR",
+        "SPELL_SUMMON_GUARDIAN_GOLEM",
+        "SPELL_SUMMON_LIGHTNING_SPIRE"
+      ],
+      "equipment": [
+        "robe",
+        "potion of magic"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_SUMMONINGS",
+          "level": 4
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 2
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_TRANSMUTER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Tm",
+      "name": "Transmuter",
+      "strength": 2,
+      "intelligence": 5,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_NAGA",
+        "SP_MERFOLK",
+        "SP_BASE_DRACONIAN",
+        "SP_DEMIGOD",
+        "SP_DEMONSPAWN",
+        "SP_TROLL",
+        "SP_METEORAN"
+      ],
+      "spells": [
+        "SPELL_BEASTLY_APPENDAGE",
+        "SPELL_WEREBLOOD",
+        "SPELL_SPIDER_FORM",
+        "SPELL_ICE_FORM"
+      ],
+      "equipment": [
+        "robe",
+        "potion of lignification"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 1
+        },
+        {
+          "id": "SK_UNARMED_COMBAT",
+          "level": 3
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 2
+        },
+        {
+          "id": "SK_TRANSMUTATIONS",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_VENOM_MAGE",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "VM",
+      "name": "Venom Mage",
+      "strength": 0,
+      "intelligence": 7,
+      "dexterity": 5,
+      "recommended_species": [
+        "SP_DEEP_ELF",
+        "SP_SPRIGGAN",
+        "SP_NAGA",
+        "SP_MERFOLK",
+        "SP_TENGU",
+        "SP_DJINNI",
+        "SP_DEMONSPAWN"
+      ],
+      "spells": [
+        "SPELL_STING",
+        "SPELL_POISONOUS_VAPOURS",
+        "SPELL_MEPHITIC_CLOUD",
+        "SPELL_OLGREBS_TOXIC_RADIANCE"
+      ],
+      "equipment": [
+        "robe",
+        "potion of magic"
+      ],
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": [
+        {
+          "id": "SK_TRANSMUTATIONS",
+          "level": 1
+        },
+        {
+          "id": "SK_POISON_MAGIC",
+          "level": 3
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 2
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_STEALTH",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    },
+    {
+      "id": "JOB_WANDERER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Wn",
+      "name": "Wanderer",
+      "strength": 0,
+      "intelligence": 0,
+      "dexterity": 0,
+      "recommended_species": [
+        "SP_HILL_ORC",
+        "SP_METEORAN",
+        "SP_GNOLL",
+        "SP_MERFOLK",
+        "SP_BASE_DRACONIAN",
+        "SP_HUMAN",
+        "SP_DEMONSPAWN"
+      ],
+      "spells": null,
+      "equipment": null,
+      "weapon_choice": "WCHOICE_NONE",
+      "skills": null,
+      "selectable": true
+    },
+    {
+      "id": "JOB_WARPER",
+      "source_path": "crawl-ref/source/job-data.h",
+      "abbreviation": "Wr",
+      "name": "Warper",
+      "strength": 3,
+      "intelligence": 5,
+      "dexterity": 4,
+      "recommended_species": [
+        "SP_FELID",
+        "SP_METEORAN",
+        "SP_SPRIGGAN",
+        "SP_PALENTONGA",
+        "SP_BASE_DRACONIAN"
+      ],
+      "spells": [
+        "SPELL_BLINK",
+        "SPELL_BECKONING",
+        "SPELL_GRAVITAS",
+        "SPELL_TELEPORT_OTHER",
+        "SPELL_MANIFOLD_ASSAULT"
+      ],
+      "equipment": [
+        "leather armour",
+        "scroll of blinking",
+        "boomerang ego:dispersal q:7"
+      ],
+      "weapon_choice": "WCHOICE_PLAIN",
+      "skills": [
+        {
+          "id": "SK_FIGHTING",
+          "level": 2
+        },
+        {
+          "id": "SK_ARMOUR",
+          "level": 1
+        },
+        {
+          "id": "SK_DODGING",
+          "level": 2
+        },
+        {
+          "id": "SK_SPELLCASTING",
+          "level": 2
+        },
+        {
+          "id": "SK_TRANSLOCATIONS",
+          "level": 3
+        },
+        {
+          "id": "SK_THROWING",
+          "level": 1
+        },
+        {
+          "id": "SK_WEAPON",
+          "level": 2
+        }
+      ],
+      "selectable": true
+    }
+  ]
+}
