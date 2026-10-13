@@ -2,6 +2,8 @@
 
 Reference: `/Users/dylanknuth/src/crawl` at `e60ba3568b0c26447ad36ec5c7b963eb04b2778f`.
 
+Content import policy for the whole Go port: every imported DCSS content category is generated into a reviewable artifact committed to this repository. Category-specific importers are optional developer tools for intentional upstream content refreshes. Normal Go builds, tests, CI, saves, and gameplay read committed Go-repository content; none runs an importer or requires the C++ checkout. A content refresh updates the artifact and its source provenance in a reviewed commit.
+
 | Domain | Source anchor | Go owner | Status |
 | --- | --- | --- | --- |
 | Rat fixture ID, glyph, speed, bite base damage | `crawl-ref/source/mon-data.h:1994-2001` | `content.Catalog` | Fixture only |
