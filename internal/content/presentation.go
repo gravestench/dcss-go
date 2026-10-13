@@ -8,12 +8,20 @@ type MenuGroup struct {
 	IDs   []string `json:"ids"`
 }
 
+type StartupMode struct {
+	ID          string `json:"id"`
+	Label       string `json:"label"`
+	Description string `json:"description"`
+}
+
 // PresentationArtifact contains source menu prose and order, independent of the C++ checkout.
 type PresentationArtifact struct {
 	SchemaVersion       int               `json:"schema_version"`
 	SourceRevision      string            `json:"source_revision"`
+	SourceVersion       string            `json:"source_version"`
 	TagMajorVersion     int               `json:"tag_major_version"`
 	SourceFiles         []JobSourceFile   `json:"source_files"`
+	StartupModes        []StartupMode     `json:"startup_modes"`
 	SpeciesGroups       []MenuGroup       `json:"species_groups"`
 	JobGroups           []MenuGroup       `json:"job_groups"`
 	SpeciesDescriptions map[string]string `json:"species_descriptions"`
@@ -22,6 +30,7 @@ type PresentationArtifact struct {
 
 func (a PresentationArtifact) clone() PresentationArtifact {
 	a.SourceFiles = append([]JobSourceFile(nil), a.SourceFiles...)
+	a.StartupModes = append([]StartupMode(nil), a.StartupModes...)
 	a.SpeciesGroups = cloneGroups(a.SpeciesGroups)
 	a.JobGroups = cloneGroups(a.JobGroups)
 	a.SpeciesDescriptions = cloneDescriptions(a.SpeciesDescriptions)
@@ -48,11 +57,18 @@ func cloneDescriptions(descriptions map[string]string) map[string]string {
 func (c Catalog) Presentation() PresentationArtifact { return c.presentation.clone() }
 
 func (a PresentationArtifact) validate(c Catalog) error {
-	if a.SchemaVersion != 1 || a.SourceRevision != sourceRevision || a.TagMajorVersion != 34 {
+	if a.SchemaVersion != 1 || a.SourceRevision != sourceRevision || a.SourceVersion == "" || a.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported presentation artifact schema/revision/tag")
 	}
-	if len(a.SpeciesGroups) != 3 || len(a.JobGroups) != 5 || len(a.SourceFiles) != 5 {
+	if len(a.SpeciesGroups) != 3 || len(a.JobGroups) != 5 || len(a.SourceFiles) != 6 || len(a.StartupModes) != 8 {
 		return fmt.Errorf("presentation has incomplete groups or provenance")
+	}
+	seenModes := map[string]bool{}
+	for _, mode := range a.StartupModes {
+		if mode.ID == "" || mode.Label == "" || mode.Description == "" || seenModes[mode.ID] {
+			return fmt.Errorf("invalid or duplicate startup mode %s", mode.ID)
+		}
+		seenModes[mode.ID] = true
 	}
 	if _, err := validSourceFiles(a.SourceFiles, "presentation"); err != nil {
 		return err

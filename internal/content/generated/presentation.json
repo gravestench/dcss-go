@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "source_revision": "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
+  "source_version": "0.30-a0-23-ge60ba3568b0",
   "tag_major_version": 34,
   "source_files": [
     {
@@ -20,8 +21,54 @@
       "sha256": "8cbc7cf3b24fbe904d9ce193d04ffcee7b27bfaa4fa44328210c7365b40b9a28"
     },
     {
+      "path": "crawl-ref/source/startup.cc",
+      "sha256": "82aef31832467f8797e0fd2d5f2818974fe1ddc2213c70445a062f2493282d2f"
+    },
+    {
       "path": "crawl-ref/source/tag-version.h",
       "sha256": "2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa"
+    }
+  ],
+  "startup_modes": [
+    {
+      "id": "GAME_TYPE_NORMAL",
+      "label": "Dungeon Crawl",
+      "description": "Dungeon Crawl: The main game: full of monsters, items, gods and danger!"
+    },
+    {
+      "id": "GAME_TYPE_CUSTOM_SEED",
+      "label": "Choose Game Seed",
+      "description": "Play with a chosen custom dungeon seed."
+    },
+    {
+      "id": "GAME_TYPE_TUTORIAL",
+      "label": "Tutorial for Dungeon Crawl",
+      "description": "Tutorial that covers the basics of Dungeon Crawl survival."
+    },
+    {
+      "id": "GAME_TYPE_HINTS",
+      "label": "Hints Mode for Dungeon Crawl",
+      "description": "A mostly normal game that provides more advanced hints than the tutorial."
+    },
+    {
+      "id": "GAME_TYPE_SPRINT",
+      "label": "Dungeon Sprint",
+      "description": "Hard, fixed single level game mode."
+    },
+    {
+      "id": "GAME_TYPE_INSTRUCTIONS",
+      "label": "Instructions",
+      "description": "Help menu."
+    },
+    {
+      "id": "GAME_TYPE_ARENA",
+      "label": "The Arena",
+      "description": "Pit computer controlled teams versus each other!"
+    },
+    {
+      "id": "GAME_TYPE_HIGH_SCORES",
+      "label": "High Scores",
+      "description": "View the high score list."
     }
   ],
   "species_groups": [

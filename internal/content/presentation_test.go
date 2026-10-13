@@ -13,8 +13,17 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 	if p.SchemaVersion != 1 || p.SourceRevision != sourceRevision || p.TagMajorVersion != 34 {
 		t.Fatalf("presentation provenance: %+v", p)
 	}
+	if p.SourceVersion != "0.30-a0-23-ge60ba3568b0" {
+		t.Fatalf("source banner version: %q", p.SourceVersion)
+	}
 	if len(p.SpeciesGroups) != 3 || len(p.JobGroups) != 5 {
 		t.Fatalf("menu group counts: %d species, %d jobs", len(p.SpeciesGroups), len(p.JobGroups))
+	}
+	if len(p.StartupModes) != 8 || p.StartupModes[0].ID != "GAME_TYPE_NORMAL" || p.StartupModes[0].Label != "Dungeon Crawl" || p.StartupModes[7].ID != "GAME_TYPE_HIGH_SCORES" {
+		t.Fatalf("source startup mode order: %+v", p.StartupModes)
+	}
+	if !strings.Contains(p.StartupModes[0].Description, "monsters, items") {
+		t.Fatalf("startup description: %+v", p.StartupModes[0])
 	}
 	var species, jobs []string
 	for _, group := range p.SpeciesGroups {
@@ -41,6 +50,7 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 		"crawl-ref/source/dat/descript/species.txt":     "7abe5f3033ae02981f8af6956add4db2f1e08ed69e688d5e213e0e906ee1fb5e",
 		"crawl-ref/source/dat/descript/backgrounds.txt": "1263736a450652589bbeb6a4cd3d6e57a092059ff34040263af7a33333803570",
 		"crawl-ref/source/tag-version.h":                "2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa",
+		"crawl-ref/source/startup.cc":                   "82aef31832467f8797e0fd2d5f2818974fe1ddc2213c70445a062f2493282d2f",
 	}
 	if len(p.SourceFiles) != len(wantHashes) {
 		t.Fatalf("source files: %+v", p.SourceFiles)

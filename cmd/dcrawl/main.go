@@ -18,7 +18,7 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("load content: %w", err)
 	}
-	model, err := terminal.NewStartModel(catalog, *seed, *savePath)
+	model, err := terminal.NewAppModel(catalog, *seed, *savePath)
 	if err != nil {
 		return fmt.Errorf("prepare start: %w", err)
 	}

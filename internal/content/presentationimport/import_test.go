@@ -37,3 +37,17 @@ func TestParseDescriptionsRejectsDuplicate(t *testing.T) {
 		t.Fatalf("duplicate accepted: %v", err)
 	}
 }
+
+func TestParseStartupModesJoinsSourceStringLiterals(t *testing.T) {
+	source := `static const game_modes_menu_item entries[] = {
+    {GAME_TYPE_NORMAL, "Dungeon Crawl", "The main " "game."},
+    {GAME_TYPE_TUTORIAL, "Tutorial", "Learn."},
+};`
+	modes, err := parseStartupModes("startup.cc", []byte(source))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(modes) != 2 || modes[0].ID != "GAME_TYPE_NORMAL" || modes[0].Description != "The main game." || modes[1].Label != "Tutorial" {
+		t.Fatalf("source modes: %+v", modes)
+	}
+}

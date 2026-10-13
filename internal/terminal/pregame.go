@@ -1,0 +1,409 @@
+package terminal
+
+import (
+	"fmt"
+	"strings"
+
+	tea "charm.land/bubbletea/v2"
+	"dcrawl-go/internal/character"
+	"dcrawl-go/internal/content"
+	"dcrawl-go/internal/game"
+	"github.com/mattn/go-runewidth"
+)
+
+func (m *AppModel) handleStartupKey(key string) tea.Cmd {
+	count := len(m.presentation.StartupModes)
+	if m.savedRunExists() {
+		count++
+	}
+	switch key {
+	case "esc":
+		return tea.Quit
+	case "up":
+		m.focus = (m.focus - 1 + count) % count
+	case "down":
+		m.focus = (m.focus + 1) % count
+	case "enter":
+		if m.focus == len(m.presentation.StartupModes) && m.savedRunExists() {
+			m.loadSavedRun()
+			return nil
+		}
+		if m.focus == 0 {
+			if m.name != "" {
+				if err := character.ValidateName(m.name); err != nil {
+					m.notice = err.Error()
+					return nil
+				}
+			}
+			m.screen, m.focus, m.notice = ScreenSpecies, 0, ""
+		} else {
+			m.notice = "This game mode is unavailable in the Go port."
+		}
+	case "backspace":
+		if len(m.name) > 0 {
+			runes := []rune(m.name)
+			m.name = string(runes[:len(runes)-1])
+		}
+	case "ctrl+u":
+		m.name = ""
+	case "?":
+		m.previous, m.screen = m.screen, ScreenHelp
+	default:
+		m.appendNameKey(key)
+	}
+	return nil
+}
+
+func (m *AppModel) appendNameKey(key string) {
+	if key == "space" {
+		key = " "
+	}
+	if len([]rune(key)) != 1 {
+		return
+	}
+	if key == " " && m.name == "" {
+		return
+	}
+	candidate := m.name + key
+	if runewidth.StringWidth(candidate) > 30 {
+		m.notice = "Name exceeds 30 display columns"
+		return
+	}
+	// A partial name may have trailing space, but it must still be source-valid.
+	if err := character.ValidateName(candidate); err != nil {
+		m.notice = "invalid name character"
+		return
+	}
+	m.name, m.notice = candidate, ""
+}
+
+func (m *AppModel) handleCharacterChoiceKey(key string) {
+	groups := m.presentation.SpeciesGroups
+	if m.screen == ScreenBackground {
+		groups = m.presentation.JobGroups
+	}
+	ids := flattenGroups(groups)
+	switch key {
+	case "esc":
+		m.screen, m.focus, m.notice = ScreenStartup, 0, ""
+		return
+	case "backspace":
+		if m.screen == ScreenBackground {
+			m.jobID = ""
+			m.screen = ScreenSpecies
+		} else {
+			m.speciesID = ""
+			m.screen = ScreenBackground
+		}
+		m.focus, m.notice = 0, ""
+		return
+	case "space":
+		if m.screen == ScreenSpecies {
+			m.screen = ScreenBackground
+		} else {
+			m.screen = ScreenSpecies
+		}
+		m.focus, m.notice = 0, ""
+		return
+	case "up":
+		m.focus = (m.focus - 1 + len(ids)) % len(ids)
+		return
+	case "down":
+		m.focus = (m.focus + 1) % len(ids)
+		return
+	case "left":
+		m.focus = (m.focus - 9 + len(ids)) % len(ids)
+		return
+	case "right":
+		m.focus = (m.focus + 9) % len(ids)
+		return
+	case "?":
+		m.previous, m.screen = m.screen, ScreenHelp
+		return
+	case "+", "#", "%", "*", "!":
+		m.notice = "This character option is unavailable in the Go port."
+		return
+	}
+	for i, id := range ids {
+		if key != string(menuLetter(i)) {
+			continue
+		}
+		m.focus = i
+		if m.screen == ScreenSpecies {
+			if id != "SP_HUMAN" {
+				m.notice = "This species is unavailable in the Go port."
+				return
+			}
+			m.speciesID, m.notice = id, ""
+			if m.jobID == "" {
+				m.screen = ScreenBackground
+				m.focus = 0
+				return
+			}
+		} else {
+			if id != "JOB_FIGHTER" {
+				m.notice = "This background is unavailable in the Go port."
+				return
+			}
+			m.jobID, m.notice = id, ""
+			if m.speciesID == "" {
+				m.screen = ScreenSpecies
+				m.focus = 0
+				return
+			}
+		}
+		m.enterWeaponChoice()
+		return
+	}
+}
+
+func (m *AppModel) enterWeaponChoice() {
+	options, err := character.WeaponOptions(m.catalog, m.speciesID, m.jobID)
+	if err != nil {
+		m.notice = fmt.Sprintf("Weapon choices failed: %v", err)
+		return
+	}
+	m.weaponReturn, m.screen, m.focus, m.options = m.screen, ScreenWeapon, 0, options
+}
+
+func (m *AppModel) handleWeaponKey(key string) {
+	switch key {
+	case "esc", "backspace":
+		m.screen, m.focus, m.notice = m.weaponReturn, 0, ""
+		return
+	case "up":
+		m.focus = (m.focus - 1 + len(m.options)) % len(m.options)
+		return
+	case "down":
+		m.focus = (m.focus + 1) % len(m.options)
+		return
+	case "?":
+		m.previous, m.screen = m.screen, ScreenHelp
+		return
+	case "+", "*", "%":
+		m.notice = "This weapon option is unavailable in the Go port."
+		return
+	}
+	for i, option := range m.options {
+		if key != string(menuLetter(i)) {
+			continue
+		}
+		m.weaponID, m.focus, m.notice = option.ID, i, ""
+		if m.name == "" {
+			m.screen = ScreenName
+			return
+		}
+		m.startGame()
+		return
+	}
+}
+
+func (m *AppModel) handleNameKey(key string) {
+	switch key {
+	case "esc":
+		m.screen, m.notice = ScreenWeapon, ""
+		return
+	case "backspace":
+		if len(m.name) > 0 {
+			runes := []rune(m.name)
+			m.name = string(runes[:len(runes)-1])
+		}
+	case "enter":
+		if err := character.ValidateName(m.name); err != nil {
+			m.notice = err.Error()
+			return
+		}
+		m.startGame()
+	default:
+		m.appendNameKey(key)
+	}
+}
+
+func (m *AppModel) startGame() {
+	started, err := game.NewScenario(m.seed, m.catalog, m.weaponID, strings.TrimSpace(m.name))
+	if err != nil {
+		m.notice = fmt.Sprintf("Start failed: %v", err)
+		return
+	}
+	m.game, m.screen, m.notice = started, ScreenPlay, ""
+}
+
+func flattenGroups(groups []content.MenuGroup) []string {
+	var ids []string
+	for _, group := range groups {
+		ids = append(ids, group.IDs...)
+	}
+	return ids
+}
+
+func menuLetter(index int) rune {
+	if index < 26 {
+		return rune('a' + index)
+	}
+	return rune('A' + index - 26)
+}
+
+func (m *AppModel) drawStartup(canvas *Canvas) {
+	canvas.Write(0, 0, "Hello, welcome to Dungeon Crawl Stone Soup "+m.presentation.SourceVersion+"!", Yellow, Black)
+	canvas.Write(0, 1, "(c) Copyright 1997-2002 Linley Henzell, 2002-2022 Crawl DevTeam", Brown, Black)
+	canvas.Write(1, 3, "Enter your name: "+m.name, LightGrey, Black)
+	canvas.Write(1, 5, "Choices:", LightGrey, Black)
+	for i, mode := range m.presentation.StartupModes {
+		color := LightGrey
+		if i == m.focus {
+			color = White
+		}
+		canvas.Write(2, 6+i, mode.Label, color, Black)
+	}
+	if m.savedRunExists() {
+		canvas.Write(1, 15, "Saved games:", LightGrey, Black)
+		canvas.Write(2, 16, "Continue saved game", White, Black)
+	}
+	if m.focus < len(m.presentation.StartupModes) {
+		writeClipped(canvas, 1, 20, m.width-2, m.presentation.StartupModes[m.focus].Description, Brown)
+	}
+	if m.notice != "" {
+		writeClipped(canvas, 1, 23, m.width-2, m.notice, LightRed)
+	}
+}
+
+func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
+	groups := m.presentation.SpeciesGroups
+	descriptions := m.presentation.SpeciesDescriptions
+	choice := "species"
+	if m.screen == ScreenBackground {
+		groups, descriptions, choice = m.presentation.JobGroups, m.presentation.JobDescriptions, "background"
+	}
+	canvas.Write(0, 0, m.welcomeText(), Brown, Black)
+	canvas.Write(1, 1, "Please select your "+choice+".", LightGrey, Black)
+	index := 0
+	for column, group := range groups {
+		col, row := groupPosition(m.screen, column)
+		canvas.Write(col, row, group.Label, LightBlue, Black)
+		for i, id := range group.IDs {
+			name := id
+			if m.screen == ScreenSpecies {
+				if definition, err := m.catalog.Species(id); err == nil {
+					name = definition.Name
+				}
+			} else {
+				if definition, err := m.catalog.Job(id); err == nil {
+					name = definition.Name
+				}
+			}
+			color := LightGrey
+			if index == m.focus {
+				color = White
+			}
+			canvas.Write(col, row+i+1, fmt.Sprintf("%c - %s", menuLetter(index), name), color, Black)
+			index++
+		}
+	}
+	canvas.Write(1, 14, "+ - Recommended       # - Recommended character", LightGrey, Black)
+	canvas.Write(1, 15, "% - List aptitudes    ? - Help", LightGrey, Black)
+	canvas.Write(1, 16, "* - Random            ! - Random character", LightGrey, Black)
+	canvas.Write(1, 17, "Space - Pick the other choice first", LightGrey, Black)
+	ids := flattenGroups(groups)
+	if m.focus < len(ids) {
+		writeWrapped(canvas, 1, 19, m.width-2, 4, strings.Join(strings.Fields(descriptions[ids[m.focus]]), " "), Brown)
+	}
+	if m.notice != "" {
+		writeClipped(canvas, 1, 23, m.width-2, m.notice, LightRed)
+	}
+}
+
+func groupPosition(screen ScreenID, group int) (int, int) {
+	if screen == ScreenSpecies {
+		return 1 + group*26, 3
+	}
+	switch group {
+	case 0:
+		return 1, 3
+	case 1:
+		return 1, 9
+	case 2:
+		return 27, 3
+	case 3:
+		return 27, 8
+	default:
+		return 53, 3
+	}
+}
+
+func writeWrapped(canvas *Canvas, x, y, width, height int, value string, color Color) {
+	words := strings.Fields(value)
+	line, row := "", 0
+	for _, word := range words {
+		candidate := word
+		if line != "" {
+			candidate = line + " " + word
+		}
+		if runewidth.StringWidth(candidate) > width && line != "" {
+			if row >= height {
+				return
+			}
+			writeClipped(canvas, x, y+row, width, line, color)
+			row++
+			line = word
+		} else {
+			line = candidate
+		}
+	}
+	if row < height {
+		writeClipped(canvas, x, y+row, width, line, color)
+	}
+}
+
+func (m *AppModel) drawWeapon(canvas *Canvas) {
+	canvas.Write(0, 0, m.welcomeText(), Brown, Black)
+	canvas.Write(1, 1, "Please select your starting weapon.", LightGrey, Black)
+	species, _ := m.catalog.Species("SP_HUMAN")
+	for i, option := range m.options {
+		aptitude := species.Aptitudes["SK_UNARMED_COMBAT"].Value
+		if option.ID != "WPN_UNARMED" {
+			if item, err := m.catalog.Item(option.ID); err == nil {
+				aptitude = species.Aptitudes[item.WeaponSkill].Value
+			}
+		}
+		color := LightGrey
+		if option.Restriction == character.Recommended || i == m.focus {
+			color = White
+		}
+		canvas.Write(2, 3+i, fmt.Sprintf("%c - %-18s (%+d apt)", menuLetter(i), option.Name, aptitude), color, Black)
+	}
+	canvas.Write(1, 11, "+ - Recommended random choice     * - Random weapon", LightGrey, Black)
+	canvas.Write(1, 12, "% - List aptitudes               ? - Help", LightGrey, Black)
+	canvas.Write(1, 13, "Bksp - Return to character menu", LightGrey, Black)
+	if m.notice != "" {
+		writeClipped(canvas, 1, 23, m.width-2, m.notice, LightRed)
+	}
+}
+
+func (m *AppModel) drawName(canvas *Canvas) {
+	canvas.Write(0, 0, m.welcomeText(), Brown, Black)
+	canvas.Write(1, 2, "Enter your name: "+m.name, LightGrey, Black)
+	if m.notice != "" {
+		writeClipped(canvas, 1, 23, m.width-2, m.notice, LightRed)
+	}
+}
+
+func (m *AppModel) welcomeText() string {
+	who := m.name
+	named := who != ""
+	if who == "" {
+		if m.speciesID == "" && m.jobID == "" {
+			return "Welcome."
+		}
+		who = "unnamed"
+	}
+	if m.speciesID == "SP_HUMAN" {
+		if named {
+			who += " the"
+		}
+		who += " Human"
+	}
+	if m.jobID == "JOB_FIGHTER" {
+		who += " Fighter"
+	}
+	return "Welcome, " + who + "."
+}

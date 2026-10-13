@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 
 	"dcrawl-go/internal/content"
@@ -22,6 +23,48 @@ const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 var sourceGroup = regexp.MustCompile(`(?s)\{\s*"([^"]+)"\s*,\s*coord_def\([^)]*\)\s*,\s*\d+\s*,\s*\{([^}]*)\}\s*\}`)
 var sourceID = regexp.MustCompile(`[A-Z]+_[A-Z_]+`)
 var tagMajor = regexp.MustCompile(`(?m)^#define\s+TAG_MAJOR_VERSION\s+(\d+)\s*$`)
+var startupModeEntry = regexp.MustCompile(`(?s)\{\s*(GAME_TYPE_[A-Z_]+)\s*,\s*((?:"[^"]*"\s*)+)\s*,\s*((?:"[^"]*"\s*)+)\s*\}`)
+var quotedString = regexp.MustCompile(`"(?:\\.|[^"\\])*"`)
+
+func parseStartupModes(path string, data []byte) ([]content.StartupMode, error) {
+	marker := "static const game_modes_menu_item entries[]"
+	start := bytes.Index(data, []byte(marker))
+	if start < 0 {
+		return nil, fmt.Errorf("%s: startup mode table missing", path)
+	}
+	text := string(data[start:])
+	end := strings.Index(text, "};")
+	if end < 0 {
+		return nil, fmt.Errorf("%s: startup mode table unterminated", path)
+	}
+	join := func(value string) (string, error) {
+		var result strings.Builder
+		for _, part := range quotedString.FindAllString(value, -1) {
+			decoded, err := strconv.Unquote(part)
+			if err != nil {
+				return "", err
+			}
+			result.WriteString(decoded)
+		}
+		return result.String(), nil
+	}
+	var modes []content.StartupMode
+	for _, match := range startupModeEntry.FindAllStringSubmatch(text[:end], -1) {
+		label, err := join(match[2])
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", path, err)
+		}
+		description, err := join(match[3])
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", path, err)
+		}
+		modes = append(modes, content.StartupMode{ID: match[1], Label: label, Description: description})
+	}
+	if len(modes) == 0 {
+		return nil, fmt.Errorf("%s: no startup modes", path)
+	}
+	return modes, nil
+}
 
 func parseGroups(path string, data []byte, variable, prefix string) ([]content.MenuGroup, error) {
 	marker := variable + "[]"
@@ -137,6 +180,14 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 	if err != nil {
 		return artifact, err
 	}
+	startupText, err := readSource(sourceDir, "startup.cc", &artifact.SourceFiles)
+	if err != nil {
+		return artifact, err
+	}
+	artifact.StartupModes, err = parseStartupModes("startup.cc", startupText)
+	if err != nil {
+		return artifact, err
+	}
 	for _, group := range artifact.SpeciesGroups {
 		for _, id := range group.IDs {
 			definition, err := catalog.Species(id)
@@ -188,7 +239,16 @@ func Generate(sourceDir string) (content.PresentationArtifact, error) {
 	if err := exec.Command("git", "-C", sourceDir, "diff", "--quiet", "HEAD", "--", ".").Run(); err != nil {
 		return content.PresentationArtifact{}, fmt.Errorf("source checkout has modified tracked files: %w", err)
 	}
-	return generateFromSource(sourceDir)
+	artifact, err := generateFromSource(sourceDir)
+	if err != nil {
+		return artifact, err
+	}
+	version, err := exec.Command("git", "-C", sourceDir, "describe", "--tags", "--always").Output()
+	if err != nil {
+		return artifact, fmt.Errorf("read source version: %w", err)
+	}
+	artifact.SourceVersion = strings.TrimSpace(string(version))
+	return artifact, nil
 }
 
 // Write atomically refreshes or checks the committed presentation artifact.
