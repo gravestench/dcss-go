@@ -40,6 +40,10 @@ func (g *Game) Snapshot() save.Snapshot {
 	return snapshot
 }
 
+func (g *Game) Restore(snapshot save.Snapshot) (*Game, error) {
+	return Restore(snapshot, g.catalog)
+}
+
 // Restore builds a separate game. The caller replaces its live game only after success.
 func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err error) {
 	if snapshot.Version != save.Version {
