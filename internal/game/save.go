@@ -84,6 +84,10 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 	seen := make(map[uint64]bool)
 	playerCount := 0
+	var playerNext int64
+	var playerAlive bool
+	var earliestID uint64
+	var earliestAut int64
 	for _, record := range snapshot.Entities {
 		if record.ID == 0 || seen[record.ID] {
 			return nil, fmt.Errorf("duplicate or zero entity ID %d", record.ID)
@@ -96,8 +100,14 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Item.Quantity <= 0 || (record.Position == nil) == (record.CarriedBy == nil) || record.Actor != nil {
 				return nil, fmt.Errorf("item %d must have exactly one of position or carrier, never both", record.ID)
 			}
+			if record.Health != nil || record.Combatant != nil || record.Player != nil || record.AI != nil {
+				return nil, fmt.Errorf("item %d has actor components", record.ID)
+			}
 		} else if record.CarriedBy != nil {
 			return nil, fmt.Errorf("non-item %d has carrier", record.ID)
+		}
+		if record.Actor == nil && record.Item == nil {
+			return nil, fmt.Errorf("entity %d has no actor or item role", record.ID)
 		}
 		if record.Player != nil && record.AI != nil {
 			return nil, fmt.Errorf("entity %d is both player and monster", record.ID)
@@ -109,6 +119,8 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 				record.Player.SpeciesID != definition.SpeciesID || record.Player.JobID != definition.JobID {
 				return nil, fmt.Errorf("invalid player entity %d", record.ID)
 			}
+			playerNext = record.Actor.NextAut
+			playerAlive = record.Health.Current > 0
 		}
 		if record.AI != nil {
 			if record.Actor == nil || record.Health == nil || record.Position == nil {
@@ -118,11 +130,22 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 				return nil, err
 			}
 		}
-		if record.Actor != nil && (record.Actor.Speed <= 0 || record.Actor.NextAut < 0 || record.Health == nil || record.Combatant == nil) {
+		if record.Actor != nil && (record.Actor.Speed <= 0 || record.Actor.NextAut < 0 || record.Health == nil || record.Combatant == nil || record.Position == nil) {
 			return nil, fmt.Errorf("invalid actor %d", record.ID)
+		}
+		if record.Combatant != nil && (record.Actor == nil || record.Combatant.BaseDamage < 0 || record.Combatant.BaseDamage == int(^uint(0)>>1)) {
+			return nil, fmt.Errorf("invalid combat stats for entity %d", record.ID)
 		}
 		if record.Actor != nil && record.Player == nil && record.AI == nil {
 			return nil, fmt.Errorf("actor %d has no player or monster role", record.ID)
+		}
+		if record.Actor != nil {
+			if record.Actor.NextAut < snapshot.CurrentAut {
+				return nil, fmt.Errorf("actor %d deadline precedes save clock", record.ID)
+			}
+			if earliestID == 0 || record.Actor.NextAut < earliestAut || (record.Actor.NextAut == earliestAut && record.ID < earliestID) {
+				earliestID, earliestAut = record.ID, record.Actor.NextAut
+			}
 		}
 		if record.Health != nil && (record.Health.Current < 0 || record.Health.Max <= 0 || record.Health.Current > record.Health.Max) {
 			return nil, fmt.Errorf("invalid health for entity %d", record.ID)
@@ -133,6 +156,11 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 	if playerCount != 1 {
 		return nil, fmt.Errorf("save requires exactly one player, found %d", playerCount)
+	}
+	// Between live turns the player is next at the displayed clock. A dead
+	// player can retain a later deadline after a monster's killing action.
+	if playerAlive && (playerNext != snapshot.CurrentAut || earliestID != snapshot.PlayerID) {
+		return nil, fmt.Errorf("save clock does not match the next player turn")
 	}
 	for _, record := range snapshot.Entities {
 		entity := akara.Entity(record.ID)

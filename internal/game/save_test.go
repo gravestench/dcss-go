@@ -7,6 +7,7 @@ import (
 
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/save"
 )
 
 func TestSaveContinuationMatches(t *testing.T) {
@@ -97,4 +98,68 @@ func TestFailedLoadLeavesLiveGame(t *testing.T) {
 	if !reflect.DeepEqual(before, g.Snapshot()) {
 		t.Fatal("failed restore changed live game")
 	}
+}
+
+func TestRestoreRejectsCorruptComponents(t *testing.T) {
+	for _, test := range []struct {
+		name   string
+		mutate func(*save.Snapshot)
+	}{
+		{"negative damage", func(snapshot *save.Snapshot) {
+			for i := range snapshot.Entities {
+				if snapshot.Entities[i].Player != nil {
+					snapshot.Entities[i].Combatant.BaseDamage = -1
+				}
+			}
+		}},
+		{"item health", func(snapshot *save.Snapshot) {
+			for i := range snapshot.Entities {
+				if snapshot.Entities[i].Item != nil {
+					snapshot.Entities[i].Health = &ecs.Health{Current: 0, Max: 1}
+				}
+			}
+		}},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			g := newStepGame(t)
+			snapshot := g.Snapshot()
+			test.mutate(&snapshot)
+			if restored, err := Restore(snapshot, content.DefaultFixture()); err == nil {
+				restored.Close()
+				t.Fatal("corrupt components accepted")
+			}
+		})
+	}
+}
+
+func TestRestoreRejectsClockMismatch(t *testing.T) {
+	g := newStepGame(t)
+	snapshot := g.Snapshot()
+	snapshot.CurrentAut = 100
+	if restored, err := Restore(snapshot, content.DefaultFixture()); err == nil {
+		restored.Close()
+		t.Fatal("clock mismatch accepted")
+	}
+}
+
+func TestRestoreAcceptsDeadPlayerClock(t *testing.T) {
+	g := newStepGame(t)
+	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
+		t.Fatal(err)
+	}
+	health, _ := g.stores.Health.Get(g.player)
+	health.Current = 1
+	for turn := 0; turn < 10 && !g.playerDead(); turn++ {
+		if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if !g.playerDead() {
+		t.Fatal("rat did not kill the low-health player")
+	}
+	restored, err := Restore(g.Snapshot(), content.DefaultFixture())
+	if err != nil {
+		t.Fatalf("valid dead-player snapshot rejected: %v", err)
+	}
+	defer restored.Close()
 }

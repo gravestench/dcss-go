@@ -9,7 +9,9 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"dcrawl-go/internal/content"
+	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/game"
+	"dcrawl-go/internal/save"
 )
 
 func newModel(t *testing.T) *Model {
@@ -79,5 +81,35 @@ func TestSaveLoadKeys(t *testing.T) {
 	press(m, "L")
 	if m.game != before || !strings.Contains(m.notice, "version") {
 		t.Fatalf("failed load replaced game or hid error: %q", m.notice)
+	}
+}
+
+func TestMalformedLoadPreservesLiveGame(t *testing.T) {
+	for _, test := range []struct {
+		name   string
+		mutate func(*save.Snapshot)
+	}{
+		{"item health", func(snapshot *save.Snapshot) {
+			for i := range snapshot.Entities {
+				if snapshot.Entities[i].Item != nil {
+					snapshot.Entities[i].Health = &ecs.Health{Current: 0, Max: 1}
+				}
+			}
+		}},
+		{"clock mismatch", func(snapshot *save.Snapshot) { snapshot.CurrentAut = 100 }},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			m := newModel(t)
+			before := m.game
+			snapshot := before.Snapshot()
+			test.mutate(&snapshot)
+			if err := save.Write(m.savePath, snapshot); err != nil {
+				t.Fatal(err)
+			}
+			press(m, "L")
+			if m.game != before || !strings.Contains(m.notice, "Load failed") {
+				t.Fatalf("malformed load changed live game: %q", m.notice)
+			}
+		})
 	}
 }
