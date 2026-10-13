@@ -98,6 +98,24 @@ func TestRenderShowsCharacterAttributes(t *testing.T) {
 	}
 }
 
+func TestCharacterInfoShowsSkillsWithoutTurn(t *testing.T) {
+	m := newModel(t)
+	press(m, "c")
+	content := m.View().Content
+	for _, want := range []string{"Skills", "Fighting 3", "Shields 3", "Armour 3", "Short Blades 2"} {
+		if !strings.Contains(content, want) {
+			t.Fatalf("character view missing %q: %s", want, content)
+		}
+	}
+	if m.game.View().CurrentAut != 0 {
+		t.Fatal("character inspection spent a turn")
+	}
+	press(m, "c")
+	if strings.Contains(m.View().Content, "Short Blades 2") || m.game.View().CurrentAut != 0 {
+		t.Fatal("character view did not close freely")
+	}
+}
+
 func TestMalformedLoadPreservesLiveGame(t *testing.T) {
 	for _, test := range []struct {
 		name   string

@@ -55,9 +55,9 @@ func TestStartMenu(t *testing.T) {
 	}
 }
 
-func TestStartMenuLoadBypassesChoice(t *testing.T) {
+func TestLoadV4BeforeWeaponChoice(t *testing.T) {
 	m, catalog, path := startFixture(t)
-	if err := os.WriteFile(path, []byte(`{"version":2}`), 0600); err != nil {
+	if err := os.WriteFile(path, []byte(`{"version":3}`), 0600); err != nil {
 		t.Fatal(err)
 	}
 	pressStart(m, "L")

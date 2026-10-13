@@ -15,6 +15,7 @@ type Model struct {
 	savePath      string
 	width, height int
 	showInventory bool
+	showCharacter bool
 	notice        string
 }
 
@@ -35,6 +36,15 @@ func (m *Model) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "i":
 			m.showInventory = !m.showInventory
+			if m.showInventory {
+				m.showCharacter = false
+			}
+			return m, nil
+		case "c":
+			m.showCharacter = !m.showCharacter
+			if m.showCharacter {
+				m.showInventory = false
+			}
 			return m, nil
 		case "S":
 			if err := save.Write(m.savePath, m.game.Snapshot()); err != nil {
@@ -98,6 +108,13 @@ func (m *Model) View() tea.View {
 		}
 		result.Content += "\n" + lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Padding(0, 1).Render(strings.Join(rows, "\n"))
 	}
+	if m.showCharacter {
+		rows := []string{"Skills"}
+		for _, skill := range view.Skills {
+			rows = append(rows, fmt.Sprintf("%s %d", skillName(skill.ID), skill.Level))
+		}
+		result.Content += "\n" + lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Padding(0, 1).Render(strings.Join(rows, "\n"))
+	}
 	if m.notice != "" {
 		result.Content += "\n" + m.notice
 	}
@@ -105,3 +122,28 @@ func (m *Model) View() tea.View {
 }
 
 func (m *Model) Close() error { return m.game.Close() }
+
+func skillName(id string) string {
+	switch id {
+	case "SK_FIGHTING":
+		return "Fighting"
+	case "SK_SHIELDS":
+		return "Shields"
+	case "SK_ARMOUR":
+		return "Armour"
+	case "SK_SHORT_BLADES":
+		return "Short Blades"
+	case "SK_MACES_FLAILS":
+		return "Maces & Flails"
+	case "SK_AXES":
+		return "Axes"
+	case "SK_POLEARMS":
+		return "Polearms"
+	case "SK_LONG_BLADES":
+		return "Long Blades"
+	case "SK_UNARMED_COMBAT":
+		return "Unarmed Combat"
+	default:
+		return id
+	}
+}
