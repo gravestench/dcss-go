@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 
 	"dcrawl-go/internal/character"
@@ -20,6 +21,14 @@ func copyComponent[T any](store *akara.Store[T], entity akara.Entity) *T {
 	return &copy
 }
 
+func copySkillsComponent(store *akara.Store[ecs.Skills], entity akara.Entity) *ecs.Skills {
+	copy := copyComponent(store, entity)
+	if copy != nil {
+		copy.Entries = append([]character.Skill(nil), copy.Entries...)
+	}
+	return copy
+}
+
 func validateSavedItem(record save.EntityRecord, catalog content.Catalog, player akara.Entity, occupied map[string]string) error {
 	item := record.Item
 	kind, err := catalog.Item(item.KindID)
@@ -32,7 +41,7 @@ func validateSavedItem(record save.EntityRecord, catalog content.Catalog, player
 	if (record.Position == nil) == (record.CarriedBy == nil) || record.Actor != nil {
 		return fmt.Errorf("item %d must have exactly one of position or carrier, never both", record.ID)
 	}
-	if record.Health != nil || record.Combatant != nil || record.Player != nil || record.AI != nil || record.Attributes != nil {
+	if record.Health != nil || record.Magic != nil || record.Skills != nil || record.Combatant != nil || record.Player != nil || record.AI != nil || record.Attributes != nil {
 		return fmt.Errorf("item %d has actor components", record.ID)
 	}
 	if item.Charges < 0 || (item.Charges != 0 && kind.Class != "OBJ_WANDS") {
@@ -76,6 +85,7 @@ func (g *Game) Snapshot() save.Snapshot {
 		snapshot.Entities = append(snapshot.Entities, save.EntityRecord{
 			ID: uint64(entity), Position: copyComponent(g.stores.Positions, entity),
 			Actor: copyComponent(g.stores.Actors, entity), Health: copyComponent(g.stores.Health, entity),
+			Magic: copyComponent(g.stores.Magic, entity), Skills: copySkillsComponent(g.stores.Skills, entity),
 			Combatant: copyComponent(g.stores.Combat, entity), Player: copyComponent(g.stores.Players, entity),
 			Attributes: copyComponent(g.stores.Attributes, entity),
 			AI:         copyComponent(g.stores.AI, entity), Item: copyComponent(g.stores.Items, entity),
@@ -160,24 +170,30 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			selectedWeaponID = record.Player.StartingWeaponID
 			definition := catalog.Player()
 			if record.ID != snapshot.PlayerID || record.Actor == nil || record.Position == nil || record.Health == nil ||
-				record.Player.SpeciesID != definition.SpeciesID || record.Player.JobID != definition.JobID || record.Attributes == nil {
+				record.Player.SpeciesID != definition.SpeciesID || record.Player.JobID != definition.JobID || record.Attributes == nil || record.Skills == nil || record.Magic == nil {
 				return nil, fmt.Errorf("invalid player entity %d", record.ID)
 			}
-			stats, statsErr := character.BaseStatSum(catalog, record.Player.SpeciesID, record.Player.JobID)
-			if statsErr != nil {
-				return nil, fmt.Errorf("invalid player choice: %w", statsErr)
-			}
-			if err := character.ValidateWeaponChoice(catalog, record.Player.SpeciesID, record.Player.JobID, selectedWeaponID); err != nil {
-				return nil, fmt.Errorf("invalid selected starting weapon: %w", err)
+			profile, profileErr := character.BuildStartProfile(catalog, record.Player.SpeciesID, record.Player.JobID, selectedWeaponID)
+			if profileErr != nil {
+				return nil, fmt.Errorf("invalid player choice: %w", profileErr)
 			}
 			if record.Attributes.Strength <= 0 || record.Attributes.Intelligence <= 0 || record.Attributes.Dexterity <= 0 ||
-				*record.Attributes != (ecs.Attributes{Strength: stats.Strength, Intelligence: stats.Intelligence, Dexterity: stats.Dexterity}) {
+				*record.Attributes != (ecs.Attributes{Strength: profile.Attributes.Strength, Intelligence: profile.Attributes.Intelligence, Dexterity: profile.Attributes.Dexterity}) {
 				return nil, fmt.Errorf("invalid player attributes for entity %d", record.ID)
+			}
+			if !slices.Equal(record.Skills.Entries, profile.Skills) {
+				return nil, fmt.Errorf("invalid player skills for entity %d", record.ID)
+			}
+			if record.Health.Max != profile.MaxHP {
+				return nil, fmt.Errorf("invalid player max HP for entity %d", record.ID)
+			}
+			if record.Magic.Max != profile.MaxMP || record.Magic.Current < 0 || record.Magic.Current > record.Magic.Max {
+				return nil, fmt.Errorf("invalid player MP for entity %d", record.ID)
 			}
 			playerNext = record.Actor.NextAut
 			playerAlive = record.Health.Current > 0
-		} else if record.Attributes != nil {
-			return nil, fmt.Errorf("non-player entity %d has attributes", record.ID)
+		} else if record.Attributes != nil || record.Skills != nil || record.Magic != nil {
+			return nil, fmt.Errorf("non-player entity %d has character components", record.ID)
 		}
 		if record.AI != nil {
 			if record.Actor == nil || record.Health == nil || record.Position == nil {
@@ -238,6 +254,16 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		}
 		if record.Health != nil {
 			if _, err := stores.Health.Set(entity, *record.Health); err != nil {
+				return nil, err
+			}
+		}
+		if record.Magic != nil {
+			if _, err := stores.Magic.Set(entity, *record.Magic); err != nil {
+				return nil, err
+			}
+		}
+		if record.Skills != nil {
+			if _, err := stores.Skills.Set(entity, ecs.Skills{Entries: append([]character.Skill(nil), record.Skills.Entries...)}); err != nil {
 				return nil, err
 			}
 		}
