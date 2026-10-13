@@ -88,6 +88,8 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 		m.handleNameKey(key)
 	case ScreenPlay:
 		return m.handlePlayKey(key)
+	case ScreenInventory, ScreenSkills:
+		m.handleModalKey(key)
 	case ScreenConfirm:
 		return m.handleConfirmKey(key)
 	case ScreenDeath:
@@ -96,7 +98,9 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 		}
 	case ScreenHelp:
 		if key == "esc" {
-			m.screen = m.previous
+			m.screen, m.notice = m.previous, ""
+		} else {
+			m.notice = "This help control is unavailable in the Go port."
 		}
 	}
 	return nil
@@ -122,9 +126,19 @@ func (m *AppModel) renderCanvas() *Canvas {
 		if m.game != nil {
 			DrawPlay(canvas, layout, m.game.View(), m.notice)
 		}
+	case ScreenInventory:
+		if m.game != nil {
+			DrawInventory(canvas, m.game.View())
+		}
+		m.drawModalNotice(canvas)
+	case ScreenSkills:
+		if m.game != nil {
+			DrawSkills(canvas, m.game.View(), m.catalog)
+		}
+		m.drawModalNotice(canvas)
 	case ScreenHelp:
-		canvas.Write(0, 0, "Dungeon Crawl Stone Soup - Help", Yellow, Black)
-		canvas.Write(0, 2, "Esc - Return", LightGrey, Black)
+		DrawHelp(canvas)
+		m.drawModalNotice(canvas)
 	case ScreenConfirm:
 		m.drawConfirm(canvas)
 	case ScreenDeath:
