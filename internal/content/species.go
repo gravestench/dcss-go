@@ -69,6 +69,9 @@ type SpeciesArtifact struct {
 	Species         []SpeciesDef        `json:"species"`
 }
 
+const ordinarySkillIDs = "SK_FIGHTING SK_SHORT_BLADES SK_LONG_BLADES SK_AXES SK_MACES_FLAILS SK_POLEARMS SK_STAVES SK_RANGED_WEAPONS SK_THROWING SK_ARMOUR SK_DODGING SK_STEALTH SK_SHIELDS SK_UNARMED_COMBAT SK_SPELLCASTING SK_CONJURATIONS SK_HEXES SK_SUMMONINGS SK_NECROMANCY SK_TRANSMUTATIONS SK_TRANSLOCATIONS SK_FIRE_MAGIC SK_ICE_MAGIC SK_AIR_MAGIC SK_EARTH_MAGIC SK_POISON_MAGIC SK_INVOCATIONS SK_EVOCATIONS"
+const legacyExtraSkillIDs = "SK_SLINGS SK_CROSSBOWS SK_STABBING SK_TRAPS SK_CHARMS"
+
 func (a SpeciesArtifact) Validate() error {
 	if a.SchemaVersion != 1 || a.SourceRevision == "" || a.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported species artifact metadata")
@@ -95,6 +98,18 @@ func (s SpeciesDef) validate() error {
 	}
 	if s.Habitat == "" || s.Size == "" || s.UndeadType == "" {
 		return fmt.Errorf("invalid species environment %q", s.ID)
+	}
+	required := strings.Fields(ordinarySkillIDs)
+	if strings.HasSuffix(s.SourcePath, "species-data-deprecated-species.txt") {
+		required = append(required, strings.Fields(legacyExtraSkillIDs)...)
+	}
+	if len(s.Aptitudes) != len(required) {
+		return fmt.Errorf("species %s has %d aptitudes; expected %d", s.ID, len(s.Aptitudes), len(required))
+	}
+	for _, skill := range required {
+		if _, found := s.Aptitudes[skill]; !found {
+			return fmt.Errorf("species %s is missing aptitude %s", s.ID, skill)
+		}
 	}
 	for skill, aptitude := range s.Aptitudes {
 		if !strings.HasPrefix(skill, "SK_") || (!aptitude.Allowed && aptitude.Value != 0) {

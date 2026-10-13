@@ -127,3 +127,20 @@ func TestParseYAMLRejectsMalformedSource(t *testing.T) {
 		})
 	}
 }
+
+func TestParseYAMLRejectsCoercionAndTrailingDocument(t *testing.T) {
+	cases := []struct{ name, input, field string }{
+		{"fractional strength", strings.Replace(humanYAML, "str: 8", "str: 8.9", 1), "str"},
+		{"numeric name", strings.Replace(humanYAML, "name: Human", "name: 123", 1), "name"},
+		{"null frequency", strings.Replace(humanYAML, "levelup_stat_frequency: 4", "levelup_stat_frequency: null", 1), "levelup_stat_frequency"},
+		{"second document", humanYAML + "---\nunknown_field: yes\n", "document"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, _, err := parseYAML("strict.yaml", []byte(tc.input))
+			if err == nil || !strings.Contains(err.Error(), "strict.yaml") || !strings.Contains(err.Error(), tc.field) {
+				t.Fatalf("want contextual rejection of %s, got %v", tc.field, err)
+			}
+		})
+	}
+}

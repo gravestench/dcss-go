@@ -2,16 +2,21 @@ package content
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 )
 
 func testSpecies(id string) SpeciesDef {
+	aptitudes := make(map[string]SpeciesAptitude)
+	for _, skill := range strings.Fields(ordinarySkillIDs) {
+		aptitudes[skill] = SpeciesAptitude{Allowed: true}
+	}
 	return SpeciesDef{
 		ID: id, MonsterID: "MONS_HUMAN", SourcePath: "crawl-ref/source/dat/species/human.yaml",
 		Name: "Human", ShortName: "Hu", Selectable: true, Difficulty: "Intermediate",
 		XP: 1, MR: 3, Strength: 8, Intelligence: 8, Dexterity: 8,
 		LevelUpStatFrequency: 4, LevelUpStats: []string{"str", "int", "dex"},
-		Aptitudes:     map[string]SpeciesAptitude{"SK_FIGHTING": {Allowed: true, Value: 0}},
+		Aptitudes:     aptitudes,
 		Mutations:     []SpeciesMutation{{Level: 1, ID: "MUT_FAST", Amount: 1}},
 		FakeMutations: []SpeciesFakeMutation{{Long: "long", Short: "short"}},
 		Flags:         []string{"SPF_NO_HAIR"}, Habitat: "HT_LAND", Size: "SIZE_MEDIUM", UndeadType: "US_ALIVE",

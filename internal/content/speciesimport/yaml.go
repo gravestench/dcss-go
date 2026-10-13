@@ -3,6 +3,7 @@ package speciesimport
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"sort"
 	"strings"
 
@@ -89,6 +90,124 @@ func duplicateKeys(node *yaml.Node, path string) error {
 	return nil
 }
 
+func scalar(path, field string, node *yaml.Node, tag string) error {
+	if node.Kind != yaml.ScalarNode || node.Tag != tag {
+		return fmt.Errorf("%s: %s must be %s", path, field, strings.TrimPrefix(tag, "!!"))
+	}
+	return nil
+}
+
+func sequence(path, field string, node *yaml.Node, elementTag string) error {
+	if node.Kind != yaml.SequenceNode {
+		return fmt.Errorf("%s: %s must be a sequence", path, field)
+	}
+	for _, element := range node.Content {
+		if err := scalar(path, field, element, elementTag); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func validateSourceShape(path string, root *yaml.Node) error {
+	if root.Kind != yaml.DocumentNode || len(root.Content) != 1 || root.Content[0].Kind != yaml.MappingNode {
+		return fmt.Errorf("%s: species document must be a mapping", path)
+	}
+	fields := root.Content[0]
+	seen := make(map[string]bool, len(fields.Content)/2)
+	for i := 0; i < len(fields.Content); i += 2 {
+		key, value := fields.Content[i], fields.Content[i+1]
+		if err := scalar(path, "field name", key, "!!str"); err != nil {
+			return err
+		}
+		name := key.Value
+		seen[name] = true
+		switch name {
+		case "TAG_MAJOR_VERSION", "difficulty_priority", "str", "int", "dex", "levelup_stat_frequency":
+			if err := scalar(path, name, value, "!!int"); err != nil {
+				return err
+			}
+		case "enum", "monster", "name", "short_name", "adjective", "genus", "undead_type", "size", "walking_verb", "altar_action":
+			if err := scalar(path, name, value, "!!str"); err != nil {
+				return err
+			}
+		case "difficulty":
+			if value.Kind != yaml.ScalarNode || (value.Tag != "!!str" && value.Tag != "!!bool") {
+				return fmt.Errorf("%s: difficulty must be a string or False", path)
+			}
+		case "can_swim", "create_enum":
+			if err := scalar(path, name, value, "!!bool"); err != nil {
+				return err
+			}
+		case "species_flags", "levelup_stats", "recommended_jobs", "recommended_weapons":
+			if err := sequence(path, name, value, "!!str"); err != nil {
+				return err
+			}
+		case "aptitudes":
+			if value.Kind != yaml.MappingNode {
+				return fmt.Errorf("%s: aptitudes must be a mapping", path)
+			}
+			for j := 0; j < len(value.Content); j += 2 {
+				aptName, aptValue := value.Content[j], value.Content[j+1]
+				if err := scalar(path, "aptitudes key", aptName, "!!str"); err != nil {
+					return err
+				}
+				if aptValue.Kind != yaml.ScalarNode || (aptValue.Tag != "!!int" && aptValue.Tag != "!!bool") {
+					return fmt.Errorf("%s: aptitudes.%s must be an integer or False", path, aptName.Value)
+				}
+			}
+		case "mutations":
+			if value.Kind != yaml.MappingNode {
+				return fmt.Errorf("%s: mutations must be a mapping", path)
+			}
+			for j := 0; j < len(value.Content); j += 2 {
+				level, group := value.Content[j], value.Content[j+1]
+				if err := scalar(path, "mutations level", level, "!!int"); err != nil {
+					return err
+				}
+				if group.Kind != yaml.MappingNode {
+					return fmt.Errorf("%s: mutations.%s must be a mapping", path, level.Value)
+				}
+				for k := 0; k < len(group.Content); k += 2 {
+					mutation, amount := group.Content[k], group.Content[k+1]
+					if err := scalar(path, "mutations key", mutation, "!!str"); err != nil {
+						return err
+					}
+					if err := scalar(path, "mutations."+mutation.Value, amount, "!!int"); err != nil {
+						return err
+					}
+				}
+			}
+		case "fake_mutations":
+			if value.Kind != yaml.SequenceNode {
+				return fmt.Errorf("%s: fake_mutations must be a sequence", path)
+			}
+			for _, entry := range value.Content {
+				if entry.Kind != yaml.MappingNode {
+					return fmt.Errorf("%s: fake_mutations entry must be a mapping", path)
+				}
+				for j := 0; j < len(entry.Content); j += 2 {
+					part, text := entry.Content[j], entry.Content[j+1]
+					if part.Value != "long" && part.Value != "short" {
+						return fmt.Errorf("%s: fake_mutations has unknown field %s", path, part.Value)
+					}
+					if err := scalar(path, "fake_mutations."+part.Value, text, "!!str"); err != nil {
+						return err
+					}
+				}
+			}
+		default:
+			return fmt.Errorf("%s: unknown field %s", path, name)
+		}
+	}
+	for _, name := range []string{"enum", "monster", "name", "difficulty", "aptitudes", "str", "int", "dex", "levelup_stat_frequency"} {
+		if !seen[name] {
+			return fmt.Errorf("%s: required field %s is missing", path, name)
+		}
+	}
+	return nil
+}
+
 func yamlInt(path, field string, node yaml.Node, min, max int) (int, error) {
 	var value any
 	if err := node.Decode(&value); err != nil {
@@ -109,11 +228,21 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 	if err := duplicateKeys(&tree, path); err != nil {
 		return content.SpeciesDef{}, 0, err
 	}
+	if err := validateSourceShape(path, &tree); err != nil {
+		return content.SpeciesDef{}, 0, err
+	}
 	decoder := yaml.NewDecoder(bytes.NewReader(data))
 	decoder.KnownFields(true)
 	var source sourceSpecies
 	if err := decoder.Decode(&source); err != nil {
 		return content.SpeciesDef{}, 0, fmt.Errorf("%s: %w", path, err)
+	}
+	var trailing yaml.Node
+	if err := decoder.Decode(&trailing); err != io.EOF {
+		if err != nil {
+			return content.SpeciesDef{}, 0, fmt.Errorf("%s: trailing document: %w", path, err)
+		}
+		return content.SpeciesDef{}, 0, fmt.Errorf("%s: multiple YAML documents are not supported", path)
 	}
 	if source.TagMajorVersion != 0 && source.TagMajorVersion != 34 {
 		return content.SpeciesDef{}, 0, fmt.Errorf("%s: TAG_MAJOR_VERSION %d is unsupported", path, source.TagMajorVersion)
@@ -149,7 +278,8 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 	selectable := true
 	difficultyName, ok := difficulty.(string)
 	if !ok {
-		if difficulty != false {
+		boolean, isBoolean := difficulty.(bool)
+		if !isBoolean || boolean {
 			return content.SpeciesDef{}, 0, fmt.Errorf("%s: difficulty must be Simple, Intermediate, Advanced, or False", path)
 		}
 		selectable = false
@@ -223,7 +353,7 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 			if err := node.Decode(&value); err != nil {
 				return content.SpeciesDef{}, 0, fmt.Errorf("%s: %s: %w", path, name, err)
 			}
-			if value == false {
+			if boolean, isBoolean := value.(bool); isBoolean && !boolean {
 				aptitudes[id] = content.SpeciesAptitude{Allowed: false}
 				continue
 			}

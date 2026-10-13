@@ -131,3 +131,35 @@ func TestLoadDefaultRejectsBadArtifact(t *testing.T) {
 		t.Fatalf("malformed artifact error = %v", err)
 	}
 }
+
+func TestLoadDefaultRejectsMissingAptitudes(t *testing.T) {
+	data, err := os.ReadFile("generated/species.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, missing := range []string{"all", "SK_FIGHTING"} {
+		t.Run(missing, func(t *testing.T) {
+			var artifact SpeciesArtifact
+			if err := json.Unmarshal(data, &artifact); err != nil {
+				t.Fatal(err)
+			}
+			for i := range artifact.Species {
+				if artifact.Species[i].ID == "SP_HUMAN" {
+					if missing == "all" {
+						artifact.Species[i].Aptitudes = nil
+					} else {
+						delete(artifact.Species[i].Aptitudes, missing)
+					}
+					break
+				}
+			}
+			encoded, err := json.Marshal(artifact)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if _, err := loadDefault(encoded); err == nil || !strings.Contains(err.Error(), "aptitude") {
+				t.Fatalf("missing %s aptitudes accepted: %v", missing, err)
+			}
+		})
+	}
+}
