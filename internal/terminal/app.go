@@ -13,6 +13,14 @@ import (
 
 type ScreenID uint8
 
+type confirmation uint8
+
+const (
+	confirmNone confirmation = iota
+	confirmSave
+	confirmAbandon
+)
+
 const (
 	ScreenStartup ScreenID = iota
 	ScreenSpecies
@@ -43,6 +51,7 @@ type AppModel struct {
 	options                    []character.WeaponOption
 	focus                      int
 	notice                     string
+	confirm                    confirmation
 }
 
 func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppModel, error) {
@@ -78,7 +87,13 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenName:
 		m.handleNameKey(key)
 	case ScreenPlay:
-		// Task 6 installs source play-command routing here.
+		return m.handlePlayKey(key)
+	case ScreenConfirm:
+		return m.handleConfirmKey(key)
+	case ScreenDeath:
+		if key == "esc" || key == "enter" {
+			return tea.Quit
+		}
 	case ScreenHelp:
 		if key == "esc" {
 			m.screen = m.previous
@@ -110,6 +125,11 @@ func (m *AppModel) renderCanvas() *Canvas {
 	case ScreenHelp:
 		canvas.Write(0, 0, "Dungeon Crawl Stone Soup - Help", Yellow, Black)
 		canvas.Write(0, 2, "Esc - Return", LightGrey, Black)
+	case ScreenConfirm:
+		m.drawConfirm(canvas)
+	case ScreenDeath:
+		canvas.Write(0, 0, "You die...", LightRed, Black)
+		canvas.Write(0, 2, "Press Enter to exit.", LightGrey, Black)
 	}
 	return canvas
 }
