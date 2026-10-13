@@ -150,3 +150,17 @@ func TestResolveKindsIgnoresUnrequestedFutureRows(t *testing.T) {
 		t.Fatalf("unrequested row affected resolution: %+v", kinds)
 	}
 }
+
+func TestResolveKindsRejectsArrayInsideInactiveTagBranch(t *testing.T) {
+	root := kindSourceFixture(t)
+	alterKindSource(t, root, "item-prop.cc",
+		"static const armour_def Armour_prop[] = {\n",
+		"#if TAG_MAJOR_VERSION > 34\nstatic const armour_def Armour_prop[] = {\n")
+	alterKindSource(t, root, "item-prop.cc",
+		"   EQ_BODY_ARMOUR, SIZE_SMALL, SIZE_MEDIUM, true },\n};",
+		"   EQ_BODY_ARMOUR, SIZE_SMALL, SIZE_MEDIUM, true },\n};\n#endif")
+	_, err := resolveKinds(root, []string{"scale mail"})
+	if err == nil || !strings.Contains(err.Error(), "item-prop.cc") || !strings.Contains(err.Error(), "Armour_prop[]") {
+		t.Fatalf("want inactive Armour_prop[] rejection with source context, got %v", err)
+	}
+}

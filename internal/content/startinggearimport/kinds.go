@@ -79,16 +79,27 @@ func activeSection(path string, data []byte, start, end string) (string, error) 
 	if begin < 0 {
 		return "", fmt.Errorf("%s: missing %s", path, start)
 	}
-	portion := string(data)[begin:]
-	stop := strings.Index(portion, end)
+	stop := strings.Index(string(data)[begin:], end)
 	if stop < 0 {
 		return "", fmt.Errorf("%s: unterminated %s", path, start)
 	}
-	lines, err := sourceparse.Tag34Lines(path, []byte(portion[:stop]))
+	// Include the source prefix so enclosing preprocessor conditions remain
+	// visible. A section that ends inside an open condition is rejected.
+	lines, err := sourceparse.Tag34Lines(path, data[:begin+stop+len(end)])
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("%s: section %s: %w", path, start, err)
 	}
-	return strings.Join(lines, "\n"), nil
+	active := strings.Join(lines, "\n")
+	begin = strings.Index(active, start)
+	if begin < 0 {
+		return "", fmt.Errorf("%s: missing active %s", path, start)
+	}
+	portion := active[begin:]
+	stop = strings.Index(portion, end)
+	if stop < 0 {
+		return "", fmt.Errorf("%s: unterminated %s", path, start)
+	}
+	return portion[:stop], nil
 }
 
 func armourSlot(path, id, cpp string) (string, error) {

@@ -53,6 +53,9 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 			}
 			grant.Ego = value
 		case "no_exclude":
+			if token != "no_exclude" {
+				return fail("invalid no_exclude tag " + token)
+			}
 			grant.NoExclude = true
 		default:
 			return fail("unsupported tag " + token)

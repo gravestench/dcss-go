@@ -37,6 +37,7 @@ func TestParseEquipmentSpecRejectsBadTag(t *testing.T) {
 		"dart q:2 q:3", "dart q:0", "wand of flame charges:-1",
 		"dart unknown:3", "dart q:many", "q:2", " ",
 		"dagger plus:1 charges:3", "dart no_exclude no_exclude", "dart ego:",
+		"scroll of fog no_exclude:false", "scroll of fog no_exclude:",
 		"dart q:2 trailing", "dart q:2 garbage:3",
 	} {
 		t.Run(raw, func(t *testing.T) {
