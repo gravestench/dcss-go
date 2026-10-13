@@ -1,4 +1,6 @@
-package speciesimport
+// Package sourceparse contains the narrow TAG_MAJOR_VERSION=34 scanner shared
+// by developer-run content importers. It does not parse general C++.
+package sourceparse
 
 import (
 	"fmt"
@@ -15,8 +17,8 @@ type tagBranch struct {
 	elseSeen  bool
 }
 
-// tag34Lines resolves only the conditional forms present in the pinned source.
-func tag34Lines(path string, data []byte) ([]string, error) {
+// Tag34Lines resolves only the conditional forms present in the pinned source.
+func Tag34Lines(path string, data []byte) ([]string, error) {
 	clean := blockComment.ReplaceAllString(string(data), "")
 	lines := strings.Split(clean, "\n")
 	active := true
@@ -64,8 +66,9 @@ func tag34Lines(path string, data []byte) ([]string, error) {
 	return result, nil
 }
 
-func activeEnumIDs(path string, data []byte, prefix string) (map[string]struct{}, error) {
-	lines, err := tag34Lines(path, data)
+// ActiveEnumIDs reports concrete active enum members, excluding aliases.
+func ActiveEnumIDs(path string, data []byte, prefix string) (map[string]struct{}, error) {
+	lines, err := Tag34Lines(path, data)
 	if err != nil {
 		return nil, err
 	}

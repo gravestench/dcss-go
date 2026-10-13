@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"dcrawl-go/internal/content"
+	"dcrawl-go/internal/content/sourceparse"
 )
 
 const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
@@ -73,15 +74,15 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	speciesIDs, err := activeEnumIDs(speciesHeaderPath, speciesHeader, "SP_")
+	speciesIDs, err := sourceparse.ActiveEnumIDs(speciesHeaderPath, speciesHeader, "SP_")
 	if err != nil {
 		return nil, err
 	}
-	monsterIDs, err := activeEnumIDs(monsterHeaderPath, monsterHeader, "MONS_")
+	monsterIDs, err := sourceparse.ActiveEnumIDs(monsterHeaderPath, monsterHeader, "MONS_")
 	if err != nil {
 		return nil, err
 	}
-	jobIDs, err := activeEnumIDs(jobHeaderPath, jobHeader, "JOB_")
+	jobIDs, err := sourceparse.ActiveEnumIDs(jobHeaderPath, jobHeader, "JOB_")
 	if err != nil {
 		return nil, err
 	}

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"dcrawl-go/internal/content"
+	"dcrawl-go/internal/content/sourceparse"
 )
 
 var legacyRecord = regexp.MustCompile(`(?s)\{\s*(SP_[A-Z_]+)\s*,\s*\{(.*?)\}\s*\}\s*,`)
@@ -119,11 +120,11 @@ func parseLegacySpecies(path, id, body string) (content.SpeciesDef, error) {
 }
 
 func parseLegacy(speciesPath string, speciesText []byte, aptitudePath string, aptitudeText []byte) ([]content.SpeciesDef, error) {
-	speciesLines, err := tag34Lines(speciesPath, speciesText)
+	speciesLines, err := sourceparse.Tag34Lines(speciesPath, speciesText)
 	if err != nil {
 		return nil, err
 	}
-	aptitudeLines, err := tag34Lines(aptitudePath, aptitudeText)
+	aptitudeLines, err := sourceparse.Tag34Lines(aptitudePath, aptitudeText)
 	if err != nil {
 		return nil, err
 	}
