@@ -15,31 +15,7 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 	}
 
 	if m.game.View().EquipmentDelay != nil {
-		switch key {
-		case "esc":
-			m.equipmentTickID++
-
-			return m.stepPlayCommand(game.Command{
-				Kind: game.CommandCancelEquipment,
-			})
-
-		case "S":
-			m.equipmentTickID++
-			m.confirm = confirmSave
-			m.screen = ScreenConfirm
-			m.notice = ""
-
-			return nil
-
-		case "ctrl+s":
-			m.equipmentTickID++
-
-			return m.saveAndExit()
-		}
-
-		m.notice = "You are changing your equipment. Esc interrupts."
-
-		return nil
+		return m.handleEquipmentDelayKey(key)
 	}
 
 	if m.pendingDoor != 0 {
@@ -48,30 +24,22 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 
 	switch key {
 	case "i":
-		m.previous = m.screen
-		m.screen = ScreenInventory
-		m.notice = ""
+		m.openReturnableScreen(ScreenInventory)
 
 		return nil
 
 	case "m":
-		m.previous = m.screen
-		m.screen = ScreenSkills
-		m.notice = ""
+		m.openReturnableScreen(ScreenSkills)
 
 		return nil
 
 	case "?":
-		m.previous = m.screen
-		m.screen = ScreenHelp
-		m.notice = ""
+		m.openReturnableScreen(ScreenHelp)
 
 		return nil
 
 	case "S":
-		m.confirm = confirmSave
-		m.screen = ScreenConfirm
-		m.notice = ""
+		m.openConfirmation(confirmSave)
 
 		return nil
 
@@ -79,41 +47,33 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 		return m.saveAndExit()
 
 	case "ctrl+q":
-		m.confirm = confirmAbandon
-		m.screen = ScreenConfirm
-		m.notice = ""
+		m.openConfirmation(confirmAbandon)
 
 		return nil
 
 	case "q":
-		m.previous = m.screen
-		m.screen = ScreenQuaff
-		m.notice = ""
+		m.openReturnableScreen(ScreenQuaff)
 
 		return nil
 
 	case "d":
-		m.screen = ScreenDrop
+		m.openScreen(ScreenDrop)
 		m.dropQuantity = ""
-		m.notice = ""
 
 		return nil
 
 	case "w":
-		m.screen = ScreenWield
-		m.notice = ""
+		m.openScreen(ScreenWield)
 
 		return nil
 
 	case "W":
-		m.screen = ScreenWear
-		m.notice = ""
+		m.openScreen(ScreenWear)
 
 		return nil
 
 	case "T":
-		m.screen = ScreenTakeOff
-		m.notice = ""
+		m.openScreen(ScreenTakeOff)
 
 		return nil
 
@@ -138,6 +98,47 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 	}
 
 	return m.stepPlayCommand(command)
+}
+
+func (m *AppModel) handleEquipmentDelayKey(key string) tea.Cmd {
+	switch key {
+	case "esc":
+		m.equipmentTickID++
+
+		return m.stepPlayCommand(game.Command{
+			Kind: game.CommandCancelEquipment,
+		})
+
+	case "S":
+		m.equipmentTickID++
+		m.openConfirmation(confirmSave)
+
+		return nil
+
+	case "ctrl+s":
+		m.equipmentTickID++
+
+		return m.saveAndExit()
+	}
+
+	m.notice = "You are changing your equipment. Esc interrupts."
+
+	return nil
+}
+
+func (m *AppModel) openScreen(screen ScreenID) {
+	m.screen = screen
+	m.notice = ""
+}
+
+func (m *AppModel) openReturnableScreen(screen ScreenID) {
+	m.previous = m.screen
+	m.openScreen(screen)
+}
+
+func (m *AppModel) openConfirmation(action confirmation) {
+	m.confirm = action
+	m.openScreen(ScreenConfirm)
 }
 
 func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
