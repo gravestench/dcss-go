@@ -105,6 +105,16 @@ func TestSavedHillOrcStatGainOnlyUsesStrength(t *testing.T) {
 	}
 }
 
+func TestSavedDeepElfStatGainOnlyUsesIntelligence(t *testing.T) {
+	if !validStatGains([3]int{0, 1, 0}, 0, 1, []string{"int"}) {
+		t.Fatal("rejected Deep Elf intelligence gain")
+	}
+
+	if validStatGains([3]int{1, 0, 0}, 0, 1, []string{"int"}) {
+		t.Fatal("accepted impossible Deep Elf strength gain")
+	}
+}
+
 func TestRestoreRejectsUnsupportedPlayerBaseSpeed(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()

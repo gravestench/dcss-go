@@ -62,6 +62,60 @@ func TestHillOrcFighterGainsStrengthAtFifthLevel(t *testing.T) {
 	}
 }
 
+func TestDeepElfFighterGainsIntelligenceAtFourthLevel(t *testing.T) {
+	catalog, err := content.LoadDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	g, err := NewDungeonGame(
+		1,
+		catalog,
+		"SP_DEEP_ELF",
+		"JOB_FIGHTER",
+		"WPN_FLAIL",
+		"Elena",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		g.Close()
+	})
+
+	progress, _ := g.stores.Progression.Get(g.player)
+	attributes, _ := g.stores.Attributes.Get(g.player)
+	species, _ := catalog.Species("SP_DEEP_ELF")
+
+	for level := 2; level <= 4; level++ {
+		progress.TotalXP, err = character.ExperienceNeeded(level, species.XP)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := g.advancement.advance(); err != nil {
+			t.Fatal(err)
+		}
+
+		if level == 3 {
+			if _, err := g.ChooseStat("str"); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+
+	if progress.Level != 4 ||
+		attributes.Strength != 15 ||
+		attributes.Intelligence != 13 ||
+		attributes.Dexterity != 14 {
+		t.Fatalf("Deep Elf XL4 progression: %+v, %+v", progress, attributes)
+	}
+}
+
 func TestAdvancementAndViewReadSelectedSpeciesXPAptitude(t *testing.T) {
 	g := newStepGame(t)
 	player, found := g.stores.Players.Get(g.player)

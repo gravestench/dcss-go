@@ -102,7 +102,7 @@ func validateSavedItem(
 		return fmt.Errorf("item %d has invalid equipped slot or carrier", record.ID)
 	}
 
-	// Neither supported Fighter species can wear barding.
+	// The supported Fighter species cannot wear barding.
 	if isBarding(kind.ID) {
 		return fmt.Errorf("item %d has barding equipped", record.ID)
 	}

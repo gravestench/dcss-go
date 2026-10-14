@@ -312,6 +312,46 @@ func TestHillOrcFighterMenuStartAndSaveRestore(t *testing.T) {
 	}
 }
 
+func TestDeepElfFighterMenuStartAndSaveRestore(t *testing.T) {
+	m := pregameModel(t)
+	enterName(m, "Elena")
+	pressApp(m, "enter")
+	pressApp(m, "p")
+	pressApp(m, "a")
+	pressApp(m, "b")
+
+	if m.screen != ScreenPlay || m.game == nil {
+		t.Fatalf("Deep Elf start: %v / %s", m.screen, m.notice)
+	}
+
+	view := m.game.View()
+
+	if view.SpeciesID != "SP_DEEP_ELF" ||
+		view.SpeciesName != "Deep Elf" ||
+		view.PlayerMaxHP != 13 ||
+		view.PlayerMaxMP != 3 ||
+		m.welcomeText() != "Welcome, Elena the Deep Elf Fighter." ||
+		!strings.Contains(plainApp(m), "Deep Elf") {
+		t.Fatalf("Deep Elf view: %+v", view)
+	}
+
+	restored, err := game.Restore(m.game.Snapshot(), m.catalog)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		restored.Close()
+	})
+
+	if loaded := restored.View(); loaded.SpeciesID != view.SpeciesID ||
+		loaded.PlayerMaxHP != view.PlayerMaxHP ||
+		loaded.PlayerMaxMP != view.PlayerMaxMP {
+		t.Fatalf("restored Deep Elf: %+v", loaded)
+	}
+}
+
 func TestPregamePostWeaponNamePromptAndUnavailableChoices(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")

@@ -43,10 +43,19 @@ func humanSkillPoints(level int) (int, error) {
 	return needed + 1, nil
 }
 
-// SupportedFighterStart identifies species whose Fighter rules are ported.
+// SupportedFighterSpecies identifies ordinary, mutation-free medium species
+// whose Fighter-specific rules are implemented.
+func SupportedFighterSpecies(speciesID string) bool {
+	switch speciesID {
+	case "SP_HUMAN", "SP_HILL_ORC", "SP_DEEP_ELF":
+		return true
+	}
+
+	return false
+}
+
 func SupportedFighterStart(speciesID, jobID string) bool {
-	return jobID == "JOB_FIGHTER" &&
-		(speciesID == "SP_HUMAN" || speciesID == "SP_HILL_ORC")
+	return jobID == "JOB_FIGHTER" && SupportedFighterSpecies(speciesID)
 }
 
 // StartingSkills resolves Fighter's SK_WEAPON grant after the weapon choice.

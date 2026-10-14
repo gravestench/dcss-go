@@ -31,7 +31,7 @@ func NewDungeonGame(
 	catalog content.Catalog,
 	speciesID, jobID, weaponID, name string,
 ) (_ *Game, err error) {
-	// The source's base player speed is 10 aut for both playable species.
+	// The source's base player speed is 10 aut for these playable species.
 	definition := content.PlayerDef{
 		SpeciesID: speciesID,
 		JobID:     jobID,

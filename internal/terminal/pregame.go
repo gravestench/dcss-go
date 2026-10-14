@@ -215,7 +215,7 @@ func (m *AppModel) selectCharacterChoice(key string, ids []string) {
 }
 
 func (m *AppModel) selectSpecies(id string) {
-	if id != "SP_HUMAN" && id != "SP_HILL_ORC" {
+	if !character.SupportedFighterSpecies(id) {
 		m.notice = "This species is unavailable in the Go port."
 
 		return

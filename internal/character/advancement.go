@@ -57,7 +57,7 @@ func BaseMaxHP(level int, species content.SpeciesDef, skills []Skill) (int, erro
 func BaseMaxMP(level int, species content.SpeciesDef) (int, error) {
 	if level < 1 ||
 		level > MaxExperienceLevel ||
-		(species.ID != "SP_HUMAN" && species.ID != "SP_HILL_ORC") {
+		!SupportedFighterSpecies(species.ID) {
 		return 0, fmt.Errorf("unsupported baseline MP inputs at XL%d for %s", level, species.ID)
 	}
 
