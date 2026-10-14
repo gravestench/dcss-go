@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"dcrawl-go/internal/character"
+	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/save"
 )
 
@@ -94,22 +95,35 @@ func TestPlayerLethalBumpClearsRatOccupancy(t *testing.T) {
 }
 
 func TestPlayerBumpRejectsInvalidWeaponBeforeSpendingTime(t *testing.T) {
-	g := newStepGame(t)
-	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
-		t.Fatal(err)
-	}
-	for _, entity := range g.stores.Equipped.Entities() {
-		item, found := g.stores.Items.Get(entity)
-		if found && item.KindID == "WPN_RAPIER" {
-			item.Plus = 101
-		}
-	}
-	before := g.Snapshot()
-	if _, err := g.Step(Command{Kind: CommandMove, DX: 1}); err == nil || !strings.Contains(err.Error(), "attack") {
-		t.Fatalf("invalid weapon bump error = %v", err)
-	}
-	if !reflect.DeepEqual(before, g.Snapshot()) {
-		t.Fatal("failed bump changed game state")
+	for _, tc := range []struct {
+		name   string
+		mutate func(*ecs.Item)
+	}{
+		{"extreme enchantment", func(item *ecs.Item) { item.Plus = 101 }},
+		{"zero quantity", func(item *ecs.Item) { item.Quantity = 0 }},
+		{"duplicate weapon quantity", func(item *ecs.Item) { item.Quantity = 2 }},
+		{"charges on weapon", func(item *ecs.Item) { item.Charges = 1 }},
+		{"unsupported ego", func(item *ecs.Item) { item.Ego = "poisoned" }},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			g := newStepGame(t)
+			if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
+				t.Fatal(err)
+			}
+			for _, entity := range g.stores.Equipped.Entities() {
+				item, found := g.stores.Items.Get(entity)
+				if found && item.KindID == "WPN_RAPIER" {
+					tc.mutate(item)
+				}
+			}
+			before := g.Snapshot()
+			if _, err := g.Step(Command{Kind: CommandMove, DX: 1}); err == nil {
+				t.Fatal("invalid weapon bump accepted")
+			}
+			if !reflect.DeepEqual(before, g.Snapshot()) {
+				t.Fatal("failed bump changed game state")
+			}
+		})
 	}
 }
 

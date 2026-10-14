@@ -35,30 +35,14 @@ func validateSavedItem(record save.EntityRecord, catalog content.Catalog, player
 	if err != nil {
 		return err
 	}
-	if item.Quantity <= 0 || (!kind.Stackable && item.Quantity != 1) {
-		return fmt.Errorf("item %d has impossible quantity", record.ID)
+	if err := validateItemProperties(*item, kind); err != nil {
+		return fmt.Errorf("item %d has %w", record.ID, err)
 	}
 	if (record.Position == nil) == (record.CarriedBy == nil) || record.Actor != nil {
 		return fmt.Errorf("item %d must have exactly one of position or carrier, never both", record.ID)
 	}
 	if record.Health != nil || record.Magic != nil || record.Skills != nil || record.Combatant != nil || record.Player != nil || record.AI != nil || record.Attributes != nil {
 		return fmt.Errorf("item %d has actor components", record.ID)
-	}
-	if item.Charges < 0 || (item.Charges != 0 && kind.Class != "OBJ_WANDS") {
-		return fmt.Errorf("item %d has impossible charges", record.ID)
-	}
-	if item.Plus != 0 && kind.Class != "OBJ_WEAPONS" && kind.Class != "OBJ_ARMOUR" {
-		return fmt.Errorf("item %d has impossible enchantment", record.ID)
-	}
-	if item.Ego != "" {
-		switch item.Ego {
-		case "poisoned", "curare", "dispersal":
-			if kind.Class != "OBJ_MISSILES" {
-				return fmt.Errorf("item %d has incompatible ego", record.ID)
-			}
-		default:
-			return fmt.Errorf("item %d has unknown ego %q", record.ID, item.Ego)
-		}
 	}
 	if record.Equipped == nil {
 		return nil

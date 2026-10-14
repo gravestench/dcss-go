@@ -4,9 +4,34 @@ import (
 	"fmt"
 	"time"
 
+	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"github.com/gravestench/akara"
 )
+
+// validateItemProperties is shared by save restore and live equipment use.
+func validateItemProperties(item ecs.Item, kind content.ItemDef) error {
+	if item.Quantity <= 0 || (!kind.Stackable && item.Quantity != 1) {
+		return fmt.Errorf("impossible quantity")
+	}
+	if item.Charges < 0 || (item.Charges != 0 && kind.Class != "OBJ_WANDS") {
+		return fmt.Errorf("impossible charges")
+	}
+	if item.Plus != 0 && kind.Class != "OBJ_WEAPONS" && kind.Class != "OBJ_ARMOUR" {
+		return fmt.Errorf("impossible enchantment")
+	}
+	if item.Ego != "" {
+		switch item.Ego {
+		case "poisoned", "curare", "dispersal":
+			if kind.Class != "OBJ_MISSILES" {
+				return fmt.Errorf("incompatible ego")
+			}
+		default:
+			return fmt.Errorf("unknown ego %q", item.Ego)
+		}
+	}
+	return nil
+}
 
 func (g *Game) floorItemAt(position ecs.Position) (akara.Entity, bool) {
 	for _, entity := range g.stores.Items.Entities() {

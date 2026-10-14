@@ -47,6 +47,9 @@ func (g *Game) playerAttackInput() (combat.PlayerAttackInput, error) {
 		if err != nil {
 			return combat.PlayerAttackInput{}, err
 		}
+		if err := validateItemProperties(*item, kind); err != nil {
+			return combat.PlayerAttackInput{}, fmt.Errorf("equipped weapon %d has %w", entity, err)
+		}
 		if kind.Weapon == nil || kind.Weapon.SkillID != kind.WeaponSkill {
 			return combat.PlayerAttackInput{}, fmt.Errorf("weapon %s has no supported melee properties", kind.ID)
 		}
