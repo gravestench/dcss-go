@@ -48,6 +48,7 @@ func newScenario(
 			world.Close()
 		}
 	}()
+
 	stores := ecs.Register(world)
 	rng := NewRNGStreams(seed)
 	setup, err := buildScenarioLevels(scenarioID, stores.Positions, rng)

@@ -193,7 +193,8 @@ func joinItemViews(
 
 		switch identity.ClassID {
 		case "OBJ_WEAPONS":
-			item.Slot, item.WeaponSkill = "weapon", row.Weapon.SkillID
+			item.Slot = "weapon"
+			item.WeaponSkill = row.Weapon.SkillID
 		case "OBJ_ARMOUR":
 			switch row.Armour.SlotID {
 			case "EQ_BODY_ARMOUR":

@@ -83,7 +83,8 @@ func (m *AppModel) Init() tea.Cmd {
 func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := message.(type) {
 	case tea.WindowSizeMsg:
-		m.width, m.height = msg.Width, msg.Height
+		m.width = msg.Width
+		m.height = msg.Height
 	case tea.KeyPressMsg:
 		return m, m.handleKey(msg.String())
 	}
@@ -121,7 +122,8 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 		}
 	case ScreenHelp:
 		if key == "esc" {
-			m.screen, m.notice = m.previous, ""
+			m.screen = m.previous
+			m.notice = ""
 		} else {
 			m.notice = "This help control is unavailable in the Go port."
 		}
@@ -255,8 +257,18 @@ func (m *AppModel) returnToStartup() {
 	}
 
 	m.game = nil
-	m.screen, m.previous, m.weaponReturn = ScreenStartup, ScreenStartup, ScreenStartup
-	m.name, m.speciesID, m.jobID, m.weaponID = "", "", "", ""
+
+	m.screen = ScreenStartup
+	m.previous = ScreenStartup
+	m.weaponReturn = ScreenStartup
+
+	m.name = ""
+	m.speciesID = ""
+	m.jobID = ""
+	m.weaponID = ""
 	m.options = nil
-	m.focus, m.notice, m.confirm = 0, "", confirmNone
+
+	m.focus = 0
+	m.notice = ""
+	m.confirm = confirmNone
 }

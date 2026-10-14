@@ -141,7 +141,8 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 
 func TestDrawPlayShowsEarnedRatExperienceProgress(t *testing.T) {
 	view := playView(t)
-	view.ExperienceLevel, view.NextLevelPercent = 1, 11
+	view.ExperienceLevel = 1
+	view.NextLevelPercent = 11
 	canvas := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
 	DrawPlay(canvas, layout, view, "")

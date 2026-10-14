@@ -294,7 +294,8 @@ func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 		x: position.X,
 		y: position.Y,
 	})
-	position.X, position.Y = x, y
+	position.X = x
+	position.Y = y
 	l.actors[point{
 		x: x,
 		y: y,

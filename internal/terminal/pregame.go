@@ -41,7 +41,9 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 				}
 			}
 
-			m.screen, m.focus, m.notice = ScreenSpecies, 0, ""
+			m.screen = ScreenSpecies
+			m.focus = 0
+			m.notice = ""
 		} else {
 			m.notice = "This game mode is unavailable in the Go port."
 		}
@@ -55,7 +57,8 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 	case "ctrl+p":
 		m.notice = "RC file information is unavailable in the Go port."
 	case "?":
-		m.previous, m.screen = m.screen, ScreenHelp
+		m.previous = m.screen
+		m.screen = ScreenHelp
 	default:
 		m.appendNameKey(key)
 	}
@@ -83,6 +86,7 @@ func (m *AppModel) appendNameKey(key string) {
 
 		return
 	}
+
 	// A partial name may have trailing space, but it must still be source-valid.
 	if err := character.ValidateName(candidate); err != nil {
 		m.notice = "invalid name character"
@@ -90,7 +94,8 @@ func (m *AppModel) appendNameKey(key string) {
 		return
 	}
 
-	m.name, m.notice = candidate, ""
+	m.name = candidate
+	m.notice = ""
 }
 
 func (m *AppModel) handleCharacterChoiceKey(key string) {
@@ -104,7 +109,9 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 
 	switch key {
 	case "esc":
-		m.screen, m.focus, m.notice = ScreenStartup, 0, ""
+		m.screen = ScreenStartup
+		m.focus = 0
+		m.notice = ""
 
 		return
 	case "backspace":
@@ -116,7 +123,8 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 			m.screen = ScreenBackground
 		}
 
-		m.focus, m.notice = 0, ""
+		m.focus = 0
+		m.notice = ""
 
 		return
 	case "space":
@@ -126,7 +134,8 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 			m.screen = ScreenSpecies
 		}
 
-		m.focus, m.notice = 0, ""
+		m.focus = 0
+		m.notice = ""
 
 		return
 	case "up":
@@ -146,7 +155,8 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 
 		return
 	case "?":
-		m.previous, m.screen = m.screen, ScreenHelp
+		m.previous = m.screen
+		m.screen = ScreenHelp
 
 		return
 	case "enter":
@@ -171,7 +181,8 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 				return
 			}
 
-			m.speciesID, m.notice = id, ""
+			m.speciesID = id
+			m.notice = ""
 
 			if m.jobID == "" {
 				m.screen = ScreenBackground
@@ -186,7 +197,8 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 				return
 			}
 
-			m.jobID, m.notice = id, ""
+			m.jobID = id
+			m.notice = ""
 
 			if m.speciesID == "" {
 				m.screen = ScreenSpecies
@@ -211,13 +223,18 @@ func (m *AppModel) enterWeaponChoice() {
 		return
 	}
 
-	m.weaponReturn, m.screen, m.focus, m.options = m.screen, ScreenWeapon, 0, options
+	m.weaponReturn = m.screen
+	m.screen = ScreenWeapon
+	m.focus = 0
+	m.options = options
 }
 
 func (m *AppModel) handleWeaponKey(key string) {
 	switch key {
 	case "esc", "backspace":
-		m.screen, m.focus, m.notice = m.weaponReturn, 0, ""
+		m.screen = m.weaponReturn
+		m.focus = 0
+		m.notice = ""
 
 		return
 	case "up":
@@ -229,7 +246,8 @@ func (m *AppModel) handleWeaponKey(key string) {
 
 		return
 	case "?":
-		m.previous, m.screen = m.screen, ScreenHelp
+		m.previous = m.screen
+		m.screen = ScreenHelp
 
 		return
 	case "enter":
@@ -245,7 +263,9 @@ func (m *AppModel) handleWeaponKey(key string) {
 			continue
 		}
 
-		m.weaponID, m.focus, m.notice = option.ID, i, ""
+		m.weaponID = option.ID
+		m.focus = i
+		m.notice = ""
 
 		if m.name == "" {
 			m.screen = ScreenName
@@ -262,7 +282,8 @@ func (m *AppModel) handleWeaponKey(key string) {
 func (m *AppModel) handleNameKey(key string) {
 	switch key {
 	case "esc":
-		m.screen, m.notice = ScreenWeapon, ""
+		m.screen = ScreenWeapon
+		m.notice = ""
 
 		return
 	case "backspace":
@@ -292,7 +313,9 @@ func (m *AppModel) startGame() {
 		return
 	}
 
-	m.game, m.screen, m.notice = started, ScreenPlay, ""
+	m.game = started
+	m.screen = ScreenPlay
+	m.notice = ""
 }
 
 func flattenGroups(groups []content.MenuGroup) []string {
@@ -351,7 +374,9 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 	choice := "species"
 
 	if m.screen == ScreenBackground {
-		groups, descriptions, choice = m.presentation.JobGroups, m.presentation.JobDescriptions, "background"
+		groups = m.presentation.JobGroups
+		descriptions = m.presentation.JobDescriptions
+		choice = "background"
 	}
 
 	canvas.Write(0, 0, m.welcomeText(), Brown, Black)

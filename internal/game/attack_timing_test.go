@@ -65,7 +65,8 @@ func TestRapierBumpCostSchedulesTwoRatActions(t *testing.T) {
 	}
 
 	health, _ := g.stores.Health.Get(rat)
-	health.Current, health.Max = 100, 100
+	health.Current = 100
+	health.Max = 100
 	result, err := g.Step(Command{
 		Kind: CommandMove,
 		DX:   1,
@@ -124,7 +125,8 @@ func TestShortUnarmedBumpSchedulesOnlyOneRatAction(t *testing.T) {
 
 	rat := ratID(t, g)
 	health, _ := g.stores.Health.Get(rat)
-	health.Current, health.Max = 100, 100
+	health.Current = 100
+	health.Max = 100
 	result, err := g.Step(Command{
 		Kind: CommandMove,
 		DX:   1,

@@ -97,12 +97,14 @@ func (g *Game) View() View {
 	}
 
 	if health, ok := g.stores.Health.Get(g.player); ok {
-		view.PlayerHP, view.PlayerMaxHP = health.Current, health.Max
+		view.PlayerHP = health.Current
+		view.PlayerMaxHP = health.Max
 		view.PlayerDead = health.Current <= 0
 	}
 
 	if magic, ok := g.stores.Magic.Get(g.player); ok {
-		view.PlayerMP, view.PlayerMaxMP = magic.Current, magic.Max
+		view.PlayerMP = magic.Current
+		view.PlayerMaxMP = magic.Max
 	}
 
 	if skills, ok := g.stores.Skills.Get(g.player); ok {
@@ -143,7 +145,9 @@ func (g *Game) View() View {
 	}
 
 	if defense, err := newPlayerCombat(g).defense(); err == nil {
-		view.PlayerAC, view.PlayerEV, view.PlayerSH = defense.AC, defense.EV, defense.ShieldClass/2
+		view.PlayerAC = defense.AC
+		view.PlayerEV = defense.EV
+		view.PlayerSH = defense.ShieldClass / 2
 		view.DefenseKnown = true
 	}
 
@@ -167,7 +171,9 @@ func (g *Game) View() View {
 		switch {
 		case entity == g.player:
 			glyph = '@'
-			kindID, name, role = "player", view.PlayerName, "player"
+			kindID = "player"
+			name = view.PlayerName
+			role = "player"
 		case g.stores.AI.Has(entity):
 			actor, _ := g.stores.Actors.Get(entity)
 			kindID, role = actor.KindID, "monster"

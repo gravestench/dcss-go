@@ -495,7 +495,9 @@ func loadDefault(
 		}
 	}
 
-	catalog.items, catalog.itemIdentities = itemCatalog.items, itemCatalog.itemIdentities
+	catalog.items = itemCatalog.items
+	catalog.itemIdentities = itemCatalog.itemIdentities
+
 	var gear StartingGearArtifact
 
 	if err := decodeArtifact(gearData, "starting gear", &gear); err != nil {

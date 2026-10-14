@@ -119,7 +119,9 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		}
 
 		in.WeaponSkillID = kind.Weapon.SkillID
-		in.WeaponDamage, in.WeaponHit, in.WeaponPlus = kind.Weapon.Damage, kind.Weapon.Hit, item.Plus
+		in.WeaponDamage = kind.Weapon.Damage
+		in.WeaponHit = kind.Weapon.Hit
+		in.WeaponPlus = item.Plus
 	}
 
 	if (in.Unarmed && weaponCount != 0) || (!in.Unarmed && weaponCount != 1) {
@@ -318,10 +320,14 @@ func (c playerCombat) defense() (combat.Defense, error) {
 		}
 
 		if equipped.Slot == "body" {
-			input.BodyAC, input.BodyEV, input.BodyPlus = kind.Armour.AC, kind.Armour.EV, item.Plus
+			input.BodyAC = kind.Armour.AC
+			input.BodyEV = kind.Armour.EV
+			input.BodyPlus = item.Plus
 			body = true
 		} else {
-			input.ShieldAC, input.ShieldEV, input.ShieldPlus = kind.Armour.AC, kind.Armour.EV, item.Plus
+			input.ShieldAC = kind.Armour.AC
+			input.ShieldEV = kind.Armour.EV
+			input.ShieldPlus = item.Plus
 			shield = true
 		}
 	}

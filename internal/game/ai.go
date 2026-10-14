@@ -99,7 +99,9 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 			return ecs.Intent{}, err
 		}
 
-		ai.Behavior, ai.TargetX, ai.TargetY = "seek", player.X, player.Y
+		ai.Behavior = "seek"
+		ai.TargetX = player.X
+		ai.TargetY = player.Y
 		ai.MemoryUntilAut = int64(*s.clock) + int64(250+memoryRoll)
 	} else if ai.Behavior == "seek" {
 		if ai.MemoryUntilAut == 0 {
@@ -108,15 +110,23 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 		}
 
 		if int64(*s.clock) >= ai.MemoryUntilAut {
-			ai.Behavior, ai.TargetX, ai.TargetY, ai.MemoryUntilAut = "wander", 0, 0, 0
+			ai.Behavior = "wander"
+			ai.TargetX = 0
+			ai.TargetY = 0
+			ai.MemoryUntilAut = 0
 		}
 	} else if ai.Behavior != "seek" && ai.Behavior != "wander" {
 		// Earlier AI records used "chase" without a remembered target.
-		ai.Behavior, ai.TargetX, ai.TargetY = "wander", 0, 0
+		ai.Behavior = "wander"
+		ai.TargetX = 0
+		ai.TargetY = 0
 	}
 
 	if position.X == ai.TargetX && position.Y == ai.TargetY {
-		ai.Behavior, ai.TargetX, ai.TargetY, ai.MemoryUntilAut = "wander", 0, 0, 0
+		ai.Behavior = "wander"
+		ai.TargetX = 0
+		ai.TargetY = 0
+		ai.MemoryUntilAut = 0
 	}
 
 	if ai.Behavior == "wander" {
@@ -213,7 +223,8 @@ func monsterStepIntent(nextX, nextY, playerX, playerY, dx, dy int) ecs.Intent {
 // chooseWanderTarget follows Crawl's 150 attempts with offsets in [-6, 6].
 // A failed search leaves the animal waiting until its next decision.
 func (s *monsterDecisionSystem) chooseWanderTarget(ai *ecs.MonsterAI, level *Level, x, y int) error {
-	ai.TargetX, ai.TargetY = 0, 0
+	ai.TargetX = 0
+	ai.TargetY = 0
 
 	for attempt := 0; attempt < 150; attempt++ {
 		dx, err := s.rng.Intn("ai", 13)
@@ -231,7 +242,8 @@ func (s *monsterDecisionSystem) chooseWanderTarget(ai *ecs.MonsterAI, level *Lev
 		targetX, targetY := x+dx-6, y+dy-6
 
 		if (targetX != x || targetY != y) && level.Walkable(targetX, targetY) {
-			ai.TargetX, ai.TargetY = targetX, targetY
+			ai.TargetX = targetX
+			ai.TargetY = targetY
 
 			return nil
 		}

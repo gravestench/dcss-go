@@ -207,9 +207,12 @@ func DrawHelp(canvas *Canvas) {
 func (m *AppModel) handleModalKey(key string) {
 	switch key {
 	case "esc":
-		m.screen, m.notice = ScreenPlay, ""
+		m.screen = ScreenPlay
+		m.notice = ""
 	case "?":
-		m.previous, m.screen, m.notice = m.screen, ScreenHelp, ""
+		m.previous = m.screen
+		m.screen = ScreenHelp
+		m.notice = ""
 	default:
 		m.notice = "This menu control is unavailable in the Go port."
 	}

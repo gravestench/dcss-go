@@ -107,7 +107,8 @@ func Generate(sourceDir string) ([]byte, error) {
 			}
 		}
 
-		spell.NumericID, spell.EnumLine = id.NumericID, id.EnumLine
+		spell.NumericID = id.NumericID
+		spell.EnumLine = id.EnumLine
 		artifact.Spells = append(artifact.Spells, spell)
 	}
 

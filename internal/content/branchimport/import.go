@@ -61,7 +61,8 @@ func Generate(sourceDir string) ([]byte, error) {
 	}
 
 	for i := range rows {
-		rows[i].NumericID, rows[i].EnumLine = ids[i].NumericID, ids[i].EnumLine
+		rows[i].NumericID = ids[i].NumericID
+		rows[i].EnumLine = ids[i].EnumLine
 	}
 
 	artifact := content.BranchArtifact{

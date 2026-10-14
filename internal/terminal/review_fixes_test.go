@@ -114,7 +114,10 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 		t.Fatalf("focused restricted species colors: %+v", c.cells[y*c.width+x])
 	}
 
-	m.screen, m.focus, m.jobID, m.speciesID = ScreenBackground, 0, "", "SP_BARACHI"
+	m.screen = ScreenBackground
+	m.focus = 0
+	m.jobID = ""
+	m.speciesID = "SP_BARACHI"
 	ids := flattenGroups(m.presentation.JobGroups)
 
 	for i, id := range ids {
@@ -185,7 +188,9 @@ func TestCreationShortcutColumnsAndContextText(t *testing.T) {
 
 func TestDrawPlayDangerValueColors(t *testing.T) {
 	view := playView(t)
-	view.PlayerHP, view.PlayerMP, view.Attributes.Strength = 7, 0, 2
+	view.PlayerHP = 7
+	view.PlayerMP = 0
+	view.Attributes.Strength = 2
 	c := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
 	DrawPlay(c, layout, view, "")

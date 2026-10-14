@@ -390,7 +390,9 @@ func TestLegacyZeroDeadlineSeekGetsFiniteMemory(t *testing.T) {
 	}
 
 	ai, _ := g.stores.AI.Get(quokka)
-	ai.Behavior, ai.TargetX, ai.TargetY = "seek", 7, 7
+	ai.Behavior = "seek"
+	ai.TargetX = 7
+	ai.TargetY = 7
 
 	if err := g.refreshVisibility(); err != nil {
 		t.Fatal(err)
@@ -480,7 +482,10 @@ func TestQuokkaRoutesAroundCentralWallToRememberedTarget(t *testing.T) {
 	}
 
 	ai, _ := g.stores.AI.Get(quokka)
-	ai.Behavior, ai.TargetX, ai.TargetY, ai.MemoryUntilAut = "seek", 7, 1, 550
+	ai.Behavior = "seek"
+	ai.TargetX = 7
+	ai.TargetY = 1
+	ai.MemoryUntilAut = 550
 	first, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
 
 	if err != nil || first != (ecs.Intent{

@@ -78,6 +78,22 @@ func checkFile(path string) (int, error) {
 
 	ast.Inspect(file, func(node ast.Node) bool {
 		switch value := node.(type) {
+		case *ast.AssignStmt:
+			if value.Tok != token.ASSIGN || len(value.Lhs) < 2 || len(value.Rhs) < 2 {
+				break
+			}
+
+			allFields := true
+
+			for _, target := range value.Lhs {
+				_, field := target.(*ast.SelectorExpr)
+				allFields = allFields && field
+			}
+
+			if allFields || len(value.Lhs) >= 3 {
+				report(value.Pos(), "assign mutable fields and unrelated values one per line")
+			}
+
 		case *ast.BlockStmt:
 			if len(value.List) > 0 && sameLine(fset, value.Lbrace, value.Rbrace) {
 				report(value.Lbrace, "expand this inline block")

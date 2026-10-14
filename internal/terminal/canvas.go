@@ -191,7 +191,9 @@ func (c *Canvas) Styled() string {
 			}
 
 			if !haveRun {
-				fg, bg, haveRun = entry.fg, entry.bg, true
+				fg = entry.fg
+				bg = entry.bg
+				haveRun = true
 			}
 
 			run.WriteString(entry.text)

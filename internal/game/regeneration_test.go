@@ -28,7 +28,8 @@ func TestHumanFighterRecoversThroughPlayerWaitsOnly(t *testing.T) {
 	moveRatToOtherFloor(t, g)
 	health, _ := g.stores.Health.Get(g.player)
 	magic, _ := g.stores.Magic.Get(g.player)
-	health.Current, magic.Current = 7, 0
+	health.Current = 7
+	magic.Current = 0
 
 	for range 17 {
 		if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
@@ -52,8 +53,10 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 	health, _ := g.stores.Health.Get(g.player)
 	magic, _ := g.stores.Magic.Get(g.player)
 	progress, _ := g.stores.Regeneration.Get(g.player)
-	health.Current, magic.Current = 10, 0
-	progress.HPProgress, progress.MPProgress = 94, 94
+	health.Current = 10
+	magic.Current = 0
+	progress.HPProgress = 94
+	progress.MPProgress = 94
 	expectedRNG := RestoreRNGStreams(g.seed, g.rng.States())
 	want, err := character.Regenerate(expectedRNG, character.Vitality{
 		HP:         10,
@@ -93,7 +96,8 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 	moveRatToOtherFloor(t, g)
 	health, _ := g.stores.Health.Get(g.player)
 	magic, _ := g.stores.Magic.Get(g.player)
-	health.Current, magic.Current = 7, 0
+	health.Current = 7
+	magic.Current = 0
 
 	for range 3 {
 		if _, err := g.Step(Command{Kind: CommandWait}); err != nil {

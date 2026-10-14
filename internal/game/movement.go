@@ -127,7 +127,8 @@ func (s *stairSystem) Update(_ *akara.World, _ time.Duration) error {
 		return err
 	}
 
-	s.turn.StairFrom, s.turn.StairTo = from.ID, to.ID
+	s.turn.StairFrom = from.ID
+	s.turn.StairTo = to.ID
 	s.turn.Events = append(s.turn.Events, Event{
 		Kind: "stairs",
 		Text: "You take the stairs.",

@@ -78,7 +78,8 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 		ratHP, _ := g.stores.Health.Get(rat)
 		ratHP.Current = 1
 		playerHP, _ := g.stores.Health.Get(g.player)
-		playerHP.Current, playerHP.Max = 100, 100
+		playerHP.Current = 100
+		playerHP.Max = 100
 
 		for attempt := 0; attempt < 100 && g.world.EntityExists(rat); attempt++ {
 			if _, err := g.Step(Command{

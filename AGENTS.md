@@ -17,6 +17,8 @@ for a human reader to follow.
   whenever they contain more than one entry. A one-entry literal may stay
   inline. Expand lists with four or more values instead of placing the whole
   declaration on one line.
+- Assign mutable fields one per line. Keep tuple assignment for values returned
+  together by a function, such as a result and its error.
 - Use names that expose the game concept. Extract a helper when it removes
   repeated reasoning, not merely to shorten a function.
 - Comment source-specific rules, invariants, ownership, and surprising

@@ -17,29 +17,41 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 
 	switch key {
 	case "i":
-		m.previous, m.screen, m.notice = m.screen, ScreenInventory, ""
+		m.previous = m.screen
+		m.screen = ScreenInventory
+		m.notice = ""
 
 		return nil
 	case "m":
-		m.previous, m.screen, m.notice = m.screen, ScreenSkills, ""
+		m.previous = m.screen
+		m.screen = ScreenSkills
+		m.notice = ""
 
 		return nil
 	case "?":
-		m.previous, m.screen, m.notice = m.screen, ScreenHelp, ""
+		m.previous = m.screen
+		m.screen = ScreenHelp
+		m.notice = ""
 
 		return nil
 	case "S":
-		m.confirm, m.screen, m.notice = confirmSave, ScreenConfirm, ""
+		m.confirm = confirmSave
+		m.screen = ScreenConfirm
+		m.notice = ""
 
 		return nil
 	case "ctrl+s":
 		return m.saveAndExit()
 	case "ctrl+q":
-		m.confirm, m.screen, m.notice = confirmAbandon, ScreenConfirm, ""
+		m.confirm = confirmAbandon
+		m.screen = ScreenConfirm
+		m.notice = ""
 
 		return nil
 	case "q":
-		m.previous, m.screen, m.notice = m.screen, ScreenQuaff, ""
+		m.previous = m.screen
+		m.screen = ScreenQuaff
+		m.notice = ""
 
 		return nil
 	case "L":
@@ -72,13 +84,16 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 
 func (m *AppModel) handleQuaffKey(key string) tea.Cmd {
 	if key == "esc" {
-		m.screen, m.notice = ScreenPlay, ""
+		m.screen = ScreenPlay
+		m.notice = ""
 
 		return nil
 	}
 
 	if key == "?" {
-		m.previous, m.screen, m.notice = ScreenQuaff, ScreenHelp, ""
+		m.previous = ScreenQuaff
+		m.screen = ScreenHelp
+		m.notice = ""
 
 		return nil
 	}
@@ -156,7 +171,9 @@ func (m *AppModel) handleStatChoiceKey(key string) {
 
 func (m *AppModel) handleConfirmKey(key string) tea.Cmd {
 	if key == "esc" || key == "n" || key == "N" {
-		m.confirm, m.screen, m.notice = confirmNone, ScreenPlay, ""
+		m.confirm = confirmNone
+		m.screen = ScreenPlay
+		m.notice = ""
 
 		return nil
 	}
@@ -182,7 +199,8 @@ func (m *AppModel) handleConfirmKey(key string) tea.Cmd {
 
 func (m *AppModel) saveAndExit() tea.Cmd {
 	if err := save.Write(m.savePath, m.game.Snapshot()); err != nil {
-		m.screen, m.notice = ScreenPlay, fmt.Sprintf("Save failed: %v", err)
+		m.screen = ScreenPlay
+		m.notice = fmt.Sprintf("Save failed: %v", err)
 
 		return nil
 	}

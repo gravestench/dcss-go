@@ -359,7 +359,8 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	g.turn.Consume = 0
 	g.turn.PlayerKill = 0
 	g.turn.Corpse = nil
-	g.turn.StairFrom, g.turn.StairTo = 0, 0
+	g.turn.StairFrom = 0
+	g.turn.StairTo = 0
 	err := g.world.Update(time.Duration(cost))
 	producedIntent := g.stores.Intents.Has(actor)
 	g.stores.Intents.Remove(actor)
