@@ -29,7 +29,8 @@ func TestGenerateAndCheckUseOnlyExplicitBranchSources(t *testing.T) {
 
 	second, err := Generate(dir)
 
-	if err != nil || !bytes.Equal(first, second) {
+	if err != nil ||
+		!bytes.Equal(first, second) {
 		t.Fatalf("nondeterministic branch import: %v", err)
 	}
 

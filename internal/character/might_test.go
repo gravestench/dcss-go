@@ -108,7 +108,8 @@ func TestMightRulesRejectInvalidStateBeforeDrawing(t *testing.T) {
 	rng := &mightRoller{value: 0}
 
 	for _, old := range []int{-1, 801} {
-		if _, _, err := MightPotionDuration(rng, old); err == nil || rng.calls != 0 {
+		if _, _, err := MightPotionDuration(rng, old); err == nil ||
+			rng.calls != 0 {
 			t.Fatalf("old %d accepted or drew", old)
 		}
 	}

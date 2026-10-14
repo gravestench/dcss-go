@@ -214,10 +214,11 @@ func TestLoadDefaultRejectsBadArtifact(t *testing.T) {
 		defaultStartingGearJSON,
 		defaultPresentationJSON,
 		defaultMonsterJSON,
-	); err == nil || !strings.Contains(
-		err.Error(),
-		"decode",
-	) {
+	); err == nil ||
+		!strings.Contains(
+			err.Error(),
+			"decode",
+		) {
 		t.Fatalf("malformed artifact error = %v", err)
 	}
 }
@@ -263,10 +264,11 @@ func TestLoadDefaultRejectsMissingAptitudes(t *testing.T) {
 				defaultStartingGearJSON,
 				defaultPresentationJSON,
 				defaultMonsterJSON,
-			); err == nil || !strings.Contains(
-				err.Error(),
-				"aptitude",
-			) {
+			); err == nil ||
+				!strings.Contains(
+					err.Error(),
+					"aptitude",
+				) {
 				t.Fatalf("missing %s aptitudes accepted: %v", missing, err)
 			}
 		})

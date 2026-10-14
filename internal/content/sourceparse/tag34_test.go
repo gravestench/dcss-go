@@ -18,6 +18,7 @@ nested_old
 new
 #endif
 end`
+
 	lines, err := Tag34Lines("job-data.h", []byte(input))
 
 	if err != nil {
@@ -62,6 +63,7 @@ current
 #else
 other
 #endif`
+
 	lines, err := Tag34Lines("item-prop-enum.h", []byte(input))
 
 	if err != nil {

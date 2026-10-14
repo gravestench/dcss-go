@@ -199,7 +199,8 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 
 			_, err := generateFromSource(root, pinnedRevision, jobs, catalog)
 
-			if err == nil || !strings.Contains(err.Error(), tc.want) {
+			if err == nil ||
+				!strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want %q error, got %v", tc.want, err)
 			}
 		})
@@ -210,10 +211,11 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 		"wrong-revision",
 		fixtureJobs(),
 		catalog,
-	); err == nil || !strings.Contains(
-		err.Error(),
-		"revision",
-	) {
+	); err == nil ||
+		!strings.Contains(
+			err.Error(),
+			"revision",
+		) {
 		t.Fatalf("wrong revision accepted: %v", err)
 	}
 

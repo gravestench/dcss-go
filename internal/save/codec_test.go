@@ -36,7 +36,8 @@ func TestFailedWritePreservesOldSave(t *testing.T) {
 
 	snapshot, err := Read(path)
 
-	if err != nil || snapshot.SourceRevision != "old" {
+	if err != nil ||
+		snapshot.SourceRevision != "old" {
 		t.Fatalf("old save lost: %+v, %v", snapshot, err)
 	}
 }

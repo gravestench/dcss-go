@@ -41,7 +41,8 @@ func TestParseTag34BranchRows(t *testing.T) {
 
 	branches, err := parseTable("branch-data.h", []byte(syntheticTable))
 
-	if err != nil || len(branches) != 2 {
+	if err != nil ||
+		len(branches) != 2 {
 		t.Fatalf("table %+v, %v", branches, err)
 	}
 
@@ -65,7 +66,8 @@ func TestBranchImporterRejectsUnrecognizedRows(t *testing.T) {
 	} {
 		ids, err := parseEnum("branch-type.h", []byte(source))
 
-		if err == nil && len(ids) == 2 {
+		if err == nil &&
+			len(ids) == 2 {
 			t.Fatalf("accepted altered branch identity: %+v", ids)
 		}
 	}

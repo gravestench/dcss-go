@@ -199,7 +199,8 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			changeJobSource(t, root, tc.file, tc.old, tc.replacement)
 			_, err := generateFromSource(root, pinnedRevision)
 
-			if err == nil || !strings.Contains(err.Error(), tc.want) {
+			if err == nil ||
+				!strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want error containing %q, got %v", tc.want, err)
 			}
 		})
@@ -244,7 +245,8 @@ func TestWriteJobArtifactCheckAndAtomicFailure(t *testing.T) {
 
 	stale, err := os.ReadFile(out)
 
-	if err != nil || string(stale) != "stale" {
+	if err != nil ||
+		string(stale) != "stale" {
 		t.Fatalf("check modified stale output: %q, %v", stale, err)
 	}
 
@@ -260,7 +262,8 @@ func TestWriteJobArtifactCheckAndAtomicFailure(t *testing.T) {
 
 	after, err := os.ReadFile(out)
 
-	if err != nil || !bytes.Equal(after, before) {
+	if err != nil ||
+		!bytes.Equal(after, before) {
 		t.Fatalf("failed generation damaged artifact: %v", err)
 	}
 }

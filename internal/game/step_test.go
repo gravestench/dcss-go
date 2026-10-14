@@ -95,7 +95,8 @@ func TestWrongStairIsFree(t *testing.T) {
 	for _, kind := range []CommandKind{CommandDownstairs, CommandUpstairs} {
 		result, err := g.Step(Command{Kind: kind})
 
-		if err != nil || result.Spent != 0 {
+		if err != nil ||
+			result.Spent != 0 {
 			t.Fatalf("wrong stair = %+v, %v", result, err)
 		}
 	}

@@ -158,7 +158,8 @@ func (parser *itemNameParser) addIdentity(identity content.ItemIdentity) error {
 
 	handled, err := parser.addSpecialIdentity(identity)
 
-	if err != nil || handled {
+	if err != nil ||
+		handled {
 		return err
 	}
 

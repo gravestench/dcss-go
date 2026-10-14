@@ -53,7 +53,8 @@ func TestCommittedSpellCatalogCoverageAndCopies(t *testing.T) {
 	} {
 		got, err := catalog.SpellStatus(id)
 
-		if err != nil || got != status {
+		if err != nil ||
+			got != status {
 			t.Fatalf("%s status %s, %v", id, got, err)
 		}
 	}

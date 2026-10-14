@@ -71,7 +71,8 @@ func TestRNGRestore(t *testing.T) {
 
 		got, err := restored.Intn(name, 100)
 
-		if err != nil || got != want {
+		if err != nil ||
+			got != want {
 			t.Fatalf("stream %q after restore = %d, %v; want %d", name, got, err, want)
 		}
 	}

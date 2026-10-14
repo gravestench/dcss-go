@@ -58,7 +58,8 @@ func TestPickupEmptyCellIsFree(t *testing.T) {
 	g := newStepGame(t)
 	result, err := g.Step(Command{Kind: CommandPickup})
 
-	if err != nil || result.Spent != 0 {
+	if err != nil ||
+		result.Spent != 0 {
 		t.Fatalf("empty pickup = %+v, %v", result, err)
 	}
 }

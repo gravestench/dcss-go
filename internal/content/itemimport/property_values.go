@@ -59,13 +59,15 @@ func parseArmourFlags(raw string, vocabulary content.ItemVocabulary) ([]content.
 		if strings.HasPrefix(text, "ard(") {
 			inside, end, err := balancedPart(text, 3, '(', ')')
 
-			if err != nil || end != len(text) {
+			if err != nil ||
+				end != len(text) {
 				return nil, fmt.Errorf("unsupported armour flag expression %q", text)
 			}
 
 			arguments, err := splitTopLevel(inside, ',')
 
-			if err != nil || len(arguments) != 2 {
+			if err != nil ||
+				len(arguments) != 2 {
 				return nil, fmt.Errorf("unsupported armour flag expression %q", text)
 			}
 
@@ -138,7 +140,8 @@ func parseBrandWeights(
 
 	inside, end, err := balancedPart(raw, 0, '{', '}')
 
-	if err != nil || end != len(raw) {
+	if err != nil ||
+		end != len(raw) {
 		return nil, fmt.Errorf("malformed weapon brand weights")
 	}
 
@@ -153,7 +156,8 @@ func parseBrandWeights(
 	for _, part := range parts {
 		fields, err := rowFields(part.text)
 
-		if err != nil || len(fields) != 2 {
+		if err != nil ||
+			len(fields) != 2 {
 			return nil, fmt.Errorf("malformed weapon brand weight %q", part.text)
 		}
 

@@ -122,7 +122,8 @@ func TestActionEnergyCostUsesResolvedIntent(t *testing.T) {
 	} {
 		cost, err := ActionEnergyCost(usage, test.intent)
 
-		if err != nil || cost != test.want {
+		if err != nil ||
+			cost != test.want {
 			t.Fatalf("intent %d cost = %d, %v; want %d", test.intent, cost, err, test.want)
 		}
 	}

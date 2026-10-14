@@ -69,7 +69,8 @@ func TestQuaffMightConsumesAndDecaysByActionCost(t *testing.T) {
 	before := result.View.MightAut
 	result, err = g.Step(Command{Kind: CommandWait})
 
-	if err != nil || result.View.MightAut != before-10 {
+	if err != nil ||
+		result.View.MightAut != before-10 {
 		t.Fatalf("wait decay = %+v, %v", result, err)
 	}
 
@@ -116,7 +117,8 @@ func TestMightDecaysByVariableMeleeActionCost(t *testing.T) {
 	status.MightAut = 20
 	attack, err := newPlayerCombat(g).attackInput("MONS_RAT")
 
-	if err != nil || !attack.Mighty {
+	if err != nil ||
+		!attack.Mighty {
 		t.Fatalf("live attack did not project might: %+v, %v", attack, err)
 	}
 
@@ -178,7 +180,8 @@ func TestMightSaveContinuationAndLegacyDefault(t *testing.T) {
 
 	old, err := Restore(legacy, testCatalog(t))
 
-	if err != nil || old.View().MightAut != 0 {
+	if err != nil ||
+		old.View().MightAut != 0 {
 		t.Fatalf("old save restore = %v, might %d", err, old.View().MightAut)
 	}
 

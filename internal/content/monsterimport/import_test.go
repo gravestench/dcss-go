@@ -57,7 +57,8 @@ func TestGenerateFixtureDeterministicPartition(t *testing.T) {
 
 	second, err := generateFromSource(dir, pinnedRevision)
 
-	if err != nil || !bytes.Equal(first, second) {
+	if err != nil ||
+		!bytes.Equal(first, second) {
 		t.Fatalf("nondeterministic generation: %v", err)
 	}
 

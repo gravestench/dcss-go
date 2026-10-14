@@ -89,7 +89,8 @@ func TestStartingSkillsHumanFighterWeapons(t *testing.T) {
 			got[0].Points = -1
 			again, err := StartingSkills(catalog, "SP_HUMAN", "JOB_FIGHTER", tc.weapon)
 
-			if err != nil || !reflect.DeepEqual(again, want) {
+			if err != nil ||
+				!reflect.DeepEqual(again, want) {
 				t.Fatalf("later skills = %+v, err = %v, want %+v", again, err, want)
 			}
 		})
@@ -129,7 +130,8 @@ func TestStartingSkillsRejectsUnsupportedChoice(t *testing.T) {
 		got, err := StartingSkills(catalog, tc.species, tc.job, tc.weapon)
 
 		if err == nil ||
-			len(got) != 0 || !strings.Contains(err.Error(), tc.job) {
+			len(got) != 0 ||
+			!strings.Contains(err.Error(), tc.job) {
 			t.Fatalf("choice %+v: got %+v, err %v", tc, got, err)
 		}
 	}
@@ -158,7 +160,8 @@ func TestResolveChosenWeaponSkillRejectsBadKind(t *testing.T) {
 		got, err := resolveChosenWeaponSkill(kind, species)
 
 		if err == nil ||
-			got != "" || !strings.Contains(err.Error(), kind.ID) {
+			got != "" ||
+			!strings.Contains(err.Error(), kind.ID) {
 			t.Fatalf("skill %q: got %q, err %v", skill, got, err)
 		}
 	}

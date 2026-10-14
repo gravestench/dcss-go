@@ -175,7 +175,8 @@ func (g *Game) compatibleFloorStack(
 ) (akara.Entity, bool) {
 	kind, err := g.catalog.Item(item.KindID)
 
-	if err != nil || !kind.Stackable {
+	if err != nil ||
+		!kind.Stackable {
 		return 0, false
 	}
 

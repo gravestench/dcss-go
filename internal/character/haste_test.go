@@ -128,7 +128,8 @@ func TestHastedActionTimeUsesSourceSixOrSevenAut(t *testing.T) {
 
 	got, err := PlayerActionTime(nil, false)
 
-	if err != nil || got != 10 {
+	if err != nil ||
+		got != 10 {
 		t.Fatalf("unhasted action = %d, %v", got, err)
 	}
 }

@@ -244,13 +244,15 @@ func (scanner monsterRowScanner) removedRow(pos, line int) (sourceRow, int, erro
 
 	fields, err := splitFields(inner)
 
-	if err != nil || len(fields) != 2 {
+	if err != nil ||
+		len(fields) != 2 {
 		return sourceRow{}, 0, fmt.Errorf("%s:%d: malformed AXED_MON", scanner.path, line)
 	}
 
 	name, err := strconv.Unquote(fields[1])
 
-	if err != nil || !strings.HasPrefix(fields[0], "MONS_") {
+	if err != nil ||
+		!strings.HasPrefix(fields[0], "MONS_") {
 		return sourceRow{}, 0, fmt.Errorf("%s:%d: malformed AXED_MON identity", scanner.path, line)
 	}
 

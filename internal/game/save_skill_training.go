@@ -52,7 +52,8 @@ func validateSavedTrainingExperience(training *ecs.SkillTraining, totalXP int) e
 
 	costLevel, err := character.SkillCostLevel(training.SpentXP)
 
-	if err != nil || training.CostLevel != costLevel {
+	if err != nil ||
+		training.CostLevel != costLevel {
 		return fmt.Errorf("invalid player skill cost level %d", training.CostLevel)
 	}
 
@@ -115,7 +116,8 @@ func validateSavedSkillProgress(
 
 		level, err := character.HumanSkillLevel(skill.Points)
 
-		if err != nil || skill.Level != level {
+		if err != nil ||
+			skill.Level != level {
 			return nil, fmt.Errorf("invalid player skill level for %s", skill.ID)
 		}
 

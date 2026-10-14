@@ -124,7 +124,8 @@ func TestDropEquipmentRulesAndInvalidRequests(t *testing.T) {
 			ItemID: uint64(id),
 		})
 
-		if err != nil || result.Spent != 0 {
+		if err != nil ||
+			result.Spent != 0 {
 			t.Fatalf("equipped armour/shield drop = %+v, %v", result, err)
 		}
 	}
@@ -143,7 +144,8 @@ func TestDropEquipmentRulesAndInvalidRequests(t *testing.T) {
 	} {
 		result, err := g.Step(command)
 
-		if err != nil || result.Spent != 0 {
+		if err != nil ||
+			result.Spent != 0 {
 			t.Fatalf("invalid drop = %+v, %v", result, err)
 		}
 	}

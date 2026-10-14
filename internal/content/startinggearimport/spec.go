@@ -42,7 +42,8 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 		case "q":
 			n, err := strconv.Atoi(value)
 
-			if err != nil || n <= 0 {
+			if err != nil ||
+				n <= 0 {
 				return fail("invalid quantity " + token)
 			}
 
@@ -60,7 +61,8 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 		case "charges":
 			n, err := strconv.Atoi(value)
 
-			if err != nil || n <= 0 {
+			if err != nil ||
+				n <= 0 {
 				return fail("invalid charges " + token)
 			}
 

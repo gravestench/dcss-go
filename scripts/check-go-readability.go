@@ -79,7 +79,8 @@ func checkFile(path string) (int, error) {
 	for _, imported := range file.Imports {
 		importPath, err := strconv.Unquote(imported.Path.Value)
 
-		if err != nil || !strings.HasPrefix(importPath, "dcrawl-go/") {
+		if err != nil ||
+			!strings.HasPrefix(importPath, "dcrawl-go/") {
 			continue
 		}
 
@@ -115,6 +116,13 @@ func checkFile(path string) (int, error) {
 
 		ast.Inspect(statement, func(node ast.Node) bool {
 			switch value := node.(type) {
+			case *ast.BasicLit:
+				if value.Kind == token.STRING &&
+					fset.Position(value.End()-1).Line == line &&
+					fset.Position(value.Pos()).Line < line {
+					found = true
+				}
+
 			case *ast.CompositeLit:
 				if fset.Position(value.Rbrace).Line == line &&
 					fset.Position(value.Lbrace).Line < line {
@@ -190,6 +198,7 @@ func checkFile(path string) (int, error) {
 	blockEndLines := make(map[int]bool)
 	checkBooleanCondition := func(condition ast.Expr) {
 		operatorsByLine := make(map[int]int)
+		reportedLines := make(map[int]bool)
 
 		ast.Inspect(condition, func(part ast.Node) bool {
 			if _, nestedFunction := part.(*ast.FuncLit); nestedFunction {
@@ -206,12 +215,33 @@ func checkFile(path string) (int, error) {
 			line := fset.Position(binary.OpPos).Line
 			operatorsByLine[line]++
 
+			if reportedLines[line] {
+				return true
+			}
+
 			if operatorsByLine[line] == 2 {
 				report(binary.OpPos, "put crowded condition checks on separate lines")
+				reportedLines[line] = true
+
+				return true
 			}
 
 			if len(lines[line-1]) > 80 && operatorsByLine[line] == 1 {
 				report(binary.OpPos, "break long boolean conditions across lines")
+				reportedLines[line] = true
+
+				return true
+			}
+
+			left := adjacentLogicalOperand(binary.X, true)
+			right := adjacentLogicalOperand(binary.Y, false)
+			leftHasError := sameLine(fset, binary.X.End()-1, binary.OpPos) &&
+				expressionHasError(left)
+
+			if sameLine(fset, binary.OpPos, binary.Y.Pos()) &&
+				(leftHasError || expressionHasError(right)) {
+				report(binary.OpPos, "put error checks on their own condition line")
+				reportedLines[line] = true
 			}
 
 			return true
@@ -380,6 +410,47 @@ func checkFile(path string) (int, error) {
 	}
 
 	return issues, nil
+}
+
+func adjacentLogicalOperand(expression ast.Expr, rightmost bool) ast.Expr {
+	for {
+		switch value := expression.(type) {
+		case *ast.ParenExpr:
+			expression = value.X
+
+		case *ast.BinaryExpr:
+			if value.Op != token.LAND && value.Op != token.LOR {
+				return expression
+			}
+
+			if rightmost {
+				expression = value.Y
+			} else {
+				expression = value.X
+			}
+
+		default:
+			return expression
+		}
+	}
+}
+
+func expressionHasError(expression ast.Expr) bool {
+	found := false
+
+	ast.Inspect(expression, func(node ast.Node) bool {
+		identifier, ok := node.(*ast.Ident)
+
+		if ok &&
+			(identifier.Name == "err" ||
+				strings.HasSuffix(identifier.Name, "Err")) {
+			found = true
+		}
+
+		return true
+	})
+
+	return found
 }
 
 func checkMultilineEntrySpacing(

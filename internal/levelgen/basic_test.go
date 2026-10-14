@@ -49,7 +49,8 @@ func TestBasicDungeonProducesStableConnectedGeometry(t *testing.T) {
 
 			second, err := BasicDungeon(depth, sequence(seed))
 
-			if err != nil || !reflect.DeepEqual(first, second) {
+			if err != nil ||
+				!reflect.DeepEqual(first, second) {
 				t.Fatalf("D:%d seed %d is not deterministic: %v", depth, seed, err)
 			}
 

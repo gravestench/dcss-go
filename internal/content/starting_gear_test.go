@@ -130,7 +130,8 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 
 	againGrants, err := again.StartingGrants("JOB_FIGHTER")
 
-	if err != nil || againGrants[0].KindID != "ARM_SCALE_MAIL" {
+	if err != nil ||
+		againGrants[0].KindID != "ARM_SCALE_MAIL" {
 		t.Fatalf("a fresh catalog inherited changed gear: %+v, %v", againGrants, err)
 	}
 }
@@ -269,10 +270,11 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 		[]byte(`{"jobs":`),
 		defaultPresentationJSON,
 		defaultMonsterJSON,
-	); err == nil || !strings.Contains(
-		err.Error(),
-		"decode",
-	) {
+	); err == nil ||
+		!strings.Contains(
+			err.Error(),
+			"decode",
+		) {
 		t.Fatalf("malformed starting gear artifact: %v", err)
 	}
 }

@@ -191,7 +191,8 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 		right, rightErr := restored.Step(command)
 
 		if leftErr != nil ||
-			rightErr != nil || !reflect.DeepEqual(left, right) {
+			rightErr != nil ||
+			!reflect.DeepEqual(left, right) {
 			t.Fatalf("continuation differs: %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 		}
 	}

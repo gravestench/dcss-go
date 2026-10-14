@@ -133,7 +133,8 @@ func TestArmourSwapSavesMidDelayAndChangesDefenseAtFinish(t *testing.T) {
 	for turn := 2; turn <= 10; turn++ {
 		result, err := restored.Step(Command{Kind: CommandContinueEquipment})
 
-		if err != nil || result.Spent != 10 {
+		if err != nil ||
+			result.Spent != 10 {
 			t.Fatalf("armour swap turn %d = %+v, %v", turn, result, err)
 		}
 
@@ -217,7 +218,8 @@ func TestRestoreRejectsPendingShieldWithTwoHandedWeapon(t *testing.T) {
 		ItemID: uint64(greatSword),
 	})
 
-	if err != nil || result.Spent == 0 {
+	if err != nil ||
+		result.Spent == 0 {
 		t.Fatalf("great sword wield = %+v, %v", result, err)
 	}
 
@@ -325,7 +327,8 @@ func TestHumanWearsAuxiliaryArmourAcrossSavedDelay(t *testing.T) {
 			for turn := 0; turn < 4; turn++ {
 				result, stepErr := restored.Step(Command{Kind: CommandContinueEquipment})
 
-				if stepErr != nil || result.Spent != 10 {
+				if stepErr != nil ||
+					result.Spent != 10 {
 					t.Fatalf("wear turn %d = %+v, %v", turn, result, stepErr)
 				}
 			}
@@ -424,7 +427,8 @@ func TestAuxiliaryArmourChangesDefenseWhenDelayFinishes(t *testing.T) {
 			ItemID: uint64(itemID),
 		})
 
-		if err != nil || result.Spent != 10 {
+		if err != nil ||
+			result.Spent != 10 {
 			t.Fatalf("wear %s start: spent %d, err %v", piece.kindID, result.Spent, err)
 		}
 
@@ -451,7 +455,8 @@ func TestAuxiliaryArmourChangesDefenseWhenDelayFinishes(t *testing.T) {
 		ItemID: uint64(gloves),
 	})
 
-	if err != nil || result.Spent != 10 {
+	if err != nil ||
+		result.Spent != 10 {
 		t.Fatalf("remove gloves start: spent %d, err %v", result.Spent, err)
 	}
 
@@ -554,7 +559,8 @@ func TestAuxiliaryArmourSwapTakesTenTurnsAcrossSave(t *testing.T) {
 		ItemID: uint64(hat),
 	})
 
-	if err != nil || first.Spent != 10 {
+	if err != nil ||
+		first.Spent != 10 {
 		t.Fatalf("swap start: spent %d, err %v", first.Spent, err)
 	}
 
@@ -571,7 +577,8 @@ func TestAuxiliaryArmourSwapTakesTenTurnsAcrossSave(t *testing.T) {
 	for turn := 2; turn <= 10; turn++ {
 		result, stepErr := restored.Step(Command{Kind: CommandContinueEquipment})
 
-		if stepErr != nil || result.Spent != 10 {
+		if stepErr != nil ||
+			result.Spent != 10 {
 			t.Fatalf("swap turn %d: spent %d, err %v", turn, result.Spent, stepErr)
 		}
 

@@ -96,7 +96,8 @@ func TestHastedWieldUsesTruncatedSourceCosts(t *testing.T) {
 
 			result, err := g.Step(command)
 
-			if err != nil || result.Spent != test.wantCost {
+			if err != nil ||
+				result.Spent != test.wantCost {
 				t.Fatalf("hasted wield spent %d aut, want %d: %v",
 					result.Spent, test.wantCost, err)
 			}
@@ -204,7 +205,8 @@ func TestHasteSaveContinuationAndLegacyDefault(t *testing.T) {
 
 	old, err := Restore(legacy, testCatalog(t))
 
-	if err != nil || old.View().HasteAut != 0 {
+	if err != nil ||
+		old.View().HasteAut != 0 {
 		t.Fatalf("legacy haste restore = %v, %d", err, old.View().HasteAut)
 	}
 
@@ -269,7 +271,8 @@ func TestHasteExpiresAfterItsFinalFastAction(t *testing.T) {
 
 	normal, err := g.Step(Command{Kind: CommandWait})
 
-	if err != nil || normal.Spent != 10 {
+	if err != nil ||
+		normal.Spent != 10 {
 		t.Fatalf("action after haste = %+v, %v", normal, err)
 	}
 }

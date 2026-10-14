@@ -147,7 +147,8 @@ func TestClosedDoorBlocksMovementAndOpensConnectedGroup(t *testing.T) {
 
 	opened, err := level.OpenDoor(3, 1)
 
-	if err != nil || opened != 2 {
+	if err != nil ||
+		opened != 2 {
 		t.Fatalf("opened door group = %d, %v", opened, err)
 	}
 

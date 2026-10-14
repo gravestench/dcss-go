@@ -147,7 +147,8 @@ func (g *Game) applyPickup(actor, itemID akara.Entity, buffer *akara.CommandBuff
 func (g *Game) compatibleCarriedStack(actor akara.Entity, item ecs.Item) (akara.Entity, bool) {
 	kind, err := g.catalog.Item(item.KindID)
 
-	if err != nil || !kind.Stackable {
+	if err != nil ||
+		!kind.Stackable {
 		return 0, false
 	}
 

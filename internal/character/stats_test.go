@@ -15,11 +15,12 @@ func TestBaseStatSum(t *testing.T) {
 
 	got, err := BaseStatSum(catalog, "SP_HUMAN", "JOB_FIGHTER")
 
-	if err != nil || got != (Attributes{
-		Strength:     16,
-		Intelligence: 8,
-		Dexterity:    12,
-	}) {
+	if err != nil ||
+		got != (Attributes{
+			Strength:     16,
+			Intelligence: 8,
+			Dexterity:    12,
+		}) {
 		t.Fatalf("Human/Fighter base attributes = %+v, %v", got, err)
 	}
 

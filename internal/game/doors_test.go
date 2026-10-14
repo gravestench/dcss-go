@@ -122,7 +122,8 @@ func TestClosingDoorPushesFloorItems(t *testing.T) {
 
 	closed, err := g.Step(Command{Kind: CommandCloseDoor})
 
-	if err != nil || closed.Spent != 10 {
+	if err != nil ||
+		closed.Spent != 10 {
 		t.Fatalf("close over item = %+v, %v", closed, err)
 	}
 
@@ -437,7 +438,8 @@ func TestInvalidDoorTargetsDoNotSpendTimeOrRNG(t *testing.T) {
 	} {
 		result, err := g.Step(command)
 
-		if err != nil || result.Spent != 0 {
+		if err != nil ||
+			result.Spent != 0 {
 			t.Fatalf("invalid door %+v = %+v, %v", command, result, err)
 		}
 	}

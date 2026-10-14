@@ -94,7 +94,8 @@ func TestOrdinaryMonsterExperienceMatchesSourceIntegerStages(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			got, err := OrdinaryMonsterExperience(tc.in)
 
-			if err != nil || got != tc.want {
+			if err != nil ||
+				got != tc.want {
 				t.Fatalf("XP = %d, %v; want %d", got, err, tc.want)
 			}
 		})

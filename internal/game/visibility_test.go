@@ -92,7 +92,8 @@ func TestFailedMoveDoesNotChangeKnowledge(t *testing.T) {
 		DX:   -1,
 	})
 
-	if err != nil || result.Spent != 0 {
+	if err != nil ||
+		result.Spent != 0 {
 		t.Fatalf("blocked move: %+v %v", result, err)
 	}
 
@@ -123,7 +124,8 @@ func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 
 	result, err := g.Step(Command{Kind: CommandDownstairs})
 
-	if err != nil || result.View.LevelID != 2 {
+	if err != nil ||
+		result.View.LevelID != 2 {
 		t.Fatalf("downstairs: %+v %v", result, err)
 	}
 
@@ -145,7 +147,8 @@ func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 
 	result, err = g.Step(Command{Kind: CommandUpstairs})
 
-	if err != nil || result.View.LevelID != 1 {
+	if err != nil ||
+		result.View.LevelID != 1 {
 		t.Fatalf("upstairs: %+v %v", result, err)
 	}
 

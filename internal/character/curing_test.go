@@ -106,7 +106,8 @@ func TestCuringRejectsInvalidHPAndRollWithoutDraw(t *testing.T) {
 	} {
 		rng := &curingRoller{bound: 7}
 
-		if _, err := CuringHP(rng, tc.current, tc.max); err == nil || rng.calls != 0 {
+		if _, err := CuringHP(rng, tc.current, tc.max); err == nil ||
+			rng.calls != 0 {
 			t.Fatalf("accepted HP %d/%d, draws %d", tc.current, tc.max, rng.calls)
 		}
 	}

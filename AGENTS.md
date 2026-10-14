@@ -22,6 +22,9 @@ for a human reader to follow.
 - Put crowded boolean conditions on separate lines so each check can be
   scanned. Keep `if` and `for` condition lines at or below 80 characters
   when they contain `&&` or `||`.
+- When a condition checks an error and another result, give each clause its
+  own line. Keep the error check first when short-circuiting protects the
+  result check.
 - Put entries of keyed literals and named composite literals on separate lines
   whenever they contain more than one entry. A one-entry literal may stay
   inline. Expand slices and lists with three or more values instead of placing
@@ -32,6 +35,8 @@ for a human reader to follow.
 - Separate consecutive multiline entries in a table, map, or test fixture with
   blank lines so each entry can be scanned on its own.
 - Leave a blank line after a multiline literal before the next statement.
+- Give multiline raw source fixtures the same breathing room before the next
+  statement.
 - Declare each struct field on its own line, including fields in test case
   tables. In large state and catalog structs, separate fields into conceptually
   related groups with blank lines. Keep serialized field order stable.

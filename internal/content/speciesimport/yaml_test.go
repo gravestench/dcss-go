@@ -118,6 +118,7 @@ recommended_weapons:
 walking_verb: slither
 altar_action: kneel at
 `
+
 	s, tag, err := parseYAML("crawl-ref/source/dat/species/tagged.yaml", []byte(input))
 
 	if err != nil {

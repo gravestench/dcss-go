@@ -176,7 +176,8 @@ func TestGenerateSpeciesArtifactRejectsSourceErrors(t *testing.T) {
 			replaceFixture(t, root, tc.path, tc.old, tc.replacement)
 			_, err := generateFromSource(root, pinnedRevision)
 
-			if err == nil || !strings.Contains(err.Error(), tc.want) {
+			if err == nil ||
+				!strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want error containing %q, got %v", tc.want, err)
 			}
 		})

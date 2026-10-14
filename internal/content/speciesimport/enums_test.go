@@ -23,6 +23,7 @@ func TestActiveEnumIDsTag34AndAliases(t *testing.T) {
     NUM_SPECIES,
     SP_UNKNOWN = 100,
 };`
+
 	ids, err := sourceparse.ActiveEnumIDs("species-type.h", []byte(input), "SP_")
 
 	if err != nil {

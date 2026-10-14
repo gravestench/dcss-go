@@ -182,7 +182,8 @@ func (g *Game) fillPlayerView(view *View) {
 		species, speciesErr := g.catalog.Species(player.SpeciesID)
 		job, jobErr := g.catalog.Job(player.JobID)
 
-		if speciesErr == nil && jobErr == nil {
+		if speciesErr == nil &&
+			jobErr == nil {
 			view.CharacterName = species.Name + " " + job.Name
 		}
 	}

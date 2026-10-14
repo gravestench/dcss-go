@@ -22,7 +22,8 @@ func TestFixedRatGrantsOneSourceExperience(t *testing.T) {
 	for hp := 1; hp <= 4; hp++ {
 		got, err := OrdinaryAnimalExperience(rat, hp)
 
-		if err != nil || got != 1 {
+		if err != nil ||
+			got != 1 {
 			t.Fatalf("rat with %d HP XP = %d, %v; want 1", hp, got, err)
 		}
 	}
@@ -83,7 +84,8 @@ func TestQuokkaOrdinaryExperienceUsesActualMaximumHP(t *testing.T) {
 			want = 1
 		}
 
-		if err != nil || got != want {
+		if err != nil ||
+			got != want {
 			t.Fatalf("quokka max HP %d gives %d XP, %v; want %d", hp, got, err, want)
 		}
 	}
@@ -111,7 +113,8 @@ func TestFrilledLizardExperienceUsesSourceOrdinaryBite(t *testing.T) {
 	for hp := 1; hp <= 3; hp++ {
 		got, err := OrdinaryAnimalExperience(lizard, hp)
 
-		if err != nil || got != 1 {
+		if err != nil ||
+			got != 1 {
 			t.Fatalf("frilled lizard at %d HP gives %d XP, %v; want 1", hp, got, err)
 		}
 	}
@@ -246,7 +249,8 @@ func TestHumanFirstLevelProgressUsesNineXPThreshold(t *testing.T) {
 	} {
 		got, err := HumanLevelProgress(tc.xp, 1)
 
-		if err != nil || got != tc.percent {
+		if err != nil ||
+			got != tc.percent {
 			t.Fatalf("XP %d => %d%%, %v; want %d%%", tc.xp, got, err, tc.percent)
 		}
 	}

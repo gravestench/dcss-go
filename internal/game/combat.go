@@ -152,7 +152,8 @@ func (s *combatSystem) resolvePlayerMelee(
 func (s *combatSystem) applyPoisonBite(animal content.MonsterDef) error {
 	amount, err := combat.PoisonBiteAmount(s.roller, animal.HD)
 
-	if err != nil || amount == 0 {
+	if err != nil ||
+		amount == 0 {
 		return err
 	}
 

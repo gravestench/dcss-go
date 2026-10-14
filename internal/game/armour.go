@@ -124,7 +124,8 @@ func (g *Game) validateWearFit(kind content.ItemDef) error {
 
 	weaponID, err := g.playerWeapon()
 
-	if err != nil || weaponID == 0 {
+	if err != nil ||
+		weaponID == 0 {
 		return err
 	}
 

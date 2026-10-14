@@ -195,6 +195,7 @@ func TestRemovedItemsIndependent(t *testing.T) {
 };
 // A property row named "removed potion" does not enter this set.
 `)
+
 	removed, err := parseRemovedItems("item-prop.cc", source)
 
 	if err != nil {

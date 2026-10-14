@@ -13,7 +13,8 @@ const corpseRotFactor = 20
 func RollCorpse(roller Roller) (appearance int, dropped bool, err error) {
 	coin, err := drawCorpse(roller, 2)
 
-	if err != nil || coin == 1 {
+	if err != nil ||
+		coin == 1 {
 		return 0, false, err
 	}
 

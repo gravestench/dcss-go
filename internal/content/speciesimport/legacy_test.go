@@ -144,7 +144,8 @@ func TestParseLegacyRejectsBadRows(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			_, err := parseLegacy("legacy-species.txt", tc.source, "legacy-aptitudes.txt", tc.aptitudes)
 
-			if err == nil || !strings.Contains(err.Error(), tc.want) {
+			if err == nil ||
+				!strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want error containing %q, got %v", tc.want, err)
 			}
 		})
@@ -166,10 +167,11 @@ func TestParseLegacyRejectsBadRows(t *testing.T) {
 			retained,
 			"\n",
 		)),
-	); err == nil || !strings.Contains(
-		err.Error(),
-		"SP_LAVA_ORC",
-	) {
+	); err == nil ||
+		!strings.Contains(
+			err.Error(),
+			"SP_LAVA_ORC",
+		) {
 		t.Fatalf("missing legacy aptitudes accepted: %v", err)
 	}
 }

@@ -15,6 +15,7 @@ func TestParseSyntheticSpellSources(t *testing.T) {
 #endif
   NUM_SPELLS
 };`)
+
 	data := []byte(`static const struct spell_desc spelldata[] = {
 {
  SPELL_NO_SPELL, "nonexistent spell", spschool::none, spflag::testing,
@@ -31,11 +32,13 @@ func TestParseSyntheticSpellSources(t *testing.T) {
 AXED_SPELL(SPELL_OLD, "Old")
 #endif
 };`)
+
 	removed := []byte(`const set<spell_type> removed_spells = {
 #if TAG_MAJOR_VERSION == 34
  SPELL_OLD,
 #endif
 };`)
+
 	ids, err := parseEnum("spell-type.h", enum)
 
 	if err != nil ||
@@ -48,7 +51,8 @@ AXED_SPELL(SPELL_OLD, "Old")
 
 	spells, err := parseSpells("spl-data.h", data)
 
-	if err != nil || len(spells) != 3 {
+	if err != nil ||
+		len(spells) != 3 {
 		t.Fatalf("spells %+v, %v", spells, err)
 	}
 

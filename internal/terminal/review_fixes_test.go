@@ -137,7 +137,8 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 		m.catalog,
 		"SP_BARACHI",
 		"JOB_ARCANE_MARKSMAN",
-	); err != nil || restriction != character.Recommended {
+	); err != nil ||
+		restriction != character.Recommended {
 		t.Fatal("review fixture does not contain a recommended pair")
 	}
 

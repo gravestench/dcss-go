@@ -173,7 +173,8 @@ func TestBumpWithoutShieldUsesUnshieldedTiming(t *testing.T) {
 		DX:   1,
 	})
 
-	if err != nil || result.Spent <= 0 {
+	if err != nil ||
+		result.Spent <= 0 {
 		t.Fatalf("unshielded bump = %+v, %v", result, err)
 	}
 

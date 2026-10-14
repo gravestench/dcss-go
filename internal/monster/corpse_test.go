@@ -120,7 +120,8 @@ func TestRatCorpseDecayAndSkeleton(t *testing.T) {
 
 	kind, freshness, _, alive, err = AgeCorpse(r, kind, true, freshness, 2200)
 
-	if err != nil || alive {
+	if err != nil ||
+		alive {
 		t.Fatalf("expired skeleton %q %d %v %v", kind, freshness, alive, err)
 	}
 }

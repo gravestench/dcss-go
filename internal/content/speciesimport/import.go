@@ -25,7 +25,8 @@ var tagMajor = regexp.MustCompile(`(?m)^#define\s+TAG_MAJOR_VERSION\s+(\d+)\s*$`
 func sourcePath(sourceDir, path string) (string, error) {
 	relative, err := filepath.Rel(sourceDir, path)
 
-	if err != nil || strings.HasPrefix(relative, "..") {
+	if err != nil ||
+		strings.HasPrefix(relative, "..") {
 		return "", fmt.Errorf("source path %s is outside %s", path, sourceDir)
 	}
 
@@ -116,7 +117,8 @@ func (i *speciesImport) readHeaders() error {
 
 	major, err := strconv.Atoi(string(match[1]))
 
-	if err != nil || major != 34 {
+	if err != nil ||
+		major != 34 {
 		return fmt.Errorf("%s: TAG_MAJOR_VERSION must be 34, got %s", versionPath, match[1])
 	}
 

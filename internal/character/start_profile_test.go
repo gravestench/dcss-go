@@ -78,7 +78,8 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 			got.Skills[0].Points = -1
 			again, err := BuildStartProfile(catalog, "SP_HUMAN", "JOB_FIGHTER", tc.weapon)
 
-			if err != nil || !reflect.DeepEqual(again.Skills, wantSkills) {
+			if err != nil ||
+				!reflect.DeepEqual(again.Skills, wantSkills) {
 				t.Fatalf("later skills = %+v, err = %v, want %+v", again.Skills, err, wantSkills)
 			}
 		})

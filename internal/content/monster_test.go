@@ -206,7 +206,8 @@ func TestMonsterCatalogCopiesAndStatuses(t *testing.T) {
 	ids[0] = "changed"
 	again, err := c.Monster("MONS_RAT")
 
-	if err != nil || !reflect.DeepEqual(again, rat) {
+	if err != nil ||
+		!reflect.DeepEqual(again, rat) {
 		t.Fatalf("catalog changed through returned monster: %+v, %v", again, err)
 	}
 

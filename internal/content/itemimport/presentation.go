@@ -74,7 +74,8 @@ func asciiTable(path string, data []byte) ([]rune, error) {
 		literal := strings.TrimPrefix(token, "U")
 		value, err := strconv.Unquote(literal)
 
-		if err != nil || len([]rune(value)) != 1 {
+		if err != nil ||
+			len([]rune(value)) != 1 {
 			return nil, fmt.Errorf("%s: unsupported ASCII glyph %q", path, token)
 		}
 

@@ -18,7 +18,8 @@ func (s *combatSystem) practicePlayerHit(
 
 	practice, err := s.skillChance(attack.WeaponDamage, 20)
 
-	if err != nil || !practice {
+	if err != nil ||
+		!practice {
 		return err
 	}
 

@@ -177,6 +177,7 @@ func sample(a, b, c bool) {
 		return
 	}
 }
+
 `,
 			want: 1,
 		},
@@ -494,5 +495,83 @@ func sample() {
 
 	if issues != 0 {
 		t.Fatalf("multiline struct fields reported %d issues, want 0", issues)
+	}
+}
+
+func TestErrorGuardAndRawFixtureSpacing(t *testing.T) {
+	tests := []struct {
+		name   string
+		source string
+		want   int
+	}{
+		{
+			name: "error guard shares a line",
+			source: "package example\nfunc sample(err error, valid bool) {\n" +
+				"\tif err != nil || !valid {\n\t\treturn\n\t}\n}\n",
+			want: 1,
+		},
+
+		{
+			name: "named error guard shares a line",
+			source: "package example\nfunc sample(stepErr error, valid bool) {\n" +
+				"\tif stepErr != nil || !valid {\n\t\treturn\n\t}\n}\n",
+			want: 1,
+		},
+
+		{
+			name: "multiline error call shares its closing line",
+			source: "package example\nimport \"errors\"\n\nfunc sample(err error, valid bool) {\n" +
+				"\tif errors.Is(\n\t\terr,\n\t\terrors.ErrUnsupported,\n" +
+				"\t) || !valid {\n\t\treturn\n\t}\n}\n",
+			want: 1,
+		},
+
+		{
+			name: "error guard has separate clauses",
+			source: "package example\nfunc sample(err error, valid bool) {\n" +
+				"\tif err != nil ||\n\t\t!valid {\n\t\treturn\n\t}\n}\n",
+			want: 0,
+		},
+
+		{
+			name: "separated error does not flag later clauses",
+			source: "package example\nfunc sample(err error, a, b bool) {\n" +
+				"\tif err != nil ||\n\t\ta || b {\n\t\treturn\n\t}\n}\n",
+			want: 0,
+		},
+
+		{
+			name: "raw fixture meets next statement",
+			source: "package example\nfunc sample() {\n" +
+				"\tsrc := `alpha\nbeta`\n\tnext := 1\n\t_ = src\n\t_ = next\n}\n",
+			want: 1,
+		},
+
+		{
+			name: "raw fixture has a blank line",
+			source: "package example\nfunc sample() {\n" +
+				"\tsrc := `alpha\nbeta`\n\n\tnext := 1\n\t_ = src\n\t_ = next\n}\n",
+			want: 0,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "sample.go")
+
+			if err := os.WriteFile(path, []byte(test.source), 0600); err != nil {
+				t.Fatal(err)
+			}
+
+			got, err := checkFile(path)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if got != test.want {
+				t.Fatalf("issues = %d, want %d", got, test.want)
+			}
+		})
 	}
 }

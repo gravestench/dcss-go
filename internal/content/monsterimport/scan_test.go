@@ -63,6 +63,7 @@ AXED_MON(MONS_BUMBLEBEE, "bee, // removed")
 #endif
 ` + row("MONS_RAT", `"rat, // \"friend\""`) + `DUMMY(MONS_BEAR, 'h', LIGHTGREY, "bear", TILEP_MONS_BEAR)
 };`
+
 	rows, err := parseRows("mon-data.h", []byte(input))
 
 	if err != nil {
@@ -121,7 +122,8 @@ func TestParseRowsRejectsMalformed(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			_, err := parseRows("mon-data.h", []byte(base+tc.body))
 
-			if err == nil || !strings.Contains(err.Error(), "mon-data.h") {
+			if err == nil ||
+				!strings.Contains(err.Error(), "mon-data.h") {
 				t.Fatalf("malformed source accepted: %v", err)
 			}
 		})

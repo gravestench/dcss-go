@@ -166,7 +166,8 @@ func (g *Game) Step(command Command) (StepResult, error) {
 
 	result, err := g.finishTurn(startAut, cost, events)
 
-	if err != nil || result.View.PlayerDead {
+	if err != nil ||
+		result.View.PlayerDead {
 		return result, err
 	}
 

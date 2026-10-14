@@ -82,7 +82,8 @@ func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 
 			intent, err := newMonsterDecisionSystem(g).chooseIntent(ratID(t, g))
 
-			if err != nil || intent != tc.want {
+			if err != nil ||
+				intent != tc.want {
 				t.Fatalf("intent %+v, error %v, want %+v", intent, err, tc.want)
 			}
 		})
@@ -135,7 +136,8 @@ func TestQuokkaAcquiresPlayerOnlyInItsOwnSight(t *testing.T) {
 
 	intent, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
 
-	if err != nil || intent.Kind == ecs.IntentMelee {
+	if err != nil ||
+		intent.Kind == ecs.IntentMelee {
 		t.Fatalf("hidden quokka intent %+v, %v", intent, err)
 	}
 
@@ -190,10 +192,11 @@ func TestQuokkaPursuesLastSeenTileThenStops(t *testing.T) {
 
 	intent, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
 
-	if err != nil || intent != (ecs.Intent{
-		Kind: ecs.IntentMove,
-		DY:   -1,
-	}) {
+	if err != nil ||
+		intent != (ecs.Intent{
+			Kind: ecs.IntentMove,
+			DY:   -1,
+		}) {
 		t.Fatalf("quokka did not pursue last seen tile: %+v, %v", intent, err)
 	}
 
@@ -203,7 +206,8 @@ func TestQuokkaPursuesLastSeenTileThenStops(t *testing.T) {
 
 	intent, err = newMonsterDecisionSystem(g).chooseIntent(quokka)
 
-	if err != nil || intent.Kind == ecs.IntentMelee {
+	if err != nil ||
+		intent.Kind == ecs.IntentMelee {
 		t.Fatalf("quokka attacked at an unseen target: %+v, %v", intent, err)
 	}
 
@@ -260,7 +264,8 @@ func TestMonsterAwarenessSurvivesSaveAndRejectsInvalidTarget(t *testing.T) {
 
 	got, err := newMonsterDecisionSystem(loaded).chooseIntent(quokka)
 
-	if err != nil || got != want {
+	if err != nil ||
+		got != want {
 		t.Fatalf("restored pursuit %+v, %v; want %+v", got, err, want)
 	}
 
@@ -311,7 +316,8 @@ func TestLegacyChaseSaveStillLoadsAndStopsBlindPursuit(t *testing.T) {
 
 	intent, err := newMonsterDecisionSystem(loaded).chooseIntent(quokka)
 
-	if err != nil || intent.Kind == ecs.IntentMelee {
+	if err != nil ||
+		intent.Kind == ecs.IntentMelee {
 		t.Fatalf("legacy quokka pursued unseen player: %+v, %v", intent, err)
 	}
 
@@ -540,10 +546,11 @@ func TestQuokkaRoutesAroundCentralWallToRememberedTarget(t *testing.T) {
 
 	first, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
 
-	if err != nil || first != (ecs.Intent{
-		Kind: ecs.IntentMove,
-		DY:   1,
-	}) {
+	if err != nil ||
+		first != (ecs.Intent{
+			Kind: ecs.IntentMove,
+			DY:   1,
+		}) {
 		t.Fatalf("first route step %+v, %v; want south around wall", first, err)
 	}
 

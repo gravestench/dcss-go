@@ -76,7 +76,8 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 
 			in, err = newPlayerCombat(g).attackInput("MONS_RAT")
 
-			if err != nil || in.WeaponPlus != 2 {
+			if err != nil ||
+				in.WeaponPlus != 2 {
 				t.Fatalf("enchanted weapon input = %+v, %v", in, err)
 			}
 		})
@@ -296,7 +297,8 @@ func TestPlayerMeleeUsesStoredSkillPoints(t *testing.T) {
 
 	in, err := newPlayerCombat(g).attackInput("MONS_RAT")
 
-	if err != nil || in.WeaponSkill100 <= 200 {
+	if err != nil ||
+		in.WeaponSkill100 <= 200 {
 		t.Fatalf("modified skill points ignored: %+v, %v", in, err)
 	}
 }

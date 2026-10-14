@@ -198,13 +198,15 @@ func decodeResistances(expr string, symbols map[string]bool) ([]content.MonsterR
 		if strings.HasPrefix(term, "mrd(") {
 			inner, end, err := balanced(term, len("mrd"), '(', ')')
 
-			if err != nil || end != len(term) {
+			if err != nil ||
+				end != len(term) {
 				return nil, fmt.Errorf("unsupported resistance macro %q", term)
 			}
 
 			args, err := splitFields(inner)
 
-			if err != nil || len(args) != 2 {
+			if err != nil ||
+				len(args) != 2 {
 				return nil, fmt.Errorf("bad mrd arguments %q", term)
 			}
 
@@ -271,13 +273,15 @@ func decodeAttacks(expr string, types, flavours map[string]bool) ([4]content.Mon
 	var result [4]content.MonsterAttack
 	inner, end, err := balanced(strings.TrimSpace(expr), 0, '{', '}')
 
-	if err != nil || end != len(strings.TrimSpace(expr)) {
+	if err != nil ||
+		end != len(strings.TrimSpace(expr)) {
 		return result, fmt.Errorf("invalid attack initializer %q", expr)
 	}
 
 	parts, err := splitFields(inner)
 
-	if err != nil || len(parts) != 4 {
+	if err != nil ||
+		len(parts) != 4 {
 		return result, fmt.Errorf("expected four attacks in %q", expr)
 	}
 
@@ -288,13 +292,15 @@ func decodeAttacks(expr string, types, flavours map[string]bool) ([4]content.Mon
 
 		value, end, err := balanced(part, 0, '{', '}')
 
-		if err != nil || end != len(part) {
+		if err != nil ||
+			end != len(part) {
 			return result, fmt.Errorf("invalid attack %q", part)
 		}
 
 		fields, err := splitFields(value)
 
-		if err != nil || len(fields) != 3 {
+		if err != nil ||
+			len(fields) != 3 {
 			return result, fmt.Errorf("invalid attack fields %q", part)
 		}
 
@@ -312,7 +318,8 @@ func decodeAttacks(expr string, types, flavours map[string]bool) ([4]content.Mon
 
 		damage, err := number(fields[2])
 
-		if err != nil || damage < 0 {
+		if err != nil ||
+			damage < 0 {
 			return result, fmt.Errorf("invalid attack damage %q", fields[2])
 		}
 
@@ -344,13 +351,15 @@ func decodeEnergy(expr string) (content.MonsterEnergy, error) {
 		if strings.HasPrefix(expr, "{") {
 			inner, end, err := balanced(expr, 0, '{', '}')
 
-			if err != nil || end != len(expr) {
+			if err != nil ||
+				end != len(expr) {
 				return content.MonsterEnergy{}, fmt.Errorf("bad energy initializer %q", expr)
 			}
 
 			parts, err := splitFields(inner)
 
-			if err != nil || len(parts) != 8 {
+			if err != nil ||
+				len(parts) != 8 {
 				return content.MonsterEnergy{}, fmt.Errorf("energy needs eight costs")
 			}
 
@@ -370,7 +379,8 @@ func decodeEnergy(expr string) (content.MonsterEnergy, error) {
 
 			inner, end, err := balanced(expr, open, '(', ')')
 
-			if err != nil || end != len(expr) {
+			if err != nil ||
+				end != len(expr) {
 				return content.MonsterEnergy{}, fmt.Errorf("bad energy macro %q", expr)
 			}
 
@@ -432,7 +442,8 @@ func decodeTile(expr string, variations map[string]bool) (content.MonsterTile, e
 	expr = strings.TrimSpace(expr)
 	inner, end, err := balanced(expr, 0, '{', '}')
 
-	if err != nil || end != len(expr) {
+	if err != nil ||
+		end != len(expr) {
 		return tile, fmt.Errorf("bad tile initializer %q", expr)
 	}
 
@@ -527,7 +538,8 @@ func decodeRow(path string, row sourceRow, s symbolSets) (content.MonsterDef, er
 
 	glyph, err := strconv.Unquote(f[1])
 
-	if err != nil || len([]rune(glyph)) != 1 {
+	if err != nil ||
+		len([]rune(glyph)) != 1 {
 		return d, fmt.Errorf("invalid glyph %q", f[1])
 	}
 

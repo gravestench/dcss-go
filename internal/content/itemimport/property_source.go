@@ -204,7 +204,8 @@ func rowFields(raw string) ([]string, error) {
 
 	inside, end, err := balancedPart(raw, 0, '{', '}')
 
-	if err != nil || strings.TrimSpace(raw[end:]) != "" {
+	if err != nil ||
+		strings.TrimSpace(raw[end:]) != "" {
 		return nil, fmt.Errorf("malformed braced row")
 	}
 

@@ -61,7 +61,8 @@ func TestHumanSkillPointThresholds(t *testing.T) {
 	for _, test := range tests {
 		got, err := HumanSkillPointsNeeded(test.level)
 
-		if err != nil || got != test.want {
+		if err != nil ||
+			got != test.want {
 			t.Fatalf("level %d needs %d, want %d: %v", test.level, got, test.want, err)
 		}
 	}
@@ -122,7 +123,8 @@ func TestHumanSkillLevelFromPoints(t *testing.T) {
 	for _, test := range tests {
 		got, err := HumanSkillLevel(test.points)
 
-		if err != nil || got != test.want {
+		if err != nil ||
+			got != test.want {
 			t.Fatalf("%d points gives level %d, want %d: %v", test.points, got, test.want, err)
 		}
 	}
@@ -170,18 +172,21 @@ func TestSkillCostBoundaries(t *testing.T) {
 	} {
 		level, err := SkillCostLevel(test.spent)
 
-		if err != nil || level != test.level {
+		if err != nil ||
+			level != test.level {
 			t.Fatalf("spent %d gives cost level %d, want %d: %v", test.spent, level, test.level, err)
 		}
 
 		cost, err := SkillPointCost(level)
 
-		if err != nil || cost != test.cost {
+		if err != nil ||
+			cost != test.cost {
 			t.Fatalf("cost level %d costs %d, want %d: %v", level, cost, test.cost, err)
 		}
 	}
 
-	if cost, err := SkillPointCost(27); err != nil || cost != 265 {
+	if cost, err := SkillPointCost(27); err != nil ||
+		cost != 265 {
 		t.Fatalf("cost level 27 costs %d, want 265: %v", cost, err)
 	}
 

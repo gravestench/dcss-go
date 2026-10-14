@@ -298,10 +298,11 @@ func TestPropertyScannerRejectsLoss(t *testing.T) {
 				"item-prop.cc",
 				[]byte(bad),
 				propertyVocabulary(),
-			); err == nil || !strings.Contains(
-				err.Error(),
-				"item-prop.cc",
-			) {
+			); err == nil ||
+				!strings.Contains(
+					err.Error(),
+					"item-prop.cc",
+				) {
 				t.Fatalf("invalid row accepted or lacked source context: %v", err)
 			}
 		})
@@ -310,10 +311,11 @@ func TestPropertyScannerRejectsLoss(t *testing.T) {
 	quoted := strings.Replace(base, `"robe"`, `"robe, // still name"`, 1)
 	rows, err := parsePropertyTables("item-prop.cc", []byte(quoted), propertyVocabulary())
 
-	if err != nil || rows[itemKey{
-		ClassID:   "OBJ_ARMOUR",
-		SubtypeID: "ARM_ROBE",
-	}].Name != "robe, // still name" {
+	if err != nil ||
+		rows[itemKey{
+			ClassID:   "OBJ_ARMOUR",
+			SubtypeID: "ARM_ROBE",
+		}].Name != "robe, // still name" {
 		t.Fatalf("quoted punctuation truncated: rows=%v err=%v", rows, err)
 	}
 }

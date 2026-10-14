@@ -19,13 +19,15 @@ func dragonArmourRows(
 
 	inside, end, err := balancedPart(raw, open, '(', ')')
 
-	if err != nil || end != len(raw) {
+	if err != nil ||
+		end != len(raw) {
 		return nil, fmt.Errorf("malformed DRAGON_ARMOUR call")
 	}
 
 	parts, err := splitTopLevel(inside, ',')
 
-	if err != nil || len(parts) != 6 {
+	if err != nil ||
+		len(parts) != 6 {
 		return nil, fmt.Errorf("DRAGON_ARMOUR needs six arguments")
 	}
 

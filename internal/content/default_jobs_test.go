@@ -98,7 +98,8 @@ func TestLoadDefaultJobs(t *testing.T) {
 	} {
 		job, err := catalog.Job(id)
 
-		if err != nil || job.Selectable {
+		if err != nil ||
+			job.Selectable {
 			t.Fatalf("removed job %s: %+v, %v", id, job, err)
 		}
 	}
@@ -112,7 +113,8 @@ func TestLoadDefaultJobs(t *testing.T) {
 
 	again, err := second.Job("JOB_FIGHTER")
 
-	if err != nil || again.Equipment[0] != "scale mail" {
+	if err != nil ||
+		again.Equipment[0] != "scale mail" {
 		t.Fatalf("fresh catalog changed: %+v, %v", again, err)
 	}
 }
@@ -239,10 +241,11 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 		defaultStartingGearJSON,
 		defaultPresentationJSON,
 		defaultMonsterJSON,
-	); err == nil || !strings.Contains(
-		err.Error(),
-		"decode",
-	) {
+	); err == nil ||
+		!strings.Contains(
+			err.Error(),
+			"decode",
+		) {
 		t.Fatalf("malformed job artifact error = %v", err)
 	}
 }

@@ -207,7 +207,8 @@ func TestAdderJoinsDungeonPopulationAndDeathRules(t *testing.T) {
 	g := newStepGame(t)
 	ids, err := scenarioAnimalIDs(generatedDungeonScenarioID)
 
-	if err != nil || !slices.Contains(ids, "MONS_ADDER") {
+	if err != nil ||
+		!slices.Contains(ids, "MONS_ADDER") {
 		t.Fatalf("generated Dungeon animal IDs = %v, %v", ids, err)
 	}
 

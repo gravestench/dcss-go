@@ -47,13 +47,15 @@ func TestWieldRecoveredStartingWeaponAfterBareHands(t *testing.T) {
 
 	input, err := newPlayerCombat(g).attackDelayInput("MONS_RAT")
 
-	if err != nil || !input.Unarmed {
+	if err != nil ||
+		!input.Unarmed {
 		t.Fatalf("bare-hands attack = %+v, %v", input, err)
 	}
 
 	alreadyBare, err := g.Step(Command{Kind: CommandWield})
 
-	if err != nil || alreadyBare.Spent != 0 {
+	if err != nil ||
+		alreadyBare.Spent != 0 {
 		t.Fatalf("already bare = %+v, %v", alreadyBare, err)
 	}
 
@@ -154,7 +156,8 @@ func TestWieldRejectsInvalidChoicesWithoutTime(t *testing.T) {
 			ItemID: uint64(itemID),
 		})
 
-		if err != nil || result.Spent != 0 {
+		if err != nil ||
+			result.Spent != 0 {
 			t.Fatalf("invalid wield %d = %+v, %v", itemID, result, err)
 		}
 	}
@@ -194,7 +197,8 @@ func TestRestoreRejectsUnsupportedEquippedWeapon(t *testing.T) {
 
 			_, err := Restore(snapshot, testCatalog(t))
 
-			if err == nil || !strings.Contains(err.Error(), "equipped weapon") {
+			if err == nil ||
+				!strings.Contains(err.Error(), "equipped weapon") {
 				t.Fatalf("restored impossible %s equipment: %v", kindID, err)
 			}
 		})

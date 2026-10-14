@@ -74,7 +74,8 @@ func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
 	} {
 		got, err := pool.Pick(tc.roll)
 
-		if err != nil || got != tc.want {
+		if err != nil ||
+			got != tc.want {
 			t.Fatalf("roll %d = %q, %v; want %q", tc.roll, got, err, tc.want)
 		}
 	}
@@ -138,7 +139,8 @@ func TestDungeonMonsterPoolVetoAndEmpty(t *testing.T) {
 			t.Fatalf("empty total = %d", empty.TotalWeight())
 		}
 
-		if got, err := empty.Pick(0); err != nil || got != "" {
+		if got, err := empty.Pick(0); err != nil ||
+			got != "" {
 			t.Fatalf("empty pick = %q, %v", got, err)
 		}
 	}
@@ -174,7 +176,8 @@ func TestDefaultDungeonMonsterPoolUsesPinnedD1Rows(t *testing.T) {
 	} {
 		got, err := pool.Pick(tc.roll)
 
-		if err != nil || got != tc.want {
+		if err != nil ||
+			got != tc.want {
 			t.Fatalf("D:1 roll %d = %q, %v; want %q", tc.roll, got, err, tc.want)
 		}
 	}

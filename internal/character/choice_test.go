@@ -197,13 +197,15 @@ func TestDirectionalRecommendationsAndBans(t *testing.T) {
 		t.Run(tc.species+"/"+tc.job, func(t *testing.T) {
 			forward, err := JobForSpecies(catalog, tc.species, tc.job)
 
-			if err != nil || forward != tc.forward {
+			if err != nil ||
+				forward != tc.forward {
 				t.Fatalf("species-first = %v, %v; want %v", forward, err, tc.forward)
 			}
 
 			reverse, err := SpeciesForJob(catalog, tc.species, tc.job)
 
-			if err != nil || reverse != tc.reverse {
+			if err != nil ||
+				reverse != tc.reverse {
 				t.Fatalf("job-first = %v, %v; want %v", reverse, err, tc.reverse)
 			}
 		})

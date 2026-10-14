@@ -129,7 +129,8 @@ func (i *jobImport) readVersion() error {
 
 	major, err := strconv.Atoi(string(match[1]))
 
-	if err != nil || major != 34 {
+	if err != nil ||
+		major != 34 {
 		return fmt.Errorf("%s: TAG_MAJOR_VERSION must be 34, got %s", path, match[1])
 	}
 

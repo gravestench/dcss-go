@@ -375,7 +375,8 @@ func (v *savedEntityValidator) validateEquipmentDelay() error {
 
 		kind, err := v.game.catalog.Item(item.Item.KindID)
 
-		if err != nil || kind.Slot != delay.Slot {
+		if err != nil ||
+			kind.Slot != delay.Slot {
 			return fmt.Errorf("saved equipment delay has invalid item %d", id)
 		}
 	}
@@ -411,7 +412,8 @@ func (v *savedEntityValidator) validateSavedWearFit(
 ) error {
 	kind, err := v.game.catalog.Item(item.Item.KindID)
 
-	if err != nil || kind.Armour == nil {
+	if err != nil ||
+		kind.Armour == nil {
 		return fmt.Errorf("saved wear item is not armour")
 	}
 

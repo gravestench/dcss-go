@@ -120,7 +120,8 @@ func TestParseJobDataRejectsMalformedDefinitions(t *testing.T) {
 			input := strings.Replace(jobFixture, tc.old, tc.replacement, 1)
 			_, err := parseJobData("job-data.h", []byte(input))
 
-			if err == nil || !strings.Contains(err.Error(), tc.want) {
+			if err == nil ||
+				!strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want error containing %q, got %v", tc.want, err)
 			}
 		})
