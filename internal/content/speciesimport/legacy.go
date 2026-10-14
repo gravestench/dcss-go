@@ -175,26 +175,31 @@ func parseLegacySpecies(path, id, body string) (content.SpeciesDef, error) {
 	}
 
 	s := content.SpeciesDef{
-		ID:                   id,
-		MonsterID:            fields[legacyMonster],
-		SourcePath:           path,
-		ShortName:            names[legacyShortName],
-		Name:                 names[legacyName],
-		Adjective:            names[legacyAdjective],
-		Genus:                names[legacyGenus],
-		XP:                   numbers[legacyXP],
-		HP:                   numbers[legacyHP],
-		MPMod:                numbers[legacyMPMod],
-		MR:                   numbers[legacyMR],
+		ID:         id,
+		MonsterID:  fields[legacyMonster],
+		SourcePath: path,
+
+		ShortName: names[legacyShortName],
+		Name:      names[legacyName],
+		Adjective: names[legacyAdjective],
+		Genus:     names[legacyGenus],
+
+		XP:    numbers[legacyXP],
+		HP:    numbers[legacyHP],
+		MPMod: numbers[legacyMPMod],
+		MR:    numbers[legacyMR],
+
 		Strength:             numbers[legacyStrength],
 		Intelligence:         numbers[legacyIntelligence],
 		Dexterity:            numbers[legacyDexterity],
 		LevelUpStats:         stats,
 		LevelUpStatFrequency: numbers[legacyLevelUpFrequency],
-		Habitat:              fields[legacyHabitat],
-		UndeadType:           fields[legacyUndeadType],
-		Size:                 fields[legacySize],
-		Aptitudes:            map[string]content.SpeciesAptitude{},
+
+		Habitat:    fields[legacyHabitat],
+		UndeadType: fields[legacyUndeadType],
+		Size:       fields[legacySize],
+
+		Aptitudes: map[string]content.SpeciesAptitude{},
 	}
 
 	if flag != "SPF_NONE" {

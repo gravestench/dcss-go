@@ -25,6 +25,8 @@ for a human reader to follow.
   inline. Expand slices and lists with three or more values instead of placing
   the whole declaration on one line. Compact fixed arrays of three scalar
   values may stay inline.
+- In long struct literals, leave blank lines between groups of related fields.
+  Keep the existing field order when grouping saved or imported data.
 - Leave a blank line after a multiline literal before the next statement.
 - Declare each struct field on its own line, including fields in test case
   tables. In large state and catalog structs, separate fields into conceptually

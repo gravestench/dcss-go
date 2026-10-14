@@ -51,12 +51,14 @@ type MonsterResistance struct {
 }
 
 type MonsterEnergy struct {
-	Move          int `json:"move"`
-	Swim          int `json:"swim"`
-	Attack        int `json:"attack"`
-	Missile       int `json:"missile"`
-	Spell         int `json:"spell"`
-	Special       int `json:"special"`
+	Move int `json:"move"`
+	Swim int `json:"swim"`
+
+	Attack  int `json:"attack"`
+	Missile int `json:"missile"`
+	Spell   int `json:"spell"`
+	Special int `json:"special"`
+
 	Item          int `json:"item"`
 	PickupPercent int `json:"pickup_percent"`
 }

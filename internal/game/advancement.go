@@ -13,16 +13,18 @@ import (
 // advancementSystem applies XP earned by deathSystem after the kill has been
 // resolved. The player's components own the resulting level, stats, and vitals.
 type advancementSystem struct {
-	player       akara.Entity
+	player akara.Entity
+
 	progression  *akara.Store[ecs.Progression]
 	attributes   *akara.Store[ecs.Attributes]
 	skills       *akara.Store[ecs.Skills]
 	health       *akara.Store[ecs.Health]
 	magic        *akara.Store[ecs.Magic]
 	regeneration *akara.Store[ecs.Regeneration]
-	species      content.SpeciesDef
-	rng          *RNGStreams
-	turn         *TurnContext
+
+	species content.SpeciesDef
+	rng     *RNGStreams
+	turn    *TurnContext
 }
 
 func newAdvancementSystem(g *Game) (*advancementSystem, error) {
@@ -35,16 +37,18 @@ func newAdvancementSystem(g *Game) (*advancementSystem, error) {
 	s := g.stores
 
 	return &advancementSystem{
-		player:       g.player,
+		player: g.player,
+
 		progression:  s.Progression,
 		attributes:   s.Attributes,
 		skills:       s.Skills,
 		health:       s.Health,
 		magic:        s.Magic,
 		regeneration: s.Regeneration,
-		species:      species,
-		rng:          g.rng,
-		turn:         &g.turn,
+
+		species: species,
+		rng:     g.rng,
+		turn:    &g.turn,
 	}, nil
 }
 

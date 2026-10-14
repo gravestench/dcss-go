@@ -16,10 +16,12 @@ type deathSystem struct {
 	positions   *akara.Store[ecs.Position]
 	health      *akara.Store[ecs.Health]
 	progression *akara.Store[ecs.Progression]
-	catalog     content.Catalog
-	rng         *RNGStreams
-	player      akara.Entity
-	turn        *TurnContext
+
+	catalog content.Catalog
+	rng     *RNGStreams
+
+	player akara.Entity
+	turn   *TurnContext
 }
 
 func newDeathSystem(g *Game) *deathSystem {
@@ -30,10 +32,12 @@ func newDeathSystem(g *Game) *deathSystem {
 		positions:   s.Positions,
 		health:      s.Health,
 		progression: s.Progression,
-		catalog:     g.catalog,
-		rng:         g.rng,
-		player:      g.player,
-		turn:        &g.turn,
+
+		catalog: g.catalog,
+		rng:     g.rng,
+
+		player: g.player,
+		turn:   &g.turn,
 	}
 }
 

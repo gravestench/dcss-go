@@ -188,25 +188,30 @@ func (g *Game) Snapshot() save.Snapshot {
 
 	for _, entity := range g.world.Entities() {
 		snapshot.Entities = append(snapshot.Entities, save.EntityRecord{
-			ID:           uint64(entity),
-			Position:     copyComponent(g.stores.Positions, entity),
-			Actor:        copyComponent(g.stores.Actors, entity),
-			Health:       copyComponent(g.stores.Health, entity),
+			ID: uint64(entity),
+
+			Position: copyComponent(g.stores.Positions, entity),
+			Actor:    copyComponent(g.stores.Actors, entity),
+			Health:   copyComponent(g.stores.Health, entity),
+
 			Magic:        copyComponent(g.stores.Magic, entity),
 			Skills:       copySkillsComponent(g.stores.Skills, entity),
 			Progression:  copyComponent(g.stores.Progression, entity),
 			Durations:    copyComponent(g.stores.Durations, entity),
 			Regeneration: copyComponent(g.stores.Regeneration, entity),
 			Combatant:    copyComponent(g.stores.Combat, entity),
-			Player:       copyComponent(g.stores.Players, entity),
-			Attributes:   copyComponent(g.stores.Attributes, entity),
-			Equipment:    copyComponent(g.stores.Equipment, entity),
+
+			Player:     copyComponent(g.stores.Players, entity),
+			Attributes: copyComponent(g.stores.Attributes, entity),
+			Equipment:  copyComponent(g.stores.Equipment, entity),
+
 			AI:           copyComponent(g.stores.AI, entity),
 			BandFollower: copyComponent(g.stores.Followers, entity),
-			Item:         copyComponent(g.stores.Items, entity),
-			Corpse:       copyComponent(g.stores.Corpses, entity),
-			CarriedBy:    copyComponent(g.stores.CarriedBy, entity),
-			Equipped:     copyComponent(g.stores.Equipped, entity),
+
+			Item:      copyComponent(g.stores.Items, entity),
+			Corpse:    copyComponent(g.stores.Corpses, entity),
+			CarriedBy: copyComponent(g.stores.CarriedBy, entity),
+			Equipped:  copyComponent(g.stores.Equipped, entity),
 		})
 	}
 
@@ -260,18 +265,21 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 
 	stores := ecs.Register(world)
 	g := &Game{
-		world:      world,
-		stores:     stores,
-		levels:     make(map[int]*Level),
-		player:     akara.Entity(snapshot.PlayerID),
+		world:  world,
+		stores: stores,
+		levels: make(map[int]*Level),
+		player: akara.Entity(snapshot.PlayerID),
+
 		catalog:    catalog,
 		seed:       snapshot.Seed,
 		scenarioID: snapshot.ScenarioID,
 		rng:        RestoreRNGStreams(snapshot.Seed, snapshot.RNG),
+
 		scheduler: TurnScheduler{
 			actors:    stores.Actors,
 			positions: stores.Positions,
 		},
+
 		currentAut: Aut(snapshot.CurrentAut),
 		messages:   append([]string(nil), snapshot.Messages...),
 	}

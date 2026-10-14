@@ -11,34 +11,38 @@ import (
 )
 
 type combatSystem struct {
-	player    akara.Entity
+	player akara.Entity
+
 	intents   *akara.Store[ecs.Intent]
 	positions *akara.Store[ecs.Position]
 	actors    *akara.Store[ecs.Actor]
 	health    *akara.Store[ecs.Health]
 	combat    *akara.Store[ecs.Combatant]
-	levels    map[int]*Level
-	catalog   content.Catalog
-	fighter   playerCombat
-	roller    combat.Roller
-	turn      *TurnContext
+
+	levels  map[int]*Level
+	catalog content.Catalog
+	fighter playerCombat
+	roller  combat.Roller
+	turn    *TurnContext
 }
 
 func newCombatSystem(g *Game) *combatSystem {
 	s := g.stores
 
 	return &combatSystem{
-		player:    g.player,
+		player: g.player,
+
 		intents:   s.Intents,
 		positions: s.Positions,
 		actors:    s.Actors,
 		health:    s.Health,
 		combat:    s.Combat,
-		levels:    g.levels,
-		catalog:   g.catalog,
-		fighter:   newPlayerCombat(g),
-		roller:    g.rng,
-		turn:      &g.turn,
+
+		levels:  g.levels,
+		catalog: g.catalog,
+		fighter: newPlayerCombat(g),
+		roller:  g.rng,
+		turn:    &g.turn,
 	}
 }
 

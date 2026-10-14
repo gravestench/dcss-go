@@ -10,14 +10,16 @@ import (
 )
 
 type quaffSystem struct {
-	player    akara.Entity
+	player akara.Entity
+
 	intents   *akara.Store[ecs.Intent]
 	items     *akara.Store[ecs.Item]
 	carried   *akara.Store[ecs.CarriedBy]
 	health    *akara.Store[ecs.Health]
 	durations *akara.Store[ecs.Durations]
-	rng       character.Roller
-	turn      *TurnContext
+
+	rng  character.Roller
+	turn *TurnContext
 }
 
 func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {

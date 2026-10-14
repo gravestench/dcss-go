@@ -9,32 +9,39 @@ import (
 )
 
 type sourceSpecies struct {
-	TagMajorVersion    int                           `yaml:"TAG_MAJOR_VERSION"`
-	Enum               string                        `yaml:"enum"`
-	Monster            string                        `yaml:"monster"`
-	Name               string                        `yaml:"name"`
-	ShortName          string                        `yaml:"short_name"`
-	Adjective          string                        `yaml:"adjective"`
-	Genus              string                        `yaml:"genus"`
-	Difficulty         yaml.Node                     `yaml:"difficulty"`
-	DifficultyPriority int                           `yaml:"difficulty_priority"`
-	Aptitudes          map[string]yaml.Node          `yaml:"aptitudes"`
-	SpeciesFlags       []string                      `yaml:"species_flags"`
-	CanSwim            bool                          `yaml:"can_swim"`
-	UndeadType         string                        `yaml:"undead_type"`
-	Size               string                        `yaml:"size"`
-	Strength           int                           `yaml:"str"`
-	Intelligence       int                           `yaml:"int"`
-	Dexterity          int                           `yaml:"dex"`
-	LevelUpFrequency   int                           `yaml:"levelup_stat_frequency"`
-	LevelUpStats       *[]string                     `yaml:"levelup_stats"`
-	Mutations          map[int]map[string]int        `yaml:"mutations"`
-	FakeMutations      []content.SpeciesFakeMutation `yaml:"fake_mutations"`
-	RecommendedJobs    []string                      `yaml:"recommended_jobs"`
-	RecommendedWeapons []string                      `yaml:"recommended_weapons"`
-	WalkingVerb        string                        `yaml:"walking_verb"`
-	AltarAction        string                        `yaml:"altar_action"`
-	CreateEnum         bool                          `yaml:"create_enum"`
+	TagMajorVersion int    `yaml:"TAG_MAJOR_VERSION"`
+	Enum            string `yaml:"enum"`
+	Monster         string `yaml:"monster"`
+
+	Name      string `yaml:"name"`
+	ShortName string `yaml:"short_name"`
+	Adjective string `yaml:"adjective"`
+	Genus     string `yaml:"genus"`
+
+	Difficulty         yaml.Node            `yaml:"difficulty"`
+	DifficultyPriority int                  `yaml:"difficulty_priority"`
+	Aptitudes          map[string]yaml.Node `yaml:"aptitudes"`
+
+	SpeciesFlags []string `yaml:"species_flags"`
+	CanSwim      bool     `yaml:"can_swim"`
+	UndeadType   string   `yaml:"undead_type"`
+	Size         string   `yaml:"size"`
+
+	Strength         int       `yaml:"str"`
+	Intelligence     int       `yaml:"int"`
+	Dexterity        int       `yaml:"dex"`
+	LevelUpFrequency int       `yaml:"levelup_stat_frequency"`
+	LevelUpStats     *[]string `yaml:"levelup_stats"`
+
+	Mutations     map[int]map[string]int        `yaml:"mutations"`
+	FakeMutations []content.SpeciesFakeMutation `yaml:"fake_mutations"`
+
+	RecommendedJobs    []string `yaml:"recommended_jobs"`
+	RecommendedWeapons []string `yaml:"recommended_weapons"`
+
+	WalkingVerb string `yaml:"walking_verb"`
+	AltarAction string `yaml:"altar_action"`
+	CreateEnum  bool   `yaml:"create_enum"`
 }
 
 var ordinarySkills = []string{

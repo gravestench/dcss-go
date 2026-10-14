@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -71,6 +72,35 @@ func checkFile(path string) (int, error) {
 
 	if err != nil {
 		return 0, err
+	}
+
+	importedTypes := make(map[string]localTypes)
+
+	for _, imported := range file.Imports {
+		importPath, err := strconv.Unquote(imported.Path.Value)
+
+		if err != nil || !strings.HasPrefix(importPath, "dcrawl-go/") {
+			continue
+		}
+
+		alias := filepath.Base(importPath)
+
+		if imported.Name != nil {
+			alias = imported.Name.Name
+		}
+
+		root, err := moduleRoot()
+
+		if err != nil {
+			return 0, err
+		}
+
+		importDir := filepath.Join(root, strings.TrimPrefix(importPath, "dcrawl-go/"))
+		importedTypes[alias], err = declaredTypes(importDir)
+
+		if err != nil {
+			return 0, err
+		}
 	}
 
 	issues := 0
@@ -294,6 +324,14 @@ func checkFile(path string) (int, error) {
 				entriesShareLine(fset, value) {
 				report(value.Lbrace, "put literal entries on separate lines")
 			}
+
+			// Ten or more fields are difficult to scan as one uninterrupted block.
+			if len(value.Elts) >= 10 && keyedFields &&
+				isStructLiteralType(value.Type, types, importedTypes) &&
+				!entriesShareLine(fset, value) &&
+				!literalHasGroupBreak(fset, value, lines) {
+				report(value.Lbrace, "group long literal fields by concept")
+			}
 		}
 
 		return true
@@ -449,6 +487,71 @@ func entriesShareLine(fset *token.FileSet, literal *ast.CompositeLit) bool {
 	}
 
 	return false
+}
+
+func literalHasGroupBreak(
+	fset *token.FileSet,
+	literal *ast.CompositeLit,
+	lines []string,
+) bool {
+	for index := 1; index < len(literal.Elts); index++ {
+		previousEnd := fset.Position(literal.Elts[index-1].End() - 1).Line
+		nextStart := fset.Position(literal.Elts[index].Pos()).Line
+
+		for line := previousEnd + 1; line < nextStart; line++ {
+			if strings.TrimSpace(lines[line-1]) == "" {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func isStructLiteralType(
+	expression ast.Expr,
+	local localTypes,
+	imports map[string]localTypes,
+) bool {
+	switch value := expression.(type) {
+	case *ast.Ident, *ast.StructType:
+		return isStructType(expression, local.structs)
+
+	case *ast.SelectorExpr:
+		owner, ok := value.X.(*ast.Ident)
+
+		return ok && imports[owner.Name].structs[value.Sel.Name]
+
+	case *ast.IndexExpr:
+		return isStructLiteralType(value.X, local, imports)
+
+	case *ast.IndexListExpr:
+		return isStructLiteralType(value.X, local, imports)
+	}
+
+	return false
+}
+
+func moduleRoot() (string, error) {
+	dir, err := os.Getwd()
+
+	if err != nil {
+		return "", err
+	}
+
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
+			return dir, nil
+		}
+
+		parent := filepath.Dir(dir)
+
+		if parent == dir {
+			return "", fmt.Errorf("cannot locate project go.mod")
+		}
+
+		dir = parent
+	}
 }
 
 func isControl(statement ast.Stmt) bool {

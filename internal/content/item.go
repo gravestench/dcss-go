@@ -50,15 +50,17 @@ type ItemFlag struct {
 }
 
 type ArmourProperties struct {
-	AC            int        `json:"ac"`
-	EV            int        `json:"ev"`
-	Price         int        `json:"price"`
-	AcquireWeight int        `json:"acquire_weight"`
-	SlotID        string     `json:"slot_id"`
-	FitMinID      string     `json:"fit_min_id"`
-	FitMaxID      string     `json:"fit_max_id"`
-	Mundane       bool       `json:"mundane"`
-	Flags         []ItemFlag `json:"flags"`
+	AC            int `json:"ac"`
+	EV            int `json:"ev"`
+	Price         int `json:"price"`
+	AcquireWeight int `json:"acquire_weight"`
+
+	SlotID   string `json:"slot_id"`
+	FitMinID string `json:"fit_min_id"`
+	FitMaxID string `json:"fit_max_id"`
+
+	Mundane bool       `json:"mundane"`
+	Flags   []ItemFlag `json:"flags"`
 }
 
 type ItemBrandWeight struct {
@@ -138,14 +140,16 @@ type ItemArtifact struct {
 }
 
 type ItemIdentityManifest struct {
-	SchemaVersion     int             `json:"schema_version"`
-	SourceRevision    string          `json:"source_revision"`
-	TagMajorVersion   int             `json:"tag_major_version"`
-	SourceFiles       []JobSourceFile `json:"source_files"`
-	Identities        []ItemIdentity  `json:"identities"`
-	Aliases           []ItemAlias     `json:"aliases"`
-	Vocabulary        ItemVocabulary  `json:"vocabulary"`
-	DefinitionsSHA256 string          `json:"definitions_sha256"`
+	SchemaVersion   int             `json:"schema_version"`
+	SourceRevision  string          `json:"source_revision"`
+	TagMajorVersion int             `json:"tag_major_version"`
+	SourceFiles     []JobSourceFile `json:"source_files"`
+
+	Identities []ItemIdentity `json:"identities"`
+	Aliases    []ItemAlias    `json:"aliases"`
+	Vocabulary ItemVocabulary `json:"vocabulary"`
+
+	DefinitionsSHA256 string `json:"definitions_sha256"`
 }
 
 func (d ItemDef) clone() ItemDef {

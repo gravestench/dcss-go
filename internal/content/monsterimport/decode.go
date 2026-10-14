@@ -10,15 +10,18 @@ import (
 
 // symbolSets are built from the active pinned enum declarations by import.go.
 type symbolSets struct {
-	monster       map[string]bool
+	monster map[string]bool
+
 	attackType    map[string]bool
 	attackFlavour map[string]bool
 	spellbook     map[string]bool
-	classFlag     map[string]bool
-	resistance    map[string]bool
-	holiness      map[string]bool
-	shout         map[string]bool
-	intelligence  map[string]bool
+
+	classFlag    map[string]bool
+	resistance   map[string]bool
+	holiness     map[string]bool
+	shout        map[string]bool
+	intelligence map[string]bool
+
 	habitat       map[string]bool
 	itemUse       map[string]bool
 	size          map[string]bool

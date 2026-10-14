@@ -118,18 +118,21 @@ func (v itemSourceViews) buildItem(identity content.ItemIdentity) (content.ItemD
 	}
 
 	item := content.ItemDef{
-		ID:                identity.ID,
-		Name:              name.Text,
-		Glyph:             glyph,
-		Class:             identity.ClassID,
-		ClassValue:        identity.ClassValue,
-		SubtypeValue:      identity.SubtypeValue,
+		ID:    identity.ID,
+		Name:  name.Text,
+		Glyph: glyph,
+
+		Class:        identity.ClassID,
+		ClassValue:   identity.ClassValue,
+		SubtypeValue: identity.SubtypeValue,
+
 		Naming:            name,
 		ExplicitlyRemoved: identity.ExplicitlyRemoved,
 		Evidence: content.ItemEvidence{
 			NameSource: name.SourcePath,
 			NameLine:   name.SourceLine,
 		},
+
 		Armour:  row.Armour,
 		Weapon:  row.Weapon,
 		Missile: row.Missile,

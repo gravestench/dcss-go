@@ -223,20 +223,23 @@ func parseDescriptor(path string, line int, fields []string) (content.SpellDef, 
 	}
 
 	return content.SpellDef{
-		ID:           fields[0],
-		Name:         name,
-		Status:       content.SpellDefined,
-		Schools:      schools,
-		Flags:        flags,
-		Level:        ints[0],
-		PowerCap:     ints[1],
+		ID:     fields[0],
+		Name:   name,
+		Status: content.SpellDefined,
+
+		Schools:  schools,
+		Flags:    flags,
+		Level:    ints[0],
+		PowerCap: ints[1],
+
 		MinRangeExpr: strings.Join(strings.Fields(fields[6]), " "),
 		MaxRangeExpr: strings.Join(strings.Fields(fields[7]), " "),
 		Noise:        ints[2],
 		EffectNoise:  ints[3],
 		TileID:       fields[10],
-		SourcePath:   "crawl-ref/source/spl-data.h",
-		SourceLine:   line,
+
+		SourcePath: "crawl-ref/source/spl-data.h",
+		SourceLine: line,
 	}, nil
 }
 
@@ -334,17 +337,20 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 			}
 
 			result[match[1]] = content.SpellDef{
-				ID:           match[1],
-				Name:         name,
-				Status:       content.SpellRemoved,
-				Schools:      []string{"none"},
-				Flags:        []string{"none"},
-				Level:        7,
+				ID:     match[1],
+				Name:   name,
+				Status: content.SpellRemoved,
+
+				Schools: []string{"none"},
+				Flags:   []string{"none"},
+				Level:   7,
+
 				MinRangeExpr: "-1",
 				MaxRangeExpr: "-1",
 				TileID:       "TILEG_ERROR",
-				SourcePath:   "crawl-ref/source/spl-data.h",
-				SourceLine:   line.Number,
+
+				SourcePath: "crawl-ref/source/spl-data.h",
+				SourceLine: line.Number,
 			}
 
 			continue

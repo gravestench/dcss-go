@@ -12,28 +12,32 @@ import (
 // monsterDecisionSystem turns an active monster's saved AI state into its
 // transient action intent before movement and combat systems run.
 type monsterDecisionSystem struct {
-	player    akara.Entity
+	player akara.Entity
+
 	positions *akara.Store[ecs.Position]
 	ai        *akara.Store[ecs.MonsterAI]
 	followers *akara.Store[ecs.BandFollower]
 	intents   *akara.Store[ecs.Intent]
-	levels    map[int]*Level
-	rng       *RNGStreams
-	clock     *Aut
-	turn      *TurnContext
+
+	levels map[int]*Level
+	rng    *RNGStreams
+	clock  *Aut
+	turn   *TurnContext
 }
 
 func newMonsterDecisionSystem(g *Game) *monsterDecisionSystem {
 	return &monsterDecisionSystem{
-		player:    g.player,
+		player: g.player,
+
 		positions: g.stores.Positions,
 		ai:        g.stores.AI,
 		followers: g.stores.Followers,
 		intents:   g.stores.Intents,
-		levels:    g.levels,
-		rng:       g.rng,
-		clock:     &g.currentAut,
-		turn:      &g.turn,
+
+		levels: g.levels,
+		rng:    g.rng,
+		clock:  &g.currentAut,
+		turn:   &g.turn,
 	}
 }
 

@@ -12,10 +12,12 @@ func testMonster(id string) MonsterDef {
 		Status:     MonsterDefined,
 		SourcePath: "crawl-ref/source/mon-data.h",
 		SourceLine: 1994,
-		Name:       "rat",
-		Glyph:      'r',
-		ColourID:   "BROWN",
-		Flags:      []string{"M_WARM_BLOOD"},
+
+		Name:     "rat",
+		Glyph:    'r',
+		ColourID: "BROWN",
+
+		Flags: []string{"M_WARM_BLOOD"},
 		Resistances: []MonsterResistance{
 			{
 				ID:    "MR_RES_FIRE",

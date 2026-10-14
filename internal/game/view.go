@@ -29,10 +29,11 @@ type EntityView struct {
 }
 
 type ItemView struct {
-	ID       uint64
-	KindID   string
-	Name     string
-	Class    string
+	ID     uint64
+	KindID string
+	Name   string
+	Class  string
+
 	Quantity int
 	Plus     int
 	Charges  int
@@ -84,12 +85,14 @@ func (g *Game) View() View {
 
 	level := g.levels[position.LevelID]
 	view := View{
-		LevelID:    position.LevelID,
-		PlayerX:    position.X,
-		PlayerY:    position.Y,
-		Width:      level.width,
-		Height:     len(level.terrain),
-		Cells:      make([]CellView, len(level.remembered)),
+		LevelID: position.LevelID,
+		PlayerX: position.X,
+		PlayerY: position.Y,
+
+		Width:  level.width,
+		Height: len(level.terrain),
+		Cells:  make([]CellView, len(level.remembered)),
+
 		CurrentAut: g.currentAut,
 		Messages:   append([]string(nil), g.messages...),
 	}
@@ -264,10 +267,11 @@ func (g *Game) fillInventoryView(view *View) {
 
 		if err == nil {
 			entry := ItemView{
-				ID:       uint64(entity),
-				KindID:   item.KindID,
-				Name:     definition.Name,
-				Class:    definition.Class,
+				ID:     uint64(entity),
+				KindID: item.KindID,
+				Name:   definition.Name,
+				Class:  definition.Class,
+
 				Quantity: item.Quantity,
 				Plus:     item.Plus,
 				Charges:  item.Charges,

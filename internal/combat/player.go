@@ -5,19 +5,23 @@ import "fmt"
 // PlayerAttackInput is the ordinary Human Fighter primary attack projected
 // from live character state, one equipped weapon, and the current defender.
 type PlayerAttackInput struct {
-	Strength         int
-	Dexterity        int
+	Strength  int
+	Dexterity int
+
 	FightingSkill100 int
 	WeaponSkill100   int
 	UnarmedSkill256  int
-	WeaponSkillID    string
-	WeaponDamage     int
-	WeaponHit        int
-	WeaponPlus       int
-	Unarmed          bool
-	DefenderEV       int
-	DefenderAC       int
-	Mighty           bool
+
+	WeaponSkillID string
+	WeaponDamage  int
+	WeaponHit     int
+	WeaponPlus    int
+	Unarmed       bool
+
+	DefenderEV int
+	DefenderAC int
+
+	Mighty bool
 }
 
 // Validate rejects inputs outside the supported Human Fighter scenario.

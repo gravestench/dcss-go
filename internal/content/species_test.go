@@ -14,15 +14,18 @@ func testSpecies(id string) SpeciesDef {
 	}
 
 	return SpeciesDef{
-		ID:                   id,
-		MonsterID:            "MONS_HUMAN",
-		SourcePath:           "crawl-ref/source/dat/species/human.yaml",
-		Name:                 "Human",
-		ShortName:            "Hu",
-		Selectable:           true,
-		Difficulty:           "Intermediate",
-		XP:                   1,
-		MR:                   3,
+		ID:         id,
+		MonsterID:  "MONS_HUMAN",
+		SourcePath: "crawl-ref/source/dat/species/human.yaml",
+
+		Name:       "Human",
+		ShortName:  "Hu",
+		Selectable: true,
+		Difficulty: "Intermediate",
+
+		XP: 1,
+		MR: 3,
+
 		Strength:             8,
 		Intelligence:         8,
 		Dexterity:            8,

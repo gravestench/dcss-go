@@ -7,17 +7,20 @@ import (
 
 func testJob(id, abbreviation string) JobDef {
 	return JobDef{
-		ID:                 id,
-		SourcePath:         "crawl-ref/source/job-data.h",
-		Abbreviation:       abbreviation,
-		Name:               "Fighter",
-		Strength:           8,
-		Intelligence:       0,
-		Dexterity:          4,
+		ID:           id,
+		SourcePath:   "crawl-ref/source/job-data.h",
+		Abbreviation: abbreviation,
+		Name:         "Fighter",
+
+		Strength:     8,
+		Intelligence: 0,
+		Dexterity:    4,
+
 		RecommendedSpecies: []string{"SP_HUMAN"},
 		Spells:             []string{"SPELL_SHOCK"},
 		Equipment:          []string{"scale mail", "buckler"},
 		WeaponChoice:       "WCHOICE_GOOD",
+
 		Skills: []JobSkillGrant{
 			{
 				ID:    "SK_FIGHTING",

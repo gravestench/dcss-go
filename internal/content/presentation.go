@@ -16,15 +16,17 @@ type StartupMode struct {
 
 // PresentationArtifact contains source menu prose and order, independent of the C++ checkout.
 type PresentationArtifact struct {
-	SchemaVersion       int               `json:"schema_version"`
-	SourceRevision      string            `json:"source_revision"`
-	SourceVersion       string            `json:"source_version"`
-	TagMajorVersion     int               `json:"tag_major_version"`
-	SourceFiles         []JobSourceFile   `json:"source_files"`
-	StartupModes        []StartupMode     `json:"startup_modes"`
-	SkillColumns        [][]string        `json:"skill_columns"`
-	SpeciesGroups       []MenuGroup       `json:"species_groups"`
-	JobGroups           []MenuGroup       `json:"job_groups"`
+	SchemaVersion   int             `json:"schema_version"`
+	SourceRevision  string          `json:"source_revision"`
+	SourceVersion   string          `json:"source_version"`
+	TagMajorVersion int             `json:"tag_major_version"`
+	SourceFiles     []JobSourceFile `json:"source_files"`
+
+	StartupModes  []StartupMode `json:"startup_modes"`
+	SkillColumns  [][]string    `json:"skill_columns"`
+	SpeciesGroups []MenuGroup   `json:"species_groups"`
+	JobGroups     []MenuGroup   `json:"job_groups"`
+
 	SpeciesDescriptions map[string]string `json:"species_descriptions"`
 	JobDescriptions     map[string]string `json:"job_descriptions"`
 }

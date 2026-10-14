@@ -14,11 +14,13 @@ type OrdinaryBiteProfile struct {
 	AverageHP10x int
 	MinHP        int
 	MaxHP        int
-	Damage       int
-	Speed        int
-	XPModifier   int
-	FastRegen    bool
-	NoSkeleton   bool
+
+	Damage int
+	Speed  int
+
+	XPModifier int
+	FastRegen  bool
+	NoSkeleton bool
 }
 
 var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{

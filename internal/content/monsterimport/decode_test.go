@@ -34,15 +34,18 @@ func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 	}
 
 	s := symbolSets{
-		monster:       makeSet(),
+		monster: makeSet(),
+
 		attackType:    makeSet(),
 		attackFlavour: makeSet(),
 		spellbook:     makeSet(),
-		classFlag:     makeSet(),
-		resistance:    makeSet(),
-		holiness:      makeSet(),
-		shout:         makeSet(),
-		intelligence:  makeSet(),
+
+		classFlag:    makeSet(),
+		resistance:   makeSet(),
+		holiness:     makeSet(),
+		shout:        makeSet(),
+		intelligence: makeSet(),
+
 		habitat:       makeSet(),
 		itemUse:       makeSet(),
 		size:          makeSet(),
@@ -137,9 +140,11 @@ func testSymbols() symbolSets {
 			"MONS_SPRIGGAN",
 			"MONS_PROGRAM_BUG",
 		),
+
 		attackType:    set("AT_NONE", "AT_BITE", "AT_HIT", "AT_CLAW"),
 		attackFlavour: set("AF_PLAIN", "AF_FIRE"),
 		spellbook:     set("MST_NO_SPELLS", "MST_ORC_WIZARD"),
+
 		classFlag:     set("M_WARM_BLOOD", "M_NO_EXP_GAIN", "M_NO_THREAT", "M_CANT_SPAWN"),
 		resistance:    set("MR_NO_FLAGS", "MR_RES_FIRE", "MR_RES_COLD", "MR_RES_POISON", "MR_VUL_COLD", "MR_VUL_POISON"),
 		holiness:      set("MH_NATURAL", "MH_DEMONIC"),

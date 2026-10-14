@@ -15,22 +15,25 @@ const (
 )
 
 type SpellDef struct {
-	ID           string      `json:"id"`
-	NumericID    int         `json:"numeric_id"`
-	Status       SpellStatus `json:"status"`
-	Name         string      `json:"name"`
-	Schools      []string    `json:"schools"`
-	Flags        []string    `json:"flags"`
-	Level        int         `json:"level"`
-	PowerCap     int         `json:"power_cap"`
-	MinRangeExpr string      `json:"min_range_expr"`
-	MaxRangeExpr string      `json:"max_range_expr"`
-	Noise        int         `json:"noise"`
-	EffectNoise  int         `json:"effect_noise"`
-	TileID       string      `json:"tile_id"`
-	EnumLine     int         `json:"enum_line"`
-	SourcePath   string      `json:"source_path"`
-	SourceLine   int         `json:"source_line"`
+	ID        string      `json:"id"`
+	NumericID int         `json:"numeric_id"`
+	Status    SpellStatus `json:"status"`
+	Name      string      `json:"name"`
+
+	Schools  []string `json:"schools"`
+	Flags    []string `json:"flags"`
+	Level    int      `json:"level"`
+	PowerCap int      `json:"power_cap"`
+
+	MinRangeExpr string `json:"min_range_expr"`
+	MaxRangeExpr string `json:"max_range_expr"`
+	Noise        int    `json:"noise"`
+	EffectNoise  int    `json:"effect_noise"`
+	TileID       string `json:"tile_id"`
+
+	EnumLine   int    `json:"enum_line"`
+	SourcePath string `json:"source_path"`
+	SourceLine int    `json:"source_line"`
 }
 
 func (s SpellDef) clone() SpellDef {

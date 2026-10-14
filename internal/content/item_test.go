@@ -4,14 +4,16 @@ import "testing"
 
 func testWeaponItem() ItemDef {
 	return ItemDef{
-		ID:           "WPN_MACE",
-		Name:         "mace",
-		Glyph:        ')',
+		ID:    "WPN_MACE",
+		Name:  "mace",
+		Glyph: ')',
+
 		Class:        "OBJ_WEAPONS",
 		ClassValue:   0,
 		SubtypeValue: 4,
 		Slot:         "weapon",
 		WeaponSkill:  "SK_MACES_FLAILS",
+
 		Naming: ItemName{
 			Text:       "mace",
 			Kind:       "static",

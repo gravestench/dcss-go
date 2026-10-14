@@ -13,32 +13,38 @@ import (
 // playerCombat projects the live Fighter's ECS state into combat rules.
 // It owns no copy of mutable character state; every method reads its stores.
 type playerCombat struct {
-	player     akara.Entity
+	player akara.Entity
+
 	players    *akara.Store[ecs.PlayerControlled]
 	attributes *akara.Store[ecs.Attributes]
 	skills     *akara.Store[ecs.Skills]
 	durations  *akara.Store[ecs.Durations]
 	combat     *akara.Store[ecs.Combatant]
-	equipped   *akara.Store[ecs.Equipped]
-	carried    *akara.Store[ecs.CarriedBy]
-	items      *akara.Store[ecs.Item]
-	catalog    content.Catalog
+
+	equipped *akara.Store[ecs.Equipped]
+	carried  *akara.Store[ecs.CarriedBy]
+	items    *akara.Store[ecs.Item]
+
+	catalog content.Catalog
 }
 
 func newPlayerCombat(g *Game) playerCombat {
 	s := g.stores
 
 	return playerCombat{
-		player:     g.player,
+		player: g.player,
+
 		players:    s.Players,
 		attributes: s.Attributes,
 		skills:     s.Skills,
 		durations:  s.Durations,
 		combat:     s.Combat,
-		equipped:   s.Equipped,
-		carried:    s.CarriedBy,
-		items:      s.Items,
-		catalog:    g.catalog,
+
+		equipped: s.Equipped,
+		carried:  s.CarriedBy,
+		items:    s.Items,
+
+		catalog: g.catalog,
 	}
 }
 

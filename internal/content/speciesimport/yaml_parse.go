@@ -65,36 +65,44 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 	}
 
 	result := content.SpeciesDef{
-		ID:                   source.Enum,
-		MonsterID:            source.Monster,
-		SourcePath:           path,
-		Name:                 source.Name,
-		ShortName:            source.ShortName,
-		Adjective:            source.Adjective,
-		Genus:                source.Genus,
-		Selectable:           selectable,
-		Difficulty:           difficultyName,
-		DifficultyPriority:   source.DifficultyPriority,
-		XP:                   aptitudes.xp,
-		HP:                   aptitudes.hp,
-		MPMod:                aptitudes.mp,
-		MR:                   aptitudes.mr,
+		ID:         source.Enum,
+		MonsterID:  source.Monster,
+		SourcePath: path,
+
+		Name:      source.Name,
+		ShortName: source.ShortName,
+		Adjective: source.Adjective,
+		Genus:     source.Genus,
+
+		Selectable:         selectable,
+		Difficulty:         difficultyName,
+		DifficultyPriority: source.DifficultyPriority,
+
+		XP:    aptitudes.xp,
+		HP:    aptitudes.hp,
+		MPMod: aptitudes.mp,
+		MR:    aptitudes.mr,
+
 		Strength:             source.Strength,
 		Intelligence:         source.Intelligence,
 		Dexterity:            source.Dexterity,
 		LevelUpStatFrequency: source.LevelUpFrequency,
 		LevelUpStats:         append([]string(nil), (*source.LevelUpStats)...),
-		Aptitudes:            aptitudes.skills,
-		Mutations:            mutations,
-		FakeMutations:        append([]content.SpeciesFakeMutation(nil), source.FakeMutations...),
-		Flags:                flags,
-		Habitat:              speciesHabitat(source.CanSwim),
-		Size:                 "SIZE_" + strings.ToUpper(source.Size),
-		UndeadType:           source.UndeadType,
-		RecommendedJobs:      append([]string(nil), source.RecommendedJobs...),
-		RecommendedWeapons:   weapons,
-		WalkingVerb:          source.WalkingVerb,
-		AltarAction:          source.AltarAction,
+
+		Aptitudes:     aptitudes.skills,
+		Mutations:     mutations,
+		FakeMutations: append([]content.SpeciesFakeMutation(nil), source.FakeMutations...),
+		Flags:         flags,
+
+		Habitat:    speciesHabitat(source.CanSwim),
+		Size:       "SIZE_" + strings.ToUpper(source.Size),
+		UndeadType: source.UndeadType,
+
+		RecommendedJobs:    append([]string(nil), source.RecommendedJobs...),
+		RecommendedWeapons: weapons,
+
+		WalkingVerb: source.WalkingVerb,
+		AltarAction: source.AltarAction,
 	}
 
 	return result, source.TagMajorVersion, nil

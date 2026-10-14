@@ -15,11 +15,14 @@ type Level struct {
 	terrain    []string
 	remembered []byte
 	width      int
+
 	// Population choices may generate bands with multiple actors.
 	initialMonsters int
 	initialActors   int
-	positions       *akara.Store[ecs.Position]
-	actors          map[point]akara.Entity
+
+	positions *akara.Store[ecs.Position]
+	actors    map[point]akara.Entity
+
 	// nil while active or before the player first visits this floor.
 	awaySinceAut *Aut
 	stairs       map[point]StairLink
@@ -71,9 +74,11 @@ func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Lev
 		terrain:    append([]string(nil), rows...),
 		remembered: make([]byte, width*len(rows)),
 		width:      width,
-		positions:  positions,
-		actors:     make(map[point]akara.Entity),
-		stairs:     make(map[point]StairLink),
+
+		positions: positions,
+		actors:    make(map[point]akara.Entity),
+
+		stairs: make(map[point]StairLink),
 	}, nil
 }
 

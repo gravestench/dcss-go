@@ -60,10 +60,12 @@ func (g *Game) validateAndRegisterSavedEntities(
 		snapshot:        snapshot,
 		scenarioAnimals: scenarioAnimals,
 		usesPopulation:  usesPopulation,
-		seen:            make(map[uint64]bool),
-		recordsByID:     make(map[uint64]save.EntityRecord),
-		monsters:        newSavedMonsterValidation(),
-		equippedSlots:   make(map[string]string),
+
+		seen:        make(map[uint64]bool),
+		recordsByID: make(map[uint64]save.EntityRecord),
+
+		monsters:      newSavedMonsterValidation(),
+		equippedSlots: make(map[string]string),
 	}
 
 	return validator.validate()
