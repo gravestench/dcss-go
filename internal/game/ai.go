@@ -20,7 +20,9 @@ func (g *Game) chooseMonsterIntent(actor akara.Entity) (ecs.Intent, error) {
 		return ecs.Intent{Kind: ecs.IntentWait}, nil
 	}
 	dx, dy := sign(player.X-position.X), sign(player.Y-position.Y)
-	for _, step := range [][2]int{{dx, 0}, {0, dy}} {
+	// DCSS aims toward the target along both axes first. Cardinal steps remain
+	// useful when a diagonal is blocked by terrain or another actor.
+	for _, step := range [][2]int{{dx, dy}, {dx, 0}, {0, dy}} {
 		if step == [2]int{} {
 			continue
 		}
