@@ -1,6 +1,8 @@
 package game
 
 import (
+	"fmt"
+
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
@@ -115,15 +117,6 @@ func newScenarioWithRules(
 		return nil, err
 	}
 
-	if err := character.ValidateWeaponChoice(
-		catalog,
-		playerDef.SpeciesID,
-		playerDef.JobID,
-		weaponID,
-	); err != nil {
-		return nil, err
-	}
-
 	world := akara.NewWorld()
 	defer func() {
 		if err != nil {
@@ -182,6 +175,61 @@ func newScenarioWithRules(
 			g.scripts.Close()
 		}
 	}()
+
+	g.catalog, err = g.catalog.WithCharacterDefinitions(
+		g.scripts.SpeciesDefinitions(),
+		g.scripts.JobDefinitions(),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	choice, err := g.scripts.CharacterChoice(
+		playerDef.SpeciesID,
+		playerDef.JobID,
+		true,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	reverseChoice, err := g.scripts.CharacterChoice(
+		playerDef.SpeciesID,
+		playerDef.JobID,
+		false,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	supported := character.SupportedFighterStart(
+		playerDef.SpeciesID,
+		playerDef.JobID,
+	)
+
+	if !choice.Playable ||
+		!reverseChoice.Playable ||
+		!supported {
+		return nil, fmt.Errorf(
+			"Lua rules do not support the %s/%s start",
+			playerDef.SpeciesID,
+			playerDef.JobID,
+		)
+	}
+
+	g.scheduler.catalog = g.catalog
+
+	if err := character.ValidateWeaponChoice(
+		g.catalog,
+		playerDef.SpeciesID,
+		playerDef.JobID,
+		weaponID,
+	); err != nil {
+		return nil, err
+	}
 
 	if err = g.createPlayerActor(playerDef, weaponID, name, setup); err != nil {
 		return nil, err

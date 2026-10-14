@@ -440,6 +440,13 @@ func (l *defaultCatalogLoader) loadPresentation(presentationData []byte) error {
 		return err
 	}
 
+	if len(presentation.SpeciesGroups) != 3 ||
+		len(presentation.JobGroups) != 5 ||
+		countSelectableSpecies(catalog.species) != 27 ||
+		countSelectableJobs(catalog.jobs) != 25 {
+		return fmt.Errorf("pinned presentation has incomplete character choices")
+	}
+
 	if err := presentation.validate(*catalog); err != nil {
 		return err
 	}

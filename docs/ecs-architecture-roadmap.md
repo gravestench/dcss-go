@@ -49,6 +49,14 @@ Dense terrain and visibility stay grid services rather than tile entities.
 Mutable state on actors and items remains in Akara, whether the schema was
 originally Go-defined or Lua-defined.
 
+The Lua runtime foundation is complete. The first character category now
+commits all 43 species and 31 job definitions as embedded Lua files and moves
+choice bans, recommendations, and current start support into a Lua policy.
+The terminal and game project the effective Lua catalog. Starting gear,
+attributes, skills, HP/MP, XP, and advancement are still Go rules for the
+four playable Fighter starts. Their Lua migration belongs with the full
+item, spell, and religion capabilities needed by the other jobs.
+
 ## Migration sequence
 
 Each numbered phase is a coherent category. A phase can temporarily break
@@ -61,10 +69,12 @@ one authoritative execution path per migrated behavior.
    register Lua component schemas and ordered systems with Akara, and persist
    dynamic component state and ruleset identity. A real game action must run
    an overlay-defined system before this phase is complete.
-2. **Character domain.** Move the full active source species and job catalogs, starting
-   equipment, restrictions, attributes, skills, HP/MP, XP, and advancement
-   policies to Lua registrations together. Keep source-generated definitions
-   committed as small Lua modules. Remove the corresponding Go rule path.
+2. **Character domain.** Start with the full species/job catalogs and choice
+   policy as one content category. Then move complete start construction,
+   equipment, attributes, skills, HP/MP, XP, and advancement policy as a
+   coherent rules category once item, spell, and religion services exist.
+   Keep source-generated definitions committed as small Lua modules and
+   remove each corresponding Go rule path when its domain is fully migrated.
 3. **Item and status domain.** Move all currently playable item use,
    equipment policy, poison, haste, might, curing, regeneration, and timed
    status behavior to Lua systems. Akara components remain authoritative;

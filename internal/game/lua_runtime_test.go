@@ -43,7 +43,7 @@ func TestOverlaySystemRunsInGameAndSurvivesSave(t *testing.T) {
 
 	if snapshot.RulesetHash != rules.Hash() ||
 		len(snapshot.LuaSchemas) != 1 ||
-		len(snapshot.RulesetFiles) != 3 ||
+		len(snapshot.RulesetFiles) != len(rules.Paths()) ||
 		len(snapshot.RulesetChanges) != 2 {
 		t.Fatalf("Lua save metadata missing: %+v", snapshot)
 	}

@@ -109,6 +109,11 @@ func (j JobDef) validate() error {
 	return nil
 }
 
+// Validate checks a Lua-registered job before it enters a catalog.
+func (j JobDef) Validate() error {
+	return j.validate()
+}
+
 func (j JobDef) clone() JobDef {
 	j.RecommendedSpecies = append([]string(nil), j.RecommendedSpecies...)
 	j.Spells = append([]string(nil), j.Spells...)

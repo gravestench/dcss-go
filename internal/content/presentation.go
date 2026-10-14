@@ -86,8 +86,8 @@ func (a PresentationArtifact) validate(c Catalog) error {
 		return fmt.Errorf("unsupported presentation artifact schema/revision/tag")
 	}
 
-	wrongGroupCount := len(a.SpeciesGroups) != 3 ||
-		len(a.JobGroups) != 5 ||
+	wrongGroupCount := len(a.SpeciesGroups) < 3 ||
+		len(a.JobGroups) < 5 ||
 		len(a.SourceFiles) != 7 || len(a.StartupModes) != 8
 	wrongSkillColumns := len(a.SkillColumns) != 2 ||
 		len(a.SkillColumns[0]) != 16 || len(a.SkillColumns[1]) != 16
@@ -135,11 +135,12 @@ func (a PresentationArtifact) validate(c Catalog) error {
 	}
 
 	if err := validateMenuGroups(a.SpeciesGroups, a.SpeciesDescriptions,
-		c.species, 27, "species"); err != nil {
+		c.species, countSelectableSpecies(c.species), "species"); err != nil {
 		return err
 	}
 
-	if err := validateMenuGroups(a.JobGroups, a.JobDescriptions, c.jobs, 25, "job"); err != nil {
+	if err := validateMenuGroups(a.JobGroups, a.JobDescriptions,
+		c.jobs, countSelectableJobs(c.jobs), "job"); err != nil {
 		return err
 	}
 
@@ -156,7 +157,7 @@ func validateMenuGroups[T interface{ SpeciesDef | JobDef }](
 	seen := make(map[string]bool, expected)
 
 	for _, group := range groups {
-		if group.Label == "" || len(group.IDs) == 0 {
+		if group.Label == "" {
 			return fmt.Errorf("empty %s menu group", kind)
 		}
 
@@ -208,4 +209,28 @@ func validateMenuGroups[T interface{ SpeciesDef | JobDef }](
 	}
 
 	return nil
+}
+
+func countSelectableSpecies(definitions map[string]SpeciesDef) int {
+	count := 0
+
+	for _, definition := range definitions {
+		if definition.Selectable {
+			count++
+		}
+	}
+
+	return count
+}
+
+func countSelectableJobs(definitions map[string]JobDef) int {
+	count := 0
+
+	for _, definition := range definitions {
+		if definition.Selectable {
+			count++
+		}
+	}
+
+	return count
 }

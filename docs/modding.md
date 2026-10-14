@@ -7,8 +7,8 @@ session. Changes to files on disk take effect when a new session starts.
 Lua source lives in `.lua` files in this tree and in test mod directories;
 Go source does not contain inline Lua programs.
 
-The bundled `init.lua` loads `schemas/`, `content/`, `systems/`, `generation/`,
-and `ui/` in that order. Paths within each tree load in sorted order. A new
+The bundled `init.lua` loads `schemas/`, `content/`, `policy/`, `systems/`,
+`generation/`, and `ui/` in that order. Paths within each tree load in sorted order. A new
 file under one of these directories is discovered automatically. Put helpers
 under `lib/` and load them with `require("lib.helper")`. `require` reads the
 effective embedded-plus-overlay tree; it cannot read arbitrary disk files.
@@ -82,12 +82,42 @@ Bootstrap has a five-second execution deadline and each system callback has
 a two-second deadline. A looping or unusually slow Lua file fails with an
 error instead of freezing the client.
 
-Component CRUD in this first runtime slice reaches Lua-registered dynamic
-components. The existing Go-defined components, grids, content definitions,
-and command handlers still use their Go APIs. The next domain migrations will
-expose the reusable host services those Lua rules require. Registration trees
-for content, generation, and UI exist, but their specialized registration
-APIs have not been added yet.
+Component CRUD currently reaches Lua-registered dynamic components. The
+existing Go-defined components, grids, most content domains, and command
+handlers still use their Go APIs. Later domain migrations will expose the
+reusable host services those Lua rules require.
+
+## Character definitions and choices
+
+The embedded `content/species/` and `content/jobs/` trees contain one Lua file
+per pinned species and job. Each calls `register.species{...}` or
+`register.job{...}` with the full source-traced definition. Replace a file at
+the same path in your mod directory to edit that definition. New files in
+either tree load in sorted path order. Duplicate IDs, invalid fields, and
+missing required definitions stop startup with an error. The species and job
+tables in Lua are the effective definitions used by the game and the
+character creation screen. Go's typed catalog is a projection for domains
+that have not yet moved to Lua; it is rebuilt from the effective files.
+Use `mod.null` when a present field intentionally has a null value; omitting
+a required field is an error. Newly selectable definitions appear on a
+separate modded menu page. They need implemented start mechanics before a
+policy can make them playable.
+
+The `policy/character_choice.lua` file calls `register.choice_policy` once.
+Its function receives copied species and job tables and a boolean indicating
+whether the menu is species-first. It returns a restriction string
+(`banned`, `restricted`, or `recommended`) and whether the start is currently
+playable. The bundled policy preserves the source bans and recommendations.
+Only Human, Hill Orc, Deep Elf, and Minotaur Fighters have complete starts
+today; other source options remain visible and explain that they are not yet
+available. The game constructor checks the same Lua policy before creating a
+player. A policy can narrow supported starts; adding a new playable start
+also requires its gameplay rules and equipment behavior to be implemented.
+
+`python3 scripts/generate_lua_character.py --check` compares the committed
+character Lua files with the pinned importer artifacts. Run the generator
+without `--check` only for an intentional upstream refresh, then review and
+commit its output. Normal builds and game launches do not run the generator.
 
 ## Saves and identity
 

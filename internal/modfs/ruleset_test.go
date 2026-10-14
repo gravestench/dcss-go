@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -31,8 +32,13 @@ func TestBundledRulesetHasStableIdentity(t *testing.T) {
 		t.Fatalf("bundled ruleset identity changed: %+v", first)
 	}
 
-	if !reflect.DeepEqual(first.Paths(), []string{"init.lua"}) {
-		t.Fatalf("unexpected bundled paths: %v", first.Paths())
+	paths := first.Paths()
+
+	if len(paths) < 76 ||
+		!slices.IsSorted(paths) ||
+		!slices.Contains(paths, "init.lua") ||
+		!slices.Contains(paths, "policy/character_choice.lua") {
+		t.Fatalf("unexpected bundled Lua tree: %d paths", len(paths))
 	}
 
 	bytes, err := first.ReadFile("init.lua")
@@ -98,15 +104,16 @@ func TestOverlayIdentityAndOrder(t *testing.T) {
 		t.Fatal("changed overlay reported vanilla")
 	}
 
-	if !reflect.DeepEqual(modded.Paths(), []string{
+	if !slices.IsSorted(modded.Paths()) ||
+		len(modded.Paths()) != len(bundled.Paths())+2 {
+		t.Fatalf("unsorted paths: %v", modded.Paths())
+	}
+
+	if !reflect.DeepEqual(modded.Changes(), []string{
 		"init.lua",
 		"systems/a.lua",
 		"systems/z.lua",
 	}) {
-		t.Fatalf("unsorted paths: %v", modded.Paths())
-	}
-
-	if !reflect.DeepEqual(modded.Changes(), modded.Paths()) {
 		t.Fatalf("unexpected changed paths: %v", modded.Changes())
 	}
 }

@@ -6,6 +6,7 @@ import (
 
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
+	"dcrawl-go/internal/script"
 	"github.com/mattn/go-runewidth"
 )
 
@@ -104,21 +105,91 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 }
 
 func (m *AppModel) drawCharacterGroups(canvas *Canvas, groups []content.MenuGroup) {
-	index := 0
+	pageStart, _, visible := characterChoicePage(groups, m.focus, m.screen)
+	index := pageStart
 
-	for column, group := range groups {
+	for column, group := range visible {
 		col, row := groupPosition(m.screen, column)
 		canvas.Write(col, row, group.Label, LightBlue, Black)
 
 		for offset, id := range group.IDs {
 			name := m.characterChoiceName(id)
 			color, background := m.characterChoiceColors(id, index)
-			label := fmt.Sprintf("%c - %s", menuLetter(index), name)
+			label := fmt.Sprintf("%c - %s", menuLetter(index-pageStart), name)
 
 			canvas.Write(col, row+offset+1, label, color, background)
 			index++
 		}
 	}
+}
+
+// Source groups keep their DCSS positions. Added choices use subsequent pages
+// with the same column geometry so the 79x24 minimum remains usable.
+func characterChoicePage(
+	groups []content.MenuGroup,
+	focus int,
+	screen ScreenID,
+) (int, int, []content.MenuGroup) {
+	baseGroups := 3
+	pageSize := 27
+	columnCapacity := []int{
+		9,
+		9,
+		9,
+	}
+
+	if screen == ScreenBackground {
+		baseGroups = 5
+		pageSize = 25
+		columnCapacity = []int{
+			5,
+			4,
+			4,
+			5,
+			7,
+		}
+	}
+
+	if len(groups) <= baseGroups {
+		return 0, len(flattenGroups(groups)), groups
+	}
+
+	base := groups[:baseGroups]
+	baseCount := len(flattenGroups(base))
+
+	if focus < baseCount {
+		return 0, baseCount, base
+	}
+
+	added := flattenGroups(groups[baseGroups:])
+	page := (focus - baseCount) / pageSize
+	first := page * pageSize
+	last := min(first+pageSize, len(added))
+	visible := make([]content.MenuGroup, 0, baseGroups)
+
+	column := first
+
+	for _, capacity := range columnCapacity {
+		if column >= last {
+			break
+		}
+
+		end := min(column+capacity, last)
+		label := ""
+
+		if column == first {
+			label = "Modded choices"
+		}
+
+		visible = append(visible, content.MenuGroup{
+			Label: label,
+			IDs:   added[column:end],
+		})
+
+		column = end
+	}
+
+	return baseCount + first, baseCount + last, visible
 }
 
 func (m *AppModel) characterChoiceName(id string) string {
@@ -141,23 +212,38 @@ func (m *AppModel) characterChoiceColors(id string, index int) (Color, Color) {
 	color := LightGrey
 	background := Black
 
-	status := character.Restricted
+	status := "restricted"
 	hasOtherChoice := false
+	available := false
 
-	if m.screen == ScreenSpecies && m.jobID != "" {
-		status, _ = character.SpeciesForJob(m.catalog, id, m.jobID)
-		hasOtherChoice = true
-	} else if m.screen == ScreenBackground && m.speciesID != "" {
-		status, _ = character.JobForSpecies(m.catalog, m.speciesID, id)
-		hasOtherChoice = true
+	if m.screen == ScreenSpecies {
+		available = m.hasPlayableChoice(id, m.jobID, false)
+		hasOtherChoice = m.jobID != ""
+
+		if hasOtherChoice {
+			status = m.choices[script.ChoiceKey{
+				SpeciesID:    id,
+				JobID:        m.jobID,
+				SpeciesFirst: false,
+			}].Restriction
+		}
+	} else {
+		available = m.hasPlayableChoice(m.speciesID, id, true)
+		hasOtherChoice = m.speciesID != ""
+
+		if hasOtherChoice {
+			status = m.choices[script.ChoiceKey{
+				SpeciesID:    m.speciesID,
+				JobID:        id,
+				SpeciesFirst: true,
+			}].Restriction
+		}
 	}
 
-	if hasOtherChoice {
-		if status == character.Recommended {
-			color = White
-		} else {
-			color = DarkGrey
-		}
+	if !available {
+		color = DarkGrey
+	} else if hasOtherChoice && status == "recommended" {
+		color = White
 	}
 
 	if index != m.focus {
@@ -166,7 +252,9 @@ func (m *AppModel) characterChoiceColors(id string, index int) (Color, Color) {
 
 	color = White
 
-	if status == character.Recommended && hasOtherChoice {
+	if !available {
+		background = DarkGrey
+	} else if status == "recommended" && hasOtherChoice {
 		background = Green
 	} else if hasOtherChoice {
 		background = LightGrey

@@ -14,6 +14,9 @@ func (r *Runtime) installRegistrationAPI() {
 
 	r.state.SetField(register, "component", r.state.NewFunction(r.luaRegisterComponent))
 	r.state.SetField(register, "system", r.state.NewFunction(r.luaRegisterSystem))
+	r.state.SetField(register, "species", r.state.NewFunction(r.luaRegisterSpecies))
+	r.state.SetField(register, "job", r.state.NewFunction(r.luaRegisterJob))
+	r.state.SetField(register, "choice_policy", r.state.NewFunction(r.luaRegisterChoicePolicy))
 	r.state.SetGlobal("register", register)
 }
 

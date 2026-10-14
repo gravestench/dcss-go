@@ -150,18 +150,18 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 		t.Fatal("recommended entry absent")
 	}
 
-	// The recommendation remains white, and focus uses the source good background.
+	// Lua recommends this pair, but the missing start mechanics mark it unavailable.
 	found := false
 
 	for _, entry := range c.cells {
-		if entry.bg == Green && entry.fg == White {
+		if entry.bg == DarkGrey && entry.fg == White {
 			found = true
 			break
 		}
 	}
 
 	if !found {
-		t.Fatal("recommended focus colors absent")
+		t.Fatal("unavailable recommended start is not marked")
 	}
 }
 

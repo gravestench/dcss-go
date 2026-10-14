@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/modfs"
 	"github.com/gravestench/akara"
 	lua "github.com/yuin/gopher-lua"
@@ -32,6 +33,11 @@ type Runtime struct {
 	services Services
 
 	components     map[string]*akara.DynamicStore
+	species        map[string]content.SpeciesDef
+	jobs           map[string]content.JobDef
+	speciesTables  map[string]*lua.LTable
+	jobTables      map[string]*lua.LTable
+	choicePolicy   *lua.LFunction
 	systems        []System
 	context        *lua.LTable
 	handles        map[akara.Entity]*lua.LUserData
@@ -39,6 +45,7 @@ type Runtime struct {
 	pendingTargets []akara.Entity
 	loaded         map[string]lua.LValue
 	loading        map[string]bool
+	moduleStack    []string
 	frozen         bool
 }
 
@@ -60,11 +67,15 @@ func New(
 		state:    state,
 		services: services,
 
-		components: make(map[string]*akara.DynamicStore),
-		loaded:     make(map[string]lua.LValue),
-		loading:    make(map[string]bool),
-		handles:    make(map[akara.Entity]*lua.LUserData),
-		pending:    akara.NewCommandBuffer(),
+		components:    make(map[string]*akara.DynamicStore),
+		species:       make(map[string]content.SpeciesDef),
+		jobs:          make(map[string]content.JobDef),
+		speciesTables: make(map[string]*lua.LTable),
+		jobTables:     make(map[string]*lua.LTable),
+		loaded:        make(map[string]lua.LValue),
+		loading:       make(map[string]bool),
+		handles:       make(map[akara.Entity]*lua.LUserData),
+		pending:       akara.NewCommandBuffer(),
 	}
 
 	defer func() {
@@ -164,8 +175,12 @@ func (r *Runtime) openLibraries() {
 
 func (r *Runtime) installModuleAPI() {
 	mod := r.state.NewTable()
+	null := r.state.NewUserData()
+
+	null.Value = definitionNull{}
 
 	r.state.SetField(mod, "load_tree", r.state.NewFunction(r.luaLoadTree))
+	r.state.SetField(mod, "null", null)
 	r.state.SetGlobal("mod", mod)
 	r.state.SetGlobal("require", r.state.NewFunction(r.luaRequire))
 }
@@ -235,8 +250,12 @@ func (r *Runtime) runModule(name string) (lua.LValue, error) {
 	}
 
 	r.loading[name] = true
+	r.moduleStack = append(r.moduleStack, name)
 
-	defer delete(r.loading, name)
+	defer func() {
+		delete(r.loading, name)
+		r.moduleStack = r.moduleStack[:len(r.moduleStack)-1]
+	}()
 
 	chunk, err := r.state.Load(strings.NewReader(string(data)), name)
 

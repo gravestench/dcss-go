@@ -8,6 +8,7 @@ import (
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/game"
+	"dcrawl-go/internal/script"
 	"github.com/mattn/go-runewidth"
 )
 
@@ -124,6 +125,12 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 
 	ids := flattenGroups(groups)
 
+	if len(ids) == 0 {
+		m.notice = "No character choices are available in this ruleset."
+
+		return
+	}
+
 	switch key {
 	case "esc":
 		m.screen = ScreenStartup
@@ -185,7 +192,8 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 		return
 
 	case "enter":
-		key = string(menuLetter(m.focus))
+		start, _, _ := characterChoicePage(groups, m.focus, m.screen)
+		key = string(menuLetter(m.focus - start))
 
 	case "+", "#", "%", "*", "!":
 		m.notice = "This character option is unavailable in the Go port."
@@ -197,10 +205,20 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 }
 
 func (m *AppModel) selectCharacterChoice(key string, ids []string) {
-	for index, id := range ids {
-		if key != string(menuLetter(index)) {
+	groups := m.presentation.SpeciesGroups
+
+	if m.screen == ScreenBackground {
+		groups = m.presentation.JobGroups
+	}
+
+	start, end, _ := characterChoicePage(groups, m.focus, m.screen)
+
+	for index := start; index < end; index++ {
+		if key != string(menuLetter(index-start)) {
 			continue
 		}
+
+		id := ids[index]
 
 		m.focus = index
 
@@ -215,7 +233,7 @@ func (m *AppModel) selectCharacterChoice(key string, ids []string) {
 }
 
 func (m *AppModel) selectSpecies(id string) {
-	if !character.SupportedFighterSpecies(id) {
+	if !m.hasPlayableChoice(id, m.jobID, false) {
 		m.notice = "This species is unavailable in the Go port."
 
 		return
@@ -235,7 +253,7 @@ func (m *AppModel) selectSpecies(id string) {
 }
 
 func (m *AppModel) selectBackground(id string) {
-	if id != "JOB_FIGHTER" {
+	if !m.hasPlayableChoice(m.speciesID, id, true) {
 		m.notice = "This background is unavailable in the Go port."
 
 		return
@@ -252,6 +270,41 @@ func (m *AppModel) selectBackground(id string) {
 	}
 
 	m.enterWeaponChoice()
+}
+
+func (m *AppModel) hasPlayableChoice(
+	speciesID, jobID string,
+	speciesFirst bool,
+) bool {
+	if speciesID != "" && jobID != "" {
+		choice := m.choices[script.ChoiceKey{
+			SpeciesID:    speciesID,
+			JobID:        jobID,
+			SpeciesFirst: speciesFirst,
+		}]
+
+		return choice.Playable && character.SupportedFighterStart(
+			speciesID, jobID,
+		)
+	}
+
+	if speciesID == "" {
+		for _, candidate := range m.catalog.SpeciesIDs() {
+			if m.hasPlayableChoice(candidate, jobID, speciesFirst) {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	for _, candidate := range m.catalog.JobIDs() {
+		if m.hasPlayableChoice(speciesID, candidate, speciesFirst) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (m *AppModel) enterWeaponChoice() {

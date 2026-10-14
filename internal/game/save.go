@@ -416,6 +416,17 @@ func RestoreWithRules(
 		}
 	}()
 
+	g.catalog, err = g.catalog.WithCharacterDefinitions(
+		g.scripts.SpeciesDefinitions(),
+		g.scripts.JobDefinitions(),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	g.scheduler.catalog = g.catalog
+
 	if err := g.validateSavedLuaSchemas(
 		snapshot.LuaSchemas,
 		policy.AllowRulesetMismatch,

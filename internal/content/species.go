@@ -179,6 +179,11 @@ func (s SpeciesDef) validate() error {
 	return nil
 }
 
+// Validate checks a Lua-registered species before it enters a catalog.
+func (s SpeciesDef) Validate() error {
+	return s.validate()
+}
+
 func (s SpeciesDef) clone() SpeciesDef {
 	s.LevelUpStats = append([]string(nil), s.LevelUpStats...)
 	s.Mutations = append([]SpeciesMutation(nil), s.Mutations...)

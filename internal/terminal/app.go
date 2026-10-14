@@ -11,6 +11,7 @@ import (
 	"dcrawl-go/internal/game"
 	"dcrawl-go/internal/modfs"
 	"dcrawl-go/internal/save"
+	"dcrawl-go/internal/script"
 )
 
 type ScreenID uint8
@@ -50,6 +51,7 @@ type equipmentTick struct {
 // AppModel owns terminal navigation; the Game owns every turn-changing state.
 type AppModel struct {
 	catalog       content.Catalog
+	choices       map[script.ChoiceKey]script.Choice
 	presentation  content.PresentationArtifact
 	seed          uint64
 	savePath      string
@@ -101,17 +103,21 @@ func NewAppModelWithRules(
 	rules modfs.Ruleset,
 	policy game.RestorePolicy,
 ) (*AppModel, error) {
-	if err := catalog.Validate(); err != nil {
+	projected, choices, err := script.ProjectCharacterCatalog(catalog, rules)
+
+	if err != nil {
 		return nil, err
 	}
 
-	if len(catalog.Presentation().SpeciesGroups) != 3 {
+	if len(projected.Presentation().SpeciesGroups) < 3 {
 		return nil, fmt.Errorf("catalog lacks console presentation")
 	}
 
 	return &AppModel{
-		catalog:       catalog,
-		presentation:  catalog.Presentation(),
+		catalog:      projected,
+		choices:      choices,
+		presentation: projected.Presentation(),
+
 		seed:          seed,
 		savePath:      savePath,
 		rules:         rules,

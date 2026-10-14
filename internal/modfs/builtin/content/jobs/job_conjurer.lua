@@ -1,0 +1,52 @@
+-- Generated from the pinned DCSS import. Refresh deliberately.
+-- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Source: crawl-ref/source/job-data.h
+
+register.job{
+    id = "JOB_CONJURER",
+    source_path = "crawl-ref/source/job-data.h",
+    abbreviation = "Cj",
+    name = "Conjurer",
+    strength = -1,
+    intelligence = 10,
+    dexterity = 3,
+    recommended_species = {
+        "SP_DEEP_ELF",
+        "SP_NAGA",
+        "SP_TENGU",
+        "SP_BASE_DRACONIAN",
+        "SP_DEMIGOD",
+        "SP_DJINNI",
+    },
+    spells = {
+        "SPELL_MAGIC_DART",
+        "SPELL_SEARING_RAY",
+        "SPELL_DAZZLING_FLASH",
+        "SPELL_FULMINANT_PRISM",
+        "SPELL_ISKENDERUNS_MYSTIC_BLAST",
+    },
+    equipment = {
+        "robe",
+        "potion of magic",
+    },
+    weapon_choice = "WCHOICE_NONE",
+    skills = {
+        {
+            id = "SK_CONJURATIONS",
+            level = 4,
+        },
+        {
+            id = "SK_SPELLCASTING",
+            level = 2,
+        },
+        {
+            id = "SK_DODGING",
+            level = 2,
+        },
+        {
+            id = "SK_STEALTH",
+            level = 2,
+        },
+    },
+    selectable = true,
+}
