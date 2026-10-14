@@ -12,6 +12,7 @@ import (
 func (m MonsterDef) MarshalJSON() ([]byte, error) {
 	if m.Status == MonsterDefined {
 		type record MonsterDef
+
 		return json.Marshal(record(m))
 	}
 
@@ -113,6 +114,7 @@ func (m MonsterDef) clone() MonsterDef {
 	m.Flags = append([]string(nil), m.Flags...)
 	m.Holiness = append([]string(nil), m.Holiness...)
 	m.Resistances = append([]MonsterResistance(nil), m.Resistances...)
+
 	return m
 }
 
@@ -161,6 +163,7 @@ func (m MonsterDef) validate() error {
 			SourceLine: m.SourceLine,
 			Name:       m.Name,
 		}
+
 		if !reflect.DeepEqual(m, identity) {
 			return fmt.Errorf("non-live monster %s has gameplay fields", m.ID)
 		}
@@ -177,6 +180,7 @@ func (a MonsterArtifact) Validate() error {
 	}
 
 	previous := ""
+
 	for _, monster := range a.Monsters {
 		if monster.ID <= previous {
 			return fmt.Errorf("duplicate or unsorted monster ID %q", monster.ID)
@@ -194,6 +198,7 @@ func (a MonsterArtifact) Validate() error {
 
 func (c Catalog) MonsterStatus(id string) (MonsterStatus, error) {
 	m, ok := c.monsters[id]
+
 	if !ok {
 		return "", fmt.Errorf("unknown monster ID %q", id)
 	}
@@ -203,10 +208,12 @@ func (c Catalog) MonsterStatus(id string) (MonsterStatus, error) {
 
 func (c Catalog) MonsterIDs() []string {
 	ids := make([]string, 0, len(c.monsters))
+
 	for id := range c.monsters {
 		ids = append(ids, id)
 	}
 
 	sort.Strings(ids)
+
 	return ids
 }

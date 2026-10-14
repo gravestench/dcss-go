@@ -64,6 +64,7 @@ type View struct {
 
 func (g *Game) View() View {
 	position, found := g.stores.Positions.Get(g.player)
+
 	if !found {
 		return View{}
 	}
@@ -79,6 +80,7 @@ func (g *Game) View() View {
 		CurrentAut: g.currentAut,
 		Messages:   append([]string(nil), g.messages...),
 	}
+
 	for i, glyph := range level.remembered {
 		switch {
 		case g.visibleLevelID == level.ID && i < len(g.visible) && g.visible[i]:
@@ -123,12 +125,14 @@ func (g *Game) View() View {
 
 	if player, ok := g.stores.Players.Get(g.player); ok {
 		view.PlayerName = player.Name
+
 		if view.PlayerName == "" {
 			view.PlayerName = "Adventurer"
 		}
 
 		species, speciesErr := g.catalog.Species(player.SpeciesID)
 		job, jobErr := g.catalog.Job(player.JobID)
+
 		if speciesErr == nil && jobErr == nil {
 			view.CharacterName = species.Name + " " + job.Name
 		}
@@ -145,18 +149,21 @@ func (g *Game) View() View {
 
 	for _, entity := range g.stores.Positions.Entities() {
 		location, _ := g.stores.Positions.Get(entity)
+
 		if location.LevelID != position.LevelID {
 			continue
 		}
 
 		index := location.Y*level.width + location.X
 		visible := g.visibleLevelID == level.ID && index < len(g.visible) && g.visible[index]
+
 		if entity != g.player && !visible {
 			continue
 		}
 
 		glyph := rune('?')
 		kindID, name, role := "", "", ""
+
 		switch {
 		case entity == g.player:
 			glyph = '@'
@@ -164,6 +171,7 @@ func (g *Game) View() View {
 		case g.stores.AI.Has(entity):
 			actor, _ := g.stores.Actors.Get(entity)
 			kindID, role = actor.KindID, "monster"
+
 			if definition, err := g.catalog.Monster(actor.KindID); err == nil {
 				glyph = definition.Glyph
 				name = definition.Name
@@ -171,9 +179,11 @@ func (g *Game) View() View {
 		case g.stores.Items.Has(entity):
 			item, _ := g.stores.Items.Get(entity)
 			kindID, role = item.KindID, "item"
+
 			if definition, err := g.catalog.Item(item.KindID); err == nil {
 				glyph = definition.Glyph
 				name = definition.Name
+
 				if corpse, found := g.stores.Corpses.Get(entity); found {
 					if source, err := g.catalog.Monster(corpse.MonsterID); err == nil {
 						name = source.Name + " " + definition.Name
@@ -195,16 +205,19 @@ func (g *Game) View() View {
 
 	for _, entity := range g.stores.CarriedBy.Entities() {
 		carrier, _ := g.stores.CarriedBy.Get(entity)
+
 		if carrier.Holder != g.player {
 			continue
 		}
 
 		item, found := g.stores.Items.Get(entity)
+
 		if !found {
 			continue
 		}
 
 		definition, err := g.catalog.Item(item.KindID)
+
 		if err == nil {
 			entry := ItemView{
 				ID:       uint64(entity),
@@ -216,6 +229,7 @@ func (g *Game) View() View {
 				Charges:  item.Charges,
 				Ego:      item.Ego,
 			}
+
 			if equipped, found := g.stores.Equipped.Get(entity); found {
 				entry.Slot = equipped.Slot
 			}

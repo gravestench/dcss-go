@@ -11,8 +11,10 @@ import (
 
 func writeClipped(canvas *Canvas, x, y, width int, value string, fg Color) {
 	used := 0
+
 	for _, glyph := range value {
 		cells := runewidth.RuneWidth(glyph)
+
 		if cells < 1 || used+cells > width {
 			break
 		}
@@ -36,6 +38,7 @@ func drawMeter(canvas *Canvas, x, y, width, current, maximum int, filled Color) 
 	}
 
 	n := width * current / maximum
+
 	for i := 0; i < width; i++ {
 		if i < n {
 			canvas.Put(x+i, y, '=', filled, Black)
@@ -51,6 +54,7 @@ func statusValueColor(current, maximum, yellowAt, redAt int) Color {
 	}
 
 	percent := current * 100 / maximum
+
 	if percent <= redAt {
 		return Red
 	}
@@ -64,6 +68,7 @@ func statusValueColor(current, maximum, yellowAt, redAt int) Color {
 
 func drawDungeon(canvas *Canvas, region Region, view game.View) {
 	centerX, centerY := region.X+region.W/2, region.Y+region.H/2
+
 	if view.Width <= 0 {
 		return
 	}
@@ -75,13 +80,16 @@ func drawDungeon(canvas *Canvas, region Region, view game.View) {
 
 		x, y := i%view.Width, i/view.Width
 		sx, sy := centerX+x-view.PlayerX, centerY+y-view.PlayerY
+
 		if sx < region.X || sy < region.Y || sx >= region.X+region.W || sy >= region.Y+region.H {
 			continue
 		}
 
 		color := DarkGrey
+
 		if cell.State == game.Visible {
 			color = LightGrey
+
 			if cell.Glyph == '<' || cell.Glyph == '>' {
 				color = Yellow
 			}
@@ -97,11 +105,13 @@ func drawDungeon(canvas *Canvas, region Region, view game.View) {
 			}
 
 			sx, sy := centerX+entity.X-view.PlayerX, centerY+entity.Y-view.PlayerY
+
 			if sx < region.X || sy < region.Y || sx >= region.X+region.W || sy >= region.Y+region.H {
 				continue
 			}
 
 			color := LightGrey
+
 			switch entity.Role {
 			case "player":
 				color = White
@@ -109,6 +119,7 @@ func drawDungeon(canvas *Canvas, region Region, view game.View) {
 				color = Brown
 			case "item":
 				color = LightGreen
+
 				if entity.KindID == "CORPSE_BODY" {
 					color = Brown
 				}
@@ -133,6 +144,7 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	}
 	hud(0, 0, view.PlayerName+" the Shield-Bearer", Yellow) // source/skills.cc:91; current Fighter only
 	hud(0, 1, "Human", Yellow)
+
 	for _, stat := range []struct {
 		y                                 int
 		label                             string
@@ -170,6 +182,7 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	drawMeter(canvas, h.X+18, h.Y+2, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
 	drawMeter(canvas, h.X+18, h.Y+3, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
 	defenseLabels := []string{"AC: --", "EV: --", "SH: --"}
+
 	if view.DefenseKnown {
 		defenseLabels = []string{
 			fmt.Sprintf("AC: %d", view.PlayerAC),
@@ -205,6 +218,7 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	} {
 		hud(18, stat.y, stat.label, Brown)
 		color := LightGrey
+
 		if stat.value < 3 {
 			color = Red
 		}
@@ -217,6 +231,7 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	hud(0, 8, "Noise: --", Brown)
 	hud(18, 8, fmt.Sprintf("Time: %.1f", float64(view.CurrentAut)/10), Brown)
 	weapon := "-) Unarmed"
+
 	for i, item := range view.Inventory {
 		if item.Slot == "weapon" {
 			weapon = fmt.Sprintf("%c) %+d %s", 'a'+i, item.Plus, item.Name)
@@ -226,11 +241,13 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 
 	hud(0, 9, weapon, LightGrey)
 	hud(0, 10, "Quiver: --", Brown)
+
 	if view.MightAut > 0 {
 		hud(0, 11, "Might", LightBlue)
 	}
 
 	var monsters []string
+
 	for _, entity := range view.Entities {
 		if entity.Role == "monster" && entity.Name != "" {
 			monsters = append(monsters, "a "+entity.Name)
@@ -238,6 +255,7 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	}
 
 	sort.Strings(monsters)
+
 	for i, name := range monsters {
 		if i >= layout.Monsters.H {
 			break
@@ -247,6 +265,7 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	}
 
 	messages := append([]string(nil), view.Messages...)
+
 	if notice != "" {
 		messages = append(messages, notice)
 	}

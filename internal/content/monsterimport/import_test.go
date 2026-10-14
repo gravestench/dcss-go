@@ -36,6 +36,7 @@ func fixtureSource(t *testing.T) string {
 		"defines.h":       "enum COLOURS { BROWN, };\nconst int WILL_INVULN = 5000;\n",
 		"colour.h":        "enum element_type { ETC_TREE, };\n",
 	}
+
 	for name, data := range files {
 		if err := os.WriteFile(filepath.Join(dir, name), []byte(data), 0o644); err != nil {
 			t.Fatal(err)
@@ -48,16 +49,19 @@ func fixtureSource(t *testing.T) string {
 func TestGenerateFixtureDeterministicPartition(t *testing.T) {
 	dir := fixtureSource(t)
 	first, err := generateFromSource(dir, pinnedRevision)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	second, err := generateFromSource(dir, pinnedRevision)
+
 	if err != nil || !bytes.Equal(first, second) {
 		t.Fatalf("nondeterministic generation: %v", err)
 	}
 
 	var artifact content.MonsterArtifact
+
 	if err := json.Unmarshal(first, &artifact); err != nil {
 		t.Fatal(err)
 	}
@@ -75,6 +79,7 @@ func TestGenerateFixtureDeterministicPartition(t *testing.T) {
 	var raw struct {
 		Monsters []map[string]json.RawMessage `json:"monsters"`
 	}
+
 	if err := json.Unmarshal(first, &raw); err != nil {
 		t.Fatal(err)
 	}
@@ -82,6 +87,7 @@ func TestGenerateFixtureDeterministicPartition(t *testing.T) {
 	for _, entry := range raw.Monsters {
 		var status string
 		_ = json.Unmarshal(entry["status"], &status)
+
 		if status != "defined" {
 			for _, field := range []string{"attacks", "energy", "tile"} {
 				if _, exists := entry[field]; exists {
@@ -94,6 +100,7 @@ func TestGenerateFixtureDeterministicPartition(t *testing.T) {
 
 func TestGenerateRejectsBadSource(t *testing.T) {
 	dir := fixtureSource(t)
+
 	if _, err := generateFromSource(dir, "wrong"); err == nil {
 		t.Fatal("wrong revision accepted")
 	}
@@ -130,6 +137,7 @@ func TestGenerateRejectsBadSource(t *testing.T) {
 			copyDir := fixtureSource(t)
 			path := filepath.Join(copyDir, tc.file)
 			data, _ := os.ReadFile(path)
+
 			if err := os.WriteFile(path, []byte(strings.Replace(string(data), tc.old, tc.next, 1)), 0o644); err != nil {
 				t.Fatal(err)
 			}
@@ -144,6 +152,7 @@ func TestGenerateRejectsBadSource(t *testing.T) {
 func TestWritePreservesArtifactOnFailure(t *testing.T) {
 	dir := fixtureSource(t)
 	out := filepath.Join(t.TempDir(), "monsters.json")
+
 	if err := os.WriteFile(out, []byte("old"), 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -155,6 +164,7 @@ func TestWritePreservesArtifactOnFailure(t *testing.T) {
 	}
 
 	data, _ := os.ReadFile(out)
+
 	if string(data) != "old" {
 		t.Fatalf("artifact overwritten: %q", data)
 	}
@@ -166,6 +176,7 @@ func TestWritePreservesArtifactOnFailure(t *testing.T) {
 	}
 
 	data, _ = os.ReadFile(out)
+
 	if string(data) != "old" {
 		t.Fatalf("check wrote artifact: %q", data)
 	}

@@ -53,11 +53,13 @@ func contains(ids []string, id string) bool {
 
 func choice(c content.Catalog, speciesID, jobID string, speciesFirst bool) (Restriction, error) {
 	species, err := c.Species(speciesID)
+
 	if err != nil {
 		return Banned, err
 	}
 
 	job, err := c.Job(jobID)
+
 	if err != nil {
 		return Banned, err
 	}
@@ -68,6 +70,7 @@ func choice(c content.Catalog, speciesID, jobID string, speciesFirst bool) (Rest
 
 	recommendedBySpecies := contains(species.RecommendedJobs, jobID)
 	recommendedByJob := contains(job.RecommendedSpecies, speciesID)
+
 	if speciesFirst && recommendedBySpecies ||
 		!speciesFirst && recommendedByJob {
 		return Recommended, nil

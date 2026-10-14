@@ -34,11 +34,13 @@ var cardinalDirections = [4]Point{
 func (b *builder) makeTrail(start trailStart) (StairPair, error) {
 	var position Point
 	found := false
+
 	for attempt := 0; attempt <= 200; attempt++ {
 		position = Point{
 			X: start.X + b.roll(start.Width),
 			Y: start.Y + b.roll(start.Height),
 		}
+
 		if b.viableTrailStart(position) {
 			found = true
 			break
@@ -52,6 +54,7 @@ func (b *builder) makeTrail(start trailStart) (StairPair, error) {
 	begin := position
 	length := 0
 	finish := 0
+
 	for attempts := 0; finish < b.corrCount; attempts++ {
 		if attempts >= 200 {
 			return StairPair{}, fmt.Errorf(
@@ -62,6 +65,7 @@ func (b *builder) makeTrail(start trailStart) (StairPair, error) {
 		}
 
 		var direction Point
+
 		if b.roll(2) == 0 {
 			direction.X = b.trailDirection(position.X, width)
 		} else {
@@ -86,6 +90,7 @@ func (b *builder) makeTrail(start trailStart) (StairPair, error) {
 				X: next.X + direction.X,
 				Y: next.Y + direction.Y,
 			}
+
 			if !b.inBounds(next) || !b.inBounds(beyond) {
 				return StairPair{}, fmt.Errorf("trail escaped the map")
 			}
@@ -95,6 +100,7 @@ func (b *builder) makeTrail(start trailStart) (StairPair, error) {
 			}
 
 			position = next
+
 			if b.grid[position.Y][position.X] == '#' {
 				b.grid[position.Y][position.X] = '.'
 			}
@@ -115,6 +121,7 @@ func (b *builder) makeTrail(start trailStart) (StairPair, error) {
 
 func (b *builder) viableTrailStart(position Point) bool {
 	terrain := b.grid[position.Y][position.X]
+
 	if terrain != '#' && terrain != '.' {
 		return false
 	}
@@ -124,6 +131,7 @@ func (b *builder) viableTrailStart(position Point) bool {
 			X: position.X + direction.X,
 			Y: position.Y + direction.Y,
 		}
+
 		if b.inBounds(adjacent) && b.grid[adjacent.Y][adjacent.X] == '#' {
 			return true
 		}
@@ -136,6 +144,7 @@ func (b *builder) viableTrailStart(position Point) bool {
 // draw can still override the bias with either direction.
 func (b *builder) trailDirection(position, bound int) int {
 	direction := 0
+
 	if position < 15 {
 		direction = 1
 	} else if position > bound-15 {
@@ -178,9 +187,11 @@ func inwardDirection(position, direction Point) Point {
 // not a claim of matching its exact cells or random sequence.
 func (b *builder) connect(from, to Point) {
 	position := from
+
 	for position != to {
 		horizontal := position.X != to.X
 		vertical := position.Y != to.Y
+
 		if horizontal && vertical {
 			horizontal = b.roll(2) == 0
 		}

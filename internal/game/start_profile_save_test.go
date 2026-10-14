@@ -11,6 +11,7 @@ import (
 
 func savedPlayer(t *testing.T, snapshot *save.Snapshot) *save.EntityRecord {
 	t.Helper()
+
 	for i := range snapshot.Entities {
 		if snapshot.Entities[i].Player != nil {
 			return &snapshot.Entities[i]
@@ -18,6 +19,7 @@ func savedPlayer(t *testing.T, snapshot *save.Snapshot) *save.EntityRecord {
 	}
 
 	t.Fatal("snapshot has no player")
+
 	return nil
 }
 
@@ -28,21 +30,25 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 	magic, _ := g.stores.Magic.Get(g.player)
 	magic.Current = 0
 	before := g.Snapshot()
+
 	if before.Version != save.Version || savedPlayer(t, &before).Player.StartingWeaponID != "WPN_RAPIER" {
 		t.Fatalf("unexpected save header or choice: %+v", before)
 	}
 
 	restored, err := Restore(before, testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer restored.Close()
+
 	if !reflect.DeepEqual(before, restored.Snapshot()) {
 		t.Fatal("start profile changed across save/restore")
 	}
 
 	view := restored.View()
+
 	if view.PlayerHP != 7 || view.PlayerMaxHP != 18 || view.PlayerMP != 0 || view.PlayerMaxMP != 1 ||
 		len(view.Skills) != 4 {
 		t.Fatalf("restored profile = %+v", view)
@@ -57,6 +63,7 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 	} {
 		left, leftErr := g.Step(command)
 		right, rightErr := restored.Step(command)
+
 		if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) {
 			t.Fatalf("continuation differs: %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 		}
@@ -67,18 +74,21 @@ func TestSaveProfileSlicesDoNotAlias(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
 	savedPlayer(t, &snapshot).Skills.Entries[0].Points = -17
+
 	if g.View().Skills[0].Points != 301 {
 		t.Fatal("snapshot mutation changed live game")
 	}
 
 	input := g.Snapshot()
 	restored, err := Restore(input, testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer restored.Close()
 	savedPlayer(t, &input).Skills.Entries[0].Points = -18
+
 	if restored.View().Skills[0].Points != 301 {
 		t.Fatal("restore retained caller-owned skill slice")
 	}
@@ -165,6 +175,7 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 								},
 							},
 						}
+
 						return
 					}
 				}
@@ -192,6 +203,7 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 							Current: 1,
 							Max:     1,
 						}
+
 						return
 					}
 				}
@@ -227,6 +239,7 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 			before := g.Snapshot()
 			invalid := g.Snapshot()
 			tc.mutate(&invalid)
+
 			if replacement, err := g.Restore(invalid); err == nil {
 				replacement.Close()
 				t.Fatal("invalid profile accepted")

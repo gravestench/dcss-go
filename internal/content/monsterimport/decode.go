@@ -16,6 +16,7 @@ type symbolSets struct {
 
 func checked(value string, symbols map[string]bool) (string, error) {
 	value = strings.TrimSpace(value)
+
 	if !symbols[value] {
 		return "", fmt.Errorf("unknown symbol %q", value)
 	}
@@ -25,11 +26,13 @@ func checked(value string, symbols map[string]bool) (string, error) {
 
 func number(value string) (int, error) {
 	value = strings.TrimSpace(value)
+
 	if value == "WILL_INVULN" {
 		return 5000, nil
 	} // defines.h:154
 
 	n, err := strconv.Atoi(value)
+
 	if err != nil {
 		return 0, fmt.Errorf("unsupported integer expression %q", value)
 	}
@@ -40,6 +43,7 @@ func number(value string) (int, error) {
 func orTerms(expr string) ([]string, error) {
 	var parts []string
 	start, depth := 0, 0
+
 	for i, c := range expr {
 		switch c {
 		case '(':
@@ -63,6 +67,7 @@ func orTerms(expr string) ([]string, error) {
 	}
 
 	parts = append(parts, strings.TrimSpace(expr[start:]))
+
 	for _, part := range parts {
 		if part == "" {
 			return nil, fmt.Errorf("empty OR term in %q", expr)
@@ -74,12 +79,14 @@ func orTerms(expr string) ([]string, error) {
 
 func decodeFlags(expr string, symbols map[string]bool) ([]string, error) {
 	terms, err := orTerms(expr)
+
 	if err != nil {
 		return nil, err
 	}
 
 	var flags []string
 	seen := map[string]bool{}
+
 	for _, term := range terms {
 		if term == "M_NOT_DANGEROUS" { // mon-data.h:121
 			for _, expanded := range []string{"M_NO_EXP_GAIN", "M_NO_THREAT"} {
@@ -111,11 +118,13 @@ func decodeFlags(expr string, symbols map[string]bool) ([]string, error) {
 
 func decodeHoliness(expr string, symbols map[string]bool) ([]string, error) {
 	terms, err := orTerms(expr)
+
 	if err != nil {
 		return nil, err
 	}
 
 	var result []string
+
 	for _, term := range terms {
 		if _, err := checked(term, symbols); err != nil {
 			return nil, err
@@ -129,6 +138,7 @@ func decodeHoliness(expr string, symbols map[string]bool) ([]string, error) {
 
 func decodeResistances(expr string, symbols map[string]bool) ([]content.MonsterResistance, error) {
 	terms, err := orTerms(expr)
+
 	if err != nil {
 		return nil, err
 	}
@@ -150,8 +160,10 @@ func decodeResistances(expr string, symbols map[string]bool) ([]content.MonsterR
 		}
 
 		levels[id] |= level & 7
+
 		return nil
 	}
+
 	for _, term := range terms {
 		if term == "MR_NO_FLAGS" {
 			if !symbols[term] {
@@ -163,21 +175,25 @@ func decodeResistances(expr string, symbols map[string]bool) ([]content.MonsterR
 
 		if strings.HasPrefix(term, "mrd(") {
 			inner, end, err := balanced(term, len("mrd"), '(', ')')
+
 			if err != nil || end != len(term) {
 				return nil, fmt.Errorf("unsupported resistance macro %q", term)
 			}
 
 			args, err := splitFields(inner)
+
 			if err != nil || len(args) != 2 {
 				return nil, fmt.Errorf("bad mrd arguments %q", term)
 			}
 
 			level, err := number(args[1])
+
 			if err != nil || level < -4 || level > 4 {
 				return nil, fmt.Errorf("invalid mrd level %q", args[1])
 			}
 
 			bases, err := orTerms(args[0])
+
 			if err != nil {
 				return nil, err
 			}
@@ -209,8 +225,10 @@ func decodeResistances(expr string, symbols map[string]bool) ([]content.MonsterR
 	}
 
 	var result []content.MonsterResistance
+
 	for _, id := range order {
 		level := levels[id]
+
 		if level > 4 {
 			level -= 8
 		}
@@ -229,11 +247,13 @@ func decodeResistances(expr string, symbols map[string]bool) ([]content.MonsterR
 func decodeAttacks(expr string, types, flavours map[string]bool) ([4]content.MonsterAttack, error) {
 	var result [4]content.MonsterAttack
 	inner, end, err := balanced(strings.TrimSpace(expr), 0, '{', '}')
+
 	if err != nil || end != len(strings.TrimSpace(expr)) {
 		return result, fmt.Errorf("invalid attack initializer %q", expr)
 	}
 
 	parts, err := splitFields(inner)
+
 	if err != nil || len(parts) != 4 {
 		return result, fmt.Errorf("expected four attacks in %q", expr)
 	}
@@ -244,26 +264,31 @@ func decodeAttacks(expr string, types, flavours map[string]bool) ([4]content.Mon
 		}
 
 		value, end, err := balanced(part, 0, '{', '}')
+
 		if err != nil || end != len(part) {
 			return result, fmt.Errorf("invalid attack %q", part)
 		}
 
 		fields, err := splitFields(value)
+
 		if err != nil || len(fields) != 3 {
 			return result, fmt.Errorf("invalid attack fields %q", part)
 		}
 
 		typeID, err := checked(fields[0], types)
+
 		if err != nil {
 			return result, err
 		}
 
 		flavour, err := checked(fields[1], flavours)
+
 		if err != nil {
 			return result, err
 		}
 
 		damage, err := number(fields[2])
+
 		if err != nil || damage < 0 {
 			return result, fmt.Errorf("invalid attack damage %q", fields[2])
 		}
@@ -290,36 +315,43 @@ func decodeEnergy(expr string) (content.MonsterEnergy, error) {
 		100,
 	}
 	expr = strings.TrimSpace(expr)
+
 	if expr != "DEFAULT_ENERGY" {
 		if strings.HasPrefix(expr, "{") {
 			inner, end, err := balanced(expr, 0, '{', '}')
+
 			if err != nil || end != len(expr) {
 				return content.MonsterEnergy{}, fmt.Errorf("bad energy initializer %q", expr)
 			}
 
 			parts, err := splitFields(inner)
+
 			if err != nil || len(parts) != 8 {
 				return content.MonsterEnergy{}, fmt.Errorf("energy needs eight costs")
 			}
 
 			for i, part := range parts {
 				base[i], err = number(part)
+
 				if err != nil {
 					return content.MonsterEnergy{}, err
 				}
 			}
 		} else {
 			open := strings.IndexByte(expr, '(')
+
 			if open < 0 {
 				return content.MonsterEnergy{}, fmt.Errorf("unknown energy macro %q", expr)
 			}
 
 			inner, end, err := balanced(expr, open, '(', ')')
+
 			if err != nil || end != len(expr) {
 				return content.MonsterEnergy{}, fmt.Errorf("bad energy macro %q", expr)
 			}
 
 			value, err := number(inner)
+
 			if err != nil {
 				return content.MonsterEnergy{}, err
 			}
@@ -369,23 +401,28 @@ func decodeTile(expr string, variations map[string]bool) (content.MonsterTile, e
 	var tile content.MonsterTile
 	expr = strings.TrimSpace(expr)
 	inner, end, err := balanced(expr, 0, '{', '}')
+
 	if err != nil || end != len(expr) {
 		return tile, fmt.Errorf("bad tile initializer %q", expr)
 	}
 
 	parts, err := splitFields(inner)
+
 	if err != nil || len(parts) < 1 || len(parts) > 2 {
 		return tile, fmt.Errorf("bad tile fields %q", expr)
 	}
 
 	tile.ID = strings.TrimSpace(parts[0])
+
 	if !validTile(tile.ID) {
 		return tile, fmt.Errorf("unknown tile %q", tile.ID)
 	}
 
 	tile.VariationID = "TVARY_NONE"
+
 	if len(parts) == 2 {
 		tile.VariationID, err = checked(parts[1], variations)
+
 		if err != nil {
 			return tile, err
 		}
@@ -414,8 +451,10 @@ func validTile(id string) bool {
 
 func decodeRows(path string, rows []sourceRow, symbols symbolSets) ([]content.MonsterDef, error) {
 	defs := make([]content.MonsterDef, 0, len(rows))
+
 	for _, row := range rows {
 		def, err := decodeRow(path, row, symbols)
+
 		if err != nil {
 			return nil, fmt.Errorf("%s:%d: %s: %w", path, row.Line, row.ID, err)
 		}
@@ -433,13 +472,16 @@ func decodeRow(path string, row sourceRow, s symbolSets) (content.MonsterDef, er
 		SourceLine: row.Line,
 		Status:     content.MonsterDefined,
 	}
+
 	if row.Removed {
 		d.Status = content.MonsterRemoved
 		d.Name = row.RemovedName
+
 		return d, nil
 	}
 
 	f := row.Fields
+
 	if len(f) != 28 || f[0] != row.ID {
 		return d, fmt.Errorf("expected 28 fields for matching monster ID")
 	}
@@ -449,11 +491,13 @@ func decodeRow(path string, row sourceRow, s symbolSets) (content.MonsterDef, er
 	}
 
 	glyph, err := strconv.Unquote(f[1])
+
 	if err != nil || len([]rune(glyph)) != 1 {
 		return d, fmt.Errorf("invalid glyph %q", f[1])
 	}
 
 	d.Glyph = []rune(glyph)[0]
+
 	if d.ColourID, err = checked(f[2], s.colour); err != nil {
 		return d, err
 	}
@@ -554,6 +598,7 @@ func decodeRow(path string, row sourceRow, s symbolSets) (content.MonsterDef, er
 	}
 
 	d.CorpseTileID = strings.TrimSpace(f[27])
+
 	if d.CorpseTileID != "0" && !validTile(d.CorpseTileID) {
 		return d, fmt.Errorf("unknown corpse tile %q", d.CorpseTileID)
 	}

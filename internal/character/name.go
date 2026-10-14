@@ -19,6 +19,7 @@ func ValidateName(name string) error {
 	}
 
 	hasAlphanumeric := false
+
 	for _, r := range name {
 		if unicode.IsLetter(r) || unicode.IsDigit(r) {
 			hasAlphanumeric = true

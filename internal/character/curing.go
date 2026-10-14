@@ -11,6 +11,7 @@ func CuringHP(roller Roller, current, maximum int) (int, error) {
 	}
 
 	roll, err := roller.Intn("potion", 7)
+
 	if err != nil {
 		return 0, err
 	}

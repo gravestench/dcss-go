@@ -25,8 +25,10 @@ func sourceFixture(t *testing.T) string {
 	legacy, aptitudes := legacyFixtures(t)
 	files["util/species-gen/species-data-deprecated-species.txt"] = legacy
 	files["util/species-gen/aptitudes-deprecated-species.txt"] = aptitudes
+
 	for path, data := range files {
 		full := filepath.Join(root, path)
+
 		if err := os.MkdirAll(filepath.Dir(full), 0755); err != nil {
 			t.Fatal(err)
 		}
@@ -43,6 +45,7 @@ func replaceFixture(t *testing.T, root, path, old, replacement string) {
 	t.Helper()
 	full := filepath.Join(root, path)
 	data, err := os.ReadFile(full)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,11 +62,13 @@ func replaceFixture(t *testing.T, root, path, old, replacement string) {
 func TestGenerateSpeciesArtifactDeterministic(t *testing.T) {
 	root := sourceFixture(t)
 	first, err := generateFromSource(root, pinnedRevision)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	second, err := generateFromSource(root, pinnedRevision)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,6 +78,7 @@ func TestGenerateSpeciesArtifactDeterministic(t *testing.T) {
 	}
 
 	var artifact content.SpeciesArtifact
+
 	if err := json.Unmarshal(first, &artifact); err != nil {
 		t.Fatal(err)
 	}
@@ -148,11 +154,13 @@ func TestGenerateSpeciesArtifactRejectsSourceErrors(t *testing.T) {
 			want:        "FEATURE_X",
 		},
 	}
+
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			root := sourceFixture(t)
 			replaceFixture(t, root, tc.path, tc.old, tc.replacement)
 			_, err := generateFromSource(root, pinnedRevision)
+
 			if err == nil || !strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want error containing %q, got %v", tc.want, err)
 			}
@@ -160,6 +168,7 @@ func TestGenerateSpeciesArtifactRejectsSourceErrors(t *testing.T) {
 	}
 
 	root := sourceFixture(t)
+
 	if _, err := generateFromSource(root, "unexpected-revision"); err == nil ||
 		!strings.Contains(err.Error(), "revision") {
 		t.Fatalf("wrong revision accepted: %v", err)
@@ -171,6 +180,7 @@ func TestWriteSpeciesArtifactCheckAndAtomicFailure(t *testing.T) {
 	generated := func(string) ([]byte, error) {
 		return []byte("current\n"), nil
 	}
+
 	if err := writeArtifact("unused", out, false, generated); err != nil {
 		t.Fatal(err)
 	}
@@ -188,6 +198,7 @@ func TestWriteSpeciesArtifactCheckAndAtomicFailure(t *testing.T) {
 	}
 
 	data, err := os.ReadFile(out)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -199,11 +210,13 @@ func TestWriteSpeciesArtifactCheckAndAtomicFailure(t *testing.T) {
 	failing := func(string) ([]byte, error) {
 		return nil, os.ErrInvalid
 	}
+
 	if err := writeArtifact("unused", out, false, failing); err == nil {
 		t.Fatal("failed generation accepted")
 	}
 
 	data, err = os.ReadFile(out)
+
 	if err != nil {
 		t.Fatal(err)
 	}

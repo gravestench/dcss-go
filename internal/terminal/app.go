@@ -132,8 +132,10 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 
 func (m *AppModel) renderCanvas() *Canvas {
 	canvas := NewCanvas(m.width, m.height)
+
 	if _, ok := ComputeLayout(m.width, m.height); !ok {
 		canvas.Write(0, 0, "Your terminal window is too small; please resize to at least 79,24", LightGrey, Black)
+
 		return canvas
 	}
 
@@ -148,11 +150,13 @@ func (m *AppModel) renderCanvas() *Canvas {
 		m.drawName(canvas)
 	case ScreenPlay:
 		layout, _ := ComputeLayout(m.width, m.height)
+
 		if m.game != nil {
 			DrawPlay(canvas, layout, m.game.View(), m.notice)
 		}
 	case ScreenStatChoice:
 		layout, _ := ComputeLayout(m.width, m.height)
+
 		if m.game != nil {
 			DrawPlay(canvas, layout, m.game.View(), m.notice)
 			canvas.Write(
@@ -196,6 +200,7 @@ func (m *AppModel) renderCanvas() *Canvas {
 func (m *AppModel) View() tea.View {
 	view := tea.NewView(m.renderCanvas().Styled())
 	view.AltScreen = true
+
 	return view
 }
 
@@ -209,19 +214,24 @@ func (m *AppModel) Close() error {
 
 func (m *AppModel) savedRunExists() bool {
 	_, err := os.Stat(m.savePath)
+
 	return err == nil
 }
 
 func (m *AppModel) loadSavedRun() {
 	snapshot, err := save.Read(m.savePath)
+
 	if err != nil {
 		m.notice = fmt.Sprintf("Load failed: %v", err)
+
 		return
 	}
 
 	restored, err := game.Restore(snapshot, m.catalog)
+
 	if err != nil {
 		m.notice = fmt.Sprintf("Load failed: %v", err)
+
 		return
 	}
 
@@ -231,6 +241,7 @@ func (m *AppModel) loadSavedRun() {
 
 	m.game = restored
 	m.screen = ScreenPlay
+
 	if restored.View().PendingStatLevel != 0 {
 		m.screen = ScreenStatChoice
 	}

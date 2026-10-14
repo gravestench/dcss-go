@@ -11,22 +11,26 @@ import (
 func TestFocusedEnterChoosesSpeciesBackgroundAndWeapon(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")
+
 	for i := 0; i < 9; i++ {
 		pressApp(m, "down")
 	}
 
 	pressApp(m, "enter")
+
 	if m.screen != ScreenBackground || m.speciesID != "SP_HUMAN" {
 		t.Fatalf("focused Human not selected: %v/%s", m.screen, m.speciesID)
 	}
 
 	pressApp(m, "enter")
+
 	if m.screen != ScreenWeapon || m.jobID != "JOB_FIGHTER" {
 		t.Fatalf("focused Fighter not selected: %v/%s", m.screen, m.jobID)
 	}
 
 	pressApp(m, "down")
 	pressApp(m, "enter")
+
 	if m.screen != ScreenName || m.weaponID != "WPN_FLAIL" {
 		t.Fatalf("focused flail not selected: %v/%s", m.screen, m.weaponID)
 	}
@@ -41,6 +45,7 @@ func TestUndersizedTerminalBlocksHiddenInput(t *testing.T) {
 		Width:  78,
 		Height: 23,
 	})
+
 	for _, key := range []string{
 		"esc",
 		"s",
@@ -56,6 +61,7 @@ func TestUndersizedTerminalBlocksHiddenInput(t *testing.T) {
 		Width:  79,
 		Height: 24,
 	})
+
 	if m.screen != ScreenInventory || m.focus != 2 || m.game.View().CurrentAut != aut {
 		t.Fatal("hidden input changed modal or game")
 	}
@@ -65,11 +71,13 @@ func TestSkillsPageTwoColumnsAndSourceControls(t *testing.T) {
 	m := playingModel(t)
 	m.handleKey("m")
 	rows := m.renderCanvas().PlainRows()
+
 	if !strings.Contains(rows[3][:39], "Fighting") || !strings.Contains(rows[3][39:], "Spellcasting") {
 		t.Fatalf("source skill columns absent: %q", rows[3])
 	}
 
 	page := strings.Join(rows, "\n")
+
 	for _, want := range []string{
 		"/ - mode",
 		"| - skill",
@@ -91,6 +99,7 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 	m.focus = 9 // Human, restricted for Fighter.
 	c := m.renderCanvas()
 	x, y, offset := 0, 0, 0
+
 	for groupIndex, group := range m.presentation.SpeciesGroups {
 		if m.focus < offset+len(group.IDs) {
 			col, row := groupPosition(ScreenSpecies, groupIndex)
@@ -107,6 +116,7 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 
 	m.screen, m.focus, m.jobID, m.speciesID = ScreenBackground, 0, "", "SP_BARACHI"
 	ids := flattenGroups(m.presentation.JobGroups)
+
 	for i, id := range ids {
 		if id == "JOB_ARCANE_MARKSMAN" {
 			m.focus = i
@@ -123,11 +133,13 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 	}
 
 	c = m.renderCanvas()
+
 	if !strings.Contains(strings.Join(c.PlainRows(), "\n"), "Arcane Marksman") {
 		t.Fatal("recommended entry absent")
 	}
 	// The recommendation remains white, and focus uses the source good background.
 	found := false
+
 	for _, entry := range c.cells {
 		if entry.bg == Green && entry.fg == White {
 			found = true
@@ -144,6 +156,7 @@ func TestCreationShortcutColumnsAndContextText(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")
 	rows := m.renderCanvas().PlainRows()
+
 	for row, want := range []string{
 		"+ - Recommended species",
 		"# - Recommended character",
@@ -163,6 +176,7 @@ func TestCreationShortcutColumnsAndContextText(t *testing.T) {
 
 	pressApp(m, "j")
 	rows = m.renderCanvas().PlainRows()
+
 	if !strings.Contains(rows[14], "Recommended background") ||
 		!strings.Contains(rows[16][40:], "Space - Change species") {
 		t.Fatal("contextual background shortcuts missing")
@@ -178,6 +192,7 @@ func TestDrawPlayDangerValueColors(t *testing.T) {
 	cellAt := func(x, y int) cell {
 		return c.cells[y*c.width+x]
 	}
+
 	if cellAt(37, 2).fg != Brown || cellAt(45, 2).fg != Red || cellAt(46, 2).fg != LightGrey {
 		t.Fatalf("HP caption/current/max colors: %+v %+v %+v", cellAt(37, 2), cellAt(45, 2), cellAt(46, 2))
 	}
@@ -195,6 +210,7 @@ func TestDeathPageExplainsUnportedRecords(t *testing.T) {
 	m := playingModel(t)
 	m.screen = ScreenDeath
 	page := strings.ToLower(plainApp(m))
+
 	if !strings.Contains(page, "morgue") || !strings.Contains(page, "scores") || !strings.Contains(page, "unavailable") {
 		t.Fatal("death page lacks honest unported-record explanation")
 	}

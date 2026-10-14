@@ -24,6 +24,7 @@ type deathSystem struct {
 
 func newDeathSystem(g *Game) *deathSystem {
 	s := g.stores
+
 	return &deathSystem{
 		actors:      s.Actors,
 		positions:   s.Positions,
@@ -39,6 +40,7 @@ func newDeathSystem(g *Game) *deathSystem {
 func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 	for _, entity := range s.health.Entities() {
 		health, _ := s.health.Get(entity)
+
 		if health.Current > 0 {
 			continue
 		}
@@ -50,11 +52,13 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 			})
 		} else {
 			actor, found := s.actors.Get(entity)
+
 			if !found {
 				return fmt.Errorf("dead monster %d has no actor", entity)
 			}
 
 			definition, err := ordinaryAnimal(s.catalog, actor.KindID)
+
 			if err != nil {
 				return err
 			}
@@ -66,12 +70,14 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 
 				if definition.LeavesCorpse {
 					appearance, dropped, err := monster.RollCorpse(s.rng)
+
 					if err != nil {
 						return err
 					}
 
 					if dropped {
 						position, found := s.positions.Get(entity)
+
 						if !found {
 							return fmt.Errorf("killed animal %d has no position", entity)
 						}
@@ -98,15 +104,18 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 
 func (s *deathSystem) awardAnimalExperience(definition content.MonsterDef, maxHP int) error {
 	amount, err := character.OrdinaryAnimalExperience(definition, maxHP)
+
 	if err != nil {
 		return err
 	}
 
 	progress, found := s.progression.Get(s.player)
+
 	if !found || progress.TotalXP < 0 {
 		return fmt.Errorf("invalid Dungeon experience state")
 	}
 
 	progress.TotalXP += amount
+
 	return nil
 }

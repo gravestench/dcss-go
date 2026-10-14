@@ -22,12 +22,14 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 		t.Run(weaponID, func(t *testing.T) {
 			catalog := testCatalog(t)
 			g, err := NewScenario(3, catalog, weaponID, "Tester")
+
 			if err != nil {
 				t.Fatal(err)
 			}
 
 			defer g.Close()
 			in, err := newPlayerCombat(g).attackInput("MONS_RAT")
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -46,6 +48,7 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 			}
 
 			kind, err := catalog.Item(weaponID)
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -57,12 +60,14 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 
 			for _, entity := range g.stores.Equipped.Entities() {
 				item, found := g.stores.Items.Get(entity)
+
 				if found && item.KindID == weaponID {
 					item.Plus = 2
 				}
 			}
 
 			in, err = newPlayerCombat(g).attackInput("MONS_RAT")
+
 			if err != nil || in.WeaponPlus != 2 {
 				t.Fatalf("enchanted weapon input = %+v, %v", in, err)
 			}
@@ -72,11 +77,13 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 
 func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 	g := newStepGame(t)
+
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
 
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,6 +95,7 @@ func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 	}
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
+
 	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
 		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("post-load bump differs: %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
@@ -100,12 +108,14 @@ func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 
 func TestPlayerLethalBumpClearsRatOccupancy(t *testing.T) {
 	g, err := NewScenario(7, testCatalog(t), "WPN_RAPIER", "Tester")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer g.Close()
 	rat := ratID(t, g)
+
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
@@ -116,6 +126,7 @@ func TestPlayerLethalBumpClearsRatOccupancy(t *testing.T) {
 		Kind: CommandMove,
 		DX:   1,
 	})
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -172,18 +183,21 @@ func TestPlayerBumpRejectsInvalidWeaponBeforeSpendingTime(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			g := newStepGame(t)
+
 			if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 				t.Fatal(err)
 			}
 
 			for _, entity := range g.stores.Equipped.Entities() {
 				item, found := g.stores.Items.Get(entity)
+
 				if found && item.KindID == "WPN_RAPIER" {
 					tc.mutate(item)
 				}
 			}
 
 			before := g.Snapshot()
+
 			if _, err := g.Step(Command{
 				Kind: CommandMove,
 				DX:   1,
@@ -231,6 +245,7 @@ func TestRestoreRejectsUnsupportedPlayerMeleeState(t *testing.T) {
 			before := g.Snapshot()
 			bad := g.Snapshot()
 			tc.change(&bad)
+
 			if restored, err := g.Restore(bad); err == nil {
 				restored.Close()
 				t.Fatal("invalid player melee state restored")
@@ -248,6 +263,7 @@ func TestRestoreRejectsUnsupportedPlayerMeleeState(t *testing.T) {
 func TestPlayerMeleeUsesStoredSkillPoints(t *testing.T) {
 	g := newStepGame(t)
 	skills, _ := g.stores.Skills.Get(g.player)
+
 	for i := range skills.Entries {
 		if skills.Entries[i].ID == "SK_SHORT_BLADES" {
 			skills.Entries[i] = character.Skill{
@@ -259,6 +275,7 @@ func TestPlayerMeleeUsesStoredSkillPoints(t *testing.T) {
 	}
 
 	in, err := newPlayerCombat(g).attackInput("MONS_RAT")
+
 	if err != nil || in.WeaponSkill100 <= 200 {
 		t.Fatalf("modified skill points ignored: %+v, %v", in, err)
 	}

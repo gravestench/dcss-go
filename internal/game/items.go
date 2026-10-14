@@ -39,8 +39,10 @@ func validateItemProperties(item ecs.Item, kind content.ItemDef) error {
 
 func (g *Game) floorItemAt(position ecs.Position) (akara.Entity, bool) {
 	var stationary akara.Entity
+
 	for _, entity := range g.stores.Items.Entities() {
 		itemPosition, located := g.stores.Positions.Get(entity)
+
 		if located && *itemPosition == position && !g.stores.CarriedBy.Has(entity) {
 			if g.stores.Corpses.Has(entity) {
 				stationary = entity
@@ -65,23 +67,27 @@ type pickupSystem struct {
 
 func (s *pickupSystem) Update(_ *akara.World, _ time.Duration) error {
 	intent, found := s.intents.Get(s.turn.Actor)
+
 	if !found || intent.Kind != ecs.IntentPickup {
 		return nil
 	}
 
 	position, found := s.positions.Get(s.turn.Actor)
+
 	if !found {
 		return fmt.Errorf("pickup actor %d has no position", s.turn.Actor)
 	}
 
 	for _, entity := range s.items.Entities() {
 		itemPosition, located := s.positions.Get(entity)
+
 		if located && *itemPosition == *position && !s.carried.Has(entity) && !s.corpses.Has(entity) {
 			s.turn.Pickup = entity
 			s.turn.Events = append(s.turn.Events, Event{
 				Kind: "pickup",
 				Text: "You pick up a potion of curing.",
 			})
+
 			return nil
 		}
 	}

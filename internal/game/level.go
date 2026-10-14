@@ -42,6 +42,7 @@ func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Lev
 	}
 
 	width := len(rows[0])
+
 	for y, row := range rows {
 		if len(row) != width {
 			return nil, fmt.Errorf("level %d row %d has width %d, want %d", id, y, len(row), width)
@@ -78,11 +79,13 @@ func (l *Level) AddStairLink(link StairLink) error {
 		x: link.X,
 		y: link.Y,
 	}
+
 	if _, duplicate := l.stairs[location]; duplicate {
 		return fmt.Errorf("level %d has duplicate stair link at (%d,%d)", l.ID, link.X, link.Y)
 	}
 
 	l.stairs[location] = link
+
 	return nil
 }
 
@@ -91,11 +94,13 @@ func (l *Level) StairAt(x, y int) (StairLink, bool) {
 		x: x,
 		y: y,
 	}]
+
 	return link, found
 }
 
 func (l *Level) StairLinks() []StairLink {
 	links := make([]StairLink, 0, len(l.stairs))
+
 	for _, link := range l.stairs {
 		links = append(links, link)
 	}
@@ -107,11 +112,13 @@ func (l *Level) StairLinks() []StairLink {
 
 		return links[i].X < links[j].X
 	})
+
 	return links
 }
 
 func validateStairLinks(levels map[int]*Level) error {
 	ids := make([]int, 0, len(levels))
+
 	for id := range levels {
 		ids = append(ids, id)
 	}
@@ -120,6 +127,7 @@ func validateStairLinks(levels map[int]*Level) error {
 
 	for _, id := range ids {
 		level := levels[id]
+
 		for y, row := range level.terrain {
 			for x := range row {
 				if row[x] != '<' && row[x] != '>' {
@@ -134,6 +142,7 @@ func validateStairLinks(levels map[int]*Level) error {
 
 		for _, link := range level.StairLinks() {
 			target := levels[link.ToLevelID]
+
 			if target == nil || !target.Walkable(link.ToX, link.ToY) {
 				return fmt.Errorf(
 					"level %d stair at (%d,%d) has invalid destination %d:(%d,%d)",
@@ -159,6 +168,7 @@ func (l *Level) ActorAt(x, y int) (akara.Entity, bool) {
 		x: x,
 		y: y,
 	}]
+
 	return actor, ok
 }
 
@@ -187,11 +197,13 @@ func (l *Level) PlaceActor(entity akara.Entity, x, y int) error {
 		x: x,
 		y: y,
 	}] = entity
+
 	return nil
 }
 
 func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 	position, found := l.positions.Get(entity)
+
 	if !found || position.LevelID != l.ID || l.actors[point{
 		x: position.X,
 		y: position.Y,
@@ -216,11 +228,13 @@ func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 		x: x,
 		y: y,
 	}] = entity
+
 	return nil
 }
 
 func (l *Level) RemoveActor(entity akara.Entity) error {
 	position, found := l.positions.Get(entity)
+
 	if !found || position.LevelID != l.ID || l.actors[point{
 		x: position.X,
 		y: position.Y,
@@ -233,14 +247,17 @@ func (l *Level) RemoveActor(entity akara.Entity) error {
 		y: position.Y,
 	})
 	l.positions.Remove(entity)
+
 	return nil
 }
 
 // KnownRows returns the player's remembered terrain. Spaces mean unseen cells.
 func (l *Level) KnownRows() []string {
 	rows := make([]string, len(l.terrain))
+
 	for y := range rows {
 		row := make([]byte, l.width)
+
 		for x := range row {
 			if glyph := l.remembered[y*l.width+x]; glyph != 0 {
 				row[x] = glyph
@@ -263,6 +280,7 @@ func (l *Level) LoadKnownRows(rows []string) error {
 	}
 
 	known := make([]byte, l.width*len(rows))
+
 	for y, row := range rows {
 		if len(row) != l.width {
 			return fmt.Errorf("level %d known row %d has width %d, want %d", l.ID, y, len(row), l.width)
@@ -280,6 +298,7 @@ func (l *Level) LoadKnownRows(rows []string) error {
 	}
 
 	l.remembered = known
+
 	return nil
 }
 

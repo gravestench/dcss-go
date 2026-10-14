@@ -14,7 +14,7 @@ invariants, source-specific order, and surprising rules, with pinned C++
 source references where helpful. They should not repeat what the next line
 already says. The repository's `AGENTS.md` carries this standard into each
 implementation slice. The style check now enforces line length, formatting,
-expanded literals and blocks, and space after control-flow blocks.
+expanded literals and blocks, and space around control-flow blocks.
 
 ## Decision
 

@@ -16,6 +16,7 @@ var dieSizeExpr = regexp.MustCompile(`^(?:[A-Z][A-Z0-9_]*|[0-9]+)$`)
 
 func parseEnum(path string, body []byte) ([]content.BranchDef, error) {
 	lines, err := sourceparse.Tag34NumberedLines(path, body)
+
 	if err != nil {
 		return nil, err
 	}
@@ -23,8 +24,10 @@ func parseEnum(path string, body []byte) ([]content.BranchDef, error) {
 	inside, opened, countSeen, closed := false, false, false, false
 	var result []content.BranchDef
 	seen := map[string]bool{}
+
 	for _, line := range lines {
 		value := strings.TrimSpace(line.Text)
+
 		if !inside {
 			if strings.HasPrefix(value, "enum branch_type") {
 				inside = true
@@ -53,11 +56,13 @@ func parseEnum(path string, body []byte) ([]content.BranchDef, error) {
 		}
 
 		match := enumRow.FindStringSubmatch(value)
+
 		if match == nil {
 			return nil, fmt.Errorf("%s:%d: unsupported branch enum row %q", path, line.Number, value)
 		}
 
 		id, target := match[1], match[2]
+
 		if id == "NUM_BRANCHES" {
 			if target != "" || countSeen {
 				return nil, fmt.Errorf("%s:%d: changed branch count sentinel", path, line.Number)
@@ -109,8 +114,10 @@ func splitFields(value string) ([]string, error) {
 	start, depth := 0, 0
 	var quote byte
 	escaped := false
+
 	for i := 0; i < len(value); i++ {
 		char := value[i]
+
 		if quote != 0 {
 			if escaped {
 				escaped = false
@@ -130,6 +137,7 @@ func splitFields(value string) ([]string, error) {
 			depth++
 		case '}':
 			depth--
+
 			if depth < 0 {
 				return nil, fmt.Errorf("unbalanced aggregate brace")
 			}
@@ -164,6 +172,7 @@ func literalStrings(value string) (string, error) {
 	}
 
 	var result strings.Builder
+
 	for i := 0; i < len(value); {
 		if unicode.IsSpace(rune(value[i])) {
 			i++
@@ -177,6 +186,7 @@ func literalStrings(value string) (string, error) {
 		start := i
 		i++
 		escaped := false
+
 		for i < len(value) {
 			if escaped {
 				escaped = false
@@ -195,6 +205,7 @@ func literalStrings(value string) (string, error) {
 		}
 
 		part, err := strconv.Unquote(value[start:i])
+
 		if err != nil {
 			return "", err
 		}
@@ -208,8 +219,10 @@ func literalStrings(value string) (string, error) {
 func prefixedList(value, prefix string) ([]string, error) {
 	parts := strings.Split(value, "|")
 	result := make([]string, 0, len(parts))
+
 	for _, part := range parts {
 		part = strings.TrimSpace(part)
+
 		if !strings.HasPrefix(part, prefix) || len(part) == len(prefix) {
 			return nil, fmt.Errorf("invalid %s token %q", prefix, part)
 		}
@@ -222,6 +235,7 @@ func prefixedList(value, prefix string) ([]string, error) {
 
 func parseRow(path string, line int, value string) (content.BranchDef, error) {
 	fields, err := splitFields(strings.TrimSpace(value))
+
 	if err != nil {
 		return content.BranchDef{}, fmt.Errorf("%s:%d: %w", path, line, err)
 	}
@@ -241,6 +255,7 @@ func parseRow(path string, line int, value string) (content.BranchDef, error) {
 		RockColor:     fields[15],
 		AmbientNoise:  fields[18],
 	}
+
 	for i, dest := range []*int{
 		&b.MinDepth,
 		&b.MaxDepth,
@@ -248,12 +263,14 @@ func parseRow(path string, line int, value string) (content.BranchDef, error) {
 		&b.AbsoluteDepth,
 	} {
 		*dest, err = strconv.Atoi(fields[i+2])
+
 		if err != nil {
 			return content.BranchDef{}, fmt.Errorf("%s:%d: invalid branch depth %q: %w", path, line, fields[i+2], err)
 		}
 	}
 
 	b.Flags, err = prefixedList(fields[6], "brflag::")
+
 	if err != nil {
 		return content.BranchDef{}, fmt.Errorf("%s:%d: %w", path, line, err)
 	}
@@ -265,17 +282,20 @@ func parseRow(path string, line int, value string) (content.BranchDef, error) {
 		&b.EntryMessage,
 	} {
 		*dest, err = literalStrings(fields[i+10])
+
 		if err != nil {
 			return content.BranchDef{}, fmt.Errorf("%s:%d: %w", path, line, err)
 		}
 	}
 
 	b.TravelShortcut, err = strconv.Unquote(fields[16])
+
 	if err != nil {
 		return content.BranchDef{}, fmt.Errorf("%s:%d: invalid branch shortcut: %w", path, line, err)
 	}
 
 	runeField := strings.TrimSpace(fields[17])
+
 	if !strings.HasPrefix(runeField, "{") || !strings.HasSuffix(runeField, "}") {
 		return content.BranchDef{}, fmt.Errorf("%s:%d: malformed rune list", path, line)
 	}
@@ -288,6 +308,7 @@ func parseRow(path string, line int, value string) (content.BranchDef, error) {
 
 	if len(fields) == 20 {
 		b.MonDieSizeExpr = fields[19]
+
 		if !dieSizeExpr.MatchString(b.MonDieSizeExpr) {
 			return content.BranchDef{}, fmt.Errorf("%s:%d: unsupported monster death size %q", path, line, b.MonDieSizeExpr)
 		}
@@ -298,6 +319,7 @@ func parseRow(path string, line int, value string) (content.BranchDef, error) {
 	}
 
 	b.AmbientNoise = strings.TrimPrefix(b.AmbientNoise, "branch_noise::")
+
 	if !strings.HasPrefix(b.ID, "BRANCH_") || (b.ParentID != "NUM_BRANCHES" && !strings.HasPrefix(b.ParentID, "BRANCH_")) {
 		return content.BranchDef{}, fmt.Errorf("%s:%d: invalid branch identity or parent", path, line)
 	}
@@ -309,8 +331,10 @@ func braceDelta(value string) (int, error) {
 	delta := 0
 	var quote byte
 	escaped := false
+
 	for i := 0; i < len(value); i++ {
 		char := value[i]
+
 		if quote != 0 {
 			if escaped {
 				escaped = false
@@ -342,6 +366,7 @@ func braceDelta(value string) (int, error) {
 
 func parseTable(path string, body []byte) ([]content.BranchDef, error) {
 	lines, err := sourceparse.Tag34NumberedLines(path, body)
+
 	if err != nil {
 		return nil, err
 	}
@@ -350,8 +375,10 @@ func parseTable(path string, body []byte) ([]content.BranchDef, error) {
 	var rows []content.BranchDef
 	var row strings.Builder
 	depth, rowLine := 0, 0
+
 	for _, line := range lines {
 		value := strings.TrimSpace(line.Text)
+
 		if !inside {
 			if strings.Contains(value, "branches[NUM_BRANCHES]") {
 				inside = true
@@ -394,22 +421,26 @@ func parseTable(path string, body []byte) ([]content.BranchDef, error) {
 
 		row.WriteString(value)
 		change, err := braceDelta(value)
+
 		if err != nil {
 			return nil, fmt.Errorf("%s:%d: %w", path, line.Number, err)
 		}
 
 		depth += change
+
 		if depth < 0 {
 			return nil, fmt.Errorf("%s:%d: unbalanced branch row", path, line.Number)
 		}
 
 		if depth == 0 {
 			text := strings.TrimSpace(row.String())
+
 			if !strings.HasSuffix(text, "},") || !strings.HasPrefix(text, "{") {
 				return nil, fmt.Errorf("%s:%d: malformed branch row ending", path, line.Number)
 			}
 
 			branch, err := parseRow(path, rowLine, strings.TrimSpace(text[1:len(text)-2]))
+
 			if err != nil {
 				return nil, err
 			}

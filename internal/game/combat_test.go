@@ -8,17 +8,20 @@ import (
 
 func ratID(t *testing.T, g *Game) akara.Entity {
 	t.Helper()
+
 	for _, id := range g.stores.AI.Entities() {
 		return id
 	}
 
 	t.Fatal("rat missing")
+
 	return 0
 }
 
 func TestBumpAttacksInsteadOfMoving(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
+
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
@@ -28,17 +31,20 @@ func TestBumpAttacksInsteadOfMoving(t *testing.T) {
 		Kind: CommandMove,
 		DX:   1,
 	})
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	playerPos, _ := g.stores.Positions.Get(g.player)
 	ratPos, ratAlive := g.stores.Positions.Get(rat)
+
 	if playerPos.X != 3 || (ratAlive && ratPos.X != 4) || result.Spent < 11 || result.Spent > 12 {
 		t.Fatalf("bump moved entities: player %+v rat %+v spent %d", playerPos, ratPos, result.Spent)
 	}
 
 	foundCombat := false
+
 	for _, event := range result.Events {
 		foundCombat = foundCombat || event.Kind == "combat"
 	}
@@ -49,6 +55,7 @@ func TestBumpAttacksInsteadOfMoving(t *testing.T) {
 
 	if ratAlive {
 		after, _ := g.stores.Health.Get(rat)
+
 		if after.Current > before.Current {
 			t.Fatalf("rat healed from %d to %d", before.Current, after.Current)
 		}
@@ -59,11 +66,13 @@ func TestRatActsBeforeNextPlayerTurn(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
 	result, err := g.Step(Command{Kind: CommandWait})
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	actor, _ := g.stores.Actors.Get(rat)
+
 	if actor.NextAut != 10 {
 		t.Fatalf("rat deadline = %d, want 10 after its action; events %+v", actor.NextAut, result.Events)
 	}
@@ -74,6 +83,7 @@ func TestDeathClearsOccupancy(t *testing.T) {
 	rat := ratID(t, g)
 	health, _ := g.stores.Health.Get(rat)
 	health.Current = 0
+
 	if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
 		t.Fatal(err)
 	}
@@ -92,6 +102,7 @@ func TestPlayerDeathEndsTurnLoop(t *testing.T) {
 	health, _ := g.stores.Health.Get(g.player)
 	health.Current = 0
 	result, err := g.Step(Command{Kind: CommandWait})
+
 	if err != nil {
 		t.Fatal(err)
 	}

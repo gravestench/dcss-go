@@ -33,18 +33,21 @@ var skillID = regexp.MustCompile(`SK_[A-Z_]+`)
 func parseSkillColumns(path string, data []byte) ([][]string, error) {
 	marker := "static const skill_type skill_display_order[]"
 	start := bytes.Index(data, []byte(marker))
+
 	if start < 0 {
 		return nil, fmt.Errorf("%s: skill display order missing", path)
 	}
 
 	text := string(data[start:])
 	end := strings.Index(text, "};")
+
 	if end < 0 {
 		return nil, fmt.Errorf("%s: skill display order unterminated", path)
 	}
 
 	var columns [][]string
 	var column []string
+
 	for _, id := range skillID.FindAllString(text[:end], -1) {
 		switch id {
 		case "SK_TITLE":
@@ -71,20 +74,24 @@ func parseSkillColumns(path string, data []byte) ([][]string, error) {
 func parseStartupModes(path string, data []byte) ([]content.StartupMode, error) {
 	marker := "static const game_modes_menu_item entries[]"
 	start := bytes.Index(data, []byte(marker))
+
 	if start < 0 {
 		return nil, fmt.Errorf("%s: startup mode table missing", path)
 	}
 
 	text := string(data[start:])
 	end := strings.Index(text, "};")
+
 	if end < 0 {
 		return nil, fmt.Errorf("%s: startup mode table unterminated", path)
 	}
 
 	join := func(value string) (string, error) {
 		var result strings.Builder
+
 		for _, part := range quotedString.FindAllString(value, -1) {
 			decoded, err := strconv.Unquote(part)
+
 			if err != nil {
 				return "", err
 			}
@@ -95,13 +102,16 @@ func parseStartupModes(path string, data []byte) ([]content.StartupMode, error) 
 		return result.String(), nil
 	}
 	var modes []content.StartupMode
+
 	for _, match := range startupModeEntry.FindAllStringSubmatch(text[:end], -1) {
 		label, err := join(match[2])
+
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", path, err)
 		}
 
 		description, err := join(match[3])
+
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", path, err)
 		}
@@ -123,20 +133,24 @@ func parseStartupModes(path string, data []byte) ([]content.StartupMode, error) 
 func parseGroups(path string, data []byte, variable, prefix string) ([]content.MenuGroup, error) {
 	marker := variable + "[]"
 	start := bytes.Index(data, []byte(marker))
+
 	if start < 0 {
 		return nil, fmt.Errorf("%s: missing %s", path, marker)
 	}
 
 	text := string(data[start:])
 	end := strings.Index(text, "};")
+
 	if end < 0 {
 		return nil, fmt.Errorf("%s: unterminated %s", path, marker)
 	}
 
 	text = text[:end]
 	var groups []content.MenuGroup
+
 	for _, match := range sourceGroup.FindAllStringSubmatch(text, -1) {
 		group := content.MenuGroup{Label: match[1]}
+
 		for _, id := range sourceID.FindAllString(match[2], -1) {
 			if !strings.HasPrefix(id, prefix) {
 				return nil, fmt.Errorf("%s: unexpected menu ID %s", path, id)
@@ -161,8 +175,10 @@ func parseGroups(path string, data []byte, variable, prefix string) ([]content.M
 
 func parseDescriptions(path string, data []byte) (map[string]string, error) {
 	records := make(map[string]string)
+
 	for _, part := range strings.Split(string(data), "%%%%") {
 		part = strings.TrimSpace(part)
+
 		if part == "" {
 			continue
 		}
@@ -170,6 +186,7 @@ func parseDescriptions(path string, data []byte) (map[string]string, error) {
 		line, body, found := strings.Cut(part, "\n")
 		name := strings.TrimSpace(line)
 		body = strings.TrimSpace(body)
+
 		if !found || name == "" || body == "" {
 			return nil, fmt.Errorf("%s: malformed description %q", path, name)
 		}
@@ -190,6 +207,7 @@ func parseDescriptions(path string, data []byte) (map[string]string, error) {
 
 func readSource(root, relative string, files *[]content.JobSourceFile) ([]byte, error) {
 	data, err := os.ReadFile(filepath.Join(root, relative))
+
 	if err != nil {
 		return nil, fmt.Errorf("source %s: %w", relative, err)
 	}
@@ -199,11 +217,13 @@ func readSource(root, relative string, files *[]content.JobSourceFile) ([]byte, 
 		Path:   filepath.ToSlash(filepath.Join("crawl-ref", "source", relative)),
 		SHA256: hex.EncodeToString(sum[:]),
 	})
+
 	return data, nil
 }
 
 func generateFromSource(sourceDir string) (content.PresentationArtifact, error) {
 	catalog, err := content.LoadDefinitionsForImport()
+
 	if err != nil {
 		return content.PresentationArtifact{}, fmt.Errorf("load committed definitions: %w", err)
 	}
@@ -216,6 +236,7 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 		JobDescriptions:     map[string]string{},
 	}
 	version, err := readSource(sourceDir, "tag-version.h", &artifact.SourceFiles)
+
 	if err != nil {
 		return artifact, err
 	}
@@ -225,61 +246,73 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 	}
 
 	speciesGroups, err := readSource(sourceDir, "species-groups.h", &artifact.SourceFiles)
+
 	if err != nil {
 		return artifact, err
 	}
 
 	artifact.SpeciesGroups, err = parseGroups("species-groups.h", speciesGroups, "species_groups", "SP_")
+
 	if err != nil {
 		return artifact, err
 	}
 
 	jobGroups, err := readSource(sourceDir, "newgame.cc", &artifact.SourceFiles)
+
 	if err != nil {
 		return artifact, err
 	}
 
 	artifact.JobGroups, err = parseGroups("newgame.cc", jobGroups, "jobs_order", "JOB_")
+
 	if err != nil {
 		return artifact, err
 	}
 
 	speciesText, err := readSource(sourceDir, "dat/descript/species.txt", &artifact.SourceFiles)
+
 	if err != nil {
 		return artifact, err
 	}
 
 	speciesDescriptions, err := parseDescriptions("species.txt", speciesText)
+
 	if err != nil {
 		return artifact, err
 	}
 
 	jobText, err := readSource(sourceDir, "dat/descript/backgrounds.txt", &artifact.SourceFiles)
+
 	if err != nil {
 		return artifact, err
 	}
 
 	jobDescriptions, err := parseDescriptions("backgrounds.txt", jobText)
+
 	if err != nil {
 		return artifact, err
 	}
 
 	startupText, err := readSource(sourceDir, "startup.cc", &artifact.SourceFiles)
+
 	if err != nil {
 		return artifact, err
 	}
 
 	artifact.StartupModes, err = parseStartupModes("startup.cc", startupText)
+
 	if err != nil {
 		return artifact, err
 	}
 
 	skillText, err := readSource(sourceDir, "skills.h", &artifact.SourceFiles)
+
 	if err != nil {
 		return artifact, err
 	}
 
 	artifact.SkillColumns, err = parseSkillColumns("skills.h", skillText)
+
 	if err != nil {
 		return artifact, err
 	}
@@ -287,6 +320,7 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 	for _, group := range artifact.SpeciesGroups {
 		for _, id := range group.IDs {
 			definition, err := catalog.Species(id)
+
 			if err != nil {
 				return artifact, err
 			}
@@ -296,6 +330,7 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 			}
 
 			text := speciesDescriptions[definition.Name]
+
 			if text == "" {
 				return artifact, fmt.Errorf("missing species description %s (%s)", id, definition.Name)
 			}
@@ -307,6 +342,7 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 	for _, group := range artifact.JobGroups {
 		for _, id := range group.IDs {
 			definition, err := catalog.Job(id)
+
 			if err != nil {
 				return artifact, err
 			}
@@ -316,6 +352,7 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 			}
 
 			text := jobDescriptions[definition.Name]
+
 			if text == "" {
 				return artifact, fmt.Errorf("missing job description %s (%s)", id, definition.Name)
 			}
@@ -330,6 +367,7 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 			return artifact.SourceFiles[i].Path < artifact.SourceFiles[j].Path
 		},
 	)
+
 	return artifact, nil
 }
 
@@ -340,6 +378,7 @@ func Generate(sourceDir string) (content.PresentationArtifact, error) {
 	}
 
 	output, err := exec.Command("git", "-C", sourceDir, "rev-parse", "HEAD").Output()
+
 	if err != nil {
 		return content.PresentationArtifact{}, fmt.Errorf("read source revision: %w", err)
 	}
@@ -353,16 +392,19 @@ func Generate(sourceDir string) (content.PresentationArtifact, error) {
 	}
 
 	artifact, err := generateFromSource(sourceDir)
+
 	if err != nil {
 		return artifact, err
 	}
 
 	version, err := exec.Command("git", "-C", sourceDir, "describe", "--tags", "--always").Output()
+
 	if err != nil {
 		return artifact, fmt.Errorf("read source version: %w", err)
 	}
 
 	artifact.SourceVersion = strings.TrimSpace(string(version))
+
 	return artifact, nil
 }
 
@@ -373,18 +415,22 @@ func Write(sourceDir, out string, check bool) error {
 	}
 
 	artifact, err := Generate(sourceDir)
+
 	if err != nil {
 		return err
 	}
 
 	data, err := json.MarshalIndent(artifact, "", "  ")
+
 	if err != nil {
 		return err
 	}
 
 	data = append(data, '\n')
+
 	if check {
 		current, err := os.ReadFile(out)
+
 		if err != nil {
 			return err
 		}
@@ -397,18 +443,22 @@ func Write(sourceDir, out string, check bool) error {
 	}
 
 	file, err := os.CreateTemp(filepath.Dir(out), ".presentation-*.tmp")
+
 	if err != nil {
 		return err
 	}
 
 	defer os.Remove(file.Name())
+
 	if _, err := file.Write(data); err != nil {
 		file.Close()
+
 		return err
 	}
 
 	if err := file.Sync(); err != nil {
 		file.Close()
+
 		return err
 	}
 

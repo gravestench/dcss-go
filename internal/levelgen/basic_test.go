@@ -11,6 +11,7 @@ func sequence(seed uint64) func() uint64 {
 		value := seed
 		value = (value ^ (value >> 30)) * 0xbf58476d1ce4e5b9
 		value = (value ^ (value >> 27)) * 0x94d049bb133111eb
+
 		return value ^ (value >> 31)
 	}
 }
@@ -31,6 +32,7 @@ func TestBasicDungeonBoundsFailedSourceDraws(t *testing.T) {
 	_, err := BasicDungeon(1, func() uint64 {
 		return 0
 	})
+
 	if err == nil {
 		t.Fatal("constant random source produced a valid layout")
 	}
@@ -40,11 +42,13 @@ func TestBasicDungeonProducesStableConnectedGeometry(t *testing.T) {
 	for _, depth := range []int{1, 2} {
 		for seed := uint64(1); seed <= 128; seed++ {
 			first, err := BasicDungeon(depth, sequence(seed))
+
 			if err != nil {
 				t.Fatalf("D:%d seed %d: %v", depth, seed, err)
 			}
 
 			second, err := BasicDungeon(depth, sequence(seed))
+
 			if err != nil || !reflect.DeepEqual(first, second) {
 				t.Fatalf("D:%d seed %d is not deterministic: %v", depth, seed, err)
 			}
@@ -56,6 +60,7 @@ func TestBasicDungeonProducesStableConnectedGeometry(t *testing.T) {
 
 func TestRoomRequiresAPerimeterConnectionAndCanMakeANarrowDoor(t *testing.T) {
 	b := &builder{next: sequence(1)}
+
 	for y := range b.grid {
 		for x := range b.grid[y] {
 			b.grid[y][x] = '#'
@@ -69,6 +74,7 @@ func TestRoomRequiresAPerimeterConnectionAndCanMakeANarrowDoor(t *testing.T) {
 	b.grid[10][7] = '.'
 	b.grid[10][8] = '.'
 	b.grid[9][9] = '+'
+
 	if !b.makeRoom(8, 8, 12, 12, 1, 10) {
 		t.Fatal("rejected a room with one corridor connection")
 	}
@@ -80,8 +86,10 @@ func TestRoomRequiresAPerimeterConnectionAndCanMakeANarrowDoor(t *testing.T) {
 
 func TestBasicDungeonCanPlaceClosedDoors(t *testing.T) {
 	doors := 0
+
 	for seed := uint64(1); seed <= 32; seed++ {
 		layout, err := BasicDungeon(1, sequence(seed))
+
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -108,6 +116,7 @@ func assertBasicLayout(t *testing.T, layout Layout) {
 	}
 
 	stairs := make(map[Point]byte)
+
 	for index, pair := range layout.Stairs {
 		for _, entry := range []struct {
 			point Point
@@ -137,6 +146,7 @@ func assertBasicLayout(t *testing.T, layout Layout) {
 
 		for x := range row {
 			terrain := row[x]
+
 			if (x == 0 || y == 0 || x == 79 || y == 69) && terrain != '#' {
 				t.Fatalf("non-rock border at (%d,%d): %q", x, y, terrain)
 			}
@@ -158,9 +168,11 @@ func assertBasicLayout(t *testing.T, layout Layout) {
 	start := layout.Stairs[0].Down
 	visited := map[Point]bool{start: true}
 	queue := []Point{start}
+
 	for len(queue) > 0 {
 		current := queue[0]
 		queue = queue[1:]
+
 		for _, direction := range []Point{
 			{
 				X: 0,
@@ -183,6 +195,7 @@ func assertBasicLayout(t *testing.T, layout Layout) {
 				X: current.X + direction.X,
 				Y: current.Y + direction.Y,
 			}
+
 			if next.X < 0 || next.X >= 80 || next.Y < 0 || next.Y >= 70 ||
 				visited[next] || layout.Rows[next.Y][next.X] == '#' {
 				continue

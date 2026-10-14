@@ -17,6 +17,7 @@ func TestStartingGearCatalogCopies(t *testing.T) {
 		}},
 	}
 	first, err := c.StartingGrants("JOB_FIGHTER")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,6 +28,7 @@ func TestStartingGearCatalogCopies(t *testing.T) {
 		Quantity: 1,
 	})
 	again, err := c.StartingGrants("JOB_FIGHTER")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -42,6 +44,7 @@ func TestStartingGearCatalogCopies(t *testing.T) {
 
 func TestLoadDefaultStartingGear(t *testing.T) {
 	catalog, err := LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,6 +54,7 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 	}
 
 	grants, err := catalog.StartingGrants("JOB_FIGHTER")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -74,6 +78,7 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 		"WPN_FLAIL":      {"OBJ_WEAPONS", "weapon", "SK_MACES_FLAILS"},
 	} {
 		kind, err := catalog.Item(id)
+
 		if err != nil || kind.Class != want.class || kind.Slot != want.slot || kind.WeaponSkill != want.skill {
 			t.Fatalf("source-backed kind %s: %+v, %v", id, kind, err)
 		}
@@ -81,11 +86,13 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 
 	grants[0].KindID = "POT_CURING"
 	again, err := LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	againGrants, err := again.StartingGrants("JOB_FIGHTER")
+
 	if err != nil || againGrants[0].KindID != "ARM_SCALE_MAIL" {
 		t.Fatalf("a fresh catalog inherited changed gear: %+v, %v", againGrants, err)
 	}
@@ -114,6 +121,7 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 				for i := range a.SourceFiles {
 					if a.SourceFiles[i].Path == "crawl-ref/source/job-data.h" {
 						a.SourceFiles[i].SHA256 = strings.Repeat("f", 64)
+
 						return
 					}
 				}
@@ -137,6 +145,7 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 				for i := range a.Jobs {
 					if a.Jobs[i].JobID == "JOB_FIGHTER" {
 						a.Jobs[i].Grants[0].Raw = "robe"
+
 						return
 					}
 				}
@@ -148,6 +157,7 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 				for i := range a.Jobs {
 					if a.Jobs[i].JobID == "JOB_FIGHTER" {
 						a.Jobs[i].Grants[0], a.Jobs[i].Grants[1] = a.Jobs[i].Grants[1], a.Jobs[i].Grants[0]
+
 						return
 					}
 				}
@@ -159,6 +169,7 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 				for i := range a.Jobs {
 					if a.Jobs[i].JobID == "JOB_FIGHTER" {
 						a.Jobs[i].Grants[0].KindID = "ARM_UNKNOWN"
+
 						return
 					}
 				}
@@ -170,6 +181,7 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 				for i := range a.Jobs {
 					if a.Jobs[i].JobID == "JOB_FIGHTER" {
 						a.Jobs[i].Grants[0].KindID = "ARM_BUCKLER"
+
 						return
 					}
 				}
@@ -178,12 +190,14 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			var artifact StartingGearArtifact
+
 			if err := json.Unmarshal(defaultStartingGearJSON, &artifact); err != nil {
 				t.Fatal(err)
 			}
 
 			tc.mutate(&artifact)
 			data, err := json.Marshal(artifact)
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -240,6 +254,7 @@ func validStartingGearArtifact() StartingGearArtifact {
 
 func TestStartingGearArtifactValidation(t *testing.T) {
 	catalog, err := LoadItemsForImport()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -298,6 +313,7 @@ func TestStartingGearArtifactValidation(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			a := validStartingGearArtifact()
 			tc.change(&a)
+
 			if err := a.Validate(catalog); err == nil || !strings.Contains(strings.ToLower(err.Error()), tc.want) {
 				t.Fatalf("want %q error, got %v", tc.want, err)
 			}

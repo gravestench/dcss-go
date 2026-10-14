@@ -10,7 +10,9 @@ for a human reader to follow.
 - Give distinct steps breathing room. Separate validation, calculation,
   state changes, and event emission with blank lines instead of packing them
   into dense expressions or one-line blocks. Expand nonempty inline callbacks.
-- Leave a blank line after a control-flow block before the next statement.
+- Leave a blank line before and after a control-flow block when it has a
+  neighboring statement in the same block. Separate the final return from
+  preceding calculations or mutations.
 - Put entries of keyed literals and named composite literals on separate lines
   whenever they contain more than one entry. A one-entry literal may stay
   inline. Expand lists with four or more values instead of placing the whole

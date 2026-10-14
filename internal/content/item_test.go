@@ -48,6 +48,7 @@ func testWeaponItem() ItemDef {
 func TestItemDefCopies(t *testing.T) {
 	c := Catalog{items: map[string]ItemDef{"WPN_MACE": testWeaponItem()}}
 	first, err := c.Item("WPN_MACE")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,6 +56,7 @@ func TestItemDefCopies(t *testing.T) {
 	first.Weapon.DamageFlags[0] = "BROKEN"
 	first.Weapon.BrandWeights[0].Weight = 0
 	second, err := c.Item("WPN_MACE")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,6 +80,7 @@ func TestItemDefCopies(t *testing.T) {
 	firstArmour, _ := c.Item("ARM_ROBE")
 	firstArmour.Armour.Flags[0].Level = 9
 	secondArmour, _ := c.Item("ARM_ROBE")
+
 	if secondArmour.Armour.Flags[0].Level != 2 {
 		t.Fatalf("armour flags leaked through return value: %+v", secondArmour.Armour.Flags)
 	}
@@ -105,6 +108,7 @@ func TestItemIdentityInspection(t *testing.T) {
 			},
 		},
 	}
+
 	if _, err := c.ItemIdentity("WPN_OLD"); err != nil {
 		t.Fatal(err)
 	}
@@ -118,11 +122,13 @@ func TestItemIdentityInspection(t *testing.T) {
 	}
 
 	ids := c.ItemIDs()
+
 	if len(ids) != 2 || ids[0] != "WPN_MACE" || ids[1] != "WPN_OLD" {
 		t.Fatalf("wrong identity listing: %v", ids)
 	}
 
 	ids[0] = "BROKEN"
+
 	if c.ItemIDs()[0] != "WPN_MACE" {
 		t.Fatal("identity listing exposed catalog storage")
 	}
@@ -130,24 +136,28 @@ func TestItemIdentityInspection(t *testing.T) {
 
 func TestItemShapeValidation(t *testing.T) {
 	valid := testWeaponItem()
+
 	if err := valid.validate(); err != nil {
 		t.Fatalf("valid weapon rejected: %v", err)
 	}
 
 	bad := valid.clone()
 	bad.Armour = &ArmourProperties{}
+
 	if err := bad.validate(); err == nil {
 		t.Fatal("weapon with armour properties accepted")
 	}
 
 	bad = valid.clone()
 	bad.Naming.SourceLine = 0
+
 	if err := bad.validate(); err == nil {
 		t.Fatal("missing source location accepted")
 	}
 
 	bad = valid.clone()
 	bad.Naming.Kind = "invented"
+
 	if err := bad.validate(); err == nil {
 		t.Fatal("unknown naming kind accepted")
 	}
@@ -163,6 +173,7 @@ func TestItemShapeValidation(t *testing.T) {
 			Weight:  58,
 		},
 	}
+
 	if err := bad.validate(); err == nil {
 		t.Fatal("unsorted brand weights accepted")
 	}

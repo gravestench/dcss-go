@@ -30,8 +30,10 @@ func Generate(sourceDir string) ([]byte, error) {
 
 	sources := make(map[string][]byte, len(sourceNames))
 	files := make([]content.JobSourceFile, 0, len(sourceNames))
+
 	for _, name := range sourceNames {
 		body, err := os.ReadFile(filepath.Join(sourceDir, name))
+
 		if err != nil {
 			return nil, fmt.Errorf("read %s: %w", name, err)
 		}
@@ -39,6 +41,7 @@ func Generate(sourceDir string) ([]byte, error) {
 		sources[name] = body
 		hash := sha256.Sum256(body)
 		actual := hex.EncodeToString(hash[:])
+
 		if actual != pinnedSourceSHA256[name] {
 			return nil, fmt.Errorf("%s differs from pinned revision %s", name, pinnedRevision)
 		}
@@ -54,6 +57,7 @@ func Generate(sourceDir string) ([]byte, error) {
 	}
 
 	rows, err := parseDungeonRows(sources["mon-pick-data.h"])
+
 	if err != nil {
 		return nil, err
 	}
@@ -69,11 +73,13 @@ func Generate(sourceDir string) ([]byte, error) {
 		SourceFiles:     files,
 		Rows:            rows,
 	}
+
 	if err := artifact.Validate(); err != nil {
 		return nil, err
 	}
 
 	encoded, err := json.MarshalIndent(artifact, "", "  ")
+
 	if err != nil {
 		return nil, err
 	}
@@ -87,12 +93,14 @@ func Write(sourceDir, outPath string, check bool) error {
 	}
 
 	generated, err := Generate(sourceDir)
+
 	if err != nil {
 		return err
 	}
 
 	if check {
 		committed, err := os.ReadFile(outPath)
+
 		if err != nil {
 			return err
 		}
@@ -105,14 +113,17 @@ func Write(sourceDir, outPath string, check bool) error {
 	}
 
 	file, err := os.CreateTemp(filepath.Dir(outPath), ".dungeon-population-*.json")
+
 	if err != nil {
 		return err
 	}
 
 	temp := file.Name()
 	defer os.Remove(temp)
+
 	if _, err := file.Write(generated); err != nil {
 		file.Close()
+
 		return err
 	}
 

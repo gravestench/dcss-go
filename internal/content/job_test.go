@@ -42,12 +42,14 @@ func TestJobCatalogCopiesAndSorts(t *testing.T) {
 		},
 	}
 	ids := catalog.JobIDs()
+
 	if !reflect.DeepEqual(ids, []string{"JOB_A", "JOB_Z"}) {
 		t.Fatalf("job IDs = %v", ids)
 	}
 
 	ids[0] = "changed"
 	returned, err := catalog.Job("JOB_Z")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,6 +59,7 @@ func TestJobCatalogCopiesAndSorts(t *testing.T) {
 	returned.Equipment[0] = "changed"
 	returned.Skills[0].Level = 27
 	again, err := catalog.Job("JOB_Z")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -76,6 +79,7 @@ func TestJobCatalogCopiesAndSorts(t *testing.T) {
 
 func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 	valid := testJob("JOB_FIGHTER", "Fi")
+
 	for _, tc := range []struct {
 		name string
 		jobs []JobDef
@@ -94,6 +98,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 				func() JobDef {
 					job := valid
 					job.Name = ""
+
 					return job
 				}(),
 			},
@@ -104,6 +109,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 				func() JobDef {
 					job := valid
 					job.WeaponChoice = "WCHOICE_UNKNOWN"
+
 					return job
 				}(),
 			},
@@ -114,6 +120,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 				func() JobDef {
 					job := valid
 					job.RecommendedSpecies = nil
+
 					return job
 				}(),
 			},
@@ -124,6 +131,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 				func() JobDef {
 					job := valid
 					job.Selectable = false
+
 					return job
 				}(),
 			},
@@ -139,6 +147,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 							Level: -1,
 						},
 					}
+
 					return j
 				}(),
 			},
@@ -154,6 +163,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 							Level: 28,
 						},
 					}
+
 					return j
 				}(),
 			},
@@ -166,6 +176,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 				TagMajorVersion: 34,
 				Jobs:            tc.jobs,
 			}
+
 			if err := artifact.Validate(); err == nil {
 				t.Fatal("invalid job artifact accepted")
 			}

@@ -46,6 +46,7 @@ var branchToken = regexp.MustCompile(`^[A-Z][A-Z0-9_]*$`)
 func (b BranchDef) clone() BranchDef {
 	b.Flags = slices.Clone(b.Flags)
 	b.Runes = slices.Clone(b.Runes)
+
 	return b
 }
 
@@ -95,6 +96,7 @@ func (a BranchArtifact) Validate() error {
 	}
 
 	seen := make(map[string]bool, len(a.Branches))
+
 	for i, branch := range a.Branches {
 		if err := branch.validate(); err != nil {
 			return err

@@ -9,6 +9,7 @@ import (
 
 func TestRejectUnsupportedVersion(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "run.json")
+
 	if err := os.WriteFile(path, []byte(`{"version":1}`), 0600); err != nil {
 		t.Fatal(err)
 	}
@@ -20,6 +21,7 @@ func TestRejectUnsupportedVersion(t *testing.T) {
 
 func TestFailedWritePreservesOldSave(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "run.json")
+
 	if err := Write(path, Snapshot{
 		Version:        Version,
 		SourceRevision: "old",
@@ -32,6 +34,7 @@ func TestFailedWritePreservesOldSave(t *testing.T) {
 	}
 
 	snapshot, err := Read(path)
+
 	if err != nil || snapshot.SourceRevision != "old" {
 		t.Fatalf("old save lost: %+v, %v", snapshot, err)
 	}
@@ -39,6 +42,7 @@ func TestFailedWritePreservesOldSave(t *testing.T) {
 
 func TestRejectVersionFourSave(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "old.json")
+
 	if err := os.WriteFile(path, []byte(`{"version":4}`), 0600); err != nil {
 		t.Fatal(err)
 	}

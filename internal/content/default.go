@@ -54,16 +54,19 @@ func LoadDefault() (Catalog, error) {
 		defaultPresentationJSON,
 		defaultMonsterJSON,
 	)
+
 	if err != nil {
 		return Catalog{}, err
 	}
 
 	catalog, err = attachDefaultSpells(catalog, defaultSpellJSON)
+
 	if err != nil {
 		return Catalog{}, err
 	}
 
 	catalog, err = attachDefaultBranches(catalog, defaultBranchJSON)
+
 	if err != nil {
 		return Catalog{}, err
 	}
@@ -83,16 +86,19 @@ func LoadDefinitionsForImport() (Catalog, error) {
 		nil,
 		defaultMonsterJSON,
 	)
+
 	if err != nil {
 		return Catalog{}, err
 	}
 
 	catalog, err = attachDefaultSpells(catalog, defaultSpellJSON)
+
 	if err != nil {
 		return Catalog{}, err
 	}
 
 	catalog, err = attachDefaultBranches(catalog, defaultBranchJSON)
+
 	if err != nil {
 		return Catalog{}, err
 	}
@@ -103,11 +109,13 @@ func LoadDefinitionsForImport() (Catalog, error) {
 func attachDefaultDungeonPopulation(catalog Catalog, data []byte) (Catalog, error) {
 	const pinnedArtifactSHA256 = "d37becdb7daa03d0e02f1b9ca5e3c42d875022ba623d71721082fb64c640fe7b"
 	hash := sha256.Sum256(data)
+
 	if hex.EncodeToString(hash[:]) != pinnedArtifactSHA256 {
 		return Catalog{}, fmt.Errorf("Dungeon population differs from pinned content")
 	}
 
 	var artifact DungeonPopulationArtifact
+
 	if err := decodeArtifact(data, "Dungeon population", &artifact); err != nil {
 		return Catalog{}, err
 	}
@@ -121,6 +129,7 @@ func attachDefaultDungeonPopulation(catalog Catalog, data []byte) (Catalog, erro
 	}
 
 	paths, err := validSourceFiles(artifact.SourceFiles, "Dungeon population")
+
 	if err != nil {
 		return Catalog{}, err
 	}
@@ -138,6 +147,7 @@ func attachDefaultDungeonPopulation(catalog Catalog, data []byte) (Catalog, erro
 	}
 
 	catalog.dungeonPopulation = append([]DungeonPopEntry(nil), artifact.Rows...)
+
 	if err := catalog.Validate(); err != nil {
 		return Catalog{}, err
 	}
@@ -148,11 +158,13 @@ func attachDefaultDungeonPopulation(catalog Catalog, data []byte) (Catalog, erro
 func attachDefaultBranches(catalog Catalog, data []byte) (Catalog, error) {
 	const pinnedArtifactSHA256 = "8ad8a4b914012c631bdf2a8f2637466fcbc47a5d76d540f810fdf6f93b15a656"
 	hash := sha256.Sum256(data)
+
 	if hex.EncodeToString(hash[:]) != pinnedArtifactSHA256 {
 		return Catalog{}, fmt.Errorf("branch catalog differs from pinned content")
 	}
 
 	var artifact BranchArtifact
+
 	if err := decodeArtifact(data, "branches", &artifact); err != nil {
 		return Catalog{}, err
 	}
@@ -166,6 +178,7 @@ func attachDefaultBranches(catalog Catalog, data []byte) (Catalog, error) {
 	}
 
 	paths, err := validSourceFiles(artifact.SourceFiles, "branch")
+
 	if err != nil {
 		return Catalog{}, err
 	}
@@ -177,6 +190,7 @@ func attachDefaultBranches(catalog Catalog, data []byte) (Catalog, error) {
 	}
 
 	catalog.branches = make(map[string]BranchDef, len(artifact.Branches))
+
 	for _, branch := range artifact.Branches {
 		catalog.branches[branch.ID] = branch.clone()
 		catalog.branchOrder = append(catalog.branchOrder, branch.ID)
@@ -191,6 +205,7 @@ func attachDefaultBranches(catalog Catalog, data []byte) (Catalog, error) {
 
 func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 	var artifact SpellArtifact
+
 	if err := decodeArtifact(data, "spells", &artifact); err != nil {
 		return Catalog{}, err
 	}
@@ -205,6 +220,7 @@ func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 	}
 
 	statusCounts := map[SpellStatus]int{}
+
 	for _, spell := range artifact.Spells {
 		statusCounts[spell.Status]++
 	}
@@ -214,11 +230,13 @@ func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 	}
 
 	paths, err := validSourceFiles(artifact.SourceFiles, "spell")
+
 	if err != nil {
 		return Catalog{}, err
 	}
 
 	identityHash, sourceHash := sha256.New(), sha256.New()
+
 	for _, spell := range artifact.Spells {
 		_, _ = fmt.Fprintf(identityHash, "%d:%s:%s\n", spell.NumericID, spell.ID, spell.Status)
 	}
@@ -229,6 +247,7 @@ func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 
 	const pinnedIdentities = "6246d8bef43a5201f5f1010c6be0baddacd23be041bf08a598bf3a1b9817d1ed"
 	const pinnedSources = "643fd960be29d053774c841f2970f5e32de898c8da826a37292e3c4ca6a486ec"
+
 	if hex.EncodeToString(identityHash.Sum(nil)) != pinnedIdentities ||
 		hex.EncodeToString(sourceHash.Sum(nil)) != pinnedSources {
 		return Catalog{}, fmt.Errorf("spell catalog differs from pinned identities, statuses, or source hashes")
@@ -248,6 +267,7 @@ func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 	}
 
 	catalog.spells = make(map[string]SpellDef, len(artifact.Spells))
+
 	for _, spell := range artifact.Spells {
 		catalog.spells[spell.ID] = spell.clone()
 		catalog.spellOrder = append(catalog.spellOrder, spell.ID)
@@ -264,16 +284,19 @@ func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 // refresh does not depend on the older gear artifact it is replacing.
 func LoadItemsForImport() (Catalog, error) {
 	catalog, _, err := loadItemPair(defaultItemsJSON, defaultItemIdentitiesJSON)
+
 	return catalog, err
 }
 
 func loadItemPair(itemData, identityData []byte) (Catalog, map[string]string, error) {
 	var manifest ItemIdentityManifest
+
 	if err := decodeArtifact(identityData, "item identities", &manifest); err != nil {
 		return Catalog{}, nil, err
 	}
 
 	var artifact ItemArtifact
+
 	if err := decodeArtifact(itemData, "items", &artifact); err != nil {
 		return Catalog{}, nil, err
 	}
@@ -291,6 +314,7 @@ func loadItemPair(itemData, identityData []byte) (Catalog, map[string]string, er
 	}
 
 	files, err := validSourceFiles(artifact.SourceFiles, "item")
+
 	if err != nil {
 		return Catalog{}, nil, err
 	}
@@ -299,6 +323,7 @@ func loadItemPair(itemData, identityData []byte) (Catalog, map[string]string, er
 		items:          make(map[string]ItemDef, len(artifact.Items)),
 		itemIdentities: make(map[string]ItemIdentity, len(manifest.Identities)),
 	}
+
 	for _, identity := range manifest.Identities {
 		catalog.itemIdentities[identity.ID] = identity
 	}
@@ -313,11 +338,13 @@ func loadItemPair(itemData, identityData []byte) (Catalog, map[string]string, er
 func decodeArtifact(data []byte, name string, target any) error {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
+
 	if err := decoder.Decode(target); err != nil {
 		return fmt.Errorf("decode %s artifact: %w", name, err)
 	}
 
 	var trailing any
+
 	if err := decoder.Decode(&trailing); err != io.EOF {
 		return fmt.Errorf("decode %s artifact: trailing data", name)
 	}
@@ -328,6 +355,7 @@ func decodeArtifact(data []byte, name string, target any) error {
 func validSourceFiles(files []JobSourceFile, name string) (map[string]string, error) {
 	paths := make(map[string]string, len(files))
 	previous := ""
+
 	for _, file := range files {
 		if file.Path <= previous || len(file.SHA256) != 64 {
 			return nil, fmt.Errorf("invalid or unsorted %s source file %q", name, file.Path)
@@ -349,6 +377,7 @@ func loadDefault(
 	gearData, presentationData, monsterData []byte,
 ) (Catalog, error) {
 	var artifact SpeciesArtifact
+
 	if err := decodeArtifact(speciesData, "species", &artifact); err != nil {
 		return Catalog{}, err
 	}
@@ -366,6 +395,7 @@ func loadDefault(
 	}
 
 	speciesFiles := make([]JobSourceFile, 0, len(artifact.SourceFiles))
+
 	for _, file := range artifact.SourceFiles {
 		speciesFiles = append(speciesFiles, JobSourceFile{
 			Path:   file.Path,
@@ -374,6 +404,7 @@ func loadDefault(
 	}
 
 	hashedPaths, err := validSourceFiles(speciesFiles, "species")
+
 	if err != nil {
 		return Catalog{}, err
 	}
@@ -381,6 +412,7 @@ func loadDefault(
 	catalog := scenarioCatalog()
 	catalog.species = make(map[string]SpeciesDef, len(artifact.Species))
 	previous := ""
+
 	for _, species := range artifact.Species {
 		if _, found := hashedPaths[species.SourcePath]; species.ID <= previous || !found {
 			return Catalog{}, fmt.Errorf("invalid order or source path for species %s", species.ID)
@@ -391,6 +423,7 @@ func loadDefault(
 	}
 
 	var jobs JobArtifact
+
 	if err := decodeArtifact(jobData, "job", &jobs); err != nil {
 		return Catalog{}, err
 	}
@@ -409,6 +442,7 @@ func loadDefault(
 	}
 
 	jobPaths, err := validSourceFiles(jobs.SourceFiles, "job")
+
 	if err != nil {
 		return Catalog{}, err
 	}
@@ -421,6 +455,7 @@ func loadDefault(
 
 	catalog.jobs = make(map[string]JobDef, len(jobs.Jobs))
 	previous = ""
+
 	for _, job := range jobs.Jobs {
 		if _, found := jobPaths[job.SourcePath]; job.ID <= previous || !found {
 			return Catalog{}, fmt.Errorf("invalid order or source path for job %s", job.ID)
@@ -445,6 +480,7 @@ func loadDefault(
 	}
 
 	itemCatalog, itemPaths, err := loadItemPair(itemData, identityData)
+
 	if err != nil {
 		return Catalog{}, err
 	}
@@ -461,6 +497,7 @@ func loadDefault(
 
 	catalog.items, catalog.itemIdentities = itemCatalog.items, itemCatalog.itemIdentities
 	var gear StartingGearArtifact
+
 	if err := decodeArtifact(gearData, "starting gear", &gear); err != nil {
 		return Catalog{}, err
 	}
@@ -479,6 +516,7 @@ func loadDefault(
 	}
 
 	gearPaths, err := validSourceFiles(gear.SourceFiles, "starting gear")
+
 	if err != nil {
 		return Catalog{}, err
 	}
@@ -528,12 +566,14 @@ func loadDefault(
 
 	catalog.startingGear = make(map[string][]StartingGrant, len(gear.Jobs))
 	previous = ""
+
 	for _, entry := range gear.Jobs {
 		if entry.JobID <= previous {
 			return Catalog{}, fmt.Errorf("starting gear jobs are not sorted by ID")
 		}
 
 		job, found := catalog.jobs[entry.JobID]
+
 		if !found || !job.Selectable || len(entry.Grants) != len(job.Equipment) {
 			return Catalog{}, fmt.Errorf("starting gear job %s disagrees with committed jobs", entry.JobID)
 		}
@@ -550,12 +590,14 @@ func loadDefault(
 
 	for id, job := range catalog.jobs {
 		_, found := catalog.startingGear[id]
+
 		if job.Selectable != found {
 			return Catalog{}, fmt.Errorf("starting gear coverage differs for job %s", id)
 		}
 	}
 
 	var monsters MonsterArtifact
+
 	if err := decodeArtifact(monsterData, "monster", &monsters); err != nil {
 		return Catalog{}, err
 	}
@@ -574,6 +616,7 @@ func loadDefault(
 	}
 
 	var vocabulary MonsterVocabulary
+
 	if err := decodeArtifact(defaultMonsterVocabularyJSON, "monster vocabulary", &vocabulary); err != nil {
 		return Catalog{}, err
 	}
@@ -583,6 +626,7 @@ func loadDefault(
 	}
 
 	monsterPaths, err := validSourceFiles(monsters.SourceFiles, "monster")
+
 	if err != nil {
 		return Catalog{}, err
 	}
@@ -620,6 +664,7 @@ func loadDefault(
 
 	catalog.monsters = make(map[string]MonsterDef, len(monsters.Monsters))
 	counts := map[MonsterStatus]int{}
+
 	for _, monster := range monsters.Monsters {
 		if _, found := monsterPaths[monster.SourcePath]; !found {
 			return Catalog{}, fmt.Errorf("monster %s lacks source provenance", monster.ID)
@@ -647,6 +692,7 @@ func loadDefault(
 
 	if len(presentationData) > 0 {
 		var presentation PresentationArtifact
+
 		if err := decodeArtifact(presentationData, "presentation", &presentation); err != nil {
 			return Catalog{}, err
 		}
@@ -656,6 +702,7 @@ func loadDefault(
 		}
 
 		presentationPaths, err := validSourceFiles(presentation.SourceFiles, "presentation")
+
 		if err != nil {
 			return Catalog{}, err
 		}

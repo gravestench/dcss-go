@@ -8,21 +8,25 @@ import (
 
 func TestParsePinnedRowsWhenRequested(t *testing.T) {
 	path := os.Getenv("DCRAWL_MON_DATA")
+
 	if path == "" {
 		t.Skip("set DCRAWL_MON_DATA for an explicit source scan")
 	}
 
 	data, err := os.ReadFile(path)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	rows, err := parseRows(path, data)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defined, removed := 0, 0
+
 	for _, row := range rows {
 		if row.Removed {
 			removed++
@@ -60,6 +64,7 @@ AXED_MON(MONS_BUMBLEBEE, "bee, // removed")
 ` + row("MONS_RAT", `"rat, // \"friend\""`) + `DUMMY(MONS_BEAR, 'h', LIGHTGREY, "bear", TILEP_MONS_BEAR)
 };`
 	rows, err := parseRows("mon-data.h", []byte(input))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,6 +83,7 @@ AXED_MON(MONS_BUMBLEBEE, "bee, // removed")
 
 func TestParseRowsRejectsMalformed(t *testing.T) {
 	base := "static monsterentry mondata[] =\n{\n"
+
 	for _, tc := range []struct {
 		name, body string
 	}{
@@ -104,6 +110,7 @@ func TestParseRowsRejectsMalformed(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			_, err := parseRows("mon-data.h", []byte(base+tc.body))
+
 			if err == nil || !strings.Contains(err.Error(), "mon-data.h") {
 				t.Fatalf("malformed source accepted: %v", err)
 			}

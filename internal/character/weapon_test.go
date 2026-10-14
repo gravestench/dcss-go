@@ -9,18 +9,22 @@ import (
 
 func TestHumanFighterWeaponOptions(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	options, err := WeaponOptions(catalog, "SP_HUMAN", "JOB_FIGHTER")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	ids := make([]string, 0, len(options))
+
 	for _, option := range options {
 		ids = append(ids, option.ID)
+
 		if option.Name == "" {
 			t.Fatalf("unnamed option: %+v", option)
 		}
@@ -59,6 +63,7 @@ func TestHumanFighterWeaponOptions(t *testing.T) {
 
 func TestWeaponChoiceRestrictions(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,6 +93,7 @@ func TestWeaponChoiceRestrictions(t *testing.T) {
 		},
 	} {
 		options, err := WeaponOptions(catalog, tc.species, tc.job)
+
 		if err != nil {
 			t.Fatalf("%s/%s: %v", tc.species, tc.job, err)
 		}
@@ -142,12 +148,14 @@ func TestWeaponChoiceRestrictions(t *testing.T) {
 	}
 
 	before, err := catalog.Species("SP_HUMAN")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	_, _ = WeaponOptions(catalog, "SP_HUMAN", "JOB_FIGHTER")
 	after, err := catalog.Species("SP_HUMAN")
+
 	if err != nil || !slices.Equal(before.RecommendedWeapons, after.RecommendedWeapons) {
 		t.Fatalf("weapon choices mutated catalog: %+v, %v", after, err)
 	}

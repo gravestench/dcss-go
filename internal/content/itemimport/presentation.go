@@ -23,6 +23,7 @@ var asciiChar = regexp.MustCompile(`(?:U)?'(?:\\.|[^'\\])+'`)
 func sourceNameView(path string, data []byte) (sourceView, error) {
 	// The needed naming functions precede unrelated tile-only conditionals.
 	cut := strings.Index(string(data), "#ifdef USE_TILE_WEB")
+
 	if cut >= 0 {
 		data = data[:cut]
 	}
@@ -32,17 +33,20 @@ func sourceNameView(path string, data []byte) (sourceView, error) {
 
 func functionBody(view sourceView, marker string) (string, int, error) {
 	start := strings.Index(view.text, marker+"(")
+
 	if start < 0 {
 		return "", 0, fmt.Errorf("%s: missing %s", view.path, marker)
 	}
 
 	open := strings.Index(view.text[start:], "{")
+
 	if open < 0 {
 		return "", 0, fmt.Errorf("%s:%d: %s lacks body", view.path, view.line(start), marker)
 	}
 
 	open += start
 	body, _, err := balancedPart(view.text, open, '{', '}')
+
 	if err != nil {
 		return "", 0, fmt.Errorf("%s:%d: %s: %w", view.path, view.line(open), marker, err)
 	}
@@ -52,9 +56,11 @@ func functionBody(view sourceView, marker string) (string, int, error) {
 
 func caseNames(view sourceView, body string, offset int) (map[string]sourceName, error) {
 	names := map[string]sourceName{}
+
 	for _, match := range directCaseName.FindAllStringSubmatchIndex(body, -1) {
 		id := body[match[2]:match[3]]
 		value, err := strconv.Unquote(`"` + body[match[4]:match[5]] + `"`)
+
 		if err != nil {
 			return nil, fmt.Errorf("%s:%d: invalid name for %s: %w", view.path, view.line(offset+match[0]), id, err)
 		}
@@ -74,6 +80,7 @@ func caseNames(view sourceView, body string, offset int) (map[string]sourceName,
 
 func functionCaseNames(view sourceView, marker string) (map[string]sourceName, error) {
 	body, offset, err := functionBody(view, marker)
+
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +90,7 @@ func functionCaseNames(view sourceView, marker string) (map[string]sourceName, e
 
 func sourceLineFor(view sourceView, text string) (int, error) {
 	where := strings.Index(view.text, text)
+
 	if where < 0 {
 		return 0, fmt.Errorf("%s: missing naming case %q", view.path, text)
 	}
@@ -92,6 +100,7 @@ func sourceLineFor(view sourceView, text string) (int, error) {
 
 func parseItemNames(path string, data []byte, identities []content.ItemIdentity) (map[itemKey]content.ItemName, error) {
 	view, err := sourceNameView(path, data)
+
 	if err != nil {
 		return nil, err
 	}
@@ -107,11 +116,13 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 		"OBJ_RUNES":      "rune_type_name",
 	}
 	needed := map[string]bool{}
+
 	for _, identity := range identities {
 		needed[identity.ClassID] = true
 	}
 
 	functionNames := map[string]map[string]sourceName{}
+
 	for class, marker := range functions {
 		if !needed[class] {
 			continue
@@ -119,22 +130,26 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 
 		if class == "OBJ_JEWELLERY" {
 			body, offset, err := functionBody(view, marker)
+
 			if err != nil {
 				return nil, err
 			}
 
 			where := strings.Index(body, "if (!terse)")
+
 			if where < 0 {
 				return nil, fmt.Errorf("%s: missing non-terse jewellery names", path)
 			}
 
 			open := strings.Index(body[where:], "{") + where
 			inner, _, err := balancedPart(body, open, '{', '}')
+
 			if err != nil {
 				return nil, fmt.Errorf("%s: malformed jewellery names: %w", path, err)
 			}
 
 			functionNames[class], err = caseNames(view, inner, offset+open+1)
+
 			if err != nil {
 				return nil, err
 			}
@@ -143,14 +158,17 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 		}
 
 		functionNames[class], err = functionCaseNames(view, marker)
+
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	var subtypeCases map[string]sourceName
+
 	if needed["OBJ_BOOKS"] || needed["OBJ_CORPSES"] || needed["OBJ_ORBS"] || needed["OBJ_GOLD"] {
 		subtypeCases, err = functionCaseNames(view, "sub_type_string")
+
 		if err != nil {
 			return nil, err
 		}
@@ -168,14 +186,17 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 			SourceLine: line,
 		}
 	}
+
 	for _, identity := range identities {
 		class, id := identity.ClassID, identity.ID
+
 		if class == "OBJ_WEAPONS" || class == "OBJ_ARMOUR" || class == "OBJ_MISSILES" {
 			continue // Names for these classes come from their property rows.
 		}
 
 		if class == "OBJ_BOOKS" && id == "BOOK_MANUAL" {
 			line, err := sourceLineFor(view, "case BOOK_MANUAL:")
+
 			if err != nil {
 				return nil, err
 			}
@@ -186,11 +207,13 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 
 		if class == "OBJ_CORPSES" {
 			line, err := sourceLineFor(view, "case OBJ_CORPSES:")
+
 			if err != nil {
 				return nil, err
 			}
 
 			text := "corpse"
+
 			if id == "CORPSE_SKELETON" {
 				text = "skeleton"
 			}
@@ -201,6 +224,7 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 
 		if class == "OBJ_MISCELLANY" && strings.HasPrefix(id, "MISC_DECK_") {
 			line, err := sourceLineFor(view, `return "removed deck"`)
+
 			if err != nil {
 				return nil, err
 			}
@@ -211,6 +235,7 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 
 		if class == "OBJ_GOLD" {
 			entry, found := subtypeCases["OBJ_GOLD"]
+
 			if !found {
 				return nil, fmt.Errorf("%s: missing gold naming case", path)
 			}
@@ -221,6 +246,7 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 
 		if class == "OBJ_ORBS" {
 			entry, found := subtypeCases["OBJ_ORBS"]
+
 			if !found {
 				return nil, fmt.Errorf("%s: missing orb naming case", path)
 			}
@@ -231,14 +257,17 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 
 		if class == "OBJ_FOOD" || class == "OBJ_RODS" {
 			text := "removed food"
+
 			if class == "OBJ_RODS" {
 				text = "removed rod"
 			}
 
 			line, err := sourceLineFor(view, `return "`+text+`"`)
+
 			if err != nil {
 				// The fixed food phrase occurs later than the narrow function view.
 				where := strings.Index(string(data), `"`+text+`"`)
+
 				if where < 0 {
 					return nil, err
 				}
@@ -251,6 +280,7 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 		}
 
 		entry, found := functionNames[class][id]
+
 		if class == "OBJ_BOOKS" {
 			if override, ok := subtypeCases[id]; ok {
 				entry, found = override, true
@@ -282,6 +312,7 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 			add(identity, "scroll of "+entry.text, "static", entry.line)
 		case "OBJ_JEWELLERY":
 			prefix := "ring of "
+
 			if strings.HasPrefix(id, "AMU_") {
 				prefix = "amulet of "
 			}
@@ -301,6 +332,7 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 
 func enumBeforeCount(path string, data []byte, name, countID string) ([]enumValue, error) {
 	entries, err := enumMembers(path, data, name)
+
 	if err != nil {
 		return nil, err
 	}
@@ -317,17 +349,20 @@ func enumBeforeCount(path string, data []byte, name, countID string) ([]enumValu
 func asciiTable(path string, data []byte) ([]rune, error) {
 	raw := string(data)
 	start := strings.Index(raw, "// CSET_ASCII")
+
 	if start < 0 {
 		return nil, fmt.Errorf("%s: missing CSET_ASCII", path)
 	}
 
 	section := []byte(raw[start:])
 	lines, err := sourceparse.Tag34NumberedLines(path, section)
+
 	if err != nil {
 		return nil, err
 	}
 
 	var active strings.Builder
+
 	for _, line := range lines {
 		active.WriteString(line.Text)
 		active.WriteByte('\n')
@@ -335,19 +370,23 @@ func asciiTable(path string, data []byte) ([]rune, error) {
 
 	text := active.String()
 	open := strings.Index(text, "{")
+
 	if open < 0 {
 		return nil, fmt.Errorf("%s: missing ASCII table brace", path)
 	}
 
 	inside, _, err := balancedPart(text, open, '{', '}')
+
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", path, err)
 	}
 
 	var values []rune
+
 	for _, token := range asciiChar.FindAllString(inside, -1) {
 		literal := strings.TrimPrefix(token, "U")
 		value, err := strconv.Unquote(literal)
+
 		if err != nil || len([]rune(value)) != 1 {
 			return nil, fmt.Errorf("%s: unsupported ASCII glyph %q", path, token)
 		}
@@ -361,27 +400,32 @@ func asciiTable(path string, data []byte) ([]rune, error) {
 func showClassCodes(path string, data []byte) (map[string]string, error) {
 	raw := string(data)
 	start := strings.LastIndex(raw, "static show_item_type _item_to_show_code(const item_def &item)")
+
 	if start < 0 {
 		return nil, fmt.Errorf("%s: missing item show function", path)
 	}
 
 	open := strings.Index(raw[start:], "{")
+
 	if open < 0 {
 		return nil, fmt.Errorf("%s: item show function lacks body", path)
 	}
 
 	open += start
 	body, _, err := balancedPart(raw, open, '{', '}')
+
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", path, err)
 	}
 
 	lines, err := sourceparse.Tag34NumberedLines(path, []byte(body))
+
 	if err != nil {
 		return nil, err
 	}
 
 	var active strings.Builder
+
 	for _, line := range lines {
 		active.WriteString(line.Text)
 		active.WriteByte('\n')
@@ -389,6 +433,7 @@ func showClassCodes(path string, data []byte) (map[string]string, error) {
 
 	body = active.String()
 	codes := map[string]string{}
+
 	for _, match := range directShowCase.FindAllStringSubmatch(body, -1) {
 		if _, found := codes[match[1]]; found {
 			return nil, fmt.Errorf("%s: duplicate show case %s", path, match[1])
@@ -404,6 +449,7 @@ func showClassCodes(path string, data []byte) (map[string]string, error) {
 
 	codes["OBJ_JEWELLERY"] = "SHOW_ITEM_RING"
 	codes["OBJ_CORPSES"] = "SHOW_ITEM_CORPSE"
+
 	return codes, nil
 }
 
@@ -417,6 +463,7 @@ func parseASCIIItemGlyphs(
 	identities []content.ItemIdentity,
 ) (map[itemKey]rune, error) {
 	showEntries, err := enumBeforeCount("crawl-ref/source/show.h", showHeader, "show_item_type", "NUM_SHOW_ITEMS")
+
 	if err != nil {
 		return nil, err
 	}
@@ -427,11 +474,13 @@ func parseASCIIItemGlyphs(
 		"dungeon_char_type",
 		"NUM_DCHAR_TYPES",
 	)
+
 	if err != nil {
 		return nil, err
 	}
 
 	showItems := []string{}
+
 	for _, entry := range showEntries {
 		if entry.ID != "SHOW_ITEM_NONE" {
 			showItems = append(showItems, strings.TrimPrefix(entry.ID, "SHOW_ITEM_"))
@@ -440,6 +489,7 @@ func parseASCIIItemGlyphs(
 
 	dcharItems := []string{}
 	dcharIndex := map[string]int{}
+
 	for i, entry := range dcharEntries {
 		if strings.HasPrefix(entry.ID, "DCHAR_ITEM_") {
 			suffix := strings.TrimPrefix(entry.ID, "DCHAR_ITEM_")
@@ -459,6 +509,7 @@ func parseASCIIItemGlyphs(
 	}
 
 	chars, err := asciiTable(viewPath, viewData)
+
 	if err != nil {
 		return nil, err
 	}
@@ -473,13 +524,16 @@ func parseASCIIItemGlyphs(
 	}
 
 	codes, err := showClassCodes(showPath, showData)
+
 	if err != nil {
 		return nil, err
 	}
 
 	result := map[itemKey]rune{}
+
 	for _, identity := range identities {
 		code, found := codes[identity.ClassID]
+
 		if !found {
 			return nil, fmt.Errorf("%s: missing show code for %s", showPath, identity.ClassID)
 		}
@@ -493,6 +547,7 @@ func parseASCIIItemGlyphs(
 		}
 
 		index, found := dcharIndex[code]
+
 		if !found || index >= len(chars) {
 			return nil, fmt.Errorf("%s: unknown show glyph reference %s", showPath, code)
 		}
@@ -508,6 +563,7 @@ func parseASCIIItemGlyphs(
 
 func sortedItemKeys(names map[itemKey]content.ItemName) []itemKey {
 	keys := make([]itemKey, 0, len(names))
+
 	for key := range names {
 		keys = append(keys, key)
 	}
@@ -519,5 +575,6 @@ func sortedItemKeys(names map[itemKey]content.ItemName) []itemKey {
 
 		return keys[i].SubtypeID < keys[j].SubtypeID
 	})
+
 	return keys
 }

@@ -4,6 +4,7 @@ import "testing"
 
 func TestViewPresentationIdentifiesEntitiesAndItemClass(t *testing.T) {
 	g, err := NewScenario(7, testCatalog(t), "WPN_RAPIER", "Alice")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -11,6 +12,7 @@ func TestViewPresentationIdentifiesEntitiesAndItemClass(t *testing.T) {
 	defer g.Close()
 	view := g.View()
 	var player, rat, potion bool
+
 	for _, entity := range view.Entities {
 		switch entity.KindID {
 		case "player":

@@ -10,6 +10,7 @@ import (
 
 func TestBuildStartProfileHumanFighter(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,6 +29,7 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 	} {
 		t.Run(tc.weapon, func(t *testing.T) {
 			got, err := BuildStartProfile(catalog, "SP_HUMAN", "JOB_FIGHTER", tc.weapon)
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -62,12 +64,14 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 					Points: 151,
 				},
 			}
+
 			if !reflect.DeepEqual(got.Skills, wantSkills) {
 				t.Fatalf("skills = %+v, want %+v", got.Skills, wantSkills)
 			}
 
 			got.Skills[0].Points = -1
 			again, err := BuildStartProfile(catalog, "SP_HUMAN", "JOB_FIGHTER", tc.weapon)
+
 			if err != nil || !reflect.DeepEqual(again.Skills, wantSkills) {
 				t.Fatalf("later skills = %+v, err = %v, want %+v", again.Skills, err, wantSkills)
 			}
@@ -103,6 +107,7 @@ func TestScaledStartingSkillsRetainFractionalProgress(t *testing.T) {
 
 func TestBuildStartProfileRejectsBadChoice(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -122,6 +127,7 @@ func TestBuildStartProfileRejectsBadChoice(t *testing.T) {
 		},
 	} {
 		got, err := BuildStartProfile(catalog, tc.species, tc.job, tc.weapon)
+
 		if err == nil || !reflect.DeepEqual(got, StartProfile{}) || !strings.Contains(err.Error(), tc.job) {
 			t.Fatalf("choice %+v: got %+v, err %v", tc, got, err)
 		}

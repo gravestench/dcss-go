@@ -33,6 +33,7 @@ func NewCanvas(width, height int) *Canvas {
 		height: height,
 		cells:  make([]cell, width*height),
 	}
+
 	for i := range c.cells {
 		c.cells[i] = cell{
 			text: " ",
@@ -54,6 +55,7 @@ func (c *Canvas) clearAt(x, y int) {
 	}
 
 	i := y*c.width + x
+
 	if c.cells[i].continuation && x > 0 {
 		c.cells[i-1] = cell{
 			text: " ",
@@ -83,6 +85,7 @@ func (c *Canvas) Put(x, y int, glyph rune, fg, bg Color) {
 	}
 
 	w := runewidth.RuneWidth(glyph)
+
 	if w < 1 || w > 2 || x+w > c.width {
 		return
 	}
@@ -97,6 +100,7 @@ func (c *Canvas) Put(x, y int, glyph rune, fg, bg Color) {
 		fg:   fg,
 		bg:   bg,
 	}
+
 	if w == 2 {
 		c.cells[i+1] = cell{
 			fg:           fg,
@@ -108,6 +112,7 @@ func (c *Canvas) Put(x, y int, glyph rune, fg, bg Color) {
 
 func (c *Canvas) Write(x, y int, value string, fg, bg Color) {
 	start := x
+
 	for _, glyph := range value {
 		if glyph == '\n' {
 			y++
@@ -116,9 +121,11 @@ func (c *Canvas) Write(x, y int, value string, fg, bg Color) {
 		}
 
 		w := runewidth.RuneWidth(glyph)
+
 		if w == 0 {
 			if c.inBounds(x-1, y) {
 				i := y*c.width + x - 1
+
 				if c.cells[i].continuation && x > 1 {
 					i--
 				}
@@ -136,10 +143,13 @@ func (c *Canvas) Write(x, y int, value string, fg, bg Color) {
 
 func (c *Canvas) PlainRows() []string {
 	rows := make([]string, c.height)
+
 	for y := 0; y < c.height; y++ {
 		var row strings.Builder
+
 		for x := 0; x < c.width; x++ {
 			entry := c.cells[y*c.width+x]
+
 			if !entry.continuation {
 				row.WriteString(entry.text)
 			}
@@ -153,6 +163,7 @@ func (c *Canvas) PlainRows() []string {
 
 func (c *Canvas) Styled() string {
 	rows := make([]string, c.height)
+
 	for y := 0; y < c.height; y++ {
 		var line strings.Builder
 		var run strings.Builder
@@ -166,8 +177,10 @@ func (c *Canvas) Styled() string {
 			line.WriteString(lipgloss.NewStyle().Foreground(styleColor(fg)).Background(styleColor(bg)).Render(run.String()))
 			run.Reset()
 		}
+
 		for x := 0; x < c.width; x++ {
 			entry := c.cells[y*c.width+x]
+
 			if entry.continuation {
 				continue
 			}

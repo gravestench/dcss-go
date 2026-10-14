@@ -12,10 +12,13 @@ import (
 
 func carriedMight(t *testing.T, g *Game) uint64 {
 	t.Helper()
+
 	for _, entity := range g.stores.Items.Entities() {
 		item, _ := g.stores.Items.Get(entity)
+
 		if item.KindID == "POT_MIGHT" {
 			carrier, ok := g.stores.CarriedBy.Get(entity)
+
 			if !ok || carrier.Holder != g.player {
 				t.Fatal("starting might potion is not carried")
 			}
@@ -25,11 +28,13 @@ func carriedMight(t *testing.T, g *Game) uint64 {
 	}
 
 	t.Fatal("missing starting might potion")
+
 	return 0
 }
 
 func TestQuaffMightConsumesAndDecaysByActionCost(t *testing.T) {
 	g := newStepGame(t)
+
 	if err := g.levels[1].MoveActor(ratID(t, g), 14, 7); err != nil {
 		t.Fatal(err)
 	}
@@ -41,6 +46,7 @@ func TestQuaffMightConsumesAndDecaysByActionCost(t *testing.T) {
 		Kind:   CommandQuaff,
 		ItemID: id,
 	})
+
 	if err != nil || result.Spent != 10 || result.View.MightAut != (35+roll)*10-10 {
 		t.Fatalf("might quaff = %+v, %v", result, err)
 	}
@@ -59,6 +65,7 @@ func TestQuaffMightConsumesAndDecaysByActionCost(t *testing.T) {
 
 	before := result.View.MightAut
 	result, err = g.Step(Command{Kind: CommandWait})
+
 	if err != nil || result.View.MightAut != before-10 {
 		t.Fatalf("wait decay = %+v, %v", result, err)
 	}
@@ -66,6 +73,7 @@ func TestQuaffMightConsumesAndDecaysByActionCost(t *testing.T) {
 	status, _ := g.stores.Durations.Get(g.player)
 	status.MightAut = 9
 	result, err = g.Step(Command{Kind: CommandWait})
+
 	if err != nil || result.View.MightAut != 0 || !containsEvent(result.Events, "You feel a little less mighty now.") {
 		t.Fatalf("expiry = %+v, %v", result, err)
 	}
@@ -82,6 +90,7 @@ func TestMightRepeatQuaffCapsAtEightyTurns(t *testing.T) {
 		Kind:   CommandQuaff,
 		ItemID: id,
 	})
+
 	if err != nil || result.View.MightAut != 790 || item.Quantity != 1 ||
 		!containsEvent(result.Events, "You feel mightier all of a sudden.") {
 		t.Fatalf("repeat might = %+v, %v; stack %+v", result, err, item)
@@ -90,6 +99,7 @@ func TestMightRepeatQuaffCapsAtEightyTurns(t *testing.T) {
 
 func TestMightDecaysByVariableMeleeActionCost(t *testing.T) {
 	g := newStepGame(t)
+
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
@@ -97,6 +107,7 @@ func TestMightDecaysByVariableMeleeActionCost(t *testing.T) {
 	status, _ := g.stores.Durations.Get(g.player)
 	status.MightAut = 20
 	attack, err := newPlayerCombat(g).attackInput("MONS_RAT")
+
 	if err != nil || !attack.Mighty {
 		t.Fatalf("live attack did not project might: %+v, %v", attack, err)
 	}
@@ -105,6 +116,7 @@ func TestMightDecaysByVariableMeleeActionCost(t *testing.T) {
 		Kind: CommandMove,
 		DX:   1,
 	})
+
 	if err != nil || result.Spent <= 0 || result.View.MightAut != 20-int(result.Spent) {
 		t.Fatalf("mighty attack timing = %+v, %v", result, err)
 	}
@@ -122,6 +134,7 @@ func containsEvent(events []Event, text string) bool {
 
 func TestMightSaveContinuationAndLegacyDefault(t *testing.T) {
 	g := newStepGame(t)
+
 	if _, err := g.Step(Command{
 		Kind:   CommandQuaff,
 		ItemID: carriedMight(t, g),
@@ -131,6 +144,7 @@ func TestMightSaveContinuationAndLegacyDefault(t *testing.T) {
 
 	snapshot := g.Snapshot()
 	loaded, err := Restore(snapshot, testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -138,17 +152,20 @@ func TestMightSaveContinuationAndLegacyDefault(t *testing.T) {
 	defer loaded.Close()
 	left, leftErr := g.Step(Command{Kind: CommandWait})
 	right, rightErr := loaded.Step(Command{Kind: CommandWait})
+
 	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
 		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("might continuation = %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 	}
 
 	legacy := newStepGame(t).Snapshot()
+
 	for i := range legacy.Entities {
 		legacy.Entities[i].Durations = nil
 	}
 
 	old, err := Restore(legacy, testCatalog(t))
+
 	if err != nil || old.View().MightAut != 0 {
 		t.Fatalf("old save restore = %v, might %d", err, old.View().MightAut)
 	}
@@ -159,6 +176,7 @@ func TestMightSaveContinuationAndLegacyDefault(t *testing.T) {
 func TestMightRestoreRejectsBadOwnershipAndRange(t *testing.T) {
 	g := newStepGame(t)
 	base := g.Snapshot()
+
 	for _, tc := range []struct {
 		name string
 		edit func(*ecs.Durations, *ecs.Durations)
@@ -185,8 +203,10 @@ func TestMightRestoreRejectsBadOwnershipAndRange(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			bad := base
 			bad.Entities = append([]save.EntityRecord(nil), base.Entities...)
+
 			for i := range bad.Entities {
 				record := &bad.Entities[i]
+
 				if record.Player != nil {
 					copy := *record.Durations
 					record.Durations = &copy
@@ -198,6 +218,7 @@ func TestMightRestoreRejectsBadOwnershipAndRange(t *testing.T) {
 			}
 
 			var player, monster *ecs.Durations
+
 			for i := range bad.Entities {
 				if bad.Entities[i].Player != nil {
 					player = bad.Entities[i].Durations
@@ -209,6 +230,7 @@ func TestMightRestoreRejectsBadOwnershipAndRange(t *testing.T) {
 			}
 
 			tc.edit(player, monster)
+
 			if _, err := Restore(bad, testCatalog(t)); err == nil {
 				t.Fatal("bad duration save accepted")
 			}

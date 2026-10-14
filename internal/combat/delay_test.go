@@ -78,6 +78,7 @@ func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
 					},
 				}
 				got, err := PlayerAttackDelay(rng, starterDelay(tc.speed, tc.skill))
+
 				if err != nil || got != boundary.want || len(rng.rolls) != 0 {
 					t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", boundary.roll, got, err, rng.rolls, boundary.want)
 				}
@@ -89,6 +90,7 @@ func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
 func TestFractionalWeaponSkillCombinesBeforeOneDraw(t *testing.T) {
 	in := starterDelay(12, "SK_SHORT_BLADES")
 	in.WeaponSkill10 = 21
+
 	for _, tc := range []struct {
 		roll, want int
 	}{
@@ -126,6 +128,7 @@ func TestFractionalWeaponSkillCombinesBeforeOneDraw(t *testing.T) {
 			},
 		}
 		got, err := PlayerAttackDelay(rng, in)
+
 		if err != nil || got != tc.want || len(rng.rolls) != 0 {
 			t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", tc.roll, got, err, rng.rolls, tc.want)
 		}
@@ -140,6 +143,7 @@ func TestUnarmedSamplesOneCombinedSourceDistribution(t *testing.T) {
 		ShieldEV:       -50,
 		ShieldsSkill10: 30,
 	}
+
 	for _, tc := range []struct {
 		roll, want int
 	}{
@@ -177,6 +181,7 @@ func TestUnarmedSamplesOneCombinedSourceDistribution(t *testing.T) {
 			},
 		}
 		got, err := PlayerAttackDelay(rng, in)
+
 		if err != nil || got != tc.want || len(rng.rolls) != 0 {
 			t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", tc.roll, got, err, rng.rolls, tc.want)
 		}

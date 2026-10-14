@@ -38,12 +38,14 @@ func TestScenarioInstallsStartingProfile(t *testing.T) {
 	} {
 		t.Run(tc.weapon, func(t *testing.T) {
 			g, err := NewScenario(37, testCatalog(t), tc.weapon, "Tester")
+
 			if err != nil {
 				t.Fatal(err)
 			}
 
 			defer g.Close()
 			view := g.View()
+
 			if view.CurrentAut != 0 || view.PlayerHP != 18 || view.PlayerMaxHP != 18 || view.PlayerMP != 1 ||
 				view.PlayerMaxMP != 1 {
 				t.Fatalf("start clocks and pools = %+v", view)
@@ -71,21 +73,25 @@ func TestScenarioInstallsStartingProfile(t *testing.T) {
 					Points: 151,
 				},
 			}
+
 			if !reflect.DeepEqual(view.Skills, want) {
 				t.Fatalf("skills = %+v, want %+v", view.Skills, want)
 			}
 
 			storedSkills, ok := g.stores.Skills.Get(g.player)
+
 			if !ok || !reflect.DeepEqual(storedSkills.Entries, want) {
 				t.Fatalf("player skills component = %+v", storedSkills)
 			}
 
 			magic, ok := g.stores.Magic.Get(g.player)
+
 			if !ok || magic.Current != 1 || magic.Max != 1 {
 				t.Fatalf("player magic component = %+v", magic)
 			}
 
 			wantItems := 4
+
 			if tc.weapon == "WPN_UNARMED" {
 				wantItems = 3
 			}
@@ -99,6 +105,7 @@ func TestScenarioInstallsStartingProfile(t *testing.T) {
 
 func TestScenarioDamageKeepsMaxHP(t *testing.T) {
 	g := newStepGame(t)
+
 	for i := 0; i < 15 && g.View().PlayerHP == 18; i++ {
 		if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
 			t.Fatal(err)
@@ -106,6 +113,7 @@ func TestScenarioDamageKeepsMaxHP(t *testing.T) {
 	}
 
 	view := g.View()
+
 	if view.PlayerHP >= 18 || view.PlayerMaxHP != 18 {
 		t.Fatalf("damage changed initial max or never happened: HP %d/%d", view.PlayerHP, view.PlayerMaxHP)
 	}
@@ -116,6 +124,7 @@ func TestViewCopiesSkills(t *testing.T) {
 	first := g.View()
 	first.Skills[0].Points = -99
 	second := g.View()
+
 	if second.Skills[0].Points != 301 {
 		t.Fatalf("view mutated live skills: %+v", second.Skills)
 	}

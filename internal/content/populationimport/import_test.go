@@ -15,6 +15,7 @@ func TestGenerateRejectsDifferentTag34TreeWithSameRowCount(t *testing.T) {
 		"random-pick.h":   "// altered random picker\n",
 		"mon-pick-data.h": "static const vector<pop_entry> population[] =\n{\n{ // Dungeon\n" + rows + "},\n};\n",
 	}
+
 	for name, body := range files {
 		if err := os.WriteFile(filepath.Join(directory, name), []byte(body), 0o600); err != nil {
 			t.Fatal(err)

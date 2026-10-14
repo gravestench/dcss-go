@@ -17,19 +17,23 @@ type movementSystem struct {
 
 func (s *movementSystem) Update(_ *akara.World, _ time.Duration) error {
 	intent, found := s.intents.Get(s.turn.Actor)
+
 	if !found || intent.Kind != ecs.IntentMove {
 		return nil
 	}
 
 	position, found := s.positions.Get(s.turn.Actor)
+
 	if !found {
 		return fmt.Errorf("moving actor %d has no position", s.turn.Actor)
 	}
 
 	level := s.levels[position.LevelID]
 	x, y := position.X+intent.DX, position.Y+intent.DY
+
 	if _, occupied := level.ActorAt(x, y); occupied {
 		intent.Kind = ecs.IntentMelee
+
 		return nil
 	}
 
@@ -45,21 +49,25 @@ type stairSystem struct {
 
 func (s *stairSystem) Update(_ *akara.World, _ time.Duration) error {
 	intent, found := s.intents.Get(s.turn.Actor)
+
 	if !found || (intent.Kind != ecs.IntentUpstairs && intent.Kind != ecs.IntentDownstairs) {
 		return nil
 	}
 
 	position, found := s.positions.Get(s.turn.Actor)
+
 	if !found {
 		return fmt.Errorf("stair actor %d has no position", s.turn.Actor)
 	}
 
 	from := s.levels[position.LevelID]
+
 	if from == nil {
 		return fmt.Errorf("stair actor %d has no level %d", s.turn.Actor, position.LevelID)
 	}
 
 	glyph := byte('>')
+
 	if intent.Kind == ecs.IntentUpstairs {
 		glyph = '<'
 	}
@@ -69,16 +77,19 @@ func (s *stairSystem) Update(_ *akara.World, _ time.Duration) error {
 	}
 
 	link, found := from.StairAt(position.X, position.Y)
+
 	if !found {
 		return fmt.Errorf("stair actor %d has no link at (%d,%d)", s.turn.Actor, position.X, position.Y)
 	}
 
 	to := s.levels[link.ToLevelID]
+
 	if to == nil {
 		return fmt.Errorf("destination floor %d is missing", link.ToLevelID)
 	}
 
 	x, y := link.ToX, link.ToY
+
 	if !to.Walkable(x, y) {
 		return fmt.Errorf("destination stair is blocked")
 	}
@@ -88,12 +99,14 @@ func (s *stairSystem) Update(_ *akara.World, _ time.Duration) error {
 	}
 
 	oldX, oldY := position.X, position.Y
+
 	if err := from.RemoveActor(s.turn.Actor); err != nil {
 		return err
 	}
 
 	if err := to.PlaceActor(s.turn.Actor, x, y); err != nil {
 		_ = from.PlaceActor(s.turn.Actor, oldX, oldY)
+
 		return err
 	}
 
@@ -102,5 +115,6 @@ func (s *stairSystem) Update(_ *akara.World, _ time.Duration) error {
 		Kind: "stairs",
 		Text: "You take the stairs.",
 	})
+
 	return nil
 }

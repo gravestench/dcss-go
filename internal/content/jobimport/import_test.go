@@ -23,6 +23,7 @@ func jobSourceFixture(t *testing.T) string {
 		"spell-type.h":   "enum spell_type {\n SPELL_NO_SPELL,\n SPELL_SHOCK,\n SPELL_BLINK,\n NUM_SPELLS,\n};\n",
 		"skill-type.h":   "enum skill_type {\n SK_FIGHTING,\n NUM_SKILLS,\n SK_BLANK_LINE,\n SK_WEAPON,\n};\n",
 	}
+
 	for name, data := range files {
 		if err := os.WriteFile(filepath.Join(root, name), []byte(data), 0644); err != nil {
 			t.Fatal(err)
@@ -36,6 +37,7 @@ func changeJobSource(t *testing.T, root, name, old, replacement string) {
 	t.Helper()
 	path := filepath.Join(root, name)
 	data, err := os.ReadFile(path)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,11 +54,13 @@ func changeJobSource(t *testing.T, root, name, old, replacement string) {
 func TestGenerateJobArtifactDeterministic(t *testing.T) {
 	root := jobSourceFixture(t)
 	first, err := generateFromSource(root, pinnedRevision)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	second, err := generateFromSource(root, pinnedRevision)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -66,6 +70,7 @@ func TestGenerateJobArtifactDeterministic(t *testing.T) {
 	}
 
 	var artifact content.JobArtifact
+
 	if err := json.Unmarshal(first, &artifact); err != nil {
 		t.Fatal(err)
 	}
@@ -173,6 +178,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			root := jobSourceFixture(t)
 			changeJobSource(t, root, tc.file, tc.old, tc.replacement)
 			_, err := generateFromSource(root, pinnedRevision)
+
 			if err == nil || !strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want error containing %q, got %v", tc.want, err)
 			}
@@ -191,11 +197,13 @@ func TestWriteJobArtifactCheckAndAtomicFailure(t *testing.T) {
 	generate := func(source string) ([]byte, error) {
 		return generateFromSource(source, pinnedRevision)
 	}
+
 	if err := writeArtifact(root, out, false, generate); err != nil {
 		t.Fatal(err)
 	}
 
 	before, err := os.ReadFile(out)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -213,6 +221,7 @@ func TestWriteJobArtifactCheckAndAtomicFailure(t *testing.T) {
 	}
 
 	stale, err := os.ReadFile(out)
+
 	if err != nil || string(stale) != "stale" {
 		t.Fatalf("check modified stale output: %q, %v", stale, err)
 	}
@@ -222,11 +231,13 @@ func TestWriteJobArtifactCheckAndAtomicFailure(t *testing.T) {
 	}
 
 	changeJobSource(t, root, "tag-version.h", "VERSION 34", "VERSION 35")
+
 	if err := writeArtifact(root, out, false, generate); err == nil {
 		t.Fatal("bad source generated an artifact")
 	}
 
 	after, err := os.ReadFile(out)
+
 	if err != nil || !bytes.Equal(after, before) {
 		t.Fatalf("failed generation damaged artifact: %v", err)
 	}

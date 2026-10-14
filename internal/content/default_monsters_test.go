@@ -9,13 +9,16 @@ import (
 
 func TestLoadDefaultMonstersAndSourceFields(t *testing.T) {
 	c, err := LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	counts := map[MonsterStatus]int{}
+
 	for _, id := range c.MonsterIDs() {
 		status, err := c.MonsterStatus(id)
+
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -29,6 +32,7 @@ func TestLoadDefaultMonstersAndSourceFields(t *testing.T) {
 	}
 
 	rat, err := c.Monster("MONS_RAT")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,6 +47,7 @@ func TestLoadDefaultMonstersAndSourceFields(t *testing.T) {
 
 	rat.Flags[0] = "changed"
 	again, _ := c.Monster("MONS_RAT")
+
 	if again.Flags[0] != "M_WARM_BLOOD" {
 		t.Fatal("monster flags escaped catalog ownership")
 	}
@@ -56,6 +61,7 @@ func TestLoadDefaultMonstersAndSourceFields(t *testing.T) {
 
 func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 	var original MonsterArtifact
+
 	if err := json.Unmarshal(defaultMonsterJSON, &original); err != nil {
 		t.Fatal(err)
 	}
@@ -179,12 +185,14 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			data := append([]byte(nil), defaultMonsterJSON...)
 			var a MonsterArtifact
+
 			if err := json.Unmarshal(data, &a); err != nil {
 				t.Fatal(err)
 			}
 
 			tc.edit(&a)
 			bad, _ := json.Marshal(a)
+
 			if _, err := loadDefault(
 				defaultSpeciesJSON,
 				defaultJobsJSON,

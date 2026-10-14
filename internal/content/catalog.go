@@ -41,6 +41,7 @@ func (c Catalog) Player() PlayerDef {
 
 func (c Catalog) Monster(id string) (MonsterDef, error) {
 	definition, found := c.monsters[id]
+
 	if !found {
 		return MonsterDef{}, fmt.Errorf("unknown monster ID %q", id)
 	}
@@ -54,6 +55,7 @@ func (c Catalog) Monster(id string) (MonsterDef, error) {
 
 func (c Catalog) Spell(id string) (SpellDef, error) {
 	definition, found := c.spells[id]
+
 	if !found {
 		return SpellDef{}, fmt.Errorf("unknown spell ID %q", id)
 	}
@@ -67,6 +69,7 @@ func (c Catalog) Spell(id string) (SpellDef, error) {
 
 func (c Catalog) SpellStatus(id string) (SpellStatus, error) {
 	definition, found := c.spells[id]
+
 	if !found {
 		return "", fmt.Errorf("unknown spell ID %q", id)
 	}
@@ -80,6 +83,7 @@ func (c Catalog) SpellIDs() []string {
 
 func (c Catalog) Branch(id string) (BranchDef, error) {
 	definition, found := c.branches[id]
+
 	if !found {
 		return BranchDef{}, fmt.Errorf("unknown branch ID %q", id)
 	}
@@ -93,6 +97,7 @@ func (c Catalog) BranchIDs() []string {
 
 func (c Catalog) Item(id string) (ItemDef, error) {
 	definition, found := c.items[id]
+
 	if !found {
 		return ItemDef{}, fmt.Errorf("unknown item ID %q", id)
 	}
@@ -163,6 +168,7 @@ func (c Catalog) Validate() error {
 
 	for i, id := range c.spellOrder {
 		spell, found := c.spells[id]
+
 		if !found || spell.NumericID != i || spell.validate() != nil {
 			return fmt.Errorf("invalid spell definition %s", id)
 		}
@@ -174,6 +180,7 @@ func (c Catalog) Validate() error {
 
 	for i, id := range c.branchOrder {
 		branch, found := c.branches[id]
+
 		if !found || branch.NumericID != i || branch.validate() != nil {
 			return fmt.Errorf("invalid branch definition %s", id)
 		}

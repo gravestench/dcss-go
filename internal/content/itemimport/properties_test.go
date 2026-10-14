@@ -36,11 +36,13 @@ static const food_def Food_prop[] =
 
 func TestPinnedPropertyTableCoverage(t *testing.T) {
 	root := os.Getenv("DCSS_SOURCE_DIR")
+
 	if root == "" {
 		t.Skip("optional pinned-source audit; normal tests use committed Go content")
 	}
 
 	source := map[string][]byte{}
+
 	for _, name := range []string{
 		"equipment-type.h",
 		"skill-type.h",
@@ -50,6 +52,7 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 		"item-prop.cc",
 	} {
 		data, err := os.ReadFile(filepath.Join(root, name))
+
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -58,16 +61,19 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 	}
 
 	vocabulary, err := parseVocabulary(source)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	rows, err := parsePropertyTables("crawl-ref/source/item-prop.cc", source["item-prop.cc"], vocabulary)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	counts := map[string]int{}
+
 	for key := range rows {
 		counts[key.ClassID]++
 	}
@@ -91,6 +97,7 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 		ClassID:   "OBJ_ARMOUR",
 		SubtypeID: "ARM_FIRE_DRAGON_ARMOUR",
 	}]
+
 	if fire.Armour == nil || fire.Armour.AC != 8 || fire.Armour.EV != -110 || len(fire.Armour.Flags) != 2 {
 		t.Fatalf("fire dragon scales fields lost: %+v", fire)
 	}
@@ -99,6 +106,7 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 		ClassID:   "OBJ_WEAPONS",
 		SubtypeID: "WPN_MACE",
 	}]
+
 	if mace.Weapon == nil || mace.Weapon.Damage != 8 || mace.Weapon.Price != 30 || len(mace.Weapon.BrandWeights) != 9 {
 		t.Fatalf("mace fields lost: %+v", mace)
 	}
@@ -107,6 +115,7 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 		ClassID:   "OBJ_MISSILES",
 		SubtypeID: "MI_NEEDLE",
 	}]
+
 	if needle.Missile == nil || needle.Missile.MulchRate != 12 {
 		t.Fatalf("needle fields lost: %+v", needle)
 	}
@@ -115,6 +124,7 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 		ClassID:   "OBJ_FOOD",
 		SubtypeID: "FOOD_RATION",
 	}]
+
 	if ration.Food == nil || ration.Food.NormalNutrition != 3400 || ration.Food.HerbivoreNutrition != 1900 {
 		t.Fatalf("ration fields lost: %+v", ration)
 	}
@@ -134,6 +144,7 @@ func propertyVocabulary() content.ItemVocabulary {
 
 func TestPropertyTablesComplete(t *testing.T) {
 	rows, err := parsePropertyTables("item-prop.cc", propertyFixture(), propertyVocabulary())
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -146,6 +157,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 		ClassID:   "OBJ_ARMOUR",
 		SubtypeID: "ARM_ROBE",
 	}]
+
 	if robe.Name != "robe" || robe.Line != 3 || robe.Armour == nil || robe.Armour.AC != 2 ||
 		robe.Armour.Price != 7 || robe.Armour.AcquireWeight != 1000 {
 		t.Fatalf("robe fields lost: %+v", robe)
@@ -155,6 +167,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 		ClassID:   "OBJ_ARMOUR",
 		SubtypeID: "ARM_FIRE_DRAGON_ARMOUR",
 	}]
+
 	if scales.Armour == nil || scales.Armour.AC != 8 || scales.Armour.EV != -110 ||
 		scales.Armour.Price != 600 || scales.Armour.AcquireWeight != 25 ||
 		len(scales.Armour.Flags) != 2 || scales.Armour.Flags[0] != (content.ItemFlag{
@@ -171,6 +184,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 		ClassID:   "OBJ_ARMOUR",
 		SubtypeID: "ARM_FIRE_DRAGON_HIDE",
 	}]
+
 	if hide.Armour == nil || hide.Armour.AC != 0 || hide.Armour.Price != 0 ||
 		hide.Armour.AcquireWeight != 0 || hide.Name != "removed fire dragon hide" {
 		t.Fatalf("dragon hide fields lost: %+v", hide)
@@ -180,6 +194,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 		ClassID:   "OBJ_WEAPONS",
 		SubtypeID: "WPN_MACE",
 	}]
+
 	if mace.Weapon == nil || mace.Weapon.Damage != 8 || mace.Weapon.Hit != 3 ||
 		mace.Weapon.Speed != 14 || mace.Weapon.Commonness != 9 || mace.Weapon.AcquireWeight != 10 ||
 		mace.Weapon.Price != 30 || len(mace.Weapon.BrandWeights) != 2 ||
@@ -191,6 +206,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 		ClassID:   "OBJ_MISSILES",
 		SubtypeID: "MI_NEEDLE",
 	}]
+
 	if needle.Missile == nil || needle.Missile.Damage != 0 || needle.Missile.MulchRate != 12 || needle.Missile.Price != 2 {
 		t.Fatalf("missile fields lost: %+v", needle)
 	}
@@ -199,6 +215,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 		ClassID:   "OBJ_FOOD",
 		SubtypeID: "FOOD_RATION",
 	}]
+
 	if ration.Food == nil || ration.Food.NormalNutrition != 3400 ||
 		ration.Food.CarnivoreNutrition != 1900 || ration.Food.HerbivoreNutrition != 1900 {
 		t.Fatalf("food fields lost: %+v", ration)
@@ -207,6 +224,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 
 func TestPropertyScannerRejectsLoss(t *testing.T) {
 	base := string(propertyFixture())
+
 	for _, test := range []struct {
 		name, from, to string
 	}{
@@ -238,6 +256,7 @@ func TestPropertyScannerRejectsLoss(t *testing.T) {
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			bad := strings.Replace(base, test.from, test.to, 1)
+
 			if _, err := parsePropertyTables(
 				"item-prop.cc",
 				[]byte(bad),
@@ -253,6 +272,7 @@ func TestPropertyScannerRejectsLoss(t *testing.T) {
 
 	quoted := strings.Replace(base, `"robe"`, `"robe, // still name"`, 1)
 	rows, err := parsePropertyTables("item-prop.cc", []byte(quoted), propertyVocabulary())
+
 	if err != nil || rows[itemKey{
 		ClassID:   "OBJ_ARMOUR",
 		SubtypeID: "ARM_ROBE",

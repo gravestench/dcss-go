@@ -13,6 +13,7 @@ import (
 func readKindSource(root, name string) ([]byte, string, error) {
 	path := filepath.Join(root, name)
 	data, err := os.ReadFile(path)
+
 	if err != nil {
 		return nil, path, fmt.Errorf("%s: %w", path, err)
 	}
@@ -22,17 +23,21 @@ func readKindSource(root, name string) ([]byte, string, error) {
 
 func activeEgoIDs(path string, data []byte) (map[string]struct{}, error) {
 	lines, err := sourceparse.Tag34Lines(path, data)
+
 	if err != nil {
 		return nil, err
 	}
 
 	ids := map[string]struct{}{}
 	state := 0
+
 	for _, line := range lines {
 		line = strings.TrimSpace(strings.SplitN(line, "//", 2)[0])
+
 		if state == 0 {
 			if strings.HasPrefix(line, "enum special_missile_type") {
 				state = 1
+
 				if strings.Contains(line, "{") {
 					state = 2
 				}
@@ -56,6 +61,7 @@ func activeEgoIDs(path string, data []byte) (map[string]struct{}, error) {
 		}
 
 		id := strings.TrimSpace(strings.SplitN(strings.TrimSuffix(line, ","), "=", 2)[0])
+
 		if !strings.HasPrefix(id, "SPMSL_") {
 			continue
 		}
@@ -77,13 +83,16 @@ func activeEgoIDs(path string, data []byte) (map[string]struct{}, error) {
 // resolveKinds resolves starter names against the committed complete catalog.
 func resolveKinds(catalog content.Catalog, names []string) (map[string]content.ItemDef, error) {
 	wanted := map[string]bool{}
+
 	for _, name := range names {
 		wanted[name] = true
 	}
 
 	resolved := make(map[string]content.ItemDef, len(wanted))
+
 	for _, id := range catalog.ItemIDs() {
 		kind, err := catalog.Item(id)
+
 		if err != nil {
 			continue
 		} // enum-only legacy identity

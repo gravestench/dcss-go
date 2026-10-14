@@ -47,6 +47,7 @@ func (a JobArtifact) Validate() error {
 
 	ids := make(map[string]bool, len(a.Jobs))
 	abbreviations := make(map[string]bool, len(a.Jobs))
+
 	for _, job := range a.Jobs {
 		if err := job.validate(); err != nil {
 			return err
@@ -104,11 +105,13 @@ func (j JobDef) clone() JobDef {
 	j.Spells = append([]string(nil), j.Spells...)
 	j.Equipment = append([]string(nil), j.Equipment...)
 	j.Skills = append([]JobSkillGrant(nil), j.Skills...)
+
 	return j
 }
 
 func (c Catalog) Job(id string) (JobDef, error) {
 	job, found := c.jobs[id]
+
 	if !found {
 		return JobDef{}, fmt.Errorf("unknown job ID %q", id)
 	}
@@ -118,10 +121,12 @@ func (c Catalog) Job(id string) (JobDef, error) {
 
 func (c Catalog) JobIDs() []string {
 	ids := make([]string, 0, len(c.jobs))
+
 	for id := range c.jobs {
 		ids = append(ids, id)
 	}
 
 	sort.Strings(ids)
+
 	return ids
 }

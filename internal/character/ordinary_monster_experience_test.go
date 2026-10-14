@@ -87,6 +87,7 @@ func TestOrdinaryMonsterExperienceMatchesSourceIntegerStages(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			got, err := OrdinaryMonsterExperience(tc.in)
+
 			if err != nil || got != tc.want {
 				t.Fatalf("XP = %d, %v; want %d", got, err, tc.want)
 			}
@@ -101,6 +102,7 @@ func TestOrdinaryMonsterExperienceRejectsInvalidStats(t *testing.T) {
 		Speed:    10,
 		Modifier: 10,
 	}
+
 	for _, edit := range []func(*OrdinaryMonsterXPInput){
 		func(in *OrdinaryMonsterXPInput) {
 			in.HitDice = 0
@@ -123,6 +125,7 @@ func TestOrdinaryMonsterExperienceRejectsInvalidStats(t *testing.T) {
 	} {
 		in := base
 		edit(&in)
+
 		if _, err := OrdinaryMonsterExperience(in); err == nil {
 			t.Fatalf("accepted invalid stats %+v", in)
 		}

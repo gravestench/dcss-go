@@ -90,6 +90,7 @@ func TestMonsterArtifactValidation(t *testing.T) {
 		},
 		Monsters: []MonsterDef{rat},
 	}
+
 	if err := base.Validate(); err != nil {
 		t.Fatalf("valid monster artifact rejected: %v", err)
 	}
@@ -135,11 +136,13 @@ func TestMonsterArtifactValidation(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			a := base
 			a.Monsters = append([]MonsterDef(nil), base.Monsters...)
 			tc.edit(&a)
+
 			if err := a.Validate(); err == nil {
 				t.Fatal("invalid monster artifact accepted")
 			}
@@ -166,6 +169,7 @@ func TestMonsterCatalogCopiesAndStatuses(t *testing.T) {
 		},
 	}
 	first, err := c.Monster("MONS_RAT")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -174,12 +178,14 @@ func TestMonsterCatalogCopiesAndStatuses(t *testing.T) {
 	first.Holiness[0] = "MH_UNDEAD"
 	first.Resistances[0].Level = 3
 	ids := c.MonsterIDs()
+
 	if !reflect.DeepEqual(ids, []string{"MONS_BEAR", "MONS_BUMBLEBEE", "MONS_RAT"}) {
 		t.Fatalf("unsorted monster IDs: %v", ids)
 	}
 
 	ids[0] = "changed"
 	again, err := c.Monster("MONS_RAT")
+
 	if err != nil || !reflect.DeepEqual(again, rat) {
 		t.Fatalf("catalog changed through returned monster: %+v, %v", again, err)
 	}

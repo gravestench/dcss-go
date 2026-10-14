@@ -14,16 +14,19 @@ import (
 
 func copyComponent[T any](store *akara.Store[T], entity akara.Entity) *T {
 	value, found := store.Get(entity)
+
 	if !found {
 		return nil
 	}
 
 	copy := *value
+
 	return &copy
 }
 
 func copySkillsComponent(store *akara.Store[ecs.Skills], entity akara.Entity) *ecs.Skills {
 	copy := copyComponent(store, entity)
+
 	if copy != nil {
 		copy.Entries = append([]character.Skill(nil), copy.Entries...)
 	}
@@ -39,6 +42,7 @@ func validateSavedItem(
 ) error {
 	item := record.Item
 	kind, err := catalog.Item(item.KindID)
+
 	if err != nil {
 		return err
 	}
@@ -52,6 +56,7 @@ func validateSavedItem(
 	}
 
 	corpseKind := item.KindID == "CORPSE_BODY" || item.KindID == "CORPSE_SKELETON"
+
 	if corpseKind != (record.Corpse != nil) {
 		return fmt.Errorf("item %d has mismatched corpse state", record.ID)
 	}
@@ -84,6 +89,7 @@ func validateSavedItem(
 	}
 
 	occupied[kind.Slot] = kind.ID
+
 	return nil
 }
 
@@ -98,12 +104,14 @@ func (g *Game) Snapshot() save.Snapshot {
 		RNG:            g.rng.States(),
 		Messages:       append([]string(nil), g.messages...),
 	}
+
 	for id, level := range g.levels {
 		record := save.LevelRecord{
 			ID:    id,
 			Rows:  append([]string(nil), level.terrain...),
 			Known: level.KnownRows(),
 		}
+
 		for _, link := range level.StairLinks() {
 			record.Stairs = append(record.Stairs, save.StairRecord{
 				X:         link.X,
@@ -125,6 +133,7 @@ func (g *Game) Snapshot() save.Snapshot {
 	sort.Slice(snapshot.Levels, func(i, j int) bool {
 		return snapshot.Levels[i].ID < snapshot.Levels[j].ID
 	})
+
 	for _, entity := range g.world.Entities() {
 		snapshot.Entities = append(snapshot.Entities, save.EntityRecord{
 			ID:           uint64(entity),
@@ -150,6 +159,7 @@ func (g *Game) Snapshot() save.Snapshot {
 	sort.Slice(snapshot.Entities, func(i, j int) bool {
 		return snapshot.Entities[i].ID < snapshot.Entities[j].ID
 	})
+
 	return snapshot
 }
 
@@ -172,11 +182,13 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 
 	scenarioAnimals, err := scenarioAnimalIDs(snapshot.ScenarioID)
+
 	if err != nil {
 		return nil, err
 	}
 
 	usesPopulation := snapshot.ScenarioID == populationScenarioID
+
 	if snapshot.PlayerID == 0 || snapshot.CurrentAut < 0 || len(snapshot.Levels) == 0 {
 		return nil, fmt.Errorf("invalid save header")
 	}
@@ -201,12 +213,14 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		currentAut: Aut(snapshot.CurrentAut),
 		messages:   append([]string(nil), snapshot.Messages...),
 	}
+
 	for _, record := range snapshot.Levels {
 		if _, duplicate := g.levels[record.ID]; duplicate {
 			return nil, fmt.Errorf("duplicate level %d", record.ID)
 		}
 
 		level, levelErr := NewLevel(record.ID, record.Rows, stores.Positions)
+
 		if levelErr != nil {
 			return nil, levelErr
 		}
@@ -228,6 +242,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		}
 
 		g.levels[record.ID] = level
+
 		if record.AwaySinceAut != nil {
 			if *record.AwaySinceAut < 0 || *record.AwaySinceAut > snapshot.CurrentAut {
 				return nil, fmt.Errorf("invalid level %d away clock", record.ID)
@@ -255,12 +270,14 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	var playerPendingStat bool
 	var earliestID uint64
 	var earliestAut int64
+
 	for _, record := range snapshot.Entities {
 		if record.ID == 0 || seen[record.ID] {
 			return nil, fmt.Errorf("duplicate or zero entity ID %d", record.ID)
 		}
 
 		seen[record.ID] = true
+
 		if record.Item != nil {
 			if record.Corpse != nil && !slices.Contains(scenarioAnimals, record.Corpse.MonsterID) {
 				return nil, fmt.Errorf("fixed Dungeon save has unsupported corpse %s", record.Corpse.MonsterID)
@@ -283,6 +300,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 
 		if record.Player != nil {
 			playerCount++
+
 			if record.Player.Name != "" {
 				if nameErr := character.ValidateName(record.Player.Name); nameErr != nil {
 					return nil, fmt.Errorf("invalid saved player name: %w", nameErr)
@@ -291,6 +309,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 
 			selectedWeaponID = record.Player.StartingWeaponID
 			definition := catalog.Player()
+
 			if record.ID != snapshot.PlayerID || record.Actor == nil || record.Position == nil || record.Health == nil ||
 				record.Player.SpeciesID != definition.SpeciesID ||
 				record.Player.JobID != definition.JobID ||
@@ -301,11 +320,13 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			profile, profileErr := character.BuildStartProfile(
 				catalog, record.Player.SpeciesID, record.Player.JobID, selectedWeaponID,
 			)
+
 			if profileErr != nil {
 				return nil, fmt.Errorf("invalid player choice: %w", profileErr)
 			}
 
 			savedXP, err = validateSavedHumanAdvancement(record, profile, catalog)
+
 			if err != nil {
 				return nil, err
 			}
@@ -342,12 +363,14 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 				}
 			case "wander":
 				level := g.levels[record.Position.LevelID]
+
 				if record.AI.MemoryUntilAut != 0 || level == nil ||
 					(record.AI.TargetX != 0 || record.AI.TargetY != 0) && !level.Walkable(record.AI.TargetX, record.AI.TargetY) {
 					return nil, fmt.Errorf("wandering monster %d has invalid target or memory", record.ID)
 				}
 			case "seek":
 				level := g.levels[record.Position.LevelID]
+
 				if level == nil || !level.Walkable(record.AI.TargetX, record.AI.TargetY) ||
 					record.AI.MemoryUntilAut < 0 || record.AI.MemoryUntilAut > snapshot.CurrentAut+550 {
 					return nil, fmt.Errorf("monster %d has invalid remembered target", record.ID)
@@ -365,6 +388,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			}
 
 			definition, definitionErr := catalog.Monster(record.Actor.KindID)
+
 			if definitionErr != nil {
 				return nil, definitionErr
 			}
@@ -382,10 +406,12 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			}
 
 			liveAnimals[record.Actor.KindID] = true
+
 			if usesPopulation {
 				levelID := record.Position.LevelID
 				liveMonstersByLevel[levelID]++
 				liveMonsterCount++
+
 				if liveMonstersByLevel[levelID] > populationMonstersPerLevel {
 					return nil, fmt.Errorf("Dungeon:%d has too many live monsters", levelID)
 				}
@@ -435,18 +461,21 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 
 	maxEarnedXP := 0
+
 	for _, id := range scenarioAnimals {
 		if !usesPopulation && liveAnimals[id] {
 			continue
 		}
 
 		definition, defErr := catalog.Monster(id)
+
 		if defErr != nil {
 			return nil, defErr
 		}
 
 		profile, _ := character.OrdinaryAnimalProfile(id)
 		amount, xpErr := character.OrdinaryAnimalExperience(definition, profile.MaxHP)
+
 		if xpErr != nil {
 			return nil, xpErr
 		}
@@ -495,6 +524,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 
 	for _, record := range snapshot.Entities {
 		entity := akara.Entity(record.ID)
+
 		if record.Actor != nil {
 			if _, err := stores.Actors.Set(entity, *record.Actor); err != nil {
 				return nil, err
@@ -517,6 +547,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			savedSkills := ecs.Skills{
 				Entries: append([]character.Skill(nil), record.Skills.Entries...),
 			}
+
 			if _, err := stores.Skills.Set(entity, savedSkills); err != nil {
 				return nil, err
 			}
@@ -524,6 +555,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 
 		if record.Player != nil {
 			progress := ecs.Progression{Level: 1}
+
 			if record.Progression != nil {
 				progress = *record.Progression
 			}
@@ -533,6 +565,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			}
 
 			durations := ecs.Durations{}
+
 			if record.Durations != nil {
 				durations = *record.Durations
 			}
@@ -542,6 +575,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			}
 
 			regeneration := ecs.Regeneration{}
+
 			if record.Regeneration != nil {
 				regeneration = *record.Regeneration
 			}
@@ -589,6 +623,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 
 		if record.Position != nil {
 			level, found := g.levels[record.Position.LevelID]
+
 			if !found || !level.Walkable(record.Position.X, record.Position.Y) {
 				return nil, fmt.Errorf("entity %d has invalid position %+v", record.ID, *record.Position)
 			}
@@ -620,6 +655,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 
 	playerPosition, positioned := stores.Positions.Get(g.player)
+
 	if !positioned {
 		return nil, fmt.Errorf("saved player has no position")
 	}
@@ -630,6 +666,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 
 	for _, entity := range stores.Corpses.Entities() {
 		position, _ := stores.Positions.Get(entity)
+
 		if position.LevelID != playerPosition.LevelID {
 			if g.levels[position.LevelID].awaySinceAut == nil {
 				return nil, fmt.Errorf("inactive corpse level %d lacks away clock", position.LevelID)

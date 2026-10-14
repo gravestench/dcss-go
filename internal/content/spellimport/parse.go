@@ -18,22 +18,26 @@ var vocabularyLine = regexp.MustCompile(`^([A-Za-z_][A-Za-z0-9_]*)\s*=`)
 func parseVocabulary(path string, body []byte, name string) (map[string]bool, error) {
 	source := string(body)
 	start := strings.Index(source, "enum class "+name)
+
 	if start < 0 {
 		return nil, fmt.Errorf("%s: missing %s enum", path, name)
 	}
 
 	end := strings.Index(source[start:], "};")
+
 	if end < 0 {
 		return nil, fmt.Errorf("%s: unterminated %s enum", path, name)
 	}
 
 	section := source[start : start+end+2]
 	lines, err := sourceparse.Tag34NumberedLines(path, []byte(section))
+
 	if err != nil {
 		return nil, err
 	}
 
 	values := map[string]bool{}
+
 	for _, line := range lines {
 		if match := vocabularyLine.FindStringSubmatch(strings.TrimSpace(line.Text)); match != nil {
 			values[match[1]] = true
@@ -49,14 +53,17 @@ func parseVocabulary(path string, body []byte, name string) (map[string]bool, er
 
 func parseEnum(path string, body []byte) ([]content.SpellDef, error) {
 	lines, err := sourceparse.Tag34NumberedLines(path, body)
+
 	if err != nil {
 		return nil, err
 	}
 
 	inside, done, sawCount := false, false, false
 	var spells []content.SpellDef
+
 	for _, line := range lines {
 		value := strings.TrimSpace(line.Text)
+
 		if !inside {
 			if strings.HasPrefix(value, "enum spell_type") {
 				inside = true
@@ -84,6 +91,7 @@ func parseEnum(path string, body []byte) ([]content.SpellDef, error) {
 		}
 
 		match := enumLine.FindStringSubmatch(value)
+
 		if match == nil {
 			return nil, fmt.Errorf("%s:%d: malformed spell enum row %q", path, line.Number, value)
 		}
@@ -114,6 +122,7 @@ func splitCSV(value string) ([]string, error) {
 	var fields []string
 	var start int
 	quoted, escaped := false, false
+
 	for i, char := range value {
 		switch {
 		case escaped:
@@ -124,6 +133,7 @@ func splitCSV(value string) ([]string, error) {
 			quoted = !quoted
 		case char == ',' && !quoted:
 			field := strings.TrimSpace(value[start:i])
+
 			if field != "" {
 				fields = append(fields, field)
 			}
@@ -145,13 +155,16 @@ func splitCSV(value string) ([]string, error) {
 
 func parseBits(value, namespace string) ([]string, error) {
 	var result []string
+
 	for _, part := range strings.Split(value, "|") {
 		part = strings.TrimSpace(part)
+
 		if !strings.HasPrefix(part, namespace+"::") {
 			return nil, fmt.Errorf("unsupported %s expression %q", namespace, value)
 		}
 
 		name := strings.TrimSpace(strings.TrimPrefix(part, namespace+"::"))
+
 		if !regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`).MatchString(name) {
 			return nil, fmt.Errorf("bad %s symbol %q", namespace, name)
 		}
@@ -168,21 +181,25 @@ func parseDescriptor(path string, line int, fields []string) (content.SpellDef, 
 	}
 
 	name, err := strconv.Unquote(fields[1])
+
 	if err != nil {
 		return content.SpellDef{}, fmt.Errorf("%s:%d: spell name: %w", path, line, err)
 	}
 
 	schools, err := parseBits(fields[2], "spschool")
+
 	if err != nil {
 		return content.SpellDef{}, fmt.Errorf("%s:%d: %w", path, line, err)
 	}
 
 	flags, err := parseBits(fields[3], "spflag")
+
 	if err != nil {
 		return content.SpellDef{}, fmt.Errorf("%s:%d: %w", path, line, err)
 	}
 
 	ints := make([]int, 4)
+
 	for i, column := range []int{
 		4,
 		5,
@@ -190,6 +207,7 @@ func parseDescriptor(path string, line int, fields []string) (content.SpellDef, 
 		9,
 	} {
 		ints[i], err = strconv.Atoi(fields[column])
+
 		if err != nil {
 			return content.SpellDef{}, fmt.Errorf("%s:%d: numeric field %d: %w", path, line, column, err)
 		}
@@ -215,6 +233,7 @@ func parseDescriptor(path string, line int, fields []string) (content.SpellDef, 
 
 func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) {
 	lines, err := sourceparse.Tag34NumberedLines(path, body)
+
 	if err != nil {
 		return nil, err
 	}
@@ -223,11 +242,14 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 	inside, tableOpened, block, closed, macro, macroBody, start := false, false, false, false, false, false, 0
 	axedCount := 0
 	var data strings.Builder
+
 	for _, line := range lines {
 		value := strings.TrimSpace(line.Text)
+
 		if !inside {
 			if strings.Contains(value, "spelldata[]") {
 				inside = true
+
 				if strings.HasSuffix(value, "{") {
 					tableOpened = true
 				}
@@ -284,6 +306,7 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 		if match := axedLine.FindStringSubmatch(value); match != nil {
 			axedCount++
 			name, err := strconv.Unquote(match[2])
+
 			if err != nil {
 				return nil, fmt.Errorf("%s:%d: %w", path, line.Number, err)
 			}
@@ -311,6 +334,7 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 		if value == "{" || strings.HasPrefix(value, "{ SPELL_") {
 			block, start = true, line.Number
 			data.Reset()
+
 			if value != "{" {
 				data.WriteString(strings.TrimSpace(strings.TrimPrefix(value, "{")))
 				data.WriteByte(' ')
@@ -325,11 +349,13 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 			}
 
 			fields, err := splitCSV(data.String())
+
 			if err != nil {
 				return nil, fmt.Errorf("%s:%d: %w", path, start, err)
 			}
 
 			spell, err := parseDescriptor(path, start, fields)
+
 			if err != nil {
 				return nil, err
 			}
@@ -360,24 +386,29 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 func parseRemoved(path string, body []byte) (map[string]bool, error) {
 	source := string(body)
 	start := strings.Index(source, "const set<spell_type> removed_spells =")
+
 	if start < 0 {
 		return nil, fmt.Errorf("%s: missing removed spell set", path)
 	}
 
 	end := strings.Index(source[start:], "};")
+
 	if end < 0 {
 		return nil, fmt.Errorf("%s: unterminated removed spell set", path)
 	}
 
 	section := strings.Repeat("\n", strings.Count(source[:start], "\n")) + source[start:start+end+2]
 	lines, err := sourceparse.Tag34NumberedLines(path, []byte(section))
+
 	if err != nil {
 		return nil, err
 	}
 
 	seen, inside, done := map[string]bool{}, false, false
+
 	for _, line := range lines {
 		value := strings.TrimSpace(line.Text)
+
 		if !inside {
 			if strings.Contains(value, "removed_spells =") {
 				inside = true
@@ -400,6 +431,7 @@ func parseRemoved(path string, body []byte) (map[string]bool, error) {
 		}
 
 		id := strings.TrimSuffix(value, ",")
+
 		if !spellID.MatchString(id) || seen[id] {
 			return nil, fmt.Errorf("%s:%d: invalid or duplicate removed spell %q", path, line.Number, value)
 		}
@@ -417,6 +449,7 @@ func parseRemoved(path string, body []byte) (map[string]bool, error) {
 func reconcile(ids []content.SpellDef, spells map[string]content.SpellDef, removed map[string]bool) error {
 	for _, id := range ids {
 		spell, exists := spells[id.ID]
+
 		if !exists {
 			return fmt.Errorf("missing descriptor for %s", id.ID)
 		}

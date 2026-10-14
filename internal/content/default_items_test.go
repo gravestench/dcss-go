@@ -7,6 +7,7 @@ import (
 
 func TestDefaultItemManifest(t *testing.T) {
 	catalog, err := LoadItemsForImport()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -16,6 +17,7 @@ func TestDefaultItemManifest(t *testing.T) {
 	}
 
 	ration, err := catalog.Item("FOOD_RATION")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,12 +57,14 @@ func TestDefaultItemManifest(t *testing.T) {
 	}
 
 	var artifact ItemArtifact
+
 	if err := json.Unmarshal(defaultItemsJSON, &artifact); err != nil {
 		t.Fatal(err)
 	}
 
 	artifact.Items[0].ID = "ARM_SUBSTITUTED"
 	changed, err := json.Marshal(artifact)
+
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -24,6 +24,7 @@ var tagMajor = regexp.MustCompile(`(?m)^#define\s+TAG_MAJOR_VERSION\s+(\d+)\s*$`
 
 func sourcePath(sourceDir, path string) (string, error) {
 	relative, err := filepath.Rel(sourceDir, path)
+
 	if err != nil || strings.HasPrefix(relative, "..") {
 		return "", fmt.Errorf("source path %s is outside %s", path, sourceDir)
 	}
@@ -34,11 +35,13 @@ func sourcePath(sourceDir, path string) (string, error) {
 func readSource(sourceDir, relative string, hashes *[]content.SpeciesSourceFile) ([]byte, string, error) {
 	path := filepath.Join(sourceDir, relative)
 	label, err := sourcePath(sourceDir, path)
+
 	if err != nil {
 		return nil, "", err
 	}
 
 	data, err := os.ReadFile(path)
+
 	if err != nil {
 		return nil, "", fmt.Errorf("%s: %w", label, err)
 	}
@@ -48,6 +51,7 @@ func readSource(sourceDir, relative string, hashes *[]content.SpeciesSourceFile)
 		Path:   label,
 		SHA256: hex.EncodeToString(sum[:]),
 	})
+
 	return data, label, nil
 }
 
@@ -58,51 +62,61 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 
 	var files []content.SpeciesSourceFile
 	version, versionPath, err := readSource(sourceDir, "tag-version.h", &files)
+
 	if err != nil {
 		return nil, err
 	}
 
 	match := tagMajor.FindSubmatch(version)
+
 	if match == nil {
 		return nil, fmt.Errorf("%s: TAG_MAJOR_VERSION definition missing", versionPath)
 	}
 
 	major, err := strconv.Atoi(string(match[1]))
+
 	if err != nil || major != 34 {
 		return nil, fmt.Errorf("%s: TAG_MAJOR_VERSION must be 34, got %s", versionPath, match[1])
 	}
 
 	speciesHeader, speciesHeaderPath, err := readSource(sourceDir, "species-type.h", &files)
+
 	if err != nil {
 		return nil, err
 	}
 
 	monsterHeader, monsterHeaderPath, err := readSource(sourceDir, "monster-type.h", &files)
+
 	if err != nil {
 		return nil, err
 	}
 
 	jobHeader, jobHeaderPath, err := readSource(sourceDir, "job-type.h", &files)
+
 	if err != nil {
 		return nil, err
 	}
 
 	speciesIDs, err := sourceparse.ActiveEnumIDs(speciesHeaderPath, speciesHeader, "SP_")
+
 	if err != nil {
 		return nil, err
 	}
 
 	monsterIDs, err := sourceparse.ActiveEnumIDs(monsterHeaderPath, monsterHeader, "MONS_")
+
 	if err != nil {
 		return nil, err
 	}
 
 	jobIDs, err := sourceparse.ActiveEnumIDs(jobHeaderPath, jobHeader, "JOB_")
+
 	if err != nil {
 		return nil, err
 	}
 
 	yamlFiles, err := filepath.Glob(filepath.Join(sourceDir, "dat", "species", "*.yaml"))
+
 	if err != nil {
 		return nil, fmt.Errorf("species YAML glob: %w", err)
 	}
@@ -114,18 +128,22 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 	sort.Strings(yamlFiles)
 	var definitions []content.SpeciesDef
 	seen := map[string]string{}
+
 	for _, path := range yamlFiles {
 		relative, err := filepath.Rel(sourceDir, path)
+
 		if err != nil {
 			return nil, err
 		}
 
 		data, label, err := readSource(sourceDir, relative, &files)
+
 		if err != nil {
 			return nil, err
 		}
 
 		species, tag, err := parseYAML(label, data)
+
 		if err != nil {
 			return nil, err
 		}
@@ -147,6 +165,7 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 		"util/species-gen/species-data-deprecated-species.txt",
 		&files,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -156,11 +175,13 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 		"util/species-gen/aptitudes-deprecated-species.txt",
 		&files,
 	)
+
 	if err != nil {
 		return nil, err
 	}
 
 	legacy, err := parseLegacy(legacySpeciesPath, legacySpecies, legacyAptitudesPath, legacyAptitudes)
+
 	if err != nil {
 		return nil, err
 	}
@@ -209,11 +230,13 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 		SourceFiles:     files,
 		Species:         definitions,
 	}
+
 	if err := artifact.Validate(); err != nil {
 		return nil, err
 	}
 
 	encoded, err := json.MarshalIndent(artifact, "", "  ")
+
 	if err != nil {
 		return nil, fmt.Errorf("encode species artifact: %w", err)
 	}
@@ -229,16 +252,19 @@ func Generate(sourceDir string) ([]byte, error) {
 
 	cmd := exec.Command("git", "-C", sourceDir, "rev-parse", "HEAD")
 	output, err := cmd.Output()
+
 	if err != nil {
 		return nil, fmt.Errorf("read source Git revision: %w", err)
 	}
 
 	revision := strings.TrimSpace(string(output))
+
 	if revision != pinnedRevision {
 		return nil, fmt.Errorf("source revision %s differs from pinned %s", revision, pinnedRevision)
 	}
 
 	cmd = exec.Command("git", "-C", sourceDir, "diff", "--quiet", "HEAD", "--", ".")
+
 	if err := cmd.Run(); err != nil {
 		return nil, fmt.Errorf("source checkout has modified tracked files under %s: %w", sourceDir, err)
 	}
@@ -248,12 +274,14 @@ func Generate(sourceDir string) ([]byte, error) {
 
 func writeArtifact(sourceDir, outPath string, check bool, generate func(string) ([]byte, error)) error {
 	data, err := generate(sourceDir)
+
 	if err != nil {
 		return err
 	}
 
 	if check {
 		current, err := os.ReadFile(outPath)
+
 		if err != nil {
 			return fmt.Errorf("read checked-in artifact %s: %w", outPath, err)
 		}
@@ -266,19 +294,23 @@ func writeArtifact(sourceDir, outPath string, check bool, generate func(string) 
 	}
 
 	file, err := os.CreateTemp(filepath.Dir(outPath), "."+filepath.Base(outPath)+".tmp-*")
+
 	if err != nil {
 		return fmt.Errorf("create artifact temp file: %w", err)
 	}
 
 	tempPath := file.Name()
 	defer os.Remove(tempPath)
+
 	if _, err := file.Write(data); err != nil {
 		file.Close()
+
 		return fmt.Errorf("write artifact: %w", err)
 	}
 
 	if err := file.Sync(); err != nil {
 		file.Close()
+
 		return fmt.Errorf("sync artifact: %w", err)
 	}
 

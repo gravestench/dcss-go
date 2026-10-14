@@ -14,11 +14,13 @@ func TestCanvasBoundsAndWideGlyphs(t *testing.T) {
 	c.Put(4, 0, '界', White, Black)
 	c.Write(0, 0, "A界B", Yellow, Black)
 	rows := c.PlainRows()
+
 	if len(rows) != 2 || rows[0] != "A界B " || rows[1] != "     " {
 		t.Fatalf("canvas rows: %#v", rows)
 	}
 
 	c.Put(2, 0, 'x', White, Black)
+
 	if got := c.PlainRows()[0]; got != "A xB " {
 		t.Fatalf("overlapping wide glyph left debris: %q", got)
 	}
@@ -30,6 +32,7 @@ func TestCanvasStyledRowsOccupyEveryTerminalCell(t *testing.T) {
 		c.Write(0, 0, "界 yellow", Yellow, Black)
 		c.Write(size[0]-6, size[1]-1, "bottom", LightRed, Black)
 		plain, styled := c.PlainRows(), strings.Split(c.Styled(), "\n")
+
 		if len(plain) != size[1] || len(styled) != size[1] {
 			t.Fatalf("%dx%d row counts: %d plain, %d styled", size[0], size[1], len(plain), len(styled))
 		}

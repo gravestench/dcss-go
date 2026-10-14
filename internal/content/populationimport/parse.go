@@ -19,8 +19,10 @@ func parseDungeonRows(source []byte) ([]content.DungeonPopEntry, error) {
 	lines := strings.Split(string(source), "\n")
 	foundTable, foundDungeon := false, false
 	var rows []content.DungeonPopEntry
+
 	for i, line := range lines {
 		trimmed := strings.TrimSpace(line)
+
 		if !foundTable {
 			foundTable = strings.Contains(line, "static const vector<pop_entry> population[]")
 			continue
@@ -47,6 +49,7 @@ func parseDungeonRows(source []byte) ([]content.DungeonPopEntry, error) {
 		}
 
 		match := populationRow.FindStringSubmatch(line)
+
 		if match == nil {
 			return nil, fmt.Errorf("unparsed Dungeon population line %d: %q", i+1, line)
 		}
@@ -54,6 +57,7 @@ func parseDungeonRows(source []byte) ([]content.DungeonPopEntry, error) {
 		minDepth, minErr := strconv.Atoi(match[1])
 		maxDepth, maxErr := strconv.Atoi(match[2])
 		rarity, rarityErr := strconv.Atoi(match[3])
+
 		if minErr != nil || maxErr != nil || rarityErr != nil {
 			return nil, fmt.Errorf("invalid Dungeon population number at line %d", i+1)
 		}

@@ -41,8 +41,10 @@ func BasicDungeon(depth int, next func() uint64) (Layout, error) {
 	}
 
 	var lastErr error
+
 	for attempt := 0; attempt < 16; attempt++ {
 		b := &builder{next: next}
+
 		for y := range b.grid {
 			for x := range b.grid[y] {
 				b.grid[y][x] = '#'
@@ -50,6 +52,7 @@ func BasicDungeon(depth int, next func() uint64) (Layout, error) {
 		}
 
 		stairs, err := b.build(depth)
+
 		if b.badRandom {
 			return Layout{}, fmt.Errorf("random source failed to provide a bounded draw")
 		}
@@ -60,6 +63,7 @@ func BasicDungeon(depth int, next func() uint64) (Layout, error) {
 		}
 
 		rows := make([]string, height)
+
 		for y := range rows {
 			rows[y] = string(b.grid[y][:])
 		}
@@ -76,6 +80,7 @@ func BasicDungeon(depth int, next func() uint64) (Layout, error) {
 func (b *builder) build(depth int) ([3]StairPair, error) {
 	// dgn-layouts.cc:49-56. random2(0) in the source returns zero.
 	b.corrLength = 2 + b.roll(14)
+
 	if b.oneIn(100) {
 		b.corrCount = 500 + b.roll(500)
 	} else {
@@ -111,8 +116,10 @@ func (b *builder) build(depth int) ([3]StairPair, error) {
 
 	var stairs [3]StairPair
 	occupied := make(map[Point]bool, len(stairs)*2)
+
 	for index, start := range starts {
 		pair, err := b.makeTrail(start)
+
 		if err != nil {
 			return stairs, fmt.Errorf("Dungeon:%d trail %d: %w", depth, index+1, err)
 		}
@@ -155,14 +162,17 @@ func (b *builder) roll(n int) int {
 
 	bound := uint64(n)
 	threshold := -bound % bound
+
 	for attempt := 0; attempt < 16; attempt++ {
 		value := b.next()
+
 		if value >= threshold {
 			return int(value % bound)
 		}
 	}
 
 	b.badRandom = true
+
 	return 0
 }
 
@@ -190,6 +200,7 @@ func (b *builder) stairsConnected(stairs [3]StairPair) bool {
 	start := stairs[0].Down
 	visited := map[Point]bool{start: true}
 	queue := []Point{start}
+
 	for len(queue) > 0 {
 		current := queue[0]
 		queue = queue[1:]
@@ -199,6 +210,7 @@ func (b *builder) stairsConnected(stairs [3]StairPair) bool {
 				X: current.X + direction.X,
 				Y: current.Y + direction.Y,
 			}
+
 			if !b.inBounds(next) || visited[next] || b.grid[next.Y][next.X] == '#' {
 				continue
 			}

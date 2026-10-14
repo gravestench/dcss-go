@@ -13,6 +13,7 @@ import (
 
 func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 	count := len(m.presentation.StartupModes)
+
 	if m.savedRunExists() {
 		count++
 	}
@@ -27,6 +28,7 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 	case "enter":
 		if m.focus == len(m.presentation.StartupModes) && m.savedRunExists() {
 			m.loadSavedRun()
+
 			return nil
 		}
 
@@ -34,6 +36,7 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 			if m.name != "" {
 				if err := character.ValidateName(m.name); err != nil {
 					m.notice = err.Error()
+
 					return nil
 				}
 			}
@@ -74,13 +77,16 @@ func (m *AppModel) appendNameKey(key string) {
 	}
 
 	candidate := m.name + key
+
 	if runewidth.StringWidth(candidate) > 30 {
 		m.notice = "Name exceeds 30 display columns"
+
 		return
 	}
 	// A partial name may have trailing space, but it must still be source-valid.
 	if err := character.ValidateName(candidate); err != nil {
 		m.notice = "invalid name character"
+
 		return
 	}
 
@@ -89,14 +95,17 @@ func (m *AppModel) appendNameKey(key string) {
 
 func (m *AppModel) handleCharacterChoiceKey(key string) {
 	groups := m.presentation.SpeciesGroups
+
 	if m.screen == ScreenBackground {
 		groups = m.presentation.JobGroups
 	}
 
 	ids := flattenGroups(groups)
+
 	switch key {
 	case "esc":
 		m.screen, m.focus, m.notice = ScreenStartup, 0, ""
+
 		return
 	case "backspace":
 		if m.screen == ScreenBackground {
@@ -108,6 +117,7 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 		}
 
 		m.focus, m.notice = 0, ""
+
 		return
 	case "space":
 		if m.screen == ScreenSpecies {
@@ -117,26 +127,33 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 		}
 
 		m.focus, m.notice = 0, ""
+
 		return
 	case "up":
 		m.focus = (m.focus - 1 + len(ids)) % len(ids)
+
 		return
 	case "down":
 		m.focus = (m.focus + 1) % len(ids)
+
 		return
 	case "left":
 		m.focus = (m.focus - 9 + len(ids)) % len(ids)
+
 		return
 	case "right":
 		m.focus = (m.focus + 9) % len(ids)
+
 		return
 	case "?":
 		m.previous, m.screen = m.screen, ScreenHelp
+
 		return
 	case "enter":
 		key = string(menuLetter(m.focus))
 	case "+", "#", "%", "*", "!":
 		m.notice = "This character option is unavailable in the Go port."
+
 		return
 	}
 
@@ -146,41 +163,51 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 		}
 
 		m.focus = i
+
 		if m.screen == ScreenSpecies {
 			if id != "SP_HUMAN" {
 				m.notice = "This species is unavailable in the Go port."
+
 				return
 			}
 
 			m.speciesID, m.notice = id, ""
+
 			if m.jobID == "" {
 				m.screen = ScreenBackground
 				m.focus = 0
+
 				return
 			}
 		} else {
 			if id != "JOB_FIGHTER" {
 				m.notice = "This background is unavailable in the Go port."
+
 				return
 			}
 
 			m.jobID, m.notice = id, ""
+
 			if m.speciesID == "" {
 				m.screen = ScreenSpecies
 				m.focus = 0
+
 				return
 			}
 		}
 
 		m.enterWeaponChoice()
+
 		return
 	}
 }
 
 func (m *AppModel) enterWeaponChoice() {
 	options, err := character.WeaponOptions(m.catalog, m.speciesID, m.jobID)
+
 	if err != nil {
 		m.notice = fmt.Sprintf("Weapon choices failed: %v", err)
+
 		return
 	}
 
@@ -191,20 +218,25 @@ func (m *AppModel) handleWeaponKey(key string) {
 	switch key {
 	case "esc", "backspace":
 		m.screen, m.focus, m.notice = m.weaponReturn, 0, ""
+
 		return
 	case "up":
 		m.focus = (m.focus - 1 + len(m.options)) % len(m.options)
+
 		return
 	case "down":
 		m.focus = (m.focus + 1) % len(m.options)
+
 		return
 	case "?":
 		m.previous, m.screen = m.screen, ScreenHelp
+
 		return
 	case "enter":
 		key = string(menuLetter(m.focus))
 	case "+", "*", "%":
 		m.notice = "This weapon option is unavailable in the Go port."
+
 		return
 	}
 
@@ -214,12 +246,15 @@ func (m *AppModel) handleWeaponKey(key string) {
 		}
 
 		m.weaponID, m.focus, m.notice = option.ID, i, ""
+
 		if m.name == "" {
 			m.screen = ScreenName
+
 			return
 		}
 
 		m.startGame()
+
 		return
 	}
 }
@@ -228,6 +263,7 @@ func (m *AppModel) handleNameKey(key string) {
 	switch key {
 	case "esc":
 		m.screen, m.notice = ScreenWeapon, ""
+
 		return
 	case "backspace":
 		if len(m.name) > 0 {
@@ -237,6 +273,7 @@ func (m *AppModel) handleNameKey(key string) {
 	case "enter":
 		if err := character.ValidateName(m.name); err != nil {
 			m.notice = err.Error()
+
 			return
 		}
 
@@ -248,8 +285,10 @@ func (m *AppModel) handleNameKey(key string) {
 
 func (m *AppModel) startGame() {
 	started, err := game.NewPopulatedScenario(m.seed, m.catalog, m.weaponID, strings.TrimSpace(m.name))
+
 	if err != nil {
 		m.notice = fmt.Sprintf("Start failed: %v", err)
+
 		return
 	}
 
@@ -258,6 +297,7 @@ func (m *AppModel) startGame() {
 
 func flattenGroups(groups []content.MenuGroup) []string {
 	var ids []string
+
 	for _, group := range groups {
 		ids = append(ids, group.IDs...)
 	}
@@ -278,8 +318,10 @@ func (m *AppModel) drawStartup(canvas *Canvas) {
 	canvas.Write(0, 1, "(c) Copyright 1997-2002 Linley Henzell, 2002-2022 Crawl DevTeam", Brown, Black)
 	canvas.Write(1, 3, "Enter your name: "+m.name, LightGrey, Black)
 	canvas.Write(1, 5, "Choices:", LightGrey, Black)
+
 	for i, mode := range m.presentation.StartupModes {
 		color := LightGrey
+
 		if i == m.focus {
 			color = White
 		}
@@ -293,6 +335,7 @@ func (m *AppModel) drawStartup(canvas *Canvas) {
 	}
 
 	canvas.Write(1, 18, "[ctrl-p] view rc file information and log", LightGrey, Black)
+
 	if m.focus < len(m.presentation.StartupModes) {
 		writeClipped(canvas, 1, 20, m.width-2, m.presentation.StartupModes[m.focus].Description, Brown)
 	}
@@ -306,6 +349,7 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 	groups := m.presentation.SpeciesGroups
 	descriptions := m.presentation.SpeciesDescriptions
 	choice := "species"
+
 	if m.screen == ScreenBackground {
 		groups, descriptions, choice = m.presentation.JobGroups, m.presentation.JobDescriptions, "background"
 	}
@@ -313,11 +357,14 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 	canvas.Write(0, 0, m.welcomeText(), Brown, Black)
 	canvas.Write(1, 1, "Please select your "+choice+".", LightGrey, Black)
 	index := 0
+
 	for column, group := range groups {
 		col, row := groupPosition(m.screen, column)
 		canvas.Write(col, row, group.Label, LightBlue, Black)
+
 		for i, id := range group.IDs {
 			name := id
+
 			if m.screen == ScreenSpecies {
 				if definition, err := m.catalog.Species(id); err == nil {
 					name = definition.Name
@@ -330,6 +377,7 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 
 			color, background := LightGrey, Black
 			status := character.Restricted
+
 			if m.screen == ScreenSpecies && m.jobID != "" {
 				status, _ = character.SpeciesForJob(m.catalog, id, m.jobID)
 			} else if m.screen == ScreenBackground && m.speciesID != "" {
@@ -338,6 +386,7 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 
 			hasOtherChoice := (m.screen == ScreenSpecies && m.jobID != "") ||
 				(m.screen == ScreenBackground && m.speciesID != "")
+
 			if hasOtherChoice {
 				if status == character.Recommended {
 					color = White
@@ -348,6 +397,7 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 
 			if index == m.focus {
 				color = White
+
 				if status == character.Recommended && hasOtherChoice {
 					background = Green
 				} else if hasOtherChoice {
@@ -364,6 +414,7 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 
 	choiceTitle, otherTitle := "species", "background"
 	otherSelected := m.jobID != ""
+
 	if m.screen == ScreenBackground {
 		choiceTitle, otherTitle = "background", "species"
 		otherSelected = m.speciesID != ""
@@ -379,6 +430,7 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 	}
 
 	change := "Space - Pick " + otherTitle + " first"
+
 	if otherSelected {
 		change = "Space - Change " + otherTitle
 	}
@@ -388,6 +440,7 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 	}
 
 	ids := flattenGroups(groups)
+
 	if m.focus < len(ids) {
 		writeWrapped(canvas, 1, 19, m.width-2, 4, strings.Join(strings.Fields(descriptions[ids[m.focus]]), " "), Brown)
 	}
@@ -419,8 +472,10 @@ func groupPosition(screen ScreenID, group int) (int, int) {
 func writeWrapped(canvas *Canvas, x, y, width, height int, value string, color Color) {
 	words := strings.Fields(value)
 	line, row := "", 0
+
 	for _, word := range words {
 		candidate := word
+
 		if line != "" {
 			candidate = line + " " + word
 		}
@@ -447,8 +502,10 @@ func (m *AppModel) drawWeapon(canvas *Canvas) {
 	canvas.Write(0, 0, m.welcomeText(), Brown, Black)
 	canvas.Write(1, 1, "Please select your starting weapon.", LightGrey, Black)
 	species, _ := m.catalog.Species("SP_HUMAN")
+
 	for i, option := range m.options {
 		aptitude := species.Aptitudes["SK_UNARMED_COMBAT"].Value
+
 		if option.ID != "WPN_UNARMED" {
 			if item, err := m.catalog.Item(option.ID); err == nil {
 				aptitude = species.Aptitudes[item.WeaponSkill].Value
@@ -456,12 +513,14 @@ func (m *AppModel) drawWeapon(canvas *Canvas) {
 		}
 
 		color, background := DarkGrey, Black
+
 		if option.Restriction == character.Recommended {
 			color = White
 		}
 
 		if i == m.focus {
 			color = White
+
 			if option.Restriction == character.Recommended {
 				background = Green
 			} else {
@@ -475,6 +534,7 @@ func (m *AppModel) drawWeapon(canvas *Canvas) {
 	canvas.Write(1, 11, "+ - Recommended random choice     * - Random weapon", LightGrey, Black)
 	canvas.Write(1, 12, "% - List aptitudes               ? - Help", LightGrey, Black)
 	canvas.Write(1, 13, "Bksp - Return to character menu", LightGrey, Black)
+
 	if m.notice != "" {
 		writeClipped(canvas, 1, 23, m.width-2, m.notice, LightRed)
 	}
@@ -483,6 +543,7 @@ func (m *AppModel) drawWeapon(canvas *Canvas) {
 func (m *AppModel) drawName(canvas *Canvas) {
 	canvas.Write(0, 0, m.welcomeText(), Brown, Black)
 	canvas.Write(1, 2, "Enter your name: "+m.name, LightGrey, Black)
+
 	if m.notice != "" {
 		writeClipped(canvas, 1, 23, m.width-2, m.notice, LightRed)
 	}
@@ -491,6 +552,7 @@ func (m *AppModel) drawName(canvas *Canvas) {
 func (m *AppModel) welcomeText() string {
 	who := m.name
 	named := who != ""
+
 	if who == "" {
 		if m.speciesID == "" && m.jobID == "" {
 			return "Welcome."

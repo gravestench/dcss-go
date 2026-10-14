@@ -10,6 +10,7 @@ func (b *builder) makeRooms() {
 	// random2avg(29, 2) draws 29 and then 30 before integer division.
 	ordinaryCount := 5 + (b.roll(29)+b.roll(30))/2
 	roomCount := ordinaryCount
+
 	if b.roll(636+49) < 49 {
 		roomCount = 100
 	}
@@ -27,6 +28,7 @@ func (b *builder) makeRooms() {
 // rectangle is in bounds and needs only the perimeter connection check.
 func (b *builder) makeRandomRooms(count, maxDoors, doorLevel, maxX, maxY, maxRoomSize int) {
 	failures := 0
+
 	for completed := 0; completed < count; {
 		left := 8 + b.roll(maxX)
 		top := 8 + b.roll(maxY)
@@ -39,6 +41,7 @@ func (b *builder) makeRandomRooms(count, maxDoors, doorLevel, maxX, maxY, maxRoo
 		}
 
 		failures++
+
 		if failures > 30 {
 			failures = 0
 			completed++
@@ -49,6 +52,7 @@ func (b *builder) makeRandomRooms(count, maxDoors, doorLevel, maxX, maxY, maxRoo
 func (b *builder) makeRoom(left, top, right, bottom, maxDoors, doorLevel int) bool {
 	connections := 0
 	diagonal := 0
+
 	for x := left; x <= right; x++ {
 		if b.goodDoorSpot(x, top) {
 			connections++
@@ -127,6 +131,7 @@ func (b *builder) makeRoom(left, top, right, bottom, maxDoors, doorLevel int) bo
 
 func (b *builder) goodDoorSpot(x, y int) bool {
 	terrain := b.grid[y][x]
+
 	return terrain == '.' || terrain == '+'
 }
 

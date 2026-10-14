@@ -84,6 +84,7 @@ func (a SpeciesArtifact) Validate() error {
 	}
 
 	seen := make(map[string]bool, len(a.Species))
+
 	for _, species := range a.Species {
 		if err := species.validate(); err != nil {
 			return err
@@ -115,6 +116,7 @@ func (s SpeciesDef) validate() error {
 	}
 
 	required := strings.Fields(ordinarySkillIDs)
+
 	if strings.HasSuffix(s.SourcePath, "species-data-deprecated-species.txt") {
 		required = append(required, strings.Fields(legacyExtraSkillIDs)...)
 	}
@@ -152,8 +154,10 @@ func (s SpeciesDef) clone() SpeciesDef {
 	s.Flags = append([]string(nil), s.Flags...)
 	s.RecommendedJobs = append([]string(nil), s.RecommendedJobs...)
 	s.RecommendedWeapons = append([]string(nil), s.RecommendedWeapons...)
+
 	if s.Aptitudes != nil {
 		copy := make(map[string]SpeciesAptitude, len(s.Aptitudes))
+
 		for id, aptitude := range s.Aptitudes {
 			copy[id] = aptitude
 		}
@@ -166,6 +170,7 @@ func (s SpeciesDef) clone() SpeciesDef {
 
 func (c Catalog) Species(id string) (SpeciesDef, error) {
 	definition, found := c.species[id]
+
 	if !found {
 		return SpeciesDef{}, fmt.Errorf("unknown species ID %q", id)
 	}
@@ -175,10 +180,12 @@ func (c Catalog) Species(id string) (SpeciesDef, error) {
 
 func (c Catalog) SpeciesIDs() []string {
 	ids := make([]string, 0, len(c.species))
+
 	for id := range c.species {
 		ids = append(ids, id)
 	}
 
 	sort.Strings(ids)
+
 	return ids
 }

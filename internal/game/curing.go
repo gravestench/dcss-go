@@ -22,6 +22,7 @@ type quaffSystem struct {
 
 func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 	intent, found := s.intents.Get(s.turn.Actor)
+
 	if !found || intent.Kind != ecs.IntentQuaff {
 		return nil
 	}
@@ -32,19 +33,23 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 
 	item, found := s.items.Get(intent.ItemID)
 	carrier, carried := s.carried.Get(intent.ItemID)
+
 	if !found || !carried || carrier.Holder != s.player || item.Quantity <= 0 {
 		return fmt.Errorf("potion %d is no longer carried", intent.ItemID)
 	}
 
 	var message string
+
 	switch item.KindID {
 	case "POT_CURING":
 		health, found := s.health.Get(s.player)
+
 		if !found {
 			return fmt.Errorf("player has no health for curing")
 		}
 
 		newHP, err := character.CuringHP(s.rng, health.Current, health.Max)
+
 		if err != nil {
 			return err
 		}
@@ -53,11 +58,13 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 		message = "You feel better."
 	case "POT_HEAL_WOUNDS":
 		health, found := s.health.Get(s.player)
+
 		if !found || health.Current == health.Max {
 			return fmt.Errorf("player cannot use heal wounds at current health")
 		}
 
 		newHP, err := character.HealWoundsHP(s.rng, health.Current, health.Max)
+
 		if err != nil {
 			return err
 		}
@@ -66,11 +73,13 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 		message = "You feel much better."
 	case "POT_MIGHT":
 		durations, found := s.durations.Get(s.player)
+
 		if !found {
 			return fmt.Errorf("player has no duration state for might")
 		}
 
 		remaining, text, err := character.MightPotionDuration(s.rng, durations.MightAut)
+
 		if err != nil {
 			return err
 		}
@@ -85,5 +94,6 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 		Kind: "quaff",
 		Text: message,
 	})
+
 	return nil
 }

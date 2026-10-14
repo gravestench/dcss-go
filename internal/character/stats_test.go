@@ -8,11 +8,13 @@ import (
 
 func TestBaseStatSum(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	got, err := BaseStatSum(catalog, "SP_HUMAN", "JOB_FIGHTER")
+
 	if err != nil || got != (Attributes{
 		Strength:     16,
 		Intelligence: 8,

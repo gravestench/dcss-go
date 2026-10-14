@@ -19,17 +19,20 @@ func RollHP(roller Roller, averageHP10x int) (int, error) {
 	}
 
 	variance, err := divRandRound(roller, averageHP10x*33, 100)
+
 	if err != nil {
 		return 0, err
 	}
 
 	sum, err := roll(roller, variance*2)
+
 	if err != nil {
 		return 0, err
 	}
 
 	for range 7 {
 		part, partErr := roll(roller, variance*2+1)
+
 		if partErr != nil {
 			return 0, partErr
 		}
@@ -39,6 +42,7 @@ func RollHP(roller Roller, averageHP10x int) (int, error) {
 
 	raw := averageHP10x - variance + sum/8
 	hp, err := divRandRound(roller, raw, 10)
+
 	if err != nil {
 		return 0, err
 	}
@@ -52,11 +56,13 @@ func divRandRound(roller Roller, numerator, denominator int) (int, error) {
 	}
 
 	quotient, remainder := numerator/denominator, numerator%denominator
+
 	if remainder == 0 {
 		return quotient, nil
 	}
 
 	value, err := roll(roller, denominator)
+
 	if err != nil {
 		return 0, err
 	}
@@ -74,6 +80,7 @@ func roll(roller Roller, bound int) (int, error) {
 	}
 
 	value, err := roller.Intn("monster_hp", bound)
+
 	if err != nil {
 		return 0, err
 	}

@@ -58,13 +58,16 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 		"tile_variation",
 	}
 	sets := make(map[string]map[string]bool, len(needed))
+
 	for _, category := range needed {
 		values := v.Symbols[category]
+
 		if len(values) == 0 || !slices.IsSorted(values) {
 			return fmt.Errorf("missing or unsorted monster vocabulary %s", category)
 		}
 
 		set := make(map[string]bool, len(values))
+
 		for _, value := range values {
 			if value == "" || set[value] {
 				return fmt.Errorf("bad monster vocabulary %s: %s", category, value)
@@ -83,6 +86,7 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 
 		return nil
 	}
+
 	for _, m := range a.Monsters {
 		if m.Status != MonsterDefined {
 			continue

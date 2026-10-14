@@ -9,11 +9,13 @@ import (
 func legacyFixtures(t *testing.T) ([]byte, []byte) {
 	t.Helper()
 	species, err := os.ReadFile("testdata/legacy-species.txt")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	aptitudes, err := os.ReadFile("testdata/legacy-aptitudes.txt")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -29,6 +31,7 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 		"crawl-ref/source/util/species-gen/aptitudes-deprecated-species.txt",
 		aptitudes,
 	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,8 +41,10 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 	}
 
 	byID := map[string]int{}
+
 	for i, record := range records {
 		byID[record.ID] = i
+
 		if record.Selectable || record.SourcePath == "" {
 			t.Fatalf("legacy record selectable or untraced: %+v", record)
 		}
@@ -71,13 +76,16 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 			dexterity:    8,
 		},
 	}
+
 	for _, check := range checks {
 		i, found := byID[check.id]
+
 		if !found {
 			t.Fatalf("missing %s", check.id)
 		}
 
 		s := records[i]
+
 		if s.MonsterID != check.monster || s.Strength != check.strength ||
 			s.Intelligence != check.intelligence || s.Dexterity != check.dexterity {
 			t.Fatalf("wrong legacy fields for %s: %+v", check.id, s)
@@ -119,9 +127,11 @@ func TestParseLegacyRejectsBadRows(t *testing.T) {
 			want:      "FEATURE_X",
 		},
 	}
+
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			_, err := parseLegacy("legacy-species.txt", tc.source, "legacy-aptitudes.txt", tc.aptitudes)
+
 			if err == nil || !strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want error containing %q, got %v", tc.want, err)
 			}
@@ -129,6 +139,7 @@ func TestParseLegacyRejectsBadRows(t *testing.T) {
 	}
 
 	var retained []string
+
 	for _, line := range strings.Split(string(aptitudes), "\n") {
 		if !strings.Contains(line, "SP_LAVA_ORC") {
 			retained = append(retained, line)

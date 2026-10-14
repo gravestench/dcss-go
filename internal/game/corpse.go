@@ -20,6 +20,7 @@ func (g *Game) placeCorpse(drop pendingCorpse) error {
 	}
 
 	entity, err := g.world.CreateEntity()
+
 	if err != nil {
 		return err
 	}
@@ -60,6 +61,7 @@ func corpseTickElapsed(startAut, endAut Aut) int {
 	}
 
 	lastTick := startAut / monster.CorpseRotIntervalAut * monster.CorpseRotIntervalAut
+
 	return int(endAut - lastTick)
 }
 
@@ -79,6 +81,7 @@ func (s corpseAgingSystem) TickLevel(levelID, elapsed int) error {
 		corpse, found := s.corpses.Get(entity)
 		item, itemFound := s.items.Get(entity)
 		position, located := s.positions.Get(entity)
+
 		if !found || !itemFound || !located {
 			return fmt.Errorf("corpse %d is not a floor item", entity)
 		}
@@ -90,6 +93,7 @@ func (s corpseAgingSystem) TickLevel(levelID, elapsed int) error {
 		kind, freshness, appearance, alive, err := monster.AgeCorpse(
 			s.rng, item.KindID, corpse.Freshness, elapsed,
 		)
+
 		if err != nil {
 			return err
 		}
@@ -104,6 +108,7 @@ func (s corpseAgingSystem) TickLevel(levelID, elapsed int) error {
 
 		item.KindID = kind
 		corpse.Freshness = freshness
+
 		if appearance != 0 {
 			corpse.Appearance = appearance
 		}

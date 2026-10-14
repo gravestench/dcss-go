@@ -12,6 +12,7 @@ func TestParseGroupsPreservesSourceOrder(t *testing.T) {
     { "Advanced", coord_def(2, 0), 20, { SP_FELID } },
 };`
 	groups, err := parseGroups("species-groups.h", []byte(source), "species_groups", "SP_")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,6 +27,7 @@ func TestParseGroupsPreservesSourceOrder(t *testing.T) {
 func TestParseDescriptionsKeepsParagraphs(t *testing.T) {
 	source := "%%%%\nHuman\n\nFirst line.\nSecond line.\n\nNext paragraph.\n%%%%\nFelid\n\nCat.\n"
 	descriptions, err := parseDescriptions("species.txt", []byte(source))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,6 +39,7 @@ func TestParseDescriptionsKeepsParagraphs(t *testing.T) {
 
 func TestParseDescriptionsRejectsDuplicate(t *testing.T) {
 	_, err := parseDescriptions("species.txt", []byte("%%%%\nHuman\n\nOne.\n%%%%\nHuman\n\nTwo.\n"))
+
 	if err == nil || !strings.Contains(err.Error(), "Human") {
 		t.Fatalf("duplicate accepted: %v", err)
 	}
@@ -48,6 +51,7 @@ func TestParseStartupModesJoinsSourceStringLiterals(t *testing.T) {
     {GAME_TYPE_TUTORIAL, "Tutorial", "Learn."},
 };`
 	modes, err := parseStartupModes("startup.cc", []byte(source))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,6 +69,7 @@ SK_COLUMN_BREAK, SK_TITLE, SK_SPELLCASTING, SK_INVOCATIONS,
 SK_COLUMN_BREAK,
 };`
 	columns, err := parseSkillColumns("skills.h", []byte(source))
+
 	if err != nil {
 		t.Fatal(err)
 	}

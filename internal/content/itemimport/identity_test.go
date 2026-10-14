@@ -106,6 +106,7 @@ NUM_RUNE_TYPES,
 
 func TestItemIdentityEnums(t *testing.T) {
 	identities, aliases, err := parseIdentities(identityFixture())
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -116,6 +117,7 @@ func TestItemIdentityEnums(t *testing.T) {
 
 	byID := map[string]int{}
 	classes := map[string]int{}
+
 	for _, identity := range identities {
 		byID[identity.ID] = identity.SubtypeValue
 		classes[identity.ClassID] = identity.ClassValue
@@ -158,6 +160,7 @@ func TestItemIdentityEnums(t *testing.T) {
 		"WPN_DAGGER = unknown()",
 		1,
 	))
+
 	if _, _, err := parseIdentities(bad); err == nil || !strings.Contains(err.Error(), "item-prop-enum.h") {
 		t.Fatalf("unsupported numeric expression was accepted: %v", err)
 	}
@@ -169,6 +172,7 @@ func TestItemIdentityEnums(t *testing.T) {
 		"WPN_DAGGER = 0",
 		1,
 	))
+
 	if _, _, err := parseIdentities(bad); err == nil {
 		t.Fatal("duplicate numeric class/subtype pair was accepted")
 	}
@@ -185,6 +189,7 @@ func TestRemovedItemsIndependent(t *testing.T) {
 // A property row named "removed potion" does not enter this set.
 `)
 	removed, err := parseRemovedItems("item-prop.cc", source)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -203,11 +208,13 @@ func TestRemovedItemsIndependent(t *testing.T) {
 	}
 
 	duplicate := []byte(strings.Replace(string(source), "{ OBJ_BOOKS, BOOK_OLD },", "{ OBJ_POTIONS, POT_OLD },", 1))
+
 	if _, err := parseRemovedItems("item-prop.cc", duplicate); err == nil {
 		t.Fatal("duplicate explicit removal accepted")
 	}
 
 	malformed := []byte(strings.Replace(string(source), "#if TAG_MAJOR_VERSION == 34", "#if OTHER_FLAG", 1))
+
 	if _, err := parseRemovedItems("item-prop.cc", malformed); err == nil ||
 		!strings.Contains(err.Error(), "item-prop.cc") {
 		t.Fatalf("unsupported conditional was accepted: %v", err)
@@ -240,6 +247,7 @@ ARMF_VUL_FIRE = ard(ARMF_RES_FIRE, -1),
 };`),
 	}
 	v, err := parseVocabulary(source)
+
 	if err != nil {
 		t.Fatal(err)
 	}

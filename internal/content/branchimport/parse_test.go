@@ -31,11 +31,13 @@ const syntheticTable = `const Branch branches[NUM_BRANCHES] =
 
 func TestParseTag34BranchRows(t *testing.T) {
 	ids, err := parseEnum("branch-type.h", []byte(syntheticEnum))
+
 	if err != nil || len(ids) != 2 || ids[1].ID != "BRANCH_TEMPLE" || ids[1].NumericID != 1 {
 		t.Fatalf("enum %+v, %v", ids, err)
 	}
 
 	branches, err := parseTable("branch-data.h", []byte(syntheticTable))
+
 	if err != nil || len(branches) != 2 {
 		t.Fatalf("table %+v, %v", branches, err)
 	}
@@ -56,6 +58,7 @@ func TestBranchImporterRejectsUnrecognizedRows(t *testing.T) {
 		strings.Replace(syntheticEnum, "NUM_BRANCHES,", "BRANCH_SURPRISE,\n NUM_BRANCHES,", 1),
 	} {
 		ids, err := parseEnum("branch-type.h", []byte(source))
+
 		if err == nil && len(ids) == 2 {
 			t.Fatalf("accepted altered branch identity: %+v", ids)
 		}
@@ -67,8 +70,10 @@ func TestBranchImporterRejectsUnrecognizedRows(t *testing.T) {
 		strings.Replace(syntheticTable, "};", "garbage\n};", 1),
 	} {
 		rows, err := parseTable("branch-data.h", []byte(source))
+
 		if err == nil {
 			ids, enumErr := parseEnum("branch-type.h", []byte(syntheticEnum))
+
 			if enumErr == nil {
 				err = reconcile(ids, rows)
 			}

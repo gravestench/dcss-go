@@ -16,6 +16,7 @@ type Attributes struct {
 // It does not apply later unfocusing or randomized Wanderer setup.
 func BaseStatSum(c content.Catalog, speciesID, jobID string) (Attributes, error) {
 	restriction, err := JobForSpecies(c, speciesID, jobID)
+
 	if err != nil {
 		return Attributes{}, err
 	}
@@ -30,6 +31,7 @@ func BaseStatSum(c content.Catalog, speciesID, jobID string) (Attributes, error)
 
 	species, _ := c.Species(speciesID)
 	job, _ := c.Job(jobID)
+
 	return Attributes{
 		Strength:     species.Strength + job.Strength,
 		Intelligence: species.Intelligence + job.Intelligence,

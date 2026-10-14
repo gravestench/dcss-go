@@ -19,6 +19,7 @@ func (r *regenRoller) Intn(stream string, bound int) (int, error) {
 
 	value := r.rolls[0].value
 	r.rolls = r.rolls[1:]
+
 	return value, nil
 }
 
@@ -30,12 +31,14 @@ func TestOrdinaryHumanFighterRegenerationRates(t *testing.T) {
 		MaxMP: 1,
 	}
 	got, err := Regenerate(&regenRoller{}, state, 10)
+
 	if err != nil || got.HP != 7 || got.HPProgress != 6 || got.MP != 0 || got.MPProgress != 7 {
 		t.Fatalf("one turn regen = %+v, %v", got, err)
 	}
 
 	for range 16 {
 		got, err = Regenerate(&regenRoller{}, got, 10)
+
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -56,6 +59,7 @@ func TestRegenFullHPAccumulatesButFullMPFreezes(t *testing.T) {
 		MPProgress: 95,
 	}
 	got, err := Regenerate(&regenRoller{}, state, 10)
+
 	if err != nil || got.HP != 18 || got.HPProgress != 1 || got.MP != 1 || got.MPProgress != 95 {
 		t.Fatalf("full vitals regen = %+v, %v", got, err)
 	}
@@ -83,6 +87,7 @@ func TestRegenVariableAutUsesHPThenMPRounding(t *testing.T) {
 		MPProgress: 94,
 	}
 	got, err := Regenerate(rng, state, 9)
+
 	if err != nil || got.HP != 11 || got.HPProgress != 0 || got.MP != 1 || got.MPProgress != 0 || len(rng.rolls) != 0 {
 		t.Fatalf("9-aut regen = %+v, %v, rolls %+v", got, err, rng.rolls)
 	}
@@ -98,6 +103,7 @@ func TestRegenCanRestoreSeveralPointsAndRejectsBadState(t *testing.T) {
 		MPProgress: 95,
 	}
 	got, err := Regenerate(&regenRoller{}, state, 200)
+
 	if err != nil || got.HP != 12 || got.HPProgress != 15 || got.MP != 2 || got.MPProgress != 55 {
 		t.Fatalf("long action regen = %+v, %v", got, err)
 	}

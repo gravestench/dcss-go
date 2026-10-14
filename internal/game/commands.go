@@ -66,6 +66,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	}
 
 	position, found := g.stores.Positions.Get(g.player)
+
 	if !found {
 		return StepResult{}, fmt.Errorf("player %d has no position", g.player)
 	}
@@ -74,6 +75,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	var intent ecs.Intent
 	const monsterCost Aut = 10
 	cost := monsterCost
+
 	switch command.Kind {
 	case CommandInspect:
 		return StepResult{View: g.View()}, nil
@@ -83,22 +85,26 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		}
 
 		x, y := position.X+command.DX, position.Y+command.DY
+
 		if !level.Walkable(x, y) {
 			return g.noTime("You cannot move there."), nil
 		}
 
 		if target, occupied := level.ActorAt(x, y); occupied {
 			actor, found := g.stores.Actors.Get(target)
+
 			if !found || !isOrdinaryAnimal(actor.KindID) {
 				return StepResult{}, fmt.Errorf("unsupported player melee target %d", target)
 			}
 
 			input, err := newPlayerCombat(g).attackDelayInput(actor.KindID)
+
 			if err != nil {
 				return StepResult{}, err
 			}
 
 			delay, err := combat.PlayerAttackDelay(g.rng, input)
+
 			if err != nil {
 				return StepResult{}, err
 			}
@@ -113,6 +119,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		}
 	case CommandUpstairs:
 		_, linked := level.StairAt(position.X, position.Y)
+
 		if level.terrain[position.Y][position.X] != '<' || !linked {
 			return g.noTime("There are no stairs up here."), nil
 		}
@@ -120,6 +127,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		intent = ecs.Intent{Kind: ecs.IntentUpstairs}
 	case CommandDownstairs:
 		_, linked := level.StairAt(position.X, position.Y)
+
 		if level.terrain[position.Y][position.X] != '>' || !linked {
 			return g.noTime("There are no stairs down here."), nil
 		}
@@ -129,6 +137,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		intent = ecs.Intent{Kind: ecs.IntentWait}
 	case CommandPickup:
 		item, found := g.floorItemAt(*position)
+
 		if !found {
 			return g.noTime("There is nothing to pick up here."), nil
 		}
@@ -142,11 +151,13 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		itemID := akara.Entity(command.ItemID)
 		item, found := g.stores.Items.Get(itemID)
 		carrier, carried := g.stores.CarriedBy.Get(itemID)
+
 		if !found || !carried || carrier.Holder != g.player {
 			return g.noTime("You are not carrying that potion."), nil
 		}
 
 		kind, err := g.catalog.Item(item.KindID)
+
 		if err != nil {
 			return StepResult{}, err
 		}
@@ -165,6 +176,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 
 		if item.KindID == "POT_HEAL_WOUNDS" {
 			health, found := g.stores.Health.Get(g.player)
+
 			if !found {
 				return StepResult{}, fmt.Errorf("player has no health for heal wounds")
 			}
@@ -188,6 +200,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 
 	startAut := g.currentAut
 	events, err := g.runAction(g.player, intent, cost, "movement")
+
 	if err != nil {
 		return StepResult{}, err
 	}
@@ -196,8 +209,10 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		from := g.levels[g.turn.StairFrom]
 		to := g.levels[g.turn.StairTo]
 		from.awaySinceAut = &startAut
+
 		if to.awaySinceAut != nil {
 			elapsed := int(startAut - *to.awaySinceAut)
+
 			if err := g.corpseAging.TickLevel(to.ID, elapsed); err != nil {
 				return StepResult{}, err
 			}
@@ -226,8 +241,10 @@ func (g *Game) Step(command Command) (StepResult, error) {
 // The player action has already spent its aut and set the next deadline.
 func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error) {
 	const monsterCost Aut = 10
+
 	for !g.playerDead() {
 		actor, at, found := g.scheduler.Next()
+
 		if !found || actor == g.player {
 			g.currentAut = at
 			break
@@ -235,12 +252,14 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 
 		g.currentAut = at
 		monsterEvents, err := g.runAction(actor, ecs.Intent{}, monsterCost, "monster")
+
 		if err != nil {
 			return StepResult{}, err
 		}
 
 		monsterPosition, monsterLocated := g.stores.Positions.Get(actor)
 		playerPosition, playerLocated := g.stores.Positions.Get(g.player)
+
 		if !monsterLocated || !playerLocated {
 			return StepResult{}, fmt.Errorf("acting monster or player has no position")
 		}
@@ -258,6 +277,7 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 
 	if elapsed := corpseTickElapsed(startAut, startAut+cost); elapsed > 0 {
 		position, found := g.stores.Positions.Get(g.player)
+
 		if !found {
 			return StepResult{}, fmt.Errorf("player has no position for corpse timer")
 		}
@@ -287,6 +307,7 @@ func (g *Game) noTime(message string) StepResult {
 
 func (g *Game) noTimeEvent(event Event) StepResult {
 	g.messages = append(g.messages, event.Text)
+
 	return StepResult{
 		Events: []Event{event},
 		View:   g.View(),
@@ -295,6 +316,7 @@ func (g *Game) noTimeEvent(event Event) StepResult {
 
 func (g *Game) playerDead() bool {
 	health, found := g.stores.Health.Get(g.player)
+
 	return !found || health.Current <= 0
 }
 
@@ -319,6 +341,7 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	err := g.world.Update(time.Duration(cost))
 	producedIntent := g.stores.Intents.Has(actor)
 	g.stores.Intents.Remove(actor)
+
 	if err != nil {
 		return nil, fmt.Errorf("%s actor %d: %w", phase, actor, err)
 	}
@@ -339,8 +362,10 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	}
 
 	buffer := akara.NewCommandBuffer()
+
 	if itemID := g.turn.Consume; itemID != 0 {
 		item, found := g.stores.Items.Get(itemID)
+
 		if !found || item.Quantity <= 0 {
 			return nil, fmt.Errorf("%s actor %d consumed invalid item %d", phase, actor, itemID)
 		}
@@ -379,6 +404,7 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	}
 
 	events := append([]Event(nil), g.turn.Events...)
+
 	for _, event := range events {
 		g.messages = append(g.messages, event.Text)
 	}

@@ -30,8 +30,10 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 	copy(clean, data)
 	state := byte(0) // 0: code, 1: string, 2: character, 3: line comment, 4: block comment
 	escaped := false
+
 	for i := 0; i < len(clean); i++ {
 		c := clean[i]
+
 		switch state {
 		case 0:
 			if c == '"' {
@@ -79,11 +81,14 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 	active := true
 	var stack []tagBranch
 	var result []Line
+
 	for n, line := range strings.Split(string(clean), "\n") {
 		trimmed := strings.TrimSpace(line)
+
 		switch {
 		case strings.HasPrefix(trimmed, "#if "):
 			condition, ok := tag34Condition(strings.TrimPrefix(trimmed, "#if "))
+
 			if !ok {
 				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 			}
@@ -99,6 +104,7 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			}
 
 			condition, ok := tag34Condition(strings.TrimPrefix(trimmed, "#elif "))
+
 			if !ok {
 				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 			}
@@ -160,11 +166,14 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 	active := true
 	var stack []tagBranch
 	var result []string
+
 	for n, line := range lines {
 		trimmed := strings.TrimSpace(line)
+
 		switch {
 		case strings.HasPrefix(trimmed, "#if "):
 			condition, supported := tag34Condition(strings.TrimPrefix(trimmed, "#if "))
+
 			if !supported {
 				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 			}
@@ -180,6 +189,7 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 			}
 
 			condition, supported := tag34Condition(strings.TrimPrefix(trimmed, "#elif "))
+
 			if !supported {
 				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 			}
@@ -223,16 +233,20 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 // ActiveEnumIDs reports concrete active enum members, excluding aliases.
 func ActiveEnumIDs(path string, data []byte, prefix string) (map[string]struct{}, error) {
 	lines, err := Tag34Lines(path, data)
+
 	if err != nil {
 		return nil, err
 	}
 
 	ids := map[string]struct{}{}
 	inside, started := false, false
+
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
+
 		if strings.HasPrefix(trimmed, "enum ") {
 			started = true
+
 			if strings.Contains(trimmed, "{") {
 				inside = true
 			}
@@ -257,6 +271,7 @@ func ActiveEnumIDs(path string, data []byte, prefix string) (map[string]struct{}
 		}
 
 		match := enumEntry.FindStringSubmatch(trimmed)
+
 		if match == nil || !strings.HasPrefix(match[1], prefix) || match[2] != "" {
 			continue
 		}

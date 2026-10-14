@@ -9,6 +9,7 @@ func TestRestoreRejectsRemovedAndEnumOnlyMonsters(t *testing.T) {
 	for _, id := range []string{"MONS_BUMBLEBEE", "MONS_BEAR"} {
 		t.Run(id, func(t *testing.T) {
 			g, err := NewScenario(42, testCatalog(t), "WPN_RAPIER", "Hero")
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -17,6 +18,7 @@ func TestRestoreRejectsRemovedAndEnumOnlyMonsters(t *testing.T) {
 			before := g.Snapshot()
 			bad := g.Snapshot()
 			changed := false
+
 			for i := range bad.Entities {
 				if bad.Entities[i].AI != nil {
 					bad.Entities[i].Actor.KindID = id

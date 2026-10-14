@@ -11,6 +11,7 @@ import (
 
 func potionLetter(t *testing.T, m *AppModel, kind string) string {
 	t.Helper()
+
 	for i, item := range m.game.View().Inventory {
 		if item.KindID == kind {
 			return string(menuLetter(i))
@@ -18,6 +19,7 @@ func potionLetter(t *testing.T, m *AppModel, kind string) string {
 	}
 
 	t.Fatalf("no carried %s", kind)
+
 	return ""
 }
 
@@ -25,17 +27,20 @@ func TestQuaffChoiceCancelAndStartingMight(t *testing.T) {
 	m := playingModel(t)
 	aut := m.game.View().CurrentAut
 	m.handleKey("q")
+
 	if m.screen != ScreenQuaff || !strings.Contains(plainApp(m), "Quaff which potion?") {
 		t.Fatalf("q screen %d: %s", m.screen, plainApp(m))
 	}
 
 	m.handleKey("esc")
+
 	if m.screen != ScreenPlay || m.game.View().CurrentAut != aut {
 		t.Fatal("cancel spent time")
 	}
 
 	m.handleKey("q")
 	m.handleKey(potionLetter(t, m, "POT_MIGHT"))
+
 	if m.screen != ScreenPlay || m.game.View().CurrentAut != aut+10 || m.game.View().MightAut < 340 || m.notice != "" {
 		t.Fatalf(
 			"might potion: screen %d notice %q time %d, might %d",
@@ -54,8 +59,10 @@ func TestQuaffChoiceCancelAndStartingMight(t *testing.T) {
 func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 	m := playingModel(t)
 	snapshot := m.game.Snapshot()
+
 	for i := range snapshot.Entities {
 		record := &snapshot.Entities[i]
+
 		if record.ID == snapshot.PlayerID {
 			record.Position.X, record.Position.Y = 4, 2
 		} else if record.Actor != nil && record.Actor.KindID == "MONS_RAT" {
@@ -64,12 +71,14 @@ func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 	}
 
 	restored, err := game.Restore(snapshot, m.catalog)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	m.game.Close()
 	m.game = restored
+
 	if _, err := m.game.Step(game.Command{Kind: game.CommandPickup}); err != nil {
 		t.Fatal(err)
 	}
@@ -77,11 +86,13 @@ func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 	aut := m.game.View().CurrentAut
 	letter := potionLetter(t, m, "POT_CURING")
 	m.handleKey("q")
+
 	if m.screen != ScreenQuaff || !strings.Contains(plainApp(m), "potion of curing") {
 		t.Fatalf("curing absent from quaff list: %s", plainApp(m))
 	}
 
 	m.handleKey(letter)
+
 	if m.screen != ScreenPlay || m.game.View().CurrentAut != aut+10 || m.notice != "" {
 		t.Fatalf("curing choice: screen %d notice %q time %d", m.screen, m.notice, m.game.View().CurrentAut)
 	}
@@ -96,8 +107,10 @@ func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 	m := playingModel(t)
 	snapshot := m.game.Snapshot()
+
 	for i := range snapshot.Entities {
 		record := &snapshot.Entities[i]
+
 		if record.ID == snapshot.PlayerID {
 			record.Health.Current = 1
 		}
@@ -109,6 +122,7 @@ func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 	}
 
 	restored, err := game.Restore(snapshot, m.catalog)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -117,11 +131,13 @@ func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 	m.game = restored
 	before := m.game.View().CurrentAut
 	m.handleKey("q")
+
 	if m.screen != ScreenQuaff || !strings.Contains(plainApp(m), "potion of heal wounds") {
 		t.Fatalf("heal wounds missing from quaff menu: %s", plainApp(m))
 	}
 
 	m.handleKey(potionLetter(t, m, "POT_HEAL_WOUNDS"))
+
 	if m.screen != ScreenPlay || m.game.View().CurrentAut != before+10 || m.game.View().PlayerHP <= 1 || m.notice != "" {
 		t.Fatalf("heal wounds choice: screen %d notice %q view %+v", m.screen, m.notice, m.game.View())
 	}

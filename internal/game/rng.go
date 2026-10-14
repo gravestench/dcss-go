@@ -20,6 +20,7 @@ func NewRNGStreams(seed uint64) *RNGStreams {
 
 func RestoreRNGStreams(seed uint64, states map[string]uint64) *RNGStreams {
 	copyStates := make(map[string]uint64, len(states))
+
 	for name, state := range states {
 		copyStates[name] = state
 	}
@@ -32,6 +33,7 @@ func RestoreRNGStreams(seed uint64, states map[string]uint64) *RNGStreams {
 
 func (r *RNGStreams) States() map[string]uint64 {
 	copyStates := make(map[string]uint64, len(r.states))
+
 	for name, state := range r.states {
 		copyStates[name] = state
 	}
@@ -41,6 +43,7 @@ func (r *RNGStreams) States() map[string]uint64 {
 
 func (r *RNGStreams) next(name string) uint64 {
 	state, found := r.states[name]
+
 	if !found {
 		hash := fnv.New64a()
 		_, _ = hash.Write([]byte(name))
@@ -52,6 +55,7 @@ func (r *RNGStreams) next(name string) uint64 {
 	z := state
 	z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9
 	z = (z ^ (z >> 27)) * 0x94d049bb133111eb
+
 	return z ^ (z >> 31)
 }
 
@@ -62,8 +66,10 @@ func (r *RNGStreams) Intn(name string, n int) (int, error) {
 
 	bound := uint64(n)
 	threshold := -bound % bound
+
 	for {
 		value := r.next(name)
+
 		if value >= threshold {
 			return int(value % bound), nil
 		}

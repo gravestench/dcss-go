@@ -36,9 +36,11 @@ var sourceNames = []string{
 func readSources(sourceDir string) (map[string][]byte, []content.JobSourceFile, error) {
 	data := make(map[string][]byte, len(sourceNames))
 	files := make([]content.JobSourceFile, 0, len(sourceNames))
+
 	for _, name := range sourceNames {
 		path := filepath.Join(sourceDir, name)
 		body, err := os.ReadFile(path)
+
 		if err != nil {
 			return nil, nil, fmt.Errorf("read %s: %w", path, err)
 		}
@@ -54,17 +56,20 @@ func readSources(sourceDir string) (map[string][]byte, []content.JobSourceFile, 
 	sort.Slice(files, func(i, j int) bool {
 		return files[i].Path < files[j].Path
 	})
+
 	return data, files, nil
 }
 
 func enumMembers(path, name string, data []byte) (map[string]bool, error) {
 	if name == "COLOURS" {
 		start := bytes.Index(data, []byte("enum COLOURS"))
+
 		if start < 0 {
 			return nil, fmt.Errorf("%s: missing COLOURS", path)
 		}
 
 		end := bytes.Index(data[start:], []byte("};"))
+
 		if end < 0 {
 			return nil, fmt.Errorf("%s: unterminated COLOURS", path)
 		}
@@ -73,31 +78,37 @@ func enumMembers(path, name string, data []byte) (map[string]bool, error) {
 	}
 
 	activeSource, err := activeText(path, data)
+
 	if err != nil {
 		return nil, err
 	}
 
 	marker := regexp.MustCompile(`\benum\s+` + regexp.QuoteMeta(name) + `\b[^{}]*\{`)
 	where := marker.FindStringIndex(activeSource)
+
 	if where == nil {
 		return nil, fmt.Errorf("%s: missing enum %s", path, name)
 	}
 
 	open := where[1] - 1
 	inner, _, err := balanced(activeSource, open, '{', '}')
+
 	if err != nil {
 		return nil, fmt.Errorf("%s: enum %s: %w", path, name, err)
 	}
 
 	parts, err := splitFields(inner)
+
 	if err != nil {
 		return nil, fmt.Errorf("%s: enum %s: %w", path, name, err)
 	}
 
 	members := map[string]bool{}
 	idPattern := regexp.MustCompile(`^[A-Z][A-Z0-9_]*$`)
+
 	for _, part := range parts {
 		id := strings.TrimSpace(strings.SplitN(part, "=", 2)[0])
+
 		if !idPattern.MatchString(id) {
 			return nil, fmt.Errorf("%s: enum %s has unsupported member %q", path, name, part)
 		}
@@ -118,33 +129,39 @@ func enumMembers(path, name string, data []byte) (map[string]bool, error) {
 
 func monsterMembers(path string, data []byte) (map[string]bool, error) {
 	activeSource, err := activeText(path, data)
+
 	if err != nil {
 		return nil, err
 	}
 
 	marker := regexp.MustCompile(`\benum\s+monster_type\b[^{}]*\{`)
 	where := marker.FindStringIndex(activeSource)
+
 	if where == nil {
 		return nil, fmt.Errorf("%s: missing monster_type", path)
 	}
 
 	inner, _, err := balanced(activeSource, where[1]-1, '{', '}')
+
 	if err != nil {
 		return nil, err
 	}
 
 	parts, err := splitFields(inner)
+
 	if err != nil {
 		return nil, err
 	}
 
 	ids := map[string]bool{}
+
 	for _, part := range parts {
 		if strings.Contains(part, "=") {
 			continue
 		} // aliases and non-monster sentinels
 
 		id := strings.TrimSpace(part)
+
 		if !strings.HasPrefix(id, "MONS_") {
 			continue
 		}
@@ -165,11 +182,13 @@ func monsterMembers(path string, data []byte) (map[string]bool, error) {
 
 func activeText(path string, data []byte) (string, error) {
 	lines, err := sourceparse.Tag34NumberedLines(path, data)
+
 	if err != nil {
 		return "", err
 	}
 
 	var active strings.Builder
+
 	for _, line := range lines {
 		active.WriteString(line.Text)
 		active.WriteByte('\n')
@@ -259,14 +278,17 @@ func sourceSymbols(data map[string][]byte) (symbolSets, error) {
 			name:   "mon_type_tile_variation",
 		},
 	}
+
 	for _, step := range steps {
 		*step.target, err = from(step.file, step.name)
+
 		if err != nil {
 			return s, err
 		}
 	}
 
 	elemental, err := from("colour.h", "element_type")
+
 	if err != nil {
 		return s, err
 	}
@@ -276,6 +298,7 @@ func sourceSymbols(data map[string][]byte) (symbolSets, error) {
 	}
 
 	s.monster, err = monsterMembers("crawl-ref/source/monster-type.h", data["monster-type.h"])
+
 	return s, err
 }
 
@@ -285,6 +308,7 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 	}
 
 	data, files, err := readSources(sourceDir)
+
 	if err != nil {
 		return nil, err
 	}
@@ -294,22 +318,26 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 	}
 
 	symbols, err := sourceSymbols(data)
+
 	if err != nil {
 		return nil, err
 	}
 
 	path := "crawl-ref/source/mon-data.h"
 	rows, err := parseRows(path, data["mon-data.h"])
+
 	if err != nil {
 		return nil, err
 	}
 
 	defs, err := decodeRows(path, rows, symbols)
+
 	if err != nil {
 		return nil, err
 	}
 
 	byID := make(map[string]content.MonsterDef, len(symbols.monster))
+
 	for _, def := range defs {
 		if !symbols.monster[def.ID] {
 			return nil, fmt.Errorf("%s:%d: %s is absent from active monster enum", path, def.SourceLine, def.ID)
@@ -338,6 +366,7 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 		TagMajorVersion: 34,
 		SourceFiles:     files,
 	}
+
 	for _, def := range byID {
 		artifact.Monsters = append(artifact.Monsters, def)
 	}
@@ -345,11 +374,13 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 	sort.Slice(artifact.Monsters, func(i, j int) bool {
 		return artifact.Monsters[i].ID < artifact.Monsters[j].ID
 	})
+
 	if err := artifact.Validate(); err != nil {
 		return nil, err
 	}
 
 	encoded, err := json.MarshalIndent(artifact, "", "  ")
+
 	if err != nil {
 		return nil, err
 	}
@@ -364,6 +395,7 @@ func Generate(sourceDir string) ([]byte, error) {
 	}
 
 	revision, err := exec.Command("git", "-C", sourceDir, "rev-parse", "HEAD").Output()
+
 	if err != nil {
 		return nil, fmt.Errorf("source revision: %w", err)
 	}
@@ -385,6 +417,7 @@ func Generate(sourceDir string) ([]byte, error) {
 		"--",
 	}, sourceNames...)
 	status, err := exec.Command("git", args...).Output()
+
 	if err != nil {
 		return nil, fmt.Errorf("source status: %w", err)
 	}
@@ -394,16 +427,19 @@ func Generate(sourceDir string) ([]byte, error) {
 	}
 
 	data, err := generateFromSource(sourceDir, pinnedRevision)
+
 	if err != nil {
 		return nil, err
 	}
 
 	var artifact content.MonsterArtifact
+
 	if err := json.Unmarshal(data, &artifact); err != nil {
 		return nil, err
 	}
 
 	counts := map[content.MonsterStatus]int{}
+
 	for _, def := range artifact.Monsters {
 		counts[def.Status]++
 	}
@@ -428,12 +464,14 @@ func writeArtifact(sourceDir, outPath string, check bool, generate func(string) 
 	}
 
 	data, err := generate(sourceDir)
+
 	if err != nil {
 		return err
 	}
 
 	if check {
 		current, err := os.ReadFile(outPath)
+
 		if err != nil {
 			return err
 		}
@@ -446,19 +484,23 @@ func writeArtifact(sourceDir, outPath string, check bool, generate func(string) 
 	}
 
 	file, err := os.CreateTemp(filepath.Dir(outPath), ".monsters-*.tmp")
+
 	if err != nil {
 		return err
 	}
 
 	temp := file.Name()
 	defer os.Remove(temp)
+
 	if _, err := file.Write(data); err != nil {
 		file.Close()
+
 		return err
 	}
 
 	if err := file.Sync(); err != nil {
 		file.Close()
+
 		return err
 	}
 
@@ -475,11 +517,13 @@ func writeArtifact(sourceDir, outPath string, check bool, generate func(string) 
 
 func sortedKeys(values map[string]bool) []string {
 	result := make([]string, 0, len(values))
+
 	for id := range values {
 		result = append(result, id)
 	}
 
 	sort.Strings(result)
+
 	return result
 }
 
@@ -487,21 +531,25 @@ func sortedKeys(values map[string]bool) []string {
 // independently of the monster definitions for runtime validation.
 func GenerateManifest(sourceDir string) ([]byte, error) {
 	definitions, err := Generate(sourceDir)
+
 	if err != nil {
 		return nil, err
 	}
 
 	var artifact content.MonsterArtifact
+
 	if err := json.Unmarshal(definitions, &artifact); err != nil {
 		return nil, err
 	}
 
 	data, _, err := readSources(sourceDir)
+
 	if err != nil {
 		return nil, err
 	}
 
 	s, err := sourceSymbols(data)
+
 	if err != nil {
 		return nil, err
 	}
@@ -528,6 +576,7 @@ func GenerateManifest(sourceDir string) ([]byte, error) {
 			"tile_variation": sortedKeys(s.tileVariation),
 		},
 	}
+
 	for _, monster := range artifact.Monsters {
 		v.Identities = append(v.Identities, content.MonsterIdentity{
 			ID:     monster.ID,
@@ -540,6 +589,7 @@ func GenerateManifest(sourceDir string) ([]byte, error) {
 	}
 
 	encoded, err := json.MarshalIndent(v, "", "  ")
+
 	if err != nil {
 		return nil, err
 	}
@@ -554,16 +604,19 @@ func Write(sourceDir, outPath string, check bool) error {
 	}
 
 	definitions, err := Generate(sourceDir)
+
 	if err != nil {
 		return err
 	}
 
 	vocabulary, err := GenerateManifest(sourceDir)
+
 	if err != nil {
 		return err
 	}
 
 	manifestPath := filepath.Join(filepath.Dir(outPath), "monster-vocabulary.json")
+
 	if check {
 		for _, entry := range []struct {
 			path     string
@@ -579,6 +632,7 @@ func Write(sourceDir, outPath string, check bool) error {
 			},
 		} {
 			actual, err := os.ReadFile(entry.path)
+
 			if err != nil {
 				return err
 			}

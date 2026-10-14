@@ -24,8 +24,10 @@ func (l *Level) RouteStep(x, y, targetX, targetY int, goalActor akara.Entity) (i
 	}
 	queue := []point{start}
 	visited[index(start)] = true
+
 	for head := 0; head < len(queue); head++ {
 		current := queue[head]
+
 		for _, step := range [][2]int{
 			{-1, -1},
 			{0, -1},
@@ -40,6 +42,7 @@ func (l *Level) RouteStep(x, y, targetX, targetY int, goalActor akara.Entity) (i
 				x: current.x + step[0],
 				y: current.y + step[1],
 			}
+
 			if !l.Walkable(next.x, next.y) || visited[index(next)] {
 				continue
 			}
@@ -50,6 +53,7 @@ func (l *Level) RouteStep(x, y, targetX, targetY int, goalActor akara.Entity) (i
 
 			visited[index(next)] = true
 			parents[index(next)] = current
+
 			if next == goal {
 				for parents[index(next)] != start {
 					next = parents[index(next)]

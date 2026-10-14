@@ -18,11 +18,13 @@ type goldenFile struct {
 
 func TestSourceGoldenSightMaps(t *testing.T) {
 	raw, err := os.ReadFile("testdata/dcss-los-tag34.json")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	var fixture goldenFile
+
 	if err := json.Unmarshal(raw, &fixture); err != nil {
 		t.Fatal(err)
 	}
@@ -39,6 +41,7 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 			for _, mirrored := range []bool{false, true} {
 				origin := 0
 				size := 10
+
 				if mirrored {
 					origin = 9
 					size = 19
@@ -46,23 +49,29 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 
 				rows := make([]string, size)
 				want := make([]bool, size*size)
+
 				for y := 0; y < size; y++ {
 					row := make([]byte, size)
+
 					for x := 0; x < size; x++ {
 						sx, sy := x, y
+
 						if mirrored {
 							sx = x - origin
+
 							if sx < 0 {
 								sx = -sx
 							}
 
 							sy = y - origin
+
 							if sy < 0 {
 								sy = -sy
 							}
 						}
 
 						symbol := mapCase.Rows[sy][sx]
+
 						if symbol == '@' || symbol == '.' || symbol == 'w' {
 							row[x] = '.'
 						} else {
@@ -76,6 +85,7 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 				}
 
 				got, err := Compute(rows, origin, origin, 7)
+
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -157,6 +167,7 @@ func TestVisibilityInputValidation(t *testing.T) {
 			r:    9,
 		},
 	}
+
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			if _, err := Compute(tc.rows, tc.x, tc.y, tc.r); err == nil {
@@ -168,11 +179,13 @@ func TestVisibilityInputValidation(t *testing.T) {
 
 func TestOpenTerrainChebyshevRange(t *testing.T) {
 	rows := make([]string, 19)
+
 	for y := range rows {
 		rows[y] = "..................."
 	}
 
 	visible, err := Compute(rows, 9, 9, 7)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -184,6 +197,7 @@ func TestOpenTerrainChebyshevRange(t *testing.T) {
 		{-7, 7},
 	} {
 		x, y := 9+offset[0], 9+offset[1]
+
 		if !visible[y*19+x] {
 			t.Fatalf("(%d,%d) should be visible", x, y)
 		}
@@ -196,6 +210,7 @@ func TestOpenTerrainChebyshevRange(t *testing.T) {
 		{0, -8},
 	} {
 		x, y := 9+offset[0], 9+offset[1]
+
 		if visible[y*19+x] {
 			t.Fatalf("(%d,%d) should be hidden", x, y)
 		}

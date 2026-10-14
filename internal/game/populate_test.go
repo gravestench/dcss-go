@@ -11,6 +11,7 @@ import (
 func newPopulatedTestGame(t *testing.T, seed uint64) *Game {
 	t.Helper()
 	g, err := NewPopulatedScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -18,11 +19,13 @@ func newPopulatedTestGame(t *testing.T, seed uint64) *Game {
 	t.Cleanup(func() {
 		_ = g.Close()
 	})
+
 	return g
 }
 
 func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 	g := newPopulatedTestGame(t, 41)
+
 	if g.scenarioID != populationScenarioID {
 		t.Fatalf("scenario ID = %q", g.scenarioID)
 	}
@@ -36,18 +39,22 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 		x: 1,
 		y: 1,
 	}
+
 	for _, entity := range g.stores.AI.Entities() {
 		actor, found := g.stores.Actors.Get(entity)
+
 		if !found || !isOrdinaryAnimal(actor.KindID) {
 			t.Fatalf("unsupported populated actor %+v", actor)
 		}
 
 		position, found := g.stores.Positions.Get(entity)
+
 		if !found {
 			t.Fatalf("monster %d has no position", entity)
 		}
 
 		level := g.levels[position.LevelID]
+
 		if level == nil || level.terrain[position.Y][position.X] != '.' ||
 			!farEnoughFromEntry(position.X, position.Y, entry, spawnDistanceFromEntry) {
 			t.Fatalf("monster %d spawned at %+v", entity, position)
@@ -61,6 +68,7 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 	}
 
 	states := g.rng.States()
+
 	if states["population"] == 0 || states["placement"] == 0 {
 		t.Fatalf("population RNG streams were not drawn: %+v", states)
 	}
@@ -69,16 +77,19 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 func TestPopulationSaveAndTurnContinuation(t *testing.T) {
 	g := newPopulatedTestGame(t, 41)
 	sameSeed := newPopulatedTestGame(t, 41)
+
 	if !reflect.DeepEqual(g.Snapshot(), sameSeed.Snapshot()) {
 		t.Fatal("same seed produced different population")
 	}
 
 	restored, err := Restore(g.Snapshot(), testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer restored.Close()
+
 	if !reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
 		t.Fatal("population or RNG changed across restore")
 	}
@@ -97,8 +108,10 @@ func TestPopulationSaveAndTurnContinuation(t *testing.T) {
 func TestRestoreRejectsOverfullPopulationLevel(t *testing.T) {
 	g := newPopulatedTestGame(t, 41)
 	snapshot := g.Snapshot()
+
 	for index := range snapshot.Entities {
 		record := &snapshot.Entities[index]
+
 		if record.AI == nil || record.Position == nil || record.Position.LevelID != 2 {
 			continue
 		}
@@ -120,8 +133,10 @@ func TestRestoreRejectsOverfullPopulationLevel(t *testing.T) {
 func TestRestoreRejectsExperienceWithoutPopulationKill(t *testing.T) {
 	g := newPopulatedTestGame(t, 41)
 	snapshot := g.Snapshot()
+
 	for index := range snapshot.Entities {
 		record := &snapshot.Entities[index]
+
 		if record.Player == nil {
 			continue
 		}

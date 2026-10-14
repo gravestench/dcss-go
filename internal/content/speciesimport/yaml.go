@@ -123,13 +123,16 @@ func skillID(name string) string {
 func duplicateKeys(node *yaml.Node, path string) error {
 	if node.Kind == yaml.MappingNode {
 		seen := map[string]bool{}
+
 		for i := 0; i < len(node.Content); i += 2 {
 			key := node.Content[i].Value
+
 			if seen[key] {
 				return fmt.Errorf("%s: duplicate key %s", path, key)
 			}
 
 			seen[key] = true
+
 			if err := duplicateKeys(node.Content[i+1], path+"."+key); err != nil {
 				return err
 			}
@@ -176,14 +179,17 @@ func validateSourceShape(path string, root *yaml.Node) error {
 
 	fields := root.Content[0]
 	seen := make(map[string]bool, len(fields.Content)/2)
+
 	for i := 0; i < len(fields.Content); i += 2 {
 		key, value := fields.Content[i], fields.Content[i+1]
+
 		if err := scalar(path, "field name", key, "!!str"); err != nil {
 			return err
 		}
 
 		name := key.Value
 		seen[name] = true
+
 		switch name {
 		case "TAG_MAJOR_VERSION", "difficulty_priority", "str", "int", "dex", "levelup_stat_frequency":
 			if err := scalar(path, name, value, "!!int"); err != nil {
@@ -213,6 +219,7 @@ func validateSourceShape(path string, root *yaml.Node) error {
 
 			for j := 0; j < len(value.Content); j += 2 {
 				aptName, aptValue := value.Content[j], value.Content[j+1]
+
 				if err := scalar(path, "aptitudes key", aptName, "!!str"); err != nil {
 					return err
 				}
@@ -228,6 +235,7 @@ func validateSourceShape(path string, root *yaml.Node) error {
 
 			for j := 0; j < len(value.Content); j += 2 {
 				level, group := value.Content[j], value.Content[j+1]
+
 				if err := scalar(path, "mutations level", level, "!!int"); err != nil {
 					return err
 				}
@@ -238,6 +246,7 @@ func validateSourceShape(path string, root *yaml.Node) error {
 
 				for k := 0; k < len(group.Content); k += 2 {
 					mutation, amount := group.Content[k], group.Content[k+1]
+
 					if err := scalar(path, "mutations key", mutation, "!!str"); err != nil {
 						return err
 					}
@@ -259,6 +268,7 @@ func validateSourceShape(path string, root *yaml.Node) error {
 
 				for j := 0; j < len(entry.Content); j += 2 {
 					part, text := entry.Content[j], entry.Content[j+1]
+
 					if part.Value != "long" && part.Value != "short" {
 						return fmt.Errorf("%s: fake_mutations has unknown field %s", path, part.Value)
 					}
@@ -294,11 +304,13 @@ func validateSourceShape(path string, root *yaml.Node) error {
 
 func yamlInt(path, field string, node yaml.Node, min, max int) (int, error) {
 	var value any
+
 	if err := node.Decode(&value); err != nil {
 		return 0, fmt.Errorf("%s: %s: %w", path, field, err)
 	}
 
 	n, ok := value.(int)
+
 	if !ok || n < min || n > max {
 		return 0, fmt.Errorf("%s: %s must be integer in %d..%d", path, field, min, max)
 	}
@@ -308,6 +320,7 @@ func yamlInt(path, field string, node yaml.Node, min, max int) (int, error) {
 
 func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 	var tree yaml.Node
+
 	if err := yaml.Unmarshal(data, &tree); err != nil {
 		return content.SpeciesDef{}, 0, fmt.Errorf("%s: %w", path, err)
 	}
@@ -323,11 +336,13 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 	decoder := yaml.NewDecoder(bytes.NewReader(data))
 	decoder.KnownFields(true)
 	var source sourceSpecies
+
 	if err := decoder.Decode(&source); err != nil {
 		return content.SpeciesDef{}, 0, fmt.Errorf("%s: %w", path, err)
 	}
 
 	var trailing yaml.Node
+
 	if err := decoder.Decode(&trailing); err != io.EOF {
 		if err != nil {
 			return content.SpeciesDef{}, 0, fmt.Errorf("%s: trailing document: %w", path, err)
@@ -373,14 +388,17 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 	}
 
 	var difficulty any
+
 	if err := source.Difficulty.Decode(&difficulty); err != nil {
 		return content.SpeciesDef{}, 0, fmt.Errorf("%s: difficulty: %w", path, err)
 	}
 
 	selectable := true
 	difficultyName, ok := difficulty.(string)
+
 	if !ok {
 		boolean, isBoolean := difficulty.(bool)
+
 		if !isBoolean || boolean {
 			return content.SpeciesDef{}, 0, fmt.Errorf("%s: difficulty must be Simple, Intermediate, Advanced, or False", path)
 		}
@@ -428,15 +446,18 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 	}
 
 	aptitudes := make(map[string]content.SpeciesAptitude, len(ordinarySkills))
+
 	for _, name := range ordinarySkills {
 		aptitudes[skillID(name)] = content.SpeciesAptitude{Allowed: true}
 	}
 
 	var xp, hp, mp, mr int
+
 	for name, node := range source.Aptitudes {
 		switch name {
 		case "xp", "hp", "mp_mod", "mr":
 			min, max := -10, 10
+
 			if name == "mp_mod" {
 				min, max = -5, 20
 			}
@@ -446,6 +467,7 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 			}
 
 			value, err := yamlInt(path, name, node, min, max)
+
 			if err != nil {
 				return content.SpeciesDef{}, 0, err
 			}
@@ -462,11 +484,13 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 			}
 		default:
 			id := skillID(name)
+
 			if _, valid := aptitudes[id]; !valid {
 				return content.SpeciesDef{}, 0, fmt.Errorf("%s: unknown aptitude %s", path, name)
 			}
 
 			var value any
+
 			if err := node.Decode(&value); err != nil {
 				return content.SpeciesDef{}, 0, fmt.Errorf("%s: %s: %w", path, name, err)
 			}
@@ -477,6 +501,7 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 			}
 
 			n, ok := value.(int)
+
 			if !ok || n < -10 || n > 10 {
 				return content.SpeciesDef{}, 0, fmt.Errorf("%s: %s aptitude must be False or integer in -10..10", path, name)
 			}
@@ -500,6 +525,7 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 	}
 
 	flags := append([]string(nil), source.SpeciesFlags...)
+
 	for _, flag := range flags {
 		if !allowedFlags[flag] {
 			return content.SpeciesDef{}, 0, fmt.Errorf("%s: invalid species_flags %s", path, flag)
@@ -508,6 +534,7 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 
 	sort.Strings(flags)
 	mutations := make([]content.SpeciesMutation, 0)
+
 	for level, group := range source.Mutations {
 		if level < 1 || level > 27 {
 			return content.SpeciesDef{}, 0, fmt.Errorf("%s: mutations level %d out of range", path, level)
@@ -534,6 +561,7 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 		return mutations[i].ID < mutations[j].ID
 	})
 	weapons := append([]string(nil), source.RecommendedWeapons...)
+
 	if selectable {
 		if len(weapons) == 0 {
 			weapons = []string{
@@ -556,6 +584,7 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 	}
 
 	habitat := "HT_LAND"
+
 	if source.CanSwim {
 		habitat = "HT_WATER"
 	}
@@ -592,5 +621,6 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 		WalkingVerb:          source.WalkingVerb,
 		AltarAction:          source.AltarAction,
 	}
+
 	return result, source.TagMajorVersion, nil
 }

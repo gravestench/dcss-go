@@ -11,6 +11,7 @@ const spawnDistanceFromEntry = 5
 
 func (g *Game) spawnFixtureAnimals() error {
 	factory := newOrdinaryMonsterFactory(g)
+
 	if _, err := factory.Spawn("MONS_RAT", 1, 4, 1); err != nil {
 		return err
 	}
@@ -32,6 +33,7 @@ func (g *Game) spawnFixtureAnimals() error {
 func (g *Game) populateDungeon() error {
 	factory := newOrdinaryMonsterFactory(g)
 	levelIDs := make([]int, 0, len(g.levels))
+
 	for id := range g.levels {
 		levelIDs = append(levelIDs, id)
 	}
@@ -42,37 +44,44 @@ func (g *Game) populateDungeon() error {
 		x: 1,
 		y: 1,
 	}
+
 	for _, levelID := range levelIDs {
 		level := g.levels[levelID]
 		pool := g.catalog.DungeonMonsterPool(levelID, func(id string) bool {
 			return !isOrdinaryAnimal(id)
 		})
+
 		if pool.TotalWeight() == 0 {
 			return fmt.Errorf("Dungeon:%d has no supported population", levelID)
 		}
 
 		for slot := 0; slot < populationMonstersPerLevel; slot++ {
 			cells := level.spawnCellsAwayFrom(entry, spawnDistanceFromEntry)
+
 			if len(cells) == 0 {
 				return fmt.Errorf("Dungeon:%d has no free monster spawn cell", levelID)
 			}
 
 			roll, err := g.rng.Intn("population", pool.TotalWeight())
+
 			if err != nil {
 				return err
 			}
 
 			monsterID, err := pool.Pick(roll)
+
 			if err != nil {
 				return err
 			}
 
 			cellIndex, err := g.rng.Intn("placement", len(cells))
+
 			if err != nil {
 				return err
 			}
 
 			cell := cells[cellIndex]
+
 			if _, err := factory.Spawn(monsterID, levelID, cell.x, cell.y); err != nil {
 				return err
 			}
@@ -84,6 +93,7 @@ func (g *Game) populateDungeon() error {
 
 func (l *Level) spawnCellsAwayFrom(entry point, minimumDistance int) []point {
 	var cells []point
+
 	for y, row := range l.terrain {
 		for x := range row {
 			if row[x] != '.' || !farEnoughFromEntry(x, y, entry, minimumDistance) {
@@ -106,11 +116,13 @@ func (l *Level) spawnCellsAwayFrom(entry point, minimumDistance int) []point {
 
 func farEnoughFromEntry(x, y int, entry point, minimumDistance int) bool {
 	dx := x - entry.x
+
 	if dx < 0 {
 		dx = -dx
 	}
 
 	dy := y - entry.y
+
 	if dy < 0 {
 		dy = -dy
 	}

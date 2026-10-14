@@ -39,16 +39,19 @@ func scenarioAnimalIDs(scenarioID string) ([]string, error) {
 
 func isOrdinaryAnimal(id string) bool {
 	_, supported := character.OrdinaryAnimalProfile(id)
+
 	return supported
 }
 
 func ordinaryAnimal(catalog content.Catalog, id string) (content.MonsterDef, error) {
 	profile, supported := character.OrdinaryAnimalProfile(id)
+
 	if !supported {
 		return content.MonsterDef{}, fmt.Errorf("unsupported ordinary animal %s", id)
 	}
 
 	definition, err := catalog.Monster(id)
+
 	if err != nil {
 		return content.MonsterDef{}, err
 	}
@@ -87,11 +90,13 @@ func newOrdinaryMonsterFactory(g *Game) ordinaryMonsterFactory {
 
 func (f ordinaryMonsterFactory) Spawn(id string, levelID, x, y int) (_ akara.Entity, err error) {
 	definition, err := ordinaryAnimal(f.catalog, id)
+
 	if err != nil {
 		return 0, err
 	}
 
 	level := f.levels[levelID]
+
 	if level == nil || !level.Walkable(x, y) {
 		return 0, fmt.Errorf("cannot place %s on level %d at (%d,%d)", id, levelID, x, y)
 	}
@@ -101,6 +106,7 @@ func (f ordinaryMonsterFactory) Spawn(id string, levelID, x, y int) (_ akara.Ent
 	}
 
 	hp, err := monster.RollHP(f.rng, definition.AverageHP10x)
+
 	if err != nil {
 		return 0, err
 	}
@@ -110,6 +116,7 @@ func (f ordinaryMonsterFactory) Spawn(id string, levelID, x, y int) (_ akara.Ent
 	}
 
 	entity, err := f.world.CreateEntity()
+
 	if err != nil {
 		return 0, err
 	}
@@ -119,6 +126,7 @@ func (f ordinaryMonsterFactory) Spawn(id string, levelID, x, y int) (_ akara.Ent
 			f.world.DestroyEntity(entity)
 		}
 	}()
+
 	if _, err = f.stores.Actors.Set(entity, ecs.Actor{
 		KindID: id,
 		Speed:  definition.Speed,

@@ -11,6 +11,7 @@ import (
 
 func TestSaveContinuationMatches(t *testing.T) {
 	g := newStepGame(t)
+
 	if err := g.levels[1].MoveActor(g.player, 4, 2); err != nil {
 		t.Fatal(err)
 	}
@@ -24,6 +25,7 @@ func TestSaveContinuationMatches(t *testing.T) {
 	}
 
 	restored, err := Restore(g.Snapshot(), testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,9 +39,11 @@ func TestSaveContinuationMatches(t *testing.T) {
 		},
 		{Kind: CommandWait},
 	}
+
 	for _, command := range commands {
 		left, leftErr := g.Step(command)
 		right, rightErr := restored.Step(command)
+
 		if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) {
 			t.Fatalf("continuation differs: %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 		}
@@ -53,6 +57,7 @@ func TestSaveContinuationMatches(t *testing.T) {
 func TestRejectUnknownCatalogID(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
+
 	for i := range snapshot.Entities {
 		if snapshot.Entities[i].AI != nil {
 			snapshot.Entities[i].Actor.KindID = "MONS_NOT_IN_CATALOG"
@@ -64,6 +69,7 @@ func TestRejectUnknownCatalogID(t *testing.T) {
 	}
 
 	snapshot = g.Snapshot()
+
 	for i := range snapshot.Entities {
 		if snapshot.Entities[i].Item != nil {
 			snapshot.Entities[i].Item.KindID = "POT_NOT_IN_CATALOG"
@@ -80,6 +86,7 @@ func TestKnownIncompleteItemRestore(t *testing.T) {
 	before := g.Snapshot()
 	invalid := g.Snapshot()
 	changed := false
+
 	for i := range invalid.Entities {
 		if invalid.Entities[i].Item != nil {
 			invalid.Entities[i].Item.KindID = "POT_GAIN_STRENGTH"
@@ -105,6 +112,7 @@ func TestKnownIncompleteItemRestore(t *testing.T) {
 func TestRejectDoubleLocatedItem(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
+
 	for i := range snapshot.Entities {
 		if snapshot.Entities[i].Item != nil {
 			snapshot.Entities[i].CarriedBy = &ecs.CarriedBy{Holder: g.player}
@@ -119,6 +127,7 @@ func TestRejectDoubleLocatedItem(t *testing.T) {
 func TestRejectDuplicateOccupancy(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
+
 	for i := range snapshot.Entities {
 		if snapshot.Entities[i].AI != nil {
 			*snapshot.Entities[i].Position = ecs.Position{
@@ -139,6 +148,7 @@ func TestFailedLoadLeavesLiveGame(t *testing.T) {
 	before := g.Snapshot()
 	invalid := g.Snapshot()
 	invalid.Version = 2
+
 	if _, err := Restore(invalid, testCatalog(t)); err == nil {
 		t.Fatal("invalid save accepted")
 	}
@@ -151,6 +161,7 @@ func TestFailedLoadLeavesLiveGame(t *testing.T) {
 func TestScenarioAttributesAndView(t *testing.T) {
 	g := newStepGame(t)
 	attributes, found := g.stores.Attributes.Get(g.player)
+
 	if !found || *attributes != (ecs.Attributes{
 		Strength:     16,
 		Intelligence: 8,
@@ -160,6 +171,7 @@ func TestScenarioAttributesAndView(t *testing.T) {
 	}
 
 	view := g.View()
+
 	if view.CharacterName != "Human Fighter" || view.Attributes != *attributes || view.PlayerHP != 18 {
 		t.Fatalf("view = %+v", view)
 	}
@@ -244,6 +256,7 @@ func TestRestoreRejectsCorruptAttributesWithoutChangingLiveGame(t *testing.T) {
 			before := g.Snapshot()
 			invalid := g.Snapshot()
 			tc.mutate(&invalid)
+
 			if restored, err := Restore(invalid, testCatalog(t)); err == nil {
 				restored.Close()
 				t.Fatal("corrupt attributes accepted")
@@ -289,6 +302,7 @@ func TestRestoreRejectsCorruptComponents(t *testing.T) {
 			g := newStepGame(t)
 			snapshot := g.Snapshot()
 			test.mutate(&snapshot)
+
 			if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
 				restored.Close()
 				t.Fatal("corrupt components accepted")
@@ -301,6 +315,7 @@ func TestRestoreRejectsClockMismatch(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
 	snapshot.CurrentAut = 100
+
 	if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
 		restored.Close()
 		t.Fatal("clock mismatch accepted")
@@ -309,12 +324,14 @@ func TestRestoreRejectsClockMismatch(t *testing.T) {
 
 func TestRestoreAcceptsDeadPlayerClock(t *testing.T) {
 	g := newStepGame(t)
+
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
 
 	health, _ := g.stores.Health.Get(g.player)
 	health.Current = 1
+
 	for turn := 0; turn < 10 && !g.playerDead(); turn++ {
 		if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
 			t.Fatal(err)
@@ -326,6 +343,7 @@ func TestRestoreAcceptsDeadPlayerClock(t *testing.T) {
 	}
 
 	restored, err := Restore(g.Snapshot(), testCatalog(t))
+
 	if err != nil {
 		t.Fatalf("valid dead-player snapshot rejected: %v", err)
 	}

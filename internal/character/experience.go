@@ -42,6 +42,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 
 func OrdinaryAnimalProfile(id string) (OrdinaryBiteProfile, bool) {
 	profile, found := ordinaryBiteProfiles[id]
+
 	return profile, found
 }
 
@@ -50,6 +51,7 @@ func OrdinaryAnimalProfile(id string) (OrdinaryBiteProfile, bool) {
 // zero because these animals have no spells, items, fast regeneration, or big damage.
 func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error) {
 	profile, found := OrdinaryAnimalProfile(animal.ID)
+
 	if !found {
 		return 0, fmt.Errorf("unsupported ordinary animal %s", animal.ID)
 	}

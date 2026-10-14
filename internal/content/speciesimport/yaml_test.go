@@ -25,6 +25,7 @@ recommended_jobs:
 
 func TestParseYAMLHumanDefaults(t *testing.T) {
 	s, tag, err := parseYAML("crawl-ref/source/dat/species/human.yaml", []byte(humanYAML))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,6 +53,7 @@ func TestParseYAMLDeepElfSpellcasting(t *testing.T) {
 	input = strings.ReplaceAll(input, "name: Human", "name: Deep Elf")
 	input += "short_name: DE\n"
 	s, _, err := parseYAML("crawl-ref/source/dat/species/deep-elf.yaml", []byte(input))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -68,6 +70,7 @@ func TestParseYAMLFelidUnusableAndMutations(t *testing.T) {
 	input = strings.Replace(input, "  spellcasting: 3\n", "  spellcasting: 3\n  short_blades: False\n", 1)
 	input += "mutations:\n  1:\n    MUT_CLAWS: 1\n  6:\n    MUT_CLAWS: 1\n"
 	s, _, err := parseYAML("crawl-ref/source/dat/species/felid.yaml", []byte(input))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -101,6 +104,7 @@ walking_verb: slither
 altar_action: kneel at
 `
 	s, tag, err := parseYAML("crawl-ref/source/dat/species/tagged.yaml", []byte(input))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -172,9 +176,11 @@ func TestParseYAMLRejectsMalformedSource(t *testing.T) {
 			field: "recommended_jobs",
 		},
 	}
+
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			_, _, err := parseYAML("bad.yaml", []byte(tc.input))
+
 			if err == nil || !strings.Contains(err.Error(), "bad.yaml") || !strings.Contains(err.Error(), tc.field) {
 				t.Fatalf("want file/field error containing %q, got %v", tc.field, err)
 			}
@@ -207,9 +213,11 @@ func TestParseYAMLRejectsCoercionAndTrailingDocument(t *testing.T) {
 			field: "document",
 		},
 	}
+
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			_, _, err := parseYAML("strict.yaml", []byte(tc.input))
+
 			if err == nil || !strings.Contains(err.Error(), "strict.yaml") || !strings.Contains(err.Error(), tc.field) {
 				t.Fatalf("want contextual rejection of %s, got %v", tc.field, err)
 			}

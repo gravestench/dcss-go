@@ -32,6 +32,7 @@ func newScenario(
 	}
 
 	playerDef := catalog.Player()
+
 	if err := character.ValidateWeaponChoice(catalog, playerDef.SpeciesID, playerDef.JobID, weaponID); err != nil {
 		return nil, err
 	}
@@ -55,6 +56,7 @@ func newScenario(
 		"#################",
 	}
 	first, err := NewLevel(1, firstRows, stores.Positions)
+
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +73,7 @@ func newScenario(
 		"#################",
 	}
 	second, err := NewLevel(2, secondRows, stores.Positions)
+
 	if err != nil {
 		return nil, err
 	}
@@ -99,11 +102,13 @@ func newScenario(
 		1: first,
 		2: second,
 	}
+
 	if err := validateStairLinks(levels); err != nil {
 		return nil, err
 	}
 
 	scenarioID := ordinaryAnimalScenarioID
+
 	if usePopulation {
 		scenarioID = populationScenarioID
 	}
@@ -120,6 +125,7 @@ func newScenario(
 	}
 
 	g.player, err = world.CreateEntity()
+
 	if err != nil {
 		return nil, err
 	}
@@ -153,6 +159,7 @@ func newScenario(
 	}
 
 	profile, err := character.BuildStartProfile(catalog, playerDef.SpeciesID, playerDef.JobID, weaponID)
+
 	if err != nil {
 		return nil, err
 	}
@@ -166,6 +173,7 @@ func newScenario(
 	}
 
 	startSkills := ecs.Skills{Entries: append([]character.Skill(nil), profile.Skills...)}
+
 	if _, err = stores.Skills.Set(g.player, startSkills); err != nil {
 		return nil, err
 	}
@@ -211,6 +219,7 @@ func newScenario(
 	}
 
 	potion, err := world.CreateEntity()
+
 	if err != nil {
 		return nil, err
 	}
@@ -235,6 +244,7 @@ func newScenario(
 	}
 
 	healPotion, err := world.CreateEntity()
+
 	if err != nil {
 		return nil, err
 	}
@@ -274,6 +284,7 @@ func registerSystems(g *Game) error {
 		positions: stores.Positions,
 		rng:       g.rng,
 	}
+
 	if _, err := world.AddSystem(newMonsterDecisionSystem(g)); err != nil {
 		return err
 	}
@@ -329,11 +340,13 @@ func registerSystems(g *Game) error {
 	}
 
 	advancement, err := newAdvancementSystem(g)
+
 	if err != nil {
 		return err
 	}
 
 	g.advancement = advancement
+
 	if _, err := world.AddSystem(advancement); err != nil {
 		return err
 	}

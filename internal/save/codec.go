@@ -14,6 +14,7 @@ func Write(path string, snapshot Snapshot) (err error) {
 	}
 
 	file, err := os.CreateTemp(filepath.Dir(path), ".dcrawl-save-*")
+
 	if err != nil {
 		return err
 	}
@@ -21,13 +22,16 @@ func Write(path string, snapshot Snapshot) (err error) {
 	defer os.Remove(file.Name())
 	encoder := json.NewEncoder(file)
 	encoder.SetIndent("", "  ")
+
 	if err = encoder.Encode(snapshot); err != nil {
 		file.Close()
+
 		return err
 	}
 
 	if err = file.Sync(); err != nil {
 		file.Close()
+
 		return err
 	}
 
@@ -44,6 +48,7 @@ func Write(path string, snapshot Snapshot) (err error) {
 
 func Read(path string) (Snapshot, error) {
 	file, err := os.Open(path)
+
 	if err != nil {
 		return Snapshot{}, err
 	}
@@ -52,6 +57,7 @@ func Read(path string) (Snapshot, error) {
 	decoder := json.NewDecoder(file)
 	decoder.DisallowUnknownFields()
 	var snapshot Snapshot
+
 	if err := decoder.Decode(&snapshot); err != nil {
 		return Snapshot{}, fmt.Errorf("decode save: %w", err)
 	}
@@ -61,6 +67,7 @@ func Read(path string) (Snapshot, error) {
 	}
 
 	var extra any
+
 	if err := decoder.Decode(&extra); err != io.EOF {
 		return Snapshot{}, fmt.Errorf("trailing save data")
 	}

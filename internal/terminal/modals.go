@@ -41,8 +41,10 @@ func DrawInventory(canvas *Canvas, view game.View) {
 		},
 	}
 	y := 2
+
 	for _, category := range order {
 		var entries []int
+
 		for i, item := range view.Inventory {
 			if item.Class == category.class {
 				entries = append(entries, i)
@@ -55,9 +57,11 @@ func DrawInventory(canvas *Canvas, view game.View) {
 
 		canvas.Write(0, y, category.title, LightBlue, Black)
 		y++
+
 		for _, i := range entries {
 			item := view.Inventory[i]
 			label := item.Name
+
 			if item.Quantity > 1 {
 				label = fmt.Sprintf("%d %s", item.Quantity, item.Name)
 			}
@@ -84,12 +88,14 @@ func DrawInventory(canvas *Canvas, view game.View) {
 func DrawQuaff(canvas *Canvas, view game.View) {
 	canvas.Write(0, 0, "Quaff which potion?", White, Black)
 	y := 2
+
 	for index, item := range view.Inventory {
 		if item.Class != "OBJ_POTIONS" {
 			continue
 		}
 
 		label := item.Name
+
 		if item.Quantity > 1 {
 			label = fmt.Sprintf("%d %s", item.Quantity, label)
 		}
@@ -112,30 +118,36 @@ func skillName(id string) string {
 		"SK_SHORT_BLADES":   "Short Blades",
 		"SK_LONG_BLADES":    "Long Blades",
 	}
+
 	if name := special[id]; name != "" {
 		return name
 	}
 
 	name := strings.TrimPrefix(id, "SK_")
+
 	return strings.Title(strings.ToLower(strings.ReplaceAll(name, "_", " ")))
 }
 
 // DrawSkills uses the source's two columns and labels for unavailable controls.
 func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
 	canvas.Write(0, 0, "Skills", White, Black)
+
 	for _, x := range []int{1, 40} {
 		writeClipped(canvas, x, 2, 38, "Skill                 Level Apt Train", LightBlue)
 	}
 
 	species, _ := catalog.Species("SP_HUMAN")
 	levels := make(map[string]int, len(view.Skills))
+
 	for _, skill := range view.Skills {
 		levels[skill.ID] = skill.Level
 	}
 
 	letter := 0
+
 	for col, skills := range catalog.Presentation().SkillColumns {
 		x := 1 + col*39
+
 		for row, id := range skills {
 			if id == "" {
 				continue
@@ -143,6 +155,7 @@ func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
 
 			apt := species.Aptitudes[id]
 			color := DarkGrey
+
 			if levels[id] > 0 {
 				color = LightGrey
 			}
@@ -179,8 +192,10 @@ func DrawHelp(canvas *Canvas) {
 		"",
 		"Esc - Return",
 	}
+
 	for y, line := range lines {
 		color := LightGrey
+
 		if y == 0 {
 			color = Yellow
 		}

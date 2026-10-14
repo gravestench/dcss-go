@@ -36,6 +36,7 @@ type SpellDef struct {
 func (s SpellDef) clone() SpellDef {
 	s.Schools = append([]string(nil), s.Schools...)
 	s.Flags = append([]string(nil), s.Flags...)
+
 	return s
 }
 
@@ -91,6 +92,7 @@ func (a SpellArtifact) Validate() error {
 	}
 
 	seen := map[string]bool{}
+
 	for i, spell := range a.Spells {
 		if spell.NumericID != i || seen[spell.ID] {
 			return fmt.Errorf("duplicate or out-of-order spell %s", spell.ID)

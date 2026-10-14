@@ -24,6 +24,7 @@ func TestActiveEnumIDsTag34AndAliases(t *testing.T) {
     SP_UNKNOWN = 100,
 };`
 	ids, err := sourceparse.ActiveEnumIDs("species-type.h", []byte(input), "SP_")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,6 +53,7 @@ func TestActiveEnumIDsRejectsUnsupportedConditional(t *testing.T) {
 		[]byte("enum species_type {\n#if FEATURE_X\n SP_HUMAN,\n#endif\n};\n"),
 		"SP_",
 	)
+
 	if err == nil || !strings.Contains(err.Error(), "species-type.h") || !strings.Contains(err.Error(), "FEATURE_X") {
 		t.Fatalf("unsupported condition accepted: %v", err)
 	}

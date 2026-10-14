@@ -8,21 +8,25 @@ import (
 
 func TestCommittedSpellCatalogCoverageAndCopies(t *testing.T) {
 	catalog, err := LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	ids := catalog.SpellIDs()
+
 	if len(ids) != 403 || ids[0] != "SPELL_NO_SPELL" || ids[1] != "SPELL_TELEPORT_SELF" {
 		t.Fatalf("spell IDs count/order %d, %v", len(ids), ids[:min(2, len(ids))])
 	}
 
 	ids[0] = "corrupted"
+
 	if catalog.SpellIDs()[0] != "SPELL_NO_SPELL" {
 		t.Fatal("spell IDs alias catalog")
 	}
 
 	magic, err := catalog.Spell("SPELL_MAGIC_DART")
+
 	if err != nil || magic.NumericID != 3 || magic.Name != "Magic Dart" || magic.Level != 1 ||
 		magic.PowerCap != 25 || magic.MinRangeExpr != "LOS_RADIUS" || magic.TileID != "TILEG_MAGIC_DART" {
 		t.Fatalf("magic dart %+v, %v", magic, err)
@@ -30,6 +34,7 @@ func TestCommittedSpellCatalogCoverageAndCopies(t *testing.T) {
 
 	magic.Schools[0] = "changed"
 	again, _ := catalog.Spell("SPELL_MAGIC_DART")
+
 	if again.Schools[0] != "conjuration" {
 		t.Fatal("spell schools alias catalog")
 	}
@@ -40,6 +45,7 @@ func TestCommittedSpellCatalogCoverageAndCopies(t *testing.T) {
 		"SPELL_SONIC_WAVE":    SpellDefined,
 	} {
 		got, err := catalog.SpellStatus(id)
+
 		if err != nil || got != status {
 			t.Fatalf("%s status %s, %v", id, got, err)
 		}
@@ -60,6 +66,7 @@ func TestCommittedSpellCatalogCoverageAndCopies(t *testing.T) {
 
 func TestCommittedSpellArtifactRejectsMissingOrCorruptRows(t *testing.T) {
 	var artifact SpellArtifact
+
 	if err := json.Unmarshal(defaultSpellJSON, &artifact); err != nil {
 		t.Fatal(err)
 	}
@@ -69,6 +76,7 @@ func TestCommittedSpellArtifactRejectsMissingOrCorruptRows(t *testing.T) {
 	}
 
 	artifact.Spells[3].Schools = []string{""}
+
 	if err := artifact.Validate(); err == nil {
 		t.Fatal("accepted empty school")
 	}

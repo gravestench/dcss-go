@@ -52,6 +52,7 @@ func (artifact DungeonPopulationArtifact) Validate() error {
 	}
 
 	previousLine := 0
+
 	for _, entry := range artifact.Rows {
 		if err := entry.validate(); err != nil {
 			return err
@@ -76,6 +77,7 @@ func (entry DungeonPopEntry) WeightAtDepth(depth int) int {
 
 	rarity := entry.Rarity * 2520
 	length := entry.MaxDepth - entry.MinDepth
+
 	switch entry.Curve {
 	case "FLAT":
 		return rarity
@@ -89,6 +91,7 @@ func (entry DungeonPopEntry) WeightAtDepth(depth int) int {
 		return rarity * (length - absInt(entry.MinDepth+entry.MaxDepth-2*depth)) / length
 	case "PEAK":
 		length += 2
+
 		return rarity * (length - absInt(entry.MinDepth+entry.MaxDepth-2*depth)) / length
 	case "RISE":
 		return rarity * (depth - entry.MinDepth + 1) / (length + 1)

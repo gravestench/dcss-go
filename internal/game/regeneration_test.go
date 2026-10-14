@@ -13,6 +13,7 @@ import (
 func moveRatToOtherFloor(t *testing.T, g *Game) {
 	t.Helper()
 	rat := ratID(t, g)
+
 	if err := g.levels[1].RemoveActor(rat); err != nil {
 		t.Fatal(err)
 	}
@@ -28,6 +29,7 @@ func TestHumanFighterRecoversThroughPlayerWaitsOnly(t *testing.T) {
 	health, _ := g.stores.Health.Get(g.player)
 	magic, _ := g.stores.Magic.Get(g.player)
 	health.Current, magic.Current = 7, 0
+
 	for range 17 {
 		if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
 			t.Fatal(err)
@@ -35,6 +37,7 @@ func TestHumanFighterRecoversThroughPlayerWaitsOnly(t *testing.T) {
 	}
 
 	progress, ok := g.stores.Regeneration.Get(g.player)
+
 	if !ok || health.Current != 8 || magic.Current != 1 || progress.HPProgress != 2 || progress.MPProgress != 5 {
 		t.Fatalf("17 waits: HP %+v MP %+v regen %+v found %v", health, magic, progress, ok)
 	}
@@ -60,11 +63,13 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 		HPProgress: 94,
 		MPProgress: 94,
 	}, 9)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	g.turn.Actor = g.player
+
 	if err := (&regenerationSystem{
 		player:       g.player,
 		health:       g.stores.Health,
@@ -89,6 +94,7 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 	health, _ := g.stores.Health.Get(g.player)
 	magic, _ := g.stores.Magic.Get(g.player)
 	health.Current, magic.Current = 7, 0
+
 	for range 3 {
 		if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
 			t.Fatal(err)
@@ -97,6 +103,7 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 
 	snapshot := g.Snapshot()
 	loaded, err := Restore(snapshot, testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -104,23 +111,27 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 	defer loaded.Close()
 	left, leftErr := g.Step(Command{Kind: CommandWait})
 	right, rightErr := loaded.Step(Command{Kind: CommandWait})
+
 	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
 		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("regen continuation %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 	}
 
 	legacy := newStepGame(t).Snapshot()
+
 	for i := range legacy.Entities {
 		legacy.Entities[i].Regeneration = nil
 	}
 
 	old, err := Restore(legacy, testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer old.Close()
 	progress, ok := old.stores.Regeneration.Get(old.player)
+
 	if !ok || *progress != (ecs.Regeneration{}) {
 		t.Fatalf("old save regen %+v found %v", progress, ok)
 	}
@@ -128,6 +139,7 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 
 func TestRegenerationRestoreRejectsInvalidCountersAndOwnership(t *testing.T) {
 	g := newStepGame(t)
+
 	for _, tc := range []struct {
 		name   string
 		mutate func(*save.Snapshot)
@@ -177,6 +189,7 @@ func TestRegenerationRestoreRejectsInvalidCountersAndOwnership(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			bad := g.Snapshot()
 			tc.mutate(&bad)
+
 			if loaded, err := Restore(bad, testCatalog(t)); err == nil {
 				loaded.Close()
 				t.Fatal("invalid regeneration save accepted")

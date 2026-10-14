@@ -19,6 +19,7 @@ const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 
 func sourceHashes(sourceDir string) ([]content.JobSourceFile, error) {
 	files := make([]content.JobSourceFile, 0, 14)
+
 	for _, name := range []string{
 		"tag-version.h",
 		"job-data.h",
@@ -36,6 +37,7 @@ func sourceHashes(sourceDir string) ([]content.JobSourceFile, error) {
 		"jobs.cc",
 	} {
 		data, _, err := readKindSource(sourceDir, name)
+
 		if err != nil {
 			return nil, err
 		}
@@ -50,6 +52,7 @@ func sourceHashes(sourceDir string) ([]content.JobSourceFile, error) {
 	sort.Slice(files, func(i, j int) bool {
 		return files[i].Path < files[j].Path
 	})
+
 	return files, nil
 }
 
@@ -63,6 +66,7 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef, catal
 	}
 
 	version, versionPath, err := readKindSource(sourceDir, "tag-version.h")
+
 	if err != nil {
 		return nil, err
 	}
@@ -72,16 +76,19 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef, catal
 	}
 
 	files, err := sourceHashes(sourceDir)
+
 	if err != nil {
 		return nil, err
 	}
 
 	enumData, enumPath, err := readKindSource(sourceDir, "item-prop-enum.h")
+
 	if err != nil {
 		return nil, err
 	}
 
 	active, err := activeEgoIDs(enumPath, enumData)
+
 	if err != nil {
 		return nil, err
 	}
@@ -89,14 +96,17 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef, catal
 	names := []string{"potion of curing"}
 	var gear []content.JobStartingGear
 	needsChoices := false
+
 	for _, job := range jobs {
 		if !job.Selectable {
 			continue
 		}
 
 		entry := content.JobStartingGear{JobID: job.ID}
+
 		for _, raw := range job.Equipment {
 			name, grant, err := parseEquipmentSpec(job.ID, raw)
+
 			if err != nil {
 				return nil, err
 			}
@@ -124,6 +134,7 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef, catal
 	}
 
 	kinds, err := resolveKinds(catalog, names)
+
 	if err != nil {
 		return nil, err
 	}
@@ -132,14 +143,17 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef, catal
 		for j := range gear[i].Grants {
 			grant := &gear[i].Grants[j]
 			name, _, err := parseEquipmentSpec(gear[i].JobID, grant.Raw)
+
 			if err != nil {
 				return nil, err
 			}
 
 			kind := kinds[name]
 			grant.KindID = kind.ID
+
 			if grant.Ego != "" {
 				egoID := "SPMSL_" + strings.ToUpper(grant.Ego)
+
 				if _, found := active[egoID]; kind.Class != "OBJ_MISSILES" || !found {
 					return nil, fmt.Errorf(
 						"%s: job %s equipment %q has unknown ego %q (%s)",
@@ -164,11 +178,13 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef, catal
 		SourceFiles:     files,
 		Jobs:            gear,
 	}
+
 	if err := artifact.Validate(catalog); err != nil {
 		return nil, err
 	}
 
 	encoded, err := json.MarshalIndent(artifact, "", "  ")
+
 	if err != nil {
 		return nil, fmt.Errorf("encode starting gear artifact: %w", err)
 	}
@@ -183,11 +199,13 @@ func Generate(sourceDir string) ([]byte, error) {
 	}
 
 	jobData, err := jobimport.Generate(sourceDir)
+
 	if err != nil {
 		return nil, err
 	}
 
 	var jobArtifact content.JobArtifact
+
 	if err := json.Unmarshal(jobData, &jobArtifact); err != nil {
 		return nil, fmt.Errorf("decode source job artifact: %w", err)
 	}
@@ -202,14 +220,17 @@ func Generate(sourceDir string) ([]byte, error) {
 
 	selectable, total := 0, 0
 	rawSpecs, itemNames := map[string]bool{}, map[string]bool{}
+
 	for _, job := range jobArtifact.Jobs {
 		if !job.Selectable {
 			continue
 		}
 
 		selectable++
+
 		for _, raw := range job.Equipment {
 			name, _, err := parseEquipmentSpec(job.ID, raw)
+
 			if err != nil {
 				return nil, err
 			}
@@ -230,21 +251,25 @@ func Generate(sourceDir string) ([]byte, error) {
 	}
 
 	catalog, err := content.LoadItemsForImport()
+
 	if err != nil {
 		return nil, err
 	}
 
 	data, err := generateFromSource(sourceDir, pinnedRevision, jobArtifact.Jobs, catalog)
+
 	if err != nil {
 		return nil, err
 	}
 
 	var gear content.StartingGearArtifact
+
 	if err := json.Unmarshal(data, &gear); err != nil {
 		return nil, err
 	}
 
 	hashes := map[string]string{}
+
 	for _, file := range gear.SourceFiles {
 		hashes[file.Path] = file.SHA256
 	}
@@ -264,12 +289,14 @@ func writeArtifact(sourceDir, outPath string, check bool, generate func(string) 
 	}
 
 	data, err := generate(sourceDir)
+
 	if err != nil {
 		return err
 	}
 
 	if check {
 		current, err := os.ReadFile(outPath)
+
 		if err != nil {
 			return fmt.Errorf("read committed artifact %s: %w", outPath, err)
 		}
@@ -282,19 +309,23 @@ func writeArtifact(sourceDir, outPath string, check bool, generate func(string) 
 	}
 
 	file, err := os.CreateTemp(filepath.Dir(outPath), "."+filepath.Base(outPath)+".tmp-*")
+
 	if err != nil {
 		return fmt.Errorf("create artifact temp file: %w", err)
 	}
 
 	tempPath := file.Name()
 	defer os.Remove(tempPath)
+
 	if _, err := file.Write(data); err != nil {
 		file.Close()
+
 		return fmt.Errorf("write artifact: %w", err)
 	}
 
 	if err := file.Sync(); err != nil {
 		file.Close()
+
 		return fmt.Errorf("sync artifact: %w", err)
 	}
 

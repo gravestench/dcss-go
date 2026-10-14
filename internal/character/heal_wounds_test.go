@@ -18,6 +18,7 @@ func (r *healWoundsRoller) Intn(stream string, bound int) (int, error) {
 	r.bounds = append(r.bounds, bound)
 	value := r.values[0]
 	r.values = r.values[1:]
+
 	return value, nil
 }
 
@@ -53,6 +54,7 @@ func TestHealWoundsUsesSourceThreeRollAverage(t *testing.T) {
 	} {
 		r := &healWoundsRoller{values: tc.values}
 		got, err := HealWoundsHP(r, tc.current, tc.maximum)
+
 		if err != nil || got != tc.want || len(r.values) != 0 || len(r.bounds) != 3 ||
 			r.bounds[0] != 28 || r.bounds[1] != 29 || r.bounds[2] != 29 {
 			t.Fatalf(
@@ -87,6 +89,7 @@ func TestHealWoundsRejectsInvalidInputAndDraws(t *testing.T) {
 		},
 	} {
 		r := &healWoundsRoller{values: []int{0, 0, 0}}
+
 		if _, err := HealWoundsHP(r, tc.current, tc.maximum); err == nil || len(r.bounds) != 0 {
 			t.Fatalf("accepted %d/%d with draws %+v", tc.current, tc.maximum, r.bounds)
 		}
@@ -94,6 +97,7 @@ func TestHealWoundsRejectsInvalidInputAndDraws(t *testing.T) {
 
 	for _, invalid := range []int{-1, 28} {
 		r := &healWoundsRoller{values: []int{invalid, 0, 0}}
+
 		if _, err := HealWoundsHP(r, 1, 18); err == nil {
 			t.Fatalf("accepted first draw %d", invalid)
 		}

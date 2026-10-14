@@ -19,9 +19,11 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 	}
 	words := strings.Fields(raw)
 	seen := map[string]bool{}
+
 	for len(words) > 0 {
 		token := words[len(words)-1]
 		field, value, hasColon := strings.Cut(token, ":")
+
 		if token == "no_exclude" {
 			field = token
 		} else if !hasColon {
@@ -33,9 +35,11 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 		}
 
 		seen[field] = true
+
 		switch field {
 		case "q":
 			n, err := strconv.Atoi(value)
+
 			if err != nil || n <= 0 {
 				return fail("invalid quantity " + token)
 			}
@@ -43,6 +47,7 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 			grant.Quantity = n
 		case "plus":
 			n, err := strconv.Atoi(value)
+
 			if err != nil {
 				return fail("invalid plus " + token)
 			}
@@ -50,6 +55,7 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 			grant.Plus = n
 		case "charges":
 			n, err := strconv.Atoi(value)
+
 			if err != nil || n <= 0 {
 				return fail("invalid charges " + token)
 			}

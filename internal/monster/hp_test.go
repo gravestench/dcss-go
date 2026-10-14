@@ -19,6 +19,7 @@ func (s *scriptedRoller) Intn(stream string, bound int) (int, error) {
 
 	value := s.rolls[0].value
 	s.rolls = s.rolls[1:]
+
 	return value, nil
 }
 
@@ -83,6 +84,7 @@ func TestRatHPSourceRollOrderAndBounds(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			rng := &scriptedRoller{rolls: tc.rolls}
 			hp, err := RollHP(rng, 25)
+
 			if err != nil || hp != tc.want || len(rng.rolls) != 0 {
 				t.Fatalf("HP = %d, err %v, rolls %+v", hp, err, rng.rolls)
 			}
@@ -92,6 +94,7 @@ func TestRatHPSourceRollOrderAndBounds(t *testing.T) {
 
 func sevenRolls(bound, value int) []scriptedRoll {
 	rolls := make([]scriptedRoll, 7)
+
 	for i := range rolls {
 		rolls[i] = scriptedRoll{
 			bound: bound,

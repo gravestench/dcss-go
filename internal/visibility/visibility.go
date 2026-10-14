@@ -34,11 +34,13 @@ func diamondEntry(sx, sy, dx, dy float64, x, y int) (float64, bool) {
 	lo, hi := 0.0, math.Inf(1)
 	clip := func(value, slope, center float64) bool {
 		low, high := center-0.5, center+0.5
+
 		if slope == 0 {
 			return value > low && value < high
 		}
 
 		a, b := (low-value)/slope, (high-value)/slope
+
 		if a > b {
 			a, b = b, a
 		}
@@ -53,6 +55,7 @@ func diamondEntry(sx, sy, dx, dy float64, x, y int) (float64, bool) {
 
 		return hi-lo > 1e-10
 	}
+
 	if !clip(sx+sy, dx+dy, float64(x+y+1)) {
 		return 0, false
 	}
@@ -66,6 +69,7 @@ func diamondEntry(sx, sy, dx, dy float64, x, y int) (float64, bool) {
 
 func footprint(sx, sy, dx, dy float64) ray {
 	var cells []rayCell
+
 	for y := 0; y <= maxRadius; y++ {
 		for x := 0; x <= maxRadius; x++ {
 			if x == 0 && y == 0 {
@@ -89,6 +93,7 @@ func footprint(sx, sy, dx, dy float64) ray {
 	})
 	result := make(ray, 0, len(cells))
 	previous := offset{}
+
 	for _, cell := range cells {
 		if cell.x-previous.x > 1 || cell.y-previous.y > 1 {
 			return nil
@@ -106,11 +111,13 @@ func buildRays() []ray {
 	var result []ray
 	add := func(sx, sy, dx, dy float64) {
 		cells := footprint(sx, sy, dx, dy)
+
 		if len(cells) == 0 {
 			return
 		}
 
 		key := make([]byte, len(cells))
+
 		for i, c := range cells {
 			key[i] = byte(c.x*9 + c.y)
 		}
@@ -125,6 +132,7 @@ func buildRays() []ray {
 	add(0.5, 0.5, 0, 1)
 	add(0.5, 0.5, 1, 0)
 	const maxAngle = 2*maxRadius - 2
+
 	for xAngle := 1; xAngle <= maxAngle; xAngle++ {
 		for yAngle := 1; yAngle <= maxAngle; yAngle++ {
 			if gcd(xAngle, yAngle) != 1 {
@@ -153,6 +161,7 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 	}
 
 	width := len(rows[0])
+
 	for y, row := range rows {
 		if len(row) != width {
 			return nil, fmt.Errorf("terrain row %d has width %d, want %d", y, len(row), width)
@@ -173,6 +182,7 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 
 	visible := make([]bool, width*len(rows))
 	visible[originY*width+originX] = true
+
 	for _, sign := range [][2]int{
 		{1, 1},
 		{-1, 1},
@@ -186,11 +196,13 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 				}
 
 				x, y := originX+sign[0]*cell.x, originY+sign[1]*cell.y
+
 				if x < 0 || x >= width || y < 0 || y >= len(rows) {
 					break
 				}
 
 				visible[y*width+x] = true
+
 				if rows[y][x] == '#' {
 					break
 				}

@@ -52,6 +52,7 @@ func roundedValues(numerator, denominator int) []weightedDelay {
 			weight: denominator - remainder,
 		},
 	}
+
 	if remainder > 0 {
 		values = append(values, weightedDelay{
 			value:  whole + 1,
@@ -64,6 +65,7 @@ func roundedValues(numerator, denominator int) []weightedDelay {
 
 func minimumWeaponDelay(speed int, skillID string) int {
 	minimum := speed / 2
+
 	if skillID == "SK_SHORT_BLADES" && minimum > 5 {
 		minimum = 5
 	}
@@ -87,6 +89,7 @@ func PlayerAttackDelay(r Roller, in AttackDelayInput) (int, error) {
 
 	base := 10
 	reductionNumerator, reductionDenominator := in.WeaponSkill10, 54
+
 	if in.Unarmed {
 		// Unarmed Combat uses 27*2 rather than the weapon's DELAY_SCALE.
 	} else {
@@ -103,6 +106,7 @@ func PlayerAttackDelay(r Roller, in AttackDelayInput) (int, error) {
 	// penalty combine as weighted distributions. The final normal-speed
 	// div_rand_round(attk_delay*10, 10) multiplies all weights by 10.
 	weights := make(map[int]int)
+
 	for _, reduction := range roundedValues(reductionNumerator, reductionDenominator) {
 		for _, shield := range roundedValues(shieldPenalty20, 20) {
 			delay := max(2, max(3, base-reduction.value)+shield.value)
@@ -111,17 +115,20 @@ func PlayerAttackDelay(r Roller, in AttackDelayInput) (int, error) {
 	}
 
 	low, high := 1<<31-1, 0
+
 	for delay := range weights {
 		low = min(low, delay)
 		high = max(high, delay)
 	}
 
 	total := 0
+
 	for delay := low; delay <= high; delay++ {
 		total += weights[delay]
 	}
 
 	roll, err := random2(r, total)
+
 	if err != nil {
 		return 0, err
 	}

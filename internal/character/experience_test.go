@@ -8,17 +8,20 @@ import (
 
 func TestFixedRatGrantsOneSourceExperience(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	rat, err := catalog.Monster("MONS_RAT")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	for hp := 1; hp <= 4; hp++ {
 		got, err := OrdinaryAnimalExperience(rat, hp)
+
 		if err != nil || got != 1 {
 			t.Fatalf("rat with %d HP XP = %d, %v; want 1", hp, got, err)
 		}
@@ -27,11 +30,13 @@ func TestFixedRatGrantsOneSourceExperience(t *testing.T) {
 
 func TestQuokkaOrdinaryExperienceUsesActualMaximumHP(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	quokka, err := catalog.Monster("MONS_QUOKKA")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -39,6 +44,7 @@ func TestQuokkaOrdinaryExperienceUsesActualMaximumHP(t *testing.T) {
 	for hp := 3; hp <= 8; hp++ {
 		got, err := OrdinaryAnimalExperience(quokka, hp)
 		want := 2
+
 		if hp == 3 {
 			want = 1
 		}
@@ -57,17 +63,20 @@ func TestQuokkaOrdinaryExperienceUsesActualMaximumHP(t *testing.T) {
 
 func TestFrilledLizardExperienceUsesSourceOrdinaryBite(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	lizard, err := catalog.Monster("MONS_FRILLED_LIZARD")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	for hp := 1; hp <= 3; hp++ {
 		got, err := OrdinaryAnimalExperience(lizard, hp)
+
 		if err != nil || got != 1 {
 			t.Fatalf("frilled lizard at %d HP gives %d XP, %v; want 1", hp, got, err)
 		}
@@ -100,6 +109,7 @@ func TestHumanFirstLevelProgressUsesNineXPThreshold(t *testing.T) {
 		},
 	} {
 		got, err := HumanLevelProgress(tc.xp, 1)
+
 		if err != nil || got != tc.percent {
 			t.Fatalf("XP %d => %d%%, %v; want %d%%", tc.xp, got, err, tc.percent)
 		}

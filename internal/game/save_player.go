@@ -19,6 +19,7 @@ func validateSavedHumanAdvancement(
 	catalog content.Catalog,
 ) (int, error) {
 	progress := ecs.Progression{Level: 1}
+
 	if record.Progression != nil {
 		progress = *record.Progression
 	}
@@ -32,11 +33,13 @@ func validateSavedHumanAdvancement(
 	}
 
 	currentNeeded, _ := character.HumanExperienceNeeded(progress.Level)
+
 	if progress.TotalXP < currentNeeded {
 		return 0, fmt.Errorf("player XL%d lacks experience", progress.Level)
 	}
 
 	earnedLevel, err := character.HumanLevelForExperience(progress.TotalXP)
+
 	if err != nil {
 		return 0, err
 	}
@@ -48,6 +51,7 @@ func validateSavedHumanAdvancement(
 	} else {
 		pending := progress.PendingStatLevel
 		needed, neededErr := character.HumanExperienceNeeded(pending)
+
 		if neededErr != nil || pending != progress.Level+1 ||
 			!character.HumanNeedsManualStat(pending) || progress.TotalXP < needed {
 			return 0, fmt.Errorf("invalid pending player stat choice at XL%d", pending)
@@ -56,6 +60,7 @@ func validateSavedHumanAdvancement(
 
 	base := profile.Attributes
 	actual := record.Attributes
+
 	if actual.Strength < base.Strength ||
 		actual.Intelligence < base.Intelligence ||
 		actual.Dexterity < base.Dexterity {
@@ -63,12 +68,14 @@ func validateSavedHumanAdvancement(
 	}
 
 	species, err := catalog.Species("SP_HUMAN")
+
 	if err != nil {
 		return 0, err
 	}
 
 	manualGains := 0
 	randomGains := 0
+
 	for level := 2; level <= progress.Level; level++ {
 		if character.HumanNeedsManualStat(level) {
 			manualGains++
@@ -85,16 +92,19 @@ func validateSavedHumanAdvancement(
 		actual.Intelligence - base.Intelligence,
 		actual.Dexterity - base.Dexterity,
 	}
+
 	if !validHumanStatGains(deltas, manualGains, randomGains) {
 		return 0, fmt.Errorf("invalid player attribute gains for entity %d", record.ID)
 	}
 
 	wantHP, err := character.HumanMaxHP(progress.Level, species, record.Skills.Entries)
+
 	if err != nil {
 		return 0, err
 	}
 
 	wantMP, err := character.HumanMaxMP(progress.Level, species)
+
 	if err != nil {
 		return 0, err
 	}
@@ -123,6 +133,7 @@ func validHumanStatGains(deltas [3]int, manualChoices, speciesGains int) bool {
 				deltas[1] - 2*intelligence,
 				deltas[2] - 2*dexterity,
 			}
+
 			if remaining[0] >= 0 && remaining[1] >= 0 && remaining[2] >= 0 &&
 				remaining[0]+remaining[1]+remaining[2] == speciesGains {
 				return true

@@ -16,6 +16,7 @@ func TestRegisterStoresAreWorldLocal(t *testing.T) {
 	first := Register(firstWorld)
 	second := Register(secondWorld)
 	entity, err := firstWorld.CreateEntity()
+
 	if err != nil {
 		t.Fatal(err)
 	}

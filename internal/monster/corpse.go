@@ -10,11 +10,13 @@ const corpseRotFactor = 20
 // A missed drop consumes no appearance draw.
 func RollCorpse(roller Roller) (appearance int, dropped bool, err error) {
 	coin, err := drawCorpse(roller, 2)
+
 	if err != nil || coin == 1 {
 		return 0, false, err
 	}
 
 	appearance, err = drawCorpse(roller, 255)
+
 	if err != nil {
 		return 0, false, err
 	}
@@ -30,12 +32,14 @@ func AgeCorpse(
 	freshness, elapsedAut int,
 ) (nextKind string, nextFreshness, appearance int, alive bool, err error) {
 	validKind := kindID == "CORPSE_BODY" || kindID == "CORPSE_SKELETON"
+
 	if !validKind || freshness < 1 ||
 		freshness > FreshestCorpse || elapsedAut < 0 {
 		return "", 0, 0, false, fmt.Errorf("invalid corpse decay input %q/%d/%d", kindID, freshness, elapsedAut)
 	}
 
 	nextFreshness = freshness - elapsedAut/corpseRotFactor
+
 	if nextFreshness > 0 {
 		return kindID, nextFreshness, 0, true, nil
 	}
@@ -45,6 +49,7 @@ func AgeCorpse(
 	}
 
 	roll, err := drawCorpse(roller, 255)
+
 	if err != nil {
 		return "", 0, 0, false, err
 	}
@@ -58,6 +63,7 @@ func drawCorpse(roller Roller, bound int) (int, error) {
 	}
 
 	value, err := roller.Intn("corpse", bound)
+
 	if err != nil {
 		return 0, err
 	}

@@ -8,30 +8,37 @@ import (
 
 func TestNormalDungeonChoiceMatrix(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	var speciesCount, jobCount, legal, banned int
+
 	for _, speciesID := range catalog.SpeciesIDs() {
 		species, _ := catalog.Species(speciesID)
+
 		if !species.Selectable {
 			continue
 		}
 
 		speciesCount++
+
 		for _, jobID := range catalog.JobIDs() {
 			job, _ := catalog.Job(jobID)
+
 			if !job.Selectable {
 				continue
 			}
 
 			forward, err := JobForSpecies(catalog, speciesID, jobID)
+
 			if err != nil {
 				t.Fatal(err)
 			}
 
 			reverse, err := SpeciesForJob(catalog, speciesID, jobID)
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -50,6 +57,7 @@ func TestNormalDungeonChoiceMatrix(t *testing.T) {
 
 	for _, jobID := range catalog.JobIDs() {
 		job, _ := catalog.Job(jobID)
+
 		if job.Selectable {
 			jobCount++
 		}
@@ -62,6 +70,7 @@ func TestNormalDungeonChoiceMatrix(t *testing.T) {
 
 func TestDirectionalRecommendationsAndBans(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -161,14 +170,17 @@ func TestDirectionalRecommendationsAndBans(t *testing.T) {
 			reverse: Banned,
 		},
 	}
+
 	for _, tc := range cases {
 		t.Run(tc.species+"/"+tc.job, func(t *testing.T) {
 			forward, err := JobForSpecies(catalog, tc.species, tc.job)
+
 			if err != nil || forward != tc.forward {
 				t.Fatalf("species-first = %v, %v; want %v", forward, err, tc.forward)
 			}
 
 			reverse, err := SpeciesForJob(catalog, tc.species, tc.job)
+
 			if err != nil || reverse != tc.reverse {
 				t.Fatalf("job-first = %v, %v; want %v", reverse, err, tc.reverse)
 			}
@@ -194,6 +206,7 @@ func TestBannedPairChecksFutureMutation(t *testing.T) {
 			},
 		},
 	}
+
 	if !bannedPair(species, "JOB_HUNTER") || bannedPair(species, "JOB_FIGHTER") {
 		t.Fatal("future no-grasping mutation should ban Hunter only")
 	}
@@ -205,6 +218,7 @@ func TestBannedPairChecksFutureMutation(t *testing.T) {
 			Amount: 1,
 		},
 	}
+
 	if !bannedPair(species, "JOB_MONK") || bannedPair(species, "JOB_FIGHTER") {
 		t.Fatal("future forlorn mutation should ban Monk only")
 	}

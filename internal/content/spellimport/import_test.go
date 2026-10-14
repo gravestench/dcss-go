@@ -22,6 +22,7 @@ func TestGenerateAndCheckUseOnlyExplicitSourceFiles(t *testing.T) {
 		"spl-util.h":  "enum class spschool {\n none = 0,\n};\n",
 		"spl-cast.h":  "enum class spflag {\n none = 0,\n testing = 1,\n};\n",
 	}
+
 	for name, body := range files {
 		if err := os.WriteFile(filepath.Join(root, name), []byte(body), 0600); err != nil {
 			t.Fatal(err)
@@ -29,6 +30,7 @@ func TestGenerateAndCheckUseOnlyExplicitSourceFiles(t *testing.T) {
 	}
 
 	out := filepath.Join(root, "spells.json")
+
 	if err := Write(root, out, false); err != nil {
 		t.Fatal(err)
 	}
@@ -38,6 +40,7 @@ func TestGenerateAndCheckUseOnlyExplicitSourceFiles(t *testing.T) {
 	}
 
 	original, err := os.ReadFile(out)
+
 	if err != nil {
 		t.Fatal(err)
 	}

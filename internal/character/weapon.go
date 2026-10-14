@@ -36,11 +36,13 @@ func goodWeaponUpgrade(id, jobID, size string) string {
 // WeaponOptions returns source-ordered legal choices without changing game state.
 func WeaponOptions(c content.Catalog, speciesID, jobID string) ([]WeaponOption, error) {
 	species, err := c.Species(speciesID)
+
 	if err != nil {
 		return nil, err
 	}
 
 	job, err := c.Job(jobID)
+
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +65,10 @@ func WeaponOptions(c content.Catalog, speciesID, jobID string) ([]WeaponOption, 
 		"WPN_QUARTERSTAFF",
 		"WPN_UNARMED",
 	}
+
 	for _, base := range baseWeapons {
 		id := base
+
 		if job.WeaponChoice == "WCHOICE_GOOD" {
 			id = goodWeaponUpgrade(id, jobID, species.Size)
 		}
@@ -75,6 +79,7 @@ func WeaponOptions(c content.Catalog, speciesID, jobID string) ([]WeaponOption, 
 
 		fighterCanUseStaff := jobID == "JOB_FIGHTER" &&
 			hasMutation(species, "MUT_QUADRUMANOUS")
+
 		if id == "WPN_QUARTERSTAFF" &&
 			jobID != "JOB_GLADIATOR" && !fighterCanUseStaff {
 			continue
@@ -85,10 +90,12 @@ func WeaponOptions(c content.Catalog, speciesID, jobID string) ([]WeaponOption, 
 			Restriction: Restricted,
 		}
 		skill := "SK_UNARMED_COMBAT"
+
 		if id == "WPN_UNARMED" {
 			option.Name = "unarmed"
 		} else {
 			item, err := c.Item(id)
+
 			if err != nil {
 				return nil, err
 			}
@@ -108,6 +115,7 @@ func WeaponOptions(c content.Catalog, speciesID, jobID string) ([]WeaponOption, 
 
 func ValidateWeaponChoice(c content.Catalog, speciesID, jobID, weaponID string) error {
 	options, err := WeaponOptions(c, speciesID, jobID)
+
 	if err != nil {
 		return err
 	}

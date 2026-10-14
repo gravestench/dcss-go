@@ -28,6 +28,7 @@ const jobFixture = `static const map<job_type, job_def> job_data =
 
 func TestParseJobDataPreservesAllFieldsAndOrder(t *testing.T) {
 	jobs, err := parseJobData("job-data.h", []byte(jobFixture))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,6 +66,7 @@ func TestParseJobDataPreservesAllFieldsAndOrder(t *testing.T) {
 			WeaponChoice: "WCHOICE_NONE",
 		},
 	}
+
 	if !reflect.DeepEqual(jobs, want) {
 		t.Fatalf("parsed jobs = %#v, want %#v", jobs, want)
 	}
@@ -108,6 +110,7 @@ func TestParseJobDataRejectsMalformedDefinitions(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			input := strings.Replace(jobFixture, tc.old, tc.replacement, 1)
 			_, err := parseJobData("job-data.h", []byte(input))
+
 			if err == nil || !strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want error containing %q, got %v", tc.want, err)
 			}

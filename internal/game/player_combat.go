@@ -27,6 +27,7 @@ type playerCombat struct {
 
 func newPlayerCombat(g *Game) playerCombat {
 	s := g.stores
+
 	return playerCombat{
 		player:     g.player,
 		players:    s.Players,
@@ -45,21 +46,25 @@ func newPlayerCombat(g *Game) playerCombat {
 // It also checks equipment before a bump spends time.
 func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, error) {
 	player, found := c.players.Get(c.player)
+
 	if !found {
 		return combat.PlayerAttackInput{}, fmt.Errorf("player has no character choice")
 	}
 
 	attributes, found := c.attributes.Get(c.player)
+
 	if !found {
 		return combat.PlayerAttackInput{}, fmt.Errorf("player has no attributes")
 	}
 
 	skills, found := c.skills.Get(c.player)
+
 	if !found {
 		return combat.PlayerAttackInput{}, fmt.Errorf("player has no skills")
 	}
 
 	defender, err := c.catalog.Monster(defenderID)
+
 	if err != nil {
 		return combat.PlayerAttackInput{}, err
 	}
@@ -71,6 +76,7 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		DefenderAC: defender.AC,
 		Unarmed:    player.StartingWeaponID == "WPN_UNARMED",
 	}
+
 	if durations, found := c.durations.Get(c.player); found {
 		in.Mighty = durations.MightAut > 0
 	}
@@ -80,15 +86,18 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 	}
 
 	weaponCount := 0
+
 	for _, entity := range c.equipped.Entities() {
 		equipment, _ := c.equipped.Get(entity)
 		carrier, carried := c.carried.Get(entity)
+
 		if !carried || carrier.Holder != c.player || equipment.Slot != "weapon" {
 			continue
 		}
 
 		weaponCount++
 		item, found := c.items.Get(entity)
+
 		if !found || in.Unarmed || item.KindID != player.StartingWeaponID {
 			return combat.PlayerAttackInput{}, fmt.Errorf(
 				"equipped weapon does not match starting weapon %s", player.StartingWeaponID,
@@ -96,6 +105,7 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		}
 
 		kind, err := c.catalog.Item(item.KindID)
+
 		if err != nil {
 			return combat.PlayerAttackInput{}, err
 		}
@@ -119,6 +129,7 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 	}
 
 	fightingFound, weaponSkillFound := false, false
+
 	for _, skill := range skills.Entries {
 		switch skill.ID {
 		case "SK_FIGHTING":
@@ -127,6 +138,7 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		default:
 			if skill.ID == in.WeaponSkillID {
 				in.WeaponSkill100 = character.ScaledSkill(skill, 100)
+
 				if in.Unarmed {
 					in.UnarmedSkill256 = character.ScaledSkill(skill, 256)
 				}
@@ -151,6 +163,7 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 // used by accuracy and damage, plus the currently equipped shield.
 func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInput, error) {
 	attack, err := c.attackInput(defenderID)
+
 	if err != nil {
 		return combat.AttackDelayInput{}, err
 	}
@@ -165,6 +178,7 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 	}
 	skills, _ := c.skills.Get(c.player)
 	weaponSkillFound, shieldSkillFound := false, false
+
 	for _, skill := range skills.Entries {
 		if skill.ID == in.WeaponSkillID {
 			in.WeaponSkill10 = character.ScaledSkill(skill, 10)
@@ -182,9 +196,11 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 	}
 
 	shieldFound := false
+
 	for _, entity := range c.equipped.Entities() {
 		equipped, _ := c.equipped.Get(entity)
 		carrier, carried := c.carried.Get(entity)
+
 		if !carried || carrier.Holder != c.player {
 			continue
 		}
@@ -194,11 +210,13 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 		}
 
 		item, found := c.items.Get(entity)
+
 		if !found {
 			return combat.AttackDelayInput{}, fmt.Errorf("equipped item %d is missing", entity)
 		}
 
 		kind, err := c.catalog.Item(item.KindID)
+
 		if err != nil {
 			return combat.AttackDelayInput{}, err
 		}
@@ -236,16 +254,19 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 
 func (c playerCombat) defense() (combat.Defense, error) {
 	attributes, found := c.attributes.Get(c.player)
+
 	if !found {
 		return combat.Defense{}, fmt.Errorf("player has no attributes")
 	}
 
 	skills, found := c.skills.Get(c.player)
+
 	if !found {
 		return combat.Defense{}, fmt.Errorf("player has no skills")
 	}
 
 	state, found := c.combat.Get(c.player)
+
 	if !found {
 		return combat.Defense{}, fmt.Errorf("player has no combat state")
 	}
@@ -255,6 +276,7 @@ func (c playerCombat) defense() (combat.Defense, error) {
 		Dexterity:    attributes.Dexterity,
 		ShieldBlocks: state.ShieldBlocks,
 	}
+
 	for _, skill := range skills.Entries {
 		switch skill.ID {
 		case "SK_ARMOUR":
@@ -265,23 +287,28 @@ func (c playerCombat) defense() (combat.Defense, error) {
 	}
 
 	body, shield := false, false
+
 	for _, entity := range c.equipped.Entities() {
 		carrier, carried := c.carried.Get(entity)
+
 		if !carried || carrier.Holder != c.player {
 			continue
 		}
 
 		equipped, _ := c.equipped.Get(entity)
+
 		if equipped.Slot != "body" && equipped.Slot != "shield" {
 			continue
 		}
 
 		item, found := c.items.Get(entity)
+
 		if !found {
 			return combat.Defense{}, fmt.Errorf("equipped entity %d has no item", entity)
 		}
 
 		kind, err := c.catalog.Item(item.KindID)
+
 		if err != nil {
 			return combat.Defense{}, err
 		}

@@ -12,6 +12,7 @@ func MightPotionDuration(roller Roller, currentAut int) (int, string, error) {
 	}
 
 	roll, err := roller.Intn("potion", 40)
+
 	if err != nil {
 		return 0, "", err
 	}
@@ -21,6 +22,7 @@ func MightPotionDuration(roller Roller, currentAut int) (int, string, error) {
 	}
 
 	message := "You feel very mighty all of a sudden."
+
 	if currentAut > 0 {
 		message = "You feel mightier all of a sudden."
 	}

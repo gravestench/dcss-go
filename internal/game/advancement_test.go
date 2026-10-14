@@ -20,6 +20,7 @@ func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 	startStrength := attributes.Strength
 
 	progress.TotalXP = 9
+
 	if err := g.advancement.Update(nil, 0); err != nil {
 		t.Fatal(err)
 	}
@@ -30,6 +31,7 @@ func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 	}
 
 	wantHundred := (9*100 + 50) * health.Max / oldMaxHP
+
 	if health.Current != wantHundred/100 ||
 		regeneration.HPProgress != wantHundred%100 ||
 		magic.Max != 2 || magic.Current != 2 {
@@ -37,6 +39,7 @@ func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 	}
 
 	progress.TotalXP = 29
+
 	if err := g.advancement.Update(nil, 0); err != nil {
 		t.Fatal(err)
 	}
@@ -47,16 +50,19 @@ func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 
 	beforeAut := g.currentAut
 	blocked, err := g.Step(Command{Kind: CommandWait})
+
 	if err != nil || blocked.Spent != 0 || g.currentAut != beforeAut {
 		t.Fatalf("turn advanced during stat choice: %+v, %v", blocked, err)
 	}
 
 	invalid, err := g.ChooseStat("luck")
+
 	if err != nil || invalid.Spent != 0 || progress.PendingStatLevel != 3 {
 		t.Fatalf("invalid stat choice changed progression: %+v, %v", invalid, err)
 	}
 
 	chosen, err := g.ChooseStat("str")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -74,6 +80,7 @@ func TestHumanAdvancementRunsThroughFinalLevel(t *testing.T) {
 	baseStats := attributes.Strength + attributes.Intelligence + attributes.Dexterity
 	lastThreshold, _ := character.HumanExperienceNeeded(character.HumanMaxLevel)
 	progress.TotalXP = lastThreshold
+
 	if err := g.advancement.Update(nil, 0); err != nil {
 		t.Fatal(err)
 	}
@@ -100,6 +107,7 @@ func TestHumanAdvancementRunsThroughFinalLevel(t *testing.T) {
 	}
 
 	statTotal := attributes.Strength + attributes.Intelligence + attributes.Dexterity
+
 	if statTotal != baseStats+5*2+6 {
 		t.Fatalf("stat gains = %d, want %d", statTotal-baseStats, 16)
 	}
@@ -109,6 +117,7 @@ func TestHumanAdvancementRunsThroughFinalLevel(t *testing.T) {
 	}
 
 	seenFinalMessage := false
+
 	for _, message := range g.View().Messages {
 		seenFinalMessage = seenFinalMessage || strings.Contains(message, "final one")
 	}
@@ -124,12 +133,14 @@ func TestStatChoiceInterruptsMonsterPhase(t *testing.T) {
 	progress.Level = 2
 	progress.TotalXP = 29
 	monsterDeadlines := make(map[uint64]int64)
+
 	for _, entity := range g.stores.AI.Entities() {
 		actor, _ := g.stores.Actors.Get(entity)
 		monsterDeadlines[uint64(entity)] = actor.NextAut
 	}
 
 	result, err := g.Step(Command{Kind: CommandWait})
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -140,12 +151,14 @@ func TestStatChoiceInterruptsMonsterPhase(t *testing.T) {
 
 	for _, entity := range g.stores.AI.Entities() {
 		actor, _ := g.stores.Actors.Get(entity)
+
 		if actor.NextAut != monsterDeadlines[uint64(entity)] {
 			t.Fatalf("monster %d acted before stat choice", entity)
 		}
 	}
 
 	chosen, err := g.ChooseStat("dex")
+
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -9,6 +9,7 @@ import (
 
 func TestResolveKindsFromCommittedCatalog(t *testing.T) {
 	catalog, err := content.LoadItemsForImport()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,6 +24,7 @@ func TestResolveKindsFromCommittedCatalog(t *testing.T) {
 		"piece from Xom's chessboard",
 	}
 	resolved, err := resolveKinds(catalog, names)
+
 	if err != nil {
 		t.Fatal(err)
 	}

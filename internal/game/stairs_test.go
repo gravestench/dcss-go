@@ -17,6 +17,7 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 		"#...#",
 		"#####",
 	}, g.stores.Positions)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,6 +28,7 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 	row := []byte(second.terrain[3])
 	row[3] = '>'
 	second.terrain[3] = string(row)
+
 	if err := second.AddStairLink(StairLink{
 		X:         3,
 		Y:         3,
@@ -68,6 +70,7 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 	}
 
 	position, found := g.stores.Positions.Get(g.player)
+
 	if !found || *position != (ecs.Position{
 		LevelID: 3,
 		X:       1,
@@ -78,11 +81,13 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 
 	snapshot := g.Snapshot()
 	restored, err := Restore(snapshot, testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer restored.Close()
+
 	if !reflect.DeepEqual(snapshot, restored.Snapshot()) {
 		t.Fatal("stair graph changed across restore")
 	}
@@ -93,6 +98,7 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 		}
 
 		position, _ := run.stores.Positions.Get(run.player)
+
 		if position.LevelID != 2 || position.X != 3 || position.Y != 3 {
 			t.Fatalf("return arrival = %+v", position)
 		}
@@ -107,6 +113,7 @@ func TestRestoreRejectsInvalidStairDestination(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
 	snapshot.Levels[0].Stairs[0].ToLevelID = 99
+
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
 		!strings.Contains(err.Error(), "invalid destination") {
 		t.Fatalf("invalid stair destination error = %v", err)
@@ -117,6 +124,7 @@ func TestRestoreRejectsMissingStairLink(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
 	snapshot.Levels[0].Stairs = nil
+
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
 		!strings.Contains(err.Error(), "missing stair link") {
 		t.Fatalf("missing stair link error = %v", err)
@@ -129,6 +137,7 @@ func TestLevelAllowsMultipleStairsOfOneKind(t *testing.T) {
 	row := []byte(level.terrain[3])
 	row[3] = '>'
 	level.terrain[3] = string(row)
+
 	if err := level.AddStairLink(StairLink{
 		X:         3,
 		Y:         3,
@@ -152,6 +161,7 @@ func TestLevelAllowsMultipleStairsOfOneKind(t *testing.T) {
 	}
 
 	position, _ := g.stores.Positions.Get(g.player)
+
 	if position.LevelID != 2 || position.X != 1 || position.Y != 1 {
 		t.Fatalf("second down stair arrived at %+v", position)
 	}
@@ -171,6 +181,7 @@ func TestOlderSaveVersionCannotLoseStairLinksSilently(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
 	snapshot.Version = save.Version - 1
+
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
 		!strings.Contains(err.Error(), "unsupported save version") {
 		t.Fatalf("older save version error = %v", err)

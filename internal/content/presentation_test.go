@@ -10,6 +10,7 @@ import (
 func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 	catalog := mustLoadDefault(t)
 	p := catalog.Presentation()
+
 	if p.SchemaVersion != 1 || p.SourceRevision != sourceRevision || p.TagMajorVersion != 34 {
 		t.Fatalf("presentation provenance: %+v", p)
 	}
@@ -37,6 +38,7 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 	}
 
 	var species, jobs []string
+
 	for _, group := range p.SpeciesGroups {
 		species = append(species, group.IDs...)
 	}
@@ -74,6 +76,7 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 		"crawl-ref/source/startup.cc":                   "82aef31832467f8797e0fd2d5f2818974fe1ddc2213c70445a062f2493282d2f",
 		"crawl-ref/source/skills.h":                     "6e43be85f9d80827d8a2a92229751d991069c8e8dd574b51a90edf078972f4c7",
 	}
+
 	if len(p.SourceFiles) != len(wantHashes) {
 		t.Fatalf("source files: %+v", p.SourceFiles)
 	}
@@ -93,6 +96,7 @@ func TestPresentationReturnedAsDefensiveCopy(t *testing.T) {
 	first.SourceFiles[0].SHA256 = "changed"
 	first.SkillColumns[0][0] = "SK_FAKE"
 	again := catalog.Presentation()
+
 	if again.SpeciesGroups[0].IDs[0] != "SP_HILL_ORC" ||
 		again.SpeciesDescriptions["SP_HUMAN"] == "changed" || again.SourceFiles[0].SHA256 == "changed" ||
 		again.SkillColumns[0][0] == "SK_FAKE" {
@@ -102,6 +106,7 @@ func TestPresentationReturnedAsDefensiveCopy(t *testing.T) {
 
 func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 	var original PresentationArtifact
+
 	if err := json.Unmarshal(defaultPresentationJSON, &original); err != nil {
 		t.Fatal(err)
 	}
@@ -156,20 +161,24 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 			want: "SP_HIGH_ELF",
 		},
 	}
+
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			data, err := json.Marshal(original)
+
 			if err != nil {
 				t.Fatal(err)
 			}
 
 			var changed PresentationArtifact
+
 			if err := json.Unmarshal(data, &changed); err != nil {
 				t.Fatal(err)
 			}
 
 			tc.change(&changed)
 			data, err = json.Marshal(changed)
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -183,6 +192,7 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 				data,
 				defaultMonsterJSON,
 			)
+
 			if err == nil || !strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want %s error, got %v", tc.want, err)
 			}
@@ -192,6 +202,7 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 
 func TestLoadDefinitionsForImportDoesNotRequirePresentation(t *testing.T) {
 	catalog, err := LoadDefinitionsForImport()
+
 	if err != nil {
 		t.Fatal(err)
 	}

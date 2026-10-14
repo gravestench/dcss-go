@@ -37,25 +37,30 @@ func TestHumanExperienceThresholdsMatchSourceTable(t *testing.T) {
 		930525,
 		1059325,
 	}
+
 	for index, tableValue := range source {
 		level := index + 1
 		want := tableValue - 1
+
 		if level == 1 {
 			want = 0
 		}
 
 		got, err := HumanExperienceNeeded(level)
+
 		if err != nil || got != want {
 			t.Fatalf("XL%d threshold = %d, %v; want %d", level, got, err, want)
 		}
 
 		atLevel, err := HumanLevelForExperience(got)
+
 		if err != nil || atLevel != level {
 			t.Fatalf("XP %d yields XL%d, %v; want XL%d", got, atLevel, err, level)
 		}
 
 		if level > 1 {
 			below, err := HumanLevelForExperience(got - 1)
+
 			if err != nil || below != level-1 {
 				t.Fatalf("XP %d yields XL%d, %v; want XL%d", got-1, below, err, level-1)
 			}
@@ -71,16 +76,19 @@ func TestHumanExperienceThresholdsMatchSourceTable(t *testing.T) {
 
 func TestHumanExperienceProgressAndVitalGrowth(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	profile, err := BuildStartProfile(catalog, "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	species, _ := catalog.Species("SP_HUMAN")
+
 	if hp, err := HumanMaxHP(1, species, profile.Skills); err != nil || hp != profile.MaxHP {
 		t.Fatalf("XL1 HP = %d, %v; want %d", hp, err, profile.MaxHP)
 	}
@@ -107,6 +115,7 @@ func TestHumanExperienceProgressAndVitalGrowth(t *testing.T) {
 		},
 	} {
 		mp, err := HumanMaxMP(tc.level, species)
+
 		if err != nil || mp != tc.mp {
 			t.Fatalf("XL%d MP = %d, %v; want %d", tc.level, mp, err, tc.mp)
 		}

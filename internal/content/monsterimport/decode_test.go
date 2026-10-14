@@ -11,16 +11,19 @@ import (
 
 func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 	path := os.Getenv("DCRAWL_MON_DATA")
+
 	if path == "" {
 		t.Skip("set DCRAWL_MON_DATA for explicit pinned decode")
 	}
 
 	data, err := os.ReadFile(path)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	rows, err := parseRows(path, data)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,6 +48,7 @@ func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 	s.shape = makeSet()
 	s.colour = makeSet()
 	s.tileVariation = makeSet()
+
 	for _, tok := range all {
 		switch {
 		case strings.HasPrefix(tok, "MONS_"):
@@ -86,6 +90,7 @@ func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 	s.classFlag["M_NO_EXP_GAIN"] = true
 	s.classFlag["M_NO_THREAT"] = true
 	defs, err := decodeRows(path, rows, s)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -98,12 +103,14 @@ func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 func testSymbols() symbolSets {
 	set := func(values ...string) map[string]bool {
 		m := map[string]bool{}
+
 		for _, v := range values {
 			m[v] = true
 		}
 
 		return m
 	}
+
 	return symbolSets{
 		monster: set(
 			"MONS_RAT",
@@ -133,6 +140,7 @@ func testSymbols() symbolSets {
 func testRow(t *testing.T) sourceRow {
 	t.Helper()
 	rows, err := parseRows("mon-data.h", []byte("static monsterentry mondata[] = {\n"+row("MONS_RAT", `"rat"`)+"};"))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -179,6 +187,7 @@ func TestDecodeGoldenRows(t *testing.T) {
 		spriggan,
 		bug,
 	}, testSymbols())
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -251,6 +260,7 @@ func TestDecodeRejectsUnknownExpressions(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			row := testRow(t)
 			row.Fields[tc.field] = tc.value
+
 			if _, err := decodeRows("mon-data.h", []sourceRow{row}, testSymbols()); err == nil ||
 				!strings.Contains(err.Error(), "MONS_RAT") {
 				t.Fatalf("unknown expression accepted: %v", err)

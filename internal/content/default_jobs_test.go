@@ -9,6 +9,7 @@ import (
 
 func TestLoadDefaultJobs(t *testing.T) {
 	catalog, err := LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -18,6 +19,7 @@ func TestLoadDefaultJobs(t *testing.T) {
 	}
 
 	fighter, err := catalog.Job("JOB_FIGHTER")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,6 +51,7 @@ func TestLoadDefaultJobs(t *testing.T) {
 	}
 
 	air, err := catalog.Job("JOB_AIR_ELEMENTALIST")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,6 +66,7 @@ func TestLoadDefaultJobs(t *testing.T) {
 	}
 
 	wanderer, err := catalog.Job("JOB_WANDERER")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -81,6 +85,7 @@ func TestLoadDefaultJobs(t *testing.T) {
 		"JOB_STALKER",
 	} {
 		job, err := catalog.Job(id)
+
 		if err != nil || job.Selectable {
 			t.Fatalf("removed job %s: %+v, %v", id, job, err)
 		}
@@ -88,11 +93,13 @@ func TestLoadDefaultJobs(t *testing.T) {
 
 	fighter.Equipment[0] = "altered"
 	second, err := LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	again, err := second.Job("JOB_FIGHTER")
+
 	if err != nil || again.Equipment[0] != "scale mail" {
 		t.Fatalf("fresh catalog changed: %+v, %v", again, err)
 	}
@@ -100,6 +107,7 @@ func TestLoadDefaultJobs(t *testing.T) {
 
 func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 	var original JobArtifact
+
 	if err := json.Unmarshal(defaultJobsJSON, &original); err != nil {
 		t.Fatal(err)
 	}
@@ -174,6 +182,7 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			artifact := original
@@ -181,6 +190,7 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 			artifact.SourceFiles = append([]JobSourceFile(nil), original.SourceFiles...)
 			tc.mutate(&artifact)
 			data, err := json.Marshal(artifact)
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -217,6 +227,7 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 
 func TestLoadDefaultRejectsBadSpeciesJobReference(t *testing.T) {
 	var artifact SpeciesArtifact
+
 	if err := json.Unmarshal(defaultSpeciesJSON, &artifact); err != nil {
 		t.Fatal(err)
 	}
@@ -229,6 +240,7 @@ func TestLoadDefaultRejectsBadSpeciesJobReference(t *testing.T) {
 	}
 
 	data, err := json.Marshal(artifact)
+
 	if err != nil {
 		t.Fatal(err)
 	}

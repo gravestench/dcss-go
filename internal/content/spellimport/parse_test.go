@@ -37,11 +37,13 @@ AXED_SPELL(SPELL_OLD, "Old")
 #endif
 };`)
 	ids, err := parseEnum("spell-type.h", enum)
+
 	if err != nil || len(ids) != 3 || ids[0].ID != "SPELL_NO_SPELL" || ids[1].NumericID != 1 || ids[2].ID != "SPELL_OLD" {
 		t.Fatalf("enum %+v, %v", ids, err)
 	}
 
 	spells, err := parseSpells("spl-data.h", data)
+
 	if err != nil || len(spells) != 3 {
 		t.Fatalf("spells %+v, %v", spells, err)
 	}
@@ -52,6 +54,7 @@ AXED_SPELL(SPELL_OLD, "Old")
 	}
 
 	removedIDs, err := parseRemoved("spl-util.cc", removed)
+
 	if err != nil || len(removedIDs) != 1 || !removedIDs["SPELL_OLD"] {
 		t.Fatalf("removed %+v, %v", removedIDs, err)
 	}
@@ -85,6 +88,7 @@ AXED_SPELL(SPELL_OLD, "Old")
 	}
 
 	delete(spells, "SPELL_FOO")
+
 	if err := reconcile(ids, spells, removedIDs); err == nil {
 		t.Fatal("accepted missing descriptor")
 	}

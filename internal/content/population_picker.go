@@ -18,12 +18,14 @@ type DungeonMonsterPool struct {
 // summing row weights. Duplicate monster IDs remain separate rows.
 func (c Catalog) DungeonMonsterPool(depth int, veto func(string) bool) DungeonMonsterPool {
 	var pool DungeonMonsterPool
+
 	for _, row := range c.dungeonPopulation {
 		if depth < row.MinDepth || depth > row.MaxDepth || veto != nil && veto(row.MonsterID) {
 			continue
 		}
 
 		weight := row.WeightAtDepth(depth)
+
 		if weight <= 0 {
 			continue
 		}

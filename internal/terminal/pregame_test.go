@@ -15,11 +15,13 @@ import (
 func pregameModel(t *testing.T) *AppModel {
 	t.Helper()
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	m, err := NewAppModel(catalog, 17, filepath.Join(t.TempDir(), "run.json"))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,6 +29,7 @@ func pregameModel(t *testing.T) *AppModel {
 	t.Cleanup(func() {
 		m.Close()
 	})
+
 	return m
 }
 
@@ -39,8 +42,10 @@ func pressApp(m *AppModel, key string) tea.Cmd {
 		"esc":       tea.KeyEscape,
 		"backspace": tea.KeyBackspace,
 	}
+
 	if code, ok := special[key]; ok {
 		_, cmd := m.Update(tea.KeyPressMsg{Code: code})
+
 		return cmd
 	}
 
@@ -48,6 +53,7 @@ func pressApp(m *AppModel, key string) tea.Cmd {
 		Text: key,
 		Code: []rune(key)[0],
 	})
+
 	return cmd
 }
 
@@ -64,6 +70,7 @@ func enterName(m *AppModel, name string) {
 func TestPregameStartupBannerAndSourceModes(t *testing.T) {
 	m := pregameModel(t)
 	view := plainApp(m)
+
 	for _, want := range []string{
 		"Dungeon Crawl Stone Soup 0.30-a0-23-ge60ba3568b0",
 		"Enter your name:",
@@ -91,12 +98,14 @@ func TestPregameStartupBannerAndSourceModes(t *testing.T) {
 	}
 
 	m.handleKey("ctrl+p")
+
 	if m.screen != ScreenStartup || !strings.Contains(m.notice, "unavailable") {
 		t.Fatal("unported rc-file control lacked explanation")
 	}
 
 	pressApp(m, "down")
 	pressApp(m, "enter")
+
 	if m.screen != ScreenStartup || !strings.Contains(m.notice, "unavailable") {
 		t.Fatalf("unported mode changed screen: %v / %q", m.screen, m.notice)
 	}
@@ -105,16 +114,19 @@ func TestPregameStartupBannerAndSourceModes(t *testing.T) {
 func TestPregameWelcomeTextAndWeaponReturnAfterHelp(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")
+
 	if !strings.Contains(plainApp(m), "Welcome.") || strings.Contains(plainApp(m), "Welcome, .") {
 		t.Fatal("blank-name welcome text")
 	}
 
 	pressApp(m, "j")
+
 	if !strings.Contains(plainApp(m), "Welcome, unnamed Human.") {
 		t.Fatal("species welcome text")
 	}
 
 	pressApp(m, "a")
+
 	if !strings.Contains(plainApp(m), "Welcome, unnamed Human Fighter.") {
 		t.Fatal("weapon welcome text")
 	}
@@ -122,11 +134,13 @@ func TestPregameWelcomeTextAndWeaponReturnAfterHelp(t *testing.T) {
 	pressApp(m, "?")
 	pressApp(m, "esc")
 	pressApp(m, "backspace")
+
 	if m.screen != ScreenBackground {
 		t.Fatalf("weapon return after help: %v", m.screen)
 	}
 
 	m.name = "Alice"
+
 	if got := m.welcomeText(); got != "Welcome, Alice the Human Fighter." {
 		t.Fatalf("named welcome: %q", got)
 	}
@@ -135,11 +149,13 @@ func TestPregameWelcomeTextAndWeaponReturnAfterHelp(t *testing.T) {
 func TestPregameSpeciesBackgroundOrderAndDescriptions(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")
+
 	if m.screen != ScreenSpecies {
 		t.Fatalf("startup -> %v", m.screen)
 	}
 
 	view := plainApp(m)
+
 	for _, want := range []string{
 		"Simple",
 		"Intermediate",
@@ -155,16 +171,19 @@ func TestPregameSpeciesBackgroundOrderAndDescriptions(t *testing.T) {
 	}
 
 	pressApp(m, "down")
+
 	if !strings.Contains(plainApp(m), "Minotaurs are large") {
 		t.Fatal("focus did not update description")
 	}
 
 	pressApp(m, "j")
+
 	if m.screen != ScreenBackground || m.speciesID != "SP_HUMAN" {
 		t.Fatalf("Human choice: %v / %s", m.screen, m.speciesID)
 	}
 
 	view = plainApp(m)
+
 	for _, want := range []string{
 		"Warrior",
 		"Adventurer",
@@ -194,6 +213,7 @@ func TestPregameBothChoiceOrdersAndSixWeapons(t *testing.T) {
 			m := pregameModel(t)
 			enterName(m, "Alice")
 			pressApp(m, "enter")
+
 			if i%2 == 0 {
 				pressApp(m, "j")
 				pressApp(m, "a")
@@ -212,6 +232,7 @@ func TestPregameBothChoiceOrdersAndSixWeapons(t *testing.T) {
 			}
 
 			pressApp(m, string(rune('a'+i)))
+
 			if m.screen != ScreenPlay || m.game == nil || m.weaponID != weapon {
 				t.Fatalf("weapon %s start failed: %v / %q", weapon, m.screen, m.notice)
 			}
@@ -227,12 +248,14 @@ func TestPregamePostWeaponNamePromptAndUnavailableChoices(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")
 	pressApp(m, "a")
+
 	if m.screen != ScreenSpecies || m.game != nil || !strings.Contains(m.notice, "unavailable") {
 		t.Fatal("unported Hill Orc started a game")
 	}
 
 	pressApp(m, "space")
 	pressApp(m, "b")
+
 	if m.screen != ScreenBackground || m.game != nil || !strings.Contains(m.notice, "unavailable") {
 		t.Fatal("unported Gladiator started a game")
 	}
@@ -240,22 +263,26 @@ func TestPregamePostWeaponNamePromptAndUnavailableChoices(t *testing.T) {
 	pressApp(m, "a")
 	pressApp(m, "j")
 	pressApp(m, "a")
+
 	if m.screen != ScreenName || m.game != nil || !strings.Contains(plainApp(m), "Enter your name") {
 		t.Fatal("blank startup name skipped post-weapon prompt")
 	}
 
 	pressApp(m, "enter")
+
 	if m.screen != ScreenName || m.game != nil {
 		t.Fatal("invalid name created game")
 	}
 
 	pressApp(m, "!")
+
 	if m.name != "" || !strings.Contains(m.notice, "invalid") {
 		t.Fatal("invalid name character was accepted")
 	}
 
 	enterName(m, "Alice")
 	pressApp(m, "enter")
+
 	if m.screen != ScreenPlay || m.game == nil || m.game.View().PlayerName != "Alice" {
 		t.Fatalf("name completion: %v / %q", m.screen, m.notice)
 	}
@@ -263,6 +290,7 @@ func TestPregamePostWeaponNamePromptAndUnavailableChoices(t *testing.T) {
 
 func TestStartupLoadKeepsStateOnCorruptSave(t *testing.T) {
 	m := pregameModel(t)
+
 	if err := os.WriteFile(m.savePath, []byte("bad json"), 0600); err != nil {
 		t.Fatal(err)
 	}
@@ -276,26 +304,31 @@ func TestStartupLoadKeepsStateOnCorruptSave(t *testing.T) {
 	}
 
 	pressApp(m, "enter")
+
 	if m.screen != ScreenStartup || m.game != nil || !strings.Contains(m.notice, "Load failed") {
 		t.Fatalf("corrupt load changed state: %v / %q", m.screen, m.notice)
 	}
 
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	g, err := game.NewScenario(17, catalog, "WPN_RAPIER", "Alice")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer g.Close()
+
 	if err := save.Write(m.savePath, g.Snapshot()); err != nil {
 		t.Fatal(err)
 	}
 
 	pressApp(m, "enter")
+
 	if m.screen != ScreenPlay || m.game == nil || m.game.View().PlayerName != "Alice" {
 		t.Fatalf("valid startup load: %v / %q", m.screen, m.notice)
 	}
@@ -310,6 +343,7 @@ func TestMenuResizePreservesFocusAndGameState(t *testing.T) {
 		Width:  78,
 		Height: 23,
 	})
+
 	if !strings.Contains(plainApp(m), "too small") {
 		t.Fatal("small terminal warning missing")
 	}
@@ -322,6 +356,7 @@ func TestMenuResizePreservesFocusAndGameState(t *testing.T) {
 		Width:  79,
 		Height: 24,
 	})
+
 	if m.focus != focus || !strings.Contains(plainApp(m), "Minotaurs are large") {
 		t.Fatal("resize recovery lost focus")
 	}

@@ -31,9 +31,11 @@ func Generate(sourceDir string) ([]byte, error) {
 
 	sources := make(map[string][]byte, len(sourceNames))
 	files := make([]content.JobSourceFile, 0, len(sourceNames))
+
 	for _, name := range sourceNames {
 		path := filepath.Join(sourceDir, name)
 		body, err := os.ReadFile(path)
+
 		if err != nil {
 			return nil, fmt.Errorf("read %s: %w", path, err)
 		}
@@ -50,16 +52,19 @@ func Generate(sourceDir string) ([]byte, error) {
 		return files[i].Path < files[j].Path
 	})
 	ids, err := parseEnum("spell-type.h", sources["spell-type.h"])
+
 	if err != nil {
 		return nil, err
 	}
 
 	spells, err := parseSpells("spl-data.h", sources["spl-data.h"])
+
 	if err != nil {
 		return nil, err
 	}
 
 	removed, err := parseRemoved("spl-util.cc", sources["spl-util.cc"])
+
 	if err != nil {
 		return nil, err
 	}
@@ -69,11 +74,13 @@ func Generate(sourceDir string) ([]byte, error) {
 	}
 
 	schools, err := parseVocabulary("spl-util.h", sources["spl-util.h"], "spschool")
+
 	if err != nil {
 		return nil, err
 	}
 
 	flags, err := parseVocabulary("spl-cast.h", sources["spl-cast.h"], "spflag")
+
 	if err != nil {
 		return nil, err
 	}
@@ -84,8 +91,10 @@ func Generate(sourceDir string) ([]byte, error) {
 		TagMajorVersion: 34,
 		SourceFiles:     files,
 	}
+
 	for _, id := range ids {
 		spell := spells[id.ID]
+
 		for _, school := range spell.Schools {
 			if !schools[school] {
 				return nil, fmt.Errorf("spell %s uses unknown school %s", spell.ID, school)
@@ -107,6 +116,7 @@ func Generate(sourceDir string) ([]byte, error) {
 	}
 
 	encoded, err := json.MarshalIndent(artifact, "", "  ")
+
 	if err != nil {
 		return nil, err
 	}
@@ -120,12 +130,14 @@ func Write(sourceDir, outPath string, check bool) error {
 	}
 
 	generated, err := Generate(sourceDir)
+
 	if err != nil {
 		return err
 	}
 
 	if check {
 		committed, err := os.ReadFile(outPath)
+
 		if err != nil {
 			return err
 		}
@@ -138,14 +150,17 @@ func Write(sourceDir, outPath string, check bool) error {
 	}
 
 	file, err := os.CreateTemp(filepath.Dir(outPath), ".spells-*.json")
+
 	if err != nil {
 		return err
 	}
 
 	temp := file.Name()
 	defer os.Remove(temp)
+
 	if _, err := file.Write(generated); err != nil {
 		file.Close()
+
 		return err
 	}
 

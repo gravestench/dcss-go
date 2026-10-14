@@ -19,11 +19,13 @@ new
 #endif
 end`
 	lines, err := Tag34Lines("job-data.h", []byte(input))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	joined := strings.Join(lines, "\n")
+
 	for _, text := range []string{
 		"start",
 		"old",
@@ -44,6 +46,7 @@ end`
 
 func TestTag34LinesRejectsUnsupportedDirective(t *testing.T) {
 	_, err := Tag34Lines("job-data.h", []byte("#if FEATURE_X\nold\n#endif\n"))
+
 	if err == nil || !strings.Contains(err.Error(), "job-data.h") || !strings.Contains(err.Error(), "FEATURE_X") {
 		t.Fatalf("unsupported directive accepted: %v", err)
 	}
@@ -58,11 +61,13 @@ current
 other
 #endif`
 	lines, err := Tag34Lines("item-prop-enum.h", []byte(input))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	joined := strings.Join(lines, "\n")
+
 	if !strings.Contains(joined, "current") || strings.Contains(joined, "future") || strings.Contains(joined, "other") {
 		t.Fatalf("wrong active branch: %q", joined)
 	}
@@ -75,6 +80,7 @@ func TestActiveEnumIDsRetainsConcreteTag34Members(t *testing.T) {
 			"#else\n JOB_FUTURE,\n#endif\n NUM_JOBS,\n JOB_UNKNOWN = 100,\n};\n"),
 		"JOB_",
 	)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -94,11 +100,13 @@ func TestTag34NumberedLinesPreservesQuotedCommentsAndLocations(t *testing.T) {
 	input := "first\n#if TAG_MAJOR_VERSION > 34\nfuture\n#else\n\"rat, // friend\" // " +
 		"comment\n/* block\ncomment */ active\n#endif\n"
 	lines, err := Tag34NumberedLines("mon-data.h", []byte(input))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	var got []Line
+
 	for _, line := range lines {
 		if strings.TrimSpace(line.Text) != "" {
 			got = append(got, line)

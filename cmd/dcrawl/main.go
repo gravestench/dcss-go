@@ -15,17 +15,20 @@ func run() error {
 	savePath := flag.String("save", "dcrawl-save.json", "save file path")
 	flag.Parse()
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		return fmt.Errorf("load content: %w", err)
 	}
 
 	model, err := terminal.NewAppModel(catalog, *seed, *savePath)
+
 	if err != nil {
 		return fmt.Errorf("prepare start: %w", err)
 	}
 
 	defer model.Close()
 	_, err = tea.NewProgram(model).Run()
+
 	if err != nil {
 		return fmt.Errorf("terminal: %w", err)
 	}

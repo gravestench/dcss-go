@@ -22,6 +22,7 @@ var monsterTable = regexp.MustCompile(`\bstatic\s+monsterentry\s+mondata\s*\[\s*
 
 func parseRows(path string, data []byte) ([]sourceRow, error) {
 	lines, err := sourceparse.Tag34NumberedLines(path, data)
+
 	if err != nil {
 		return nil, err
 	}
@@ -29,10 +30,12 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 	var body strings.Builder
 	starts := make([]int, len(lines))
 	inTable := false
+
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]
 		starts[i] = body.Len()
 		text := line.Text
+
 		if strings.Contains(text, "static monsterentry mondata") {
 			inTable = true
 		}
@@ -41,10 +44,12 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 			// The two pinned table macros are expanded by the scanner/decoder,
 			// not by a general preprocessor. Other directives in the table fail.
 			trimmed := strings.TrimSpace(text)
+
 			if !inTable {
 				// Includes and helper macros before the table are not input rows.
 			} else if strings.HasPrefix(trimmed, "#define ") {
 				name := strings.Fields(trimmed)[1]
+
 				if !strings.HasPrefix(name, "AXED_MON(") && !strings.HasPrefix(name, "DUMMY(") {
 					return nil, fmt.Errorf("%s:%d: unsupported table macro %s", path, line.Number, name)
 				}
@@ -53,6 +58,7 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 			}
 
 			text = ""
+
 			if strings.HasSuffix(strings.TrimSpace(line.Text), "\\") {
 				for i+1 < len(lines) {
 					i++
@@ -60,6 +66,7 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 					body.WriteString(text)
 					body.WriteByte('\n')
 					text = ""
+
 					if !strings.HasSuffix(strings.TrimSpace(lines[i].Text), "\\") {
 						break
 					}
@@ -73,6 +80,7 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 
 	src := body.String()
 	header := monsterTable.FindStringIndex(src)
+
 	if header == nil {
 		return nil, fmt.Errorf("%s: missing mondata table", path)
 	}
@@ -81,6 +89,7 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 		idx := sort.Search(len(starts), func(i int) bool {
 			return starts[i] > pos
 		}) - 1
+
 		if idx < 0 {
 			return 0
 		}
@@ -88,20 +97,24 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 		return lines[idx].Number
 	}
 	pos := skipSpace(src, header[1])
+
 	if pos >= len(src) || src[pos] != '{' {
 		return nil, fmt.Errorf("%s:%d: missing mondata initializer", path, lineAt(pos))
 	}
 
 	pos++
 	var rows []sourceRow
+
 	for {
 		pos = skipSpaceAndCommas(src, pos)
+
 		if pos >= len(src) {
 			return nil, fmt.Errorf("%s: unterminated mondata table", path)
 		}
 
 		if src[pos] == '}' {
 			pos = skipSpace(src, pos+1)
+
 			if pos >= len(src) || src[pos] != ';' {
 				return nil, fmt.Errorf("%s:%d: missing table terminator", path, lineAt(pos))
 			}
@@ -110,19 +123,23 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 		}
 
 		line := lineAt(pos)
+
 		switch {
 		case src[pos] == '{':
 			inner, end, err := balanced(src, pos, '{', '}')
+
 			if err != nil {
 				return nil, fmt.Errorf("%s:%d: %w", path, line, err)
 			}
 
 			fields, err := splitFields(inner)
+
 			if err != nil {
 				return nil, fmt.Errorf("%s:%d: %w", path, line, err)
 			}
 
 			id := ""
+
 			if len(fields) > 0 {
 				id = fields[0]
 			}
@@ -148,16 +165,19 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 			pos = end
 		case strings.HasPrefix(src[pos:], "AXED_MON("):
 			inner, end, err := balanced(src, pos+len("AXED_MON"), '(', ')')
+
 			if err != nil {
 				return nil, fmt.Errorf("%s:%d: %w", path, line, err)
 			}
 
 			fields, err := splitFields(inner)
+
 			if err != nil || len(fields) != 2 {
 				return nil, fmt.Errorf("%s:%d: malformed AXED_MON", path, line)
 			}
 
 			name, err := strconv.Unquote(fields[1])
+
 			if err != nil || !strings.HasPrefix(fields[0], "MONS_") {
 				return nil, fmt.Errorf("%s:%d: malformed AXED_MON identity", path, line)
 			}
@@ -171,11 +191,13 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 			pos = end
 		case strings.HasPrefix(src[pos:], "DUMMY("):
 			inner, end, err := balanced(src, pos+len("DUMMY"), '(', ')')
+
 			if err != nil {
 				return nil, fmt.Errorf("%s:%d: %w", path, line, err)
 			}
 
 			fields, err := splitFields(inner)
+
 			if err != nil || len(fields) != 5 || !strings.HasPrefix(fields[0], "MONS_") {
 				return nil, fmt.Errorf("%s:%d: malformed DUMMY", path, line)
 			}
@@ -210,8 +232,10 @@ func balanced(src string, pos int, open, close byte) (string, int, error) {
 	}
 
 	depth, quote, escaped := 0, byte(0), false
+
 	for i := pos; i < len(src); i++ {
 		c := src[i]
+
 		if quote != 0 {
 			if escaped {
 				escaped = false
@@ -233,6 +257,7 @@ func balanced(src string, pos int, open, close byte) (string, int, error) {
 			depth++
 		} else if c == close {
 			depth--
+
 			if depth == 0 {
 				return src[pos+1 : i], i + 1, nil
 			}
@@ -246,8 +271,10 @@ func splitFields(src string) ([]string, error) {
 	var fields []string
 	start, braces, parens := 0, 0, 0
 	quote, escaped := byte(0), false
+
 	for i := 0; i < len(src); i++ {
 		c := src[i]
+
 		if quote != 0 {
 			if escaped {
 				escaped = false
@@ -288,6 +315,7 @@ func splitFields(src string) ([]string, error) {
 	}
 
 	last := strings.TrimSpace(src[start:])
+
 	if last != "" {
 		fields = append(fields, last)
 	}

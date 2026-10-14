@@ -17,6 +17,7 @@ func ComputeLayout(width, height int) (Layout, bool) {
 	}
 
 	dungeonW, dungeonH := width-46, height-7
+
 	return Layout{
 		Dungeon: Region{
 			X: 0,

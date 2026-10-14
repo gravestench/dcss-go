@@ -59,6 +59,7 @@ func (a StartingGearArtifact) Validate(catalog Catalog) error {
 	}
 
 	jobs := make(map[string]bool, len(a.Jobs))
+
 	for _, job := range a.Jobs {
 		if !strings.HasPrefix(job.JobID, "JOB_") {
 			return fmt.Errorf("invalid starting gear job ID %q", job.JobID)
@@ -69,8 +70,10 @@ func (a StartingGearArtifact) Validate(catalog Catalog) error {
 		}
 
 		jobs[job.JobID] = true
+
 		for _, grant := range job.Grants {
 			kind, err := catalog.Item(grant.KindID)
+
 			if err != nil {
 				return fmt.Errorf("job %s grant %q has unknown kind %s", job.JobID, grant.Raw, grant.KindID)
 			}
@@ -87,6 +90,7 @@ func (a StartingGearArtifact) Validate(catalog Catalog) error {
 // StartingGrants returns a copy so callers cannot change the catalog.
 func (c Catalog) StartingGrants(jobID string) ([]StartingGrant, error) {
 	grants, found := c.startingGear[jobID]
+
 	if !found {
 		return nil, fmt.Errorf("unknown starting gear job %q", jobID)
 	}

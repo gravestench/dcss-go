@@ -55,16 +55,19 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 	}
 
 	fighting, err := maybeRandomDiv(r, in.FightingSkill100, 100)
+
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	weaponSkill, err := maybeRandomDiv(r, in.WeaponSkill100, 100)
+
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	toHitBase := 15 + in.Dexterity/2 + fighting + weaponSkill
+
 	if in.Unarmed {
 		toHitBase += 2
 	} else {
@@ -72,18 +75,22 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 	}
 
 	toHit, err := random2(r, toHitBase)
+
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	autoChance, err := random2(r, 100)
+
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	autoMiss, autoHit := false, false
+
 	if autoChance < 5 {
 		coin, coinErr := random2(r, 2)
+
 		if coinErr != nil {
 			return Outcome{}, coinErr
 		}
@@ -100,10 +107,13 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 	}
 
 	potential := in.WeaponDamage
+
 	if in.Unarmed {
 		potential = 3 + in.UnarmedSkill256/256
+
 		if rem := in.UnarmedSkill256 % 256; rem != 0 {
 			roll, rollErr := random2(r, 256)
+
 			if rollErr != nil {
 				return Outcome{}, rollErr
 			}
@@ -115,18 +125,21 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 	}
 
 	stat := in.Strength
+
 	if !in.Unarmed && (in.WeaponSkillID == "SK_SHORT_BLADES" || in.WeaponSkillID == "SK_LONG_BLADES") {
 		stat = in.Dexterity
 	}
 
 	potential = potential * max(2, 150+5*stat) / 2 / 100
 	damage, err := random2(r, potential+1)
+
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	if !in.Unarmed {
 		bonus, bonusErr := random2(r, in.WeaponSkill100+1)
+
 		if bonusErr != nil {
 			return Outcome{}, bonusErr
 		}
@@ -135,13 +148,16 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 	}
 
 	fightingBonus, err := random2(r, in.FightingSkill100+1)
+
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	damage = damage * (3000 + fightingBonus) / 3000
+
 	if in.Mighty {
 		bonus, bonusErr := random2(r, 10)
+
 		if bonusErr != nil {
 			return Outcome{}, bonusErr
 		}
@@ -151,6 +167,7 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 
 	if in.WeaponPlus >= 0 {
 		bonus, bonusErr := random2(r, 1+in.WeaponPlus)
+
 		if bonusErr != nil {
 			return Outcome{}, bonusErr
 		}
@@ -158,6 +175,7 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 		damage += bonus
 	} else {
 		penalty, penaltyErr := random2(r, 1-in.WeaponPlus)
+
 		if penaltyErr != nil {
 			return Outcome{}, penaltyErr
 		}
@@ -166,6 +184,7 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 	}
 
 	saved, err := random2(r, in.DefenderAC+1)
+
 	if err != nil {
 		return Outcome{}, err
 	}
@@ -188,5 +207,6 @@ func maybeRandomDiv(r Roller, numerator, denominator int) (int, error) {
 	}
 
 	roll, err := random2(r, numerator+denominator)
+
 	return roll / denominator, err
 }

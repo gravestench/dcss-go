@@ -28,6 +28,7 @@ func (s *regenerationSystem) Update(_ *akara.World, delta time.Duration) error {
 	health, hasHealth := s.health.Get(s.player)
 	magic, hasMagic := s.magic.Get(s.player)
 	progress, hasProgress := s.regeneration.Get(s.player)
+
 	if !hasHealth || !hasMagic || !hasProgress {
 		return fmt.Errorf("player lacks health, magic, or regeneration state")
 	}
@@ -40,11 +41,13 @@ func (s *regenerationSystem) Update(_ *akara.World, delta time.Duration) error {
 		HPProgress: progress.HPProgress,
 		MPProgress: progress.MPProgress,
 	}, int(delta))
+
 	if err != nil {
 		return err
 	}
 
 	health.Current, magic.Current = state.HP, state.MP
 	progress.HPProgress, progress.MPProgress = state.HPProgress, state.MPProgress
+
 	return nil
 }

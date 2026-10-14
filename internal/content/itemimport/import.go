@@ -53,8 +53,10 @@ var identitySourceNames = map[string]bool{
 func readSources(sourceDir string) (map[string][]byte, []content.JobSourceFile, error) {
 	data := make(map[string][]byte, len(sourceNames))
 	files := make([]content.JobSourceFile, 0, len(sourceNames))
+
 	for _, name := range sourceNames {
 		body, err := os.ReadFile(filepath.Join(sourceDir, name))
+
 		if err != nil {
 			return nil, nil, fmt.Errorf("read %s: %w", name, err)
 		}
@@ -70,6 +72,7 @@ func readSources(sourceDir string) (map[string][]byte, []content.JobSourceFile, 
 	sort.Slice(files, func(i, j int) bool {
 		return files[i].Path < files[j].Path
 	})
+
 	return data, files, nil
 }
 
@@ -80,11 +83,13 @@ func joinItemViews(
 	glyphs map[itemKey]rune,
 ) ([]content.ItemDef, error) {
 	known := make(map[itemKey]bool, len(identities))
+
 	for _, id := range identities {
 		key := itemKey{
 			ClassID:   id.ClassID,
 			SubtypeID: id.ID,
 		}
+
 		if known[key] {
 			return nil, fmt.Errorf("duplicate identity %s/%s", key.ClassID, key.SubtypeID)
 		}
@@ -111,6 +116,7 @@ func joinItemViews(
 	}
 
 	items := make([]content.ItemDef, 0, len(identities))
+
 	for _, identity := range identities {
 		key := itemKey{
 			ClassID:   identity.ClassID,
@@ -119,12 +125,14 @@ func joinItemViews(
 		row, hasRow := rows[key]
 		name, hasName := names[key]
 		glyph, hasGlyph := glyphs[key]
+
 		if !hasGlyph || glyph == 0 {
 			return nil, fmt.Errorf("missing ASCII glyph for %s", identity.ID)
 		}
 
 		expectsRow := identity.ClassID == "OBJ_WEAPONS" || identity.ClassID == "OBJ_ARMOUR" ||
 			identity.ClassID == "OBJ_MISSILES" || identity.ClassID == "OBJ_FOOD"
+
 		if expectsRow && !hasRow {
 			return nil, fmt.Errorf("missing property row for %s", identity.ID)
 		}
@@ -173,9 +181,11 @@ func joinItemViews(
 			Missile: row.Missile,
 			Food:    row.Food,
 		}
+
 		if hasRow {
 			item.Evidence.PropertySource = "crawl-ref/source/item-prop.cc"
 			item.Evidence.PropertyLine = row.Line
+
 			if identity.ClassID == "OBJ_FOOD" {
 				item.PropertyName = row.Name
 			}
@@ -217,6 +227,7 @@ func generateFromSource(sourceDir, revision string) ([]byte, []byte, error) {
 	}
 
 	data, files, err := readSources(sourceDir)
+
 	if err != nil {
 		return nil, nil, err
 	}
@@ -226,11 +237,13 @@ func generateFromSource(sourceDir, revision string) ([]byte, []byte, error) {
 	}
 
 	identities, aliases, err := parseIdentities(data)
+
 	if err != nil {
 		return nil, nil, err
 	}
 
 	removed, err := parseRemovedItems("crawl-ref/source/item-prop.cc", data["item-prop.cc"])
+
 	if err != nil {
 		return nil, nil, err
 	}
@@ -240,6 +253,7 @@ func generateFromSource(sourceDir, revision string) ([]byte, []byte, error) {
 			ClassID:   identities[i].ClassID,
 			SubtypeID: identities[i].ID,
 		}
+
 		if removed[key] {
 			identities[i].ExplicitlyRemoved = true
 			delete(removed, key)
@@ -251,16 +265,19 @@ func generateFromSource(sourceDir, revision string) ([]byte, []byte, error) {
 	}
 
 	vocabulary, err := parseVocabulary(data)
+
 	if err != nil {
 		return nil, nil, err
 	}
 
 	rows, err := parsePropertyTables("crawl-ref/source/item-prop.cc", data["item-prop.cc"], vocabulary)
+
 	if err != nil {
 		return nil, nil, err
 	}
 
 	names, err := parseItemNames("crawl-ref/source/item-name.cc", data["item-name.cc"], identities)
+
 	if err != nil {
 		return nil, nil, err
 	}
@@ -274,22 +291,26 @@ func generateFromSource(sourceDir, revision string) ([]byte, []byte, error) {
 		data["viewchar.cc"],
 		identities,
 	)
+
 	if err != nil {
 		return nil, nil, err
 	}
 
 	items, err := joinItemViews(identities, rows, names, glyphs)
+
 	if err != nil {
 		return nil, nil, err
 	}
 
 	itemBytes, err := json.Marshal(items)
+
 	if err != nil {
 		return nil, nil, err
 	}
 
 	digest := sha256.Sum256(itemBytes)
 	manifestFiles := make([]content.JobSourceFile, 0, len(identitySourceNames))
+
 	for _, file := range files {
 		if identitySourceNames[strings.TrimPrefix(file.Path, "crawl-ref/source/")] {
 			manifestFiles = append(manifestFiles, file)
@@ -313,16 +334,19 @@ func generateFromSource(sourceDir, revision string) ([]byte, []byte, error) {
 		SourceFiles:     files,
 		Items:           items,
 	}
+
 	if err := artifact.Validate(manifest); err != nil {
 		return nil, nil, err
 	}
 
 	itemOutput, err := json.MarshalIndent(artifact, "", "  ")
+
 	if err != nil {
 		return nil, nil, err
 	}
 
 	manifestOutput, err := json.MarshalIndent(manifest, "", "  ")
+
 	if err != nil {
 		return nil, nil, err
 	}
@@ -337,6 +361,7 @@ func Generate(sourceDir string) ([]byte, []byte, error) {
 	}
 
 	revision, err := exec.Command("git", "-C", sourceDir, "rev-parse", "HEAD").Output()
+
 	if err != nil {
 		return nil, nil, fmt.Errorf("source revision: %w", err)
 	}
@@ -358,6 +383,7 @@ func Generate(sourceDir string) ([]byte, []byte, error) {
 		"--",
 	}, sourceNames...)
 	status, err := exec.Command("git", args...).Output()
+
 	if err != nil {
 		return nil, nil, fmt.Errorf("source status: %w", err)
 	}
@@ -372,6 +398,7 @@ func Generate(sourceDir string) ([]byte, []byte, error) {
 func validatePair(itemsJSON, identitiesJSON []byte) error {
 	var artifact content.ItemArtifact
 	var manifest content.ItemIdentityManifest
+
 	if err := json.Unmarshal(itemsJSON, &artifact); err != nil {
 		return fmt.Errorf("decode items: %w", err)
 	}
@@ -385,6 +412,7 @@ func validatePair(itemsJSON, identitiesJSON []byte) error {
 
 func writeTemp(path string, data []byte) (string, error) {
 	file, err := os.CreateTemp(filepath.Dir(path), ".item-import-*.tmp")
+
 	if err != nil {
 		return "", err
 	}
@@ -395,6 +423,7 @@ func writeTemp(path string, data []byte) (string, error) {
 			os.Remove(file.Name())
 		}
 	}()
+
 	if _, err = file.Write(data); err != nil {
 		return "", err
 	}
@@ -416,6 +445,7 @@ func writePair(outPath string, check bool, generate func() ([]byte, []byte, erro
 	}
 
 	items, identities, err := generate()
+
 	if err != nil {
 		return err
 	}
@@ -425,6 +455,7 @@ func writePair(outPath string, check bool, generate func() ([]byte, []byte, erro
 	}
 
 	manifestPath := filepath.Join(filepath.Dir(outPath), "item-identities.json")
+
 	if check {
 		for _, entry := range []struct {
 			path string
@@ -440,6 +471,7 @@ func writePair(outPath string, check bool, generate func() ([]byte, []byte, erro
 			},
 		} {
 			current, err := os.ReadFile(entry.path)
+
 			if err != nil {
 				return err
 			}
@@ -453,17 +485,20 @@ func writePair(outPath string, check bool, generate func() ([]byte, []byte, erro
 	}
 
 	itemTemp, err := writeTemp(outPath, items)
+
 	if err != nil {
 		return err
 	}
 
 	defer os.Remove(itemTemp)
 	manifestTemp, err := writeTemp(manifestPath, identities)
+
 	if err != nil {
 		return err
 	}
 
 	defer os.Remove(manifestTemp)
+
 	if err := os.Rename(itemTemp, outPath); err != nil {
 		return err
 	}

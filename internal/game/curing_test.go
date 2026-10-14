@@ -11,6 +11,7 @@ import (
 
 func carryCuring(t *testing.T, g *Game) uint64 {
 	t.Helper()
+
 	if err := g.levels[1].MoveActor(ratID(t, g), 14, 7); err != nil {
 		t.Fatal(err)
 	}
@@ -33,6 +34,7 @@ func TestQuaffCuringHealsConsumesAndSchedules(t *testing.T) {
 	before.Current = 1
 	expectedRoller := RestoreRNGStreams(g.seed, g.rng.States())
 	want, err := character.CuringHP(expectedRoller, 1, before.Max)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -42,6 +44,7 @@ func TestQuaffCuringHealsConsumesAndSchedules(t *testing.T) {
 		Kind:   CommandQuaff,
 		ItemID: itemID,
 	})
+
 	if err != nil || result.Spent != 10 || result.View.PlayerHP != want || result.View.CurrentAut != start+10 {
 		t.Fatalf("quaff = %+v, %v; want HP %d and time %d", result, err, want, start+10)
 	}
@@ -55,6 +58,7 @@ func TestQuaffCuringHealsConsumesAndSchedules(t *testing.T) {
 	}
 
 	actor, _ := g.stores.Actors.Get(ratID(t, g))
+
 	if actor.NextAut <= int64(start) {
 		t.Fatalf("rat deadline = %d, want an action during quaff starting at %d", actor.NextAut, start)
 	}
@@ -71,6 +75,7 @@ func TestQuaffAtFullHPStillConsumesOnePotion(t *testing.T) {
 		Kind:   CommandQuaff,
 		ItemID: itemID,
 	})
+
 	if err != nil || first.Spent != 10 || first.View.PlayerHP != health.Max || item.Quantity != 1 {
 		t.Fatalf("first quaff = %+v, %v; item %+v", first, err, item)
 	}
@@ -79,6 +84,7 @@ func TestQuaffAtFullHPStillConsumesOnePotion(t *testing.T) {
 		Kind:   CommandQuaff,
 		ItemID: itemID,
 	})
+
 	if err != nil || second.Spent != 10 || g.world.EntityExists(akara.Entity(itemID)) {
 		t.Fatalf("second quaff = %+v, %v", second, err)
 	}
@@ -92,6 +98,7 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 		Kind:   CommandQuaff,
 		ItemID: itemID,
 	})
+
 	if err != nil || result.Spent != 0 || !strings.Contains(strings.ToLower(result.Events[0].Text), "carry") {
 		t.Fatalf("floor quaff = %+v, %v", result, err)
 	}
@@ -102,8 +109,10 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 
 	carryCuring(t, g)
 	var mightID uint64
+
 	for _, entity := range g.stores.Items.Entities() {
 		item, _ := g.stores.Items.Get(entity)
+
 		if item.KindID == "POT_MIGHT" {
 			mightID = uint64(entity)
 			item.KindID = "POT_HASTE" // another carried catalogued potion is still unsupported
@@ -116,6 +125,7 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 		Kind:   CommandQuaff,
 		ItemID: mightID,
 	})
+
 	if err != nil || result.Spent != 0 || !strings.Contains(strings.ToLower(result.Events[0].Text), "unavailable") {
 		t.Fatalf("unsupported quaff = %+v, %v", result, err)
 	}
@@ -129,6 +139,7 @@ func TestQuaffSaveContinuation(t *testing.T) {
 	g := newStepGame(t)
 	itemID := carryCuring(t, g)
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -140,6 +151,7 @@ func TestQuaffSaveContinuation(t *testing.T) {
 	}
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
+
 	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
 		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("quaff continuation = %+v/%v versus %+v/%v", left, leftErr, right, rightErr)

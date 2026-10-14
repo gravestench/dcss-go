@@ -5,6 +5,7 @@ import "testing"
 func mustLoadDefault(t *testing.T) Catalog {
 	t.Helper()
 	catalog, err := LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -14,6 +15,7 @@ func mustLoadDefault(t *testing.T) Catalog {
 
 func TestRatFixture(t *testing.T) {
 	catalog := mustLoadDefault(t)
+
 	if err := catalog.Validate(); err != nil {
 		t.Fatal(err)
 	}
@@ -23,6 +25,7 @@ func TestRatFixture(t *testing.T) {
 	}
 
 	rat, err := catalog.Monster("MONS_RAT")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -32,6 +35,7 @@ func TestRatFixture(t *testing.T) {
 	}
 
 	player := catalog.Player()
+
 	if player.SpeciesID != "SP_HUMAN" || player.JobID != "JOB_FIGHTER" || player.Speed != 10 {
 		t.Fatalf("unexpected player fixture: %+v", player)
 	}

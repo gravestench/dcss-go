@@ -14,6 +14,7 @@ import (
 func gearSourceFixture(t *testing.T) string {
 	t.Helper()
 	root := t.TempDir()
+
 	for name, data := range map[string]string{
 		"tag-version.h":    "#define TAG_MAJOR_VERSION 34\n",
 		"job-data.h":       "// synthetic starter job\n",
@@ -56,16 +57,19 @@ func fixtureJobs() []content.JobDef {
 func TestGenerateStartingGear(t *testing.T) {
 	root := gearSourceFixture(t)
 	catalog, err := content.LoadItemsForImport()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	first, err := generateFromSource(root, pinnedRevision, fixtureJobs(), catalog)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	second, err := generateFromSource(root, pinnedRevision, fixtureJobs(), catalog)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -75,6 +79,7 @@ func TestGenerateStartingGear(t *testing.T) {
 	}
 
 	var artifact content.StartingGearArtifact
+
 	if err := json.Unmarshal(first, &artifact); err != nil {
 		t.Fatal(err)
 	}
@@ -85,6 +90,7 @@ func TestGenerateStartingGear(t *testing.T) {
 	}
 
 	grants := artifact.Jobs[0].Grants
+
 	if grants[0].KindID != "ARM_SCALE_MAIL" || grants[1].KindID != "POT_MIGHT" ||
 		grants[2].KindID != "MI_DART" || grants[2].Quantity != 3 || grants[2].Ego != "curare" {
 		t.Fatalf("grant order or properties changed: %+v", grants)
@@ -107,6 +113,7 @@ func TestGenerateStartingGear(t *testing.T) {
 
 func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 	catalog, err := content.LoadItemsForImport()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -132,6 +139,7 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 			jobs: func() []content.JobDef {
 				jobs := fixtureJobs()
 				jobs[0].Equipment[0] = "unknown item"
+
 				return jobs
 			},
 		},
@@ -144,15 +152,18 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 			jobs: func() []content.JobDef {
 				jobs := fixtureJobs()
 				jobs[0].Equipment[2] = "dart ego:unknown q:3"
+
 				return jobs
 			},
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			root := gearSourceFixture(t)
+
 			if tc.file != "" {
 				path := filepath.Join(root, tc.file)
 				data, err := os.ReadFile(path)
+
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -163,11 +174,13 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 			}
 
 			jobs := fixtureJobs()
+
 			if tc.jobs != nil {
 				jobs = tc.jobs()
 			}
 
 			_, err := generateFromSource(root, pinnedRevision, jobs, catalog)
+
 			if err == nil || !strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want %q error, got %v", tc.want, err)
 			}
@@ -196,6 +209,7 @@ func TestWriteStartingGear(t *testing.T) {
 	root := gearSourceFixture(t)
 	out := filepath.Join(t.TempDir(), "starting-gear.json")
 	catalog, err := content.LoadItemsForImport()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -203,11 +217,13 @@ func TestWriteStartingGear(t *testing.T) {
 	generate := func(source string) ([]byte, error) {
 		return generateFromSource(source, pinnedRevision, fixtureJobs(), catalog)
 	}
+
 	if err := writeArtifact(root, out, false, generate); err != nil {
 		t.Fatal(err)
 	}
 
 	before, err := os.ReadFile(out)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -235,6 +251,7 @@ func TestWriteStartingGear(t *testing.T) {
 	broken := func(string) ([]byte, error) {
 		return nil, os.ErrInvalid
 	}
+
 	if err := writeArtifact(root, out, false, broken); err == nil {
 		t.Fatal("failed generation passed")
 	}

@@ -59,16 +59,19 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 	bodyEncumbrance := -in.BodyEV / 10
 	bodyPenalty := 2 * bodyEncumbrance * bodyEncumbrance * (450 - in.ArmourSkill*10) * scale /
 		(5 * (in.Strength + 3)) / 450
+
 	if bodyPenalty < 0 {
 		return Defense{}, fmt.Errorf("unsupported armour skill %d", in.ArmourSkill)
 	}
 
 	piecePenalty := (-in.BodyEV / 3) * scale / 10
 	shieldPenalty := 0
+
 	if in.ShieldAC > 0 {
 		baseShieldPenalty := -in.ShieldEV / 10
 		shieldPenalty = 2 * baseShieldPenalty * baseShieldPenalty *
 			(270 - in.ShieldsSkill*10) * scale / (5 * 20) / 270
+
 		if shieldPenalty < 0 {
 			return Defense{}, fmt.Errorf("unsupported shields skill %d", in.ShieldsSkill)
 		}
@@ -76,6 +79,7 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 
 	dodgeBonus := 800 * scale / 20 / 10 / 10 // zero Dodging at the supported start
 	armourDodgePenalty := bodyEncumbrance - 3
+
 	if armourDodgePenalty > 0 {
 		if armourDodgePenalty >= in.Strength {
 			dodgeBonus = dodgeBonus * in.Strength / (armourDodgePenalty * 2)
@@ -85,6 +89,7 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 	}
 
 	naturalEV := 10*scale + dodgeBonus - piecePenalty - bodyPenalty - shieldPenalty
+
 	if naturalEV < scale {
 		naturalEV = scale
 	}
@@ -93,11 +98,13 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 
 	baseAC := in.BodyAC * scale * (440 + in.ArmourSkill*20) / 440
 	ac := (baseAC + in.BodyPlus*scale) / scale
+
 	if ac < 0 {
 		ac = 0
 	}
 
 	shieldClass := 0
+
 	if in.ShieldAC > 0 {
 		baseShield := in.ShieldAC * 2
 		shield := baseShield*50 + baseShield*(in.ShieldsSkill*5)/2 +
@@ -107,6 +114,7 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 	}
 
 	gdr := int(16 * math.Sqrt(math.Sqrt(float64(ac))))
+
 	return Defense{
 		EV:           ev,
 		AC:           ac,
@@ -122,6 +130,7 @@ func random2(r Roller, bound int) (int, error) {
 	}
 
 	value, err := r.Intn("melee", bound)
+
 	if err != nil {
 		return 0, err
 	}
@@ -135,11 +144,13 @@ func random2(r Roller, bound int) (int, error) {
 
 func random2avg2(r Roller, bound int) (int, error) {
 	first, err := random2(r, bound)
+
 	if err != nil {
 		return 0, err
 	}
 
 	second, err := random2(r, bound+1)
+
 	if err != nil {
 		return 0, err
 	}
@@ -157,23 +168,28 @@ func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, e
 
 	toHitBase := 18 + attack.HD*3/2 // supported animals have no M_FIGHTER flag
 	toHit, err := random2(r, toHitBase+1)
+
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	evRoll, err := random2avg2(r, 2*defense.EV)
+
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	autoChance, err := random2(r, 100)
+
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	autoMiss, autoHit := false, false
+
 	if autoChance < 5 {
 		coin, coinErr := random2(r, 2)
+
 		if coinErr != nil {
 			return Outcome{}, coinErr
 		}
@@ -183,13 +199,16 @@ func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, e
 
 	bypass := 15 + attack.HD*2/3 + 5*defense.ShieldBlocks*defense.ShieldBlocks
 	conBlock, err := random2(r, bypass)
+
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	proBlock := -100
+
 	if defense.ShieldClass > 0 {
 		shieldRoll, rollErr := random2avg2(r, defense.ShieldClass*2)
+
 		if rollErr != nil {
 			return Outcome{}, rollErr
 		}
@@ -219,12 +238,14 @@ func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, e
 	}
 
 	baseRoll, err := random2(r, attack.Damage)
+
 	if err != nil {
 		return Outcome{}, err
 	}
 
 	damage := 1 + baseRoll
 	acRoll, err := random2(r, defense.AC+1)
+
 	if err != nil {
 		return Outcome{}, err
 	}
@@ -233,8 +254,10 @@ func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, e
 	// actor::apply_ac evaluates div_rand_round even if GDR later selects zero.
 	maxGDR := defense.GDR * attack.Damage / 100
 	acHalf := defense.AC / 2
+
 	if defense.AC%2 != 0 {
 		remainder, remainderErr := random2(r, 2)
+
 		if remainderErr != nil {
 			return Outcome{}, remainderErr
 		}
@@ -245,6 +268,7 @@ func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, e
 	}
 
 	saved = max(saved, min(maxGDR, acHalf))
+
 	return Outcome{
 		Kind:         Hit,
 		Damage:       max(0, damage-saved),

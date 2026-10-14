@@ -81,6 +81,7 @@ func TestLayoutMatchesMinimumAndExpandedConsole(t *testing.T) {
 		},
 	} {
 		got, ok := ComputeLayout(tc.width, tc.height)
+
 		if !ok || got != tc.want {
 			t.Fatalf("layout %dx%d = %+v, valid %v; want %+v", tc.width, tc.height, got, ok, tc.want)
 		}

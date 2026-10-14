@@ -11,6 +11,7 @@ import (
 
 func carryHealWounds(t *testing.T, g *Game) uint64 {
 	t.Helper()
+
 	if err := g.levels[1].MoveActor(g.player, 7, 3); err != nil {
 		t.Fatal(err)
 	}
@@ -32,8 +33,10 @@ func carryHealWounds(t *testing.T, g *Game) uint64 {
 
 	for _, entity := range g.stores.Items.Entities() {
 		item, _ := g.stores.Items.Get(entity)
+
 		if item.KindID == "POT_HEAL_WOUNDS" {
 			carrier, carried := g.stores.CarriedBy.Get(entity)
+
 			if !carried || carrier.Holder != g.player {
 				t.Fatal("heal wounds potion was not picked up")
 			}
@@ -43,6 +46,7 @@ func carryHealWounds(t *testing.T, g *Game) uint64 {
 	}
 
 	t.Fatal("heal wounds potion missing")
+
 	return 0
 }
 
@@ -52,6 +56,7 @@ func TestHealWoundsFloorPickupQuaffAndSaveContinuation(t *testing.T) {
 	health, _ := g.stores.Health.Get(g.player)
 	health.Current = 1
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,6 +64,7 @@ func TestHealWoundsFloorPickupQuaffAndSaveContinuation(t *testing.T) {
 	defer loaded.Close()
 	wantRolls := RestoreRNGStreams(g.seed, g.rng.States())
 	wantHP, err := character.HealWoundsHP(wantRolls, 1, health.Max)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -69,6 +75,7 @@ func TestHealWoundsFloorPickupQuaffAndSaveContinuation(t *testing.T) {
 	}
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
+
 	if leftErr != nil || rightErr != nil || left.Spent != 10 || left.View.PlayerHP != wantHP ||
 		!reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("heal wounds continuation %+v/%v versus %+v/%v; want HP %d", left, leftErr, right, rightErr, wantHP)
@@ -93,11 +100,13 @@ func TestHealWoundsAtFullHPIsFreeAndKeepsPotion(t *testing.T) {
 		Kind:   CommandQuaff,
 		ItemID: itemID,
 	})
+
 	if err != nil || result.Spent != 0 || !strings.Contains(result.Events[0].Text, "already full") {
 		t.Fatalf("full-HP quaff %+v, %v", result, err)
 	}
 
 	selected, found := g.stores.Items.Get(akara.Entity(itemID))
+
 	if !found || selected.Quantity != 1 || g.currentAut != Aut(before.CurrentAut) ||
 		!reflect.DeepEqual(g.rng.States(), before.RNG) {
 		t.Fatal("full-HP refusal consumed item, time, or RNG")

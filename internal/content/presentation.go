@@ -32,8 +32,10 @@ type PresentationArtifact struct {
 func (a PresentationArtifact) clone() PresentationArtifact {
 	a.SourceFiles = append([]JobSourceFile(nil), a.SourceFiles...)
 	a.StartupModes = append([]StartupMode(nil), a.StartupModes...)
+
 	if a.SkillColumns != nil {
 		columns := make([][]string, len(a.SkillColumns))
+
 		for i, column := range a.SkillColumns {
 			columns[i] = append([]string(nil), column...)
 		}
@@ -45,11 +47,13 @@ func (a PresentationArtifact) clone() PresentationArtifact {
 	a.JobGroups = cloneGroups(a.JobGroups)
 	a.SpeciesDescriptions = cloneDescriptions(a.SpeciesDescriptions)
 	a.JobDescriptions = cloneDescriptions(a.JobDescriptions)
+
 	return a
 }
 
 func cloneGroups(groups []MenuGroup) []MenuGroup {
 	copy := append([]MenuGroup(nil), groups...)
+
 	for i := range copy {
 		copy[i].IDs = append([]string(nil), groups[i].IDs...)
 	}
@@ -59,6 +63,7 @@ func cloneGroups(groups []MenuGroup) []MenuGroup {
 
 func cloneDescriptions(descriptions map[string]string) map[string]string {
 	copy := make(map[string]string, len(descriptions))
+
 	for id, description := range descriptions {
 		copy[id] = description
 	}
@@ -82,6 +87,7 @@ func (a PresentationArtifact) validate(c Catalog) error {
 
 	seenSkills := map[string]bool{}
 	human, found := c.species["SP_HUMAN"]
+
 	if !found {
 		return fmt.Errorf("presentation lacks Human skill catalog")
 	}
@@ -101,6 +107,7 @@ func (a PresentationArtifact) validate(c Catalog) error {
 	}
 
 	seenModes := map[string]bool{}
+
 	for _, mode := range a.StartupModes {
 		if mode.ID == "" || mode.Label == "" || mode.Description == "" || seenModes[mode.ID] {
 			return fmt.Errorf("invalid or duplicate startup mode %s", mode.ID)
@@ -132,6 +139,7 @@ func validateMenuGroups[T interface{ SpeciesDef | JobDef }](
 	kind string,
 ) error {
 	seen := make(map[string]bool, expected)
+
 	for _, group := range groups {
 		if group.Label == "" || len(group.IDs) == 0 {
 			return fmt.Errorf("empty %s menu group", kind)
@@ -143,6 +151,7 @@ func validateMenuGroups[T interface{ SpeciesDef | JobDef }](
 			}
 
 			definition, found := definitions[id]
+
 			if !found {
 				return fmt.Errorf("unknown %s menu ID %s", kind, id)
 			}

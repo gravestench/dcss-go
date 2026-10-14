@@ -29,12 +29,14 @@ type sourceView struct {
 
 func newSourceView(path string, data []byte) (sourceView, error) {
 	lines, err := sourceparse.Tag34NumberedLines(path, data)
+
 	if err != nil {
 		return sourceView{}, err
 	}
 
 	v := sourceView{path: path}
 	var text strings.Builder
+
 	for _, line := range lines {
 		v.starts = append(v.starts, text.Len())
 		v.lines = append(v.lines, line.Number)
@@ -43,6 +45,7 @@ func newSourceView(path string, data []byte) (sourceView, error) {
 	}
 
 	v.text = text.String()
+
 	return v, nil
 }
 
@@ -50,6 +53,7 @@ func (v sourceView) line(offset int) int {
 	index := sort.Search(len(v.starts), func(i int) bool {
 		return v.starts[i] > offset
 	}) - 1
+
 	if index < 0 {
 		return 0
 	}
@@ -59,23 +63,27 @@ func (v sourceView) line(offset int) int {
 
 func (v sourceView) initializer(marker string) (string, int, error) {
 	start := strings.Index(v.text, marker)
+
 	if start < 0 {
 		return "", 0, fmt.Errorf("%s: missing %s", v.path, marker)
 	}
 
 	assign := strings.Index(v.text[start+len(marker):], "=")
+
 	if assign < 0 {
 		return "", 0, fmt.Errorf("%s:%d: %s lacks initializer", v.path, v.line(start), marker)
 	}
 
 	assign += start + len(marker)
 	open := strings.Index(v.text[assign:], "{")
+
 	if open < 0 {
 		return "", 0, fmt.Errorf("%s:%d: %s lacks opening brace", v.path, v.line(start), marker)
 	}
 
 	open += assign
 	inside, _, err := balancedPart(v.text, open, '{', '}')
+
 	if err != nil {
 		return "", 0, fmt.Errorf("%s:%d: %s: %w", v.path, v.line(open), marker, err)
 	}
@@ -91,8 +99,10 @@ func balancedPart(text string, start int, open, close byte) (string, int, error)
 
 	depth := 0
 	quote, escape := byte(0), false
+
 	for i := start; i < len(text); i++ {
 		c := text[i]
+
 		if quote != 0 {
 			if escape {
 				escape = false
@@ -114,6 +124,7 @@ func balancedPart(text string, start int, open, close byte) (string, int, error)
 			depth++
 		} else if c == close {
 			depth--
+
 			if depth == 0 {
 				return text[start+1 : i], i + 1, nil
 			}
@@ -135,6 +146,7 @@ func splitTopLevel(text string, sep byte) ([]sourcePart, error) {
 	appendPart := func(end int) {
 		part := text[start:end]
 		trimmed := strings.TrimSpace(part)
+
 		if trimmed != "" {
 			parts = append(parts, sourcePart{
 				text:  trimmed,
@@ -142,8 +154,10 @@ func splitTopLevel(text string, sep byte) ([]sourcePart, error) {
 			})
 		}
 	}
+
 	for i := 0; i < len(text); i++ {
 		c := text[i]
+
 		if quote != 0 {
 			if escape {
 				escape = false
@@ -184,6 +198,7 @@ func splitTopLevel(text string, sep byte) ([]sourcePart, error) {
 	}
 
 	appendPart(len(text))
+
 	return parts, nil
 }
 
@@ -193,16 +208,19 @@ func rowFields(raw string) ([]string, error) {
 	}
 
 	inside, end, err := balancedPart(raw, 0, '{', '}')
+
 	if err != nil || strings.TrimSpace(raw[end:]) != "" {
 		return nil, fmt.Errorf("malformed braced row")
 	}
 
 	parts, err := splitTopLevel(inside, ',')
+
 	if err != nil {
 		return nil, err
 	}
 
 	fields := make([]string, len(parts))
+
 	for i, part := range parts {
 		fields[i] = part.text
 	}
@@ -212,6 +230,7 @@ func rowFields(raw string) ([]string, error) {
 
 func propertyInt(raw string) (int, error) {
 	value, err := strconv.ParseInt(strings.TrimSpace(raw), 0, 32)
+
 	if err != nil {
 		return 0, fmt.Errorf("unsupported integer %q", raw)
 	}
@@ -221,6 +240,7 @@ func propertyInt(raw string) (int, error) {
 
 func propertyName(raw string) (string, error) {
 	name, err := strconv.Unquote(strings.TrimSpace(raw))
+
 	if err != nil {
 		return "", fmt.Errorf("unsupported item name %q", raw)
 	}
@@ -238,30 +258,36 @@ func parseArmourFlags(raw string, vocabulary content.ItemVocabulary) ([]content.
 	}
 
 	parts, err := splitTopLevel(raw, '|')
+
 	if err != nil {
 		return nil, err
 	}
 
 	var flags []content.ItemFlag
+
 	for _, part := range parts {
 		text := part.text
 		flag := content.ItemFlag{
 			ID:    text,
 			Level: 1,
 		}
+
 		if strings.HasPrefix(text, "ard(") {
 			inside, end, err := balancedPart(text, 3, '(', ')')
+
 			if err != nil || end != len(text) {
 				return nil, fmt.Errorf("unsupported armour flag expression %q", text)
 			}
 
 			arguments, err := splitTopLevel(inside, ',')
+
 			if err != nil || len(arguments) != 2 {
 				return nil, fmt.Errorf("unsupported armour flag expression %q", text)
 			}
 
 			flag.ID = arguments[0].text
 			flag.Level, err = propertyInt(arguments[1].text)
+
 			if err != nil {
 				return nil, err
 			}
@@ -279,6 +305,7 @@ func parseArmourFlags(raw string, vocabulary content.ItemVocabulary) ([]content.
 	sort.Slice(flags, func(i, j int) bool {
 		return flags[i].ID < flags[j].ID
 	})
+
 	for i := 1; i < len(flags); i++ {
 		if flags[i].ID == flags[i-1].ID {
 			return nil, fmt.Errorf("duplicate armour flag %s", flags[i].ID)
@@ -290,11 +317,13 @@ func parseArmourFlags(raw string, vocabulary content.ItemVocabulary) ([]content.
 
 func parseDamageFlags(raw string, vocabulary content.ItemVocabulary) ([]string, error) {
 	parts, err := splitTopLevel(raw, '|')
+
 	if err != nil {
 		return nil, err
 	}
 
 	flags := make([]string, 0, len(parts))
+
 	for _, part := range parts {
 		if !knownSymbol(part.text, vocabulary.DamageFlags) {
 			return nil, fmt.Errorf("unknown damage flag %q", part.text)
@@ -304,6 +333,7 @@ func parseDamageFlags(raw string, vocabulary content.ItemVocabulary) ([]string, 
 	}
 
 	sort.Strings(flags)
+
 	return flags, nil
 }
 
@@ -314,6 +344,7 @@ func parseBrandWeights(
 ) ([]content.ItemBrandWeight, error) {
 	if !strings.HasPrefix(raw, "{") {
 		weights, found := named[raw]
+
 		if !found {
 			return nil, fmt.Errorf("unknown weapon brand table %s", raw)
 		}
@@ -322,23 +353,28 @@ func parseBrandWeights(
 	}
 
 	inside, end, err := balancedPart(raw, 0, '{', '}')
+
 	if err != nil || end != len(raw) {
 		return nil, fmt.Errorf("malformed weapon brand weights")
 	}
 
 	parts, err := splitTopLevel(inside, ',')
+
 	if err != nil {
 		return nil, err
 	}
 
 	var weights []content.ItemBrandWeight
+
 	for _, part := range parts {
 		fields, err := rowFields(part.text)
+
 		if err != nil || len(fields) != 2 {
 			return nil, fmt.Errorf("malformed weapon brand weight %q", part.text)
 		}
 
 		weight, err := propertyInt(fields[1])
+
 		if err != nil {
 			return nil, err
 		}
@@ -356,6 +392,7 @@ func parseBrandWeights(
 	sort.Slice(weights, func(i, j int) bool {
 		return weights[i].BrandID < weights[j].BrandID
 	})
+
 	for i := 1; i < len(weights); i++ {
 		if weights[i].BrandID == weights[i-1].BrandID {
 			return nil, fmt.Errorf("duplicate weapon brand %s", weights[i].BrandID)
@@ -369,20 +406,24 @@ var brandTablePattern = regexp.MustCompile(`static\s+const\s+vector<brand_weight
 
 func parseNamedBrands(v sourceView, vocabulary content.ItemVocabulary) (map[string][]content.ItemBrandWeight, error) {
 	named := map[string][]content.ItemBrandWeight{}
+
 	for _, match := range brandTablePattern.FindAllStringSubmatchIndex(v.text, -1) {
 		name := v.text[match[2]:match[3]]
 		open := strings.Index(v.text[match[1]:], "{")
+
 		if open < 0 {
 			return nil, fmt.Errorf("%s:%d: brand table %s lacks initializer", v.path, v.line(match[0]), name)
 		}
 
 		open += match[1]
 		inside, _, err := balancedPart(v.text, open, '{', '}')
+
 		if err != nil {
 			return nil, fmt.Errorf("%s:%d: brand table %s: %w", v.path, v.line(open), name, err)
 		}
 
 		weights, err := parseBrandWeights("{"+inside+"}", nil, vocabulary)
+
 		if err != nil {
 			return nil, fmt.Errorf("%s:%d: brand table %s: %w", v.path, v.line(open), name, err)
 		}
@@ -403,6 +444,7 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 	}
 
 	name, err := propertyName(fields[1])
+
 	if err != nil {
 		return itemPropertyRow{}, err
 	}
@@ -434,6 +476,7 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 		FitMinID: fields[6],
 		FitMaxID: fields[7],
 	}
+
 	for _, field := range []struct {
 		raw    string
 		target *int
@@ -452,6 +495,7 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 		},
 	} {
 		*field.target, err = propertyInt(field.raw)
+
 		if err != nil {
 			return itemPropertyRow{}, err
 		}
@@ -467,6 +511,7 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 
 	if len(fields) >= 10 {
 		p.Flags, err = parseArmourFlags(fields[9], vocabulary)
+
 		if err != nil {
 			return itemPropertyRow{}, err
 		}
@@ -474,6 +519,7 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 
 	if len(fields) == 11 {
 		p.AcquireWeight, err = propertyInt(fields[10])
+
 		if err != nil {
 			return itemPropertyRow{}, err
 		}
@@ -495,6 +541,7 @@ func weaponRow(
 	}
 
 	name, err := propertyName(fields[1])
+
 	if err != nil {
 		return itemPropertyRow{}, err
 	}
@@ -505,6 +552,7 @@ func weaponRow(
 		Min1HSizeID: fields[7],
 		AmmoID:      fields[8],
 	}
+
 	for _, symbol := range []struct {
 		id  string
 		set []string
@@ -561,18 +609,21 @@ func weaponRow(
 		},
 	} {
 		*field.target, err = propertyInt(field.raw)
+
 		if err != nil {
 			return itemPropertyRow{}, err
 		}
 	}
 
 	p.DamageFlags, err = parseDamageFlags(fields[9], vocabulary)
+
 	if err != nil {
 		return itemPropertyRow{}, err
 	}
 
 	if len(fields) == 14 {
 		p.BrandWeights, err = parseBrandWeights(fields[13], named, vocabulary)
+
 		if err != nil {
 			return itemPropertyRow{}, err
 		}
@@ -594,11 +645,13 @@ func missileRow(fields []string, vocabulary content.ItemVocabulary) (itemPropert
 	}
 
 	name, err := propertyName(fields[1])
+
 	if err != nil {
 		return itemPropertyRow{}, err
 	}
 
 	p := content.MissileProperties{}
+
 	for _, field := range []struct {
 		raw    string
 		target *int
@@ -617,6 +670,7 @@ func missileRow(fields []string, vocabulary content.ItemVocabulary) (itemPropert
 		},
 	} {
 		*field.target, err = propertyInt(field.raw)
+
 		if err != nil {
 			return itemPropertyRow{}, err
 		}
@@ -634,11 +688,13 @@ func foodRow(fields []string) (itemPropertyRow, error) {
 	}
 
 	name, err := propertyName(fields[1])
+
 	if err != nil {
 		return itemPropertyRow{}, err
 	}
 
 	p := content.FoodProperties{}
+
 	for _, field := range []struct {
 		raw    string
 		target *int
@@ -657,6 +713,7 @@ func foodRow(fields []string) (itemPropertyRow, error) {
 		},
 	} {
 		*field.target, err = propertyInt(field.raw)
+
 		if err != nil {
 			return itemPropertyRow{}, err
 		}
@@ -670,46 +727,55 @@ func foodRow(fields []string) (itemPropertyRow, error) {
 
 func dragonArmourRows(raw string, vocabulary content.ItemVocabulary) (map[itemKey]itemPropertyRow, error) {
 	open := strings.Index(raw, "(")
+
 	if open < 0 || !strings.HasPrefix(raw, "DRAGON_ARMOUR") {
 		return nil, fmt.Errorf("unsupported armour macro %q", raw)
 	}
 
 	inside, end, err := balancedPart(raw, open, '(', ')')
+
 	if err != nil || end != len(raw) {
 		return nil, fmt.Errorf("malformed DRAGON_ARMOUR call")
 	}
 
 	parts, err := splitTopLevel(inside, ',')
+
 	if err != nil || len(parts) != 6 {
 		return nil, fmt.Errorf("DRAGON_ARMOUR needs six arguments")
 	}
 
 	args := make([]string, 6)
+
 	for i, p := range parts {
 		args[i] = p.text
 	}
 
 	name, err := propertyName(args[1])
+
 	if err != nil {
 		return nil, err
 	}
 
 	flags, err := parseArmourFlags(args[5], vocabulary)
+
 	if err != nil {
 		return nil, err
 	}
 
 	ac, err := propertyInt(args[2])
+
 	if err != nil {
 		return nil, err
 	}
 
 	ev, err := propertyInt(args[3])
+
 	if err != nil {
 		return nil, err
 	}
 
 	price, err := propertyInt(args[4])
+
 	if err != nil {
 		return nil, err
 	}
@@ -719,6 +785,7 @@ func dragonArmourRows(raw string, vocabulary content.ItemVocabulary) (map[itemKe
 	}
 	hideID := "ARM_" + args[0] + "_DRAGON_HIDE"
 	scalesID := "ARM_" + args[0] + "_DRAGON_ARMOUR"
+
 	return map[itemKey]itemPropertyRow{
 		{"OBJ_ARMOUR", hideID}: {
 			Name: "removed " + name + " dragon hide",
@@ -751,16 +818,19 @@ func parsePropertyTables(
 	vocabulary content.ItemVocabulary,
 ) (map[itemKey]itemPropertyRow, error) {
 	v, err := newSourceView(path, data)
+
 	if err != nil {
 		return nil, err
 	}
 
 	named, err := parseNamedBrands(v, vocabulary)
+
 	if err != nil {
 		return nil, err
 	}
 
 	result := map[itemKey]itemPropertyRow{}
+
 	for _, table := range []struct {
 		marker, classID string
 		decode          func([]string) (itemPropertyRow, error)
@@ -793,17 +863,20 @@ func parsePropertyTables(
 		},
 	} {
 		inside, base, err := v.initializer(table.marker)
+
 		if err != nil {
 			return nil, err
 		}
 
 		parts, err := splitTopLevel(inside, ',')
+
 		if err != nil {
 			return nil, fmt.Errorf("%s:%d: %s: %w", path, v.line(base), table.marker, err)
 		}
 
 		for _, part := range parts {
 			line := v.line(base + part.start)
+
 			if part.text == "#undef DRAGON_ARMOUR" && table.classID == "OBJ_ARMOUR" {
 				continue
 			}
@@ -814,6 +887,7 @@ func parsePropertyTables(
 				}
 
 				expanded, err := dragonArmourRows(part.text, vocabulary)
+
 				if err != nil {
 					return nil, fmt.Errorf("%s:%d: %w", path, line, err)
 				}
@@ -831,6 +905,7 @@ func parsePropertyTables(
 			}
 
 			fields, err := rowFields(part.text)
+
 			if err != nil {
 				return nil, fmt.Errorf("%s:%d: %w", path, line, err)
 			}
@@ -840,6 +915,7 @@ func parsePropertyTables(
 			}
 
 			row, err := table.decode(fields)
+
 			if err != nil {
 				return nil, fmt.Errorf("%s:%d: %s: %w", path, line, fields[0], err)
 			}
@@ -848,6 +924,7 @@ func parsePropertyTables(
 				ClassID:   table.classID,
 				SubtypeID: fields[0],
 			}
+
 			if _, found := result[key]; found {
 				return nil, fmt.Errorf("%s:%d: duplicate property row %s", path, line, fields[0])
 			}

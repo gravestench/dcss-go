@@ -23,16 +23,19 @@ func (s *durationSystem) Update(_ *akara.World, delta time.Duration) error {
 	}
 
 	status, found := s.durations.Get(s.player)
+
 	if !found {
 		return fmt.Errorf("player has no duration state")
 	}
 
 	remaining, ended, err := character.DecayMight(status.MightAut, int(delta))
+
 	if err != nil {
 		return err
 	}
 
 	status.MightAut = remaining
+
 	if ended {
 		s.turn.Events = append(s.turn.Events, Event{
 			Kind: "duration",

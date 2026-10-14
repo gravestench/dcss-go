@@ -75,6 +75,7 @@ func TestParseEquipmentSpec(t *testing.T) {
 	} {
 		t.Run(tc.raw, func(t *testing.T) {
 			name, got, err := parseEquipmentSpec("JOB_TEST", tc.raw)
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -105,6 +106,7 @@ func TestParseEquipmentSpecRejectsBadTag(t *testing.T) {
 	} {
 		t.Run(raw, func(t *testing.T) {
 			_, _, err := parseEquipmentSpec("JOB_BRIGAND", raw)
+
 			if err == nil || !strings.Contains(err.Error(), "JOB_BRIGAND") || !strings.Contains(err.Error(), raw) {
 				t.Fatalf("want contextual error for %q, got %v", raw, err)
 			}

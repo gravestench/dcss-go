@@ -147,6 +147,7 @@ var enumSymbolPattern = regexp.MustCompile(`^[A-Z][A-Z0-9_]*$`)
 // enumMembers reads only one named enum, keeping C++ numeric progression.
 func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 	lines, err := sourceparse.Tag34NumberedLines(path, data)
+
 	if err != nil {
 		return nil, err
 	}
@@ -155,15 +156,19 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 	value := -1
 	known := map[string]int{}
 	var entries []enumValue
+
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line.Text)
+
 		if state == 0 {
 			match := enumHeaderPattern.FindStringSubmatch(trimmed)
+
 			if match == nil || match[1] != name {
 				continue
 			}
 
 			state = 1
+
 			if strings.Contains(trimmed, "{") {
 				state = 2
 			}
@@ -195,27 +200,32 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 
 		for _, raw := range strings.Split(trimmed, ",") {
 			part := strings.TrimSpace(raw)
+
 			if part == "" {
 				continue
 			}
 
 			match := enumMemberPattern.FindStringSubmatch(part)
+
 			if match == nil {
 				return nil, fmt.Errorf("%s:%d: unsupported enum %s row %q", path, line.Number, name, part)
 			}
 
 			id, expression := match[1], strings.TrimSpace(match[2])
+
 			if _, found := known[id]; found {
 				return nil, fmt.Errorf("%s:%d: duplicate enum member %s", path, line.Number, id)
 			}
 
 			alias := ""
+
 			if expression == "" {
 				value++
 			} else if number, err := strconv.ParseInt(expression, 0, 32); err == nil {
 				value = int(number)
 			} else if enumSymbolPattern.MatchString(expression) {
 				referenced, found := known[expression]
+
 				if !found {
 					return nil, fmt.Errorf("%s:%d: enum %s references unknown %s", path, line.Number, id, expression)
 				}
@@ -249,11 +259,13 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 		source["object-class-type.h"],
 		"object_class_type",
 	)
+
 	if err != nil {
 		return nil, nil, err
 	}
 
 	classValues := map[string]int{}
+
 	for _, entry := range classEntries {
 		if entry.ID == "NUM_OBJECT_CLASSES" {
 			break
@@ -279,6 +291,7 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 		}
 
 		pair := [2]int{classValue, entry.Value}
+
 		if previous, found := seenPairs[pair]; found {
 			return fmt.Errorf(
 				"%s:%d: subtype %s duplicates numeric pair of %s",
@@ -298,21 +311,26 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 			SourcePath:   entry.SourcePath,
 			SourceLine:   entry.SourceLine,
 		})
+
 		return nil
 	}
+
 	for _, class := range itemClassSources {
 		classValue, found := classValues[class.ClassID]
+
 		if !found {
 			return nil, nil, fmt.Errorf("missing active item class %s", class.ClassID)
 		}
 
 		entries, err := enumMembers("crawl-ref/source/"+class.File, source[class.File], class.Enum)
+
 		if err != nil {
 			return nil, nil, err
 		}
 
 		concrete := map[string]bool{}
 		ended := class.End == ""
+
 		for _, entry := range entries {
 			if entry.ID == class.End {
 				ended = true
@@ -320,6 +338,7 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 			}
 
 			matchesPrefix := false
+
 			for _, prefix := range class.Prefix {
 				matchesPrefix = matchesPrefix || strings.HasPrefix(entry.ID, prefix)
 			}
@@ -362,6 +381,7 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 		Value:      0,
 		SourcePath: "crawl-ref/source/object-class-type.h",
 	}
+
 	for _, entry := range classEntries {
 		if entry.ID == "OBJ_GOLD" {
 			gold.SourceLine = entry.SourceLine
@@ -383,6 +403,7 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 	sort.Slice(aliases, func(i, j int) bool {
 		return aliases[i].ID < aliases[j].ID
 	})
+
 	return identities, aliases, nil
 }
 
@@ -390,14 +411,17 @@ var removedRow = regexp.MustCompile(`^\{\s*(OBJ_[A-Z0-9_]+)\s*,\s*([A-Z][A-Z0-9_
 
 func parseRemovedItems(path string, data []byte) (map[itemKey]bool, error) {
 	lines, err := sourceparse.Tag34NumberedLines(path, data)
+
 	if err != nil {
 		return nil, err
 	}
 
 	state := 0
 	removed := map[itemKey]bool{}
+
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line.Text)
+
 		if state == 0 {
 			if strings.Contains(trimmed, " removed_items ") && strings.HasSuffix(trimmed, "=") {
 				state = 1
@@ -425,6 +449,7 @@ func parseRemovedItems(path string, data []byte) (map[itemKey]bool, error) {
 		}
 
 		match := removedRow.FindStringSubmatch(trimmed)
+
 		if match == nil {
 			return nil, fmt.Errorf("%s:%d: unsupported removed_items row %q", path, line.Number, trimmed)
 		}
@@ -433,6 +458,7 @@ func parseRemovedItems(path string, data []byte) (map[itemKey]bool, error) {
 			ClassID:   match[1],
 			SubtypeID: match[2],
 		}
+
 		if removed[key] {
 			return nil, fmt.Errorf("%s:%d: duplicate removed item %s/%s", path, line.Number, key.ClassID, key.SubtypeID)
 		}
@@ -449,16 +475,20 @@ func parseRemovedItems(path string, data []byte) (map[itemKey]bool, error) {
 
 func enumSymbolIDs(path string, data []byte, name string, prefixes ...string) ([]string, error) {
 	lines, err := sourceparse.Tag34NumberedLines(path, data)
+
 	if err != nil {
 		return nil, err
 	}
 
 	state := 0
 	var ids []string
+
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line.Text)
+
 		if state == 0 {
 			match := enumHeaderPattern.FindStringSubmatch(trimmed)
+
 			if match != nil && match[1] == name {
 				state = 1
 			}
@@ -487,6 +517,7 @@ func enumSymbolIDs(path string, data []byte, name string, prefixes ...string) ([
 		member := strings.TrimSpace(strings.TrimSuffix(trimmed, ","))
 		parts := strings.SplitN(member, "=", 2)
 		id := strings.TrimSpace(parts[0])
+
 		if !enumSymbolPattern.MatchString(id) || (len(parts) == 2 && strings.TrimSpace(parts[1]) == "") {
 			return nil, fmt.Errorf("%s:%d: unsupported vocabulary enum row %q", path, line.Number, trimmed)
 		}
@@ -504,6 +535,7 @@ func enumSymbolIDs(path string, data []byte, name string, prefixes ...string) ([
 	}
 
 	sort.Strings(ids)
+
 	return ids, nil
 }
 
@@ -515,6 +547,7 @@ func parseVocabulary(source map[string][]byte) (content.ItemVocabulary, error) {
 		enum     string
 		prefixes []string
 	}
+
 	for _, spec := range []target{
 		{
 			place:    &v.Slots,
@@ -560,6 +593,7 @@ func parseVocabulary(source map[string][]byte) (content.ItemVocabulary, error) {
 		},
 	} {
 		ids, err := enumSymbolIDs("crawl-ref/source/"+spec.file, source[spec.file], spec.enum, spec.prefixes...)
+
 		if err != nil {
 			return v, err
 		}

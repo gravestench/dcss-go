@@ -9,6 +9,7 @@ import (
 
 func (g *Game) createStartingGear(jobID, weaponID string) error {
 	grants, err := g.catalog.StartingGrants(jobID)
+
 	if err != nil {
 		return err
 	}
@@ -24,13 +25,16 @@ func (g *Game) createStartingGear(jobID, weaponID string) error {
 	}
 
 	occupied := map[string]bool{}
+
 	for _, grant := range grants {
 		kind, err := g.catalog.Item(grant.KindID)
+
 		if err != nil {
 			return err
 		}
 
 		entity, err := g.world.CreateEntity()
+
 		if err != nil {
 			return err
 		}

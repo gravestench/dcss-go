@@ -8,6 +8,7 @@ import (
 
 func testSpecies(id string) SpeciesDef {
 	aptitudes := make(map[string]SpeciesAptitude)
+
 	for _, skill := range strings.Fields(ordinarySkillIDs) {
 		aptitudes[skill] = SpeciesAptitude{Allowed: true}
 	}
@@ -54,6 +55,7 @@ func TestSpeciesCatalogDefensiveCopies(t *testing.T) {
 	original := testSpecies("SP_HUMAN")
 	catalog := Catalog{species: map[string]SpeciesDef{original.ID: original}}
 	first, err := catalog.Species("SP_HUMAN")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -66,6 +68,7 @@ func TestSpeciesCatalogDefensiveCopies(t *testing.T) {
 	first.RecommendedJobs[0] = "changed"
 	first.RecommendedWeapons[0] = "changed"
 	second, err := catalog.Species("SP_HUMAN")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -83,6 +86,7 @@ func TestSpeciesCatalogRejectsDuplicateOrInvalidRecord(t *testing.T) {
 		TagMajorVersion: 34,
 		Species:         []SpeciesDef{valid, valid},
 	}
+
 	if err := duplicate.Validate(); err == nil {
 		t.Fatal("duplicate species ID accepted")
 	}
@@ -95,6 +99,7 @@ func TestSpeciesCatalogRejectsDuplicateOrInvalidRecord(t *testing.T) {
 		TagMajorVersion: 34,
 		Species:         []SpeciesDef{invalid},
 	}
+
 	if err := artifact.Validate(); err == nil {
 		t.Fatal("species without name accepted")
 	}
@@ -121,11 +126,13 @@ func TestSpeciesIDsSorted(t *testing.T) {
 		},
 	}
 	ids := catalog.SpeciesIDs()
+
 	if !reflect.DeepEqual(ids, []string{"SP_A", "SP_Z"}) {
 		t.Fatalf("species IDs not sorted: %v", ids)
 	}
 
 	ids[0] = "changed"
+
 	if _, err := catalog.Species("SP_NOT_REAL"); err == nil {
 		t.Fatal("unknown species ID accepted")
 	}

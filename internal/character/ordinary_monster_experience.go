@@ -25,6 +25,7 @@ func OrdinaryMonsterExperience(in OrdinaryMonsterXPInput) (int, error) {
 	}
 
 	maxMelee := 0
+
 	for _, damage := range in.AttackDamage {
 		if damage < 0 || damage > 1000 {
 			return 0, fmt.Errorf("invalid ordinary monster attack damage %d", damage)
@@ -35,6 +36,7 @@ func OrdinaryMonsterExperience(in OrdinaryMonsterXPInput) (int, error) {
 
 	xp := (16 + in.MaxHP) * in.HitDice * in.HitDice / 10
 	difficulty := 0
+
 	if in.FastRegen {
 		difficulty += 15
 	}
@@ -53,6 +55,7 @@ func OrdinaryMonsterExperience(in OrdinaryMonsterXPInput) (int, error) {
 
 	xp = xp * (100 + difficulty) / 100
 	xp = xp * in.Speed / 10
+
 	if in.Speed < 10 {
 		xp /= 2
 	}

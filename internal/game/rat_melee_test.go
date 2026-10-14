@@ -25,6 +25,7 @@ func (r *combatRoller) Intn(stream string, bound int) (int, error) {
 
 	value := r.rolls[0].value
 	r.rolls = r.rolls[1:]
+
 	return value, nil
 }
 
@@ -198,6 +199,7 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			g := newStepGame(t)
 			rat := ratID(t, g)
+
 			if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 				t.Fatal(err)
 			}
@@ -215,12 +217,14 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 			initialHP := before.Current
 			system := newCombatSystem(g)
 			system.roller = rng
+
 			if err := system.Update(nil, time.Duration(10)); err != nil {
 				t.Fatal(err)
 			}
 
 			after, _ := g.stores.Health.Get(g.player)
 			state, _ := g.stores.Combat.Get(g.player)
+
 			if initialHP-after.Current != tc.hpLoss || state.ShieldBlocks != tc.blocks || len(rng.rolls) != 0 {
 				t.Fatalf("HP %d -> %d, combat %+v, rolls %+v", initialHP, after.Current, state, rng.rolls)
 			}
@@ -234,16 +238,19 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 
 func TestRatBiteWorksForUnarmedFighterAndCostsOneTurn(t *testing.T) {
 	g, err := NewScenario(31, testCatalog(t), "WPN_UNARMED", "Barehands")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer g.Close()
+
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
 
 	result, err := g.Step(Command{Kind: CommandWait})
+
 	if err != nil || result.Spent != 10 || result.View.CurrentAut != 10 {
 		t.Fatalf("unarmed wait/rat bite = %+v, %v", result, err)
 	}
@@ -252,6 +259,7 @@ func TestRatBiteWorksForUnarmedFighterAndCostsOneTurn(t *testing.T) {
 func TestFighterViewDisplaysSourceDefense(t *testing.T) {
 	g := newStepGame(t)
 	view := g.View()
+
 	if !view.DefenseKnown || view.PlayerAC != 6 || view.PlayerEV != 5 || view.PlayerSH != 4 {
 		t.Fatalf(
 			"Fighter defense in view = AC %d EV %d SH %d known %v",
@@ -267,6 +275,7 @@ func TestPlayerActionResetsPriorRoundShieldBlocks(t *testing.T) {
 	g := newStepGame(t)
 	state, _ := g.stores.Combat.Get(g.player)
 	state.ShieldBlocks = 2
+
 	if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
 		t.Fatal(err)
 	}
@@ -280,28 +289,33 @@ func TestCombatStateAndMeleeRNGContinueThroughSave(t *testing.T) {
 	g := newStepGame(t)
 	state, _ := g.stores.Combat.Get(g.player)
 	state.ShieldBlocks = 1
+
 	if _, err := g.rng.Intn("melee", 20); err != nil {
 		t.Fatal(err)
 	}
 
 	snapshot := g.Snapshot()
+
 	if snapshot.Version != save.Version {
 		t.Fatalf("combat save version %d, want %d", snapshot.Version, save.Version)
 	}
 
 	restored, err := Restore(snapshot, testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer restored.Close()
 	loaded, _ := restored.stores.Combat.Get(restored.player)
+
 	if loaded.ShieldBlocks != 1 {
 		t.Fatalf("saved shield blocks = %d, want 1", loaded.ShieldBlocks)
 	}
 
 	want, _ := g.rng.Intn("melee", 100)
 	got, _ := restored.rng.Intn("melee", 100)
+
 	if got != want {
 		t.Fatalf("melee RNG after load = %d, want %d", got, want)
 	}
@@ -311,12 +325,14 @@ func TestCombatSaveRejectsNegativeBlocksAndOldVersion(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
 	snapshot.Version = 5
+
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
 		!strings.Contains(err.Error(), "unsupported save version") {
 		t.Fatalf("version-5 restore error = %v", err)
 	}
 
 	snapshot.Version = save.Version
+
 	for i := range snapshot.Entities {
 		if snapshot.Entities[i].ID == uint64(g.player) {
 			snapshot.Entities[i].Combatant.ShieldBlocks = -1
@@ -372,6 +388,7 @@ func TestRestoreRejectsCombatStateItCannotRun(t *testing.T) {
 			before := g.Snapshot()
 			bad := g.Snapshot()
 			tc.mutate(&bad)
+
 			if reflect.DeepEqual(before, bad) {
 				t.Fatal("test did not mutate the save")
 			}

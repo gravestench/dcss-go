@@ -10,6 +10,7 @@ import (
 
 func TestGenerateAndCheckUseOnlyExplicitBranchSources(t *testing.T) {
 	dir := t.TempDir()
+
 	for name, body := range map[string]string{
 		"tag-version.h": "#define TAG_MAJOR_VERSION 34\n",
 		"branch-type.h": syntheticEnum,
@@ -21,16 +22,19 @@ func TestGenerateAndCheckUseOnlyExplicitBranchSources(t *testing.T) {
 	}
 
 	first, err := Generate(dir)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	second, err := Generate(dir)
+
 	if err != nil || !bytes.Equal(first, second) {
 		t.Fatalf("nondeterministic branch import: %v", err)
 	}
 
 	out := filepath.Join(t.TempDir(), "branches.json")
+
 	if err := Write(dir, out, false); err != nil {
 		t.Fatal(err)
 	}

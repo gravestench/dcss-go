@@ -9,6 +9,7 @@ import (
 
 func TestLoadDefaultSpeciesAndFixture(t *testing.T) {
 	catalog, err := LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,6 +27,7 @@ func TestLoadDefaultSpeciesAndFixture(t *testing.T) {
 	}
 
 	human, err := catalog.Species("SP_HUMAN")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,6 +37,7 @@ func TestLoadDefaultSpeciesAndFixture(t *testing.T) {
 	}
 
 	deepElf, err := catalog.Species("SP_DEEP_ELF")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -44,6 +47,7 @@ func TestLoadDefaultSpeciesAndFixture(t *testing.T) {
 	}
 
 	felid, err := catalog.Species("SP_FELID")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -53,6 +57,7 @@ func TestLoadDefaultSpeciesAndFixture(t *testing.T) {
 	}
 
 	highElf, err := catalog.Species("SP_HIGH_ELF")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,6 +68,7 @@ func TestLoadDefaultSpeciesAndFixture(t *testing.T) {
 	}
 
 	rat, err := catalog.Monster("MONS_RAT")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,22 +88,26 @@ func TestLoadDefaultSpeciesAndFixture(t *testing.T) {
 
 func TestLoadDefaultReturnsFreshCatalogs(t *testing.T) {
 	first, err := LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	human, err := first.Species("SP_HUMAN")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	human.Aptitudes["SK_FIGHTING"] = SpeciesAptitude{Allowed: false}
 	second, err := LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	again, err := second.Species("SP_HUMAN")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -109,11 +119,13 @@ func TestLoadDefaultReturnsFreshCatalogs(t *testing.T) {
 
 func TestLoadDefaultRejectsBadArtifact(t *testing.T) {
 	data, err := os.ReadFile("generated/species.json")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	var original SpeciesArtifact
+
 	if err := json.Unmarshal(data, &original); err != nil {
 		t.Fatal(err)
 	}
@@ -158,12 +170,14 @@ func TestLoadDefaultRejectsBadArtifact(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			artifact := original
 			artifact.Species = append([]SpeciesDef(nil), original.Species...)
 			tc.mutate(&artifact)
 			encoded, err := json.Marshal(artifact)
+
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -200,6 +214,7 @@ func TestLoadDefaultRejectsBadArtifact(t *testing.T) {
 
 func TestLoadDefaultRejectsMissingAptitudes(t *testing.T) {
 	data, err := os.ReadFile("generated/species.json")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -207,6 +222,7 @@ func TestLoadDefaultRejectsMissingAptitudes(t *testing.T) {
 	for _, missing := range []string{"all", "SK_FIGHTING"} {
 		t.Run(missing, func(t *testing.T) {
 			var artifact SpeciesArtifact
+
 			if err := json.Unmarshal(data, &artifact); err != nil {
 				t.Fatal(err)
 			}
@@ -224,6 +240,7 @@ func TestLoadDefaultRejectsMissingAptitudes(t *testing.T) {
 			}
 
 			encoded, err := json.Marshal(artifact)
+
 			if err != nil {
 				t.Fatal(err)
 			}

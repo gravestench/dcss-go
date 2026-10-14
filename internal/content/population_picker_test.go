@@ -30,6 +30,7 @@ func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
 	}
 	pool := c.DungeonMonsterPool(2, nil)
 	first, second, third := 2*2520, 3*2520/3, 3*2520/3
+
 	if got, want := pool.TotalWeight(), first+second+third; got != want {
 		t.Fatalf("total = %d, want %d", got, want)
 	}
@@ -64,6 +65,7 @@ func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
 		},
 	} {
 		got, err := pool.Pick(tc.roll)
+
 		if err != nil || got != tc.want {
 			t.Fatalf("roll %d = %q, %v; want %q", tc.roll, got, err, tc.want)
 		}
@@ -105,6 +107,7 @@ func TestDungeonMonsterPoolVetoAndEmpty(t *testing.T) {
 	pool := c.DungeonMonsterPool(1, func(id string) bool {
 		return id == "MONS_RAT"
 	})
+
 	if pool.TotalWeight() != 3*2520 {
 		t.Fatalf("vetoed total = %d", pool.TotalWeight())
 	}
@@ -131,11 +134,13 @@ func TestDungeonMonsterPoolVetoAndEmpty(t *testing.T) {
 
 func TestDefaultDungeonMonsterPoolUsesPinnedD1Rows(t *testing.T) {
 	c, err := LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	pool := c.DungeonMonsterPool(1, nil)
+
 	for _, tc := range []struct {
 		roll int
 		want string
@@ -154,6 +159,7 @@ func TestDefaultDungeonMonsterPoolUsesPinnedD1Rows(t *testing.T) {
 		},
 	} {
 		got, err := pool.Pick(tc.roll)
+
 		if err != nil || got != tc.want {
 			t.Fatalf("D:1 roll %d = %q, %v; want %q", tc.roll, got, err, tc.want)
 		}

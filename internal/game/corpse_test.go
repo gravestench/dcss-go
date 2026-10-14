@@ -12,8 +12,10 @@ import (
 
 func corpseDropSeed(t *testing.T, drop bool) uint64 {
 	t.Helper()
+
 	for seed := uint64(1); seed < 100; seed++ {
 		coin, err := NewRNGStreams(seed).Intn("corpse", 2)
+
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -24,12 +26,14 @@ func corpseDropSeed(t *testing.T, drop bool) uint64 {
 	}
 
 	t.Fatal("no corpse seed")
+
 	return 0
 }
 
 func testCorpseAt(t *testing.T, g *Game, kind string, position ecs.Position) akara.Entity {
 	t.Helper()
 	id, err := g.world.CreateEntity()
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,11 +64,13 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 	for _, drop := range []bool{false, true} {
 		seed := corpseDropSeed(t, drop)
 		g, err := NewScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		rat := ratID(t, g)
+
 		if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 			t.Fatal(err)
 		}
@@ -73,6 +79,7 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 		ratHP.Current = 1
 		playerHP, _ := g.stores.Health.Get(g.player)
 		playerHP.Current, playerHP.Max = 100, 100
+
 		for attempt := 0; attempt < 100 && g.world.EntityExists(rat); attempt++ {
 			if _, err := g.Step(Command{
 				Kind: CommandMove,
@@ -87,6 +94,7 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 		}
 
 		corpses := g.stores.Corpses.Entities()
+
 		if (len(corpses) == 1) != drop {
 			t.Fatalf("seed %d drop=%v corpses=%v", seed, drop, corpses)
 		}
@@ -96,6 +104,7 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 			item, _ := g.stores.Items.Get(id)
 			position, _ := g.stores.Positions.Get(id)
 			corpse, _ := g.stores.Corpses.Get(id)
+
 			if item.KindID != "CORPSE_BODY" || *position != (ecs.Position{
 				LevelID: 1,
 				X:       4,
@@ -105,6 +114,7 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 			}
 
 			seen := false
+
 			for _, entity := range g.View().Entities {
 				if entity.ID == uint64(id) && entity.Name == "rat corpse" && entity.Glyph == '%' {
 					seen = true
@@ -122,6 +132,7 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 
 func TestPreDeadRatLeavesNoCorpse(t *testing.T) {
 	g, err := NewScenario(corpseDropSeed(t, true), testCatalog(t), "WPN_RAPIER", "Tester")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -129,6 +140,7 @@ func TestPreDeadRatLeavesNoCorpse(t *testing.T) {
 	defer g.Close()
 	hp, _ := g.stores.Health.Get(ratID(t, g))
 	hp.Current = 0
+
 	if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
 		t.Fatal(err)
 	}
@@ -140,6 +152,7 @@ func TestPreDeadRatLeavesNoCorpse(t *testing.T) {
 
 func TestCorpseIsStationaryButPortableItemSharesTile(t *testing.T) {
 	g := newStepGame(t)
+
 	if err := g.levels[1].MoveActor(g.player, 4, 2); err != nil {
 		t.Fatal(err)
 	}
@@ -150,11 +163,13 @@ func TestCorpseIsStationaryButPortableItemSharesTile(t *testing.T) {
 		Y:       2,
 	})
 	result, err := g.Step(Command{Kind: CommandPickup})
+
 	if err != nil || result.Spent != 10 || !g.stores.Positions.Has(id) || !g.stores.CarriedBy.Has(potionID(t, g)) {
 		t.Fatalf("mixed pickup %+v %v", result, err)
 	}
 
 	result, err = g.Step(Command{Kind: CommandPickup})
+
 	if err != nil || result.Spent != 0 || !strings.Contains(result.Events[0].Text, "can't pick") ||
 		!g.stores.Positions.Has(id) {
 		t.Fatalf("corpse pickup %+v %v", result, err)
@@ -164,6 +179,7 @@ func TestCorpseIsStationaryButPortableItemSharesTile(t *testing.T) {
 func TestCorpseDecaysAtTwoHundredAutAndSurvivesSave(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
+
 	if err := g.levels[1].RemoveActor(rat); err != nil {
 		t.Fatal(err)
 	}
@@ -177,6 +193,7 @@ func TestCorpseDecaysAtTwoHundredAutAndSurvivesSave(t *testing.T) {
 		X:       4,
 		Y:       1,
 	})
+
 	for range 19 {
 		if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
 			t.Fatal(err)
@@ -184,6 +201,7 @@ func TestCorpseDecaysAtTwoHundredAutAndSurvivesSave(t *testing.T) {
 	}
 
 	corpse, _ := g.stores.Corpses.Get(id)
+
 	if corpse.Freshness != 110 {
 		t.Fatalf("decay before boundary = %d", corpse.Freshness)
 	}
@@ -198,11 +216,13 @@ func TestCorpseDecaysAtTwoHundredAutAndSurvivesSave(t *testing.T) {
 
 	snapshot := g.Snapshot()
 	loaded, err := Restore(snapshot, testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer loaded.Close()
+
 	if !reflect.DeepEqual(snapshot, loaded.Snapshot()) {
 		t.Fatal("corpse save changed on restore")
 	}
@@ -215,11 +235,13 @@ func TestCorpseDecaysAtTwoHundredAutAndSurvivesSave(t *testing.T) {
 
 	item, _ := loaded.stores.Items.Get(id)
 	corpse, _ = loaded.stores.Corpses.Get(id)
+
 	if item.KindID != "CORPSE_SKELETON" || corpse.Freshness != 110 {
 		t.Fatalf("skeleton %+v %+v", item, corpse)
 	}
 
 	seenSkeleton := false
+
 	for _, entity := range loaded.View().Entities {
 		if entity.ID == uint64(id) && entity.Name == "rat skeleton" && entity.Glyph == '%' {
 			seenSkeleton = true
@@ -244,6 +266,7 @@ func TestCorpseDecaysAtTwoHundredAutAndSurvivesSave(t *testing.T) {
 func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
+
 	if err := g.levels[1].RemoveActor(rat); err != nil {
 		t.Fatal(err)
 	}
@@ -253,11 +276,13 @@ func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 	}
 
 	quokka := quokkaID(t, g)
+
 	if err := g.levels[2].RemoveActor(quokka); err != nil || !g.world.DestroyEntity(quokka) {
 		t.Fatalf("quokka removal: %v", err)
 	}
 
 	lizard := frilledLizardID(t, g)
+
 	if err := g.levels[2].RemoveActor(lizard); err != nil || !g.world.DestroyEntity(lizard) {
 		t.Fatalf("frilled lizard removal: %v", err)
 	}
@@ -267,6 +292,7 @@ func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 		X:       4,
 		Y:       1,
 	})
+
 	if err := g.levels[1].MoveActor(g.player, 7, 3); err != nil {
 		t.Fatal(err)
 	}
@@ -282,17 +308,20 @@ func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 	}
 
 	corpse, _ := g.stores.Corpses.Get(id)
+
 	if corpse.Freshness != 110 {
 		t.Fatalf("inactive corpse aged before return: %d", corpse.Freshness)
 	}
 
 	snapshot := g.Snapshot()
 	loaded, err := Restore(snapshot, testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer loaded.Close()
+
 	if !reflect.DeepEqual(snapshot, loaded.Snapshot()) {
 		t.Fatal("away clock changed on restore")
 	}
@@ -309,6 +338,7 @@ func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 
 	item, present := loaded.stores.Items.Get(id)
 	corpse, _ = loaded.stores.Corpses.Get(id)
+
 	if !present || item.KindID != "CORPSE_SKELETON" || corpse.Freshness != 110 {
 		t.Fatalf("source return catch-up should reset one skeleton: %+v %+v", item, corpse)
 	}
@@ -317,6 +347,7 @@ func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 func TestRestoreRejectsMalformedCorpseState(t *testing.T) {
 	g := newStepGame(t)
 	before := g.Snapshot()
+
 	for _, mutate := range []func(*ecs.Item, *ecs.Corpse, *ecs.Position){
 		func(_ *ecs.Item, corpse *ecs.Corpse, _ *ecs.Position) {
 			corpse.MonsterID = "MONS_ORC"
@@ -337,6 +368,7 @@ func TestRestoreRejectsMalformedCorpseState(t *testing.T) {
 			Y:       1,
 		})
 		bad := g.Snapshot()
+
 		for i := range bad.Entities {
 			if bad.Entities[i].ID == uint64(id) {
 				mutate(bad.Entities[i].Item, bad.Entities[i].Corpse, bad.Entities[i].Position)
@@ -366,12 +398,14 @@ func TestRestoreRejectsInvalidCorpseFloorClock(t *testing.T) {
 	active := g.Snapshot()
 	zero := int64(0)
 	active.Levels[0].AwaySinceAut = &zero
+
 	if loaded, err := Restore(active, testCatalog(t)); err == nil {
 		loaded.Close()
 		t.Fatal("accepted active floor marked away")
 	}
 
 	inactive := g.Snapshot()
+
 	for i := range inactive.Entities {
 		if inactive.Entities[i].ID == uint64(id) {
 			inactive.Entities[i].Position.LevelID = 2

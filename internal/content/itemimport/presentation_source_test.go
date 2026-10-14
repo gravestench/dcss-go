@@ -8,11 +8,13 @@ import (
 
 func TestPinnedItemPresentationCoverage(t *testing.T) {
 	root := os.Getenv("DCSS_SOURCE_DIR")
+
 	if root == "" {
 		t.Skip("optional pinned-source audit; normal tests use committed Go content")
 	}
 
 	source := map[string][]byte{}
+
 	for _, name := range []string{
 		"object-class-type.h",
 		"item-prop-enum.h",
@@ -27,6 +29,7 @@ func TestPinnedItemPresentationCoverage(t *testing.T) {
 		"viewchar.cc",
 	} {
 		data, err := os.ReadFile(filepath.Join(root, name))
+
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -35,11 +38,13 @@ func TestPinnedItemPresentationCoverage(t *testing.T) {
 	}
 
 	identities, _, err := parseIdentities(source)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	removed, err := parseRemovedItems("crawl-ref/source/item-prop.cc", source["item-prop.cc"])
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,17 +57,20 @@ func TestPinnedItemPresentationCoverage(t *testing.T) {
 	}
 
 	names, err := parseItemNames("crawl-ref/source/item-name.cc", source["item-name.cc"], identities)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	missing := map[string][]string{}
+
 	for _, identity := range identities {
 		if _, found := names[itemKey{
 			ClassID:   identity.ClassID,
 			SubtypeID: identity.ID,
 		}]; !found {
 			missing[identity.ClassID] = append(missing[identity.ClassID], identity.ID)
+
 			if identity.ClassID != "OBJ_ARMOUR" && identity.ClassID != "OBJ_WEAPONS" &&
 				identity.ClassID != "OBJ_MISSILES" && !identity.ExplicitlyRemoved {
 				t.Errorf("active item %s has no source name", identity.ID)
@@ -83,6 +91,7 @@ func TestPinnedItemPresentationCoverage(t *testing.T) {
 		source["viewchar.cc"],
 		identities,
 	)
+
 	if err != nil {
 		t.Fatal(err)
 	}

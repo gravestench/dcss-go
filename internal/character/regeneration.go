@@ -19,17 +19,20 @@ func Regenerate(roller Roller, state Vitality, actionAut int) (Vitality, error) 
 	}
 
 	hpRate := state.MaxHP / 3
+
 	if hpRate > 20 {
 		hpRate = 20 + (hpRate-20)/2
 	}
 
 	hpRate = max(1, hpRate)
 	hpGain, err := regenerationCount(roller, hpRate, actionAut)
+
 	if err != nil {
 		return Vitality{}, err
 	}
 
 	state.HPProgress += hpGain
+
 	for state.HPProgress >= 100 {
 		state.HP = min(state.MaxHP, state.HP+1)
 		state.HPProgress -= 100
@@ -38,6 +41,7 @@ func Regenerate(roller Roller, state Vitality, actionAut int) (Vitality, error) 
 	if state.MP < state.MaxMP {
 		mpRate := 7 + state.MaxMP/2
 		mpGain, err := regenerationCount(roller, mpRate, actionAut)
+
 		if err != nil {
 			return Vitality{}, err
 		}
@@ -56,11 +60,13 @@ func Regenerate(roller Roller, state Vitality, actionAut int) (Vitality, error) 
 func regenerationCount(roller Roller, rate, actionAut int) (int, error) {
 	numerator := rate * actionAut
 	count, remainder := numerator/10, numerator%10
+
 	if remainder == 0 {
 		return count, nil
 	}
 
 	roll, err := roller.Intn("regeneration", 10)
+
 	if err != nil {
 		return 0, err
 	}

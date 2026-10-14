@@ -193,6 +193,7 @@ func (d ItemDef) validate() error {
 		"OBJ_RODS":       "ROD_",
 		"OBJ_RUNES":      "RUNE_",
 	}[d.Class]
+
 	if _, known := map[string]bool{
 		"OBJ_WEAPONS":    true,
 		"OBJ_ARMOUR":     true,
@@ -248,6 +249,7 @@ func (d ItemDef) validate() error {
 	}
 
 	propertyCount := 0
+
 	for _, present := range []bool{
 		d.Armour != nil,
 		d.Weapon != nil,
@@ -271,6 +273,7 @@ func (d ItemDef) validate() error {
 
 	if d.Weapon != nil {
 		previous := ""
+
 		for _, brand := range d.Weapon.BrandWeights {
 			if brand.BrandID <= previous || brand.Weight < 0 {
 				return fmt.Errorf("item %s has invalid brand weights", d.ID)
@@ -302,6 +305,7 @@ func (m ItemIdentityManifest) Validate() error {
 
 	seen := map[string]bool{}
 	previousClass, previousSubtype := -1, -1
+
 	for _, identity := range m.Identities {
 		if identity.ID == "" || identity.ClassID == "" || identity.ClassValue < 0 ||
 			identity.SubtypeValue < 0 || identity.SourcePath == "" || identity.SourceLine <= 0 || seen[identity.ID] {
@@ -309,6 +313,7 @@ func (m ItemIdentityManifest) Validate() error {
 		}
 
 		seen[identity.ID] = true
+
 		if identity.ClassValue < previousClass || (identity.ClassValue == previousClass &&
 			identity.SubtypeValue <= previousSubtype) {
 			return fmt.Errorf("item identities are not in numeric class/subtype order")
@@ -359,6 +364,7 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 	}
 
 	files, err := validSourceFiles(a.SourceFiles, "item")
+
 	if err != nil {
 		return err
 	}
@@ -370,14 +376,17 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 	}
 
 	identities := make(map[string]ItemIdentity, len(manifest.Identities))
+
 	for _, identity := range manifest.Identities {
 		identities[identity.ID] = identity
 	}
 
 	seen := map[string]bool{}
 	previousClass, previousSubtype := -1, -1
+
 	for _, item := range a.Items {
 		identity, ok := identities[item.ID]
+
 		if !ok || seen[item.ID] || identity.ClassID != item.Class ||
 			identity.ClassValue != item.ClassValue || identity.SubtypeValue != item.SubtypeValue ||
 			identity.ExplicitlyRemoved != item.ExplicitlyRemoved {
@@ -393,6 +402,7 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 		}
 
 		previousClass, previousSubtype = item.ClassValue, item.SubtypeValue
+
 		if item.Name != item.Naming.Text || item.Naming.Kind == "" || files[item.Naming.SourcePath] == "" {
 			return fmt.Errorf("item %s has invalid naming evidence", item.ID)
 		}
@@ -422,11 +432,13 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 	}
 
 	encoded, err := json.Marshal(a.Items)
+
 	if err != nil {
 		return fmt.Errorf("encode item definitions for validation: %w", err)
 	}
 
 	hash := sha256.Sum256(encoded)
+
 	if hex.EncodeToString(hash[:]) != manifest.DefinitionsSHA256 {
 		return fmt.Errorf("item definitions differ from identity manifest hash")
 	}
@@ -436,6 +448,7 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 
 func vocabularyHas(ids []string, id string) bool {
 	i := sort.SearchStrings(ids, id)
+
 	return i < len(ids) && ids[i] == id
 }
 
@@ -489,6 +502,7 @@ func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 
 func (c Catalog) ItemIdentity(id string) (ItemIdentity, error) {
 	identity, found := c.itemIdentities[id]
+
 	if !found {
 		return ItemIdentity{}, fmt.Errorf("unknown item identity %q", id)
 	}
@@ -498,10 +512,12 @@ func (c Catalog) ItemIdentity(id string) (ItemIdentity, error) {
 
 func (c Catalog) ItemIDs() []string {
 	ids := make([]string, 0, len(c.itemIdentities))
+
 	for id := range c.itemIdentities {
 		ids = append(ids, id)
 	}
 
 	sort.Strings(ids)
+
 	return ids
 }

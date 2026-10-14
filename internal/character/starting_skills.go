@@ -46,23 +46,28 @@ func StartingSkills(c content.Catalog, speciesID, jobID, weaponID string) ([]Ski
 	}
 
 	species, err := c.Species(speciesID)
+
 	if err != nil {
 		return nil, err
 	}
 
 	job, err := c.Job(jobID)
+
 	if err != nil {
 		return nil, err
 	}
 
 	weaponSkill := "SK_UNARMED_COMBAT"
+
 	if weaponID != "WPN_UNARMED" {
 		kind, err := c.Item(weaponID)
+
 		if err != nil {
 			return nil, err
 		}
 
 		weaponSkill, err = resolveChosenWeaponSkill(kind, species)
+
 		if err != nil {
 			return nil, err
 		}
@@ -70,13 +75,16 @@ func StartingSkills(c content.Catalog, speciesID, jobID, weaponID string) ([]Ski
 
 	skills := make([]Skill, 0, len(job.Skills))
 	seen := map[string]bool{}
+
 	for _, grant := range job.Skills {
 		id := grant.ID
+
 		if id == "SK_WEAPON" {
 			id = weaponSkill
 		}
 
 		aptitude, found := species.Aptitudes[id]
+
 		if !found || !aptitude.Allowed || aptitude.Value != 0 {
 			return nil, fmt.Errorf("%s/%s has unsupported Human aptitude for %s", speciesID, jobID, id)
 		}
@@ -87,6 +95,7 @@ func StartingSkills(c content.Catalog, speciesID, jobID, weaponID string) ([]Ski
 
 		seen[id] = true
 		points, err := humanSkillPoints(grant.Level)
+
 		if err != nil {
 			return nil, fmt.Errorf("%s/%s %s: %w", speciesID, jobID, id, err)
 		}

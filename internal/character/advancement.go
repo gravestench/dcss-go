@@ -28,10 +28,12 @@ func HumanExperienceNeeded(level int) (int, error) {
 
 	if level < 13 {
 		offset := level - 4
+
 		return 9 + 10*offset + (60 << offset), nil
 	}
 
 	offset := level - 12
+
 	return 16674 + 5985*offset + 4235*offset*offset, nil
 }
 
@@ -41,8 +43,10 @@ func HumanLevelForExperience(totalXP int) (int, error) {
 	}
 
 	level := 1
+
 	for level < HumanMaxLevel {
 		next, _ := HumanExperienceNeeded(level + 1)
+
 		if totalXP < next {
 			break
 		}
@@ -61,6 +65,7 @@ func HumanLevelProgress(totalXP, level int) (int, error) {
 	}
 
 	current, err := HumanExperienceNeeded(level)
+
 	if err != nil {
 		return 0, err
 	}
@@ -74,6 +79,7 @@ func HumanLevelProgress(totalXP, level int) (int, error) {
 	}
 
 	next, _ := HumanExperienceNeeded(level + 1)
+
 	return (totalXP - current) * 100 / (next - current), nil
 }
 
@@ -85,6 +91,7 @@ func HumanMaxHP(level int, species content.SpeciesDef, skills []Skill) (int, err
 	}
 
 	var fighting *Skill
+
 	for index := range skills {
 		if skills[index].ID == "SK_FIGHTING" {
 			fighting = &skills[index]
@@ -100,6 +107,7 @@ func HumanMaxHP(level int, species content.SpeciesDef, skills []Skill) (int, err
 	hp += level*ScaledSkill(*fighting, 5)/70 +
 		(ScaledSkill(*fighting, 3)+1)/2
 	hp = hp * (10 + species.HP) / 10
+
 	return max(1, hp), nil
 }
 

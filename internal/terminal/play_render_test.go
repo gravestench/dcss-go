@@ -11,11 +11,13 @@ import (
 func playView(t *testing.T) game.View {
 	t.Helper()
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	g, err := game.NewScenario(7, catalog, "WPN_RAPIER", "Alice")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,6 +25,7 @@ func playView(t *testing.T) game.View {
 	t.Cleanup(func() {
 		g.Close()
 	})
+
 	return g.View()
 }
 
@@ -30,12 +33,14 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 	view := playView(t)
 	canvas := NewCanvas(79, 24)
 	layout, ok := ComputeLayout(79, 24)
+
 	if !ok {
 		t.Fatal("minimum size rejected")
 	}
 
 	DrawPlay(canvas, layout, view, "Unavailable: quaffing")
 	rows := canvas.PlainRows()
+
 	for _, tc := range []struct {
 		y, x int
 		text string
@@ -140,6 +145,7 @@ func TestDrawPlayShowsEarnedRatExperienceProgress(t *testing.T) {
 	canvas := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
 	DrawPlay(canvas, layout, view, "")
+
 	if got := canvas.PlainRows()[7][37:]; !strings.HasPrefix(got, "XL:  1 Next: 11%") {
 		t.Fatalf("experience HUD = %q", got)
 	}
@@ -151,6 +157,7 @@ func TestDrawPlayShowsMightLightOnlyWhileActive(t *testing.T) {
 	layout, _ := ComputeLayout(79, 24)
 	view.MightAut = 340
 	DrawPlay(canvas, layout, view, "")
+
 	if !strings.Contains(canvas.PlainRows()[11][37:], "Might") {
 		t.Fatal("active Might status light missing")
 	}
@@ -158,6 +165,7 @@ func TestDrawPlayShowsMightLightOnlyWhileActive(t *testing.T) {
 	view.MightAut = 0
 	canvas = NewCanvas(79, 24)
 	DrawPlay(canvas, layout, view, "")
+
 	if strings.Contains(canvas.PlainRows()[11][37:], "Might") {
 		t.Fatal("expired Might status light remains")
 	}
@@ -167,12 +175,14 @@ func TestDrawPlayExpandedViewportUsesFullTerminal(t *testing.T) {
 	view := playView(t)
 	canvas := NewCanvas(120, 40)
 	layout, ok := ComputeLayout(120, 40)
+
 	if !ok {
 		t.Fatal("large size rejected")
 	}
 
 	DrawPlay(canvas, layout, view, "")
 	rows := canvas.PlainRows()
+
 	if rows[16][37] != '@' || !strings.HasPrefix(rows[0][78:], "Alice the Shield-Bearer") {
 		t.Fatalf("expanded map/HUD positions: %q / %q", rows[16], rows[0])
 	}
@@ -184,11 +194,13 @@ func TestDrawPlayExpandedViewportUsesFullTerminal(t *testing.T) {
 
 func TestDrawPlayUnarmedUsesSourceWeaponSlot(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	g, err := game.NewScenario(7, catalog, "WPN_UNARMED", "Alice")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -197,6 +209,7 @@ func TestDrawPlayUnarmedUsesSourceWeaponSlot(t *testing.T) {
 	canvas := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
 	DrawPlay(canvas, layout, g.View(), "")
+
 	if got := canvas.PlainRows()[9][37:]; !strings.HasPrefix(got, "-) Unarmed") {
 		t.Fatalf("unarmed weapon row: %q", got)
 	}
@@ -204,17 +217,20 @@ func TestDrawPlayUnarmedUsesSourceWeaponSlot(t *testing.T) {
 
 func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 	catalog, err := content.LoadDefault()
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	run, err := game.NewScenario(7, catalog, "WPN_RAPIER", "Alice")
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	snapshot := run.Snapshot()
 	run.Close()
+
 	for i := range snapshot.Entities {
 		if snapshot.Entities[i].Actor != nil && snapshot.Entities[i].Actor.KindID == "MONS_RAT" {
 			snapshot.Entities[i].Position.X = 3
@@ -226,12 +242,14 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 	known[3] = '.'
 	snapshot.Levels[0].Known[3] = string(known)
 	restored, err := game.Restore(snapshot, catalog)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer restored.Close()
 	view := restored.View()
+
 	if view.Cells[3*view.Width+3].State != game.Explored {
 		t.Fatal("fixture floor is not remembered")
 	}
@@ -239,6 +257,7 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 	for _, size := range [][2]int{{79, 24}, {120, 40}} {
 		canvas := NewCanvas(size[0], size[1])
 		layout, ok := ComputeLayout(size[0], size[1])
+
 		if !ok {
 			t.Fatal("layout rejected")
 		}
@@ -247,8 +266,10 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 		at := func(x, y int) cell {
 			sx := layout.Dungeon.X + layout.Dungeon.W/2 + x - view.PlayerX
 			sy := layout.Dungeon.Y + layout.Dungeon.H/2 + y - view.PlayerY
+
 			return canvas.cells[sy*canvas.width+sx]
 		}
+
 		if got := at(3, 3); got.text != "." || got.fg != DarkGrey {
 			t.Fatalf("%dx%d remembered floor = %+v", size[0], size[1], got)
 		}

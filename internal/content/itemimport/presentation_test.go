@@ -83,6 +83,7 @@ func presentationIdentities() []content.ItemIdentity {
 
 func glyphIdentities() []content.ItemIdentity {
 	var selected []content.ItemIdentity
+
 	for _, identity := range presentationIdentities() {
 		switch identity.ClassID {
 		case "OBJ_WEAPONS", "OBJ_POTIONS", "OBJ_BOOKS", "OBJ_CORPSES", "OBJ_GOLD", "OBJ_ORBS", "OBJ_RUNES", "OBJ_JEWELLERY":
@@ -198,12 +199,14 @@ NUM_DCHAR_TYPES
     // CSET_ASCII
     { '#', '}', '{', ')', '=', '!', ':', '%', '%', '$', '"' }
 };`)
+
 	return
 }
 
 func TestPinnedItemNamesAndGlyphs(t *testing.T) {
 	ids := presentationIdentities()
 	names, err := parseItemNames("item-name.cc", presentationNameFixture(), ids)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -250,6 +253,7 @@ func TestPinnedItemNamesAndGlyphs(t *testing.T) {
 
 	show, showHeader, dcharHeader, view := presentationGlyphFixture()
 	glyphs, err := parseASCIIItemGlyphs("show.cc", show, showHeader, dcharHeader, "viewchar.cc", view, glyphIdentities())
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -280,6 +284,7 @@ func TestDynamicNameAndSourceErrors(t *testing.T) {
 		`case POT_CURING: return "curing"; case POT_CURING: return "healing";`,
 		1,
 	)
+
 	if _, err := parseItemNames("item-name.cc", []byte(bad), ids); err == nil ||
 		!strings.Contains(err.Error(), "item-name.cc") {
 		t.Fatalf("ambiguous source name accepted: %v", err)
@@ -291,11 +296,13 @@ func TestDynamicNameAndSourceErrors(t *testing.T) {
 		`case POT_UNKNOWN: return "unknown";`,
 		1,
 	)
+
 	if _, err := parseItemNames("item-name.cc", []byte(bad), ids); err == nil {
 		t.Fatal("missing name for unremoved potion accepted")
 	}
 
 	bad = "#if OTHER_FLAG\n" + string(presentationNameFixture()) + "\n#endif\n"
+
 	if _, err := parseItemNames("item-name.cc", []byte(bad), ids); err == nil {
 		t.Fatal("unsupported conditional accepted")
 	}
@@ -307,6 +314,7 @@ func TestDynamicNameAndSourceErrors(t *testing.T) {
 		"DCHAR_ITEM_WEAPON,\nDCHAR_ITEM_RUNE,",
 		1,
 	))
+
 	if _, err := parseASCIIItemGlyphs(
 		"show.cc",
 		show,
@@ -321,6 +329,7 @@ func TestDynamicNameAndSourceErrors(t *testing.T) {
 
 	show, showHeader, dcharHeader, view = presentationGlyphFixture()
 	show = []byte(strings.Replace(string(show), "return SHOW_ITEM_POTION;", "return SHOW_ITEM_NOT_REAL;", 1))
+
 	if _, err := parseASCIIItemGlyphs(
 		"show.cc",
 		show,

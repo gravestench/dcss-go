@@ -36,6 +36,7 @@ func TestDungeonPopulationWeightCurves(t *testing.T) {
 			MonsterID:  "MONS_RAT",
 			SourceLine: 1,
 		}
+
 		for depth := 1; depth <= 3; depth++ {
 			if got := entry.WeightAtDepth(depth); got != tc.want[depth-1] {
 				t.Errorf("%s depth %d = %d, want %d", tc.curve, depth, got, tc.want[depth-1])
@@ -70,6 +71,7 @@ func TestDungeonPopulationArtifactRejectsMalformedRows(t *testing.T) {
 			},
 		},
 	}
+
 	if err := good.Validate(); err != nil {
 		t.Fatal(err)
 	}
@@ -110,6 +112,7 @@ func TestDungeonPopulationArtifactRejectsMalformedRows(t *testing.T) {
 	} {
 		artifact := good
 		artifact.Rows = []DungeonPopEntry{bad}
+
 		if err := artifact.Validate(); err == nil {
 			t.Fatalf("malformed row accepted: %+v", bad)
 		}

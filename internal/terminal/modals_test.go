@@ -10,11 +10,13 @@ import (
 func TestInventoryPageSourceCategoriesAndLetters(t *testing.T) {
 	m := playingModel(t)
 	m.handleKey("i")
+
 	if m.screen != ScreenInventory {
 		t.Fatal("inventory did not open")
 	}
 
 	page := plainApp(m)
+
 	for _, want := range []string{
 		"Inventory:",
 		"Hand Weapons",
@@ -47,11 +49,13 @@ func TestSkillsPageLevelsAptitudesAndUnavailableTraining(t *testing.T) {
 	m := playingModel(t)
 	aut := m.game.View().CurrentAut
 	m.handleKey("m")
+
 	if m.screen != ScreenSkills {
 		t.Fatal("skills did not open")
 	}
 
 	page := plainApp(m)
+
 	for _, want := range []string{
 		"Skills",
 		"Skill",
@@ -73,6 +77,7 @@ func TestSkillsPageLevelsAptitudesAndUnavailableTraining(t *testing.T) {
 	}
 
 	m.handleKey("a")
+
 	if !strings.Contains(plainApp(m), "unavailable") || m.game.View().CurrentAut != aut {
 		t.Fatal("training control changed turn or lacked explanation")
 	}
@@ -83,6 +88,7 @@ func TestHelpPageSourceKeysAndModalNavigation(t *testing.T) {
 	aut := m.game.View().CurrentAut
 	m.handleKey("?")
 	page := plainApp(m)
+
 	for _, want := range []string{
 		"Dungeon Crawl Stone Soup",
 		"Movement",
@@ -103,6 +109,7 @@ func TestHelpPageSourceKeysAndModalNavigation(t *testing.T) {
 	}
 
 	m.handleKey("esc")
+
 	if m.screen != ScreenPlay || m.game.View().CurrentAut != aut {
 		t.Fatal("help escape changed run")
 	}
@@ -111,6 +118,7 @@ func TestHelpPageSourceKeysAndModalNavigation(t *testing.T) {
 	m.handleKey("?")
 	m.handleKey("esc")
 	m.handleKey("esc")
+
 	if m.screen != ScreenPlay || m.game.View().CurrentAut != aut {
 		t.Fatal("nested modal escape changed run")
 	}
@@ -125,6 +133,7 @@ func TestModalResizePreservesFocusGameAndAut(t *testing.T) {
 		Width:  78,
 		Height: 23,
 	})
+
 	if !strings.Contains(plainApp(m), "too small") {
 		t.Fatal("resize warning missing")
 	}
@@ -133,6 +142,7 @@ func TestModalResizePreservesFocusGameAndAut(t *testing.T) {
 		Width:  79,
 		Height: 24,
 	})
+
 	if m.screen != ScreenInventory || m.focus != 2 || m.game != g || m.game.View().CurrentAut != aut ||
 		!strings.Contains(plainApp(m), "Inventory:") {
 		t.Fatal("modal resize lost state")

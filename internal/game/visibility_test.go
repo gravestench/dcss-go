@@ -10,6 +10,7 @@ import (
 func TestNewRunSightAndOcclusion(t *testing.T) {
 	g := newStepGame(t)
 	view := g.View()
+
 	if view.Width != 17 || view.Height != 9 || len(view.Cells) != 153 {
 		t.Fatalf("view geometry: %+v", view)
 	}
@@ -41,6 +42,7 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 
 		return false
 	}
+
 	if contains(g.View(), uint64(item)) {
 		t.Fatal("unseen item leaked into view")
 	}
@@ -49,6 +51,7 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 		Kind: CommandMove,
 		DX:   1,
 	})
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -61,6 +64,7 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 		Kind: CommandMove,
 		DX:   -1,
 	})
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -81,6 +85,7 @@ func TestFailedMoveDoesNotChangeKnowledge(t *testing.T) {
 		Kind: CommandMove,
 		DX:   -1,
 	})
+
 	if err != nil || result.Spent != 0 {
 		t.Fatalf("blocked move: %+v %v", result, err)
 	}
@@ -93,6 +98,7 @@ func TestFailedMoveDoesNotChangeKnowledge(t *testing.T) {
 func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 	g := newStepGame(t)
 	firstBefore := g.levels[1].KnownRows()
+
 	for _, row := range g.levels[2].KnownRows() {
 		for _, cell := range row {
 			if cell != ' ' {
@@ -110,11 +116,13 @@ func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 	}
 
 	result, err := g.Step(Command{Kind: CommandDownstairs})
+
 	if err != nil || result.View.LevelID != 2 {
 		t.Fatalf("downstairs: %+v %v", result, err)
 	}
 
 	firstAfter := g.levels[1].KnownRows()
+
 	for y, row := range firstBefore {
 		for x := range row {
 			if row[x] != ' ' && firstAfter[y][x] != row[x] {
@@ -124,11 +132,13 @@ func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 	}
 
 	second := g.levels[2].KnownRows()
+
 	if second[1][1] != '<' {
 		t.Fatal("destination stair not seen")
 	}
 
 	result, err = g.Step(Command{Kind: CommandUpstairs})
+
 	if err != nil || result.View.LevelID != 1 {
 		t.Fatalf("upstairs: %+v %v", result, err)
 	}
@@ -140,6 +150,7 @@ func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 
 func TestKnowledgeSaveRoundTrip(t *testing.T) {
 	g := newStepGame(t)
+
 	if _, err := g.Step(Command{
 		Kind: CommandMove,
 		DX:   1,
@@ -148,16 +159,19 @@ func TestKnowledgeSaveRoundTrip(t *testing.T) {
 	}
 
 	snapshot := g.Snapshot()
+
 	if snapshot.Version != save.Version || len(snapshot.Levels) != 2 || len(snapshot.Levels[0].Known) == 0 {
 		t.Fatalf("snapshot knowledge missing: %+v", snapshot.Levels)
 	}
 
 	restored, err := Restore(snapshot, testCatalog(t))
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer restored.Close()
+
 	if !reflect.DeepEqual(g.View(), restored.View()) || !reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
 		t.Fatal("restored sight or knowledge differs")
 	}
@@ -203,10 +217,12 @@ func TestRestoreRejectsInvalidKnowledge(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			bad := g.Snapshot()
 			tc.change(&bad)
+
 			if replacement, err := Restore(bad, testCatalog(t)); err == nil {
 				replacement.Close()
 				t.Fatal("malformed knowledge restored")

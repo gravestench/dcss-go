@@ -15,6 +15,7 @@ func (r *mightRoller) Intn(stream string, bound int) (int, error) {
 	}
 
 	r.calls++
+
 	return r.value, nil
 }
 
@@ -44,6 +45,7 @@ func TestMightPotionDurationAndCap(t *testing.T) {
 	} {
 		rng := &mightRoller{value: tc.roll}
 		got, message, err := MightPotionDuration(rng, tc.old)
+
 		if err != nil || got != tc.want || message != tc.message || rng.calls != 1 {
 			t.Fatalf("old %d roll %d: duration %d, message %q, draws %d, err %v", tc.old, tc.roll, got, message, rng.calls, err)
 		}
@@ -81,6 +83,7 @@ func TestMightDurationDecay(t *testing.T) {
 		},
 	} {
 		got, ended, err := DecayMight(tc.old, tc.cost)
+
 		if err != nil || got != tc.want || ended != tc.ended {
 			t.Fatalf("decay %d by %d = %d/%v, %v", tc.old, tc.cost, got, ended, err)
 		}
@@ -89,6 +92,7 @@ func TestMightDurationDecay(t *testing.T) {
 
 func TestMightRulesRejectInvalidStateBeforeDrawing(t *testing.T) {
 	rng := &mightRoller{value: 0}
+
 	for _, old := range []int{-1, 801} {
 		if _, _, err := MightPotionDuration(rng, old); err == nil || rng.calls != 0 {
 			t.Fatalf("old %d accepted or drew", old)
