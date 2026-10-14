@@ -34,6 +34,7 @@ const (
 	ScreenConfirm
 	ScreenDeath
 	ScreenQuaff
+	ScreenStatChoice
 )
 
 // AppModel owns terminal navigation; the Game owns every turn-changing state.
@@ -100,6 +101,8 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 		m.handleNameKey(key)
 	case ScreenPlay:
 		return m.handlePlayKey(key)
+	case ScreenStatChoice:
+		m.handleStatChoiceKey(key)
 	case ScreenInventory, ScreenSkills:
 		m.handleModalKey(key)
 	case ScreenQuaff:
@@ -139,6 +142,16 @@ func (m *AppModel) renderCanvas() *Canvas {
 		layout, _ := ComputeLayout(m.width, m.height)
 		if m.game != nil {
 			DrawPlay(canvas, layout, m.game.View(), m.notice)
+		}
+	case ScreenStatChoice:
+		layout, _ := ComputeLayout(m.width, m.height)
+		if m.game != nil {
+			DrawPlay(canvas, layout, m.game.View(), m.notice)
+			canvas.Write(
+				0, m.height-1,
+				"Increase (S)trength, (I)ntelligence, or (D)exterity?",
+				LightGrey, Black,
+			)
 		}
 	case ScreenInventory:
 		if m.game != nil {
@@ -202,6 +215,9 @@ func (m *AppModel) loadSavedRun() {
 	}
 	m.game = restored
 	m.screen = ScreenPlay
+	if restored.View().PendingStatLevel != 0 {
+		m.screen = ScreenStatChoice
+	}
 	m.notice = ""
 }
 

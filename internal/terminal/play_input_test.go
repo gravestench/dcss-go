@@ -24,23 +24,31 @@ func playingModel(t *testing.T) *AppModel {
 }
 
 func TestPlayKeysSourceBindingsAndTurnCost(t *testing.T) {
-	cases := []struct {
-		key    string
-		kind   game.CommandKind
-		dx, dy int
-	}{
-		{"h", game.CommandMove, -1, 0}, {"j", game.CommandMove, 0, 1}, {"k", game.CommandMove, 0, -1}, {"l", game.CommandMove, 1, 0},
-		{"y", game.CommandMove, -1, -1}, {"u", game.CommandMove, 1, -1}, {"b", game.CommandMove, -1, 1}, {"n", game.CommandMove, 1, 1},
-		{"home", game.CommandMove, -1, -1}, {"end", game.CommandMove, -1, 1}, {"pgup", game.CommandMove, 1, -1}, {"pgdown", game.CommandMove, 1, 1},
-		{"s", game.CommandWait, 0, 0}, {".", game.CommandWait, 0, 0}, {"g", game.CommandPickup, 0, 0}, {",", game.CommandPickup, 0, 0},
-		{"<", game.CommandUpstairs, 0, 0}, {">", game.CommandDownstairs, 0, 0},
-	}
-	for _, tc := range cases {
-		command, ok := CommandForKey(tc.key)
-		if !ok || command.Kind != tc.kind || command.DX != tc.dx || command.DY != tc.dy {
-			t.Fatalf("%q: %+v, %v", tc.key, command, ok)
+	expect := func(key string, kind game.CommandKind, dx, dy int) {
+		t.Helper()
+		command, ok := CommandForKey(key)
+		if !ok || command.Kind != kind || command.DX != dx || command.DY != dy {
+			t.Fatalf("%q: %+v, %v", key, command, ok)
 		}
 	}
+	expect("h", game.CommandMove, -1, 0)
+	expect("j", game.CommandMove, 0, 1)
+	expect("k", game.CommandMove, 0, -1)
+	expect("l", game.CommandMove, 1, 0)
+	expect("y", game.CommandMove, -1, -1)
+	expect("u", game.CommandMove, 1, -1)
+	expect("b", game.CommandMove, -1, 1)
+	expect("n", game.CommandMove, 1, 1)
+	expect("home", game.CommandMove, -1, -1)
+	expect("end", game.CommandMove, -1, 1)
+	expect("pgup", game.CommandMove, 1, -1)
+	expect("pgdown", game.CommandMove, 1, 1)
+	expect("s", game.CommandWait, 0, 0)
+	expect(".", game.CommandWait, 0, 0)
+	expect("g", game.CommandPickup, 0, 0)
+	expect(",", game.CommandPickup, 0, 0)
+	expect("<", game.CommandUpstairs, 0, 0)
+	expect(">", game.CommandDownstairs, 0, 0)
 	for _, key := range []string{"q", "L", "m", "S", "ctrl+s", "ctrl+q"} {
 		if _, ok := CommandForKey(key); ok {
 			t.Fatalf("UI/stub key %q became a game command", key)
@@ -84,7 +92,8 @@ func TestSaveExitConfirmationAndFailure(t *testing.T) {
 	m.savePath = filepath.Join(t.TempDir(), "missing", "run.json")
 	m.handleKey("S")
 	cmd := m.handleKey("y")
-	if cmd != nil || m.screen != ScreenPlay || !strings.Contains(m.notice, "Save failed") || m.game.View().CurrentAut != aut {
+	if cmd != nil || m.screen != ScreenPlay ||
+		!strings.Contains(m.notice, "Save failed") || m.game.View().CurrentAut != aut {
 		t.Fatalf("failed save changed run: screen %v, notice %q", m.screen, m.notice)
 	}
 	m.savePath = filepath.Join(t.TempDir(), "run.json")
@@ -132,5 +141,22 @@ func TestDeathTransitionAfterStep(t *testing.T) {
 	m.handleKey("enter")
 	if m.screen != ScreenStartup || m.game != nil {
 		t.Fatal("death could not return to startup")
+	}
+}
+
+func TestStatChoiceTransitionAfterStep(t *testing.T) {
+	m := playingModel(t)
+	m.afterStep(game.StepResult{
+		View: game.View{PendingStatLevel: 3},
+	})
+	if m.screen != ScreenStatChoice {
+		t.Fatalf("pending stat choice screen = %d", m.screen)
+	}
+	if !strings.Contains(plainApp(m), "Increase (S)trength") {
+		t.Fatal("stat choice prompt is missing")
+	}
+	m.handleStatChoiceKey("x")
+	if m.screen != ScreenStatChoice || m.notice == "" {
+		t.Fatalf("invalid stat key changed screen: %d, notice %q", m.screen, m.notice)
 	}
 }

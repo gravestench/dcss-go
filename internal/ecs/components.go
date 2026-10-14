@@ -35,9 +35,12 @@ type Skills struct {
 	Entries []character.Skill
 }
 
-// Progression owns the player's earned experience in this run.
+// Progression owns earned XP and the applied level. A pending stat choice
+// holds the next level until the player chooses, as in DCSS level_change.
 type Progression struct {
-	TotalXP int
+	TotalXP          int
+	Level            int
+	PendingStatLevel int
 }
 
 // Durations owns temporary player effects in action-time units (aut).

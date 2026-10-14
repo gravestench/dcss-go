@@ -53,7 +53,10 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 	if !found {
 		return 0, fmt.Errorf("unsupported ordinary animal %s", animal.ID)
 	}
-	if animal.HD != 1 || animal.AverageHP10x != profile.AverageHP10x || animal.Speed != profile.Speed || animal.XPModifier != profile.XPModifier ||
+	if animal.HD != 1 ||
+		animal.AverageHP10x != profile.AverageHP10x ||
+		animal.Speed != profile.Speed ||
+		animal.XPModifier != profile.XPModifier ||
 		animal.SpellbookID != "MST_NO_SPELLS" || animal.ItemUseID != "MONUSE_NOTHING" ||
 		animal.Attacks[0] != (content.MonsterAttack{
 			TypeID:    "AT_BITE",
@@ -76,13 +79,4 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 		Modifier:     animal.XPModifier,
 		AttackDamage: [4]int{animal.Attacks[0].Damage},
 	})
-}
-
-// HumanFirstLevelProgress follows exp_needed(1)=0, exp_needed(2)=9 and
-// get_exp_progress(), which truncates the percentage toward zero.
-func HumanFirstLevelProgress(totalXP int) (int, error) {
-	if totalXP < 0 || totalXP >= 9 {
-		return 0, fmt.Errorf("unsupported Human XL1 experience %d", totalXP)
-	}
-	return totalXP * 100 / 9, nil
 }

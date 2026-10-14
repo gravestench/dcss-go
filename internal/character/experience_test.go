@@ -71,13 +71,13 @@ func TestFrilledLizardExperienceUsesSourceOrdinaryBite(t *testing.T) {
 
 func TestHumanFirstLevelProgressUsesNineXPThreshold(t *testing.T) {
 	for _, tc := range []struct{ xp, percent int }{{0, 0}, {1, 11}, {4, 44}, {8, 88}} {
-		got, err := HumanFirstLevelProgress(tc.xp)
+		got, err := HumanLevelProgress(tc.xp, 1)
 		if err != nil || got != tc.percent {
 			t.Fatalf("XP %d => %d%%, %v; want %d%%", tc.xp, got, err, tc.percent)
 		}
 	}
-	for _, xp := range []int{-1, 9} {
-		if _, err := HumanFirstLevelProgress(xp); err == nil {
+	for _, xp := range []int{-1} {
+		if _, err := HumanLevelProgress(xp, 1); err == nil {
 			t.Fatalf("accepted unsupported XP %d", xp)
 		}
 	}

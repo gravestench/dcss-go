@@ -58,6 +58,7 @@ type View struct {
 	Attributes                        ecs.Attributes
 	Skills                            []character.Skill
 	ExperienceLevel, NextLevelPercent int
+	PendingStatLevel                  int
 	MightAut                          int
 }
 
@@ -102,8 +103,12 @@ func (g *Game) View() View {
 		view.Skills = append([]character.Skill(nil), skills.Entries...)
 	}
 	if progression, ok := g.stores.Progression.Get(g.player); ok {
-		if percent, err := character.HumanFirstLevelProgress(progression.TotalXP); err == nil {
-			view.ExperienceLevel, view.NextLevelPercent = 1, percent
+		if percent, err := character.HumanLevelProgress(
+			progression.TotalXP, progression.Level,
+		); err == nil {
+			view.ExperienceLevel = progression.Level
+			view.NextLevelPercent = percent
+			view.PendingStatLevel = progression.PendingStatLevel
 		}
 	}
 	if durations, ok := g.stores.Durations.Get(g.player); ok {

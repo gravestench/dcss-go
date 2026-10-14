@@ -94,8 +94,8 @@ func (s *deathSystem) awardAnimalExperience(definition content.MonsterDef, maxHP
 		return err
 	}
 	progress, found := s.progression.Get(s.player)
-	if !found || progress.TotalXP < 0 || progress.TotalXP+amount >= 9 {
-		return fmt.Errorf("invalid fixed Dungeon experience state")
+	if !found || progress.TotalXP < 0 {
+		return fmt.Errorf("invalid Dungeon experience state")
 	}
 	progress.TotalXP += amount
 	return nil

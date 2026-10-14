@@ -152,7 +152,7 @@ func newScenario(
 	if _, err = stores.Skills.Set(g.player, startSkills); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Progression.Set(g.player, ecs.Progression{}); err != nil {
+	if _, err = stores.Progression.Set(g.player, ecs.Progression{Level: 1}); err != nil {
 		return nil, err
 	}
 	if _, err = stores.Durations.Set(g.player, ecs.Durations{}); err != nil {
@@ -286,6 +286,14 @@ func registerSystems(g *Game) error {
 		return err
 	}
 	if _, err := world.AddSystem(newDeathSystem(g)); err != nil {
+		return err
+	}
+	advancement, err := newAdvancementSystem(g)
+	if err != nil {
+		return err
+	}
+	g.advancement = advancement
+	if _, err := world.AddSystem(advancement); err != nil {
 		return err
 	}
 	if _, err := world.AddSystem(&durationSystem{

@@ -221,6 +221,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	equippedSlots := map[string]string{}
 	var playerNext int64
 	var playerAlive bool
+	var playerPendingStat bool
 	var earliestID uint64
 	var earliestAut int64
 	for _, record := range snapshot.Entities {
@@ -265,31 +266,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if profileErr != nil {
 				return nil, fmt.Errorf("invalid player choice: %w", profileErr)
 			}
-			if record.Attributes.Strength <= 0 || record.Attributes.Intelligence <= 0 || record.Attributes.Dexterity <= 0 ||
-				*record.Attributes != (ecs.Attributes{
-					Strength:     profile.Attributes.Strength,
-					Intelligence: profile.Attributes.Intelligence,
-					Dexterity:    profile.Attributes.Dexterity,
-				}) {
-				return nil, fmt.Errorf("invalid player attributes for entity %d", record.ID)
-			}
-			if !slices.Equal(record.Skills.Entries, profile.Skills) {
-				return nil, fmt.Errorf("invalid player skills for entity %d", record.ID)
-			}
-			if record.Health.Max != profile.MaxHP {
-				return nil, fmt.Errorf("invalid player max HP for entity %d", record.ID)
-			}
-			if record.Magic.Max != profile.MaxMP || record.Magic.Current < 0 || record.Magic.Current > record.Magic.Max {
-				return nil, fmt.Errorf("invalid player MP for entity %d", record.ID)
-			}
-			if record.Progression != nil && record.Progression.TotalXP < 0 {
-				return nil, fmt.Errorf("invalid Dungeon experience for entity %d", record.ID)
-			}
-			if record.Progression != nil && !usesPopulation && record.Progression.TotalXP >= 9 {
-				return nil, fmt.Errorf("invalid fixed Dungeon experience for entity %d", record.ID)
-			}
-			if record.Progression != nil {
-				savedXP = record.Progression.TotalXP
+			savedXP, err = validateSavedHumanAdvancement(record, profile, catalog)
+			if err != nil {
+				return nil, err
 			}
 			if record.Durations != nil && (record.Durations.MightAut < 0 || record.Durations.MightAut > character.MightCapAut) {
 				return nil, fmt.Errorf("invalid player might duration for entity %d", record.ID)
@@ -301,6 +280,8 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			}
 			playerNext = record.Actor.NextAut
 			playerAlive = record.Health.Current > 0
+			playerPendingStat = record.Progression != nil &&
+				record.Progression.PendingStatLevel != 0
 		} else if record.Attributes != nil || record.Skills != nil ||
 			record.Magic != nil || record.Progression != nil ||
 			record.Durations != nil || record.Regeneration != nil {
@@ -433,10 +414,16 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			selectedWeaponID, equippedSlots["weapon"],
 		)
 	}
-	// Between live turns the player is next at the displayed clock. A dead
-	// player can retain a later deadline after a monster's killing action.
-	if playerAlive && (playerNext != snapshot.CurrentAut || earliestID != snapshot.PlayerID) {
-		return nil, fmt.Errorf("save clock does not match the next player turn")
+	// A stat prompt pauses before the monster phase at the start of the
+	// player's spent turn. Its next deadline is therefore still in the future.
+	if playerAlive {
+		if playerPendingStat {
+			if playerNext <= snapshot.CurrentAut {
+				return nil, fmt.Errorf("invalid pending player turn clock")
+			}
+		} else if playerNext != snapshot.CurrentAut || earliestID != snapshot.PlayerID {
+			return nil, fmt.Errorf("save clock does not match the next player turn")
+		}
 	}
 	for _, record := range snapshot.Entities {
 		entity := akara.Entity(record.ID)
@@ -464,7 +451,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			}
 		}
 		if record.Player != nil {
-			progress := ecs.Progression{}
+			progress := ecs.Progression{Level: 1}
 			if record.Progression != nil {
 				progress = *record.Progression
 			}

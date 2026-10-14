@@ -19,6 +19,7 @@ type Game struct {
 	scheduler      TurnScheduler
 	currentAut     Aut
 	corpseAging    corpseAgingSystem
+	advancement    *advancementSystem
 	turn           TurnContext
 	messages       []string
 	visible        []bool

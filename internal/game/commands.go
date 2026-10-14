@@ -59,6 +59,10 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			Text: "You die.",
 		}), nil
 	}
+	if progress, found := g.stores.Progression.Get(g.player); found &&
+		progress.PendingStatLevel != 0 && command.Kind != CommandInspect {
+		return g.noTime("Choose Strength, Intelligence, or Dexterity first."), nil
+	}
 	position, found := g.stores.Positions.Get(g.player)
 	if !found {
 		return StepResult{}, fmt.Errorf("player %d has no position", g.player)
@@ -177,6 +181,24 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			to.awaySinceAut = nil
 		}
 	}
+	if progress, found := g.stores.Progression.Get(g.player); found &&
+		progress.PendingStatLevel != 0 {
+		if err := g.refreshVisibility(); err != nil {
+			return StepResult{}, err
+		}
+		return StepResult{
+			Spent:  cost,
+			Events: events,
+			View:   g.View(),
+		}, nil
+	}
+	return g.finishTurn(startAut, cost, events)
+}
+
+// finishTurn resumes the scheduled monster phase after a level-up prompt.
+// The player action has already spent its aut and set the next deadline.
+func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error) {
+	const monsterCost Aut = 10
 	for !g.playerDead() {
 		actor, at, found := g.scheduler.Next()
 		if !found || actor == g.player {

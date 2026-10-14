@@ -90,7 +90,32 @@ func (m *AppModel) handleQuaffKey(key string) tea.Cmd {
 func (m *AppModel) afterStep(result game.StepResult) {
 	if result.View.PlayerDead {
 		m.screen = ScreenDeath
+	} else if result.View.PendingStatLevel != 0 {
+		m.screen = ScreenStatChoice
 	}
+}
+
+func (m *AppModel) handleStatChoiceKey(key string) {
+	id := ""
+	switch key {
+	case "S":
+		id = "str"
+	case "I":
+		id = "int"
+	case "D":
+		id = "dex"
+	default:
+		m.notice = "Choose S, I, or D."
+		return
+	}
+	result, err := m.game.ChooseStat(id)
+	if err != nil {
+		m.notice = fmt.Sprintf("Stat choice failed: %v", err)
+		return
+	}
+	m.notice = ""
+	m.screen = ScreenPlay
+	m.afterStep(result)
 }
 
 func (m *AppModel) handleConfirmKey(key string) tea.Cmd {
