@@ -29,7 +29,12 @@ func copySkillsComponent(store *akara.Store[ecs.Skills], entity akara.Entity) *e
 	return copy
 }
 
-func validateSavedItem(record save.EntityRecord, catalog content.Catalog, player akara.Entity, occupied map[string]string) error {
+func validateSavedItem(
+	record save.EntityRecord,
+	catalog content.Catalog,
+	player akara.Entity,
+	occupied map[string]string,
+) error {
 	item := record.Item
 	kind, err := catalog.Item(item.KindID)
 	if err != nil {
@@ -50,13 +55,18 @@ func validateSavedItem(record save.EntityRecord, catalog content.Catalog, player
 		record.Corpse.Appearance < 1 || record.Corpse.Appearance > 255) {
 		return fmt.Errorf("item %d has invalid ordinary animal corpse state", record.ID)
 	}
-	if record.Health != nil || record.Magic != nil || record.Skills != nil || record.Progression != nil || record.Durations != nil || record.Regeneration != nil || record.Combatant != nil || record.Player != nil || record.AI != nil || record.Attributes != nil {
+	if record.Health != nil || record.Magic != nil || record.Skills != nil ||
+		record.Progression != nil || record.Durations != nil ||
+		record.Regeneration != nil || record.Combatant != nil ||
+		record.Player != nil || record.AI != nil || record.Attributes != nil {
 		return fmt.Errorf("item %d has actor components", record.ID)
 	}
 	if record.Equipped == nil {
 		return nil
 	}
-	if record.CarriedBy == nil || record.CarriedBy.Holder != player || record.Position != nil || kind.Slot == "" || record.Equipped.Slot != kind.Slot {
+	if record.CarriedBy == nil || record.CarriedBy.Holder != player ||
+		record.Position != nil || kind.Slot == "" ||
+		record.Equipped.Slot != kind.Slot {
 		return fmt.Errorf("item %d has invalid equipped slot or carrier", record.ID)
 	}
 	if _, duplicate := occupied[kind.Slot]; duplicate {
@@ -227,10 +237,14 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			selectedWeaponID = record.Player.StartingWeaponID
 			definition := catalog.Player()
 			if record.ID != snapshot.PlayerID || record.Actor == nil || record.Position == nil || record.Health == nil ||
-				record.Player.SpeciesID != definition.SpeciesID || record.Player.JobID != definition.JobID || record.Attributes == nil || record.Skills == nil || record.Magic == nil {
+				record.Player.SpeciesID != definition.SpeciesID ||
+				record.Player.JobID != definition.JobID ||
+				record.Attributes == nil || record.Skills == nil || record.Magic == nil {
 				return nil, fmt.Errorf("invalid player entity %d", record.ID)
 			}
-			profile, profileErr := character.BuildStartProfile(catalog, record.Player.SpeciesID, record.Player.JobID, selectedWeaponID)
+			profile, profileErr := character.BuildStartProfile(
+				catalog, record.Player.SpeciesID, record.Player.JobID, selectedWeaponID,
+			)
 			if profileErr != nil {
 				return nil, fmt.Errorf("invalid player choice: %w", profileErr)
 			}
@@ -260,12 +274,16 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Durations != nil && (record.Durations.MightAut < 0 || record.Durations.MightAut > character.MightCapAut) {
 				return nil, fmt.Errorf("invalid player might duration for entity %d", record.ID)
 			}
-			if record.Regeneration != nil && (record.Regeneration.HPProgress < 0 || record.Regeneration.HPProgress >= 100 || record.Regeneration.MPProgress < 0 || record.Regeneration.MPProgress >= 100) {
+			if record.Regeneration != nil &&
+				(record.Regeneration.HPProgress < 0 || record.Regeneration.HPProgress >= 100 ||
+					record.Regeneration.MPProgress < 0 || record.Regeneration.MPProgress >= 100) {
 				return nil, fmt.Errorf("invalid player regeneration counters for entity %d", record.ID)
 			}
 			playerNext = record.Actor.NextAut
 			playerAlive = record.Health.Current > 0
-		} else if record.Attributes != nil || record.Skills != nil || record.Magic != nil || record.Progression != nil || record.Durations != nil || record.Regeneration != nil {
+		} else if record.Attributes != nil || record.Skills != nil ||
+			record.Magic != nil || record.Progression != nil ||
+			record.Durations != nil || record.Regeneration != nil {
 			return nil, fmt.Errorf("non-player entity %d has character components", record.ID)
 		}
 		if record.AI != nil {
@@ -313,10 +331,14 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			}
 			liveAnimals[record.Actor.KindID] = true
 		}
-		if record.Actor != nil && (record.Actor.Speed <= 0 || record.Actor.NextAut < 0 || record.Health == nil || record.Combatant == nil || record.Position == nil) {
+		if record.Actor != nil &&
+			(record.Actor.Speed <= 0 || record.Actor.NextAut < 0 ||
+				record.Health == nil || record.Combatant == nil || record.Position == nil) {
 			return nil, fmt.Errorf("invalid actor %d", record.ID)
 		}
-		if record.Combatant != nil && (record.Actor == nil || record.Combatant.ShieldBlocks < 0 || record.Combatant.ShieldBlocks > 100) {
+		if record.Combatant != nil &&
+			(record.Actor == nil || record.Combatant.ShieldBlocks < 0 ||
+				record.Combatant.ShieldBlocks > 100) {
 			return nil, fmt.Errorf("invalid combat stats for entity %d", record.ID)
 		}
 		if record.Actor != nil && record.Player == nil && record.AI == nil {
@@ -326,11 +348,14 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Actor.NextAut < snapshot.CurrentAut {
 				return nil, fmt.Errorf("actor %d deadline precedes save clock", record.ID)
 			}
-			if earliestID == 0 || record.Actor.NextAut < earliestAut || (record.Actor.NextAut == earliestAut && record.ID < earliestID) {
+			if earliestID == 0 || record.Actor.NextAut < earliestAut ||
+				(record.Actor.NextAut == earliestAut && record.ID < earliestID) {
 				earliestID, earliestAut = record.ID, record.Actor.NextAut
 			}
 		}
-		if record.Health != nil && (record.Health.Current < 0 || record.Health.Max <= 0 || record.Health.Current > record.Health.Max) {
+		if record.Health != nil &&
+			(record.Health.Current < 0 || record.Health.Max <= 0 ||
+				record.Health.Current > record.Health.Max) {
 			return nil, fmt.Errorf("invalid health for entity %d", record.ID)
 		}
 		if err := world.CreateEntityWithID(akara.Entity(record.ID)); err != nil {
@@ -367,7 +392,10 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			return nil, fmt.Errorf("unarmed start has an equipped weapon")
 		}
 	} else if equippedSlots["weapon"] != selectedWeaponID {
-		return nil, fmt.Errorf("selected starting weapon %s disagrees with equipped weapon %s", selectedWeaponID, equippedSlots["weapon"])
+		return nil, fmt.Errorf(
+			"selected starting weapon %s disagrees with equipped weapon %s",
+			selectedWeaponID, equippedSlots["weapon"],
+		)
 	}
 	// Between live turns the player is next at the displayed clock. A dead
 	// player can retain a later deadline after a monster's killing action.
@@ -392,7 +420,10 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			}
 		}
 		if record.Skills != nil {
-			if _, err := stores.Skills.Set(entity, ecs.Skills{Entries: append([]character.Skill(nil), record.Skills.Entries...)}); err != nil {
+			savedSkills := ecs.Skills{
+				Entries: append([]character.Skill(nil), record.Skills.Entries...),
+			}
+			if _, err := stores.Skills.Set(entity, savedSkills); err != nil {
 				return nil, err
 			}
 		}

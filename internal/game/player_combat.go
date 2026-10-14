@@ -83,7 +83,9 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		weaponCount++
 		item, found := c.items.Get(entity)
 		if !found || in.Unarmed || item.KindID != player.StartingWeaponID {
-			return combat.PlayerAttackInput{}, fmt.Errorf("equipped weapon does not match starting weapon %s", player.StartingWeaponID)
+			return combat.PlayerAttackInput{}, fmt.Errorf(
+				"equipped weapon does not match starting weapon %s", player.StartingWeaponID,
+			)
 		}
 		kind, err := c.catalog.Item(item.KindID)
 		if err != nil {
@@ -99,7 +101,9 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		in.WeaponDamage, in.WeaponHit, in.WeaponPlus = kind.Weapon.Damage, kind.Weapon.Hit, item.Plus
 	}
 	if (in.Unarmed && weaponCount != 0) || (!in.Unarmed && weaponCount != 1) {
-		return combat.PlayerAttackInput{}, fmt.Errorf("player has %d equipped weapons for %s", weaponCount, player.StartingWeaponID)
+		return combat.PlayerAttackInput{}, fmt.Errorf(
+			"player has %d equipped weapons for %s", weaponCount, player.StartingWeaponID,
+		)
 	}
 	fightingFound, weaponSkillFound := false, false
 	for _, skill := range skills.Entries {

@@ -132,7 +132,9 @@ func (g *Game) View() View {
 		if location.LevelID != position.LevelID {
 			continue
 		}
-		if entity != g.player && (g.visibleLevelID != level.ID || location.Y*level.width+location.X >= len(g.visible) || !g.visible[location.Y*level.width+location.X]) {
+		index := location.Y*level.width + location.X
+		visible := g.visibleLevelID == level.ID && index < len(g.visible) && g.visible[index]
+		if entity != g.player && !visible {
 			continue
 		}
 		glyph := rune('?')

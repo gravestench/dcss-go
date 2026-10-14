@@ -25,11 +25,33 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 		}
 	}()
 	stores := ecs.Register(world)
-	first, err := NewLevel(1, []string{"#################", "#.......#.......#", "#.#.....#.......#", "#......>#.......#", "#...............#", "#.......#.......#", "#.......#.......#", "#.......#.......#", "#################"}, stores.Positions)
+	firstRows := []string{
+		"#################",
+		"#.......#.......#",
+		"#.#.....#.......#",
+		"#......>#.......#",
+		"#...............#",
+		"#.......#.......#",
+		"#.......#.......#",
+		"#.......#.......#",
+		"#################",
+	}
+	first, err := NewLevel(1, firstRows, stores.Positions)
 	if err != nil {
 		return nil, err
 	}
-	second, err := NewLevel(2, []string{"#################", "#<......#.......#", "#.......#.......#", "#.......#.......#", "#...............#", "#.......#.......#", "#.......#.......#", "#.......#.......#", "#################"}, stores.Positions)
+	secondRows := []string{
+		"#################",
+		"#<......#.......#",
+		"#.......#.......#",
+		"#.......#.......#",
+		"#...............#",
+		"#.......#.......#",
+		"#.......#.......#",
+		"#.......#.......#",
+		"#################",
+	}
+	second, err := NewLevel(2, secondRows, stores.Positions)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +108,8 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Skills.Set(g.player, ecs.Skills{Entries: append([]character.Skill(nil), profile.Skills...)}); err != nil {
+	startSkills := ecs.Skills{Entries: append([]character.Skill(nil), profile.Skills...)}
+	if _, err = stores.Skills.Set(g.player, startSkills); err != nil {
 		return nil, err
 	}
 	if _, err = stores.Progression.Set(g.player, ecs.Progression{}); err != nil {
