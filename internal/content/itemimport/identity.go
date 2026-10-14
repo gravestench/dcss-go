@@ -258,8 +258,54 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 	return entries, nil
 }
 
+// identityCollector keeps duplicate numeric pairs and aliases together while
+// the source enums are read in class order.
+type identityCollector struct {
+	classValues map[string]int
+	seenPairs   map[[2]int]string
+	identities  []content.ItemIdentity
+	aliases     []content.ItemAlias
+}
+
 func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []content.ItemAlias, error) {
-	classEntries, err := enumMembers(
+	classEntries, classValues, err := activeItemClasses(source)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	collector := identityCollector{
+		classValues: classValues,
+		seenPairs:   make(map[[2]int]string),
+	}
+
+	for _, class := range itemClassSources {
+		if err := collector.collectClass(source, class); err != nil {
+			return nil, nil, err
+		}
+	}
+
+	if err := collector.collectGold(classEntries); err != nil {
+		return nil, nil, err
+	}
+
+	sort.Slice(collector.identities, func(i, j int) bool {
+		if collector.identities[i].ClassValue != collector.identities[j].ClassValue {
+			return collector.identities[i].ClassValue < collector.identities[j].ClassValue
+		}
+
+		return collector.identities[i].SubtypeValue < collector.identities[j].SubtypeValue
+	})
+
+	sort.Slice(collector.aliases, func(i, j int) bool {
+		return collector.aliases[i].ID < collector.aliases[j].ID
+	})
+
+	return collector.identities, collector.aliases, nil
+}
+
+func activeItemClasses(source map[string][]byte) ([]enumValue, map[string]int, error) {
+	entries, err := enumMembers(
 		"crawl-ref/source/object-class-type.h",
 		source["object-class-type.h"],
 		"object_class_type",
@@ -269,9 +315,9 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 		return nil, nil, err
 	}
 
-	classValues := map[string]int{}
+	values := make(map[string]int)
 
-	for _, entry := range classEntries {
+	for _, entry := range entries {
 		if entry.ID == "NUM_OBJECT_CLASSES" {
 			break
 		}
@@ -281,110 +327,113 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 				entry.SourcePath, entry.SourceLine, entry.ID)
 		}
 
-		classValues[entry.ID] = entry.Value
+		values[entry.ID] = entry.Value
 	}
 
-	if len(classValues) != 16 {
+	if len(values) != 16 {
 		return nil, nil, fmt.Errorf("object-class-type.h: expected 16 active classes, got %d",
-			len(classValues))
+			len(values))
 	}
 
-	var identities []content.ItemIdentity
-	var aliases []content.ItemAlias
-	seenPairs := map[[2]int]string{}
-	appendIdentity := func(classID string, classValue int, entry enumValue) error {
-		if entry.Value < 0 {
-			return fmt.Errorf("%s:%d: negative concrete subtype %s",
-				entry.SourcePath, entry.SourceLine, entry.ID)
-		}
+	return entries, values, nil
+}
 
-		pair := [2]int{classValue, entry.Value}
-
-		if previous, found := seenPairs[pair]; found {
-			return fmt.Errorf(
-				"%s:%d: subtype %s duplicates numeric pair of %s",
-				entry.SourcePath,
-				entry.SourceLine,
-				entry.ID,
-				previous,
-			)
-		}
-
-		seenPairs[pair] = entry.ID
-		identities = append(identities, content.ItemIdentity{
-			ID:           entry.ID,
-			ClassID:      classID,
-			ClassValue:   classValue,
-			SubtypeValue: entry.Value,
-			SourcePath:   entry.SourcePath,
-			SourceLine:   entry.SourceLine,
-		})
-
-		return nil
+func (c *identityCollector) appendIdentity(classID string, classValue int, entry enumValue) error {
+	if entry.Value < 0 {
+		return fmt.Errorf("%s:%d: negative concrete subtype %s",
+			entry.SourcePath, entry.SourceLine, entry.ID)
 	}
 
-	for _, class := range itemClassSources {
-		classValue, found := classValues[class.ClassID]
+	pair := [2]int{classValue, entry.Value}
 
-		if !found {
-			return nil, nil, fmt.Errorf("missing active item class %s", class.ClassID)
-		}
-
-		entries, err := enumMembers("crawl-ref/source/"+class.File, source[class.File], class.Enum)
-
-		if err != nil {
-			return nil, nil, err
-		}
-
-		concrete := map[string]bool{}
-		ended := class.End == ""
-
-		for _, entry := range entries {
-			if entry.ID == class.End {
-				ended = true
-				break
-			}
-
-			matchesPrefix := false
-
-			for _, prefix := range class.Prefix {
-				matchesPrefix = matchesPrefix || strings.HasPrefix(entry.ID, prefix)
-			}
-
-			if entry.AliasOf != "" {
-				if concrete[entry.AliasOf] {
-					aliases = append(aliases, content.ItemAlias{
-						ID:           entry.ID,
-						TargetID:     entry.AliasOf,
-						ClassID:      class.ClassID,
-						NumericValue: entry.Value,
-						SourcePath:   entry.SourcePath,
-						SourceLine:   entry.SourceLine,
-					})
-				}
-
-				continue
-			}
-
-			if !matchesPrefix || strings.HasPrefix(entry.ID, "NUM_") ||
-				strings.HasPrefix(entry.ID, "MAX_") || strings.Contains(entry.ID, "_FIRST_") ||
-				strings.Contains(entry.ID, "_LAST_") || strings.HasSuffix(entry.ID, "_UNKNOWN") {
-				continue
-			}
-
-			if err := appendIdentity(class.ClassID, classValue, entry); err != nil {
-				return nil, nil, err
-			}
-
-			concrete[entry.ID] = true
-		}
-
-		if !ended || len(concrete) == 0 {
-			return nil, nil, fmt.Errorf("%s: incomplete enum %s for %s",
-				class.File, class.Enum, class.ClassID)
-		}
+	if previous, found := c.seenPairs[pair]; found {
+		return fmt.Errorf(
+			"%s:%d: subtype %s duplicates numeric pair of %s",
+			entry.SourcePath,
+			entry.SourceLine,
+			entry.ID,
+			previous,
+		)
 	}
 
+	c.seenPairs[pair] = entry.ID
+	c.identities = append(c.identities, content.ItemIdentity{
+		ID:           entry.ID,
+		ClassID:      classID,
+		ClassValue:   classValue,
+		SubtypeValue: entry.Value,
+		SourcePath:   entry.SourcePath,
+		SourceLine:   entry.SourceLine,
+	})
+
+	return nil
+}
+
+func (c *identityCollector) collectClass(source map[string][]byte, class classSource) error {
+	classValue, found := c.classValues[class.ClassID]
+
+	if !found {
+		return fmt.Errorf("missing active item class %s", class.ClassID)
+	}
+
+	entries, err := enumMembers("crawl-ref/source/"+class.File, source[class.File], class.Enum)
+
+	if err != nil {
+		return err
+	}
+
+	concrete := make(map[string]bool)
+	ended := class.End == ""
+
+	for _, entry := range entries {
+		if entry.ID == class.End {
+			ended = true
+			break
+		}
+
+		matchesPrefix := false
+
+		for _, prefix := range class.Prefix {
+			matchesPrefix = matchesPrefix || strings.HasPrefix(entry.ID, prefix)
+		}
+
+		if entry.AliasOf != "" {
+			if concrete[entry.AliasOf] {
+				c.aliases = append(c.aliases, content.ItemAlias{
+					ID:           entry.ID,
+					TargetID:     entry.AliasOf,
+					ClassID:      class.ClassID,
+					NumericValue: entry.Value,
+					SourcePath:   entry.SourcePath,
+					SourceLine:   entry.SourceLine,
+				})
+			}
+
+			continue
+		}
+
+		if !matchesPrefix || strings.HasPrefix(entry.ID, "NUM_") ||
+			strings.HasPrefix(entry.ID, "MAX_") || strings.Contains(entry.ID, "_FIRST_") ||
+			strings.Contains(entry.ID, "_LAST_") || strings.HasSuffix(entry.ID, "_UNKNOWN") {
+			continue
+		}
+
+		if err := c.appendIdentity(class.ClassID, classValue, entry); err != nil {
+			return err
+		}
+
+		concrete[entry.ID] = true
+	}
+
+	if !ended || len(concrete) == 0 {
+		return fmt.Errorf("%s: incomplete enum %s for %s",
+			class.File, class.Enum, class.ClassID)
+	}
+
+	return nil
+}
+
+func (c *identityCollector) collectGold(classEntries []enumValue) error {
 	gold := enumValue{
 		ID:         "OBJ_GOLD",
 		Value:      0,
@@ -394,26 +443,12 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 	for _, entry := range classEntries {
 		if entry.ID == "OBJ_GOLD" {
 			gold.SourceLine = entry.SourceLine
+
 			break
 		}
 	}
 
-	if err := appendIdentity("OBJ_GOLD", classValues["OBJ_GOLD"], gold); err != nil {
-		return nil, nil, err
-	}
-
-	sort.Slice(identities, func(i, j int) bool {
-		if identities[i].ClassValue != identities[j].ClassValue {
-			return identities[i].ClassValue < identities[j].ClassValue
-		}
-
-		return identities[i].SubtypeValue < identities[j].SubtypeValue
-	})
-	sort.Slice(aliases, func(i, j int) bool {
-		return aliases[i].ID < aliases[j].ID
-	})
-
-	return identities, aliases, nil
+	return c.appendIdentity("OBJ_GOLD", c.classValues["OBJ_GOLD"], gold)
 }
 
 var removedRow = regexp.MustCompile(`^\{\s*(OBJ_[A-Z0-9_]+)\s*,\s*([A-Z][A-Z0-9_]+)\s*\}\s*,?$`)
