@@ -216,6 +216,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Actor.KindID != "MONS_RAT" {
 				return nil, fmt.Errorf("unsupported melee attacker %s in fixed Dungeon scenario", record.Actor.KindID)
 			}
+			if record.Health.Max < 1 || record.Health.Max > 4 {
+				return nil, fmt.Errorf("impossible fixed rat maximum HP %d", record.Health.Max)
+			}
 			ratPresent = true
 		}
 		if record.Actor != nil && (record.Actor.Speed <= 0 || record.Actor.NextAut < 0 || record.Health == nil || record.Combatant == nil || record.Position == nil) {

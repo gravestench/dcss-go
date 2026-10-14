@@ -146,7 +146,7 @@ func TestAttackDelaySaveContinuation(t *testing.T) {
 	}
 	rat := ratID(t, g)
 	health, _ := g.stores.Health.Get(rat)
-	health.Current, health.Max = 100, 100
+	health.Current = health.Max
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))
 	if err != nil {
 		t.Fatal(err)

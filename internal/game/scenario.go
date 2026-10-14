@@ -4,6 +4,7 @@ import (
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/monster"
 	"fmt"
 	"github.com/gravestench/akara"
 )
@@ -83,7 +84,7 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if err != nil {
 		return nil, err
 	}
-	if ratDef.HD != 1 || ratDef.AC != 1 || ratDef.EV != 10 ||
+	if ratDef.HD != 1 || ratDef.AverageHP10x != 25 || ratDef.AC != 1 || ratDef.EV != 10 ||
 		ratDef.Attacks[0] != (content.MonsterAttack{TypeID: "AT_BITE", FlavourID: "AF_PLAIN", Damage: 3}) {
 		return nil, fmt.Errorf("fixed rat scenario expects the pinned ordinary bite and defense")
 	}
@@ -94,8 +95,11 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if _, err = stores.Actors.Set(rat, ecs.Actor{KindID: ratDef.ID, Speed: ratDef.Speed}); err != nil {
 		return nil, err
 	}
-	const scenarioRatHP = 4
-	if _, err = stores.Health.Set(rat, ecs.Health{Current: scenarioRatHP, Max: scenarioRatHP}); err != nil {
+	ratHP, err := monster.RollHP(g.rng, ratDef.AverageHP10x)
+	if err != nil {
+		return nil, err
+	}
+	if _, err = stores.Health.Set(rat, ecs.Health{Current: ratHP, Max: ratHP}); err != nil {
 		return nil, err
 	}
 	if _, err = stores.Combat.Set(rat, ecs.Combatant{}); err != nil {

@@ -15,9 +15,11 @@ func TestFixedRatGrantsOneSourceExperience(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	got, err := RatKillExperience(rat, 4)
-	if err != nil || got != 1 {
-		t.Fatalf("rat XP = %d, %v; want 1", got, err)
+	for hp := 1; hp <= 4; hp++ {
+		got, err := RatKillExperience(rat, hp)
+		if err != nil || got != 1 {
+			t.Fatalf("rat with %d HP XP = %d, %v; want 1", hp, got, err)
+		}
 	}
 }
 

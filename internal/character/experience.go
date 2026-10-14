@@ -12,7 +12,7 @@ import (
 func RatKillExperience(rat content.MonsterDef, maxHP int) (int, error) {
 	if rat.ID != "MONS_RAT" || rat.HD != 1 || rat.Speed != 10 || rat.XPModifier != 1 ||
 		rat.SpellbookID != "MST_NO_SPELLS" || rat.ItemUseID != "MONUSE_NOTHING" ||
-		rat.Attacks[0].Damage != 3 || slices.Contains(rat.Flags, "M_NO_EXP_GAIN") || maxHP != 4 {
+		rat.Attacks[0].Damage != 3 || slices.Contains(rat.Flags, "M_NO_EXP_GAIN") || maxHP < 1 || maxHP > 4 {
 		return 0, fmt.Errorf("unsupported rat experience inputs for %s at %d HP", rat.ID, maxHP)
 	}
 	value := (16 + maxHP) * rat.HD * rat.HD / 10
