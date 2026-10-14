@@ -330,7 +330,7 @@ func parseVocabulary(source map[string][]byte) (content.ItemVocabulary, error) {
 	for _, spec := range []target{
 		{&v.Slots, "equipment-type.h", "equipment_type", []string{"EQ_"}},
 		{&v.Skills, "skill-type.h", "skill_type", []string{"SK_"}},
-		{&v.Sizes, "size-type.h", "size_type", []string{"SIZE_"}},
+		{&v.Sizes, "size-type.h", "size_type", []string{"SIZE_", "NUM_SIZE_LEVELS"}},
 		{&v.Ammo, "item-prop-enum.h", "missile_type", []string{"MI_"}},
 		{&v.DamageFlags, "item-prop-enum.h", "vorpal_damage_type", []string{"DAM_", "DAMV_", "DVORP_"}},
 		{&v.Brands, "item-prop-enum.h", "brand_type", []string{"SPWPN_"}},
