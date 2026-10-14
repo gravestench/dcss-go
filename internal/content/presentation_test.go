@@ -37,7 +37,8 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 		t.Fatalf("startup description: %+v", p.StartupModes[0])
 	}
 
-	var species, jobs []string
+	var species []string
+	var jobs []string
 
 	for _, group := range p.SpeciesGroups {
 		species = append(species, group.IDs...)

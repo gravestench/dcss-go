@@ -451,7 +451,10 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 		aptitudes[skillID(name)] = content.SpeciesAptitude{Allowed: true}
 	}
 
-	var xp, hp, mp, mr int
+	var xp int
+	var hp int
+	var mp int
+	var mr int
 
 	for name, node := range source.Aptitudes {
 		switch name {

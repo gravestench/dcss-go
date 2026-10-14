@@ -78,6 +78,11 @@ func checkFile(path string) (int, error) {
 
 	ast.Inspect(file, func(node ast.Node) bool {
 		switch value := node.(type) {
+		case *ast.ValueSpec:
+			if len(value.Names) > 1 {
+				report(value.Pos(), "declare each named value on its own line")
+			}
+
 		case *ast.StructType:
 			for _, field := range value.Fields.List {
 				if len(field.Names) > 1 {

@@ -217,7 +217,8 @@ func TestMightRestoreRejectsBadOwnershipAndRange(t *testing.T) {
 				}
 			}
 
-			var player, monster *ecs.Durations
+			var player *ecs.Durations
+			var monster *ecs.Durations
 
 			for i := range bad.Entities {
 				if bad.Entities[i].Player != nil {

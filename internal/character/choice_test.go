@@ -13,7 +13,10 @@ func TestNormalDungeonChoiceMatrix(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var speciesCount, jobCount, legal, banned int
+	var speciesCount int
+	var jobCount int
+	var legal int
+	var banned int
 
 	for _, speciesID := range catalog.SpeciesIDs() {
 		species, _ := catalog.Species(speciesID)

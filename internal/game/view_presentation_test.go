@@ -11,7 +11,9 @@ func TestViewPresentationIdentifiesEntitiesAndItemClass(t *testing.T) {
 
 	defer g.Close()
 	view := g.View()
-	var player, rat, potion bool
+	var player bool
+	var rat bool
+	var potion bool
 
 	for _, entity := range view.Entities {
 		switch entity.KindID {

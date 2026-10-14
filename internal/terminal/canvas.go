@@ -169,7 +169,8 @@ func (c *Canvas) Styled() string {
 	for y := 0; y < c.height; y++ {
 		var line strings.Builder
 		var run strings.Builder
-		var fg, bg Color
+		var fg Color
+		var bg Color
 		haveRun := false
 		flush := func() {
 			if !haveRun {

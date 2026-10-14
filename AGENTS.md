@@ -21,8 +21,9 @@ for a human reader to follow.
   tables. Group related fields by order and names rather than comma packing.
 - Assign mutable fields one per line. Keep tuple assignment for values returned
   together by a function, such as a result and its error.
-- Give each of four or more local state variables its own declaration instead
-  of initializing the group in a single line. Function results may remain tuples.
+- Give each `var` local state variable its own declaration. Related values
+  initialized together with `:=`, such as coordinates and bounds, and
+  function result tuples may remain together.
 - Use names that expose the game concept. Extract a helper when it removes
   repeated reasoning, not merely to shorten a function.
 - Comment source-specific rules, invariants, ownership, and surprising
