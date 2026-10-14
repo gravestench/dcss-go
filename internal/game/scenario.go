@@ -345,6 +345,14 @@ func registerSystems(g *Game) error {
 		return err
 	}
 
+	if _, err := world.AddSystem(&doorSystem{
+		game:    g,
+		intents: stores.Intents,
+		turn:    &g.turn,
+	}); err != nil {
+		return err
+	}
+
 	if _, err := world.AddSystem(&movementSystem{
 		positions: stores.Positions,
 		intents:   stores.Intents,

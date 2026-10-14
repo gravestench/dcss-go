@@ -230,6 +230,7 @@ func DrawHelp(canvas *Canvas) {
 		"",
 		"Movement: h j k l, y u b n, arrow keys",
 		"Wait: . or s     Pick up: g ,     Drop: d     Wield: w",
+		"Doors: O open, C close (direction if prompted)",
 		"Stairs: < or >",
 		"Inventory: i     Skills: m     Help: ?",
 		"Save and exit: S (confirm), Ctrl-S (now)",

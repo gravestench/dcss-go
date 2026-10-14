@@ -120,6 +120,7 @@ const (
 	IntentWait
 	IntentQuaff
 	IntentOpenDoor
+	IntentCloseDoor
 	IntentDrop
 	IntentWield
 )

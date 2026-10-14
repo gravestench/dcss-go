@@ -21,6 +21,8 @@ const (
 	CommandQuaff
 	CommandDrop
 	CommandWield
+	CommandOpenDoor
+	CommandCloseDoor
 )
 
 type Command struct {
@@ -185,6 +187,9 @@ func (g *Game) preparePlayerCommand(
 
 	case CommandWield:
 		return g.prepareWieldCommand(command.ItemID)
+
+	case CommandOpenDoor, CommandCloseDoor:
+		return g.prepareDoorCommand(command, position, level)
 
 	default:
 		return freeCommand(g.noTime("Unknown command.")), nil

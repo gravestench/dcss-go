@@ -183,8 +183,41 @@ func (l *Level) Walkable(x, y int) bool {
 // terrain.cc:751-785 does for a multi-cell door. Known cells also update when
 // an opened segment lies outside current sight.
 func (l *Level) OpenDoor(x, y int) (int, error) {
-	if !l.inBounds(x, y) || l.terrain[y][x] != '+' {
-		return 0, fmt.Errorf("level %d has no closed door at (%d,%d)", l.ID, x, y)
+	cells, err := l.doorGroup(x, y, '+')
+
+	if err != nil {
+		return 0, err
+	}
+
+	l.changeDoorCells(cells, '\'')
+
+	return len(cells), nil
+}
+
+// CloseDoor changes one connected open-door group after the caller has moved
+// floor items away. No actor may stand in any segment of the group.
+func (l *Level) CloseDoor(x, y int) (int, error) {
+	cells, err := l.doorGroup(x, y, '\'')
+
+	if err != nil {
+		return 0, err
+	}
+
+	for _, cell := range cells {
+		if _, occupied := l.ActorAt(cell.x, cell.y); occupied {
+			return 0, fmt.Errorf("level %d door at (%d,%d) has an actor", l.ID, cell.x, cell.y)
+		}
+	}
+
+	l.changeDoorCells(cells, '+')
+
+	return len(cells), nil
+}
+
+// doorGroup follows find_connected_identical in terrain.cc:751-785.
+func (l *Level) doorGroup(x, y int, glyph byte) ([]point, error) {
+	if !l.inBounds(x, y) || l.terrain[y][x] != glyph {
+		return nil, fmt.Errorf("level %d has no %q door at (%d,%d)", l.ID, glyph, x, y)
 	}
 
 	queue := []point{
@@ -194,27 +227,20 @@ func (l *Level) OpenDoor(x, y int) (int, error) {
 		},
 	}
 
-	opened := 0
+	seen := make(map[point]bool)
+	var cells []point
 
 	for len(queue) > 0 {
 		cell := queue[0]
 		queue = queue[1:]
 
-		if !l.inBounds(cell.x, cell.y) || l.terrain[cell.y][cell.x] != '+' {
+		if seen[cell] || !l.inBounds(cell.x, cell.y) ||
+			l.terrain[cell.y][cell.x] != glyph {
 			continue
 		}
 
-		row := []byte(l.terrain[cell.y])
-		row[cell.x] = '\''
-		l.terrain[cell.y] = string(row)
-		opened++
-
-		index := cell.y*l.width + cell.x
-
-		if l.remembered[index] != 0 {
-			l.remembered[index] = '\''
-		}
-
+		seen[cell] = true
+		cells = append(cells, cell)
 		queue = append(queue,
 			point{
 				x: cell.x + 1,
@@ -235,7 +261,31 @@ func (l *Level) OpenDoor(x, y int) (int, error) {
 		)
 	}
 
-	return opened, nil
+	// The C++ source stores connected cells in an ordered set. Its coordinate
+	// comparison sorts by x, then y, which sets blocker and item-push order.
+	sort.Slice(cells, func(i, j int) bool {
+		if cells[i].x == cells[j].x {
+			return cells[i].y < cells[j].y
+		}
+
+		return cells[i].x < cells[j].x
+	})
+
+	return cells, nil
+}
+
+func (l *Level) changeDoorCells(cells []point, glyph byte) {
+	for _, cell := range cells {
+		row := []byte(l.terrain[cell.y])
+		row[cell.x] = glyph
+		l.terrain[cell.y] = string(row)
+
+		index := cell.y*l.width + cell.x
+
+		if l.remembered[index] != 0 {
+			l.remembered[index] = glyph
+		}
+	}
 }
 
 func (l *Level) ActorAt(x, y int) (akara.Entity, bool) {

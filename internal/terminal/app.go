@@ -63,6 +63,7 @@ type AppModel struct {
 	notice       string
 	confirm      confirmation
 	dropQuantity string
+	pendingDoor  game.CommandKind
 }
 
 func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppModel, error) {
@@ -322,4 +323,5 @@ func (m *AppModel) returnToStartup() {
 	m.focus = 0
 	m.notice = ""
 	m.confirm = confirmNone
+	m.pendingDoor = 0
 }
