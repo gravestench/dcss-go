@@ -36,17 +36,7 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 		}
 
 		if m.focus == 0 {
-			if m.name != "" {
-				if err := character.ValidateName(m.name); err != nil {
-					m.notice = err.Error()
-
-					return nil
-				}
-			}
-
-			m.screen = ScreenSpecies
-			m.focus = 0
-			m.notice = ""
+			m.startNewCharacter()
 		} else {
 			m.notice = "This game mode is unavailable in the Go port."
 		}
@@ -72,6 +62,20 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 	}
 
 	return nil
+}
+
+func (m *AppModel) startNewCharacter() {
+	if m.name != "" {
+		if err := character.ValidateName(m.name); err != nil {
+			m.notice = err.Error()
+
+			return
+		}
+	}
+
+	m.screen = ScreenSpecies
+	m.focus = 0
+	m.notice = ""
 }
 
 func (m *AppModel) appendNameKey(key string) {
@@ -184,51 +188,65 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 		return
 	}
 
-	for i, id := range ids {
-		if key != string(menuLetter(i)) {
+	m.selectCharacterChoice(key, ids)
+}
+
+func (m *AppModel) selectCharacterChoice(key string, ids []string) {
+	for index, id := range ids {
+		if key != string(menuLetter(index)) {
 			continue
 		}
 
-		m.focus = i
+		m.focus = index
 
 		if m.screen == ScreenSpecies {
-			if id != "SP_HUMAN" {
-				m.notice = "This species is unavailable in the Go port."
-
-				return
-			}
-
-			m.speciesID = id
-			m.notice = ""
-
-			if m.jobID == "" {
-				m.screen = ScreenBackground
-				m.focus = 0
-
-				return
-			}
+			m.selectSpecies(id)
 		} else {
-			if id != "JOB_FIGHTER" {
-				m.notice = "This background is unavailable in the Go port."
-
-				return
-			}
-
-			m.jobID = id
-			m.notice = ""
-
-			if m.speciesID == "" {
-				m.screen = ScreenSpecies
-				m.focus = 0
-
-				return
-			}
+			m.selectBackground(id)
 		}
-
-		m.enterWeaponChoice()
 
 		return
 	}
+}
+
+func (m *AppModel) selectSpecies(id string) {
+	if id != "SP_HUMAN" {
+		m.notice = "This species is unavailable in the Go port."
+
+		return
+	}
+
+	m.speciesID = id
+	m.notice = ""
+
+	if m.jobID == "" {
+		m.screen = ScreenBackground
+		m.focus = 0
+
+		return
+	}
+
+	m.enterWeaponChoice()
+}
+
+func (m *AppModel) selectBackground(id string) {
+	if id != "JOB_FIGHTER" {
+		m.notice = "This background is unavailable in the Go port."
+
+		return
+	}
+
+	m.jobID = id
+	m.notice = ""
+
+	if m.speciesID == "" {
+		m.screen = ScreenSpecies
+		m.focus = 0
+
+		return
+	}
+
+	m.enterWeaponChoice()
 }
 
 func (m *AppModel) enterWeaponChoice() {
@@ -412,65 +430,97 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 
 	canvas.Write(0, 0, m.welcomeText(), Brown, Black)
 	canvas.Write(1, 1, "Please select your "+choice+".", LightGrey, Black)
+	m.drawCharacterGroups(canvas, groups)
+	m.drawCharacterChoiceHints(canvas)
+
+	ids := flattenGroups(groups)
+
+	if m.focus < len(ids) {
+		description := descriptions[ids[m.focus]]
+		wrapped := strings.Join(strings.Fields(description), " ")
+
+		writeWrapped(canvas, 1, 19, m.width-2, 4, wrapped, Brown)
+	}
+
+	if m.notice != "" {
+		writeClipped(canvas, 1, 23, m.width-2, m.notice, LightRed)
+	}
+}
+
+func (m *AppModel) drawCharacterGroups(canvas *Canvas, groups []content.MenuGroup) {
 	index := 0
 
 	for column, group := range groups {
 		col, row := groupPosition(m.screen, column)
 		canvas.Write(col, row, group.Label, LightBlue, Black)
 
-		for i, id := range group.IDs {
-			name := id
-
-			if m.screen == ScreenSpecies {
-				if definition, err := m.catalog.Species(id); err == nil {
-					name = definition.Name
-				}
-			} else {
-				if definition, err := m.catalog.Job(id); err == nil {
-					name = definition.Name
-				}
-			}
-
-			color, background := LightGrey, Black
-			status := character.Restricted
-
-			if m.screen == ScreenSpecies && m.jobID != "" {
-				status, _ = character.SpeciesForJob(m.catalog, id, m.jobID)
-			} else if m.screen == ScreenBackground && m.speciesID != "" {
-				status, _ = character.JobForSpecies(m.catalog, m.speciesID, id)
-			}
-
-			hasOtherChoice := (m.screen == ScreenSpecies && m.jobID != "") ||
-				(m.screen == ScreenBackground && m.speciesID != "")
-
-			if hasOtherChoice {
-				if status == character.Recommended {
-					color = White
-				} else {
-					color = DarkGrey
-				}
-			}
-
-			if index == m.focus {
-				color = White
-
-				if status == character.Recommended && hasOtherChoice {
-					background = Green
-				} else if hasOtherChoice {
-					background = LightGrey
-				} else {
-					background = Blue
-				}
-			}
-
+		for offset, id := range group.IDs {
+			name := m.characterChoiceName(id)
+			color, background := m.characterChoiceColors(id, index)
 			label := fmt.Sprintf("%c - %s", menuLetter(index), name)
 
-			canvas.Write(col, row+i+1, label, color, background)
-
+			canvas.Write(col, row+offset+1, label, color, background)
 			index++
 		}
 	}
+}
 
+func (m *AppModel) characterChoiceName(id string) string {
+	if m.screen == ScreenSpecies {
+		if definition, err := m.catalog.Species(id); err == nil {
+			return definition.Name
+		}
+
+		return id
+	}
+
+	if definition, err := m.catalog.Job(id); err == nil {
+		return definition.Name
+	}
+
+	return id
+}
+
+func (m *AppModel) characterChoiceColors(id string, index int) (Color, Color) {
+	color := LightGrey
+	background := Black
+	status := character.Restricted
+	hasOtherChoice := false
+
+	if m.screen == ScreenSpecies && m.jobID != "" {
+		status, _ = character.SpeciesForJob(m.catalog, id, m.jobID)
+		hasOtherChoice = true
+	} else if m.screen == ScreenBackground && m.speciesID != "" {
+		status, _ = character.JobForSpecies(m.catalog, m.speciesID, id)
+		hasOtherChoice = true
+	}
+
+	if hasOtherChoice {
+		if status == character.Recommended {
+			color = White
+		} else {
+			color = DarkGrey
+		}
+	}
+
+	if index != m.focus {
+		return color, background
+	}
+
+	color = White
+
+	if status == character.Recommended && hasOtherChoice {
+		background = Green
+	} else if hasOtherChoice {
+		background = LightGrey
+	} else {
+		background = Blue
+	}
+
+	return color, background
+}
+
+func (m *AppModel) drawCharacterChoiceHints(canvas *Canvas) {
 	choiceTitle, otherTitle := "species", "background"
 	otherSelected := m.jobID != ""
 
@@ -500,19 +550,6 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 		change,
 	} {
 		canvas.Write(40, 14+row, label, LightGrey, Black)
-	}
-
-	ids := flattenGroups(groups)
-
-	if m.focus < len(ids) {
-		description := descriptions[ids[m.focus]]
-		wrapped := strings.Join(strings.Fields(description), " ")
-
-		writeWrapped(canvas, 1, 19, m.width-2, 4, wrapped, Brown)
-	}
-
-	if m.notice != "" {
-		writeClipped(canvas, 1, 23, m.width-2, m.notice, LightRed)
 	}
 }
 

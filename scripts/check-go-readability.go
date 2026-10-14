@@ -86,7 +86,15 @@ func checkFile(path string) (int, error) {
 			previous := statements[index-1]
 			next := statements[index]
 			previousEndLine := fset.Position(previous.End() - 1).Line
-			adjacent := previousEndLine+1 == fset.Position(next.Pos()).Line
+			nextStartLine := fset.Position(next.Pos()).Line
+
+			if previousEndLine == nextStartLine {
+				report(next.Pos(), "put each statement on its own line")
+
+				continue
+			}
+
+			adjacent := previousEndLine+1 == nextStartLine
 			_, returns := next.(*ast.ReturnStmt)
 
 			if isControl(next) && !isControl(previous) &&

@@ -5,12 +5,14 @@ import "fmt"
 // defaultCatalogLoader keeps provenance and catalog assembly together while
 // committed artifacts are checked in dependency order.
 type defaultCatalogLoader struct {
-	catalog         Catalog
+	catalog Catalog
+
 	speciesArtifact SpeciesArtifact
-	speciesPaths    map[string]string
-	jobPaths        map[string]string
-	itemPaths       map[string]string
-	gearPaths       map[string]string
+
+	speciesPaths map[string]string
+	jobPaths     map[string]string
+	itemPaths    map[string]string
+	gearPaths    map[string]string
 }
 
 func (l *defaultCatalogLoader) loadSpecies(speciesData []byte) error {
@@ -165,20 +167,15 @@ func (l *defaultCatalogLoader) loadItems(itemData, identityData []byte) error {
 }
 
 func (l *defaultCatalogLoader) loadGear(gearData []byte) error {
-	artifact := l.speciesArtifact
-	hashedPaths := l.speciesPaths
-	jobPaths := l.jobPaths
-	itemPaths := l.itemPaths
-	catalog := &l.catalog
-
 	var gear StartingGearArtifact
 
 	if err := decodeArtifact(gearData, "starting gear", &gear); err != nil {
 		return err
 	}
 
-	if gear.SchemaVersion != 2 || gear.SourceRevision != artifact.SourceRevision ||
-		gear.TagMajorVersion != artifact.TagMajorVersion {
+	if gear.SchemaVersion != 2 ||
+		gear.SourceRevision != l.speciesArtifact.SourceRevision ||
+		gear.TagMajorVersion != l.speciesArtifact.TagMajorVersion {
 		return fmt.Errorf("unsupported or mismatched starting gear artifact schema/revision/tag")
 	}
 
@@ -186,35 +183,59 @@ func (l *defaultCatalogLoader) loadGear(gearData []byte) error {
 		return fmt.Errorf("starting gear artifact has incomplete records or provenance")
 	}
 
-	if err := gear.Validate(*catalog); err != nil {
+	if err := gear.Validate(l.catalog); err != nil {
 		return err
 	}
 
-	gearPaths, err := validSourceFiles(gear.SourceFiles, "starting gear")
+	gearPaths, err := l.validateGearSources(gear.SourceFiles)
 
 	if err != nil {
 		return err
 	}
 
+	if err := l.installGear(gear.Jobs); err != nil {
+		return err
+	}
+
+	l.gearPaths = gearPaths
+
+	return nil
+}
+
+func (l *defaultCatalogLoader) validateGearSources(
+	files []JobSourceFile,
+) (map[string]string, error) {
+	gearPaths, err := validSourceFiles(files, "starting gear")
+
+	if err != nil {
+		return nil, err
+	}
+
 	for path, hash := range gearPaths {
-		if speciesHash, shared := hashedPaths[path]; shared && speciesHash != hash {
-			return fmt.Errorf("shared species/gear source hash differs for %s", path)
+		if speciesHash, shared := l.speciesPaths[path]; shared && speciesHash != hash {
+			return nil, fmt.Errorf("shared species/gear source hash differs for %s", path)
 		}
 
-		if jobHash, shared := jobPaths[path]; shared && jobHash != hash {
-			return fmt.Errorf("shared job/gear source hash differs for %s", path)
+		if jobHash, shared := l.jobPaths[path]; shared && jobHash != hash {
+			return nil, fmt.Errorf("shared job/gear source hash differs for %s", path)
 		}
 
-		if itemHash, shared := itemPaths[path]; shared && itemHash != hash {
-			return fmt.Errorf("shared item/gear source hash differs for %s", path)
+		if itemHash, shared := l.itemPaths[path]; shared && itemHash != hash {
+			return nil, fmt.Errorf("shared item/gear source hash differs for %s", path)
 		}
 	}
 
-	for path := range jobPaths {
+	for path := range l.jobPaths {
 		if _, found := gearPaths[path]; !found {
-			return fmt.Errorf("starting gear artifact lacks job source %s", path)
+			return nil, fmt.Errorf("starting gear artifact lacks job source %s", path)
 		}
 	}
+
+	return gearPaths, nil
+}
+
+func (l *defaultCatalogLoader) installGear(entries []JobStartingGear) error {
+	catalog := &l.catalog
 
 	for _, id := range []string{
 		"POT_CURING",
@@ -239,10 +260,10 @@ func (l *defaultCatalogLoader) loadGear(gearData []byte) error {
 		return fmt.Errorf("unarmed choice must not be an item kind")
 	}
 
-	catalog.startingGear = make(map[string][]StartingGrant, len(gear.Jobs))
+	catalog.startingGear = make(map[string][]StartingGrant, len(entries))
 	previous := ""
 
-	for _, entry := range gear.Jobs {
+	for _, entry := range entries {
 		if entry.JobID <= previous {
 			return fmt.Errorf("starting gear jobs are not sorted by ID")
 		}
@@ -272,28 +293,19 @@ func (l *defaultCatalogLoader) loadGear(gearData []byte) error {
 		}
 	}
 
-	l.gearPaths = gearPaths
-
 	return nil
 }
 
 func (l *defaultCatalogLoader) loadMonsters(monsterData []byte) error {
-	artifact := l.speciesArtifact
-
-	hashedPaths := l.speciesPaths
-	jobPaths := l.jobPaths
-	itemPaths := l.itemPaths
-	gearPaths := l.gearPaths
-	catalog := &l.catalog
-
 	var monsters MonsterArtifact
 
 	if err := decodeArtifact(monsterData, "monster", &monsters); err != nil {
 		return err
 	}
 
-	if monsters.SchemaVersion != 1 || monsters.SourceRevision != artifact.SourceRevision ||
-		monsters.TagMajorVersion != artifact.TagMajorVersion {
+	if monsters.SchemaVersion != 1 ||
+		monsters.SourceRevision != l.speciesArtifact.SourceRevision ||
+		monsters.TagMajorVersion != l.speciesArtifact.TagMajorVersion {
 		return fmt.Errorf("unsupported or mismatched monster artifact schema/revision/tag")
 	}
 
@@ -316,10 +328,22 @@ func (l *defaultCatalogLoader) loadMonsters(monsterData []byte) error {
 		return err
 	}
 
-	monsterPaths, err := validSourceFiles(monsters.SourceFiles, "monster")
+	monsterPaths, err := l.validateMonsterSources(monsters.SourceFiles)
 
 	if err != nil {
 		return err
+	}
+
+	return l.installMonsters(monsters.Monsters, monsterPaths)
+}
+
+func (l *defaultCatalogLoader) validateMonsterSources(
+	files []JobSourceFile,
+) (map[string]string, error) {
+	monsterPaths, err := validSourceFiles(files, "monster")
+
+	if err != nil {
+		return nil, err
 	}
 
 	for _, name := range []string{
@@ -336,33 +360,40 @@ func (l *defaultCatalogLoader) loadMonsters(monsterData []byte) error {
 		"tag-version.h",
 	} {
 		if _, found := monsterPaths["crawl-ref/source/"+name]; !found {
-			return fmt.Errorf("monster artifact lacks source %s", name)
+			return nil, fmt.Errorf("monster artifact lacks source %s", name)
 		}
 	}
 
 	for path, hash := range monsterPaths {
 		for _, previous := range []map[string]string{
-			hashedPaths,
-			jobPaths,
-			itemPaths,
-			gearPaths,
+			l.speciesPaths,
+			l.jobPaths,
+			l.itemPaths,
+			l.gearPaths,
 		} {
 			if known, shared := previous[path]; shared && known != hash {
-				return fmt.Errorf("shared monster source hash differs for %s", path)
+				return nil, fmt.Errorf("shared monster source hash differs for %s", path)
 			}
 		}
 	}
 
-	catalog.monsters = make(map[string]MonsterDef, len(monsters.Monsters))
+	return monsterPaths, nil
+}
+
+func (l *defaultCatalogLoader) installMonsters(
+	entries []MonsterDef,
+	monsterPaths map[string]string,
+) error {
+	l.catalog.monsters = make(map[string]MonsterDef, len(entries))
 	counts := map[MonsterStatus]int{}
 
-	for _, monster := range monsters.Monsters {
+	for _, monster := range entries {
 		if _, found := monsterPaths[monster.SourcePath]; !found {
 			return fmt.Errorf("monster %s lacks source provenance", monster.ID)
 		}
 
 		counts[monster.Status]++
-		catalog.monsters[monster.ID] = monster.clone()
+		l.catalog.monsters[monster.ID] = monster.clone()
 	}
 
 	if counts[MonsterDefined] != 562 ||
@@ -370,13 +401,13 @@ func (l *defaultCatalogLoader) loadMonsters(monsterData []byte) error {
 		return fmt.Errorf("monster artifact has wrong status partition")
 	}
 
-	for _, monster := range monsters.Monsters {
+	for _, monster := range entries {
 		if monster.Status == MonsterDefined {
-			if _, found := catalog.monsters[monster.GenusID]; !found {
+			if _, found := l.catalog.monsters[monster.GenusID]; !found {
 				return fmt.Errorf("monster %s has unknown genus %s", monster.ID, monster.GenusID)
 			}
 
-			if _, found := catalog.monsters[monster.SpeciesID]; !found {
+			if _, found := l.catalog.monsters[monster.SpeciesID]; !found {
 				return fmt.Errorf("monster %s has unknown species %s", monster.ID, monster.SpeciesID)
 			}
 		}
