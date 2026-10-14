@@ -146,6 +146,12 @@ var enumHeaderPattern = regexp.MustCompile(`^enum(?:\s+class)?\s+([A-Za-z][A-Za-
 
 var enumSymbolPattern = regexp.MustCompile(`^[A-Z][A-Z0-9_]*$`)
 
+type enumAccumulator struct {
+	value   int
+	known   map[string]int
+	entries []enumValue
+}
+
 // enumMembers reads only one named enum, keeping C++ numeric progression.
 func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 	lines, err := sourceparse.Tag34NumberedLines(path, data)
@@ -155,9 +161,10 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 	}
 
 	state := 0 // before header, before brace, inside enum, finished
-	value := -1
-	known := map[string]int{}
-	var entries []enumValue
+	accumulator := enumAccumulator{
+		value: -1,
+		known: make(map[string]int),
+	}
 
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line.Text)
@@ -196,66 +203,86 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 			continue
 		}
 
-		if strings.ContainsAny(trimmed, "{}") {
-			return nil, fmt.Errorf("%s:%d: unsupported enum %s row %q",
-				path, line.Number, name, trimmed)
-		}
-
-		for _, raw := range strings.Split(trimmed, ",") {
-			part := strings.TrimSpace(raw)
-
-			if part == "" {
-				continue
-			}
-
-			match := enumMemberPattern.FindStringSubmatch(part)
-
-			if match == nil {
-				return nil, fmt.Errorf("%s:%d: unsupported enum %s row %q", path, line.Number, name, part)
-			}
-
-			id, expression := match[1], strings.TrimSpace(match[2])
-
-			if _, found := known[id]; found {
-				return nil, fmt.Errorf("%s:%d: duplicate enum member %s", path, line.Number, id)
-			}
-
-			alias := ""
-
-			if expression == "" {
-				value++
-			} else if number, err := strconv.ParseInt(expression, 0, 32); err == nil {
-				value = int(number)
-			} else if enumSymbolPattern.MatchString(expression) {
-				referenced, found := known[expression]
-
-				if !found {
-					return nil, fmt.Errorf("%s:%d: enum %s references unknown %s",
-						path, line.Number, id, expression)
-				}
-
-				value, alias = referenced, expression
-			} else {
-				return nil, fmt.Errorf("%s:%d: unsupported numeric expression %q for %s",
-					path, line.Number, expression, id)
-			}
-
-			known[id] = value
-			entries = append(entries, enumValue{
-				ID:         id,
-				Value:      value,
-				AliasOf:    alias,
-				SourcePath: path,
-				SourceLine: line.Number,
-			})
+		if err := accumulator.addRow(path, name, line); err != nil {
+			return nil, err
 		}
 	}
 
-	if state != 3 || len(entries) == 0 {
+	if state != 3 || len(accumulator.entries) == 0 {
 		return nil, fmt.Errorf("%s: missing or empty enum %s", path, name)
 	}
 
-	return entries, nil
+	return accumulator.entries, nil
+}
+
+func (a *enumAccumulator) addRow(path, name string, line sourceparse.Line) error {
+	trimmed := strings.TrimSpace(line.Text)
+
+	if strings.ContainsAny(trimmed, "{}") {
+		return fmt.Errorf("%s:%d: unsupported enum %s row %q",
+			path, line.Number, name, trimmed)
+	}
+
+	for _, raw := range strings.Split(trimmed, ",") {
+		part := strings.TrimSpace(raw)
+
+		if part == "" {
+			continue
+		}
+
+		if err := a.addMember(path, name, line.Number, part); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (a *enumAccumulator) addMember(path, name string, line int, part string) error {
+	match := enumMemberPattern.FindStringSubmatch(part)
+
+	if match == nil {
+		return fmt.Errorf("%s:%d: unsupported enum %s row %q", path, line, name, part)
+	}
+
+	id := match[1]
+	expression := strings.TrimSpace(match[2])
+
+	if _, found := a.known[id]; found {
+		return fmt.Errorf("%s:%d: duplicate enum member %s", path, line, id)
+	}
+
+	alias := ""
+
+	if expression == "" {
+		a.value++
+	} else if number, err := strconv.ParseInt(expression, 0, 32); err == nil {
+		a.value = int(number)
+	} else if enumSymbolPattern.MatchString(expression) {
+		referenced, found := a.known[expression]
+
+		if !found {
+			return fmt.Errorf("%s:%d: enum %s references unknown %s",
+				path, line, id, expression)
+		}
+
+		a.value = referenced
+		alias = expression
+	} else {
+		return fmt.Errorf("%s:%d: unsupported numeric expression %q for %s",
+			path, line, expression, id)
+	}
+
+	a.known[id] = a.value
+	a.entries = append(a.entries, enumValue{
+		ID:         id,
+		Value:      a.value,
+		AliasOf:    alias,
+		SourcePath: path,
+		SourceLine: line,
+	})
+
+	return nil
 }
 
 // identityCollector keeps duplicate numeric pairs and aliases together while
