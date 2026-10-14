@@ -1,0 +1,108 @@
+package content
+
+import (
+	"fmt"
+	"slices"
+	"strings"
+)
+
+// MonsterVocabulary is committed independently of the definition table.
+// It lets normal startup verify source IDs and enums without a C++ checkout.
+type MonsterVocabulary struct {
+	SchemaVersion   int                 `json:"schema_version"`
+	SourceRevision  string              `json:"source_revision"`
+	TagMajorVersion int                 `json:"tag_major_version"`
+	SourceFiles     []JobSourceFile     `json:"source_files"`
+	Identities      []MonsterIdentity   `json:"identities"`
+	Symbols         map[string][]string `json:"symbols"`
+}
+
+type MonsterIdentity struct {
+	ID     string        `json:"id"`
+	Status MonsterStatus `json:"status"`
+}
+
+func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
+	if v.SchemaVersion != 1 || v.SourceRevision != a.SourceRevision || v.TagMajorVersion != a.TagMajorVersion || len(v.Identities) != len(a.Monsters) || len(v.SourceFiles) != len(a.SourceFiles) {
+		return fmt.Errorf("monster vocabulary metadata or coverage differs")
+	}
+	for i, file := range v.SourceFiles {
+		if file != a.SourceFiles[i] {
+			return fmt.Errorf("monster vocabulary source hash differs for %s", file.Path)
+		}
+	}
+	for i, identity := range v.Identities {
+		if identity.ID != a.Monsters[i].ID || identity.Status != a.Monsters[i].Status {
+			return fmt.Errorf("monster identity/status differs at %s", identity.ID)
+		}
+	}
+	needed := []string{"attack_type", "attack_flavour", "spellbook", "class_flag", "resistance", "holiness", "shout", "intelligence", "habitat", "item_use", "size", "shape", "colour", "tile_variation"}
+	sets := make(map[string]map[string]bool, len(needed))
+	for _, category := range needed {
+		values := v.Symbols[category]
+		if len(values) == 0 || !slices.IsSorted(values) {
+			return fmt.Errorf("missing or unsorted monster vocabulary %s", category)
+		}
+		set := make(map[string]bool, len(values))
+		for _, value := range values {
+			if value == "" || set[value] {
+				return fmt.Errorf("bad monster vocabulary %s: %s", category, value)
+			}
+			set[value] = true
+		}
+		sets[category] = set
+	}
+	check := func(category, value, monsterID string) error {
+		if !sets[category][value] {
+			return fmt.Errorf("monster %s has unknown %s %q", monsterID, category, value)
+		}
+		return nil
+	}
+	for _, m := range a.Monsters {
+		if m.Status != MonsterDefined {
+			continue
+		}
+		for _, pair := range []struct{ category, value string }{{"colour", m.ColourID}, {"spellbook", m.SpellbookID}, {"shout", m.ShoutID}, {"intelligence", m.IntelligenceID}, {"habitat", m.HabitatID}, {"item_use", m.ItemUseID}, {"size", m.SizeID}, {"shape", m.ShapeID}, {"tile_variation", m.Tile.VariationID}} {
+			if err := check(pair.category, pair.value, m.ID); err != nil {
+				return err
+			}
+		}
+		for _, id := range m.Flags {
+			if err := check("class_flag", id, m.ID); err != nil {
+				return err
+			}
+		}
+		for _, id := range m.Holiness {
+			if err := check("holiness", id, m.ID); err != nil {
+				return err
+			}
+		}
+		for _, r := range m.Resistances {
+			if err := check("resistance", r.ID, m.ID); err != nil {
+				return err
+			}
+		}
+		for _, attack := range m.Attacks {
+			if err := check("attack_type", attack.TypeID, m.ID); err != nil {
+				return err
+			}
+			if err := check("attack_flavour", attack.FlavourID, m.ID); err != nil {
+				return err
+			}
+		}
+		for _, tile := range []string{m.Tile.ID, m.CorpseTileID} {
+			if tile == "0" {
+				continue
+			}
+			if tile != "TILE_ERROR" && !strings.HasPrefix(tile, "TILEP_") && !strings.HasPrefix(tile, "TILE_") {
+				return fmt.Errorf("monster %s has invalid tile %q", m.ID, tile)
+			}
+			for _, r := range tile {
+				if !(r >= 'A' && r <= 'Z') && !(r >= '0' && r <= '9') && r != '_' {
+					return fmt.Errorf("monster %s has invalid tile %q", m.ID, tile)
+				}
+			}
+		}
+	}
+	return nil
+}

@@ -308,7 +308,87 @@ func writeArtifact(sourceDir, outPath string, check bool, generate func(string) 
 	return nil
 }
 
-// Write checks or atomically replaces the committed generated artifact.
+func sortedKeys(values map[string]bool) []string {
+	result := make([]string, 0, len(values))
+	for id := range values {
+		result = append(result, id)
+	}
+	sort.Strings(result)
+	return result
+}
+
+// GenerateManifest records the pinned IDs, statuses, and enum vocabulary
+// independently of the monster definitions for runtime validation.
+func GenerateManifest(sourceDir string) ([]byte, error) {
+	definitions, err := Generate(sourceDir)
+	if err != nil {
+		return nil, err
+	}
+	var artifact content.MonsterArtifact
+	if err := json.Unmarshal(definitions, &artifact); err != nil {
+		return nil, err
+	}
+	data, _, err := readSources(sourceDir)
+	if err != nil {
+		return nil, err
+	}
+	s, err := sourceSymbols(data)
+	if err != nil {
+		return nil, err
+	}
+	v := content.MonsterVocabulary{SchemaVersion: 1, SourceRevision: pinnedRevision, TagMajorVersion: 34, SourceFiles: artifact.SourceFiles, Symbols: map[string][]string{
+		"attack_type": sortedKeys(s.attackType), "attack_flavour": sortedKeys(s.attackFlavour),
+		"spellbook": sortedKeys(s.spellbook), "class_flag": sortedKeys(s.classFlag),
+		"resistance": sortedKeys(s.resistance), "holiness": sortedKeys(s.holiness),
+		"shout": sortedKeys(s.shout), "intelligence": sortedKeys(s.intelligence),
+		"habitat": sortedKeys(s.habitat), "item_use": sortedKeys(s.itemUse),
+		"size": sortedKeys(s.size), "shape": sortedKeys(s.shape),
+		"colour": sortedKeys(s.colour), "tile_variation": sortedKeys(s.tileVariation),
+	}}
+	for _, monster := range artifact.Monsters {
+		v.Identities = append(v.Identities, content.MonsterIdentity{ID: monster.ID, Status: monster.Status})
+	}
+	if err := v.ValidateArtifact(artifact); err != nil {
+		return nil, err
+	}
+	encoded, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	return append(encoded, '\n'), nil
+}
+
+// Write checks or atomically replaces the committed generated artifacts.
 func Write(sourceDir, outPath string, check bool) error {
-	return writeArtifact(sourceDir, outPath, check, Generate)
+	if outPath == "" {
+		return fmt.Errorf("output path is required")
+	}
+	definitions, err := Generate(sourceDir)
+	if err != nil {
+		return err
+	}
+	vocabulary, err := GenerateManifest(sourceDir)
+	if err != nil {
+		return err
+	}
+	manifestPath := filepath.Join(filepath.Dir(outPath), "monster-vocabulary.json")
+	if check {
+		for _, entry := range []struct {
+			path     string
+			expected []byte
+		}{{outPath, definitions}, {manifestPath, vocabulary}} {
+			actual, err := os.ReadFile(entry.path)
+			if err != nil {
+				return err
+			}
+			if !bytes.Equal(actual, entry.expected) {
+				return fmt.Errorf("artifact %s is stale", entry.path)
+			}
+		}
+		return nil
+	}
+	if err := writeArtifact(sourceDir, outPath, false, func(string) ([]byte, error) { return definitions, nil }); err != nil {
+		return err
+	}
+	return writeArtifact(sourceDir, manifestPath, false, func(string) ([]byte, error) { return vocabulary, nil })
 }

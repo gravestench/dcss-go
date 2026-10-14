@@ -24,6 +24,9 @@ var defaultPresentationJSON []byte
 //go:embed generated/monsters.json
 var defaultMonsterJSON []byte
 
+//go:embed generated/monster-vocabulary.json
+var defaultMonsterVocabularyJSON []byte
+
 // LoadDefault builds a fresh catalog from the checked-in source-traced artifacts.
 func LoadDefault() (Catalog, error) {
 	return loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultStartingGearJSON, defaultPresentationJSON, defaultMonsterJSON)
@@ -221,6 +224,13 @@ func loadDefault(speciesData, jobData, gearData, presentationData, monsterData [
 		return Catalog{}, fmt.Errorf("monster artifact has incomplete records or provenance")
 	}
 	if err := monsters.Validate(); err != nil {
+		return Catalog{}, err
+	}
+	var vocabulary MonsterVocabulary
+	if err := decodeArtifact(defaultMonsterVocabularyJSON, "monster vocabulary", &vocabulary); err != nil {
+		return Catalog{}, err
+	}
+	if err := vocabulary.ValidateArtifact(monsters); err != nil {
 		return Catalog{}, err
 	}
 	monsterPaths, err := validSourceFiles(monsters.SourceFiles, "monster")

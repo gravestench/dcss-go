@@ -2,6 +2,7 @@ package content
 
 import (
 	"encoding/json"
+	"sort"
 	"strings"
 	"testing"
 )
@@ -78,6 +79,39 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 					break
 				}
 			}
+		}},
+		{"unknown attack", func(a *MonsterArtifact) {
+			for i := range a.Monsters {
+				if a.Monsters[i].ID == "MONS_RAT" {
+					a.Monsters[i].Attacks[1].TypeID = "AT_MADE_UP"
+					break
+				}
+			}
+		}},
+		{"unknown spellbook", func(a *MonsterArtifact) {
+			for i := range a.Monsters {
+				if a.Monsters[i].ID == "MONS_RAT" {
+					a.Monsters[i].SpellbookID = "MST_MADE_UP"
+					break
+				}
+			}
+		}},
+		{"unknown flag", func(a *MonsterArtifact) {
+			for i := range a.Monsters {
+				if a.Monsters[i].ID == "MONS_RAT" {
+					a.Monsters[i].Flags = append(a.Monsters[i].Flags, "M_MADE_UP")
+					break
+				}
+			}
+		}},
+		{"same-count identity swap", func(a *MonsterArtifact) {
+			for i := range a.Monsters {
+				if a.Monsters[i].ID == "MONS_BUMBLEBEE" {
+					a.Monsters[i].ID = "MONS_ZZZ_MADE_UP"
+					break
+				}
+			}
+			sort.Slice(a.Monsters, func(i, j int) bool { return a.Monsters[i].ID < a.Monsters[j].ID })
 		}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
