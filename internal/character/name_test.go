@@ -11,7 +11,15 @@ func TestValidateNameUsesSourceCharactersAndDisplayWidth(t *testing.T) {
 			t.Fatalf("valid name %q: %v", name, err)
 		}
 	}
-	for _, name := range []string{"", "   ", "Bad!", "Bad/name", strings.Repeat("界", 16), strings.Repeat("a", 31)} {
+
+	for _, name := range []string{
+		"",
+		"   ",
+		"Bad!",
+		"Bad/name",
+		strings.Repeat("界", 16),
+		strings.Repeat("a", 31),
+	} {
 		if err := ValidateName(name); err == nil {
 			t.Fatalf("invalid name %q accepted", name)
 		}

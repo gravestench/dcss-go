@@ -48,9 +48,11 @@ func DrawInventory(canvas *Canvas, view game.View) {
 				entries = append(entries, i)
 			}
 		}
+
 		if len(entries) == 0 {
 			continue
 		}
+
 		canvas.Write(0, y, category.title, LightBlue, Black)
 		y++
 		for _, i := range entries {
@@ -59,17 +61,22 @@ func DrawInventory(canvas *Canvas, view game.View) {
 			if item.Quantity > 1 {
 				label = fmt.Sprintf("%d %s", item.Quantity, item.Name)
 			}
+
 			if item.Plus != 0 {
 				label = fmt.Sprintf("%+d %s", item.Plus, label)
 			}
+
 			if item.Slot != "" {
 				label += " (" + item.Slot + ")"
 			}
+
 			writeClipped(canvas, 1, y, canvas.width-1, fmt.Sprintf("%c - %s", menuLetter(i), label), LightGrey)
 			y++
 		}
+
 		y++
 	}
+
 	canvas.Write(0, canvas.height-2, "Esc - Return    ? - Help", Brown, Black)
 }
 
@@ -81,16 +88,20 @@ func DrawQuaff(canvas *Canvas, view game.View) {
 		if item.Class != "OBJ_POTIONS" {
 			continue
 		}
+
 		label := item.Name
 		if item.Quantity > 1 {
 			label = fmt.Sprintf("%d %s", item.Quantity, label)
 		}
+
 		writeClipped(canvas, 1, y, canvas.width-1, fmt.Sprintf("%c - %s", menuLetter(index), label), LightGrey)
 		y++
 	}
+
 	if y == 2 {
 		canvas.Write(1, y, "You have no potions.", Brown, Black)
 	}
+
 	canvas.Write(0, canvas.height-2, "Esc - Cancel    ? - Help", Brown, Black)
 }
 
@@ -104,6 +115,7 @@ func skillName(id string) string {
 	if name := special[id]; name != "" {
 		return name
 	}
+
 	name := strings.TrimPrefix(id, "SK_")
 	return strings.Title(strings.ToLower(strings.ReplaceAll(name, "_", " ")))
 }
@@ -114,11 +126,13 @@ func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
 	for _, x := range []int{1, 40} {
 		writeClipped(canvas, x, 2, 38, "Skill                 Level Apt Train", LightBlue)
 	}
+
 	species, _ := catalog.Species("SP_HUMAN")
 	levels := make(map[string]int, len(view.Skills))
 	for _, skill := range view.Skills {
 		levels[skill.ID] = skill.Level
 	}
+
 	letter := 0
 	for col, skills := range catalog.Presentation().SkillColumns {
 		x := 1 + col*39
@@ -126,11 +140,13 @@ func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
 			if id == "" {
 				continue
 			}
+
 			apt := species.Aptitudes[id]
 			color := DarkGrey
 			if levels[id] > 0 {
 				color = LightGrey
 			}
+
 			label := fmt.Sprintf(
 				"%c - %-19s %4.1f %+2d  --",
 				menuLetter(letter),
@@ -142,6 +158,7 @@ func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
 			letter++
 		}
 	}
+
 	writeClipped(canvas, 0, canvas.height-5, canvas.width, "/ - mode    | - skill    * - skills    ! - view", Brown)
 	writeClipped(canvas, 0, canvas.height-4, canvas.width, "= - target    ? - help    Esc - Return", Brown)
 	writeClipped(canvas, 0, canvas.height-3, canvas.width, "Training controls are unavailable in the Go port.", Brown)
@@ -167,6 +184,7 @@ func DrawHelp(canvas *Canvas) {
 		if y == 0 {
 			color = Yellow
 		}
+
 		writeClipped(canvas, 0, y, canvas.width, line, color)
 	}
 }

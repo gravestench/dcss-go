@@ -11,6 +11,7 @@ func TestPinnedItemSourceCoverage(t *testing.T) {
 	if root == "" {
 		t.Skip("optional pinned-source audit; normal tests use committed Go content")
 	}
+
 	source := map[string][]byte{}
 	for _, name := range []string{
 		"object-class-type.h",
@@ -28,24 +29,30 @@ func TestPinnedItemSourceCoverage(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		source[name] = data
 	}
+
 	identities, aliases, err := parseIdentities(source)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	removed, err := parseRemovedItems("crawl-ref/source/item-prop.cc", source["item-prop.cc"])
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	vocabulary, err := parseVocabulary(source)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	counts := map[string]int{}
 	for _, identity := range identities {
 		counts[identity.ClassID]++
 	}
+
 	want := map[string]int{
 		"OBJ_ARMOUR":     43,
 		"OBJ_BOOKS":      78,
@@ -73,11 +80,13 @@ func TestPinnedItemSourceCoverage(t *testing.T) {
 			counts,
 		)
 	}
+
 	for class, count := range want {
 		if counts[class] != count {
 			t.Errorf("%s: got %d identities, want %d", class, counts[class], count)
 		}
 	}
+
 	if len(vocabulary.ArmourFlags) != 14 || len(vocabulary.DamageFlags) != 22 {
 		t.Fatalf("pinned property vocabulary changed: %+v", vocabulary)
 	}

@@ -150,6 +150,7 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	state := 0 // before header, before brace, inside enum, finished
 	value := -1
 	known := map[string]int{}
@@ -161,42 +162,53 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 			if match == nil || match[1] != name {
 				continue
 			}
+
 			state = 1
 			if strings.Contains(trimmed, "{") {
 				state = 2
 			}
+
 			continue
 		}
+
 		if state == 1 {
 			if trimmed == "{" {
 				state = 2
 				continue
 			}
+
 			return nil, fmt.Errorf("%s:%d: enum %s lacks opening brace", path, line.Number, name)
 		}
+
 		if strings.HasPrefix(trimmed, "}") {
 			state = 3
 			break
 		}
+
 		if trimmed == "" {
 			continue
 		}
+
 		if strings.ContainsAny(trimmed, "{}") {
 			return nil, fmt.Errorf("%s:%d: unsupported enum %s row %q", path, line.Number, name, trimmed)
 		}
+
 		for _, raw := range strings.Split(trimmed, ",") {
 			part := strings.TrimSpace(raw)
 			if part == "" {
 				continue
 			}
+
 			match := enumMemberPattern.FindStringSubmatch(part)
 			if match == nil {
 				return nil, fmt.Errorf("%s:%d: unsupported enum %s row %q", path, line.Number, name, part)
 			}
+
 			id, expression := match[1], strings.TrimSpace(match[2])
 			if _, found := known[id]; found {
 				return nil, fmt.Errorf("%s:%d: duplicate enum member %s", path, line.Number, id)
 			}
+
 			alias := ""
 			if expression == "" {
 				value++
@@ -207,10 +219,12 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 				if !found {
 					return nil, fmt.Errorf("%s:%d: enum %s references unknown %s", path, line.Number, id, expression)
 				}
+
 				value, alias = referenced, expression
 			} else {
 				return nil, fmt.Errorf("%s:%d: unsupported numeric expression %q for %s", path, line.Number, expression, id)
 			}
+
 			known[id] = value
 			entries = append(entries, enumValue{
 				ID:         id,
@@ -221,9 +235,11 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 			})
 		}
 	}
+
 	if state != 3 || len(entries) == 0 {
 		return nil, fmt.Errorf("%s: missing or empty enum %s", path, name)
 	}
+
 	return entries, nil
 }
 
@@ -236,19 +252,24 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 	if err != nil {
 		return nil, nil, err
 	}
+
 	classValues := map[string]int{}
 	for _, entry := range classEntries {
 		if entry.ID == "NUM_OBJECT_CLASSES" {
 			break
 		}
+
 		if !strings.HasPrefix(entry.ID, "OBJ_") || entry.AliasOf != "" {
 			return nil, nil, fmt.Errorf("%s:%d: invalid active class %s", entry.SourcePath, entry.SourceLine, entry.ID)
 		}
+
 		classValues[entry.ID] = entry.Value
 	}
+
 	if len(classValues) != 16 {
 		return nil, nil, fmt.Errorf("object-class-type.h: expected 16 active classes, got %d", len(classValues))
 	}
+
 	var identities []content.ItemIdentity
 	var aliases []content.ItemAlias
 	seenPairs := map[[2]int]string{}
@@ -256,6 +277,7 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 		if entry.Value < 0 {
 			return fmt.Errorf("%s:%d: negative concrete subtype %s", entry.SourcePath, entry.SourceLine, entry.ID)
 		}
+
 		pair := [2]int{classValue, entry.Value}
 		if previous, found := seenPairs[pair]; found {
 			return fmt.Errorf(
@@ -266,6 +288,7 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 				previous,
 			)
 		}
+
 		seenPairs[pair] = entry.ID
 		identities = append(identities, content.ItemIdentity{
 			ID:           entry.ID,
@@ -282,10 +305,12 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 		if !found {
 			return nil, nil, fmt.Errorf("missing active item class %s", class.ClassID)
 		}
+
 		entries, err := enumMembers("crawl-ref/source/"+class.File, source[class.File], class.Enum)
 		if err != nil {
 			return nil, nil, err
 		}
+
 		concrete := map[string]bool{}
 		ended := class.End == ""
 		for _, entry := range entries {
@@ -293,10 +318,12 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 				ended = true
 				break
 			}
+
 			matchesPrefix := false
 			for _, prefix := range class.Prefix {
 				matchesPrefix = matchesPrefix || strings.HasPrefix(entry.ID, prefix)
 			}
+
 			if entry.AliasOf != "" {
 				if concrete[entry.AliasOf] {
 					aliases = append(aliases, content.ItemAlias{
@@ -308,22 +335,28 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 						SourceLine:   entry.SourceLine,
 					})
 				}
+
 				continue
 			}
+
 			if !matchesPrefix || strings.HasPrefix(entry.ID, "NUM_") ||
 				strings.HasPrefix(entry.ID, "MAX_") || strings.Contains(entry.ID, "_FIRST_") ||
 				strings.Contains(entry.ID, "_LAST_") || strings.HasSuffix(entry.ID, "_UNKNOWN") {
 				continue
 			}
+
 			if err := appendIdentity(class.ClassID, classValue, entry); err != nil {
 				return nil, nil, err
 			}
+
 			concrete[entry.ID] = true
 		}
+
 		if !ended || len(concrete) == 0 {
 			return nil, nil, fmt.Errorf("%s: incomplete enum %s for %s", class.File, class.Enum, class.ClassID)
 		}
 	}
+
 	gold := enumValue{
 		ID:         "OBJ_GOLD",
 		Value:      0,
@@ -335,16 +368,21 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 			break
 		}
 	}
+
 	if err := appendIdentity("OBJ_GOLD", classValues["OBJ_GOLD"], gold); err != nil {
 		return nil, nil, err
 	}
+
 	sort.Slice(identities, func(i, j int) bool {
 		if identities[i].ClassValue != identities[j].ClassValue {
 			return identities[i].ClassValue < identities[j].ClassValue
 		}
+
 		return identities[i].SubtypeValue < identities[j].SubtypeValue
 	})
-	sort.Slice(aliases, func(i, j int) bool { return aliases[i].ID < aliases[j].ID })
+	sort.Slice(aliases, func(i, j int) bool {
+		return aliases[i].ID < aliases[j].ID
+	})
 	return identities, aliases, nil
 }
 
@@ -355,6 +393,7 @@ func parseRemovedItems(path string, data []byte) (map[itemKey]bool, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	state := 0
 	removed := map[itemKey]bool{}
 	for _, line := range lines {
@@ -363,26 +402,33 @@ func parseRemovedItems(path string, data []byte) (map[itemKey]bool, error) {
 			if strings.Contains(trimmed, " removed_items ") && strings.HasSuffix(trimmed, "=") {
 				state = 1
 			}
+
 			continue
 		}
+
 		if state == 1 {
 			if trimmed != "{" {
 				return nil, fmt.Errorf("%s:%d: removed_items lacks opening brace", path, line.Number)
 			}
+
 			state = 2
 			continue
 		}
+
 		if trimmed == "};" {
 			state = 3
 			break
 		}
+
 		if trimmed == "" {
 			continue
 		}
+
 		match := removedRow.FindStringSubmatch(trimmed)
 		if match == nil {
 			return nil, fmt.Errorf("%s:%d: unsupported removed_items row %q", path, line.Number, trimmed)
 		}
+
 		key := itemKey{
 			ClassID:   match[1],
 			SubtypeID: match[2],
@@ -390,11 +436,14 @@ func parseRemovedItems(path string, data []byte) (map[itemKey]bool, error) {
 		if removed[key] {
 			return nil, fmt.Errorf("%s:%d: duplicate removed item %s/%s", path, line.Number, key.ClassID, key.SubtypeID)
 		}
+
 		removed[key] = true
 	}
+
 	if state != 3 {
 		return nil, fmt.Errorf("%s: missing or unterminated removed_items", path)
 	}
+
 	return removed, nil
 }
 
@@ -403,6 +452,7 @@ func enumSymbolIDs(path string, data []byte, name string, prefixes ...string) ([
 	if err != nil {
 		return nil, err
 	}
+
 	state := 0
 	var ids []string
 	for _, line := range lines {
@@ -412,28 +462,35 @@ func enumSymbolIDs(path string, data []byte, name string, prefixes ...string) ([
 			if match != nil && match[1] == name {
 				state = 1
 			}
+
 			continue
 		}
+
 		if state == 1 {
 			if trimmed != "{" {
 				return nil, fmt.Errorf("%s:%d: enum %s lacks opening brace", path, line.Number, name)
 			}
+
 			state = 2
 			continue
 		}
+
 		if strings.HasPrefix(trimmed, "}") {
 			state = 3
 			break
 		}
+
 		if trimmed == "" {
 			continue
 		}
+
 		member := strings.TrimSpace(strings.TrimSuffix(trimmed, ","))
 		parts := strings.SplitN(member, "=", 2)
 		id := strings.TrimSpace(parts[0])
 		if !enumSymbolPattern.MatchString(id) || (len(parts) == 2 && strings.TrimSpace(parts[1]) == "") {
 			return nil, fmt.Errorf("%s:%d: unsupported vocabulary enum row %q", path, line.Number, trimmed)
 		}
+
 		for _, prefix := range prefixes {
 			if strings.HasPrefix(id, prefix) {
 				ids = append(ids, id)
@@ -441,9 +498,11 @@ func enumSymbolIDs(path string, data []byte, name string, prefixes ...string) ([
 			}
 		}
 	}
+
 	if state != 3 || len(ids) == 0 {
 		return nil, fmt.Errorf("%s: missing or empty vocabulary enum %s", path, name)
 	}
+
 	sort.Strings(ids)
 	return ids, nil
 }
@@ -504,7 +563,9 @@ func parseVocabulary(source map[string][]byte) (content.ItemVocabulary, error) {
 		if err != nil {
 			return v, err
 		}
+
 		*spec.place = ids
 	}
+
 	return v, nil
 }

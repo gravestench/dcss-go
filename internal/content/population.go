@@ -32,6 +32,7 @@ func (entry DungeonPopEntry) validate() error {
 		entry.SourceLine <= 0 || !populationMonsterID.MatchString(entry.MonsterID) {
 		return fmt.Errorf("invalid Dungeon population row %+v", entry)
 	}
+
 	switch entry.Curve {
 	case "FLAT", "SEMI", "PEAK", "RISE", "FALL":
 		return nil
@@ -45,19 +46,24 @@ func (artifact DungeonPopulationArtifact) Validate() error {
 		artifact.TagMajorVersion != 34 || len(artifact.SourceFiles) == 0 || len(artifact.Rows) == 0 {
 		return fmt.Errorf("invalid Dungeon population metadata")
 	}
+
 	if _, err := validSourceFiles(artifact.SourceFiles, "Dungeon population"); err != nil {
 		return err
 	}
+
 	previousLine := 0
 	for _, entry := range artifact.Rows {
 		if err := entry.validate(); err != nil {
 			return err
 		}
+
 		if entry.SourceLine <= previousLine {
 			return fmt.Errorf("Dungeon population rows are out of source order")
 		}
+
 		previousLine = entry.SourceLine
 	}
+
 	return nil
 }
 
@@ -67,6 +73,7 @@ func (entry DungeonPopEntry) WeightAtDepth(depth int) int {
 	if depth < entry.MinDepth || depth > entry.MaxDepth {
 		return 0
 	}
+
 	rarity := entry.Rarity * 2520
 	length := entry.MaxDepth - entry.MinDepth
 	switch entry.Curve {
@@ -78,6 +85,7 @@ func (entry DungeonPopEntry) WeightAtDepth(depth int) int {
 		} else {
 			length *= 2
 		}
+
 		return rarity * (length - absInt(entry.MinDepth+entry.MaxDepth-2*depth)) / length
 	case "PEAK":
 		length += 2
@@ -95,6 +103,7 @@ func absInt(value int) int {
 	if value < 0 {
 		return -value
 	}
+
 	return value
 }
 

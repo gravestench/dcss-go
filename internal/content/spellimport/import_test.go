@@ -27,23 +27,29 @@ func TestGenerateAndCheckUseOnlyExplicitSourceFiles(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+
 	out := filepath.Join(root, "spells.json")
 	if err := Write(root, out, false); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := Write(root, out, true); err != nil {
 		t.Fatal(err)
 	}
+
 	original, err := os.ReadFile(out)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !strings.Contains(string(original), `"id": "SPELL_NO_SPELL"`) {
 		t.Fatal("missing generated sentinel")
 	}
+
 	if err := os.WriteFile(out, []byte("corrupt"), 0600); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := Write(root, out, true); err == nil {
 		t.Fatal("check accepted changed committed artifact")
 	}

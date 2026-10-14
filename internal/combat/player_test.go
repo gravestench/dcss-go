@@ -321,6 +321,7 @@ func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 	if err != nil || got.Kind != Hit || got.Damage != 13 || len(rng.rolls) != 0 {
 		t.Fatalf("mighty hit = %+v, %v; rolls %+v", got, err, rng.rolls)
 	}
+
 	rng = &scriptedRoller{
 		rolls: []scriptedRoll{
 			{

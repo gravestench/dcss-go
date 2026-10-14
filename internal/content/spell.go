@@ -51,23 +51,28 @@ func (s SpellDef) validate() error {
 		s.SourcePath != "crawl-ref/source/spl-data.h" || s.SourceLine <= 0 {
 		return fmt.Errorf("invalid spell definition %s", s.ID)
 	}
+
 	if s.ID == "SPELL_NO_SPELL" && s.Status != SpellSentinel || s.ID != "SPELL_NO_SPELL" &&
 		s.Status != SpellDefined && s.Status != SpellRemoved {
 		return fmt.Errorf("invalid spell status for %s", s.ID)
 	}
+
 	if len(s.Schools) == 0 || len(s.Flags) == 0 {
 		return fmt.Errorf("spell %s lacks schools or flags", s.ID)
 	}
+
 	for _, value := range s.Schools {
 		if value == "" {
 			return fmt.Errorf("spell %s has empty school", s.ID)
 		}
 	}
+
 	for _, value := range s.Flags {
 		if value == "" {
 			return fmt.Errorf("spell %s has empty flag", s.ID)
 		}
 	}
+
 	return nil
 }
 
@@ -84,15 +89,19 @@ func (a SpellArtifact) Validate() error {
 		len(a.SourceFiles) == 0 || len(a.Spells) == 0 {
 		return fmt.Errorf("invalid spell artifact header or empty catalog")
 	}
+
 	seen := map[string]bool{}
 	for i, spell := range a.Spells {
 		if spell.NumericID != i || seen[spell.ID] {
 			return fmt.Errorf("duplicate or out-of-order spell %s", spell.ID)
 		}
+
 		if err := spell.validate(); err != nil {
 			return err
 		}
+
 		seen[spell.ID] = true
 	}
+
 	return nil
 }

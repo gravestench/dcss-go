@@ -102,12 +102,24 @@ func TestOrdinaryMonsterExperienceRejectsInvalidStats(t *testing.T) {
 		Modifier: 10,
 	}
 	for _, edit := range []func(*OrdinaryMonsterXPInput){
-		func(in *OrdinaryMonsterXPInput) { in.HitDice = 0 },
-		func(in *OrdinaryMonsterXPInput) { in.MaxHP = 0 },
-		func(in *OrdinaryMonsterXPInput) { in.MaxHP = 10001 },
-		func(in *OrdinaryMonsterXPInput) { in.Speed = 0 },
-		func(in *OrdinaryMonsterXPInput) { in.Modifier = -1 },
-		func(in *OrdinaryMonsterXPInput) { in.AttackDamage[3] = -1 },
+		func(in *OrdinaryMonsterXPInput) {
+			in.HitDice = 0
+		},
+		func(in *OrdinaryMonsterXPInput) {
+			in.MaxHP = 0
+		},
+		func(in *OrdinaryMonsterXPInput) {
+			in.MaxHP = 10001
+		},
+		func(in *OrdinaryMonsterXPInput) {
+			in.Speed = 0
+		},
+		func(in *OrdinaryMonsterXPInput) {
+			in.Modifier = -1
+		},
+		func(in *OrdinaryMonsterXPInput) {
+			in.AttackDamage[3] = -1
+		},
 	} {
 		in := base
 		edit(&in)

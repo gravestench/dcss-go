@@ -14,6 +14,7 @@ func HumanExperienceNeeded(level int) (int, error) {
 	if level < 1 || level > HumanMaxLevel {
 		return 0, fmt.Errorf("Human experience level %d is outside 1..27", level)
 	}
+
 	switch level {
 	case 1:
 		return 0, nil
@@ -24,10 +25,12 @@ func HumanExperienceNeeded(level int) (int, error) {
 	case 4:
 		return 69, nil
 	}
+
 	if level < 13 {
 		offset := level - 4
 		return 9 + 10*offset + (60 << offset), nil
 	}
+
 	offset := level - 12
 	return 16674 + 5985*offset + 4235*offset*offset, nil
 }
@@ -36,14 +39,17 @@ func HumanLevelForExperience(totalXP int) (int, error) {
 	if totalXP < 0 {
 		return 0, fmt.Errorf("negative Human experience %d", totalXP)
 	}
+
 	level := 1
 	for level < HumanMaxLevel {
 		next, _ := HumanExperienceNeeded(level + 1)
 		if totalXP < next {
 			break
 		}
+
 		level++
 	}
+
 	return level, nil
 }
 
@@ -53,16 +59,20 @@ func HumanLevelProgress(totalXP, level int) (int, error) {
 	if totalXP < 0 {
 		return 0, fmt.Errorf("negative Human experience %d", totalXP)
 	}
+
 	current, err := HumanExperienceNeeded(level)
 	if err != nil {
 		return 0, err
 	}
+
 	if totalXP < current {
 		return 0, fmt.Errorf("Human XL%d needs at least %d experience", level, current)
 	}
+
 	if level == HumanMaxLevel {
 		return 0, nil
 	}
+
 	next, _ := HumanExperienceNeeded(level + 1)
 	return (totalXP - current) * 100 / (next - current), nil
 }
@@ -73,6 +83,7 @@ func HumanMaxHP(level int, species content.SpeciesDef, skills []Skill) (int, err
 	if level < 1 || level > HumanMaxLevel || species.ID != "SP_HUMAN" {
 		return 0, fmt.Errorf("unsupported Human HP inputs at XL%d for %s", level, species.ID)
 	}
+
 	var fighting *Skill
 	for index := range skills {
 		if skills[index].ID == "SK_FIGHTING" {
@@ -80,9 +91,11 @@ func HumanMaxHP(level int, species content.SpeciesDef, skills []Skill) (int, err
 			break
 		}
 	}
+
 	if fighting == nil {
 		return 0, fmt.Errorf("Human lacks Fighting skill")
 	}
+
 	hp := level*11/2 + 8
 	hp += level*ScaledSkill(*fighting, 5)/70 +
 		(ScaledSkill(*fighting, 3)+1)/2
@@ -96,6 +109,7 @@ func HumanMaxMP(level int, species content.SpeciesDef) (int, error) {
 	if level < 1 || level > HumanMaxLevel || species.ID != "SP_HUMAN" {
 		return 0, fmt.Errorf("unsupported Human MP inputs at XL%d for %s", level, species.ID)
 	}
+
 	return max(0, min(23, level)+species.MPMod), nil
 }
 

@@ -67,6 +67,7 @@ func (g *Game) View() View {
 	if !found {
 		return View{}
 	}
+
 	level := g.levels[position.LevelID]
 	view := View{
 		LevelID:    position.LevelID,
@@ -92,16 +93,20 @@ func (g *Game) View() View {
 			}
 		}
 	}
+
 	if health, ok := g.stores.Health.Get(g.player); ok {
 		view.PlayerHP, view.PlayerMaxHP = health.Current, health.Max
 		view.PlayerDead = health.Current <= 0
 	}
+
 	if magic, ok := g.stores.Magic.Get(g.player); ok {
 		view.PlayerMP, view.PlayerMaxMP = magic.Current, magic.Max
 	}
+
 	if skills, ok := g.stores.Skills.Get(g.player); ok {
 		view.Skills = append([]character.Skill(nil), skills.Entries...)
 	}
+
 	if progression, ok := g.stores.Progression.Get(g.player); ok {
 		if percent, err := character.HumanLevelProgress(
 			progression.TotalXP, progression.Level,
@@ -111,37 +116,45 @@ func (g *Game) View() View {
 			view.PendingStatLevel = progression.PendingStatLevel
 		}
 	}
+
 	if durations, ok := g.stores.Durations.Get(g.player); ok {
 		view.MightAut = durations.MightAut
 	}
+
 	if player, ok := g.stores.Players.Get(g.player); ok {
 		view.PlayerName = player.Name
 		if view.PlayerName == "" {
 			view.PlayerName = "Adventurer"
 		}
+
 		species, speciesErr := g.catalog.Species(player.SpeciesID)
 		job, jobErr := g.catalog.Job(player.JobID)
 		if speciesErr == nil && jobErr == nil {
 			view.CharacterName = species.Name + " " + job.Name
 		}
 	}
+
 	if attributes, ok := g.stores.Attributes.Get(g.player); ok {
 		view.Attributes = *attributes
 	}
+
 	if defense, err := newPlayerCombat(g).defense(); err == nil {
 		view.PlayerAC, view.PlayerEV, view.PlayerSH = defense.AC, defense.EV, defense.ShieldClass/2
 		view.DefenseKnown = true
 	}
+
 	for _, entity := range g.stores.Positions.Entities() {
 		location, _ := g.stores.Positions.Get(entity)
 		if location.LevelID != position.LevelID {
 			continue
 		}
+
 		index := location.Y*level.width + location.X
 		visible := g.visibleLevelID == level.ID && index < len(g.visible) && g.visible[index]
 		if entity != g.player && !visible {
 			continue
 		}
+
 		glyph := rune('?')
 		kindID, name, role := "", "", ""
 		switch {
@@ -168,6 +181,7 @@ func (g *Game) View() View {
 				}
 			}
 		}
+
 		view.Entities = append(view.Entities, EntityView{
 			ID:     uint64(entity),
 			X:      location.X,
@@ -178,15 +192,18 @@ func (g *Game) View() View {
 			Role:   role,
 		})
 	}
+
 	for _, entity := range g.stores.CarriedBy.Entities() {
 		carrier, _ := g.stores.CarriedBy.Get(entity)
 		if carrier.Holder != g.player {
 			continue
 		}
+
 		item, found := g.stores.Items.Get(entity)
 		if !found {
 			continue
 		}
+
 		definition, err := g.catalog.Item(item.KindID)
 		if err == nil {
 			entry := ItemView{
@@ -202,8 +219,10 @@ func (g *Game) View() View {
 			if equipped, found := g.stores.Equipped.Get(entity); found {
 				entry.Slot = equipped.Slot
 			}
+
 			view.Inventory = append(view.Inventory, entry)
 		}
 	}
+
 	return view
 }

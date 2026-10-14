@@ -60,9 +60,11 @@ func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppMod
 	if err := catalog.Validate(); err != nil {
 		return nil, err
 	}
+
 	if len(catalog.Presentation().SpeciesGroups) != 3 {
 		return nil, fmt.Errorf("catalog lacks console presentation")
 	}
+
 	return &AppModel{
 		catalog:      catalog,
 		presentation: catalog.Presentation(),
@@ -85,6 +87,7 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyPressMsg:
 		return m, m.handleKey(msg.String())
 	}
+
 	return m, nil
 }
 
@@ -92,6 +95,7 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	if _, valid := ComputeLayout(m.width, m.height); !valid {
 		return nil
 	}
+
 	switch m.screen {
 	case ScreenStartup:
 		return m.handleStartupKey(key)
@@ -122,6 +126,7 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 			m.notice = "This help control is unavailable in the Go port."
 		}
 	}
+
 	return nil
 }
 
@@ -131,6 +136,7 @@ func (m *AppModel) renderCanvas() *Canvas {
 		canvas.Write(0, 0, "Your terminal window is too small; please resize to at least 79,24", LightGrey, Black)
 		return canvas
 	}
+
 	switch m.screen {
 	case ScreenStartup:
 		m.drawStartup(canvas)
@@ -159,16 +165,19 @@ func (m *AppModel) renderCanvas() *Canvas {
 		if m.game != nil {
 			DrawInventory(canvas, m.game.View())
 		}
+
 		m.drawModalNotice(canvas)
 	case ScreenSkills:
 		if m.game != nil {
 			DrawSkills(canvas, m.game.View(), m.catalog)
 		}
+
 		m.drawModalNotice(canvas)
 	case ScreenQuaff:
 		if m.game != nil {
 			DrawQuaff(canvas, m.game.View())
 		}
+
 		m.drawModalNotice(canvas)
 	case ScreenHelp:
 		DrawHelp(canvas)
@@ -180,6 +189,7 @@ func (m *AppModel) renderCanvas() *Canvas {
 		canvas.Write(0, 2, "Press Enter to return to startup.", LightGrey, Black)
 		canvas.Write(0, 4, "Morgue and high scores are unavailable in the Go port.", Brown, Black)
 	}
+
 	return canvas
 }
 
@@ -193,6 +203,7 @@ func (m *AppModel) Close() error {
 	if m.game != nil {
 		return m.game.Close()
 	}
+
 	return nil
 }
 
@@ -207,19 +218,23 @@ func (m *AppModel) loadSavedRun() {
 		m.notice = fmt.Sprintf("Load failed: %v", err)
 		return
 	}
+
 	restored, err := game.Restore(snapshot, m.catalog)
 	if err != nil {
 		m.notice = fmt.Sprintf("Load failed: %v", err)
 		return
 	}
+
 	if m.game != nil {
 		_ = m.game.Close()
 	}
+
 	m.game = restored
 	m.screen = ScreenPlay
 	if restored.View().PendingStatLevel != 0 {
 		m.screen = ScreenStatChoice
 	}
+
 	m.notice = ""
 }
 
@@ -227,6 +242,7 @@ func (m *AppModel) returnToStartup() {
 	if m.game != nil {
 		_ = m.game.Close()
 	}
+
 	m.game = nil
 	m.screen, m.previous, m.weaponReturn = ScreenStartup, ScreenStartup, ScreenStartup
 	m.name, m.speciesID, m.jobID, m.weaponID = "", "", "", ""

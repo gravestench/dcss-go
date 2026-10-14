@@ -51,15 +51,18 @@ func TestItemDefCopies(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	first.Weapon.DamageFlags[0] = "BROKEN"
 	first.Weapon.BrandWeights[0].Weight = 0
 	second, err := c.Item("WPN_MACE")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if second.Weapon.DamageFlags[0] != "DAMV_CRUSHING" || second.Weapon.BrandWeights[0].Weight != 58 {
 		t.Fatalf("catalog item was mutated through return value: %+v", second.Weapon)
 	}
+
 	armour := ItemDef{
 		ID: "ARM_ROBE",
 		Armour: &ArmourProperties{
@@ -105,16 +108,20 @@ func TestItemIdentityInspection(t *testing.T) {
 	if _, err := c.ItemIdentity("WPN_OLD"); err != nil {
 		t.Fatal(err)
 	}
+
 	if _, err := c.Item("WPN_OLD"); err == nil {
 		t.Fatal("undefined item was returned as a usable definition")
 	}
+
 	if _, err := c.ItemIdentity("WPN_UNKNOWN"); err == nil {
 		t.Fatal("unknown identity was accepted")
 	}
+
 	ids := c.ItemIDs()
 	if len(ids) != 2 || ids[0] != "WPN_MACE" || ids[1] != "WPN_OLD" {
 		t.Fatalf("wrong identity listing: %v", ids)
 	}
+
 	ids[0] = "BROKEN"
 	if c.ItemIDs()[0] != "WPN_MACE" {
 		t.Fatal("identity listing exposed catalog storage")
@@ -126,21 +133,25 @@ func TestItemShapeValidation(t *testing.T) {
 	if err := valid.validate(); err != nil {
 		t.Fatalf("valid weapon rejected: %v", err)
 	}
+
 	bad := valid.clone()
 	bad.Armour = &ArmourProperties{}
 	if err := bad.validate(); err == nil {
 		t.Fatal("weapon with armour properties accepted")
 	}
+
 	bad = valid.clone()
 	bad.Naming.SourceLine = 0
 	if err := bad.validate(); err == nil {
 		t.Fatal("missing source location accepted")
 	}
+
 	bad = valid.clone()
 	bad.Naming.Kind = "invented"
 	if err := bad.validate(); err == nil {
 		t.Fatal("unknown naming kind accepted")
 	}
+
 	bad = valid.clone()
 	bad.Weapon.BrandWeights = []ItemBrandWeight{
 		{

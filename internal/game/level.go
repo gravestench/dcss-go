@@ -40,11 +40,13 @@ func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Lev
 	if id <= 0 || positions == nil || len(rows) == 0 || len(rows[0]) == 0 {
 		return nil, fmt.Errorf("invalid level definition")
 	}
+
 	width := len(rows[0])
 	for y, row := range rows {
 		if len(row) != width {
 			return nil, fmt.Errorf("level %d row %d has width %d, want %d", id, y, len(row), width)
 		}
+
 		for x := range row {
 			switch row[x] {
 			case '#', '.', '<', '>':
@@ -53,6 +55,7 @@ func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Lev
 			}
 		}
 	}
+
 	return &Level{
 		ID:         id,
 		terrain:    append([]string(nil), rows...),
@@ -70,6 +73,7 @@ func (l *Level) AddStairLink(link StairLink) error {
 		link.ToLevelID <= 0 || link.ToX < 0 || link.ToY < 0 {
 		return fmt.Errorf("level %d has invalid stair link at (%d,%d)", l.ID, link.X, link.Y)
 	}
+
 	location := point{
 		x: link.X,
 		y: link.Y,
@@ -77,6 +81,7 @@ func (l *Level) AddStairLink(link StairLink) error {
 	if _, duplicate := l.stairs[location]; duplicate {
 		return fmt.Errorf("level %d has duplicate stair link at (%d,%d)", l.ID, link.X, link.Y)
 	}
+
 	l.stairs[location] = link
 	return nil
 }
@@ -94,10 +99,12 @@ func (l *Level) StairLinks() []StairLink {
 	for _, link := range l.stairs {
 		links = append(links, link)
 	}
+
 	sort.Slice(links, func(i, j int) bool {
 		if links[i].Y != links[j].Y {
 			return links[i].Y < links[j].Y
 		}
+
 		return links[i].X < links[j].X
 	})
 	return links
@@ -108,6 +115,7 @@ func validateStairLinks(levels map[int]*Level) error {
 	for id := range levels {
 		ids = append(ids, id)
 	}
+
 	sort.Ints(ids)
 
 	for _, id := range ids {
@@ -117,11 +125,13 @@ func validateStairLinks(levels map[int]*Level) error {
 				if row[x] != '<' && row[x] != '>' {
 					continue
 				}
+
 				if _, found := level.StairAt(x, y); !found {
 					return fmt.Errorf("level %d missing stair link at (%d,%d)", id, x, y)
 				}
 			}
 		}
+
 		for _, link := range level.StairLinks() {
 			target := levels[link.ToLevelID]
 			if target == nil || !target.Walkable(link.ToX, link.ToY) {
@@ -132,6 +142,7 @@ func validateStairLinks(levels map[int]*Level) error {
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -155,12 +166,15 @@ func (l *Level) PlaceActor(entity akara.Entity, x, y int) error {
 	if !l.Walkable(x, y) {
 		return fmt.Errorf("level %d location (%d,%d) is blocked", l.ID, x, y)
 	}
+
 	if _, occupied := l.ActorAt(x, y); occupied {
 		return fmt.Errorf("level %d location (%d,%d) is occupied", l.ID, x, y)
 	}
+
 	if l.positions.Has(entity) {
 		return fmt.Errorf("entity %d is already positioned", entity)
 	}
+
 	if _, err := l.positions.Set(entity, ecs.Position{
 		LevelID: l.ID,
 		X:       x,
@@ -168,6 +182,7 @@ func (l *Level) PlaceActor(entity akara.Entity, x, y int) error {
 	}); err != nil {
 		return err
 	}
+
 	l.actors[point{
 		x: x,
 		y: y,
@@ -183,12 +198,15 @@ func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 	}] != entity {
 		return fmt.Errorf("entity %d is not indexed on level %d", entity, l.ID)
 	}
+
 	if !l.Walkable(x, y) {
 		return fmt.Errorf("level %d location (%d,%d) is blocked", l.ID, x, y)
 	}
+
 	if other, occupied := l.ActorAt(x, y); occupied && other != entity {
 		return fmt.Errorf("level %d location (%d,%d) is occupied", l.ID, x, y)
 	}
+
 	delete(l.actors, point{
 		x: position.X,
 		y: position.Y,
@@ -209,6 +227,7 @@ func (l *Level) RemoveActor(entity akara.Entity) error {
 	}] != entity {
 		return fmt.Errorf("entity %d is not indexed on level %d", entity, l.ID)
 	}
+
 	delete(l.actors, point{
 		x: position.X,
 		y: position.Y,
@@ -229,8 +248,10 @@ func (l *Level) KnownRows() []string {
 				row[x] = ' '
 			}
 		}
+
 		rows[y] = string(row)
 	}
+
 	return rows
 }
 
@@ -240,11 +261,13 @@ func (l *Level) LoadKnownRows(rows []string) error {
 	if len(rows) != len(l.terrain) {
 		return fmt.Errorf("level %d has %d known rows, want %d", l.ID, len(rows), len(l.terrain))
 	}
+
 	known := make([]byte, l.width*len(rows))
 	for y, row := range rows {
 		if len(row) != l.width {
 			return fmt.Errorf("level %d known row %d has width %d, want %d", l.ID, y, len(row), l.width)
 		}
+
 		for x := 0; x < len(row); x++ {
 			switch row[x] {
 			case ' ':
@@ -255,6 +278,7 @@ func (l *Level) LoadKnownRows(rows []string) error {
 			}
 		}
 	}
+
 	l.remembered = known
 	return nil
 }
@@ -263,6 +287,7 @@ func (l *Level) Remember(visible []bool) error {
 	if len(visible) != len(l.remembered) {
 		return fmt.Errorf("level %d sight mask has %d cells, want %d", l.ID, len(visible), len(l.remembered))
 	}
+
 	for y, row := range l.terrain {
 		for x := 0; x < l.width; x++ {
 			if visible[y*l.width+x] {
@@ -270,5 +295,6 @@ func (l *Level) Remember(visible []bool) error {
 			}
 		}
 	}
+
 	return nil
 }

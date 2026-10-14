@@ -22,24 +22,30 @@ func TestAttackDelayProjectionUsesEveryFighterStart(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			defer g.Close()
 			in, err := newPlayerCombat(g).attackDelayInput("MONS_RAT")
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			if in.WeaponSkill10 != 20 || in.ShieldsSkill10 != 30 || in.ShieldEV != -50 {
 				t.Fatalf("attack delay input = %+v", in)
 			}
+
 			if weaponID == "WPN_UNARMED" {
 				if !in.Unarmed || in.WeaponSpeed != 0 || in.WeaponSkillID != "SK_UNARMED_COMBAT" {
 					t.Fatalf("unarmed attack delay = %+v", in)
 				}
+
 				return
 			}
+
 			weapon, err := catalog.Item(weaponID)
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			if in.Unarmed || in.WeaponSpeed != weapon.Weapon.Speed || in.WeaponSkillID != weapon.Weapon.SkillID {
 				t.Fatalf("%s delay = %+v, catalog %+v", weaponID, in, weapon.Weapon)
 			}
@@ -53,6 +59,7 @@ func TestRapierBumpCostSchedulesTwoRatActions(t *testing.T) {
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
+
 	health, _ := g.stores.Health.Get(rat)
 	health.Current, health.Max = 100, 100
 	result, err := g.Step(Command{
@@ -62,12 +69,15 @@ func TestRapierBumpCostSchedulesTwoRatActions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if result.Spent != 11 && result.Spent != 12 {
 		t.Fatalf("rapier bump cost = %d, want 11 or 12", result.Spent)
 	}
+
 	if result.View.CurrentAut != result.Spent {
 		t.Fatalf("view time %d differs from spent %d", result.View.CurrentAut, result.Spent)
 	}
+
 	actor, _ := g.stores.Actors.Get(rat)
 	if actor.NextAut != 20 {
 		t.Fatalf("rat deadline = %d, want 20", actor.NextAut)
@@ -81,22 +91,27 @@ func TestShortUnarmedBumpSchedulesOnlyOneRatAction(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		if roll < 2400 {
 			seed = candidate
 			break
 		}
 	}
+
 	if seed == 0 {
 		t.Fatal("no seed yielded a 9-aut unarmed attack")
 	}
+
 	g, err := NewScenario(seed, testCatalog(t), "WPN_UNARMED", "Tester")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer g.Close()
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
+
 	rat := ratID(t, g)
 	health, _ := g.stores.Health.Get(rat)
 	health.Current, health.Max = 100, 100
@@ -107,6 +122,7 @@ func TestShortUnarmedBumpSchedulesOnlyOneRatAction(t *testing.T) {
 	if err != nil || result.Spent != 9 || result.View.CurrentAut != 9 {
 		t.Fatalf("unarmed bump = %+v, %v", result, err)
 	}
+
 	playerActor, _ := g.stores.Actors.Get(g.player)
 	ratActor, _ := g.stores.Actors.Get(rat)
 	if playerActor.NextAut != 9 || ratActor.NextAut != 10 {
@@ -119,12 +135,14 @@ func TestBumpRejectsMissingShieldBeforeTimingDraw(t *testing.T) {
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
+
 	for _, entity := range g.stores.Equipped.Entities() {
 		equipped, _ := g.stores.Equipped.Get(entity)
 		if equipped.Slot == "shield" {
 			g.stores.Equipped.Remove(entity)
 		}
 	}
+
 	before := g.Snapshot()
 	if _, err := g.Step(Command{
 		Kind: CommandMove,
@@ -132,6 +150,7 @@ func TestBumpRejectsMissingShieldBeforeTimingDraw(t *testing.T) {
 	}); err == nil {
 		t.Fatal("bump accepted missing shield")
 	}
+
 	if !reflect.DeepEqual(before, g.Snapshot()) {
 		t.Fatal("failed bump changed state or melee RNG")
 	}
@@ -142,6 +161,7 @@ func TestAttackDelaySaveContinuation(t *testing.T) {
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
+
 	rat := ratID(t, g)
 	health, _ := g.stores.Health.Get(rat)
 	health.Current = health.Max
@@ -149,6 +169,7 @@ func TestAttackDelaySaveContinuation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer loaded.Close()
 	command := Command{
 		Kind: CommandMove,
@@ -172,10 +193,12 @@ func TestRestoreRejectsMissingTimingEquipment(t *testing.T) {
 			bad.Entities[i].CarriedBy = &ecs.CarriedBy{Holder: g.player}
 		}
 	}
+
 	if restored, err := g.Restore(bad); err == nil {
 		restored.Close()
 		t.Fatal("missing timing equipment restored")
 	}
+
 	if !reflect.DeepEqual(before, g.Snapshot()) {
 		t.Fatal("failed restore changed live game")
 	}

@@ -20,6 +20,7 @@ func TestStartingGearCatalogCopies(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	first[0].KindID = "POT_CURING"
 	first = append(first, StartingGrant{
 		KindID:   "WPN_FLAIL",
@@ -29,9 +30,11 @@ func TestStartingGearCatalogCopies(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if len(again) != 1 || again[0].KindID != "ARM_SCALE_MAIL" {
 		t.Fatalf("catalog grants changed through returned slice: %+v", again)
 	}
+
 	if _, err := c.StartingGrants("JOB_UNKNOWN"); err == nil {
 		t.Fatal("unknown job gear was accepted")
 	}
@@ -42,13 +45,16 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if len(catalog.startingGear) != 25 {
 		t.Fatalf("starting gear job count = %d, want 25", len(catalog.startingGear))
 	}
+
 	grants, err := catalog.StartingGrants("JOB_FIGHTER")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if len(grants) != 3 || !slices.Equal(
 		[]string{grants[0].Raw, grants[1].Raw, grants[2].Raw},
 		[]string{"scale mail", "buckler", "potion of might"},
@@ -59,6 +65,7 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 		) {
 		t.Fatalf("Fighter grants differ from source: %+v", grants)
 	}
+
 	for id, want := range map[string]struct {
 		class, slot, skill string
 	}{
@@ -71,11 +78,13 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 			t.Fatalf("source-backed kind %s: %+v, %v", id, kind, err)
 		}
 	}
+
 	grants[0].KindID = "POT_CURING"
 	again, err := LoadDefault()
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	againGrants, err := again.StartingGrants("JOB_FIGHTER")
 	if err != nil || againGrants[0].KindID != "ARM_SCALE_MAIL" {
 		t.Fatalf("a fresh catalog inherited changed gear: %+v, %v", againGrants, err)
@@ -88,12 +97,16 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 		mutate func(*StartingGearArtifact)
 	}{
 		{
-			name:   "wrong revision",
-			mutate: func(a *StartingGearArtifact) { a.SourceRevision = "wrong" },
+			name: "wrong revision",
+			mutate: func(a *StartingGearArtifact) {
+				a.SourceRevision = "wrong"
+			},
 		},
 		{
-			name:   "wrong tag",
-			mutate: func(a *StartingGearArtifact) { a.TagMajorVersion = 35 },
+			name: "wrong tag",
+			mutate: func(a *StartingGearArtifact) {
+				a.TagMajorVersion = 35
+			},
 		},
 		{
 			name: "shared source hash",
@@ -107,12 +120,16 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 			},
 		},
 		{
-			name:   "duplicate job",
-			mutate: func(a *StartingGearArtifact) { a.Jobs = append(a.Jobs, a.Jobs[0]) },
+			name: "duplicate job",
+			mutate: func(a *StartingGearArtifact) {
+				a.Jobs = append(a.Jobs, a.Jobs[0])
+			},
 		},
 		{
-			name:   "missing job",
-			mutate: func(a *StartingGearArtifact) { a.Jobs = a.Jobs[1:] },
+			name: "missing job",
+			mutate: func(a *StartingGearArtifact) {
+				a.Jobs = a.Jobs[1:]
+			},
 		},
 		{
 			name: "changed raw spec",
@@ -164,11 +181,13 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 			if err := json.Unmarshal(defaultStartingGearJSON, &artifact); err != nil {
 				t.Fatal(err)
 			}
+
 			tc.mutate(&artifact)
 			data, err := json.Marshal(artifact)
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			if _, err := loadDefault(
 				defaultSpeciesJSON,
 				defaultJobsJSON,
@@ -182,6 +201,7 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 			}
 		})
 	}
+
 	if _, err := loadDefault(
 		defaultSpeciesJSON,
 		defaultJobsJSON,
@@ -223,42 +243,56 @@ func TestStartingGearArtifactValidation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if err := validStartingGearArtifact().Validate(catalog); err != nil {
 		t.Fatalf("valid artifact: %v", err)
 	}
+
 	for _, tc := range []struct {
 		name, want string
 		change     func(*StartingGearArtifact)
 	}{
 		{
-			name:   "duplicate job",
-			want:   "duplicate",
-			change: func(a *StartingGearArtifact) { a.Jobs = append(a.Jobs, a.Jobs[0]) },
+			name: "duplicate job",
+			want: "duplicate",
+			change: func(a *StartingGearArtifact) {
+				a.Jobs = append(a.Jobs, a.Jobs[0])
+			},
 		},
 		{
-			name:   "unknown kind",
-			want:   "unknown",
-			change: func(a *StartingGearArtifact) { a.Jobs[0].Grants[0].KindID = "POT_UNKNOWN" },
+			name: "unknown kind",
+			want: "unknown",
+			change: func(a *StartingGearArtifact) {
+				a.Jobs[0].Grants[0].KindID = "POT_UNKNOWN"
+			},
 		},
 		{
-			name:   "undefined legacy kind",
-			want:   "unknown",
-			change: func(a *StartingGearArtifact) { a.Jobs[0].Grants[0].KindID = "POT_GAIN_STRENGTH" },
+			name: "undefined legacy kind",
+			want: "unknown",
+			change: func(a *StartingGearArtifact) {
+				a.Jobs[0].Grants[0].KindID = "POT_GAIN_STRENGTH"
+			},
 		},
 		{
-			name:   "zero quantity",
-			want:   "quantity",
-			change: func(a *StartingGearArtifact) { a.Jobs[0].Grants[0].Quantity = 0 },
+			name: "zero quantity",
+			want: "quantity",
+			change: func(a *StartingGearArtifact) {
+				a.Jobs[0].Grants[0].Quantity = 0
+			},
 		},
 		{
-			name:   "potion charges",
-			want:   "charges",
-			change: func(a *StartingGearArtifact) { a.Jobs[0].Grants[0].Charges = 3 },
+			name: "potion charges",
+			want: "charges",
+			change: func(a *StartingGearArtifact) {
+				a.Jobs[0].Grants[0].Charges = 3
+			},
 		},
 		{
-			name:   "potion ego",
-			want:   "ego",
-			change: func(a *StartingGearArtifact) { a.Jobs[0].Grants[0].Ego = "poisoned" },
+			name: "potion ego",
+			want: "ego",
+			change: func(a *StartingGearArtifact) {
+				a.Jobs[0].Grants[0].Ego = "poisoned"
+			},
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {

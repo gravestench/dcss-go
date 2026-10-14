@@ -46,44 +46,54 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	if !found || intent.Kind != ecs.IntentMelee {
 		return nil
 	}
+
 	position, found := s.positions.Get(s.turn.Actor)
 	if !found {
 		return fmt.Errorf("attacker %d has no position", s.turn.Actor)
 	}
+
 	level := s.levels[position.LevelID]
 	if level == nil {
 		return fmt.Errorf("attacker %d has no level %d", s.turn.Actor, position.LevelID)
 	}
+
 	target, found := level.ActorAt(position.X+intent.DX, position.Y+intent.DY)
 	if !found || target == s.turn.Actor {
 		return fmt.Errorf("attacker %d has no target", s.turn.Actor)
 	}
+
 	victim, found := s.health.Get(target)
 	if !found {
 		return fmt.Errorf("target %d has no health", target)
 	}
+
 	if s.turn.Actor == s.player {
 		actor, found := s.actors.Get(target)
 		if !found || !isOrdinaryAnimal(actor.KindID) {
 			return fmt.Errorf("unsupported player melee target %d", target)
 		}
+
 		defender, err := ordinaryAnimal(s.catalog, actor.KindID)
 		if err != nil {
 			return err
 		}
+
 		input, err := s.fighter.attackInput(actor.KindID)
 		if err != nil {
 			return err
 		}
+
 		outcome, err := combat.PlayerMelee(s.roller, input)
 		if err != nil {
 			return err
 		}
+
 		beforeHP := victim.Current
 		victim.Current = max(0, victim.Current-outcome.Damage)
 		if beforeHP > 0 && victim.Current == 0 {
 			s.turn.PlayerKill = target
 		}
+
 		message := fmt.Sprintf("You miss the %s.", defender.Name)
 		if outcome.Kind == combat.Hit {
 			message = fmt.Sprintf("You hit the %s.", defender.Name)
@@ -91,27 +101,33 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 				message = fmt.Sprintf("You hit the %s but do no damage.", defender.Name)
 			}
 		}
+
 		s.turn.Events = append(s.turn.Events, Event{
 			Kind: "combat",
 			Text: message,
 		})
 		return nil
 	}
+
 	if target != s.player {
 		return fmt.Errorf("unsupported non-player melee defender %d", target)
 	}
+
 	actor, found := s.actors.Get(s.turn.Actor)
 	if !found || !isOrdinaryAnimal(actor.KindID) {
 		return fmt.Errorf("unsupported melee attacker %d", s.turn.Actor)
 	}
+
 	animal, err := ordinaryAnimal(s.catalog, actor.KindID)
 	if err != nil {
 		return err
 	}
+
 	defense, err := s.fighter.defense()
 	if err != nil {
 		return err
 	}
+
 	outcome, err := combat.ResolveAnimalBite(s.roller, combat.AnimalBite{
 		HD:        animal.HD,
 		Damage:    animal.Attacks[0].Damage,
@@ -121,10 +137,12 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	if err != nil {
 		return err
 	}
+
 	state, found := s.combat.Get(s.player)
 	if !found {
 		return fmt.Errorf("player %d has no combat state", s.player)
 	}
+
 	state.ShieldBlocks = outcome.ShieldBlocks
 	victim.Current = max(0, victim.Current-outcome.Damage)
 	message := ""
@@ -144,6 +162,7 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	default:
 		return fmt.Errorf("unknown animal bite outcome %d", outcome.Kind)
 	}
+
 	s.turn.Events = append(s.turn.Events, Event{
 		Kind: "combat",
 		Text: message,

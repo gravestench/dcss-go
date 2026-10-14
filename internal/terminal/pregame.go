@@ -16,6 +16,7 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 	if m.savedRunExists() {
 		count++
 	}
+
 	switch key {
 	case "esc":
 		return tea.Quit
@@ -28,6 +29,7 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 			m.loadSavedRun()
 			return nil
 		}
+
 		if m.focus == 0 {
 			if m.name != "" {
 				if err := character.ValidateName(m.name); err != nil {
@@ -35,6 +37,7 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 					return nil
 				}
 			}
+
 			m.screen, m.focus, m.notice = ScreenSpecies, 0, ""
 		} else {
 			m.notice = "This game mode is unavailable in the Go port."
@@ -53,6 +56,7 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 	default:
 		m.appendNameKey(key)
 	}
+
 	return nil
 }
 
@@ -60,12 +64,15 @@ func (m *AppModel) appendNameKey(key string) {
 	if key == "space" {
 		key = " "
 	}
+
 	if len([]rune(key)) != 1 {
 		return
 	}
+
 	if key == " " && m.name == "" {
 		return
 	}
+
 	candidate := m.name + key
 	if runewidth.StringWidth(candidate) > 30 {
 		m.notice = "Name exceeds 30 display columns"
@@ -76,6 +83,7 @@ func (m *AppModel) appendNameKey(key string) {
 		m.notice = "invalid name character"
 		return
 	}
+
 	m.name, m.notice = candidate, ""
 }
 
@@ -84,6 +92,7 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 	if m.screen == ScreenBackground {
 		groups = m.presentation.JobGroups
 	}
+
 	ids := flattenGroups(groups)
 	switch key {
 	case "esc":
@@ -97,6 +106,7 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 			m.speciesID = ""
 			m.screen = ScreenBackground
 		}
+
 		m.focus, m.notice = 0, ""
 		return
 	case "space":
@@ -105,6 +115,7 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 		} else {
 			m.screen = ScreenSpecies
 		}
+
 		m.focus, m.notice = 0, ""
 		return
 	case "up":
@@ -128,16 +139,19 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 		m.notice = "This character option is unavailable in the Go port."
 		return
 	}
+
 	for i, id := range ids {
 		if key != string(menuLetter(i)) {
 			continue
 		}
+
 		m.focus = i
 		if m.screen == ScreenSpecies {
 			if id != "SP_HUMAN" {
 				m.notice = "This species is unavailable in the Go port."
 				return
 			}
+
 			m.speciesID, m.notice = id, ""
 			if m.jobID == "" {
 				m.screen = ScreenBackground
@@ -149,6 +163,7 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 				m.notice = "This background is unavailable in the Go port."
 				return
 			}
+
 			m.jobID, m.notice = id, ""
 			if m.speciesID == "" {
 				m.screen = ScreenSpecies
@@ -156,6 +171,7 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 				return
 			}
 		}
+
 		m.enterWeaponChoice()
 		return
 	}
@@ -167,6 +183,7 @@ func (m *AppModel) enterWeaponChoice() {
 		m.notice = fmt.Sprintf("Weapon choices failed: %v", err)
 		return
 	}
+
 	m.weaponReturn, m.screen, m.focus, m.options = m.screen, ScreenWeapon, 0, options
 }
 
@@ -190,15 +207,18 @@ func (m *AppModel) handleWeaponKey(key string) {
 		m.notice = "This weapon option is unavailable in the Go port."
 		return
 	}
+
 	for i, option := range m.options {
 		if key != string(menuLetter(i)) {
 			continue
 		}
+
 		m.weaponID, m.focus, m.notice = option.ID, i, ""
 		if m.name == "" {
 			m.screen = ScreenName
 			return
 		}
+
 		m.startGame()
 		return
 	}
@@ -219,6 +239,7 @@ func (m *AppModel) handleNameKey(key string) {
 			m.notice = err.Error()
 			return
 		}
+
 		m.startGame()
 	default:
 		m.appendNameKey(key)
@@ -231,6 +252,7 @@ func (m *AppModel) startGame() {
 		m.notice = fmt.Sprintf("Start failed: %v", err)
 		return
 	}
+
 	m.game, m.screen, m.notice = started, ScreenPlay, ""
 }
 
@@ -239,6 +261,7 @@ func flattenGroups(groups []content.MenuGroup) []string {
 	for _, group := range groups {
 		ids = append(ids, group.IDs...)
 	}
+
 	return ids
 }
 
@@ -246,6 +269,7 @@ func menuLetter(index int) rune {
 	if index < 26 {
 		return rune('a' + index)
 	}
+
 	return rune('A' + index - 26)
 }
 
@@ -259,16 +283,20 @@ func (m *AppModel) drawStartup(canvas *Canvas) {
 		if i == m.focus {
 			color = White
 		}
+
 		canvas.Write(2, 6+i, mode.Label, color, Black)
 	}
+
 	if m.savedRunExists() {
 		canvas.Write(1, 15, "Saved games:", LightGrey, Black)
 		canvas.Write(2, 16, "Continue saved game", White, Black)
 	}
+
 	canvas.Write(1, 18, "[ctrl-p] view rc file information and log", LightGrey, Black)
 	if m.focus < len(m.presentation.StartupModes) {
 		writeClipped(canvas, 1, 20, m.width-2, m.presentation.StartupModes[m.focus].Description, Brown)
 	}
+
 	if m.notice != "" {
 		writeClipped(canvas, 1, 23, m.width-2, m.notice, LightRed)
 	}
@@ -281,6 +309,7 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 	if m.screen == ScreenBackground {
 		groups, descriptions, choice = m.presentation.JobGroups, m.presentation.JobDescriptions, "background"
 	}
+
 	canvas.Write(0, 0, m.welcomeText(), Brown, Black)
 	canvas.Write(1, 1, "Please select your "+choice+".", LightGrey, Black)
 	index := 0
@@ -298,6 +327,7 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 					name = definition.Name
 				}
 			}
+
 			color, background := LightGrey, Black
 			status := character.Restricted
 			if m.screen == ScreenSpecies && m.jobID != "" {
@@ -305,6 +335,7 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 			} else if m.screen == ScreenBackground && m.speciesID != "" {
 				status, _ = character.JobForSpecies(m.catalog, m.speciesID, id)
 			}
+
 			hasOtherChoice := (m.screen == ScreenSpecies && m.jobID != "") ||
 				(m.screen == ScreenBackground && m.speciesID != "")
 			if hasOtherChoice {
@@ -314,6 +345,7 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 					color = DarkGrey
 				}
 			}
+
 			if index == m.focus {
 				color = White
 				if status == character.Recommended && hasOtherChoice {
@@ -324,16 +356,19 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 					background = Blue
 				}
 			}
+
 			canvas.Write(col, row+i+1, fmt.Sprintf("%c - %s", menuLetter(index), name), color, background)
 			index++
 		}
 	}
+
 	choiceTitle, otherTitle := "species", "background"
 	otherSelected := m.jobID != ""
 	if m.screen == ScreenBackground {
 		choiceTitle, otherTitle = "background", "species"
 		otherSelected = m.speciesID != ""
 	}
+
 	for row, label := range []string{
 		"+ - Recommended " + choiceTitle,
 		"# - Recommended character",
@@ -342,17 +377,21 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 	} {
 		canvas.Write(1, 14+row, label, LightGrey, Black)
 	}
+
 	change := "Space - Pick " + otherTitle + " first"
 	if otherSelected {
 		change = "Space - Change " + otherTitle
 	}
+
 	for row, label := range []string{"    * - Random " + choiceTitle, "    ! - Random character", change} {
 		canvas.Write(40, 14+row, label, LightGrey, Black)
 	}
+
 	ids := flattenGroups(groups)
 	if m.focus < len(ids) {
 		writeWrapped(canvas, 1, 19, m.width-2, 4, strings.Join(strings.Fields(descriptions[ids[m.focus]]), " "), Brown)
 	}
+
 	if m.notice != "" {
 		writeClipped(canvas, 1, 23, m.width-2, m.notice, LightRed)
 	}
@@ -362,6 +401,7 @@ func groupPosition(screen ScreenID, group int) (int, int) {
 	if screen == ScreenSpecies {
 		return 1 + group*26, 3
 	}
+
 	switch group {
 	case 0:
 		return 1, 3
@@ -384,10 +424,12 @@ func writeWrapped(canvas *Canvas, x, y, width, height int, value string, color C
 		if line != "" {
 			candidate = line + " " + word
 		}
+
 		if runewidth.StringWidth(candidate) > width && line != "" {
 			if row >= height {
 				return
 			}
+
 			writeClipped(canvas, x, y+row, width, line, color)
 			row++
 			line = word
@@ -395,6 +437,7 @@ func writeWrapped(canvas *Canvas, x, y, width, height int, value string, color C
 			line = candidate
 		}
 	}
+
 	if row < height {
 		writeClipped(canvas, x, y+row, width, line, color)
 	}
@@ -411,10 +454,12 @@ func (m *AppModel) drawWeapon(canvas *Canvas) {
 				aptitude = species.Aptitudes[item.WeaponSkill].Value
 			}
 		}
+
 		color, background := DarkGrey, Black
 		if option.Restriction == character.Recommended {
 			color = White
 		}
+
 		if i == m.focus {
 			color = White
 			if option.Restriction == character.Recommended {
@@ -423,8 +468,10 @@ func (m *AppModel) drawWeapon(canvas *Canvas) {
 				background = LightGrey
 			}
 		}
+
 		canvas.Write(2, 3+i, fmt.Sprintf("%c - %-18s (%+d apt)", menuLetter(i), option.Name, aptitude), color, background)
 	}
+
 	canvas.Write(1, 11, "+ - Recommended random choice     * - Random weapon", LightGrey, Black)
 	canvas.Write(1, 12, "% - List aptitudes               ? - Help", LightGrey, Black)
 	canvas.Write(1, 13, "Bksp - Return to character menu", LightGrey, Black)
@@ -448,16 +495,21 @@ func (m *AppModel) welcomeText() string {
 		if m.speciesID == "" && m.jobID == "" {
 			return "Welcome."
 		}
+
 		who = "unnamed"
 	}
+
 	if m.speciesID == "SP_HUMAN" {
 		if named {
 			who += " the"
 		}
+
 		who += " Human"
 	}
+
 	if m.jobID == "JOB_FIGHTER" {
 		who += " Fighter"
 	}
+
 	return "Welcome, " + who + "."
 }

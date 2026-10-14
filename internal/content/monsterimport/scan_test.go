@@ -11,14 +11,17 @@ func TestParsePinnedRowsWhenRequested(t *testing.T) {
 	if path == "" {
 		t.Skip("set DCRAWL_MON_DATA for an explicit source scan")
 	}
+
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	rows, err := parseRows(path, data)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defined, removed := 0, 0
 	for _, row := range rows {
 		if row.Removed {
@@ -27,6 +30,7 @@ func TestParsePinnedRowsWhenRequested(t *testing.T) {
 			defined++
 		}
 	}
+
 	if defined != 562 || removed != 120 {
 		t.Fatalf("source partition defined=%d removed=%d", defined, removed)
 	}
@@ -59,11 +63,13 @@ AXED_MON(MONS_BUMBLEBEE, "bee, // removed")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if len(rows) != 2 || !rows[0].Removed || rows[0].Line != 6 ||
 		rows[0].RemovedName != "bee, // removed" || rows[1].ID != "MONS_RAT" || rows[1].Line != 8 ||
 		len(rows[1].Fields) != 28 {
 		t.Fatalf("wrong rows: %#v", rows)
 	}
+
 	if rows[1].Fields[3] != `"rat, // \"friend\""` ||
 		!strings.Contains(rows[1].Fields[5], "MR_RES_COLD, 3") || !strings.Contains(rows[1].Fields[11], "AT_NO_ATK") {
 		t.Fatalf("lost nested data: %#v", rows[1].Fields)

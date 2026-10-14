@@ -22,16 +22,19 @@ func (c Catalog) DungeonMonsterPool(depth int, veto func(string) bool) DungeonMo
 		if depth < row.MinDepth || depth > row.MaxDepth || veto != nil && veto(row.MonsterID) {
 			continue
 		}
+
 		weight := row.WeightAtDepth(depth)
 		if weight <= 0 {
 			continue
 		}
+
 		pool.rows = append(pool.rows, weightedDungeonMonster{
 			id:     row.MonsterID,
 			weight: weight,
 		})
 		pool.total += weight
 	}
+
 	return pool
 }
 
@@ -45,14 +48,18 @@ func (p DungeonMonsterPool) Pick(roll int) (string, error) {
 	if p.total == 0 {
 		return "", nil
 	}
+
 	if roll < 0 || roll >= p.total {
 		return "", fmt.Errorf("Dungeon monster roll %d outside [0,%d)", roll, p.total)
 	}
+
 	for _, row := range p.rows {
 		if roll < row.weight {
 			return row.id, nil
 		}
+
 		roll -= row.weight
 	}
+
 	return "", fmt.Errorf("Dungeon monster pool has inconsistent total weight")
 }

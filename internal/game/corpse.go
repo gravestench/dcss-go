@@ -18,19 +18,23 @@ func (g *Game) placeCorpse(drop pendingCorpse) error {
 	if _, err := g.catalog.Item("CORPSE_BODY"); err != nil {
 		return err
 	}
+
 	entity, err := g.world.CreateEntity()
 	if err != nil {
 		return err
 	}
+
 	if _, err := g.stores.Items.Set(entity, ecs.Item{
 		KindID:   "CORPSE_BODY",
 		Quantity: 1,
 	}); err != nil {
 		return err
 	}
+
 	if _, err := ordinaryAnimal(g.catalog, drop.MonsterID); err != nil {
 		return err
 	}
+
 	if _, err := g.stores.Corpses.Set(entity, ecs.Corpse{
 		MonsterID:  drop.MonsterID,
 		Freshness:  monster.FreshestCorpse,
@@ -38,9 +42,11 @@ func (g *Game) placeCorpse(drop pendingCorpse) error {
 	}); err != nil {
 		return err
 	}
+
 	if _, err := g.stores.Positions.Set(entity, drop.Position); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -52,6 +58,7 @@ func corpseTickElapsed(startAut, endAut Aut) int {
 		endAut/monster.CorpseRotIntervalAut == startAut/monster.CorpseRotIntervalAut {
 		return 0
 	}
+
 	lastTick := startAut / monster.CorpseRotIntervalAut * monster.CorpseRotIntervalAut
 	return int(endAut - lastTick)
 }
@@ -75,26 +82,32 @@ func (s corpseAgingSystem) TickLevel(levelID, elapsed int) error {
 		if !found || !itemFound || !located {
 			return fmt.Errorf("corpse %d is not a floor item", entity)
 		}
+
 		if position.LevelID != levelID {
 			continue
 		}
+
 		kind, freshness, appearance, alive, err := monster.AgeCorpse(
 			s.rng, item.KindID, corpse.Freshness, elapsed,
 		)
 		if err != nil {
 			return err
 		}
+
 		if !alive {
 			if !s.world.DestroyEntity(entity) {
 				return fmt.Errorf("corpse %d could not be destroyed", entity)
 			}
+
 			continue
 		}
+
 		item.KindID = kind
 		corpse.Freshness = freshness
 		if appearance != 0 {
 			corpse.Appearance = appearance
 		}
 	}
+
 	return nil
 }

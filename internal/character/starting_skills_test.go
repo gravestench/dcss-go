@@ -13,6 +13,7 @@ func TestStartingSkillsHumanFighterWeapons(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for _, tc := range []struct {
 		weapon, skill string
 	}{
@@ -46,6 +47,7 @@ func TestStartingSkillsHumanFighterWeapons(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			want := []Skill{
 				{
 					ID:     "SK_FIGHTING",
@@ -71,6 +73,7 @@ func TestStartingSkillsHumanFighterWeapons(t *testing.T) {
 			if !reflect.DeepEqual(got, want) {
 				t.Fatalf("skills = %+v, want %+v", got, want)
 			}
+
 			got[0].Points = -1
 			again, err := StartingSkills(catalog, "SP_HUMAN", "JOB_FIGHTER", tc.weapon)
 			if err != nil || !reflect.DeepEqual(again, want) {
@@ -85,6 +88,7 @@ func TestStartingSkillsRejectsUnsupportedChoice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for _, tc := range []struct {
 		species, job, weapon string
 	}{
@@ -116,10 +120,12 @@ func TestResolveChosenWeaponSkillRejectsBadKind(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	species, err := catalog.Species("SP_HUMAN")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for _, skill := range []string{"", "SK_UNKNOWN"} {
 		kind := content.ItemDef{
 			ID:          "WPN_BROKEN",

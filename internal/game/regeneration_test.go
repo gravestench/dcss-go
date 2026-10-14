@@ -16,6 +16,7 @@ func moveRatToOtherFloor(t *testing.T, g *Game) {
 	if err := g.levels[1].RemoveActor(rat); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := g.levels[2].PlaceActor(rat, 8, 4); err != nil {
 		t.Fatal(err)
 	}
@@ -32,10 +33,12 @@ func TestHumanFighterRecoversThroughPlayerWaitsOnly(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+
 	progress, ok := g.stores.Regeneration.Get(g.player)
 	if !ok || health.Current != 8 || magic.Current != 1 || progress.HPProgress != 2 || progress.MPProgress != 5 {
 		t.Fatalf("17 waits: HP %+v MP %+v regen %+v found %v", health, magic, progress, ok)
 	}
+
 	if g.currentAut != 170 {
 		t.Fatalf("clock %d", g.currentAut)
 	}
@@ -60,6 +63,7 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	g.turn.Actor = g.player
 	if err := (&regenerationSystem{
 		player:       g.player,
@@ -71,6 +75,7 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 	}).Update(nil, time.Duration(9)); err != nil {
 		t.Fatal(err)
 	}
+
 	if health.Current != want.HP || magic.Current != want.MP ||
 		progress.HPProgress != want.HPProgress || progress.MPProgress != want.MPProgress ||
 		!reflect.DeepEqual(g.rng.States(), expectedRNG.States()) {
@@ -89,11 +94,13 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+
 	snapshot := g.Snapshot()
 	loaded, err := Restore(snapshot, testCatalog(t))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer loaded.Close()
 	left, leftErr := g.Step(Command{Kind: CommandWait})
 	right, rightErr := loaded.Step(Command{Kind: CommandWait})
@@ -101,14 +108,17 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("regen continuation %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 	}
+
 	legacy := newStepGame(t).Snapshot()
 	for i := range legacy.Entities {
 		legacy.Entities[i].Regeneration = nil
 	}
+
 	old, err := Restore(legacy, testCatalog(t))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer old.Close()
 	progress, ok := old.stores.Regeneration.Get(old.player)
 	if !ok || *progress != (ecs.Regeneration{}) {

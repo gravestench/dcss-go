@@ -18,15 +18,18 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("load content: %w", err)
 	}
+
 	model, err := terminal.NewAppModel(catalog, *seed, *savePath)
 	if err != nil {
 		return fmt.Errorf("prepare start: %w", err)
 	}
+
 	defer model.Close()
 	_, err = tea.NewProgram(model).Run()
 	if err != nil {
 		return fmt.Errorf("terminal: %w", err)
 	}
+
 	return nil
 }
 

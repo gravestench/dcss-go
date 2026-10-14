@@ -27,12 +27,19 @@ func TestActiveEnumIDsTag34AndAliases(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for _, id := range []string{"SP_HUMAN", "SP_HIGH_ELF", "SP_RED_DRACONIAN"} {
 		if _, found := ids[id]; !found {
 			t.Fatalf("active ID %s missing", id)
 		}
 	}
-	for _, id := range []string{"SP_NEW_ELF", "SP_FUTURE", "SP_FIRST_NONBASE_DRACONIAN", "SP_UNKNOWN"} {
+
+	for _, id := range []string{
+		"SP_NEW_ELF",
+		"SP_FUTURE",
+		"SP_FIRST_NONBASE_DRACONIAN",
+		"SP_UNKNOWN",
+	} {
 		if _, found := ids[id]; found {
 			t.Fatalf("inactive/alias/sentinel ID %s included", id)
 		}

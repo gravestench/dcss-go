@@ -13,12 +13,15 @@ func TestNewRunSightAndOcclusion(t *testing.T) {
 	if view.Width != 17 || view.Height != 9 || len(view.Cells) != 153 {
 		t.Fatalf("view geometry: %+v", view)
 	}
+
 	if wall := view.Cells[2*17+2]; wall.Glyph != '#' || wall.State != Visible {
 		t.Fatalf("blocking wall = %+v", wall)
 	}
+
 	if behind := view.Cells[3*17+3]; behind.Glyph != 0 || behind.State != Unknown {
 		t.Fatalf("unknown cell leaked terrain: %+v", behind)
 	}
+
 	if len(view.Entities) == 0 {
 		t.Fatal("player absent")
 	}
@@ -35,11 +38,13 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 				return true
 			}
 		}
+
 		return false
 	}
 	if contains(g.View(), uint64(item)) {
 		t.Fatal("unseen item leaked into view")
 	}
+
 	right, err := g.Step(Command{
 		Kind: CommandMove,
 		DX:   1,
@@ -47,9 +52,11 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if right.View.Cells[3*17+3].State != Visible || !contains(right.View, uint64(item)) {
 		t.Fatalf("newly visible item/terrain missing: %+v", right.View.Cells[3*17+3])
 	}
+
 	left, err := g.Step(Command{
 		Kind: CommandMove,
 		DX:   -1,
@@ -57,9 +64,11 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if cell := left.View.Cells[3*17+3]; cell.Glyph != '.' || cell.State != Explored {
 		t.Fatalf("remembered floor = %+v", cell)
 	}
+
 	if contains(left.View, uint64(item)) {
 		t.Fatal("item remained visible outside sight")
 	}
@@ -75,6 +84,7 @@ func TestFailedMoveDoesNotChangeKnowledge(t *testing.T) {
 	if err != nil || result.Spent != 0 {
 		t.Fatalf("blocked move: %+v %v", result, err)
 	}
+
 	if after := g.levels[1].KnownRows(); !reflect.DeepEqual(before, after) {
 		t.Fatalf("blocked move changed map knowledge: %q -> %q", before, after)
 	}
@@ -90,16 +100,20 @@ func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 			}
 		}
 	}
+
 	if err := g.levels[1].MoveActor(g.player, 7, 3); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := g.refreshVisibility(); err != nil {
 		t.Fatal(err)
 	}
+
 	result, err := g.Step(Command{Kind: CommandDownstairs})
 	if err != nil || result.View.LevelID != 2 {
 		t.Fatalf("downstairs: %+v %v", result, err)
 	}
+
 	firstAfter := g.levels[1].KnownRows()
 	for y, row := range firstBefore {
 		for x := range row {
@@ -108,14 +122,17 @@ func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 			}
 		}
 	}
+
 	second := g.levels[2].KnownRows()
 	if second[1][1] != '<' {
 		t.Fatal("destination stair not seen")
 	}
+
 	result, err = g.Step(Command{Kind: CommandUpstairs})
 	if err != nil || result.View.LevelID != 1 {
 		t.Fatalf("upstairs: %+v %v", result, err)
 	}
+
 	if !reflect.DeepEqual(second, g.levels[2].KnownRows()) {
 		t.Fatal("inactive floor knowledge changed")
 	}
@@ -129,14 +146,17 @@ func TestKnowledgeSaveRoundTrip(t *testing.T) {
 	}); err != nil {
 		t.Fatal(err)
 	}
+
 	snapshot := g.Snapshot()
 	if snapshot.Version != save.Version || len(snapshot.Levels) != 2 || len(snapshot.Levels[0].Known) == 0 {
 		t.Fatalf("snapshot knowledge missing: %+v", snapshot.Levels)
 	}
+
 	restored, err := Restore(snapshot, testCatalog(t))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer restored.Close()
 	if !reflect.DeepEqual(g.View(), restored.View()) || !reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
 		t.Fatal("restored sight or knowledge differs")
@@ -151,20 +171,28 @@ func TestRestoreRejectsInvalidKnowledge(t *testing.T) {
 		change func(*save.Snapshot)
 	}{
 		{
-			name:   "missing",
-			change: func(s *save.Snapshot) { s.Levels[0].Known = nil },
+			name: "missing",
+			change: func(s *save.Snapshot) {
+				s.Levels[0].Known = nil
+			},
 		},
 		{
-			name:   "short rows",
-			change: func(s *save.Snapshot) { s.Levels[0].Known = s.Levels[0].Known[:1] },
+			name: "short rows",
+			change: func(s *save.Snapshot) {
+				s.Levels[0].Known = s.Levels[0].Known[:1]
+			},
 		},
 		{
-			name:   "short row",
-			change: func(s *save.Snapshot) { s.Levels[0].Known[0] = s.Levels[0].Known[0][:2] },
+			name: "short row",
+			change: func(s *save.Snapshot) {
+				s.Levels[0].Known[0] = s.Levels[0].Known[0][:2]
+			},
 		},
 		{
-			name:   "long row",
-			change: func(s *save.Snapshot) { s.Levels[0].Known[0] += " " },
+			name: "long row",
+			change: func(s *save.Snapshot) {
+				s.Levels[0].Known[0] += " "
+			},
 		},
 		{
 			name: "bad glyph",
@@ -183,6 +211,7 @@ func TestRestoreRejectsInvalidKnowledge(t *testing.T) {
 				replacement.Close()
 				t.Fatal("malformed knowledge restored")
 			}
+
 			if !reflect.DeepEqual(before, g.Snapshot()) {
 				t.Fatal("failed restore changed live game")
 			}

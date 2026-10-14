@@ -45,11 +45,13 @@ func TestJobCatalogCopiesAndSorts(t *testing.T) {
 	if !reflect.DeepEqual(ids, []string{"JOB_A", "JOB_Z"}) {
 		t.Fatalf("job IDs = %v", ids)
 	}
+
 	ids[0] = "changed"
 	returned, err := catalog.Job("JOB_Z")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	returned.RecommendedSpecies[0] = "SP_OTHER"
 	returned.Spells[0] = "SPELL_OTHER"
 	returned.Equipment[0] = "changed"
@@ -58,12 +60,15 @@ func TestJobCatalogCopiesAndSorts(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !reflect.DeepEqual(again, first) {
 		t.Fatalf("catalog job mutated through caller: %+v", again)
 	}
+
 	if _, err := catalog.Job("JOB_UNKNOWN"); err == nil {
 		t.Fatal("unknown job ID accepted")
 	}
+
 	if _, err := catalog.Job("JOB_A"); err != nil {
 		t.Fatalf("mutating ID list affected catalog: %v", err)
 	}
@@ -166,6 +171,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 			}
 		})
 	}
+
 	if err := (JobArtifact{
 		SchemaVersion:   1,
 		SourceRevision:  sourceRevision,

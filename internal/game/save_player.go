@@ -22,20 +22,25 @@ func validateSavedHumanAdvancement(
 	if record.Progression != nil {
 		progress = *record.Progression
 	}
+
 	if !slices.Equal(record.Skills.Entries, profile.Skills) {
 		return 0, fmt.Errorf("invalid player skills for entity %d", record.ID)
 	}
+
 	if progress.Level < 1 || progress.Level > character.HumanMaxLevel {
 		return 0, fmt.Errorf("invalid player level %d", progress.Level)
 	}
+
 	currentNeeded, _ := character.HumanExperienceNeeded(progress.Level)
 	if progress.TotalXP < currentNeeded {
 		return 0, fmt.Errorf("player XL%d lacks experience", progress.Level)
 	}
+
 	earnedLevel, err := character.HumanLevelForExperience(progress.TotalXP)
 	if err != nil {
 		return 0, err
 	}
+
 	if progress.PendingStatLevel == 0 {
 		if progress.Level != earnedLevel {
 			return 0, fmt.Errorf("player level %d disagrees with experience", progress.Level)
@@ -56,21 +61,25 @@ func validateSavedHumanAdvancement(
 		actual.Dexterity < base.Dexterity {
 		return 0, fmt.Errorf("invalid player attributes for entity %d", record.ID)
 	}
+
 	species, err := catalog.Species("SP_HUMAN")
 	if err != nil {
 		return 0, err
 	}
+
 	manualGains := 0
 	randomGains := 0
 	for level := 2; level <= progress.Level; level++ {
 		if character.HumanNeedsManualStat(level) {
 			manualGains++
 		}
+
 		if species.LevelUpStatFrequency > 0 && len(species.LevelUpStats) > 0 &&
 			level%species.LevelUpStatFrequency == 0 {
 			randomGains++
 		}
 	}
+
 	deltas := [3]int{
 		actual.Strength - base.Strength,
 		actual.Intelligence - base.Intelligence,
@@ -79,21 +88,26 @@ func validateSavedHumanAdvancement(
 	if !validHumanStatGains(deltas, manualGains, randomGains) {
 		return 0, fmt.Errorf("invalid player attribute gains for entity %d", record.ID)
 	}
+
 	wantHP, err := character.HumanMaxHP(progress.Level, species, record.Skills.Entries)
 	if err != nil {
 		return 0, err
 	}
+
 	wantMP, err := character.HumanMaxMP(progress.Level, species)
 	if err != nil {
 		return 0, err
 	}
+
 	if record.Health.Max != wantHP {
 		return 0, fmt.Errorf("invalid player max HP for entity %d", record.ID)
 	}
+
 	if record.Magic.Max != wantMP ||
 		record.Magic.Current < 0 || record.Magic.Current > wantMP {
 		return 0, fmt.Errorf("invalid player MP for entity %d", record.ID)
 	}
+
 	return progress.TotalXP, nil
 }
 
@@ -115,5 +129,6 @@ func validHumanStatGains(deltas [3]int, manualChoices, speciesGains int) bool {
 			}
 		}
 	}
+
 	return false
 }

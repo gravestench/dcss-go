@@ -78,6 +78,7 @@ func TestParseEquipmentSpec(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			if name != tc.name || got != tc.want {
 				t.Fatalf("got %q, %+v; want %q, %+v", name, got, tc.name, tc.want)
 			}

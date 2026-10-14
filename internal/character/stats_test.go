@@ -11,6 +11,7 @@ func TestBaseStatSum(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	got, err := BaseStatSum(catalog, "SP_HUMAN", "JOB_FIGHTER")
 	if err != nil || got != (Attributes{
 		Strength:     16,
@@ -19,6 +20,7 @@ func TestBaseStatSum(t *testing.T) {
 	}) {
 		t.Fatalf("Human/Fighter base attributes = %+v, %v", got, err)
 	}
+
 	for _, pair := range [][2]string{
 		{"SP_HUMAN", "JOB_WANDERER"},
 		{"SP_FELID", "JOB_HUNTER"},

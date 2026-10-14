@@ -13,6 +13,7 @@ func (r *curingRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "potion" || bound != r.bound {
 		return 0, fmt.Errorf("unexpected curing draw %q/%d", stream, bound)
 	}
+
 	r.calls++
 	return r.value, nil
 }
@@ -92,6 +93,7 @@ func TestCuringRejectsInvalidHPAndRollWithoutDraw(t *testing.T) {
 			t.Fatalf("accepted HP %d/%d, draws %d", tc.current, tc.max, rng.calls)
 		}
 	}
+
 	rng := &curingRoller{
 		bound: 7,
 		value: 7,

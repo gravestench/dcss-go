@@ -25,31 +25,39 @@ func parseDungeonRows(source []byte) ([]content.DungeonPopEntry, error) {
 			foundTable = strings.Contains(line, "static const vector<pop_entry> population[]")
 			continue
 		}
+
 		if !foundDungeon {
 			if strings.HasPrefix(trimmed, "{ // Dungeon") {
 				foundDungeon = true
 			}
+
 			continue
 		}
+
 		if trimmed == "}," {
 			if len(rows) == 0 {
 				return nil, fmt.Errorf("Dungeon population is empty")
 			}
+
 			return rows, nil
 		}
+
 		if trimmed == "" || strings.HasPrefix(trimmed, "//") {
 			continue
 		}
+
 		match := populationRow.FindStringSubmatch(line)
 		if match == nil {
 			return nil, fmt.Errorf("unparsed Dungeon population line %d: %q", i+1, line)
 		}
+
 		minDepth, minErr := strconv.Atoi(match[1])
 		maxDepth, maxErr := strconv.Atoi(match[2])
 		rarity, rarityErr := strconv.Atoi(match[3])
 		if minErr != nil || maxErr != nil || rarityErr != nil {
 			return nil, fmt.Errorf("invalid Dungeon population number at line %d", i+1)
 		}
+
 		rows = append(rows, content.DungeonPopEntry{
 			MinDepth:   minDepth,
 			MaxDepth:   maxDepth,
@@ -59,5 +67,6 @@ func parseDungeonRows(source []byte) ([]content.DungeonPopEntry, error) {
 			SourceLine: i + 1,
 		})
 	}
+
 	return nil, fmt.Errorf("pinned Dungeon population table or closing delimiter is missing")
 }

@@ -9,9 +9,12 @@ for a human reader to follow.
   characters when the expression stays clear.
 - Give distinct steps breathing room. Separate validation, calculation,
   state changes, and event emission with blank lines instead of packing them
-  into dense expressions or one-line blocks.
-- Put fields of a struct literal on separate lines whenever it populates
-  more than one field. A one-field literal may stay inline.
+  into dense expressions or one-line blocks. Expand nonempty inline callbacks.
+- Leave a blank line after a control-flow block before the next statement.
+- Put entries of keyed literals and named composite literals on separate lines
+  whenever they contain more than one entry. A one-entry literal may stay
+  inline. Expand lists with four or more values instead of placing the whole
+  declaration on one line.
 - Use names that expose the game concept. Extract a helper when it removes
   repeated reasoning, not merely to shorten a function.
 - Comment source-specific rules, invariants, ownership, and surprising

@@ -13,6 +13,7 @@ func TestInventoryPageSourceCategoriesAndLetters(t *testing.T) {
 	if m.screen != ScreenInventory {
 		t.Fatal("inventory did not open")
 	}
+
 	page := plainApp(m)
 	for _, want := range []string{
 		"Inventory:",
@@ -35,6 +36,7 @@ func TestInventoryPageSourceCategoriesAndLetters(t *testing.T) {
 			t.Fatalf("inventory missing %q", want)
 		}
 	}
+
 	if strings.Index(page, "rapier") > strings.Index(page, "scale mail") ||
 		strings.Index(page, "scale mail") > strings.Index(page, "potion of might") {
 		t.Fatal("inventory source category order")
@@ -48,6 +50,7 @@ func TestSkillsPageLevelsAptitudesAndUnavailableTraining(t *testing.T) {
 	if m.screen != ScreenSkills {
 		t.Fatal("skills did not open")
 	}
+
 	page := plainApp(m)
 	for _, want := range []string{
 		"Skills",
@@ -68,6 +71,7 @@ func TestSkillsPageLevelsAptitudesAndUnavailableTraining(t *testing.T) {
 			t.Fatalf("skills missing %q", want)
 		}
 	}
+
 	m.handleKey("a")
 	if !strings.Contains(plainApp(m), "unavailable") || m.game.View().CurrentAut != aut {
 		t.Fatal("training control changed turn or lacked explanation")
@@ -97,10 +101,12 @@ func TestHelpPageSourceKeysAndModalNavigation(t *testing.T) {
 			t.Fatalf("help missing %q", want)
 		}
 	}
+
 	m.handleKey("esc")
 	if m.screen != ScreenPlay || m.game.View().CurrentAut != aut {
 		t.Fatal("help escape changed run")
 	}
+
 	m.handleKey("i")
 	m.handleKey("?")
 	m.handleKey("esc")
@@ -122,6 +128,7 @@ func TestModalResizePreservesFocusGameAndAut(t *testing.T) {
 	if !strings.Contains(plainApp(m), "too small") {
 		t.Fatal("resize warning missing")
 	}
+
 	m.Update(tea.WindowSizeMsg{
 		Width:  79,
 		Height: 24,

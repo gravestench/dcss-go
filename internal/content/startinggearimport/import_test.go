@@ -34,6 +34,7 @@ func gearSourceFixture(t *testing.T) string {
 			t.Fatal(err)
 		}
 	}
+
 	return root
 }
 
@@ -58,36 +59,45 @@ func TestGenerateStartingGear(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	first, err := generateFromSource(root, pinnedRevision, fixtureJobs(), catalog)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	second, err := generateFromSource(root, pinnedRevision, fixtureJobs(), catalog)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !bytes.Equal(first, second) || first[len(first)-1] != '\n' {
 		t.Fatal("generation is not deterministic or lacks a final newline")
 	}
+
 	var artifact content.StartingGearArtifact
 	if err := json.Unmarshal(first, &artifact); err != nil {
 		t.Fatal(err)
 	}
+
 	if artifact.SchemaVersion != 2 || artifact.SourceRevision != pinnedRevision ||
 		artifact.TagMajorVersion != 34 || len(artifact.Jobs) != 1 || len(artifact.Jobs[0].Grants) != 3 {
 		t.Fatalf("unexpected starter artifact: %+v", artifact)
 	}
+
 	grants := artifact.Jobs[0].Grants
 	if grants[0].KindID != "ARM_SCALE_MAIL" || grants[1].KindID != "POT_MIGHT" ||
 		grants[2].KindID != "MI_DART" || grants[2].Quantity != 3 || grants[2].Ego != "curare" {
 		t.Fatalf("grant order or properties changed: %+v", grants)
 	}
+
 	if bytes.Contains(first, []byte(`"kinds"`)) {
 		t.Fatal("gear artifact still duplicates item definitions")
 	}
+
 	if len(artifact.SourceFiles) < 10 {
 		t.Fatalf("missing source hashes: %+v", artifact.SourceFiles)
 	}
+
 	for i, file := range artifact.SourceFiles {
 		if len(file.SHA256) != 64 || i > 0 && artifact.SourceFiles[i-1].Path >= file.Path {
 			t.Fatalf("invalid source hash/order: %+v", artifact.SourceFiles)
@@ -100,6 +110,7 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for _, tc := range []struct {
 		name, file, old, replacement, want string
 		jobs                               func() []content.JobDef
@@ -145,20 +156,24 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
+
 				if err := os.WriteFile(path, []byte(strings.Replace(string(data), tc.old, tc.replacement, 1)), 0644); err != nil {
 					t.Fatal(err)
 				}
 			}
+
 			jobs := fixtureJobs()
 			if tc.jobs != nil {
 				jobs = tc.jobs()
 			}
+
 			_, err := generateFromSource(root, pinnedRevision, jobs, catalog)
 			if err == nil || !strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want %q error, got %v", tc.want, err)
 			}
 		})
 	}
+
 	if _, err := generateFromSource(
 		gearSourceFixture(t),
 		"wrong-revision",
@@ -170,6 +185,7 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 	) {
 		t.Fatalf("wrong revision accepted: %v", err)
 	}
+
 	if _, err := generateFromSource(gearSourceFixture(t), pinnedRevision, nil, catalog); err == nil ||
 		!strings.Contains(err.Error(), "job") {
 		t.Fatalf("missing jobs accepted: %v", err)
@@ -183,37 +199,46 @@ func TestWriteStartingGear(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	generate := func(source string) ([]byte, error) {
 		return generateFromSource(source, pinnedRevision, fixtureJobs(), catalog)
 	}
 	if err := writeArtifact(root, out, false, generate); err != nil {
 		t.Fatal(err)
 	}
+
 	before, err := os.ReadFile(out)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if err := writeArtifact(root, out, true, generate); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := os.WriteFile(out, []byte("stale"), 0644); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := writeArtifact(root, out, true, generate); err == nil {
 		t.Fatal("stale artifact passed check")
 	}
+
 	if data, _ := os.ReadFile(out); string(data) != "stale" {
 		t.Fatal("failed check changed output")
 	}
+
 	if err := os.WriteFile(out, before, 0644); err != nil {
 		t.Fatal(err)
 	}
+
 	broken := func(string) ([]byte, error) {
 		return nil, os.ErrInvalid
 	}
 	if err := writeArtifact(root, out, false, broken); err == nil {
 		t.Fatal("failed generation passed")
 	}
+
 	if data, _ := os.ReadFile(out); !bytes.Equal(data, before) {
 		t.Fatal("failed generation changed output")
 	}

@@ -16,6 +16,7 @@ func writeClipped(canvas *Canvas, x, y, width int, value string, fg Color) {
 		if cells < 1 || used+cells > width {
 			break
 		}
+
 		canvas.Put(x+used, y, glyph, fg, Black)
 		used += cells
 	}
@@ -25,12 +26,15 @@ func drawMeter(canvas *Canvas, x, y, width, current, maximum int, filled Color) 
 	if maximum <= 0 {
 		return
 	}
+
 	if current < 0 {
 		current = 0
 	}
+
 	if current > maximum {
 		current = maximum
 	}
+
 	n := width * current / maximum
 	for i := 0; i < width; i++ {
 		if i < n {
@@ -45,13 +49,16 @@ func statusValueColor(current, maximum, yellowAt, redAt int) Color {
 	if maximum <= 0 {
 		return LightGrey
 	}
+
 	percent := current * 100 / maximum
 	if percent <= redAt {
 		return Red
 	}
+
 	if percent <= yellowAt {
 		return Yellow
 	}
+
 	return LightGrey
 }
 
@@ -60,15 +67,18 @@ func drawDungeon(canvas *Canvas, region Region, view game.View) {
 	if view.Width <= 0 {
 		return
 	}
+
 	for i, cell := range view.Cells {
 		if cell.State == game.Unknown {
 			continue
 		}
+
 		x, y := i%view.Width, i/view.Width
 		sx, sy := centerX+x-view.PlayerX, centerY+y-view.PlayerY
 		if sx < region.X || sy < region.Y || sx >= region.X+region.W || sy >= region.Y+region.H {
 			continue
 		}
+
 		color := DarkGrey
 		if cell.State == game.Visible {
 			color = LightGrey
@@ -76,17 +86,21 @@ func drawDungeon(canvas *Canvas, region Region, view game.View) {
 				color = Yellow
 			}
 		}
+
 		canvas.Put(sx, sy, cell.Glyph, color, Black)
 	}
+
 	for _, playerPass := range []bool{false, true} {
 		for _, entity := range view.Entities {
 			if (entity.Role == "player") != playerPass {
 				continue
 			}
+
 			sx, sy := centerX+entity.X-view.PlayerX, centerY+entity.Y-view.PlayerY
 			if sx < region.X || sy < region.Y || sx >= region.X+region.W || sy >= region.Y+region.H {
 				continue
 			}
+
 			color := LightGrey
 			switch entity.Role {
 			case "player":
@@ -98,10 +112,12 @@ func drawDungeon(canvas *Canvas, region Region, view game.View) {
 				if entity.KindID == "CORPSE_BODY" {
 					color = Brown
 				}
+
 				if entity.KindID == "CORPSE_SKELETON" {
 					color = LightGrey
 				}
 			}
+
 			canvas.Put(sx, sy, entity.Glyph, color, Black)
 		}
 	}
@@ -150,6 +166,7 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 		hud(len(stat.label), stat.y, value, color)
 		hud(len(stat.label)+len(value), stat.y, fmt.Sprintf("/%d", stat.maximum), LightGrey)
 	}
+
 	drawMeter(canvas, h.X+18, h.Y+2, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
 	drawMeter(canvas, h.X+18, h.Y+3, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
 	defenseLabels := []string{"AC: --", "EV: --", "SH: --"}
@@ -160,9 +177,11 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 			fmt.Sprintf("SH: %d", view.PlayerSH),
 		}
 	}
+
 	for i, label := range defenseLabels {
 		hud(0, 4+i, label, Brown)
 	}
+
 	for _, stat := range []struct {
 		y     int
 		label string
@@ -189,8 +208,10 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 		if stat.value < 3 {
 			color = Red
 		}
+
 		hud(18+len(stat.label), stat.y, fmt.Sprintf("%d", stat.value), color)
 	}
+
 	hud(0, 7, fmt.Sprintf("XL: %2d Next: %2d%%", view.ExperienceLevel, view.NextLevelPercent), Brown)
 	hud(18, 7, fmt.Sprintf("Place: D:%d", view.LevelID), Brown)
 	hud(0, 8, "Noise: --", Brown)
@@ -202,6 +223,7 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 			break
 		}
 	}
+
 	hud(0, 9, weapon, LightGrey)
 	hud(0, 10, "Quiver: --", Brown)
 	if view.MightAut > 0 {
@@ -214,20 +236,25 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 			monsters = append(monsters, "a "+entity.Name)
 		}
 	}
+
 	sort.Strings(monsters)
 	for i, name := range monsters {
 		if i >= layout.Monsters.H {
 			break
 		}
+
 		writeClipped(canvas, layout.Monsters.X, layout.Monsters.Y+i, layout.Monsters.W, name, LightGrey)
 	}
+
 	messages := append([]string(nil), view.Messages...)
 	if notice != "" {
 		messages = append(messages, notice)
 	}
+
 	if len(messages) > layout.Messages.H {
 		messages = messages[len(messages)-layout.Messages.H:]
 	}
+
 	for i, message := range messages {
 		writeClipped(canvas, layout.Messages.X, layout.Messages.Y+i, layout.Messages.W, strings.TrimSpace(message), LightGrey)
 	}

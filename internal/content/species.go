@@ -82,16 +82,20 @@ func (a SpeciesArtifact) Validate() error {
 	if a.SchemaVersion != 1 || a.SourceRevision == "" || a.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported species artifact metadata")
 	}
+
 	seen := make(map[string]bool, len(a.Species))
 	for _, species := range a.Species {
 		if err := species.validate(); err != nil {
 			return err
 		}
+
 		if seen[species.ID] {
 			return fmt.Errorf("duplicate species ID %s", species.ID)
 		}
+
 		seen[species.ID] = true
 	}
+
 	return nil
 }
 
@@ -100,36 +104,44 @@ func (s SpeciesDef) validate() error {
 		s.SourcePath == "" || s.Name == "" || s.ShortName == "" {
 		return fmt.Errorf("invalid species definition %q", s.ID)
 	}
+
 	if s.Strength < 1 || s.Intelligence < 1 || s.Dexterity < 1 || s.LevelUpStatFrequency < 0 ||
 		s.LevelUpStatFrequency > 28 {
 		return fmt.Errorf("invalid species stats %q", s.ID)
 	}
+
 	if s.Habitat == "" || s.Size == "" || s.UndeadType == "" {
 		return fmt.Errorf("invalid species environment %q", s.ID)
 	}
+
 	required := strings.Fields(ordinarySkillIDs)
 	if strings.HasSuffix(s.SourcePath, "species-data-deprecated-species.txt") {
 		required = append(required, strings.Fields(legacyExtraSkillIDs)...)
 	}
+
 	if len(s.Aptitudes) != len(required) {
 		return fmt.Errorf("species %s has %d aptitudes; expected %d", s.ID, len(s.Aptitudes), len(required))
 	}
+
 	for _, skill := range required {
 		if _, found := s.Aptitudes[skill]; !found {
 			return fmt.Errorf("species %s is missing aptitude %s", s.ID, skill)
 		}
 	}
+
 	for skill, aptitude := range s.Aptitudes {
 		if !strings.HasPrefix(skill, "SK_") || (!aptitude.Allowed && aptitude.Value != 0) {
 			return fmt.Errorf("invalid species aptitude %s for %s", skill, s.ID)
 		}
 	}
+
 	for _, mutation := range s.Mutations {
 		if mutation.Level < 1 || mutation.Level > 27 || !strings.HasPrefix(mutation.ID, "MUT_") ||
 			mutation.Amount < -3 || mutation.Amount > 3 {
 			return fmt.Errorf("invalid species mutation %s for %s", mutation.ID, s.ID)
 		}
 	}
+
 	return nil
 }
 
@@ -145,8 +157,10 @@ func (s SpeciesDef) clone() SpeciesDef {
 		for id, aptitude := range s.Aptitudes {
 			copy[id] = aptitude
 		}
+
 		s.Aptitudes = copy
 	}
+
 	return s
 }
 
@@ -155,6 +169,7 @@ func (c Catalog) Species(id string) (SpeciesDef, error) {
 	if !found {
 		return SpeciesDef{}, fmt.Errorf("unknown species ID %q", id)
 	}
+
 	return definition.clone(), nil
 }
 
@@ -163,6 +178,7 @@ func (c Catalog) SpeciesIDs() []string {
 	for id := range c.species {
 		ids = append(ids, id)
 	}
+
 	sort.Strings(ids)
 	return ids
 }

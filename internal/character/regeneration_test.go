@@ -16,6 +16,7 @@ func (r *regenRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "regeneration" || len(r.rolls) == 0 || r.rolls[0].bound != bound {
 		return 0, fmt.Errorf("unexpected %s/%d; remaining %+v", stream, bound, r.rolls)
 	}
+
 	value := r.rolls[0].value
 	r.rolls = r.rolls[1:]
 	return value, nil
@@ -32,12 +33,14 @@ func TestOrdinaryHumanFighterRegenerationRates(t *testing.T) {
 	if err != nil || got.HP != 7 || got.HPProgress != 6 || got.MP != 0 || got.MPProgress != 7 {
 		t.Fatalf("one turn regen = %+v, %v", got, err)
 	}
+
 	for range 16 {
 		got, err = Regenerate(&regenRoller{}, got, 10)
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
+
 	if got.HP != 8 || got.HPProgress != 2 || got.MP != 1 || got.MPProgress != 5 {
 		t.Fatalf("17 turns regen = %+v", got)
 	}
@@ -98,6 +101,7 @@ func TestRegenCanRestoreSeveralPointsAndRejectsBadState(t *testing.T) {
 	if err != nil || got.HP != 12 || got.HPProgress != 15 || got.MP != 2 || got.MPProgress != 55 {
 		t.Fatalf("long action regen = %+v, %v", got, err)
 	}
+
 	for _, bad := range []Vitality{
 		{
 			HP:    -1,
@@ -124,6 +128,7 @@ func TestRegenCanRestoreSeveralPointsAndRejectsBadState(t *testing.T) {
 			t.Fatalf("accepted invalid vitality %+v", bad)
 		}
 	}
+
 	if _, err := Regenerate(&regenRoller{}, state, -1); err == nil {
 		t.Fatal("negative aut accepted")
 	}

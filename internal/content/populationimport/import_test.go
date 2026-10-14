@@ -20,6 +20,7 @@ func TestGenerateRejectsDifferentTag34TreeWithSameRowCount(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+
 	if _, err := Generate(directory); err == nil || !strings.Contains(err.Error(), "pinned") {
 		t.Fatalf("different source tree accepted or rejected for wrong reason: %v", err)
 	}

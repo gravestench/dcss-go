@@ -14,17 +14,22 @@ func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 	if path == "" {
 		t.Skip("set DCRAWL_MON_DATA for explicit pinned decode")
 	}
+
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	rows, err := parseRows(path, data)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	s := symbolSets{}
 	all := regexp.MustCompile(`[A-Z][A-Z0-9_]+`).FindAllString(string(data), -1)
-	makeSet := func() map[string]bool { return map[string]bool{} }
+	makeSet := func() map[string]bool {
+		return map[string]bool{}
+	}
 	s.monster = makeSet()
 	s.attackType = makeSet()
 	s.attackFlavour = makeSet()
@@ -74,6 +79,7 @@ func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 			s.colour[tok] = true
 		}
 	}
+
 	s.attackType["AT_NONE"] = true
 	s.attackFlavour["AF_PLAIN"] = true
 	s.tileVariation["TVARY_NONE"] = true
@@ -83,6 +89,7 @@ func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if len(defs) != 682 {
 		t.Fatalf("decoded %d records", len(defs))
 	}
@@ -94,6 +101,7 @@ func testSymbols() symbolSets {
 		for _, v := range values {
 			m[v] = true
 		}
+
 		return m
 	}
 	return symbolSets{
@@ -128,6 +136,7 @@ func testRow(t *testing.T) sourceRow {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	return rows[0]
 }
 
@@ -162,17 +171,27 @@ func TestDecodeGoldenRows(t *testing.T) {
 	bug.Fields[21] = "0"
 	bug.Fields[13] = "0"
 	bug.Fields[4] = "M_NOT_DANGEROUS | M_CANT_SPAWN"
-	defs, err := decodeRows("mon-data.h", []sourceRow{rat, wizard, dragon, demon, spriggan, bug}, testSymbols())
+	defs, err := decodeRows("mon-data.h", []sourceRow{
+		rat,
+		wizard,
+		dragon,
+		demon,
+		spriggan,
+		bug,
+	}, testSymbols())
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if len(defs) != 6 || defs[0].Glyph != 'r' || defs[0].AverageHP10x != 25 ||
 		defs[0].Attacks[0].Damage != 3 || defs[0].Attacks[3].TypeID != "AT_NONE" {
 		t.Fatalf("rat decoded incorrectly: %+v", defs[0])
 	}
+
 	if defs[1].SpellbookID != "MST_ORC_WIZARD" {
 		t.Fatalf("wizard spellbook: %+v", defs[1])
 	}
+
 	if len(defs[2].Resistances) != 2 || defs[2].Resistances[0] != (content.MonsterResistance{
 		ID:    "MR_RES_FIRE",
 		Level: 2,
@@ -182,12 +201,15 @@ func TestDecodeGoldenRows(t *testing.T) {
 	}) || defs[2].Attacks[2].Damage != 10 {
 		t.Fatalf("dragon: %+v", defs[2])
 	}
+
 	if strings.Join(defs[3].Holiness, ",") != "MH_NATURAL,MH_DEMONIC" {
 		t.Fatalf("demon: %+v", defs[3])
 	}
+
 	if defs[4].Energy.Move != 6 || defs[4].Energy.Attack != 10 || defs[4].Energy.PickupPercent != 100 {
 		t.Fatalf("spriggan: %+v", defs[4])
 	}
+
 	if defs[5].Speed != 0 || defs[5].AverageHP10x != 0 ||
 		strings.Join(defs[5].Flags, ",") != "M_NO_EXP_GAIN,M_NO_THREAT,M_CANT_SPAWN" {
 		t.Fatalf("bug: %+v", defs[5])

@@ -23,22 +23,27 @@ func BuildStartProfile(c content.Catalog, speciesID, jobID, weaponID string) (St
 	if err != nil {
 		return StartProfile{}, err
 	}
+
 	attributes, err := BaseStatSum(c, speciesID, jobID)
 	if err != nil {
 		return StartProfile{}, err
 	}
+
 	species, err := c.Species(speciesID)
 	if err != nil {
 		return StartProfile{}, err
 	}
+
 	hp, err := HumanMaxHP(1, species, skills)
 	if err != nil {
 		return StartProfile{}, err
 	}
+
 	mp, err := HumanMaxMP(1, species)
 	if err != nil {
 		return StartProfile{}, err
 	}
+
 	return StartProfile{
 		Attributes: attributes,
 		Skills:     skills,

@@ -13,46 +13,58 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 	if p.SchemaVersion != 1 || p.SourceRevision != sourceRevision || p.TagMajorVersion != 34 {
 		t.Fatalf("presentation provenance: %+v", p)
 	}
+
 	if p.SourceVersion != "0.30-a0-23-ge60ba3568b0" {
 		t.Fatalf("source banner version: %q", p.SourceVersion)
 	}
+
 	if len(p.SpeciesGroups) != 3 || len(p.JobGroups) != 5 {
 		t.Fatalf("menu group counts: %d species, %d jobs", len(p.SpeciesGroups), len(p.JobGroups))
 	}
+
 	if len(p.StartupModes) != 8 || p.StartupModes[0].ID != "GAME_TYPE_NORMAL" ||
 		p.StartupModes[0].Label != "Dungeon Crawl" || p.StartupModes[7].ID != "GAME_TYPE_HIGH_SCORES" {
 		t.Fatalf("source startup mode order: %+v", p.StartupModes)
 	}
+
 	if len(p.SkillColumns) != 2 || len(p.SkillColumns[0]) != 16 || len(p.SkillColumns[1]) != 16 ||
 		p.SkillColumns[0][0] != "SK_FIGHTING" || p.SkillColumns[1][0] != "SK_SPELLCASTING" {
 		t.Fatalf("source skill display columns: %+v", p.SkillColumns)
 	}
+
 	if !strings.Contains(p.StartupModes[0].Description, "monsters, items") {
 		t.Fatalf("startup description: %+v", p.StartupModes[0])
 	}
+
 	var species, jobs []string
 	for _, group := range p.SpeciesGroups {
 		species = append(species, group.IDs...)
 	}
+
 	for _, group := range p.JobGroups {
 		jobs = append(jobs, group.IDs...)
 	}
+
 	if len(species) != 27 || species[0] != "SP_HILL_ORC" || species[len(species)-1] != "SP_MUMMY" {
 		t.Fatalf("species menu order: %v", species)
 	}
+
 	if len(jobs) != 25 || jobs[0] != "JOB_FIGHTER" || jobs[len(jobs)-1] != "JOB_VENOM_MAGE" {
 		t.Fatalf("job menu order: %v", jobs)
 	}
+
 	if !slices.Equal(
 		[]string{p.SpeciesGroups[0].Label, p.SpeciesGroups[1].Label, p.SpeciesGroups[2].Label},
 		[]string{"Simple", "Intermediate", "Advanced"},
 	) {
 		t.Fatalf("species labels: %+v", p.SpeciesGroups)
 	}
+
 	if !strings.Contains(p.SpeciesDescriptions["SP_HUMAN"], "Humans advance quickly") ||
 		!strings.Contains(p.JobDescriptions["JOB_FIGHTER"], "Fighters are equipped") {
 		t.Fatal("source description prose missing")
 	}
+
 	wantHashes := map[string]string{
 		"crawl-ref/source/species-groups.h":             "8cbc7cf3b24fbe904d9ce193d04ffcee7b27bfaa4fa44328210c7365b40b9a28",
 		"crawl-ref/source/newgame.cc":                   "32e2055c3b71002a2a3610c322fa05b35f8a8b05f00411df46f1de70adf8ef69",
@@ -65,6 +77,7 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 	if len(p.SourceFiles) != len(wantHashes) {
 		t.Fatalf("source files: %+v", p.SourceFiles)
 	}
+
 	for _, file := range p.SourceFiles {
 		if wantHashes[file.Path] != file.SHA256 {
 			t.Fatalf("source hash for %s: %s", file.Path, file.SHA256)
@@ -92,35 +105,46 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 	if err := json.Unmarshal(defaultPresentationJSON, &original); err != nil {
 		t.Fatal(err)
 	}
+
 	cases := []struct {
 		name   string
 		change func(*PresentationArtifact)
 		want   string
 	}{
 		{
-			name:   "missing description",
-			change: func(a *PresentationArtifact) { delete(a.SpeciesDescriptions, "SP_HUMAN") },
-			want:   "SP_HUMAN",
+			name: "missing description",
+			change: func(a *PresentationArtifact) {
+				delete(a.SpeciesDescriptions, "SP_HUMAN")
+			},
+			want: "SP_HUMAN",
 		},
 		{
-			name:   "duplicate menu ID",
-			change: func(a *PresentationArtifact) { a.SpeciesGroups[0].IDs = append(a.SpeciesGroups[0].IDs, "SP_HILL_ORC") },
-			want:   "SP_HILL_ORC",
+			name: "duplicate menu ID",
+			change: func(a *PresentationArtifact) {
+				a.SpeciesGroups[0].IDs = append(a.SpeciesGroups[0].IDs, "SP_HILL_ORC")
+			},
+			want: "SP_HILL_ORC",
 		},
 		{
-			name:   "unknown catalog ID",
-			change: func(a *PresentationArtifact) { a.JobGroups[0].IDs[0] = "JOB_NOT_REAL" },
-			want:   "JOB_NOT_REAL",
+			name: "unknown catalog ID",
+			change: func(a *PresentationArtifact) {
+				a.JobGroups[0].IDs[0] = "JOB_NOT_REAL"
+			},
+			want: "JOB_NOT_REAL",
 		},
 		{
-			name:   "unknown skill ID",
-			change: func(a *PresentationArtifact) { a.SkillColumns[0][0] = "SK_NOT_REAL" },
-			want:   "SK_NOT_REAL",
+			name: "unknown skill ID",
+			change: func(a *PresentationArtifact) {
+				a.SkillColumns[0][0] = "SK_NOT_REAL"
+			},
+			want: "SK_NOT_REAL",
 		},
 		{
-			name:   "duplicate skill ID",
-			change: func(a *PresentationArtifact) { a.SkillColumns[1][0] = "SK_FIGHTING" },
-			want:   "SK_FIGHTING",
+			name: "duplicate skill ID",
+			change: func(a *PresentationArtifact) {
+				a.SkillColumns[1][0] = "SK_FIGHTING"
+			},
+			want: "SK_FIGHTING",
 		},
 		{
 			name: "nonselectable catalog ID",
@@ -138,15 +162,18 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			var changed PresentationArtifact
 			if err := json.Unmarshal(data, &changed); err != nil {
 				t.Fatal(err)
 			}
+
 			tc.change(&changed)
 			data, err = json.Marshal(changed)
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			_, err = loadDefault(
 				defaultSpeciesJSON,
 				defaultJobsJSON,
@@ -168,12 +195,15 @@ func TestLoadDefinitionsForImportDoesNotRequirePresentation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if _, err := catalog.Species("SP_HUMAN"); err != nil {
 		t.Fatal(err)
 	}
+
 	if _, err := catalog.Job("JOB_FIGHTER"); err != nil {
 		t.Fatal(err)
 	}
+
 	if len(catalog.Presentation().SpeciesGroups) != 0 {
 		t.Fatal("import definitions unexpectedly depend on presentation")
 	}

@@ -42,6 +42,7 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 		if health.Current > 0 {
 			continue
 		}
+
 		if entity == s.player {
 			s.turn.Events = append(s.turn.Events, Event{
 				Kind: "death",
@@ -52,24 +53,29 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 			if !found {
 				return fmt.Errorf("dead monster %d has no actor", entity)
 			}
+
 			definition, err := ordinaryAnimal(s.catalog, actor.KindID)
 			if err != nil {
 				return err
 			}
+
 			if entity == s.turn.PlayerKill {
 				if err := s.awardAnimalExperience(definition, health.Max); err != nil {
 					return err
 				}
+
 				if definition.LeavesCorpse {
 					appearance, dropped, err := monster.RollCorpse(s.rng)
 					if err != nil {
 						return err
 					}
+
 					if dropped {
 						position, found := s.positions.Get(entity)
 						if !found {
 							return fmt.Errorf("killed animal %d has no position", entity)
 						}
+
 						s.turn.Corpse = &pendingCorpse{
 							MonsterID:  actor.KindID,
 							Position:   *position,
@@ -78,6 +84,7 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 					}
 				}
 			}
+
 			s.turn.Deaths = append(s.turn.Deaths, entity)
 			s.turn.Events = append(s.turn.Events, Event{
 				Kind: "death",
@@ -85,6 +92,7 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 			})
 		}
 	}
+
 	return nil
 }
 
@@ -93,10 +101,12 @@ func (s *deathSystem) awardAnimalExperience(definition content.MonsterDef, maxHP
 	if err != nil {
 		return err
 	}
+
 	progress, found := s.progression.Get(s.player)
 	if !found || progress.TotalXP < 0 {
 		return fmt.Errorf("invalid Dungeon experience state")
 	}
+
 	progress.TotalXP += amount
 	return nil
 }

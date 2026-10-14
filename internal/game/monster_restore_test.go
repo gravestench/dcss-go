@@ -12,6 +12,7 @@ func TestRestoreRejectsRemovedAndEnumOnlyMonsters(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			defer g.Close()
 			before := g.Snapshot()
 			bad := g.Snapshot()
@@ -23,13 +24,16 @@ func TestRestoreRejectsRemovedAndEnumOnlyMonsters(t *testing.T) {
 					break
 				}
 			}
+
 			if !changed {
 				t.Fatal("no monster in scenario")
 			}
+
 			if replacement, err := g.Restore(bad); err == nil {
 				replacement.Close()
 				t.Fatal("placeholder restored as live monster")
 			}
+
 			if !reflect.DeepEqual(g.Snapshot(), before) {
 				t.Fatal("failed restore changed live game")
 			}

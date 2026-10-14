@@ -57,5 +57,6 @@ func CommandForKey(key string) (game.Command, bool) {
 	case ">":
 		return game.Command{Kind: game.CommandDownstairs}, true
 	}
+
 	return game.Command{}, false
 }

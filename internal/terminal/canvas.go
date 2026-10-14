@@ -23,9 +23,11 @@ func NewCanvas(width, height int) *Canvas {
 	if width < 0 {
 		width = 0
 	}
+
 	if height < 0 {
 		height = 0
 	}
+
 	c := &Canvas{
 		width:  width,
 		height: height,
@@ -38,6 +40,7 @@ func NewCanvas(width, height int) *Canvas {
 			bg:   Black,
 		}
 	}
+
 	return c
 }
 
@@ -49,6 +52,7 @@ func (c *Canvas) clearAt(x, y int) {
 	if !c.inBounds(x, y) {
 		return
 	}
+
 	i := y*c.width + x
 	if c.cells[i].continuation && x > 0 {
 		c.cells[i-1] = cell{
@@ -57,6 +61,7 @@ func (c *Canvas) clearAt(x, y int) {
 			bg:   Black,
 		}
 	}
+
 	if !c.cells[i].continuation && x+1 < c.width && c.cells[i+1].continuation {
 		c.cells[i+1] = cell{
 			text: " ",
@@ -64,6 +69,7 @@ func (c *Canvas) clearAt(x, y int) {
 			bg:   Black,
 		}
 	}
+
 	c.cells[i] = cell{
 		text: " ",
 		fg:   LightGrey,
@@ -75,13 +81,16 @@ func (c *Canvas) Put(x, y int, glyph rune, fg, bg Color) {
 	if !c.inBounds(x, y) {
 		return
 	}
+
 	w := runewidth.RuneWidth(glyph)
 	if w < 1 || w > 2 || x+w > c.width {
 		return
 	}
+
 	for dx := 0; dx < w; dx++ {
 		c.clearAt(x+dx, y)
 	}
+
 	i := y*c.width + x
 	c.cells[i] = cell{
 		text: string(glyph),
@@ -105,6 +114,7 @@ func (c *Canvas) Write(x, y int, value string, fg, bg Color) {
 			x = start
 			continue
 		}
+
 		w := runewidth.RuneWidth(glyph)
 		if w == 0 {
 			if c.inBounds(x-1, y) {
@@ -112,10 +122,13 @@ func (c *Canvas) Write(x, y int, value string, fg, bg Color) {
 				if c.cells[i].continuation && x > 1 {
 					i--
 				}
+
 				c.cells[i].text += string(glyph)
 			}
+
 			continue
 		}
+
 		c.Put(x, y, glyph, fg, bg)
 		x += w
 	}
@@ -131,8 +144,10 @@ func (c *Canvas) PlainRows() []string {
 				row.WriteString(entry.text)
 			}
 		}
+
 		rows[y] = row.String()
 	}
+
 	return rows
 }
 
@@ -147,6 +162,7 @@ func (c *Canvas) Styled() string {
 			if !haveRun {
 				return
 			}
+
 			line.WriteString(lipgloss.NewStyle().Foreground(styleColor(fg)).Background(styleColor(bg)).Render(run.String()))
 			run.Reset()
 		}
@@ -155,17 +171,22 @@ func (c *Canvas) Styled() string {
 			if entry.continuation {
 				continue
 			}
+
 			if haveRun && (entry.fg != fg || entry.bg != bg) {
 				flush()
 				haveRun = false
 			}
+
 			if !haveRun {
 				fg, bg, haveRun = entry.fg, entry.bg, true
 			}
+
 			run.WriteString(entry.text)
 		}
+
 		flush()
 		rows[y] = line.String()
 	}
+
 	return strings.Join(rows, "\n")
 }

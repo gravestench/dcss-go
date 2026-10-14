@@ -39,6 +39,7 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 	if root == "" {
 		t.Skip("optional pinned-source audit; normal tests use committed Go content")
 	}
+
 	source := map[string][]byte{}
 	for _, name := range []string{
 		"equipment-type.h",
@@ -52,20 +53,25 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		source[name] = data
 	}
+
 	vocabulary, err := parseVocabulary(source)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	rows, err := parsePropertyTables("crawl-ref/source/item-prop.cc", source["item-prop.cc"], vocabulary)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	counts := map[string]int{}
 	for key := range rows {
 		counts[key.ClassID]++
 	}
+
 	for class, want := range map[string]int{
 		"OBJ_ARMOUR":   43,
 		"OBJ_WEAPONS":  57,
@@ -76,9 +82,11 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 			t.Errorf("%s rows: got %d, want %d", class, counts[class], want)
 		}
 	}
+
 	if len(rows) != 133 {
 		t.Fatalf("got %d property rows, want 133", len(rows))
 	}
+
 	fire := rows[itemKey{
 		ClassID:   "OBJ_ARMOUR",
 		SubtypeID: "ARM_FIRE_DRAGON_ARMOUR",
@@ -86,6 +94,7 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 	if fire.Armour == nil || fire.Armour.AC != 8 || fire.Armour.EV != -110 || len(fire.Armour.Flags) != 2 {
 		t.Fatalf("fire dragon scales fields lost: %+v", fire)
 	}
+
 	mace := rows[itemKey{
 		ClassID:   "OBJ_WEAPONS",
 		SubtypeID: "WPN_MACE",
@@ -93,6 +102,7 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 	if mace.Weapon == nil || mace.Weapon.Damage != 8 || mace.Weapon.Price != 30 || len(mace.Weapon.BrandWeights) != 9 {
 		t.Fatalf("mace fields lost: %+v", mace)
 	}
+
 	needle := rows[itemKey{
 		ClassID:   "OBJ_MISSILES",
 		SubtypeID: "MI_NEEDLE",
@@ -100,6 +110,7 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 	if needle.Missile == nil || needle.Missile.MulchRate != 12 {
 		t.Fatalf("needle fields lost: %+v", needle)
 	}
+
 	ration := rows[itemKey{
 		ClassID:   "OBJ_FOOD",
 		SubtypeID: "FOOD_RATION",
@@ -126,9 +137,11 @@ func TestPropertyTablesComplete(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if len(rows) != 6 {
 		t.Fatalf("got %d rows, want 6", len(rows))
 	}
+
 	robe := rows[itemKey{
 		ClassID:   "OBJ_ARMOUR",
 		SubtypeID: "ARM_ROBE",
@@ -137,6 +150,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 		robe.Armour.Price != 7 || robe.Armour.AcquireWeight != 1000 {
 		t.Fatalf("robe fields lost: %+v", robe)
 	}
+
 	scales := rows[itemKey{
 		ClassID:   "OBJ_ARMOUR",
 		SubtypeID: "ARM_FIRE_DRAGON_ARMOUR",
@@ -152,6 +166,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 	}) {
 		t.Fatalf("dragon scales fields lost: %+v", scales)
 	}
+
 	hide := rows[itemKey{
 		ClassID:   "OBJ_ARMOUR",
 		SubtypeID: "ARM_FIRE_DRAGON_HIDE",
@@ -160,6 +175,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 		hide.Armour.AcquireWeight != 0 || hide.Name != "removed fire dragon hide" {
 		t.Fatalf("dragon hide fields lost: %+v", hide)
 	}
+
 	mace := rows[itemKey{
 		ClassID:   "OBJ_WEAPONS",
 		SubtypeID: "WPN_MACE",
@@ -170,6 +186,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 		mace.Weapon.BrandWeights[0].BrandID != "SPWPN_NORMAL" || mace.Weapon.BrandWeights[0].Weight != 58 {
 		t.Fatalf("weapon fields lost: %+v", mace)
 	}
+
 	needle := rows[itemKey{
 		ClassID:   "OBJ_MISSILES",
 		SubtypeID: "MI_NEEDLE",
@@ -177,6 +194,7 @@ func TestPropertyTablesComplete(t *testing.T) {
 	if needle.Missile == nil || needle.Missile.Damage != 0 || needle.Missile.MulchRate != 12 || needle.Missile.Price != 2 {
 		t.Fatalf("missile fields lost: %+v", needle)
 	}
+
 	ration := rows[itemKey{
 		ClassID:   "OBJ_FOOD",
 		SubtypeID: "FOOD_RATION",
@@ -232,6 +250,7 @@ func TestPropertyScannerRejectsLoss(t *testing.T) {
 			}
 		})
 	}
+
 	quoted := strings.Replace(base, `"robe"`, `"robe, // still name"`, 1)
 	rows, err := parsePropertyTables("item-prop.cc", []byte(quoted), propertyVocabulary())
 	if err != nil || rows[itemKey{

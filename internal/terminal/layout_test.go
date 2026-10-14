@@ -88,7 +88,12 @@ func TestLayoutMatchesMinimumAndExpandedConsole(t *testing.T) {
 }
 
 func TestLayoutRejectsBelowMinimum(t *testing.T) {
-	for _, size := range [][2]int{{78, 24}, {79, 23}, {78, 23}, {0, 0}} {
+	for _, size := range [][2]int{
+		{78, 24},
+		{79, 23},
+		{78, 23},
+		{0, 0},
+	} {
 		if _, ok := ComputeLayout(size[0], size[1]); ok {
 			t.Fatalf("accepted %dx%d", size[0], size[1])
 		}

@@ -30,5 +30,6 @@ func (g *Game) Close() error {
 	if g == nil || g.world == nil {
 		return nil
 	}
+
 	return g.world.Close()
 }

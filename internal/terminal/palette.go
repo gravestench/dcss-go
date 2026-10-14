@@ -30,11 +30,29 @@ const (
 )
 
 // ANSI's color cube orders red and blue differently than DCSS's IRGB enum.
-var ansiColor = [16]int{0, 4, 2, 6, 1, 5, 3, 7, 8, 12, 10, 14, 9, 13, 11, 15}
+var ansiColor = [16]int{
+	0,
+	4,
+	2,
+	6,
+	1,
+	5,
+	3,
+	7,
+	8,
+	12,
+	10,
+	14,
+	9,
+	13,
+	11,
+	15,
+}
 
 func styleColor(tone Color) color.Color {
 	if tone > White {
 		tone = LightGrey
 	}
+
 	return lipgloss.Color(strconv.Itoa(ansiColor[tone]))
 }

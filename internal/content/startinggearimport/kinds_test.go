@@ -12,6 +12,7 @@ func TestResolveKindsFromCommittedCatalog(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	names := []string{
 		"scale mail",
 		"flail",
@@ -25,6 +26,7 @@ func TestResolveKindsFromCommittedCatalog(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for name, want := range map[string]string{
 		"scale mail":                  "ARM_SCALE_MAIL",
 		"flail":                       "WPN_FLAIL",
@@ -38,10 +40,12 @@ func TestResolveKindsFromCommittedCatalog(t *testing.T) {
 			t.Errorf("%q resolved to %s, want %s", name, resolved[name].ID, want)
 		}
 	}
+
 	if _, err := resolveKinds(catalog, []string{"unknown item"}); err == nil ||
 		!strings.Contains(err.Error(), "unknown item") {
 		t.Fatalf("unknown name accepted: %v", err)
 	}
+
 	if _, err := resolveKinds(catalog, []string{"removed deck"}); err == nil ||
 		!strings.Contains(err.Error(), "ambiguous") {
 		t.Fatalf("ambiguous legacy name accepted: %v", err)

@@ -41,6 +41,7 @@ func fixtureSource(t *testing.T) string {
 			t.Fatal(err)
 		}
 	}
+
 	return dir
 }
 
@@ -50,28 +51,34 @@ func TestGenerateFixtureDeterministicPartition(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	second, err := generateFromSource(dir, pinnedRevision)
 	if err != nil || !bytes.Equal(first, second) {
 		t.Fatalf("nondeterministic generation: %v", err)
 	}
+
 	var artifact content.MonsterArtifact
 	if err := json.Unmarshal(first, &artifact); err != nil {
 		t.Fatal(err)
 	}
+
 	if len(artifact.Monsters) != 4 || artifact.Monsters[0].ID != "MONS_BEAR" ||
 		artifact.Monsters[0].Status != content.MonsterEnumOnly ||
 		artifact.Monsters[1].Status != content.MonsterRemoved || artifact.Monsters[3].ID != "MONS_RAT" {
 		t.Fatalf("incorrect partition: %+v", artifact.Monsters)
 	}
+
 	if len(artifact.SourceFiles) != 11 || artifact.SourceFiles[0].SHA256 == "" || !bytes.HasSuffix(first, []byte("\n")) {
 		t.Fatalf("bad provenance: %+v", artifact.SourceFiles)
 	}
+
 	var raw struct {
 		Monsters []map[string]json.RawMessage `json:"monsters"`
 	}
 	if err := json.Unmarshal(first, &raw); err != nil {
 		t.Fatal(err)
 	}
+
 	for _, entry := range raw.Monsters {
 		var status string
 		_ = json.Unmarshal(entry["status"], &status)
@@ -90,6 +97,7 @@ func TestGenerateRejectsBadSource(t *testing.T) {
 	if _, err := generateFromSource(dir, "wrong"); err == nil {
 		t.Fatal("wrong revision accepted")
 	}
+
 	for _, tc := range []struct {
 		name, file, old, next string
 	}{
@@ -125,6 +133,7 @@ func TestGenerateRejectsBadSource(t *testing.T) {
 			if err := os.WriteFile(path, []byte(strings.Replace(string(data), tc.old, tc.next, 1)), 0o644); err != nil {
 				t.Fatal(err)
 			}
+
 			if _, err := generateFromSource(copyDir, pinnedRevision); err == nil {
 				t.Fatal("bad source accepted")
 			}
@@ -138,16 +147,24 @@ func TestWritePreservesArtifactOnFailure(t *testing.T) {
 	if err := os.WriteFile(out, []byte("old"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := writeArtifact(dir, out, false, func(string) ([]byte, error) { return nil, os.ErrInvalid }); err == nil {
+
+	if err := writeArtifact(dir, out, false, func(string) ([]byte, error) {
+		return nil, os.ErrInvalid
+	}); err == nil {
 		t.Fatal("generation failure accepted")
 	}
+
 	data, _ := os.ReadFile(out)
 	if string(data) != "old" {
 		t.Fatalf("artifact overwritten: %q", data)
 	}
-	if err := writeArtifact(dir, out, true, func(string) ([]byte, error) { return []byte("new"), nil }); err == nil {
+
+	if err := writeArtifact(dir, out, true, func(string) ([]byte, error) {
+		return []byte("new"), nil
+	}); err == nil {
 		t.Fatal("stale check accepted")
 	}
+
 	data, _ = os.ReadFile(out)
 	if string(data) != "old" {
 		t.Fatalf("check wrote artifact: %q", data)

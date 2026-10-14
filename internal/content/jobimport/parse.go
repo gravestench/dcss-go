@@ -40,15 +40,19 @@ func lexJobData(path, source string) ([]token, error) {
 					i++
 					break
 				}
+
 				i++
 			}
+
 			if i > len(source) || source[i-1] != '"' {
 				return nil, fmt.Errorf("%s: unterminated job string", path)
 			}
+
 			value, err := strconv.Unquote(source[start:i])
 			if err != nil {
 				return nil, fmt.Errorf("%s: invalid job string: %w", path, err)
 			}
+
 			tokens = append(tokens, token{
 				kind:  "string",
 				value: value,
@@ -59,9 +63,11 @@ func lexJobData(path, source string) ([]token, error) {
 			for i < len(source) && source[i] >= '0' && source[i] <= '9' {
 				i++
 			}
+
 			if _, err := strconv.Atoi(source[start:i]); err != nil {
 				return nil, fmt.Errorf("%s: invalid integer %q", path, source[start:i])
 			}
+
 			tokens = append(tokens, token{
 				kind:  "integer",
 				value: source[start:i],
@@ -77,6 +83,7 @@ func lexJobData(path, source string) ([]token, error) {
 					break
 				}
 			}
+
 			tokens = append(tokens, token{
 				kind:  "identifier",
 				value: source[start:i],
@@ -85,6 +92,7 @@ func lexJobData(path, source string) ([]token, error) {
 			return nil, fmt.Errorf("%s: unsupported job initializer character %q", path, ch)
 		}
 	}
+
 	return tokens, nil
 }
 
@@ -98,6 +106,7 @@ func (p *jobParser) peek() token {
 	if p.index >= len(p.tokens) {
 		return token{kind: "end"}
 	}
+
 	return p.tokens[p.index]
 }
 
@@ -106,6 +115,7 @@ func (p *jobParser) take(kind, field string) (string, error) {
 	if current.kind != kind {
 		return "", fmt.Errorf("%s: expected %s in %s, got %q", p.path, kind, field, current.value)
 	}
+
 	p.index++
 	return current.value, nil
 }
@@ -120,10 +130,12 @@ func (p *jobParser) integer(field string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	number, err := strconv.Atoi(value)
 	if err != nil {
 		return 0, fmt.Errorf("%s: invalid %s integer %s", p.path, field, value)
 	}
+
 	return number, nil
 }
 
@@ -131,20 +143,24 @@ func (p *jobParser) vector(kind, field string) ([]string, error) {
 	if err := p.symbol("{", field); err != nil {
 		return nil, err
 	}
+
 	var values []string
 	for p.peek().kind != "}" {
 		value, err := p.take(kind, field)
 		if err != nil {
 			return nil, err
 		}
+
 		values = append(values, value)
 		if p.peek().kind == "}" {
 			break
 		}
+
 		if err := p.symbol(",", field); err != nil {
 			return nil, err
 		}
 	}
+
 	return values, p.symbol("}", field)
 }
 
@@ -152,25 +168,31 @@ func (p *jobParser) skills() ([]content.JobSkillGrant, error) {
 	if err := p.symbol("{", "skills"); err != nil {
 		return nil, err
 	}
+
 	var skills []content.JobSkillGrant
 	for p.peek().kind != "}" {
 		if err := p.symbol("{", "skill grant"); err != nil {
 			return nil, err
 		}
+
 		id, err := p.take("identifier", "skill ID")
 		if err != nil {
 			return nil, err
 		}
+
 		if err := p.symbol(",", "skill grant"); err != nil {
 			return nil, err
 		}
+
 		level, err := p.integer("skill level")
 		if err != nil {
 			return nil, err
 		}
+
 		if err := p.symbol("}", "skill grant"); err != nil {
 			return nil, err
 		}
+
 		skills = append(skills, content.JobSkillGrant{
 			ID:    id,
 			Level: level,
@@ -178,10 +200,12 @@ func (p *jobParser) skills() ([]content.JobSkillGrant, error) {
 		if p.peek().kind == "}" {
 			break
 		}
+
 		if err := p.symbol(",", "skills"); err != nil {
 			return nil, err
 		}
 	}
+
 	return skills, p.symbol("}", "skills")
 }
 
@@ -189,10 +213,12 @@ func (p *jobParser) job() (job content.JobDef, err error) {
 	if err = p.symbol("{", "job entry"); err != nil {
 		return job, err
 	}
+
 	job.ID, err = p.take("identifier", "job ID")
 	if err != nil {
 		return job, err
 	}
+
 	defer func() {
 		if err != nil {
 			err = fmt.Errorf("%s: %s: %w", p.path, job.ID, err)
@@ -201,75 +227,95 @@ func (p *jobParser) job() (job content.JobDef, err error) {
 	if err = p.symbol(",", "job entry"); err != nil {
 		return job, err
 	}
+
 	if err = p.symbol("{", "job fields"); err != nil {
 		return job, err
 	}
+
 	job.SourcePath = p.path
 	job.Abbreviation, err = p.take("string", "abbreviation")
 	if err != nil {
 		return job, err
 	}
+
 	if err = p.symbol(",", "abbreviation"); err != nil {
 		return job, err
 	}
+
 	job.Name, err = p.take("string", "name")
 	if err != nil {
 		return job, err
 	}
+
 	if err = p.symbol(",", "name"); err != nil {
 		return job, err
 	}
+
 	for i, target := range []*int{&job.Strength, &job.Intelligence, &job.Dexterity} {
 		field := []string{"strength", "intelligence", "dexterity"}[i]
 		*target, err = p.integer(field)
 		if err != nil {
 			return job, err
 		}
+
 		if err = p.symbol(",", field); err != nil {
 			return job, err
 		}
 	}
+
 	job.RecommendedSpecies, err = p.vector("identifier", "recommended species")
 	if err != nil {
 		return job, err
 	}
+
 	if err = p.symbol(",", "recommended species"); err != nil {
 		return job, err
 	}
+
 	job.Spells, err = p.vector("identifier", "spells")
 	if err != nil {
 		return job, err
 	}
+
 	if err = p.symbol(",", "spells"); err != nil {
 		return job, err
 	}
+
 	job.Equipment, err = p.vector("string", "equipment")
 	if err != nil {
 		return job, err
 	}
+
 	if err = p.symbol(",", "equipment"); err != nil {
 		return job, err
 	}
+
 	job.WeaponChoice, err = p.take("identifier", "weapon choice")
 	if err != nil {
 		return job, err
 	}
+
 	if err = p.symbol(",", "weapon choice"); err != nil {
 		return job, err
 	}
+
 	job.Skills, err = p.skills()
 	if err != nil {
 		return job, err
 	}
+
 	if p.peek().kind == "," {
 		p.index++
 	}
+
 	if err = p.symbol("}", "job fields"); err != nil {
 		return job, err
 	}
+
 	if err = p.symbol("}", "job entry"); err != nil {
 		return job, err
 	}
+
 	job.Selectable = len(job.RecommendedSpecies) > 0
 	err = jobValidation(job)
 	return job, err
@@ -289,15 +335,18 @@ func parseJobData(path string, data []byte) ([]content.JobDef, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	filtered := strings.Join(lines, "\n")
 	start := strings.Index(filtered, "job_data =")
 	if start < 0 {
 		return nil, fmt.Errorf("%s: job_data initializer missing", path)
 	}
+
 	tokens, err := lexJobData(path, filtered[start+len("job_data ="):])
 	if err != nil {
 		return nil, err
 	}
+
 	p := jobParser{
 		path:   path,
 		tokens: tokens,
@@ -305,6 +354,7 @@ func parseJobData(path string, data []byte) ([]content.JobDef, error) {
 	if err := p.symbol("{", "job_data"); err != nil {
 		return nil, err
 	}
+
 	var jobs []content.JobDef
 	seen := map[string]bool{}
 	for p.peek().kind != "}" {
@@ -312,26 +362,33 @@ func parseJobData(path string, data []byte) ([]content.JobDef, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		if seen[job.ID] {
 			return nil, fmt.Errorf("%s: duplicate job %s", path, job.ID)
 		}
+
 		seen[job.ID] = true
 		jobs = append(jobs, job)
 		if p.peek().kind == "}" {
 			break
 		}
+
 		if err := p.symbol(",", "job_data entries"); err != nil {
 			return nil, err
 		}
 	}
+
 	if err := p.symbol("}", "job_data"); err != nil {
 		return nil, err
 	}
+
 	if err := p.symbol(";", "job_data terminator"); err != nil {
 		return nil, err
 	}
+
 	if p.peek().kind != "end" || len(jobs) == 0 {
 		return nil, fmt.Errorf("%s: trailing tokens or empty job_data", path)
 	}
+
 	return jobs, nil
 }

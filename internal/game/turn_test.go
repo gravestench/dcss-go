@@ -38,14 +38,17 @@ func TestScheduleAfter(t *testing.T) {
 	if err := scheduler.ScheduleAfter(entity, 10); err != nil {
 		t.Fatal(err)
 	}
+
 	actor, _ := actors.Get(entity)
 	if actor.NextAut != 10 {
 		t.Fatalf("next aut = %d, want 10", actor.NextAut)
 	}
+
 	actor.Speed = 20
 	if err := scheduler.ScheduleAfter(entity, 10); err != nil {
 		t.Fatal(err)
 	}
+
 	if actor.NextAut != 15 {
 		t.Fatalf("fast actor next aut = %d, want 15", actor.NextAut)
 	}
@@ -56,17 +59,20 @@ func TestRNGRestore(t *testing.T) {
 	if _, err := original.Intn("combat", 100); err != nil {
 		t.Fatal(err)
 	}
+
 	restored := RestoreRNGStreams(42, original.States())
 	for _, name := range []string{"combat", "world"} {
 		want, err := original.Intn(name, 100)
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		got, err := restored.Intn(name, 100)
 		if err != nil || got != want {
 			t.Fatalf("stream %q after restore = %d, %v; want %d", name, got, err, want)
 		}
 	}
+
 	if _, err := restored.Intn("combat", 0); err == nil {
 		t.Fatal("accepted zero upper bound")
 	}

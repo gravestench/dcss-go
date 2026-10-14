@@ -41,6 +41,7 @@ func TestDungeonPopulationWeightCurves(t *testing.T) {
 				t.Errorf("%s depth %d = %d, want %d", tc.curve, depth, got, tc.want[depth-1])
 			}
 		}
+
 		if entry.WeightAtDepth(0) != 0 || entry.WeightAtDepth(4) != 0 {
 			t.Errorf("%s has weight outside depth range", tc.curve)
 		}
@@ -72,6 +73,7 @@ func TestDungeonPopulationArtifactRejectsMalformedRows(t *testing.T) {
 	if err := good.Validate(); err != nil {
 		t.Fatal(err)
 	}
+
 	for _, bad := range []DungeonPopEntry{
 		{
 			MinDepth:   3,

@@ -31,6 +31,7 @@ func TestParseJobDataPreservesAllFieldsAndOrder(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	want := []content.JobDef{
 		{
 			ID:                 "JOB_FIGHTER",

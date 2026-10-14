@@ -24,6 +24,7 @@ func (s TurnScheduler) Next() (akara.Entity, Aut, bool) {
 			chosen, at = entity, Aut(actor.NextAut)
 		}
 	}
+
 	return chosen, at, chosen != 0
 }
 
@@ -32,10 +33,12 @@ func (s TurnScheduler) ScheduleAfter(entity akara.Entity, cost Aut) error {
 	if !found || actor.Speed <= 0 || cost <= 0 {
 		return fmt.Errorf("cannot schedule actor %d with cost %d", entity, cost)
 	}
+
 	delay := (int64(cost)*10 + int64(actor.Speed) - 1) / int64(actor.Speed)
 	if delay < 1 {
 		delay = 1
 	}
+
 	actor.NextAut += delay
 	return nil
 }

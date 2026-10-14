@@ -14,6 +14,7 @@ func potionID(t *testing.T, g *Game) akara.Entity {
 			return id
 		}
 	}
+
 	t.Fatal("potion missing")
 	return 0
 }
@@ -23,10 +24,12 @@ func TestPickupTransfersLocation(t *testing.T) {
 	if err := g.levels[1].MoveActor(g.player, 4, 2); err != nil {
 		t.Fatal(err)
 	}
+
 	result, err := g.Step(Command{Kind: CommandPickup})
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	item := potionID(t, g)
 	carrier, carried := g.stores.CarriedBy.Get(item)
 	if result.Spent != 10 || g.stores.Positions.Has(item) || !carried || carrier.Holder != g.player ||
@@ -54,9 +57,11 @@ func TestViewIsCopied(t *testing.T) {
 	if err := g.levels[1].MoveActor(g.player, 4, 2); err != nil {
 		t.Fatal(err)
 	}
+
 	if _, err := g.Step(Command{Kind: CommandPickup}); err != nil {
 		t.Fatal(err)
 	}
+
 	view := g.View()
 	view.Cells[0].Glyph = '?'
 	view.Entities[0].X = 99

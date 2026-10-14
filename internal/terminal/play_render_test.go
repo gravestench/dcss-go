@@ -14,11 +14,15 @@ func playView(t *testing.T) game.View {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	g, err := game.NewScenario(7, catalog, "WPN_RAPIER", "Alice")
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Cleanup(func() { g.Close() })
+
+	t.Cleanup(func() {
+		g.Close()
+	})
 	return g.View()
 }
 
@@ -29,6 +33,7 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 	if !ok {
 		t.Fatal("minimum size rejected")
 	}
+
 	DrawPlay(canvas, layout, view, "Unavailable: quaffing")
 	rows := canvas.PlainRows()
 	for _, tc := range []struct {
@@ -115,12 +120,15 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 			t.Fatalf("row %d column %d = %q, want prefix %q", tc.y, tc.x, rows[tc.y][tc.x:], tc.text)
 		}
 	}
+
 	if rows[8][16] != '@' || rows[8][19] != 'r' || rows[9][19] == ' ' {
 		t.Fatalf("map not centered on player: %q / %q", rows[8], rows[9])
 	}
+
 	if !strings.Contains(rows[13][37:], "rat") {
 		t.Fatalf("nearby list has no rat: %q", rows[13])
 	}
+
 	if !strings.Contains(strings.Join(rows[17:], "\n"), "Unavailable: quaffing") {
 		t.Fatal("UI notice missing from message area")
 	}
@@ -146,6 +154,7 @@ func TestDrawPlayShowsMightLightOnlyWhileActive(t *testing.T) {
 	if !strings.Contains(canvas.PlainRows()[11][37:], "Might") {
 		t.Fatal("active Might status light missing")
 	}
+
 	view.MightAut = 0
 	canvas = NewCanvas(79, 24)
 	DrawPlay(canvas, layout, view, "")
@@ -161,11 +170,13 @@ func TestDrawPlayExpandedViewportUsesFullTerminal(t *testing.T) {
 	if !ok {
 		t.Fatal("large size rejected")
 	}
+
 	DrawPlay(canvas, layout, view, "")
 	rows := canvas.PlainRows()
 	if rows[16][37] != '@' || !strings.HasPrefix(rows[0][78:], "Alice the Shield-Bearer") {
 		t.Fatalf("expanded map/HUD positions: %q / %q", rows[16], rows[0])
 	}
+
 	if len(rows) != 40 || len(rows[0]) != 120 || len(rows[39]) != 120 {
 		t.Fatalf("terminal dimensions: %d rows, %d/%d columns", len(rows), len(rows[0]), len(rows[39]))
 	}
@@ -176,10 +187,12 @@ func TestDrawPlayUnarmedUsesSourceWeaponSlot(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	g, err := game.NewScenario(7, catalog, "WPN_UNARMED", "Alice")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer g.Close()
 	canvas := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
@@ -194,10 +207,12 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	run, err := game.NewScenario(7, catalog, "WPN_RAPIER", "Alice")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	snapshot := run.Snapshot()
 	run.Close()
 	for i := range snapshot.Entities {
@@ -206,6 +221,7 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 			snapshot.Entities[i].Position.Y = 3
 		}
 	}
+
 	known := []byte(snapshot.Levels[0].Known[3])
 	known[3] = '.'
 	snapshot.Levels[0].Known[3] = string(known)
@@ -213,17 +229,20 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer restored.Close()
 	view := restored.View()
 	if view.Cells[3*view.Width+3].State != game.Explored {
 		t.Fatal("fixture floor is not remembered")
 	}
+
 	for _, size := range [][2]int{{79, 24}, {120, 40}} {
 		canvas := NewCanvas(size[0], size[1])
 		layout, ok := ComputeLayout(size[0], size[1])
 		if !ok {
 			t.Fatal("layout rejected")
 		}
+
 		DrawPlay(canvas, layout, view, "")
 		at := func(x, y int) cell {
 			sx := layout.Dungeon.X + layout.Dungeon.W/2 + x - view.PlayerX
@@ -233,12 +252,15 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 		if got := at(3, 3); got.text != "." || got.fg != DarkGrey {
 			t.Fatalf("%dx%d remembered floor = %+v", size[0], size[1], got)
 		}
+
 		if got := at(15, 7); got.text != " " {
 			t.Fatalf("%dx%d unknown terrain leaked: %+v", size[0], size[1], got)
 		}
+
 		if got := at(1, 2); got.text != "." || got.fg != LightGrey {
 			t.Fatalf("%dx%d visible floor = %+v", size[0], size[1], got)
 		}
+
 		for y := layout.Monsters.Y; y < layout.Monsters.Y+layout.Monsters.H; y++ {
 			if strings.Contains(canvas.PlainRows()[y][layout.Monsters.X:], "rat") {
 				t.Fatal("hidden rat leaked into nearby-monster pane")

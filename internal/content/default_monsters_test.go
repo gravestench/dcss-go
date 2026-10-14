@@ -12,22 +12,27 @@ func TestLoadDefaultMonstersAndSourceFields(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	counts := map[MonsterStatus]int{}
 	for _, id := range c.MonsterIDs() {
 		status, err := c.MonsterStatus(id)
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		counts[status]++
 	}
+
 	if len(c.MonsterIDs()) != 700 || counts[MonsterDefined] != 562 || counts[MonsterRemoved] != 120 ||
 		counts[MonsterEnumOnly] != 18 {
 		t.Fatalf("monster partition: %d %+v", len(c.MonsterIDs()), counts)
 	}
+
 	rat, err := c.Monster("MONS_RAT")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if rat.Glyph != 'r' || rat.Speed != 10 || rat.AverageHP10x != 25 || rat.Attacks[0] != (MonsterAttack{
 		TypeID:    "AT_BITE",
 		FlavourID: "AF_PLAIN",
@@ -35,11 +40,13 @@ func TestLoadDefaultMonstersAndSourceFields(t *testing.T) {
 	}) {
 		t.Fatalf("rat source fields: %+v", rat)
 	}
+
 	rat.Flags[0] = "changed"
 	again, _ := c.Monster("MONS_RAT")
 	if again.Flags[0] != "M_WARM_BLOOD" {
 		t.Fatal("monster flags escaped catalog ownership")
 	}
+
 	for _, id := range []string{"MONS_BUMBLEBEE", "MONS_BEAR"} {
 		if _, err := c.Monster(id); err == nil {
 			t.Fatalf("placeholder %s became live", id)
@@ -52,21 +59,28 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 	if err := json.Unmarshal(defaultMonsterJSON, &original); err != nil {
 		t.Fatal(err)
 	}
+
 	for _, tc := range []struct {
 		name string
 		edit func(*MonsterArtifact)
 	}{
 		{
 			name: "schema",
-			edit: func(a *MonsterArtifact) { a.SchemaVersion = 2 },
+			edit: func(a *MonsterArtifact) {
+				a.SchemaVersion = 2
+			},
 		},
 		{
 			name: "revision",
-			edit: func(a *MonsterArtifact) { a.SourceRevision = "other" },
+			edit: func(a *MonsterArtifact) {
+				a.SourceRevision = "other"
+			},
 		},
 		{
 			name: "tag",
-			edit: func(a *MonsterArtifact) { a.TagMajorVersion = 35 },
+			edit: func(a *MonsterArtifact) {
+				a.TagMajorVersion = 35
+			},
 		},
 		{
 			name: "provenance",
@@ -81,11 +95,15 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 		},
 		{
 			name: "order",
-			edit: func(a *MonsterArtifact) { a.Monsters[0], a.Monsters[1] = a.Monsters[1], a.Monsters[0] },
+			edit: func(a *MonsterArtifact) {
+				a.Monsters[0], a.Monsters[1] = a.Monsters[1], a.Monsters[0]
+			},
 		},
 		{
 			name: "duplicate",
-			edit: func(a *MonsterArtifact) { a.Monsters[1] = a.Monsters[0] },
+			edit: func(a *MonsterArtifact) {
+				a.Monsters[1] = a.Monsters[0]
+			},
 		},
 		{
 			name: "genus",
@@ -151,7 +169,10 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 						break
 					}
 				}
-				sort.Slice(a.Monsters, func(i, j int) bool { return a.Monsters[i].ID < a.Monsters[j].ID })
+
+				sort.Slice(a.Monsters, func(i, j int) bool {
+					return a.Monsters[i].ID < a.Monsters[j].ID
+				})
 			},
 		},
 	} {
@@ -161,6 +182,7 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 			if err := json.Unmarshal(data, &a); err != nil {
 				t.Fatal(err)
 			}
+
 			tc.edit(&a)
 			bad, _ := json.Marshal(a)
 			if _, err := loadDefault(

@@ -30,6 +30,7 @@ func newAdvancementSystem(g *Game) (*advancementSystem, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	s := g.stores
 	return &advancementSystem{
 		player:       g.player,
@@ -54,15 +55,18 @@ func (s *advancementSystem) advance() error {
 	if !found || progress.Level < 1 || progress.Level > character.HumanMaxLevel {
 		return fmt.Errorf("player has invalid advancement state")
 	}
+
 	if progress.PendingStatLevel != 0 {
 		return nil
 	}
+
 	for progress.Level < character.HumanMaxLevel {
 		nextLevel := progress.Level + 1
 		needed, _ := character.HumanExperienceNeeded(nextLevel)
 		if progress.TotalXP < needed {
 			break
 		}
+
 		if character.HumanNeedsManualStat(nextLevel) {
 			progress.PendingStatLevel = nextLevel
 			s.turn.Events = append(s.turn.Events, Event{
@@ -71,10 +75,12 @@ func (s *advancementSystem) advance() error {
 			})
 			break
 		}
+
 		if err := s.applyLevel(nextLevel); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -89,10 +95,12 @@ func (s *advancementSystem) applyLevel(level int) error {
 		health.Max <= 0 || magic.Max < 0 {
 		return fmt.Errorf("player lacks advancement components")
 	}
+
 	nextHP, err := character.HumanMaxHP(level, s.species, skills.Entries)
 	if err != nil {
 		return err
 	}
+
 	nextMP, err := character.HumanMaxMP(level, s.species)
 	if err != nil {
 		return err
@@ -107,6 +115,7 @@ func (s *advancementSystem) applyLevel(level int) error {
 		if err != nil {
 			return err
 		}
+
 		if err := increaseStat(attributes, s.species.LevelUpStats[index], 1); err != nil {
 			return err
 		}
@@ -123,6 +132,7 @@ func (s *advancementSystem) applyLevel(level int) error {
 	} else {
 		magic.Current = nextMP
 	}
+
 	magic.Max = nextMP
 	progress.Level = level
 
@@ -130,6 +140,7 @@ func (s *advancementSystem) applyLevel(level int) error {
 	if level == character.HumanMaxLevel {
 		message = "You have reached level 27, the final one!"
 	}
+
 	s.turn.Events = append(s.turn.Events, Event{
 		Kind: "level-up",
 		Text: message,
@@ -148,6 +159,7 @@ func increaseStat(attributes *ecs.Attributes, id string, amount int) error {
 	default:
 		return fmt.Errorf("unsupported level-up stat %s", id)
 	}
+
 	return nil
 }
 
@@ -157,38 +169,47 @@ func (g *Game) ChooseStat(id string) (StepResult, error) {
 	if !found || progress.PendingStatLevel != progress.Level+1 {
 		return StepResult{}, fmt.Errorf("no stat choice is pending")
 	}
+
 	attributes, found := g.stores.Attributes.Get(g.player)
 	if !found {
 		return StepResult{}, fmt.Errorf("player has no attributes")
 	}
+
 	if id != "str" && id != "int" && id != "dex" {
 		return g.noTime("Choose Strength, Intelligence, or Dexterity."), nil
 	}
+
 	actor, found := g.stores.Actors.Get(g.player)
 	if !found || actor.NextAut < int64(g.currentAut) {
 		return StepResult{}, fmt.Errorf("player has no pending turn deadline")
 	}
+
 	turnCost := Aut(actor.NextAut) - g.currentAut
 	startAut := g.currentAut
 	if err := increaseStat(attributes, id, 2); err != nil {
 		return StepResult{}, err
 	}
+
 	nextLevel := progress.PendingStatLevel
 	progress.PendingStatLevel = 0
 	g.turn.Events = nil
 	if err := g.advancement.applyLevel(nextLevel); err != nil {
 		return StepResult{}, err
 	}
+
 	if err := g.advancement.advance(); err != nil {
 		return StepResult{}, err
 	}
+
 	events := append([]Event(nil), g.turn.Events...)
 	for _, event := range events {
 		g.messages = append(g.messages, event.Text)
 	}
+
 	if turnCost > 0 {
 		return g.finishTurn(startAut, turnCost, events)
 	}
+
 	return StepResult{
 		Events: events,
 		View:   g.View(),

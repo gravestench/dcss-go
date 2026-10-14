@@ -19,12 +19,15 @@ func BaseStatSum(c content.Catalog, speciesID, jobID string) (Attributes, error)
 	if err != nil {
 		return Attributes{}, err
 	}
+
 	if restriction == Banned {
 		return Attributes{}, fmt.Errorf("banned character choice %s/%s", speciesID, jobID)
 	}
+
 	if jobID == "JOB_WANDERER" {
 		return Attributes{}, fmt.Errorf("Wanderer needs randomized starting attributes")
 	}
+
 	species, _ := c.Species(speciesID)
 	job, _ := c.Job(jobID)
 	return Attributes{

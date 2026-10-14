@@ -15,6 +15,7 @@ func TestNewScenarioStartingGear(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for _, weaponID := range []string{
 		"WPN_RAPIER",
 		"WPN_FLAIL",
@@ -28,11 +29,13 @@ func TestNewScenarioStartingGear(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			defer g.Close()
 			player, found := g.stores.Players.Get(g.player)
 			if !found || player.StartingWeaponID != weaponID {
 				t.Fatalf("selected weapon = %+v", player)
 			}
+
 			view := g.View()
 			wantKinds := []string{"ARM_SCALE_MAIL", "ARM_BUCKLER", "POT_MIGHT"}
 			wantSlots := []string{"body", "shield", ""}
@@ -40,6 +43,7 @@ func TestNewScenarioStartingGear(t *testing.T) {
 				wantKinds = append([]string{weaponID}, wantKinds...)
 				wantSlots = append([]string{"weapon"}, wantSlots...)
 			}
+
 			gotKinds, gotSlots := []string{}, []string{}
 			for _, item := range view.Inventory {
 				gotKinds, gotSlots = append(gotKinds, item.KindID), append(gotSlots, item.Slot)
@@ -47,39 +51,48 @@ func TestNewScenarioStartingGear(t *testing.T) {
 					t.Fatalf("wrong starter quantity: %+v", item)
 				}
 			}
+
 			if !slices.Equal(gotKinds, wantKinds) || !slices.Equal(gotSlots, wantSlots) {
 				t.Fatalf("loadout kinds/slots = %v/%v, want %v/%v", gotKinds, gotSlots, wantKinds, wantSlots)
 			}
+
 			if view.CurrentAut != 0 || view.PlayerHP != 18 || view.PlayerMaxHP != 18 {
 				t.Fatalf("scenario start changed time or HP: %+v", view)
 			}
+
 			combat, found := g.stores.Combat.Get(g.player)
 			if !found || combat.ShieldBlocks != 0 {
 				t.Fatalf("initial combat state = %+v", combat)
 			}
+
 			floorPotion, carried := false, 0
 			for _, record := range g.Snapshot().Entities {
 				if record.Item == nil {
 					continue
 				}
+
 				if record.Item.KindID == "POT_CURING" && record.Position != nil {
 					floorPotion = true
 				}
+
 				if record.CarriedBy != nil {
 					carried++
 					if record.CarriedBy.Holder != g.player {
 						t.Fatalf("wrong carrier: %+v", record)
 					}
+
 					if record.Equipped != nil && record.Equipped.Slot == "" {
 						t.Fatalf("empty equipped slot: %+v", record)
 					}
 				}
 			}
+
 			if !floorPotion || carried != len(wantKinds) {
 				t.Fatalf("floor potion or carried items missing: floor=%v carried=%d", floorPotion, carried)
 			}
 		})
 	}
+
 	if g, err := NewScenario(7, catalog, "WPN_QUARTERSTAFF", "Tester"); err == nil {
 		g.Close()
 		t.Fatal("banned weapon accepted")
@@ -91,6 +104,7 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer g.Close()
 	for _, extra := range []ecs.Item{
 		{
@@ -108,13 +122,16 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		if _, err := g.stores.Items.Set(entity, extra); err != nil {
 			t.Fatal(err)
 		}
+
 		if _, err := g.stores.CarriedBy.Set(entity, ecs.CarriedBy{Holder: g.player}); err != nil {
 			t.Fatal(err)
 		}
 	}
+
 	for _, entity := range g.stores.Items.Entities() {
 		item, _ := g.stores.Items.Get(entity)
 		if item.KindID == "WPN_RAPIER" {
@@ -124,15 +141,18 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 			}
 		}
 	}
+
 	before := g.Snapshot()
 	restored, err := Restore(before, testCatalog(t))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer restored.Close()
 	if !reflect.DeepEqual(before, restored.Snapshot()) {
 		t.Fatal("loadout properties or slots lost on restore")
 	}
+
 	for _, command := range []Command{
 		{Kind: CommandWait},
 		{
@@ -146,6 +166,7 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 			t.Fatalf("continuation differs: %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 		}
 	}
+
 	if !reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
 		t.Fatal("seeded continuation diverged")
 	}
@@ -249,8 +270,10 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 			},
 		},
 		{
-			name:   "version two",
-			mutate: func(s *save.Snapshot) { s.Version = 2 },
+			name: "version two",
+			mutate: func(s *save.Snapshot) {
+				s.Version = 2
+			},
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -258,6 +281,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			defer g.Close()
 			before := g.Snapshot()
 			bad := g.Snapshot()
@@ -266,6 +290,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 				replacement.Close()
 				t.Fatal("corrupt gear accepted")
 			}
+
 			if !reflect.DeepEqual(before, g.Snapshot()) {
 				t.Fatal("failed restore changed live game")
 			}

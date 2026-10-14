@@ -11,29 +11,35 @@ func TestNormalDungeonChoiceMatrix(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	var speciesCount, jobCount, legal, banned int
 	for _, speciesID := range catalog.SpeciesIDs() {
 		species, _ := catalog.Species(speciesID)
 		if !species.Selectable {
 			continue
 		}
+
 		speciesCount++
 		for _, jobID := range catalog.JobIDs() {
 			job, _ := catalog.Job(jobID)
 			if !job.Selectable {
 				continue
 			}
+
 			forward, err := JobForSpecies(catalog, speciesID, jobID)
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			reverse, err := SpeciesForJob(catalog, speciesID, jobID)
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			if (forward == Banned) != (reverse == Banned) {
 				t.Fatalf("directions disagree on ban: %s/%s", speciesID, jobID)
 			}
+
 			if forward == Banned {
 				banned++
 			} else {
@@ -41,12 +47,14 @@ func TestNormalDungeonChoiceMatrix(t *testing.T) {
 			}
 		}
 	}
+
 	for _, jobID := range catalog.JobIDs() {
 		job, _ := catalog.Job(jobID)
 		if job.Selectable {
 			jobCount++
 		}
 	}
+
 	if speciesCount != 27 || jobCount != 25 || legal != 664 || banned != 11 {
 		t.Fatalf("matrix: species=%d jobs=%d legal=%d banned=%d", speciesCount, jobCount, legal, banned)
 	}
@@ -57,6 +65,7 @@ func TestDirectionalRecommendationsAndBans(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	cases := []struct {
 		species, job     string
 		forward, reverse Restriction
@@ -158,15 +167,18 @@ func TestDirectionalRecommendationsAndBans(t *testing.T) {
 			if err != nil || forward != tc.forward {
 				t.Fatalf("species-first = %v, %v; want %v", forward, err, tc.forward)
 			}
+
 			reverse, err := SpeciesForJob(catalog, tc.species, tc.job)
 			if err != nil || reverse != tc.reverse {
 				t.Fatalf("job-first = %v, %v; want %v", reverse, err, tc.reverse)
 			}
 		})
 	}
+
 	if _, err := JobForSpecies(catalog, "SP_MISSING", "JOB_FIGHTER"); err == nil {
 		t.Fatal("unknown species accepted")
 	}
+
 	if _, err := SpeciesForJob(catalog, "SP_HUMAN", "JOB_MISSING"); err == nil {
 		t.Fatal("unknown job accepted")
 	}
@@ -185,6 +197,7 @@ func TestBannedPairChecksFutureMutation(t *testing.T) {
 	if !bannedPair(species, "JOB_HUNTER") || bannedPair(species, "JOB_FIGHTER") {
 		t.Fatal("future no-grasping mutation should ban Hunter only")
 	}
+
 	species.Mutations = []content.SpeciesMutation{
 		{
 			Level:  12,

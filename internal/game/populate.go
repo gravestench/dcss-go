@@ -14,12 +14,15 @@ func (g *Game) spawnFixtureAnimals() error {
 	if _, err := factory.Spawn("MONS_RAT", 1, 4, 1); err != nil {
 		return err
 	}
+
 	if _, err := factory.Spawn("MONS_QUOKKA", 2, 14, 7); err != nil {
 		return err
 	}
+
 	if _, err := factory.Spawn("MONS_FRILLED_LIZARD", 2, 14, 1); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -32,6 +35,7 @@ func (g *Game) populateDungeon() error {
 	for id := range g.levels {
 		levelIDs = append(levelIDs, id)
 	}
+
 	sort.Ints(levelIDs)
 
 	entry := point{
@@ -52,24 +56,29 @@ func (g *Game) populateDungeon() error {
 			if len(cells) == 0 {
 				return fmt.Errorf("Dungeon:%d has no free monster spawn cell", levelID)
 			}
+
 			roll, err := g.rng.Intn("population", pool.TotalWeight())
 			if err != nil {
 				return err
 			}
+
 			monsterID, err := pool.Pick(roll)
 			if err != nil {
 				return err
 			}
+
 			cellIndex, err := g.rng.Intn("placement", len(cells))
 			if err != nil {
 				return err
 			}
+
 			cell := cells[cellIndex]
 			if _, err := factory.Spawn(monsterID, levelID, cell.x, cell.y); err != nil {
 				return err
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -80,15 +89,18 @@ func (l *Level) spawnCellsAwayFrom(entry point, minimumDistance int) []point {
 			if row[x] != '.' || !farEnoughFromEntry(x, y, entry, minimumDistance) {
 				continue
 			}
+
 			if _, occupied := l.ActorAt(x, y); occupied {
 				continue
 			}
+
 			cells = append(cells, point{
 				x: x,
 				y: y,
 			})
 		}
 	}
+
 	return cells
 }
 
@@ -97,9 +109,11 @@ func farEnoughFromEntry(x, y int, entry point, minimumDistance int) bool {
 	if dx < 0 {
 		dx = -dx
 	}
+
 	dy := y - entry.y
 	if dy < 0 {
 		dy = -dy
 	}
+
 	return max(dx, dy) >= minimumDistance
 }

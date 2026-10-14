@@ -14,12 +14,15 @@ func carryCuring(t *testing.T, g *Game) uint64 {
 	if err := g.levels[1].MoveActor(ratID(t, g), 14, 7); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := g.levels[1].MoveActor(g.player, 4, 2); err != nil {
 		t.Fatal(err)
 	}
+
 	if result, err := g.Step(Command{Kind: CommandPickup}); err != nil || result.Spent != 10 {
 		t.Fatalf("pickup = %+v, %v", result, err)
 	}
+
 	return uint64(potionID(t, g))
 }
 
@@ -33,6 +36,7 @@ func TestQuaffCuringHealsConsumesAndSchedules(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	start := g.currentAut
 	result, err := g.Step(Command{
 		Kind:   CommandQuaff,
@@ -41,12 +45,15 @@ func TestQuaffCuringHealsConsumesAndSchedules(t *testing.T) {
 	if err != nil || result.Spent != 10 || result.View.PlayerHP != want || result.View.CurrentAut != start+10 {
 		t.Fatalf("quaff = %+v, %v; want HP %d and time %d", result, err, want, start+10)
 	}
+
 	if g.world.EntityExists(akara.Entity(itemID)) {
 		t.Fatal("last curing potion remained after quaff")
 	}
+
 	if !reflect.DeepEqual(expectedRoller.States()["potion"], g.rng.States()["potion"]) {
 		t.Fatal("quaff used the wrong number of potion draws")
 	}
+
 	actor, _ := g.stores.Actors.Get(ratID(t, g))
 	if actor.NextAut <= int64(start) {
 		t.Fatalf("rat deadline = %d, want an action during quaff starting at %d", actor.NextAut, start)
@@ -67,6 +74,7 @@ func TestQuaffAtFullHPStillConsumesOnePotion(t *testing.T) {
 	if err != nil || first.Spent != 10 || first.View.PlayerHP != health.Max || item.Quantity != 1 {
 		t.Fatalf("first quaff = %+v, %v; item %+v", first, err, item)
 	}
+
 	second, err := g.Step(Command{
 		Kind:   CommandQuaff,
 		ItemID: itemID,
@@ -87,9 +95,11 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 	if err != nil || result.Spent != 0 || !strings.Contains(strings.ToLower(result.Events[0].Text), "carry") {
 		t.Fatalf("floor quaff = %+v, %v", result, err)
 	}
+
 	if g.currentAut != Aut(before.CurrentAut) || len(g.rng.States()) != len(before.RNG) {
 		t.Fatal("rejected floor quaff spent time or RNG")
 	}
+
 	carryCuring(t, g)
 	var mightID uint64
 	for _, entity := range g.stores.Items.Entities() {
@@ -100,6 +110,7 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 			break
 		}
 	}
+
 	before = g.Snapshot()
 	result, err = g.Step(Command{
 		Kind:   CommandQuaff,
@@ -108,6 +119,7 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 	if err != nil || result.Spent != 0 || !strings.Contains(strings.ToLower(result.Events[0].Text), "unavailable") {
 		t.Fatalf("unsupported quaff = %+v, %v", result, err)
 	}
+
 	if g.currentAut != Aut(before.CurrentAut) || !reflect.DeepEqual(g.rng.States(), before.RNG) {
 		t.Fatal("unsupported quaff spent time or RNG")
 	}
@@ -120,6 +132,7 @@ func TestQuaffSaveContinuation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer loaded.Close()
 	command := Command{
 		Kind:   CommandQuaff,

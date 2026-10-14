@@ -149,20 +149,24 @@ func (d ItemDef) clone() ItemDef {
 		copy.Flags = append([]ItemFlag(nil), copy.Flags...)
 		d.Armour = &copy
 	}
+
 	if d.Weapon != nil {
 		copy := *d.Weapon
 		copy.DamageFlags = append([]string(nil), copy.DamageFlags...)
 		copy.BrandWeights = append([]ItemBrandWeight(nil), copy.BrandWeights...)
 		d.Weapon = &copy
 	}
+
 	if d.Missile != nil {
 		copy := *d.Missile
 		d.Missile = &copy
 	}
+
 	if d.Food != nil {
 		copy := *d.Food
 		d.Food = &copy
 	}
+
 	return d
 }
 
@@ -170,6 +174,7 @@ func (d ItemDef) validate() error {
 	if d.ID == "" || d.Name == "" || d.Glyph == 0 {
 		return fmt.Errorf("item %s has empty ID, name, or glyph", d.ID)
 	}
+
 	prefix := map[string]string{
 		"OBJ_WEAPONS":    "WPN_",
 		"OBJ_ARMOUR":     "ARM_",
@@ -208,6 +213,7 @@ func (d ItemDef) validate() error {
 	}[d.Class]; !known || (prefix != "" && !strings.HasPrefix(d.ID, prefix)) {
 		return fmt.Errorf("item %s has invalid class %s", d.ID, d.Class)
 	}
+
 	switch d.Class {
 	case "OBJ_WEAPONS":
 		if d.Slot != "weapon" || !strings.HasPrefix(d.WeaponSkill, "SK_") || d.Stackable {
@@ -221,44 +227,59 @@ func (d ItemDef) validate() error {
 		if d.Slot != "" || d.WeaponSkill != "" {
 			return fmt.Errorf("item %s has invalid slot or skill", d.ID)
 		}
+
 		if (d.Class == "OBJ_MISSILES" || d.Class == "OBJ_POTIONS" || d.Class == "OBJ_SCROLLS") && !d.Stackable {
 			return fmt.Errorf("item %s must be stackable", d.ID)
 		}
 	}
+
 	if d.Naming.Text == "" || d.Naming.SourcePath == "" || d.Naming.SourceLine <= 0 {
 		return fmt.Errorf("item %s has invalid naming provenance", d.ID)
 	}
+
 	switch d.Naming.Kind {
 	case "static", "manual_skill", "corpse_monster":
 	default:
 		return fmt.Errorf("item %s has invalid naming kind %q", d.ID, d.Naming.Kind)
 	}
+
 	if d.ClassValue < 0 || d.SubtypeValue < 0 {
 		return fmt.Errorf("item %s has invalid numeric identity", d.ID)
 	}
+
 	propertyCount := 0
-	for _, present := range []bool{d.Armour != nil, d.Weapon != nil, d.Missile != nil, d.Food != nil} {
+	for _, present := range []bool{
+		d.Armour != nil,
+		d.Weapon != nil,
+		d.Missile != nil,
+		d.Food != nil,
+	} {
 		if present {
 			propertyCount++
 		}
 	}
+
 	if propertyCount > 1 || (d.Armour != nil && d.Class != "OBJ_ARMOUR") || (d.Weapon != nil &&
 		d.Class != "OBJ_WEAPONS") || (d.Missile != nil && d.Class != "OBJ_MISSILES") || (d.Food != nil &&
 		d.Class != "OBJ_FOOD") {
 		return fmt.Errorf("item %s has wrong class property shape", d.ID)
 	}
+
 	if (d.Food != nil && d.PropertyName == "") || (d.Food == nil && d.PropertyName != "") {
 		return fmt.Errorf("item %s has invalid food property name", d.ID)
 	}
+
 	if d.Weapon != nil {
 		previous := ""
 		for _, brand := range d.Weapon.BrandWeights {
 			if brand.BrandID <= previous || brand.Weight < 0 {
 				return fmt.Errorf("item %s has invalid brand weights", d.ID)
 			}
+
 			previous = brand.BrandID
 		}
 	}
+
 	return nil
 }
 
@@ -266,15 +287,19 @@ func (m ItemIdentityManifest) Validate() error {
 	if m.SchemaVersion != 1 || m.SourceRevision == "" || m.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported item identity manifest metadata")
 	}
+
 	if _, err := validSourceFiles(m.SourceFiles, "item identity"); err != nil {
 		return err
 	}
+
 	if len(m.DefinitionsSHA256) != 64 {
 		return fmt.Errorf("item identity manifest has no definitions hash")
 	}
+
 	if _, err := hex.DecodeString(m.DefinitionsSHA256); err != nil {
 		return fmt.Errorf("invalid item definitions hash: %w", err)
 	}
+
 	seen := map[string]bool{}
 	previousClass, previousSubtype := -1, -1
 	for _, identity := range m.Identities {
@@ -282,19 +307,24 @@ func (m ItemIdentityManifest) Validate() error {
 			identity.SubtypeValue < 0 || identity.SourcePath == "" || identity.SourceLine <= 0 || seen[identity.ID] {
 			return fmt.Errorf("invalid or duplicate item identity %q", identity.ID)
 		}
+
 		seen[identity.ID] = true
 		if identity.ClassValue < previousClass || (identity.ClassValue == previousClass &&
 			identity.SubtypeValue <= previousSubtype) {
 			return fmt.Errorf("item identities are not in numeric class/subtype order")
 		}
+
 		previousClass, previousSubtype = identity.ClassValue, identity.SubtypeValue
 	}
+
 	for _, alias := range m.Aliases {
 		if alias.ID == "" || alias.TargetID == "" || alias.SourcePath == "" || alias.SourceLine <= 0 || seen[alias.ID] {
 			return fmt.Errorf("invalid or duplicate item alias %q", alias.ID)
 		}
+
 		seen[alias.ID] = true
 	}
+
 	for _, symbols := range [][]string{
 		m.Vocabulary.Slots,
 		m.Vocabulary.Skills,
@@ -307,12 +337,14 @@ func (m ItemIdentityManifest) Validate() error {
 		if !sort.StringsAreSorted(symbols) {
 			return fmt.Errorf("unsorted item vocabulary")
 		}
+
 		for i, symbol := range symbols {
 			if symbol == "" || (i > 0 && symbol == symbols[i-1]) {
 				return fmt.Errorf("duplicate or empty item vocabulary symbol %q", symbol)
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -320,23 +352,28 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 	if err := manifest.Validate(); err != nil {
 		return err
 	}
+
 	if a.SchemaVersion != 1 || a.SourceRevision != manifest.SourceRevision ||
 		a.TagMajorVersion != manifest.TagMajorVersion {
 		return fmt.Errorf("item artifact metadata differs from identity manifest")
 	}
+
 	files, err := validSourceFiles(a.SourceFiles, "item")
 	if err != nil {
 		return err
 	}
+
 	for _, file := range manifest.SourceFiles {
 		if files[file.Path] != file.SHA256 {
 			return fmt.Errorf("item artifact source hash differs for %s", file.Path)
 		}
 	}
+
 	identities := make(map[string]ItemIdentity, len(manifest.Identities))
 	for _, identity := range manifest.Identities {
 		identities[identity.ID] = identity
 	}
+
 	seen := map[string]bool{}
 	previousClass, previousSubtype := -1, -1
 	for _, item := range a.Items {
@@ -346,43 +383,54 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 			identity.ExplicitlyRemoved != item.ExplicitlyRemoved {
 			return fmt.Errorf("item %s differs from independent identity manifest", item.ID)
 		}
+
 		if err := item.validate(); err != nil {
 			return err
 		}
+
 		if item.ClassValue < previousClass || (item.ClassValue == previousClass && item.SubtypeValue <= previousSubtype) {
 			return fmt.Errorf("item definitions are not in numeric class/subtype order")
 		}
+
 		previousClass, previousSubtype = item.ClassValue, item.SubtypeValue
 		if item.Name != item.Naming.Text || item.Naming.Kind == "" || files[item.Naming.SourcePath] == "" {
 			return fmt.Errorf("item %s has invalid naming evidence", item.ID)
 		}
+
 		if item.Armour != nil || item.Weapon != nil || item.Missile != nil || item.Food != nil {
 			if files[item.Evidence.PropertySource] == "" || item.Evidence.PropertyLine <= 0 {
 				return fmt.Errorf("item %s has invalid property evidence", item.ID)
 			}
 		}
+
 		if err := item.validateVocabulary(manifest.Vocabulary); err != nil {
 			return err
 		}
+
 		seen[item.ID] = true
 	}
+
 	for _, identity := range manifest.Identities {
 		if !identity.ExplicitlyRemoved && !seen[identity.ID] {
 			return fmt.Errorf("item %s is missing a definition", identity.ID)
 		}
+
 		if (identity.ClassID == "OBJ_WEAPONS" || identity.ClassID == "OBJ_ARMOUR" ||
 			identity.ClassID == "OBJ_MISSILES" || identity.ClassID == "OBJ_FOOD") && !seen[identity.ID] {
 			return fmt.Errorf("item %s is missing its property row", identity.ID)
 		}
 	}
+
 	encoded, err := json.Marshal(a.Items)
 	if err != nil {
 		return fmt.Errorf("encode item definitions for validation: %w", err)
 	}
+
 	hash := sha256.Sum256(encoded)
 	if hex.EncodeToString(hash[:]) != manifest.DefinitionsSHA256 {
 		return fmt.Errorf("item definitions differ from identity manifest hash")
 	}
+
 	return nil
 }
 
@@ -398,6 +446,7 @@ func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 			!vocabularyHas(v.Sizes, d.Armour.FitMinID) || !vocabularyHas(v.Sizes, d.Armour.FitMaxID) {
 			return fmt.Errorf("item %s has incomplete or unknown armour properties", d.ID)
 		}
+
 		for _, flag := range d.Armour.Flags {
 			if !vocabularyHas(v.ArmourFlags, flag.ID) || flag.Level == 0 {
 				return fmt.Errorf("item %s has unknown armour flag %s", d.ID, flag.ID)
@@ -409,11 +458,13 @@ func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 			!vocabularyHas(v.Ammo, d.Weapon.AmmoID) || d.Weapon.SkillID != d.WeaponSkill {
 			return fmt.Errorf("item %s has incomplete or unknown weapon properties", d.ID)
 		}
+
 		for _, flag := range d.Weapon.DamageFlags {
 			if !vocabularyHas(v.DamageFlags, flag) {
 				return fmt.Errorf("item %s has unknown damage flag %s", d.ID, flag)
 			}
 		}
+
 		for _, brand := range d.Weapon.BrandWeights {
 			if !vocabularyHas(v.Brands, brand.BrandID) {
 				return fmt.Errorf("item %s has unknown brand %s", d.ID, brand.BrandID)
@@ -432,6 +483,7 @@ func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 			return fmt.Errorf("item %s has invented class properties", d.ID)
 		}
 	}
+
 	return nil
 }
 
@@ -440,6 +492,7 @@ func (c Catalog) ItemIdentity(id string) (ItemIdentity, error) {
 	if !found {
 		return ItemIdentity{}, fmt.Errorf("unknown item identity %q", id)
 	}
+
 	return identity, nil
 }
 
@@ -448,6 +501,7 @@ func (c Catalog) ItemIDs() []string {
 	for id := range c.itemIdentities {
 		ids = append(ids, id)
 	}
+
 	sort.Strings(ids)
 	return ids
 }

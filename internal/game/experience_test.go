@@ -13,6 +13,7 @@ func TestPlayerRatKillAwardsOneExperienceOnlyOnce(t *testing.T) {
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
+
 	current, _ := g.stores.Health.Get(rat)
 	current.Current = 1
 	playerHealth, _ := g.stores.Health.Get(g.player)
@@ -25,13 +26,16 @@ func TestPlayerRatKillAwardsOneExperienceOnlyOnce(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+
 	if g.world.EntityExists(rat) {
 		t.Fatal("rat survived 100 attacks")
 	}
+
 	progress, found := g.stores.Progression.Get(g.player)
 	if !found || progress.TotalXP != 1 || g.View().ExperienceLevel != 1 || g.View().NextLevelPercent != 11 {
 		t.Fatalf("rat kill progression %+v found %v view %+v", progress, found, g.View())
 	}
+
 	if _, err := g.Step(Command{Kind: CommandWait}); err != nil || progress.TotalXP != 1 {
 		t.Fatalf("rat kill credited twice: XP %+v, err %v", progress, err)
 	}
@@ -45,6 +49,7 @@ func TestPreDeadRatCleanupDoesNotAwardExperience(t *testing.T) {
 	if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
 		t.Fatal(err)
 	}
+
 	progress, _ := g.stores.Progression.Get(g.player)
 	if progress.TotalXP != 0 {
 		t.Fatalf("pre-dead rat awarded %d XP", progress.TotalXP)
@@ -57,18 +62,22 @@ func TestExperienceSaveRoundTripAndOlderFieldDefault(t *testing.T) {
 	if err := g.levels[1].RemoveActor(rat); err != nil {
 		t.Fatal(err)
 	}
+
 	if !g.world.DestroyEntity(rat) {
 		t.Fatal("could not build killed-rat save fixture")
 	}
+
 	progress, _ := g.stores.Progression.Get(g.player)
 	progress.TotalXP = 1
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatal("XP snapshot changed on restore")
 	}
+
 	loaded.Close()
 	old := g.Snapshot()
 	for i := range old.Entities {
@@ -76,10 +85,12 @@ func TestExperienceSaveRoundTripAndOlderFieldDefault(t *testing.T) {
 			old.Entities[i].Progression = nil
 		}
 	}
+
 	loaded, err = Restore(old, testCatalog(t))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer loaded.Close()
 	oldProgress, found := loaded.stores.Progression.Get(loaded.player)
 	if !found || oldProgress.TotalXP != 0 {
@@ -96,10 +107,12 @@ func TestRestoreRejectsClaimedRatXPWhileRatAlive(t *testing.T) {
 			bad.Entities[i].Progression.TotalXP = 1
 		}
 	}
+
 	if loaded, err := Restore(bad, testCatalog(t)); err == nil {
 		loaded.Close()
 		t.Fatal("restored XP already awarded for a living rat")
 	}
+
 	if !reflect.DeepEqual(before, g.Snapshot()) {
 		t.Fatal("failed restore changed the live game")
 	}
@@ -114,6 +127,7 @@ func TestExperienceRestoreRejectsMalformedProgression(t *testing.T) {
 				bad.Entities[i].Progression.TotalXP = xp
 			}
 		}
+
 		if restored, err := Restore(bad, testCatalog(t)); err == nil {
 			restored.Close()
 			t.Fatalf("restored impossible fixed-scenario XP %d", xp)

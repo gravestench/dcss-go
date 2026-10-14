@@ -13,6 +13,7 @@ func (r *mightRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "potion" || bound != 40 {
 		return 0, fmt.Errorf("unexpected %s/%d", stream, bound)
 	}
+
 	r.calls++
 	return r.value, nil
 }
@@ -93,6 +94,7 @@ func TestMightRulesRejectInvalidStateBeforeDrawing(t *testing.T) {
 			t.Fatalf("old %d accepted or drew", old)
 		}
 	}
+
 	if _, _, err := DecayMight(1, -1); err == nil {
 		t.Fatal("negative cost accepted")
 	}

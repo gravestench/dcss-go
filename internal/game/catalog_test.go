@@ -12,5 +12,6 @@ func testCatalog(t *testing.T) content.Catalog {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	return catalog
 }

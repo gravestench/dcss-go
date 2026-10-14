@@ -53,6 +53,7 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 	if !found {
 		return 0, fmt.Errorf("unsupported ordinary animal %s", animal.ID)
 	}
+
 	if animal.HD != 1 ||
 		animal.AverageHP10x != profile.AverageHP10x ||
 		animal.Speed != profile.Speed ||
@@ -67,11 +68,13 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 		slices.Contains(animal.Flags, "M_FAST_REGEN") || maxHP < profile.MinHP || maxHP > profile.MaxHP {
 		return 0, fmt.Errorf("unsupported %s experience inputs at %d HP", animal.ID, maxHP)
 	}
+
 	for _, extra := range animal.Attacks[1:] {
 		if extra.TypeID != "AT_NONE" || extra.Damage != 0 {
 			return 0, fmt.Errorf("unsupported extra %s attack %+v", animal.ID, extra)
 		}
 	}
+
 	return OrdinaryMonsterExperience(OrdinaryMonsterXPInput{
 		HitDice:      animal.HD,
 		MaxHP:        maxHP,

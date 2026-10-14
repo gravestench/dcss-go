@@ -22,12 +22,19 @@ end`
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	joined := strings.Join(lines, "\n")
-	for _, text := range []string{"start", "old", "nested_old", "end"} {
+	for _, text := range []string{
+		"start",
+		"old",
+		"nested_old",
+		"end",
+	} {
 		if !strings.Contains(joined, text) {
 			t.Fatalf("missing %q in %q", text, joined)
 		}
 	}
+
 	for _, text := range []string{"future", "new"} {
 		if strings.Contains(joined, text) {
 			t.Fatalf("inactive %q in %q", text, joined)
@@ -54,6 +61,7 @@ other
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	joined := strings.Join(lines, "\n")
 	if !strings.Contains(joined, "current") || strings.Contains(joined, "future") || strings.Contains(joined, "other") {
 		t.Fatalf("wrong active branch: %q", joined)
@@ -70,9 +78,11 @@ func TestActiveEnumIDsRetainsConcreteTag34Members(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if len(ids) != 2 {
 		t.Fatalf("active IDs = %v", ids)
 	}
+
 	for _, id := range []string{"JOB_FIGHTER", "JOB_PRIEST"} {
 		if _, found := ids[id]; !found {
 			t.Fatalf("missing %s", id)
@@ -87,12 +97,14 @@ func TestTag34NumberedLinesPreservesQuotedCommentsAndLocations(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	var got []Line
 	for _, line := range lines {
 		if strings.TrimSpace(line.Text) != "" {
 			got = append(got, line)
 		}
 	}
+
 	if len(got) != 3 || got[1].Number != 5 || strings.TrimSpace(got[1].Text) != `"rat, // friend"` ||
 		got[2].Number != 7 || strings.TrimSpace(got[2].Text) != "active" {
 		t.Fatalf("unexpected numbered lines: %#v", got)

@@ -28,16 +28,19 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 		len(v.SourceFiles) != len(a.SourceFiles) {
 		return fmt.Errorf("monster vocabulary metadata or coverage differs")
 	}
+
 	for i, file := range v.SourceFiles {
 		if file != a.SourceFiles[i] {
 			return fmt.Errorf("monster vocabulary source hash differs for %s", file.Path)
 		}
 	}
+
 	for i, identity := range v.Identities {
 		if identity.ID != a.Monsters[i].ID || identity.Status != a.Monsters[i].Status {
 			return fmt.Errorf("monster identity/status differs at %s", identity.ID)
 		}
 	}
+
 	needed := []string{
 		"attack_type",
 		"attack_flavour",
@@ -60,25 +63,31 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 		if len(values) == 0 || !slices.IsSorted(values) {
 			return fmt.Errorf("missing or unsorted monster vocabulary %s", category)
 		}
+
 		set := make(map[string]bool, len(values))
 		for _, value := range values {
 			if value == "" || set[value] {
 				return fmt.Errorf("bad monster vocabulary %s: %s", category, value)
 			}
+
 			set[value] = true
 		}
+
 		sets[category] = set
 	}
+
 	check := func(category, value, monsterID string) error {
 		if !sets[category][value] {
 			return fmt.Errorf("monster %s has unknown %s %q", monsterID, category, value)
 		}
+
 		return nil
 	}
 	for _, m := range a.Monsters {
 		if m.Status != MonsterDefined {
 			continue
 		}
+
 		for _, pair := range []struct {
 			category, value string
 		}{
@@ -123,36 +132,44 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 				return err
 			}
 		}
+
 		for _, id := range m.Flags {
 			if err := check("class_flag", id, m.ID); err != nil {
 				return err
 			}
 		}
+
 		for _, id := range m.Holiness {
 			if err := check("holiness", id, m.ID); err != nil {
 				return err
 			}
 		}
+
 		for _, r := range m.Resistances {
 			if err := check("resistance", r.ID, m.ID); err != nil {
 				return err
 			}
 		}
+
 		for _, attack := range m.Attacks {
 			if err := check("attack_type", attack.TypeID, m.ID); err != nil {
 				return err
 			}
+
 			if err := check("attack_flavour", attack.FlavourID, m.ID); err != nil {
 				return err
 			}
 		}
+
 		for _, tile := range []string{m.Tile.ID, m.CorpseTileID} {
 			if tile == "0" {
 				continue
 			}
+
 			if tile != "TILE_ERROR" && !strings.HasPrefix(tile, "TILEP_") && !strings.HasPrefix(tile, "TILE_") {
 				return fmt.Errorf("monster %s has invalid tile %q", m.ID, tile)
 			}
+
 			for _, r := range tile {
 				if !(r >= 'A' && r <= 'Z') && !(r >= '0' && r <= '9') && r != '_' {
 					return fmt.Errorf("monster %s has invalid tile %q", m.ID, tile)
@@ -160,5 +177,6 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 			}
 		}
 	}
+
 	return nil
 }

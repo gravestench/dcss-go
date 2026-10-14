@@ -21,16 +21,19 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	var fixture goldenFile
 	if err := json.Unmarshal(raw, &fixture); err != nil {
 		t.Fatal(err)
 	}
+
 	if fixture.SourceRevision != "e60ba3568b0c26447ad36ec5c7b963eb04b2778f" ||
 		fixture.SourcePath != "crawl-ref/source/dat/des/test/suite-los.des" ||
 		fixture.SourceSHA256 != "850a05146a96e8d778c3f666ee07d7b6a056afc499081e2ca30ecd631380ed10" ||
 		len(fixture.Maps) != 15 {
 		t.Fatalf("bad source provenance or map count: %+v", fixture)
 	}
+
 	for _, mapCase := range fixture.Maps {
 		t.Run(mapCase.Name, func(t *testing.T) {
 			for _, mirrored := range []bool{false, true} {
@@ -40,6 +43,7 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 					origin = 9
 					size = 19
 				}
+
 				rows := make([]string, size)
 				want := make([]bool, size*size)
 				for y := 0; y < size; y++ {
@@ -51,28 +55,35 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 							if sx < 0 {
 								sx = -sx
 							}
+
 							sy = y - origin
 							if sy < 0 {
 								sy = -sy
 							}
 						}
+
 						symbol := mapCase.Rows[sy][sx]
 						if symbol == '@' || symbol == '.' || symbol == 'w' {
 							row[x] = '.'
 						} else {
 							row[x] = '#'
 						}
+
 						want[y*size+x] = symbol == '@' || symbol == '.' || symbol == 'x'
 					}
+
 					rows[y] = string(row)
 				}
+
 				got, err := Compute(rows, origin, origin, 7)
 				if err != nil {
 					t.Fatal(err)
 				}
+
 				if len(got) != len(want) {
 					t.Fatalf("mask length %d, want %d", len(got), len(want))
 				}
+
 				for i, v := range want {
 					if got[i] != v {
 						t.Fatalf("mirrored=%t cell=(%d,%d) got %t want %t", mirrored, i%size, i/size, got[i], v)
@@ -160,17 +171,30 @@ func TestOpenTerrainChebyshevRange(t *testing.T) {
 	for y := range rows {
 		rows[y] = "..................."
 	}
+
 	visible, err := Compute(rows, 9, 9, 7)
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, offset := range [][2]int{{7, 7}, {-7, -7}, {7, -7}, {-7, 7}} {
+
+	for _, offset := range [][2]int{
+		{7, 7},
+		{-7, -7},
+		{7, -7},
+		{-7, 7},
+	} {
 		x, y := 9+offset[0], 9+offset[1]
 		if !visible[y*19+x] {
 			t.Fatalf("(%d,%d) should be visible", x, y)
 		}
 	}
-	for _, offset := range [][2]int{{8, 0}, {-8, 0}, {0, 8}, {0, -8}} {
+
+	for _, offset := range [][2]int{
+		{8, 0},
+		{-8, 0},
+		{0, 8},
+		{0, -8},
+	} {
 		x, y := 9+offset[0], 9+offset[1]
 		if visible[y*19+x] {
 			t.Fatalf("(%d,%d) should be hidden", x, y)

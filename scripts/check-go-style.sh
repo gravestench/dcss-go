@@ -19,3 +19,5 @@ if [ -n "$unformatted" ]; then
 	printf 'Run gofmt on:\n%s\n' "$unformatted"
 	exit 1
 fi
+
+go run ./scripts/check-go-readability.go

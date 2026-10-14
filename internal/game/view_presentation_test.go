@@ -7,6 +7,7 @@ func TestViewPresentationIdentifiesEntitiesAndItemClass(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer g.Close()
 	view := g.View()
 	var player, rat, potion bool
@@ -20,9 +21,11 @@ func TestViewPresentationIdentifiesEntitiesAndItemClass(t *testing.T) {
 			potion = entity.Role == "item" && entity.Name != "" && entity.Glyph != 0
 		}
 	}
+
 	if !player || !rat || !potion {
 		t.Fatalf("entity presentation missing: %+v", view.Entities)
 	}
+
 	for _, item := range view.Inventory {
 		if item.KindID == "WPN_RAPIER" && item.Class != "OBJ_WEAPONS" {
 			t.Fatalf("rapier class: %+v", item)

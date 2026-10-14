@@ -13,6 +13,7 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for _, tc := range []struct {
 		weapon, skill string
 	}{
@@ -30,6 +31,7 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			if got.Attributes != (Attributes{
 				Strength:     16,
 				Intelligence: 8,
@@ -37,6 +39,7 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 			}) || got.MaxHP != 18 || got.MaxMP != 1 {
 				t.Fatalf("profile = %+v, want 16/8/12, HP 18, MP 1", got)
 			}
+
 			wantSkills := []Skill{
 				{
 					ID:     "SK_FIGHTING",
@@ -62,6 +65,7 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 			if !reflect.DeepEqual(got.Skills, wantSkills) {
 				t.Fatalf("skills = %+v, want %+v", got.Skills, wantSkills)
 			}
+
 			got.Skills[0].Points = -1
 			again, err := BuildStartProfile(catalog, "SP_HUMAN", "JOB_FIGHTER", tc.weapon)
 			if err != nil || !reflect.DeepEqual(again.Skills, wantSkills) {
@@ -79,6 +83,7 @@ func TestScaledStartingSkillsRetainFractionalProgress(t *testing.T) {
 	}, 100); got != 300 {
 		t.Fatalf("Fighting at scale 100 = %d, want 300", got)
 	}
+
 	if got := ScaledSkill(Skill{
 		ID:     "SK_MACES_FLAILS",
 		Level:  2,
@@ -86,6 +91,7 @@ func TestScaledStartingSkillsRetainFractionalProgress(t *testing.T) {
 	}, 100); got != 200 {
 		t.Fatalf("weapon at scale 100 = %d, want 200", got)
 	}
+
 	if got := ScaledSkill(Skill{
 		ID:     "SK_UNARMED_COMBAT",
 		Level:  2,
@@ -100,6 +106,7 @@ func TestBuildStartProfileRejectsBadChoice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for _, tc := range []struct {
 		species, job, weapon string
 	}{

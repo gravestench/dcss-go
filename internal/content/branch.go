@@ -56,24 +56,35 @@ func (b BranchDef) validate() error {
 		b.AmbientNoise == "" {
 		return fmt.Errorf("invalid branch %q", b.ID)
 	}
+
 	if b.MinDepth > b.MaxDepth || b.MaxDepth < -1 {
 		return fmt.Errorf("invalid branch depth for %s", b.ID)
 	}
-	for _, token := range []string{b.EntryFeature, b.ExitFeature, b.EscapeFeature, b.FloorColor, b.RockColor} {
+
+	for _, token := range []string{
+		b.EntryFeature,
+		b.ExitFeature,
+		b.EscapeFeature,
+		b.FloorColor,
+		b.RockColor,
+	} {
 		if !branchToken.MatchString(token) {
 			return fmt.Errorf("invalid branch token %q for %s", token, b.ID)
 		}
 	}
+
 	for _, flag := range b.Flags {
 		if flag == "" {
 			return fmt.Errorf("empty branch flag for %s", b.ID)
 		}
 	}
+
 	for _, runeID := range b.Runes {
 		if !strings.HasPrefix(runeID, "RUNE_") {
 			return fmt.Errorf("invalid rune %q for %s", runeID, b.ID)
 		}
 	}
+
 	return nil
 }
 
@@ -82,20 +93,25 @@ func (a BranchArtifact) Validate() error {
 		len(a.Branches) == 0 || len(a.SourceFiles) != 3 {
 		return fmt.Errorf("invalid branch artifact metadata")
 	}
+
 	seen := make(map[string]bool, len(a.Branches))
 	for i, branch := range a.Branches {
 		if err := branch.validate(); err != nil {
 			return err
 		}
+
 		if branch.NumericID != i || seen[branch.ID] {
 			return fmt.Errorf("branch identity/order mismatch at %d", i)
 		}
+
 		seen[branch.ID] = true
 	}
+
 	for _, branch := range a.Branches {
 		if branch.ParentID != "NUM_BRANCHES" && !seen[branch.ParentID] {
 			return fmt.Errorf("branch %s has unknown parent %s", branch.ID, branch.ParentID)
 		}
 	}
+
 	return nil
 }

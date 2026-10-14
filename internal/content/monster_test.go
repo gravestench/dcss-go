@@ -93,33 +93,46 @@ func TestMonsterArtifactValidation(t *testing.T) {
 	if err := base.Validate(); err != nil {
 		t.Fatalf("valid monster artifact rejected: %v", err)
 	}
+
 	cases := []struct {
 		name string
 		edit func(*MonsterArtifact)
 	}{
 		{
 			name: "duplicate",
-			edit: func(a *MonsterArtifact) { a.Monsters = append(a.Monsters, rat) },
+			edit: func(a *MonsterArtifact) {
+				a.Monsters = append(a.Monsters, rat)
+			},
 		},
 		{
 			name: "unsorted",
-			edit: func(a *MonsterArtifact) { a.Monsters = append(a.Monsters, testMonster("MONS_AAA")) },
+			edit: func(a *MonsterArtifact) {
+				a.Monsters = append(a.Monsters, testMonster("MONS_AAA"))
+			},
 		},
 		{
 			name: "bad status",
-			edit: func(a *MonsterArtifact) { a.Monsters[0].Status = "bogus" },
+			edit: func(a *MonsterArtifact) {
+				a.Monsters[0].Status = "bogus"
+			},
 		},
 		{
 			name: "missing attack",
-			edit: func(a *MonsterArtifact) { a.Monsters[0].Attacks[0].TypeID = "" },
+			edit: func(a *MonsterArtifact) {
+				a.Monsters[0].Attacks[0].TypeID = ""
+			},
 		},
 		{
 			name: "removed live data",
-			edit: func(a *MonsterArtifact) { a.Monsters[0].Status = MonsterRemoved },
+			edit: func(a *MonsterArtifact) {
+				a.Monsters[0].Status = MonsterRemoved
+			},
 		},
 		{
 			name: "enum-only live data",
-			edit: func(a *MonsterArtifact) { a.Monsters[0].Status = MonsterEnumOnly },
+			edit: func(a *MonsterArtifact) {
+				a.Monsters[0].Status = MonsterEnumOnly
+			},
 		},
 	}
 	for _, tc := range cases {
@@ -156,6 +169,7 @@ func TestMonsterCatalogCopiesAndStatuses(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	first.Flags[0] = "M_CANT_SPAWN"
 	first.Holiness[0] = "MH_UNDEAD"
 	first.Resistances[0].Level = 3
@@ -163,19 +177,23 @@ func TestMonsterCatalogCopiesAndStatuses(t *testing.T) {
 	if !reflect.DeepEqual(ids, []string{"MONS_BEAR", "MONS_BUMBLEBEE", "MONS_RAT"}) {
 		t.Fatalf("unsorted monster IDs: %v", ids)
 	}
+
 	ids[0] = "changed"
 	again, err := c.Monster("MONS_RAT")
 	if err != nil || !reflect.DeepEqual(again, rat) {
 		t.Fatalf("catalog changed through returned monster: %+v, %v", again, err)
 	}
+
 	for _, id := range []string{"MONS_BUMBLEBEE", "MONS_BEAR"} {
 		if _, err := c.Monster(id); err == nil {
 			t.Fatalf("non-live monster %s returned as a definition", id)
 		}
+
 		if _, err := c.MonsterStatus(id); err != nil {
 			t.Fatalf("status for %s unavailable: %v", id, err)
 		}
 	}
+
 	if _, err := c.MonsterStatus("MONS_UNKNOWN"); err == nil {
 		t.Fatal("unknown monster has a status")
 	}

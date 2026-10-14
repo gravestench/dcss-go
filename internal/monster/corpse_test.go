@@ -16,6 +16,7 @@ func (r *corpseRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "corpse" || len(r.rolls) == 0 || r.rolls[0].bound != bound {
 		return 0, fmt.Errorf("unexpected %s roll %d: %+v", stream, bound, r.rolls)
 	}
+
 	value := r.rolls[0].value
 	r.rolls = r.rolls[1:]
 	return value, nil
@@ -87,10 +88,12 @@ func TestRatCorpseDecayAndSkeleton(t *testing.T) {
 	if err != nil || !alive || kind != "CORPSE_BODY" || freshness != 100 || appearance != 0 {
 		t.Fatalf("first decay %q %d %d %v %v", kind, freshness, appearance, alive, err)
 	}
+
 	kind, freshness, appearance, alive, err = AgeCorpse(r, kind, freshness, 2000)
 	if err != nil || !alive || kind != "CORPSE_SKELETON" || freshness != 110 || appearance != 10 || len(r.rolls) != 0 {
 		t.Fatalf("skeleton %q %d %d %v %v", kind, freshness, appearance, alive, err)
 	}
+
 	kind, freshness, _, alive, err = AgeCorpse(r, kind, freshness, 2200)
 	if err != nil || alive {
 		t.Fatalf("expired skeleton %q %d %v %v", kind, freshness, alive, err)

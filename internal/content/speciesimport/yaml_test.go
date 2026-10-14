@@ -28,15 +28,19 @@ func TestParseYAMLHumanDefaults(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if tag != 0 || s.ID != "SP_HUMAN" || s.ShortName != "Hu" || !s.Selectable || s.XP != 1 || s.MR != 3 {
 		t.Fatalf("wrong Human identity/defaults: %+v, tag %d", s, tag)
 	}
+
 	if a := s.Aptitudes["SK_FIGHTING"]; !a.Allowed || a.Value != 0 {
 		t.Fatalf("omitted fighting aptitude is not allowed zero: %+v", a)
 	}
+
 	if a := s.Aptitudes["SK_SPELLCASTING"]; !a.Allowed || a.Value != 3 {
 		t.Fatalf("explicit spellcasting aptitude lost: %+v", a)
 	}
+
 	if s.Habitat != "HT_LAND" || s.UndeadType != "US_ALIVE" || s.Size != "SIZE_MEDIUM" || len(s.LevelUpStats) != 3 {
 		t.Fatalf("wrong environment/stat defaults: %+v", s)
 	}
@@ -51,6 +55,7 @@ func TestParseYAMLDeepElfSpellcasting(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if s.ID != "SP_DEEP_ELF" || s.ShortName != "DE" || s.Aptitudes["SK_SPELLCASTING"].Value != 3 {
 		t.Fatalf("Deep Elf identity or spellcasting lost: %+v", s)
 	}
@@ -66,9 +71,11 @@ func TestParseYAMLFelidUnusableAndMutations(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if a := s.Aptitudes["SK_SHORT_BLADES"]; a.Allowed || a.Value != 0 {
 		t.Fatalf("False aptitude became usable: %+v", a)
 	}
+
 	if len(s.Mutations) != 2 || s.Mutations[0].Level != 1 || s.Mutations[1].Level != 6 {
 		t.Fatalf("nested mutation levels lost: %+v", s.Mutations)
 	}
@@ -97,10 +104,12 @@ altar_action: kneel at
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if tag != 34 || s.ShortName != "Hm" || s.Habitat != "HT_WATER" ||
 		s.UndeadType != "US_SEMI_UNDEAD" || s.Size != "SIZE_SMALL" {
 		t.Fatalf("tag/optional fields lost: %+v tag %d", s, tag)
 	}
+
 	if len(s.Flags) != 1 || s.Flags[0] != "SPF_NO_HAIR" || len(s.LevelUpStats) != 1 ||
 		s.LevelUpStats[0] != "int" || len(s.FakeMutations) != 1 ||
 		s.FakeMutations[0].Short != "short description" || len(s.RecommendedWeapons) != 1 || s.AltarAction != "kneel at" {

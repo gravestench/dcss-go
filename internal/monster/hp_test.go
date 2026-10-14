@@ -16,6 +16,7 @@ func (s *scriptedRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "monster_hp" || len(s.rolls) == 0 || s.rolls[0].bound != bound {
 		return 0, fmt.Errorf("unexpected roll %s/%d, remaining %+v", stream, bound, s.rolls)
 	}
+
 	value := s.rolls[0].value
 	s.rolls = s.rolls[1:]
 	return value, nil
@@ -97,6 +98,7 @@ func sevenRolls(bound, value int) []scriptedRoll {
 			value: value,
 		}
 	}
+
 	return rolls
 }
 
@@ -106,9 +108,11 @@ func TestRollHPRejectsInvalidInputsAndRolls(t *testing.T) {
 			t.Fatalf("average %d accepted", avg)
 		}
 	}
+
 	if _, err := RollHP(nil, 25); err == nil {
 		t.Fatal("nil roller accepted")
 	}
+
 	if _, err := RollHP(&scriptedRoller{
 		rolls: []scriptedRoll{
 			{

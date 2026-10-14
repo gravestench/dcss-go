@@ -23,6 +23,7 @@ func RestoreRNGStreams(seed uint64, states map[string]uint64) *RNGStreams {
 	for name, state := range states {
 		copyStates[name] = state
 	}
+
 	return &RNGStreams{
 		seed:   seed,
 		states: copyStates,
@@ -34,6 +35,7 @@ func (r *RNGStreams) States() map[string]uint64 {
 	for name, state := range r.states {
 		copyStates[name] = state
 	}
+
 	return copyStates
 }
 
@@ -44,6 +46,7 @@ func (r *RNGStreams) next(name string) uint64 {
 		_, _ = hash.Write([]byte(name))
 		state = r.seed ^ hash.Sum64()
 	}
+
 	state += 0x9e3779b97f4a7c15
 	r.states[name] = state
 	z := state
@@ -56,6 +59,7 @@ func (r *RNGStreams) Intn(name string, n int) (int, error) {
 	if name == "" || n <= 0 {
 		return 0, fmt.Errorf("RNG stream name and positive bound required")
 	}
+
 	bound := uint64(n)
 	threshold := -bound % bound
 	for {

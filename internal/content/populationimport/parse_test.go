@@ -10,6 +10,7 @@ func TestParseDungeonRowsKeepsDuplicatesAndSourceLines(t *testing.T) {
 		rows[1].MonsterID != "MONS_RAT" || rows[0].SourceLine != 4 || rows[1].SourceLine != 5 {
 		t.Fatalf("parsed rows %+v, %v", rows, err)
 	}
+
 	for _, bad := range []string{
 		"static const vector<pop_entry> population[] =\n{\n{ // Dungeon\n  { 1, bad, 1000, FLAT, MONS_RAT },\n},\n};\n",
 		"static const vector<pop_entry> population[] =\n{\n{ // Dungeon\n  { 1, 3, " +

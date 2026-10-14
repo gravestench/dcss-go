@@ -17,6 +17,7 @@ func (s *scriptedRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "melee" || len(s.rolls) == 0 || s.rolls[0].bound != bound {
 		return 0, fmt.Errorf("unexpected roll %q bound %d, remaining %+v", stream, bound, s.rolls)
 	}
+
 	value := s.rolls[0].value
 	s.rolls = s.rolls[1:]
 	return value, nil
@@ -46,6 +47,7 @@ func TestHumanFighterDefenseUsesEquippedScaleMailAndBuckler(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if got.EV != 5 || got.AC != 6 || got.ShieldClass != 9 || got.GDR != 25 {
 		t.Fatalf("Human/Fighter defense = %+v, want EV 5 AC 6 SH 9 GDR 25", got)
 	}
@@ -137,6 +139,7 @@ func TestRatBiteAutomaticMissAndHit(t *testing.T) {
 	if err != nil || got.Kind != Miss || len(miss.rolls) != 0 {
 		t.Fatalf("automatic miss = %+v, %v, rolls %+v", got, err, miss.rolls)
 	}
+
 	hit := &scriptedRoller{
 		rolls: []scriptedRoll{
 			{

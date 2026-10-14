@@ -14,6 +14,7 @@ func (m MonsterDef) MarshalJSON() ([]byte, error) {
 		type record MonsterDef
 		return json.Marshal(record(m))
 	}
+
 	return json.Marshal(struct {
 		ID         string        `json:"id"`
 		Status     MonsterStatus `json:"status"`
@@ -119,6 +120,7 @@ func (m MonsterDef) validate() error {
 	if !strings.HasPrefix(m.ID, "MONS_") || m.SourcePath == "" || m.SourceLine < 0 {
 		return fmt.Errorf("invalid monster identity %q", m.ID)
 	}
+
 	switch m.Status {
 	case MonsterDefined:
 		if m.SourceLine == 0 || m.ColourID == "" || m.GenusID == "" || m.SpeciesID == "" ||
@@ -127,21 +129,25 @@ func (m MonsterDef) validate() error {
 			m.Tile.VariationID == "" || m.CorpseTileID == "" || len(m.Holiness) == 0 {
 			return fmt.Errorf("incomplete monster definition %s", m.ID)
 		}
+
 		for _, attack := range m.Attacks {
 			if !strings.HasPrefix(attack.TypeID, "AT_") || !strings.HasPrefix(attack.FlavourID, "AF_") || attack.Damage < 0 {
 				return fmt.Errorf("monster %s has invalid attack", m.ID)
 			}
 		}
+
 		for _, flag := range m.Flags {
 			if !strings.HasPrefix(flag, "M_") {
 				return fmt.Errorf("monster %s has invalid flag %q", m.ID, flag)
 			}
 		}
+
 		for _, holy := range m.Holiness {
 			if !strings.HasPrefix(holy, "MH_") {
 				return fmt.Errorf("monster %s has invalid holiness %q", m.ID, holy)
 			}
 		}
+
 		for _, resistance := range m.Resistances {
 			if !strings.HasPrefix(resistance.ID, "MR_") || resistance.Level == 0 {
 				return fmt.Errorf("monster %s has invalid resistance %q", m.ID, resistance.ID)
@@ -161,6 +167,7 @@ func (m MonsterDef) validate() error {
 	default:
 		return fmt.Errorf("monster %s has unknown status %q", m.ID, m.Status)
 	}
+
 	return nil
 }
 
@@ -168,16 +175,20 @@ func (a MonsterArtifact) Validate() error {
 	if a.SchemaVersion != 1 || a.SourceRevision == "" || a.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported monster artifact metadata")
 	}
+
 	previous := ""
 	for _, monster := range a.Monsters {
 		if monster.ID <= previous {
 			return fmt.Errorf("duplicate or unsorted monster ID %q", monster.ID)
 		}
+
 		if err := monster.validate(); err != nil {
 			return err
 		}
+
 		previous = monster.ID
 	}
+
 	return nil
 }
 
@@ -186,6 +197,7 @@ func (c Catalog) MonsterStatus(id string) (MonsterStatus, error) {
 	if !ok {
 		return "", fmt.Errorf("unknown monster ID %q", id)
 	}
+
 	return m.Status, nil
 }
 
@@ -194,6 +206,7 @@ func (c Catalog) MonsterIDs() []string {
 	for id := range c.monsters {
 		ids = append(ids, id)
 	}
+
 	sort.Strings(ids)
 	return ids
 }

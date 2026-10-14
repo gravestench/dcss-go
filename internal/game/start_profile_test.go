@@ -41,12 +41,14 @@ func TestScenarioInstallsStartingProfile(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			defer g.Close()
 			view := g.View()
 			if view.CurrentAut != 0 || view.PlayerHP != 18 || view.PlayerMaxHP != 18 || view.PlayerMP != 1 ||
 				view.PlayerMaxMP != 1 {
 				t.Fatalf("start clocks and pools = %+v", view)
 			}
+
 			want := []character.Skill{
 				{
 					ID:     "SK_FIGHTING",
@@ -72,18 +74,22 @@ func TestScenarioInstallsStartingProfile(t *testing.T) {
 			if !reflect.DeepEqual(view.Skills, want) {
 				t.Fatalf("skills = %+v, want %+v", view.Skills, want)
 			}
+
 			storedSkills, ok := g.stores.Skills.Get(g.player)
 			if !ok || !reflect.DeepEqual(storedSkills.Entries, want) {
 				t.Fatalf("player skills component = %+v", storedSkills)
 			}
+
 			magic, ok := g.stores.Magic.Get(g.player)
 			if !ok || magic.Current != 1 || magic.Max != 1 {
 				t.Fatalf("player magic component = %+v", magic)
 			}
+
 			wantItems := 4
 			if tc.weapon == "WPN_UNARMED" {
 				wantItems = 3
 			}
+
 			if len(view.Inventory) != wantItems {
 				t.Fatalf("starter inventory has %d items, want %d", len(view.Inventory), wantItems)
 			}
@@ -98,6 +104,7 @@ func TestScenarioDamageKeepsMaxHP(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+
 	view := g.View()
 	if view.PlayerHP >= 18 || view.PlayerMaxHP != 18 {
 		t.Fatalf("damage changed initial max or never happened: HP %d/%d", view.PlayerHP, view.PlayerMaxHP)

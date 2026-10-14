@@ -19,6 +19,7 @@ func hasMutation(species content.SpeciesDef, id string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -29,12 +30,14 @@ func bannedPair(species content.SpeciesDef, jobID string) bool {
 			return true
 		}
 	}
+
 	if hasMutation(species, "MUT_FORLORN") {
 		switch jobID {
 		case "JOB_BERSERKER", "JOB_CHAOS_KNIGHT", "JOB_ABYSSAL_KNIGHT", "JOB_CINDER_ACOLYTE", "JOB_MONK":
 			return true
 		}
 	}
+
 	return jobID == "JOB_TRANSMUTER" && species.UndeadType == "US_UNDEAD"
 }
 
@@ -44,6 +47,7 @@ func contains(ids []string, id string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -52,19 +56,23 @@ func choice(c content.Catalog, speciesID, jobID string, speciesFirst bool) (Rest
 	if err != nil {
 		return Banned, err
 	}
+
 	job, err := c.Job(jobID)
 	if err != nil {
 		return Banned, err
 	}
+
 	if !species.Selectable || !job.Selectable || bannedPair(species, jobID) {
 		return Banned, nil
 	}
+
 	recommendedBySpecies := contains(species.RecommendedJobs, jobID)
 	recommendedByJob := contains(job.RecommendedSpecies, speciesID)
 	if speciesFirst && recommendedBySpecies ||
 		!speciesFirst && recommendedByJob {
 		return Recommended, nil
 	}
+
 	return Restricted, nil
 }
 

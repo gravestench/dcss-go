@@ -23,10 +23,12 @@ func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 	if err := g.advancement.Update(nil, 0); err != nil {
 		t.Fatal(err)
 	}
+
 	if progress.Level != 2 || progress.PendingStatLevel != 0 ||
 		g.View().ExperienceLevel != 2 || g.View().NextLevelPercent != 0 {
 		t.Fatalf("XL2 state = %+v, view %+v", progress, g.View())
 	}
+
 	wantHundred := (9*100 + 50) * health.Max / oldMaxHP
 	if health.Current != wantHundred/100 ||
 		regeneration.HPProgress != wantHundred%100 ||
@@ -38,22 +40,27 @@ func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 	if err := g.advancement.Update(nil, 0); err != nil {
 		t.Fatal(err)
 	}
+
 	if progress.Level != 2 || progress.PendingStatLevel != 3 {
 		t.Fatalf("manual stat choice did not hold XL3: %+v", progress)
 	}
+
 	beforeAut := g.currentAut
 	blocked, err := g.Step(Command{Kind: CommandWait})
 	if err != nil || blocked.Spent != 0 || g.currentAut != beforeAut {
 		t.Fatalf("turn advanced during stat choice: %+v, %v", blocked, err)
 	}
+
 	invalid, err := g.ChooseStat("luck")
 	if err != nil || invalid.Spent != 0 || progress.PendingStatLevel != 3 {
 		t.Fatalf("invalid stat choice changed progression: %+v, %v", invalid, err)
 	}
+
 	chosen, err := g.ChooseStat("str")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if chosen.Spent != 0 || progress.Level != 3 || progress.PendingStatLevel != 0 ||
 		attributes.Strength != startStrength+2 || g.View().NextLevelPercent != 0 {
 		t.Fatalf("XL3 stat choice = %+v, attrs %+v, view %+v", progress, attributes, g.View())
@@ -70,29 +77,42 @@ func TestHumanAdvancementRunsThroughFinalLevel(t *testing.T) {
 	if err := g.advancement.Update(nil, 0); err != nil {
 		t.Fatal(err)
 	}
-	for _, level := range []int{3, 9, 15, 21, 27} {
+
+	for _, level := range []int{
+		3,
+		9,
+		15,
+		21,
+		27,
+	} {
 		if progress.PendingStatLevel != level || progress.Level != level-1 {
 			t.Fatalf("pending XL%d choice = %+v", level, progress)
 		}
+
 		if _, err := g.ChooseStat("dex"); err != nil {
 			t.Fatal(err)
 		}
 	}
+
 	if progress.Level != 27 || progress.PendingStatLevel != 0 ||
 		g.View().ExperienceLevel != 27 || g.View().NextLevelPercent != 0 {
 		t.Fatalf("final level state = %+v, view %+v", progress, g.View())
 	}
+
 	statTotal := attributes.Strength + attributes.Intelligence + attributes.Dexterity
 	if statTotal != baseStats+5*2+6 {
 		t.Fatalf("stat gains = %d, want %d", statTotal-baseStats, 16)
 	}
+
 	if _, err := g.ChooseStat("str"); err == nil {
 		t.Fatal("accepted stat choice without a pending level")
 	}
+
 	seenFinalMessage := false
 	for _, message := range g.View().Messages {
 		seenFinalMessage = seenFinalMessage || strings.Contains(message, "final one")
 	}
+
 	if !seenFinalMessage {
 		t.Fatal("final-level message missing")
 	}
@@ -113,9 +133,11 @@ func TestStatChoiceInterruptsMonsterPhase(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if result.View.PendingStatLevel != 3 || g.currentAut != 0 {
 		t.Fatalf("stat prompt did not interrupt turn: %+v", result)
 	}
+
 	for _, entity := range g.stores.AI.Entities() {
 		actor, _ := g.stores.Actors.Get(entity)
 		if actor.NextAut != monsterDeadlines[uint64(entity)] {
@@ -127,6 +149,7 @@ func TestStatChoiceInterruptsMonsterPhase(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if chosen.View.PendingStatLevel != 0 || chosen.View.ExperienceLevel != 3 ||
 		g.currentAut != 10 {
 		t.Fatalf("stat choice did not finish turn: %+v", chosen)

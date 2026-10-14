@@ -20,16 +20,19 @@ func (s *movementSystem) Update(_ *akara.World, _ time.Duration) error {
 	if !found || intent.Kind != ecs.IntentMove {
 		return nil
 	}
+
 	position, found := s.positions.Get(s.turn.Actor)
 	if !found {
 		return fmt.Errorf("moving actor %d has no position", s.turn.Actor)
 	}
+
 	level := s.levels[position.LevelID]
 	x, y := position.X+intent.DX, position.Y+intent.DY
 	if _, occupied := level.ActorAt(x, y); occupied {
 		intent.Kind = ecs.IntentMelee
 		return nil
 	}
+
 	return level.MoveActor(s.turn.Actor, x, y)
 }
 
@@ -45,44 +48,55 @@ func (s *stairSystem) Update(_ *akara.World, _ time.Duration) error {
 	if !found || (intent.Kind != ecs.IntentUpstairs && intent.Kind != ecs.IntentDownstairs) {
 		return nil
 	}
+
 	position, found := s.positions.Get(s.turn.Actor)
 	if !found {
 		return fmt.Errorf("stair actor %d has no position", s.turn.Actor)
 	}
+
 	from := s.levels[position.LevelID]
 	if from == nil {
 		return fmt.Errorf("stair actor %d has no level %d", s.turn.Actor, position.LevelID)
 	}
+
 	glyph := byte('>')
 	if intent.Kind == ecs.IntentUpstairs {
 		glyph = '<'
 	}
+
 	if from.terrain[position.Y][position.X] != glyph {
 		return fmt.Errorf("stair actor %d is not on a %q stair", s.turn.Actor, glyph)
 	}
+
 	link, found := from.StairAt(position.X, position.Y)
 	if !found {
 		return fmt.Errorf("stair actor %d has no link at (%d,%d)", s.turn.Actor, position.X, position.Y)
 	}
+
 	to := s.levels[link.ToLevelID]
 	if to == nil {
 		return fmt.Errorf("destination floor %d is missing", link.ToLevelID)
 	}
+
 	x, y := link.ToX, link.ToY
 	if !to.Walkable(x, y) {
 		return fmt.Errorf("destination stair is blocked")
 	}
+
 	if _, occupied := to.ActorAt(x, y); occupied {
 		return fmt.Errorf("destination stair is occupied")
 	}
+
 	oldX, oldY := position.X, position.Y
 	if err := from.RemoveActor(s.turn.Actor); err != nil {
 		return err
 	}
+
 	if err := to.PlaceActor(s.turn.Actor, x, y); err != nil {
 		_ = from.PlaceActor(s.turn.Actor, oldX, oldY)
 		return err
 	}
+
 	s.turn.StairFrom, s.turn.StairTo = from.ID, to.ID
 	s.turn.Events = append(s.turn.Events, Event{
 		Kind: "stairs",

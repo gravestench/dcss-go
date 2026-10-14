@@ -47,16 +47,20 @@ func ordinaryAnimal(catalog content.Catalog, id string) (content.MonsterDef, err
 	if !supported {
 		return content.MonsterDef{}, fmt.Errorf("unsupported ordinary animal %s", id)
 	}
+
 	definition, err := catalog.Monster(id)
 	if err != nil {
 		return content.MonsterDef{}, err
 	}
+
 	if definition.AverageHP10x != profile.AverageHP10x || !definition.LeavesCorpse {
 		return content.MonsterDef{}, fmt.Errorf("unsupported ordinary animal definition %s", id)
 	}
+
 	if _, err := character.OrdinaryAnimalExperience(definition, profile.MinHP); err != nil {
 		return content.MonsterDef{}, err
 	}
+
 	return definition, nil
 }
 
@@ -86,24 +90,30 @@ func (f ordinaryMonsterFactory) Spawn(id string, levelID, x, y int) (_ akara.Ent
 	if err != nil {
 		return 0, err
 	}
+
 	level := f.levels[levelID]
 	if level == nil || !level.Walkable(x, y) {
 		return 0, fmt.Errorf("cannot place %s on level %d at (%d,%d)", id, levelID, x, y)
 	}
+
 	if _, occupied := level.ActorAt(x, y); occupied {
 		return 0, fmt.Errorf("monster spawn tile (%d,%d) is occupied", x, y)
 	}
+
 	hp, err := monster.RollHP(f.rng, definition.AverageHP10x)
 	if err != nil {
 		return 0, err
 	}
+
 	if _, err := character.OrdinaryAnimalExperience(definition, hp); err != nil {
 		return 0, err
 	}
+
 	entity, err := f.world.CreateEntity()
 	if err != nil {
 		return 0, err
 	}
+
 	defer func() {
 		if err != nil {
 			f.world.DestroyEntity(entity)
@@ -115,20 +125,25 @@ func (f ordinaryMonsterFactory) Spawn(id string, levelID, x, y int) (_ akara.Ent
 	}); err != nil {
 		return 0, err
 	}
+
 	if _, err = f.stores.Health.Set(entity, ecs.Health{
 		Current: hp,
 		Max:     hp,
 	}); err != nil {
 		return 0, err
 	}
+
 	if _, err = f.stores.Combat.Set(entity, ecs.Combatant{}); err != nil {
 		return 0, err
 	}
+
 	if _, err = f.stores.AI.Set(entity, ecs.MonsterAI{Behavior: "wander"}); err != nil {
 		return 0, err
 	}
+
 	if err = level.PlaceActor(entity, x, y); err != nil {
 		return 0, err
 	}
+
 	return entity, nil
 }

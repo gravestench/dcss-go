@@ -12,10 +12,12 @@ func legacyFixtures(t *testing.T) ([]byte, []byte) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	aptitudes, err := os.ReadFile("testdata/legacy-aptitudes.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	return species, aptitudes
 }
 
@@ -30,9 +32,11 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if len(records) != 3 {
 		t.Fatalf("want three legacy species, got %d", len(records))
 	}
+
 	byID := map[string]int{}
 	for i, record := range records {
 		byID[record.ID] = i
@@ -40,6 +44,7 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 			t.Fatalf("legacy record selectable or untraced: %+v", record)
 		}
 	}
+
 	checks := []struct {
 		id, monster                       string
 		strength, intelligence, dexterity int
@@ -71,15 +76,18 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 		if !found {
 			t.Fatalf("missing %s", check.id)
 		}
+
 		s := records[i]
 		if s.MonsterID != check.monster || s.Strength != check.strength ||
 			s.Intelligence != check.intelligence || s.Dexterity != check.dexterity {
 			t.Fatalf("wrong legacy fields for %s: %+v", check.id, s)
 		}
 	}
+
 	if records[byID["SP_HIGH_ELF"]].Aptitudes["SK_SLINGS"].Allowed {
 		t.Fatal("legacy UNUSABLE_SKILL was made usable")
 	}
+
 	if got := records[byID["SP_LAVA_ORC"]].Aptitudes["SK_ICE_MAGIC"]; !got.Allowed || got.Value != -4 {
 		t.Fatalf("legacy numeric aptitude lost: %+v", got)
 	}
@@ -119,12 +127,14 @@ func TestParseLegacyRejectsBadRows(t *testing.T) {
 			}
 		})
 	}
+
 	var retained []string
 	for _, line := range strings.Split(string(aptitudes), "\n") {
 		if !strings.Contains(line, "SP_LAVA_ORC") {
 			retained = append(retained, line)
 		}
 	}
+
 	if _, err := parseLegacy(
 		"legacy-species.txt",
 		source,

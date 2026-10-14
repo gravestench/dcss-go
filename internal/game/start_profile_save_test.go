@@ -16,6 +16,7 @@ func savedPlayer(t *testing.T, snapshot *save.Snapshot) *save.EntityRecord {
 			return &snapshot.Entities[i]
 		}
 	}
+
 	t.Fatal("snapshot has no player")
 	return nil
 }
@@ -30,19 +31,23 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 	if before.Version != save.Version || savedPlayer(t, &before).Player.StartingWeaponID != "WPN_RAPIER" {
 		t.Fatalf("unexpected save header or choice: %+v", before)
 	}
+
 	restored, err := Restore(before, testCatalog(t))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer restored.Close()
 	if !reflect.DeepEqual(before, restored.Snapshot()) {
 		t.Fatal("start profile changed across save/restore")
 	}
+
 	view := restored.View()
 	if view.PlayerHP != 7 || view.PlayerMaxHP != 18 || view.PlayerMP != 0 || view.PlayerMaxMP != 1 ||
 		len(view.Skills) != 4 {
 		t.Fatalf("restored profile = %+v", view)
 	}
+
 	for _, command := range []Command{
 		{Kind: CommandWait},
 		{
@@ -65,11 +70,13 @@ func TestSaveProfileSlicesDoNotAlias(t *testing.T) {
 	if g.View().Skills[0].Points != 301 {
 		t.Fatal("snapshot mutation changed live game")
 	}
+
 	input := g.Snapshot()
 	restored, err := Restore(input, testCatalog(t))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer restored.Close()
 	savedPlayer(t, &input).Skills.Entries[0].Points = -18
 	if restored.View().Skills[0].Points != 301 {
@@ -209,8 +216,10 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 			},
 		},
 		{
-			name:   "version three",
-			mutate: func(s *save.Snapshot) { s.Version = 3 },
+			name: "version three",
+			mutate: func(s *save.Snapshot) {
+				s.Version = 3
+			},
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -222,6 +231,7 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 				replacement.Close()
 				t.Fatal("invalid profile accepted")
 			}
+
 			if !reflect.DeepEqual(before, g.Snapshot()) {
 				t.Fatal("failed restore changed live game")
 			}

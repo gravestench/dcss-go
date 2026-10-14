@@ -13,17 +13,21 @@ func (g *Game) refreshVisibility() error {
 	if !found {
 		return fmt.Errorf("player %d has no position", g.player)
 	}
+
 	level := g.levels[position.LevelID]
 	if level == nil {
 		return fmt.Errorf("player level %d is missing", position.LevelID)
 	}
+
 	visible, err := visibility.Compute(level.terrain, position.X, position.Y, 7)
 	if err != nil {
 		return err
 	}
+
 	if err := level.Remember(visible); err != nil {
 		return err
 	}
+
 	g.visible = visible
 	g.visibleLevelID = position.LevelID
 	return nil

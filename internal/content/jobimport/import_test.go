@@ -28,6 +28,7 @@ func jobSourceFixture(t *testing.T) string {
 			t.Fatal(err)
 		}
 	}
+
 	return root
 }
 
@@ -38,9 +39,11 @@ func changeJobSource(t *testing.T, root, name, old, replacement string) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !strings.Contains(string(data), old) {
 		t.Fatalf("%s missing %q", name, old)
 	}
+
 	if err := os.WriteFile(path, []byte(strings.Replace(string(data), old, replacement, 1)), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -52,25 +55,31 @@ func TestGenerateJobArtifactDeterministic(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	second, err := generateFromSource(root, pinnedRevision)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !bytes.Equal(first, second) || first[len(first)-1] != '\n' {
 		t.Fatal("job artifact changed between runs or lacks newline")
 	}
+
 	var artifact content.JobArtifact
 	if err := json.Unmarshal(first, &artifact); err != nil {
 		t.Fatal(err)
 	}
+
 	if artifact.SchemaVersion != 1 || artifact.SourceRevision != pinnedRevision ||
 		artifact.TagMajorVersion != 34 || len(artifact.SourceFiles) != 6 || len(artifact.Jobs) != 2 {
 		t.Fatalf("unexpected artifact metadata/counts: %+v", artifact)
 	}
+
 	if artifact.Jobs[0].ID != "JOB_FIGHTER" || artifact.Jobs[1].ID != "JOB_PRIEST" ||
 		artifact.Jobs[0].Equipment[1] != "wand of flame charges:15, q:2" {
 		t.Fatalf("job order or equipment changed: %+v", artifact.Jobs)
 	}
+
 	for i, file := range artifact.SourceFiles {
 		if len(file.SHA256) != 64 || i > 0 && artifact.SourceFiles[i-1].Path >= file.Path {
 			t.Fatalf("bad source provenance order/hash: %+v", artifact.SourceFiles)
@@ -169,6 +178,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			}
 		})
 	}
+
 	if _, err := generateFromSource(jobSourceFixture(t), "wrong-revision"); err == nil ||
 		!strings.Contains(err.Error(), "revision") {
 		t.Fatalf("wrong revision accepted: %v", err)
@@ -178,34 +188,44 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 func TestWriteJobArtifactCheckAndAtomicFailure(t *testing.T) {
 	root := jobSourceFixture(t)
 	out := filepath.Join(t.TempDir(), "jobs.json")
-	generate := func(source string) ([]byte, error) { return generateFromSource(source, pinnedRevision) }
+	generate := func(source string) ([]byte, error) {
+		return generateFromSource(source, pinnedRevision)
+	}
 	if err := writeArtifact(root, out, false, generate); err != nil {
 		t.Fatal(err)
 	}
+
 	before, err := os.ReadFile(out)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if err := writeArtifact(root, out, true, generate); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := os.WriteFile(out, []byte("stale"), 0644); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := writeArtifact(root, out, true, generate); err == nil {
 		t.Fatal("stale artifact accepted")
 	}
+
 	stale, err := os.ReadFile(out)
 	if err != nil || string(stale) != "stale" {
 		t.Fatalf("check modified stale output: %q, %v", stale, err)
 	}
+
 	if err := os.WriteFile(out, before, 0644); err != nil {
 		t.Fatal(err)
 	}
+
 	changeJobSource(t, root, "tag-version.h", "VERSION 34", "VERSION 35")
 	if err := writeArtifact(root, out, false, generate); err == nil {
 		t.Fatal("bad source generated an artifact")
 	}
+
 	after, err := os.ReadFile(out)
 	if err != nil || !bytes.Equal(after, before) {
 		t.Fatalf("failed generation damaged artifact: %v", err)

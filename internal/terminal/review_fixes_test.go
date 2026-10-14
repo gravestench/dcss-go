@@ -14,14 +14,17 @@ func TestFocusedEnterChoosesSpeciesBackgroundAndWeapon(t *testing.T) {
 	for i := 0; i < 9; i++ {
 		pressApp(m, "down")
 	}
+
 	pressApp(m, "enter")
 	if m.screen != ScreenBackground || m.speciesID != "SP_HUMAN" {
 		t.Fatalf("focused Human not selected: %v/%s", m.screen, m.speciesID)
 	}
+
 	pressApp(m, "enter")
 	if m.screen != ScreenWeapon || m.jobID != "JOB_FIGHTER" {
 		t.Fatalf("focused Fighter not selected: %v/%s", m.screen, m.jobID)
 	}
+
 	pressApp(m, "down")
 	pressApp(m, "enter")
 	if m.screen != ScreenName || m.weaponID != "WPN_FLAIL" {
@@ -38,11 +41,17 @@ func TestUndersizedTerminalBlocksHiddenInput(t *testing.T) {
 		Width:  78,
 		Height: 23,
 	})
-	for _, key := range []string{"esc", "s", "S", "ctrl+s"} {
+	for _, key := range []string{
+		"esc",
+		"s",
+		"S",
+		"ctrl+s",
+	} {
 		if cmd := m.handleKey(key); cmd != nil {
 			t.Fatalf("%q exited behind resize warning", key)
 		}
 	}
+
 	m.Update(tea.WindowSizeMsg{
 		Width:  79,
 		Height: 24,
@@ -59,8 +68,16 @@ func TestSkillsPageTwoColumnsAndSourceControls(t *testing.T) {
 	if !strings.Contains(rows[3][:39], "Fighting") || !strings.Contains(rows[3][39:], "Spellcasting") {
 		t.Fatalf("source skill columns absent: %q", rows[3])
 	}
+
 	page := strings.Join(rows, "\n")
-	for _, want := range []string{"/ - mode", "| - skill", "* - skills", "! - view", "= - target", "? - help"} {
+	for _, want := range []string{
+		"/ - mode",
+		"| - skill",
+		"* - skills",
+		"! - view",
+		"= - target",
+		"? - help",
+	} {
 		if !strings.Contains(page, want) {
 			t.Fatalf("source skill control %q absent", want)
 		}
@@ -80,11 +97,14 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 			x, y = col, row+1+m.focus-offset
 			break
 		}
+
 		offset += len(group.IDs)
 	}
+
 	if c.cells[y*c.width+x].fg != White || c.cells[y*c.width+x].bg != LightGrey {
 		t.Fatalf("focused restricted species colors: %+v", c.cells[y*c.width+x])
 	}
+
 	m.screen, m.focus, m.jobID, m.speciesID = ScreenBackground, 0, "", "SP_BARACHI"
 	ids := flattenGroups(m.presentation.JobGroups)
 	for i, id := range ids {
@@ -93,6 +113,7 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 			break
 		}
 	}
+
 	if restriction, err := character.JobForSpecies(
 		m.catalog,
 		"SP_BARACHI",
@@ -100,6 +121,7 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 	); err != nil || restriction != character.Recommended {
 		t.Fatal("review fixture does not contain a recommended pair")
 	}
+
 	c = m.renderCanvas()
 	if !strings.Contains(strings.Join(c.PlainRows(), "\n"), "Arcane Marksman") {
 		t.Fatal("recommended entry absent")
@@ -112,6 +134,7 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 			break
 		}
 	}
+
 	if !found {
 		t.Fatal("recommended focus colors absent")
 	}
@@ -131,11 +154,13 @@ func TestCreationShortcutColumnsAndContextText(t *testing.T) {
 			t.Fatalf("left shortcut row %d: %q", 14+row, rows[14+row])
 		}
 	}
+
 	for row, want := range []string{"* - Random species", "! - Random character", "Space - Pick background first"} {
 		if !strings.Contains(rows[14+row][40:], want) {
 			t.Fatalf("right shortcut row %d: %q", 14+row, rows[14+row])
 		}
 	}
+
 	pressApp(m, "j")
 	rows = m.renderCanvas().PlainRows()
 	if !strings.Contains(rows[14], "Recommended background") ||
@@ -150,13 +175,17 @@ func TestDrawPlayDangerValueColors(t *testing.T) {
 	c := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
 	DrawPlay(c, layout, view, "")
-	cellAt := func(x, y int) cell { return c.cells[y*c.width+x] }
+	cellAt := func(x, y int) cell {
+		return c.cells[y*c.width+x]
+	}
 	if cellAt(37, 2).fg != Brown || cellAt(45, 2).fg != Red || cellAt(46, 2).fg != LightGrey {
 		t.Fatalf("HP caption/current/max colors: %+v %+v %+v", cellAt(37, 2), cellAt(45, 2), cellAt(46, 2))
 	}
+
 	if cellAt(37, 3).fg != Brown || cellAt(45, 3).fg != Red {
 		t.Fatalf("MP caption/current colors: %+v %+v", cellAt(37, 3), cellAt(45, 3))
 	}
+
 	if cellAt(55, 4).fg != Brown || cellAt(60, 4).fg != Red {
 		t.Fatalf("stat caption/value colors: %+v %+v", cellAt(55, 4), cellAt(60, 4))
 	}

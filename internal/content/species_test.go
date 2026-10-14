@@ -11,6 +11,7 @@ func testSpecies(id string) SpeciesDef {
 	for _, skill := range strings.Fields(ordinarySkillIDs) {
 		aptitudes[skill] = SpeciesAptitude{Allowed: true}
 	}
+
 	return SpeciesDef{
 		ID:                   id,
 		MonsterID:            "MONS_HUMAN",
@@ -56,6 +57,7 @@ func TestSpeciesCatalogDefensiveCopies(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	first.Aptitudes["SK_FIGHTING"] = SpeciesAptitude{Allowed: false}
 	first.Mutations[0].Amount = 3
 	first.FakeMutations[0].Long = "changed"
@@ -67,6 +69,7 @@ func TestSpeciesCatalogDefensiveCopies(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !reflect.DeepEqual(second, original) {
 		t.Fatalf("catalog changed through returned species: %+v", second)
 	}
@@ -83,6 +86,7 @@ func TestSpeciesCatalogRejectsDuplicateOrInvalidRecord(t *testing.T) {
 	if err := duplicate.Validate(); err == nil {
 		t.Fatal("duplicate species ID accepted")
 	}
+
 	invalid := valid
 	invalid.Name = ""
 	artifact := SpeciesArtifact{
@@ -94,6 +98,7 @@ func TestSpeciesCatalogRejectsDuplicateOrInvalidRecord(t *testing.T) {
 	if err := artifact.Validate(); err == nil {
 		t.Fatal("species without name accepted")
 	}
+
 	if err := (Catalog{
 		species:        map[string]SpeciesDef{"SP_HUMAN": invalid},
 		version:        1,
@@ -119,10 +124,12 @@ func TestSpeciesIDsSorted(t *testing.T) {
 	if !reflect.DeepEqual(ids, []string{"SP_A", "SP_Z"}) {
 		t.Fatalf("species IDs not sorted: %v", ids)
 	}
+
 	ids[0] = "changed"
 	if _, err := catalog.Species("SP_NOT_REAL"); err == nil {
 		t.Fatal("unknown species ID accepted")
 	}
+
 	if _, err := catalog.Species("SP_A"); err != nil {
 		t.Fatal("mutating ID list changed catalog:", err)
 	}

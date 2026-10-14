@@ -54,6 +54,7 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 		in.ShieldPlus < -100 || in.ShieldPlus > 100 {
 		return Defense{}, fmt.Errorf("invalid Human Fighter defense %+v", in)
 	}
+
 	const scale = 100
 	bodyEncumbrance := -in.BodyEV / 10
 	bodyPenalty := 2 * bodyEncumbrance * bodyEncumbrance * (450 - in.ArmourSkill*10) * scale /
@@ -61,6 +62,7 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 	if bodyPenalty < 0 {
 		return Defense{}, fmt.Errorf("unsupported armour skill %d", in.ArmourSkill)
 	}
+
 	piecePenalty := (-in.BodyEV / 3) * scale / 10
 	shieldPenalty := 0
 	if in.ShieldAC > 0 {
@@ -71,6 +73,7 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 			return Defense{}, fmt.Errorf("unsupported shields skill %d", in.ShieldsSkill)
 		}
 	}
+
 	dodgeBonus := 800 * scale / 20 / 10 / 10 // zero Dodging at the supported start
 	armourDodgePenalty := bodyEncumbrance - 3
 	if armourDodgePenalty > 0 {
@@ -80,10 +83,12 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 			dodgeBonus -= dodgeBonus * armourDodgePenalty / (in.Strength * 2)
 		}
 	}
+
 	naturalEV := 10*scale + dodgeBonus - piecePenalty - bodyPenalty - shieldPenalty
 	if naturalEV < scale {
 		naturalEV = scale
 	}
+
 	ev := (naturalEV + scale - 1) / scale
 
 	baseAC := in.BodyAC * scale * (440 + in.ArmourSkill*20) / 440
@@ -91,6 +96,7 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 	if ac < 0 {
 		ac = 0
 	}
+
 	shieldClass := 0
 	if in.ShieldAC > 0 {
 		baseShield := in.ShieldAC * 2
@@ -99,6 +105,7 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 			in.Dexterity*38*(baseShield+13)/26 + in.ShieldPlus*200
 		shieldClass = max(0, (shield+50)/100)
 	}
+
 	gdr := int(16 * math.Sqrt(math.Sqrt(float64(ac))))
 	return Defense{
 		EV:           ev,
@@ -113,13 +120,16 @@ func random2(r Roller, bound int) (int, error) {
 	if bound <= 1 {
 		return 0, nil
 	}
+
 	value, err := r.Intn("melee", bound)
 	if err != nil {
 		return 0, err
 	}
+
 	if value < 0 || value >= bound {
 		return 0, fmt.Errorf("melee roll %d outside [0,%d)", value, bound)
 	}
+
 	return value, nil
 }
 
@@ -128,10 +138,12 @@ func random2avg2(r Roller, bound int) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	second, err := random2(r, bound+1)
 	if err != nil {
 		return 0, err
 	}
+
 	return (first + second) / 2, nil
 }
 
@@ -142,67 +154,81 @@ func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, e
 		defense.ShieldClass < 0 || defense.GDR < 0 || defense.ShieldBlocks < 0 {
 		return Outcome{}, fmt.Errorf("unsupported ordinary bite or defense: %+v %+v", attack, defense)
 	}
+
 	toHitBase := 18 + attack.HD*3/2 // supported animals have no M_FIGHTER flag
 	toHit, err := random2(r, toHitBase+1)
 	if err != nil {
 		return Outcome{}, err
 	}
+
 	evRoll, err := random2avg2(r, 2*defense.EV)
 	if err != nil {
 		return Outcome{}, err
 	}
+
 	autoChance, err := random2(r, 100)
 	if err != nil {
 		return Outcome{}, err
 	}
+
 	autoMiss, autoHit := false, false
 	if autoChance < 5 {
 		coin, coinErr := random2(r, 2)
 		if coinErr != nil {
 			return Outcome{}, coinErr
 		}
+
 		autoMiss, autoHit = coin == 0, coin != 0
 	}
+
 	bypass := 15 + attack.HD*2/3 + 5*defense.ShieldBlocks*defense.ShieldBlocks
 	conBlock, err := random2(r, bypass)
 	if err != nil {
 		return Outcome{}, err
 	}
+
 	proBlock := -100
 	if defense.ShieldClass > 0 {
 		shieldRoll, rollErr := random2avg2(r, defense.ShieldClass*2)
 		if rollErr != nil {
 			return Outcome{}, rollErr
 		}
+
 		proBlock = shieldRoll/3 - 1
 	}
+
 	if proBlock >= conBlock {
 		return Outcome{
 			Kind:         Block,
 			ShieldBlocks: defense.ShieldBlocks + 1,
 		}, nil
 	}
+
 	if autoMiss {
 		return Outcome{
 			Kind:         Miss,
 			ShieldBlocks: defense.ShieldBlocks,
 		}, nil
 	}
+
 	if !autoHit && toHit < evRoll {
 		return Outcome{
 			Kind:         Dodge,
 			ShieldBlocks: defense.ShieldBlocks,
 		}, nil
 	}
+
 	baseRoll, err := random2(r, attack.Damage)
 	if err != nil {
 		return Outcome{}, err
 	}
+
 	damage := 1 + baseRoll
 	acRoll, err := random2(r, defense.AC+1)
 	if err != nil {
 		return Outcome{}, err
 	}
+
 	saved := acRoll
 	// actor::apply_ac evaluates div_rand_round even if GDR later selects zero.
 	maxGDR := defense.GDR * attack.Damage / 100
@@ -212,10 +238,12 @@ func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, e
 		if remainderErr != nil {
 			return Outcome{}, remainderErr
 		}
+
 		if remainder == 0 {
 			acHalf++
 		}
 	}
+
 	saved = max(saved, min(maxGDR, acHalf))
 	return Outcome{
 		Kind:         Hit,

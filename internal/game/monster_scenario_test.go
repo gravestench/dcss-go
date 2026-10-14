@@ -16,15 +16,19 @@ func TestRatScenarioRollsSourceHPAndKeepsCatalogedBite(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if _, err := monster.RollHP(expected, 55); err != nil {
 		t.Fatal(err)
 	}
+
 	if _, err := monster.RollHP(expected, 20); err != nil {
 		t.Fatal(err)
 	}
+
 	if !ok || health.Current != want || health.Max != want || !reflect.DeepEqual(expected.States(), g.rng.States()) {
 		t.Fatalf("rat health = %+v, found %v", health, ok)
 	}
+
 	combat, ok := g.stores.Combat.Get(rat)
 	definition, err := g.catalog.Monster("MONS_RAT")
 	if !ok || combat.ShieldBlocks != 0 || err != nil || definition.HD != 1 ||
@@ -40,20 +44,24 @@ func TestRatRolledHPSurvivesSaveWithoutReroll(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer loaded.Close()
 	if !reflect.DeepEqual(before, loaded.Snapshot()) {
 		t.Fatal("loading rerolled the rat or monster HP stream")
 	}
+
 	for i := range before.Entities {
 		if before.Entities[i].Actor != nil && before.Entities[i].Actor.KindID == "MONS_RAT" {
 			before.Entities[i].Health.Max = 4
 			before.Entities[i].Health.Current = 4
 		}
 	}
+
 	legacy, err := Restore(before, testCatalog(t))
 	if err != nil {
 		t.Fatalf("old 4-HP rat save rejected: %v", err)
 	}
+
 	legacy.Close()
 }
 
@@ -67,6 +75,7 @@ func TestRatRestoreRejectsImpossibleMaxHP(t *testing.T) {
 				bad.Entities[i].Health.Current = max(0, hp)
 			}
 		}
+
 		if loaded, err := Restore(bad, testCatalog(t)); err == nil {
 			loaded.Close()
 			t.Fatalf("impossible rat max HP %d accepted", hp)

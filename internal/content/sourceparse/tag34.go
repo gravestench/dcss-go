@@ -71,9 +71,11 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			}
 		}
 	}
+
 	if state == 1 || state == 2 || state == 4 {
 		return nil, fmt.Errorf("%s: unterminated string, character, or block comment", path)
 	}
+
 	active := true
 	var stack []tagBranch
 	var result []Line
@@ -85,6 +87,7 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			if !ok {
 				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 			}
+
 			stack = append(stack, tagBranch{
 				parent:  active,
 				matched: condition,
@@ -94,10 +97,12 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
 				return nil, fmt.Errorf("%s:%d: unexpected #elif", path, n+1)
 			}
+
 			condition, ok := tag34Condition(strings.TrimPrefix(trimmed, "#elif "))
 			if !ok {
 				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 			}
+
 			top := &stack[len(stack)-1]
 			active = top.parent && !top.matched && condition
 			top.matched = top.matched || condition
@@ -105,6 +110,7 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
 				return nil, fmt.Errorf("%s:%d: unexpected #else", path, n+1)
 			}
+
 			top := &stack[len(stack)-1]
 			top.elseSeen = true
 			active = top.parent && !top.matched
@@ -113,6 +119,7 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			if len(stack) == 0 {
 				return nil, fmt.Errorf("%s:%d: unexpected #endif", path, n+1)
 			}
+
 			active = stack[len(stack)-1].parent
 			stack = stack[:len(stack)-1]
 		case strings.HasPrefix(trimmed, "#if") || strings.HasPrefix(trimmed, "#elif") ||
@@ -127,9 +134,11 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			}
 		}
 	}
+
 	if len(stack) != 0 {
 		return nil, fmt.Errorf("%s: unterminated conditional", path)
 	}
+
 	return result, nil
 }
 
@@ -159,6 +168,7 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 			if !supported {
 				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 			}
+
 			stack = append(stack, tagBranch{
 				parent:  active,
 				matched: condition,
@@ -168,10 +178,12 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
 				return nil, fmt.Errorf("%s:%d: unexpected #elif", path, n+1)
 			}
+
 			condition, supported := tag34Condition(strings.TrimPrefix(trimmed, "#elif "))
 			if !supported {
 				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 			}
+
 			top := &stack[len(stack)-1]
 			active = top.parent && !top.matched && condition
 			top.matched = top.matched || condition
@@ -179,6 +191,7 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
 				return nil, fmt.Errorf("%s:%d: unexpected #else", path, n+1)
 			}
+
 			top := &stack[len(stack)-1]
 			top.elseSeen = true
 			active = top.parent && !top.matched
@@ -187,6 +200,7 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 			if len(stack) == 0 {
 				return nil, fmt.Errorf("%s:%d: unexpected #endif", path, n+1)
 			}
+
 			active = stack[len(stack)-1].parent
 			stack = stack[:len(stack)-1]
 		case strings.HasPrefix(trimmed, "#if") || strings.HasPrefix(trimmed, "#elif") ||
@@ -198,9 +212,11 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 			}
 		}
 	}
+
 	if len(stack) != 0 {
 		return nil, fmt.Errorf("%s: unterminated conditional", path)
 	}
+
 	return result, nil
 }
 
@@ -210,6 +226,7 @@ func ActiveEnumIDs(path string, data []byte, prefix string) (map[string]struct{}
 	if err != nil {
 		return nil, err
 	}
+
 	ids := map[string]struct{}{}
 	inside, started := false, false
 	for _, line := range lines {
@@ -219,31 +236,41 @@ func ActiveEnumIDs(path string, data []byte, prefix string) (map[string]struct{}
 			if strings.Contains(trimmed, "{") {
 				inside = true
 			}
+
 			continue
 		}
+
 		if started && !inside {
 			if strings.Contains(trimmed, "{") {
 				inside = true
 			}
+
 			continue
 		}
+
 		if inside && strings.HasPrefix(trimmed, "}") {
 			break
 		}
+
 		if !inside {
 			continue
 		}
+
 		match := enumEntry.FindStringSubmatch(trimmed)
 		if match == nil || !strings.HasPrefix(match[1], prefix) || match[2] != "" {
 			continue
 		}
+
 		if _, exists := ids[match[1]]; exists {
 			return nil, fmt.Errorf("%s: duplicate enum ID %s", path, match[1])
 		}
+
 		ids[match[1]] = struct{}{}
 	}
+
 	if !started || !inside || len(ids) == 0 {
 		return nil, fmt.Errorf("%s: no active %s enum entries", path, prefix)
 	}
+
 	return ids, nil
 }

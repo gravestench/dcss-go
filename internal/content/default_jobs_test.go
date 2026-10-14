@@ -12,16 +12,20 @@ func TestLoadDefaultJobs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if got := len(catalog.JobIDs()); got != 31 {
 		t.Fatalf("jobs = %d, want 31", got)
 	}
+
 	fighter, err := catalog.Job("JOB_FIGHTER")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if fighter.Strength != 8 || fighter.Intelligence != 0 || fighter.Dexterity != 4 || !fighter.Selectable {
 		t.Fatalf("Fighter modifiers or selectability: %+v", fighter)
 	}
+
 	if !slices.Equal(fighter.Equipment, []string{"scale mail", "buckler", "potion of might"}) ||
 		!slices.Equal(fighter.Skills, []JobSkillGrant{
 			{
@@ -43,32 +47,51 @@ func TestLoadDefaultJobs(t *testing.T) {
 		}) {
 		t.Fatalf("Fighter gear or skills: %+v", fighter)
 	}
+
 	air, err := catalog.Job("JOB_AIR_ELEMENTALIST")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !slices.Equal(air.Spells, []string{"SPELL_SHOCK", "SPELL_DISCHARGE", "SPELL_SWIFTNESS", "SPELL_AIRSTRIKE"}) {
+
+	if !slices.Equal(air.Spells, []string{
+		"SPELL_SHOCK",
+		"SPELL_DISCHARGE",
+		"SPELL_SWIFTNESS",
+		"SPELL_AIRSTRIKE",
+	}) {
 		t.Fatalf("Air Elementalist spell library: %v", air.Spells)
 	}
+
 	wanderer, err := catalog.Job("JOB_WANDERER")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !wanderer.Selectable || wanderer.Strength != 0 || wanderer.Intelligence != 0 ||
 		wanderer.Dexterity != 0 || len(wanderer.Skills) != 0 {
 		t.Fatalf("Wanderer table placeholders: %+v", wanderer)
 	}
-	for _, id := range []string{"JOB_DEATH_KNIGHT", "JOB_HEALER", "JOB_JESTER", "JOB_PRIEST", "JOB_SKALD", "JOB_STALKER"} {
+
+	for _, id := range []string{
+		"JOB_DEATH_KNIGHT",
+		"JOB_HEALER",
+		"JOB_JESTER",
+		"JOB_PRIEST",
+		"JOB_SKALD",
+		"JOB_STALKER",
+	} {
 		job, err := catalog.Job(id)
 		if err != nil || job.Selectable {
 			t.Fatalf("removed job %s: %+v, %v", id, job, err)
 		}
 	}
+
 	fighter.Equipment[0] = "altered"
 	second, err := LoadDefault()
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	again, err := second.Job("JOB_FIGHTER")
 	if err != nil || again.Equipment[0] != "scale mail" {
 		t.Fatalf("fresh catalog changed: %+v, %v", again, err)
@@ -80,37 +103,52 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 	if err := json.Unmarshal(defaultJobsJSON, &original); err != nil {
 		t.Fatal(err)
 	}
+
 	cases := []struct {
 		name   string
 		mutate func(*JobArtifact)
 	}{
 		{
-			name:   "wrong revision",
-			mutate: func(a *JobArtifact) { a.SourceRevision = "wrong" },
+			name: "wrong revision",
+			mutate: func(a *JobArtifact) {
+				a.SourceRevision = "wrong"
+			},
 		},
 		{
-			name:   "wrong tag",
-			mutate: func(a *JobArtifact) { a.TagMajorVersion = 35 },
+			name: "wrong tag",
+			mutate: func(a *JobArtifact) {
+				a.TagMajorVersion = 35
+			},
 		},
 		{
-			name:   "wrong schema",
-			mutate: func(a *JobArtifact) { a.SchemaVersion = 2 },
+			name: "wrong schema",
+			mutate: func(a *JobArtifact) {
+				a.SchemaVersion = 2
+			},
 		},
 		{
-			name:   "duplicate",
-			mutate: func(a *JobArtifact) { a.Jobs = append(a.Jobs, a.Jobs[0]) },
+			name: "duplicate",
+			mutate: func(a *JobArtifact) {
+				a.Jobs = append(a.Jobs, a.Jobs[0])
+			},
 		},
 		{
-			name:   "missing",
-			mutate: func(a *JobArtifact) { a.Jobs = a.Jobs[1:] },
+			name: "missing",
+			mutate: func(a *JobArtifact) {
+				a.Jobs = a.Jobs[1:]
+			},
 		},
 		{
-			name:   "unknown species",
-			mutate: func(a *JobArtifact) { a.Jobs[0].RecommendedSpecies = []string{"SP_MISSING"} },
+			name: "unknown species",
+			mutate: func(a *JobArtifact) {
+				a.Jobs[0].RecommendedSpecies = []string{"SP_MISSING"}
+			},
 		},
 		{
-			name:   "bad hash",
-			mutate: func(a *JobArtifact) { a.SourceFiles[0].SHA256 = "zzz" },
+			name: "bad hash",
+			mutate: func(a *JobArtifact) {
+				a.SourceFiles[0].SHA256 = "zzz"
+			},
 		},
 		{
 			name: "mismatched shared hash",
@@ -124,12 +162,16 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 			},
 		},
 		{
-			name:   "unsorted hashes",
-			mutate: func(a *JobArtifact) { a.SourceFiles[0], a.SourceFiles[1] = a.SourceFiles[1], a.SourceFiles[0] },
+			name: "unsorted hashes",
+			mutate: func(a *JobArtifact) {
+				a.SourceFiles[0], a.SourceFiles[1] = a.SourceFiles[1], a.SourceFiles[0]
+			},
 		},
 		{
-			name:   "wrong source path",
-			mutate: func(a *JobArtifact) { a.Jobs[0].SourcePath = "not-a-source-file" },
+			name: "wrong source path",
+			mutate: func(a *JobArtifact) {
+				a.Jobs[0].SourcePath = "not-a-source-file"
+			},
 		},
 	}
 	for _, tc := range cases {
@@ -142,6 +184,7 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			if _, err := loadDefault(
 				defaultSpeciesJSON,
 				data,
@@ -155,6 +198,7 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 			}
 		})
 	}
+
 	if _, err := loadDefault(
 		defaultSpeciesJSON,
 		[]byte(`{"jobs":`),
@@ -176,16 +220,19 @@ func TestLoadDefaultRejectsBadSpeciesJobReference(t *testing.T) {
 	if err := json.Unmarshal(defaultSpeciesJSON, &artifact); err != nil {
 		t.Fatal(err)
 	}
+
 	for i := range artifact.Species {
 		if artifact.Species[i].ID == "SP_HUMAN" {
 			artifact.Species[i].RecommendedJobs = []string{"JOB_MISSING"}
 			break
 		}
 	}
+
 	data, err := json.Marshal(artifact)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if _, err := loadDefault(
 		data,
 		defaultJobsJSON,

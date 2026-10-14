@@ -19,21 +19,26 @@ func TestGenerateAndCheckUseOnlyExplicitBranchSources(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+
 	first, err := Generate(dir)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	second, err := Generate(dir)
 	if err != nil || !bytes.Equal(first, second) {
 		t.Fatalf("nondeterministic branch import: %v", err)
 	}
+
 	out := filepath.Join(t.TempDir(), "branches.json")
 	if err := Write(dir, out, false); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := Write(dir, out, true); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := os.WriteFile(
 		filepath.Join(
 			dir,
@@ -49,6 +54,7 @@ func TestGenerateAndCheckUseOnlyExplicitBranchSources(t *testing.T) {
 	); err != nil {
 		t.Fatal(err)
 	}
+
 	if err := Write(dir, out, true); err == nil {
 		t.Fatal("accepted stale committed branch content")
 	}

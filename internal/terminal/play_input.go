@@ -13,6 +13,7 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 		m.notice = "No game is running."
 		return nil
 	}
+
 	switch key {
 	case "i":
 		m.previous, m.screen, m.notice = m.screen, ScreenInventory, ""
@@ -38,16 +39,19 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 		m.notice = "Running is unavailable in the Go port."
 		return nil
 	}
+
 	command, ok := CommandForKey(key)
 	if !ok {
 		m.notice = fmt.Sprintf("Command %q is unavailable in the Go port.", key)
 		return nil
 	}
+
 	result, err := m.game.Step(command)
 	if err != nil {
 		m.notice = fmt.Sprintf("Action failed: %v", err)
 		return nil
 	}
+
 	m.notice = ""
 	m.afterStep(result)
 	return nil
@@ -58,14 +62,17 @@ func (m *AppModel) handleQuaffKey(key string) tea.Cmd {
 		m.screen, m.notice = ScreenPlay, ""
 		return nil
 	}
+
 	if key == "?" {
 		m.previous, m.screen, m.notice = ScreenQuaff, ScreenHelp, ""
 		return nil
 	}
+
 	for index, item := range m.game.View().Inventory {
 		if item.Class != "OBJ_POTIONS" || key != string(menuLetter(index)) {
 			continue
 		}
+
 		result, err := m.game.Step(game.Command{
 			Kind:   game.CommandQuaff,
 			ItemID: item.ID,
@@ -75,14 +82,17 @@ func (m *AppModel) handleQuaffKey(key string) tea.Cmd {
 			m.notice = fmt.Sprintf("Quaff failed: %v", err)
 			return nil
 		}
+
 		if result.Spent == 0 {
 			m.notice = result.Events[0].Text
 			return nil
 		}
+
 		m.notice = ""
 		m.afterStep(result)
 		return nil
 	}
+
 	m.notice = "Select a potion by its inventory letter."
 	return nil
 }
@@ -108,11 +118,13 @@ func (m *AppModel) handleStatChoiceKey(key string) {
 		m.notice = "Choose S, I, or D."
 		return
 	}
+
 	result, err := m.game.ChooseStat(id)
 	if err != nil {
 		m.notice = fmt.Sprintf("Stat choice failed: %v", err)
 		return
 	}
+
 	m.notice = ""
 	m.screen = ScreenPlay
 	m.afterStep(result)
@@ -123,9 +135,11 @@ func (m *AppModel) handleConfirmKey(key string) tea.Cmd {
 		m.confirm, m.screen, m.notice = confirmNone, ScreenPlay, ""
 		return nil
 	}
+
 	if key != "y" && key != "Y" && !(key == "S" && m.confirm == confirmSave) {
 		return nil
 	}
+
 	action := m.confirm
 	m.confirm = confirmNone
 	switch action {
@@ -135,6 +149,7 @@ func (m *AppModel) handleConfirmKey(key string) tea.Cmd {
 		m.screen = ScreenDeath
 		return nil
 	}
+
 	return nil
 }
 
@@ -143,6 +158,7 @@ func (m *AppModel) saveAndExit() tea.Cmd {
 		m.screen, m.notice = ScreenPlay, fmt.Sprintf("Save failed: %v", err)
 		return nil
 	}
+
 	return tea.Quit
 }
 
@@ -151,5 +167,6 @@ func (m *AppModel) drawConfirm(canvas *Canvas) {
 	if m.confirm == confirmAbandon {
 		prompt = "Are you sure you want to abandon this character? (y/N)"
 	}
+
 	canvas.Write(0, 0, prompt, LightGrey, Black)
 }
