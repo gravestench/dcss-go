@@ -274,15 +274,32 @@ func (p *jobParser) job() (job content.JobDef, err error) {
 		return job, err
 	}
 
-	for i, target := range []*int{&job.Strength, &job.Intelligence, &job.Dexterity} {
-		field := []string{"strength", "intelligence", "dexterity"}[i]
-		*target, err = p.integer(field)
+	attributes := []struct {
+		field  string
+		target *int
+	}{
+		{
+			field:  "strength",
+			target: &job.Strength,
+		},
+		{
+			field:  "intelligence",
+			target: &job.Intelligence,
+		},
+		{
+			field:  "dexterity",
+			target: &job.Dexterity,
+		},
+	}
+
+	for _, attribute := range attributes {
+		*attribute.target, err = p.integer(attribute.field)
 
 		if err != nil {
 			return job, err
 		}
 
-		if err = p.symbol(",", field); err != nil {
+		if err = p.symbol(",", attribute.field); err != nil {
 			return job, err
 		}
 	}

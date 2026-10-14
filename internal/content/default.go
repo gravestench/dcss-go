@@ -134,7 +134,11 @@ func attachDefaultDungeonPopulation(catalog Catalog, data []byte) (Catalog, erro
 		return Catalog{}, err
 	}
 
-	for _, name := range []string{"mon-pick-data.h", "random-pick.h", "tag-version.h"} {
+	for _, name := range []string{
+		"mon-pick-data.h",
+		"random-pick.h",
+		"tag-version.h",
+	} {
 		if _, found := paths["crawl-ref/source/"+name]; !found {
 			return Catalog{}, fmt.Errorf("Dungeon population lacks source %s", name)
 		}
@@ -183,7 +187,11 @@ func attachDefaultBranches(catalog Catalog, data []byte) (Catalog, error) {
 		return Catalog{}, err
 	}
 
-	for _, name := range []string{"tag-version.h", "branch-type.h", "branch-data.h"} {
+	for _, name := range []string{
+		"tag-version.h",
+		"branch-type.h",
+		"branch-data.h",
+	} {
 		if _, found := paths["crawl-ref/source/"+name]; !found {
 			return Catalog{}, fmt.Errorf("branch catalog lacks source %s", name)
 		}

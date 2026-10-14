@@ -60,12 +60,28 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 	}
 
 	if len(grants) != 3 || !slices.Equal(
-		[]string{grants[0].Raw, grants[1].Raw, grants[2].Raw},
-		[]string{"scale mail", "buckler", "potion of might"},
+		[]string{
+			grants[0].Raw,
+			grants[1].Raw,
+			grants[2].Raw,
+		},
+		[]string{
+			"scale mail",
+			"buckler",
+			"potion of might",
+		},
 	) ||
 		!slices.Equal(
-			[]string{grants[0].KindID, grants[1].KindID, grants[2].KindID},
-			[]string{"ARM_SCALE_MAIL", "ARM_BUCKLER", "POT_MIGHT"},
+			[]string{
+				grants[0].KindID,
+				grants[1].KindID,
+				grants[2].KindID,
+			},
+			[]string{
+				"ARM_SCALE_MAIL",
+				"ARM_BUCKLER",
+				"POT_MIGHT",
+			},
 		) {
 		t.Fatalf("Fighter grants differ from source: %+v", grants)
 	}
@@ -75,9 +91,21 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 		slot  string
 		skill string
 	}{
-		"POT_CURING":     {"OBJ_POTIONS", "", ""},
-		"ARM_SCALE_MAIL": {"OBJ_ARMOUR", "body", ""},
-		"WPN_FLAIL":      {"OBJ_WEAPONS", "weapon", "SK_MACES_FLAILS"},
+		"POT_CURING": {
+			class: "OBJ_POTIONS",
+			slot:  "",
+			skill: "",
+		},
+		"ARM_SCALE_MAIL": {
+			class: "OBJ_ARMOUR",
+			slot:  "body",
+			skill: "",
+		},
+		"WPN_FLAIL": {
+			class: "OBJ_WEAPONS",
+			slot:  "weapon",
+			skill: "SK_MACES_FLAILS",
+		},
 	} {
 		kind, err := catalog.Item(id)
 

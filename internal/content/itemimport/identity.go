@@ -574,10 +574,14 @@ func parseVocabulary(source map[string][]byte) (content.ItemVocabulary, error) {
 			prefixes: []string{"MI_"},
 		},
 		{
-			place:    &v.DamageFlags,
-			file:     "item-prop-enum.h",
-			enum:     "vorpal_damage_type",
-			prefixes: []string{"DAM_", "DAMV_", "DVORP_"},
+			place: &v.DamageFlags,
+			file:  "item-prop-enum.h",
+			enum:  "vorpal_damage_type",
+			prefixes: []string{
+				"DAM_",
+				"DAMV_",
+				"DVORP_",
+			},
 		},
 		{
 			place:    &v.Brands,

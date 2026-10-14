@@ -138,7 +138,11 @@ func propertyVocabulary() content.ItemVocabulary {
 		Ammo:        []string{"MI_NEEDLE", "MI_NONE"},
 		DamageFlags: []string{"DAMV_CRUSHING"},
 		Brands:      []string{"SPWPN_NORMAL", "SPWPN_VENOM"},
-		ArmourFlags: []string{"ARMF_NO_FLAGS", "ARMF_RES_FIRE", "ARMF_VUL_COLD"},
+		ArmourFlags: []string{
+			"ARMF_NO_FLAGS",
+			"ARMF_RES_FIRE",
+			"ARMF_VUL_COLD",
+		},
 	}
 }
 

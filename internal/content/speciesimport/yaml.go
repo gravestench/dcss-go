@@ -435,7 +435,11 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 	}
 
 	if source.LevelUpStats == nil {
-		defaults := []string{"str", "int", "dex"}
+		defaults := []string{
+			"str",
+			"int",
+			"dex",
+		}
 		source.LevelUpStats = &defaults
 	}
 

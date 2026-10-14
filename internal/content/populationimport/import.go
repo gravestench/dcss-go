@@ -15,7 +15,11 @@ import (
 
 const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 
-var sourceNames = []string{"mon-pick-data.h", "random-pick.h", "tag-version.h"}
+var sourceNames = []string{
+	"mon-pick-data.h",
+	"random-pick.h",
+	"tag-version.h",
+}
 
 var pinnedSourceSHA256 = map[string]string{
 	"mon-pick-data.h": "055cc0f1a9837044a99acb04560231403d8c4d5f58c64d9d006f131016d168ea",

@@ -179,7 +179,11 @@ func TestMonsterCatalogCopiesAndStatuses(t *testing.T) {
 	first.Resistances[0].Level = 3
 	ids := c.MonsterIDs()
 
-	if !reflect.DeepEqual(ids, []string{"MONS_BEAR", "MONS_BUMBLEBEE", "MONS_RAT"}) {
+	if !reflect.DeepEqual(ids, []string{
+		"MONS_BEAR",
+		"MONS_BUMBLEBEE",
+		"MONS_RAT",
+	}) {
 		t.Fatalf("unsorted monster IDs: %v", ids)
 	}
 

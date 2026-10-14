@@ -27,8 +27,12 @@ func testSpecies(id string) SpeciesDef {
 		Intelligence:         8,
 		Dexterity:            8,
 		LevelUpStatFrequency: 4,
-		LevelUpStats:         []string{"str", "int", "dex"},
-		Aptitudes:            aptitudes,
+		LevelUpStats: []string{
+			"str",
+			"int",
+			"dex",
+		},
+		Aptitudes: aptitudes,
 		Mutations: []SpeciesMutation{
 			{
 				Level:  1,

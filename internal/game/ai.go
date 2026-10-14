@@ -171,7 +171,11 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 	}
 	// DCSS aims toward the target along both axes first. Cardinal steps remain
 	// useful when a diagonal is blocked by terrain or another actor.
-	for _, step := range [][2]int{{dx, dy}, {dx, 0}, {0, dy}} {
+	for _, step := range [][2]int{
+		{dx, dy},
+		{dx, 0},
+		{0, dy},
+	} {
 		if step == [2]int{} {
 			continue
 		}

@@ -11,7 +11,11 @@ func HealWoundsHP(roller Roller, current, maximum int) (int, error) {
 
 	total := 0
 
-	for i, bound := range []int{28, 29, 29} {
+	for i, bound := range []int{
+		28,
+		29,
+		29,
+	} {
 		roll, err := roller.Intn("potion", bound)
 
 		if err != nil {

@@ -171,7 +171,11 @@ func TestCreationShortcutColumnsAndContextText(t *testing.T) {
 		}
 	}
 
-	for row, want := range []string{"* - Random species", "! - Random character", "Space - Pick background first"} {
+	for row, want := range []string{
+		"* - Random species",
+		"! - Random character",
+		"Space - Pick background first",
+	} {
 		if !strings.Contains(rows[14+row][40:], want) {
 			t.Fatalf("right shortcut row %d: %q", 14+row, rows[14+row])
 		}

@@ -81,7 +81,14 @@ func TestLevelRejectsInvalidTerrain(t *testing.T) {
 	defer world.Close()
 	positions := ecs.Register(world).Positions
 
-	for _, rows := range [][]string{{"###", "#?#", "###"}, {"###", "##"}} {
+	for _, rows := range [][]string{
+		{
+			"###",
+			"#?#",
+			"###",
+		},
+		{"###", "##"},
+	} {
 		if _, err := NewLevel(1, rows, positions); err == nil {
 			t.Fatalf("accepted invalid terrain %q", rows)
 		}
@@ -92,7 +99,11 @@ func TestOccupancyRejectsSecondActor(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
 	positions := ecs.Register(world).Positions
-	level, err := NewLevel(1, []string{"###", "#.#", "###"}, positions)
+	level, err := NewLevel(1, []string{
+		"###",
+		"#.#",
+		"###",
+	}, positions)
 
 	if err != nil {
 		t.Fatal(err)

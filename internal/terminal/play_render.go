@@ -191,7 +191,11 @@ func drawHUD(canvas *Canvas, region Region, view game.View) {
 	drawMeter(canvas, region.X+18, region.Y+2, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
 	drawMeter(canvas, region.X+18, region.Y+3, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
 
-	defenseLabels := []string{"AC: --", "EV: --", "SH: --"}
+	defenseLabels := []string{
+		"AC: --",
+		"EV: --",
+		"SH: --",
+	}
 
 	if view.DefenseKnown {
 		defenseLabels = []string{

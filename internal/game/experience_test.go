@@ -133,7 +133,11 @@ func TestRestoreRejectsClaimedRatXPWhileRatAlive(t *testing.T) {
 func TestExperienceRestoreRejectsMalformedProgression(t *testing.T) {
 	g := newStepGame(t)
 
-	for _, xp := range []int{-1, 2, 9} {
+	for _, xp := range []int{
+		-1,
+		2,
+		9,
+	} {
 		bad := g.Snapshot()
 
 		for i := range bad.Entities {

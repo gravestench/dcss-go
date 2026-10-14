@@ -40,8 +40,16 @@ func TestNewScenarioStartingGear(t *testing.T) {
 			}
 
 			view := g.View()
-			wantKinds := []string{"ARM_SCALE_MAIL", "ARM_BUCKLER", "POT_MIGHT"}
-			wantSlots := []string{"body", "shield", ""}
+			wantKinds := []string{
+				"ARM_SCALE_MAIL",
+				"ARM_BUCKLER",
+				"POT_MIGHT",
+			}
+			wantSlots := []string{
+				"body",
+				"shield",
+				"",
+			}
 
 			if weaponID != "WPN_UNARMED" {
 				wantKinds = append([]string{weaponID}, wantKinds...)

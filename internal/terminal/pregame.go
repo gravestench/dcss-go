@@ -460,7 +460,11 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 		change = "Space - Change " + otherTitle
 	}
 
-	for row, label := range []string{"    * - Random " + choiceTitle, "    ! - Random character", change} {
+	for row, label := range []string{
+		"    * - Random " + choiceTitle,
+		"    ! - Random character",
+		change,
+	} {
 		canvas.Write(40, 14+row, label, LightGrey, Black)
 	}
 

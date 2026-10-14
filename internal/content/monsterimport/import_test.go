@@ -89,7 +89,11 @@ func TestGenerateFixtureDeterministicPartition(t *testing.T) {
 		_ = json.Unmarshal(entry["status"], &status)
 
 		if status != "defined" {
-			for _, field := range []string{"attacks", "energy", "tile"} {
+			for _, field := range []string{
+				"attacks",
+				"energy",
+				"tile",
+			} {
 				if _, exists := entry[field]; exists {
 					t.Fatalf("non-live record carries %s: %s", field, entry["id"])
 				}

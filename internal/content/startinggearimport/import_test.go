@@ -49,7 +49,11 @@ func fixtureJobs() []content.JobDef {
 			Selectable:         true,
 			RecommendedSpecies: []string{"SP_HUMAN"},
 			WeaponChoice:       "WCHOICE_NONE",
-			Equipment:          []string{"scale mail", "potion of might", "dart ego:curare q:3"},
+			Equipment: []string{
+				"scale mail",
+				"potion of might",
+				"dart ego:curare q:3",
+			},
 		},
 	}
 }

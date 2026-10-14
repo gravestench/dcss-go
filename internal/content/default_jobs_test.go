@@ -28,7 +28,11 @@ func TestLoadDefaultJobs(t *testing.T) {
 		t.Fatalf("Fighter modifiers or selectability: %+v", fighter)
 	}
 
-	if !slices.Equal(fighter.Equipment, []string{"scale mail", "buckler", "potion of might"}) ||
+	if !slices.Equal(fighter.Equipment, []string{
+		"scale mail",
+		"buckler",
+		"potion of might",
+	}) ||
 		!slices.Equal(fighter.Skills, []JobSkillGrant{
 			{
 				ID:    "SK_FIGHTING",

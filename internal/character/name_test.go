@@ -6,7 +6,11 @@ import (
 )
 
 func TestValidateNameUsesSourceCharactersAndDisplayWidth(t *testing.T) {
-	for _, name := range []string{"Alice", "A.B-C_D 9", strings.Repeat("界", 15)} {
+	for _, name := range []string{
+		"Alice",
+		"A.B-C_D 9",
+		strings.Repeat("界", 15),
+	} {
 		if err := ValidateName(name); err != nil {
 			t.Fatalf("valid name %q: %v", name, err)
 		}

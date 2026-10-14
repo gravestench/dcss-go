@@ -15,7 +15,11 @@ import (
 
 const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 
-var sourceNames = []string{"tag-version.h", "branch-type.h", "branch-data.h"}
+var sourceNames = []string{
+	"tag-version.h",
+	"branch-type.h",
+	"branch-data.h",
+}
 
 func Generate(sourceDir string) ([]byte, error) {
 	if sourceDir == "" {

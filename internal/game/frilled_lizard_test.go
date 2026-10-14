@@ -142,7 +142,11 @@ func TestFrilledLizardEncounterUsesCatalogAndSurvivesSave(t *testing.T) {
 
 	wantRNG := NewRNGStreams(g.seed)
 
-	for _, average := range []int{25, 55, 20} {
+	for _, average := range []int{
+		25,
+		55,
+		20,
+	} {
 		if _, err := monster.RollHP(wantRNG, average); err != nil {
 			t.Fatal(err)
 		}

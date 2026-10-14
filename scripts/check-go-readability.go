@@ -14,7 +14,11 @@ import (
 func main() {
 	issues := 0
 
-	for _, root := range []string{"cmd", "internal", "scripts"} {
+	for _, root := range []string{
+		"cmd",
+		"internal",
+		"scripts",
+	} {
 		err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, walkErr error) error {
 			if walkErr != nil {
 				return walkErr
@@ -140,8 +144,12 @@ func checkFile(path string) (int, error) {
 			_, anonymous := value.Type.(*ast.StructType)
 			_, generic := value.Type.(*ast.IndexExpr)
 			_, genericList := value.Type.(*ast.IndexListExpr)
+			fixedArray, array := value.Type.(*ast.ArrayType)
+			compactFixedArray := array && fixedArray.Len != nil &&
+				scalarElements(value.Elts)
 
-			if (len(value.Elts) >= 4 || keyedFields || named || qualified ||
+			if ((len(value.Elts) >= 3 && !compactFixedArray) ||
+				len(value.Elts) >= 4 || keyedFields || named || qualified ||
 				anonymous || generic || genericList) &&
 				entriesShareLine(fset, value) {
 				report(value.Lbrace, "put literal entries on separate lines")
@@ -156,6 +164,23 @@ func checkFile(path string) (int, error) {
 
 func sameLine(fset *token.FileSet, left, right token.Pos) bool {
 	return fset.Position(left).Line == fset.Position(right).Line
+}
+
+func scalarElements(elements []ast.Expr) bool {
+	for _, element := range elements {
+		switch value := element.(type) {
+		case *ast.BasicLit, *ast.Ident:
+			continue
+		case *ast.UnaryExpr:
+			if _, literal := value.X.(*ast.BasicLit); literal {
+				continue
+			}
+		}
+
+		return false
+	}
+
+	return true
 }
 
 func entriesShareLine(fset *token.FileSet, literal *ast.CompositeLit) bool {

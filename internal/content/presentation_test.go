@@ -57,8 +57,16 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 	}
 
 	if !slices.Equal(
-		[]string{p.SpeciesGroups[0].Label, p.SpeciesGroups[1].Label, p.SpeciesGroups[2].Label},
-		[]string{"Simple", "Intermediate", "Advanced"},
+		[]string{
+			p.SpeciesGroups[0].Label,
+			p.SpeciesGroups[1].Label,
+			p.SpeciesGroups[2].Label,
+		},
+		[]string{
+			"Simple",
+			"Intermediate",
+			"Advanced",
+		},
 	) {
 		t.Fatalf("species labels: %+v", p.SpeciesGroups)
 	}

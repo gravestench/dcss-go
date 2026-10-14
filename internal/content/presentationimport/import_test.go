@@ -74,7 +74,11 @@ SK_COLUMN_BREAK,
 		t.Fatal(err)
 	}
 
-	if len(columns) != 2 || !slices.Equal(columns[0], []string{"SK_FIGHTING", "", "SK_ARMOUR"}) ||
+	if len(columns) != 2 || !slices.Equal(columns[0], []string{
+		"SK_FIGHTING",
+		"",
+		"SK_ARMOUR",
+	}) ||
 		!slices.Equal(columns[1], []string{"SK_SPELLCASTING", "SK_INVOCATIONS"}) {
 		t.Fatalf("source skill columns: %+v", columns)
 	}
