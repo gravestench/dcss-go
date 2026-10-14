@@ -242,13 +242,20 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 				return nil, fmt.Errorf("invalid monster entity %d", record.ID)
 			}
 			switch record.AI.Behavior {
-			case "wander", "chase":
-				if record.AI.TargetX != 0 || record.AI.TargetY != 0 {
-					return nil, fmt.Errorf("non-seeking monster %d has a target", record.ID)
+			case "chase":
+				if record.AI.TargetX != 0 || record.AI.TargetY != 0 || record.AI.MemoryUntilAut != 0 {
+					return nil, fmt.Errorf("legacy monster %d has a target or memory", record.ID)
+				}
+			case "wander":
+				level := g.levels[record.Position.LevelID]
+				if record.AI.MemoryUntilAut != 0 || level == nil ||
+					(record.AI.TargetX != 0 || record.AI.TargetY != 0) && !level.Walkable(record.AI.TargetX, record.AI.TargetY) {
+					return nil, fmt.Errorf("wandering monster %d has invalid target or memory", record.ID)
 				}
 			case "seek":
 				level := g.levels[record.Position.LevelID]
-				if level == nil || !level.Walkable(record.AI.TargetX, record.AI.TargetY) {
+				if level == nil || !level.Walkable(record.AI.TargetX, record.AI.TargetY) ||
+					record.AI.MemoryUntilAut < 0 || record.AI.MemoryUntilAut > snapshot.CurrentAut+550 {
 					return nil, fmt.Errorf("monster %d has invalid remembered target", record.ID)
 				}
 			default:

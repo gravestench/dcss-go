@@ -52,11 +52,11 @@ func TestQuokkaAcquiresPlayerOnlyInItsOwnSight(t *testing.T) {
 		t.Fatal(err)
 	}
 	intent, err := g.chooseMonsterIntent(quokka)
-	if err != nil || intent.Kind != ecs.IntentWait {
+	if err != nil || intent.Kind == ecs.IntentMelee {
 		t.Fatalf("hidden quokka intent %+v, %v", intent, err)
 	}
 	ai, _ := g.stores.AI.Get(quokka)
-	if ai.Behavior != "wander" {
+	if ai.Behavior != "wander" || ai.TargetX < 8 || ai.TargetX > 16 || ai.TargetY < 1 || ai.TargetY > 7 || !g.levels[2].Walkable(ai.TargetX, ai.TargetY) {
 		t.Fatalf("hidden quokka behavior %+v", ai)
 	}
 	if err := g.levels[2].MoveActor(g.player, 14, 6); err != nil {
@@ -94,11 +94,11 @@ func TestQuokkaPursuesLastSeenTileThenStops(t *testing.T) {
 		t.Fatal(err)
 	}
 	intent, err = g.chooseMonsterIntent(quokka)
-	if err != nil || intent.Kind != ecs.IntentWait {
-		t.Fatalf("quokka continued blind pursuit: %+v, %v", intent, err)
+	if err != nil || intent.Kind == ecs.IntentMelee {
+		t.Fatalf("quokka attacked at an unseen target: %+v, %v", intent, err)
 	}
 	ai, _ := g.stores.AI.Get(quokka)
-	if ai.Behavior != "wander" {
+	if ai.Behavior != "wander" || (ai.TargetX == 14 && ai.TargetY == 5) {
 		t.Fatalf("quokka kept stale target: %+v", ai)
 	}
 }
@@ -174,8 +174,148 @@ func TestLegacyChaseSaveStillLoadsAndStopsBlindPursuit(t *testing.T) {
 		t.Fatal(err)
 	}
 	intent, err := loaded.chooseMonsterIntent(quokka)
-	if err != nil || intent.Kind != ecs.IntentWait {
+	if err != nil || intent.Kind == ecs.IntentMelee {
 		t.Fatalf("legacy quokka pursued unseen player: %+v, %v", intent, err)
+	}
+	ai, _ := loaded.stores.AI.Get(quokka)
+	if ai.Behavior != "wander" {
+		t.Fatalf("legacy chase behavior persisted after unseen decision: %+v", ai)
+	}
+}
+
+func TestQuokkaWanderTargetAndMemoryUseSerializableAIStream(t *testing.T) {
+	g := newStepGame(t)
+	quokka := quokkaID(t, g)
+	if err := g.levels[1].RemoveActor(g.player); err != nil {
+		t.Fatal(err)
+	}
+	if err := g.levels[2].PlaceActor(g.player, 1, 1); err != nil {
+		t.Fatal(err)
+	}
+	before := g.rng.States()
+	if _, err := g.chooseMonsterIntent(quokka); err != nil {
+		t.Fatal(err)
+	}
+	ai, _ := g.stores.AI.Get(quokka)
+	if ai.Behavior != "wander" || (ai.TargetX == 0 && ai.TargetY == 0) {
+		t.Fatalf("quokka did not select wander target: %+v", ai)
+	}
+	after := g.rng.States()
+	if after["ai"] == 0 || after["monster_hp"] != before["monster_hp"] {
+		t.Fatalf("wander changed unrelated RNG streams: before %+v after %+v", before, after)
+	}
+	if err := g.refreshVisibility(); err != nil {
+		t.Fatal(err)
+	}
+	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer loaded.Close()
+	if !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
+		t.Fatal("wander target or RNG stream changed on save")
+	}
+	want, err := g.chooseMonsterIntent(quokka)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := loaded.chooseMonsterIntent(quokka)
+	if err != nil || got != want || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
+		t.Fatalf("wander continuation diverged: got %+v, %v; want %+v", got, err, want)
+	}
+}
+
+func TestQuokkaFoeMemoryExpiresAfterSourceRange(t *testing.T) {
+	g := newStepGame(t)
+	quokka := quokkaID(t, g)
+	if err := g.levels[1].RemoveActor(g.player); err != nil {
+		t.Fatal(err)
+	}
+	if err := g.levels[2].PlaceActor(g.player, 14, 5); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := g.chooseMonsterIntent(quokka); err != nil {
+		t.Fatal(err)
+	}
+	ai, _ := g.stores.AI.Get(quokka)
+	if ai.MemoryUntilAut < 250 || ai.MemoryUntilAut > 550 {
+		t.Fatalf("animal memory deadline = %d", ai.MemoryUntilAut)
+	}
+	if err := g.levels[2].MoveActor(g.player, 1, 1); err != nil {
+		t.Fatal(err)
+	}
+	g.currentAut = Aut(ai.MemoryUntilAut - 1)
+	if _, err := g.chooseMonsterIntent(quokka); err != nil || ai.Behavior != "seek" {
+		t.Fatalf("animal forgot too soon: %+v, %v", ai, err)
+	}
+	g.currentAut = Aut(ai.MemoryUntilAut)
+	if _, err := g.chooseMonsterIntent(quokka); err != nil || ai.Behavior != "wander" || ai.MemoryUntilAut != 0 {
+		t.Fatalf("animal retained expired foe memory: %+v, %v", ai, err)
+	}
+}
+
+func TestLegacyZeroDeadlineSeekGetsFiniteMemory(t *testing.T) {
+	g := newStepGame(t)
+	quokka := quokkaID(t, g)
+	if err := g.levels[1].RemoveActor(g.player); err != nil {
+		t.Fatal(err)
+	}
+	if err := g.levels[2].PlaceActor(g.player, 1, 1); err != nil {
+		t.Fatal(err)
+	}
+	ai, _ := g.stores.AI.Get(quokka)
+	ai.Behavior, ai.TargetX, ai.TargetY = "seek", 7, 7
+	if err := g.refreshVisibility(); err != nil {
+		t.Fatal(err)
+	}
+	legacy := g.Snapshot()
+	loaded, err := Restore(legacy, testCatalog(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer loaded.Close()
+	if !reflect.DeepEqual(legacy, loaded.Snapshot()) {
+		t.Fatal("legacy seek save changed during load")
+	}
+	if _, err := loaded.chooseMonsterIntent(quokka); err != nil {
+		t.Fatal(err)
+	}
+	loadedAI, _ := loaded.stores.AI.Get(quokka)
+	if loadedAI.MemoryUntilAut != 250 {
+		t.Fatalf("legacy seek memory deadline = %d, want 250", loadedAI.MemoryUntilAut)
+	}
+	loaded.currentAut = 250
+	if _, err := loaded.chooseMonsterIntent(quokka); err != nil || loadedAI.Behavior != "wander" || loadedAI.MemoryUntilAut != 0 {
+		t.Fatalf("legacy seek did not expire: %+v, %v", loadedAI, err)
+	}
+}
+
+func TestRestoreRejectsImpossibleAnimalMemoryDeadline(t *testing.T) {
+	g := newStepGame(t)
+	quokka := quokkaID(t, g)
+	if err := g.levels[1].RemoveActor(g.player); err != nil {
+		t.Fatal(err)
+	}
+	if err := g.levels[2].PlaceActor(g.player, 14, 5); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := g.chooseMonsterIntent(quokka); err != nil {
+		t.Fatal(err)
+	}
+	if err := g.refreshVisibility(); err != nil {
+		t.Fatal(err)
+	}
+	for _, deadline := range []int64{-1, 551} {
+		bad := g.Snapshot()
+		for i := range bad.Entities {
+			if bad.Entities[i].ID == uint64(quokka) {
+				bad.Entities[i].AI.MemoryUntilAut = deadline
+			}
+		}
+		if loaded, err := Restore(bad, testCatalog(t)); err == nil {
+			loaded.Close()
+			t.Fatalf("invalid animal memory deadline %d accepted", deadline)
+		}
 	}
 }
 

@@ -69,9 +69,10 @@ type Attributes struct {
 }
 
 type MonsterAI struct {
-	Behavior string
-	TargetX  int
-	TargetY  int
+	Behavior       string
+	TargetX        int
+	TargetY        int
+	MemoryUntilAut int64
 }
 
 type Item struct {
