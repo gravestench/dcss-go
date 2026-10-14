@@ -116,22 +116,6 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 				}
 			}
 		}},
-		{"missing floor potion", func(a *StartingGearArtifact) {
-			for i := range a.Kinds {
-				if a.Kinds[i].ID == "POT_CURING" {
-					a.Kinds = append(a.Kinds[:i], a.Kinds[i+1:]...)
-					return
-				}
-			}
-		}},
-		{"missing choice weapon", func(a *StartingGearArtifact) {
-			for i := range a.Kinds {
-				if a.Kinds[i].ID == "WPN_RAPIER" {
-					a.Kinds = append(a.Kinds[:i], a.Kinds[i+1:]...)
-					return
-				}
-			}
-		}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			var artifact StartingGearArtifact
@@ -143,41 +127,38 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if _, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, data, defaultPresentationJSON, defaultMonsterJSON); err == nil {
+			if _, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, data, defaultPresentationJSON, defaultMonsterJSON); err == nil {
 				t.Fatal("invalid starting gear artifact accepted")
 			}
 		})
 	}
-	if _, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, []byte(`{"jobs":`), defaultPresentationJSON, defaultMonsterJSON); err == nil || !strings.Contains(err.Error(), "decode") {
+	if _, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, []byte(`{"jobs":`), defaultPresentationJSON, defaultMonsterJSON); err == nil || !strings.Contains(err.Error(), "decode") {
 		t.Fatalf("malformed starting gear artifact: %v", err)
 	}
 }
 
 func validStartingGearArtifact() StartingGearArtifact {
 	return StartingGearArtifact{
-		SchemaVersion: 1, SourceRevision: sourceRevision, TagMajorVersion: 34,
-		Kinds: []ItemDef{
-			{ID: "POT_CURING", Name: "potion of curing", Glyph: '!', Class: "OBJ_POTIONS", Stackable: true},
-			{ID: "WPN_FLAIL", Name: "flail", Glyph: ')', Class: "OBJ_WEAPONS", Slot: "weapon", WeaponSkill: "SK_MACES_FLAILS"},
-		},
+		SchemaVersion: 2, SourceRevision: sourceRevision, TagMajorVersion: 34,
 		Jobs: []JobStartingGear{{JobID: "JOB_FIGHTER", Grants: []StartingGrant{{Raw: "potion of curing", KindID: "POT_CURING", Quantity: 1}}}},
 	}
 }
 
 func TestStartingGearArtifactValidation(t *testing.T) {
-	if err := validStartingGearArtifact().Validate(); err != nil {
+	catalog, err := LoadItemsForImport()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := validStartingGearArtifact().Validate(catalog); err != nil {
 		t.Fatalf("valid artifact: %v", err)
 	}
 	for _, tc := range []struct {
 		name, want string
 		change     func(*StartingGearArtifact)
 	}{
-		{"duplicate kind", "duplicate", func(a *StartingGearArtifact) { a.Kinds = append(a.Kinds, a.Kinds[0]) }},
 		{"duplicate job", "duplicate", func(a *StartingGearArtifact) { a.Jobs = append(a.Jobs, a.Jobs[0]) }},
-		{"empty name", "name", func(a *StartingGearArtifact) { a.Kinds[0].Name = "" }},
-		{"potion slot", "slot", func(a *StartingGearArtifact) { a.Kinds[0].Slot = "weapon" }},
-		{"weapon without slot", "slot", func(a *StartingGearArtifact) { a.Kinds[1].Slot = "" }},
-		{"potion skill", "skill", func(a *StartingGearArtifact) { a.Kinds[0].WeaponSkill = "SK_AXES" }},
+		{"unknown kind", "unknown", func(a *StartingGearArtifact) { a.Jobs[0].Grants[0].KindID = "POT_UNKNOWN" }},
+		{"undefined legacy kind", "unknown", func(a *StartingGearArtifact) { a.Jobs[0].Grants[0].KindID = "POT_GAIN_STRENGTH" }},
 		{"zero quantity", "quantity", func(a *StartingGearArtifact) { a.Jobs[0].Grants[0].Quantity = 0 }},
 		{"potion charges", "charges", func(a *StartingGearArtifact) { a.Jobs[0].Grants[0].Charges = 3 }},
 		{"potion ego", "ego", func(a *StartingGearArtifact) { a.Jobs[0].Grants[0].Ego = "poisoned" }},
@@ -185,7 +166,7 @@ func TestStartingGearArtifactValidation(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			a := validStartingGearArtifact()
 			tc.change(&a)
-			if err := a.Validate(); err == nil || !strings.Contains(strings.ToLower(err.Error()), tc.want) {
+			if err := a.Validate(catalog); err == nil || !strings.Contains(strings.ToLower(err.Error()), tc.want) {
 				t.Fatalf("want %q error, got %v", tc.want, err)
 			}
 		})

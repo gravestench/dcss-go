@@ -26,7 +26,6 @@ type StartingGearArtifact struct {
 	SourceRevision  string            `json:"source_revision"`
 	TagMajorVersion int               `json:"tag_major_version"`
 	SourceFiles     []JobSourceFile   `json:"source_files"`
-	Kinds           []ItemDef         `json:"kinds"`
 	Jobs            []JobStartingGear `json:"jobs"`
 }
 
@@ -49,24 +48,9 @@ func (g StartingGrant) validate(kind ItemDef) error {
 	return nil
 }
 
-func (a StartingGearArtifact) Validate() error {
-	if a.SchemaVersion != 1 || a.SourceRevision == "" || a.TagMajorVersion != 34 {
+func (a StartingGearArtifact) Validate(catalog Catalog) error {
+	if a.SchemaVersion != 2 || a.SourceRevision == "" || a.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported starting gear artifact metadata")
-	}
-	kinds := make(map[string]ItemDef, len(a.Kinds))
-	names := make(map[string]string, len(a.Kinds))
-	for _, kind := range a.Kinds {
-		if err := kind.validate(); err != nil {
-			return err
-		}
-		if _, found := kinds[kind.ID]; found {
-			return fmt.Errorf("duplicate item kind %s", kind.ID)
-		}
-		if id, found := names[kind.Name]; found {
-			return fmt.Errorf("duplicate item name %s for %s and %s", kind.Name, id, kind.ID)
-		}
-		kinds[kind.ID] = kind
-		names[kind.Name] = kind.ID
 	}
 	jobs := make(map[string]bool, len(a.Jobs))
 	for _, job := range a.Jobs {
@@ -78,8 +62,8 @@ func (a StartingGearArtifact) Validate() error {
 		}
 		jobs[job.JobID] = true
 		for _, grant := range job.Grants {
-			kind, found := kinds[grant.KindID]
-			if !found {
+			kind, err := catalog.Item(grant.KindID)
+			if err != nil {
 				return fmt.Errorf("job %s grant %q has unknown kind %s", job.JobID, grant.Raw, grant.KindID)
 			}
 			if err := grant.validate(kind); err != nil {

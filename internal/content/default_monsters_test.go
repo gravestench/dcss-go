@@ -122,7 +122,7 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 			}
 			tc.edit(&a)
 			bad, _ := json.Marshal(a)
-			if _, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultStartingGearJSON, defaultPresentationJSON, bad); err == nil {
+			if _, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, defaultPresentationJSON, bad); err == nil {
 				t.Fatal("bad monster artifact accepted")
 			}
 		})

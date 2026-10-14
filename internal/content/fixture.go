@@ -4,7 +4,7 @@ const sourceRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 
 // scenarioCatalog contains only the non-species scenario rules.
 // Human ID: species-data.h:483; Fighter ID: job-data.h:191.
-// Potion kinds come from the committed starting-gear artifact.
+// Item kinds come from the committed complete item catalog.
 // Player damage is a controlled scenario value, not DCSS combat parity.
 func scenarioCatalog() Catalog {
 	return Catalog{

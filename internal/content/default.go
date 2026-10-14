@@ -18,6 +18,12 @@ var defaultJobsJSON []byte
 //go:embed generated/starting-gear.json
 var defaultStartingGearJSON []byte
 
+//go:embed generated/items.json
+var defaultItemsJSON []byte
+
+//go:embed generated/item-identities.json
+var defaultItemIdentitiesJSON []byte
+
 //go:embed generated/presentation.json
 var defaultPresentationJSON []byte
 
@@ -29,13 +35,52 @@ var defaultMonsterVocabularyJSON []byte
 
 // LoadDefault builds a fresh catalog from the checked-in source-traced artifacts.
 func LoadDefault() (Catalog, error) {
-	return loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultStartingGearJSON, defaultPresentationJSON, defaultMonsterJSON)
+	return loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, defaultPresentationJSON, defaultMonsterJSON)
 }
 
 // LoadDefinitionsForImport reads committed gameplay definitions without needing
 // the presentation artifact that the refresh tool is about to regenerate.
 func LoadDefinitionsForImport() (Catalog, error) {
-	return loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultStartingGearJSON, nil, defaultMonsterJSON)
+	return loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, nil, defaultMonsterJSON)
+}
+
+// LoadItemsForImport reads only the committed item pair, so the starting-gear
+// refresh does not depend on the older gear artifact it is replacing.
+func LoadItemsForImport() (Catalog, error) {
+	catalog, _, err := loadItemPair(defaultItemsJSON, defaultItemIdentitiesJSON)
+	return catalog, err
+}
+
+func loadItemPair(itemData, identityData []byte) (Catalog, map[string]string, error) {
+	var manifest ItemIdentityManifest
+	if err := decodeArtifact(identityData, "item identities", &manifest); err != nil {
+		return Catalog{}, nil, err
+	}
+	var artifact ItemArtifact
+	if err := decodeArtifact(itemData, "items", &artifact); err != nil {
+		return Catalog{}, nil, err
+	}
+	if artifact.SourceRevision != sourceRevision || manifest.SourceRevision != sourceRevision {
+		return Catalog{}, nil, fmt.Errorf("item source revision differs from pinned revision")
+	}
+	if len(manifest.Identities) != 408 || len(artifact.Items) != 368 || len(manifest.Aliases) != 10 {
+		return Catalog{}, nil, fmt.Errorf("item catalog has incomplete identity or definition coverage")
+	}
+	if err := artifact.Validate(manifest); err != nil {
+		return Catalog{}, nil, err
+	}
+	files, err := validSourceFiles(artifact.SourceFiles, "item")
+	if err != nil {
+		return Catalog{}, nil, err
+	}
+	catalog := Catalog{items: make(map[string]ItemDef, len(artifact.Items)), itemIdentities: make(map[string]ItemIdentity, len(manifest.Identities))}
+	for _, identity := range manifest.Identities {
+		catalog.itemIdentities[identity.ID] = identity
+	}
+	for _, item := range artifact.Items {
+		catalog.items[item.ID] = item.clone()
+	}
+	return catalog, files, nil
 }
 
 func decodeArtifact(data []byte, name string, target any) error {
@@ -67,7 +112,7 @@ func validSourceFiles(files []JobSourceFile, name string) (map[string]string, er
 	return paths, nil
 }
 
-func loadDefault(speciesData, jobData, gearData, presentationData, monsterData []byte) (Catalog, error) {
+func loadDefault(speciesData, jobData, itemData, identityData, gearData, presentationData, monsterData []byte) (Catalog, error) {
 	var artifact SpeciesArtifact
 	if err := decodeArtifact(speciesData, "species", &artifact); err != nil {
 		return Catalog{}, err
@@ -142,17 +187,30 @@ func loadDefault(speciesData, jobData, gearData, presentationData, monsterData [
 			}
 		}
 	}
+	itemCatalog, itemPaths, err := loadItemPair(itemData, identityData)
+	if err != nil {
+		return Catalog{}, err
+	}
+	for path, hash := range itemPaths {
+		if prior, shared := hashedPaths[path]; shared && prior != hash {
+			return Catalog{}, fmt.Errorf("shared species/item source hash differs for %s", path)
+		}
+		if prior, shared := jobPaths[path]; shared && prior != hash {
+			return Catalog{}, fmt.Errorf("shared job/item source hash differs for %s", path)
+		}
+	}
+	catalog.items, catalog.itemIdentities = itemCatalog.items, itemCatalog.itemIdentities
 	var gear StartingGearArtifact
 	if err := decodeArtifact(gearData, "starting gear", &gear); err != nil {
 		return Catalog{}, err
 	}
-	if gear.SchemaVersion != 1 || gear.SourceRevision != artifact.SourceRevision || gear.TagMajorVersion != artifact.TagMajorVersion {
+	if gear.SchemaVersion != 2 || gear.SourceRevision != artifact.SourceRevision || gear.TagMajorVersion != artifact.TagMajorVersion {
 		return Catalog{}, fmt.Errorf("unsupported or mismatched starting gear artifact schema/revision/tag")
 	}
 	if len(gear.Jobs) != 25 || len(gear.SourceFiles) != 14 {
 		return Catalog{}, fmt.Errorf("starting gear artifact has incomplete records or provenance")
 	}
-	if err := gear.Validate(); err != nil {
+	if err := gear.Validate(catalog); err != nil {
 		return Catalog{}, err
 	}
 	gearPaths, err := validSourceFiles(gear.SourceFiles, "starting gear")
@@ -166,24 +224,18 @@ func loadDefault(speciesData, jobData, gearData, presentationData, monsterData [
 		if jobHash, shared := jobPaths[path]; shared && jobHash != hash {
 			return Catalog{}, fmt.Errorf("shared job/gear source hash differs for %s", path)
 		}
+		if itemHash, shared := itemPaths[path]; shared && itemHash != hash {
+			return Catalog{}, fmt.Errorf("shared item/gear source hash differs for %s", path)
+		}
 	}
 	for path := range jobPaths {
 		if _, found := gearPaths[path]; !found {
 			return Catalog{}, fmt.Errorf("starting gear artifact lacks job source %s", path)
 		}
 	}
-	catalog.items = make(map[string]ItemDef, len(gear.Kinds))
-	previous = ""
-	for _, kind := range gear.Kinds {
-		if kind.ID <= previous {
-			return Catalog{}, fmt.Errorf("starting item kinds are not sorted by ID")
-		}
-		catalog.items[kind.ID] = kind
-		previous = kind.ID
-	}
 	for _, id := range []string{"POT_CURING", "WPN_SHORT_SWORD", "WPN_MACE", "WPN_HAND_AXE", "WPN_SPEAR", "WPN_FALCHION", "WPN_QUARTERSTAFF", "WPN_RAPIER", "WPN_FLAIL", "WPN_WAR_AXE", "WPN_TRIDENT", "WPN_LONG_SWORD"} {
 		if _, found := catalog.items[id]; !found {
-			return Catalog{}, fmt.Errorf("starting gear artifact lacks required item kind %s", id)
+			return Catalog{}, fmt.Errorf("item catalog lacks required item kind %s", id)
 		}
 	}
 	if _, found := catalog.items["WPN_UNARMED"]; found {
@@ -243,7 +295,7 @@ func loadDefault(speciesData, jobData, gearData, presentationData, monsterData [
 		}
 	}
 	for path, hash := range monsterPaths {
-		for _, previous := range []map[string]string{hashedPaths, jobPaths, gearPaths} {
+		for _, previous := range []map[string]string{hashedPaths, jobPaths, itemPaths, gearPaths} {
 			if known, shared := previous[path]; shared && known != hash {
 				return Catalog{}, fmt.Errorf("shared monster source hash differs for %s", path)
 			}

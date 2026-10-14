@@ -35,7 +35,7 @@ func sourceHashes(sourceDir string) ([]content.JobSourceFile, error) {
 	return files, nil
 }
 
-func generateFromSource(sourceDir, revision string, jobs []content.JobDef) ([]byte, error) {
+func generateFromSource(sourceDir, revision string, jobs []content.JobDef, catalog content.Catalog) ([]byte, error) {
 	if revision != pinnedRevision {
 		return nil, fmt.Errorf("source revision %s differs from pinned %s", revision, pinnedRevision)
 	}
@@ -57,7 +57,7 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef) ([]by
 	if err != nil {
 		return nil, err
 	}
-	active, err := activeItemIDs(enumPath, enumData)
+	active, err := activeEgoIDs(enumPath, enumData)
 	if err != nil {
 		return nil, err
 	}
@@ -91,13 +91,9 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef) ([]by
 		names = append(names, "short sword", "mace", "hand axe", "spear", "falchion", "quarterstaff",
 			"rapier", "flail", "war axe", "trident", "long sword")
 	}
-	kinds, err := resolveKinds(sourceDir, names)
+	kinds, err := resolveKinds(catalog, names)
 	if err != nil {
 		return nil, err
-	}
-	byName := make(map[string]content.ItemDef, len(kinds))
-	for _, kind := range kinds {
-		byName[kind.Name] = kind
 	}
 	for i := range gear {
 		for j := range gear[i].Grants {
@@ -106,19 +102,19 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef) ([]by
 			if err != nil {
 				return nil, err
 			}
-			kind := byName[name]
+			kind := kinds[name]
 			grant.KindID = kind.ID
 			if grant.Ego != "" {
 				egoID := "SPMSL_" + strings.ToUpper(grant.Ego)
-				if kind.Class != "OBJ_MISSILES" || !active[egoID] {
+				if _, found := active[egoID]; kind.Class != "OBJ_MISSILES" || !found {
 					return nil, fmt.Errorf("%s: job %s equipment %q has unknown ego %q (%s)", enumPath, gear[i].JobID, grant.Raw, grant.Ego, egoID)
 				}
 			}
 		}
 	}
 	sort.Slice(gear, func(i, j int) bool { return gear[i].JobID < gear[j].JobID })
-	artifact := content.StartingGearArtifact{SchemaVersion: 1, SourceRevision: revision, TagMajorVersion: 34, SourceFiles: files, Kinds: kinds, Jobs: gear}
-	if err := artifact.Validate(); err != nil {
+	artifact := content.StartingGearArtifact{SchemaVersion: 2, SourceRevision: revision, TagMajorVersion: 34, SourceFiles: files, Jobs: gear}
+	if err := artifact.Validate(catalog); err != nil {
 		return nil, err
 	}
 	encoded, err := json.MarshalIndent(artifact, "", "  ")
@@ -166,7 +162,11 @@ func Generate(sourceDir string) ([]byte, error) {
 	if selectable != 25 || total != 63 || len(rawSpecs) != 36 || len(itemNames) != 32 {
 		return nil, fmt.Errorf("source starter coverage changed: jobs=%d grants=%d specs=%d names=%d", selectable, total, len(rawSpecs), len(itemNames))
 	}
-	data, err := generateFromSource(sourceDir, pinnedRevision, jobArtifact.Jobs)
+	catalog, err := content.LoadItemsForImport()
+	if err != nil {
+		return nil, err
+	}
+	data, err := generateFromSource(sourceDir, pinnedRevision, jobArtifact.Jobs, catalog)
 	if err != nil {
 		return nil, err
 	}

@@ -60,6 +60,30 @@ func TestRejectUnknownCatalogID(t *testing.T) {
 	}
 }
 
+func TestKnownIncompleteItemRestore(t *testing.T) {
+	g := newStepGame(t)
+	before := g.Snapshot()
+	invalid := g.Snapshot()
+	changed := false
+	for i := range invalid.Entities {
+		if invalid.Entities[i].Item != nil {
+			invalid.Entities[i].Item.KindID = "POT_GAIN_STRENGTH"
+			changed = true
+			break
+		}
+	}
+	if !changed {
+		t.Fatal("scenario has no item to test")
+	}
+	if restored, err := Restore(invalid, testCatalog(t)); err == nil {
+		restored.Close()
+		t.Fatal("known but undefined legacy item restored")
+	}
+	if !reflect.DeepEqual(before, g.Snapshot()) {
+		t.Fatal("failed restore changed live game")
+	}
+}
+
 func TestRejectDoubleLocatedItem(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()

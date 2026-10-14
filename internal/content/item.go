@@ -196,10 +196,6 @@ func (d ItemDef) validate() error {
 			return fmt.Errorf("item %s must be stackable", d.ID)
 		}
 	}
-	// Schema-1 starter kinds are accepted until the schema-2 gear migration.
-	if d.Naming.Kind == "" && d.Armour == nil && d.Weapon == nil && d.Missile == nil && d.Food == nil {
-		return nil
-	}
 	if d.Naming.Text == "" || d.Naming.SourcePath == "" || d.Naming.SourceLine <= 0 {
 		return fmt.Errorf("item %s has invalid naming provenance", d.ID)
 	}
