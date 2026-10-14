@@ -52,6 +52,27 @@ func DrawInventory(canvas *Canvas, view game.View) {
 	canvas.Write(0, canvas.height-2, "Esc - Return    ? - Help", Brown, Black)
 }
 
+// DrawQuaff uses inventory letters so a choice always selects the displayed item.
+func DrawQuaff(canvas *Canvas, view game.View) {
+	canvas.Write(0, 0, "Quaff which potion?", White, Black)
+	y := 2
+	for index, item := range view.Inventory {
+		if item.Class != "OBJ_POTIONS" {
+			continue
+		}
+		label := item.Name
+		if item.Quantity > 1 {
+			label = fmt.Sprintf("%d %s", item.Quantity, label)
+		}
+		writeClipped(canvas, 1, y, canvas.width-1, fmt.Sprintf("%c - %s", menuLetter(index), label), LightGrey)
+		y++
+	}
+	if y == 2 {
+		canvas.Write(1, y, "You have no potions.", Brown, Black)
+	}
+	canvas.Write(0, canvas.height-2, "Esc - Cancel    ? - Help", Brown, Black)
+}
+
 func skillName(id string) string {
 	special := map[string]string{"SK_MACES_FLAILS": "Maces & Flails", "SK_UNARMED_COMBAT": "Unarmed Combat", "SK_SHORT_BLADES": "Short Blades", "SK_LONG_BLADES": "Long Blades"}
 	if name := special[id]; name != "" {
@@ -103,7 +124,7 @@ func DrawHelp(canvas *Canvas) {
 		"Inventory: i     Skills: m     Help: ?",
 		"Save and exit: S (confirm), Ctrl-S (now)",
 		"Abandon character: Ctrl-Q (confirm)",
-		"Quaff: q (unavailable)     Run right: L (unavailable)",
+		"Quaff: q (curing available)     Run right: L (unavailable)",
 		"Other unported commands explain their unavailable status.",
 		"",
 		"Esc - Return",

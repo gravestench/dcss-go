@@ -32,7 +32,7 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 		m.confirm, m.screen, m.notice = confirmAbandon, ScreenConfirm, ""
 		return nil
 	case "q":
-		m.notice = "Quaffing is unavailable in the Go port."
+		m.previous, m.screen, m.notice = m.screen, ScreenQuaff, ""
 		return nil
 	case "L":
 		m.notice = "Running is unavailable in the Go port."
@@ -50,6 +50,37 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 	}
 	m.notice = ""
 	m.afterStep(result)
+	return nil
+}
+
+func (m *AppModel) handleQuaffKey(key string) tea.Cmd {
+	if key == "esc" {
+		m.screen, m.notice = ScreenPlay, ""
+		return nil
+	}
+	if key == "?" {
+		m.previous, m.screen, m.notice = ScreenQuaff, ScreenHelp, ""
+		return nil
+	}
+	for index, item := range m.game.View().Inventory {
+		if item.Class != "OBJ_POTIONS" || key != string(menuLetter(index)) {
+			continue
+		}
+		result, err := m.game.Step(game.Command{Kind: game.CommandQuaff, ItemID: item.ID})
+		m.screen = ScreenPlay
+		if err != nil {
+			m.notice = fmt.Sprintf("Quaff failed: %v", err)
+			return nil
+		}
+		if result.Spent == 0 {
+			m.notice = result.Events[0].Text
+			return nil
+		}
+		m.notice = ""
+		m.afterStep(result)
+		return nil
+	}
+	m.notice = "Select a potion by its inventory letter."
 	return nil
 }
 

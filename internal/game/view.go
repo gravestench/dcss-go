@@ -28,6 +28,7 @@ type EntityView struct {
 }
 
 type ItemView struct {
+	ID       uint64
 	KindID   string
 	Name     string
 	Class    string
@@ -144,7 +145,7 @@ func (g *Game) View() View {
 		}
 		definition, err := g.catalog.Item(item.KindID)
 		if err == nil {
-			entry := ItemView{KindID: item.KindID, Name: definition.Name, Class: definition.Class, Quantity: item.Quantity, Plus: item.Plus, Charges: item.Charges, Ego: item.Ego}
+			entry := ItemView{ID: uint64(entity), KindID: item.KindID, Name: definition.Name, Class: definition.Class, Quantity: item.Quantity, Plus: item.Plus, Charges: item.Charges, Ego: item.Ego}
 			if equipped, found := g.stores.Equipped.Get(entity); found {
 				entry.Slot = equipped.Slot
 			}
