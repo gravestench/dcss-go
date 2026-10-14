@@ -8,6 +8,7 @@ import (
 )
 
 type pendingCorpse struct {
+	MonsterID  string
 	Position   ecs.Position
 	Appearance int
 }
@@ -23,7 +24,10 @@ func (g *Game) placeCorpse(drop pendingCorpse) error {
 	if _, err := g.stores.Items.Set(entity, ecs.Item{KindID: "CORPSE_BODY", Quantity: 1}); err != nil {
 		return err
 	}
-	if _, err := g.stores.Corpses.Set(entity, ecs.Corpse{MonsterID: "MONS_RAT", Freshness: monster.FreshestCorpse, Appearance: drop.Appearance}); err != nil {
+	if _, err := g.ordinaryAnimal(drop.MonsterID); err != nil {
+		return err
+	}
+	if _, err := g.stores.Corpses.Set(entity, ecs.Corpse{MonsterID: drop.MonsterID, Freshness: monster.FreshestCorpse, Appearance: drop.Appearance}); err != nil {
 		return err
 	}
 	if _, err := g.stores.Positions.Set(entity, drop.Position); err != nil {

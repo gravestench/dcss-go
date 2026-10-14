@@ -7,21 +7,21 @@ import (
 	"github.com/gravestench/akara"
 )
 
-func (g *Game) awardRatExperience(ratID akara.Entity, maxHP int) error {
-	actor, found := g.stores.Actors.Get(ratID)
-	if !found || actor.KindID != "MONS_RAT" {
-		return fmt.Errorf("unsupported experience source %d", ratID)
+func (g *Game) awardAnimalExperience(animalID akara.Entity, maxHP int) error {
+	actor, found := g.stores.Actors.Get(animalID)
+	if !found || !isOrdinaryAnimal(actor.KindID) {
+		return fmt.Errorf("unsupported experience source %d", animalID)
 	}
-	rat, err := g.catalog.Monster(actor.KindID)
+	animal, err := g.ordinaryAnimal(actor.KindID)
 	if err != nil {
 		return err
 	}
-	amount, err := character.RatKillExperience(rat, maxHP)
+	amount, err := character.OrdinaryAnimalExperience(animal, maxHP)
 	if err != nil {
 		return err
 	}
 	progress, found := g.stores.Progression.Get(g.player)
-	if !found || progress.TotalXP != 0 {
+	if !found || progress.TotalXP < 0 || progress.TotalXP+amount >= 9 {
 		return fmt.Errorf("invalid fixed Dungeon experience state")
 	}
 	progress.TotalXP += amount

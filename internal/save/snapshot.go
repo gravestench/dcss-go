@@ -7,6 +7,7 @@ const Version = 6
 type Snapshot struct {
 	Version        int               `json:"version"`
 	SourceRevision string            `json:"source_revision"`
+	ScenarioID     string            `json:"scenario_id,omitempty"`
 	PlayerID       uint64            `json:"player_id"`
 	CurrentAut     int64             `json:"current_aut"`
 	Seed           uint64            `json:"seed"`

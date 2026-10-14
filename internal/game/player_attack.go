@@ -7,9 +7,9 @@ import (
 	"dcrawl-go/internal/combat"
 )
 
-// playerAttackInput projects the live Fighter and committed rat catalog into
-// one primary attack. It also checks equipment before a bump spends time.
-func (g *Game) playerAttackInput() (combat.PlayerAttackInput, error) {
+// playerAttackInput projects the live Fighter against a cataloged defender.
+// It also checks equipment before a bump spends time.
+func (g *Game) playerAttackInput(defenderID string) (combat.PlayerAttackInput, error) {
 	player, found := g.stores.Players.Get(g.player)
 	if !found {
 		return combat.PlayerAttackInput{}, fmt.Errorf("player has no character choice")
@@ -22,12 +22,12 @@ func (g *Game) playerAttackInput() (combat.PlayerAttackInput, error) {
 	if !found {
 		return combat.PlayerAttackInput{}, fmt.Errorf("player has no skills")
 	}
-	rat, err := g.catalog.Monster("MONS_RAT")
+	defender, err := g.catalog.Monster(defenderID)
 	if err != nil {
 		return combat.PlayerAttackInput{}, err
 	}
 	in := combat.PlayerAttackInput{Strength: attributes.Strength, Dexterity: attributes.Dexterity,
-		DefenderEV: rat.EV, DefenderAC: rat.AC, Unarmed: player.StartingWeaponID == "WPN_UNARMED"}
+		DefenderEV: defender.EV, DefenderAC: defender.AC, Unarmed: player.StartingWeaponID == "WPN_UNARMED"}
 	if durations, found := g.stores.Durations.Get(g.player); found {
 		in.Mighty = durations.MightAut > 0
 	}
@@ -89,8 +89,8 @@ func (g *Game) playerAttackInput() (combat.PlayerAttackInput, error) {
 
 // playerAttackDelayInput reads the same live weapon and stored skill points
 // used by accuracy and damage, plus the currently equipped shield.
-func (g *Game) playerAttackDelayInput() (combat.AttackDelayInput, error) {
-	attack, err := g.playerAttackInput()
+func (g *Game) playerAttackDelayInput(defenderID string) (combat.AttackDelayInput, error) {
+	attack, err := g.playerAttackInput(defenderID)
 	if err != nil {
 		return combat.AttackDelayInput{}, err
 	}

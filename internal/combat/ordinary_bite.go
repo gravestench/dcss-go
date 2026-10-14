@@ -24,8 +24,8 @@ type Defense struct {
 	EV, AC, ShieldClass, GDR, ShieldBlocks int
 }
 
-// RatAttack is the ordinary first attack recorded in MONS_RAT's catalog row.
-type RatAttack struct {
+// AnimalBite is a plain first bite from a supported ordinary animal.
+type AnimalBite struct {
 	HD, Damage        int
 	TypeID, FlavourID string
 }
@@ -129,14 +129,14 @@ func random2avg2(r Roller, bound int) (int, error) {
 	return (first + second) / 2, nil
 }
 
-// RatBite resolves the ordinary MONS_RAT plain bite in DCSS attack phase order.
-func RatBite(r Roller, attack RatAttack, defense Defense) (Outcome, error) {
+// ResolveAnimalBite follows the source's ordinary monster attack phase order.
+func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, error) {
 	if r == nil || attack.TypeID != "AT_BITE" || attack.FlavourID != "AF_PLAIN" ||
 		attack.HD <= 0 || attack.Damage <= 0 || defense.EV < 0 || defense.AC < 0 ||
 		defense.ShieldClass < 0 || defense.GDR < 0 || defense.ShieldBlocks < 0 {
-		return Outcome{}, fmt.Errorf("unsupported rat bite or defense: %+v %+v", attack, defense)
+		return Outcome{}, fmt.Errorf("unsupported ordinary bite or defense: %+v %+v", attack, defense)
 	}
-	toHitBase := 18 + attack.HD*3/2 // rat has no M_FIGHTER flag
+	toHitBase := 18 + attack.HD*3/2 // supported animals have no M_FIGHTER flag
 	toHit, err := random2(r, toHitBase+1)
 	if err != nil {
 		return Outcome{}, err

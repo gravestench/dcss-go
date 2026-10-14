@@ -14,6 +14,7 @@ type Game struct {
 	player         akara.Entity
 	catalog        content.Catalog
 	seed           uint64
+	scenarioID     string
 	rng            *RNGStreams
 	scheduler      TurnScheduler
 	currentAut     Aut

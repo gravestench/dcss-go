@@ -7,18 +7,34 @@ import (
 	"dcrawl-go/internal/content"
 )
 
-// RatKillExperience evaluates the ordinary fixed rat path of
-// mon-util.cc:2345-2535 against its live maximum HP.
-func RatKillExperience(rat content.MonsterDef, maxHP int) (int, error) {
-	if rat.ID != "MONS_RAT" || rat.HD != 1 || rat.Speed != 10 || rat.XPModifier != 1 ||
-		rat.SpellbookID != "MST_NO_SPELLS" || rat.ItemUseID != "MONUSE_NOTHING" ||
-		rat.Attacks[0].Damage != 3 || slices.Contains(rat.Flags, "M_NO_EXP_GAIN") || maxHP < 1 || maxHP > 4 {
-		return 0, fmt.Errorf("unsupported rat experience inputs for %s at %d HP", rat.ID, maxHP)
+// OrdinaryAnimalExperience evaluates the source's plain rat/quokka path of
+// mon-util.cc:2345-2535 against live maximum HP. Their difficulty adjustment
+// is zero because neither has spells, items, fast regeneration, or big damage.
+func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error) {
+	minimum, maximum, damage, speed, modifier := 0, 0, 0, 0, 0
+	switch animal.ID {
+	case "MONS_RAT":
+		minimum, maximum, damage, speed, modifier = 1, 4, 3, 10, 1
+	case "MONS_QUOKKA":
+		minimum, maximum, damage, speed, modifier = 3, 8, 5, 12, 10
+	default:
+		return 0, fmt.Errorf("unsupported ordinary animal %s", animal.ID)
 	}
-	value := (16 + maxHP) * rat.HD * rat.HD / 10
-	// This rat has no difficulty adjustment. Its base speed is 10.
-	value = value * rat.Speed / 10
-	value = value * rat.XPModifier / 10
+	if animal.HD != 1 || animal.Speed != speed || animal.XPModifier != modifier ||
+		animal.SpellbookID != "MST_NO_SPELLS" || animal.ItemUseID != "MONUSE_NOTHING" ||
+		animal.Attacks[0] != (content.MonsterAttack{TypeID: "AT_BITE", FlavourID: "AF_PLAIN", Damage: damage}) ||
+		slices.Contains(animal.Flags, "M_NO_EXP_GAIN") || slices.Contains(animal.Flags, "M_FIGHTER") ||
+		slices.Contains(animal.Flags, "M_FAST_REGEN") || maxHP < minimum || maxHP > maximum {
+		return 0, fmt.Errorf("unsupported %s experience inputs at %d HP", animal.ID, maxHP)
+	}
+	for _, extra := range animal.Attacks[1:] {
+		if extra.TypeID != "AT_NONE" || extra.Damage != 0 {
+			return 0, fmt.Errorf("unsupported extra %s attack %+v", animal.ID, extra)
+		}
+	}
+	value := (16 + maxHP) * animal.HD * animal.HD / 10
+	value = value * animal.Speed / 10
+	value = value * animal.XPModifier / 10
 	return max(1, value), nil
 }
 

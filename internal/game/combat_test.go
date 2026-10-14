@@ -48,16 +48,14 @@ func TestBumpAttacksInsteadOfMoving(t *testing.T) {
 
 func TestRatActsBeforeNextPlayerTurn(t *testing.T) {
 	g := newStepGame(t)
+	rat := ratID(t, g)
 	result, err := g.Step(Command{Kind: CommandWait})
 	if err != nil {
 		t.Fatal(err)
 	}
-	found := false
-	for _, event := range result.Events {
-		found = found || event.Kind == "monster"
-	}
-	if !found {
-		t.Fatalf("rat did not act: %+v", result.Events)
+	actor, _ := g.stores.Actors.Get(rat)
+	if actor.NextAut != 10 {
+		t.Fatalf("rat deadline = %d, want 10 after its action; events %+v", actor.NextAut, result.Events)
 	}
 }
 

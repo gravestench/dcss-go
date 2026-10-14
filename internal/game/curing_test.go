@@ -44,14 +44,9 @@ func TestQuaffCuringHealsConsumesAndSchedules(t *testing.T) {
 	if !reflect.DeepEqual(expectedRoller.States()["potion"], g.rng.States()["potion"]) {
 		t.Fatal("quaff used the wrong number of potion draws")
 	}
-	monsterActs := 0
-	for _, event := range result.Events {
-		if event.Kind == "monster" {
-			monsterActs++
-		}
-	}
-	if monsterActs != 1 {
-		t.Fatalf("rat acted %d times during quaff", monsterActs)
+	actor, _ := g.stores.Actors.Get(ratID(t, g))
+	if actor.NextAut <= int64(start) {
+		t.Fatalf("rat deadline = %d, want an action during quaff starting at %d", actor.NextAut, start)
 	}
 }
 

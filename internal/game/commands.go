@@ -77,10 +77,10 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		}
 		if target, occupied := level.ActorAt(x, y); occupied {
 			actor, found := g.stores.Actors.Get(target)
-			if !found || actor.KindID != "MONS_RAT" {
+			if !found || !isOrdinaryAnimal(actor.KindID) {
 				return StepResult{}, fmt.Errorf("unsupported player melee target %d", target)
 			}
-			input, err := g.playerAttackDelayInput()
+			input, err := g.playerAttackDelayInput(actor.KindID)
 			if err != nil {
 				return StepResult{}, err
 			}
@@ -177,7 +177,17 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		if err != nil {
 			return StepResult{}, err
 		}
-		events = append(events, Event{Kind: "monster", Text: "The rat acts."})
+		monsterPosition, monsterLocated := g.stores.Positions.Get(actor)
+		playerPosition, playerLocated := g.stores.Positions.Get(g.player)
+		if !monsterLocated || !playerLocated {
+			return StepResult{}, fmt.Errorf("acting monster or player has no position")
+		}
+		if monsterPosition.LevelID != playerPosition.LevelID {
+			if len(monsterEvents) != 0 {
+				return StepResult{}, fmt.Errorf("off-floor monster %d emitted events", actor)
+			}
+			continue
+		}
 		events = append(events, monsterEvents...)
 	}
 	if err := g.ageCorpses(startAut, startAut+cost); err != nil {

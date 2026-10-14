@@ -40,10 +40,14 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	}
 	if s.turn.Actor == g.player {
 		actor, found := g.stores.Actors.Get(target)
-		if !found || actor.KindID != "MONS_RAT" {
+		if !found || !isOrdinaryAnimal(actor.KindID) {
 			return fmt.Errorf("unsupported player melee target %d", target)
 		}
-		input, err := g.playerAttackInput()
+		defender, err := g.ordinaryAnimal(actor.KindID)
+		if err != nil {
+			return err
+		}
+		input, err := g.playerAttackInput(actor.KindID)
 		if err != nil {
 			return err
 		}
@@ -56,11 +60,11 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 		if beforeHP > 0 && victim.Current == 0 {
 			s.turn.PlayerKill = target
 		}
-		message := "You miss the rat."
+		message := fmt.Sprintf("You miss the %s.", defender.Name)
 		if outcome.Kind == combat.Hit {
-			message = "You hit the rat."
+			message = fmt.Sprintf("You hit the %s.", defender.Name)
 			if outcome.Damage == 0 {
-				message = "You hit the rat but do no damage."
+				message = fmt.Sprintf("You hit the %s but do no damage.", defender.Name)
 			}
 		}
 		s.turn.Events = append(s.turn.Events, Event{Kind: "combat", Text: message})
@@ -70,10 +74,10 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 		return fmt.Errorf("unsupported non-player melee defender %d", target)
 	}
 	actor, found := g.stores.Actors.Get(s.turn.Actor)
-	if !found || actor.KindID != "MONS_RAT" {
+	if !found || !isOrdinaryAnimal(actor.KindID) {
 		return fmt.Errorf("unsupported melee attacker %d", s.turn.Actor)
 	}
-	rat, err := g.catalog.Monster(actor.KindID)
+	animal, err := g.ordinaryAnimal(actor.KindID)
 	if err != nil {
 		return err
 	}
@@ -81,9 +85,9 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	if err != nil {
 		return err
 	}
-	outcome, err := combat.RatBite(s.roller, combat.RatAttack{
-		HD: rat.HD, Damage: rat.Attacks[0].Damage,
-		TypeID: rat.Attacks[0].TypeID, FlavourID: rat.Attacks[0].FlavourID,
+	outcome, err := combat.ResolveAnimalBite(s.roller, combat.AnimalBite{
+		HD: animal.HD, Damage: animal.Attacks[0].Damage,
+		TypeID: animal.Attacks[0].TypeID, FlavourID: animal.Attacks[0].FlavourID,
 	}, defense)
 	if err != nil {
 		return err
@@ -97,19 +101,19 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	message := ""
 	switch outcome.Kind {
 	case combat.Miss:
-		message = "The rat misses you."
+		message = fmt.Sprintf("The %s misses you.", animal.Name)
 	case combat.Dodge:
-		message = "You dodge the rat's attack."
+		message = fmt.Sprintf("You dodge the %s's attack.", animal.Name)
 	case combat.Block:
-		message = "You block the rat's attack."
+		message = fmt.Sprintf("You block the %s's attack.", animal.Name)
 	case combat.Hit:
 		if outcome.Damage == 0 {
-			message = "The rat bites you, but does no damage."
+			message = fmt.Sprintf("The %s bites you, but does no damage.", animal.Name)
 		} else {
-			message = fmt.Sprintf("The rat bites you for %d damage.", outcome.Damage)
+			message = fmt.Sprintf("The %s bites you for %d damage.", animal.Name, outcome.Damage)
 		}
 	default:
-		return fmt.Errorf("unknown rat bite outcome %d", outcome.Kind)
+		return fmt.Errorf("unknown animal bite outcome %d", outcome.Kind)
 	}
 	s.turn.Events = append(s.turn.Events, Event{Kind: "combat", Text: message})
 	return nil
@@ -189,10 +193,14 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 			s.turn.Events = append(s.turn.Events, Event{Kind: "death", Text: "You die."})
 		} else {
 			if entity == s.turn.PlayerKill {
-				if err := s.game.awardRatExperience(entity, health.Max); err != nil {
+				actor, found := s.game.stores.Actors.Get(entity)
+				if !found {
+					return fmt.Errorf("killed monster %d has no actor", entity)
+				}
+				if err := s.game.awardAnimalExperience(entity, health.Max); err != nil {
 					return err
 				}
-				definition, err := s.game.catalog.Monster("MONS_RAT")
+				definition, err := s.game.ordinaryAnimal(actor.KindID)
 				if err != nil {
 					return err
 				}
@@ -204,14 +212,22 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 					if dropped {
 						position, found := s.game.stores.Positions.Get(entity)
 						if !found {
-							return fmt.Errorf("killed rat %d has no position", entity)
+							return fmt.Errorf("killed animal %d has no position", entity)
 						}
-						s.turn.Corpse = &pendingCorpse{Position: *position, Appearance: appearance}
+						s.turn.Corpse = &pendingCorpse{MonsterID: actor.KindID, Position: *position, Appearance: appearance}
 					}
 				}
 			}
 			s.turn.Deaths = append(s.turn.Deaths, entity)
-			s.turn.Events = append(s.turn.Events, Event{Kind: "death", Text: "The rat dies."})
+			actor, found := s.game.stores.Actors.Get(entity)
+			if !found {
+				return fmt.Errorf("dead monster %d has no actor", entity)
+			}
+			definition, err := s.game.ordinaryAnimal(actor.KindID)
+			if err != nil {
+				return err
+			}
+			s.turn.Events = append(s.turn.Events, Event{Kind: "death", Text: fmt.Sprintf("The %s dies.", definition.Name)})
 		}
 	}
 	return nil

@@ -46,9 +46,9 @@ func validateSavedItem(record save.EntityRecord, catalog content.Catalog, player
 		return fmt.Errorf("item %d has mismatched corpse state", record.ID)
 	}
 	if corpseKind && (record.Position == nil || record.CarriedBy != nil || record.Equipped != nil || item.Quantity != 1 ||
-		record.Corpse.MonsterID != "MONS_RAT" || record.Corpse.Freshness < 1 || record.Corpse.Freshness > 110 ||
+		!isOrdinaryAnimal(record.Corpse.MonsterID) || record.Corpse.Freshness < 1 || record.Corpse.Freshness > 110 ||
 		record.Corpse.Appearance < 1 || record.Corpse.Appearance > 255) {
-		return fmt.Errorf("item %d has invalid rat corpse state", record.ID)
+		return fmt.Errorf("item %d has invalid ordinary animal corpse state", record.ID)
 	}
 	if record.Health != nil || record.Magic != nil || record.Skills != nil || record.Progression != nil || record.Durations != nil || record.Regeneration != nil || record.Combatant != nil || record.Player != nil || record.AI != nil || record.Attributes != nil {
 		return fmt.Errorf("item %d has actor components", record.ID)
@@ -67,7 +67,7 @@ func validateSavedItem(record save.EntityRecord, catalog content.Catalog, player
 }
 
 func (g *Game) Snapshot() save.Snapshot {
-	snapshot := save.Snapshot{Version: save.Version, SourceRevision: g.catalog.SourceRevision(),
+	snapshot := save.Snapshot{Version: save.Version, SourceRevision: g.catalog.SourceRevision(), ScenarioID: g.scenarioID,
 		PlayerID: uint64(g.player), CurrentAut: int64(g.currentAut), Seed: g.seed,
 		RNG: g.rng.States(), Messages: append([]string(nil), g.messages...)}
 	for id, level := range g.levels {
@@ -114,6 +114,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	if snapshot.SourceRevision != catalog.SourceRevision() {
 		return nil, fmt.Errorf("save source revision %q does not match catalog", snapshot.SourceRevision)
 	}
+	if snapshot.ScenarioID != "" && snapshot.ScenarioID != ordinaryAnimalScenarioID {
+		return nil, fmt.Errorf("unsupported scenario ID %q", snapshot.ScenarioID)
+	}
 	if snapshot.PlayerID == 0 || snapshot.CurrentAut < 0 || len(snapshot.Levels) == 0 {
 		return nil, fmt.Errorf("invalid save header")
 	}
@@ -125,7 +128,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}()
 	stores := ecs.Register(world)
 	g := &Game{world: world, stores: stores, levels: make(map[int]*Level), player: akara.Entity(snapshot.PlayerID),
-		catalog: catalog, seed: snapshot.Seed, rng: RestoreRNGStreams(snapshot.Seed, snapshot.RNG),
+		catalog: catalog, seed: snapshot.Seed, scenarioID: snapshot.ScenarioID, rng: RestoreRNGStreams(snapshot.Seed, snapshot.RNG),
 		scheduler: TurnScheduler{actors: stores.Actors}, currentAut: Aut(snapshot.CurrentAut), levelAwaySince: make(map[int]Aut),
 		messages: append([]string(nil), snapshot.Messages...)}
 	for _, record := range snapshot.Levels {
@@ -159,7 +162,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	seen := make(map[uint64]bool)
 	playerCount := 0
 	savedXP := 0
-	ratPresent := false
+	liveAnimals := map[string]bool{}
 	selectedWeaponID := ""
 	equippedSlots := map[string]string{}
 	var playerNext int64
@@ -172,6 +175,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		}
 		seen[record.ID] = true
 		if record.Item != nil {
+			if snapshot.ScenarioID == "" && record.Corpse != nil && record.Corpse.MonsterID != "MONS_RAT" {
+				return nil, fmt.Errorf("legacy fixed Dungeon save has unsupported corpse %s", record.Corpse.MonsterID)
+			}
 			if err := validateSavedItem(record, catalog, g.player, equippedSlots); err != nil {
 				return nil, err
 			}
@@ -214,7 +220,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Magic.Max != profile.MaxMP || record.Magic.Current < 0 || record.Magic.Current > record.Magic.Max {
 				return nil, fmt.Errorf("invalid player MP for entity %d", record.ID)
 			}
-			if record.Progression != nil && (record.Progression.TotalXP < 0 || record.Progression.TotalXP > 1) {
+			if record.Progression != nil && (record.Progression.TotalXP < 0 || record.Progression.TotalXP >= 9) {
 				return nil, fmt.Errorf("invalid fixed Dungeon experience for entity %d", record.ID)
 			}
 			if record.Progression != nil {
@@ -238,13 +244,23 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if _, err := catalog.Monster(record.Actor.KindID); err != nil {
 				return nil, err
 			}
-			if record.Actor.KindID != "MONS_RAT" {
+			if !isOrdinaryAnimal(record.Actor.KindID) || (snapshot.ScenarioID == "" && record.Actor.KindID != "MONS_RAT") {
 				return nil, fmt.Errorf("unsupported melee attacker %s in fixed Dungeon scenario", record.Actor.KindID)
 			}
-			if record.Health.Max < 1 || record.Health.Max > 4 {
-				return nil, fmt.Errorf("impossible fixed rat maximum HP %d", record.Health.Max)
+			definition, definitionErr := catalog.Monster(record.Actor.KindID)
+			if definitionErr != nil {
+				return nil, definitionErr
 			}
-			ratPresent = true
+			if _, xpErr := character.OrdinaryAnimalExperience(definition, record.Health.Max); xpErr != nil {
+				return nil, fmt.Errorf("impossible fixed animal maximum HP %d: %w", record.Health.Max, xpErr)
+			}
+			if record.Actor.Speed != definition.Speed {
+				return nil, fmt.Errorf("fixed animal %s has wrong speed %d", record.Actor.KindID, record.Actor.Speed)
+			}
+			if liveAnimals[record.Actor.KindID] {
+				return nil, fmt.Errorf("duplicate fixed animal %s", record.Actor.KindID)
+			}
+			liveAnimals[record.Actor.KindID] = true
 		}
 		if record.Actor != nil && (record.Actor.Speed <= 0 || record.Actor.NextAut < 0 || record.Health == nil || record.Combatant == nil || record.Position == nil) {
 			return nil, fmt.Errorf("invalid actor %d", record.ID)
@@ -273,8 +289,15 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	if playerCount != 1 {
 		return nil, fmt.Errorf("save requires exactly one player, found %d", playerCount)
 	}
-	if savedXP == 1 && ratPresent {
-		return nil, fmt.Errorf("saved experience already credits the living rat")
+	maxEarnedXP := 0
+	if !liveAnimals["MONS_RAT"] {
+		maxEarnedXP++
+	}
+	if snapshot.ScenarioID == ordinaryAnimalScenarioID && !liveAnimals["MONS_QUOKKA"] {
+		maxEarnedXP += 2
+	}
+	if savedXP > maxEarnedXP {
+		return nil, fmt.Errorf("saved experience exceeds killed fixed animals")
 	}
 	if equippedSlots["body"] != "ARM_SCALE_MAIL" || equippedSlots["shield"] != "ARM_BUCKLER" {
 		return nil, fmt.Errorf("save is missing required Human/Fighter armour slots")
@@ -411,7 +434,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	if _, err := g.fighterDefense(); err != nil {
 		return nil, fmt.Errorf("unsupported saved player defense: %w", err)
 	}
-	if _, err := g.playerAttackDelayInput(); err != nil {
+	if _, err := g.playerAttackDelayInput("MONS_RAT"); err != nil {
 		return nil, fmt.Errorf("unsupported saved player attack timing: %w", err)
 	}
 	if err := registerSystems(g); err != nil {

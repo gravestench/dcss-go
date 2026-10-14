@@ -196,6 +196,10 @@ func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 	if !g.world.DestroyEntity(rat) {
 		t.Fatal("rat removal")
 	}
+	quokka := quokkaID(t, g)
+	if err := g.levels[2].RemoveActor(quokka); err != nil || !g.world.DestroyEntity(quokka) {
+		t.Fatalf("quokka removal: %v", err)
+	}
 	id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{LevelID: 1, X: 4, Y: 1})
 	if err := g.levels[1].MoveActor(g.player, 7, 3); err != nil {
 		t.Fatal(err)

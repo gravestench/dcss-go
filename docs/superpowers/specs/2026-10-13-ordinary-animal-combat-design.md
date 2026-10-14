@@ -1,0 +1,7 @@
+# Ordinary animal combat in the fixed Dungeon
+
+The pinned monster catalog defines both the rat and quokka as source-backed, plain-bite, no-equipment, no-spell, corpse-leaving animals. This slice puts one quokka on Dungeon:2 and removes rat identity assumptions from the shared ordinary animal paths: player bump target defense, incoming bite, XP, death message, corpse identity, and save validation. The existing rat remains on Dungeon:1; the quokka has its source speed and rolled HP.
+
+The game continues to support only these two ordinary animals. Each live monster's kind chooses combat and presentation inputs from the committed catalog. The ordinary bite uses the existing source attack phase order with HD and damage from that definition. Player-attributed kills gain the source ordinary XP formula, using actual maximum HP; death may drop the named corpse, which ages by the existing timer. Current XP stays below Human XL2 in this two-monster fixture. Other monster abilities, equipment, spells, and loot stay unavailable.
+
+Existing version-6 saves containing only the rat still load. New saves persist both animals, their rolled HP, and any quokka corpse. Restore rejects unsupported live monster kinds and impossible rat/quokka HP bounds. It accepts a recorded XP amount only if dead fixture monsters could have yielded it. Source lineage: `mon-data.h` rat and quokka rows, `mon-util.cc:2345-2535`, `melee-attack.cc`, `mon-death.cc`, and `corpse.cc`.

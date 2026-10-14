@@ -13,7 +13,13 @@ func TestRatScenarioRollsSourceHPAndKeepsCatalogedBite(t *testing.T) {
 	health, ok := g.stores.Health.Get(rat)
 	expected := NewRNGStreams(g.seed)
 	want, err := monster.RollHP(expected, 25)
-	if err != nil || !ok || health.Current != want || health.Max != want || !reflect.DeepEqual(expected.States(), g.rng.States()) {
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := monster.RollHP(expected, 55); err != nil {
+		t.Fatal(err)
+	}
+	if !ok || health.Current != want || health.Max != want || !reflect.DeepEqual(expected.States(), g.rng.States()) {
 		t.Fatalf("rat health = %+v, found %v", health, ok)
 	}
 	combat, ok := g.stores.Combat.Get(rat)
