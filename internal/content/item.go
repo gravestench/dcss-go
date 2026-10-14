@@ -382,7 +382,8 @@ func (m ItemIdentityManifest) Validate() error {
 	previousClass, previousSubtype := -1, -1
 
 	for _, identity := range m.Identities {
-		invalidIdentity := identity.ID == "" || identity.ClassID == "" ||
+		invalidIdentity := identity.ID == "" ||
+			identity.ClassID == "" ||
 			identity.ClassValue < 0 || identity.SubtypeValue < 0
 		invalidSource := identity.SourcePath == "" || identity.SourceLine <= 0
 
@@ -403,7 +404,8 @@ func (m ItemIdentityManifest) Validate() error {
 	}
 
 	for _, alias := range m.Aliases {
-		invalidAlias := alias.ID == "" || alias.TargetID == "" ||
+		invalidAlias := alias.ID == "" ||
+			alias.TargetID == "" ||
 			alias.SourcePath == "" || alias.SourceLine <= 0
 
 		if invalidAlias || seen[alias.ID] {

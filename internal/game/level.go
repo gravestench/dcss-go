@@ -186,11 +186,16 @@ func validateStairLinks(levels map[int]*Level) error {
 }
 
 func (l *Level) inBounds(x, y int) bool {
-	return y >= 0 && y < len(l.terrain) && x >= 0 && x < l.width
+	return y >= 0 &&
+		y < len(l.terrain) &&
+		x >= 0 &&
+		x < l.width
 }
 
 func (l *Level) Walkable(x, y int) bool {
-	return l.inBounds(x, y) && l.terrain[y][x] != '#' && l.terrain[y][x] != '+'
+	return l.inBounds(x, y) &&
+		l.terrain[y][x] != '#' &&
+		l.terrain[y][x] != '+'
 }
 
 // OpenDoor changes the entire four-connected closed-door group, as the pinned

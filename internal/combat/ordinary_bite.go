@@ -95,8 +95,10 @@ type Outcome struct {
 // ProjectFighter follows the unmodified Human path in player.cc. Item EV is
 // stored in hundredths in the committed catalog, as in item-prop.cc.
 func ProjectFighter(in FighterDefense) (Defense, error) {
-	invalidStats := in.Strength <= 0 || in.Dexterity < 0 ||
-		in.ArmourSkill < 0 || in.ShieldsSkill < 0 ||
+	invalidStats := in.Strength <= 0 ||
+		in.Dexterity < 0 ||
+		in.ArmourSkill < 0 ||
+		in.ShieldsSkill < 0 ||
 		in.DodgingSkill10 < 0
 	invalidArmour := invalidArmourPiece(in.Body)
 	invalidShield := invalidArmourPiece(in.Shield) || in.ShieldBlocks < 0
@@ -198,7 +200,10 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 }
 
 func invalidArmourPiece(piece ArmourPiece) bool {
-	return piece.AC < 0 || piece.EV > 0 || piece.Plus < -100 || piece.Plus > 100
+	return piece.AC < 0 ||
+		piece.EV > 0 ||
+		piece.Plus < -100 ||
+		piece.Plus > 100
 }
 
 func random2(r Roller, bound int) (int, error) {

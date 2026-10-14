@@ -81,7 +81,9 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 							row[x] = '#'
 						}
 
-						want[y*size+x] = symbol == '@' || symbol == '.' || symbol == 'x'
+						want[y*size+x] = symbol == '@' ||
+							symbol == '.' ||
+							symbol == 'x'
 					}
 
 					rows[y] = string(row)

@@ -56,12 +56,16 @@ func (b BranchDef) clone() BranchDef {
 
 func (b BranchDef) validate() error {
 	invalidIdentity := !strings.HasPrefix(b.ID, "BRANCH_") ||
-		b.NumericID < 0 || b.EnumLine <= 0 || b.SourceLine <= 0
+		b.NumericID < 0 ||
+		b.EnumLine <= 0 ||
+		b.SourceLine <= 0
 	invalidParent := b.ParentID != "NUM_BRANCHES" &&
 		!strings.HasPrefix(b.ParentID, "BRANCH_")
 	invalidDepth := b.Depth < 0 || b.AbsoluteDepth < 0
-	invalidNames := b.ShortName == "" || b.LongName == "" ||
-		b.Abbreviation == "" || len([]rune(b.TravelShortcut)) != 1 ||
+	invalidNames := b.ShortName == "" ||
+		b.LongName == "" ||
+		b.Abbreviation == "" ||
+		len([]rune(b.TravelShortcut)) != 1 ||
 		b.AmbientNoise == ""
 
 	if invalidIdentity ||

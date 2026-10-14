@@ -19,9 +19,9 @@ for a human reader to follow.
 - Leave a blank line before and after a control-flow block when it has a
   neighboring statement in the same block. Separate the final return from
   preceding calculations or mutations.
-- Put crowded boolean conditions on separate lines so each check can be
-  scanned. Keep `if` and `for` condition lines at or below 80 characters
-  when they contain `&&` or `||`.
+- Put crowded boolean expressions on separate lines so each check can be
+  scanned, including expressions in returns and assignments. Keep lines with
+  `&&` or `||` at or below 80 characters where they contain a boolean check.
 - When a condition checks an error and another result, give each clause its
   own line. Keep the error check first when short-circuiting protects the
   result check.

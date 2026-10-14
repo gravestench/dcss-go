@@ -26,8 +26,11 @@ type PlayerAttackInput struct {
 
 // Validate rejects inputs outside the supported Human Fighter scenario.
 func (in PlayerAttackInput) Validate() error {
-	invalidStats := in.Strength <= 0 || in.Dexterity < 0 ||
-		in.FightingSkill100 < 0 || in.WeaponSkill100 < 0 || in.UnarmedSkill256 < 0
+	invalidStats := in.Strength <= 0 ||
+		in.Dexterity < 0 ||
+		in.FightingSkill100 < 0 ||
+		in.WeaponSkill100 < 0 ||
+		in.UnarmedSkill256 < 0
 	invalidDefender := in.DefenderEV < 0 || in.DefenderAC < 0
 	invalidWeapon := in.WeaponPlus < -100 || in.WeaponPlus > 100
 

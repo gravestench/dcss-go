@@ -86,7 +86,8 @@ func (a PresentationArtifact) validate(c Catalog) error {
 		return fmt.Errorf("unsupported presentation artifact schema/revision/tag")
 	}
 
-	wrongGroupCount := len(a.SpeciesGroups) != 3 || len(a.JobGroups) != 5 ||
+	wrongGroupCount := len(a.SpeciesGroups) != 3 ||
+		len(a.JobGroups) != 5 ||
 		len(a.SourceFiles) != 7 || len(a.StartupModes) != 8
 	wrongSkillColumns := len(a.SkillColumns) != 2 ||
 		len(a.SkillColumns[0]) != 16 || len(a.SkillColumns[1]) != 16

@@ -132,7 +132,8 @@ func (g *Game) weaponConflictsWithShield(kind content.ItemDef) (bool, error) {
 }
 
 func supportsWieldedWeapon(kind content.ItemDef) bool {
-	return kind.Class == "OBJ_WEAPONS" && kind.Weapon != nil &&
+	return kind.Class == "OBJ_WEAPONS" &&
+		kind.Weapon != nil &&
 		combat.SupportsPrimaryWeaponSkill(kind.Weapon.SkillID)
 }
 

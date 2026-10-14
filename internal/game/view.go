@@ -112,7 +112,9 @@ func (g *Game) View() View {
 func (g *Game) fillTerrainView(view *View, level *Level) {
 	for i, glyph := range level.remembered {
 		switch {
-		case g.visibleLevelID == level.ID && i < len(g.visible) && g.visible[i]:
+		case g.visibleLevelID == level.ID &&
+			i < len(g.visible) &&
+			g.visible[i]:
 			view.Cells[i] = CellView{
 				Glyph: rune(level.terrain[i/level.width][i%level.width]),
 				State: Visible,
@@ -210,7 +212,9 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 		}
 
 		index := location.Y*level.width + location.X
-		visible := g.visibleLevelID == level.ID && index < len(g.visible) && g.visible[index]
+		visible := g.visibleLevelID == level.ID &&
+			index < len(g.visible) &&
+			g.visible[index]
 
 		if entity != g.player && !visible {
 			continue

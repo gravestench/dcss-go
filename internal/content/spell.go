@@ -51,13 +51,19 @@ var spellTilePattern = regexp.MustCompile(`^TILEG_[A-Z0-9_]+$`)
 
 func (s SpellDef) validate() error {
 	invalidIdentity := !spellIDPattern.MatchString(s.ID) ||
-		s.NumericID < 0 || s.Name == "" || strings.TrimSpace(s.Name) != s.Name
-	invalidStats := s.Level < 1 || s.Level > 9 || s.PowerCap < 0 ||
-		s.Noise < 0 || s.EffectNoise < 0
+		s.NumericID < 0 ||
+		s.Name == "" ||
+		strings.TrimSpace(s.Name) != s.Name
+	invalidStats := s.Level < 1 ||
+		s.Level > 9 ||
+		s.PowerCap < 0 ||
+		s.Noise < 0 ||
+		s.EffectNoise < 0
 	invalidRange := !spellRangePattern.MatchString(s.MinRangeExpr) ||
 		!spellRangePattern.MatchString(s.MaxRangeExpr)
 	invalidSource := !spellTilePattern.MatchString(s.TileID) ||
-		s.EnumLine <= 0 || s.SourceLine <= 0 ||
+		s.EnumLine <= 0 ||
+		s.SourceLine <= 0 ||
 		s.SourcePath != "crawl-ref/source/spl-data.h"
 
 	if invalidIdentity ||

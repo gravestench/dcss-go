@@ -21,10 +21,16 @@ func lexJobData(path, source string) ([]token, error) {
 		ch := source[i]
 
 		switch {
-		case ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r':
+		case ch == ' ' ||
+			ch == '\t' ||
+			ch == '\n' ||
+			ch == '\r':
 			i++
 
-		case ch == '{' || ch == '}' || ch == ',' || ch == ';':
+		case ch == '{' ||
+			ch == '}' ||
+			ch == ',' ||
+			ch == ';':
 			tokens = append(tokens, token{
 				kind:  string(ch),
 				value: string(ch),
@@ -65,7 +71,9 @@ func lexJobData(path, source string) ([]token, error) {
 				value: value,
 			})
 
-		case ch == '-' || ch == '+' || ch >= '0' && ch <= '9':
+		case ch == '-' ||
+			ch == '+' ||
+			ch >= '0' && ch <= '9':
 			start := i
 			i++
 
@@ -83,7 +91,9 @@ func lexJobData(path, source string) ([]token, error) {
 				value: source[start:i],
 			})
 
-		case ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z' || ch == '_':
+		case (ch >= 'A' && ch <= 'Z') ||
+			(ch >= 'a' && ch <= 'z') ||
+			ch == '_':
 			start := i
 			i++
 

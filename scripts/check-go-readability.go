@@ -196,9 +196,9 @@ func checkFile(path string) (int, error) {
 	}
 
 	blockEndLines := make(map[int]bool)
-	checkBooleanCondition := func(condition ast.Expr) {
-		operatorsByLine := make(map[int]int)
-		reportedLines := make(map[int]bool)
+	booleanOperatorsByLine := make(map[int]map[token.Token]int)
+	reportedBooleanLines := make(map[int]bool)
+	checkErrorCondition := func(condition ast.Expr) {
 
 		ast.Inspect(condition, func(part ast.Node) bool {
 			if _, nestedFunction := part.(*ast.FuncLit); nestedFunction {
@@ -213,23 +213,8 @@ func checkFile(path string) (int, error) {
 			}
 
 			line := fset.Position(binary.OpPos).Line
-			operatorsByLine[line]++
 
-			if reportedLines[line] {
-				return true
-			}
-
-			if operatorsByLine[line] == 2 {
-				report(binary.OpPos, "put crowded condition checks on separate lines")
-				reportedLines[line] = true
-
-				return true
-			}
-
-			if len(lines[line-1]) > 80 && operatorsByLine[line] == 1 {
-				report(binary.OpPos, "break long boolean conditions across lines")
-				reportedLines[line] = true
-
+			if reportedBooleanLines[line] {
 				return true
 			}
 
@@ -241,7 +226,7 @@ func checkFile(path string) (int, error) {
 			if sameLine(fset, binary.OpPos, binary.Y.Pos()) &&
 				(leftHasError || expressionHasError(right)) {
 				report(binary.OpPos, "put error checks on their own condition line")
-				reportedLines[line] = true
+				reportedBooleanLines[line] = true
 			}
 
 			return true
@@ -260,11 +245,50 @@ func checkFile(path string) (int, error) {
 	ast.Inspect(file, func(node ast.Node) bool {
 		switch value := node.(type) {
 		case *ast.IfStmt:
-			checkBooleanCondition(value.Cond)
+			checkErrorCondition(value.Cond)
 
 		case *ast.ForStmt:
 			if value.Cond != nil {
-				checkBooleanCondition(value.Cond)
+				checkErrorCondition(value.Cond)
+			}
+
+		case *ast.BinaryExpr:
+			if value.Op != token.LAND && value.Op != token.LOR {
+				break
+			}
+
+			line := fset.Position(value.OpPos).Line
+
+			if booleanOperatorsByLine[line] == nil {
+				booleanOperatorsByLine[line] = make(map[token.Token]int)
+			}
+
+			booleanOperatorsByLine[line][value.Op]++
+
+			if reportedBooleanLines[line] {
+				break
+			}
+
+			mixedWithoutGrouping := false
+
+			for _, operand := range []ast.Expr{value.X, value.Y} {
+				nested, ok := operand.(*ast.BinaryExpr)
+
+				if ok &&
+					(nested.Op == token.LAND || nested.Op == token.LOR) &&
+					nested.Op != value.Op &&
+					sameLine(fset, nested.OpPos, value.OpPos) {
+					mixedWithoutGrouping = true
+				}
+			}
+
+			if booleanOperatorsByLine[line][value.Op] == 2 ||
+				mixedWithoutGrouping {
+				report(value.OpPos, "put crowded boolean checks on separate lines")
+				reportedBooleanLines[line] = true
+			} else if len(lines[line-1]) > 80 {
+				report(value.OpPos, "break long boolean expression across lines")
+				reportedBooleanLines[line] = true
 			}
 
 		case *ast.SwitchStmt:
@@ -372,7 +396,8 @@ func checkFile(path string) (int, error) {
 			_, generic := value.Type.(*ast.IndexExpr)
 			_, genericList := value.Type.(*ast.IndexListExpr)
 			fixedArray, array := value.Type.(*ast.ArrayType)
-			compactFixedArray := array && fixedArray.Len != nil &&
+			compactFixedArray := array &&
+				fixedArray.Len != nil &&
 				scalarElements(value.Elts)
 
 			if ((len(value.Elts) >= 3 &&

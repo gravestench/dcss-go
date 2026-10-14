@@ -170,7 +170,8 @@ func matchingItemStack(left, right ecs.Item) bool {
 	// See items.cc:1577-1584 in the pinned source.
 	maxQuantity := int(^uint(0) >> 1)
 
-	return left.Quantity > 0 && right.Quantity > 0 &&
+	return left.Quantity > 0 &&
+		right.Quantity > 0 &&
 		left.Quantity <= maxQuantity-right.Quantity &&
 		left.KindID == right.KindID &&
 		left.Plus == right.Plus &&

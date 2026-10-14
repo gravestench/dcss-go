@@ -210,7 +210,7 @@ func sample(a, b, c, d bool) {
 		},
 
 		{
-			name: "ignore conditions inside a function literal",
+			name: "check conditions inside a function literal",
 			source: `package example
 func sample(a, b, c, d bool) {
 	if func() bool {
@@ -220,7 +220,7 @@ func sample(a, b, c, d bool) {
 	}
 }
 `,
-			want: 0,
+			want: 1,
 		},
 
 		{
@@ -236,6 +236,97 @@ func sample(a, b, c, d bool) {
 	}() {
 		return
 	}
+}
+`,
+			want: 1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "sample.go")
+
+			if err := os.WriteFile(path, []byte(test.source), 0600); err != nil {
+				t.Fatal(err)
+			}
+
+			got, err := checkFile(path)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if got != test.want {
+				t.Fatalf("issues = %d, want %d", got, test.want)
+			}
+		})
+	}
+}
+
+func TestCrowdedBooleanExpressions(t *testing.T) {
+	tests := []struct {
+		name   string
+		source string
+		want   int
+	}{
+		{
+			name: "crowded return",
+			source: `package example
+func sample(a, b, c bool) bool {
+	return a && b && c
+}
+`,
+			want: 1,
+		},
+
+		{
+			name: "crowded assignment",
+			source: `package example
+func sample(a, b, c bool) {
+	valid := a || b || c
+	_ = valid
+}
+`,
+			want: 1,
+		},
+
+		{
+			name: "long return",
+			source: `package example
+func sample(thisConditionNameIsLongEnoughToMakeTheWholeExpressionHardToReadForHumans, b bool) bool {
+	return thisConditionNameIsLongEnoughToMakeTheWholeExpressionHardToReadForHumans || b
+}
+`,
+			want: 1,
+		},
+
+		{
+			name: "one clause per line",
+			source: `package example
+func sample(a, b, c bool) bool {
+	return a &&
+		b &&
+		c
+}
+`,
+			want: 0,
+		},
+
+		{
+			name: "short grouped checks",
+			source: `package example
+func sample(a, b, c bool) bool {
+	return (a && b) || c
+}
+`,
+			want: 0,
+		},
+
+		{
+			name: "ungrouped mixed checks",
+			source: `package example
+func sample(a, b, c bool) bool {
+	return a && b || c
 }
 `,
 			want: 1,

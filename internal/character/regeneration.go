@@ -16,10 +16,16 @@ type Vitality struct {
 // Regenerate applies player_reacts' HP and MP recovery for one player action.
 // Other species, equipment, mutations, and magical modifiers enter later.
 func Regenerate(roller Roller, state Vitality, actionAut int) (Vitality, error) {
-	invalidHP := state.MaxHP <= 0 || state.HP <= 0 || state.HP > state.MaxHP
-	invalidMP := state.MaxMP < 0 || state.MP < 0 || state.MP > state.MaxMP
-	invalidProgress := state.HPProgress < 0 || state.HPProgress >= 100 ||
-		state.MPProgress < 0 || state.MPProgress >= 100
+	invalidHP := state.MaxHP <= 0 ||
+		state.HP <= 0 ||
+		state.HP > state.MaxHP
+	invalidMP := state.MaxMP < 0 ||
+		state.MP < 0 ||
+		state.MP > state.MaxMP
+	invalidProgress := state.HPProgress < 0 ||
+		state.HPProgress >= 100 ||
+		state.MPProgress < 0 ||
+		state.MPProgress >= 100
 
 	if roller == nil ||
 		actionAut < 0 ||

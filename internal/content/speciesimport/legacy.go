@@ -71,7 +71,8 @@ func splitLegacyFields(body string) ([]string, error) {
 		case !quoted && ch == '}':
 			depth--
 
-		case !quoted && ch == ',' && depth == 0:
+		case !quoted &&
+			ch == ',' && depth == 0:
 			fields = append(fields, strings.TrimSpace(body[start:i]))
 			start = i + 1
 		}

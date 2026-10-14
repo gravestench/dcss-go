@@ -128,5 +128,7 @@ func HumanMaxMP(level int, species content.SpeciesDef) (int, error) {
 
 // With no divine-attributes mutation, the source prompts at XL 3, 9, ...
 func HumanNeedsManualStat(level int) bool {
-	return level >= 3 && level <= HumanMaxLevel && level%6 == 3
+	return level >= 3 &&
+		level <= HumanMaxLevel &&
+		level%6 == 3
 }

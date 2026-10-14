@@ -162,6 +162,12 @@ func reciprocalGeneratedStair(levels map[int]*Level, depth int, link StairLink) 
 	fromGlyph := levels[depth].terrain[link.Y][link.X]
 	toGlyph := target.terrain[link.ToY][link.ToX]
 
-	return depth == 1 && fromGlyph == '>' && toGlyph == '<' ||
-		depth == 2 && fromGlyph == '<' && toGlyph == '>'
+	downstairs := depth == 1 &&
+		fromGlyph == '>' &&
+		toGlyph == '<'
+	upstairs := depth == 2 &&
+		fromGlyph == '<' &&
+		toGlyph == '>'
+
+	return downstairs || upstairs
 }

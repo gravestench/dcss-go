@@ -199,7 +199,10 @@ func (b *builder) chanceIn(chance, total int) bool {
 }
 
 func (b *builder) inBounds(point Point) bool {
-	return point.X > 0 && point.X < width-1 && point.Y > 0 && point.Y < height-1
+	return point.X > 0 &&
+		point.X < width-1 &&
+		point.Y > 0 &&
+		point.Y < height-1
 }
 
 func (b *builder) stairsConnected(stairs [3]StairPair) bool {
