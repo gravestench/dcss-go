@@ -128,6 +128,19 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if _, err = stores.Positions.Set(potion, ecs.Position{LevelID: 1, X: 4, Y: 2}); err != nil {
 		return nil, err
 	}
+	if _, err = catalog.Item("POT_HEAL_WOUNDS"); err != nil {
+		return nil, err
+	}
+	healPotion, err := world.CreateEntity()
+	if err != nil {
+		return nil, err
+	}
+	if _, err = stores.Items.Set(healPotion, ecs.Item{KindID: "POT_HEAL_WOUNDS", Quantity: 1}); err != nil {
+		return nil, err
+	}
+	if _, err = stores.Positions.Set(healPotion, ecs.Position{LevelID: 2, X: 2, Y: 1}); err != nil {
+		return nil, err
+	}
 	if err = registerSystems(g); err != nil {
 		return nil, err
 	}

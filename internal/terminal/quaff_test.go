@@ -4,7 +4,9 @@ import (
 	"strings"
 	"testing"
 
+	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/game"
+	"github.com/gravestench/akara"
 )
 
 func potionLetter(t *testing.T, m *AppModel, kind string) string {
@@ -73,5 +75,35 @@ func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 		if item.KindID == "POT_CURING" {
 			t.Fatal("curing potion still in pack")
 		}
+	}
+}
+
+func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
+	m := playingModel(t)
+	snapshot := m.game.Snapshot()
+	for i := range snapshot.Entities {
+		record := &snapshot.Entities[i]
+		if record.ID == snapshot.PlayerID {
+			record.Health.Current = 1
+		}
+		if record.Item != nil && record.Item.KindID == "POT_HEAL_WOUNDS" {
+			record.Position = nil
+			record.CarriedBy = &ecs.CarriedBy{Holder: akara.Entity(snapshot.PlayerID)}
+		}
+	}
+	restored, err := game.Restore(snapshot, m.catalog)
+	if err != nil {
+		t.Fatal(err)
+	}
+	m.game.Close()
+	m.game = restored
+	before := m.game.View().CurrentAut
+	m.handleKey("q")
+	if m.screen != ScreenQuaff || !strings.Contains(plainApp(m), "potion of heal wounds") {
+		t.Fatalf("heal wounds missing from quaff menu: %s", plainApp(m))
+	}
+	m.handleKey(potionLetter(t, m, "POT_HEAL_WOUNDS"))
+	if m.screen != ScreenPlay || m.game.View().CurrentAut != before+10 || m.game.View().PlayerHP <= 1 || m.notice != "" {
+		t.Fatalf("heal wounds choice: screen %d notice %q view %+v", m.screen, m.notice, m.game.View())
 	}
 }

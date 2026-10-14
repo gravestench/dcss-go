@@ -27,12 +27,24 @@ func TestScenarioHasTwoFloors(t *testing.T) {
 		t.Fatal("stair terrain is wrong")
 	}
 	items := game.stores.Items.Entities()
-	if len(items) != 5 {
-		t.Fatalf("item count = %d, want 5", len(items))
+	if len(items) != 6 {
+		t.Fatalf("item count = %d, want 6", len(items))
 	}
 	itemPosition, ok := game.stores.Positions.Get(potionID(t, game))
 	if !ok || *itemPosition != (ecs.Position{LevelID: 1, X: 4, Y: 2}) {
 		t.Fatalf("potion position = %+v", itemPosition)
+	}
+	healWoundsFound := false
+	for _, itemID := range items {
+		item, ok := game.stores.Items.Get(itemID)
+		if !ok || item.KindID != "POT_HEAL_WOUNDS" {
+			continue
+		}
+		position, located := game.stores.Positions.Get(itemID)
+		healWoundsFound = located && *position == (ecs.Position{LevelID: 2, X: 2, Y: 1})
+	}
+	if !healWoundsFound {
+		t.Fatal("heal wounds potion absent from Dungeon:2")
 	}
 }
 

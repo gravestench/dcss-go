@@ -41,6 +41,17 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 		}
 		health.Current = newHP
 		message = "You feel better."
+	case "POT_HEAL_WOUNDS":
+		health, found := g.stores.Health.Get(g.player)
+		if !found || health.Current == health.Max {
+			return fmt.Errorf("player cannot use heal wounds at current health")
+		}
+		newHP, err := character.HealWoundsHP(g.rng, health.Current, health.Max)
+		if err != nil {
+			return err
+		}
+		health.Current = newHP
+		message = "You feel much better."
 	case "POT_MIGHT":
 		durations, found := g.stores.Durations.Get(g.player)
 		if !found {

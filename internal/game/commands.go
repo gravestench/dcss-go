@@ -129,8 +129,17 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		if kind.Class != "OBJ_POTIONS" {
 			return g.noTime("You cannot drink that."), nil
 		}
-		if item.KindID != "POT_CURING" && item.KindID != "POT_MIGHT" {
+		if item.KindID != "POT_CURING" && item.KindID != "POT_MIGHT" && item.KindID != "POT_HEAL_WOUNDS" {
 			return g.noTime("That potion's effect is unavailable in the Go port."), nil
+		}
+		if item.KindID == "POT_HEAL_WOUNDS" {
+			health, found := g.stores.Health.Get(g.player)
+			if !found {
+				return StepResult{}, fmt.Errorf("player has no health for heal wounds")
+			}
+			if health.Current == health.Max {
+				return g.noTime("Your health is already full."), nil
+			}
 		}
 		intent = ecs.Intent{Kind: ecs.IntentQuaff, ItemID: itemID}
 	default:
