@@ -6,7 +6,6 @@ import (
 
 	"dcrawl-go/internal/combat"
 	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/rules"
 	"github.com/gravestench/akara"
 )
 
@@ -39,14 +38,27 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 		return fmt.Errorf("target %d has no health", target)
 	}
 	if s.turn.Actor == g.player {
-		base := g.catalog.Player().BaseDamage // until the player melee slice
-		roll, err := s.roller.Intn("melee", base+1)
+		actor, found := g.stores.Actors.Get(target)
+		if !found || actor.KindID != "MONS_RAT" {
+			return fmt.Errorf("unsupported player melee target %d", target)
+		}
+		input, err := g.playerAttackInput()
 		if err != nil {
 			return err
 		}
-		damage := rules.MeleeDamage(base, roll)
-		victim.Current = max(0, victim.Current-damage)
-		s.turn.Events = append(s.turn.Events, Event{Kind: "combat", Text: fmt.Sprintf("You hit the rat for %d damage.", damage)})
+		outcome, err := combat.PlayerMelee(s.roller, input)
+		if err != nil {
+			return err
+		}
+		victim.Current = max(0, victim.Current-outcome.Damage)
+		message := "You miss the rat."
+		if outcome.Kind == combat.Hit {
+			message = "You hit the rat."
+			if outcome.Damage == 0 {
+				message = "You hit the rat but do no damage."
+			}
+		}
+		s.turn.Events = append(s.turn.Events, Event{Kind: "combat", Text: message})
 		return nil
 	}
 	if target != g.player {

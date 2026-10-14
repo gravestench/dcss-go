@@ -3,10 +3,9 @@ package content
 import "fmt"
 
 type PlayerDef struct {
-	SpeciesID  string
-	JobID      string
-	Speed      int
-	BaseDamage int
+	SpeciesID string
+	JobID     string
+	Speed     int
 }
 
 // Catalog owns immutable definitions for one run. Its maps are private.

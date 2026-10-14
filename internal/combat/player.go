@@ -14,7 +14,8 @@ type PlayerAttackInput struct {
 	DefenderEV, DefenderAC              int
 }
 
-func (in PlayerAttackInput) validate() error {
+// Validate rejects inputs outside the supported Human Fighter scenario.
+func (in PlayerAttackInput) Validate() error {
 	if in.Strength <= 0 || in.Dexterity < 0 || in.FightingSkill100 < 0 || in.WeaponSkill100 < 0 ||
 		in.UnarmedSkill256 < 0 || in.DefenderEV < 0 || in.DefenderAC < 0 ||
 		in.WeaponPlus < -100 || in.WeaponPlus > 100 {
@@ -43,7 +44,7 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 	if r == nil {
 		return Outcome{}, fmt.Errorf("player melee requires a roller")
 	}
-	if err := in.validate(); err != nil {
+	if err := in.Validate(); err != nil {
 		return Outcome{}, err
 	}
 	fighting, err := maybeRandomDiv(r, in.FightingSkill100, 100)

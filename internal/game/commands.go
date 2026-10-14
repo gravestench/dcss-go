@@ -66,6 +66,15 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		if !level.Walkable(x, y) {
 			return g.noTime("You cannot move there."), nil
 		}
+		if target, occupied := level.ActorAt(x, y); occupied {
+			actor, found := g.stores.Actors.Get(target)
+			if !found || actor.KindID != "MONS_RAT" {
+				return StepResult{}, fmt.Errorf("unsupported player melee target %d", target)
+			}
+			if _, err := g.playerAttackInput(); err != nil {
+				return StepResult{}, err
+			}
+		}
 		intent = ecs.Intent{Kind: ecs.IntentMove, DX: command.DX, DY: command.DY}
 	case CommandUpstairs:
 		if level.terrain[position.Y][position.X] != '<' || position.LevelID != 2 {
