@@ -27,6 +27,17 @@ type Line struct {
 // Tag34NumberedLines preserves quoted punctuation and original line numbers.
 // It intentionally accepts only the conditional forms in the pinned source.
 func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
+	clean, err := stripCommentsPreservingLines(path, data)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return selectTag34NumberedLines(path, clean)
+}
+
+// Keep comments blank so directives and definitions retain their source lines.
+func stripCommentsPreservingLines(path string, data []byte) ([]byte, error) {
 	clean := make([]byte, len(data))
 	copy(clean, data)
 	state := byte(0) // 0: code, 1: string, 2: character, 3: line comment, 4: block comment
@@ -82,6 +93,10 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 		return nil, fmt.Errorf("%s: unterminated string, character, or block comment", path)
 	}
 
+	return clean, nil
+}
+
+func selectTag34NumberedLines(path string, clean []byte) ([]Line, error) {
 	active := true
 	var stack []tagBranch
 	var result []Line
