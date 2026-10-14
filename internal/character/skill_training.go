@@ -52,7 +52,7 @@ func SkillCostLevel(spentXP int) (int, error) {
 	level := 1
 
 	for level < HumanMaxSkillLevel {
-		threshold, _ := HumanExperienceNeeded(level + 1)
+		threshold, _ := ExperienceNeeded(level+1, 1)
 
 		if spentXP < 13*threshold {
 			break

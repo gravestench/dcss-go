@@ -23,17 +23,27 @@ func validateSavedHumanAdvancement(
 		progress = *record.Progression
 	}
 
-	if progress.Level < 1 || progress.Level > character.HumanMaxLevel {
+	if progress.Level < 1 || progress.Level > character.MaxExperienceLevel {
 		return 0, fmt.Errorf("invalid player level %d", progress.Level)
 	}
 
-	currentNeeded, _ := character.HumanExperienceNeeded(progress.Level)
+	species, err := catalog.Species(record.Player.SpeciesID)
+
+	if err != nil {
+		return 0, err
+	}
+
+	currentNeeded, err := character.ExperienceNeeded(progress.Level, species.XP)
+
+	if err != nil {
+		return 0, err
+	}
 
 	if progress.TotalXP < currentNeeded {
 		return 0, fmt.Errorf("player XL%d lacks experience", progress.Level)
 	}
 
-	earnedLevel, err := character.HumanLevelForExperience(progress.TotalXP)
+	earnedLevel, err := character.LevelForExperience(progress.TotalXP, species.XP)
 
 	if err != nil {
 		return 0, err
@@ -45,7 +55,7 @@ func validateSavedHumanAdvancement(
 		}
 	} else {
 		pending := progress.PendingStatLevel
-		needed, neededErr := character.HumanExperienceNeeded(pending)
+		needed, neededErr := character.ExperienceNeeded(pending, species.XP)
 
 		if neededErr != nil ||
 			pending != progress.Level+1 ||
@@ -54,9 +64,9 @@ func validateSavedHumanAdvancement(
 		}
 	}
 
-	species, err := validateSavedHumanAttributes(record, profile, catalog, progress.Level)
-
-	if err != nil {
+	if err := validateSavedHumanAttributes(
+		record, profile, species, progress.Level,
+	); err != nil {
 		return 0, err
 	}
 
@@ -70,22 +80,16 @@ func validateSavedHumanAdvancement(
 func validateSavedHumanAttributes(
 	record save.EntityRecord,
 	profile character.StartProfile,
-	catalog content.Catalog,
+	species content.SpeciesDef,
 	levelApplied int,
-) (content.SpeciesDef, error) {
+) error {
 	base := profile.Attributes
 	actual := record.Attributes
 
 	if actual.Strength < base.Strength ||
 		actual.Intelligence < base.Intelligence ||
 		actual.Dexterity < base.Dexterity {
-		return content.SpeciesDef{}, fmt.Errorf("invalid player attributes for entity %d", record.ID)
-	}
-
-	species, err := catalog.Species("SP_HUMAN")
-
-	if err != nil {
-		return content.SpeciesDef{}, err
+		return fmt.Errorf("invalid player attributes for entity %d", record.ID)
 	}
 
 	manualGains := 0
@@ -110,10 +114,10 @@ func validateSavedHumanAttributes(
 	}
 
 	if !validHumanStatGains(deltas, manualGains, randomGains) {
-		return content.SpeciesDef{}, fmt.Errorf("invalid player attribute gains for entity %d", record.ID)
+		return fmt.Errorf("invalid player attribute gains for entity %d", record.ID)
 	}
 
-	return species, nil
+	return nil
 }
 
 func validateSavedHumanVitals(

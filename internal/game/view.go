@@ -2,6 +2,7 @@ package game
 
 import (
 	"dcrawl-go/internal/character"
+	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 )
 
@@ -130,6 +131,16 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 }
 
 func (g *Game) fillPlayerView(view *View) {
+	player, hasPlayer := g.stores.Players.Get(g.player)
+	var species content.SpeciesDef
+	var hasSpecies bool
+
+	if hasPlayer {
+		var err error
+		species, err = g.catalog.Species(player.SpeciesID)
+		hasSpecies = err == nil
+	}
+
 	if health, ok := g.stores.Health.Get(g.player); ok {
 		view.PlayerHP = health.Current
 		view.PlayerMaxHP = health.Max
@@ -150,9 +161,9 @@ func (g *Game) fillPlayerView(view *View) {
 		view.SkillPercent = skillTrainingPercent(view.Skills, &view.SkillTraining)
 	}
 
-	if progression, ok := g.stores.Progression.Get(g.player); ok {
-		if percent, err := character.HumanLevelProgress(
-			progression.TotalXP, progression.Level,
+	if progression, ok := g.stores.Progression.Get(g.player); ok && hasSpecies {
+		if percent, err := character.LevelProgress(
+			progression.TotalXP, progression.Level, species.XP,
 		); err == nil {
 			view.ExperienceLevel = progression.Level
 			view.NextLevelPercent = percent
@@ -175,17 +186,16 @@ func (g *Game) fillPlayerView(view *View) {
 		view.EquipmentDelay = &copy
 	}
 
-	if player, ok := g.stores.Players.Get(g.player); ok {
+	if hasPlayer {
 		view.PlayerName = player.Name
 
 		if view.PlayerName == "" {
 			view.PlayerName = "Adventurer"
 		}
 
-		species, speciesErr := g.catalog.Species(player.SpeciesID)
 		job, jobErr := g.catalog.Job(player.JobID)
 
-		if speciesErr == nil &&
+		if hasSpecies &&
 			jobErr == nil {
 			view.CharacterName = species.Name + " " + job.Name
 		}

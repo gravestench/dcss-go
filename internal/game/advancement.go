@@ -28,7 +28,13 @@ type advancementSystem struct {
 }
 
 func newAdvancementSystem(g *Game) (*advancementSystem, error) {
-	species, err := g.catalog.Species("SP_HUMAN")
+	player, found := g.stores.Players.Get(g.player)
+
+	if !found {
+		return nil, fmt.Errorf("player has no selected species")
+	}
+
+	species, err := g.catalog.Species(player.SpeciesID)
 
 	if err != nil {
 		return nil, err
@@ -60,7 +66,7 @@ func (s *advancementSystem) advance() error {
 	progress, found := s.progression.Get(s.player)
 
 	if !found ||
-		progress.Level < 1 || progress.Level > character.HumanMaxLevel {
+		progress.Level < 1 || progress.Level > character.MaxExperienceLevel {
 		return fmt.Errorf("player has invalid advancement state")
 	}
 
@@ -68,9 +74,13 @@ func (s *advancementSystem) advance() error {
 		return nil
 	}
 
-	for progress.Level < character.HumanMaxLevel {
+	for progress.Level < character.MaxExperienceLevel {
 		nextLevel := progress.Level + 1
-		needed, _ := character.HumanExperienceNeeded(nextLevel)
+		needed, err := character.ExperienceNeeded(nextLevel, s.species.XP)
+
+		if err != nil {
+			return err
+		}
 
 		if progress.TotalXP < needed {
 			break
@@ -153,7 +163,7 @@ func (s *advancementSystem) applyLevel(level int) error {
 
 	message := fmt.Sprintf("You have reached level %d!", level)
 
-	if level == character.HumanMaxLevel {
+	if level == character.MaxExperienceLevel {
 		message = "You have reached level 27, the final one!"
 	}
 

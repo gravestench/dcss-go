@@ -194,7 +194,8 @@ func skillBatchLimit(training *ecs.SkillTraining, cost int) (int, error) {
 		return batch, nil
 	}
 
-	nextThreshold, err := character.HumanExperienceNeeded(training.CostLevel + 1)
+	// skills.cc:skill_cost_needed always uses XP aptitude 1.
+	nextThreshold, err := character.ExperienceNeeded(training.CostLevel+1, 1)
 
 	if err != nil {
 		return 0, err

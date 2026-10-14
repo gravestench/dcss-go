@@ -7,6 +7,57 @@ import (
 	"dcrawl-go/internal/character"
 )
 
+func TestAdvancementAndViewReadSelectedSpeciesXPAptitude(t *testing.T) {
+	g := newStepGame(t)
+	player, found := g.stores.Players.Get(g.player)
+
+	if !found {
+		t.Fatal("player has no identity component")
+	}
+
+	player.SpeciesID = "SP_TENGU"
+
+	progress, found := g.stores.Progression.Get(g.player)
+
+	if !found {
+		t.Fatal("player has no progression component")
+	}
+
+	progress.TotalXP = 9
+
+	advancement, err := newAdvancementSystem(g)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if advancement.species.ID != "SP_TENGU" || advancement.species.XP != 0 {
+		t.Fatalf("advancement used species %+v", advancement.species)
+	}
+
+	if err := advancement.advance(); err != nil {
+		t.Fatal(err)
+	}
+
+	if progress.Level != 1 {
+		t.Fatalf("Tengu advanced before its 10-XP threshold: XL%d", progress.Level)
+	}
+
+	if percent := g.View().NextLevelPercent; percent != 90 {
+		t.Fatalf("Tengu XP progress = %d%%, want 90%%", percent)
+	}
+}
+
+func TestAdvancementRejectsInvalidSpeciesXPAptitude(t *testing.T) {
+	g := newStepGame(t)
+
+	g.advancement.species.XP = 1000
+
+	if err := g.advancement.advance(); err == nil {
+		t.Fatal("advanced with an underflowing species XP threshold")
+	}
+}
+
 func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 	g := newStepGame(t)
 
@@ -88,7 +139,7 @@ func TestHumanAdvancementRunsThroughFinalLevel(t *testing.T) {
 	attributes, _ := g.stores.Attributes.Get(g.player)
 	baseStats := attributes.Strength + attributes.Intelligence + attributes.Dexterity
 
-	lastThreshold, _ := character.HumanExperienceNeeded(character.HumanMaxLevel)
+	lastThreshold, _ := character.ExperienceNeeded(character.MaxExperienceLevel, 1)
 
 	progress.TotalXP = lastThreshold
 

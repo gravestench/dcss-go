@@ -247,7 +247,7 @@ func TestHumanFirstLevelProgressUsesNineXPThreshold(t *testing.T) {
 			percent: 88,
 		},
 	} {
-		got, err := HumanLevelProgress(tc.xp, 1)
+		got, err := LevelProgress(tc.xp, 1, 1)
 
 		if err != nil ||
 			got != tc.percent {
@@ -256,7 +256,7 @@ func TestHumanFirstLevelProgressUsesNineXPThreshold(t *testing.T) {
 	}
 
 	for _, xp := range []int{-1} {
-		if _, err := HumanLevelProgress(xp, 1); err == nil {
+		if _, err := LevelProgress(xp, 1, 1); err == nil {
 			t.Fatalf("accepted unsupported XP %d", xp)
 		}
 	}
