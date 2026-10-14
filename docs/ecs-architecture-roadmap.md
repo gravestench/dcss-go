@@ -75,9 +75,11 @@ the fixed test fixture still chooses two monsters per floor.
 
 Monster weapon ownership: the 162 primary and 16 secondary declarative
 loadouts now live in immutable, committed content. The next monster equipment
-slice will choose from these tables and the source's switch rules during
-creation, then put each actual weapon on an Akara item entity carried by its
-monster. Combat should read that same entity state.
+slice will turn source choices into Akara item entities during creation.
+The pure early-humanoid policy already chooses goblin and kobold weapon
+kinds, including the goblin sling override and its alternate melee weapon.
+Combat reads the equipped entity state; item quality and live assignment
+remain to port.
 
 Monster inventory lifecycle progress: the save validator now accepts one
 equipped weapon item per live monster, restores its carrier relationship, and
