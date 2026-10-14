@@ -163,6 +163,9 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	}
 	hud(0, 9, weapon, LightGrey)
 	hud(0, 10, "Quiver: --", Brown)
+	if view.MightAut > 0 {
+		hud(0, 11, "Might", LightBlue)
+	}
 
 	var monsters []string
 	for _, entity := range view.Entities {

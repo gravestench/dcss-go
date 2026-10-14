@@ -68,6 +68,23 @@ func TestDrawPlayShowsEarnedRatExperienceProgress(t *testing.T) {
 	}
 }
 
+func TestDrawPlayShowsMightLightOnlyWhileActive(t *testing.T) {
+	view := playView(t)
+	canvas := NewCanvas(79, 24)
+	layout, _ := ComputeLayout(79, 24)
+	view.MightAut = 340
+	DrawPlay(canvas, layout, view, "")
+	if !strings.Contains(canvas.PlainRows()[11][37:], "Might") {
+		t.Fatal("active Might status light missing")
+	}
+	view.MightAut = 0
+	canvas = NewCanvas(79, 24)
+	DrawPlay(canvas, layout, view, "")
+	if strings.Contains(canvas.PlainRows()[11][37:], "Might") {
+		t.Fatal("expired Might status light remains")
+	}
+}
+
 func TestDrawPlayExpandedViewportUsesFullTerminal(t *testing.T) {
 	view := playView(t)
 	canvas := NewCanvas(120, 40)

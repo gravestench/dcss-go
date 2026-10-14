@@ -18,7 +18,7 @@ func potionLetter(t *testing.T, m *AppModel, kind string) string {
 	return ""
 }
 
-func TestQuaffChoiceCancelAndUnsupportedPotionAreFree(t *testing.T) {
+func TestQuaffChoiceCancelAndStartingMight(t *testing.T) {
 	m := playingModel(t)
 	aut := m.game.View().CurrentAut
 	m.handleKey("q")
@@ -31,8 +31,11 @@ func TestQuaffChoiceCancelAndUnsupportedPotionAreFree(t *testing.T) {
 	}
 	m.handleKey("q")
 	m.handleKey(potionLetter(t, m, "POT_MIGHT"))
-	if m.screen != ScreenPlay || m.game.View().CurrentAut != aut || !strings.Contains(m.notice, "unavailable") {
-		t.Fatalf("unsupported potion: screen %d notice %q time %d", m.screen, m.notice, m.game.View().CurrentAut)
+	if m.screen != ScreenPlay || m.game.View().CurrentAut != aut+10 || m.game.View().MightAut < 340 || m.notice != "" {
+		t.Fatalf("might potion: screen %d notice %q time %d, might %d", m.screen, m.notice, m.game.View().CurrentAut, m.game.View().MightAut)
+	}
+	if !strings.Contains(plainApp(m), "Might") {
+		t.Fatal("might status light is missing")
 	}
 }
 

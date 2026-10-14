@@ -124,7 +124,7 @@ func DrawHelp(canvas *Canvas) {
 		"Inventory: i     Skills: m     Help: ?",
 		"Save and exit: S (confirm), Ctrl-S (now)",
 		"Abandon character: Ctrl-Q (confirm)",
-		"Quaff: q (curing available)     Run right: L (unavailable)",
+		"Quaff: q (curing, might)         Run right: L (unavailable)",
 		"Other unported commands explain their unavailable status.",
 		"",
 		"Esc - Return",
