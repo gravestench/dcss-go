@@ -101,6 +101,15 @@ func TestItemImportPair(t *testing.T) {
 	if _, err := joinItemViews(identities, rows, names, glyphs); err == nil {
 		t.Fatal("property row without enum identity accepted")
 	}
+	food, err := joinItemViews(
+		[]content.ItemIdentity{{ID: "FOOD_RATION", ClassID: "OBJ_FOOD", ClassValue: 4, SubtypeValue: 0}},
+		map[itemKey]itemPropertyRow{{"OBJ_FOOD", "FOOD_RATION"}: {Name: "buggy ration", Line: 40, Food: &content.FoodProperties{NormalNutrition: 3400}}},
+		map[itemKey]content.ItemName{{"OBJ_FOOD", "FOOD_RATION"}: {Text: "removed food", Kind: "static", SourcePath: "crawl-ref/source/item-name.cc", SourceLine: 20}},
+		map[itemKey]rune{{"OBJ_FOOD", "FOOD_RATION"}: '%'},
+	)
+	if err != nil || len(food) != 1 || food[0].Name != "removed food" || food[0].PropertyName != "buggy ration" {
+		t.Fatalf("food names lost: %+v, %v", food, err)
+	}
 }
 
 func TestItemImportWrite(t *testing.T) {

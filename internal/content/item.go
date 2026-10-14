@@ -97,6 +97,7 @@ type FoodProperties struct {
 type ItemDef struct {
 	ID                string             `json:"id"`
 	Name              string             `json:"name"`
+	PropertyName      string             `json:"property_name,omitempty"`
 	Glyph             rune               `json:"glyph"`
 	Class             string             `json:"class"`
 	ClassValue        int                `json:"class_value"`
@@ -215,6 +216,9 @@ func (d ItemDef) validate() error {
 	}
 	if propertyCount > 1 || (d.Armour != nil && d.Class != "OBJ_ARMOUR") || (d.Weapon != nil && d.Class != "OBJ_WEAPONS") || (d.Missile != nil && d.Class != "OBJ_MISSILES") || (d.Food != nil && d.Class != "OBJ_FOOD") {
 		return fmt.Errorf("item %s has wrong class property shape", d.ID)
+	}
+	if (d.Food != nil && d.PropertyName == "") || (d.Food == nil && d.PropertyName != "") {
+		return fmt.Errorf("item %s has invalid food property name", d.ID)
 	}
 	if d.Weapon != nil {
 		previous := ""

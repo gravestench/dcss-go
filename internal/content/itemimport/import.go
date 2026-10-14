@@ -108,6 +108,9 @@ func joinItemViews(identities []content.ItemIdentity, rows map[itemKey]itemPrope
 		if hasRow {
 			item.Evidence.PropertySource = "crawl-ref/source/item-prop.cc"
 			item.Evidence.PropertyLine = row.Line
+			if identity.ClassID == "OBJ_FOOD" {
+				item.PropertyName = row.Name
+			}
 		}
 		switch identity.ClassID {
 		case "OBJ_WEAPONS":
