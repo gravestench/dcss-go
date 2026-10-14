@@ -83,6 +83,12 @@ func LoadDefault() (Catalog, error) {
 	return attachDefaultDungeonPopulation(catalog, defaultDungeonPopulationJSON)
 }
 
+// LoadDefaultSpells gives content refresh tools the committed spell identities
+// without requiring any other catalog category to load successfully.
+func LoadDefaultSpells() (Catalog, error) {
+	return attachDefaultSpells(scenarioCatalog(), defaultSpellJSON)
+}
+
 // LoadDefinitionsForImport reads committed gameplay definitions without needing
 // the presentation artifact that the refresh tool is about to regenerate.
 func LoadDefinitionsForImport() (Catalog, error) {
@@ -320,19 +326,37 @@ func attachDefaultMonsterSpellbooks(catalog Catalog, data []byte) (Catalog, erro
 		return Catalog{}, err
 	}
 
-	const pinnedSource = "ee46cb6314b5464dd617975eb064e271af3448ed4494486d3de3b2c7fef84021"
-
 	if artifact.SourceRevision != catalog.SourceRevision() ||
-		artifact.SourceSHA256 != pinnedSource ||
-		len(artifact.Books) != 1 ||
-		artifact.Books[0].ID != "MST_ENDOPLASM" {
+		len(artifact.Books) != 285 {
 		return Catalog{}, fmt.Errorf("monster spellbooks differ from pinned source")
+	}
+
+	paths, err := validSourceFiles(artifact.SourceFiles, "monster spellbooks")
+
+	if err != nil {
+		return Catalog{}, err
+	}
+
+	if paths["crawl-ref/source/externs.h"] !=
+		"6a1f394df9a93e6a411680a1ca6a69524bc29259c16cc2e9850ee0aac168a211" ||
+		paths["crawl-ref/source/mon-mst.h"] !=
+			"d73ad1c8ad8fbd4c82a1f56847c193ffbdd41f617f1b77f98969a1e4fe98f800" ||
+		paths["crawl-ref/source/mon-spell.h"] !=
+			"ee46cb6314b5464dd617975eb064e271af3448ed4494486d3de3b2c7fef84021" {
+		return Catalog{}, fmt.Errorf("monster spellbooks have unexpected source files")
 	}
 
 	catalog.monsterSpellbooks = make(map[string]MonsterSpellbook, len(artifact.Books))
 
 	for _, book := range artifact.Books {
-		book.Slots = append([]MonsterSpellSlot(nil), book.Slots...)
+		slots := make([]MonsterSpellSlot, len(book.Slots))
+
+		for index, slot := range book.Slots {
+			slots[index] = slot
+			slots[index].Flags = append([]string(nil), slot.Flags...)
+		}
+
+		book.Slots = slots
 		catalog.monsterSpellbooks[book.ID] = book
 	}
 

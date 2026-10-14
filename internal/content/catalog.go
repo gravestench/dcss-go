@@ -175,9 +175,16 @@ func (c Catalog) Validate() error {
 		}
 
 		for _, slot := range book.Slots {
-			if slot.FlagID != "MON_SPELL_NATURAL" ||
-				slot.Frequency < 1 || slot.Frequency > 200 {
+			if slot.Frequency < 1 ||
+				slot.Frequency > 200 ||
+				len(slot.Flags) == 0 {
 				return fmt.Errorf("invalid monster spell slot in %s", id)
+			}
+
+			for _, flag := range slot.Flags {
+				if !validMonsterSpellFlag(flag) {
+					return fmt.Errorf("invalid monster spell flag %q in %s", flag, id)
+				}
 			}
 
 			spell, found := c.spells[slot.SpellID]

@@ -98,4 +98,12 @@ Adder poison progress: the seventh supported ordinary animal keeps its static bi
 
 Haste progress: the fourth supported potion uses the committed item catalog and a fixed Dungeon:2 floor placement. `Durations.HasteAut` is owned by the Akara player; quaff and end-turn systems mutate it. `Game.Step` chooses one source-rounded player speed for each accepted action, and melee delay, scheduling, saves, view, and the `Fast` HUD consume that same state.
 
-Endoplasm spell progress: a committed source-traced spellbook row supplies the immutable Freeze slot. The monster decision system chooses a transient `IntentSpell` from the endoplasm's live ECS identity and position; a focused ordered system resolves damage before movement or melee. The same ECS energy component pays the cataloged spell cost, and the named `monster_spell` stream saves selection and damage draws. No duplicate spell state or generic effect framework was added.
+Monster spell progress: all 285 active source spellbooks and 697 ordered
+slots are committed as immutable content, including frequencies and flags.
+The importer runs only for an intentional upstream refresh. The decision
+system currently chooses a transient `IntentSpell` for endoplasm Freeze
+from live ECS identity and position; a focused ordered system resolves
+damage before movement or melee. The same ECS energy component pays the
+cataloged spell cost, and the named `monster_spell` stream saves selection
+and damage draws. Other book behaviors will enter that path as their
+targeting and effects are ported.
