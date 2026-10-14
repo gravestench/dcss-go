@@ -73,6 +73,12 @@ the level supplies walkability and occupancy. The game owns named layout, count,
 and saves their states. Live D:1–2 counts follow the pinned three-dice rule;
 the fixed test fixture still chooses two monsters per floor.
 
+Monster weapon ownership: the 162 primary and 16 secondary declarative
+loadouts now live in immutable, committed content. The next monster equipment
+slice will choose from these tables and the source's switch rules during
+creation, then put each actual weapon on an Akara item entity carried by its
+monster. Combat, drops, and save validation should read that same entity state.
+
 Phase 5 progress: corpse state remains in Akara stores, and a focused aging system owns its decay and removal. The `Level` owns its away clock. `Game.Step` supplies elapsed aut only after all actor actions, preserving the source's 200-aut timer phase and inactive-floor catch-up. The scheduler grants source-rounded energy only to monsters on the player's floor and acts with the highest-energy ready monster first. Inactive monster energy stays frozen. On return to a visited floor, an event-driven system applies the eleven supported monsters' source HP recovery, including the worm’s fast rate and direct movement toward a saved target before ordinary energy grants resume. First entry skips this update. Bat retreat actions are mutable `MonsterAI` state and survive saves; its plain natural hit and two wandering actions share the existing combat and AI systems. The ball python adds one optional player `Constricted` component, with its constrictor entity and escape attempts. The post-action constriction system owns damage and release, while movement uses a pure escape roll. Save validation checks the cross-entity link. Summons, pacification, enchantments, broader ranged behavior, and other monster capabilities still need their source return-time rules.
 
 Level travel progress: each stair cell has an explicit destination level and arrival cell owned by its `Level`. The new Go save schema stores those links, and restore validates linked destinations and explicit unported boundaries. A pure D:1–2 `layout_basic` builder now produces source-shaped terrain and stair pairs. The generated two-floor scenario is now playable, with connected doors, three stair pairs, source monster-count dice, and explicit boundary exits. Other weighted layouts, vaults, deeper floors, and branch travel are next.

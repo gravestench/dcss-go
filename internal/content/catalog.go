@@ -13,13 +13,15 @@ type Catalog struct {
 	version        int
 	sourceRevision string
 
-	monsters          map[string]MonsterDef
-	monsterSpellbooks map[string]MonsterSpellbook
-	spells            map[string]SpellDef
-	spellOrder        []string
-	branches          map[string]BranchDef
-	branchOrder       []string
-	dungeonPopulation []DungeonPopEntry
+	monsters                map[string]MonsterDef
+	monsterSpellbooks       map[string]MonsterSpellbook
+	primaryMonsterWeapons   map[string]MonsterWeaponSpec
+	secondaryMonsterWeapons map[string]MonsterWeaponSpec
+	spells                  map[string]SpellDef
+	spellOrder              []string
+	branches                map[string]BranchDef
+	branchOrder             []string
+	dungeonPopulation       []DungeonPopEntry
 
 	items          map[string]ItemDef
 	itemIdentities map[string]ItemIdentity

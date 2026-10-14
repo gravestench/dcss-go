@@ -40,6 +40,9 @@ var defaultSpellJSON []byte
 //go:embed generated/monster-spellbooks.json
 var defaultMonsterSpellbookJSON []byte
 
+//go:embed generated/monster-weapons.json
+var defaultMonsterWeaponJSON []byte
+
 //go:embed generated/branches.json
 var defaultBranchJSON []byte
 
@@ -69,6 +72,12 @@ func LoadDefault() (Catalog, error) {
 	}
 
 	catalog, err = attachDefaultMonsterSpellbooks(catalog, defaultMonsterSpellbookJSON)
+
+	if err != nil {
+		return Catalog{}, err
+	}
+
+	catalog, err = attachDefaultMonsterWeapons(catalog, defaultMonsterWeaponJSON)
 
 	if err != nil {
 		return Catalog{}, err

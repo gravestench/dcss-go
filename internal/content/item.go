@@ -152,6 +152,22 @@ type ItemIdentityManifest struct {
 	DefinitionsSHA256 string `json:"definitions_sha256"`
 }
 
+// DefaultItemBrandIDs supplies the committed brand vocabulary to developer
+// importers before the next content category is attached to the catalog.
+func DefaultItemBrandIDs() ([]string, error) {
+	var manifest ItemIdentityManifest
+
+	if err := decodeArtifact(defaultItemIdentitiesJSON, "item identities", &manifest); err != nil {
+		return nil, err
+	}
+
+	if err := manifest.Validate(); err != nil {
+		return nil, err
+	}
+
+	return append([]string(nil), manifest.Vocabulary.Brands...), nil
+}
+
 func (d ItemDef) clone() ItemDef {
 	if d.Armour != nil {
 		copy := *d.Armour
