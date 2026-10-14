@@ -6,7 +6,8 @@ import (
 )
 
 type corpseRoll struct {
-	bound, value int
+	bound int
+	value int
 }
 type corpseRoller struct {
 	rolls []corpseRoll

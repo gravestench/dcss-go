@@ -20,7 +20,8 @@ type CellView struct {
 
 type EntityView struct {
 	ID     uint64
-	X, Y   int
+	X      int
+	Y      int
 	Glyph  rune
 	KindID string
 	Name   string
@@ -40,26 +41,33 @@ type ItemView struct {
 }
 
 type View struct {
-	LevelID                           int
-	PlayerX, PlayerY                  int
-	PlayerDead                        bool
-	PlayerName                        string
-	Width, Height                     int
-	Cells                             []CellView
-	Entities                          []EntityView
-	PlayerHP, PlayerMaxHP             int
-	PlayerMP, PlayerMaxMP             int
-	PlayerAC, PlayerEV, PlayerSH      int
-	DefenseKnown                      bool
-	CurrentAut                        Aut
-	Messages                          []string
-	Inventory                         []ItemView
-	CharacterName                     string
-	Attributes                        ecs.Attributes
-	Skills                            []character.Skill
-	ExperienceLevel, NextLevelPercent int
-	PendingStatLevel                  int
-	MightAut                          int
+	LevelID          int
+	PlayerX          int
+	PlayerY          int
+	PlayerDead       bool
+	PlayerName       string
+	Width            int
+	Height           int
+	Cells            []CellView
+	Entities         []EntityView
+	PlayerHP         int
+	PlayerMaxHP      int
+	PlayerMP         int
+	PlayerMaxMP      int
+	PlayerAC         int
+	PlayerEV         int
+	PlayerSH         int
+	DefenseKnown     bool
+	CurrentAut       Aut
+	Messages         []string
+	Inventory        []ItemView
+	CharacterName    string
+	Attributes       ecs.Attributes
+	Skills           []character.Skill
+	ExperienceLevel  int
+	NextLevelPercent int
+	PendingStatLevel int
+	MightAut         int
 }
 
 func (g *Game) View() View {

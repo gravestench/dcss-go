@@ -14,8 +14,10 @@ func starterDelay(speed int, skill string) AttackDelayInput {
 
 func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
 	for _, tc := range []struct {
-		name, skill string
-		speed, fast int
+		name  string
+		skill string
+		speed int
+		fast  int
 	}{
 		{
 			name:  "rapier",
@@ -50,7 +52,8 @@ func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			for _, boundary := range []struct {
-				roll, want int
+				roll int
+				want int
 			}{
 				{
 					roll: 0,
@@ -92,7 +95,8 @@ func TestFractionalWeaponSkillCombinesBeforeOneDraw(t *testing.T) {
 	in.WeaponSkill10 = 21
 
 	for _, tc := range []struct {
-		roll, want int
+		roll int
+		want int
 	}{
 		{
 			roll: 0,
@@ -145,7 +149,8 @@ func TestUnarmedSamplesOneCombinedSourceDistribution(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		roll, want int
+		roll int
+		want int
 	}{
 		{
 			roll: 0,

@@ -6,7 +6,8 @@ import (
 )
 
 type scriptedRoll struct {
-	bound, value int
+	bound int
+	value int
 }
 
 type scriptedRoller struct {

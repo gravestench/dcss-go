@@ -25,7 +25,8 @@ type Level struct {
 }
 
 type point struct {
-	x, y int
+	x int
+	y int
 }
 
 // StairLink connects a stair cell to an arrival cell on another level.

@@ -24,8 +24,10 @@ func (r *healWoundsRoller) Intn(stream string, bound int) (int, error) {
 
 func TestHealWoundsUsesSourceThreeRollAverage(t *testing.T) {
 	for _, tc := range []struct {
-		values                 []int
-		current, maximum, want int
+		values  []int
+		current int
+		maximum int
+		want    int
 	}{
 		{
 			values:  []int{0, 0, 0},
@@ -73,7 +75,8 @@ func TestHealWoundsUsesSourceThreeRollAverage(t *testing.T) {
 
 func TestHealWoundsRejectsInvalidInputAndDraws(t *testing.T) {
 	for _, tc := range []struct {
-		current, maximum int
+		current int
+		maximum int
 	}{
 		{
 			current: 0,

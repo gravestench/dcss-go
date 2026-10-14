@@ -89,7 +89,8 @@ func TestFrilledLizardExperienceUsesSourceOrdinaryBite(t *testing.T) {
 
 func TestHumanFirstLevelProgressUsesNineXPThreshold(t *testing.T) {
 	for _, tc := range []struct {
-		xp, percent int
+		xp      int
+		percent int
 	}{
 		{
 			xp:      0,

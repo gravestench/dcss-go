@@ -10,8 +10,21 @@ import (
 
 // symbolSets are built from the active pinned enum declarations by import.go.
 type symbolSets struct {
-	monster, attackType, attackFlavour, spellbook, classFlag, resistance                map[string]bool
-	holiness, shout, intelligence, habitat, itemUse, size, shape, colour, tileVariation map[string]bool
+	monster       map[string]bool
+	attackType    map[string]bool
+	attackFlavour map[string]bool
+	spellbook     map[string]bool
+	classFlag     map[string]bool
+	resistance    map[string]bool
+	holiness      map[string]bool
+	shout         map[string]bool
+	intelligence  map[string]bool
+	habitat       map[string]bool
+	itemUse       map[string]bool
+	size          map[string]bool
+	shape         map[string]bool
+	colour        map[string]bool
+	tileVariation map[string]bool
 }
 
 func checked(value string, symbols map[string]bool) (string, error) {
@@ -27,9 +40,10 @@ func checked(value string, symbols map[string]bool) (string, error) {
 func number(value string) (int, error) {
 	value = strings.TrimSpace(value)
 
+	// defines.h:154 reserves this sentinel for invulnerable monsters.
 	if value == "WILL_INVULN" {
 		return 5000, nil
-	} // defines.h:154
+	}
 
 	n, err := strconv.Atoi(value)
 

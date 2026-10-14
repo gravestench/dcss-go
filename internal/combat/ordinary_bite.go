@@ -12,22 +12,34 @@ type Roller interface {
 
 // FighterDefense contains the live parts of an ordinary Human Fighter's defence.
 type FighterDefense struct {
-	Strength, Dexterity       int
-	ArmourSkill, ShieldsSkill int
-	BodyAC, BodyEV, BodyPlus  int
-	ShieldAC, ShieldEV        int
-	ShieldPlus, ShieldBlocks  int
+	Strength     int
+	Dexterity    int
+	ArmourSkill  int
+	ShieldsSkill int
+	BodyAC       int
+	BodyEV       int
+	BodyPlus     int
+	ShieldAC     int
+	ShieldEV     int
+	ShieldPlus   int
+	ShieldBlocks int
 }
 
 // Defense is the source-derived value used to resolve one incoming attack.
 type Defense struct {
-	EV, AC, ShieldClass, GDR, ShieldBlocks int
+	EV           int
+	AC           int
+	ShieldClass  int
+	GDR          int
+	ShieldBlocks int
 }
 
 // AnimalBite is a plain first bite from a supported ordinary animal.
 type AnimalBite struct {
-	HD, Damage        int
-	TypeID, FlavourID string
+	HD        int
+	Damage    int
+	TypeID    string
+	FlavourID string
 }
 
 type OutcomeKind uint8
@@ -48,10 +60,14 @@ type Outcome struct {
 // ProjectFighter follows the unmodified Human path in player.cc. Item EV is
 // stored in hundredths in the committed catalog, as in item-prop.cc.
 func ProjectFighter(in FighterDefense) (Defense, error) {
-	if in.Strength <= 0 || in.Dexterity < 0 || in.ArmourSkill < 0 || in.ShieldsSkill < 0 ||
-		in.BodyAC < 0 || in.BodyEV > 0 || in.ShieldAC < 0 || in.ShieldEV > 0 ||
-		in.ShieldBlocks < 0 || in.BodyPlus < -100 || in.BodyPlus > 100 ||
-		in.ShieldPlus < -100 || in.ShieldPlus > 100 {
+	invalidStats := in.Strength <= 0 || in.Dexterity < 0 ||
+		in.ArmourSkill < 0 || in.ShieldsSkill < 0
+	invalidArmour := in.BodyAC < 0 || in.BodyEV > 0 ||
+		in.BodyPlus < -100 || in.BodyPlus > 100
+	invalidShield := in.ShieldAC < 0 || in.ShieldEV > 0 ||
+		in.ShieldBlocks < 0 || in.ShieldPlus < -100 || in.ShieldPlus > 100
+
+	if invalidStats || invalidArmour || invalidShield {
 		return Defense{}, fmt.Errorf("invalid Human Fighter defense %+v", in)
 	}
 

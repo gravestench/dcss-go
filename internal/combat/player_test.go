@@ -142,8 +142,10 @@ func TestPlayerMeleeMissAndAutomaticOverrides(t *testing.T) {
 
 func TestPlayerMeleeWeaponDamageAndRatArmour(t *testing.T) {
 	for _, tc := range []struct {
-		name                     string
-		damageRoll, acRoll, want int
+		name       string
+		damageRoll int
+		acRoll     int
+		want       int
 	}{
 		{
 			name:       "absorbed",

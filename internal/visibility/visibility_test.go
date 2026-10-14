@@ -106,9 +106,11 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 
 func TestVisibilityInputValidation(t *testing.T) {
 	cases := []struct {
-		name    string
-		rows    []string
-		x, y, r int
+		name string
+		rows []string
+		x    int
+		y    int
+		r    int
 	}{
 		{
 			name: "empty",

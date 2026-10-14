@@ -106,7 +106,10 @@ func TestGenerateRejectsBadSource(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		name, file, old, next string
+		name string
+		file string
+		old  string
+		next string
 	}{
 		{
 			name: "tag",

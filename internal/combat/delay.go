@@ -5,10 +5,12 @@ import "fmt"
 // AttackDelayInput contains the ordinary Fighter's selected weapon or hands,
 // stored skill values at scale 10, and the equipped buckler's EV property.
 type AttackDelayInput struct {
-	Unarmed                    bool
-	WeaponSkillID              string
-	WeaponSpeed, WeaponSkill10 int
-	ShieldEV, ShieldsSkill10   int
+	Unarmed        bool
+	WeaponSkillID  string
+	WeaponSpeed    int
+	WeaponSkill10  int
+	ShieldEV       int
+	ShieldsSkill10 int
 }
 
 // Validate rejects timing inputs outside the supported normal Human start.
@@ -39,7 +41,8 @@ func (in AttackDelayInput) Validate() error {
 }
 
 type weightedDelay struct {
-	value, weight int
+	value  int
+	weight int
 }
 
 // roundedValues mirrors div_rand_round(random_var, d): it multiplies every

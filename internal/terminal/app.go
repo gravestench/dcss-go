@@ -39,21 +39,24 @@ const (
 
 // AppModel owns terminal navigation; the Game owns every turn-changing state.
 type AppModel struct {
-	catalog                    content.Catalog
-	presentation               content.PresentationArtifact
-	seed                       uint64
-	savePath                   string
-	game                       *game.Game
-	screen                     ScreenID
-	previous                   ScreenID
-	weaponReturn               ScreenID
-	width, height              int
-	name                       string
-	speciesID, jobID, weaponID string
-	options                    []character.WeaponOption
-	focus                      int
-	notice                     string
-	confirm                    confirmation
+	catalog      content.Catalog
+	presentation content.PresentationArtifact
+	seed         uint64
+	savePath     string
+	game         *game.Game
+	screen       ScreenID
+	previous     ScreenID
+	weaponReturn ScreenID
+	width        int
+	height       int
+	name         string
+	speciesID    string
+	jobID        string
+	weaponID     string
+	options      []character.WeaponOption
+	focus        int
+	notice       string
+	confirm      confirmation
 }
 
 func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppModel, error) {

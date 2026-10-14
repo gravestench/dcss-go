@@ -16,7 +16,8 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		weapon, skill string
+		weapon string
+		skill  string
 	}{
 		{
 			weapon: "WPN_FLAIL",
@@ -113,7 +114,9 @@ func TestBuildStartProfileRejectsBadChoice(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		species, job, weapon string
+		species string
+		job     string
+		weapon  string
 	}{
 		{
 			species: "SP_HUMAN",

@@ -51,8 +51,11 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 	}
 
 	checks := []struct {
-		id, monster                       string
-		strength, intelligence, dexterity int
+		id           string
+		monster      string
+		strength     int
+		intelligence int
+		dexterity    int
 	}{
 		{
 			id:           "SP_HIGH_ELF",
@@ -104,9 +107,10 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 func TestParseLegacyRejectsBadRows(t *testing.T) {
 	source, aptitudes := legacyFixtures(t)
 	cases := []struct {
-		name              string
-		source, aptitudes []byte
-		want              string
+		name      string
+		source    []byte
+		aptitudes []byte
+		want      string
 	}{
 		{
 			name:      "duplicate species",

@@ -5,21 +5,29 @@ import "fmt"
 // PlayerAttackInput is the ordinary Human Fighter primary attack projected
 // from live character state, one equipped weapon, and the current defender.
 type PlayerAttackInput struct {
-	Strength, Dexterity                 int
-	FightingSkill100, WeaponSkill100    int
-	UnarmedSkill256                     int
-	WeaponSkillID                       string
-	WeaponDamage, WeaponHit, WeaponPlus int
-	Unarmed                             bool
-	DefenderEV, DefenderAC              int
-	Mighty                              bool
+	Strength         int
+	Dexterity        int
+	FightingSkill100 int
+	WeaponSkill100   int
+	UnarmedSkill256  int
+	WeaponSkillID    string
+	WeaponDamage     int
+	WeaponHit        int
+	WeaponPlus       int
+	Unarmed          bool
+	DefenderEV       int
+	DefenderAC       int
+	Mighty           bool
 }
 
 // Validate rejects inputs outside the supported Human Fighter scenario.
 func (in PlayerAttackInput) Validate() error {
-	if in.Strength <= 0 || in.Dexterity < 0 || in.FightingSkill100 < 0 || in.WeaponSkill100 < 0 ||
-		in.UnarmedSkill256 < 0 || in.DefenderEV < 0 || in.DefenderAC < 0 ||
-		in.WeaponPlus < -100 || in.WeaponPlus > 100 {
+	invalidStats := in.Strength <= 0 || in.Dexterity < 0 ||
+		in.FightingSkill100 < 0 || in.WeaponSkill100 < 0 || in.UnarmedSkill256 < 0
+	invalidDefender := in.DefenderEV < 0 || in.DefenderAC < 0
+	invalidWeapon := in.WeaponPlus < -100 || in.WeaponPlus > 100
+
+	if invalidStats || invalidDefender || invalidWeapon {
 		return fmt.Errorf("invalid Human Fighter attack %+v", in)
 	}
 

@@ -526,6 +526,7 @@ func writeWrapped(canvas *Canvas, x, y, width, height int, value string, color C
 func (m *AppModel) drawWeapon(canvas *Canvas) {
 	canvas.Write(0, 0, m.welcomeText(), Brown, Black)
 	canvas.Write(1, 1, "Please select your starting weapon.", LightGrey, Black)
+
 	species, _ := m.catalog.Species("SP_HUMAN")
 
 	for i, option := range m.options {

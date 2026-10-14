@@ -109,7 +109,11 @@ func TestGenerateSpeciesArtifactDeterministic(t *testing.T) {
 
 func TestGenerateSpeciesArtifactRejectsSourceErrors(t *testing.T) {
 	cases := []struct {
-		name, path, old, replacement, want string
+		name        string
+		path        string
+		old         string
+		replacement string
+		want        string
 	}{
 		{
 			name:        "duplicate ID",

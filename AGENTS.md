@@ -17,6 +17,8 @@ for a human reader to follow.
   whenever they contain more than one entry. A one-entry literal may stay
   inline. Expand lists with four or more values instead of placing the whole
   declaration on one line.
+- Declare each struct field on its own line, including fields in test case
+  tables. Group related fields by order and names rather than comma packing.
 - Assign mutable fields one per line. Keep tuple assignment for values returned
   together by a function, such as a result and its error.
 - Give each of four or more local state variables its own declaration instead

@@ -9,14 +9,16 @@ import (
 
 type cell struct {
 	text         string
-	fg, bg       Color
+	fg           Color
+	bg           Color
 	continuation bool
 }
 
 // Canvas stores one logical terminal cell per coordinate, including wide-rune tails.
 type Canvas struct {
-	width, height int
-	cells         []cell
+	width  int
+	height int
+	cells  []cell
 }
 
 func NewCanvas(width, height int) *Canvas {

@@ -93,7 +93,8 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 		}
 
 		for _, pair := range []struct {
-			category, value string
+			category string
+			value    string
 		}{
 			{
 				category: "colour",

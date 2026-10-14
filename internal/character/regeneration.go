@@ -5,16 +5,23 @@ import "fmt"
 // Vitality is the ordinary Human Fighter's live HP/MP and fractional recovery.
 // Each progress counter holds hundredths of one point between player actions.
 type Vitality struct {
-	HP, MaxHP, MP, MaxMP   int
-	HPProgress, MPProgress int
+	HP         int
+	MaxHP      int
+	MP         int
+	MaxMP      int
+	HPProgress int
+	MPProgress int
 }
 
 // Regenerate applies player_reacts' HP and MP recovery for one player action.
 // Other species, equipment, mutations, and magical modifiers enter later.
 func Regenerate(roller Roller, state Vitality, actionAut int) (Vitality, error) {
-	if roller == nil || actionAut < 0 || state.MaxHP <= 0 || state.HP <= 0 || state.HP > state.MaxHP ||
-		state.MaxMP < 0 || state.MP < 0 || state.MP > state.MaxMP ||
-		state.HPProgress < 0 || state.HPProgress >= 100 || state.MPProgress < 0 || state.MPProgress >= 100 {
+	invalidHP := state.MaxHP <= 0 || state.HP <= 0 || state.HP > state.MaxHP
+	invalidMP := state.MaxMP < 0 || state.MP < 0 || state.MP > state.MaxMP
+	invalidProgress := state.HPProgress < 0 || state.HPProgress >= 100 ||
+		state.MPProgress < 0 || state.MPProgress >= 100
+
+	if roller == nil || actionAut < 0 || invalidHP || invalidMP || invalidProgress {
 		return Vitality{}, fmt.Errorf("invalid regeneration state %+v or aut %d", state, actionAut)
 	}
 

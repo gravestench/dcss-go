@@ -138,17 +138,26 @@ func drawDungeon(canvas *Canvas, region Region, view game.View) {
 // The Go-only differences are an expanding dungeon and explicit placeholders.
 func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	drawDungeon(canvas, layout.Dungeon, view)
-	h := layout.HUD
+	drawHUD(canvas, layout.HUD, view)
+	drawNearbyMonsters(canvas, layout.Monsters, view.Entities)
+	drawMessages(canvas, layout.Messages, view.Messages, notice)
+}
+
+func drawHUD(canvas *Canvas, region Region, view game.View) {
 	hud := func(x, y int, value string, color Color) {
-		writeClipped(canvas, h.X+x, h.Y+y, h.W-x, value, color)
+		writeClipped(canvas, region.X+x, region.Y+y, region.W-x, value, color)
 	}
+
 	hud(0, 0, view.PlayerName+" the Shield-Bearer", Yellow) // source/skills.cc:91; current Fighter only
 	hud(0, 1, "Human", Yellow)
 
 	for _, stat := range []struct {
-		y                                 int
-		label                             string
-		current, maximum, yellowAt, redAt int
+		y        int
+		label    string
+		current  int
+		maximum  int
+		yellowAt int
+		redAt    int
 	}{
 		{
 			y:        2,
@@ -179,8 +188,9 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 		hud(len(stat.label)+len(value), stat.y, fmt.Sprintf("/%d", stat.maximum), LightGrey)
 	}
 
-	drawMeter(canvas, h.X+18, h.Y+2, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
-	drawMeter(canvas, h.X+18, h.Y+3, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
+	drawMeter(canvas, region.X+18, region.Y+2, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
+	drawMeter(canvas, region.X+18, region.Y+3, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
+
 	defenseLabels := []string{"AC: --", "EV: --", "SH: --"}
 
 	if view.DefenseKnown {
@@ -245,10 +255,12 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	if view.MightAut > 0 {
 		hud(0, 11, "Might", LightBlue)
 	}
+}
 
+func drawNearbyMonsters(canvas *Canvas, region Region, entities []game.EntityView) {
 	var monsters []string
 
-	for _, entity := range view.Entities {
+	for _, entity := range entities {
 		if entity.Role == "monster" && entity.Name != "" {
 			monsters = append(monsters, "a "+entity.Name)
 		}
@@ -257,24 +269,26 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	sort.Strings(monsters)
 
 	for i, name := range monsters {
-		if i >= layout.Monsters.H {
+		if i >= region.H {
 			break
 		}
 
-		writeClipped(canvas, layout.Monsters.X, layout.Monsters.Y+i, layout.Monsters.W, name, LightGrey)
+		writeClipped(canvas, region.X, region.Y+i, region.W, name, LightGrey)
 	}
+}
 
-	messages := append([]string(nil), view.Messages...)
+func drawMessages(canvas *Canvas, region Region, history []string, notice string) {
+	messages := append([]string(nil), history...)
 
 	if notice != "" {
 		messages = append(messages, notice)
 	}
 
-	if len(messages) > layout.Messages.H {
-		messages = messages[len(messages)-layout.Messages.H:]
+	if len(messages) > region.H {
+		messages = messages[len(messages)-region.H:]
 	}
 
 	for i, message := range messages {
-		writeClipped(canvas, layout.Messages.X, layout.Messages.Y+i, layout.Messages.W, strings.TrimSpace(message), LightGrey)
+		writeClipped(canvas, region.X, region.Y+i, region.W, strings.TrimSpace(message), LightGrey)
 	}
 }

@@ -10,7 +10,8 @@ import (
 const maxRadius = 8
 
 type offset struct {
-	x, y int
+	x int
+	y int
 }
 type rayCell struct {
 	offset

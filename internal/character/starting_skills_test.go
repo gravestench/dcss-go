@@ -16,7 +16,8 @@ func TestStartingSkillsHumanFighterWeapons(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		weapon, skill string
+		weapon string
+		skill  string
 	}{
 		{
 			weapon: "WPN_RAPIER",
@@ -95,7 +96,9 @@ func TestStartingSkillsRejectsUnsupportedChoice(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		species, job, weapon string
+		species string
+		job     string
+		weapon  string
 	}{
 		{
 			species: "SP_HILL_ORC",

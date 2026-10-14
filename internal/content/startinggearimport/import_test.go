@@ -119,8 +119,12 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		name, file, old, replacement, want string
-		jobs                               func() []content.JobDef
+		name        string
+		file        string
+		old         string
+		replacement string
+		want        string
+		jobs        func() []content.JobDef
 	}{
 		{
 			name:        "wrong tag",

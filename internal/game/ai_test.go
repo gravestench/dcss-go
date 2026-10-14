@@ -9,10 +9,11 @@ import (
 
 func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 	for _, tc := range []struct {
-		name             string
-		playerX, playerY int
-		blockDiagonal    bool
-		want             ecs.Intent
+		name          string
+		playerX       int
+		playerY       int
+		blockDiagonal bool
+		want          ecs.Intent
 	}{
 		{
 			name:          "diagonal melee",

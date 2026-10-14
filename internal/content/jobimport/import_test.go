@@ -94,7 +94,11 @@ func TestGenerateJobArtifactDeterministic(t *testing.T) {
 
 func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 	for _, tc := range []struct {
-		name, file, old, replacement, want string
+		name        string
+		file        string
+		old         string
+		replacement string
+		want        string
 	}{
 		{
 			name:        "missing enum job",

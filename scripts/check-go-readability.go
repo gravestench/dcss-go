@@ -78,6 +78,13 @@ func checkFile(path string) (int, error) {
 
 	ast.Inspect(file, func(node ast.Node) bool {
 		switch value := node.(type) {
+		case *ast.StructType:
+			for _, field := range value.Fields.List {
+				if len(field.Names) > 1 {
+					report(field.Pos(), "declare each struct field on its own line")
+				}
+			}
+
 		case *ast.AssignStmt:
 			if value.Tok == token.DEFINE && len(value.Lhs) >= 4 && len(value.Rhs) >= 4 {
 				report(value.Pos(), "declare parser and other local state one variable per line")

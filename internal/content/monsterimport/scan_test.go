@@ -85,7 +85,8 @@ func TestParseRowsRejectsMalformed(t *testing.T) {
 	base := "static monsterentry mondata[] =\n{\n"
 
 	for _, tc := range []struct {
-		name, body string
+		name string
+		body string
 	}{
 		{
 			name: "short row",

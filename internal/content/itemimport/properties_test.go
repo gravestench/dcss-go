@@ -226,7 +226,9 @@ func TestPropertyScannerRejectsLoss(t *testing.T) {
 	base := string(propertyFixture())
 
 	for _, test := range []struct {
-		name, from, to string
+		name string
+		from string
+		to   string
 	}{
 		{
 			name: "missing field",

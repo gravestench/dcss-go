@@ -6,7 +6,8 @@ import (
 )
 
 type regenRoll struct {
-	bound, value int
+	bound int
+	value int
 }
 type regenRoller struct {
 	rolls []regenRoll

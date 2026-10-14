@@ -74,7 +74,10 @@ func TestParseJobDataPreservesAllFieldsAndOrder(t *testing.T) {
 
 func TestParseJobDataRejectsMalformedDefinitions(t *testing.T) {
 	for _, tc := range []struct {
-		name, old, replacement, want string
+		name        string
+		old         string
+		replacement string
+		want        string
 	}{
 		{
 			name:        "duplicate ID",

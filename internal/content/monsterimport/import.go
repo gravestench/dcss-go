@@ -201,11 +201,13 @@ func sourceSymbols(data map[string][]byte) (symbolSets, error) {
 	from := func(file, name string) (map[string]bool, error) {
 		return enumMembers("crawl-ref/source/"+file, name, data[file])
 	}
+
 	var s symbolSets
 	var err error
 	steps := []struct {
-		target     *map[string]bool
-		file, name string
+		target *map[string]bool
+		file   string
+		name   string
 	}{
 		{
 			target: &s.attackType,

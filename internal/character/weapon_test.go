@@ -69,7 +69,9 @@ func TestWeaponChoiceRestrictions(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		species, job, want string
+		species string
+		job     string
+		want    string
 	}{
 		{
 			species: "SP_KOBOLD",
@@ -119,7 +121,9 @@ func TestWeaponChoiceRestrictions(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		species, job, weapon string
+		species string
+		job     string
+		weapon  string
 	}{
 		{
 			species: "SP_UNKNOWN",

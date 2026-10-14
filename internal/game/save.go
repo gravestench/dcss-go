@@ -61,16 +61,13 @@ func validateSavedItem(
 		return fmt.Errorf("item %d has mismatched corpse state", record.ID)
 	}
 
-	if corpseKind && (record.Position == nil || record.CarriedBy != nil || record.Equipped != nil || item.Quantity != 1 ||
-		!isOrdinaryAnimal(record.Corpse.MonsterID) || record.Corpse.Freshness < 1 || record.Corpse.Freshness > 110 ||
-		record.Corpse.Appearance < 1 || record.Corpse.Appearance > 255) {
-		return fmt.Errorf("item %d has invalid ordinary animal corpse state", record.ID)
+	if corpseKind {
+		if err := validateSavedCorpse(record); err != nil {
+			return err
+		}
 	}
 
-	if record.Health != nil || record.Magic != nil || record.Skills != nil ||
-		record.Progression != nil || record.Durations != nil ||
-		record.Regeneration != nil || record.Combatant != nil ||
-		record.Player != nil || record.AI != nil || record.Attributes != nil {
+	if savedItemHasActorComponents(record) {
 		return fmt.Errorf("item %d has actor components", record.ID)
 	}
 
@@ -91,6 +88,37 @@ func validateSavedItem(
 	occupied[kind.Slot] = kind.ID
 
 	return nil
+}
+
+func validateSavedCorpse(record save.EntityRecord) error {
+	item := record.Item
+	corpse := record.Corpse
+
+	if record.Position == nil || record.CarriedBy != nil ||
+		record.Equipped != nil || item.Quantity != 1 {
+		return fmt.Errorf("item %d has invalid ordinary animal corpse state", record.ID)
+	}
+
+	if !isOrdinaryAnimal(corpse.MonsterID) ||
+		corpse.Freshness < 1 || corpse.Freshness > 110 ||
+		corpse.Appearance < 1 || corpse.Appearance > 255 {
+		return fmt.Errorf("item %d has invalid ordinary animal corpse state", record.ID)
+	}
+
+	return nil
+}
+
+func savedItemHasActorComponents(record save.EntityRecord) bool {
+	return record.Health != nil ||
+		record.Magic != nil ||
+		record.Skills != nil ||
+		record.Progression != nil ||
+		record.Durations != nil ||
+		record.Regeneration != nil ||
+		record.Combatant != nil ||
+		record.Player != nil ||
+		record.AI != nil ||
+		record.Attributes != nil
 }
 
 func (g *Game) Snapshot() save.Snapshot {
@@ -541,6 +569,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			selectedWeaponID, equippedSlots["weapon"],
 		)
 	}
+
 	// A stat prompt pauses before the monster phase at the start of the
 	// player's spent turn. Its next deadline is therefore still in the future.
 	if playerAlive {

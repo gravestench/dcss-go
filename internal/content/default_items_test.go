@@ -35,8 +35,9 @@ func TestDefaultItemManifest(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		name                   string
-		itemData, identityData []byte
+		name         string
+		itemData     []byte
+		identityData []byte
 	}{
 		{
 			name:         "bad item bytes",

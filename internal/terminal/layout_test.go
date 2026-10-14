@@ -4,8 +4,9 @@ import "testing"
 
 func TestLayoutMatchesMinimumAndExpandedConsole(t *testing.T) {
 	for _, tc := range []struct {
-		width, height int
-		want          Layout
+		width  int
+		height int
+		want   Layout
 	}{
 		{
 			width:  79,

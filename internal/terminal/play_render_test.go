@@ -42,7 +42,8 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 	rows := canvas.PlainRows()
 
 	for _, tc := range []struct {
-		y, x int
+		y    int
+		x    int
 		text string
 	}{
 		{

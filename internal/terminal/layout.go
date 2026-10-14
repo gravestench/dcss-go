@@ -2,11 +2,18 @@ package terminal
 
 // Region uses zero-based terminal cells; W and H are extents, not last indices.
 type Region struct {
-	X, Y, W, H int
+	X int
+	Y int
+	W int
+	H int
 }
 
 type Layout struct {
-	Dungeon, Gutter, HUD, Monsters, Messages Region
+	Dungeon  Region
+	Gutter   Region
+	HUD      Region
+	Monsters Region
+	Messages Region
 }
 
 // ComputeLayout follows the source's 79x24 inline panes, expanding only the dungeon.

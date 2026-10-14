@@ -6,7 +6,8 @@ import (
 )
 
 type mightRoller struct {
-	value, calls int
+	value int
+	calls int
 }
 
 func (r *mightRoller) Intn(stream string, bound int) (int, error) {
@@ -21,8 +22,10 @@ func (r *mightRoller) Intn(stream string, bound int) (int, error) {
 
 func TestMightPotionDurationAndCap(t *testing.T) {
 	for _, tc := range []struct {
-		old, roll, want int
-		message         string
+		old     int
+		roll    int
+		want    int
+		message string
 	}{
 		{
 			old:     0,
@@ -54,8 +57,10 @@ func TestMightPotionDurationAndCap(t *testing.T) {
 
 func TestMightDurationDecay(t *testing.T) {
 	for _, tc := range []struct {
-		old, cost, want int
-		ended           bool
+		old   int
+		cost  int
+		want  int
+		ended bool
 	}{
 		{
 			old:   350,

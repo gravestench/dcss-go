@@ -9,7 +9,8 @@ import (
 
 func TestScenarioInstallsStartingProfile(t *testing.T) {
 	for _, tc := range []struct {
-		weapon, skill string
+		weapon string
+		skill  string
 	}{
 		{
 			weapon: "WPN_RAPIER",

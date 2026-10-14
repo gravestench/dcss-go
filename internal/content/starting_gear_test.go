@@ -71,7 +71,9 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 	}
 
 	for id, want := range map[string]struct {
-		class, slot, skill string
+		class string
+		slot  string
+		skill string
 	}{
 		"POT_CURING":     {"OBJ_POTIONS", "", ""},
 		"ARM_SCALE_MAIL": {"OBJ_ARMOUR", "body", ""},
@@ -264,8 +266,9 @@ func TestStartingGearArtifactValidation(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		name, want string
-		change     func(*StartingGearArtifact)
+		name   string
+		want   string
+		change func(*StartingGearArtifact)
 	}{
 		{
 			name: "duplicate job",

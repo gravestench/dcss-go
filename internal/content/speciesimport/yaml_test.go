@@ -123,7 +123,9 @@ altar_action: kneel at
 
 func TestParseYAMLRejectsMalformedSource(t *testing.T) {
 	cases := []struct {
-		name, input, field string
+		name  string
+		input string
+		field string
 	}{
 		{
 			name:  "unknown field",
@@ -190,7 +192,9 @@ func TestParseYAMLRejectsMalformedSource(t *testing.T) {
 
 func TestParseYAMLRejectsCoercionAndTrailingDocument(t *testing.T) {
 	cases := []struct {
-		name, input, field string
+		name  string
+		input string
+		field string
 	}{
 		{
 			name:  "fractional strength",

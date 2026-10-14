@@ -6,7 +6,9 @@ import (
 )
 
 type curingRoller struct {
-	bound, value, calls int
+	bound int
+	value int
+	calls int
 }
 
 func (r *curingRoller) Intn(stream string, bound int) (int, error) {
@@ -21,7 +23,10 @@ func (r *curingRoller) Intn(stream string, bound int) (int, error) {
 
 func TestCuringHealsSourceRangeAndCapsAtMax(t *testing.T) {
 	for _, tc := range []struct {
-		current, max, roll, want int
+		current int
+		max     int
+		roll    int
+		want    int
 	}{
 		{
 			current: 1,
@@ -71,7 +76,8 @@ func TestCuringHealsSourceRangeAndCapsAtMax(t *testing.T) {
 
 func TestCuringRejectsInvalidHPAndRollWithoutDraw(t *testing.T) {
 	for _, tc := range []struct {
-		current, max int
+		current int
+		max     int
 	}{
 		{
 			current: -1,

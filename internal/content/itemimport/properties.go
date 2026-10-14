@@ -832,8 +832,9 @@ func parsePropertyTables(
 	result := map[itemKey]itemPropertyRow{}
 
 	for _, table := range []struct {
-		marker, classID string
-		decode          func([]string) (itemPropertyRow, error)
+		marker  string
+		classID string
+		decode  func([]string) (itemPropertyRow, error)
 	}{
 		{
 			marker:  "Armour_prop[]",

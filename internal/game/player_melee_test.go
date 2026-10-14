@@ -214,8 +214,9 @@ func TestPlayerBumpRejectsInvalidWeaponBeforeSpendingTime(t *testing.T) {
 
 func TestRestoreRejectsUnsupportedPlayerMeleeState(t *testing.T) {
 	for _, tc := range []struct {
-		name, want string
-		change     func(*save.Snapshot)
+		name   string
+		want   string
+		change func(*save.Snapshot)
 	}{
 		{
 			name: "extreme weapon plus",

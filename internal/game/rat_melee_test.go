@@ -12,7 +12,8 @@ import (
 )
 
 type combatRoll struct {
-	bound, value int
+	bound int
+	value int
 }
 type combatRoller struct {
 	rolls []combatRoll
@@ -31,9 +32,11 @@ func (r *combatRoller) Intn(stream string, bound int) (int, error) {
 
 func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 	for _, tc := range []struct {
-		name, message  string
-		rolls          []combatRoll
-		hpLoss, blocks int
+		name    string
+		message string
+		rolls   []combatRoll
+		hpLoss  int
+		blocks  int
 	}{
 		{
 			name:    "dodge",
@@ -346,8 +349,9 @@ func TestCombatSaveRejectsNegativeBlocksAndOldVersion(t *testing.T) {
 
 func TestRestoreRejectsCombatStateItCannotRun(t *testing.T) {
 	for _, tc := range []struct {
-		name, want string
-		mutate     func(*save.Snapshot)
+		name   string
+		want   string
+		mutate func(*save.Snapshot)
 	}{
 		{
 			name: "cataloged non-rat",

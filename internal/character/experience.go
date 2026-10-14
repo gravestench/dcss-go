@@ -10,7 +10,12 @@ import (
 // OrdinaryBiteProfile is the supported source-backed subset of monsters with
 // one plain bite and no special combat or experience behavior.
 type OrdinaryBiteProfile struct {
-	AverageHP10x, MinHP, MaxHP, Damage, Speed, XPModifier int
+	AverageHP10x int
+	MinHP        int
+	MaxHP        int
+	Damage       int
+	Speed        int
+	XPModifier   int
 }
 
 var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{

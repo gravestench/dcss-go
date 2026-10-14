@@ -9,8 +9,9 @@ import (
 
 func TestParseEquipmentSpec(t *testing.T) {
 	for _, tc := range []struct {
-		raw, name string
-		want      content.StartingGrant
+		raw  string
+		name string
+		want content.StartingGrant
 	}{
 		{
 			raw:  "scale mail",

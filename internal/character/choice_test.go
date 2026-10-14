@@ -76,8 +76,10 @@ func TestDirectionalRecommendationsAndBans(t *testing.T) {
 	}
 
 	cases := []struct {
-		species, job     string
-		forward, reverse Restriction
+		species string
+		job     string
+		forward Restriction
+		reverse Restriction
 	}{
 		{
 			species: "SP_HUMAN",
