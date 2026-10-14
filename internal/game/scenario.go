@@ -273,8 +273,11 @@ func (g *Game) spawnScenarioPotion(kindID string, levelID int, cell point) error
 	return err
 }
 
+// Registration order is the action resolution order in Akara. Keep these
+// groups in turn order when adding a new system.
 func registerSystems(g *Game) error {
 	world, stores := g.world, g.stores
+
 	g.corpseAging = corpseAgingSystem{
 		world:     world,
 		items:     stores.Items,
@@ -293,6 +296,24 @@ func registerSystems(g *Game) error {
 		rng:       g.rng,
 	}
 
+	if err := registerMonsterSystems(g); err != nil {
+		return err
+	}
+
+	if err := registerTravelAndItemSystems(g); err != nil {
+		return err
+	}
+
+	if err := registerInteractionAndCombatSystems(g); err != nil {
+		return err
+	}
+
+	return registerEndTurnSystems(g)
+}
+
+func registerMonsterSystems(g *Game) error {
+	world, stores := g.world, g.stores
+
 	if _, err := world.AddSystem(&monsterRegenerationSystem{
 		actors:  stores.Actors,
 		health:  stores.Health,
@@ -307,6 +328,12 @@ func registerSystems(g *Game) error {
 	if _, err := world.AddSystem(newMonsterDecisionSystem(g)); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func registerTravelAndItemSystems(g *Game) error {
+	world, stores := g.world, g.stores
 
 	if _, err := world.AddSystem(&stairSystem{
 		positions: stores.Positions,
@@ -362,6 +389,12 @@ func registerSystems(g *Game) error {
 		return err
 	}
 
+	return nil
+}
+
+func registerInteractionAndCombatSystems(g *Game) error {
+	world, stores := g.world, g.stores
+
 	if _, err := world.AddSystem(&doorSystem{
 		game:    g,
 		intents: stores.Intents,
@@ -386,6 +419,12 @@ func registerSystems(g *Game) error {
 	if _, err := world.AddSystem(newDeathSystem(g)); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func registerEndTurnSystems(g *Game) error {
+	world, stores := g.world, g.stores
 
 	advancement, err := newAdvancementSystem(g)
 

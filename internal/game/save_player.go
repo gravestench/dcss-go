@@ -58,25 +58,44 @@ func validateSavedHumanAdvancement(
 		}
 	}
 
+	species, err := validateSavedHumanAttributes(record, profile, catalog, progress.Level)
+
+	if err != nil {
+		return 0, err
+	}
+
+	if err := validateSavedHumanVitals(record, species, progress.Level); err != nil {
+		return 0, err
+	}
+
+	return progress.TotalXP, nil
+}
+
+func validateSavedHumanAttributes(
+	record save.EntityRecord,
+	profile character.StartProfile,
+	catalog content.Catalog,
+	levelApplied int,
+) (content.SpeciesDef, error) {
 	base := profile.Attributes
 	actual := record.Attributes
 
 	if actual.Strength < base.Strength ||
 		actual.Intelligence < base.Intelligence ||
 		actual.Dexterity < base.Dexterity {
-		return 0, fmt.Errorf("invalid player attributes for entity %d", record.ID)
+		return content.SpeciesDef{}, fmt.Errorf("invalid player attributes for entity %d", record.ID)
 	}
 
 	species, err := catalog.Species("SP_HUMAN")
 
 	if err != nil {
-		return 0, err
+		return content.SpeciesDef{}, err
 	}
 
 	manualGains := 0
 	randomGains := 0
 
-	for level := 2; level <= progress.Level; level++ {
+	for level := 2; level <= levelApplied; level++ {
 		if character.HumanNeedsManualStat(level) {
 			manualGains++
 		}
@@ -94,31 +113,39 @@ func validateSavedHumanAdvancement(
 	}
 
 	if !validHumanStatGains(deltas, manualGains, randomGains) {
-		return 0, fmt.Errorf("invalid player attribute gains for entity %d", record.ID)
+		return content.SpeciesDef{}, fmt.Errorf("invalid player attribute gains for entity %d", record.ID)
 	}
 
-	wantHP, err := character.HumanMaxHP(progress.Level, species, record.Skills.Entries)
+	return species, nil
+}
+
+func validateSavedHumanVitals(
+	record save.EntityRecord,
+	species content.SpeciesDef,
+	levelApplied int,
+) error {
+	wantHP, err := character.HumanMaxHP(levelApplied, species, record.Skills.Entries)
 
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	wantMP, err := character.HumanMaxMP(progress.Level, species)
+	wantMP, err := character.HumanMaxMP(levelApplied, species)
 
 	if err != nil {
-		return 0, err
+		return err
 	}
 
 	if record.Health.Max != wantHP {
-		return 0, fmt.Errorf("invalid player max HP for entity %d", record.ID)
+		return fmt.Errorf("invalid player max HP for entity %d", record.ID)
 	}
 
 	if record.Magic.Max != wantMP ||
 		record.Magic.Current < 0 || record.Magic.Current > wantMP {
-		return 0, fmt.Errorf("invalid player MP for entity %d", record.ID)
+		return fmt.Errorf("invalid player MP for entity %d", record.ID)
 	}
 
-	return progress.TotalXP, nil
+	return nil
 }
 
 // A manual choice adds two points to one stat. Each species gain adds one.

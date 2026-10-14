@@ -74,59 +74,70 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	}
 
 	if s.turn.Actor == s.player {
-		actor, found := s.actors.Get(target)
-
-		if !found || !isOrdinaryAnimal(actor.KindID) {
-			return fmt.Errorf("unsupported player melee target %d", target)
-		}
-
-		defender, err := ordinaryAnimal(s.catalog, actor.KindID)
-
-		if err != nil {
-			return err
-		}
-
-		input, err := s.fighter.attackInput(actor.KindID)
-
-		if err != nil {
-			return err
-		}
-
-		outcome, err := combat.PlayerMelee(s.roller, input)
-
-		if err != nil {
-			return err
-		}
-
-		beforeHP := victim.Current
-		victim.Current = max(0, victim.Current-outcome.Damage)
-
-		if beforeHP > 0 && victim.Current == 0 {
-			s.turn.PlayerKill = target
-		}
-
-		message := fmt.Sprintf("You miss the %s.", defender.Name)
-
-		if outcome.Kind == combat.Hit {
-			message = fmt.Sprintf("You hit the %s.", defender.Name)
-
-			if outcome.Damage == 0 {
-				message = fmt.Sprintf("You hit the %s but do no damage.", defender.Name)
-			}
-		}
-
-		s.turn.Events = append(s.turn.Events, Event{
-			Kind: "combat",
-			Text: message,
-		})
-
-		return nil
+		return s.resolvePlayerMelee(target, victim)
 	}
 
 	if target != s.player {
 		return fmt.Errorf("unsupported non-player melee defender %d", target)
 	}
 
+	return s.resolveAnimalMelee(victim)
+}
+
+func (s *combatSystem) resolvePlayerMelee(
+	target akara.Entity,
+	victim *ecs.Health,
+) error {
+	actor, found := s.actors.Get(target)
+
+	if !found || !isOrdinaryAnimal(actor.KindID) {
+		return fmt.Errorf("unsupported player melee target %d", target)
+	}
+
+	defender, err := ordinaryAnimal(s.catalog, actor.KindID)
+
+	if err != nil {
+		return err
+	}
+
+	input, err := s.fighter.attackInput(actor.KindID)
+
+	if err != nil {
+		return err
+	}
+
+	outcome, err := combat.PlayerMelee(s.roller, input)
+
+	if err != nil {
+		return err
+	}
+
+	beforeHP := victim.Current
+	victim.Current = max(0, victim.Current-outcome.Damage)
+
+	if beforeHP > 0 && victim.Current == 0 {
+		s.turn.PlayerKill = target
+	}
+
+	message := fmt.Sprintf("You miss the %s.", defender.Name)
+
+	if outcome.Kind == combat.Hit {
+		message = fmt.Sprintf("You hit the %s.", defender.Name)
+
+		if outcome.Damage == 0 {
+			message = fmt.Sprintf("You hit the %s but do no damage.", defender.Name)
+		}
+	}
+
+	s.turn.Events = append(s.turn.Events, Event{
+		Kind: "combat",
+		Text: message,
+	})
+
+	return nil
+}
+
+func (s *combatSystem) resolveAnimalMelee(victim *ecs.Health) error {
 	actor, found := s.actors.Get(s.turn.Actor)
 
 	if !found || !isOrdinaryAnimal(actor.KindID) {
