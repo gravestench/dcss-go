@@ -13,6 +13,7 @@ import (
 type skillTrainingSystem struct {
 	player akara.Entity
 
+	players      *akara.Store[ecs.PlayerControlled]
 	skills       *akara.Store[ecs.Skills]
 	training     *akara.Store[ecs.SkillTraining]
 	progression  *akara.Store[ecs.Progression]
@@ -28,6 +29,7 @@ func newSkillTrainingSystem(g *Game) *skillTrainingSystem {
 	return &skillTrainingSystem{
 		player: g.player,
 
+		players:      g.stores.Players,
 		skills:       g.stores.Skills,
 		training:     g.stores.SkillTraining,
 		progression:  g.stores.Progression,
@@ -38,6 +40,16 @@ func newSkillTrainingSystem(g *Game) *skillTrainingSystem {
 		rng:     g.rng,
 		turn:    &g.turn,
 	}
+}
+
+func (s *skillTrainingSystem) selectedSpecies() (content.SpeciesDef, error) {
+	player, found := s.players.Get(s.player)
+
+	if !found {
+		return content.SpeciesDef{}, fmt.Errorf("player has no selected species")
+	}
+
+	return s.catalog.Species(player.SpeciesID)
 }
 
 func (s *skillTrainingSystem) Update(_ *akara.World, _ time.Duration) error {
@@ -87,13 +99,13 @@ func (s *skillTrainingSystem) recalculateFightingHP(skills []character.Skill) er
 		return fmt.Errorf("player lacks Fighting HP state")
 	}
 
-	species, err := s.catalog.Species("SP_HUMAN")
+	species, err := s.selectedSpecies()
 
 	if err != nil {
 		return err
 	}
 
-	nextHP, err := character.HumanMaxHP(progress.Level, species, skills)
+	nextHP, err := character.BaseMaxHP(progress.Level, species, skills)
 
 	if err != nil {
 		return err
@@ -114,21 +126,19 @@ func (s *skillTrainingSystem) recordPractice(
 	}
 
 	for _, skill := range skills.Entries {
-		if skill.ID == id && skill.Level == character.HumanMaxSkillLevel {
+		if skill.ID == id && skill.Level == character.MaxSkillLevel {
 			return nil
 		}
 	}
 
-	species, err := s.catalog.Species("SP_HUMAN")
+	species, err := s.selectedSpecies()
 
 	if err != nil {
 		return err
 	}
 
-	aptitude, known := species.Aptitudes[id]
-
-	if !known || !aptitude.Allowed {
-		return fmt.Errorf("invalid Human skill practice %s", id)
+	if _, err := species.SkillAptitude(id); err != nil {
+		return err
 	}
 
 	setting := trainingSetting(training, id)

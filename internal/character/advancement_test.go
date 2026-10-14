@@ -90,6 +90,44 @@ func TestSpeciesExperienceThresholdsMatchPinnedSource(t *testing.T) {
 	}
 }
 
+func TestBaseMaxHPUsesSpeciesModifierAndFightingAptitude(t *testing.T) {
+	catalog, err := content.LoadDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tengu, err := catalog.Species("SP_TENGU")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fighting := []Skill{
+		{
+			ID:     "SK_FIGHTING",
+			Level:  3,
+			Points: 301,
+		},
+	}
+
+	if hp, err := BaseMaxHP(1, tengu, fighting); err != nil ||
+		hp != 14 {
+		t.Fatalf("Tengu base HP = %d, %v; want 14", hp, err)
+	}
+
+	barachi, err := catalog.Species("SP_BARACHI")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if hp, err := BaseMaxHP(20, barachi, fighting); err != nil ||
+		hp != 128 {
+		t.Fatalf("Barachi HP with +2 Fighting = %d, %v; want 128", hp, err)
+	}
+}
+
 func TestSpeciesExperienceBoundaryAndHeldProgress(t *testing.T) {
 	for _, test := range []struct {
 		xp    int
@@ -260,7 +298,7 @@ func TestHumanExperienceProgressAndVitalGrowth(t *testing.T) {
 
 	species, _ := catalog.Species("SP_HUMAN")
 
-	if hp, err := HumanMaxHP(1, species, profile.Skills); err != nil ||
+	if hp, err := BaseMaxHP(1, species, profile.Skills); err != nil ||
 		hp != profile.MaxHP {
 		t.Fatalf("XL1 HP = %d, %v; want %d", hp, err, profile.MaxHP)
 	}
@@ -297,7 +335,7 @@ func TestHumanExperienceProgressAndVitalGrowth(t *testing.T) {
 		}
 	}
 
-	if hp, err := HumanMaxHP(2, species, profile.Skills); err != nil ||
+	if hp, err := BaseMaxHP(2, species, profile.Skills); err != nil ||
 		hp <= profile.MaxHP {
 		t.Fatalf("XL2 HP = %d, %v; want more than %d", hp, err, profile.MaxHP)
 	}

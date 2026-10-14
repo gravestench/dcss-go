@@ -6,12 +6,12 @@ import (
 	"dcrawl-go/internal/content"
 )
 
-// HumanMaxHP projects get_real_hp without mutations, drains, artefacts, or
-// transformations. Fighting is the only live skill this formula reads.
-func HumanMaxHP(level int, species content.SpeciesDef, skills []Skill) (int, error) {
-	if level < 1 ||
-		level > MaxExperienceLevel || species.ID != "SP_HUMAN" {
-		return 0, fmt.Errorf("unsupported Human HP inputs at XL%d for %s", level, species.ID)
+// BaseMaxHP projects get_real_hp through the racial modifier. Permanent HP
+// adjustments, mutations, religion, drains, artefacts, and transformations
+// have separate state and are not yet part of this baseline.
+func BaseMaxHP(level int, species content.SpeciesDef, skills []Skill) (int, error) {
+	if level < 1 || level > MaxExperienceLevel {
+		return 0, fmt.Errorf("invalid HP level %d", level)
 	}
 
 	var fighting *Skill
@@ -24,12 +24,29 @@ func HumanMaxHP(level int, species content.SpeciesDef, skills []Skill) (int, err
 	}
 
 	if fighting == nil {
-		return 0, fmt.Errorf("Human lacks Fighting skill")
+		return 0, fmt.Errorf("%s lacks Fighting skill", species.ID)
+	}
+
+	aptitude, err := species.SkillAptitude("SK_FIGHTING")
+
+	if err != nil {
+		return 0, err
+	}
+
+	fighting5, err := ScaledSkill(*fighting, 5, aptitude)
+
+	if err != nil {
+		return 0, err
+	}
+
+	fighting3, err := ScaledSkill(*fighting, 3, aptitude)
+
+	if err != nil {
+		return 0, err
 	}
 
 	hp := level*11/2 + 8
-	hp += level*ScaledSkill(*fighting, 5)/70 +
-		(ScaledSkill(*fighting, 3)+1)/2
+	hp += level*fighting5/70 + (fighting3+1)/2
 	hp = hp * (10 + species.HP) / 10
 
 	return max(1, hp), nil

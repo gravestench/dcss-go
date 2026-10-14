@@ -59,7 +59,7 @@ func TestHumanSkillPointThresholds(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got, err := HumanSkillPointsNeeded(test.level)
+		got, err := SkillPointsNeeded(test.level, 0)
 
 		if err != nil ||
 			got != test.want {
@@ -68,7 +68,7 @@ func TestHumanSkillPointThresholds(t *testing.T) {
 	}
 
 	for _, level := range []int{-1, 28} {
-		if _, err := HumanSkillPointsNeeded(level); err == nil {
+		if _, err := SkillPointsNeeded(level, 0); err == nil {
 			t.Fatalf("accepted skill level %d", level)
 		}
 	}
@@ -121,7 +121,7 @@ func TestHumanSkillLevelFromPoints(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got, err := HumanSkillLevel(test.points)
+		got, err := SkillLevel(test.points, 0)
 
 		if err != nil ||
 			got != test.want {
@@ -129,7 +129,7 @@ func TestHumanSkillLevelFromPoints(t *testing.T) {
 		}
 	}
 
-	if _, err := HumanSkillLevel(-1); err == nil {
+	if _, err := SkillLevel(-1, 0); err == nil {
 		t.Fatal("accepted negative skill points")
 	}
 }

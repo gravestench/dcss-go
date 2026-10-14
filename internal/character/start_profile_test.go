@@ -88,27 +88,36 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 }
 
 func TestScaledStartingSkillsRetainFractionalProgress(t *testing.T) {
-	if got := ScaledSkill(Skill{
+	got, err := ScaledSkill(Skill{
 		ID:     "SK_FIGHTING",
 		Level:  3,
 		Points: 301,
-	}, 100); got != 300 {
+	}, 100, 0)
+
+	if err != nil ||
+		got != 300 {
 		t.Fatalf("Fighting at scale 100 = %d, want 300", got)
 	}
 
-	if got := ScaledSkill(Skill{
+	got, err = ScaledSkill(Skill{
 		ID:     "SK_MACES_FLAILS",
 		Level:  2,
 		Points: 151,
-	}, 100); got != 200 {
+	}, 100, 0)
+
+	if err != nil ||
+		got != 200 {
 		t.Fatalf("weapon at scale 100 = %d, want 200", got)
 	}
 
-	if got := ScaledSkill(Skill{
+	got, err = ScaledSkill(Skill{
 		ID:     "SK_UNARMED_COMBAT",
 		Level:  2,
 		Points: 151,
-	}, 256); got != 513 {
+	}, 256, 0)
+
+	if err != nil ||
+		got != 513 {
 		t.Fatalf("unarmed at scale 256 = %d, want 513", got)
 	}
 }

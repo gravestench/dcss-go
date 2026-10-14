@@ -133,7 +133,7 @@ func TestBatchTrainingWeightScaling(t *testing.T) {
 		t.Fatalf("displayed training differs from spending weights: %v", percent)
 	}
 
-	skills[2].Level = character.HumanMaxSkillLevel
+	skills[2].Level = character.MaxSkillLevel
 
 	maxed := scaledTrainingWeights(skills, training)
 
@@ -195,13 +195,13 @@ func TestMaxedSkillShareLeavesWeightedRemainderDraws(t *testing.T) {
 	g := newStepGame(t)
 	skills, _ := g.stores.Skills.Get(g.player)
 	training, _ := g.stores.SkillTraining.Get(g.player)
-	maximum, err := character.HumanSkillPointsNeeded(character.HumanMaxSkillLevel)
+	maximum, err := character.SkillPointsNeeded(character.MaxSkillLevel, 0)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	skills.Entries[0].Level = character.HumanMaxSkillLevel - 1
+	skills.Entries[0].Level = character.MaxSkillLevel - 1
 	skills.Entries[0].Points = maximum - 1
 	training.Manual = true
 	training.AvailableXP = 100
@@ -477,7 +477,7 @@ func TestFightingPracticeRecalculatesHPBeforeAdvancement(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	health.Max, err = character.HumanMaxHP(1, species, skills.Entries)
+	health.Max, err = character.BaseMaxHP(1, species, skills.Entries)
 
 	if err != nil {
 		t.Fatal(err)
@@ -492,7 +492,7 @@ func TestFightingPracticeRecalculatesHPBeforeAdvancement(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	want, err := character.HumanMaxHP(1, species, skills.Entries)
+	want, err := character.BaseMaxHP(1, species, skills.Entries)
 
 	if err != nil {
 		t.Fatal(err)
@@ -572,14 +572,14 @@ func TestMaxedSkillsLeaveSkillExperienceUnspent(t *testing.T) {
 	g := newStepGame(t)
 	skills, _ := g.stores.Skills.Get(g.player)
 	training, _ := g.stores.SkillTraining.Get(g.player)
-	maximum, err := character.HumanSkillPointsNeeded(character.HumanMaxSkillLevel)
+	maximum, err := character.SkillPointsNeeded(character.MaxSkillLevel, 0)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	for i := range skills.Entries {
-		skills.Entries[i].Level = character.HumanMaxSkillLevel
+		skills.Entries[i].Level = character.MaxSkillLevel
 		skills.Entries[i].Points = maximum
 	}
 

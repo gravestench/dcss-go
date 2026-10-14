@@ -197,6 +197,16 @@ func (c Catalog) Species(id string) (SpeciesDef, error) {
 	return definition.clone(), nil
 }
 
+func (s SpeciesDef) SkillAptitude(id string) (int, error) {
+	aptitude, found := s.Aptitudes[id]
+
+	if !found || !aptitude.Allowed {
+		return 0, fmt.Errorf("%s cannot train %s", s.ID, id)
+	}
+
+	return aptitude.Value, nil
+}
+
 func (c Catalog) SpeciesIDs() []string {
 	ids := make([]string, 0, len(c.species))
 

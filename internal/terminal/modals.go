@@ -243,12 +243,38 @@ func DrawSkills(
 		writeClipped(canvas, x, 2, 38, "Skill                 Level Apt Train", LightBlue)
 	}
 
-	species, _ := catalog.Species("SP_HUMAN")
+	species, err := catalog.Species(view.SpeciesID)
+
+	if err != nil {
+		writeClipped(canvas, 1, 3, canvas.width-2,
+			"Skills unavailable: unknown species", LightRed)
+
+		return
+	}
+
 	levels := make(map[string]int, len(view.Skills))
 	settings := make(map[string]ecs.SkillTrainingSetting, len(view.SkillTraining.Settings))
 
 	for _, skill := range view.Skills {
-		levels[skill.ID] = character.ScaledSkill(skill, 10)
+		aptitude, err := species.SkillAptitude(skill.ID)
+
+		if err != nil {
+			writeClipped(canvas, 1, 3, canvas.width-2,
+				"Skills unavailable: invalid species skill", LightRed)
+
+			return
+		}
+
+		scaled, err := character.ScaledSkill(skill, 10, aptitude)
+
+		if err != nil {
+			writeClipped(canvas, 1, 3, canvas.width-2,
+				"Skills unavailable: invalid skill points", LightRed)
+
+			return
+		}
+
+		levels[skill.ID] = scaled
 	}
 
 	for _, setting := range view.SkillTraining.Settings {

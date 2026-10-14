@@ -20,7 +20,7 @@ func (g *Game) SetSkillTrainingMode(manual bool) error {
 	return nil
 }
 
-// ChangeSkillTraining changes one supported Human skill without spending aut.
+// ChangeSkillTraining changes one supported player skill without spending aut.
 // Selecting a zero-point skill creates its ECS entry so later practice and
 // earned experience have an authoritative place to accumulate.
 func (g *Game) ChangeSkillTraining(id string, focus bool) error {
@@ -28,16 +28,20 @@ func (g *Game) ChangeSkillTraining(id string, focus bool) error {
 		return fmt.Errorf("training %s is unavailable in this Dungeon slice", id)
 	}
 
-	species, err := g.catalog.Species("SP_HUMAN")
+	player, found := g.stores.Players.Get(g.player)
+
+	if !found {
+		return fmt.Errorf("player has no selected species")
+	}
+
+	species, err := g.catalog.Species(player.SpeciesID)
 
 	if err != nil {
 		return err
 	}
 
-	aptitude, known := species.Aptitudes[id]
-
-	if !known || !aptitude.Allowed {
-		return fmt.Errorf("Human cannot train %s", id)
+	if _, err := species.SkillAptitude(id); err != nil {
+		return err
 	}
 
 	skills, hasSkills := g.stores.Skills.Get(g.player)

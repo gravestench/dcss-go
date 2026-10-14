@@ -23,17 +23,20 @@ func validateSavedSkillTraining(
 		return err
 	}
 
-	known, err := supportedSavedHumanSkills(catalog)
+	species, err := catalog.Species(record.Player.SpeciesID)
 
 	if err != nil {
 		return err
 	}
+
+	known := supportedSavedSkills(catalog, species)
 
 	seen, err := validateSavedSkillProgress(
 		record.Skills.Entries,
 		profile.Skills,
 		known,
 		training.SpentXP,
+		species,
 	)
 
 	if err != nil {
@@ -65,13 +68,10 @@ func validateSavedTrainingExperience(training *ecs.SkillTraining, totalXP int) e
 	return nil
 }
 
-func supportedSavedHumanSkills(catalog content.Catalog) (map[string]bool, error) {
-	species, err := catalog.Species("SP_HUMAN")
-
-	if err != nil {
-		return nil, err
-	}
-
+func supportedSavedSkills(
+	catalog content.Catalog,
+	species content.SpeciesDef,
+) map[string]bool {
 	known := make(map[string]bool)
 
 	for _, column := range catalog.Presentation().SkillColumns {
@@ -84,7 +84,7 @@ func supportedSavedHumanSkills(catalog content.Catalog) (map[string]bool, error)
 		}
 	}
 
-	return known, nil
+	return known
 }
 
 func validateSavedSkillProgress(
@@ -92,6 +92,7 @@ func validateSavedSkillProgress(
 	startingSkills []character.Skill,
 	known map[string]bool,
 	spentXP int,
+	species content.SpeciesDef,
 ) (map[string]bool, error) {
 	starting := make(map[string]int, len(startingSkills))
 
@@ -103,10 +104,24 @@ func validateSavedSkillProgress(
 	gainedPoints := 0
 
 	for index, skill := range entries {
+		aptitude, err := species.SkillAptitude(skill.ID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		maximum, err := character.SkillPointsNeeded(
+			character.MaxSkillLevel, aptitude,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
 		if !known[skill.ID] ||
 			seenSkills[skill.ID] ||
 			skill.Points < starting[skill.ID] ||
-			skill.Points > maxHumanSkillPoints() {
+			skill.Points > maximum {
 			return nil, fmt.Errorf("invalid player skill %s", skill.ID)
 		}
 
@@ -114,7 +129,7 @@ func validateSavedSkillProgress(
 			return nil, fmt.Errorf("starting player skill order changed at %d", index)
 		}
 
-		level, err := character.HumanSkillLevel(skill.Points)
+		level, err := character.SkillLevel(skill.Points, aptitude)
 
 		if err != nil ||
 			skill.Level != level {
@@ -173,10 +188,4 @@ func validateSavedTrainingChoices(
 	}
 
 	return nil
-}
-
-func maxHumanSkillPoints() int {
-	points, _ := character.HumanSkillPointsNeeded(character.HumanMaxSkillLevel)
-
-	return points
 }

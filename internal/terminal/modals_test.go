@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
+	"dcrawl-go/internal/character"
 )
 
 func TestInventoryPageSourceCategoriesAndLetters(t *testing.T) {
@@ -116,6 +117,42 @@ func TestSkillsPageShowsProgressWithinLevel(t *testing.T) {
 
 	if !strings.Contains(strings.Join(canvas.PlainRows(), "\n"), "3.1") {
 		t.Fatal("skills page hid fractional Fighting progress")
+	}
+}
+
+func TestSkillsPageUsesSelectedSpeciesAptitude(t *testing.T) {
+	m := playingModel(t)
+	view := m.game.View()
+
+	view.SpeciesID = "SP_TENGU"
+
+	canvas := NewCanvas(79, 24)
+	DrawSkills(canvas, view, m.catalog, false)
+
+	page := strings.Join(canvas.PlainRows(), "\n")
+
+	if !strings.Contains(page, "Short Blades") ||
+		!strings.Contains(page, "2.1 +1") {
+		t.Fatalf("skills page hid Tengu aptitude projection:\n%s", page)
+	}
+}
+
+func TestSkillsPageExplainsInvalidSpeciesSkill(t *testing.T) {
+	m := playingModel(t)
+	view := m.game.View()
+
+	view.Skills = append(view.Skills, character.Skill{
+		ID: "SK_UNKNOWN",
+	})
+
+	canvas := NewCanvas(79, 24)
+	DrawSkills(canvas, view, m.catalog, false)
+
+	if !strings.Contains(
+		strings.Join(canvas.PlainRows(), "\n"),
+		"Skills unavailable: invalid species skill",
+	) {
+		t.Fatal("skills page silently hid an invalid species skill")
 	}
 }
 

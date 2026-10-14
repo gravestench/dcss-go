@@ -4,18 +4,25 @@ import (
 	"fmt"
 
 	"dcrawl-go/internal/character"
+	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 )
 
 const skillChunkXP = 2650
 
-// spendBatch follows skills.cc:train_skills and _train_skills for a Human
-// without manuals, training targets, or cross-training. The player component
+// spendBatch follows skills.cc:train_skills and _train_skills without manuals,
+// training targets, or cross-training. The player component
 // remains the only owner of the XP pools and skill points.
 func (s *skillTrainingSystem) spendBatch(
 	skills *ecs.Skills,
 	training *ecs.SkillTraining,
 ) (int, error) {
+	species, err := s.selectedSpecies()
+
+	if err != nil {
+		return 0, err
+	}
+
 	cost, err := character.SkillPointCost(training.CostLevel)
 
 	if err != nil {
@@ -51,6 +58,7 @@ func (s *skillTrainingSystem) spendBatch(
 			shares,
 			order,
 			remaining,
+			species,
 		)
 
 		if err != nil {
@@ -64,6 +72,7 @@ func (s *skillTrainingSystem) spendBatch(
 		shares,
 		skipFirst,
 		remaining,
+		species,
 	)
 
 	return batchXP - remaining, err
@@ -75,6 +84,7 @@ func (s *skillTrainingSystem) spendAllocatedShares(
 	shares []int,
 	order []int,
 	remaining int,
+	species content.SpeciesDef,
 ) (int, error) {
 	if err := shuffleTrainingOrder(order, s.rng); err != nil {
 		return remaining, err
@@ -86,6 +96,7 @@ func (s *skillTrainingSystem) spendAllocatedShares(
 				&skills.Entries[index],
 				training,
 				min(shares[index], remaining),
+				species,
 			)
 
 			if err != nil {
@@ -114,6 +125,7 @@ func (s *skillTrainingSystem) spendWeightedRemainder(
 	shares []int,
 	skipFirst bool,
 	remaining int,
+	species content.SpeciesDef,
 ) (int, error) {
 	for remaining > 0 {
 		cost, err := character.SkillPointCost(training.CostLevel)
@@ -151,7 +163,9 @@ func (s *skillTrainingSystem) spendWeightedRemainder(
 			break
 		}
 
-		spent, err := s.trainChunk(&skills.Entries[chosen], training, remaining)
+		spent, err := s.trainChunk(
+			&skills.Entries[chosen], training, remaining, species,
+		)
 
 		if err != nil {
 			return remaining, err
@@ -190,7 +204,7 @@ func allocatedSkillShares(weights []int, batchXP, cost int) ([]int, bool) {
 func skillBatchLimit(training *ecs.SkillTraining, cost int) (int, error) {
 	batch := training.AvailableXP
 
-	if training.CostLevel == character.HumanMaxSkillLevel {
+	if training.CostLevel == character.MaxSkillLevel {
 		return batch, nil
 	}
 
@@ -229,13 +243,14 @@ func trainableSkill(skill character.Skill, training *ecs.SkillTraining) bool {
 
 	return setting != nil &&
 		setting.Enabled &&
-		skill.Level < character.HumanMaxSkillLevel
+		skill.Level < character.MaxSkillLevel
 }
 
 func (s *skillTrainingSystem) trainChunk(
 	skill *character.Skill,
 	training *ecs.SkillTraining,
 	budget int,
+	species content.SpeciesDef,
 ) (int, error) {
 	if !trainableSkill(*skill, training) {
 		return 0, nil
@@ -247,7 +262,15 @@ func (s *skillTrainingSystem) trainChunk(
 		return 0, err
 	}
 
-	maximum, err := character.HumanSkillPointsNeeded(character.HumanMaxSkillLevel)
+	aptitude, err := species.SkillAptitude(skill.ID)
+
+	if err != nil {
+		return 0, err
+	}
+
+	maximum, err := character.SkillPointsNeeded(
+		character.MaxSkillLevel, aptitude,
+	)
 
 	if err != nil {
 		return 0, err
@@ -266,7 +289,7 @@ func (s *skillTrainingSystem) trainChunk(
 	training.AvailableXP -= spent
 	training.SpentXP += spent
 
-	level, err := character.HumanSkillLevel(skill.Points)
+	level, err := character.SkillLevel(skill.Points, aptitude)
 
 	if err != nil {
 		return 0, err

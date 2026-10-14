@@ -31,7 +31,7 @@ func TestSavedHumanAdvancementValidatesAppliedAndPendingLevels(t *testing.T) {
 
 	player.Progression.TotalXP = 9
 	player.Progression.Level = 2
-	player.Health.Max, err = character.HumanMaxHP(2, species, player.Skills.Entries)
+	player.Health.Max, err = character.BaseMaxHP(2, species, player.Skills.Entries)
 
 	if err != nil {
 		t.Fatal(err)
@@ -64,7 +64,7 @@ func TestSavedHumanAdvancementValidatesAppliedAndPendingLevels(t *testing.T) {
 
 	player.Progression.Level = 3
 	player.Attributes.Strength += 2
-	player.Health.Max, err = character.HumanMaxHP(3, species, player.Skills.Entries)
+	player.Health.Max, err = character.BaseMaxHP(3, species, player.Skills.Entries)
 
 	if err != nil {
 		t.Fatal(err)

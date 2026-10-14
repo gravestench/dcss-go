@@ -125,7 +125,7 @@ func validateSavedHumanVitals(
 	species content.SpeciesDef,
 	levelApplied int,
 ) error {
-	wantHP, err := character.HumanMaxHP(levelApplied, species, record.Skills.Entries)
+	wantHP, err := character.BaseMaxHP(levelApplied, species, record.Skills.Entries)
 
 	if err != nil {
 		return err

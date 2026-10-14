@@ -122,7 +122,7 @@ func (s *advancementSystem) applyLevel(level int) error {
 		return fmt.Errorf("player lacks advancement components")
 	}
 
-	nextHP, err := character.HumanMaxHP(level, s.species, skills.Entries)
+	nextHP, err := character.BaseMaxHP(level, s.species, skills.Entries)
 
 	if err != nil {
 		return err

@@ -2,48 +2,10 @@ package character
 
 import "fmt"
 
-const HumanMaxSkillLevel = 27
-
-// HumanSkillPointsNeeded follows skills.cc:_get_skill_cost_for at zero
-// aptitude. Breakpoints at 9, 18, and 26 add half of the base cost curve.
-func HumanSkillPointsNeeded(level int) (int, error) {
-	if level < 0 || level > HumanMaxSkillLevel {
-		return 0, fmt.Errorf("Human skill level %d is outside 0..27", level)
-	}
-
-	points := baseSkillCost(level)
-
-	for _, breakpoint := range [...]int{9, 18, 26} {
-		if level > breakpoint {
-			points += baseSkillCost(level-breakpoint) / 2
-		}
-	}
-
-	return points, nil
-}
-
-func baseSkillCost(level int) int {
-	return 25 * level * (level + 1)
-}
-
-func HumanSkillLevel(points int) (int, error) {
-	if points < 0 {
-		return 0, fmt.Errorf("negative Human skill points %d", points)
-	}
-
-	for level := HumanMaxSkillLevel; level > 0; level-- {
-		needed, _ := HumanSkillPointsNeeded(level)
-
-		if points >= needed {
-			return level, nil
-		}
-	}
-
-	return 0, nil
-}
+const MaxSkillLevel = 27
 
 // SkillCostLevel follows skills.cc:skill_cost_needed. Spent skill XP uses
-// Human's historical XP-aptitude-one threshold multiplied by thirteen.
+// the fixed XP-aptitude-one threshold multiplied by thirteen.
 func SkillCostLevel(spentXP int) (int, error) {
 	if spentXP < 0 {
 		return 0, fmt.Errorf("negative spent skill experience %d", spentXP)
@@ -51,7 +13,7 @@ func SkillCostLevel(spentXP int) (int, error) {
 
 	level := 1
 
-	for level < HumanMaxSkillLevel {
+	for level < MaxSkillLevel {
 		threshold, _ := ExperienceNeeded(level+1, 1)
 
 		if spentXP < 13*threshold {

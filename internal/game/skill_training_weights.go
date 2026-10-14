@@ -82,7 +82,7 @@ func trainingWeights(
 
 		if setting == nil ||
 			!setting.Enabled ||
-			skill.Level == character.HumanMaxSkillLevel {
+			skill.Level == character.MaxSkillLevel {
 			continue
 		}
 
@@ -114,7 +114,7 @@ func trainingWeights(
 
 			if setting != nil &&
 				setting.Enabled &&
-				skill.Level < character.HumanMaxSkillLevel {
+				skill.Level < character.MaxSkillLevel {
 				weights[i] = 1
 
 				if setting.Focused {
@@ -131,7 +131,7 @@ func trainingWeights(
 			if setting == nil ||
 				!setting.Enabled ||
 				!setting.Focused ||
-				skill.Level == character.HumanMaxSkillLevel {
+				skill.Level == character.MaxSkillLevel {
 				continue
 			}
 

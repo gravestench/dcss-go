@@ -48,13 +48,37 @@ func newPlayerCombat(g *Game) playerCombat {
 	}
 }
 
+func (c playerCombat) selectedSpecies() (content.SpeciesDef, error) {
+	player, found := c.players.Get(c.player)
+
+	if !found {
+		return content.SpeciesDef{}, fmt.Errorf("player has no character choice")
+	}
+
+	return c.catalog.Species(player.SpeciesID)
+}
+
+func scaledSpeciesSkill(
+	skill character.Skill,
+	scale int,
+	species content.SpeciesDef,
+) (int, error) {
+	aptitude, err := species.SkillAptitude(skill.ID)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return character.ScaledSkill(skill, scale, aptitude)
+}
+
 // attackInput projects the live Fighter against a cataloged defender.
 // It also checks equipment before a bump spends time.
 func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, error) {
-	_, found := c.players.Get(c.player)
+	species, err := c.selectedSpecies()
 
-	if !found {
-		return combat.PlayerAttackInput{}, fmt.Errorf("player has no character choice")
+	if err != nil {
+		return combat.PlayerAttackInput{}, err
 	}
 
 	attributes, found := c.attributes.Get(c.player)
@@ -90,7 +114,7 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		return combat.PlayerAttackInput{}, err
 	}
 
-	if err := projectAttackSkills(&in, *skills); err != nil {
+	if err := projectAttackSkills(&in, *skills, species); err != nil {
 		return combat.PlayerAttackInput{}, err
 	}
 
@@ -156,12 +180,22 @@ func (c playerCombat) projectAttackWeapon(in *combat.PlayerAttackInput) error {
 	return nil
 }
 
-func projectAttackSkills(in *combat.PlayerAttackInput, skills ecs.Skills) error {
+func projectAttackSkills(
+	in *combat.PlayerAttackInput,
+	skills ecs.Skills,
+	species content.SpeciesDef,
+) error {
 	fightingFound := false
 
 	for _, skill := range skills.Entries {
 		if skill.ID == "SK_FIGHTING" {
-			in.FightingSkill100 = character.ScaledSkill(skill, 100)
+			scaled, err := scaledSpeciesSkill(skill, 100, species)
+
+			if err != nil {
+				return err
+			}
+
+			in.FightingSkill100 = scaled
 			fightingFound = true
 
 			continue
@@ -171,10 +205,22 @@ func projectAttackSkills(in *combat.PlayerAttackInput, skills ecs.Skills) error 
 			continue
 		}
 
-		in.WeaponSkill100 = character.ScaledSkill(skill, 100)
+		scaled, err := scaledSpeciesSkill(skill, 100, species)
+
+		if err != nil {
+			return err
+		}
+
+		in.WeaponSkill100 = scaled
 
 		if in.Unarmed {
-			in.UnarmedSkill256 = character.ScaledSkill(skill, 256)
+			scaled, err := scaledSpeciesSkill(skill, 256, species)
+
+			if err != nil {
+				return err
+			}
+
+			in.UnarmedSkill256 = scaled
 		}
 	}
 
@@ -199,6 +245,12 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 		return combat.AttackDelayInput{}, err
 	}
 
+	species, err := c.selectedSpecies()
+
+	if err != nil {
+		return combat.AttackDelayInput{}, err
+	}
+
 	in := combat.AttackDelayInput{
 		Unarmed:       attack.Unarmed,
 		WeaponSkillID: attack.WeaponSkillID,
@@ -209,11 +261,23 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 
 	for _, skill := range skills.Entries {
 		if skill.ID == in.WeaponSkillID {
-			in.WeaponSkill10 = character.ScaledSkill(skill, 10)
+			scaled, err := scaledSpeciesSkill(skill, 10, species)
+
+			if err != nil {
+				return combat.AttackDelayInput{}, err
+			}
+
+			in.WeaponSkill10 = scaled
 		}
 
 		if skill.ID == "SK_SHIELDS" {
-			in.ShieldsSkill10 = character.ScaledSkill(skill, 10)
+			scaled, err := scaledSpeciesSkill(skill, 10, species)
+
+			if err != nil {
+				return combat.AttackDelayInput{}, err
+			}
+
+			in.ShieldsSkill10 = scaled
 			shieldSkillFound = true
 		}
 	}
@@ -280,6 +344,12 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 }
 
 func (c playerCombat) defense() (combat.Defense, error) {
+	species, err := c.selectedSpecies()
+
+	if err != nil {
+		return combat.Defense{}, err
+	}
+
 	attributes, found := c.attributes.Get(c.player)
 
 	if !found {
@@ -313,7 +383,13 @@ func (c playerCombat) defense() (combat.Defense, error) {
 			input.ShieldsSkill = skill.Level
 
 		case "SK_DODGING":
-			input.DodgingSkill10 = character.ScaledSkill(skill, 10)
+			scaled, err := scaledSpeciesSkill(skill, 10, species)
+
+			if err != nil {
+				return combat.Defense{}, err
+			}
+
+			input.DodgingSkill10 = scaled
 		}
 	}
 

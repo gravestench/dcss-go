@@ -38,7 +38,7 @@ func humanSkillPoints(level int) (int, error) {
 		return 0, fmt.Errorf("unsupported Human starting skill level %d", level)
 	}
 
-	needed, _ := HumanSkillPointsNeeded(level)
+	needed, _ := SkillPointsNeeded(level, 0)
 
 	return needed + 1, nil
 }

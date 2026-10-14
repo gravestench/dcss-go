@@ -10,16 +10,29 @@ type StartProfile struct {
 	MaxMP      int
 }
 
-// ScaledSkill projects stored Human skill points at a source skill scale.
-func ScaledSkill(skill Skill, scale int) int {
-	if skill.Level == HumanMaxSkillLevel {
-		return skill.Level * scale
+// ScaledSkill projects stored points at a source skill scale and aptitude.
+func ScaledSkill(skill Skill, scale, aptitude int) (int, error) {
+	if _, err := SkillPointsNeeded(1, aptitude); err != nil {
+		return 0, err
 	}
 
-	previous, _ := HumanSkillPointsNeeded(skill.Level)
-	next, _ := HumanSkillPointsNeeded(skill.Level + 1)
+	if skill.Level == MaxSkillLevel {
+		return skill.Level * scale, nil
+	}
 
-	return skill.Level*scale + (skill.Points-previous)*scale/(next-previous)
+	previous, err := SkillPointsNeeded(skill.Level, aptitude)
+
+	if err != nil {
+		return 0, err
+	}
+
+	next, err := SkillPointsNeeded(skill.Level+1, aptitude)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return skill.Level*scale + (skill.Points-previous)*scale/(next-previous), nil
 }
 
 // BuildStartProfile calculates the supported Human/Fighter normal Dungeon start.
@@ -42,7 +55,7 @@ func BuildStartProfile(c content.Catalog, speciesID, jobID, weaponID string) (St
 		return StartProfile{}, err
 	}
 
-	hp, err := HumanMaxHP(1, species, skills)
+	hp, err := BaseMaxHP(1, species, skills)
 
 	if err != nil {
 		return StartProfile{}, err
