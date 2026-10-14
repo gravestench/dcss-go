@@ -184,43 +184,25 @@ func (d ItemDef) validate() error {
 		return fmt.Errorf("item %s has empty ID, name, or glyph", d.ID)
 	}
 
-	prefix := map[string]string{
-		"OBJ_WEAPONS":    "WPN_",
-		"OBJ_ARMOUR":     "ARM_",
-		"OBJ_MISSILES":   "MI_",
-		"OBJ_POTIONS":    "POT_",
-		"OBJ_SCROLLS":    "SCR_",
-		"OBJ_WANDS":      "WAND_",
-		"OBJ_MISCELLANY": "MISC_",
-		"OBJ_FOOD":       "FOOD_",
-		"OBJ_JEWELLERY":  "",
-		"OBJ_BOOKS":      "BOOK_",
-		"OBJ_STAVES":     "STAFF_",
-		"OBJ_ORBS":       "ORB_",
-		"OBJ_CORPSES":    "CORPSE_",
-		"OBJ_GOLD":       "OBJ_GOLD",
-		"OBJ_RODS":       "ROD_",
-		"OBJ_RUNES":      "RUNE_",
-	}[d.Class]
+	if err := d.validateClassAndEquipment(); err != nil {
+		return err
+	}
 
-	if _, known := map[string]bool{
-		"OBJ_WEAPONS":    true,
-		"OBJ_ARMOUR":     true,
-		"OBJ_MISSILES":   true,
-		"OBJ_POTIONS":    true,
-		"OBJ_SCROLLS":    true,
-		"OBJ_WANDS":      true,
-		"OBJ_MISCELLANY": true,
-		"OBJ_FOOD":       true,
-		"OBJ_JEWELLERY":  true,
-		"OBJ_BOOKS":      true,
-		"OBJ_STAVES":     true,
-		"OBJ_ORBS":       true,
-		"OBJ_CORPSES":    true,
-		"OBJ_GOLD":       true,
-		"OBJ_RODS":       true,
-		"OBJ_RUNES":      true,
-	}[d.Class]; !known || (prefix != "" && !strings.HasPrefix(d.ID, prefix)) {
+	if err := d.validateNaming(); err != nil {
+		return err
+	}
+
+	if d.ClassValue < 0 || d.SubtypeValue < 0 {
+		return fmt.Errorf("item %s has invalid numeric identity", d.ID)
+	}
+
+	return d.validateProperties()
+}
+
+func (d ItemDef) validateClassAndEquipment() error {
+	prefix, known := itemClassPrefix(d.Class)
+
+	if !known || (prefix != "" && !strings.HasPrefix(d.ID, prefix)) {
 		return fmt.Errorf("item %s has invalid class %s", d.ID, d.Class)
 	}
 
@@ -253,6 +235,65 @@ func (d ItemDef) validate() error {
 		}
 	}
 
+	return nil
+}
+
+// A switch keeps class recognition and its required ID prefix in one place.
+func itemClassPrefix(class string) (string, bool) {
+	switch class {
+	case "OBJ_WEAPONS":
+		return "WPN_", true
+
+	case "OBJ_ARMOUR":
+		return "ARM_", true
+
+	case "OBJ_MISSILES":
+		return "MI_", true
+
+	case "OBJ_POTIONS":
+		return "POT_", true
+
+	case "OBJ_SCROLLS":
+		return "SCR_", true
+
+	case "OBJ_WANDS":
+		return "WAND_", true
+
+	case "OBJ_MISCELLANY":
+		return "MISC_", true
+
+	case "OBJ_FOOD":
+		return "FOOD_", true
+
+	case "OBJ_JEWELLERY":
+		return "", true
+
+	case "OBJ_BOOKS":
+		return "BOOK_", true
+
+	case "OBJ_STAVES":
+		return "STAFF_", true
+
+	case "OBJ_ORBS":
+		return "ORB_", true
+
+	case "OBJ_CORPSES":
+		return "CORPSE_", true
+
+	case "OBJ_GOLD":
+		return "OBJ_GOLD", true
+
+	case "OBJ_RODS":
+		return "ROD_", true
+
+	case "OBJ_RUNES":
+		return "RUNE_", true
+	}
+
+	return "", false
+}
+
+func (d ItemDef) validateNaming() error {
 	if d.Naming.Text == "" || d.Naming.SourcePath == "" || d.Naming.SourceLine <= 0 {
 		return fmt.Errorf("item %s has invalid naming provenance", d.ID)
 	}
@@ -264,10 +305,10 @@ func (d ItemDef) validate() error {
 		return fmt.Errorf("item %s has invalid naming kind %q", d.ID, d.Naming.Kind)
 	}
 
-	if d.ClassValue < 0 || d.SubtypeValue < 0 {
-		return fmt.Errorf("item %s has invalid numeric identity", d.ID)
-	}
+	return nil
+}
 
+func (d ItemDef) validateProperties() error {
 	propertyCount := 0
 
 	for _, present := range []bool{
