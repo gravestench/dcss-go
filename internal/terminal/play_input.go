@@ -69,6 +69,12 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 
 		return nil
 
+	case "w":
+		m.screen = ScreenWield
+		m.notice = ""
+
+		return nil
+
 	case "L":
 		m.notice = "Running is unavailable in the Go port."
 
@@ -236,6 +242,67 @@ func (m *AppModel) handleDropKey(key string) tea.Cmd {
 	}
 
 	m.notice = "Select an item by its inventory letter."
+
+	return nil
+}
+
+func (m *AppModel) handleWieldKey(key string) tea.Cmd {
+	if key == "esc" {
+		m.screen = ScreenPlay
+		m.notice = ""
+
+		return nil
+	}
+
+	if key == "?" {
+		m.previous = ScreenWield
+		m.screen = ScreenHelp
+		m.notice = ""
+
+		return nil
+	}
+
+	itemID := uint64(0)
+	selected := key == "-"
+
+	if !selected {
+		for index, item := range m.game.View().Inventory {
+			if item.Class == "OBJ_WEAPONS" && key == string(menuLetter(index)) {
+				itemID = item.ID
+				selected = true
+
+				break
+			}
+		}
+	}
+
+	if !selected {
+		m.notice = "Select a weapon by its inventory letter, or - for bare hands."
+
+		return nil
+	}
+
+	result, err := m.game.Step(game.Command{
+		Kind:   game.CommandWield,
+		ItemID: itemID,
+	})
+
+	m.screen = ScreenPlay
+
+	if err != nil {
+		m.notice = fmt.Sprintf("Wield failed: %v", err)
+
+		return nil
+	}
+
+	if result.Spent == 0 {
+		m.notice = result.Events[0].Text
+
+		return nil
+	}
+
+	m.notice = ""
+	m.afterStep(result)
 
 	return nil
 }

@@ -127,7 +127,6 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 	}
 
 	fightingFound := false
-	weaponSkillFound := in.Unarmed
 
 	for _, skill := range skills.Entries {
 		switch skill.ID {
@@ -143,13 +142,13 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 					in.UnarmedSkill256 = character.ScaledSkill(skill, 256)
 				}
 
-				weaponSkillFound = true
 			}
 		}
 	}
 
-	if !fightingFound || !weaponSkillFound {
-		return combat.PlayerAttackInput{}, fmt.Errorf("player attack lacks Fighting or %s skill", in.WeaponSkillID)
+	// An untrained newly wielded weapon has zero skill points, as in DCSS.
+	if !fightingFound {
+		return combat.PlayerAttackInput{}, fmt.Errorf("player attack lacks Fighting skill")
 	}
 
 	if err := in.Validate(); err != nil {
@@ -178,13 +177,11 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 	}
 
 	skills, _ := c.skills.Get(c.player)
-	weaponSkillFound := in.Unarmed
 	shieldSkillFound := false
 
 	for _, skill := range skills.Entries {
 		if skill.ID == in.WeaponSkillID {
 			in.WeaponSkill10 = character.ScaledSkill(skill, 10)
-			weaponSkillFound = true
 		}
 
 		if skill.ID == "SK_SHIELDS" {
@@ -193,8 +190,8 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 		}
 	}
 
-	if !weaponSkillFound || !shieldSkillFound {
-		return combat.AttackDelayInput{}, fmt.Errorf("player attack timing lacks weapon or Shields skill")
+	if !shieldSkillFound {
+		return combat.AttackDelayInput{}, fmt.Errorf("player attack timing lacks Shields skill")
 	}
 
 	shieldFound := false

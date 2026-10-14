@@ -322,6 +322,16 @@ func registerSystems(g *Game) error {
 		return err
 	}
 
+	if _, err := world.AddSystem(&wieldSystem{
+		items:   stores.Items,
+		carried: stores.CarriedBy,
+		intents: stores.Intents,
+		catalog: g.catalog,
+		turn:    &g.turn,
+	}); err != nil {
+		return err
+	}
+
 	if _, err := world.AddSystem(&quaffSystem{
 		player:    g.player,
 		intents:   stores.Intents,

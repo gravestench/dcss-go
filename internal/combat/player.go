@@ -43,12 +43,22 @@ func (in PlayerAttackInput) Validate() error {
 		return fmt.Errorf("invalid equipped weapon attack %+v", in)
 	}
 
-	switch in.WeaponSkillID {
-	case "SK_SHORT_BLADES", "SK_LONG_BLADES", "SK_MACES_FLAILS", "SK_AXES", "SK_POLEARMS":
+	if SupportsPrimaryWeaponSkill(in.WeaponSkillID) {
 		return nil
+	}
+
+	return fmt.Errorf("unsupported weapon skill %s", in.WeaponSkillID)
+}
+
+// SupportsPrimaryWeaponSkill names the melee weapon families whose ordinary
+// attacks and action delay are currently ported together.
+func SupportsPrimaryWeaponSkill(id string) bool {
+	switch id {
+	case "SK_SHORT_BLADES", "SK_LONG_BLADES", "SK_MACES_FLAILS", "SK_AXES", "SK_POLEARMS":
+		return true
 
 	default:
-		return fmt.Errorf("unsupported weapon skill %s", in.WeaponSkillID)
+		return false
 	}
 }
 

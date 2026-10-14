@@ -213,30 +213,45 @@ func (g *Game) validateSavedExperience(
 	return nil
 }
 
-func validateSavedEquipment(slots map[string]string, weaponID string) error {
+func (g *Game) validateSavedEquipment(slots map[string]string) error {
 	if slots["body"] != "ARM_SCALE_MAIL" || slots["shield"] != "ARM_BUCKLER" {
 		return fmt.Errorf("save is missing required Human/Fighter armour slots")
 	}
 
-	if weaponID == "WPN_UNARMED" {
-		if slots["weapon"] != "" {
-			return fmt.Errorf("unarmed start has an equipped weapon")
-		}
-
+	if slots["weapon"] == "" {
 		return nil
 	}
 
-	if slots["weapon"] != "" && slots["weapon"] != weaponID {
-		return fmt.Errorf(
-			"selected starting weapon %s disagrees with equipped weapon %s",
-			weaponID, slots["weapon"],
-		)
+	kind, err := g.catalog.Item(slots["weapon"])
+
+	if err != nil {
+		return err
+	}
+
+	if !supportsWieldedWeapon(kind) {
+		return fmt.Errorf("unsupported equipped weapon %s", kind.ID)
+	}
+
+	species, err := g.catalog.Species(g.catalog.Player().SpeciesID)
+
+	if err != nil {
+		return err
+	}
+
+	incompatible, err := weaponNeedsSecondHand(kind, species.Size)
+
+	if err != nil {
+		return err
+	}
+
+	if incompatible {
+		return fmt.Errorf("equipped weapon %s conflicts with shield", kind.ID)
 	}
 
 	return nil
 }
 
-func validateSavedUnequippedWeapon(records []save.EntityRecord, weaponID string) error {
+func validateSavedStartingWeapon(records []save.EntityRecord, weaponID string) error {
 	for _, record := range records {
 		if record.Item != nil && record.Item.KindID == weaponID &&
 			(record.Position != nil || record.CarriedBy != nil) {

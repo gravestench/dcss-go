@@ -20,6 +20,7 @@ const (
 	CommandInspect
 	CommandQuaff
 	CommandDrop
+	CommandWield
 )
 
 type Command struct {
@@ -49,6 +50,7 @@ type TurnContext struct {
 	Pickup     akara.Entity
 	Consume    akara.Entity
 	Drop       *pendingItemDrop
+	Wield      *pendingItemWield
 	PlayerKill akara.Entity
 	Corpse     *pendingCorpse
 	StairFrom  int
@@ -176,6 +178,9 @@ func (g *Game) preparePlayerCommand(
 
 	case CommandDrop:
 		return g.prepareDropCommand(command)
+
+	case CommandWield:
+		return g.prepareWieldCommand(command.ItemID)
 
 	default:
 		return freeCommand(g.noTime("Unknown command.")), nil
@@ -442,6 +447,12 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	if g.turn.Drop != nil {
 		if err := g.applyDrop(*g.turn.Drop, buffer); err != nil {
 			return nil, fmt.Errorf("%s actor %d drop: %w", phase, actor, err)
+		}
+	}
+
+	if g.turn.Wield != nil {
+		if err := g.applyWield(*g.turn.Wield); err != nil {
+			return nil, fmt.Errorf("%s actor %d wield: %w", phase, actor, err)
 		}
 	}
 

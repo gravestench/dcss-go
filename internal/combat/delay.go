@@ -32,13 +32,11 @@ func (in AttackDelayInput) Validate() error {
 		return fmt.Errorf("invalid weapon speed %d", in.WeaponSpeed)
 	}
 
-	switch in.WeaponSkillID {
-	case "SK_SHORT_BLADES", "SK_LONG_BLADES", "SK_MACES_FLAILS", "SK_AXES", "SK_POLEARMS":
+	if SupportsPrimaryWeaponSkill(in.WeaponSkillID) {
 		return nil
-
-	default:
-		return fmt.Errorf("unsupported attack-delay weapon skill %s", in.WeaponSkillID)
 	}
+
+	return fmt.Errorf("unsupported attack-delay weapon skill %s", in.WeaponSkillID)
 }
 
 type weightedDelay struct {

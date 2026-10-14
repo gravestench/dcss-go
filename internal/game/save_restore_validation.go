@@ -284,15 +284,12 @@ func (v *savedEntityValidator) validateFinalState() error {
 		return err
 	}
 
-	if err := validateSavedEquipment(
-		v.equippedSlots,
-		v.player.weaponID,
-	); err != nil {
+	if err := v.game.validateSavedEquipment(v.equippedSlots); err != nil {
 		return err
 	}
 
-	if v.player.weaponID != "WPN_UNARMED" && v.equippedSlots["weapon"] == "" {
-		if err := validateSavedUnequippedWeapon(v.snapshot.Entities, v.player.weaponID); err != nil {
+	if v.player.weaponID != "WPN_UNARMED" {
+		if err := validateSavedStartingWeapon(v.snapshot.Entities, v.player.weaponID); err != nil {
 			return err
 		}
 	}

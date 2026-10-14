@@ -97,6 +97,39 @@ func DrawDrop(canvas *Canvas, view game.View, quantity string) {
 	canvas.Write(0, canvas.height-2, "Digits - Quantity    Esc - Cancel    ? - Help", Brown, Black)
 }
 
+// DrawWield keeps the inventory letters visible while filtering to weapons.
+func DrawWield(canvas *Canvas, view game.View) {
+	canvas.Write(0, 0, "Wield which item?", White, Black)
+	canvas.Write(1, 2, "- - bare hands", LightGrey, Black)
+
+	y := 4
+
+	for index, item := range view.Inventory {
+		if item.Class != "OBJ_WEAPONS" {
+			continue
+		}
+
+		label := item.Name
+
+		if item.Slot == "weapon" {
+			label += " (wielded)"
+		}
+
+		writeClipped(
+			canvas,
+			1,
+			y,
+			canvas.width-1,
+			fmt.Sprintf("%c - %s", menuLetter(index), label),
+			LightGrey,
+		)
+
+		y++
+	}
+
+	canvas.Write(0, canvas.height-2, "- - Bare hands    Esc - Cancel    ? - Help", Brown, Black)
+}
+
 // DrawQuaff uses inventory letters so a choice always selects the displayed item.
 func DrawQuaff(canvas *Canvas, view game.View) {
 	canvas.Write(0, 0, "Quaff which potion?", White, Black)
@@ -196,7 +229,8 @@ func DrawHelp(canvas *Canvas) {
 		"Dungeon Crawl Stone Soup - Help",
 		"",
 		"Movement: h j k l, y u b n, arrow keys",
-		"Wait: . or s     Pick up: g ,     Drop: d     Stairs: < or >",
+		"Wait: . or s     Pick up: g ,     Drop: d     Wield: w",
+		"Stairs: < or >",
 		"Inventory: i     Skills: m     Help: ?",
 		"Save and exit: S (confirm), Ctrl-S (now)",
 		"Abandon character: Ctrl-Q (confirm)",

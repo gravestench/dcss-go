@@ -121,6 +121,7 @@ const (
 	IntentQuaff
 	IntentOpenDoor
 	IntentDrop
+	IntentWield
 )
 
 type Intent struct {
