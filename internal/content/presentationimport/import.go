@@ -243,6 +243,7 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 		SpeciesDescriptions: map[string]string{},
 		JobDescriptions:     map[string]string{},
 	}
+
 	version, err := readSource(sourceDir, "tag-version.h", &artifact.SourceFiles)
 
 	if err != nil {

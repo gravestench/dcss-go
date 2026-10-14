@@ -93,6 +93,7 @@ func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 		Kind: CommandMove,
 		DX:   1,
 	}
+
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
 

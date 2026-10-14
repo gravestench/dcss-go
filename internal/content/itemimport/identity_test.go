@@ -246,6 +246,7 @@ ARMF_RES_FIRE = 1 << 0,
 ARMF_VUL_FIRE = ard(ARMF_RES_FIRE, -1),
 };`),
 	}
+
 	v, err := parseVocabulary(source)
 
 	if err != nil {

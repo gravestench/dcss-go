@@ -94,6 +94,7 @@ func WeaponOptions(c content.Catalog, speciesID, jobID string) ([]WeaponOption, 
 			ID:          id,
 			Restriction: Restricted,
 		}
+
 		skill := "SK_UNARMED_COMBAT"
 
 		if id == "WPN_UNARMED" {

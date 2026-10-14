@@ -455,6 +455,7 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 			"int",
 			"dex",
 		}
+
 		source.LevelUpStats = &defaults
 	}
 

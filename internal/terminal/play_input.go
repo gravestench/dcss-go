@@ -114,6 +114,7 @@ func (m *AppModel) handleQuaffKey(key string) tea.Cmd {
 			Kind:   game.CommandQuaff,
 			ItemID: item.ID,
 		})
+
 		m.screen = ScreenPlay
 
 		if err != nil {

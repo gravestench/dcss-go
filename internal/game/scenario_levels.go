@@ -184,6 +184,7 @@ func buildGeneratedDungeonLevels(
 		x: firstLayout.Stairs[0].Up.X,
 		y: firstLayout.Stairs[0].Up.Y,
 	}
+
 	secondEntry := point{
 		x: secondLayout.Stairs[0].Up.X,
 		y: secondLayout.Stairs[0].Up.Y,

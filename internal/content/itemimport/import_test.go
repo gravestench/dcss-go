@@ -20,6 +20,7 @@ func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 			SHA256: strings.Repeat("a", 64),
 		},
 	}
+
 	identities := []content.ItemIdentity{
 		{
 			ID:           "WPN_MACE",
@@ -38,6 +39,7 @@ func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 			SourceLine:   20,
 		},
 	}
+
 	items := []content.ItemDef{
 		{
 			ID:           "WPN_MACE",
@@ -91,6 +93,7 @@ func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 			},
 		},
 	}
+
 	vocab := content.ItemVocabulary{
 		Slots:       []string{"EQ_BODY_ARMOUR"},
 		Skills:      []string{"SK_MACES_FLAILS"},
@@ -100,6 +103,7 @@ func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 		Brands:      []string{"SPWPN_NORMAL"},
 		ArmourFlags: []string{"ARMF_NO_FLAGS"},
 	}
+
 	itemBytes, err := json.Marshal(items)
 
 	if err != nil {
@@ -116,6 +120,7 @@ func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 		Vocabulary:        vocab,
 		DefinitionsSHA256: hex.EncodeToString(hash[:]),
 	}
+
 	artifact := content.ItemArtifact{
 		SchemaVersion:   1,
 		SourceRevision:  "revision",
@@ -234,16 +239,19 @@ func TestItemImportPair(t *testing.T) {
 			ExplicitlyRemoved: true,
 		},
 	}
+
 	rows := map[itemKey]itemPropertyRow{{"OBJ_WEAPONS", "WPN_MACE"}: {
 		Name:   "mace",
 		Line:   11,
 		Weapon: &content.WeaponProperties{SkillID: "SK_MACES_FLAILS"},
 	}}
+
 	names := map[itemKey]content.ItemName{}
 	glyphs := map[itemKey]rune{
 		{"OBJ_WEAPONS", "WPN_MACE"}: ')',
 		{"OBJ_POTIONS", "POT_OLD"}:  '!',
 	}
+
 	joined, err := joinItemViews(identities, rows, names, glyphs)
 
 	if err != nil || len(joined) != 1 || joined[0].ID != "WPN_MACE" {

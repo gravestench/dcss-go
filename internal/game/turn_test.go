@@ -18,16 +18,19 @@ func TestSchedulerTieBreak(t *testing.T) {
 		Speed:   10,
 		NextAut: 0,
 	})
+
 	actors.Set(second, ecs.Actor{
 		Speed:   10,
 		NextAut: 0,
 	})
+
 	stores.Positions.Set(first, ecs.Position{LevelID: 1})
 	stores.Positions.Set(second, ecs.Position{LevelID: 1})
 	scheduler := TurnScheduler{
 		actors:    actors,
 		positions: stores.Positions,
 	}
+
 	entity, at, ok := scheduler.Next(1)
 
 	if !ok || entity != first || at != 0 {
@@ -45,16 +48,19 @@ func TestSchedulerSelectsOnlyCurrentFloor(t *testing.T) {
 		Speed:   10,
 		NextAut: 20,
 	})
+
 	stores.Actors.Set(inactive, ecs.Actor{
 		Speed:   10,
 		NextAut: 0,
 	})
+
 	stores.Positions.Set(active, ecs.Position{LevelID: 1})
 	stores.Positions.Set(inactive, ecs.Position{LevelID: 2})
 	scheduler := TurnScheduler{
 		actors:    stores.Actors,
 		positions: stores.Positions,
 	}
+
 	entity, at, found := scheduler.Next(1)
 
 	if !found || entity != active || at != 20 {

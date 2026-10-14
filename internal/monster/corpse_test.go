@@ -88,6 +88,7 @@ func TestRatCorpseDecayAndSkeleton(t *testing.T) {
 			},
 		},
 	}
+
 	kind, freshness, appearance, alive, err := AgeCorpse(r, "CORPSE_BODY", true, 110, 200)
 
 	if err != nil || !alive || kind != "CORPSE_BODY" || freshness != 100 || appearance != 0 {

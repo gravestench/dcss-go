@@ -122,6 +122,7 @@ func joinItemViews(
 			ClassID:   identity.ClassID,
 			SubtypeID: identity.ID,
 		}
+
 		row, hasRow := rows[key]
 		name, hasName := names[key]
 		glyph, hasGlyph := glyphs[key]
@@ -152,6 +153,7 @@ func joinItemViews(
 				SourcePath: "crawl-ref/source/item-prop.cc",
 				SourceLine: row.Line,
 			}
+
 			hasName = true
 		}
 
@@ -336,6 +338,7 @@ func generateFromSource(sourceDir, revision string) ([]byte, []byte, error) {
 		Vocabulary:        vocabulary,
 		DefinitionsSHA256: hex.EncodeToString(digest[:]),
 	}
+
 	artifact := content.ItemArtifact{
 		SchemaVersion:   1,
 		SourceRevision:  revision,
@@ -391,6 +394,7 @@ func Generate(sourceDir string) ([]byte, []byte, error) {
 		"--untracked-files=no",
 		"--",
 	}, sourceNames...)
+
 	status, err := exec.Command("git", args...).Output()
 
 	if err != nil {

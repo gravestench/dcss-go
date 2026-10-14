@@ -232,6 +232,7 @@ func registerSystems(g *Game) error {
 		catalog:   g.catalog,
 		rng:       g.rng,
 	}
+
 	g.monsterCatchup = monsterCatchupSystem{
 		actors:    stores.Actors,
 		health:    stores.Health,

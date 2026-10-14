@@ -29,6 +29,7 @@ func lexJobData(path, source string) ([]token, error) {
 				kind:  string(ch),
 				value: string(ch),
 			})
+
 			i++
 
 		case ch == '"':

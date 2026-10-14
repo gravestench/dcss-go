@@ -331,6 +331,7 @@ func decodeEnergy(expr string) (content.MonsterEnergy, error) {
 		10,
 		100,
 	}
+
 	expr = strings.TrimSpace(expr)
 
 	if expr != "DEFAULT_ENERGY" {

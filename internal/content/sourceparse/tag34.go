@@ -101,6 +101,7 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 				parent:  active,
 				matched: condition,
 			})
+
 			active = active && condition
 
 		case strings.HasPrefix(trimmed, "#elif "):
@@ -193,6 +194,7 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 				parent:  active,
 				matched: condition,
 			})
+
 			active = active && condition
 
 		case strings.HasPrefix(trimmed, "#elif "):

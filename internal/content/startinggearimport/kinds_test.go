@@ -23,6 +23,7 @@ func TestResolveKindsFromCommittedCatalog(t *testing.T) {
 		"wand of charming",
 		"piece from Xom's chessboard",
 	}
+
 	resolved, err := resolveKinds(catalog, names)
 
 	if err != nil {

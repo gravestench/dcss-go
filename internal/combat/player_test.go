@@ -205,6 +205,7 @@ func TestPlayerMeleeWeaponDamageAndRatArmour(t *testing.T) {
 					},
 				},
 			}
+
 			got, err := PlayerMelee(rng, fighterFlailAttack())
 
 			if err != nil || got.Kind != Hit || got.Damage != tc.want || len(rng.rolls) != 0 {
@@ -265,6 +266,7 @@ func TestPlayerMeleeUnarmedUsesNormalFormBaseAndNoWeaponSkillMultiplier(t *testi
 			},
 		},
 	}
+
 	got, err := PlayerMelee(rng, in)
 
 	if err != nil || got.Kind != Hit || got.Damage != 6 || len(rng.rolls) != 0 {
@@ -323,6 +325,7 @@ func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 			},
 		},
 	}
+
 	got, err := PlayerMelee(rng, in)
 
 	if err != nil || got.Kind != Hit || got.Damage != 13 || len(rng.rolls) != 0 {
@@ -353,6 +356,7 @@ func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 			},
 		},
 	}
+
 	got, err = PlayerMelee(rng, in)
 
 	if err != nil || got.Kind != Miss || len(rng.rolls) != 0 {
@@ -416,6 +420,7 @@ func TestPlayerMeleeMightRollPrecedesEnchantmentRoll(t *testing.T) {
 			},
 		},
 	}
+
 	got, err := PlayerMelee(rng, in)
 
 	if err != nil || got.Kind != Hit || got.Damage != 15 || len(rng.rolls) != 0 {

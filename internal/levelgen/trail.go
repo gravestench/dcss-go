@@ -86,6 +86,7 @@ func (b *builder) makeTrail(start trailStart) (StairPair, error) {
 				X: position.X + direction.X,
 				Y: position.Y + direction.Y,
 			}
+
 			beyond := Point{
 				X: next.X + direction.X,
 				Y: next.Y + direction.Y,

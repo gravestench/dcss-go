@@ -117,6 +117,7 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 		"OBJ_STAVES":     "staff_type_name",
 		"OBJ_RUNES":      "rune_type_name",
 	}
+
 	needed := map[string]bool{}
 
 	for _, identity := range identities {

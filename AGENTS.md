@@ -20,6 +20,7 @@ for a human reader to follow.
   inline. Expand slices and lists with three or more values instead of placing
   the whole declaration on one line. Compact fixed arrays of three scalar
   values may stay inline.
+- Leave a blank line after a multiline literal before the next statement.
 - Declare each struct field on its own line, including fields in test case
   tables. Group related fields by order and names rather than comma packing.
 - Assign mutable fields one per line. Keep tuple assignment for values returned

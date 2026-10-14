@@ -192,6 +192,7 @@ func (l *Level) OpenDoor(x, y int) (int, error) {
 			y: y,
 		},
 	}
+
 	opened := 0
 
 	for len(queue) > 0 {
@@ -296,6 +297,7 @@ func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 		x: position.X,
 		y: position.Y,
 	})
+
 	position.X = x
 	position.Y = y
 	l.actors[point{
@@ -320,6 +322,7 @@ func (l *Level) RemoveActor(entity akara.Entity) error {
 		x: position.X,
 		y: position.Y,
 	})
+
 	l.positions.Remove(entity)
 
 	return nil

@@ -80,6 +80,7 @@ func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
 						},
 					},
 				}
+
 				got, err := PlayerAttackDelay(rng, starterDelay(tc.speed, tc.skill))
 
 				if err != nil || got != boundary.want || len(rng.rolls) != 0 {
@@ -131,6 +132,7 @@ func TestFractionalWeaponSkillCombinesBeforeOneDraw(t *testing.T) {
 				},
 			},
 		}
+
 		got, err := PlayerAttackDelay(rng, in)
 
 		if err != nil || got != tc.want || len(rng.rolls) != 0 {
@@ -185,6 +187,7 @@ func TestUnarmedSamplesOneCombinedSourceDistribution(t *testing.T) {
 				},
 			},
 		}
+
 		got, err := PlayerAttackDelay(rng, in)
 
 		if err != nil || got != tc.want || len(rng.rolls) != 0 {

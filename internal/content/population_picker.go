@@ -34,6 +34,7 @@ func (c Catalog) DungeonMonsterPool(depth int, veto func(string) bool) DungeonMo
 			id:     row.MonsterID,
 			weight: weight,
 		})
+
 		pool.total += weight
 	}
 

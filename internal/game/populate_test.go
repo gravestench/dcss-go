@@ -167,6 +167,7 @@ func TestRestoreRejectsOverfullPopulationLevel(t *testing.T) {
 			X:       12,
 			Y:       2,
 		}
+
 		break
 	}
 

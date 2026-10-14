@@ -149,6 +149,7 @@ func TestQuaffSaveContinuation(t *testing.T) {
 		Kind:   CommandQuaff,
 		ItemID: itemID,
 	}
+
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
 

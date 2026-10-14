@@ -22,6 +22,7 @@ func sourceFixture(t *testing.T) string {
 		"monster-type.h": []byte("enum monster_type {\n MONS_HUMAN,\n MONS_ELF,\n MONS_LAVA_ORC,\n};\n"),
 		"job-type.h":     []byte("enum job_type {\n JOB_FIGHTER,\n NUM_JOBS,\n};\n"),
 	}
+
 	legacy, aptitudes := legacyFixtures(t)
 	files["util/species-gen/species-data-deprecated-species.txt"] = legacy
 	files["util/species-gen/aptitudes-deprecated-species.txt"] = aptitudes

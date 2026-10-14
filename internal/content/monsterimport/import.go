@@ -418,6 +418,7 @@ func Generate(sourceDir string) ([]byte, error) {
 		"--untracked-files=no",
 		"--",
 	}, sourceNames...)
+
 	status, err := exec.Command("git", args...).Output()
 
 	if err != nil {

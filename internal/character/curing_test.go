@@ -57,6 +57,7 @@ func TestCuringHealsSourceRangeAndCapsAtMax(t *testing.T) {
 			bound: 7,
 			value: tc.roll,
 		}
+
 		got, err := CuringHP(rng, tc.current, tc.max)
 
 		if err != nil || got != tc.want || rng.calls != 1 {

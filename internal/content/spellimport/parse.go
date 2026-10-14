@@ -341,6 +341,7 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 				SourcePath:   "crawl-ref/source/spl-data.h",
 				SourceLine:   line.Number,
 			}
+
 			continue
 		}
 

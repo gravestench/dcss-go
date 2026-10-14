@@ -179,6 +179,7 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 		Unarmed:       attack.Unarmed,
 		WeaponSkillID: attack.WeaponSkillID,
 	}
+
 	skills, _ := c.skills.Get(c.player)
 	weaponSkillFound, shieldSkillFound := false, false
 

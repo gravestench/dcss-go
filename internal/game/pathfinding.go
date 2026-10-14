@@ -17,6 +17,7 @@ func (l *Level) RouteStep(x, y, targetX, targetY int, goalActor akara.Entity) (i
 		x: targetX,
 		y: targetY,
 	}
+
 	visited := make([]bool, l.width*len(l.terrain))
 	parents := make([]point, len(visited))
 	index := func(p point) int {

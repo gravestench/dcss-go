@@ -28,6 +28,7 @@ func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
 			},
 		},
 	}
+
 	pool := c.DungeonMonsterPool(2, nil)
 	first, second, third := 2*2520, 3*2520/3, 3*2520/3
 
@@ -104,6 +105,7 @@ func TestDungeonMonsterPoolVetoAndEmpty(t *testing.T) {
 			},
 		},
 	}
+
 	pool := c.DungeonMonsterPool(1, func(id string) bool {
 		return id == "MONS_RAT"
 	})

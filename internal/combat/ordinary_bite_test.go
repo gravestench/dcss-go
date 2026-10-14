@@ -103,6 +103,7 @@ func TestRatBiteDodgesWithoutShield(t *testing.T) {
 			},
 		},
 	}
+
 	got, err := ResolveAnimalBite(rng, ratAttack(), Defense{EV: 10})
 
 	if err != nil || got.Kind != Dodge || got.Damage != 0 || len(rng.rolls) != 0 {
@@ -139,6 +140,7 @@ func TestRatBiteAutomaticMissAndHit(t *testing.T) {
 			},
 		},
 	}
+
 	got, err := ResolveAnimalBite(miss, ratAttack(), Defense{EV: 10})
 
 	if err != nil || got.Kind != Miss || len(miss.rolls) != 0 {
@@ -177,6 +179,7 @@ func TestRatBiteAutomaticMissAndHit(t *testing.T) {
 			},
 		},
 	}
+
 	got, err = ResolveAnimalBite(hit, ratAttack(), Defense{EV: 10})
 
 	if err != nil || got.Kind != Hit || got.Damage != 3 || len(hit.rolls) != 0 {
@@ -217,6 +220,7 @@ func TestRatShieldBlockPrecedesDodge(t *testing.T) {
 			},
 		},
 	}
+
 	got, err := ResolveAnimalBite(rng, ratAttack(), Defense{
 		EV:          10,
 		ShieldClass: 9,
@@ -277,6 +281,7 @@ func TestRatBiteArmourCanAbsorbOrPassDamage(t *testing.T) {
 					},
 				},
 			}
+
 			got, err := ResolveAnimalBite(rng, ratAttack(), Defense{
 				EV:  5,
 				AC:  6,
@@ -311,6 +316,7 @@ func TestQuokkaPlainBiteUsesCataloguedFiveDamage(t *testing.T) {
 			},
 		},
 	}
+
 	outcome, err := ResolveAnimalBite(roller, AnimalBite{
 		HD:        1,
 		Damage:    5,

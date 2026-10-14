@@ -16,6 +16,7 @@ func TestStartingGearCatalogCopies(t *testing.T) {
 			Quantity: 1,
 		}},
 	}
+
 	first, err := c.StartingGrants("JOB_FIGHTER")
 
 	if err != nil {
@@ -27,6 +28,7 @@ func TestStartingGearCatalogCopies(t *testing.T) {
 		KindID:   "WPN_FLAIL",
 		Quantity: 1,
 	})
+
 	again, err := c.StartingGrants("JOB_FIGHTER")
 
 	if err != nil {

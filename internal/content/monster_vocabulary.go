@@ -57,6 +57,7 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 		"colour",
 		"tile_variation",
 	}
+
 	sets := make(map[string]map[string]bool, len(needed))
 
 	for _, category := range needed {

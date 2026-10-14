@@ -41,6 +41,7 @@ func TestJobCatalogCopiesAndSorts(t *testing.T) {
 			second.ID: second,
 		},
 	}
+
 	ids := catalog.JobIDs()
 
 	if !reflect.DeepEqual(ids, []string{"JOB_A", "JOB_Z"}) {

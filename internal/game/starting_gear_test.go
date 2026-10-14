@@ -45,6 +45,7 @@ func TestNewScenarioStartingGear(t *testing.T) {
 				"ARM_BUCKLER",
 				"POT_MIGHT",
 			}
+
 			wantSlots := []string{
 				"body",
 				"shield",

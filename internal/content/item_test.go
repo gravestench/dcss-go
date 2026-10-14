@@ -76,6 +76,7 @@ func TestItemDefCopies(t *testing.T) {
 			},
 		},
 	}
+
 	c.items["ARM_ROBE"] = armour
 	firstArmour, _ := c.Item("ARM_ROBE")
 	firstArmour.Armour.Flags[0].Level = 9

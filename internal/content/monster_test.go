@@ -168,6 +168,7 @@ func TestMonsterCatalogCopiesAndStatuses(t *testing.T) {
 			},
 		},
 	}
+
 	first, err := c.Monster("MONS_RAT")
 
 	if err != nil {

@@ -65,24 +65,47 @@ func checkFile(path string) (int, error) {
 		fmt.Printf("%s: %s\n", fset.Position(pos), message)
 		issues++
 	}
+	multilineLiteralEndsAt := func(statement ast.Stmt, line int) bool {
+		found := false
+
+		ast.Inspect(statement, func(node ast.Node) bool {
+			literal, ok := node.(*ast.CompositeLit)
+
+			if ok && fset.Position(literal.Rbrace).Line == line &&
+				fset.Position(literal.Lbrace).Line < line {
+				found = true
+			}
+
+			return true
+		})
+
+		return found
+	}
 	checkStatements := func(statements []ast.Stmt) {
 		for index := 1; index < len(statements); index++ {
 			previous := statements[index-1]
 			next := statements[index]
+			previousEndLine := fset.Position(previous.End() - 1).Line
+			adjacent := previousEndLine+1 == fset.Position(next.Pos()).Line
+			_, returns := next.(*ast.ReturnStmt)
 
 			if isControl(next) && !isControl(previous) &&
-				fset.Position(previous.End()-1).Line+1 == fset.Position(next.Pos()).Line {
+				adjacent {
 				report(next.Pos(), "leave a blank line before the control block")
 			}
 
-			if _, returns := next.(*ast.ReturnStmt); returns && !isControl(previous) &&
-				fset.Position(previous.End()-1).Line+1 == fset.Position(next.Pos()).Line {
+			if returns && !isControl(previous) &&
+				adjacent {
 				report(next.Pos(), "leave a blank line before the return")
 			}
 
-			if isControl(previous) &&
-				fset.Position(previous.End()-1).Line+1 == fset.Position(next.Pos()).Line {
+			if isControl(previous) && adjacent {
 				report(next.Pos(), "leave a blank line after the control block")
+			}
+
+			if !isControl(previous) && !isControl(next) && !returns && adjacent &&
+				multilineLiteralEndsAt(previous, previousEndLine) {
+				report(next.Pos(), "leave a blank line after the multiline literal")
 			}
 		}
 	}

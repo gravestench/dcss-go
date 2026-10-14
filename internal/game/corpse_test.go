@@ -69,6 +69,7 @@ func TestCockroachCorpseCannotBecomeSkeleton(t *testing.T) {
 		X:       4,
 		Y:       1,
 	})
+
 	corpse, _ := g.stores.Corpses.Get(id)
 	corpse.MonsterID = "MONS_GIANT_COCKROACH"
 
@@ -203,6 +204,7 @@ func TestCorpseIsStationaryButPortableItemSharesTile(t *testing.T) {
 		X:       4,
 		Y:       2,
 	})
+
 	result, err := g.Step(Command{Kind: CommandPickup})
 
 	if err != nil || result.Spent != 10 || !g.stores.Positions.Has(id) || !g.stores.CarriedBy.Has(potionID(t, g)) {
@@ -408,6 +410,7 @@ func TestRestoreRejectsMalformedCorpseState(t *testing.T) {
 			X:       4,
 			Y:       1,
 		})
+
 		bad := g.Snapshot()
 
 		for i := range bad.Entities {
@@ -436,6 +439,7 @@ func TestRestoreRejectsInvalidCorpseFloorClock(t *testing.T) {
 		X:       4,
 		Y:       1,
 	})
+
 	active := g.Snapshot()
 	zero := int64(0)
 	active.Levels[0].AwaySinceAut = &zero

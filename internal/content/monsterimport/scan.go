@@ -162,6 +162,7 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 				Line:   line,
 				Fields: fields,
 			})
+
 			pos = end
 
 		case strings.HasPrefix(src[pos:], "AXED_MON("):
@@ -189,6 +190,7 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 				Removed:     true,
 				RemovedName: name,
 			})
+
 			pos = end
 
 		case strings.HasPrefix(src[pos:], "DUMMY("):

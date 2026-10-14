@@ -32,6 +32,7 @@ func TestOrdinaryHumanFighterRegenerationRates(t *testing.T) {
 		MP:    0,
 		MaxMP: 1,
 	}
+
 	got, err := Regenerate(&regenRoller{}, state, 10)
 
 	if err != nil || got.HP != 7 || got.HPProgress != 6 || got.MP != 0 || got.MPProgress != 7 {
@@ -60,6 +61,7 @@ func TestRegenFullHPAccumulatesButFullMPFreezes(t *testing.T) {
 		HPProgress: 95,
 		MPProgress: 95,
 	}
+
 	got, err := Regenerate(&regenRoller{}, state, 10)
 
 	if err != nil || got.HP != 18 || got.HPProgress != 1 || got.MP != 1 || got.MPProgress != 95 {
@@ -80,6 +82,7 @@ func TestRegenVariableAutUsesHPThenMPRounding(t *testing.T) {
 			},
 		},
 	}
+
 	state := Vitality{
 		HP:         10,
 		MaxHP:      18,
@@ -88,6 +91,7 @@ func TestRegenVariableAutUsesHPThenMPRounding(t *testing.T) {
 		HPProgress: 94,
 		MPProgress: 94,
 	}
+
 	got, err := Regenerate(rng, state, 9)
 
 	if err != nil || got.HP != 11 || got.HPProgress != 0 || got.MP != 1 || got.MPProgress != 0 || len(rng.rolls) != 0 {
@@ -104,6 +108,7 @@ func TestRegenCanRestoreSeveralPointsAndRejectsBadState(t *testing.T) {
 		HPProgress: 95,
 		MPProgress: 95,
 	}
+
 	got, err := Regenerate(&regenRoller{}, state, 200)
 
 	if err != nil || got.HP != 12 || got.HPProgress != 15 || got.MP != 2 || got.MPProgress != 55 {

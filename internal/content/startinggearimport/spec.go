@@ -14,6 +14,7 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 		Raw:      raw,
 		Quantity: 1,
 	}
+
 	fail := func(reason string) (string, content.StartingGrant, error) {
 		return "", content.StartingGrant{}, fmt.Errorf("job %s equipment %q: %s", jobID, raw, reason)
 	}

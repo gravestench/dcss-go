@@ -143,6 +143,7 @@ func TestResolveChosenWeaponSkillRejectsBadKind(t *testing.T) {
 			Class:       "OBJ_WEAPONS",
 			WeaponSkill: skill,
 		}
+
 		got, err := resolveChosenWeaponSkill(kind, species)
 
 		if err == nil || got != "" || !strings.Contains(err.Error(), kind.ID) {

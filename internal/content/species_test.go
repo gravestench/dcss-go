@@ -129,6 +129,7 @@ func TestSpeciesIDsSorted(t *testing.T) {
 			"SP_A": testSpecies("SP_A"),
 		},
 	}
+
 	ids := catalog.SpeciesIDs()
 
 	if !reflect.DeepEqual(ids, []string{"SP_A", "SP_Z"}) {

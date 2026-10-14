@@ -40,6 +40,7 @@ func DrawInventory(canvas *Canvas, view game.View) {
 			title: "Potions",
 		},
 	}
+
 	y := 2
 
 	for _, category := range order {

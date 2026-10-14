@@ -77,6 +77,7 @@ func (s *advancementSystem) advance() error {
 				Kind: "stat-choice",
 				Text: "Your experience leads to an increase in your attributes!",
 			})
+
 			break
 		}
 
