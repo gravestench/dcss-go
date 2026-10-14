@@ -61,6 +61,20 @@ type SpeciesDef struct {
 	AltarAction        string   `json:"altar_action,omitempty"`
 }
 
+// InnateMutationLevel sums the species mutations gained by the given XL.
+// Acquired mutations belong to character state, not this catalog definition.
+func (s SpeciesDef) InnateMutationLevel(id string, level int) int {
+	amount := 0
+
+	for _, mutation := range s.Mutations {
+		if mutation.ID == id && mutation.Level <= level {
+			amount += mutation.Amount
+		}
+	}
+
+	return amount
+}
+
 type SpeciesSourceFile struct {
 	Path   string `json:"path"`
 	SHA256 string `json:"sha256"`

@@ -267,6 +267,24 @@ func (g *Game) validateSavedExperience(
 }
 
 func (g *Game) validateSavedEquipment(slots map[string]string, speciesID string) error {
+	species, err := g.catalog.Species(speciesID)
+
+	if err != nil {
+		return err
+	}
+
+	if slots["head"] == "ARM_HELMET" {
+		headgear, err := g.catalog.Item(slots["head"])
+
+		if err != nil {
+			return err
+		}
+
+		if hardHelmetConflicts(headgear, species) {
+			return fmt.Errorf("saved helmet conflicts with horns")
+		}
+	}
+
 	if slots["weapon"] == "" {
 		return nil
 	}
@@ -279,12 +297,6 @@ func (g *Game) validateSavedEquipment(slots map[string]string, speciesID string)
 
 	if !supportsWieldedWeapon(kind) {
 		return fmt.Errorf("unsupported equipped weapon %s", kind.ID)
-	}
-
-	species, err := g.catalog.Species(speciesID)
-
-	if err != nil {
-		return err
 	}
 
 	incompatible, err := weaponNeedsSecondHand(kind, species.Size)

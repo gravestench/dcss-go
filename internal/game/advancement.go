@@ -136,7 +136,8 @@ func (s *advancementSystem) applyLevel(level int) error {
 
 	// species_stat_gain follows player.cc:level_change. Human gains a random
 	// attribute every fourth XL; Hill Orc gains Strength every fifth XL,
-	// and Deep Elf gains Intelligence every fourth XL.
+	// Deep Elf gains Intelligence every fourth XL, and Minotaur gains
+	// Strength or Dexterity every fourth XL.
 	if s.species.LevelUpStatFrequency > 0 &&
 		len(s.species.LevelUpStats) > 0 &&
 		level%s.species.LevelUpStatFrequency == 0 {

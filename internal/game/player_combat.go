@@ -15,11 +15,12 @@ import (
 type playerCombat struct {
 	player akara.Entity
 
-	players    *akara.Store[ecs.PlayerControlled]
-	attributes *akara.Store[ecs.Attributes]
-	skills     *akara.Store[ecs.Skills]
-	durations  *akara.Store[ecs.Durations]
-	combat     *akara.Store[ecs.Combatant]
+	players     *akara.Store[ecs.PlayerControlled]
+	attributes  *akara.Store[ecs.Attributes]
+	skills      *akara.Store[ecs.Skills]
+	durations   *akara.Store[ecs.Durations]
+	combat      *akara.Store[ecs.Combatant]
+	progression *akara.Store[ecs.Progression]
 
 	equipped *akara.Store[ecs.Equipped]
 	carried  *akara.Store[ecs.CarriedBy]
@@ -34,11 +35,12 @@ func newPlayerCombat(g *Game) playerCombat {
 	return playerCombat{
 		player: g.player,
 
-		players:    s.Players,
-		attributes: s.Attributes,
-		skills:     s.Skills,
-		durations:  s.Durations,
-		combat:     s.Combat,
+		players:     s.Players,
+		attributes:  s.Attributes,
+		skills:      s.Skills,
+		durations:   s.Durations,
+		combat:      s.Combat,
+		progression: s.Progression,
 
 		equipped: s.Equipped,
 		carried:  s.CarriedBy,
@@ -56,6 +58,68 @@ func (c playerCombat) selectedSpecies() (content.SpeciesDef, error) {
 	}
 
 	return c.catalog.Species(player.SpeciesID)
+}
+
+// headbuttInput reads immutable species horns and the current ECS fighter
+// state. A zero horns level means this species has no headbutt attack.
+func (c playerCombat) headbuttInput(defenderID string) (combat.HeadbuttInput, error) {
+	species, err := c.selectedSpecies()
+
+	if err != nil {
+		return combat.HeadbuttInput{}, err
+	}
+
+	progress, hasProgress := c.progression.Get(c.player)
+	attributes, hasAttributes := c.attributes.Get(c.player)
+	skills, hasSkills := c.skills.Get(c.player)
+
+	if !hasProgress ||
+		!hasAttributes ||
+		!hasSkills {
+		return combat.HeadbuttInput{}, fmt.Errorf("player lacks headbutt components")
+	}
+
+	defender, err := c.catalog.Monster(defenderID)
+
+	if err != nil {
+		return combat.HeadbuttInput{}, err
+	}
+
+	in := combat.HeadbuttInput{
+		Level:      progress.Level,
+		Horns:      species.InnateMutationLevel("MUT_HORNS", progress.Level),
+		Strength:   attributes.Strength,
+		Dexterity:  attributes.Dexterity,
+		DefenderEV: defender.EV,
+		DefenderAC: defender.AC,
+		Reflexive:  species.InnateMutationLevel("MUT_REFLEXIVE_HEADBUTT", progress.Level) > 0,
+	}
+
+	for _, skill := range skills.Entries {
+		if skill.ID != "SK_FIGHTING" {
+			continue
+		}
+
+		in.FightingSkill100, err = scaledSpeciesSkill(skill, 100, species)
+
+		if err != nil {
+			return combat.HeadbuttInput{}, err
+		}
+
+		in.FightingSkill30, err = scaledSpeciesSkill(skill, 30, species)
+
+		if err != nil {
+			return combat.HeadbuttInput{}, err
+		}
+
+		break
+	}
+
+	if durations, found := c.durations.Get(c.player); found {
+		in.Mighty = durations.MightAut > 0
+	}
+
+	return in, in.Validate()
 }
 
 func scaledSpeciesSkill(

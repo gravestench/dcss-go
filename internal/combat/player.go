@@ -2,7 +2,7 @@ package combat
 
 import "fmt"
 
-// PlayerAttackInput is the ordinary Human Fighter primary attack projected
+// PlayerAttackInput is the ordinary Fighter primary attack projected
 // from live character state, one equipped weapon, and the current defender.
 type PlayerAttackInput struct {
 	Strength  int
@@ -24,7 +24,7 @@ type PlayerAttackInput struct {
 	Mighty bool
 }
 
-// Validate rejects inputs outside the supported Human Fighter scenario.
+// Validate rejects inputs outside the supported Fighter scenario.
 func (in PlayerAttackInput) Validate() error {
 	invalidStats := in.Strength <= 0 ||
 		in.Dexterity < 0 ||
@@ -36,7 +36,7 @@ func (in PlayerAttackInput) Validate() error {
 
 	if invalidStats ||
 		invalidDefender || invalidWeapon {
-		return fmt.Errorf("invalid Human Fighter attack %+v", in)
+		return fmt.Errorf("invalid Fighter attack %+v", in)
 	}
 
 	if in.Unarmed {
@@ -73,8 +73,8 @@ func SupportsPrimaryWeaponSkill(id string) bool {
 	}
 }
 
-// PlayerMelee follows the supported C++ primary attack phases. Rat shields,
-// auxiliary strikes, brands, and statuses beyond might are absent in this slice.
+// PlayerMelee follows the supported C++ primary attack phases. Species
+// auxiliary strikes run separately after this result while the target lives.
 func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 	if r == nil {
 		return Outcome{}, fmt.Errorf("player melee requires a roller")

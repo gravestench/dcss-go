@@ -352,15 +352,55 @@ func TestDeepElfFighterMenuStartAndSaveRestore(t *testing.T) {
 	}
 }
 
+func TestMinotaurFighterMenuStartAndSaveRestore(t *testing.T) {
+	m := pregameModel(t)
+	enterName(m, "Aster")
+	pressApp(m, "enter")
+	pressApp(m, "b")
+	pressApp(m, "a")
+	pressApp(m, "b")
+
+	if m.screen != ScreenPlay || m.game == nil {
+		t.Fatalf("Minotaur start: %v / %s", m.screen, m.notice)
+	}
+
+	view := m.game.View()
+
+	if view.SpeciesID != "SP_MINOTAUR" ||
+		view.SpeciesName != "Minotaur" ||
+		view.PlayerMaxHP != 19 ||
+		view.PlayerMaxMP != 0 ||
+		m.welcomeText() != "Welcome, Aster the Minotaur Fighter." ||
+		!strings.Contains(plainApp(m), "Minotaur") {
+		t.Fatalf("Minotaur view: %+v", view)
+	}
+
+	restored, err := game.Restore(m.game.Snapshot(), m.catalog)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		restored.Close()
+	})
+
+	if loaded := restored.View(); loaded.SpeciesID != view.SpeciesID ||
+		loaded.PlayerMaxHP != view.PlayerMaxHP ||
+		loaded.PlayerMaxMP != view.PlayerMaxMP {
+		t.Fatalf("restored Minotaur: %+v", loaded)
+	}
+}
+
 func TestPregamePostWeaponNamePromptAndUnavailableChoices(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")
-	pressApp(m, "b")
+	pressApp(m, "c")
 
 	if m.screen != ScreenSpecies ||
 		m.game != nil ||
 		!strings.Contains(m.notice, "unavailable") {
-		t.Fatal("unported Minotaur started a game")
+		t.Fatal("unported species started a game")
 	}
 
 	pressApp(m, "space")

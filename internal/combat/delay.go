@@ -20,7 +20,7 @@ func (in AttackDelayInput) Validate() error {
 		in.ShieldsSkill10 < 0 ||
 		in.ShieldsSkill10 > 270 ||
 		in.ShieldEV > 0 || in.ShieldEV < -1000 {
-		return fmt.Errorf("invalid Human Fighter attack delay %+v", in)
+		return fmt.Errorf("invalid Fighter attack delay %+v", in)
 	}
 
 	if in.Unarmed {

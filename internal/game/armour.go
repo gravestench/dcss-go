@@ -96,6 +96,11 @@ func isBarding(kindID string) bool {
 	return kindID == "ARM_BARDING" || kindID == "ARM_CENTAUR_BARDING"
 }
 
+func hardHelmetConflicts(kind content.ItemDef, species content.SpeciesDef) bool {
+	return kind.ID == "ARM_HELMET" &&
+		species.InnateMutationLevel("MUT_HORNS", 1) > 0
+}
+
 func (g *Game) validateWearFit(kind content.ItemDef) error {
 	player, found := g.stores.Players.Get(g.player)
 
@@ -113,6 +118,10 @@ func (g *Game) validateWearFit(kind content.ItemDef) error {
 	// Source: item-use.cc can_wear_armour and _cant_wear_barding_reason.
 	if isBarding(kind.ID) {
 		return fmt.Errorf("You can't wear that!")
+	}
+
+	if hardHelmetConflicts(kind, species) {
+		return fmt.Errorf("You can't wear that with your horns!")
 	}
 
 	if err := validateArmourSize(kind, species.Size); err != nil {

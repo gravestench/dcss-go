@@ -17,7 +17,7 @@ type ArmourPiece struct {
 	Plus int
 }
 
-// FighterDefense contains the live parts of an ordinary Human Fighter's defence.
+// FighterDefense contains the live parts of a supported Fighter's defence.
 type FighterDefense struct {
 	Strength       int
 	Dexterity      int
@@ -92,7 +92,7 @@ type Outcome struct {
 	ShieldBlocks int
 }
 
-// ProjectFighter follows the unmodified Human path in player.cc. Item EV is
+// ProjectFighter follows the ordinary player path in player.cc. Item EV is
 // stored in hundredths in the committed catalog, as in item-prop.cc.
 func ProjectFighter(in FighterDefense) (Defense, error) {
 	invalidStats := in.Strength <= 0 ||
@@ -109,7 +109,7 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 
 	if invalidStats ||
 		invalidArmour || invalidShield {
-		return Defense{}, fmt.Errorf("invalid Human Fighter defense %+v", in)
+		return Defense{}, fmt.Errorf("invalid Fighter defense %+v", in)
 	}
 
 	const scale = 100

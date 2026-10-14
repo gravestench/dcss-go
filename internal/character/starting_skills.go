@@ -43,11 +43,11 @@ func humanSkillPoints(level int) (int, error) {
 	return needed + 1, nil
 }
 
-// SupportedFighterSpecies identifies ordinary, mutation-free medium species
-// whose Fighter-specific rules are implemented.
+// SupportedFighterSpecies identifies species whose Fighter start and innate
+// rules are implemented in the current Dungeon slice.
 func SupportedFighterSpecies(speciesID string) bool {
 	switch speciesID {
-	case "SP_HUMAN", "SP_HILL_ORC", "SP_DEEP_ELF":
+	case "SP_HUMAN", "SP_HILL_ORC", "SP_DEEP_ELF", "SP_MINOTAUR":
 		return true
 	}
 

@@ -431,6 +431,10 @@ func (v *savedEntityValidator) validateSavedWearFit(
 		return fmt.Errorf("saved wear item is barding for unsupported species")
 	}
 
+	if hardHelmetConflicts(kind, species) {
+		return fmt.Errorf("saved helmet wear conflicts with horns")
+	}
+
 	if err := validateArmourSize(kind, species.Size); err != nil {
 		return fmt.Errorf("saved wear item does not fit: %w", err)
 	}

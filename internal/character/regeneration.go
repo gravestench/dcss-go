@@ -2,7 +2,7 @@ package character
 
 import "fmt"
 
-// Vitality is the ordinary Human Fighter's live HP/MP and fractional recovery.
+// Vitality is a supported Fighter's live HP/MP and fractional recovery.
 // Each progress counter holds hundredths of one point between player actions.
 type Vitality struct {
 	HP         int

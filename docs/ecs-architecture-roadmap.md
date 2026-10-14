@@ -79,12 +79,14 @@ Level travel progress: each stair cell has an explicit destination level and arr
 
 Advancement ownership: the death system credits source-derived XP to the player's `Progression` component and tenfold skill XP to `SkillTraining`. An ordered Akara skill system spends from that player-owned pool before the advancement system applies the selected species' source XP thresholds, recalculates supported species HP/MP, gives periodic random stat gains, and records a pending manual stat choice before levels 3, 9, 15, 21, and 27. Combat writes transient practice events to `TurnContext`; the training system owns both recent-practice queues and the named `skill` RNG stream. The terminal submits no-aut training and stat choices through game methods and renders copied views. Immutable XP and species skill thresholds, baseline species HP/MP live in `character`; skill-cost thresholds keep the source's fixed XP aptitude regardless of species. Training, combat, save validation, and the skills screen read the selected species' skill aptitudes from the ECS player identity and committed catalog. Version-12 saves validate skill points, queues, cost level, XP conservation, player turn time, and monster action energy. Live source-sized D:1–2 monster budgets permit natural level-up. Fighter training now divides each XP batch among enabled skills, shuffles first-phase spending, and uses weighted remainder choices with source-sized chunks. Remaining species' starting profiles, full HP/MP growth, training special cases, manuals, targets, and cross-training remain to port.
 
-Playable starts now include Human, Hill Orc, and Deep Elf Fighters. These
-three ordinary species share the same ECS player components and Fighter gear;
-the selected identity drives starting attributes, aptitude-reassessed skills,
-HP/MP, XP, periodic stat gains, terminal labels, and save validation.
-Mutation-bearing species still need their own gameplay rules before the menu
-enables them.
+Playable starts now include Human, Hill Orc, Deep Elf, and Minotaur
+Fighters. The four species share ECS player components and Fighter gear; their
+selected identity drives attributes, aptitude-reassessed skills, HP/MP, XP,
+periodic stat gains, terminal labels, and save validation. Minotaur's innate
+horns stay in the immutable species catalog. The combat system projects that
+identity and live ECS skills into pure auxiliary and reflexive headbutt rules;
+equipment fit reads the same identity. Acquired mutable mutations will need a
+player component when ported.
 
 ## Slice rule and acceptance checks
 

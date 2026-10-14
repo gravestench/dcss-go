@@ -147,6 +147,54 @@ func (s *combatSystem) resolvePlayerMelee(
 		Text: message,
 	})
 
+	if victim.Current == 0 {
+		return nil
+	}
+
+	return s.resolveAuxiliaryHeadbutt(target, victim, defender.Name, actor.KindID)
+}
+
+func (s *combatSystem) resolveAuxiliaryHeadbutt(
+	target akara.Entity,
+	victim *ecs.Health,
+	name, kindID string,
+) error {
+	in, err := s.fighter.headbuttInput(kindID)
+
+	if err != nil {
+		return err
+	}
+
+	outcome, err := combat.AuxiliaryHeadbutt(s.roller, in)
+
+	if err != nil {
+		return err
+	}
+
+	if !outcome.Attempted {
+		return nil
+	}
+
+	message := fmt.Sprintf("Your headbutt misses the %s.", name)
+
+	if outcome.Hit {
+		victim.Current = max(0, victim.Current-outcome.Damage)
+		message = fmt.Sprintf("You headbutt the %s.", name)
+
+		if outcome.Damage == 0 {
+			message = fmt.Sprintf("You headbutt the %s, but do no damage.", name)
+		}
+
+		if victim.Current == 0 {
+			s.turn.PlayerKill = target
+		}
+	}
+
+	s.turn.Events = append(s.turn.Events, Event{
+		Kind: "combat",
+		Text: message,
+	})
+
 	return nil
 }
 
@@ -253,9 +301,65 @@ func (s *combatSystem) resolveAnimalMelee(victim *ecs.Health) error {
 		Text: message,
 	})
 
+	if outcome.Kind == combat.Miss || outcome.Kind == combat.Dodge {
+		if err := s.resolveReflexiveHeadbutt(animal.Name, actor.KindID); err != nil {
+			return err
+		}
+	}
+
 	if outcome.Kind == combat.Hit && animal.Attacks[0].FlavourID == "AF_POISON" {
 		return s.applyPoisonBite(animal)
 	}
+
+	return nil
+}
+
+func (s *combatSystem) resolveReflexiveHeadbutt(name, kindID string) error {
+	in, err := s.fighter.headbuttInput(kindID)
+
+	if err != nil {
+		return err
+	}
+
+	outcome, err := combat.ReflexiveHeadbutt(s.roller, in)
+
+	if err != nil {
+		return err
+	}
+
+	if !outcome.Attempted {
+		return nil
+	}
+
+	attacker, found := s.health.Get(s.turn.Actor)
+
+	if !found || attacker.Current <= 0 {
+		return fmt.Errorf("retaliation target %d is not alive", s.turn.Actor)
+	}
+
+	attacker.Current = max(0, attacker.Current-outcome.Damage)
+
+	message := fmt.Sprintf("You headbutt the %s.", name)
+
+	if outcome.Damage == 0 {
+		message = fmt.Sprintf("You headbutt the %s, but do no damage.", name)
+	}
+
+	if attacker.Current == 0 {
+		s.turn.PlayerKill = s.turn.Actor
+	}
+
+	s.turn.Events = append(s.turn.Events,
+		Event{
+			Kind: "combat",
+			Text: "You furiously retaliate!",
+		},
+
+		Event{
+			Kind: "combat",
+			Text: message,
+		},
+	)
 
 	return nil
 }
