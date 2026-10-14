@@ -42,6 +42,8 @@ const (
 	ScreenWield
 	ScreenWear
 	ScreenTakeOff
+	ScreenThrow
+	ScreenAim
 )
 
 type equipmentTick struct {
@@ -87,6 +89,10 @@ type AppModel struct {
 	dropQuantity    string
 	pendingDoor     game.CommandKind
 	equipmentTickID uint64
+	aimKind         game.CommandKind
+	aimItemID       uint64
+	aimX            int
+	aimY            int
 }
 
 func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppModel, error) {
@@ -240,6 +246,12 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenWear, ScreenTakeOff:
 		return m.handleArmourKey(key)
 
+	case ScreenThrow:
+		return m.handleThrowKey(key)
+
+	case ScreenAim:
+		return m.handleAimKey(key)
+
 	case ScreenConfirm:
 		return m.handleConfirmKey(key)
 
@@ -283,9 +295,13 @@ func (m *AppModel) renderCanvas() *Canvas {
 	case ScreenName:
 		m.drawName(canvas)
 
-	case ScreenPlay, ScreenStatChoice:
+	case ScreenPlay, ScreenStatChoice, ScreenAim:
 		if m.game != nil {
 			DrawPlay(canvas, layout, m.game.View(), m.notice, m.presentationPolicy)
+		}
+
+		if m.screen == ScreenAim && m.game != nil {
+			m.drawAim(canvas, layout)
 		}
 
 		if m.screen == ScreenStatChoice && m.game != nil {
@@ -293,7 +309,7 @@ func (m *AppModel) renderCanvas() *Canvas {
 		}
 
 	case ScreenInventory, ScreenSkills, ScreenQuaff, ScreenDrop,
-		ScreenWield, ScreenWear, ScreenTakeOff:
+		ScreenWield, ScreenWear, ScreenTakeOff, ScreenThrow:
 		m.drawGameMenu(canvas)
 
 	case ScreenHelp:
@@ -342,6 +358,9 @@ func (m *AppModel) drawGameMenu(canvas *Canvas) {
 
 		case ScreenWear, ScreenTakeOff:
 			DrawArmour(canvas, view, m.screen == ScreenTakeOff, m.presentationPolicy)
+
+		case ScreenThrow:
+			drawInventoryModal(canvas, view, "throw", "", m.presentationPolicy)
 		}
 	}
 

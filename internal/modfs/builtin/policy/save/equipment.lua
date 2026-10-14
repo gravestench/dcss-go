@@ -12,14 +12,6 @@ local armour_slots = {
     boots = true,
 }
 
-local supported_weapons = {
-    SK_SHORT_BLADES = true,
-    SK_LONG_BLADES = true,
-    SK_MACES_FLAILS = true,
-    SK_AXES = true,
-    SK_POLEARMS = true,
-}
-
 local function held_item(ctx, id, player, slot)
     local number = type(id) == "number" and id or ctx:id(id)
     local entity = number ~= 0 and
@@ -172,7 +164,7 @@ local function validate(ctx)
 
     if weapon then
         if weapon.class ~= "OBJ_WEAPONS" or not weapon.weapon or
-            not supported_weapons[weapon.weapon.skill_id] then
+            not equipment.weapon_supported(weapon.weapon.skill_id) then
             error("unsupported equipped weapon " .. weapon.id)
         end
 

@@ -5,6 +5,7 @@ local quaff = require("policy.commands.quaff")
 local items = require("policy.inventory.items")
 local equipment = require("policy.inventory.equipment")
 local doors = require("policy.inventory.doors")
+local projectiles = require("policy.commands.projectiles")
 
 local function wait_command()
     return {
@@ -85,6 +86,8 @@ local function prepare(ctx, input)
         return doors.prepare(ctx, player, kind == 10, dx, dy)
     elseif kind == 12 or kind == 13 then
         return equipment.prepare_armour(ctx, player, item_id, kind == 13)
+    elseif kind == 16 or kind == 17 then
+        return projectiles.prepare(ctx, player, kind == 16, item_id, dx, dy)
     end
 
     return {

@@ -1,4 +1,5 @@
 local delay = require("policy.combat.delay")
+local projectiles = require("policy.combat.player_projectiles")
 
 register.policy({
     id = "command.timing",
@@ -24,6 +25,9 @@ register.policy({
 
         if input.attack_target then
             cost = delay.player(ctx, time_taken)
+        elseif input.intent_kind == 13 then
+            projectiles.practice(ctx, input.item_id)
+            cost = delay.projectile(ctx, time_taken, input.item_id)
         elseif input.intent_kind == 11 then
             cost = input.item_id == 0 and math.floor(time_taken * 3 / 10) or
                 math.floor(time_taken / 2)

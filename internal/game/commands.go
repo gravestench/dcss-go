@@ -26,6 +26,8 @@ const (
 	CommandTakeOff
 	CommandContinueEquipment
 	CommandCancelEquipment
+	CommandFire
+	CommandThrow
 )
 
 type Command struct {
@@ -72,9 +74,14 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		return prepared.response, nil
 	}
 
+	// Timing policies run inside this action context. Source projectile
+	// practice happens before the delay roll and remains visible to systems.
+	g.scripts.BeginAction()
 	cost, err := g.playerActionCost(prepared)
 
 	if err != nil {
+		g.scripts.DiscardPending()
+
 		return StepResult{}, err
 	}
 
@@ -85,7 +92,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	}
 
 	startAut := g.currentAut
-	events, err := g.runAction(g.player, intent, cost, "movement")
+	events, err := g.runActionStarted(g.player, intent, cost, "movement")
 
 	if err != nil {
 		return StepResult{}, err
@@ -263,6 +270,18 @@ func (g *Game) runAction(
 	cost Aut,
 	phase string,
 ) ([]Event, error) {
+	g.scripts.BeginAction()
+
+	return g.runActionStarted(actor, intent, cost, phase)
+}
+
+// runActionStarted preserves signals emitted while pricing a player action.
+func (g *Game) runActionStarted(
+	actor akara.Entity,
+	intent ecs.Intent,
+	cost Aut,
+	phase string,
+) ([]Event, error) {
 	if intent.Kind != 0 {
 		if _, err := g.stores.Intents.Set(actor, intent); err != nil {
 			return nil, fmt.Errorf("%s actor %d intent: %w", phase, actor, err)
@@ -273,7 +292,6 @@ func (g *Game) runAction(
 
 	// Every system shares this context; reset all pending work for each actor.
 	g.turn = TurnContext{Actor: actor}
-	g.scripts.BeginAction()
 
 	err := g.world.Update(time.Duration(cost))
 

@@ -87,7 +87,8 @@ function equipment.monster_melee(ctx, monster)
         local slot = ctx:get(entity, "core.equipped")
 
         if carrier.holder == monster and slot.slot ~= "weapon" and
-            slot.slot ~= "alternate_weapon" and slot.slot ~= "missile" then
+            slot.slot ~= "alternate_weapon" and slot.slot ~= "missile" and
+            slot.slot ~= "shield" then
             error("monster has unsupported equipment slot " .. slot.slot)
         end
     end
@@ -119,6 +120,24 @@ function equipment.monster_melee(ctx, monster)
     end
 
     return nil
+end
+
+function equipment.monster_shield(ctx, monster)
+    local worn = equipment.worn(ctx, monster, { shield = true })
+    local shield = worn.shield
+
+    if not shield then
+        return nil
+    end
+
+    local definition = shield.definition
+
+    if definition.class ~= "OBJ_ARMOUR" or not definition.armour or
+        definition.armour.slot_id ~= "EQ_SHIELD" then
+        error("monster has non-shield in shield slot")
+    end
+
+    return shield
 end
 
 function equipment.protection_ac(ctx, monster)

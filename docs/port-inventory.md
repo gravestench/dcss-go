@@ -37,9 +37,9 @@ than a handler API for each game domain.
 | Character | Human, Hill Orc, Deep Elf, and Minotaur Fighters; weapon choice, starting gear, attributes, skills, HP/MP, training, XP, level gains, stat choice | `policy/character`, `systems/character_*` |
 | Dungeon | Seeded basic-layout D:1–2, rooms, corridors, doors, paired stairs, source-sized population, fixed test scenario | `policy/generation`, `policy/population`, `systems/world_*` |
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
-| Combat | Fighter melee and headbutts, monster natural/weapon/ranged hits, Freeze, Slug Dart, AC/EV/shields, supported brands, constriction, kills, XP, corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
-| Items and status | Pickup/drop, wielding, armour delays, quaffing curing/heal wounds/might/haste, poison, regeneration, duration decay | `policy/inventory`, `policy/potions.lua`, `systems/item_*`, `systems/player_status.lua` |
-| Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, direction prompts, unavailable-feature notices | `policy/presentation`, `internal/terminal` |
+| Combat | Fighter melee and headbutts; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, Freeze, Slug Dart, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
+| Items and status | Pickup/drop, wielding, armour delays, quaffing curing/heal wounds/might/haste, ammunition stacks and landing, poison, curare slow, trapping nets, regeneration, and duration decay | `policy/inventory`, `policy/potions.lua`, `systems/item_*`, `systems/player_status.lua`, `systems/monster_*` |
+| Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `internal/terminal` |
 | Persistence | Version-12 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
 
 Core Akara components remain typed Go stores where the generic engine must
@@ -77,7 +77,8 @@ client compatibility are outside this Go port.
 
 For each new domain, add its complete Lua definition and policy slice,
 register systems where Akara state changes, then extend Go only for reusable
-engine primitives. Keep generated content checked in and refresh it
+engine primitives. Replace any old rule path in the same pass; do not keep
+compatibility adapters. Keep generated content checked in and refresh it
 explicitly.
 
 ## Running the slice

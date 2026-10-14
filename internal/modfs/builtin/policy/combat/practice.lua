@@ -27,18 +27,9 @@ local function emit(ctx, id)
     ctx:signal("practice", id)
 end
 
-function practice.player_hit(ctx, input)
-    if input.unarmed then
-        emit(ctx, "SK_UNARMED_COMBAT")
-
-        return
-    end
-
-    if not chance(ctx, input.weapon_damage, 20) then
-        return
-    end
-
-    local minimum = delay.minimum_skill(input.weapon_speed, input.weapon_skill)
+local function weapon_use(ctx, input)
+    local minimum = input.minimum_skill or
+        delay.minimum_skill(input.weapon_speed, input.weapon_skill)
     local current = math.floor(input.weapon100 / 100)
     local degree = 0
 
@@ -59,6 +50,45 @@ function practice.player_hit(ctx, input)
     if chance(ctx, 1, 2) then
         emit(ctx, "SK_FIGHTING")
     end
+end
+
+function practice.player_hit(ctx, input)
+    if input.unarmed then
+        emit(ctx, "SK_UNARMED_COMBAT")
+
+        return
+    end
+
+    if not chance(ctx, input.weapon_damage, 20) then
+        return
+    end
+
+    weapon_use(ctx, input)
+end
+
+function practice.player_projectile(ctx, missile, launcher)
+    -- exercise.cc:184-199 trains on the committed shot, even when it misses.
+    if not launcher then
+        if missile.id ~= "MI_STONE" or chance(ctx, 1, 2) then
+            emit(ctx, "SK_THROWING")
+        end
+
+        return
+    end
+
+    if not chance(ctx, 1, 2) then
+        return
+    end
+
+    local weapon = launcher.weapon
+    local input = {
+        weapon_skill = weapon.skill_id,
+        weapon_speed = weapon.speed,
+        weapon100 = fighter.skill(ctx, weapon.skill_id, 100),
+        minimum_skill = 2 * (weapon.speed - delay.minimum_launcher(launcher)),
+    }
+
+    weapon_use(ctx, input)
 end
 
 function practice.incoming_shield(ctx, outcome, defense)

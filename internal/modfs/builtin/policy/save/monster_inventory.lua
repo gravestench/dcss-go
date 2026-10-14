@@ -36,6 +36,11 @@ function inventory.validate(ctx)
                 if kind.class ~= "OBJ_MISSILES" or not kind.missile then
                     error("item " .. ctx:id(entity) .. " is not monster ammunition")
                 end
+            elseif slot == "shield" then
+                if kind.class ~= "OBJ_ARMOUR" or not kind.armour or
+                    kind.armour.slot_id ~= "EQ_SHIELD" then
+                    error("item " .. ctx:id(entity) .. " is not a monster shield")
+                end
             else
                 error("item " .. ctx:id(entity) .. " has unsupported monster slot " .. tostring(slot))
             end

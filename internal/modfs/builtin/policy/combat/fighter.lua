@@ -108,14 +108,20 @@ function fighter.attack(ctx, defender)
             error("equipped weapon lacks melee properties")
         end
 
-        input.weapon_skill = definition.weapon.skill_id
-        input.weapon_damage = definition.weapon.damage
-        input.weapon_hit = definition.weapon.hit
+        local launcher = definition.weapon.ammo_id ~= nil and
+            definition.weapon.ammo_id ~= "MI_NONE"
+        input.held_non_melee = launcher
+        input.using_weapon = not launcher
+        input.weapon_skill = launcher and "SK_FIGHTING" or
+            definition.weapon.skill_id
+        input.weapon_damage = launcher and 0 or definition.weapon.damage
+        input.weapon_hit = launcher and 0 or definition.weapon.hit
         input.weapon_speed = definition.weapon.speed
-        input.weapon_plus = weapon.item.plus
+        input.weapon_plus = launcher and 0 or weapon.item.plus
         input.weapon100 = fighter.skill(ctx, input.weapon_skill, 100)
     else
         input.unarmed = true
+        input.using_weapon = false
         input.weapon_skill = "SK_UNARMED_COMBAT"
         input.weapon_damage = 0
         input.weapon_hit = 0

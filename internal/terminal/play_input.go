@@ -67,6 +67,16 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 
 		return nil
 
+	case "f":
+		m.startAim(game.CommandFire, 0)
+
+		return nil
+
+	case "F":
+		m.openScreen(ScreenThrow)
+
+		return nil
+
 	case "W":
 		m.openScreen(ScreenWear)
 

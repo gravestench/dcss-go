@@ -3,6 +3,7 @@ package game
 import (
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -274,12 +275,20 @@ func TestOverlaySystemRunsInGameAndSurvivesSave(t *testing.T) {
 	checkLuaCounter(t, g, 1)
 
 	snapshot := g.Snapshot()
+	hasCounterSchema := slices.ContainsFunc(snapshot.LuaSchemas,
+		func(schema save.LuaSchemaRecord) bool {
+			return schema.Name == "mod.turns" && schema.Version == 1
+		})
 
 	if snapshot.RulesetHash != rules.Hash() ||
-		len(snapshot.LuaSchemas) != 1 ||
+		!hasCounterSchema ||
 		len(snapshot.RulesetFiles) != len(rules.Paths()) ||
 		len(snapshot.RulesetChanges) != 2 {
-		t.Fatalf("Lua save metadata missing: %+v", snapshot)
+		t.Fatalf("Lua save metadata missing: hash=%q schemas=%d files=%d changes=%d",
+			snapshot.RulesetHash,
+			len(snapshot.LuaSchemas),
+			len(snapshot.RulesetFiles),
+			len(snapshot.RulesetChanges))
 	}
 
 	path := filepath.Join(t.TempDir(), "lua-save.json")
@@ -386,7 +395,13 @@ func TestOverlaySystemRunsInGameAndSurvivesSave(t *testing.T) {
 
 	checkLuaCounter(t, withExtra, 1)
 
-	if len(withExtra.Snapshot().LuaSchemas) != 2 {
+	extraSchemas := withExtra.Snapshot().LuaSchemas
+	hasExtraSchema := slices.ContainsFunc(extraSchemas,
+		func(schema save.LuaSchemaRecord) bool {
+			return schema.Name == "mod.extra" && schema.Version == 1
+		})
+
+	if len(extraSchemas) != len(snapshot.LuaSchemas)+1 || !hasExtraSchema {
 		t.Fatal("added Lua schema was not registered")
 	}
 }

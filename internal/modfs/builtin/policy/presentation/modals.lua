@@ -128,12 +128,15 @@ function modals.rows(input)
         end
 
         write(writes, 0, height - 2, "Esc - Cancel    ? - Help", colors.brown)
-    elseif mode == "quaff" then
-        write(writes, 0, 0, "Quaff which potion?", colors.white)
+    elseif mode == "quaff" or mode == "throw" then
+        local choosing_throw = mode == "throw"
+        local title = choosing_throw and "Throw which missile?" or "Quaff which potion?"
+        local class = choosing_throw and "OBJ_MISSILES" or "OBJ_POTIONS"
+        write(writes, 0, 0, title, colors.white)
         local y = 2
 
         for index, item in ipairs(inventory) do
-            if item.class == "OBJ_POTIONS" then
+            if item.class == class then
                 local label = item.name
 
                 if item.quantity > 1 then
@@ -146,7 +149,9 @@ function modals.rows(input)
         end
 
         if y == 2 then
-            write(writes, 1, y, "You have no potions.", colors.brown)
+            local empty = choosing_throw and "You have no missiles." or
+                "You have no potions."
+            write(writes, 1, y, empty, colors.brown)
         end
 
         write(writes, 0, height - 2, "Esc - Cancel    ? - Help", colors.brown)

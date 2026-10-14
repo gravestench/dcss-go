@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local death = require("policy.death")
+local net = require("policy.combat.net")
 
 register.system({
     id = "actor.death",
@@ -47,6 +48,7 @@ register.system({
                         death.corpse(ctx, definition, position)
                     end
 
+                    net.release(ctx, entity)
                     death.drop_inventory(ctx, entity, position)
                     ctx:remove_actor(entity, position.level_id)
                     ctx:destroy(entity)

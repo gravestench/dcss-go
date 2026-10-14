@@ -1,5 +1,6 @@
 local melee = require("policy.combat.melee_actions")
 local ranged = require("policy.combat.ranged_actions")
+local player_projectiles = require("policy.combat.player_projectiles")
 
 register.system({
     id = "attack.combat",
@@ -15,6 +16,12 @@ register.system({
         end
 
         if intent.kind == 13 then
+            if attacker == ctx:player() then
+                player_projectiles.resolve(ctx, attacker, intent)
+
+                return
+            end
+
             local actor = ctx:get(attacker, "core.actor")
 
             if not actor then

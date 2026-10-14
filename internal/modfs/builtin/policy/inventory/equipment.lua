@@ -19,7 +19,13 @@ local supported_weapons = {
     SK_MACES_FLAILS = true,
     SK_AXES = true,
     SK_POLEARMS = true,
+    SK_RANGED_WEAPONS = true,
+    SK_THROWING = true,
 }
+
+function equipment.weapon_supported(skill_id)
+    return supported_weapons[skill_id] == true
+end
 
 local armour_slots = {
     body = true,
@@ -92,7 +98,7 @@ function equipment.prepare_wield(ctx, actor, item_id)
         return { message = "You cannot wield that item." }
     end
 
-    if not supported_weapons[kind.weapon.skill_id] then
+    if not equipment.weapon_supported(kind.weapon.skill_id) then
         return { message = "That weapon's combat is unavailable in the Go port." }
     end
 

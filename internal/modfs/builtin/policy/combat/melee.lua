@@ -1,87 +1,11 @@
 local fighter = require("policy.combat.fighter")
+local player_attack = require("policy.combat.player_attack")
 local roll = require("policy.combat.roll")
 
 local melee = {}
 
-local function maybe_random_div(ctx, numerator, denominator)
-    if numerator <= 0 then
-        return 0
-    end
-
-    return math.floor(roll.melee(ctx, numerator + denominator) / denominator)
-end
-
 function melee.player(ctx, input)
-    local fighting = maybe_random_div(ctx, input.fighting100, 100)
-    local weapon_skill = maybe_random_div(ctx, input.weapon100, 100)
-    local hit_base = 15 + math.floor(input.dexterity / 2) + fighting + weapon_skill
-
-    if input.unarmed then
-        hit_base = hit_base + 2
-    else
-        hit_base = hit_base + input.weapon_hit + input.weapon_plus
-    end
-
-    local to_hit = roll.melee(ctx, hit_base)
-    local auto_chance = roll.melee(ctx, 100)
-    local auto_miss = false
-    local auto_hit = false
-
-    if auto_chance < 5 then
-        local coin = roll.melee(ctx, 2)
-        auto_miss = coin == 0
-        auto_hit = coin ~= 0
-    end
-
-    -- Shield bypass is evaluated even for a shieldless ordinary monster.
-    roll.melee(ctx, 15 + math.floor(to_hit / 2))
-
-    if auto_miss or (not auto_hit and to_hit < input.defender_ev) then
-        return { kind = "miss", damage = 0 }
-    end
-
-    local potential = input.weapon_damage
-
-    if input.unarmed then
-        potential = 3 + math.floor(input.unarmed256 / 256)
-        local remainder = input.unarmed256 % 256
-
-        if remainder ~= 0 and roll.melee(ctx, 256) < remainder then
-            potential = potential + 1
-        end
-    end
-
-    local stat = input.strength
-
-    if not input.unarmed and
-        (input.weapon_skill == "SK_SHORT_BLADES" or input.weapon_skill == "SK_LONG_BLADES") then
-        stat = input.dexterity
-    end
-
-    potential = math.floor(potential * math.max(2, 150 + 5 * stat) / 2 / 100)
-    local damage = roll.melee(ctx, potential + 1)
-
-    if not input.unarmed then
-        local bonus = roll.melee(ctx, input.weapon100 + 1)
-        damage = math.floor(damage * (2500 + bonus) / 2500)
-    end
-
-    local fighting_bonus = roll.melee(ctx, input.fighting100 + 1)
-    damage = math.floor(damage * (3000 + fighting_bonus) / 3000)
-
-    if input.mighty then
-        damage = damage + 1 + roll.melee(ctx, 10)
-    end
-
-    if input.weapon_plus >= 0 then
-        damage = damage + roll.melee(ctx, 1 + input.weapon_plus)
-    else
-        damage = damage - roll.melee(ctx, 1 - input.weapon_plus)
-    end
-
-    local saved = roll.armour(ctx, input.defender_ac)
-
-    return { kind = "hit", damage = math.max(0, damage - saved) }
+    return player_attack.resolve(ctx, input)
 end
 
 local function headbutt_damage(ctx, input)

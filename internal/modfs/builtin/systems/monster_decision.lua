@@ -4,6 +4,7 @@ local wander = require("policy.ai.wander")
 local route = require("policy.ai.route")
 local spell = require("policy.ai.spell")
 local ranged = require("policy.ai.ranged")
+local net = require("policy.combat.net")
 
 local function choose_intent(ctx, entity, state)
     local position = ctx:get(entity, "core.position")
@@ -100,6 +101,19 @@ register.system({
             return
         end
 
+        local health = ctx:get(entity, "core.health")
+
+        if not health or health.current <= 0 then
+            return
+        end
+
+        local combat = ctx:get(entity, "core.combat")
+
+        if combat then
+            combat.shield_blocks = 0
+            ctx:set(entity, "core.combat", combat)
+        end
+
         if ctx:has(entity, "core.intent") then
             error("monster " .. ctx:id(entity) .. " already has an intent")
         end
@@ -108,6 +122,17 @@ register.system({
 
         if not state then
             error("monster " .. ctx:id(entity) .. " has no AI")
+        end
+
+        local held = ctx:get(entity, "projectile.held")
+
+        if held then
+            net.struggle(ctx, entity, held)
+            ctx:add(entity, "core.intent", {
+                kind = 6,
+            })
+
+            return
         end
 
         local next_state, intent = choose_intent(ctx, entity, state)

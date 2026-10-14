@@ -9,6 +9,7 @@ local lines = {
     "Wait: . or s     Pick up: g ,     Drop: d     Wield: w",
     "Wear: W     Take off: T     Esc interrupts equipment delay",
     "Doors: O open, C close (direction if prompted)",
+    "Fire: f     Throw: F     Aim: direction, Tab, Enter, Esc",
     "Stairs: < or >",
     "Inventory: i     Skills: m     Help: ?",
     "Save and exit: S (confirm), Ctrl-S (now)",

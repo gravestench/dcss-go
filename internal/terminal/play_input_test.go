@@ -119,6 +119,24 @@ func TestPlayKeysSourceBindingsAndTurnCost(t *testing.T) {
 	}
 }
 
+func TestThrowSelectionCancelsWithoutSpendingTime(t *testing.T) {
+	m := playingModel(t)
+	defer m.Close()
+
+	before := m.game.View().CurrentAut
+	m.handleKey("F")
+
+	if m.screen == ScreenPlay || m.screen == ScreenHelp {
+		t.Fatalf("F did not open throw selection: screen %v", m.screen)
+	}
+
+	m.handleKey("esc")
+
+	if m.screen != ScreenPlay || m.game.View().CurrentAut != before {
+		t.Fatal("canceling a throw changed the turn")
+	}
+}
+
 func TestSaveExitConfirmationAndFailure(t *testing.T) {
 	m := playingModel(t)
 	aut := m.game.View().CurrentAut

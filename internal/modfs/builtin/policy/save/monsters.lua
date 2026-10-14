@@ -3,6 +3,9 @@ local roster = require("policy.population.roster")
 local entities = require("policy.save.entities")
 local inventory = require("policy.save.monster_inventory")
 local links = require("policy.save.links")
+local net = require("policy.combat.net")
+local poison = require("policy.combat.monster_poison")
+local slow = require("policy.combat.monster_slow")
 
 local function has_flag(definition, id)
     for _, flag in ipairs(definition.flags or {}) do
@@ -113,11 +116,13 @@ register.policy({
                 error("impossible fixed monster maximum HP " .. health.max)
             end
 
-            if actor.speed ~= definition.speed then
+            if not slow.validate(ctx, entity, definition, actor) then
                 error("fixed monster " .. actor.kind_id .. " has wrong speed " .. actor.speed)
             end
 
             validate_ai(ctx, entity, ai, position, definition, input.current_aut)
+            net.validate(ctx, entity, position)
+            poison.validate(ctx, entity)
         end
 
         return {}
