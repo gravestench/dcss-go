@@ -16,6 +16,7 @@ type Stores struct {
 	Combat       *akara.Store[Combatant]
 	Players      *akara.Store[PlayerControlled]
 	Attributes   *akara.Store[Attributes]
+	Equipment    *akara.Store[EquipmentDelay]
 
 	AI        *akara.Store[MonsterAI]
 	Followers *akara.Store[BandFollower]
@@ -42,6 +43,7 @@ func Register(world *akara.World) Stores {
 		Combat:       akara.Register[Combatant](world),
 		Players:      akara.Register[PlayerControlled](world),
 		Attributes:   akara.Register[Attributes](world),
+		Equipment:    akara.Register[EquipmentDelay](world),
 
 		AI:        akara.Register[MonsterAI](world),
 		Followers: akara.Register[BandFollower](world),

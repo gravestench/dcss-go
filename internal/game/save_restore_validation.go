@@ -173,7 +173,8 @@ func (v *savedEntityValidator) validateCharacterRole(record save.EntityRecord) e
 		v.player = validated
 	} else if record.Attributes != nil || record.Skills != nil ||
 		record.Magic != nil || record.Progression != nil ||
-		record.Durations != nil || record.Regeneration != nil {
+		record.Durations != nil || record.Regeneration != nil ||
+		record.Equipment != nil {
 		return fmt.Errorf("non-player entity %d has character components", record.ID)
 	}
 
@@ -291,6 +292,10 @@ func (v *savedEntityValidator) validateFinalState() error {
 		return err
 	}
 
+	if err := v.validateEquipmentDelay(); err != nil {
+		return err
+	}
+
 	if v.player.weaponID != "WPN_UNARMED" {
 		if err := validateSavedStartingWeapon(v.snapshot.Entities, v.player.weaponID); err != nil {
 			return err
@@ -308,6 +313,122 @@ func (v *savedEntityValidator) validateFinalState() error {
 			v.earliestID != v.snapshot.PlayerID {
 			return fmt.Errorf("save clock does not match the next player turn")
 		}
+	}
+
+	return nil
+}
+
+func (v *savedEntityValidator) validateEquipmentDelay() error {
+	player := v.recordsByID[v.snapshot.PlayerID]
+	delay := player.Equipment
+
+	if delay == nil {
+		return nil
+	}
+
+	if delay.Remaining < 1 || delay.Remaining > armourEquipTurns ||
+		(delay.Slot != "body" && delay.Slot != "shield") ||
+		(delay.Phase != "wear" && delay.Phase != "remove") {
+		return fmt.Errorf("invalid saved equipment delay")
+	}
+
+	if delay.Phase == "remove" && delay.Remaining == armourEquipTurns ||
+		delay.Phase == "wear" && delay.OldItemID == 0 &&
+			delay.Remaining == armourEquipTurns {
+		return fmt.Errorf("saved equipment delay has impossible turn count")
+	}
+
+	if delay.Phase == "remove" && delay.OldItemID == 0 ||
+		delay.Phase == "wear" && delay.ItemID == 0 {
+		return fmt.Errorf("saved equipment delay lacks its item")
+	}
+
+	if delay.ItemID != 0 && delay.ItemID == delay.OldItemID {
+		return fmt.Errorf("saved equipment delay repeats one item")
+	}
+
+	for _, id := range []akara.Entity{delay.ItemID, delay.OldItemID} {
+		if id == 0 {
+			continue
+		}
+
+		item, found := v.recordsByID[uint64(id)]
+
+		if !found || item.Item == nil || item.CarriedBy == nil ||
+			item.CarriedBy.Holder != v.game.player {
+			return fmt.Errorf("saved equipment delay references missing item %d", id)
+		}
+
+		kind, err := v.game.catalog.Item(item.Item.KindID)
+
+		if err != nil || kind.Slot != delay.Slot {
+			return fmt.Errorf("saved equipment delay has invalid item %d", id)
+		}
+	}
+
+	old := v.recordsByID[uint64(delay.OldItemID)]
+	new := v.recordsByID[uint64(delay.ItemID)]
+
+	if delay.Phase == "remove" &&
+		(old.Equipped == nil || old.Equipped.Slot != delay.Slot) {
+		return fmt.Errorf("saved removal has no equipped item")
+	}
+
+	if delay.Phase == "wear" && new.Equipped != nil {
+		return fmt.Errorf("saved wear item is already equipped")
+	}
+
+	if delay.Phase == "wear" && v.equippedSlots[delay.Slot] != "" {
+		return fmt.Errorf("saved wear slot is still occupied")
+	}
+
+	if delay.Phase == "wear" {
+		if err := v.validateSavedWearFit(player, new); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (v *savedEntityValidator) validateSavedWearFit(
+	player save.EntityRecord,
+	item save.EntityRecord,
+) error {
+	kind, err := v.game.catalog.Item(item.Item.KindID)
+
+	if err != nil || kind.Armour == nil {
+		return fmt.Errorf("saved wear item is not armour")
+	}
+
+	species, err := v.game.catalog.Species(player.Player.SpeciesID)
+
+	if err != nil {
+		return err
+	}
+
+	if err := validateArmourSize(kind, species.Size); err != nil {
+		return fmt.Errorf("saved wear item does not fit: %w", err)
+	}
+
+	if kind.Slot != "shield" || v.equippedSlots["weapon"] == "" {
+		return nil
+	}
+
+	weapon, err := v.game.catalog.Item(v.equippedSlots["weapon"])
+
+	if err != nil {
+		return err
+	}
+
+	conflicts, err := weaponNeedsSecondHand(weapon, species.Size)
+
+	if err != nil {
+		return err
+	}
+
+	if conflicts {
+		return fmt.Errorf("saved shield wear conflicts with equipped weapon")
 	}
 
 	return nil

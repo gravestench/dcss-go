@@ -23,6 +23,10 @@ const (
 	CommandWield
 	CommandOpenDoor
 	CommandCloseDoor
+	CommandWear
+	CommandTakeOff
+	CommandContinueEquipment
+	CommandCancelEquipment
 )
 
 type Command struct {
@@ -69,6 +73,27 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			Kind: "death",
 			Text: "You die.",
 		}), nil
+	}
+
+	if delay, active := g.stores.Equipment.Get(g.player); active {
+		if command.Kind == CommandCancelEquipment {
+			message := "You stop putting on your armour."
+
+			if delay.Phase == "remove" {
+				message = "You stop removing your armour."
+			}
+
+			g.stores.Equipment.Remove(g.player)
+
+			return g.noTime(message), nil
+		}
+
+		if command.Kind != CommandInspect && command.Kind != CommandContinueEquipment {
+			return g.noTime("You are changing your equipment. Press Esc to stop."), nil
+		}
+	} else if command.Kind == CommandContinueEquipment ||
+		command.Kind == CommandCancelEquipment {
+		return g.noTime("You are not changing your equipment."), nil
 	}
 
 	if progress, found := g.stores.Progression.Get(g.player); found &&
@@ -130,7 +155,13 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		}, nil
 	}
 
-	return g.finishTurn(startAut, cost, events)
+	result, err := g.finishTurn(startAut, cost, events)
+
+	if err != nil || result.View.PlayerDead {
+		return result, err
+	}
+
+	return g.finishEquipmentCommand(command, prepared, result)
 }
 
 // preparedCommand separates validation and no-time responses from action
@@ -140,6 +171,7 @@ type preparedCommand struct {
 	cost       Aut
 	response   StepResult
 	spendsTime bool
+	equipment  *ecs.EquipmentDelay
 }
 
 func spendingCommand(intent ecs.Intent, cost Aut) preparedCommand {
@@ -187,6 +219,12 @@ func (g *Game) preparePlayerCommand(
 
 	case CommandWield:
 		return g.prepareWieldCommand(command.ItemID)
+
+	case CommandWear, CommandTakeOff:
+		return g.prepareEquipmentCommand(command)
+
+	case CommandContinueEquipment:
+		return spendingCommand(ecs.Intent{Kind: ecs.IntentWait}, ordinaryCost), nil
 
 	case CommandOpenDoor, CommandCloseDoor:
 		return g.prepareDoorCommand(command, position, level)

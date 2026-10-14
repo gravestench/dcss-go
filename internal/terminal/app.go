@@ -3,6 +3,7 @@ package terminal
 import (
 	"fmt"
 	"os"
+	"time"
 
 	tea "charm.land/bubbletea/v2"
 	"dcrawl-go/internal/character"
@@ -37,7 +38,13 @@ const (
 	ScreenStatChoice
 	ScreenDrop
 	ScreenWield
+	ScreenWear
+	ScreenTakeOff
 )
+
+type equipmentTick struct {
+	id uint64
+}
 
 // AppModel owns terminal navigation; the Game owns every turn-changing state.
 type AppModel struct {
@@ -60,10 +67,11 @@ type AppModel struct {
 	options   []character.WeaponOption
 	focus     int
 
-	notice       string
-	confirm      confirmation
-	dropQuantity string
-	pendingDoor  game.CommandKind
+	notice          string
+	confirm         confirmation
+	dropQuantity    string
+	pendingDoor     game.CommandKind
+	equipmentTickID uint64
 }
 
 func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppModel, error) {
@@ -87,6 +95,10 @@ func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppMod
 }
 
 func (m *AppModel) Init() tea.Cmd {
+	if m.game != nil && m.game.View().EquipmentDelay != nil {
+		return m.nextEquipmentTick()
+	}
+
 	return nil
 }
 
@@ -98,6 +110,16 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyPressMsg:
 		return m, m.handleKey(msg.String())
+
+	case equipmentTick:
+		if msg.id != m.equipmentTickID || m.screen != ScreenPlay ||
+			m.game == nil || m.game.View().EquipmentDelay == nil {
+			return m, nil
+		}
+
+		return m, m.stepPlayCommand(game.Command{
+			Kind: game.CommandContinueEquipment,
+		})
 	}
 
 	return m, nil
@@ -138,6 +160,9 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 
 	case ScreenWield:
 		return m.handleWieldKey(key)
+
+	case ScreenWear, ScreenTakeOff:
+		return m.handleArmourKey(key)
 
 	case ScreenConfirm:
 		return m.handleConfirmKey(key)
@@ -236,6 +261,13 @@ func (m *AppModel) renderCanvas() *Canvas {
 
 		m.drawModalNotice(canvas)
 
+	case ScreenWear, ScreenTakeOff:
+		if m.game != nil {
+			DrawArmour(canvas, m.game.View(), m.screen == ScreenTakeOff)
+		}
+
+		m.drawModalNotice(canvas)
+
 	case ScreenHelp:
 		DrawHelp(canvas)
 		m.drawModalNotice(canvas)
@@ -250,6 +282,15 @@ func (m *AppModel) renderCanvas() *Canvas {
 	}
 
 	return canvas
+}
+
+func (m *AppModel) nextEquipmentTick() tea.Cmd {
+	m.equipmentTickID++
+	id := m.equipmentTickID
+
+	return tea.Tick(80*time.Millisecond, func(time.Time) tea.Msg {
+		return equipmentTick{id: id}
+	})
 }
 
 func (m *AppModel) View() tea.View {

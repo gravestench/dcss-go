@@ -91,6 +91,12 @@ func (g *Game) restoreActorComponents(
 		if _, err := g.stores.Regeneration.Set(entity, regeneration); err != nil {
 			return err
 		}
+
+		if record.Equipment != nil {
+			if _, err := g.stores.Equipment.Set(entity, *record.Equipment); err != nil {
+				return err
+			}
+		}
 	}
 
 	if record.Combatant != nil {

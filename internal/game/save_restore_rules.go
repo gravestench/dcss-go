@@ -214,10 +214,6 @@ func (g *Game) validateSavedExperience(
 }
 
 func (g *Game) validateSavedEquipment(slots map[string]string) error {
-	if slots["body"] != "ARM_SCALE_MAIL" || slots["shield"] != "ARM_BUCKLER" {
-		return fmt.Errorf("save is missing required Human/Fighter armour slots")
-	}
-
 	if slots["weapon"] == "" {
 		return nil
 	}
@@ -244,7 +240,7 @@ func (g *Game) validateSavedEquipment(slots map[string]string) error {
 		return err
 	}
 
-	if incompatible {
+	if incompatible && slots["shield"] != "" {
 		return fmt.Errorf("equipped weapon %s conflicts with shield", kind.ID)
 	}
 

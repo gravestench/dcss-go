@@ -109,6 +109,16 @@ type Equipped struct {
 	Slot string
 }
 
+// EquipmentDelay keeps an interrupted wear or removal action on the player.
+// Remaining counts future ten-aut turns in the current phase.
+type EquipmentDelay struct {
+	ItemID    akara.Entity
+	OldItemID akara.Entity
+	Slot      string
+	Phase     string
+	Remaining int
+}
+
 type IntentKind uint8
 
 const (

@@ -32,6 +32,10 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 		if m.focus == len(m.presentation.StartupModes) && m.savedRunExists() {
 			m.loadSavedRun()
 
+			if m.game != nil && m.game.View().EquipmentDelay != nil {
+				return m.nextEquipmentTick()
+			}
+
 			return nil
 		}
 

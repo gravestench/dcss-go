@@ -129,6 +129,40 @@ func DrawWield(canvas *Canvas, view game.View) {
 	canvas.Write(0, canvas.height-2, "- - Bare hands    Esc - Cancel    ? - Help", Brown, Black)
 }
 
+// DrawArmour keeps source inventory letters stable in both equipment menus.
+func DrawArmour(canvas *Canvas, view game.View, remove bool) {
+	title := "Wear which item?"
+
+	if remove {
+		title = "Take off which item?"
+	}
+
+	canvas.Write(0, 0, title, White, Black)
+	y := 2
+
+	for index, item := range view.Inventory {
+		if item.Class != "OBJ_ARMOUR" {
+			continue
+		}
+
+		if remove && item.Slot == "" || !remove && item.Slot != "" {
+			continue
+		}
+
+		label := item.Name
+
+		if item.Slot != "" {
+			label += " (worn)"
+		}
+
+		entry := fmt.Sprintf("%c - %s", menuLetter(index), label)
+		writeClipped(canvas, 1, y, canvas.width-1, entry, LightGrey)
+		y++
+	}
+
+	canvas.Write(0, canvas.height-2, "Esc - Cancel    ? - Help", Brown, Black)
+}
+
 // DrawQuaff uses inventory letters so a choice always selects the displayed item.
 func DrawQuaff(canvas *Canvas, view game.View) {
 	canvas.Write(0, 0, "Quaff which potion?", White, Black)
@@ -237,6 +271,7 @@ func DrawHelp(canvas *Canvas) {
 		"",
 		"Movement: h j k l, y u b n, arrow keys",
 		"Wait: . or s     Pick up: g ,     Drop: d     Wield: w",
+		"Wear: W     Take off: T     Esc interrupts equipment delay",
 		"Doors: O open, C close (direction if prompted)",
 		"Stairs: < or >",
 		"Inventory: i     Skills: m     Help: ?",

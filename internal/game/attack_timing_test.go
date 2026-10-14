@@ -144,7 +144,7 @@ func TestShortUnarmedBumpSchedulesOnlyOneRatAction(t *testing.T) {
 	}
 }
 
-func TestBumpRejectsMissingShieldBeforeTimingDraw(t *testing.T) {
+func TestBumpWithoutShieldUsesUnshieldedTiming(t *testing.T) {
 	g := newStepGame(t)
 
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
@@ -159,17 +159,17 @@ func TestBumpRejectsMissingShieldBeforeTimingDraw(t *testing.T) {
 		}
 	}
 
-	before := g.Snapshot()
-
-	if _, err := g.Step(Command{
+	result, err := g.Step(Command{
 		Kind: CommandMove,
 		DX:   1,
-	}); err == nil {
-		t.Fatal("bump accepted missing shield")
+	})
+
+	if err != nil || result.Spent <= 0 {
+		t.Fatalf("unshielded bump = %+v, %v", result, err)
 	}
 
-	if !reflect.DeepEqual(before, g.Snapshot()) {
-		t.Fatal("failed bump changed state or melee RNG")
+	if result.View.PlayerSH != 0 {
+		t.Fatalf("unshielded player has SH %d", result.View.PlayerSH)
 	}
 }
 
@@ -204,24 +204,26 @@ func TestAttackDelaySaveContinuation(t *testing.T) {
 	}
 }
 
-func TestRestoreRejectsMissingTimingEquipment(t *testing.T) {
+func TestRestoreAllowsRemovedShield(t *testing.T) {
 	g := newStepGame(t)
-	before := g.Snapshot()
-	bad := g.Snapshot()
+	saved := g.Snapshot()
 
-	for i := range bad.Entities {
-		if bad.Entities[i].Equipped != nil && bad.Entities[i].Equipped.Slot == "shield" {
-			bad.Entities[i].Equipped = nil
-			bad.Entities[i].CarriedBy = &ecs.CarriedBy{Holder: g.player}
+	for i := range saved.Entities {
+		if saved.Entities[i].Equipped != nil && saved.Entities[i].Equipped.Slot == "shield" {
+			saved.Entities[i].Equipped = nil
+			saved.Entities[i].CarriedBy = &ecs.CarriedBy{Holder: g.player}
 		}
 	}
 
-	if restored, err := g.Restore(bad); err == nil {
-		restored.Close()
-		t.Fatal("missing timing equipment restored")
+	restored, err := g.Restore(saved)
+
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(before, g.Snapshot()) {
-		t.Fatal("failed restore changed live game")
+	defer restored.Close()
+
+	if restored.View().PlayerSH != 0 {
+		t.Fatal("restored shieldless player has SH")
 	}
 }

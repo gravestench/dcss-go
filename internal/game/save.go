@@ -133,7 +133,8 @@ func savedItemHasActorComponents(record save.EntityRecord) bool {
 		record.Player != nil ||
 		record.AI != nil ||
 		record.BandFollower != nil ||
-		record.Attributes != nil
+		record.Attributes != nil ||
+		record.Equipment != nil
 }
 
 func (g *Game) Snapshot() save.Snapshot {
@@ -194,6 +195,7 @@ func (g *Game) Snapshot() save.Snapshot {
 			Combatant:    copyComponent(g.stores.Combat, entity),
 			Player:       copyComponent(g.stores.Players, entity),
 			Attributes:   copyComponent(g.stores.Attributes, entity),
+			Equipment:    copyComponent(g.stores.Equipment, entity),
 			AI:           copyComponent(g.stores.AI, entity),
 			BandFollower: copyComponent(g.stores.Followers, entity),
 			Item:         copyComponent(g.stores.Items, entity),

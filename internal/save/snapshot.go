@@ -2,7 +2,7 @@ package save
 
 import "dcrawl-go/internal/ecs"
 
-const Version = 8
+const Version = 9
 
 type Snapshot struct {
 	Version        int    `json:"version"`
@@ -52,6 +52,7 @@ type EntityRecord struct {
 	Combatant    *ecs.Combatant        `json:"combatant,omitempty"`
 	Player       *ecs.PlayerControlled `json:"player,omitempty"`
 	Attributes   *ecs.Attributes       `json:"attributes,omitempty"`
+	Equipment    *ecs.EquipmentDelay   `json:"equipment_delay,omitempty"`
 
 	AI           *ecs.MonsterAI    `json:"ai,omitempty"`
 	BandFollower *ecs.BandFollower `json:"band_follower,omitempty"`

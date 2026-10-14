@@ -16,6 +16,34 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 		return nil
 	}
 
+	if m.game.View().EquipmentDelay != nil {
+		switch key {
+		case "esc":
+			m.equipmentTickID++
+
+			return m.stepPlayCommand(game.Command{
+				Kind: game.CommandCancelEquipment,
+			})
+
+		case "S":
+			m.equipmentTickID++
+			m.confirm = confirmSave
+			m.screen = ScreenConfirm
+			m.notice = ""
+
+			return nil
+
+		case "ctrl+s":
+			m.equipmentTickID++
+
+			return m.saveAndExit()
+		}
+
+		m.notice = "You are changing your equipment. Esc interrupts."
+
+		return nil
+	}
+
 	if m.pendingDoor != 0 {
 		return m.handleDoorDirectionKey(key)
 	}
@@ -75,6 +103,18 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 
 	case "w":
 		m.screen = ScreenWield
+		m.notice = ""
+
+		return nil
+
+	case "W":
+		m.screen = ScreenWear
+		m.notice = ""
+
+		return nil
+
+	case "T":
+		m.screen = ScreenTakeOff
 		m.notice = ""
 
 		return nil
@@ -178,6 +218,55 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 
 	m.notice = ""
 	m.afterStep(result)
+
+	if result.View.EquipmentDelay != nil && m.screen == ScreenPlay {
+		return m.nextEquipmentTick()
+	}
+
+	return nil
+}
+
+func (m *AppModel) handleArmourKey(key string) tea.Cmd {
+	if key == "esc" {
+		m.screen = ScreenPlay
+		m.notice = ""
+
+		return nil
+	}
+
+	if key == "?" {
+		m.previous = m.screen
+		m.screen = ScreenHelp
+		m.notice = ""
+
+		return nil
+	}
+
+	kind := game.CommandWear
+	remove := m.screen == ScreenTakeOff
+
+	if remove {
+		kind = game.CommandTakeOff
+	}
+
+	for index, item := range m.game.View().Inventory {
+		if key != string(menuLetter(index)) || item.Class != "OBJ_ARMOUR" {
+			continue
+		}
+
+		if remove && item.Slot == "" || !remove && item.Slot != "" {
+			break
+		}
+
+		m.screen = ScreenPlay
+
+		return m.stepPlayCommand(game.Command{
+			Kind:   kind,
+			ItemID: item.ID,
+		})
+	}
+
+	m.notice = "Choose armour by its inventory letter, or Esc to cancel."
 
 	return nil
 }
@@ -432,6 +521,10 @@ func (m *AppModel) handleConfirmKey(key string) tea.Cmd {
 		m.screen = ScreenPlay
 		m.notice = ""
 
+		if m.game != nil && m.game.View().EquipmentDelay != nil {
+			return m.nextEquipmentTick()
+		}
+
 		return nil
 	}
 
@@ -459,6 +552,10 @@ func (m *AppModel) saveAndExit() tea.Cmd {
 	if err := save.Write(m.savePath, m.game.Snapshot()); err != nil {
 		m.screen = ScreenPlay
 		m.notice = fmt.Sprintf("Save failed: %v", err)
+
+		if m.game.View().EquipmentDelay != nil {
+			return m.nextEquipmentTick()
+		}
 
 		return nil
 	}

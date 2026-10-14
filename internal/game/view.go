@@ -69,9 +69,10 @@ type View struct {
 	PendingStatLevel int
 	MightAut         int
 
-	Inventory  []ItemView
-	CurrentAut Aut
-	Messages   []string
+	Inventory      []ItemView
+	EquipmentDelay *ecs.EquipmentDelay
+	CurrentAut     Aut
+	Messages       []string
 }
 
 func (g *Game) View() View {
@@ -147,6 +148,11 @@ func (g *Game) fillPlayerView(view *View) {
 
 	if durations, ok := g.stores.Durations.Get(g.player); ok {
 		view.MightAut = durations.MightAut
+	}
+
+	if delay, ok := g.stores.Equipment.Get(g.player); ok {
+		copy := *delay
+		view.EquipmentDelay = &copy
 	}
 
 	if player, ok := g.stores.Players.Get(g.player); ok {

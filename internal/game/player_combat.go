@@ -263,10 +263,6 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 		}
 	}
 
-	if !shieldFound {
-		return combat.AttackDelayInput{}, fmt.Errorf("player attack timing lacks equipped shield")
-	}
-
 	if err := in.Validate(); err != nil {
 		return combat.AttackDelayInput{}, err
 	}
@@ -309,8 +305,6 @@ func (c playerCombat) defense() (combat.Defense, error) {
 		}
 	}
 
-	body, shield := false, false
-
 	for _, entity := range c.equipped.Entities() {
 		carrier, carried := c.carried.Get(entity)
 
@@ -344,17 +338,11 @@ func (c playerCombat) defense() (combat.Defense, error) {
 			input.BodyAC = kind.Armour.AC
 			input.BodyEV = kind.Armour.EV
 			input.BodyPlus = item.Plus
-			body = true
 		} else {
 			input.ShieldAC = kind.Armour.AC
 			input.ShieldEV = kind.Armour.EV
 			input.ShieldPlus = item.Plus
-			shield = true
 		}
-	}
-
-	if !body || !shield {
-		return combat.Defense{}, fmt.Errorf("Human Fighter lacks body armour or shield")
 	}
 
 	return combat.ProjectFighter(input)
