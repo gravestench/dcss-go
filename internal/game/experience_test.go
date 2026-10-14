@@ -50,6 +50,13 @@ func TestPreDeadRatCleanupDoesNotAwardExperience(t *testing.T) {
 
 func TestExperienceSaveRoundTripAndOlderFieldDefault(t *testing.T) {
 	g := newStepGame(t)
+	rat := ratID(t, g)
+	if err := g.levels[1].RemoveActor(rat); err != nil {
+		t.Fatal(err)
+	}
+	if !g.world.DestroyEntity(rat) {
+		t.Fatal("could not build killed-rat save fixture")
+	}
 	progress, _ := g.stores.Progression.Get(g.player)
 	progress.TotalXP = 1
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))
@@ -74,6 +81,24 @@ func TestExperienceSaveRoundTripAndOlderFieldDefault(t *testing.T) {
 	oldProgress, found := loaded.stores.Progression.Get(loaded.player)
 	if !found || oldProgress.TotalXP != 0 {
 		t.Fatalf("old version-%d save progressed %+v", save.Version, oldProgress)
+	}
+}
+
+func TestRestoreRejectsClaimedRatXPWhileRatAlive(t *testing.T) {
+	g := newStepGame(t)
+	before := g.Snapshot()
+	bad := g.Snapshot()
+	for i := range bad.Entities {
+		if bad.Entities[i].ID == bad.PlayerID {
+			bad.Entities[i].Progression.TotalXP = 1
+		}
+	}
+	if loaded, err := Restore(bad, testCatalog(t)); err == nil {
+		loaded.Close()
+		t.Fatal("restored XP already awarded for a living rat")
+	}
+	if !reflect.DeepEqual(before, g.Snapshot()) {
+		t.Fatal("failed restore changed the live game")
 	}
 }
 

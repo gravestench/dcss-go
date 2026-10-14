@@ -15,7 +15,7 @@
 
 ## Task 2 — ECS attribution and persistence
 
-- Write RED game tests for one XP on a player kill, zero on pre-dead cleanup, no duplicate credit, save/load, old-version-6 omission defaulting zero, and malformed XP rejection.
+- Write RED game tests for one XP on a player kill, zero on pre-dead cleanup, no duplicate credit, save/load, old-version-6 omission defaulting zero, malformed XP rejection, and rejection of claimed XP while the rat remains alive.
 - Add `Progression` to Akara stores/snapshot/restore. Record player-caused lethal damage during combat, award in death handling, and expose total XP/XL in `View`. Keep the single-rat 0–1 XP invariant.
 - Run focused game/save tests and commit.
 

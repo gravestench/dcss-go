@@ -135,6 +135,8 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 	seen := make(map[uint64]bool)
 	playerCount := 0
+	savedXP := 0
+	ratPresent := false
 	selectedWeaponID := ""
 	equippedSlots := map[string]string{}
 	var playerNext int64
@@ -192,6 +194,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Progression != nil && (record.Progression.TotalXP < 0 || record.Progression.TotalXP > 1) {
 				return nil, fmt.Errorf("invalid fixed Dungeon experience for entity %d", record.ID)
 			}
+			if record.Progression != nil {
+				savedXP = record.Progression.TotalXP
+			}
 			playerNext = record.Actor.NextAut
 			playerAlive = record.Health.Current > 0
 		} else if record.Attributes != nil || record.Skills != nil || record.Magic != nil || record.Progression != nil {
@@ -207,6 +212,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Actor.KindID != "MONS_RAT" {
 				return nil, fmt.Errorf("unsupported melee attacker %s in fixed Dungeon scenario", record.Actor.KindID)
 			}
+			ratPresent = true
 		}
 		if record.Actor != nil && (record.Actor.Speed <= 0 || record.Actor.NextAut < 0 || record.Health == nil || record.Combatant == nil || record.Position == nil) {
 			return nil, fmt.Errorf("invalid actor %d", record.ID)
@@ -234,6 +240,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 	if playerCount != 1 {
 		return nil, fmt.Errorf("save requires exactly one player, found %d", playerCount)
+	}
+	if savedXP == 1 && ratPresent {
+		return nil, fmt.Errorf("saved experience already credits the living rat")
 	}
 	if equippedSlots["body"] != "ARM_SCALE_MAIL" || equippedSlots["shield"] != "ARM_BUCKLER" {
 		return nil, fmt.Errorf("save is missing required Human/Fighter armour slots")
