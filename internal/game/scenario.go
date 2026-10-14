@@ -71,83 +71,11 @@ func newScenario(
 		scenarioID: scenarioID,
 	}
 
-	g.player, err = world.CreateEntity()
-
-	if err != nil {
+	if err = g.createPlayerActor(playerDef, weaponID, name, setup); err != nil {
 		return nil, err
 	}
 
-	if _, err = stores.Actors.Set(g.player, ecs.Actor{
-		KindID: "player",
-		Speed:  playerDef.Speed,
-	}); err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Combat.Set(g.player, ecs.Combatant{}); err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Players.Set(g.player, ecs.PlayerControlled{
-		Name:             name,
-		SpeciesID:        playerDef.SpeciesID,
-		JobID:            playerDef.JobID,
-		StartingWeaponID: weaponID,
-	}); err != nil {
-		return nil, err
-	}
-
-	if err = setup.levels[1].PlaceActor(g.player, setup.entry.x, setup.entry.y); err != nil {
-		return nil, err
-	}
-
-	if err = g.createStartingGear(playerDef.JobID, weaponID); err != nil {
-		return nil, err
-	}
-
-	profile, err := character.BuildStartProfile(catalog, playerDef.SpeciesID, playerDef.JobID, weaponID)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Attributes.Set(g.player, ecs.Attributes{
-		Strength:     profile.Attributes.Strength,
-		Intelligence: profile.Attributes.Intelligence,
-		Dexterity:    profile.Attributes.Dexterity,
-	}); err != nil {
-		return nil, err
-	}
-
-	startSkills := ecs.Skills{Entries: append([]character.Skill(nil), profile.Skills...)}
-
-	if _, err = stores.Skills.Set(g.player, startSkills); err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Progression.Set(g.player, ecs.Progression{Level: 1}); err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Durations.Set(g.player, ecs.Durations{}); err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Regeneration.Set(g.player, ecs.Regeneration{}); err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Health.Set(g.player, ecs.Health{
-		Current: profile.MaxHP,
-		Max:     profile.MaxHP,
-	}); err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Magic.Set(g.player, ecs.Magic{
-		Current: profile.MaxMP,
-		Max:     profile.MaxMP,
-	}); err != nil {
+	if err = g.initializeCharacter(playerDef, weaponID); err != nil {
 		return nil, err
 	}
 
@@ -161,53 +89,7 @@ func newScenario(
 		return nil, err
 	}
 
-	if _, err = catalog.Item("POT_CURING"); err != nil {
-		return nil, err
-	}
-
-	potion, err := world.CreateEntity()
-
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Items.Set(potion, ecs.Item{
-		KindID:   "POT_CURING",
-		Quantity: 1,
-	}); err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Positions.Set(potion, ecs.Position{
-		LevelID: 1,
-		X:       setup.curing.x,
-		Y:       setup.curing.y,
-	}); err != nil {
-		return nil, err
-	}
-
-	if _, err = catalog.Item("POT_HEAL_WOUNDS"); err != nil {
-		return nil, err
-	}
-
-	healPotion, err := world.CreateEntity()
-
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Items.Set(healPotion, ecs.Item{
-		KindID:   "POT_HEAL_WOUNDS",
-		Quantity: 1,
-	}); err != nil {
-		return nil, err
-	}
-
-	if _, err = stores.Positions.Set(healPotion, ecs.Position{
-		LevelID: 2,
-		X:       setup.heal.x,
-		Y:       setup.heal.y,
-	}); err != nil {
+	if err = g.createStartingFloorItems(setup); err != nil {
 		return nil, err
 	}
 
@@ -220,6 +102,158 @@ func newScenario(
 	}
 
 	return g, nil
+}
+
+// createPlayerActor establishes identity, position, and starting equipment.
+// These must exist before character rules project the starting profile.
+func (g *Game) createPlayerActor(
+	definition content.PlayerDef,
+	weaponID, name string,
+	setup scenarioLevels,
+) error {
+	player, err := g.world.CreateEntity()
+
+	if err != nil {
+		return err
+	}
+
+	g.player = player
+
+	_, err = g.stores.Actors.Set(player, ecs.Actor{
+		KindID: "player",
+		Speed:  definition.Speed,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	_, err = g.stores.Combat.Set(player, ecs.Combatant{})
+
+	if err != nil {
+		return err
+	}
+
+	_, err = g.stores.Players.Set(player, ecs.PlayerControlled{
+		Name:             name,
+		SpeciesID:        definition.SpeciesID,
+		JobID:            definition.JobID,
+		StartingWeaponID: weaponID,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if err := setup.levels[1].PlaceActor(player, setup.entry.x, setup.entry.y); err != nil {
+		return err
+	}
+
+	return g.createStartingGear(definition.JobID, weaponID)
+}
+
+// initializeCharacter stores the source-derived Fighter state on the player.
+func (g *Game) initializeCharacter(definition content.PlayerDef, weaponID string) error {
+	profile, err := character.BuildStartProfile(
+		g.catalog,
+		definition.SpeciesID,
+		definition.JobID,
+		weaponID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = g.stores.Attributes.Set(g.player, ecs.Attributes{
+		Strength:     profile.Attributes.Strength,
+		Intelligence: profile.Attributes.Intelligence,
+		Dexterity:    profile.Attributes.Dexterity,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	skills := append([]character.Skill(nil), profile.Skills...)
+	_, err = g.stores.Skills.Set(g.player, ecs.Skills{
+		Entries: skills,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	_, err = g.stores.Progression.Set(g.player, ecs.Progression{Level: 1})
+
+	if err != nil {
+		return err
+	}
+
+	_, err = g.stores.Durations.Set(g.player, ecs.Durations{})
+
+	if err != nil {
+		return err
+	}
+
+	_, err = g.stores.Regeneration.Set(g.player, ecs.Regeneration{})
+
+	if err != nil {
+		return err
+	}
+
+	_, err = g.stores.Health.Set(g.player, ecs.Health{
+		Current: profile.MaxHP,
+		Max:     profile.MaxHP,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	_, err = g.stores.Magic.Set(g.player, ecs.Magic{
+		Current: profile.MaxMP,
+		Max:     profile.MaxMP,
+	})
+
+	return err
+}
+
+func (g *Game) createStartingFloorItems(setup scenarioLevels) error {
+	if err := g.spawnScenarioPotion("POT_CURING", 1, setup.curing); err != nil {
+		return err
+	}
+
+	return g.spawnScenarioPotion("POT_HEAL_WOUNDS", 2, setup.heal)
+}
+
+func (g *Game) spawnScenarioPotion(kindID string, levelID int, cell point) error {
+	if _, err := g.catalog.Item(kindID); err != nil {
+		return err
+	}
+
+	entity, err := g.world.CreateEntity()
+
+	if err != nil {
+		return err
+	}
+
+	_, err = g.stores.Items.Set(entity, ecs.Item{
+		KindID:   kindID,
+		Quantity: 1,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	_, err = g.stores.Positions.Set(entity, ecs.Position{
+		LevelID: levelID,
+		X:       cell.x,
+		Y:       cell.y,
+	})
+
+	return err
 }
 
 func registerSystems(g *Game) error {

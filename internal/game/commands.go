@@ -72,156 +72,18 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	}
 
 	level := g.levels[position.LevelID]
-	var intent ecs.Intent
-	const monsterCost Aut = 10
-	cost := monsterCost
+	prepared, err := g.preparePlayerCommand(command, *position, level)
 
-	switch command.Kind {
-	case CommandInspect:
-		return StepResult{View: g.View()}, nil
-
-	case CommandMove:
-		if command.DX < -1 || command.DX > 1 || command.DY < -1 || command.DY > 1 || (command.DX == 0 && command.DY == 0) {
-			return g.noTime("Invalid movement direction."), nil
-		}
-
-		x, y := position.X+command.DX, position.Y+command.DY
-
-		if !level.inBounds(x, y) {
-			return g.noTime("You cannot move there."), nil
-		}
-
-		if level.terrain[y][x] == '+' {
-			intent = ecs.Intent{
-				Kind: ecs.IntentOpenDoor,
-				DX:   command.DX,
-				DY:   command.DY,
-			}
-
-			break
-		}
-
-		if !level.Walkable(x, y) {
-			return g.noTime("You cannot move there."), nil
-		}
-
-		if target, occupied := level.ActorAt(x, y); occupied {
-			actor, found := g.stores.Actors.Get(target)
-
-			if !found || !isOrdinaryAnimal(actor.KindID) {
-				return StepResult{}, fmt.Errorf("unsupported player melee target %d", target)
-			}
-
-			input, err := newPlayerCombat(g).attackDelayInput(actor.KindID)
-
-			if err != nil {
-				return StepResult{}, err
-			}
-
-			delay, err := combat.PlayerAttackDelay(g.rng, input)
-
-			if err != nil {
-				return StepResult{}, err
-			}
-
-			cost = Aut(delay)
-		}
-
-		intent = ecs.Intent{
-			Kind: ecs.IntentMove,
-			DX:   command.DX,
-			DY:   command.DY,
-		}
-
-	case CommandUpstairs:
-		link, linked := level.StairAt(position.X, position.Y)
-
-		if level.terrain[position.Y][position.X] != '<' || !linked {
-			return g.noTime("There are no stairs up here."), nil
-		}
-
-		if link.Unavailable != "" {
-			return g.noTime(link.Unavailable), nil
-		}
-
-		intent = ecs.Intent{Kind: ecs.IntentUpstairs}
-
-	case CommandDownstairs:
-		link, linked := level.StairAt(position.X, position.Y)
-
-		if level.terrain[position.Y][position.X] != '>' || !linked {
-			return g.noTime("There are no stairs down here."), nil
-		}
-
-		if link.Unavailable != "" {
-			return g.noTime(link.Unavailable), nil
-		}
-
-		intent = ecs.Intent{Kind: ecs.IntentDownstairs}
-
-	case CommandWait:
-		intent = ecs.Intent{Kind: ecs.IntentWait}
-
-	case CommandPickup:
-		item, found := g.floorItemAt(*position)
-
-		if !found {
-			return g.noTime("There is nothing to pick up here."), nil
-		}
-
-		if g.stores.Corpses.Has(item) {
-			return g.noTime("You can't pick that up."), nil
-		}
-
-		intent = ecs.Intent{Kind: ecs.IntentPickup}
-
-	case CommandQuaff:
-		itemID := akara.Entity(command.ItemID)
-		item, found := g.stores.Items.Get(itemID)
-		carrier, carried := g.stores.CarriedBy.Get(itemID)
-
-		if !found || !carried || carrier.Holder != g.player {
-			return g.noTime("You are not carrying that potion."), nil
-		}
-
-		kind, err := g.catalog.Item(item.KindID)
-
-		if err != nil {
-			return StepResult{}, err
-		}
-
-		if err := validateItemProperties(*item, kind); err != nil {
-			return StepResult{}, fmt.Errorf("cannot quaff item %d: %w", itemID, err)
-		}
-
-		if kind.Class != "OBJ_POTIONS" {
-			return g.noTime("You cannot drink that."), nil
-		}
-
-		if item.KindID != "POT_CURING" && item.KindID != "POT_MIGHT" && item.KindID != "POT_HEAL_WOUNDS" {
-			return g.noTime("That potion's effect is unavailable in the Go port."), nil
-		}
-
-		if item.KindID == "POT_HEAL_WOUNDS" {
-			health, found := g.stores.Health.Get(g.player)
-
-			if !found {
-				return StepResult{}, fmt.Errorf("player has no health for heal wounds")
-			}
-
-			if health.Current == health.Max {
-				return g.noTime("Your health is already full."), nil
-			}
-		}
-
-		intent = ecs.Intent{
-			Kind:   ecs.IntentQuaff,
-			ItemID: itemID,
-		}
-
-	default:
-		return g.noTime("Unknown command."), nil
+	if err != nil {
+		return StepResult{}, err
 	}
+
+	if !prepared.spendsTime {
+		return prepared.response, nil
+	}
+
+	intent := prepared.intent
+	cost := prepared.cost
 
 	if combat, found := g.stores.Combat.Get(g.player); found {
 		combat.ShieldBlocks = 0
@@ -258,6 +120,210 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	}
 
 	return g.finishTurn(startAut, cost, events)
+}
+
+// preparedCommand separates validation and no-time responses from action
+// execution. Only an accepted action reaches the scheduler and spends aut.
+type preparedCommand struct {
+	intent     ecs.Intent
+	cost       Aut
+	response   StepResult
+	spendsTime bool
+}
+
+func spendingCommand(intent ecs.Intent, cost Aut) preparedCommand {
+	return preparedCommand{
+		intent:     intent,
+		cost:       cost,
+		spendsTime: true,
+	}
+}
+
+func freeCommand(response StepResult) preparedCommand {
+	return preparedCommand{
+		response: response,
+	}
+}
+
+func (g *Game) preparePlayerCommand(
+	command Command,
+	position ecs.Position,
+	level *Level,
+) (preparedCommand, error) {
+	const ordinaryCost Aut = 10
+
+	switch command.Kind {
+	case CommandInspect:
+		return freeCommand(StepResult{View: g.View()}), nil
+
+	case CommandMove:
+		return g.prepareMoveCommand(command, position, level)
+
+	case CommandUpstairs, CommandDownstairs:
+		return g.prepareStairCommand(command.Kind, position, level), nil
+
+	case CommandWait:
+		return spendingCommand(ecs.Intent{Kind: ecs.IntentWait}, ordinaryCost), nil
+
+	case CommandPickup:
+		return g.preparePickupCommand(position), nil
+
+	case CommandQuaff:
+		return g.prepareQuaffCommand(command.ItemID)
+
+	default:
+		return freeCommand(g.noTime("Unknown command.")), nil
+	}
+}
+
+func (g *Game) prepareMoveCommand(
+	command Command,
+	position ecs.Position,
+	level *Level,
+) (preparedCommand, error) {
+	if command.DX < -1 || command.DX > 1 ||
+		command.DY < -1 || command.DY > 1 ||
+		(command.DX == 0 && command.DY == 0) {
+		return freeCommand(g.noTime("Invalid movement direction.")), nil
+	}
+
+	x := position.X + command.DX
+	y := position.Y + command.DY
+
+	if !level.inBounds(x, y) {
+		return freeCommand(g.noTime("You cannot move there.")), nil
+	}
+
+	if level.terrain[y][x] == '+' {
+		return spendingCommand(ecs.Intent{
+			Kind: ecs.IntentOpenDoor,
+			DX:   command.DX,
+			DY:   command.DY,
+		}, 10), nil
+	}
+
+	if !level.Walkable(x, y) {
+		return freeCommand(g.noTime("You cannot move there.")), nil
+	}
+
+	cost := Aut(10)
+
+	if target, occupied := level.ActorAt(x, y); occupied {
+		actor, found := g.stores.Actors.Get(target)
+
+		if !found || !isOrdinaryAnimal(actor.KindID) {
+			return preparedCommand{}, fmt.Errorf("unsupported player melee target %d", target)
+		}
+
+		input, err := newPlayerCombat(g).attackDelayInput(actor.KindID)
+
+		if err != nil {
+			return preparedCommand{}, err
+		}
+
+		delay, err := combat.PlayerAttackDelay(g.rng, input)
+
+		if err != nil {
+			return preparedCommand{}, err
+		}
+
+		cost = Aut(delay)
+	}
+
+	return spendingCommand(ecs.Intent{
+		Kind: ecs.IntentMove,
+		DX:   command.DX,
+		DY:   command.DY,
+	}, cost), nil
+}
+
+func (g *Game) prepareStairCommand(
+	kind CommandKind,
+	position ecs.Position,
+	level *Level,
+) preparedCommand {
+	wantedGlyph := byte('<')
+	missingMessage := "There are no stairs up here."
+	intentKind := ecs.IntentUpstairs
+
+	if kind == CommandDownstairs {
+		wantedGlyph = '>'
+		missingMessage = "There are no stairs down here."
+		intentKind = ecs.IntentDownstairs
+	}
+
+	link, linked := level.StairAt(position.X, position.Y)
+
+	if level.terrain[position.Y][position.X] != wantedGlyph || !linked {
+		return freeCommand(g.noTime(missingMessage))
+	}
+
+	if link.Unavailable != "" {
+		return freeCommand(g.noTime(link.Unavailable))
+	}
+
+	return spendingCommand(ecs.Intent{Kind: intentKind}, 10)
+}
+
+func (g *Game) preparePickupCommand(position ecs.Position) preparedCommand {
+	item, found := g.floorItemAt(position)
+
+	if !found {
+		return freeCommand(g.noTime("There is nothing to pick up here."))
+	}
+
+	if g.stores.Corpses.Has(item) {
+		return freeCommand(g.noTime("You can't pick that up."))
+	}
+
+	return spendingCommand(ecs.Intent{Kind: ecs.IntentPickup}, 10)
+}
+
+func (g *Game) prepareQuaffCommand(itemID uint64) (preparedCommand, error) {
+	entity := akara.Entity(itemID)
+	item, found := g.stores.Items.Get(entity)
+	carrier, carried := g.stores.CarriedBy.Get(entity)
+
+	if !found || !carried || carrier.Holder != g.player {
+		return freeCommand(g.noTime("You are not carrying that potion.")), nil
+	}
+
+	kind, err := g.catalog.Item(item.KindID)
+
+	if err != nil {
+		return preparedCommand{}, err
+	}
+
+	if err := validateItemProperties(*item, kind); err != nil {
+		return preparedCommand{}, fmt.Errorf("cannot quaff item %d: %w", entity, err)
+	}
+
+	if kind.Class != "OBJ_POTIONS" {
+		return freeCommand(g.noTime("You cannot drink that.")), nil
+	}
+
+	if item.KindID != "POT_CURING" &&
+		item.KindID != "POT_MIGHT" &&
+		item.KindID != "POT_HEAL_WOUNDS" {
+		return freeCommand(g.noTime("That potion's effect is unavailable in the Go port.")), nil
+	}
+
+	if item.KindID == "POT_HEAL_WOUNDS" {
+		health, found := g.stores.Health.Get(g.player)
+
+		if !found {
+			return preparedCommand{}, fmt.Errorf("player has no health for heal wounds")
+		}
+
+		if health.Current == health.Max {
+			return freeCommand(g.noTime("Your health is already full.")), nil
+		}
+	}
+
+	return spendingCommand(ecs.Intent{
+		Kind:   ecs.IntentQuaff,
+		ItemID: entity,
+	}, 10), nil
 }
 
 // finishTurn resumes the scheduled monster phase after a level-up prompt.
