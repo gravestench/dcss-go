@@ -15,6 +15,7 @@ type monsterDecisionSystem struct {
 	player    akara.Entity
 	positions *akara.Store[ecs.Position]
 	ai        *akara.Store[ecs.MonsterAI]
+	followers *akara.Store[ecs.BandFollower]
 	intents   *akara.Store[ecs.Intent]
 	levels    map[int]*Level
 	rng       *RNGStreams
@@ -27,6 +28,7 @@ func newMonsterDecisionSystem(g *Game) *monsterDecisionSystem {
 		player:    g.player,
 		positions: g.stores.Positions,
 		ai:        g.stores.AI,
+		followers: g.stores.Followers,
 		intents:   g.stores.Intents,
 		levels:    g.levels,
 		rng:       g.rng,
@@ -92,11 +94,34 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 		return ecs.Intent{}, err
 	}
 
-	if visible[player.Y*level.width+player.X] {
+	if err := s.updateMonsterTarget(ai, *position, *player, visible[player.Y*level.width+player.X]); err != nil {
+		return ecs.Intent{}, err
+	}
+
+	if ai.Behavior == "wander" {
+		if err := s.updateWanderTarget(actor, ai, level, *position, visible); err != nil {
+			return ecs.Intent{}, err
+		}
+
+		if ai.TargetX == 0 && ai.TargetY == 0 {
+			return ecs.Intent{Kind: ecs.IntentWait}, nil
+		}
+	}
+
+	return s.followMonsterTarget(actor, *ai, level, *position, *player, visible), nil
+}
+
+func (s *monsterDecisionSystem) updateMonsterTarget(
+	ai *ecs.MonsterAI,
+	position ecs.Position,
+	player ecs.Position,
+	playerVisible bool,
+) error {
+	if playerVisible {
 		memoryRoll, err := s.rng.Intn("ai", 301)
 
 		if err != nil {
-			return ecs.Intent{}, err
+			return err
 		}
 
 		ai.Behavior = "seek"
@@ -129,45 +154,75 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 		ai.MemoryUntilAut = 0
 	}
 
-	if ai.Behavior == "wander" {
-		retarget := ai.TargetX == 0 && ai.TargetY == 0
+	return nil
+}
 
-		if !retarget {
-			roll, err := s.rng.Intn("ai", 20)
+func (s *monsterDecisionSystem) updateWanderTarget(
+	actor akara.Entity,
+	ai *ecs.MonsterAI,
+	level *Level,
+	position ecs.Position,
+	visible []bool,
+) error {
+	retarget := ai.TargetX == 0 && ai.TargetY == 0
+	leaderPosition, inBand := s.bandLeaderPosition(actor, position.LevelID)
 
-			if err != nil {
-				return ecs.Intent{}, err
-			}
-
-			retarget = roll == 0
-		}
-
-		if retarget {
-			if err := s.chooseWanderTarget(ai, level, position.X, position.Y); err != nil {
-				return ecs.Intent{}, err
-			}
-		}
-
-		if ai.TargetX == 0 && ai.TargetY == 0 {
-			return ecs.Intent{Kind: ecs.IntentWait}, nil
-		}
+	if inBand && chebyshevDistance(position.X, position.Y, leaderPosition.X, leaderPosition.Y) >= 6 {
+		retarget = true
 	}
 
+	if inBand && ai.TargetX == leaderPosition.X && ai.TargetY == leaderPosition.Y &&
+		chebyshevDistance(position.X, position.Y, leaderPosition.X, leaderPosition.Y) < 6 {
+		retarget = true
+	}
+
+	if !retarget {
+		roll, err := s.rng.Intn("ai", 20)
+
+		if err != nil {
+			return err
+		}
+
+		retarget = roll == 0
+	}
+
+	if retarget {
+		return s.chooseWanderTarget(actor, ai, level, position.X, position.Y, visible)
+	}
+
+	return nil
+}
+
+func (s *monsterDecisionSystem) followMonsterTarget(
+	actor akara.Entity,
+	ai ecs.MonsterAI,
+	level *Level,
+	position ecs.Position,
+	player ecs.Position,
+	visible []bool,
+) ecs.Intent {
 	dx, dy := sign(ai.TargetX-position.X), sign(ai.TargetY-position.Y)
 	goalActor := akara.Entity(0)
 
 	if ai.TargetX == player.X && ai.TargetY == player.Y {
 		goalActor = s.player
+	} else if follower, found := s.followers.Get(actor); found {
+		leader, alive := s.positions.Get(follower.Leader)
+
+		if alive && leader.LevelID == position.LevelID &&
+			ai.TargetX == leader.X && ai.TargetY == leader.Y {
+			goalActor = follower.Leader
+		}
 	}
 
 	if !visible[ai.TargetY*level.width+ai.TargetX] {
-		pathDX, pathDY, found := level.RouteStep(position.X, position.Y, ai.TargetX, ai.TargetY, goalActor)
+		intent, found := s.routeMonsterIntent(ai, level, position, player, goalActor)
 
 		if !found {
-			return ecs.Intent{Kind: ecs.IntentWait}, nil
+			return ecs.Intent{Kind: ecs.IntentWait}
 		}
 
-		return monsterStepIntent(position.X+pathDX, position.Y+pathDY, player.X, player.Y, pathDX, pathDY), nil
+		return intent
 	}
 
 	// DCSS aims toward the target along both axes first. Cardinal steps remain
@@ -188,7 +243,7 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 				Kind: ecs.IntentMelee,
 				DX:   step[0],
 				DY:   step[1],
-			}, nil
+			}
 		}
 
 		if level.Walkable(x, y) {
@@ -197,16 +252,48 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 					Kind: ecs.IntentMove,
 					DX:   step[0],
 					DY:   step[1],
-				}, nil
+				}
 			}
 		}
 	}
 
-	if pathDX, pathDY, found := level.RouteStep(position.X, position.Y, ai.TargetX, ai.TargetY, goalActor); found {
-		return monsterStepIntent(position.X+pathDX, position.Y+pathDY, player.X, player.Y, pathDX, pathDY), nil
+	if intent, found := s.routeMonsterIntent(ai, level, position, player, goalActor); found {
+		return intent
 	}
 
-	return ecs.Intent{Kind: ecs.IntentWait}, nil
+	return ecs.Intent{Kind: ecs.IntentWait}
+}
+
+func (s *monsterDecisionSystem) routeMonsterIntent(
+	ai ecs.MonsterAI,
+	level *Level,
+	position ecs.Position,
+	player ecs.Position,
+	goalActor akara.Entity,
+) (ecs.Intent, bool) {
+	dx, dy, found := level.RouteStep(
+		position.X,
+		position.Y,
+		ai.TargetX,
+		ai.TargetY,
+		goalActor,
+	)
+
+	if !found {
+		return ecs.Intent{}, false
+	}
+
+	nextX := position.X + dx
+	nextY := position.Y + dy
+
+	// RouteStep may enter a goal actor's tile for melee. A band leader is
+	// a navigation goal, never a valid attack target for its followers.
+	if goalActor != 0 && goalActor != s.player &&
+		nextX == ai.TargetX && nextY == ai.TargetY {
+		return ecs.Intent{Kind: ecs.IntentWait}, true
+	}
+
+	return monsterStepIntent(nextX, nextY, player.X, player.Y, dx, dy), true
 }
 
 func monsterStepIntent(nextX, nextY, playerX, playerY, dx, dy int) ecs.Intent {
@@ -227,9 +314,19 @@ func monsterStepIntent(nextX, nextY, playerX, playerY, dx, dy int) ecs.Intent {
 
 // chooseWanderTarget follows Crawl's 150 attempts with offsets in [-6, 6].
 // A failed search leaves the animal waiting until its next decision.
-func (s *monsterDecisionSystem) chooseWanderTarget(ai *ecs.MonsterAI, level *Level, x, y int) error {
+func (s *monsterDecisionSystem) chooseWanderTarget(
+	actor akara.Entity,
+	ai *ecs.MonsterAI,
+	level *Level,
+	x, y int,
+	visible []bool,
+) error {
 	ai.TargetX = 0
 	ai.TargetY = 0
+
+	if leader, found := s.bandLeaderPosition(actor, level.ID); found {
+		return s.chooseBandWanderTarget(ai, level, x, y, leader, visible)
+	}
 
 	for attempt := 0; attempt < 150; attempt++ {
 		dx, err := s.rng.Intn("ai", 13)
@@ -255,6 +352,98 @@ func (s *monsterDecisionSystem) chooseWanderTarget(ai *ecs.MonsterAI, level *Lev
 	}
 
 	return nil
+}
+
+func (s *monsterDecisionSystem) bandLeaderPosition(
+	actor akara.Entity,
+	levelID int,
+) (ecs.Position, bool) {
+	follower, found := s.followers.Get(actor)
+
+	if !found {
+		return ecs.Position{}, false
+	}
+
+	leader, alive := s.positions.Get(follower.Leader)
+
+	if !alive || leader.LevelID != levelID {
+		return ecs.Position{}, false
+	}
+
+	return *leader, true
+}
+
+// Follower wandering favors cells within the source six-cell comfort range.
+// A separated follower heads toward the leader until that range is reachable.
+func (s *monsterDecisionSystem) chooseBandWanderTarget(
+	ai *ecs.MonsterAI,
+	level *Level,
+	x, y int,
+	leader ecs.Position,
+	visible []bool,
+) error {
+	if chebyshevDistance(x, y, leader.X, leader.Y) > 13 {
+		ai.TargetX = leader.X
+		ai.TargetY = leader.Y
+
+		return nil
+	}
+
+	candidates := make([]point, 0)
+
+	for candidateY := 0; candidateY < len(level.terrain); candidateY++ {
+		for candidateX := 0; candidateX < level.width; candidateX++ {
+			if !visible[candidateY*level.width+candidateX] ||
+				!level.Walkable(candidateX, candidateY) ||
+				chebyshevDistance(candidateX, candidateY, leader.X, leader.Y) >= 6 ||
+				(candidateX == x && candidateY == y) {
+				continue
+			}
+
+			if _, occupied := level.ActorAt(candidateX, candidateY); occupied {
+				continue
+			}
+
+			candidates = append(candidates, point{
+				x: candidateX,
+				y: candidateY,
+			})
+		}
+	}
+
+	if len(candidates) == 0 {
+		ai.TargetX = leader.X
+		ai.TargetY = leader.Y
+
+		return nil
+	}
+
+	choice, err := s.rng.Intn("ai", len(candidates))
+
+	if err != nil {
+		return err
+	}
+
+	ai.TargetX = candidates[choice].x
+	ai.TargetY = candidates[choice].y
+
+	return nil
+}
+
+func chebyshevDistance(x1, y1, x2, y2 int) int {
+	dx := x1 - x2
+
+	if dx < 0 {
+		dx = -dx
+	}
+
+	dy := y1 - y2
+
+	if dy < 0 {
+		dy = -dy
+	}
+
+	return max(dx, dy)
 }
 
 func sign(value int) int {

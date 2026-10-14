@@ -129,6 +129,7 @@ func savedItemHasActorComponents(record save.EntityRecord) bool {
 		record.Combatant != nil ||
 		record.Player != nil ||
 		record.AI != nil ||
+		record.BandFollower != nil ||
 		record.Attributes != nil
 }
 
@@ -150,6 +151,7 @@ func (g *Game) Snapshot() save.Snapshot {
 			Rows:            append([]string(nil), level.terrain...),
 			Known:           level.KnownRows(),
 			InitialMonsters: level.initialMonsters,
+			InitialActors:   level.initialActors,
 		}
 
 		for _, link := range level.StairLinks() {
@@ -190,6 +192,7 @@ func (g *Game) Snapshot() save.Snapshot {
 			Player:       copyComponent(g.stores.Players, entity),
 			Attributes:   copyComponent(g.stores.Attributes, entity),
 			AI:           copyComponent(g.stores.AI, entity),
+			BandFollower: copyComponent(g.stores.Followers, entity),
 			Item:         copyComponent(g.stores.Items, entity),
 			Corpse:       copyComponent(g.stores.Corpses, entity),
 			CarriedBy:    copyComponent(g.stores.CarriedBy, entity),

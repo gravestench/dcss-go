@@ -23,6 +23,7 @@ type LevelRecord struct {
 	Known           []string      `json:"known"`
 	Stairs          []StairRecord `json:"stairs,omitempty"`
 	InitialMonsters int           `json:"initial_monsters,omitempty"`
+	InitialActors   int           `json:"initial_actors,omitempty"`
 	AwaySinceAut    *int64        `json:"away_since_aut,omitempty"`
 }
 
@@ -49,6 +50,7 @@ type EntityRecord struct {
 	Player       *ecs.PlayerControlled `json:"player,omitempty"`
 	Attributes   *ecs.Attributes       `json:"attributes,omitempty"`
 	AI           *ecs.MonsterAI        `json:"ai,omitempty"`
+	BandFollower *ecs.BandFollower     `json:"band_follower,omitempty"`
 	Item         *ecs.Item             `json:"item,omitempty"`
 	Corpse       *ecs.Corpse           `json:"corpse,omitempty"`
 	CarriedBy    *ecs.CarriedBy        `json:"carried_by,omitempty"`

@@ -3,6 +3,11 @@ package game
 import (
 	"fmt"
 	"sort"
+
+	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/monster"
+	"dcrawl-go/internal/visibility"
+	"github.com/gravestench/akara"
 )
 
 // Keeping monsters away from an entry prevents an immediate spawn collision.
@@ -27,8 +32,8 @@ func (g *Game) spawnFixtureAnimals() error {
 }
 
 // populateDungeon reads immutable source weights, then creates live Akara
-// actors. The two named RNG streams keep monster choice independent of map
-// placement, and their states already travel with the run's save.
+// actors. Named RNG streams keep monster choice, band size, and placement
+// independent, and their states travel with the run's save.
 func (g *Game) populateDungeon(entries map[int]point) error {
 	factory := newOrdinaryMonsterFactory(g)
 	levelIDs := make([]int, 0, len(g.levels))
@@ -82,13 +87,115 @@ func (g *Game) populateDungeon(entries map[int]point) error {
 
 			cell := cells[cellIndex]
 
-			if _, err := factory.Spawn(monsterID, levelID, cell.x, cell.y); err != nil {
+			leader, err := factory.Spawn(monsterID, levelID, cell.x, cell.y)
+
+			if err != nil {
 				return err
+			}
+
+			level.initialActors++
+
+			if monsterID == "MONS_JACKAL" {
+				if err := g.spawnJackalFollowers(factory, level, leader, cell); err != nil {
+					return err
+				}
 			}
 		}
 	}
 
 	return nil
+}
+
+// A source band is created after its leader. Each member gets up to 1000
+// nearby placement attempts; an unavailable cell only skips that member.
+func (g *Game) spawnJackalFollowers(
+	factory ordinaryMonsterFactory,
+	level *Level,
+	leader akara.Entity,
+	origin point,
+) error {
+	count, err := monster.JackalFollowerCount(g.rng)
+
+	if err != nil {
+		return err
+	}
+
+	visible, err := visibility.Compute(level.terrain, origin.x, origin.y, 7)
+
+	if err != nil {
+		return err
+	}
+
+	for member := 0; member < count; member++ {
+		cell, found, err := g.findJackalFollowerCell(level, origin, visible)
+
+		if err != nil {
+			return err
+		}
+
+		if !found {
+			continue
+		}
+
+		follower, err := factory.Spawn("MONS_JACKAL", level.ID, cell.x, cell.y)
+
+		if err != nil {
+			return err
+		}
+
+		_, err = g.stores.Followers.Set(follower, ecs.BandFollower{
+			Leader: leader,
+		})
+
+		if err != nil {
+			return err
+		}
+
+		level.initialActors++
+	}
+
+	return nil
+}
+
+func (g *Game) findJackalFollowerCell(
+	level *Level,
+	origin point,
+	visible []bool,
+) (point, bool, error) {
+	for attempt := 0; attempt < 1000; attempt++ {
+		xRoll, err := g.rng.Intn("placement", 7)
+
+		if err != nil {
+			return point{}, false, err
+		}
+
+		yRoll, err := g.rng.Intn("placement", 7)
+
+		if err != nil {
+			return point{}, false, err
+		}
+
+		cell := point{
+			x: origin.x + xRoll - 3,
+			y: origin.y + yRoll - 3,
+		}
+
+		if !level.Walkable(cell.x, cell.y) {
+			continue
+		}
+
+		if !visible[cell.y*level.width+cell.x] {
+			continue
+		}
+
+		if _, occupied := level.ActorAt(cell.x, cell.y); occupied {
+			continue
+		}
+
+		return cell, true, nil
+	}
+
+	return point{}, false, nil
 }
 
 func (l *Level) spawnCellsAwayFrom(entry point, minimumDistance int) []point {

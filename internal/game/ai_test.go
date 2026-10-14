@@ -86,6 +86,37 @@ func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 	}
 }
 
+func TestBandRouteWaitsBeforeEnteringOccupiedLeaderTile(t *testing.T) {
+	g := newStepGame(t)
+	leader := ratID(t, g)
+	leaderPosition, _ := g.stores.Positions.Get(leader)
+	playerPosition, _ := g.stores.Positions.Get(g.player)
+	followerPosition := ecs.Position{
+		LevelID: leaderPosition.LevelID,
+		X:       leaderPosition.X - 1,
+		Y:       leaderPosition.Y,
+	}
+
+	if !g.levels[1].Walkable(followerPosition.X, followerPosition.Y) {
+		t.Fatal("test follower position is blocked")
+	}
+
+	intent, found := newMonsterDecisionSystem(g).routeMonsterIntent(
+		ecs.MonsterAI{
+			TargetX: leaderPosition.X,
+			TargetY: leaderPosition.Y,
+		},
+		g.levels[1],
+		followerPosition,
+		*playerPosition,
+		leader,
+	)
+
+	if !found || intent.Kind != ecs.IntentWait {
+		t.Fatalf("occupied leader route = %+v, found %v", intent, found)
+	}
+}
+
 func TestQuokkaAcquiresPlayerOnlyInItsOwnSight(t *testing.T) {
 	g := newStepGame(t)
 	quokka := quokkaID(t, g)

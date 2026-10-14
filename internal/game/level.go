@@ -15,8 +15,9 @@ type Level struct {
 	terrain    []string
 	remembered []byte
 	width      int
-	// Initial generation budget bounds earned XP during save validation.
+	// Population choices may generate bands with multiple actors.
 	initialMonsters int
+	initialActors   int
 	positions       *akara.Store[ecs.Position]
 	actors          map[point]akara.Entity
 	// nil while active or before the player first visits this floor.

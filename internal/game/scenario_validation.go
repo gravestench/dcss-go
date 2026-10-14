@@ -15,7 +15,33 @@ func initialMonsterBudget(level *Level, scenarioID string) int {
 	return level.initialMonsters
 }
 
+func initialActorBudget(level *Level, scenarioID string) int {
+	if level == nil {
+		return 0
+	}
+
+	if level.initialActors > 0 {
+		return level.initialActors
+	}
+
+	// Older version-8 saves had one actor per population choice.
+	return initialMonsterBudget(level, scenarioID)
+}
+
 func validateScenarioLevels(levels map[int]*Level, scenarioID string) error {
+	for id, level := range levels {
+		choices := initialMonsterBudget(level, scenarioID)
+
+		if scenarioID == generatedDungeonScenarioID || scenarioID == populationScenarioID {
+			if level.initialActors != 0 &&
+				(level.initialActors < choices || level.initialActors > 4*choices) {
+				return fmt.Errorf("Dungeon:%d has invalid initial actor count", id)
+			}
+		} else if level.initialActors != 0 {
+			return fmt.Errorf("fixture Dungeon:%d has an initial actor count", id)
+		}
+	}
+
 	if scenarioID != generatedDungeonScenarioID {
 		for id, level := range levels {
 			for _, link := range level.StairLinks() {

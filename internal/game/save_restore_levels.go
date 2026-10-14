@@ -19,6 +19,7 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 		}
 
 		level.initialMonsters = record.InitialMonsters
+		level.initialActors = record.InitialActors
 
 		if knownErr := level.LoadKnownRows(record.Known); knownErr != nil {
 			return knownErr

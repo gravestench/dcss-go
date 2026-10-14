@@ -35,6 +35,7 @@ func (g *Game) validateAndRegisterSavedEntities(
 	usesPopulation bool,
 ) error {
 	seen := make(map[uint64]bool)
+	recordsByID := make(map[uint64]save.EntityRecord)
 	player := savedPlayerValidation{}
 	playerCount := 0
 	monsters := newSavedMonsterValidation()
@@ -61,6 +62,7 @@ func (g *Game) validateAndRegisterSavedEntities(
 		}
 
 		seen[record.ID] = true
+		recordsByID[record.ID] = record
 
 		if record.Item != nil {
 			if record.Corpse != nil && !slices.Contains(scenarioAnimals, record.Corpse.MonsterID) {
@@ -80,6 +82,15 @@ func (g *Game) validateAndRegisterSavedEntities(
 
 		if record.Player != nil && record.AI != nil {
 			return fmt.Errorf("entity %d is both player and monster", record.ID)
+		}
+
+		if record.BandFollower != nil {
+			if record.AI == nil || record.Actor == nil ||
+				record.Actor.KindID != "MONS_JACKAL" ||
+				record.BandFollower.Leader == 0 ||
+				uint64(record.BandFollower.Leader) == record.ID {
+				return fmt.Errorf("entity %d has an invalid band leader link", record.ID)
+			}
 		}
 
 		if record.Player != nil {
@@ -113,7 +124,7 @@ func (g *Game) validateAndRegisterSavedEntities(
 				monsters.liveByLevel[levelID]++
 				monsters.liveCount++
 
-				if monsters.liveByLevel[levelID] > initialMonsterBudget(g.levels[levelID], snapshot.ScenarioID) {
+				if monsters.liveByLevel[levelID] > initialActorBudget(g.levels[levelID], snapshot.ScenarioID) {
 					return fmt.Errorf("Dungeon:%d has too many live monsters", levelID)
 				}
 			}
@@ -154,6 +165,19 @@ func (g *Game) validateAndRegisterSavedEntities(
 
 		if err := g.world.CreateEntityWithID(akara.Entity(record.ID)); err != nil {
 			return err
+		}
+	}
+
+	for _, record := range snapshot.Entities {
+		if record.BandFollower == nil {
+			continue
+		}
+
+		leader, alive := recordsByID[uint64(record.BandFollower.Leader)]
+
+		if alive && (leader.Actor == nil || leader.Actor.KindID != "MONS_JACKAL" ||
+			leader.Position == nil || leader.Position.LevelID != record.Position.LevelID) {
+			return fmt.Errorf("entity %d has an incompatible living band leader", record.ID)
 		}
 	}
 

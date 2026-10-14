@@ -78,6 +78,12 @@ type MonsterAI struct {
 	MemoryUntilAut int64
 }
 
+// BandFollower keeps the original leader identity even after that leader
+// dies. AI only follows the leader while it remains a live actor nearby.
+type BandFollower struct {
+	Leader akara.Entity
+}
+
 type Item struct {
 	KindID   string
 	Quantity int

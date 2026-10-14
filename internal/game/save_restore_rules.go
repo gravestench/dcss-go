@@ -200,7 +200,7 @@ func (g *Game) validateSavedExperience(
 		initialMonsterCount := 0
 
 		for _, level := range g.levels {
-			initialMonsterCount += initialMonsterBudget(level, g.scenarioID)
+			initialMonsterCount += initialActorBudget(level, g.scenarioID)
 		}
 
 		maxEarnedXP *= initialMonsterCount - monsters.liveCount

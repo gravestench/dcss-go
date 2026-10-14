@@ -97,6 +97,12 @@ func (g *Game) restoreEntityComponents(records []save.EntityRecord) error {
 			}
 		}
 
+		if record.BandFollower != nil {
+			if _, err := g.stores.Followers.Set(entity, *record.BandFollower); err != nil {
+				return err
+			}
+		}
+
 		if record.Item != nil {
 			if _, err := g.stores.Items.Set(entity, *record.Item); err != nil {
 				return err

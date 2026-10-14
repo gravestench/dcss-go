@@ -70,6 +70,15 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		FastRegen:    true,
 		NoSkeleton:   true,
 	},
+	"MONS_JACKAL": {
+		HitDice:      1,
+		AverageHP10x: 55,
+		MinHP:        3,
+		MaxHP:        8,
+		Damage:       3,
+		Speed:        14,
+		XPModifier:   10,
+	},
 }
 
 func OrdinaryAnimalProfile(id string) (OrdinaryBiteProfile, bool) {

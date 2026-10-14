@@ -146,6 +146,44 @@ func TestCockroachAndWormPlainBiteExperience(t *testing.T) {
 	}
 }
 
+func TestJackalPlainBiteExperience(t *testing.T) {
+	catalog, err := content.LoadDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	jackal, err := catalog.Monster("MONS_JACKAL")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for hp := 3; hp <= 8; hp++ {
+		got, err := OrdinaryAnimalExperience(jackal, hp)
+
+		if err != nil {
+			t.Fatalf("jackal at %d HP: %v", hp, err)
+		}
+
+		want := 2
+
+		if hp == 3 {
+			want = 1
+		}
+
+		if got != want {
+			t.Fatalf("jackal at %d HP awards %d XP, want %d", hp, got, want)
+		}
+	}
+
+	for _, hp := range []int{2, 9} {
+		if _, err := OrdinaryAnimalExperience(jackal, hp); err == nil {
+			t.Fatalf("accepted impossible jackal HP %d", hp)
+		}
+	}
+}
+
 func TestHumanFirstLevelProgressUsesNineXPThreshold(t *testing.T) {
 	for _, tc := range []struct {
 		xp      int
