@@ -62,6 +62,9 @@ func ActionEnergyCost(
 	case ecs.IntentSpell:
 		cost = usage.Spell
 
+	case ecs.IntentRanged:
+		cost = usage.Missile
+
 	case ecs.IntentWait:
 		cost = min(usage.Move, usage.Swim)
 

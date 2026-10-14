@@ -20,6 +20,9 @@ type monsterDecisionSystem struct {
 	ai        *akara.Store[ecs.MonsterAI]
 	followers *akara.Store[ecs.BandFollower]
 	intents   *akara.Store[ecs.Intent]
+	items     *akara.Store[ecs.Item]
+	carried   *akara.Store[ecs.CarriedBy]
+	equipped  *akara.Store[ecs.Equipped]
 
 	levels  map[int]*Level
 	catalog content.Catalog
@@ -37,6 +40,9 @@ func newMonsterDecisionSystem(g *Game) *monsterDecisionSystem {
 		ai:        g.stores.AI,
 		followers: g.stores.Followers,
 		intents:   g.stores.Intents,
+		items:     g.stores.Items,
+		carried:   g.stores.CarriedBy,
+		equipped:  g.stores.Equipped,
 
 		levels:  g.levels,
 		catalog: g.catalog,
@@ -133,6 +139,16 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 				Kind:    ecs.IntentSpell,
 				SpellID: spell,
 			}, nil
+		}
+
+		ranged, shoot, err := s.chooseGoblinSling(actor, *position, *player, level)
+
+		if err != nil {
+			return ecs.Intent{}, err
+		}
+
+		if shoot {
+			return ranged, nil
 		}
 	}
 

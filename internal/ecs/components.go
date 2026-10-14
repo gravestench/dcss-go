@@ -188,6 +188,7 @@ const (
 	IntentDrop
 	IntentWield
 	IntentSpell
+	IntentRanged
 )
 
 type Intent struct {

@@ -64,7 +64,15 @@ func newCombatSystem(g *Game) *combatSystem {
 func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	intent, found := s.intents.Get(s.turn.Actor)
 
-	if !found || intent.Kind != ecs.IntentMelee {
+	if !found {
+		return nil
+	}
+
+	if intent.Kind == ecs.IntentRanged {
+		return s.resolveGoblinSling(intent)
+	}
+
+	if intent.Kind != ecs.IntentMelee {
 		return nil
 	}
 
