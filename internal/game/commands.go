@@ -41,11 +41,12 @@ type StepResult struct {
 
 // TurnContext is updated by Game before ordered Akara systems run.
 type TurnContext struct {
-	Actor   akara.Entity
-	Events  []Event
-	Deaths  []akara.Entity
-	Pickup  akara.Entity
-	Consume akara.Entity
+	Actor      akara.Entity
+	Events     []Event
+	Deaths     []akara.Entity
+	Pickup     akara.Entity
+	Consume    akara.Entity
+	PlayerKill akara.Entity
 }
 
 func (g *Game) Step(command Command) (StepResult, error) {
@@ -183,6 +184,7 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	g.turn.Deaths = nil
 	g.turn.Pickup = 0
 	g.turn.Consume = 0
+	g.turn.PlayerKill = 0
 	err := g.world.Update(time.Duration(cost))
 	g.stores.Intents.Remove(actor)
 	if err != nil {

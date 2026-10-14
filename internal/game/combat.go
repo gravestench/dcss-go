@@ -50,7 +50,11 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 		if err != nil {
 			return err
 		}
+		beforeHP := victim.Current
 		victim.Current = max(0, victim.Current-outcome.Damage)
+		if beforeHP > 0 && victim.Current == 0 {
+			s.turn.PlayerKill = target
+		}
 		message := "You miss the rat."
 		if outcome.Kind == combat.Hit {
 			message = "You hit the rat."
@@ -168,6 +172,7 @@ func (g *Game) fighterDefense() (combat.Defense, error) {
 }
 
 type deathSystem struct {
+	game   *Game
 	health *akara.Store[ecs.Health]
 	player akara.Entity
 	turn   *TurnContext
@@ -182,6 +187,11 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 		if entity == s.player {
 			s.turn.Events = append(s.turn.Events, Event{Kind: "death", Text: "You die."})
 		} else {
+			if entity == s.turn.PlayerKill {
+				if err := s.game.awardRatExperience(entity, health.Max); err != nil {
+					return err
+				}
+			}
 			s.turn.Deaths = append(s.turn.Deaths, entity)
 			s.turn.Events = append(s.turn.Events, Event{Kind: "death", Text: "The rat dies."})
 		}

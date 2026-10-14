@@ -35,6 +35,11 @@ type Skills struct {
 	Entries []character.Skill
 }
 
+// Progression owns the player's earned experience in this run.
+type Progression struct {
+	TotalXP int
+}
+
 type Combatant struct {
 	ShieldBlocks int
 }

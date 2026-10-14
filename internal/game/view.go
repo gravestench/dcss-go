@@ -40,23 +40,24 @@ type ItemView struct {
 }
 
 type View struct {
-	LevelID                      int
-	PlayerX, PlayerY             int
-	PlayerDead                   bool
-	PlayerName                   string
-	Width, Height                int
-	Cells                        []CellView
-	Entities                     []EntityView
-	PlayerHP, PlayerMaxHP        int
-	PlayerMP, PlayerMaxMP        int
-	PlayerAC, PlayerEV, PlayerSH int
-	DefenseKnown                 bool
-	CurrentAut                   Aut
-	Messages                     []string
-	Inventory                    []ItemView
-	CharacterName                string
-	Attributes                   ecs.Attributes
-	Skills                       []character.Skill
+	LevelID                           int
+	PlayerX, PlayerY                  int
+	PlayerDead                        bool
+	PlayerName                        string
+	Width, Height                     int
+	Cells                             []CellView
+	Entities                          []EntityView
+	PlayerHP, PlayerMaxHP             int
+	PlayerMP, PlayerMaxMP             int
+	PlayerAC, PlayerEV, PlayerSH      int
+	DefenseKnown                      bool
+	CurrentAut                        Aut
+	Messages                          []string
+	Inventory                         []ItemView
+	CharacterName                     string
+	Attributes                        ecs.Attributes
+	Skills                            []character.Skill
+	ExperienceLevel, NextLevelPercent int
 }
 
 func (g *Game) View() View {
@@ -84,6 +85,11 @@ func (g *Game) View() View {
 	}
 	if skills, ok := g.stores.Skills.Get(g.player); ok {
 		view.Skills = append([]character.Skill(nil), skills.Entries...)
+	}
+	if progression, ok := g.stores.Progression.Get(g.player); ok {
+		if percent, err := character.HumanFirstLevelProgress(progression.TotalXP); err == nil {
+			view.ExperienceLevel, view.NextLevelPercent = 1, percent
+		}
 	}
 	if player, ok := g.stores.Players.Get(g.player); ok {
 		view.PlayerName = player.Name

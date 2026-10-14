@@ -23,17 +23,18 @@ type LevelRecord struct {
 }
 
 type EntityRecord struct {
-	ID         uint64                `json:"id"`
-	Position   *ecs.Position         `json:"position,omitempty"`
-	Actor      *ecs.Actor            `json:"actor,omitempty"`
-	Health     *ecs.Health           `json:"health,omitempty"`
-	Magic      *ecs.Magic            `json:"magic,omitempty"`
-	Skills     *ecs.Skills           `json:"skills,omitempty"`
-	Combatant  *ecs.Combatant        `json:"combatant,omitempty"`
-	Player     *ecs.PlayerControlled `json:"player,omitempty"`
-	Attributes *ecs.Attributes       `json:"attributes,omitempty"`
-	AI         *ecs.MonsterAI        `json:"ai,omitempty"`
-	Item       *ecs.Item             `json:"item,omitempty"`
-	CarriedBy  *ecs.CarriedBy        `json:"carried_by,omitempty"`
-	Equipped   *ecs.Equipped         `json:"equipped,omitempty"`
+	ID          uint64                `json:"id"`
+	Position    *ecs.Position         `json:"position,omitempty"`
+	Actor       *ecs.Actor            `json:"actor,omitempty"`
+	Health      *ecs.Health           `json:"health,omitempty"`
+	Magic       *ecs.Magic            `json:"magic,omitempty"`
+	Skills      *ecs.Skills           `json:"skills,omitempty"`
+	Progression *ecs.Progression      `json:"progression,omitempty"`
+	Combatant   *ecs.Combatant        `json:"combatant,omitempty"`
+	Player      *ecs.PlayerControlled `json:"player,omitempty"`
+	Attributes  *ecs.Attributes       `json:"attributes,omitempty"`
+	AI          *ecs.MonsterAI        `json:"ai,omitempty"`
+	Item        *ecs.Item             `json:"item,omitempty"`
+	CarriedBy   *ecs.CarriedBy        `json:"carried_by,omitempty"`
+	Equipped    *ecs.Equipped         `json:"equipped,omitempty"`
 }
