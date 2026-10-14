@@ -17,7 +17,9 @@ type sourceName struct {
 }
 
 var directCaseName = regexp.MustCompile(`case\s+([A-Z][A-Z0-9_]*)\s*:\s*return\s+"((?:\\.|[^"\\])*)"\s*;`)
+
 var directShowCase = regexp.MustCompile(`case\s+(OBJ_[A-Z0-9_]+)\s*:\s*return\s+(SHOW_ITEM_[A-Z0-9_]+)\s*;`)
+
 var asciiChar = regexp.MustCompile(`(?:U)?'(?:\\.|[^'\\])+'`)
 
 func sourceNameView(path string, data []byte) (sourceView, error) {

@@ -11,8 +11,11 @@ import (
 )
 
 const legacyAnimalScenarioID = "fixed-dungeon-rat-quokka-v1"
+
 const ordinaryAnimalScenarioID = "fixed-dungeon-rat-quokka-lizard-v2"
+
 const populationScenarioID = "fixed-dungeon-population-v1"
+
 const generatedDungeonScenarioID = "generated-dungeon-basic-v1"
 
 const populationMonstersPerLevel = 2

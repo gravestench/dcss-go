@@ -13,10 +13,12 @@ type offset struct {
 	x int
 	y int
 }
+
 type rayCell struct {
 	offset
 	enter float64
 }
+
 type ray []offset
 
 // The source enumerates rational rays in one quadrant, then mirrors them.

@@ -21,13 +21,18 @@ import (
 const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 
 var sourceGroup = regexp.MustCompile(`(?s)\{\s*"([^"]+)"\s*,\s*coord_def\([^)]*\)\s*,\s*\d+\s*,\s*\{([^}]*)\}\s*\}`)
+
 var sourceID = regexp.MustCompile(`[A-Z]+_[A-Z_]+`)
+
 var tagMajor = regexp.MustCompile(`(?m)^#define\s+TAG_MAJOR_VERSION\s+(\d+)\s*$`)
+
 var startupModeEntry = regexp.MustCompile(
 	`(?s)\{\s*(GAME_TYPE_[A-Z_]+)\s*,\s*` +
 		`((?:"[^"]*"\s*)+)\s*,\s*((?:"[^"]*"\s*)+)\s*\}`,
 )
+
 var quotedString = regexp.MustCompile(`"(?:\\.|[^"\\])*"`)
+
 var skillID = regexp.MustCompile(`SK_[A-Z_]+`)
 
 func parseSkillColumns(path string, data []byte) ([][]string, error) {

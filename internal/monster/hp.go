@@ -8,6 +8,7 @@ type Roller interface {
 }
 
 const maxMonsterHP = 10000
+
 const maxSafeAverageHP = int(^uint(0)>>1) / 33
 
 // RollHP follows mon-util.cc's hit_points(avg_hp_10x) and the live cap from

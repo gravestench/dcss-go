@@ -9,6 +9,7 @@ import (
 )
 
 var blockComment = regexp.MustCompile(`(?s)/\*.*?\*/`)
+
 var enumEntry = regexp.MustCompile(`^([A-Z][A-Z0-9_]*)\s*(=\s*[^,]+)?\s*,?`)
 
 type tagBranch struct {

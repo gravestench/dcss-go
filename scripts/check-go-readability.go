@@ -98,6 +98,15 @@ func checkFile(path string) (int, error) {
 	}
 	blockEndLines := make(map[int]bool)
 
+	for index := 1; index < len(file.Decls); index++ {
+		previous := file.Decls[index-1]
+		next := file.Decls[index]
+
+		if fset.Position(previous.End()-1).Line+1 == fset.Position(next.Pos()).Line {
+			report(next.Pos(), "leave a blank line between top-level declarations")
+		}
+	}
+
 	ast.Inspect(file, func(node ast.Node) bool {
 		switch value := node.(type) {
 		case *ast.SwitchStmt:

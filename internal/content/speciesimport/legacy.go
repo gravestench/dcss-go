@@ -12,6 +12,7 @@ import (
 )
 
 var legacyRecord = regexp.MustCompile(`(?s)\{\s*(SP_[A-Z_]+)\s*,\s*\{(.*?)\}\s*\}\s*,`)
+
 var legacyAptitude = regexp.MustCompile(
 	`^\{\s*(SP_[A-Z_]+)\s*,\s*(SK_[A-Z_]+)\s*,\s*` +
 		`(-?\d+|UNUSABLE_SKILL)\s*\}\s*,?\s*$`,

@@ -9,6 +9,7 @@ type corpseRoll struct {
 	bound int
 	value int
 }
+
 type corpseRoller struct {
 	rolls []corpseRoll
 }

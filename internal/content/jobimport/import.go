@@ -21,6 +21,7 @@ import (
 const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 
 var tagMajor = regexp.MustCompile(`(?m)^#define\s+TAG_MAJOR_VERSION\s+(\d+)\s*$`)
+
 var skillEntry = regexp.MustCompile(`^\s*(SK_[A-Z_]+)\s*,`)
 
 func readJobSource(root, name string, files *[]content.JobSourceFile) ([]byte, string, error) {

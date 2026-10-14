@@ -15,6 +15,7 @@ type combatRoll struct {
 	bound int
 	value int
 }
+
 type combatRoller struct {
 	rolls []combatRoll
 }

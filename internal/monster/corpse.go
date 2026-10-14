@@ -3,7 +3,9 @@ package monster
 import "fmt"
 
 const FreshestCorpse = 110
+
 const CorpseRotIntervalAut = 200
+
 const corpseRotFactor = 20
 
 // RollCorpse follows the ordinary 50% drop check and corpse appearance roll.

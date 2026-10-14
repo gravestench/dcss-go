@@ -9,6 +9,7 @@ type regenRoll struct {
 	bound int
 	value int
 }
+
 type regenRoller struct {
 	rolls []regenRoll
 }

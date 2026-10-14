@@ -12,6 +12,7 @@ import (
 )
 
 var enumRow = regexp.MustCompile(`^([A-Z][A-Z0-9_]*)(?:\s*=\s*([A-Z][A-Z0-9_]*|[0-9]+))?,?$`)
+
 var dieSizeExpr = regexp.MustCompile(`^(?:[A-Z][A-Z0-9_]*|[0-9]+)$`)
 
 func parseEnum(path string, body []byte) ([]content.BranchDef, error) {

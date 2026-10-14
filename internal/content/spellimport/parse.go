@@ -11,8 +11,11 @@ import (
 )
 
 var spellID = regexp.MustCompile(`^SPELL_[A-Z0-9_]+$`)
+
 var enumLine = regexp.MustCompile(`^(SPELL_[A-Z0-9_]+)(?:\s*=\s*(SPELL_[A-Z0-9_]+))?,?$`)
+
 var axedLine = regexp.MustCompile(`^AXED_SPELL\((SPELL_[A-Z0-9_]+),\s*("(?:\\.|[^"])*")\)$`)
+
 var vocabularyLine = regexp.MustCompile(`^([A-Za-z_][A-Za-z0-9_]*)\s*=`)
 
 func parseVocabulary(path string, body []byte, name string) (map[string]bool, error) {

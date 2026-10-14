@@ -10,6 +10,8 @@ for a human reader to follow.
 - Give distinct steps breathing room. Separate validation, calculation,
   state changes, and event emission with blank lines instead of packing them
   into dense expressions or one-line blocks. Expand nonempty inline callbacks.
+- Separate top-level declarations, including related constants and types, with
+  a blank line so each name is easy to find.
 - Leave a blank line before and after a control-flow block when it has a
   neighboring statement in the same block. Separate the final return from
   preceding calculations or mutations.

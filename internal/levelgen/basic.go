@@ -3,6 +3,7 @@ package levelgen
 import "fmt"
 
 const width = 80
+
 const height = 70
 
 // Point identifies a cell in a Dungeon terrain grid.

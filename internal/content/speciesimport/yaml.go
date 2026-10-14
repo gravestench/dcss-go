@@ -78,6 +78,7 @@ var allowedFlags = map[string]bool{
 	"SPF_NO_BONES":    true,
 	"SPF_BARDING":     true,
 }
+
 var allowedSizes = map[string]bool{
 	"tiny":   true,
 	"little": true,
@@ -86,16 +87,19 @@ var allowedSizes = map[string]bool{
 	"large":  true,
 	"giant":  true,
 }
+
 var allowedUndead = map[string]bool{
 	"US_ALIVE":       true,
 	"US_UNDEAD":      true,
 	"US_SEMI_UNDEAD": true,
 }
+
 var allowedStats = map[string]bool{
 	"str": true,
 	"int": true,
 	"dex": true,
 }
+
 var allowedWeapons = map[string]bool{
 	"SK_SHORT_BLADES":   true,
 	"SK_LONG_BLADES":    true,

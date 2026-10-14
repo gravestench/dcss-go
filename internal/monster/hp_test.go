@@ -9,6 +9,7 @@ type scriptedRoll struct {
 	bound int
 	value int
 }
+
 type scriptedRoller struct {
 	rolls []scriptedRoll
 }

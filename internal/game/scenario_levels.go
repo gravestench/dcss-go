@@ -9,6 +9,7 @@ import (
 )
 
 const exitDungeonUnavailable = "Leaving the Dungeon is unavailable in the Go port."
+
 const dungeonThreeUnavailable = "Dungeon:3 is unavailable in the Go port."
 
 // scenarioLevels contains the terrain-specific part of a new run. The common

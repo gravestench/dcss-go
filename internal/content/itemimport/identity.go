@@ -141,7 +141,9 @@ var itemClassSources = []classSource{
 }
 
 var enumMemberPattern = regexp.MustCompile(`^([A-Z][A-Z0-9_]*)\s*(?:=\s*(.*))?$`)
+
 var enumHeaderPattern = regexp.MustCompile(`^enum(?:\s+class)?\s+([A-Za-z][A-Za-z0-9_]*)\b`)
+
 var enumSymbolPattern = regexp.MustCompile(`^[A-Z][A-Z0-9_]*$`)
 
 // enumMembers reads only one named enum, keeping C++ numeric progression.

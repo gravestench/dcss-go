@@ -41,7 +41,9 @@ func (s SpellDef) clone() SpellDef {
 }
 
 var spellIDPattern = regexp.MustCompile(`^SPELL_[A-Z0-9_]+$`)
+
 var spellRangePattern = regexp.MustCompile(`^[A-Z0-9_+*/() -]+$`)
+
 var spellTilePattern = regexp.MustCompile(`^TILEG_[A-Z0-9_]+$`)
 
 func (s SpellDef) validate() error {
