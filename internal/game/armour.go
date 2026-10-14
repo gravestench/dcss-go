@@ -32,7 +32,7 @@ func (g *Game) prepareEquipmentCommand(command Command) (preparedCommand, error)
 		return freeCommand(g.noTime("That is not armour.")), nil
 	}
 
-	if kind.Slot != "body" && kind.Slot != "shield" {
+	if !supportedArmourSlot(kind.Slot) {
 		return freeCommand(g.noTime("Wearing that armour is unavailable in the Go port.")), nil
 	}
 
@@ -81,6 +81,19 @@ func equipmentCommand(delay ecs.EquipmentDelay) preparedCommand {
 	return command
 }
 
+func supportedArmourSlot(slot string) bool {
+	switch slot {
+	case "body", "shield", "head", "cloak", "gloves", "boots":
+		return true
+	}
+
+	return false
+}
+
+func isBarding(kindID string) bool {
+	return kindID == "ARM_BARDING" || kindID == "ARM_CENTAUR_BARDING"
+}
+
 func (g *Game) validateWearFit(kind content.ItemDef) error {
 	player, found := g.stores.Players.Get(g.player)
 
@@ -92,6 +105,12 @@ func (g *Game) validateWearFit(kind content.ItemDef) error {
 
 	if err != nil {
 		return err
+	}
+
+	// Human cannot wear barding even though both kinds use the boots slot.
+	// Source: item-use.cc can_wear_armour and _cant_wear_barding_reason.
+	if player.SpeciesID == "SP_HUMAN" && isBarding(kind.ID) {
+		return fmt.Errorf("You can't wear that!")
 	}
 
 	if err := validateArmourSize(kind, species.Size); err != nil {

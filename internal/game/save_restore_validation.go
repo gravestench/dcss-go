@@ -329,7 +329,7 @@ func (v *savedEntityValidator) validateEquipmentDelay() error {
 	}
 
 	if delay.Remaining < 1 || delay.Remaining > armourEquipTurns ||
-		(delay.Slot != "body" && delay.Slot != "shield") ||
+		!supportedArmourSlot(delay.Slot) ||
 		(delay.Phase != "wear" && delay.Phase != "remove") {
 		return fmt.Errorf("invalid saved equipment delay")
 	}
@@ -386,7 +386,7 @@ func (v *savedEntityValidator) validateEquipmentDelay() error {
 		return fmt.Errorf("saved wear slot is still occupied")
 	}
 
-	if delay.Phase == "wear" {
+	if delay.ItemID != 0 {
 		if err := v.validateSavedWearFit(player, new); err != nil {
 			return err
 		}
@@ -409,6 +409,10 @@ func (v *savedEntityValidator) validateSavedWearFit(
 
 	if err != nil {
 		return err
+	}
+
+	if player.Player.SpeciesID == "SP_HUMAN" && isBarding(kind.ID) {
+		return fmt.Errorf("saved wear item is barding for Human")
 	}
 
 	if err := validateArmourSize(kind, species.Size); err != nil {

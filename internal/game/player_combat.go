@@ -315,7 +315,7 @@ func (c playerCombat) defense() (combat.Defense, error) {
 
 		equipped, _ := c.equipped.Get(entity)
 
-		if equipped.Slot != "body" && equipped.Slot != "shield" {
+		if !supportedArmourSlot(equipped.Slot) {
 			continue
 		}
 
@@ -335,14 +335,21 @@ func (c playerCombat) defense() (combat.Defense, error) {
 			return combat.Defense{}, fmt.Errorf("equipped %s has no armour properties", kind.ID)
 		}
 
-		if equipped.Slot == "body" {
-			input.BodyAC = kind.Armour.AC
-			input.BodyEV = kind.Armour.EV
-			input.BodyPlus = item.Plus
-		} else {
-			input.ShieldAC = kind.Armour.AC
-			input.ShieldEV = kind.Armour.EV
-			input.ShieldPlus = item.Plus
+		piece := combat.ArmourPiece{
+			AC:   kind.Armour.AC,
+			EV:   kind.Armour.EV,
+			Plus: item.Plus,
+		}
+
+		switch equipped.Slot {
+		case "body":
+			input.Body = piece
+
+		case "shield":
+			input.Shield = piece
+
+		case "head", "cloak", "gloves", "boots":
+			input.Auxiliary = append(input.Auxiliary, piece)
 		}
 	}
 

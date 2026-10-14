@@ -10,18 +10,24 @@ type Roller interface {
 	Intn(string, int) (int, error)
 }
 
+// ArmourPiece is one worn item's base AC, EV penalty, and enchantment.
+type ArmourPiece struct {
+	AC   int
+	EV   int
+	Plus int
+}
+
 // FighterDefense contains the live parts of an ordinary Human Fighter's defence.
 type FighterDefense struct {
 	Strength     int
 	Dexterity    int
 	ArmourSkill  int
 	ShieldsSkill int
-	BodyAC       int
-	BodyEV       int
-	BodyPlus     int
-	ShieldAC     int
-	ShieldEV     int
-	ShieldPlus   int
+
+	Body      ArmourPiece
+	Shield    ArmourPiece
+	Auxiliary []ArmourPiece
+
 	ShieldBlocks int
 }
 
@@ -62,17 +68,19 @@ type Outcome struct {
 func ProjectFighter(in FighterDefense) (Defense, error) {
 	invalidStats := in.Strength <= 0 || in.Dexterity < 0 ||
 		in.ArmourSkill < 0 || in.ShieldsSkill < 0
-	invalidArmour := in.BodyAC < 0 || in.BodyEV > 0 ||
-		in.BodyPlus < -100 || in.BodyPlus > 100
-	invalidShield := in.ShieldAC < 0 || in.ShieldEV > 0 ||
-		in.ShieldBlocks < 0 || in.ShieldPlus < -100 || in.ShieldPlus > 100
+	invalidArmour := invalidArmourPiece(in.Body)
+	invalidShield := invalidArmourPiece(in.Shield) || in.ShieldBlocks < 0
+
+	for _, piece := range in.Auxiliary {
+		invalidArmour = invalidArmour || invalidArmourPiece(piece)
+	}
 
 	if invalidStats || invalidArmour || invalidShield {
 		return Defense{}, fmt.Errorf("invalid Human Fighter defense %+v", in)
 	}
 
 	const scale = 100
-	bodyEncumbrance := -in.BodyEV / 10
+	bodyEncumbrance := -in.Body.EV / 10
 	bodyPenalty := 2 * bodyEncumbrance * bodyEncumbrance * (450 - in.ArmourSkill*10) * scale /
 		(5 * (in.Strength + 3)) / 450
 
@@ -80,11 +88,18 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 		return Defense{}, fmt.Errorf("unsupported armour skill %d", in.ArmourSkill)
 	}
 
-	piecePenalty := (-in.BodyEV / 3) * scale / 10
+	// player.cc sums each non-shield base EV penalty before scaling.
+	piecePenalty := -in.Body.EV / 3
+
+	for _, piece := range in.Auxiliary {
+		piecePenalty += -piece.EV / 3
+	}
+
+	piecePenalty = piecePenalty * scale / 10
 	shieldPenalty := 0
 
-	if in.ShieldAC > 0 {
-		baseShieldPenalty := -in.ShieldEV / 10
+	if in.Shield.AC > 0 {
+		baseShieldPenalty := -in.Shield.EV / 10
 		shieldPenalty = 2 * baseShieldPenalty * baseShieldPenalty *
 			(270 - in.ShieldsSkill*10) * scale / (5 * 20) / 270
 
@@ -112,8 +127,17 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 
 	ev := (naturalEV + scale - 1) / scale
 
-	baseAC := in.BodyAC * scale * (440 + in.ArmourSkill*20) / 440
-	ac := (baseAC + in.BodyPlus*scale) / scale
+	armourSkillFactor := 440 + in.ArmourSkill*20
+	baseAC := in.Body.AC * scale * armourSkillFactor / 440
+	baseAC += in.Body.Plus * scale
+
+	// player.cc sums scaled AC from every non-shield item before rounding.
+	for _, piece := range in.Auxiliary {
+		baseAC += piece.AC * scale * armourSkillFactor / 440
+		baseAC += piece.Plus * scale
+	}
+
+	ac := baseAC / scale
 
 	if ac < 0 {
 		ac = 0
@@ -121,11 +145,11 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 
 	shieldClass := 0
 
-	if in.ShieldAC > 0 {
-		baseShield := in.ShieldAC * 2
+	if in.Shield.AC > 0 {
+		baseShield := in.Shield.AC * 2
 		shield := baseShield*50 + baseShield*(in.ShieldsSkill*5)/2 +
 			in.ShieldsSkill*38 + min(in.ShieldsSkill*38, 3*38) +
-			in.Dexterity*38*(baseShield+13)/26 + in.ShieldPlus*200
+			in.Dexterity*38*(baseShield+13)/26 + in.Shield.Plus*200
 		shieldClass = max(0, (shield+50)/100)
 	}
 
@@ -138,6 +162,10 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 		GDR:          gdr,
 		ShieldBlocks: in.ShieldBlocks,
 	}, nil
+}
+
+func invalidArmourPiece(piece ArmourPiece) bool {
+	return piece.AC < 0 || piece.EV > 0 || piece.Plus < -100 || piece.Plus > 100
 }
 
 func random2(r Roller, bound int) (int, error) {

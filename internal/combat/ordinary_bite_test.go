@@ -41,10 +41,14 @@ func TestHumanFighterDefenseUsesEquippedScaleMailAndBuckler(t *testing.T) {
 		Dexterity:    12,
 		ArmourSkill:  3,
 		ShieldsSkill: 3,
-		BodyAC:       6,
-		BodyEV:       -100,
-		ShieldAC:     3,
-		ShieldEV:     -50,
+		Body: ArmourPiece{
+			AC: 6,
+			EV: -100,
+		},
+		Shield: ArmourPiece{
+			AC: 3,
+			EV: -50,
+		},
 	})
 
 	if err != nil {
@@ -59,7 +63,65 @@ func TestHumanFighterDefenseUsesEquippedScaleMailAndBuckler(t *testing.T) {
 	}
 }
 
-func TestFighterDefenseRejectsInvalidAttributesAndBlockCount(t *testing.T) {
+func TestFighterDefenseAddsAuxiliaryArmourBeforeRounding(t *testing.T) {
+	// player.cc base_ac_with_specific_items sums scaled pieces first.
+	got, err := ProjectFighter(FighterDefense{
+		Strength:     16,
+		Dexterity:    12,
+		ArmourSkill:  3,
+		ShieldsSkill: 3,
+		Body: ArmourPiece{
+			AC: 6,
+			EV: -100,
+		},
+		Shield: ArmourPiece{
+			AC: 3,
+			EV: -50,
+		},
+		Auxiliary: []ArmourPiece{
+			{
+				AC:   1,
+				Plus: 2,
+			},
+			{AC: 1},
+			{AC: 1},
+			{AC: 1},
+		},
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if got.AC != 13 || got.EV != 5 || got.ShieldClass != 9 {
+		t.Fatalf("auxiliary defense = %+v, want AC 13 EV 5 SH 9", got)
+	}
+}
+
+func TestFighterDefenseCountsAuxiliaryEvasionPenalty(t *testing.T) {
+	got, err := ProjectFighter(FighterDefense{
+		Strength:    16,
+		Dexterity:   12,
+		ArmourSkill: 3,
+		Body: ArmourPiece{
+			AC: 6,
+			EV: -100,
+		},
+		Auxiliary: []ArmourPiece{
+			{EV: -30},
+		},
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if got.EV != 5 {
+		t.Fatalf("auxiliary EV penalty = %d, want 5", got.EV)
+	}
+}
+
+func TestFighterDefenseRejectsInvalidInputs(t *testing.T) {
 	for _, input := range []FighterDefense{
 		{
 			Strength:  0,
@@ -73,6 +135,20 @@ func TestFighterDefenseRejectsInvalidAttributesAndBlockCount(t *testing.T) {
 			Strength:     16,
 			Dexterity:    12,
 			ShieldBlocks: -1,
+		},
+		{
+			Strength:  16,
+			Dexterity: 12,
+			Auxiliary: []ArmourPiece{
+				{AC: -1},
+			},
+		},
+		{
+			Strength:  16,
+			Dexterity: 12,
+			Auxiliary: []ArmourPiece{
+				{EV: 1},
+			},
 		},
 	} {
 		if _, err := ProjectFighter(input); err == nil {
