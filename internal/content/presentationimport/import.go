@@ -245,130 +245,30 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 		JobDescriptions:     map[string]string{},
 	}
 
-	version, err := readSource(sourceDir, "tag-version.h", &artifact.SourceFiles)
+	if err := validateTagVersion(sourceDir, &artifact); err != nil {
+		return artifact, err
+	}
+
+	if err := loadMenuGroups(sourceDir, &artifact); err != nil {
+		return artifact, err
+	}
+
+	speciesDescriptions, jobDescriptions, err := loadDescriptions(sourceDir, &artifact)
 
 	if err != nil {
 		return artifact, err
 	}
 
-	if match := tagMajor.FindSubmatch(version); match == nil || string(match[1]) != "34" {
-		return artifact, fmt.Errorf("tag-version.h: expected TAG_MAJOR_VERSION 34")
-	}
-
-	speciesGroups, err := readSource(sourceDir, "species-groups.h", &artifact.SourceFiles)
-
-	if err != nil {
+	if err := loadMenuControls(sourceDir, &artifact); err != nil {
 		return artifact, err
 	}
 
-	artifact.SpeciesGroups, err = parseGroups("species-groups.h", speciesGroups, "species_groups", "SP_")
-
-	if err != nil {
+	if err := attachSpeciesDescriptions(catalog, speciesDescriptions, &artifact); err != nil {
 		return artifact, err
 	}
 
-	jobGroups, err := readSource(sourceDir, "newgame.cc", &artifact.SourceFiles)
-
-	if err != nil {
+	if err := attachJobDescriptions(catalog, jobDescriptions, &artifact); err != nil {
 		return artifact, err
-	}
-
-	artifact.JobGroups, err = parseGroups("newgame.cc", jobGroups, "jobs_order", "JOB_")
-
-	if err != nil {
-		return artifact, err
-	}
-
-	speciesText, err := readSource(sourceDir, "dat/descript/species.txt", &artifact.SourceFiles)
-
-	if err != nil {
-		return artifact, err
-	}
-
-	speciesDescriptions, err := parseDescriptions("species.txt", speciesText)
-
-	if err != nil {
-		return artifact, err
-	}
-
-	jobText, err := readSource(sourceDir, "dat/descript/backgrounds.txt", &artifact.SourceFiles)
-
-	if err != nil {
-		return artifact, err
-	}
-
-	jobDescriptions, err := parseDescriptions("backgrounds.txt", jobText)
-
-	if err != nil {
-		return artifact, err
-	}
-
-	startupText, err := readSource(sourceDir, "startup.cc", &artifact.SourceFiles)
-
-	if err != nil {
-		return artifact, err
-	}
-
-	artifact.StartupModes, err = parseStartupModes("startup.cc", startupText)
-
-	if err != nil {
-		return artifact, err
-	}
-
-	skillText, err := readSource(sourceDir, "skills.h", &artifact.SourceFiles)
-
-	if err != nil {
-		return artifact, err
-	}
-
-	artifact.SkillColumns, err = parseSkillColumns("skills.h", skillText)
-
-	if err != nil {
-		return artifact, err
-	}
-
-	for _, group := range artifact.SpeciesGroups {
-		for _, id := range group.IDs {
-			definition, err := catalog.Species(id)
-
-			if err != nil {
-				return artifact, err
-			}
-
-			if !definition.Selectable {
-				return artifact, fmt.Errorf("nonselectable species %s in menu", id)
-			}
-
-			text := speciesDescriptions[definition.Name]
-
-			if text == "" {
-				return artifact, fmt.Errorf("missing species description %s (%s)", id, definition.Name)
-			}
-
-			artifact.SpeciesDescriptions[id] = text
-		}
-	}
-
-	for _, group := range artifact.JobGroups {
-		for _, id := range group.IDs {
-			definition, err := catalog.Job(id)
-
-			if err != nil {
-				return artifact, err
-			}
-
-			if !definition.Selectable {
-				return artifact, fmt.Errorf("nonselectable job %s in menu", id)
-			}
-
-			text := jobDescriptions[definition.Name]
-
-			if text == "" {
-				return artifact, fmt.Errorf("missing job description %s (%s)", id, definition.Name)
-			}
-
-			artifact.JobDescriptions[id] = text
-		}
 	}
 
 	sort.Slice(
@@ -379,6 +279,164 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 	)
 
 	return artifact, nil
+}
+
+func validateTagVersion(sourceDir string, artifact *content.PresentationArtifact) error {
+	version, err := readSource(sourceDir, "tag-version.h", &artifact.SourceFiles)
+
+	if err != nil {
+		return err
+	}
+
+	if match := tagMajor.FindSubmatch(version); match == nil || string(match[1]) != "34" {
+		return fmt.Errorf("tag-version.h: expected TAG_MAJOR_VERSION 34")
+	}
+
+	return nil
+}
+
+func loadMenuGroups(sourceDir string, artifact *content.PresentationArtifact) error {
+	speciesGroups, err := readSource(sourceDir, "species-groups.h", &artifact.SourceFiles)
+
+	if err != nil {
+		return err
+	}
+
+	artifact.SpeciesGroups, err = parseGroups(
+		"species-groups.h",
+		speciesGroups,
+		"species_groups",
+		"SP_",
+	)
+
+	if err != nil {
+		return err
+	}
+
+	jobGroups, err := readSource(sourceDir, "newgame.cc", &artifact.SourceFiles)
+
+	if err != nil {
+		return err
+	}
+
+	artifact.JobGroups, err = parseGroups("newgame.cc", jobGroups, "jobs_order", "JOB_")
+
+	return err
+}
+
+func loadDescriptions(
+	sourceDir string,
+	artifact *content.PresentationArtifact,
+) (map[string]string, map[string]string, error) {
+	speciesText, err := readSource(sourceDir, "dat/descript/species.txt", &artifact.SourceFiles)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	speciesDescriptions, err := parseDescriptions("species.txt", speciesText)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	jobText, err := readSource(sourceDir, "dat/descript/backgrounds.txt", &artifact.SourceFiles)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	jobDescriptions, err := parseDescriptions("backgrounds.txt", jobText)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return speciesDescriptions, jobDescriptions, nil
+}
+
+func loadMenuControls(sourceDir string, artifact *content.PresentationArtifact) error {
+	startupText, err := readSource(sourceDir, "startup.cc", &artifact.SourceFiles)
+
+	if err != nil {
+		return err
+	}
+
+	artifact.StartupModes, err = parseStartupModes("startup.cc", startupText)
+
+	if err != nil {
+		return err
+	}
+
+	skillText, err := readSource(sourceDir, "skills.h", &artifact.SourceFiles)
+
+	if err != nil {
+		return err
+	}
+
+	artifact.SkillColumns, err = parseSkillColumns("skills.h", skillText)
+
+	return err
+}
+
+func attachSpeciesDescriptions(
+	catalog content.Catalog,
+	descriptions map[string]string,
+	artifact *content.PresentationArtifact,
+) error {
+	for _, group := range artifact.SpeciesGroups {
+		for _, id := range group.IDs {
+			definition, err := catalog.Species(id)
+
+			if err != nil {
+				return err
+			}
+
+			if !definition.Selectable {
+				return fmt.Errorf("nonselectable species %s in menu", id)
+			}
+
+			text := descriptions[definition.Name]
+
+			if text == "" {
+				return fmt.Errorf("missing species description %s (%s)", id, definition.Name)
+			}
+
+			artifact.SpeciesDescriptions[id] = text
+		}
+	}
+
+	return nil
+}
+
+func attachJobDescriptions(
+	catalog content.Catalog,
+	descriptions map[string]string,
+	artifact *content.PresentationArtifact,
+) error {
+	for _, group := range artifact.JobGroups {
+		for _, id := range group.IDs {
+			definition, err := catalog.Job(id)
+
+			if err != nil {
+				return err
+			}
+
+			if !definition.Selectable {
+				return fmt.Errorf("nonselectable job %s in menu", id)
+			}
+
+			text := descriptions[definition.Name]
+
+			if text == "" {
+				return fmt.Errorf("missing job description %s (%s)", id, definition.Name)
+			}
+
+			artifact.JobDescriptions[id] = text
+		}
+	}
+
+	return nil
 }
 
 // Generate reads the pinned, clean C++ source only during an intentional content refresh.
