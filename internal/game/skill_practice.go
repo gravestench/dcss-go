@@ -84,46 +84,74 @@ func (s *combatSystem) practiceAnimalAttack(
 	defense combat.Defense,
 ) error {
 	armourMass := max(0, 42*(-defense.BodyEV/10)-13)
-	practiceDodge, err := s.skillChance(1, 6)
 
-	if err != nil {
+	if err := s.practiceIncomingDodge(armourMass); err != nil {
 		return err
 	}
 
-	if practiceDodge {
-		blocked, err := s.skillChance(armourMass, 800)
-
-		if err != nil {
-			return err
-		}
-
-		if !blocked {
-			s.turn.Practice = append(s.turn.Practice, "SK_DODGING")
-		}
-	}
-
-	if defense.ShieldClass > 0 {
-		denominator := 6
-
-		if outcome.Kind == combat.Block {
-			denominator = 2
-		}
-
-		practiceShield, err := s.skillChance(1, denominator)
-
-		if err != nil {
-			return err
-		}
-
-		if practiceShield {
-			s.turn.Practice = append(s.turn.Practice, "SK_SHIELDS")
-		}
+	if err := s.practiceIncomingShield(outcome, defense); err != nil {
+		return err
 	}
 
 	if outcome.Kind != combat.Hit {
 		return nil
 	}
 
+	return s.practiceIncomingHit(armourMass)
+}
+
+func (s *combatSystem) practiceIncomingDodge(armourMass int) error {
+	practiceDodge, err := s.skillChance(1, 6)
+
+	if err != nil {
+		return err
+	}
+
+	if !practiceDodge {
+		return nil
+	}
+
+	blocked, err := s.skillChance(armourMass, 800)
+
+	if err != nil {
+		return err
+	}
+
+	if !blocked {
+		s.turn.Practice = append(s.turn.Practice, "SK_DODGING")
+	}
+
+	return nil
+}
+
+func (s *combatSystem) practiceIncomingShield(
+	outcome combat.Outcome,
+	defense combat.Defense,
+) error {
+	if defense.ShieldClass <= 0 {
+		return nil
+	}
+
+	denominator := 6
+
+	if outcome.Kind == combat.Block {
+		denominator = 2
+	}
+
+	practiceShield, err := s.skillChance(1, denominator)
+
+	if err != nil {
+		return err
+	}
+
+	if practiceShield {
+		s.turn.Practice = append(s.turn.Practice, "SK_SHIELDS")
+	}
+
+	return nil
+}
+
+func (s *combatSystem) practiceIncomingHit(armourMass int) error {
 	practiceArmour, err := s.skillChance(1, 2)
 
 	if err != nil {
