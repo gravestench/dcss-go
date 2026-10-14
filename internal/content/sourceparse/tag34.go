@@ -17,6 +17,115 @@ type tagBranch struct {
 	elseSeen bool
 }
 
+// Line keeps the original source position after tag selection.
+type Line struct {
+	Number int
+	Text   string
+}
+
+// Tag34NumberedLines preserves quoted punctuation and original line numbers.
+// It intentionally accepts only the conditional forms in the pinned source.
+func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
+	clean := make([]byte, len(data))
+	copy(clean, data)
+	state := byte(0) // 0: code, 1: string, 2: character, 3: line comment, 4: block comment
+	escaped := false
+	for i := 0; i < len(clean); i++ {
+		c := clean[i]
+		switch state {
+		case 0:
+			if c == '"' {
+				state = 1
+			} else if c == '\'' {
+				state = 2
+			} else if c == '/' && i+1 < len(clean) && clean[i+1] == '/' {
+				state = 3
+				clean[i], clean[i+1] = ' ', ' '
+				i++
+			} else if c == '/' && i+1 < len(clean) && clean[i+1] == '*' {
+				state = 4
+				clean[i], clean[i+1] = ' ', ' '
+				i++
+			}
+		case 1, 2:
+			if escaped {
+				escaped = false
+			} else if c == '\\' {
+				escaped = true
+			} else if (state == 1 && c == '"') || (state == 2 && c == '\'') {
+				state = 0
+			}
+		case 3:
+			if c == '\n' {
+				state = 0
+			} else {
+				clean[i] = ' '
+			}
+		case 4:
+			if c == '*' && i+1 < len(clean) && clean[i+1] == '/' {
+				clean[i], clean[i+1] = ' ', ' '
+				i++
+				state = 0
+			} else if c != '\n' {
+				clean[i] = ' '
+			}
+		}
+	}
+	if state == 1 || state == 2 || state == 4 {
+		return nil, fmt.Errorf("%s: unterminated string, character, or block comment", path)
+	}
+	active := true
+	var stack []tagBranch
+	var result []Line
+	for n, line := range strings.Split(string(clean), "\n") {
+		trimmed := strings.TrimSpace(line)
+		switch {
+		case strings.HasPrefix(trimmed, "#if "):
+			condition, ok := tag34Condition(strings.TrimPrefix(trimmed, "#if "))
+			if !ok {
+				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
+			}
+			stack = append(stack, tagBranch{parent: active, matched: condition})
+			active = active && condition
+		case strings.HasPrefix(trimmed, "#elif "):
+			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
+				return nil, fmt.Errorf("%s:%d: unexpected #elif", path, n+1)
+			}
+			condition, ok := tag34Condition(strings.TrimPrefix(trimmed, "#elif "))
+			if !ok {
+				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
+			}
+			top := &stack[len(stack)-1]
+			active = top.parent && !top.matched && condition
+			top.matched = top.matched || condition
+		case trimmed == "#else":
+			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
+				return nil, fmt.Errorf("%s:%d: unexpected #else", path, n+1)
+			}
+			top := &stack[len(stack)-1]
+			top.elseSeen = true
+			active = top.parent && !top.matched
+			top.matched = true
+		case trimmed == "#endif":
+			if len(stack) == 0 {
+				return nil, fmt.Errorf("%s:%d: unexpected #endif", path, n+1)
+			}
+			active = stack[len(stack)-1].parent
+			stack = stack[:len(stack)-1]
+		case strings.HasPrefix(trimmed, "#if") || strings.HasPrefix(trimmed, "#elif") || strings.HasPrefix(trimmed, "#ifdef") || strings.HasPrefix(trimmed, "#ifndef"):
+			return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
+		default:
+			if active {
+				result = append(result, Line{Number: n + 1, Text: line})
+			}
+		}
+	}
+	if len(stack) != 0 {
+		return nil, fmt.Errorf("%s: unterminated conditional", path)
+	}
+	return result, nil
+}
+
 func tag34Condition(directive string) (bool, bool) {
 	switch directive {
 	case "TAG_MAJOR_VERSION == 34":
