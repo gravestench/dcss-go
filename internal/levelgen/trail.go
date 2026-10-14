@@ -64,13 +64,7 @@ func (b *builder) makeTrail(start trailStart) (StairPair, error) {
 			)
 		}
 
-		var direction Point
-
-		if b.roll(2) == 0 {
-			direction.X = b.trailDirection(position.X, width)
-		} else {
-			direction.Y = b.trailDirection(position.Y, height)
-		}
+		direction := b.chooseTrailDirection(position)
 
 		if direction.X == 0 && direction.Y == 0 {
 			continue
@@ -80,31 +74,11 @@ func (b *builder) makeTrail(start trailStart) (StairPair, error) {
 			length = b.roll(b.corrLength) + 2
 		}
 
-		for step := 0; step < length; step++ {
-			direction = inwardDirection(position, direction)
-			next := Point{
-				X: position.X + direction.X,
-				Y: position.Y + direction.Y,
-			}
+		var err error
+		position, err = b.carveTrailSegment(position, direction, length)
 
-			beyond := Point{
-				X: next.X + direction.X,
-				Y: next.Y + direction.Y,
-			}
-
-			if !b.inBounds(next) || !b.inBounds(beyond) {
-				return StairPair{}, fmt.Errorf("trail escaped the map")
-			}
-
-			if b.grid[beyond.Y][beyond.X] == '.' && !b.oneIn(b.intersectIn) {
-				break
-			}
-
-			position = next
-
-			if b.grid[position.Y][position.X] == '#' {
-				b.grid[position.Y][position.X] = '.'
-			}
+		if err != nil {
+			return StairPair{}, err
 		}
 
 		if finish == b.corrCount-1 && b.grid[position.Y][position.X] != '.' {
@@ -118,6 +92,49 @@ func (b *builder) makeTrail(start trailStart) (StairPair, error) {
 		Down: begin,
 		Up:   position,
 	}, nil
+}
+
+func (b *builder) chooseTrailDirection(position Point) Point {
+	var direction Point
+
+	if b.roll(2) == 0 {
+		direction.X = b.trailDirection(position.X, width)
+	} else {
+		direction.Y = b.trailDirection(position.Y, height)
+	}
+
+	return direction
+}
+
+func (b *builder) carveTrailSegment(position, direction Point, length int) (Point, error) {
+	for step := 0; step < length; step++ {
+		direction = inwardDirection(position, direction)
+		next := Point{
+			X: position.X + direction.X,
+			Y: position.Y + direction.Y,
+		}
+
+		beyond := Point{
+			X: next.X + direction.X,
+			Y: next.Y + direction.Y,
+		}
+
+		if !b.inBounds(next) || !b.inBounds(beyond) {
+			return Point{}, fmt.Errorf("trail escaped the map")
+		}
+
+		if b.grid[beyond.Y][beyond.X] == '.' && !b.oneIn(b.intersectIn) {
+			break
+		}
+
+		position = next
+
+		if b.grid[position.Y][position.X] == '#' {
+			b.grid[position.Y][position.X] = '.'
+		}
+	}
+
+	return position, nil
 }
 
 func (b *builder) viableTrailStart(position Point) bool {

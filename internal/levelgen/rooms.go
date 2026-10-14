@@ -50,8 +50,26 @@ func (b *builder) makeRandomRooms(count, maxDoors, doorLevel, maxX, maxY, maxRoo
 }
 
 func (b *builder) makeRoom(left, top, right, bottom, maxDoors, doorLevel int) bool {
+	connections, cornerConnections := b.roomConnections(left, top, right, bottom)
+
+	// The source counts corner openings twice for a single-door room.
+	if maxDoors == 1 && connections+cornerConnections > 1 {
+		return false
+	}
+
+	if connections == 0 || connections > maxDoors {
+		return false
+	}
+
+	b.carveRoom(left, top, right, bottom)
+	b.placeRoomDoors(left, top, right, bottom, doorLevel)
+
+	return true
+}
+
+func (b *builder) roomConnections(left, top, right, bottom int) (int, int) {
 	connections := 0
-	diagonal := 0
+	cornerConnections := 0
 
 	for x := left; x <= right; x++ {
 		if b.goodDoorSpot(x, top) {
@@ -92,18 +110,14 @@ func (b *builder) makeRoom(left, top, right, bottom, maxDoors, doorLevel int) bo
 		},
 	} {
 		if b.goodDoorSpot(corner.X, corner.Y) {
-			diagonal++
+			cornerConnections++
 		}
 	}
 
-	if maxDoors == 1 && connections+diagonal > 1 {
-		return false
-	}
+	return connections, cornerConnections
+}
 
-	if connections == 0 || connections > maxDoors {
-		return false
-	}
-
+func (b *builder) carveRoom(left, top, right, bottom int) {
 	for y := top; y <= bottom; y++ {
 		for x := left; x <= right; x++ {
 			// Closed doors are solid and do not have dry floor in the
@@ -113,7 +127,9 @@ func (b *builder) makeRoom(left, top, right, bottom, maxDoors, doorLevel int) bo
 			}
 		}
 	}
+}
 
+func (b *builder) placeRoomDoors(left, top, right, bottom, doorLevel int) {
 	// The adjacent corridor becomes a door only when walls flank it. This
 	// leaves room openings that are wider than one cell as ordinary floor.
 	for y := top + 1; y < bottom; y++ {
@@ -125,8 +141,6 @@ func (b *builder) makeRoom(left, top, right, bottom, maxDoors, doorLevel int) bo
 		b.maybeDoor(x, top-1, 1, 0, doorLevel)
 		b.maybeDoor(x, bottom+1, 1, 0, doorLevel)
 	}
-
-	return true
 }
 
 func (b *builder) goodDoorSpot(x, y int) bool {
