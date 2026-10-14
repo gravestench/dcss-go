@@ -150,7 +150,7 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 		}
 		hud(18+len(stat.label), stat.y, fmt.Sprintf("%d", stat.value), color)
 	}
-	hud(0, 7, "XL: -- Next: --", Brown)
+	hud(0, 7, fmt.Sprintf("XL: %2d Next: %2d%%", view.ExperienceLevel, view.NextLevelPercent), Brown)
 	hud(18, 7, fmt.Sprintf("Place: D:%d", view.LevelID), Brown)
 	hud(0, 8, "Noise: --", Brown)
 	hud(18, 8, fmt.Sprintf("Time: %.1f", float64(view.CurrentAut)/10), Brown)

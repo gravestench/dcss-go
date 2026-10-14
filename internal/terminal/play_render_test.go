@@ -39,7 +39,7 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 		{2, 37, "Health: 18/18"}, {3, 37, "Magic:  1/1"},
 		{4, 37, "AC: 6"}, {5, 37, "EV: 5"}, {6, 37, "SH: 4"},
 		{4, 55, "Str: 16"}, {5, 55, "Int: 8"}, {6, 55, "Dex: 12"},
-		{7, 37, "XL: --"}, {7, 55, "Place: D:1"}, {8, 37, "Noise: --"},
+		{7, 37, "XL:  1 Next:  0%"}, {7, 55, "Place: D:1"}, {8, 37, "Noise: --"},
 		{9, 37, "a) +0 rapier"}, {10, 37, "Quiver: --"},
 	} {
 		if !strings.HasPrefix(rows[tc.y][tc.x:], tc.text) {
@@ -54,6 +54,17 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 	}
 	if !strings.Contains(strings.Join(rows[17:], "\n"), "Unavailable: quaffing") {
 		t.Fatal("UI notice missing from message area")
+	}
+}
+
+func TestDrawPlayShowsEarnedRatExperienceProgress(t *testing.T) {
+	view := playView(t)
+	view.ExperienceLevel, view.NextLevelPercent = 1, 11
+	canvas := NewCanvas(79, 24)
+	layout, _ := ComputeLayout(79, 24)
+	DrawPlay(canvas, layout, view, "")
+	if got := canvas.PlainRows()[7][37:]; !strings.HasPrefix(got, "XL:  1 Next: 11%") {
+		t.Fatalf("experience HUD = %q", got)
 	}
 }
 
