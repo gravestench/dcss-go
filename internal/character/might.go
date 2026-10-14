@@ -6,7 +6,7 @@ const MightCapAut = 800
 
 // MightPotionDuration applies potion.cc's 35+random2(40) turns, capped at
 // 80 turns. Duration is stored in aut and the quaff's aut is decayed later.
-func MightPotionDuration(roller PotionRoller, currentAut int) (int, string, error) {
+func MightPotionDuration(roller Roller, currentAut int) (int, string, error) {
 	if roller == nil || currentAut < 0 || currentAut > MightCapAut {
 		return 0, "", fmt.Errorf("invalid might duration %d", currentAut)
 	}
