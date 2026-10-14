@@ -23,7 +23,7 @@ func TestRatFixture(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rat.Glyph != 'r' || rat.Speed != 10 || rat.BaseDamage != 3 || rat.ScenarioHP != 4 {
+	if rat.Glyph != 'r' || rat.Speed != 10 || rat.Attacks[0].Damage != 3 || rat.AverageHP10x != 25 {
 		t.Fatalf("unexpected rat fixture: %+v", rat)
 	}
 	player := catalog.Player()

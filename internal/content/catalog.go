@@ -2,15 +2,6 @@ package content
 
 import "fmt"
 
-type MonsterDef struct {
-	ID         string
-	Name       string
-	Glyph      rune
-	Speed      int
-	BaseDamage int
-	ScenarioHP int
-}
-
 type ItemDef struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
@@ -49,10 +40,10 @@ func (c Catalog) Player() PlayerDef { return c.player }
 
 func (c Catalog) Monster(id string) (MonsterDef, error) {
 	definition, found := c.monsters[id]
-	if !found {
+	if !found || definition.Status != MonsterDefined {
 		return MonsterDef{}, fmt.Errorf("unknown monster ID %q", id)
 	}
-	return definition, nil
+	return definition.clone(), nil
 }
 
 func (c Catalog) Item(id string) (ItemDef, error) {
@@ -97,7 +88,7 @@ func (c Catalog) Validate() error {
 		}
 	}
 	for id, monster := range c.monsters {
-		if id == "" || monster.ID != id || monster.Name == "" || monster.Glyph == 0 || monster.Speed <= 0 || monster.ScenarioHP <= 0 {
+		if id == "" || monster.ID != id || monster.validate() != nil {
 			return fmt.Errorf("invalid monster definition %q", id)
 		}
 	}

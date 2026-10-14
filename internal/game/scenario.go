@@ -4,6 +4,7 @@ import (
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
+	"fmt"
 	"github.com/gravestench/akara"
 )
 
@@ -76,6 +77,9 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if err != nil {
 		return nil, err
 	}
+	if ratDef.Attacks[0] != (content.MonsterAttack{TypeID: "AT_BITE", FlavourID: "AF_PLAIN", Damage: 3}) {
+		return nil, fmt.Errorf("fixed rat scenario expects the pinned three-damage bite")
+	}
 	rat, err := world.CreateEntity()
 	if err != nil {
 		return nil, err
@@ -83,10 +87,11 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if _, err = stores.Actors.Set(rat, ecs.Actor{KindID: ratDef.ID, Speed: ratDef.Speed}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Health.Set(rat, ecs.Health{Current: ratDef.ScenarioHP, Max: ratDef.ScenarioHP}); err != nil {
+	const scenarioRatHP = 4
+	if _, err = stores.Health.Set(rat, ecs.Health{Current: scenarioRatHP, Max: scenarioRatHP}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Combat.Set(rat, ecs.Combatant{BaseDamage: ratDef.BaseDamage}); err != nil {
+	if _, err = stores.Combat.Set(rat, ecs.Combatant{BaseDamage: ratDef.Attacks[0].Damage}); err != nil {
 		return nil, err
 	}
 	if _, err = stores.AI.Set(rat, ecs.MonsterAI{Behavior: "chase"}); err != nil {

@@ -53,7 +53,7 @@ func TestLoadDefaultSpeciesAndFixture(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rat.Glyph != 'r' || rat.Speed != 10 || rat.BaseDamage != 3 || rat.ScenarioHP != 4 {
+	if rat.Glyph != 'r' || rat.Speed != 10 || rat.Attacks[0].Damage != 3 || rat.AverageHP10x != 25 {
 		t.Fatalf("scenario rat changed: %+v", rat)
 	}
 	if player := catalog.Player(); player.SpeciesID != "SP_HUMAN" || player.JobID != "JOB_FIGHTER" || player.BaseDamage != 4 {
