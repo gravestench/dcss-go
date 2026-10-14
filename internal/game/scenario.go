@@ -62,12 +62,11 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 			1: first,
 			2: second,
 		},
-		catalog:        catalog,
-		seed:           seed,
-		rng:            NewRNGStreams(seed),
-		scheduler:      TurnScheduler{actors: stores.Actors},
-		levelAwaySince: make(map[int]Aut),
-		scenarioID:     ordinaryAnimalScenarioID,
+		catalog:    catalog,
+		seed:       seed,
+		rng:        NewRNGStreams(seed),
+		scheduler:  TurnScheduler{actors: stores.Actors},
+		scenarioID: ordinaryAnimalScenarioID,
 	}
 
 	g.player, err = world.CreateEntity()
@@ -196,6 +195,13 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 
 func registerSystems(g *Game) error {
 	world, stores := g.world, g.stores
+	g.corpseAging = corpseAgingSystem{
+		world:     world,
+		items:     stores.Items,
+		corpses:   stores.Corpses,
+		positions: stores.Positions,
+		rng:       g.rng,
+	}
 	if _, err := world.AddSystem(newMonsterDecisionSystem(g)); err != nil {
 		return err
 	}

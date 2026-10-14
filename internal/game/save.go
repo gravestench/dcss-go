@@ -93,8 +93,8 @@ func (g *Game) Snapshot() save.Snapshot {
 			Rows:  append([]string(nil), level.terrain...),
 			Known: level.KnownRows(),
 		}
-		if awayAt, away := g.levelAwaySince[id]; away {
-			since := int64(awayAt)
+		if level.awaySinceAut != nil {
+			since := int64(*level.awaySinceAut)
 			record.AwaySinceAut = &since
 		}
 		snapshot.Levels = append(snapshot.Levels, record)
@@ -155,18 +155,17 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}()
 	stores := ecs.Register(world)
 	g := &Game{
-		world:          world,
-		stores:         stores,
-		levels:         make(map[int]*Level),
-		player:         akara.Entity(snapshot.PlayerID),
-		catalog:        catalog,
-		seed:           snapshot.Seed,
-		scenarioID:     snapshot.ScenarioID,
-		rng:            RestoreRNGStreams(snapshot.Seed, snapshot.RNG),
-		scheduler:      TurnScheduler{actors: stores.Actors},
-		currentAut:     Aut(snapshot.CurrentAut),
-		levelAwaySince: make(map[int]Aut),
-		messages:       append([]string(nil), snapshot.Messages...),
+		world:      world,
+		stores:     stores,
+		levels:     make(map[int]*Level),
+		player:     akara.Entity(snapshot.PlayerID),
+		catalog:    catalog,
+		seed:       snapshot.Seed,
+		scenarioID: snapshot.ScenarioID,
+		rng:        RestoreRNGStreams(snapshot.Seed, snapshot.RNG),
+		scheduler:  TurnScheduler{actors: stores.Actors},
+		currentAut: Aut(snapshot.CurrentAut),
+		messages:   append([]string(nil), snapshot.Messages...),
 	}
 	for _, record := range snapshot.Levels {
 		if _, duplicate := g.levels[record.ID]; duplicate {
@@ -184,7 +183,8 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if *record.AwaySinceAut < 0 || *record.AwaySinceAut > snapshot.CurrentAut {
 				return nil, fmt.Errorf("invalid level %d away clock", record.ID)
 			}
-			g.levelAwaySince[record.ID] = Aut(*record.AwaySinceAut)
+			awaySince := Aut(*record.AwaySinceAut)
+			level.awaySinceAut = &awaySince
 		}
 	}
 	if g.levels[1] == nil || g.levels[2] == nil {
@@ -511,13 +511,13 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	if !positioned {
 		return nil, fmt.Errorf("saved player has no position")
 	}
-	if _, away := g.levelAwaySince[playerPosition.LevelID]; away {
+	if g.levels[playerPosition.LevelID].awaySinceAut != nil {
 		return nil, fmt.Errorf("active level %d is marked away", playerPosition.LevelID)
 	}
 	for _, entity := range stores.Corpses.Entities() {
 		position, _ := stores.Positions.Get(entity)
 		if position.LevelID != playerPosition.LevelID {
-			if _, away := g.levelAwaySince[position.LevelID]; !away {
+			if g.levels[position.LevelID].awaySinceAut == nil {
 				return nil, fmt.Errorf("inactive corpse level %d lacks away clock", position.LevelID)
 			}
 		}

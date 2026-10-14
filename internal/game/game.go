@@ -18,7 +18,7 @@ type Game struct {
 	rng            *RNGStreams
 	scheduler      TurnScheduler
 	currentAut     Aut
-	levelAwaySince map[int]Aut
+	corpseAging    corpseAgingSystem
 	turn           TurnContext
 	messages       []string
 	visible        []bool

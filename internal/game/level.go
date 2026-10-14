@@ -15,6 +15,8 @@ type Level struct {
 	width      int
 	positions  *akara.Store[ecs.Position]
 	actors     map[point]akara.Entity
+	// nil while active or before the player first visits this floor.
+	awaySinceAut *Aut
 }
 
 type point struct{ x, y int }

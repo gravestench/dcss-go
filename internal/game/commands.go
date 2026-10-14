@@ -164,12 +164,15 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		return StepResult{}, err
 	}
 	if g.turn.StairFrom != 0 {
-		g.levelAwaySince[g.turn.StairFrom] = startAut
-		if awayAt, away := g.levelAwaySince[g.turn.StairTo]; away {
-			if err := g.ageCorpsesOnLevel(g.turn.StairTo, int(startAut-awayAt)); err != nil {
+		from := g.levels[g.turn.StairFrom]
+		to := g.levels[g.turn.StairTo]
+		from.awaySinceAut = &startAut
+		if to.awaySinceAut != nil {
+			elapsed := int(startAut - *to.awaySinceAut)
+			if err := g.corpseAging.TickLevel(to.ID, elapsed); err != nil {
 				return StepResult{}, err
 			}
-			delete(g.levelAwaySince, g.turn.StairTo)
+			to.awaySinceAut = nil
 		}
 	}
 	for !g.playerDead() {
@@ -196,8 +199,14 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		}
 		events = append(events, monsterEvents...)
 	}
-	if err := g.ageCorpses(startAut, startAut+cost); err != nil {
-		return StepResult{}, err
+	if elapsed := corpseTickElapsed(startAut, startAut+cost); elapsed > 0 {
+		position, found := g.stores.Positions.Get(g.player)
+		if !found {
+			return StepResult{}, fmt.Errorf("player has no position for corpse timer")
+		}
+		if err := g.corpseAging.TickLevel(position.LevelID, elapsed); err != nil {
+			return StepResult{}, err
+		}
 	}
 	if err := g.refreshVisibility(); err != nil {
 		return StepResult{}, err

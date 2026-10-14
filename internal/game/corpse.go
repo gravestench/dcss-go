@@ -5,6 +5,7 @@ import (
 
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/monster"
+	"github.com/gravestench/akara"
 )
 
 type pendingCorpse struct {
@@ -43,38 +44,48 @@ func (g *Game) placeCorpse(drop pendingCorpse) error {
 	return nil
 }
 
-// ageCorpses runs after monster turns at the source's 200-aut boundary.
-// Only the active floor ages here. Inactive floors receive one catch-up call
-// when the player returns, preserving the skeleton reset after long absences.
-func (g *Game) ageCorpses(startAut, endAut Aut) error {
-	if endAut < startAut || endAut/monster.CorpseRotIntervalAut == startAut/monster.CorpseRotIntervalAut {
-		return nil
+// corpseTickElapsed keeps the source's 200-aut phase. The action coordinator
+// calls this after all intervening monster actions, never during each actor's
+// Akara update.
+func corpseTickElapsed(startAut, endAut Aut) int {
+	if endAut < startAut ||
+		endAut/monster.CorpseRotIntervalAut == startAut/monster.CorpseRotIntervalAut {
+		return 0
 	}
 	lastTick := startAut / monster.CorpseRotIntervalAut * monster.CorpseRotIntervalAut
-	position, found := g.stores.Positions.Get(g.player)
-	if !found {
-		return fmt.Errorf("player has no position for corpse timer")
-	}
-	return g.ageCorpsesOnLevel(position.LevelID, int(endAut-lastTick))
+	return int(endAut - lastTick)
 }
 
-func (g *Game) ageCorpsesOnLevel(levelID, elapsed int) error {
-	for _, entity := range g.stores.Corpses.Entities() {
-		corpse, found := g.stores.Corpses.Get(entity)
-		item, itemFound := g.stores.Items.Get(entity)
-		position, located := g.stores.Positions.Get(entity)
+// corpseAgingSystem owns corpse/item state transitions and entity removal.
+// The turn coordinator invokes it at the post-action timer barrier, so rot
+// never runs once for each monster that acts between player turns.
+type corpseAgingSystem struct {
+	world     *akara.World
+	items     *akara.Store[ecs.Item]
+	corpses   *akara.Store[ecs.Corpse]
+	positions *akara.Store[ecs.Position]
+	rng       monster.Roller
+}
+
+func (s corpseAgingSystem) TickLevel(levelID, elapsed int) error {
+	for _, entity := range s.corpses.Entities() {
+		corpse, found := s.corpses.Get(entity)
+		item, itemFound := s.items.Get(entity)
+		position, located := s.positions.Get(entity)
 		if !found || !itemFound || !located {
 			return fmt.Errorf("corpse %d is not a floor item", entity)
 		}
 		if position.LevelID != levelID {
 			continue
 		}
-		kind, freshness, appearance, alive, err := monster.AgeCorpse(g.rng, item.KindID, corpse.Freshness, elapsed)
+		kind, freshness, appearance, alive, err := monster.AgeCorpse(
+			s.rng, item.KindID, corpse.Freshness, elapsed,
+		)
 		if err != nil {
 			return err
 		}
 		if !alive {
-			if !g.world.DestroyEntity(entity) {
+			if !s.world.DestroyEntity(entity) {
 				return fmt.Errorf("corpse %d could not be destroyed", entity)
 			}
 			continue
