@@ -78,140 +78,184 @@ func ordinaryJobSkills(path string, data []byte) (map[string]struct{}, error) {
 	return allowed, nil
 }
 
+// jobImport holds source bytes, identity sets, and definitions for one refresh.
+// The runtime reads the committed artifact and never owns this state.
+type jobImport struct {
+	sourceDir     string
+	files         []content.JobSourceFile
+	jobHeaderPath string
+
+	jobIDs     map[string]struct{}
+	speciesIDs map[string]struct{}
+	spellIDs   map[string]struct{}
+	skillIDs   map[string]struct{}
+	jobs       []content.JobDef
+}
+
 func generateFromSource(sourceDir, revision string) ([]byte, error) {
 	if revision != pinnedRevision {
 		return nil, fmt.Errorf("source revision %s differs from pinned %s", revision, pinnedRevision)
 	}
 
-	var files []content.JobSourceFile
-	version, versionPath, err := readJobSource(sourceDir, "tag-version.h", &files)
+	importer := jobImport{sourceDir: sourceDir}
+
+	if err := importer.readVersion(); err != nil {
+		return nil, err
+	}
+
+	if err := importer.readTables(); err != nil {
+		return nil, err
+	}
+
+	if err := importer.validateJobs(); err != nil {
+		return nil, err
+	}
+
+	return importer.encode(revision)
+}
+
+func (i *jobImport) readVersion() error {
+	version, path, err := readJobSource(i.sourceDir, "tag-version.h", &i.files)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	match := tagMajor.FindSubmatch(version)
 
 	if match == nil {
-		return nil, fmt.Errorf("%s: TAG_MAJOR_VERSION definition missing", versionPath)
+		return fmt.Errorf("%s: TAG_MAJOR_VERSION definition missing", path)
 	}
 
 	major, err := strconv.Atoi(string(match[1]))
 
 	if err != nil || major != 34 {
-		return nil, fmt.Errorf("%s: TAG_MAJOR_VERSION must be 34, got %s", versionPath, match[1])
+		return fmt.Errorf("%s: TAG_MAJOR_VERSION must be 34, got %s", path, match[1])
 	}
 
-	jobData, jobDataPath, err := readJobSource(sourceDir, "job-data.h", &files)
+	return nil
+}
+
+func (i *jobImport) readTables() error {
+	jobData, jobDataPath, err := readJobSource(i.sourceDir, "job-data.h", &i.files)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	jobHeader, jobHeaderPath, err := readJobSource(sourceDir, "job-type.h", &files)
+	jobHeader, jobPath, err := readJobSource(i.sourceDir, "job-type.h", &i.files)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	speciesHeader, speciesHeaderPath, err := readJobSource(sourceDir, "species-type.h", &files)
+	speciesHeader, speciesPath, err := readJobSource(i.sourceDir, "species-type.h", &i.files)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	spellHeader, spellHeaderPath, err := readJobSource(sourceDir, "spell-type.h", &files)
+	spellHeader, spellPath, err := readJobSource(i.sourceDir, "spell-type.h", &i.files)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	skillHeader, skillHeaderPath, err := readJobSource(sourceDir, "skill-type.h", &files)
+	skillHeader, skillPath, err := readJobSource(i.sourceDir, "skill-type.h", &i.files)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	jobIDs, err := sourceparse.ActiveEnumIDs(jobHeaderPath, jobHeader, "JOB_")
+	i.jobIDs, err = sourceparse.ActiveEnumIDs(jobPath, jobHeader, "JOB_")
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	delete(jobIDs, "JOB_RANDOM")
-	delete(jobIDs, "JOB_VIABLE")
-	speciesIDs, err := sourceparse.ActiveEnumIDs(speciesHeaderPath, speciesHeader, "SP_")
+	delete(i.jobIDs, "JOB_RANDOM")
+	delete(i.jobIDs, "JOB_VIABLE")
+
+	i.speciesIDs, err = sourceparse.ActiveEnumIDs(speciesPath, speciesHeader, "SP_")
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	spellIDs, err := sourceparse.ActiveEnumIDs(spellHeaderPath, spellHeader, "SPELL_")
+	i.spellIDs, err = sourceparse.ActiveEnumIDs(spellPath, spellHeader, "SPELL_")
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	delete(spellIDs, "SPELL_NO_SPELL")
-	delete(spellIDs, "SPELL_MELEE")
-	skillIDs, err := ordinaryJobSkills(skillHeaderPath, skillHeader)
+	delete(i.spellIDs, "SPELL_NO_SPELL")
+	delete(i.spellIDs, "SPELL_MELEE")
+
+	i.skillIDs, err = ordinaryJobSkills(skillPath, skillHeader)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	jobs, err := parseJobData(jobDataPath, jobData)
+	i.jobHeaderPath = jobPath
+	i.jobs, err = parseJobData(jobDataPath, jobData)
 
-	if err != nil {
-		return nil, err
-	}
+	return err
+}
 
-	seen := make(map[string]bool, len(jobs))
+func (i *jobImport) validateJobs() error {
+	seen := make(map[string]bool, len(i.jobs))
 
-	for _, job := range jobs {
-		if _, active := jobIDs[job.ID]; !active {
-			return nil, fmt.Errorf("%s: job %s is not an active concrete job", job.SourcePath, job.ID)
+	for _, job := range i.jobs {
+		if _, active := i.jobIDs[job.ID]; !active {
+			return fmt.Errorf("%s: job %s is not an active concrete job", job.SourcePath, job.ID)
 		}
 
 		seen[job.ID] = true
 
 		for _, species := range job.RecommendedSpecies {
-			if _, active := speciesIDs[species]; !active {
-				return nil, fmt.Errorf("%s: %s has unknown recommended species %s", job.SourcePath, job.ID, species)
+			if _, active := i.speciesIDs[species]; !active {
+				return fmt.Errorf("%s: %s has unknown recommended species %s", job.SourcePath, job.ID, species)
 			}
 		}
 
 		for _, spell := range job.Spells {
-			if _, active := spellIDs[spell]; !active {
-				return nil, fmt.Errorf("%s: %s has unknown spell %s", job.SourcePath, job.ID, spell)
+			if _, active := i.spellIDs[spell]; !active {
+				return fmt.Errorf("%s: %s has unknown spell %s", job.SourcePath, job.ID, spell)
 			}
 		}
 
 		for _, grant := range job.Skills {
-			if _, active := skillIDs[grant.ID]; !active {
-				return nil, fmt.Errorf("%s: %s has unknown skill %s", job.SourcePath, job.ID, grant.ID)
+			if _, active := i.skillIDs[grant.ID]; !active {
+				return fmt.Errorf("%s: %s has unknown skill %s", job.SourcePath, job.ID, grant.ID)
 			}
 		}
 	}
 
-	for id := range jobIDs {
+	for id := range i.jobIDs {
 		if !seen[id] {
-			return nil, fmt.Errorf("%s: active job %s has no definition", jobHeaderPath, id)
+			return fmt.Errorf("%s: active job %s has no definition", i.jobHeaderPath, id)
 		}
 	}
 
-	sort.Slice(jobs, func(i, j int) bool {
-		return jobs[i].ID < jobs[j].ID
+	return nil
+}
+
+func (i *jobImport) encode(revision string) ([]byte, error) {
+	sort.Slice(i.jobs, func(first, second int) bool {
+		return i.jobs[first].ID < i.jobs[second].ID
 	})
-	sort.Slice(files, func(i, j int) bool {
-		return files[i].Path < files[j].Path
+
+	sort.Slice(i.files, func(first, second int) bool {
+		return i.files[first].Path < i.files[second].Path
 	})
+
 	artifact := content.JobArtifact{
 		SchemaVersion:   1,
 		SourceRevision:  revision,
 		TagMajorVersion: 34,
-		SourceFiles:     files,
-		Jobs:            jobs,
+		SourceFiles:     i.files,
+		Jobs:            i.jobs,
 	}
 
 	if err := artifact.Validate(); err != nil {
