@@ -93,6 +93,15 @@ func (g *Game) Snapshot() save.Snapshot {
 			Rows:  append([]string(nil), level.terrain...),
 			Known: level.KnownRows(),
 		}
+		for _, link := range level.StairLinks() {
+			record.Stairs = append(record.Stairs, save.StairRecord{
+				X:         link.X,
+				Y:         link.Y,
+				ToLevelID: link.ToLevelID,
+				ToX:       link.ToX,
+				ToY:       link.ToY,
+			})
+		}
 		if level.awaySinceAut != nil {
 			since := int64(*level.awaySinceAut)
 			record.AwaySinceAut = &since
@@ -178,6 +187,17 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		if knownErr := level.LoadKnownRows(record.Known); knownErr != nil {
 			return nil, knownErr
 		}
+		for _, savedLink := range record.Stairs {
+			if linkErr := level.AddStairLink(StairLink{
+				X:         savedLink.X,
+				Y:         savedLink.Y,
+				ToLevelID: savedLink.ToLevelID,
+				ToX:       savedLink.ToX,
+				ToY:       savedLink.ToY,
+			}); linkErr != nil {
+				return nil, linkErr
+			}
+		}
 		g.levels[record.ID] = level
 		if record.AwaySinceAut != nil {
 			if *record.AwaySinceAut < 0 || *record.AwaySinceAut > snapshot.CurrentAut {
@@ -187,14 +207,8 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			level.awaySinceAut = &awaySince
 		}
 	}
-	if g.levels[1] == nil || g.levels[2] == nil {
-		return nil, fmt.Errorf("save is missing a Dungeon floor")
-	}
-	if _, _, ok := g.levels[1].FindUniqueTerrain('>'); !ok {
-		return nil, fmt.Errorf("Dungeon:1 must have one down stair")
-	}
-	if _, _, ok := g.levels[2].FindUniqueTerrain('<'); !ok {
-		return nil, fmt.Errorf("Dungeon:2 must have one up stair")
+	if err := validateStairLinks(g.levels); err != nil {
+		return nil, err
 	}
 	seen := make(map[uint64]bool)
 	playerCount := 0

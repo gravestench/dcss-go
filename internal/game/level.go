@@ -2,12 +2,14 @@ package game
 
 import (
 	"fmt"
+	"sort"
 
 	"dcrawl-go/internal/ecs"
 	"github.com/gravestench/akara"
 )
 
-// Level owns terrain and its actor occupancy index. Position remains the source of truth.
+// Level owns terrain, stair links, away time, and its actor occupancy index.
+// Position remains the source of truth for actor location.
 type Level struct {
 	ID         int
 	terrain    []string
@@ -17,9 +19,20 @@ type Level struct {
 	actors     map[point]akara.Entity
 	// nil while active or before the player first visits this floor.
 	awaySinceAut *Aut
+	stairs       map[point]StairLink
 }
 
 type point struct{ x, y int }
+
+// StairLink connects a stair cell to an arrival cell on another level.
+// The level owns its outgoing links; the world validates destinations.
+type StairLink struct {
+	X         int
+	Y         int
+	ToLevelID int
+	ToX       int
+	ToY       int
+}
 
 func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Level, error) {
 	if id <= 0 || positions == nil || len(rows) == 0 || len(rows[0]) == 0 {
@@ -45,7 +58,79 @@ func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Lev
 		width:      width,
 		positions:  positions,
 		actors:     make(map[point]akara.Entity),
+		stairs:     make(map[point]StairLink),
 	}, nil
+}
+
+func (l *Level) AddStairLink(link StairLink) error {
+	if !l.inBounds(link.X, link.Y) ||
+		(l.terrain[link.Y][link.X] != '<' && l.terrain[link.Y][link.X] != '>') ||
+		link.ToLevelID <= 0 || link.ToX < 0 || link.ToY < 0 {
+		return fmt.Errorf("level %d has invalid stair link at (%d,%d)", l.ID, link.X, link.Y)
+	}
+	location := point{
+		x: link.X,
+		y: link.Y,
+	}
+	if _, duplicate := l.stairs[location]; duplicate {
+		return fmt.Errorf("level %d has duplicate stair link at (%d,%d)", l.ID, link.X, link.Y)
+	}
+	l.stairs[location] = link
+	return nil
+}
+
+func (l *Level) StairAt(x, y int) (StairLink, bool) {
+	link, found := l.stairs[point{
+		x: x,
+		y: y,
+	}]
+	return link, found
+}
+
+func (l *Level) StairLinks() []StairLink {
+	links := make([]StairLink, 0, len(l.stairs))
+	for _, link := range l.stairs {
+		links = append(links, link)
+	}
+	sort.Slice(links, func(i, j int) bool {
+		if links[i].Y != links[j].Y {
+			return links[i].Y < links[j].Y
+		}
+		return links[i].X < links[j].X
+	})
+	return links
+}
+
+func validateStairLinks(levels map[int]*Level) error {
+	ids := make([]int, 0, len(levels))
+	for id := range levels {
+		ids = append(ids, id)
+	}
+	sort.Ints(ids)
+
+	for _, id := range ids {
+		level := levels[id]
+		for y, row := range level.terrain {
+			for x := range row {
+				if row[x] != '<' && row[x] != '>' {
+					continue
+				}
+				if _, found := level.StairAt(x, y); !found {
+					return fmt.Errorf("level %d missing stair link at (%d,%d)", id, x, y)
+				}
+			}
+		}
+		for _, link := range level.StairLinks() {
+			target := levels[link.ToLevelID]
+			if target == nil || !target.Walkable(link.ToX, link.ToY) {
+				return fmt.Errorf(
+					"level %d stair at (%d,%d) has invalid destination %d:(%d,%d)",
+					id, link.X, link.Y, link.ToLevelID, link.ToX, link.ToY,
+				)
+			}
+		}
+	}
+	return nil
 }
 
 func (l *Level) inBounds(x, y int) bool {
@@ -184,21 +269,4 @@ func (l *Level) Remember(visible []bool) error {
 		}
 	}
 	return nil
-}
-
-// FindUniqueTerrain finds the sole stair of a given kind on a fixed floor.
-func (l *Level) FindUniqueTerrain(glyph byte) (x, y int, ok bool) {
-	found := false
-	for row, terrain := range l.terrain {
-		for column := 0; column < l.width; column++ {
-			if terrain[column] != glyph {
-				continue
-			}
-			if found {
-				return 0, 0, false
-			}
-			x, y, found = column, row, true
-		}
-	}
-	return x, y, found
 }

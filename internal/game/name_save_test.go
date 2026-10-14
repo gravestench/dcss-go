@@ -26,7 +26,7 @@ func TestPlayerNameSurvivesGoSaveAndRestore(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if snapshot.Version != 6 || savedPlayer(t, &snapshot).Player.Name != "Alice" {
+	if snapshot.Version != save.Version || savedPlayer(t, &snapshot).Player.Name != "Alice" {
 		t.Fatalf("saved player: %+v", snapshot)
 	}
 	restored, err := Restore(snapshot, testCatalog(t))

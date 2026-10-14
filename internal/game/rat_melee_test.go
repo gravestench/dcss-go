@@ -110,8 +110,8 @@ func TestCombatStateAndMeleeRNGContinueThroughSave(t *testing.T) {
 		t.Fatal(err)
 	}
 	snapshot := g.Snapshot()
-	if snapshot.Version != 6 || save.Version != 6 {
-		t.Fatalf("combat save version %d/%d, want 6", snapshot.Version, save.Version)
+	if snapshot.Version != save.Version {
+		t.Fatalf("combat save version %d, want %d", snapshot.Version, save.Version)
 	}
 	restored, err := Restore(snapshot, testCatalog(t))
 	if err != nil {

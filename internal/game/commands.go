@@ -99,12 +99,14 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			DY:   command.DY,
 		}
 	case CommandUpstairs:
-		if level.terrain[position.Y][position.X] != '<' || position.LevelID != 2 {
+		_, linked := level.StairAt(position.X, position.Y)
+		if level.terrain[position.Y][position.X] != '<' || !linked {
 			return g.noTime("There are no stairs up here."), nil
 		}
 		intent = ecs.Intent{Kind: ecs.IntentUpstairs}
 	case CommandDownstairs:
-		if level.terrain[position.Y][position.X] != '>' || position.LevelID != 1 {
+		_, linked := level.StairAt(position.X, position.Y)
+		if level.terrain[position.Y][position.X] != '>' || !linked {
 			return g.noTime("There are no stairs down here."), nil
 		}
 		intent = ecs.Intent{Kind: ecs.IntentDownstairs}

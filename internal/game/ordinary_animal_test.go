@@ -176,6 +176,6 @@ func TestLegacyRatOnlySaveStillLoads(t *testing.T) {
 	}
 	defer loaded.Close()
 	if !reflect.DeepEqual(legacy, loaded.Snapshot()) {
-		t.Fatal("legacy rat-only version-6 save changed on load")
+		t.Fatal("rat-only scenario changed on load")
 	}
 }

@@ -130,7 +130,7 @@ func TestKnowledgeSaveRoundTrip(t *testing.T) {
 		t.Fatal(err)
 	}
 	snapshot := g.Snapshot()
-	if snapshot.Version != 6 || len(snapshot.Levels) != 2 || len(snapshot.Levels[0].Known) == 0 {
+	if snapshot.Version != save.Version || len(snapshot.Levels) != 2 || len(snapshot.Levels[0].Known) == 0 {
 		t.Fatalf("snapshot knowledge missing: %+v", snapshot.Levels)
 	}
 	restored, err := Restore(snapshot, testCatalog(t))

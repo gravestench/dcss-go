@@ -84,14 +84,14 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 		ai.MemoryUntilAut = int64(*s.clock) + int64(250+memoryRoll)
 	} else if ai.Behavior == "seek" {
 		if ai.MemoryUntilAut == 0 {
-			// Pre-memory version-6 saves carried a target but no deadline.
+			// Earlier AI records carried a target but no deadline.
 			ai.MemoryUntilAut = int64(*s.clock) + 250
 		}
 		if int64(*s.clock) >= ai.MemoryUntilAut {
 			ai.Behavior, ai.TargetX, ai.TargetY, ai.MemoryUntilAut = "wander", 0, 0, 0
 		}
 	} else if ai.Behavior != "seek" && ai.Behavior != "wander" {
-		// Old version-6 saves used "chase" without a remembered target.
+		// Earlier AI records used "chase" without a remembered target.
 		ai.Behavior, ai.TargetX, ai.TargetY = "wander", 0, 0
 	}
 	if position.X == ai.TargetX && position.Y == ai.TargetY {

@@ -55,13 +55,35 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if err != nil {
 		return nil, err
 	}
+	if err := first.AddStairLink(StairLink{
+		X:         7,
+		Y:         3,
+		ToLevelID: 2,
+		ToX:       1,
+		ToY:       1,
+	}); err != nil {
+		return nil, err
+	}
+	if err := second.AddStairLink(StairLink{
+		X:         1,
+		Y:         1,
+		ToLevelID: 1,
+		ToX:       7,
+		ToY:       3,
+	}); err != nil {
+		return nil, err
+	}
+	levels := map[int]*Level{
+		1: first,
+		2: second,
+	}
+	if err := validateStairLinks(levels); err != nil {
+		return nil, err
+	}
 	g := &Game{
-		world:  world,
-		stores: stores,
-		levels: map[int]*Level{
-			1: first,
-			2: second,
-		},
+		world:      world,
+		stores:     stores,
+		levels:     levels,
 		catalog:    catalog,
 		seed:       seed,
 		rng:        NewRNGStreams(seed),
