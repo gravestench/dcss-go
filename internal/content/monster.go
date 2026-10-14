@@ -155,6 +155,7 @@ func (m MonsterDef) validate() error {
 				return fmt.Errorf("monster %s has invalid resistance %q", m.ID, resistance.ID)
 			}
 		}
+
 	case MonsterRemoved, MonsterEnumOnly:
 		identity := MonsterDef{
 			ID:         m.ID,
@@ -167,6 +168,7 @@ func (m MonsterDef) validate() error {
 		if !reflect.DeepEqual(m, identity) {
 			return fmt.Errorf("non-live monster %s has gameplay fields", m.ID)
 		}
+
 	default:
 		return fmt.Errorf("monster %s has unknown status %q", m.ID, m.Status)
 	}

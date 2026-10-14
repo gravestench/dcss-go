@@ -16,18 +16,23 @@ func goodWeaponUpgrade(id, jobID, size string) string {
 	switch id {
 	case "WPN_SHORT_SWORD":
 		return "WPN_RAPIER"
+
 	case "WPN_MACE":
 		return "WPN_FLAIL"
+
 	case "WPN_HAND_AXE":
 		return "WPN_WAR_AXE"
+
 	case "WPN_SPEAR":
 		if jobID == "JOB_FIGHTER" && (size == "SIZE_TINY" || size == "SIZE_LITTLE" || size == "SIZE_SMALL") {
 			return id
 		}
 
 		return "WPN_TRIDENT"
+
 	case "WPN_FALCHION":
 		return "WPN_LONG_SWORD"
+
 	default:
 		return id
 	}

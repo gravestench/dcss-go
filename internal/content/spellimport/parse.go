@@ -127,10 +127,13 @@ func splitCSV(value string) ([]string, error) {
 		switch {
 		case escaped:
 			escaped = false
+
 		case char == '\\' && quoted:
 			escaped = true
+
 		case char == '"':
 			quoted = !quoted
+
 		case char == ',' && !quoted:
 			field := strings.TrimSpace(value[start:i])
 

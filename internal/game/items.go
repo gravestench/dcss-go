@@ -29,6 +29,7 @@ func validateItemProperties(item ecs.Item, kind content.ItemDef) error {
 			if kind.Class != "OBJ_MISSILES" {
 				return fmt.Errorf("incompatible ego")
 			}
+
 		default:
 			return fmt.Errorf("unknown ego %q", item.Ego)
 		}

@@ -26,14 +26,19 @@ func splitLegacyFields(body string) ([]string, error) {
 		switch {
 		case quoted && escaped:
 			escaped = false
+
 		case quoted && ch == '\\':
 			escaped = true
+
 		case ch == '"':
 			quoted = !quoted
+
 		case !quoted && ch == '{':
 			depth++
+
 		case !quoted && ch == '}':
 			depth--
+
 		case !quoted && ch == ',' && depth == 0:
 			fields = append(fields, strings.TrimSpace(body[start:i]))
 			start = i + 1
@@ -224,6 +229,7 @@ func parseLegacy(
 		records = append(records, record)
 		byID[id] = &records[len(records)-1]
 	}
+
 	// Rebuild pointers after the append loop, since growing the slice may move it.
 	for i := range records {
 		byID[records[i].ID] = &records[i]

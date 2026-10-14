@@ -137,14 +137,17 @@ func splitFields(value string) ([]string, error) {
 		switch char {
 		case '\'', '"':
 			quote = char
+
 		case '{':
 			depth++
+
 		case '}':
 			depth--
 
 			if depth < 0 {
 				return nil, fmt.Errorf("unbalanced aggregate brace")
 			}
+
 		case ',':
 			if depth == 0 {
 				fields = append(fields, strings.TrimSpace(value[start:i]))
@@ -354,8 +357,10 @@ func braceDelta(value string) (int, error) {
 		switch char {
 		case '\'', '"':
 			quote = char
+
 		case '{':
 			delta++
+
 		case '}':
 			delta--
 		}

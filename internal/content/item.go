@@ -220,10 +220,12 @@ func (d ItemDef) validate() error {
 		if d.Slot != "weapon" || !strings.HasPrefix(d.WeaponSkill, "SK_") || d.Stackable {
 			return fmt.Errorf("item %s has invalid weapon slot or skill", d.ID)
 		}
+
 	case "OBJ_ARMOUR":
 		if !strings.Contains(" body shield head cloak gloves boots ", " "+d.Slot+" ") || d.WeaponSkill != "" || d.Stackable {
 			return fmt.Errorf("item %s has invalid armour slot or skill", d.ID)
 		}
+
 	default:
 		if d.Slot != "" || d.WeaponSkill != "" {
 			return fmt.Errorf("item %s has invalid slot or skill", d.ID)
@@ -240,6 +242,7 @@ func (d ItemDef) validate() error {
 
 	switch d.Naming.Kind {
 	case "static", "manual_skill", "corpse_monster":
+
 	default:
 		return fmt.Errorf("item %s has invalid naming kind %q", d.ID, d.Naming.Kind)
 	}
@@ -465,6 +468,7 @@ func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 				return fmt.Errorf("item %s has unknown armour flag %s", d.ID, flag.ID)
 			}
 		}
+
 	case "OBJ_WEAPONS":
 		if d.Weapon == nil || !vocabularyHas(v.Skills, d.Weapon.SkillID) ||
 			!vocabularyHas(v.Sizes, d.Weapon.Min2HSizeID) || !vocabularyHas(v.Sizes, d.Weapon.Min1HSizeID) ||
@@ -483,14 +487,17 @@ func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 				return fmt.Errorf("item %s has unknown brand %s", d.ID, brand.BrandID)
 			}
 		}
+
 	case "OBJ_MISSILES":
 		if d.Missile == nil {
 			return fmt.Errorf("item %s lacks missile properties", d.ID)
 		}
+
 	case "OBJ_FOOD":
 		if d.Food == nil {
 			return fmt.Errorf("item %s lacks food properties", d.ID)
 		}
+
 	default:
 		if d.Armour != nil || d.Weapon != nil || d.Missile != nil || d.Food != nil {
 			return fmt.Errorf("item %s has invented class properties", d.ID)

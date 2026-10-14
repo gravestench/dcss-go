@@ -96,6 +96,7 @@ func (g *Game) View() View {
 				Glyph: rune(level.terrain[i/level.width][i%level.width]),
 				State: Visible,
 			}
+
 		case glyph != 0:
 			view.Cells[i] = CellView{
 				Glyph: rune(glyph),
@@ -182,6 +183,7 @@ func (g *Game) View() View {
 			kindID = "player"
 			name = view.PlayerName
 			role = "player"
+
 		case g.stores.AI.Has(entity):
 			actor, _ := g.stores.Actors.Get(entity)
 			kindID, role = actor.KindID, "monster"
@@ -190,6 +192,7 @@ func (g *Game) View() View {
 				glyph = definition.Glyph
 				name = definition.Name
 			}
+
 		case g.stores.Items.Has(entity):
 			item, _ := g.stores.Items.Get(entity)
 			kindID, role = item.KindID, "item"

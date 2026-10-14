@@ -153,6 +153,7 @@ func assertBasicLayout(t *testing.T, layout Layout) {
 
 			switch terrain {
 			case '#', '.', '+', '<', '>':
+
 			default:
 				t.Fatalf("unknown terrain %q at (%d,%d)", terrain, x, y)
 			}

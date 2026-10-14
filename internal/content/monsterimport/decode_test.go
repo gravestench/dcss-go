@@ -53,32 +53,46 @@ func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 		switch {
 		case strings.HasPrefix(tok, "MONS_"):
 			s.monster[tok] = true
+
 		case strings.HasPrefix(tok, "AT_"):
 			s.attackType[tok] = true
+
 		case strings.HasPrefix(tok, "AF_"):
 			s.attackFlavour[tok] = true
+
 		case strings.HasPrefix(tok, "MST_"):
 			s.spellbook[tok] = true
+
 		case strings.HasPrefix(tok, "MR_"):
 			s.resistance[tok] = true
+
 		case strings.HasPrefix(tok, "MH_"):
 			s.holiness[tok] = true
+
 		case strings.HasPrefix(tok, "M_"):
 			s.classFlag[tok] = true
+
 		case strings.HasPrefix(tok, "S_"):
 			s.shout[tok] = true
+
 		case strings.HasPrefix(tok, "I_"):
 			s.intelligence[tok] = true
+
 		case strings.HasPrefix(tok, "HT_"):
 			s.habitat[tok] = true
+
 		case strings.HasPrefix(tok, "MONUSE_"):
 			s.itemUse[tok] = true
+
 		case strings.HasPrefix(tok, "SIZE_"):
 			s.size[tok] = true
+
 		case strings.HasPrefix(tok, "MON_SHAPE_"):
 			s.shape[tok] = true
+
 		case strings.HasPrefix(tok, "TVARY_"):
 			s.tileVariation[tok] = true
+
 		default:
 			s.colour[tok] = true
 		}

@@ -163,6 +163,7 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 				Fields: fields,
 			})
 			pos = end
+
 		case strings.HasPrefix(src[pos:], "AXED_MON("):
 			inner, end, err := balanced(src, pos+len("AXED_MON"), '(', ')')
 
@@ -189,6 +190,7 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 				RemovedName: name,
 			})
 			pos = end
+
 		case strings.HasPrefix(src[pos:], "DUMMY("):
 			inner, end, err := balanced(src, pos+len("DUMMY"), '(', ')')
 
@@ -203,6 +205,7 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 			}
 
 			pos = end // DUMMY is an enum-only genus placeholder, not an explicit definition.
+
 		default:
 			return nil, fmt.Errorf("%s:%d: unsupported table token near %.32q", path, line, src[pos:])
 		}
@@ -290,14 +293,19 @@ func splitFields(src string) ([]string, error) {
 		switch c {
 		case '"', '\'':
 			quote = c
+
 		case '{':
 			braces++
+
 		case '}':
 			braces--
+
 		case '(':
 			parens++
+
 		case ')':
 			parens--
+
 		case ',':
 			if braces == 0 && parens == 0 {
 				fields = append(fields, strings.TrimSpace(src[start:i]))

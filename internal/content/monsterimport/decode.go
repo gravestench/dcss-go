@@ -62,8 +62,10 @@ func orTerms(expr string) ([]string, error) {
 		switch c {
 		case '(':
 			depth++
+
 		case ')':
 			depth--
+
 		case '|':
 			if depth == 0 {
 				parts = append(parts, strings.TrimSpace(expr[start:i]))
@@ -156,6 +158,7 @@ func decodeResistances(expr string, symbols map[string]bool) ([]content.MonsterR
 	if err != nil {
 		return nil, err
 	}
+
 	// The seven low bits of each three-bit slot encode signed levels; OR
 	// source terms at the bit level before decoding, as mon-enum.h does.
 	levels := map[string]int{}
@@ -373,20 +376,26 @@ func decodeEnergy(expr string) (content.MonsterEnergy, error) {
 			switch expr[:open] {
 			case "MOVE_ENERGY":
 				base[0], base[1] = value, value
+
 			case "ACTION_ENERGY":
 				for i := 2; i <= 6; i++ {
 					base[i] = value
 				}
 
 				base[7] = value * 10
+
 			case "ATTACK_ENERGY":
 				base[2] = value
+
 			case "MISSILE_ENERGY":
 				base[3] = value
+
 			case "SPELL_ENERGY":
 				base[4] = value
+
 			case "SWIM_ENERGY":
 				base[1] = value
+
 			default:
 				return content.MonsterEnergy{}, fmt.Errorf("unknown energy macro %q", expr)
 			}
@@ -570,7 +579,9 @@ func decodeRow(path string, row sourceRow, s symbolSets) (content.MonsterDef, er
 	switch f[17] {
 	case "true":
 		d.LeavesCorpse = true
+
 	case "false":
+
 	default:
 		return d, fmt.Errorf("invalid corpse boolean %q", f[17])
 	}

@@ -36,6 +36,7 @@ func (entry DungeonPopEntry) validate() error {
 	switch entry.Curve {
 	case "FLAT", "SEMI", "PEAK", "RISE", "FALL":
 		return nil
+
 	default:
 		return fmt.Errorf("invalid Dungeon population curve %q", entry.Curve)
 	}
@@ -81,6 +82,7 @@ func (entry DungeonPopEntry) WeightAtDepth(depth int) int {
 	switch entry.Curve {
 	case "FLAT":
 		return rarity
+
 	case "SEMI":
 		if length == 0 {
 			length = 2
@@ -89,14 +91,18 @@ func (entry DungeonPopEntry) WeightAtDepth(depth int) int {
 		}
 
 		return rarity * (length - absInt(entry.MinDepth+entry.MaxDepth-2*depth)) / length
+
 	case "PEAK":
 		length += 2
 
 		return rarity * (length - absInt(entry.MinDepth+entry.MaxDepth-2*depth)) / length
+
 	case "RISE":
 		return rarity * (depth - entry.MinDepth + 1) / (length + 1)
+
 	case "FALL":
 		return rarity * (entry.MaxDepth - depth + 1) / (length + 1)
+
 	default:
 		return 0
 	}

@@ -18,10 +18,13 @@ func HumanExperienceNeeded(level int) (int, error) {
 	switch level {
 	case 1:
 		return 0, nil
+
 	case 2:
 		return 9, nil
+
 	case 3:
 		return 29, nil
+
 	case 4:
 		return 69, nil
 	}

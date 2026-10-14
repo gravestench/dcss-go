@@ -112,6 +112,7 @@ const char* jewellery_effect_name(int type, bool terse)
     if (!terse) {
         switch (type) {
         case RING_PROTECTION: return "protection";
+
         case AMU_FAITH: return "faith";
         }
     } else { return "short"; }
@@ -138,10 +139,14 @@ string sub_type_string(const item_def &item, bool known)
     case BOOK_MANUAL:
         if (!known) return "manual";
         return "manual of " + skill_name(item.plus);
+
     case OBJ_ORBS: return "orb of Zot";
+
     case OBJ_CORPSES: return "corpse";
+
     case OBJ_GOLD: return "gold";
 }
+
 case OBJ_FOOD: return "removed food";
 `)
 }
@@ -151,16 +156,24 @@ func presentationGlyphFixture() (show, showHeader, dcharHeader, view []byte) {
 {
     switch (item.base_type) {
     case OBJ_ORBS: return SHOW_ITEM_ORB;
+
     case OBJ_WEAPONS: return SHOW_ITEM_WEAPON;
+
     case OBJ_POTIONS: return SHOW_ITEM_POTION;
+
     case OBJ_BOOKS: return SHOW_ITEM_BOOK;
+
     case OBJ_CORPSES:
         if (item.sub_type == CORPSE_SKELETON) return SHOW_ITEM_SKELETON;
         else return SHOW_ITEM_CORPSE;
+
     case OBJ_GOLD: return SHOW_ITEM_GOLD;
+
     case OBJ_RUNES: return SHOW_ITEM_RUNE;
+
     case OBJ_JEWELLERY:
         return jewellery_is_amulet(item) ? SHOW_ITEM_AMULET : SHOW_ITEM_RING;
+
     default: return SHOW_ITEM_ORB;
     }
 }`)

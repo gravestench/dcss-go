@@ -23,12 +23,14 @@ func lexJobData(path, source string) ([]token, error) {
 		switch {
 		case ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r':
 			i++
+
 		case ch == '{' || ch == '}' || ch == ',' || ch == ';':
 			tokens = append(tokens, token{
 				kind:  string(ch),
 				value: string(ch),
 			})
 			i++
+
 		case ch == '"':
 			start := i
 			i++
@@ -61,6 +63,7 @@ func lexJobData(path, source string) ([]token, error) {
 				kind:  "string",
 				value: value,
 			})
+
 		case ch == '-' || ch == '+' || ch >= '0' && ch <= '9':
 			start := i
 			i++
@@ -77,6 +80,7 @@ func lexJobData(path, source string) ([]token, error) {
 				kind:  "integer",
 				value: source[start:i],
 			})
+
 		case ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z' || ch == '_':
 			start := i
 			i++
@@ -95,6 +99,7 @@ func lexJobData(path, source string) ([]token, error) {
 				kind:  "identifier",
 				value: source[start:i],
 			})
+
 		default:
 			return nil, fmt.Errorf("%s: unsupported job initializer character %q", path, ch)
 		}

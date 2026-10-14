@@ -46,8 +46,15 @@ func main() {
 }
 
 func checkFile(path string) (int, error) {
+	source, err := os.ReadFile(path)
+
+	if err != nil {
+		return 0, err
+	}
+
+	lines := strings.Split(string(source), "\n")
 	fset := token.NewFileSet()
-	file, err := parser.ParseFile(fset, path, nil, 0)
+	file, err := parser.ParseFile(fset, path, source, parser.ParseComments)
 
 	if err != nil {
 		return 0, err
@@ -79,9 +86,29 @@ func checkFile(path string) (int, error) {
 			}
 		}
 	}
+	checkClauses := func(clauses []ast.Stmt) {
+		for index := 1; index < len(clauses); index++ {
+			previous := clauses[index-1]
+			next := clauses[index]
+
+			if fset.Position(previous.End()-1).Line+1 == fset.Position(next.Pos()).Line {
+				report(next.Pos(), "leave a blank line between switch or select cases")
+			}
+		}
+	}
+	blockEndLines := make(map[int]bool)
 
 	ast.Inspect(file, func(node ast.Node) bool {
 		switch value := node.(type) {
+		case *ast.SwitchStmt:
+			checkClauses(value.Body.List)
+
+		case *ast.TypeSwitchStmt:
+			checkClauses(value.Body.List)
+
+		case *ast.SelectStmt:
+			checkClauses(value.Body.List)
+
 		case *ast.ValueSpec:
 			if len(value.Names) > 1 {
 				report(value.Pos(), "declare each named value on its own line")
@@ -115,6 +142,8 @@ func checkFile(path string) (int, error) {
 			}
 
 		case *ast.BlockStmt:
+			blockEndLines[fset.Position(value.Rbrace).Line] = true
+
 			if len(value.List) > 0 && sameLine(fset, value.Lbrace, value.Rbrace) {
 				report(value.Lbrace, "expand this inline block")
 			}
@@ -159,6 +188,14 @@ func checkFile(path string) (int, error) {
 		return true
 	})
 
+	for _, group := range file.Comments {
+		line := fset.Position(group.Pos()).Line
+
+		if blockEndLines[line-1] && strings.TrimSpace(lines[line-2]) == "}" {
+			report(group.Pos(), "leave a blank line after the block before its comment")
+		}
+	}
+
 	return issues, nil
 }
 
@@ -171,6 +208,7 @@ func scalarElements(elements []ast.Expr) bool {
 		switch value := element.(type) {
 		case *ast.BasicLit, *ast.Ident:
 			continue
+
 		case *ast.UnaryExpr:
 			if _, literal := value.X.(*ast.BasicLit); literal {
 				continue

@@ -79,6 +79,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	switch command.Kind {
 	case CommandInspect:
 		return StepResult{View: g.View()}, nil
+
 	case CommandMove:
 		if command.DX < -1 || command.DX > 1 || command.DY < -1 || command.DY > 1 || (command.DX == 0 && command.DY == 0) {
 			return g.noTime("Invalid movement direction."), nil
@@ -131,6 +132,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			DX:   command.DX,
 			DY:   command.DY,
 		}
+
 	case CommandUpstairs:
 		link, linked := level.StairAt(position.X, position.Y)
 
@@ -143,6 +145,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		}
 
 		intent = ecs.Intent{Kind: ecs.IntentUpstairs}
+
 	case CommandDownstairs:
 		link, linked := level.StairAt(position.X, position.Y)
 
@@ -155,8 +158,10 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		}
 
 		intent = ecs.Intent{Kind: ecs.IntentDownstairs}
+
 	case CommandWait:
 		intent = ecs.Intent{Kind: ecs.IntentWait}
+
 	case CommandPickup:
 		item, found := g.floorItemAt(*position)
 
@@ -169,6 +174,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		}
 
 		intent = ecs.Intent{Kind: ecs.IntentPickup}
+
 	case CommandQuaff:
 		itemID := akara.Entity(command.ItemID)
 		item, found := g.stores.Items.Get(itemID)
@@ -212,6 +218,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			Kind:   ecs.IntentQuaff,
 			ItemID: itemID,
 		}
+
 	default:
 		return g.noTime("Unknown command."), nil
 	}

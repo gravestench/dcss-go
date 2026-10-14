@@ -49,6 +49,7 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 				clean[i], clean[i+1] = ' ', ' '
 				i++
 			}
+
 		case 1, 2:
 			if escaped {
 				escaped = false
@@ -57,12 +58,14 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			} else if (state == 1 && c == '"') || (state == 2 && c == '\'') {
 				state = 0
 			}
+
 		case 3:
 			if c == '\n' {
 				state = 0
 			} else {
 				clean[i] = ' '
 			}
+
 		case 4:
 			if c == '*' && i+1 < len(clean) && clean[i+1] == '/' {
 				clean[i], clean[i+1] = ' ', ' '
@@ -98,6 +101,7 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 				matched: condition,
 			})
 			active = active && condition
+
 		case strings.HasPrefix(trimmed, "#elif "):
 			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
 				return nil, fmt.Errorf("%s:%d: unexpected #elif", path, n+1)
@@ -112,6 +116,7 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			top := &stack[len(stack)-1]
 			active = top.parent && !top.matched && condition
 			top.matched = top.matched || condition
+
 		case trimmed == "#else":
 			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
 				return nil, fmt.Errorf("%s:%d: unexpected #else", path, n+1)
@@ -121,6 +126,7 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			top.elseSeen = true
 			active = top.parent && !top.matched
 			top.matched = true
+
 		case trimmed == "#endif":
 			if len(stack) == 0 {
 				return nil, fmt.Errorf("%s:%d: unexpected #endif", path, n+1)
@@ -128,9 +134,11 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 
 			active = stack[len(stack)-1].parent
 			stack = stack[:len(stack)-1]
+
 		case strings.HasPrefix(trimmed, "#if") || strings.HasPrefix(trimmed, "#elif") ||
 			strings.HasPrefix(trimmed, "#ifdef") || strings.HasPrefix(trimmed, "#ifndef"):
 			return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
+
 		default:
 			if active {
 				result = append(result, Line{
@@ -152,8 +160,10 @@ func tag34Condition(directive string) (bool, bool) {
 	switch directive {
 	case "TAG_MAJOR_VERSION == 34":
 		return true, true
+
 	case "TAG_MAJOR_VERSION > 34":
 		return false, true
+
 	default:
 		return false, false
 	}
@@ -183,6 +193,7 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 				matched: condition,
 			})
 			active = active && condition
+
 		case strings.HasPrefix(trimmed, "#elif "):
 			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
 				return nil, fmt.Errorf("%s:%d: unexpected #elif", path, n+1)
@@ -197,6 +208,7 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 			top := &stack[len(stack)-1]
 			active = top.parent && !top.matched && condition
 			top.matched = top.matched || condition
+
 		case trimmed == "#else":
 			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
 				return nil, fmt.Errorf("%s:%d: unexpected #else", path, n+1)
@@ -206,6 +218,7 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 			top.elseSeen = true
 			active = top.parent && !top.matched
 			top.matched = true
+
 		case trimmed == "#endif":
 			if len(stack) == 0 {
 				return nil, fmt.Errorf("%s:%d: unexpected #endif", path, n+1)
@@ -213,9 +226,11 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 
 			active = stack[len(stack)-1].parent
 			stack = stack[:len(stack)-1]
+
 		case strings.HasPrefix(trimmed, "#if") || strings.HasPrefix(trimmed, "#elif") ||
 			strings.HasPrefix(trimmed, "#ifdef") || strings.HasPrefix(trimmed, "#ifndef"):
 			return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
+
 		default:
 			if active {
 				result = append(result, strings.SplitN(line, "//", 2)[0])

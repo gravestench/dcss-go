@@ -45,6 +45,7 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 			}
 
 			grant.Quantity = n
+
 		case "plus":
 			n, err := strconv.Atoi(value)
 
@@ -53,6 +54,7 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 			}
 
 			grant.Plus = n
+
 		case "charges":
 			n, err := strconv.Atoi(value)
 
@@ -61,18 +63,21 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 			}
 
 			grant.Charges = n
+
 		case "ego":
 			if value == "" || strings.ContainsAny(value, ",: ") {
 				return fail("invalid ego " + token)
 			}
 
 			grant.Ego = value
+
 		case "no_exclude":
 			if token != "no_exclude" {
 				return fail("invalid no_exclude tag " + token)
 			}
 
 			grant.NoExclude = true
+
 		default:
 			return fail("unsupported tag " + token)
 		}

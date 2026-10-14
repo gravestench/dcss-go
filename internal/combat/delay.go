@@ -35,6 +35,7 @@ func (in AttackDelayInput) Validate() error {
 	switch in.WeaponSkillID {
 	case "SK_SHORT_BLADES", "SK_LONG_BLADES", "SK_MACES_FLAILS", "SK_AXES", "SK_POLEARMS":
 		return nil
+
 	default:
 		return fmt.Errorf("unsupported attack-delay weapon skill %s", in.WeaponSkillID)
 	}

@@ -163,10 +163,13 @@ func increaseStat(attributes *ecs.Attributes, id string, amount int) error {
 	switch id {
 	case "str":
 		attributes.Strength += amount
+
 	case "int":
 		attributes.Intelligence += amount
+
 	case "dex":
 		attributes.Dexterity += amount
+
 	default:
 		return fmt.Errorf("unsupported level-up stat %s", id)
 	}

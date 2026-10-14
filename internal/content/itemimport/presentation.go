@@ -306,10 +306,13 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 		switch class {
 		case "OBJ_WANDS":
 			add(identity, "wand of "+entry.text, "static", entry.line)
+
 		case "OBJ_POTIONS":
 			add(identity, "potion of "+entry.text, "static", entry.line)
+
 		case "OBJ_SCROLLS":
 			add(identity, "scroll of "+entry.text, "static", entry.line)
+
 		case "OBJ_JEWELLERY":
 			prefix := "ring of "
 
@@ -318,10 +321,13 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 			}
 
 			add(identity, prefix+entry.text, "static", entry.line)
+
 		case "OBJ_STAVES":
 			add(identity, "staff of "+entry.text, "static", entry.line)
+
 		case "OBJ_RUNES":
 			add(identity, entry.text+" rune of Zot", "static", entry.line)
+
 		default:
 			add(identity, entry.text, "static", entry.line)
 		}

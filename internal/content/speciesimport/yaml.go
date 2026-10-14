@@ -111,10 +111,13 @@ func skillID(name string) string {
 	switch name {
 	case "maces_and_flails":
 		return "SK_MACES_FLAILS"
+
 	case "ranged weapons":
 		return "SK_RANGED_WEAPONS"
+
 	case "summoning":
 		return "SK_SUMMONINGS"
+
 	default:
 		return "SK_" + strings.ToUpper(name)
 	}
@@ -195,23 +198,28 @@ func validateSourceShape(path string, root *yaml.Node) error {
 			if err := scalar(path, name, value, "!!int"); err != nil {
 				return err
 			}
+
 		case "enum", "monster", "name", "short_name", "adjective",
 			"genus", "undead_type", "size", "walking_verb", "altar_action":
 			if err := scalar(path, name, value, "!!str"); err != nil {
 				return err
 			}
+
 		case "difficulty":
 			if value.Kind != yaml.ScalarNode || (value.Tag != "!!str" && value.Tag != "!!bool") {
 				return fmt.Errorf("%s: difficulty must be a string or False", path)
 			}
+
 		case "can_swim", "create_enum":
 			if err := scalar(path, name, value, "!!bool"); err != nil {
 				return err
 			}
+
 		case "species_flags", "levelup_stats", "recommended_jobs", "recommended_weapons":
 			if err := sequence(path, name, value, "!!str"); err != nil {
 				return err
 			}
+
 		case "aptitudes":
 			if value.Kind != yaml.MappingNode {
 				return fmt.Errorf("%s: aptitudes must be a mapping", path)
@@ -228,6 +236,7 @@ func validateSourceShape(path string, root *yaml.Node) error {
 					return fmt.Errorf("%s: aptitudes.%s must be an integer or False", path, aptName.Value)
 				}
 			}
+
 		case "mutations":
 			if value.Kind != yaml.MappingNode {
 				return fmt.Errorf("%s: mutations must be a mapping", path)
@@ -256,6 +265,7 @@ func validateSourceShape(path string, root *yaml.Node) error {
 					}
 				}
 			}
+
 		case "fake_mutations":
 			if value.Kind != yaml.SequenceNode {
 				return fmt.Errorf("%s: fake_mutations must be a sequence", path)
@@ -278,6 +288,7 @@ func validateSourceShape(path string, root *yaml.Node) error {
 					}
 				}
 			}
+
 		default:
 			return fmt.Errorf("%s: unknown field %s", path, name)
 		}
@@ -482,13 +493,17 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 			switch name {
 			case "xp":
 				xp = value
+
 			case "hp":
 				hp = value
+
 			case "mp_mod":
 				mp = value
+
 			case "mr":
 				mr = value
 			}
+
 		default:
 			id := skillID(name)
 

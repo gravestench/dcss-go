@@ -56,6 +56,7 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 
 		health.Current = newHP
 		message = "You feel better."
+
 	case "POT_HEAL_WOUNDS":
 		health, found := s.health.Get(s.player)
 
@@ -71,6 +72,7 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 
 		health.Current = newHP
 		message = "You feel much better."
+
 	case "POT_MIGHT":
 		durations, found := s.durations.Get(s.player)
 
@@ -85,6 +87,7 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 		}
 
 		durations.MightAut, message = remaining, text
+
 	default:
 		return fmt.Errorf("unsupported potion %s", item.KindID)
 	}

@@ -173,14 +173,19 @@ func splitTopLevel(text string, sep byte) ([]sourcePart, error) {
 		switch c {
 		case '"', '\'':
 			quote = c
+
 		case '{':
 			braces++
+
 		case '}':
 			braces--
+
 		case '(':
 			parens++
+
 		case ')':
 			parens--
+
 		default:
 			if c == sep && braces == 0 && parens == 0 {
 				appendPart(i)
@@ -504,7 +509,9 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 	switch fields[8] {
 	case "true":
 		p.Mundane = true
+
 	case "false":
+
 	default:
 		return itemPropertyRow{}, fmt.Errorf("unsupported armour mundane value %q", fields[8])
 	}

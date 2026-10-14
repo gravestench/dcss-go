@@ -161,6 +161,7 @@ func validateMenuGroups[T interface{ SpeciesDef | JobDef }](
 				if !entry.Selectable {
 					return fmt.Errorf("nonselectable species menu ID %s", id)
 				}
+
 			case JobDef:
 				if !entry.Selectable {
 					return fmt.Errorf("nonselectable job menu ID %s", id)

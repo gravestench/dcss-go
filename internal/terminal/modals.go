@@ -209,10 +209,12 @@ func (m *AppModel) handleModalKey(key string) {
 	case "esc":
 		m.screen = ScreenPlay
 		m.notice = ""
+
 	case "?":
 		m.previous = m.screen
 		m.screen = ScreenHelp
 		m.notice = ""
+
 	default:
 		m.notice = "This menu control is unavailable in the Go port."
 	}

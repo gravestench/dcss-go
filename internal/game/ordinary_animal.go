@@ -27,14 +27,19 @@ func scenarioAnimalIDs(scenarioID string) ([]string, error) {
 	switch scenarioID {
 	case "":
 		return []string{"MONS_RAT"}, nil
+
 	case legacyAnimalScenarioID:
 		return []string{"MONS_RAT", "MONS_QUOKKA"}, nil
+
 	case ordinaryAnimalScenarioID:
 		return append([]string(nil), supportedOrdinaryAnimals...), nil
+
 	case populationScenarioID:
 		return append([]string(nil), supportedOrdinaryAnimals...), nil
+
 	case generatedDungeonScenarioID:
 		return append([]string(nil), supportedOrdinaryAnimals...), nil
+
 	default:
 		return nil, fmt.Errorf("unsupported scenario ID %q", scenarioID)
 	}

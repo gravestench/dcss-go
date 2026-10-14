@@ -140,6 +140,7 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 	if !strings.Contains(strings.Join(c.PlainRows(), "\n"), "Arcane Marksman") {
 		t.Fatal("recommended entry absent")
 	}
+
 	// The recommendation remains white, and focus uses the source good background.
 	found := false
 

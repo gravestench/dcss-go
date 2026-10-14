@@ -195,23 +195,31 @@ func joinItemViews(
 		case "OBJ_WEAPONS":
 			item.Slot = "weapon"
 			item.WeaponSkill = row.Weapon.SkillID
+
 		case "OBJ_ARMOUR":
 			switch row.Armour.SlotID {
 			case "EQ_BODY_ARMOUR":
 				item.Slot = "body"
+
 			case "EQ_SHIELD":
 				item.Slot = "shield"
+
 			case "EQ_HELMET":
 				item.Slot = "head"
+
 			case "EQ_CLOAK":
 				item.Slot = "cloak"
+
 			case "EQ_GLOVES":
 				item.Slot = "gloves"
+
 			case "EQ_BOOTS":
 				item.Slot = "boots"
+
 			default:
 				return nil, fmt.Errorf("unsupported armour slot %s for %s", row.Armour.SlotID, identity.ID)
 			}
+
 		case "OBJ_MISSILES", "OBJ_POTIONS", "OBJ_SCROLLS", "OBJ_FOOD", "OBJ_GOLD":
 			item.Stackable = true
 		}

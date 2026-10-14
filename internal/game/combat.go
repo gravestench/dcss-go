@@ -169,16 +169,20 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	switch outcome.Kind {
 	case combat.Miss:
 		message = fmt.Sprintf("The %s misses you.", animal.Name)
+
 	case combat.Dodge:
 		message = fmt.Sprintf("You dodge the %s's attack.", animal.Name)
+
 	case combat.Block:
 		message = fmt.Sprintf("You block the %s's attack.", animal.Name)
+
 	case combat.Hit:
 		if outcome.Damage == 0 {
 			message = fmt.Sprintf("The %s bites you, but does no damage.", animal.Name)
 		} else {
 			message = fmt.Sprintf("The %s bites you for %d damage.", animal.Name, outcome.Damage)
 		}
+
 	default:
 		return fmt.Errorf("unknown animal bite outcome %d", outcome.Kind)
 	}

@@ -88,6 +88,7 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
+
 	case tea.KeyPressMsg:
 		return m, m.handleKey(msg.String())
 	}
@@ -103,26 +104,36 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	switch m.screen {
 	case ScreenStartup:
 		return m.handleStartupKey(key)
+
 	case ScreenSpecies, ScreenBackground:
 		m.handleCharacterChoiceKey(key)
+
 	case ScreenWeapon:
 		m.handleWeaponKey(key)
+
 	case ScreenName:
 		m.handleNameKey(key)
+
 	case ScreenPlay:
 		return m.handlePlayKey(key)
+
 	case ScreenStatChoice:
 		m.handleStatChoiceKey(key)
+
 	case ScreenInventory, ScreenSkills:
 		m.handleModalKey(key)
+
 	case ScreenQuaff:
 		return m.handleQuaffKey(key)
+
 	case ScreenConfirm:
 		return m.handleConfirmKey(key)
+
 	case ScreenDeath:
 		if key == "esc" || key == "enter" {
 			m.returnToStartup()
 		}
+
 	case ScreenHelp:
 		if key == "esc" {
 			m.screen = m.previous
@@ -147,18 +158,23 @@ func (m *AppModel) renderCanvas() *Canvas {
 	switch m.screen {
 	case ScreenStartup:
 		m.drawStartup(canvas)
+
 	case ScreenSpecies, ScreenBackground:
 		m.drawCharacterChoice(canvas)
+
 	case ScreenWeapon:
 		m.drawWeapon(canvas)
+
 	case ScreenName:
 		m.drawName(canvas)
+
 	case ScreenPlay:
 		layout, _ := ComputeLayout(m.width, m.height)
 
 		if m.game != nil {
 			DrawPlay(canvas, layout, m.game.View(), m.notice)
 		}
+
 	case ScreenStatChoice:
 		layout, _ := ComputeLayout(m.width, m.height)
 
@@ -170,29 +186,35 @@ func (m *AppModel) renderCanvas() *Canvas {
 				LightGrey, Black,
 			)
 		}
+
 	case ScreenInventory:
 		if m.game != nil {
 			DrawInventory(canvas, m.game.View())
 		}
 
 		m.drawModalNotice(canvas)
+
 	case ScreenSkills:
 		if m.game != nil {
 			DrawSkills(canvas, m.game.View(), m.catalog)
 		}
 
 		m.drawModalNotice(canvas)
+
 	case ScreenQuaff:
 		if m.game != nil {
 			DrawQuaff(canvas, m.game.View())
 		}
 
 		m.drawModalNotice(canvas)
+
 	case ScreenHelp:
 		DrawHelp(canvas)
 		m.drawModalNotice(canvas)
+
 	case ScreenConfirm:
 		m.drawConfirm(canvas)
+
 	case ScreenDeath:
 		canvas.Write(0, 0, "You die...", LightRed, Black)
 		canvas.Write(0, 2, "Press Enter to return to startup.", LightGrey, Black)

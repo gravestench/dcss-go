@@ -137,6 +137,7 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		case "SK_FIGHTING":
 			in.FightingSkill100 = character.ScaledSkill(skill, 100)
 			fightingFound = true
+
 		default:
 			if skill.ID == in.WeaponSkillID {
 				in.WeaponSkill100 = character.ScaledSkill(skill, 100)
@@ -283,6 +284,7 @@ func (c playerCombat) defense() (combat.Defense, error) {
 		switch skill.ID {
 		case "SK_ARMOUR":
 			input.ArmourSkill = skill.Level
+
 		case "SK_SHIELDS":
 			input.ShieldsSkill = skill.Level
 		}

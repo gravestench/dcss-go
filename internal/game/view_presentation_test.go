@@ -19,8 +19,10 @@ func TestViewPresentationIdentifiesEntitiesAndItemClass(t *testing.T) {
 		switch entity.KindID {
 		case "player":
 			player = entity.Role == "player" && entity.Name == "Alice"
+
 		case "MONS_RAT":
 			rat = entity.Role == "monster" && entity.Name == "rat" && entity.Glyph == 'r'
+
 		case "POT_CURING":
 			potion = entity.Role == "item" && entity.Name != "" && entity.Glyph != 0
 		}

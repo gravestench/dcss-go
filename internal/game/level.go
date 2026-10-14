@@ -55,6 +55,7 @@ func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Lev
 		for x := range row {
 			switch row[x] {
 			case '#', '.', '+', '\'', '<', '>':
+
 			default:
 				return nil, fmt.Errorf("level %d unknown terrain %q at (%d,%d)", id, row[x], x, y)
 			}
@@ -362,8 +363,10 @@ func (l *Level) LoadKnownRows(rows []string) error {
 		for x := 0; x < len(row); x++ {
 			switch row[x] {
 			case ' ':
+
 			case '#', '.', '+', '\'', '<', '>':
 				known[y*l.width+x] = row[x]
+
 			default:
 				return fmt.Errorf("level %d invalid remembered terrain %q at (%d,%d)", l.ID, row[x], x, y)
 			}

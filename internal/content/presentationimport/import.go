@@ -52,13 +52,16 @@ func parseSkillColumns(path string, data []byte) ([][]string, error) {
 		switch id {
 		case "SK_TITLE":
 			continue
+
 		case "SK_BLANK_LINE":
 			column = append(column, "")
+
 		case "SK_COLUMN_BREAK":
 			if len(column) > 0 {
 				columns = append(columns, column)
 				column = nil
 			}
+
 		default:
 			column = append(column, id)
 		}

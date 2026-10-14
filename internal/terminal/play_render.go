@@ -115,8 +115,10 @@ func drawDungeon(canvas *Canvas, region Region, view game.View) {
 			switch entity.Role {
 			case "player":
 				color = White
+
 			case "monster":
 				color = Brown
+
 			case "item":
 				color = LightGreen
 

@@ -22,38 +22,45 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 		m.notice = ""
 
 		return nil
+
 	case "m":
 		m.previous = m.screen
 		m.screen = ScreenSkills
 		m.notice = ""
 
 		return nil
+
 	case "?":
 		m.previous = m.screen
 		m.screen = ScreenHelp
 		m.notice = ""
 
 		return nil
+
 	case "S":
 		m.confirm = confirmSave
 		m.screen = ScreenConfirm
 		m.notice = ""
 
 		return nil
+
 	case "ctrl+s":
 		return m.saveAndExit()
+
 	case "ctrl+q":
 		m.confirm = confirmAbandon
 		m.screen = ScreenConfirm
 		m.notice = ""
 
 		return nil
+
 	case "q":
 		m.previous = m.screen
 		m.screen = ScreenQuaff
 		m.notice = ""
 
 		return nil
+
 	case "L":
 		m.notice = "Running is unavailable in the Go port."
 
@@ -146,10 +153,13 @@ func (m *AppModel) handleStatChoiceKey(key string) {
 	switch key {
 	case "S":
 		id = "str"
+
 	case "I":
 		id = "int"
+
 	case "D":
 		id = "dex"
+
 	default:
 		m.notice = "Choose S, I, or D."
 
@@ -188,6 +198,7 @@ func (m *AppModel) handleConfirmKey(key string) tea.Cmd {
 	switch action {
 	case confirmSave:
 		return m.saveAndExit()
+
 	case confirmAbandon:
 		m.screen = ScreenDeath
 

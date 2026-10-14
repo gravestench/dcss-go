@@ -29,8 +29,10 @@ func buildScenarioLevels(
 	switch scenarioID {
 	case ordinaryAnimalScenarioID, populationScenarioID:
 		return buildFixedScenarioLevels(scenarioID, positions)
+
 	case generatedDungeonScenarioID:
 		return buildGeneratedDungeonLevels(positions, rng)
+
 	default:
 		return scenarioLevels{}, fmt.Errorf("unsupported scenario ID %q", scenarioID)
 	}

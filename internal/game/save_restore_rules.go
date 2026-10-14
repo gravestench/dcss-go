@@ -128,6 +128,7 @@ func (g *Game) validateSavedMonsterAI(
 		if ai.TargetX != 0 || ai.TargetY != 0 || ai.MemoryUntilAut != 0 {
 			return fmt.Errorf("legacy monster %d has a target or memory", record.ID)
 		}
+
 	case "wander":
 		level := g.levels[record.Position.LevelID]
 
@@ -138,6 +139,7 @@ func (g *Game) validateSavedMonsterAI(
 				"wandering monster %d has invalid target or memory", record.ID,
 			)
 		}
+
 	case "seek":
 		level := g.levels[record.Position.LevelID]
 
@@ -145,6 +147,7 @@ func (g *Game) validateSavedMonsterAI(
 			ai.MemoryUntilAut < 0 || ai.MemoryUntilAut > currentAut+550 {
 			return fmt.Errorf("monster %d has invalid remembered target", record.ID)
 		}
+
 	default:
 		return fmt.Errorf(
 			"monster %d has invalid behavior %q", record.ID, ai.Behavior,

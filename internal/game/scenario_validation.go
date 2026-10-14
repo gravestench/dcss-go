@@ -29,12 +29,14 @@ func validateScenarioLevels(levels map[int]*Level, scenarioID string) error {
 	switch scenarioID {
 	case generatedDungeonScenarioID:
 		return validateGeneratedDungeonLevels(levels)
+
 	case populationScenarioID:
 		for id, level := range levels {
 			if level.initialMonsters != 0 && level.initialMonsters != populationMonstersPerLevel {
 				return fmt.Errorf("fixed Dungeon:%d has invalid monster budget", id)
 			}
 		}
+
 	default:
 		for id, level := range levels {
 			if level.initialMonsters != 0 {

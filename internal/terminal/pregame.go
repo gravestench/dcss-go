@@ -21,10 +21,13 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 	switch key {
 	case "esc":
 		return tea.Quit
+
 	case "up":
 		m.focus = (m.focus - 1 + count) % count
+
 	case "down":
 		m.focus = (m.focus + 1) % count
+
 	case "enter":
 		if m.focus == len(m.presentation.StartupModes) && m.savedRunExists() {
 			m.loadSavedRun()
@@ -47,18 +50,23 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 		} else {
 			m.notice = "This game mode is unavailable in the Go port."
 		}
+
 	case "backspace":
 		if len(m.name) > 0 {
 			runes := []rune(m.name)
 			m.name = string(runes[:len(runes)-1])
 		}
+
 	case "ctrl+u":
 		m.name = ""
+
 	case "ctrl+p":
 		m.notice = "RC file information is unavailable in the Go port."
+
 	case "?":
 		m.previous = m.screen
 		m.screen = ScreenHelp
+
 	default:
 		m.appendNameKey(key)
 	}
@@ -114,6 +122,7 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 		m.notice = ""
 
 		return
+
 	case "backspace":
 		if m.screen == ScreenBackground {
 			m.jobID = ""
@@ -127,6 +136,7 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 		m.notice = ""
 
 		return
+
 	case "space":
 		if m.screen == ScreenSpecies {
 			m.screen = ScreenBackground
@@ -138,29 +148,36 @@ func (m *AppModel) handleCharacterChoiceKey(key string) {
 		m.notice = ""
 
 		return
+
 	case "up":
 		m.focus = (m.focus - 1 + len(ids)) % len(ids)
 
 		return
+
 	case "down":
 		m.focus = (m.focus + 1) % len(ids)
 
 		return
+
 	case "left":
 		m.focus = (m.focus - 9 + len(ids)) % len(ids)
 
 		return
+
 	case "right":
 		m.focus = (m.focus + 9) % len(ids)
 
 		return
+
 	case "?":
 		m.previous = m.screen
 		m.screen = ScreenHelp
 
 		return
+
 	case "enter":
 		key = string(menuLetter(m.focus))
+
 	case "+", "#", "%", "*", "!":
 		m.notice = "This character option is unavailable in the Go port."
 
@@ -237,21 +254,26 @@ func (m *AppModel) handleWeaponKey(key string) {
 		m.notice = ""
 
 		return
+
 	case "up":
 		m.focus = (m.focus - 1 + len(m.options)) % len(m.options)
 
 		return
+
 	case "down":
 		m.focus = (m.focus + 1) % len(m.options)
 
 		return
+
 	case "?":
 		m.previous = m.screen
 		m.screen = ScreenHelp
 
 		return
+
 	case "enter":
 		key = string(menuLetter(m.focus))
+
 	case "+", "*", "%":
 		m.notice = "This weapon option is unavailable in the Go port."
 
@@ -286,11 +308,13 @@ func (m *AppModel) handleNameKey(key string) {
 		m.notice = ""
 
 		return
+
 	case "backspace":
 		if len(m.name) > 0 {
 			runes := []rune(m.name)
 			m.name = string(runes[:len(runes)-1])
 		}
+
 	case "enter":
 		if err := character.ValidateName(m.name); err != nil {
 			m.notice = err.Error()
@@ -299,6 +323,7 @@ func (m *AppModel) handleNameKey(key string) {
 		}
 
 		m.startGame()
+
 	default:
 		m.appendNameKey(key)
 	}
@@ -487,12 +512,16 @@ func groupPosition(screen ScreenID, group int) (int, int) {
 	switch group {
 	case 0:
 		return 1, 3
+
 	case 1:
 		return 1, 9
+
 	case 2:
 		return 27, 3
+
 	case 3:
 		return 27, 8
+
 	default:
 		return 53, 3
 	}

@@ -200,6 +200,7 @@ func TestItemImportPair(t *testing.T) {
 			}
 		})
 	}
+
 	// A manifest with an updated digest still cannot declare a live enum item
 	// while silently omitting its definition.
 	missing := artifact

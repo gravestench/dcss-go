@@ -46,6 +46,7 @@ func (in PlayerAttackInput) Validate() error {
 	switch in.WeaponSkillID {
 	case "SK_SHORT_BLADES", "SK_LONG_BLADES", "SK_MACES_FLAILS", "SK_AXES", "SK_POLEARMS":
 		return nil
+
 	default:
 		return fmt.Errorf("unsupported weapon skill %s", in.WeaponSkillID)
 	}
@@ -105,6 +106,7 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 
 		autoMiss, autoHit = coin == 0, coin != 0
 	}
+
 	// attack_shield_blocked still draws the bypass roll for a shieldless rat.
 	if _, err := random2(r, 15+toHit/2); err != nil {
 		return Outcome{}, err
@@ -196,6 +198,7 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 	if err != nil {
 		return Outcome{}, err
 	}
+
 	// actor::apply_ac evaluates div_rand_round(AC,2) even with zero GDR.
 	if in.DefenderAC%2 != 0 {
 		if _, err := random2(r, 2); err != nil {

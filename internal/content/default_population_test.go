@@ -28,6 +28,7 @@ func TestCommittedDungeonPopulationCoverageAndCopies(t *testing.T) {
 			if row.WeightAtDepth(1) != 2520000 {
 				t.Fatalf("D:1 rat weight = %d", row.WeightAtDepth(1))
 			}
+
 		case "MONS_QUOKKA":
 			quokkaRows++
 		}

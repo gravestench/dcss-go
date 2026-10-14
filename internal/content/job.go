@@ -75,6 +75,7 @@ func (j JobDef) validate() error {
 
 	switch j.WeaponChoice {
 	case "WCHOICE_NONE", "WCHOICE_PLAIN", "WCHOICE_GOOD":
+
 	default:
 		return fmt.Errorf("job %s has invalid weapon choice %q", j.ID, j.WeaponChoice)
 	}

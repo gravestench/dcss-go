@@ -171,6 +171,7 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 		for x := 0; x < width; x++ {
 			switch row[x] {
 			case '#', '.', '+', '\'', '<', '>':
+
 			default:
 				return nil, fmt.Errorf("unknown terrain %q at (%d,%d)", row[x], x, y)
 			}
