@@ -51,11 +51,13 @@ local function choose_intent(ctx, entity, state)
         local intent = spell.choose(ctx, entity, position, player)
 
         if not intent then
-            intent = ranged.choose_sling(ctx, entity, position, player)
-        end
+            local launcher_intent, has_launcher = ranged.choose_launcher(ctx, entity, position, player)
 
-        if not intent then
-            intent = ranged.choose_throw(ctx, entity, position, player)
+            if has_launcher then
+                intent = launcher_intent
+            else
+                intent = ranged.choose_throw(ctx, entity, position, player)
+            end
         end
 
         if intent then

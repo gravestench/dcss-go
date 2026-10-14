@@ -2,8 +2,9 @@ local catalog = require("policy.catalog")
 local brands = require("policy.combat.brands")
 local equipment = require("policy.combat.equipment")
 local fighter = require("policy.combat.fighter")
+local items = require("policy.inventory.items")
 local practice = require("policy.combat.practice")
-local ranged = require("policy.combat.ranged")
+local projectiles = require("policy.combat.monster_projectiles")
 
 local actions = {}
 
@@ -12,7 +13,7 @@ local function adjacent(a, b)
         math.abs(a.x - b.x) <= 1 and math.abs(a.y - b.y) <= 1
 end
 
-local function target(ctx, attacker, kind_id)
+local function target(ctx, attacker)
     local player = ctx:player()
     local actor = ctx:get(attacker, "core.actor")
     local attack_pos = ctx:get(attacker, "core.position")
@@ -20,9 +21,9 @@ local function target(ctx, attacker, kind_id)
     local attack_health = ctx:get(attacker, "core.health")
     local health = ctx:get(player, "core.health")
 
-    if not actor or actor.kind_id ~= kind_id or not attack_pos or not player_pos or
-        not attack_health or not health or attack_health.current <= 0 or
-        health.current <= 0 or attack_pos.level_id ~= player_pos.level_id or
+    if not actor or not attack_pos or not player_pos or not attack_health or
+        not health or attack_health.current <= 0 or health.current <= 0 or
+        attack_pos.level_id ~= player_pos.level_id or
         adjacent(attack_pos, player_pos) then
         error("monster cannot shoot distant or dead player")
     end
@@ -32,7 +33,7 @@ local function target(ctx, attacker, kind_id)
         error("monster has no clear shot")
     end
 
-    return catalog.get("monsters", kind_id), fighter.defense(ctx), health
+    return catalog.get("monsters", actor.kind_id), fighter.defense(ctx), health
 end
 
 local function apply(ctx, outcome, health, defense)
@@ -53,120 +54,119 @@ local function apply(ctx, outcome, health, defense)
     end
 end
 
-function actions.goblin(ctx, attacker, intent)
-    local definition, defense, health = target(ctx, attacker, "MONS_GOBLIN")
-    local worn = equipment.worn(ctx, attacker, { weapon = true })
-    local launcher = worn.weapon
-
-    if not launcher or launcher.entity ~= intent.item_id or
-        launcher.definition.id ~= "WPN_SLING" then
-        error("goblin has no matching sling")
+local function hit_message(name, outcome, include_damage)
+    if outcome.kind == "block" then
+        return "You block the " .. name .. "."
     end
 
-    local brand = launcher.item.ego or ""
-
-    if brand ~= "" and brand ~= "SPWPN_NORMAL" and brand ~= "SPWPN_FLAMING" and
-        brand ~= "SPWPN_FREEZING" and brand ~= "SPWPN_VORPAL" then
-        error("unsupported goblin sling brand " .. brand)
+    if outcome.kind ~= "hit" then
+        return "The " .. name .. " misses you."
     end
 
+    if include_damage then
+        if outcome.damage == 0 then
+            return "The " .. name .. " hits you but does no damage."
+        end
+
+        return "The " .. name .. " hits you for " .. outcome.damage .. " damage."
+    end
+
+    return "The " .. name .. " hits you."
+end
+
+local function launcher_attack(ctx, launcher, definition, defense, health)
     local weapon = launcher.definition.weapon
     local projectile = catalog.get("items", weapon.ammo_id)
+    local brand = launcher.item.ego or ""
 
     if projectile.class ~= "OBJ_MISSILES" or not projectile.missile then
-        error("sling has invalid projectile")
+        error("monster launcher has invalid projectile")
     end
 
-    local outcome = ranged.shot(ctx, {
-        hd = definition.hd,
-        weapon_damage = weapon.damage,
-        weapon_hit = weapon.hit,
-        weapon_plus = launcher.item.plus,
-        projectile_damage = projectile.missile.damage,
-        natural_damage = definition.attacks[1].damage,
-    }, defense)
+    local effect = projectiles.effect(projectile.id)
+
+    if not effect.resolve_launcher then
+        error("unsupported monster launcher ammo " .. projectile.id)
+    end
+
+    effect.validate_launcher(launcher.item)
+    local outcome = effect.resolve_launcher(ctx, definition, defense,
+        weapon, launcher.item, projectile)
 
     apply(ctx, outcome, health, defense)
-    ctx:emit("combat", "The goblin shoots a sling bullet.")
-
-    local message = "The sling bullet misses you."
-
-    if outcome.kind == "block" then
-        message = "You block the sling bullet."
-    elseif outcome.kind == "hit" then
-        if outcome.damage == 0 then
-            message = "The sling bullet hits you but does no damage."
-        else
-            message = "The sling bullet hits you for " .. outcome.damage .. " damage."
-        end
-    end
-
-    ctx:emit("combat", message)
+    ctx:emit("combat", "The " .. definition.name .. " shoots " ..
+        items.phrase(projectile.name, 1) .. ".")
+    ctx:emit("combat", hit_message(projectile.name, outcome, true))
 
     if outcome.kind == "hit" and
         (health.current > 0 or brands.after_death(brand)) then
-        brands.apply(ctx, brand, outcome.damage, "MONS_GOBLIN", "sling bullet", health)
+        brands.apply(ctx, brand, outcome.damage, definition.id,
+            projectile.name, health)
         ctx:set(ctx:player(), "core.health", health)
     end
 end
 
-function actions.kobold(ctx, attacker, intent)
-    local definition, defense, health = target(ctx, attacker, "MONS_KOBOLD")
-    local worn = equipment.worn(ctx, attacker, { missile = true })
-    local missile = worn.missile
-
-    if not missile or missile.entity ~= intent.item_id or missile.item.quantity <= 0 then
-        error("kobold has no matching missile stack")
-    end
-
+local function missile_attack(ctx, missile, definition, defense, health)
     local kind = missile.definition
-    local valid_stone = kind.id == "MI_STONE" and missile.item.ego == ""
-    local valid_dart = kind.id == "MI_DART" and missile.item.ego == "poisoned"
+    local item = missile.item
 
-    if not valid_stone and not valid_dart then
-        error("unsupported kobold missile " .. kind.id)
+    if item.quantity <= 0 or kind.class ~= "OBJ_MISSILES" or not kind.missile then
+        error("monster has no matching missile stack")
     end
 
-    local outcome
-    local poison = 0
-
-    if valid_dart then
-        outcome, poison = ranged.poison_dart(ctx, definition.hd, defense)
-    else
-        outcome = ranged.shot(ctx, {
-            hd = definition.hd,
-            weapon_damage = 0,
-            projectile_damage = kind.missile.damage,
-            natural_damage = definition.attacks[1].damage,
-        }, defense)
-    end
+    local effect = projectiles.effect(kind.id)
+    effect.validate(item)
+    local outcome, poison, name = effect.resolve(ctx, definition, defense, kind)
 
     apply(ctx, outcome, health, defense)
 
-    local name = valid_dart and "poisoned dart" or "stone"
-    ctx:emit("combat", "The kobold throws a " .. name .. ".")
-
-    local message = "The " .. name .. " misses you."
-
-    if outcome.kind == "block" then
-        message = "You block the " .. name .. "."
-    elseif outcome.kind == "hit" then
-        message = "The " .. name .. " hits you."
-
-        if valid_stone then
-            if outcome.damage == 0 then
-                message = "The stone hits you but does no damage."
-            else
-                message = "The stone hits you for " .. outcome.damage .. " damage."
-            end
-        end
-    end
-
-    ctx:emit("combat", message)
+    ctx:emit("combat", "The " .. definition.name .. " throws " ..
+        items.phrase(name, 1) .. ".")
+    ctx:emit("combat", hit_message(name, outcome, effect.show_damage))
 
     if poison > 0 then
-        brands.poison(ctx, poison, "MONS_KOBOLD")
+        brands.poison(ctx, poison, definition.id)
     end
+end
+
+local function swap_launcher(ctx, worn)
+    local alternate = worn.alternate_weapon
+
+    ctx:set(alternate.entity, "core.equipped", { slot = "weapon" })
+
+    if worn.weapon then
+        ctx:set(worn.weapon.entity, "core.equipped", { slot = "alternate_weapon" })
+    end
+end
+
+function actions.monster(ctx, attacker, intent)
+    local definition, defense, health = target(ctx, attacker)
+    local worn = equipment.worn(ctx, attacker, {
+        weapon = true,
+        alternate_weapon = true,
+        missile = true,
+    })
+
+    if worn.weapon and worn.weapon.entity == intent.item_id then
+        launcher_attack(ctx, worn.weapon, definition, defense, health)
+
+        return
+    end
+
+    if worn.alternate_weapon and worn.alternate_weapon.entity == intent.item_id then
+        swap_launcher(ctx, worn)
+        launcher_attack(ctx, worn.alternate_weapon, definition, defense, health)
+
+        return
+    end
+
+    if worn.missile and worn.missile.entity == intent.item_id then
+        missile_attack(ctx, worn.missile, definition, defense, health)
+
+        return
+    end
+
+    error("monster ranged intent has no equipped item")
 end
 
 return actions

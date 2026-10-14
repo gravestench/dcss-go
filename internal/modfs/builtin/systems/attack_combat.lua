@@ -22,19 +22,7 @@ register.system({
                 return
             end
 
-            local actor = ctx:get(attacker, "core.actor")
-
-            if not actor then
-                error("ranged attacker has no actor")
-            end
-
-            if actor.kind_id == "MONS_GOBLIN" then
-                ranged.goblin(ctx, attacker, intent)
-            elseif actor.kind_id == "MONS_KOBOLD" then
-                ranged.kobold(ctx, attacker, intent)
-            else
-                error("unsupported ranged attacker " .. actor.kind_id)
-            end
+            ranged.monster(ctx, attacker, intent)
 
             return
         end
