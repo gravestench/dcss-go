@@ -94,6 +94,7 @@ func footprint(sx, sy, dx, dy float64) ray {
 	sort.Slice(cells, func(i, j int) bool {
 		return cells[i].enter < cells[j].enter
 	})
+
 	result := make(ray, 0, len(cells))
 	previous := offset{}
 
@@ -132,6 +133,7 @@ func buildRays() []ray {
 		seen[string(key)] = true
 		result = append(result, cells)
 	}
+
 	add(0.5, 0.5, 0, 1)
 	add(0.5, 0.5, 1, 0)
 	const maxAngle = 2*maxRadius - 2

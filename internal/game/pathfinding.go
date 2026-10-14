@@ -26,6 +26,7 @@ func (l *Level) RouteStep(
 	index := func(p point) int {
 		return p.y*l.width + p.x
 	}
+
 	queue := []point{start}
 	visited[index(start)] = true
 

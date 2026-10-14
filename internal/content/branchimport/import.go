@@ -48,6 +48,7 @@ func Generate(sourceDir string) ([]byte, error) {
 	sort.Slice(files, func(i, j int) bool {
 		return files[i].Path < files[j].Path
 	})
+
 	ids, err := parseEnum("branch-type.h", sources["branch-type.h"])
 
 	if err != nil {

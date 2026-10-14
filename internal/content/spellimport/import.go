@@ -51,6 +51,7 @@ func Generate(sourceDir string) ([]byte, error) {
 	sort.Slice(files, func(i, j int) bool {
 		return files[i].Path < files[j].Path
 	})
+
 	ids, err := parseEnum("spell-type.h", sources["spell-type.h"])
 
 	if err != nil {

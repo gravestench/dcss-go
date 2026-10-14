@@ -61,19 +61,28 @@ func checkFile(path string) (int, error) {
 	}
 
 	issues := 0
+
 	report := func(pos token.Pos, message string) {
 		fmt.Printf("%s: %s\n", fset.Position(pos), message)
 		issues++
 	}
-	multilineLiteralEndsAt := func(statement ast.Stmt, line int) bool {
+
+	multilineValueEndsAt := func(statement ast.Stmt, line int) bool {
 		found := false
 
 		ast.Inspect(statement, func(node ast.Node) bool {
-			literal, ok := node.(*ast.CompositeLit)
+			switch value := node.(type) {
+			case *ast.CompositeLit:
+				if fset.Position(value.Rbrace).Line == line &&
+					fset.Position(value.Lbrace).Line < line {
+					found = true
+				}
 
-			if ok && fset.Position(literal.Rbrace).Line == line &&
-				fset.Position(literal.Lbrace).Line < line {
-				found = true
+			case *ast.FuncLit:
+				if fset.Position(value.Body.Rbrace).Line == line &&
+					fset.Position(value.Body.Lbrace).Line < line {
+					found = true
+				}
 			}
 
 			return true
@@ -81,6 +90,7 @@ func checkFile(path string) (int, error) {
 
 		return found
 	}
+
 	checkStatements := func(statements []ast.Stmt) {
 		for index := 1; index < len(statements); index++ {
 			previous := statements[index-1]
@@ -112,11 +122,12 @@ func checkFile(path string) (int, error) {
 			}
 
 			if !isControl(previous) && !isControl(next) && !returns && adjacent &&
-				multilineLiteralEndsAt(previous, previousEndLine) {
-				report(next.Pos(), "leave a blank line after the multiline literal")
+				multilineValueEndsAt(previous, previousEndLine) {
+				report(next.Pos(), "leave a blank line after the multiline value")
 			}
 		}
 	}
+
 	checkClauses := func(clauses []ast.Stmt) {
 		for index := 1; index < len(clauses); index++ {
 			previous := clauses[index-1]
@@ -127,6 +138,7 @@ func checkFile(path string) (int, error) {
 			}
 		}
 	}
+
 	blockEndLines := make(map[int]bool)
 
 	for index := 1; index < len(file.Decls); index++ {

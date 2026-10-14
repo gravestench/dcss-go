@@ -84,6 +84,7 @@ func TestEarlyDungeonPopulationPoolIncludesPlainBiteKinds(t *testing.T) {
 		pool := catalog.DungeonMonsterPool(depth, func(id string) bool {
 			return !isOrdinaryAnimal(id)
 		})
+
 		seen := make(map[string]bool)
 
 		for roll := range pool.TotalWeight() {

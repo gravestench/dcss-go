@@ -109,6 +109,7 @@ func parseStartupModes(path string, data []byte) ([]content.StartupMode, error) 
 
 		return result.String(), nil
 	}
+
 	var modes []content.StartupMode
 
 	for _, match := range startupModeEntry.FindAllStringSubmatch(text[:end], -1) {

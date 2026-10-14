@@ -792,6 +792,7 @@ func dragonArmourRows(raw string, vocabulary content.ItemVocabulary) (map[itemKe
 	copyFlags := func() []content.ItemFlag {
 		return append([]content.ItemFlag(nil), flags...)
 	}
+
 	hideID := "ARM_" + args[0] + "_DRAGON_HIDE"
 	scalesID := "ARM_" + args[0] + "_DRAGON_ARMOUR"
 

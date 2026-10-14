@@ -34,6 +34,7 @@ func TestPlayKeysSourceBindingsAndTurnCost(t *testing.T) {
 			t.Fatalf("%q: %+v, %v", key, command, ok)
 		}
 	}
+
 	expect("h", game.CommandMove, -1, 0)
 	expect("j", game.CommandMove, 0, 1)
 	expect("k", game.CommandMove, 0, -1)

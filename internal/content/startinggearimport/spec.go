@@ -18,6 +18,7 @@ func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error
 	fail := func(reason string) (string, content.StartingGrant, error) {
 		return "", content.StartingGrant{}, fmt.Errorf("job %s equipment %q: %s", jobID, raw, reason)
 	}
+
 	words := strings.Fields(raw)
 	seen := map[string]bool{}
 

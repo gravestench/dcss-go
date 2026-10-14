@@ -171,6 +171,7 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef, catal
 	sort.Slice(gear, func(i, j int) bool {
 		return gear[i].JobID < gear[j].JobID
 	})
+
 	artifact := content.StartingGearArtifact{
 		SchemaVersion:   2,
 		SourceRevision:  revision,
