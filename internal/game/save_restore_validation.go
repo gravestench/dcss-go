@@ -98,6 +98,10 @@ func (v *savedEntityValidator) validate() error {
 		return err
 	}
 
+	if err := v.validateConstrictLink(); err != nil {
+		return err
+	}
+
 	return v.validateFinalState()
 }
 
@@ -189,6 +193,7 @@ func (v *savedEntityValidator) validateCharacterRole(record save.EntityRecord) e
 		record.Durations != nil ||
 		record.Regeneration != nil ||
 		record.Poison != nil ||
+		record.Constricted != nil ||
 		record.Equipment != nil {
 		return fmt.Errorf("non-player entity %d has character components", record.ID)
 	}
@@ -279,6 +284,36 @@ func (v *savedEntityValidator) validateBandLinks() error {
 				leader.Position.LevelID != record.Position.LevelID) {
 			return fmt.Errorf("entity %d has an incompatible living band leader", record.ID)
 		}
+	}
+
+	return nil
+}
+
+func (v *savedEntityValidator) validateConstrictLink() error {
+	player := v.recordsByID[v.snapshot.PlayerID]
+	grip := player.Constricted
+
+	if grip == nil {
+		return nil
+	}
+
+	python, found := v.recordsByID[uint64(grip.By)]
+
+	if !found ||
+		grip.By == 0 ||
+		grip.EscapeAttempts < 0 ||
+		grip.EscapeAttempts > 1000 ||
+		player.Health == nil ||
+		player.Health.Current <= 0 ||
+		player.Position == nil ||
+		python.Actor == nil ||
+		python.Actor.KindID != "MONS_BALL_PYTHON" ||
+		python.AI == nil ||
+		python.Health == nil ||
+		python.Health.Current <= 0 ||
+		python.Position == nil ||
+		!adjacentActors(*player.Position, *python.Position) {
+		return fmt.Errorf("player has invalid ball python constriction link")
 	}
 
 	return nil

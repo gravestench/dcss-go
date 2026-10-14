@@ -250,6 +250,10 @@ func (h hudRenderer) drawStatus(view game.View) {
 	if view.HasteAut > 0 {
 		h.write(20, 11, "Fast", LightBlue)
 	}
+
+	if view.Constricted {
+		h.write(26, 11, "Constr", LightRed)
+	}
 }
 
 func equippedWeaponLabel(inventory []game.ItemView) string {

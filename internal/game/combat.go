@@ -14,13 +14,14 @@ import (
 type combatSystem struct {
 	player akara.Entity
 
-	intents   *akara.Store[ecs.Intent]
-	positions *akara.Store[ecs.Position]
-	actors    *akara.Store[ecs.Actor]
-	health    *akara.Store[ecs.Health]
-	combat    *akara.Store[ecs.Combatant]
-	poison    *akara.Store[ecs.Poison]
-	ai        *akara.Store[ecs.MonsterAI]
+	intents     *akara.Store[ecs.Intent]
+	positions   *akara.Store[ecs.Position]
+	actors      *akara.Store[ecs.Actor]
+	health      *akara.Store[ecs.Health]
+	combat      *akara.Store[ecs.Combatant]
+	poison      *akara.Store[ecs.Poison]
+	constricted *akara.Store[ecs.Constricted]
+	ai          *akara.Store[ecs.MonsterAI]
 
 	levels  map[int]*Level
 	catalog content.Catalog
@@ -36,13 +37,14 @@ func newCombatSystem(g *Game) *combatSystem {
 	return &combatSystem{
 		player: g.player,
 
-		intents:   s.Intents,
-		positions: s.Positions,
-		actors:    s.Actors,
-		health:    s.Health,
-		combat:    s.Combat,
-		poison:    s.Poison,
-		ai:        s.AI,
+		intents:     s.Intents,
+		positions:   s.Positions,
+		actors:      s.Actors,
+		health:      s.Health,
+		combat:      s.Combat,
+		poison:      s.Poison,
+		constricted: s.Constricted,
+		ai:          s.AI,
 
 		levels:  g.levels,
 		catalog: g.catalog,
@@ -314,6 +316,12 @@ func (s *combatSystem) resolveMonsterMelee(victim *ecs.Health) error {
 		if err := s.resolveReflexiveHeadbutt(animal.Name, actor.KindID); err != nil {
 			return err
 		}
+
+		attackerHealth, found := s.health.Get(s.turn.Actor)
+
+		if !found || attackerHealth.Current <= 0 {
+			return nil
+		}
 	}
 
 	if slices.Contains(animal.Flags, "M_BATTY") {
@@ -332,8 +340,89 @@ func (s *combatSystem) resolveMonsterMelee(victim *ecs.Health) error {
 	}
 
 	if outcome.Kind == combat.Hit && animal.Attacks[0].FlavourID == "AF_POISON" {
-		return s.applyPoisonBite(animal)
+		if err := s.applyPoisonBite(animal); err != nil {
+			return err
+		}
 	}
+
+	return s.resolveConstrictGrab(animal, victim)
+}
+
+func (s *combatSystem) resolveConstrictGrab(
+	definition content.MonsterDef,
+	victim *ecs.Health,
+) error {
+	if definition.Attacks[1].TypeID != "AT_CONSTRICT" ||
+		victim.Current <= 0 ||
+		s.constricted.Has(s.player) {
+		return nil
+	}
+
+	defense, err := s.fighter.defense()
+
+	if err != nil {
+		return err
+	}
+
+	grab := definition.Attacks[1]
+	outcome, err := combat.ResolveNaturalAttack(s.roller, combat.NaturalAttack{
+		HD:        definition.HD,
+		Damage:    grab.Damage,
+		TypeID:    grab.TypeID,
+		FlavourID: grab.FlavourID,
+	}, defense)
+
+	if err != nil {
+		return err
+	}
+
+	state, found := s.combat.Get(s.player)
+
+	if !found {
+		return fmt.Errorf("player %d has no combat state", s.player)
+	}
+
+	state.ShieldBlocks = outcome.ShieldBlocks
+
+	if err := s.practiceMonsterAttack(outcome, defense); err != nil {
+		return err
+	}
+
+	if outcome.Kind != combat.Hit {
+		message := ""
+
+		switch outcome.Kind {
+		case combat.Miss:
+			message = fmt.Sprintf("The %s misses you with its grab.", definition.Name)
+
+		case combat.Dodge:
+			message = fmt.Sprintf("You dodge the %s's grab.", definition.Name)
+
+		case combat.Block:
+			message = fmt.Sprintf("You block the %s's grab.", definition.Name)
+
+		default:
+			return fmt.Errorf("unknown constrict grab outcome %d", outcome.Kind)
+		}
+
+		s.turn.Events = append(s.turn.Events, Event{
+			Kind: "combat",
+			Text: message,
+		})
+
+		return nil
+	}
+
+	if _, err := s.constricted.Set(s.player, ecs.Constricted{
+		By: s.turn.Actor,
+	}); err != nil {
+		return err
+	}
+
+	s.turn.Events = append(s.turn.Events, Event{
+		Kind: "combat",
+		Text: fmt.Sprintf("The %s grabs you.", definition.Name),
+	})
 
 	return nil
 }

@@ -242,10 +242,13 @@ func random2avg2(r Roller, bound int) (int, error) {
 
 // ResolveNaturalAttack follows the source's ordinary monster attack phase order.
 func ResolveNaturalAttack(r Roller, attack NaturalAttack, defense Defense) (Outcome, error) {
+	ordinaryAttack := (attack.TypeID == "AT_BITE" || attack.TypeID == "AT_HIT") &&
+		(attack.FlavourID == "AF_PLAIN" || attack.FlavourID == "AF_POISON")
+	constrictGrab := attack.TypeID == "AT_CONSTRICT" &&
+		attack.FlavourID == "AF_CRUSH"
+
 	if r == nil ||
-		(attack.TypeID != "AT_BITE" && attack.TypeID != "AT_HIT") ||
-		(attack.FlavourID != "AF_PLAIN" &&
-			attack.FlavourID != "AF_POISON") ||
+		(!ordinaryAttack && !constrictGrab) ||
 		attack.HD <= 0 ||
 		attack.Damage <= 0 ||
 		defense.EV < 0 ||
@@ -322,6 +325,14 @@ func ResolveNaturalAttack(r Roller, attack NaturalAttack, defense Defense) (Outc
 	if !autoHit && toHit < evRoll {
 		return Outcome{
 			Kind:         Dodge,
+			ShieldBlocks: defense.ShieldBlocks,
+		}, nil
+	}
+
+	if constrictGrab {
+		// AF_CRUSH attaches a grip; damage is resolved after the action.
+		return Outcome{
+			Kind:         Hit,
 			ShieldBlocks: defense.ShieldBlocks,
 		}, nil
 	}

@@ -53,7 +53,7 @@ func scenarioMonsterIDs(scenarioID string) ([]string, error) {
 	case generatedDungeonScenarioID:
 		ids := append([]string(nil), supportedPopulationMonsters...)
 
-		return append(ids, "MONS_BAT"), nil
+		return append(ids, "MONS_BAT", "MONS_BALL_PYTHON"), nil
 
 	default:
 		return nil, fmt.Errorf("unsupported scenario ID %q", scenarioID)

@@ -62,6 +62,41 @@ func TestBatPlainHitProfileAndSpeedExperience(t *testing.T) {
 	}
 }
 
+func TestBallPythonProfileRequiresSourceGrabAttack(t *testing.T) {
+	catalog, err := content.LoadDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	python, err := catalog.Monster("MONS_BALL_PYTHON")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile, found := OrdinaryNaturalProfileFor(python.ID)
+
+	if !found ||
+		profile.MinHP != 2 ||
+		profile.MaxHP != 5 ||
+		profile.Speed != 12 ||
+		profile.ConstrictDamage != 1 {
+		t.Fatalf("ball python profile %+v, found %v", profile, found)
+	}
+
+	if xp, err := OrdinaryNaturalExperience(python, 4); err != nil ||
+		xp != 2 {
+		t.Fatalf("ball python XP = %d, %v; want 2", xp, err)
+	}
+
+	python.Attacks[1].FlavourID = "AF_PLAIN"
+
+	if _, err := OrdinaryNaturalExperience(python, 4); err == nil {
+		t.Fatal("accepted a python without its source crush attack")
+	}
+}
+
 func TestAdderPoisonBiteUsesActualMaximumHPForExperience(t *testing.T) {
 	catalog, err := content.LoadDefault()
 

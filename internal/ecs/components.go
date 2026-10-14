@@ -124,6 +124,13 @@ type MonsterAI struct {
 	BatRetreatActions int
 }
 
+// Constricted is the player's live direct grip and accumulated escape effort.
+// The constrictor's position, health, and attack stay on its own entity.
+type Constricted struct {
+	By             akara.Entity
+	EscapeAttempts int
+}
+
 // BandFollower keeps the original leader identity even after that leader
 // dies. AI only follows the leader while it remains a live actor nearby.
 type BandFollower struct {

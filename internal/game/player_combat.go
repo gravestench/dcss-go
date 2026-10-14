@@ -20,6 +20,7 @@ type playerCombat struct {
 	skills      *akara.Store[ecs.Skills]
 	durations   *akara.Store[ecs.Durations]
 	combat      *akara.Store[ecs.Combatant]
+	constricted *akara.Store[ecs.Constricted]
 	progression *akara.Store[ecs.Progression]
 
 	equipped *akara.Store[ecs.Equipped]
@@ -40,6 +41,7 @@ func newPlayerCombat(g *Game) playerCombat {
 		skills:      s.Skills,
 		durations:   s.Durations,
 		combat:      s.Combat,
+		constricted: s.Constricted,
 		progression: s.Progression,
 
 		equipped: s.Equipped,
@@ -504,7 +506,17 @@ func (c playerCombat) defense() (combat.Defense, error) {
 		}
 	}
 
-	return combat.ProjectFighter(input)
+	defense, err := combat.ProjectFighter(input)
+
+	if err != nil {
+		return combat.Defense{}, err
+	}
+
+	if c.constricted.Has(c.player) {
+		defense.EV = max(0, defense.EV-3)
+	}
+
+	return defense, nil
 }
 
 func (c playerCombat) skillLevel(id string) int {

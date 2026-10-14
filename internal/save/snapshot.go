@@ -52,6 +52,7 @@ type EntityRecord struct {
 	Progression   *ecs.Progression      `json:"progression,omitempty"`
 	Durations     *ecs.Durations        `json:"durations,omitempty"`
 	Poison        *ecs.Poison           `json:"poison,omitempty"`
+	Constricted   *ecs.Constricted      `json:"constricted,omitempty"`
 	Regeneration  *ecs.Regeneration     `json:"regeneration,omitempty"`
 	Combatant     *ecs.Combatant        `json:"combatant,omitempty"`
 	Player        *ecs.PlayerControlled `json:"player,omitempty"`

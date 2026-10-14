@@ -258,6 +258,27 @@ func TestDrawPlayExpandedViewportUsesFullTerminal(t *testing.T) {
 	}
 }
 
+func TestDrawPlayShowsConstrictedStatus(t *testing.T) {
+	view := playView(t)
+
+	view.Constricted = true
+
+	canvas := NewCanvas(79, 24)
+	layout, ok := ComputeLayout(79, 24)
+
+	if !ok {
+		t.Fatal("minimum size rejected")
+	}
+
+	DrawPlay(canvas, layout, view, "")
+	row := canvas.PlainRows()[11]
+	start := layout.HUD.X + 26
+
+	if row[start:start+6] != "Constr" {
+		t.Fatalf("constricted status row = %q", row)
+	}
+}
+
 func TestDrawPlayUnarmedUsesSourceWeaponSlot(t *testing.T) {
 	catalog, err := content.LoadDefault()
 

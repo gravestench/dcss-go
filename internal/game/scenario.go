@@ -436,16 +436,15 @@ func registerInteractionAndCombatSystems(g *Game) error {
 		return err
 	}
 
-	if _, err := world.AddSystem(&movementSystem{
-		positions: stores.Positions,
-		intents:   stores.Intents,
-		levels:    g.levels,
-		turn:      &g.turn,
-	}); err != nil {
+	if _, err := world.AddSystem(newMovementSystem(g)); err != nil {
 		return err
 	}
 
 	if _, err := world.AddSystem(newCombatSystem(g)); err != nil {
+		return err
+	}
+
+	if _, err := world.AddSystem(newConstrictSystem(g)); err != nil {
 		return err
 	}
 

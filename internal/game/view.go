@@ -76,6 +76,7 @@ type View struct {
 	MightAut           int
 	HasteAut           int
 	PoisonAmountScaled int
+	Constricted        bool
 
 	Inventory      []ItemView
 	EquipmentDelay *ecs.EquipmentDelay
@@ -181,6 +182,8 @@ func (g *Game) fillPlayerView(view *View) {
 	if poison, ok := g.stores.Poison.Get(g.player); ok {
 		view.PoisonAmountScaled = poison.AmountScaled
 	}
+
+	view.Constricted = g.stores.Constricted.Has(g.player)
 
 	if delay, ok := g.stores.Equipment.Get(g.player); ok {
 		copy := *delay

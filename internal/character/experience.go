@@ -15,9 +15,10 @@ type OrdinaryNaturalProfile struct {
 	MinHP        int
 	MaxHP        int
 
-	Damage       int
-	Speed        int
-	AttackTypeID string
+	Damage          int
+	Speed           int
+	AttackTypeID    string
+	ConstrictDamage int
 
 	XPModifier int
 	FastRegen  bool
@@ -121,6 +122,18 @@ var ordinaryNaturalProfiles = map[string]OrdinaryNaturalProfile{
 		XPModifier:   4,
 		Batty:        true,
 	},
+
+	"MONS_BALL_PYTHON": {
+		HitDice:         1,
+		AverageHP10x:    35,
+		MinHP:           2,
+		MaxHP:           5,
+		Damage:          3,
+		Speed:           12,
+		AttackTypeID:    "AT_BITE",
+		ConstrictDamage: 1,
+		XPModifier:      13,
+	},
 }
 
 func OrdinaryNaturalProfileFor(id string) (OrdinaryNaturalProfile, bool) {
@@ -146,6 +159,19 @@ func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, e
 		flavourID = "AF_POISON"
 	}
 
+	secondAttack := content.MonsterAttack{
+		TypeID:    "AT_NONE",
+		FlavourID: "AF_PLAIN",
+	}
+
+	if profile.ConstrictDamage > 0 {
+		secondAttack = content.MonsterAttack{
+			TypeID:    "AT_CONSTRICT",
+			FlavourID: "AF_CRUSH",
+			Damage:    profile.ConstrictDamage,
+		}
+	}
+
 	if definition.HD != profile.HitDice ||
 		definition.AverageHP10x != profile.AverageHP10x ||
 		definition.Speed != profile.Speed ||
@@ -157,6 +183,7 @@ func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, e
 			FlavourID: flavourID,
 			Damage:    profile.Damage,
 		}) ||
+		definition.Attacks[1] != secondAttack ||
 		slices.Contains(definition.Flags, "M_NO_EXP_GAIN") ||
 		slices.Contains(definition.Flags, "M_FIGHTER") ||
 		slices.Contains(definition.Flags, "M_FAST_REGEN") != profile.FastRegen ||
@@ -166,10 +193,15 @@ func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, e
 		return 0, fmt.Errorf("unsupported %s experience inputs at %d HP", definition.ID, maxHP)
 	}
 
-	for _, extra := range definition.Attacks[1:] {
+	for _, extra := range definition.Attacks[2:] {
 		if extra.TypeID != "AT_NONE" || extra.Damage != 0 {
 			return 0, fmt.Errorf("unsupported extra %s attack %+v", definition.ID, extra)
 		}
+	}
+
+	attackDamage := [4]int{
+		definition.Attacks[0].Damage,
+		definition.Attacks[1].Damage,
 	}
 
 	return OrdinaryMonsterExperience(OrdinaryMonsterXPInput{
@@ -177,7 +209,7 @@ func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, e
 		MaxHP:        maxHP,
 		Speed:        definition.Speed,
 		Modifier:     definition.XPModifier,
-		AttackDamage: [4]int{definition.Attacks[0].Damage},
+		AttackDamage: attackDamage,
 		FastRegen:    profile.FastRegen,
 	})
 }

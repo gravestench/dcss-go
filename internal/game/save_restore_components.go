@@ -108,6 +108,12 @@ func (g *Game) restoreActorComponents(
 			}
 		}
 
+		if record.Constricted != nil {
+			if _, err := g.stores.Constricted.Set(entity, *record.Constricted); err != nil {
+				return err
+			}
+		}
+
 		regeneration := ecs.Regeneration{}
 
 		if record.Regeneration != nil {
