@@ -16,7 +16,7 @@ func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 	}{
 		{"diagonal melee", 3, 2, false, ecs.Intent{Kind: ecs.IntentMelee, DX: -1, DY: 1}},
 		{"diagonal pursuit", 2, 3, false, ecs.Intent{Kind: ecs.IntentMove, DX: -1, DY: 1}},
-		{"blocked diagonal fallback", 2, 3, true, ecs.Intent{Kind: ecs.IntentMove, DX: -1}},
+		{"blocked sight routes around wall", 2, 3, true, ecs.Intent{Kind: ecs.IntentMove, DY: 1}},
 		{"cardinal melee", 3, 1, false, ecs.Intent{Kind: ecs.IntentMelee, DX: -1}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -25,8 +25,8 @@ func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 				t.Fatal(err)
 			}
 			if tc.blockDiagonal {
-				// Acquire the player before the new wall cuts sight; fallback
-				// movement then uses the remembered target.
+				// Acquire the player before the new wall cuts sight; routing
+				// then uses the remembered target and avoids the blocked corner.
 				if _, err := g.chooseMonsterIntent(ratID(t, g)); err != nil {
 					t.Fatal(err)
 				}
@@ -316,6 +316,64 @@ func TestRestoreRejectsImpossibleAnimalMemoryDeadline(t *testing.T) {
 			loaded.Close()
 			t.Fatalf("invalid animal memory deadline %d accepted", deadline)
 		}
+	}
+}
+
+func TestQuokkaRoutesAroundCentralWallToRememberedTarget(t *testing.T) {
+	g := newStepGame(t)
+	quokka := quokkaID(t, g)
+	if err := g.levels[1].RemoveActor(g.player); err != nil {
+		t.Fatal(err)
+	}
+	if err := g.levels[2].PlaceActor(g.player, 1, 1); err != nil {
+		t.Fatal(err)
+	}
+	if err := g.levels[2].MoveActor(quokka, 9, 1); err != nil {
+		t.Fatal(err)
+	}
+	ai, _ := g.stores.AI.Get(quokka)
+	ai.Behavior, ai.TargetX, ai.TargetY, ai.MemoryUntilAut = "seek", 7, 1, 550
+	first, err := g.chooseMonsterIntent(quokka)
+	if err != nil || first != (ecs.Intent{Kind: ecs.IntentMove, DY: 1}) {
+		t.Fatalf("first route step %+v, %v; want south around wall", first, err)
+	}
+	for turn := 0; turn < 12; turn++ {
+		intent, err := g.chooseMonsterIntent(quokka)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if intent.Kind != ecs.IntentMove {
+			t.Fatalf("route stalled on turn %d with %+v", turn, intent)
+		}
+		position, _ := g.stores.Positions.Get(quokka)
+		if err := g.levels[2].MoveActor(quokka, position.X+intent.DX, position.Y+intent.DY); err != nil {
+			t.Fatal(err)
+		}
+		g.currentAut += 10
+		position, _ = g.stores.Positions.Get(quokka)
+		if position.X <= 8 {
+			return
+		}
+	}
+	t.Fatal("quokka did not cross the central gap")
+}
+
+func TestFixedAnimalRouteAvoidsOccupantsAndUnreachableTarget(t *testing.T) {
+	g := newStepGame(t)
+	level := g.levels[1]
+	if err := level.MoveActor(g.player, 5, 1); err != nil {
+		t.Fatal(err)
+	}
+	dx, dy, ok := level.RouteStep(4, 1, 6, 1, 0)
+	if !ok || (dx == 1 && dy == 0) {
+		t.Fatalf("route stepped into occupied tile: %d,%d found %v", dx, dy, ok)
+	}
+	second := g.levels[2]
+	row := []byte(second.terrain[4])
+	row[8] = '#'
+	second.terrain[4] = string(row)
+	if _, _, ok := second.RouteStep(9, 1, 7, 1, 0); ok {
+		t.Fatal("route crossed a sealed central wall")
 	}
 }
 

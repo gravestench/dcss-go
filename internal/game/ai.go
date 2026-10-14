@@ -73,6 +73,17 @@ func (g *Game) chooseMonsterIntent(actor akara.Entity) (ecs.Intent, error) {
 		}
 	}
 	dx, dy := sign(ai.TargetX-position.X), sign(ai.TargetY-position.Y)
+	goalActor := akara.Entity(0)
+	if ai.TargetX == player.X && ai.TargetY == player.Y {
+		goalActor = g.player
+	}
+	if !visible[ai.TargetY*level.width+ai.TargetX] {
+		pathDX, pathDY, found := level.RouteStep(position.X, position.Y, ai.TargetX, ai.TargetY, goalActor)
+		if !found {
+			return ecs.Intent{Kind: ecs.IntentWait}, nil
+		}
+		return monsterStepIntent(position.X+pathDX, position.Y+pathDY, player.X, player.Y, pathDX, pathDY), nil
+	}
 	// DCSS aims toward the target along both axes first. Cardinal steps remain
 	// useful when a diagonal is blocked by terrain or another actor.
 	for _, step := range [][2]int{{dx, dy}, {dx, 0}, {0, dy}} {
@@ -89,7 +100,17 @@ func (g *Game) chooseMonsterIntent(actor akara.Entity) (ecs.Intent, error) {
 			}
 		}
 	}
+	if pathDX, pathDY, found := level.RouteStep(position.X, position.Y, ai.TargetX, ai.TargetY, goalActor); found {
+		return monsterStepIntent(position.X+pathDX, position.Y+pathDY, player.X, player.Y, pathDX, pathDY), nil
+	}
 	return ecs.Intent{Kind: ecs.IntentWait}, nil
+}
+
+func monsterStepIntent(nextX, nextY, playerX, playerY, dx, dy int) ecs.Intent {
+	if nextX == playerX && nextY == playerY {
+		return ecs.Intent{Kind: ecs.IntentMelee, DX: dx, DY: dy}
+	}
+	return ecs.Intent{Kind: ecs.IntentMove, DX: dx, DY: dy}
 }
 
 // chooseWanderTarget follows Crawl's 150 attempts with offsets in [-6, 6].
