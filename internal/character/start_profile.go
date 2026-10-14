@@ -35,7 +35,7 @@ func ScaledSkill(skill Skill, scale, aptitude int) (int, error) {
 	return skill.Level*scale + (skill.Points-previous)*scale/(next-previous), nil
 }
 
-// BuildStartProfile calculates the supported Human/Fighter normal Dungeon start.
+// BuildStartProfile calculates a supported Fighter normal Dungeon start.
 func BuildStartProfile(c content.Catalog, speciesID, jobID, weaponID string) (StartProfile, error) {
 	skills, err := StartingSkills(c, speciesID, jobID, weaponID)
 
@@ -61,7 +61,7 @@ func BuildStartProfile(c content.Catalog, speciesID, jobID, weaponID string) (St
 		return StartProfile{}, err
 	}
 
-	mp, err := HumanMaxMP(1, species)
+	mp, err := BaseMaxMP(1, species)
 
 	if err != nil {
 		return StartProfile{}, err

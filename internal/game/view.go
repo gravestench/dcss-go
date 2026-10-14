@@ -65,6 +65,7 @@ type View struct {
 
 	CharacterName      string
 	SpeciesID          string
+	SpeciesName        string
 	Attributes         ecs.Attributes
 	Skills             []character.Skill
 	SkillTraining      ecs.SkillTraining
@@ -190,6 +191,10 @@ func (g *Game) fillPlayerView(view *View) {
 	if hasPlayer {
 		view.PlayerName = player.Name
 		view.SpeciesID = player.SpeciesID
+
+		if hasSpecies {
+			view.SpeciesName = species.Name
+		}
 
 		if view.PlayerName == "" {
 			view.PlayerName = "Adventurer"

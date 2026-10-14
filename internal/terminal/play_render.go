@@ -115,7 +115,7 @@ func drawHUD(canvas *Canvas, region Region, view game.View) {
 
 	// source/skills.cc:91; the current playable start is Fighter only.
 	hud.write(0, 0, view.PlayerName+" the Shield-Bearer", Yellow)
-	hud.write(0, 1, "Human", Yellow)
+	hud.write(0, 1, view.SpeciesName, Yellow)
 
 	hud.drawVitals(view)
 	hud.drawDefenses(view)

@@ -52,19 +52,20 @@ func BaseMaxHP(level int, species content.SpeciesDef, skills []Skill) (int, erro
 	return max(1, hp), nil
 }
 
-// HumanMaxMP projects get_real_mp for a Fighter with no Spellcasting,
+// BaseMaxMP projects get_real_mp for a Fighter with no Spellcasting,
 // Invocations, magic mutations, or power-granting equipment.
-func HumanMaxMP(level int, species content.SpeciesDef) (int, error) {
+func BaseMaxMP(level int, species content.SpeciesDef) (int, error) {
 	if level < 1 ||
-		level > MaxExperienceLevel || species.ID != "SP_HUMAN" {
-		return 0, fmt.Errorf("unsupported Human MP inputs at XL%d for %s", level, species.ID)
+		level > MaxExperienceLevel ||
+		(species.ID != "SP_HUMAN" && species.ID != "SP_HILL_ORC") {
+		return 0, fmt.Errorf("unsupported baseline MP inputs at XL%d for %s", level, species.ID)
 	}
 
 	return max(0, min(23, level)+species.MPMod), nil
 }
 
 // With no divine-attributes mutation, the source prompts at XL 3, 9, ...
-func HumanNeedsManualStat(level int) bool {
+func NeedsManualStat(level int) bool {
 	return level >= 3 &&
 		level <= MaxExperienceLevel &&
 		level%6 == 3

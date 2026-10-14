@@ -11,6 +11,7 @@ import (
 type savedPlayerValidation struct {
 	xp          int
 	weaponID    string
+	speciesID   string
 	nextAut     int64
 	alive       bool
 	pendingStat bool
@@ -297,7 +298,10 @@ func (v *savedEntityValidator) validateFinalState() error {
 		return err
 	}
 
-	if err := v.game.validateSavedEquipment(v.equippedSlots); err != nil {
+	if err := v.game.validateSavedEquipment(
+		v.equippedSlots,
+		v.player.speciesID,
+	); err != nil {
 		return err
 	}
 
@@ -423,8 +427,8 @@ func (v *savedEntityValidator) validateSavedWearFit(
 		return err
 	}
 
-	if player.Player.SpeciesID == "SP_HUMAN" && isBarding(kind.ID) {
-		return fmt.Errorf("saved wear item is barding for Human")
+	if isBarding(kind.ID) {
+		return fmt.Errorf("saved wear item is barding for unsupported species")
 	}
 
 	if err := validateArmourSize(kind, species.Size); err != nil {

@@ -9,7 +9,7 @@ import (
 func newGeneratedTestGame(t *testing.T, seed uint64) *Game {
 	t.Helper()
 
-	g, err := NewDungeonGame(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+	g, err := NewDungeonGame(seed, testCatalog(t), "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER", "Tester")
 
 	if err != nil {
 		t.Fatal(err)
@@ -233,7 +233,7 @@ func TestGeneratedDungeonBuildsAcrossSeeds(t *testing.T) {
 	catalog := testCatalog(t)
 
 	for seed := uint64(1); seed <= 16; seed++ {
-		g, err := NewDungeonGame(seed, catalog, "WPN_RAPIER", "Tester")
+		g, err := NewDungeonGame(seed, catalog, "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatalf("seed %d: %v", seed, err)

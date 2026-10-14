@@ -109,9 +109,9 @@ func (g *Game) validateWearFit(kind content.ItemDef) error {
 		return err
 	}
 
-	// Human cannot wear barding even though both kinds use the boots slot.
+	// Neither supported Fighter species can wear barding in the boots slot.
 	// Source: item-use.cc can_wear_armour and _cant_wear_barding_reason.
-	if player.SpeciesID == "SP_HUMAN" && isBarding(kind.ID) {
+	if isBarding(kind.ID) {
 		return fmt.Errorf("You can't wear that!")
 	}
 

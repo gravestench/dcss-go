@@ -43,9 +43,15 @@ func humanSkillPoints(level int) (int, error) {
 	return needed + 1, nil
 }
 
+// SupportedFighterStart identifies species whose Fighter rules are ported.
+func SupportedFighterStart(speciesID, jobID string) bool {
+	return jobID == "JOB_FIGHTER" &&
+		(speciesID == "SP_HUMAN" || speciesID == "SP_HILL_ORC")
+}
+
 // StartingSkills resolves Fighter's SK_WEAPON grant after the weapon choice.
 func StartingSkills(c content.Catalog, speciesID, jobID, weaponID string) ([]Skill, error) {
-	if speciesID != "SP_HUMAN" || jobID != "JOB_FIGHTER" {
+	if !SupportedFighterStart(speciesID, jobID) {
 		return nil, fmt.Errorf("unsupported starting skills for %s/%s", speciesID, jobID)
 	}
 
@@ -93,9 +99,8 @@ func StartingSkills(c content.Catalog, speciesID, jobID, weaponID string) ([]Ski
 
 		aptitude, found := species.Aptitudes[id]
 
-		if !found ||
-			!aptitude.Allowed || aptitude.Value != 0 {
-			return nil, fmt.Errorf("%s/%s has unsupported Human aptitude for %s", speciesID, jobID, id)
+		if !found || !aptitude.Allowed {
+			return nil, fmt.Errorf("%s/%s cannot train %s", speciesID, jobID, id)
 		}
 
 		if seen[id] {
@@ -110,12 +115,40 @@ func StartingSkills(c content.Catalog, speciesID, jobID, weaponID string) ([]Ski
 			return nil, fmt.Errorf("%s/%s %s: %w", speciesID, jobID, id, err)
 		}
 
+		level, err := reassessedStartingLevel(points, aptitude.Value)
+
+		if err != nil {
+			return nil, fmt.Errorf("%s/%s %s: %w", speciesID, jobID, id, err)
+		}
+
 		skills = append(skills, Skill{
 			ID:     id,
-			Level:  grant.Level,
+			Level:  level,
 			Points: points,
 		})
 	}
 
 	return skills, nil
+}
+
+// reassess_starting_skills in skills.cc uses a strict greater-than check.
+// Runtime skill training uses its own threshold comparison.
+func reassessedStartingLevel(points, aptitude int) (int, error) {
+	level := 0
+
+	for next := 1; next <= 8; next++ {
+		needed, err := SkillPointsNeeded(next, aptitude)
+
+		if err != nil {
+			return 0, err
+		}
+
+		if points <= needed {
+			break
+		}
+
+		level = next
+	}
+
+	return level, nil
 }

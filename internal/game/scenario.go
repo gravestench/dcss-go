@@ -12,7 +12,7 @@ func NewScenario(
 	catalog content.Catalog,
 	weaponID, name string,
 ) (_ *Game, err error) {
-	return newScenario(seed, catalog, weaponID, name, ordinaryAnimalScenarioID)
+	return newScenario(seed, catalog, catalog.Player(), weaponID, name, ordinaryAnimalScenarioID)
 }
 
 // NewPopulatedScenario keeps the current fixed map while selecting its
@@ -22,21 +22,29 @@ func NewPopulatedScenario(
 	catalog content.Catalog,
 	weaponID, name string,
 ) (_ *Game, err error) {
-	return newScenario(seed, catalog, weaponID, name, populationScenarioID)
+	return newScenario(seed, catalog, catalog.Player(), weaponID, name, populationScenarioID)
 }
 
 // NewDungeonGame starts the live client on generated D:1-2 basic layouts.
 func NewDungeonGame(
 	seed uint64,
 	catalog content.Catalog,
-	weaponID, name string,
+	speciesID, jobID, weaponID, name string,
 ) (_ *Game, err error) {
-	return newScenario(seed, catalog, weaponID, name, generatedDungeonScenarioID)
+	// The source's base player speed is 10 aut for both playable species.
+	definition := content.PlayerDef{
+		SpeciesID: speciesID,
+		JobID:     jobID,
+		Speed:     10,
+	}
+
+	return newScenario(seed, catalog, definition, weaponID, name, generatedDungeonScenarioID)
 }
 
 func newScenario(
 	seed uint64,
 	catalog content.Catalog,
+	playerDef content.PlayerDef,
 	weaponID, name string,
 	scenarioID string,
 ) (_ *Game, err error) {
@@ -47,8 +55,6 @@ func newScenario(
 	if err := character.ValidateName(name); err != nil {
 		return nil, err
 	}
-
-	playerDef := catalog.Player()
 
 	if err := character.ValidateWeaponChoice(
 		catalog,

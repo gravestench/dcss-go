@@ -262,15 +262,65 @@ func TestPregameBothChoiceOrdersAndSixWeapons(t *testing.T) {
 	}
 }
 
+func TestHillOrcFighterMenuStartAndSaveRestore(t *testing.T) {
+	m := pregameModel(t)
+	enterName(m, "Orcus")
+	pressApp(m, "enter")
+	pressApp(m, "a")
+	pressApp(m, "a")
+
+	if m.screen != ScreenWeapon ||
+		!strings.Contains(m.welcomeText(), "Hill Orc Fighter") ||
+		!strings.Contains(plainApp(m), "flail") ||
+		!strings.Contains(plainApp(m), "(+1 apt)") {
+		t.Fatalf("Hill Orc weapon choice: %v / %s", m.screen, m.notice)
+	}
+
+	pressApp(m, "b")
+
+	if m.screen != ScreenPlay || m.game == nil {
+		t.Fatalf("Hill Orc start: %v / %s", m.screen, m.notice)
+	}
+
+	view := m.game.View()
+
+	if view.SpeciesID != "SP_HILL_ORC" ||
+		view.SpeciesName != "Hill Orc" ||
+		view.CharacterName != "Hill Orc Fighter" ||
+		view.PlayerMaxHP != 19 ||
+		view.PlayerMaxMP != 1 ||
+		!strings.Contains(plainApp(m), "Hill Orc") {
+		t.Fatalf("Hill Orc view: %+v", view)
+	}
+
+	restored, err := game.Restore(m.game.Snapshot(), m.catalog)
+
+	if err != nil {
+		t.Fatalf("Hill Orc restore: %v", err)
+	}
+
+	t.Cleanup(func() {
+		restored.Close()
+	})
+
+	loaded := restored.View()
+
+	if loaded.SpeciesID != view.SpeciesID ||
+		loaded.PlayerMaxHP != view.PlayerMaxHP ||
+		loaded.PlayerMaxMP != view.PlayerMaxMP {
+		t.Fatalf("restored Hill Orc view: %+v", loaded)
+	}
+}
+
 func TestPregamePostWeaponNamePromptAndUnavailableChoices(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")
-	pressApp(m, "a")
+	pressApp(m, "b")
 
 	if m.screen != ScreenSpecies ||
 		m.game != nil ||
 		!strings.Contains(m.notice, "unavailable") {
-		t.Fatal("unported Hill Orc started a game")
+		t.Fatal("unported Minotaur started a game")
 	}
 
 	pressApp(m, "space")

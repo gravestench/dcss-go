@@ -9,10 +9,10 @@ import (
 	"dcrawl-go/internal/save"
 )
 
-// validateSavedHumanAdvancement checks authoritative XP, applied levels,
+// validateSavedAdvancement checks authoritative XP, applied levels,
 // attributes, and vitals together. A pending manual choice deliberately holds
 // the applied level below the level implied by XP.
-func validateSavedHumanAdvancement(
+func validateSavedAdvancement(
 	record save.EntityRecord,
 	profile character.StartProfile,
 	catalog content.Catalog,
@@ -59,25 +59,25 @@ func validateSavedHumanAdvancement(
 
 		if neededErr != nil ||
 			pending != progress.Level+1 ||
-			!character.HumanNeedsManualStat(pending) || progress.TotalXP < needed {
+			!character.NeedsManualStat(pending) || progress.TotalXP < needed {
 			return 0, fmt.Errorf("invalid pending player stat choice at XL%d", pending)
 		}
 	}
 
-	if err := validateSavedHumanAttributes(
+	if err := validateSavedAttributes(
 		record, profile, species, progress.Level,
 	); err != nil {
 		return 0, err
 	}
 
-	if err := validateSavedHumanVitals(record, species, progress.Level); err != nil {
+	if err := validateSavedVitals(record, species, progress.Level); err != nil {
 		return 0, err
 	}
 
 	return progress.TotalXP, nil
 }
 
-func validateSavedHumanAttributes(
+func validateSavedAttributes(
 	record save.EntityRecord,
 	profile character.StartProfile,
 	species content.SpeciesDef,
@@ -96,7 +96,7 @@ func validateSavedHumanAttributes(
 	randomGains := 0
 
 	for level := 2; level <= levelApplied; level++ {
-		if character.HumanNeedsManualStat(level) {
+		if character.NeedsManualStat(level) {
 			manualGains++
 		}
 
@@ -113,14 +113,19 @@ func validateSavedHumanAttributes(
 		actual.Dexterity - base.Dexterity,
 	}
 
-	if !validHumanStatGains(deltas, manualGains, randomGains) {
+	if !validStatGains(
+		deltas,
+		manualGains,
+		randomGains,
+		species.LevelUpStats,
+	) {
 		return fmt.Errorf("invalid player attribute gains for entity %d", record.ID)
 	}
 
 	return nil
 }
 
-func validateSavedHumanVitals(
+func validateSavedVitals(
 	record save.EntityRecord,
 	species content.SpeciesDef,
 	levelApplied int,
@@ -131,7 +136,7 @@ func validateSavedHumanVitals(
 		return err
 	}
 
-	wantMP, err := character.HumanMaxMP(levelApplied, species)
+	wantMP, err := character.BaseMaxMP(levelApplied, species)
 
 	if err != nil {
 		return err
@@ -151,8 +156,27 @@ func validateSavedHumanVitals(
 
 // A manual choice adds two points to one stat. Each species gain adds one.
 // Try every distribution of the five possible manual choices; the remaining
-// nonnegative points must be exactly the species gains.
-func validHumanStatGains(deltas [3]int, manualChoices, speciesGains int) bool {
+// nonnegative points must be exactly the species gains in allowed attributes.
+func validStatGains(
+	deltas [3]int,
+	manualChoices, speciesGains int,
+	allowedStats []string,
+) bool {
+	allowed := [3]bool{}
+
+	for _, stat := range allowedStats {
+		switch stat {
+		case "str":
+			allowed[0] = true
+
+		case "int":
+			allowed[1] = true
+
+		case "dex":
+			allowed[2] = true
+		}
+	}
+
 	for strength := 0; strength <= manualChoices; strength++ {
 		for intelligence := 0; intelligence <= manualChoices-strength; intelligence++ {
 			dexterity := manualChoices - strength - intelligence
@@ -160,6 +184,12 @@ func validHumanStatGains(deltas [3]int, manualChoices, speciesGains int) bool {
 				deltas[0] - 2*strength,
 				deltas[1] - 2*intelligence,
 				deltas[2] - 2*dexterity,
+			}
+
+			if (!allowed[0] && remaining[0] != 0) ||
+				(!allowed[1] && remaining[1] != 0) ||
+				(!allowed[2] && remaining[2] != 0) {
+				continue
 			}
 
 			if remaining[0] >= 0 &&

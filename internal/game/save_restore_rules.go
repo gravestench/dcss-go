@@ -19,14 +19,15 @@ func (g *Game) validateSavedPlayer(
 		}
 	}
 
-	definition := g.catalog.Player()
-
 	if record.ID != playerID ||
 		record.Actor == nil ||
+		record.Actor.Speed != 10 ||
 		record.Position == nil ||
 		record.Health == nil ||
-		record.Player.SpeciesID != definition.SpeciesID ||
-		record.Player.JobID != definition.JobID ||
+		!character.SupportedFighterStart(
+			record.Player.SpeciesID,
+			record.Player.JobID,
+		) ||
 		record.Attributes == nil ||
 		record.Skills == nil ||
 		record.SkillTraining == nil ||
@@ -57,7 +58,7 @@ func (g *Game) validateSavedPlayer(
 		return savedPlayerValidation{}, err
 	}
 
-	xp, err = validateSavedHumanAdvancement(record, profile, g.catalog)
+	xp, err = validateSavedAdvancement(record, profile, g.catalog)
 
 	if err != nil {
 		return savedPlayerValidation{}, err
@@ -99,10 +100,11 @@ func (g *Game) validateSavedPlayer(
 	}
 
 	return savedPlayerValidation{
-		xp:       xp,
-		weaponID: weaponID,
-		nextAut:  record.PlayerTurn.NextAut,
-		alive:    record.Health.Current > 0,
+		xp:        xp,
+		weaponID:  weaponID,
+		speciesID: record.Player.SpeciesID,
+		nextAut:   record.PlayerTurn.NextAut,
+		alive:     record.Health.Current > 0,
 		pendingStat: record.Progression != nil &&
 			record.Progression.PendingStatLevel != 0,
 	}, nil
@@ -264,7 +266,7 @@ func (g *Game) validateSavedExperience(
 	return nil
 }
 
-func (g *Game) validateSavedEquipment(slots map[string]string) error {
+func (g *Game) validateSavedEquipment(slots map[string]string, speciesID string) error {
 	if slots["weapon"] == "" {
 		return nil
 	}
@@ -279,7 +281,7 @@ func (g *Game) validateSavedEquipment(slots map[string]string) error {
 		return fmt.Errorf("unsupported equipped weapon %s", kind.ID)
 	}
 
-	species, err := g.catalog.Species(g.catalog.Player().SpeciesID)
+	species, err := g.catalog.Species(speciesID)
 
 	if err != nil {
 		return err

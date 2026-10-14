@@ -86,7 +86,7 @@ func (s *advancementSystem) advance() error {
 			break
 		}
 
-		if character.HumanNeedsManualStat(nextLevel) {
+		if character.NeedsManualStat(nextLevel) {
 			progress.PendingStatLevel = nextLevel
 			s.turn.Events = append(s.turn.Events, Event{
 				Kind: "stat-choice",
@@ -128,14 +128,14 @@ func (s *advancementSystem) applyLevel(level int) error {
 		return err
 	}
 
-	nextMP, err := character.HumanMaxMP(level, s.species)
+	nextMP, err := character.BaseMaxMP(level, s.species)
 
 	if err != nil {
 		return err
 	}
 
-	// species_stat_gain follows player.cc:level_change. Human gains one of
-	// Strength, Intelligence, or Dexterity every fourth XL.
+	// species_stat_gain follows player.cc:level_change. Human gains a random
+	// attribute every fourth XL; Hill Orc gains Strength every fifth XL.
 	if s.species.LevelUpStatFrequency > 0 &&
 		len(s.species.LevelUpStats) > 0 &&
 		level%s.species.LevelUpStatFrequency == 0 {

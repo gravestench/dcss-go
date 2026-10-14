@@ -240,7 +240,7 @@ func (m *AppModel) drawWeapon(canvas *Canvas) {
 	canvas.Write(0, 0, m.welcomeText(), Brown, Black)
 	canvas.Write(1, 1, "Please select your starting weapon.", LightGrey, Black)
 
-	species, _ := m.catalog.Species("SP_HUMAN")
+	species, _ := m.catalog.Species(m.speciesID)
 
 	for i, option := range m.options {
 		aptitude := species.Aptitudes["SK_UNARMED_COMBAT"].Value
@@ -302,12 +302,13 @@ func (m *AppModel) welcomeText() string {
 		who = "unnamed"
 	}
 
-	if m.speciesID == "SP_HUMAN" {
+	if m.speciesID != "" {
 		if named {
 			who += " the"
 		}
 
-		who += " Human"
+		species, _ := m.catalog.Species(m.speciesID)
+		who += " " + species.Name
 	}
 
 	if m.jobID == "JOB_FIGHTER" {

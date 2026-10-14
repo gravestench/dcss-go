@@ -5,7 +5,62 @@ import (
 	"testing"
 
 	"dcrawl-go/internal/character"
+	"dcrawl-go/internal/content"
 )
+
+func TestHillOrcFighterGainsStrengthAtFifthLevel(t *testing.T) {
+	catalog, err := content.LoadDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	g, err := NewDungeonGame(
+		1,
+		catalog,
+		"SP_HILL_ORC",
+		"JOB_FIGHTER",
+		"WPN_FLAIL",
+		"Orcus",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		g.Close()
+	})
+
+	progress, _ := g.stores.Progression.Get(g.player)
+	attributes, _ := g.stores.Attributes.Get(g.player)
+	species, _ := catalog.Species("SP_HILL_ORC")
+
+	for level := 2; level <= 5; level++ {
+		progress.TotalXP, err = character.ExperienceNeeded(level, species.XP)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := g.advancement.advance(); err != nil {
+			t.Fatal(err)
+		}
+
+		if level == 3 {
+			if _, err := g.ChooseStat("dex"); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+
+	if progress.Level != 5 ||
+		attributes.Strength != 19 ||
+		attributes.Intelligence != 8 ||
+		attributes.Dexterity != 12 {
+		t.Fatalf("Hill Orc XL5 progression: %+v, %+v", progress, attributes)
+	}
+}
 
 func TestAdvancementAndViewReadSelectedSpeciesXPAptitude(t *testing.T) {
 	g := newStepGame(t)

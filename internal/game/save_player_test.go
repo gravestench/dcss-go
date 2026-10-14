@@ -39,7 +39,7 @@ func TestSavedHumanAdvancementValidatesAppliedAndPendingLevels(t *testing.T) {
 
 	player.Magic.Max = 2
 
-	got, err := validateSavedHumanAdvancement(player, profile, g.catalog)
+	got, err := validateSavedAdvancement(player, profile, g.catalog)
 
 	if err != nil ||
 		got != 9 {
@@ -49,7 +49,7 @@ func TestSavedHumanAdvancementValidatesAppliedAndPendingLevels(t *testing.T) {
 	player.Progression.TotalXP = 29
 	player.Progression.PendingStatLevel = 3
 
-	got, err = validateSavedHumanAdvancement(player, profile, g.catalog)
+	got, err = validateSavedAdvancement(player, profile, g.catalog)
 
 	if err != nil ||
 		got != 29 {
@@ -58,7 +58,7 @@ func TestSavedHumanAdvancementValidatesAppliedAndPendingLevels(t *testing.T) {
 
 	player.Progression.PendingStatLevel = 0
 
-	if _, err := validateSavedHumanAdvancement(player, profile, g.catalog); err == nil {
+	if _, err := validateSavedAdvancement(player, profile, g.catalog); err == nil {
 		t.Fatal("accepted XP past a missing stat choice")
 	}
 
@@ -72,7 +72,7 @@ func TestSavedHumanAdvancementValidatesAppliedAndPendingLevels(t *testing.T) {
 
 	player.Magic.Max = 3
 
-	got, err = validateSavedHumanAdvancement(player, profile, g.catalog)
+	got, err = validateSavedAdvancement(player, profile, g.catalog)
 
 	if err != nil ||
 		got != 29 {
@@ -82,7 +82,7 @@ func TestSavedHumanAdvancementValidatesAppliedAndPendingLevels(t *testing.T) {
 	player.Attributes.Strength--
 	player.Attributes.Intelligence++
 
-	if _, err := validateSavedHumanAdvancement(player, profile, g.catalog); err == nil {
+	if _, err := validateSavedAdvancement(player, profile, g.catalog); err == nil {
 		t.Fatal("accepted a split manual stat choice")
 	}
 
@@ -90,7 +90,37 @@ func TestSavedHumanAdvancementValidatesAppliedAndPendingLevels(t *testing.T) {
 	player.Attributes.Intelligence--
 	player.Attributes.Strength++
 
-	if _, err := validateSavedHumanAdvancement(player, profile, g.catalog); err == nil {
+	if _, err := validateSavedAdvancement(player, profile, g.catalog); err == nil {
 		t.Fatal("accepted unearned player attribute")
+	}
+}
+
+func TestSavedHillOrcStatGainOnlyUsesStrength(t *testing.T) {
+	if !validStatGains([3]int{1, 0, 0}, 0, 1, []string{"str"}) {
+		t.Fatal("rejected Hill Orc strength gain")
+	}
+
+	if validStatGains([3]int{0, 0, 1}, 0, 1, []string{"str"}) {
+		t.Fatal("accepted impossible Hill Orc dexterity gain")
+	}
+}
+
+func TestRestoreRejectsUnsupportedPlayerBaseSpeed(t *testing.T) {
+	g := newStepGame(t)
+	snapshot := g.Snapshot()
+
+	for index := range snapshot.Entities {
+		record := &snapshot.Entities[index]
+
+		if record.ID != snapshot.PlayerID {
+			continue
+		}
+
+		record.Actor.Speed = 11
+		break
+	}
+
+	if _, err := Restore(snapshot, g.catalog); err == nil {
+		t.Fatal("restored a Fighter with unsupported base speed")
 	}
 }

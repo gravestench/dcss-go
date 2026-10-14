@@ -215,7 +215,7 @@ func (m *AppModel) selectCharacterChoice(key string, ids []string) {
 }
 
 func (m *AppModel) selectSpecies(id string) {
-	if id != "SP_HUMAN" {
+	if id != "SP_HUMAN" && id != "SP_HILL_ORC" {
 		m.notice = "This species is unavailable in the Go port."
 
 		return
@@ -356,7 +356,14 @@ func (m *AppModel) handleNameKey(key string) {
 }
 
 func (m *AppModel) startGame() {
-	started, err := game.NewDungeonGame(m.seed, m.catalog, m.weaponID, strings.TrimSpace(m.name))
+	started, err := game.NewDungeonGame(
+		m.seed,
+		m.catalog,
+		m.speciesID,
+		m.jobID,
+		m.weaponID,
+		strings.TrimSpace(m.name),
+	)
 
 	if err != nil {
 		m.notice = fmt.Sprintf("Start failed: %v", err)

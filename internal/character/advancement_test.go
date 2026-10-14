@@ -327,7 +327,7 @@ func TestHumanExperienceProgressAndVitalGrowth(t *testing.T) {
 			mp:    23,
 		},
 	} {
-		mp, err := HumanMaxMP(tc.level, species)
+		mp, err := BaseMaxMP(tc.level, species)
 
 		if err != nil ||
 			mp != tc.mp {
@@ -367,7 +367,7 @@ func TestHumanExperienceProgressAndVitalGrowth(t *testing.T) {
 		21,
 		27,
 	} {
-		if !HumanNeedsManualStat(level) {
+		if !NeedsManualStat(level) {
 			t.Fatalf("XL%d did not request its source stat choice", level)
 		}
 	}

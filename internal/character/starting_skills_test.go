@@ -111,12 +111,6 @@ func TestStartingSkillsRejectsUnsupportedChoice(t *testing.T) {
 		weapon  string
 	}{
 		{
-			species: "SP_HILL_ORC",
-			job:     "JOB_FIGHTER",
-			weapon:  "WPN_FLAIL",
-		},
-
-		{
 			species: "SP_HUMAN",
 			job:     "JOB_GLADIATOR",
 			weapon:  "WPN_FLAIL",

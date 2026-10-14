@@ -139,12 +139,6 @@ func TestBuildStartProfileRejectsBadChoice(t *testing.T) {
 			job:     "JOB_FIGHTER",
 			weapon:  "WPN_QUARTERSTAFF",
 		},
-
-		{
-			species: "SP_HILL_ORC",
-			job:     "JOB_FIGHTER",
-			weapon:  "WPN_FLAIL",
-		},
 	} {
 		got, err := BuildStartProfile(catalog, tc.species, tc.job, tc.weapon)
 
