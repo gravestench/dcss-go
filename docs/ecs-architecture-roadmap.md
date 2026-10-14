@@ -82,8 +82,9 @@ monster. Combat should read that same entity state.
 Monster inventory lifecycle progress: the save validator now accepts one
 equipped weapon item per live monster, restores its carrier relationship, and
 the death barrier releases that same item entity onto the monster's cell.
-Source weapon selection and attack rules still need to activate this path for
-the generated Dungeon roster.
+The combat system reads that live item for `AT_HIT` melee accuracy, damage,
+and enchantment rolls. Source weapon selection still needs to equip generated
+humanoids; brands, alternate weapons, and ranged behavior remain to port.
 
 Phase 5 progress: corpse state remains in Akara stores, and a focused aging system owns its decay and removal. The `Level` owns its away clock. `Game.Step` supplies elapsed aut only after all actor actions, preserving the source's 200-aut timer phase and inactive-floor catch-up. The scheduler grants source-rounded energy only to monsters on the player's floor and acts with the highest-energy ready monster first. Inactive monster energy stays frozen. On return to a visited floor, an event-driven system applies the twelve supported monsters' source HP recovery, including the worm’s fast rate and direct movement toward a saved target before ordinary energy grants resume. First entry skips this update. Bat retreat actions are mutable `MonsterAI` state and survive saves; its plain natural hit and two wandering actions share the existing combat and AI systems. The ball python adds one optional player `Constricted` component, with its constrictor entity and escape attempts. The post-action constriction system owns damage and release, while movement uses a pure escape roll. Save validation checks the cross-entity link. Summons, pacification, enchantments, broader ranged behavior, and other monster capabilities still need their source return-time rules.
 

@@ -42,12 +42,21 @@ type Defense struct {
 	BodyEV       int
 }
 
-// NaturalAttack is the first natural attack of a supported ordinary monster.
+// MeleeWeapon is the live weapon contribution to one monster hit.
+type MeleeWeapon struct {
+	Damage int
+	Hit    int
+	Plus   int
+}
+
+// NaturalAttack is the first attack of a supported ordinary monster.
+// An AT_HIT monster can add its equipped melee weapon to the natural hit.
 type NaturalAttack struct {
 	HD        int
 	Damage    int
 	TypeID    string
 	FlavourID string
+	Weapon    *MeleeWeapon
 }
 
 // PoisonBiteAmount follows melee-attack.cc's 1-in-3 normal poison flavour.
@@ -246,9 +255,15 @@ func ResolveNaturalAttack(r Roller, attack NaturalAttack, defense Defense) (Outc
 		(attack.FlavourID == "AF_PLAIN" || attack.FlavourID == "AF_POISON")
 	constrictGrab := attack.TypeID == "AT_CONSTRICT" &&
 		attack.FlavourID == "AF_CRUSH"
+	invalidWeapon := attack.Weapon != nil &&
+		(attack.TypeID != "AT_HIT" ||
+			attack.Weapon.Damage <= 0 ||
+			attack.Weapon.Plus < -32768 ||
+			attack.Weapon.Plus > 32767)
 
 	if r == nil ||
 		(!ordinaryAttack && !constrictGrab) ||
+		invalidWeapon ||
 		attack.HD <= 0 ||
 		attack.Damage <= 0 ||
 		defense.EV < 0 ||
@@ -259,6 +274,11 @@ func ResolveNaturalAttack(r Roller, attack NaturalAttack, defense Defense) (Outc
 	}
 
 	toHitBase := 18 + attack.HD*3/2 // supported monsters have no M_FIGHTER flag
+
+	if attack.Weapon != nil {
+		toHitBase += attack.Weapon.Hit + attack.Weapon.Plus
+	}
+
 	toHit, err := random2(r, toHitBase+1)
 
 	if err != nil {
@@ -337,13 +357,46 @@ func ResolveNaturalAttack(r Roller, attack NaturalAttack, defense Defense) (Outc
 		}, nil
 	}
 
+	weaponDamage := 0
+	potentialDamage := attack.Damage
+
+	if attack.Weapon != nil {
+		weaponDamage, err = random2(r, attack.Weapon.Damage)
+
+		if err != nil {
+			return Outcome{}, err
+		}
+
+		// attack.cc:_core_apply_slaying rolls the enchantment before the
+		// natural attack damage, including a zero-effect roll for +0.
+		slayBound := 1 + attack.Weapon.Plus
+
+		if attack.Weapon.Plus < 0 {
+			slayBound = 1 - attack.Weapon.Plus
+		}
+
+		slayRoll, rollErr := random2(r, slayBound)
+
+		if rollErr != nil {
+			return Outcome{}, rollErr
+		}
+
+		if attack.Weapon.Plus < 0 {
+			weaponDamage -= slayRoll
+		} else {
+			weaponDamage += slayRoll
+		}
+
+		potentialDamage += attack.Weapon.Damage
+	}
+
 	baseRoll, err := random2(r, attack.Damage)
 
 	if err != nil {
 		return Outcome{}, err
 	}
 
-	damage := 1 + baseRoll
+	damage := weaponDamage + 1 + baseRoll
 	acRoll, err := random2(r, defense.AC+1)
 
 	if err != nil {
@@ -352,7 +405,7 @@ func ResolveNaturalAttack(r Roller, attack NaturalAttack, defense Defense) (Outc
 
 	saved := acRoll
 	// actor::apply_ac evaluates div_rand_round even if GDR later selects zero.
-	maxGDR := defense.GDR * attack.Damage / 100
+	maxGDR := defense.GDR * potentialDamage / 100
 	acHalf := defense.AC / 2
 
 	if defense.AC%2 != 0 {

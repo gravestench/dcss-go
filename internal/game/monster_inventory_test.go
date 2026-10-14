@@ -101,6 +101,18 @@ func TestMonsterWeaponOwnershipSurvivesSaveRestore(t *testing.T) {
 	}
 }
 
+func TestRestoreRejectsWeaponPlusOutsideSourceShort(t *testing.T) {
+	g := newStepGame(t)
+	weaponID := giveTestMonsterWeapon(t, g, ratID(t, g))
+	weapon, _ := g.stores.Items.Get(weaponID)
+
+	weapon.Plus = 32768
+
+	if _, err := Restore(g.Snapshot(), testCatalog(t)); err == nil {
+		t.Fatal("restored a weapon enchantment outside C++ short range")
+	}
+}
+
 func TestRestoreRejectsInvalidMonsterWeaponOwner(t *testing.T) {
 	g := newStepGame(t)
 	defer g.Close()

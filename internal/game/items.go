@@ -28,6 +28,11 @@ func validateItemProperties(item ecs.Item, kind content.ItemDef) error {
 		return fmt.Errorf("impossible enchantment")
 	}
 
+	// item_def.plus is a signed short in the pinned C++ source.
+	if item.Plus < -32768 || item.Plus > 32767 {
+		return fmt.Errorf("enchantment outside source item range")
+	}
+
 	if item.Ego != "" {
 		switch item.Ego {
 		case "poisoned", "curare", "dispersal":

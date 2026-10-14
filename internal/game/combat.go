@@ -19,6 +19,9 @@ type combatSystem struct {
 	actors      *akara.Store[ecs.Actor]
 	health      *akara.Store[ecs.Health]
 	combat      *akara.Store[ecs.Combatant]
+	items       *akara.Store[ecs.Item]
+	carried     *akara.Store[ecs.CarriedBy]
+	equipped    *akara.Store[ecs.Equipped]
 	poison      *akara.Store[ecs.Poison]
 	constricted *akara.Store[ecs.Constricted]
 	ai          *akara.Store[ecs.MonsterAI]
@@ -42,6 +45,9 @@ func newCombatSystem(g *Game) *combatSystem {
 		actors:      s.Actors,
 		health:      s.Health,
 		combat:      s.Combat,
+		items:       s.Items,
+		carried:     s.CarriedBy,
+		equipped:    s.Equipped,
 		poison:      s.Poison,
 		constricted: s.Constricted,
 		ai:          s.AI,
@@ -254,11 +260,22 @@ func (s *combatSystem) resolveMonsterMelee(victim *ecs.Health) error {
 		return err
 	}
 
+	var weapon *combat.MeleeWeapon
+
+	if animal.Attacks[0].TypeID == "AT_HIT" {
+		weapon, err = s.monsterMeleeWeapon(s.turn.Actor)
+
+		if err != nil {
+			return err
+		}
+	}
+
 	outcome, err := combat.ResolveNaturalAttack(s.roller, combat.NaturalAttack{
 		HD:        animal.HD,
 		Damage:    animal.Attacks[0].Damage,
 		TypeID:    animal.Attacks[0].TypeID,
 		FlavourID: animal.Attacks[0].FlavourID,
+		Weapon:    weapon,
 	}, defense)
 
 	if err != nil {
