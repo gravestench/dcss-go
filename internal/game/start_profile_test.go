@@ -135,6 +135,7 @@ func TestScenarioDamageKeepsMaxHP(t *testing.T) {
 func TestViewCopiesSkills(t *testing.T) {
 	g := newStepGame(t)
 	first := g.View()
+
 	first.Skills[0].Points = -99
 	second := g.View()
 

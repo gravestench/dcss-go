@@ -297,6 +297,7 @@ func (l *Level) doorGroup(x, y int, glyph byte) ([]point, error) {
 func (l *Level) changeDoorCells(cells []point, glyph byte) {
 	for _, cell := range cells {
 		row := []byte(l.terrain[cell.y])
+
 		row[cell.x] = glyph
 		l.terrain[cell.y] = string(row)
 

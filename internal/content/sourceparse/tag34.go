@@ -149,6 +149,7 @@ func selectTag34NumberedLines(path string, clean []byte) ([]Line, error) {
 			}
 
 			top := &stack[len(stack)-1]
+
 			top.elseSeen = true
 			active = top.parent && !top.matched
 			top.matched = true
@@ -247,6 +248,7 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 			}
 
 			top := &stack[len(stack)-1]
+
 			top.elseSeen = true
 			active = top.parent && !top.matched
 			top.matched = true

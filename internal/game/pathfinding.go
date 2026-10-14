@@ -31,6 +31,7 @@ func (l *Level) RouteStep(
 	}
 
 	queue := []point{start}
+
 	visited[index(start)] = true
 
 	for head := 0; head < len(queue); head++ {

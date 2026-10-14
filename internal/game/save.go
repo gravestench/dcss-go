@@ -200,6 +200,7 @@ func (g *Game) Snapshot() save.Snapshot {
 
 		if level.awaySinceAut != nil {
 			since := int64(*level.awaySinceAut)
+
 			record.AwaySinceAut = &since
 		}
 

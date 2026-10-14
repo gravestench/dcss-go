@@ -153,6 +153,7 @@ func (g *Game) applyDrop(drop pendingItemDrop, buffer *akara.CommandBuffer) erro
 	}
 
 	copy := *item
+
 	copy.Quantity = drop.quantity
 
 	if _, err := g.stores.Items.Set(dropped, copy); err != nil {

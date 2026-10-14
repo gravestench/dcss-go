@@ -121,6 +121,7 @@ func (s *combatSystem) resolvePlayerMelee(
 	}
 
 	beforeHP := victim.Current
+
 	victim.Current = max(0, victim.Current-outcome.Damage)
 
 	if beforeHP > 0 && victim.Current == 0 {

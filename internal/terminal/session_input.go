@@ -61,6 +61,7 @@ func (m *AppModel) handleConfirmKey(key string) tea.Cmd {
 	}
 
 	action := m.confirm
+
 	m.confirm = confirmNone
 
 	switch action {

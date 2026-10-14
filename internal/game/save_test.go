@@ -153,6 +153,7 @@ func TestFailedLoadLeavesLiveGame(t *testing.T) {
 	g := newStepGame(t)
 	before := g.Snapshot()
 	invalid := g.Snapshot()
+
 	invalid.Version = 2
 
 	if _, err := Restore(invalid, testCatalog(t)); err == nil {
@@ -328,6 +329,7 @@ func TestRestoreRejectsCorruptComponents(t *testing.T) {
 func TestRestoreRejectsClockMismatch(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
+
 	snapshot.CurrentAut = 100
 
 	if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
@@ -344,6 +346,7 @@ func TestRestoreAcceptsDeadPlayerClock(t *testing.T) {
 	}
 
 	health, _ := g.stores.Health.Get(g.player)
+
 	health.Current = 1
 
 	for turn := 0; turn < 10 && !g.playerDead(); turn++ {

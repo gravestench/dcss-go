@@ -14,6 +14,7 @@ func setFixtureTerrain(t *testing.T, g *Game, x, y int, glyph byte) {
 
 	level := g.levels[1]
 	row := []byte(level.terrain[y])
+
 	row[x] = glyph
 	level.terrain[y] = string(row)
 
@@ -225,6 +226,7 @@ func TestClosingDoorRejectsVisibleActorWithoutTime(t *testing.T) {
 	before := g.Snapshot()
 	result, err := g.Step(Command{Kind: CommandCloseDoor})
 	after := g.Snapshot()
+
 	before.Messages = after.Messages
 
 	if err != nil ||
@@ -293,6 +295,7 @@ func TestClosingDoorRejectsJammedGroupWithoutTime(t *testing.T) {
 
 	itemID := potionID(t, g)
 	position, _ := g.stores.Positions.Get(itemID)
+
 	*position = ecs.Position{
 		LevelID: 1,
 		X:       4,
@@ -307,6 +310,7 @@ func TestClosingDoorRejectsJammedGroupWithoutTime(t *testing.T) {
 	})
 
 	after := g.Snapshot()
+
 	before.Messages = after.Messages
 
 	if err != nil ||
@@ -362,6 +366,7 @@ func TestEarlierJammedDoorPreventsUnseenBlockerTurn(t *testing.T) {
 
 	itemID := potionID(t, g)
 	position, _ := g.stores.Positions.Get(itemID)
+
 	position.X = 3
 	position.Y = 1
 
@@ -405,6 +410,7 @@ func TestPlayerStandingInDoorCannotCloseGroup(t *testing.T) {
 	})
 
 	after := g.Snapshot()
+
 	before.Messages = after.Messages
 
 	if err != nil ||
@@ -445,6 +451,7 @@ func TestInvalidDoorTargetsDoNotSpendTimeOrRNG(t *testing.T) {
 	}
 
 	after := g.Snapshot()
+
 	before.Messages = after.Messages
 
 	if !reflect.DeepEqual(before, after) {

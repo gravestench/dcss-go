@@ -154,6 +154,7 @@ func TestMonsterArtifactValidation(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			a := base
+
 			a.Monsters = append([]MonsterDef(nil), base.Monsters...)
 			tc.edit(&a)
 

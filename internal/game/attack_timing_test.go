@@ -70,6 +70,7 @@ func TestTwelveAutRapierBumpGrantsOneRatAction(t *testing.T) {
 	}
 
 	health, _ := g.stores.Health.Get(rat)
+
 	health.Current = 100
 	health.Max = 100
 
@@ -192,6 +193,7 @@ func TestAttackDelaySaveContinuation(t *testing.T) {
 
 	rat := ratID(t, g)
 	health, _ := g.stores.Health.Get(rat)
+
 	health.Current = health.Max
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))
 

@@ -97,6 +97,7 @@ func checkFile(path string) (int, error) {
 		}
 
 		importDir := filepath.Join(root, strings.TrimPrefix(importPath, "dcrawl-go/"))
+
 		importedTypes[alias], err = declaredTypes(importDir)
 
 		if err != nil {
@@ -157,6 +158,17 @@ func checkFile(path string) (int, error) {
 
 			adjacent := previousEndLine+1 == nextStartLine
 			_, returns := next.(*ast.ReturnStmt)
+			calculation, declared := previous.(*ast.AssignStmt)
+			mutation, assigned := next.(*ast.AssignStmt)
+
+			if adjacent &&
+				declared &&
+				calculation.Tok == token.DEFINE &&
+				assigned &&
+				mutation.Tok == token.ASSIGN &&
+				assignsOwnedState(mutation) {
+				report(next.Pos(), "separate calculation from state mutation")
+			}
 
 			if isControl(next) &&
 				!isControl(previous) &&
@@ -435,6 +447,17 @@ func checkFile(path string) (int, error) {
 	}
 
 	return issues, nil
+}
+
+func assignsOwnedState(statement *ast.AssignStmt) bool {
+	for _, target := range statement.Lhs {
+		switch target.(type) {
+		case *ast.SelectorExpr, *ast.IndexExpr, *ast.StarExpr:
+			return true
+		}
+	}
+
+	return false
 }
 
 func adjacentLogicalOperand(expression ast.Expr, rightmost bool) ast.Expr {

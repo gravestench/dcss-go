@@ -77,6 +77,7 @@ func (g *Game) prepareEquipmentCommand(command Command) (preparedCommand, error)
 
 func equipmentCommand(delay ecs.EquipmentDelay) preparedCommand {
 	command := spendingCommand(ecs.Intent{Kind: ecs.IntentWait}, 10)
+
 	command.equipment = &delay
 
 	return command

@@ -285,6 +285,7 @@ func (m *AppModel) nextEquipmentTick() tea.Cmd {
 
 func (m *AppModel) View() tea.View {
 	view := tea.NewView(m.renderCanvas().Styled())
+
 	view.AltScreen = true
 
 	return view

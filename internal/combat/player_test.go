@@ -326,6 +326,7 @@ func TestPlayerMeleeUnarmedUsesNormalFormBaseAndNoWeaponSkillMultiplier(t *testi
 
 func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 	in := fighterFlailAttack()
+
 	in.Mighty = true
 	rng := &scriptedRoller{
 		rolls: []scriptedRoll{
@@ -434,6 +435,7 @@ func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 
 func TestPlayerMeleeMightRollPrecedesEnchantmentRoll(t *testing.T) {
 	in := fighterFlailAttack()
+
 	in.Mighty = true
 	in.WeaponPlus = 2
 	rng := &scriptedRoller{

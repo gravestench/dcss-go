@@ -51,6 +51,7 @@ func (l *defaultCatalogLoader) loadSpecies(speciesData []byte) error {
 	}
 
 	catalog := &l.catalog
+
 	catalog.species = make(map[string]SpeciesDef, len(artifact.Species))
 	previous := ""
 

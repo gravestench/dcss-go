@@ -26,9 +26,11 @@ func savedPlayer(t *testing.T, snapshot *save.Snapshot) *save.EntityRecord {
 func TestStartProfileSaveRoundTrip(t *testing.T) {
 	g := newStepGame(t)
 	health, _ := g.stores.Health.Get(g.player)
+
 	health.Current = 7
 
 	magic, _ := g.stores.Magic.Get(g.player)
+
 	magic.Current = 0
 
 	before := g.Snapshot()
@@ -81,6 +83,7 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 func TestSaveProfileSlicesDoNotAlias(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
+
 	savedPlayer(t, &snapshot).Skills.Entries[0].Points = -17
 
 	if g.View().Skills[0].Points != 301 {
@@ -111,6 +114,7 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 			name: "duplicate skill",
 			mutate: func(s *save.Snapshot) {
 				p := savedPlayer(t, s)
+
 				p.Skills.Entries[1] = p.Skills.Entries[0]
 			},
 		},
@@ -119,6 +123,7 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 			name: "reordered skills",
 			mutate: func(s *save.Snapshot) {
 				p := savedPlayer(t, s)
+
 				p.Skills.Entries[0], p.Skills.Entries[1] = p.Skills.Entries[1], p.Skills.Entries[0]
 			},
 		},

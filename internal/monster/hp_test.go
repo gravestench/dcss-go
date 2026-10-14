@@ -21,6 +21,7 @@ func (s *scriptedRoller) Intn(stream string, bound int) (int, error) {
 	}
 
 	value := s.rolls[0].value
+
 	s.rolls = s.rolls[1:]
 
 	return value, nil

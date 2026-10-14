@@ -304,6 +304,7 @@ func (s *doorSystem) closeDoor(level *Level, x, y int) (bool, bool, error) {
 			}
 
 			position, _ := s.game.stores.Positions.Get(entity)
+
 			position.X = targets[choice].x
 			position.Y = targets[choice].y
 			moved = true

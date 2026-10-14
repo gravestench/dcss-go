@@ -225,6 +225,7 @@ func readSource(root, relative string, files *[]content.JobSourceFile) ([]byte, 
 	}
 
 	sum := sha256.Sum256(data)
+
 	*files = append(*files, content.JobSourceFile{
 		Path:   filepath.ToSlash(filepath.Join("crawl-ref", "source", relative)),
 		SHA256: hex.EncodeToString(sum[:]),

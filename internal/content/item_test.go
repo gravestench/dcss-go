@@ -85,6 +85,7 @@ func TestItemDefCopies(t *testing.T) {
 
 	c.items["ARM_ROBE"] = armour
 	firstArmour, _ := c.Item("ARM_ROBE")
+
 	firstArmour.Armour.Flags[0].Level = 9
 	secondArmour, _ := c.Item("ARM_ROBE")
 
@@ -151,6 +152,7 @@ func TestItemShapeValidation(t *testing.T) {
 	}
 
 	bad := valid.clone()
+
 	bad.Armour = &ArmourProperties{}
 
 	if err := bad.validate(); err == nil {

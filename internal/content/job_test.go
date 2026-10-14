@@ -105,6 +105,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 			jobs: []JobDef{
 				func() JobDef {
 					job := valid
+
 					job.Name = ""
 
 					return job
@@ -117,6 +118,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 			jobs: []JobDef{
 				func() JobDef {
 					job := valid
+
 					job.WeaponChoice = "WCHOICE_UNKNOWN"
 
 					return job
@@ -129,6 +131,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 			jobs: []JobDef{
 				func() JobDef {
 					job := valid
+
 					job.RecommendedSpecies = nil
 
 					return job
@@ -141,6 +144,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 			jobs: []JobDef{
 				func() JobDef {
 					job := valid
+
 					job.Selectable = false
 
 					return job
@@ -153,6 +157,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 			jobs: []JobDef{
 				func() JobDef {
 					j := valid
+
 					j.Skills = []JobSkillGrant{
 						{
 							ID:    "SK_FIGHTING",
@@ -170,6 +175,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 			jobs: []JobDef{
 				func() JobDef {
 					j := valid
+
 					j.Skills = []JobSkillGrant{
 						{
 							ID:    "SK_FIGHTING",

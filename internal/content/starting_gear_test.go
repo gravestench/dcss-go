@@ -9,6 +9,7 @@ import (
 
 func TestStartingGearCatalogCopies(t *testing.T) {
 	c := scenarioCatalog()
+
 	c.startingGear = map[string][]StartingGrant{
 		"JOB_FIGHTER": {{
 			Raw:      "scale mail",

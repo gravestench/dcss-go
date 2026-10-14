@@ -26,6 +26,7 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 
 	second := g.levels[2]
 	row := []byte(second.terrain[3])
+
 	row[3] = '>'
 	second.terrain[3] = string(row)
 
@@ -113,6 +114,7 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 func TestRestoreRejectsInvalidStairDestination(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
+
 	snapshot.Levels[0].Stairs[0].ToLevelID = 99
 
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
@@ -139,6 +141,7 @@ func TestFixedScenarioRestoreRejectsForgedUnavailableStair(t *testing.T) {
 func TestRestoreRejectsMissingStairLink(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
+
 	snapshot.Levels[0].Stairs = nil
 
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
@@ -198,6 +201,7 @@ func TestLevelAllowsMultipleStairsOfOneKind(t *testing.T) {
 func TestOlderSaveVersionCannotLoseStairLinksSilently(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
+
 	snapshot.Version = save.Version - 1
 
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||

@@ -88,6 +88,7 @@ func TestHumanAdvancementRunsThroughFinalLevel(t *testing.T) {
 	baseStats := attributes.Strength + attributes.Intelligence + attributes.Dexterity
 
 	lastThreshold, _ := character.HumanExperienceNeeded(character.HumanMaxLevel)
+
 	progress.TotalXP = lastThreshold
 
 	if err := g.advancement.Update(nil, 0); err != nil {
@@ -140,6 +141,7 @@ func TestHumanAdvancementRunsThroughFinalLevel(t *testing.T) {
 func TestStatChoiceInterruptsMonsterPhase(t *testing.T) {
 	g := newStepGame(t)
 	progress, _ := g.stores.Progression.Get(g.player)
+
 	progress.Level = 2
 	progress.TotalXP = 29
 
@@ -147,6 +149,7 @@ func TestStatChoiceInterruptsMonsterPhase(t *testing.T) {
 
 	for _, entity := range g.stores.AI.Entities() {
 		energy, _ := g.stores.MonsterEnergy.Get(entity)
+
 		monsterEnergy[uint64(entity)] = energy.Points
 	}
 

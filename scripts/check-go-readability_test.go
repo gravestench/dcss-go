@@ -7,6 +7,105 @@ import (
 	"testing"
 )
 
+func TestCalculationMutationSpacing(t *testing.T) {
+	tests := []struct {
+		name   string
+		source string
+		want   int
+	}{
+		{
+			name: "adjacent field mutation",
+			source: `package example
+
+type State struct {
+	Value int
+}
+
+func sample(state *State) {
+	next := state.Value + 1
+	state.Value = next
+}
+			`,
+			want: 1,
+		},
+
+		{
+			name: "separated field mutation",
+			source: `package example
+
+type State struct {
+	Value int
+}
+
+func sample(state *State) {
+	next := state.Value + 1
+
+	state.Value = next
+}
+			`,
+			want: 0,
+		},
+
+		{
+			name: "local assignment",
+			source: `package example
+
+func sample() {
+	next := 1
+	next = 2
+
+	_ = next
+}
+			`,
+			want: 0,
+		},
+
+		{
+			name: "indexed mutation",
+			source: `package example
+
+func sample(values []int) {
+	next := 1
+	values[0] = next
+}
+			`,
+			want: 1,
+		},
+
+		{
+			name: "pointer mutation",
+			source: `package example
+
+func sample(target *int) {
+	next := 1
+	*target = next
+}
+			`,
+			want: 1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "sample.go")
+
+			if err := os.WriteFile(path, []byte(test.source), 0600); err != nil {
+				t.Fatal(err)
+			}
+
+			got, err := checkFile(path)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if got != test.want {
+				t.Fatalf("issues = %d, want %d", got, test.want)
+			}
+		})
+	}
+}
+
 func TestStructMapKeySpacing(t *testing.T) {
 	tests := []struct {
 		name   string

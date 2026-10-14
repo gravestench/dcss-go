@@ -19,6 +19,7 @@ func TestAdderPoisonBiteAddsPlayerOwnedStatus(t *testing.T) {
 	}
 
 	system := newCombatSystem(g)
+
 	system.roller = &combatRoller{
 		rolls: []combatRoll{
 			{
@@ -124,6 +125,7 @@ func TestAdderZeroDamageBiteStillPoisonsPlayer(t *testing.T) {
 	}
 
 	system := newCombatSystem(g)
+
 	system.roller = &combatRoller{rolls: rolls}
 	health, _ := g.stores.Health.Get(g.player)
 	before := health.Current
@@ -183,6 +185,7 @@ func TestCuringClearsPoisonAtFullHealth(t *testing.T) {
 	g := newStepGame(t)
 	itemID := carryCuring(t, g)
 	health, _ := g.stores.Health.Get(g.player)
+
 	health.Current = health.Max
 
 	if _, err := g.stores.Poison.Set(g.player, ecs.Poison{
@@ -250,6 +253,7 @@ func TestAdderJoinsDungeonPopulationAndDeathRules(t *testing.T) {
 
 	health, _ := g.stores.Health.Get(adderID)
 	before := health.Max
+
 	health.Current = 0
 	g.turn.PlayerKill = adderID
 
@@ -286,6 +290,7 @@ func TestAdderJoinsDungeonPopulationAndDeathRules(t *testing.T) {
 func TestPoisonWaitCanKillBeforeMonsterTurn(t *testing.T) {
 	g := newStepGame(t)
 	health, _ := g.stores.Health.Get(g.player)
+
 	health.Current = 1
 
 	if _, err := g.stores.Poison.Set(g.player, ecs.Poison{
@@ -308,6 +313,7 @@ func TestPoisonWaitCanKillBeforeMonsterTurn(t *testing.T) {
 func TestMonsterActionDoesNotAdvancePlayerPoison(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
+
 	g.turn.Actor = rat
 
 	if _, err := g.stores.Poison.Set(g.player, ecs.Poison{

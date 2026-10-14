@@ -53,6 +53,7 @@ func TestFrilledLizardUsesOrdinaryMeleeDeathAndExperience(t *testing.T) {
 	}
 
 	health, _ := g.stores.Health.Get(lizard)
+
 	health.Current = 1
 
 	for attempt := 0; attempt < 100 && g.world.EntityExists(lizard); attempt++ {
@@ -177,6 +178,7 @@ func TestFrilledLizardEncounterUsesCatalogAndSurvivesSave(t *testing.T) {
 func TestPreviousTwoAnimalScenarioSaveStillLoads(t *testing.T) {
 	g := newStepGame(t)
 	previous := g.Snapshot()
+
 	previous.ScenarioID = legacyAnimalScenarioID
 
 	for i := len(previous.Entities) - 1; i >= 0; i-- {

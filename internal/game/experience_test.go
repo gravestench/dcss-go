@@ -16,6 +16,7 @@ func TestPlayerRatKillAwardsOneExperienceOnlyOnce(t *testing.T) {
 	}
 
 	current, _ := g.stores.Health.Get(rat)
+
 	current.Current = 1
 	playerHealth, _ := g.stores.Health.Get(g.player)
 
@@ -54,6 +55,7 @@ func TestPreDeadRatCleanupDoesNotAwardExperience(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
 	health, _ := g.stores.Health.Get(rat)
+
 	health.Current = 0
 
 	if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
@@ -80,8 +82,10 @@ func TestExperienceSaveRoundTripAndOlderFieldDefault(t *testing.T) {
 	}
 
 	progress, _ := g.stores.Progression.Get(g.player)
+
 	progress.TotalXP = 1
 	training, _ := g.stores.SkillTraining.Get(g.player)
+
 	training.AvailableXP = 10
 
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))

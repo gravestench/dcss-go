@@ -87,6 +87,7 @@ func TestDeathClearsOccupancy(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
 	health, _ := g.stores.Health.Get(rat)
+
 	health.Current = 0
 
 	if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
@@ -105,6 +106,7 @@ func TestDeathClearsOccupancy(t *testing.T) {
 func TestPlayerDeathEndsTurnLoop(t *testing.T) {
 	g := newStepGame(t)
 	health, _ := g.stores.Health.Get(g.player)
+
 	health.Current = 0
 	result, err := g.Step(Command{Kind: CommandWait})
 

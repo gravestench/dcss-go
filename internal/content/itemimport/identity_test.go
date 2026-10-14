@@ -160,6 +160,7 @@ func TestItemIdentityEnums(t *testing.T) {
 	}
 
 	bad := identityFixture()
+
 	bad["item-prop-enum.h"] = []byte(strings.Replace(
 		string(bad["item-prop-enum.h"]),
 		"WPN_DAGGER = 3",

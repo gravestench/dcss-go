@@ -40,6 +40,7 @@ func scaledTrainingWeights(
 		}
 
 		product := weight * 100
+
 		weights[index] = product / total
 		scaledTotal += weights[index]
 

@@ -228,6 +228,7 @@ func TestRestoreRejectsInvalidKnowledge(t *testing.T) {
 			name: "bad glyph",
 			change: func(s *save.Snapshot) {
 				row := []byte(s.Levels[0].Known[0])
+
 				row[0] = '?'
 				s.Levels[0].Known[0] = string(row)
 			},

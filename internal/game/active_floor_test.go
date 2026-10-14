@@ -29,6 +29,7 @@ func TestInactiveFloorMonsterEnergyStaysFrozen(t *testing.T) {
 func TestFirstEntryDoesNotReplayInactiveMonsterTurns(t *testing.T) {
 	g := newStepGame(t)
 	rat, _ := g.stores.MonsterEnergy.Get(ratID(t, g))
+
 	rat.Points = 0
 	quokka := quokkaID(t, g)
 
@@ -37,6 +38,7 @@ func TestFirstEntryDoesNotReplayInactiveMonsterTurns(t *testing.T) {
 	}
 
 	health, _ := g.stores.Health.Get(g.player)
+
 	health.Current = 100
 	health.Max = 100
 

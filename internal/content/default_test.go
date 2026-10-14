@@ -184,6 +184,7 @@ func TestLoadDefaultRejectsBadArtifact(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			artifact := original
+
 			artifact.Species = append([]SpeciesDef(nil), original.Species...)
 			tc.mutate(&artifact)
 			encoded, err := json.Marshal(artifact)

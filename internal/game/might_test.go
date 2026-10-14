@@ -75,6 +75,7 @@ func TestQuaffMightConsumesAndDecaysByActionCost(t *testing.T) {
 	}
 
 	status, _ := g.stores.Durations.Get(g.player)
+
 	status.MightAut = 9
 	result, err = g.Step(Command{Kind: CommandWait})
 
@@ -89,9 +90,11 @@ func TestMightRepeatQuaffCapsAtEightyTurns(t *testing.T) {
 	g := newStepGame(t)
 	id := carriedMight(t, g)
 	item, _ := g.stores.Items.Get(akara.Entity(id))
+
 	item.Quantity = 2
 
 	status, _ := g.stores.Durations.Get(g.player)
+
 	status.MightAut = 790
 	result, err := g.Step(Command{
 		Kind:   CommandQuaff,
@@ -114,6 +117,7 @@ func TestMightDecaysByVariableMeleeActionCost(t *testing.T) {
 	}
 
 	status, _ := g.stores.Durations.Get(g.player)
+
 	status.MightAut = 20
 	attack, err := newPlayerCombat(g).attackInput("MONS_RAT")
 
@@ -219,6 +223,7 @@ func TestMightRestoreRejectsBadOwnershipAndRange(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			bad := base
+
 			bad.Entities = append([]save.EntityRecord(nil), base.Entities...)
 
 			for i := range bad.Entities {
@@ -226,6 +231,7 @@ func TestMightRestoreRejectsBadOwnershipAndRange(t *testing.T) {
 
 				if record.Player != nil {
 					copy := *record.Durations
+
 					record.Durations = &copy
 				}
 

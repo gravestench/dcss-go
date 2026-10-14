@@ -157,6 +157,7 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 
 func TestDrawPlayShowsEarnedRatExperienceProgress(t *testing.T) {
 	view := playView(t)
+
 	view.ExperienceLevel = 1
 	view.NextLevelPercent = 11
 
@@ -194,6 +195,7 @@ func TestDrawPlayShowsPoisonOnlyWhileActive(t *testing.T) {
 	view := playView(t)
 	canvas := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
+
 	view.PoisonAmountScaled = 8000
 
 	DrawPlay(canvas, layout, view, "")
@@ -215,6 +217,7 @@ func TestDrawPlayShowsFastOnlyWhileHasted(t *testing.T) {
 	view := playView(t)
 	canvas := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
+
 	view.HasteAut = 100
 
 	DrawPlay(canvas, layout, view, "")
@@ -303,6 +306,7 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 	}
 
 	known := []byte(snapshot.Levels[0].Known[3])
+
 	known[3] = '.'
 	snapshot.Levels[0].Known[3] = string(known)
 	restored, err := game.Restore(snapshot, catalog)

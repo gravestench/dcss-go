@@ -155,12 +155,14 @@ type ItemIdentityManifest struct {
 func (d ItemDef) clone() ItemDef {
 	if d.Armour != nil {
 		copy := *d.Armour
+
 		copy.Flags = append([]ItemFlag(nil), copy.Flags...)
 		d.Armour = &copy
 	}
 
 	if d.Weapon != nil {
 		copy := *d.Weapon
+
 		copy.DamageFlags = append([]string(nil), copy.DamageFlags...)
 		copy.BrandWeights = append([]ItemBrandWeight(nil), copy.BrandWeights...)
 		d.Weapon = &copy
@@ -168,11 +170,13 @@ func (d ItemDef) clone() ItemDef {
 
 	if d.Missile != nil {
 		copy := *d.Missile
+
 		d.Missile = &copy
 	}
 
 	if d.Food != nil {
 		copy := *d.Food
+
 		d.Food = &copy
 	}
 

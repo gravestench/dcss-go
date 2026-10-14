@@ -76,6 +76,7 @@ func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 				}
 
 				row := []byte(g.levels[1].terrain[2])
+
 				row[3] = '#'
 				g.levels[1].terrain[2] = string(row)
 			}
@@ -444,6 +445,7 @@ func TestLegacyZeroDeadlineSeekGetsFiniteMemory(t *testing.T) {
 	}
 
 	ai, _ := g.stores.AI.Get(quokka)
+
 	ai.Behavior = "seek"
 	ai.TargetX = 7
 	ai.TargetY = 7
@@ -599,6 +601,7 @@ func TestFixedAnimalRouteAvoidsOccupantsAndUnreachableTarget(t *testing.T) {
 
 	second := g.levels[2]
 	row := []byte(second.terrain[4])
+
 	row[8] = '#'
 	second.terrain[4] = string(row)
 

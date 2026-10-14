@@ -48,6 +48,7 @@ func (m *AppModel) handleStartupKey(key string) tea.Cmd {
 	case "backspace":
 		if len(m.name) > 0 {
 			runes := []rune(m.name)
+
 			m.name = string(runes[:len(runes)-1])
 		}
 
@@ -336,6 +337,7 @@ func (m *AppModel) handleNameKey(key string) {
 	case "backspace":
 		if len(m.name) > 0 {
 			runes := []rune(m.name)
+
 			m.name = string(runes[:len(runes)-1])
 		}
 

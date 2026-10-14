@@ -37,8 +37,10 @@ func TestReturnedWormHealsAtFastRate(t *testing.T) {
 	}
 
 	health, _ := g.stores.Health.Get(worm)
+
 	health.Current = health.Max - 3
 	away := Aut(0)
+
 	g.levels[2].awaySinceAut = &away
 
 	if err := g.activateLevel(g.levels[2], 20); err != nil {
@@ -61,6 +63,7 @@ func TestReturnedMonsterHealsAndWalksTowardLastTarget(t *testing.T) {
 	ai.TargetY = 1
 
 	away := Aut(0)
+
 	g.levels[1].awaySinceAut = &away
 
 	if err := g.activateLevel(g.levels[1], 100); err != nil {
@@ -93,6 +96,7 @@ func TestReturnedMonsterStopsAtBlockedTerrain(t *testing.T) {
 	ai.TargetY = 1
 
 	away := Aut(0)
+
 	g.levels[1].awaySinceAut = &away
 
 	if err := g.activateLevel(g.levels[1], 100); err != nil {
@@ -120,10 +124,12 @@ func TestReturnedMonsterStopsAtAnotherActor(t *testing.T) {
 	}
 
 	ai, _ := g.stores.AI.Get(quokka)
+
 	ai.TargetX = 6
 	ai.TargetY = 2
 
 	away := Aut(0)
+
 	g.levels[2].awaySinceAut = &away
 
 	if err := g.activateLevel(g.levels[2], 100); err != nil {
@@ -150,6 +156,7 @@ func TestReturnedMonsterCannotEnterPlayerCell(t *testing.T) {
 	}
 
 	away := Aut(0)
+
 	g.levels[1].awaySinceAut = &away
 
 	if err := g.activateLevel(g.levels[1], 100); err != nil {
@@ -170,6 +177,7 @@ func TestReturnedMonsterHealingStopsAtMaximum(t *testing.T) {
 
 	health.Current = health.Max - 1
 	away := Aut(0)
+
 	g.levels[1].awaySinceAut = &away
 
 	if err := g.activateLevel(g.levels[1], 1000); err != nil {
@@ -188,6 +196,7 @@ func TestReturnedMonsterWithoutTargetStaysPut(t *testing.T) {
 	before := *position
 
 	away := Aut(0)
+
 	g.levels[1].awaySinceAut = &away
 
 	if err := g.activateLevel(g.levels[1], 100); err != nil {

@@ -83,6 +83,7 @@ func TestHastedWieldUsesTruncatedSourceCosts(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			g := newStepGame(t)
 			durations, _ := g.stores.Durations.Get(g.player)
+
 			durations.HasteAut = 100
 			expectedSpeedState := nextSpeedStreamState(t, g, test.speedRoll)
 			command := Command{
@@ -91,6 +92,7 @@ func TestHastedWieldUsesTruncatedSourceCosts(t *testing.T) {
 
 			if test.useWeapon {
 				weapon := addCarriedWeapon(t, g, "WPN_FLAIL")
+
 				command.ItemID = uint64(weapon)
 			}
 
@@ -191,6 +193,7 @@ func TestHasteSaveContinuationAndLegacyDefault(t *testing.T) {
 	}
 
 	legacy := snapshot
+
 	legacy.Entities = append([]save.EntityRecord(nil), snapshot.Entities...)
 
 	for index := range legacy.Entities {
@@ -198,6 +201,7 @@ func TestHasteSaveContinuationAndLegacyDefault(t *testing.T) {
 
 		if record.Player != nil {
 			durations := *record.Durations
+
 			durations.HasteAut = 0
 			record.Durations = &durations
 		}
@@ -221,6 +225,7 @@ func TestHasteScalesMeleeAndDurationByTheSameAction(t *testing.T) {
 	}
 
 	durations, _ := g.stores.Durations.Get(g.player)
+
 	durations.HasteAut = 100
 	result, err := g.Step(Command{
 		Kind: CommandMove,
@@ -240,6 +245,7 @@ func TestHasteLeavesRatShortOfActionEnergy(t *testing.T) {
 	g := newStepGame(t)
 	rat, _ := g.stores.MonsterEnergy.Get(ratID(t, g))
 	durations, _ := g.stores.Durations.Get(g.player)
+
 	durations.HasteAut = 100
 
 	result, err := g.Step(Command{Kind: CommandWait})
@@ -257,6 +263,7 @@ func TestHasteLeavesRatShortOfActionEnergy(t *testing.T) {
 func TestHasteExpiresAfterItsFinalFastAction(t *testing.T) {
 	g := newStepGame(t)
 	durations, _ := g.stores.Durations.Get(g.player)
+
 	durations.HasteAut = 9
 
 	lastFast, err := g.Step(Command{Kind: CommandWait})
@@ -306,6 +313,7 @@ func TestRestoreRejectsHasteOutsideItsSourceCap(t *testing.T) {
 
 	for _, invalid := range []int{-1, 401} {
 		bad := base
+
 		bad.Entities = append([]save.EntityRecord(nil), base.Entities...)
 
 		for index := range bad.Entities {
@@ -313,6 +321,7 @@ func TestRestoreRejectsHasteOutsideItsSourceCap(t *testing.T) {
 
 			if record.Player != nil {
 				durations := *record.Durations
+
 				durations.HasteAut = invalid
 				record.Durations = &durations
 			}

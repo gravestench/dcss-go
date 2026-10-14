@@ -102,6 +102,7 @@ func (c *Canvas) Put(x, y int, glyph rune, fg, bg Color) {
 	}
 
 	i := y*c.width + x
+
 	c.cells[i] = cell{
 		text: string(glyph),
 		fg:   fg,

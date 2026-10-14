@@ -119,6 +119,7 @@ func TestDungeonPopulationArtifactRejectsMalformedRows(t *testing.T) {
 		},
 	} {
 		artifact := good
+
 		artifact.Rows = []DungeonPopEntry{bad}
 
 		if err := artifact.Validate(); err == nil {

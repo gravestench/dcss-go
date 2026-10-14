@@ -158,6 +158,7 @@ func TestWalkingIntoClosedDoorOpensAndSavesIt(t *testing.T) {
 	level := g.levels[1]
 
 	row := []byte(level.terrain[1])
+
 	row[2], row[3] = '+', '+'
 	level.terrain[1] = string(row)
 	level.remembered[1*level.width+4] = 0
@@ -204,6 +205,7 @@ func TestWalkingIntoClosedDoorOpensAndSavesIt(t *testing.T) {
 func TestGeneratedDungeonRejectsInvalidSavedBoundaryAndBudget(t *testing.T) {
 	g := newGeneratedTestGame(t, 17)
 	snapshot := g.Snapshot()
+
 	snapshot.Levels[0].InitialMonsters = 0
 
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil {

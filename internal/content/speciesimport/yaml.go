@@ -201,6 +201,7 @@ func validateSourceShape(path string, root *yaml.Node) error {
 		}
 
 		name := key.Value
+
 		seen[name] = true
 
 		switch name {

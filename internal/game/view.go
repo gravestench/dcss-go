@@ -171,6 +171,7 @@ func (g *Game) fillPlayerView(view *View) {
 
 	if delay, ok := g.stores.Equipment.Get(g.player); ok {
 		copy := *delay
+
 		view.EquipmentDelay = &copy
 	}
 

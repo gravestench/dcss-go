@@ -153,6 +153,7 @@ func generateFromSource(
 			}
 
 			kind := kinds[name]
+
 			grant.KindID = kind.ID
 
 			if grant.Ego != "" {

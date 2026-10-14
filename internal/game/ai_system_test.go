@@ -11,6 +11,7 @@ func TestMonsterDecisionSystemWritesOnlyActiveMonsterIntent(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
 	system := newMonsterDecisionSystem(g)
+
 	g.turn.Actor = g.player
 
 	if err := system.Update(nil, time.Duration(10)); err != nil ||

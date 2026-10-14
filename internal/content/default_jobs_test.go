@@ -209,6 +209,7 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			artifact := original
+
 			artifact.Jobs = append([]JobDef(nil), original.Jobs...)
 			artifact.SourceFiles = append([]JobSourceFile(nil), original.SourceFiles...)
 

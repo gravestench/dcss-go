@@ -132,6 +132,7 @@ func TestQuokkaMeleeDeathExperienceAndCorpse(t *testing.T) {
 	}
 
 	health, _ := g.stores.Health.Get(quokka)
+
 	health.Current = 1
 	definition, _ := g.catalog.Monster("MONS_QUOKKA")
 	wantXP, err := character.OrdinaryAnimalExperience(definition, health.Max)
@@ -215,6 +216,7 @@ func TestQuokkaMeleeDeathExperienceAndCorpse(t *testing.T) {
 func TestLegacyRatOnlySaveStillLoads(t *testing.T) {
 	g := newStepGame(t)
 	legacy := g.Snapshot()
+
 	legacy.ScenarioID = ""
 
 	for i := len(legacy.Entities) - 1; i >= 0; i-- {

@@ -191,6 +191,7 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 	}
 
 	visible := make([]bool, width*len(rows))
+
 	visible[originY*width+originX] = true
 
 	for _, sign := range [][2]int{

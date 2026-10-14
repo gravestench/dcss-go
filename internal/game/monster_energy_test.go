@@ -132,6 +132,7 @@ func TestMonsterEnergySurvivesSaveAndNextTurn(t *testing.T) {
 	}
 
 	energy, _ := g.stores.MonsterEnergy.Get(rat)
+
 	energy.Points = 75
 	snapshot := g.Snapshot()
 	restored, err := Restore(snapshot, testCatalog(t))
@@ -190,6 +191,7 @@ func TestRestoreRejectsMissingTimingRoleComponents(t *testing.T) {
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			invalid := snapshot
+
 			invalid.Entities = append([]save.EntityRecord(nil), snapshot.Entities...)
 			test.mutate(&invalid)
 
@@ -236,6 +238,7 @@ func TestPoisonDeathPreservesReadyMonsterEnergyInSave(t *testing.T) {
 		}
 
 		energy, _ := g.stores.MonsterEnergy.Get(entity)
+
 		energy.Points = 79
 		active = append(active, entity)
 	}
@@ -245,6 +248,7 @@ func TestPoisonDeathPreservesReadyMonsterEnergyInSave(t *testing.T) {
 	}
 
 	health, _ := g.stores.Health.Get(g.player)
+
 	health.Current = 1
 
 	if _, err := g.stores.Poison.Set(g.player, ecs.Poison{

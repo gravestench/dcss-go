@@ -175,6 +175,7 @@ func TestDecodeGoldenRows(t *testing.T) {
 	rat := testRow(t)
 
 	wizard := rat
+
 	wizard.ID = "MONS_ORC_WIZARD"
 	wizard.Fields = append([]string(nil), rat.Fields...)
 
@@ -182,6 +183,7 @@ func TestDecodeGoldenRows(t *testing.T) {
 	wizard.Fields[16] = "MST_ORC_WIZARD"
 
 	dragon := rat
+
 	dragon.ID = "MONS_FIRE_DRAGON"
 	dragon.Fields = append([]string(nil), rat.Fields...)
 
@@ -190,6 +192,7 @@ func TestDecodeGoldenRows(t *testing.T) {
 	dragon.Fields[11] = "{ {AT_BITE, AF_PLAIN, 30}, {AT_CLAW, AF_PLAIN, 15}, {AT_HIT, AF_FIRE, 10}, AT_NO_ATK }"
 
 	demon := rat
+
 	demon.ID = "MONS_DEMONSPAWN"
 	demon.Fields = append([]string(nil), rat.Fields...)
 
@@ -197,6 +200,7 @@ func TestDecodeGoldenRows(t *testing.T) {
 	demon.Fields[9] = "MH_NATURAL | MH_DEMONIC"
 
 	spriggan := rat
+
 	spriggan.ID = "MONS_SPRIGGAN"
 	spriggan.Fields = append([]string(nil), rat.Fields...)
 
@@ -204,6 +208,7 @@ func TestDecodeGoldenRows(t *testing.T) {
 	spriggan.Fields[22] = "MOVE_ENERGY(6)"
 
 	bug := rat
+
 	bug.ID = "MONS_PROGRAM_BUG"
 	bug.Fields = append([]string(nil), rat.Fields...)
 
@@ -304,6 +309,7 @@ func TestDecodeRejectsUnknownExpressions(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			row := testRow(t)
+
 			row.Fields[tc.field] = tc.value
 
 			_, err := decodeRows("mon-data.h", []sourceRow{row}, testSymbols())

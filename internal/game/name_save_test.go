@@ -64,6 +64,7 @@ func TestOldVersionFourSaveWithoutNameDisplaysAdventurer(t *testing.T) {
 
 	defer g.Close()
 	snapshot := g.Snapshot()
+
 	savedPlayer(t, &snapshot).Player.Name = ""
 	encoded, err := json.Marshal(snapshot)
 
@@ -103,6 +104,7 @@ func TestRestoreRejectsInvalidSavedName(t *testing.T) {
 
 	defer g.Close()
 	snapshot := g.Snapshot()
+
 	savedPlayer(t, &snapshot).Player.Name = "Bad!"
 
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||

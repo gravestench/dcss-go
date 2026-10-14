@@ -45,6 +45,7 @@ func (s *poisonSystem) Update(_ *akara.World, delta time.Duration) error {
 	}
 
 	beforeHP := health.Current
+
 	health.Current = max(0, health.Current-damage)
 
 	if health.Current < beforeHP {

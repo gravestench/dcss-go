@@ -71,6 +71,7 @@ func TestCockroachCorpseCannotBecomeSkeleton(t *testing.T) {
 	})
 
 	corpse, _ := g.stores.Corpses.Get(id)
+
 	corpse.MonsterID = "MONS_GIANT_COCKROACH"
 
 	snapshot := g.Snapshot()
@@ -117,6 +118,7 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 		}
 
 		ratHP, _ := g.stores.Health.Get(rat)
+
 		ratHP.Current = 1
 		playerHP, _ := g.stores.Health.Get(g.player)
 
@@ -187,6 +189,7 @@ func TestPreDeadRatLeavesNoCorpse(t *testing.T) {
 
 	defer g.Close()
 	hp, _ := g.stores.Health.Get(ratID(t, g))
+
 	hp.Current = 0
 
 	if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
@@ -461,6 +464,7 @@ func TestRestoreRejectsInvalidCorpseFloorClock(t *testing.T) {
 
 	active := g.Snapshot()
 	zero := int64(0)
+
 	active.Levels[0].AwaySinceAut = &zero
 
 	if loaded, err := Restore(active, testCatalog(t)); err == nil {

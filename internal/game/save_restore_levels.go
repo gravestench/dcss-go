@@ -46,6 +46,7 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 			}
 
 			awaySince := Aut(*record.AwaySinceAut)
+
 			level.awaySinceAut = &awaySince
 		}
 	}

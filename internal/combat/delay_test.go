@@ -148,6 +148,7 @@ func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
 
 func TestFractionalWeaponSkillCombinesBeforeOneDraw(t *testing.T) {
 	in := starterDelay(12, "SK_SHORT_BLADES")
+
 	in.WeaponSkill10 = 21
 
 	for _, tc := range []struct {

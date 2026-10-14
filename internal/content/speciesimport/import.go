@@ -50,6 +50,7 @@ func readSource(sourceDir, relative string,
 	}
 
 	sum := sha256.Sum256(data)
+
 	*hashes = append(*hashes, content.SpeciesSourceFile{
 		Path:   label,
 		SHA256: hex.EncodeToString(sum[:]),

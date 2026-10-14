@@ -216,6 +216,7 @@ func (g *Game) ChooseStat(id string) (StepResult, error) {
 	}
 
 	nextLevel := progress.PendingStatLevel
+
 	progress.PendingStatLevel = 0
 	g.turn.Events = nil
 

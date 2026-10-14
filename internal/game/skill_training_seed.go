@@ -55,6 +55,7 @@ func seedSkillQueue(skills []character.Skill, rng *RNGStreams) ([]string, error)
 
 	for i, skill := range skills {
 		scaled := skill.Points * skill.Points * recentSkillLimit
+
 		counts[i] = scaled / weightTotal
 		remainders[i] = scaled % weightTotal
 		assigned += counts[i]

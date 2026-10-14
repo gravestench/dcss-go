@@ -155,6 +155,7 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 			want:        "unknown item",
 			jobs: func() []content.JobDef {
 				jobs := fixtureJobs()
+
 				jobs[0].Equipment[0] = "unknown item"
 
 				return jobs
@@ -169,6 +170,7 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 			want:        "unknown",
 			jobs: func() []content.JobDef {
 				jobs := fixtureJobs()
+
 				jobs[0].Equipment[2] = "dart ego:unknown q:3"
 
 				return jobs

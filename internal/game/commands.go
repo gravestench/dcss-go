@@ -144,6 +144,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	if g.turn.StairFrom != 0 {
 		from := g.levels[g.turn.StairFrom]
 		to := g.levels[g.turn.StairTo]
+
 		from.awaySinceAut = &startAut
 
 		if err := g.activateLevel(to, startAut); err != nil {

@@ -23,6 +23,7 @@ func doorModel(t *testing.T, cells map[[2]int]byte) *AppModel {
 	for cell, glyph := range cells {
 		x, y := cell[0], cell[1]
 		row := []byte(snapshot.Levels[0].Rows[y])
+
 		row[x] = glyph
 		snapshot.Levels[0].Rows[y] = string(row)
 	}

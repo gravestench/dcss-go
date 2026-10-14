@@ -21,6 +21,7 @@ func (r *corpseRoller) Intn(stream string, bound int) (int, error) {
 	}
 
 	value := r.rolls[0].value
+
 	r.rolls = r.rolls[1:]
 
 	return value, nil

@@ -34,6 +34,7 @@ func readJobSource(root, name string, files *[]content.JobSourceFile) ([]byte, s
 	}
 
 	sum := sha256.Sum256(data)
+
 	*files = append(*files, content.JobSourceFile{
 		Path:   label,
 		SHA256: hex.EncodeToString(sum[:]),

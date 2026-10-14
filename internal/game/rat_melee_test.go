@@ -27,6 +27,7 @@ func (r *combatRoller) Intn(stream string, bound int) (int, error) {
 	}
 
 	value := r.rolls[0].value
+
 	r.rolls = r.rolls[1:]
 
 	return value, nil
@@ -253,6 +254,7 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 			initialHP := before.Current
 
 			system := newCombatSystem(g)
+
 			system.roller = rng
 
 			if err := system.Update(nil, time.Duration(10)); err != nil {
@@ -318,6 +320,7 @@ func TestFighterViewDisplaysSourceDefense(t *testing.T) {
 func TestPlayerActionResetsPriorRoundShieldBlocks(t *testing.T) {
 	g := newStepGame(t)
 	state, _ := g.stores.Combat.Get(g.player)
+
 	state.ShieldBlocks = 2
 
 	if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
@@ -332,6 +335,7 @@ func TestPlayerActionResetsPriorRoundShieldBlocks(t *testing.T) {
 func TestCombatStateAndMeleeRNGContinueThroughSave(t *testing.T) {
 	g := newStepGame(t)
 	state, _ := g.stores.Combat.Get(g.player)
+
 	state.ShieldBlocks = 1
 
 	if _, err := g.rng.Intn("melee", 20); err != nil {
@@ -368,6 +372,7 @@ func TestCombatStateAndMeleeRNGContinueThroughSave(t *testing.T) {
 func TestCombatSaveRejectsNegativeBlocksAndOldVersion(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
+
 	snapshot.Version = 5
 
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||

@@ -219,6 +219,7 @@ func TestItemImportPair(t *testing.T) {
 	// A manifest with an updated digest still cannot declare a live enum item
 	// while silently omitting its definition.
 	missing := artifact
+
 	missing.Items = missing.Items[:1]
 	encoded, err := json.Marshal(missing.Items)
 
@@ -228,6 +229,7 @@ func TestItemImportPair(t *testing.T) {
 
 	updated := manifest
 	digest := sha256.Sum256(encoded)
+
 	updated.DefinitionsSHA256 = hex.EncodeToString(digest[:])
 
 	if err := missing.Validate(updated); err == nil {

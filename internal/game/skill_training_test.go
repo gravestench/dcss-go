@@ -148,6 +148,7 @@ func TestSkillBatchGivesEqualManualSkillsTheirAllocatedXP(t *testing.T) {
 	g := newStepGame(t)
 	skills, _ := g.stores.Skills.Get(g.player)
 	training, _ := g.stores.SkillTraining.Get(g.player)
+
 	training.Manual = true
 	training.AvailableXP = 100
 
@@ -326,6 +327,7 @@ func TestRatExperienceTrainsPlayerSkillsBeforeNextTurn(t *testing.T) {
 	}
 
 	health, _ := g.stores.Health.Get(rat)
+
 	health.Current = 1
 
 	start, _ := g.stores.Skills.Get(g.player)
@@ -518,6 +520,7 @@ func TestDisabledTrainingKeepsExperienceUntilEnabled(t *testing.T) {
 	}
 
 	health, _ := g.stores.Health.Get(rat)
+
 	health.Current = 1
 
 	for attempt := 0; attempt < 100 && g.world.EntityExists(rat); attempt++ {
@@ -620,6 +623,7 @@ func TestSkillRNGAndPracticeContinueAfterRestore(t *testing.T) {
 	g := newStepGame(t)
 	training, _ := g.stores.SkillTraining.Get(g.player)
 	skills, _ := g.stores.Skills.Get(g.player)
+
 	training.AvailableXP = 10
 	training.Manual = true
 	firstBefore := skills.Entries[0].Points
@@ -630,6 +634,7 @@ func TestSkillRNGAndPracticeContinueAfterRestore(t *testing.T) {
 	}
 
 	progress, _ := g.stores.Progression.Get(g.player)
+
 	progress.TotalXP = 1
 
 	// Remove a killed rat so the snapshot's earned XP remains possible.

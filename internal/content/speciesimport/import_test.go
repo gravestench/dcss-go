@@ -24,6 +24,7 @@ func sourceFixture(t *testing.T) string {
 	}
 
 	legacy, aptitudes := legacyFixtures(t)
+
 	files["util/species-gen/species-data-deprecated-species.txt"] = legacy
 	files["util/species-gen/aptitudes-deprecated-species.txt"] = aptitudes
 

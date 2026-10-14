@@ -163,6 +163,7 @@ func TestWieldRejectsInvalidChoicesWithoutTime(t *testing.T) {
 	}
 
 	after := g.Snapshot()
+
 	before.Messages = after.Messages
 
 	if !reflect.DeepEqual(before, after) || !g.stores.Equipped.Has(starting) {

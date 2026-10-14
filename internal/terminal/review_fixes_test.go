@@ -200,6 +200,7 @@ func TestCreationShortcutColumnsAndContextText(t *testing.T) {
 
 func TestDrawPlayDangerValueColors(t *testing.T) {
 	view := playView(t)
+
 	view.PlayerHP = 7
 	view.PlayerMP = 0
 	view.Attributes.Strength = 2
@@ -228,6 +229,7 @@ func TestDrawPlayDangerValueColors(t *testing.T) {
 
 func TestDeathPageExplainsUnportedRecords(t *testing.T) {
 	m := playingModel(t)
+
 	m.screen = ScreenDeath
 	page := strings.ToLower(plainApp(m))
 

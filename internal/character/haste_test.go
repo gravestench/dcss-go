@@ -23,6 +23,7 @@ func (r *hasteRoller) Intn(stream string, bound int) (int, error) {
 	}
 
 	value := r.draws[0].value
+
 	r.draws = r.draws[1:]
 
 	return value, nil

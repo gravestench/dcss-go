@@ -58,6 +58,7 @@ func TestPartialDropMergesMatchingFloorStackAndSaves(t *testing.T) {
 	g := newStepGame(t)
 	itemID := carriedItemByKind(t, g, "POT_MIGHT")
 	item, _ := g.stores.Items.Get(itemID)
+
 	item.Quantity = 3
 
 	first, err := g.Step(Command{
@@ -151,6 +152,7 @@ func TestDropEquipmentRulesAndInvalidRequests(t *testing.T) {
 	}
 
 	after := g.Snapshot()
+
 	before.Messages = after.Messages
 
 	if !reflect.DeepEqual(before, after) {
@@ -192,6 +194,7 @@ func TestPickupMergesReturnedPartialStack(t *testing.T) {
 	g := newStepGame(t)
 	carriedID := carriedItemByKind(t, g, "POT_MIGHT")
 	carried, _ := g.stores.Items.Get(carriedID)
+
 	carried.Quantity = 3
 
 	if _, err := g.Step(Command{
@@ -264,6 +267,7 @@ func TestStackTransfersDoNotOverflowQuantity(t *testing.T) {
 		g := newStepGame(t)
 		carriedID := carriedItemByKind(t, g, "POT_MIGHT")
 		carried, _ := g.stores.Items.Get(carriedID)
+
 		carried.Quantity = 2
 
 		if _, err := g.Step(Command{
@@ -277,6 +281,7 @@ func TestStackTransfersDoNotOverflowQuantity(t *testing.T) {
 		position, _ := g.stores.Positions.Get(g.player)
 		floorID, _ := g.floorItemAt(*position)
 		floor, _ := g.stores.Items.Get(floorID)
+
 		floor.Quantity = maxInt
 
 		if _, err := g.Step(Command{
@@ -299,6 +304,7 @@ func TestStackTransfersDoNotOverflowQuantity(t *testing.T) {
 		g := newStepGame(t)
 		carriedID := carriedItemByKind(t, g, "POT_MIGHT")
 		carried, _ := g.stores.Items.Get(carriedID)
+
 		carried.Quantity = 2
 
 		if _, err := g.Step(Command{
