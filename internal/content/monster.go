@@ -1,11 +1,27 @@
 package content
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"sort"
 	"strings"
 )
+
+// MarshalJSON keeps placeholder records free of live gameplay fields.
+func (m MonsterDef) MarshalJSON() ([]byte, error) {
+	if m.Status == MonsterDefined {
+		type record MonsterDef
+		return json.Marshal(record(m))
+	}
+	return json.Marshal(struct {
+		ID         string        `json:"id"`
+		Status     MonsterStatus `json:"status"`
+		SourcePath string        `json:"source_path"`
+		SourceLine int           `json:"source_line"`
+		Name       string        `json:"name,omitempty"`
+	}{m.ID, m.Status, m.SourcePath, m.SourceLine, m.Name})
+}
 
 type MonsterStatus string
 
