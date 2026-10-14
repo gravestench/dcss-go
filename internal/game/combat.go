@@ -125,6 +125,14 @@ func (s *combatSystem) resolvePlayerMelee(
 		return err
 	}
 
+	protectionAC, err := s.monsterProtectionAC(target)
+
+	if err != nil {
+		return err
+	}
+
+	input.DefenderAC += protectionAC
+
 	outcome, err := combat.PlayerMelee(s.roller, input)
 
 	if err != nil {
@@ -176,6 +184,14 @@ func (s *combatSystem) resolveAuxiliaryHeadbutt(
 		return err
 	}
 
+	protectionAC, err := s.monsterProtectionAC(target)
+
+	if err != nil {
+		return err
+	}
+
+	in.DefenderAC += protectionAC
+
 	outcome, err := combat.AuxiliaryHeadbutt(s.roller, in)
 
 	if err != nil {
@@ -217,12 +233,16 @@ func (s *combatSystem) applyPoisonBite(animal content.MonsterDef) error {
 		return err
 	}
 
+	return s.addPlayerPoison(amount, animal.ID)
+}
+
+func (s *combatSystem) addPlayerPoison(amount int, sourceID string) error {
 	poison, found := s.poison.Get(s.player)
 
 	if !found {
-		_, err = s.poison.Set(s.player, ecs.Poison{
+		_, err := s.poison.Set(s.player, ecs.Poison{
 			AmountScaled:    amount * 1000,
-			SourceMonsterID: animal.ID,
+			SourceMonsterID: sourceID,
 		})
 
 		if err != nil {
@@ -230,7 +250,7 @@ func (s *combatSystem) applyPoisonBite(animal content.MonsterDef) error {
 		}
 	} else {
 		poison.AmountScaled = min(2147483647, poison.AmountScaled+amount*1000)
-		poison.SourceMonsterID = animal.ID
+		poison.SourceMonsterID = sourceID
 	}
 
 	s.turn.Events = append(s.turn.Events, Event{
@@ -267,6 +287,10 @@ func (s *combatSystem) resolveMonsterMelee(victim *ecs.Health) error {
 
 		if err != nil {
 			return err
+		}
+
+		if weapon != nil && !supportedMonsterMeleeBrand(weapon.Brand) {
+			return fmt.Errorf("unsupported monster melee brand %s", weapon.Brand)
 		}
 	}
 
@@ -328,6 +352,18 @@ func (s *combatSystem) resolveMonsterMelee(victim *ecs.Health) error {
 		Kind: "combat",
 		Text: message,
 	})
+
+	if outcome.Kind == combat.Hit &&
+		weapon != nil &&
+		victim.Current > 0 {
+		if err := s.applyMonsterWeaponBrand(
+			weapon.Brand,
+			outcome.Damage,
+			actor.KindID,
+		); err != nil {
+			return err
+		}
+	}
 
 	if outcome.Kind == combat.Miss || outcome.Kind == combat.Dodge {
 		if err := s.resolveReflexiveHeadbutt(animal.Name, actor.KindID); err != nil {
@@ -450,6 +486,14 @@ func (s *combatSystem) resolveReflexiveHeadbutt(name, kindID string) error {
 	if err != nil {
 		return err
 	}
+
+	protectionAC, err := s.monsterProtectionAC(s.turn.Actor)
+
+	if err != nil {
+		return err
+	}
+
+	in.DefenderAC += protectionAC
 
 	outcome, err := combat.ReflexiveHeadbutt(s.roller, in)
 

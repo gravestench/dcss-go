@@ -69,6 +69,7 @@ func (s *combatSystem) monsterMeleeWeapon(
 			Damage: kind.Weapon.Damage,
 			Hit:    kind.Weapon.Hit,
 			Plus:   item.Plus,
+			Brand:  item.Ego,
 		}
 
 		if slot.Slot == "weapon" {

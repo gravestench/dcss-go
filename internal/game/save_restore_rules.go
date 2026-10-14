@@ -83,7 +83,7 @@ func (g *Game) validateSavedPlayer(
 	if record.Poison != nil &&
 		(record.Poison.AmountScaled < 1000 ||
 			record.Poison.AmountScaled > 2147483647 ||
-			record.Poison.SourceMonsterID != "MONS_ADDER") {
+			!supportedPoisonSource(record.Poison.SourceMonsterID)) {
 		return savedPlayerValidation{}, fmt.Errorf(
 			"invalid player poison for entity %d", record.ID,
 		)
@@ -108,6 +108,16 @@ func (g *Game) validateSavedPlayer(
 		pendingStat: record.Progression != nil &&
 			record.Progression.PendingStatLevel != 0,
 	}, nil
+}
+
+func supportedPoisonSource(monsterID string) bool {
+	switch monsterID {
+	case "MONS_ADDER", "MONS_GOBLIN", "MONS_KOBOLD":
+		return true
+
+	default:
+		return false
+	}
 }
 
 func (g *Game) validateSavedMonster(

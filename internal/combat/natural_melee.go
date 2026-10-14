@@ -47,6 +47,7 @@ type MeleeWeapon struct {
 	Damage int
 	Hit    int
 	Plus   int
+	Brand  string
 }
 
 // NaturalAttack is the first attack of a supported ordinary monster.
