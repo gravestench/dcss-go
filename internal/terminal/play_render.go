@@ -145,22 +145,56 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	drawMessages(canvas, layout.Messages, view.Messages, notice)
 }
 
+// hudRenderer keeps pane coordinates in one place for the source-shaped HUD.
+type hudRenderer struct {
+	canvas *Canvas
+	region Region
+}
+
+type vitalRow struct {
+	y        int
+	label    string
+	current  int
+	maximum  int
+	yellowAt int
+	redAt    int
+}
+
+type attributeRow struct {
+	y     int
+	label string
+	value int
+}
+
+func (h hudRenderer) write(x, y int, value string, color Color) {
+	writeClipped(
+		h.canvas,
+		h.region.X+x,
+		h.region.Y+y,
+		h.region.W-x,
+		value,
+		color,
+	)
+}
+
 func drawHUD(canvas *Canvas, region Region, view game.View) {
-	hud := func(x, y int, value string, color Color) {
-		writeClipped(canvas, region.X+x, region.Y+y, region.W-x, value, color)
+	hud := hudRenderer{
+		canvas: canvas,
+		region: region,
 	}
 
-	hud(0, 0, view.PlayerName+" the Shield-Bearer", Yellow) // source/skills.cc:91; current Fighter only
-	hud(0, 1, "Human", Yellow)
+	// source/skills.cc:91; the current playable start is Fighter only.
+	hud.write(0, 0, view.PlayerName+" the Shield-Bearer", Yellow)
+	hud.write(0, 1, "Human", Yellow)
 
-	for _, stat := range []struct {
-		y        int
-		label    string
-		current  int
-		maximum  int
-		yellowAt int
-		redAt    int
-	}{
+	hud.drawVitals(view)
+	hud.drawDefenses(view)
+	hud.drawAttributes(view)
+	hud.drawStatus(view)
+}
+
+func (h hudRenderer) drawVitals(view game.View) {
+	rows := []vitalRow{
 		{
 			y:        2,
 			label:    "Health: ",
@@ -177,8 +211,11 @@ func drawHUD(canvas *Canvas, region Region, view game.View) {
 			yellowAt: 50,
 			redAt:    25,
 		},
-	} {
-		hud(0, stat.y, stat.label, Brown)
+	}
+
+	for _, stat := range rows {
+		h.write(0, stat.y, stat.label, Brown)
+
 		value := fmt.Sprintf("%d", stat.current)
 		color := statusValueColor(
 			stat.current,
@@ -186,36 +223,37 @@ func drawHUD(canvas *Canvas, region Region, view game.View) {
 			stat.yellowAt,
 			stat.redAt,
 		)
-		hud(len(stat.label), stat.y, value, color)
-		hud(len(stat.label)+len(value), stat.y, fmt.Sprintf("/%d", stat.maximum), LightGrey)
+
+		h.write(len(stat.label), stat.y, value, color)
+		h.write(len(stat.label)+len(value), stat.y, fmt.Sprintf("/%d", stat.maximum), LightGrey)
 	}
 
-	drawMeter(canvas, region.X+18, region.Y+2, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
-	drawMeter(canvas, region.X+18, region.Y+3, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
+	drawMeter(h.canvas, h.region.X+18, h.region.Y+2, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
+	drawMeter(h.canvas, h.region.X+18, h.region.Y+3, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
+}
 
-	defenseLabels := []string{
+func (h hudRenderer) drawDefenses(view game.View) {
+	labels := []string{
 		"AC: --",
 		"EV: --",
 		"SH: --",
 	}
 
 	if view.DefenseKnown {
-		defenseLabels = []string{
+		labels = []string{
 			fmt.Sprintf("AC: %d", view.PlayerAC),
 			fmt.Sprintf("EV: %d", view.PlayerEV),
 			fmt.Sprintf("SH: %d", view.PlayerSH),
 		}
 	}
 
-	for i, label := range defenseLabels {
-		hud(0, 4+i, label, Brown)
+	for index, label := range labels {
+		h.write(0, 4+index, label, Brown)
 	}
+}
 
-	for _, stat := range []struct {
-		y     int
-		label string
-		value int
-	}{
+func (h hudRenderer) drawAttributes(view game.View) {
+	rows := []attributeRow{
 		{
 			y:     4,
 			label: "Str: ",
@@ -231,36 +269,43 @@ func drawHUD(canvas *Canvas, region Region, view game.View) {
 			label: "Dex: ",
 			value: view.Attributes.Dexterity,
 		},
-	} {
-		hud(18, stat.y, stat.label, Brown)
+	}
+
+	for _, stat := range rows {
+		h.write(18, stat.y, stat.label, Brown)
+
 		color := LightGrey
 
 		if stat.value < 3 {
 			color = Red
 		}
 
-		hud(18+len(stat.label), stat.y, fmt.Sprintf("%d", stat.value), color)
+		h.write(18+len(stat.label), stat.y, fmt.Sprintf("%d", stat.value), color)
 	}
+}
 
-	hud(0, 7, fmt.Sprintf("XL: %2d Next: %2d%%", view.ExperienceLevel, view.NextLevelPercent), Brown)
-	hud(18, 7, fmt.Sprintf("Place: D:%d", view.LevelID), Brown)
-	hud(0, 8, "Noise: --", Brown)
-	hud(18, 8, fmt.Sprintf("Time: %.1f", float64(view.CurrentAut)/10), Brown)
-	weapon := "-) Unarmed"
+func (h hudRenderer) drawStatus(view game.View) {
+	h.write(0, 7, fmt.Sprintf("XL: %2d Next: %2d%%", view.ExperienceLevel, view.NextLevelPercent), Brown)
+	h.write(18, 7, fmt.Sprintf("Place: D:%d", view.LevelID), Brown)
+	h.write(0, 8, "Noise: --", Brown)
+	h.write(18, 8, fmt.Sprintf("Time: %.1f", float64(view.CurrentAut)/10), Brown)
 
-	for i, item := range view.Inventory {
+	h.write(0, 9, equippedWeaponLabel(view.Inventory), LightGrey)
+	h.write(0, 10, "Quiver: --", Brown)
+
+	if view.MightAut > 0 {
+		h.write(0, 11, "Might", LightBlue)
+	}
+}
+
+func equippedWeaponLabel(inventory []game.ItemView) string {
+	for index, item := range inventory {
 		if item.Slot == "weapon" {
-			weapon = fmt.Sprintf("%c) %+d %s", 'a'+i, item.Plus, item.Name)
-			break
+			return fmt.Sprintf("%c) %+d %s", 'a'+index, item.Plus, item.Name)
 		}
 	}
 
-	hud(0, 9, weapon, LightGrey)
-	hud(0, 10, "Quiver: --", Brown)
-
-	if view.MightAut > 0 {
-		hud(0, 11, "Might", LightBlue)
-	}
+	return "-) Unarmed"
 }
 
 func drawNearbyMonsters(canvas *Canvas, region Region, entities []game.EntityView) {

@@ -30,6 +30,10 @@ for a human reader to follow.
   function result tuples may remain together.
 - Use names that expose the game concept. Extract a helper when it removes
   repeated reasoning, not merely to shorten a function.
+- Review functions over roughly 100 lines for mixed responsibilities. Split
+  projections, validation, decisions, and mutations into named steps when
+  those steps can be understood on their own. Do not add wrappers that only
+  hide one expression.
 - Comment source-specific rules, invariants, ownership, and surprising
   choices. Do not narrate obvious statements. Cite the pinned C++ source
   when a numeric rule or unusual order comes from it.

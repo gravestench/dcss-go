@@ -89,6 +89,15 @@ func (g *Game) View() View {
 		Messages:   append([]string(nil), g.messages...),
 	}
 
+	g.fillTerrainView(&view, level)
+	g.fillPlayerView(&view)
+	g.fillEntityView(&view, level, position.LevelID)
+	g.fillInventoryView(&view)
+
+	return view
+}
+
+func (g *Game) fillTerrainView(view *View, level *Level) {
 	for i, glyph := range level.remembered {
 		switch {
 		case g.visibleLevelID == level.ID && i < len(g.visible) && g.visible[i]:
@@ -104,7 +113,9 @@ func (g *Game) View() View {
 			}
 		}
 	}
+}
 
+func (g *Game) fillPlayerView(view *View) {
 	if health, ok := g.stores.Health.Get(g.player); ok {
 		view.PlayerHP = health.Current
 		view.PlayerMaxHP = health.Max
@@ -159,11 +170,13 @@ func (g *Game) View() View {
 		view.PlayerSH = defense.ShieldClass / 2
 		view.DefenseKnown = true
 	}
+}
 
+func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 	for _, entity := range g.stores.Positions.Entities() {
 		location, _ := g.stores.Positions.Get(entity)
 
-		if location.LevelID != position.LevelID {
+		if location.LevelID != levelID {
 			continue
 		}
 
@@ -219,7 +232,9 @@ func (g *Game) View() View {
 			Role:   role,
 		})
 	}
+}
 
+func (g *Game) fillInventoryView(view *View) {
 	for _, entity := range g.stores.CarriedBy.Entities() {
 		carrier, _ := g.stores.CarriedBy.Get(entity)
 
@@ -254,6 +269,4 @@ func (g *Game) View() View {
 			view.Inventory = append(view.Inventory, entry)
 		}
 	}
-
-	return view
 }

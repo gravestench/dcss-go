@@ -15,6 +15,10 @@ source references where helpful. They should not repeat what the next line
 already says. The repository's `AGENTS.md` carries this standard into each
 implementation slice. The style check now enforces line length, formatting,
 expanded literals and blocks, and space around control-flow blocks.
+Review functions over roughly 100 lines for mixed responsibilities. In
+particular, project terrain, player state, entities, and inventory in
+separate named steps, and split setup from turn decisions. A syntactic
+style check cannot establish that a long function is easy to follow.
 
 ## Decision
 
