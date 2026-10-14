@@ -38,7 +38,10 @@ func TestPickupTransfersLocation(t *testing.T) {
 	item := potionID(t, g)
 	carrier, carried := g.stores.CarriedBy.Get(item)
 
-	if result.Spent != 10 || g.stores.Positions.Has(item) || !carried || carrier.Holder != g.player ||
+	if result.Spent != 10 ||
+		g.stores.Positions.Has(item) ||
+		!carried ||
+		carrier.Holder != g.player ||
 		len(result.View.Inventory) != 5 || result.View.Inventory[4].KindID != "POT_CURING" {
 		t.Fatalf(
 			"pickup = %+v, located=%v, carried=%+v, inventory=%+v",
@@ -79,7 +82,9 @@ func TestViewIsCopied(t *testing.T) {
 
 	again := g.View()
 
-	if again.Cells[0].Glyph == '?' || again.Entities[0].X == 99 || again.Messages[0] == "changed" ||
+	if again.Cells[0].Glyph == '?' ||
+		again.Entities[0].X == 99 ||
+		again.Messages[0] == "changed" ||
 		again.Inventory[0].Name == "changed" {
 		t.Fatalf("view aliases game state: %+v", again)
 	}

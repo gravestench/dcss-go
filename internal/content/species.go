@@ -112,7 +112,10 @@ func (s SpeciesDef) validate() error {
 		return fmt.Errorf("invalid species definition %q", s.ID)
 	}
 
-	if s.Strength < 1 || s.Intelligence < 1 || s.Dexterity < 1 || s.LevelUpStatFrequency < 0 ||
+	if s.Strength < 1 ||
+		s.Intelligence < 1 ||
+		s.Dexterity < 1 ||
+		s.LevelUpStatFrequency < 0 ||
 		s.LevelUpStatFrequency > 28 {
 		return fmt.Errorf("invalid species stats %q", s.ID)
 	}
@@ -145,7 +148,9 @@ func (s SpeciesDef) validate() error {
 	}
 
 	for _, mutation := range s.Mutations {
-		if mutation.Level < 1 || mutation.Level > 27 || !strings.HasPrefix(mutation.ID, "MUT_") ||
+		if mutation.Level < 1 ||
+			mutation.Level > 27 ||
+			!strings.HasPrefix(mutation.ID, "MUT_") ||
 			mutation.Amount < -3 || mutation.Amount > 3 {
 			return fmt.Errorf("invalid species mutation %s for %s", mutation.ID, s.ID)
 		}

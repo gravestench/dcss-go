@@ -180,7 +180,10 @@ func TestForcedDoorPushDoesNotAdvanceRNG(t *testing.T) {
 	position, _ = g.stores.Positions.Get(itemID)
 	after := g.Snapshot()
 
-	if err != nil || result.Spent != 10 || position.X != 1 || position.Y != 1 {
+	if err != nil ||
+		result.Spent != 10 ||
+		position.X != 1 ||
+		position.Y != 1 {
 		t.Fatalf("forced push = %+v, %v, item %+v", result, err, position)
 	}
 
@@ -285,7 +288,9 @@ func TestClosingDoorRejectsJammedGroupWithoutTime(t *testing.T) {
 	after := g.Snapshot()
 	before.Messages = after.Messages
 
-	if err != nil || result.Spent != 0 || !reflect.DeepEqual(before, after) ||
+	if err != nil ||
+		result.Spent != 0 ||
+		!reflect.DeepEqual(before, after) ||
 		level.terrain[1][4] != '\'' {
 		t.Fatalf("jammed door = %+v, %v", result, err)
 	}

@@ -49,7 +49,10 @@ func TestMightPotionDurationAndCap(t *testing.T) {
 		rng := &mightRoller{value: tc.roll}
 		got, message, err := MightPotionDuration(rng, tc.old)
 
-		if err != nil || got != tc.want || message != tc.message || rng.calls != 1 {
+		if err != nil ||
+			got != tc.want ||
+			message != tc.message ||
+			rng.calls != 1 {
 			t.Fatalf("old %d roll %d: duration %d, message %q, draws %d, err %v", tc.old, tc.roll, got, message, rng.calls, err)
 		}
 	}

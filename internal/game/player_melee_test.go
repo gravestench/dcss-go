@@ -34,13 +34,18 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if in.Strength != 16 || in.Dexterity != 12 || in.FightingSkill100 != 300 ||
+			if in.Strength != 16 ||
+				in.Dexterity != 12 ||
+				in.FightingSkill100 != 300 ||
 				in.WeaponSkill100 != 200 || in.DefenderEV != 10 || in.DefenderAC != 1 {
 				t.Fatalf("source input = %+v", in)
 			}
 
 			if weaponID == "WPN_UNARMED" {
-				if !in.Unarmed || in.WeaponSkillID != "SK_UNARMED_COMBAT" || in.UnarmedSkill256 != 513 || in.WeaponDamage != 0 {
+				if !in.Unarmed ||
+					in.WeaponSkillID != "SK_UNARMED_COMBAT" ||
+					in.UnarmedSkill256 != 513 ||
+					in.WeaponDamage != 0 {
 					t.Fatalf("unarmed input = %+v", in)
 				}
 
@@ -53,7 +58,9 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if in.Unarmed || in.WeaponSkillID != kind.WeaponSkill || in.WeaponDamage != kind.Weapon.Damage ||
+			if in.Unarmed ||
+				in.WeaponSkillID != kind.WeaponSkill ||
+				in.WeaponDamage != kind.Weapon.Damage ||
 				in.WeaponHit != kind.Weapon.Hit {
 				t.Fatalf("%s input = %+v, catalog %+v", weaponID, in, kind.Weapon)
 			}
@@ -97,7 +104,9 @@ func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
 
-	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
+	if leftErr != nil ||
+		rightErr != nil ||
+		!reflect.DeepEqual(left, right) ||
 		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("post-load bump differs: %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 	}

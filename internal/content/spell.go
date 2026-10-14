@@ -57,12 +57,17 @@ func (s SpellDef) validate() error {
 		s.EnumLine <= 0 || s.SourceLine <= 0 ||
 		s.SourcePath != "crawl-ref/source/spl-data.h"
 
-	if invalidIdentity || invalidStats || invalidRange || invalidSource {
+	if invalidIdentity ||
+		invalidStats ||
+		invalidRange ||
+		invalidSource {
 		return fmt.Errorf("invalid spell definition %s", s.ID)
 	}
 
-	if s.ID == "SPELL_NO_SPELL" && s.Status != SpellSentinel || s.ID != "SPELL_NO_SPELL" &&
-		s.Status != SpellDefined && s.Status != SpellRemoved {
+	if s.ID == "SPELL_NO_SPELL" &&
+		s.Status != SpellSentinel ||
+		s.ID != "SPELL_NO_SPELL" &&
+			s.Status != SpellDefined && s.Status != SpellRemoved {
 		return fmt.Errorf("invalid spell status for %s", s.ID)
 	}
 
@@ -94,7 +99,9 @@ type SpellArtifact struct {
 }
 
 func (a SpellArtifact) Validate() error {
-	if a.SchemaVersion != 1 || a.SourceRevision != sourceRevision || a.TagMajorVersion != 34 ||
+	if a.SchemaVersion != 1 ||
+		a.SourceRevision != sourceRevision ||
+		a.TagMajorVersion != 34 ||
 		len(a.SourceFiles) == 0 || len(a.Spells) == 0 {
 		return fmt.Errorf("invalid spell artifact header or empty catalog")
 	}

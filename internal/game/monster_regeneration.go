@@ -38,7 +38,10 @@ func (s *monsterRegenerationSystem) Update(_ *akara.World, _ time.Duration) erro
 
 	health, found := s.health.Get(entity)
 
-	if !found || health.Current < 0 || health.Max <= 0 || health.Current > health.Max {
+	if !found ||
+		health.Current < 0 ||
+		health.Max <= 0 ||
+		health.Current > health.Max {
 		return fmt.Errorf("regenerating monster %d has invalid health", entity)
 	}
 

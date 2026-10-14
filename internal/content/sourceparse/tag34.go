@@ -67,7 +67,10 @@ func stripCommentsPreservingLines(path string, data []byte) ([]byte, error) {
 				escaped = false
 			} else if c == '\\' {
 				escaped = true
-			} else if (state == 1 && c == '"') || (state == 2 && c == '\'') {
+			} else if (state == 1 &&
+				c == '"') ||
+				(state == 2 &&
+					c == '\'') {
 				state = 0
 			}
 

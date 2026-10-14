@@ -24,7 +24,10 @@ func goodWeaponUpgrade(id, jobID, size string) string {
 		return "WPN_WAR_AXE"
 
 	case "WPN_SPEAR":
-		if jobID == "JOB_FIGHTER" && (size == "SIZE_TINY" || size == "SIZE_LITTLE" || size == "SIZE_SMALL") {
+		if jobID == "JOB_FIGHTER" &&
+			(size == "SIZE_TINY" ||
+				size == "SIZE_LITTLE" ||
+				size == "SIZE_SMALL") {
 			return id
 		}
 

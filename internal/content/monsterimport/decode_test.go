@@ -215,7 +215,9 @@ func TestDecodeGoldenRows(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(defs) != 6 || defs[0].Glyph != 'r' || defs[0].AverageHP10x != 25 ||
+	if len(defs) != 6 ||
+		defs[0].Glyph != 'r' ||
+		defs[0].AverageHP10x != 25 ||
 		defs[0].Attacks[0].Damage != 3 || defs[0].Attacks[3].TypeID != "AT_NONE" {
 		t.Fatalf("rat decoded incorrectly: %+v", defs[0])
 	}

@@ -51,7 +51,10 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 
 	view := restored.View()
 
-	if view.PlayerHP != 7 || view.PlayerMaxHP != 18 || view.PlayerMP != 0 || view.PlayerMaxMP != 1 ||
+	if view.PlayerHP != 7 ||
+		view.PlayerMaxHP != 18 ||
+		view.PlayerMP != 0 ||
+		view.PlayerMaxMP != 1 ||
 		len(view.Skills) != 4 {
 		t.Fatalf("restored profile = %+v", view)
 	}

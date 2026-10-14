@@ -114,7 +114,10 @@ func (parser *itemNameParser) jewelleryCaseNames(marker string) (map[string]sour
 }
 
 func (parser *itemNameParser) loadSubtypeCases(needed map[string]bool) error {
-	if !needed["OBJ_BOOKS"] && !needed["OBJ_CORPSES"] && !needed["OBJ_ORBS"] && !needed["OBJ_GOLD"] {
+	if !needed["OBJ_BOOKS"] &&
+		!needed["OBJ_CORPSES"] &&
+		!needed["OBJ_ORBS"] &&
+		!needed["OBJ_GOLD"] {
 		return nil
 	}
 

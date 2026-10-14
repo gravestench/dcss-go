@@ -130,9 +130,18 @@ func (m MonsterDef) validate() error {
 
 	switch m.Status {
 	case MonsterDefined:
-		if m.SourceLine == 0 || m.ColourID == "" || m.GenusID == "" || m.SpeciesID == "" ||
-			m.SpellbookID == "" || m.ShoutID == "" || m.IntelligenceID == "" || m.HabitatID == "" ||
-			m.ItemUseID == "" || m.SizeID == "" || m.ShapeID == "" || m.Tile.ID == "" ||
+		if m.SourceLine == 0 ||
+			m.ColourID == "" ||
+			m.GenusID == "" ||
+			m.SpeciesID == "" ||
+			m.SpellbookID == "" ||
+			m.ShoutID == "" ||
+			m.IntelligenceID == "" ||
+			m.HabitatID == "" ||
+			m.ItemUseID == "" ||
+			m.SizeID == "" ||
+			m.ShapeID == "" ||
+			m.Tile.ID == "" ||
 			m.Tile.VariationID == "" || m.CorpseTileID == "" || len(m.Holiness) == 0 {
 			return fmt.Errorf("incomplete monster definition %s", m.ID)
 		}

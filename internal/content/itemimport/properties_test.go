@@ -98,7 +98,10 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 		SubtypeID: "ARM_FIRE_DRAGON_ARMOUR",
 	}]
 
-	if fire.Armour == nil || fire.Armour.AC != 8 || fire.Armour.EV != -110 || len(fire.Armour.Flags) != 2 {
+	if fire.Armour == nil ||
+		fire.Armour.AC != 8 ||
+		fire.Armour.EV != -110 ||
+		len(fire.Armour.Flags) != 2 {
 		t.Fatalf("fire dragon scales fields lost: %+v", fire)
 	}
 
@@ -107,7 +110,10 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 		SubtypeID: "WPN_MACE",
 	}]
 
-	if mace.Weapon == nil || mace.Weapon.Damage != 8 || mace.Weapon.Price != 30 || len(mace.Weapon.BrandWeights) != 9 {
+	if mace.Weapon == nil ||
+		mace.Weapon.Damage != 8 ||
+		mace.Weapon.Price != 30 ||
+		len(mace.Weapon.BrandWeights) != 9 {
 		t.Fatalf("mace fields lost: %+v", mace)
 	}
 
@@ -162,7 +168,10 @@ func TestPropertyTablesComplete(t *testing.T) {
 		SubtypeID: "ARM_ROBE",
 	}]
 
-	if robe.Name != "robe" || robe.Line != 3 || robe.Armour == nil || robe.Armour.AC != 2 ||
+	if robe.Name != "robe" ||
+		robe.Line != 3 ||
+		robe.Armour == nil ||
+		robe.Armour.AC != 2 ||
 		robe.Armour.Price != 7 || robe.Armour.AcquireWeight != 1000 {
 		t.Fatalf("robe fields lost: %+v", robe)
 	}
@@ -172,7 +181,9 @@ func TestPropertyTablesComplete(t *testing.T) {
 		SubtypeID: "ARM_FIRE_DRAGON_ARMOUR",
 	}]
 
-	if scales.Armour == nil || scales.Armour.AC != 8 || scales.Armour.EV != -110 ||
+	if scales.Armour == nil ||
+		scales.Armour.AC != 8 ||
+		scales.Armour.EV != -110 ||
 		scales.Armour.Price != 600 || scales.Armour.AcquireWeight != 25 ||
 		len(scales.Armour.Flags) != 2 || scales.Armour.Flags[0] != (content.ItemFlag{
 		ID:    "ARMF_RES_FIRE",
@@ -189,7 +200,9 @@ func TestPropertyTablesComplete(t *testing.T) {
 		SubtypeID: "ARM_FIRE_DRAGON_HIDE",
 	}]
 
-	if hide.Armour == nil || hide.Armour.AC != 0 || hide.Armour.Price != 0 ||
+	if hide.Armour == nil ||
+		hide.Armour.AC != 0 ||
+		hide.Armour.Price != 0 ||
 		hide.Armour.AcquireWeight != 0 || hide.Name != "removed fire dragon hide" {
 		t.Fatalf("dragon hide fields lost: %+v", hide)
 	}
@@ -199,8 +212,12 @@ func TestPropertyTablesComplete(t *testing.T) {
 		SubtypeID: "WPN_MACE",
 	}]
 
-	if mace.Weapon == nil || mace.Weapon.Damage != 8 || mace.Weapon.Hit != 3 ||
-		mace.Weapon.Speed != 14 || mace.Weapon.Commonness != 9 || mace.Weapon.AcquireWeight != 10 ||
+	if mace.Weapon == nil ||
+		mace.Weapon.Damage != 8 ||
+		mace.Weapon.Hit != 3 ||
+		mace.Weapon.Speed != 14 ||
+		mace.Weapon.Commonness != 9 ||
+		mace.Weapon.AcquireWeight != 10 ||
 		mace.Weapon.Price != 30 || len(mace.Weapon.BrandWeights) != 2 ||
 		mace.Weapon.BrandWeights[0].BrandID != "SPWPN_NORMAL" || mace.Weapon.BrandWeights[0].Weight != 58 {
 		t.Fatalf("weapon fields lost: %+v", mace)
@@ -211,7 +228,10 @@ func TestPropertyTablesComplete(t *testing.T) {
 		SubtypeID: "MI_NEEDLE",
 	}]
 
-	if needle.Missile == nil || needle.Missile.Damage != 0 || needle.Missile.MulchRate != 12 || needle.Missile.Price != 2 {
+	if needle.Missile == nil ||
+		needle.Missile.Damage != 0 ||
+		needle.Missile.MulchRate != 12 ||
+		needle.Missile.Price != 2 {
 		t.Fatalf("missile fields lost: %+v", needle)
 	}
 

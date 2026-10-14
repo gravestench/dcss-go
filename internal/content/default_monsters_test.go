@@ -26,7 +26,9 @@ func TestLoadDefaultMonstersAndSourceFields(t *testing.T) {
 		counts[status]++
 	}
 
-	if len(c.MonsterIDs()) != 700 || counts[MonsterDefined] != 562 || counts[MonsterRemoved] != 120 ||
+	if len(c.MonsterIDs()) != 700 ||
+		counts[MonsterDefined] != 562 ||
+		counts[MonsterRemoved] != 120 ||
 		counts[MonsterEnumOnly] != 18 {
 		t.Fatalf("monster partition: %d %+v", len(c.MonsterIDs()), counts)
 	}
@@ -37,11 +39,14 @@ func TestLoadDefaultMonstersAndSourceFields(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rat.Glyph != 'r' || rat.Speed != 10 || rat.AverageHP10x != 25 || rat.Attacks[0] != (MonsterAttack{
-		TypeID:    "AT_BITE",
-		FlavourID: "AF_PLAIN",
-		Damage:    3,
-	}) {
+	if rat.Glyph != 'r' ||
+		rat.Speed != 10 ||
+		rat.AverageHP10x != 25 ||
+		rat.Attacks[0] != (MonsterAttack{
+			TypeID:    "AT_BITE",
+			FlavourID: "AF_PLAIN",
+			Damage:    3,
+		}) {
 		t.Fatalf("rat source fields: %+v", rat)
 	}
 

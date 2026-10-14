@@ -34,7 +34,10 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 	item, found := s.items.Get(intent.ItemID)
 	carrier, carried := s.carried.Get(intent.ItemID)
 
-	if !found || !carried || carrier.Holder != s.player || item.Quantity <= 0 {
+	if !found ||
+		!carried ||
+		carrier.Holder != s.player ||
+		item.Quantity <= 0 {
 		return fmt.Errorf("potion %d is no longer carried", intent.ItemID)
 	}
 

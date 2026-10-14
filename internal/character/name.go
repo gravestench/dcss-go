@@ -26,7 +26,10 @@ func ValidateName(name string) error {
 			continue
 		}
 
-		if r != '-' && r != '.' && r != '_' && r != ' ' {
+		if r != '-' &&
+			r != '.' &&
+			r != '_' &&
+			r != ' ' {
 			return fmt.Errorf("player name contains invalid character %q", r)
 		}
 	}

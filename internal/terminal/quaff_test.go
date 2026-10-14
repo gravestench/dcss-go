@@ -41,7 +41,10 @@ func TestQuaffChoiceCancelAndStartingMight(t *testing.T) {
 	m.handleKey("q")
 	m.handleKey(potionLetter(t, m, "POT_MIGHT"))
 
-	if m.screen != ScreenPlay || m.game.View().CurrentAut != aut+10 || m.game.View().MightAut < 340 || m.notice != "" {
+	if m.screen != ScreenPlay ||
+		m.game.View().CurrentAut != aut+10 ||
+		m.game.View().MightAut < 340 ||
+		m.notice != "" {
 		t.Fatalf(
 			"might potion: screen %d notice %q time %d, might %d",
 			m.screen,
@@ -157,7 +160,10 @@ func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 
 	m.handleKey(potionLetter(t, m, "POT_HEAL_WOUNDS"))
 
-	if m.screen != ScreenPlay || m.game.View().CurrentAut != before+10 || m.game.View().PlayerHP <= 1 || m.notice != "" {
+	if m.screen != ScreenPlay ||
+		m.game.View().CurrentAut != before+10 ||
+		m.game.View().PlayerHP <= 1 ||
+		m.notice != "" {
 		t.Fatalf("heal wounds choice: screen %d notice %q view %+v", m.screen, m.notice, m.game.View())
 	}
 }

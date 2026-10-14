@@ -146,7 +146,10 @@ func reciprocalGeneratedStair(levels map[int]*Level, depth int, link StairLink) 
 
 	other, found := target.StairAt(link.ToX, link.ToY)
 
-	if !found || other.ToLevelID != depth || other.ToX != link.X || other.ToY != link.Y {
+	if !found ||
+		other.ToLevelID != depth ||
+		other.ToX != link.X ||
+		other.ToY != link.Y {
 		return false
 	}
 

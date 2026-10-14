@@ -86,3 +86,87 @@ func sample() {
 		})
 	}
 }
+
+func TestCrowdedIfCondition(t *testing.T) {
+	tests := []struct {
+		name   string
+		source string
+		want   int
+	}{
+		{
+			name: "four checks on one line",
+			source: `package example
+func sample(a, b, c, d bool) {
+	if a || b || c || d {
+		return
+	}
+}
+`,
+			want: 1,
+		},
+		{
+			name: "one check per line",
+			source: `package example
+func sample(a, b, c, d bool) {
+	if a ||
+		b ||
+		c ||
+		d {
+		return
+	}
+}
+`,
+			want: 0,
+		},
+		{
+			name: "ignore conditions inside a function literal",
+			source: `package example
+func sample(a, b, c, d bool) {
+	if func() bool {
+		return a || b || c || d
+	}() {
+		return
+	}
+}
+`,
+			want: 0,
+		},
+		{
+			name: "count a nested if only once",
+			source: `package example
+func sample(a, b, c, d bool) {
+	if func() bool {
+		if a || b || c || d {
+			return true
+		}
+
+		return false
+	}() {
+		return
+	}
+}
+`,
+			want: 1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "sample.go")
+
+			if err := os.WriteFile(path, []byte(test.source), 0600); err != nil {
+				t.Fatal(err)
+			}
+
+			got, err := checkFile(path)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if got != test.want {
+				t.Fatalf("issues = %d, want %d", got, test.want)
+			}
+		})
+	}
+}

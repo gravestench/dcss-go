@@ -79,7 +79,10 @@ func TestPinnedItemSourceCoverage(t *testing.T) {
 		"OBJ_WEAPONS":    57,
 	}
 
-	if len(identities) != 408 || len(aliases) != 10 || len(removed) != 84 || len(counts) != len(want) {
+	if len(identities) != 408 ||
+		len(aliases) != 10 ||
+		len(removed) != 84 ||
+		len(counts) != len(want) {
 		t.Fatalf(
 			"pinned identity partition changed: identities=%d aliases=%d removed=%d classes=%v",
 			len(identities),

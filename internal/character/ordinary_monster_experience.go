@@ -19,8 +19,14 @@ type OrdinaryMonsterXPInput struct {
 func OrdinaryMonsterExperience(in OrdinaryMonsterXPInput) (int, error) {
 	// These generous bounds cover the committed catalog while keeping every
 	// intermediate product below signed 64-bit range on supported platforms.
-	if in.HitDice <= 0 || in.HitDice > 1000 || in.MaxHP <= 0 || in.MaxHP > 10000 ||
-		in.Speed <= 0 || in.Speed > 1000 || in.Modifier < 0 || in.Modifier > 1000 {
+	if in.HitDice <= 0 ||
+		in.HitDice > 1000 ||
+		in.MaxHP <= 0 ||
+		in.MaxHP > 10000 ||
+		in.Speed <= 0 ||
+		in.Speed > 1000 ||
+		in.Modifier < 0 ||
+		in.Modifier > 1000 {
 		return 0, fmt.Errorf("invalid ordinary monster XP stats %+v", in)
 	}
 

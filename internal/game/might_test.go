@@ -92,7 +92,9 @@ func TestMightRepeatQuaffCapsAtEightyTurns(t *testing.T) {
 		ItemID: id,
 	})
 
-	if err != nil || result.View.MightAut != 790 || item.Quantity != 1 ||
+	if err != nil ||
+		result.View.MightAut != 790 ||
+		item.Quantity != 1 ||
 		!containsEvent(result.Events, "You feel mightier all of a sudden.") {
 		t.Fatalf("repeat might = %+v, %v; stack %+v", result, err, item)
 	}
@@ -154,7 +156,9 @@ func TestMightSaveContinuationAndLegacyDefault(t *testing.T) {
 	left, leftErr := g.Step(Command{Kind: CommandWait})
 	right, rightErr := loaded.Step(Command{Kind: CommandWait})
 
-	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
+	if leftErr != nil ||
+		rightErr != nil ||
+		!reflect.DeepEqual(left, right) ||
 		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("might continuation = %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 	}

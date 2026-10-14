@@ -38,7 +38,11 @@ AXED_SPELL(SPELL_OLD, "Old")
 };`)
 	ids, err := parseEnum("spell-type.h", enum)
 
-	if err != nil || len(ids) != 3 || ids[0].ID != "SPELL_NO_SPELL" || ids[1].NumericID != 1 || ids[2].ID != "SPELL_OLD" {
+	if err != nil ||
+		len(ids) != 3 ||
+		ids[0].ID != "SPELL_NO_SPELL" ||
+		ids[1].NumericID != 1 ||
+		ids[2].ID != "SPELL_OLD" {
 		t.Fatalf("enum %+v, %v", ids, err)
 	}
 

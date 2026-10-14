@@ -26,7 +26,10 @@ func (m *AppModel) startDoorCommand(kind game.CommandKind) tea.Cmd {
 			x := view.PlayerX + dx
 			y := view.PlayerY + dy
 
-			if x >= 0 && x < view.Width && y >= 0 && y < view.Height &&
+			if x >= 0 &&
+				x < view.Width &&
+				y >= 0 &&
+				y < view.Height &&
 				view.Cells[y*view.Width+x].Glyph == glyph {
 				choices++
 			}

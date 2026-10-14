@@ -123,7 +123,9 @@ func TestItemIdentityEnums(t *testing.T) {
 		classes[identity.ClassID] = identity.ClassValue
 	}
 
-	if byID["WPN_CLUB"] != 0 || byID["WPN_DAGGER"] != 3 || byID["OBJ_GOLD"] != 0 ||
+	if byID["WPN_CLUB"] != 0 ||
+		byID["WPN_DAGGER"] != 3 ||
+		byID["OBJ_GOLD"] != 0 ||
 		classes["OBJ_GOLD"] != 13 || len(classes) != 16 {
 		t.Fatalf("wrong numeric identities: ids=%v classes=%v", byID, classes)
 	}

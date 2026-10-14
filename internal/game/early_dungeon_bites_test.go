@@ -21,7 +21,10 @@ func seededPlainBiteMonster(
 		actor, found := g.stores.Actors.Get(entity)
 		position, located := g.stores.Positions.Get(entity)
 
-		if found && located && actor.KindID == kindID && position.LevelID == levelID {
+		if found &&
+			located &&
+			actor.KindID == kindID &&
+			position.LevelID == levelID {
 			return entity
 		}
 	}

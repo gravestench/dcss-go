@@ -265,8 +265,10 @@ func (v *savedEntityValidator) validateBandLinks() error {
 
 		leader, alive := v.recordsByID[uint64(record.BandFollower.Leader)]
 
-		if alive && (leader.Actor == nil || leader.Actor.KindID != "MONS_JACKAL" ||
-			leader.Position == nil || leader.Position.LevelID != record.Position.LevelID) {
+		if alive &&
+			(leader.Actor == nil ||
+				leader.Actor.KindID != "MONS_JACKAL" ||
+				leader.Position == nil || leader.Position.LevelID != record.Position.LevelID) {
 			return fmt.Errorf("entity %d has an incompatible living band leader", record.ID)
 		}
 	}
@@ -354,7 +356,9 @@ func (v *savedEntityValidator) validateEquipmentDelay() error {
 
 		item, found := v.recordsByID[uint64(id)]
 
-		if !found || item.Item == nil || item.CarriedBy == nil ||
+		if !found ||
+			item.Item == nil ||
+			item.CarriedBy == nil ||
 			item.CarriedBy.Holder != v.game.player {
 			return fmt.Errorf("saved equipment delay references missing item %d", id)
 		}

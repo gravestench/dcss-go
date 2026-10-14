@@ -182,7 +182,10 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 		}
 	}
 
-	if originX < 0 || originX >= width || originY < 0 || originY >= len(rows) ||
+	if originX < 0 ||
+		originX >= width ||
+		originY < 0 ||
+		originY >= len(rows) ||
 		rows[originY][originX] == '#' || rows[originY][originX] == '+' {
 		return nil, fmt.Errorf("invalid sight origin (%d,%d)", originX, originY)
 	}
@@ -204,7 +207,10 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 
 				x, y := originX+sign[0]*cell.x, originY+sign[1]*cell.y
 
-				if x < 0 || x >= width || y < 0 || y >= len(rows) {
+				if x < 0 ||
+					x >= width ||
+					y < 0 ||
+					y >= len(rows) {
 					break
 				}
 

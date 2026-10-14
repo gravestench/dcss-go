@@ -51,7 +51,10 @@ func TestHumanFighterDefenseUsesEquippedScaleMailAndBuckler(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if got.EV != 5 || got.AC != 6 || got.ShieldClass != 9 || got.GDR != 25 {
+	if got.EV != 5 ||
+		got.AC != 6 ||
+		got.ShieldClass != 9 ||
+		got.GDR != 25 {
 		t.Fatalf("Human/Fighter defense = %+v, want EV 5 AC 6 SH 9 GDR 25", got)
 	}
 }
@@ -106,7 +109,10 @@ func TestRatBiteDodgesWithoutShield(t *testing.T) {
 
 	got, err := ResolveAnimalBite(rng, ratAttack(), Defense{EV: 10})
 
-	if err != nil || got.Kind != Dodge || got.Damage != 0 || len(rng.rolls) != 0 {
+	if err != nil ||
+		got.Kind != Dodge ||
+		got.Damage != 0 ||
+		len(rng.rolls) != 0 {
 		t.Fatalf("dodge = %+v, %v, rolls %+v", got, err, rng.rolls)
 	}
 }
@@ -182,7 +188,10 @@ func TestRatBiteAutomaticMissAndHit(t *testing.T) {
 
 	got, err = ResolveAnimalBite(hit, ratAttack(), Defense{EV: 10})
 
-	if err != nil || got.Kind != Hit || got.Damage != 3 || len(hit.rolls) != 0 {
+	if err != nil ||
+		got.Kind != Hit ||
+		got.Damage != 3 ||
+		len(hit.rolls) != 0 {
 		t.Fatalf("automatic hit = %+v, %v, rolls %+v", got, err, hit.rolls)
 	}
 }
@@ -226,7 +235,11 @@ func TestRatShieldBlockPrecedesDodge(t *testing.T) {
 		ShieldClass: 9,
 	})
 
-	if err != nil || got.Kind != Block || got.ShieldBlocks != 1 || got.Damage != 0 || len(rng.rolls) != 0 {
+	if err != nil ||
+		got.Kind != Block ||
+		got.ShieldBlocks != 1 ||
+		got.Damage != 0 ||
+		len(rng.rolls) != 0 {
 		t.Fatalf("block = %+v, %v, rolls %+v", got, err, rng.rolls)
 	}
 }
@@ -288,7 +301,10 @@ func TestRatBiteArmourCanAbsorbOrPassDamage(t *testing.T) {
 				GDR: 25,
 			})
 
-			if err != nil || got.Kind != Hit || got.Damage != tc.want || len(rng.rolls) != 0 {
+			if err != nil ||
+				got.Kind != Hit ||
+				got.Damage != tc.want ||
+				len(rng.rolls) != 0 {
 				t.Fatalf("bite = %+v, %v, rolls %+v", got, err, rng.rolls)
 			}
 		})
@@ -324,7 +340,10 @@ func TestQuokkaPlainBiteUsesCataloguedFiveDamage(t *testing.T) {
 		FlavourID: "AF_PLAIN",
 	}, Defense{})
 
-	if err != nil || outcome.Kind != Hit || outcome.Damage != 5 || len(roller.rolls) != 0 {
+	if err != nil ||
+		outcome.Kind != Hit ||
+		outcome.Damage != 5 ||
+		len(roller.rolls) != 0 {
 		t.Fatalf("quokka bite %+v, %v, remaining rolls %+v", outcome, err, roller.rolls)
 	}
 }

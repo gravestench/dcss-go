@@ -66,7 +66,10 @@ func TestNormalDungeonChoiceMatrix(t *testing.T) {
 		}
 	}
 
-	if speciesCount != 27 || jobCount != 25 || legal != 664 || banned != 11 {
+	if speciesCount != 27 ||
+		jobCount != 25 ||
+		legal != 664 ||
+		banned != 11 {
 		t.Fatalf("matrix: species=%d jobs=%d legal=%d banned=%d", speciesCount, jobCount, legal, banned)
 	}
 }

@@ -46,7 +46,10 @@ func TestQuaffCuringHealsConsumesAndSchedules(t *testing.T) {
 		ItemID: itemID,
 	})
 
-	if err != nil || result.Spent != 10 || result.View.PlayerHP != want || result.View.CurrentAut != start+10 {
+	if err != nil ||
+		result.Spent != 10 ||
+		result.View.PlayerHP != want ||
+		result.View.CurrentAut != start+10 {
 		t.Fatalf("quaff = %+v, %v; want HP %d and time %d", result, err, want, start+10)
 	}
 
@@ -78,7 +81,10 @@ func TestQuaffAtFullHPStillConsumesOnePotion(t *testing.T) {
 		ItemID: itemID,
 	})
 
-	if err != nil || first.Spent != 10 || first.View.PlayerHP != health.Max || item.Quantity != 1 {
+	if err != nil ||
+		first.Spent != 10 ||
+		first.View.PlayerHP != health.Max ||
+		item.Quantity != 1 {
 		t.Fatalf("first quaff = %+v, %v; item %+v", first, err, item)
 	}
 
@@ -155,7 +161,9 @@ func TestQuaffSaveContinuation(t *testing.T) {
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
 
-	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
+	if leftErr != nil ||
+		rightErr != nil ||
+		!reflect.DeepEqual(left, right) ||
 		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("quaff continuation = %+v/%v versus %+v/%v", left, leftErr, right, rightErr)
 	}

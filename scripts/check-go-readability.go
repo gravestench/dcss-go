@@ -134,7 +134,10 @@ func checkFile(path string) (int, error) {
 				report(next.Pos(), "leave a blank line after the control block")
 			}
 
-			if !isControl(previous) && !isControl(next) && !returns && adjacent &&
+			if !isControl(previous) &&
+				!isControl(next) &&
+				!returns &&
+				adjacent &&
 				multilineValueEndsAt(previous, previousEndLine) {
 				report(next.Pos(), "leave a blank line after the multiline value")
 			}
@@ -165,6 +168,30 @@ func checkFile(path string) (int, error) {
 
 	ast.Inspect(file, func(node ast.Node) bool {
 		switch value := node.(type) {
+		case *ast.IfStmt:
+			operatorsByLine := make(map[int]int)
+
+			ast.Inspect(value.Cond, func(part ast.Node) bool {
+				if _, nestedFunction := part.(*ast.FuncLit); nestedFunction {
+					return false
+				}
+
+				binary, ok := part.(*ast.BinaryExpr)
+
+				if !ok || (binary.Op != token.LAND && binary.Op != token.LOR) {
+					return true
+				}
+
+				line := fset.Position(binary.OpPos).Line
+				operatorsByLine[line]++
+
+				if operatorsByLine[line] == 3 {
+					report(binary.OpPos, "put crowded condition checks on separate lines")
+				}
+
+				return true
+			})
+
 		case *ast.SwitchStmt:
 			checkClauses(value.Body.List)
 
@@ -257,8 +284,13 @@ func checkFile(path string) (int, error) {
 				scalarElements(value.Elts)
 
 			if ((len(value.Elts) >= 3 && !compactFixedArray) ||
-				len(value.Elts) >= 4 || keyedFields || named || qualified ||
-				anonymous || generic || genericList) &&
+				len(value.Elts) >= 4 ||
+				keyedFields ||
+				named ||
+				qualified ||
+				anonymous ||
+				generic ||
+				genericList) &&
 				entriesShareLine(fset, value) {
 				report(value.Lbrace, "put literal entries on separate lines")
 			}

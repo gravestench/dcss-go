@@ -286,7 +286,10 @@ func (d ItemDef) validate() error {
 		return fmt.Errorf("item %s has wrong class property shape", d.ID)
 	}
 
-	if (d.Food != nil && d.PropertyName == "") || (d.Food == nil && d.PropertyName != "") {
+	if (d.Food != nil &&
+		d.PropertyName == "") ||
+		(d.Food == nil &&
+			d.PropertyName != "") {
 		return fmt.Errorf("item %s has invalid food property name", d.ID)
 	}
 
@@ -412,7 +415,9 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 	for _, item := range a.Items {
 		identity, ok := identities[item.ID]
 
-		if !ok || seen[item.ID] || identity.ClassID != item.Class ||
+		if !ok ||
+			seen[item.ID] ||
+			identity.ClassID != item.Class ||
 			identity.ClassValue != item.ClassValue || identity.SubtypeValue != item.SubtypeValue ||
 			identity.ExplicitlyRemoved != item.ExplicitlyRemoved {
 			return fmt.Errorf("item %s differs from independent identity manifest", item.ID)
@@ -436,7 +441,10 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 			return fmt.Errorf("item %s has invalid naming evidence", item.ID)
 		}
 
-		if item.Armour != nil || item.Weapon != nil || item.Missile != nil || item.Food != nil {
+		if item.Armour != nil ||
+			item.Weapon != nil ||
+			item.Missile != nil ||
+			item.Food != nil {
 			if files[item.Evidence.PropertySource] == "" || item.Evidence.PropertyLine <= 0 {
 				return fmt.Errorf("item %s has invalid property evidence", item.ID)
 			}
@@ -529,7 +537,10 @@ func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 		}
 
 	default:
-		if d.Armour != nil || d.Weapon != nil || d.Missile != nil || d.Food != nil {
+		if d.Armour != nil ||
+			d.Weapon != nil ||
+			d.Missile != nil ||
+			d.Food != nil {
 			return fmt.Errorf("item %s has invented class properties", d.ID)
 		}
 	}

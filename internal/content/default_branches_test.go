@@ -27,13 +27,19 @@ func TestCommittedBranchCatalogCoverageAndCopies(t *testing.T) {
 
 	dungeon, err := catalog.Branch("BRANCH_DUNGEON")
 
-	if err != nil || dungeon.ParentID != "NUM_BRANCHES" || dungeon.Depth != 15 || dungeon.TravelShortcut != "D" {
+	if err != nil ||
+		dungeon.ParentID != "NUM_BRANCHES" ||
+		dungeon.Depth != 15 ||
+		dungeon.TravelShortcut != "D" {
 		t.Fatalf("Dungeon %+v, %v", dungeon, err)
 	}
 
 	swamp, err := catalog.Branch("BRANCH_SWAMP")
 
-	if err != nil || swamp.ParentID != "BRANCH_LAIR" || swamp.MinDepth != 2 || swamp.MaxDepth != 3 ||
+	if err != nil ||
+		swamp.ParentID != "BRANCH_LAIR" ||
+		swamp.MinDepth != 2 ||
+		swamp.MaxDepth != 3 ||
 		len(swamp.Runes) != 1 || swamp.Runes[0] != "RUNE_SWAMP" {
 		t.Fatalf("Swamp %+v, %v", swamp, err)
 	}

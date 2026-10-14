@@ -32,7 +32,10 @@ const syntheticTable = `const Branch branches[NUM_BRANCHES] =
 func TestParseTag34BranchRows(t *testing.T) {
 	ids, err := parseEnum("branch-type.h", []byte(syntheticEnum))
 
-	if err != nil || len(ids) != 2 || ids[1].ID != "BRANCH_TEMPLE" || ids[1].NumericID != 1 {
+	if err != nil ||
+		len(ids) != 2 ||
+		ids[1].ID != "BRANCH_TEMPLE" ||
+		ids[1].NumericID != 1 {
 		t.Fatalf("enum %+v, %v", ids, err)
 	}
 

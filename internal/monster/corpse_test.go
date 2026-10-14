@@ -73,7 +73,10 @@ func TestRatCorpseDropRolls(t *testing.T) {
 		r := &corpseRoller{rolls: tc.rolls}
 		appearance, dropped, err := RollCorpse(r)
 
-		if err != nil || appearance != tc.want || dropped != tc.wantDropped || len(r.rolls) != 0 {
+		if err != nil ||
+			appearance != tc.want ||
+			dropped != tc.wantDropped ||
+			len(r.rolls) != 0 {
 			t.Fatalf("roll %+v => %d/%v/%v, left %+v", tc.rolls, appearance, dropped, err, r.rolls)
 		}
 	}
@@ -91,13 +94,22 @@ func TestRatCorpseDecayAndSkeleton(t *testing.T) {
 
 	kind, freshness, appearance, alive, err := AgeCorpse(r, "CORPSE_BODY", true, 110, 200)
 
-	if err != nil || !alive || kind != "CORPSE_BODY" || freshness != 100 || appearance != 0 {
+	if err != nil ||
+		!alive ||
+		kind != "CORPSE_BODY" ||
+		freshness != 100 ||
+		appearance != 0 {
 		t.Fatalf("first decay %q %d %d %v %v", kind, freshness, appearance, alive, err)
 	}
 
 	kind, freshness, appearance, alive, err = AgeCorpse(r, kind, true, freshness, 2000)
 
-	if err != nil || !alive || kind != "CORPSE_SKELETON" || freshness != 110 || appearance != 10 || len(r.rolls) != 0 {
+	if err != nil ||
+		!alive ||
+		kind != "CORPSE_SKELETON" ||
+		freshness != 110 ||
+		appearance != 10 ||
+		len(r.rolls) != 0 {
 		t.Fatalf("skeleton %q %d %d %v %v", kind, freshness, appearance, alive, err)
 	}
 
@@ -122,7 +134,10 @@ func TestNoSkeletonCorpseDisappearsWithoutDraw(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if alive || kind != "" || freshness != 0 || appearance != 0 {
+	if alive ||
+		kind != "" ||
+		freshness != 0 ||
+		appearance != 0 {
 		t.Fatalf("expired corpse: %q %d %d alive=%v", kind, freshness, appearance, alive)
 	}
 

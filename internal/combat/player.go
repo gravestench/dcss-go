@@ -32,7 +32,10 @@ func (in PlayerAttackInput) Validate() error {
 	}
 
 	if in.Unarmed {
-		if in.WeaponSkillID != "SK_UNARMED_COMBAT" || in.WeaponDamage != 0 || in.WeaponHit != 0 || in.WeaponPlus != 0 {
+		if in.WeaponSkillID != "SK_UNARMED_COMBAT" ||
+			in.WeaponDamage != 0 ||
+			in.WeaponHit != 0 ||
+			in.WeaponPlus != 0 {
 			return fmt.Errorf("invalid unarmed attack %+v", in)
 		}
 

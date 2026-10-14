@@ -130,13 +130,18 @@ func TestFrilledLizardEncounterUsesCatalogAndSurvivesSave(t *testing.T) {
 	position, _ := g.stores.Positions.Get(lizard)
 	ai, _ := g.stores.AI.Get(lizard)
 
-	if definition.Name != "frilled lizard" || definition.AverageHP10x != 20 || definition.Attacks[0].Damage != 3 ||
+	if definition.Name != "frilled lizard" ||
+		definition.AverageHP10x != 20 ||
+		definition.Attacks[0].Damage != 3 ||
 		actor.Speed != definition.Speed || *position != (ecs.Position{
 		LevelID: 2,
 		X:       14,
 		Y:       1,
 	}) ||
-		health.Current < 1 || health.Current > 3 || health.Max != health.Current || ai.Behavior != "wander" {
+		health.Current < 1 ||
+		health.Current > 3 ||
+		health.Max != health.Current ||
+		ai.Behavior != "wander" {
 		t.Fatalf("lizard definition %+v actor %+v health %+v position %+v AI %+v", definition, actor, health, position, ai)
 	}
 

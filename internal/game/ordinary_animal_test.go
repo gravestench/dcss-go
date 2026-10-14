@@ -35,11 +35,14 @@ func TestQuokkaScenarioUsesCatalogSpeedHPAndSave(t *testing.T) {
 
 	definition, err := g.catalog.Monster("MONS_QUOKKA")
 
-	if err != nil || actor.Speed != definition.Speed || actor.Speed != 12 || *position != (ecs.Position{
-		LevelID: 2,
-		X:       14,
-		Y:       7,
-	}) || health.Max < 3 || health.Max > 8 {
+	if err != nil ||
+		actor.Speed != definition.Speed ||
+		actor.Speed != 12 ||
+		*position != (ecs.Position{
+			LevelID: 2,
+			X:       14,
+			Y:       7,
+		}) || health.Max < 3 || health.Max > 8 {
 		t.Fatalf("quokka actor %+v position %+v health %+v definition %+v: %v", actor, position, health, definition, err)
 	}
 

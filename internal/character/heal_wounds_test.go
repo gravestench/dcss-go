@@ -73,7 +73,10 @@ func TestHealWoundsUsesSourceThreeRollAverage(t *testing.T) {
 		r := &healWoundsRoller{values: tc.values}
 		got, err := HealWoundsHP(r, tc.current, tc.maximum)
 
-		if err != nil || got != tc.want || len(r.values) != 0 || len(r.bounds) != 3 ||
+		if err != nil ||
+			got != tc.want ||
+			len(r.values) != 0 ||
+			len(r.bounds) != 3 ||
 			r.bounds[0] != 28 || r.bounds[1] != 29 || r.bounds[2] != 29 {
 			t.Fatalf(
 				"rolls %+v at %d/%d => %d, %v, bounds %+v; want %d",

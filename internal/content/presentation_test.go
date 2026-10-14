@@ -28,7 +28,9 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 		t.Fatalf("source startup mode order: %+v", p.StartupModes)
 	}
 
-	if len(p.SkillColumns) != 2 || len(p.SkillColumns[0]) != 16 || len(p.SkillColumns[1]) != 16 ||
+	if len(p.SkillColumns) != 2 ||
+		len(p.SkillColumns[0]) != 16 ||
+		len(p.SkillColumns[1]) != 16 ||
 		p.SkillColumns[0][0] != "SK_FIGHTING" || p.SkillColumns[1][0] != "SK_SPELLCASTING" {
 		t.Fatalf("source skill display columns: %+v", p.SkillColumns)
 	}

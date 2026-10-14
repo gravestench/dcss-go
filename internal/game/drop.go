@@ -73,7 +73,9 @@ func (s *dropSystem) Update(_ *akara.World, _ time.Duration) error {
 	item, found := s.items.Get(intent.ItemID)
 	carrier, carried := s.carried.Get(intent.ItemID)
 
-	if !found || !carried || carrier.Holder != s.turn.Actor ||
+	if !found ||
+		!carried ||
+		carrier.Holder != s.turn.Actor ||
 		intent.Quantity <= 0 || intent.Quantity > item.Quantity {
 		return fmt.Errorf("drop actor %d has invalid item %d", s.turn.Actor, intent.ItemID)
 	}
@@ -109,7 +111,10 @@ func (g *Game) applyDrop(drop pendingItemDrop, buffer *akara.CommandBuffer) erro
 	carrier, carried := g.stores.CarriedBy.Get(drop.itemID)
 	position, located := g.stores.Positions.Get(drop.actor)
 
-	if !found || !carried || carrier.Holder != drop.actor || !located ||
+	if !found ||
+		!carried ||
+		carrier.Holder != drop.actor ||
+		!located ||
 		drop.quantity <= 0 || drop.quantity > item.Quantity {
 		return fmt.Errorf("invalid pending drop item %d", drop.itemID)
 	}

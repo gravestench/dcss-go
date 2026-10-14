@@ -28,7 +28,9 @@ type DungeonPopulationArtifact struct {
 var populationMonsterID = regexp.MustCompile(`^MONS_[A-Z0-9_]+$`)
 
 func (entry DungeonPopEntry) validate() error {
-	if entry.MinDepth < 0 || entry.MaxDepth < entry.MinDepth || entry.Rarity <= 0 ||
+	if entry.MinDepth < 0 ||
+		entry.MaxDepth < entry.MinDepth ||
+		entry.Rarity <= 0 ||
 		entry.SourceLine <= 0 || !populationMonsterID.MatchString(entry.MonsterID) {
 		return fmt.Errorf("invalid Dungeon population row %+v", entry)
 	}

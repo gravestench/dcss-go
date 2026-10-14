@@ -293,7 +293,10 @@ func TestItemImportPair(t *testing.T) {
 		map[itemKey]rune{itemKeyFor("OBJ_FOOD", "FOOD_RATION"): '%'},
 	)
 
-	if err != nil || len(food) != 1 || food[0].Name != "removed food" || food[0].PropertyName != "buggy ration" {
+	if err != nil ||
+		len(food) != 1 ||
+		food[0].Name != "removed food" ||
+		food[0].PropertyName != "buggy ration" {
 		t.Fatalf("food names lost: %+v, %v", food, err)
 	}
 }

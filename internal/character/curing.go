@@ -6,7 +6,10 @@ import "fmt"
 // potion.cc:103-112. The default healing factor is 2/2, so the amount is
 // 5 + random2(7). The potion still draws when HP is already full.
 func CuringHP(roller Roller, current, maximum int) (int, error) {
-	if roller == nil || maximum <= 0 || current <= 0 || current > maximum {
+	if roller == nil ||
+		maximum <= 0 ||
+		current <= 0 ||
+		current > maximum {
 		return 0, fmt.Errorf("invalid curing HP %d/%d", current, maximum)
 	}
 

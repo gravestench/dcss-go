@@ -24,7 +24,10 @@ func TestLoadDefaultJobs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if fighter.Strength != 8 || fighter.Intelligence != 0 || fighter.Dexterity != 4 || !fighter.Selectable {
+	if fighter.Strength != 8 ||
+		fighter.Intelligence != 0 ||
+		fighter.Dexterity != 4 ||
+		!fighter.Selectable {
 		t.Fatalf("Fighter modifiers or selectability: %+v", fighter)
 	}
 
@@ -75,7 +78,9 @@ func TestLoadDefaultJobs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !wanderer.Selectable || wanderer.Strength != 0 || wanderer.Intelligence != 0 ||
+	if !wanderer.Selectable ||
+		wanderer.Strength != 0 ||
+		wanderer.Intelligence != 0 ||
 		wanderer.Dexterity != 0 || len(wanderer.Skills) != 0 {
 		t.Fatalf("Wanderer table placeholders: %+v", wanderer)
 	}

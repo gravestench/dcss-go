@@ -64,7 +64,10 @@ func (b BranchDef) validate() error {
 		b.Abbreviation == "" || len([]rune(b.TravelShortcut)) != 1 ||
 		b.AmbientNoise == ""
 
-	if invalidIdentity || invalidParent || invalidDepth || invalidNames {
+	if invalidIdentity ||
+		invalidParent ||
+		invalidDepth ||
+		invalidNames {
 		return fmt.Errorf("invalid branch %q", b.ID)
 	}
 
@@ -100,7 +103,9 @@ func (b BranchDef) validate() error {
 }
 
 func (a BranchArtifact) Validate() error {
-	if a.SchemaVersion != 1 || a.SourceRevision == "" || a.TagMajorVersion != 34 ||
+	if a.SchemaVersion != 1 ||
+		a.SourceRevision == "" ||
+		a.TagMajorVersion != 34 ||
 		len(a.Branches) == 0 || len(a.SourceFiles) != 3 {
 		return fmt.Errorf("invalid branch artifact metadata")
 	}

@@ -39,7 +39,11 @@ func TestHumanFighterRecoversThroughPlayerWaitsOnly(t *testing.T) {
 
 	progress, ok := g.stores.Regeneration.Get(g.player)
 
-	if !ok || health.Current != 8 || magic.Current != 1 || progress.HPProgress != 2 || progress.MPProgress != 5 {
+	if !ok ||
+		health.Current != 8 ||
+		magic.Current != 1 ||
+		progress.HPProgress != 2 ||
+		progress.MPProgress != 5 {
 		t.Fatalf("17 waits: HP %+v MP %+v regen %+v found %v", health, magic, progress, ok)
 	}
 
@@ -118,7 +122,9 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 	left, leftErr := g.Step(Command{Kind: CommandWait})
 	right, rightErr := loaded.Step(Command{Kind: CommandWait})
 
-	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
+	if leftErr != nil ||
+		rightErr != nil ||
+		!reflect.DeepEqual(left, right) ||
 		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("regen continuation %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 	}

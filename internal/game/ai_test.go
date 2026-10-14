@@ -137,7 +137,10 @@ func TestQuokkaAcquiresPlayerOnlyInItsOwnSight(t *testing.T) {
 
 	ai, _ := g.stores.AI.Get(quokka)
 
-	if ai.Behavior != "wander" || ai.TargetX < 8 || ai.TargetX > 16 || ai.TargetY < 1 ||
+	if ai.Behavior != "wander" ||
+		ai.TargetX < 8 ||
+		ai.TargetX > 16 ||
+		ai.TargetY < 1 ||
 		ai.TargetY > 7 || !g.levels[2].Walkable(ai.TargetX, ai.TargetY) {
 		t.Fatalf("hidden quokka behavior %+v", ai)
 	}
@@ -148,7 +151,10 @@ func TestQuokkaAcquiresPlayerOnlyInItsOwnSight(t *testing.T) {
 
 	intent, err = newMonsterDecisionSystem(g).chooseIntent(quokka)
 
-	if err != nil || intent.Kind != ecs.IntentMelee || intent.DX != 0 || intent.DY != -1 {
+	if err != nil ||
+		intent.Kind != ecs.IntentMelee ||
+		intent.DX != 0 ||
+		intent.DY != -1 {
 		t.Fatalf("visible quokka intent %+v, %v", intent, err)
 	}
 

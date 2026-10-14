@@ -151,7 +151,10 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 				LevelID: 1,
 				X:       4,
 				Y:       1,
-			}) || corpse.MonsterID != "MONS_RAT" || corpse.Appearance < 1 || corpse.Appearance > 255 {
+			}) ||
+				corpse.MonsterID != "MONS_RAT" ||
+				corpse.Appearance < 1 ||
+				corpse.Appearance > 255 {
 				t.Fatalf("corpse %+v %+v %+v", item, position, corpse)
 			}
 
@@ -207,13 +210,18 @@ func TestCorpseIsStationaryButPortableItemSharesTile(t *testing.T) {
 
 	result, err := g.Step(Command{Kind: CommandPickup})
 
-	if err != nil || result.Spent != 10 || !g.stores.Positions.Has(id) || !g.stores.CarriedBy.Has(potionID(t, g)) {
+	if err != nil ||
+		result.Spent != 10 ||
+		!g.stores.Positions.Has(id) ||
+		!g.stores.CarriedBy.Has(potionID(t, g)) {
 		t.Fatalf("mixed pickup %+v %v", result, err)
 	}
 
 	result, err = g.Step(Command{Kind: CommandPickup})
 
-	if err != nil || result.Spent != 0 || !strings.Contains(result.Events[0].Text, "can't pick") ||
+	if err != nil ||
+		result.Spent != 0 ||
+		!strings.Contains(result.Events[0].Text, "can't pick") ||
 		!g.stores.Positions.Has(id) {
 		t.Fatalf("corpse pickup %+v %v", result, err)
 	}

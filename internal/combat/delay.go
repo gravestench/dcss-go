@@ -15,7 +15,10 @@ type AttackDelayInput struct {
 
 // Validate rejects timing inputs outside the supported normal Human start.
 func (in AttackDelayInput) Validate() error {
-	if in.WeaponSkill10 < 0 || in.WeaponSkill10 > 270 || in.ShieldsSkill10 < 0 || in.ShieldsSkill10 > 270 ||
+	if in.WeaponSkill10 < 0 ||
+		in.WeaponSkill10 > 270 ||
+		in.ShieldsSkill10 < 0 ||
+		in.ShieldsSkill10 > 270 ||
 		in.ShieldEV > 0 || in.ShieldEV < -1000 {
 		return fmt.Errorf("invalid Human Fighter attack delay %+v", in)
 	}

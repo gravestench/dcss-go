@@ -30,7 +30,10 @@ func TestRatFixture(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if rat.Glyph != 'r' || rat.Speed != 10 || rat.Attacks[0].Damage != 3 || rat.AverageHP10x != 25 {
+	if rat.Glyph != 'r' ||
+		rat.Speed != 10 ||
+		rat.Attacks[0].Damage != 3 ||
+		rat.AverageHP10x != 25 {
 		t.Fatalf("unexpected rat fixture: %+v", rat)
 	}
 

@@ -161,7 +161,9 @@ func validHumanStatGains(deltas [3]int, manualChoices, speciesGains int) bool {
 				deltas[2] - 2*dexterity,
 			}
 
-			if remaining[0] >= 0 && remaining[1] >= 0 && remaining[2] >= 0 &&
+			if remaining[0] >= 0 &&
+				remaining[1] >= 0 &&
+				remaining[2] >= 0 &&
 				remaining[0]+remaining[1]+remaining[2] == speciesGains {
 				return true
 			}

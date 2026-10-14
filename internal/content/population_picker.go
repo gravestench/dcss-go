@@ -20,7 +20,10 @@ func (c Catalog) DungeonMonsterPool(depth int, veto func(string) bool) DungeonMo
 	var pool DungeonMonsterPool
 
 	for _, row := range c.dungeonPopulation {
-		if depth < row.MinDepth || depth > row.MaxDepth || veto != nil && veto(row.MonsterID) {
+		if depth < row.MinDepth ||
+			depth > row.MaxDepth ||
+			veto != nil &&
+				veto(row.MonsterID) {
 			continue
 		}
 

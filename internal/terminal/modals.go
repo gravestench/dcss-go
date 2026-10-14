@@ -155,7 +155,10 @@ func DrawArmour(canvas *Canvas, view game.View, remove bool) {
 			continue
 		}
 
-		if remove && item.Slot == "" || !remove && item.Slot != "" {
+		if remove &&
+			item.Slot == "" ||
+			!remove &&
+				item.Slot != "" {
 			continue
 		}
 

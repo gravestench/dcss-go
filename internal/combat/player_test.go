@@ -208,7 +208,10 @@ func TestPlayerMeleeWeaponDamageAndRatArmour(t *testing.T) {
 
 			got, err := PlayerMelee(rng, fighterFlailAttack())
 
-			if err != nil || got.Kind != Hit || got.Damage != tc.want || len(rng.rolls) != 0 {
+			if err != nil ||
+				got.Kind != Hit ||
+				got.Damage != tc.want ||
+				len(rng.rolls) != 0 {
 				t.Fatalf("attack = %+v, err %v, rolls %+v", got, err, rng.rolls)
 			}
 		})
@@ -271,7 +274,10 @@ func TestPlayerMeleeUnarmedUsesNormalFormBaseAndNoWeaponSkillMultiplier(t *testi
 
 	got, err := PlayerMelee(rng, in)
 
-	if err != nil || got.Kind != Hit || got.Damage != 6 || len(rng.rolls) != 0 {
+	if err != nil ||
+		got.Kind != Hit ||
+		got.Damage != 6 ||
+		len(rng.rolls) != 0 {
 		t.Fatalf("unarmed attack = %+v, err %v, rolls %+v", got, err, rng.rolls)
 	}
 }
@@ -330,7 +336,10 @@ func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 
 	got, err := PlayerMelee(rng, in)
 
-	if err != nil || got.Kind != Hit || got.Damage != 13 || len(rng.rolls) != 0 {
+	if err != nil ||
+		got.Kind != Hit ||
+		got.Damage != 13 ||
+		len(rng.rolls) != 0 {
 		t.Fatalf("mighty hit = %+v, %v; rolls %+v", got, err, rng.rolls)
 	}
 
@@ -425,7 +434,10 @@ func TestPlayerMeleeMightRollPrecedesEnchantmentRoll(t *testing.T) {
 
 	got, err := PlayerMelee(rng, in)
 
-	if err != nil || got.Kind != Hit || got.Damage != 15 || len(rng.rolls) != 0 {
+	if err != nil ||
+		got.Kind != Hit ||
+		got.Damage != 15 ||
+		len(rng.rolls) != 0 {
 		t.Fatalf("enchanted mighty hit = %+v, %v; rolls %+v", got, err, rng.rolls)
 	}
 }

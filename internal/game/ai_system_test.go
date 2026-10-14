@@ -25,7 +25,10 @@ func TestMonsterDecisionSystemWritesOnlyActiveMonsterIntent(t *testing.T) {
 
 	intent, found := g.stores.Intents.Get(rat)
 
-	if !found || intent.Kind != ecs.IntentMove || intent.DX != -1 || intent.DY != 0 {
+	if !found ||
+		intent.Kind != ecs.IntentMove ||
+		intent.DX != -1 ||
+		intent.DY != 0 {
 		t.Fatalf("rat decision = %+v, found %v", intent, found)
 	}
 

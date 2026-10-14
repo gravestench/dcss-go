@@ -111,7 +111,10 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 	} {
 		kind, err := catalog.Item(id)
 
-		if err != nil || kind.Class != want.class || kind.Slot != want.slot || kind.WeaponSkill != want.skill {
+		if err != nil ||
+			kind.Class != want.class ||
+			kind.Slot != want.slot ||
+			kind.WeaponSkill != want.skill {
 			t.Fatalf("source-backed kind %s: %+v, %v", id, kind, err)
 		}
 	}

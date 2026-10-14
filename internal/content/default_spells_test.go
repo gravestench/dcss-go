@@ -27,7 +27,10 @@ func TestCommittedSpellCatalogCoverageAndCopies(t *testing.T) {
 
 	magic, err := catalog.Spell("SPELL_MAGIC_DART")
 
-	if err != nil || magic.NumericID != 3 || magic.Name != "Magic Dart" || magic.Level != 1 ||
+	if err != nil ||
+		magic.NumericID != 3 ||
+		magic.Name != "Magic Dart" ||
+		magic.Level != 1 ||
 		magic.PowerCap != 25 || magic.MinRangeExpr != "LOS_RADIUS" || magic.TileID != "TILEG_MAGIC_DART" {
 		t.Fatalf("magic dart %+v, %v", magic, err)
 	}

@@ -98,7 +98,11 @@ func (s *advancementSystem) applyLevel(level int) error {
 	magic, hasMagic := s.magic.Get(s.player)
 	regeneration, hasRegeneration := s.regeneration.Get(s.player)
 
-	if !hasAttributes || !hasSkills || !hasHealth || !hasMagic || !hasRegeneration ||
+	if !hasAttributes ||
+		!hasSkills ||
+		!hasHealth ||
+		!hasMagic ||
+		!hasRegeneration ||
 		health.Max <= 0 || magic.Max < 0 {
 		return fmt.Errorf("player lacks advancement components")
 	}

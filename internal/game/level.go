@@ -42,7 +42,10 @@ type StairLink struct {
 }
 
 func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Level, error) {
-	if id <= 0 || positions == nil || len(rows) == 0 || len(rows[0]) == 0 {
+	if id <= 0 ||
+		positions == nil ||
+		len(rows) == 0 ||
+		len(rows[0]) == 0 {
 		return nil, fmt.Errorf("invalid level definition")
 	}
 
@@ -82,8 +85,14 @@ func (l *Level) AddStairLink(link StairLink) error {
 
 	boundary := link.Unavailable != ""
 
-	if boundary && (link.ToLevelID != 0 || link.ToX != 0 || link.ToY != 0) ||
-		!boundary && (link.ToLevelID <= 0 || link.ToX < 0 || link.ToY < 0) {
+	if boundary &&
+		(link.ToLevelID != 0 ||
+			link.ToX != 0 ||
+			link.ToY != 0) ||
+		!boundary &&
+			(link.ToLevelID <= 0 ||
+				link.ToX < 0 ||
+				link.ToY < 0) {
 		return fmt.Errorf("level %d has invalid stair destination at (%d,%d)", l.ID, link.X, link.Y)
 	}
 

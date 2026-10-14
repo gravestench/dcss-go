@@ -47,7 +47,10 @@ func TestScenarioInstallsStartingProfile(t *testing.T) {
 			defer g.Close()
 			view := g.View()
 
-			if view.CurrentAut != 0 || view.PlayerHP != 18 || view.PlayerMaxHP != 18 || view.PlayerMP != 1 ||
+			if view.CurrentAut != 0 ||
+				view.PlayerHP != 18 ||
+				view.PlayerMaxHP != 18 ||
+				view.PlayerMP != 1 ||
 				view.PlayerMaxMP != 1 {
 				t.Fatalf("start clocks and pools = %+v", view)
 			}

@@ -241,7 +241,10 @@ func Generate(sourceDir string) ([]byte, error) {
 		}
 	}
 
-	if selectable != 25 || total != 63 || len(rawSpecs) != 36 || len(itemNames) != 32 {
+	if selectable != 25 ||
+		total != 63 ||
+		len(rawSpecs) != 36 ||
+		len(itemNames) != 32 {
 		return nil, fmt.Errorf(
 			"source starter coverage changed: jobs=%d grants=%d specs=%d names=%d",
 			selectable,

@@ -69,8 +69,12 @@ AXED_MON(MONS_BUMBLEBEE, "bee, // removed")
 		t.Fatal(err)
 	}
 
-	if len(rows) != 2 || !rows[0].Removed || rows[0].Line != 6 ||
-		rows[0].RemovedName != "bee, // removed" || rows[1].ID != "MONS_RAT" || rows[1].Line != 8 ||
+	if len(rows) != 2 ||
+		!rows[0].Removed ||
+		rows[0].Line != 6 ||
+		rows[0].RemovedName != "bee, // removed" ||
+		rows[1].ID != "MONS_RAT" ||
+		rows[1].Line != 8 ||
 		len(rows[1].Fields) != 28 {
 		t.Fatalf("wrong rows: %#v", rows)
 	}

@@ -59,7 +59,9 @@ func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 	before := g.Snapshot()
 	result, err := g.Step(Command{Kind: CommandUpstairs})
 
-	if err != nil || result.Spent != 0 || len(result.Events) != 1 ||
+	if err != nil ||
+		result.Spent != 0 ||
+		len(result.Events) != 1 ||
 		!strings.Contains(result.Events[0].Text, "unavailable") {
 		t.Fatalf("unported Dungeon exit = %+v, %v", result, err)
 	}
@@ -126,13 +128,19 @@ func TestGeneratedDungeonStairsTravelBetweenPairedCells(t *testing.T) {
 
 	down, err := g.Step(Command{Kind: CommandDownstairs})
 
-	if err != nil || down.View.LevelID != 2 || down.View.PlayerX != stair.ToX || down.View.PlayerY != stair.ToY {
+	if err != nil ||
+		down.View.LevelID != 2 ||
+		down.View.PlayerX != stair.ToX ||
+		down.View.PlayerY != stair.ToY {
 		t.Fatalf("downward travel = %+v, %v", down.View, err)
 	}
 
 	up, err := g.Step(Command{Kind: CommandUpstairs})
 
-	if err != nil || up.View.LevelID != 1 || up.View.PlayerX != stair.X || up.View.PlayerY != stair.Y {
+	if err != nil ||
+		up.View.LevelID != 1 ||
+		up.View.PlayerX != stair.X ||
+		up.View.PlayerY != stair.Y {
 		t.Fatalf("upward travel = %+v, %v", up.View, err)
 	}
 }
@@ -161,7 +169,9 @@ func TestWalkingIntoClosedDoorOpensAndSavesIt(t *testing.T) {
 		DX:   1,
 	})
 
-	if err != nil || result.Spent != 10 || result.View.PlayerX != 1 ||
+	if err != nil ||
+		result.Spent != 10 ||
+		result.View.PlayerX != 1 ||
 		level.terrain[1][2] != '\'' || level.terrain[1][3] != '\'' {
 		t.Fatalf("opening by movement = %+v, %v", result, err)
 	}

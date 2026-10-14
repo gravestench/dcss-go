@@ -176,8 +176,13 @@ func random2avg2(r Roller, bound int) (int, error) {
 
 // ResolveAnimalBite follows the source's ordinary monster attack phase order.
 func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, error) {
-	if r == nil || attack.TypeID != "AT_BITE" || attack.FlavourID != "AF_PLAIN" ||
-		attack.HD <= 0 || attack.Damage <= 0 || defense.EV < 0 || defense.AC < 0 ||
+	if r == nil ||
+		attack.TypeID != "AT_BITE" ||
+		attack.FlavourID != "AF_PLAIN" ||
+		attack.HD <= 0 ||
+		attack.Damage <= 0 ||
+		defense.EV < 0 ||
+		defense.AC < 0 ||
 		defense.ShieldClass < 0 || defense.GDR < 0 || defense.ShieldBlocks < 0 {
 		return Outcome{}, fmt.Errorf("unsupported ordinary bite or defense: %+v %+v", attack, defense)
 	}

@@ -113,7 +113,9 @@ func TestTag34NumberedLinesPreservesQuotedCommentsAndLocations(t *testing.T) {
 		}
 	}
 
-	if len(got) != 3 || got[1].Number != 5 || strings.TrimSpace(got[1].Text) != `"rat, // friend"` ||
+	if len(got) != 3 ||
+		got[1].Number != 5 ||
+		strings.TrimSpace(got[1].Text) != `"rat, // friend"` ||
 		got[2].Number != 7 || strings.TrimSpace(got[2].Text) != "active" {
 		t.Fatalf("unexpected numbered lines: %#v", got)
 	}

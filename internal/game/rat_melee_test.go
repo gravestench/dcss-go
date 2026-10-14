@@ -265,7 +265,10 @@ func TestFighterViewDisplaysSourceDefense(t *testing.T) {
 	g := newStepGame(t)
 	view := g.View()
 
-	if !view.DefenseKnown || view.PlayerAC != 6 || view.PlayerEV != 5 || view.PlayerSH != 4 {
+	if !view.DefenseKnown ||
+		view.PlayerAC != 6 ||
+		view.PlayerEV != 5 ||
+		view.PlayerSH != 4 {
 		t.Fatalf(
 			"Fighter defense in view = AC %d EV %d SH %d known %v",
 			view.PlayerAC,

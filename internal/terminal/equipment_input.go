@@ -35,7 +35,10 @@ func (m *AppModel) handleArmourKey(key string) tea.Cmd {
 			continue
 		}
 
-		if remove && item.Slot == "" || !remove && item.Slot != "" {
+		if remove &&
+			item.Slot == "" ||
+			!remove &&
+				item.Slot != "" {
 			break
 		}
 

@@ -18,7 +18,10 @@ func TestPlayerNameSurvivesGoSaveAndRestore(t *testing.T) {
 
 	defer g.Close()
 
-	if view := g.View(); view.PlayerName != "Alice" || view.PlayerX != 1 || view.PlayerY != 1 || view.PlayerDead {
+	if view := g.View(); view.PlayerName != "Alice" ||
+		view.PlayerX != 1 ||
+		view.PlayerY != 1 ||
+		view.PlayerDead {
 		t.Fatalf("new player view: %+v", view)
 	}
 

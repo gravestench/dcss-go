@@ -147,7 +147,11 @@ func assertBasicLayout(t *testing.T, layout Layout) {
 		for x := range row {
 			terrain := row[x]
 
-			if (x == 0 || y == 0 || x == 79 || y == 69) && terrain != '#' {
+			if (x == 0 ||
+				y == 0 ||
+				x == 79 ||
+				y == 69) &&
+				terrain != '#' {
 				t.Fatalf("non-rock border at (%d,%d): %q", x, y, terrain)
 			}
 
@@ -197,7 +201,10 @@ func assertBasicLayout(t *testing.T, layout Layout) {
 				Y: current.Y + direction.Y,
 			}
 
-			if next.X < 0 || next.X >= 80 || next.Y < 0 || next.Y >= 70 ||
+			if next.X < 0 ||
+				next.X >= 80 ||
+				next.Y < 0 ||
+				next.Y >= 70 ||
 				visited[next] || layout.Rows[next.Y][next.X] == '#' {
 				continue
 			}

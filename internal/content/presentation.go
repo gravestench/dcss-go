@@ -117,7 +117,10 @@ func (a PresentationArtifact) validate(c Catalog) error {
 	seenModes := map[string]bool{}
 
 	for _, mode := range a.StartupModes {
-		if mode.ID == "" || mode.Label == "" || mode.Description == "" || seenModes[mode.ID] {
+		if mode.ID == "" ||
+			mode.Label == "" ||
+			mode.Description == "" ||
+			seenModes[mode.ID] {
 			return fmt.Errorf("invalid or duplicate startup mode %s", mode.ID)
 		}
 

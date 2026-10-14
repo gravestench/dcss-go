@@ -143,7 +143,10 @@ func TestModalResizePreservesFocusGameAndAut(t *testing.T) {
 		Height: 24,
 	})
 
-	if m.screen != ScreenInventory || m.focus != 2 || m.game != g || m.game.View().CurrentAut != aut ||
+	if m.screen != ScreenInventory ||
+		m.focus != 2 ||
+		m.game != g ||
+		m.game.View().CurrentAut != aut ||
 		!strings.Contains(plainApp(m), "Inventory:") {
 		t.Fatal("modal resize lost state")
 	}

@@ -104,7 +104,9 @@ func TestWieldAlternateCarriedWeaponAndRestore(t *testing.T) {
 		ItemID: uint64(flail),
 	})
 
-	if err != nil || result.Spent != 5 || g.stores.Equipped.Has(starting) ||
+	if err != nil ||
+		result.Spent != 5 ||
+		g.stores.Equipped.Has(starting) ||
 		!g.stores.Equipped.Has(flail) {
 		t.Fatalf("weapon switch = %+v, %v", result, err)
 	}

@@ -5,7 +5,10 @@ import "fmt"
 // HealWoundsHP follows potion.cc's ordinary Human healing: 10 plus
 // random2avg(28, 3). The caller checks can_quaff before spending time.
 func HealWoundsHP(roller Roller, current, maximum int) (int, error) {
-	if roller == nil || maximum <= 0 || current <= 0 || current > maximum {
+	if roller == nil ||
+		maximum <= 0 ||
+		current <= 0 ||
+		current > maximum {
 		return 0, fmt.Errorf("invalid heal wounds HP %d/%d", current, maximum)
 	}
 

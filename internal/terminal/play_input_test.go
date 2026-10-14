@@ -30,7 +30,10 @@ func TestPlayKeysSourceBindingsAndTurnCost(t *testing.T) {
 		t.Helper()
 		command, ok := CommandForKey(key)
 
-		if !ok || command.Kind != kind || command.DX != dx || command.DY != dy {
+		if !ok ||
+			command.Kind != kind ||
+			command.DX != dx ||
+			command.DY != dy {
 			t.Fatalf("%q: %+v, %v", key, command, ok)
 		}
 	}

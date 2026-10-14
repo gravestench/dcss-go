@@ -52,7 +52,10 @@ func (m *AppModel) handleConfirmKey(key string) tea.Cmd {
 		return nil
 	}
 
-	if key != "y" && key != "Y" && !(key == "S" && m.confirm == confirmSave) {
+	if key != "y" &&
+		key != "Y" &&
+		!(key == "S" &&
+			m.confirm == confirmSave) {
 		return nil
 	}
 

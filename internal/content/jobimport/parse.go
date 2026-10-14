@@ -89,7 +89,13 @@ func lexJobData(path, source string) ([]token, error) {
 			for i < len(source) {
 				c := source[i]
 
-				if c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || c == '_' {
+				if c >= 'A' &&
+					c <= 'Z' ||
+					c >= 'a' &&
+						c <= 'z' ||
+					c >= '0' &&
+						c <= '9' ||
+					c == '_' {
 					i++
 				} else {
 					break

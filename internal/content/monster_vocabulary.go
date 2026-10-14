@@ -204,7 +204,11 @@ func validateMonsterTileIDs(m MonsterDef) error {
 		}
 
 		for _, r := range tile {
-			if !(r >= 'A' && r <= 'Z') && !(r >= '0' && r <= '9') && r != '_' {
+			if !(r >= 'A' &&
+				r <= 'Z') &&
+				!(r >= '0' &&
+					r <= '9') &&
+				r != '_' {
 				return fmt.Errorf("monster %s has invalid tile %q", m.ID, tile)
 			}
 		}

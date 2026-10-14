@@ -69,7 +69,9 @@ func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if chosen.Spent != 0 || progress.Level != 3 || progress.PendingStatLevel != 0 ||
+	if chosen.Spent != 0 ||
+		progress.Level != 3 ||
+		progress.PendingStatLevel != 0 ||
 		attributes.Strength != startStrength+2 || g.View().NextLevelPercent != 0 {
 		t.Fatalf("XL3 stat choice = %+v, attrs %+v, view %+v", progress, attributes, g.View())
 	}

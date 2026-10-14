@@ -36,7 +36,10 @@ func TestPlayerRatKillAwardsOneExperienceOnlyOnce(t *testing.T) {
 
 	progress, found := g.stores.Progression.Get(g.player)
 
-	if !found || progress.TotalXP != 1 || g.View().ExperienceLevel != 1 || g.View().NextLevelPercent != 11 {
+	if !found ||
+		progress.TotalXP != 1 ||
+		g.View().ExperienceLevel != 1 ||
+		g.View().NextLevelPercent != 11 {
 		t.Fatalf("rat kill progression %+v found %v view %+v", progress, found, g.View())
 	}
 

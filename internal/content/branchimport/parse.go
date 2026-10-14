@@ -108,7 +108,11 @@ func parseEnum(path string, body []byte) ([]content.BranchDef, error) {
 		})
 	}
 
-	if !inside || !opened || !countSeen || !closed || len(result) == 0 {
+	if !inside ||
+		!opened ||
+		!countSeen ||
+		!closed ||
+		len(result) == 0 {
 		return nil, fmt.Errorf("%s: incomplete branch enum", path)
 	}
 
@@ -476,7 +480,11 @@ func parseTable(path string, body []byte) ([]content.BranchDef, error) {
 		}
 	}
 
-	if !inside || !opened || !closed || rowOpen || len(rows) == 0 {
+	if !inside ||
+		!opened ||
+		!closed ||
+		rowOpen ||
+		len(rows) == 0 {
 		return nil, fmt.Errorf("%s: incomplete branch table", path)
 	}
 

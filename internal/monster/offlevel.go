@@ -8,7 +8,10 @@ import "fmt"
 func OffLevelRecovery(roller Roller, turns, rate int) (int, error) {
 	const maximumInt = int(^uint(0) >> 1)
 
-	if roller == nil || turns < 0 || rate <= 0 || rate > 100 ||
+	if roller == nil ||
+		turns < 0 ||
+		rate <= 0 ||
+		rate > 100 ||
 		turns > maximumInt/rate {
 		return 0, fmt.Errorf("invalid off-level recovery turns %d at rate %d", turns, rate)
 	}

@@ -43,7 +43,10 @@ func (g *Game) prepareDoorCommand(
 		}
 	}
 
-	if dx < -1 || dx > 1 || dy < -1 || dy > 1 ||
+	if dx < -1 ||
+		dx > 1 ||
+		dy < -1 ||
+		dy > 1 ||
 		(dx == 0 && dy == 0) {
 		return freeCommand(g.noTime("Choose an adjacent direction.")), nil
 	}

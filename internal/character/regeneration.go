@@ -21,7 +21,11 @@ func Regenerate(roller Roller, state Vitality, actionAut int) (Vitality, error) 
 	invalidProgress := state.HPProgress < 0 || state.HPProgress >= 100 ||
 		state.MPProgress < 0 || state.MPProgress >= 100
 
-	if roller == nil || actionAut < 0 || invalidHP || invalidMP || invalidProgress {
+	if roller == nil ||
+		actionAut < 0 ||
+		invalidHP ||
+		invalidMP ||
+		invalidProgress {
 		return Vitality{}, fmt.Errorf("invalid regeneration state %+v or aut %d", state, actionAut)
 	}
 

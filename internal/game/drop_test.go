@@ -87,7 +87,10 @@ func TestPartialDropMergesMatchingFloorStackAndSaves(t *testing.T) {
 		Quantity: 10,
 	})
 
-	if err != nil || second.Spent != 10 || dropped.Quantity != 3 || g.stores.Items.Has(itemID) {
+	if err != nil ||
+		second.Spent != 10 ||
+		dropped.Quantity != 3 ||
+		g.stores.Items.Has(itemID) {
 		t.Fatalf("merged drop = %+v, %v; floor=%+v; old item=%v", second, err, dropped, g.stores.Items.Has(itemID))
 	}
 
@@ -200,7 +203,10 @@ func TestPickupMergesReturnedPartialStack(t *testing.T) {
 
 	result, err := g.Step(Command{Kind: CommandPickup})
 
-	if err != nil || result.Spent != 10 || carried.Quantity != 3 || g.stores.Items.Has(floorID) {
+	if err != nil ||
+		result.Spent != 10 ||
+		carried.Quantity != 3 ||
+		g.stores.Items.Has(floorID) {
 		t.Fatalf(
 			"returned stack = %+v, %v; carried=%+v floor=%v",
 			result,

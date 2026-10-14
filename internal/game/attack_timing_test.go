@@ -198,7 +198,9 @@ func TestAttackDelaySaveContinuation(t *testing.T) {
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
 
-	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
+	if leftErr != nil ||
+		rightErr != nil ||
+		!reflect.DeepEqual(left, right) ||
 		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("attack timing continuation: %+v/%v versus %+v/%v", left, leftErr, right, rightErr)
 	}

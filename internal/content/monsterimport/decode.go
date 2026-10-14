@@ -465,7 +465,11 @@ func validTile(id string) bool {
 	}
 
 	for _, r := range id {
-		if !(r >= 'A' && r <= 'Z') && !(r >= '0' && r <= '9') && r != '_' {
+		if !(r >= 'A' &&
+			r <= 'Z') &&
+			!(r >= '0' &&
+				r <= '9') &&
+			r != '_' {
 			return false
 		}
 	}

@@ -114,7 +114,10 @@ func parseEnum(path string, body []byte) ([]content.SpellDef, error) {
 		})
 	}
 
-	if !inside || !done || !sawCount || len(spells) == 0 {
+	if !inside ||
+		!done ||
+		!sawCount ||
+		len(spells) == 0 {
 		return nil, fmt.Errorf("%s: incomplete spell enum", path)
 	}
 
@@ -392,7 +395,13 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 		return nil, fmt.Errorf("%s:%d: unsupported spell table row %q", path, line.Number, value)
 	}
 
-	if block || !tableOpened || !closed || len(result) == 0 || axedCount > 0 && (!macro || !macroBody) {
+	if block ||
+		!tableOpened ||
+		!closed ||
+		len(result) == 0 ||
+		axedCount > 0 &&
+			(!macro ||
+				!macroBody) {
 		return nil, fmt.Errorf("%s: incomplete spell table", path)
 	}
 
