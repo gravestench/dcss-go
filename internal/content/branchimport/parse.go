@@ -21,7 +21,11 @@ func parseEnum(path string, body []byte) ([]content.BranchDef, error) {
 		return nil, err
 	}
 
-	inside, opened, countSeen, closed := false, false, false, false
+	var inside bool
+	var opened bool
+	var countSeen bool
+	var closed bool
+
 	var result []content.BranchDef
 	seen := map[string]bool{}
 
@@ -371,10 +375,15 @@ func parseTable(path string, body []byte) ([]content.BranchDef, error) {
 		return nil, err
 	}
 
-	inside, opened, closed, rowOpen := false, false, false, false
+	var inside bool
+	var opened bool
+	var closed bool
+	var rowOpen bool
+
 	var rows []content.BranchDef
 	var row strings.Builder
-	depth, rowLine := 0, 0
+	depth := 0
+	rowLine := 0
 
 	for _, line := range lines {
 		value := strings.TrimSpace(line.Text)

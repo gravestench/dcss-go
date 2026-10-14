@@ -239,7 +239,14 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 	}
 
 	result := map[string]content.SpellDef{}
-	inside, tableOpened, block, closed, macro, macroBody, start := false, false, false, false, false, false, 0
+
+	var inside bool
+	var tableOpened bool
+	var block bool
+	var closed bool
+	var macro bool
+	var macroBody bool
+	start := 0
 	axedCount := 0
 	var data strings.Builder
 

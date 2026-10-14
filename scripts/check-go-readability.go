@@ -79,6 +79,10 @@ func checkFile(path string) (int, error) {
 	ast.Inspect(file, func(node ast.Node) bool {
 		switch value := node.(type) {
 		case *ast.AssignStmt:
+			if value.Tok == token.DEFINE && len(value.Lhs) >= 4 && len(value.Rhs) >= 4 {
+				report(value.Pos(), "declare parser and other local state one variable per line")
+			}
+
 			if value.Tok != token.ASSIGN || len(value.Lhs) < 2 || len(value.Rhs) < 2 {
 				break
 			}
