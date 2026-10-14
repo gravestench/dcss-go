@@ -31,7 +31,8 @@ func TestAttackDelayProjectionUsesEveryFighterStart(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if in.WeaponSkill10 != 20 || in.ShieldsSkill10 != 30 || in.ShieldEV != -50 {
+			if in.WeaponSkill10 != 20 ||
+				in.ShieldsSkill10 != 30 || in.ShieldEV != -50 {
 				t.Fatalf("attack delay input = %+v", in)
 			}
 
@@ -138,7 +139,8 @@ func TestShortUnarmedBumpSchedulesOnlyOneRatAction(t *testing.T) {
 		DX:   1,
 	})
 
-	if err != nil || result.Spent != 9 || result.View.CurrentAut != 9 {
+	if err != nil ||
+		result.Spent != 9 || result.View.CurrentAut != 9 {
 		t.Fatalf("unarmed bump = %+v, %v", result, err)
 	}
 

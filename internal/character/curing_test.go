@@ -63,7 +63,8 @@ func TestCuringHealsSourceRangeAndCapsAtMax(t *testing.T) {
 
 		got, err := CuringHP(rng, tc.current, tc.max)
 
-		if err != nil || got != tc.want || rng.calls != 1 {
+		if err != nil ||
+			got != tc.want || rng.calls != 1 {
 			t.Fatalf(
 				"HP %d/%d roll %d: got %d, err %v, calls %d; want %d",
 				tc.current,

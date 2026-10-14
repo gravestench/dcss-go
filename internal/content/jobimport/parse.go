@@ -69,7 +69,8 @@ func lexJobData(path, source string) ([]token, error) {
 			start := i
 			i++
 
-			for i < len(source) && source[i] >= '0' && source[i] <= '9' {
+			for i < len(source) &&
+				source[i] >= '0' && source[i] <= '9' {
 				i++
 			}
 

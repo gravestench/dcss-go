@@ -15,7 +15,8 @@ const maxSafeAverageHP = int(^uint(0)>>1) / 33
 // mon-place.cc. A source average of zero is a special monster case and cannot
 // be used to create an ordinary live monster.
 func RollHP(roller Roller, averageHP10x int) (int, error) {
-	if roller == nil || averageHP10x <= 0 || averageHP10x > maxSafeAverageHP {
+	if roller == nil ||
+		averageHP10x <= 0 || averageHP10x > maxSafeAverageHP {
 		return 0, fmt.Errorf("invalid monster average HP %d", averageHP10x)
 	}
 

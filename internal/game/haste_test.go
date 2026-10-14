@@ -122,8 +122,10 @@ func TestHasteQuaffUsesOldSpeedThenSpeedsLaterActions(t *testing.T) {
 		ItemID: uint64(item),
 	})
 
-	if err != nil || quaff.Spent != 10 ||
-		quaff.View.HasteAut < 250 || quaff.View.HasteAut > 390 ||
+	if err != nil ||
+		quaff.Spent != 10 ||
+		quaff.View.HasteAut < 250 ||
+		quaff.View.HasteAut > 390 ||
 		!containsEvent(quaff.Events, "You feel yourself speed up.") {
 		t.Fatalf("haste quaff = %+v, %v", quaff, err)
 	}
@@ -136,7 +138,8 @@ func TestHasteQuaffUsesOldSpeedThenSpeedsLaterActions(t *testing.T) {
 	wait, err := g.Step(Command{Kind: CommandWait})
 
 	if err != nil ||
-		(wait.Spent != 6 && wait.Spent != 7) ||
+		(wait.Spent != 6 &&
+			wait.Spent != 7) ||
 		wait.View.HasteAut != before-int(wait.Spent) {
 		t.Fatalf("hasted wait = %+v, %v", wait, err)
 	}
@@ -241,7 +244,8 @@ func TestHasteSchedulesPlayerBeforeLaterMonsterDeadline(t *testing.T) {
 	result, err := g.Step(Command{Kind: CommandWait})
 
 	if err != nil ||
-		(result.Spent != 6 && result.Spent != 7) ||
+		(result.Spent != 6 &&
+			result.Spent != 7) ||
 		rat.NextAut != 10 ||
 		g.currentAut != result.Spent {
 		t.Fatalf("haste deadline = %d, rat %d, clock %d, err %v",
@@ -257,7 +261,8 @@ func TestHasteExpiresAfterItsFinalFastAction(t *testing.T) {
 	lastFast, err := g.Step(Command{Kind: CommandWait})
 
 	if err != nil ||
-		(lastFast.Spent != 6 && lastFast.Spent != 7) ||
+		(lastFast.Spent != 6 &&
+			lastFast.Spent != 7) ||
 		lastFast.View.HasteAut != 0 ||
 		!containsEvent(lastFast.Events, "You feel yourself slow down.") {
 		t.Fatalf("last hasted action = %+v, %v", lastFast, err)
@@ -285,7 +290,8 @@ func TestDungeonTwoHasSeparateHasteAndHealingPotions(t *testing.T) {
 
 	haste, found := positions["POT_HASTE"]
 
-	if !found || haste.LevelID != 2 ||
+	if !found ||
+		haste.LevelID != 2 ||
 		haste == positions["POT_HEAL_WOUNDS"] ||
 		!g.levels[2].Walkable(haste.X, haste.Y) {
 		t.Fatalf("D:2 haste placement = %+v; floor items %+v", haste, positions)

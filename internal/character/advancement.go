@@ -89,7 +89,8 @@ func HumanLevelProgress(totalXP, level int) (int, error) {
 // HumanMaxHP projects get_real_hp without mutations, drains, artefacts, or
 // transformations. Fighting is the only live skill this formula reads.
 func HumanMaxHP(level int, species content.SpeciesDef, skills []Skill) (int, error) {
-	if level < 1 || level > HumanMaxLevel || species.ID != "SP_HUMAN" {
+	if level < 1 ||
+		level > HumanMaxLevel || species.ID != "SP_HUMAN" {
 		return 0, fmt.Errorf("unsupported Human HP inputs at XL%d for %s", level, species.ID)
 	}
 
@@ -117,7 +118,8 @@ func HumanMaxHP(level int, species content.SpeciesDef, skills []Skill) (int, err
 // HumanMaxMP projects get_real_mp for a Fighter with no Spellcasting,
 // Invocations, magic mutations, or power-granting equipment.
 func HumanMaxMP(level int, species content.SpeciesDef) (int, error) {
-	if level < 1 || level > HumanMaxLevel || species.ID != "SP_HUMAN" {
+	if level < 1 ||
+		level > HumanMaxLevel || species.ID != "SP_HUMAN" {
 		return 0, fmt.Errorf("unsupported Human MP inputs at XL%d for %s", level, species.ID)
 	}
 

@@ -58,7 +58,8 @@ func TestHumanPoisonDecayMatchesSourceRateRegions(t *testing.T) {
 				test.elapsedAut,
 			)
 
-			if err != nil || amount != test.wantAmount || damage != test.wantDamage {
+			if err != nil ||
+				amount != test.wantAmount || damage != test.wantDamage {
 				t.Fatalf(
 					"decay = %d amount, %d damage, %v; want %d, %d",
 					amount,

@@ -58,7 +58,8 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 
 		level := g.levels[position.LevelID]
 
-		if level == nil || level.terrain[position.Y][position.X] != '.' ||
+		if level == nil ||
+			level.terrain[position.Y][position.X] != '.' ||
 			!farEnoughFromEntry(position.X, position.Y, entry, spawnDistanceFromEntry) {
 			t.Fatalf("monster %d spawned at %+v", entity, position)
 		}
@@ -125,7 +126,8 @@ func TestJackalPopulationCreatesAndSavesBands(t *testing.T) {
 		leader, _ := g.stores.Positions.Get(follower.Leader)
 		level := g.levels[position.LevelID]
 
-		if actor.KindID != "MONS_JACKAL" || leader == nil ||
+		if actor.KindID != "MONS_JACKAL" ||
+			leader == nil ||
 			leader.LevelID != position.LevelID ||
 			chebyshevDistance(position.X, position.Y, leader.X, leader.Y) > 3 {
 			t.Fatalf("invalid jackal follower %d at %+v with leader %+v", entity, position, leader)

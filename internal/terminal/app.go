@@ -113,7 +113,8 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 		return m, m.handleKey(msg.String())
 
 	case equipmentTick:
-		if msg.id != m.equipmentTickID || m.screen != ScreenPlay ||
+		if msg.id != m.equipmentTickID ||
+			m.screen != ScreenPlay ||
 			m.game == nil || m.game.View().EquipmentDelay == nil {
 			return m, nil
 		}

@@ -47,7 +47,8 @@ func (g *Game) prepareWieldCommand(rawItemID uint64) (preparedCommand, error) {
 	item, found := g.stores.Items.Get(itemID)
 	carrier, carried := g.stores.CarriedBy.Get(itemID)
 
-	if !found || !carried || carrier.Holder != g.player {
+	if !found ||
+		!carried || carrier.Holder != g.player {
 		return freeCommand(g.noTime("You are not carrying that item.")), nil
 	}
 
@@ -104,7 +105,8 @@ func (g *Game) weaponConflictsWithShield(kind content.ItemDef) (bool, error) {
 		equipped, _ := g.stores.Equipped.Get(entity)
 		carrier, carried := g.stores.CarriedBy.Get(entity)
 
-		if carried && carrier.Holder == g.player && equipped.Slot == "shield" {
+		if carried &&
+			carrier.Holder == g.player && equipped.Slot == "shield" {
 			shielded = true
 			break
 		}
@@ -186,7 +188,8 @@ func (g *Game) playerWeapon() (akara.Entity, error) {
 		equipped, _ := g.stores.Equipped.Get(entity)
 		carrier, carried := g.stores.CarriedBy.Get(entity)
 
-		if !carried || carrier.Holder != g.player || equipped.Slot != "weapon" {
+		if !carried ||
+			carrier.Holder != g.player || equipped.Slot != "weapon" {
 			continue
 		}
 
@@ -213,7 +216,8 @@ func (s *wieldSystem) Update(_ *akara.World, _ time.Duration) error {
 		item, found := s.items.Get(intent.ItemID)
 		carrier, carried := s.carried.Get(intent.ItemID)
 
-		if !found || !carried || carrier.Holder != s.turn.Actor {
+		if !found ||
+			!carried || carrier.Holder != s.turn.Actor {
 			return fmt.Errorf("wield actor %d has invalid item %d", s.turn.Actor, intent.ItemID)
 		}
 

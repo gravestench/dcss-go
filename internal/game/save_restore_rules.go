@@ -20,11 +20,14 @@ func (g *Game) validateSavedPlayer(
 
 	definition := g.catalog.Player()
 
-	if record.ID != playerID || record.Actor == nil ||
-		record.Position == nil || record.Health == nil ||
+	if record.ID != playerID ||
+		record.Actor == nil ||
+		record.Position == nil ||
+		record.Health == nil ||
 		record.Player.SpeciesID != definition.SpeciesID ||
 		record.Player.JobID != definition.JobID ||
-		record.Attributes == nil || record.Skills == nil ||
+		record.Attributes == nil ||
+		record.Skills == nil ||
 		record.SkillTraining == nil ||
 		record.Magic == nil {
 		return savedPlayerValidation{}, fmt.Errorf("invalid player entity %d", record.ID)
@@ -106,7 +109,8 @@ func (g *Game) validateSavedMonster(
 	currentAut int64,
 	scenarioAnimals []string,
 ) error {
-	if record.Actor == nil || record.Health == nil || record.Position == nil {
+	if record.Actor == nil ||
+		record.Health == nil || record.Position == nil {
 		return fmt.Errorf("invalid monster entity %d", record.ID)
 	}
 
@@ -158,15 +162,18 @@ func (g *Game) validateSavedMonsterAI(
 
 	switch ai.Behavior {
 	case "chase":
-		if ai.TargetX != 0 || ai.TargetY != 0 || ai.MemoryUntilAut != 0 {
+		if ai.TargetX != 0 ||
+			ai.TargetY != 0 || ai.MemoryUntilAut != 0 {
 			return fmt.Errorf("legacy monster %d has a target or memory", record.ID)
 		}
 
 	case "wander":
 		level := g.levels[record.Position.LevelID]
 
-		if ai.MemoryUntilAut != 0 || level == nil ||
-			(ai.TargetX != 0 || ai.TargetY != 0) &&
+		if ai.MemoryUntilAut != 0 ||
+			level == nil ||
+			(ai.TargetX != 0 ||
+				ai.TargetY != 0) &&
 				!level.Walkable(ai.TargetX, ai.TargetY) {
 			return fmt.Errorf(
 				"wandering monster %d has invalid target or memory", record.ID,
@@ -176,7 +183,8 @@ func (g *Game) validateSavedMonsterAI(
 	case "seek":
 		level := g.levels[record.Position.LevelID]
 
-		if level == nil || !level.Walkable(ai.TargetX, ai.TargetY) ||
+		if level == nil ||
+			!level.Walkable(ai.TargetX, ai.TargetY) ||
 			ai.MemoryUntilAut < 0 || ai.MemoryUntilAut > currentAut+550 {
 			return fmt.Errorf("monster %d has invalid remembered target", record.ID)
 		}
@@ -278,7 +286,8 @@ func (g *Game) validateSavedEquipment(slots map[string]string) error {
 
 func validateSavedStartingWeapon(records []save.EntityRecord, weaponID string) error {
 	for _, record := range records {
-		if record.Item != nil && record.Item.KindID == weaponID &&
+		if record.Item != nil &&
+			record.Item.KindID == weaponID &&
 			(record.Position != nil || record.CarriedBy != nil) {
 			return nil
 		}

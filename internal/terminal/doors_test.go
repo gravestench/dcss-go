@@ -85,7 +85,8 @@ func TestDoorDirectionPromptAndCancel(t *testing.T) {
 	m.handleKey("O")
 	m.handleKey("l")
 
-	if m.pendingDoor != 0 || m.game.View().CurrentAut != start+10 ||
+	if m.pendingDoor != 0 ||
+		m.game.View().CurrentAut != start+10 ||
 		m.game.View().Cells[2*m.game.View().Width+2].Glyph != '\'' {
 		t.Fatalf("directional open did not change connected group: %s", plainApp(m))
 	}
@@ -93,7 +94,8 @@ func TestDoorDirectionPromptAndCancel(t *testing.T) {
 	m.handleKey("C")
 	m.handleKey("l")
 
-	if m.pendingDoor != 0 || m.game.View().CurrentAut != start+20 ||
+	if m.pendingDoor != 0 ||
+		m.game.View().CurrentAut != start+20 ||
 		m.game.View().Cells[2*m.game.View().Width+2].Glyph != '+' {
 		t.Fatalf("directional close did not change connected group: %s", plainApp(m))
 	}

@@ -59,7 +59,8 @@ func (s *advancementSystem) Update(_ *akara.World, _ time.Duration) error {
 func (s *advancementSystem) advance() error {
 	progress, found := s.progression.Get(s.player)
 
-	if !found || progress.Level < 1 || progress.Level > character.HumanMaxLevel {
+	if !found ||
+		progress.Level < 1 || progress.Level > character.HumanMaxLevel {
 		return fmt.Errorf("player has invalid advancement state")
 	}
 
@@ -196,7 +197,8 @@ func (g *Game) ChooseStat(id string) (StepResult, error) {
 		return StepResult{}, fmt.Errorf("player has no attributes")
 	}
 
-	if id != "str" && id != "int" && id != "dex" {
+	if id != "str" &&
+		id != "int" && id != "dex" {
 		return g.noTime("Choose Strength, Intelligence, or Dexterity."), nil
 	}
 

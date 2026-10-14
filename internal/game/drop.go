@@ -32,7 +32,8 @@ func (g *Game) prepareDropCommand(command Command) (preparedCommand, error) {
 	item, found := g.stores.Items.Get(itemID)
 	carrier, carried := g.stores.CarriedBy.Get(itemID)
 
-	if !found || !carried || carrier.Holder != g.player {
+	if !found ||
+		!carried || carrier.Holder != g.player {
 		return freeCommand(g.noTime("You are not carrying that item.")), nil
 	}
 
@@ -188,7 +189,8 @@ func (g *Game) compatibleFloorStack(
 		location, located := g.stores.Positions.Get(entity)
 		floorItem, found := g.stores.Items.Get(entity)
 
-		if !located || !found || *location != position {
+		if !located ||
+			!found || *location != position {
 			continue
 		}
 

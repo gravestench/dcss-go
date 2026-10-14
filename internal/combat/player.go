@@ -31,7 +31,8 @@ func (in PlayerAttackInput) Validate() error {
 	invalidDefender := in.DefenderEV < 0 || in.DefenderAC < 0
 	invalidWeapon := in.WeaponPlus < -100 || in.WeaponPlus > 100
 
-	if invalidStats || invalidDefender || invalidWeapon {
+	if invalidStats ||
+		invalidDefender || invalidWeapon {
 		return fmt.Errorf("invalid Human Fighter attack %+v", in)
 	}
 

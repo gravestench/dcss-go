@@ -80,7 +80,8 @@ func validateGeneratedDungeonLevels(levels map[int]*Level) error {
 	first := levels[1]
 	second := levels[2]
 
-	if len(levels) != 2 || first == nil || second == nil {
+	if len(levels) != 2 ||
+		first == nil || second == nil {
 		return fmt.Errorf("generated Dungeon save needs exactly D:1-2")
 	}
 
@@ -144,7 +145,8 @@ func validateGeneratedDungeonLevels(levels map[int]*Level) error {
 func reciprocalGeneratedStair(levels map[int]*Level, depth int, link StairLink) bool {
 	target := levels[link.ToLevelID]
 
-	if target == nil || link.Unavailable != "" || link.ToLevelID != 3-depth {
+	if target == nil ||
+		link.Unavailable != "" || link.ToLevelID != 3-depth {
 		return false
 	}
 

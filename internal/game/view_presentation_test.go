@@ -28,7 +28,8 @@ func TestViewPresentationIdentifiesEntitiesAndItemClass(t *testing.T) {
 		}
 	}
 
-	if !player || !rat || !potion {
+	if !player ||
+		!rat || !potion {
 		t.Fatalf("entity presentation missing: %+v", view.Entities)
 	}
 

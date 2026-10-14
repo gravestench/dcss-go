@@ -30,7 +30,8 @@ type StartingGearArtifact struct {
 }
 
 func (g StartingGrant) validate(kind ItemDef) error {
-	if g.Raw == "" || g.KindID != kind.ID || g.Quantity <= 0 {
+	if g.Raw == "" ||
+		g.KindID != kind.ID || g.Quantity <= 0 {
 		return fmt.Errorf("grant %q has invalid raw spec, kind, or quantity", g.Raw)
 	}
 
@@ -38,15 +39,18 @@ func (g StartingGrant) validate(kind ItemDef) error {
 		return fmt.Errorf("grant %q does not name item kind %s (%s)", g.Raw, kind.ID, kind.Name)
 	}
 
-	if g.Charges < 0 || (g.Charges != 0 && kind.Class != "OBJ_WANDS") {
+	if g.Charges < 0 ||
+		(g.Charges != 0 && kind.Class != "OBJ_WANDS") {
 		return fmt.Errorf("grant %q has invalid charges", g.Raw)
 	}
 
-	if g.Plus != 0 && kind.Class != "OBJ_WEAPONS" && kind.Class != "OBJ_ARMOUR" {
+	if g.Plus != 0 &&
+		kind.Class != "OBJ_WEAPONS" && kind.Class != "OBJ_ARMOUR" {
 		return fmt.Errorf("grant %q has invalid plus", g.Raw)
 	}
 
-	if g.Ego != "" && kind.Class != "OBJ_WEAPONS" &&
+	if g.Ego != "" &&
+		kind.Class != "OBJ_WEAPONS" &&
 		kind.Class != "OBJ_ARMOUR" && kind.Class != "OBJ_MISSILES" {
 		return fmt.Errorf("grant %q has invalid ego", g.Raw)
 	}
@@ -55,7 +59,8 @@ func (g StartingGrant) validate(kind ItemDef) error {
 }
 
 func (a StartingGearArtifact) Validate(catalog Catalog) error {
-	if a.SchemaVersion != 2 || a.SourceRevision == "" || a.TagMajorVersion != 34 {
+	if a.SchemaVersion != 2 ||
+		a.SourceRevision == "" || a.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported starting gear artifact metadata")
 	}
 

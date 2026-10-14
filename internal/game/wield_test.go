@@ -40,7 +40,8 @@ func TestWieldRecoveredStartingWeaponAfterBareHands(t *testing.T) {
 
 	bare, err := g.Step(Command{Kind: CommandWield})
 
-	if err != nil || bare.Spent != 3 || g.stores.Equipped.Has(weapon) {
+	if err != nil ||
+		bare.Spent != 3 || g.stores.Equipped.Has(weapon) {
 		t.Fatalf("bare hands = %+v, %v; weapon equipped=%v", bare, err, g.stores.Equipped.Has(weapon))
 	}
 
@@ -72,13 +73,15 @@ func TestWieldRecoveredStartingWeaponAfterBareHands(t *testing.T) {
 		ItemID: uint64(weapon),
 	})
 
-	if err != nil || wielded.Spent != 5 || !g.stores.Equipped.Has(weapon) {
+	if err != nil ||
+		wielded.Spent != 5 || !g.stores.Equipped.Has(weapon) {
 		t.Fatalf("re-wield = %+v, %v; equipped=%v", wielded, err, g.stores.Equipped.Has(weapon))
 	}
 
 	input, err = newPlayerCombat(g).attackDelayInput("MONS_RAT")
 
-	if err != nil || input.Unarmed || input.WeaponSkillID != "SK_SHORT_BLADES" {
+	if err != nil ||
+		input.Unarmed || input.WeaponSkillID != "SK_SHORT_BLADES" {
 		t.Fatalf("re-wield attack = %+v, %v", input, err)
 	}
 

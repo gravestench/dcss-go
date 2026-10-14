@@ -99,7 +99,8 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 
 		position, _ := run.stores.Positions.Get(run.player)
 
-		if position.LevelID != 2 || position.X != 3 || position.Y != 3 {
+		if position.LevelID != 2 ||
+			position.X != 3 || position.Y != 3 {
 			t.Fatalf("return arrival = %+v", position)
 		}
 	}
@@ -178,7 +179,8 @@ func TestLevelAllowsMultipleStairsOfOneKind(t *testing.T) {
 
 	position, _ := g.stores.Positions.Get(g.player)
 
-	if position.LevelID != 2 || position.X != 1 || position.Y != 1 {
+	if position.LevelID != 2 ||
+		position.X != 1 || position.Y != 1 {
 		t.Fatalf("second down stair arrived at %+v", position)
 	}
 

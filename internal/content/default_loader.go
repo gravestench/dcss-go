@@ -82,7 +82,8 @@ func (l *defaultCatalogLoader) loadJobs(jobData []byte) error {
 		return err
 	}
 
-	if jobs.SchemaVersion != 1 || jobs.SourceRevision != artifact.SourceRevision ||
+	if jobs.SchemaVersion != 1 ||
+		jobs.SourceRevision != artifact.SourceRevision ||
 		jobs.TagMajorVersion != artifact.TagMajorVersion {
 		return fmt.Errorf("unsupported or mismatched job artifact schema/revision/tag")
 	}
@@ -272,7 +273,8 @@ func (l *defaultCatalogLoader) installGear(entries []JobStartingGear) error {
 
 		job, found := catalog.jobs[entry.JobID]
 
-		if !found || !job.Selectable || len(entry.Grants) != len(job.Equipment) {
+		if !found ||
+			!job.Selectable || len(entry.Grants) != len(job.Equipment) {
 			return fmt.Errorf("starting gear job %s disagrees with committed jobs", entry.JobID)
 		}
 

@@ -41,7 +41,8 @@ func (s TurnScheduler) Next(levelID int) (akara.Entity, Aut, bool) {
 func (s TurnScheduler) ScheduleAfter(entity akara.Entity, cost Aut) error {
 	actor, found := s.actors.Get(entity)
 
-	if !found || actor.Speed <= 0 || cost <= 0 {
+	if !found ||
+		actor.Speed <= 0 || cost <= 0 {
 		return fmt.Errorf("cannot schedule actor %d with cost %d", entity, cost)
 	}
 

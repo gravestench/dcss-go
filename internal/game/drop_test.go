@@ -14,7 +14,8 @@ func carriedItemByKind(t *testing.T, g *Game, kindID string) akara.Entity {
 		carrier, _ := g.stores.CarriedBy.Get(entity)
 		item, found := g.stores.Items.Get(entity)
 
-		if found && carrier.Holder == g.player && item.KindID == kindID {
+		if found &&
+			carrier.Holder == g.player && item.KindID == kindID {
 			return entity
 		}
 	}
@@ -33,7 +34,8 @@ func TestDropFullItemAndPickItUpAgain(t *testing.T) {
 		ItemID: uint64(itemID),
 	})
 
-	if err != nil || result.Spent != 10 || g.stores.CarriedBy.Has(itemID) {
+	if err != nil ||
+		result.Spent != 10 || g.stores.CarriedBy.Has(itemID) {
 		t.Fatalf("drop = %+v, %v; still carried=%v", result, err, g.stores.CarriedBy.Has(itemID))
 	}
 
@@ -64,7 +66,8 @@ func TestPartialDropMergesMatchingFloorStackAndSaves(t *testing.T) {
 		Quantity: 2,
 	})
 
-	if err != nil || first.Spent != 10 || item.Quantity != 1 {
+	if err != nil ||
+		first.Spent != 10 || item.Quantity != 1 {
 		t.Fatalf("partial drop = %+v, %v; carried quantity=%d", first, err, item.Quantity)
 	}
 
@@ -157,7 +160,8 @@ func TestDropEquipmentRulesAndInvalidRequests(t *testing.T) {
 		ItemID: uint64(weapon),
 	})
 
-	if err != nil || result.Spent != 10 || g.stores.Equipped.Has(weapon) {
+	if err != nil ||
+		result.Spent != 10 || g.stores.Equipped.Has(weapon) {
 		t.Fatalf("weapon drop = %+v, %v; equipped=%v", result, err, g.stores.Equipped.Has(weapon))
 	}
 

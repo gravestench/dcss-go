@@ -259,7 +259,8 @@ func TestDecodeGoldenRows(t *testing.T) {
 		t.Fatalf("spriggan: %+v", defs[4])
 	}
 
-	if defs[5].Speed != 0 || defs[5].AverageHP10x != 0 ||
+	if defs[5].Speed != 0 ||
+		defs[5].AverageHP10x != 0 ||
 		strings.Join(defs[5].Flags, ",") != "M_NO_EXP_GAIN,M_NO_THREAT,M_CANT_SPAWN" {
 		t.Fatalf("bug: %+v", defs[5])
 	}

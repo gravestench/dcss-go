@@ -53,7 +53,8 @@ type AnimalBite struct {
 // PoisonBiteAmount follows melee-attack.cc's 1-in-3 normal poison flavour.
 // A zero result means the flavour did not trigger after the bite landed.
 func PoisonBiteAmount(r Roller, hitDice int) (int, error) {
-	if r == nil || hitDice <= 0 || hitDice > 1000 {
+	if r == nil ||
+		hitDice <= 0 || hitDice > 1000 {
 		return 0, fmt.Errorf("invalid poison bite hit dice %d", hitDice)
 	}
 
@@ -104,7 +105,8 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 		invalidArmour = invalidArmour || invalidArmourPiece(piece)
 	}
 
-	if invalidStats || invalidArmour || invalidShield {
+	if invalidStats ||
+		invalidArmour || invalidShield {
 		return Defense{}, fmt.Errorf("invalid Human Fighter defense %+v", in)
 	}
 
@@ -237,12 +239,14 @@ func random2avg2(r Roller, bound int) (int, error) {
 func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, error) {
 	if r == nil ||
 		attack.TypeID != "AT_BITE" ||
-		(attack.FlavourID != "AF_PLAIN" && attack.FlavourID != "AF_POISON") ||
+		(attack.FlavourID != "AF_PLAIN" &&
+			attack.FlavourID != "AF_POISON") ||
 		attack.HD <= 0 ||
 		attack.Damage <= 0 ||
 		defense.EV < 0 ||
 		defense.AC < 0 ||
-		defense.ShieldClass < 0 || defense.GDR < 0 || defense.ShieldBlocks < 0 {
+		defense.ShieldClass < 0 ||
+		defense.GDR < 0 || defense.ShieldBlocks < 0 {
 		return Outcome{}, fmt.Errorf("unsupported ordinary bite or defense: %+v %+v", attack, defense)
 	}
 

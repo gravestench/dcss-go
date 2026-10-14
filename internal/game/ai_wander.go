@@ -79,7 +79,8 @@ func (s *monsterDecisionSystem) chooseWanderTarget(
 
 		targetX, targetY := x+dx-6, y+dy-6
 
-		if (targetX != x || targetY != y) && level.Walkable(targetX, targetY) {
+		if (targetX != x ||
+			targetY != y) && level.Walkable(targetX, targetY) {
 			ai.TargetX = targetX
 			ai.TargetY = targetY
 

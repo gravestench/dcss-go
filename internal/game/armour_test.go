@@ -58,14 +58,16 @@ func TestTakeOffArmourSpendsFiveTurnsAndCanBeInterrupted(t *testing.T) {
 		ItemID: uint64(shield),
 	})
 
-	if err != nil || first.Spent != 10 || !g.stores.Equipped.Has(shield) {
+	if err != nil ||
+		first.Spent != 10 || !g.stores.Equipped.Has(shield) {
 		t.Fatalf("takeoff start = %+v, %v", first, err)
 	}
 
 	for turn := 0; turn < 3; turn++ {
 		result, err := g.Step(Command{Kind: CommandContinueEquipment})
 
-		if err != nil || result.Spent != 10 || !g.stores.Equipped.Has(shield) {
+		if err != nil ||
+			result.Spent != 10 || !g.stores.Equipped.Has(shield) {
 			t.Fatalf("takeoff turn %d = %+v, %v", turn, result, err)
 		}
 
@@ -81,7 +83,8 @@ func TestTakeOffArmourSpendsFiveTurnsAndCanBeInterrupted(t *testing.T) {
 
 	cancelled, err := g.Step(Command{Kind: CommandCancelEquipment})
 
-	if err != nil || cancelled.Spent != 0 || !g.stores.Equipped.Has(shield) {
+	if err != nil ||
+		cancelled.Spent != 0 || !g.stores.Equipped.Has(shield) {
 		t.Fatalf("cancelled takeoff = %+v, %v", cancelled, err)
 	}
 
@@ -106,7 +109,8 @@ func TestArmourSwapSavesMidDelayAndChangesDefenseAtFinish(t *testing.T) {
 		ItemID: uint64(plate),
 	})
 
-	if err != nil || first.Spent != 10 || !g.stores.Equipped.Has(old) {
+	if err != nil ||
+		first.Spent != 10 || !g.stores.Equipped.Has(old) {
 		t.Fatalf("armour swap start = %+v, %v", first, err)
 	}
 
@@ -301,7 +305,8 @@ func TestHumanWearsAuxiliaryArmourAcrossSavedDelay(t *testing.T) {
 				ItemID: uint64(itemID),
 			})
 
-			if err != nil || first.Spent != 10 || first.View.EquipmentDelay == nil {
+			if err != nil ||
+				first.Spent != 10 || first.View.EquipmentDelay == nil {
 				t.Fatalf("wear start = %+v, %v", first, err)
 			}
 
@@ -429,14 +434,16 @@ func TestAuxiliaryArmourChangesDefenseWhenDelayFinishes(t *testing.T) {
 		for turn := 0; turn < 3; turn++ {
 			result, err = g.Step(Command{Kind: CommandContinueEquipment})
 
-			if err != nil || result.Spent != 10 || result.View.PlayerAC != before {
+			if err != nil ||
+				result.Spent != 10 || result.View.PlayerAC != before {
 				t.Fatalf("%s changed AC during wear turn %d", piece.kindID, turn)
 			}
 		}
 
 		result, err = g.Step(Command{Kind: CommandContinueEquipment})
 
-		if err != nil || result.Spent != 10 || result.View.PlayerAC != piece.wantAC {
+		if err != nil ||
+			result.Spent != 10 || result.View.PlayerAC != piece.wantAC {
 			t.Fatalf("wear %s ended at AC %d, want %d: %v",
 				piece.kindID, result.View.PlayerAC, piece.wantAC, err)
 		}
@@ -454,14 +461,16 @@ func TestAuxiliaryArmourChangesDefenseWhenDelayFinishes(t *testing.T) {
 	for turn := 0; turn < 3; turn++ {
 		result, err = g.Step(Command{Kind: CommandContinueEquipment})
 
-		if err != nil || result.Spent != 10 || result.View.PlayerAC != 11 {
+		if err != nil ||
+			result.Spent != 10 || result.View.PlayerAC != 11 {
 			t.Fatalf("gloves changed AC during removal turn %d", turn)
 		}
 	}
 
 	result, err = g.Step(Command{Kind: CommandContinueEquipment})
 
-	if err != nil || result.Spent != 10 || result.View.PlayerAC != 10 {
+	if err != nil ||
+		result.Spent != 10 || result.View.PlayerAC != 10 {
 		t.Fatalf("gloves removal ended at AC %d, want 10: %v", result.View.PlayerAC, err)
 	}
 }
@@ -580,7 +589,8 @@ func TestAuxiliaryArmourSwapTakesTenTurnsAcrossSave(t *testing.T) {
 
 	equipped, found := restored.stores.Equipped.Get(hat)
 
-	if !found || equipped.Slot != "head" || restored.View().CurrentAut != 100 {
+	if !found ||
+		equipped.Slot != "head" || restored.View().CurrentAut != 100 {
 		t.Fatal("hat was not equipped after ten turns")
 	}
 

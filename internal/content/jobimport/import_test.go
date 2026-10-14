@@ -75,7 +75,8 @@ func TestGenerateJobArtifactDeterministic(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if artifact.SchemaVersion != 1 || artifact.SourceRevision != pinnedRevision ||
+	if artifact.SchemaVersion != 1 ||
+		artifact.SourceRevision != pinnedRevision ||
 		artifact.TagMajorVersion != 34 ||
 		len(artifact.SourceFiles) != 6 ||
 		len(artifact.Jobs) != 2 {

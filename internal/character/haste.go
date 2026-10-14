@@ -7,7 +7,8 @@ const HasteCapAut = 400
 // HastePotionDuration follows potion.cc and player.cc: the nominal potion
 // turns are cut to two thirds before they are stored in aut, then capped.
 func HastePotionDuration(roller Roller, currentAut int) (int, string, error) {
-	if roller == nil || currentAut < 0 || currentAut > HasteCapAut {
+	if roller == nil ||
+		currentAut < 0 || currentAut > HasteCapAut {
 		return 0, "", fmt.Errorf("invalid haste duration %d", currentAut)
 	}
 
@@ -79,7 +80,8 @@ func roundedTwoThirds(roller Roller, stream string, value int) (int, error) {
 // DecayHaste follows player.cc:4616-4642. A timer that crosses zero during
 // a long action remains truthy for one more action before the slowdown text.
 func DecayHaste(roller Roller, currentAut, costAut int) (int, string, error) {
-	if currentAut < 0 || currentAut > HasteCapAut || costAut < 0 {
+	if currentAut < 0 ||
+		currentAut > HasteCapAut || costAut < 0 {
 		return 0, "", fmt.Errorf("invalid haste decay %d by %d", currentAut, costAut)
 	}
 

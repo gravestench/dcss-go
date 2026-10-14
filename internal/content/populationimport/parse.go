@@ -58,7 +58,8 @@ func parseDungeonRows(source []byte) ([]content.DungeonPopEntry, error) {
 		maxDepth, maxErr := strconv.Atoi(match[2])
 		rarity, rarityErr := strconv.Atoi(match[3])
 
-		if minErr != nil || maxErr != nil || rarityErr != nil {
+		if minErr != nil ||
+			maxErr != nil || rarityErr != nil {
 			return nil, fmt.Errorf("invalid Dungeon population number at line %d", i+1)
 		}
 

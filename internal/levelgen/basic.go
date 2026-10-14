@@ -37,7 +37,8 @@ type builder struct {
 // BasicDungeon ports the geometry of layout_basic for Dungeon:1-2. Other
 // Dungeon layouts and vaults require separate source-backed implementations.
 func BasicDungeon(depth int, next func() uint64) (Layout, error) {
-	if depth < 1 || depth > 2 || next == nil {
+	if depth < 1 ||
+		depth > 2 || next == nil {
 		return Layout{}, fmt.Errorf("basic Dungeon layout needs depth 1 or 2 and a random source")
 	}
 
@@ -127,7 +128,8 @@ func (b *builder) build(depth int) ([3]StairPair, error) {
 			return stairs, fmt.Errorf("Dungeon:%d trail %d: %w", depth, index+1, err)
 		}
 
-		if occupied[pair.Down] || occupied[pair.Up] || pair.Down == pair.Up {
+		if occupied[pair.Down] ||
+			occupied[pair.Up] || pair.Down == pair.Up {
 			return stairs, fmt.Errorf("Dungeon:%d trail %d overlaps another stair", depth, index+1)
 		}
 
@@ -215,7 +217,8 @@ func (b *builder) stairsConnected(stairs [3]StairPair) bool {
 				Y: current.Y + direction.Y,
 			}
 
-			if !b.inBounds(next) || visited[next] || b.grid[next.Y][next.X] == '#' {
+			if !b.inBounds(next) ||
+				visited[next] || b.grid[next.Y][next.X] == '#' {
 				continue
 			}
 

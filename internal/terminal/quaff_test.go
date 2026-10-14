@@ -76,6 +76,7 @@ func TestQuaffHasteFromInventoryShowsFastLight(t *testing.T) {
 			KindID:   "POT_HASTE",
 			Quantity: 1,
 		},
+
 		CarriedBy: &ecs.CarriedBy{
 			Holder: akara.Entity(snapshot.PlayerID),
 		},
@@ -92,7 +93,8 @@ func TestQuaffHasteFromInventoryShowsFastLight(t *testing.T) {
 	m.handleKey("q")
 	m.handleKey(potionLetter(t, m, "POT_HASTE"))
 
-	if m.screen != ScreenPlay || m.notice != "" ||
+	if m.screen != ScreenPlay ||
+		m.notice != "" ||
 		m.game.View().HasteAut == 0 ||
 		!strings.Contains(plainApp(m), "Fast") {
 		t.Fatalf("haste quaff screen %d, notice %q, duration %d",

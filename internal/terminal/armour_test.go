@@ -93,7 +93,8 @@ func TestSaveControlsWorkDuringEquipmentDelay(t *testing.T) {
 
 	command := m.handleKey("n")
 
-	if m.screen != ScreenPlay || command == nil ||
+	if m.screen != ScreenPlay ||
+		command == nil ||
 		m.game.View().CurrentAut != before {
 		t.Fatal("cancelled save failed to resume equipment delay")
 	}

@@ -114,7 +114,8 @@ func (c Catalog) Validate() error {
 		return fmt.Errorf("catalog has no version or source revision")
 	}
 
-	if c.player.SpeciesID == "" || c.player.JobID == "" || c.player.Speed <= 0 {
+	if c.player.SpeciesID == "" ||
+		c.player.JobID == "" || c.player.Speed <= 0 {
 		return fmt.Errorf("catalog has an invalid player fixture")
 	}
 
@@ -161,7 +162,8 @@ func (c Catalog) Validate() error {
 	}
 
 	for id, monster := range c.monsters {
-		if id == "" || monster.ID != id || monster.validate() != nil {
+		if id == "" ||
+			monster.ID != id || monster.validate() != nil {
 			return fmt.Errorf("invalid monster definition %q", id)
 		}
 	}
@@ -173,7 +175,8 @@ func (c Catalog) Validate() error {
 	for i, id := range c.spellOrder {
 		spell, found := c.spells[id]
 
-		if !found || spell.NumericID != i || spell.validate() != nil {
+		if !found ||
+			spell.NumericID != i || spell.validate() != nil {
 			return fmt.Errorf("invalid spell definition %s", id)
 		}
 	}
@@ -185,7 +188,8 @@ func (c Catalog) Validate() error {
 	for i, id := range c.branchOrder {
 		branch, found := c.branches[id]
 
-		if !found || branch.NumericID != i || branch.validate() != nil {
+		if !found ||
+			branch.NumericID != i || branch.validate() != nil {
 			return fmt.Errorf("invalid branch definition %s", id)
 		}
 
@@ -197,7 +201,8 @@ func (c Catalog) Validate() error {
 	}
 
 	for id, item := range c.items {
-		if id == "" || item.ID != id || item.validate() != nil {
+		if id == "" ||
+			item.ID != id || item.validate() != nil {
 			return fmt.Errorf("invalid item definition %q", id)
 		}
 	}

@@ -11,7 +11,8 @@ func TestNewRunSightAndOcclusion(t *testing.T) {
 	g := newStepGame(t)
 	view := g.View()
 
-	if view.Width != 17 || view.Height != 9 || len(view.Cells) != 153 {
+	if view.Width != 17 ||
+		view.Height != 9 || len(view.Cells) != 153 {
 		t.Fatalf("view geometry: %+v", view)
 	}
 

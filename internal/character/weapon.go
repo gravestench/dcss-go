@@ -55,7 +55,8 @@ func WeaponOptions(c content.Catalog, speciesID, jobID string) ([]WeaponOption, 
 		return nil, err
 	}
 
-	if !species.Selectable || !job.Selectable || bannedPair(species, jobID) {
+	if !species.Selectable ||
+		!job.Selectable || bannedPair(species, jobID) {
 		return nil, fmt.Errorf("%s/%s is not a legal normal Dungeon start", speciesID, jobID)
 	}
 

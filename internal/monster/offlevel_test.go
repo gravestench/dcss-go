@@ -11,7 +11,8 @@ type offLevelRoller struct {
 }
 
 func (r *offLevelRoller) Intn(stream string, bound int) (int, error) {
-	if stream != "offlevel" || bound != 100 || r.calls >= len(r.values) {
+	if stream != "offlevel" ||
+		bound != 100 || r.calls >= len(r.values) {
 		return 0, fmt.Errorf("unexpected off-level roll %s/%d", stream, bound)
 	}
 
@@ -65,7 +66,8 @@ func TestOffLevelRecoveryUsesSourceFractionalRound(t *testing.T) {
 			roller := &offLevelRoller{values: tc.values}
 			got, err := OffLevelRecovery(roller, tc.turns, 10)
 
-			if err != nil || got != tc.want || roller.calls != len(tc.values) {
+			if err != nil ||
+				got != tc.want || roller.calls != len(tc.values) {
 				t.Fatalf("recovery = %d, calls = %d, err = %v", got, roller.calls, err)
 			}
 		})
@@ -76,7 +78,8 @@ func TestFastOffLevelRecoveryHealsOncePerAwayTurn(t *testing.T) {
 	roller := &offLevelRoller{}
 	got, err := OffLevelRecovery(roller, 17, 100)
 
-	if err != nil || got != 17 || roller.calls != 0 {
+	if err != nil ||
+		got != 17 || roller.calls != 0 {
 		t.Fatalf("fast recovery = %d, calls = %d, error = %v", got, roller.calls, err)
 	}
 }

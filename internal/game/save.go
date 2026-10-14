@@ -94,8 +94,10 @@ func validateSavedItem(
 		return nil
 	}
 
-	if record.CarriedBy == nil || record.CarriedBy.Holder != player ||
-		record.Position != nil || kind.Slot == "" ||
+	if record.CarriedBy == nil ||
+		record.CarriedBy.Holder != player ||
+		record.Position != nil ||
+		kind.Slot == "" ||
 		record.Equipped.Slot != kind.Slot {
 		return fmt.Errorf("item %d has invalid equipped slot or carrier", record.ID)
 	}
@@ -118,13 +120,15 @@ func validateSavedCorpse(record save.EntityRecord, catalog content.Catalog) erro
 	item := record.Item
 	corpse := record.Corpse
 
-	if record.Position == nil || record.CarriedBy != nil ||
+	if record.Position == nil ||
+		record.CarriedBy != nil ||
 		record.Equipped != nil || item.Quantity != 1 {
 		return fmt.Errorf("item %d has invalid ordinary animal corpse state", record.ID)
 	}
 
 	if !isOrdinaryAnimal(corpse.MonsterID) ||
-		corpse.Freshness < 1 || corpse.Freshness > 110 ||
+		corpse.Freshness < 1 ||
+		corpse.Freshness > 110 ||
 		corpse.Appearance < 1 || corpse.Appearance > 255 {
 		return fmt.Errorf("item %d has invalid ordinary animal corpse state", record.ID)
 	}

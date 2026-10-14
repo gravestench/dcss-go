@@ -15,7 +15,8 @@ type regenRoller struct {
 }
 
 func (r *regenRoller) Intn(stream string, bound int) (int, error) {
-	if stream != "regeneration" || len(r.rolls) == 0 || r.rolls[0].bound != bound {
+	if stream != "regeneration" ||
+		len(r.rolls) == 0 || r.rolls[0].bound != bound {
 		return 0, fmt.Errorf("unexpected %s/%d; remaining %+v", stream, bound, r.rolls)
 	}
 

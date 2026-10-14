@@ -19,7 +19,8 @@ func TestPlayerTrainingStateIsOwnedByAkaraAndSnapshotIsIsolated(t *testing.T) {
 		t.Fatal("player has no skill-training component")
 	}
 
-	if training.CostLevel != 1 || training.AvailableXP != 0 ||
+	if training.CostLevel != 1 ||
+		training.AvailableXP != 0 ||
 		training.SpentXP != 0 || len(training.Settings) != 4 {
 		t.Fatalf("starting training state %+v", *training)
 	}
@@ -205,7 +206,8 @@ func TestSkillTrainingChoicesDoNotSpendTime(t *testing.T) {
 	view := g.View()
 	setting := view.SkillTraining.Settings[0]
 
-	if !view.SkillTraining.Manual || setting.Enabled ||
+	if !view.SkillTraining.Manual ||
+		setting.Enabled ||
 		view.SkillPercent[setting.ID] != 0 || g.currentAut != beforeAut {
 		t.Fatalf("manual toggle changed time or wrong state: %+v", view.SkillTraining)
 	}
@@ -328,7 +330,8 @@ func TestFightingPracticeRecalculatesHPBeforeAdvancement(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if want <= before || health.Max != want || health.Current != want {
+	if want <= before ||
+		health.Max != want || health.Current != want {
 		t.Fatalf("Fighting points %d left HP %+v, want %d", skills.Entries[0].Points, *health, want)
 	}
 }

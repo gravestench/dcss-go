@@ -66,7 +66,8 @@ func (c *Canvas) clearAt(x, y int) {
 		}
 	}
 
-	if !c.cells[i].continuation && x+1 < c.width && c.cells[i+1].continuation {
+	if !c.cells[i].continuation &&
+		x+1 < c.width && c.cells[i+1].continuation {
 		c.cells[i+1] = cell{
 			text: " ",
 			fg:   LightGrey,
@@ -88,7 +89,8 @@ func (c *Canvas) Put(x, y int, glyph rune, fg, bg Color) {
 
 	w := runewidth.RuneWidth(glyph)
 
-	if w < 1 || w > 2 || x+w > c.width {
+	if w < 1 ||
+		w > 2 || x+w > c.width {
 		return
 	}
 
@@ -193,7 +195,8 @@ func (c *Canvas) Styled() string {
 				continue
 			}
 
-			if haveRun && (entry.fg != fg || entry.bg != bg) {
+			if haveRun &&
+				(entry.fg != fg || entry.bg != bg) {
 				flush()
 				haveRun = false
 			}

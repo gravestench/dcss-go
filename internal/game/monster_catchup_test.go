@@ -69,7 +69,8 @@ func TestReturnedMonsterHealsAndWalksTowardLastTarget(t *testing.T) {
 
 	position, _ := g.stores.Positions.Get(rat)
 
-	if health.Current != 2 || position.X != 7 || position.Y != 1 {
+	if health.Current != 2 ||
+		position.X != 7 || position.Y != 1 {
 		t.Fatalf("returned rat has %d HP at %+v, want 2 HP at (7,1)", health.Current, *position)
 	}
 
@@ -271,7 +272,8 @@ func TestSavedInactiveMonsterReturnsWithSameCatchup(t *testing.T) {
 		returnedHealth, _ := run.stores.Health.Get(rat)
 		position, _ := run.stores.Positions.Get(rat)
 
-		if returnedHealth.Current <= 1 || position.X != 7 || position.Y != 1 {
+		if returnedHealth.Current <= 1 ||
+			position.X != 7 || position.Y != 1 {
 			t.Fatalf("returned rat has %d HP at %+v", returnedHealth.Current, *position)
 		}
 	}

@@ -21,7 +21,8 @@ type combatRoller struct {
 }
 
 func (r *combatRoller) Intn(stream string, bound int) (int, error) {
-	if stream != "melee" || len(r.rolls) == 0 || r.rolls[0].bound != bound {
+	if stream != "melee" ||
+		len(r.rolls) == 0 || r.rolls[0].bound != bound {
 		return 0, fmt.Errorf("unexpected %s roll %d; left %+v", stream, bound, r.rolls)
 	}
 
@@ -290,7 +291,8 @@ func TestRatBiteWorksForUnarmedFighterAndCostsOneTurn(t *testing.T) {
 
 	result, err := g.Step(Command{Kind: CommandWait})
 
-	if err != nil || result.Spent != 10 || result.View.CurrentAut != 10 {
+	if err != nil ||
+		result.Spent != 10 || result.View.CurrentAut != 10 {
 		t.Fatalf("unarmed wait/rat bite = %+v, %v", result, err)
 	}
 }

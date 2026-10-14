@@ -37,7 +37,8 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 			if in.Strength != 16 ||
 				in.Dexterity != 12 ||
 				in.FightingSkill100 != 300 ||
-				in.WeaponSkill100 != 200 || in.DefenderEV != 10 || in.DefenderAC != 1 {
+				in.WeaponSkill100 != 200 ||
+				in.DefenderEV != 10 || in.DefenderAC != 1 {
 				t.Fatalf("source input = %+v", in)
 			}
 
@@ -143,7 +144,8 @@ func TestPlayerLethalBumpClearsRatOccupancy(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if (result.Spent != 11 && result.Spent != 12) || g.world.EntityExists(rat) {
+	if (result.Spent != 11 &&
+		result.Spent != 12) || g.world.EntityExists(rat) {
 		t.Fatalf(
 			"lethal bump spent %d aut, rat still exists %v; events %+v",
 			result.Spent,

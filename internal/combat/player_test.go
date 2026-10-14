@@ -154,7 +154,8 @@ func TestPlayerMeleeMissAndAutomaticOverrides(t *testing.T) {
 			rng := &scriptedRoller{rolls: tc.rolls}
 			got, err := PlayerMelee(rng, fighterFlailAttack())
 
-			if err != nil || got.Kind != tc.want || len(rng.rolls) != 0 {
+			if err != nil ||
+				got.Kind != tc.want || len(rng.rolls) != 0 {
 				t.Fatalf("attack = %+v, err %v, rolls %+v", got, err, rng.rolls)
 			}
 		})
@@ -425,7 +426,8 @@ func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 
 	got, err = PlayerMelee(rng, in)
 
-	if err != nil || got.Kind != Miss || len(rng.rolls) != 0 {
+	if err != nil ||
+		got.Kind != Miss || len(rng.rolls) != 0 {
 		t.Fatalf("mighty miss = %+v, %v; rolls %+v", got, err, rng.rolls)
 	}
 }

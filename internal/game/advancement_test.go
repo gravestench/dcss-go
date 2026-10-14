@@ -28,7 +28,8 @@ func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if progress.Level != 2 || progress.PendingStatLevel != 0 ||
+	if progress.Level != 2 ||
+		progress.PendingStatLevel != 0 ||
 		g.View().ExperienceLevel != 2 || g.View().NextLevelPercent != 0 {
 		t.Fatalf("XL2 state = %+v, view %+v", progress, g.View())
 	}
@@ -54,13 +55,15 @@ func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 	beforeAut := g.currentAut
 	blocked, err := g.Step(Command{Kind: CommandWait})
 
-	if err != nil || blocked.Spent != 0 || g.currentAut != beforeAut {
+	if err != nil ||
+		blocked.Spent != 0 || g.currentAut != beforeAut {
 		t.Fatalf("turn advanced during stat choice: %+v, %v", blocked, err)
 	}
 
 	invalid, err := g.ChooseStat("luck")
 
-	if err != nil || invalid.Spent != 0 || progress.PendingStatLevel != 3 {
+	if err != nil ||
+		invalid.Spent != 0 || progress.PendingStatLevel != 3 {
 		t.Fatalf("invalid stat choice changed progression: %+v, %v", invalid, err)
 	}
 
@@ -107,7 +110,8 @@ func TestHumanAdvancementRunsThroughFinalLevel(t *testing.T) {
 		}
 	}
 
-	if progress.Level != 27 || progress.PendingStatLevel != 0 ||
+	if progress.Level != 27 ||
+		progress.PendingStatLevel != 0 ||
 		g.View().ExperienceLevel != 27 || g.View().NextLevelPercent != 0 {
 		t.Fatalf("final level state = %+v, view %+v", progress, g.View())
 	}
@@ -170,7 +174,8 @@ func TestStatChoiceInterruptsMonsterPhase(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if chosen.View.PendingStatLevel != 0 || chosen.View.ExperienceLevel != 3 ||
+	if chosen.View.PendingStatLevel != 0 ||
+		chosen.View.ExperienceLevel != 3 ||
 		g.currentAut != 10 {
 		t.Fatalf("stat choice did not finish turn: %+v", chosen)
 	}

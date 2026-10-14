@@ -97,7 +97,8 @@ func TestMightDurationDecay(t *testing.T) {
 	} {
 		got, ended, err := DecayMight(tc.old, tc.cost)
 
-		if err != nil || got != tc.want || ended != tc.ended {
+		if err != nil ||
+			got != tc.want || ended != tc.ended {
 			t.Fatalf("decay %d by %d = %d/%v, %v", tc.old, tc.cost, got, ended, err)
 		}
 	}

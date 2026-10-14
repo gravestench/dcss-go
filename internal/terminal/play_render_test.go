@@ -141,7 +141,8 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 		}
 	}
 
-	if rows[8][16] != '@' || rows[8][19] != 'r' || rows[9][19] == ' ' {
+	if rows[8][16] != '@' ||
+		rows[8][19] != 'r' || rows[9][19] == ' ' {
 		t.Fatalf("map not centered on player: %q / %q", rows[8], rows[9])
 	}
 
@@ -248,7 +249,8 @@ func TestDrawPlayExpandedViewportUsesFullTerminal(t *testing.T) {
 		t.Fatalf("expanded map/HUD positions: %q / %q", rows[16], rows[0])
 	}
 
-	if len(rows) != 40 || len(rows[0]) != 120 || len(rows[39]) != 120 {
+	if len(rows) != 40 ||
+		len(rows[0]) != 120 || len(rows[39]) != 120 {
 		t.Fatalf("terminal dimensions: %d rows, %d/%d columns", len(rows), len(rows[0]), len(rows[39]))
 	}
 }

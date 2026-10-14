@@ -48,7 +48,8 @@ func (s *monsterDecisionSystem) goalActorForTarget(
 
 	leader, alive := s.positions.Get(follower.Leader)
 
-	if alive && leader.LevelID == position.LevelID &&
+	if alive &&
+		leader.LevelID == position.LevelID &&
 		ai.TargetX == leader.X && ai.TargetY == leader.Y {
 		return follower.Leader
 	}
@@ -124,7 +125,8 @@ func (s *monsterDecisionSystem) routeMonsterIntent(
 
 	// RouteStep may enter a goal actor's tile for melee. A band leader is
 	// a navigation goal, never a valid attack target for its followers.
-	if goalActor != 0 && goalActor != s.player &&
+	if goalActor != 0 &&
+		goalActor != s.player &&
 		nextX == ai.TargetX && nextY == ai.TargetY {
 		return ecs.Intent{Kind: ecs.IntentWait}, true
 	}

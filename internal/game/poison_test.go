@@ -39,7 +39,8 @@ func TestAdderPoisonBiteAddsPlayerOwnedStatus(t *testing.T) {
 
 	poison, found := g.stores.Poison.Get(g.player)
 
-	if !found || poison.AmountScaled != 8000 ||
+	if !found ||
+		poison.AmountScaled != 8000 ||
 		poison.SourceMonsterID != adder.ID {
 		t.Fatalf("adder poison = %+v, present %v", poison, found)
 	}
@@ -133,7 +134,8 @@ func TestAdderZeroDamageBiteStillPoisonsPlayer(t *testing.T) {
 
 	poison, found := g.stores.Poison.Get(g.player)
 
-	if health.Current != before || !found ||
+	if health.Current != before ||
+		!found ||
 		poison.AmountScaled != 8000 ||
 		len(g.turn.Events) != 2 {
 		t.Fatalf(
@@ -195,7 +197,8 @@ func TestCuringClearsPoisonAtFullHealth(t *testing.T) {
 		ItemID: itemID,
 	})
 
-	if err != nil || result.Spent != 10 || g.stores.Poison.Has(g.player) {
+	if err != nil ||
+		result.Spent != 10 || g.stores.Poison.Has(g.player) {
 		t.Fatalf("full-HP curing = %+v, %v", result, err)
 	}
 }
@@ -293,7 +296,8 @@ func TestPoisonWaitCanKillBeforeMonsterTurn(t *testing.T) {
 
 	result, err := g.Step(Command{Kind: CommandWait})
 
-	if err != nil || !result.View.PlayerDead ||
+	if err != nil ||
+		!result.View.PlayerDead ||
 		health.Current != 0 ||
 		!containsEvent(result.Events, "You die.") {
 		t.Fatalf("poison death = HP %d, dead %v, error %v", health.Current, result.View.PlayerDead, err)

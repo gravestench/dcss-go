@@ -25,7 +25,8 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 		t.Fatalf("menu group counts: %d species, %d jobs", len(p.SpeciesGroups), len(p.JobGroups))
 	}
 
-	if len(p.StartupModes) != 8 || p.StartupModes[0].ID != "GAME_TYPE_NORMAL" ||
+	if len(p.StartupModes) != 8 ||
+		p.StartupModes[0].ID != "GAME_TYPE_NORMAL" ||
 		p.StartupModes[0].Label != "Dungeon Crawl" ||
 		p.StartupModes[7].ID != "GAME_TYPE_HIGH_SCORES" {
 		t.Fatalf("source startup mode order: %+v", p.StartupModes)

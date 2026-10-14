@@ -40,7 +40,8 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 				Strength:     16,
 				Intelligence: 8,
 				Dexterity:    12,
-			}) || got.MaxHP != 18 || got.MaxMP != 1 {
+			}) ||
+				got.MaxHP != 18 || got.MaxMP != 1 {
 				t.Fatalf("profile = %+v, want 16/8/12, HP 18, MP 1", got)
 			}
 

@@ -200,8 +200,10 @@ func (g *Game) floorItemsAt(levelID int, cell point) []akara.Entity {
 	for _, entity := range g.stores.Items.Entities() {
 		position, found := g.stores.Positions.Get(entity)
 
-		if found && position.LevelID == levelID &&
-			position.X == cell.x && position.Y == cell.y &&
+		if found &&
+			position.LevelID == levelID &&
+			position.X == cell.x &&
+			position.Y == cell.y &&
 			!g.stores.CarriedBy.Has(entity) {
 			items = append(items, entity)
 		}
@@ -221,8 +223,9 @@ type doorSystem struct {
 func (s *doorSystem) Update(_ *akara.World, _ time.Duration) error {
 	intent, found := s.intents.Get(s.turn.Actor)
 
-	if !found || (intent.Kind != ecs.IntentOpenDoor &&
-		intent.Kind != ecs.IntentCloseDoor) {
+	if !found ||
+		(intent.Kind != ecs.IntentOpenDoor &&
+			intent.Kind != ecs.IntentCloseDoor) {
 		return nil
 	}
 

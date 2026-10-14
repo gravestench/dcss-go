@@ -108,7 +108,8 @@ func (c playerCombat) projectAttackWeapon(in *combat.PlayerAttackInput) error {
 		equipment, _ := c.equipped.Get(entity)
 		carrier, carried := c.carried.Get(entity)
 
-		if !carried || carrier.Holder != c.player || equipment.Slot != "weapon" {
+		if !carried ||
+			carrier.Holder != c.player || equipment.Slot != "weapon" {
 			continue
 		}
 
@@ -257,7 +258,8 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 
 			in.WeaponSpeed = kind.Weapon.Speed
 		} else {
-			if shieldFound || kind.Armour == nil || kind.Slot != "shield" {
+			if shieldFound ||
+				kind.Armour == nil || kind.Slot != "shield" {
 				return combat.AttackDelayInput{}, fmt.Errorf("unsupported equipped shield %s", kind.ID)
 			}
 

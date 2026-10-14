@@ -34,7 +34,8 @@ func TestSchedulerTieBreak(t *testing.T) {
 
 	entity, at, ok := scheduler.Next(1)
 
-	if !ok || entity != first || at != 0 {
+	if !ok ||
+		entity != first || at != 0 {
 		t.Fatalf("next = (%d,%d,%t), want first actor at aut 0", entity, at, ok)
 	}
 }
@@ -65,7 +66,8 @@ func TestSchedulerSelectsOnlyCurrentFloor(t *testing.T) {
 
 	entity, at, found := scheduler.Next(1)
 
-	if !found || entity != active || at != 20 {
+	if !found ||
+		entity != active || at != 20 {
 		t.Fatalf("active floor actor = (%d, %d, %t), want %d at aut 20", entity, at, found, active)
 	}
 }

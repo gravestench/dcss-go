@@ -126,7 +126,8 @@ func splitFields(src string) ([]string, error) {
 		}
 	}
 
-	if quote != 0 || braces != 0 || parens != 0 {
+	if quote != 0 ||
+		braces != 0 || parens != 0 {
 		return nil, fmt.Errorf("unterminated initializer field")
 	}
 

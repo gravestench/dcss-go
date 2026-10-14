@@ -280,8 +280,10 @@ func (g *Game) prepareMoveCommand(
 	position ecs.Position,
 	level *Level,
 ) (preparedCommand, error) {
-	if command.DX < -1 || command.DX > 1 ||
-		command.DY < -1 || command.DY > 1 ||
+	if command.DX < -1 ||
+		command.DX > 1 ||
+		command.DY < -1 ||
+		command.DY > 1 ||
 		(command.DX == 0 && command.DY == 0) {
 		return freeCommand(g.noTime("Invalid movement direction.")), nil
 	}
@@ -381,7 +383,8 @@ func (g *Game) prepareQuaffCommand(itemID uint64) (preparedCommand, error) {
 	item, found := g.stores.Items.Get(entity)
 	carrier, carried := g.stores.CarriedBy.Get(entity)
 
-	if !found || !carried || carrier.Holder != g.player {
+	if !found ||
+		!carried || carrier.Holder != g.player {
 		return freeCommand(g.noTime("You are not carrying that potion.")), nil
 	}
 

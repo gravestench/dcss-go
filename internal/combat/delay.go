@@ -96,7 +96,8 @@ func PlayerAttackDelay(r Roller, in AttackDelayInput, timeTaken int) (int, error
 		return 0, fmt.Errorf("attack delay requires a roller")
 	}
 
-	if timeTaken != 6 && timeTaken != 7 && timeTaken != 10 {
+	if timeTaken != 6 &&
+		timeTaken != 7 && timeTaken != 10 {
 		return 0, fmt.Errorf("unsupported player action time %d", timeTaken)
 	}
 

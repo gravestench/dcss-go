@@ -170,6 +170,18 @@ func TestCrowdedIfCondition(t *testing.T) {
 		want   int
 	}{
 		{
+			name: "three checks on one line",
+			source: `package example
+func sample(a, b, c bool) {
+	if a || b || c {
+		return
+	}
+}
+`,
+			want: 1,
+		},
+
+		{
 			name: "four checks on one line",
 			source: `package example
 func sample(a, b, c, d bool) {
@@ -366,5 +378,121 @@ func sample() {
 
 	if issues != 0 {
 		t.Fatalf("separated table issues = %d, want 0", issues)
+	}
+}
+
+func TestMultilineMapEntrySpacing(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "sample.go")
+	source := `package example
+
+type Key struct {
+	Class string
+	Kind string
+}
+
+type Row struct {
+	Name string
+	Value int
+}
+
+func sample() {
+	_ = map[Key]Row{
+		Key{
+			Class: "armour",
+			Kind: "hide",
+		}: {
+			Name: "first",
+			Value: 1,
+		},
+		Key{
+			Class: "armour",
+			Kind: "scales",
+		}: {
+			Name: "second",
+			Value: 2,
+		},
+	}
+}
+`
+
+	if err := os.WriteFile(path, []byte(source), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	issues, err := checkFile(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if issues != 1 {
+		t.Fatalf("crowded map issues = %d, want 1", issues)
+	}
+
+	separated := strings.Replace(source, "},\n\t\tKey{", "},\n\n\t\tKey{", 1)
+
+	if err := os.WriteFile(path, []byte(separated), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	issues, err = checkFile(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if issues != 0 {
+		t.Fatalf("separated map issues = %d, want 0", issues)
+	}
+}
+
+func TestMultilineStructFieldsMayStayTogether(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "sample.go")
+	source := `package example
+
+type Pair struct {
+	From int
+	To int
+}
+
+func parse(value int) int {
+	return value
+}
+
+func sample() {
+	_ = Pair{
+		From: parse(
+			1,
+		),
+		To: parse(
+			2,
+		),
+	}
+
+	_ = []Pair{
+		{
+			From: parse(
+				1,
+			),
+			To: parse(
+				2,
+			),
+		},
+	}
+}
+`
+
+	if err := os.WriteFile(path, []byte(source), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	issues, err := checkFile(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if issues != 0 {
+		t.Fatalf("multiline struct fields reported %d issues, want 0", issues)
 	}
 }

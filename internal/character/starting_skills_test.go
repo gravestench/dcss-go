@@ -128,7 +128,8 @@ func TestStartingSkillsRejectsUnsupportedChoice(t *testing.T) {
 	} {
 		got, err := StartingSkills(catalog, tc.species, tc.job, tc.weapon)
 
-		if err == nil || len(got) != 0 || !strings.Contains(err.Error(), tc.job) {
+		if err == nil ||
+			len(got) != 0 || !strings.Contains(err.Error(), tc.job) {
 			t.Fatalf("choice %+v: got %+v, err %v", tc, got, err)
 		}
 	}
@@ -156,7 +157,8 @@ func TestResolveChosenWeaponSkillRejectsBadKind(t *testing.T) {
 
 		got, err := resolveChosenWeaponSkill(kind, species)
 
-		if err == nil || got != "" || !strings.Contains(err.Error(), kind.ID) {
+		if err == nil ||
+			got != "" || !strings.Contains(err.Error(), kind.ID) {
 			t.Fatalf("skill %q: got %q, err %v", skill, got, err)
 		}
 	}

@@ -397,7 +397,8 @@ func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 	item, present := loaded.stores.Items.Get(id)
 	corpse, _ = loaded.stores.Corpses.Get(id)
 
-	if !present || item.KindID != "CORPSE_SKELETON" || corpse.Freshness != 110 {
+	if !present ||
+		item.KindID != "CORPSE_SKELETON" || corpse.Freshness != 110 {
 		t.Fatalf("source return catch-up should reset one skeleton: %+v %+v", item, corpse)
 	}
 }
@@ -410,12 +411,15 @@ func TestRestoreRejectsMalformedCorpseState(t *testing.T) {
 		func(_ *ecs.Item, corpse *ecs.Corpse, _ *ecs.Position) {
 			corpse.MonsterID = "MONS_ORC"
 		},
+
 		func(_ *ecs.Item, corpse *ecs.Corpse, _ *ecs.Position) {
 			corpse.Freshness = 0
 		},
+
 		func(_ *ecs.Item, corpse *ecs.Corpse, _ *ecs.Position) {
 			corpse.Appearance = 256
 		},
+
 		func(item *ecs.Item, _ *ecs.Corpse, _ *ecs.Position) {
 			item.KindID = "POT_CURING"
 		},

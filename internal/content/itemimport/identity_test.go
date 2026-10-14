@@ -247,6 +247,7 @@ enum brand_type
 {
 SPWPN_NORMAL,
 };`),
+
 		"item-prop.h": []byte(`enum armour_flag
 {
 ARMF_RES_FIRE = 1 << 0,
@@ -260,8 +261,10 @@ ARMF_VUL_FIRE = ard(ARMF_RES_FIRE, -1),
 		t.Fatal(err)
 	}
 
-	if len(v.ArmourFlags) != 2 || v.ArmourFlags[0] != "ARMF_RES_FIRE" ||
-		v.ArmourFlags[1] != "ARMF_VUL_FIRE" || len(v.DamageFlags) != 2 ||
+	if len(v.ArmourFlags) != 2 ||
+		v.ArmourFlags[0] != "ARMF_RES_FIRE" ||
+		v.ArmourFlags[1] != "ARMF_VUL_FIRE" ||
+		len(v.DamageFlags) != 2 ||
 		v.DamageFlags[0] != "DAMV_PIERCING" || v.DamageFlags[1] != "DAM_PIERCE" {
 		t.Fatalf("symbolic vocabulary was lost: %+v", v)
 	}

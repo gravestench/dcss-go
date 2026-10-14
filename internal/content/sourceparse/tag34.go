@@ -52,11 +52,13 @@ func stripCommentsPreservingLines(path string, data []byte) ([]byte, error) {
 				state = 1
 			} else if c == '\'' {
 				state = 2
-			} else if c == '/' && i+1 < len(clean) && clean[i+1] == '/' {
+			} else if c == '/' &&
+				i+1 < len(clean) && clean[i+1] == '/' {
 				state = 3
 				clean[i], clean[i+1] = ' ', ' '
 				i++
-			} else if c == '/' && i+1 < len(clean) && clean[i+1] == '*' {
+			} else if c == '/' &&
+				i+1 < len(clean) && clean[i+1] == '*' {
 				state = 4
 				clean[i], clean[i+1] = ' ', ' '
 				i++
@@ -82,7 +84,8 @@ func stripCommentsPreservingLines(path string, data []byte) ([]byte, error) {
 			}
 
 		case 4:
-			if c == '*' && i+1 < len(clean) && clean[i+1] == '/' {
+			if c == '*' &&
+				i+1 < len(clean) && clean[i+1] == '/' {
 				clean[i], clean[i+1] = ' ', ' '
 				i++
 				state = 0
@@ -92,7 +95,8 @@ func stripCommentsPreservingLines(path string, data []byte) ([]byte, error) {
 		}
 	}
 
-	if state == 1 || state == 2 || state == 4 {
+	if state == 1 ||
+		state == 2 || state == 4 {
 		return nil, fmt.Errorf("%s: unterminated string, character, or block comment", path)
 	}
 
@@ -309,7 +313,8 @@ func ActiveEnumIDs(path string, data []byte, prefix string) (map[string]struct{}
 
 		match := enumEntry.FindStringSubmatch(trimmed)
 
-		if match == nil || !strings.HasPrefix(match[1], prefix) || match[2] != "" {
+		if match == nil ||
+			!strings.HasPrefix(match[1], prefix) || match[2] != "" {
 			continue
 		}
 
@@ -320,7 +325,8 @@ func ActiveEnumIDs(path string, data []byte, prefix string) (map[string]struct{}
 		ids[match[1]] = struct{}{}
 	}
 
-	if !started || !inside || len(ids) == 0 {
+	if !started ||
+		!inside || len(ids) == 0 {
 		return nil, fmt.Errorf("%s: no active %s enum entries", path, prefix)
 	}
 

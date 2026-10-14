@@ -150,12 +150,14 @@ func checkFile(path string) (int, error) {
 			adjacent := previousEndLine+1 == nextStartLine
 			_, returns := next.(*ast.ReturnStmt)
 
-			if isControl(next) && !isControl(previous) &&
+			if isControl(next) &&
+				!isControl(previous) &&
 				adjacent {
 				report(next.Pos(), "leave a blank line before the control block")
 			}
 
-			if returns && !isControl(previous) &&
+			if returns &&
+				!isControl(previous) &&
 				adjacent {
 				report(next.Pos(), "leave a blank line before the return")
 			}
@@ -196,14 +198,15 @@ func checkFile(path string) (int, error) {
 
 			binary, ok := part.(*ast.BinaryExpr)
 
-			if !ok || (binary.Op != token.LAND && binary.Op != token.LOR) {
+			if !ok ||
+				(binary.Op != token.LAND && binary.Op != token.LOR) {
 				return true
 			}
 
 			line := fset.Position(binary.OpPos).Line
 			operatorsByLine[line]++
 
-			if operatorsByLine[line] == 3 {
+			if operatorsByLine[line] == 2 {
 				report(binary.OpPos, "put crowded condition checks on separate lines")
 			}
 
@@ -256,11 +259,13 @@ func checkFile(path string) (int, error) {
 			}
 
 		case *ast.AssignStmt:
-			if value.Tok == token.DEFINE && len(value.Lhs) >= 4 && len(value.Rhs) >= 4 {
+			if value.Tok == token.DEFINE &&
+				len(value.Lhs) >= 4 && len(value.Rhs) >= 4 {
 				report(value.Pos(), "declare parser and other local state one variable per line")
 			}
 
-			if value.Tok != token.ASSIGN || len(value.Lhs) < 2 || len(value.Rhs) < 2 {
+			if value.Tok != token.ASSIGN ||
+				len(value.Lhs) < 2 || len(value.Rhs) < 2 {
 				break
 			}
 
@@ -291,7 +296,12 @@ func checkFile(path string) (int, error) {
 			checkStatements(value.Body)
 
 		case *ast.CompositeLit:
-			checkNestedLiteralSpacing(fset, value, report)
+			// An omitted type usually belongs to a nested struct value. The
+			// enclosing collection checks spacing between its entries.
+			if value.Type != nil &&
+				!isStructLiteralType(value.Type, types, importedTypes) {
+				checkMultilineEntrySpacing(fset, value, report)
+			}
 
 			checkCollectionStructValues(
 				fset,
@@ -335,7 +345,8 @@ func checkFile(path string) (int, error) {
 			compactFixedArray := array && fixedArray.Len != nil &&
 				scalarElements(value.Elts)
 
-			if ((len(value.Elts) >= 3 && !compactFixedArray) ||
+			if ((len(value.Elts) >= 3 &&
+				!compactFixedArray) ||
 				len(value.Elts) >= 4 ||
 				keyedFields ||
 				named ||
@@ -348,7 +359,8 @@ func checkFile(path string) (int, error) {
 			}
 
 			// Ten or more fields are difficult to scan as one uninterrupted block.
-			if len(value.Elts) >= 10 && keyedFields &&
+			if len(value.Elts) >= 10 &&
+				keyedFields &&
 				isStructLiteralType(value.Type, types, importedTypes) &&
 				!entriesShareLine(fset, value) &&
 				!literalHasGroupBreak(fset, value, lines) {
@@ -370,39 +382,26 @@ func checkFile(path string) (int, error) {
 	return issues, nil
 }
 
-func checkNestedLiteralSpacing(
+func checkMultilineEntrySpacing(
 	fset *token.FileSet,
 	collection *ast.CompositeLit,
 	report func(token.Pos, string),
 ) {
 	for index := 1; index < len(collection.Elts); index++ {
-		previous, previousOK := nestedLiteral(collection.Elts[index-1])
-		next, nextOK := nestedLiteral(collection.Elts[index])
-
-		if !previousOK || !nextOK {
-			continue
-		}
+		previous := collection.Elts[index-1]
+		next := collection.Elts[index]
 
 		previousStart := fset.Position(previous.Pos()).Line
 		previousEnd := fset.Position(previous.End() - 1).Line
 		nextStart := fset.Position(next.Pos()).Line
 		nextEnd := fset.Position(next.End() - 1).Line
 
-		if previousEnd > previousStart && nextEnd > nextStart &&
+		if previousEnd > previousStart &&
+			nextEnd > nextStart &&
 			previousEnd+1 == nextStart {
 			report(next.Pos(), "leave a blank line between multiline literal entries")
 		}
 	}
-}
-
-func nestedLiteral(element ast.Expr) (*ast.CompositeLit, bool) {
-	if keyed, ok := element.(*ast.KeyValueExpr); ok {
-		element = keyed.Value
-	}
-
-	literal, ok := element.(*ast.CompositeLit)
-
-	return literal, ok
 }
 
 func checkCollectionStructValues(
@@ -433,7 +432,8 @@ func checkCollectionStructValues(
 
 		value, composite := element.(*ast.CompositeLit)
 
-		if !composite || value.Type != nil || len(value.Elts) < 2 {
+		if !composite ||
+			value.Type != nil || len(value.Elts) < 2 {
 			continue
 		}
 
@@ -461,7 +461,8 @@ func checkStructMapKeys(
 
 		key, ok := entry.Key.(*ast.CompositeLit)
 
-		if !ok || key.Type != nil || len(key.Elts) < 2 {
+		if !ok ||
+			key.Type != nil || len(key.Elts) < 2 {
 			continue
 		}
 

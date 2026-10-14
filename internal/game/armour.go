@@ -18,7 +18,8 @@ func (g *Game) prepareEquipmentCommand(command Command) (preparedCommand, error)
 	item, carried := g.stores.Items.Get(itemID)
 	carrier, hasCarrier := g.stores.CarriedBy.Get(itemID)
 
-	if !carried || !hasCarrier || carrier.Holder != g.player {
+	if !carried ||
+		!hasCarrier || carrier.Holder != g.player {
 		return freeCommand(g.noTime("You are not carrying that armour.")), nil
 	}
 
@@ -178,7 +179,8 @@ func (g *Game) equippedInSlot(slot string) akara.Entity {
 		equipped, _ := g.stores.Equipped.Get(entity)
 		carrier, carried := g.stores.CarriedBy.Get(entity)
 
-		if carried && carrier.Holder == g.player && equipped.Slot == slot {
+		if carried &&
+			carrier.Holder == g.player && equipped.Slot == slot {
 			return entity
 		}
 	}

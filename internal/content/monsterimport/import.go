@@ -156,9 +156,10 @@ func monsterMembers(path string, data []byte) (map[string]bool, error) {
 	ids := map[string]bool{}
 
 	for _, part := range parts {
+		// Aliases and non-monster sentinels are not live monster IDs.
 		if strings.Contains(part, "=") {
 			continue
-		} // aliases and non-monster sentinels
+		}
 
 		id := strings.TrimSpace(part)
 
@@ -471,7 +472,8 @@ func Generate(sourceDir string) ([]byte, error) {
 		counts[def.Status]++
 	}
 
-	if len(artifact.Monsters) != 700 || counts[content.MonsterDefined] != 562 ||
+	if len(artifact.Monsters) != 700 ||
+		counts[content.MonsterDefined] != 562 ||
 		counts[content.MonsterRemoved] != 120 ||
 		counts[content.MonsterEnumOnly] != 18 {
 		return nil, fmt.Errorf(

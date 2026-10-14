@@ -38,7 +38,8 @@ func TestDropMenuSelectsItemAndQuantityWithoutSpendingOnCancel(t *testing.T) {
 	m.handleKey("d")
 	m.handleKey(inventoryLetter(t, m, "ARM_SCALE_MAIL"))
 
-	if m.screen != ScreenPlay || m.game.View().CurrentAut != start ||
+	if m.screen != ScreenPlay ||
+		m.game.View().CurrentAut != start ||
 		!strings.Contains(m.notice, "take that off") {
 		t.Fatalf("equipped armour drop: screen=%d aut=%d notice=%q", m.screen, m.game.View().CurrentAut, m.notice)
 	}

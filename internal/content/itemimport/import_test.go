@@ -62,6 +62,7 @@ func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 				PropertySource: files[0].Path,
 				PropertyLine:   10,
 			},
+
 			Weapon: &content.WeaponProperties{
 				Damage:      8,
 				Hit:         3,
@@ -264,7 +265,8 @@ func TestItemImportPair(t *testing.T) {
 
 	joined, err := joinItemViews(identities, rows, names, glyphs)
 
-	if err != nil || len(joined) != 1 || joined[0].ID != "WPN_MACE" {
+	if err != nil ||
+		len(joined) != 1 || joined[0].ID != "WPN_MACE" {
 		t.Fatalf("wrong source join: items=%+v err=%v", joined, err)
 	}
 

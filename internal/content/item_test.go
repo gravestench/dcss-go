@@ -25,6 +25,7 @@ func testWeaponItem() ItemDef {
 			PropertySource: "crawl-ref/source/item-prop.cc",
 			PropertyLine:   7,
 		},
+
 		Weapon: &WeaponProperties{
 			Damage:      8,
 			Hit:         3,
@@ -130,7 +131,8 @@ func TestItemIdentityInspection(t *testing.T) {
 
 	ids := c.ItemIDs()
 
-	if len(ids) != 2 || ids[0] != "WPN_MACE" || ids[1] != "WPN_OLD" {
+	if len(ids) != 2 ||
+		ids[0] != "WPN_MACE" || ids[1] != "WPN_OLD" {
 		t.Fatalf("wrong identity listing: %v", ids)
 	}
 

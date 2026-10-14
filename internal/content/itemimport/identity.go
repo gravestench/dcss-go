@@ -455,7 +455,8 @@ func (c *identityCollector) collectClass(source map[string][]byte, class classSo
 			continue
 		}
 
-		if !matchesPrefix || strings.HasPrefix(entry.ID, "NUM_") ||
+		if !matchesPrefix ||
+			strings.HasPrefix(entry.ID, "NUM_") ||
 			strings.HasPrefix(entry.ID, "MAX_") ||
 			strings.Contains(entry.ID, "_FIRST_") ||
 			strings.Contains(entry.ID, "_LAST_") ||

@@ -84,7 +84,8 @@ func (m *AppModel) handleDropKey(key string) tea.Cmd {
 		return nil
 	}
 
-	if len(key) == 1 && key[0] >= '0' && key[0] <= '9' {
+	if len(key) == 1 &&
+		key[0] >= '0' && key[0] <= '9' {
 		if len(m.dropQuantity) < 8 {
 			m.dropQuantity += key
 		}

@@ -23,7 +23,8 @@ type MonsterIdentity struct {
 }
 
 func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
-	if v.SchemaVersion != 1 || v.SourceRevision != a.SourceRevision ||
+	if v.SchemaVersion != 1 ||
+		v.SourceRevision != a.SourceRevision ||
 		v.TagMajorVersion != a.TagMajorVersion ||
 		len(v.Identities) != len(a.Monsters) ||
 		len(v.SourceFiles) != len(a.SourceFiles) {
@@ -208,7 +209,8 @@ func validateMonsterTileIDs(m MonsterDef) error {
 			continue
 		}
 
-		if tile != "TILE_ERROR" && !strings.HasPrefix(tile, "TILEP_") &&
+		if tile != "TILE_ERROR" &&
+			!strings.HasPrefix(tile, "TILEP_") &&
 			!strings.HasPrefix(tile, "TILE_") {
 			return fmt.Errorf("monster %s has invalid tile %q", m.ID, tile)
 		}

@@ -180,7 +180,8 @@ func (d ItemDef) clone() ItemDef {
 }
 
 func (d ItemDef) validate() error {
-	if d.ID == "" || d.Name == "" || d.Glyph == 0 {
+	if d.ID == "" ||
+		d.Name == "" || d.Glyph == 0 {
 		return fmt.Errorf("item %s has empty ID, name, or glyph", d.ID)
 	}
 
@@ -202,7 +203,8 @@ func (d ItemDef) validate() error {
 func (d ItemDef) validateClassAndEquipment() error {
 	prefix, known := itemClassPrefix(d.Class)
 
-	if !known || (prefix != "" && !strings.HasPrefix(d.ID, prefix)) {
+	if !known ||
+		(prefix != "" && !strings.HasPrefix(d.ID, prefix)) {
 		return fmt.Errorf("item %s has invalid class %s", d.ID, d.Class)
 	}
 
@@ -220,7 +222,8 @@ func (d ItemDef) validateClassAndEquipment() error {
 			" "+d.Slot+" ",
 		)
 
-		if !validSlot || d.WeaponSkill != "" || d.Stackable {
+		if !validSlot ||
+			d.WeaponSkill != "" || d.Stackable {
 			return fmt.Errorf("item %s has invalid armour slot or skill", d.ID)
 		}
 
@@ -358,7 +361,8 @@ func (d ItemDef) validateProperties() error {
 }
 
 func (m ItemIdentityManifest) Validate() error {
-	if m.SchemaVersion != 1 || m.SourceRevision == "" || m.TagMajorVersion != 34 {
+	if m.SchemaVersion != 1 ||
+		m.SourceRevision == "" || m.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported item identity manifest metadata")
 	}
 
@@ -382,7 +386,8 @@ func (m ItemIdentityManifest) Validate() error {
 			identity.ClassValue < 0 || identity.SubtypeValue < 0
 		invalidSource := identity.SourcePath == "" || identity.SourceLine <= 0
 
-		if invalidIdentity || invalidSource || seen[identity.ID] {
+		if invalidIdentity ||
+			invalidSource || seen[identity.ID] {
 			return fmt.Errorf("invalid or duplicate item identity %q", identity.ID)
 		}
 
@@ -422,7 +427,8 @@ func (m ItemIdentityManifest) Validate() error {
 		}
 
 		for i, symbol := range symbols {
-			if symbol == "" || (i > 0 && symbol == symbols[i-1]) {
+			if symbol == "" ||
+				(i > 0 && symbol == symbols[i-1]) {
 				return fmt.Errorf("duplicate or empty item vocabulary symbol %q", symbol)
 			}
 		}
@@ -436,7 +442,8 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 		return err
 	}
 
-	if a.SchemaVersion != 1 || a.SourceRevision != manifest.SourceRevision ||
+	if a.SchemaVersion != 1 ||
+		a.SourceRevision != manifest.SourceRevision ||
 		a.TagMajorVersion != manifest.TagMajorVersion {
 		return fmt.Errorf("item artifact metadata differs from identity manifest")
 	}
@@ -487,7 +494,8 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 
 		previousClass, previousSubtype = item.ClassValue, item.SubtypeValue
 
-		if item.Name != item.Naming.Text || item.Naming.Kind == "" ||
+		if item.Name != item.Naming.Text ||
+			item.Naming.Kind == "" ||
 			files[item.Naming.SourcePath] == "" {
 			return fmt.Errorf("item %s has invalid naming evidence", item.ID)
 		}
@@ -547,7 +555,8 @@ func vocabularyHas(ids []string, id string) bool {
 func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 	switch d.Class {
 	case "OBJ_ARMOUR":
-		if d.Armour == nil || !vocabularyHas(v.Slots, d.Armour.SlotID) ||
+		if d.Armour == nil ||
+			!vocabularyHas(v.Slots, d.Armour.SlotID) ||
 			!vocabularyHas(v.Sizes, d.Armour.FitMinID) ||
 			!vocabularyHas(v.Sizes, d.Armour.FitMaxID) {
 			return fmt.Errorf("item %s has incomplete or unknown armour properties", d.ID)
@@ -560,7 +569,8 @@ func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 		}
 
 	case "OBJ_WEAPONS":
-		if d.Weapon == nil || !vocabularyHas(v.Skills, d.Weapon.SkillID) ||
+		if d.Weapon == nil ||
+			!vocabularyHas(v.Skills, d.Weapon.SkillID) ||
 			!vocabularyHas(v.Sizes, d.Weapon.Min2HSizeID) ||
 			!vocabularyHas(v.Sizes, d.Weapon.Min1HSizeID) ||
 			!vocabularyHas(v.Ammo, d.Weapon.AmmoID) ||

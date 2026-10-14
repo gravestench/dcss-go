@@ -70,7 +70,8 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 		left, leftErr := g.Step(command)
 		right, rightErr := restored.Step(command)
 
-		if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) {
+		if leftErr != nil ||
+			rightErr != nil || !reflect.DeepEqual(left, right) {
 			t.Fatalf("continuation differs: %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 		}
 	}

@@ -85,7 +85,8 @@ const ordinarySkillIDs = "SK_FIGHTING SK_SHORT_BLADES SK_LONG_BLADES SK_AXES " +
 const legacyExtraSkillIDs = "SK_SLINGS SK_CROSSBOWS SK_STABBING SK_TRAPS SK_CHARMS"
 
 func (a SpeciesArtifact) Validate() error {
-	if a.SchemaVersion != 1 || a.SourceRevision == "" || a.TagMajorVersion != 34 {
+	if a.SchemaVersion != 1 ||
+		a.SourceRevision == "" || a.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported species artifact metadata")
 	}
 
@@ -109,7 +110,8 @@ func (a SpeciesArtifact) Validate() error {
 func (s SpeciesDef) validate() error {
 	if !strings.HasPrefix(s.ID, "SP_") ||
 		!strings.HasPrefix(s.MonsterID, "MONS_") ||
-		s.SourcePath == "" || s.Name == "" || s.ShortName == "" {
+		s.SourcePath == "" ||
+		s.Name == "" || s.ShortName == "" {
 		return fmt.Errorf("invalid species definition %q", s.ID)
 	}
 
@@ -121,7 +123,8 @@ func (s SpeciesDef) validate() error {
 		return fmt.Errorf("invalid species stats %q", s.ID)
 	}
 
-	if s.Habitat == "" || s.Size == "" || s.UndeadType == "" {
+	if s.Habitat == "" ||
+		s.Size == "" || s.UndeadType == "" {
 		return fmt.Errorf("invalid species environment %q", s.ID)
 	}
 

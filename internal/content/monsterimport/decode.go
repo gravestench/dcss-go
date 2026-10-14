@@ -210,7 +210,8 @@ func decodeResistances(expr string, symbols map[string]bool) ([]content.MonsterR
 
 			level, err := number(args[1])
 
-			if err != nil || level < -4 || level > 4 {
+			if err != nil ||
+				level < -4 || level > 4 {
 				return nil, fmt.Errorf("invalid mrd level %q", args[1])
 			}
 
@@ -437,7 +438,8 @@ func decodeTile(expr string, variations map[string]bool) (content.MonsterTile, e
 
 	parts, err := splitFields(inner)
 
-	if err != nil || len(parts) < 1 || len(parts) > 2 {
+	if err != nil ||
+		len(parts) < 1 || len(parts) > 2 {
 		return tile, fmt.Errorf("bad tile fields %q", expr)
 	}
 

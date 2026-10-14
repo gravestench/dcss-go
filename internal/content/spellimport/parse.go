@@ -317,7 +317,8 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 			continue
 		}
 
-		if macro && !macroBody && strings.HasPrefix(value, "{ tag, name,") {
+		if macro &&
+			!macroBody && strings.HasPrefix(value, "{ tag, name,") {
 			if strings.Join(
 				strings.Fields(value),
 				" ",

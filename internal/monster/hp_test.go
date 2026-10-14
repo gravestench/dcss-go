@@ -15,7 +15,8 @@ type scriptedRoller struct {
 }
 
 func (s *scriptedRoller) Intn(stream string, bound int) (int, error) {
-	if stream != "monster_hp" || len(s.rolls) == 0 || s.rolls[0].bound != bound {
+	if stream != "monster_hp" ||
+		len(s.rolls) == 0 || s.rolls[0].bound != bound {
 		return 0, fmt.Errorf("unexpected roll %s/%d, remaining %+v", stream, bound, s.rolls)
 	}
 
@@ -92,7 +93,8 @@ func TestRatHPSourceRollOrderAndBounds(t *testing.T) {
 			rng := &scriptedRoller{rolls: tc.rolls}
 			hp, err := RollHP(rng, 25)
 
-			if err != nil || hp != tc.want || len(rng.rolls) != 0 {
+			if err != nil ||
+				hp != tc.want || len(rng.rolls) != 0 {
 				t.Fatalf("HP = %d, err %v, rolls %+v", hp, err, rng.rolls)
 			}
 		})

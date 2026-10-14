@@ -86,7 +86,8 @@ func TestGenerateSpeciesArtifactDeterministic(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if artifact.SchemaVersion != 1 || artifact.SourceRevision != pinnedRevision ||
+	if artifact.SchemaVersion != 1 ||
+		artifact.SourceRevision != pinnedRevision ||
 		artifact.TagMajorVersion != 34 ||
 		len(artifact.Species) != 4 ||
 		len(artifact.SourceFiles) != 7 {

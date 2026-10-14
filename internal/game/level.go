@@ -248,7 +248,8 @@ func (l *Level) doorGroup(x, y int, glyph byte) ([]point, error) {
 		cell := queue[0]
 		queue = queue[1:]
 
-		if seen[cell] || !l.inBounds(cell.x, cell.y) ||
+		if seen[cell] ||
+			!l.inBounds(cell.x, cell.y) ||
 			l.terrain[cell.y][cell.x] != glyph {
 			continue
 		}
@@ -343,7 +344,8 @@ func (l *Level) PlaceActor(entity akara.Entity, x, y int) error {
 func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 	position, found := l.positions.Get(entity)
 
-	if !found || position.LevelID != l.ID || l.actors[point{
+	if !found ||
+		position.LevelID != l.ID || l.actors[point{
 		x: position.X,
 		y: position.Y,
 	}] != entity {
@@ -376,7 +378,8 @@ func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 func (l *Level) RemoveActor(entity akara.Entity) error {
 	position, found := l.positions.Get(entity)
 
-	if !found || position.LevelID != l.ID || l.actors[point{
+	if !found ||
+		position.LevelID != l.ID || l.actors[point{
 		x: position.X,
 		y: position.Y,
 	}] != entity {

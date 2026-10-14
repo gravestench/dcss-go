@@ -91,11 +91,12 @@ func resolveKinds(catalog content.Catalog, names []string) (map[string]content.I
 	resolved := make(map[string]content.ItemDef, len(wanted))
 
 	for _, id := range catalog.ItemIDs() {
+		// Enum-only legacy identities have no item definition.
 		kind, err := catalog.Item(id)
 
 		if err != nil {
 			continue
-		} // enum-only legacy identity
+		}
 
 		if !wanted[kind.Name] {
 			continue

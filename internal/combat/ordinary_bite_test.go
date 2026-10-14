@@ -15,7 +15,8 @@ type scriptedRoller struct {
 }
 
 func (s *scriptedRoller) Intn(stream string, bound int) (int, error) {
-	if stream != "melee" || len(s.rolls) == 0 || s.rolls[0].bound != bound {
+	if stream != "melee" ||
+		len(s.rolls) == 0 || s.rolls[0].bound != bound {
 		return 0, fmt.Errorf("unexpected roll %q bound %d, remaining %+v", stream, bound, s.rolls)
 	}
 
@@ -68,7 +69,8 @@ func TestPoisonBiteKeepsOrdinaryDamageRolls(t *testing.T) {
 
 	outcome, err := ResolveAnimalBite(roller, attack, Defense{})
 
-	if err != nil || outcome.Kind != Hit ||
+	if err != nil ||
+		outcome.Kind != Hit ||
 		outcome.Damage != 4 ||
 		len(roller.rolls) != 0 {
 		t.Fatalf("poison bite %+v, %v, rolls %+v", outcome, err, roller.rolls)
@@ -92,7 +94,8 @@ func TestPoisonBiteRollsSourceTriggerAndAmount(t *testing.T) {
 
 	amount, err := PoisonBiteAmount(triggered, 2)
 
-	if err != nil || amount != 8 || len(triggered.rolls) != 0 {
+	if err != nil ||
+		amount != 8 || len(triggered.rolls) != 0 {
 		t.Fatalf("poison amount %d, %v, rolls %+v", amount, err, triggered.rolls)
 	}
 
@@ -107,7 +110,8 @@ func TestPoisonBiteRollsSourceTriggerAndAmount(t *testing.T) {
 
 	amount, err = PoisonBiteAmount(missed, 2)
 
-	if err != nil || amount != 0 || len(missed.rolls) != 0 {
+	if err != nil ||
+		amount != 0 || len(missed.rolls) != 0 {
 		t.Fatalf("missed poison %d, %v, rolls %+v", amount, err, missed.rolls)
 	}
 
@@ -202,7 +206,8 @@ func TestFighterDefenseAddsAuxiliaryArmourBeforeRounding(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if got.AC != 13 || got.EV != 5 || got.ShieldClass != 9 {
+	if got.AC != 13 ||
+		got.EV != 5 || got.ShieldClass != 9 {
 		t.Fatalf("auxiliary defense = %+v, want AC 13 EV 5 SH 9", got)
 	}
 }
@@ -348,7 +353,8 @@ func TestRatBiteAutomaticMissAndHit(t *testing.T) {
 
 	got, err := ResolveAnimalBite(miss, ratAttack(), Defense{EV: 10})
 
-	if err != nil || got.Kind != Miss || len(miss.rolls) != 0 {
+	if err != nil ||
+		got.Kind != Miss || len(miss.rolls) != 0 {
 		t.Fatalf("automatic miss = %+v, %v, rolls %+v", got, err, miss.rolls)
 	}
 

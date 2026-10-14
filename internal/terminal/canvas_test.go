@@ -16,7 +16,8 @@ func TestCanvasBoundsAndWideGlyphs(t *testing.T) {
 	c.Write(0, 0, "A界B", Yellow, Black)
 	rows := c.PlainRows()
 
-	if len(rows) != 2 || rows[0] != "A界B " || rows[1] != "     " {
+	if len(rows) != 2 ||
+		rows[0] != "A界B " || rows[1] != "     " {
 		t.Fatalf("canvas rows: %#v", rows)
 	}
 

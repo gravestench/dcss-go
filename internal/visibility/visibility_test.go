@@ -74,7 +74,8 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 
 						symbol := mapCase.Rows[sy][sx]
 
-						if symbol == '@' || symbol == '.' || symbol == 'w' {
+						if symbol == '@' ||
+							symbol == '.' || symbol == 'w' {
 							row[x] = '.'
 						} else {
 							row[x] = '#'

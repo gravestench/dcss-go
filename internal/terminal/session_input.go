@@ -40,7 +40,8 @@ func (m *AppModel) handleStatChoiceKey(key string) {
 }
 
 func (m *AppModel) handleConfirmKey(key string) tea.Cmd {
-	if key == "esc" || key == "n" || key == "N" {
+	if key == "esc" ||
+		key == "n" || key == "N" {
 		m.confirm = confirmNone
 		m.screen = ScreenPlay
 		m.notice = ""

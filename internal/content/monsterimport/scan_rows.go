@@ -273,7 +273,8 @@ func (scanner monsterRowScanner) placeholderRow(pos, line int) (int, error) {
 
 	fields, err := splitFields(inner)
 
-	if err != nil || len(fields) != 5 || !strings.HasPrefix(fields[0], "MONS_") {
+	if err != nil ||
+		len(fields) != 5 || !strings.HasPrefix(fields[0], "MONS_") {
 		return 0, fmt.Errorf("%s:%d: malformed DUMMY", scanner.path, line)
 	}
 

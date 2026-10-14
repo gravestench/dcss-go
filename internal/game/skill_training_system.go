@@ -11,28 +11,32 @@ import (
 )
 
 type skillTrainingSystem struct {
-	player       akara.Entity
+	player akara.Entity
+
 	skills       *akara.Store[ecs.Skills]
 	training     *akara.Store[ecs.SkillTraining]
 	progression  *akara.Store[ecs.Progression]
 	health       *akara.Store[ecs.Health]
 	regeneration *akara.Store[ecs.Regeneration]
-	catalog      content.Catalog
-	rng          *RNGStreams
-	turn         *TurnContext
+
+	catalog content.Catalog
+	rng     *RNGStreams
+	turn    *TurnContext
 }
 
 func newSkillTrainingSystem(g *Game) *skillTrainingSystem {
 	return &skillTrainingSystem{
-		player:       g.player,
+		player: g.player,
+
 		skills:       g.stores.Skills,
 		training:     g.stores.SkillTraining,
 		progression:  g.stores.Progression,
 		health:       g.stores.Health,
 		regeneration: g.stores.Regeneration,
-		catalog:      g.catalog,
-		rng:          g.rng,
-		turn:         &g.turn,
+
+		catalog: g.catalog,
+		rng:     g.rng,
+		turn:    &g.turn,
 	}
 }
 
@@ -78,7 +82,8 @@ func (s *skillTrainingSystem) recalculateFightingHP(skills []character.Skill) er
 	health, hasHealth := s.health.Get(s.player)
 	regeneration, hasRegeneration := s.regeneration.Get(s.player)
 
-	if !hasProgress || !hasHealth || !hasRegeneration {
+	if !hasProgress ||
+		!hasHealth || !hasRegeneration {
 		return fmt.Errorf("player lacks Fighting HP state")
 	}
 

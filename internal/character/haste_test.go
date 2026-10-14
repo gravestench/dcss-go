@@ -120,7 +120,8 @@ func TestHastedActionTimeUsesSourceSixOrSevenAut(t *testing.T) {
 
 		got, err := PlayerActionTime(rng, true)
 
-		if err != nil || got != test.want || len(rng.draws) != 0 {
+		if err != nil ||
+			got != test.want || len(rng.draws) != 0 {
 			t.Fatalf("speed roll %d = %d, %v", test.roll, got, err)
 		}
 	}
@@ -153,13 +154,15 @@ func TestHasteWarnsAndExpiresAfterAFinalFastAction(t *testing.T) {
 
 	remaining, message, err = DecayHaste(nil, 11, 14)
 
-	if err != nil || remaining != 1 || message != "" {
+	if err != nil ||
+		remaining != 1 || message != "" {
 		t.Fatalf("last active action = %d, %q, %v", remaining, message, err)
 	}
 
 	remaining, message, err = DecayHaste(nil, remaining, 6)
 
-	if err != nil || remaining != 0 || message != "You feel yourself slow down." {
+	if err != nil ||
+		remaining != 0 || message != "You feel yourself slow down." {
 		t.Fatalf("expiry = %d, %q, %v", remaining, message, err)
 	}
 }

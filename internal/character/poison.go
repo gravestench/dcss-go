@@ -16,7 +16,8 @@ const poisonMaxRate = 5000.0
 // DecayHumanPoison follows player.cc:4204-4339 for an ordinary living Human.
 // Amounts are thousandths of one eventual HP of poison damage.
 func DecayHumanPoison(amountScaled, elapsedAut int) (int, int, error) {
-	if amountScaled < 1000 || amountScaled > maxHumanPoison || elapsedAut <= 0 {
+	if amountScaled < 1000 ||
+		amountScaled > maxHumanPoison || elapsedAut <= 0 {
 		return 0, 0, fmt.Errorf(
 			"invalid Human poison %d over %d aut",
 			amountScaled,

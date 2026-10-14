@@ -7,7 +7,8 @@ const MightCapAut = 800
 // MightPotionDuration applies potion.cc's 35+random2(40) turns, capped at
 // 80 turns. Duration is stored in aut and the quaff's aut is decayed later.
 func MightPotionDuration(roller Roller, currentAut int) (int, string, error) {
-	if roller == nil || currentAut < 0 || currentAut > MightCapAut {
+	if roller == nil ||
+		currentAut < 0 || currentAut > MightCapAut {
 		return 0, "", fmt.Errorf("invalid might duration %d", currentAut)
 	}
 
@@ -32,7 +33,8 @@ func MightPotionDuration(roller Roller, currentAut int) (int, string, error) {
 
 // DecayMight matches a normal duration's per-player-action aut decrement.
 func DecayMight(currentAut, costAut int) (remaining int, ended bool, err error) {
-	if currentAut < 0 || currentAut > MightCapAut || costAut < 0 {
+	if currentAut < 0 ||
+		currentAut > MightCapAut || costAut < 0 {
 		return 0, false, fmt.Errorf("invalid might decay %d by %d", currentAut, costAut)
 	}
 

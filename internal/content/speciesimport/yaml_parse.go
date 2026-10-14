@@ -149,7 +149,8 @@ func validateSpeciesIdentity(path string, source *sourceSpecies) error {
 		return fmt.Errorf("%s: TAG_MAJOR_VERSION %d is unsupported", path, source.TagMajorVersion)
 	}
 
-	if source.Name == "" || source.Enum == "" || source.Monster == "" {
+	if source.Name == "" ||
+		source.Enum == "" || source.Monster == "" {
 		return fmt.Errorf("%s: enum, monster, and name are required", path)
 	}
 
@@ -356,7 +357,8 @@ func parseSpeciesSkill(
 
 	n, ok := value.(int)
 
-	if !ok || n < -10 || n > 10 {
+	if !ok ||
+		n < -10 || n > 10 {
 		return fmt.Errorf("%s: %s aptitude must be False or integer in -10..10", path, name)
 	}
 
@@ -394,7 +396,8 @@ func parseSpeciesMutations(
 		}
 
 		for id, amount := range group {
-			if !strings.HasPrefix(id, "MUT_") || amount < -3 || amount > 3 {
+			if !strings.HasPrefix(id, "MUT_") ||
+				amount < -3 || amount > 3 {
 				return nil, fmt.Errorf("%s: mutations.%s has invalid amount %d", path, id, amount)
 			}
 

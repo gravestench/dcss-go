@@ -175,7 +175,8 @@ func splitTopLevel(text string, sep byte) ([]sourcePart, error) {
 			parens--
 
 		default:
-			if c == sep && braces == 0 && parens == 0 {
+			if c == sep &&
+				braces == 0 && parens == 0 {
 				appendPart(i)
 				start = i + 1
 			}
@@ -186,7 +187,8 @@ func splitTopLevel(text string, sep byte) ([]sourcePart, error) {
 		}
 	}
 
-	if quote != 0 || braces != 0 || parens != 0 {
+	if quote != 0 ||
+		braces != 0 || parens != 0 {
 		return nil, fmt.Errorf("unterminated source row")
 	}
 

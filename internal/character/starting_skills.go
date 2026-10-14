@@ -93,7 +93,8 @@ func StartingSkills(c content.Catalog, speciesID, jobID, weaponID string) ([]Ski
 
 		aptitude, found := species.Aptitudes[id]
 
-		if !found || !aptitude.Allowed || aptitude.Value != 0 {
+		if !found ||
+			!aptitude.Allowed || aptitude.Value != 0 {
 			return nil, fmt.Errorf("%s/%s has unsupported Human aptitude for %s", speciesID, jobID, id)
 		}
 

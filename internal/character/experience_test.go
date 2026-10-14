@@ -43,7 +43,8 @@ func TestAdderPoisonBiteUsesActualMaximumHPForExperience(t *testing.T) {
 
 	profile, found := OrdinaryAnimalProfile(adder.ID)
 
-	if !found || !profile.Poison ||
+	if !found ||
+		!profile.Poison ||
 		profile.MinHP != 7 || profile.MaxHP != 15 {
 		t.Fatalf("adder combat profile %+v, present %v", profile, found)
 	}

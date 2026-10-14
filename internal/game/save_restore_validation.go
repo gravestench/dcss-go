@@ -158,7 +158,8 @@ func (v *savedEntityValidator) validateCharacterRole(record save.EntityRecord) e
 	}
 
 	if record.BandFollower != nil {
-		if record.AI == nil || record.Actor == nil ||
+		if record.AI == nil ||
+			record.Actor == nil ||
 			record.Actor.KindID != "MONS_JACKAL" ||
 			record.BandFollower.Leader == 0 ||
 			uint64(record.BandFollower.Leader) == record.ID {
@@ -175,10 +176,13 @@ func (v *savedEntityValidator) validateCharacterRole(record save.EntityRecord) e
 
 		v.playerCount++
 		v.player = validated
-	} else if record.Attributes != nil || record.Skills != nil ||
+	} else if record.Attributes != nil ||
+		record.Skills != nil ||
 		record.SkillTraining != nil ||
-		record.Magic != nil || record.Progression != nil ||
-		record.Durations != nil || record.Regeneration != nil ||
+		record.Magic != nil ||
+		record.Progression != nil ||
+		record.Durations != nil ||
+		record.Regeneration != nil ||
 		record.Poison != nil ||
 		record.Equipment != nil {
 		return fmt.Errorf("non-player entity %d has character components", record.ID)
@@ -226,28 +230,34 @@ func (v *savedEntityValidator) validateMonsterRole(record save.EntityRecord) err
 
 func (v *savedEntityValidator) validateActorState(record save.EntityRecord) error {
 	if record.Actor != nil &&
-		(record.Actor.Speed <= 0 || record.Actor.NextAut < 0 ||
-			record.Health == nil || record.Combatant == nil || record.Position == nil) {
+		(record.Actor.Speed <= 0 ||
+			record.Actor.NextAut < 0 ||
+			record.Health == nil ||
+			record.Combatant == nil || record.Position == nil) {
 		return fmt.Errorf("invalid actor %d", record.ID)
 	}
 
 	if record.Combatant != nil &&
-		(record.Actor == nil || record.Combatant.ShieldBlocks < 0 ||
+		(record.Actor == nil ||
+			record.Combatant.ShieldBlocks < 0 ||
 			record.Combatant.ShieldBlocks > 100) {
 		return fmt.Errorf("invalid combat stats for entity %d", record.ID)
 	}
 
-	if record.Actor != nil && record.Player == nil && record.AI == nil {
+	if record.Actor != nil &&
+		record.Player == nil && record.AI == nil {
 		return fmt.Errorf("actor %d has no player or monster role", record.ID)
 	}
 
-	if record.Actor != nil && record.Position != nil &&
+	if record.Actor != nil &&
+		record.Position != nil &&
 		record.Position.LevelID == v.activeLevelID {
 		if record.Actor.NextAut < v.snapshot.CurrentAut {
 			return fmt.Errorf("actor %d deadline precedes save clock", record.ID)
 		}
 
-		if v.earliestID == 0 || record.Actor.NextAut < v.earliestAut ||
+		if v.earliestID == 0 ||
+			record.Actor.NextAut < v.earliestAut ||
 			(record.Actor.NextAut == v.earliestAut && record.ID < v.earliestID) {
 			v.earliestID = record.ID
 			v.earliestAut = record.Actor.NextAut
@@ -255,7 +265,8 @@ func (v *savedEntityValidator) validateActorState(record save.EntityRecord) erro
 	}
 
 	if record.Health != nil &&
-		(record.Health.Current < 0 || record.Health.Max <= 0 ||
+		(record.Health.Current < 0 ||
+			record.Health.Max <= 0 ||
 			record.Health.Current > record.Health.Max) {
 		return fmt.Errorf("invalid health for entity %d", record.ID)
 	}
@@ -335,19 +346,23 @@ func (v *savedEntityValidator) validateEquipmentDelay() error {
 		return nil
 	}
 
-	if delay.Remaining < 1 || delay.Remaining > armourEquipTurns ||
+	if delay.Remaining < 1 ||
+		delay.Remaining > armourEquipTurns ||
 		!supportedArmourSlot(delay.Slot) ||
 		(delay.Phase != "wear" && delay.Phase != "remove") {
 		return fmt.Errorf("invalid saved equipment delay")
 	}
 
-	if delay.Phase == "remove" && delay.Remaining == armourEquipTurns ||
-		delay.Phase == "wear" && delay.OldItemID == 0 &&
+	if delay.Phase == "remove" &&
+		delay.Remaining == armourEquipTurns ||
+		delay.Phase == "wear" &&
+			delay.OldItemID == 0 &&
 			delay.Remaining == armourEquipTurns {
 		return fmt.Errorf("saved equipment delay has impossible turn count")
 	}
 
-	if delay.Phase == "remove" && delay.OldItemID == 0 ||
+	if delay.Phase == "remove" &&
+		delay.OldItemID == 0 ||
 		delay.Phase == "wear" && delay.ItemID == 0 {
 		return fmt.Errorf("saved equipment delay lacks its item")
 	}

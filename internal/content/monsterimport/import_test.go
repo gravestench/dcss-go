@@ -19,6 +19,7 @@ func fixtureSource(t *testing.T) string {
 		"monster-type.h": "enum monster_type {\n MONS_PROGRAM_BUG, MONS_0 = MONS_PROGRAM_BUG, " +
 			"MONS_BUMBLEBEE, MONS_RAT, MONS_BEAR, NUM_MONSTERS, MONS_NO_MONSTER = 1000, " +
 			"RANDOM_MONSTER = 2000,\n#if TAG_MAJOR_VERSION > 34\n MONS_FUTURE,\n#endif\n};\n",
+
 		"mon-data.h": "static monsterentry mondata[] = {\nAXED_MON(MONS_BUMBLEBEE, \"bee\")\n" + row(
 			"MONS_RAT",
 			`"rat"`,
@@ -66,7 +67,8 @@ func TestGenerateFixtureDeterministicPartition(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(artifact.Monsters) != 4 || artifact.Monsters[0].ID != "MONS_BEAR" ||
+	if len(artifact.Monsters) != 4 ||
+		artifact.Monsters[0].ID != "MONS_BEAR" ||
 		artifact.Monsters[0].Status != content.MonsterEnumOnly ||
 		artifact.Monsters[1].Status != content.MonsterRemoved ||
 		artifact.Monsters[3].ID != "MONS_RAT" {

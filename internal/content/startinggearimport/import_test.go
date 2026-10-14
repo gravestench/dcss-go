@@ -88,7 +88,8 @@ func TestGenerateStartingGear(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if artifact.SchemaVersion != 2 || artifact.SourceRevision != pinnedRevision ||
+	if artifact.SchemaVersion != 2 ||
+		artifact.SourceRevision != pinnedRevision ||
 		artifact.TagMajorVersion != 34 ||
 		len(artifact.Jobs) != 1 ||
 		len(artifact.Jobs[0].Grants) != 3 {
@@ -97,7 +98,8 @@ func TestGenerateStartingGear(t *testing.T) {
 
 	grants := artifact.Jobs[0].Grants
 
-	if grants[0].KindID != "ARM_SCALE_MAIL" || grants[1].KindID != "POT_MIGHT" ||
+	if grants[0].KindID != "ARM_SCALE_MAIL" ||
+		grants[1].KindID != "POT_MIGHT" ||
 		grants[2].KindID != "MI_DART" ||
 		grants[2].Quantity != 3 ||
 		grants[2].Ego != "curare" {

@@ -28,13 +28,15 @@ func TestExplicitDoorOpenCloseAndRestore(t *testing.T) {
 
 	opened, err := g.Step(Command{Kind: CommandOpenDoor})
 
-	if err != nil || opened.Spent != 10 || g.levels[1].terrain[1][2] != '\'' {
+	if err != nil ||
+		opened.Spent != 10 || g.levels[1].terrain[1][2] != '\'' {
 		t.Fatalf("open door = %+v, %v, row %q", opened, err, g.levels[1].terrain[1])
 	}
 
 	closed, err := g.Step(Command{Kind: CommandCloseDoor})
 
-	if err != nil || closed.Spent != 10 || g.levels[1].terrain[1][2] != '+' {
+	if err != nil ||
+		closed.Spent != 10 || g.levels[1].terrain[1][2] != '+' {
 		t.Fatalf("close door = %+v, %v, row %q", closed, err, g.levels[1].terrain[1])
 	}
 
@@ -58,7 +60,8 @@ func TestExplicitDoorDirectionAndConnectedGroup(t *testing.T) {
 
 	choice, err := g.Step(Command{Kind: CommandOpenDoor})
 
-	if err != nil || choice.Spent != 0 ||
+	if err != nil ||
+		choice.Spent != 0 ||
 		!strings.Contains(choice.Events[0].Text, "direction") {
 		t.Fatalf("ambiguous door = %+v, %v", choice, err)
 	}
@@ -68,7 +71,8 @@ func TestExplicitDoorDirectionAndConnectedGroup(t *testing.T) {
 		DX:   1,
 	})
 
-	if err != nil || opened.Spent != 10 ||
+	if err != nil ||
+		opened.Spent != 10 ||
 		g.levels[1].terrain[1][2] != '\'' || g.levels[1].terrain[2][2] != '\'' {
 		t.Fatalf("connected door = %+v, %v", opened, err)
 	}
@@ -78,7 +82,8 @@ func TestExplicitDoorDirectionAndConnectedGroup(t *testing.T) {
 		DX:   1,
 	})
 
-	if err != nil || closed.Spent != 10 ||
+	if err != nil ||
+		closed.Spent != 10 ||
 		g.levels[1].terrain[1][2] != '+' || g.levels[1].terrain[2][2] != '+' {
 		t.Fatalf("connected close = %+v, %v", closed, err)
 	}
@@ -128,7 +133,8 @@ func TestClosingDoorPushesFloorItems(t *testing.T) {
 		pushed, _ := g.stores.Positions.Get(entity)
 
 		if g.levels[1].terrain[1][2] != '+' ||
-			(pushed.X == 2 && pushed.Y == 1) ||
+			(pushed.X == 2 &&
+				pushed.Y == 1) ||
 			!g.levels[1].Walkable(pushed.X, pushed.Y) {
 			t.Fatalf("item %d was left in closed door at %+v", entity, pushed)
 		}
@@ -220,7 +226,8 @@ func TestClosingDoorRejectsVisibleActorWithoutTime(t *testing.T) {
 	after := g.Snapshot()
 	before.Messages = after.Messages
 
-	if err != nil || result.Spent != 0 || !reflect.DeepEqual(before, after) {
+	if err != nil ||
+		result.Spent != 0 || !reflect.DeepEqual(before, after) {
 		t.Fatalf("blocked door = %+v, %v", result, err)
 	}
 }
@@ -333,7 +340,8 @@ func TestUnseenDoorBlockerConsumesTurnWithoutClosing(t *testing.T) {
 		DX:   1,
 	})
 
-	if err != nil || result.Spent != 10 ||
+	if err != nil ||
+		result.Spent != 10 ||
 		g.levels[1].terrain[1][2] != '\'' ||
 		!strings.Contains(result.Events[0].Text, "Something is blocking") {
 		t.Fatalf("unseen blocker = %+v, %v", result, err)
@@ -372,7 +380,8 @@ func TestEarlierJammedDoorPreventsUnseenBlockerTurn(t *testing.T) {
 
 	before.Messages = g.Snapshot().Messages
 
-	if err != nil || result.Spent != 0 ||
+	if err != nil ||
+		result.Spent != 0 ||
 		!strings.Contains(result.Events[0].Text, "jamming") ||
 		!reflect.DeepEqual(before, g.Snapshot()) {
 		t.Fatalf("jam before unseen blocker = %+v, %v", result, err)
@@ -397,7 +406,8 @@ func TestPlayerStandingInDoorCannotCloseGroup(t *testing.T) {
 	after := g.Snapshot()
 	before.Messages = after.Messages
 
-	if err != nil || result.Spent != 0 ||
+	if err != nil ||
+		result.Spent != 0 ||
 		!strings.Contains(result.Events[0].Text, "thick-headed") ||
 		!reflect.DeepEqual(before, after) {
 		t.Fatalf("player in doorway = %+v, %v", result, err)

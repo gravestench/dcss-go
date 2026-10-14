@@ -85,7 +85,8 @@ func (s corpseAgingSystem) TickLevel(levelID, elapsed int) error {
 		item, itemFound := s.items.Get(entity)
 		position, located := s.positions.Get(entity)
 
-		if !found || !itemFound || !located {
+		if !found ||
+			!itemFound || !located {
 			return fmt.Errorf("corpse %d is not a floor item", entity)
 		}
 

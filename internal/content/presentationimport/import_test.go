@@ -17,7 +17,8 @@ func TestParseGroupsPreservesSourceOrder(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(groups) != 2 || groups[0].Label != "Simple" ||
+	if len(groups) != 2 ||
+		groups[0].Label != "Simple" ||
 		!slices.Equal(groups[0].IDs, []string{"SP_HUMAN", "SP_MINOTAUR"}) ||
 		groups[1].Label != "Advanced" ||
 		!slices.Equal(groups[1].IDs, []string{"SP_FELID"}) {
@@ -58,7 +59,8 @@ func TestParseStartupModesJoinsSourceStringLiterals(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(modes) != 2 || modes[0].ID != "GAME_TYPE_NORMAL" ||
+	if len(modes) != 2 ||
+		modes[0].ID != "GAME_TYPE_NORMAL" ||
 		modes[0].Description != "The main game." || modes[1].Label != "Tutorial" {
 		t.Fatalf("source modes: %+v", modes)
 	}

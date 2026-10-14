@@ -134,7 +134,8 @@ altar_action: kneel at
 	if len(s.Flags) != 1 ||
 		s.Flags[0] != "SPF_NO_HAIR" ||
 		len(s.LevelUpStats) != 1 ||
-		s.LevelUpStats[0] != "int" || len(s.FakeMutations) != 1 ||
+		s.LevelUpStats[0] != "int" ||
+		len(s.FakeMutations) != 1 ||
 		s.FakeMutations[0].Short != "short description" ||
 		len(s.RecommendedWeapons) != 1 ||
 		s.AltarAction != "kneel at" {

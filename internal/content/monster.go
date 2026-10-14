@@ -146,7 +146,8 @@ func (m MonsterDef) validate() error {
 			m.SizeID == "" ||
 			m.ShapeID == "" ||
 			m.Tile.ID == "" ||
-			m.Tile.VariationID == "" || m.CorpseTileID == "" || len(m.Holiness) == 0 {
+			m.Tile.VariationID == "" ||
+			m.CorpseTileID == "" || len(m.Holiness) == 0 {
 			return fmt.Errorf("incomplete monster definition %s", m.ID)
 		}
 
@@ -196,7 +197,8 @@ func (m MonsterDef) validate() error {
 }
 
 func (a MonsterArtifact) Validate() error {
-	if a.SchemaVersion != 1 || a.SourceRevision == "" || a.TagMajorVersion != 34 {
+	if a.SchemaVersion != 1 ||
+		a.SourceRevision == "" || a.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported monster artifact metadata")
 	}
 

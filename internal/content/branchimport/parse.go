@@ -77,7 +77,8 @@ func parseEnum(path string, body []byte) ([]content.BranchDef, error) {
 			continue
 		}
 
-		if id == "GLOBAL_BRANCH_INFO" && countSeen && target == "127" {
+		if id == "GLOBAL_BRANCH_INFO" &&
+			countSeen && target == "127" {
 			continue
 		}
 

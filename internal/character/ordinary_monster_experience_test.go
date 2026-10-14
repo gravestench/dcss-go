@@ -113,18 +113,23 @@ func TestOrdinaryMonsterExperienceRejectsInvalidStats(t *testing.T) {
 		func(in *OrdinaryMonsterXPInput) {
 			in.HitDice = 0
 		},
+
 		func(in *OrdinaryMonsterXPInput) {
 			in.MaxHP = 0
 		},
+
 		func(in *OrdinaryMonsterXPInput) {
 			in.MaxHP = 10001
 		},
+
 		func(in *OrdinaryMonsterXPInput) {
 			in.Speed = 0
 		},
+
 		func(in *OrdinaryMonsterXPInput) {
 			in.Modifier = -1
 		},
+
 		func(in *OrdinaryMonsterXPInput) {
 			in.AttackDamage[3] = -1
 		},

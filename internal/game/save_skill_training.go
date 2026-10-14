@@ -44,7 +44,8 @@ func validateSavedSkillTraining(
 }
 
 func validateSavedTrainingExperience(training *ecs.SkillTraining, totalXP int) error {
-	if training.AvailableXP < 0 || training.SpentXP < 0 ||
+	if training.AvailableXP < 0 ||
+		training.SpentXP < 0 ||
 		int64(training.AvailableXP)+int64(training.SpentXP) != int64(totalXP)*10 {
 		return fmt.Errorf("player skill experience disagrees with earned XP")
 	}
@@ -74,7 +75,8 @@ func supportedSavedHumanSkills(catalog content.Catalog) (map[string]bool, error)
 
 	for _, column := range catalog.Presentation().SkillColumns {
 		for _, id := range column {
-			if id != "" && species.Aptitudes[id].Allowed &&
+			if id != "" &&
+				species.Aptitudes[id].Allowed &&
 				supportsMeleeSkillTraining(id) {
 				known[id] = true
 			}
@@ -100,7 +102,8 @@ func validateSavedSkillProgress(
 	gainedPoints := 0
 
 	for index, skill := range entries {
-		if !known[skill.ID] || seenSkills[skill.ID] ||
+		if !known[skill.ID] ||
+			seenSkills[skill.ID] ||
 			skill.Points < starting[skill.ID] ||
 			skill.Points > maxHumanSkillPoints() {
 			return nil, fmt.Errorf("invalid player skill %s", skill.ID)
@@ -141,8 +144,10 @@ func validateSavedTrainingChoices(
 	seenSettings := make(map[string]bool, len(training.Settings))
 
 	for _, setting := range training.Settings {
-		if !known[setting.ID] || !seenSkills[setting.ID] ||
-			seenSettings[setting.ID] || setting.Focused && !setting.Enabled {
+		if !known[setting.ID] ||
+			!seenSkills[setting.ID] ||
+			seenSettings[setting.ID] ||
+			setting.Focused && !setting.Enabled {
 			return fmt.Errorf("invalid player skill training setting %s", setting.ID)
 		}
 

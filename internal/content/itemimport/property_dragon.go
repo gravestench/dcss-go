@@ -85,6 +85,7 @@ func dragonArmourRows(
 				Flags:    copyFlags(),
 			},
 		},
+
 		itemKey{
 			ClassID:   "OBJ_ARMOUR",
 			SubtypeID: scalesID,

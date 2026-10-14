@@ -61,7 +61,8 @@ AXED_SPELL(SPELL_OLD, "Old")
 
 	removedIDs, err := parseRemoved("spl-util.cc", removed)
 
-	if err != nil || len(removedIDs) != 1 || !removedIDs["SPELL_OLD"] {
+	if err != nil ||
+		len(removedIDs) != 1 || !removedIDs["SPELL_OLD"] {
 		t.Fatalf("removed %+v, %v", removedIDs, err)
 	}
 

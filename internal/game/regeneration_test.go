@@ -91,7 +91,8 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if health.Current != want.HP || magic.Current != want.MP ||
+	if health.Current != want.HP ||
+		magic.Current != want.MP ||
 		progress.HPProgress != want.HPProgress ||
 		progress.MPProgress != want.MPProgress ||
 		!reflect.DeepEqual(g.rng.States(), expectedRNG.States()) {

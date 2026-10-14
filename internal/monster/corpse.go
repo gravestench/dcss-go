@@ -36,7 +36,8 @@ func AgeCorpse(
 ) (nextKind string, nextFreshness, appearance int, alive bool, err error) {
 	validKind := kindID == "CORPSE_BODY" || kindID == "CORPSE_SKELETON"
 
-	if !validKind || freshness < 1 ||
+	if !validKind ||
+		freshness < 1 ||
 		freshness > FreshestCorpse || elapsedAut < 0 {
 		return "", 0, 0, false, fmt.Errorf(
 			"invalid corpse decay input %q/%d/%d",

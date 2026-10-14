@@ -15,7 +15,8 @@ type corpseRoller struct {
 }
 
 func (r *corpseRoller) Intn(stream string, bound int) (int, error) {
-	if stream != "corpse" || len(r.rolls) == 0 || r.rolls[0].bound != bound {
+	if stream != "corpse" ||
+		len(r.rolls) == 0 || r.rolls[0].bound != bound {
 		return 0, fmt.Errorf("unexpected %s roll %d: %+v", stream, bound, r.rolls)
 	}
 

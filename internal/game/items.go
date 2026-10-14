@@ -12,11 +12,13 @@ import (
 
 // validateItemProperties is shared by save restore and live equipment use.
 func validateItemProperties(item ecs.Item, kind content.ItemDef) error {
-	if item.Quantity <= 0 || (!kind.Stackable && item.Quantity != 1) {
+	if item.Quantity <= 0 ||
+		(!kind.Stackable && item.Quantity != 1) {
 		return fmt.Errorf("impossible quantity")
 	}
 
-	if item.Charges < 0 || (item.Charges != 0 && kind.Class != "OBJ_WANDS") {
+	if item.Charges < 0 ||
+		(item.Charges != 0 && kind.Class != "OBJ_WANDS") {
 		return fmt.Errorf("impossible charges")
 	}
 
@@ -47,7 +49,8 @@ func (g *Game) floorItemAt(position ecs.Position) (akara.Entity, bool) {
 	for _, entity := range g.stores.Items.Entities() {
 		itemPosition, located := g.stores.Positions.Get(entity)
 
-		if located && *itemPosition == position && !g.stores.CarriedBy.Has(entity) {
+		if located &&
+			*itemPosition == position && !g.stores.CarriedBy.Has(entity) {
 			if g.stores.Corpses.Has(entity) {
 				stationary = entity
 				continue
@@ -86,7 +89,8 @@ func (s *pickupSystem) Update(_ *akara.World, _ time.Duration) error {
 	for _, entity := range s.items.Entities() {
 		itemPosition, located := s.positions.Get(entity)
 
-		if located && *itemPosition == *position &&
+		if located &&
+			*itemPosition == *position &&
 			!s.carried.Has(entity) && !s.corpses.Has(entity) {
 			item, found := s.items.Get(entity)
 
@@ -151,7 +155,8 @@ func (g *Game) compatibleCarriedStack(actor akara.Entity, item ecs.Item) (akara.
 		carrier, _ := g.stores.CarriedBy.Get(entity)
 		carried, found := g.stores.Items.Get(entity)
 
-		if carrier.Holder == actor && found && matchingItemStack(*carried, item) {
+		if carrier.Holder == actor &&
+			found && matchingItemStack(*carried, item) {
 			return entity, true
 		}
 	}

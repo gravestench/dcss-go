@@ -47,7 +47,8 @@ func validateSavedHumanAdvancement(
 		pending := progress.PendingStatLevel
 		needed, neededErr := character.HumanExperienceNeeded(pending)
 
-		if neededErr != nil || pending != progress.Level+1 ||
+		if neededErr != nil ||
+			pending != progress.Level+1 ||
 			!character.HumanNeedsManualStat(pending) || progress.TotalXP < needed {
 			return 0, fmt.Errorf("invalid pending player stat choice at XL%d", pending)
 		}
@@ -95,7 +96,8 @@ func validateSavedHumanAttributes(
 			manualGains++
 		}
 
-		if species.LevelUpStatFrequency > 0 && len(species.LevelUpStats) > 0 &&
+		if species.LevelUpStatFrequency > 0 &&
+			len(species.LevelUpStats) > 0 &&
 			level%species.LevelUpStatFrequency == 0 {
 			randomGains++
 		}

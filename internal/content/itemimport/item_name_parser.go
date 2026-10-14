@@ -151,7 +151,8 @@ func (parser *itemNameParser) add(identity content.ItemIdentity, text, kind stri
 func (parser *itemNameParser) addIdentity(identity content.ItemIdentity) error {
 	class := identity.ClassID
 
-	if class == "OBJ_WEAPONS" || class == "OBJ_ARMOUR" || class == "OBJ_MISSILES" {
+	if class == "OBJ_WEAPONS" ||
+		class == "OBJ_ARMOUR" || class == "OBJ_MISSILES" {
 		return nil // Names for these classes come from their property rows.
 	}
 

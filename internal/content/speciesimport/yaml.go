@@ -336,7 +336,8 @@ func yamlInt(path, field string, node yaml.Node, min, max int) (int, error) {
 
 	n, ok := value.(int)
 
-	if !ok || n < min || n > max {
+	if !ok ||
+		n < min || n > max {
 		return 0, fmt.Errorf("%s: %s must be integer in %d..%d", path, field, min, max)
 	}
 

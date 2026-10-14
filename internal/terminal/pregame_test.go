@@ -65,7 +65,8 @@ func TestNewTerminalRunUsesGeneratedDungeon(t *testing.T) {
 	m := playingModel(t)
 	view := m.game.View()
 
-	if view.Width != 80 || view.Height != 70 || view.LevelID != 1 {
+	if view.Width != 80 ||
+		view.Height != 70 || view.LevelID != 1 {
 		t.Fatalf("terminal started on wrong Dungeon layout: %+v", view)
 	}
 
@@ -248,7 +249,8 @@ func TestPregameBothChoiceOrdersAndSixWeapons(t *testing.T) {
 
 			pressApp(m, string(rune('a'+i)))
 
-			if m.screen != ScreenPlay || m.game == nil || m.weaponID != weapon {
+			if m.screen != ScreenPlay ||
+				m.game == nil || m.weaponID != weapon {
 				t.Fatalf("weapon %s start failed: %v / %q", weapon, m.screen, m.notice)
 			}
 
@@ -377,7 +379,8 @@ func TestMenuResizePreservesFocusAndGameState(t *testing.T) {
 		t.Fatal("small terminal warning missing")
 	}
 
-	if m.focus != focus || m.screen != ScreenSpecies || m.game != nil {
+	if m.focus != focus ||
+		m.screen != ScreenSpecies || m.game != nil {
 		t.Fatal("resize changed menu state")
 	}
 

@@ -139,7 +139,8 @@ func TestSaveExitConfirmationAndFailure(t *testing.T) {
 	m.handleKey("S")
 	cmd := m.handleKey("y")
 
-	if cmd != nil || m.screen != ScreenPlay ||
+	if cmd != nil ||
+		m.screen != ScreenPlay ||
 		!strings.Contains(m.notice, "Save failed") ||
 		m.game.View().CurrentAut != aut {
 		t.Fatalf("failed save changed run: screen %v, notice %q", m.screen, m.notice)

@@ -98,7 +98,8 @@ func TestScenarioInstallsStartingProfile(t *testing.T) {
 
 			magic, ok := g.stores.Magic.Get(g.player)
 
-			if !ok || magic.Current != 1 || magic.Max != 1 {
+			if !ok ||
+				magic.Current != 1 || magic.Max != 1 {
 				t.Fatalf("player magic component = %+v", magic)
 			}
 

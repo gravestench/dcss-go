@@ -43,7 +43,8 @@ func TestQuokkaScenarioUsesCatalogSpeedHPAndSave(t *testing.T) {
 			LevelID: 2,
 			X:       14,
 			Y:       7,
-		}) || health.Max < 3 || health.Max > 8 {
+		}) ||
+		health.Max < 3 || health.Max > 8 {
 		t.Fatalf("quokka actor %+v position %+v health %+v definition %+v: %v", actor, position, health, definition, err)
 	}
 

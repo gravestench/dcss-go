@@ -17,7 +17,8 @@ func trainingWeights(
 	for i, skill := range skills {
 		setting := trainingSetting(training, skill.ID)
 
-		if setting == nil || !setting.Enabled ||
+		if setting == nil ||
+			!setting.Enabled ||
 			skill.Level == character.HumanMaxSkillLevel {
 			continue
 		}
@@ -48,7 +49,8 @@ func trainingWeights(
 		for i, skill := range skills {
 			setting := trainingSetting(training, skill.ID)
 
-			if setting != nil && setting.Enabled &&
+			if setting != nil &&
+				setting.Enabled &&
 				skill.Level < character.HumanMaxSkillLevel {
 				weights[i] = 1
 
@@ -63,7 +65,8 @@ func trainingWeights(
 		for i, skill := range skills {
 			setting := trainingSetting(training, skill.ID)
 
-			if setting == nil || !setting.Enabled ||
+			if setting == nil ||
+				!setting.Enabled ||
 				!setting.Focused ||
 				skill.Level == character.HumanMaxSkillLevel {
 				continue

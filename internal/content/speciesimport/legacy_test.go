@@ -91,7 +91,8 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 
 		s := records[i]
 
-		if s.MonsterID != check.monster || s.Strength != check.strength ||
+		if s.MonsterID != check.monster ||
+			s.Strength != check.strength ||
 			s.Intelligence != check.intelligence || s.Dexterity != check.dexterity {
 			t.Fatalf("wrong legacy fields for %s: %+v", check.id, s)
 		}

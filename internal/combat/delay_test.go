@@ -38,7 +38,8 @@ func TestPlayerAttackDelayUsesChosenHasteActionTime(t *testing.T) {
 
 		got, err := PlayerAttackDelay(rng, input, test.actionTime)
 
-		if err != nil || got != test.want || len(rng.rolls) != 0 {
+		if err != nil ||
+			got != test.want || len(rng.rolls) != 0 {
 			t.Fatalf("action time %d: delay %d, err %v", test.actionTime, got, err)
 		}
 	}
@@ -136,7 +137,8 @@ func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
 
 				got, err := PlayerAttackDelay(rng, starterDelay(tc.speed, tc.skill), 10)
 
-				if err != nil || got != boundary.want || len(rng.rolls) != 0 {
+				if err != nil ||
+					got != boundary.want || len(rng.rolls) != 0 {
 					t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", boundary.roll, got, err, rng.rolls, boundary.want)
 				}
 			}
@@ -193,7 +195,8 @@ func TestFractionalWeaponSkillCombinesBeforeOneDraw(t *testing.T) {
 
 		got, err := PlayerAttackDelay(rng, in, 10)
 
-		if err != nil || got != tc.want || len(rng.rolls) != 0 {
+		if err != nil ||
+			got != tc.want || len(rng.rolls) != 0 {
 			t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", tc.roll, got, err, rng.rolls, tc.want)
 		}
 	}
@@ -253,7 +256,8 @@ func TestUnarmedSamplesOneCombinedSourceDistribution(t *testing.T) {
 
 		got, err := PlayerAttackDelay(rng, in, 10)
 
-		if err != nil || got != tc.want || len(rng.rolls) != 0 {
+		if err != nil ||
+			got != tc.want || len(rng.rolls) != 0 {
 			t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", tc.roll, got, err, rng.rolls, tc.want)
 		}
 	}

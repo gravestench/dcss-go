@@ -71,7 +71,8 @@ func TestPinnedItemPresentationCoverage(t *testing.T) {
 		}]; !found {
 			missing[identity.ClassID] = append(missing[identity.ClassID], identity.ID)
 
-			if identity.ClassID != "OBJ_ARMOUR" && identity.ClassID != "OBJ_WEAPONS" &&
+			if identity.ClassID != "OBJ_ARMOUR" &&
+				identity.ClassID != "OBJ_WEAPONS" &&
 				identity.ClassID != "OBJ_MISSILES" && !identity.ExplicitlyRemoved {
 				t.Errorf("active item %s has no source name", identity.ID)
 			}

@@ -356,7 +356,8 @@ func attachLegacyAptitudes(
 
 		value, err := strconv.Atoi(parts[3])
 
-		if err != nil || value < -10 || value > 10 {
+		if err != nil ||
+			value < -10 || value > 10 {
 			return fmt.Errorf("%s: invalid aptitude %s for %s", path, parts[2], parts[1])
 		}
 

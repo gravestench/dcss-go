@@ -198,7 +198,8 @@ func parseDescriptions(path string, data []byte) (map[string]string, error) {
 		name := strings.TrimSpace(line)
 		body = strings.TrimSpace(body)
 
-		if !found || name == "" || body == "" {
+		if !found ||
+			name == "" || body == "" {
 			return nil, fmt.Errorf("%s: malformed description %q", path, name)
 		}
 

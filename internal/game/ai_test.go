@@ -162,7 +162,8 @@ func TestQuokkaAcquiresPlayerOnlyInItsOwnSight(t *testing.T) {
 		t.Fatalf("visible quokka intent %+v, %v", intent, err)
 	}
 
-	if ai.Behavior != "seek" || ai.TargetX != 14 || ai.TargetY != 6 {
+	if ai.Behavior != "seek" ||
+		ai.TargetX != 14 || ai.TargetY != 6 {
 		t.Fatalf("quokka did not remember seen player: %+v", ai)
 	}
 }
@@ -208,7 +209,8 @@ func TestQuokkaPursuesLastSeenTileThenStops(t *testing.T) {
 
 	ai, _ := g.stores.AI.Get(quokka)
 
-	if ai.Behavior != "wander" || (ai.TargetX == 14 && ai.TargetY == 5) {
+	if ai.Behavior != "wander" ||
+		(ai.TargetX == 14 && ai.TargetY == 5) {
 		t.Fatalf("quokka kept stale target: %+v", ai)
 	}
 }
@@ -340,7 +342,8 @@ func TestQuokkaWanderTargetAndMemoryUseSerializableAIStream(t *testing.T) {
 
 	ai, _ := g.stores.AI.Get(quokka)
 
-	if ai.Behavior != "wander" || (ai.TargetX == 0 && ai.TargetY == 0) {
+	if ai.Behavior != "wander" ||
+		(ai.TargetX == 0 && ai.TargetY == 0) {
 		t.Fatalf("quokka did not select wander target: %+v", ai)
 	}
 
@@ -582,7 +585,8 @@ func TestFixedAnimalRouteAvoidsOccupantsAndUnreachableTarget(t *testing.T) {
 
 	dx, dy, ok := level.RouteStep(4, 1, 6, 1, 0)
 
-	if !ok || (dx == 1 && dy == 0) {
+	if !ok ||
+		(dx == 1 && dy == 0) {
 		t.Fatalf("route stepped into occupied tile: %d,%d found %v", dx, dy, ok)
 	}
 

@@ -71,7 +71,8 @@ func TestNewScenarioStartingGear(t *testing.T) {
 				t.Fatalf("loadout kinds/slots = %v/%v, want %v/%v", gotKinds, gotSlots, wantKinds, wantSlots)
 			}
 
-			if view.CurrentAut != 0 || view.PlayerHP != 18 || view.PlayerMaxHP != 18 {
+			if view.CurrentAut != 0 ||
+				view.PlayerHP != 18 || view.PlayerMaxHP != 18 {
 				t.Fatalf("scenario start changed time or HP: %+v", view)
 			}
 
@@ -189,7 +190,8 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 		left, leftErr := g.Step(command)
 		right, rightErr := restored.Step(command)
 
-		if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) {
+		if leftErr != nil ||
+			rightErr != nil || !reflect.DeepEqual(left, right) {
 			t.Fatalf("continuation differs: %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 		}
 	}

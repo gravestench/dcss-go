@@ -44,7 +44,8 @@ type JobArtifact struct {
 }
 
 func (a JobArtifact) Validate() error {
-	if a.SchemaVersion != 1 || a.SourceRevision == "" || a.TagMajorVersion != 34 {
+	if a.SchemaVersion != 1 ||
+		a.SourceRevision == "" || a.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported job artifact metadata")
 	}
 
@@ -68,7 +69,8 @@ func (a JobArtifact) Validate() error {
 }
 
 func (j JobDef) validate() error {
-	if !strings.HasPrefix(j.ID, "JOB_") || j.SourcePath == "" ||
+	if !strings.HasPrefix(j.ID, "JOB_") ||
+		j.SourcePath == "" ||
 		len(j.Abbreviation) != 2 || j.Name == "" {
 		return fmt.Errorf("invalid job definition %q", j.ID)
 	}
