@@ -12,6 +12,7 @@ func TestSchedulerTieBreak(t *testing.T) {
 	defer world.Close()
 	stores := ecs.Register(world)
 	actors := stores.Actors
+
 	first, _ := world.CreateEntity()
 	second, _ := world.CreateEntity()
 	actors.Set(first, ecs.Actor{
@@ -42,6 +43,7 @@ func TestSchedulerSelectsOnlyCurrentFloor(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
 	stores := ecs.Register(world)
+
 	active, _ := world.CreateEntity()
 	inactive, _ := world.CreateEntity()
 	stores.Actors.Set(active, ecs.Actor{
@@ -72,6 +74,7 @@ func TestScheduleAfter(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
 	actors := ecs.Register(world).Actors
+
 	entity, _ := world.CreateEntity()
 	actors.Set(entity, ecs.Actor{Speed: 10})
 	scheduler := TurnScheduler{actors: actors}

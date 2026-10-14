@@ -287,6 +287,7 @@ func TestFightingPracticeRecalculatesHPBeforeAdvancement(t *testing.T) {
 	skills.Entries[0].Points = 433
 	training.SpentXP = 132
 	training.AvailableXP = 2
+
 	training.CostLevel = 2
 	training.Manual = true
 
@@ -419,7 +420,9 @@ func TestTrainingChangesCostAtSpentExperienceBoundary(t *testing.T) {
 	g := newStepGame(t)
 	skills, _ := g.stores.Skills.Get(g.player)
 	training, _ := g.stores.SkillTraining.Get(g.player)
+
 	skills.Entries[0].Points = 417
+
 	training.AvailableXP = 3
 	training.SpentXP = 116
 	training.Manual = true
@@ -444,6 +447,7 @@ func TestSkillRNGAndPracticeContinueAfterRestore(t *testing.T) {
 	g := newStepGame(t)
 	training, _ := g.stores.SkillTraining.Get(g.player)
 	training.AvailableXP = 10
+
 	progress, _ := g.stores.Progression.Get(g.player)
 	progress.TotalXP = 1
 

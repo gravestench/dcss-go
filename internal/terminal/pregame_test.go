@@ -351,6 +351,7 @@ func TestMenuResizePreservesFocusAndGameState(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")
 	pressApp(m, "down")
+
 	focus := m.focus
 	m.Update(tea.WindowSizeMsg{
 		Width:  78,

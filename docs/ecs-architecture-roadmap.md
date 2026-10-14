@@ -18,7 +18,8 @@ expanded literals and blocks, and space around control-flow blocks.
 Review functions over roughly 100 lines for mixed responsibilities. In
 particular, project terrain, player state, entities, and inventory in
 separate named steps, and split setup from turn decisions. A syntactic
-style check cannot establish that a long function is easy to follow.
+style check cannot establish that a long function is easy to follow or that
+statement groups match the game concepts they represent.
 
 ## Decision
 

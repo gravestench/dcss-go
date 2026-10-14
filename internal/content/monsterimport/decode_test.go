@@ -106,6 +106,7 @@ func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 	s.attackType["AT_NONE"] = true
 	s.attackFlavour["AF_PLAIN"] = true
 	s.tileVariation["TVARY_NONE"] = true
+
 	s.classFlag["M_NO_EXP_GAIN"] = true
 	s.classFlag["M_NO_THREAT"] = true
 
@@ -176,12 +177,14 @@ func TestDecodeGoldenRows(t *testing.T) {
 	wizard := rat
 	wizard.ID = "MONS_ORC_WIZARD"
 	wizard.Fields = append([]string(nil), rat.Fields...)
+
 	wizard.Fields[0] = wizard.ID
 	wizard.Fields[16] = "MST_ORC_WIZARD"
 
 	dragon := rat
 	dragon.ID = "MONS_FIRE_DRAGON"
 	dragon.Fields = append([]string(nil), rat.Fields...)
+
 	dragon.Fields[0] = dragon.ID
 	dragon.Fields[5] = "mrd(MR_RES_FIRE, 2) | MR_VUL_COLD"
 	dragon.Fields[11] = "{ {AT_BITE, AF_PLAIN, 30}, {AT_CLAW, AF_PLAIN, 15}, {AT_HIT, AF_FIRE, 10}, AT_NO_ATK }"
@@ -189,19 +192,23 @@ func TestDecodeGoldenRows(t *testing.T) {
 	demon := rat
 	demon.ID = "MONS_DEMONSPAWN"
 	demon.Fields = append([]string(nil), rat.Fields...)
+
 	demon.Fields[0] = demon.ID
 	demon.Fields[9] = "MH_NATURAL | MH_DEMONIC"
 
 	spriggan := rat
 	spriggan.ID = "MONS_SPRIGGAN"
 	spriggan.Fields = append([]string(nil), rat.Fields...)
+
 	spriggan.Fields[0] = spriggan.ID
 	spriggan.Fields[22] = "MOVE_ENERGY(6)"
 
 	bug := rat
 	bug.ID = "MONS_PROGRAM_BUG"
 	bug.Fields = append([]string(nil), rat.Fields...)
+
 	bug.Fields[0] = bug.ID
+
 	bug.Fields[20] = "HT_LAND"
 	bug.Fields[21] = "0"
 	bug.Fields[13] = "0"

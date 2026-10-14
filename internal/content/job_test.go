@@ -61,6 +61,7 @@ func TestJobCatalogCopiesAndSorts(t *testing.T) {
 	returned.RecommendedSpecies[0] = "SP_OTHER"
 	returned.Spells[0] = "SPELL_OTHER"
 	returned.Equipment[0] = "changed"
+
 	returned.Skills[0].Level = 27
 	again, err := catalog.Job("JOB_Z")
 

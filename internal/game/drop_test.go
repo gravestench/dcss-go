@@ -111,6 +111,7 @@ func TestDropEquipmentRulesAndInvalidRequests(t *testing.T) {
 	g := newStepGame(t)
 	armour := carriedItemByKind(t, g, "ARM_SCALE_MAIL")
 	shield := carriedItemByKind(t, g, "ARM_BUCKLER")
+
 	weapon := carriedItemByKind(t, g, "WPN_RAPIER")
 	before := g.Snapshot()
 

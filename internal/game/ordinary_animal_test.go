@@ -30,6 +30,7 @@ func TestQuokkaScenarioUsesCatalogSpeedHPAndSave(t *testing.T) {
 	g := newStepGame(t)
 	quokka := quokkaID(t, g)
 	actor, _ := g.stores.Actors.Get(quokka)
+
 	position, _ := g.stores.Positions.Get(quokka)
 	health, _ := g.stores.Health.Get(quokka)
 

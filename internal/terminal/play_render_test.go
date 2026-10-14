@@ -144,6 +144,7 @@ func TestDrawPlayShowsEarnedRatExperienceProgress(t *testing.T) {
 	view := playView(t)
 	view.ExperienceLevel = 1
 	view.NextLevelPercent = 11
+
 	canvas := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
 	DrawPlay(canvas, layout, view, "")
@@ -157,6 +158,7 @@ func TestDrawPlayShowsMightLightOnlyWhileActive(t *testing.T) {
 	view := playView(t)
 	canvas := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
+
 	view.MightAut = 340
 	DrawPlay(canvas, layout, view, "")
 

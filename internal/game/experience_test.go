@@ -18,6 +18,7 @@ func TestPlayerRatKillAwardsOneExperienceOnlyOnce(t *testing.T) {
 	current, _ := g.stores.Health.Get(rat)
 	current.Current = 1
 	playerHealth, _ := g.stores.Health.Get(g.player)
+
 	playerHealth.Current = 100
 	playerHealth.Max = 100
 

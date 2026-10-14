@@ -54,6 +54,7 @@ func TestHealWoundsFloorPickupQuaffAndSaveContinuation(t *testing.T) {
 	g := newStepGame(t)
 	itemID := carryHealWounds(t, g)
 	health, _ := g.stores.Health.Get(g.player)
+
 	health.Current = 1
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))
 

@@ -90,8 +90,10 @@ func TestClosingDoorPushesFloorItems(t *testing.T) {
 
 	itemID := potionID(t, g)
 	position, _ := g.stores.Positions.Get(itemID)
+
 	position.X = 2
 	position.Y = 1
+
 	secondID, err := g.world.CreateEntity()
 
 	if err != nil {
@@ -172,8 +174,10 @@ func TestForcedDoorPushDoesNotAdvanceRNG(t *testing.T) {
 
 	itemID := potionID(t, g)
 	position, _ := g.stores.Positions.Get(itemID)
+
 	position.X = 2
 	position.Y = 1
+
 	before := g.Snapshot()
 
 	result, err := g.Step(Command{Kind: CommandCloseDoor})

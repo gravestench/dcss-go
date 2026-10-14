@@ -13,6 +13,7 @@ func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 	progress, _ := g.stores.Progression.Get(g.player)
 	health, _ := g.stores.Health.Get(g.player)
 	magic, _ := g.stores.Magic.Get(g.player)
+
 	regeneration, _ := g.stores.Regeneration.Get(g.player)
 	attributes, _ := g.stores.Attributes.Get(g.player)
 
@@ -137,6 +138,7 @@ func TestStatChoiceInterruptsMonsterPhase(t *testing.T) {
 	progress, _ := g.stores.Progression.Get(g.player)
 	progress.Level = 2
 	progress.TotalXP = 29
+
 	monsterDeadlines := make(map[uint64]int64)
 
 	for _, entity := range g.stores.AI.Entities() {

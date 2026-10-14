@@ -224,6 +224,7 @@ func TestPlayerMeleeUnarmedUsesNormalFormBaseAndNoWeaponSkillMultiplier(t *testi
 	in.Unarmed = true
 	in.WeaponSkillID = "SK_UNARMED_COMBAT"
 	in.UnarmedSkill256 = 513
+
 	in.WeaponDamage = 0
 	in.WeaponHit = 0
 

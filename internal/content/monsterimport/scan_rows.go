@@ -79,6 +79,7 @@ func activeMonsterTable(path string, data []byte) (string, []int, []sourceparse.
 				for i+1 < len(lines) {
 					i++
 					starts[i] = body.Len() + len(text) + 1
+
 					body.WriteString(text)
 					body.WriteByte('\n')
 					text = ""

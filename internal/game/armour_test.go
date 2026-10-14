@@ -94,8 +94,10 @@ func TestArmourSwapSavesMidDelayAndChangesDefenseAtFinish(t *testing.T) {
 	g := newStepGame(t)
 	old := carriedItemByKind(t, g, "ARM_SCALE_MAIL")
 	plate := addCarriedArmour(t, g, "ARM_PLATE_ARMOUR")
+
 	startDefense := g.View().PlayerAC
 	rat := ratID(t, g)
+
 	ratActor, _ := g.stores.Actors.Get(rat)
 	initialMonsterAut := ratActor.NextAut
 

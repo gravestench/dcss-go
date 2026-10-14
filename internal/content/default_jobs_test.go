@@ -197,6 +197,7 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 			artifact := original
 			artifact.Jobs = append([]JobDef(nil), original.Jobs...)
 			artifact.SourceFiles = append([]JobSourceFile(nil), original.SourceFiles...)
+
 			tc.mutate(&artifact)
 			data, err := json.Marshal(artifact)
 

@@ -28,6 +28,7 @@ func TestHumanFighterRecoversThroughPlayerWaitsOnly(t *testing.T) {
 	moveRatToOtherFloor(t, g)
 	health, _ := g.stores.Health.Get(g.player)
 	magic, _ := g.stores.Magic.Get(g.player)
+
 	health.Current = 7
 	magic.Current = 0
 
@@ -102,6 +103,7 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 	moveRatToOtherFloor(t, g)
 	health, _ := g.stores.Health.Get(g.player)
 	magic, _ := g.stores.Magic.Get(g.player)
+
 	health.Current = 7
 	magic.Current = 0
 

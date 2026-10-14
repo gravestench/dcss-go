@@ -161,6 +161,7 @@ func TestModalResizePreservesFocusGameAndAut(t *testing.T) {
 	m := playingModel(t)
 	m.handleKey("i")
 	aut, g := m.game.View().CurrentAut, m.game
+
 	m.focus = 2
 	m.Update(tea.WindowSizeMsg{
 		Width:  78,

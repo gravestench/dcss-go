@@ -193,6 +193,7 @@ func tag34Condition(directive string) (bool, bool) {
 func Tag34Lines(path string, data []byte) ([]string, error) {
 	clean := blockComment.ReplaceAllString(string(data), "")
 	lines := strings.Split(clean, "\n")
+
 	active := true
 	var stack []tagBranch
 	var result []string

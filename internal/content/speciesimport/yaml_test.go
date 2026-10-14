@@ -59,6 +59,7 @@ func TestParseYAMLDeepElfSpellcasting(t *testing.T) {
 	input := strings.ReplaceAll(humanYAML, "SP_HUMAN", "SP_DEEP_ELF")
 	input = strings.ReplaceAll(input, "MONS_HUMAN", "MONS_ELF")
 	input = strings.ReplaceAll(input, "name: Human", "name: Deep Elf")
+
 	input += "short_name: DE\n"
 	s, _, err := parseYAML("crawl-ref/source/dat/species/deep-elf.yaml", []byte(input))
 
@@ -75,6 +76,7 @@ func TestParseYAMLFelidUnusableAndMutations(t *testing.T) {
 	input := strings.ReplaceAll(humanYAML, "SP_HUMAN", "SP_FELID")
 	input = strings.ReplaceAll(input, "MONS_HUMAN", "MONS_FELID")
 	input = strings.ReplaceAll(input, "name: Human", "name: Felid")
+
 	input = strings.Replace(input, "  spellcasting: 3\n", "  spellcasting: 3\n  short_blades: False\n", 1)
 	input += "mutations:\n  1:\n    MUT_CLAWS: 1\n  6:\n    MUT_CLAWS: 1\n"
 

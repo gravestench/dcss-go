@@ -13,8 +13,10 @@ func playingModel(t *testing.T) *AppModel {
 	t.Helper()
 	m := pregameModel(t)
 	enterName(m, "Alice")
+
 	pressApp(m, "enter")
 	pressApp(m, "j")
+
 	pressApp(m, "a")
 	pressApp(m, "a")
 
@@ -39,21 +41,29 @@ func TestPlayKeysSourceBindingsAndTurnCost(t *testing.T) {
 	}
 
 	expect("h", game.CommandMove, -1, 0)
+	expect("l", game.CommandMove, 1, 0)
+
 	expect("j", game.CommandMove, 0, 1)
 	expect("k", game.CommandMove, 0, -1)
-	expect("l", game.CommandMove, 1, 0)
+
 	expect("y", game.CommandMove, -1, -1)
 	expect("u", game.CommandMove, 1, -1)
+
 	expect("b", game.CommandMove, -1, 1)
 	expect("n", game.CommandMove, 1, 1)
+
 	expect("home", game.CommandMove, -1, -1)
 	expect("end", game.CommandMove, -1, 1)
+
 	expect("pgup", game.CommandMove, 1, -1)
 	expect("pgdown", game.CommandMove, 1, 1)
+
 	expect("s", game.CommandWait, 0, 0)
 	expect(".", game.CommandWait, 0, 0)
+
 	expect("g", game.CommandPickup, 0, 0)
 	expect(",", game.CommandPickup, 0, 0)
+
 	expect("<", game.CommandUpstairs, 0, 0)
 	expect(">", game.CommandDownstairs, 0, 0)
 

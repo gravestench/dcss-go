@@ -150,6 +150,7 @@ func TestLevelAllowsMultipleStairsOfOneKind(t *testing.T) {
 	g := newStepGame(t)
 	level := g.levels[1]
 	row := []byte(level.terrain[3])
+
 	row[3] = '>'
 	level.terrain[3] = string(row)
 

@@ -196,6 +196,7 @@ func TestItemImportPair(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			var a content.ItemArtifact
 			var m content.ItemIdentityManifest
+
 			_ = json.Unmarshal(itemsJSON, &a)
 			_ = json.Unmarshal(identitiesJSON, &m)
 			test.change(&a, &m)
@@ -306,6 +307,7 @@ func TestItemImportWrite(t *testing.T) {
 	dir := t.TempDir()
 	out := filepath.Join(dir, "items.json")
 	manifestPath := filepath.Join(dir, "item-identities.json")
+
 	generate := func() ([]byte, []byte, error) {
 		return itemsJSON, identitiesJSON, nil
 	}

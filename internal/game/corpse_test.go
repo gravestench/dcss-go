@@ -119,6 +119,7 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 		ratHP, _ := g.stores.Health.Get(rat)
 		ratHP.Current = 1
 		playerHP, _ := g.stores.Health.Get(g.player)
+
 		playerHP.Current = 100
 		playerHP.Max = 100
 

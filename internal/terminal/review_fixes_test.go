@@ -40,6 +40,7 @@ func TestUndersizedTerminalBlocksHiddenInput(t *testing.T) {
 	m := playingModel(t)
 	m.handleKey("i")
 	m.focus = 2
+
 	aut := m.game.View().CurrentAut
 	m.Update(tea.WindowSizeMsg{
 		Width:  78,
@@ -96,6 +97,7 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")
 	m.jobID = "JOB_FIGHTER"
+
 	m.focus = 9 // Human, restricted for Fighter.
 	c := m.renderCanvas()
 	x, y, offset := 0, 0, 0
@@ -117,6 +119,7 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 	m.screen = ScreenBackground
 	m.focus = 0
 	m.jobID = ""
+
 	m.speciesID = "SP_BARACHI"
 	ids := flattenGroups(m.presentation.JobGroups)
 

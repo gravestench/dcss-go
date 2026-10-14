@@ -134,6 +134,7 @@ func TestWieldRejectsInvalidChoicesWithoutTime(t *testing.T) {
 	g := newStepGame(t)
 	starting := carriedItemByKind(t, g, "WPN_RAPIER")
 	armour := carriedItemByKind(t, g, "ARM_SCALE_MAIL")
+
 	twoHanded := addCarriedWeapon(t, g, "WPN_GREAT_SWORD")
 	before := g.Snapshot()
 

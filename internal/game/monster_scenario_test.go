@@ -11,6 +11,7 @@ func TestRatScenarioRollsSourceHPAndKeepsCatalogedBite(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
 	health, ok := g.stores.Health.Get(rat)
+
 	expected := NewRNGStreams(g.seed)
 	want, err := monster.RollHP(expected, 25)
 

@@ -11,6 +11,7 @@ func TestCanvasBoundsAndWideGlyphs(t *testing.T) {
 	c := NewCanvas(5, 2)
 	c.Put(-1, 0, 'X', White, Black)
 	c.Put(5, 0, 'X', White, Black)
+
 	c.Put(4, 0, '界', White, Black)
 	c.Write(0, 0, "A界B", Yellow, Black)
 	rows := c.PlainRows()

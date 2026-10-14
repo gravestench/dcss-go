@@ -28,6 +28,7 @@ func TestSavedHumanAdvancementValidatesAppliedAndPendingLevels(t *testing.T) {
 
 	player := snapshot.Entities[playerIndex]
 	species, _ := g.catalog.Species("SP_HUMAN")
+
 	player.Progression.TotalXP = 9
 	player.Progression.Level = 2
 	player.Health.Max, err = character.HumanMaxHP(2, species, player.Skills.Entries)

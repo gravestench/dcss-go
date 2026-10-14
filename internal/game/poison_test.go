@@ -139,6 +139,7 @@ func TestPoisonTicksAfterPlayerRegeneration(t *testing.T) {
 	g := newStepGame(t)
 	health, _ := g.stores.Health.Get(g.player)
 	regeneration, _ := g.stores.Regeneration.Get(g.player)
+
 	health.Current = 1
 	regeneration.HPProgress = 99
 

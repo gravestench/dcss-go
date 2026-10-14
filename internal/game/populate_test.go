@@ -120,6 +120,7 @@ func TestJackalPopulationCreatesAndSavesBands(t *testing.T) {
 		follower, _ := g.stores.Followers.Get(entity)
 		actor, _ := g.stores.Actors.Get(entity)
 		position, _ := g.stores.Positions.Get(entity)
+
 		leader, _ := g.stores.Positions.Get(follower.Leader)
 		level := g.levels[position.LevelID]
 

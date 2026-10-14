@@ -90,6 +90,7 @@ func TestBandRouteWaitsBeforeEnteringOccupiedLeaderTile(t *testing.T) {
 	g := newStepGame(t)
 	leader := ratID(t, g)
 	leaderPosition, _ := g.stores.Positions.Get(leader)
+
 	playerPosition, _ := g.stores.Positions.Get(g.player)
 	followerPosition := ecs.Position{
 		LevelID: leaderPosition.LevelID,
@@ -520,6 +521,7 @@ func TestQuokkaRoutesAroundCentralWallToRememberedTarget(t *testing.T) {
 	}
 
 	ai, _ := g.stores.AI.Get(quokka)
+
 	ai.Behavior = "seek"
 	ai.TargetX = 7
 	ai.TargetY = 1
