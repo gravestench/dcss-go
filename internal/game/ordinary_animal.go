@@ -59,7 +59,7 @@ func (g *Game) createScenarioAnimal(id string, levelID, x, y int) error {
 	if _, err := g.stores.Combat.Set(entity, ecs.Combatant{}); err != nil {
 		return err
 	}
-	if _, err := g.stores.AI.Set(entity, ecs.MonsterAI{Behavior: "chase"}); err != nil {
+	if _, err := g.stores.AI.Set(entity, ecs.MonsterAI{Behavior: "wander"}); err != nil {
 		return err
 	}
 	return g.levels[levelID].PlaceActor(entity, x, y)

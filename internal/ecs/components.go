@@ -70,6 +70,8 @@ type Attributes struct {
 
 type MonsterAI struct {
 	Behavior string
+	TargetX  int
+	TargetY  int
 }
 
 type Item struct {

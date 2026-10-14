@@ -241,6 +241,19 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Actor == nil || record.Health == nil || record.Position == nil {
 				return nil, fmt.Errorf("invalid monster entity %d", record.ID)
 			}
+			switch record.AI.Behavior {
+			case "wander", "chase":
+				if record.AI.TargetX != 0 || record.AI.TargetY != 0 {
+					return nil, fmt.Errorf("non-seeking monster %d has a target", record.ID)
+				}
+			case "seek":
+				level := g.levels[record.Position.LevelID]
+				if level == nil || !level.Walkable(record.AI.TargetX, record.AI.TargetY) {
+					return nil, fmt.Errorf("monster %d has invalid remembered target", record.ID)
+				}
+			default:
+				return nil, fmt.Errorf("monster %d has invalid behavior %q", record.ID, record.AI.Behavior)
+			}
 			if _, err := catalog.Monster(record.Actor.KindID); err != nil {
 				return nil, err
 			}
