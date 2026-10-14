@@ -120,6 +120,20 @@ func TestRestoreRejectsInvalidStairDestination(t *testing.T) {
 	}
 }
 
+func TestFixedScenarioRestoreRejectsForgedUnavailableStair(t *testing.T) {
+	g := newStepGame(t)
+	snapshot := g.Snapshot()
+	stair := &snapshot.Levels[0].Stairs[0]
+	stair.ToLevelID = 0
+	stair.ToX = 0
+	stair.ToY = 0
+	stair.Unavailable = "Dungeon:2 is unavailable."
+
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil {
+		t.Fatal("fixed scenario accepted an unavailable stair")
+	}
+}
+
 func TestRestoreRejectsMissingStairLink(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()

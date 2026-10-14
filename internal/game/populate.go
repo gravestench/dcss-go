@@ -5,8 +5,7 @@ import (
 	"sort"
 )
 
-// The fixed map starts the player and places the D:2 arrival at (1,1).
-// Keeping monsters away from that cell prevents an immediate spawn collision.
+// Keeping monsters away from an entry prevents an immediate spawn collision.
 const spawnDistanceFromEntry = 5
 
 func (g *Game) spawnFixtureAnimals() error {
@@ -30,7 +29,7 @@ func (g *Game) spawnFixtureAnimals() error {
 // populateDungeon reads immutable source weights, then creates live Akara
 // actors. The two named RNG streams keep monster choice independent of map
 // placement, and their states already travel with the run's save.
-func (g *Game) populateDungeon() error {
+func (g *Game) populateDungeon(entries map[int]point) error {
 	factory := newOrdinaryMonsterFactory(g)
 	levelIDs := make([]int, 0, len(g.levels))
 
@@ -40,13 +39,14 @@ func (g *Game) populateDungeon() error {
 
 	sort.Ints(levelIDs)
 
-	entry := point{
-		x: 1,
-		y: 1,
-	}
-
 	for _, levelID := range levelIDs {
 		level := g.levels[levelID]
+		entry, found := entries[levelID]
+
+		if !found || level.initialMonsters <= 0 {
+			return fmt.Errorf("Dungeon:%d has no population entry or budget", levelID)
+		}
+
 		pool := g.catalog.DungeonMonsterPool(levelID, func(id string) bool {
 			return !isOrdinaryAnimal(id)
 		})
@@ -55,7 +55,7 @@ func (g *Game) populateDungeon() error {
 			return fmt.Errorf("Dungeon:%d has no supported population", levelID)
 		}
 
-		for slot := 0; slot < populationMonstersPerLevel; slot++ {
+		for slot := 0; slot < level.initialMonsters; slot++ {
 			cells := level.spawnCellsAwayFrom(entry, spawnDistanceFromEntry)
 
 			if len(cells) == 0 {

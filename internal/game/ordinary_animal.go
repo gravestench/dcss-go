@@ -13,6 +13,7 @@ import (
 const legacyAnimalScenarioID = "fixed-dungeon-rat-quokka-v1"
 const ordinaryAnimalScenarioID = "fixed-dungeon-rat-quokka-lizard-v2"
 const populationScenarioID = "fixed-dungeon-population-v1"
+const generatedDungeonScenarioID = "generated-dungeon-basic-v1"
 
 const populationMonstersPerLevel = 2
 
@@ -31,6 +32,8 @@ func scenarioAnimalIDs(scenarioID string) ([]string, error) {
 	case ordinaryAnimalScenarioID:
 		return append([]string(nil), supportedOrdinaryAnimals...), nil
 	case populationScenarioID:
+		return append([]string(nil), supportedOrdinaryAnimals...), nil
+	case generatedDungeonScenarioID:
 		return append([]string(nil), supportedOrdinaryAnimals...), nil
 	default:
 		return nil, fmt.Errorf("unsupported scenario ID %q", scenarioID)

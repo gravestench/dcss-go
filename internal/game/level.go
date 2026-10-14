@@ -15,8 +15,10 @@ type Level struct {
 	terrain    []string
 	remembered []byte
 	width      int
-	positions  *akara.Store[ecs.Position]
-	actors     map[point]akara.Entity
+	// Initial generation budget bounds earned XP during save validation.
+	initialMonsters int
+	positions       *akara.Store[ecs.Position]
+	actors          map[point]akara.Entity
 	// nil while active or before the player first visits this floor.
 	awaySinceAut *Aut
 	stairs       map[point]StairLink
@@ -29,11 +31,12 @@ type point struct {
 // StairLink connects a stair cell to an arrival cell on another level.
 // The level owns its outgoing links; the world validates destinations.
 type StairLink struct {
-	X         int
-	Y         int
-	ToLevelID int
-	ToX       int
-	ToY       int
+	X           int
+	Y           int
+	ToLevelID   int
+	ToX         int
+	ToY         int
+	Unavailable string
 }
 
 func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Level, error) {
@@ -50,7 +53,7 @@ func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Lev
 
 		for x := range row {
 			switch row[x] {
-			case '#', '.', '<', '>':
+			case '#', '.', '+', '\'', '<', '>':
 			default:
 				return nil, fmt.Errorf("level %d unknown terrain %q at (%d,%d)", id, row[x], x, y)
 			}
@@ -70,9 +73,15 @@ func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Lev
 
 func (l *Level) AddStairLink(link StairLink) error {
 	if !l.inBounds(link.X, link.Y) ||
-		(l.terrain[link.Y][link.X] != '<' && l.terrain[link.Y][link.X] != '>') ||
-		link.ToLevelID <= 0 || link.ToX < 0 || link.ToY < 0 {
+		(l.terrain[link.Y][link.X] != '<' && l.terrain[link.Y][link.X] != '>') {
 		return fmt.Errorf("level %d has invalid stair link at (%d,%d)", l.ID, link.X, link.Y)
+	}
+
+	boundary := link.Unavailable != ""
+
+	if boundary && (link.ToLevelID != 0 || link.ToX != 0 || link.ToY != 0) ||
+		!boundary && (link.ToLevelID <= 0 || link.ToX < 0 || link.ToY < 0) {
+		return fmt.Errorf("level %d has invalid stair destination at (%d,%d)", l.ID, link.X, link.Y)
 	}
 
 	location := point{
@@ -141,6 +150,10 @@ func validateStairLinks(levels map[int]*Level) error {
 		}
 
 		for _, link := range level.StairLinks() {
+			if link.Unavailable != "" {
+				continue
+			}
+
 			target := levels[link.ToLevelID]
 
 			if target == nil || !target.Walkable(link.ToX, link.ToY) {
@@ -160,7 +173,65 @@ func (l *Level) inBounds(x, y int) bool {
 }
 
 func (l *Level) Walkable(x, y int) bool {
-	return l.inBounds(x, y) && l.terrain[y][x] != '#'
+	return l.inBounds(x, y) && l.terrain[y][x] != '#' && l.terrain[y][x] != '+'
+}
+
+// OpenDoor changes the entire four-connected closed-door group, as the pinned
+// terrain.cc:751-785 does for a multi-cell door. Known cells also update when
+// an opened segment lies outside current sight.
+func (l *Level) OpenDoor(x, y int) (int, error) {
+	if !l.inBounds(x, y) || l.terrain[y][x] != '+' {
+		return 0, fmt.Errorf("level %d has no closed door at (%d,%d)", l.ID, x, y)
+	}
+
+	queue := []point{
+		{
+			x: x,
+			y: y,
+		},
+	}
+	opened := 0
+
+	for len(queue) > 0 {
+		cell := queue[0]
+		queue = queue[1:]
+
+		if !l.inBounds(cell.x, cell.y) || l.terrain[cell.y][cell.x] != '+' {
+			continue
+		}
+
+		row := []byte(l.terrain[cell.y])
+		row[cell.x] = '\''
+		l.terrain[cell.y] = string(row)
+		opened++
+
+		index := cell.y*l.width + cell.x
+
+		if l.remembered[index] != 0 {
+			l.remembered[index] = '\''
+		}
+
+		queue = append(queue,
+			point{
+				x: cell.x + 1,
+				y: cell.y,
+			},
+			point{
+				x: cell.x - 1,
+				y: cell.y,
+			},
+			point{
+				x: cell.x,
+				y: cell.y + 1,
+			},
+			point{
+				x: cell.x,
+				y: cell.y - 1,
+			},
+		)
+	}
+
+	return opened, nil
 }
 
 func (l *Level) ActorAt(x, y int) (akara.Entity, bool) {
@@ -289,7 +360,7 @@ func (l *Level) LoadKnownRows(rows []string) error {
 		for x := 0; x < len(row); x++ {
 			switch row[x] {
 			case ' ':
-			case '#', '.', '<', '>':
+			case '#', '.', '+', '\'', '<', '>':
 				known[y*l.width+x] = row[x]
 			default:
 				return fmt.Errorf("level %d invalid remembered terrain %q at (%d,%d)", l.ID, row[x], x, y)

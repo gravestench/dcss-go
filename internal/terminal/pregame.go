@@ -284,7 +284,7 @@ func (m *AppModel) handleNameKey(key string) {
 }
 
 func (m *AppModel) startGame() {
-	started, err := game.NewPopulatedScenario(m.seed, m.catalog, m.weaponID, strings.TrimSpace(m.name))
+	started, err := game.NewDungeonGame(m.seed, m.catalog, m.weaponID, strings.TrimSpace(m.name))
 
 	if err != nil {
 		m.notice = fmt.Sprintf("Start failed: %v", err)

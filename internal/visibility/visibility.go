@@ -169,14 +169,15 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 
 		for x := 0; x < width; x++ {
 			switch row[x] {
-			case '#', '.', '<', '>':
+			case '#', '.', '+', '\'', '<', '>':
 			default:
 				return nil, fmt.Errorf("unknown terrain %q at (%d,%d)", row[x], x, y)
 			}
 		}
 	}
 
-	if originX < 0 || originX >= width || originY < 0 || originY >= len(rows) || rows[originY][originX] == '#' {
+	if originX < 0 || originX >= width || originY < 0 || originY >= len(rows) ||
+		rows[originY][originX] == '#' || rows[originY][originX] == '+' {
 		return nil, fmt.Errorf("invalid sight origin (%d,%d)", originX, originY)
 	}
 
@@ -203,7 +204,7 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 
 				visible[y*width+x] = true
 
-				if rows[y][x] == '#' {
+				if rows[y][x] == '#' || rows[y][x] == '+' {
 					break
 				}
 			}

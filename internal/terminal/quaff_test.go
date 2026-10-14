@@ -59,14 +59,33 @@ func TestQuaffChoiceCancelAndStartingMight(t *testing.T) {
 func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 	m := playingModel(t)
 	snapshot := m.game.Snapshot()
+	var curing *ecs.Position
+
+	for i := range snapshot.Entities {
+		record := &snapshot.Entities[i]
+
+		if record.Item != nil && record.Item.KindID == "POT_CURING" {
+			curing = record.Position
+
+			break
+		}
+	}
+
+	if curing == nil {
+		t.Fatal("generated run has no curing potion")
+	}
 
 	for i := range snapshot.Entities {
 		record := &snapshot.Entities[i]
 
 		if record.ID == snapshot.PlayerID {
-			record.Position.X, record.Position.Y = 4, 2
-		} else if record.Actor != nil && record.Actor.KindID == "MONS_RAT" {
-			record.Position.X, record.Position.Y = 14, 7
+			record.Position = &ecs.Position{
+				LevelID: curing.LevelID,
+				X:       curing.X,
+				Y:       curing.Y,
+			}
+
+			break
 		}
 	}
 

@@ -18,19 +18,21 @@ type Snapshot struct {
 }
 
 type LevelRecord struct {
-	ID           int           `json:"id"`
-	Rows         []string      `json:"rows"`
-	Known        []string      `json:"known"`
-	Stairs       []StairRecord `json:"stairs,omitempty"`
-	AwaySinceAut *int64        `json:"away_since_aut,omitempty"`
+	ID              int           `json:"id"`
+	Rows            []string      `json:"rows"`
+	Known           []string      `json:"known"`
+	Stairs          []StairRecord `json:"stairs,omitempty"`
+	InitialMonsters int           `json:"initial_monsters,omitempty"`
+	AwaySinceAut    *int64        `json:"away_since_aut,omitempty"`
 }
 
 type StairRecord struct {
-	X         int `json:"x"`
-	Y         int `json:"y"`
-	ToLevelID int `json:"to_level_id"`
-	ToX       int `json:"to_x"`
-	ToY       int `json:"to_y"`
+	X           int    `json:"x"`
+	Y           int    `json:"y"`
+	ToLevelID   int    `json:"to_level_id"`
+	ToX         int    `json:"to_x"`
+	ToY         int    `json:"to_y"`
+	Unavailable string `json:"unavailable,omitempty"`
 }
 
 type EntityRecord struct {

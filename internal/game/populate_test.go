@@ -105,6 +105,23 @@ func TestPopulationSaveAndTurnContinuation(t *testing.T) {
 	}
 }
 
+func TestOlderFixedPopulationSaveWithoutBudgetsStillLoads(t *testing.T) {
+	g := newPopulatedTestGame(t, 41)
+	snapshot := g.Snapshot()
+
+	for index := range snapshot.Levels {
+		snapshot.Levels[index].InitialMonsters = 0
+	}
+
+	restored, err := Restore(snapshot, testCatalog(t))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+}
+
 func TestRestoreRejectsOverfullPopulationLevel(t *testing.T) {
 	g := newPopulatedTestGame(t, 41)
 	snapshot := g.Snapshot()

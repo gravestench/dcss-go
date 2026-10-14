@@ -113,6 +113,7 @@ const (
 	IntentDownstairs
 	IntentWait
 	IntentQuaff
+	IntentOpenDoor
 )
 
 type Intent struct {

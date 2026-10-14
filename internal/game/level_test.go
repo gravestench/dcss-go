@@ -113,3 +113,34 @@ func TestOccupancyRejectsSecondActor(t *testing.T) {
 		t.Fatal("failed placement left a position on second actor")
 	}
 }
+
+func TestClosedDoorBlocksMovementAndOpensConnectedGroup(t *testing.T) {
+	world := akara.NewWorld()
+	defer world.Close()
+
+	positions := ecs.Register(world).Positions
+	level, err := NewLevel(1, []string{
+		"#######",
+		"#..++.#",
+		"#.....#",
+		"#######",
+	}, positions)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if level.Walkable(3, 1) {
+		t.Fatal("closed door is walkable")
+	}
+
+	opened, err := level.OpenDoor(3, 1)
+
+	if err != nil || opened != 2 {
+		t.Fatalf("opened door group = %d, %v", opened, err)
+	}
+
+	if level.terrain[1] != "#..''.#" || !level.Walkable(3, 1) {
+		t.Fatalf("open door terrain = %q", level.terrain[1])
+	}
+}

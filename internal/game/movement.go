@@ -18,7 +18,7 @@ type movementSystem struct {
 func (s *movementSystem) Update(_ *akara.World, _ time.Duration) error {
 	intent, found := s.intents.Get(s.turn.Actor)
 
-	if !found || intent.Kind != ecs.IntentMove {
+	if !found || (intent.Kind != ecs.IntentMove && intent.Kind != ecs.IntentOpenDoor) {
 		return nil
 	}
 
@@ -30,6 +30,19 @@ func (s *movementSystem) Update(_ *akara.World, _ time.Duration) error {
 
 	level := s.levels[position.LevelID]
 	x, y := position.X+intent.DX, position.Y+intent.DY
+
+	if intent.Kind == ecs.IntentOpenDoor {
+		if _, err := level.OpenDoor(x, y); err != nil {
+			return err
+		}
+
+		s.turn.Events = append(s.turn.Events, Event{
+			Kind: "door",
+			Text: "You open the door.",
+		})
+
+		return nil
+	}
 
 	if _, occupied := level.ActorAt(x, y); occupied {
 		intent.Kind = ecs.IntentMelee
@@ -80,6 +93,10 @@ func (s *stairSystem) Update(_ *akara.World, _ time.Duration) error {
 
 	if !found {
 		return fmt.Errorf("stair actor %d has no link at (%d,%d)", s.turn.Actor, position.X, position.Y)
+	}
+
+	if link.Unavailable != "" {
+		return fmt.Errorf("stair actor %d tried an unavailable exit", s.turn.Actor)
 	}
 
 	to := s.levels[link.ToLevelID]

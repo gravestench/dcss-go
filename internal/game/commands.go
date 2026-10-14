@@ -86,6 +86,20 @@ func (g *Game) Step(command Command) (StepResult, error) {
 
 		x, y := position.X+command.DX, position.Y+command.DY
 
+		if !level.inBounds(x, y) {
+			return g.noTime("You cannot move there."), nil
+		}
+
+		if level.terrain[y][x] == '+' {
+			intent = ecs.Intent{
+				Kind: ecs.IntentOpenDoor,
+				DX:   command.DX,
+				DY:   command.DY,
+			}
+
+			break
+		}
+
 		if !level.Walkable(x, y) {
 			return g.noTime("You cannot move there."), nil
 		}
@@ -118,18 +132,26 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			DY:   command.DY,
 		}
 	case CommandUpstairs:
-		_, linked := level.StairAt(position.X, position.Y)
+		link, linked := level.StairAt(position.X, position.Y)
 
 		if level.terrain[position.Y][position.X] != '<' || !linked {
 			return g.noTime("There are no stairs up here."), nil
 		}
 
+		if link.Unavailable != "" {
+			return g.noTime(link.Unavailable), nil
+		}
+
 		intent = ecs.Intent{Kind: ecs.IntentUpstairs}
 	case CommandDownstairs:
-		_, linked := level.StairAt(position.X, position.Y)
+		link, linked := level.StairAt(position.X, position.Y)
 
 		if level.terrain[position.Y][position.X] != '>' || !linked {
 			return g.noTime("There are no stairs down here."), nil
+		}
+
+		if link.Unavailable != "" {
+			return g.noTime(link.Unavailable), nil
 		}
 
 		intent = ecs.Intent{Kind: ecs.IntentDownstairs}

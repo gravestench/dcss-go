@@ -61,6 +61,19 @@ func plainApp(m *AppModel) string {
 	return strings.Join(m.renderCanvas().PlainRows(), "\n")
 }
 
+func TestNewTerminalRunUsesGeneratedDungeon(t *testing.T) {
+	m := playingModel(t)
+	view := m.game.View()
+
+	if view.Width != 80 || view.Height != 70 || view.LevelID != 1 {
+		t.Fatalf("terminal started on wrong Dungeon layout: %+v", view)
+	}
+
+	if cell := view.Cells[view.PlayerY*view.Width+view.PlayerX]; cell.Glyph != '<' {
+		t.Fatalf("new player is not on a Dungeon exit stair: %+v", cell)
+	}
+}
+
 func enterName(m *AppModel, name string) {
 	for _, r := range name {
 		pressApp(m, string(r))

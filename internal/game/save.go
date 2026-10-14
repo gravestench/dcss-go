@@ -107,18 +107,20 @@ func (g *Game) Snapshot() save.Snapshot {
 
 	for id, level := range g.levels {
 		record := save.LevelRecord{
-			ID:    id,
-			Rows:  append([]string(nil), level.terrain...),
-			Known: level.KnownRows(),
+			ID:              id,
+			Rows:            append([]string(nil), level.terrain...),
+			Known:           level.KnownRows(),
+			InitialMonsters: level.initialMonsters,
 		}
 
 		for _, link := range level.StairLinks() {
 			record.Stairs = append(record.Stairs, save.StairRecord{
-				X:         link.X,
-				Y:         link.Y,
-				ToLevelID: link.ToLevelID,
-				ToX:       link.ToX,
-				ToY:       link.ToY,
+				X:           link.X,
+				Y:           link.Y,
+				ToLevelID:   link.ToLevelID,
+				ToX:         link.ToX,
+				ToY:         link.ToY,
+				Unavailable: link.Unavailable,
 			})
 		}
 
@@ -187,7 +189,8 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		return nil, err
 	}
 
-	usesPopulation := snapshot.ScenarioID == populationScenarioID
+	usesPopulation := snapshot.ScenarioID == populationScenarioID ||
+		snapshot.ScenarioID == generatedDungeonScenarioID
 
 	if snapshot.PlayerID == 0 || snapshot.CurrentAut < 0 || len(snapshot.Levels) == 0 {
 		return nil, fmt.Errorf("invalid save header")
@@ -225,17 +228,20 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			return nil, levelErr
 		}
 
+		level.initialMonsters = record.InitialMonsters
+
 		if knownErr := level.LoadKnownRows(record.Known); knownErr != nil {
 			return nil, knownErr
 		}
 
 		for _, savedLink := range record.Stairs {
 			if linkErr := level.AddStairLink(StairLink{
-				X:         savedLink.X,
-				Y:         savedLink.Y,
-				ToLevelID: savedLink.ToLevelID,
-				ToX:       savedLink.ToX,
-				ToY:       savedLink.ToY,
+				X:           savedLink.X,
+				Y:           savedLink.Y,
+				ToLevelID:   savedLink.ToLevelID,
+				ToX:         savedLink.ToX,
+				ToY:         savedLink.ToY,
+				Unavailable: savedLink.Unavailable,
 			}); linkErr != nil {
 				return nil, linkErr
 			}
@@ -254,6 +260,10 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 
 	if err := validateStairLinks(g.levels); err != nil {
+		return nil, err
+	}
+
+	if err := validateScenarioLevels(g.levels, snapshot.ScenarioID); err != nil {
 		return nil, err
 	}
 
@@ -412,7 +422,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 				liveMonstersByLevel[levelID]++
 				liveMonsterCount++
 
-				if liveMonstersByLevel[levelID] > populationMonstersPerLevel {
+				if liveMonstersByLevel[levelID] > initialMonsterBudget(g.levels[levelID], snapshot.ScenarioID) {
 					return nil, fmt.Errorf("Dungeon:%d has too many live monsters", levelID)
 				}
 			}
@@ -488,7 +498,12 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 
 	if usesPopulation {
-		initialMonsterCount := populationMonstersPerLevel * len(g.levels)
+		initialMonsterCount := 0
+
+		for _, level := range g.levels {
+			initialMonsterCount += initialMonsterBudget(level, snapshot.ScenarioID)
+		}
+
 		maxEarnedXP *= initialMonsterCount - liveMonsterCount
 	}
 

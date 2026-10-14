@@ -8,20 +8,25 @@ import (
 )
 
 func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_ *Game, err error) {
-	return newScenario(seed, catalog, weaponID, name, false)
+	return newScenario(seed, catalog, weaponID, name, ordinaryAnimalScenarioID)
 }
 
 // NewPopulatedScenario keeps the current fixed map while selecting its
 // supported monsters from the committed Dungeon population table.
 func NewPopulatedScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_ *Game, err error) {
-	return newScenario(seed, catalog, weaponID, name, true)
+	return newScenario(seed, catalog, weaponID, name, populationScenarioID)
+}
+
+// NewDungeonGame starts the live client on generated D:1-2 basic layouts.
+func NewDungeonGame(seed uint64, catalog content.Catalog, weaponID, name string) (_ *Game, err error) {
+	return newScenario(seed, catalog, weaponID, name, generatedDungeonScenarioID)
 }
 
 func newScenario(
 	seed uint64,
 	catalog content.Catalog,
 	weaponID, name string,
-	usePopulation bool,
+	scenarioID string,
 ) (_ *Game, err error) {
 	if err := catalog.Validate(); err != nil {
 		return nil, err
@@ -44,82 +49,20 @@ func newScenario(
 		}
 	}()
 	stores := ecs.Register(world)
-	firstRows := []string{
-		"#################",
-		"#.......#.......#",
-		"#.#.....#.......#",
-		"#......>#.......#",
-		"#...............#",
-		"#.......#.......#",
-		"#.......#.......#",
-		"#.......#.......#",
-		"#################",
-	}
-	first, err := NewLevel(1, firstRows, stores.Positions)
+	rng := NewRNGStreams(seed)
+	setup, err := buildScenarioLevels(scenarioID, stores.Positions, rng)
 
 	if err != nil {
 		return nil, err
-	}
-
-	secondRows := []string{
-		"#################",
-		"#<......#.......#",
-		"#.......#.......#",
-		"#.......#.......#",
-		"#...............#",
-		"#.......#.......#",
-		"#.......#.......#",
-		"#.......#.......#",
-		"#################",
-	}
-	second, err := NewLevel(2, secondRows, stores.Positions)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if err := first.AddStairLink(StairLink{
-		X:         7,
-		Y:         3,
-		ToLevelID: 2,
-		ToX:       1,
-		ToY:       1,
-	}); err != nil {
-		return nil, err
-	}
-
-	if err := second.AddStairLink(StairLink{
-		X:         1,
-		Y:         1,
-		ToLevelID: 1,
-		ToX:       7,
-		ToY:       3,
-	}); err != nil {
-		return nil, err
-	}
-
-	levels := map[int]*Level{
-		1: first,
-		2: second,
-	}
-
-	if err := validateStairLinks(levels); err != nil {
-		return nil, err
-	}
-
-	scenarioID := ordinaryAnimalScenarioID
-
-	if usePopulation {
-		scenarioID = populationScenarioID
 	}
 
 	g := &Game{
 		world:      world,
 		stores:     stores,
-		levels:     levels,
+		levels:     setup.levels,
 		catalog:    catalog,
 		seed:       seed,
-		rng:        NewRNGStreams(seed),
+		rng:        rng,
 		scheduler:  TurnScheduler{actors: stores.Actors},
 		scenarioID: scenarioID,
 	}
@@ -150,7 +93,7 @@ func newScenario(
 		return nil, err
 	}
 
-	if err = first.PlaceActor(g.player, 1, 1); err != nil {
+	if err = setup.levels[1].PlaceActor(g.player, setup.entry.x, setup.entry.y); err != nil {
 		return nil, err
 	}
 
@@ -204,8 +147,8 @@ func newScenario(
 		return nil, err
 	}
 
-	if usePopulation {
-		err = g.populateDungeon()
+	if scenarioID != ordinaryAnimalScenarioID {
+		err = g.populateDungeon(setup.populationEntries)
 	} else {
 		err = g.spawnFixtureAnimals()
 	}
@@ -233,8 +176,8 @@ func newScenario(
 
 	if _, err = stores.Positions.Set(potion, ecs.Position{
 		LevelID: 1,
-		X:       4,
-		Y:       2,
+		X:       setup.curing.x,
+		Y:       setup.curing.y,
 	}); err != nil {
 		return nil, err
 	}
@@ -258,8 +201,8 @@ func newScenario(
 
 	if _, err = stores.Positions.Set(healPotion, ecs.Position{
 		LevelID: 2,
-		X:       2,
-		Y:       1,
+		X:       setup.heal.x,
+		Y:       setup.heal.y,
 	}); err != nil {
 		return nil, err
 	}
