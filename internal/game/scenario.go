@@ -8,6 +8,21 @@ import (
 )
 
 func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_ *Game, err error) {
+	return newScenario(seed, catalog, weaponID, name, false)
+}
+
+// NewPopulatedScenario keeps the current fixed map while selecting its
+// supported monsters from the committed Dungeon population table.
+func NewPopulatedScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_ *Game, err error) {
+	return newScenario(seed, catalog, weaponID, name, true)
+}
+
+func newScenario(
+	seed uint64,
+	catalog content.Catalog,
+	weaponID, name string,
+	usePopulation bool,
+) (_ *Game, err error) {
 	if err := catalog.Validate(); err != nil {
 		return nil, err
 	}
@@ -80,6 +95,10 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if err := validateStairLinks(levels); err != nil {
 		return nil, err
 	}
+	scenarioID := ordinaryAnimalScenarioID
+	if usePopulation {
+		scenarioID = populationScenarioID
+	}
 	g := &Game{
 		world:      world,
 		stores:     stores,
@@ -88,7 +107,7 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 		seed:       seed,
 		rng:        NewRNGStreams(seed),
 		scheduler:  TurnScheduler{actors: stores.Actors},
-		scenarioID: ordinaryAnimalScenarioID,
+		scenarioID: scenarioID,
 	}
 
 	g.player, err = world.CreateEntity()
@@ -155,14 +174,12 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 		return nil, err
 	}
 
-	monsterFactory := newOrdinaryMonsterFactory(g)
-	if _, err = monsterFactory.Spawn("MONS_RAT", 1, 4, 1); err != nil {
-		return nil, err
+	if usePopulation {
+		err = g.populateDungeon()
+	} else {
+		err = g.spawnFixtureAnimals()
 	}
-	if _, err = monsterFactory.Spawn("MONS_QUOKKA", 2, 14, 7); err != nil {
-		return nil, err
-	}
-	if _, err = monsterFactory.Spawn("MONS_FRILLED_LIZARD", 2, 14, 1); err != nil {
+	if err != nil {
 		return nil, err
 	}
 

@@ -153,6 +153,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	if err != nil {
 		return nil, err
 	}
+	usesPopulation := snapshot.ScenarioID == populationScenarioID
 	if snapshot.PlayerID == 0 || snapshot.CurrentAut < 0 || len(snapshot.Levels) == 0 {
 		return nil, fmt.Errorf("invalid save header")
 	}
@@ -214,6 +215,8 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	playerCount := 0
 	savedXP := 0
 	liveAnimals := map[string]bool{}
+	liveMonstersByLevel := map[int]int{}
+	liveMonsterCount := 0
 	selectedWeaponID := ""
 	equippedSlots := map[string]string{}
 	var playerNext int64
@@ -279,7 +282,10 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Magic.Max != profile.MaxMP || record.Magic.Current < 0 || record.Magic.Current > record.Magic.Max {
 				return nil, fmt.Errorf("invalid player MP for entity %d", record.ID)
 			}
-			if record.Progression != nil && (record.Progression.TotalXP < 0 || record.Progression.TotalXP >= 9) {
+			if record.Progression != nil && record.Progression.TotalXP < 0 {
+				return nil, fmt.Errorf("invalid Dungeon experience for entity %d", record.ID)
+			}
+			if record.Progression != nil && !usesPopulation && record.Progression.TotalXP >= 9 {
 				return nil, fmt.Errorf("invalid fixed Dungeon experience for entity %d", record.ID)
 			}
 			if record.Progression != nil {
@@ -340,10 +346,18 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Actor.Speed != definition.Speed {
 				return nil, fmt.Errorf("fixed animal %s has wrong speed %d", record.Actor.KindID, record.Actor.Speed)
 			}
-			if liveAnimals[record.Actor.KindID] {
+			if !usesPopulation && liveAnimals[record.Actor.KindID] {
 				return nil, fmt.Errorf("duplicate fixed animal %s", record.Actor.KindID)
 			}
 			liveAnimals[record.Actor.KindID] = true
+			if usesPopulation {
+				levelID := record.Position.LevelID
+				liveMonstersByLevel[levelID]++
+				liveMonsterCount++
+				if liveMonstersByLevel[levelID] > populationMonstersPerLevel {
+					return nil, fmt.Errorf("Dungeon:%d has too many live monsters", levelID)
+				}
+			}
 		}
 		if record.Actor != nil &&
 			(record.Actor.Speed <= 0 || record.Actor.NextAut < 0 ||
@@ -381,7 +395,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 	maxEarnedXP := 0
 	for _, id := range scenarioAnimals {
-		if liveAnimals[id] {
+		if !usesPopulation && liveAnimals[id] {
 			continue
 		}
 		definition, defErr := catalog.Monster(id)
@@ -393,10 +407,18 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		if xpErr != nil {
 			return nil, xpErr
 		}
-		maxEarnedXP += amount
+		if usesPopulation {
+			maxEarnedXP = max(maxEarnedXP, amount)
+		} else {
+			maxEarnedXP += amount
+		}
+	}
+	if usesPopulation {
+		initialMonsterCount := populationMonstersPerLevel * len(g.levels)
+		maxEarnedXP *= initialMonsterCount - liveMonsterCount
 	}
 	if savedXP > maxEarnedXP {
-		return nil, fmt.Errorf("saved experience exceeds killed fixed animals")
+		return nil, fmt.Errorf("saved experience exceeds possible Dungeon kills")
 	}
 	if equippedSlots["body"] != "ARM_SCALE_MAIL" || equippedSlots["shield"] != "ARM_BUCKLER" {
 		return nil, fmt.Errorf("save is missing required Human/Fighter armour slots")

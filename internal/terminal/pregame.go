@@ -226,7 +226,7 @@ func (m *AppModel) handleNameKey(key string) {
 }
 
 func (m *AppModel) startGame() {
-	started, err := game.NewScenario(m.seed, m.catalog, m.weaponID, strings.TrimSpace(m.name))
+	started, err := game.NewPopulatedScenario(m.seed, m.catalog, m.weaponID, strings.TrimSpace(m.name))
 	if err != nil {
 		m.notice = fmt.Sprintf("Start failed: %v", err)
 		return
@@ -305,7 +305,9 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 			} else if m.screen == ScreenBackground && m.speciesID != "" {
 				status, _ = character.JobForSpecies(m.catalog, m.speciesID, id)
 			}
-			if (m.screen == ScreenSpecies && m.jobID != "") || (m.screen == ScreenBackground && m.speciesID != "") {
+			hasOtherChoice := (m.screen == ScreenSpecies && m.jobID != "") ||
+				(m.screen == ScreenBackground && m.speciesID != "")
+			if hasOtherChoice {
 				if status == character.Recommended {
 					color = White
 				} else {
@@ -314,9 +316,9 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 			}
 			if index == m.focus {
 				color = White
-				if status == character.Recommended && ((m.screen == ScreenSpecies && m.jobID != "") || (m.screen == ScreenBackground && m.speciesID != "")) {
+				if status == character.Recommended && hasOtherChoice {
 					background = Green
-				} else if (m.screen == ScreenSpecies && m.jobID != "") || (m.screen == ScreenBackground && m.speciesID != "") {
+				} else if hasOtherChoice {
 					background = LightGrey
 				} else {
 					background = Blue

@@ -55,7 +55,15 @@ Each numbered phase contains contiguous problem categories, committed separately
 
 Phase 1 progress: quaff, combat, death, duration decay, and regeneration systems now receive their required Akara stores and services rather than holding `*Game`. The Fighter's attack, timing, and defense projections live in `playerCombat`. The action barrier remains coordinated in `Game.runAction`.
 
-Phase 2 progress: the ordered Akara monster-decision system reads the acting monster's `MonsterAI` and `Position`, advances the serializable `ai` stream, and writes its transient `Intent` before movement. `Game.Step` no longer selects monster actions. A focused factory now creates the rat, quokka, and frilled lizard from immutable source definitions with mutable ECS state. Population-driven placement and broader capability composition remain next.
+Phase 2 progress: the ordered Akara monster-decision system reads the acting monster's `MonsterAI` and `Position`, advances the serializable `ai` stream, and writes its transient `Intent` before movement. `Game.Step` no longer selects monster actions. A focused factory creates the rat, quokka, and frilled lizard from immutable source definitions with mutable ECS state. The playable fixed map now chooses these supported monsters from the committed Dungeon population table and places them through the factory. The population selector owns the `population` RNG stream, the placement policy owns the `placement` stream, and each monster's mutable state lives in Akara. Source population density, other monster capabilities, and procedural level generation remain next.
+
+Fixed-map population ownership: each spawned monster owns `Actor`, `Health`,
+`Combatant`, `MonsterAI`, and `Position` components. Ordered monster systems
+change those components during turns. The immutable catalog supplies Dungeon
+weights and monster definitions. The scenario builder chooses kinds and cells;
+the level supplies walkability and occupancy. The game owns the two RNG streams
+and saves their states. The chosen count of two per floor is temporary pending
+source-backed level generation.
 
 Phase 5 progress: corpse state remains in Akara stores, and a focused aging system now owns its decay and removal. The `Level` owns its away clock. `Game.Step` supplies elapsed aut only after all actor actions, preserving the source's 200-aut timer phase and inactive-floor catch-up.
 
@@ -65,4 +73,4 @@ Level travel progress: each stair cell has an explicit destination level and arr
 
 Before each implementation slice, write a small ownership note: **which entity owns new mutable state, which system changes it, which immutable definition it reads, and what belongs to a level/session instead**. Add a component only if an actual feature or invariant uses it. Keep each behavior in one path; remove its former `Game` implementation in the same category. A completed slice must show deterministic turn/RNG continuation, save/restore of new authoritative state, correct system order, and no rendering or catalog import dependency in the simulation. Run focused tests during development and full test/vet/build plus review at the category boundary.
 
-The next categories are population-driven placement of supported ordinary monsters and action-barrier cleanup as broader combat and level mechanics arrive.
+The next categories are source-backed level generation and action-barrier cleanup as broader combat and level mechanics arrive.
