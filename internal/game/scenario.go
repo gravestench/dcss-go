@@ -73,6 +73,9 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if _, err = stores.Durations.Set(g.player, ecs.Durations{}); err != nil {
 		return nil, err
 	}
+	if _, err = stores.Regeneration.Set(g.player, ecs.Regeneration{}); err != nil {
+		return nil, err
+	}
 	if _, err = stores.Health.Set(g.player, ecs.Health{Current: profile.MaxHP, Max: profile.MaxHP}); err != nil {
 		return nil, err
 	}
@@ -155,6 +158,9 @@ func registerSystems(g *Game) error {
 		return err
 	}
 	if _, err := world.AddSystem(&durationSystem{game: g, turn: &g.turn}); err != nil {
+		return err
+	}
+	if _, err := world.AddSystem(&regenerationSystem{game: g, turn: &g.turn}); err != nil {
 		return err
 	}
 	return nil

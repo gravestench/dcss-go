@@ -45,6 +45,12 @@ type Durations struct {
 	MightAut int
 }
 
+// Regeneration owns the player's fractional HP and MP recovery counters.
+type Regeneration struct {
+	HPProgress int
+	MPProgress int
+}
+
 type Combatant struct {
 	ShieldBlocks int
 }
