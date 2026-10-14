@@ -29,151 +29,237 @@ func newSavedMonsterValidation() savedMonsterValidation {
 	}
 }
 
+// savedEntityValidator owns bookkeeping only for one restore attempt.
+// Each record is checked before its entity ID is registered in Akara.
+type savedEntityValidator struct {
+	game            *Game
+	snapshot        save.Snapshot
+	scenarioAnimals []string
+	usesPopulation  bool
+	seen            map[uint64]bool
+	recordsByID     map[uint64]save.EntityRecord
+	player          savedPlayerValidation
+	playerCount     int
+	monsters        savedMonsterValidation
+	equippedSlots   map[string]string
+	activeLevelID   int
+	earliestID      uint64
+	earliestAut     int64
+}
+
 func (g *Game) validateAndRegisterSavedEntities(
 	snapshot save.Snapshot,
 	scenarioAnimals []string,
 	usesPopulation bool,
 ) error {
-	seen := make(map[uint64]bool)
-	recordsByID := make(map[uint64]save.EntityRecord)
-	player := savedPlayerValidation{}
-	playerCount := 0
-	monsters := newSavedMonsterValidation()
-	equippedSlots := map[string]string{}
-	var earliestID uint64
-	var earliestAut int64
-	activeLevelID := 0
+	validator := savedEntityValidator{
+		game:            g,
+		snapshot:        snapshot,
+		scenarioAnimals: scenarioAnimals,
+		usesPopulation:  usesPopulation,
+		seen:            make(map[uint64]bool),
+		recordsByID:     make(map[uint64]save.EntityRecord),
+		monsters:        newSavedMonsterValidation(),
+		equippedSlots:   make(map[string]string),
+	}
 
-	for _, record := range snapshot.Entities {
-		if record.ID == snapshot.PlayerID && record.Position != nil {
-			activeLevelID = record.Position.LevelID
+	return validator.validate()
+}
+
+func (v *savedEntityValidator) validate() error {
+	for _, record := range v.snapshot.Entities {
+		if record.ID == v.snapshot.PlayerID && record.Position != nil {
+			v.activeLevelID = record.Position.LevelID
 
 			break
 		}
 	}
 
-	if activeLevelID == 0 {
+	if v.activeLevelID == 0 {
 		return fmt.Errorf("saved player has no active level")
 	}
 
-	for _, record := range snapshot.Entities {
-		if record.ID == 0 || seen[record.ID] {
-			return fmt.Errorf("duplicate or zero entity ID %d", record.ID)
-		}
-
-		seen[record.ID] = true
-		recordsByID[record.ID] = record
-
-		if record.Item != nil {
-			if record.Corpse != nil && !slices.Contains(scenarioAnimals, record.Corpse.MonsterID) {
-				return fmt.Errorf("fixed Dungeon save has unsupported corpse %s", record.Corpse.MonsterID)
-			}
-
-			if err := validateSavedItem(record, g.catalog, g.player, equippedSlots); err != nil {
-				return err
-			}
-		} else if record.CarriedBy != nil || record.Equipped != nil || record.Corpse != nil {
-			return fmt.Errorf("non-item %d has carrier or equipment slot", record.ID)
-		}
-
-		if record.Actor == nil && record.Item == nil {
-			return fmt.Errorf("entity %d has no actor or item role", record.ID)
-		}
-
-		if record.Player != nil && record.AI != nil {
-			return fmt.Errorf("entity %d is both player and monster", record.ID)
-		}
-
-		if record.BandFollower != nil {
-			if record.AI == nil || record.Actor == nil ||
-				record.Actor.KindID != "MONS_JACKAL" ||
-				record.BandFollower.Leader == 0 ||
-				uint64(record.BandFollower.Leader) == record.ID {
-				return fmt.Errorf("entity %d has an invalid band leader link", record.ID)
-			}
-		}
-
-		if record.Player != nil {
-			validated, err := g.validateSavedPlayer(record, snapshot.PlayerID)
-
-			if err != nil {
-				return err
-			}
-
-			playerCount++
-			player = validated
-		} else if record.Attributes != nil || record.Skills != nil ||
-			record.Magic != nil || record.Progression != nil ||
-			record.Durations != nil || record.Regeneration != nil {
-			return fmt.Errorf("non-player entity %d has character components", record.ID)
-		}
-
-		if record.AI != nil {
-			if err := g.validateSavedMonster(record, snapshot.CurrentAut, scenarioAnimals); err != nil {
-				return err
-			}
-
-			if !usesPopulation && monsters.liveByKind[record.Actor.KindID] {
-				return fmt.Errorf("duplicate fixed animal %s", record.Actor.KindID)
-			}
-
-			monsters.liveByKind[record.Actor.KindID] = true
-
-			if usesPopulation {
-				levelID := record.Position.LevelID
-				monsters.liveByLevel[levelID]++
-				monsters.liveCount++
-
-				if monsters.liveByLevel[levelID] > initialActorBudget(g.levels[levelID], snapshot.ScenarioID) {
-					return fmt.Errorf("Dungeon:%d has too many live monsters", levelID)
-				}
-			}
-		}
-
-		if record.Actor != nil &&
-			(record.Actor.Speed <= 0 || record.Actor.NextAut < 0 ||
-				record.Health == nil || record.Combatant == nil || record.Position == nil) {
-			return fmt.Errorf("invalid actor %d", record.ID)
-		}
-
-		if record.Combatant != nil &&
-			(record.Actor == nil || record.Combatant.ShieldBlocks < 0 ||
-				record.Combatant.ShieldBlocks > 100) {
-			return fmt.Errorf("invalid combat stats for entity %d", record.ID)
-		}
-
-		if record.Actor != nil && record.Player == nil && record.AI == nil {
-			return fmt.Errorf("actor %d has no player or monster role", record.ID)
-		}
-
-		if record.Actor != nil && record.Position != nil && record.Position.LevelID == activeLevelID {
-			if record.Actor.NextAut < snapshot.CurrentAut {
-				return fmt.Errorf("actor %d deadline precedes save clock", record.ID)
-			}
-
-			if earliestID == 0 || record.Actor.NextAut < earliestAut ||
-				(record.Actor.NextAut == earliestAut && record.ID < earliestID) {
-				earliestID, earliestAut = record.ID, record.Actor.NextAut
-			}
-		}
-
-		if record.Health != nil &&
-			(record.Health.Current < 0 || record.Health.Max <= 0 ||
-				record.Health.Current > record.Health.Max) {
-			return fmt.Errorf("invalid health for entity %d", record.ID)
-		}
-
-		if err := g.world.CreateEntityWithID(akara.Entity(record.ID)); err != nil {
+	for _, record := range v.snapshot.Entities {
+		if err := v.validateRecord(record); err != nil {
 			return err
 		}
 	}
 
-	for _, record := range snapshot.Entities {
+	if err := v.validateBandLinks(); err != nil {
+		return err
+	}
+
+	return v.validateFinalState()
+}
+
+func (v *savedEntityValidator) validateRecord(record save.EntityRecord) error {
+	if record.ID == 0 || v.seen[record.ID] {
+		return fmt.Errorf("duplicate or zero entity ID %d", record.ID)
+	}
+
+	v.seen[record.ID] = true
+	v.recordsByID[record.ID] = record
+
+	if err := v.validateItemRole(record); err != nil {
+		return err
+	}
+
+	if err := v.validateCharacterRole(record); err != nil {
+		return err
+	}
+
+	if err := v.validateMonsterRole(record); err != nil {
+		return err
+	}
+
+	if err := v.validateActorState(record); err != nil {
+		return err
+	}
+
+	return v.game.world.CreateEntityWithID(akara.Entity(record.ID))
+}
+
+func (v *savedEntityValidator) validateItemRole(record save.EntityRecord) error {
+	if record.Item != nil {
+		if record.Corpse != nil &&
+			!slices.Contains(v.scenarioAnimals, record.Corpse.MonsterID) {
+			return fmt.Errorf("fixed Dungeon save has unsupported corpse %s", record.Corpse.MonsterID)
+		}
+
+		if err := validateSavedItem(
+			record,
+			v.game.catalog,
+			v.game.player,
+			v.equippedSlots,
+		); err != nil {
+			return err
+		}
+	} else if record.CarriedBy != nil || record.Equipped != nil || record.Corpse != nil {
+		return fmt.Errorf("non-item %d has carrier or equipment slot", record.ID)
+	}
+
+	if record.Actor == nil && record.Item == nil {
+		return fmt.Errorf("entity %d has no actor or item role", record.ID)
+	}
+
+	return nil
+}
+
+func (v *savedEntityValidator) validateCharacterRole(record save.EntityRecord) error {
+	if record.Player != nil && record.AI != nil {
+		return fmt.Errorf("entity %d is both player and monster", record.ID)
+	}
+
+	if record.BandFollower != nil {
+		if record.AI == nil || record.Actor == nil ||
+			record.Actor.KindID != "MONS_JACKAL" ||
+			record.BandFollower.Leader == 0 ||
+			uint64(record.BandFollower.Leader) == record.ID {
+			return fmt.Errorf("entity %d has an invalid band leader link", record.ID)
+		}
+	}
+
+	if record.Player != nil {
+		validated, err := v.game.validateSavedPlayer(record, v.snapshot.PlayerID)
+
+		if err != nil {
+			return err
+		}
+
+		v.playerCount++
+		v.player = validated
+	} else if record.Attributes != nil || record.Skills != nil ||
+		record.Magic != nil || record.Progression != nil ||
+		record.Durations != nil || record.Regeneration != nil {
+		return fmt.Errorf("non-player entity %d has character components", record.ID)
+	}
+
+	return nil
+}
+
+func (v *savedEntityValidator) validateMonsterRole(record save.EntityRecord) error {
+	if record.AI == nil {
+		return nil
+	}
+
+	if err := v.game.validateSavedMonster(
+		record,
+		v.snapshot.CurrentAut,
+		v.scenarioAnimals,
+	); err != nil {
+		return err
+	}
+
+	if !v.usesPopulation && v.monsters.liveByKind[record.Actor.KindID] {
+		return fmt.Errorf("duplicate fixed animal %s", record.Actor.KindID)
+	}
+
+	v.monsters.liveByKind[record.Actor.KindID] = true
+
+	if !v.usesPopulation {
+		return nil
+	}
+
+	levelID := record.Position.LevelID
+	v.monsters.liveByLevel[levelID]++
+	v.monsters.liveCount++
+
+	if v.monsters.liveByLevel[levelID] > initialActorBudget(
+		v.game.levels[levelID],
+		v.snapshot.ScenarioID,
+	) {
+		return fmt.Errorf("Dungeon:%d has too many live monsters", levelID)
+	}
+
+	return nil
+}
+
+func (v *savedEntityValidator) validateActorState(record save.EntityRecord) error {
+	if record.Actor != nil &&
+		(record.Actor.Speed <= 0 || record.Actor.NextAut < 0 ||
+			record.Health == nil || record.Combatant == nil || record.Position == nil) {
+		return fmt.Errorf("invalid actor %d", record.ID)
+	}
+
+	if record.Combatant != nil &&
+		(record.Actor == nil || record.Combatant.ShieldBlocks < 0 ||
+			record.Combatant.ShieldBlocks > 100) {
+		return fmt.Errorf("invalid combat stats for entity %d", record.ID)
+	}
+
+	if record.Actor != nil && record.Player == nil && record.AI == nil {
+		return fmt.Errorf("actor %d has no player or monster role", record.ID)
+	}
+
+	if record.Actor != nil && record.Position != nil &&
+		record.Position.LevelID == v.activeLevelID {
+		if record.Actor.NextAut < v.snapshot.CurrentAut {
+			return fmt.Errorf("actor %d deadline precedes save clock", record.ID)
+		}
+
+		if v.earliestID == 0 || record.Actor.NextAut < v.earliestAut ||
+			(record.Actor.NextAut == v.earliestAut && record.ID < v.earliestID) {
+			v.earliestID = record.ID
+			v.earliestAut = record.Actor.NextAut
+		}
+	}
+
+	if record.Health != nil &&
+		(record.Health.Current < 0 || record.Health.Max <= 0 ||
+			record.Health.Current > record.Health.Max) {
+		return fmt.Errorf("invalid health for entity %d", record.ID)
+	}
+
+	return nil
+}
+
+func (v *savedEntityValidator) validateBandLinks() error {
+	for _, record := range v.snapshot.Entities {
 		if record.BandFollower == nil {
 			continue
 		}
 
-		leader, alive := recordsByID[uint64(record.BandFollower.Leader)]
+		leader, alive := v.recordsByID[uint64(record.BandFollower.Leader)]
 
 		if alive && (leader.Actor == nil || leader.Actor.KindID != "MONS_JACKAL" ||
 			leader.Position == nil || leader.Position.LevelID != record.Position.LevelID) {
@@ -181,26 +267,39 @@ func (g *Game) validateAndRegisterSavedEntities(
 		}
 	}
 
-	if playerCount != 1 {
-		return fmt.Errorf("save requires exactly one player, found %d", playerCount)
+	return nil
+}
+
+func (v *savedEntityValidator) validateFinalState() error {
+	if v.playerCount != 1 {
+		return fmt.Errorf("save requires exactly one player, found %d", v.playerCount)
 	}
 
-	if err := g.validateSavedExperience(player.xp, scenarioAnimals, usesPopulation, monsters); err != nil {
+	if err := v.game.validateSavedExperience(
+		v.player.xp,
+		v.scenarioAnimals,
+		v.usesPopulation,
+		v.monsters,
+	); err != nil {
 		return err
 	}
 
-	if err := validateSavedEquipment(equippedSlots, player.weaponID); err != nil {
+	if err := validateSavedEquipment(
+		v.equippedSlots,
+		v.player.weaponID,
+	); err != nil {
 		return err
 	}
 
 	// A stat prompt pauses before the monster phase at the start of the
 	// player's spent turn. Its next deadline is therefore still in the future.
-	if player.alive {
-		if player.pendingStat {
-			if player.nextAut <= snapshot.CurrentAut {
+	if v.player.alive {
+		if v.player.pendingStat {
+			if v.player.nextAut <= v.snapshot.CurrentAut {
 				return fmt.Errorf("invalid pending player turn clock")
 			}
-		} else if player.nextAut != snapshot.CurrentAut || earliestID != snapshot.PlayerID {
+		} else if v.player.nextAut != v.snapshot.CurrentAut ||
+			v.earliestID != v.snapshot.PlayerID {
 			return fmt.Errorf("save clock does not match the next player turn")
 		}
 	}
