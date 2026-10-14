@@ -18,6 +18,37 @@ var legacyAptitude = regexp.MustCompile(
 		`(-?\d+|UNUSABLE_SKILL)\s*\}\s*,?\s*$`,
 )
 
+// The tag-34 aggregate has no field names in C++. Keep its exact order here
+// so an upstream source change cannot silently shift a species property.
+const (
+	legacyShortName = iota
+	legacyName
+	legacyAdjective
+	legacyGenus
+	legacyFlags
+	legacyXP
+	legacyHP
+	legacyMPMod
+	legacyMR
+	legacyMonster
+	legacyHabitat
+	legacyUndeadType
+	legacySize
+	legacyStrength
+	legacyIntelligence
+	legacyDexterity
+	legacyLevelUpStats
+	legacyLevelUpFrequency
+)
+
+const (
+	legacyUnusedStart = 18
+	legacyUnusedEnd   = 22
+	legacyWalkingVerb = 23
+	legacyAltarAction = 24
+	legacyFieldCount  = 25
+)
+
 func splitLegacyFields(body string) ([]string, error) {
 	var fields []string
 	depth, quoted, escaped := 0, false, false
@@ -78,102 +109,91 @@ func parseLegacySpecies(path, id, body string) (content.SpeciesDef, error) {
 		return content.SpeciesDef{}, fmt.Errorf("%s: %s: %w", path, id, err)
 	}
 
-	if len(fields) != 25 {
-		return content.SpeciesDef{}, fmt.Errorf("%s: %s: expected 25 initializer fields, got %d", path, id, len(fields))
+	if len(fields) != legacyFieldCount {
+		return content.SpeciesDef{}, fmt.Errorf(
+			"%s: %s: expected 25 initializer fields, got %d",
+			path, id, len(fields),
+		)
 	}
 
-	strings4 := [4]string{}
+	names := [4]string{}
 
-	for i := 0; i < 4; i++ {
-		strings4[i], err = legacyString(fields[i])
+	for index := legacyShortName; index <= legacyGenus; index++ {
+		names[index], err = legacyString(fields[index])
 
 		if err != nil {
 			return content.SpeciesDef{}, fmt.Errorf("%s: %s: %w", path, id, err)
 		}
 	}
 
-	flag := fields[4]
+	flag := fields[legacyFlags]
 
 	if flag != "SPF_NONE" && !allowedFlags[flag] {
 		return content.SpeciesDef{}, fmt.Errorf("%s: %s: invalid flag %s", path, id, flag)
 	}
 
-	ints := map[int]int{}
+	numbers := map[int]int{}
 
-	for _, i := range []int{
-		5,
-		6,
-		7,
-		8,
-		13,
-		14,
-		15,
-		17,
+	for _, index := range []int{
+		legacyXP,
+		legacyHP,
+		legacyMPMod,
+		legacyMR,
+		legacyStrength,
+		legacyIntelligence,
+		legacyDexterity,
+		legacyLevelUpFrequency,
 	} {
-		ints[i], err = strconv.Atoi(fields[i])
+		numbers[index], err = strconv.Atoi(fields[index])
 
 		if err != nil {
-			return content.SpeciesDef{}, fmt.Errorf("%s: %s: invalid integer %s", path, id, fields[i])
+			return content.SpeciesDef{}, fmt.Errorf(
+				"%s: %s: invalid integer %s",
+				path, id, fields[index],
+			)
 		}
 	}
 
-	if !strings.HasPrefix(fields[9], "MONS_") || !strings.HasPrefix(fields[10], "HT_") ||
-		!allowedUndead[fields[11]] || !strings.HasPrefix(fields[12], "SIZE_") {
-		return content.SpeciesDef{}, fmt.Errorf("%s: %s: invalid monster/habitat/undead/size fields", path, id)
+	if !strings.HasPrefix(fields[legacyMonster], "MONS_") ||
+		!strings.HasPrefix(fields[legacyHabitat], "HT_") ||
+		!allowedUndead[fields[legacyUndeadType]] ||
+		!strings.HasPrefix(fields[legacySize], "SIZE_") {
+		return content.SpeciesDef{}, fmt.Errorf(
+			"%s: %s: invalid monster/habitat/undead/size fields",
+			path, id,
+		)
 	}
 
-	statsField := strings.TrimSpace(fields[16])
+	stats, err := parseLegacyStats(path, id, fields[legacyLevelUpStats])
 
-	if !strings.HasPrefix(statsField, "{") || !strings.HasSuffix(statsField, "}") {
-		return content.SpeciesDef{}, fmt.Errorf("%s: %s: invalid level-up stats", path, id)
+	if err != nil {
+		return content.SpeciesDef{}, err
 	}
 
-	var stats []string
-
-	for _, stat := range strings.Split(strings.Trim(statsField, "{} "), ",") {
-		stat = strings.TrimSpace(stat)
-
-		if stat == "" {
-			continue
-		}
-
-		if !strings.HasPrefix(stat, "STAT_") {
-			return content.SpeciesDef{}, fmt.Errorf("%s: %s: invalid level-up stat %s", path, id, stat)
-		}
-
-		stats = append(stats, strings.ToLower(strings.TrimPrefix(stat, "STAT_")))
-	}
-
-	for i := 18; i <= 22; i++ {
-		if fields[i] != "{}" {
-			return content.SpeciesDef{}, fmt.Errorf("%s: %s: unsupported legacy field %d", path, id, i)
-		}
-	}
-
-	if fields[23] != "nullptr" || fields[24] != "nullptr" {
-		return content.SpeciesDef{}, fmt.Errorf("%s: %s: unsupported legacy actions", path, id)
+	if err := validateLegacyTail(path, id, fields); err != nil {
+		return content.SpeciesDef{}, err
 	}
 
 	s := content.SpeciesDef{
 		ID:                   id,
-		MonsterID:            fields[9],
+		MonsterID:            fields[legacyMonster],
 		SourcePath:           path,
-		ShortName:            strings4[0],
-		Name:                 strings4[1],
-		Adjective:            strings4[2],
-		Genus:                strings4[3],
-		XP:                   ints[5],
-		HP:                   ints[6],
-		MPMod:                ints[7],
-		MR:                   ints[8],
-		Strength:             ints[13],
-		Intelligence:         ints[14],
-		Dexterity:            ints[15],
+		ShortName:            names[legacyShortName],
+		Name:                 names[legacyName],
+		Adjective:            names[legacyAdjective],
+		Genus:                names[legacyGenus],
+		XP:                   numbers[legacyXP],
+		HP:                   numbers[legacyHP],
+		MPMod:                numbers[legacyMPMod],
+		MR:                   numbers[legacyMR],
+		Strength:             numbers[legacyStrength],
+		Intelligence:         numbers[legacyIntelligence],
+		Dexterity:            numbers[legacyDexterity],
 		LevelUpStats:         stats,
-		LevelUpStatFrequency: ints[17],
-		Habitat:              fields[10],
-		UndeadType:           fields[11],
-		Size:                 fields[12],
+		LevelUpStatFrequency: numbers[legacyLevelUpFrequency],
+		Habitat:              fields[legacyHabitat],
+		UndeadType:           fields[legacyUndeadType],
+		Size:                 fields[legacySize],
 		Aptitudes:            map[string]content.SpeciesAptitude{},
 	}
 
@@ -182,6 +202,47 @@ func parseLegacySpecies(path, id, body string) (content.SpeciesDef, error) {
 	}
 
 	return s, nil
+}
+
+func parseLegacyStats(path, id, raw string) ([]string, error) {
+	field := strings.TrimSpace(raw)
+
+	if !strings.HasPrefix(field, "{") || !strings.HasSuffix(field, "}") {
+		return nil, fmt.Errorf("%s: %s: invalid level-up stats", path, id)
+	}
+
+	var stats []string
+
+	for _, stat := range strings.Split(strings.Trim(field, "{} "), ",") {
+		stat = strings.TrimSpace(stat)
+
+		if stat == "" {
+			continue
+		}
+
+		if !strings.HasPrefix(stat, "STAT_") {
+			return nil, fmt.Errorf("%s: %s: invalid level-up stat %s", path, id, stat)
+		}
+
+		stats = append(stats, strings.ToLower(strings.TrimPrefix(stat, "STAT_")))
+	}
+
+	return stats, nil
+}
+
+func validateLegacyTail(path, id string, fields []string) error {
+	for index := legacyUnusedStart; index <= legacyUnusedEnd; index++ {
+		if fields[index] != "{}" {
+			return fmt.Errorf("%s: %s: unsupported legacy field %d", path, id, index)
+		}
+	}
+
+	if fields[legacyWalkingVerb] != "nullptr" ||
+		fields[legacyAltarAction] != "nullptr" {
+		return fmt.Errorf("%s: %s: unsupported legacy actions", path, id)
+	}
+
+	return nil
 }
 
 func parseLegacy(
@@ -202,41 +263,65 @@ func parseLegacy(
 		return nil, err
 	}
 
-	source := strings.Join(speciesLines, "\n")
+	records, err := parseLegacyRecords(speciesPath, strings.Join(speciesLines, "\n"))
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := attachLegacyAptitudes(aptitudePath, aptitudeLines, records); err != nil {
+		return nil, err
+	}
+
+	sort.Slice(records, func(i, j int) bool {
+		return records[i].ID < records[j].ID
+	})
+
+	return records, nil
+}
+
+func parseLegacyRecords(path, source string) ([]content.SpeciesDef, error) {
 	matches := legacyRecord.FindAllStringSubmatchIndex(source, -1)
 
 	if len(matches) != 3 {
-		return nil, fmt.Errorf("%s: expected three legacy species, found %d", speciesPath, len(matches))
+		return nil, fmt.Errorf("%s: expected three legacy species, found %d", path, len(matches))
 	}
 
 	seen := map[string]bool{}
-	byID := map[string]*content.SpeciesDef{}
 	var records []content.SpeciesDef
 
 	for _, match := range matches {
 		id := source[match[2]:match[3]]
 
 		if seen[id] {
-			return nil, fmt.Errorf("%s: duplicate legacy species %s", speciesPath, id)
+			return nil, fmt.Errorf("%s: duplicate legacy species %s", path, id)
 		}
 
 		seen[id] = true
-		record, err := parseLegacySpecies(speciesPath, id, source[match[4]:match[5]])
+		record, err := parseLegacySpecies(path, id, source[match[4]:match[5]])
 
 		if err != nil {
 			return nil, err
 		}
 
 		records = append(records, record)
-		byID[id] = &records[len(records)-1]
 	}
 
-	// Rebuild pointers after the append loop, since growing the slice may move it.
-	for i := range records {
-		byID[records[i].ID] = &records[i]
+	return records, nil
+}
+
+func attachLegacyAptitudes(
+	path string,
+	lines []string,
+	records []content.SpeciesDef,
+) error {
+	byID := make(map[string]*content.SpeciesDef, len(records))
+
+	for index := range records {
+		byID[records[index].ID] = &records[index]
 	}
 
-	for _, line := range aptitudeLines {
+	for _, line := range lines {
 		line = strings.TrimSpace(line)
 
 		if line == "" {
@@ -246,17 +331,17 @@ func parseLegacy(
 		parts := legacyAptitude.FindStringSubmatch(line)
 
 		if parts == nil {
-			return nil, fmt.Errorf("%s: invalid aptitude row %s", aptitudePath, line)
+			return fmt.Errorf("%s: invalid aptitude row %s", path, line)
 		}
 
 		record := byID[parts[1]]
 
 		if record == nil {
-			return nil, fmt.Errorf("%s: aptitude for unknown species %s", aptitudePath, parts[1])
+			return fmt.Errorf("%s: aptitude for unknown species %s", path, parts[1])
 		}
 
 		if _, duplicate := record.Aptitudes[parts[2]]; duplicate {
-			return nil, fmt.Errorf("%s: duplicate aptitude %s for %s", aptitudePath, parts[2], parts[1])
+			return fmt.Errorf("%s: duplicate aptitude %s for %s", path, parts[2], parts[1])
 		}
 
 		if parts[3] == "UNUSABLE_SKILL" {
@@ -267,7 +352,7 @@ func parseLegacy(
 		value, err := strconv.Atoi(parts[3])
 
 		if err != nil || value < -10 || value > 10 {
-			return nil, fmt.Errorf("%s: invalid aptitude %s for %s", aptitudePath, parts[2], parts[1])
+			return fmt.Errorf("%s: invalid aptitude %s for %s", path, parts[2], parts[1])
 		}
 
 		record.Aptitudes[parts[2]] = content.SpeciesAptitude{
@@ -278,13 +363,9 @@ func parseLegacy(
 
 	for _, record := range records {
 		if len(record.Aptitudes) == 0 {
-			return nil, fmt.Errorf("%s: missing aptitudes for %s", aptitudePath, record.ID)
+			return fmt.Errorf("%s: missing aptitudes for %s", path, record.ID)
 		}
 	}
 
-	sort.Slice(records, func(i, j int) bool {
-		return records[i].ID < records[j].ID
-	})
-
-	return records, nil
+	return nil
 }
