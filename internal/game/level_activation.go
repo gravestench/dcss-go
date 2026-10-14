@@ -18,6 +18,10 @@ func (g *Game) activateLevel(level *Level, now Aut) error {
 		if err := g.corpseAging.TickLevel(level.ID, int(elapsed)); err != nil {
 			return err
 		}
+
+		if err := g.monsterCatchup.TickLevel(level, int(elapsed/10)); err != nil {
+			return err
+		}
 	}
 
 	for _, entity := range g.stores.Actors.Entities() {
