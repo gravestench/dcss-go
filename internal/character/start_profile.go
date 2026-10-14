@@ -14,7 +14,8 @@ type StartProfile struct {
 	MaxMP      int
 }
 
-func scaledStartingSkill(skill Skill, scale int) int {
+// ScaledSkill projects the stored starting points at a source skill scale.
+func ScaledSkill(skill Skill, scale int) int {
 	previous := 25 * skill.Level * (skill.Level + 1)
 	next := 25 * (skill.Level + 1) * (skill.Level + 2)
 	return skill.Level*scale + (skill.Points-previous)*scale/(next-previous)
@@ -33,7 +34,7 @@ func startingHP(species content.SpeciesDef, skills []Skill) (int, error) {
 	}
 	// player.cc:get_real_hp at XL 1, with no mutations, drains, or item effects.
 	hp := 1*11/2 + 8
-	hp += scaledStartingSkill(*fighting, 5)/70 + (scaledStartingSkill(*fighting, 3)+1)/2
+	hp += ScaledSkill(*fighting, 5)/70 + (ScaledSkill(*fighting, 3)+1)/2
 	hp = hp * (10 + species.HP) / 10
 	if hp < 1 {
 		hp = 1
