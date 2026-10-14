@@ -80,6 +80,22 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		in.Mighty = durations.MightAut > 0
 	}
 
+	if err := c.projectAttackWeapon(&in); err != nil {
+		return combat.PlayerAttackInput{}, err
+	}
+
+	if err := projectAttackSkills(&in, *skills); err != nil {
+		return combat.PlayerAttackInput{}, err
+	}
+
+	if err := in.Validate(); err != nil {
+		return combat.PlayerAttackInput{}, err
+	}
+
+	return in, nil
+}
+
+func (c playerCombat) projectAttackWeapon(in *combat.PlayerAttackInput) error {
 	weaponCount := 0
 
 	for _, entity := range c.equipped.Entities() {
@@ -94,21 +110,21 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		item, found := c.items.Get(entity)
 
 		if !found {
-			return combat.PlayerAttackInput{}, fmt.Errorf("equipped weapon %d has no item", entity)
+			return fmt.Errorf("equipped weapon %d has no item", entity)
 		}
 
 		kind, err := c.catalog.Item(item.KindID)
 
 		if err != nil {
-			return combat.PlayerAttackInput{}, err
+			return err
 		}
 
 		if err := validateItemProperties(*item, kind); err != nil {
-			return combat.PlayerAttackInput{}, fmt.Errorf("equipped weapon %d has %w", entity, err)
+			return fmt.Errorf("equipped weapon %d has %w", entity, err)
 		}
 
 		if kind.Weapon == nil || kind.Weapon.SkillID != kind.WeaponSkill {
-			return combat.PlayerAttackInput{}, fmt.Errorf(
+			return fmt.Errorf(
 				"weapon %s has no supported melee properties",
 				kind.ID,
 			)
@@ -121,7 +137,7 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 	}
 
 	if weaponCount > 1 {
-		return combat.PlayerAttackInput{}, fmt.Errorf("player has %d equipped weapons", weaponCount)
+		return fmt.Errorf("player has %d equipped weapons", weaponCount)
 	}
 
 	if weaponCount == 0 {
@@ -129,36 +145,37 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		in.WeaponSkillID = "SK_UNARMED_COMBAT"
 	}
 
+	return nil
+}
+
+func projectAttackSkills(in *combat.PlayerAttackInput, skills ecs.Skills) error {
 	fightingFound := false
 
 	for _, skill := range skills.Entries {
-		switch skill.ID {
-		case "SK_FIGHTING":
+		if skill.ID == "SK_FIGHTING" {
 			in.FightingSkill100 = character.ScaledSkill(skill, 100)
 			fightingFound = true
 
-		default:
-			if skill.ID == in.WeaponSkillID {
-				in.WeaponSkill100 = character.ScaledSkill(skill, 100)
+			continue
+		}
 
-				if in.Unarmed {
-					in.UnarmedSkill256 = character.ScaledSkill(skill, 256)
-				}
+		if skill.ID != in.WeaponSkillID {
+			continue
+		}
 
-			}
+		in.WeaponSkill100 = character.ScaledSkill(skill, 100)
+
+		if in.Unarmed {
+			in.UnarmedSkill256 = character.ScaledSkill(skill, 256)
 		}
 	}
 
 	// An untrained newly wielded weapon has zero skill points, as in DCSS.
 	if !fightingFound {
-		return combat.PlayerAttackInput{}, fmt.Errorf("player attack lacks Fighting skill")
+		return fmt.Errorf("player attack lacks Fighting skill")
 	}
 
-	if err := in.Validate(); err != nil {
-		return combat.PlayerAttackInput{}, err
-	}
-
-	return in, nil
+	return nil
 }
 
 // attackDelayInput reads the same live weapon and stored skill points
