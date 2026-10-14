@@ -69,7 +69,22 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	}
 
 	if intent.Kind == ecs.IntentRanged {
-		return s.resolveGoblinSling(intent)
+		actor, found := s.actors.Get(s.turn.Actor)
+
+		if !found {
+			return fmt.Errorf("ranged attacker %d has no actor", s.turn.Actor)
+		}
+
+		switch actor.KindID {
+		case "MONS_GOBLIN":
+			return s.resolveGoblinSling(intent)
+
+		case "MONS_KOBOLD":
+			return s.resolveKoboldThrow(intent)
+
+		default:
+			return fmt.Errorf("unsupported ranged attacker %s", actor.KindID)
+		}
 	}
 
 	if intent.Kind != ecs.IntentMelee {

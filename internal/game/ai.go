@@ -150,6 +150,16 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 		if shoot {
 			return ranged, nil
 		}
+
+		thrown, throw, err := s.chooseKoboldThrow(actor, *position, *player, level)
+
+		if err != nil {
+			return ecs.Intent{}, err
+		}
+
+		if throw {
+			return thrown, nil
+		}
 	}
 
 	if ai.Behavior == "wander" {

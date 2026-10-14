@@ -19,59 +19,39 @@ func goblinSling(
 	carried *akara.Store[ecs.CarriedBy],
 	equipped *akara.Store[ecs.Equipped],
 ) (akara.Entity, ecs.Item, content.ItemDef, bool, error) {
-	for _, itemID := range equipped.Entities() {
-		slot, _ := equipped.Get(itemID)
+	itemID, item, kind, found, err := equippedMonsterItem(
+		monsterID,
+		"weapon",
+		catalog,
+		items,
+		carried,
+		equipped,
+	)
 
-		if slot.Slot != "weapon" {
-			continue
-		}
-
-		carrier, found := carried.Get(itemID)
-
-		if !found || carrier.Holder != monsterID {
-			continue
-		}
-
-		item, found := items.Get(itemID)
-
-		if !found {
-			return 0, ecs.Item{}, content.ItemDef{}, false,
-				fmt.Errorf("goblin weapon %d has no item", itemID)
-		}
-
-		kind, err := catalog.Item(item.KindID)
-
-		if err != nil {
-			return 0, ecs.Item{}, content.ItemDef{}, false, err
-		}
-
-		if err := validateItemProperties(*item, kind); err != nil {
-			return 0, ecs.Item{}, content.ItemDef{}, false, err
-		}
-
-		if kind.ID != "WPN_SLING" {
-			return 0, ecs.Item{}, content.ItemDef{}, false, nil
-		}
-
-		if kind.Weapon == nil ||
-			!slices.Contains(kind.Weapon.DamageFlags, "DAMV_NON_MELEE") {
-			return 0, ecs.Item{}, content.ItemDef{}, false,
-				fmt.Errorf("goblin has invalid sling definition")
-		}
-
-		if item.Ego != "" &&
-			item.Ego != "SPWPN_NORMAL" &&
-			item.Ego != "SPWPN_FLAMING" &&
-			item.Ego != "SPWPN_FREEZING" &&
-			item.Ego != "SPWPN_VORPAL" {
-			return 0, ecs.Item{}, content.ItemDef{}, false,
-				fmt.Errorf("unsupported goblin sling brand %s", item.Ego)
-		}
-
-		return itemID, *item, kind, true, nil
+	if err != nil {
+		return 0, ecs.Item{}, content.ItemDef{}, false, err
 	}
 
-	return 0, ecs.Item{}, content.ItemDef{}, false, nil
+	if !found || kind.ID != "WPN_SLING" {
+		return itemID, item, kind, false, nil
+	}
+
+	if kind.Weapon == nil ||
+		!slices.Contains(kind.Weapon.DamageFlags, "DAMV_NON_MELEE") {
+		return 0, ecs.Item{}, content.ItemDef{}, false,
+			fmt.Errorf("goblin has invalid sling definition")
+	}
+
+	if item.Ego != "" &&
+		item.Ego != "SPWPN_NORMAL" &&
+		item.Ego != "SPWPN_FLAMING" &&
+		item.Ego != "SPWPN_FREEZING" &&
+		item.Ego != "SPWPN_VORPAL" {
+		return 0, ecs.Item{}, content.ItemDef{}, false,
+			fmt.Errorf("unsupported goblin sling brand %s", item.Ego)
+	}
+
+	return itemID, item, kind, true, nil
 }
 
 // chooseGoblinSling follows mon-act.cc:handle_throw. Ordinary launcher users
@@ -126,38 +106,10 @@ func (s *monsterDecisionSystem) chooseGoblinSling(
 // resolveGoblinSling reads the current launcher at resolution, so a stale
 // transient intent cannot fire a removed or replaced ECS item.
 func (s *combatSystem) resolveGoblinSling(intent *ecs.Intent) error {
-	actor, found := s.actors.Get(s.turn.Actor)
+	target, err := s.rangedTarget("MONS_GOBLIN")
 
-	if !found || actor.KindID != "MONS_GOBLIN" {
-		return fmt.Errorf("unsupported ranged attacker %d", s.turn.Actor)
-	}
-
-	monsterPosition, monsterLocated := s.positions.Get(s.turn.Actor)
-	playerPosition, playerLocated := s.positions.Get(s.player)
-	monsterHealth, monsterAlive := s.health.Get(s.turn.Actor)
-	playerHealth, playerAlive := s.health.Get(s.player)
-
-	if !monsterLocated ||
-		!playerLocated ||
-		!monsterAlive ||
-		!playerAlive ||
-		monsterHealth.Current <= 0 ||
-		playerHealth.Current <= 0 ||
-		monsterPosition.LevelID != playerPosition.LevelID ||
-		adjacentActors(*monsterPosition, *playerPosition) {
-		return fmt.Errorf("goblin cannot shoot distant or dead player")
-	}
-
-	level := s.levels[monsterPosition.LevelID]
-
-	if level == nil ||
-		!level.ClearProjectilePath(
-			monsterPosition.X,
-			monsterPosition.Y,
-			playerPosition.X,
-			playerPosition.Y,
-		) {
-		return fmt.Errorf("goblin has no clear shot")
+	if err != nil {
+		return err
 	}
 
 	itemID, launcher, kind, armed, err := goblinSling(
@@ -186,25 +138,14 @@ func (s *combatSystem) resolveGoblinSling(intent *ecs.Intent) error {
 		return fmt.Errorf("sling has invalid projectile %s", projectile.ID)
 	}
 
-	definition, err := s.catalog.Monster(actor.KindID)
-
-	if err != nil {
-		return err
-	}
-
-	defense, err := s.fighter.defense()
-
-	if err != nil {
-		return err
-	}
-
 	outcome, err := combat.ResolveMonsterShot(s.roller, combat.MonsterShot{
-		HD:               definition.HD,
+		HD:               target.definition.HD,
 		WeaponDamage:     kind.Weapon.Damage,
 		WeaponHit:        kind.Weapon.Hit,
 		WeaponPlus:       launcher.Plus,
 		ProjectileDamage: projectile.Missile.Damage,
-	}, defense)
+		NaturalDamage:    target.definition.Attacks[0].Damage,
+	}, target.defense)
 
 	if err != nil {
 		return err
@@ -217,13 +158,13 @@ func (s *combatSystem) resolveGoblinSling(intent *ecs.Intent) error {
 	}
 
 	state.ShieldBlocks = outcome.ShieldBlocks
-	playerHealth.Current = max(0, playerHealth.Current-outcome.Damage)
+	target.health.Current = max(0, target.health.Current-outcome.Damage)
 
 	// The source's physical missile path uses ranged_attack, not beam's
 	// ordinary spell training or melee_attack's hit training. A successful
 	// shield block still calls player::shield_block_succeeded.
 	if outcome.Kind == combat.Block {
-		if err := s.practiceIncomingShield(outcome, defense); err != nil {
+		if err := s.practiceIncomingShield(outcome, target.defense); err != nil {
 			return err
 		}
 	}
@@ -253,13 +194,13 @@ func (s *combatSystem) resolveGoblinSling(intent *ecs.Intent) error {
 	})
 
 	if outcome.Kind == combat.Hit &&
-		(playerHealth.Current > 0 || brandCanTriggerAfterDeath(launcher.Ego)) {
+		(target.health.Current > 0 || brandCanTriggerAfterDeath(launcher.Ego)) {
 		return s.applyMonsterWeaponBrand(
 			launcher.Ego,
 			outcome.Damage,
-			actor.KindID,
+			"MONS_GOBLIN",
 			"sling bullet",
-			playerHealth,
+			target.health,
 		)
 	}
 
