@@ -24,8 +24,16 @@ type deathSystem struct {
 
 func newDeathSystem(g *Game) *deathSystem {
 	s := g.stores
-	return &deathSystem{actors: s.Actors, positions: s.Positions, health: s.Health,
-		progression: s.Progression, catalog: g.catalog, rng: g.rng, player: g.player, turn: &g.turn}
+	return &deathSystem{
+		actors:      s.Actors,
+		positions:   s.Positions,
+		health:      s.Health,
+		progression: s.Progression,
+		catalog:     g.catalog,
+		rng:         g.rng,
+		player:      g.player,
+		turn:        &g.turn,
+	}
 }
 
 func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
@@ -35,7 +43,10 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 			continue
 		}
 		if entity == s.player {
-			s.turn.Events = append(s.turn.Events, Event{Kind: "death", Text: "You die."})
+			s.turn.Events = append(s.turn.Events, Event{
+				Kind: "death",
+				Text: "You die.",
+			})
 		} else {
 			actor, found := s.actors.Get(entity)
 			if !found {
@@ -59,12 +70,19 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 						if !found {
 							return fmt.Errorf("killed animal %d has no position", entity)
 						}
-						s.turn.Corpse = &pendingCorpse{MonsterID: actor.KindID, Position: *position, Appearance: appearance}
+						s.turn.Corpse = &pendingCorpse{
+							MonsterID:  actor.KindID,
+							Position:   *position,
+							Appearance: appearance,
+						}
 					}
 				}
 			}
 			s.turn.Deaths = append(s.turn.Deaths, entity)
-			s.turn.Events = append(s.turn.Events, Event{Kind: "death", Text: fmt.Sprintf("The %s dies.", definition.Name)})
+			s.turn.Events = append(s.turn.Events, Event{
+				Kind: "death",
+				Text: fmt.Sprintf("The %s dies.", definition.Name),
+			})
 		}
 	}
 	return nil

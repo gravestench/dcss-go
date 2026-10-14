@@ -13,10 +13,35 @@ func ComputeLayout(width, height int) (Layout, bool) {
 	}
 	dungeonW, dungeonH := width-46, height-7
 	return Layout{
-		Dungeon:  Region{0, 0, dungeonW, dungeonH},
-		Gutter:   Region{dungeonW, 0, 4, dungeonH},
-		HUD:      Region{dungeonW + 4, 0, 42, 13},
-		Monsters: Region{dungeonW + 4, 13, 42, dungeonH - 13},
-		Messages: Region{0, dungeonH, width, 7},
+		Dungeon: Region{
+			0,
+			0,
+			dungeonW,
+			dungeonH,
+		},
+		Gutter: Region{
+			dungeonW,
+			0,
+			4,
+			dungeonH,
+		},
+		HUD: Region{
+			dungeonW + 4,
+			0,
+			42,
+			13,
+		},
+		Monsters: Region{
+			dungeonW + 4,
+			13,
+			42,
+			dungeonH - 13,
+		},
+		Messages: Region{
+			0,
+			dungeonH,
+			width,
+			7,
+		},
 	}, true
 }

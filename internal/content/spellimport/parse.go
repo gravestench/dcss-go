@@ -81,7 +81,11 @@ func parseEnum(path string, body []byte) ([]content.SpellDef, error) {
 			}
 			continue
 		}
-		spells = append(spells, content.SpellDef{ID: match[1], NumericID: len(spells), EnumLine: line.Number})
+		spells = append(spells, content.SpellDef{
+			ID:        match[1],
+			NumericID: len(spells),
+			EnumLine:  line.Number,
+		})
 	}
 	if !inside || !done || !sawCount || len(spells) == 0 {
 		return nil, fmt.Errorf("%s: incomplete spell enum", path)
@@ -157,9 +161,22 @@ func parseDescriptor(path string, line int, fields []string) (content.SpellDef, 
 			return content.SpellDef{}, fmt.Errorf("%s:%d: numeric field %d: %w", path, line, column, err)
 		}
 	}
-	return content.SpellDef{ID: fields[0], Name: name, Status: content.SpellDefined, Schools: schools, Flags: flags,
-		Level: ints[0], PowerCap: ints[1], MinRangeExpr: strings.Join(strings.Fields(fields[6]), " "), MaxRangeExpr: strings.Join(strings.Fields(fields[7]), " "),
-		Noise: ints[2], EffectNoise: ints[3], TileID: fields[10], SourcePath: "crawl-ref/source/spl-data.h", SourceLine: line}, nil
+	return content.SpellDef{
+		ID:           fields[0],
+		Name:         name,
+		Status:       content.SpellDefined,
+		Schools:      schools,
+		Flags:        flags,
+		Level:        ints[0],
+		PowerCap:     ints[1],
+		MinRangeExpr: strings.Join(strings.Fields(fields[6]), " "),
+		MaxRangeExpr: strings.Join(strings.Fields(fields[7]), " "),
+		Noise:        ints[2],
+		EffectNoise:  ints[3],
+		TileID:       fields[10],
+		SourcePath:   "crawl-ref/source/spl-data.h",
+		SourceLine:   line,
+	}, nil
 }
 
 func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) {
@@ -224,8 +241,19 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 			if _, duplicate := result[match[1]]; duplicate {
 				return nil, fmt.Errorf("%s:%d: duplicate spell %s", path, line.Number, match[1])
 			}
-			result[match[1]] = content.SpellDef{ID: match[1], Name: name, Status: content.SpellRemoved, Schools: []string{"none"}, Flags: []string{"none"}, Level: 7,
-				MinRangeExpr: "-1", MaxRangeExpr: "-1", TileID: "TILEG_ERROR", SourcePath: "crawl-ref/source/spl-data.h", SourceLine: line.Number}
+			result[match[1]] = content.SpellDef{
+				ID:           match[1],
+				Name:         name,
+				Status:       content.SpellRemoved,
+				Schools:      []string{"none"},
+				Flags:        []string{"none"},
+				Level:        7,
+				MinRangeExpr: "-1",
+				MaxRangeExpr: "-1",
+				TileID:       "TILEG_ERROR",
+				SourcePath:   "crawl-ref/source/spl-data.h",
+				SourceLine:   line.Number,
+			}
 			continue
 		}
 		if value == "{" || strings.HasPrefix(value, "{ SPELL_") {

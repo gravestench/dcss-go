@@ -40,14 +40,20 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 	if contains(g.View(), uint64(item)) {
 		t.Fatal("unseen item leaked into view")
 	}
-	right, err := g.Step(Command{Kind: CommandMove, DX: 1})
+	right, err := g.Step(Command{
+		Kind: CommandMove,
+		DX:   1,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
 	if right.View.Cells[3*17+3].State != Visible || !contains(right.View, uint64(item)) {
 		t.Fatalf("newly visible item/terrain missing: %+v", right.View.Cells[3*17+3])
 	}
-	left, err := g.Step(Command{Kind: CommandMove, DX: -1})
+	left, err := g.Step(Command{
+		Kind: CommandMove,
+		DX:   -1,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +68,10 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 func TestFailedMoveDoesNotChangeKnowledge(t *testing.T) {
 	g := newStepGame(t)
 	before := g.levels[1].KnownRows()
-	result, err := g.Step(Command{Kind: CommandMove, DX: -1})
+	result, err := g.Step(Command{
+		Kind: CommandMove,
+		DX:   -1,
+	})
 	if err != nil || result.Spent != 0 {
 		t.Fatalf("blocked move: %+v %v", result, err)
 	}
@@ -114,7 +123,10 @@ func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 
 func TestKnowledgeSaveRoundTrip(t *testing.T) {
 	g := newStepGame(t)
-	if _, err := g.Step(Command{Kind: CommandMove, DX: 1}); err != nil {
+	if _, err := g.Step(Command{
+		Kind: CommandMove,
+		DX:   1,
+	}); err != nil {
 		t.Fatal(err)
 	}
 	snapshot := g.Snapshot()

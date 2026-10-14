@@ -41,7 +41,10 @@ func readSource(sourceDir, relative string, hashes *[]content.SpeciesSourceFile)
 		return nil, "", fmt.Errorf("%s: %w", label, err)
 	}
 	sum := sha256.Sum256(data)
-	*hashes = append(*hashes, content.SpeciesSourceFile{Path: label, SHA256: hex.EncodeToString(sum[:])})
+	*hashes = append(*hashes, content.SpeciesSourceFile{
+		Path:   label,
+		SHA256: hex.EncodeToString(sum[:]),
+	})
 	return data, label, nil
 }
 
@@ -157,7 +160,13 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 	}
 	sort.Slice(definitions, func(i, j int) bool { return definitions[i].ID < definitions[j].ID })
 	sort.Slice(files, func(i, j int) bool { return files[i].Path < files[j].Path })
-	artifact := content.SpeciesArtifact{SchemaVersion: 1, SourceRevision: revision, TagMajorVersion: 34, SourceFiles: files, Species: definitions}
+	artifact := content.SpeciesArtifact{
+		SchemaVersion:   1,
+		SourceRevision:  revision,
+		TagMajorVersion: 34,
+		SourceFiles:     files,
+		Species:         definitions,
+	}
 	if err := artifact.Validate(); err != nil {
 		return nil, err
 	}

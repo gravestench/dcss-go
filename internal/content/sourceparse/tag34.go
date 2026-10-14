@@ -85,7 +85,10 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			if !ok {
 				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 			}
-			stack = append(stack, tagBranch{parent: active, matched: condition})
+			stack = append(stack, tagBranch{
+				parent:  active,
+				matched: condition,
+			})
 			active = active && condition
 		case strings.HasPrefix(trimmed, "#elif "):
 			if len(stack) == 0 || stack[len(stack)-1].elseSeen {
@@ -116,7 +119,10 @@ func Tag34NumberedLines(path string, data []byte) ([]Line, error) {
 			return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 		default:
 			if active {
-				result = append(result, Line{Number: n + 1, Text: line})
+				result = append(result, Line{
+					Number: n + 1,
+					Text:   line,
+				})
 			}
 		}
 	}
@@ -152,7 +158,10 @@ func Tag34Lines(path string, data []byte) ([]string, error) {
 			if !supported {
 				return nil, fmt.Errorf("%s:%d: unsupported conditional %s", path, n+1, trimmed)
 			}
-			stack = append(stack, tagBranch{parent: active, matched: condition})
+			stack = append(stack, tagBranch{
+				parent:  active,
+				matched: condition,
+			})
 			active = active && condition
 		case strings.HasPrefix(trimmed, "#elif "):
 			if len(stack) == 0 || stack[len(stack)-1].elseSeen {

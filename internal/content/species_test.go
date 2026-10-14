@@ -12,15 +12,36 @@ func testSpecies(id string) SpeciesDef {
 		aptitudes[skill] = SpeciesAptitude{Allowed: true}
 	}
 	return SpeciesDef{
-		ID: id, MonsterID: "MONS_HUMAN", SourcePath: "crawl-ref/source/dat/species/human.yaml",
-		Name: "Human", ShortName: "Hu", Selectable: true, Difficulty: "Intermediate",
-		XP: 1, MR: 3, Strength: 8, Intelligence: 8, Dexterity: 8,
-		LevelUpStatFrequency: 4, LevelUpStats: []string{"str", "int", "dex"},
-		Aptitudes:     aptitudes,
-		Mutations:     []SpeciesMutation{{Level: 1, ID: "MUT_FAST", Amount: 1}},
-		FakeMutations: []SpeciesFakeMutation{{Long: "long", Short: "short"}},
-		Flags:         []string{"SPF_NO_HAIR"}, Habitat: "HT_LAND", Size: "SIZE_MEDIUM", UndeadType: "US_ALIVE",
-		RecommendedJobs: []string{"JOB_FIGHTER"}, RecommendedWeapons: []string{"SK_AXES"},
+		ID:                   id,
+		MonsterID:            "MONS_HUMAN",
+		SourcePath:           "crawl-ref/source/dat/species/human.yaml",
+		Name:                 "Human",
+		ShortName:            "Hu",
+		Selectable:           true,
+		Difficulty:           "Intermediate",
+		XP:                   1,
+		MR:                   3,
+		Strength:             8,
+		Intelligence:         8,
+		Dexterity:            8,
+		LevelUpStatFrequency: 4,
+		LevelUpStats:         []string{"str", "int", "dex"},
+		Aptitudes:            aptitudes,
+		Mutations: []SpeciesMutation{{
+			Level:  1,
+			ID:     "MUT_FAST",
+			Amount: 1,
+		}},
+		FakeMutations: []SpeciesFakeMutation{{
+			Long:  "long",
+			Short: "short",
+		}},
+		Flags:              []string{"SPF_NO_HAIR"},
+		Habitat:            "HT_LAND",
+		Size:               "SIZE_MEDIUM",
+		UndeadType:         "US_ALIVE",
+		RecommendedJobs:    []string{"JOB_FIGHTER"},
+		RecommendedWeapons: []string{"SK_AXES"},
 	}
 }
 
@@ -49,23 +70,45 @@ func TestSpeciesCatalogDefensiveCopies(t *testing.T) {
 
 func TestSpeciesCatalogRejectsDuplicateOrInvalidRecord(t *testing.T) {
 	valid := testSpecies("SP_HUMAN")
-	duplicate := SpeciesArtifact{SchemaVersion: 1, SourceRevision: sourceRevision, TagMajorVersion: 34, Species: []SpeciesDef{valid, valid}}
+	duplicate := SpeciesArtifact{
+		SchemaVersion:   1,
+		SourceRevision:  sourceRevision,
+		TagMajorVersion: 34,
+		Species:         []SpeciesDef{valid, valid},
+	}
 	if err := duplicate.Validate(); err == nil {
 		t.Fatal("duplicate species ID accepted")
 	}
 	invalid := valid
 	invalid.Name = ""
-	artifact := SpeciesArtifact{SchemaVersion: 1, SourceRevision: sourceRevision, TagMajorVersion: 34, Species: []SpeciesDef{invalid}}
+	artifact := SpeciesArtifact{
+		SchemaVersion:   1,
+		SourceRevision:  sourceRevision,
+		TagMajorVersion: 34,
+		Species:         []SpeciesDef{invalid},
+	}
 	if err := artifact.Validate(); err == nil {
 		t.Fatal("species without name accepted")
 	}
-	if err := (Catalog{species: map[string]SpeciesDef{"SP_HUMAN": invalid}, version: 1, sourceRevision: sourceRevision, player: PlayerDef{SpeciesID: "SP_HUMAN", JobID: "JOB_FIGHTER", Speed: 10}}).Validate(); err == nil {
+	if err := (Catalog{
+		species:        map[string]SpeciesDef{"SP_HUMAN": invalid},
+		version:        1,
+		sourceRevision: sourceRevision,
+		player: PlayerDef{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+			Speed:     10,
+		},
+	}).Validate(); err == nil {
 		t.Fatal("invalid catalog species accepted")
 	}
 }
 
 func TestSpeciesIDsSorted(t *testing.T) {
-	catalog := Catalog{species: map[string]SpeciesDef{"SP_Z": testSpecies("SP_Z"), "SP_A": testSpecies("SP_A")}}
+	catalog := Catalog{species: map[string]SpeciesDef{
+		"SP_Z": testSpecies("SP_Z"),
+		"SP_A": testSpecies("SP_A"),
+	}}
 	ids := catalog.SpeciesIDs()
 	if !reflect.DeepEqual(ids, []string{"SP_A", "SP_Z"}) {
 		t.Fatalf("species IDs not sorted: %v", ids)

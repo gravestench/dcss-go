@@ -88,9 +88,24 @@ func TestRatExperienceRejectsWrongKindAndHP(t *testing.T) {
 		rat content.MonsterDef
 		hp  int
 	}{
-		{content.MonsterDef{ID: "MONS_ORC", HD: 1, Speed: 10, XPModifier: 1}, 4},
-		{content.MonsterDef{ID: "MONS_RAT", HD: 1, Speed: 10, XPModifier: 1}, 0},
-		{content.MonsterDef{ID: "MONS_RAT", HD: 2, Speed: 10, XPModifier: 1}, 4},
+		{content.MonsterDef{
+			ID:         "MONS_ORC",
+			HD:         1,
+			Speed:      10,
+			XPModifier: 1,
+		}, 4},
+		{content.MonsterDef{
+			ID:         "MONS_RAT",
+			HD:         1,
+			Speed:      10,
+			XPModifier: 1,
+		}, 0},
+		{content.MonsterDef{
+			ID:         "MONS_RAT",
+			HD:         2,
+			Speed:      10,
+			XPModifier: 1,
+		}, 4},
 	} {
 		if _, err := OrdinaryAnimalExperience(tc.rat, tc.hp); err == nil {
 			t.Fatalf("accepted rat %+v with HP %d", tc.rat, tc.hp)

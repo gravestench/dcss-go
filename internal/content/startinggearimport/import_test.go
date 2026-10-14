@@ -38,9 +38,16 @@ func gearSourceFixture(t *testing.T) string {
 }
 
 func fixtureJobs() []content.JobDef {
-	return []content.JobDef{{ID: "JOB_FIGHTER", SourcePath: "crawl-ref/source/job-data.h", Abbreviation: "Fi", Name: "Fighter", Selectable: true,
-		RecommendedSpecies: []string{"SP_HUMAN"}, WeaponChoice: "WCHOICE_NONE",
-		Equipment: []string{"scale mail", "potion of might", "dart ego:curare q:3"}}}
+	return []content.JobDef{{
+		ID:                 "JOB_FIGHTER",
+		SourcePath:         "crawl-ref/source/job-data.h",
+		Abbreviation:       "Fi",
+		Name:               "Fighter",
+		Selectable:         true,
+		RecommendedSpecies: []string{"SP_HUMAN"},
+		WeaponChoice:       "WCHOICE_NONE",
+		Equipment:          []string{"scale mail", "potion of might", "dart ego:curare q:3"},
+	}}
 }
 
 func TestGenerateStartingGear(t *testing.T) {

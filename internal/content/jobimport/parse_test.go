@@ -32,11 +32,34 @@ func TestParseJobDataPreservesAllFieldsAndOrder(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := []content.JobDef{
-		{ID: "JOB_FIGHTER", SourcePath: "job-data.h", Abbreviation: "Fi", Name: "Fighter", Strength: 8, Intelligence: -1, Dexterity: 4,
-			RecommendedSpecies: []string{"SP_HUMAN", "SP_MINOTAUR"}, Spells: []string{"SPELL_SHOCK", "SPELL_BLINK"},
-			Equipment: []string{"scale mail", "wand of flame charges:15, q:2"}, WeaponChoice: "WCHOICE_GOOD",
-			Skills: []content.JobSkillGrant{{ID: "SK_FIGHTING", Level: 3}, {ID: "SK_WEAPON", Level: 2}}, Selectable: true},
-		{ID: "JOB_PRIEST", SourcePath: "job-data.h", Abbreviation: "Pr", Name: "Priest", WeaponChoice: "WCHOICE_NONE"},
+		{
+			ID:                 "JOB_FIGHTER",
+			SourcePath:         "job-data.h",
+			Abbreviation:       "Fi",
+			Name:               "Fighter",
+			Strength:           8,
+			Intelligence:       -1,
+			Dexterity:          4,
+			RecommendedSpecies: []string{"SP_HUMAN", "SP_MINOTAUR"},
+			Spells:             []string{"SPELL_SHOCK", "SPELL_BLINK"},
+			Equipment:          []string{"scale mail", "wand of flame charges:15, q:2"},
+			WeaponChoice:       "WCHOICE_GOOD",
+			Skills: []content.JobSkillGrant{{
+				ID:    "SK_FIGHTING",
+				Level: 3,
+			}, {
+				ID:    "SK_WEAPON",
+				Level: 2,
+			}},
+			Selectable: true,
+		},
+		{
+			ID:           "JOB_PRIEST",
+			SourcePath:   "job-data.h",
+			Abbreviation: "Pr",
+			Name:         "Priest",
+			WeaponChoice: "WCHOICE_NONE",
+		},
 	}
 	if !reflect.DeepEqual(jobs, want) {
 		t.Fatalf("parsed jobs = %#v, want %#v", jobs, want)

@@ -46,8 +46,14 @@ func parseDungeonRows(source []byte) ([]content.DungeonPopEntry, error) {
 		if minErr != nil || maxErr != nil || rarityErr != nil {
 			return nil, fmt.Errorf("invalid Dungeon population number at line %d", i+1)
 		}
-		rows = append(rows, content.DungeonPopEntry{MinDepth: minDepth, MaxDepth: maxDepth, Rarity: rarity,
-			Curve: match[4], MonsterID: match[5], SourceLine: i + 1})
+		rows = append(rows, content.DungeonPopEntry{
+			MinDepth:   minDepth,
+			MaxDepth:   maxDepth,
+			Rarity:     rarity,
+			Curve:      match[4],
+			MonsterID:  match[5],
+			SourceLine: i + 1,
+		})
 	}
 	return nil, fmt.Errorf("pinned Dungeon population table or closing delimiter is missing")
 }

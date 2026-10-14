@@ -19,7 +19,11 @@ func TestRegisterStoresAreWorldLocal(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := first.Positions.Set(entity, Position{LevelID: 1, X: 2, Y: 3}); err != nil {
+	if _, err := first.Positions.Set(entity, Position{
+		LevelID: 1,
+		X:       2,
+		Y:       3,
+	}); err != nil {
 		t.Fatal(err)
 	}
 	if _, found := second.Positions.Get(entity); found {

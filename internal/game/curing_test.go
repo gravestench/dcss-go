@@ -34,7 +34,10 @@ func TestQuaffCuringHealsConsumesAndSchedules(t *testing.T) {
 		t.Fatal(err)
 	}
 	start := g.currentAut
-	result, err := g.Step(Command{Kind: CommandQuaff, ItemID: itemID})
+	result, err := g.Step(Command{
+		Kind:   CommandQuaff,
+		ItemID: itemID,
+	})
 	if err != nil || result.Spent != 10 || result.View.PlayerHP != want || result.View.CurrentAut != start+10 {
 		t.Fatalf("quaff = %+v, %v; want HP %d and time %d", result, err, want, start+10)
 	}
@@ -57,11 +60,17 @@ func TestQuaffAtFullHPStillConsumesOnePotion(t *testing.T) {
 	item.Quantity = 2
 	health, _ := g.stores.Health.Get(g.player)
 	health.Current = health.Max
-	first, err := g.Step(Command{Kind: CommandQuaff, ItemID: itemID})
+	first, err := g.Step(Command{
+		Kind:   CommandQuaff,
+		ItemID: itemID,
+	})
 	if err != nil || first.Spent != 10 || first.View.PlayerHP != health.Max || item.Quantity != 1 {
 		t.Fatalf("first quaff = %+v, %v; item %+v", first, err, item)
 	}
-	second, err := g.Step(Command{Kind: CommandQuaff, ItemID: itemID})
+	second, err := g.Step(Command{
+		Kind:   CommandQuaff,
+		ItemID: itemID,
+	})
 	if err != nil || second.Spent != 10 || g.world.EntityExists(akara.Entity(itemID)) {
 		t.Fatalf("second quaff = %+v, %v", second, err)
 	}
@@ -71,7 +80,10 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 	g := newStepGame(t)
 	itemID := uint64(potionID(t, g))
 	before := g.Snapshot()
-	result, err := g.Step(Command{Kind: CommandQuaff, ItemID: itemID})
+	result, err := g.Step(Command{
+		Kind:   CommandQuaff,
+		ItemID: itemID,
+	})
 	if err != nil || result.Spent != 0 || !strings.Contains(strings.ToLower(result.Events[0].Text), "carry") {
 		t.Fatalf("floor quaff = %+v, %v", result, err)
 	}
@@ -89,7 +101,10 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 		}
 	}
 	before = g.Snapshot()
-	result, err = g.Step(Command{Kind: CommandQuaff, ItemID: mightID})
+	result, err = g.Step(Command{
+		Kind:   CommandQuaff,
+		ItemID: mightID,
+	})
 	if err != nil || result.Spent != 0 || !strings.Contains(strings.ToLower(result.Events[0].Text), "unavailable") {
 		t.Fatalf("unsupported quaff = %+v, %v", result, err)
 	}
@@ -106,7 +121,10 @@ func TestQuaffSaveContinuation(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer loaded.Close()
-	command := Command{Kind: CommandQuaff, ItemID: itemID}
+	command := Command{
+		Kind:   CommandQuaff,
+		ItemID: itemID,
+	}
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
 	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {

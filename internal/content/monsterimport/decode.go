@@ -184,7 +184,10 @@ func decodeResistances(expr string, symbols map[string]bool) ([]content.MonsterR
 			level -= 8
 		}
 		if level != 0 {
-			result = append(result, content.MonsterResistance{ID: id, Level: level})
+			result = append(result, content.MonsterResistance{
+				ID:    id,
+				Level: level,
+			})
 		}
 	}
 	return result, nil
@@ -224,7 +227,11 @@ func decodeAttacks(expr string, types, flavours map[string]bool) ([4]content.Mon
 		if err != nil || damage < 0 {
 			return result, fmt.Errorf("invalid attack damage %q", fields[2])
 		}
-		result[i] = content.MonsterAttack{TypeID: typeID, FlavourID: flavour, Damage: damage}
+		result[i] = content.MonsterAttack{
+			TypeID:    typeID,
+			FlavourID: flavour,
+			Damage:    damage,
+		}
 	}
 	return result, nil
 }
@@ -287,7 +294,16 @@ func decodeEnergy(expr string) (content.MonsterEnergy, error) {
 			return content.MonsterEnergy{}, fmt.Errorf("energy cost out of range")
 		}
 	}
-	return content.MonsterEnergy{Move: base[0], Swim: base[1], Attack: base[2], Missile: base[3], Spell: base[4], Special: base[5], Item: base[6], PickupPercent: base[7]}, nil
+	return content.MonsterEnergy{
+		Move:          base[0],
+		Swim:          base[1],
+		Attack:        base[2],
+		Missile:       base[3],
+		Spell:         base[4],
+		Special:       base[5],
+		Item:          base[6],
+		PickupPercent: base[7],
+	}, nil
 }
 
 func decodeTile(expr string, variations map[string]bool) (content.MonsterTile, error) {
@@ -343,7 +359,12 @@ func decodeRows(path string, rows []sourceRow, symbols symbolSets) ([]content.Mo
 }
 
 func decodeRow(path string, row sourceRow, s symbolSets) (content.MonsterDef, error) {
-	d := content.MonsterDef{ID: row.ID, SourcePath: path, SourceLine: row.Line, Status: content.MonsterDefined}
+	d := content.MonsterDef{
+		ID:         row.ID,
+		SourcePath: path,
+		SourceLine: row.Line,
+		Status:     content.MonsterDefined,
+	}
 	if row.Removed {
 		d.Status = content.MonsterRemoved
 		d.Name = row.RemovedName

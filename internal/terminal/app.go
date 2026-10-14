@@ -62,7 +62,15 @@ func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppMod
 	if len(catalog.Presentation().SpeciesGroups) != 3 {
 		return nil, fmt.Errorf("catalog lacks console presentation")
 	}
-	return &AppModel{catalog: catalog, presentation: catalog.Presentation(), seed: seed, savePath: savePath, screen: ScreenStartup, width: 79, height: 24}, nil
+	return &AppModel{
+		catalog:      catalog,
+		presentation: catalog.Presentation(),
+		seed:         seed,
+		savePath:     savePath,
+		screen:       ScreenStartup,
+		width:        79,
+		height:       24,
+	}, nil
 }
 
 func (m *AppModel) Init() tea.Cmd { return nil }

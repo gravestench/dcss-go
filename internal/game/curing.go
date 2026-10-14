@@ -71,6 +71,9 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 		return fmt.Errorf("unsupported potion %s", item.KindID)
 	}
 	s.turn.Consume = intent.ItemID
-	s.turn.Events = append(s.turn.Events, Event{Kind: "quaff", Text: message})
+	s.turn.Events = append(s.turn.Events, Event{
+		Kind: "quaff",
+		Text: message,
+	})
 	return nil
 }

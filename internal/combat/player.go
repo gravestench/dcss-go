@@ -150,7 +150,10 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 			return Outcome{}, err
 		}
 	}
-	return Outcome{Kind: Hit, Damage: max(0, damage-saved)}, nil
+	return Outcome{
+		Kind:   Hit,
+		Damage: max(0, damage-saved),
+	}, nil
 }
 
 func maybeRandomDiv(r Roller, numerator, denominator int) (int, error) {

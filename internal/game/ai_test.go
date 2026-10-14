@@ -14,10 +14,24 @@ func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 		blockDiagonal    bool
 		want             ecs.Intent
 	}{
-		{"diagonal melee", 3, 2, false, ecs.Intent{Kind: ecs.IntentMelee, DX: -1, DY: 1}},
-		{"diagonal pursuit", 2, 3, false, ecs.Intent{Kind: ecs.IntentMove, DX: -1, DY: 1}},
-		{"blocked sight routes around wall", 2, 3, true, ecs.Intent{Kind: ecs.IntentMove, DY: 1}},
-		{"cardinal melee", 3, 1, false, ecs.Intent{Kind: ecs.IntentMelee, DX: -1}},
+		{"diagonal melee", 3, 2, false, ecs.Intent{
+			Kind: ecs.IntentMelee,
+			DX:   -1,
+			DY:   1,
+		}},
+		{"diagonal pursuit", 2, 3, false, ecs.Intent{
+			Kind: ecs.IntentMove,
+			DX:   -1,
+			DY:   1,
+		}},
+		{"blocked sight routes around wall", 2, 3, true, ecs.Intent{
+			Kind: ecs.IntentMove,
+			DY:   1,
+		}},
+		{"cardinal melee", 3, 1, false, ecs.Intent{
+			Kind: ecs.IntentMelee,
+			DX:   -1,
+		}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			g := newStepGame(t)
@@ -87,7 +101,10 @@ func TestQuokkaPursuesLastSeenTileThenStops(t *testing.T) {
 		t.Fatal(err)
 	}
 	intent, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
-	if err != nil || intent != (ecs.Intent{Kind: ecs.IntentMove, DY: -1}) {
+	if err != nil || intent != (ecs.Intent{
+		Kind: ecs.IntentMove,
+		DY:   -1,
+	}) {
 		t.Fatalf("quokka did not pursue last seen tile: %+v, %v", intent, err)
 	}
 	if err := g.levels[2].MoveActor(quokka, 14, 5); err != nil {
@@ -334,7 +351,10 @@ func TestQuokkaRoutesAroundCentralWallToRememberedTarget(t *testing.T) {
 	ai, _ := g.stores.AI.Get(quokka)
 	ai.Behavior, ai.TargetX, ai.TargetY, ai.MemoryUntilAut = "seek", 7, 1, 550
 	first, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
-	if err != nil || first != (ecs.Intent{Kind: ecs.IntentMove, DY: 1}) {
+	if err != nil || first != (ecs.Intent{
+		Kind: ecs.IntentMove,
+		DY:   1,
+	}) {
 		t.Fatalf("first route step %+v, %v; want south around wall", first, err)
 	}
 	for turn := 0; turn < 12; turn++ {

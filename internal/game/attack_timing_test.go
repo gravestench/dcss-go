@@ -48,7 +48,10 @@ func TestRapierBumpCostSchedulesTwoRatActions(t *testing.T) {
 	}
 	health, _ := g.stores.Health.Get(rat)
 	health.Current, health.Max = 100, 100
-	result, err := g.Step(Command{Kind: CommandMove, DX: 1})
+	result, err := g.Step(Command{
+		Kind: CommandMove,
+		DX:   1,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -90,7 +93,10 @@ func TestShortUnarmedBumpSchedulesOnlyOneRatAction(t *testing.T) {
 	rat := ratID(t, g)
 	health, _ := g.stores.Health.Get(rat)
 	health.Current, health.Max = 100, 100
-	result, err := g.Step(Command{Kind: CommandMove, DX: 1})
+	result, err := g.Step(Command{
+		Kind: CommandMove,
+		DX:   1,
+	})
 	if err != nil || result.Spent != 9 || result.View.CurrentAut != 9 {
 		t.Fatalf("unarmed bump = %+v, %v", result, err)
 	}
@@ -113,7 +119,10 @@ func TestBumpRejectsMissingShieldBeforeTimingDraw(t *testing.T) {
 		}
 	}
 	before := g.Snapshot()
-	if _, err := g.Step(Command{Kind: CommandMove, DX: 1}); err == nil {
+	if _, err := g.Step(Command{
+		Kind: CommandMove,
+		DX:   1,
+	}); err == nil {
 		t.Fatal("bump accepted missing shield")
 	}
 	if !reflect.DeepEqual(before, g.Snapshot()) {
@@ -134,7 +143,10 @@ func TestAttackDelaySaveContinuation(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer loaded.Close()
-	command := Command{Kind: CommandMove, DX: 1}
+	command := Command{
+		Kind: CommandMove,
+		DX:   1,
+	}
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
 	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {

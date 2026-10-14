@@ -73,7 +73,11 @@ func parseEnum(path string, body []byte) ([]content.BranchDef, error) {
 			return nil, fmt.Errorf("%s:%d: invalid or duplicate branch ID %q", path, line.Number, id)
 		}
 		seen[id] = true
-		result = append(result, content.BranchDef{ID: id, NumericID: len(result), EnumLine: line.Number})
+		result = append(result, content.BranchDef{
+			ID:        id,
+			NumericID: len(result),
+			EnumLine:  line.Number,
+		})
 	}
 	if !inside || !opened || !countSeen || !closed || len(result) == 0 {
 		return nil, fmt.Errorf("%s: incomplete branch enum", path)
@@ -191,9 +195,17 @@ func parseRow(path string, line int, value string) (content.BranchDef, error) {
 	if len(fields) != 19 && len(fields) != 20 {
 		return content.BranchDef{}, fmt.Errorf("%s:%d: branch row has %d fields", path, line, len(fields))
 	}
-	b := content.BranchDef{ID: fields[0], ParentID: fields[1], SourceLine: line,
-		EntryFeature: fields[7], ExitFeature: fields[8], EscapeFeature: fields[9],
-		FloorColor: fields[14], RockColor: fields[15], AmbientNoise: fields[18]}
+	b := content.BranchDef{
+		ID:            fields[0],
+		ParentID:      fields[1],
+		SourceLine:    line,
+		EntryFeature:  fields[7],
+		ExitFeature:   fields[8],
+		EscapeFeature: fields[9],
+		FloorColor:    fields[14],
+		RockColor:     fields[15],
+		AmbientNoise:  fields[18],
+	}
 	for i, dest := range []*int{&b.MinDepth, &b.MaxDepth, &b.Depth, &b.AbsoluteDepth} {
 		*dest, err = strconv.Atoi(fields[i+2])
 		if err != nil {

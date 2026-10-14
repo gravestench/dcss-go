@@ -40,7 +40,10 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 			if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 				t.Fatal(err)
 			}
-			if _, err := g.stores.Intents.Set(rat, ecs.Intent{Kind: ecs.IntentMelee, DX: -1}); err != nil {
+			if _, err := g.stores.Intents.Set(rat, ecs.Intent{
+				Kind: ecs.IntentMelee,
+				DX:   -1,
+			}); err != nil {
 				t.Fatal(err)
 			}
 			g.turn.Actor = rat

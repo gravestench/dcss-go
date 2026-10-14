@@ -2,6 +2,20 @@
 
 This is the implementation strategy for the ongoing faithful DCSS-to-Go port. It supplements [port-inventory.md](port-inventory.md), which tracks gameplay and content coverage. The Go port works from local `main` and uses Akara `v0.1.4`; the C++ reference is pinned at `e60ba3568b0c26447ad36ec5c7b963eb04b2778f`.
 
+## Human readability contract
+
+The port should be digestible to a developer reading one file at a time.
+Handwritten Go lines have a hard maximum of 120 characters and should stay
+near 80 when practical. Put each populated field of a multi-field struct
+literal on its own line. Give validation, calculation, mutation, and event
+emission separate visual space; avoid code cuddling and long compound
+conditions that hide the reason for a failure. Comments explain ownership,
+invariants, source-specific order, and surprising rules, with pinned C++
+source references where helpful. They should not repeat what the next line
+already says. The repository's `AGENTS.md` carries this standard into each
+implementation slice. Existing long lines will be reflowed in coherent
+readability passes; every new or changed handwritten line must meet it now.
+
 ## Decision
 
 Use Akara as the source of truth for **mutable, independently addressable game entities** and run their repeatable behavior in systems. Keep dense terrain and exploration grids with each level; keep immutable source content in the catalog; keep the terminal, save codec, RNG streams, and turn coordinator outside ECS. An ECS component is warranted when a value varies by entity, must survive turns or saves, or controls which entities a system processes. A system is warranted when a behavior acts on a set of entities or combines components in an ordered turn phase. Neither a static definition nor a one-off calculation needs an entity.

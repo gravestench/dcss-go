@@ -31,7 +31,10 @@ func (s *durationSystem) Update(_ *akara.World, delta time.Duration) error {
 	}
 	status.MightAut = remaining
 	if ended {
-		s.turn.Events = append(s.turn.Events, Event{Kind: "duration", Text: "You feel a little less mighty now."})
+		s.turn.Events = append(s.turn.Events, Event{
+			Kind: "duration",
+			Text: "You feel a little less mighty now.",
+		})
 	}
 	return nil
 }

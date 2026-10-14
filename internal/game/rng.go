@@ -12,7 +12,10 @@ type RNGStreams struct {
 }
 
 func NewRNGStreams(seed uint64) *RNGStreams {
-	return &RNGStreams{seed: seed, states: make(map[string]uint64)}
+	return &RNGStreams{
+		seed:   seed,
+		states: make(map[string]uint64),
+	}
 }
 
 func RestoreRNGStreams(seed uint64, states map[string]uint64) *RNGStreams {
@@ -20,7 +23,10 @@ func RestoreRNGStreams(seed uint64, states map[string]uint64) *RNGStreams {
 	for name, state := range states {
 		copyStates[name] = state
 	}
-	return &RNGStreams{seed: seed, states: copyStates}
+	return &RNGStreams{
+		seed:   seed,
+		states: copyStates,
+	}
 }
 
 func (r *RNGStreams) States() map[string]uint64 {

@@ -9,6 +9,10 @@ func scenarioCatalog() Catalog {
 	return Catalog{
 		version:        1,
 		sourceRevision: sourceRevision,
-		player:         PlayerDef{SpeciesID: "SP_HUMAN", JobID: "JOB_FIGHTER", Speed: 10},
+		player: PlayerDef{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+			Speed:     10,
+		},
 	}
 }

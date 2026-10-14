@@ -23,7 +23,10 @@ func TestCuringHealsSourceRangeAndCapsAtMax(t *testing.T) {
 	}{
 		{1, 18, 0, 6}, {1, 18, 6, 12}, {15, 18, 6, 18}, {18, 18, 0, 18},
 	} {
-		rng := &curingRoller{bound: 7, value: tc.roll}
+		rng := &curingRoller{
+			bound: 7,
+			value: tc.roll,
+		}
 		got, err := CuringHP(rng, tc.current, tc.max)
 		if err != nil || got != tc.want || rng.calls != 1 {
 			t.Fatalf("HP %d/%d roll %d: got %d, err %v, calls %d; want %d", tc.current, tc.max, tc.roll, got, err, rng.calls, tc.want)
@@ -38,7 +41,10 @@ func TestCuringRejectsInvalidHPAndRollWithoutDraw(t *testing.T) {
 			t.Fatalf("accepted HP %d/%d, draws %d", tc.current, tc.max, rng.calls)
 		}
 	}
-	rng := &curingRoller{bound: 7, value: 7}
+	rng := &curingRoller{
+		bound: 7,
+		value: 7,
+	}
 	if _, err := CuringHP(rng, 1, 18); err == nil {
 		t.Fatal("accepted out-of-range potion roll")
 	}

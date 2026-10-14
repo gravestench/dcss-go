@@ -98,11 +98,19 @@ func TestDirectionalRecommendationsAndBans(t *testing.T) {
 }
 
 func TestBannedPairChecksFutureMutation(t *testing.T) {
-	species := content.SpeciesDef{Mutations: []content.SpeciesMutation{{Level: 9, ID: "MUT_NO_GRASPING", Amount: 1}}}
+	species := content.SpeciesDef{Mutations: []content.SpeciesMutation{{
+		Level:  9,
+		ID:     "MUT_NO_GRASPING",
+		Amount: 1,
+	}}}
 	if !bannedPair(species, "JOB_HUNTER") || bannedPair(species, "JOB_FIGHTER") {
 		t.Fatal("future no-grasping mutation should ban Hunter only")
 	}
-	species.Mutations = []content.SpeciesMutation{{Level: 12, ID: "MUT_FORLORN", Amount: 1}}
+	species.Mutations = []content.SpeciesMutation{{
+		Level:  12,
+		ID:     "MUT_FORLORN",
+		Amount: 1,
+	}}
 	if !bannedPair(species, "JOB_MONK") || bannedPair(species, "JOB_FIGHTER") {
 		t.Fatal("future forlorn mutation should ban Monk only")
 	}

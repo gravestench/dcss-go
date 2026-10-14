@@ -26,9 +26,17 @@ func NewCanvas(width, height int) *Canvas {
 	if height < 0 {
 		height = 0
 	}
-	c := &Canvas{width: width, height: height, cells: make([]cell, width*height)}
+	c := &Canvas{
+		width:  width,
+		height: height,
+		cells:  make([]cell, width*height),
+	}
 	for i := range c.cells {
-		c.cells[i] = cell{text: " ", fg: LightGrey, bg: Black}
+		c.cells[i] = cell{
+			text: " ",
+			fg:   LightGrey,
+			bg:   Black,
+		}
 	}
 	return c
 }
@@ -41,12 +49,24 @@ func (c *Canvas) clearAt(x, y int) {
 	}
 	i := y*c.width + x
 	if c.cells[i].continuation && x > 0 {
-		c.cells[i-1] = cell{text: " ", fg: LightGrey, bg: Black}
+		c.cells[i-1] = cell{
+			text: " ",
+			fg:   LightGrey,
+			bg:   Black,
+		}
 	}
 	if !c.cells[i].continuation && x+1 < c.width && c.cells[i+1].continuation {
-		c.cells[i+1] = cell{text: " ", fg: LightGrey, bg: Black}
+		c.cells[i+1] = cell{
+			text: " ",
+			fg:   LightGrey,
+			bg:   Black,
+		}
 	}
-	c.cells[i] = cell{text: " ", fg: LightGrey, bg: Black}
+	c.cells[i] = cell{
+		text: " ",
+		fg:   LightGrey,
+		bg:   Black,
+	}
 }
 
 func (c *Canvas) Put(x, y int, glyph rune, fg, bg Color) {
@@ -61,9 +81,17 @@ func (c *Canvas) Put(x, y int, glyph rune, fg, bg Color) {
 		c.clearAt(x+dx, y)
 	}
 	i := y*c.width + x
-	c.cells[i] = cell{text: string(glyph), fg: fg, bg: bg}
+	c.cells[i] = cell{
+		text: string(glyph),
+		fg:   fg,
+		bg:   bg,
+	}
 	if w == 2 {
-		c.cells[i+1] = cell{fg: fg, bg: bg, continuation: true}
+		c.cells[i+1] = cell{
+			fg:           fg,
+			bg:           bg,
+			continuation: true,
+		}
 	}
 }
 

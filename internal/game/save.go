@@ -67,11 +67,22 @@ func validateSavedItem(record save.EntityRecord, catalog content.Catalog, player
 }
 
 func (g *Game) Snapshot() save.Snapshot {
-	snapshot := save.Snapshot{Version: save.Version, SourceRevision: g.catalog.SourceRevision(), ScenarioID: g.scenarioID,
-		PlayerID: uint64(g.player), CurrentAut: int64(g.currentAut), Seed: g.seed,
-		RNG: g.rng.States(), Messages: append([]string(nil), g.messages...)}
+	snapshot := save.Snapshot{
+		Version:        save.Version,
+		SourceRevision: g.catalog.SourceRevision(),
+		ScenarioID:     g.scenarioID,
+		PlayerID:       uint64(g.player),
+		CurrentAut:     int64(g.currentAut),
+		Seed:           g.seed,
+		RNG:            g.rng.States(),
+		Messages:       append([]string(nil), g.messages...),
+	}
 	for id, level := range g.levels {
-		record := save.LevelRecord{ID: id, Rows: append([]string(nil), level.terrain...), Known: level.KnownRows()}
+		record := save.LevelRecord{
+			ID:    id,
+			Rows:  append([]string(nil), level.terrain...),
+			Known: level.KnownRows(),
+		}
 		if awayAt, away := g.levelAwaySince[id]; away {
 			since := int64(awayAt)
 			record.AwaySinceAut = &since
@@ -81,18 +92,23 @@ func (g *Game) Snapshot() save.Snapshot {
 	sort.Slice(snapshot.Levels, func(i, j int) bool { return snapshot.Levels[i].ID < snapshot.Levels[j].ID })
 	for _, entity := range g.world.Entities() {
 		snapshot.Entities = append(snapshot.Entities, save.EntityRecord{
-			ID: uint64(entity), Position: copyComponent(g.stores.Positions, entity),
-			Actor: copyComponent(g.stores.Actors, entity), Health: copyComponent(g.stores.Health, entity),
-			Magic: copyComponent(g.stores.Magic, entity), Skills: copySkillsComponent(g.stores.Skills, entity),
+			ID:           uint64(entity),
+			Position:     copyComponent(g.stores.Positions, entity),
+			Actor:        copyComponent(g.stores.Actors, entity),
+			Health:       copyComponent(g.stores.Health, entity),
+			Magic:        copyComponent(g.stores.Magic, entity),
+			Skills:       copySkillsComponent(g.stores.Skills, entity),
 			Progression:  copyComponent(g.stores.Progression, entity),
 			Durations:    copyComponent(g.stores.Durations, entity),
 			Regeneration: copyComponent(g.stores.Regeneration, entity),
-			Combatant:    copyComponent(g.stores.Combat, entity), Player: copyComponent(g.stores.Players, entity),
-			Attributes: copyComponent(g.stores.Attributes, entity),
-			AI:         copyComponent(g.stores.AI, entity), Item: copyComponent(g.stores.Items, entity),
-			Corpse:    copyComponent(g.stores.Corpses, entity),
-			CarriedBy: copyComponent(g.stores.CarriedBy, entity),
-			Equipped:  copyComponent(g.stores.Equipped, entity),
+			Combatant:    copyComponent(g.stores.Combat, entity),
+			Player:       copyComponent(g.stores.Players, entity),
+			Attributes:   copyComponent(g.stores.Attributes, entity),
+			AI:           copyComponent(g.stores.AI, entity),
+			Item:         copyComponent(g.stores.Items, entity),
+			Corpse:       copyComponent(g.stores.Corpses, entity),
+			CarriedBy:    copyComponent(g.stores.CarriedBy, entity),
+			Equipped:     copyComponent(g.stores.Equipped, entity),
 		})
 	}
 	sort.Slice(snapshot.Entities, func(i, j int) bool { return snapshot.Entities[i].ID < snapshot.Entities[j].ID })
@@ -128,10 +144,20 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		}
 	}()
 	stores := ecs.Register(world)
-	g := &Game{world: world, stores: stores, levels: make(map[int]*Level), player: akara.Entity(snapshot.PlayerID),
-		catalog: catalog, seed: snapshot.Seed, scenarioID: snapshot.ScenarioID, rng: RestoreRNGStreams(snapshot.Seed, snapshot.RNG),
-		scheduler: TurnScheduler{actors: stores.Actors}, currentAut: Aut(snapshot.CurrentAut), levelAwaySince: make(map[int]Aut),
-		messages: append([]string(nil), snapshot.Messages...)}
+	g := &Game{
+		world:          world,
+		stores:         stores,
+		levels:         make(map[int]*Level),
+		player:         akara.Entity(snapshot.PlayerID),
+		catalog:        catalog,
+		seed:           snapshot.Seed,
+		scenarioID:     snapshot.ScenarioID,
+		rng:            RestoreRNGStreams(snapshot.Seed, snapshot.RNG),
+		scheduler:      TurnScheduler{actors: stores.Actors},
+		currentAut:     Aut(snapshot.CurrentAut),
+		levelAwaySince: make(map[int]Aut),
+		messages:       append([]string(nil), snapshot.Messages...),
+	}
 	for _, record := range snapshot.Levels {
 		if _, duplicate := g.levels[record.ID]; duplicate {
 			return nil, fmt.Errorf("duplicate level %d", record.ID)
@@ -209,7 +235,11 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 				return nil, fmt.Errorf("invalid player choice: %w", profileErr)
 			}
 			if record.Attributes.Strength <= 0 || record.Attributes.Intelligence <= 0 || record.Attributes.Dexterity <= 0 ||
-				*record.Attributes != (ecs.Attributes{Strength: profile.Attributes.Strength, Intelligence: profile.Attributes.Intelligence, Dexterity: profile.Attributes.Dexterity}) {
+				*record.Attributes != (ecs.Attributes{
+					Strength:     profile.Attributes.Strength,
+					Intelligence: profile.Attributes.Intelligence,
+					Dexterity:    profile.Attributes.Dexterity,
+				}) {
 				return nil, fmt.Errorf("invalid player attributes for entity %d", record.ID)
 			}
 			if !slices.Equal(record.Skills.Entries, profile.Skills) {

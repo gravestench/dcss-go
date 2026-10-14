@@ -63,7 +63,10 @@ func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer loaded.Close()
-	command := Command{Kind: CommandMove, DX: 1}
+	command := Command{
+		Kind: CommandMove,
+		DX:   1,
+	}
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
 	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
@@ -86,7 +89,10 @@ func TestPlayerLethalBumpClearsRatOccupancy(t *testing.T) {
 	}
 	health, _ := g.stores.Health.Get(rat)
 	health.Current = 1
-	result, err := g.Step(Command{Kind: CommandMove, DX: 1})
+	result, err := g.Step(Command{
+		Kind: CommandMove,
+		DX:   1,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -121,7 +127,10 @@ func TestPlayerBumpRejectsInvalidWeaponBeforeSpendingTime(t *testing.T) {
 				}
 			}
 			before := g.Snapshot()
-			if _, err := g.Step(Command{Kind: CommandMove, DX: 1}); err == nil {
+			if _, err := g.Step(Command{
+				Kind: CommandMove,
+				DX:   1,
+			}); err == nil {
 				t.Fatal("invalid weapon bump accepted")
 			}
 			if !reflect.DeepEqual(before, g.Snapshot()) {
@@ -174,7 +183,11 @@ func TestPlayerMeleeUsesStoredSkillPoints(t *testing.T) {
 	skills, _ := g.stores.Skills.Get(g.player)
 	for i := range skills.Entries {
 		if skills.Entries[i].ID == "SK_SHORT_BLADES" {
-			skills.Entries[i] = character.Skill{ID: "SK_SHORT_BLADES", Level: 2, Points: 299}
+			skills.Entries[i] = character.Skill{
+				ID:     "SK_SHORT_BLADES",
+				Level:  2,
+				Points: 299,
+			}
 		}
 	}
 	in, err := newPlayerCombat(g).attackInput("MONS_RAT")

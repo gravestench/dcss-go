@@ -23,9 +23,18 @@ func TestRatHPSourceRollOrderAndBounds(t *testing.T) {
 		rolls []scriptedRoll
 		want  int
 	}{
-		{"minimum", append([]scriptedRoll{{100, 25}, {16, 0}}, append(sevenRolls(17, 0), scriptedRoll{10, 7})...), 1},
-		{"maximum", append([]scriptedRoll{{100, 25}, {16, 15}}, append(sevenRolls(17, 16), scriptedRoll{10, 0})...), 4},
-		{"variance-round-up", append([]scriptedRoll{{100, 0}, {18, 9}}, append(sevenRolls(19, 9), scriptedRoll{10, 0})...), 3},
+		{"minimum", append([]scriptedRoll{{100, 25}, {16, 0}}, append(sevenRolls(17, 0), scriptedRoll{
+			10,
+			7,
+		})...), 1},
+		{"maximum", append([]scriptedRoll{{100, 25}, {16, 15}}, append(sevenRolls(17, 16), scriptedRoll{
+			10,
+			0,
+		})...), 4},
+		{"variance-round-up", append([]scriptedRoll{{100, 0}, {18, 9}}, append(sevenRolls(19, 9), scriptedRoll{
+			10,
+			0,
+		})...), 3},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			rng := &scriptedRoller{rolls: tc.rolls}
@@ -40,7 +49,10 @@ func TestRatHPSourceRollOrderAndBounds(t *testing.T) {
 func sevenRolls(bound, value int) []scriptedRoll {
 	rolls := make([]scriptedRoll, 7)
 	for i := range rolls {
-		rolls[i] = scriptedRoll{bound, value}
+		rolls[i] = scriptedRoll{
+			bound,
+			value,
+		}
 	}
 	return rolls
 }

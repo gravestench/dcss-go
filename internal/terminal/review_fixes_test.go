@@ -34,13 +34,19 @@ func TestUndersizedTerminalBlocksHiddenInput(t *testing.T) {
 	m.handleKey("i")
 	m.focus = 2
 	aut := m.game.View().CurrentAut
-	m.Update(tea.WindowSizeMsg{Width: 78, Height: 23})
+	m.Update(tea.WindowSizeMsg{
+		Width:  78,
+		Height: 23,
+	})
 	for _, key := range []string{"esc", "s", "S", "ctrl+s"} {
 		if cmd := m.handleKey(key); cmd != nil {
 			t.Fatalf("%q exited behind resize warning", key)
 		}
 	}
-	m.Update(tea.WindowSizeMsg{Width: 79, Height: 24})
+	m.Update(tea.WindowSizeMsg{
+		Width:  79,
+		Height: 24,
+	})
 	if m.screen != ScreenInventory || m.focus != 2 || m.game.View().CurrentAut != aut {
 		t.Fatal("hidden input changed modal or game")
 	}

@@ -42,7 +42,10 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 	if view.PlayerHP != 7 || view.PlayerMaxHP != 18 || view.PlayerMP != 0 || view.PlayerMaxMP != 1 || len(view.Skills) != 4 {
 		t.Fatalf("restored profile = %+v", view)
 	}
-	for _, command := range []Command{{Kind: CommandWait}, {Kind: CommandMove, DX: 1}} {
+	for _, command := range []Command{{Kind: CommandWait}, {
+		Kind: CommandMove,
+		DX:   1,
+	}} {
 		left, leftErr := g.Step(command)
 		right, rightErr := restored.Step(command)
 		if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) {
@@ -101,14 +104,22 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 		{"monster skills", func(s *save.Snapshot) {
 			for i := range s.Entities {
 				if s.Entities[i].AI != nil {
-					s.Entities[i].Skills = &ecs.Skills{Entries: []character.Skill{{ID: "SK_FIGHTING", Level: 3, Points: 301}}}
+					s.Entities[i].Skills = &ecs.Skills{Entries: []character.Skill{{
+						ID:     "SK_FIGHTING",
+						Level:  3,
+						Points: 301,
+					}}}
 				}
 			}
 		}},
 		{"item skills", func(s *save.Snapshot) {
 			for i := range s.Entities {
 				if s.Entities[i].Item != nil {
-					s.Entities[i].Skills = &ecs.Skills{Entries: []character.Skill{{ID: "SK_FIGHTING", Level: 3, Points: 301}}}
+					s.Entities[i].Skills = &ecs.Skills{Entries: []character.Skill{{
+						ID:     "SK_FIGHTING",
+						Level:  3,
+						Points: 301,
+					}}}
 					return
 				}
 			}
@@ -116,14 +127,20 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 		{"monster magic", func(s *save.Snapshot) {
 			for i := range s.Entities {
 				if s.Entities[i].AI != nil {
-					s.Entities[i].Magic = &ecs.Magic{Current: 1, Max: 1}
+					s.Entities[i].Magic = &ecs.Magic{
+						Current: 1,
+						Max:     1,
+					}
 				}
 			}
 		}},
 		{"item magic", func(s *save.Snapshot) {
 			for i := range s.Entities {
 				if s.Entities[i].Item != nil {
-					s.Entities[i].Magic = &ecs.Magic{Current: 1, Max: 1}
+					s.Entities[i].Magic = &ecs.Magic{
+						Current: 1,
+						Max:     1,
+					}
 					return
 				}
 			}

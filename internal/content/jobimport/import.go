@@ -31,7 +31,10 @@ func readJobSource(root, name string, files *[]content.JobSourceFile) ([]byte, s
 		return nil, "", fmt.Errorf("%s: %w", label, err)
 	}
 	sum := sha256.Sum256(data)
-	*files = append(*files, content.JobSourceFile{Path: label, SHA256: hex.EncodeToString(sum[:])})
+	*files = append(*files, content.JobSourceFile{
+		Path:   label,
+		SHA256: hex.EncodeToString(sum[:]),
+	})
 	return data, label, nil
 }
 
@@ -152,7 +155,13 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 	}
 	sort.Slice(jobs, func(i, j int) bool { return jobs[i].ID < jobs[j].ID })
 	sort.Slice(files, func(i, j int) bool { return files[i].Path < files[j].Path })
-	artifact := content.JobArtifact{SchemaVersion: 1, SourceRevision: revision, TagMajorVersion: 34, SourceFiles: files, Jobs: jobs}
+	artifact := content.JobArtifact{
+		SchemaVersion:   1,
+		SourceRevision:  revision,
+		TagMajorVersion: 34,
+		SourceFiles:     files,
+		Jobs:            jobs,
+	}
 	if err := artifact.Validate(); err != nil {
 		return nil, err
 	}

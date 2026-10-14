@@ -54,7 +54,10 @@ type TurnContext struct {
 
 func (g *Game) Step(command Command) (StepResult, error) {
 	if g.playerDead() {
-		return g.noTimeEvent(Event{Kind: "death", Text: "You die."}), nil
+		return g.noTimeEvent(Event{
+			Kind: "death",
+			Text: "You die.",
+		}), nil
 	}
 	position, found := g.stores.Positions.Get(g.player)
 	if !found {
@@ -90,7 +93,11 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			}
 			cost = Aut(delay)
 		}
-		intent = ecs.Intent{Kind: ecs.IntentMove, DX: command.DX, DY: command.DY}
+		intent = ecs.Intent{
+			Kind: ecs.IntentMove,
+			DX:   command.DX,
+			DY:   command.DY,
+		}
 	case CommandUpstairs:
 		if level.terrain[position.Y][position.X] != '<' || position.LevelID != 2 {
 			return g.noTime("There are no stairs up here."), nil
@@ -141,7 +148,10 @@ func (g *Game) Step(command Command) (StepResult, error) {
 				return g.noTime("Your health is already full."), nil
 			}
 		}
-		intent = ecs.Intent{Kind: ecs.IntentQuaff, ItemID: itemID}
+		intent = ecs.Intent{
+			Kind:   ecs.IntentQuaff,
+			ItemID: itemID,
+		}
 	default:
 		return g.noTime("Unknown command."), nil
 	}
@@ -192,16 +202,26 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	if err := g.refreshVisibility(); err != nil {
 		return StepResult{}, err
 	}
-	return StepResult{Spent: cost, Events: events, View: g.View()}, nil
+	return StepResult{
+		Spent:  cost,
+		Events: events,
+		View:   g.View(),
+	}, nil
 }
 
 func (g *Game) noTime(message string) StepResult {
-	return g.noTimeEvent(Event{Kind: "notice", Text: message})
+	return g.noTimeEvent(Event{
+		Kind: "notice",
+		Text: message,
+	})
 }
 
 func (g *Game) noTimeEvent(event Event) StepResult {
 	g.messages = append(g.messages, event.Text)
-	return StepResult{Events: []Event{event}, View: g.View()}
+	return StepResult{
+		Events: []Event{event},
+		View:   g.View(),
+	}
 }
 
 func (g *Game) playerDead() bool {

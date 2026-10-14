@@ -27,10 +27,26 @@ func TestScenarioInstallsStartingProfile(t *testing.T) {
 				t.Fatalf("start clocks and pools = %+v", view)
 			}
 			want := []character.Skill{
-				{ID: "SK_FIGHTING", Level: 3, Points: 301},
-				{ID: "SK_SHIELDS", Level: 3, Points: 301},
-				{ID: "SK_ARMOUR", Level: 3, Points: 301},
-				{ID: tc.skill, Level: 2, Points: 151},
+				{
+					ID:     "SK_FIGHTING",
+					Level:  3,
+					Points: 301,
+				},
+				{
+					ID:     "SK_SHIELDS",
+					Level:  3,
+					Points: 301,
+				},
+				{
+					ID:     "SK_ARMOUR",
+					Level:  3,
+					Points: 301,
+				},
+				{
+					ID:     tc.skill,
+					Level:  2,
+					Points: 151,
+				},
 			}
 			if !reflect.DeepEqual(view.Skills, want) {
 				t.Fatalf("skills = %+v, want %+v", view.Skills, want)

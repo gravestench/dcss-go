@@ -13,7 +13,11 @@ func (g *Game) createStartingGear(jobID, weaponID string) error {
 		return err
 	}
 	if weaponID != "WPN_UNARMED" {
-		grants = append([]content.StartingGrant{{Raw: weaponID, KindID: weaponID, Quantity: 1}}, grants...)
+		grants = append([]content.StartingGrant{{
+			Raw:      weaponID,
+			KindID:   weaponID,
+			Quantity: 1,
+		}}, grants...)
 	}
 	occupied := map[string]bool{}
 	for _, grant := range grants {
@@ -25,7 +29,13 @@ func (g *Game) createStartingGear(jobID, weaponID string) error {
 		if err != nil {
 			return err
 		}
-		if _, err := g.stores.Items.Set(entity, ecs.Item{KindID: kind.ID, Quantity: grant.Quantity, Plus: grant.Plus, Charges: grant.Charges, Ego: grant.Ego}); err != nil {
+		if _, err := g.stores.Items.Set(entity, ecs.Item{
+			KindID:   kind.ID,
+			Quantity: grant.Quantity,
+			Plus:     grant.Plus,
+			Charges:  grant.Charges,
+			Ego:      grant.Ego,
+		}); err != nil {
 			return err
 		}
 		if _, err := g.stores.CarriedBy.Set(entity, ecs.CarriedBy{Holder: g.player}); err != nil {

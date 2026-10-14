@@ -35,7 +35,10 @@ func readSources(sourceDir string) (map[string][]byte, []content.JobSourceFile, 
 		}
 		data[name] = body
 		hash := sha256.Sum256(body)
-		files = append(files, content.JobSourceFile{Path: "crawl-ref/source/" + name, SHA256: hex.EncodeToString(hash[:])})
+		files = append(files, content.JobSourceFile{
+			Path:   "crawl-ref/source/" + name,
+			SHA256: hex.EncodeToString(hash[:]),
+		})
 	}
 	sort.Slice(files, func(i, j int) bool { return files[i].Path < files[j].Path })
 	return data, files, nil
@@ -211,10 +214,19 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 	}
 	for id := range symbols.monster {
 		if _, exists := byID[id]; !exists {
-			byID[id] = content.MonsterDef{ID: id, Status: content.MonsterEnumOnly, SourcePath: "crawl-ref/source/monster-type.h"}
+			byID[id] = content.MonsterDef{
+				ID:         id,
+				Status:     content.MonsterEnumOnly,
+				SourcePath: "crawl-ref/source/monster-type.h",
+			}
 		}
 	}
-	artifact := content.MonsterArtifact{SchemaVersion: 1, SourceRevision: revision, TagMajorVersion: 34, SourceFiles: files}
+	artifact := content.MonsterArtifact{
+		SchemaVersion:   1,
+		SourceRevision:  revision,
+		TagMajorVersion: 34,
+		SourceFiles:     files,
+	}
 	for _, def := range byID {
 		artifact.Monsters = append(artifact.Monsters, def)
 	}
@@ -336,17 +348,33 @@ func GenerateManifest(sourceDir string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	v := content.MonsterVocabulary{SchemaVersion: 1, SourceRevision: pinnedRevision, TagMajorVersion: 34, SourceFiles: artifact.SourceFiles, Symbols: map[string][]string{
-		"attack_type": sortedKeys(s.attackType), "attack_flavour": sortedKeys(s.attackFlavour),
-		"spellbook": sortedKeys(s.spellbook), "class_flag": sortedKeys(s.classFlag),
-		"resistance": sortedKeys(s.resistance), "holiness": sortedKeys(s.holiness),
-		"shout": sortedKeys(s.shout), "intelligence": sortedKeys(s.intelligence),
-		"habitat": sortedKeys(s.habitat), "item_use": sortedKeys(s.itemUse),
-		"size": sortedKeys(s.size), "shape": sortedKeys(s.shape),
-		"colour": sortedKeys(s.colour), "tile_variation": sortedKeys(s.tileVariation),
-	}}
+	v := content.MonsterVocabulary{
+		SchemaVersion:   1,
+		SourceRevision:  pinnedRevision,
+		TagMajorVersion: 34,
+		SourceFiles:     artifact.SourceFiles,
+		Symbols: map[string][]string{
+			"attack_type":    sortedKeys(s.attackType),
+			"attack_flavour": sortedKeys(s.attackFlavour),
+			"spellbook":      sortedKeys(s.spellbook),
+			"class_flag":     sortedKeys(s.classFlag),
+			"resistance":     sortedKeys(s.resistance),
+			"holiness":       sortedKeys(s.holiness),
+			"shout":          sortedKeys(s.shout),
+			"intelligence":   sortedKeys(s.intelligence),
+			"habitat":        sortedKeys(s.habitat),
+			"item_use":       sortedKeys(s.itemUse),
+			"size":           sortedKeys(s.size),
+			"shape":          sortedKeys(s.shape),
+			"colour":         sortedKeys(s.colour),
+			"tile_variation": sortedKeys(s.tileVariation),
+		},
+	}
 	for _, monster := range artifact.Monsters {
-		v.Identities = append(v.Identities, content.MonsterIdentity{ID: monster.ID, Status: monster.Status})
+		v.Identities = append(v.Identities, content.MonsterIdentity{
+			ID:     monster.ID,
+			Status: monster.Status,
+		})
 	}
 	if err := v.ValidateArtifact(artifact); err != nil {
 		return nil, err

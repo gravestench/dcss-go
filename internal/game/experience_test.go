@@ -18,7 +18,10 @@ func TestPlayerRatKillAwardsOneExperienceOnlyOnce(t *testing.T) {
 	playerHealth, _ := g.stores.Health.Get(g.player)
 	playerHealth.Current, playerHealth.Max = 100, 100
 	for attempt := 0; attempt < 100 && g.world.EntityExists(rat); attempt++ {
-		if _, err := g.Step(Command{Kind: CommandMove, DX: 1}); err != nil {
+		if _, err := g.Step(Command{
+			Kind: CommandMove,
+			DX:   1,
+		}); err != nil {
 			t.Fatal(err)
 		}
 	}

@@ -61,7 +61,13 @@ type ordinaryMonsterFactory struct {
 }
 
 func newOrdinaryMonsterFactory(g *Game) ordinaryMonsterFactory {
-	return ordinaryMonsterFactory{world: g.world, stores: g.stores, levels: g.levels, catalog: g.catalog, rng: g.rng}
+	return ordinaryMonsterFactory{
+		world:   g.world,
+		stores:  g.stores,
+		levels:  g.levels,
+		catalog: g.catalog,
+		rng:     g.rng,
+	}
 }
 
 func (f ordinaryMonsterFactory) Spawn(id string, levelID, x, y int) (_ akara.Entity, err error) {
@@ -92,10 +98,16 @@ func (f ordinaryMonsterFactory) Spawn(id string, levelID, x, y int) (_ akara.Ent
 			f.world.DestroyEntity(entity)
 		}
 	}()
-	if _, err = f.stores.Actors.Set(entity, ecs.Actor{KindID: id, Speed: definition.Speed}); err != nil {
+	if _, err = f.stores.Actors.Set(entity, ecs.Actor{
+		KindID: id,
+		Speed:  definition.Speed,
+	}); err != nil {
 		return 0, err
 	}
-	if _, err = f.stores.Health.Set(entity, ecs.Health{Current: hp, Max: hp}); err != nil {
+	if _, err = f.stores.Health.Set(entity, ecs.Health{
+		Current: hp,
+		Max:     hp,
+	}); err != nil {
 		return 0, err
 	}
 	if _, err = f.stores.Combat.Set(entity, ecs.Combatant{}); err != nil {

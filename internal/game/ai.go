@@ -23,8 +23,16 @@ type monsterDecisionSystem struct {
 }
 
 func newMonsterDecisionSystem(g *Game) *monsterDecisionSystem {
-	return &monsterDecisionSystem{player: g.player, positions: g.stores.Positions, ai: g.stores.AI,
-		intents: g.stores.Intents, levels: g.levels, rng: g.rng, clock: &g.currentAut, turn: &g.turn}
+	return &monsterDecisionSystem{
+		player:    g.player,
+		positions: g.stores.Positions,
+		ai:        g.stores.AI,
+		intents:   g.stores.Intents,
+		levels:    g.levels,
+		rng:       g.rng,
+		clock:     &g.currentAut,
+		turn:      &g.turn,
+	}
 }
 
 func (s *monsterDecisionSystem) Update(_ *akara.World, _ time.Duration) error {
@@ -127,11 +135,19 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 		}
 		x, y := position.X+step[0], position.Y+step[1]
 		if x == player.X && y == player.Y {
-			return ecs.Intent{Kind: ecs.IntentMelee, DX: step[0], DY: step[1]}, nil
+			return ecs.Intent{
+				Kind: ecs.IntentMelee,
+				DX:   step[0],
+				DY:   step[1],
+			}, nil
 		}
 		if level.Walkable(x, y) {
 			if _, occupied := level.ActorAt(x, y); !occupied {
-				return ecs.Intent{Kind: ecs.IntentMove, DX: step[0], DY: step[1]}, nil
+				return ecs.Intent{
+					Kind: ecs.IntentMove,
+					DX:   step[0],
+					DY:   step[1],
+				}, nil
 			}
 		}
 	}
@@ -143,9 +159,17 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 
 func monsterStepIntent(nextX, nextY, playerX, playerY, dx, dy int) ecs.Intent {
 	if nextX == playerX && nextY == playerY {
-		return ecs.Intent{Kind: ecs.IntentMelee, DX: dx, DY: dy}
+		return ecs.Intent{
+			Kind: ecs.IntentMelee,
+			DX:   dx,
+			DY:   dy,
+		}
 	}
-	return ecs.Intent{Kind: ecs.IntentMove, DX: dx, DY: dy}
+	return ecs.Intent{
+		Kind: ecs.IntentMove,
+		DX:   dx,
+		DY:   dy,
+	}
 }
 
 // chooseWanderTarget follows Crawl's 150 attempts with offsets in [-6, 6].

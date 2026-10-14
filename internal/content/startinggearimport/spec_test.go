@@ -12,13 +12,38 @@ func TestParseEquipmentSpec(t *testing.T) {
 		raw, name string
 		want      content.StartingGrant
 	}{
-		{"scale mail", "scale mail", content.StartingGrant{Raw: "scale mail", Quantity: 1}},
-		{"potion of invisibility q:2", "potion of invisibility", content.StartingGrant{Raw: "potion of invisibility q:2", Quantity: 2}},
-		{"wand of flame charges:15", "wand of flame", content.StartingGrant{Raw: "wand of flame charges:15", Quantity: 1, Charges: 15}},
-		{"dart ego:curare q:3", "dart", content.StartingGrant{Raw: "dart ego:curare q:3", Quantity: 3, Ego: "curare"}},
-		{"scroll of fog no_exclude", "scroll of fog", content.StartingGrant{Raw: "scroll of fog no_exclude", Quantity: 1, NoExclude: true}},
-		{"piece from Xom's chessboard", "piece from Xom's chessboard", content.StartingGrant{Raw: "piece from Xom's chessboard", Quantity: 1}},
-		{"dagger plus:2", "dagger", content.StartingGrant{Raw: "dagger plus:2", Quantity: 1, Plus: 2}},
+		{"scale mail", "scale mail", content.StartingGrant{
+			Raw:      "scale mail",
+			Quantity: 1,
+		}},
+		{"potion of invisibility q:2", "potion of invisibility", content.StartingGrant{
+			Raw:      "potion of invisibility q:2",
+			Quantity: 2,
+		}},
+		{"wand of flame charges:15", "wand of flame", content.StartingGrant{
+			Raw:      "wand of flame charges:15",
+			Quantity: 1,
+			Charges:  15,
+		}},
+		{"dart ego:curare q:3", "dart", content.StartingGrant{
+			Raw:      "dart ego:curare q:3",
+			Quantity: 3,
+			Ego:      "curare",
+		}},
+		{"scroll of fog no_exclude", "scroll of fog", content.StartingGrant{
+			Raw:       "scroll of fog no_exclude",
+			Quantity:  1,
+			NoExclude: true,
+		}},
+		{"piece from Xom's chessboard", "piece from Xom's chessboard", content.StartingGrant{
+			Raw:      "piece from Xom's chessboard",
+			Quantity: 1,
+		}},
+		{"dagger plus:2", "dagger", content.StartingGrant{
+			Raw:      "dagger plus:2",
+			Quantity: 1,
+			Plus:     2,
+		}},
 	} {
 		t.Run(tc.raw, func(t *testing.T) {
 			name, got, err := parseEquipmentSpec("JOB_TEST", tc.raw)

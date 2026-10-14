@@ -108,10 +108,26 @@ func parseLegacySpecies(path, id, body string) (content.SpeciesDef, error) {
 		return content.SpeciesDef{}, fmt.Errorf("%s: %s: unsupported legacy actions", path, id)
 	}
 	s := content.SpeciesDef{
-		ID: id, MonsterID: fields[9], SourcePath: path, ShortName: strings4[0], Name: strings4[1], Adjective: strings4[2], Genus: strings4[3],
-		XP: ints[5], HP: ints[6], MPMod: ints[7], MR: ints[8], Strength: ints[13], Intelligence: ints[14], Dexterity: ints[15],
-		LevelUpStats: stats, LevelUpStatFrequency: ints[17], Habitat: fields[10], UndeadType: fields[11], Size: fields[12],
-		Aptitudes: map[string]content.SpeciesAptitude{},
+		ID:                   id,
+		MonsterID:            fields[9],
+		SourcePath:           path,
+		ShortName:            strings4[0],
+		Name:                 strings4[1],
+		Adjective:            strings4[2],
+		Genus:                strings4[3],
+		XP:                   ints[5],
+		HP:                   ints[6],
+		MPMod:                ints[7],
+		MR:                   ints[8],
+		Strength:             ints[13],
+		Intelligence:         ints[14],
+		Dexterity:            ints[15],
+		LevelUpStats:         stats,
+		LevelUpStatFrequency: ints[17],
+		Habitat:              fields[10],
+		UndeadType:           fields[11],
+		Size:                 fields[12],
+		Aptitudes:            map[string]content.SpeciesAptitude{},
 	}
 	if flag != "SPF_NONE" {
 		s.Flags = []string{flag}
@@ -177,7 +193,10 @@ func parseLegacy(speciesPath string, speciesText []byte, aptitudePath string, ap
 		if err != nil || value < -10 || value > 10 {
 			return nil, fmt.Errorf("%s: invalid aptitude %s for %s", aptitudePath, parts[2], parts[1])
 		}
-		record.Aptitudes[parts[2]] = content.SpeciesAptitude{Allowed: true, Value: value}
+		record.Aptitudes[parts[2]] = content.SpeciesAptitude{
+			Allowed: true,
+			Value:   value,
+		}
 	}
 	for _, record := range records {
 		if len(record.Aptitudes) == 0 {

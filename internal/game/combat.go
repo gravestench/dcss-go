@@ -26,9 +26,19 @@ type combatSystem struct {
 
 func newCombatSystem(g *Game) *combatSystem {
 	s := g.stores
-	return &combatSystem{player: g.player, intents: s.Intents, positions: s.Positions, actors: s.Actors,
-		health: s.Health, combat: s.Combat, levels: g.levels, catalog: g.catalog,
-		fighter: newPlayerCombat(g), roller: g.rng, turn: &g.turn}
+	return &combatSystem{
+		player:    g.player,
+		intents:   s.Intents,
+		positions: s.Positions,
+		actors:    s.Actors,
+		health:    s.Health,
+		combat:    s.Combat,
+		levels:    g.levels,
+		catalog:   g.catalog,
+		fighter:   newPlayerCombat(g),
+		roller:    g.rng,
+		turn:      &g.turn,
+	}
 }
 
 func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
@@ -81,7 +91,10 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 				message = fmt.Sprintf("You hit the %s but do no damage.", defender.Name)
 			}
 		}
-		s.turn.Events = append(s.turn.Events, Event{Kind: "combat", Text: message})
+		s.turn.Events = append(s.turn.Events, Event{
+			Kind: "combat",
+			Text: message,
+		})
 		return nil
 	}
 	if target != s.player {
@@ -100,8 +113,10 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 		return err
 	}
 	outcome, err := combat.ResolveAnimalBite(s.roller, combat.AnimalBite{
-		HD: animal.HD, Damage: animal.Attacks[0].Damage,
-		TypeID: animal.Attacks[0].TypeID, FlavourID: animal.Attacks[0].FlavourID,
+		HD:        animal.HD,
+		Damage:    animal.Attacks[0].Damage,
+		TypeID:    animal.Attacks[0].TypeID,
+		FlavourID: animal.Attacks[0].FlavourID,
 	}, defense)
 	if err != nil {
 		return err
@@ -129,6 +144,9 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	default:
 		return fmt.Errorf("unknown animal bite outcome %d", outcome.Kind)
 	}
-	s.turn.Events = append(s.turn.Events, Event{Kind: "combat", Text: message})
+	s.turn.Events = append(s.turn.Events, Event{
+		Kind: "combat",
+		Text: message,
+	})
 	return nil
 }

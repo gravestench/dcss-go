@@ -70,5 +70,10 @@ func BuildStartProfile(c content.Catalog, speciesID, jobID, weaponID string) (St
 	if err != nil {
 		return StartProfile{}, err
 	}
-	return StartProfile{Attributes: attributes, Skills: skills, MaxHP: hp, MaxMP: startingMP(species)}, nil
+	return StartProfile{
+		Attributes: attributes,
+		Skills:     skills,
+		MaxHP:      hp,
+		MaxMP:      startingMP(species),
+	}, nil
 }

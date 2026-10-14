@@ -26,7 +26,10 @@ func (c Catalog) DungeonMonsterPool(depth int, veto func(string) bool) DungeonMo
 		if weight <= 0 {
 			continue
 		}
-		pool.rows = append(pool.rows, weightedDungeonMonster{id: row.MonsterID, weight: weight})
+		pool.rows = append(pool.rows, weightedDungeonMonster{
+			id:     row.MonsterID,
+			weight: weight,
+		})
 		pool.total += weight
 	}
 	return pool

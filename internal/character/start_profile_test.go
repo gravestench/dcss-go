@@ -22,14 +22,34 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if got.Attributes != (Attributes{Strength: 16, Intelligence: 8, Dexterity: 12}) || got.MaxHP != 18 || got.MaxMP != 1 {
+			if got.Attributes != (Attributes{
+				Strength:     16,
+				Intelligence: 8,
+				Dexterity:    12,
+			}) || got.MaxHP != 18 || got.MaxMP != 1 {
 				t.Fatalf("profile = %+v, want 16/8/12, HP 18, MP 1", got)
 			}
 			wantSkills := []Skill{
-				{ID: "SK_FIGHTING", Level: 3, Points: 301},
-				{ID: "SK_SHIELDS", Level: 3, Points: 301},
-				{ID: "SK_ARMOUR", Level: 3, Points: 301},
-				{ID: tc.skill, Level: 2, Points: 151},
+				{
+					ID:     "SK_FIGHTING",
+					Level:  3,
+					Points: 301,
+				},
+				{
+					ID:     "SK_SHIELDS",
+					Level:  3,
+					Points: 301,
+				},
+				{
+					ID:     "SK_ARMOUR",
+					Level:  3,
+					Points: 301,
+				},
+				{
+					ID:     tc.skill,
+					Level:  2,
+					Points: 151,
+				},
 			}
 			if !reflect.DeepEqual(got.Skills, wantSkills) {
 				t.Fatalf("skills = %+v, want %+v", got.Skills, wantSkills)
@@ -44,13 +64,25 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 }
 
 func TestScaledStartingSkillsRetainFractionalProgress(t *testing.T) {
-	if got := ScaledSkill(Skill{ID: "SK_FIGHTING", Level: 3, Points: 301}, 100); got != 300 {
+	if got := ScaledSkill(Skill{
+		ID:     "SK_FIGHTING",
+		Level:  3,
+		Points: 301,
+	}, 100); got != 300 {
 		t.Fatalf("Fighting at scale 100 = %d, want 300", got)
 	}
-	if got := ScaledSkill(Skill{ID: "SK_MACES_FLAILS", Level: 2, Points: 151}, 100); got != 200 {
+	if got := ScaledSkill(Skill{
+		ID:     "SK_MACES_FLAILS",
+		Level:  2,
+		Points: 151,
+	}, 100); got != 200 {
 		t.Fatalf("weapon at scale 100 = %d, want 200", got)
 	}
-	if got := ScaledSkill(Skill{ID: "SK_UNARMED_COMBAT", Level: 2, Points: 151}, 256); got != 513 {
+	if got := ScaledSkill(Skill{
+		ID:     "SK_UNARMED_COMBAT",
+		Level:  2,
+		Points: 151,
+	}, 256); got != 513 {
 		t.Fatalf("unarmed at scale 256 = %d, want 513", got)
 	}
 }

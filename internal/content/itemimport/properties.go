@@ -122,7 +122,10 @@ func splitTopLevel(text string, sep byte) ([]sourcePart, error) {
 		part := text[start:end]
 		trimmed := strings.TrimSpace(part)
 		if trimmed != "" {
-			parts = append(parts, sourcePart{text: trimmed, start: start + strings.Index(part, trimmed)})
+			parts = append(parts, sourcePart{
+				text:  trimmed,
+				start: start + strings.Index(part, trimmed),
+			})
 		}
 	}
 	for i := 0; i < len(text); i++ {
@@ -215,7 +218,10 @@ func parseArmourFlags(raw string, vocabulary content.ItemVocabulary) ([]content.
 	var flags []content.ItemFlag
 	for _, part := range parts {
 		text := part.text
-		flag := content.ItemFlag{ID: text, Level: 1}
+		flag := content.ItemFlag{
+			ID:    text,
+			Level: 1,
+		}
 		if strings.HasPrefix(text, "ard(") {
 			inside, end, err := balancedPart(text, 3, '(', ')')
 			if err != nil || end != len(text) {
@@ -292,7 +298,10 @@ func parseBrandWeights(raw string, named map[string][]content.ItemBrandWeight, v
 		if !knownSymbol(fields[0], vocabulary.Brands) || weight < 0 {
 			return nil, fmt.Errorf("unknown or invalid brand %s", fields[0])
 		}
-		weights = append(weights, content.ItemBrandWeight{BrandID: fields[0], Weight: weight})
+		weights = append(weights, content.ItemBrandWeight{
+			BrandID: fields[0],
+			Weight:  weight,
+		})
 	}
 	sort.Slice(weights, func(i, j int) bool { return weights[i].BrandID < weights[j].BrandID })
 	for i := 1; i < len(weights); i++ {
@@ -346,7 +355,11 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 			return itemPropertyRow{}, fmt.Errorf("unknown armour symbol %s", symbol.id)
 		}
 	}
-	p := content.ArmourProperties{SlotID: fields[5], FitMinID: fields[6], FitMaxID: fields[7]}
+	p := content.ArmourProperties{
+		SlotID:   fields[5],
+		FitMinID: fields[6],
+		FitMaxID: fields[7],
+	}
 	for _, field := range []struct {
 		raw    string
 		target *int
@@ -375,7 +388,10 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 			return itemPropertyRow{}, err
 		}
 	}
-	return itemPropertyRow{Name: name, Armour: &p}, nil
+	return itemPropertyRow{
+		Name:   name,
+		Armour: &p,
+	}, nil
 }
 
 func weaponRow(fields []string, named map[string][]content.ItemBrandWeight, vocabulary content.ItemVocabulary) (itemPropertyRow, error) {
@@ -386,7 +402,12 @@ func weaponRow(fields []string, named map[string][]content.ItemBrandWeight, voca
 	if err != nil {
 		return itemPropertyRow{}, err
 	}
-	p := content.WeaponProperties{SkillID: fields[5], Min2HSizeID: fields[6], Min1HSizeID: fields[7], AmmoID: fields[8]}
+	p := content.WeaponProperties{
+		SkillID:     fields[5],
+		Min2HSizeID: fields[6],
+		Min1HSizeID: fields[7],
+		AmmoID:      fields[8],
+	}
 	for _, symbol := range []struct {
 		id  string
 		set []string
@@ -414,7 +435,10 @@ func weaponRow(fields []string, named map[string][]content.ItemBrandWeight, voca
 			return itemPropertyRow{}, err
 		}
 	}
-	return itemPropertyRow{Name: name, Weapon: &p}, nil
+	return itemPropertyRow{
+		Name:   name,
+		Weapon: &p,
+	}, nil
 }
 
 func missileRow(fields []string, vocabulary content.ItemVocabulary) (itemPropertyRow, error) {
@@ -438,7 +462,10 @@ func missileRow(fields []string, vocabulary content.ItemVocabulary) (itemPropert
 			return itemPropertyRow{}, err
 		}
 	}
-	return itemPropertyRow{Name: name, Missile: &p}, nil
+	return itemPropertyRow{
+		Name:    name,
+		Missile: &p,
+	}, nil
 }
 
 func foodRow(fields []string) (itemPropertyRow, error) {
@@ -459,7 +486,10 @@ func foodRow(fields []string) (itemPropertyRow, error) {
 			return itemPropertyRow{}, err
 		}
 	}
-	return itemPropertyRow{Name: name, Food: &p}, nil
+	return itemPropertyRow{
+		Name: name,
+		Food: &p,
+	}, nil
 }
 
 func dragonArmourRows(raw string, vocabulary content.ItemVocabulary) (map[itemKey]itemPropertyRow, error) {
@@ -503,8 +533,28 @@ func dragonArmourRows(raw string, vocabulary content.ItemVocabulary) (map[itemKe
 	hideID := "ARM_" + args[0] + "_DRAGON_HIDE"
 	scalesID := "ARM_" + args[0] + "_DRAGON_ARMOUR"
 	return map[itemKey]itemPropertyRow{
-		{"OBJ_ARMOUR", hideID}:   {Name: "removed " + name + " dragon hide", Armour: &content.ArmourProperties{SlotID: "EQ_BODY_ARMOUR", FitMinID: "SIZE_LITTLE", FitMaxID: "SIZE_GIANT", Flags: copyFlags()}},
-		{"OBJ_ARMOUR", scalesID}: {Name: name + " dragon scales", Armour: &content.ArmourProperties{AC: ac, EV: ev, Price: price, AcquireWeight: 25, SlotID: "EQ_BODY_ARMOUR", FitMinID: "SIZE_LITTLE", FitMaxID: "SIZE_GIANT", Flags: copyFlags()}},
+		{"OBJ_ARMOUR", hideID}: {
+			Name: "removed " + name + " dragon hide",
+			Armour: &content.ArmourProperties{
+				SlotID:   "EQ_BODY_ARMOUR",
+				FitMinID: "SIZE_LITTLE",
+				FitMaxID: "SIZE_GIANT",
+				Flags:    copyFlags(),
+			},
+		},
+		{"OBJ_ARMOUR", scalesID}: {
+			Name: name + " dragon scales",
+			Armour: &content.ArmourProperties{
+				AC:            ac,
+				EV:            ev,
+				Price:         price,
+				AcquireWeight: 25,
+				SlotID:        "EQ_BODY_ARMOUR",
+				FitMinID:      "SIZE_LITTLE",
+				FitMaxID:      "SIZE_GIANT",
+				Flags:         copyFlags(),
+			},
+		},
 	}, nil
 }
 
@@ -568,7 +618,10 @@ func parsePropertyTables(path string, data []byte, vocabulary content.ItemVocabu
 			if err != nil {
 				return nil, fmt.Errorf("%s:%d: %s: %w", path, line, fields[0], err)
 			}
-			key := itemKey{table.classID, fields[0]}
+			key := itemKey{
+				table.classID,
+				fields[0],
+			}
 			if _, found := result[key]; found {
 				return nil, fmt.Errorf("%s:%d: duplicate property row %s", path, line, fields[0])
 			}

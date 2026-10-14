@@ -28,7 +28,11 @@ func TestCommittedSpellCatalogCoverageAndCopies(t *testing.T) {
 	if again.Schools[0] != "conjuration" {
 		t.Fatal("spell schools alias catalog")
 	}
-	for id, status := range map[string]SpellStatus{"SPELL_NO_SPELL": SpellSentinel, "SPELL_TELEPORT_SELF": SpellRemoved, "SPELL_SONIC_WAVE": SpellDefined} {
+	for id, status := range map[string]SpellStatus{
+		"SPELL_NO_SPELL":      SpellSentinel,
+		"SPELL_TELEPORT_SELF": SpellRemoved,
+		"SPELL_SONIC_WAVE":    SpellDefined,
+	} {
 		got, err := catalog.SpellStatus(id)
 		if err != nil || got != status {
 			t.Fatalf("%s status %s, %v", id, got, err)

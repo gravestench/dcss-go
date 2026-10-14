@@ -71,11 +71,17 @@ func TestModalResizePreservesFocusGameAndAut(t *testing.T) {
 	m.handleKey("i")
 	aut, g := m.game.View().CurrentAut, m.game
 	m.focus = 2
-	m.Update(tea.WindowSizeMsg{Width: 78, Height: 23})
+	m.Update(tea.WindowSizeMsg{
+		Width:  78,
+		Height: 23,
+	})
 	if !strings.Contains(plainApp(m), "too small") {
 		t.Fatal("resize warning missing")
 	}
-	m.Update(tea.WindowSizeMsg{Width: 79, Height: 24})
+	m.Update(tea.WindowSizeMsg{
+		Width:  79,
+		Height: 24,
+	})
 	if m.screen != ScreenInventory || m.focus != 2 || m.game != g || m.game.View().CurrentAut != aut || !strings.Contains(plainApp(m), "Inventory:") {
 		t.Fatal("modal resize lost state")
 	}

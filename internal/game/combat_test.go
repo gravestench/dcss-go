@@ -22,7 +22,10 @@ func TestBumpAttacksInsteadOfMoving(t *testing.T) {
 		t.Fatal(err)
 	}
 	before, _ := g.stores.Health.Get(rat)
-	result, err := g.Step(Command{Kind: CommandMove, DX: 1})
+	result, err := g.Step(Command{
+		Kind: CommandMove,
+		DX:   1,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}

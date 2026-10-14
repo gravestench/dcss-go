@@ -31,7 +31,10 @@ func Generate(sourceDir string) ([]byte, error) {
 		}
 		sources[name] = body
 		hash := sha256.Sum256(body)
-		files = append(files, content.JobSourceFile{Path: "crawl-ref/source/" + name, SHA256: hex.EncodeToString(hash[:])})
+		files = append(files, content.JobSourceFile{
+			Path:   "crawl-ref/source/" + name,
+			SHA256: hex.EncodeToString(hash[:]),
+		})
 	}
 	sort.Slice(files, func(i, j int) bool { return files[i].Path < files[j].Path })
 	ids, err := parseEnum("spell-type.h", sources["spell-type.h"])
@@ -57,7 +60,12 @@ func Generate(sourceDir string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	artifact := content.SpellArtifact{SchemaVersion: 1, SourceRevision: pinnedRevision, TagMajorVersion: 34, SourceFiles: files}
+	artifact := content.SpellArtifact{
+		SchemaVersion:   1,
+		SourceRevision:  pinnedRevision,
+		TagMajorVersion: 34,
+		SourceFiles:     files,
+	}
 	for _, id := range ids {
 		spell := spells[id.ID]
 		for _, school := range spell.Schools {

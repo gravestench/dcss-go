@@ -17,7 +17,10 @@ func carryHealWounds(t *testing.T, g *Game) uint64 {
 	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := g.Step(Command{Kind: CommandMove, DX: 1}); err != nil {
+	if _, err := g.Step(Command{
+		Kind: CommandMove,
+		DX:   1,
+	}); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := g.Step(Command{Kind: CommandPickup}); err != nil {
@@ -52,7 +55,10 @@ func TestHealWoundsFloorPickupQuaffAndSaveContinuation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	command := Command{Kind: CommandQuaff, ItemID: itemID}
+	command := Command{
+		Kind:   CommandQuaff,
+		ItemID: itemID,
+	}
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
 	if leftErr != nil || rightErr != nil || left.Spent != 10 || left.View.PlayerHP != wantHP || !reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
@@ -72,7 +78,10 @@ func TestHealWoundsAtFullHPIsFreeAndKeepsPotion(t *testing.T) {
 	g := newStepGame(t)
 	itemID := carryHealWounds(t, g)
 	before := g.Snapshot()
-	result, err := g.Step(Command{Kind: CommandQuaff, ItemID: itemID})
+	result, err := g.Step(Command{
+		Kind:   CommandQuaff,
+		ItemID: itemID,
+	})
 	if err != nil || result.Spent != 0 || !strings.Contains(result.Events[0].Text, "already full") {
 		t.Fatalf("full-HP quaff %+v, %v", result, err)
 	}

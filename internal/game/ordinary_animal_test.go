@@ -29,7 +29,11 @@ func TestQuokkaScenarioUsesCatalogSpeedHPAndSave(t *testing.T) {
 	position, _ := g.stores.Positions.Get(quokka)
 	health, _ := g.stores.Health.Get(quokka)
 	definition, err := g.catalog.Monster("MONS_QUOKKA")
-	if err != nil || actor.Speed != definition.Speed || actor.Speed != 12 || *position != (ecs.Position{LevelID: 2, X: 14, Y: 7}) || health.Max < 3 || health.Max > 8 {
+	if err != nil || actor.Speed != definition.Speed || actor.Speed != 12 || *position != (ecs.Position{
+		LevelID: 2,
+		X:       14,
+		Y:       7,
+	}) || health.Max < 3 || health.Max > 8 {
 		t.Fatalf("quokka actor %+v position %+v health %+v definition %+v: %v", actor, position, health, definition, err)
 	}
 	if _, err := character.OrdinaryAnimalExperience(definition, health.Max); err != nil {
@@ -104,7 +108,10 @@ func TestQuokkaMeleeDeathExperienceAndCorpse(t *testing.T) {
 		t.Fatal(err)
 	}
 	for attempt := 0; attempt < 100 && g.world.EntityExists(quokka); attempt++ {
-		result, err := g.Step(Command{Kind: CommandMove, DX: 1})
+		result, err := g.Step(Command{
+			Kind: CommandMove,
+			DX:   1,
+		})
 		if err != nil {
 			t.Fatal(err)
 		}

@@ -14,23 +14,109 @@ import (
 
 func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 	t.Helper()
-	files := []content.JobSourceFile{{Path: "crawl-ref/source/item-prop-enum.h", SHA256: strings.Repeat("a", 64)}}
+	files := []content.JobSourceFile{{
+		Path:   "crawl-ref/source/item-prop-enum.h",
+		SHA256: strings.Repeat("a", 64),
+	}}
 	identities := []content.ItemIdentity{
-		{ID: "WPN_MACE", ClassID: "OBJ_WEAPONS", ClassValue: 0, SubtypeValue: 3, SourcePath: files[0].Path, SourceLine: 10},
-		{ID: "POT_CURING", ClassID: "OBJ_POTIONS", ClassValue: 7, SubtypeValue: 0, SourcePath: files[0].Path, SourceLine: 20},
+		{
+			ID:           "WPN_MACE",
+			ClassID:      "OBJ_WEAPONS",
+			ClassValue:   0,
+			SubtypeValue: 3,
+			SourcePath:   files[0].Path,
+			SourceLine:   10,
+		},
+		{
+			ID:           "POT_CURING",
+			ClassID:      "OBJ_POTIONS",
+			ClassValue:   7,
+			SubtypeValue: 0,
+			SourcePath:   files[0].Path,
+			SourceLine:   20,
+		},
 	}
 	items := []content.ItemDef{
-		{ID: "WPN_MACE", Name: "mace", Glyph: ')', Class: "OBJ_WEAPONS", ClassValue: 0, SubtypeValue: 3, Slot: "weapon", WeaponSkill: "SK_MACES_FLAILS", Naming: content.ItemName{Text: "mace", Kind: "static", SourcePath: files[0].Path, SourceLine: 10}, Evidence: content.ItemEvidence{PropertySource: files[0].Path, PropertyLine: 10}, Weapon: &content.WeaponProperties{Damage: 8, Hit: 3, Speed: 14, SkillID: "SK_MACES_FLAILS", Min2HSizeID: "SIZE_LITTLE", Min1HSizeID: "SIZE_LITTLE", AmmoID: "MI_NONE", DamageFlags: []string{"DAMV_CRUSHING"}, BrandWeights: []content.ItemBrandWeight{{BrandID: "SPWPN_NORMAL", Weight: 58}}}},
-		{ID: "POT_CURING", Name: "potion of curing", Glyph: '!', Class: "OBJ_POTIONS", ClassValue: 7, SubtypeValue: 0, Stackable: true, Naming: content.ItemName{Text: "potion of curing", Kind: "static", SourcePath: files[0].Path, SourceLine: 20}},
+		{
+			ID:           "WPN_MACE",
+			Name:         "mace",
+			Glyph:        ')',
+			Class:        "OBJ_WEAPONS",
+			ClassValue:   0,
+			SubtypeValue: 3,
+			Slot:         "weapon",
+			WeaponSkill:  "SK_MACES_FLAILS",
+			Naming: content.ItemName{
+				Text:       "mace",
+				Kind:       "static",
+				SourcePath: files[0].Path,
+				SourceLine: 10,
+			},
+			Evidence: content.ItemEvidence{
+				PropertySource: files[0].Path,
+				PropertyLine:   10,
+			},
+			Weapon: &content.WeaponProperties{
+				Damage:      8,
+				Hit:         3,
+				Speed:       14,
+				SkillID:     "SK_MACES_FLAILS",
+				Min2HSizeID: "SIZE_LITTLE",
+				Min1HSizeID: "SIZE_LITTLE",
+				AmmoID:      "MI_NONE",
+				DamageFlags: []string{"DAMV_CRUSHING"},
+				BrandWeights: []content.ItemBrandWeight{{
+					BrandID: "SPWPN_NORMAL",
+					Weight:  58,
+				}},
+			},
+		},
+		{
+			ID:           "POT_CURING",
+			Name:         "potion of curing",
+			Glyph:        '!',
+			Class:        "OBJ_POTIONS",
+			ClassValue:   7,
+			SubtypeValue: 0,
+			Stackable:    true,
+			Naming: content.ItemName{
+				Text:       "potion of curing",
+				Kind:       "static",
+				SourcePath: files[0].Path,
+				SourceLine: 20,
+			},
+		},
 	}
-	vocab := content.ItemVocabulary{Slots: []string{"EQ_BODY_ARMOUR"}, Skills: []string{"SK_MACES_FLAILS"}, Sizes: []string{"SIZE_LITTLE"}, Ammo: []string{"MI_NONE"}, DamageFlags: []string{"DAMV_CRUSHING"}, Brands: []string{"SPWPN_NORMAL"}, ArmourFlags: []string{"ARMF_NO_FLAGS"}}
+	vocab := content.ItemVocabulary{
+		Slots:       []string{"EQ_BODY_ARMOUR"},
+		Skills:      []string{"SK_MACES_FLAILS"},
+		Sizes:       []string{"SIZE_LITTLE"},
+		Ammo:        []string{"MI_NONE"},
+		DamageFlags: []string{"DAMV_CRUSHING"},
+		Brands:      []string{"SPWPN_NORMAL"},
+		ArmourFlags: []string{"ARMF_NO_FLAGS"},
+	}
 	itemBytes, err := json.Marshal(items)
 	if err != nil {
 		t.Fatal(err)
 	}
 	hash := sha256.Sum256(itemBytes)
-	manifest := content.ItemIdentityManifest{SchemaVersion: 1, SourceRevision: "revision", TagMajorVersion: 34, SourceFiles: files, Identities: identities, Vocabulary: vocab, DefinitionsSHA256: hex.EncodeToString(hash[:])}
-	artifact := content.ItemArtifact{SchemaVersion: 1, SourceRevision: "revision", TagMajorVersion: 34, SourceFiles: files, Items: items}
+	manifest := content.ItemIdentityManifest{
+		SchemaVersion:     1,
+		SourceRevision:    "revision",
+		TagMajorVersion:   34,
+		SourceFiles:       files,
+		Identities:        identities,
+		Vocabulary:        vocab,
+		DefinitionsSHA256: hex.EncodeToString(hash[:]),
+	}
+	artifact := content.ItemArtifact{
+		SchemaVersion:   1,
+		SourceRevision:  "revision",
+		TagMajorVersion: 34,
+		SourceFiles:     files,
+		Items:           items,
+	}
 	if err := artifact.Validate(manifest); err != nil {
 		t.Fatal(err)
 	}
@@ -89,22 +175,60 @@ func TestItemImportPair(t *testing.T) {
 	if err := missing.Validate(updated); err == nil {
 		t.Fatal("missing live definition passed with recomputed manifest digest")
 	}
-	identities := []content.ItemIdentity{{ID: "WPN_MACE", ClassID: "OBJ_WEAPONS", ClassValue: 0, SubtypeValue: 3}, {ID: "POT_OLD", ClassID: "OBJ_POTIONS", ClassValue: 7, SubtypeValue: 1, ExplicitlyRemoved: true}}
-	rows := map[itemKey]itemPropertyRow{{"OBJ_WEAPONS", "WPN_MACE"}: {Name: "mace", Line: 11, Weapon: &content.WeaponProperties{SkillID: "SK_MACES_FLAILS"}}}
+	identities := []content.ItemIdentity{{
+		ID:           "WPN_MACE",
+		ClassID:      "OBJ_WEAPONS",
+		ClassValue:   0,
+		SubtypeValue: 3,
+	}, {
+		ID:                "POT_OLD",
+		ClassID:           "OBJ_POTIONS",
+		ClassValue:        7,
+		SubtypeValue:      1,
+		ExplicitlyRemoved: true,
+	}}
+	rows := map[itemKey]itemPropertyRow{{"OBJ_WEAPONS", "WPN_MACE"}: {
+		Name:   "mace",
+		Line:   11,
+		Weapon: &content.WeaponProperties{SkillID: "SK_MACES_FLAILS"},
+	}}
 	names := map[itemKey]content.ItemName{}
-	glyphs := map[itemKey]rune{{"OBJ_WEAPONS", "WPN_MACE"}: ')', {"OBJ_POTIONS", "POT_OLD"}: '!'}
+	glyphs := map[itemKey]rune{
+		{"OBJ_WEAPONS", "WPN_MACE"}: ')',
+		{"OBJ_POTIONS", "POT_OLD"}:  '!',
+	}
 	joined, err := joinItemViews(identities, rows, names, glyphs)
 	if err != nil || len(joined) != 1 || joined[0].ID != "WPN_MACE" {
 		t.Fatalf("wrong source join: items=%+v err=%v", joined, err)
 	}
-	rows[itemKey{"OBJ_WEAPONS", "WPN_EXTRA"}] = rows[itemKey{"OBJ_WEAPONS", "WPN_MACE"}]
+	rows[itemKey{
+		"OBJ_WEAPONS",
+		"WPN_EXTRA",
+	}] = rows[itemKey{
+		"OBJ_WEAPONS",
+		"WPN_MACE",
+	}]
 	if _, err := joinItemViews(identities, rows, names, glyphs); err == nil {
 		t.Fatal("property row without enum identity accepted")
 	}
 	food, err := joinItemViews(
-		[]content.ItemIdentity{{ID: "FOOD_RATION", ClassID: "OBJ_FOOD", ClassValue: 4, SubtypeValue: 0}},
-		map[itemKey]itemPropertyRow{{"OBJ_FOOD", "FOOD_RATION"}: {Name: "buggy ration", Line: 40, Food: &content.FoodProperties{NormalNutrition: 3400}}},
-		map[itemKey]content.ItemName{{"OBJ_FOOD", "FOOD_RATION"}: {Text: "removed food", Kind: "static", SourcePath: "crawl-ref/source/item-name.cc", SourceLine: 20}},
+		[]content.ItemIdentity{{
+			ID:           "FOOD_RATION",
+			ClassID:      "OBJ_FOOD",
+			ClassValue:   4,
+			SubtypeValue: 0,
+		}},
+		map[itemKey]itemPropertyRow{{"OBJ_FOOD", "FOOD_RATION"}: {
+			Name: "buggy ration",
+			Line: 40,
+			Food: &content.FoodProperties{NormalNutrition: 3400},
+		}},
+		map[itemKey]content.ItemName{{"OBJ_FOOD", "FOOD_RATION"}: {
+			Text:       "removed food",
+			Kind:       "static",
+			SourcePath: "crawl-ref/source/item-name.cc",
+			SourceLine: 20,
+		}},
 		map[itemKey]rune{{"OBJ_FOOD", "FOOD_RATION"}: '%'},
 	)
 	if err != nil || len(food) != 1 || food[0].Name != "removed food" || food[0].PropertyName != "buggy ration" {

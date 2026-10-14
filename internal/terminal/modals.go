@@ -74,7 +74,12 @@ func DrawQuaff(canvas *Canvas, view game.View) {
 }
 
 func skillName(id string) string {
-	special := map[string]string{"SK_MACES_FLAILS": "Maces & Flails", "SK_UNARMED_COMBAT": "Unarmed Combat", "SK_SHORT_BLADES": "Short Blades", "SK_LONG_BLADES": "Long Blades"}
+	special := map[string]string{
+		"SK_MACES_FLAILS":   "Maces & Flails",
+		"SK_UNARMED_COMBAT": "Unarmed Combat",
+		"SK_SHORT_BLADES":   "Short Blades",
+		"SK_LONG_BLADES":    "Long Blades",
+	}
 	if name := special[id]; name != "" {
 		return name
 	}

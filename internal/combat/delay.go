@@ -44,7 +44,10 @@ func roundedValues(numerator, denominator int) []weightedDelay {
 	whole, remainder := numerator/denominator, numerator%denominator
 	values := []weightedDelay{{whole, denominator - remainder}}
 	if remainder > 0 {
-		values = append(values, weightedDelay{whole + 1, remainder})
+		values = append(values, weightedDelay{
+			whole + 1,
+			remainder,
+		})
 	}
 	return values
 }

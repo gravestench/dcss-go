@@ -13,8 +13,14 @@ func TestSchedulerTieBreak(t *testing.T) {
 	actors := ecs.Register(world).Actors
 	first, _ := world.CreateEntity()
 	second, _ := world.CreateEntity()
-	actors.Set(first, ecs.Actor{Speed: 10, NextAut: 0})
-	actors.Set(second, ecs.Actor{Speed: 10, NextAut: 0})
+	actors.Set(first, ecs.Actor{
+		Speed:   10,
+		NextAut: 0,
+	})
+	actors.Set(second, ecs.Actor{
+		Speed:   10,
+		NextAut: 0,
+	})
 	scheduler := TurnScheduler{actors: actors}
 	entity, at, ok := scheduler.Next()
 	if !ok || entity != first || at != 0 {

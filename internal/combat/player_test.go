@@ -3,9 +3,17 @@ package combat
 import "testing"
 
 func fighterFlailAttack() PlayerAttackInput {
-	return PlayerAttackInput{Strength: 16, Dexterity: 12, FightingSkill100: 300,
-		WeaponSkill100: 200, WeaponSkillID: "SK_MACES_FLAILS", WeaponDamage: 8,
-		WeaponHit: 1, DefenderEV: 10, DefenderAC: 1}
+	return PlayerAttackInput{
+		Strength:         16,
+		Dexterity:        12,
+		FightingSkill100: 300,
+		WeaponSkill100:   200,
+		WeaponSkillID:    "SK_MACES_FLAILS",
+		WeaponDamage:     8,
+		WeaponHit:        1,
+		DefenderEV:       10,
+		DefenderAC:       1,
+	}
 }
 
 func TestPlayerMeleeMissAndAutomaticOverrides(t *testing.T) {

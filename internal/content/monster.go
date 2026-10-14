@@ -20,7 +20,13 @@ func (m MonsterDef) MarshalJSON() ([]byte, error) {
 		SourcePath string        `json:"source_path"`
 		SourceLine int           `json:"source_line"`
 		Name       string        `json:"name,omitempty"`
-	}{m.ID, m.Status, m.SourcePath, m.SourceLine, m.Name})
+	}{
+		m.ID,
+		m.Status,
+		m.SourcePath,
+		m.SourceLine,
+		m.Name,
+	})
 }
 
 type MonsterStatus string
@@ -139,7 +145,13 @@ func (m MonsterDef) validate() error {
 			}
 		}
 	case MonsterRemoved, MonsterEnumOnly:
-		identity := MonsterDef{ID: m.ID, Status: m.Status, SourcePath: m.SourcePath, SourceLine: m.SourceLine, Name: m.Name}
+		identity := MonsterDef{
+			ID:         m.ID,
+			Status:     m.Status,
+			SourcePath: m.SourcePath,
+			SourceLine: m.SourceLine,
+			Name:       m.Name,
+		}
 		if !reflect.DeepEqual(m, identity) {
 			return fmt.Errorf("non-live monster %s has gameplay fields", m.ID)
 		}

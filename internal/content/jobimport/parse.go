@@ -22,7 +22,10 @@ func lexJobData(path, source string) ([]token, error) {
 		case ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r':
 			i++
 		case ch == '{' || ch == '}' || ch == ',' || ch == ';':
-			tokens = append(tokens, token{kind: string(ch), value: string(ch)})
+			tokens = append(tokens, token{
+				kind:  string(ch),
+				value: string(ch),
+			})
 			i++
 		case ch == '"':
 			start := i
@@ -46,7 +49,10 @@ func lexJobData(path, source string) ([]token, error) {
 			if err != nil {
 				return nil, fmt.Errorf("%s: invalid job string: %w", path, err)
 			}
-			tokens = append(tokens, token{kind: "string", value: value})
+			tokens = append(tokens, token{
+				kind:  "string",
+				value: value,
+			})
 		case ch == '-' || ch == '+' || ch >= '0' && ch <= '9':
 			start := i
 			i++
@@ -56,7 +62,10 @@ func lexJobData(path, source string) ([]token, error) {
 			if _, err := strconv.Atoi(source[start:i]); err != nil {
 				return nil, fmt.Errorf("%s: invalid integer %q", path, source[start:i])
 			}
-			tokens = append(tokens, token{kind: "integer", value: source[start:i]})
+			tokens = append(tokens, token{
+				kind:  "integer",
+				value: source[start:i],
+			})
 		case ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z' || ch == '_':
 			start := i
 			i++
@@ -68,7 +77,10 @@ func lexJobData(path, source string) ([]token, error) {
 					break
 				}
 			}
-			tokens = append(tokens, token{kind: "identifier", value: source[start:i]})
+			tokens = append(tokens, token{
+				kind:  "identifier",
+				value: source[start:i],
+			})
 		default:
 			return nil, fmt.Errorf("%s: unsupported job initializer character %q", path, ch)
 		}
@@ -159,7 +171,10 @@ func (p *jobParser) skills() ([]content.JobSkillGrant, error) {
 		if err := p.symbol("}", "skill grant"); err != nil {
 			return nil, err
 		}
-		skills = append(skills, content.JobSkillGrant{ID: id, Level: level})
+		skills = append(skills, content.JobSkillGrant{
+			ID:    id,
+			Level: level,
+		})
 		if p.peek().kind == "}" {
 			break
 		}
@@ -261,7 +276,12 @@ func (p *jobParser) job() (job content.JobDef, err error) {
 }
 
 func jobValidation(job content.JobDef) error {
-	return (content.JobArtifact{SchemaVersion: 1, SourceRevision: "source", TagMajorVersion: 34, Jobs: []content.JobDef{job}}).Validate()
+	return (content.JobArtifact{
+		SchemaVersion:   1,
+		SourceRevision:  "source",
+		TagMajorVersion: 34,
+		Jobs:            []content.JobDef{job},
+	}).Validate()
 }
 
 func parseJobData(path string, data []byte) ([]content.JobDef, error) {
@@ -278,7 +298,10 @@ func parseJobData(path string, data []byte) ([]content.JobDef, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := jobParser{path: path, tokens: tokens}
+	p := jobParser{
+		path:   path,
+		tokens: tokens,
+	}
 	if err := p.symbol("{", "job_data"); err != nil {
 		return nil, err
 	}

@@ -29,7 +29,10 @@ func sourceHashes(sourceDir string) ([]content.JobSourceFile, error) {
 			return nil, err
 		}
 		sum := sha256.Sum256(data)
-		files = append(files, content.JobSourceFile{Path: filepath.ToSlash(filepath.Join("crawl-ref", "source", name)), SHA256: hex.EncodeToString(sum[:])})
+		files = append(files, content.JobSourceFile{
+			Path:   filepath.ToSlash(filepath.Join("crawl-ref", "source", name)),
+			SHA256: hex.EncodeToString(sum[:]),
+		})
 	}
 	sort.Slice(files, func(i, j int) bool { return files[i].Path < files[j].Path })
 	return files, nil
@@ -113,7 +116,13 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef, catal
 		}
 	}
 	sort.Slice(gear, func(i, j int) bool { return gear[i].JobID < gear[j].JobID })
-	artifact := content.StartingGearArtifact{SchemaVersion: 2, SourceRevision: revision, TagMajorVersion: 34, SourceFiles: files, Jobs: gear}
+	artifact := content.StartingGearArtifact{
+		SchemaVersion:   2,
+		SourceRevision:  revision,
+		TagMajorVersion: 34,
+		SourceFiles:     files,
+		Jobs:            gear,
+	}
 	if err := artifact.Validate(catalog); err != nil {
 		return nil, err
 	}

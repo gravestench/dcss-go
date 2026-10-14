@@ -36,7 +36,14 @@ func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Lev
 			}
 		}
 	}
-	return &Level{ID: id, terrain: append([]string(nil), rows...), remembered: make([]byte, width*len(rows)), width: width, positions: positions, actors: make(map[point]akara.Entity)}, nil
+	return &Level{
+		ID:         id,
+		terrain:    append([]string(nil), rows...),
+		remembered: make([]byte, width*len(rows)),
+		width:      width,
+		positions:  positions,
+		actors:     make(map[point]akara.Entity),
+	}, nil
 }
 
 func (l *Level) inBounds(x, y int) bool {
@@ -48,7 +55,10 @@ func (l *Level) Walkable(x, y int) bool {
 }
 
 func (l *Level) ActorAt(x, y int) (akara.Entity, bool) {
-	actor, ok := l.actors[point{x, y}]
+	actor, ok := l.actors[point{
+		x,
+		y,
+	}]
 	return actor, ok
 }
 
@@ -62,16 +72,26 @@ func (l *Level) PlaceActor(entity akara.Entity, x, y int) error {
 	if l.positions.Has(entity) {
 		return fmt.Errorf("entity %d is already positioned", entity)
 	}
-	if _, err := l.positions.Set(entity, ecs.Position{LevelID: l.ID, X: x, Y: y}); err != nil {
+	if _, err := l.positions.Set(entity, ecs.Position{
+		LevelID: l.ID,
+		X:       x,
+		Y:       y,
+	}); err != nil {
 		return err
 	}
-	l.actors[point{x, y}] = entity
+	l.actors[point{
+		x,
+		y,
+	}] = entity
 	return nil
 }
 
 func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 	position, found := l.positions.Get(entity)
-	if !found || position.LevelID != l.ID || l.actors[point{position.X, position.Y}] != entity {
+	if !found || position.LevelID != l.ID || l.actors[point{
+		position.X,
+		position.Y,
+	}] != entity {
 		return fmt.Errorf("entity %d is not indexed on level %d", entity, l.ID)
 	}
 	if !l.Walkable(x, y) {
@@ -80,18 +100,30 @@ func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 	if other, occupied := l.ActorAt(x, y); occupied && other != entity {
 		return fmt.Errorf("level %d location (%d,%d) is occupied", l.ID, x, y)
 	}
-	delete(l.actors, point{position.X, position.Y})
+	delete(l.actors, point{
+		position.X,
+		position.Y,
+	})
 	position.X, position.Y = x, y
-	l.actors[point{x, y}] = entity
+	l.actors[point{
+		x,
+		y,
+	}] = entity
 	return nil
 }
 
 func (l *Level) RemoveActor(entity akara.Entity) error {
 	position, found := l.positions.Get(entity)
-	if !found || position.LevelID != l.ID || l.actors[point{position.X, position.Y}] != entity {
+	if !found || position.LevelID != l.ID || l.actors[point{
+		position.X,
+		position.Y,
+	}] != entity {
 		return fmt.Errorf("entity %d is not indexed on level %d", entity, l.ID)
 	}
-	delete(l.actors, point{position.X, position.Y})
+	delete(l.actors, point{
+		position.X,
+		position.Y,
+	})
 	l.positions.Remove(entity)
 	return nil
 }

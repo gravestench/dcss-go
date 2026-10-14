@@ -49,13 +49,26 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 	health.Current, magic.Current = 10, 0
 	progress.HPProgress, progress.MPProgress = 94, 94
 	expectedRNG := RestoreRNGStreams(g.seed, g.rng.States())
-	want, err := character.Regenerate(expectedRNG, character.Vitality{HP: 10, MaxHP: health.Max, MP: 0, MaxMP: magic.Max, HPProgress: 94, MPProgress: 94}, 9)
+	want, err := character.Regenerate(expectedRNG, character.Vitality{
+		HP:         10,
+		MaxHP:      health.Max,
+		MP:         0,
+		MaxMP:      magic.Max,
+		HPProgress: 94,
+		MPProgress: 94,
+	}, 9)
 	if err != nil {
 		t.Fatal(err)
 	}
 	g.turn.Actor = g.player
-	if err := (&regenerationSystem{player: g.player, health: g.stores.Health, magic: g.stores.Magic,
-		regeneration: g.stores.Regeneration, rng: g.rng, turn: &g.turn}).Update(nil, time.Duration(9)); err != nil {
+	if err := (&regenerationSystem{
+		player:       g.player,
+		health:       g.stores.Health,
+		magic:        g.stores.Magic,
+		regeneration: g.stores.Regeneration,
+		rng:          g.rng,
+		turn:         &g.turn,
+	}).Update(nil, time.Duration(9)); err != nil {
 		t.Fatal(err)
 	}
 	if health.Current != want.HP || magic.Current != want.MP || progress.HPProgress != want.HPProgress || progress.MPProgress != want.MPProgress || !reflect.DeepEqual(g.rng.States(), expectedRNG.States()) {

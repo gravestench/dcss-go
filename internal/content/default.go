@@ -230,7 +230,10 @@ func loadItemPair(itemData, identityData []byte) (Catalog, map[string]string, er
 	if err != nil {
 		return Catalog{}, nil, err
 	}
-	catalog := Catalog{items: make(map[string]ItemDef, len(artifact.Items)), itemIdentities: make(map[string]ItemIdentity, len(manifest.Identities))}
+	catalog := Catalog{
+		items:          make(map[string]ItemDef, len(artifact.Items)),
+		itemIdentities: make(map[string]ItemIdentity, len(manifest.Identities)),
+	}
 	for _, identity := range manifest.Identities {
 		catalog.itemIdentities[identity.ID] = identity
 	}
@@ -285,7 +288,10 @@ func loadDefault(speciesData, jobData, itemData, identityData, gearData, present
 	}
 	speciesFiles := make([]JobSourceFile, 0, len(artifact.SourceFiles))
 	for _, file := range artifact.SourceFiles {
-		speciesFiles = append(speciesFiles, JobSourceFile{Path: file.Path, SHA256: file.SHA256})
+		speciesFiles = append(speciesFiles, JobSourceFile{
+			Path:   file.Path,
+			SHA256: file.SHA256,
+		})
 	}
 	hashedPaths, err := validSourceFiles(speciesFiles, "species")
 	if err != nil {

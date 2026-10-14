@@ -9,23 +9,75 @@ import (
 
 func presentationIdentities() []content.ItemIdentity {
 	return []content.ItemIdentity{
-		{ID: "WPN_MACE", ClassID: "OBJ_WEAPONS"},
-		{ID: "POT_CURING", ClassID: "OBJ_POTIONS"},
-		{ID: "BOOK_MINOR_MAGIC", ClassID: "OBJ_BOOKS"},
-		{ID: "BOOK_MANUAL", ClassID: "OBJ_BOOKS"},
-		{ID: "CORPSE_BODY", ClassID: "OBJ_CORPSES"},
-		{ID: "CORPSE_SKELETON", ClassID: "OBJ_CORPSES"},
-		{ID: "OBJ_GOLD", ClassID: "OBJ_GOLD"},
-		{ID: "ORB_ZOT", ClassID: "OBJ_ORBS"},
-		{ID: "RUNE_SWAMP", ClassID: "OBJ_RUNES"},
-		{ID: "RING_PROTECTION", ClassID: "OBJ_JEWELLERY"},
-		{ID: "AMU_FAITH", ClassID: "OBJ_JEWELLERY"},
-		{ID: "MISC_XOMS_CHESSBOARD", ClassID: "OBJ_MISCELLANY"},
-		{ID: "MISC_DECK_OF_ESCAPE", ClassID: "OBJ_MISCELLANY", ExplicitlyRemoved: true},
-		{ID: "STAFF_FIRE", ClassID: "OBJ_STAVES"},
-		{ID: "FOOD_RATION", ClassID: "OBJ_FOOD"},
-		{ID: "WAND_FLAME", ClassID: "OBJ_WANDS"},
-		{ID: "SCR_IDENTIFY", ClassID: "OBJ_SCROLLS"},
+		{
+			ID:      "WPN_MACE",
+			ClassID: "OBJ_WEAPONS",
+		},
+		{
+			ID:      "POT_CURING",
+			ClassID: "OBJ_POTIONS",
+		},
+		{
+			ID:      "BOOK_MINOR_MAGIC",
+			ClassID: "OBJ_BOOKS",
+		},
+		{
+			ID:      "BOOK_MANUAL",
+			ClassID: "OBJ_BOOKS",
+		},
+		{
+			ID:      "CORPSE_BODY",
+			ClassID: "OBJ_CORPSES",
+		},
+		{
+			ID:      "CORPSE_SKELETON",
+			ClassID: "OBJ_CORPSES",
+		},
+		{
+			ID:      "OBJ_GOLD",
+			ClassID: "OBJ_GOLD",
+		},
+		{
+			ID:      "ORB_ZOT",
+			ClassID: "OBJ_ORBS",
+		},
+		{
+			ID:      "RUNE_SWAMP",
+			ClassID: "OBJ_RUNES",
+		},
+		{
+			ID:      "RING_PROTECTION",
+			ClassID: "OBJ_JEWELLERY",
+		},
+		{
+			ID:      "AMU_FAITH",
+			ClassID: "OBJ_JEWELLERY",
+		},
+		{
+			ID:      "MISC_XOMS_CHESSBOARD",
+			ClassID: "OBJ_MISCELLANY",
+		},
+		{
+			ID:                "MISC_DECK_OF_ESCAPE",
+			ClassID:           "OBJ_MISCELLANY",
+			ExplicitlyRemoved: true,
+		},
+		{
+			ID:      "STAFF_FIRE",
+			ClassID: "OBJ_STAVES",
+		},
+		{
+			ID:      "FOOD_RATION",
+			ClassID: "OBJ_FOOD",
+		},
+		{
+			ID:      "WAND_FLAME",
+			ClassID: "OBJ_WANDS",
+		},
+		{
+			ID:      "SCR_IDENTIFY",
+			ClassID: "OBJ_SCROLLS",
+		},
 	}
 }
 
@@ -172,13 +224,22 @@ func TestPinnedItemNamesAndGlyphs(t *testing.T) {
 			t.Errorf("%v: got %+v, want %q", key, names[key], want)
 		}
 	}
-	if manual := names[itemKey{"OBJ_BOOKS", "BOOK_MANUAL"}]; manual.Kind != "manual_skill" || manual.Text != "manual" {
+	if manual := names[itemKey{
+		"OBJ_BOOKS",
+		"BOOK_MANUAL",
+	}]; manual.Kind != "manual_skill" || manual.Text != "manual" {
 		t.Errorf("manual naming lost: %+v", manual)
 	}
-	if corpse := names[itemKey{"OBJ_CORPSES", "CORPSE_BODY"}]; corpse.Kind != "corpse_monster" || corpse.Text != "corpse" {
+	if corpse := names[itemKey{
+		"OBJ_CORPSES",
+		"CORPSE_BODY",
+	}]; corpse.Kind != "corpse_monster" || corpse.Text != "corpse" {
 		t.Errorf("corpse naming lost: %+v", corpse)
 	}
-	if _, found := names[itemKey{"OBJ_WEAPONS", "WPN_MACE"}]; found {
+	if _, found := names[itemKey{
+		"OBJ_WEAPONS",
+		"WPN_MACE",
+	}]; found {
 		t.Fatal("property-table weapon name was invented in item-name.cc view")
 	}
 	show, showHeader, dcharHeader, view := presentationGlyphFixture()

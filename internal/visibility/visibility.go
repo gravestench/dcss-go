@@ -63,7 +63,13 @@ func footprint(sx, sy, dx, dy float64) ray {
 				continue
 			}
 			if enter, ok := diamondEntry(sx, sy, dx, dy, x, y); ok {
-				cells = append(cells, rayCell{offset{x, y}, enter})
+				cells = append(cells, rayCell{
+					offset{
+						x,
+						y,
+					},
+					enter,
+				})
 			}
 		}
 	}

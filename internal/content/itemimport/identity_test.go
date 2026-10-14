@@ -161,7 +161,16 @@ func TestRemovedItemsIndependent(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(removed) != 2 || !removed[itemKey{"OBJ_POTIONS", "POT_OLD"}] || !removed[itemKey{"OBJ_BOOKS", "BOOK_OLD"}] || removed[itemKey{"OBJ_POTIONS", "POT_OTHER"}] {
+	if len(removed) != 2 || !removed[itemKey{
+		"OBJ_POTIONS",
+		"POT_OLD",
+	}] || !removed[itemKey{
+		"OBJ_BOOKS",
+		"BOOK_OLD",
+	}] || removed[itemKey{
+		"OBJ_POTIONS",
+		"POT_OTHER",
+	}] {
 		t.Fatalf("wrong explicit removal set: %v", removed)
 	}
 	duplicate := []byte(strings.Replace(string(source), "{ OBJ_BOOKS, BOOK_OLD },", "{ OBJ_POTIONS, POT_OLD },", 1))

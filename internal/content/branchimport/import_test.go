@@ -10,7 +10,11 @@ import (
 
 func TestGenerateAndCheckUseOnlyExplicitBranchSources(t *testing.T) {
 	dir := t.TempDir()
-	for name, body := range map[string]string{"tag-version.h": "#define TAG_MAJOR_VERSION 34\n", "branch-type.h": syntheticEnum, "branch-data.h": syntheticTable} {
+	for name, body := range map[string]string{
+		"tag-version.h": "#define TAG_MAJOR_VERSION 34\n",
+		"branch-type.h": syntheticEnum,
+		"branch-data.h": syntheticTable,
+	} {
 		if err := os.WriteFile(filepath.Join(dir, name), []byte(body), 0600); err != nil {
 			t.Fatal(err)
 		}

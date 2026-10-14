@@ -100,7 +100,13 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 		shieldClass = max(0, (shield+50)/100)
 	}
 	gdr := int(16 * math.Sqrt(math.Sqrt(float64(ac))))
-	return Defense{EV: ev, AC: ac, ShieldClass: shieldClass, GDR: gdr, ShieldBlocks: in.ShieldBlocks}, nil
+	return Defense{
+		EV:           ev,
+		AC:           ac,
+		ShieldClass:  shieldClass,
+		GDR:          gdr,
+		ShieldBlocks: in.ShieldBlocks,
+	}, nil
 }
 
 func random2(r Roller, bound int) (int, error) {
@@ -171,13 +177,22 @@ func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, e
 		proBlock = shieldRoll/3 - 1
 	}
 	if proBlock >= conBlock {
-		return Outcome{Kind: Block, ShieldBlocks: defense.ShieldBlocks + 1}, nil
+		return Outcome{
+			Kind:         Block,
+			ShieldBlocks: defense.ShieldBlocks + 1,
+		}, nil
 	}
 	if autoMiss {
-		return Outcome{Kind: Miss, ShieldBlocks: defense.ShieldBlocks}, nil
+		return Outcome{
+			Kind:         Miss,
+			ShieldBlocks: defense.ShieldBlocks,
+		}, nil
 	}
 	if !autoHit && toHit < evRoll {
-		return Outcome{Kind: Dodge, ShieldBlocks: defense.ShieldBlocks}, nil
+		return Outcome{
+			Kind:         Dodge,
+			ShieldBlocks: defense.ShieldBlocks,
+		}, nil
 	}
 	baseRoll, err := random2(r, attack.Damage)
 	if err != nil {
@@ -202,5 +217,9 @@ func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, e
 		}
 	}
 	saved = max(saved, min(maxGDR, acHalf))
-	return Outcome{Kind: Hit, Damage: max(0, damage-saved), ShieldBlocks: defense.ShieldBlocks}, nil
+	return Outcome{
+		Kind:         Hit,
+		Damage:       max(0, damage-saved),
+		ShieldBlocks: defense.ShieldBlocks,
+	}, nil
 }

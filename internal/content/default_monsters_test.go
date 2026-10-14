@@ -27,7 +27,11 @@ func TestLoadDefaultMonstersAndSourceFields(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rat.Glyph != 'r' || rat.Speed != 10 || rat.AverageHP10x != 25 || rat.Attacks[0] != (MonsterAttack{TypeID: "AT_BITE", FlavourID: "AF_PLAIN", Damage: 3}) {
+	if rat.Glyph != 'r' || rat.Speed != 10 || rat.AverageHP10x != 25 || rat.Attacks[0] != (MonsterAttack{
+		TypeID:    "AT_BITE",
+		FlavourID: "AF_PLAIN",
+		Damage:    3,
+	}) {
 		t.Fatalf("rat source fields: %+v", rat)
 	}
 	rat.Flags[0] = "changed"

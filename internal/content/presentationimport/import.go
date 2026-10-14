@@ -93,7 +93,11 @@ func parseStartupModes(path string, data []byte) ([]content.StartupMode, error) 
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", path, err)
 		}
-		modes = append(modes, content.StartupMode{ID: match[1], Label: label, Description: description})
+		modes = append(modes, content.StartupMode{
+			ID:          match[1],
+			Label:       label,
+			Description: description,
+		})
 	}
 	if len(modes) == 0 {
 		return nil, fmt.Errorf("%s: no startup modes", path)
@@ -163,7 +167,10 @@ func readSource(root, relative string, files *[]content.JobSourceFile) ([]byte, 
 		return nil, fmt.Errorf("source %s: %w", relative, err)
 	}
 	sum := sha256.Sum256(data)
-	*files = append(*files, content.JobSourceFile{Path: filepath.ToSlash(filepath.Join("crawl-ref", "source", relative)), SHA256: hex.EncodeToString(sum[:])})
+	*files = append(*files, content.JobSourceFile{
+		Path:   filepath.ToSlash(filepath.Join("crawl-ref", "source", relative)),
+		SHA256: hex.EncodeToString(sum[:]),
+	})
 	return data, nil
 }
 
@@ -173,8 +180,11 @@ func generateFromSource(sourceDir string) (content.PresentationArtifact, error) 
 		return content.PresentationArtifact{}, fmt.Errorf("load committed definitions: %w", err)
 	}
 	artifact := content.PresentationArtifact{
-		SchemaVersion: 1, SourceRevision: pinnedRevision, TagMajorVersion: 34,
-		SpeciesDescriptions: map[string]string{}, JobDescriptions: map[string]string{},
+		SchemaVersion:       1,
+		SourceRevision:      pinnedRevision,
+		TagMajorVersion:     34,
+		SpeciesDescriptions: map[string]string{},
+		JobDescriptions:     map[string]string{},
 	}
 	version, err := readSource(sourceDir, "tag-version.h", &artifact.SourceFiles)
 	if err != nil {

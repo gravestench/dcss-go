@@ -122,7 +122,13 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 				return nil, fmt.Errorf("%s:%d: unsupported numeric expression %q for %s", path, line.Number, expression, id)
 			}
 			known[id] = value
-			entries = append(entries, enumValue{ID: id, Value: value, AliasOf: alias, SourcePath: path, SourceLine: line.Number})
+			entries = append(entries, enumValue{
+				ID:         id,
+				Value:      value,
+				AliasOf:    alias,
+				SourcePath: path,
+				SourceLine: line.Number,
+			})
 		}
 	}
 	if state != 3 || len(entries) == 0 {
@@ -161,7 +167,14 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 			return fmt.Errorf("%s:%d: subtype %s duplicates numeric pair of %s", entry.SourcePath, entry.SourceLine, entry.ID, previous)
 		}
 		seenPairs[pair] = entry.ID
-		identities = append(identities, content.ItemIdentity{ID: entry.ID, ClassID: classID, ClassValue: classValue, SubtypeValue: entry.Value, SourcePath: entry.SourcePath, SourceLine: entry.SourceLine})
+		identities = append(identities, content.ItemIdentity{
+			ID:           entry.ID,
+			ClassID:      classID,
+			ClassValue:   classValue,
+			SubtypeValue: entry.Value,
+			SourcePath:   entry.SourcePath,
+			SourceLine:   entry.SourceLine,
+		})
 		return nil
 	}
 	for _, class := range itemClassSources {
@@ -186,7 +199,14 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 			}
 			if entry.AliasOf != "" {
 				if concrete[entry.AliasOf] {
-					aliases = append(aliases, content.ItemAlias{ID: entry.ID, TargetID: entry.AliasOf, ClassID: class.ClassID, NumericValue: entry.Value, SourcePath: entry.SourcePath, SourceLine: entry.SourceLine})
+					aliases = append(aliases, content.ItemAlias{
+						ID:           entry.ID,
+						TargetID:     entry.AliasOf,
+						ClassID:      class.ClassID,
+						NumericValue: entry.Value,
+						SourcePath:   entry.SourcePath,
+						SourceLine:   entry.SourceLine,
+					})
 				}
 				continue
 			}
@@ -202,7 +222,11 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 			return nil, nil, fmt.Errorf("%s: incomplete enum %s for %s", class.File, class.Enum, class.ClassID)
 		}
 	}
-	gold := enumValue{ID: "OBJ_GOLD", Value: 0, SourcePath: "crawl-ref/source/object-class-type.h"}
+	gold := enumValue{
+		ID:         "OBJ_GOLD",
+		Value:      0,
+		SourcePath: "crawl-ref/source/object-class-type.h",
+	}
 	for _, entry := range classEntries {
 		if entry.ID == "OBJ_GOLD" {
 			gold.SourceLine = entry.SourceLine
@@ -257,7 +281,10 @@ func parseRemovedItems(path string, data []byte) (map[itemKey]bool, error) {
 		if match == nil {
 			return nil, fmt.Errorf("%s:%d: unsupported removed_items row %q", path, line.Number, trimmed)
 		}
-		key := itemKey{ClassID: match[1], SubtypeID: match[2]}
+		key := itemKey{
+			ClassID:   match[1],
+			SubtypeID: match[2],
+		}
 		if removed[key] {
 			return nil, fmt.Errorf("%s:%d: duplicate removed item %s/%s", path, line.Number, key.ClassID, key.SubtypeID)
 		}

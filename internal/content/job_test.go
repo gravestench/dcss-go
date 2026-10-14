@@ -7,11 +7,24 @@ import (
 
 func testJob(id, abbreviation string) JobDef {
 	return JobDef{
-		ID: id, SourcePath: "crawl-ref/source/job-data.h", Abbreviation: abbreviation,
-		Name: "Fighter", Strength: 8, Intelligence: 0, Dexterity: 4,
-		RecommendedSpecies: []string{"SP_HUMAN"}, Spells: []string{"SPELL_SHOCK"},
-		Equipment: []string{"scale mail", "buckler"}, WeaponChoice: "WCHOICE_GOOD",
-		Skills:     []JobSkillGrant{{ID: "SK_FIGHTING", Level: 3}, {ID: "SK_WEAPON", Level: 2}},
+		ID:                 id,
+		SourcePath:         "crawl-ref/source/job-data.h",
+		Abbreviation:       abbreviation,
+		Name:               "Fighter",
+		Strength:           8,
+		Intelligence:       0,
+		Dexterity:          4,
+		RecommendedSpecies: []string{"SP_HUMAN"},
+		Spells:             []string{"SPELL_SHOCK"},
+		Equipment:          []string{"scale mail", "buckler"},
+		WeaponChoice:       "WCHOICE_GOOD",
+		Skills: []JobSkillGrant{{
+			ID:    "SK_FIGHTING",
+			Level: 3,
+		}, {
+			ID:    "SK_WEAPON",
+			Level: 2,
+		}},
 		Selectable: true,
 	}
 }
@@ -19,7 +32,10 @@ func testJob(id, abbreviation string) JobDef {
 func TestJobCatalogCopiesAndSorts(t *testing.T) {
 	first := testJob("JOB_Z", "Zz")
 	second := testJob("JOB_A", "Aa")
-	catalog := Catalog{jobs: map[string]JobDef{first.ID: first, second.ID: second}}
+	catalog := Catalog{jobs: map[string]JobDef{
+		first.ID:  first,
+		second.ID: second,
+	}}
 	ids := catalog.JobIDs()
 	if !reflect.DeepEqual(ids, []string{"JOB_A", "JOB_Z"}) {
 		t.Fatalf("job IDs = %v", ids)
@@ -60,17 +76,41 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 		{"invalid weapon choice", []JobDef{func() JobDef { j := valid; j.WeaponChoice = "WCHOICE_UNKNOWN"; return j }()}},
 		{"selectable without recommendations", []JobDef{func() JobDef { j := valid; j.RecommendedSpecies = nil; return j }()}},
 		{"removed with recommendations", []JobDef{func() JobDef { j := valid; j.Selectable = false; return j }()}},
-		{"negative skill", []JobDef{func() JobDef { j := valid; j.Skills = []JobSkillGrant{{ID: "SK_FIGHTING", Level: -1}}; return j }()}},
-		{"skill above cap", []JobDef{func() JobDef { j := valid; j.Skills = []JobSkillGrant{{ID: "SK_FIGHTING", Level: 28}}; return j }()}},
+		{"negative skill", []JobDef{func() JobDef {
+			j := valid
+			j.Skills = []JobSkillGrant{{
+				ID:    "SK_FIGHTING",
+				Level: -1,
+			}}
+			return j
+		}()}},
+		{"skill above cap", []JobDef{func() JobDef {
+			j := valid
+			j.Skills = []JobSkillGrant{{
+				ID:    "SK_FIGHTING",
+				Level: 28,
+			}}
+			return j
+		}()}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			artifact := JobArtifact{SchemaVersion: 1, SourceRevision: sourceRevision, TagMajorVersion: 34, Jobs: tc.jobs}
+			artifact := JobArtifact{
+				SchemaVersion:   1,
+				SourceRevision:  sourceRevision,
+				TagMajorVersion: 34,
+				Jobs:            tc.jobs,
+			}
 			if err := artifact.Validate(); err == nil {
 				t.Fatal("invalid job artifact accepted")
 			}
 		})
 	}
-	if err := (JobArtifact{SchemaVersion: 1, SourceRevision: sourceRevision, TagMajorVersion: 34, Jobs: []JobDef{valid}}).Validate(); err != nil {
+	if err := (JobArtifact{
+		SchemaVersion:   1,
+		SourceRevision:  sourceRevision,
+		TagMajorVersion: 34,
+		Jobs:            []JobDef{valid},
+	}).Validate(); err != nil {
 		t.Fatalf("valid job rejected: %v", err)
 	}
 }

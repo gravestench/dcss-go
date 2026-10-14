@@ -18,9 +18,13 @@ func TestResolveKindsFromCommittedCatalog(t *testing.T) {
 		t.Fatal(err)
 	}
 	for name, want := range map[string]string{
-		"scale mail": "ARM_SCALE_MAIL", "flail": "WPN_FLAIL", "dart": "MI_DART",
-		"potion of might": "POT_MIGHT", "scroll of magic mapping": "SCR_MAGIC_MAPPING",
-		"wand of charming": "WAND_CHARMING", "piece from Xom's chessboard": "MISC_XOMS_CHESSBOARD",
+		"scale mail":                  "ARM_SCALE_MAIL",
+		"flail":                       "WPN_FLAIL",
+		"dart":                        "MI_DART",
+		"potion of might":             "POT_MIGHT",
+		"scroll of magic mapping":     "SCR_MAGIC_MAPPING",
+		"wand of charming":            "WAND_CHARMING",
+		"piece from Xom's chessboard": "MISC_XOMS_CHESSBOARD",
 	} {
 		if resolved[name].ID != want {
 			t.Errorf("%q resolved to %s, want %s", name, resolved[name].ID, want)

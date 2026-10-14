@@ -31,10 +31,17 @@ func testCorpseAt(t *testing.T, g *Game, kind string, position ecs.Position) aka
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := g.stores.Items.Set(id, ecs.Item{KindID: kind, Quantity: 1}); err != nil {
+	if _, err := g.stores.Items.Set(id, ecs.Item{
+		KindID:   kind,
+		Quantity: 1,
+	}); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := g.stores.Corpses.Set(id, ecs.Corpse{MonsterID: "MONS_RAT", Freshness: monster.FreshestCorpse, Appearance: 1}); err != nil {
+	if _, err := g.stores.Corpses.Set(id, ecs.Corpse{
+		MonsterID:  "MONS_RAT",
+		Freshness:  monster.FreshestCorpse,
+		Appearance: 1,
+	}); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := g.stores.Positions.Set(id, position); err != nil {
@@ -59,7 +66,10 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 		playerHP, _ := g.stores.Health.Get(g.player)
 		playerHP.Current, playerHP.Max = 100, 100
 		for attempt := 0; attempt < 100 && g.world.EntityExists(rat); attempt++ {
-			if _, err := g.Step(Command{Kind: CommandMove, DX: 1}); err != nil {
+			if _, err := g.Step(Command{
+				Kind: CommandMove,
+				DX:   1,
+			}); err != nil {
 				t.Fatal(err)
 			}
 		}
@@ -75,7 +85,11 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 			item, _ := g.stores.Items.Get(id)
 			position, _ := g.stores.Positions.Get(id)
 			corpse, _ := g.stores.Corpses.Get(id)
-			if item.KindID != "CORPSE_BODY" || *position != (ecs.Position{LevelID: 1, X: 4, Y: 1}) || corpse.MonsterID != "MONS_RAT" || corpse.Appearance < 1 || corpse.Appearance > 255 {
+			if item.KindID != "CORPSE_BODY" || *position != (ecs.Position{
+				LevelID: 1,
+				X:       4,
+				Y:       1,
+			}) || corpse.MonsterID != "MONS_RAT" || corpse.Appearance < 1 || corpse.Appearance > 255 {
 				t.Fatalf("corpse %+v %+v %+v", item, position, corpse)
 			}
 			seen := false
@@ -113,7 +127,11 @@ func TestCorpseIsStationaryButPortableItemSharesTile(t *testing.T) {
 	if err := g.levels[1].MoveActor(g.player, 4, 2); err != nil {
 		t.Fatal(err)
 	}
-	id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{LevelID: 1, X: 4, Y: 2})
+	id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{
+		LevelID: 1,
+		X:       4,
+		Y:       2,
+	})
 	result, err := g.Step(Command{Kind: CommandPickup})
 	if err != nil || result.Spent != 10 || !g.stores.Positions.Has(id) || !g.stores.CarriedBy.Has(potionID(t, g)) {
 		t.Fatalf("mixed pickup %+v %v", result, err)
@@ -133,7 +151,11 @@ func TestCorpseDecaysAtTwoHundredAutAndSurvivesSave(t *testing.T) {
 	if !g.world.DestroyEntity(rat) {
 		t.Fatal("rat removal")
 	}
-	id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{LevelID: 1, X: 4, Y: 1})
+	id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{
+		LevelID: 1,
+		X:       4,
+		Y:       1,
+	})
 	for range 19 {
 		if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
 			t.Fatal(err)
@@ -204,7 +226,11 @@ func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 	if err := g.levels[2].RemoveActor(lizard); err != nil || !g.world.DestroyEntity(lizard) {
 		t.Fatalf("frilled lizard removal: %v", err)
 	}
-	id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{LevelID: 1, X: 4, Y: 1})
+	id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{
+		LevelID: 1,
+		X:       4,
+		Y:       1,
+	})
 	if err := g.levels[1].MoveActor(g.player, 7, 3); err != nil {
 		t.Fatal(err)
 	}
@@ -253,7 +279,11 @@ func TestRestoreRejectsMalformedCorpseState(t *testing.T) {
 		func(_ *ecs.Item, corpse *ecs.Corpse, _ *ecs.Position) { corpse.Appearance = 256 },
 		func(item *ecs.Item, _ *ecs.Corpse, _ *ecs.Position) { item.KindID = "POT_CURING" },
 	} {
-		id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{LevelID: 1, X: 4, Y: 1})
+		id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{
+			LevelID: 1,
+			X:       4,
+			Y:       1,
+		})
 		bad := g.Snapshot()
 		for i := range bad.Entities {
 			if bad.Entities[i].ID == uint64(id) {
@@ -273,7 +303,11 @@ func TestRestoreRejectsMalformedCorpseState(t *testing.T) {
 
 func TestRestoreRejectsInvalidCorpseFloorClock(t *testing.T) {
 	g := newStepGame(t)
-	id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{LevelID: 1, X: 4, Y: 1})
+	id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{
+		LevelID: 1,
+		X:       4,
+		Y:       1,
+	})
 	active := g.Snapshot()
 	zero := int64(0)
 	active.Levels[0].AwaySinceAut = &zero

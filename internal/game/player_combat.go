@@ -27,9 +27,18 @@ type playerCombat struct {
 
 func newPlayerCombat(g *Game) playerCombat {
 	s := g.stores
-	return playerCombat{player: g.player, players: s.Players, attributes: s.Attributes, skills: s.Skills,
-		durations: s.Durations, combat: s.Combat, equipped: s.Equipped, carried: s.CarriedBy,
-		items: s.Items, catalog: g.catalog}
+	return playerCombat{
+		player:     g.player,
+		players:    s.Players,
+		attributes: s.Attributes,
+		skills:     s.Skills,
+		durations:  s.Durations,
+		combat:     s.Combat,
+		equipped:   s.Equipped,
+		carried:    s.CarriedBy,
+		items:      s.Items,
+		catalog:    g.catalog,
+	}
 }
 
 // attackInput projects the live Fighter against a cataloged defender.
@@ -51,8 +60,13 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 	if err != nil {
 		return combat.PlayerAttackInput{}, err
 	}
-	in := combat.PlayerAttackInput{Strength: attributes.Strength, Dexterity: attributes.Dexterity,
-		DefenderEV: defender.EV, DefenderAC: defender.AC, Unarmed: player.StartingWeaponID == "WPN_UNARMED"}
+	in := combat.PlayerAttackInput{
+		Strength:   attributes.Strength,
+		Dexterity:  attributes.Dexterity,
+		DefenderEV: defender.EV,
+		DefenderAC: defender.AC,
+		Unarmed:    player.StartingWeaponID == "WPN_UNARMED",
+	}
 	if durations, found := c.durations.Get(c.player); found {
 		in.Mighty = durations.MightAut > 0
 	}
@@ -122,7 +136,10 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 	if _, err := c.defense(); err != nil {
 		return combat.AttackDelayInput{}, err
 	}
-	in := combat.AttackDelayInput{Unarmed: attack.Unarmed, WeaponSkillID: attack.WeaponSkillID}
+	in := combat.AttackDelayInput{
+		Unarmed:       attack.Unarmed,
+		WeaponSkillID: attack.WeaponSkillID,
+	}
 	skills, _ := c.skills.Get(c.player)
 	weaponSkillFound, shieldSkillFound := false, false
 	for _, skill := range skills.Entries {
@@ -194,7 +211,11 @@ func (c playerCombat) defense() (combat.Defense, error) {
 	if !found {
 		return combat.Defense{}, fmt.Errorf("player has no combat state")
 	}
-	input := combat.FighterDefense{Strength: attributes.Strength, Dexterity: attributes.Dexterity, ShieldBlocks: state.ShieldBlocks}
+	input := combat.FighterDefense{
+		Strength:     attributes.Strength,
+		Dexterity:    attributes.Dexterity,
+		ShieldBlocks: state.ShieldBlocks,
+	}
 	for _, skill := range skills.Entries {
 		switch skill.ID {
 		case "SK_ARMOUR":

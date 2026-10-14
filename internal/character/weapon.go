@@ -60,7 +60,10 @@ func WeaponOptions(c content.Catalog, speciesID, jobID string) ([]WeaponOption, 
 		if id == "WPN_QUARTERSTAFF" && jobID != "JOB_GLADIATOR" && !(jobID == "JOB_FIGHTER" && hasMutation(species, "MUT_QUADRUMANOUS")) {
 			continue
 		}
-		option := WeaponOption{ID: id, Restriction: Restricted}
+		option := WeaponOption{
+			ID:          id,
+			Restriction: Restricted,
+		}
 		skill := "SK_UNARMED_COMBAT"
 		if id == "WPN_UNARMED" {
 			option.Name = "unarmed"

@@ -29,10 +29,26 @@ func TestStartingSkillsHumanFighterWeapons(t *testing.T) {
 				t.Fatal(err)
 			}
 			want := []Skill{
-				{ID: "SK_FIGHTING", Level: 3, Points: 301},
-				{ID: "SK_SHIELDS", Level: 3, Points: 301},
-				{ID: "SK_ARMOUR", Level: 3, Points: 301},
-				{ID: tc.skill, Level: 2, Points: 151},
+				{
+					ID:     "SK_FIGHTING",
+					Level:  3,
+					Points: 301,
+				},
+				{
+					ID:     "SK_SHIELDS",
+					Level:  3,
+					Points: 301,
+				},
+				{
+					ID:     "SK_ARMOUR",
+					Level:  3,
+					Points: 301,
+				},
+				{
+					ID:     tc.skill,
+					Level:  2,
+					Points: 151,
+				},
 			}
 			if !reflect.DeepEqual(got, want) {
 				t.Fatalf("skills = %+v, want %+v", got, want)
@@ -73,7 +89,11 @@ func TestResolveChosenWeaponSkillRejectsBadKind(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, skill := range []string{"", "SK_UNKNOWN"} {
-		kind := content.ItemDef{ID: "WPN_BROKEN", Class: "OBJ_WEAPONS", WeaponSkill: skill}
+		kind := content.ItemDef{
+			ID:          "WPN_BROKEN",
+			Class:       "OBJ_WEAPONS",
+			WeaponSkill: skill,
+		}
 		got, err := resolveChosenWeaponSkill(kind, species)
 		if err == nil || got != "" || !strings.Contains(err.Error(), kind.ID) {
 			t.Fatalf("skill %q: got %q, err %v", skill, got, err)

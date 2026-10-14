@@ -44,7 +44,10 @@ func TestFrilledLizardUsesOrdinaryMeleeDeathAndExperience(t *testing.T) {
 	health, _ := g.stores.Health.Get(lizard)
 	health.Current = 1
 	for attempt := 0; attempt < 100 && g.world.EntityExists(lizard); attempt++ {
-		result, err := g.Step(Command{Kind: CommandMove, DX: 1})
+		result, err := g.Step(Command{
+			Kind: CommandMove,
+			DX:   1,
+		})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -98,7 +101,11 @@ func TestFrilledLizardEncounterUsesCatalogAndSurvivesSave(t *testing.T) {
 	position, _ := g.stores.Positions.Get(lizard)
 	ai, _ := g.stores.AI.Get(lizard)
 	if definition.Name != "frilled lizard" || definition.AverageHP10x != 20 || definition.Attacks[0].Damage != 3 ||
-		actor.Speed != definition.Speed || *position != (ecs.Position{LevelID: 2, X: 14, Y: 1}) ||
+		actor.Speed != definition.Speed || *position != (ecs.Position{
+		LevelID: 2,
+		X:       14,
+		Y:       1,
+	}) ||
 		health.Current < 1 || health.Current > 3 || health.Max != health.Current || ai.Behavior != "wander" {
 		t.Fatalf("lizard definition %+v actor %+v health %+v position %+v AI %+v", definition, actor, health, position, ai)
 	}

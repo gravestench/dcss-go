@@ -34,7 +34,10 @@ func TestQuaffMightConsumesAndDecaysByActionCost(t *testing.T) {
 	id := carriedMight(t, g)
 	expected := RestoreRNGStreams(g.seed, g.rng.States())
 	roll, _ := expected.Intn("potion", 40)
-	result, err := g.Step(Command{Kind: CommandQuaff, ItemID: id})
+	result, err := g.Step(Command{
+		Kind:   CommandQuaff,
+		ItemID: id,
+	})
 	if err != nil || result.Spent != 10 || result.View.MightAut != (35+roll)*10-10 {
 		t.Fatalf("might quaff = %+v, %v", result, err)
 	}
@@ -67,7 +70,10 @@ func TestMightRepeatQuaffCapsAtEightyTurns(t *testing.T) {
 	item.Quantity = 2
 	status, _ := g.stores.Durations.Get(g.player)
 	status.MightAut = 790
-	result, err := g.Step(Command{Kind: CommandQuaff, ItemID: id})
+	result, err := g.Step(Command{
+		Kind:   CommandQuaff,
+		ItemID: id,
+	})
 	if err != nil || result.View.MightAut != 790 || item.Quantity != 1 || !containsEvent(result.Events, "You feel mightier all of a sudden.") {
 		t.Fatalf("repeat might = %+v, %v; stack %+v", result, err, item)
 	}
@@ -84,7 +90,10 @@ func TestMightDecaysByVariableMeleeActionCost(t *testing.T) {
 	if err != nil || !attack.Mighty {
 		t.Fatalf("live attack did not project might: %+v, %v", attack, err)
 	}
-	result, err := g.Step(Command{Kind: CommandMove, DX: 1})
+	result, err := g.Step(Command{
+		Kind: CommandMove,
+		DX:   1,
+	})
 	if err != nil || result.Spent <= 0 || result.View.MightAut != 20-int(result.Spent) {
 		t.Fatalf("mighty attack timing = %+v, %v", result, err)
 	}
@@ -101,7 +110,10 @@ func containsEvent(events []Event, text string) bool {
 
 func TestMightSaveContinuationAndLegacyDefault(t *testing.T) {
 	g := newStepGame(t)
-	if _, err := g.Step(Command{Kind: CommandQuaff, ItemID: carriedMight(t, g)}); err != nil {
+	if _, err := g.Step(Command{
+		Kind:   CommandQuaff,
+		ItemID: carriedMight(t, g),
+	}); err != nil {
 		t.Fatal(err)
 	}
 	snapshot := g.Snapshot()

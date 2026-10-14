@@ -78,7 +78,11 @@ func StartingSkills(c content.Catalog, speciesID, jobID, weaponID string) ([]Ski
 		if err != nil {
 			return nil, fmt.Errorf("%s/%s %s: %w", speciesID, jobID, id, err)
 		}
-		skills = append(skills, Skill{ID: id, Level: grant.Level, Points: points})
+		skills = append(skills, Skill{
+			ID:     id,
+			Level:  grant.Level,
+			Points: points,
+		})
 	}
 	return skills, nil
 }

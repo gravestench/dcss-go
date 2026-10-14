@@ -67,14 +67,28 @@ func (g *Game) View() View {
 		return View{}
 	}
 	level := g.levels[position.LevelID]
-	view := View{LevelID: position.LevelID, PlayerX: position.X, PlayerY: position.Y, Width: level.width, Height: len(level.terrain), Cells: make([]CellView, len(level.remembered)), CurrentAut: g.currentAut,
-		Messages: append([]string(nil), g.messages...)}
+	view := View{
+		LevelID:    position.LevelID,
+		PlayerX:    position.X,
+		PlayerY:    position.Y,
+		Width:      level.width,
+		Height:     len(level.terrain),
+		Cells:      make([]CellView, len(level.remembered)),
+		CurrentAut: g.currentAut,
+		Messages:   append([]string(nil), g.messages...),
+	}
 	for i, glyph := range level.remembered {
 		switch {
 		case g.visibleLevelID == level.ID && i < len(g.visible) && g.visible[i]:
-			view.Cells[i] = CellView{Glyph: rune(level.terrain[i/level.width][i%level.width]), State: Visible}
+			view.Cells[i] = CellView{
+				Glyph: rune(level.terrain[i/level.width][i%level.width]),
+				State: Visible,
+			}
 		case glyph != 0:
-			view.Cells[i] = CellView{Glyph: rune(glyph), State: Explored}
+			view.Cells[i] = CellView{
+				Glyph: rune(glyph),
+				State: Explored,
+			}
 		}
 	}
 	if health, ok := g.stores.Health.Get(g.player); ok {
@@ -147,7 +161,15 @@ func (g *Game) View() View {
 				}
 			}
 		}
-		view.Entities = append(view.Entities, EntityView{ID: uint64(entity), X: location.X, Y: location.Y, Glyph: glyph, KindID: kindID, Name: name, Role: role})
+		view.Entities = append(view.Entities, EntityView{
+			ID:     uint64(entity),
+			X:      location.X,
+			Y:      location.Y,
+			Glyph:  glyph,
+			KindID: kindID,
+			Name:   name,
+			Role:   role,
+		})
 	}
 	for _, entity := range g.stores.CarriedBy.Entities() {
 		carrier, _ := g.stores.CarriedBy.Get(entity)
@@ -160,7 +182,16 @@ func (g *Game) View() View {
 		}
 		definition, err := g.catalog.Item(item.KindID)
 		if err == nil {
-			entry := ItemView{ID: uint64(entity), KindID: item.KindID, Name: definition.Name, Class: definition.Class, Quantity: item.Quantity, Plus: item.Plus, Charges: item.Charges, Ego: item.Ego}
+			entry := ItemView{
+				ID:       uint64(entity),
+				KindID:   item.KindID,
+				Name:     definition.Name,
+				Class:    definition.Class,
+				Quantity: item.Quantity,
+				Plus:     item.Plus,
+				Charges:  item.Charges,
+				Ego:      item.Ego,
+			}
 			if equipped, found := g.stores.Equipped.Get(entity); found {
 				entry.Slot = equipped.Slot
 			}

@@ -10,7 +10,10 @@ import (
 
 // parseEquipmentSpec accepts only the suffix grammar used by pinned job data.
 func parseEquipmentSpec(jobID, raw string) (string, content.StartingGrant, error) {
-	grant := content.StartingGrant{Raw: raw, Quantity: 1}
+	grant := content.StartingGrant{
+		Raw:      raw,
+		Quantity: 1,
+	}
 	fail := func(reason string) (string, content.StartingGrant, error) {
 		return "", content.StartingGrant{}, fmt.Errorf("job %s equipment %q: %s", jobID, raw, reason)
 	}

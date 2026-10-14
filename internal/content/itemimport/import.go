@@ -24,9 +24,17 @@ var sourceNames = []string{
 }
 
 var identitySourceNames = map[string]bool{
-	"object-class-type.h": true, "item-prop-enum.h": true, "potion-type.h": true, "book-type.h": true,
-	"orb-type.h": true, "item-prop.cc": true, "tag-version.h": true, "equipment-type.h": true,
-	"skill-type.h": true, "size-type.h": true, "item-prop.h": true,
+	"object-class-type.h": true,
+	"item-prop-enum.h":    true,
+	"potion-type.h":       true,
+	"book-type.h":         true,
+	"orb-type.h":          true,
+	"item-prop.cc":        true,
+	"tag-version.h":       true,
+	"equipment-type.h":    true,
+	"skill-type.h":        true,
+	"size-type.h":         true,
+	"item-prop.h":         true,
 }
 
 func readSources(sourceDir string) (map[string][]byte, []content.JobSourceFile, error) {
@@ -39,7 +47,10 @@ func readSources(sourceDir string) (map[string][]byte, []content.JobSourceFile, 
 		}
 		data[name] = body
 		hash := sha256.Sum256(body)
-		files = append(files, content.JobSourceFile{Path: "crawl-ref/source/" + name, SHA256: hex.EncodeToString(hash[:])})
+		files = append(files, content.JobSourceFile{
+			Path:   "crawl-ref/source/" + name,
+			SHA256: hex.EncodeToString(hash[:]),
+		})
 	}
 	sort.Slice(files, func(i, j int) bool { return files[i].Path < files[j].Path })
 	return data, files, nil
@@ -48,7 +59,10 @@ func readSources(sourceDir string) (map[string][]byte, []content.JobSourceFile, 
 func joinItemViews(identities []content.ItemIdentity, rows map[itemKey]itemPropertyRow, names map[itemKey]content.ItemName, glyphs map[itemKey]rune) ([]content.ItemDef, error) {
 	known := make(map[itemKey]bool, len(identities))
 	for _, id := range identities {
-		key := itemKey{id.ClassID, id.ID}
+		key := itemKey{
+			id.ClassID,
+			id.ID,
+		}
 		if known[key] {
 			return nil, fmt.Errorf("duplicate identity %s/%s", key.ClassID, key.SubtypeID)
 		}
@@ -71,7 +85,10 @@ func joinItemViews(identities []content.ItemIdentity, rows map[itemKey]itemPrope
 	}
 	items := make([]content.ItemDef, 0, len(identities))
 	for _, identity := range identities {
-		key := itemKey{identity.ClassID, identity.ID}
+		key := itemKey{
+			identity.ClassID,
+			identity.ID,
+		}
 		row, hasRow := rows[key]
 		name, hasName := names[key]
 		glyph, hasGlyph := glyphs[key]
@@ -89,7 +106,12 @@ func joinItemViews(identities []content.ItemIdentity, rows map[itemKey]itemPrope
 			if hasName && name.Text != row.Name {
 				return nil, fmt.Errorf("conflicting names for %s", identity.ID)
 			}
-			name = content.ItemName{Text: row.Name, Kind: "static", SourcePath: "crawl-ref/source/item-prop.cc", SourceLine: row.Line}
+			name = content.ItemName{
+				Text:       row.Name,
+				Kind:       "static",
+				SourcePath: "crawl-ref/source/item-prop.cc",
+				SourceLine: row.Line,
+			}
 			hasName = true
 		}
 		if !hasName {
@@ -99,11 +121,22 @@ func joinItemViews(identities []content.ItemIdentity, rows map[itemKey]itemPrope
 			return nil, fmt.Errorf("missing source name for %s", identity.ID)
 		}
 		item := content.ItemDef{
-			ID: identity.ID, Name: name.Text, Glyph: glyph, Class: identity.ClassID,
-			ClassValue: identity.ClassValue, SubtypeValue: identity.SubtypeValue,
-			Naming: name, ExplicitlyRemoved: identity.ExplicitlyRemoved,
-			Evidence: content.ItemEvidence{NameSource: name.SourcePath, NameLine: name.SourceLine},
-			Armour:   row.Armour, Weapon: row.Weapon, Missile: row.Missile, Food: row.Food,
+			ID:                identity.ID,
+			Name:              name.Text,
+			Glyph:             glyph,
+			Class:             identity.ClassID,
+			ClassValue:        identity.ClassValue,
+			SubtypeValue:      identity.SubtypeValue,
+			Naming:            name,
+			ExplicitlyRemoved: identity.ExplicitlyRemoved,
+			Evidence: content.ItemEvidence{
+				NameSource: name.SourcePath,
+				NameLine:   name.SourceLine,
+			},
+			Armour:  row.Armour,
+			Weapon:  row.Weapon,
+			Missile: row.Missile,
+			Food:    row.Food,
 		}
 		if hasRow {
 			item.Evidence.PropertySource = "crawl-ref/source/item-prop.cc"
@@ -160,7 +193,10 @@ func generateFromSource(sourceDir, revision string) ([]byte, []byte, error) {
 		return nil, nil, err
 	}
 	for i := range identities {
-		key := itemKey{identities[i].ClassID, identities[i].ID}
+		key := itemKey{
+			identities[i].ClassID,
+			identities[i].ID,
+		}
 		if removed[key] {
 			identities[i].ExplicitlyRemoved = true
 			delete(removed, key)
@@ -200,8 +236,23 @@ func generateFromSource(sourceDir, revision string) ([]byte, []byte, error) {
 			manifestFiles = append(manifestFiles, file)
 		}
 	}
-	manifest := content.ItemIdentityManifest{SchemaVersion: 1, SourceRevision: revision, TagMajorVersion: 34, SourceFiles: manifestFiles, Identities: identities, Aliases: aliases, Vocabulary: vocabulary, DefinitionsSHA256: hex.EncodeToString(digest[:])}
-	artifact := content.ItemArtifact{SchemaVersion: 1, SourceRevision: revision, TagMajorVersion: 34, SourceFiles: files, Items: items}
+	manifest := content.ItemIdentityManifest{
+		SchemaVersion:     1,
+		SourceRevision:    revision,
+		TagMajorVersion:   34,
+		SourceFiles:       manifestFiles,
+		Identities:        identities,
+		Aliases:           aliases,
+		Vocabulary:        vocabulary,
+		DefinitionsSHA256: hex.EncodeToString(digest[:]),
+	}
+	artifact := content.ItemArtifact{
+		SchemaVersion:   1,
+		SourceRevision:  revision,
+		TagMajorVersion: 34,
+		SourceFiles:     files,
+		Items:           items,
+	}
 	if err := artifact.Validate(manifest); err != nil {
 		return nil, nil, err
 	}

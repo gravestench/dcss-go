@@ -28,7 +28,10 @@ func TestPinnedItemPresentationCoverage(t *testing.T) {
 		t.Fatal(err)
 	}
 	for i := range identities {
-		identities[i].ExplicitlyRemoved = removed[itemKey{identities[i].ClassID, identities[i].ID}]
+		identities[i].ExplicitlyRemoved = removed[itemKey{
+			identities[i].ClassID,
+			identities[i].ID,
+		}]
 	}
 	names, err := parseItemNames("crawl-ref/source/item-name.cc", source["item-name.cc"], identities)
 	if err != nil {
@@ -36,7 +39,10 @@ func TestPinnedItemPresentationCoverage(t *testing.T) {
 	}
 	missing := map[string][]string{}
 	for _, identity := range identities {
-		if _, found := names[itemKey{identity.ClassID, identity.ID}]; !found {
+		if _, found := names[itemKey{
+			identity.ClassID,
+			identity.ID,
+		}]; !found {
 			missing[identity.ClassID] = append(missing[identity.ClassID], identity.ID)
 			if identity.ClassID != "OBJ_ARMOUR" && identity.ClassID != "OBJ_WEAPONS" && identity.ClassID != "OBJ_MISSILES" && !identity.ExplicitlyRemoved {
 				t.Errorf("active item %s has no source name", identity.ID)

@@ -97,14 +97,21 @@ func testSymbols() symbolSets {
 		return m
 	}
 	return symbolSets{
-		monster:    set("MONS_RAT", "MONS_ORC_WIZARD", "MONS_FIRE_DRAGON", "MONS_DEMONSPAWN", "MONS_SPRIGGAN", "MONS_PROGRAM_BUG"),
-		attackType: set("AT_NONE", "AT_BITE", "AT_HIT", "AT_CLAW"), attackFlavour: set("AF_PLAIN", "AF_FIRE"),
-		spellbook:  set("MST_NO_SPELLS", "MST_ORC_WIZARD"),
-		classFlag:  set("M_WARM_BLOOD", "M_NO_EXP_GAIN", "M_NO_THREAT", "M_CANT_SPAWN"),
-		resistance: set("MR_NO_FLAGS", "MR_RES_FIRE", "MR_RES_COLD", "MR_RES_POISON", "MR_VUL_COLD", "MR_VUL_POISON"),
-		holiness:   set("MH_NATURAL", "MH_DEMONIC"), shout: set("S_SILENT"), intelligence: set("I_ANIMAL"),
-		habitat: set("HT_LAND"), itemUse: set("MONUSE_NOTHING"), size: set("SIZE_TINY"),
-		shape: set("MON_SHAPE_QUADRUPED"), colour: set("BROWN"), tileVariation: set("TVARY_NONE", "TVARY_MOD"),
+		monster:       set("MONS_RAT", "MONS_ORC_WIZARD", "MONS_FIRE_DRAGON", "MONS_DEMONSPAWN", "MONS_SPRIGGAN", "MONS_PROGRAM_BUG"),
+		attackType:    set("AT_NONE", "AT_BITE", "AT_HIT", "AT_CLAW"),
+		attackFlavour: set("AF_PLAIN", "AF_FIRE"),
+		spellbook:     set("MST_NO_SPELLS", "MST_ORC_WIZARD"),
+		classFlag:     set("M_WARM_BLOOD", "M_NO_EXP_GAIN", "M_NO_THREAT", "M_CANT_SPAWN"),
+		resistance:    set("MR_NO_FLAGS", "MR_RES_FIRE", "MR_RES_COLD", "MR_RES_POISON", "MR_VUL_COLD", "MR_VUL_POISON"),
+		holiness:      set("MH_NATURAL", "MH_DEMONIC"),
+		shout:         set("S_SILENT"),
+		intelligence:  set("I_ANIMAL"),
+		habitat:       set("HT_LAND"),
+		itemUse:       set("MONUSE_NOTHING"),
+		size:          set("SIZE_TINY"),
+		shape:         set("MON_SHAPE_QUADRUPED"),
+		colour:        set("BROWN"),
+		tileVariation: set("TVARY_NONE", "TVARY_MOD"),
 	}
 }
 
@@ -158,7 +165,13 @@ func TestDecodeGoldenRows(t *testing.T) {
 	if defs[1].SpellbookID != "MST_ORC_WIZARD" {
 		t.Fatalf("wizard spellbook: %+v", defs[1])
 	}
-	if len(defs[2].Resistances) != 2 || defs[2].Resistances[0] != (content.MonsterResistance{ID: "MR_RES_FIRE", Level: 2}) || defs[2].Resistances[1] != (content.MonsterResistance{ID: "MR_RES_COLD", Level: -1}) || defs[2].Attacks[2].Damage != 10 {
+	if len(defs[2].Resistances) != 2 || defs[2].Resistances[0] != (content.MonsterResistance{
+		ID:    "MR_RES_FIRE",
+		Level: 2,
+	}) || defs[2].Resistances[1] != (content.MonsterResistance{
+		ID:    "MR_RES_COLD",
+		Level: -1,
+	}) || defs[2].Attacks[2].Damage != 10 {
 		t.Fatalf("dragon: %+v", defs[2])
 	}
 	if strings.Join(defs[3].Holiness, ",") != "MH_NATURAL,MH_DEMONIC" {

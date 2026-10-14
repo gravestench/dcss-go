@@ -85,7 +85,15 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer g.Close()
-	for _, extra := range []ecs.Item{{KindID: "WAND_CHARMING", Quantity: 1, Charges: 15}, {KindID: "MI_DART", Quantity: 3, Ego: "curare"}} {
+	for _, extra := range []ecs.Item{{
+		KindID:   "WAND_CHARMING",
+		Quantity: 1,
+		Charges:  15,
+	}, {
+		KindID:   "MI_DART",
+		Quantity: 3,
+		Ego:      "curare",
+	}} {
 		entity, err := g.world.CreateEntity()
 		if err != nil {
 			t.Fatal(err)
@@ -115,7 +123,10 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 	if !reflect.DeepEqual(before, restored.Snapshot()) {
 		t.Fatal("loadout properties or slots lost on restore")
 	}
-	for _, command := range []Command{{Kind: CommandWait}, {Kind: CommandMove, DX: 1}} {
+	for _, command := range []Command{{Kind: CommandWait}, {
+		Kind: CommandMove,
+		DX:   1,
+	}} {
 		left, leftErr := g.Step(command)
 		right, rightErr := restored.Step(command)
 		if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) {
@@ -143,7 +154,11 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 			for i := range s.Entities {
 				if s.Entities[i].Equipped != nil {
 					s.Entities[i].CarriedBy = nil
-					s.Entities[i].Position = &ecs.Position{LevelID: 1, X: 2, Y: 2}
+					s.Entities[i].Position = &ecs.Position{
+						LevelID: 1,
+						X:       2,
+						Y:       2,
+					}
 					return
 				}
 			}

@@ -25,7 +25,10 @@ func TestSaveContinuationMatches(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer restored.Close()
-	commands := []Command{{Kind: CommandWait}, {Kind: CommandMove, DX: -1}, {Kind: CommandWait}}
+	commands := []Command{{Kind: CommandWait}, {
+		Kind: CommandMove,
+		DX:   -1,
+	}, {Kind: CommandWait}}
 	for _, command := range commands {
 		left, leftErr := g.Step(command)
 		right, rightErr := restored.Step(command)
@@ -102,7 +105,11 @@ func TestRejectDuplicateOccupancy(t *testing.T) {
 	snapshot := g.Snapshot()
 	for i := range snapshot.Entities {
 		if snapshot.Entities[i].AI != nil {
-			*snapshot.Entities[i].Position = ecs.Position{LevelID: 1, X: 1, Y: 1}
+			*snapshot.Entities[i].Position = ecs.Position{
+				LevelID: 1,
+				X:       1,
+				Y:       1,
+			}
 		}
 	}
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "occupied") {
@@ -126,7 +133,11 @@ func TestFailedLoadLeavesLiveGame(t *testing.T) {
 func TestScenarioAttributesAndView(t *testing.T) {
 	g := newStepGame(t)
 	attributes, found := g.stores.Attributes.Get(g.player)
-	if !found || *attributes != (ecs.Attributes{Strength: 16, Intelligence: 8, Dexterity: 12}) {
+	if !found || *attributes != (ecs.Attributes{
+		Strength:     16,
+		Intelligence: 8,
+		Dexterity:    12,
+	}) {
 		t.Fatalf("player attributes = %+v, found %v", attributes, found)
 	}
 	view := g.View()
@@ -167,14 +178,22 @@ func TestRestoreRejectsCorruptAttributesWithoutChangingLiveGame(t *testing.T) {
 		{"monster attributes", func(snapshot *save.Snapshot) {
 			for i := range snapshot.Entities {
 				if snapshot.Entities[i].AI != nil {
-					snapshot.Entities[i].Attributes = &ecs.Attributes{Strength: 8, Intelligence: 8, Dexterity: 8}
+					snapshot.Entities[i].Attributes = &ecs.Attributes{
+						Strength:     8,
+						Intelligence: 8,
+						Dexterity:    8,
+					}
 				}
 			}
 		}},
 		{"item attributes", func(snapshot *save.Snapshot) {
 			for i := range snapshot.Entities {
 				if snapshot.Entities[i].Item != nil {
-					snapshot.Entities[i].Attributes = &ecs.Attributes{Strength: 8, Intelligence: 8, Dexterity: 8}
+					snapshot.Entities[i].Attributes = &ecs.Attributes{
+						Strength:     8,
+						Intelligence: 8,
+						Dexterity:    8,
+					}
 				}
 			}
 		}},
@@ -211,7 +230,10 @@ func TestRestoreRejectsCorruptComponents(t *testing.T) {
 		{"item health", func(snapshot *save.Snapshot) {
 			for i := range snapshot.Entities {
 				if snapshot.Entities[i].Item != nil {
-					snapshot.Entities[i].Health = &ecs.Health{Current: 0, Max: 1}
+					snapshot.Entities[i].Health = &ecs.Health{
+						Current: 0,
+						Max:     1,
+					}
 				}
 			}
 		}},

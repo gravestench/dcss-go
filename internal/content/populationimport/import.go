@@ -40,7 +40,10 @@ func Generate(sourceDir string) ([]byte, error) {
 		if actual != pinnedSourceSHA256[name] {
 			return nil, fmt.Errorf("%s differs from pinned revision %s", name, pinnedRevision)
 		}
-		files = append(files, content.JobSourceFile{Path: "crawl-ref/source/" + name, SHA256: actual})
+		files = append(files, content.JobSourceFile{
+			Path:   "crawl-ref/source/" + name,
+			SHA256: actual,
+		})
 	}
 	if !strings.Contains(string(sources["tag-version.h"]), "#define TAG_MAJOR_VERSION 34") {
 		return nil, fmt.Errorf("source does not define tag major version 34")
@@ -52,7 +55,13 @@ func Generate(sourceDir string) ([]byte, error) {
 	if len(rows) != 125 {
 		return nil, fmt.Errorf("pinned Dungeon population has %d rows, want 125", len(rows))
 	}
-	artifact := content.DungeonPopulationArtifact{SchemaVersion: 1, SourceRevision: pinnedRevision, TagMajorVersion: 34, SourceFiles: files, Rows: rows}
+	artifact := content.DungeonPopulationArtifact{
+		SchemaVersion:   1,
+		SourceRevision:  pinnedRevision,
+		TagMajorVersion: 34,
+		SourceFiles:     files,
+		Rows:            rows,
+	}
 	if err := artifact.Validate(); err != nil {
 		return nil, err
 	}

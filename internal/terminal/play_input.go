@@ -66,7 +66,10 @@ func (m *AppModel) handleQuaffKey(key string) tea.Cmd {
 		if item.Class != "OBJ_POTIONS" || key != string(menuLetter(index)) {
 			continue
 		}
-		result, err := m.game.Step(game.Command{Kind: game.CommandQuaff, ItemID: item.ID})
+		result, err := m.game.Step(game.Command{
+			Kind:   game.CommandQuaff,
+			ItemID: item.ID,
+		})
 		m.screen = ScreenPlay
 		if err != nil {
 			m.notice = fmt.Sprintf("Quaff failed: %v", err)

@@ -57,7 +57,10 @@ func caseNames(view sourceView, body string, offset int) (map[string]sourceName,
 		if _, found := names[id]; found {
 			return nil, fmt.Errorf("%s:%d: ambiguous name for %s", view.path, view.line(offset+match[0]), id)
 		}
-		names[id] = sourceName{text: value, line: view.line(offset + match[0])}
+		names[id] = sourceName{
+			text: value,
+			line: view.line(offset + match[0]),
+		}
 	}
 	return names, nil
 }
@@ -84,10 +87,14 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 		return nil, err
 	}
 	functions := map[string]string{
-		"OBJ_WANDS": "_wand_type_name", "OBJ_POTIONS": "potion_type_name",
-		"OBJ_SCROLLS": "scroll_type_name", "OBJ_JEWELLERY": "jewellery_effect_name",
-		"OBJ_MISCELLANY": "misc_type_name", "OBJ_BOOKS": "_book_type_name",
-		"OBJ_STAVES": "staff_type_name", "OBJ_RUNES": "rune_type_name",
+		"OBJ_WANDS":      "_wand_type_name",
+		"OBJ_POTIONS":    "potion_type_name",
+		"OBJ_SCROLLS":    "scroll_type_name",
+		"OBJ_JEWELLERY":  "jewellery_effect_name",
+		"OBJ_MISCELLANY": "misc_type_name",
+		"OBJ_BOOKS":      "_book_type_name",
+		"OBJ_STAVES":     "staff_type_name",
+		"OBJ_RUNES":      "rune_type_name",
 	}
 	needed := map[string]bool{}
 	for _, identity := range identities {
@@ -132,7 +139,15 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 	}
 	result := map[itemKey]content.ItemName{}
 	add := func(identity content.ItemIdentity, text, kind string, line int) {
-		result[itemKey{identity.ClassID, identity.ID}] = content.ItemName{Text: text, Kind: kind, SourcePath: path, SourceLine: line}
+		result[itemKey{
+			identity.ClassID,
+			identity.ID,
+		}] = content.ItemName{
+			Text:       text,
+			Kind:       kind,
+			SourcePath: path,
+			SourceLine: line,
+		}
 	}
 	for _, identity := range identities {
 		class, id := identity.ClassID, identity.ID
@@ -391,7 +406,10 @@ func parseASCIIItemGlyphs(showPath string, showData []byte, showHeader []byte, d
 		if !found || index >= len(chars) {
 			return nil, fmt.Errorf("%s: unknown show glyph reference %s", showPath, code)
 		}
-		result[itemKey{identity.ClassID, identity.ID}] = chars[index]
+		result[itemKey{
+			identity.ClassID,
+			identity.ID,
+		}] = chars[index]
 	}
 	return result, nil
 }

@@ -3,8 +3,13 @@ package combat
 import "testing"
 
 func starterDelay(speed int, skill string) AttackDelayInput {
-	return AttackDelayInput{WeaponSpeed: speed, WeaponSkillID: skill,
-		WeaponSkill10: 20, ShieldEV: -50, ShieldsSkill10: 30}
+	return AttackDelayInput{
+		WeaponSpeed:    speed,
+		WeaponSkillID:  skill,
+		WeaponSkill10:  20,
+		ShieldEV:       -50,
+		ShieldsSkill10: 30,
+	}
 }
 
 func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
@@ -47,8 +52,13 @@ func TestFractionalWeaponSkillCombinesBeforeOneDraw(t *testing.T) {
 }
 
 func TestUnarmedSamplesOneCombinedSourceDistribution(t *testing.T) {
-	in := AttackDelayInput{Unarmed: true, WeaponSkillID: "SK_UNARMED_COMBAT",
-		WeaponSkill10: 20, ShieldEV: -50, ShieldsSkill10: 30}
+	in := AttackDelayInput{
+		Unarmed:        true,
+		WeaponSkillID:  "SK_UNARMED_COMBAT",
+		WeaponSkill10:  20,
+		ShieldEV:       -50,
+		ShieldsSkill10: 30,
+	}
 	for _, tc := range []struct{ roll, want int }{
 		{0, 9}, {2399, 9}, {2400, 10}, {8079, 10}, {8080, 11}, {10799, 11},
 	} {
@@ -64,8 +74,17 @@ func TestAttackDelayRejectsUnsupportedInput(t *testing.T) {
 	for _, in := range []AttackDelayInput{
 		starterDelay(0, "SK_AXES"),
 		starterDelay(12, "SK_RANGED_WEAPONS"),
-		{Unarmed: true, WeaponSkillID: "SK_UNARMED_COMBAT", WeaponSpeed: 12, ShieldEV: -50},
-		{Unarmed: true, WeaponSkillID: "SK_UNARMED_COMBAT", ShieldEV: 5},
+		{
+			Unarmed:       true,
+			WeaponSkillID: "SK_UNARMED_COMBAT",
+			WeaponSpeed:   12,
+			ShieldEV:      -50,
+		},
+		{
+			Unarmed:       true,
+			WeaponSkillID: "SK_UNARMED_COMBAT",
+			ShieldEV:      5,
+		},
 	} {
 		if _, err := PlayerAttackDelay(&scriptedRoller{}, in); err == nil {
 			t.Fatalf("accepted unsupported delay input %+v", in)

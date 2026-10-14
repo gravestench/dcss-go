@@ -10,14 +10,21 @@ import (
 func TestStartingGearCatalogCopies(t *testing.T) {
 	c := scenarioCatalog()
 	c.startingGear = map[string][]StartingGrant{
-		"JOB_FIGHTER": {{Raw: "scale mail", KindID: "ARM_SCALE_MAIL", Quantity: 1}},
+		"JOB_FIGHTER": {{
+			Raw:      "scale mail",
+			KindID:   "ARM_SCALE_MAIL",
+			Quantity: 1,
+		}},
 	}
 	first, err := c.StartingGrants("JOB_FIGHTER")
 	if err != nil {
 		t.Fatal(err)
 	}
 	first[0].KindID = "POT_CURING"
-	first = append(first, StartingGrant{KindID: "WPN_FLAIL", Quantity: 1})
+	first = append(first, StartingGrant{
+		KindID:   "WPN_FLAIL",
+		Quantity: 1,
+	})
 	again, err := c.StartingGrants("JOB_FIGHTER")
 	if err != nil {
 		t.Fatal(err)
@@ -139,8 +146,17 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 
 func validStartingGearArtifact() StartingGearArtifact {
 	return StartingGearArtifact{
-		SchemaVersion: 2, SourceRevision: sourceRevision, TagMajorVersion: 34,
-		Jobs: []JobStartingGear{{JobID: "JOB_FIGHTER", Grants: []StartingGrant{{Raw: "potion of curing", KindID: "POT_CURING", Quantity: 1}}}},
+		SchemaVersion:   2,
+		SourceRevision:  sourceRevision,
+		TagMajorVersion: 34,
+		Jobs: []JobStartingGear{{
+			JobID: "JOB_FIGHTER",
+			Grants: []StartingGrant{{
+				Raw:      "potion of curing",
+				KindID:   "POT_CURING",
+				Quantity: 1,
+			}},
+		}},
 	}
 }
 

@@ -17,7 +17,11 @@ func TestScenarioHasTwoFloors(t *testing.T) {
 		t.Fatalf("level count = %d, want 2", len(game.levels))
 	}
 	player, ok := game.stores.Positions.Get(game.player)
-	if !ok || *player != (ecs.Position{LevelID: 1, X: 1, Y: 1}) {
+	if !ok || *player != (ecs.Position{
+		LevelID: 1,
+		X:       1,
+		Y:       1,
+	}) {
 		t.Fatalf("player position = %+v", player)
 	}
 	if id, ok := game.levels[1].ActorAt(4, 1); !ok || !game.stores.AI.Has(id) {
@@ -31,7 +35,11 @@ func TestScenarioHasTwoFloors(t *testing.T) {
 		t.Fatalf("item count = %d, want 6", len(items))
 	}
 	itemPosition, ok := game.stores.Positions.Get(potionID(t, game))
-	if !ok || *itemPosition != (ecs.Position{LevelID: 1, X: 4, Y: 2}) {
+	if !ok || *itemPosition != (ecs.Position{
+		LevelID: 1,
+		X:       4,
+		Y:       2,
+	}) {
 		t.Fatalf("potion position = %+v", itemPosition)
 	}
 	healWoundsFound := false
@@ -41,7 +49,11 @@ func TestScenarioHasTwoFloors(t *testing.T) {
 			continue
 		}
 		position, located := game.stores.Positions.Get(itemID)
-		healWoundsFound = located && *position == (ecs.Position{LevelID: 2, X: 2, Y: 1})
+		healWoundsFound = located && *position == (ecs.Position{
+			LevelID: 2,
+			X:       2,
+			Y:       1,
+		})
 	}
 	if !healWoundsFound {
 		t.Fatal("heal wounds potion absent from Dungeon:2")

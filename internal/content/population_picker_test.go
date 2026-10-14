@@ -4,9 +4,27 @@ import "testing"
 
 func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
 	c := Catalog{dungeonPopulation: []DungeonPopEntry{
-		{MinDepth: 1, MaxDepth: 3, Rarity: 2, Curve: "FLAT", MonsterID: "MONS_RAT"},
-		{MinDepth: 2, MaxDepth: 4, Rarity: 3, Curve: "RISE", MonsterID: "MONS_QUOKKA"},
-		{MinDepth: 2, MaxDepth: 4, Rarity: 1, Curve: "FALL", MonsterID: "MONS_RAT"},
+		{
+			MinDepth:  1,
+			MaxDepth:  3,
+			Rarity:    2,
+			Curve:     "FLAT",
+			MonsterID: "MONS_RAT",
+		},
+		{
+			MinDepth:  2,
+			MaxDepth:  4,
+			Rarity:    3,
+			Curve:     "RISE",
+			MonsterID: "MONS_QUOKKA",
+		},
+		{
+			MinDepth:  2,
+			MaxDepth:  4,
+			Rarity:    1,
+			Curve:     "FALL",
+			MonsterID: "MONS_RAT",
+		},
 	}}
 	pool := c.DungeonMonsterPool(2, nil)
 	first, second, third := 2*2520, 3*2520/3, 3*2520/3
@@ -38,9 +56,27 @@ func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
 
 func TestDungeonMonsterPoolVetoAndEmpty(t *testing.T) {
 	c := Catalog{dungeonPopulation: []DungeonPopEntry{
-		{MinDepth: 1, MaxDepth: 2, Rarity: 2, Curve: "FLAT", MonsterID: "MONS_RAT"},
-		{MinDepth: 1, MaxDepth: 2, Rarity: 3, Curve: "FLAT", MonsterID: "MONS_QUOKKA"},
-		{MinDepth: 1, MaxDepth: 2, Rarity: 1, Curve: "FLAT", MonsterID: "MONS_RAT"},
+		{
+			MinDepth:  1,
+			MaxDepth:  2,
+			Rarity:    2,
+			Curve:     "FLAT",
+			MonsterID: "MONS_RAT",
+		},
+		{
+			MinDepth:  1,
+			MaxDepth:  2,
+			Rarity:    3,
+			Curve:     "FLAT",
+			MonsterID: "MONS_QUOKKA",
+		},
+		{
+			MinDepth:  1,
+			MaxDepth:  2,
+			Rarity:    1,
+			Curve:     "FLAT",
+			MonsterID: "MONS_RAT",
+		},
 	}}
 	pool := c.DungeonMonsterPool(1, func(id string) bool { return id == "MONS_RAT" })
 	if pool.TotalWeight() != 3*2520 {

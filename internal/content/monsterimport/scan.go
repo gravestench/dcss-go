@@ -121,7 +121,11 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 			if !strings.HasPrefix(id, "MONS_") {
 				return nil, fmt.Errorf("%s:%d: invalid monster ID %q", path, line, id)
 			}
-			rows = append(rows, sourceRow{ID: id, Line: line, Fields: fields})
+			rows = append(rows, sourceRow{
+				ID:     id,
+				Line:   line,
+				Fields: fields,
+			})
 			pos = end
 		case strings.HasPrefix(src[pos:], "AXED_MON("):
 			inner, end, err := balanced(src, pos+len("AXED_MON"), '(', ')')
@@ -136,7 +140,12 @@ func parseRows(path string, data []byte) ([]sourceRow, error) {
 			if err != nil || !strings.HasPrefix(fields[0], "MONS_") {
 				return nil, fmt.Errorf("%s:%d: malformed AXED_MON identity", path, line)
 			}
-			rows = append(rows, sourceRow{ID: fields[0], Line: line, Removed: true, RemovedName: name})
+			rows = append(rows, sourceRow{
+				ID:          fields[0],
+				Line:        line,
+				Removed:     true,
+				RemovedName: name,
+			})
 			pos = end
 		case strings.HasPrefix(src[pos:], "DUMMY("):
 			inner, end, err := balanced(src, pos+len("DUMMY"), '(', ')')

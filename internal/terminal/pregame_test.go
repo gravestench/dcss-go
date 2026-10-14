@@ -27,12 +27,22 @@ func pregameModel(t *testing.T) *AppModel {
 }
 
 func pressApp(m *AppModel, key string) tea.Cmd {
-	special := map[string]rune{"enter": tea.KeyEnter, "down": tea.KeyDown, "up": tea.KeyUp, "space": tea.KeySpace, "esc": tea.KeyEscape, "backspace": tea.KeyBackspace}
+	special := map[string]rune{
+		"enter":     tea.KeyEnter,
+		"down":      tea.KeyDown,
+		"up":        tea.KeyUp,
+		"space":     tea.KeySpace,
+		"esc":       tea.KeyEscape,
+		"backspace": tea.KeyBackspace,
+	}
 	if code, ok := special[key]; ok {
 		_, cmd := m.Update(tea.KeyPressMsg{Code: code})
 		return cmd
 	}
-	_, cmd := m.Update(tea.KeyPressMsg{Text: key, Code: []rune(key)[0]})
+	_, cmd := m.Update(tea.KeyPressMsg{
+		Text: key,
+		Code: []rune(key)[0],
+	})
 	return cmd
 }
 
@@ -225,14 +235,20 @@ func TestMenuResizePreservesFocusAndGameState(t *testing.T) {
 	pressApp(m, "enter")
 	pressApp(m, "down")
 	focus := m.focus
-	m.Update(tea.WindowSizeMsg{Width: 78, Height: 23})
+	m.Update(tea.WindowSizeMsg{
+		Width:  78,
+		Height: 23,
+	})
 	if !strings.Contains(plainApp(m), "too small") {
 		t.Fatal("small terminal warning missing")
 	}
 	if m.focus != focus || m.screen != ScreenSpecies || m.game != nil {
 		t.Fatal("resize changed menu state")
 	}
-	m.Update(tea.WindowSizeMsg{Width: 79, Height: 24})
+	m.Update(tea.WindowSizeMsg{
+		Width:  79,
+		Height: 24,
+	})
 	if m.focus != focus || !strings.Contains(plainApp(m), "Minotaurs are large") {
 		t.Fatal("resize recovery lost focus")
 	}

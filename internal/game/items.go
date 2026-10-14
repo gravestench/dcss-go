@@ -70,7 +70,10 @@ func (s *pickupSystem) Update(_ *akara.World, _ time.Duration) error {
 		itemPosition, located := s.positions.Get(entity)
 		if located && *itemPosition == *position && !s.carried.Has(entity) && !s.corpses.Has(entity) {
 			s.turn.Pickup = entity
-			s.turn.Events = append(s.turn.Events, Event{Kind: "pickup", Text: "You pick up a potion of curing."})
+			s.turn.Events = append(s.turn.Events, Event{
+				Kind: "pickup",
+				Text: "You pick up a potion of curing.",
+			})
 			return nil
 		}
 	}

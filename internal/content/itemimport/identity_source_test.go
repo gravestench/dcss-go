@@ -35,7 +35,24 @@ func TestPinnedItemSourceCoverage(t *testing.T) {
 	for _, identity := range identities {
 		counts[identity.ClassID]++
 	}
-	want := map[string]int{"OBJ_ARMOUR": 43, "OBJ_BOOKS": 78, "OBJ_CORPSES": 2, "OBJ_FOOD": 23, "OBJ_GOLD": 1, "OBJ_JEWELLERY": 37, "OBJ_MISCELLANY": 29, "OBJ_MISSILES": 10, "OBJ_ORBS": 1, "OBJ_POTIONS": 32, "OBJ_RODS": 10, "OBJ_RUNES": 19, "OBJ_SCROLLS": 28, "OBJ_STAVES": 13, "OBJ_WANDS": 25, "OBJ_WEAPONS": 57}
+	want := map[string]int{
+		"OBJ_ARMOUR":     43,
+		"OBJ_BOOKS":      78,
+		"OBJ_CORPSES":    2,
+		"OBJ_FOOD":       23,
+		"OBJ_GOLD":       1,
+		"OBJ_JEWELLERY":  37,
+		"OBJ_MISCELLANY": 29,
+		"OBJ_MISSILES":   10,
+		"OBJ_ORBS":       1,
+		"OBJ_POTIONS":    32,
+		"OBJ_RODS":       10,
+		"OBJ_RUNES":      19,
+		"OBJ_SCROLLS":    28,
+		"OBJ_STAVES":     13,
+		"OBJ_WANDS":      25,
+		"OBJ_WEAPONS":    57,
+	}
 	if len(identities) != 408 || len(aliases) != 10 || len(removed) != 84 || len(counts) != len(want) {
 		t.Fatalf("pinned identity partition changed: identities=%d aliases=%d removed=%d classes=%v", len(identities), len(aliases), len(removed), counts)
 	}

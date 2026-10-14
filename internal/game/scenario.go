@@ -33,20 +33,40 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if err != nil {
 		return nil, err
 	}
-	g := &Game{world: world, stores: stores, levels: map[int]*Level{1: first, 2: second}, catalog: catalog, seed: seed,
-		rng: NewRNGStreams(seed), scheduler: TurnScheduler{actors: stores.Actors}, levelAwaySince: make(map[int]Aut), scenarioID: ordinaryAnimalScenarioID}
+	g := &Game{
+		world:  world,
+		stores: stores,
+		levels: map[int]*Level{
+			1: first,
+			2: second,
+		},
+		catalog:        catalog,
+		seed:           seed,
+		rng:            NewRNGStreams(seed),
+		scheduler:      TurnScheduler{actors: stores.Actors},
+		levelAwaySince: make(map[int]Aut),
+		scenarioID:     ordinaryAnimalScenarioID,
+	}
 
 	g.player, err = world.CreateEntity()
 	if err != nil {
 		return nil, err
 	}
-	if _, err = stores.Actors.Set(g.player, ecs.Actor{KindID: "player", Speed: playerDef.Speed}); err != nil {
+	if _, err = stores.Actors.Set(g.player, ecs.Actor{
+		KindID: "player",
+		Speed:  playerDef.Speed,
+	}); err != nil {
 		return nil, err
 	}
 	if _, err = stores.Combat.Set(g.player, ecs.Combatant{}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Players.Set(g.player, ecs.PlayerControlled{Name: name, SpeciesID: playerDef.SpeciesID, JobID: playerDef.JobID, StartingWeaponID: weaponID}); err != nil {
+	if _, err = stores.Players.Set(g.player, ecs.PlayerControlled{
+		Name:             name,
+		SpeciesID:        playerDef.SpeciesID,
+		JobID:            playerDef.JobID,
+		StartingWeaponID: weaponID,
+	}); err != nil {
 		return nil, err
 	}
 	if err = first.PlaceActor(g.player, 1, 1); err != nil {
@@ -59,7 +79,11 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if err != nil {
 		return nil, err
 	}
-	if _, err = stores.Attributes.Set(g.player, ecs.Attributes{Strength: profile.Attributes.Strength, Intelligence: profile.Attributes.Intelligence, Dexterity: profile.Attributes.Dexterity}); err != nil {
+	if _, err = stores.Attributes.Set(g.player, ecs.Attributes{
+		Strength:     profile.Attributes.Strength,
+		Intelligence: profile.Attributes.Intelligence,
+		Dexterity:    profile.Attributes.Dexterity,
+	}); err != nil {
 		return nil, err
 	}
 	if _, err = stores.Skills.Set(g.player, ecs.Skills{Entries: append([]character.Skill(nil), profile.Skills...)}); err != nil {
@@ -74,10 +98,16 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if _, err = stores.Regeneration.Set(g.player, ecs.Regeneration{}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Health.Set(g.player, ecs.Health{Current: profile.MaxHP, Max: profile.MaxHP}); err != nil {
+	if _, err = stores.Health.Set(g.player, ecs.Health{
+		Current: profile.MaxHP,
+		Max:     profile.MaxHP,
+	}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Magic.Set(g.player, ecs.Magic{Current: profile.MaxMP, Max: profile.MaxMP}); err != nil {
+	if _, err = stores.Magic.Set(g.player, ecs.Magic{
+		Current: profile.MaxMP,
+		Max:     profile.MaxMP,
+	}); err != nil {
 		return nil, err
 	}
 
@@ -99,10 +129,17 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if err != nil {
 		return nil, err
 	}
-	if _, err = stores.Items.Set(potion, ecs.Item{KindID: "POT_CURING", Quantity: 1}); err != nil {
+	if _, err = stores.Items.Set(potion, ecs.Item{
+		KindID:   "POT_CURING",
+		Quantity: 1,
+	}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Positions.Set(potion, ecs.Position{LevelID: 1, X: 4, Y: 2}); err != nil {
+	if _, err = stores.Positions.Set(potion, ecs.Position{
+		LevelID: 1,
+		X:       4,
+		Y:       2,
+	}); err != nil {
 		return nil, err
 	}
 	if _, err = catalog.Item("POT_HEAL_WOUNDS"); err != nil {
@@ -112,10 +149,17 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if err != nil {
 		return nil, err
 	}
-	if _, err = stores.Items.Set(healPotion, ecs.Item{KindID: "POT_HEAL_WOUNDS", Quantity: 1}); err != nil {
+	if _, err = stores.Items.Set(healPotion, ecs.Item{
+		KindID:   "POT_HEAL_WOUNDS",
+		Quantity: 1,
+	}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Positions.Set(healPotion, ecs.Position{LevelID: 2, X: 2, Y: 1}); err != nil {
+	if _, err = stores.Positions.Set(healPotion, ecs.Position{
+		LevelID: 2,
+		X:       2,
+		Y:       1,
+	}); err != nil {
 		return nil, err
 	}
 	if err = registerSystems(g); err != nil {
@@ -132,17 +176,42 @@ func registerSystems(g *Game) error {
 	if _, err := world.AddSystem(newMonsterDecisionSystem(g)); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&stairSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(&stairSystem{
+		positions: stores.Positions,
+		intents:   stores.Intents,
+		levels:    g.levels,
+		turn:      &g.turn,
+	}); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&pickupSystem{positions: stores.Positions, items: stores.Items, corpses: stores.Corpses, carried: stores.CarriedBy, intents: stores.Intents, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(&pickupSystem{
+		positions: stores.Positions,
+		items:     stores.Items,
+		corpses:   stores.Corpses,
+		carried:   stores.CarriedBy,
+		intents:   stores.Intents,
+		turn:      &g.turn,
+	}); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&quaffSystem{player: g.player, intents: stores.Intents, items: stores.Items, carried: stores.CarriedBy,
-		health: stores.Health, durations: stores.Durations, rng: g.rng, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(&quaffSystem{
+		player:    g.player,
+		intents:   stores.Intents,
+		items:     stores.Items,
+		carried:   stores.CarriedBy,
+		health:    stores.Health,
+		durations: stores.Durations,
+		rng:       g.rng,
+		turn:      &g.turn,
+	}); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&movementSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(&movementSystem{
+		positions: stores.Positions,
+		intents:   stores.Intents,
+		levels:    g.levels,
+		turn:      &g.turn,
+	}); err != nil {
 		return err
 	}
 	if _, err := world.AddSystem(newCombatSystem(g)); err != nil {
@@ -151,11 +220,21 @@ func registerSystems(g *Game) error {
 	if _, err := world.AddSystem(newDeathSystem(g)); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&durationSystem{player: g.player, durations: stores.Durations, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(&durationSystem{
+		player:    g.player,
+		durations: stores.Durations,
+		turn:      &g.turn,
+	}); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&regenerationSystem{player: g.player, health: stores.Health, magic: stores.Magic,
-		regeneration: stores.Regeneration, rng: g.rng, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(&regenerationSystem{
+		player:       g.player,
+		health:       stores.Health,
+		magic:        stores.Magic,
+		regeneration: stores.Regeneration,
+		rng:          g.rng,
+		turn:         &g.turn,
+	}); err != nil {
 		return err
 	}
 	return nil

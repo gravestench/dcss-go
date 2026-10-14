@@ -47,11 +47,41 @@ var ordinarySkills = []string{
 	"poison_magic", "invocations", "evocations",
 }
 
-var allowedFlags = map[string]bool{"SPF_NO_HAIR": true, "SPF_DRACONIAN": true, "SPF_SMALL_TORSO": true, "SPF_NO_BONES": true, "SPF_BARDING": true}
-var allowedSizes = map[string]bool{"tiny": true, "little": true, "small": true, "medium": true, "large": true, "giant": true}
-var allowedUndead = map[string]bool{"US_ALIVE": true, "US_UNDEAD": true, "US_SEMI_UNDEAD": true}
-var allowedStats = map[string]bool{"str": true, "int": true, "dex": true}
-var allowedWeapons = map[string]bool{"SK_SHORT_BLADES": true, "SK_LONG_BLADES": true, "SK_AXES": true, "SK_MACES_FLAILS": true, "SK_POLEARMS": true, "SK_STAVES": true, "SK_RANGED_WEAPONS": true, "SK_UNARMED_COMBAT": true}
+var allowedFlags = map[string]bool{
+	"SPF_NO_HAIR":     true,
+	"SPF_DRACONIAN":   true,
+	"SPF_SMALL_TORSO": true,
+	"SPF_NO_BONES":    true,
+	"SPF_BARDING":     true,
+}
+var allowedSizes = map[string]bool{
+	"tiny":   true,
+	"little": true,
+	"small":  true,
+	"medium": true,
+	"large":  true,
+	"giant":  true,
+}
+var allowedUndead = map[string]bool{
+	"US_ALIVE":       true,
+	"US_UNDEAD":      true,
+	"US_SEMI_UNDEAD": true,
+}
+var allowedStats = map[string]bool{
+	"str": true,
+	"int": true,
+	"dex": true,
+}
+var allowedWeapons = map[string]bool{
+	"SK_SHORT_BLADES":   true,
+	"SK_LONG_BLADES":    true,
+	"SK_AXES":           true,
+	"SK_MACES_FLAILS":   true,
+	"SK_POLEARMS":       true,
+	"SK_STAVES":         true,
+	"SK_RANGED_WEAPONS": true,
+	"SK_UNARMED_COMBAT": true,
+}
 
 func skillID(name string) string {
 	switch name {
@@ -361,7 +391,10 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 			if !ok || n < -10 || n > 10 {
 				return content.SpeciesDef{}, 0, fmt.Errorf("%s: %s aptitude must be False or integer in -10..10", path, name)
 			}
-			aptitudes[id] = content.SpeciesAptitude{Allowed: true, Value: n}
+			aptitudes[id] = content.SpeciesAptitude{
+				Allowed: true,
+				Value:   n,
+			}
 		}
 	}
 	for _, required := range []string{"xp", "hp", "mp_mod", "mr"} {
@@ -385,7 +418,11 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 			if !strings.HasPrefix(id, "MUT_") || amount < -3 || amount > 3 {
 				return content.SpeciesDef{}, 0, fmt.Errorf("%s: mutations.%s has invalid amount %d", path, id, amount)
 			}
-			mutations = append(mutations, content.SpeciesMutation{Level: level, ID: id, Amount: amount})
+			mutations = append(mutations, content.SpeciesMutation{
+				Level:  level,
+				ID:     id,
+				Amount: amount,
+			})
 		}
 	}
 	sort.Slice(mutations, func(i, j int) bool {
@@ -412,15 +449,36 @@ func parseYAML(path string, data []byte) (content.SpeciesDef, int, error) {
 		habitat = "HT_WATER"
 	}
 	result := content.SpeciesDef{
-		ID: source.Enum, MonsterID: source.Monster, SourcePath: path, Name: source.Name, ShortName: source.ShortName,
-		Adjective: source.Adjective, Genus: source.Genus, Selectable: selectable, Difficulty: difficultyName,
-		DifficultyPriority: source.DifficultyPriority, XP: xp, HP: hp, MPMod: mp, MR: mr,
-		Strength: source.Strength, Intelligence: source.Intelligence, Dexterity: source.Dexterity,
-		LevelUpStatFrequency: source.LevelUpFrequency, LevelUpStats: append([]string(nil), (*source.LevelUpStats)...),
-		Aptitudes: aptitudes, Mutations: mutations, FakeMutations: append([]content.SpeciesFakeMutation(nil), source.FakeMutations...),
-		Flags: flags, Habitat: habitat, Size: "SIZE_" + strings.ToUpper(source.Size), UndeadType: source.UndeadType,
-		RecommendedJobs: append([]string(nil), source.RecommendedJobs...), RecommendedWeapons: weapons,
-		WalkingVerb: source.WalkingVerb, AltarAction: source.AltarAction,
+		ID:                   source.Enum,
+		MonsterID:            source.Monster,
+		SourcePath:           path,
+		Name:                 source.Name,
+		ShortName:            source.ShortName,
+		Adjective:            source.Adjective,
+		Genus:                source.Genus,
+		Selectable:           selectable,
+		Difficulty:           difficultyName,
+		DifficultyPriority:   source.DifficultyPriority,
+		XP:                   xp,
+		HP:                   hp,
+		MPMod:                mp,
+		MR:                   mr,
+		Strength:             source.Strength,
+		Intelligence:         source.Intelligence,
+		Dexterity:            source.Dexterity,
+		LevelUpStatFrequency: source.LevelUpFrequency,
+		LevelUpStats:         append([]string(nil), (*source.LevelUpStats)...),
+		Aptitudes:            aptitudes,
+		Mutations:            mutations,
+		FakeMutations:        append([]content.SpeciesFakeMutation(nil), source.FakeMutations...),
+		Flags:                flags,
+		Habitat:              habitat,
+		Size:                 "SIZE_" + strings.ToUpper(source.Size),
+		UndeadType:           source.UndeadType,
+		RecommendedJobs:      append([]string(nil), source.RecommendedJobs...),
+		RecommendedWeapons:   weapons,
+		WalkingVerb:          source.WalkingVerb,
+		AltarAction:          source.AltarAction,
 	}
 	return result, source.TagMajorVersion, nil
 }

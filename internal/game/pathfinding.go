@@ -9,7 +9,13 @@ func (l *Level) RouteStep(x, y, targetX, targetY int, goalActor akara.Entity) (i
 	if !l.Walkable(x, y) || !l.Walkable(targetX, targetY) || x == targetX && y == targetY {
 		return 0, 0, false
 	}
-	start, goal := point{x, y}, point{targetX, targetY}
+	start, goal := point{
+		x,
+		y,
+	}, point{
+		targetX,
+		targetY,
+	}
 	visited := make([]bool, l.width*len(l.terrain))
 	parents := make([]point, len(visited))
 	index := func(p point) int { return p.y*l.width + p.x }
@@ -18,7 +24,10 @@ func (l *Level) RouteStep(x, y, targetX, targetY int, goalActor akara.Entity) (i
 	for head := 0; head < len(queue); head++ {
 		current := queue[head]
 		for _, step := range [][2]int{{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}} {
-			next := point{current.x + step[0], current.y + step[1]}
+			next := point{
+				current.x + step[0],
+				current.y + step[1],
+			}
 			if !l.Walkable(next.x, next.y) || visited[index(next)] {
 				continue
 			}
