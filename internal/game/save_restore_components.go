@@ -90,6 +90,12 @@ func (g *Game) restoreActorComponents(
 			return err
 		}
 
+		if record.Poison != nil {
+			if _, err := g.stores.Poison.Set(entity, *record.Poison); err != nil {
+				return err
+			}
+		}
+
 		regeneration := ecs.Regeneration{}
 
 		if record.Regeneration != nil {

@@ -76,6 +76,13 @@ type Durations struct {
 	MightAut int
 }
 
+// Poison is the remaining damage carried by one affected actor. The source
+// identifies the attacker even after that monster dies or changes floors.
+type Poison struct {
+	AmountScaled    int
+	SourceMonsterID string
+}
+
 // Regeneration owns the player's fractional HP and MP recovery counters.
 type Regeneration struct {
 	HPProgress int

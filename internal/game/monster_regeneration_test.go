@@ -95,6 +95,59 @@ func TestInjuredRatUsesNaturalRegenerationRollOnItsTurn(t *testing.T) {
 	}
 }
 
+func TestInjuredAdderUsesNaturalRegenerationOnItsTurn(t *testing.T) {
+	g := newStepGame(t)
+	cells := g.levels[1].spawnCellsAwayFrom(point{
+		x: 1,
+		y: 1,
+	}, 5)
+
+	if len(cells) == 0 {
+		t.Fatal("fixture has no adder spawn cell")
+	}
+
+	cell := cells[0]
+	adder, err := newOrdinaryMonsterFactory(g).Spawn(
+		"MONS_ADDER", 1, cell.x, cell.y,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	health, found := g.stores.Health.Get(adder)
+
+	if !found {
+		t.Fatal("adder has no health")
+	}
+
+	health.Current = health.Max - 1
+	expectedRNG := RestoreRNGStreams(g.seed, g.rng.States())
+	roll, err := expectedRNG.Intn("monster_regen", 25)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := g.runAction(adder, ecs.Intent{}, 10, "monster"); err != nil {
+		t.Fatal(err)
+	}
+
+	wantHP := health.Max - 1
+
+	if roll == 0 {
+		wantHP++
+	}
+
+	if health.Current != wantHP {
+		t.Fatalf("adder HP after regeneration = %d, want %d", health.Current, wantHP)
+	}
+
+	if g.rng.States()["monster_regen"] != expectedRNG.States()["monster_regen"] {
+		t.Fatal("adder consumed the wrong natural regeneration draw")
+	}
+}
+
 func TestRestoreRejectsZeroHPWorm(t *testing.T) {
 	g, err := NewDungeonGame(1, testCatalog(t), "WPN_RAPIER", "Tester")
 

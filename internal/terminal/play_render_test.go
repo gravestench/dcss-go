@@ -173,6 +173,27 @@ func TestDrawPlayShowsMightLightOnlyWhileActive(t *testing.T) {
 	}
 }
 
+func TestDrawPlayShowsPoisonOnlyWhileActive(t *testing.T) {
+	view := playView(t)
+	canvas := NewCanvas(79, 24)
+	layout, _ := ComputeLayout(79, 24)
+	view.PoisonAmountScaled = 8000
+
+	DrawPlay(canvas, layout, view, "")
+
+	if !strings.Contains(canvas.PlainRows()[11][37:], "Poisoned") {
+		t.Fatal("active poison status is missing from the HUD")
+	}
+
+	view.PoisonAmountScaled = 0
+	canvas = NewCanvas(79, 24)
+	DrawPlay(canvas, layout, view, "")
+
+	if strings.Contains(canvas.PlainRows()[11][37:], "Poisoned") {
+		t.Fatal("cured poison status remains on the HUD")
+	}
+}
+
 func TestDrawPlayExpandedViewportUsesFullTerminal(t *testing.T) {
 	view := playView(t)
 	canvas := NewCanvas(120, 40)

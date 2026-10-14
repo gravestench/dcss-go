@@ -50,6 +50,32 @@ type AnimalBite struct {
 	FlavourID string
 }
 
+// PoisonBiteAmount follows melee-attack.cc's 1-in-3 normal poison flavour.
+// A zero result means the flavour did not trigger after the bite landed.
+func PoisonBiteAmount(r Roller, hitDice int) (int, error) {
+	if r == nil || hitDice <= 0 || hitDice > 1000 {
+		return 0, fmt.Errorf("invalid poison bite hit dice %d", hitDice)
+	}
+
+	trigger, err := random2(r, 3)
+
+	if err != nil {
+		return 0, err
+	}
+
+	if trigger != 0 {
+		return 0, nil
+	}
+
+	roll, err := random2(r, 2*hitDice+1)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return 2*hitDice + roll, nil
+}
+
 type OutcomeKind uint8
 
 const (
@@ -211,7 +237,7 @@ func random2avg2(r Roller, bound int) (int, error) {
 func ResolveAnimalBite(r Roller, attack AnimalBite, defense Defense) (Outcome, error) {
 	if r == nil ||
 		attack.TypeID != "AT_BITE" ||
-		attack.FlavourID != "AF_PLAIN" ||
+		(attack.FlavourID != "AF_PLAIN" && attack.FlavourID != "AF_POISON") ||
 		attack.HD <= 0 ||
 		attack.Damage <= 0 ||
 		defense.EV < 0 ||

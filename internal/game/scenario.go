@@ -398,6 +398,7 @@ func registerTravelAndItemSystems(g *Game) error {
 		carried:   stores.CarriedBy,
 		health:    stores.Health,
 		durations: stores.Durations,
+		poison:    stores.Poison,
 		rng:       g.rng,
 		turn:      &g.turn,
 	}); err != nil {
@@ -472,6 +473,15 @@ func registerEndTurnSystems(g *Game) error {
 		regeneration: stores.Regeneration,
 		rng:          g.rng,
 		turn:         &g.turn,
+	}); err != nil {
+		return err
+	}
+
+	if _, err := world.AddSystem(&poisonSystem{
+		player: g.player,
+		health: stores.Health,
+		poison: stores.Poison,
+		turn:   &g.turn,
 	}); err != nil {
 		return err
 	}

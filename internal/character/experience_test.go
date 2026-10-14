@@ -28,6 +28,39 @@ func TestFixedRatGrantsOneSourceExperience(t *testing.T) {
 	}
 }
 
+func TestAdderPoisonBiteUsesActualMaximumHPForExperience(t *testing.T) {
+	catalog, err := content.LoadDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	adder, err := catalog.Monster("MONS_ADDER")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile, found := OrdinaryAnimalProfile(adder.ID)
+
+	if !found || !profile.Poison ||
+		profile.MinHP != 7 || profile.MaxHP != 15 {
+		t.Fatalf("adder combat profile %+v, present %v", profile, found)
+	}
+
+	for hp := profile.MinHP; hp <= profile.MaxHP; hp++ {
+		if _, err := OrdinaryAnimalExperience(adder, hp); err != nil {
+			t.Fatalf("adder with %d maximum HP: %v", hp, err)
+		}
+	}
+
+	adder.Attacks[0].FlavourID = "AF_PLAIN"
+
+	if _, err := OrdinaryAnimalExperience(adder, 11); err == nil {
+		t.Fatal("accepted an adder without its source poison bite")
+	}
+}
+
 func TestQuokkaOrdinaryExperienceUsesActualMaximumHP(t *testing.T) {
 	catalog, err := content.LoadDefault()
 

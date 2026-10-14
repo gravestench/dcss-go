@@ -64,6 +64,15 @@ func (g *Game) validateSavedPlayer(
 		)
 	}
 
+	if record.Poison != nil &&
+		(record.Poison.AmountScaled < 1000 ||
+			record.Poison.AmountScaled > 2147483647 ||
+			record.Poison.SourceMonsterID != "MONS_ADDER") {
+		return savedPlayerValidation{}, fmt.Errorf(
+			"invalid player poison for entity %d", record.ID,
+		)
+	}
+
 	if record.Regeneration != nil &&
 		(record.Regeneration.HPProgress < 0 ||
 			record.Regeneration.HPProgress >= 100 ||

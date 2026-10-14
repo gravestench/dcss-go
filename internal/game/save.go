@@ -149,6 +149,7 @@ func savedItemHasActorComponents(record save.EntityRecord) bool {
 		record.SkillTraining != nil ||
 		record.Progression != nil ||
 		record.Durations != nil ||
+		record.Poison != nil ||
 		record.Regeneration != nil ||
 		record.Combatant != nil ||
 		record.Player != nil ||
@@ -215,6 +216,7 @@ func (g *Game) Snapshot() save.Snapshot {
 			SkillTraining: copySkillTrainingComponent(g.stores.SkillTraining, entity),
 			Progression:   copyComponent(g.stores.Progression, entity),
 			Durations:     copyComponent(g.stores.Durations, entity),
+			Poison:        copyComponent(g.stores.Poison, entity),
 			Regeneration:  copyComponent(g.stores.Regeneration, entity),
 			Combatant:     copyComponent(g.stores.Combat, entity),
 

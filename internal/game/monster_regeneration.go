@@ -12,7 +12,7 @@ import (
 )
 
 // monsterRegenerationSystem runs before a monster chooses its action.
-// The supported HD-1 animals have a one-in-25 natural roll; a worm's
+// The supported HD-1 and HD-2 animals have a one-in-25 natural roll; a worm's
 // M_FAST_REGEN heals one point without a draw. Source: mon-act.cc:125-160,1724.
 type monsterRegenerationSystem struct {
 	actors  *akara.Store[ecs.Actor]
@@ -65,8 +65,8 @@ func (s *monsterRegenerationSystem) Update(_ *akara.World, _ time.Duration) erro
 		return nil
 	}
 
-	// natural_regen_rate() resolves to one at HD 1 for this supported set.
-	if profile.HitDice != 1 {
+	// monster.cc:2934-2942 resolves to one at HD 1 and 2.
+	if profile.HitDice < 1 || profile.HitDice > 2 {
 		return fmt.Errorf("unsupported natural regeneration for %s", actor.KindID)
 	}
 

@@ -8,7 +8,7 @@ import (
 )
 
 // OrdinaryBiteProfile is the supported source-backed subset of monsters with
-// one plain bite and no special combat or experience behavior.
+// one ordinary bite and no spell or equipment behavior.
 type OrdinaryBiteProfile struct {
 	HitDice      int
 	AverageHP10x int
@@ -21,6 +21,7 @@ type OrdinaryBiteProfile struct {
 	XPModifier int
 	FastRegen  bool
 	NoSkeleton bool
+	Poison     bool
 }
 
 var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
@@ -81,6 +82,18 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		Speed:        14,
 		XPModifier:   10,
 	},
+	"MONS_ADDER": {
+		HitDice:      2,
+		AverageHP10x: 110,
+		MinHP:        7,
+		MaxHP:        15,
+
+		Damage: 4,
+		Speed:  13,
+
+		XPModifier: 10,
+		Poison:     true,
+	},
 }
 
 func OrdinaryAnimalProfile(id string) (OrdinaryBiteProfile, bool) {
@@ -89,7 +102,7 @@ func OrdinaryAnimalProfile(id string) (OrdinaryBiteProfile, bool) {
 	return profile, found
 }
 
-// OrdinaryAnimalExperience evaluates the source's plain bite path of
+// OrdinaryAnimalExperience evaluates the source's ordinary bite path of
 // mon-util.cc:2345-2535 against live maximum HP. Difficulty adjustment is
 // zero except for the worm's source fast-regeneration adjustment. These
 // supported animals have no spells, equipment, or large fast melee attack.
@@ -100,6 +113,12 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 		return 0, fmt.Errorf("unsupported ordinary animal %s", animal.ID)
 	}
 
+	flavourID := "AF_PLAIN"
+
+	if profile.Poison {
+		flavourID = "AF_POISON"
+	}
+
 	if animal.HD != profile.HitDice ||
 		animal.AverageHP10x != profile.AverageHP10x ||
 		animal.Speed != profile.Speed ||
@@ -107,7 +126,7 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 		animal.SpellbookID != "MST_NO_SPELLS" || animal.ItemUseID != "MONUSE_NOTHING" ||
 		animal.Attacks[0] != (content.MonsterAttack{
 			TypeID:    "AT_BITE",
-			FlavourID: "AF_PLAIN",
+			FlavourID: flavourID,
 			Damage:    profile.Damage,
 		}) ||
 		slices.Contains(animal.Flags, "M_NO_EXP_GAIN") ||

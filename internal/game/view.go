@@ -62,15 +62,16 @@ type View struct {
 	PlayerSH     int
 	DefenseKnown bool
 
-	CharacterName    string
-	Attributes       ecs.Attributes
-	Skills           []character.Skill
-	SkillTraining    ecs.SkillTraining
-	SkillPercent     map[string]int
-	ExperienceLevel  int
-	NextLevelPercent int
-	PendingStatLevel int
-	MightAut         int
+	CharacterName      string
+	Attributes         ecs.Attributes
+	Skills             []character.Skill
+	SkillTraining      ecs.SkillTraining
+	SkillPercent       map[string]int
+	ExperienceLevel    int
+	NextLevelPercent   int
+	PendingStatLevel   int
+	MightAut           int
+	PoisonAmountScaled int
 
 	Inventory      []ItemView
 	EquipmentDelay *ecs.EquipmentDelay
@@ -158,6 +159,10 @@ func (g *Game) fillPlayerView(view *View) {
 
 	if durations, ok := g.stores.Durations.Get(g.player); ok {
 		view.MightAut = durations.MightAut
+	}
+
+	if poison, ok := g.stores.Poison.Get(g.player); ok {
+		view.PoisonAmountScaled = poison.AmountScaled
 	}
 
 	if delay, ok := g.stores.Equipment.Get(g.player); ok {

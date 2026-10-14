@@ -17,6 +17,7 @@ type quaffSystem struct {
 	carried   *akara.Store[ecs.CarriedBy]
 	health    *akara.Store[ecs.Health]
 	durations *akara.Store[ecs.Durations]
+	poison    *akara.Store[ecs.Poison]
 
 	rng  character.Roller
 	turn *TurnContext
@@ -60,6 +61,7 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 		}
 
 		health.Current = newHP
+		s.poison.Remove(s.player)
 		message = "You feel better."
 
 	case "POT_HEAL_WOUNDS":

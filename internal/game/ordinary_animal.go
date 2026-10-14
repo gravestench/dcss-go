@@ -33,6 +33,7 @@ var supportedPopulationAnimals = []string{
 	"MONS_GIANT_COCKROACH",
 	"MONS_WORM",
 	"MONS_JACKAL",
+	"MONS_ADDER",
 }
 
 func scenarioAnimalIDs(scenarioID string) ([]string, error) {

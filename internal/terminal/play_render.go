@@ -239,6 +239,10 @@ func (h hudRenderer) drawStatus(view game.View) {
 	if view.MightAut > 0 {
 		h.write(0, 11, "Might", LightBlue)
 	}
+
+	if view.PoisonAmountScaled > 0 {
+		h.write(10, 11, "Poisoned", LightGreen)
+	}
 }
 
 func equippedWeaponLabel(inventory []game.ItemView) string {

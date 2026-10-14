@@ -34,6 +34,84 @@ func ratAttack() AnimalBite {
 	}
 }
 
+func TestPoisonBiteKeepsOrdinaryDamageRolls(t *testing.T) {
+	roller := &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 22,
+				value: 0,
+			},
+			{
+				bound: 100,
+				value: 50,
+			},
+			{
+				bound: 16,
+				value: 0,
+			},
+			{
+				bound: 4,
+				value: 3,
+			},
+		},
+	}
+
+	attack := AnimalBite{
+		HD:        2,
+		Damage:    4,
+		TypeID:    "AT_BITE",
+		FlavourID: "AF_POISON",
+	}
+
+	outcome, err := ResolveAnimalBite(roller, attack, Defense{})
+
+	if err != nil || outcome.Kind != Hit ||
+		outcome.Damage != 4 ||
+		len(roller.rolls) != 0 {
+		t.Fatalf("poison bite %+v, %v, rolls %+v", outcome, err, roller.rolls)
+	}
+}
+
+func TestPoisonBiteRollsSourceTriggerAndAmount(t *testing.T) {
+	triggered := &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 3,
+				value: 0,
+			},
+			{
+				bound: 5,
+				value: 4,
+			},
+		},
+	}
+
+	amount, err := PoisonBiteAmount(triggered, 2)
+
+	if err != nil || amount != 8 || len(triggered.rolls) != 0 {
+		t.Fatalf("poison amount %d, %v, rolls %+v", amount, err, triggered.rolls)
+	}
+
+	missed := &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 3,
+				value: 1,
+			},
+		},
+	}
+
+	amount, err = PoisonBiteAmount(missed, 2)
+
+	if err != nil || amount != 0 || len(missed.rolls) != 0 {
+		t.Fatalf("missed poison %d, %v, rolls %+v", amount, err, missed.rolls)
+	}
+
+	if _, err := PoisonBiteAmount(missed, 0); err == nil {
+		t.Fatal("accepted poison with zero hit dice")
+	}
+}
+
 func TestHumanFighterDefenseUsesEquippedScaleMailAndBuckler(t *testing.T) {
 	// Source: player.cc armour/evasion/shield formulas; Human is medium size.
 	got, err := ProjectFighter(FighterDefense{

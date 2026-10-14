@@ -18,6 +18,7 @@ type combatSystem struct {
 	actors    *akara.Store[ecs.Actor]
 	health    *akara.Store[ecs.Health]
 	combat    *akara.Store[ecs.Combatant]
+	poison    *akara.Store[ecs.Poison]
 
 	levels  map[int]*Level
 	catalog content.Catalog
@@ -38,6 +39,7 @@ func newCombatSystem(g *Game) *combatSystem {
 		actors:    s.Actors,
 		health:    s.Health,
 		combat:    s.Combat,
+		poison:    s.Poison,
 
 		levels:  g.levels,
 		catalog: g.catalog,
@@ -147,6 +149,37 @@ func (s *combatSystem) resolvePlayerMelee(
 	return nil
 }
 
+func (s *combatSystem) applyPoisonBite(animal content.MonsterDef) error {
+	amount, err := combat.PoisonBiteAmount(s.roller, animal.HD)
+
+	if err != nil || amount == 0 {
+		return err
+	}
+
+	poison, found := s.poison.Get(s.player)
+
+	if !found {
+		_, err = s.poison.Set(s.player, ecs.Poison{
+			AmountScaled:    amount * 1000,
+			SourceMonsterID: animal.ID,
+		})
+
+		if err != nil {
+			return err
+		}
+	} else {
+		poison.AmountScaled = min(2147483647, poison.AmountScaled+amount*1000)
+		poison.SourceMonsterID = animal.ID
+	}
+
+	s.turn.Events = append(s.turn.Events, Event{
+		Kind: "poison",
+		Text: "You are poisoned.",
+	})
+
+	return nil
+}
+
 func (s *combatSystem) resolveAnimalMelee(victim *ecs.Health) error {
 	actor, found := s.actors.Get(s.turn.Actor)
 
@@ -217,6 +250,10 @@ func (s *combatSystem) resolveAnimalMelee(victim *ecs.Health) error {
 		Kind: "combat",
 		Text: message,
 	})
+
+	if outcome.Kind == combat.Hit && animal.Attacks[0].FlavourID == "AF_POISON" {
+		return s.applyPoisonBite(animal)
+	}
 
 	return nil
 }

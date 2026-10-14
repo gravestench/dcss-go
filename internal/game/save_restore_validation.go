@@ -177,6 +177,7 @@ func (v *savedEntityValidator) validateCharacterRole(record save.EntityRecord) e
 		record.SkillTraining != nil ||
 		record.Magic != nil || record.Progression != nil ||
 		record.Durations != nil || record.Regeneration != nil ||
+		record.Poison != nil ||
 		record.Equipment != nil {
 		return fmt.Errorf("non-player entity %d has character components", record.ID)
 	}
