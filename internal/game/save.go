@@ -97,13 +97,19 @@ func validateSavedItem(
 	if record.CarriedBy == nil ||
 		record.CarriedBy.Holder == 0 ||
 		record.Position != nil ||
-		kind.Slot == "" ||
-		record.Equipped.Slot != kind.Slot {
+		record.Equipped.Slot == "" {
 		return fmt.Errorf("item %d has invalid equipped slot or carrier", record.ID)
 	}
 
 	if record.CarriedBy.Holder != player {
+		// Monster inventory uses source slots that differ from player
+		// equipment slots. Validate each kind and slot after resolving the
+		// holder's saved actor record.
 		return nil
+	}
+
+	if kind.Slot == "" || record.Equipped.Slot != kind.Slot {
+		return fmt.Errorf("item %d has invalid equipped slot", record.ID)
 	}
 
 	// The supported Fighter species cannot wear barding.

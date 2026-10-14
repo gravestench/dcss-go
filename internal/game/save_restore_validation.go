@@ -112,7 +112,7 @@ func (v *savedEntityValidator) validate() error {
 // Monster inventory links are validated after every actor ID is registered,
 // because a carried item can appear before its holder in a saved snapshot.
 func (v *savedEntityValidator) validateMonsterInventory() error {
-	equipped := make(map[uint64]bool)
+	slotsByMonster := make(map[uint64]map[string]bool)
 
 	for _, record := range v.snapshot.Entities {
 		if record.CarriedBy == nil ||
@@ -130,9 +130,7 @@ func (v *savedEntityValidator) validateMonsterInventory() error {
 			holder.Health.Current <= 0 ||
 			holder.Position == nil ||
 			record.Item == nil ||
-			record.Equipped == nil ||
-			record.Equipped.Slot != "weapon" ||
-			equipped[holderID] {
+			record.Equipped == nil {
 			return fmt.Errorf("item %d has invalid monster carrier %d", record.ID, holderID)
 		}
 
@@ -142,11 +140,32 @@ func (v *savedEntityValidator) validateMonsterInventory() error {
 			return err
 		}
 
-		if kind.Class != "OBJ_WEAPONS" {
-			return fmt.Errorf("item %d is not a monster weapon", record.ID)
+		slot := record.Equipped.Slot
+
+		switch slot {
+		case "weapon", "alternate_weapon":
+			if kind.Class != "OBJ_WEAPONS" || kind.Weapon == nil {
+				return fmt.Errorf("item %d is not a monster weapon", record.ID)
+			}
+
+		case "missile":
+			if kind.Class != "OBJ_MISSILES" || kind.Missile == nil {
+				return fmt.Errorf("item %d is not monster ammunition", record.ID)
+			}
+
+		default:
+			return fmt.Errorf("item %d has unsupported monster slot %q", record.ID, slot)
 		}
 
-		equipped[holderID] = true
+		if slotsByMonster[holderID] == nil {
+			slotsByMonster[holderID] = make(map[string]bool)
+		}
+
+		if slotsByMonster[holderID][slot] {
+			return fmt.Errorf("monster %d has duplicate %s slot", holderID, slot)
+		}
+
+		slotsByMonster[holderID][slot] = true
 	}
 
 	return nil

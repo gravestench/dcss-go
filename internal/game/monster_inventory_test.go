@@ -9,6 +9,17 @@ import (
 )
 
 func giveTestMonsterWeapon(t *testing.T, g *Game, monsterID akara.Entity) akara.Entity {
+	return giveTestMonsterItem(t, g, monsterID, "WPN_DAGGER", "weapon", 1)
+}
+
+func giveTestMonsterItem(
+	t *testing.T,
+	g *Game,
+	monsterID akara.Entity,
+	kindID string,
+	slot string,
+	quantity int,
+) akara.Entity {
 	t.Helper()
 
 	itemID, err := g.world.CreateEntity()
@@ -18,8 +29,8 @@ func giveTestMonsterWeapon(t *testing.T, g *Game, monsterID akara.Entity) akara.
 	}
 
 	if _, err := g.stores.Items.Set(itemID, ecs.Item{
-		KindID:   "WPN_DAGGER",
-		Quantity: 1,
+		KindID:   kindID,
+		Quantity: quantity,
 	}); err != nil {
 		t.Fatal(err)
 	}
@@ -31,12 +42,107 @@ func giveTestMonsterWeapon(t *testing.T, g *Game, monsterID akara.Entity) akara.
 	}
 
 	if _, err := g.stores.Equipped.Set(itemID, ecs.Equipped{
-		Slot: "weapon",
+		Slot: slot,
 	}); err != nil {
 		t.Fatal(err)
 	}
 
 	return itemID
+}
+
+func TestMonsterWeaponAndMissileSlotsSurviveSaveAndDrop(t *testing.T) {
+	g := newStepGame(t)
+	defer g.Close()
+
+	monsterID := ratID(t, g)
+	slingID := giveTestMonsterItem(t, g, monsterID, "WPN_SLING", "weapon", 1)
+	daggerID := giveTestMonsterItem(t, g, monsterID, "WPN_DAGGER", "alternate_weapon", 1)
+	stoneID := giveTestMonsterItem(t, g, monsterID, "MI_STONE", "missile", 4)
+
+	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer loaded.Close()
+
+	if !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
+		t.Fatal("monster inventory slots changed on restore")
+	}
+
+	items := []akara.Entity{
+		slingID,
+		daggerID,
+		stoneID,
+	}
+
+	for _, itemID := range items {
+		carrier, found := loaded.stores.CarriedBy.Get(itemID)
+
+		if !found || carrier.Holder != monsterID {
+			t.Fatalf("item %d lost monster carrier", itemID)
+		}
+	}
+
+	position, found := loaded.stores.Positions.Get(monsterID)
+
+	if !found {
+		t.Fatal("monster has no position")
+	}
+
+	if err := loaded.dropMonsterInventory(monsterID, *position); err != nil {
+		t.Fatal(err)
+	}
+
+	for _, itemID := range items {
+		dropped, found := loaded.stores.Positions.Get(itemID)
+
+		if !found ||
+			*dropped != *position ||
+			loaded.stores.CarriedBy.Has(itemID) ||
+			loaded.stores.Equipped.Has(itemID) {
+			t.Fatalf("item %d was not released at the death cell", itemID)
+		}
+	}
+}
+
+func TestMonsterMeleeUsesAlternateWhenPrimaryIsRanged(t *testing.T) {
+	g := newStepGame(t)
+	defer g.Close()
+
+	monsterID := ratID(t, g)
+	giveTestMonsterItem(t, g, monsterID, "WPN_SLING", "weapon", 1)
+	giveTestMonsterItem(t, g, monsterID, "WPN_DAGGER", "alternate_weapon", 1)
+
+	weapon, err := newCombatSystem(g).monsterMeleeWeapon(monsterID)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dagger, err := g.catalog.Item("WPN_DAGGER")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if weapon == nil || weapon.Damage != dagger.Weapon.Damage {
+		t.Fatalf("alternate melee weapon = %+v", weapon)
+	}
+}
+
+func TestRestoreRejectsMonsterItemInWrongSlot(t *testing.T) {
+	g := newStepGame(t)
+	defer g.Close()
+
+	monsterID := ratID(t, g)
+	giveTestMonsterItem(t, g, monsterID, "MI_STONE", "weapon", 4)
+
+	if loaded, err := Restore(g.Snapshot(), testCatalog(t)); err == nil {
+		loaded.Close()
+		t.Fatal("accepted a missile in a weapon slot")
+	}
 }
 
 func TestMonsterWeaponOwnershipSurvivesSaveRestore(t *testing.T) {

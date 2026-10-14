@@ -157,7 +157,8 @@ type CarriedBy struct {
 	Holder akara.Entity
 }
 
-// Equipped records an inventory item's active slot; CarriedBy owns it.
+// Equipped records a player equipment slot or a monster inventory slot.
+// CarriedBy owns the item in either case.
 type Equipped struct {
 	Slot string
 }

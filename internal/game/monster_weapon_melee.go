@@ -8,12 +8,15 @@ import (
 	"github.com/gravestench/akara"
 )
 
-// monsterMeleeWeapon projects one live Akara item into the source attack
-// calculation. Ranged weapons cannot contribute to a melee AT_HIT.
+// monsterMeleeWeapon projects a live Akara item into the source attack
+// calculation. A ranged primary leaves the alternate melee weapon available.
 func (s *combatSystem) monsterMeleeWeapon(
 	monsterID akara.Entity,
 ) (*combat.MeleeWeapon, error) {
-	var selected *combat.MeleeWeapon
+	var primary *combat.MeleeWeapon
+	var alternate *combat.MeleeWeapon
+
+	seen := make(map[string]bool)
 
 	for _, entity := range s.equipped.Entities() {
 		carrier, carried := s.carried.Get(entity)
@@ -24,13 +27,19 @@ func (s *combatSystem) monsterMeleeWeapon(
 
 		slot, _ := s.equipped.Get(entity)
 
-		if slot.Slot != "weapon" {
+		if slot.Slot != "weapon" && slot.Slot != "alternate_weapon" {
+			if slot.Slot == "missile" {
+				continue
+			}
+
 			return nil, fmt.Errorf("monster %d has unsupported equipment slot %q", monsterID, slot.Slot)
 		}
 
-		if selected != nil {
-			return nil, fmt.Errorf("monster %d has multiple melee weapons", monsterID)
+		if seen[slot.Slot] {
+			return nil, fmt.Errorf("monster %d has duplicate %s slot", monsterID, slot.Slot)
 		}
+
+		seen[slot.Slot] = true
 
 		item, found := s.items.Get(entity)
 
@@ -56,12 +65,22 @@ func (s *combatSystem) monsterMeleeWeapon(
 			continue
 		}
 
-		selected = &combat.MeleeWeapon{
+		weapon := &combat.MeleeWeapon{
 			Damage: kind.Weapon.Damage,
 			Hit:    kind.Weapon.Hit,
 			Plus:   item.Plus,
 		}
+
+		if slot.Slot == "weapon" {
+			primary = weapon
+		} else {
+			alternate = weapon
+		}
 	}
 
-	return selected, nil
+	if primary != nil {
+		return primary, nil
+	}
+
+	return alternate, nil
 }
