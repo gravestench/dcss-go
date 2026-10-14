@@ -3,7 +3,52 @@ package game
 import (
 	"reflect"
 	"testing"
+
+	"github.com/gravestench/akara"
 )
+
+func TestReturnedWormHealsAtFastRate(t *testing.T) {
+	g, err := NewDungeonGame(1, testCatalog(t), "WPN_RAPIER", "Tester")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer g.Close()
+	var worm akara.Entity
+
+	for _, entity := range g.stores.AI.Entities() {
+		actor, _ := g.stores.Actors.Get(entity)
+
+		if actor.KindID == "MONS_WORM" {
+			worm = entity
+			break
+		}
+	}
+
+	if worm == 0 {
+		t.Fatal("seed 1 has no worm")
+	}
+
+	position, _ := g.stores.Positions.Get(worm)
+
+	if position.LevelID != 2 {
+		t.Fatalf("worm started on D:%d, want D:2", position.LevelID)
+	}
+
+	health, _ := g.stores.Health.Get(worm)
+	health.Current = health.Max - 3
+	away := Aut(0)
+	g.levels[2].awaySinceAut = &away
+
+	if err := g.activateLevel(g.levels[2], 20); err != nil {
+		t.Fatal(err)
+	}
+
+	if health.Current != health.Max-1 {
+		t.Fatalf("returned worm HP = %d, want %d", health.Current, health.Max-1)
+	}
+}
 
 func TestReturnedMonsterHealsAndWalksTowardLastTarget(t *testing.T) {
 	g := newStepGame(t)

@@ -74,6 +74,35 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 	}
 }
 
+func TestEarlyDungeonPopulationPoolIncludesPlainBiteKinds(t *testing.T) {
+	catalog := testCatalog(t)
+
+	for _, depth := range []int{1, 2} {
+		pool := catalog.DungeonMonsterPool(depth, func(id string) bool {
+			return !isOrdinaryAnimal(id)
+		})
+		seen := make(map[string]bool)
+
+		for roll := range pool.TotalWeight() {
+			id, err := pool.Pick(roll)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			seen[id] = true
+		}
+
+		if !seen["MONS_GIANT_COCKROACH"] {
+			t.Fatalf("D:%d excludes giant cockroach", depth)
+		}
+
+		if seen["MONS_WORM"] != (depth == 2) {
+			t.Fatalf("D:%d worm eligibility = %v", depth, seen["MONS_WORM"])
+		}
+	}
+}
+
 func TestPopulationSaveAndTurnContinuation(t *testing.T) {
 	g := newPopulatedTestGame(t, 41)
 	sameSeed := newPopulatedTestGame(t, 41)

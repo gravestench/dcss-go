@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 
 	"dcrawl-go/internal/content"
@@ -66,7 +67,13 @@ func (s monsterCatchupSystem) TickLevel(level *Level, turns int) error {
 			return fmt.Errorf("monster %d has incorrect catch-up speed", entity)
 		}
 
-		recovery, err := monster.OffLevelRecovery(s.rng, turns)
+		rate := 10
+
+		if slices.Contains(definition.Flags, "M_FAST_REGEN") {
+			rate = 100
+		}
+
+		recovery, err := monster.OffLevelRecovery(s.rng, turns, rate)
 
 		if err != nil {
 			return err

@@ -87,6 +87,65 @@ func TestFrilledLizardExperienceUsesSourceOrdinaryBite(t *testing.T) {
 	}
 }
 
+func TestCockroachAndWormPlainBiteExperience(t *testing.T) {
+	catalog, err := content.LoadDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, tc := range []struct {
+		id     string
+		minHP  int
+		maxHP  int
+		atHP   int
+		wantXP int
+	}{
+		{
+			id:     "MONS_GIANT_COCKROACH",
+			minHP:  3,
+			maxHP:  7,
+			atHP:   5,
+			wantXP: 2,
+		},
+		{
+			id:     "MONS_WORM",
+			minHP:  12,
+			maxHP:  24,
+			atHP:   18,
+			wantXP: 5,
+		},
+	} {
+		definition, err := catalog.Monster(tc.id)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for _, hp := range []int{
+			tc.minHP,
+			tc.atHP,
+			tc.maxHP,
+		} {
+			got, err := OrdinaryAnimalExperience(definition, hp)
+
+			if err != nil {
+				t.Fatalf("%s at %d HP: %v", tc.id, hp, err)
+			}
+
+			if hp == tc.atHP && got != tc.wantXP {
+				t.Fatalf("%s at %d HP awards %d XP, want %d", tc.id, hp, got, tc.wantXP)
+			}
+		}
+
+		for _, hp := range []int{tc.minHP - 1, tc.maxHP + 1} {
+			if _, err := OrdinaryAnimalExperience(definition, hp); err == nil {
+				t.Fatalf("accepted impossible %s maximum HP %d", tc.id, hp)
+			}
+		}
+	}
+}
+
 func TestHumanFirstLevelProgressUsesNineXPThreshold(t *testing.T) {
 	for _, tc := range []struct {
 		xp      int

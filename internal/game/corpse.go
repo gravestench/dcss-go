@@ -2,7 +2,9 @@ package game
 
 import (
 	"fmt"
+	"slices"
 
+	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/monster"
 	"github.com/gravestench/akara"
@@ -73,6 +75,7 @@ type corpseAgingSystem struct {
 	items     *akara.Store[ecs.Item]
 	corpses   *akara.Store[ecs.Corpse]
 	positions *akara.Store[ecs.Position]
+	catalog   content.Catalog
 	rng       monster.Roller
 }
 
@@ -90,8 +93,19 @@ func (s corpseAgingSystem) TickLevel(levelID, elapsed int) error {
 			continue
 		}
 
+		definition, err := ordinaryAnimal(s.catalog, corpse.MonsterID)
+
+		if err != nil {
+			return fmt.Errorf("corpse %d: %w", entity, err)
+		}
+
+		canSkeleton := !slices.Contains(definition.Flags, "M_NO_SKELETON")
 		kind, freshness, appearance, alive, err := monster.AgeCorpse(
-			s.rng, item.KindID, corpse.Freshness, elapsed,
+			s.rng,
+			item.KindID,
+			canSkeleton,
+			corpse.Freshness,
+			elapsed,
 		)
 
 		if err != nil {

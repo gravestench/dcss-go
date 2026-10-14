@@ -29,6 +29,7 @@ func RollCorpse(roller Roller) (appearance int, dropped bool, err error) {
 func AgeCorpse(
 	roller Roller,
 	kindID string,
+	canSkeleton bool,
 	freshness, elapsedAut int,
 ) (nextKind string, nextFreshness, appearance int, alive bool, err error) {
 	validKind := kindID == "CORPSE_BODY" || kindID == "CORPSE_SKELETON"
@@ -44,7 +45,7 @@ func AgeCorpse(
 		return kindID, nextFreshness, 0, true, nil
 	}
 
-	if kindID == "CORPSE_SKELETON" {
+	if kindID == "CORPSE_SKELETON" || !canSkeleton {
 		return "", 0, 0, false, nil
 	}
 

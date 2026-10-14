@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 
 	"dcrawl-go/internal/character"
@@ -61,7 +62,7 @@ func validateSavedItem(
 	}
 
 	if corpseKind {
-		if err := validateSavedCorpse(record); err != nil {
+		if err := validateSavedCorpse(record, catalog); err != nil {
 			return err
 		}
 	}
@@ -89,7 +90,7 @@ func validateSavedItem(
 	return nil
 }
 
-func validateSavedCorpse(record save.EntityRecord) error {
+func validateSavedCorpse(record save.EntityRecord, catalog content.Catalog) error {
 	item := record.Item
 	corpse := record.Corpse
 
@@ -102,6 +103,17 @@ func validateSavedCorpse(record save.EntityRecord) error {
 		corpse.Freshness < 1 || corpse.Freshness > 110 ||
 		corpse.Appearance < 1 || corpse.Appearance > 255 {
 		return fmt.Errorf("item %d has invalid ordinary animal corpse state", record.ID)
+	}
+
+	definition, err := ordinaryAnimal(catalog, corpse.MonsterID)
+
+	if err != nil {
+		return fmt.Errorf("item %d corpse: %w", record.ID, err)
+	}
+
+	if item.KindID == "CORPSE_SKELETON" &&
+		slices.Contains(definition.Flags, "M_NO_SKELETON") {
+		return fmt.Errorf("item %d has impossible %s skeleton", record.ID, corpse.MonsterID)
 	}
 
 	return nil

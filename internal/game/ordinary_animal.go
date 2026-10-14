@@ -23,6 +23,14 @@ var supportedOrdinaryAnimals = []string{
 	"MONS_FRILLED_LIZARD",
 }
 
+var supportedPopulationAnimals = []string{
+	"MONS_RAT",
+	"MONS_QUOKKA",
+	"MONS_FRILLED_LIZARD",
+	"MONS_GIANT_COCKROACH",
+	"MONS_WORM",
+}
+
 func scenarioAnimalIDs(scenarioID string) ([]string, error) {
 	switch scenarioID {
 	case "":
@@ -35,10 +43,10 @@ func scenarioAnimalIDs(scenarioID string) ([]string, error) {
 		return append([]string(nil), supportedOrdinaryAnimals...), nil
 
 	case populationScenarioID:
-		return append([]string(nil), supportedOrdinaryAnimals...), nil
+		return append([]string(nil), supportedPopulationAnimals...), nil
 
 	case generatedDungeonScenarioID:
-		return append([]string(nil), supportedOrdinaryAnimals...), nil
+		return append([]string(nil), supportedPopulationAnimals...), nil
 
 	default:
 		return nil, fmt.Errorf("unsupported scenario ID %q", scenarioID)

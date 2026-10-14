@@ -2,16 +2,20 @@ package monster
 
 import "fmt"
 
-// OffLevelRecovery is the HD-1 ordinary animal case of Crawl's off-level
-// regeneration. Its natural rate resolves to 10 hundredths of HP per turn.
+// OffLevelRecovery applies Crawl's source rate in hundredths of HP per away
+// turn. HD-1 ordinary animals use 10; fast-regenerating worms use 100.
 // Source: monster.cc:2928-2955 and timed-effects.cc:749.
-func OffLevelRecovery(roller Roller, turns int) (int, error) {
-	if roller == nil || turns < 0 {
-		return 0, fmt.Errorf("invalid off-level recovery turns %d", turns)
+func OffLevelRecovery(roller Roller, turns, rate int) (int, error) {
+	const maximumInt = int(^uint(0) >> 1)
+
+	if roller == nil || turns < 0 || rate <= 0 || rate > 100 ||
+		turns > maximumInt/rate {
+		return 0, fmt.Errorf("invalid off-level recovery turns %d at rate %d", turns, rate)
 	}
 
-	whole := turns / 10
-	remainder := turns % 10 * 10
+	units := turns * rate
+	whole := units / 100
+	remainder := units % 100
 
 	if remainder == 0 {
 		return whole, nil

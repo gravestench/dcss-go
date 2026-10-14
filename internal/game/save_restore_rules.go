@@ -81,6 +81,10 @@ func (g *Game) validateSavedMonster(
 		return fmt.Errorf("invalid monster entity %d", record.ID)
 	}
 
+	if record.Health.Current <= 0 {
+		return fmt.Errorf("saved monster %d has no remaining HP", record.ID)
+	}
+
 	if err := g.validateSavedMonsterAI(record, currentAut); err != nil {
 		return err
 	}

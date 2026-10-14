@@ -60,6 +60,46 @@ func testCorpseAt(t *testing.T, g *Game, kind string, position ecs.Position) aka
 	return id
 }
 
+func TestCockroachCorpseCannotBecomeSkeleton(t *testing.T) {
+	g := newPopulatedTestGame(t, 41)
+	defer g.Close()
+
+	id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{
+		LevelID: 1,
+		X:       4,
+		Y:       1,
+	})
+	corpse, _ := g.stores.Corpses.Get(id)
+	corpse.MonsterID = "MONS_GIANT_COCKROACH"
+
+	snapshot := g.Snapshot()
+	loaded, err := Restore(snapshot, testCatalog(t))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer loaded.Close()
+
+	if err := loaded.corpseAging.TickLevel(1, 2200); err != nil {
+		t.Fatal(err)
+	}
+
+	if loaded.world.EntityExists(id) {
+		t.Fatal("cockroach corpse survived as a skeleton")
+	}
+
+	for index := range snapshot.Entities {
+		if snapshot.Entities[index].ID == uint64(id) {
+			snapshot.Entities[index].Item.KindID = "CORPSE_SKELETON"
+		}
+	}
+
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil {
+		t.Fatal("accepted impossible cockroach skeleton save")
+	}
+}
+
 func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 	for _, drop := range []bool{false, true} {
 		seed := corpseDropSeed(t, drop)

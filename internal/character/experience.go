@@ -10,16 +10,20 @@ import (
 // OrdinaryBiteProfile is the supported source-backed subset of monsters with
 // one plain bite and no special combat or experience behavior.
 type OrdinaryBiteProfile struct {
+	HitDice      int
 	AverageHP10x int
 	MinHP        int
 	MaxHP        int
 	Damage       int
 	Speed        int
 	XPModifier   int
+	FastRegen    bool
+	NoSkeleton   bool
 }
 
 var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 	"MONS_RAT": {
+		HitDice:      1,
 		AverageHP10x: 25,
 		MinHP:        1,
 		MaxHP:        4,
@@ -28,6 +32,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		XPModifier:   1,
 	},
 	"MONS_QUOKKA": {
+		HitDice:      1,
 		AverageHP10x: 55,
 		MinHP:        3,
 		MaxHP:        8,
@@ -36,12 +41,34 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		XPModifier:   10,
 	},
 	"MONS_FRILLED_LIZARD": {
+		HitDice:      1,
 		AverageHP10x: 20,
 		MinHP:        1,
 		MaxHP:        3,
 		Damage:       3,
 		Speed:        10,
 		XPModifier:   10,
+	},
+	"MONS_GIANT_COCKROACH": {
+		HitDice:      1,
+		AverageHP10x: 50,
+		MinHP:        3,
+		MaxHP:        7,
+		Damage:       2,
+		Speed:        12,
+		XPModifier:   10,
+		NoSkeleton:   true,
+	},
+	"MONS_WORM": {
+		HitDice:      4,
+		AverageHP10x: 180,
+		MinHP:        12,
+		MaxHP:        24,
+		Damage:       12,
+		Speed:        6,
+		XPModifier:   3,
+		FastRegen:    true,
+		NoSkeleton:   true,
 	},
 }
 
@@ -53,7 +80,8 @@ func OrdinaryAnimalProfile(id string) (OrdinaryBiteProfile, bool) {
 
 // OrdinaryAnimalExperience evaluates the source's plain bite path of
 // mon-util.cc:2345-2535 against live maximum HP. Difficulty adjustment is
-// zero because these animals have no spells, items, fast regeneration, or big damage.
+// zero except for the worm's source fast-regeneration adjustment. These
+// supported animals have no spells, equipment, or large fast melee attack.
 func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error) {
 	profile, found := OrdinaryAnimalProfile(animal.ID)
 
@@ -61,7 +89,7 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 		return 0, fmt.Errorf("unsupported ordinary animal %s", animal.ID)
 	}
 
-	if animal.HD != 1 ||
+	if animal.HD != profile.HitDice ||
 		animal.AverageHP10x != profile.AverageHP10x ||
 		animal.Speed != profile.Speed ||
 		animal.XPModifier != profile.XPModifier ||
@@ -71,8 +99,11 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 			FlavourID: "AF_PLAIN",
 			Damage:    profile.Damage,
 		}) ||
-		slices.Contains(animal.Flags, "M_NO_EXP_GAIN") || slices.Contains(animal.Flags, "M_FIGHTER") ||
-		slices.Contains(animal.Flags, "M_FAST_REGEN") || maxHP < profile.MinHP || maxHP > profile.MaxHP {
+		slices.Contains(animal.Flags, "M_NO_EXP_GAIN") ||
+		slices.Contains(animal.Flags, "M_FIGHTER") ||
+		slices.Contains(animal.Flags, "M_FAST_REGEN") != profile.FastRegen ||
+		slices.Contains(animal.Flags, "M_NO_SKELETON") != profile.NoSkeleton ||
+		maxHP < profile.MinHP || maxHP > profile.MaxHP {
 		return 0, fmt.Errorf("unsupported %s experience inputs at %d HP", animal.ID, maxHP)
 	}
 
@@ -88,5 +119,6 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 		Speed:        animal.Speed,
 		Modifier:     animal.XPModifier,
 		AttackDamage: [4]int{animal.Attacks[0].Damage},
+		FastRegen:    profile.FastRegen,
 	})
 }

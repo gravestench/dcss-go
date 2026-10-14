@@ -229,6 +229,7 @@ func registerSystems(g *Game) error {
 		items:     stores.Items,
 		corpses:   stores.Corpses,
 		positions: stores.Positions,
+		catalog:   g.catalog,
 		rng:       g.rng,
 	}
 	g.monsterCatchup = monsterCatchupSystem{
@@ -238,6 +239,17 @@ func registerSystems(g *Game) error {
 		ai:        stores.AI,
 		catalog:   g.catalog,
 		rng:       g.rng,
+	}
+
+	if _, err := world.AddSystem(&monsterRegenerationSystem{
+		actors:  stores.Actors,
+		health:  stores.Health,
+		ai:      stores.AI,
+		catalog: g.catalog,
+		rng:     g.rng,
+		turn:    &g.turn,
+	}); err != nil {
+		return err
 	}
 
 	if _, err := world.AddSystem(newMonsterDecisionSystem(g)); err != nil {

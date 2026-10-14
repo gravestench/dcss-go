@@ -87,21 +87,44 @@ func TestRatCorpseDecayAndSkeleton(t *testing.T) {
 			},
 		},
 	}
-	kind, freshness, appearance, alive, err := AgeCorpse(r, "CORPSE_BODY", 110, 200)
+	kind, freshness, appearance, alive, err := AgeCorpse(r, "CORPSE_BODY", true, 110, 200)
 
 	if err != nil || !alive || kind != "CORPSE_BODY" || freshness != 100 || appearance != 0 {
 		t.Fatalf("first decay %q %d %d %v %v", kind, freshness, appearance, alive, err)
 	}
 
-	kind, freshness, appearance, alive, err = AgeCorpse(r, kind, freshness, 2000)
+	kind, freshness, appearance, alive, err = AgeCorpse(r, kind, true, freshness, 2000)
 
 	if err != nil || !alive || kind != "CORPSE_SKELETON" || freshness != 110 || appearance != 10 || len(r.rolls) != 0 {
 		t.Fatalf("skeleton %q %d %d %v %v", kind, freshness, appearance, alive, err)
 	}
 
-	kind, freshness, _, alive, err = AgeCorpse(r, kind, freshness, 2200)
+	kind, freshness, _, alive, err = AgeCorpse(r, kind, true, freshness, 2200)
 
 	if err != nil || alive {
 		t.Fatalf("expired skeleton %q %d %v %v", kind, freshness, alive, err)
+	}
+}
+
+func TestNoSkeletonCorpseDisappearsWithoutDraw(t *testing.T) {
+	roller := &corpseRoller{}
+	kind, freshness, appearance, alive, err := AgeCorpse(
+		roller,
+		"CORPSE_BODY",
+		false,
+		110,
+		2200,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if alive || kind != "" || freshness != 0 || appearance != 0 {
+		t.Fatalf("expired corpse: %q %d %d alive=%v", kind, freshness, appearance, alive)
+	}
+
+	if len(roller.rolls) != 0 {
+		t.Fatalf("unexpected corpse rolls: %+v", roller.rolls)
 	}
 }
