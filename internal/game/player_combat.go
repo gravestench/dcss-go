@@ -108,7 +108,10 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		}
 
 		if kind.Weapon == nil || kind.Weapon.SkillID != kind.WeaponSkill {
-			return combat.PlayerAttackInput{}, fmt.Errorf("weapon %s has no supported melee properties", kind.ID)
+			return combat.PlayerAttackInput{}, fmt.Errorf(
+				"weapon %s has no supported melee properties",
+				kind.ID,
+			)
 		}
 
 		in.WeaponSkillID = kind.Weapon.SkillID
@@ -222,7 +225,10 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 
 		if equipped.Slot == "weapon" {
 			if kind.Weapon == nil || in.Unarmed {
-				return combat.AttackDelayInput{}, fmt.Errorf("unsupported equipped attack weapon %s", kind.ID)
+				return combat.AttackDelayInput{}, fmt.Errorf(
+					"unsupported equipped attack weapon %s",
+					kind.ID,
+				)
 			}
 
 			in.WeaponSpeed = kind.Weapon.Speed

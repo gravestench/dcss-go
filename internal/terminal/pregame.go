@@ -362,8 +362,12 @@ func menuLetter(index int) rune {
 }
 
 func (m *AppModel) drawStartup(canvas *Canvas) {
-	canvas.Write(0, 0, "Hello, welcome to Dungeon Crawl Stone Soup "+m.presentation.SourceVersion+"!", Yellow, Black)
-	canvas.Write(0, 1, "(c) Copyright 1997-2002 Linley Henzell, 2002-2022 Crawl DevTeam", Brown, Black)
+	welcome := "Hello, welcome to Dungeon Crawl Stone Soup " +
+		m.presentation.SourceVersion + "!"
+	canvas.Write(0, 0, welcome, Yellow, Black)
+
+	copyright := "(c) Copyright 1997-2002 Linley Henzell, 2002-2022 Crawl DevTeam"
+	canvas.Write(0, 1, copyright, Brown, Black)
 	canvas.Write(1, 3, "Enter your name: "+m.name, LightGrey, Black)
 	canvas.Write(1, 5, "Choices:", LightGrey, Black)
 
@@ -385,7 +389,9 @@ func (m *AppModel) drawStartup(canvas *Canvas) {
 	canvas.Write(1, 18, "[ctrl-p] view rc file information and log", LightGrey, Black)
 
 	if m.focus < len(m.presentation.StartupModes) {
-		writeClipped(canvas, 1, 20, m.width-2, m.presentation.StartupModes[m.focus].Description, Brown)
+		description := m.presentation.StartupModes[m.focus].Description
+
+		writeClipped(canvas, 1, 20, m.width-2, description, Brown)
 	}
 
 	if m.notice != "" {
@@ -457,7 +463,10 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 				}
 			}
 
-			canvas.Write(col, row+i+1, fmt.Sprintf("%c - %s", menuLetter(index), name), color, background)
+			label := fmt.Sprintf("%c - %s", menuLetter(index), name)
+
+			canvas.Write(col, row+i+1, label, color, background)
+
 			index++
 		}
 	}
@@ -496,7 +505,10 @@ func (m *AppModel) drawCharacterChoice(canvas *Canvas) {
 	ids := flattenGroups(groups)
 
 	if m.focus < len(ids) {
-		writeWrapped(canvas, 1, 19, m.width-2, 4, strings.Join(strings.Fields(descriptions[ids[m.focus]]), " "), Brown)
+		description := descriptions[ids[m.focus]]
+		wrapped := strings.Join(strings.Fields(description), " ")
+
+		writeWrapped(canvas, 1, 19, m.width-2, 4, wrapped, Brown)
 	}
 
 	if m.notice != "" {
@@ -587,7 +599,9 @@ func (m *AppModel) drawWeapon(canvas *Canvas) {
 			}
 		}
 
-		canvas.Write(2, 3+i, fmt.Sprintf("%c - %-18s (%+d apt)", menuLetter(i), option.Name, aptitude), color, background)
+		label := fmt.Sprintf("%c - %-18s (%+d apt)", menuLetter(i), option.Name, aptitude)
+
+		canvas.Write(2, 3+i, label, color, background)
 	}
 
 	canvas.Write(1, 11, "+ - Recommended random choice     * - Random weapon", LightGrey, Black)

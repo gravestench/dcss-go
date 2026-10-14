@@ -178,7 +178,10 @@ func (c *Canvas) Styled() string {
 				return
 			}
 
-			line.WriteString(lipgloss.NewStyle().Foreground(styleColor(fg)).Background(styleColor(bg)).Render(run.String()))
+			style := lipgloss.NewStyle().Foreground(styleColor(fg))
+			style = style.Background(styleColor(bg))
+
+			line.WriteString(style.Render(run.String()))
 			run.Reset()
 		}
 

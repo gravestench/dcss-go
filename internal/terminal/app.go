@@ -163,7 +163,8 @@ func (m *AppModel) renderCanvas() *Canvas {
 	canvas := NewCanvas(m.width, m.height)
 
 	if _, ok := ComputeLayout(m.width, m.height); !ok {
-		canvas.Write(0, 0, "Your terminal window is too small; please resize to at least 79,24", LightGrey, Black)
+		message := "Your terminal window is too small; please resize to at least 79,24"
+		canvas.Write(0, 0, message, LightGrey, Black)
 
 		return canvas
 	}

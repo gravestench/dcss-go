@@ -79,7 +79,12 @@ func (s *stairSystem) Update(_ *akara.World, _ time.Duration) error {
 	link, found := from.StairAt(position.X, position.Y)
 
 	if !found {
-		return fmt.Errorf("stair actor %d has no link at (%d,%d)", s.turn.Actor, position.X, position.Y)
+		return fmt.Errorf(
+			"stair actor %d has no link at (%d,%d)",
+			s.turn.Actor,
+			position.X,
+			position.Y,
+		)
 	}
 
 	if link.Unavailable != "" {

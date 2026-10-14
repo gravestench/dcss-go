@@ -75,7 +75,10 @@ func DrawInventory(canvas *Canvas, view game.View) {
 				label += " (" + item.Slot + ")"
 			}
 
-			writeClipped(canvas, 1, y, canvas.width-1, fmt.Sprintf("%c - %s", menuLetter(i), label), LightGrey)
+			entry := fmt.Sprintf("%c - %s", menuLetter(i), label)
+
+			writeClipped(canvas, 1, y, canvas.width-1, entry, LightGrey)
+
 			y++
 		}
 
@@ -94,7 +97,8 @@ func DrawDrop(canvas *Canvas, view game.View, quantity string) {
 	}
 
 	canvas.Write(0, 0, "Drop which item? (quantity: "+quantity+")", White, Black)
-	canvas.Write(0, canvas.height-2, "Digits - Quantity    Esc - Cancel    ? - Help", Brown, Black)
+	canvas.Write(0, canvas.height-2,
+		"Digits - Quantity    Esc - Cancel    ? - Help", Brown, Black)
 }
 
 // DrawWield keeps the inventory letters visible while filtering to weapons.
@@ -115,14 +119,9 @@ func DrawWield(canvas *Canvas, view game.View) {
 			label += " (wielded)"
 		}
 
-		writeClipped(
-			canvas,
-			1,
-			y,
-			canvas.width-1,
-			fmt.Sprintf("%c - %s", menuLetter(index), label),
-			LightGrey,
-		)
+		entry := fmt.Sprintf("%c - %s", menuLetter(index), label)
+
+		writeClipped(canvas, 1, y, canvas.width-1, entry, LightGrey)
 
 		y++
 	}
@@ -146,7 +145,10 @@ func DrawQuaff(canvas *Canvas, view game.View) {
 			label = fmt.Sprintf("%d %s", item.Quantity, label)
 		}
 
-		writeClipped(canvas, 1, y, canvas.width-1, fmt.Sprintf("%c - %s", menuLetter(index), label), LightGrey)
+		entry := fmt.Sprintf("%c - %s", menuLetter(index), label)
+
+		writeClipped(canvas, 1, y, canvas.width-1, entry, LightGrey)
+
 		y++
 	}
 
@@ -218,9 +220,14 @@ func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
 		}
 	}
 
-	writeClipped(canvas, 0, canvas.height-5, canvas.width, "/ - mode    | - skill    * - skills    ! - view", Brown)
-	writeClipped(canvas, 0, canvas.height-4, canvas.width, "= - target    ? - help    Esc - Return", Brown)
-	writeClipped(canvas, 0, canvas.height-3, canvas.width, "Training controls are unavailable in the Go port.", Brown)
+	writeClipped(canvas, 0, canvas.height-5, canvas.width,
+		"/ - mode    | - skill    * - skills    ! - view", Brown)
+
+	writeClipped(canvas, 0, canvas.height-4, canvas.width,
+		"= - target    ? - help    Esc - Return", Brown)
+
+	writeClipped(canvas, 0, canvas.height-3, canvas.width,
+		"Training controls are unavailable in the Go port.", Brown)
 }
 
 // DrawHelp keeps the source command meanings visible for supported and stubbed actions.

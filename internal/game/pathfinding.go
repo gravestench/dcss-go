@@ -5,7 +5,10 @@ import "github.com/gravestench/akara"
 // RouteStep finds the first step on a shortest eight-way path across this
 // level's walkable terrain. A goal actor may occupy the destination for melee.
 // The route is derived from current terrain and occupancy, never saved.
-func (l *Level) RouteStep(x, y, targetX, targetY int, goalActor akara.Entity) (int, int, bool) {
+func (l *Level) RouteStep(
+	x, y, targetX, targetY int,
+	goalActor akara.Entity,
+) (int, int, bool) {
 	if !l.Walkable(x, y) || !l.Walkable(targetX, targetY) || x == targetX && y == targetY {
 		return 0, 0, false
 	}
@@ -48,7 +51,8 @@ func (l *Level) RouteStep(x, y, targetX, targetY int, goalActor akara.Entity) (i
 				continue
 			}
 
-			if occupant, occupied := l.ActorAt(next.x, next.y); occupied && !(next == goal && occupant == goalActor) {
+			if occupant, occupied := l.ActorAt(next.x, next.y); occupied &&
+				!(next == goal && occupant == goalActor) {
 				continue
 			}
 

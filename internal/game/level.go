@@ -434,7 +434,12 @@ func (l *Level) LoadKnownRows(rows []string) error {
 
 func (l *Level) Remember(visible []bool) error {
 	if len(visible) != len(l.remembered) {
-		return fmt.Errorf("level %d sight mask has %d cells, want %d", l.ID, len(visible), len(l.remembered))
+		return fmt.Errorf(
+			"level %d sight mask has %d cells, want %d",
+			l.ID,
+			len(visible),
+			len(l.remembered),
+		)
 	}
 
 	for y, row := range l.terrain {

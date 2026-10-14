@@ -52,7 +52,10 @@ func validateSavedItem(
 	}
 
 	if (record.Position == nil) == (record.CarriedBy == nil) || record.Actor != nil {
-		return fmt.Errorf("item %d must have exactly one of position or carrier, never both", record.ID)
+		return fmt.Errorf(
+			"item %d must have exactly one of position or carrier, never both",
+			record.ID,
+		)
 	}
 
 	corpseKind := item.KindID == "CORPSE_BODY" || item.KindID == "CORPSE_SKELETON"
@@ -222,7 +225,10 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 
 	if snapshot.SourceRevision != catalog.SourceRevision() {
-		return nil, fmt.Errorf("save source revision %q does not match catalog", snapshot.SourceRevision)
+		return nil, fmt.Errorf(
+			"save source revision %q does not match catalog",
+			snapshot.SourceRevision,
+		)
 	}
 
 	scenarioAnimals, err := scenarioAnimalIDs(snapshot.ScenarioID)
@@ -267,7 +273,11 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		return nil, err
 	}
 
-	if err := g.validateAndRegisterSavedEntities(snapshot, scenarioAnimals, usesPopulation); err != nil {
+	if err := g.validateAndRegisterSavedEntities(
+		snapshot,
+		scenarioAnimals,
+		usesPopulation,
+	); err != nil {
 		return nil, err
 	}
 

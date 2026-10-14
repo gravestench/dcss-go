@@ -62,7 +62,8 @@ func (g *Game) createStartingGear(jobID, weaponID string) error {
 		}
 	}
 
-	if !occupied["body"] || !occupied["shield"] || (weaponID != "WPN_UNARMED" && !occupied["weapon"]) {
+	if !occupied["body"] || !occupied["shield"] ||
+		(weaponID != "WPN_UNARMED" && !occupied["weapon"]) {
 		return fmt.Errorf("starting equipment lacks required Human/Fighter slots")
 	}
 

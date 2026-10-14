@@ -84,7 +84,8 @@ func (s *pickupSystem) Update(_ *akara.World, _ time.Duration) error {
 	for _, entity := range s.items.Entities() {
 		itemPosition, located := s.positions.Get(entity)
 
-		if located && *itemPosition == *position && !s.carried.Has(entity) && !s.corpses.Has(entity) {
+		if located && *itemPosition == *position &&
+			!s.carried.Has(entity) && !s.corpses.Has(entity) {
 			item, found := s.items.Get(entity)
 
 			if !found {

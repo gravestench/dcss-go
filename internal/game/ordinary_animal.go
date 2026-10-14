@@ -108,7 +108,10 @@ func newOrdinaryMonsterFactory(g *Game) ordinaryMonsterFactory {
 	}
 }
 
-func (f ordinaryMonsterFactory) Spawn(id string, levelID, x, y int) (_ akara.Entity, err error) {
+func (f ordinaryMonsterFactory) Spawn(
+	id string,
+	levelID, x, y int,
+) (_ akara.Entity, err error) {
 	definition, err := ordinaryAnimal(f.catalog, id)
 
 	if err != nil {

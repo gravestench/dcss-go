@@ -420,7 +420,12 @@ func (g *Game) playerDead() bool {
 }
 
 // runAction is the only bridge from logical auts to Akara's duration argument.
-func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase string) ([]Event, error) {
+func (g *Game) runAction(
+	actor akara.Entity,
+	intent ecs.Intent,
+	cost Aut,
+	phase string,
+) ([]Event, error) {
 	if intent.Kind != 0 {
 		if _, err := g.stores.Intents.Set(actor, intent); err != nil {
 			return nil, fmt.Errorf("%s actor %d intent: %w", phase, actor, err)

@@ -7,18 +7,30 @@ import (
 	"github.com/gravestench/akara"
 )
 
-func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_ *Game, err error) {
+func NewScenario(
+	seed uint64,
+	catalog content.Catalog,
+	weaponID, name string,
+) (_ *Game, err error) {
 	return newScenario(seed, catalog, weaponID, name, ordinaryAnimalScenarioID)
 }
 
 // NewPopulatedScenario keeps the current fixed map while selecting its
 // supported monsters from the committed Dungeon population table.
-func NewPopulatedScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_ *Game, err error) {
+func NewPopulatedScenario(
+	seed uint64,
+	catalog content.Catalog,
+	weaponID, name string,
+) (_ *Game, err error) {
 	return newScenario(seed, catalog, weaponID, name, populationScenarioID)
 }
 
 // NewDungeonGame starts the live client on generated D:1-2 basic layouts.
-func NewDungeonGame(seed uint64, catalog content.Catalog, weaponID, name string) (_ *Game, err error) {
+func NewDungeonGame(
+	seed uint64,
+	catalog content.Catalog,
+	weaponID, name string,
+) (_ *Game, err error) {
 	return newScenario(seed, catalog, weaponID, name, generatedDungeonScenarioID)
 }
 
@@ -38,7 +50,12 @@ func newScenario(
 
 	playerDef := catalog.Player()
 
-	if err := character.ValidateWeaponChoice(catalog, playerDef.SpeciesID, playerDef.JobID, weaponID); err != nil {
+	if err := character.ValidateWeaponChoice(
+		catalog,
+		playerDef.SpeciesID,
+		playerDef.JobID,
+		weaponID,
+	); err != nil {
 		return nil, err
 	}
 

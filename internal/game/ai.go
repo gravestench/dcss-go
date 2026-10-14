@@ -94,7 +94,9 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 		return ecs.Intent{}, err
 	}
 
-	if err := s.updateMonsterTarget(ai, *position, *player, visible[player.Y*level.width+player.X]); err != nil {
+	playerVisible := visible[player.Y*level.width+player.X]
+
+	if err := s.updateMonsterTarget(ai, *position, *player, playerVisible); err != nil {
 		return ecs.Intent{}, err
 	}
 
@@ -167,7 +169,8 @@ func (s *monsterDecisionSystem) updateWanderTarget(
 	retarget := ai.TargetX == 0 && ai.TargetY == 0
 	leaderPosition, inBand := s.bandLeaderPosition(actor, position.LevelID)
 
-	if inBand && chebyshevDistance(position.X, position.Y, leaderPosition.X, leaderPosition.Y) >= 6 {
+	if inBand &&
+		chebyshevDistance(position.X, position.Y, leaderPosition.X, leaderPosition.Y) >= 6 {
 		retarget = true
 	}
 

@@ -228,8 +228,13 @@ func (h hudRenderer) drawVitals(view game.View) {
 		h.write(len(stat.label)+len(value), stat.y, fmt.Sprintf("/%d", stat.maximum), LightGrey)
 	}
 
-	drawMeter(h.canvas, h.region.X+18, h.region.Y+2, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
-	drawMeter(h.canvas, h.region.X+18, h.region.Y+3, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
+	meterX := h.region.X + 18
+	healthY := h.region.Y + 2
+	magicY := h.region.Y + 3
+
+	drawMeter(h.canvas, meterX, healthY, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
+
+	drawMeter(h.canvas, meterX, magicY, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
 }
 
 func (h hudRenderer) drawDefenses(view game.View) {
@@ -285,9 +290,17 @@ func (h hudRenderer) drawAttributes(view game.View) {
 }
 
 func (h hudRenderer) drawStatus(view game.View) {
-	h.write(0, 7, fmt.Sprintf("XL: %2d Next: %2d%%", view.ExperienceLevel, view.NextLevelPercent), Brown)
+	experience := fmt.Sprintf(
+		"XL: %2d Next: %2d%%",
+		view.ExperienceLevel,
+		view.NextLevelPercent,
+	)
+	h.write(0, 7, experience, Brown)
+
 	h.write(18, 7, fmt.Sprintf("Place: D:%d", view.LevelID), Brown)
+
 	h.write(0, 8, "Noise: --", Brown)
+
 	h.write(18, 8, fmt.Sprintf("Time: %.1f", float64(view.CurrentAut)/10), Brown)
 
 	h.write(0, 9, equippedWeaponLabel(view.Inventory), LightGrey)
