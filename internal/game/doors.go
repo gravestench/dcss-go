@@ -231,6 +231,7 @@ func (s *doorSystem) Update(_ *akara.World, _ time.Duration) error {
 	level := s.game.levels[position.LevelID]
 	x := position.X + intent.DX
 	y := position.Y + intent.DY
+
 	message := "You open the door."
 
 	if intent.Kind == ecs.IntentOpenDoor {

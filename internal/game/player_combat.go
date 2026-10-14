@@ -133,6 +133,7 @@ func (c playerCombat) projectAttackWeapon(in *combat.PlayerAttackInput) error {
 		in.WeaponSkillID = kind.Weapon.SkillID
 		in.WeaponDamage = kind.Weapon.Damage
 		in.WeaponHit = kind.Weapon.Hit
+
 		in.WeaponPlus = item.Plus
 	}
 

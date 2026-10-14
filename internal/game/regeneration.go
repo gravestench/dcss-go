@@ -47,8 +47,9 @@ func (s *regenerationSystem) Update(_ *akara.World, delta time.Duration) error {
 	}
 
 	health.Current = state.HP
-	magic.Current = state.MP
 	progress.HPProgress = state.HPProgress
+
+	magic.Current = state.MP
 	progress.MPProgress = state.MPProgress
 
 	return nil

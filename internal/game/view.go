@@ -178,6 +178,7 @@ func (g *Game) fillPlayerView(view *View) {
 		view.PlayerAC = defense.AC
 		view.PlayerEV = defense.EV
 		view.PlayerSH = defense.ShieldClass / 2
+
 		view.DefenseKnown = true
 	}
 }
@@ -203,6 +204,7 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 		switch {
 		case entity == g.player:
 			glyph = '@'
+
 			kindID = "player"
 			name = view.PlayerName
 			role = "player"

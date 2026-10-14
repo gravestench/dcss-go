@@ -357,13 +357,16 @@ func (m *AppModel) returnToStartup() {
 	m.weaponReturn = ScreenStartup
 
 	m.name = ""
+
 	m.speciesID = ""
 	m.jobID = ""
 	m.weaponID = ""
+
 	m.options = nil
 
 	m.focus = 0
 	m.notice = ""
+
 	m.confirm = confirmNone
 	m.pendingDoor = 0
 }

@@ -132,6 +132,7 @@ func (b *builder) build(depth int) ([3]StairPair, error) {
 		occupied[pair.Down] = true
 		occupied[pair.Up] = true
 		stairs[index] = pair
+
 		b.grid[pair.Down.Y][pair.Down.X] = '>'
 		b.grid[pair.Up.Y][pair.Up.X] = '<'
 	}

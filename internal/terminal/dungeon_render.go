@@ -107,6 +107,7 @@ func entityColor(entity game.EntityView) Color {
 func (r dungeonRenderer) screenPoint(x, y int) (int, int, bool) {
 	screenX := r.centerX + x - r.view.PlayerX
 	screenY := r.centerY + y - r.view.PlayerY
+
 	inX := screenX >= r.region.X && screenX < r.region.X+r.region.W
 	inY := screenY >= r.region.Y && screenY < r.region.Y+r.region.H
 

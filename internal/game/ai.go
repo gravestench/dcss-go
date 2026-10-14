@@ -129,6 +129,7 @@ func (s *monsterDecisionSystem) updateMonsterTarget(
 		ai.Behavior = "seek"
 		ai.TargetX = player.X
 		ai.TargetY = player.Y
+
 		ai.MemoryUntilAut = int64(*s.clock) + int64(250+memoryRoll)
 	} else if ai.Behavior == "seek" {
 		if ai.MemoryUntilAut == 0 {
@@ -137,10 +138,7 @@ func (s *monsterDecisionSystem) updateMonsterTarget(
 		}
 
 		if int64(*s.clock) >= ai.MemoryUntilAut {
-			ai.Behavior = "wander"
-			ai.TargetX = 0
-			ai.TargetY = 0
-			ai.MemoryUntilAut = 0
+			forgetMonsterTarget(ai)
 		}
 	} else if ai.Behavior != "seek" && ai.Behavior != "wander" {
 		// Earlier AI records used "chase" without a remembered target.
@@ -150,11 +148,16 @@ func (s *monsterDecisionSystem) updateMonsterTarget(
 	}
 
 	if position.X == ai.TargetX && position.Y == ai.TargetY {
-		ai.Behavior = "wander"
-		ai.TargetX = 0
-		ai.TargetY = 0
-		ai.MemoryUntilAut = 0
+		forgetMonsterTarget(ai)
 	}
 
 	return nil
+}
+
+// forgetMonsterTarget clears the remembered destination and its expiry together.
+func forgetMonsterTarget(ai *ecs.MonsterAI) {
+	ai.Behavior = "wander"
+	ai.TargetX = 0
+	ai.TargetY = 0
+	ai.MemoryUntilAut = 0
 }
