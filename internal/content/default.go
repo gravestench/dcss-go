@@ -37,13 +37,20 @@ var defaultMonsterVocabularyJSON []byte
 //go:embed generated/spells.json
 var defaultSpellJSON []byte
 
+//go:embed generated/branches.json
+var defaultBranchJSON []byte
+
 // LoadDefault builds a fresh catalog from the checked-in source-traced artifacts.
 func LoadDefault() (Catalog, error) {
 	catalog, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, defaultPresentationJSON, defaultMonsterJSON)
 	if err != nil {
 		return Catalog{}, err
 	}
-	return attachDefaultSpells(catalog, defaultSpellJSON)
+	catalog, err = attachDefaultSpells(catalog, defaultSpellJSON)
+	if err != nil {
+		return Catalog{}, err
+	}
+	return attachDefaultBranches(catalog, defaultBranchJSON)
 }
 
 // LoadDefinitionsForImport reads committed gameplay definitions without needing
@@ -53,7 +60,47 @@ func LoadDefinitionsForImport() (Catalog, error) {
 	if err != nil {
 		return Catalog{}, err
 	}
-	return attachDefaultSpells(catalog, defaultSpellJSON)
+	catalog, err = attachDefaultSpells(catalog, defaultSpellJSON)
+	if err != nil {
+		return Catalog{}, err
+	}
+	return attachDefaultBranches(catalog, defaultBranchJSON)
+}
+
+func attachDefaultBranches(catalog Catalog, data []byte) (Catalog, error) {
+	const pinnedArtifactSHA256 = "8ad8a4b914012c631bdf2a8f2637466fcbc47a5d76d540f810fdf6f93b15a656"
+	hash := sha256.Sum256(data)
+	if hex.EncodeToString(hash[:]) != pinnedArtifactSHA256 {
+		return Catalog{}, fmt.Errorf("branch catalog differs from pinned content")
+	}
+	var artifact BranchArtifact
+	if err := decodeArtifact(data, "branches", &artifact); err != nil {
+		return Catalog{}, err
+	}
+	if err := artifact.Validate(); err != nil {
+		return Catalog{}, err
+	}
+	if artifact.SourceRevision != catalog.SourceRevision() || len(artifact.Branches) != 38 {
+		return Catalog{}, fmt.Errorf("branch catalog has incomplete pinned coverage")
+	}
+	paths, err := validSourceFiles(artifact.SourceFiles, "branch")
+	if err != nil {
+		return Catalog{}, err
+	}
+	for _, name := range []string{"tag-version.h", "branch-type.h", "branch-data.h"} {
+		if _, found := paths["crawl-ref/source/"+name]; !found {
+			return Catalog{}, fmt.Errorf("branch catalog lacks source %s", name)
+		}
+	}
+	catalog.branches = make(map[string]BranchDef, len(artifact.Branches))
+	for _, branch := range artifact.Branches {
+		catalog.branches[branch.ID] = branch.clone()
+		catalog.branchOrder = append(catalog.branchOrder, branch.ID)
+	}
+	if err := catalog.Validate(); err != nil {
+		return Catalog{}, err
+	}
+	return catalog, nil
 }
 
 func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {

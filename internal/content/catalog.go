@@ -15,6 +15,8 @@ type Catalog struct {
 	monsters       map[string]MonsterDef
 	spells         map[string]SpellDef
 	spellOrder     []string
+	branches       map[string]BranchDef
+	branchOrder    []string
 	items          map[string]ItemDef
 	itemIdentities map[string]ItemIdentity
 	species        map[string]SpeciesDef
@@ -61,6 +63,16 @@ func (c Catalog) SpellStatus(id string) (SpellStatus, error) {
 }
 
 func (c Catalog) SpellIDs() []string { return append([]string(nil), c.spellOrder...) }
+
+func (c Catalog) Branch(id string) (BranchDef, error) {
+	definition, found := c.branches[id]
+	if !found {
+		return BranchDef{}, fmt.Errorf("unknown branch ID %q", id)
+	}
+	return definition.clone(), nil
+}
+
+func (c Catalog) BranchIDs() []string { return append([]string(nil), c.branchOrder...) }
 
 func (c Catalog) Item(id string) (ItemDef, error) {
 	definition, found := c.items[id]
@@ -115,6 +127,20 @@ func (c Catalog) Validate() error {
 		spell, found := c.spells[id]
 		if !found || spell.NumericID != i || spell.validate() != nil {
 			return fmt.Errorf("invalid spell definition %s", id)
+		}
+	}
+	if len(c.branches) != len(c.branchOrder) {
+		return fmt.Errorf("branch catalog and order disagree")
+	}
+	for i, id := range c.branchOrder {
+		branch, found := c.branches[id]
+		if !found || branch.NumericID != i || branch.validate() != nil {
+			return fmt.Errorf("invalid branch definition %s", id)
+		}
+		if branch.ParentID != "NUM_BRANCHES" {
+			if _, found := c.branches[branch.ParentID]; !found {
+				return fmt.Errorf("branch %s has unknown parent %s", id, branch.ParentID)
+			}
 		}
 	}
 	for id, item := range c.items {
