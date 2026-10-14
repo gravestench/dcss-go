@@ -80,7 +80,7 @@ func TestMightDecaysByVariableMeleeActionCost(t *testing.T) {
 	}
 	status, _ := g.stores.Durations.Get(g.player)
 	status.MightAut = 20
-	attack, err := g.playerAttackInput("MONS_RAT")
+	attack, err := newPlayerCombat(g).attackInput("MONS_RAT")
 	if err != nil || !attack.Mighty {
 		t.Fatalf("live attack did not project might: %+v, %v", attack, err)
 	}

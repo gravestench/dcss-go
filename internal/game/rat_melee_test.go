@@ -47,7 +47,8 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 			rng := &combatRoller{rolls: tc.rolls}
 			before, _ := g.stores.Health.Get(g.player)
 			initialHP := before.Current
-			system := &combatSystem{game: g, roller: rng, turn: &g.turn}
+			system := newCombatSystem(g)
+			system.roller = rng
 			if err := system.Update(nil, time.Duration(10)); err != nil {
 				t.Fatal(err)
 			}

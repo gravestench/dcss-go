@@ -19,7 +19,7 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 				t.Fatal(err)
 			}
 			defer g.Close()
-			in, err := g.playerAttackInput("MONS_RAT")
+			in, err := newPlayerCombat(g).attackInput("MONS_RAT")
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -45,7 +45,7 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 					item.Plus = 2
 				}
 			}
-			in, err = g.playerAttackInput("MONS_RAT")
+			in, err = newPlayerCombat(g).attackInput("MONS_RAT")
 			if err != nil || in.WeaponPlus != 2 {
 				t.Fatalf("enchanted weapon input = %+v, %v", in, err)
 			}
@@ -177,7 +177,7 @@ func TestPlayerMeleeUsesStoredSkillPoints(t *testing.T) {
 			skills.Entries[i] = character.Skill{ID: "SK_SHORT_BLADES", Level: 2, Points: 299}
 		}
 	}
-	in, err := g.playerAttackInput("MONS_RAT")
+	in, err := newPlayerCombat(g).attackInput("MONS_RAT")
 	if err != nil || in.WeaponSkill100 <= 200 {
 		t.Fatalf("modified skill points ignored: %+v, %v", in, err)
 	}

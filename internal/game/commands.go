@@ -80,7 +80,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			if !found || !isOrdinaryAnimal(actor.KindID) {
 				return StepResult{}, fmt.Errorf("unsupported player melee target %d", target)
 			}
-			input, err := g.playerAttackDelayInput(actor.KindID)
+			input, err := newPlayerCombat(g).attackDelayInput(actor.KindID)
 			if err != nil {
 				return StepResult{}, err
 			}

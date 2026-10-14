@@ -5,28 +5,42 @@ import (
 	"time"
 
 	"dcrawl-go/internal/combat"
+	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/monster"
 	"github.com/gravestench/akara"
 )
 
 type combatSystem struct {
-	game   *Game
-	roller combat.Roller
-	turn   *TurnContext
+	player    akara.Entity
+	intents   *akara.Store[ecs.Intent]
+	positions *akara.Store[ecs.Position]
+	actors    *akara.Store[ecs.Actor]
+	health    *akara.Store[ecs.Health]
+	combat    *akara.Store[ecs.Combatant]
+	levels    map[int]*Level
+	catalog   content.Catalog
+	fighter   playerCombat
+	roller    combat.Roller
+	turn      *TurnContext
+}
+
+func newCombatSystem(g *Game) *combatSystem {
+	s := g.stores
+	return &combatSystem{player: g.player, intents: s.Intents, positions: s.Positions, actors: s.Actors,
+		health: s.Health, combat: s.Combat, levels: g.levels, catalog: g.catalog,
+		fighter: newPlayerCombat(g), roller: g.rng, turn: &g.turn}
 }
 
 func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
-	g := s.game
-	intent, found := g.stores.Intents.Get(s.turn.Actor)
+	intent, found := s.intents.Get(s.turn.Actor)
 	if !found || intent.Kind != ecs.IntentMelee {
 		return nil
 	}
-	position, found := g.stores.Positions.Get(s.turn.Actor)
+	position, found := s.positions.Get(s.turn.Actor)
 	if !found {
 		return fmt.Errorf("attacker %d has no position", s.turn.Actor)
 	}
-	level := g.levels[position.LevelID]
+	level := s.levels[position.LevelID]
 	if level == nil {
 		return fmt.Errorf("attacker %d has no level %d", s.turn.Actor, position.LevelID)
 	}
@@ -34,20 +48,20 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	if !found || target == s.turn.Actor {
 		return fmt.Errorf("attacker %d has no target", s.turn.Actor)
 	}
-	victim, found := g.stores.Health.Get(target)
+	victim, found := s.health.Get(target)
 	if !found {
 		return fmt.Errorf("target %d has no health", target)
 	}
-	if s.turn.Actor == g.player {
-		actor, found := g.stores.Actors.Get(target)
+	if s.turn.Actor == s.player {
+		actor, found := s.actors.Get(target)
 		if !found || !isOrdinaryAnimal(actor.KindID) {
 			return fmt.Errorf("unsupported player melee target %d", target)
 		}
-		defender, err := ordinaryAnimal(g.catalog, actor.KindID)
+		defender, err := ordinaryAnimal(s.catalog, actor.KindID)
 		if err != nil {
 			return err
 		}
-		input, err := g.playerAttackInput(actor.KindID)
+		input, err := s.fighter.attackInput(actor.KindID)
 		if err != nil {
 			return err
 		}
@@ -70,18 +84,18 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 		s.turn.Events = append(s.turn.Events, Event{Kind: "combat", Text: message})
 		return nil
 	}
-	if target != g.player {
+	if target != s.player {
 		return fmt.Errorf("unsupported non-player melee defender %d", target)
 	}
-	actor, found := g.stores.Actors.Get(s.turn.Actor)
+	actor, found := s.actors.Get(s.turn.Actor)
 	if !found || !isOrdinaryAnimal(actor.KindID) {
 		return fmt.Errorf("unsupported melee attacker %d", s.turn.Actor)
 	}
-	animal, err := ordinaryAnimal(g.catalog, actor.KindID)
+	animal, err := ordinaryAnimal(s.catalog, actor.KindID)
 	if err != nil {
 		return err
 	}
-	defense, err := g.fighterDefense()
+	defense, err := s.fighter.defense()
 	if err != nil {
 		return err
 	}
@@ -92,9 +106,9 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	if err != nil {
 		return err
 	}
-	state, found := g.stores.Combat.Get(g.player)
+	state, found := s.combat.Get(s.player)
 	if !found {
-		return fmt.Errorf("player %d has no combat state", g.player)
+		return fmt.Errorf("player %d has no combat state", s.player)
 	}
 	state.ShieldBlocks = outcome.ShieldBlocks
 	victim.Current = max(0, victim.Current-outcome.Damage)
@@ -116,119 +130,5 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 		return fmt.Errorf("unknown animal bite outcome %d", outcome.Kind)
 	}
 	s.turn.Events = append(s.turn.Events, Event{Kind: "combat", Text: message})
-	return nil
-}
-
-func (g *Game) fighterDefense() (combat.Defense, error) {
-	attributes, found := g.stores.Attributes.Get(g.player)
-	if !found {
-		return combat.Defense{}, fmt.Errorf("player has no attributes")
-	}
-	skills, found := g.stores.Skills.Get(g.player)
-	if !found {
-		return combat.Defense{}, fmt.Errorf("player has no skills")
-	}
-	state, found := g.stores.Combat.Get(g.player)
-	if !found {
-		return combat.Defense{}, fmt.Errorf("player has no combat state")
-	}
-	input := combat.FighterDefense{Strength: attributes.Strength, Dexterity: attributes.Dexterity, ShieldBlocks: state.ShieldBlocks}
-	for _, skill := range skills.Entries {
-		switch skill.ID {
-		case "SK_ARMOUR":
-			input.ArmourSkill = skill.Level
-		case "SK_SHIELDS":
-			input.ShieldsSkill = skill.Level
-		}
-	}
-	body, shield := false, false
-	for _, entity := range g.stores.Equipped.Entities() {
-		carrier, carried := g.stores.CarriedBy.Get(entity)
-		if !carried || carrier.Holder != g.player {
-			continue
-		}
-		equipped, _ := g.stores.Equipped.Get(entity)
-		if equipped.Slot != "body" && equipped.Slot != "shield" {
-			continue
-		}
-		item, found := g.stores.Items.Get(entity)
-		if !found {
-			return combat.Defense{}, fmt.Errorf("equipped entity %d has no item", entity)
-		}
-		kind, err := g.catalog.Item(item.KindID)
-		if err != nil {
-			return combat.Defense{}, err
-		}
-		if kind.Armour == nil {
-			return combat.Defense{}, fmt.Errorf("equipped %s has no armour properties", kind.ID)
-		}
-		if equipped.Slot == "body" {
-			input.BodyAC, input.BodyEV, input.BodyPlus = kind.Armour.AC, kind.Armour.EV, item.Plus
-			body = true
-		} else {
-			input.ShieldAC, input.ShieldEV, input.ShieldPlus = kind.Armour.AC, kind.Armour.EV, item.Plus
-			shield = true
-		}
-	}
-	if !body || !shield {
-		return combat.Defense{}, fmt.Errorf("Human Fighter lacks body armour or shield")
-	}
-	return combat.ProjectFighter(input)
-}
-
-type deathSystem struct {
-	game   *Game
-	health *akara.Store[ecs.Health]
-	player akara.Entity
-	turn   *TurnContext
-}
-
-func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
-	for _, entity := range s.health.Entities() {
-		health, _ := s.health.Get(entity)
-		if health.Current > 0 {
-			continue
-		}
-		if entity == s.player {
-			s.turn.Events = append(s.turn.Events, Event{Kind: "death", Text: "You die."})
-		} else {
-			if entity == s.turn.PlayerKill {
-				actor, found := s.game.stores.Actors.Get(entity)
-				if !found {
-					return fmt.Errorf("killed monster %d has no actor", entity)
-				}
-				if err := s.game.awardAnimalExperience(entity, health.Max); err != nil {
-					return err
-				}
-				definition, err := ordinaryAnimal(s.game.catalog, actor.KindID)
-				if err != nil {
-					return err
-				}
-				if definition.LeavesCorpse {
-					appearance, dropped, err := monster.RollCorpse(s.game.rng)
-					if err != nil {
-						return err
-					}
-					if dropped {
-						position, found := s.game.stores.Positions.Get(entity)
-						if !found {
-							return fmt.Errorf("killed animal %d has no position", entity)
-						}
-						s.turn.Corpse = &pendingCorpse{MonsterID: actor.KindID, Position: *position, Appearance: appearance}
-					}
-				}
-			}
-			s.turn.Deaths = append(s.turn.Deaths, entity)
-			actor, found := s.game.stores.Actors.Get(entity)
-			if !found {
-				return fmt.Errorf("dead monster %d has no actor", entity)
-			}
-			definition, err := ordinaryAnimal(s.game.catalog, actor.KindID)
-			if err != nil {
-				return err
-			}
-			s.turn.Events = append(s.turn.Events, Event{Kind: "death", Text: fmt.Sprintf("The %s dies.", definition.Name)})
-		}
-	}
 	return nil
 }

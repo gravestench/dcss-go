@@ -461,10 +461,10 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			}
 		}
 	}
-	if _, err := g.fighterDefense(); err != nil {
+	if _, err := newPlayerCombat(g).defense(); err != nil {
 		return nil, fmt.Errorf("unsupported saved player defense: %w", err)
 	}
-	if _, err := g.playerAttackDelayInput("MONS_RAT"); err != nil {
+	if _, err := newPlayerCombat(g).attackDelayInput("MONS_RAT"); err != nil {
 		return nil, fmt.Errorf("unsupported saved player attack timing: %w", err)
 	}
 	if err := registerSystems(g); err != nil {

@@ -145,10 +145,10 @@ func registerSystems(g *Game) error {
 	if _, err := world.AddSystem(&movementSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&combatSystem{game: g, roller: g.rng, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(newCombatSystem(g)); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&deathSystem{game: g, health: stores.Health, player: g.player, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(newDeathSystem(g)); err != nil {
 		return err
 	}
 	if _, err := world.AddSystem(&durationSystem{player: g.player, durations: stores.Durations, turn: &g.turn}); err != nil {

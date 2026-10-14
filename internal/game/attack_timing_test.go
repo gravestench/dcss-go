@@ -16,7 +16,7 @@ func TestAttackDelayProjectionUsesEveryFighterStart(t *testing.T) {
 				t.Fatal(err)
 			}
 			defer g.Close()
-			in, err := g.playerAttackDelayInput("MONS_RAT")
+			in, err := newPlayerCombat(g).attackDelayInput("MONS_RAT")
 			if err != nil {
 				t.Fatal(err)
 			}

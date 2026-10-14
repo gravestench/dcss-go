@@ -5,48 +5,73 @@ import (
 
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/combat"
+	"dcrawl-go/internal/content"
+	"dcrawl-go/internal/ecs"
+	"github.com/gravestench/akara"
 )
 
-// playerAttackInput projects the live Fighter against a cataloged defender.
+// playerCombat projects the live Fighter's ECS state into combat rules.
+// It owns no copy of mutable character state; every method reads its stores.
+type playerCombat struct {
+	player     akara.Entity
+	players    *akara.Store[ecs.PlayerControlled]
+	attributes *akara.Store[ecs.Attributes]
+	skills     *akara.Store[ecs.Skills]
+	durations  *akara.Store[ecs.Durations]
+	combat     *akara.Store[ecs.Combatant]
+	equipped   *akara.Store[ecs.Equipped]
+	carried    *akara.Store[ecs.CarriedBy]
+	items      *akara.Store[ecs.Item]
+	catalog    content.Catalog
+}
+
+func newPlayerCombat(g *Game) playerCombat {
+	s := g.stores
+	return playerCombat{player: g.player, players: s.Players, attributes: s.Attributes, skills: s.Skills,
+		durations: s.Durations, combat: s.Combat, equipped: s.Equipped, carried: s.CarriedBy,
+		items: s.Items, catalog: g.catalog}
+}
+
+// attackInput projects the live Fighter against a cataloged defender.
 // It also checks equipment before a bump spends time.
-func (g *Game) playerAttackInput(defenderID string) (combat.PlayerAttackInput, error) {
-	player, found := g.stores.Players.Get(g.player)
+func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, error) {
+	player, found := c.players.Get(c.player)
 	if !found {
 		return combat.PlayerAttackInput{}, fmt.Errorf("player has no character choice")
 	}
-	attributes, found := g.stores.Attributes.Get(g.player)
+	attributes, found := c.attributes.Get(c.player)
 	if !found {
 		return combat.PlayerAttackInput{}, fmt.Errorf("player has no attributes")
 	}
-	skills, found := g.stores.Skills.Get(g.player)
+	skills, found := c.skills.Get(c.player)
 	if !found {
 		return combat.PlayerAttackInput{}, fmt.Errorf("player has no skills")
 	}
-	defender, err := g.catalog.Monster(defenderID)
+	defender, err := c.catalog.Monster(defenderID)
 	if err != nil {
 		return combat.PlayerAttackInput{}, err
 	}
 	in := combat.PlayerAttackInput{Strength: attributes.Strength, Dexterity: attributes.Dexterity,
 		DefenderEV: defender.EV, DefenderAC: defender.AC, Unarmed: player.StartingWeaponID == "WPN_UNARMED"}
-	if durations, found := g.stores.Durations.Get(g.player); found {
+	if durations, found := c.durations.Get(c.player); found {
 		in.Mighty = durations.MightAut > 0
 	}
 	if in.Unarmed {
 		in.WeaponSkillID = "SK_UNARMED_COMBAT"
 	}
 	weaponCount := 0
-	for _, entity := range g.stores.Equipped.Entities() {
-		equipment, _ := g.stores.Equipped.Get(entity)
-		carrier, carried := g.stores.CarriedBy.Get(entity)
-		if !carried || carrier.Holder != g.player || equipment.Slot != "weapon" {
+	for _, entity := range c.equipped.Entities() {
+		equipment, _ := c.equipped.Get(entity)
+		carrier, carried := c.carried.Get(entity)
+		if !carried || carrier.Holder != c.player || equipment.Slot != "weapon" {
 			continue
 		}
 		weaponCount++
-		item, found := g.stores.Items.Get(entity)
+		item, found := c.items.Get(entity)
 		if !found || in.Unarmed || item.KindID != player.StartingWeaponID {
 			return combat.PlayerAttackInput{}, fmt.Errorf("equipped weapon does not match starting weapon %s", player.StartingWeaponID)
 		}
-		kind, err := g.catalog.Item(item.KindID)
+		kind, err := c.catalog.Item(item.KindID)
 		if err != nil {
 			return combat.PlayerAttackInput{}, err
 		}
@@ -87,18 +112,18 @@ func (g *Game) playerAttackInput(defenderID string) (combat.PlayerAttackInput, e
 	return in, nil
 }
 
-// playerAttackDelayInput reads the same live weapon and stored skill points
+// attackDelayInput reads the same live weapon and stored skill points
 // used by accuracy and damage, plus the currently equipped shield.
-func (g *Game) playerAttackDelayInput(defenderID string) (combat.AttackDelayInput, error) {
-	attack, err := g.playerAttackInput(defenderID)
+func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInput, error) {
+	attack, err := c.attackInput(defenderID)
 	if err != nil {
 		return combat.AttackDelayInput{}, err
 	}
-	if _, err := g.fighterDefense(); err != nil {
+	if _, err := c.defense(); err != nil {
 		return combat.AttackDelayInput{}, err
 	}
 	in := combat.AttackDelayInput{Unarmed: attack.Unarmed, WeaponSkillID: attack.WeaponSkillID}
-	skills, _ := g.stores.Skills.Get(g.player)
+	skills, _ := c.skills.Get(c.player)
 	weaponSkillFound, shieldSkillFound := false, false
 	for _, skill := range skills.Entries {
 		if skill.ID == in.WeaponSkillID {
@@ -114,20 +139,20 @@ func (g *Game) playerAttackDelayInput(defenderID string) (combat.AttackDelayInpu
 		return combat.AttackDelayInput{}, fmt.Errorf("player attack timing lacks weapon or Shields skill")
 	}
 	shieldFound := false
-	for _, entity := range g.stores.Equipped.Entities() {
-		equipped, _ := g.stores.Equipped.Get(entity)
-		carrier, carried := g.stores.CarriedBy.Get(entity)
-		if !carried || carrier.Holder != g.player {
+	for _, entity := range c.equipped.Entities() {
+		equipped, _ := c.equipped.Get(entity)
+		carrier, carried := c.carried.Get(entity)
+		if !carried || carrier.Holder != c.player {
 			continue
 		}
 		if equipped.Slot != "weapon" && equipped.Slot != "shield" {
 			continue
 		}
-		item, found := g.stores.Items.Get(entity)
+		item, found := c.items.Get(entity)
 		if !found {
 			return combat.AttackDelayInput{}, fmt.Errorf("equipped item %d is missing", entity)
 		}
-		kind, err := g.catalog.Item(item.KindID)
+		kind, err := c.catalog.Item(item.KindID)
 		if err != nil {
 			return combat.AttackDelayInput{}, err
 		}
@@ -154,4 +179,61 @@ func (g *Game) playerAttackDelayInput(defenderID string) (combat.AttackDelayInpu
 		return combat.AttackDelayInput{}, err
 	}
 	return in, nil
+}
+
+func (c playerCombat) defense() (combat.Defense, error) {
+	attributes, found := c.attributes.Get(c.player)
+	if !found {
+		return combat.Defense{}, fmt.Errorf("player has no attributes")
+	}
+	skills, found := c.skills.Get(c.player)
+	if !found {
+		return combat.Defense{}, fmt.Errorf("player has no skills")
+	}
+	state, found := c.combat.Get(c.player)
+	if !found {
+		return combat.Defense{}, fmt.Errorf("player has no combat state")
+	}
+	input := combat.FighterDefense{Strength: attributes.Strength, Dexterity: attributes.Dexterity, ShieldBlocks: state.ShieldBlocks}
+	for _, skill := range skills.Entries {
+		switch skill.ID {
+		case "SK_ARMOUR":
+			input.ArmourSkill = skill.Level
+		case "SK_SHIELDS":
+			input.ShieldsSkill = skill.Level
+		}
+	}
+	body, shield := false, false
+	for _, entity := range c.equipped.Entities() {
+		carrier, carried := c.carried.Get(entity)
+		if !carried || carrier.Holder != c.player {
+			continue
+		}
+		equipped, _ := c.equipped.Get(entity)
+		if equipped.Slot != "body" && equipped.Slot != "shield" {
+			continue
+		}
+		item, found := c.items.Get(entity)
+		if !found {
+			return combat.Defense{}, fmt.Errorf("equipped entity %d has no item", entity)
+		}
+		kind, err := c.catalog.Item(item.KindID)
+		if err != nil {
+			return combat.Defense{}, err
+		}
+		if kind.Armour == nil {
+			return combat.Defense{}, fmt.Errorf("equipped %s has no armour properties", kind.ID)
+		}
+		if equipped.Slot == "body" {
+			input.BodyAC, input.BodyEV, input.BodyPlus = kind.Armour.AC, kind.Armour.EV, item.Plus
+			body = true
+		} else {
+			input.ShieldAC, input.ShieldEV, input.ShieldPlus = kind.Armour.AC, kind.Armour.EV, item.Plus
+			shield = true
+		}
+	}
+	if !body || !shield {
+		return combat.Defense{}, fmt.Errorf("Human Fighter lacks body armour or shield")
+	}
+	return combat.ProjectFighter(input)
 }

@@ -109,7 +109,7 @@ func (g *Game) View() View {
 	if attributes, ok := g.stores.Attributes.Get(g.player); ok {
 		view.Attributes = *attributes
 	}
-	if defense, err := g.fighterDefense(); err == nil {
+	if defense, err := newPlayerCombat(g).defense(); err == nil {
 		view.PlayerAC, view.PlayerEV, view.PlayerSH = defense.AC, defense.EV, defense.ShieldClass/2
 		view.DefenseKnown = true
 	}
