@@ -24,36 +24,41 @@ type SpeciesFakeMutation struct {
 }
 
 type SpeciesDef struct {
-	ID                   string                     `json:"id"`
-	MonsterID            string                     `json:"monster_id"`
-	SourcePath           string                     `json:"source_path"`
-	Name                 string                     `json:"name"`
-	ShortName            string                     `json:"short_name"`
-	Adjective            string                     `json:"adjective,omitempty"`
-	Genus                string                     `json:"genus,omitempty"`
-	Selectable           bool                       `json:"selectable"`
-	Difficulty           string                     `json:"difficulty,omitempty"`
-	DifficultyPriority   int                        `json:"difficulty_priority,omitempty"`
-	XP                   int                        `json:"xp"`
-	HP                   int                        `json:"hp"`
-	MPMod                int                        `json:"mp_mod"`
-	MR                   int                        `json:"mr"`
-	Strength             int                        `json:"strength"`
-	Intelligence         int                        `json:"intelligence"`
-	Dexterity            int                        `json:"dexterity"`
+	ID         string `json:"id"`
+	MonsterID  string `json:"monster_id"`
+	SourcePath string `json:"source_path"`
+
+	Name               string `json:"name"`
+	ShortName          string `json:"short_name"`
+	Adjective          string `json:"adjective,omitempty"`
+	Genus              string `json:"genus,omitempty"`
+	Selectable         bool   `json:"selectable"`
+	Difficulty         string `json:"difficulty,omitempty"`
+	DifficultyPriority int    `json:"difficulty_priority,omitempty"`
+
+	XP           int `json:"xp"`
+	HP           int `json:"hp"`
+	MPMod        int `json:"mp_mod"`
+	MR           int `json:"mr"`
+	Strength     int `json:"strength"`
+	Intelligence int `json:"intelligence"`
+	Dexterity    int `json:"dexterity"`
+
 	LevelUpStatFrequency int                        `json:"levelup_stat_frequency"`
 	LevelUpStats         []string                   `json:"levelup_stats"`
 	Aptitudes            map[string]SpeciesAptitude `json:"aptitudes"`
 	Mutations            []SpeciesMutation          `json:"mutations,omitempty"`
 	FakeMutations        []SpeciesFakeMutation      `json:"fake_mutations,omitempty"`
-	Flags                []string                   `json:"flags,omitempty"`
-	Habitat              string                     `json:"habitat"`
-	Size                 string                     `json:"size"`
-	UndeadType           string                     `json:"undead_type"`
-	RecommendedJobs      []string                   `json:"recommended_jobs,omitempty"`
-	RecommendedWeapons   []string                   `json:"recommended_weapons,omitempty"`
-	WalkingVerb          string                     `json:"walking_verb,omitempty"`
-	AltarAction          string                     `json:"altar_action,omitempty"`
+
+	Flags      []string `json:"flags,omitempty"`
+	Habitat    string   `json:"habitat"`
+	Size       string   `json:"size"`
+	UndeadType string   `json:"undead_type"`
+
+	RecommendedJobs    []string `json:"recommended_jobs,omitempty"`
+	RecommendedWeapons []string `json:"recommended_weapons,omitempty"`
+	WalkingVerb        string   `json:"walking_verb,omitempty"`
+	AltarAction        string   `json:"altar_action,omitempty"`
 }
 
 type SpeciesSourceFile struct {

@@ -17,19 +17,22 @@ type JobSourceFile struct {
 }
 
 type JobDef struct {
-	ID                 string          `json:"id"`
-	SourcePath         string          `json:"source_path"`
-	Abbreviation       string          `json:"abbreviation"`
-	Name               string          `json:"name"`
-	Strength           int             `json:"strength"`
-	Intelligence       int             `json:"intelligence"`
-	Dexterity          int             `json:"dexterity"`
+	ID           string `json:"id"`
+	SourcePath   string `json:"source_path"`
+	Abbreviation string `json:"abbreviation"`
+	Name         string `json:"name"`
+
+	Strength     int `json:"strength"`
+	Intelligence int `json:"intelligence"`
+	Dexterity    int `json:"dexterity"`
+
 	RecommendedSpecies []string        `json:"recommended_species"`
 	Spells             []string        `json:"spells"`
 	Equipment          []string        `json:"equipment"`
 	WeaponChoice       string          `json:"weapon_choice"`
 	Skills             []JobSkillGrant `json:"skills"`
-	Selectable         bool            `json:"selectable"`
+
+	Selectable bool `json:"selectable"`
 }
 
 type JobArtifact struct {

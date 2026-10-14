@@ -67,18 +67,20 @@ type ItemBrandWeight struct {
 }
 
 type WeaponProperties struct {
-	Damage        int               `json:"damage"`
-	Hit           int               `json:"hit"`
-	Speed         int               `json:"speed"`
-	Commonness    int               `json:"commonness"`
-	AcquireWeight int               `json:"acquire_weight"`
-	Price         int               `json:"price"`
-	SkillID       string            `json:"skill_id"`
-	Min2HSizeID   string            `json:"min_2h_size_id"`
-	Min1HSizeID   string            `json:"min_1h_size_id"`
-	AmmoID        string            `json:"ammo_id"`
-	DamageFlags   []string          `json:"damage_flags"`
-	BrandWeights  []ItemBrandWeight `json:"brand_weights"`
+	Damage int `json:"damage"`
+	Hit    int `json:"hit"`
+	Speed  int `json:"speed"`
+
+	Commonness    int `json:"commonness"`
+	AcquireWeight int `json:"acquire_weight"`
+	Price         int `json:"price"`
+
+	SkillID      string            `json:"skill_id"`
+	Min2HSizeID  string            `json:"min_2h_size_id"`
+	Min1HSizeID  string            `json:"min_1h_size_id"`
+	AmmoID       string            `json:"ammo_id"`
+	DamageFlags  []string          `json:"damage_flags"`
+	BrandWeights []ItemBrandWeight `json:"brand_weights"`
 }
 
 type MissileProperties struct {
@@ -95,23 +97,26 @@ type FoodProperties struct {
 
 // ItemDef contains immutable base-kind data. Live per-instance fields live in ECS.
 type ItemDef struct {
-	ID                string             `json:"id"`
-	Name              string             `json:"name"`
-	PropertyName      string             `json:"property_name,omitempty"`
-	Glyph             rune               `json:"glyph"`
-	Class             string             `json:"class"`
-	ClassValue        int                `json:"class_value"`
-	SubtypeValue      int                `json:"subtype_value"`
-	Slot              string             `json:"slot,omitempty"`
-	WeaponSkill       string             `json:"weapon_skill,omitempty"`
-	Stackable         bool               `json:"stackable"`
-	Naming            ItemName           `json:"naming"`
-	Evidence          ItemEvidence       `json:"evidence"`
-	ExplicitlyRemoved bool               `json:"explicitly_removed"`
-	Armour            *ArmourProperties  `json:"armour,omitempty"`
-	Weapon            *WeaponProperties  `json:"weapon,omitempty"`
-	Missile           *MissileProperties `json:"missile,omitempty"`
-	Food              *FoodProperties    `json:"food,omitempty"`
+	ID           string `json:"id"`
+	Name         string `json:"name"`
+	PropertyName string `json:"property_name,omitempty"`
+	Glyph        rune   `json:"glyph"`
+
+	Class        string `json:"class"`
+	ClassValue   int    `json:"class_value"`
+	SubtypeValue int    `json:"subtype_value"`
+	Slot         string `json:"slot,omitempty"`
+	WeaponSkill  string `json:"weapon_skill,omitempty"`
+	Stackable    bool   `json:"stackable"`
+
+	Naming            ItemName     `json:"naming"`
+	Evidence          ItemEvidence `json:"evidence"`
+	ExplicitlyRemoved bool         `json:"explicitly_removed"`
+
+	Armour  *ArmourProperties  `json:"armour,omitempty"`
+	Weapon  *WeaponProperties  `json:"weapon,omitempty"`
+	Missile *MissileProperties `json:"missile,omitempty"`
+	Food    *FoodProperties    `json:"food,omitempty"`
 }
 
 type ItemVocabulary struct {

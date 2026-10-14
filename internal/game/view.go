@@ -41,26 +41,26 @@ type ItemView struct {
 }
 
 type View struct {
-	LevelID          int
-	PlayerX          int
-	PlayerY          int
-	PlayerDead       bool
-	PlayerName       string
-	Width            int
-	Height           int
-	Cells            []CellView
-	Entities         []EntityView
-	PlayerHP         int
-	PlayerMaxHP      int
-	PlayerMP         int
-	PlayerMaxMP      int
-	PlayerAC         int
-	PlayerEV         int
-	PlayerSH         int
-	DefenseKnown     bool
-	CurrentAut       Aut
-	Messages         []string
-	Inventory        []ItemView
+	LevelID  int
+	Width    int
+	Height   int
+	Cells    []CellView
+	Entities []EntityView
+
+	PlayerX    int
+	PlayerY    int
+	PlayerDead bool
+	PlayerName string
+
+	PlayerHP     int
+	PlayerMaxHP  int
+	PlayerMP     int
+	PlayerMaxMP  int
+	PlayerAC     int
+	PlayerEV     int
+	PlayerSH     int
+	DefenseKnown bool
+
 	CharacterName    string
 	Attributes       ecs.Attributes
 	Skills           []character.Skill
@@ -68,6 +68,10 @@ type View struct {
 	NextLevelPercent int
 	PendingStatLevel int
 	MightAut         int
+
+	Inventory  []ItemView
+	CurrentAut Aut
+	Messages   []string
 }
 
 func (g *Game) View() View {

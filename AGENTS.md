@@ -25,7 +25,8 @@ for a human reader to follow.
   values may stay inline.
 - Leave a blank line after a multiline literal before the next statement.
 - Declare each struct field on its own line, including fields in test case
-  tables. Group related fields by order and names rather than comma packing.
+  tables. In large state and catalog structs, separate fields into conceptually
+  related groups with blank lines. Keep serialized field order stable.
 - Assign mutable fields one per line. Keep tuple assignment for values returned
   together by a function, such as a result and its error.
 - Give each `var` local state variable its own declaration. Related values

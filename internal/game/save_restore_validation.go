@@ -36,15 +36,18 @@ type savedEntityValidator struct {
 	snapshot        save.Snapshot
 	scenarioAnimals []string
 	usesPopulation  bool
-	seen            map[uint64]bool
-	recordsByID     map[uint64]save.EntityRecord
-	player          savedPlayerValidation
-	playerCount     int
-	monsters        savedMonsterValidation
-	equippedSlots   map[string]string
-	activeLevelID   int
-	earliestID      uint64
-	earliestAut     int64
+
+	seen        map[uint64]bool
+	recordsByID map[uint64]save.EntityRecord
+
+	player        savedPlayerValidation
+	playerCount   int
+	monsters      savedMonsterValidation
+	equippedSlots map[string]string
+
+	activeLevelID int
+	earliestID    uint64
+	earliestAut   int64
 }
 
 func (g *Game) validateAndRegisterSavedEntities(

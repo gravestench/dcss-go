@@ -46,17 +46,20 @@ type AppModel struct {
 	seed         uint64
 	savePath     string
 	game         *game.Game
+
 	screen       ScreenID
 	previous     ScreenID
 	weaponReturn ScreenID
 	width        int
 	height       int
-	name         string
-	speciesID    string
-	jobID        string
-	weaponID     string
-	options      []character.WeaponOption
-	focus        int
+
+	name      string
+	speciesID string
+	jobID     string
+	weaponID  string
+	options   []character.WeaponOption
+	focus     int
+
 	notice       string
 	confirm      confirmation
 	dropQuantity string

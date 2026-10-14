@@ -8,23 +8,27 @@ import (
 )
 
 type BranchDef struct {
-	ID             string   `json:"id"`
-	NumericID      int      `json:"numeric_id"`
-	EnumLine       int      `json:"enum_line"`
-	SourceLine     int      `json:"source_line"`
-	ParentID       string   `json:"parent_id"`
-	MinDepth       int      `json:"min_depth"`
-	MaxDepth       int      `json:"max_depth"`
-	Depth          int      `json:"depth"`
-	AbsoluteDepth  int      `json:"absolute_depth"`
-	Flags          []string `json:"flags"`
-	EntryFeature   string   `json:"entry_feature"`
-	ExitFeature    string   `json:"exit_feature"`
-	EscapeFeature  string   `json:"escape_feature"`
-	ShortName      string   `json:"short_name"`
-	LongName       string   `json:"long_name"`
-	Abbreviation   string   `json:"abbreviation"`
-	EntryMessage   string   `json:"entry_message,omitempty"`
+	ID         string `json:"id"`
+	NumericID  int    `json:"numeric_id"`
+	EnumLine   int    `json:"enum_line"`
+	SourceLine int    `json:"source_line"`
+
+	ParentID      string   `json:"parent_id"`
+	MinDepth      int      `json:"min_depth"`
+	MaxDepth      int      `json:"max_depth"`
+	Depth         int      `json:"depth"`
+	AbsoluteDepth int      `json:"absolute_depth"`
+	Flags         []string `json:"flags"`
+
+	EntryFeature  string `json:"entry_feature"`
+	ExitFeature   string `json:"exit_feature"`
+	EscapeFeature string `json:"escape_feature"`
+
+	ShortName    string `json:"short_name"`
+	LongName     string `json:"long_name"`
+	Abbreviation string `json:"abbreviation"`
+	EntryMessage string `json:"entry_message,omitempty"`
+
 	FloorColor     string   `json:"floor_color"`
 	RockColor      string   `json:"rock_color"`
 	TravelShortcut string   `json:"travel_shortcut"`

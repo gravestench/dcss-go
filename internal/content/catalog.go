@@ -10,21 +10,24 @@ type PlayerDef struct {
 
 // Catalog owns immutable definitions for one run. Its maps are private.
 type Catalog struct {
-	version           int
-	sourceRevision    string
+	version        int
+	sourceRevision string
+
 	monsters          map[string]MonsterDef
 	spells            map[string]SpellDef
 	spellOrder        []string
 	branches          map[string]BranchDef
 	branchOrder       []string
 	dungeonPopulation []DungeonPopEntry
-	items             map[string]ItemDef
-	itemIdentities    map[string]ItemIdentity
-	species           map[string]SpeciesDef
-	jobs              map[string]JobDef
-	startingGear      map[string][]StartingGrant
-	presentation      PresentationArtifact
-	player            PlayerDef
+
+	items          map[string]ItemDef
+	itemIdentities map[string]ItemIdentity
+
+	species      map[string]SpeciesDef
+	jobs         map[string]JobDef
+	startingGear map[string][]StartingGrant
+	presentation PresentationArtifact
+	player       PlayerDef
 }
 
 func (c Catalog) Version() int {

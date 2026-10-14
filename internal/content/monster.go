@@ -69,37 +69,42 @@ type MonsterTile struct {
 // MonsterDef is a source-traced class definition, never a live monster.
 // Removed and enum-only records carry identity and provenance, not gameplay fields.
 type MonsterDef struct {
-	ID             string              `json:"id"`
-	Status         MonsterStatus       `json:"status"`
-	SourcePath     string              `json:"source_path"`
-	SourceLine     int                 `json:"source_line"`
-	Name           string              `json:"name,omitempty"`
-	Glyph          rune                `json:"glyph,omitempty"`
-	ColourID       string              `json:"colour_id,omitempty"`
-	Flags          []string            `json:"flags,omitempty"`
-	Resistances    []MonsterResistance `json:"resistances,omitempty"`
-	XPModifier     int                 `json:"xp_modifier,omitempty"`
-	GenusID        string              `json:"genus_id,omitempty"`
-	SpeciesID      string              `json:"species_id,omitempty"`
-	Holiness       []string            `json:"holiness,omitempty"`
-	Willpower      int                 `json:"willpower,omitempty"`
-	Attacks        [4]MonsterAttack    `json:"attacks,omitempty"`
-	HD             int                 `json:"hd,omitempty"`
-	AverageHP10x   int                 `json:"average_hp_10x,omitempty"`
-	AC             int                 `json:"ac,omitempty"`
-	EV             int                 `json:"ev,omitempty"`
-	SpellbookID    string              `json:"spellbook_id,omitempty"`
-	LeavesCorpse   bool                `json:"leaves_corpse,omitempty"`
-	ShoutID        string              `json:"shout_id,omitempty"`
-	IntelligenceID string              `json:"intelligence_id,omitempty"`
-	HabitatID      string              `json:"habitat_id,omitempty"`
-	Speed          int                 `json:"speed,omitempty"`
-	Energy         MonsterEnergy       `json:"energy,omitempty"`
-	ItemUseID      string              `json:"item_use_id,omitempty"`
-	SizeID         string              `json:"size_id,omitempty"`
-	ShapeID        string              `json:"shape_id,omitempty"`
-	Tile           MonsterTile         `json:"tile,omitempty"`
-	CorpseTileID   string              `json:"corpse_tile_id,omitempty"`
+	ID         string        `json:"id"`
+	Status     MonsterStatus `json:"status"`
+	SourcePath string        `json:"source_path"`
+	SourceLine int           `json:"source_line"`
+
+	Name     string `json:"name,omitempty"`
+	Glyph    rune   `json:"glyph,omitempty"`
+	ColourID string `json:"colour_id,omitempty"`
+
+	Flags       []string            `json:"flags,omitempty"`
+	Resistances []MonsterResistance `json:"resistances,omitempty"`
+	XPModifier  int                 `json:"xp_modifier,omitempty"`
+	GenusID     string              `json:"genus_id,omitempty"`
+	SpeciesID   string              `json:"species_id,omitempty"`
+	Holiness    []string            `json:"holiness,omitempty"`
+	Willpower   int                 `json:"willpower,omitempty"`
+
+	Attacks      [4]MonsterAttack `json:"attacks,omitempty"`
+	HD           int              `json:"hd,omitempty"`
+	AverageHP10x int              `json:"average_hp_10x,omitempty"`
+	AC           int              `json:"ac,omitempty"`
+	EV           int              `json:"ev,omitempty"`
+	SpellbookID  string           `json:"spellbook_id,omitempty"`
+
+	LeavesCorpse   bool          `json:"leaves_corpse,omitempty"`
+	ShoutID        string        `json:"shout_id,omitempty"`
+	IntelligenceID string        `json:"intelligence_id,omitempty"`
+	HabitatID      string        `json:"habitat_id,omitempty"`
+	Speed          int           `json:"speed,omitempty"`
+	Energy         MonsterEnergy `json:"energy,omitempty"`
+	ItemUseID      string        `json:"item_use_id,omitempty"`
+	SizeID         string        `json:"size_id,omitempty"`
+	ShapeID        string        `json:"shape_id,omitempty"`
+
+	Tile         MonsterTile `json:"tile,omitempty"`
+	CorpseTileID string      `json:"corpse_tile_id,omitempty"`
 }
 
 type MonsterArtifact struct {

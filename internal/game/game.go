@@ -8,20 +8,23 @@ import (
 
 // Game owns one run. Other packages interact with it through commands and views.
 type Game struct {
-	world          *akara.World
-	stores         ecs.Stores
-	levels         map[int]*Level
-	player         akara.Entity
-	catalog        content.Catalog
-	seed           uint64
-	scenarioID     string
-	rng            *RNGStreams
-	scheduler      TurnScheduler
-	currentAut     Aut
+	world   *akara.World
+	stores  ecs.Stores
+	levels  map[int]*Level
+	player  akara.Entity
+	catalog content.Catalog
+
+	seed       uint64
+	scenarioID string
+	rng        *RNGStreams
+	scheduler  TurnScheduler
+	currentAut Aut
+
 	corpseAging    corpseAgingSystem
 	monsterCatchup monsterCatchupSystem
 	advancement    *advancementSystem
 	turn           TurnContext
+
 	messages       []string
 	visible        []bool
 	visibleLevelID int
