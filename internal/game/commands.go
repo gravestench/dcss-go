@@ -594,6 +594,10 @@ func (g *Game) runAction(
 
 	for _, dead := range g.turn.Deaths {
 		if position, found := g.stores.Positions.Get(dead); found {
+			if err := g.dropMonsterInventory(dead, *position); err != nil {
+				return nil, fmt.Errorf("%s actor %d inventory drop: %w", phase, actor, err)
+			}
+
 			if err := g.levels[position.LevelID].RemoveActor(dead); err != nil {
 				return nil, fmt.Errorf("%s actor %d death: %w", phase, actor, err)
 			}

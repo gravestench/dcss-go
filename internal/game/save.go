@@ -95,11 +95,15 @@ func validateSavedItem(
 	}
 
 	if record.CarriedBy == nil ||
-		record.CarriedBy.Holder != player ||
+		record.CarriedBy.Holder == 0 ||
 		record.Position != nil ||
 		kind.Slot == "" ||
 		record.Equipped.Slot != kind.Slot {
 		return fmt.Errorf("item %d has invalid equipped slot or carrier", record.ID)
+	}
+
+	if record.CarriedBy.Holder != player {
+		return nil
 	}
 
 	// The supported Fighter species cannot wear barding.

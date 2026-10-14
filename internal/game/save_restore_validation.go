@@ -94,6 +94,10 @@ func (v *savedEntityValidator) validate() error {
 		}
 	}
 
+	if err := v.validateMonsterInventory(); err != nil {
+		return err
+	}
+
 	if err := v.validateBandLinks(); err != nil {
 		return err
 	}
@@ -103,6 +107,49 @@ func (v *savedEntityValidator) validate() error {
 	}
 
 	return v.validateFinalState()
+}
+
+// Monster inventory links are validated after every actor ID is registered,
+// because a carried item can appear before its holder in a saved snapshot.
+func (v *savedEntityValidator) validateMonsterInventory() error {
+	equipped := make(map[uint64]bool)
+
+	for _, record := range v.snapshot.Entities {
+		if record.CarriedBy == nil ||
+			record.CarriedBy.Holder == v.game.player {
+			continue
+		}
+
+		holderID := uint64(record.CarriedBy.Holder)
+		holder, found := v.recordsByID[holderID]
+
+		if !found ||
+			holder.Actor == nil ||
+			holder.AI == nil ||
+			holder.Health == nil ||
+			holder.Health.Current <= 0 ||
+			holder.Position == nil ||
+			record.Item == nil ||
+			record.Equipped == nil ||
+			record.Equipped.Slot != "weapon" ||
+			equipped[holderID] {
+			return fmt.Errorf("item %d has invalid monster carrier %d", record.ID, holderID)
+		}
+
+		kind, err := v.game.catalog.Item(record.Item.KindID)
+
+		if err != nil {
+			return err
+		}
+
+		if kind.Class != "OBJ_WEAPONS" {
+			return fmt.Errorf("item %d is not a monster weapon", record.ID)
+		}
+
+		equipped[holderID] = true
+	}
+
+	return nil
 }
 
 func (v *savedEntityValidator) validateRecord(record save.EntityRecord) error {

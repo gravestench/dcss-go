@@ -204,10 +204,6 @@ func (g *Game) restoreLocationComponents(
 	}
 
 	if record.CarriedBy != nil {
-		if record.CarriedBy.Holder != g.player {
-			return fmt.Errorf("item %d has unsupported carrier %d", record.ID, record.CarriedBy.Holder)
-		}
-
 		if _, err := g.stores.CarriedBy.Set(entity, *record.CarriedBy); err != nil {
 			return err
 		}
