@@ -34,19 +34,19 @@ func (in AttackDelayInput) Validate() error {
 	}
 }
 
-func randomRoundDivision(r Roller, numerator, denominator int) (int, error) {
+type weightedDelay struct {
+	value, weight int
+}
+
+// roundedValues mirrors div_rand_round(random_var, d): it multiplies every
+// source weight by d even when division is exact. No draw occurs here.
+func roundedValues(numerator, denominator int) []weightedDelay {
 	whole, remainder := numerator/denominator, numerator%denominator
-	if remainder == 0 {
-		return whole, nil
+	values := []weightedDelay{{whole, denominator - remainder}}
+	if remainder > 0 {
+		values = append(values, weightedDelay{whole + 1, remainder})
 	}
-	roll, err := random2(r, denominator)
-	if err != nil {
-		return 0, err
-	}
-	if roll < remainder {
-		whole++
-	}
-	return whole, nil
+	return values
 }
 
 func minimumWeaponDelay(speed int, skillID string) int {
@@ -68,29 +68,47 @@ func PlayerAttackDelay(r Roller, in AttackDelayInput) (int, error) {
 	if err := in.Validate(); err != nil {
 		return 0, err
 	}
-	delay := 10
+	base := 10
+	reductionNumerator, reductionDenominator := in.WeaponSkill10, 54
 	if in.Unarmed {
-		reduction, err := randomRoundDivision(r, in.WeaponSkill10, 54)
-		if err != nil {
-			return 0, err
-		}
-		delay -= reduction
+		// Unarmed Combat uses 27*2 rather than the weapon's DELAY_SCALE.
 	} else {
 		minimum := minimumWeaponDelay(in.WeaponSpeed, in.WeaponSkillID)
-		cappedSkill := min(in.WeaponSkill10, 10*(in.WeaponSpeed-minimum)*2)
-		reduction, err := randomRoundDivision(r, cappedSkill, 20)
-		if err != nil {
-			return 0, err
-		}
-		delay = in.WeaponSpeed - reduction
+		reductionNumerator = min(in.WeaponSkill10, 10*(in.WeaponSpeed-minimum)*2)
+		reductionDenominator = 20
+		base = in.WeaponSpeed
 	}
-	delay = max(delay, 3)
 	baseShieldPenalty := -in.ShieldEV / 10
 	shieldPenalty20 := 2 * baseShieldPenalty * baseShieldPenalty *
 		(270 - in.ShieldsSkill10) * 20 / (5 * 20) / 270
-	shieldDelay, err := randomRoundDivision(r, shieldPenalty20, 20)
+	// C++ builds one random_var: skill reduction, max(3), and shield
+	// penalty combine as weighted distributions. The final normal-speed
+	// div_rand_round(attk_delay*10, 10) multiplies all weights by 10.
+	weights := make(map[int]int)
+	for _, reduction := range roundedValues(reductionNumerator, reductionDenominator) {
+		for _, shield := range roundedValues(shieldPenalty20, 20) {
+			delay := max(2, max(3, base-reduction.value)+shield.value)
+			weights[delay] += reduction.weight * shield.weight * 10
+		}
+	}
+	low, high := 1<<31-1, 0
+	for delay := range weights {
+		low = min(low, delay)
+		high = max(high, delay)
+	}
+	total := 0
+	for delay := low; delay <= high; delay++ {
+		total += weights[delay]
+	}
+	roll, err := random2(r, total)
 	if err != nil {
 		return 0, err
 	}
-	return max(2, delay+shieldDelay), nil
+	for delay := low; delay <= high; delay++ {
+		if roll < weights[delay] {
+			return delay, nil
+		}
+		roll -= weights[delay]
+	}
+	return 0, fmt.Errorf("attack delay distribution was empty")
 }

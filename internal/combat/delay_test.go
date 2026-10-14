@@ -7,10 +7,10 @@ func starterDelay(speed int, skill string) AttackDelayInput {
 		WeaponSkill10: 20, ShieldEV: -50, ShieldsSkill10: 30}
 }
 
-func TestStartingWeaponsUseSourceSpeedAndBucklerRounding(t *testing.T) {
+func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
 	for _, tc := range []struct {
 		name, skill string
-		speed, want int
+		speed, fast int
 	}{
 		{"rapier", "SK_SHORT_BLADES", 12, 11},
 		{"flail", "SK_MACES_FLAILS", 14, 13},
@@ -19,49 +19,44 @@ func TestStartingWeaponsUseSourceSpeedAndBucklerRounding(t *testing.T) {
 		{"long sword", "SK_LONG_BLADES", 14, 13},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			rng := &scriptedRoller{rolls: []scriptedRoll{{20, 19}}}
-			got, err := PlayerAttackDelay(rng, starterDelay(tc.speed, tc.skill))
-			if err != nil || got != tc.want || len(rng.rolls) != 0 {
-				t.Fatalf("delay = %d, err %v, rolls %+v, want %d", got, err, rng.rolls, tc.want)
+			for _, boundary := range []struct{ roll, want int }{
+				{0, tc.fast}, {2399, tc.fast}, {2400, tc.fast + 1}, {3999, tc.fast + 1},
+			} {
+				rng := &scriptedRoller{rolls: []scriptedRoll{{4000, boundary.roll}}}
+				got, err := PlayerAttackDelay(rng, starterDelay(tc.speed, tc.skill))
+				if err != nil || got != boundary.want || len(rng.rolls) != 0 {
+					t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", boundary.roll, got, err, rng.rolls, boundary.want)
+				}
 			}
 		})
 	}
 }
 
-func TestRapierBucklerPenaltyAndFractionalSkillDrawOrder(t *testing.T) {
+func TestFractionalWeaponSkillCombinesBeforeOneDraw(t *testing.T) {
 	in := starterDelay(12, "SK_SHORT_BLADES")
-	rng := &scriptedRoller{rolls: []scriptedRoll{{20, 0}}}
-	got, err := PlayerAttackDelay(rng, in)
-	if err != nil || got != 12 || len(rng.rolls) != 0 {
-		t.Fatalf("buckler-penalized delay = %d, %v, %+v", got, err, rng.rolls)
-	}
 	in.WeaponSkill10 = 21
-	rng = &scriptedRoller{rolls: []scriptedRoll{{20, 0}, {20, 19}}}
-	got, err = PlayerAttackDelay(rng, in)
-	if err != nil || got != 10 || len(rng.rolls) != 0 {
-		t.Fatalf("fractional-skill delay = %d, %v, %+v", got, err, rng.rolls)
+	for _, tc := range []struct{ roll, want int }{
+		{0, 10}, {119, 10}, {120, 11}, {2479, 11}, {2480, 12}, {3999, 12},
+	} {
+		rng := &scriptedRoller{rolls: []scriptedRoll{{4000, tc.roll}}}
+		got, err := PlayerAttackDelay(rng, in)
+		if err != nil || got != tc.want || len(rng.rolls) != 0 {
+			t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", tc.roll, got, err, rng.rolls, tc.want)
+		}
 	}
 }
 
-func TestUnarmedDelayUsesSeparateSkillRoundBeforeShield(t *testing.T) {
+func TestUnarmedSamplesOneCombinedSourceDistribution(t *testing.T) {
 	in := AttackDelayInput{Unarmed: true, WeaponSkillID: "SK_UNARMED_COMBAT",
 		WeaponSkill10: 20, ShieldEV: -50, ShieldsSkill10: 30}
-	for _, tc := range []struct {
-		name  string
-		rolls []scriptedRoll
-		want  int
-	}{
-		{"fast", []scriptedRoll{{54, 0}, {20, 19}}, 9},
-		{"cancelled", []scriptedRoll{{54, 0}, {20, 0}}, 10},
-		{"slow", []scriptedRoll{{54, 53}, {20, 0}}, 11},
+	for _, tc := range []struct{ roll, want int }{
+		{0, 9}, {2399, 9}, {2400, 10}, {8079, 10}, {8080, 11}, {10799, 11},
 	} {
-		t.Run(tc.name, func(t *testing.T) {
-			rng := &scriptedRoller{rolls: tc.rolls}
-			got, err := PlayerAttackDelay(rng, in)
-			if err != nil || got != tc.want || len(rng.rolls) != 0 {
-				t.Fatalf("delay = %d, err %v, rolls %+v", got, err, rng.rolls)
-			}
-		})
+		rng := &scriptedRoller{rolls: []scriptedRoll{{10800, tc.roll}}}
+		got, err := PlayerAttackDelay(rng, in)
+		if err != nil || got != tc.want || len(rng.rolls) != 0 {
+			t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", tc.roll, got, err, rng.rolls, tc.want)
+		}
 	}
 }
 

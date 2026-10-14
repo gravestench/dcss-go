@@ -22,7 +22,7 @@
 - Attack delay draws occur before accuracy and damage on the same named stream.
 - The 10-aut assumption in `Step`, its result, and the scheduler all change together for bumps.
 - Unarmed has no weapon entity and uses its separate 54-denominator rule.
-- Shield penalty draws even when weapon skill reduction is exact; randomized rounding follows source integer order.
+- Skill reduction and shield penalty form one weighted `random_var` distribution. Roll that distribution once before accuracy, including when either division is exact.
 - Restored saves with malformed timing inputs fail before a live game is replaced or an action is spent.
 
 ---
@@ -33,9 +33,9 @@
 
 **Interfaces:** `type AttackDelayInput struct { Unarmed bool; WeaponSkillID string; WeaponSpeed, WeaponSkill10, ShieldEV, ShieldsSkill10 int }`; `func PlayerAttackDelay(Roller, AttackDelayInput) (int, error)`.
 
-- [ ] Write scripted tests for rapier at skill 2 and buckler Shields 3 producing 11 or 12 aut depending on the shield draw; unarmed producing 9/10/11 aut; every Fighter starter weapon's speed; and invalid inputs. Assert draw bounds and order.
+- [ ] Write scripted tests for rapier at skill 2 and buckler Shields 3 producing 11 or 12 aut from one bound-4000 draw; unarmed producing 9/10/11 aut from one bound-10800 draw; every Fighter starter weapon's speed; and invalid inputs. Assert weight boundaries and draw order.
 - [ ] Run `GOCACHE=/private/tmp/dcrawl-go-attack-delay-cache go test ./internal/combat` and observe missing API failures.
-- [ ] Implement the ordinary source path from `player-act.cc:246-331`, `fight.cc:912-956`, `player.cc:5649-5661`, `random.cc:313-321`; share the existing bounded `Roller` and skip RNG draws for exact divisions.
+- [ ] Implement the ordinary source path from `player-act.cc:246-331`, `fight.cc:912-956`, `player.cc:5649-5661`, `random-var.cc:88-220`, and `melee-attack.cc:201`; combine source integer weights without intermediate draws and sample once through the bounded `Roller`.
 - [ ] Run focused tests and commit the pure timing category.
 
 ### Task 2: ECS projection and variable player scheduling

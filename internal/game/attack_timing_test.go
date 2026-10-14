@@ -73,8 +73,22 @@ func TestRapierBumpCostSchedulesTwoRatActions(t *testing.T) {
 	}
 }
 
-func TestUnarmedBumpUsesVariableCost(t *testing.T) {
-	g, err := NewScenario(11, testCatalog(t), "WPN_UNARMED", "Tester")
+func TestShortUnarmedBumpSchedulesOnlyOneRatAction(t *testing.T) {
+	var seed uint64
+	for candidate := uint64(1); candidate < 10000; candidate++ {
+		roll, err := NewRNGStreams(candidate).Intn("melee", 10800)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if roll < 2400 {
+			seed = candidate
+			break
+		}
+	}
+	if seed == 0 {
+		t.Fatal("no seed yielded a 9-aut unarmed attack")
+	}
+	g, err := NewScenario(seed, testCatalog(t), "WPN_UNARMED", "Tester")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,9 +96,26 @@ func TestUnarmedBumpUsesVariableCost(t *testing.T) {
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
 	}
+	rat := ratID(t, g)
+	health, _ := g.stores.Health.Get(rat)
+	health.Current, health.Max = 100, 100
 	result, err := g.Step(Command{Kind: CommandMove, DX: 1})
-	if err != nil || result.Spent < 9 || result.Spent > 11 || result.View.CurrentAut != result.Spent {
+	if err != nil || result.Spent != 9 || result.View.CurrentAut != 9 {
 		t.Fatalf("unarmed bump = %+v, %v", result, err)
+	}
+	monsterActs := 0
+	for _, event := range result.Events {
+		if event.Kind == "monster" {
+			monsterActs++
+		}
+	}
+	if monsterActs != 1 {
+		t.Fatalf("rat acted %d times after a 9-aut attack: %+v", monsterActs, result.Events)
+	}
+	playerActor, _ := g.stores.Actors.Get(g.player)
+	ratActor, _ := g.stores.Actors.Get(rat)
+	if playerActor.NextAut != 9 || ratActor.NextAut != 10 {
+		t.Fatalf("player deadline %d, rat deadline %d; want 9 and 10", playerActor.NextAut, ratActor.NextAut)
 	}
 }
 
