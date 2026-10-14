@@ -216,6 +216,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if _, err := catalog.Monster(record.Actor.KindID); err != nil {
 				return nil, err
 			}
+			if record.Actor.KindID != "MONS_RAT" {
+				return nil, fmt.Errorf("unsupported melee attacker %s in fixed Dungeon scenario", record.Actor.KindID)
+			}
 		}
 		if record.Actor != nil && (record.Actor.Speed <= 0 || record.Actor.NextAut < 0 || record.Health == nil || record.Combatant == nil || record.Position == nil) {
 			return nil, fmt.Errorf("invalid actor %d", record.ID)
@@ -332,6 +335,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 				return nil, err
 			}
 		}
+	}
+	if _, err := g.fighterDefense(); err != nil {
+		return nil, fmt.Errorf("unsupported saved player defense: %w", err)
 	}
 	if err := registerSystems(g); err != nil {
 		return nil, err

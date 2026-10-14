@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -139,5 +140,53 @@ func TestCombatSaveRejectsNegativeBlocksAndOldVersion(t *testing.T) {
 	}
 	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "combat") {
 		t.Fatalf("negative shield-block restore error = %v", err)
+	}
+}
+
+func TestRestoreRejectsCombatStateItCannotRun(t *testing.T) {
+	for _, tc := range []struct {
+		name, want string
+		mutate     func(*save.Snapshot)
+	}{
+		{"cataloged non-rat", "unsupported melee attacker", func(snapshot *save.Snapshot) {
+			for i := range snapshot.Entities {
+				if snapshot.Entities[i].AI != nil {
+					snapshot.Entities[i].Actor.KindID = "MONS_ORC"
+				}
+			}
+		}},
+		{"body armour enchantment", "defense", func(snapshot *save.Snapshot) {
+			for i := range snapshot.Entities {
+				if snapshot.Entities[i].Item != nil && snapshot.Entities[i].Item.KindID == "ARM_SCALE_MAIL" {
+					snapshot.Entities[i].Item.Plus = 101
+				}
+			}
+		}},
+		{"shield enchantment", "defense", func(snapshot *save.Snapshot) {
+			for i := range snapshot.Entities {
+				if snapshot.Entities[i].Item != nil && snapshot.Entities[i].Item.KindID == "ARM_BUCKLER" {
+					snapshot.Entities[i].Item.Plus = 101
+				}
+			}
+		}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			g := newStepGame(t)
+			before := g.Snapshot()
+			bad := g.Snapshot()
+			tc.mutate(&bad)
+			if reflect.DeepEqual(before, bad) {
+				t.Fatal("test did not mutate the save")
+			}
+			if replacement, err := g.Restore(bad); err == nil {
+				replacement.Close()
+				t.Fatal("unsupported combat state restored")
+			} else if !strings.Contains(err.Error(), tc.want) {
+				t.Fatalf("restore error %q does not contain %q", err, tc.want)
+			}
+			if !reflect.DeepEqual(before, g.Snapshot()) {
+				t.Fatal("failed restore changed the live game")
+			}
+		})
 	}
 }
