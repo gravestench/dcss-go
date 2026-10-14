@@ -30,38 +30,6 @@ type StartingGearArtifact struct {
 	Jobs            []JobStartingGear `json:"jobs"`
 }
 
-func (d ItemDef) validate() error {
-	if d.ID == "" || d.Name == "" || d.Glyph == 0 {
-		return fmt.Errorf("item %s has empty ID, name, or glyph", d.ID)
-	}
-	prefix := map[string]string{
-		"OBJ_WEAPONS": "WPN_", "OBJ_ARMOUR": "ARM_", "OBJ_MISSILES": "MI_",
-		"OBJ_POTIONS": "POT_", "OBJ_SCROLLS": "SCR_", "OBJ_WANDS": "WAND_",
-		"OBJ_MISCELLANY": "MISC_",
-	}[d.Class]
-	if prefix == "" || !strings.HasPrefix(d.ID, prefix) {
-		return fmt.Errorf("item %s has invalid class %s", d.ID, d.Class)
-	}
-	switch d.Class {
-	case "OBJ_WEAPONS":
-		if d.Slot != "weapon" || !strings.HasPrefix(d.WeaponSkill, "SK_") || d.Stackable {
-			return fmt.Errorf("item %s has invalid weapon slot or skill", d.ID)
-		}
-	case "OBJ_ARMOUR":
-		if !strings.Contains(" body shield head cloak gloves boots ", " "+d.Slot+" ") || d.WeaponSkill != "" || d.Stackable {
-			return fmt.Errorf("item %s has invalid armour slot or skill", d.ID)
-		}
-	default:
-		if d.Slot != "" || d.WeaponSkill != "" {
-			return fmt.Errorf("item %s has invalid slot or skill", d.ID)
-		}
-		if (d.Class == "OBJ_MISSILES" || d.Class == "OBJ_POTIONS" || d.Class == "OBJ_SCROLLS") && !d.Stackable {
-			return fmt.Errorf("item %s must be stackable", d.ID)
-		}
-	}
-	return nil
-}
-
 func (g StartingGrant) validate(kind ItemDef) error {
 	if g.Raw == "" || g.KindID != kind.ID || g.Quantity <= 0 {
 		return fmt.Errorf("grant %q has invalid raw spec, kind, or quantity", g.Raw)

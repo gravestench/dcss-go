@@ -2,16 +2,6 @@ package content
 
 import "fmt"
 
-type ItemDef struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Glyph       rune   `json:"glyph"`
-	Class       string `json:"class"`
-	Slot        string `json:"slot,omitempty"`
-	WeaponSkill string `json:"weapon_skill,omitempty"`
-	Stackable   bool   `json:"stackable"`
-}
-
 type PlayerDef struct {
 	SpeciesID  string
 	JobID      string
@@ -25,6 +15,7 @@ type Catalog struct {
 	sourceRevision string
 	monsters       map[string]MonsterDef
 	items          map[string]ItemDef
+	itemIdentities map[string]ItemIdentity
 	species        map[string]SpeciesDef
 	jobs           map[string]JobDef
 	startingGear   map[string][]StartingGrant
@@ -54,7 +45,7 @@ func (c Catalog) Item(id string) (ItemDef, error) {
 	if !found {
 		return ItemDef{}, fmt.Errorf("unknown item ID %q", id)
 	}
-	return definition, nil
+	return definition.clone(), nil
 }
 
 func (c Catalog) Validate() error {
