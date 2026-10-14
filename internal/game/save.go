@@ -114,8 +114,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	if snapshot.SourceRevision != catalog.SourceRevision() {
 		return nil, fmt.Errorf("save source revision %q does not match catalog", snapshot.SourceRevision)
 	}
-	if snapshot.ScenarioID != "" && snapshot.ScenarioID != ordinaryAnimalScenarioID {
-		return nil, fmt.Errorf("unsupported scenario ID %q", snapshot.ScenarioID)
+	scenarioAnimals, err := scenarioAnimalIDs(snapshot.ScenarioID)
+	if err != nil {
+		return nil, err
 	}
 	if snapshot.PlayerID == 0 || snapshot.CurrentAut < 0 || len(snapshot.Levels) == 0 {
 		return nil, fmt.Errorf("invalid save header")
@@ -175,8 +176,8 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		}
 		seen[record.ID] = true
 		if record.Item != nil {
-			if snapshot.ScenarioID == "" && record.Corpse != nil && record.Corpse.MonsterID != "MONS_RAT" {
-				return nil, fmt.Errorf("legacy fixed Dungeon save has unsupported corpse %s", record.Corpse.MonsterID)
+			if record.Corpse != nil && !slices.Contains(scenarioAnimals, record.Corpse.MonsterID) {
+				return nil, fmt.Errorf("fixed Dungeon save has unsupported corpse %s", record.Corpse.MonsterID)
 			}
 			if err := validateSavedItem(record, catalog, g.player, equippedSlots); err != nil {
 				return nil, err
@@ -264,7 +265,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if _, err := catalog.Monster(record.Actor.KindID); err != nil {
 				return nil, err
 			}
-			if !isOrdinaryAnimal(record.Actor.KindID) || (snapshot.ScenarioID == "" && record.Actor.KindID != "MONS_RAT") {
+			if !slices.Contains(scenarioAnimals, record.Actor.KindID) {
 				return nil, fmt.Errorf("unsupported melee attacker %s in fixed Dungeon scenario", record.Actor.KindID)
 			}
 			definition, definitionErr := catalog.Monster(record.Actor.KindID)
@@ -310,11 +311,20 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		return nil, fmt.Errorf("save requires exactly one player, found %d", playerCount)
 	}
 	maxEarnedXP := 0
-	if !liveAnimals["MONS_RAT"] {
-		maxEarnedXP++
-	}
-	if snapshot.ScenarioID == ordinaryAnimalScenarioID && !liveAnimals["MONS_QUOKKA"] {
-		maxEarnedXP += 2
+	for _, id := range scenarioAnimals {
+		if liveAnimals[id] {
+			continue
+		}
+		definition, defErr := catalog.Monster(id)
+		if defErr != nil {
+			return nil, defErr
+		}
+		profile, _ := character.OrdinaryAnimalProfile(id)
+		amount, xpErr := character.OrdinaryAnimalExperience(definition, profile.MaxHP)
+		if xpErr != nil {
+			return nil, xpErr
+		}
+		maxEarnedXP += amount
 	}
 	if savedXP > maxEarnedXP {
 		return nil, fmt.Errorf("saved experience exceeds killed fixed animals")

@@ -12,7 +12,7 @@ func (g *Game) awardAnimalExperience(animalID akara.Entity, maxHP int) error {
 	if !found || !isOrdinaryAnimal(actor.KindID) {
 		return fmt.Errorf("unsupported experience source %d", animalID)
 	}
-	animal, err := g.ordinaryAnimal(actor.KindID)
+	animal, err := ordinaryAnimal(g.catalog, actor.KindID)
 	if err != nil {
 		return err
 	}

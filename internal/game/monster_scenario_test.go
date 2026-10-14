@@ -19,6 +19,9 @@ func TestRatScenarioRollsSourceHPAndKeepsCatalogedBite(t *testing.T) {
 	if _, err := monster.RollHP(expected, 55); err != nil {
 		t.Fatal(err)
 	}
+	if _, err := monster.RollHP(expected, 20); err != nil {
+		t.Fatal(err)
+	}
 	if !ok || health.Current != want || health.Max != want || !reflect.DeepEqual(expected.States(), g.rng.States()) {
 		t.Fatalf("rat health = %+v, found %v", health, ok)
 	}
@@ -41,7 +44,7 @@ func TestRatRolledHPSurvivesSaveWithoutReroll(t *testing.T) {
 		t.Fatal("loading rerolled the rat or monster HP stream")
 	}
 	for i := range before.Entities {
-		if before.Entities[i].AI != nil {
+		if before.Entities[i].Actor != nil && before.Entities[i].Actor.KindID == "MONS_RAT" {
 			before.Entities[i].Health.Max = 4
 			before.Entities[i].Health.Current = 4
 		}

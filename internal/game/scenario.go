@@ -81,10 +81,14 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 		return nil, err
 	}
 
-	if err = g.createScenarioAnimal("MONS_RAT", 1, 4, 1); err != nil {
+	monsterFactory := newOrdinaryMonsterFactory(g)
+	if _, err = monsterFactory.Spawn("MONS_RAT", 1, 4, 1); err != nil {
 		return nil, err
 	}
-	if err = g.createScenarioAnimal("MONS_QUOKKA", 2, 14, 7); err != nil {
+	if _, err = monsterFactory.Spawn("MONS_QUOKKA", 2, 14, 7); err != nil {
+		return nil, err
+	}
+	if _, err = monsterFactory.Spawn("MONS_FRILLED_LIZARD", 2, 14, 1); err != nil {
 		return nil, err
 	}
 

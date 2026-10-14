@@ -158,10 +158,9 @@ func TestLegacyRatOnlySaveStillLoads(t *testing.T) {
 	g := newStepGame(t)
 	legacy := g.Snapshot()
 	legacy.ScenarioID = ""
-	for i := range legacy.Entities {
-		if legacy.Entities[i].Actor != nil && legacy.Entities[i].Actor.KindID == "MONS_QUOKKA" {
+	for i := len(legacy.Entities) - 1; i >= 0; i-- {
+		if legacy.Entities[i].Actor != nil && legacy.Entities[i].Actor.KindID != "MONS_RAT" && legacy.Entities[i].AI != nil {
 			legacy.Entities = append(legacy.Entities[:i], legacy.Entities[i+1:]...)
-			break
 		}
 	}
 	loaded, err := Restore(legacy, testCatalog(t))

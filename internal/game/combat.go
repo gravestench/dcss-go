@@ -43,7 +43,7 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 		if !found || !isOrdinaryAnimal(actor.KindID) {
 			return fmt.Errorf("unsupported player melee target %d", target)
 		}
-		defender, err := g.ordinaryAnimal(actor.KindID)
+		defender, err := ordinaryAnimal(g.catalog, actor.KindID)
 		if err != nil {
 			return err
 		}
@@ -77,7 +77,7 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 	if !found || !isOrdinaryAnimal(actor.KindID) {
 		return fmt.Errorf("unsupported melee attacker %d", s.turn.Actor)
 	}
-	animal, err := g.ordinaryAnimal(actor.KindID)
+	animal, err := ordinaryAnimal(g.catalog, actor.KindID)
 	if err != nil {
 		return err
 	}
@@ -200,7 +200,7 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 				if err := s.game.awardAnimalExperience(entity, health.Max); err != nil {
 					return err
 				}
-				definition, err := s.game.ordinaryAnimal(actor.KindID)
+				definition, err := ordinaryAnimal(s.game.catalog, actor.KindID)
 				if err != nil {
 					return err
 				}
@@ -223,7 +223,7 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 			if !found {
 				return fmt.Errorf("dead monster %d has no actor", entity)
 			}
-			definition, err := s.game.ordinaryAnimal(actor.KindID)
+			definition, err := ordinaryAnimal(s.game.catalog, actor.KindID)
 			if err != nil {
 				return err
 			}

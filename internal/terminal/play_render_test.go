@@ -132,7 +132,7 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 	snapshot := run.Snapshot()
 	run.Close()
 	for i := range snapshot.Entities {
-		if snapshot.Entities[i].AI != nil {
+		if snapshot.Entities[i].Actor != nil && snapshot.Entities[i].Actor.KindID == "MONS_RAT" {
 			snapshot.Entities[i].Position.X = 3
 			snapshot.Entities[i].Position.Y = 3
 		}

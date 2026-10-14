@@ -49,6 +49,26 @@ func TestQuokkaOrdinaryExperienceUsesActualMaximumHP(t *testing.T) {
 	}
 }
 
+func TestFrilledLizardExperienceUsesSourceOrdinaryBite(t *testing.T) {
+	catalog, err := content.LoadDefault()
+	if err != nil {
+		t.Fatal(err)
+	}
+	lizard, err := catalog.Monster("MONS_FRILLED_LIZARD")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for hp := 1; hp <= 3; hp++ {
+		got, err := OrdinaryAnimalExperience(lizard, hp)
+		if err != nil || got != 1 {
+			t.Fatalf("frilled lizard at %d HP gives %d XP, %v; want 1", hp, got, err)
+		}
+	}
+	if _, err := OrdinaryAnimalExperience(lizard, 4); err == nil {
+		t.Fatal("accepted impossible frilled-lizard maximum HP")
+	}
+}
+
 func TestHumanFirstLevelProgressUsesNineXPThreshold(t *testing.T) {
 	for _, tc := range []struct{ xp, percent int }{{0, 0}, {1, 11}, {4, 44}, {8, 88}} {
 		got, err := HumanFirstLevelProgress(tc.xp)
