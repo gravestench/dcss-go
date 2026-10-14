@@ -53,10 +53,12 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 	health, _ := g.stores.Health.Get(g.player)
 	magic, _ := g.stores.Magic.Get(g.player)
 	progress, _ := g.stores.Regeneration.Get(g.player)
+
 	health.Current = 10
 	magic.Current = 0
 	progress.HPProgress = 94
 	progress.MPProgress = 94
+
 	expectedRNG := RestoreRNGStreams(g.seed, g.rng.States())
 	want, err := character.Regenerate(expectedRNG, character.Vitality{
 		HP:         10,

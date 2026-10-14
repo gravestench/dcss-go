@@ -9,11 +9,13 @@ import (
 
 func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 	g := newStepGame(t)
+
 	progress, _ := g.stores.Progression.Get(g.player)
 	health, _ := g.stores.Health.Get(g.player)
 	magic, _ := g.stores.Magic.Get(g.player)
 	regeneration, _ := g.stores.Regeneration.Get(g.player)
 	attributes, _ := g.stores.Attributes.Get(g.player)
+
 	health.Current = 9
 	regeneration.HPProgress = 50
 	oldMaxHP := health.Max
@@ -78,6 +80,7 @@ func TestHumanAdvancementRunsThroughFinalLevel(t *testing.T) {
 	progress, _ := g.stores.Progression.Get(g.player)
 	attributes, _ := g.stores.Attributes.Get(g.player)
 	baseStats := attributes.Strength + attributes.Intelligence + attributes.Dexterity
+
 	lastThreshold, _ := character.HumanExperienceNeeded(character.HumanMaxLevel)
 	progress.TotalXP = lastThreshold
 

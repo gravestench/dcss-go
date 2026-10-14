@@ -32,6 +32,7 @@ func TestQuokkaScenarioUsesCatalogSpeedHPAndSave(t *testing.T) {
 	actor, _ := g.stores.Actors.Get(quokka)
 	position, _ := g.stores.Positions.Get(quokka)
 	health, _ := g.stores.Health.Get(quokka)
+
 	definition, err := g.catalog.Monster("MONS_QUOKKA")
 
 	if err != nil || actor.Speed != definition.Speed || actor.Speed != 12 || *position != (ecs.Position{

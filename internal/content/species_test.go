@@ -67,10 +67,12 @@ func TestSpeciesCatalogDefensiveCopies(t *testing.T) {
 	first.Aptitudes["SK_FIGHTING"] = SpeciesAptitude{Allowed: false}
 	first.Mutations[0].Amount = 3
 	first.FakeMutations[0].Long = "changed"
+
 	first.Flags[0] = "changed"
 	first.LevelUpStats[0] = "changed"
 	first.RecommendedJobs[0] = "changed"
 	first.RecommendedWeapons[0] = "changed"
+
 	second, err := catalog.Species("SP_HUMAN")
 
 	if err != nil {

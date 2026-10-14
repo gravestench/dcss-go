@@ -71,10 +71,12 @@ func TestViewIsCopied(t *testing.T) {
 	}
 
 	view := g.View()
+
 	view.Cells[0].Glyph = '?'
 	view.Entities[0].X = 99
 	view.Messages[0] = "changed"
 	view.Inventory[0].Name = "changed"
+
 	again := g.View()
 
 	if again.Cells[0].Glyph == '?' || again.Entities[0].X == 99 || again.Messages[0] == "changed" ||

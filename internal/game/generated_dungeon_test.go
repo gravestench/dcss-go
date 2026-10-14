@@ -140,6 +140,7 @@ func TestGeneratedDungeonStairsTravelBetweenPairedCells(t *testing.T) {
 func TestWalkingIntoClosedDoorOpensAndSavesIt(t *testing.T) {
 	g := newStepGame(t)
 	level := g.levels[1]
+
 	row := []byte(level.terrain[1])
 	row[2], row[3] = '+', '+'
 	level.terrain[1] = string(row)

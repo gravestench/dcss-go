@@ -415,16 +415,9 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 		return nil, fmt.Errorf("%s actor %d has a stale intent", phase, actor)
 	}
 
-	g.turn.Actor = actor
-	g.turn.Events = nil
-	g.turn.Deaths = nil
-	g.turn.Pickup = 0
-	g.turn.Consume = 0
-	g.turn.Drop = nil
-	g.turn.PlayerKill = 0
-	g.turn.Corpse = nil
-	g.turn.StairFrom = 0
-	g.turn.StairTo = 0
+	// Every system shares this context; reset all pending work for each actor.
+	g.turn = TurnContext{Actor: actor}
+
 	err := g.world.Update(time.Duration(cost))
 	producedIntent := g.stores.Intents.Has(actor)
 	g.stores.Intents.Remove(actor)

@@ -169,6 +169,7 @@ func TestJackalPopulationCreatesAndSavesBands(t *testing.T) {
 	follower, _ := g.stores.Followers.Get(followerEntity)
 	position, _ := g.stores.Positions.Get(followerEntity)
 	leaderPosition, _ := g.stores.Positions.Get(follower.Leader)
+
 	level := g.levels[position.LevelID]
 	visible, err := visibility.Compute(level.terrain, position.X, position.Y, 7)
 

@@ -124,6 +124,7 @@ func TestFixedScenarioRestoreRejectsForgedUnavailableStair(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
 	stair := &snapshot.Levels[0].Stairs[0]
+
 	stair.ToLevelID = 0
 	stair.ToX = 0
 	stair.ToY = 0

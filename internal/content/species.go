@@ -153,6 +153,7 @@ func (s SpeciesDef) clone() SpeciesDef {
 	s.Mutations = append([]SpeciesMutation(nil), s.Mutations...)
 	s.FakeMutations = append([]SpeciesFakeMutation(nil), s.FakeMutations...)
 	s.Flags = append([]string(nil), s.Flags...)
+
 	s.RecommendedJobs = append([]string(nil), s.RecommendedJobs...)
 	s.RecommendedWeapons = append([]string(nil), s.RecommendedWeapons...)
 

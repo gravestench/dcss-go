@@ -217,11 +217,13 @@ func TestPlayerMeleeWeaponDamageAndRatArmour(t *testing.T) {
 
 func TestPlayerMeleeUnarmedUsesNormalFormBaseAndNoWeaponSkillMultiplier(t *testing.T) {
 	in := fighterFlailAttack()
+
 	in.Unarmed = true
 	in.WeaponSkillID = "SK_UNARMED_COMBAT"
 	in.UnarmedSkill256 = 513
 	in.WeaponDamage = 0
 	in.WeaponHit = 0
+
 	rng := &scriptedRoller{
 		rolls: []scriptedRoll{
 			{

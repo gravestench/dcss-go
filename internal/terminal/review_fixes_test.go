@@ -196,6 +196,7 @@ func TestDrawPlayDangerValueColors(t *testing.T) {
 	view.PlayerHP = 7
 	view.PlayerMP = 0
 	view.Attributes.Strength = 2
+
 	c := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
 	DrawPlay(c, layout, view, "")

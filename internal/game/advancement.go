@@ -93,6 +93,7 @@ func (s *advancementSystem) applyLevel(level int) error {
 	progress, _ := s.progression.Get(s.player)
 	attributes, hasAttributes := s.attributes.Get(s.player)
 	skills, hasSkills := s.skills.Get(s.player)
+
 	health, hasHealth := s.health.Get(s.player)
 	magic, hasMagic := s.magic.Get(s.player)
 	regeneration, hasRegeneration := s.regeneration.Get(s.player)

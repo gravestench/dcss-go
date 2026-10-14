@@ -248,12 +248,14 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 
 	var inside bool
 	var tableOpened bool
-	var block bool
 	var closed bool
+
 	var macro bool
 	var macroBody bool
-	start := 0
 	axedCount := 0
+
+	var block bool
+	start := 0
 	var data strings.Builder
 
 	for _, line := range lines {

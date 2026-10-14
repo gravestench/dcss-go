@@ -84,6 +84,7 @@ func TestMightRepeatQuaffCapsAtEightyTurns(t *testing.T) {
 	id := carriedMight(t, g)
 	item, _ := g.stores.Items.Get(akara.Entity(id))
 	item.Quantity = 2
+
 	status, _ := g.stores.Durations.Get(g.player)
 	status.MightAut = 790
 	result, err := g.Step(Command{

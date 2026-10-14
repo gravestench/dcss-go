@@ -10,6 +10,9 @@ for a human reader to follow.
 - Give distinct steps breathing room. Separate validation, calculation,
   state changes, and event emission with blank lines instead of packing them
   into dense expressions or one-line blocks. Expand nonempty inline callbacks.
+- Break long runs of assignments into groups that match the game concepts
+  being set up. Use a named reset or helper when one operation clears many
+  fields.
 - Separate top-level declarations, including related constants and types, with
   a blank line so each name is easy to find.
 - Leave a blank line before and after a control-flow block when it has a

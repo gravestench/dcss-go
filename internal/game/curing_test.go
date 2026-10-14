@@ -32,6 +32,7 @@ func TestQuaffCuringHealsConsumesAndSchedules(t *testing.T) {
 	itemID := carryCuring(t, g)
 	before, _ := g.stores.Health.Get(g.player)
 	before.Current = 1
+
 	expectedRoller := RestoreRNGStreams(g.seed, g.rng.States())
 	want, err := character.CuringHP(expectedRoller, 1, before.Max)
 
@@ -69,6 +70,7 @@ func TestQuaffAtFullHPStillConsumesOnePotion(t *testing.T) {
 	itemID := carryCuring(t, g)
 	item, _ := g.stores.Items.Get(potionID(t, g))
 	item.Quantity = 2
+
 	health, _ := g.stores.Health.Get(g.player)
 	health.Current = health.Max
 	first, err := g.Step(Command{

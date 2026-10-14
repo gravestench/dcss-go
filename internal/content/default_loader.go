@@ -277,6 +277,7 @@ func (l *defaultCatalogLoader) loadGear(gearData []byte) error {
 
 func (l *defaultCatalogLoader) loadMonsters(monsterData []byte) error {
 	artifact := l.speciesArtifact
+
 	hashedPaths := l.speciesPaths
 	jobPaths := l.jobPaths
 	itemPaths := l.itemPaths

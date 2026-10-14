@@ -100,10 +100,12 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 func TestPresentationReturnedAsDefensiveCopy(t *testing.T) {
 	catalog := mustLoadDefault(t)
 	first := catalog.Presentation()
+
 	first.SpeciesGroups[0].IDs[0] = "SP_BOGUS"
 	first.SpeciesDescriptions["SP_HUMAN"] = "changed"
 	first.SourceFiles[0].SHA256 = "changed"
 	first.SkillColumns[0][0] = "SK_FAKE"
+
 	again := catalog.Presentation()
 
 	if again.SpeciesGroups[0].IDs[0] != "SP_HILL_ORC" ||

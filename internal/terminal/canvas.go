@@ -172,6 +172,7 @@ func (c *Canvas) Styled() string {
 		var fg Color
 		var bg Color
 		haveRun := false
+
 		flush := func() {
 			if !haveRun {
 				return

@@ -219,6 +219,7 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 			rng := &combatRoller{rolls: tc.rolls}
 			before, _ := g.stores.Health.Get(g.player)
 			initialHP := before.Current
+
 			system := newCombatSystem(g)
 			system.roller = rng
 

@@ -32,8 +32,10 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 	g := newStepGame(t)
 	item := potionID(t, g)
 	position, _ := g.stores.Positions.Get(item)
+
 	position.X = 3
 	position.Y = 3
+
 	contains := func(v View, id uint64) bool {
 		for _, entity := range v.Entities {
 			if entity.ID == id {

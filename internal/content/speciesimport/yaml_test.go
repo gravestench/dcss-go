@@ -69,6 +69,7 @@ func TestParseYAMLFelidUnusableAndMutations(t *testing.T) {
 	input = strings.ReplaceAll(input, "name: Human", "name: Felid")
 	input = strings.Replace(input, "  spellcasting: 3\n", "  spellcasting: 3\n  short_blades: False\n", 1)
 	input += "mutations:\n  1:\n    MUT_CLAWS: 1\n  6:\n    MUT_CLAWS: 1\n"
+
 	s, _, err := parseYAML("crawl-ref/source/dat/species/felid.yaml", []byte(input))
 
 	if err != nil {

@@ -28,26 +28,28 @@ func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := symbolSets{}
 	all := regexp.MustCompile(`[A-Z][A-Z0-9_]+`).FindAllString(string(data), -1)
 	makeSet := func() map[string]bool {
 		return map[string]bool{}
 	}
-	s.monster = makeSet()
-	s.attackType = makeSet()
-	s.attackFlavour = makeSet()
-	s.spellbook = makeSet()
-	s.classFlag = makeSet()
-	s.resistance = makeSet()
-	s.holiness = makeSet()
-	s.shout = makeSet()
-	s.intelligence = makeSet()
-	s.habitat = makeSet()
-	s.itemUse = makeSet()
-	s.size = makeSet()
-	s.shape = makeSet()
-	s.colour = makeSet()
-	s.tileVariation = makeSet()
+
+	s := symbolSets{
+		monster:       makeSet(),
+		attackType:    makeSet(),
+		attackFlavour: makeSet(),
+		spellbook:     makeSet(),
+		classFlag:     makeSet(),
+		resistance:    makeSet(),
+		holiness:      makeSet(),
+		shout:         makeSet(),
+		intelligence:  makeSet(),
+		habitat:       makeSet(),
+		itemUse:       makeSet(),
+		size:          makeSet(),
+		shape:         makeSet(),
+		colour:        makeSet(),
+		tileVariation: makeSet(),
+	}
 
 	for _, tok := range all {
 		switch {
@@ -103,6 +105,7 @@ func TestDecodePinnedRowsWhenRequested(t *testing.T) {
 	s.tileVariation["TVARY_NONE"] = true
 	s.classFlag["M_NO_EXP_GAIN"] = true
 	s.classFlag["M_NO_THREAT"] = true
+
 	defs, err := decodeRows(path, rows, s)
 
 	if err != nil {
@@ -164,27 +167,32 @@ func testRow(t *testing.T) sourceRow {
 
 func TestDecodeGoldenRows(t *testing.T) {
 	rat := testRow(t)
+
 	wizard := rat
 	wizard.ID = "MONS_ORC_WIZARD"
 	wizard.Fields = append([]string(nil), rat.Fields...)
 	wizard.Fields[0] = wizard.ID
 	wizard.Fields[16] = "MST_ORC_WIZARD"
+
 	dragon := rat
 	dragon.ID = "MONS_FIRE_DRAGON"
 	dragon.Fields = append([]string(nil), rat.Fields...)
 	dragon.Fields[0] = dragon.ID
 	dragon.Fields[5] = "mrd(MR_RES_FIRE, 2) | MR_VUL_COLD"
 	dragon.Fields[11] = "{ {AT_BITE, AF_PLAIN, 30}, {AT_CLAW, AF_PLAIN, 15}, {AT_HIT, AF_FIRE, 10}, AT_NO_ATK }"
+
 	demon := rat
 	demon.ID = "MONS_DEMONSPAWN"
 	demon.Fields = append([]string(nil), rat.Fields...)
 	demon.Fields[0] = demon.ID
 	demon.Fields[9] = "MH_NATURAL | MH_DEMONIC"
+
 	spriggan := rat
 	spriggan.ID = "MONS_SPRIGGAN"
 	spriggan.Fields = append([]string(nil), rat.Fields...)
 	spriggan.Fields[0] = spriggan.ID
 	spriggan.Fields[22] = "MOVE_ENERGY(6)"
+
 	bug := rat
 	bug.ID = "MONS_PROGRAM_BUG"
 	bug.Fields = append([]string(nil), rat.Fields...)
@@ -193,6 +201,7 @@ func TestDecodeGoldenRows(t *testing.T) {
 	bug.Fields[21] = "0"
 	bug.Fields[13] = "0"
 	bug.Fields[4] = "M_NOT_DANGEROUS | M_CANT_SPAWN"
+
 	defs, err := decodeRows("mon-data.h", []sourceRow{
 		rat,
 		wizard,

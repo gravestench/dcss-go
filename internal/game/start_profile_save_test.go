@@ -27,8 +27,10 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 	g := newStepGame(t)
 	health, _ := g.stores.Health.Get(g.player)
 	health.Current = 7
+
 	magic, _ := g.stores.Magic.Get(g.player)
 	magic.Current = 0
+
 	before := g.Snapshot()
 
 	if before.Version != save.Version || savedPlayer(t, &before).Player.StartingWeaponID != "WPN_RAPIER" {

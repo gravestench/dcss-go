@@ -518,6 +518,7 @@ func TestQuokkaRoutesAroundCentralWallToRememberedTarget(t *testing.T) {
 	ai.TargetX = 7
 	ai.TargetY = 1
 	ai.MemoryUntilAut = 550
+
 	first, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
 
 	if err != nil || first != (ecs.Intent{

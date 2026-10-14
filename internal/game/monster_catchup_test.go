@@ -55,6 +55,7 @@ func TestReturnedMonsterHealsAndWalksTowardLastTarget(t *testing.T) {
 	rat := ratID(t, g)
 	health, _ := g.stores.Health.Get(rat)
 	ai, _ := g.stores.AI.Get(rat)
+
 	health.Current = 1
 	ai.TargetX = 7
 	ai.TargetY = 1
@@ -86,6 +87,7 @@ func TestReturnedMonsterStopsAtBlockedTerrain(t *testing.T) {
 	ai, _ := g.stores.AI.Get(rat)
 	ai.TargetX = 12
 	ai.TargetY = 1
+
 	away := Aut(0)
 	g.levels[1].awaySinceAut = &away
 
@@ -159,6 +161,7 @@ func TestReturnedMonsterHealingStopsAtMaximum(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
 	health, _ := g.stores.Health.Get(rat)
+
 	health.Current = health.Max - 1
 	away := Aut(0)
 	g.levels[1].awaySinceAut = &away
@@ -177,6 +180,7 @@ func TestReturnedMonsterWithoutTargetStaysPut(t *testing.T) {
 	rat := ratID(t, g)
 	position, _ := g.stores.Positions.Get(rat)
 	before := *position
+
 	away := Aut(0)
 	g.levels[1].awaySinceAut = &away
 
@@ -195,7 +199,9 @@ func TestFirstEntryDoesNotCatchUpMonster(t *testing.T) {
 	health, _ := g.stores.Health.Get(quokka)
 	ai, _ := g.stores.AI.Get(quokka)
 	position, _ := g.stores.Positions.Get(quokka)
+
 	before := *position
+
 	health.Current = 1
 	ai.TargetX = 5
 	ai.TargetY = 7
@@ -215,6 +221,7 @@ func TestSavedInactiveMonsterReturnsWithSameCatchup(t *testing.T) {
 	health, _ := g.stores.Health.Get(rat)
 	ai, _ := g.stores.AI.Get(rat)
 	actor, _ := g.stores.Actors.Get(rat)
+
 	health.Current = 1
 	ai.TargetX = 7
 	ai.TargetY = 1
