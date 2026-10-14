@@ -139,6 +139,10 @@ func validateSavedCorpse(record save.EntityRecord, catalog content.Catalog) erro
 		return fmt.Errorf("item %d corpse: %w", record.ID, err)
 	}
 
+	if !definition.LeavesCorpse {
+		return fmt.Errorf("item %d has impossible %s corpse", record.ID, corpse.MonsterID)
+	}
+
 	if item.KindID == "CORPSE_SKELETON" &&
 		slices.Contains(definition.Flags, "M_NO_SKELETON") {
 		return fmt.Errorf("item %d has impossible %s skeleton", record.ID, corpse.MonsterID)

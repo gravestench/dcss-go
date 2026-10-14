@@ -8,7 +8,7 @@ import (
 )
 
 // OrdinaryNaturalProfile is the supported source-backed subset of monsters with
-// one natural attack and no spell or equipment behavior.
+// natural melee and no equipment behavior. Spellbooks are explicit.
 type OrdinaryNaturalProfile struct {
 	HitDice      int
 	AverageHP10x int
@@ -19,10 +19,12 @@ type OrdinaryNaturalProfile struct {
 	Speed           int
 	AttackTypeID    string
 	ConstrictDamage int
+	SpellbookID     string
 
 	XPModifier int
 	FastRegen  bool
 	NoSkeleton bool
+	NoCorpse   bool
 	Poison     bool
 	Batty      bool
 }
@@ -134,6 +136,22 @@ var ordinaryNaturalProfiles = map[string]OrdinaryNaturalProfile{
 		ConstrictDamage: 1,
 		XPModifier:      13,
 	},
+
+	"MONS_ENDOPLASM": {
+		HitDice:      1,
+		AverageHP10x: 60,
+		MinHP:        4,
+		MaxHP:        8,
+
+		Damage:       3,
+		Speed:        10,
+		AttackTypeID: "AT_HIT",
+		SpellbookID:  "MST_ENDOPLASM",
+
+		XPModifier: 10,
+		NoSkeleton: true,
+		NoCorpse:   true,
+	},
 }
 
 func OrdinaryNaturalProfileFor(id string) (OrdinaryNaturalProfile, bool) {
@@ -172,11 +190,19 @@ func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, e
 		}
 	}
 
+	spellbookID := profile.SpellbookID
+
+	if spellbookID == "" {
+		spellbookID = "MST_NO_SPELLS"
+	}
+
+	expectedCorpse := !profile.NoCorpse
+
 	if definition.HD != profile.HitDice ||
 		definition.AverageHP10x != profile.AverageHP10x ||
 		definition.Speed != profile.Speed ||
 		definition.XPModifier != profile.XPModifier ||
-		definition.SpellbookID != "MST_NO_SPELLS" ||
+		definition.SpellbookID != spellbookID ||
 		definition.ItemUseID != "MONUSE_NOTHING" ||
 		definition.Attacks[0] != (content.MonsterAttack{
 			TypeID:    profile.AttackTypeID,
@@ -188,6 +214,7 @@ func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, e
 		slices.Contains(definition.Flags, "M_FIGHTER") ||
 		slices.Contains(definition.Flags, "M_FAST_REGEN") != profile.FastRegen ||
 		slices.Contains(definition.Flags, "M_NO_SKELETON") != profile.NoSkeleton ||
+		definition.LeavesCorpse != expectedCorpse ||
 		slices.Contains(definition.Flags, "M_BATTY") != profile.Batty ||
 		maxHP < profile.MinHP || maxHP > profile.MaxHP {
 		return 0, fmt.Errorf("unsupported %s experience inputs at %d HP", definition.ID, maxHP)

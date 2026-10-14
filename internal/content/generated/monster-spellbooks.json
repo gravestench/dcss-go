@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "source_revision": "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
+  "source_path": "crawl-ref/source/mon-spell.h",
+  "source_sha256": "ee46cb6314b5464dd617975eb064e271af3448ed4494486d3de3b2c7fef84021",
+  "books": [
+    {
+      "id": "MST_ENDOPLASM",
+      "source_line": 1843,
+      "slots": [
+        {
+          "spell_id": "SPELL_FREEZE",
+          "frequency": 70,
+          "flag_id": "MON_SPELL_NATURAL"
+        }
+      ]
+    }
+  ]
+}

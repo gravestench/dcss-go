@@ -160,6 +160,8 @@ func TestRestoreRejectsZeroHPWorm(t *testing.T) {
 	}
 
 	defer g.Close()
+	spawnWormForTest(t, g, 2)
+
 	snapshot := g.Snapshot()
 	found := false
 

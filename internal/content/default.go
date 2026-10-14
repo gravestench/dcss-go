@@ -37,6 +37,9 @@ var defaultMonsterVocabularyJSON []byte
 //go:embed generated/spells.json
 var defaultSpellJSON []byte
 
+//go:embed generated/monster-spellbooks.json
+var defaultMonsterSpellbookJSON []byte
+
 //go:embed generated/branches.json
 var defaultBranchJSON []byte
 
@@ -60,6 +63,12 @@ func LoadDefault() (Catalog, error) {
 	}
 
 	catalog, err = attachDefaultSpells(catalog, defaultSpellJSON)
+
+	if err != nil {
+		return Catalog{}, err
+	}
+
+	catalog, err = attachDefaultMonsterSpellbooks(catalog, defaultMonsterSpellbookJSON)
 
 	if err != nil {
 		return Catalog{}, err
@@ -92,6 +101,12 @@ func LoadDefinitionsForImport() (Catalog, error) {
 	}
 
 	catalog, err = attachDefaultSpells(catalog, defaultSpellJSON)
+
+	if err != nil {
+		return Catalog{}, err
+	}
+
+	catalog, err = attachDefaultMonsterSpellbooks(catalog, defaultMonsterSpellbookJSON)
 
 	if err != nil {
 		return Catalog{}, err
@@ -285,6 +300,40 @@ func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 	for _, spell := range artifact.Spells {
 		catalog.spells[spell.ID] = spell.clone()
 		catalog.spellOrder = append(catalog.spellOrder, spell.ID)
+	}
+
+	if err := catalog.Validate(); err != nil {
+		return Catalog{}, err
+	}
+
+	return catalog, nil
+}
+
+func attachDefaultMonsterSpellbooks(catalog Catalog, data []byte) (Catalog, error) {
+	var artifact MonsterSpellbookArtifact
+
+	if err := decodeArtifact(data, "monster spellbooks", &artifact); err != nil {
+		return Catalog{}, err
+	}
+
+	if err := artifact.Validate(); err != nil {
+		return Catalog{}, err
+	}
+
+	const pinnedSource = "ee46cb6314b5464dd617975eb064e271af3448ed4494486d3de3b2c7fef84021"
+
+	if artifact.SourceRevision != catalog.SourceRevision() ||
+		artifact.SourceSHA256 != pinnedSource ||
+		len(artifact.Books) != 1 ||
+		artifact.Books[0].ID != "MST_ENDOPLASM" {
+		return Catalog{}, fmt.Errorf("monster spellbooks differ from pinned source")
+	}
+
+	catalog.monsterSpellbooks = make(map[string]MonsterSpellbook, len(artifact.Books))
+
+	for _, book := range artifact.Books {
+		book.Slots = append([]MonsterSpellSlot(nil), book.Slots...)
+		catalog.monsterSpellbooks[book.ID] = book
 	}
 
 	if err := catalog.Validate(); err != nil {

@@ -53,7 +53,7 @@ func scenarioMonsterIDs(scenarioID string) ([]string, error) {
 	case generatedDungeonScenarioID:
 		ids := append([]string(nil), supportedPopulationMonsters...)
 
-		return append(ids, "MONS_BAT", "MONS_BALL_PYTHON"), nil
+		return append(ids, "MONS_BAT", "MONS_BALL_PYTHON", "MONS_ENDOPLASM"), nil
 
 	default:
 		return nil, fmt.Errorf("unsupported scenario ID %q", scenarioID)
@@ -79,8 +79,10 @@ func ordinaryMonster(catalog content.Catalog, id string) (content.MonsterDef, er
 		return content.MonsterDef{}, err
 	}
 
+	expectedCorpse := !profile.NoCorpse
+
 	if definition.AverageHP10x != profile.AverageHP10x ||
-		!definition.LeavesCorpse {
+		definition.LeavesCorpse != expectedCorpse {
 		return content.MonsterDef{}, fmt.Errorf("unsupported ordinary monster definition %s", id)
 	}
 

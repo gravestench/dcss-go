@@ -436,6 +436,10 @@ func registerInteractionAndCombatSystems(g *Game) error {
 		return err
 	}
 
+	if _, err := world.AddSystem(newMonsterSpellSystem(g)); err != nil {
+		return err
+	}
+
 	if _, err := world.AddSystem(newMovementSystem(g)); err != nil {
 		return err
 	}

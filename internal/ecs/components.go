@@ -186,6 +186,7 @@ const (
 	IntentCloseDoor
 	IntentDrop
 	IntentWield
+	IntentSpell
 )
 
 type Intent struct {
@@ -194,4 +195,5 @@ type Intent struct {
 	DY       int
 	ItemID   akara.Entity
 	Quantity int
+	SpellID  string
 }

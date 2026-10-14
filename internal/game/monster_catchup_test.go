@@ -3,8 +3,6 @@ package game
 import (
 	"reflect"
 	"testing"
-
-	"github.com/gravestench/akara"
 )
 
 func TestReturnedWormHealsAtFastRate(t *testing.T) {
@@ -15,20 +13,7 @@ func TestReturnedWormHealsAtFastRate(t *testing.T) {
 	}
 
 	defer g.Close()
-	var worm akara.Entity
-
-	for _, entity := range g.stores.AI.Entities() {
-		actor, _ := g.stores.Actors.Get(entity)
-
-		if actor.KindID == "MONS_WORM" {
-			worm = entity
-			break
-		}
-	}
-
-	if worm == 0 {
-		t.Fatal("seed 1 has no worm")
-	}
+	worm := spawnWormForTest(t, g, 2)
 
 	position, _ := g.stores.Positions.Get(worm)
 

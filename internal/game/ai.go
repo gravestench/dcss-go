@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/visibility"
 	"github.com/gravestench/akara"
@@ -15,14 +16,16 @@ type monsterDecisionSystem struct {
 	player akara.Entity
 
 	positions *akara.Store[ecs.Position]
+	actors    *akara.Store[ecs.Actor]
 	ai        *akara.Store[ecs.MonsterAI]
 	followers *akara.Store[ecs.BandFollower]
 	intents   *akara.Store[ecs.Intent]
 
-	levels map[int]*Level
-	rng    *RNGStreams
-	clock  *Aut
-	turn   *TurnContext
+	levels  map[int]*Level
+	catalog content.Catalog
+	rng     *RNGStreams
+	clock   *Aut
+	turn    *TurnContext
 }
 
 func newMonsterDecisionSystem(g *Game) *monsterDecisionSystem {
@@ -30,14 +33,16 @@ func newMonsterDecisionSystem(g *Game) *monsterDecisionSystem {
 		player: g.player,
 
 		positions: g.stores.Positions,
+		actors:    g.stores.Actors,
 		ai:        g.stores.AI,
 		followers: g.stores.Followers,
 		intents:   g.stores.Intents,
 
-		levels: g.levels,
-		rng:    g.rng,
-		clock:  &g.currentAut,
-		turn:   &g.turn,
+		levels:  g.levels,
+		catalog: g.catalog,
+		rng:     g.rng,
+		clock:   &g.currentAut,
+		turn:    &g.turn,
 	}
 }
 
@@ -113,6 +118,21 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 	if !retreating {
 		if err := s.updateMonsterTarget(ai, *position, *player, playerVisible); err != nil {
 			return ecs.Intent{}, err
+		}
+	}
+
+	if playerVisible && !retreating {
+		spell, cast, err := s.chooseEndoplasmSpell(actor, *position, *player)
+
+		if err != nil {
+			return ecs.Intent{}, err
+		}
+
+		if cast {
+			return ecs.Intent{
+				Kind:    ecs.IntentSpell,
+				SpellID: spell,
+			}, nil
 		}
 	}
 

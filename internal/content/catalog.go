@@ -14,6 +14,7 @@ type Catalog struct {
 	sourceRevision string
 
 	monsters          map[string]MonsterDef
+	monsterSpellbooks map[string]MonsterSpellbook
 	spells            map[string]SpellDef
 	spellOrder        []string
 	branches          map[string]BranchDef
@@ -165,6 +166,25 @@ func (c Catalog) Validate() error {
 		if id == "" ||
 			monster.ID != id || monster.validate() != nil {
 			return fmt.Errorf("invalid monster definition %q", id)
+		}
+	}
+
+	for id, book := range c.monsterSpellbooks {
+		if id != book.ID || len(book.Slots) == 0 {
+			return fmt.Errorf("invalid monster spellbook %q", id)
+		}
+
+		for _, slot := range book.Slots {
+			if slot.FlagID != "MON_SPELL_NATURAL" ||
+				slot.Frequency < 1 || slot.Frequency > 200 {
+				return fmt.Errorf("invalid monster spell slot in %s", id)
+			}
+
+			spell, found := c.spells[slot.SpellID]
+
+			if !found || spell.Status != SpellDefined {
+				return fmt.Errorf("unknown monster spell %q in %s", slot.SpellID, id)
+			}
 		}
 	}
 
