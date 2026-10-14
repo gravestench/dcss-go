@@ -5,6 +5,7 @@ import (
 
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
+	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/save"
 )
 
@@ -17,8 +18,32 @@ func validateSavedSkillTraining(
 	totalXP int,
 ) error {
 	training := record.SkillTraining
-	progress := record.Skills
 
+	if err := validateSavedTrainingExperience(training, totalXP); err != nil {
+		return err
+	}
+
+	known, err := supportedSavedHumanSkills(catalog)
+
+	if err != nil {
+		return err
+	}
+
+	seen, err := validateSavedSkillProgress(
+		record.Skills.Entries,
+		profile.Skills,
+		known,
+		training.SpentXP,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return validateSavedTrainingChoices(training, known, seen)
+}
+
+func validateSavedTrainingExperience(training *ecs.SkillTraining, totalXP int) error {
 	if training.AvailableXP < 0 || training.SpentXP < 0 ||
 		int64(training.AvailableXP)+int64(training.SpentXP) != int64(totalXP)*10 {
 		return fmt.Errorf("player skill experience disagrees with earned XP")
@@ -35,10 +60,14 @@ func validateSavedSkillTraining(
 		return fmt.Errorf("player skill practice history exceeds %d", recentSkillLimit)
 	}
 
+	return nil
+}
+
+func supportedSavedHumanSkills(catalog content.Catalog) (map[string]bool, error) {
 	species, err := catalog.Species("SP_HUMAN")
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	known := make(map[string]bool)
@@ -52,46 +81,63 @@ func validateSavedSkillTraining(
 		}
 	}
 
-	starting := make(map[string]int, len(profile.Skills))
+	return known, nil
+}
 
-	for _, skill := range profile.Skills {
+func validateSavedSkillProgress(
+	entries []character.Skill,
+	startingSkills []character.Skill,
+	known map[string]bool,
+	spentXP int,
+) (map[string]bool, error) {
+	starting := make(map[string]int, len(startingSkills))
+
+	for _, skill := range startingSkills {
 		starting[skill.ID] = skill.Points
 	}
 
-	seenSkills := make(map[string]bool, len(progress.Entries))
+	seenSkills := make(map[string]bool, len(entries))
 	gainedPoints := 0
 
-	for index, skill := range progress.Entries {
+	for index, skill := range entries {
 		if !known[skill.ID] || seenSkills[skill.ID] ||
 			skill.Points < starting[skill.ID] ||
 			skill.Points > maxHumanSkillPoints() {
-			return fmt.Errorf("invalid player skill %s", skill.ID)
+			return nil, fmt.Errorf("invalid player skill %s", skill.ID)
 		}
 
-		if index < len(profile.Skills) && skill.ID != profile.Skills[index].ID {
-			return fmt.Errorf("starting player skill order changed at %d", index)
+		if index < len(startingSkills) && skill.ID != startingSkills[index].ID {
+			return nil, fmt.Errorf("starting player skill order changed at %d", index)
 		}
 
 		level, err := character.HumanSkillLevel(skill.Points)
 
 		if err != nil || skill.Level != level {
-			return fmt.Errorf("invalid player skill level for %s", skill.ID)
+			return nil, fmt.Errorf("invalid player skill level for %s", skill.ID)
 		}
 
 		seenSkills[skill.ID] = true
 		gainedPoints += skill.Points - starting[skill.ID]
 	}
 
-	if gainedPoints > training.SpentXP {
-		return fmt.Errorf("player skill points exceed spent skill experience")
+	if gainedPoints > spentXP {
+		return nil, fmt.Errorf("player skill points exceed spent skill experience")
 	}
 
-	for _, skill := range profile.Skills {
+	for _, skill := range startingSkills {
 		if !seenSkills[skill.ID] {
-			return fmt.Errorf("missing starting skill %s", skill.ID)
+			return nil, fmt.Errorf("missing starting skill %s", skill.ID)
 		}
 	}
 
+	return seenSkills, nil
+}
+
+func validateSavedTrainingChoices(
+	training *ecs.SkillTraining,
+	known map[string]bool,
+	seenSkills map[string]bool,
+) error {
 	seenSettings := make(map[string]bool, len(training.Settings))
 
 	for _, setting := range training.Settings {

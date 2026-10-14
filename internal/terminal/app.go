@@ -190,8 +190,9 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 
 func (m *AppModel) renderCanvas() *Canvas {
 	canvas := NewCanvas(m.width, m.height)
+	layout, ok := ComputeLayout(m.width, m.height)
 
-	if _, ok := ComputeLayout(m.width, m.height); !ok {
+	if !ok {
 		message := "Your terminal window is too small; please resize to at least 79,24"
 		canvas.Write(0, 0, message, LightGrey, Black)
 
@@ -211,18 +212,12 @@ func (m *AppModel) renderCanvas() *Canvas {
 	case ScreenName:
 		m.drawName(canvas)
 
-	case ScreenPlay:
-		layout, _ := ComputeLayout(m.width, m.height)
-
+	case ScreenPlay, ScreenStatChoice:
 		if m.game != nil {
 			DrawPlay(canvas, layout, m.game.View(), m.notice)
 		}
 
-	case ScreenStatChoice:
-		layout, _ := ComputeLayout(m.width, m.height)
-
-		if m.game != nil {
-			DrawPlay(canvas, layout, m.game.View(), m.notice)
+		if m.screen == ScreenStatChoice && m.game != nil {
 			canvas.Write(
 				0, m.height-1,
 				"Increase (S)trength, (I)ntelligence, or (D)exterity?",
@@ -230,47 +225,9 @@ func (m *AppModel) renderCanvas() *Canvas {
 			)
 		}
 
-	case ScreenInventory:
-		if m.game != nil {
-			DrawInventory(canvas, m.game.View())
-		}
-
-		m.drawModalNotice(canvas)
-
-	case ScreenSkills:
-		if m.game != nil {
-			DrawSkills(canvas, m.game.View(), m.catalog, m.skillFocusAction)
-		}
-
-		m.drawModalNotice(canvas)
-
-	case ScreenQuaff:
-		if m.game != nil {
-			DrawQuaff(canvas, m.game.View())
-		}
-
-		m.drawModalNotice(canvas)
-
-	case ScreenDrop:
-		if m.game != nil {
-			DrawDrop(canvas, m.game.View(), m.dropQuantity)
-		}
-
-		m.drawModalNotice(canvas)
-
-	case ScreenWield:
-		if m.game != nil {
-			DrawWield(canvas, m.game.View())
-		}
-
-		m.drawModalNotice(canvas)
-
-	case ScreenWear, ScreenTakeOff:
-		if m.game != nil {
-			DrawArmour(canvas, m.game.View(), m.screen == ScreenTakeOff)
-		}
-
-		m.drawModalNotice(canvas)
+	case ScreenInventory, ScreenSkills, ScreenQuaff, ScreenDrop,
+		ScreenWield, ScreenWear, ScreenTakeOff:
+		m.drawGameMenu(canvas)
 
 	case ScreenHelp:
 		DrawHelp(canvas)
@@ -286,6 +243,34 @@ func (m *AppModel) renderCanvas() *Canvas {
 	}
 
 	return canvas
+}
+
+func (m *AppModel) drawGameMenu(canvas *Canvas) {
+	if m.game != nil {
+		view := m.game.View()
+
+		switch m.screen {
+		case ScreenInventory:
+			DrawInventory(canvas, view)
+
+		case ScreenSkills:
+			DrawSkills(canvas, view, m.catalog, m.skillFocusAction)
+
+		case ScreenQuaff:
+			DrawQuaff(canvas, view)
+
+		case ScreenDrop:
+			DrawDrop(canvas, view, m.dropQuantity)
+
+		case ScreenWield:
+			DrawWield(canvas, view)
+
+		case ScreenWear, ScreenTakeOff:
+			DrawArmour(canvas, view, m.screen == ScreenTakeOff)
+		}
+	}
+
+	m.drawModalNotice(canvas)
 }
 
 func (m *AppModel) nextEquipmentTick() tea.Cmd {
