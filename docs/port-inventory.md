@@ -1,5 +1,7 @@
 # DCSS Go port inventory
 
+Architecture and migration strategy: [ECS architecture assessment and roadmap](ecs-architecture-roadmap.md). This inventory tracks gameplay and content fidelity; the roadmap tracks where mutable entity behavior should move into Akara systems as the port grows.
+
 Reference: `/Users/dylanknuth/src/crawl` at `e60ba3568b0c26447ad36ec5c7b963eb04b2778f`.
 
 Content import policy for the whole Go port: every imported DCSS content category is generated into a reviewable artifact committed to this repository. Category-specific importers are optional developer tools for intentional upstream content refreshes. Normal Go builds, tests, CI, saves, and gameplay read committed Go-repository content; none runs an importer or requires the C++ checkout. A content refresh updates the artifact and its source provenance in a reviewed commit.
