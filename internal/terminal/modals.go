@@ -8,6 +8,16 @@ import (
 	"dcrawl-go/internal/game"
 )
 
+func (m *AppModel) drawConfirm(canvas *Canvas) {
+	prompt := "Save game and exit? (Y/n)"
+
+	if m.confirm == confirmAbandon {
+		prompt = "Are you sure you want to abandon this character? (y/N)"
+	}
+
+	canvas.Write(0, 0, prompt, LightGrey, Black)
+}
+
 // DrawInventory follows the source's full-screen inventory listing and pack letters.
 func DrawInventory(canvas *Canvas, view game.View) {
 	canvas.Write(0, 0, fmt.Sprintf("Inventory: %d/52 slots", len(view.Inventory)), White, Black)
