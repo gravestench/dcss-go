@@ -212,7 +212,10 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		seed:       snapshot.Seed,
 		scenarioID: snapshot.ScenarioID,
 		rng:        RestoreRNGStreams(snapshot.Seed, snapshot.RNG),
-		scheduler:  TurnScheduler{actors: stores.Actors},
+		scheduler: TurnScheduler{
+			actors:    stores.Actors,
+			positions: stores.Positions,
+		},
 		currentAut: Aut(snapshot.CurrentAut),
 		messages:   append([]string(nil), snapshot.Messages...),
 	}
@@ -280,6 +283,19 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	var playerPendingStat bool
 	var earliestID uint64
 	var earliestAut int64
+	activeLevelID := 0
+
+	for _, record := range snapshot.Entities {
+		if record.ID == snapshot.PlayerID && record.Position != nil {
+			activeLevelID = record.Position.LevelID
+
+			break
+		}
+	}
+
+	if activeLevelID == 0 {
+		return nil, fmt.Errorf("saved player has no active level")
+	}
 
 	for _, record := range snapshot.Entities {
 		if record.ID == 0 || seen[record.ID] {
@@ -444,7 +460,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			return nil, fmt.Errorf("actor %d has no player or monster role", record.ID)
 		}
 
-		if record.Actor != nil {
+		if record.Actor != nil && record.Position != nil && record.Position.LevelID == activeLevelID {
 			if record.Actor.NextAut < snapshot.CurrentAut {
 				return nil, fmt.Errorf("actor %d deadline precedes save clock", record.ID)
 			}

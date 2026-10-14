@@ -232,14 +232,8 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		to := g.levels[g.turn.StairTo]
 		from.awaySinceAut = &startAut
 
-		if to.awaySinceAut != nil {
-			elapsed := int(startAut - *to.awaySinceAut)
-
-			if err := g.corpseAging.TickLevel(to.ID, elapsed); err != nil {
-				return StepResult{}, err
-			}
-
-			to.awaySinceAut = nil
+		if err := g.activateLevel(to, startAut); err != nil {
+			return StepResult{}, err
 		}
 	}
 
@@ -263,9 +257,14 @@ func (g *Game) Step(command Command) (StepResult, error) {
 // The player action has already spent its aut and set the next deadline.
 func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error) {
 	const monsterCost Aut = 10
+	position, located := g.stores.Positions.Get(g.player)
+
+	if !located {
+		return StepResult{}, fmt.Errorf("player has no position for scheduling")
+	}
 
 	for !g.playerDead() {
-		actor, at, found := g.scheduler.Next()
+		actor, at, found := g.scheduler.Next(position.LevelID)
 
 		if !found || actor == g.player {
 			g.currentAut = at
@@ -277,21 +276,6 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 
 		if err != nil {
 			return StepResult{}, err
-		}
-
-		monsterPosition, monsterLocated := g.stores.Positions.Get(actor)
-		playerPosition, playerLocated := g.stores.Positions.Get(g.player)
-
-		if !monsterLocated || !playerLocated {
-			return StepResult{}, fmt.Errorf("acting monster or player has no position")
-		}
-
-		if monsterPosition.LevelID != playerPosition.LevelID {
-			if len(monsterEvents) != 0 {
-				return StepResult{}, fmt.Errorf("off-floor monster %d emitted events", actor)
-			}
-
-			continue
 		}
 
 		events = append(events, monsterEvents...)

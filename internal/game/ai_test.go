@@ -547,7 +547,7 @@ func TestFixedAnimalRouteAvoidsOccupantsAndUnreachableTarget(t *testing.T) {
 	}
 }
 
-func TestRatWaitsWhenPlayerIsOnAnotherFloor(t *testing.T) {
+func TestOffFloorMonsterDecisionIsRejected(t *testing.T) {
 	g := newStepGame(t)
 
 	if err := g.levels[1].RemoveActor(g.player); err != nil {
@@ -558,9 +558,9 @@ func TestRatWaitsWhenPlayerIsOnAnotherFloor(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	intent, err := newMonsterDecisionSystem(g).chooseIntent(ratID(t, g))
+	_, err := newMonsterDecisionSystem(g).chooseIntent(ratID(t, g))
 
-	if err != nil || intent.Kind != ecs.IntentWait {
-		t.Fatalf("off-floor intent %+v, %v", intent, err)
+	if err == nil {
+		t.Fatal("off-floor monster received an ordinary turn")
 	}
 }

@@ -10,7 +10,8 @@ import (
 func TestSchedulerTieBreak(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
-	actors := ecs.Register(world).Actors
+	stores := ecs.Register(world)
+	actors := stores.Actors
 	first, _ := world.CreateEntity()
 	second, _ := world.CreateEntity()
 	actors.Set(first, ecs.Actor{
@@ -21,11 +22,43 @@ func TestSchedulerTieBreak(t *testing.T) {
 		Speed:   10,
 		NextAut: 0,
 	})
-	scheduler := TurnScheduler{actors: actors}
-	entity, at, ok := scheduler.Next()
+	stores.Positions.Set(first, ecs.Position{LevelID: 1})
+	stores.Positions.Set(second, ecs.Position{LevelID: 1})
+	scheduler := TurnScheduler{
+		actors:    actors,
+		positions: stores.Positions,
+	}
+	entity, at, ok := scheduler.Next(1)
 
 	if !ok || entity != first || at != 0 {
 		t.Fatalf("next = (%d,%d,%t), want first actor at aut 0", entity, at, ok)
+	}
+}
+
+func TestSchedulerSelectsOnlyCurrentFloor(t *testing.T) {
+	world := akara.NewWorld()
+	defer world.Close()
+	stores := ecs.Register(world)
+	active, _ := world.CreateEntity()
+	inactive, _ := world.CreateEntity()
+	stores.Actors.Set(active, ecs.Actor{
+		Speed:   10,
+		NextAut: 20,
+	})
+	stores.Actors.Set(inactive, ecs.Actor{
+		Speed:   10,
+		NextAut: 0,
+	})
+	stores.Positions.Set(active, ecs.Position{LevelID: 1})
+	stores.Positions.Set(inactive, ecs.Position{LevelID: 2})
+	scheduler := TurnScheduler{
+		actors:    stores.Actors,
+		positions: stores.Positions,
+	}
+	entity, at, found := scheduler.Next(1)
+
+	if !found || entity != active || at != 20 {
+		t.Fatalf("active floor actor = (%d, %d, %t), want %d at aut 20", entity, at, found, active)
 	}
 }
 

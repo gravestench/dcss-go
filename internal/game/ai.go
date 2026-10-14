@@ -71,7 +71,7 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 	}
 
 	if position.LevelID != player.LevelID {
-		return ecs.Intent{Kind: ecs.IntentWait}, nil
+		return ecs.Intent{}, fmt.Errorf("monster %d is not on the active floor", actor)
 	}
 
 	ai, found := s.ai.Get(actor)

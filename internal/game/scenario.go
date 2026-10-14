@@ -58,13 +58,16 @@ func newScenario(
 	}
 
 	g := &Game{
-		world:      world,
-		stores:     stores,
-		levels:     setup.levels,
-		catalog:    catalog,
-		seed:       seed,
-		rng:        rng,
-		scheduler:  TurnScheduler{actors: stores.Actors},
+		world:   world,
+		stores:  stores,
+		levels:  setup.levels,
+		catalog: catalog,
+		seed:    seed,
+		rng:     rng,
+		scheduler: TurnScheduler{
+			actors:    stores.Actors,
+			positions: stores.Positions,
+		},
 		scenarioID: scenarioID,
 	}
 

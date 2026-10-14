@@ -10,16 +10,24 @@ import (
 // Aut is DCSS logical action time, independent of wall-clock durations.
 type Aut int64
 
-// TurnScheduler reads Actor.NextAut as its only ordering state.
+// TurnScheduler orders actors on the player's current floor. The Position
+// store determines membership; inactive floors do not receive no-op turns.
 type TurnScheduler struct {
-	actors *akara.Store[ecs.Actor]
+	actors    *akara.Store[ecs.Actor]
+	positions *akara.Store[ecs.Position]
 }
 
-func (s TurnScheduler) Next() (akara.Entity, Aut, bool) {
+func (s TurnScheduler) Next(levelID int) (akara.Entity, Aut, bool) {
 	var chosen akara.Entity
 	var at Aut
 
 	for _, entity := range s.actors.Entities() {
+		position, found := s.positions.Get(entity)
+
+		if !found || position.LevelID != levelID {
+			continue
+		}
+
 		actor, _ := s.actors.Get(entity)
 
 		if chosen == 0 || Aut(actor.NextAut) < at {
