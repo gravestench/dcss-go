@@ -20,7 +20,9 @@ import (
 
 const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 
-var sourceGroup = regexp.MustCompile(`(?s)\{\s*"([^"]+)"\s*,\s*coord_def\([^)]*\)\s*,\s*\d+\s*,\s*\{([^}]*)\}\s*\}`)
+var sourceGroup = regexp.MustCompile(
+	`(?s)\{\s*"([^"]+)"\s*,\s*coord_def\([^)]*\)\s*,\s*\d+\s*,\s*\{([^}]*)\}\s*\}`,
+)
 
 var sourceID = regexp.MustCompile(`[A-Z]+_[A-Z_]+`)
 
@@ -288,7 +290,8 @@ func validateTagVersion(sourceDir string, artifact *content.PresentationArtifact
 		return err
 	}
 
-	if match := tagMajor.FindSubmatch(version); match == nil || string(match[1]) != "34" {
+	if match := tagMajor.FindSubmatch(version); match == nil ||
+		string(match[1]) != "34" {
 		return fmt.Errorf("tag-version.h: expected TAG_MAJOR_VERSION 34")
 	}
 
@@ -452,11 +455,19 @@ func Generate(sourceDir string) (content.PresentationArtifact, error) {
 	}
 
 	if strings.TrimSpace(string(output)) != pinnedRevision {
-		return content.PresentationArtifact{}, fmt.Errorf("source revision differs from pinned %s", pinnedRevision)
+		return content.PresentationArtifact{}, fmt.Errorf(
+			"source revision differs from pinned %s",
+			pinnedRevision,
+		)
 	}
 
-	if err := exec.Command("git", "-C", sourceDir, "diff", "--quiet", "HEAD", "--", ".").Run(); err != nil {
-		return content.PresentationArtifact{}, fmt.Errorf("source checkout has modified tracked files: %w", err)
+	command := exec.Command("git", "-C", sourceDir, "diff", "--quiet", "HEAD", "--", ".")
+
+	if err := command.Run(); err != nil {
+		return content.PresentationArtifact{}, fmt.Errorf(
+			"source checkout has modified tracked files: %w",
+			err,
+		)
 	}
 
 	artifact, err := generateFromSource(sourceDir)

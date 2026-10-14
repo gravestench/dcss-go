@@ -14,7 +14,8 @@ func TestRejectUnsupportedVersion(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := Read(path); err == nil || !strings.Contains(err.Error(), "version") {
+	if _, err := Read(path); err == nil ||
+		!strings.Contains(err.Error(), "version") {
 		t.Fatalf("Read unsupported version = %v", err)
 	}
 }
@@ -47,7 +48,8 @@ func TestRejectVersionFourSave(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := Read(path); err == nil || !strings.Contains(err.Error(), "version") {
+	if _, err := Read(path); err == nil ||
+		!strings.Contains(err.Error(), "version") {
 		t.Fatalf("old save error = %v", err)
 	}
 }

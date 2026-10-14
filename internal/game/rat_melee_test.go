@@ -261,11 +261,14 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 			after, _ := g.stores.Health.Get(g.player)
 			state, _ := g.stores.Combat.Get(g.player)
 
-			if initialHP-after.Current != tc.hpLoss || state.ShieldBlocks != tc.blocks || len(rng.rolls) != 0 {
+			if initialHP-after.Current != tc.hpLoss ||
+				state.ShieldBlocks != tc.blocks ||
+				len(rng.rolls) != 0 {
 				t.Fatalf("HP %d -> %d, combat %+v, rolls %+v", initialHP, after.Current, state, rng.rolls)
 			}
 
-			if len(g.turn.Events) != 1 || !strings.Contains(strings.ToLower(g.turn.Events[0].Text), tc.message) {
+			if len(g.turn.Events) != 1 ||
+				!strings.Contains(strings.ToLower(g.turn.Events[0].Text), tc.message) {
 				t.Fatalf("events %+v do not report %q", g.turn.Events, tc.message)
 			}
 		})
@@ -378,7 +381,8 @@ func TestCombatSaveRejectsNegativeBlocksAndOldVersion(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "combat") {
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+		!strings.Contains(err.Error(), "combat") {
 		t.Fatalf("negative shield-block restore error = %v", err)
 	}
 }
@@ -406,7 +410,8 @@ func TestRestoreRejectsCombatStateItCannotRun(t *testing.T) {
 			want: "defense",
 			mutate: func(snapshot *save.Snapshot) {
 				for i := range snapshot.Entities {
-					if snapshot.Entities[i].Item != nil && snapshot.Entities[i].Item.KindID == "ARM_SCALE_MAIL" {
+					if snapshot.Entities[i].Item != nil &&
+						snapshot.Entities[i].Item.KindID == "ARM_SCALE_MAIL" {
 						snapshot.Entities[i].Item.Plus = 101
 					}
 				}
@@ -418,7 +423,8 @@ func TestRestoreRejectsCombatStateItCannotRun(t *testing.T) {
 			want: "defense",
 			mutate: func(snapshot *save.Snapshot) {
 				for i := range snapshot.Entities {
-					if snapshot.Entities[i].Item != nil && snapshot.Entities[i].Item.KindID == "ARM_BUCKLER" {
+					if snapshot.Entities[i].Item != nil &&
+						snapshot.Entities[i].Item.KindID == "ARM_BUCKLER" {
 						snapshot.Entities[i].Item.Plus = 101
 					}
 				}

@@ -89,14 +89,18 @@ func TestGenerateStartingGear(t *testing.T) {
 	}
 
 	if artifact.SchemaVersion != 2 || artifact.SourceRevision != pinnedRevision ||
-		artifact.TagMajorVersion != 34 || len(artifact.Jobs) != 1 || len(artifact.Jobs[0].Grants) != 3 {
+		artifact.TagMajorVersion != 34 ||
+		len(artifact.Jobs) != 1 ||
+		len(artifact.Jobs[0].Grants) != 3 {
 		t.Fatalf("unexpected starter artifact: %+v", artifact)
 	}
 
 	grants := artifact.Jobs[0].Grants
 
 	if grants[0].KindID != "ARM_SCALE_MAIL" || grants[1].KindID != "POT_MIGHT" ||
-		grants[2].KindID != "MI_DART" || grants[2].Quantity != 3 || grants[2].Ego != "curare" {
+		grants[2].KindID != "MI_DART" ||
+		grants[2].Quantity != 3 ||
+		grants[2].Ego != "curare" {
 		t.Fatalf("grant order or properties changed: %+v", grants)
 	}
 
@@ -109,7 +113,9 @@ func TestGenerateStartingGear(t *testing.T) {
 	}
 
 	for i, file := range artifact.SourceFiles {
-		if len(file.SHA256) != 64 || i > 0 && artifact.SourceFiles[i-1].Path >= file.Path {
+		if len(file.SHA256) != 64 ||
+			i > 0 &&
+				artifact.SourceFiles[i-1].Path >= file.Path {
 			t.Fatalf("invalid source hash/order: %+v", artifact.SourceFiles)
 		}
 	}
@@ -209,7 +215,9 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 		t.Fatalf("wrong revision accepted: %v", err)
 	}
 
-	if _, err := generateFromSource(gearSourceFixture(t), pinnedRevision, nil, catalog); err == nil ||
+	_, err = generateFromSource(gearSourceFixture(t), pinnedRevision, nil, catalog)
+
+	if err == nil ||
 		!strings.Contains(err.Error(), "job") {
 		t.Fatalf("missing jobs accepted: %v", err)
 	}

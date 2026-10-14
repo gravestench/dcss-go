@@ -111,7 +111,9 @@ func TestPlayerDeathEndsTurnLoop(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if result.Spent != 0 || len(result.Events) == 0 || result.Events[0].Kind != "death" {
+	if result.Spent != 0 ||
+		len(result.Events) == 0 ||
+		result.Events[0].Kind != "death" {
 		t.Fatalf("dead player step = %+v", result)
 	}
 }

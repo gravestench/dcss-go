@@ -7,7 +7,10 @@ import (
 	"dcrawl-go/internal/content"
 )
 
-func dragonArmourRows(raw string, vocabulary content.ItemVocabulary) (map[itemKey]itemPropertyRow, error) {
+func dragonArmourRows(
+	raw string,
+	vocabulary content.ItemVocabulary,
+) (map[itemKey]itemPropertyRow, error) {
 	open := strings.Index(raw, "(")
 
 	if open < 0 || !strings.HasPrefix(raw, "DRAGON_ARMOUR") {

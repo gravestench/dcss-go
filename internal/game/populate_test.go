@@ -66,7 +66,8 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 		counts[position.LevelID]++
 	}
 
-	if counts[1] != populationMonstersPerLevel || counts[2] != populationMonstersPerLevel {
+	if counts[1] != populationMonstersPerLevel ||
+		counts[2] != populationMonstersPerLevel {
 		t.Fatalf("population by level = %+v", counts)
 	}
 
@@ -348,7 +349,9 @@ func TestRestoreRejectsOverfullPopulationLevel(t *testing.T) {
 	for index := range snapshot.Entities {
 		record := &snapshot.Entities[index]
 
-		if record.AI == nil || record.Position == nil || record.Position.LevelID != 2 {
+		if record.AI == nil ||
+			record.Position == nil ||
+			record.Position.LevelID != 2 {
 			continue
 		}
 

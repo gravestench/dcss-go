@@ -162,7 +162,9 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 			seen := false
 
 			for _, entity := range g.View().Entities {
-				if entity.ID == uint64(id) && entity.Name == "rat corpse" && entity.Glyph == '%' {
+				if entity.ID == uint64(id) &&
+					entity.Name == "rat corpse" &&
+					entity.Glyph == '%' {
 					seen = true
 				}
 			}
@@ -295,7 +297,9 @@ func TestCorpseDecaysAtTwoHundredAutAndSurvivesSave(t *testing.T) {
 	seenSkeleton := false
 
 	for _, entity := range loaded.View().Entities {
-		if entity.ID == uint64(id) && entity.Name == "rat skeleton" && entity.Glyph == '%' {
+		if entity.ID == uint64(id) &&
+			entity.Name == "rat skeleton" &&
+			entity.Glyph == '%' {
 			seenSkeleton = true
 		}
 	}
@@ -329,13 +333,15 @@ func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 
 	quokka := quokkaID(t, g)
 
-	if err := g.levels[2].RemoveActor(quokka); err != nil || !g.world.DestroyEntity(quokka) {
+	if err := g.levels[2].RemoveActor(quokka); err != nil ||
+		!g.world.DestroyEntity(quokka) {
 		t.Fatalf("quokka removal: %v", err)
 	}
 
 	lizard := frilledLizardID(t, g)
 
-	if err := g.levels[2].RemoveActor(lizard); err != nil || !g.world.DestroyEntity(lizard) {
+	if err := g.levels[2].RemoveActor(lizard); err != nil ||
+		!g.world.DestroyEntity(lizard) {
 		t.Fatalf("frilled lizard removal: %v", err)
 	}
 

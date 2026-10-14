@@ -58,7 +58,9 @@ func TestActiveEnumIDsRejectsUnsupportedConditional(t *testing.T) {
 		"SP_",
 	)
 
-	if err == nil || !strings.Contains(err.Error(), "species-type.h") || !strings.Contains(err.Error(), "FEATURE_X") {
+	if err == nil ||
+		!strings.Contains(err.Error(), "species-type.h") ||
+		!strings.Contains(err.Error(), "FEATURE_X") {
 		t.Fatalf("unsupported condition accepted: %v", err)
 	}
 }

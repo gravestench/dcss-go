@@ -101,7 +101,10 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 		t.Fatal("legacy UNUSABLE_SKILL was made usable")
 	}
 
-	if got := records[byID["SP_LAVA_ORC"]].Aptitudes["SK_ICE_MAGIC"]; !got.Allowed || got.Value != -4 {
+	got := records[byID["SP_LAVA_ORC"]].Aptitudes["SK_ICE_MAGIC"]
+
+	if !got.Allowed ||
+		got.Value != -4 {
 		t.Fatalf("legacy numeric aptitude lost: %+v", got)
 	}
 }

@@ -56,7 +56,8 @@ func (g *Game) prepareDoorCommand(
 		y: position.Y + dy,
 	}
 
-	if !level.inBounds(target.x, target.y) || level.terrain[target.y][target.x] != glyph {
+	if !level.inBounds(target.x, target.y) ||
+		level.terrain[target.y][target.x] != glyph {
 		return freeCommand(g.noTime("There isn't a door to " + verb + " there.")), nil
 	}
 

@@ -145,7 +145,9 @@ func TestHasteWarnsAndExpiresAfterAFinalFastAction(t *testing.T) {
 
 	remaining, message, err := DecayHaste(rng, 65, 7)
 
-	if err != nil || remaining != 48 || message != "Your extra speed is starting to run out." {
+	if err != nil ||
+		remaining != 48 ||
+		message != "Your extra speed is starting to run out." {
 		t.Fatalf("warning = %d, %q, %v", remaining, message, err)
 	}
 

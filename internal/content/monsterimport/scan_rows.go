@@ -66,7 +66,8 @@ func activeMonsterTable(path string, data []byte) (string, []int, []sourceparse.
 			} else if strings.HasPrefix(trimmed, "#define ") {
 				name := strings.Fields(trimmed)[1]
 
-				if !strings.HasPrefix(name, "AXED_MON(") && !strings.HasPrefix(name, "DUMMY(") {
+				if !strings.HasPrefix(name, "AXED_MON(") &&
+					!strings.HasPrefix(name, "DUMMY(") {
 					return "", nil, nil, fmt.Errorf("%s:%d: unsupported table macro %s", path, line.Number, name)
 				}
 			} else {

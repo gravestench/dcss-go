@@ -305,7 +305,8 @@ func TestHumanWearsAuxiliaryArmourAcrossSavedDelay(t *testing.T) {
 				t.Fatalf("wear start = %+v, %v", first, err)
 			}
 
-			if first.View.EquipmentDelay.Slot != test.slot || g.stores.Equipped.Has(itemID) {
+			if first.View.EquipmentDelay.Slot != test.slot ||
+				g.stores.Equipped.Has(itemID) {
 				t.Fatalf("%s was equipped before its delay", test.kindID)
 			}
 
@@ -333,7 +334,8 @@ func TestHumanWearsAuxiliaryArmourAcrossSavedDelay(t *testing.T) {
 				t.Fatalf("%s was not equipped in %s", test.kindID, test.slot)
 			}
 
-			if restored.View().EquipmentDelay != nil || restored.View().CurrentAut != start+50 {
+			if restored.View().EquipmentDelay != nil ||
+				restored.View().CurrentAut != start+50 {
 				t.Fatalf("%s did not finish after five turns", test.kindID)
 			}
 		})

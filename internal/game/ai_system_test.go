@@ -13,7 +13,8 @@ func TestMonsterDecisionSystemWritesOnlyActiveMonsterIntent(t *testing.T) {
 	system := newMonsterDecisionSystem(g)
 	g.turn.Actor = g.player
 
-	if err := system.Update(nil, time.Duration(10)); err != nil || g.stores.Intents.Has(g.player) {
+	if err := system.Update(nil, time.Duration(10)); err != nil ||
+		g.stores.Intents.Has(g.player) {
 		t.Fatalf("player decision wrote monster intent: %v", err)
 	}
 

@@ -47,11 +47,14 @@ func TestQuaffMightConsumesAndDecaysByActionCost(t *testing.T) {
 		ItemID: id,
 	})
 
-	if err != nil || result.Spent != 10 || result.View.MightAut != (35+roll)*10-10 {
+	if err != nil ||
+		result.Spent != 10 ||
+		result.View.MightAut != (35+roll)*10-10 {
 		t.Fatalf("might quaff = %+v, %v", result, err)
 	}
 
-	if g.world.EntityExists(akara.Entity(id)) || !strings.Contains(result.Events[0].Text, "very mighty") {
+	if g.world.EntityExists(akara.Entity(id)) ||
+		!strings.Contains(result.Events[0].Text, "very mighty") {
 		t.Fatalf("potion not consumed or source message missing: %+v", result)
 	}
 
@@ -74,7 +77,9 @@ func TestQuaffMightConsumesAndDecaysByActionCost(t *testing.T) {
 	status.MightAut = 9
 	result, err = g.Step(Command{Kind: CommandWait})
 
-	if err != nil || result.View.MightAut != 0 || !containsEvent(result.Events, "You feel a little less mighty now.") {
+	if err != nil ||
+		result.View.MightAut != 0 ||
+		!containsEvent(result.Events, "You feel a little less mighty now.") {
 		t.Fatalf("expiry = %+v, %v", result, err)
 	}
 }
@@ -120,7 +125,9 @@ func TestMightDecaysByVariableMeleeActionCost(t *testing.T) {
 		DX:   1,
 	})
 
-	if err != nil || result.Spent <= 0 || result.View.MightAut != 20-int(result.Spent) {
+	if err != nil ||
+		result.Spent <= 0 ||
+		result.View.MightAut != 20-int(result.Spent) {
 		t.Fatalf("mighty attack timing = %+v, %v", result, err)
 	}
 }

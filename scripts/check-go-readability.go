@@ -186,6 +186,34 @@ func checkFile(path string) (int, error) {
 	}
 
 	blockEndLines := make(map[int]bool)
+	checkBooleanCondition := func(condition ast.Expr) {
+		operatorsByLine := make(map[int]int)
+
+		ast.Inspect(condition, func(part ast.Node) bool {
+			if _, nestedFunction := part.(*ast.FuncLit); nestedFunction {
+				return false
+			}
+
+			binary, ok := part.(*ast.BinaryExpr)
+
+			if !ok || (binary.Op != token.LAND && binary.Op != token.LOR) {
+				return true
+			}
+
+			line := fset.Position(binary.OpPos).Line
+			operatorsByLine[line]++
+
+			if operatorsByLine[line] == 3 {
+				report(binary.OpPos, "put crowded condition checks on separate lines")
+			}
+
+			if len(lines[line-1]) > 80 && operatorsByLine[line] == 1 {
+				report(binary.OpPos, "break long boolean conditions across lines")
+			}
+
+			return true
+		})
+	}
 
 	for index := 1; index < len(file.Decls); index++ {
 		previous := file.Decls[index-1]
@@ -199,28 +227,12 @@ func checkFile(path string) (int, error) {
 	ast.Inspect(file, func(node ast.Node) bool {
 		switch value := node.(type) {
 		case *ast.IfStmt:
-			operatorsByLine := make(map[int]int)
+			checkBooleanCondition(value.Cond)
 
-			ast.Inspect(value.Cond, func(part ast.Node) bool {
-				if _, nestedFunction := part.(*ast.FuncLit); nestedFunction {
-					return false
-				}
-
-				binary, ok := part.(*ast.BinaryExpr)
-
-				if !ok || (binary.Op != token.LAND && binary.Op != token.LOR) {
-					return true
-				}
-
-				line := fset.Position(binary.OpPos).Line
-				operatorsByLine[line]++
-
-				if operatorsByLine[line] == 3 {
-					report(binary.OpPos, "put crowded condition checks on separate lines")
-				}
-
-				return true
-			})
+		case *ast.ForStmt:
+			if value.Cond != nil {
+				checkBooleanCondition(value.Cond)
+			}
 
 		case *ast.SwitchStmt:
 			checkClauses(value.Body.List)

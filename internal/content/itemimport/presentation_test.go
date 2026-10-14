@@ -257,7 +257,9 @@ func TestPinnedItemNamesAndGlyphs(t *testing.T) {
 		itemKeyFor("OBJ_WANDS", "WAND_FLAME"):                "wand of flame",
 		itemKeyFor("OBJ_SCROLLS", "SCR_IDENTIFY"):            "scroll of identify",
 	} {
-		if names[key].Text != want || names[key].Kind != "static" || names[key].SourceLine <= 0 {
+		if names[key].Text != want ||
+			names[key].Kind != "static" ||
+			names[key].SourceLine <= 0 {
 			t.Errorf("%v: got %+v, want %q", key, names[key], want)
 		}
 	}

@@ -67,7 +67,9 @@ func TestParseYAMLDeepElfSpellcasting(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if s.ID != "SP_DEEP_ELF" || s.ShortName != "DE" || s.Aptitudes["SK_SPELLCASTING"].Value != 3 {
+	if s.ID != "SP_DEEP_ELF" ||
+		s.ShortName != "DE" ||
+		s.Aptitudes["SK_SPELLCASTING"].Value != 3 {
 		t.Fatalf("Deep Elf identity or spellcasting lost: %+v", s)
 	}
 }
@@ -90,7 +92,9 @@ func TestParseYAMLFelidUnusableAndMutations(t *testing.T) {
 		t.Fatalf("False aptitude became usable: %+v", a)
 	}
 
-	if len(s.Mutations) != 2 || s.Mutations[0].Level != 1 || s.Mutations[1].Level != 6 {
+	if len(s.Mutations) != 2 ||
+		s.Mutations[0].Level != 1 ||
+		s.Mutations[1].Level != 6 {
 		t.Fatalf("nested mutation levels lost: %+v", s.Mutations)
 	}
 }
@@ -131,7 +135,9 @@ altar_action: kneel at
 		s.Flags[0] != "SPF_NO_HAIR" ||
 		len(s.LevelUpStats) != 1 ||
 		s.LevelUpStats[0] != "int" || len(s.FakeMutations) != 1 ||
-		s.FakeMutations[0].Short != "short description" || len(s.RecommendedWeapons) != 1 || s.AltarAction != "kneel at" {
+		s.FakeMutations[0].Short != "short description" ||
+		len(s.RecommendedWeapons) != 1 ||
+		s.AltarAction != "kneel at" {
 		t.Fatalf("optional details lost: %+v", s)
 	}
 }
@@ -207,7 +213,9 @@ func TestParseYAMLRejectsMalformedSource(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			_, _, err := parseYAML("bad.yaml", []byte(tc.input))
 
-			if err == nil || !strings.Contains(err.Error(), "bad.yaml") || !strings.Contains(err.Error(), tc.field) {
+			if err == nil ||
+				!strings.Contains(err.Error(), "bad.yaml") ||
+				!strings.Contains(err.Error(), tc.field) {
 				t.Fatalf("want file/field error containing %q, got %v", tc.field, err)
 			}
 		})
@@ -249,7 +257,9 @@ func TestParseYAMLRejectsCoercionAndTrailingDocument(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			_, _, err := parseYAML("strict.yaml", []byte(tc.input))
 
-			if err == nil || !strings.Contains(err.Error(), "strict.yaml") || !strings.Contains(err.Error(), tc.field) {
+			if err == nil ||
+				!strings.Contains(err.Error(), "strict.yaml") ||
+				!strings.Contains(err.Error(), tc.field) {
 				t.Fatalf("want contextual rejection of %s, got %v", tc.field, err)
 			}
 		})

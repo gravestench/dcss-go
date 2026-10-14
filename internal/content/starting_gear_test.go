@@ -365,7 +365,8 @@ func TestStartingGearArtifactValidation(t *testing.T) {
 			a := validStartingGearArtifact()
 			tc.change(&a)
 
-			if err := a.Validate(catalog); err == nil || !strings.Contains(strings.ToLower(err.Error()), tc.want) {
+			if err := a.Validate(catalog); err == nil ||
+				!strings.Contains(strings.ToLower(err.Error()), tc.want) {
 				t.Fatalf("want %q error, got %v", tc.want, err)
 			}
 		})

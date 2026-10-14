@@ -97,7 +97,9 @@ func (j JobDef) validate() error {
 	}
 
 	for _, skill := range j.Skills {
-		if !strings.HasPrefix(skill.ID, "SK_") || skill.Level < 0 || skill.Level > 27 {
+		if !strings.HasPrefix(skill.ID, "SK_") ||
+			skill.Level < 0 ||
+			skill.Level > 27 {
 			return fmt.Errorf("job %s has invalid skill grant %s/%d", j.ID, skill.ID, skill.Level)
 		}
 	}

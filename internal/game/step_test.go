@@ -143,7 +143,9 @@ func TestStepErrorNamesPhaseAndActor(t *testing.T) {
 		DX:   1,
 	})
 
-	if err == nil || !strings.Contains(err.Error(), "movement") || !strings.Contains(err.Error(), fmt.Sprint(g.player)) {
+	if err == nil ||
+		!strings.Contains(err.Error(), "movement") ||
+		!strings.Contains(err.Error(), fmt.Sprint(g.player)) {
 		t.Fatalf("error = %v, want movement phase and actor ID", err)
 	}
 }

@@ -184,7 +184,9 @@ func sequence(path, field string, node *yaml.Node, elementTag string) error {
 }
 
 func validateSourceShape(path string, root *yaml.Node) error {
-	if root.Kind != yaml.DocumentNode || len(root.Content) != 1 || root.Content[0].Kind != yaml.MappingNode {
+	if root.Kind != yaml.DocumentNode ||
+		len(root.Content) != 1 ||
+		root.Content[0].Kind != yaml.MappingNode {
 		return fmt.Errorf("%s: species document must be a mapping", path)
 	}
 
@@ -214,7 +216,9 @@ func validateSourceShape(path string, root *yaml.Node) error {
 			}
 
 		case "difficulty":
-			if value.Kind != yaml.ScalarNode || (value.Tag != "!!str" && value.Tag != "!!bool") {
+			if value.Kind != yaml.ScalarNode ||
+				(value.Tag != "!!str" &&
+					value.Tag != "!!bool") {
 				return fmt.Errorf("%s: difficulty must be a string or False", path)
 			}
 
@@ -240,7 +244,9 @@ func validateSourceShape(path string, root *yaml.Node) error {
 					return err
 				}
 
-				if aptValue.Kind != yaml.ScalarNode || (aptValue.Tag != "!!int" && aptValue.Tag != "!!bool") {
+				if aptValue.Kind != yaml.ScalarNode ||
+					(aptValue.Tag != "!!int" &&
+						aptValue.Tag != "!!bool") {
 					return fmt.Errorf("%s: aptitudes.%s must be an integer or False", path, aptName.Value)
 				}
 			}

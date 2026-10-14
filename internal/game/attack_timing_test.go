@@ -36,7 +36,9 @@ func TestAttackDelayProjectionUsesEveryFighterStart(t *testing.T) {
 			}
 
 			if weaponID == "WPN_UNARMED" {
-				if !in.Unarmed || in.WeaponSpeed != 0 || in.WeaponSkillID != "SK_UNARMED_COMBAT" {
+				if !in.Unarmed ||
+					in.WeaponSpeed != 0 ||
+					in.WeaponSkillID != "SK_UNARMED_COMBAT" {
 					t.Fatalf("unarmed attack delay = %+v", in)
 				}
 
@@ -49,7 +51,9 @@ func TestAttackDelayProjectionUsesEveryFighterStart(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if in.Unarmed || in.WeaponSpeed != weapon.Weapon.Speed || in.WeaponSkillID != weapon.Weapon.SkillID {
+			if in.Unarmed ||
+				in.WeaponSpeed != weapon.Weapon.Speed ||
+				in.WeaponSkillID != weapon.Weapon.SkillID {
 				t.Fatalf("%s delay = %+v, catalog %+v", weaponID, in, weapon.Weapon)
 			}
 		})
@@ -213,7 +217,8 @@ func TestRestoreAllowsRemovedShield(t *testing.T) {
 	saved := g.Snapshot()
 
 	for i := range saved.Entities {
-		if saved.Entities[i].Equipped != nil && saved.Entities[i].Equipped.Slot == "shield" {
+		if saved.Entities[i].Equipped != nil &&
+			saved.Entities[i].Equipped.Slot == "shield" {
 			saved.Entities[i].Equipped = nil
 			saved.Entities[i].CarriedBy = &ecs.CarriedBy{Holder: g.player}
 		}

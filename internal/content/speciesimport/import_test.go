@@ -74,7 +74,9 @@ func TestGenerateSpeciesArtifactDeterministic(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !bytes.Equal(first, second) || len(first) == 0 || first[len(first)-1] != '\n' {
+	if !bytes.Equal(first, second) ||
+		len(first) == 0 ||
+		first[len(first)-1] != '\n' {
 		t.Fatal("artifact bytes changed or lack final newline")
 	}
 
@@ -85,7 +87,9 @@ func TestGenerateSpeciesArtifactDeterministic(t *testing.T) {
 	}
 
 	if artifact.SchemaVersion != 1 || artifact.SourceRevision != pinnedRevision ||
-		artifact.TagMajorVersion != 34 || len(artifact.Species) != 4 || len(artifact.SourceFiles) != 7 {
+		artifact.TagMajorVersion != 34 ||
+		len(artifact.Species) != 4 ||
+		len(artifact.SourceFiles) != 7 {
 		t.Fatalf("wrong artifact metadata/counts: %+v", artifact)
 	}
 

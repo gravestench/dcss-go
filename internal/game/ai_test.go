@@ -374,7 +374,9 @@ func TestQuokkaWanderTargetAndMemoryUseSerializableAIStream(t *testing.T) {
 
 	got, err := newMonsterDecisionSystem(loaded).chooseIntent(quokka)
 
-	if err != nil || got != want || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
+	if err != nil ||
+		got != want ||
+		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("wander continuation diverged: got %+v, %v; want %+v", got, err, want)
 	}
 }
@@ -407,7 +409,8 @@ func TestQuokkaFoeMemoryExpiresAfterSourceRange(t *testing.T) {
 
 	g.currentAut = Aut(ai.MemoryUntilAut - 1)
 
-	if _, err := newMonsterDecisionSystem(g).chooseIntent(quokka); err != nil || ai.Behavior != "seek" {
+	if _, err := newMonsterDecisionSystem(g).chooseIntent(quokka); err != nil ||
+		ai.Behavior != "seek" {
 		t.Fatalf("animal forgot too soon: %+v, %v", ai, err)
 	}
 
@@ -465,7 +468,9 @@ func TestLegacyZeroDeadlineSeekGetsFiniteMemory(t *testing.T) {
 
 	loaded.currentAut = 250
 
-	if _, err := newMonsterDecisionSystem(loaded).chooseIntent(quokka); err != nil ||
+	_, err = newMonsterDecisionSystem(loaded).chooseIntent(quokka)
+
+	if err != nil ||
 		loadedAI.Behavior != "wander" || loadedAI.MemoryUntilAut != 0 {
 		t.Fatalf("legacy seek did not expire: %+v, %v", loadedAI, err)
 	}

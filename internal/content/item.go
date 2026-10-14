@@ -208,7 +208,9 @@ func (d ItemDef) validateClassAndEquipment() error {
 
 	switch d.Class {
 	case "OBJ_WEAPONS":
-		if d.Slot != "weapon" || !strings.HasPrefix(d.WeaponSkill, "SK_") || d.Stackable {
+		if d.Slot != "weapon" ||
+			!strings.HasPrefix(d.WeaponSkill, "SK_") ||
+			d.Stackable {
 			return fmt.Errorf("item %s has invalid weapon slot or skill", d.ID)
 		}
 
@@ -294,7 +296,9 @@ func itemClassPrefix(class string) (string, bool) {
 }
 
 func (d ItemDef) validateNaming() error {
-	if d.Naming.Text == "" || d.Naming.SourcePath == "" || d.Naming.SourceLine <= 0 {
+	if d.Naming.Text == "" ||
+		d.Naming.SourcePath == "" ||
+		d.Naming.SourceLine <= 0 {
 		return fmt.Errorf("item %s has invalid naming provenance", d.ID)
 	}
 
@@ -384,8 +388,9 @@ func (m ItemIdentityManifest) Validate() error {
 
 		seen[identity.ID] = true
 
-		if identity.ClassValue < previousClass || (identity.ClassValue == previousClass &&
-			identity.SubtypeValue <= previousSubtype) {
+		if identity.ClassValue < previousClass ||
+			(identity.ClassValue == previousClass &&
+				identity.SubtypeValue <= previousSubtype) {
 			return fmt.Errorf("item identities are not in numeric class/subtype order")
 		}
 
@@ -463,7 +468,8 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 		if !ok ||
 			seen[item.ID] ||
 			identity.ClassID != item.Class ||
-			identity.ClassValue != item.ClassValue || identity.SubtypeValue != item.SubtypeValue ||
+			identity.ClassValue != item.ClassValue ||
+			identity.SubtypeValue != item.SubtypeValue ||
 			identity.ExplicitlyRemoved != item.ExplicitlyRemoved {
 			return fmt.Errorf("item %s differs from independent identity manifest", item.ID)
 		}
@@ -490,7 +496,8 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 			item.Weapon != nil ||
 			item.Missile != nil ||
 			item.Food != nil {
-			if files[item.Evidence.PropertySource] == "" || item.Evidence.PropertyLine <= 0 {
+			if files[item.Evidence.PropertySource] == "" ||
+				item.Evidence.PropertyLine <= 0 {
 				return fmt.Errorf("item %s has invalid property evidence", item.ID)
 			}
 		}
@@ -541,7 +548,8 @@ func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 	switch d.Class {
 	case "OBJ_ARMOUR":
 		if d.Armour == nil || !vocabularyHas(v.Slots, d.Armour.SlotID) ||
-			!vocabularyHas(v.Sizes, d.Armour.FitMinID) || !vocabularyHas(v.Sizes, d.Armour.FitMaxID) {
+			!vocabularyHas(v.Sizes, d.Armour.FitMinID) ||
+			!vocabularyHas(v.Sizes, d.Armour.FitMaxID) {
 			return fmt.Errorf("item %s has incomplete or unknown armour properties", d.ID)
 		}
 
@@ -555,7 +563,8 @@ func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 		if d.Weapon == nil || !vocabularyHas(v.Skills, d.Weapon.SkillID) ||
 			!vocabularyHas(v.Sizes, d.Weapon.Min2HSizeID) ||
 			!vocabularyHas(v.Sizes, d.Weapon.Min1HSizeID) ||
-			!vocabularyHas(v.Ammo, d.Weapon.AmmoID) || d.Weapon.SkillID != d.WeaponSkill {
+			!vocabularyHas(v.Ammo, d.Weapon.AmmoID) ||
+			d.Weapon.SkillID != d.WeaponSkill {
 			return fmt.Errorf("item %s has incomplete or unknown weapon properties", d.ID)
 		}
 

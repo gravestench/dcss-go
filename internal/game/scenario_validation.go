@@ -32,7 +32,8 @@ func validateScenarioLevels(levels map[int]*Level, scenarioID string) error {
 	for id, level := range levels {
 		choices := initialMonsterBudget(level, scenarioID)
 
-		if scenarioID == generatedDungeonScenarioID || scenarioID == populationScenarioID {
+		if scenarioID == generatedDungeonScenarioID ||
+			scenarioID == populationScenarioID {
 			if level.initialActors != 0 &&
 				(level.initialActors < choices || level.initialActors > 4*choices) {
 				return fmt.Errorf("Dungeon:%d has invalid initial actor count", id)
@@ -58,7 +59,8 @@ func validateScenarioLevels(levels map[int]*Level, scenarioID string) error {
 
 	case populationScenarioID:
 		for id, level := range levels {
-			if level.initialMonsters != 0 && level.initialMonsters != populationMonstersPerLevel {
+			if level.initialMonsters != 0 &&
+				level.initialMonsters != populationMonstersPerLevel {
 				return fmt.Errorf("fixed Dungeon:%d has invalid monster budget", id)
 			}
 		}
@@ -83,7 +85,9 @@ func validateGeneratedDungeonLevels(levels map[int]*Level) error {
 	}
 
 	for depth, level := range levels {
-		if level.width != 80 || len(level.terrain) != 70 || len(level.StairLinks()) != 6 {
+		if level.width != 80 ||
+			len(level.terrain) != 70 ||
+			len(level.StairLinks()) != 6 {
 			return fmt.Errorf("generated Dungeon:%d has invalid geometry or stair count", depth)
 		}
 

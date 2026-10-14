@@ -11,7 +11,9 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 	catalog := mustLoadDefault(t)
 	p := catalog.Presentation()
 
-	if p.SchemaVersion != 1 || p.SourceRevision != sourceRevision || p.TagMajorVersion != 34 {
+	if p.SchemaVersion != 1 ||
+		p.SourceRevision != sourceRevision ||
+		p.TagMajorVersion != 34 {
 		t.Fatalf("presentation provenance: %+v", p)
 	}
 
@@ -24,14 +26,16 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 	}
 
 	if len(p.StartupModes) != 8 || p.StartupModes[0].ID != "GAME_TYPE_NORMAL" ||
-		p.StartupModes[0].Label != "Dungeon Crawl" || p.StartupModes[7].ID != "GAME_TYPE_HIGH_SCORES" {
+		p.StartupModes[0].Label != "Dungeon Crawl" ||
+		p.StartupModes[7].ID != "GAME_TYPE_HIGH_SCORES" {
 		t.Fatalf("source startup mode order: %+v", p.StartupModes)
 	}
 
 	if len(p.SkillColumns) != 2 ||
 		len(p.SkillColumns[0]) != 16 ||
 		len(p.SkillColumns[1]) != 16 ||
-		p.SkillColumns[0][0] != "SK_FIGHTING" || p.SkillColumns[1][0] != "SK_SPELLCASTING" {
+		p.SkillColumns[0][0] != "SK_FIGHTING" ||
+		p.SkillColumns[1][0] != "SK_SPELLCASTING" {
 		t.Fatalf("source skill display columns: %+v", p.SkillColumns)
 	}
 
@@ -50,11 +54,15 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 		jobs = append(jobs, group.IDs...)
 	}
 
-	if len(species) != 27 || species[0] != "SP_HILL_ORC" || species[len(species)-1] != "SP_MUMMY" {
+	if len(species) != 27 ||
+		species[0] != "SP_HILL_ORC" ||
+		species[len(species)-1] != "SP_MUMMY" {
 		t.Fatalf("species menu order: %v", species)
 	}
 
-	if len(jobs) != 25 || jobs[0] != "JOB_FIGHTER" || jobs[len(jobs)-1] != "JOB_VENOM_MAGE" {
+	if len(jobs) != 25 ||
+		jobs[0] != "JOB_FIGHTER" ||
+		jobs[len(jobs)-1] != "JOB_VENOM_MAGE" {
 		t.Fatalf("job menu order: %v", jobs)
 	}
 
@@ -73,8 +81,11 @@ func TestLoadDefaultPresentationOrderAndProvenance(t *testing.T) {
 		t.Fatalf("species labels: %+v", p.SpeciesGroups)
 	}
 
-	if !strings.Contains(p.SpeciesDescriptions["SP_HUMAN"], "Humans advance quickly") ||
-		!strings.Contains(p.JobDescriptions["JOB_FIGHTER"], "Fighters are equipped") {
+	humanDescription := p.SpeciesDescriptions["SP_HUMAN"]
+	fighterDescription := p.JobDescriptions["JOB_FIGHTER"]
+
+	if !strings.Contains(humanDescription, "Humans advance quickly") ||
+		!strings.Contains(fighterDescription, "Fighters are equipped") {
 		t.Fatal("source description prose missing")
 	}
 
@@ -111,7 +122,8 @@ func TestPresentationReturnedAsDefensiveCopy(t *testing.T) {
 	again := catalog.Presentation()
 
 	if again.SpeciesGroups[0].IDs[0] != "SP_HILL_ORC" ||
-		again.SpeciesDescriptions["SP_HUMAN"] == "changed" || again.SourceFiles[0].SHA256 == "changed" ||
+		again.SpeciesDescriptions["SP_HUMAN"] == "changed" ||
+		again.SourceFiles[0].SHA256 == "changed" ||
 		again.SkillColumns[0][0] == "SK_FAKE" {
 		t.Fatal("caller mutated catalog presentation")
 	}

@@ -10,7 +10,9 @@ func TestParseDungeonRowsKeepsDuplicatesAndSourceLines(t *testing.T) {
 	if err != nil ||
 		len(rows) != 2 ||
 		rows[0].MonsterID != "MONS_RAT" ||
-		rows[1].MonsterID != "MONS_RAT" || rows[0].SourceLine != 4 || rows[1].SourceLine != 5 {
+		rows[1].MonsterID != "MONS_RAT" ||
+		rows[0].SourceLine != 4 ||
+		rows[1].SourceLine != 5 {
 		t.Fatalf("parsed rows %+v, %v", rows, err)
 	}
 

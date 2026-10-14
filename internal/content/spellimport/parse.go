@@ -186,7 +186,12 @@ func parseBits(value, namespace string) ([]string, error) {
 
 func parseDescriptor(path string, line int, fields []string) (content.SpellDef, error) {
 	if len(fields) != 11 || !spellID.MatchString(fields[0]) {
-		return content.SpellDef{}, fmt.Errorf("%s:%d: expected eleven spell fields, got %d", path, line, len(fields))
+		return content.SpellDef{}, fmt.Errorf(
+			"%s:%d: expected eleven spell fields, got %d",
+			path,
+			line,
+			len(fields),
+		)
 	}
 
 	name, err := strconv.Unquote(fields[1])
@@ -477,7 +482,11 @@ func parseRemoved(path string, body []byte) (map[string]bool, error) {
 	return seen, nil
 }
 
-func reconcile(ids []content.SpellDef, spells map[string]content.SpellDef, removed map[string]bool) error {
+func reconcile(
+	ids []content.SpellDef,
+	spells map[string]content.SpellDef,
+	removed map[string]bool,
+) error {
 	for _, id := range ids {
 		spell, exists := spells[id.ID]
 

@@ -18,8 +18,14 @@ func resolveChosenWeaponSkill(kind content.ItemDef, species content.SpeciesDef) 
 		return "", fmt.Errorf("weapon %s has no usable weapon skill", kind.ID)
 	}
 
-	if aptitude, found := species.Aptitudes[kind.WeaponSkill]; !found || !aptitude.Allowed {
-		return "", fmt.Errorf("weapon %s has unsupported skill %s for %s", kind.ID, kind.WeaponSkill, species.ID)
+	if aptitude, found := species.Aptitudes[kind.WeaponSkill]; !found ||
+		!aptitude.Allowed {
+		return "", fmt.Errorf(
+			"weapon %s has unsupported skill %s for %s",
+			kind.ID,
+			kind.WeaponSkill,
+			species.ID,
+		)
 	}
 
 	return kind.WeaponSkill, nil

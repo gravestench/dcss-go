@@ -113,7 +113,9 @@ func TestWieldAlternateCarriedWeaponAndRestore(t *testing.T) {
 
 	input, err := newPlayerCombat(g).attackInput("MONS_RAT")
 
-	if err != nil || input.WeaponSkillID != "SK_MACES_FLAILS" || input.WeaponSkill100 != 0 {
+	if err != nil ||
+		input.WeaponSkillID != "SK_MACES_FLAILS" ||
+		input.WeaponSkill100 != 0 {
 		t.Fatalf("untrained flail attack = %+v, %v", input, err)
 	}
 

@@ -15,7 +15,9 @@ func TestCommittedSpellCatalogCoverageAndCopies(t *testing.T) {
 
 	ids := catalog.SpellIDs()
 
-	if len(ids) != 403 || ids[0] != "SPELL_NO_SPELL" || ids[1] != "SPELL_TELEPORT_SELF" {
+	if len(ids) != 403 ||
+		ids[0] != "SPELL_NO_SPELL" ||
+		ids[1] != "SPELL_TELEPORT_SELF" {
 		t.Fatalf("spell IDs count/order %d, %v", len(ids), ids[:min(2, len(ids))])
 	}
 
@@ -31,7 +33,9 @@ func TestCommittedSpellCatalogCoverageAndCopies(t *testing.T) {
 		magic.NumericID != 3 ||
 		magic.Name != "Magic Dart" ||
 		magic.Level != 1 ||
-		magic.PowerCap != 25 || magic.MinRangeExpr != "LOS_RADIUS" || magic.TileID != "TILEG_MAGIC_DART" {
+		magic.PowerCap != 25 ||
+		magic.MinRangeExpr != "LOS_RADIUS" ||
+		magic.TileID != "TILEG_MAGIC_DART" {
 		t.Fatalf("magic dart %+v, %v", magic, err)
 	}
 

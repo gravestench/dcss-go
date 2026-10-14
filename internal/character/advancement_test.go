@@ -89,7 +89,8 @@ func TestHumanExperienceProgressAndVitalGrowth(t *testing.T) {
 
 	species, _ := catalog.Species("SP_HUMAN")
 
-	if hp, err := HumanMaxHP(1, species, profile.Skills); err != nil || hp != profile.MaxHP {
+	if hp, err := HumanMaxHP(1, species, profile.Skills); err != nil ||
+		hp != profile.MaxHP {
 		t.Fatalf("XL1 HP = %d, %v; want %d", hp, err, profile.MaxHP)
 	}
 
@@ -124,7 +125,8 @@ func TestHumanExperienceProgressAndVitalGrowth(t *testing.T) {
 		}
 	}
 
-	if hp, err := HumanMaxHP(2, species, profile.Skills); err != nil || hp <= profile.MaxHP {
+	if hp, err := HumanMaxHP(2, species, profile.Skills); err != nil ||
+		hp <= profile.MaxHP {
 		t.Fatalf("XL2 HP = %d, %v; want more than %d", hp, err, profile.MaxHP)
 	}
 
@@ -140,7 +142,8 @@ func TestHumanExperienceProgressAndVitalGrowth(t *testing.T) {
 		t.Fatalf("pending XL3 progress = %d, %v", progress, err)
 	}
 
-	if progress, err := HumanLevelProgress(1059324, 27); err != nil || progress != 0 {
+	if progress, err := HumanLevelProgress(1059324, 27); err != nil ||
+		progress != 0 {
 		t.Fatalf("final XL progress = %d, %v", progress, err)
 	}
 

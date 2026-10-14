@@ -243,7 +243,8 @@ func TestDrawPlayExpandedViewportUsesFullTerminal(t *testing.T) {
 	DrawPlay(canvas, layout, view, "")
 	rows := canvas.PlainRows()
 
-	if rows[16][37] != '@' || !strings.HasPrefix(rows[0][78:], "Alice the Shield-Bearer") {
+	if rows[16][37] != '@' ||
+		!strings.HasPrefix(rows[0][78:], "Alice the Shield-Bearer") {
 		t.Fatalf("expanded map/HUD positions: %q / %q", rows[16], rows[0])
 	}
 
@@ -292,7 +293,8 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 	run.Close()
 
 	for i := range snapshot.Entities {
-		if snapshot.Entities[i].Actor != nil && snapshot.Entities[i].Actor.KindID == "MONS_RAT" {
+		if snapshot.Entities[i].Actor != nil &&
+			snapshot.Entities[i].Actor.KindID == "MONS_RAT" {
 			snapshot.Entities[i].Position.X = 3
 			snapshot.Entities[i].Position.Y = 3
 		}

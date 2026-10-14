@@ -98,7 +98,8 @@ func TestSkillsPageLevelsAptitudesAndTrainingControls(t *testing.T) {
 
 	m.handleKey("=")
 
-	if !strings.Contains(plainApp(m), "unavailable") || m.game.View().CurrentAut != aut {
+	if !strings.Contains(plainApp(m), "unavailable") ||
+		m.game.View().CurrentAut != aut {
 		t.Fatal("unported target control lacked explanation or spent time")
 	}
 }

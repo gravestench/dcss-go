@@ -12,7 +12,8 @@ func TestWieldMenuBareHandsAndRecoveredWeapon(t *testing.T) {
 	start := m.game.View().CurrentAut
 	m.handleKey("w")
 
-	if m.screen != ScreenWield || !strings.Contains(plainApp(m), "Wield which item?") {
+	if m.screen != ScreenWield ||
+		!strings.Contains(plainApp(m), "Wield which item?") {
 		t.Fatalf("wield menu missing: %s", plainApp(m))
 	}
 

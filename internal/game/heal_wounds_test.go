@@ -82,7 +82,8 @@ func TestHealWoundsFloorPickupQuaffAndSaveContinuation(t *testing.T) {
 		rightErr != nil ||
 		left.Spent != 10 ||
 		left.View.PlayerHP != wantHP ||
-		!reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
+		!reflect.DeepEqual(left, right) ||
+		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("heal wounds continuation %+v/%v versus %+v/%v; want HP %d", left, leftErr, right, rightErr, wantHP)
 	}
 
@@ -106,7 +107,9 @@ func TestHealWoundsAtFullHPIsFreeAndKeepsPotion(t *testing.T) {
 		ItemID: itemID,
 	})
 
-	if err != nil || result.Spent != 0 || !strings.Contains(result.Events[0].Text, "already full") {
+	if err != nil ||
+		result.Spent != 0 ||
+		!strings.Contains(result.Events[0].Text, "already full") {
 		t.Fatalf("full-HP quaff %+v, %v", result, err)
 	}
 

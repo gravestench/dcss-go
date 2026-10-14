@@ -16,7 +16,11 @@ type itemNameParser struct {
 	names         map[itemKey]content.ItemName
 }
 
-func parseItemNames(path string, data []byte, identities []content.ItemIdentity) (map[itemKey]content.ItemName, error) {
+func parseItemNames(
+	path string,
+	data []byte,
+	identities []content.ItemIdentity,
+) (map[itemKey]content.ItemName, error) {
 	view, err := sourceNameView(path, data)
 
 	if err != nil {

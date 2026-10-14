@@ -38,7 +38,12 @@ func AgeCorpse(
 
 	if !validKind || freshness < 1 ||
 		freshness > FreshestCorpse || elapsedAut < 0 {
-		return "", 0, 0, false, fmt.Errorf("invalid corpse decay input %q/%d/%d", kindID, freshness, elapsedAut)
+		return "", 0, 0, false, fmt.Errorf(
+			"invalid corpse decay input %q/%d/%d",
+			kindID,
+			freshness,
+			elapsedAut,
+		)
 	}
 
 	nextFreshness = freshness - elapsedAut/corpseRotFactor

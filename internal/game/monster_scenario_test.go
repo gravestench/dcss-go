@@ -62,7 +62,8 @@ func TestRatRolledHPSurvivesSaveWithoutReroll(t *testing.T) {
 	}
 
 	for i := range before.Entities {
-		if before.Entities[i].Actor != nil && before.Entities[i].Actor.KindID == "MONS_RAT" {
+		if before.Entities[i].Actor != nil &&
+			before.Entities[i].Actor.KindID == "MONS_RAT" {
 			before.Entities[i].Health.Max = 4
 			before.Entities[i].Health.Current = 4
 		}

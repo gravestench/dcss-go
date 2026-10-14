@@ -42,7 +42,8 @@ func TestPickupTransfersLocation(t *testing.T) {
 		g.stores.Positions.Has(item) ||
 		!carried ||
 		carrier.Holder != g.player ||
-		len(result.View.Inventory) != 5 || result.View.Inventory[4].KindID != "POT_CURING" {
+		len(result.View.Inventory) != 5 ||
+		result.View.Inventory[4].KindID != "POT_CURING" {
 		t.Fatalf(
 			"pickup = %+v, located=%v, carried=%+v, inventory=%+v",
 			result,

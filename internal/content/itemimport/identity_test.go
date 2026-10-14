@@ -145,7 +145,9 @@ func TestItemIdentityEnums(t *testing.T) {
 		}
 	}
 
-	if len(aliases) != 2 || aliases[0].ID != "RING_FIRST_RING" && aliases[1].ID != "RING_FIRST_RING" {
+	if len(aliases) != 2 ||
+		aliases[0].ID != "RING_FIRST_RING" &&
+			aliases[1].ID != "RING_FIRST_RING" {
 		t.Fatalf("alias exclusions missing: %+v", aliases)
 	}
 
@@ -165,7 +167,8 @@ func TestItemIdentityEnums(t *testing.T) {
 		1,
 	))
 
-	if _, _, err := parseIdentities(bad); err == nil || !strings.Contains(err.Error(), "item-prop-enum.h") {
+	if _, _, err := parseIdentities(bad); err == nil ||
+		!strings.Contains(err.Error(), "item-prop-enum.h") {
 		t.Fatalf("unsupported numeric expression was accepted: %v", err)
 	}
 

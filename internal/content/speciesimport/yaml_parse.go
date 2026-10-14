@@ -198,11 +198,16 @@ func parseSpeciesDifficulty(path string, source sourceSpecies) (bool, string, er
 		boolean, isBoolean := difficulty.(bool)
 
 		if !isBoolean || boolean {
-			return false, "", fmt.Errorf("%s: difficulty must be Simple, Intermediate, Advanced, or False", path)
+			return false, "", fmt.Errorf(
+				"%s: difficulty must be Simple, Intermediate, Advanced, or False",
+				path,
+			)
 		}
 
 		selectable = false
-	} else if difficultyName != "Simple" && difficultyName != "Intermediate" && difficultyName != "Advanced" {
+	} else if difficultyName != "Simple" &&
+		difficultyName != "Intermediate" &&
+		difficultyName != "Advanced" {
 		return false, "", fmt.Errorf("%s: difficulty %q is invalid", path, difficultyName)
 	}
 
@@ -326,7 +331,11 @@ func parseSpeciesModifier(path, name string, node yaml.Node, result *speciesApti
 	return nil
 }
 
-func parseSpeciesSkill(path, name string, node yaml.Node, skills map[string]content.SpeciesAptitude) error {
+func parseSpeciesSkill(
+	path, name string,
+	node yaml.Node,
+	skills map[string]content.SpeciesAptitude,
+) error {
 	id := skillID(name)
 
 	if _, valid := skills[id]; !valid {
@@ -373,7 +382,10 @@ func parseSpeciesFlags(path string, sourceFlags []string) ([]string, error) {
 	return flags, nil
 }
 
-func parseSpeciesMutations(path string, sourceMutations map[int]map[string]int) ([]content.SpeciesMutation, error) {
+func parseSpeciesMutations(
+	path string,
+	sourceMutations map[int]map[string]int,
+) ([]content.SpeciesMutation, error) {
 	mutations := make([]content.SpeciesMutation, 0)
 
 	for level, group := range sourceMutations {

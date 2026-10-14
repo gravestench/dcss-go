@@ -59,7 +59,8 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if right.View.Cells[3*17+3].State != Visible || !contains(right.View, uint64(item)) {
+	if right.View.Cells[3*17+3].State != Visible ||
+		!contains(right.View, uint64(item)) {
 		t.Fatalf("newly visible item/terrain missing: %+v", right.View.Cells[3*17+3])
 	}
 
@@ -72,7 +73,8 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if cell := left.View.Cells[3*17+3]; cell.Glyph != '.' || cell.State != Explored {
+	if cell := left.View.Cells[3*17+3]; cell.Glyph != '.' ||
+		cell.State != Explored {
 		t.Fatalf("remembered floor = %+v", cell)
 	}
 
@@ -163,7 +165,9 @@ func TestKnowledgeSaveRoundTrip(t *testing.T) {
 
 	snapshot := g.Snapshot()
 
-	if snapshot.Version != save.Version || len(snapshot.Levels) != 2 || len(snapshot.Levels[0].Known) == 0 {
+	if snapshot.Version != save.Version ||
+		len(snapshot.Levels) != 2 ||
+		len(snapshot.Levels[0].Known) == 0 {
 		t.Fatalf("snapshot knowledge missing: %+v", snapshot.Levels)
 	}
 
@@ -175,7 +179,8 @@ func TestKnowledgeSaveRoundTrip(t *testing.T) {
 
 	defer restored.Close()
 
-	if !reflect.DeepEqual(g.View(), restored.View()) || !reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
+	if !reflect.DeepEqual(g.View(), restored.View()) ||
+		!reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
 		t.Fatal("restored sight or knowledge differs")
 	}
 }

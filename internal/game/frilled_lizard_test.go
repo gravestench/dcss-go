@@ -180,7 +180,8 @@ func TestPreviousTwoAnimalScenarioSaveStillLoads(t *testing.T) {
 	previous.ScenarioID = legacyAnimalScenarioID
 
 	for i := len(previous.Entities) - 1; i >= 0; i-- {
-		if previous.Entities[i].Actor != nil && previous.Entities[i].Actor.KindID == "MONS_FRILLED_LIZARD" {
+		if previous.Entities[i].Actor != nil &&
+			previous.Entities[i].Actor.KindID == "MONS_FRILLED_LIZARD" {
 			previous.Entities = append(previous.Entities[:i], previous.Entities[i+1:]...)
 		}
 	}

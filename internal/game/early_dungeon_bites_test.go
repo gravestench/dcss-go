@@ -142,7 +142,8 @@ func TestSeededEarlyDungeonBitesSurviveSaveAndAwardXP(t *testing.T) {
 			health, _ = loaded.stores.Health.Get(target)
 			health.Current = 1
 
-			for attempt := 0; attempt < 100 && loaded.world.EntityExists(target); attempt++ {
+			for attempt := 0; attempt < 100 &&
+				loaded.world.EntityExists(target); attempt++ {
 				if _, err := loaded.runAction(loaded.player, ecs.Intent{
 					Kind: ecs.IntentMelee,
 					DX:   dx,

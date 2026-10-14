@@ -238,10 +238,11 @@ func TestDecodeGoldenRows(t *testing.T) {
 		t.Fatalf("wizard spellbook: %+v", defs[1])
 	}
 
-	if len(defs[2].Resistances) != 2 || defs[2].Resistances[0] != (content.MonsterResistance{
-		ID:    "MR_RES_FIRE",
-		Level: 2,
-	}) || defs[2].Resistances[1] != (content.MonsterResistance{
+	if len(defs[2].Resistances) != 2 ||
+		defs[2].Resistances[0] != (content.MonsterResistance{
+			ID:    "MR_RES_FIRE",
+			Level: 2,
+		}) || defs[2].Resistances[1] != (content.MonsterResistance{
 		ID:    "MR_RES_COLD",
 		Level: -1,
 	}) || defs[2].Attacks[2].Damage != 10 {
@@ -252,7 +253,9 @@ func TestDecodeGoldenRows(t *testing.T) {
 		t.Fatalf("demon: %+v", defs[3])
 	}
 
-	if defs[4].Energy.Move != 6 || defs[4].Energy.Attack != 10 || defs[4].Energy.PickupPercent != 100 {
+	if defs[4].Energy.Move != 6 ||
+		defs[4].Energy.Attack != 10 ||
+		defs[4].Energy.PickupPercent != 100 {
 		t.Fatalf("spriggan: %+v", defs[4])
 	}
 
@@ -302,7 +305,9 @@ func TestDecodeRejectsUnknownExpressions(t *testing.T) {
 			row := testRow(t)
 			row.Fields[tc.field] = tc.value
 
-			if _, err := decodeRows("mon-data.h", []sourceRow{row}, testSymbols()); err == nil ||
+			_, err := decodeRows("mon-data.h", []sourceRow{row}, testSymbols())
+
+			if err == nil ||
 				!strings.Contains(err.Error(), "MONS_RAT") {
 				t.Fatalf("unknown expression accepted: %v", err)
 			}

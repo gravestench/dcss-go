@@ -136,7 +136,9 @@ func TestBuildStartProfileRejectsBadChoice(t *testing.T) {
 	} {
 		got, err := BuildStartProfile(catalog, tc.species, tc.job, tc.weapon)
 
-		if err == nil || !reflect.DeepEqual(got, StartProfile{}) || !strings.Contains(err.Error(), tc.job) {
+		if err == nil ||
+			!reflect.DeepEqual(got, StartProfile{}) ||
+			!strings.Contains(err.Error(), tc.job) {
 			t.Fatalf("choice %+v: got %+v, err %v", tc, got, err)
 		}
 	}

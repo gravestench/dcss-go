@@ -20,7 +20,8 @@ func TestRatFixture(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if catalog.Version() != 1 || catalog.SourceRevision() != "e60ba3568b0c26447ad36ec5c7b963eb04b2778f" {
+	if catalog.Version() != 1 ||
+		catalog.SourceRevision() != "e60ba3568b0c26447ad36ec5c7b963eb04b2778f" {
 		t.Fatalf("wrong fixture provenance: version %d source %s", catalog.Version(), catalog.SourceRevision())
 	}
 
@@ -39,7 +40,9 @@ func TestRatFixture(t *testing.T) {
 
 	player := catalog.Player()
 
-	if player.SpeciesID != "SP_HUMAN" || player.JobID != "JOB_FIGHTER" || player.Speed != 10 {
+	if player.SpeciesID != "SP_HUMAN" ||
+		player.JobID != "JOB_FIGHTER" ||
+		player.Speed != 10 {
 		t.Fatalf("unexpected player fixture: %+v", player)
 	}
 

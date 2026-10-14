@@ -246,7 +246,10 @@ func Generate(sourceDir string) ([]byte, []byte, error) {
 	}
 
 	if len(bytes.TrimSpace(status)) != 0 {
-		return nil, nil, fmt.Errorf("tracked item sources have local changes: %s", strings.TrimSpace(string(status)))
+		return nil, nil, fmt.Errorf(
+			"tracked item sources have local changes: %s",
+			strings.TrimSpace(string(status)),
+		)
 	}
 
 	return generateFromSource(sourceDir, pinnedRevision)

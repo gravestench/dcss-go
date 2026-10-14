@@ -46,7 +46,8 @@ func (g *Game) prepareDropCommand(command Command) (preparedCommand, error) {
 		return preparedCommand{}, fmt.Errorf("cannot drop item %d: %w", itemID, err)
 	}
 
-	if equipped, found := g.stores.Equipped.Get(itemID); found && equipped.Slot != "weapon" {
+	if equipped, found := g.stores.Equipped.Get(itemID); found &&
+		equipped.Slot != "weapon" {
 		return freeCommand(g.noTime("You will have to take that off first.")), nil
 	}
 
@@ -178,7 +179,9 @@ func (g *Game) compatibleFloorStack(
 	}
 
 	for _, entity := range g.stores.Items.Entities() {
-		if entity == exclude || g.stores.CarriedBy.Has(entity) || g.stores.Corpses.Has(entity) {
+		if entity == exclude ||
+			g.stores.CarriedBy.Has(entity) ||
+			g.stores.Corpses.Has(entity) {
 			continue
 		}
 

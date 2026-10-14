@@ -19,7 +19,8 @@ func TestParseGroupsPreservesSourceOrder(t *testing.T) {
 
 	if len(groups) != 2 || groups[0].Label != "Simple" ||
 		!slices.Equal(groups[0].IDs, []string{"SP_HUMAN", "SP_MINOTAUR"}) ||
-		groups[1].Label != "Advanced" || !slices.Equal(groups[1].IDs, []string{"SP_FELID"}) {
+		groups[1].Label != "Advanced" ||
+		!slices.Equal(groups[1].IDs, []string{"SP_FELID"}) {
 		t.Fatalf("group order changed: %+v", groups)
 	}
 }
@@ -32,7 +33,8 @@ func TestParseDescriptionsKeepsParagraphs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if descriptions["Human"] != "First line.\nSecond line.\n\nNext paragraph." || descriptions["Felid"] != "Cat." {
+	if descriptions["Human"] != "First line.\nSecond line.\n\nNext paragraph." ||
+		descriptions["Felid"] != "Cat." {
 		t.Fatalf("description prose changed: %+v", descriptions)
 	}
 }

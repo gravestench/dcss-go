@@ -77,7 +77,8 @@ func ordinaryAnimal(catalog content.Catalog, id string) (content.MonsterDef, err
 		return content.MonsterDef{}, err
 	}
 
-	if definition.AverageHP10x != profile.AverageHP10x || !definition.LeavesCorpse {
+	if definition.AverageHP10x != profile.AverageHP10x ||
+		!definition.LeavesCorpse {
 		return content.MonsterDef{}, fmt.Errorf("unsupported ordinary animal definition %s", id)
 	}
 

@@ -217,7 +217,9 @@ func TestLegacyRatOnlySaveStillLoads(t *testing.T) {
 	legacy.ScenarioID = ""
 
 	for i := len(legacy.Entities) - 1; i >= 0; i-- {
-		if legacy.Entities[i].Actor != nil && legacy.Entities[i].Actor.KindID != "MONS_RAT" && legacy.Entities[i].AI != nil {
+		if legacy.Entities[i].Actor != nil &&
+			legacy.Entities[i].Actor.KindID != "MONS_RAT" &&
+			legacy.Entities[i].AI != nil {
 			legacy.Entities = append(legacy.Entities[:i], legacy.Entities[i+1:]...)
 		}
 	}

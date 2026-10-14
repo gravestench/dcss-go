@@ -77,7 +77,8 @@ func TestReturnedMonsterHealsAndWalksTowardLastTarget(t *testing.T) {
 		t.Fatal("old rat cell remains occupied")
 	}
 
-	if occupant, occupied := g.levels[1].ActorAt(7, 1); !occupied || occupant != rat {
+	if occupant, occupied := g.levels[1].ActorAt(7, 1); !occupied ||
+		occupant != rat {
 		t.Fatal("new rat cell is not indexed")
 	}
 }

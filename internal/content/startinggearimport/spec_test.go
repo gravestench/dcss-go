@@ -114,7 +114,9 @@ func TestParseEquipmentSpecRejectsBadTag(t *testing.T) {
 		t.Run(raw, func(t *testing.T) {
 			_, _, err := parseEquipmentSpec("JOB_BRIGAND", raw)
 
-			if err == nil || !strings.Contains(err.Error(), "JOB_BRIGAND") || !strings.Contains(err.Error(), raw) {
+			if err == nil ||
+				!strings.Contains(err.Error(), "JOB_BRIGAND") ||
+				!strings.Contains(err.Error(), raw) {
 				t.Fatalf("want contextual error for %q, got %v", raw, err)
 			}
 		})

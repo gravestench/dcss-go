@@ -92,7 +92,8 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 	}
 
 	if health.Current != want.HP || magic.Current != want.MP ||
-		progress.HPProgress != want.HPProgress || progress.MPProgress != want.MPProgress ||
+		progress.HPProgress != want.HPProgress ||
+		progress.MPProgress != want.MPProgress ||
 		!reflect.DeepEqual(g.rng.States(), expectedRNG.States()) {
 		t.Fatalf("9-aut system got HP %+v MP %+v regen %+v, want %+v", health, magic, progress, want)
 	}

@@ -55,7 +55,8 @@ func (l *defaultCatalogLoader) loadSpecies(speciesData []byte) error {
 	previous := ""
 
 	for _, species := range artifact.Species {
-		if _, found := hashedPaths[species.SourcePath]; species.ID <= previous || !found {
+		if _, found := hashedPaths[species.SourcePath]; species.ID <= previous ||
+			!found {
 			return fmt.Errorf("invalid order or source path for species %s", species.ID)
 		}
 
@@ -212,7 +213,8 @@ func (l *defaultCatalogLoader) validateGearSources(
 	}
 
 	for path, hash := range gearPaths {
-		if speciesHash, shared := l.speciesPaths[path]; shared && speciesHash != hash {
+		if speciesHash, shared := l.speciesPaths[path]; shared &&
+			speciesHash != hash {
 			return nil, fmt.Errorf("shared species/gear source hash differs for %s", path)
 		}
 

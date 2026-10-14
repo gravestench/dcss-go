@@ -12,7 +12,9 @@ type sourceName struct {
 	line int
 }
 
-var directCaseName = regexp.MustCompile(`case\s+([A-Z][A-Z0-9_]*)\s*:\s*return\s+"((?:\\.|[^"\\])*)"\s*;`)
+var directCaseName = regexp.MustCompile(
+	`case\s+([A-Z][A-Z0-9_]*)\s*:\s*return\s+"((?:\\.|[^"\\])*)"\s*;`,
+)
 
 func sourceNameView(path string, data []byte) (sourceView, error) {
 	// The needed naming functions precede unrelated tile-only conditionals.
@@ -56,7 +58,13 @@ func caseNames(view sourceView, body string, offset int) (map[string]sourceName,
 		value, err := strconv.Unquote(`"` + body[match[4]:match[5]] + `"`)
 
 		if err != nil {
-			return nil, fmt.Errorf("%s:%d: invalid name for %s: %w", view.path, view.line(offset+match[0]), id, err)
+			return nil, fmt.Errorf(
+				"%s:%d: invalid name for %s: %w",
+				view.path,
+				view.line(offset+match[0]),
+				id,
+				err,
+			)
 		}
 
 		if _, found := names[id]; found {

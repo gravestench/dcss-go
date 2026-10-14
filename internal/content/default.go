@@ -178,7 +178,8 @@ func attachDefaultBranches(catalog Catalog, data []byte) (Catalog, error) {
 		return Catalog{}, err
 	}
 
-	if artifact.SourceRevision != catalog.SourceRevision() || len(artifact.Branches) != 38 {
+	if artifact.SourceRevision != catalog.SourceRevision() ||
+		len(artifact.Branches) != 38 {
 		return Catalog{}, fmt.Errorf("branch catalog has incomplete pinned coverage")
 	}
 
@@ -223,7 +224,8 @@ func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 		return Catalog{}, err
 	}
 
-	if artifact.SourceRevision != catalog.SourceRevision() || len(artifact.Spells) != 403 ||
+	if artifact.SourceRevision != catalog.SourceRevision() ||
+		len(artifact.Spells) != 403 ||
 		len(artifact.SourceFiles) != 6 {
 		return Catalog{}, fmt.Errorf("spell catalog has incomplete pinned coverage")
 	}
@@ -313,7 +315,8 @@ func loadItemPair(itemData, identityData []byte) (Catalog, map[string]string, er
 		return Catalog{}, nil, err
 	}
 
-	if artifact.SourceRevision != sourceRevision || manifest.SourceRevision != sourceRevision {
+	if artifact.SourceRevision != sourceRevision ||
+		manifest.SourceRevision != sourceRevision {
 		return Catalog{}, nil, fmt.Errorf("item source revision differs from pinned revision")
 	}
 

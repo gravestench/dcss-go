@@ -39,14 +39,20 @@ func TestSavedHumanAdvancementValidatesAppliedAndPendingLevels(t *testing.T) {
 
 	player.Magic.Max = 2
 
-	if got, err := validateSavedHumanAdvancement(player, profile, g.catalog); err != nil || got != 9 {
+	got, err := validateSavedHumanAdvancement(player, profile, g.catalog)
+
+	if err != nil ||
+		got != 9 {
 		t.Fatalf("valid XL2 save = %d XP, %v", got, err)
 	}
 
 	player.Progression.TotalXP = 29
 	player.Progression.PendingStatLevel = 3
 
-	if got, err := validateSavedHumanAdvancement(player, profile, g.catalog); err != nil || got != 29 {
+	got, err = validateSavedHumanAdvancement(player, profile, g.catalog)
+
+	if err != nil ||
+		got != 29 {
 		t.Fatalf("pending XL3 save = %d XP, %v", got, err)
 	}
 
@@ -66,7 +72,10 @@ func TestSavedHumanAdvancementValidatesAppliedAndPendingLevels(t *testing.T) {
 
 	player.Magic.Max = 3
 
-	if got, err := validateSavedHumanAdvancement(player, profile, g.catalog); err != nil || got != 29 {
+	got, err = validateSavedHumanAdvancement(player, profile, g.catalog)
+
+	if err != nil ||
+		got != 29 {
 		t.Fatalf("chosen XL3 save = %d XP, %v", got, err)
 	}
 

@@ -46,7 +46,9 @@ func (entry DungeonPopEntry) validate() error {
 
 func (artifact DungeonPopulationArtifact) Validate() error {
 	if artifact.SchemaVersion != 1 || artifact.SourceRevision != sourceRevision ||
-		artifact.TagMajorVersion != 34 || len(artifact.SourceFiles) == 0 || len(artifact.Rows) == 0 {
+		artifact.TagMajorVersion != 34 ||
+		len(artifact.SourceFiles) == 0 ||
+		len(artifact.Rows) == 0 {
 		return fmt.Errorf("invalid Dungeon population metadata")
 	}
 

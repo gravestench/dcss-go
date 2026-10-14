@@ -299,7 +299,11 @@ func Generate(sourceDir string) ([]byte, error) {
 	return generateFromSource(sourceDir, revision)
 }
 
-func writeArtifact(sourceDir, outPath string, check bool, generate func(string) ([]byte, error)) error {
+func writeArtifact(
+	sourceDir, outPath string,
+	check bool,
+	generate func(string) ([]byte, error),
+) error {
 	data, err := generate(sourceDir)
 
 	if err != nil {

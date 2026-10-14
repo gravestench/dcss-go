@@ -208,7 +208,8 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 			name: "duplicate slot",
 			mutate: func(s *save.Snapshot) {
 				for i := range s.Entities {
-					if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "ARM_BUCKLER" {
+					if s.Entities[i].Item != nil &&
+						s.Entities[i].Item.KindID == "ARM_BUCKLER" {
 						s.Entities[i].Equipped.Slot = "body"
 					}
 				}

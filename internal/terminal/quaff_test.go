@@ -29,7 +29,8 @@ func TestQuaffChoiceCancelAndStartingMight(t *testing.T) {
 	aut := m.game.View().CurrentAut
 	m.handleKey("q")
 
-	if m.screen != ScreenQuaff || !strings.Contains(plainApp(m), "Quaff which potion?") {
+	if m.screen != ScreenQuaff ||
+		!strings.Contains(plainApp(m), "Quaff which potion?") {
 		t.Fatalf("q screen %d: %s", m.screen, plainApp(m))
 	}
 
@@ -149,13 +150,16 @@ func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 	letter := potionLetter(t, m, "POT_CURING")
 	m.handleKey("q")
 
-	if m.screen != ScreenQuaff || !strings.Contains(plainApp(m), "potion of curing") {
+	if m.screen != ScreenQuaff ||
+		!strings.Contains(plainApp(m), "potion of curing") {
 		t.Fatalf("curing absent from quaff list: %s", plainApp(m))
 	}
 
 	m.handleKey(letter)
 
-	if m.screen != ScreenPlay || m.game.View().CurrentAut != aut+10 || m.notice != "" {
+	if m.screen != ScreenPlay ||
+		m.game.View().CurrentAut != aut+10 ||
+		m.notice != "" {
 		t.Fatalf("curing choice: screen %d notice %q time %d", m.screen, m.notice, m.game.View().CurrentAut)
 	}
 
@@ -194,7 +198,8 @@ func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 	before := m.game.View().CurrentAut
 	m.handleKey("q")
 
-	if m.screen != ScreenQuaff || !strings.Contains(plainApp(m), "potion of heal wounds") {
+	if m.screen != ScreenQuaff ||
+		!strings.Contains(plainApp(m), "potion of heal wounds") {
 		t.Fatalf("heal wounds missing from quaff menu: %s", plainApp(m))
 	}
 

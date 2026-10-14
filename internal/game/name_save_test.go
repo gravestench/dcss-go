@@ -37,7 +37,8 @@ func TestPlayerNameSurvivesGoSaveAndRestore(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if snapshot.Version != save.Version || savedPlayer(t, &snapshot).Player.Name != "Alice" {
+	if snapshot.Version != save.Version ||
+		savedPlayer(t, &snapshot).Player.Name != "Alice" {
 		t.Fatalf("saved player: %+v", snapshot)
 	}
 
@@ -104,7 +105,8 @@ func TestRestoreRejectsInvalidSavedName(t *testing.T) {
 	snapshot := g.Snapshot()
 	savedPlayer(t, &snapshot).Player.Name = "Bad!"
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "name") {
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+		!strings.Contains(err.Error(), "name") {
 		t.Fatalf("bad saved name accepted: %v", err)
 	}
 }

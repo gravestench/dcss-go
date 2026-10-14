@@ -76,17 +76,22 @@ func TestGenerateJobArtifactDeterministic(t *testing.T) {
 	}
 
 	if artifact.SchemaVersion != 1 || artifact.SourceRevision != pinnedRevision ||
-		artifact.TagMajorVersion != 34 || len(artifact.SourceFiles) != 6 || len(artifact.Jobs) != 2 {
+		artifact.TagMajorVersion != 34 ||
+		len(artifact.SourceFiles) != 6 ||
+		len(artifact.Jobs) != 2 {
 		t.Fatalf("unexpected artifact metadata/counts: %+v", artifact)
 	}
 
-	if artifact.Jobs[0].ID != "JOB_FIGHTER" || artifact.Jobs[1].ID != "JOB_PRIEST" ||
+	if artifact.Jobs[0].ID != "JOB_FIGHTER" ||
+		artifact.Jobs[1].ID != "JOB_PRIEST" ||
 		artifact.Jobs[0].Equipment[1] != "wand of flame charges:15, q:2" {
 		t.Fatalf("job order or equipment changed: %+v", artifact.Jobs)
 	}
 
 	for i, file := range artifact.SourceFiles {
-		if len(file.SHA256) != 64 || i > 0 && artifact.SourceFiles[i-1].Path >= file.Path {
+		if len(file.SHA256) != 64 ||
+			i > 0 &&
+				artifact.SourceFiles[i-1].Path >= file.Path {
 			t.Fatalf("bad source provenance order/hash: %+v", artifact.SourceFiles)
 		}
 	}
@@ -199,7 +204,9 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 		})
 	}
 
-	if _, err := generateFromSource(jobSourceFixture(t), "wrong-revision"); err == nil ||
+	_, err := generateFromSource(jobSourceFixture(t), "wrong-revision")
+
+	if err == nil ||
 		!strings.Contains(err.Error(), "revision") {
 		t.Fatalf("wrong revision accepted: %v", err)
 	}

@@ -63,7 +63,9 @@ func TestUndersizedTerminalBlocksHiddenInput(t *testing.T) {
 		Height: 24,
 	})
 
-	if m.screen != ScreenInventory || m.focus != 2 || m.game.View().CurrentAut != aut {
+	if m.screen != ScreenInventory ||
+		m.focus != 2 ||
+		m.game.View().CurrentAut != aut {
 		t.Fatal("hidden input changed modal or game")
 	}
 }
@@ -73,7 +75,8 @@ func TestSkillsPageTwoColumnsAndSourceControls(t *testing.T) {
 	m.handleKey("m")
 	rows := m.renderCanvas().PlainRows()
 
-	if !strings.Contains(rows[3][:39], "Fighting") || !strings.Contains(rows[3][39:], "Spellcasting") {
+	if !strings.Contains(rows[3][:39], "Fighting") ||
+		!strings.Contains(rows[3][39:], "Spellcasting") {
 		t.Fatalf("source skill columns absent: %q", rows[3])
 	}
 
@@ -207,7 +210,9 @@ func TestDrawPlayDangerValueColors(t *testing.T) {
 		return c.cells[y*c.width+x]
 	}
 
-	if cellAt(37, 2).fg != Brown || cellAt(45, 2).fg != Red || cellAt(46, 2).fg != LightGrey {
+	if cellAt(37, 2).fg != Brown ||
+		cellAt(45, 2).fg != Red ||
+		cellAt(46, 2).fg != LightGrey {
 		t.Fatalf("HP caption/current/max colors: %+v %+v %+v", cellAt(37, 2), cellAt(45, 2), cellAt(46, 2))
 	}
 
@@ -225,7 +230,9 @@ func TestDeathPageExplainsUnportedRecords(t *testing.T) {
 	m.screen = ScreenDeath
 	page := strings.ToLower(plainApp(m))
 
-	if !strings.Contains(page, "morgue") || !strings.Contains(page, "scores") || !strings.Contains(page, "unavailable") {
+	if !strings.Contains(page, "morgue") ||
+		!strings.Contains(page, "scores") ||
+		!strings.Contains(page, "unavailable") {
 		t.Fatal("death page lacks honest unported-record explanation")
 	}
 }

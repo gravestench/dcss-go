@@ -171,7 +171,9 @@ func decodeResistances(expr string, symbols map[string]bool) ([]content.MonsterR
 			return fmt.Errorf("unknown resistance %q", id)
 		}
 
-		if !strings.HasPrefix(id, "MR_RES_") && id != "MR_OLD_RES_ACID" && id != "MR_VUL_WATER" {
+		if !strings.HasPrefix(id, "MR_RES_") &&
+			id != "MR_OLD_RES_ACID" &&
+			id != "MR_VUL_WATER" {
 			return fmt.Errorf("invalid resistance %q", id)
 		}
 

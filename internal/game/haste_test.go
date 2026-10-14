@@ -150,7 +150,9 @@ func TestHasteQuaffUsesOldSpeedThenSpeedsLaterActions(t *testing.T) {
 	streams := g.rng.States()
 	inspect, err := g.Step(Command{Kind: CommandInspect})
 
-	if err != nil || inspect.Spent != 0 || !reflect.DeepEqual(streams, g.rng.States()) {
+	if err != nil ||
+		inspect.Spent != 0 ||
+		!reflect.DeepEqual(streams, g.rng.States()) {
 		t.Fatalf("inspection drew speed or spent time: %+v, %v", inspect, err)
 	}
 }

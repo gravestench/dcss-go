@@ -68,11 +68,14 @@ func TestGenerateFixtureDeterministicPartition(t *testing.T) {
 
 	if len(artifact.Monsters) != 4 || artifact.Monsters[0].ID != "MONS_BEAR" ||
 		artifact.Monsters[0].Status != content.MonsterEnumOnly ||
-		artifact.Monsters[1].Status != content.MonsterRemoved || artifact.Monsters[3].ID != "MONS_RAT" {
+		artifact.Monsters[1].Status != content.MonsterRemoved ||
+		artifact.Monsters[3].ID != "MONS_RAT" {
 		t.Fatalf("incorrect partition: %+v", artifact.Monsters)
 	}
 
-	if len(artifact.SourceFiles) != 11 || artifact.SourceFiles[0].SHA256 == "" || !bytes.HasSuffix(first, []byte("\n")) {
+	if len(artifact.SourceFiles) != 11 ||
+		artifact.SourceFiles[0].SHA256 == "" ||
+		!bytes.HasSuffix(first, []byte("\n")) {
 		t.Fatalf("bad provenance: %+v", artifact.SourceFiles)
 	}
 

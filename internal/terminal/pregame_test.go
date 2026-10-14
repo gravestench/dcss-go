@@ -128,7 +128,8 @@ func TestPregameWelcomeTextAndWeaponReturnAfterHelp(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")
 
-	if !strings.Contains(plainApp(m), "Welcome.") || strings.Contains(plainApp(m), "Welcome, .") {
+	if !strings.Contains(plainApp(m), "Welcome.") ||
+		strings.Contains(plainApp(m), "Welcome, .") {
 		t.Fatal("blank-name welcome text")
 	}
 
@@ -240,7 +241,8 @@ func TestPregameBothChoiceOrdersAndSixWeapons(t *testing.T) {
 				t.Fatalf("choice order did not reach weapon: %v / %s", m.screen, m.notice)
 			}
 
-			if !strings.Contains(plainApp(m), "a - rapier") || !strings.Contains(plainApp(m), "f - unarmed") {
+			if !strings.Contains(plainApp(m), "a - rapier") ||
+				!strings.Contains(plainApp(m), "f - unarmed") {
 				t.Fatal("source weapon letters missing")
 			}
 
@@ -250,7 +252,8 @@ func TestPregameBothChoiceOrdersAndSixWeapons(t *testing.T) {
 				t.Fatalf("weapon %s start failed: %v / %q", weapon, m.screen, m.notice)
 			}
 
-			if view := m.game.View(); view.PlayerName != "Alice" || view.CurrentAut != 0 {
+			if view := m.game.View(); view.PlayerName != "Alice" ||
+				view.CurrentAut != 0 {
 				t.Fatalf("started view: %+v", view)
 			}
 		})
@@ -262,14 +265,18 @@ func TestPregamePostWeaponNamePromptAndUnavailableChoices(t *testing.T) {
 	pressApp(m, "enter")
 	pressApp(m, "a")
 
-	if m.screen != ScreenSpecies || m.game != nil || !strings.Contains(m.notice, "unavailable") {
+	if m.screen != ScreenSpecies ||
+		m.game != nil ||
+		!strings.Contains(m.notice, "unavailable") {
 		t.Fatal("unported Hill Orc started a game")
 	}
 
 	pressApp(m, "space")
 	pressApp(m, "b")
 
-	if m.screen != ScreenBackground || m.game != nil || !strings.Contains(m.notice, "unavailable") {
+	if m.screen != ScreenBackground ||
+		m.game != nil ||
+		!strings.Contains(m.notice, "unavailable") {
 		t.Fatal("unported Gladiator started a game")
 	}
 
@@ -277,7 +284,9 @@ func TestPregamePostWeaponNamePromptAndUnavailableChoices(t *testing.T) {
 	pressApp(m, "j")
 	pressApp(m, "a")
 
-	if m.screen != ScreenName || m.game != nil || !strings.Contains(plainApp(m), "Enter your name") {
+	if m.screen != ScreenName ||
+		m.game != nil ||
+		!strings.Contains(plainApp(m), "Enter your name") {
 		t.Fatal("blank startup name skipped post-weapon prompt")
 	}
 
@@ -296,7 +305,9 @@ func TestPregamePostWeaponNamePromptAndUnavailableChoices(t *testing.T) {
 	enterName(m, "Alice")
 	pressApp(m, "enter")
 
-	if m.screen != ScreenPlay || m.game == nil || m.game.View().PlayerName != "Alice" {
+	if m.screen != ScreenPlay ||
+		m.game == nil ||
+		m.game.View().PlayerName != "Alice" {
 		t.Fatalf("name completion: %v / %q", m.screen, m.notice)
 	}
 }
@@ -318,7 +329,9 @@ func TestStartupLoadKeepsStateOnCorruptSave(t *testing.T) {
 
 	pressApp(m, "enter")
 
-	if m.screen != ScreenStartup || m.game != nil || !strings.Contains(m.notice, "Load failed") {
+	if m.screen != ScreenStartup ||
+		m.game != nil ||
+		!strings.Contains(m.notice, "Load failed") {
 		t.Fatalf("corrupt load changed state: %v / %q", m.screen, m.notice)
 	}
 
@@ -342,7 +355,9 @@ func TestStartupLoadKeepsStateOnCorruptSave(t *testing.T) {
 
 	pressApp(m, "enter")
 
-	if m.screen != ScreenPlay || m.game == nil || m.game.View().PlayerName != "Alice" {
+	if m.screen != ScreenPlay ||
+		m.game == nil ||
+		m.game.View().PlayerName != "Alice" {
 		t.Fatalf("valid startup load: %v / %q", m.screen, m.notice)
 	}
 }

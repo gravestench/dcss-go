@@ -186,9 +186,14 @@ func parseBrandWeights(
 	return weights, nil
 }
 
-var brandTablePattern = regexp.MustCompile(`static\s+const\s+vector<brand_weight_tuple>\s+([A-Z][A-Z0-9_]*)\s*=`)
+var brandTablePattern = regexp.MustCompile(
+	`static\s+const\s+vector<brand_weight_tuple>\s+([A-Z][A-Z0-9_]*)\s*=`,
+)
 
-func parseNamedBrands(v sourceView, vocabulary content.ItemVocabulary) (map[string][]content.ItemBrandWeight, error) {
+func parseNamedBrands(
+	v sourceView,
+	vocabulary content.ItemVocabulary,
+) (map[string][]content.ItemBrandWeight, error) {
 	named := map[string][]content.ItemBrandWeight{}
 
 	for _, match := range brandTablePattern.FindAllStringSubmatchIndex(v.text, -1) {

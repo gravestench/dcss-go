@@ -329,7 +329,10 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 	}
 
 	if !bytes.Contains(data["tag-version.h"], []byte("#define TAG_MAJOR_VERSION 34")) {
-		return nil, fmt.Errorf("%s: TAG_MAJOR_VERSION must be 34", filepath.Join(sourceDir, "tag-version.h"))
+		return nil, fmt.Errorf(
+			"%s: TAG_MAJOR_VERSION must be 34",
+			filepath.Join(sourceDir, "tag-version.h"),
+		)
 	}
 
 	symbols, err := sourceSymbols(data)
@@ -355,7 +358,12 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 
 	for _, def := range defs {
 		if !symbols.monster[def.ID] {
-			return nil, fmt.Errorf("%s:%d: %s is absent from active monster enum", path, def.SourceLine, def.ID)
+			return nil, fmt.Errorf(
+				"%s:%d: %s is absent from active monster enum",
+				path,
+				def.SourceLine,
+				def.ID,
+			)
 		}
 
 		if _, exists := byID[def.ID]; exists {
@@ -439,7 +447,10 @@ func Generate(sourceDir string) ([]byte, error) {
 	}
 
 	if len(bytes.TrimSpace(status)) != 0 {
-		return nil, fmt.Errorf("tracked monster sources have local changes: %s", strings.TrimSpace(string(status)))
+		return nil, fmt.Errorf(
+			"tracked monster sources have local changes: %s",
+			strings.TrimSpace(string(status)),
+		)
 	}
 
 	data, err := generateFromSource(sourceDir, pinnedRevision)
@@ -461,7 +472,8 @@ func Generate(sourceDir string) ([]byte, error) {
 	}
 
 	if len(artifact.Monsters) != 700 || counts[content.MonsterDefined] != 562 ||
-		counts[content.MonsterRemoved] != 120 || counts[content.MonsterEnumOnly] != 18 {
+		counts[content.MonsterRemoved] != 120 ||
+		counts[content.MonsterEnumOnly] != 18 {
 		return nil, fmt.Errorf(
 			"monster partition changed: total=%d defined=%d removed=%d enum_only=%d",
 			len(artifact.Monsters),
@@ -474,7 +486,11 @@ func Generate(sourceDir string) ([]byte, error) {
 	return data, nil
 }
 
-func writeArtifact(sourceDir, outPath string, check bool, generate func(string) ([]byte, error)) error {
+func writeArtifact(
+	sourceDir, outPath string,
+	check bool,
+	generate func(string) ([]byte, error),
+) error {
 	if outPath == "" {
 		return fmt.Errorf("output path is required")
 	}

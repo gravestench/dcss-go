@@ -29,9 +29,11 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	const sourceSHA256 = "850a05146a96e8d778c3f666ee07d7b6a056afc499081e2ca30ecd631380ed10"
+
 	if fixture.SourceRevision != "e60ba3568b0c26447ad36ec5c7b963eb04b2778f" ||
 		fixture.SourcePath != "crawl-ref/source/dat/des/test/suite-los.des" ||
-		fixture.SourceSHA256 != "850a05146a96e8d778c3f666ee07d7b6a056afc499081e2ca30ecd631380ed10" ||
+		fixture.SourceSHA256 != sourceSHA256 ||
 		len(fixture.Maps) != 15 {
 		t.Fatalf("bad source provenance or map count: %+v", fixture)
 	}

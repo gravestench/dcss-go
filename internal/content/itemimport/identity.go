@@ -308,7 +308,9 @@ type identityCollector struct {
 	aliases     []content.ItemAlias
 }
 
-func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []content.ItemAlias, error) {
+func parseIdentities(
+	source map[string][]byte,
+) ([]content.ItemIdentity, []content.ItemAlias, error) {
 	classEntries, classValues, err := activeItemClasses(source)
 
 	if err != nil {
@@ -454,8 +456,10 @@ func (c *identityCollector) collectClass(source map[string][]byte, class classSo
 		}
 
 		if !matchesPrefix || strings.HasPrefix(entry.ID, "NUM_") ||
-			strings.HasPrefix(entry.ID, "MAX_") || strings.Contains(entry.ID, "_FIRST_") ||
-			strings.Contains(entry.ID, "_LAST_") || strings.HasSuffix(entry.ID, "_UNKNOWN") {
+			strings.HasPrefix(entry.ID, "MAX_") ||
+			strings.Contains(entry.ID, "_FIRST_") ||
+			strings.Contains(entry.ID, "_LAST_") ||
+			strings.HasSuffix(entry.ID, "_UNKNOWN") {
 			continue
 		}
 
@@ -508,7 +512,8 @@ func parseRemovedItems(path string, data []byte) (map[itemKey]bool, error) {
 		trimmed := strings.TrimSpace(line.Text)
 
 		if state == 0 {
-			if strings.Contains(trimmed, " removed_items ") && strings.HasSuffix(trimmed, "=") {
+			if strings.Contains(trimmed, " removed_items ") &&
+				strings.HasSuffix(trimmed, "=") {
 				state = 1
 			}
 

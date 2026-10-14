@@ -129,7 +129,8 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 		animal.AverageHP10x != profile.AverageHP10x ||
 		animal.Speed != profile.Speed ||
 		animal.XPModifier != profile.XPModifier ||
-		animal.SpellbookID != "MST_NO_SPELLS" || animal.ItemUseID != "MONUSE_NOTHING" ||
+		animal.SpellbookID != "MST_NO_SPELLS" ||
+		animal.ItemUseID != "MONUSE_NOTHING" ||
 		animal.Attacks[0] != (content.MonsterAttack{
 			TypeID:    "AT_BITE",
 			FlavourID: flavourID,

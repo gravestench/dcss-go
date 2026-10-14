@@ -24,7 +24,8 @@ type MonsterIdentity struct {
 
 func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 	if v.SchemaVersion != 1 || v.SourceRevision != a.SourceRevision ||
-		v.TagMajorVersion != a.TagMajorVersion || len(v.Identities) != len(a.Monsters) ||
+		v.TagMajorVersion != a.TagMajorVersion ||
+		len(v.Identities) != len(a.Monsters) ||
 		len(v.SourceFiles) != len(a.SourceFiles) {
 		return fmt.Errorf("monster vocabulary metadata or coverage differs")
 	}
@@ -36,7 +37,8 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 	}
 
 	for i, identity := range v.Identities {
-		if identity.ID != a.Monsters[i].ID || identity.Status != a.Monsters[i].Status {
+		if identity.ID != a.Monsters[i].ID ||
+			identity.Status != a.Monsters[i].Status {
 			return fmt.Errorf("monster identity/status differs at %s", identity.ID)
 		}
 	}

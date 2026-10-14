@@ -44,9 +44,12 @@ func TestHumanFighterWeaponOptions(t *testing.T) {
 		t.Fatalf("Fighter choices = %v", ids)
 	}
 
-	if options[0].Restriction != Restricted || options[1].Restriction != Recommended ||
-		options[2].Restriction != Recommended || options[3].Restriction != Recommended ||
-		options[4].Restriction != Recommended || options[5].Restriction != Restricted {
+	if options[0].Restriction != Restricted ||
+		options[1].Restriction != Recommended ||
+		options[2].Restriction != Recommended ||
+		options[3].Restriction != Recommended ||
+		options[4].Restriction != Recommended ||
+		options[5].Restriction != Restricted {
 		t.Fatalf("Fighter recommendations = %+v", options)
 	}
 
@@ -118,7 +121,9 @@ func TestWeaponChoiceRestrictions(t *testing.T) {
 			t.Fatal("small Fighter spear was upgraded to trident")
 		}
 
-		if tc.species == "SP_FELID" && (len(options) != 1 || options[0].Restriction != Recommended) {
+		if tc.species == "SP_FELID" &&
+			(len(options) != 1 ||
+				options[0].Restriction != Recommended) {
 			t.Fatalf("no-grasping Felid has grasped choices: %+v", options)
 		}
 	}
@@ -166,7 +171,8 @@ func TestWeaponChoiceRestrictions(t *testing.T) {
 	_, _ = WeaponOptions(catalog, "SP_HUMAN", "JOB_FIGHTER")
 	after, err := catalog.Species("SP_HUMAN")
 
-	if err != nil || !slices.Equal(before.RecommendedWeapons, after.RecommendedWeapons) {
+	if err != nil ||
+		!slices.Equal(before.RecommendedWeapons, after.RecommendedWeapons) {
 		t.Fatalf("weapon choices mutated catalog: %+v, %v", after, err)
 	}
 }

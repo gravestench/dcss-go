@@ -62,7 +62,9 @@ func playerDamageRoll(r Roller, in PlayerAttackInput) (int, error) {
 
 	stat := in.Strength
 
-	if !in.Unarmed && (in.WeaponSkillID == "SK_SHORT_BLADES" || in.WeaponSkillID == "SK_LONG_BLADES") {
+	if !in.Unarmed &&
+		(in.WeaponSkillID == "SK_SHORT_BLADES" ||
+			in.WeaponSkillID == "SK_LONG_BLADES") {
 		stat = in.Dexterity
 	}
 

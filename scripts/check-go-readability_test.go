@@ -250,6 +250,71 @@ func sample(a, b, c, d bool) {
 	}
 }
 
+func TestLongBooleanCondition(t *testing.T) {
+	tests := []struct {
+		name   string
+		source string
+		want   int
+	}{
+		{
+			name: "long if condition",
+			source: `package example
+func sample() {
+	if thisConditionNameIsLongEnoughToMakeTheWholeExpressionHardToReadForHumans || b {
+		return
+	}
+}
+`,
+			want: 1,
+		},
+
+		{
+			name: "long for condition",
+			source: `package example
+func sample() {
+	for thisConditionNameIsLongEnoughToMakeTheWholeExpressionHardToReadForHumans || b {
+		return
+	}
+}
+`,
+			want: 1,
+		},
+
+		{
+			name: "broken condition",
+			source: `package example
+func sample() {
+	if thisConditionNameIsLongEnoughToMakeTheWholeExpressionHardToReadForHumans ||
+		b {
+		return
+	}
+}
+`,
+			want: 0,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			file := filepath.Join(t.TempDir(), "sample.go")
+
+			if err := os.WriteFile(file, []byte(test.source), 0600); err != nil {
+				t.Fatal(err)
+			}
+
+			got, err := checkFile(file)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if got != test.want {
+				t.Fatalf("issues = %d, want %d", got, test.want)
+			}
+		})
+	}
+}
+
 func TestMultilineLiteralEntrySpacing(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "sample.go")
 	source := `package example

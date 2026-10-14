@@ -66,7 +66,8 @@ func validateSavedItem(
 		return fmt.Errorf("item %d has %w", record.ID, err)
 	}
 
-	if (record.Position == nil) == (record.CarriedBy == nil) || record.Actor != nil {
+	if (record.Position == nil) == (record.CarriedBy == nil) ||
+		record.Actor != nil {
 		return fmt.Errorf(
 			"item %d must have exactly one of position or carrier, never both",
 			record.ID,
@@ -271,7 +272,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	usesPopulation := snapshot.ScenarioID == populationScenarioID ||
 		snapshot.ScenarioID == generatedDungeonScenarioID
 
-	if snapshot.PlayerID == 0 || snapshot.CurrentAut < 0 || len(snapshot.Levels) == 0 {
+	if snapshot.PlayerID == 0 ||
+		snapshot.CurrentAut < 0 ||
+		len(snapshot.Levels) == 0 {
 		return nil, fmt.Errorf("invalid save header")
 	}
 

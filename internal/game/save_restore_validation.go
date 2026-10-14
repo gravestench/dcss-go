@@ -139,7 +139,9 @@ func (v *savedEntityValidator) validateItemRole(record save.EntityRecord) error 
 		); err != nil {
 			return err
 		}
-	} else if record.CarriedBy != nil || record.Equipped != nil || record.Corpse != nil {
+	} else if record.CarriedBy != nil ||
+		record.Equipped != nil ||
+		record.Corpse != nil {
 		return fmt.Errorf("non-item %d has carrier or equipment slot", record.ID)
 	}
 
@@ -272,7 +274,8 @@ func (v *savedEntityValidator) validateBandLinks() error {
 		if alive &&
 			(leader.Actor == nil ||
 				leader.Actor.KindID != "MONS_JACKAL" ||
-				leader.Position == nil || leader.Position.LevelID != record.Position.LevelID) {
+				leader.Position == nil ||
+				leader.Position.LevelID != record.Position.LevelID) {
 			return fmt.Errorf("entity %d has an incompatible living band leader", record.ID)
 		}
 	}

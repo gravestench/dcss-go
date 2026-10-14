@@ -14,7 +14,9 @@ func TestCommittedDungeonPopulationCoverageAndCopies(t *testing.T) {
 
 	rows := catalog.DungeonPopulation()
 
-	if len(rows) != 125 || rows[0].MonsterID != "MONS_BAT" || rows[len(rows)-1].MonsterID != "MONS_IRON_DRAGON" {
+	if len(rows) != 125 ||
+		rows[0].MonsterID != "MONS_BAT" ||
+		rows[len(rows)-1].MonsterID != "MONS_IRON_DRAGON" {
 		t.Fatalf("Dungeon population has %d rows, first %+v, last %+v", len(rows), rows[0], rows[len(rows)-1])
 	}
 

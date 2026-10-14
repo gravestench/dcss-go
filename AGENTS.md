@@ -20,7 +20,8 @@ for a human reader to follow.
   neighboring statement in the same block. Separate the final return from
   preceding calculations or mutations.
 - Put crowded boolean conditions on separate lines so each check can be
-  scanned; avoid three or more `&&` or `||` operators on one line.
+  scanned. Keep `if` and `for` condition lines at or below 80 characters
+  when they contain `&&` or `||`.
 - Put entries of keyed literals and named composite literals on separate lines
   whenever they contain more than one entry. A one-entry literal may stay
   inline. Expand slices and lists with three or more values instead of placing

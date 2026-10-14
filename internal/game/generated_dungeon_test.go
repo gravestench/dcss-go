@@ -37,7 +37,9 @@ func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 	}
 
 	for depth, level := range g.levels {
-		if len(level.terrain) != 70 || level.width != 80 || len(level.StairLinks()) != 6 {
+		if len(level.terrain) != 70 ||
+			level.width != 80 ||
+			len(level.StairLinks()) != 6 {
 			t.Fatalf("Dungeon:%d topology is incomplete", depth)
 		}
 

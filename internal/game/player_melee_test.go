@@ -111,7 +111,9 @@ func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 		t.Fatalf("post-load bump differs: %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 	}
 
-	if (left.Spent != 11 && left.Spent != 12) || left.View.CurrentAut != left.Spent {
+	if (left.Spent != 11 &&
+		left.Spent != 12) ||
+		left.View.CurrentAut != left.Spent {
 		t.Fatalf("bump cost = %d at aut %d", left.Spent, left.View.CurrentAut)
 	}
 }

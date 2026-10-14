@@ -90,7 +90,8 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			return g.noTime(message), nil
 		}
 
-		if command.Kind != CommandInspect && command.Kind != CommandContinueEquipment {
+		if command.Kind != CommandInspect &&
+			command.Kind != CommandContinueEquipment {
 			return g.noTime("You are changing your equipment. Press Esc to stop."), nil
 		}
 	} else if command.Kind == CommandContinueEquipment ||

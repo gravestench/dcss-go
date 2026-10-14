@@ -64,7 +64,8 @@ func TestRejectUnknownCatalogID(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "MONS_NOT_IN_CATALOG") {
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+		!strings.Contains(err.Error(), "MONS_NOT_IN_CATALOG") {
 		t.Fatalf("unknown catalog ID error = %v", err)
 	}
 
@@ -76,7 +77,8 @@ func TestRejectUnknownCatalogID(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "POT_NOT_IN_CATALOG") {
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+		!strings.Contains(err.Error(), "POT_NOT_IN_CATALOG") {
 		t.Fatalf("unknown item ID error = %v", err)
 	}
 }
@@ -119,7 +121,8 @@ func TestRejectDoubleLocatedItem(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "both") {
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+		!strings.Contains(err.Error(), "both") {
 		t.Fatalf("double location error = %v", err)
 	}
 }
@@ -138,7 +141,8 @@ func TestRejectDuplicateOccupancy(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "occupied") {
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+		!strings.Contains(err.Error(), "occupied") {
 		t.Fatalf("duplicate occupancy error = %v", err)
 	}
 }
@@ -172,7 +176,9 @@ func TestScenarioAttributesAndView(t *testing.T) {
 
 	view := g.View()
 
-	if view.CharacterName != "Human Fighter" || view.Attributes != *attributes || view.PlayerHP != 18 {
+	if view.CharacterName != "Human Fighter" ||
+		view.Attributes != *attributes ||
+		view.PlayerHP != 18 {
 		t.Fatalf("view = %+v", view)
 	}
 

@@ -24,7 +24,8 @@ func TestDropMenuSelectsItemAndQuantityWithoutSpendingOnCancel(t *testing.T) {
 	start := m.game.View().CurrentAut
 	m.handleKey("d")
 
-	if m.screen != ScreenDrop || !strings.Contains(plainApp(m), "Drop which item?") {
+	if m.screen != ScreenDrop ||
+		!strings.Contains(plainApp(m), "Drop which item?") {
 		t.Fatalf("drop menu missing: %s", plainApp(m))
 	}
 

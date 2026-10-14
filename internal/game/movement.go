@@ -50,7 +50,9 @@ type stairSystem struct {
 func (s *stairSystem) Update(_ *akara.World, _ time.Duration) error {
 	intent, found := s.intents.Get(s.turn.Actor)
 
-	if !found || (intent.Kind != ecs.IntentUpstairs && intent.Kind != ecs.IntentDownstairs) {
+	if !found ||
+		(intent.Kind != ecs.IntentUpstairs &&
+			intent.Kind != ecs.IntentDownstairs) {
 		return nil
 	}
 

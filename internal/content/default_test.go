@@ -32,7 +32,8 @@ func TestLoadDefaultSpeciesAndFixture(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !human.Selectable || human.Aptitudes["SK_FIGHTING"] != (SpeciesAptitude{Allowed: true}) {
+	if !human.Selectable ||
+		human.Aptitudes["SK_FIGHTING"] != (SpeciesAptitude{Allowed: true}) {
 		t.Fatalf("Human defaults lost: %+v", human)
 	}
 
@@ -80,7 +81,9 @@ func TestLoadDefaultSpeciesAndFixture(t *testing.T) {
 		t.Fatalf("scenario rat changed: %+v", rat)
 	}
 
-	if player := catalog.Player(); player.SpeciesID != "SP_HUMAN" || player.JobID != "JOB_FIGHTER" || player.Speed != 10 {
+	if player := catalog.Player(); player.SpeciesID != "SP_HUMAN" ||
+		player.JobID != "JOB_FIGHTER" ||
+		player.Speed != 10 {
 		t.Fatalf("scenario player changed: %+v", player)
 	}
 

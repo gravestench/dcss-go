@@ -52,8 +52,10 @@ AXED_SPELL(SPELL_OLD, "Old")
 		t.Fatalf("spells %+v, %v", spells, err)
 	}
 
-	if spells["SPELL_FOO"].Name != "Foo" || len(spells["SPELL_FOO"].Schools) != 2 ||
-		spells["SPELL_FOO"].MinRangeExpr != "LOS_RADIUS" || len(spells["SPELL_FOO"].Flags) != 2 {
+	if spells["SPELL_FOO"].Name != "Foo" ||
+		len(spells["SPELL_FOO"].Schools) != 2 ||
+		spells["SPELL_FOO"].MinRangeExpr != "LOS_RADIUS" ||
+		len(spells["SPELL_FOO"].Flags) != 2 {
 		t.Fatalf("Foo %+v", spells["SPELL_FOO"])
 	}
 

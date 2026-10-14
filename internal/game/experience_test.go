@@ -44,7 +44,8 @@ func TestPlayerRatKillAwardsOneExperienceOnlyOnce(t *testing.T) {
 		t.Fatalf("rat kill progression %+v found %v view %+v", progress, found, g.View())
 	}
 
-	if _, err := g.Step(Command{Kind: CommandWait}); err != nil || progress.TotalXP != 1 {
+	if _, err := g.Step(Command{Kind: CommandWait}); err != nil ||
+		progress.TotalXP != 1 {
 		t.Fatalf("rat kill credited twice: XP %+v, err %v", progress, err)
 	}
 }

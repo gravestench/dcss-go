@@ -131,7 +131,9 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 		SubtypeID: "FOOD_RATION",
 	}]
 
-	if ration.Food == nil || ration.Food.NormalNutrition != 3400 || ration.Food.HerbivoreNutrition != 1900 {
+	if ration.Food == nil ||
+		ration.Food.NormalNutrition != 3400 ||
+		ration.Food.HerbivoreNutrition != 1900 {
 		t.Fatalf("ration fields lost: %+v", ration)
 	}
 }
@@ -219,7 +221,8 @@ func TestPropertyTablesComplete(t *testing.T) {
 		mace.Weapon.Commonness != 9 ||
 		mace.Weapon.AcquireWeight != 10 ||
 		mace.Weapon.Price != 30 || len(mace.Weapon.BrandWeights) != 2 ||
-		mace.Weapon.BrandWeights[0].BrandID != "SPWPN_NORMAL" || mace.Weapon.BrandWeights[0].Weight != 58 {
+		mace.Weapon.BrandWeights[0].BrandID != "SPWPN_NORMAL" ||
+		mace.Weapon.BrandWeights[0].Weight != 58 {
 		t.Fatalf("weapon fields lost: %+v", mace)
 	}
 
@@ -241,7 +244,8 @@ func TestPropertyTablesComplete(t *testing.T) {
 	}]
 
 	if ration.Food == nil || ration.Food.NormalNutrition != 3400 ||
-		ration.Food.CarnivoreNutrition != 1900 || ration.Food.HerbivoreNutrition != 1900 {
+		ration.Food.CarnivoreNutrition != 1900 ||
+		ration.Food.HerbivoreNutrition != 1900 {
 		t.Fatalf("food fields lost: %+v", ration)
 	}
 }

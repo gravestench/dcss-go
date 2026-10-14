@@ -80,7 +80,8 @@ AXED_MON(MONS_BUMBLEBEE, "bee, // removed")
 	}
 
 	if rows[1].Fields[3] != `"rat, // \"friend\""` ||
-		!strings.Contains(rows[1].Fields[5], "MR_RES_COLD, 3") || !strings.Contains(rows[1].Fields[11], "AT_NO_ATK") {
+		!strings.Contains(rows[1].Fields[5], "MR_RES_COLD, 3") ||
+		!strings.Contains(rows[1].Fields[11], "AT_NO_ATK") {
 		t.Fatalf("lost nested data: %#v", rows[1].Fields)
 	}
 }

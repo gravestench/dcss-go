@@ -56,7 +56,11 @@ func sourceHashes(sourceDir string) ([]content.JobSourceFile, error) {
 	return files, nil
 }
 
-func generateFromSource(sourceDir, revision string, jobs []content.JobDef, catalog content.Catalog) ([]byte, error) {
+func generateFromSource(
+	sourceDir, revision string,
+	jobs []content.JobDef,
+	catalog content.Catalog,
+) ([]byte, error) {
 	if revision != pinnedRevision {
 		return nil, fmt.Errorf("source revision %s differs from pinned %s", revision, pinnedRevision)
 	}
@@ -215,7 +219,8 @@ func Generate(sourceDir string) ([]byte, error) {
 		return nil, err
 	}
 
-	if jobArtifact.SourceRevision != pinnedRevision || len(jobArtifact.Jobs) != 31 {
+	if jobArtifact.SourceRevision != pinnedRevision ||
+		len(jobArtifact.Jobs) != 31 {
 		return nil, fmt.Errorf("source job artifact has wrong revision or job coverage")
 	}
 
@@ -287,7 +292,11 @@ func Generate(sourceDir string) ([]byte, error) {
 	return data, nil
 }
 
-func writeArtifact(sourceDir, outPath string, check bool, generate func(string) ([]byte, error)) error {
+func writeArtifact(
+	sourceDir, outPath string,
+	check bool,
+	generate func(string) ([]byte, error),
+) error {
 	if outPath == "" {
 		return fmt.Errorf("output path is required")
 	}

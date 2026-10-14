@@ -47,7 +47,9 @@ end`
 func TestTag34LinesRejectsUnsupportedDirective(t *testing.T) {
 	_, err := Tag34Lines("job-data.h", []byte("#if FEATURE_X\nold\n#endif\n"))
 
-	if err == nil || !strings.Contains(err.Error(), "job-data.h") || !strings.Contains(err.Error(), "FEATURE_X") {
+	if err == nil ||
+		!strings.Contains(err.Error(), "job-data.h") ||
+		!strings.Contains(err.Error(), "FEATURE_X") {
 		t.Fatalf("unsupported directive accepted: %v", err)
 	}
 }
@@ -68,7 +70,9 @@ other
 
 	joined := strings.Join(lines, "\n")
 
-	if !strings.Contains(joined, "current") || strings.Contains(joined, "future") || strings.Contains(joined, "other") {
+	if !strings.Contains(joined, "current") ||
+		strings.Contains(joined, "future") ||
+		strings.Contains(joined, "other") {
 		t.Fatalf("wrong active branch: %q", joined)
 	}
 }
@@ -122,7 +126,9 @@ func TestTag34NumberedLinesPreservesQuotedCommentsAndLocations(t *testing.T) {
 }
 
 func TestTag34NumberedLinesRejectsUnknownConditional(t *testing.T) {
-	if _, err := Tag34NumberedLines("mon-data.h", []byte("#ifdef EXTRA\nrow\n#endif")); err == nil ||
+	_, err := Tag34NumberedLines("mon-data.h", []byte("#ifdef EXTRA\nrow\n#endif"))
+
+	if err == nil ||
 		!strings.Contains(err.Error(), "mon-data.h:1") {
 		t.Fatalf("unknown conditional accepted: %v", err)
 	}

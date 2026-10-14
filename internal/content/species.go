@@ -107,7 +107,8 @@ func (a SpeciesArtifact) Validate() error {
 }
 
 func (s SpeciesDef) validate() error {
-	if !strings.HasPrefix(s.ID, "SP_") || !strings.HasPrefix(s.MonsterID, "MONS_") ||
+	if !strings.HasPrefix(s.ID, "SP_") ||
+		!strings.HasPrefix(s.MonsterID, "MONS_") ||
 		s.SourcePath == "" || s.Name == "" || s.ShortName == "" {
 		return fmt.Errorf("invalid species definition %q", s.ID)
 	}
@@ -142,7 +143,9 @@ func (s SpeciesDef) validate() error {
 	}
 
 	for skill, aptitude := range s.Aptitudes {
-		if !strings.HasPrefix(skill, "SK_") || (!aptitude.Allowed && aptitude.Value != 0) {
+		if !strings.HasPrefix(skill, "SK_") ||
+			(!aptitude.Allowed &&
+				aptitude.Value != 0) {
 			return fmt.Errorf("invalid species aptitude %s for %s", skill, s.ID)
 		}
 	}

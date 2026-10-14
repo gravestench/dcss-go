@@ -121,7 +121,8 @@ func TestHealWoundsRejectsInvalidInputAndDraws(t *testing.T) {
 			0,
 		}}
 
-		if _, err := HealWoundsHP(r, tc.current, tc.maximum); err == nil || len(r.bounds) != 0 {
+		if _, err := HealWoundsHP(r, tc.current, tc.maximum); err == nil ||
+			len(r.bounds) != 0 {
 			t.Fatalf("accepted %d/%d with draws %+v", tc.current, tc.maximum, r.bounds)
 		}
 	}

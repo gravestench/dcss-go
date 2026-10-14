@@ -123,7 +123,8 @@ func TestDungeonMonsterPoolVetoAndEmpty(t *testing.T) {
 		t.Fatalf("vetoed total = %d", pool.TotalWeight())
 	}
 
-	if got, err := pool.Pick(pool.TotalWeight() - 1); err != nil || got != "MONS_QUOKKA" {
+	if got, err := pool.Pick(pool.TotalWeight() - 1); err != nil ||
+		got != "MONS_QUOKKA" {
 		t.Fatalf("vetoed pick = %q, %v", got, err)
 	}
 

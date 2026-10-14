@@ -65,7 +65,8 @@ func TestItemDefCopies(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if second.Weapon.DamageFlags[0] != "DAMV_CRUSHING" || second.Weapon.BrandWeights[0].Weight != 58 {
+	if second.Weapon.DamageFlags[0] != "DAMV_CRUSHING" ||
+		second.Weapon.BrandWeights[0].Weight != 58 {
 		t.Fatalf("catalog item was mutated through return value: %+v", second.Weapon)
 	}
 

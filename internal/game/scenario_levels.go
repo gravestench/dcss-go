@@ -336,7 +336,9 @@ func nearestOpenFloor(level *Level, start point, exclude ...point) (point, error
 				y: cell.y + delta.y,
 			}
 
-			if !level.inBounds(next.x, next.y) || seen[next] || level.terrain[next.y][next.x] == '#' {
+			if !level.inBounds(next.x, next.y) ||
+				seen[next] ||
+				level.terrain[next.y][next.x] == '#' {
 				continue
 			}
 

@@ -20,7 +20,9 @@ func validateItemProperties(item ecs.Item, kind content.ItemDef) error {
 		return fmt.Errorf("impossible charges")
 	}
 
-	if item.Plus != 0 && kind.Class != "OBJ_WEAPONS" && kind.Class != "OBJ_ARMOUR" {
+	if item.Plus != 0 &&
+		kind.Class != "OBJ_WEAPONS" &&
+		kind.Class != "OBJ_ARMOUR" {
 		return fmt.Errorf("impossible enchantment")
 	}
 

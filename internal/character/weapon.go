@@ -112,7 +112,9 @@ func WeaponOptions(c content.Catalog, speciesID, jobID string) ([]WeaponOption, 
 			option.Name, skill = item.Name, item.WeaponSkill
 		}
 
-		if contains(species.RecommendedWeapons, skill) && !(jobID == "JOB_FIGHTER" && skill == "SK_SHORT_BLADES") {
+		if contains(species.RecommendedWeapons, skill) &&
+			!(jobID == "JOB_FIGHTER" &&
+				skill == "SK_SHORT_BLADES") {
 			option.Restriction = Recommended
 		}
 

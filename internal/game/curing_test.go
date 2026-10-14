@@ -20,7 +20,8 @@ func carryCuring(t *testing.T, g *Game) uint64 {
 		t.Fatal(err)
 	}
 
-	if result, err := g.Step(Command{Kind: CommandPickup}); err != nil || result.Spent != 10 {
+	if result, err := g.Step(Command{Kind: CommandPickup}); err != nil ||
+		result.Spent != 10 {
 		t.Fatalf("pickup = %+v, %v", result, err)
 	}
 
@@ -93,7 +94,9 @@ func TestQuaffAtFullHPStillConsumesOnePotion(t *testing.T) {
 		ItemID: itemID,
 	})
 
-	if err != nil || second.Spent != 10 || g.world.EntityExists(akara.Entity(itemID)) {
+	if err != nil ||
+		second.Spent != 10 ||
+		g.world.EntityExists(akara.Entity(itemID)) {
 		t.Fatalf("second quaff = %+v, %v", second, err)
 	}
 }
@@ -107,11 +110,14 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 		ItemID: itemID,
 	})
 
-	if err != nil || result.Spent != 0 || !strings.Contains(strings.ToLower(result.Events[0].Text), "carry") {
+	if err != nil ||
+		result.Spent != 0 ||
+		!strings.Contains(strings.ToLower(result.Events[0].Text), "carry") {
 		t.Fatalf("floor quaff = %+v, %v", result, err)
 	}
 
-	if g.currentAut != Aut(before.CurrentAut) || len(g.rng.States()) != len(before.RNG) {
+	if g.currentAut != Aut(before.CurrentAut) ||
+		len(g.rng.States()) != len(before.RNG) {
 		t.Fatal("rejected floor quaff spent time or RNG")
 	}
 
@@ -134,11 +140,14 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 		ItemID: mightID,
 	})
 
-	if err != nil || result.Spent != 0 || !strings.Contains(strings.ToLower(result.Events[0].Text), "unavailable") {
+	if err != nil ||
+		result.Spent != 0 ||
+		!strings.Contains(strings.ToLower(result.Events[0].Text), "unavailable") {
 		t.Fatalf("unsupported quaff = %+v, %v", result, err)
 	}
 
-	if g.currentAut != Aut(before.CurrentAut) || !reflect.DeepEqual(g.rng.States(), before.RNG) {
+	if g.currentAut != Aut(before.CurrentAut) ||
+		!reflect.DeepEqual(g.rng.States(), before.RNG) {
 		t.Fatal("unsupported quaff spent time or RNG")
 	}
 }

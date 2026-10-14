@@ -15,7 +15,9 @@ func TestCommittedBranchCatalogCoverageAndCopies(t *testing.T) {
 
 	ids := catalog.BranchIDs()
 
-	if len(ids) != 38 || ids[0] != "BRANCH_DUNGEON" || ids[len(ids)-1] != "BRANCH_ARENA" {
+	if len(ids) != 38 ||
+		ids[0] != "BRANCH_DUNGEON" ||
+		ids[len(ids)-1] != "BRANCH_ARENA" {
 		t.Fatalf("branch IDs %d: %v", len(ids), ids)
 	}
 

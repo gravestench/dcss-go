@@ -126,7 +126,9 @@ func (m MonsterDef) clone() MonsterDef {
 }
 
 func (m MonsterDef) validate() error {
-	if !strings.HasPrefix(m.ID, "MONS_") || m.SourcePath == "" || m.SourceLine < 0 {
+	if !strings.HasPrefix(m.ID, "MONS_") ||
+		m.SourcePath == "" ||
+		m.SourceLine < 0 {
 		return fmt.Errorf("invalid monster identity %q", m.ID)
 	}
 

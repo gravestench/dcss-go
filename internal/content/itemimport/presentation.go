@@ -11,7 +11,9 @@ import (
 	"dcrawl-go/internal/content/sourceparse"
 )
 
-var directShowCase = regexp.MustCompile(`case\s+(OBJ_[A-Z0-9_]+)\s*:\s*return\s+(SHOW_ITEM_[A-Z0-9_]+)\s*;`)
+var directShowCase = regexp.MustCompile(
+	`case\s+(OBJ_[A-Z0-9_]+)\s*:\s*return\s+(SHOW_ITEM_[A-Z0-9_]+)\s*;`,
+)
 
 var asciiChar = regexp.MustCompile(`(?:U)?'(?:\\.|[^'\\])+'`)
 
@@ -127,7 +129,9 @@ func showClassCodes(path string, data []byte) (map[string]string, error) {
 		codes[match[1]] = match[2]
 	}
 
-	if !strings.Contains(body, "jewellery_is_amulet(item) ? SHOW_ITEM_AMULET : SHOW_ITEM_RING") ||
+	const jewelleryShowCase = "jewellery_is_amulet(item) ? SHOW_ITEM_AMULET : SHOW_ITEM_RING"
+
+	if !strings.Contains(body, jewelleryShowCase) ||
 		!strings.Contains(body, "item.sub_type == CORPSE_SKELETON") {
 		return nil, fmt.Errorf("%s: missing subtype-dependent item show cases", path)
 	}
@@ -147,7 +151,12 @@ func parseASCIIItemGlyphs(
 	viewData []byte,
 	identities []content.ItemIdentity,
 ) (map[itemKey]rune, error) {
-	showEntries, err := enumBeforeCount("crawl-ref/source/show.h", showHeader, "show_item_type", "NUM_SHOW_ITEMS")
+	showEntries, err := enumBeforeCount(
+		"crawl-ref/source/show.h",
+		showHeader,
+		"show_item_type",
+		"NUM_SHOW_ITEMS",
+	)
 
 	if err != nil {
 		return nil, err
@@ -189,7 +198,12 @@ func parseASCIIItemGlyphs(
 
 	for i := range showItems {
 		if showItems[i] != dcharItems[i] {
-			return nil, fmt.Errorf("show/dchar item order differs at %d: %s/%s", i, showItems[i], dcharItems[i])
+			return nil, fmt.Errorf(
+				"show/dchar item order differs at %d: %s/%s",
+				i,
+				showItems[i],
+				dcharItems[i],
+			)
 		}
 	}
 
@@ -223,7 +237,8 @@ func parseASCIIItemGlyphs(
 			return nil, fmt.Errorf("%s: missing show code for %s", showPath, identity.ClassID)
 		}
 
-		if identity.ClassID == "OBJ_JEWELLERY" && strings.HasPrefix(identity.ID, "AMU_") {
+		if identity.ClassID == "OBJ_JEWELLERY" &&
+			strings.HasPrefix(identity.ID, "AMU_") {
 			code = "SHOW_ITEM_AMULET"
 		}
 

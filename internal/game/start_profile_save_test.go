@@ -33,7 +33,8 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 
 	before := g.Snapshot()
 
-	if before.Version != save.Version || savedPlayer(t, &before).Player.StartingWeaponID != "WPN_RAPIER" {
+	if before.Version != save.Version ||
+		savedPlayer(t, &before).Player.StartingWeaponID != "WPN_RAPIER" {
 		t.Fatalf("unexpected save header or choice: %+v", before)
 	}
 
