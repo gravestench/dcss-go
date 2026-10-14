@@ -32,7 +32,9 @@ func sourcePath(sourceDir, path string) (string, error) {
 	return filepath.ToSlash(filepath.Join("crawl-ref", "source", relative)), nil
 }
 
-func readSource(sourceDir, relative string, hashes *[]content.SpeciesSourceFile) ([]byte, string, error) {
+func readSource(sourceDir, relative string,
+	hashes *[]content.SpeciesSourceFile,
+) ([]byte, string, error) {
 	path := filepath.Join(sourceDir, relative)
 	label, err := sourcePath(sourceDir, path)
 
@@ -180,7 +182,8 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 		return nil, err
 	}
 
-	legacy, err := parseLegacy(legacySpeciesPath, legacySpecies, legacyAptitudesPath, legacyAptitudes)
+	legacy, err := parseLegacy(legacySpeciesPath, legacySpecies,
+		legacyAptitudesPath, legacyAptitudes)
 
 	if err != nil {
 		return nil, err
@@ -188,7 +191,8 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 
 	for _, species := range legacy {
 		if earlier, duplicate := seen[species.ID]; duplicate {
-			return nil, fmt.Errorf("%s: duplicate species %s also in %s", species.SourcePath, species.ID, earlier)
+			return nil, fmt.Errorf("%s: duplicate species %s also in %s",
+				species.SourcePath, species.ID, earlier)
 		}
 
 		seen[species.ID] = species.SourcePath
@@ -203,16 +207,19 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 
 	for _, species := range definitions {
 		if _, active := speciesIDs[species.ID]; !active {
-			return nil, fmt.Errorf("%s: species %s is not active in %s", species.SourcePath, species.ID, speciesHeaderPath)
+			return nil, fmt.Errorf("%s: species %s is not active in %s",
+				species.SourcePath, species.ID, speciesHeaderPath)
 		}
 
 		if _, active := monsterIDs[species.MonsterID]; !active {
-			return nil, fmt.Errorf("%s: %s has unknown monster %s", species.SourcePath, species.ID, species.MonsterID)
+			return nil, fmt.Errorf("%s: %s has unknown monster %s",
+				species.SourcePath, species.ID, species.MonsterID)
 		}
 
 		for _, job := range species.RecommendedJobs {
 			if _, active := jobIDs[job]; !active {
-				return nil, fmt.Errorf("%s: %s has unknown recommended job %s", species.SourcePath, species.ID, job)
+				return nil, fmt.Errorf("%s: %s has unknown recommended job %s",
+					species.SourcePath, species.ID, job)
 			}
 		}
 	}
@@ -266,13 +273,16 @@ func Generate(sourceDir string) ([]byte, error) {
 	cmd = exec.Command("git", "-C", sourceDir, "diff", "--quiet", "HEAD", "--", ".")
 
 	if err := cmd.Run(); err != nil {
-		return nil, fmt.Errorf("source checkout has modified tracked files under %s: %w", sourceDir, err)
+		return nil, fmt.Errorf("source checkout has modified tracked files under %s: %w",
+			sourceDir, err)
 	}
 
 	return generateFromSource(sourceDir, revision)
 }
 
-func writeArtifact(sourceDir, outPath string, check bool, generate func(string) ([]byte, error)) error {
+func writeArtifact(sourceDir, outPath string, check bool,
+	generate func(string) ([]byte, error),
+) error {
 	data, err := generate(sourceDir)
 
 	if err != nil {

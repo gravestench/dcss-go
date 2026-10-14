@@ -68,7 +68,8 @@ func (a JobArtifact) Validate() error {
 }
 
 func (j JobDef) validate() error {
-	if !strings.HasPrefix(j.ID, "JOB_") || j.SourcePath == "" || len(j.Abbreviation) != 2 || j.Name == "" {
+	if !strings.HasPrefix(j.ID, "JOB_") || j.SourcePath == "" ||
+		len(j.Abbreviation) != 2 || j.Name == "" {
 		return fmt.Errorf("invalid job definition %q", j.ID)
 	}
 

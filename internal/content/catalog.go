@@ -50,7 +50,8 @@ func (c Catalog) Monster(id string) (MonsterDef, error) {
 	}
 
 	if definition.Status != MonsterDefined {
-		return MonsterDef{}, fmt.Errorf("monster ID %q is %s and cannot be instantiated", id, definition.Status)
+		return MonsterDef{}, fmt.Errorf("monster ID %q is %s and cannot be instantiated",
+			id, definition.Status)
 	}
 
 	return definition.clone(), nil

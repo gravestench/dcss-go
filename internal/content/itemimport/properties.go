@@ -254,7 +254,9 @@ func propertyName(raw string) (string, error) {
 }
 
 func knownSymbol(symbol string, list []string) bool {
-	return sort.SearchStrings(list, symbol) < len(list) && list[sort.SearchStrings(list, symbol)] == symbol
+	index := sort.SearchStrings(list, symbol)
+
+	return index < len(list) && list[index] == symbol
 }
 
 func parseArmourFlags(raw string, vocabulary content.ItemVocabulary) ([]content.ItemFlag, error) {

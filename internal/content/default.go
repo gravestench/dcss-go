@@ -124,7 +124,8 @@ func attachDefaultDungeonPopulation(catalog Catalog, data []byte) (Catalog, erro
 		return Catalog{}, err
 	}
 
-	if artifact.SourceRevision != catalog.SourceRevision() || len(artifact.Rows) != 125 || len(artifact.SourceFiles) != 3 {
+	if artifact.SourceRevision != catalog.SourceRevision() ||
+		len(artifact.Rows) != 125 || len(artifact.SourceFiles) != 3 {
 		return Catalog{}, fmt.Errorf("Dungeon population has incomplete pinned coverage")
 	}
 
@@ -233,7 +234,8 @@ func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 		statusCounts[spell.Status]++
 	}
 
-	if statusCounts[SpellDefined] != 316 || statusCounts[SpellRemoved] != 86 || statusCounts[SpellSentinel] != 1 {
+	if statusCounts[SpellDefined] != 316 ||
+		statusCounts[SpellRemoved] != 86 || statusCounts[SpellSentinel] != 1 {
 		return Catalog{}, fmt.Errorf("spell catalog has incorrect status partition")
 	}
 
@@ -258,7 +260,9 @@ func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 
 	if hex.EncodeToString(identityHash.Sum(nil)) != pinnedIdentities ||
 		hex.EncodeToString(sourceHash.Sum(nil)) != pinnedSources {
-		return Catalog{}, fmt.Errorf("spell catalog differs from pinned identities, statuses, or source hashes")
+		return Catalog{}, fmt.Errorf(
+			"spell catalog differs from pinned identities, statuses, or source hashes",
+		)
 	}
 
 	for _, name := range []string{
@@ -313,8 +317,11 @@ func loadItemPair(itemData, identityData []byte) (Catalog, map[string]string, er
 		return Catalog{}, nil, fmt.Errorf("item source revision differs from pinned revision")
 	}
 
-	if len(manifest.Identities) != 408 || len(artifact.Items) != 368 || len(manifest.Aliases) != 10 {
-		return Catalog{}, nil, fmt.Errorf("item catalog has incomplete identity or definition coverage")
+	if len(manifest.Identities) != 408 ||
+		len(artifact.Items) != 368 || len(manifest.Aliases) != 10 {
+		return Catalog{}, nil, fmt.Errorf(
+			"item catalog has incomplete identity or definition coverage",
+		)
 	}
 
 	if err := artifact.Validate(manifest); err != nil {

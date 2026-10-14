@@ -47,11 +47,17 @@ var spellRangePattern = regexp.MustCompile(`^[A-Z0-9_+*/() -]+$`)
 var spellTilePattern = regexp.MustCompile(`^TILEG_[A-Z0-9_]+$`)
 
 func (s SpellDef) validate() error {
-	if !spellIDPattern.MatchString(s.ID) || s.NumericID < 0 || s.Name == "" || strings.TrimSpace(s.Name) != s.Name ||
-		s.Level < 1 || s.Level > 9 || s.PowerCap < 0 || s.Noise < 0 || s.EffectNoise < 0 ||
-		!spellRangePattern.MatchString(s.MinRangeExpr) || !spellRangePattern.MatchString(s.MaxRangeExpr) ||
-		!spellTilePattern.MatchString(s.TileID) || s.EnumLine <= 0 ||
-		s.SourcePath != "crawl-ref/source/spl-data.h" || s.SourceLine <= 0 {
+	invalidIdentity := !spellIDPattern.MatchString(s.ID) ||
+		s.NumericID < 0 || s.Name == "" || strings.TrimSpace(s.Name) != s.Name
+	invalidStats := s.Level < 1 || s.Level > 9 || s.PowerCap < 0 ||
+		s.Noise < 0 || s.EffectNoise < 0
+	invalidRange := !spellRangePattern.MatchString(s.MinRangeExpr) ||
+		!spellRangePattern.MatchString(s.MaxRangeExpr)
+	invalidSource := !spellTilePattern.MatchString(s.TileID) ||
+		s.EnumLine <= 0 || s.SourceLine <= 0 ||
+		s.SourcePath != "crawl-ref/source/spl-data.h"
+
+	if invalidIdentity || invalidStats || invalidRange || invalidSource {
 		return fmt.Errorf("invalid spell definition %s", s.ID)
 	}
 

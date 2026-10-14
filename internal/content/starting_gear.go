@@ -46,7 +46,8 @@ func (g StartingGrant) validate(kind ItemDef) error {
 		return fmt.Errorf("grant %q has invalid plus", g.Raw)
 	}
 
-	if g.Ego != "" && kind.Class != "OBJ_WEAPONS" && kind.Class != "OBJ_ARMOUR" && kind.Class != "OBJ_MISSILES" {
+	if g.Ego != "" && kind.Class != "OBJ_WEAPONS" &&
+		kind.Class != "OBJ_ARMOUR" && kind.Class != "OBJ_MISSILES" {
 		return fmt.Errorf("grant %q has invalid ego", g.Raw)
 	}
 
@@ -75,7 +76,8 @@ func (a StartingGearArtifact) Validate(catalog Catalog) error {
 			kind, err := catalog.Item(grant.KindID)
 
 			if err != nil {
-				return fmt.Errorf("job %s grant %q has unknown kind %s", job.JobID, grant.Raw, grant.KindID)
+				return fmt.Errorf("job %s grant %q has unknown kind %s",
+					job.JobID, grant.Raw, grant.KindID)
 			}
 
 			if err := grant.validate(kind); err != nil {

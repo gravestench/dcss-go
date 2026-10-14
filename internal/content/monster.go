@@ -138,7 +138,8 @@ func (m MonsterDef) validate() error {
 		}
 
 		for _, attack := range m.Attacks {
-			if !strings.HasPrefix(attack.TypeID, "AT_") || !strings.HasPrefix(attack.FlavourID, "AF_") || attack.Damage < 0 {
+			if !strings.HasPrefix(attack.TypeID, "AT_") ||
+				!strings.HasPrefix(attack.FlavourID, "AF_") || attack.Damage < 0 {
 				return fmt.Errorf("monster %s has invalid attack", m.ID)
 			}
 		}

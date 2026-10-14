@@ -128,7 +128,8 @@ func (s SpeciesDef) validate() error {
 	}
 
 	if len(s.Aptitudes) != len(required) {
-		return fmt.Errorf("species %s has %d aptitudes; expected %d", s.ID, len(s.Aptitudes), len(required))
+		return fmt.Errorf("species %s has %d aptitudes; expected %d",
+			s.ID, len(s.Aptitudes), len(required))
 	}
 
 	for _, skill := range required {

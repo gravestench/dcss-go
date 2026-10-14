@@ -86,7 +86,10 @@ func parseEnum(path string, body []byte) ([]content.BranchDef, error) {
 		}
 
 		if target != "" {
-			if !(strings.HasPrefix(id, "BRANCH_FIRST_") || strings.HasPrefix(id, "BRANCH_LAST_")) || !seen[target] {
+			validPrefix := strings.HasPrefix(id, "BRANCH_FIRST_") ||
+				strings.HasPrefix(id, "BRANCH_LAST_")
+
+			if !validPrefix || !seen[target] {
 				return nil, fmt.Errorf("%s:%d: unsupported branch alias %q", path, line.Number, value)
 			}
 
@@ -249,7 +252,8 @@ func parseRow(path string, line int, value string) (content.BranchDef, error) {
 	}
 
 	if len(fields) != 19 && len(fields) != 20 {
-		return content.BranchDef{}, fmt.Errorf("%s:%d: branch row has %d fields", path, line, len(fields))
+		return content.BranchDef{}, fmt.Errorf("%s:%d: branch row has %d fields",
+			path, line, len(fields))
 	}
 
 	b := content.BranchDef{
@@ -273,7 +277,8 @@ func parseRow(path string, line int, value string) (content.BranchDef, error) {
 		*dest, err = strconv.Atoi(fields[i+2])
 
 		if err != nil {
-			return content.BranchDef{}, fmt.Errorf("%s:%d: invalid branch depth %q: %w", path, line, fields[i+2], err)
+			return content.BranchDef{}, fmt.Errorf("%s:%d: invalid branch depth %q: %w",
+				path, line, fields[i+2], err)
 		}
 	}
 
@@ -318,18 +323,24 @@ func parseRow(path string, line int, value string) (content.BranchDef, error) {
 		b.MonDieSizeExpr = fields[19]
 
 		if !dieSizeExpr.MatchString(b.MonDieSizeExpr) {
-			return content.BranchDef{}, fmt.Errorf("%s:%d: unsupported monster death size %q", path, line, b.MonDieSizeExpr)
+			return content.BranchDef{}, fmt.Errorf("%s:%d: unsupported monster death size %q",
+				path, line, b.MonDieSizeExpr)
 		}
 	}
 
 	if !strings.HasPrefix(b.AmbientNoise, "branch_noise::") {
-		return content.BranchDef{}, fmt.Errorf("%s:%d: invalid ambient noise %q", path, line, b.AmbientNoise)
+		return content.BranchDef{}, fmt.Errorf("%s:%d: invalid ambient noise %q",
+			path, line, b.AmbientNoise)
 	}
 
 	b.AmbientNoise = strings.TrimPrefix(b.AmbientNoise, "branch_noise::")
 
-	if !strings.HasPrefix(b.ID, "BRANCH_") || (b.ParentID != "NUM_BRANCHES" && !strings.HasPrefix(b.ParentID, "BRANCH_")) {
-		return content.BranchDef{}, fmt.Errorf("%s:%d: invalid branch identity or parent", path, line)
+	validParent := b.ParentID == "NUM_BRANCHES" ||
+		strings.HasPrefix(b.ParentID, "BRANCH_")
+
+	if !strings.HasPrefix(b.ID, "BRANCH_") || !validParent {
+		return content.BranchDef{}, fmt.Errorf("%s:%d: invalid branch identity or parent",
+			path, line)
 	}
 
 	return b, nil

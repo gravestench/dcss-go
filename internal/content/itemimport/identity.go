@@ -197,7 +197,8 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 		}
 
 		if strings.ContainsAny(trimmed, "{}") {
-			return nil, fmt.Errorf("%s:%d: unsupported enum %s row %q", path, line.Number, name, trimmed)
+			return nil, fmt.Errorf("%s:%d: unsupported enum %s row %q",
+				path, line.Number, name, trimmed)
 		}
 
 		for _, raw := range strings.Split(trimmed, ",") {
@@ -229,12 +230,14 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 				referenced, found := known[expression]
 
 				if !found {
-					return nil, fmt.Errorf("%s:%d: enum %s references unknown %s", path, line.Number, id, expression)
+					return nil, fmt.Errorf("%s:%d: enum %s references unknown %s",
+						path, line.Number, id, expression)
 				}
 
 				value, alias = referenced, expression
 			} else {
-				return nil, fmt.Errorf("%s:%d: unsupported numeric expression %q for %s", path, line.Number, expression, id)
+				return nil, fmt.Errorf("%s:%d: unsupported numeric expression %q for %s",
+					path, line.Number, expression, id)
 			}
 
 			known[id] = value
@@ -274,14 +277,16 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 		}
 
 		if !strings.HasPrefix(entry.ID, "OBJ_") || entry.AliasOf != "" {
-			return nil, nil, fmt.Errorf("%s:%d: invalid active class %s", entry.SourcePath, entry.SourceLine, entry.ID)
+			return nil, nil, fmt.Errorf("%s:%d: invalid active class %s",
+				entry.SourcePath, entry.SourceLine, entry.ID)
 		}
 
 		classValues[entry.ID] = entry.Value
 	}
 
 	if len(classValues) != 16 {
-		return nil, nil, fmt.Errorf("object-class-type.h: expected 16 active classes, got %d", len(classValues))
+		return nil, nil, fmt.Errorf("object-class-type.h: expected 16 active classes, got %d",
+			len(classValues))
 	}
 
 	var identities []content.ItemIdentity
@@ -289,7 +294,8 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 	seenPairs := map[[2]int]string{}
 	appendIdentity := func(classID string, classValue int, entry enumValue) error {
 		if entry.Value < 0 {
-			return fmt.Errorf("%s:%d: negative concrete subtype %s", entry.SourcePath, entry.SourceLine, entry.ID)
+			return fmt.Errorf("%s:%d: negative concrete subtype %s",
+				entry.SourcePath, entry.SourceLine, entry.ID)
 		}
 
 		pair := [2]int{classValue, entry.Value}
@@ -374,7 +380,8 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 		}
 
 		if !ended || len(concrete) == 0 {
-			return nil, nil, fmt.Errorf("%s: incomplete enum %s for %s", class.File, class.Enum, class.ClassID)
+			return nil, nil, fmt.Errorf("%s: incomplete enum %s for %s",
+				class.File, class.Enum, class.ClassID)
 		}
 	}
 
@@ -453,7 +460,8 @@ func parseRemovedItems(path string, data []byte) (map[itemKey]bool, error) {
 		match := removedRow.FindStringSubmatch(trimmed)
 
 		if match == nil {
-			return nil, fmt.Errorf("%s:%d: unsupported removed_items row %q", path, line.Number, trimmed)
+			return nil, fmt.Errorf("%s:%d: unsupported removed_items row %q",
+				path, line.Number, trimmed)
 		}
 
 		key := itemKey{
@@ -462,7 +470,8 @@ func parseRemovedItems(path string, data []byte) (map[itemKey]bool, error) {
 		}
 
 		if removed[key] {
-			return nil, fmt.Errorf("%s:%d: duplicate removed item %s/%s", path, line.Number, key.ClassID, key.SubtypeID)
+			return nil, fmt.Errorf("%s:%d: duplicate removed item %s/%s",
+				path, line.Number, key.ClassID, key.SubtypeID)
 		}
 
 		removed[key] = true
@@ -520,8 +529,11 @@ func enumSymbolIDs(path string, data []byte, name string, prefixes ...string) ([
 		parts := strings.SplitN(member, "=", 2)
 		id := strings.TrimSpace(parts[0])
 
-		if !enumSymbolPattern.MatchString(id) || (len(parts) == 2 && strings.TrimSpace(parts[1]) == "") {
-			return nil, fmt.Errorf("%s:%d: unsupported vocabulary enum row %q", path, line.Number, trimmed)
+		missingAlias := len(parts) == 2 && strings.TrimSpace(parts[1]) == ""
+
+		if !enumSymbolPattern.MatchString(id) || missingAlias {
+			return nil, fmt.Errorf("%s:%d: unsupported vocabulary enum row %q",
+				path, line.Number, trimmed)
 		}
 
 		for _, prefix := range prefixes {
@@ -598,7 +610,8 @@ func parseVocabulary(source map[string][]byte) (content.ItemVocabulary, error) {
 			prefixes: []string{"ARMF_"},
 		},
 	} {
-		ids, err := enumSymbolIDs("crawl-ref/source/"+spec.file, source[spec.file], spec.enum, spec.prefixes...)
+		ids, err := enumSymbolIDs("crawl-ref/source/"+spec.file,
+			source[spec.file], spec.enum, spec.prefixes...)
 
 		if err != nil {
 			return v, err

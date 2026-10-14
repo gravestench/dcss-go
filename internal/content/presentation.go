@@ -76,12 +76,20 @@ func (c Catalog) Presentation() PresentationArtifact {
 }
 
 func (a PresentationArtifact) validate(c Catalog) error {
-	if a.SchemaVersion != 1 || a.SourceRevision != sourceRevision || a.SourceVersion == "" || a.TagMajorVersion != 34 {
+	wrongVersion := a.SchemaVersion != 1 ||
+		a.SourceRevision != sourceRevision ||
+		a.SourceVersion == "" || a.TagMajorVersion != 34
+
+	if wrongVersion {
 		return fmt.Errorf("unsupported presentation artifact schema/revision/tag")
 	}
 
-	if len(a.SpeciesGroups) != 3 || len(a.JobGroups) != 5 || len(a.SourceFiles) != 7 ||
-		len(a.StartupModes) != 8 || len(a.SkillColumns) != 2 || len(a.SkillColumns[0]) != 16 || len(a.SkillColumns[1]) != 16 {
+	wrongGroupCount := len(a.SpeciesGroups) != 3 || len(a.JobGroups) != 5 ||
+		len(a.SourceFiles) != 7 || len(a.StartupModes) != 8
+	wrongSkillColumns := len(a.SkillColumns) != 2 ||
+		len(a.SkillColumns[0]) != 16 || len(a.SkillColumns[1]) != 16
+
+	if wrongGroupCount || wrongSkillColumns {
 		return fmt.Errorf("presentation has incomplete groups or provenance")
 	}
 
@@ -120,7 +128,8 @@ func (a PresentationArtifact) validate(c Catalog) error {
 		return err
 	}
 
-	if err := validateMenuGroups(a.SpeciesGroups, a.SpeciesDescriptions, c.species, 27, "species"); err != nil {
+	if err := validateMenuGroups(a.SpeciesGroups, a.SpeciesDescriptions,
+		c.species, 27, "species"); err != nil {
 		return err
 	}
 

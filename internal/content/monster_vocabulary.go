@@ -172,7 +172,8 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 				continue
 			}
 
-			if tile != "TILE_ERROR" && !strings.HasPrefix(tile, "TILEP_") && !strings.HasPrefix(tile, "TILE_") {
+			if tile != "TILE_ERROR" && !strings.HasPrefix(tile, "TILEP_") &&
+				!strings.HasPrefix(tile, "TILE_") {
 				return fmt.Errorf("monster %s has invalid tile %q", m.ID, tile)
 			}
 

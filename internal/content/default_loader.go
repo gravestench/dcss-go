@@ -20,7 +20,8 @@ func (l *defaultCatalogLoader) loadSpecies(speciesData []byte) error {
 		return err
 	}
 
-	if artifact.SchemaVersion != 1 || artifact.SourceRevision != sourceRevision || artifact.TagMajorVersion != 34 {
+	if artifact.SchemaVersion != 1 ||
+		artifact.SourceRevision != sourceRevision || artifact.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported species artifact schema/revision/tag")
 	}
 
@@ -254,7 +255,8 @@ func (l *defaultCatalogLoader) loadGear(gearData []byte) error {
 
 		for i, grant := range entry.Grants {
 			if grant.Raw != job.Equipment[i] {
-				return fmt.Errorf("starting gear job %s grant %d raw spec/order differs from jobs", entry.JobID, i)
+				return fmt.Errorf("starting gear job %s grant %d raw spec/order differs from jobs",
+					entry.JobID, i)
 			}
 		}
 
@@ -305,7 +307,8 @@ func (l *defaultCatalogLoader) loadMonsters(monsterData []byte) error {
 
 	var vocabulary MonsterVocabulary
 
-	if err := decodeArtifact(defaultMonsterVocabularyJSON, "monster vocabulary", &vocabulary); err != nil {
+	if err := decodeArtifact(defaultMonsterVocabularyJSON,
+		"monster vocabulary", &vocabulary); err != nil {
 		return err
 	}
 
@@ -362,7 +365,8 @@ func (l *defaultCatalogLoader) loadMonsters(monsterData []byte) error {
 		catalog.monsters[monster.ID] = monster.clone()
 	}
 
-	if counts[MonsterDefined] != 562 || counts[MonsterRemoved] != 120 || counts[MonsterEnumOnly] != 18 {
+	if counts[MonsterDefined] != 562 ||
+		counts[MonsterRemoved] != 120 || counts[MonsterEnumOnly] != 18 {
 		return fmt.Errorf("monster artifact has wrong status partition")
 	}
 

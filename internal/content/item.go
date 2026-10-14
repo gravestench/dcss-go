@@ -227,7 +227,12 @@ func (d ItemDef) validate() error {
 		}
 
 	case "OBJ_ARMOUR":
-		if !strings.Contains(" body shield head cloak gloves boots ", " "+d.Slot+" ") || d.WeaponSkill != "" || d.Stackable {
+		validSlot := strings.Contains(
+			" body shield head cloak gloves boots ",
+			" "+d.Slot+" ",
+		)
+
+		if !validSlot || d.WeaponSkill != "" || d.Stackable {
 			return fmt.Errorf("item %s has invalid armour slot or skill", d.ID)
 		}
 
@@ -236,7 +241,10 @@ func (d ItemDef) validate() error {
 			return fmt.Errorf("item %s has invalid slot or skill", d.ID)
 		}
 
-		if (d.Class == "OBJ_MISSILES" || d.Class == "OBJ_POTIONS" || d.Class == "OBJ_SCROLLS") && !d.Stackable {
+		stackableClass := d.Class == "OBJ_MISSILES" ||
+			d.Class == "OBJ_POTIONS" || d.Class == "OBJ_SCROLLS"
+
+		if stackableClass && !d.Stackable {
 			return fmt.Errorf("item %s must be stackable", d.ID)
 		}
 	}
@@ -269,9 +277,12 @@ func (d ItemDef) validate() error {
 		}
 	}
 
-	if propertyCount > 1 || (d.Armour != nil && d.Class != "OBJ_ARMOUR") || (d.Weapon != nil &&
-		d.Class != "OBJ_WEAPONS") || (d.Missile != nil && d.Class != "OBJ_MISSILES") || (d.Food != nil &&
-		d.Class != "OBJ_FOOD") {
+	wrongPropertyClass := (d.Armour != nil && d.Class != "OBJ_ARMOUR") ||
+		(d.Weapon != nil && d.Class != "OBJ_WEAPONS") ||
+		(d.Missile != nil && d.Class != "OBJ_MISSILES") ||
+		(d.Food != nil && d.Class != "OBJ_FOOD")
+
+	if propertyCount > 1 || wrongPropertyClass {
 		return fmt.Errorf("item %s has wrong class property shape", d.ID)
 	}
 
@@ -315,8 +326,11 @@ func (m ItemIdentityManifest) Validate() error {
 	previousClass, previousSubtype := -1, -1
 
 	for _, identity := range m.Identities {
-		if identity.ID == "" || identity.ClassID == "" || identity.ClassValue < 0 ||
-			identity.SubtypeValue < 0 || identity.SourcePath == "" || identity.SourceLine <= 0 || seen[identity.ID] {
+		invalidIdentity := identity.ID == "" || identity.ClassID == "" ||
+			identity.ClassValue < 0 || identity.SubtypeValue < 0
+		invalidSource := identity.SourcePath == "" || identity.SourceLine <= 0
+
+		if invalidIdentity || invalidSource || seen[identity.ID] {
 			return fmt.Errorf("invalid or duplicate item identity %q", identity.ID)
 		}
 
@@ -331,7 +345,10 @@ func (m ItemIdentityManifest) Validate() error {
 	}
 
 	for _, alias := range m.Aliases {
-		if alias.ID == "" || alias.TargetID == "" || alias.SourcePath == "" || alias.SourceLine <= 0 || seen[alias.ID] {
+		invalidAlias := alias.ID == "" || alias.TargetID == "" ||
+			alias.SourcePath == "" || alias.SourceLine <= 0
+
+		if invalidAlias || seen[alias.ID] {
 			return fmt.Errorf("invalid or duplicate item alias %q", alias.ID)
 		}
 
@@ -405,13 +422,17 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 			return err
 		}
 
-		if item.ClassValue < previousClass || (item.ClassValue == previousClass && item.SubtypeValue <= previousSubtype) {
+		outOfOrder := item.ClassValue < previousClass ||
+			(item.ClassValue == previousClass && item.SubtypeValue <= previousSubtype)
+
+		if outOfOrder {
 			return fmt.Errorf("item definitions are not in numeric class/subtype order")
 		}
 
 		previousClass, previousSubtype = item.ClassValue, item.SubtypeValue
 
-		if item.Name != item.Naming.Text || item.Naming.Kind == "" || files[item.Naming.SourcePath] == "" {
+		if item.Name != item.Naming.Text || item.Naming.Kind == "" ||
+			files[item.Naming.SourcePath] == "" {
 			return fmt.Errorf("item %s has invalid naming evidence", item.ID)
 		}
 
@@ -433,8 +454,11 @@ func (a ItemArtifact) Validate(manifest ItemIdentityManifest) error {
 			return fmt.Errorf("item %s is missing a definition", identity.ID)
 		}
 
-		if (identity.ClassID == "OBJ_WEAPONS" || identity.ClassID == "OBJ_ARMOUR" ||
-			identity.ClassID == "OBJ_MISSILES" || identity.ClassID == "OBJ_FOOD") && !seen[identity.ID] {
+		needsPropertyRow := identity.ClassID == "OBJ_WEAPONS" ||
+			identity.ClassID == "OBJ_ARMOUR" ||
+			identity.ClassID == "OBJ_MISSILES" || identity.ClassID == "OBJ_FOOD"
+
+		if needsPropertyRow && !seen[identity.ID] {
 			return fmt.Errorf("item %s is missing its property row", identity.ID)
 		}
 	}
@@ -476,7 +500,8 @@ func (d ItemDef) validateVocabulary(v ItemVocabulary) error {
 
 	case "OBJ_WEAPONS":
 		if d.Weapon == nil || !vocabularyHas(v.Skills, d.Weapon.SkillID) ||
-			!vocabularyHas(v.Sizes, d.Weapon.Min2HSizeID) || !vocabularyHas(v.Sizes, d.Weapon.Min1HSizeID) ||
+			!vocabularyHas(v.Sizes, d.Weapon.Min2HSizeID) ||
+			!vocabularyHas(v.Sizes, d.Weapon.Min1HSizeID) ||
 			!vocabularyHas(v.Ammo, d.Weapon.AmmoID) || d.Weapon.SkillID != d.WeaponSkill {
 			return fmt.Errorf("item %s has incomplete or unknown weapon properties", d.ID)
 		}
