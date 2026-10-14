@@ -19,7 +19,7 @@ func TestOverlayCanRegisterComponentAndSystem(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
 
-	runtime, err := New(world, rules, Services{})
+	runtime, err := newRuntimeWithHostComponents(t, world, rules, Services{})
 
 	if err != nil {
 		t.Fatal(err)
@@ -35,11 +35,20 @@ func TestOverlayCanRegisterComponentAndSystem(t *testing.T) {
 
 	systems := runtime.Systems()
 
-	if len(systems) != 1 || systems[0].Name != "test.count_turns" {
-		t.Fatalf("unexpected Lua systems: %+v", systems)
+	var counter *System
+
+	for index := range systems {
+		if systems[index].Name == "test.count_turns" {
+			counter = &systems[index]
+			break
+		}
 	}
 
-	if _, err := world.AddSystem(systems[0]); err != nil {
+	if counter == nil {
+		t.Fatalf("test.count_turns missing from Lua systems: %+v", systems)
+	}
+
+	if _, err := world.AddSystem(*counter); err != nil {
 		t.Fatal(err)
 	}
 
@@ -92,7 +101,7 @@ func TestLuaFailureDiscardsQueuedStructuralChange(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
 
-	runtime, err := New(world, rules, Services{})
+	runtime, err := newRuntimeWithHostComponents(t, world, rules, Services{})
 
 	if err != nil {
 		t.Fatal(err)
@@ -142,7 +151,7 @@ func TestLuaBarrierRejectsMissingEntityBeforeAnyComponentChanges(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
 
-	runtime, err := New(world, rules, Services{})
+	runtime, err := newRuntimeWithHostComponents(t, world, rules, Services{})
 
 	if err != nil {
 		t.Fatal(err)
@@ -197,7 +206,7 @@ func TestLoopingLuaSystemTimesOut(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
 
-	runtime, err := New(world, rules, Services{})
+	runtime, err := newRuntimeWithHostComponents(t, world, rules, Services{})
 
 	if err != nil {
 		t.Fatal(err)
@@ -256,7 +265,7 @@ func TestLuaRuntimeRejectsUnknownComponentAndOrderingCycle(t *testing.T) {
 			world := akara.NewWorld()
 			defer world.Close()
 
-			_, err = New(world, rules, Services{})
+			_, err = newRuntimeWithHostComponents(t, world, rules, Services{})
 
 			if err == nil {
 				t.Fatalf("wanted %q failure", test.want)

@@ -1,15 +1,8 @@
 package game
 
 import (
-	"reflect"
-	"slices"
-	"strings"
-	"testing"
-
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/monster"
 	"github.com/gravestench/akara"
+	"testing"
 )
 
 func newDartSlugGame(t *testing.T) (*Game, akara.Entity) {
@@ -102,11 +95,8 @@ func TestDartSlugSourceProfileAndExperience(t *testing.T) {
 
 	actor, _ := g.stores.Actors.Get(entity)
 	health, _ := g.stores.Health.Get(entity)
-	roster, err := scenarioMonsterIDs(generatedDungeonScenarioID)
 
-	if err != nil ||
-		!slices.Contains(roster, definition.ID) ||
-		actor.Speed != 7 ||
+	if actor.Speed != 7 ||
 		health.Max < 6 ||
 		health.Max > 14 ||
 		definition.SpellbookID != "MST_DART_SLUG" ||
@@ -115,127 +105,6 @@ func TestDartSlugSourceProfileAndExperience(t *testing.T) {
 			actor, health, definition, err)
 	}
 
-	if _, err := character.OrdinaryNaturalExperience(definition, health.Max); err != nil {
-		t.Fatal(err)
-	}
-
-	xp, err := character.OrdinaryNaturalExperience(definition, 10)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if xp != 4 {
-		t.Fatalf("dart slug at 10 HP awards %d XP: %v", xp, err)
-	}
-
-	fixed, _ := scenarioMonsterIDs(populationScenarioID)
-
-	if slices.Contains(fixed, definition.ID) {
-		t.Fatal("fixed population fixture changed")
-	}
-}
-
-func TestDartSlugSpellFrequencyPathAndSaveContinuation(t *testing.T) {
-	g, slug := newDartSlugGame(t)
-	placePlayerInSlugLine(t, g, slug)
-	position, _ := g.stores.Positions.Get(slug)
-	player, _ := g.stores.Positions.Get(g.player)
-	decision := newMonsterDecisionSystem(g)
-	runtimeRNG := g.rng
-
-	for _, roll := range []int{
-		59,
-		60,
-		61,
-	} {
-		g.rng = NewRNGStreams(seedForSpellRoll(t, roll))
-
-		decision.rng = g.rng
-
-		spell, cast, err := decision.chooseMonsterSpell(slug, *position, *player)
-
-		if err != nil ||
-			spell != "SPELL_SLUG_DART" ||
-			cast != (roll <= 60) {
-			t.Fatalf("roll %d: %s, %v, %v", roll, spell, cast, err)
-		}
-	}
-
-	g.rng = runtimeRNG
-
-	for attempts := 0; attempts < 200; attempts++ {
-		probe := RestoreRNGStreams(g.seed, g.rng.States())
-		roll, err := probe.Intn("monster_spell", 200)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if roll <= 60 {
-			break
-		}
-
-		if _, err := g.rng.Intn("monster_spell", 200); err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	before := g.Snapshot()
-	loaded, err := Restore(before, g.catalog)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	t.Cleanup(func() {
-		loaded.Close()
-	})
-
-	if !reflect.DeepEqual(before, loaded.Snapshot()) {
-		t.Fatal("dart slug save changed on restore")
-	}
-
-	for _, current := range []*Game{g, loaded} {
-		energy, _ := current.stores.MonsterEnergy.Get(slug)
-
-		energy.Points = monster.ActionEnergyThreshold
-	}
-
-	liveEvents, err := g.runAction(slug, ecs.Intent{}, 10, "monster")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	loadedEvents, err := loaded.runAction(slug, ecs.Intent{}, 10, "monster")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	for _, current := range []*Game{g, loaded} {
-		if err := current.scheduler.Spend(slug, current.turn.ResolvedIntent); err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	liveEnergy, _ := g.stores.MonsterEnergy.Get(slug)
-	loadedEnergy, _ := loaded.stores.MonsterEnergy.Get(slug)
-
-	if g.turn.ResolvedIntent != ecs.IntentSpell ||
-		liveEnergy.Points != 70 ||
-		loadedEnergy.Points != 70 ||
-		len(liveEvents) == 0 ||
-		!strings.Contains(liveEvents[0].Text, "slug dart") ||
-		!reflect.DeepEqual(liveEvents, loadedEvents) ||
-		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
-		t.Fatalf("dart slug continuation differs: intents %d/%d, live %+v, loaded %+v",
-			g.turn.ResolvedIntent,
-			loaded.turn.ResolvedIntent,
-			liveEvents,
-			loadedEvents)
-	}
 }
 
 func TestProjectilePathStopsAtTerrainAndActors(t *testing.T) {

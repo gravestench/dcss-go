@@ -37,7 +37,7 @@ func TestDrawDungeonKeepsPlayerAboveFloorItems(t *testing.T) {
 		},
 	}
 
-	drawDungeon(canvas, region, view)
+	drawDungeon(canvas, region, view, testPresentationPolicy(t))
 	center := canvas.cells[8*canvas.width+18]
 
 	if center.text != "@" || center.fg != White {

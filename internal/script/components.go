@@ -108,19 +108,22 @@ func exactLuaNumber(value lua.LValue) (float64, error) {
 
 func (r *Runtime) luaFieldValue(value any) (lua.LValue, error) {
 	switch typed := value.(type) {
+	case nil:
+		return lua.LNil, nil
+
 	case bool:
 		return lua.LBool(typed), nil
 
 	case int64:
 		if typed > maxExactLuaInteger || typed < -maxExactLuaInteger {
-			return nil, fmt.Errorf("int64 exceeds Lua's exact numeric range")
+			return lua.LString(fmt.Sprint(typed)), nil
 		}
 
 		return lua.LNumber(typed), nil
 
 	case uint64:
 		if typed > maxExactLuaInteger {
-			return nil, fmt.Errorf("uint64 exceeds Lua's exact numeric range")
+			return lua.LString(fmt.Sprint(typed)), nil
 		}
 
 		return lua.LNumber(typed), nil
@@ -133,6 +136,36 @@ func (r *Runtime) luaFieldValue(value any) (lua.LValue, error) {
 
 	case akara.Entity:
 		return r.entityHandle(typed), nil
+
+	case []any:
+		table := r.state.NewTable()
+
+		for index, entry := range typed {
+			converted, err := r.luaFieldValue(entry)
+
+			if err != nil {
+				return nil, fmt.Errorf("entry %d: %w", index+1, err)
+			}
+
+			table.Append(converted)
+		}
+
+		return table, nil
+
+	case map[string]any:
+		table := r.state.NewTable()
+
+		for name, entry := range typed {
+			converted, err := r.luaFieldValue(entry)
+
+			if err != nil {
+				return nil, fmt.Errorf("field %s: %w", name, err)
+			}
+
+			r.state.SetField(table, name, converted)
+		}
+
+		return table, nil
 
 	default:
 		return nil, fmt.Errorf("unsupported component value %T", value)

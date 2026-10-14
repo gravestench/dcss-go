@@ -1,11 +1,10 @@
 package game
 
 import (
-	"reflect"
-	"testing"
-
 	"dcrawl-go/internal/ecs"
 	"github.com/gravestench/akara"
+	"reflect"
+	"testing"
 )
 
 func giveTestMonsterWeapon(t *testing.T, g *Game, monsterID akara.Entity) akara.Entity {
@@ -48,88 +47,6 @@ func giveTestMonsterItem(
 	}
 
 	return itemID
-}
-
-func TestMonsterWeaponAndMissileSlotsSurviveSaveAndDrop(t *testing.T) {
-	g := newStepGame(t)
-	defer g.Close()
-
-	monsterID := ratID(t, g)
-	slingID := giveTestMonsterItem(t, g, monsterID, "WPN_SLING", "weapon", 1)
-	daggerID := giveTestMonsterItem(t, g, monsterID, "WPN_DAGGER", "alternate_weapon", 1)
-	stoneID := giveTestMonsterItem(t, g, monsterID, "MI_STONE", "missile", 4)
-
-	loaded, err := Restore(g.Snapshot(), testCatalog(t))
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	defer loaded.Close()
-
-	if !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
-		t.Fatal("monster inventory slots changed on restore")
-	}
-
-	items := []akara.Entity{
-		slingID,
-		daggerID,
-		stoneID,
-	}
-
-	for _, itemID := range items {
-		carrier, found := loaded.stores.CarriedBy.Get(itemID)
-
-		if !found || carrier.Holder != monsterID {
-			t.Fatalf("item %d lost monster carrier", itemID)
-		}
-	}
-
-	position, found := loaded.stores.Positions.Get(monsterID)
-
-	if !found {
-		t.Fatal("monster has no position")
-	}
-
-	if err := loaded.dropMonsterInventory(monsterID, *position); err != nil {
-		t.Fatal(err)
-	}
-
-	for _, itemID := range items {
-		dropped, found := loaded.stores.Positions.Get(itemID)
-
-		if !found ||
-			*dropped != *position ||
-			loaded.stores.CarriedBy.Has(itemID) ||
-			loaded.stores.Equipped.Has(itemID) {
-			t.Fatalf("item %d was not released at the death cell", itemID)
-		}
-	}
-}
-
-func TestMonsterMeleeUsesAlternateWhenPrimaryIsRanged(t *testing.T) {
-	g := newStepGame(t)
-	defer g.Close()
-
-	monsterID := ratID(t, g)
-	giveTestMonsterItem(t, g, monsterID, "WPN_SLING", "weapon", 1)
-	giveTestMonsterItem(t, g, monsterID, "WPN_DAGGER", "alternate_weapon", 1)
-
-	weapon, err := newCombatSystem(g).monsterMeleeWeapon(monsterID)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	dagger, err := g.catalog.Item("WPN_DAGGER")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if weapon == nil || weapon.Damage != dagger.Weapon.Damage {
-		t.Fatalf("alternate melee weapon = %+v", weapon)
-	}
 }
 
 func TestRestoreRejectsMonsterItemInWrongSlot(t *testing.T) {

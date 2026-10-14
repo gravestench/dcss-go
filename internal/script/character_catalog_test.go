@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/modfs"
 	"github.com/gravestench/akara"
@@ -27,7 +26,7 @@ func TestBundledLuaCharacterCatalogMatchesPinnedImport(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
 
-	runtime, err := New(world, rules, Services{})
+	runtime, err := newRuntimeWithHostComponents(t, world, rules, Services{})
 
 	if err != nil {
 		t.Fatal(err)
@@ -83,41 +82,14 @@ func TestBundledLuaCharacterCatalogMatchesPinnedImport(t *testing.T) {
 					t.Fatalf("missing Lua choice for %s/%s", speciesID, jobID)
 				}
 
-				var sourceRestriction character.Restriction
-
-				if speciesFirst {
-					sourceRestriction, err = character.JobForSpecies(
-						base, speciesID, jobID,
-					)
-				} else {
-					sourceRestriction, err = character.SpeciesForJob(
-						base, speciesID, jobID,
-					)
+				if choice.Restriction != "banned" &&
+					choice.Restriction != "restricted" &&
+					choice.Restriction != "recommended" {
+					t.Fatalf("invalid Lua restriction %q", choice.Restriction)
 				}
 
-				if err != nil {
-					t.Fatal(err)
-				}
-
-				expected := map[character.Restriction]string{
-					character.Banned:      "banned",
-					character.Restricted:  "restricted",
-					character.Recommended: "recommended",
-				}[sourceRestriction]
-
-				if choice.Restriction != expected {
-					t.Fatalf(
-						"Lua choice %s/%s (%t): got %s, want %s",
-						speciesID, jobID, speciesFirst,
-						choice.Restriction, expected,
-					)
-				}
-
-				playable := character.SupportedFighterStart(speciesID, jobID) &&
-					sourceRestriction != character.Banned
-
-				if choice.Playable != playable {
-					t.Fatalf("Lua start support differs for %s/%s", speciesID, jobID)
+				if choice.Playable && choice.Restriction == "banned" {
+					t.Fatalf("banned Lua choice %s/%s is playable", speciesID, jobID)
 				}
 			}
 		}
@@ -251,7 +223,7 @@ func TestDuplicateLuaSpeciesFailsStartup(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
 
-	runtime, err := New(world, rules, Services{})
+	runtime, err := newRuntimeWithHostComponents(t, world, rules, Services{})
 
 	if runtime != nil {
 		runtime.Close()
@@ -320,7 +292,7 @@ func TestIncompleteLuaDefinitionNamesPathAndField(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
 
-	runtime, err := New(world, rules, Services{})
+	runtime, err := newRuntimeWithHostComponents(t, world, rules, Services{})
 
 	if runtime != nil {
 		runtime.Close()

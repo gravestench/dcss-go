@@ -4,24 +4,30 @@ import "dcrawl-go/internal/game"
 
 // dungeonRenderer projects the read-only level view into the map pane.
 type dungeonRenderer struct {
-	canvas  *Canvas
-	region  Region
-	view    game.View
-	centerX int
-	centerY int
+	canvas        *Canvas
+	region        Region
+	view          game.View
+	policy        presentationPolicy
+	centerX       int
+	centerY       int
+	terrainColors map[game.CellView]Color
+	entityColors  map[string]Color
 }
 
-func drawDungeon(canvas *Canvas, region Region, view game.View) {
+func drawDungeon(canvas *Canvas, region Region, view game.View, policy presentationPolicy) {
 	if view.Width <= 0 {
 		return
 	}
 
 	renderer := dungeonRenderer{
-		canvas:  canvas,
-		region:  region,
-		view:    view,
-		centerX: region.X + region.W/2,
-		centerY: region.Y + region.H/2,
+		canvas:        canvas,
+		region:        region,
+		view:          view,
+		policy:        policy,
+		centerX:       region.X + region.W/2,
+		centerY:       region.Y + region.H/2,
+		terrainColors: make(map[game.CellView]Color),
+		entityColors:  make(map[string]Color),
 	}
 
 	renderer.drawTerrain()
@@ -42,20 +48,25 @@ func (r dungeonRenderer) drawTerrain() {
 			continue
 		}
 
-		r.canvas.Put(screenX, screenY, cell.Glyph, terrainColor(cell), Black)
+		r.canvas.Put(screenX, screenY, cell.Glyph, r.terrainColor(cell), Black)
 	}
 }
 
-func terrainColor(cell game.CellView) Color {
-	if cell.State != game.Visible {
-		return DarkGrey
+func (r dungeonRenderer) terrainColor(cell game.CellView) Color {
+	if color, found := r.terrainColors[cell]; found {
+		return color
 	}
 
-	if cell.Glyph == '<' || cell.Glyph == '>' {
-		return Yellow
-	}
+	result := runPresentation(r.policy, "presentation.terrain_color", map[string]any{
+		"state": int(cell.State),
+		"glyph": string(cell.Glyph),
+	})
 
-	return LightGrey
+	color := policyColor(result["fg"])
+
+	r.terrainColors[cell] = color
+
+	return color
 }
 
 func (r dungeonRenderer) drawEntities() {
@@ -78,30 +89,26 @@ func (r dungeonRenderer) drawEntity(entity game.EntityView) {
 		return
 	}
 
-	r.canvas.Put(screenX, screenY, entity.Glyph, entityColor(entity), Black)
+	r.canvas.Put(screenX, screenY, entity.Glyph, r.entityColor(entity), Black)
 }
 
-func entityColor(entity game.EntityView) Color {
-	switch entity.Role {
-	case "player":
-		return White
+func (r dungeonRenderer) entityColor(entity game.EntityView) Color {
+	key := entity.Role + ":" + entity.KindID
 
-	case "monster":
-		return Brown
-
-	case "item":
-		switch entity.KindID {
-		case "CORPSE_BODY":
-			return Brown
-
-		case "CORPSE_SKELETON":
-			return LightGrey
-		}
-
-		return LightGreen
+	if color, found := r.entityColors[key]; found {
+		return color
 	}
 
-	return LightGrey
+	result := runPresentation(r.policy, "presentation.entity_color", map[string]any{
+		"role":    entity.Role,
+		"kind_id": entity.KindID,
+	})
+
+	color := policyColor(result["fg"])
+
+	r.entityColors[key] = color
+
+	return color
 }
 
 func (r dungeonRenderer) screenPoint(x, y int) (int, int, bool) {

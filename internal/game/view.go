@@ -2,8 +2,8 @@ package game
 
 import (
 	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
+	"fmt"
 )
 
 type CellState uint8
@@ -84,7 +84,22 @@ type View struct {
 	Messages       []string
 }
 
-func (g *Game) View() View {
+func (g *Game) View() (view View) {
+	defer func() {
+		if failure := recover(); failure != nil {
+			problem, ok := failure.(error)
+
+			if !ok {
+				panic(failure)
+			}
+
+			view.Messages = append(
+				view.Messages,
+				fmt.Sprintf("Lua presentation error: %v", problem),
+			)
+		}
+	}()
+
 	position, found := g.stores.Positions.Get(g.player)
 
 	if !found {
@@ -92,7 +107,7 @@ func (g *Game) View() View {
 	}
 
 	level := g.levels[position.LevelID]
-	view := View{
+	view = View{
 		LevelID: position.LevelID,
 		PlayerX: position.X,
 		PlayerY: position.Y,
@@ -111,6 +126,22 @@ func (g *Game) View() View {
 	g.fillInventoryView(&view)
 
 	return view
+}
+
+// PresentationPolicy runs a pure, named screen decision against this game's
+// effective Lua ruleset. Renderers pass plain values and draw its result.
+func (g *Game) PresentationPolicy(name string, input map[string]any) (map[string]any, error) {
+	return g.scripts.Policy(name, input)
+}
+
+func (g *Game) mustPresentationPolicy(name string, input map[string]any) map[string]any {
+	result, err := g.PresentationPolicy(name, input)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return result
 }
 
 func (g *Game) fillTerrainView(view *View, level *Level) {
@@ -135,14 +166,6 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 
 func (g *Game) fillPlayerView(view *View) {
 	player, hasPlayer := g.stores.Players.Get(g.player)
-	var species content.SpeciesDef
-	var hasSpecies bool
-
-	if hasPlayer {
-		var err error
-		species, err = g.catalog.Species(player.SpeciesID)
-		hasSpecies = err == nil
-	}
 
 	if health, ok := g.stores.Health.Get(g.player); ok {
 		view.PlayerHP = health.Current
@@ -161,17 +184,31 @@ func (g *Game) fillPlayerView(view *View) {
 
 	if training, ok := g.stores.SkillTraining.Get(g.player); ok {
 		view.SkillTraining = training.Clone()
-		view.SkillPercent = skillTrainingPercent(view.Skills, &view.SkillTraining)
+
+		percent := g.mustPresentationPolicy("character.training_percent", map[string]any{})
+
+		view.SkillPercent = make(map[string]int, len(percent))
+
+		for id, value := range percent {
+			view.SkillPercent[id] = int(value.(int64))
+		}
 	}
 
-	if progression, ok := g.stores.Progression.Get(g.player); ok && hasSpecies {
-		if percent, err := character.LevelProgress(
-			progression.TotalXP, progression.Level, species.XP,
-		); err == nil {
-			view.ExperienceLevel = progression.Level
-			view.NextLevelPercent = percent
-			view.PendingStatLevel = progression.PendingStatLevel
-		}
+	if progression, ok := g.stores.Progression.Get(g.player); ok && hasPlayer {
+		identity := g.mustPresentationPolicy("presentation.player", map[string]any{
+			"name":       player.Name,
+			"species_id": player.SpeciesID,
+			"job_id":     player.JobID,
+			"total_xp":   progression.TotalXP,
+			"level":      progression.Level,
+		})
+
+		view.PlayerName = identity["player_name"].(string)
+		view.SpeciesName = identity["species_name"].(string)
+		view.CharacterName = identity["character_name"].(string)
+		view.ExperienceLevel = progression.Level
+		view.NextLevelPercent = int(identity["next_level_percent"].(int64))
+		view.PendingStatLevel = progression.PendingStatLevel
 	}
 
 	if durations, ok := g.stores.Durations.Get(g.player); ok {
@@ -192,36 +229,19 @@ func (g *Game) fillPlayerView(view *View) {
 	}
 
 	if hasPlayer {
-		view.PlayerName = player.Name
 		view.SpeciesID = player.SpeciesID
-
-		if hasSpecies {
-			view.SpeciesName = species.Name
-		}
-
-		if view.PlayerName == "" {
-			view.PlayerName = "Adventurer"
-		}
-
-		job, jobErr := g.catalog.Job(player.JobID)
-
-		if hasSpecies &&
-			jobErr == nil {
-			view.CharacterName = species.Name + " " + job.Name
-		}
 	}
 
 	if attributes, ok := g.stores.Attributes.Get(g.player); ok {
 		view.Attributes = *attributes
 	}
 
-	if defense, err := newPlayerCombat(g).defense(); err == nil {
-		view.PlayerAC = defense.AC
-		view.PlayerEV = defense.EV
-		view.PlayerSH = defense.ShieldClass / 2
+	defense := g.mustPresentationPolicy("presentation.defense", map[string]any{})
 
-		view.DefenseKnown = true
-	}
+	view.PlayerAC = int(defense["ac"].(int64))
+	view.PlayerEV = int(defense["ev"].(int64))
+	view.PlayerSH = int(defense["sh"].(int64))
+	view.DefenseKnown = true
 }
 
 func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
@@ -241,50 +261,40 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 			continue
 		}
 
-		glyph := rune('?')
-		kindID, name, role := "", "", ""
+		kindID, role := "", ""
+		input := map[string]any{}
 
 		switch {
 		case entity == g.player:
-			glyph = '@'
-
-			kindID = "player"
-			name = view.PlayerName
 			role = "player"
+			input["player_name"] = view.PlayerName
 
 		case g.stores.AI.Has(entity):
 			actor, _ := g.stores.Actors.Get(entity)
 			kindID, role = actor.KindID, "monster"
 
-			if definition, err := g.catalog.Monster(actor.KindID); err == nil {
-				glyph = definition.Glyph
-				name = definition.Name
-			}
-
 		case g.stores.Items.Has(entity):
 			item, _ := g.stores.Items.Get(entity)
 			kindID, role = item.KindID, "item"
 
-			if definition, err := g.catalog.Item(item.KindID); err == nil {
-				glyph = definition.Glyph
-				name = definition.Name
-
-				if corpse, found := g.stores.Corpses.Get(entity); found {
-					if source, err := g.catalog.Monster(corpse.MonsterID); err == nil {
-						name = source.Name + " " + definition.Name
-					}
-				}
+			if corpse, found := g.stores.Corpses.Get(entity); found {
+				input["corpse_monster_id"] = corpse.MonsterID
 			}
 		}
+
+		input["role"] = role
+		input["kind_id"] = kindID
+
+		presentation := g.mustPresentationPolicy("presentation.entity", input)
 
 		view.Entities = append(view.Entities, EntityView{
 			ID:     uint64(entity),
 			X:      location.X,
 			Y:      location.Y,
-			Glyph:  glyph,
-			KindID: kindID,
-			Name:   name,
-			Role:   role,
+			Glyph:  rune(presentation["glyph"].(int64)),
+			KindID: presentation["kind_id"].(string),
+			Name:   presentation["name"].(string),
+			Role:   presentation["role"].(string),
 		})
 	}
 }
@@ -303,26 +313,31 @@ func (g *Game) fillInventoryView(view *View) {
 			continue
 		}
 
-		definition, err := g.catalog.Item(item.KindID)
+		slot := ""
 
-		if err == nil {
-			entry := ItemView{
-				ID:     uint64(entity),
-				KindID: item.KindID,
-				Name:   definition.Name,
-				Class:  definition.Class,
-
-				Quantity: item.Quantity,
-				Plus:     item.Plus,
-				Charges:  item.Charges,
-				Ego:      item.Ego,
-			}
-
-			if equipped, found := g.stores.Equipped.Get(entity); found {
-				entry.Slot = equipped.Slot
-			}
-
-			view.Inventory = append(view.Inventory, entry)
+		if equipped, found := g.stores.Equipped.Get(entity); found {
+			slot = equipped.Slot
 		}
+
+		presentation := g.mustPresentationPolicy("presentation.inventory_item", map[string]any{
+			"kind_id":  item.KindID,
+			"quantity": item.Quantity,
+			"plus":     item.Plus,
+			"charges":  item.Charges,
+			"ego":      item.Ego,
+			"slot":     slot,
+		})
+
+		view.Inventory = append(view.Inventory, ItemView{
+			ID:       uint64(entity),
+			KindID:   presentation["kind_id"].(string),
+			Name:     presentation["name"].(string),
+			Class:    presentation["class"].(string),
+			Quantity: item.Quantity,
+			Plus:     item.Plus,
+			Charges:  item.Charges,
+			Ego:      item.Ego,
+			Slot:     slot,
+		})
 	}
 }

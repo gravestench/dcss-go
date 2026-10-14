@@ -1,0 +1,55 @@
+local items = require("policy.inventory.items")
+local potions = require("policy.potions")
+
+local quaff = {}
+
+function quaff.prepare(ctx, player, item_id)
+    local entity = item_id ~= 0 and ctx:entity(item_id) or nil
+    local item = entity and ctx:get(entity, "core.item")
+    local carrier = entity and ctx:get(entity, "core.carried_by")
+
+    if not item or not carrier or carrier.holder ~= player then
+        return {
+            message = "You are not carrying that potion.",
+        }
+    end
+
+    local kind = items.kind(item)
+    items.validate(item, kind)
+
+    if kind.class ~= "OBJ_POTIONS" then
+        return {
+            message = "You cannot drink that.",
+        }
+    end
+
+    if not potions[item.kind_id] then
+        return {
+            message = "That potion's effect is unavailable in the Go port.",
+        }
+    end
+
+    if item.kind_id == "POT_HEAL_WOUNDS" then
+        local health = ctx:get(player, "core.health")
+
+        if not health then
+            error("player has no health for heal wounds")
+        end
+
+        if health.current == health.max then
+            return {
+                message = "Your health is already full.",
+            }
+        end
+    end
+
+    return {
+        intent = {
+            kind = 7,
+            item_id = entity,
+        },
+        cost = 10,
+    }
+end
+
+return quaff

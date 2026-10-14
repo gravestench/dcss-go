@@ -7,60 +7,6 @@ import (
 	"dcrawl-go/internal/ecs"
 )
 
-func TestAttackDelayProjectionUsesEveryFighterStart(t *testing.T) {
-	for _, weaponID := range []string{
-		"WPN_RAPIER",
-		"WPN_FLAIL",
-		"WPN_WAR_AXE",
-		"WPN_TRIDENT",
-		"WPN_LONG_SWORD",
-		"WPN_UNARMED",
-	} {
-		t.Run(weaponID, func(t *testing.T) {
-			catalog := testCatalog(t)
-			g, err := NewScenario(2, catalog, weaponID, "Tester")
-
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			defer g.Close()
-			in, err := newPlayerCombat(g).attackDelayInput("MONS_RAT")
-
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			if in.WeaponSkill10 != 20 ||
-				in.ShieldsSkill10 != 30 || in.ShieldEV != -50 {
-				t.Fatalf("attack delay input = %+v", in)
-			}
-
-			if weaponID == "WPN_UNARMED" {
-				if !in.Unarmed ||
-					in.WeaponSpeed != 0 ||
-					in.WeaponSkillID != "SK_UNARMED_COMBAT" {
-					t.Fatalf("unarmed attack delay = %+v", in)
-				}
-
-				return
-			}
-
-			weapon, err := catalog.Item(weaponID)
-
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			if in.Unarmed ||
-				in.WeaponSpeed != weapon.Weapon.Speed ||
-				in.WeaponSkillID != weapon.Weapon.SkillID {
-				t.Fatalf("%s delay = %+v, catalog %+v", weaponID, in, weapon.Weapon)
-			}
-		})
-	}
-}
-
 func TestTwelveAutRapierBumpGrantsOneRatAction(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)

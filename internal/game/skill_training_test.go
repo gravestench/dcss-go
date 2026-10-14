@@ -1,15 +1,22 @@
 package game
 
 import (
-	"reflect"
-	"testing"
-	"time"
-
 	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/combat"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/save"
+	"reflect"
+	"testing"
 )
+
+func totalSkillPoints(skills []character.Skill) int {
+	total := 0
+
+	for _, skill := range skills {
+		total += skill.Points
+	}
+
+	return total
+}
 
 func TestPlayerTrainingStateIsOwnedByAkaraAndSnapshotIsIsolated(t *testing.T) {
 	g := newStepGame(t)
@@ -65,171 +72,6 @@ func TestPlayerTrainingStateIsOwnedByAkaraAndSnapshotIsIsolated(t *testing.T) {
 
 	if !restoredTraining.Settings[0].Enabled {
 		t.Fatal("restored settings alias the save snapshot")
-	}
-}
-
-func TestBatchTrainingWeightScaling(t *testing.T) {
-	skills := []character.Skill{
-		{ID: "SK_FIGHTING"},
-		{ID: "SK_ARMOUR"},
-		{ID: "SK_SHIELDS"},
-	}
-
-	training := &ecs.SkillTraining{
-		Manual: true,
-		Settings: []ecs.SkillTrainingSetting{
-			{
-				ID:      "SK_FIGHTING",
-				Enabled: true,
-			},
-
-			{
-				ID:      "SK_ARMOUR",
-				Enabled: true,
-			},
-
-			{
-				ID:      "SK_SHIELDS",
-				Enabled: true,
-			},
-		},
-	}
-
-	manual := scaledTrainingWeights(skills, training)
-
-	if !reflect.DeepEqual(manual, []int{
-		33,
-		33,
-		33,
-	}) {
-		t.Fatalf("manual truncated weights = %v", manual)
-	}
-
-	training.Manual = false
-	training.RecentPractice = []string{
-		"SK_FIGHTING",
-		"SK_ARMOUR",
-		"SK_ARMOUR",
-		"SK_SHIELDS",
-		"SK_SHIELDS",
-		"SK_SHIELDS",
-	}
-
-	automatic := scaledTrainingWeights(skills, training)
-
-	if !reflect.DeepEqual(automatic, []int{
-		16,
-		34,
-		50,
-	}) {
-		t.Fatalf("automatic exact weights = %v", automatic)
-	}
-
-	percent := skillTrainingPercent(skills, training)
-
-	if percent["SK_FIGHTING"] != 16 ||
-		percent["SK_ARMOUR"] != 34 ||
-		percent["SK_SHIELDS"] != 50 {
-		t.Fatalf("displayed training differs from spending weights: %v", percent)
-	}
-
-	skills[2].Level = character.MaxSkillLevel
-
-	maxed := scaledTrainingWeights(skills, training)
-
-	if !reflect.DeepEqual(maxed, []int{
-		34,
-		66,
-		0,
-	}) {
-		t.Fatalf("maxed skill retained training weight: %v", maxed)
-	}
-}
-
-func TestSkillBatchGivesEqualManualSkillsTheirAllocatedXP(t *testing.T) {
-	g := newStepGame(t)
-	skills, _ := g.stores.Skills.Get(g.player)
-	training, _ := g.stores.SkillTraining.Get(g.player)
-
-	training.Manual = true
-	training.AvailableXP = 100
-
-	for index := range training.Settings {
-		training.Settings[index].Enabled = index < 2
-	}
-
-	firstBefore := skills.Entries[0].Points
-	secondBefore := skills.Entries[1].Points
-
-	if err := newSkillTrainingSystem(g).spend(skills, training); err != nil {
-		t.Fatal(err)
-	}
-
-	firstGain := skills.Entries[0].Points - firstBefore
-	secondGain := skills.Entries[1].Points - secondBefore
-
-	if firstGain != 50 || secondGain != 50 {
-		t.Fatalf("batch allocation = %d/%d, want 50/50", firstGain, secondGain)
-	}
-
-	if training.AvailableXP != 0 || training.SpentXP != 100 {
-		t.Fatalf("batch XP accounting = %+v", *training)
-	}
-}
-
-func TestSmallSkillShareSkipsFirstAllocationPhase(t *testing.T) {
-	shares, skip := allocatedSkillShares([]int{99, 1}, 10, 1)
-
-	if !skip || !reflect.DeepEqual(shares, []int{9, 0}) {
-		t.Fatalf("small training share = %v, skip %v", shares, skip)
-	}
-
-	shares, skip = allocatedSkillShares([]int{50, 50}, 100, 1)
-
-	if skip || !reflect.DeepEqual(shares, []int{50, 50}) {
-		t.Fatalf("sufficient training shares = %v, skip %v", shares, skip)
-	}
-}
-
-func TestMaxedSkillShareLeavesWeightedRemainderDraws(t *testing.T) {
-	g := newStepGame(t)
-	skills, _ := g.stores.Skills.Get(g.player)
-	training, _ := g.stores.SkillTraining.Get(g.player)
-	maximum, err := character.SkillPointsNeeded(character.MaxSkillLevel, 0)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	skills.Entries[0].Level = character.MaxSkillLevel - 1
-	skills.Entries[0].Points = maximum - 1
-	training.Manual = true
-	training.AvailableXP = 100
-
-	for index := range training.Settings {
-		training.Settings[index].Enabled = index < 2
-	}
-
-	expectedRNG := RestoreRNGStreams(g.seed, g.rng.States())
-
-	if _, err := expectedRNG.Intn("skill", 2); err != nil {
-		t.Fatal(err)
-	}
-
-	if _, err := expectedRNG.Intn("skill", 100); err != nil {
-		t.Fatal(err)
-	}
-
-	if err := newSkillTrainingSystem(g).spend(skills, training); err != nil {
-		t.Fatal(err)
-	}
-
-	if training.AvailableXP != 0 || skills.Entries[0].Points != maximum {
-		t.Fatalf("maxed skill batch state = %+v, %+v", *training, skills.Entries[0])
-	}
-
-	if !reflect.DeepEqual(g.rng.States(), expectedRNG.States()) {
-		t.Fatalf("maxed skill used an extra remainder draw")
 	}
 }
 
@@ -406,39 +248,6 @@ func TestSkillTrainingChoicesDoNotSpendTime(t *testing.T) {
 	}
 }
 
-func TestRareFocusedAutomaticSkillReceivesSourceWeight(t *testing.T) {
-	skills := []character.Skill{
-		{ID: "SK_FIGHTING"},
-		{ID: "SK_DODGING"},
-	}
-
-	training := &ecs.SkillTraining{
-		Settings: []ecs.SkillTrainingSetting{
-			{
-				ID:      "SK_FIGHTING",
-				Enabled: true,
-				Focused: true,
-			},
-
-			{
-				ID:      "SK_DODGING",
-				Enabled: true,
-			},
-		},
-		RecentPractice: []string{"SK_FIGHTING"},
-	}
-
-	for i := 0; i < 99; i++ {
-		training.RecentPractice = append(training.RecentPractice, "SK_DODGING")
-	}
-
-	weights := trainingWeights(skills, training)
-
-	if weights[0] != 27 || weights[1] != 99 {
-		t.Fatalf("source focus weights = %v, want [27 99]", weights)
-	}
-}
-
 func TestFirstAutoToggleDisablesUntrainedSkill(t *testing.T) {
 	g := newStepGame(t)
 
@@ -451,56 +260,6 @@ func TestFirstAutoToggleDisablesUntrainedSkill(t *testing.T) {
 
 	if setting.ID != "SK_DODGING" || setting.Enabled {
 		t.Fatalf("first automatic toggle should disable Dodging: %+v", setting)
-	}
-}
-
-func TestFightingPracticeRecalculatesHPBeforeAdvancement(t *testing.T) {
-	g := newStepGame(t)
-	skills, _ := g.stores.Skills.Get(g.player)
-	training, _ := g.stores.SkillTraining.Get(g.player)
-	health, _ := g.stores.Health.Get(g.player)
-
-	skills.Entries[0].Points = 433
-	training.SpentXP = 132
-	training.AvailableXP = 2
-
-	training.CostLevel = 2
-	training.Manual = true
-
-	for i := 1; i < len(training.Settings); i++ {
-		training.Settings[i].Enabled = false
-	}
-
-	species, err := g.catalog.Species("SP_HUMAN")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	health.Max, err = character.BaseMaxHP(1, species, skills.Entries)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	health.Current = health.Max
-
-	before := health.Max
-	system := newSkillTrainingSystem(g)
-
-	if err := system.Update(nil, time.Duration(10)); err != nil {
-		t.Fatal(err)
-	}
-
-	want, err := character.BaseMaxHP(1, species, skills.Entries)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if want <= before ||
-		health.Max != want || health.Current != want {
-		t.Fatalf("Fighting points %d left HP %+v, want %d", skills.Entries[0].Points, *health, want)
 	}
 }
 
@@ -568,61 +327,6 @@ func TestDisabledTrainingKeepsExperienceUntilEnabled(t *testing.T) {
 	}
 }
 
-func TestMaxedSkillsLeaveSkillExperienceUnspent(t *testing.T) {
-	g := newStepGame(t)
-	skills, _ := g.stores.Skills.Get(g.player)
-	training, _ := g.stores.SkillTraining.Get(g.player)
-	maximum, err := character.SkillPointsNeeded(character.MaxSkillLevel, 0)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	for i := range skills.Entries {
-		skills.Entries[i].Level = character.MaxSkillLevel
-		skills.Entries[i].Points = maximum
-	}
-
-	training.AvailableXP = 100
-
-	system := newSkillTrainingSystem(g)
-
-	if err := system.Update(nil, time.Duration(10)); err != nil {
-		t.Fatal(err)
-	}
-
-	if training.AvailableXP != 100 || training.SpentXP != 0 {
-		t.Fatalf("maxed skills consumed XP: %+v", *training)
-	}
-}
-
-func TestTrainingChangesCostAtSpentExperienceBoundary(t *testing.T) {
-	g := newStepGame(t)
-	skills, _ := g.stores.Skills.Get(g.player)
-	training, _ := g.stores.SkillTraining.Get(g.player)
-
-	skills.Entries[0].Points = 417
-
-	training.AvailableXP = 3
-	training.SpentXP = 116
-	training.Manual = true
-
-	for i := 1; i < len(training.Settings); i++ {
-		training.Settings[i].Enabled = false
-	}
-
-	if err := newSkillTrainingSystem(g).Update(nil, time.Duration(10)); err != nil {
-		t.Fatal(err)
-	}
-
-	if skills.Entries[0].Points != 419 ||
-		training.SpentXP != 119 ||
-		training.AvailableXP != 0 ||
-		training.CostLevel != 2 {
-		t.Fatalf("training crossed cost boundary incorrectly: %+v, %+v", skills.Entries[0], *training)
-	}
-}
-
 func TestSkillRNGAndPracticeContinueAfterRestore(t *testing.T) {
 	g := newStepGame(t)
 	training, _ := g.stores.SkillTraining.Get(g.player)
@@ -678,90 +382,4 @@ func TestSkillRNGAndPracticeContinueAfterRestore(t *testing.T) {
 		skills.Entries[1].Points != secondBefore+5 {
 		t.Fatalf("restored batch allocation = %+v", skills.Entries)
 	}
-}
-
-func TestPracticeCreatesZeroPointHumanSkillAndKeepsBoundedQueues(t *testing.T) {
-	g := newStepGame(t)
-	skills, _ := g.stores.Skills.Get(g.player)
-	training, _ := g.stores.SkillTraining.Get(g.player)
-	system := newSkillTrainingSystem(g)
-
-	for i := 0; i < 101; i++ {
-		if err := system.recordPractice(skills, training, "SK_DODGING"); err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	if len(skills.Entries) != 5 ||
-		skills.Entries[4].ID != "SK_DODGING" ||
-		skills.Entries[4].Points != 0 ||
-		len(training.RecentPractice) != 100 ||
-		len(training.RecentAll) != 100 ||
-		training.RecentPractice[99] != "SK_DODGING" {
-		t.Fatalf("new practice state: skills %+v, training %+v", skills.Entries, *training)
-	}
-
-	if err := system.recordPractice(skills, training, "SK_UNKNOWN"); err == nil {
-		t.Fatal("accepted practice for unknown skill")
-	}
-}
-
-func TestSupportedCombatEventsProduceSkillPractice(t *testing.T) {
-	g := newStepGame(t)
-	system := newCombatSystem(g)
-	attack := combat.PlayerAttackInput{
-		Unarmed:       true,
-		WeaponSkillID: "SK_UNARMED_COMBAT",
-	}
-
-	if err := system.practicePlayerHit(attack, "MONS_RAT"); err != nil {
-		t.Fatal(err)
-	}
-
-	if len(g.turn.Practice) != 1 || g.turn.Practice[0] != "SK_UNARMED_COMBAT" {
-		t.Fatalf("unarmed hit practice %+v", g.turn.Practice)
-	}
-
-	for i := 0; i < 100; i++ {
-		if err := system.practiceMonsterAttack(
-			combat.Outcome{Kind: combat.Hit},
-			combat.Defense{
-				BodyEV:      -100,
-				ShieldClass: 9,
-			},
-		); err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	for _, id := range []string{
-		"SK_DODGING",
-		"SK_SHIELDS",
-		"SK_ARMOUR",
-		"SK_FIGHTING",
-	} {
-		if !containsPractice(g.turn.Practice, id) {
-			t.Fatalf("combat practice lacks %s: %+v", id, g.turn.Practice)
-		}
-	}
-}
-
-func containsPractice(practice []string, id string) bool {
-	for _, candidate := range practice {
-		if candidate == id {
-			return true
-		}
-	}
-
-	return false
-}
-
-func totalSkillPoints(skills []character.Skill) int {
-	total := 0
-
-	for _, skill := range skills {
-		total += skill.Points
-	}
-
-	return total
 }

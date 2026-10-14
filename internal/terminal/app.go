@@ -6,12 +6,12 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/game"
 	"dcrawl-go/internal/modfs"
 	"dcrawl-go/internal/save"
 	"dcrawl-go/internal/script"
+	"github.com/gravestench/akara"
 )
 
 type ScreenID uint8
@@ -48,16 +48,25 @@ type equipmentTick struct {
 	id uint64
 }
 
+type menuWeaponOption struct {
+	ID          string
+	Name        string
+	Restriction string
+}
+
 // AppModel owns terminal navigation; the Game owns every turn-changing state.
 type AppModel struct {
-	catalog       content.Catalog
-	choices       map[script.ChoiceKey]script.Choice
-	presentation  content.PresentationArtifact
-	seed          uint64
-	savePath      string
-	rules         modfs.Ruleset
-	restorePolicy game.RestorePolicy
-	game          *game.Game
+	catalog             content.Catalog
+	choices             map[script.ChoiceKey]script.Choice
+	supportedStarts     map[script.ChoiceKey]bool
+	presentation        content.PresentationArtifact
+	seed                uint64
+	savePath            string
+	rules               modfs.Ruleset
+	restorePolicy       game.RestorePolicy
+	game                *game.Game
+	presentationWorld   *akara.World
+	presentationRuntime *script.Runtime
 
 	screen       ScreenID
 	previous     ScreenID
@@ -69,7 +78,7 @@ type AppModel struct {
 	speciesID        string
 	jobID            string
 	weaponID         string
-	options          []character.WeaponOption
+	options          []menuWeaponOption
 	focus            int
 	skillFocusAction bool
 
@@ -113,19 +122,48 @@ func NewAppModelWithRules(
 		return nil, fmt.Errorf("catalog lacks console presentation")
 	}
 
-	return &AppModel{
-		catalog:      projected,
-		choices:      choices,
-		presentation: projected.Presentation(),
+	presentationWorld := akara.NewWorld()
+	presentationRuntime, err := script.NewCatalog(presentationWorld, rules)
 
-		seed:          seed,
-		savePath:      savePath,
-		rules:         rules,
-		restorePolicy: policy,
-		screen:        ScreenStartup,
-		width:         79,
-		height:        24,
+	if err != nil {
+		presentationWorld.Close()
+
+		return nil, err
+	}
+
+	supportedStarts, err := projectSupportedStarts(presentationRuntime, projected)
+
+	if err != nil {
+		presentationRuntime.Close()
+		presentationWorld.Close()
+
+		return nil, err
+	}
+
+	return &AppModel{
+		catalog:         projected,
+		choices:         choices,
+		supportedStarts: supportedStarts,
+		presentation:    projected.Presentation(),
+
+		seed:                seed,
+		savePath:            savePath,
+		rules:               rules,
+		restorePolicy:       policy,
+		presentationWorld:   presentationWorld,
+		presentationRuntime: presentationRuntime,
+		screen:              ScreenStartup,
+		width:               79,
+		height:              24,
 	}, nil
+}
+
+func (m *AppModel) presentationPolicy(name string, input map[string]any) (map[string]any, error) {
+	if m.game != nil {
+		return m.game.PresentationPolicy(name, input)
+	}
+
+	return m.presentationRuntime.Policy(name, input)
 }
 
 func (m *AppModel) Init() tea.Cmd {
@@ -227,8 +265,7 @@ func (m *AppModel) renderCanvas() *Canvas {
 	layout, ok := ComputeLayout(m.width, m.height)
 
 	if !ok {
-		message := "Your terminal window is too small; please resize to at least 79,24"
-		canvas.Write(0, 0, message, LightGrey, Black)
+		m.drawStatus(canvas, "small_terminal")
 
 		return canvas
 	}
@@ -248,15 +285,11 @@ func (m *AppModel) renderCanvas() *Canvas {
 
 	case ScreenPlay, ScreenStatChoice:
 		if m.game != nil {
-			DrawPlay(canvas, layout, m.game.View(), m.notice)
+			DrawPlay(canvas, layout, m.game.View(), m.notice, m.presentationPolicy)
 		}
 
 		if m.screen == ScreenStatChoice && m.game != nil {
-			canvas.Write(
-				0, m.height-1,
-				"Increase (S)trength, (I)ntelligence, or (D)exterity?",
-				LightGrey, Black,
-			)
+			m.drawStatus(canvas, "stat_choice")
 		}
 
 	case ScreenInventory, ScreenSkills, ScreenQuaff, ScreenDrop,
@@ -264,19 +297,27 @@ func (m *AppModel) renderCanvas() *Canvas {
 		m.drawGameMenu(canvas)
 
 	case ScreenHelp:
-		DrawHelp(canvas)
+		DrawHelp(canvas, m.presentationPolicy)
 		m.drawModalNotice(canvas)
 
 	case ScreenConfirm:
 		m.drawConfirm(canvas)
 
 	case ScreenDeath:
-		canvas.Write(0, 0, "You die...", LightRed, Black)
-		canvas.Write(0, 2, "Press Enter to return to startup.", LightGrey, Black)
-		canvas.Write(0, 4, "Morgue and high scores are unavailable in the Go port.", Brown, Black)
+		m.drawStatus(canvas, "death")
 	}
 
 	return canvas
+}
+
+func (m *AppModel) drawStatus(canvas *Canvas, kind string) {
+	result := runPresentation(m.presentationPolicy, "presentation.status", map[string]any{
+		"kind":   kind,
+		"height": canvas.height,
+		"notice": m.notice,
+	})
+
+	drawPresentation(canvas, fullRegion(canvas), result)
 }
 
 func (m *AppModel) drawGameMenu(canvas *Canvas) {
@@ -285,22 +326,22 @@ func (m *AppModel) drawGameMenu(canvas *Canvas) {
 
 		switch m.screen {
 		case ScreenInventory:
-			DrawInventory(canvas, view)
+			DrawInventory(canvas, view, m.presentationPolicy)
 
 		case ScreenSkills:
-			DrawSkills(canvas, view, m.catalog, m.skillFocusAction)
+			DrawSkills(canvas, view, m.skillFocusAction, m.presentationPolicy)
 
 		case ScreenQuaff:
-			DrawQuaff(canvas, view)
+			DrawQuaff(canvas, view, m.presentationPolicy)
 
 		case ScreenDrop:
-			DrawDrop(canvas, view, m.dropQuantity)
+			DrawDrop(canvas, view, m.dropQuantity, m.presentationPolicy)
 
 		case ScreenWield:
-			DrawWield(canvas, view)
+			DrawWield(canvas, view, m.presentationPolicy)
 
 		case ScreenWear, ScreenTakeOff:
-			DrawArmour(canvas, view, m.screen == ScreenTakeOff)
+			DrawArmour(canvas, view, m.screen == ScreenTakeOff, m.presentationPolicy)
 		}
 	}
 
@@ -316,8 +357,15 @@ func (m *AppModel) nextEquipmentTick() tea.Cmd {
 	})
 }
 
-func (m *AppModel) View() tea.View {
-	view := tea.NewView(m.renderCanvas().Styled())
+func (m *AppModel) View() (view tea.View) {
+	defer func() {
+		if failure := recover(); failure != nil {
+			view = tea.NewView(fmt.Sprintf("Lua presentation error: %v", failure))
+			view.AltScreen = true
+		}
+	}()
+
+	view = tea.NewView(m.renderCanvas().Styled())
 
 	view.AltScreen = true
 
@@ -325,11 +373,24 @@ func (m *AppModel) View() tea.View {
 }
 
 func (m *AppModel) Close() error {
+	var err error
+
 	if m.game != nil {
-		return m.game.Close()
+		err = m.game.Close()
+		m.game = nil
 	}
 
-	return nil
+	if m.presentationRuntime != nil {
+		m.presentationRuntime.Close()
+		m.presentationRuntime = nil
+	}
+
+	if m.presentationWorld != nil {
+		m.presentationWorld.Close()
+		m.presentationWorld = nil
+	}
+
+	return err
 }
 
 func (m *AppModel) savedRunExists() bool {

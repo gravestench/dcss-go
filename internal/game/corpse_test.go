@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/monster"
 	"github.com/gravestench/akara"
 )
 
@@ -47,7 +46,7 @@ func testCorpseAt(t *testing.T, g *Game, kind string, position ecs.Position) aka
 
 	if _, err := g.stores.Corpses.Set(id, ecs.Corpse{
 		MonsterID:  "MONS_RAT",
-		Freshness:  monster.FreshestCorpse,
+		Freshness:  110,
 		Appearance: 1,
 	}); err != nil {
 		t.Fatal(err)
@@ -83,7 +82,10 @@ func TestCockroachCorpseCannotBecomeSkeleton(t *testing.T) {
 
 	defer loaded.Close()
 
-	if err := loaded.corpseAging.TickLevel(1, 2200); err != nil {
+	if err := loaded.runWorldPolicy("world.age_corpses", map[string]any{
+		"level_id": 1,
+		"elapsed":  2200,
+	}); err != nil {
 		t.Fatal(err)
 	}
 

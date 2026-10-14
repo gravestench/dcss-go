@@ -262,6 +262,55 @@ func TestPregameBothChoiceOrdersAndSixWeapons(t *testing.T) {
 	}
 }
 
+func TestPregameWeaponRecommendationsComeFromLua(t *testing.T) {
+	m := pregameModel(t)
+	pressApp(m, "enter")
+	pressApp(m, "j")
+	pressApp(m, "a")
+
+	if m.screen != ScreenWeapon || len(m.options) != 6 {
+		t.Fatalf("weapon menu = %v, options %+v", m.screen, m.options)
+	}
+
+	if m.options[0].Restriction != "restricted" ||
+		m.options[1].Restriction != "recommended" ||
+		m.options[5].Restriction != "restricted" {
+		t.Fatalf("weapon recommendations = %+v", m.options)
+	}
+}
+
+func TestLuaWeaponOptionsCoverSupportedFighterSpecies(t *testing.T) {
+	for _, speciesID := range []string{
+		"SP_HUMAN",
+		"SP_HILL_ORC",
+		"SP_DEEP_ELF",
+		"SP_MINOTAUR",
+	} {
+		t.Run(speciesID, func(t *testing.T) {
+			m := pregameModel(t)
+
+			m.speciesID = speciesID
+			m.jobID = "JOB_FIGHTER"
+			m.enterWeaponChoice()
+
+			if m.screen != ScreenWeapon || len(m.options) != 6 {
+				t.Fatalf("weapon options for %s: %v / %+v", speciesID, m.screen, m.options)
+			}
+
+			for _, option := range m.options {
+				validRestriction := option.Restriction == "recommended" ||
+					option.Restriction == "restricted"
+
+				if option.ID == "" ||
+					option.Name == "" ||
+					!validRestriction {
+					t.Fatalf("invalid %s option: %+v", speciesID, option)
+				}
+			}
+		})
+	}
+}
+
 func TestHillOrcFighterMenuStartAndSaveRestore(t *testing.T) {
 	m := pregameModel(t)
 	enterName(m, "Orcus")

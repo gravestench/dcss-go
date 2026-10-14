@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/monster"
 	"dcrawl-go/internal/save"
 	"github.com/gravestench/akara"
 )
@@ -15,13 +14,12 @@ func TestEnergySchedulerOrdersReadyMonstersByEnergy(t *testing.T) {
 	defer world.Close()
 
 	stores := ecs.Register(world)
-	catalog := testCatalog(t)
+	g := newStepGame(t)
 	scheduler := TurnScheduler{
 		actors:    stores.Actors,
 		positions: stores.Positions,
 		energies:  stores.MonsterEnergy,
-		catalog:   catalog,
-		rng:       NewRNGStreams(1),
+		policy:    g.scripts.Policy,
 	}
 
 	ids := make(map[string]akara.Entity)
@@ -59,7 +57,7 @@ func TestEnergySchedulerOrdersReadyMonstersByEnergy(t *testing.T) {
 
 		stores.Positions.Set(entity, ecs.Position{LevelID: 1})
 		stores.MonsterEnergy.Set(entity, ecs.MonsterEnergy{
-			Points: monster.InitialActionEnergy,
+			Points: 70,
 		})
 	}
 
@@ -78,7 +76,11 @@ func TestEnergySchedulerOrdersReadyMonstersByEnergy(t *testing.T) {
 			jackal.Points, worm.Points, rat.Points)
 	}
 
-	first, ready := scheduler.NextReady(1)
+	first, ready, err := scheduler.NextReady(1)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if !ready || first != ids["MONS_JACKAL"] {
 		t.Fatalf("first ready = %d/%v, want jackal", first, ready)
@@ -88,7 +90,11 @@ func TestEnergySchedulerOrdersReadyMonstersByEnergy(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	second, ready := scheduler.NextReady(1)
+	second, ready, err := scheduler.NextReady(1)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if !ready || second != ids["MONS_RAT"] {
 		t.Fatalf("second ready = %d/%v, want rat", second, ready)
@@ -98,7 +104,13 @@ func TestEnergySchedulerOrdersReadyMonstersByEnergy(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if next, ready := scheduler.NextReady(1); ready {
+	next, ready, err := scheduler.NextReady(1)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if ready {
 		t.Fatalf("unexpected ready monster %d", next)
 	}
 
@@ -111,7 +123,11 @@ func TestEnergySchedulerOrdersReadyMonstersByEnergy(t *testing.T) {
 		ids["MONS_WORM"],
 		ids["MONS_RAT"],
 	} {
-		entity, ready := scheduler.NextReady(1)
+		entity, ready, err := scheduler.NextReady(1)
+
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		if !ready || entity != want {
 			t.Fatalf("next ready = %d/%v, want %d", entity, ready, want)
@@ -212,7 +228,7 @@ func TestRestoreAllowsReadyEnergyAfterPlayerDeath(t *testing.T) {
 
 	// The player can die before the queued monsters spend their action energy.
 	playerHealth.Current = 0
-	ratEnergy.Points = monster.ActionEnergyThreshold
+	ratEnergy.Points = 80
 
 	snapshot := g.Snapshot()
 	restored, err := Restore(snapshot, testCatalog(t))
@@ -273,7 +289,7 @@ func TestPoisonDeathPreservesReadyMonsterEnergyInSave(t *testing.T) {
 	for _, entity := range active {
 		energy, _ := g.stores.MonsterEnergy.Get(entity)
 
-		if energy.Points < monster.ActionEnergyThreshold {
+		if energy.Points < 80 {
 			t.Fatalf("monster %d lost ready energy after player death: %d",
 				entity, energy.Points)
 		}

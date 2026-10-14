@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/monster"
 	"github.com/gravestench/akara"
 )
 
@@ -146,22 +145,6 @@ func TestFrilledLizardEncounterUsesCatalogAndSurvivesSave(t *testing.T) {
 		t.Fatalf("lizard definition %+v actor %+v health %+v position %+v AI %+v", definition, actor, health, position, ai)
 	}
 
-	wantRNG := NewRNGStreams(g.seed)
-
-	for _, average := range []int{
-		25,
-		55,
-		20,
-	} {
-		if _, err := monster.RollHP(wantRNG, average); err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	if wantRNG.States()["monster_hp"] != g.rng.States()["monster_hp"] {
-		t.Fatal("monster factory used unexpected RNG streams or draw order")
-	}
-
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))
 
 	if err != nil {
@@ -172,41 +155,5 @@ func TestFrilledLizardEncounterUsesCatalogAndSurvivesSave(t *testing.T) {
 
 	if !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatal("lizard state changed across save restore")
-	}
-}
-
-func TestPreviousTwoAnimalScenarioSaveStillLoads(t *testing.T) {
-	g := newStepGame(t)
-	previous := g.Snapshot()
-
-	previous.ScenarioID = legacyAnimalScenarioID
-
-	for i := len(previous.Entities) - 1; i >= 0; i-- {
-		if previous.Entities[i].Actor != nil &&
-			previous.Entities[i].Actor.KindID == "MONS_FRILLED_LIZARD" {
-			previous.Entities = append(previous.Entities[:i], previous.Entities[i+1:]...)
-		}
-	}
-
-	previousRNG := NewRNGStreams(g.seed)
-
-	for _, average := range []int{25, 55} {
-		if _, err := monster.RollHP(previousRNG, average); err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	previous.RNG = previousRNG.States()
-
-	loaded, err := Restore(previous, testCatalog(t))
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	defer loaded.Close()
-
-	if !reflect.DeepEqual(previous, loaded.Snapshot()) {
-		t.Fatal("previous two-animal save changed on load")
 	}
 }

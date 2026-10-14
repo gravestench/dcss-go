@@ -1,383 +1,87 @@
 package terminal
 
-import (
-	"fmt"
-	"strings"
+import "dcrawl-go/internal/game"
 
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/content"
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/game"
-)
-
-func (m *AppModel) drawConfirm(canvas *Canvas) {
-	prompt := "Save game and exit? (Y/n)"
-
-	if m.confirm == confirmAbandon {
-		prompt = "Are you sure you want to abandon this character? (y/N)"
+func fullRegion(canvas *Canvas) Region {
+	return Region{
+		W: canvas.width,
+		H: canvas.height,
 	}
-
-	canvas.Write(0, 0, prompt, LightGrey, Black)
 }
 
-// DrawInventory follows the source's full-screen inventory listing and pack letters.
-func DrawInventory(canvas *Canvas, view game.View) {
-	canvas.Write(0, 0, fmt.Sprintf("Inventory: %d/52 slots", len(view.Inventory)), White, Black)
-	order := []struct {
-		class string
-		title string
-	}{
-		{
-			class: "OBJ_WEAPONS",
-			title: "Hand Weapons",
-		},
-
-		{
-			class: "OBJ_MISSILES",
-			title: "Missiles",
-		},
-
-		{
-			class: "OBJ_ARMOUR",
-			title: "Armour",
-		},
-
-		{
-			class: "OBJ_WANDS",
-			title: "Wands",
-		},
-
-		{
-			class: "OBJ_SCROLLS",
-			title: "Scrolls",
-		},
-
-		{
-			class: "OBJ_POTIONS",
-			title: "Potions",
-		},
-	}
-
-	y := 2
-
-	for _, category := range order {
-		var entries []int
-
-		for i, item := range view.Inventory {
-			if item.Class == category.class {
-				entries = append(entries, i)
-			}
-		}
-
-		if len(entries) == 0 {
-			continue
-		}
-
-		canvas.Write(0, y, category.title, LightBlue, Black)
-		y++
-
-		for _, i := range entries {
-			item := view.Inventory[i]
-			label := item.Name
-
-			if item.Quantity > 1 {
-				label = fmt.Sprintf("%d %s", item.Quantity, item.Name)
-			}
-
-			if item.Plus != 0 {
-				label = fmt.Sprintf("%+d %s", item.Plus, label)
-			}
-
-			if item.Slot != "" {
-				label += " (" + item.Slot + ")"
-			}
-
-			entry := fmt.Sprintf("%c - %s", menuLetter(i), label)
-
-			writeClipped(canvas, 1, y, canvas.width-1, entry, LightGrey)
-
-			y++
-		}
-
-		y++
-	}
-
-	canvas.Write(0, canvas.height-2, "Esc - Return    ? - Help", Brown, Black)
-}
-
-// DrawDrop shares inventory letters with the standard inventory screen.
-func DrawDrop(canvas *Canvas, view game.View, quantity string) {
-	DrawInventory(canvas, view)
-
-	if quantity == "" {
-		quantity = "all"
-	}
-
-	canvas.Write(0, 0, "Drop which item? (quantity: "+quantity+")", White, Black)
-	canvas.Write(0, canvas.height-2,
-		"Digits - Quantity    Esc - Cancel    ? - Help", Brown, Black)
-}
-
-// DrawWield keeps the inventory letters visible while filtering to weapons.
-func DrawWield(canvas *Canvas, view game.View) {
-	canvas.Write(0, 0, "Wield which item?", White, Black)
-	canvas.Write(1, 2, "- - bare hands", LightGrey, Black)
-
-	y := 4
-
-	for index, item := range view.Inventory {
-		if item.Class != "OBJ_WEAPONS" {
-			continue
-		}
-
-		label := item.Name
-
-		if item.Slot == "weapon" {
-			label += " (wielded)"
-		}
-
-		entry := fmt.Sprintf("%c - %s", menuLetter(index), label)
-
-		writeClipped(canvas, 1, y, canvas.width-1, entry, LightGrey)
-
-		y++
-	}
-
-	canvas.Write(0, canvas.height-2, "- - Bare hands    Esc - Cancel    ? - Help", Brown, Black)
-}
-
-// DrawArmour keeps source inventory letters stable in both equipment menus.
-func DrawArmour(canvas *Canvas, view game.View, remove bool) {
-	title := "Wear which item?"
-
-	if remove {
-		title = "Take off which item?"
-	}
-
-	canvas.Write(0, 0, title, White, Black)
-	y := 2
-
-	for index, item := range view.Inventory {
-		if item.Class != "OBJ_ARMOUR" {
-			continue
-		}
-
-		if remove &&
-			item.Slot == "" ||
-			!remove &&
-				item.Slot != "" {
-			continue
-		}
-
-		label := item.Name
-
-		if item.Slot != "" {
-			label += " (worn)"
-		}
-
-		entry := fmt.Sprintf("%c - %s", menuLetter(index), label)
-		writeClipped(canvas, 1, y, canvas.width-1, entry, LightGrey)
-		y++
-	}
-
-	canvas.Write(0, canvas.height-2, "Esc - Cancel    ? - Help", Brown, Black)
-}
-
-// DrawQuaff uses inventory letters so a choice always selects the displayed item.
-func DrawQuaff(canvas *Canvas, view game.View) {
-	canvas.Write(0, 0, "Quaff which potion?", White, Black)
-	y := 2
-
-	for index, item := range view.Inventory {
-		if item.Class != "OBJ_POTIONS" {
-			continue
-		}
-
-		label := item.Name
-
-		if item.Quantity > 1 {
-			label = fmt.Sprintf("%d %s", item.Quantity, label)
-		}
-
-		entry := fmt.Sprintf("%c - %s", menuLetter(index), label)
-
-		writeClipped(canvas, 1, y, canvas.width-1, entry, LightGrey)
-
-		y++
-	}
-
-	if y == 2 {
-		canvas.Write(1, y, "You have no potions.", Brown, Black)
-	}
-
-	canvas.Write(0, canvas.height-2, "Esc - Cancel    ? - Help", Brown, Black)
-}
-
-func skillName(id string) string {
-	special := map[string]string{
-		"SK_MACES_FLAILS":   "Maces & Flails",
-		"SK_UNARMED_COMBAT": "Unarmed Combat",
-		"SK_SHORT_BLADES":   "Short Blades",
-		"SK_LONG_BLADES":    "Long Blades",
-	}
-
-	if name := special[id]; name != "" {
-		return name
-	}
-
-	name := strings.TrimPrefix(id, "SK_")
-
-	return strings.Title(strings.ToLower(strings.ReplaceAll(name, "_", " ")))
-}
-
-// DrawSkills uses the source's two columns and shows live training choices.
-func DrawSkills(
+func drawInventoryModal(
 	canvas *Canvas,
 	view game.View,
-	catalog content.Catalog,
-	focusAction bool,
+	mode string,
+	quantity string,
+	policy presentationPolicy,
 ) {
-	canvas.Write(0, 0, "Skills", White, Black)
+	result := runPresentation(policy, "presentation.inventory_modal", map[string]any{
+		"mode":      mode,
+		"inventory": inventoryInput(view.Inventory),
+		"quantity":  quantity,
+		"height":    canvas.height,
+	})
 
-	for _, x := range []int{1, 40} {
-		writeClipped(canvas, x, 2, 38, "Skill                 Level Apt Train", LightBlue)
-	}
-
-	species, err := catalog.Species(view.SpeciesID)
-
-	if err != nil {
-		writeClipped(canvas, 1, 3, canvas.width-2,
-			"Skills unavailable: unknown species", LightRed)
-
-		return
-	}
-
-	levels := make(map[string]int, len(view.Skills))
-	settings := make(map[string]ecs.SkillTrainingSetting, len(view.SkillTraining.Settings))
-
-	for _, skill := range view.Skills {
-		aptitude, err := species.SkillAptitude(skill.ID)
-
-		if err != nil {
-			writeClipped(canvas, 1, 3, canvas.width-2,
-				"Skills unavailable: invalid species skill", LightRed)
-
-			return
-		}
-
-		scaled, err := character.ScaledSkill(skill, 10, aptitude)
-
-		if err != nil {
-			writeClipped(canvas, 1, 3, canvas.width-2,
-				"Skills unavailable: invalid skill points", LightRed)
-
-			return
-		}
-
-		levels[skill.ID] = scaled
-	}
-
-	for _, setting := range view.SkillTraining.Settings {
-		settings[setting.ID] = setting
-	}
-
-	letter := 0
-
-	for col, skills := range catalog.Presentation().SkillColumns {
-		x := 1 + col*39
-
-		for row, id := range skills {
-			if id == "" {
-				continue
-			}
-
-			apt := species.Aptitudes[id]
-			color := DarkGrey
-
-			if levels[id] > 0 {
-				color = LightGrey
-			}
-
-			training := "--"
-			setting := settings[id]
-
-			if setting.Enabled {
-				training = fmt.Sprintf("%d%%", view.SkillPercent[id])
-			}
-
-			if setting.Focused {
-				training = "*" + training
-			}
-
-			label := fmt.Sprintf(
-				"%c - %-18s %4.1f %+2d %5s",
-				menuLetter(letter),
-				skillName(id),
-				float64(levels[id])/10,
-				apt.Value,
-				training,
-			)
-			writeClipped(canvas, x, 3+row, 38, label, color)
-			letter++
-		}
-	}
-
-	writeClipped(canvas, 0, canvas.height-5, canvas.width,
-		"/ - mode    | - skill    * - skills    ! - view", Brown)
-
-	writeClipped(canvas, 0, canvas.height-4, canvas.width,
-		"= - target    ? - help    Esc - Return", Brown)
-
-	mode := "Automatic training"
-
-	if view.SkillTraining.Manual {
-		mode = "Manual training"
-	}
-
-	action := "toggle"
-
-	if focusAction {
-		action = "focus"
-	}
-
-	writeClipped(
-		canvas,
-		0,
-		canvas.height-3,
-		canvas.width,
-		fmt.Sprintf("%s | Skill letters: %s", mode, action),
-		Brown,
-	)
+	drawPresentation(canvas, fullRegion(canvas), result)
 }
 
-// DrawHelp keeps the source command meanings visible for supported and stubbed actions.
-func DrawHelp(canvas *Canvas) {
-	lines := []string{
-		"Dungeon Crawl Stone Soup - Help",
-		"",
-		"Movement: h j k l, y u b n, arrow keys",
-		"Wait: . or s     Pick up: g ,     Drop: d     Wield: w",
-		"Wear: W     Take off: T     Esc interrupts equipment delay",
-		"Doors: O open, C close (direction if prompted)",
-		"Stairs: < or >",
-		"Inventory: i     Skills: m     Help: ?",
-		"Save and exit: S (confirm), Ctrl-S (now)",
-		"Abandon character: Ctrl-Q (confirm)",
-		"Quaff: q (curing, might)         Run right: L (unavailable)",
-		"Other unported commands explain their unavailable status.",
-		"",
-		"Esc - Return",
+func DrawInventory(canvas *Canvas, view game.View, policy presentationPolicy) {
+	drawInventoryModal(canvas, view, "inventory", "", policy)
+}
+
+func DrawDrop(canvas *Canvas, view game.View, quantity string, policy presentationPolicy) {
+	drawInventoryModal(canvas, view, "drop", quantity, policy)
+}
+
+func DrawWield(canvas *Canvas, view game.View, policy presentationPolicy) {
+	drawInventoryModal(canvas, view, "wield", "", policy)
+}
+
+func DrawArmour(canvas *Canvas, view game.View, remove bool, policy presentationPolicy) {
+	mode := "wear"
+
+	if remove {
+		mode = "take_off"
 	}
 
-	for y, line := range lines {
-		color := LightGrey
+	drawInventoryModal(canvas, view, mode, "", policy)
+}
 
-		if y == 0 {
-			color = Yellow
-		}
+func DrawQuaff(canvas *Canvas, view game.View, policy presentationPolicy) {
+	drawInventoryModal(canvas, view, "quaff", "", policy)
+}
 
-		writeClipped(canvas, 0, y, canvas.width, line, color)
+func DrawSkills(canvas *Canvas, view game.View, focusAction bool, policy presentationPolicy) {
+	percent := make(map[string]any, len(view.SkillPercent))
+
+	for id, value := range view.SkillPercent {
+		percent[id] = value
 	}
+
+	result := runPresentation(policy, "presentation.skills", map[string]any{
+		"species_id":     view.SpeciesID,
+		"skills":         skillInput(view),
+		"skill_training": trainingInput(view),
+		"skill_percent":  percent,
+		"focus_action":   focusAction,
+		"height":         canvas.height,
+	})
+
+	drawPresentation(canvas, fullRegion(canvas), result)
+}
+
+func DrawHelp(canvas *Canvas, policy presentationPolicy) {
+	result := runPresentation(policy, "presentation.help", map[string]any{})
+	drawPresentation(canvas, fullRegion(canvas), result)
+}
+
+func (m *AppModel) drawConfirm(canvas *Canvas) {
+	result := runPresentation(m.presentationPolicy, "presentation.confirm", map[string]any{
+		"abandon": m.confirm == confirmAbandon,
+	})
+
+	drawPresentation(canvas, fullRegion(canvas), result)
 }
 
 func (m *AppModel) handleModalKey(key string) {
@@ -398,6 +102,6 @@ func (m *AppModel) handleModalKey(key string) {
 
 func (m *AppModel) drawModalNotice(canvas *Canvas) {
 	if m.notice != "" {
-		writeClipped(canvas, 0, canvas.height-1, canvas.width, m.notice, LightRed)
+		m.drawStatus(canvas, "modal_notice")
 	}
 }

@@ -219,6 +219,52 @@ func (g *Game) restoreLocationComponents(
 }
 
 func (g *Game) validateRestoredPlacement() error {
+	if _, err := g.scripts.Policy("save.validate_training", nil); err != nil {
+		return err
+	}
+
+	if _, err := g.scripts.Policy("save.validate_player", nil); err != nil {
+		return err
+	}
+
+	if _, err := g.scripts.Policy("save.validate_status", nil); err != nil {
+		return err
+	}
+
+	if _, err := g.scripts.Policy("save.validate_equipment", nil); err != nil {
+		return err
+	}
+
+	if _, err := g.scripts.Policy("save.validate_corpses", map[string]any{
+		"scenario_id": g.scenarioID,
+	}); err != nil {
+		return err
+	}
+
+	playerHealth, _ := g.stores.Health.Get(g.player)
+
+	if _, err := g.scripts.Policy("save.validate_monsters", map[string]any{
+		"scenario_id":  g.scenarioID,
+		"current_aut":  int64(g.currentAut),
+		"player_alive": playerHealth.Current > 0,
+		"levels":       scenarioLevelPolicyRecords(g.levels),
+	}); err != nil {
+		return err
+	}
+
+	initialCount := 0
+
+	for _, level := range g.levels {
+		initialCount += level.initialActors
+	}
+
+	if _, err := g.scripts.Policy("save.validate_experience", map[string]any{
+		"scenario_id":   g.scenarioID,
+		"initial_count": initialCount,
+	}); err != nil {
+		return err
+	}
+
 	playerPosition, positioned := g.stores.Positions.Get(g.player)
 
 	if !positioned {
@@ -237,14 +283,6 @@ func (g *Game) validateRestoredPlacement() error {
 				return fmt.Errorf("inactive corpse level %d lacks away clock", position.LevelID)
 			}
 		}
-	}
-
-	if _, err := newPlayerCombat(g).defense(); err != nil {
-		return fmt.Errorf("unsupported saved player defense: %w", err)
-	}
-
-	if _, err := newPlayerCombat(g).attackDelayInput("MONS_RAT"); err != nil {
-		return fmt.Errorf("unsupported saved player attack timing: %w", err)
 	}
 
 	return nil

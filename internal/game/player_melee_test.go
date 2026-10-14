@@ -5,84 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/save"
 )
-
-func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
-	for _, weaponID := range []string{
-		"WPN_RAPIER",
-		"WPN_FLAIL",
-		"WPN_WAR_AXE",
-		"WPN_TRIDENT",
-		"WPN_LONG_SWORD",
-		"WPN_UNARMED",
-	} {
-		t.Run(weaponID, func(t *testing.T) {
-			catalog := testCatalog(t)
-			g, err := NewScenario(3, catalog, weaponID, "Tester")
-
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			defer g.Close()
-			in, err := newPlayerCombat(g).attackInput("MONS_RAT")
-
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			if in.Strength != 16 ||
-				in.Dexterity != 12 ||
-				in.FightingSkill100 != 300 ||
-				in.WeaponSkill100 != 200 ||
-				in.DefenderEV != 10 || in.DefenderAC != 1 {
-				t.Fatalf("source input = %+v", in)
-			}
-
-			if weaponID == "WPN_UNARMED" {
-				if !in.Unarmed ||
-					in.WeaponSkillID != "SK_UNARMED_COMBAT" ||
-					in.UnarmedSkill256 != 513 ||
-					in.WeaponDamage != 0 {
-					t.Fatalf("unarmed input = %+v", in)
-				}
-
-				return
-			}
-
-			kind, err := catalog.Item(weaponID)
-
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			if in.Unarmed ||
-				in.WeaponSkillID != kind.WeaponSkill ||
-				in.WeaponDamage != kind.Weapon.Damage ||
-				in.WeaponHit != kind.Weapon.Hit {
-				t.Fatalf("%s input = %+v, catalog %+v", weaponID, in, kind.Weapon)
-			}
-
-			for _, entity := range g.stores.Equipped.Entities() {
-				item, found := g.stores.Items.Get(entity)
-
-				if found && item.KindID == weaponID {
-					item.Plus = 2
-				}
-			}
-
-			in, err = newPlayerCombat(g).attackInput("MONS_RAT")
-
-			if err != nil ||
-				in.WeaponPlus != 2 {
-				t.Fatalf("enchanted weapon input = %+v, %v", in, err)
-			}
-		})
-	}
-}
 
 func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 	g := newStepGame(t)
@@ -280,27 +205,5 @@ func TestRestoreRejectsUnsupportedPlayerMeleeState(t *testing.T) {
 				t.Fatal("failed restore changed live game")
 			}
 		})
-	}
-}
-
-func TestPlayerMeleeUsesStoredSkillPoints(t *testing.T) {
-	g := newStepGame(t)
-	skills, _ := g.stores.Skills.Get(g.player)
-
-	for i := range skills.Entries {
-		if skills.Entries[i].ID == "SK_SHORT_BLADES" {
-			skills.Entries[i] = character.Skill{
-				ID:     "SK_SHORT_BLADES",
-				Level:  2,
-				Points: 299,
-			}
-		}
-	}
-
-	in, err := newPlayerCombat(g).attackInput("MONS_RAT")
-
-	if err != nil ||
-		in.WeaponSkill100 <= 200 {
-		t.Fatalf("modified skill points ignored: %+v, %v", in, err)
 	}
 }

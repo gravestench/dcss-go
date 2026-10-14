@@ -24,7 +24,7 @@ func ProjectCharacterCatalog(
 	world := akara.NewWorld()
 	defer world.Close()
 
-	runtime, err := New(world, rules, Services{})
+	runtime, err := NewCatalog(world, rules)
 
 	if err != nil {
 		return content.Catalog{}, nil, err

@@ -45,13 +45,6 @@ func TestWieldRecoveredStartingWeaponAfterBareHands(t *testing.T) {
 		t.Fatalf("bare hands = %+v, %v; weapon equipped=%v", bare, err, g.stores.Equipped.Has(weapon))
 	}
 
-	input, err := newPlayerCombat(g).attackDelayInput("MONS_RAT")
-
-	if err != nil ||
-		!input.Unarmed {
-		t.Fatalf("bare-hands attack = %+v, %v", input, err)
-	}
-
 	alreadyBare, err := g.Step(Command{Kind: CommandWield})
 
 	if err != nil ||
@@ -78,13 +71,6 @@ func TestWieldRecoveredStartingWeaponAfterBareHands(t *testing.T) {
 	if err != nil ||
 		wielded.Spent != 5 || !g.stores.Equipped.Has(weapon) {
 		t.Fatalf("re-wield = %+v, %v; equipped=%v", wielded, err, g.stores.Equipped.Has(weapon))
-	}
-
-	input, err = newPlayerCombat(g).attackDelayInput("MONS_RAT")
-
-	if err != nil ||
-		input.Unarmed || input.WeaponSkillID != "SK_SHORT_BLADES" {
-		t.Fatalf("re-wield attack = %+v, %v", input, err)
 	}
 
 	restored, err := Restore(g.Snapshot(), testCatalog(t))
@@ -114,14 +100,6 @@ func TestWieldAlternateCarriedWeaponAndRestore(t *testing.T) {
 		g.stores.Equipped.Has(starting) ||
 		!g.stores.Equipped.Has(flail) {
 		t.Fatalf("weapon switch = %+v, %v", result, err)
-	}
-
-	input, err := newPlayerCombat(g).attackInput("MONS_RAT")
-
-	if err != nil ||
-		input.WeaponSkillID != "SK_MACES_FLAILS" ||
-		input.WeaponSkill100 != 0 {
-		t.Fatalf("untrained flail attack = %+v, %v", input, err)
 	}
 
 	restored, err := Restore(g.Snapshot(), testCatalog(t))

@@ -2,7 +2,6 @@ package game
 
 import (
 	"fmt"
-	"slices"
 	"sort"
 
 	"dcrawl-go/internal/character"
@@ -51,41 +50,13 @@ func copySkillTrainingComponent(
 	return &copy
 }
 
-func validateSavedItem(
-	record save.EntityRecord,
-	catalog content.Catalog,
-	player akara.Entity,
-	occupied map[string]string,
-) error {
-	item := record.Item
-	kind, err := catalog.Item(item.KindID)
-
-	if err != nil {
-		return err
-	}
-
-	if err := validateItemProperties(*item, kind); err != nil {
-		return fmt.Errorf("item %d has %w", record.ID, err)
-	}
-
+func validateSavedItem(record save.EntityRecord) error {
 	if (record.Position == nil) == (record.CarriedBy == nil) ||
 		record.Actor != nil {
 		return fmt.Errorf(
 			"item %d must have exactly one of position or carrier, never both",
 			record.ID,
 		)
-	}
-
-	corpseKind := item.KindID == "CORPSE_BODY" || item.KindID == "CORPSE_SKELETON"
-
-	if corpseKind != (record.Corpse != nil) {
-		return fmt.Errorf("item %d has mismatched corpse state", record.ID)
-	}
-
-	if corpseKind {
-		if err := validateSavedCorpse(record, catalog); err != nil {
-			return err
-		}
 	}
 
 	if savedItemHasActorComponents(record) {
@@ -101,63 +72,6 @@ func validateSavedItem(
 		record.Position != nil ||
 		record.Equipped.Slot == "" {
 		return fmt.Errorf("item %d has invalid equipped slot or carrier", record.ID)
-	}
-
-	if record.CarriedBy.Holder != player {
-		// Monster inventory uses source slots that differ from player
-		// equipment slots. Validate each kind and slot after resolving the
-		// holder's saved actor record.
-		return nil
-	}
-
-	if kind.Slot == "" || record.Equipped.Slot != kind.Slot {
-		return fmt.Errorf("item %d has invalid equipped slot", record.ID)
-	}
-
-	// The supported Fighter species cannot wear barding.
-	if isBarding(kind.ID) {
-		return fmt.Errorf("item %d has barding equipped", record.ID)
-	}
-
-	if _, duplicate := occupied[kind.Slot]; duplicate {
-		return fmt.Errorf("duplicate equipped slot %s", kind.Slot)
-	}
-
-	occupied[kind.Slot] = kind.ID
-
-	return nil
-}
-
-func validateSavedCorpse(record save.EntityRecord, catalog content.Catalog) error {
-	item := record.Item
-	corpse := record.Corpse
-
-	if record.Position == nil ||
-		record.CarriedBy != nil ||
-		record.Equipped != nil || item.Quantity != 1 {
-		return fmt.Errorf("item %d has invalid ordinary monster corpse state", record.ID)
-	}
-
-	if !isOrdinaryMonster(corpse.MonsterID) ||
-		corpse.Freshness < 1 ||
-		corpse.Freshness > 110 ||
-		corpse.Appearance < 1 || corpse.Appearance > 255 {
-		return fmt.Errorf("item %d has invalid ordinary monster corpse state", record.ID)
-	}
-
-	definition, err := ordinaryMonster(catalog, corpse.MonsterID)
-
-	if err != nil {
-		return fmt.Errorf("item %d corpse: %w", record.ID, err)
-	}
-
-	if !definition.LeavesCorpse {
-		return fmt.Errorf("item %d has impossible %s corpse", record.ID, corpse.MonsterID)
-	}
-
-	if item.KindID == "CORPSE_SKELETON" &&
-		slices.Contains(definition.Flags, "M_NO_SKELETON") {
-		return fmt.Errorf("item %d has impossible %s skeleton", record.ID, corpse.MonsterID)
 	}
 
 	return nil
@@ -340,20 +254,6 @@ func RestoreWithRules(
 		)
 	}
 
-	scenarioMonsters, err := scenarioMonsterIDs(snapshot.ScenarioID)
-
-	if err != nil {
-		return nil, err
-	}
-
-	restorableMonsters := restorableMonsterIDs(
-		snapshot.ScenarioID,
-		scenarioMonsters,
-	)
-
-	usesPopulation := snapshot.ScenarioID == populationScenarioID ||
-		snapshot.ScenarioID == generatedDungeonScenarioID
-
 	if snapshot.PlayerID == 0 ||
 		snapshot.CurrentAut < 0 ||
 		len(snapshot.Levels) == 0 {
@@ -385,30 +285,25 @@ func RestoreWithRules(
 			actors:    stores.Actors,
 			positions: stores.Positions,
 			energies:  stores.MonsterEnergy,
-			catalog:   catalog,
-			rng:       rng,
 		},
 
 		currentAut: Aut(snapshot.CurrentAut),
 		messages:   append([]string(nil), snapshot.Messages...),
 	}
 
-	g.scripts, err = script.New(world, rules, script.Services{
-		ActiveActor: func() akara.Entity {
-			return g.turn.Actor
-		},
-		Random: g.rng.Intn,
-		Emit: func(kind, message string) {
-			g.turn.Events = append(g.turn.Events, Event{
-				Kind: kind,
-				Text: message,
-			})
-		},
-	})
+	services, err := g.scriptServices()
 
 	if err != nil {
 		return nil, err
 	}
+
+	g.scripts, err = script.New(world, rules, services)
+
+	if err != nil {
+		return nil, err
+	}
+
+	g.scheduler.policy = g.scripts.Policy
 
 	defer func() {
 		if err != nil {
@@ -425,8 +320,6 @@ func RestoreWithRules(
 		return nil, err
 	}
 
-	g.scheduler.catalog = g.catalog
-
 	if err := g.validateSavedLuaSchemas(
 		snapshot.LuaSchemas,
 		policy.AllowRulesetMismatch,
@@ -438,12 +331,7 @@ func RestoreWithRules(
 		return nil, err
 	}
 
-	if err := g.validateAndRegisterSavedEntities(
-		snapshot,
-		scenarioMonsters,
-		restorableMonsters,
-		usesPopulation,
-	); err != nil {
+	if err := g.validateAndRegisterSavedEntities(snapshot); err != nil {
 		return nil, err
 	}
 

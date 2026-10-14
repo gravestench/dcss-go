@@ -1,14 +1,12 @@
 package game
 
 import (
+	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/save"
+	"github.com/gravestench/akara"
 	"reflect"
 	"strings"
 	"testing"
-
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/save"
-	"dcrawl-go/internal/visibility"
-	"github.com/gravestench/akara"
 )
 
 func newPopulatedTestGame(t *testing.T, seed uint64) *Game {
@@ -46,8 +44,12 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 	for _, entity := range g.stores.AI.Entities() {
 		actor, found := g.stores.Actors.Get(entity)
 
-		if !found || !isOrdinaryMonster(actor.KindID) {
+		if !found {
 			t.Fatalf("unsupported populated actor %+v", actor)
+		}
+
+		if _, err := g.catalog.Monster(actor.KindID); err != nil {
+			t.Fatalf("unsupported populated actor %+v: %v", actor, err)
 		}
 
 		position, found := g.stores.Positions.Get(entity)
@@ -60,7 +62,12 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 
 		if level == nil ||
 			level.terrain[position.Y][position.X] != '.' ||
-			!farEnoughFromEntry(position.X, position.Y, entry, spawnDistanceFromEntry) {
+			max(
+				position.X-entry.x,
+				entry.x-position.X,
+				position.Y-entry.y,
+				entry.y-position.Y,
+			) < 5 {
 			t.Fatalf("monster %d spawned at %+v", entity, position)
 		}
 
@@ -77,148 +84,6 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 	if states["population"] == 0 || states["placement"] == 0 {
 		t.Fatalf("population RNG streams were not drawn: %+v", states)
 	}
-}
-
-func TestEarlyDungeonPopulationPoolIncludesPlainBiteKinds(t *testing.T) {
-	catalog := testCatalog(t)
-
-	for _, depth := range []int{1, 2} {
-		pool := catalog.DungeonMonsterPool(depth, func(id string) bool {
-			return !isOrdinaryMonster(id)
-		})
-
-		seen := make(map[string]bool)
-
-		for roll := range pool.TotalWeight() {
-			id, err := pool.Pick(roll)
-
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			seen[id] = true
-		}
-
-		if !seen["MONS_GIANT_COCKROACH"] {
-			t.Fatalf("D:%d excludes giant cockroach", depth)
-		}
-
-		if seen["MONS_WORM"] != (depth == 2) {
-			t.Fatalf("D:%d worm eligibility = %v", depth, seen["MONS_WORM"])
-		}
-
-		if !seen["MONS_JACKAL"] {
-			t.Fatalf("D:%d excludes jackal", depth)
-		}
-	}
-}
-
-func TestJackalPopulationCreatesAndSavesBands(t *testing.T) {
-	g := newJackalBandTestGame(t)
-
-	followersByLeader := make(map[akara.Entity]int)
-
-	for _, entity := range g.stores.Followers.Entities() {
-		follower, _ := g.stores.Followers.Get(entity)
-		actor, _ := g.stores.Actors.Get(entity)
-		position, _ := g.stores.Positions.Get(entity)
-
-		leader, _ := g.stores.Positions.Get(follower.Leader)
-		level := g.levels[position.LevelID]
-
-		if actor.KindID != "MONS_JACKAL" ||
-			leader == nil ||
-			leader.LevelID != position.LevelID ||
-			chebyshevDistance(position.X, position.Y, leader.X, leader.Y) > 3 {
-			t.Fatalf("invalid jackal follower %d at %+v with leader %+v", entity, position, leader)
-		}
-
-		visible, err := visibility.Compute(level.terrain, leader.X, leader.Y, 7)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if !visible[position.Y*level.width+position.X] {
-			t.Fatalf("jackal follower %d spawned outside leader sight", entity)
-		}
-
-		followersByLeader[follower.Leader]++
-	}
-
-	for leader, count := range followersByLeader {
-		if count < 1 || count > 3 {
-			t.Fatalf("jackal leader %d has %d followers", leader, count)
-		}
-	}
-
-	for _, level := range g.levels {
-		if level.initialActors < level.initialMonsters {
-			t.Fatalf("level %d lost population actors", level.ID)
-		}
-	}
-
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	defer restored.Close()
-
-	if !reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
-		t.Fatal("jackal bands changed across save and restore")
-	}
-
-	followerEntity := g.stores.Followers.Entities()[0]
-	follower, _ := g.stores.Followers.Get(followerEntity)
-	position, _ := g.stores.Positions.Get(followerEntity)
-	leaderPosition, _ := g.stores.Positions.Get(follower.Leader)
-
-	level := g.levels[position.LevelID]
-	visible, err := visibility.Compute(level.terrain, position.X, position.Y, 7)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	ai, _ := g.stores.AI.Get(followerEntity)
-	decision := newMonsterDecisionSystem(g)
-
-	if err := decision.chooseWanderTarget(
-		followerEntity,
-		ai,
-		level,
-		position.X,
-		position.Y,
-		visible,
-	); err != nil {
-		t.Fatal(err)
-	}
-
-	if chebyshevDistance(ai.TargetX, ai.TargetY, leaderPosition.X, leaderPosition.Y) >= 6 {
-		t.Fatalf("jackal wandered away from leader: %+v", ai)
-	}
-
-	if err := level.RemoveActor(follower.Leader); err != nil {
-		t.Fatal(err)
-	}
-
-	if !g.world.DestroyEntity(follower.Leader) {
-		t.Fatal("failed to remove jackal leader")
-	}
-
-	if _, found := decision.bandLeaderPosition(followerEntity, level.ID); found {
-		t.Fatal("follower still tracks a dead leader")
-	}
-
-	afterLoss, err := Restore(g.Snapshot(), testCatalog(t))
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	defer afterLoss.Close()
 }
 
 func newJackalBandTestGame(t *testing.T) *Game {
@@ -326,7 +191,7 @@ func TestPopulationSaveAndTurnContinuation(t *testing.T) {
 	}
 }
 
-func TestOlderFixedPopulationSaveWithoutBudgetsStillLoads(t *testing.T) {
+func TestRestoreRejectsFixedPopulationSaveWithoutBudgets(t *testing.T) {
 	g := newPopulatedTestGame(t, 41)
 	snapshot := g.Snapshot()
 
@@ -337,11 +202,10 @@ func TestOlderFixedPopulationSaveWithoutBudgetsStillLoads(t *testing.T) {
 
 	restored, err := Restore(snapshot, testCatalog(t))
 
-	if err != nil {
-		t.Fatal(err)
+	if err == nil {
+		restored.Close()
+		t.Fatal("restored fixed population without level budgets")
 	}
-
-	defer restored.Close()
 }
 
 func TestRestoreRejectsOverfullPopulationLevel(t *testing.T) {

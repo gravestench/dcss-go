@@ -4,8 +4,32 @@ import (
 	"reflect"
 	"testing"
 
+	"dcrawl-go/internal/ecs"
 	"github.com/gravestench/akara"
 )
+
+func (g *Game) floorItemAt(position ecs.Position) (akara.Entity, bool) {
+	var corpse akara.Entity
+
+	for _, entity := range g.stores.Items.Entities() {
+		itemPosition, located := g.stores.Positions.Get(entity)
+
+		if !located ||
+			*itemPosition != position ||
+			g.stores.CarriedBy.Has(entity) {
+			continue
+		}
+
+		if g.stores.Corpses.Has(entity) {
+			corpse = entity
+			continue
+		}
+
+		return entity, true
+	}
+
+	return corpse, corpse != 0
+}
 
 func carriedItemByKind(t *testing.T, g *Game, kindID string) akara.Entity {
 	t.Helper()
@@ -171,10 +195,6 @@ func TestDropEquipmentRulesAndInvalidRequests(t *testing.T) {
 
 	if !g.stores.Positions.Has(weapon) || g.stores.CarriedBy.Has(weapon) {
 		t.Fatal("unwielded weapon is not on the floor")
-	}
-
-	if _, err := newPlayerCombat(g).attackDelayInput("MONS_RAT"); err != nil {
-		t.Fatalf("unarmed follow-up unavailable: %v", err)
 	}
 
 	restored, err := Restore(g.Snapshot(), testCatalog(t))

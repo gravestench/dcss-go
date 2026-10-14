@@ -231,7 +231,7 @@ func TestRestoreRejectsPendingShieldWithTwoHandedWeapon(t *testing.T) {
 				ItemID:    shield,
 				Slot:      "shield",
 				Phase:     "wear",
-				Remaining: armourEquipTurns - 1,
+				Remaining: 5 - 1,
 			}
 		}
 	}
@@ -257,7 +257,7 @@ func TestRestoreRejectsImpossibleRemovalTurnCount(t *testing.T) {
 
 	for index := range snapshot.Entities {
 		if snapshot.Entities[index].ID == snapshot.PlayerID {
-			snapshot.Entities[index].Equipment.Remaining = armourEquipTurns
+			snapshot.Entities[index].Equipment.Remaining = 5
 		}
 	}
 
@@ -521,7 +521,7 @@ func TestRestoreRejectsQueuedBarding(t *testing.T) {
 					OldItemID: boots,
 					Slot:      "boots",
 					Phase:     phase,
-					Remaining: armourEquipTurns - 1,
+					Remaining: 5 - 1,
 				}); err != nil {
 					t.Fatal(err)
 				}

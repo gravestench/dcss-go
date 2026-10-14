@@ -113,7 +113,7 @@ func TestSkillsPageShowsProgressWithinLevel(t *testing.T) {
 
 	canvas := NewCanvas(79, 24)
 
-	DrawSkills(canvas, view, m.catalog, false)
+	DrawSkills(canvas, view, false, m.presentationPolicy)
 
 	if !strings.Contains(strings.Join(canvas.PlainRows(), "\n"), "3.1") {
 		t.Fatal("skills page hid fractional Fighting progress")
@@ -127,7 +127,7 @@ func TestSkillsPageUsesSelectedSpeciesAptitude(t *testing.T) {
 	view.SpeciesID = "SP_TENGU"
 
 	canvas := NewCanvas(79, 24)
-	DrawSkills(canvas, view, m.catalog, false)
+	DrawSkills(canvas, view, false, m.presentationPolicy)
 
 	page := strings.Join(canvas.PlainRows(), "\n")
 
@@ -146,7 +146,7 @@ func TestSkillsPageExplainsInvalidSpeciesSkill(t *testing.T) {
 	})
 
 	canvas := NewCanvas(79, 24)
-	DrawSkills(canvas, view, m.catalog, false)
+	DrawSkills(canvas, view, false, m.presentationPolicy)
 
 	if !strings.Contains(
 		strings.Join(canvas.PlainRows(), "\n"),

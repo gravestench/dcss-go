@@ -6,9 +6,243 @@ import (
 	"strings"
 	"testing"
 
+	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/modfs"
 	"dcrawl-go/internal/save"
 )
+
+func TestFailedLuaActionDoesNotMoveActorOrChangeHealth(t *testing.T) {
+	rules, err := modfs.Load("testdata/rollback-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	base := testCatalog(t)
+	g, err := newScenarioWithRules(
+		1,
+		base,
+		base.Player(),
+		"WPN_RAPIER",
+		"Tester",
+		ordinaryMonsterScenarioID,
+		rules,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer g.Close()
+
+	position, _ := g.stores.Positions.Get(g.player)
+	before := *position
+	health, _ := g.stores.Health.Get(g.player)
+	beforeHP := health.Current
+
+	for _, direction := range [][2]int{
+		{1, 0},
+		{-1, 0},
+		{0, 1},
+		{0, -1},
+	} {
+		x := before.X + direction[0]
+		y := before.Y + direction[1]
+		level := g.levels[before.LevelID]
+
+		if !level.Walkable(x, y) {
+			continue
+		}
+
+		if _, occupied := level.ActorAt(x, y); occupied {
+			continue
+		}
+
+		_, err := g.runAction(g.player, ecs.Intent{
+			Kind: ecs.IntentMove,
+			DX:   direction[0],
+			DY:   direction[1],
+		}, 10, "player")
+
+		if err == nil {
+			t.Fatal("Lua action unexpectedly succeeded")
+		}
+
+		if !strings.Contains(err.Error(), "intentional rollback") {
+			t.Fatalf("Lua action error = %v", err)
+		}
+
+		if *position != before ||
+			health.Current != beforeHP {
+			t.Fatalf("failed action changed position %+v or HP %d", position, health.Current)
+		}
+
+		actor, found := level.ActorAt(before.X, before.Y)
+
+		if !found ||
+			actor != g.player {
+			t.Fatal("failed action removed player from original cell")
+		}
+
+		if _, found := level.ActorAt(x, y); found {
+			t.Fatal("failed action occupied destination")
+		}
+
+		return
+	}
+
+	t.Fatal("test scenario has no open adjacent cell")
+}
+
+func TestInvalidLuaPolicyOutputDiscardsCreatedEntity(t *testing.T) {
+	g := newRollbackGame(t)
+	before := len(g.world.Entities())
+
+	_, err := g.scripts.Policy("test.invalid_output", nil)
+
+	if err == nil {
+		t.Fatal("invalid Lua policy unexpectedly succeeded")
+	}
+
+	if !strings.Contains(err.Error(), "must return a table") {
+		t.Fatalf("invalid Lua policy result = %v", err)
+	}
+
+	if err := g.scripts.ApplyPending(); err != nil {
+		t.Fatal(err)
+	}
+
+	if got := len(g.world.Entities()); got != before {
+		t.Fatalf("invalid policy left %d entities, want %d", got, before)
+	}
+}
+
+func TestMalformedLuaPresentationReportsErrorInView(t *testing.T) {
+	rules, err := modfs.Load("testdata/bad-view-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	base := testCatalog(t)
+	g, err := newScenarioWithRules(
+		1,
+		base,
+		base.Player(),
+		"WPN_RAPIER",
+		"Tester",
+		ordinaryMonsterScenarioID,
+		rules,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer g.Close()
+
+	view := g.View()
+	last := view.Messages[len(view.Messages)-1]
+
+	if !strings.Contains(last, "Lua presentation error") {
+		t.Fatalf("malformed Lua view produced %q", last)
+	}
+}
+
+func TestFailedLuaApplyRollsBackEarlierComponentChange(t *testing.T) {
+	g := newRollbackGame(t)
+	playerPosition, _ := g.stores.Positions.Get(g.player)
+	playerHealth, _ := g.stores.Health.Get(g.player)
+	originalHP := playerHealth.Current
+	level := g.levels[playerPosition.LevelID]
+
+	for _, direction := range [][2]int{
+		{1, 0},
+		{-1, 0},
+		{0, 1},
+		{0, -1},
+	} {
+		x := playerPosition.X + direction[0]
+		y := playerPosition.Y + direction[1]
+
+		if !level.Walkable(x, y) {
+			continue
+		}
+
+		if _, occupied := level.ActorAt(x, y); occupied {
+			continue
+		}
+
+		_, err := g.scripts.Policy("test.apply_failure", map[string]any{
+			"level_id": level.ID,
+			"x":        x,
+			"y":        y,
+		})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		blocker, err := g.world.CreateEntity()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := level.PlaceActor(blocker, x, y); err != nil {
+			t.Fatal(err)
+		}
+
+		err = g.scripts.ApplyPending()
+
+		if err == nil {
+			t.Fatal("invalid Lua apply unexpectedly succeeded")
+		}
+
+		if !strings.Contains(err.Error(), "would block actor") {
+			t.Fatalf("Lua apply error = %v", err)
+		}
+
+		if playerHealth.Current != originalHP {
+			t.Fatalf("failed apply changed player HP to %d", playerHealth.Current)
+		}
+
+		return
+	}
+
+	t.Fatal("test scenario has no open adjacent cell")
+}
+
+func newRollbackGame(t *testing.T) *Game {
+	t.Helper()
+
+	rules, err := modfs.Load("testdata/rollback-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	base := testCatalog(t)
+	g, err := newScenarioWithRules(
+		1,
+		base,
+		base.Player(),
+		"WPN_RAPIER",
+		"Tester",
+		ordinaryMonsterScenarioID,
+		rules,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		g.Close()
+	})
+
+	return g
+}
 
 func TestOverlaySystemRunsInGameAndSurvivesSave(t *testing.T) {
 	rules, err := modfs.Load("testdata/turn-counter-mod")

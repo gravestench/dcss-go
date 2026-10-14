@@ -39,6 +39,12 @@ func TestGameUsesEffectiveLuaCharacterDefinitions(t *testing.T) {
 	if human.Name != "Moon Human" {
 		t.Fatalf("game ignored effective Lua species: %q", human.Name)
 	}
+
+	attributes, found := g.stores.Attributes.Get(g.player)
+
+	if !found || attributes.Strength != 17 {
+		t.Fatalf("Lua species override did not change starting strength: %+v", attributes)
+	}
 }
 
 func TestGameRespectsLuaCharacterChoicePolicy(t *testing.T) {

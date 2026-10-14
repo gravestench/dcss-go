@@ -16,7 +16,9 @@ func (r *Runtime) installRegistrationAPI() {
 	r.state.SetField(register, "system", r.state.NewFunction(r.luaRegisterSystem))
 	r.state.SetField(register, "species", r.state.NewFunction(r.luaRegisterSpecies))
 	r.state.SetField(register, "job", r.state.NewFunction(r.luaRegisterJob))
+	r.state.SetField(register, "get", r.state.NewFunction(r.luaRegisteredDefinition))
 	r.state.SetField(register, "choice_policy", r.state.NewFunction(r.luaRegisterChoicePolicy))
+	r.state.SetField(register, "policy", r.state.NewFunction(r.luaRegisterPolicy))
 	r.state.SetGlobal("register", register)
 }
 
@@ -29,6 +31,13 @@ func (r *Runtime) luaRegisterComponent(state *lua.LState) int {
 
 	definition := state.CheckTable(1)
 	name := requiredString(state, definition, "id")
+
+	if _, found := r.hostComponents[name]; found {
+		state.RaiseError("Lua component %s conflicts with a host component", name)
+
+		return 0
+	}
+
 	version := requiredUint32(state, definition, "version")
 	fields, ok := state.GetField(definition, "fields").(*lua.LTable)
 

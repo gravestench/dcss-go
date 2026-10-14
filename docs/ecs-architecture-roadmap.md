@@ -31,17 +31,14 @@ bytes count as vanilla even when copied into an overlay. Saves record the
 effective hash and dynamic schema versions; changed rules require an explicit
 opt-in or migration on restore.
 
-## Current state at the pivot
+## Current implemented slice
 
 The playable Go slice includes four Fighter species, a source-shaped terminal,
 D:1-2 terrain and population, Akara actors/items/status, basic melee,
 projectile and spell intents, equipment, training, XP, and Go saves. Source
-content is committed mainly as JSON under `internal/content/generated`; each
-normal build uses that committed content without the C++ checkout. Gameplay
-behavior is still mostly Go. The current `combatSystem` and monster decision
-system are becoming difficult to extend because they route by content IDs.
-Those rules should move to Lua as whole intent and domain slices rather than
-accumulating more Go cases.
+content is committed as Lua gameplay data and source-traced JSON import
+artifacts. No normal build uses the C++ checkout. Implemented gameplay rules
+now execute from the embedded Lua tree; Go owns generic engine services.
 
 Akara v0.1.4 already has `RegisterSchema` and dynamic component stores. Lua
 can register new schema-backed components without a Go type declaration.
@@ -49,50 +46,46 @@ Dense terrain and visibility stay grid services rather than tile entities.
 Mutable state on actors and items remains in Akara, whether the schema was
 originally Go-defined or Lua-defined.
 
-The Lua runtime foundation is complete. The first character category now
-commits all 43 species and 31 job definitions as embedded Lua files and moves
-choice bans, recommendations, and current start support into a Lua policy.
-The terminal and game project the effective Lua catalog. Starting gear,
-attributes, skills, HP/MP, XP, and advancement are still Go rules for the
-four playable Fighter starts. Their Lua migration belongs with the full
-item, spell, and religion capabilities needed by the other jobs.
+The Lua runtime registers all 43 species and 31 jobs from per-definition
+files. Character choice, four playable Fighter starts, combat, equipment,
+statuses, monster behavior, generated floors, save semantics, and screen
+policy use Lua. Other aggregate source content is committed as generated
+Lua modules. One generic typed-store context exposes authoritative Akara
+state to those rules. The
+[one-pass conversion contract](superpowers/specs/2026-10-14-one-pass-lua-gameplay-design.md)
+sets the boundary for this implementation.
 
-## Migration sequence
+## Conversion coverage
 
-Each numbered phase is a coherent category. A phase can temporarily break
-compilation on its branch while the old path is replaced. Commit when the
-category works, rather than making one commit per monster or one effect. Keep
-one authoritative execution path per migrated behavior.
+The implemented parts of categories 2–6 moved in one sweep. These categories
+are an audit checklist for future work, not adapter milestones. Category 7
+extends the game beyond the present D:1–2 slice.
 
 1. **Mod runtime foundation.** Embed the Lua tree, resolve one overlay by
    relative path, hash the effective files, bootstrap a per-game Lua VM,
    register Lua component schemas and ordered systems with Akara, and persist
    dynamic component state and ruleset identity. A real game action must run
    an overlay-defined system before this phase is complete.
-2. **Character domain.** Start with the full species/job catalogs and choice
-   policy as one content category. Then move complete start construction,
-   equipment, attributes, skills, HP/MP, XP, and advancement policy as a
-   coherent rules category once item, spell, and religion services exist.
-   Keep source-generated definitions committed as small Lua modules and
-   remove each corresponding Go rule path when its domain is fully migrated.
-3. **Item and status domain.** Move all currently playable item use,
-   equipment policy, poison, haste, might, curing, regeneration, and timed
-   status behavior to Lua systems. Akara components remain authoritative;
-   status creation, decay, removal, and save continuation use one path.
-4. **Attack intent domain.** Move all implemented melee, launched, thrown,
-   and spell intent behavior into Lua capability, resolution, and effect
-   modules. Shared hit geometry and dice primitives may remain Go services.
-   No monster-ID or brand-ID switch remains in the Go kernel. Complete
-   reachable early humanoid effects and their world consequences before
-   admitting those monsters to generated floors.
-5. **Monster and world domain.** Move monster decisions, inventories, spawn
-   policy, generated population, level layouts, branch travel, vaults, and
-   map generation to Lua registrations. Go continues to provide grids,
-   occupancy, pathfinding, visibility, and transactional movement services.
-6. **Client and policy domain.** Move game command policy, keymaps, messages,
-   screen layout decisions, and unported-feature handling into Lua while Go
-   keeps Bubble Tea/Lip Gloss terminal mechanics. Preserve the full-terminal
-   DCSS presentation and minimum 79×24 layout.
+2. **Character domain.** Species/job catalogs, choice policy, and four
+   playable Fighter starts now live in Lua. Add remaining starts as complete
+   rules with their equipment, spell, and religion needs. Keep generated
+   definitions committed as small Lua modules.
+3. **Item and status domain.** Playable item use, equipment policy, poison,
+   haste, might, curing, regeneration, and timed statuses use Lua systems.
+   Add more items and effects as complete Lua rule slices. Akara components
+   remain authoritative through creation, decay, removal, and saves.
+4. **Attack intent domain.** Implemented melee, launched, thrown, and spell
+   intents use Lua capability, resolution, and effect modules. The Go kernel
+   has no monster-ID or brand-ID effect switch. Expand the complete effect
+   families before admitting more monsters to generated floors.
+5. **Monster and world domain.** Existing monster decisions, inventories,
+   spawns, generated population, level layouts, and travel use Lua. Add
+   further branches, vaults, and generation in Lua. Go continues to provide
+   grids, occupancy, pathfinding, visibility, and transactional movement.
+6. **Client and policy domain.** Current command policy, messages, screen
+   layout, and unavailable-feature handling use Lua. Expand keymaps and
+   screens there while Go keeps Bubble Tea/Lip Gloss terminal mechanics.
+   Preserve the full-terminal DCSS presentation and minimum 79×24 layout.
 7. **Remaining DCSS domains.** Add religion, mutations, forms, allies,
    shops, traps, clouds, runes, endgame, and full branch/content coverage as
    whole Lua domain slices. Extend the Go kernel only for reusable capability
@@ -100,13 +93,13 @@ one authoritative execution path per migrated behavior.
 
 ## Slice checks
 
-At each category boundary, verify deterministic turn and RNG continuation,
-round-trip saves of new authoritative state, exact ruleset identity, stable
-system order, and source-shaped behavior for the supported features. Use
-representative whole-flow tests plus focused tests for unusual source rules.
-Run full Go test, vet, build, style, and diff checks once at the coherent
-category boundary. Review the whole branch before merging to local `main`.
-Update [the port inventory](port-inventory.md) with precise playable coverage.
+At the integrated conversion boundary, verify deterministic turn and RNG
+continuation, round-trip saves of authoritative state, exact ruleset
+identity, stable system order, and source-shaped behavior for the supported
+features. Use representative whole-flow tests plus focused tests for unusual
+source rules. Run full Go test, vet, build, style, and diff checks after the
+broad sweep. Review the whole branch before merging to local `main`. Update
+[the port inventory](port-inventory.md) with precise playable coverage.
 
 ## Readability contract
 

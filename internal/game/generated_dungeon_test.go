@@ -239,9 +239,13 @@ func TestGeneratedDungeonBuildsAcrossSeeds(t *testing.T) {
 			t.Fatalf("seed %d: %v", seed, err)
 		}
 
-		if err := validateGeneratedDungeonLevels(g.levels); err != nil {
-			t.Fatalf("seed %d: %v", seed, err)
+		restored, err := Restore(g.Snapshot(), catalog)
+
+		if err != nil {
+			t.Fatalf("seed %d restore: %v", seed, err)
 		}
+
+		_ = restored.Close()
 
 		_ = g.Close()
 	}

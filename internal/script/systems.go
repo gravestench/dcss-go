@@ -3,6 +3,7 @@ package script
 import (
 	"context"
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/gravestench/akara"
@@ -10,6 +11,30 @@ import (
 )
 
 const callbackTimeout = 2 * time.Second
+
+type structuralCommand struct {
+	entity  akara.Entity
+	apply   func() error
+	undo    func() error
+	destroy bool
+}
+
+type componentTarget struct {
+	entity akara.Entity
+	name   string
+}
+
+type pendingComponent struct {
+	present bool
+	values  map[string]any
+}
+
+// BeginAction clears transient facts before the next actor enters the
+// ordered system chain. Lua rules can share signals within one action.
+func (r *Runtime) BeginAction() {
+	r.DiscardPending()
+	r.signals = make(map[string][]lua.LValue)
+}
 
 // System is a Lua callback with stable ordering constraints. Game composes
 // these descriptors with its remaining Go systems before Akara registration.
@@ -74,8 +99,12 @@ func (s System) Update(_ *akara.World, delta time.Duration) error {
 }
 
 func (r *Runtime) entityMatches(entity akara.Entity, names []string) bool {
+	if r.pendingDestroy[entity] {
+		return false
+	}
+
 	for _, name := range names {
-		if !r.components[name].Has(entity) {
+		if !r.componentHas(name, entity) {
 			return false
 		}
 	}
@@ -85,18 +114,42 @@ func (r *Runtime) entityMatches(entity akara.Entity, names []string) bool {
 
 func (r *Runtime) queryEntities(names []string) []akara.Entity {
 	if len(names) == 0 {
-		return r.world.Entities()
+		entities := r.world.Entities()
+		matched := make([]akara.Entity, 0, len(entities))
+
+		for _, entity := range entities {
+			if !r.pendingDestroy[entity] {
+				matched = append(matched, entity)
+			}
+		}
+
+		return matched
 	}
 
-	first := r.components[names[0]]
-	entities := first.Entities()
+	entities := append([]akara.Entity(nil), r.componentEntities(names[0])...)
+	seen := make(map[akara.Entity]bool, len(entities))
+
+	for _, entity := range entities {
+		seen[entity] = true
+	}
+
+	for target, view := range r.pendingViews {
+		if target.name == names[0] &&
+			view.present &&
+			!seen[target.entity] {
+			entities = append(entities, target.entity)
+			seen[target.entity] = true
+		}
+	}
+
+	slices.Sort(entities)
 	matched := make([]akara.Entity, 0, len(entities))
 
 	for _, entity := range entities {
-		all := true
+		all := r.componentHas(names[0], entity)
 
 		for _, name := range names[1:] {
-			if !r.components[name].Has(entity) {
+			if !r.componentHas(name, entity) {
 				all = false
 
 				break
@@ -118,7 +171,10 @@ func (r *Runtime) validateSystems() error {
 		names[system.Name] = true
 
 		for _, component := range system.query {
-			if _, found := r.components[component]; !found {
+			_, dynamic := r.components[component]
+			_, host := r.hostComponents[component]
+
+			if !dynamic && !host {
 				return fmt.Errorf("Lua system %s queries unknown component %s", system.Name, component)
 			}
 		}
@@ -194,8 +250,17 @@ func (r *Runtime) entityHandle(entity akara.Entity) *lua.LUserData {
 // DiscardPending forgets structural changes from a failed update.
 func (r *Runtime) DiscardPending() {
 	if r != nil {
-		r.pending = akara.NewCommandBuffer()
-		r.pendingTargets = nil
+		for _, entity := range r.created {
+			r.world.DestroyEntity(entity)
+		}
+
+		r.created = nil
+		r.pending = nil
+		r.pendingViews = make(map[componentTarget]*pendingComponent)
+		r.pendingDestroy = make(map[akara.Entity]bool)
+		r.pendingCells = make(map[gridCell]byte)
+		r.pendingActors = make(map[gridCell]akara.Entity)
+		r.pendingPositions = make(map[akara.Entity]*gridCell)
 	}
 }
 
@@ -205,18 +270,65 @@ func (r *Runtime) ApplyPending() error {
 		return nil
 	}
 
-	for _, entity := range r.pendingTargets {
-		if !r.world.EntityExists(entity) {
+	for _, command := range r.pending {
+		if command.entity != 0 && !r.world.EntityExists(command.entity) {
 			r.DiscardPending()
 
-			return fmt.Errorf("Lua component command targets missing entity %d", entity)
+			return fmt.Errorf("Lua component command targets missing entity %d", command.entity)
 		}
 	}
 
-	pending := r.pending
+	var applied []structuralCommand
+	var destroys []structuralCommand
 
-	r.pending = akara.NewCommandBuffer()
-	r.pendingTargets = nil
+	for index, command := range r.pending {
+		if command.destroy {
+			destroys = append(destroys, command)
 
-	return pending.Apply()
+			continue
+		}
+
+		if err := command.apply(); err != nil {
+			var rollbackErr error
+
+			for rollback := len(applied) - 1; rollback >= 0; rollback-- {
+				if applied[rollback].undo == nil {
+					continue
+				}
+
+				if undoErr := applied[rollback].undo(); undoErr != nil {
+					rollbackErr = undoErr
+				}
+			}
+
+			r.DiscardPending()
+
+			if rollbackErr != nil {
+				return fmt.Errorf(
+					"Lua structural command %d: %w; rollback: %v",
+					index, err, rollbackErr,
+				)
+			}
+
+			return fmt.Errorf("Lua structural command %d: %w", index, err)
+		}
+
+		applied = append(applied, command)
+	}
+
+	for _, command := range destroys {
+		if err := command.apply(); err != nil {
+			return fmt.Errorf("Lua destroy command: %w", err)
+		}
+	}
+
+	r.pending = nil
+	r.created = nil
+	r.pendingViews = make(map[componentTarget]*pendingComponent)
+	r.pendingDestroy = make(map[akara.Entity]bool)
+	r.pendingCells = make(map[gridCell]byte)
+	r.pendingActors = make(map[gridCell]akara.Entity)
+	r.pendingPositions = make(map[akara.Entity]*gridCell)
+
+	return nil
 }

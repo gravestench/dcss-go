@@ -97,6 +97,7 @@ func (r *Runtime) luaRegisterSpecies(state *lua.LState) int {
 
 	r.species[id] = definition
 	r.speciesTables[id] = copyDefinitionTable(state, table)
+	r.definitions["species"][id] = r.speciesTables[id]
 
 	return 0
 }
@@ -145,8 +146,35 @@ func (r *Runtime) luaRegisterJob(state *lua.LState) int {
 
 	r.jobs[id] = definition
 	r.jobTables[id] = copyDefinitionTable(state, table)
+	r.definitions["jobs"][id] = r.jobTables[id]
 
 	return 0
+}
+
+// Lua policy reads the same registered definitions used by the character
+// menu, so a same-path mod override cannot split menu and gameplay rules.
+func (r *Runtime) luaRegisteredDefinition(state *lua.LState) int {
+	category := state.CheckString(1)
+	id := state.CheckString(2)
+	entries, found := r.definitions[category]
+
+	if !found {
+		state.RaiseError("unknown registered content category %s", category)
+
+		return 0
+	}
+
+	definition, found := entries[id]
+
+	if !found {
+		state.RaiseError("unknown registered %s ID %s", category, id)
+
+		return 0
+	}
+
+	state.Push(copyDefinitionTable(state, definition))
+
+	return 1
 }
 
 func (r *Runtime) currentModule() string {

@@ -38,7 +38,7 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 		t.Fatal("minimum size rejected")
 	}
 
-	DrawPlay(canvas, layout, view, "Unavailable: quaffing")
+	DrawPlay(canvas, layout, view, "Unavailable: quaffing", testPresentationPolicy(t))
 	rows := canvas.PlainRows()
 
 	for _, tc := range []struct {
@@ -163,7 +163,7 @@ func TestDrawPlayShowsEarnedRatExperienceProgress(t *testing.T) {
 
 	canvas := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
-	DrawPlay(canvas, layout, view, "")
+	DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
 
 	if got := canvas.PlainRows()[7][37:]; !strings.HasPrefix(got, "XL:  1 Next: 11%") {
 		t.Fatalf("experience HUD = %q", got)
@@ -176,7 +176,7 @@ func TestDrawPlayShowsMightLightOnlyWhileActive(t *testing.T) {
 	layout, _ := ComputeLayout(79, 24)
 
 	view.MightAut = 340
-	DrawPlay(canvas, layout, view, "")
+	DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
 
 	if !strings.Contains(canvas.PlainRows()[11][37:], "Might") {
 		t.Fatal("active Might status light missing")
@@ -184,7 +184,7 @@ func TestDrawPlayShowsMightLightOnlyWhileActive(t *testing.T) {
 
 	view.MightAut = 0
 	canvas = NewCanvas(79, 24)
-	DrawPlay(canvas, layout, view, "")
+	DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
 
 	if strings.Contains(canvas.PlainRows()[11][37:], "Might") {
 		t.Fatal("expired Might status light remains")
@@ -198,7 +198,7 @@ func TestDrawPlayShowsPoisonOnlyWhileActive(t *testing.T) {
 
 	view.PoisonAmountScaled = 8000
 
-	DrawPlay(canvas, layout, view, "")
+	DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
 
 	if !strings.Contains(canvas.PlainRows()[11][37:], "Poisoned") {
 		t.Fatal("active poison status is missing from the HUD")
@@ -206,7 +206,7 @@ func TestDrawPlayShowsPoisonOnlyWhileActive(t *testing.T) {
 
 	view.PoisonAmountScaled = 0
 	canvas = NewCanvas(79, 24)
-	DrawPlay(canvas, layout, view, "")
+	DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
 
 	if strings.Contains(canvas.PlainRows()[11][37:], "Poisoned") {
 		t.Fatal("cured poison status remains on the HUD")
@@ -220,7 +220,7 @@ func TestDrawPlayShowsFastOnlyWhileHasted(t *testing.T) {
 
 	view.HasteAut = 100
 
-	DrawPlay(canvas, layout, view, "")
+	DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
 
 	if !strings.Contains(canvas.PlainRows()[11][37:], "Fast") {
 		t.Fatal("active haste status is missing from the HUD")
@@ -228,7 +228,7 @@ func TestDrawPlayShowsFastOnlyWhileHasted(t *testing.T) {
 
 	view.HasteAut = 0
 	canvas = NewCanvas(79, 24)
-	DrawPlay(canvas, layout, view, "")
+	DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
 
 	if strings.Contains(canvas.PlainRows()[11][37:], "Fast") {
 		t.Fatal("expired haste status remains on the HUD")
@@ -244,7 +244,7 @@ func TestDrawPlayExpandedViewportUsesFullTerminal(t *testing.T) {
 		t.Fatal("large size rejected")
 	}
 
-	DrawPlay(canvas, layout, view, "")
+	DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
 	rows := canvas.PlainRows()
 
 	if rows[16][37] != '@' ||
@@ -270,7 +270,7 @@ func TestDrawPlayShowsConstrictedStatus(t *testing.T) {
 		t.Fatal("minimum size rejected")
 	}
 
-	DrawPlay(canvas, layout, view, "")
+	DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
 	row := canvas.PlainRows()[11]
 	start := layout.HUD.X + 26
 
@@ -295,7 +295,7 @@ func TestDrawPlayUnarmedUsesSourceWeaponSlot(t *testing.T) {
 	defer g.Close()
 	canvas := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
-	DrawPlay(canvas, layout, g.View(), "")
+	DrawPlay(canvas, layout, g.View(), "", testPresentationPolicy(t))
 
 	if got := canvas.PlainRows()[9][37:]; !strings.HasPrefix(got, "-) Unarmed") {
 		t.Fatalf("unarmed weapon row: %q", got)
@@ -352,7 +352,7 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 			t.Fatal("layout rejected")
 		}
 
-		DrawPlay(canvas, layout, view, "")
+		DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
 		at := func(x, y int) cell {
 			sx := layout.Dungeon.X + layout.Dungeon.W/2 + x - view.PlayerX
 			sy := layout.Dungeon.Y + layout.Dungeon.H/2 + y - view.PlayerY

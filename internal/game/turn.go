@@ -2,86 +2,136 @@ package game
 
 import (
 	"fmt"
+	"sort"
 
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/monster"
 	"github.com/gravestench/akara"
 )
 
 // Aut is DCSS logical action time, independent of wall-clock durations.
 type Aut int64
 
-// TurnScheduler applies source monster energy only on the player's floor.
-// It reads and changes Akara components; the catalog holds immutable costs.
+type schedulerPolicy func(string, map[string]any) (map[string]any, error)
+
+// TurnScheduler projects Akara state into the active Lua scheduler rules.
 type TurnScheduler struct {
 	actors    *akara.Store[ecs.Actor]
 	positions *akara.Store[ecs.Position]
 	energies  *akara.Store[ecs.MonsterEnergy]
-	catalog   content.Catalog
-	rng       *RNGStreams
+	policy    schedulerPolicy
 }
 
-// Grant follows mon-act.cc:_pre_monster_move. Entity order fixes the draw
-// order for monsters whose speed needs random rounding.
+// Grant retains the store's entity order so named RNG draws remain stable.
 func (s TurnScheduler) Grant(levelID int, elapsed Aut) error {
 	if elapsed <= 0 || int64(int(elapsed)) != int64(elapsed) {
 		return fmt.Errorf("invalid player action time %d", elapsed)
 	}
 
-	for _, entity := range s.energies.Entities() {
+	entities := s.energies.Entities()
+	monsters := make([]any, 0, len(entities))
+
+	for _, entity := range entities {
 		position, found := s.positions.Get(entity)
 
 		if !found {
 			return fmt.Errorf("monster %d has energy but no position", entity)
 		}
 
-		if position.LevelID != levelID {
-			continue
-		}
-
-		actor, found := s.actors.Get(entity)
-
-		if !found {
-			return fmt.Errorf("monster %d has energy but no actor", entity)
-		}
-
 		energy, _ := s.energies.Get(entity)
-		grant, err := monster.GainActionEnergy(s.rng, actor.Speed, int(elapsed))
+		speed := 0
 
-		if err != nil {
-			return fmt.Errorf("monster %d energy grant: %w", entity, err)
+		if position.LevelID == levelID {
+			actor, found := s.actors.Get(entity)
+
+			if !found {
+				return fmt.Errorf("monster %d has energy but no actor", entity)
+			}
+
+			speed = actor.Speed
 		}
 
-		energy.Points += grant
+		monsters = append(monsters, map[string]any{
+			"level_id": position.LevelID,
+			"speed":    speed,
+			"points":   energy.Points,
+		})
+	}
+
+	result, err := s.policy("scheduler.grant", map[string]any{
+		"active_level": levelID,
+		"elapsed":      int(elapsed),
+		"monsters":     monsters,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	points, err := schedulerPoints(result["points"], len(entities))
+
+	if err != nil {
+		return err
+	}
+
+	for index, entity := range entities {
+		energy, _ := s.energies.Get(entity)
+
+		energy.Points = points[index]
 	}
 
 	return nil
 }
 
-// NextReady chooses the most energetic monster. Entity ID settles source
-// pointer-order ties in a way that survives save and restore.
-func (s TurnScheduler) NextReady(levelID int) (akara.Entity, bool) {
-	var chosen akara.Entity
-	most := monster.ActionEnergyThreshold - 1
+// NextReady gives Lua candidates in entity order for the stable tie break.
+func (s TurnScheduler) NextReady(levelID int) (akara.Entity, bool, error) {
+	entities := append([]akara.Entity(nil), s.energies.Entities()...)
+	sort.Slice(entities, func(left, right int) bool {
+		return entities[left] < entities[right]
+	})
 
-	for _, entity := range s.energies.Entities() {
+	monsters := make([]any, 0, len(entities))
+
+	for _, entity := range entities {
 		position, found := s.positions.Get(entity)
 
-		if !found || position.LevelID != levelID {
+		if !found {
+			monsters = append(monsters, map[string]any{
+				"level_id": -1,
+				"points":   0,
+			})
+
 			continue
 		}
 
 		energy, _ := s.energies.Get(entity)
-
-		if energy.Points > most ||
-			(energy.Points == most && entity < chosen) {
-			chosen = entity
-			most = energy.Points
-		}
+		monsters = append(monsters, map[string]any{
+			"level_id": position.LevelID,
+			"points":   energy.Points,
+		})
 	}
 
-	return chosen, chosen != 0
+	result, err := s.policy("scheduler.next_ready", map[string]any{
+		"active_level": levelID,
+		"monsters":     monsters,
+	})
+
+	if err != nil {
+		return 0, false, fmt.Errorf("next monster energy: %w", err)
+	}
+
+	index, ok := result["index"].(int64)
+
+	if !ok ||
+		index < 0 ||
+		index > int64(len(entities)) {
+		return 0, false, fmt.Errorf("invalid next monster index %v", result["index"])
+	}
+
+	if index == 0 {
+		return 0, false, nil
+	}
+
+	return entities[index-1], true, nil
 }
 
 // Spend uses the final intent after movement has turned a bump into melee.
@@ -94,23 +144,55 @@ func (s TurnScheduler) Spend(entity akara.Entity, intent ecs.IntentKind) error {
 
 	energy, found := s.energies.Get(entity)
 
-	if !found || energy.Points < monster.ActionEnergyThreshold {
-		return fmt.Errorf("monster %d lacks action energy", entity)
+	if !found {
+		return fmt.Errorf("monster %d has no energy", entity)
 	}
 
-	definition, err := s.catalog.Monster(actor.KindID)
+	result, err := s.policy("scheduler.spend", map[string]any{
+		"kind_id": actor.KindID,
+		"intent":  int(intent),
+		"points":  energy.Points,
+	})
 
 	if err != nil {
-		return err
+		return fmt.Errorf("monster %d energy spend: %w", entity, err)
 	}
 
-	cost, err := monster.ActionEnergyCost(definition.Energy, intent)
+	points, ok := result["points"].(int64)
 
-	if err != nil {
-		return err
+	if !ok {
+		return fmt.Errorf("monster %d energy spend returned %T", entity, result["points"])
 	}
 
-	energy.Points -= cost
+	energy.Points = int(points)
 
 	return nil
+}
+
+func schedulerPoints(value any, count int) ([]int, error) {
+	if count == 0 {
+		if empty, ok := value.(map[string]any); ok && len(empty) == 0 {
+			return nil, nil
+		}
+	}
+
+	rows, ok := value.([]any)
+
+	if !ok || len(rows) != count {
+		return nil, fmt.Errorf("monster energy grant returned %T for %d monsters", value, count)
+	}
+
+	points := make([]int, count)
+
+	for index, row := range rows {
+		value, ok := row.(int64)
+
+		if !ok {
+			return nil, fmt.Errorf("monster energy %d has type %T", index, row)
+		}
+
+		points[index] = int(value)
+	}
+
+	return points, nil
 }

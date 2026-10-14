@@ -1,13 +1,35 @@
 package game
 
 import (
+	"fmt"
 	"testing"
 
 	"dcrawl-go/internal/ecs"
 	"github.com/gravestench/akara"
 )
 
+func TestSchedulerReportsLuaPolicyFailure(t *testing.T) {
+	world := akara.NewWorld()
+	defer world.Close()
+
+	stores := ecs.Register(world)
+	scheduler := TurnScheduler{
+		positions: stores.Positions,
+		energies:  stores.MonsterEnergy,
+		policy: func(string, map[string]any) (map[string]any, error) {
+			return nil, fmt.Errorf("bad mod policy")
+		},
+	}
+
+	_, _, err := scheduler.NextReady(1)
+
+	if err == nil {
+		t.Fatal("invalid scheduler policy did not return an error")
+	}
+}
+
 func TestSchedulerTieBreak(t *testing.T) {
+	g := newStepGame(t)
 	world := akara.NewWorld()
 	defer world.Close()
 	stores := ecs.Register(world)
@@ -21,9 +43,14 @@ func TestSchedulerTieBreak(t *testing.T) {
 	scheduler := TurnScheduler{
 		positions: stores.Positions,
 		energies:  stores.MonsterEnergy,
+		policy:    g.scripts.Policy,
 	}
 
-	entity, ok := scheduler.NextReady(1)
+	entity, ok, err := scheduler.NextReady(1)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if !ok || entity != first {
 		t.Fatalf("next = (%d,%t), want first actor", entity, ok)
@@ -31,6 +58,7 @@ func TestSchedulerTieBreak(t *testing.T) {
 }
 
 func TestSchedulerSelectsOnlyCurrentFloor(t *testing.T) {
+	g := newStepGame(t)
 	world := akara.NewWorld()
 	defer world.Close()
 	stores := ecs.Register(world)
@@ -44,9 +72,14 @@ func TestSchedulerSelectsOnlyCurrentFloor(t *testing.T) {
 	scheduler := TurnScheduler{
 		positions: stores.Positions,
 		energies:  stores.MonsterEnergy,
+		policy:    g.scripts.Policy,
 	}
 
-	entity, found := scheduler.NextReady(1)
+	entity, found, err := scheduler.NextReady(1)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if !found || entity != active {
 		t.Fatalf("active floor actor = (%d, %t), want %d", entity, found, active)

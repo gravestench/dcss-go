@@ -1,0 +1,177 @@
+local catalog = require("policy.catalog")
+
+local items = {}
+
+function items.kind(item)
+    return catalog.get("items", item.kind_id)
+end
+
+function items.phrase(name, quantity)
+    if quantity > 1 then
+        local before, after = name:match("^(.-)( of .*)$")
+
+        if before and before ~= "" then
+            return quantity .. " " .. before .. "s" .. after
+        end
+
+        return quantity .. " " .. name .. "s"
+    end
+
+    local article = name:match("^[aeiouAEIOU]") and "an" or "a"
+
+    return article .. " " .. name
+end
+
+function items.validate(item, kind)
+    if item.quantity <= 0 or (not kind.stackable and item.quantity ~= 1) then
+        error("impossible quantity")
+    end
+
+    if item.charges < 0 or (item.charges ~= 0 and kind.class ~= "OBJ_WANDS") then
+        error("impossible charges")
+    end
+
+    if item.plus ~= 0 and kind.class ~= "OBJ_WEAPONS" and kind.class ~= "OBJ_ARMOUR" then
+        error("impossible enchantment")
+    end
+
+    if item.plus < -32768 or item.plus > 32767 then
+        error("enchantment outside source item range")
+    end
+
+    if item.ego == "" then
+        return
+    end
+
+    if kind.class == "OBJ_WEAPONS" and kind.weapon then
+        local brands = type(kind.weapon.brand_weights) == "table" and
+            kind.weapon.brand_weights or {}
+
+        for _, brand in ipairs(brands) do
+            if brand.brand_id == item.ego and brand.weight > 0 and item.ego ~= "SPWPN_NORMAL" then
+                return
+            end
+        end
+    end
+
+    if item.ego == "poisoned" or item.ego == "curare" or item.ego == "dispersal" then
+        if kind.class == "OBJ_MISSILES" then
+            return
+        end
+
+        error("incompatible ego")
+    end
+
+    error("unknown ego " .. item.ego)
+end
+
+function items.prepare_pickup(ctx, actor)
+    local position = ctx:get(actor, "core.position")
+
+    if not position then
+        error("pickup actor " .. ctx:id(actor) .. " has no position")
+    end
+
+    local corpse
+
+    for _, entity in ipairs(items.at(ctx, position)) do
+        if ctx:has(entity, "core.corpse") then
+            corpse = true
+        else
+            return { intent = { kind = 3 }, cost = 10 }
+        end
+    end
+
+    if corpse then
+        return { message = "You can't pick that up." }
+    end
+
+    return { message = "There is nothing to pick up here." }
+end
+
+function items.prepare_drop(ctx, actor, item_id, quantity)
+    if quantity < 0 then
+        return { message = "Drop quantity must be positive." }
+    end
+
+    local entity = item_id ~= 0 and ctx:entity(item_id) or nil
+    local item = entity and ctx:get(entity, "core.item")
+    local carrier = entity and ctx:get(entity, "core.carried_by")
+
+    if not item or not carrier or carrier.holder ~= actor then
+        return { message = "You are not carrying that item." }
+    end
+
+    items.validate(item, items.kind(item))
+    local equipped = ctx:get(entity, "core.equipped")
+
+    if equipped and equipped.slot ~= "weapon" then
+        return { message = "You will have to take that off first." }
+    end
+
+    if quantity == 0 or quantity > item.quantity then
+        quantity = item.quantity
+    end
+
+    return {
+        intent = { kind = 10, item_id = entity, quantity = quantity },
+        cost = 10,
+    }
+end
+
+function items.matches(left, right)
+    -- Lua host component integers are exact through 2^53-1.
+    return type(left.quantity) == "number" and type(right.quantity) == "number" and
+        left.quantity > 0 and right.quantity > 0 and
+        left.quantity <= 9007199254740991 - right.quantity and
+        left.kind_id == right.kind_id and left.plus == right.plus and
+        left.charges == right.charges and left.ego == right.ego
+end
+
+function items.at(ctx, position)
+    local found = {}
+
+    for _, entity in ipairs(ctx:query({ "core.item", "core.position" })) do
+        local location = ctx:get(entity, "core.position")
+
+        if location.level_id == position.level_id and location.x == position.x and
+            location.y == position.y and not ctx:has(entity, "core.carried_by") then
+            found[#found + 1] = entity
+        end
+    end
+
+    return found
+end
+
+function items.carried_stack(ctx, actor, item)
+    if not items.kind(item).stackable then
+        return nil
+    end
+
+    for _, entity in ipairs(ctx:query({ "core.carried_by", "core.item" })) do
+        local carrier = ctx:get(entity, "core.carried_by")
+
+        if carrier.holder == actor and items.matches(ctx:get(entity, "core.item"), item) then
+            return entity
+        end
+    end
+
+    return nil
+end
+
+function items.floor_stack(ctx, position, item, exclude)
+    if not items.kind(item).stackable then
+        return nil
+    end
+
+    for _, entity in ipairs(items.at(ctx, position)) do
+        if entity ~= exclude and not ctx:has(entity, "core.corpse") and
+            items.matches(ctx:get(entity, "core.item"), item) then
+            return entity
+        end
+    end
+
+    return nil
+end
+
+return items

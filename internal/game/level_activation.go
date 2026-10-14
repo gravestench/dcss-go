@@ -14,11 +14,17 @@ func (g *Game) activateLevel(level *Level, now Aut) error {
 			return fmt.Errorf("level %d away clock exceeds current time", level.ID)
 		}
 
-		if err := g.corpseAging.TickLevel(level.ID, int(elapsed)); err != nil {
+		if err := g.runWorldPolicy("world.age_corpses", map[string]any{
+			"level_id": level.ID,
+			"elapsed":  int(elapsed),
+		}); err != nil {
 			return err
 		}
 
-		if err := g.monsterCatchup.TickLevel(level, int(elapsed/10)); err != nil {
+		if err := g.runWorldPolicy("world.catchup_monsters", map[string]any{
+			"level_id": level.ID,
+			"turns":    int(elapsed / 10),
+		}); err != nil {
 			return err
 		}
 	}
@@ -26,4 +32,12 @@ func (g *Game) activateLevel(level *Level, now Aut) error {
 	level.awaySinceAut = nil
 
 	return nil
+}
+
+func (g *Game) runWorldPolicy(name string, input map[string]any) error {
+	if _, err := g.scripts.Policy(name, input); err != nil {
+		return err
+	}
+
+	return g.scripts.ApplyPending()
 }

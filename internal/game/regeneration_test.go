@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/save"
 )
@@ -65,38 +64,42 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 	progress.MPProgress = 94
 
 	expectedRNG := RestoreRNGStreams(g.seed, g.rng.States())
-	want, err := character.Regenerate(expectedRNG, character.Vitality{
-		HP:         10,
-		MaxHP:      health.Max,
-		MP:         0,
-		MaxMP:      magic.Max,
-		HPProgress: 94,
-		MPProgress: 94,
-	}, 9)
+	hpRoll, err := expectedRNG.Intn("regeneration", 10)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	g.turn.Actor = g.player
+	mpRoll, err := expectedRNG.Intn("regeneration", 10)
 
-	if err := (&regenerationSystem{
-		player:       g.player,
-		health:       g.stores.Health,
-		magic:        g.stores.Magic,
-		regeneration: g.stores.Regeneration,
-		rng:          g.rng,
-		turn:         &g.turn,
-	}).Update(nil, time.Duration(9)); err != nil {
+	if err != nil {
 		t.Fatal(err)
 	}
 
-	if health.Current != want.HP ||
-		magic.Current != want.MP ||
-		progress.HPProgress != want.HPProgress ||
-		progress.MPProgress != want.MPProgress ||
+	wantHP := 10
+	wantHPProgress := 99
+
+	if hpRoll < 4 {
+		wantHP = 11
+		wantHPProgress = 0
+	}
+
+	wantMPProgress := 0
+
+	if mpRoll < 3 {
+		wantMPProgress = 1
+	}
+
+	g.turn.Actor = g.player
+
+	updateLuaSystem(t, g, "status.regeneration", time.Duration(9))
+
+	if health.Current != wantHP ||
+		magic.Current != 1 ||
+		progress.HPProgress != wantHPProgress ||
+		progress.MPProgress != wantMPProgress ||
 		!reflect.DeepEqual(g.rng.States(), expectedRNG.States()) {
-		t.Fatalf("9-aut system got HP %+v MP %+v regen %+v, want %+v", health, magic, progress, want)
+		t.Fatalf("9-aut Lua regen got HP %+v MP %+v progress %+v", health, magic, progress)
 	}
 }
 

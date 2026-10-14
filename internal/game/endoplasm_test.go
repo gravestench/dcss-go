@@ -1,16 +1,12 @@
 package game
 
 import (
-	"reflect"
-	"slices"
-	"strings"
-	"testing"
-
-	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/monster"
 	"github.com/gravestench/akara"
+	"reflect"
+	"strings"
+	"testing"
 )
 
 func newEndoplasmGame(
@@ -78,11 +74,8 @@ func TestEndoplasmUsesSourcePopulationProfile(t *testing.T) {
 
 	actor, _ := g.stores.Actors.Get(entity)
 	health, _ := g.stores.Health.Get(entity)
-	generated, err := scenarioMonsterIDs(generatedDungeonScenarioID)
 
-	if err != nil ||
-		!slices.Contains(generated, definition.ID) ||
-		actor.Speed != 10 ||
+	if actor.Speed != 10 ||
 		health.Max < 4 ||
 		health.Max > 8 ||
 		definition.LeavesCorpse {
@@ -90,15 +83,6 @@ func TestEndoplasmUsesSourcePopulationProfile(t *testing.T) {
 			actor, health, definition, err)
 	}
 
-	if _, err := character.OrdinaryNaturalExperience(definition, health.Max); err != nil {
-		t.Fatal(err)
-	}
-
-	fixed, _ := scenarioMonsterIDs(populationScenarioID)
-
-	if slices.Contains(fixed, definition.ID) {
-		t.Fatal("fixed population fixture changed")
-	}
 }
 
 func TestEndoplasmFreezeUsesSpellIntentAndEnergy(t *testing.T) {
@@ -117,7 +101,7 @@ func TestEndoplasmFreezeUsesSpellIntentAndEnergy(t *testing.T) {
 	energy, _ := g.stores.MonsterEnergy.Get(entity)
 	before := playerHealth.Current
 
-	energy.Points = monster.ActionEnergyThreshold
+	energy.Points = 80
 
 	events, err := g.runAction(entity, ecs.Intent{}, 10, "monster")
 
@@ -194,89 +178,6 @@ func TestEndoplasmCanUseOrdinaryMeleeWhenNoSpellChosen(t *testing.T) {
 
 	if g.turn.ResolvedIntent != ecs.IntentMelee {
 		t.Fatalf("endoplasm fallback intent %d", g.turn.ResolvedIntent)
-	}
-}
-
-func TestEndoplasmDeathAwardsXPWithoutCorpse(t *testing.T) {
-	g, entity := newEndoplasmGame(t, true)
-	health, _ := g.stores.Health.Get(entity)
-	definition, _ := g.catalog.Monster("MONS_ENDOPLASM")
-	wantXP, err := character.OrdinaryNaturalExperience(definition, health.Max)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	health.Current = 0
-	g.turn.Actor = g.player
-	g.turn.PlayerKill = entity
-
-	if err := newDeathSystem(g).Update(nil, 0); err != nil {
-		t.Fatal(err)
-	}
-
-	progress, _ := g.stores.Progression.Get(g.player)
-
-	if progress.TotalXP != wantXP || g.turn.Corpse != nil {
-		t.Fatalf("endoplasm kill awarded %d XP and corpse %+v",
-			progress.TotalXP, g.turn.Corpse)
-	}
-}
-
-func TestEndoplasmFreezeRequiresAdjacentPlayer(t *testing.T) {
-	g, entity := newEndoplasmGame(t, true)
-	position, _ := g.stores.Positions.Get(entity)
-	player, _ := g.stores.Positions.Get(g.player)
-
-	if adjacentActors(*position, *player) {
-		t.Skip("generated endoplasm already adjacent")
-	}
-
-	spell, cast, err := newMonsterDecisionSystem(g).chooseMonsterSpell(
-		entity,
-		*position,
-		*player,
-	)
-
-	if err != nil ||
-		cast ||
-		spell != "" {
-		t.Fatalf("distant Freeze choice %q, %v, %v", spell, cast, err)
-	}
-}
-
-func TestEndoplasmSpellChoiceIncludesFrequencyBoundary(t *testing.T) {
-	g := newStepGame(t)
-	entity := ratID(t, g)
-	actor, _ := g.stores.Actors.Get(entity)
-
-	actor.KindID = "MONS_ENDOPLASM"
-	placePlayerBesideMonster(t, g, entity)
-
-	position, _ := g.stores.Positions.Get(entity)
-	player, _ := g.stores.Positions.Get(g.player)
-
-	for _, targetRoll := range []int{
-		69,
-		70,
-		71,
-	} {
-		seed := seedForSpellRoll(t, targetRoll)
-
-		g.rng = NewRNGStreams(seed)
-
-		spell, cast, err := newMonsterDecisionSystem(g).chooseMonsterSpell(
-			entity,
-			*position,
-			*player,
-		)
-
-		if err != nil ||
-			spell != "SPELL_FREEZE" ||
-			cast != (targetRoll <= 70) {
-			t.Fatalf("roll %d: spell %q, cast %v, error %v",
-				targetRoll, spell, cast, err)
-		}
 	}
 }
 

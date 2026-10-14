@@ -363,6 +363,44 @@ func (l *Level) changeDoorCells(cells []point, glyph byte) {
 	}
 }
 
+// SetCell is the grid mutation primitive used by Lua generation and terrain
+// policy. It keeps explored terrain in sync with the authoritative grid.
+func (l *Level) SetCell(x, y int, glyph byte) error {
+	if !l.inBounds(x, y) {
+		return fmt.Errorf("level %d has no cell at (%d,%d)", l.ID, x, y)
+	}
+
+	switch glyph {
+	case '#', '.', '+', '\'', '<', '>':
+
+	default:
+		return fmt.Errorf("level %d has invalid terrain %q", l.ID, glyph)
+	}
+
+	occupant, found := l.ActorAt(x, y)
+
+	if found &&
+		(glyph == '#' || glyph == '+') {
+		return fmt.Errorf("terrain %q would block actor %d", glyph, occupant)
+	}
+
+	_, linked := l.StairAt(x, y)
+
+	if linked &&
+		glyph != '<' && glyph != '>' {
+		return fmt.Errorf("terrain would remove stair link at (%d,%d)", x, y)
+	}
+
+	l.changeDoorCells([]point{
+		{
+			x: x,
+			y: y,
+		},
+	}, glyph)
+
+	return nil
+}
+
 func (l *Level) ActorAt(x, y int) (akara.Entity, bool) {
 	actor, ok := l.actors[point{
 		x: x,

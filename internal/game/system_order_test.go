@@ -50,6 +50,26 @@ func TestLuaSystemCanRunBetweenExistingGoSystems(t *testing.T) {
 	}
 }
 
+func updateLuaSystem(t *testing.T, g *Game, name string, aut time.Duration) {
+	t.Helper()
+
+	for _, system := range g.scripts.Systems() {
+		if system.Name == name {
+			if err := system.Update(g.world, aut); err != nil {
+				t.Fatal(err)
+			}
+
+			if err := g.scripts.ApplyPending(); err != nil {
+				t.Fatal(err)
+			}
+
+			return
+		}
+	}
+
+	t.Fatalf("missing Lua system %s", name)
+}
+
 func TestSystemOrderRejectsUnknownAndCycle(t *testing.T) {
 	noop := akara.SystemFunc(func(*akara.World, time.Duration) error {
 		return nil

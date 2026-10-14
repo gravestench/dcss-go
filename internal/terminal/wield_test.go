@@ -66,7 +66,7 @@ func TestWieldMenuKeepsInventoryLetters(t *testing.T) {
 		},
 	}
 
-	DrawWield(canvas, view)
+	DrawWield(canvas, view, testPresentationPolicy(t))
 	page := strings.Join(canvas.PlainRows(), "\n")
 
 	if !strings.Contains(page, "b - rapier") ||

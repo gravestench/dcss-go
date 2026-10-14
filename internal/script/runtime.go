@@ -19,9 +19,43 @@ const bootstrapTimeout = 5 * time.Second
 // Services are the session operations made available to Lua callbacks.
 // A nil operation is unavailable to that particular runtime.
 type Services struct {
-	ActiveActor func() akara.Entity
-	Random      func(stream string, bound int) (int, error)
-	Emit        func(kind, text string)
+	ActiveActor    func() akara.Entity
+	PlayerEntity   func() akara.Entity
+	CurrentAut     func() int64
+	Random         func(stream string, bound int) (int, error)
+	RandomWord     func(stream string) uint64
+	Emit           func(kind, text string)
+	Grid           Grid
+	HostComponents map[string]HostComponent
+}
+
+// Grid exposes reusable spatial reads. Game rules decide how to interpret
+// terrain glyphs, stair links, occupancy, and walkability.
+type Grid interface {
+	Cell(levelID, x, y int) (byte, bool)
+	Walkable(levelID, x, y int) bool
+	ActorAt(levelID, x, y int) (akara.Entity, bool)
+	StairAt(levelID, x, y int) (Stair, bool)
+	Visible(levelID, fromX, fromY, radius, targetX, targetY int) (bool, error)
+	RouteStep(levelID, fromX, fromY, toX, toY int, goal akara.Entity) (int, int, bool)
+	ProjectileClear(levelID, fromX, fromY, toX, toY int) bool
+	SetCell(levelID, x, y int, glyph byte) error
+	MoveActor(entity akara.Entity, levelID, x, y int) error
+	PlaceActor(entity akara.Entity, levelID, x, y int) error
+	RemoveActor(entity akara.Entity, levelID int) error
+}
+
+type gridCell struct {
+	levelID int
+	x       int
+	y       int
+}
+
+type Stair struct {
+	ToLevelID   int
+	ToX         int
+	ToY         int
+	Unavailable string
 }
 
 // Runtime owns one Lua VM and its Akara registrations for one game session.
@@ -32,21 +66,30 @@ type Runtime struct {
 	state    *lua.LState
 	services Services
 
-	components     map[string]*akara.DynamicStore
-	species        map[string]content.SpeciesDef
-	jobs           map[string]content.JobDef
-	speciesTables  map[string]*lua.LTable
-	jobTables      map[string]*lua.LTable
-	choicePolicy   *lua.LFunction
-	systems        []System
-	context        *lua.LTable
-	handles        map[akara.Entity]*lua.LUserData
-	pending        *akara.CommandBuffer
-	pendingTargets []akara.Entity
-	loaded         map[string]lua.LValue
-	loading        map[string]bool
-	moduleStack    []string
-	frozen         bool
+	components       map[string]*akara.DynamicStore
+	hostComponents   map[string]HostComponent
+	species          map[string]content.SpeciesDef
+	jobs             map[string]content.JobDef
+	speciesTables    map[string]*lua.LTable
+	jobTables        map[string]*lua.LTable
+	definitions      map[string]map[string]*lua.LTable
+	choicePolicy     *lua.LFunction
+	policies         map[string]*lua.LFunction
+	systems          []System
+	context          *lua.LTable
+	handles          map[akara.Entity]*lua.LUserData
+	pending          []structuralCommand
+	pendingViews     map[componentTarget]*pendingComponent
+	pendingDestroy   map[akara.Entity]bool
+	pendingCells     map[gridCell]byte
+	pendingActors    map[gridCell]akara.Entity
+	pendingPositions map[akara.Entity]*gridCell
+	created          []akara.Entity
+	signals          map[string][]lua.LValue
+	loaded           map[string]lua.LValue
+	loading          map[string]bool
+	moduleStack      []string
+	frozen           bool
 }
 
 // New loads and validates the effective Lua source tree for one world.
@@ -54,6 +97,25 @@ func New(
 	world *akara.World,
 	rules modfs.Ruleset,
 	services Services,
+) (_ *Runtime, err error) {
+	return newRuntime(world, rules, services, true)
+}
+
+// NewCatalog loads character definitions for the menu before a game world
+// exists. It loads the same effective Lua tree but does not validate or run
+// systems that require gameplay components.
+func NewCatalog(
+	world *akara.World,
+	rules modfs.Ruleset,
+) (*Runtime, error) {
+	return newRuntime(world, rules, Services{}, false)
+}
+
+func newRuntime(
+	world *akara.World,
+	rules modfs.Ruleset,
+	services Services,
+	validateSystems bool,
 ) (_ *Runtime, err error) {
 	if world == nil {
 		return nil, fmt.Errorf("Lua runtime has no Akara world")
@@ -67,15 +129,26 @@ func New(
 		state:    state,
 		services: services,
 
-		components:    make(map[string]*akara.DynamicStore),
-		species:       make(map[string]content.SpeciesDef),
-		jobs:          make(map[string]content.JobDef),
-		speciesTables: make(map[string]*lua.LTable),
-		jobTables:     make(map[string]*lua.LTable),
-		loaded:        make(map[string]lua.LValue),
-		loading:       make(map[string]bool),
-		handles:       make(map[akara.Entity]*lua.LUserData),
-		pending:       akara.NewCommandBuffer(),
+		components:     make(map[string]*akara.DynamicStore),
+		hostComponents: services.HostComponents,
+		species:        make(map[string]content.SpeciesDef),
+		jobs:           make(map[string]content.JobDef),
+		speciesTables:  make(map[string]*lua.LTable),
+		jobTables:      make(map[string]*lua.LTable),
+		definitions: map[string]map[string]*lua.LTable{
+			"species": make(map[string]*lua.LTable),
+			"jobs":    make(map[string]*lua.LTable),
+		},
+		policies:         make(map[string]*lua.LFunction),
+		loaded:           make(map[string]lua.LValue),
+		loading:          make(map[string]bool),
+		handles:          make(map[akara.Entity]*lua.LUserData),
+		pendingViews:     make(map[componentTarget]*pendingComponent),
+		pendingDestroy:   make(map[akara.Entity]bool),
+		pendingCells:     make(map[gridCell]byte),
+		pendingActors:    make(map[gridCell]akara.Entity),
+		pendingPositions: make(map[akara.Entity]*gridCell),
+		signals:          make(map[string][]lua.LValue),
 	}
 
 	defer func() {
@@ -106,8 +179,10 @@ func New(
 
 	runtime.frozen = true
 
-	if err := runtime.validateSystems(); err != nil {
-		return nil, err
+	if validateSystems {
+		if err := runtime.validateSystems(); err != nil {
+			return nil, err
+		}
 	}
 
 	return runtime, nil

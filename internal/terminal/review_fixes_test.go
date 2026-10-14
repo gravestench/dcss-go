@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/character"
+	"dcrawl-go/internal/script"
 )
 
 func TestFocusedEnterChoosesSpeciesBackgroundAndWeapon(t *testing.T) {
@@ -135,12 +135,13 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 		}
 	}
 
-	if restriction, err := character.JobForSpecies(
-		m.catalog,
-		"SP_BARACHI",
-		"JOB_ARCANE_MARKSMAN",
-	); err != nil ||
-		restriction != character.Recommended {
+	choice := m.choices[script.ChoiceKey{
+		SpeciesID:    "SP_BARACHI",
+		JobID:        "JOB_ARCANE_MARKSMAN",
+		SpeciesFirst: true,
+	}]
+
+	if choice.Restriction != "recommended" {
 		t.Fatal("review fixture does not contain a recommended pair")
 	}
 
@@ -209,7 +210,7 @@ func TestDrawPlayDangerValueColors(t *testing.T) {
 
 	c := NewCanvas(79, 24)
 	layout, _ := ComputeLayout(79, 24)
-	DrawPlay(c, layout, view, "")
+	DrawPlay(c, layout, view, "", testPresentationPolicy(t))
 	cellAt := func(x, y int) cell {
 		return c.cells[y*c.width+x]
 	}

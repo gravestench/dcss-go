@@ -283,9 +283,10 @@ func (m *AppModel) hasPlayableChoice(
 			SpeciesFirst: speciesFirst,
 		}]
 
-		return choice.Playable && character.SupportedFighterStart(
-			speciesID, jobID,
-		)
+		return choice.Playable && m.supportedStarts[script.ChoiceKey{
+			SpeciesID: speciesID,
+			JobID:     jobID,
+		}]
 	}
 
 	if speciesID == "" {
@@ -308,7 +309,10 @@ func (m *AppModel) hasPlayableChoice(
 }
 
 func (m *AppModel) enterWeaponChoice() {
-	options, err := character.WeaponOptions(m.catalog, m.speciesID, m.jobID)
+	result, err := m.presentationPolicy("character.weapon_options", map[string]any{
+		"species_id": m.speciesID,
+		"job_id":     m.jobID,
+	})
 
 	if err != nil {
 		m.notice = fmt.Sprintf("Weapon choices failed: %v", err)
@@ -316,11 +320,73 @@ func (m *AppModel) enterWeaponChoice() {
 		return
 	}
 
+	rows := policyRows(result["options"])
+	options := make([]menuWeaponOption, 0, len(rows))
+
+	for _, raw := range rows {
+		option := policyRecord(raw)
+		options = append(options, menuWeaponOption{
+			ID:          option["id"].(string),
+			Name:        option["name"].(string),
+			Restriction: option["restriction"].(string),
+		})
+	}
+
 	m.weaponReturn = m.screen
 	m.options = options
 
 	m.screen = ScreenWeapon
 	m.focus = 0
+}
+
+func projectSupportedStarts(
+	runtime *script.Runtime,
+	catalog content.Catalog,
+) (map[script.ChoiceKey]bool, error) {
+	pairs := make([]any, 0)
+	keys := make([]script.ChoiceKey, 0)
+
+	for _, speciesID := range catalog.SpeciesIDs() {
+		for _, jobID := range catalog.JobIDs() {
+			keys = append(keys, script.ChoiceKey{
+				SpeciesID: speciesID,
+				JobID:     jobID,
+			})
+
+			pairs = append(pairs, map[string]any{
+				"species_id": speciesID,
+				"job_id":     jobID,
+			})
+		}
+	}
+
+	result, err := runtime.Policy("character.supported_starts", map[string]any{
+		"pairs": pairs,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	rows := policyRows(result["supported"])
+
+	if len(rows) != len(keys) {
+		return nil, fmt.Errorf("Lua start support returned %d choices for %d pairs", len(rows), len(keys))
+	}
+
+	supported := make(map[script.ChoiceKey]bool, len(keys))
+
+	for index, key := range keys {
+		value, ok := rows[index].(bool)
+
+		if !ok {
+			return nil, fmt.Errorf("Lua start support %d has type %T", index, rows[index])
+		}
+
+		supported[key] = value
+	}
+
+	return supported, nil
 }
 
 func (m *AppModel) handleWeaponKey(key string) {

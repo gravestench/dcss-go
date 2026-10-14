@@ -15,7 +15,7 @@ register.species{
     hp = 0,
     mp_mod = 0,
     mr = 3,
-    strength = 8,
+    strength = 9,
     intelligence = 8,
     dexterity = 8,
     levelup_stat_frequency = 4,
