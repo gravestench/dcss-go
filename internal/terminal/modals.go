@@ -85,6 +85,18 @@ func DrawInventory(canvas *Canvas, view game.View) {
 	canvas.Write(0, canvas.height-2, "Esc - Return    ? - Help", Brown, Black)
 }
 
+// DrawDrop shares inventory letters with the standard inventory screen.
+func DrawDrop(canvas *Canvas, view game.View, quantity string) {
+	DrawInventory(canvas, view)
+
+	if quantity == "" {
+		quantity = "all"
+	}
+
+	canvas.Write(0, 0, "Drop which item? (quantity: "+quantity+")", White, Black)
+	canvas.Write(0, canvas.height-2, "Digits - Quantity    Esc - Cancel    ? - Help", Brown, Black)
+}
+
 // DrawQuaff uses inventory letters so a choice always selects the displayed item.
 func DrawQuaff(canvas *Canvas, view game.View) {
 	canvas.Write(0, 0, "Quaff which potion?", White, Black)
@@ -184,7 +196,7 @@ func DrawHelp(canvas *Canvas) {
 		"Dungeon Crawl Stone Soup - Help",
 		"",
 		"Movement: h j k l, y u b n, arrow keys",
-		"Wait: . or s     Pick up: g ,     Stairs: < or >",
+		"Wait: . or s     Pick up: g ,     Drop: d     Stairs: < or >",
 		"Inventory: i     Skills: m     Help: ?",
 		"Save and exit: S (confirm), Ctrl-S (now)",
 		"Abandon character: Ctrl-Q (confirm)",

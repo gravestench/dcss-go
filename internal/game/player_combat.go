@@ -45,7 +45,7 @@ func newPlayerCombat(g *Game) playerCombat {
 // attackInput projects the live Fighter against a cataloged defender.
 // It also checks equipment before a bump spends time.
 func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, error) {
-	player, found := c.players.Get(c.player)
+	_, found := c.players.Get(c.player)
 
 	if !found {
 		return combat.PlayerAttackInput{}, fmt.Errorf("player has no character choice")
@@ -74,15 +74,10 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		Dexterity:  attributes.Dexterity,
 		DefenderEV: defender.EV,
 		DefenderAC: defender.AC,
-		Unarmed:    player.StartingWeaponID == "WPN_UNARMED",
 	}
 
 	if durations, found := c.durations.Get(c.player); found {
 		in.Mighty = durations.MightAut > 0
-	}
-
-	if in.Unarmed {
-		in.WeaponSkillID = "SK_UNARMED_COMBAT"
 	}
 
 	weaponCount := 0
@@ -98,10 +93,8 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		weaponCount++
 		item, found := c.items.Get(entity)
 
-		if !found || in.Unarmed || item.KindID != player.StartingWeaponID {
-			return combat.PlayerAttackInput{}, fmt.Errorf(
-				"equipped weapon does not match starting weapon %s", player.StartingWeaponID,
-			)
+		if !found {
+			return combat.PlayerAttackInput{}, fmt.Errorf("equipped weapon %d has no item", entity)
 		}
 
 		kind, err := c.catalog.Item(item.KindID)
@@ -124,13 +117,17 @@ func (c playerCombat) attackInput(defenderID string) (combat.PlayerAttackInput, 
 		in.WeaponPlus = item.Plus
 	}
 
-	if (in.Unarmed && weaponCount != 0) || (!in.Unarmed && weaponCount != 1) {
-		return combat.PlayerAttackInput{}, fmt.Errorf(
-			"player has %d equipped weapons for %s", weaponCount, player.StartingWeaponID,
-		)
+	if weaponCount > 1 {
+		return combat.PlayerAttackInput{}, fmt.Errorf("player has %d equipped weapons", weaponCount)
 	}
 
-	fightingFound, weaponSkillFound := false, false
+	if weaponCount == 0 {
+		in.Unarmed = true
+		in.WeaponSkillID = "SK_UNARMED_COMBAT"
+	}
+
+	fightingFound := false
+	weaponSkillFound := in.Unarmed
 
 	for _, skill := range skills.Entries {
 		switch skill.ID {
@@ -181,7 +178,8 @@ func (c playerCombat) attackDelayInput(defenderID string) (combat.AttackDelayInp
 	}
 
 	skills, _ := c.skills.Get(c.player)
-	weaponSkillFound, shieldSkillFound := false, false
+	weaponSkillFound := in.Unarmed
+	shieldSkillFound := false
 
 	for _, skill := range skills.Entries {
 		if skill.ID == in.WeaponSkillID {

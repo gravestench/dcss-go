@@ -35,6 +35,7 @@ const (
 	ScreenDeath
 	ScreenQuaff
 	ScreenStatChoice
+	ScreenDrop
 )
 
 // AppModel owns terminal navigation; the Game owns every turn-changing state.
@@ -57,6 +58,7 @@ type AppModel struct {
 	focus        int
 	notice       string
 	confirm      confirmation
+	dropQuantity string
 }
 
 func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppModel, error) {
@@ -125,6 +127,9 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 
 	case ScreenQuaff:
 		return m.handleQuaffKey(key)
+
+	case ScreenDrop:
+		return m.handleDropKey(key)
 
 	case ScreenConfirm:
 		return m.handleConfirmKey(key)
@@ -204,6 +209,13 @@ func (m *AppModel) renderCanvas() *Canvas {
 	case ScreenQuaff:
 		if m.game != nil {
 			DrawQuaff(canvas, m.game.View())
+		}
+
+		m.drawModalNotice(canvas)
+
+	case ScreenDrop:
+		if m.game != nil {
+			DrawDrop(canvas, m.game.View(), m.dropQuantity)
 		}
 
 		m.drawModalNotice(canvas)

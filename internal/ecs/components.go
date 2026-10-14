@@ -120,11 +120,13 @@ const (
 	IntentWait
 	IntentQuaff
 	IntentOpenDoor
+	IntentDrop
 )
 
 type Intent struct {
-	Kind   IntentKind
-	DX     int
-	DY     int
-	ItemID akara.Entity
+	Kind     IntentKind
+	DX       int
+	DY       int
+	ItemID   akara.Entity
+	Quantity int
 }

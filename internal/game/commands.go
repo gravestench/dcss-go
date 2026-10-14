@@ -19,13 +19,15 @@ const (
 	CommandWait
 	CommandInspect
 	CommandQuaff
+	CommandDrop
 )
 
 type Command struct {
-	Kind   CommandKind
-	DX     int
-	DY     int
-	ItemID uint64
+	Kind     CommandKind
+	DX       int
+	DY       int
+	ItemID   uint64
+	Quantity int
 }
 
 type Event struct {
@@ -46,6 +48,7 @@ type TurnContext struct {
 	Deaths     []akara.Entity
 	Pickup     akara.Entity
 	Consume    akara.Entity
+	Drop       *pendingItemDrop
 	PlayerKill akara.Entity
 	Corpse     *pendingCorpse
 	StairFrom  int
@@ -170,6 +173,9 @@ func (g *Game) preparePlayerCommand(
 
 	case CommandQuaff:
 		return g.prepareQuaffCommand(command.ItemID)
+
+	case CommandDrop:
+		return g.prepareDropCommand(command)
 
 	default:
 		return freeCommand(g.noTime("Unknown command.")), nil
@@ -414,6 +420,7 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	g.turn.Deaths = nil
 	g.turn.Pickup = 0
 	g.turn.Consume = 0
+	g.turn.Drop = nil
 	g.turn.PlayerKill = 0
 	g.turn.Corpse = nil
 	g.turn.StairFrom = 0
@@ -430,18 +437,20 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 		return nil, fmt.Errorf("%s actor %d produced no intent", phase, actor)
 	}
 
+	buffer := akara.NewCommandBuffer()
+
 	if item := g.turn.Pickup; item != 0 {
 		// World.Update has completed; this is the structural pickup barrier.
-		if !g.stores.Positions.Remove(item) {
-			return nil, fmt.Errorf("%s actor %d pickup item %d lost its position", phase, actor, item)
-		}
-
-		if _, err := g.stores.CarriedBy.Set(item, ecs.CarriedBy{Holder: actor}); err != nil {
+		if err := g.applyPickup(actor, item, buffer); err != nil {
 			return nil, fmt.Errorf("%s actor %d pickup item %d: %w", phase, actor, item, err)
 		}
 	}
 
-	buffer := akara.NewCommandBuffer()
+	if g.turn.Drop != nil {
+		if err := g.applyDrop(*g.turn.Drop, buffer); err != nil {
+			return nil, fmt.Errorf("%s actor %d drop: %w", phase, actor, err)
+		}
+	}
 
 	if itemID := g.turn.Consume; itemID != 0 {
 		item, found := g.stores.Items.Get(itemID)

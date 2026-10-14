@@ -306,7 +306,18 @@ func registerSystems(g *Game) error {
 		corpses:   stores.Corpses,
 		carried:   stores.CarriedBy,
 		intents:   stores.Intents,
+		catalog:   g.catalog,
 		turn:      &g.turn,
+	}); err != nil {
+		return err
+	}
+
+	if _, err := world.AddSystem(&dropSystem{
+		items:   stores.Items,
+		carried: stores.CarriedBy,
+		intents: stores.Intents,
+		catalog: g.catalog,
+		turn:    &g.turn,
 	}); err != nil {
 		return err
 	}

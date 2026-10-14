@@ -226,7 +226,7 @@ func validateSavedEquipment(slots map[string]string, weaponID string) error {
 		return nil
 	}
 
-	if slots["weapon"] != weaponID {
+	if slots["weapon"] != "" && slots["weapon"] != weaponID {
 		return fmt.Errorf(
 			"selected starting weapon %s disagrees with equipped weapon %s",
 			weaponID, slots["weapon"],
@@ -234,4 +234,15 @@ func validateSavedEquipment(slots map[string]string, weaponID string) error {
 	}
 
 	return nil
+}
+
+func validateSavedUnequippedWeapon(records []save.EntityRecord, weaponID string) error {
+	for _, record := range records {
+		if record.Item != nil && record.Item.KindID == weaponID &&
+			(record.Position != nil || record.CarriedBy != nil) {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("save is missing selected starting weapon %s", weaponID)
 }

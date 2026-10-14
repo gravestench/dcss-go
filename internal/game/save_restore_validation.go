@@ -291,6 +291,12 @@ func (v *savedEntityValidator) validateFinalState() error {
 		return err
 	}
 
+	if v.player.weaponID != "WPN_UNARMED" && v.equippedSlots["weapon"] == "" {
+		if err := validateSavedUnequippedWeapon(v.snapshot.Entities, v.player.weaponID); err != nil {
+			return err
+		}
+	}
+
 	// A stat prompt pauses before the monster phase at the start of the
 	// player's spent turn. Its next deadline is therefore still in the future.
 	if v.player.alive {
