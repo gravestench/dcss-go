@@ -13,8 +13,8 @@ conditions that hide the reason for a failure. Comments explain ownership,
 invariants, source-specific order, and surprising rules, with pinned C++
 source references where helpful. They should not repeat what the next line
 already says. The repository's `AGENTS.md` carries this standard into each
-implementation slice. Existing long lines will be reflowed in coherent
-readability passes; every new or changed handwritten line must meet it now.
+implementation slice. The style check now enforces line length, formatting,
+expanded literals and blocks, and space after control-flow blocks.
 
 ## Decision
 
@@ -33,7 +33,7 @@ Use Akara as the source of truth for **mutable, independently addressable game e
 | Items and equipment | Floor items, inventory links, equipped slots, quantities, and corpses are entities/components. `pickupSystem` and `quaffSystem` run in Akara; quaff receives its exact stores, RNG, and action context but still hard-codes three potions. | **State is already ECS; behavior is partial.** Keep item definitions in the catalog. Make pickup text derive from the item. Add effect handlers as content is ported; use components for persistent effects, not for each potion identity. |
 | Status and regeneration | `Durations.MightAut` and `Regeneration` are components; their systems now receive narrow store dependencies and action context but only support the player. | **Partly ECS.** When a second status needs different application/removal rules, use an optional typed component or a small explicit status model rather than growing one player-only struct indefinitely. |
 | Corpses and floor timers | Corpses are ECS entities. `corpseAgingSystem` owns their item/corpse mutations and removal, while each `Level` owns its away clock. The turn coordinator invokes the system at the post-action 200-aut boundary and on floor return. | **ECS-owned lifecycle.** Preserve this timer barrier when adding other timed floor entities; do not run rot once per acting monster. |
-| World, visibility, and generation | `Level` owns terrain, remembered cells, and occupancy; `Game` holds a derived current visibility mask. Population weights are immutable catalog data; no procedural level generation exists. | **Keep grids outside ECS.** Treat `Level` as map service, not a tile entity collection. A level builder produces grids and then requests Akara entity creation. Recompute derived sight instead of persisting it as a component. |
+| World, visibility, and generation | `Level` owns terrain, remembered cells, and occupancy; `Game` holds a derived current visibility mask. Population weights are immutable catalog data; `levelgen` builds D:1–2 `layout_basic` geometry as a temporary grid, but live play still uses the fixed map. | **Keep grids outside ECS.** Treat `Level` as map service, not a tile entity collection. The level builder produces grids; integration will then request Akara entity creation. Recompute derived sight instead of persisting it as a component. |
 | Saves and views | `Game.Snapshot` and `Restore` manually copy/validate components in one large file; `Game.View` projects component and level state; Bubble Tea renders the view. | **Keep adapters outside ECS.** Split save validation by component/domain and build read-only projections from stores. Maintain one explicit component serialization schema. UI must never mutate stores. |
 | Session services | `Game` owns Akara world, catalog, levels, player ID, RNG streams, clock, messages, and an action context. | **Appropriate composition root.** Keep services outside entity stores. Reduce `Game` methods that implement entity behavior; retain orchestration, lifecycle, save, and view entry points. |
 
@@ -67,7 +67,7 @@ source-backed level generation.
 
 Phase 5 progress: corpse state remains in Akara stores, and a focused aging system now owns its decay and removal. The `Level` owns its away clock. `Game.Step` supplies elapsed aut only after all actor actions, preserving the source's 200-aut timer phase and inactive-floor catch-up.
 
-Level travel progress: each stair cell has an explicit destination level and arrival cell owned by its `Level`. The new Go save schema stores those links, and restore validates every destination. The fixed two-floor scenario remains the playable fixture; procedural floors and branch travel are still missing.
+Level travel progress: each stair cell has an explicit destination level and arrival cell owned by its `Level`. The new Go save schema stores those links, and restore validates every destination. A pure D:1–2 `layout_basic` builder now produces source-shaped terrain and stair pairs. The fixed two-floor scenario remains the playable fixture; integrating generated floors, closed-door behavior, source spawn counts, and branch travel is next.
 
 Human advancement ownership: the death system credits source-derived XP to the player’s `Progression` component. A following Akara advancement system applies Human level thresholds, recalculates HP/MP, gives periodic random stat gains, and records a pending manual stat choice before levels 3, 9, 15, 21, and 27. The terminal prompts through the read-only view and submits a no-aut choice; the game owns the `level` RNG stream. Immutable thresholds and vital formulas live in `character`. Version-8 saves validate XP, level, stat totals, and vitals together. The fixed-map monster budget currently prevents natural level-up; larger generated floors and skill training remain next.
 
