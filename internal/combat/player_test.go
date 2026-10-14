@@ -22,9 +22,112 @@ func TestPlayerMeleeMissAndAutomaticOverrides(t *testing.T) {
 		rolls []scriptedRoll
 		want  OutcomeKind
 	}{
-		{"ordinary miss", []scriptedRoll{{400, 0}, {300, 0}, {22, 0}, {100, 10}, {15, 0}}, Miss},
-		{"automatic miss", []scriptedRoll{{400, 0}, {300, 0}, {22, 21}, {100, 0}, {2, 0}, {25, 0}}, Miss},
-		{"automatic hit", []scriptedRoll{{400, 0}, {300, 0}, {22, 0}, {100, 0}, {2, 1}, {15, 0}, {10, 9}, {201, 0}, {301, 0}, {2, 0}, {2, 1}}, Hit},
+		{
+			name: "ordinary miss",
+			rolls: []scriptedRoll{
+				{
+					bound: 400,
+					value: 0,
+				},
+				{
+					bound: 300,
+					value: 0,
+				},
+				{
+					bound: 22,
+					value: 0,
+				},
+				{
+					bound: 100,
+					value: 10,
+				},
+				{
+					bound: 15,
+					value: 0,
+				},
+			},
+			want: Miss,
+		},
+		{
+			name: "automatic miss",
+			rolls: []scriptedRoll{
+				{
+					bound: 400,
+					value: 0,
+				},
+				{
+					bound: 300,
+					value: 0,
+				},
+				{
+					bound: 22,
+					value: 21,
+				},
+				{
+					bound: 100,
+					value: 0,
+				},
+				{
+					bound: 2,
+					value: 0,
+				},
+				{
+					bound: 25,
+					value: 0,
+				},
+			},
+			want: Miss,
+		},
+		{
+			name: "automatic hit",
+			rolls: []scriptedRoll{
+				{
+					bound: 400,
+					value: 0,
+				},
+				{
+					bound: 300,
+					value: 0,
+				},
+				{
+					bound: 22,
+					value: 0,
+				},
+				{
+					bound: 100,
+					value: 0,
+				},
+				{
+					bound: 2,
+					value: 1,
+				},
+				{
+					bound: 15,
+					value: 0,
+				},
+				{
+					bound: 10,
+					value: 9,
+				},
+				{
+					bound: 201,
+					value: 0,
+				},
+				{
+					bound: 301,
+					value: 0,
+				},
+				{
+					bound: 2,
+					value: 0,
+				},
+				{
+					bound: 2,
+					value: 1,
+				},
+			},
+			want: Hit,
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			rng := &scriptedRoller{rolls: tc.rolls}
@@ -41,11 +144,64 @@ func TestPlayerMeleeWeaponDamageAndRatArmour(t *testing.T) {
 		name                     string
 		damageRoll, acRoll, want int
 	}{
-		{"absorbed", 1, 1, 0},
-		{"damaging", 9, 0, 9},
+		{
+			name:       "absorbed",
+			damageRoll: 1,
+			acRoll:     1,
+			want:       0,
+		},
+		{
+			name:       "damaging",
+			damageRoll: 9,
+			acRoll:     0,
+			want:       9,
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			rng := &scriptedRoller{rolls: []scriptedRoll{{400, 300}, {300, 200}, {27, 26}, {100, 10}, {28, 0}, {10, tc.damageRoll}, {201, 200}, {301, 300}, {2, tc.acRoll}, {2, 1}}}
+			rng := &scriptedRoller{
+				rolls: []scriptedRoll{
+					{
+						bound: 400,
+						value: 300,
+					},
+					{
+						bound: 300,
+						value: 200,
+					},
+					{
+						bound: 27,
+						value: 26,
+					},
+					{
+						bound: 100,
+						value: 10,
+					},
+					{
+						bound: 28,
+						value: 0,
+					},
+					{
+						bound: 10,
+						value: tc.damageRoll,
+					},
+					{
+						bound: 201,
+						value: 200,
+					},
+					{
+						bound: 301,
+						value: 300,
+					},
+					{
+						bound: 2,
+						value: tc.acRoll,
+					},
+					{
+						bound: 2,
+						value: 1,
+					},
+				},
+			}
 			got, err := PlayerMelee(rng, fighterFlailAttack())
 			if err != nil || got.Kind != Hit || got.Damage != tc.want || len(rng.rolls) != 0 {
 				t.Fatalf("attack = %+v, err %v, rolls %+v", got, err, rng.rolls)
@@ -60,7 +216,50 @@ func TestPlayerMeleeUnarmedUsesNormalFormBaseAndNoWeaponSkillMultiplier(t *testi
 	in.WeaponSkillID = "SK_UNARMED_COMBAT"
 	in.UnarmedSkill256 = 513
 	in.WeaponDamage, in.WeaponHit = 0, 0
-	rng := &scriptedRoller{rolls: []scriptedRoll{{400, 0}, {300, 0}, {23, 22}, {100, 10}, {26, 0}, {256, 0}, {7, 6}, {301, 0}, {2, 0}, {2, 1}}}
+	rng := &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 400,
+				value: 0,
+			},
+			{
+				bound: 300,
+				value: 0,
+			},
+			{
+				bound: 23,
+				value: 22,
+			},
+			{
+				bound: 100,
+				value: 10,
+			},
+			{
+				bound: 26,
+				value: 0,
+			},
+			{
+				bound: 256,
+				value: 0,
+			},
+			{
+				bound: 7,
+				value: 6,
+			},
+			{
+				bound: 301,
+				value: 0,
+			},
+			{
+				bound: 2,
+				value: 0,
+			},
+			{
+				bound: 2,
+				value: 1,
+			},
+		},
+	}
 	got, err := PlayerMelee(rng, in)
 	if err != nil || got.Kind != Hit || got.Damage != 6 || len(rng.rolls) != 0 {
 		t.Fatalf("unarmed attack = %+v, err %v, rolls %+v", got, err, rng.rolls)
@@ -70,12 +269,82 @@ func TestPlayerMeleeUnarmedUsesNormalFormBaseAndNoWeaponSkillMultiplier(t *testi
 func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 	in := fighterFlailAttack()
 	in.Mighty = true
-	rng := &scriptedRoller{rolls: []scriptedRoll{{400, 300}, {300, 200}, {27, 26}, {100, 10}, {28, 0}, {10, 9}, {201, 200}, {301, 300}, {10, 4}, {2, 1}, {2, 1}}}
+	rng := &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 400,
+				value: 300,
+			},
+			{
+				bound: 300,
+				value: 200,
+			},
+			{
+				bound: 27,
+				value: 26,
+			},
+			{
+				bound: 100,
+				value: 10,
+			},
+			{
+				bound: 28,
+				value: 0,
+			},
+			{
+				bound: 10,
+				value: 9,
+			},
+			{
+				bound: 201,
+				value: 200,
+			},
+			{
+				bound: 301,
+				value: 300,
+			},
+			{
+				bound: 10,
+				value: 4,
+			},
+			{
+				bound: 2,
+				value: 1,
+			},
+			{
+				bound: 2,
+				value: 1,
+			},
+		},
+	}
 	got, err := PlayerMelee(rng, in)
 	if err != nil || got.Kind != Hit || got.Damage != 13 || len(rng.rolls) != 0 {
 		t.Fatalf("mighty hit = %+v, %v; rolls %+v", got, err, rng.rolls)
 	}
-	rng = &scriptedRoller{rolls: []scriptedRoll{{400, 0}, {300, 0}, {22, 0}, {100, 10}, {15, 0}}}
+	rng = &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 400,
+				value: 0,
+			},
+			{
+				bound: 300,
+				value: 0,
+			},
+			{
+				bound: 22,
+				value: 0,
+			},
+			{
+				bound: 100,
+				value: 10,
+			},
+			{
+				bound: 15,
+				value: 0,
+			},
+		},
+	}
 	got, err = PlayerMelee(rng, in)
 	if err != nil || got.Kind != Miss || len(rng.rolls) != 0 {
 		t.Fatalf("mighty miss = %+v, %v; rolls %+v", got, err, rng.rolls)
@@ -86,7 +355,58 @@ func TestPlayerMeleeMightRollPrecedesEnchantmentRoll(t *testing.T) {
 	in := fighterFlailAttack()
 	in.Mighty = true
 	in.WeaponPlus = 2
-	rng := &scriptedRoller{rolls: []scriptedRoll{{400, 300}, {300, 200}, {29, 28}, {100, 10}, {29, 0}, {10, 9}, {201, 200}, {301, 300}, {10, 4}, {3, 2}, {2, 1}, {2, 1}}}
+	rng := &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 400,
+				value: 300,
+			},
+			{
+				bound: 300,
+				value: 200,
+			},
+			{
+				bound: 29,
+				value: 28,
+			},
+			{
+				bound: 100,
+				value: 10,
+			},
+			{
+				bound: 29,
+				value: 0,
+			},
+			{
+				bound: 10,
+				value: 9,
+			},
+			{
+				bound: 201,
+				value: 200,
+			},
+			{
+				bound: 301,
+				value: 300,
+			},
+			{
+				bound: 10,
+				value: 4,
+			},
+			{
+				bound: 3,
+				value: 2,
+			},
+			{
+				bound: 2,
+				value: 1,
+			},
+			{
+				bound: 2,
+				value: 1,
+			},
+		},
+	}
 	got, err := PlayerMelee(rng, in)
 	if err != nil || got.Kind != Hit || got.Damage != 15 || len(rng.rolls) != 0 {
 		t.Fatalf("enchanted mighty hit = %+v, %v; rolls %+v", got, err, rng.rolls)

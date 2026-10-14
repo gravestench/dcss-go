@@ -41,7 +41,9 @@ func NewCanvas(width, height int) *Canvas {
 	return c
 }
 
-func (c *Canvas) inBounds(x, y int) bool { return x >= 0 && y >= 0 && x < c.width && y < c.height }
+func (c *Canvas) inBounds(x, y int) bool {
+	return x >= 0 && y >= 0 && x < c.width && y < c.height
+}
 
 func (c *Canvas) clearAt(x, y int) {
 	if !c.inBounds(x, y) {

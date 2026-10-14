@@ -21,7 +21,12 @@ func legacyFixtures(t *testing.T) ([]byte, []byte) {
 
 func TestParseLegacyThreeSpecies(t *testing.T) {
 	source, aptitudes := legacyFixtures(t)
-	records, err := parseLegacy("crawl-ref/source/util/species-gen/species-data-deprecated-species.txt", source, "crawl-ref/source/util/species-gen/aptitudes-deprecated-species.txt", aptitudes)
+	records, err := parseLegacy(
+		"crawl-ref/source/util/species-gen/species-data-deprecated-species.txt",
+		source,
+		"crawl-ref/source/util/species-gen/aptitudes-deprecated-species.txt",
+		aptitudes,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -39,9 +44,27 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 		id, monster                       string
 		strength, intelligence, dexterity int
 	}{
-		{"SP_HIGH_ELF", "MONS_ELF", 7, 11, 10},
-		{"SP_LAVA_ORC", "MONS_LAVA_ORC", 10, 8, 6},
-		{"SP_SLUDGE_ELF", "MONS_ELF", 8, 8, 8},
+		{
+			id:           "SP_HIGH_ELF",
+			monster:      "MONS_ELF",
+			strength:     7,
+			intelligence: 11,
+			dexterity:    10,
+		},
+		{
+			id:           "SP_LAVA_ORC",
+			monster:      "MONS_LAVA_ORC",
+			strength:     10,
+			intelligence: 8,
+			dexterity:    6,
+		},
+		{
+			id:           "SP_SLUDGE_ELF",
+			monster:      "MONS_ELF",
+			strength:     8,
+			intelligence: 8,
+			dexterity:    8,
+		},
 	}
 	for _, check := range checks {
 		i, found := byID[check.id]
@@ -49,7 +72,8 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 			t.Fatalf("missing %s", check.id)
 		}
 		s := records[i]
-		if s.MonsterID != check.monster || s.Strength != check.strength || s.Intelligence != check.intelligence || s.Dexterity != check.dexterity {
+		if s.MonsterID != check.monster || s.Strength != check.strength ||
+			s.Intelligence != check.intelligence || s.Dexterity != check.dexterity {
 			t.Fatalf("wrong legacy fields for %s: %+v", check.id, s)
 		}
 	}
@@ -68,9 +92,24 @@ func TestParseLegacyRejectsBadRows(t *testing.T) {
 		source, aptitudes []byte
 		want              string
 	}{
-		{"duplicate species", []byte(strings.Replace(string(source), "SP_HIGH_ELF", "SP_SLUDGE_ELF", 1)), aptitudes, "SP_SLUDGE_ELF"},
-		{"bad aptitude", source, []byte(strings.Replace(string(aptitudes), "SK_FIGHTING,        0", "SK_FIGHTING,        bogus", 1)), "SK_FIGHTING"},
-		{"unsupported conditional", []byte(strings.Replace(string(source), "TAG_MAJOR_VERSION == 34", "FEATURE_X", 1)), aptitudes, "FEATURE_X"},
+		{
+			name:      "duplicate species",
+			source:    []byte(strings.Replace(string(source), "SP_HIGH_ELF", "SP_SLUDGE_ELF", 1)),
+			aptitudes: aptitudes,
+			want:      "SP_SLUDGE_ELF",
+		},
+		{
+			name:      "bad aptitude",
+			source:    source,
+			aptitudes: []byte(strings.Replace(string(aptitudes), "SK_FIGHTING,        0", "SK_FIGHTING,        bogus", 1)),
+			want:      "SK_FIGHTING",
+		},
+		{
+			name:      "unsupported conditional",
+			source:    []byte(strings.Replace(string(source), "TAG_MAJOR_VERSION == 34", "FEATURE_X", 1)),
+			aptitudes: aptitudes,
+			want:      "FEATURE_X",
+		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -86,7 +125,18 @@ func TestParseLegacyRejectsBadRows(t *testing.T) {
 			retained = append(retained, line)
 		}
 	}
-	if _, err := parseLegacy("legacy-species.txt", source, "legacy-aptitudes.txt", []byte(strings.Join(retained, "\n"))); err == nil || !strings.Contains(err.Error(), "SP_LAVA_ORC") {
+	if _, err := parseLegacy(
+		"legacy-species.txt",
+		source,
+		"legacy-aptitudes.txt",
+		[]byte(strings.Join(
+			retained,
+			"\n",
+		)),
+	); err == nil || !strings.Contains(
+		err.Error(),
+		"SP_LAVA_ORC",
+	) {
 		t.Fatalf("missing legacy aptitudes accepted: %v", err)
 	}
 }

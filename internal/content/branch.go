@@ -78,7 +78,8 @@ func (b BranchDef) validate() error {
 }
 
 func (a BranchArtifact) Validate() error {
-	if a.SchemaVersion != 1 || a.SourceRevision == "" || a.TagMajorVersion != 34 || len(a.Branches) == 0 || len(a.SourceFiles) != 3 {
+	if a.SchemaVersion != 1 || a.SourceRevision == "" || a.TagMajorVersion != 34 ||
+		len(a.Branches) == 0 || len(a.SourceFiles) != 3 {
 		return fmt.Errorf("invalid branch artifact metadata")
 	}
 	seen := make(map[string]bool, len(a.Branches))

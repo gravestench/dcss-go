@@ -27,11 +27,17 @@ type Catalog struct {
 	player            PlayerDef
 }
 
-func (c Catalog) Version() int { return c.version }
+func (c Catalog) Version() int {
+	return c.version
+}
 
-func (c Catalog) SourceRevision() string { return c.sourceRevision }
+func (c Catalog) SourceRevision() string {
+	return c.sourceRevision
+}
 
-func (c Catalog) Player() PlayerDef { return c.player }
+func (c Catalog) Player() PlayerDef {
+	return c.player
+}
 
 func (c Catalog) Monster(id string) (MonsterDef, error) {
 	definition, found := c.monsters[id]
@@ -63,7 +69,9 @@ func (c Catalog) SpellStatus(id string) (SpellStatus, error) {
 	return definition.Status, nil
 }
 
-func (c Catalog) SpellIDs() []string { return append([]string(nil), c.spellOrder...) }
+func (c Catalog) SpellIDs() []string {
+	return append([]string(nil), c.spellOrder...)
+}
 
 func (c Catalog) Branch(id string) (BranchDef, error) {
 	definition, found := c.branches[id]
@@ -73,7 +81,9 @@ func (c Catalog) Branch(id string) (BranchDef, error) {
 	return definition.clone(), nil
 }
 
-func (c Catalog) BranchIDs() []string { return append([]string(nil), c.branchOrder...) }
+func (c Catalog) BranchIDs() []string {
+	return append([]string(nil), c.branchOrder...)
+}
 
 func (c Catalog) Item(id string) (ItemDef, error) {
 	definition, found := c.items[id]

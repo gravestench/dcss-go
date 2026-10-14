@@ -9,7 +9,9 @@ import (
 
 const maxRadius = 8
 
-type offset struct{ x, y int }
+type offset struct {
+	x, y int
+}
 type rayCell struct {
 	offset
 	enter float64
@@ -65,8 +67,8 @@ func footprint(sx, sy, dx, dy float64) ray {
 			if enter, ok := diamondEntry(sx, sy, dx, dy, x, y); ok {
 				cells = append(cells, rayCell{
 					offset{
-						x,
-						y,
+						x: x,
+						y: y,
 					},
 					enter,
 				})

@@ -16,29 +16,35 @@ func testMonster(id string) MonsterDef {
 		Glyph:      'r',
 		ColourID:   "BROWN",
 		Flags:      []string{"M_WARM_BLOOD"},
-		Resistances: []MonsterResistance{{
-			ID:    "MR_RES_FIRE",
-			Level: 1,
-		}},
+		Resistances: []MonsterResistance{
+			{
+				ID:    "MR_RES_FIRE",
+				Level: 1,
+			},
+		},
 		XPModifier: 1,
 		GenusID:    id,
 		SpeciesID:  id,
 		Holiness:   []string{"MH_NATURAL"},
-		Attacks: [4]MonsterAttack{{
-			TypeID:    "AT_BITE",
-			FlavourID: "AF_PLAIN",
-			Damage:    3,
-		},
+		Attacks: [4]MonsterAttack{
+			{
+				TypeID:    "AT_BITE",
+				FlavourID: "AF_PLAIN",
+				Damage:    3,
+			},
 			{
 				TypeID:    "AT_NONE",
 				FlavourID: "AF_PLAIN",
-			}, {
+			},
+			{
 				TypeID:    "AT_NONE",
 				FlavourID: "AF_PLAIN",
-			}, {
+			},
+			{
 				TypeID:    "AT_NONE",
 				FlavourID: "AF_PLAIN",
-			}},
+			},
+		},
 		HD:             1,
 		AverageHP10x:   25,
 		AC:             1,
@@ -76,10 +82,12 @@ func TestMonsterArtifactValidation(t *testing.T) {
 		SchemaVersion:   1,
 		SourceRevision:  sourceRevision,
 		TagMajorVersion: 34,
-		SourceFiles: []JobSourceFile{{
-			Path:   "crawl-ref/source/mon-data.h",
-			SHA256: strings.Repeat("a", 64),
-		}},
+		SourceFiles: []JobSourceFile{
+			{
+				Path:   "crawl-ref/source/mon-data.h",
+				SHA256: strings.Repeat("a", 64),
+			},
+		},
 		Monsters: []MonsterDef{rat},
 	}
 	if err := base.Validate(); err != nil {
@@ -89,12 +97,30 @@ func TestMonsterArtifactValidation(t *testing.T) {
 		name string
 		edit func(*MonsterArtifact)
 	}{
-		{"duplicate", func(a *MonsterArtifact) { a.Monsters = append(a.Monsters, rat) }},
-		{"unsorted", func(a *MonsterArtifact) { a.Monsters = append(a.Monsters, testMonster("MONS_AAA")) }},
-		{"bad status", func(a *MonsterArtifact) { a.Monsters[0].Status = "bogus" }},
-		{"missing attack", func(a *MonsterArtifact) { a.Monsters[0].Attacks[0].TypeID = "" }},
-		{"removed live data", func(a *MonsterArtifact) { a.Monsters[0].Status = MonsterRemoved }},
-		{"enum-only live data", func(a *MonsterArtifact) { a.Monsters[0].Status = MonsterEnumOnly }},
+		{
+			name: "duplicate",
+			edit: func(a *MonsterArtifact) { a.Monsters = append(a.Monsters, rat) },
+		},
+		{
+			name: "unsorted",
+			edit: func(a *MonsterArtifact) { a.Monsters = append(a.Monsters, testMonster("MONS_AAA")) },
+		},
+		{
+			name: "bad status",
+			edit: func(a *MonsterArtifact) { a.Monsters[0].Status = "bogus" },
+		},
+		{
+			name: "missing attack",
+			edit: func(a *MonsterArtifact) { a.Monsters[0].Attacks[0].TypeID = "" },
+		},
+		{
+			name: "removed live data",
+			edit: func(a *MonsterArtifact) { a.Monsters[0].Status = MonsterRemoved },
+		},
+		{
+			name: "enum-only live data",
+			edit: func(a *MonsterArtifact) { a.Monsters[0].Status = MonsterEnumOnly },
+		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -110,20 +136,22 @@ func TestMonsterArtifactValidation(t *testing.T) {
 
 func TestMonsterCatalogCopiesAndStatuses(t *testing.T) {
 	rat := testMonster("MONS_RAT")
-	c := Catalog{monsters: map[string]MonsterDef{
-		"MONS_RAT": rat,
-		"MONS_BUMBLEBEE": {
-			ID:         "MONS_BUMBLEBEE",
-			Status:     MonsterRemoved,
-			SourcePath: "crawl-ref/source/mon-data.h",
-			Name:       "bumblebee",
+	c := Catalog{
+		monsters: map[string]MonsterDef{
+			"MONS_RAT": rat,
+			"MONS_BUMBLEBEE": {
+				ID:         "MONS_BUMBLEBEE",
+				Status:     MonsterRemoved,
+				SourcePath: "crawl-ref/source/mon-data.h",
+				Name:       "bumblebee",
+			},
+			"MONS_BEAR": {
+				ID:         "MONS_BEAR",
+				Status:     MonsterEnumOnly,
+				SourcePath: "crawl-ref/source/monster-type.h",
+			},
 		},
-		"MONS_BEAR": {
-			ID:         "MONS_BEAR",
-			Status:     MonsterEnumOnly,
-			SourcePath: "crawl-ref/source/monster-type.h",
-		},
-	}}
+	}
 	first, err := c.Monster("MONS_RAT")
 	if err != nil {
 		t.Fatal(err)

@@ -42,13 +42,16 @@ func TestMoveConsumesTenAut(t *testing.T) {
 
 func TestBlockedMoveIsFree(t *testing.T) {
 	g := newStepGame(t)
-	for _, command := range []Command{{
-		Kind: CommandMove,
-		DX:   -1,
-	}, {
-		Kind: CommandMove,
-		DX:   -2,
-	}} {
+	for _, command := range []Command{
+		{
+			Kind: CommandMove,
+			DX:   -1,
+		},
+		{
+			Kind: CommandMove,
+			DX:   -2,
+		},
+	} {
 		result, err := g.Step(command)
 		if err != nil {
 			t.Fatal(err)

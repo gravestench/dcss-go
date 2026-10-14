@@ -59,7 +59,10 @@ func choice(c content.Catalog, speciesID, jobID string, speciesFirst bool) (Rest
 	if !species.Selectable || !job.Selectable || bannedPair(species, jobID) {
 		return Banned, nil
 	}
-	if speciesFirst && contains(species.RecommendedJobs, jobID) || !speciesFirst && contains(job.RecommendedSpecies, speciesID) {
+	recommendedBySpecies := contains(species.RecommendedJobs, jobID)
+	recommendedByJob := contains(job.RecommendedSpecies, speciesID)
+	if speciesFirst && recommendedBySpecies ||
+		!speciesFirst && recommendedByJob {
 		return Recommended, nil
 	}
 	return Restricted, nil

@@ -97,7 +97,14 @@ func testSymbols() symbolSets {
 		return m
 	}
 	return symbolSets{
-		monster:       set("MONS_RAT", "MONS_ORC_WIZARD", "MONS_FIRE_DRAGON", "MONS_DEMONSPAWN", "MONS_SPRIGGAN", "MONS_PROGRAM_BUG"),
+		monster: set(
+			"MONS_RAT",
+			"MONS_ORC_WIZARD",
+			"MONS_FIRE_DRAGON",
+			"MONS_DEMONSPAWN",
+			"MONS_SPRIGGAN",
+			"MONS_PROGRAM_BUG",
+		),
 		attackType:    set("AT_NONE", "AT_BITE", "AT_HIT", "AT_CLAW"),
 		attackFlavour: set("AF_PLAIN", "AF_FIRE"),
 		spellbook:     set("MST_NO_SPELLS", "MST_ORC_WIZARD"),
@@ -159,7 +166,8 @@ func TestDecodeGoldenRows(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(defs) != 6 || defs[0].Glyph != 'r' || defs[0].AverageHP10x != 25 || defs[0].Attacks[0].Damage != 3 || defs[0].Attacks[3].TypeID != "AT_NONE" {
+	if len(defs) != 6 || defs[0].Glyph != 'r' || defs[0].AverageHP10x != 25 ||
+		defs[0].Attacks[0].Damage != 3 || defs[0].Attacks[3].TypeID != "AT_NONE" {
 		t.Fatalf("rat decoded incorrectly: %+v", defs[0])
 	}
 	if defs[1].SpellbookID != "MST_ORC_WIZARD" {
@@ -180,7 +188,8 @@ func TestDecodeGoldenRows(t *testing.T) {
 	if defs[4].Energy.Move != 6 || defs[4].Energy.Attack != 10 || defs[4].Energy.PickupPercent != 100 {
 		t.Fatalf("spriggan: %+v", defs[4])
 	}
-	if defs[5].Speed != 0 || defs[5].AverageHP10x != 0 || strings.Join(defs[5].Flags, ",") != "M_NO_EXP_GAIN,M_NO_THREAT,M_CANT_SPAWN" {
+	if defs[5].Speed != 0 || defs[5].AverageHP10x != 0 ||
+		strings.Join(defs[5].Flags, ",") != "M_NO_EXP_GAIN,M_NO_THREAT,M_CANT_SPAWN" {
 		t.Fatalf("bug: %+v", defs[5])
 	}
 }
@@ -191,13 +200,37 @@ func TestDecodeRejectsUnknownExpressions(t *testing.T) {
 		field int
 		value string
 	}{
-		{"flag", 4, "M_UNKNOWN"}, {"enum", 16, "MST_UNKNOWN"}, {"energy macro", 22, "TURBO_ENERGY(4)"},
-		{"arithmetic", 12, "1 + UNKNOWN"}, {"attack", 11, "{ {AT_FAKE, AF_PLAIN, 3}, AT_NO_ATK, AT_NO_ATK, AT_NO_ATK }"},
+		{
+			name:  "flag",
+			field: 4,
+			value: "M_UNKNOWN",
+		},
+		{
+			name:  "enum",
+			field: 16,
+			value: "MST_UNKNOWN",
+		},
+		{
+			name:  "energy macro",
+			field: 22,
+			value: "TURBO_ENERGY(4)",
+		},
+		{
+			name:  "arithmetic",
+			field: 12,
+			value: "1 + UNKNOWN",
+		},
+		{
+			name:  "attack",
+			field: 11,
+			value: "{ {AT_FAKE, AF_PLAIN, 3}, AT_NO_ATK, AT_NO_ATK, AT_NO_ATK }",
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			row := testRow(t)
 			row.Fields[tc.field] = tc.value
-			if _, err := decodeRows("mon-data.h", []sourceRow{row}, testSymbols()); err == nil || !strings.Contains(err.Error(), "MONS_RAT") {
+			if _, err := decodeRows("mon-data.h", []sourceRow{row}, testSymbols()); err == nil ||
+				!strings.Contains(err.Error(), "MONS_RAT") {
 				t.Fatalf("unknown expression accepted: %v", err)
 			}
 		})

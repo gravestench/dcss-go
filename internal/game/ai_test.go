@@ -14,24 +14,48 @@ func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 		blockDiagonal    bool
 		want             ecs.Intent
 	}{
-		{"diagonal melee", 3, 2, false, ecs.Intent{
-			Kind: ecs.IntentMelee,
-			DX:   -1,
-			DY:   1,
-		}},
-		{"diagonal pursuit", 2, 3, false, ecs.Intent{
-			Kind: ecs.IntentMove,
-			DX:   -1,
-			DY:   1,
-		}},
-		{"blocked sight routes around wall", 2, 3, true, ecs.Intent{
-			Kind: ecs.IntentMove,
-			DY:   1,
-		}},
-		{"cardinal melee", 3, 1, false, ecs.Intent{
-			Kind: ecs.IntentMelee,
-			DX:   -1,
-		}},
+		{
+			name:          "diagonal melee",
+			playerX:       3,
+			playerY:       2,
+			blockDiagonal: false,
+			want: ecs.Intent{
+				Kind: ecs.IntentMelee,
+				DX:   -1,
+				DY:   1,
+			},
+		},
+		{
+			name:          "diagonal pursuit",
+			playerX:       2,
+			playerY:       3,
+			blockDiagonal: false,
+			want: ecs.Intent{
+				Kind: ecs.IntentMove,
+				DX:   -1,
+				DY:   1,
+			},
+		},
+		{
+			name:          "blocked sight routes around wall",
+			playerX:       2,
+			playerY:       3,
+			blockDiagonal: true,
+			want: ecs.Intent{
+				Kind: ecs.IntentMove,
+				DY:   1,
+			},
+		},
+		{
+			name:          "cardinal melee",
+			playerX:       3,
+			playerY:       1,
+			blockDiagonal: false,
+			want: ecs.Intent{
+				Kind: ecs.IntentMelee,
+				DX:   -1,
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			g := newStepGame(t)
@@ -70,7 +94,8 @@ func TestQuokkaAcquiresPlayerOnlyInItsOwnSight(t *testing.T) {
 		t.Fatalf("hidden quokka intent %+v, %v", intent, err)
 	}
 	ai, _ := g.stores.AI.Get(quokka)
-	if ai.Behavior != "wander" || ai.TargetX < 8 || ai.TargetX > 16 || ai.TargetY < 1 || ai.TargetY > 7 || !g.levels[2].Walkable(ai.TargetX, ai.TargetY) {
+	if ai.Behavior != "wander" || ai.TargetX < 8 || ai.TargetX > 16 || ai.TargetY < 1 ||
+		ai.TargetY > 7 || !g.levels[2].Walkable(ai.TargetX, ai.TargetY) {
 		t.Fatalf("hidden quokka behavior %+v", ai)
 	}
 	if err := g.levels[2].MoveActor(g.player, 14, 6); err != nil {
@@ -266,7 +291,8 @@ func TestQuokkaFoeMemoryExpiresAfterSourceRange(t *testing.T) {
 		t.Fatalf("animal forgot too soon: %+v, %v", ai, err)
 	}
 	g.currentAut = Aut(ai.MemoryUntilAut)
-	if _, err := newMonsterDecisionSystem(g).chooseIntent(quokka); err != nil || ai.Behavior != "wander" || ai.MemoryUntilAut != 0 {
+	if _, err := newMonsterDecisionSystem(g).chooseIntent(quokka); err != nil ||
+		ai.Behavior != "wander" || ai.MemoryUntilAut != 0 {
 		t.Fatalf("animal retained expired foe memory: %+v, %v", ai, err)
 	}
 }
@@ -302,7 +328,8 @@ func TestLegacyZeroDeadlineSeekGetsFiniteMemory(t *testing.T) {
 		t.Fatalf("legacy seek memory deadline = %d, want 250", loadedAI.MemoryUntilAut)
 	}
 	loaded.currentAut = 250
-	if _, err := newMonsterDecisionSystem(loaded).chooseIntent(quokka); err != nil || loadedAI.Behavior != "wander" || loadedAI.MemoryUntilAut != 0 {
+	if _, err := newMonsterDecisionSystem(loaded).chooseIntent(quokka); err != nil ||
+		loadedAI.Behavior != "wander" || loadedAI.MemoryUntilAut != 0 {
 		t.Fatalf("legacy seek did not expire: %+v, %v", loadedAI, err)
 	}
 }

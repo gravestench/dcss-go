@@ -61,21 +61,96 @@ func TestDirectionalRecommendationsAndBans(t *testing.T) {
 		species, job     string
 		forward, reverse Restriction
 	}{
-		{"SP_HUMAN", "JOB_FIGHTER", Restricted, Restricted},
-		{"SP_BARACHI", "JOB_ARCANE_MARKSMAN", Recommended, Restricted},
-		{"SP_FELID", "JOB_GLADIATOR", Banned, Banned},
-		{"SP_FELID", "JOB_BRIGAND", Banned, Banned},
-		{"SP_FELID", "JOB_HUNTER", Banned, Banned},
-		{"SP_FELID", "JOB_ARCANE_MARKSMAN", Banned, Banned},
-		{"SP_DEMIGOD", "JOB_BERSERKER", Banned, Banned},
-		{"SP_DEMIGOD", "JOB_CHAOS_KNIGHT", Banned, Banned},
-		{"SP_DEMIGOD", "JOB_ABYSSAL_KNIGHT", Banned, Banned},
-		{"SP_DEMIGOD", "JOB_CINDER_ACOLYTE", Banned, Banned},
-		{"SP_DEMIGOD", "JOB_MONK", Banned, Banned},
-		{"SP_GHOUL", "JOB_TRANSMUTER", Banned, Banned},
-		{"SP_MUMMY", "JOB_TRANSMUTER", Banned, Banned},
-		{"SP_HUMAN", "JOB_HEALER", Banned, Banned},
-		{"SP_HIGH_ELF", "JOB_FIGHTER", Banned, Banned},
+		{
+			species: "SP_HUMAN",
+			job:     "JOB_FIGHTER",
+			forward: Restricted,
+			reverse: Restricted,
+		},
+		{
+			species: "SP_BARACHI",
+			job:     "JOB_ARCANE_MARKSMAN",
+			forward: Recommended,
+			reverse: Restricted,
+		},
+		{
+			species: "SP_FELID",
+			job:     "JOB_GLADIATOR",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_FELID",
+			job:     "JOB_BRIGAND",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_FELID",
+			job:     "JOB_HUNTER",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_FELID",
+			job:     "JOB_ARCANE_MARKSMAN",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_DEMIGOD",
+			job:     "JOB_BERSERKER",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_DEMIGOD",
+			job:     "JOB_CHAOS_KNIGHT",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_DEMIGOD",
+			job:     "JOB_ABYSSAL_KNIGHT",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_DEMIGOD",
+			job:     "JOB_CINDER_ACOLYTE",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_DEMIGOD",
+			job:     "JOB_MONK",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_GHOUL",
+			job:     "JOB_TRANSMUTER",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_MUMMY",
+			job:     "JOB_TRANSMUTER",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_HUMAN",
+			job:     "JOB_HEALER",
+			forward: Banned,
+			reverse: Banned,
+		},
+		{
+			species: "SP_HIGH_ELF",
+			job:     "JOB_FIGHTER",
+			forward: Banned,
+			reverse: Banned,
+		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.species+"/"+tc.job, func(t *testing.T) {
@@ -98,19 +173,25 @@ func TestDirectionalRecommendationsAndBans(t *testing.T) {
 }
 
 func TestBannedPairChecksFutureMutation(t *testing.T) {
-	species := content.SpeciesDef{Mutations: []content.SpeciesMutation{{
-		Level:  9,
-		ID:     "MUT_NO_GRASPING",
-		Amount: 1,
-	}}}
+	species := content.SpeciesDef{
+		Mutations: []content.SpeciesMutation{
+			{
+				Level:  9,
+				ID:     "MUT_NO_GRASPING",
+				Amount: 1,
+			},
+		},
+	}
 	if !bannedPair(species, "JOB_HUNTER") || bannedPair(species, "JOB_FIGHTER") {
 		t.Fatal("future no-grasping mutation should ban Hunter only")
 	}
-	species.Mutations = []content.SpeciesMutation{{
-		Level:  12,
-		ID:     "MUT_FORLORN",
-		Amount: 1,
-	}}
+	species.Mutations = []content.SpeciesMutation{
+		{
+			Level:  12,
+			ID:     "MUT_FORLORN",
+			Amount: 1,
+		},
+	}
 	if !bannedPair(species, "JOB_MONK") || bannedPair(species, "JOB_FIGHTER") {
 		t.Fatal("future forlorn mutation should ban Monk only")
 	}

@@ -5,9 +5,13 @@ import (
 	"testing"
 )
 
-type scriptedRoll struct{ bound, value int }
+type scriptedRoll struct {
+	bound, value int
+}
 
-type scriptedRoller struct{ rolls []scriptedRoll }
+type scriptedRoller struct {
+	rolls []scriptedRoll
+}
 
 func (s *scriptedRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "melee" || len(s.rolls) == 0 || s.rolls[0].bound != bound {
@@ -70,7 +74,30 @@ func TestFighterDefenseRejectsInvalidAttributesAndBlockCount(t *testing.T) {
 }
 
 func TestRatBiteDodgesWithoutShield(t *testing.T) {
-	rng := &scriptedRoller{rolls: []scriptedRoll{{20, 0}, {20, 5}, {21, 5}, {100, 10}, {15, 0}}}
+	rng := &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 20,
+				value: 0,
+			},
+			{
+				bound: 20,
+				value: 5,
+			},
+			{
+				bound: 21,
+				value: 5,
+			},
+			{
+				bound: 100,
+				value: 10,
+			},
+			{
+				bound: 15,
+				value: 0,
+			},
+		},
+	}
 	got, err := ResolveAnimalBite(rng, ratAttack(), Defense{EV: 10})
 	if err != nil || got.Kind != Dodge || got.Damage != 0 || len(rng.rolls) != 0 {
 		t.Fatalf("dodge = %+v, %v, rolls %+v", got, err, rng.rolls)
@@ -78,12 +105,70 @@ func TestRatBiteDodgesWithoutShield(t *testing.T) {
 }
 
 func TestRatBiteAutomaticMissAndHit(t *testing.T) {
-	miss := &scriptedRoller{rolls: []scriptedRoll{{20, 19}, {20, 0}, {21, 0}, {100, 0}, {2, 0}, {15, 0}}}
+	miss := &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 20,
+				value: 19,
+			},
+			{
+				bound: 20,
+				value: 0,
+			},
+			{
+				bound: 21,
+				value: 0,
+			},
+			{
+				bound: 100,
+				value: 0,
+			},
+			{
+				bound: 2,
+				value: 0,
+			},
+			{
+				bound: 15,
+				value: 0,
+			},
+		},
+	}
 	got, err := ResolveAnimalBite(miss, ratAttack(), Defense{EV: 10})
 	if err != nil || got.Kind != Miss || len(miss.rolls) != 0 {
 		t.Fatalf("automatic miss = %+v, %v, rolls %+v", got, err, miss.rolls)
 	}
-	hit := &scriptedRoller{rolls: []scriptedRoll{{20, 0}, {20, 19}, {21, 20}, {100, 0}, {2, 1}, {15, 0}, {3, 2}}}
+	hit := &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 20,
+				value: 0,
+			},
+			{
+				bound: 20,
+				value: 19,
+			},
+			{
+				bound: 21,
+				value: 20,
+			},
+			{
+				bound: 100,
+				value: 0,
+			},
+			{
+				bound: 2,
+				value: 1,
+			},
+			{
+				bound: 15,
+				value: 0,
+			},
+			{
+				bound: 3,
+				value: 2,
+			},
+		},
+	}
 	got, err = ResolveAnimalBite(hit, ratAttack(), Defense{EV: 10})
 	if err != nil || got.Kind != Hit || got.Damage != 3 || len(hit.rolls) != 0 {
 		t.Fatalf("automatic hit = %+v, %v, rolls %+v", got, err, hit.rolls)
@@ -91,7 +176,38 @@ func TestRatBiteAutomaticMissAndHit(t *testing.T) {
 }
 
 func TestRatShieldBlockPrecedesDodge(t *testing.T) {
-	rng := &scriptedRoller{rolls: []scriptedRoll{{20, 0}, {20, 5}, {21, 5}, {100, 10}, {15, 0}, {18, 17}, {19, 18}}}
+	rng := &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 20,
+				value: 0,
+			},
+			{
+				bound: 20,
+				value: 5,
+			},
+			{
+				bound: 21,
+				value: 5,
+			},
+			{
+				bound: 100,
+				value: 10,
+			},
+			{
+				bound: 15,
+				value: 0,
+			},
+			{
+				bound: 18,
+				value: 17,
+			},
+			{
+				bound: 19,
+				value: 18,
+			},
+		},
+	}
 	got, err := ResolveAnimalBite(rng, ratAttack(), Defense{
 		EV:          10,
 		ShieldClass: 9,
@@ -107,11 +223,50 @@ func TestRatBiteArmourCanAbsorbOrPassDamage(t *testing.T) {
 		acRoll int
 		want   int
 	}{
-		{"absorbed", 6, 0},
-		{"damaging", 0, 3},
+		{
+			name:   "absorbed",
+			acRoll: 6,
+			want:   0,
+		},
+		{
+			name:   "damaging",
+			acRoll: 0,
+			want:   3,
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			rng := &scriptedRoller{rolls: []scriptedRoll{{20, 19}, {10, 0}, {11, 0}, {100, 10}, {15, 0}, {3, 2}, {7, tc.acRoll}}}
+			rng := &scriptedRoller{
+				rolls: []scriptedRoll{
+					{
+						bound: 20,
+						value: 19,
+					},
+					{
+						bound: 10,
+						value: 0,
+					},
+					{
+						bound: 11,
+						value: 0,
+					},
+					{
+						bound: 100,
+						value: 10,
+					},
+					{
+						bound: 15,
+						value: 0,
+					},
+					{
+						bound: 3,
+						value: 2,
+					},
+					{
+						bound: 7,
+						value: tc.acRoll,
+					},
+				},
+			}
 			got, err := ResolveAnimalBite(rng, ratAttack(), Defense{
 				EV:  5,
 				AC:  6,
@@ -125,7 +280,26 @@ func TestRatBiteArmourCanAbsorbOrPassDamage(t *testing.T) {
 }
 
 func TestQuokkaPlainBiteUsesCataloguedFiveDamage(t *testing.T) {
-	roller := &scriptedRoller{rolls: []scriptedRoll{{20, 19}, {100, 10}, {15, 14}, {5, 4}}}
+	roller := &scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 20,
+				value: 19,
+			},
+			{
+				bound: 100,
+				value: 10,
+			},
+			{
+				bound: 15,
+				value: 14,
+			},
+			{
+				bound: 5,
+				value: 4,
+			},
+		},
+	}
 	outcome, err := ResolveAnimalBite(roller, AnimalBite{
 		HD:        1,
 		Damage:    5,

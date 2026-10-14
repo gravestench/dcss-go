@@ -33,21 +33,111 @@ type classSource struct {
 }
 
 var itemClassSources = []classSource{
-	{"OBJ_WEAPONS", "item-prop-enum.h", "weapon_type", []string{"WPN_"}, "NUM_WEAPONS"},
-	{"OBJ_MISSILES", "item-prop-enum.h", "missile_type", []string{"MI_"}, "NUM_MISSILES"},
-	{"OBJ_ARMOUR", "item-prop-enum.h", "armour_type", []string{"ARM_"}, "NUM_ARMOURS"},
-	{"OBJ_WANDS", "item-prop-enum.h", "wand_type", []string{"WAND_"}, "NUM_WANDS"},
-	{"OBJ_FOOD", "item-prop-enum.h", "food_type", []string{"FOOD_"}, "NUM_FOODS"},
-	{"OBJ_SCROLLS", "item-prop-enum.h", "scroll_type", []string{"SCR_"}, "NUM_SCROLLS"},
-	{"OBJ_JEWELLERY", "item-prop-enum.h", "jewellery_type", []string{"RING_", "AMU_"}, "NUM_JEWELLERY"},
-	{"OBJ_POTIONS", "potion-type.h", "potion_type", []string{"POT_"}, "NUM_POTIONS"},
-	{"OBJ_BOOKS", "book-type.h", "book_type", []string{"BOOK_"}, "NUM_BOOKS"},
-	{"OBJ_STAVES", "item-prop-enum.h", "stave_type", []string{"STAFF_"}, "NUM_STAVES"},
-	{"OBJ_ORBS", "orb-type.h", "orb_type", []string{"ORB_"}, ""},
-	{"OBJ_MISCELLANY", "item-prop-enum.h", "misc_item_type", []string{"MISC_"}, "NUM_MISCELLANY"},
-	{"OBJ_CORPSES", "item-prop-enum.h", "corpse_type", []string{"CORPSE_"}, ""},
-	{"OBJ_RODS", "item-prop-enum.h", "rod_type", []string{"ROD_"}, "NUM_RODS"},
-	{"OBJ_RUNES", "item-prop-enum.h", "rune_type", []string{"RUNE_"}, "NUM_RUNE_TYPES"},
+	{
+		ClassID: "OBJ_WEAPONS",
+		File:    "item-prop-enum.h",
+		Enum:    "weapon_type",
+		Prefix:  []string{"WPN_"},
+		End:     "NUM_WEAPONS",
+	},
+	{
+		ClassID: "OBJ_MISSILES",
+		File:    "item-prop-enum.h",
+		Enum:    "missile_type",
+		Prefix:  []string{"MI_"},
+		End:     "NUM_MISSILES",
+	},
+	{
+		ClassID: "OBJ_ARMOUR",
+		File:    "item-prop-enum.h",
+		Enum:    "armour_type",
+		Prefix:  []string{"ARM_"},
+		End:     "NUM_ARMOURS",
+	},
+	{
+		ClassID: "OBJ_WANDS",
+		File:    "item-prop-enum.h",
+		Enum:    "wand_type",
+		Prefix:  []string{"WAND_"},
+		End:     "NUM_WANDS",
+	},
+	{
+		ClassID: "OBJ_FOOD",
+		File:    "item-prop-enum.h",
+		Enum:    "food_type",
+		Prefix:  []string{"FOOD_"},
+		End:     "NUM_FOODS",
+	},
+	{
+		ClassID: "OBJ_SCROLLS",
+		File:    "item-prop-enum.h",
+		Enum:    "scroll_type",
+		Prefix:  []string{"SCR_"},
+		End:     "NUM_SCROLLS",
+	},
+	{
+		ClassID: "OBJ_JEWELLERY",
+		File:    "item-prop-enum.h",
+		Enum:    "jewellery_type",
+		Prefix:  []string{"RING_", "AMU_"},
+		End:     "NUM_JEWELLERY",
+	},
+	{
+		ClassID: "OBJ_POTIONS",
+		File:    "potion-type.h",
+		Enum:    "potion_type",
+		Prefix:  []string{"POT_"},
+		End:     "NUM_POTIONS",
+	},
+	{
+		ClassID: "OBJ_BOOKS",
+		File:    "book-type.h",
+		Enum:    "book_type",
+		Prefix:  []string{"BOOK_"},
+		End:     "NUM_BOOKS",
+	},
+	{
+		ClassID: "OBJ_STAVES",
+		File:    "item-prop-enum.h",
+		Enum:    "stave_type",
+		Prefix:  []string{"STAFF_"},
+		End:     "NUM_STAVES",
+	},
+	{
+		ClassID: "OBJ_ORBS",
+		File:    "orb-type.h",
+		Enum:    "orb_type",
+		Prefix:  []string{"ORB_"},
+		End:     "",
+	},
+	{
+		ClassID: "OBJ_MISCELLANY",
+		File:    "item-prop-enum.h",
+		Enum:    "misc_item_type",
+		Prefix:  []string{"MISC_"},
+		End:     "NUM_MISCELLANY",
+	},
+	{
+		ClassID: "OBJ_CORPSES",
+		File:    "item-prop-enum.h",
+		Enum:    "corpse_type",
+		Prefix:  []string{"CORPSE_"},
+		End:     "",
+	},
+	{
+		ClassID: "OBJ_RODS",
+		File:    "item-prop-enum.h",
+		Enum:    "rod_type",
+		Prefix:  []string{"ROD_"},
+		End:     "NUM_RODS",
+	},
+	{
+		ClassID: "OBJ_RUNES",
+		File:    "item-prop-enum.h",
+		Enum:    "rune_type",
+		Prefix:  []string{"RUNE_"},
+		End:     "NUM_RUNE_TYPES",
+	},
 }
 
 var enumMemberPattern = regexp.MustCompile(`^([A-Z][A-Z0-9_]*)\s*(?:=\s*(.*))?$`)
@@ -138,7 +228,11 @@ func enumMembers(path string, data []byte, name string) ([]enumValue, error) {
 }
 
 func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []content.ItemAlias, error) {
-	classEntries, err := enumMembers("crawl-ref/source/object-class-type.h", source["object-class-type.h"], "object_class_type")
+	classEntries, err := enumMembers(
+		"crawl-ref/source/object-class-type.h",
+		source["object-class-type.h"],
+		"object_class_type",
+	)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -164,7 +258,13 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 		}
 		pair := [2]int{classValue, entry.Value}
 		if previous, found := seenPairs[pair]; found {
-			return fmt.Errorf("%s:%d: subtype %s duplicates numeric pair of %s", entry.SourcePath, entry.SourceLine, entry.ID, previous)
+			return fmt.Errorf(
+				"%s:%d: subtype %s duplicates numeric pair of %s",
+				entry.SourcePath,
+				entry.SourceLine,
+				entry.ID,
+				previous,
+			)
 		}
 		seenPairs[pair] = entry.ID
 		identities = append(identities, content.ItemIdentity{
@@ -210,7 +310,9 @@ func parseIdentities(source map[string][]byte) ([]content.ItemIdentity, []conten
 				}
 				continue
 			}
-			if !matchesPrefix || strings.HasPrefix(entry.ID, "NUM_") || strings.HasPrefix(entry.ID, "MAX_") || strings.Contains(entry.ID, "_FIRST_") || strings.Contains(entry.ID, "_LAST_") || strings.HasSuffix(entry.ID, "_UNKNOWN") {
+			if !matchesPrefix || strings.HasPrefix(entry.ID, "NUM_") ||
+				strings.HasPrefix(entry.ID, "MAX_") || strings.Contains(entry.ID, "_FIRST_") ||
+				strings.Contains(entry.ID, "_LAST_") || strings.HasSuffix(entry.ID, "_UNKNOWN") {
 				continue
 			}
 			if err := appendIdentity(class.ClassID, classValue, entry); err != nil {
@@ -355,13 +457,48 @@ func parseVocabulary(source map[string][]byte) (content.ItemVocabulary, error) {
 		prefixes []string
 	}
 	for _, spec := range []target{
-		{&v.Slots, "equipment-type.h", "equipment_type", []string{"EQ_"}},
-		{&v.Skills, "skill-type.h", "skill_type", []string{"SK_"}},
-		{&v.Sizes, "size-type.h", "size_type", []string{"SIZE_", "NUM_SIZE_LEVELS"}},
-		{&v.Ammo, "item-prop-enum.h", "missile_type", []string{"MI_"}},
-		{&v.DamageFlags, "item-prop-enum.h", "vorpal_damage_type", []string{"DAM_", "DAMV_", "DVORP_"}},
-		{&v.Brands, "item-prop-enum.h", "brand_type", []string{"SPWPN_"}},
-		{&v.ArmourFlags, "item-prop.h", "armour_flag", []string{"ARMF_"}},
+		{
+			place:    &v.Slots,
+			file:     "equipment-type.h",
+			enum:     "equipment_type",
+			prefixes: []string{"EQ_"},
+		},
+		{
+			place:    &v.Skills,
+			file:     "skill-type.h",
+			enum:     "skill_type",
+			prefixes: []string{"SK_"},
+		},
+		{
+			place:    &v.Sizes,
+			file:     "size-type.h",
+			enum:     "size_type",
+			prefixes: []string{"SIZE_", "NUM_SIZE_LEVELS"},
+		},
+		{
+			place:    &v.Ammo,
+			file:     "item-prop-enum.h",
+			enum:     "missile_type",
+			prefixes: []string{"MI_"},
+		},
+		{
+			place:    &v.DamageFlags,
+			file:     "item-prop-enum.h",
+			enum:     "vorpal_damage_type",
+			prefixes: []string{"DAM_", "DAMV_", "DVORP_"},
+		},
+		{
+			place:    &v.Brands,
+			file:     "item-prop-enum.h",
+			enum:     "brand_type",
+			prefixes: []string{"SPWPN_"},
+		},
+		{
+			place:    &v.ArmourFlags,
+			file:     "item-prop.h",
+			enum:     "armour_flag",
+			prefixes: []string{"ARMF_"},
+		},
 	} {
 		ids, err := enumSymbolIDs("crawl-ref/source/"+spec.file, source[spec.file], spec.enum, spec.prefixes...)
 		if err != nil {

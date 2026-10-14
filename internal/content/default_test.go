@@ -46,7 +46,8 @@ func TestLoadDefaultSpeciesAndFixture(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if highElf.Selectable || highElf.SourcePath != "crawl-ref/source/util/species-gen/species-data-deprecated-species.txt" {
+	if highElf.Selectable ||
+		highElf.SourcePath != "crawl-ref/source/util/species-gen/species-data-deprecated-species.txt" {
 		t.Fatalf("tag-34 legacy species lost: %+v", highElf)
 	}
 	rat, err := catalog.Monster("MONS_RAT")
@@ -100,18 +101,33 @@ func TestLoadDefaultRejectsBadArtifact(t *testing.T) {
 		name   string
 		mutate func(*SpeciesArtifact)
 	}{
-		{"schema", func(a *SpeciesArtifact) { a.SchemaVersion = 2 }},
-		{"revision", func(a *SpeciesArtifact) { a.SourceRevision = "wrong" }},
-		{"tag", func(a *SpeciesArtifact) { a.TagMajorVersion = 35 }},
-		{"duplicate", func(a *SpeciesArtifact) { a.Species = append(a.Species, a.Species[0]) }},
-		{"missing player species", func(a *SpeciesArtifact) {
-			for i, s := range a.Species {
-				if s.ID == "SP_HUMAN" {
-					a.Species = append(a.Species[:i], a.Species[i+1:]...)
-					break
+		{
+			name:   "schema",
+			mutate: func(a *SpeciesArtifact) { a.SchemaVersion = 2 },
+		},
+		{
+			name:   "revision",
+			mutate: func(a *SpeciesArtifact) { a.SourceRevision = "wrong" },
+		},
+		{
+			name:   "tag",
+			mutate: func(a *SpeciesArtifact) { a.TagMajorVersion = 35 },
+		},
+		{
+			name:   "duplicate",
+			mutate: func(a *SpeciesArtifact) { a.Species = append(a.Species, a.Species[0]) },
+		},
+		{
+			name: "missing player species",
+			mutate: func(a *SpeciesArtifact) {
+				for i, s := range a.Species {
+					if s.ID == "SP_HUMAN" {
+						a.Species = append(a.Species[:i], a.Species[i+1:]...)
+						break
+					}
 				}
-			}
-		}},
+			},
+		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -122,12 +138,31 @@ func TestLoadDefaultRejectsBadArtifact(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if _, err := loadDefault(encoded, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, defaultPresentationJSON, defaultMonsterJSON); err == nil {
+			if _, err := loadDefault(
+				encoded,
+				defaultJobsJSON,
+				defaultItemsJSON,
+				defaultItemIdentitiesJSON,
+				defaultStartingGearJSON,
+				defaultPresentationJSON,
+				defaultMonsterJSON,
+			); err == nil {
 				t.Fatal("bad embedded artifact accepted")
 			}
 		})
 	}
-	if _, err := loadDefault([]byte(`{"species":`), defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, defaultPresentationJSON, defaultMonsterJSON); err == nil || !strings.Contains(err.Error(), "decode") {
+	if _, err := loadDefault(
+		[]byte(`{"species":`),
+		defaultJobsJSON,
+		defaultItemsJSON,
+		defaultItemIdentitiesJSON,
+		defaultStartingGearJSON,
+		defaultPresentationJSON,
+		defaultMonsterJSON,
+	); err == nil || !strings.Contains(
+		err.Error(),
+		"decode",
+	) {
 		t.Fatalf("malformed artifact error = %v", err)
 	}
 }
@@ -157,7 +192,18 @@ func TestLoadDefaultRejectsMissingAptitudes(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if _, err := loadDefault(encoded, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, defaultPresentationJSON, defaultMonsterJSON); err == nil || !strings.Contains(err.Error(), "aptitude") {
+			if _, err := loadDefault(
+				encoded,
+				defaultJobsJSON,
+				defaultItemsJSON,
+				defaultItemIdentitiesJSON,
+				defaultStartingGearJSON,
+				defaultPresentationJSON,
+				defaultMonsterJSON,
+			); err == nil || !strings.Contains(
+				err.Error(),
+				"aptitude",
+			) {
 				t.Fatalf("missing %s aptitudes accepted: %v", missing, err)
 			}
 		})

@@ -137,7 +137,8 @@ func TestCorpseIsStationaryButPortableItemSharesTile(t *testing.T) {
 		t.Fatalf("mixed pickup %+v %v", result, err)
 	}
 	result, err = g.Step(Command{Kind: CommandPickup})
-	if err != nil || result.Spent != 0 || !strings.Contains(result.Events[0].Text, "can't pick") || !g.stores.Positions.Has(id) {
+	if err != nil || result.Spent != 0 || !strings.Contains(result.Events[0].Text, "can't pick") ||
+		!g.stores.Positions.Has(id) {
 		t.Fatalf("corpse pickup %+v %v", result, err)
 	}
 }

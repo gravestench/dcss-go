@@ -93,7 +93,11 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 			break
 		}
 	}
-	if restriction, err := character.JobForSpecies(m.catalog, "SP_BARACHI", "JOB_ARCANE_MARKSMAN"); err != nil || restriction != character.Recommended {
+	if restriction, err := character.JobForSpecies(
+		m.catalog,
+		"SP_BARACHI",
+		"JOB_ARCANE_MARKSMAN",
+	); err != nil || restriction != character.Recommended {
 		t.Fatal("review fixture does not contain a recommended pair")
 	}
 	c = m.renderCanvas()
@@ -117,7 +121,12 @@ func TestCreationShortcutColumnsAndContextText(t *testing.T) {
 	m := pregameModel(t)
 	pressApp(m, "enter")
 	rows := m.renderCanvas().PlainRows()
-	for row, want := range []string{"+ - Recommended species", "# - Recommended character", "% - List aptitudes", "? - Help"} {
+	for row, want := range []string{
+		"+ - Recommended species",
+		"# - Recommended character",
+		"% - List aptitudes",
+		"? - Help",
+	} {
 		if !strings.HasPrefix(rows[14+row][1:], want) {
 			t.Fatalf("left shortcut row %d: %q", 14+row, rows[14+row])
 		}
@@ -129,7 +138,8 @@ func TestCreationShortcutColumnsAndContextText(t *testing.T) {
 	}
 	pressApp(m, "j")
 	rows = m.renderCanvas().PlainRows()
-	if !strings.Contains(rows[14], "Recommended background") || !strings.Contains(rows[16][40:], "Space - Change species") {
+	if !strings.Contains(rows[14], "Recommended background") ||
+		!strings.Contains(rows[16][40:], "Space - Change species") {
 		t.Fatal("contextual background shortcuts missing")
 	}
 }

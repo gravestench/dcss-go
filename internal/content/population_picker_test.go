@@ -3,29 +3,31 @@ package content
 import "testing"
 
 func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
-	c := Catalog{dungeonPopulation: []DungeonPopEntry{
-		{
-			MinDepth:  1,
-			MaxDepth:  3,
-			Rarity:    2,
-			Curve:     "FLAT",
-			MonsterID: "MONS_RAT",
+	c := Catalog{
+		dungeonPopulation: []DungeonPopEntry{
+			{
+				MinDepth:  1,
+				MaxDepth:  3,
+				Rarity:    2,
+				Curve:     "FLAT",
+				MonsterID: "MONS_RAT",
+			},
+			{
+				MinDepth:  2,
+				MaxDepth:  4,
+				Rarity:    3,
+				Curve:     "RISE",
+				MonsterID: "MONS_QUOKKA",
+			},
+			{
+				MinDepth:  2,
+				MaxDepth:  4,
+				Rarity:    1,
+				Curve:     "FALL",
+				MonsterID: "MONS_RAT",
+			},
 		},
-		{
-			MinDepth:  2,
-			MaxDepth:  4,
-			Rarity:    3,
-			Curve:     "RISE",
-			MonsterID: "MONS_QUOKKA",
-		},
-		{
-			MinDepth:  2,
-			MaxDepth:  4,
-			Rarity:    1,
-			Curve:     "FALL",
-			MonsterID: "MONS_RAT",
-		},
-	}}
+	}
 	pool := c.DungeonMonsterPool(2, nil)
 	first, second, third := 2*2520, 3*2520/3, 3*2520/3
 	if got, want := pool.TotalWeight(), first+second+third; got != want {
@@ -35,12 +37,30 @@ func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
 		roll int
 		want string
 	}{
-		{0, "MONS_RAT"},
-		{first - 1, "MONS_RAT"},
-		{first, "MONS_QUOKKA"},
-		{first + second - 1, "MONS_QUOKKA"},
-		{first + second, "MONS_RAT"},
-		{pool.TotalWeight() - 1, "MONS_RAT"},
+		{
+			roll: 0,
+			want: "MONS_RAT",
+		},
+		{
+			roll: first - 1,
+			want: "MONS_RAT",
+		},
+		{
+			roll: first,
+			want: "MONS_QUOKKA",
+		},
+		{
+			roll: first + second - 1,
+			want: "MONS_QUOKKA",
+		},
+		{
+			roll: first + second,
+			want: "MONS_RAT",
+		},
+		{
+			roll: pool.TotalWeight() - 1,
+			want: "MONS_RAT",
+		},
 	} {
 		got, err := pool.Pick(tc.roll)
 		if err != nil || got != tc.want {
@@ -55,29 +75,31 @@ func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
 }
 
 func TestDungeonMonsterPoolVetoAndEmpty(t *testing.T) {
-	c := Catalog{dungeonPopulation: []DungeonPopEntry{
-		{
-			MinDepth:  1,
-			MaxDepth:  2,
-			Rarity:    2,
-			Curve:     "FLAT",
-			MonsterID: "MONS_RAT",
+	c := Catalog{
+		dungeonPopulation: []DungeonPopEntry{
+			{
+				MinDepth:  1,
+				MaxDepth:  2,
+				Rarity:    2,
+				Curve:     "FLAT",
+				MonsterID: "MONS_RAT",
+			},
+			{
+				MinDepth:  1,
+				MaxDepth:  2,
+				Rarity:    3,
+				Curve:     "FLAT",
+				MonsterID: "MONS_QUOKKA",
+			},
+			{
+				MinDepth:  1,
+				MaxDepth:  2,
+				Rarity:    1,
+				Curve:     "FLAT",
+				MonsterID: "MONS_RAT",
+			},
 		},
-		{
-			MinDepth:  1,
-			MaxDepth:  2,
-			Rarity:    3,
-			Curve:     "FLAT",
-			MonsterID: "MONS_QUOKKA",
-		},
-		{
-			MinDepth:  1,
-			MaxDepth:  2,
-			Rarity:    1,
-			Curve:     "FLAT",
-			MonsterID: "MONS_RAT",
-		},
-	}}
+	}
 	pool := c.DungeonMonsterPool(1, func(id string) bool { return id == "MONS_RAT" })
 	if pool.TotalWeight() != 3*2520 {
 		t.Fatalf("vetoed total = %d", pool.TotalWeight())
@@ -108,9 +130,18 @@ func TestDefaultDungeonMonsterPoolUsesPinnedD1Rows(t *testing.T) {
 		roll int
 		want string
 	}{
-		{0, "MONS_BAT"},
-		{1000*2520 - 1, "MONS_BAT"},
-		{1000 * 2520, "MONS_RAT"},
+		{
+			roll: 0,
+			want: "MONS_BAT",
+		},
+		{
+			roll: 1000*2520 - 1,
+			want: "MONS_BAT",
+		},
+		{
+			roll: 1000 * 2520,
+			want: "MONS_RAT",
+		},
 	} {
 		got, err := pool.Pick(tc.roll)
 		if err != nil || got != tc.want {

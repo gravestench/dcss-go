@@ -22,8 +22,14 @@ func RollCorpse(roller Roller) (appearance int, dropped bool, err error) {
 
 // AgeCorpse applies one source timed-effect interval. appearance is nonzero
 // only when skeletonisation rerolls it. The caller owns the floor entity.
-func AgeCorpse(roller Roller, kindID string, freshness, elapsedAut int) (nextKind string, nextFreshness, appearance int, alive bool, err error) {
-	if (kindID != "CORPSE_BODY" && kindID != "CORPSE_SKELETON") || freshness < 1 || freshness > FreshestCorpse || elapsedAut < 0 {
+func AgeCorpse(
+	roller Roller,
+	kindID string,
+	freshness, elapsedAut int,
+) (nextKind string, nextFreshness, appearance int, alive bool, err error) {
+	validKind := kindID == "CORPSE_BODY" || kindID == "CORPSE_SKELETON"
+	if !validKind || freshness < 1 ||
+		freshness > FreshestCorpse || elapsedAut < 0 {
 		return "", 0, 0, false, fmt.Errorf("invalid corpse decay input %q/%d/%d", kindID, freshness, elapsedAut)
 	}
 	nextFreshness = freshness - elapsedAut/corpseRotFactor

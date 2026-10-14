@@ -61,7 +61,8 @@ func TestHealWoundsFloorPickupQuaffAndSaveContinuation(t *testing.T) {
 	}
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
-	if leftErr != nil || rightErr != nil || left.Spent != 10 || left.View.PlayerHP != wantHP || !reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
+	if leftErr != nil || rightErr != nil || left.Spent != 10 || left.View.PlayerHP != wantHP ||
+		!reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("heal wounds continuation %+v/%v versus %+v/%v; want HP %d", left, leftErr, right, rightErr, wantHP)
 	}
 	if !reflect.DeepEqual(wantRolls.States()["potion"], g.rng.States()["potion"]) {
@@ -86,7 +87,8 @@ func TestHealWoundsAtFullHPIsFreeAndKeepsPotion(t *testing.T) {
 		t.Fatalf("full-HP quaff %+v, %v", result, err)
 	}
 	selected, found := g.stores.Items.Get(akara.Entity(itemID))
-	if !found || selected.Quantity != 1 || g.currentAut != Aut(before.CurrentAut) || !reflect.DeepEqual(g.rng.States(), before.RNG) {
+	if !found || selected.Quantity != 1 || g.currentAut != Aut(before.CurrentAut) ||
+		!reflect.DeepEqual(g.rng.States(), before.RNG) {
 		t.Fatal("full-HP refusal consumed item, time, or RNG")
 	}
 }

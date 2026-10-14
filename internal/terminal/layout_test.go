@@ -7,70 +7,78 @@ func TestLayoutMatchesMinimumAndExpandedConsole(t *testing.T) {
 		width, height int
 		want          Layout
 	}{
-		{79, 24, Layout{
-			Dungeon: Region{
-				0,
-				0,
-				33,
-				17,
+		{
+			width:  79,
+			height: 24,
+			want: Layout{
+				Dungeon: Region{
+					X: 0,
+					Y: 0,
+					W: 33,
+					H: 17,
+				},
+				Gutter: Region{
+					X: 33,
+					Y: 0,
+					W: 4,
+					H: 17,
+				},
+				HUD: Region{
+					X: 37,
+					Y: 0,
+					W: 42,
+					H: 13,
+				},
+				Monsters: Region{
+					X: 37,
+					Y: 13,
+					W: 42,
+					H: 4,
+				},
+				Messages: Region{
+					X: 0,
+					Y: 17,
+					W: 79,
+					H: 7,
+				},
 			},
-			Gutter: Region{
-				33,
-				0,
-				4,
-				17,
+		},
+		{
+			width:  120,
+			height: 40,
+			want: Layout{
+				Dungeon: Region{
+					X: 0,
+					Y: 0,
+					W: 74,
+					H: 33,
+				},
+				Gutter: Region{
+					X: 74,
+					Y: 0,
+					W: 4,
+					H: 33,
+				},
+				HUD: Region{
+					X: 78,
+					Y: 0,
+					W: 42,
+					H: 13,
+				},
+				Monsters: Region{
+					X: 78,
+					Y: 13,
+					W: 42,
+					H: 20,
+				},
+				Messages: Region{
+					X: 0,
+					Y: 33,
+					W: 120,
+					H: 7,
+				},
 			},
-			HUD: Region{
-				37,
-				0,
-				42,
-				13,
-			},
-			Monsters: Region{
-				37,
-				13,
-				42,
-				4,
-			},
-			Messages: Region{
-				0,
-				17,
-				79,
-				7,
-			},
-		}},
-		{120, 40, Layout{
-			Dungeon: Region{
-				0,
-				0,
-				74,
-				33,
-			},
-			Gutter: Region{
-				74,
-				0,
-				4,
-				33,
-			},
-			HUD: Region{
-				78,
-				0,
-				42,
-				13,
-			},
-			Monsters: Region{
-				78,
-				13,
-				42,
-				20,
-			},
-			Messages: Region{
-				0,
-				33,
-				120,
-				7,
-			},
-		}},
+		},
 	} {
 		got, ok := ComputeLayout(tc.width, tc.height)
 		if !ok || got != tc.want {

@@ -127,7 +127,8 @@ func TestQuaffSaveContinuation(t *testing.T) {
 	}
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
-	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
+	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
+		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("quaff continuation = %+v/%v versus %+v/%v", left, leftErr, right, rightErr)
 	}
 }

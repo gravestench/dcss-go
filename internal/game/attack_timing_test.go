@@ -8,7 +8,14 @@ import (
 )
 
 func TestAttackDelayProjectionUsesEveryFighterStart(t *testing.T) {
-	for _, weaponID := range []string{"WPN_RAPIER", "WPN_FLAIL", "WPN_WAR_AXE", "WPN_TRIDENT", "WPN_LONG_SWORD", "WPN_UNARMED"} {
+	for _, weaponID := range []string{
+		"WPN_RAPIER",
+		"WPN_FLAIL",
+		"WPN_WAR_AXE",
+		"WPN_TRIDENT",
+		"WPN_LONG_SWORD",
+		"WPN_UNARMED",
+	} {
 		t.Run(weaponID, func(t *testing.T) {
 			catalog := testCatalog(t)
 			g, err := NewScenario(2, catalog, weaponID, "Tester")
@@ -149,7 +156,8 @@ func TestAttackDelaySaveContinuation(t *testing.T) {
 	}
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
-	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
+	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
+		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("attack timing continuation: %+v/%v versus %+v/%v", left, leftErr, right, rightErr)
 	}
 }

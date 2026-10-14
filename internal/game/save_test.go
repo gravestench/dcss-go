@@ -25,10 +25,14 @@ func TestSaveContinuationMatches(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer restored.Close()
-	commands := []Command{{Kind: CommandWait}, {
-		Kind: CommandMove,
-		DX:   -1,
-	}, {Kind: CommandWait}}
+	commands := []Command{
+		{Kind: CommandWait},
+		{
+			Kind: CommandMove,
+			DX:   -1,
+		},
+		{Kind: CommandWait},
+	}
 	for _, command := range commands {
 		left, leftErr := g.Step(command)
 		right, rightErr := restored.Step(command)
@@ -154,50 +158,68 @@ func TestRestoreRejectsCorruptAttributesWithoutChangingLiveGame(t *testing.T) {
 		name   string
 		mutate func(*save.Snapshot)
 	}{
-		{"missing player attributes", func(snapshot *save.Snapshot) {
-			for i := range snapshot.Entities {
-				if snapshot.Entities[i].Player != nil {
-					snapshot.Entities[i].Attributes = nil
-				}
-			}
-		}},
-		{"mismatched attributes", func(snapshot *save.Snapshot) {
-			for i := range snapshot.Entities {
-				if snapshot.Entities[i].Player != nil {
-					snapshot.Entities[i].Attributes.Strength++
-				}
-			}
-		}},
-		{"nonpositive attributes", func(snapshot *save.Snapshot) {
-			for i := range snapshot.Entities {
-				if snapshot.Entities[i].Player != nil {
-					snapshot.Entities[i].Attributes.Dexterity = 0
-				}
-			}
-		}},
-		{"monster attributes", func(snapshot *save.Snapshot) {
-			for i := range snapshot.Entities {
-				if snapshot.Entities[i].AI != nil {
-					snapshot.Entities[i].Attributes = &ecs.Attributes{
-						Strength:     8,
-						Intelligence: 8,
-						Dexterity:    8,
+		{
+			name: "missing player attributes",
+			mutate: func(snapshot *save.Snapshot) {
+				for i := range snapshot.Entities {
+					if snapshot.Entities[i].Player != nil {
+						snapshot.Entities[i].Attributes = nil
 					}
 				}
-			}
-		}},
-		{"item attributes", func(snapshot *save.Snapshot) {
-			for i := range snapshot.Entities {
-				if snapshot.Entities[i].Item != nil {
-					snapshot.Entities[i].Attributes = &ecs.Attributes{
-						Strength:     8,
-						Intelligence: 8,
-						Dexterity:    8,
+			},
+		},
+		{
+			name: "mismatched attributes",
+			mutate: func(snapshot *save.Snapshot) {
+				for i := range snapshot.Entities {
+					if snapshot.Entities[i].Player != nil {
+						snapshot.Entities[i].Attributes.Strength++
 					}
 				}
-			}
-		}},
-		{"version 1", func(snapshot *save.Snapshot) { snapshot.Version = 1 }},
+			},
+		},
+		{
+			name: "nonpositive attributes",
+			mutate: func(snapshot *save.Snapshot) {
+				for i := range snapshot.Entities {
+					if snapshot.Entities[i].Player != nil {
+						snapshot.Entities[i].Attributes.Dexterity = 0
+					}
+				}
+			},
+		},
+		{
+			name: "monster attributes",
+			mutate: func(snapshot *save.Snapshot) {
+				for i := range snapshot.Entities {
+					if snapshot.Entities[i].AI != nil {
+						snapshot.Entities[i].Attributes = &ecs.Attributes{
+							Strength:     8,
+							Intelligence: 8,
+							Dexterity:    8,
+						}
+					}
+				}
+			},
+		},
+		{
+			name: "item attributes",
+			mutate: func(snapshot *save.Snapshot) {
+				for i := range snapshot.Entities {
+					if snapshot.Entities[i].Item != nil {
+						snapshot.Entities[i].Attributes = &ecs.Attributes{
+							Strength:     8,
+							Intelligence: 8,
+							Dexterity:    8,
+						}
+					}
+				}
+			},
+		},
+		{
+			name:   "version 1",
+			mutate: func(snapshot *save.Snapshot) { snapshot.Version = 1 },
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			g := newStepGame(t)
@@ -220,23 +242,29 @@ func TestRestoreRejectsCorruptComponents(t *testing.T) {
 		name   string
 		mutate func(*save.Snapshot)
 	}{
-		{"negative shield blocks", func(snapshot *save.Snapshot) {
-			for i := range snapshot.Entities {
-				if snapshot.Entities[i].Player != nil {
-					snapshot.Entities[i].Combatant.ShieldBlocks = -1
-				}
-			}
-		}},
-		{"item health", func(snapshot *save.Snapshot) {
-			for i := range snapshot.Entities {
-				if snapshot.Entities[i].Item != nil {
-					snapshot.Entities[i].Health = &ecs.Health{
-						Current: 0,
-						Max:     1,
+		{
+			name: "negative shield blocks",
+			mutate: func(snapshot *save.Snapshot) {
+				for i := range snapshot.Entities {
+					if snapshot.Entities[i].Player != nil {
+						snapshot.Entities[i].Combatant.ShieldBlocks = -1
 					}
 				}
-			}
-		}},
+			},
+		},
+		{
+			name: "item health",
+			mutate: func(snapshot *save.Snapshot) {
+				for i := range snapshot.Entities {
+					if snapshot.Entities[i].Item != nil {
+						snapshot.Entities[i].Health = &ecs.Health{
+							Current: 0,
+							Max:     1,
+						}
+					}
+				}
+			},
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			g := newStepGame(t)

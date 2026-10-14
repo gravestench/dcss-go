@@ -19,7 +19,11 @@ func TestBaseStatSum(t *testing.T) {
 	}) {
 		t.Fatalf("Human/Fighter base attributes = %+v, %v", got, err)
 	}
-	for _, pair := range [][2]string{{"SP_HUMAN", "JOB_WANDERER"}, {"SP_FELID", "JOB_HUNTER"}, {"SP_HUMAN", "JOB_HEALER"}} {
+	for _, pair := range [][2]string{
+		{"SP_HUMAN", "JOB_WANDERER"},
+		{"SP_FELID", "JOB_HUNTER"},
+		{"SP_HUMAN", "JOB_HEALER"},
+	} {
 		if _, err := BaseStatSum(catalog, pair[0], pair[1]); err == nil {
 			t.Fatalf("invalid fixed-stat pair %s/%s accepted", pair[0], pair[1])
 		}

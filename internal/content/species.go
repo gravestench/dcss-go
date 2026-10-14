@@ -69,7 +69,13 @@ type SpeciesArtifact struct {
 	Species         []SpeciesDef        `json:"species"`
 }
 
-const ordinarySkillIDs = "SK_FIGHTING SK_SHORT_BLADES SK_LONG_BLADES SK_AXES SK_MACES_FLAILS SK_POLEARMS SK_STAVES SK_RANGED_WEAPONS SK_THROWING SK_ARMOUR SK_DODGING SK_STEALTH SK_SHIELDS SK_UNARMED_COMBAT SK_SPELLCASTING SK_CONJURATIONS SK_HEXES SK_SUMMONINGS SK_NECROMANCY SK_TRANSMUTATIONS SK_TRANSLOCATIONS SK_FIRE_MAGIC SK_ICE_MAGIC SK_AIR_MAGIC SK_EARTH_MAGIC SK_POISON_MAGIC SK_INVOCATIONS SK_EVOCATIONS"
+const ordinarySkillIDs = "SK_FIGHTING SK_SHORT_BLADES SK_LONG_BLADES SK_AXES " +
+	"SK_MACES_FLAILS SK_POLEARMS SK_STAVES SK_RANGED_WEAPONS " +
+	"SK_THROWING SK_ARMOUR SK_DODGING SK_STEALTH SK_SHIELDS " +
+	"SK_UNARMED_COMBAT SK_SPELLCASTING SK_CONJURATIONS SK_HEXES " +
+	"SK_SUMMONINGS SK_NECROMANCY SK_TRANSMUTATIONS SK_TRANSLOCATIONS " +
+	"SK_FIRE_MAGIC SK_ICE_MAGIC SK_AIR_MAGIC SK_EARTH_MAGIC " +
+	"SK_POISON_MAGIC SK_INVOCATIONS SK_EVOCATIONS"
 const legacyExtraSkillIDs = "SK_SLINGS SK_CROSSBOWS SK_STABBING SK_TRAPS SK_CHARMS"
 
 func (a SpeciesArtifact) Validate() error {
@@ -90,10 +96,12 @@ func (a SpeciesArtifact) Validate() error {
 }
 
 func (s SpeciesDef) validate() error {
-	if !strings.HasPrefix(s.ID, "SP_") || !strings.HasPrefix(s.MonsterID, "MONS_") || s.SourcePath == "" || s.Name == "" || s.ShortName == "" {
+	if !strings.HasPrefix(s.ID, "SP_") || !strings.HasPrefix(s.MonsterID, "MONS_") ||
+		s.SourcePath == "" || s.Name == "" || s.ShortName == "" {
 		return fmt.Errorf("invalid species definition %q", s.ID)
 	}
-	if s.Strength < 1 || s.Intelligence < 1 || s.Dexterity < 1 || s.LevelUpStatFrequency < 0 || s.LevelUpStatFrequency > 28 {
+	if s.Strength < 1 || s.Intelligence < 1 || s.Dexterity < 1 || s.LevelUpStatFrequency < 0 ||
+		s.LevelUpStatFrequency > 28 {
 		return fmt.Errorf("invalid species stats %q", s.ID)
 	}
 	if s.Habitat == "" || s.Size == "" || s.UndeadType == "" {
@@ -117,7 +125,8 @@ func (s SpeciesDef) validate() error {
 		}
 	}
 	for _, mutation := range s.Mutations {
-		if mutation.Level < 1 || mutation.Level > 27 || !strings.HasPrefix(mutation.ID, "MUT_") || mutation.Amount < -3 || mutation.Amount > 3 {
+		if mutation.Level < 1 || mutation.Level > 27 || !strings.HasPrefix(mutation.ID, "MUT_") ||
+			mutation.Amount < -3 || mutation.Amount > 3 {
 			return fmt.Errorf("invalid species mutation %s for %s", mutation.ID, s.ID)
 		}
 	}

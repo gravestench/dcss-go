@@ -8,54 +8,82 @@ func TestOrdinaryMonsterExperienceMatchesSourceIntegerStages(t *testing.T) {
 		in   OrdinaryMonsterXPInput
 		want int
 	}{
-		{"rat floor", OrdinaryMonsterXPInput{
-			HitDice:      1,
-			MaxHP:        4,
-			Speed:        10,
-			Modifier:     1,
-			AttackDamage: [4]int{3},
-		}, 1},
-		{"quokka speed", OrdinaryMonsterXPInput{
-			HitDice:      1,
-			MaxHP:        8,
-			Speed:        12,
-			Modifier:     10,
-			AttackDamage: [4]int{5},
-		}, 2},
-		{"large melee", OrdinaryMonsterXPInput{
-			HitDice:      5,
-			MaxHP:        40,
-			Speed:        10,
-			Modifier:     10,
-			AttackDamage: [4]int{15, 25},
-		}, 151},
-		{"fast large melee", OrdinaryMonsterXPInput{
-			HitDice:      5,
-			MaxHP:        40,
-			Speed:        12,
-			Modifier:     10,
-			AttackDamage: [4]int{15, 25},
-		}, 201},
-		{"fast regeneration and slow", OrdinaryMonsterXPInput{
-			HitDice:      5,
-			MaxHP:        40,
-			Speed:        7,
-			Modifier:     10,
-			AttackDamage: [4]int{5},
-			FastRegen:    true,
-		}, 56},
-		{"high value stepdowns", OrdinaryMonsterXPInput{
-			HitDice:  20,
-			MaxHP:    100,
-			Speed:    10,
-			Modifier: 10,
-		}, 1209},
-		{"zero modifier skips stage", OrdinaryMonsterXPInput{
-			HitDice:  1,
-			MaxHP:    4,
-			Speed:    10,
-			Modifier: 0,
-		}, 2},
+		{
+			name: "rat floor",
+			in: OrdinaryMonsterXPInput{
+				HitDice:      1,
+				MaxHP:        4,
+				Speed:        10,
+				Modifier:     1,
+				AttackDamage: [4]int{3},
+			},
+			want: 1,
+		},
+		{
+			name: "quokka speed",
+			in: OrdinaryMonsterXPInput{
+				HitDice:      1,
+				MaxHP:        8,
+				Speed:        12,
+				Modifier:     10,
+				AttackDamage: [4]int{5},
+			},
+			want: 2,
+		},
+		{
+			name: "large melee",
+			in: OrdinaryMonsterXPInput{
+				HitDice:      5,
+				MaxHP:        40,
+				Speed:        10,
+				Modifier:     10,
+				AttackDamage: [4]int{15, 25},
+			},
+			want: 151,
+		},
+		{
+			name: "fast large melee",
+			in: OrdinaryMonsterXPInput{
+				HitDice:      5,
+				MaxHP:        40,
+				Speed:        12,
+				Modifier:     10,
+				AttackDamage: [4]int{15, 25},
+			},
+			want: 201,
+		},
+		{
+			name: "fast regeneration and slow",
+			in: OrdinaryMonsterXPInput{
+				HitDice:      5,
+				MaxHP:        40,
+				Speed:        7,
+				Modifier:     10,
+				AttackDamage: [4]int{5},
+				FastRegen:    true,
+			},
+			want: 56,
+		},
+		{
+			name: "high value stepdowns",
+			in: OrdinaryMonsterXPInput{
+				HitDice:  20,
+				MaxHP:    100,
+				Speed:    10,
+				Modifier: 10,
+			},
+			want: 1209,
+		},
+		{
+			name: "zero modifier skips stage",
+			in: OrdinaryMonsterXPInput{
+				HitDice:  1,
+				MaxHP:    4,
+				Speed:    10,
+				Modifier: 0,
+			},
+			want: 2,
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			got, err := OrdinaryMonsterExperience(tc.in)

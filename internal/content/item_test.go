@@ -31,13 +31,16 @@ func testWeaponItem() ItemDef {
 			Min1HSizeID: "SIZE_LITTLE",
 			AmmoID:      "MI_NONE",
 			DamageFlags: []string{"DAMV_CRUSHING"},
-			BrandWeights: []ItemBrandWeight{{
-				BrandID: "SPWPN_NORMAL",
-				Weight:  58,
-			}, {
-				BrandID: "SPWPN_VENOM",
-				Weight:  16,
-			}},
+			BrandWeights: []ItemBrandWeight{
+				{
+					BrandID: "SPWPN_NORMAL",
+					Weight:  58,
+				},
+				{
+					BrandID: "SPWPN_VENOM",
+					Weight:  16,
+				},
+			},
 		},
 	}
 }
@@ -59,10 +62,14 @@ func TestItemDefCopies(t *testing.T) {
 	}
 	armour := ItemDef{
 		ID: "ARM_ROBE",
-		Armour: &ArmourProperties{Flags: []ItemFlag{{
-			ID:    "ARMF_RES_FIRE",
-			Level: 2,
-		}}},
+		Armour: &ArmourProperties{
+			Flags: []ItemFlag{
+				{
+					ID:    "ARMF_RES_FIRE",
+					Level: 2,
+				},
+			},
+		},
 	}
 	c.items["ARM_ROBE"] = armour
 	firstArmour, _ := c.Item("ARM_ROBE")
@@ -135,13 +142,16 @@ func TestItemShapeValidation(t *testing.T) {
 		t.Fatal("unknown naming kind accepted")
 	}
 	bad = valid.clone()
-	bad.Weapon.BrandWeights = []ItemBrandWeight{{
-		BrandID: "SPWPN_VENOM",
-		Weight:  16,
-	}, {
-		BrandID: "SPWPN_NORMAL",
-		Weight:  58,
-	}}
+	bad.Weapon.BrandWeights = []ItemBrandWeight{
+		{
+			BrandID: "SPWPN_VENOM",
+			Weight:  16,
+		},
+		{
+			BrandID: "SPWPN_NORMAL",
+			Weight:  58,
+		},
+	}
 	if err := bad.validate(); err == nil {
 		t.Fatal("unsorted brand weights accepted")
 	}

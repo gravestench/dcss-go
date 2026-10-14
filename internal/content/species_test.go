@@ -27,15 +27,19 @@ func testSpecies(id string) SpeciesDef {
 		LevelUpStatFrequency: 4,
 		LevelUpStats:         []string{"str", "int", "dex"},
 		Aptitudes:            aptitudes,
-		Mutations: []SpeciesMutation{{
-			Level:  1,
-			ID:     "MUT_FAST",
-			Amount: 1,
-		}},
-		FakeMutations: []SpeciesFakeMutation{{
-			Long:  "long",
-			Short: "short",
-		}},
+		Mutations: []SpeciesMutation{
+			{
+				Level:  1,
+				ID:     "MUT_FAST",
+				Amount: 1,
+			},
+		},
+		FakeMutations: []SpeciesFakeMutation{
+			{
+				Long:  "long",
+				Short: "short",
+			},
+		},
 		Flags:              []string{"SPF_NO_HAIR"},
 		Habitat:            "HT_LAND",
 		Size:               "SIZE_MEDIUM",
@@ -105,10 +109,12 @@ func TestSpeciesCatalogRejectsDuplicateOrInvalidRecord(t *testing.T) {
 }
 
 func TestSpeciesIDsSorted(t *testing.T) {
-	catalog := Catalog{species: map[string]SpeciesDef{
-		"SP_Z": testSpecies("SP_Z"),
-		"SP_A": testSpecies("SP_A"),
-	}}
+	catalog := Catalog{
+		species: map[string]SpeciesDef{
+			"SP_Z": testSpecies("SP_Z"),
+			"SP_A": testSpecies("SP_A"),
+		},
+	}
 	ids := catalog.SpeciesIDs()
 	if !reflect.DeepEqual(ids, []string{"SP_A", "SP_Z"}) {
 		t.Fatalf("species IDs not sorted: %v", ids)

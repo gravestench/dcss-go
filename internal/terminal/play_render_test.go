@@ -35,12 +35,81 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 		y, x int
 		text string
 	}{
-		{0, 37, "Alice the Shield-Bearer"}, {1, 37, "Human"},
-		{2, 37, "Health: 18/18"}, {3, 37, "Magic:  1/1"},
-		{4, 37, "AC: 6"}, {5, 37, "EV: 5"}, {6, 37, "SH: 4"},
-		{4, 55, "Str: 16"}, {5, 55, "Int: 8"}, {6, 55, "Dex: 12"},
-		{7, 37, "XL:  1 Next:  0%"}, {7, 55, "Place: D:1"}, {8, 37, "Noise: --"},
-		{9, 37, "a) +0 rapier"}, {10, 37, "Quiver: --"},
+		{
+			y:    0,
+			x:    37,
+			text: "Alice the Shield-Bearer",
+		},
+		{
+			y:    1,
+			x:    37,
+			text: "Human",
+		},
+		{
+			y:    2,
+			x:    37,
+			text: "Health: 18/18",
+		},
+		{
+			y:    3,
+			x:    37,
+			text: "Magic:  1/1",
+		},
+		{
+			y:    4,
+			x:    37,
+			text: "AC: 6",
+		},
+		{
+			y:    5,
+			x:    37,
+			text: "EV: 5",
+		},
+		{
+			y:    6,
+			x:    37,
+			text: "SH: 4",
+		},
+		{
+			y:    4,
+			x:    55,
+			text: "Str: 16",
+		},
+		{
+			y:    5,
+			x:    55,
+			text: "Int: 8",
+		},
+		{
+			y:    6,
+			x:    55,
+			text: "Dex: 12",
+		},
+		{
+			y:    7,
+			x:    37,
+			text: "XL:  1 Next:  0%",
+		},
+		{
+			y:    7,
+			x:    55,
+			text: "Place: D:1",
+		},
+		{
+			y:    8,
+			x:    37,
+			text: "Noise: --",
+		},
+		{
+			y:    9,
+			x:    37,
+			text: "a) +0 rapier",
+		},
+		{
+			y:    10,
+			x:    37,
+			text: "Quiver: --",
+		},
 	} {
 		if !strings.HasPrefix(rows[tc.y][tc.x:], tc.text) {
 			t.Fatalf("row %d column %d = %q, want prefix %q", tc.y, tc.x, rows[tc.y][tc.x:], tc.text)

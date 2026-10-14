@@ -25,21 +25,66 @@ func TestHealWoundsUsesSourceThreeRollAverage(t *testing.T) {
 		values                 []int
 		current, maximum, want int
 	}{
-		{[]int{0, 0, 0}, 1, 40, 11},
-		{[]int{27, 28, 28}, 1, 40, 38},
-		{[]int{1, 2, 3}, 1, 40, 13},
-		{[]int{27, 28, 28}, 35, 40, 40},
+		{
+			values:  []int{0, 0, 0},
+			current: 1,
+			maximum: 40,
+			want:    11,
+		},
+		{
+			values:  []int{27, 28, 28},
+			current: 1,
+			maximum: 40,
+			want:    38,
+		},
+		{
+			values:  []int{1, 2, 3},
+			current: 1,
+			maximum: 40,
+			want:    13,
+		},
+		{
+			values:  []int{27, 28, 28},
+			current: 35,
+			maximum: 40,
+			want:    40,
+		},
 	} {
 		r := &healWoundsRoller{values: tc.values}
 		got, err := HealWoundsHP(r, tc.current, tc.maximum)
-		if err != nil || got != tc.want || len(r.values) != 0 || len(r.bounds) != 3 || r.bounds[0] != 28 || r.bounds[1] != 29 || r.bounds[2] != 29 {
-			t.Fatalf("rolls %+v at %d/%d => %d, %v, bounds %+v; want %d", tc.values, tc.current, tc.maximum, got, err, r.bounds, tc.want)
+		if err != nil || got != tc.want || len(r.values) != 0 || len(r.bounds) != 3 ||
+			r.bounds[0] != 28 || r.bounds[1] != 29 || r.bounds[2] != 29 {
+			t.Fatalf(
+				"rolls %+v at %d/%d => %d, %v, bounds %+v; want %d",
+				tc.values,
+				tc.current,
+				tc.maximum,
+				got,
+				err,
+				r.bounds,
+				tc.want,
+			)
 		}
 	}
 }
 
 func TestHealWoundsRejectsInvalidInputAndDraws(t *testing.T) {
-	for _, tc := range []struct{ current, maximum int }{{0, 18}, {19, 18}, {1, 0}} {
+	for _, tc := range []struct {
+		current, maximum int
+	}{
+		{
+			current: 0,
+			maximum: 18,
+		},
+		{
+			current: 19,
+			maximum: 18,
+		},
+		{
+			current: 1,
+			maximum: 0,
+		},
+	} {
 		r := &healWoundsRoller{values: []int{0, 0, 0}}
 		if _, err := HealWoundsHP(r, tc.current, tc.maximum); err == nil || len(r.bounds) != 0 {
 			t.Fatalf("accepted %d/%d with draws %+v", tc.current, tc.maximum, r.bounds)

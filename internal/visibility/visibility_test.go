@@ -25,7 +25,10 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 	if err := json.Unmarshal(raw, &fixture); err != nil {
 		t.Fatal(err)
 	}
-	if fixture.SourceRevision != "e60ba3568b0c26447ad36ec5c7b963eb04b2778f" || fixture.SourcePath != "crawl-ref/source/dat/des/test/suite-los.des" || fixture.SourceSHA256 != "850a05146a96e8d778c3f666ee07d7b6a056afc499081e2ca30ecd631380ed10" || len(fixture.Maps) != 15 {
+	if fixture.SourceRevision != "e60ba3568b0c26447ad36ec5c7b963eb04b2778f" ||
+		fixture.SourcePath != "crawl-ref/source/dat/des/test/suite-los.des" ||
+		fixture.SourceSHA256 != "850a05146a96e8d778c3f666ee07d7b6a056afc499081e2ca30ecd631380ed10" ||
+		len(fixture.Maps) != 15 {
 		t.Fatalf("bad source provenance or map count: %+v", fixture)
 	}
 	for _, mapCase := range fixture.Maps {
@@ -86,10 +89,62 @@ func TestVisibilityInputValidation(t *testing.T) {
 		rows    []string
 		x, y, r int
 	}{
-		{"empty", nil, 0, 0, 7}, {"ragged", []string{"...", ".."}, 0, 0, 7},
-		{"unknown", []string{".?."}, 0, 0, 7}, {"opaque origin", []string{"#.."}, 0, 0, 7},
-		{"negative origin", []string{"..."}, -1, 0, 7}, {"outside origin", []string{"..."}, 3, 0, 7},
-		{"zero radius", []string{"..."}, 0, 0, 0}, {"large radius", []string{"..."}, 0, 0, 9},
+		{
+			name: "empty",
+			rows: nil,
+			x:    0,
+			y:    0,
+			r:    7,
+		},
+		{
+			name: "ragged",
+			rows: []string{"...", ".."},
+			x:    0,
+			y:    0,
+			r:    7,
+		},
+		{
+			name: "unknown",
+			rows: []string{".?."},
+			x:    0,
+			y:    0,
+			r:    7,
+		},
+		{
+			name: "opaque origin",
+			rows: []string{"#.."},
+			x:    0,
+			y:    0,
+			r:    7,
+		},
+		{
+			name: "negative origin",
+			rows: []string{"..."},
+			x:    -1,
+			y:    0,
+			r:    7,
+		},
+		{
+			name: "outside origin",
+			rows: []string{"..."},
+			x:    3,
+			y:    0,
+			r:    7,
+		},
+		{
+			name: "zero radius",
+			rows: []string{"..."},
+			x:    0,
+			y:    0,
+			r:    0,
+		},
+		{
+			name: "large radius",
+			rows: []string{"..."},
+			x:    0,
+			y:    0,
+			r:    9,
+		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {

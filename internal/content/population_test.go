@@ -7,11 +7,26 @@ func TestDungeonPopulationWeightCurves(t *testing.T) {
 		curve string
 		want  [3]int
 	}{
-		{"FLAT", [3]int{25200, 25200, 25200}},
-		{"SEMI", [3]int{12600, 25200, 12600}},
-		{"PEAK", [3]int{12600, 25200, 12600}},
-		{"RISE", [3]int{8400, 16800, 25200}},
-		{"FALL", [3]int{25200, 16800, 8400}},
+		{
+			curve: "FLAT",
+			want:  [3]int{25200, 25200, 25200},
+		},
+		{
+			curve: "SEMI",
+			want:  [3]int{12600, 25200, 12600},
+		},
+		{
+			curve: "PEAK",
+			want:  [3]int{12600, 25200, 12600},
+		},
+		{
+			curve: "RISE",
+			want:  [3]int{8400, 16800, 25200},
+		},
+		{
+			curve: "FALL",
+			want:  [3]int{25200, 16800, 8400},
+		},
 	} {
 		entry := DungeonPopEntry{
 			MinDepth:   1,
@@ -37,18 +52,22 @@ func TestDungeonPopulationArtifactRejectsMalformedRows(t *testing.T) {
 		SchemaVersion:   1,
 		SourceRevision:  sourceRevision,
 		TagMajorVersion: 34,
-		SourceFiles: []JobSourceFile{{
-			Path:   "crawl-ref/source/mon-pick-data.h",
-			SHA256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-		}},
-		Rows: []DungeonPopEntry{{
-			MinDepth:   1,
-			MaxDepth:   3,
-			Rarity:     1000,
-			Curve:      "FLAT",
-			MonsterID:  "MONS_RAT",
-			SourceLine: 60,
-		}},
+		SourceFiles: []JobSourceFile{
+			{
+				Path:   "crawl-ref/source/mon-pick-data.h",
+				SHA256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			},
+		},
+		Rows: []DungeonPopEntry{
+			{
+				MinDepth:   1,
+				MaxDepth:   3,
+				Rarity:     1000,
+				Curve:      "FLAT",
+				MonsterID:  "MONS_RAT",
+				SourceLine: 60,
+			},
+		},
 	}
 	if err := good.Validate(); err != nil {
 		t.Fatal(err)

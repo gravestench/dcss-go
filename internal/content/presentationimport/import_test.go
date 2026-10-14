@@ -15,7 +15,9 @@ func TestParseGroupsPreservesSourceOrder(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(groups) != 2 || groups[0].Label != "Simple" || !slices.Equal(groups[0].IDs, []string{"SP_HUMAN", "SP_MINOTAUR"}) || groups[1].Label != "Advanced" || !slices.Equal(groups[1].IDs, []string{"SP_FELID"}) {
+	if len(groups) != 2 || groups[0].Label != "Simple" ||
+		!slices.Equal(groups[0].IDs, []string{"SP_HUMAN", "SP_MINOTAUR"}) ||
+		groups[1].Label != "Advanced" || !slices.Equal(groups[1].IDs, []string{"SP_FELID"}) {
 		t.Fatalf("group order changed: %+v", groups)
 	}
 }
@@ -47,7 +49,8 @@ func TestParseStartupModesJoinsSourceStringLiterals(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(modes) != 2 || modes[0].ID != "GAME_TYPE_NORMAL" || modes[0].Description != "The main game." || modes[1].Label != "Tutorial" {
+	if len(modes) != 2 || modes[0].ID != "GAME_TYPE_NORMAL" ||
+		modes[0].Description != "The main game." || modes[1].Label != "Tutorial" {
 		t.Fatalf("source modes: %+v", modes)
 	}
 }
@@ -62,7 +65,8 @@ SK_COLUMN_BREAK,
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(columns) != 2 || !slices.Equal(columns[0], []string{"SK_FIGHTING", "", "SK_ARMOUR"}) || !slices.Equal(columns[1], []string{"SK_SPELLCASTING", "SK_INVOCATIONS"}) {
+	if len(columns) != 2 || !slices.Equal(columns[0], []string{"SK_FIGHTING", "", "SK_ARMOUR"}) ||
+		!slices.Equal(columns[1], []string{"SK_SPELLCASTING", "SK_INVOCATIONS"}) {
 		t.Fatalf("source skill columns: %+v", columns)
 	}
 }

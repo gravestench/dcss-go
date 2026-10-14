@@ -12,7 +12,18 @@ func TestPinnedItemSourceCoverage(t *testing.T) {
 		t.Skip("optional pinned-source audit; normal tests use committed Go content")
 	}
 	source := map[string][]byte{}
-	for _, name := range []string{"object-class-type.h", "item-prop-enum.h", "potion-type.h", "book-type.h", "orb-type.h", "item-prop.cc", "equipment-type.h", "skill-type.h", "size-type.h", "item-prop.h"} {
+	for _, name := range []string{
+		"object-class-type.h",
+		"item-prop-enum.h",
+		"potion-type.h",
+		"book-type.h",
+		"orb-type.h",
+		"item-prop.cc",
+		"equipment-type.h",
+		"skill-type.h",
+		"size-type.h",
+		"item-prop.h",
+	} {
 		data, err := os.ReadFile(filepath.Join(root, name))
 		if err != nil {
 			t.Fatal(err)
@@ -54,7 +65,13 @@ func TestPinnedItemSourceCoverage(t *testing.T) {
 		"OBJ_WEAPONS":    57,
 	}
 	if len(identities) != 408 || len(aliases) != 10 || len(removed) != 84 || len(counts) != len(want) {
-		t.Fatalf("pinned identity partition changed: identities=%d aliases=%d removed=%d classes=%v", len(identities), len(aliases), len(removed), counts)
+		t.Fatalf(
+			"pinned identity partition changed: identities=%d aliases=%d removed=%d classes=%v",
+			len(identities),
+			len(aliases),
+			len(removed),
+			counts,
+		)
 	}
 	for class, count := range want {
 		if counts[class] != count {

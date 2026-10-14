@@ -23,7 +23,9 @@ type MonsterIdentity struct {
 }
 
 func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
-	if v.SchemaVersion != 1 || v.SourceRevision != a.SourceRevision || v.TagMajorVersion != a.TagMajorVersion || len(v.Identities) != len(a.Monsters) || len(v.SourceFiles) != len(a.SourceFiles) {
+	if v.SchemaVersion != 1 || v.SourceRevision != a.SourceRevision ||
+		v.TagMajorVersion != a.TagMajorVersion || len(v.Identities) != len(a.Monsters) ||
+		len(v.SourceFiles) != len(a.SourceFiles) {
 		return fmt.Errorf("monster vocabulary metadata or coverage differs")
 	}
 	for i, file := range v.SourceFiles {
@@ -36,7 +38,22 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 			return fmt.Errorf("monster identity/status differs at %s", identity.ID)
 		}
 	}
-	needed := []string{"attack_type", "attack_flavour", "spellbook", "class_flag", "resistance", "holiness", "shout", "intelligence", "habitat", "item_use", "size", "shape", "colour", "tile_variation"}
+	needed := []string{
+		"attack_type",
+		"attack_flavour",
+		"spellbook",
+		"class_flag",
+		"resistance",
+		"holiness",
+		"shout",
+		"intelligence",
+		"habitat",
+		"item_use",
+		"size",
+		"shape",
+		"colour",
+		"tile_variation",
+	}
 	sets := make(map[string]map[string]bool, len(needed))
 	for _, category := range needed {
 		values := v.Symbols[category]
@@ -62,7 +79,46 @@ func (v MonsterVocabulary) ValidateArtifact(a MonsterArtifact) error {
 		if m.Status != MonsterDefined {
 			continue
 		}
-		for _, pair := range []struct{ category, value string }{{"colour", m.ColourID}, {"spellbook", m.SpellbookID}, {"shout", m.ShoutID}, {"intelligence", m.IntelligenceID}, {"habitat", m.HabitatID}, {"item_use", m.ItemUseID}, {"size", m.SizeID}, {"shape", m.ShapeID}, {"tile_variation", m.Tile.VariationID}} {
+		for _, pair := range []struct {
+			category, value string
+		}{
+			{
+				category: "colour",
+				value:    m.ColourID,
+			},
+			{
+				category: "spellbook",
+				value:    m.SpellbookID,
+			},
+			{
+				category: "shout",
+				value:    m.ShoutID,
+			},
+			{
+				category: "intelligence",
+				value:    m.IntelligenceID,
+			},
+			{
+				category: "habitat",
+				value:    m.HabitatID,
+			},
+			{
+				category: "item_use",
+				value:    m.ItemUseID,
+			},
+			{
+				category: "size",
+				value:    m.SizeID,
+			},
+			{
+				category: "shape",
+				value:    m.ShapeID,
+			},
+			{
+				category: "tile_variation",
+				value:    m.Tile.VariationID,
+			},
+		} {
 			if err := check(pair.category, pair.value, m.ID); err != nil {
 				return err
 			}

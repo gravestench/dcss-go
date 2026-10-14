@@ -34,7 +34,14 @@ func TestCanvasStyledRowsOccupyEveryTerminalCell(t *testing.T) {
 		}
 		for y := range styled {
 			if lipgloss.Width(styled[y]) != size[0] || lipgloss.Width(plain[y]) != size[0] {
-				t.Fatalf("%dx%d row %d widths: styled %d, plain %d", size[0], size[1], y, lipgloss.Width(styled[y]), lipgloss.Width(plain[y]))
+				t.Fatalf(
+					"%dx%d row %d widths: styled %d, plain %d",
+					size[0],
+					size[1],
+					y,
+					lipgloss.Width(styled[y]),
+					lipgloss.Width(plain[y]),
+				)
 			}
 		}
 	}

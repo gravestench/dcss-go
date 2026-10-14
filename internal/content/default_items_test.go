@@ -30,8 +30,16 @@ func TestDefaultItemManifest(t *testing.T) {
 		name                   string
 		itemData, identityData []byte
 	}{
-		{"bad item bytes", []byte(`{"items":`), defaultItemIdentitiesJSON},
-		{"bad identity bytes", defaultItemsJSON, []byte(`{"identities":`)},
+		{
+			name:         "bad item bytes",
+			itemData:     []byte(`{"items":`),
+			identityData: defaultItemIdentitiesJSON,
+		},
+		{
+			name:         "bad identity bytes",
+			itemData:     defaultItemsJSON,
+			identityData: []byte(`{"identities":`),
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			if _, _, err := loadItemPair(tc.itemData, tc.identityData); err == nil {

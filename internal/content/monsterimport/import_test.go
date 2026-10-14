@@ -15,11 +15,20 @@ func fixtureSource(t *testing.T) string {
 	t.Helper()
 	dir := t.TempDir()
 	files := map[string]string{
-		"tag-version.h":   "#define TAG_MAJOR_VERSION 34\n",
-		"monster-type.h":  "enum monster_type {\n MONS_PROGRAM_BUG, MONS_0 = MONS_PROGRAM_BUG, MONS_BUMBLEBEE, MONS_RAT, MONS_BEAR, NUM_MONSTERS, MONS_NO_MONSTER = 1000, RANDOM_MONSTER = 2000,\n#if TAG_MAJOR_VERSION > 34\n MONS_FUTURE,\n#endif\n};\n",
-		"mon-data.h":      "static monsterentry mondata[] = {\nAXED_MON(MONS_BUMBLEBEE, \"bee\")\n" + row("MONS_RAT", `"rat"`) + "};\n",
-		"mon-util.h":      "enum mon_type_tile_variation { TVARY_NONE, TVARY_MOD, };\n",
-		"mon-enum.h":      "enum attack_type { AT_NONE, AT_BITE, };\nenum attack_flavour { AF_PLAIN, };\nenum mon_intel_type { I_ANIMAL, };\nenum habitat_type { HT_LAND, };\nenum mon_itemuse_type { MONUSE_NOTHING, };\nenum shout_type { S_SILENT, };\nenum mon_resist_flags { MR_NO_FLAGS, MR_RES_FIRE, MR_RES_COLD, MR_RES_POISON, MR_VUL_POISON, };\nenum mon_body_shape { MON_SHAPE_QUADRUPED, };\n",
+		"tag-version.h": "#define TAG_MAJOR_VERSION 34\n",
+		"monster-type.h": "enum monster_type {\n MONS_PROGRAM_BUG, MONS_0 = MONS_PROGRAM_BUG, " +
+			"MONS_BUMBLEBEE, MONS_RAT, MONS_BEAR, NUM_MONSTERS, MONS_NO_MONSTER = 1000, " +
+			"RANDOM_MONSTER = 2000,\n#if TAG_MAJOR_VERSION > 34\n MONS_FUTURE,\n#endif\n};\n",
+		"mon-data.h": "static monsterentry mondata[] = {\nAXED_MON(MONS_BUMBLEBEE, \"bee\")\n" + row(
+			"MONS_RAT",
+			`"rat"`,
+		) + "};\n",
+		"mon-util.h": "enum mon_type_tile_variation { TVARY_NONE, TVARY_MOD, };\n",
+		"mon-enum.h": "enum attack_type { AT_NONE, AT_BITE, };\nenum attack_flavour { AF_PLAIN, };\n" +
+			"enum mon_intel_type { I_ANIMAL, };\nenum habitat_type { HT_LAND, };\nenum " +
+			"mon_itemuse_type { MONUSE_NOTHING, };\nenum shout_type { S_SILENT, };\nenum " +
+			"mon_resist_flags { MR_NO_FLAGS, MR_RES_FIRE, MR_RES_COLD, MR_RES_POISON, " +
+			"MR_VUL_POISON, };\nenum mon_body_shape { MON_SHAPE_QUADRUPED, };\n",
 		"mon-flags.h":     "enum monclass_flag_type : uint64_t { M_NO_FLAGS, M_WARM_BLOOD, M_NO_EXP_GAIN, M_NO_THREAT, };\n",
 		"mon-holy-type.h": "enum mon_holy_type_flags { MH_NATURAL, };\n",
 		"size-type.h":     "enum size_type { SIZE_TINY, };\n",
@@ -49,7 +58,9 @@ func TestGenerateFixtureDeterministicPartition(t *testing.T) {
 	if err := json.Unmarshal(first, &artifact); err != nil {
 		t.Fatal(err)
 	}
-	if len(artifact.Monsters) != 4 || artifact.Monsters[0].ID != "MONS_BEAR" || artifact.Monsters[0].Status != content.MonsterEnumOnly || artifact.Monsters[1].Status != content.MonsterRemoved || artifact.Monsters[3].ID != "MONS_RAT" {
+	if len(artifact.Monsters) != 4 || artifact.Monsters[0].ID != "MONS_BEAR" ||
+		artifact.Monsters[0].Status != content.MonsterEnumOnly ||
+		artifact.Monsters[1].Status != content.MonsterRemoved || artifact.Monsters[3].ID != "MONS_RAT" {
 		t.Fatalf("incorrect partition: %+v", artifact.Monsters)
 	}
 	if len(artifact.SourceFiles) != 11 || artifact.SourceFiles[0].SHA256 == "" || !bytes.HasSuffix(first, []byte("\n")) {
@@ -79,11 +90,33 @@ func TestGenerateRejectsBadSource(t *testing.T) {
 	if _, err := generateFromSource(dir, "wrong"); err == nil {
 		t.Fatal("wrong revision accepted")
 	}
-	for _, tc := range []struct{ name, file, old, next string }{
-		{"tag", "tag-version.h", "34", "35"},
-		{"missing", "mon-data.h", "MONS_RAT,", "MONS_MISSING,"},
-		{"duplicate", "mon-data.h", "};\n", row("MONS_RAT", `"rat"`) + "};\n"},
-		{"unknown reference", "mon-data.h", "MONS_RAT, MONS_RAT, MH_NATURAL", "MONS_RAT, MONS_UNKNOWN, MH_NATURAL"},
+	for _, tc := range []struct {
+		name, file, old, next string
+	}{
+		{
+			name: "tag",
+			file: "tag-version.h",
+			old:  "34",
+			next: "35",
+		},
+		{
+			name: "missing",
+			file: "mon-data.h",
+			old:  "MONS_RAT,",
+			next: "MONS_MISSING,",
+		},
+		{
+			name: "duplicate",
+			file: "mon-data.h",
+			old:  "};\n",
+			next: row("MONS_RAT", `"rat"`) + "};\n",
+		},
+		{
+			name: "unknown reference",
+			file: "mon-data.h",
+			old:  "MONS_RAT, MONS_RAT, MH_NATURAL",
+			next: "MONS_RAT, MONS_UNKNOWN, MH_NATURAL",
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			copyDir := fixtureSource(t)

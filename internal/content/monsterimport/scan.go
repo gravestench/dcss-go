@@ -171,7 +171,8 @@ func skipSpace(src string, pos int) int {
 }
 
 func skipSpaceAndCommas(src string, pos int) int {
-	for pos < len(src) && (src[pos] == ' ' || src[pos] == '\t' || src[pos] == '\r' || src[pos] == '\n' || src[pos] == ',') {
+	for pos < len(src) && (src[pos] == ' ' || src[pos] == '\t' || src[pos] == '\r' ||
+		src[pos] == '\n' || src[pos] == ',') {
 		pos++
 	}
 	return pos

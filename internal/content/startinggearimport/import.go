@@ -20,9 +20,20 @@ const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 func sourceHashes(sourceDir string) ([]content.JobSourceFile, error) {
 	files := make([]content.JobSourceFile, 0, 14)
 	for _, name := range []string{
-		"tag-version.h", "job-data.h", "job-type.h", "species-type.h", "spell-type.h", "skill-type.h",
-		"item-prop-enum.h", "potion-type.h", "item-prop.cc", "item-name.cc",
-		"newgame.cc", "ng-restr.cc", "ng-setup.cc", "jobs.cc",
+		"tag-version.h",
+		"job-data.h",
+		"job-type.h",
+		"species-type.h",
+		"spell-type.h",
+		"skill-type.h",
+		"item-prop-enum.h",
+		"potion-type.h",
+		"item-prop.cc",
+		"item-name.cc",
+		"newgame.cc",
+		"ng-restr.cc",
+		"ng-setup.cc",
+		"jobs.cc",
 	} {
 		data, _, err := readKindSource(sourceDir, name)
 		if err != nil {
@@ -110,7 +121,14 @@ func generateFromSource(sourceDir, revision string, jobs []content.JobDef, catal
 			if grant.Ego != "" {
 				egoID := "SPMSL_" + strings.ToUpper(grant.Ego)
 				if _, found := active[egoID]; kind.Class != "OBJ_MISSILES" || !found {
-					return nil, fmt.Errorf("%s: job %s equipment %q has unknown ego %q (%s)", enumPath, gear[i].JobID, grant.Raw, grant.Ego, egoID)
+					return nil, fmt.Errorf(
+						"%s: job %s equipment %q has unknown ego %q (%s)",
+						enumPath,
+						gear[i].JobID,
+						grant.Raw,
+						grant.Ego,
+						egoID,
+					)
 				}
 			}
 		}
@@ -169,7 +187,13 @@ func Generate(sourceDir string) ([]byte, error) {
 		}
 	}
 	if selectable != 25 || total != 63 || len(rawSpecs) != 36 || len(itemNames) != 32 {
-		return nil, fmt.Errorf("source starter coverage changed: jobs=%d grants=%d specs=%d names=%d", selectable, total, len(rawSpecs), len(itemNames))
+		return nil, fmt.Errorf(
+			"source starter coverage changed: jobs=%d grants=%d specs=%d names=%d",
+			selectable,
+			total,
+			len(rawSpecs),
+			len(itemNames),
+		)
 	}
 	catalog, err := content.LoadItemsForImport()
 	if err != nil {

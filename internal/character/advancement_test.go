@@ -9,10 +9,33 @@ import (
 func TestHumanExperienceThresholdsMatchSourceTable(t *testing.T) {
 	// player.cc:exp_needed lists these values before Human's final minus one.
 	source := []int{
-		0, 10, 30, 70, 140, 270, 520, 1010, 1980,
-		3910, 7760, 15450, 26895, 45585, 72745, 108375,
-		152475, 205045, 266085, 335595, 413575, 500025,
-		594945, 698335, 810195, 930525, 1059325,
+		0,
+		10,
+		30,
+		70,
+		140,
+		270,
+		520,
+		1010,
+		1980,
+		3910,
+		7760,
+		15450,
+		26895,
+		45585,
+		72745,
+		108375,
+		152475,
+		205045,
+		266085,
+		335595,
+		413575,
+		500025,
+		594945,
+		698335,
+		810195,
+		930525,
+		1059325,
 	}
 	for index, tableValue := range source {
 		level := index + 1

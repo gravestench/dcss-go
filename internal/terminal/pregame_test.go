@@ -46,7 +46,9 @@ func pressApp(m *AppModel, key string) tea.Cmd {
 	return cmd
 }
 
-func plainApp(m *AppModel) string { return strings.Join(m.renderCanvas().PlainRows(), "\n") }
+func plainApp(m *AppModel) string {
+	return strings.Join(m.renderCanvas().PlainRows(), "\n")
+}
 
 func enterName(m *AppModel, name string) {
 	for _, r := range name {
@@ -57,7 +59,19 @@ func enterName(m *AppModel, name string) {
 func TestPregameStartupBannerAndSourceModes(t *testing.T) {
 	m := pregameModel(t)
 	view := plainApp(m)
-	for _, want := range []string{"Dungeon Crawl Stone Soup 0.30-a0-23-ge60ba3568b0", "Enter your name:", "Choices:", "Dungeon Crawl", "Choose Game Seed", "Tutorial for Dungeon Crawl", "Hints Mode for Dungeon Crawl", "Dungeon Sprint", "Instructions", "The Arena", "High Scores"} {
+	for _, want := range []string{
+		"Dungeon Crawl Stone Soup 0.30-a0-23-ge60ba3568b0",
+		"Enter your name:",
+		"Choices:",
+		"Dungeon Crawl",
+		"Choose Game Seed",
+		"Tutorial for Dungeon Crawl",
+		"Hints Mode for Dungeon Crawl",
+		"Dungeon Sprint",
+		"Instructions",
+		"The Arena",
+		"High Scores",
+	} {
 		if !strings.Contains(view, want) {
 			t.Fatalf("startup missing %q", want)
 		}
@@ -112,7 +126,15 @@ func TestPregameSpeciesBackgroundOrderAndDescriptions(t *testing.T) {
 		t.Fatalf("startup -> %v", m.screen)
 	}
 	view := plainApp(m)
-	for _, want := range []string{"Simple", "Intermediate", "Advanced", "a - Hill Orc", "j - Human", "A - Mummy", "Hill Orcs are skilled"} {
+	for _, want := range []string{
+		"Simple",
+		"Intermediate",
+		"Advanced",
+		"a - Hill Orc",
+		"j - Human",
+		"A - Mummy",
+		"Hill Orcs are skilled",
+	} {
 		if !strings.Contains(view, want) {
 			t.Fatalf("species menu missing %q", want)
 		}
@@ -126,7 +148,16 @@ func TestPregameSpeciesBackgroundOrderAndDescriptions(t *testing.T) {
 		t.Fatalf("Human choice: %v / %s", m.screen, m.speciesID)
 	}
 	view = plainApp(m)
-	for _, want := range []string{"Warrior", "Adventurer", "Zealot", "Warrior-mage", "Mage", "a - Fighter", "y - Venom Mage", "Fighters are equipped"} {
+	for _, want := range []string{
+		"Warrior",
+		"Adventurer",
+		"Zealot",
+		"Warrior-mage",
+		"Mage",
+		"a - Fighter",
+		"y - Venom Mage",
+		"Fighters are equipped",
+	} {
 		if !strings.Contains(view, want) {
 			t.Fatalf("background menu missing %q", want)
 		}
@@ -134,7 +165,14 @@ func TestPregameSpeciesBackgroundOrderAndDescriptions(t *testing.T) {
 }
 
 func TestPregameBothChoiceOrdersAndSixWeapons(t *testing.T) {
-	for i, weapon := range []string{"WPN_RAPIER", "WPN_FLAIL", "WPN_WAR_AXE", "WPN_TRIDENT", "WPN_LONG_SWORD", "WPN_UNARMED"} {
+	for i, weapon := range []string{
+		"WPN_RAPIER",
+		"WPN_FLAIL",
+		"WPN_WAR_AXE",
+		"WPN_TRIDENT",
+		"WPN_LONG_SWORD",
+		"WPN_UNARMED",
+	} {
 		t.Run(weapon, func(t *testing.T) {
 			m := pregameModel(t)
 			enterName(m, "Alice")

@@ -20,8 +20,17 @@ import (
 const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 
 var sourceNames = []string{
-	"tag-version.h", "monster-type.h", "mon-data.h", "mon-util.h", "mon-enum.h",
-	"mon-flags.h", "mon-holy-type.h", "size-type.h", "mon-mst.h", "defines.h", "colour.h",
+	"tag-version.h",
+	"monster-type.h",
+	"mon-data.h",
+	"mon-util.h",
+	"mon-enum.h",
+	"mon-flags.h",
+	"mon-holy-type.h",
+	"size-type.h",
+	"mon-mst.h",
+	"defines.h",
+	"colour.h",
 }
 
 func readSources(sourceDir string) (map[string][]byte, []content.JobSourceFile, error) {
@@ -153,13 +162,76 @@ func sourceSymbols(data map[string][]byte) (symbolSets, error) {
 		target     *map[string]bool
 		file, name string
 	}{
-		{&s.attackType, "mon-enum.h", "attack_type"}, {&s.attackFlavour, "mon-enum.h", "attack_flavour"},
-		{&s.spellbook, "mon-mst.h", "mon_spellbook_type"}, {&s.classFlag, "mon-flags.h", "monclass_flag_type"},
-		{&s.resistance, "mon-enum.h", "mon_resist_flags"}, {&s.holiness, "mon-holy-type.h", "mon_holy_type_flags"},
-		{&s.shout, "mon-enum.h", "shout_type"}, {&s.intelligence, "mon-enum.h", "mon_intel_type"},
-		{&s.habitat, "mon-enum.h", "habitat_type"}, {&s.itemUse, "mon-enum.h", "mon_itemuse_type"},
-		{&s.size, "size-type.h", "size_type"}, {&s.shape, "mon-enum.h", "mon_body_shape"},
-		{&s.colour, "defines.h", "COLOURS"}, {&s.tileVariation, "mon-util.h", "mon_type_tile_variation"},
+		{
+			target: &s.attackType,
+			file:   "mon-enum.h",
+			name:   "attack_type",
+		},
+		{
+			target: &s.attackFlavour,
+			file:   "mon-enum.h",
+			name:   "attack_flavour",
+		},
+		{
+			target: &s.spellbook,
+			file:   "mon-mst.h",
+			name:   "mon_spellbook_type",
+		},
+		{
+			target: &s.classFlag,
+			file:   "mon-flags.h",
+			name:   "monclass_flag_type",
+		},
+		{
+			target: &s.resistance,
+			file:   "mon-enum.h",
+			name:   "mon_resist_flags",
+		},
+		{
+			target: &s.holiness,
+			file:   "mon-holy-type.h",
+			name:   "mon_holy_type_flags",
+		},
+		{
+			target: &s.shout,
+			file:   "mon-enum.h",
+			name:   "shout_type",
+		},
+		{
+			target: &s.intelligence,
+			file:   "mon-enum.h",
+			name:   "mon_intel_type",
+		},
+		{
+			target: &s.habitat,
+			file:   "mon-enum.h",
+			name:   "habitat_type",
+		},
+		{
+			target: &s.itemUse,
+			file:   "mon-enum.h",
+			name:   "mon_itemuse_type",
+		},
+		{
+			target: &s.size,
+			file:   "size-type.h",
+			name:   "size_type",
+		},
+		{
+			target: &s.shape,
+			file:   "mon-enum.h",
+			name:   "mon_body_shape",
+		},
+		{
+			target: &s.colour,
+			file:   "defines.h",
+			name:   "COLOURS",
+		},
+		{
+			target: &s.tileVariation,
+			file:   "mon-util.h",
+			name:   "mon_type_tile_variation",
+		},
 	}
 	for _, step := range steps {
 		*step.target, err = from(step.file, step.name)
@@ -251,7 +323,11 @@ func Generate(sourceDir string) ([]byte, error) {
 		return nil, fmt.Errorf("source revision: %w", err)
 	}
 	if strings.TrimSpace(string(revision)) != pinnedRevision {
-		return nil, fmt.Errorf("source revision %s differs from pinned %s", strings.TrimSpace(string(revision)), pinnedRevision)
+		return nil, fmt.Errorf(
+			"source revision %s differs from pinned %s",
+			strings.TrimSpace(string(revision)),
+			pinnedRevision,
+		)
 	}
 	args := append([]string{"-C", sourceDir, "status", "--porcelain", "--untracked-files=no", "--"}, sourceNames...)
 	status, err := exec.Command("git", args...).Output()
@@ -273,8 +349,15 @@ func Generate(sourceDir string) ([]byte, error) {
 	for _, def := range artifact.Monsters {
 		counts[def.Status]++
 	}
-	if len(artifact.Monsters) != 700 || counts[content.MonsterDefined] != 562 || counts[content.MonsterRemoved] != 120 || counts[content.MonsterEnumOnly] != 18 {
-		return nil, fmt.Errorf("monster partition changed: total=%d defined=%d removed=%d enum_only=%d", len(artifact.Monsters), counts[content.MonsterDefined], counts[content.MonsterRemoved], counts[content.MonsterEnumOnly])
+	if len(artifact.Monsters) != 700 || counts[content.MonsterDefined] != 562 ||
+		counts[content.MonsterRemoved] != 120 || counts[content.MonsterEnumOnly] != 18 {
+		return nil, fmt.Errorf(
+			"monster partition changed: total=%d defined=%d removed=%d enum_only=%d",
+			len(artifact.Monsters),
+			counts[content.MonsterDefined],
+			counts[content.MonsterRemoved],
+			counts[content.MonsterEnumOnly],
+		)
 	}
 	return data, nil
 }
@@ -404,7 +487,16 @@ func Write(sourceDir, outPath string, check bool) error {
 		for _, entry := range []struct {
 			path     string
 			expected []byte
-		}{{outPath, definitions}, {manifestPath, vocabulary}} {
+		}{
+			{
+				path:     outPath,
+				expected: definitions,
+			},
+			{
+				path:     manifestPath,
+				expected: vocabulary,
+			},
+		} {
 			actual, err := os.ReadFile(entry.path)
 			if err != nil {
 				return err
@@ -415,7 +507,12 @@ func Write(sourceDir, outPath string, check bool) error {
 		}
 		return nil
 	}
-	if err := writeArtifact(sourceDir, outPath, false, func(string) ([]byte, error) { return definitions, nil }); err != nil {
+	if err := writeArtifact(
+		sourceDir,
+		outPath,
+		false,
+		func(string) ([]byte, error) { return definitions, nil },
+	); err != nil {
 		return err
 	}
 	return writeArtifact(sourceDir, manifestPath, false, func(string) ([]byte, error) { return vocabulary, nil })

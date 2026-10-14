@@ -35,7 +35,9 @@ func (c Catalog) DungeonMonsterPool(depth int, veto func(string) bool) DungeonMo
 	return pool
 }
 
-func (p DungeonMonsterPool) TotalWeight() int { return p.total }
+func (p DungeonMonsterPool) TotalWeight() int {
+	return p.total
+}
 
 // Pick maps a caller-owned random roll to the first source row containing it.
 // An empty pool returns the source picker's no-monster result without a draw.

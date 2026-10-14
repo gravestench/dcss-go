@@ -14,10 +14,12 @@ import (
 
 func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 	t.Helper()
-	files := []content.JobSourceFile{{
-		Path:   "crawl-ref/source/item-prop-enum.h",
-		SHA256: strings.Repeat("a", 64),
-	}}
+	files := []content.JobSourceFile{
+		{
+			Path:   "crawl-ref/source/item-prop-enum.h",
+			SHA256: strings.Repeat("a", 64),
+		},
+	}
 	identities := []content.ItemIdentity{
 		{
 			ID:           "WPN_MACE",
@@ -65,10 +67,12 @@ func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 				Min1HSizeID: "SIZE_LITTLE",
 				AmmoID:      "MI_NONE",
 				DamageFlags: []string{"DAMV_CRUSHING"},
-				BrandWeights: []content.ItemBrandWeight{{
-					BrandID: "SPWPN_NORMAL",
-					Weight:  58,
-				}},
+				BrandWeights: []content.ItemBrandWeight{
+					{
+						BrandID: "SPWPN_NORMAL",
+						Weight:  58,
+					},
+				},
 			},
 		},
 		{
@@ -139,16 +143,34 @@ func TestItemImportPair(t *testing.T) {
 		name   string
 		change func(*content.ItemArtifact, *content.ItemIdentityManifest)
 	}{
-		{"omitted row", func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) { a.Items = a.Items[:1] }},
-		{"same-count ID substitution", func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) { a.Items[1].ID = "POT_MAGIC" }},
-		{"wrong numeric subtype", func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) { a.Items[1].SubtypeValue = 99 }},
-		{"swapped removal membership", func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) { a.Items[1].ExplicitlyRemoved = true }},
-		{"unknown property symbol", func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) {
-			a.Items[0].Weapon.SkillID = "SK_NOT_REAL"
-		}},
-		{"source hash mismatch", func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) {
-			a.SourceFiles[0].SHA256 = strings.Repeat("b", 64)
-		}},
+		{
+			name:   "omitted row",
+			change: func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) { a.Items = a.Items[:1] },
+		},
+		{
+			name:   "same-count ID substitution",
+			change: func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) { a.Items[1].ID = "POT_MAGIC" },
+		},
+		{
+			name:   "wrong numeric subtype",
+			change: func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) { a.Items[1].SubtypeValue = 99 },
+		},
+		{
+			name:   "swapped removal membership",
+			change: func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) { a.Items[1].ExplicitlyRemoved = true },
+		},
+		{
+			name: "unknown property symbol",
+			change: func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) {
+				a.Items[0].Weapon.SkillID = "SK_NOT_REAL"
+			},
+		},
+		{
+			name: "source hash mismatch",
+			change: func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) {
+				a.SourceFiles[0].SHA256 = strings.Repeat("b", 64)
+			},
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			var a content.ItemArtifact
@@ -175,18 +197,21 @@ func TestItemImportPair(t *testing.T) {
 	if err := missing.Validate(updated); err == nil {
 		t.Fatal("missing live definition passed with recomputed manifest digest")
 	}
-	identities := []content.ItemIdentity{{
-		ID:           "WPN_MACE",
-		ClassID:      "OBJ_WEAPONS",
-		ClassValue:   0,
-		SubtypeValue: 3,
-	}, {
-		ID:                "POT_OLD",
-		ClassID:           "OBJ_POTIONS",
-		ClassValue:        7,
-		SubtypeValue:      1,
-		ExplicitlyRemoved: true,
-	}}
+	identities := []content.ItemIdentity{
+		{
+			ID:           "WPN_MACE",
+			ClassID:      "OBJ_WEAPONS",
+			ClassValue:   0,
+			SubtypeValue: 3,
+		},
+		{
+			ID:                "POT_OLD",
+			ClassID:           "OBJ_POTIONS",
+			ClassValue:        7,
+			SubtypeValue:      1,
+			ExplicitlyRemoved: true,
+		},
+	}
 	rows := map[itemKey]itemPropertyRow{{"OBJ_WEAPONS", "WPN_MACE"}: {
 		Name:   "mace",
 		Line:   11,
@@ -202,22 +227,24 @@ func TestItemImportPair(t *testing.T) {
 		t.Fatalf("wrong source join: items=%+v err=%v", joined, err)
 	}
 	rows[itemKey{
-		"OBJ_WEAPONS",
-		"WPN_EXTRA",
+		ClassID:   "OBJ_WEAPONS",
+		SubtypeID: "WPN_EXTRA",
 	}] = rows[itemKey{
-		"OBJ_WEAPONS",
-		"WPN_MACE",
+		ClassID:   "OBJ_WEAPONS",
+		SubtypeID: "WPN_MACE",
 	}]
 	if _, err := joinItemViews(identities, rows, names, glyphs); err == nil {
 		t.Fatal("property row without enum identity accepted")
 	}
 	food, err := joinItemViews(
-		[]content.ItemIdentity{{
-			ID:           "FOOD_RATION",
-			ClassID:      "OBJ_FOOD",
-			ClassValue:   4,
-			SubtypeValue: 0,
-		}},
+		[]content.ItemIdentity{
+			{
+				ID:           "FOOD_RATION",
+				ClassID:      "OBJ_FOOD",
+				ClassValue:   4,
+				SubtypeValue: 0,
+			},
+		},
 		map[itemKey]itemPropertyRow{{"OBJ_FOOD", "FOOD_RATION"}: {
 			Name: "buggy ration",
 			Line: 40,

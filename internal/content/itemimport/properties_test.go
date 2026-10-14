@@ -21,7 +21,8 @@ static const vector<brand_weight_tuple> M_AND_F_BRANDS = {
 };
 static const weapon_def Weapon_prop[] =
 {
-    { WPN_MACE, "mace", 8, 3, 14, SK_MACES_FLAILS, SIZE_LITTLE, SIZE_LITTLE, MI_NONE, DAMV_CRUSHING, 9, 10, 30, M_AND_F_BRANDS },
+    { WPN_MACE, "mace", 8, 3, 14, SK_MACES_FLAILS, SIZE_LITTLE, ` +
+		`SIZE_LITTLE, MI_NONE, DAMV_CRUSHING, 9, 10, 30, M_AND_F_BRANDS },
 };
 static const missile_def Missile_prop[] =
 {
@@ -39,7 +40,14 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 		t.Skip("optional pinned-source audit; normal tests use committed Go content")
 	}
 	source := map[string][]byte{}
-	for _, name := range []string{"equipment-type.h", "skill-type.h", "size-type.h", "item-prop-enum.h", "item-prop.h", "item-prop.cc"} {
+	for _, name := range []string{
+		"equipment-type.h",
+		"skill-type.h",
+		"size-type.h",
+		"item-prop-enum.h",
+		"item-prop.h",
+		"item-prop.cc",
+	} {
 		data, err := os.ReadFile(filepath.Join(root, name))
 		if err != nil {
 			t.Fatal(err)
@@ -72,29 +80,29 @@ func TestPinnedPropertyTableCoverage(t *testing.T) {
 		t.Fatalf("got %d property rows, want 133", len(rows))
 	}
 	fire := rows[itemKey{
-		"OBJ_ARMOUR",
-		"ARM_FIRE_DRAGON_ARMOUR",
+		ClassID:   "OBJ_ARMOUR",
+		SubtypeID: "ARM_FIRE_DRAGON_ARMOUR",
 	}]
 	if fire.Armour == nil || fire.Armour.AC != 8 || fire.Armour.EV != -110 || len(fire.Armour.Flags) != 2 {
 		t.Fatalf("fire dragon scales fields lost: %+v", fire)
 	}
 	mace := rows[itemKey{
-		"OBJ_WEAPONS",
-		"WPN_MACE",
+		ClassID:   "OBJ_WEAPONS",
+		SubtypeID: "WPN_MACE",
 	}]
 	if mace.Weapon == nil || mace.Weapon.Damage != 8 || mace.Weapon.Price != 30 || len(mace.Weapon.BrandWeights) != 9 {
 		t.Fatalf("mace fields lost: %+v", mace)
 	}
 	needle := rows[itemKey{
-		"OBJ_MISSILES",
-		"MI_NEEDLE",
+		ClassID:   "OBJ_MISSILES",
+		SubtypeID: "MI_NEEDLE",
 	}]
 	if needle.Missile == nil || needle.Missile.MulchRate != 12 {
 		t.Fatalf("needle fields lost: %+v", needle)
 	}
 	ration := rows[itemKey{
-		"OBJ_FOOD",
-		"FOOD_RATION",
+		ClassID:   "OBJ_FOOD",
+		SubtypeID: "FOOD_RATION",
 	}]
 	if ration.Food == nil || ration.Food.NormalNutrition != 3400 || ration.Food.HerbivoreNutrition != 1900 {
 		t.Fatalf("ration fields lost: %+v", ration)
@@ -122,17 +130,20 @@ func TestPropertyTablesComplete(t *testing.T) {
 		t.Fatalf("got %d rows, want 6", len(rows))
 	}
 	robe := rows[itemKey{
-		"OBJ_ARMOUR",
-		"ARM_ROBE",
+		ClassID:   "OBJ_ARMOUR",
+		SubtypeID: "ARM_ROBE",
 	}]
-	if robe.Name != "robe" || robe.Line != 3 || robe.Armour == nil || robe.Armour.AC != 2 || robe.Armour.Price != 7 || robe.Armour.AcquireWeight != 1000 {
+	if robe.Name != "robe" || robe.Line != 3 || robe.Armour == nil || robe.Armour.AC != 2 ||
+		robe.Armour.Price != 7 || robe.Armour.AcquireWeight != 1000 {
 		t.Fatalf("robe fields lost: %+v", robe)
 	}
 	scales := rows[itemKey{
-		"OBJ_ARMOUR",
-		"ARM_FIRE_DRAGON_ARMOUR",
+		ClassID:   "OBJ_ARMOUR",
+		SubtypeID: "ARM_FIRE_DRAGON_ARMOUR",
 	}]
-	if scales.Armour == nil || scales.Armour.AC != 8 || scales.Armour.EV != -110 || scales.Armour.Price != 600 || scales.Armour.AcquireWeight != 25 || len(scales.Armour.Flags) != 2 || scales.Armour.Flags[0] != (content.ItemFlag{
+	if scales.Armour == nil || scales.Armour.AC != 8 || scales.Armour.EV != -110 ||
+		scales.Armour.Price != 600 || scales.Armour.AcquireWeight != 25 ||
+		len(scales.Armour.Flags) != 2 || scales.Armour.Flags[0] != (content.ItemFlag{
 		ID:    "ARMF_RES_FIRE",
 		Level: 2,
 	}) || scales.Armour.Flags[1] != (content.ItemFlag{
@@ -142,47 +153,81 @@ func TestPropertyTablesComplete(t *testing.T) {
 		t.Fatalf("dragon scales fields lost: %+v", scales)
 	}
 	hide := rows[itemKey{
-		"OBJ_ARMOUR",
-		"ARM_FIRE_DRAGON_HIDE",
+		ClassID:   "OBJ_ARMOUR",
+		SubtypeID: "ARM_FIRE_DRAGON_HIDE",
 	}]
-	if hide.Armour == nil || hide.Armour.AC != 0 || hide.Armour.Price != 0 || hide.Armour.AcquireWeight != 0 || hide.Name != "removed fire dragon hide" {
+	if hide.Armour == nil || hide.Armour.AC != 0 || hide.Armour.Price != 0 ||
+		hide.Armour.AcquireWeight != 0 || hide.Name != "removed fire dragon hide" {
 		t.Fatalf("dragon hide fields lost: %+v", hide)
 	}
 	mace := rows[itemKey{
-		"OBJ_WEAPONS",
-		"WPN_MACE",
+		ClassID:   "OBJ_WEAPONS",
+		SubtypeID: "WPN_MACE",
 	}]
-	if mace.Weapon == nil || mace.Weapon.Damage != 8 || mace.Weapon.Hit != 3 || mace.Weapon.Speed != 14 || mace.Weapon.Commonness != 9 || mace.Weapon.AcquireWeight != 10 || mace.Weapon.Price != 30 || len(mace.Weapon.BrandWeights) != 2 || mace.Weapon.BrandWeights[0].BrandID != "SPWPN_NORMAL" || mace.Weapon.BrandWeights[0].Weight != 58 {
+	if mace.Weapon == nil || mace.Weapon.Damage != 8 || mace.Weapon.Hit != 3 ||
+		mace.Weapon.Speed != 14 || mace.Weapon.Commonness != 9 || mace.Weapon.AcquireWeight != 10 ||
+		mace.Weapon.Price != 30 || len(mace.Weapon.BrandWeights) != 2 ||
+		mace.Weapon.BrandWeights[0].BrandID != "SPWPN_NORMAL" || mace.Weapon.BrandWeights[0].Weight != 58 {
 		t.Fatalf("weapon fields lost: %+v", mace)
 	}
 	needle := rows[itemKey{
-		"OBJ_MISSILES",
-		"MI_NEEDLE",
+		ClassID:   "OBJ_MISSILES",
+		SubtypeID: "MI_NEEDLE",
 	}]
 	if needle.Missile == nil || needle.Missile.Damage != 0 || needle.Missile.MulchRate != 12 || needle.Missile.Price != 2 {
 		t.Fatalf("missile fields lost: %+v", needle)
 	}
 	ration := rows[itemKey{
-		"OBJ_FOOD",
-		"FOOD_RATION",
+		ClassID:   "OBJ_FOOD",
+		SubtypeID: "FOOD_RATION",
 	}]
-	if ration.Food == nil || ration.Food.NormalNutrition != 3400 || ration.Food.CarnivoreNutrition != 1900 || ration.Food.HerbivoreNutrition != 1900 {
+	if ration.Food == nil || ration.Food.NormalNutrition != 3400 ||
+		ration.Food.CarnivoreNutrition != 1900 || ration.Food.HerbivoreNutrition != 1900 {
 		t.Fatalf("food fields lost: %+v", ration)
 	}
 }
 
 func TestPropertyScannerRejectsLoss(t *testing.T) {
 	base := string(propertyFixture())
-	for _, test := range []struct{ name, from, to string }{
-		{"missing field", "EQ_BODY_ARMOUR, SIZE_LITTLE", "SIZE_LITTLE"},
-		{"unknown macro", "DRAGON_ARMOUR(FIRE", "DRAGON_SHIELD(FIRE"},
-		{"unknown symbol", "SK_MACES_FLAILS", "SK_NOT_REAL"},
-		{"duplicate row", "{ MI_NEEDLE, \"needle\", 0, 12, 2 },", "{ MI_NEEDLE, \"needle\", 0, 12, 2 },\n    { MI_NEEDLE, \"needle\", 0, 12, 2 },"},
-		{"extra table row", "{ MI_NEEDLE, \"needle\", 0, 12, 2 },", "{ MI_NEEDLE, \"needle\", 0, 12, 2 },\n    { MI_BAD, \"bad\", 0, 12, 2 },"},
+	for _, test := range []struct {
+		name, from, to string
+	}{
+		{
+			name: "missing field",
+			from: "EQ_BODY_ARMOUR, SIZE_LITTLE",
+			to:   "SIZE_LITTLE",
+		},
+		{
+			name: "unknown macro",
+			from: "DRAGON_ARMOUR(FIRE",
+			to:   "DRAGON_SHIELD(FIRE",
+		},
+		{
+			name: "unknown symbol",
+			from: "SK_MACES_FLAILS",
+			to:   "SK_NOT_REAL",
+		},
+		{
+			name: "duplicate row",
+			from: "{ MI_NEEDLE, \"needle\", 0, 12, 2 },",
+			to:   "{ MI_NEEDLE, \"needle\", 0, 12, 2 },\n    { MI_NEEDLE, \"needle\", 0, 12, 2 },",
+		},
+		{
+			name: "extra table row",
+			from: "{ MI_NEEDLE, \"needle\", 0, 12, 2 },",
+			to:   "{ MI_NEEDLE, \"needle\", 0, 12, 2 },\n    { MI_BAD, \"bad\", 0, 12, 2 },",
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			bad := strings.Replace(base, test.from, test.to, 1)
-			if _, err := parsePropertyTables("item-prop.cc", []byte(bad), propertyVocabulary()); err == nil || !strings.Contains(err.Error(), "item-prop.cc") {
+			if _, err := parsePropertyTables(
+				"item-prop.cc",
+				[]byte(bad),
+				propertyVocabulary(),
+			); err == nil || !strings.Contains(
+				err.Error(),
+				"item-prop.cc",
+			) {
 				t.Fatalf("invalid row accepted or lacked source context: %v", err)
 			}
 		})
@@ -190,8 +235,8 @@ func TestPropertyScannerRejectsLoss(t *testing.T) {
 	quoted := strings.Replace(base, `"robe"`, `"robe, // still name"`, 1)
 	rows, err := parsePropertyTables("item-prop.cc", []byte(quoted), propertyVocabulary())
 	if err != nil || rows[itemKey{
-		"OBJ_ARMOUR",
-		"ARM_ROBE",
+		ClassID:   "OBJ_ARMOUR",
+		SubtypeID: "ARM_ROBE",
 	}].Name != "robe, // still name" {
 		t.Fatalf("quoted punctuation truncated: rows=%v err=%v", rows, err)
 	}

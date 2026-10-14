@@ -38,16 +38,18 @@ func gearSourceFixture(t *testing.T) string {
 }
 
 func fixtureJobs() []content.JobDef {
-	return []content.JobDef{{
-		ID:                 "JOB_FIGHTER",
-		SourcePath:         "crawl-ref/source/job-data.h",
-		Abbreviation:       "Fi",
-		Name:               "Fighter",
-		Selectable:         true,
-		RecommendedSpecies: []string{"SP_HUMAN"},
-		WeaponChoice:       "WCHOICE_NONE",
-		Equipment:          []string{"scale mail", "potion of might", "dart ego:curare q:3"},
-	}}
+	return []content.JobDef{
+		{
+			ID:                 "JOB_FIGHTER",
+			SourcePath:         "crawl-ref/source/job-data.h",
+			Abbreviation:       "Fi",
+			Name:               "Fighter",
+			Selectable:         true,
+			RecommendedSpecies: []string{"SP_HUMAN"},
+			WeaponChoice:       "WCHOICE_NONE",
+			Equipment:          []string{"scale mail", "potion of might", "dart ego:curare q:3"},
+		},
+	}
 }
 
 func TestGenerateStartingGear(t *testing.T) {
@@ -71,11 +73,13 @@ func TestGenerateStartingGear(t *testing.T) {
 	if err := json.Unmarshal(first, &artifact); err != nil {
 		t.Fatal(err)
 	}
-	if artifact.SchemaVersion != 2 || artifact.SourceRevision != pinnedRevision || artifact.TagMajorVersion != 34 || len(artifact.Jobs) != 1 || len(artifact.Jobs[0].Grants) != 3 {
+	if artifact.SchemaVersion != 2 || artifact.SourceRevision != pinnedRevision ||
+		artifact.TagMajorVersion != 34 || len(artifact.Jobs) != 1 || len(artifact.Jobs[0].Grants) != 3 {
 		t.Fatalf("unexpected starter artifact: %+v", artifact)
 	}
 	grants := artifact.Jobs[0].Grants
-	if grants[0].KindID != "ARM_SCALE_MAIL" || grants[1].KindID != "POT_MIGHT" || grants[2].KindID != "MI_DART" || grants[2].Quantity != 3 || grants[2].Ego != "curare" {
+	if grants[0].KindID != "ARM_SCALE_MAIL" || grants[1].KindID != "POT_MIGHT" ||
+		grants[2].KindID != "MI_DART" || grants[2].Quantity != 3 || grants[2].Ego != "curare" {
 		t.Fatalf("grant order or properties changed: %+v", grants)
 	}
 	if bytes.Contains(first, []byte(`"kinds"`)) {
@@ -100,13 +104,38 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 		name, file, old, replacement, want string
 		jobs                               func() []content.JobDef
 	}{
-		{"wrong tag", "tag-version.h", "VERSION 34", "VERSION 35", "tag-version.h", nil},
-		{"missing item", "", "", "", "unknown item", func() []content.JobDef { jobs := fixtureJobs(); jobs[0].Equipment[0] = "unknown item"; return jobs }},
-		{"unknown ego", "", "", "", "unknown", func() []content.JobDef {
-			jobs := fixtureJobs()
-			jobs[0].Equipment[2] = "dart ego:unknown q:3"
-			return jobs
-		}},
+		{
+			name:        "wrong tag",
+			file:        "tag-version.h",
+			old:         "VERSION 34",
+			replacement: "VERSION 35",
+			want:        "tag-version.h",
+			jobs:        nil,
+		},
+		{
+			name:        "missing item",
+			file:        "",
+			old:         "",
+			replacement: "",
+			want:        "unknown item",
+			jobs: func() []content.JobDef {
+				jobs := fixtureJobs()
+				jobs[0].Equipment[0] = "unknown item"
+				return jobs
+			},
+		},
+		{
+			name:        "unknown ego",
+			file:        "",
+			old:         "",
+			replacement: "",
+			want:        "unknown",
+			jobs: func() []content.JobDef {
+				jobs := fixtureJobs()
+				jobs[0].Equipment[2] = "dart ego:unknown q:3"
+				return jobs
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			root := gearSourceFixture(t)
@@ -130,10 +159,19 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 			}
 		})
 	}
-	if _, err := generateFromSource(gearSourceFixture(t), "wrong-revision", fixtureJobs(), catalog); err == nil || !strings.Contains(err.Error(), "revision") {
+	if _, err := generateFromSource(
+		gearSourceFixture(t),
+		"wrong-revision",
+		fixtureJobs(),
+		catalog,
+	); err == nil || !strings.Contains(
+		err.Error(),
+		"revision",
+	) {
 		t.Fatalf("wrong revision accepted: %v", err)
 	}
-	if _, err := generateFromSource(gearSourceFixture(t), pinnedRevision, nil, catalog); err == nil || !strings.Contains(err.Error(), "job") {
+	if _, err := generateFromSource(gearSourceFixture(t), pinnedRevision, nil, catalog); err == nil ||
+		!strings.Contains(err.Error(), "job") {
 		t.Fatalf("missing jobs accepted: %v", err)
 	}
 }
@@ -170,7 +208,9 @@ func TestWriteStartingGear(t *testing.T) {
 	if err := os.WriteFile(out, before, 0644); err != nil {
 		t.Fatal(err)
 	}
-	broken := func(string) ([]byte, error) { return nil, os.ErrInvalid }
+	broken := func(string) ([]byte, error) {
+		return nil, os.ErrInvalid
+	}
 	if err := writeArtifact(root, out, false, broken); err == nil {
 		t.Fatal("failed generation passed")
 	}

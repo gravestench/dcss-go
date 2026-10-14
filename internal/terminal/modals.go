@@ -11,13 +11,34 @@ import (
 // DrawInventory follows the source's full-screen inventory listing and pack letters.
 func DrawInventory(canvas *Canvas, view game.View) {
 	canvas.Write(0, 0, fmt.Sprintf("Inventory: %d/52 slots", len(view.Inventory)), White, Black)
-	order := []struct{ class, title string }{
-		{"OBJ_WEAPONS", "Hand Weapons"},
-		{"OBJ_MISSILES", "Missiles"},
-		{"OBJ_ARMOUR", "Armour"},
-		{"OBJ_WANDS", "Wands"},
-		{"OBJ_SCROLLS", "Scrolls"},
-		{"OBJ_POTIONS", "Potions"},
+	order := []struct {
+		class string
+		title string
+	}{
+		{
+			class: "OBJ_WEAPONS",
+			title: "Hand Weapons",
+		},
+		{
+			class: "OBJ_MISSILES",
+			title: "Missiles",
+		},
+		{
+			class: "OBJ_ARMOUR",
+			title: "Armour",
+		},
+		{
+			class: "OBJ_WANDS",
+			title: "Wands",
+		},
+		{
+			class: "OBJ_SCROLLS",
+			title: "Scrolls",
+		},
+		{
+			class: "OBJ_POTIONS",
+			title: "Potions",
+		},
 	}
 	y := 2
 	for _, category := range order {
@@ -110,7 +131,14 @@ func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
 			if levels[id] > 0 {
 				color = LightGrey
 			}
-			writeClipped(canvas, x, 3+row, 38, fmt.Sprintf("%c - %-19s %4.1f %+2d  --", menuLetter(letter), skillName(id), float64(levels[id]), apt.Value), color)
+			label := fmt.Sprintf(
+				"%c - %-19s %4.1f %+2d  --",
+				menuLetter(letter),
+				skillName(id),
+				float64(levels[id]),
+				apt.Value,
+			)
+			writeClipped(canvas, x, 3+row, 38, label, color)
 			letter++
 		}
 	}

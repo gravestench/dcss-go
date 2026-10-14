@@ -5,7 +5,9 @@ import (
 	"testing"
 )
 
-type mightRoller struct{ value, calls int }
+type mightRoller struct {
+	value, calls int
+}
 
 func (r *mightRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "potion" || bound != 40 {
@@ -20,9 +22,24 @@ func TestMightPotionDurationAndCap(t *testing.T) {
 		old, roll, want int
 		message         string
 	}{
-		{0, 0, 350, "You feel very mighty all of a sudden."},
-		{0, 39, 740, "You feel very mighty all of a sudden."},
-		{350, 39, 800, "You feel mightier all of a sudden."},
+		{
+			old:     0,
+			roll:    0,
+			want:    350,
+			message: "You feel very mighty all of a sudden.",
+		},
+		{
+			old:     0,
+			roll:    39,
+			want:    740,
+			message: "You feel very mighty all of a sudden.",
+		},
+		{
+			old:     350,
+			roll:    39,
+			want:    800,
+			message: "You feel mightier all of a sudden.",
+		},
 	} {
 		rng := &mightRoller{value: tc.roll}
 		got, message, err := MightPotionDuration(rng, tc.old)
@@ -37,7 +54,30 @@ func TestMightDurationDecay(t *testing.T) {
 		old, cost, want int
 		ended           bool
 	}{
-		{350, 10, 340, false}, {9, 9, 0, true}, {9, 10, 0, true}, {0, 10, 0, false},
+		{
+			old:   350,
+			cost:  10,
+			want:  340,
+			ended: false,
+		},
+		{
+			old:   9,
+			cost:  9,
+			want:  0,
+			ended: true,
+		},
+		{
+			old:   9,
+			cost:  10,
+			want:  0,
+			ended: true,
+		},
+		{
+			old:   0,
+			cost:  10,
+			want:  0,
+			ended: false,
+		},
 	} {
 		got, ended, err := DecayMight(tc.old, tc.cost)
 		if err != nil || got != tc.want || ended != tc.ended {

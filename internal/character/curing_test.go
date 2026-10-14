@@ -21,7 +21,30 @@ func TestCuringHealsSourceRangeAndCapsAtMax(t *testing.T) {
 	for _, tc := range []struct {
 		current, max, roll, want int
 	}{
-		{1, 18, 0, 6}, {1, 18, 6, 12}, {15, 18, 6, 18}, {18, 18, 0, 18},
+		{
+			current: 1,
+			max:     18,
+			roll:    0,
+			want:    6,
+		},
+		{
+			current: 1,
+			max:     18,
+			roll:    6,
+			want:    12,
+		},
+		{
+			current: 15,
+			max:     18,
+			roll:    6,
+			want:    18,
+		},
+		{
+			current: 18,
+			max:     18,
+			roll:    0,
+			want:    18,
+		},
 	} {
 		rng := &curingRoller{
 			bound: 7,
@@ -29,13 +52,41 @@ func TestCuringHealsSourceRangeAndCapsAtMax(t *testing.T) {
 		}
 		got, err := CuringHP(rng, tc.current, tc.max)
 		if err != nil || got != tc.want || rng.calls != 1 {
-			t.Fatalf("HP %d/%d roll %d: got %d, err %v, calls %d; want %d", tc.current, tc.max, tc.roll, got, err, rng.calls, tc.want)
+			t.Fatalf(
+				"HP %d/%d roll %d: got %d, err %v, calls %d; want %d",
+				tc.current,
+				tc.max,
+				tc.roll,
+				got,
+				err,
+				rng.calls,
+				tc.want,
+			)
 		}
 	}
 }
 
 func TestCuringRejectsInvalidHPAndRollWithoutDraw(t *testing.T) {
-	for _, tc := range []struct{ current, max int }{{-1, 18}, {19, 18}, {1, 0}, {0, 18}} {
+	for _, tc := range []struct {
+		current, max int
+	}{
+		{
+			current: -1,
+			max:     18,
+		},
+		{
+			current: 19,
+			max:     18,
+		},
+		{
+			current: 1,
+			max:     0,
+		},
+		{
+			current: 0,
+			max:     18,
+		},
+	} {
 		rng := &curingRoller{bound: 7}
 		if _, err := CuringHP(rng, tc.current, tc.max); err == nil || rng.calls != 0 {
 			t.Fatalf("accepted HP %d/%d, draws %d", tc.current, tc.max, rng.calls)

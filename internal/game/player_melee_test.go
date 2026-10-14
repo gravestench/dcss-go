@@ -11,7 +11,14 @@ import (
 )
 
 func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
-	for _, weaponID := range []string{"WPN_RAPIER", "WPN_FLAIL", "WPN_WAR_AXE", "WPN_TRIDENT", "WPN_LONG_SWORD", "WPN_UNARMED"} {
+	for _, weaponID := range []string{
+		"WPN_RAPIER",
+		"WPN_FLAIL",
+		"WPN_WAR_AXE",
+		"WPN_TRIDENT",
+		"WPN_LONG_SWORD",
+		"WPN_UNARMED",
+	} {
 		t.Run(weaponID, func(t *testing.T) {
 			catalog := testCatalog(t)
 			g, err := NewScenario(3, catalog, weaponID, "Tester")
@@ -23,7 +30,8 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if in.Strength != 16 || in.Dexterity != 12 || in.FightingSkill100 != 300 || in.WeaponSkill100 != 200 || in.DefenderEV != 10 || in.DefenderAC != 1 {
+			if in.Strength != 16 || in.Dexterity != 12 || in.FightingSkill100 != 300 ||
+				in.WeaponSkill100 != 200 || in.DefenderEV != 10 || in.DefenderAC != 1 {
 				t.Fatalf("source input = %+v", in)
 			}
 			if weaponID == "WPN_UNARMED" {
@@ -36,7 +44,8 @@ func TestPlayerMeleeProjectionUsesEveryStartingWeapon(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if in.Unarmed || in.WeaponSkillID != kind.WeaponSkill || in.WeaponDamage != kind.Weapon.Damage || in.WeaponHit != kind.Weapon.Hit {
+			if in.Unarmed || in.WeaponSkillID != kind.WeaponSkill || in.WeaponDamage != kind.Weapon.Damage ||
+				in.WeaponHit != kind.Weapon.Hit {
 				t.Fatalf("%s input = %+v, catalog %+v", weaponID, in, kind.Weapon)
 			}
 			for _, entity := range g.stores.Equipped.Entities() {
@@ -69,7 +78,8 @@ func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 	}
 	left, leftErr := g.Step(command)
 	right, rightErr := loaded.Step(command)
-	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
+	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
+		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("post-load bump differs: %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 	}
 	if (left.Spent != 11 && left.Spent != 12) || left.View.CurrentAut != left.Spent {
@@ -97,7 +107,12 @@ func TestPlayerLethalBumpClearsRatOccupancy(t *testing.T) {
 		t.Fatal(err)
 	}
 	if (result.Spent != 11 && result.Spent != 12) || g.world.EntityExists(rat) {
-		t.Fatalf("lethal bump spent %d aut, rat still exists %v; events %+v", result.Spent, g.world.EntityExists(rat), result.Events)
+		t.Fatalf(
+			"lethal bump spent %d aut, rat still exists %v; events %+v",
+			result.Spent,
+			g.world.EntityExists(rat),
+			result.Events,
+		)
 	}
 	if _, occupied := g.levels[1].ActorAt(4, 1); occupied {
 		t.Fatal("dead rat remains in occupancy index")
@@ -109,11 +124,26 @@ func TestPlayerBumpRejectsInvalidWeaponBeforeSpendingTime(t *testing.T) {
 		name   string
 		mutate func(*ecs.Item)
 	}{
-		{"extreme enchantment", func(item *ecs.Item) { item.Plus = 101 }},
-		{"zero quantity", func(item *ecs.Item) { item.Quantity = 0 }},
-		{"duplicate weapon quantity", func(item *ecs.Item) { item.Quantity = 2 }},
-		{"charges on weapon", func(item *ecs.Item) { item.Charges = 1 }},
-		{"unsupported ego", func(item *ecs.Item) { item.Ego = "poisoned" }},
+		{
+			name:   "extreme enchantment",
+			mutate: func(item *ecs.Item) { item.Plus = 101 },
+		},
+		{
+			name:   "zero quantity",
+			mutate: func(item *ecs.Item) { item.Quantity = 0 },
+		},
+		{
+			name:   "duplicate weapon quantity",
+			mutate: func(item *ecs.Item) { item.Quantity = 2 },
+		},
+		{
+			name:   "charges on weapon",
+			mutate: func(item *ecs.Item) { item.Charges = 1 },
+		},
+		{
+			name:   "unsupported ego",
+			mutate: func(item *ecs.Item) { item.Ego = "poisoned" },
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			g := newStepGame(t)
@@ -145,20 +175,28 @@ func TestRestoreRejectsUnsupportedPlayerMeleeState(t *testing.T) {
 		name, want string
 		change     func(*save.Snapshot)
 	}{
-		{"extreme weapon plus", "attack", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "WPN_RAPIER" {
-					s.Entities[i].Item.Plus = 101
+		{
+			name: "extreme weapon plus",
+			want: "attack",
+			change: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "WPN_RAPIER" {
+						s.Entities[i].Item.Plus = 101
+					}
 				}
-			}
-		}},
-		{"mismatched weapon", "weapon", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "WPN_RAPIER" {
-					s.Entities[i].Item.KindID = "WPN_FLAIL"
+			},
+		},
+		{
+			name: "mismatched weapon",
+			want: "weapon",
+			change: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "WPN_RAPIER" {
+						s.Entities[i].Item.KindID = "WPN_FLAIL"
+					}
 				}
-			}
-		}},
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			g := newStepGame(t)

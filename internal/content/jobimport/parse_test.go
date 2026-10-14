@@ -44,13 +44,16 @@ func TestParseJobDataPreservesAllFieldsAndOrder(t *testing.T) {
 			Spells:             []string{"SPELL_SHOCK", "SPELL_BLINK"},
 			Equipment:          []string{"scale mail", "wand of flame charges:15, q:2"},
 			WeaponChoice:       "WCHOICE_GOOD",
-			Skills: []content.JobSkillGrant{{
-				ID:    "SK_FIGHTING",
-				Level: 3,
-			}, {
-				ID:    "SK_WEAPON",
-				Level: 2,
-			}},
+			Skills: []content.JobSkillGrant{
+				{
+					ID:    "SK_FIGHTING",
+					Level: 3,
+				},
+				{
+					ID:    "SK_WEAPON",
+					Level: 2,
+				},
+			},
 			Selectable: true,
 		},
 		{
@@ -67,12 +70,39 @@ func TestParseJobDataPreservesAllFieldsAndOrder(t *testing.T) {
 }
 
 func TestParseJobDataRejectsMalformedDefinitions(t *testing.T) {
-	for _, tc := range []struct{ name, old, replacement, want string }{
-		{"duplicate ID", "JOB_PRIEST", "JOB_FIGHTER", "duplicate"},
-		{"missing field", "WCHOICE_GOOD,", "", "JOB_FIGHTER"},
-		{"unknown token", "WCHOICE_GOOD", "WCHOICE_MISSING", "weapon"},
-		{"malformed string", `"Fi", "Fighter"`, `"Fi, "Fighter"`, "job-data.h"},
-		{"unsupported conditional", "#if TAG_MAJOR_VERSION == 34", "#if FEATURE_X", "FEATURE_X"},
+	for _, tc := range []struct {
+		name, old, replacement, want string
+	}{
+		{
+			name:        "duplicate ID",
+			old:         "JOB_PRIEST",
+			replacement: "JOB_FIGHTER",
+			want:        "duplicate",
+		},
+		{
+			name:        "missing field",
+			old:         "WCHOICE_GOOD,",
+			replacement: "",
+			want:        "JOB_FIGHTER",
+		},
+		{
+			name:        "unknown token",
+			old:         "WCHOICE_GOOD",
+			replacement: "WCHOICE_MISSING",
+			want:        "weapon",
+		},
+		{
+			name:        "malformed string",
+			old:         `"Fi", "Fighter"`,
+			replacement: `"Fi, "Fighter"`,
+			want:        "job-data.h",
+		},
+		{
+			name:        "unsupported conditional",
+			old:         "#if TAG_MAJOR_VERSION == 34",
+			replacement: "#if FEATURE_X",
+			want:        "FEATURE_X",
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			input := strings.Replace(jobFixture, tc.old, tc.replacement, 1)

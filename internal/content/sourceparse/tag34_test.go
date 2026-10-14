@@ -61,7 +61,12 @@ other
 }
 
 func TestActiveEnumIDsRetainsConcreteTag34Members(t *testing.T) {
-	ids, err := ActiveEnumIDs("job-type.h", []byte("enum job_type {\n JOB_FIGHTER,\n#if TAG_MAJOR_VERSION == 34\n JOB_PRIEST,\n#else\n JOB_FUTURE,\n#endif\n NUM_JOBS,\n JOB_UNKNOWN = 100,\n};\n"), "JOB_")
+	ids, err := ActiveEnumIDs(
+		"job-type.h",
+		[]byte("enum job_type {\n JOB_FIGHTER,\n#if TAG_MAJOR_VERSION == 34\n JOB_PRIEST,\n"+
+			"#else\n JOB_FUTURE,\n#endif\n NUM_JOBS,\n JOB_UNKNOWN = 100,\n};\n"),
+		"JOB_",
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -76,7 +81,8 @@ func TestActiveEnumIDsRetainsConcreteTag34Members(t *testing.T) {
 }
 
 func TestTag34NumberedLinesPreservesQuotedCommentsAndLocations(t *testing.T) {
-	input := "first\n#if TAG_MAJOR_VERSION > 34\nfuture\n#else\n\"rat, // friend\" // comment\n/* block\ncomment */ active\n#endif\n"
+	input := "first\n#if TAG_MAJOR_VERSION > 34\nfuture\n#else\n\"rat, // friend\" // " +
+		"comment\n/* block\ncomment */ active\n#endif\n"
 	lines, err := Tag34NumberedLines("mon-data.h", []byte(input))
 	if err != nil {
 		t.Fatal(err)
@@ -87,13 +93,15 @@ func TestTag34NumberedLinesPreservesQuotedCommentsAndLocations(t *testing.T) {
 			got = append(got, line)
 		}
 	}
-	if len(got) != 3 || got[1].Number != 5 || strings.TrimSpace(got[1].Text) != `"rat, // friend"` || got[2].Number != 7 || strings.TrimSpace(got[2].Text) != "active" {
+	if len(got) != 3 || got[1].Number != 5 || strings.TrimSpace(got[1].Text) != `"rat, // friend"` ||
+		got[2].Number != 7 || strings.TrimSpace(got[2].Text) != "active" {
 		t.Fatalf("unexpected numbered lines: %#v", got)
 	}
 }
 
 func TestTag34NumberedLinesRejectsUnknownConditional(t *testing.T) {
-	if _, err := Tag34NumberedLines("mon-data.h", []byte("#ifdef EXTRA\nrow\n#endif")); err == nil || !strings.Contains(err.Error(), "mon-data.h:1") {
+	if _, err := Tag34NumberedLines("mon-data.h", []byte("#ifdef EXTRA\nrow\n#endif")); err == nil ||
+		!strings.Contains(err.Error(), "mon-data.h:1") {
 		t.Fatalf("unknown conditional accepted: %v", err)
 	}
 }

@@ -225,20 +225,20 @@ func TestPinnedItemNamesAndGlyphs(t *testing.T) {
 		}
 	}
 	if manual := names[itemKey{
-		"OBJ_BOOKS",
-		"BOOK_MANUAL",
+		ClassID:   "OBJ_BOOKS",
+		SubtypeID: "BOOK_MANUAL",
 	}]; manual.Kind != "manual_skill" || manual.Text != "manual" {
 		t.Errorf("manual naming lost: %+v", manual)
 	}
 	if corpse := names[itemKey{
-		"OBJ_CORPSES",
-		"CORPSE_BODY",
+		ClassID:   "OBJ_CORPSES",
+		SubtypeID: "CORPSE_BODY",
 	}]; corpse.Kind != "corpse_monster" || corpse.Text != "corpse" {
 		t.Errorf("corpse naming lost: %+v", corpse)
 	}
 	if _, found := names[itemKey{
-		"OBJ_WEAPONS",
-		"WPN_MACE",
+		ClassID:   "OBJ_WEAPONS",
+		SubtypeID: "WPN_MACE",
 	}]; found {
 		t.Fatal("property-table weapon name was invented in item-name.cc view")
 	}
@@ -267,11 +267,22 @@ func TestPinnedItemNamesAndGlyphs(t *testing.T) {
 
 func TestDynamicNameAndSourceErrors(t *testing.T) {
 	ids := presentationIdentities()
-	bad := strings.Replace(string(presentationNameFixture()), `case POT_CURING: return "curing";`, `case POT_CURING: return "curing"; case POT_CURING: return "healing";`, 1)
-	if _, err := parseItemNames("item-name.cc", []byte(bad), ids); err == nil || !strings.Contains(err.Error(), "item-name.cc") {
+	bad := strings.Replace(
+		string(presentationNameFixture()),
+		`case POT_CURING: return "curing";`,
+		`case POT_CURING: return "curing"; case POT_CURING: return "healing";`,
+		1,
+	)
+	if _, err := parseItemNames("item-name.cc", []byte(bad), ids); err == nil ||
+		!strings.Contains(err.Error(), "item-name.cc") {
 		t.Fatalf("ambiguous source name accepted: %v", err)
 	}
-	bad = strings.Replace(string(presentationNameFixture()), `case POT_CURING: return "curing";`, `case POT_UNKNOWN: return "unknown";`, 1)
+	bad = strings.Replace(
+		string(presentationNameFixture()),
+		`case POT_CURING: return "curing";`,
+		`case POT_UNKNOWN: return "unknown";`,
+		1,
+	)
 	if _, err := parseItemNames("item-name.cc", []byte(bad), ids); err == nil {
 		t.Fatal("missing name for unremoved potion accepted")
 	}
@@ -280,13 +291,34 @@ func TestDynamicNameAndSourceErrors(t *testing.T) {
 		t.Fatal("unsupported conditional accepted")
 	}
 	show, showHeader, dcharHeader, view := presentationGlyphFixture()
-	dcharHeader = []byte(strings.Replace(string(dcharHeader), "DCHAR_ITEM_RUNE,\nDCHAR_ITEM_WEAPON,", "DCHAR_ITEM_WEAPON,\nDCHAR_ITEM_RUNE,", 1))
-	if _, err := parseASCIIItemGlyphs("show.cc", show, showHeader, dcharHeader, "viewchar.cc", view, glyphIdentities()); err == nil {
+	dcharHeader = []byte(strings.Replace(
+		string(dcharHeader),
+		"DCHAR_ITEM_RUNE,\nDCHAR_ITEM_WEAPON,",
+		"DCHAR_ITEM_WEAPON,\nDCHAR_ITEM_RUNE,",
+		1,
+	))
+	if _, err := parseASCIIItemGlyphs(
+		"show.cc",
+		show,
+		showHeader,
+		dcharHeader,
+		"viewchar.cc",
+		view,
+		glyphIdentities(),
+	); err == nil {
 		t.Fatal("mismatched show/dchar ordering accepted")
 	}
 	show, showHeader, dcharHeader, view = presentationGlyphFixture()
 	show = []byte(strings.Replace(string(show), "return SHOW_ITEM_POTION;", "return SHOW_ITEM_NOT_REAL;", 1))
-	if _, err := parseASCIIItemGlyphs("show.cc", show, showHeader, dcharHeader, "viewchar.cc", view, glyphIdentities()); err == nil {
+	if _, err := parseASCIIItemGlyphs(
+		"show.cc",
+		show,
+		showHeader,
+		dcharHeader,
+		"viewchar.cc",
+		view,
+		glyphIdentities(),
+	); err == nil {
 		t.Fatal("unknown show glyph reference accepted")
 	}
 }

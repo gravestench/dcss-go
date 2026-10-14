@@ -269,7 +269,11 @@ func parseDamageFlags(raw string, vocabulary content.ItemVocabulary) ([]string, 
 	return flags, nil
 }
 
-func parseBrandWeights(raw string, named map[string][]content.ItemBrandWeight, vocabulary content.ItemVocabulary) ([]content.ItemBrandWeight, error) {
+func parseBrandWeights(
+	raw string,
+	named map[string][]content.ItemBrandWeight,
+	vocabulary content.ItemVocabulary,
+) ([]content.ItemBrandWeight, error) {
 	if !strings.HasPrefix(raw, "{") {
 		weights, found := named[raw]
 		if !found {
@@ -350,7 +354,20 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 	for _, symbol := range []struct {
 		id  string
 		set []string
-	}{{fields[5], vocabulary.Slots}, {fields[6], vocabulary.Sizes}, {fields[7], vocabulary.Sizes}} {
+	}{
+		{
+			id:  fields[5],
+			set: vocabulary.Slots,
+		},
+		{
+			id:  fields[6],
+			set: vocabulary.Sizes,
+		},
+		{
+			id:  fields[7],
+			set: vocabulary.Sizes,
+		},
+	} {
 		if !knownSymbol(symbol.id, symbol.set) {
 			return itemPropertyRow{}, fmt.Errorf("unknown armour symbol %s", symbol.id)
 		}
@@ -363,7 +380,20 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 	for _, field := range []struct {
 		raw    string
 		target *int
-	}{{fields[2], &p.AC}, {fields[3], &p.EV}, {fields[4], &p.Price}} {
+	}{
+		{
+			raw:    fields[2],
+			target: &p.AC,
+		},
+		{
+			raw:    fields[3],
+			target: &p.EV,
+		},
+		{
+			raw:    fields[4],
+			target: &p.Price,
+		},
+	} {
 		*field.target, err = propertyInt(field.raw)
 		if err != nil {
 			return itemPropertyRow{}, err
@@ -394,7 +424,11 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 	}, nil
 }
 
-func weaponRow(fields []string, named map[string][]content.ItemBrandWeight, vocabulary content.ItemVocabulary) (itemPropertyRow, error) {
+func weaponRow(
+	fields []string,
+	named map[string][]content.ItemBrandWeight,
+	vocabulary content.ItemVocabulary,
+) (itemPropertyRow, error) {
 	if len(fields) < 13 || len(fields) > 14 {
 		return itemPropertyRow{}, fmt.Errorf("weapon row has %d fields, want 13–14", len(fields))
 	}
@@ -411,7 +445,24 @@ func weaponRow(fields []string, named map[string][]content.ItemBrandWeight, voca
 	for _, symbol := range []struct {
 		id  string
 		set []string
-	}{{p.SkillID, vocabulary.Skills}, {p.Min2HSizeID, vocabulary.Sizes}, {p.Min1HSizeID, vocabulary.Sizes}, {p.AmmoID, vocabulary.Ammo}} {
+	}{
+		{
+			id:  p.SkillID,
+			set: vocabulary.Skills,
+		},
+		{
+			id:  p.Min2HSizeID,
+			set: vocabulary.Sizes,
+		},
+		{
+			id:  p.Min1HSizeID,
+			set: vocabulary.Sizes,
+		},
+		{
+			id:  p.AmmoID,
+			set: vocabulary.Ammo,
+		},
+	} {
 		if !knownSymbol(symbol.id, symbol.set) {
 			return itemPropertyRow{}, fmt.Errorf("unknown weapon symbol %s", symbol.id)
 		}
@@ -419,7 +470,32 @@ func weaponRow(fields []string, named map[string][]content.ItemBrandWeight, voca
 	for _, field := range []struct {
 		raw    string
 		target *int
-	}{{fields[2], &p.Damage}, {fields[3], &p.Hit}, {fields[4], &p.Speed}, {fields[10], &p.Commonness}, {fields[11], &p.AcquireWeight}, {fields[12], &p.Price}} {
+	}{
+		{
+			raw:    fields[2],
+			target: &p.Damage,
+		},
+		{
+			raw:    fields[3],
+			target: &p.Hit,
+		},
+		{
+			raw:    fields[4],
+			target: &p.Speed,
+		},
+		{
+			raw:    fields[10],
+			target: &p.Commonness,
+		},
+		{
+			raw:    fields[11],
+			target: &p.AcquireWeight,
+		},
+		{
+			raw:    fields[12],
+			target: &p.Price,
+		},
+	} {
 		*field.target, err = propertyInt(field.raw)
 		if err != nil {
 			return itemPropertyRow{}, err
@@ -456,7 +532,20 @@ func missileRow(fields []string, vocabulary content.ItemVocabulary) (itemPropert
 	for _, field := range []struct {
 		raw    string
 		target *int
-	}{{fields[2], &p.Damage}, {fields[3], &p.MulchRate}, {fields[4], &p.Price}} {
+	}{
+		{
+			raw:    fields[2],
+			target: &p.Damage,
+		},
+		{
+			raw:    fields[3],
+			target: &p.MulchRate,
+		},
+		{
+			raw:    fields[4],
+			target: &p.Price,
+		},
+	} {
 		*field.target, err = propertyInt(field.raw)
 		if err != nil {
 			return itemPropertyRow{}, err
@@ -480,7 +569,20 @@ func foodRow(fields []string) (itemPropertyRow, error) {
 	for _, field := range []struct {
 		raw    string
 		target *int
-	}{{fields[2], &p.NormalNutrition}, {fields[3], &p.CarnivoreNutrition}, {fields[4], &p.HerbivoreNutrition}} {
+	}{
+		{
+			raw:    fields[2],
+			target: &p.NormalNutrition,
+		},
+		{
+			raw:    fields[3],
+			target: &p.CarnivoreNutrition,
+		},
+		{
+			raw:    fields[4],
+			target: &p.HerbivoreNutrition,
+		},
+	} {
 		*field.target, err = propertyInt(field.raw)
 		if err != nil {
 			return itemPropertyRow{}, err
@@ -558,7 +660,11 @@ func dragonArmourRows(raw string, vocabulary content.ItemVocabulary) (map[itemKe
 	}, nil
 }
 
-func parsePropertyTables(path string, data []byte, vocabulary content.ItemVocabulary) (map[itemKey]itemPropertyRow, error) {
+func parsePropertyTables(
+	path string,
+	data []byte,
+	vocabulary content.ItemVocabulary,
+) (map[itemKey]itemPropertyRow, error) {
 	v, err := newSourceView(path, data)
 	if err != nil {
 		return nil, err
@@ -572,10 +678,26 @@ func parsePropertyTables(path string, data []byte, vocabulary content.ItemVocabu
 		marker, classID string
 		decode          func([]string) (itemPropertyRow, error)
 	}{
-		{"Armour_prop[]", "OBJ_ARMOUR", func(fields []string) (itemPropertyRow, error) { return armourRow(fields, vocabulary) }},
-		{"Weapon_prop[]", "OBJ_WEAPONS", func(fields []string) (itemPropertyRow, error) { return weaponRow(fields, named, vocabulary) }},
-		{"Missile_prop[]", "OBJ_MISSILES", func(fields []string) (itemPropertyRow, error) { return missileRow(fields, vocabulary) }},
-		{"Food_prop[]", "OBJ_FOOD", foodRow},
+		{
+			marker:  "Armour_prop[]",
+			classID: "OBJ_ARMOUR",
+			decode:  func(fields []string) (itemPropertyRow, error) { return armourRow(fields, vocabulary) },
+		},
+		{
+			marker:  "Weapon_prop[]",
+			classID: "OBJ_WEAPONS",
+			decode:  func(fields []string) (itemPropertyRow, error) { return weaponRow(fields, named, vocabulary) },
+		},
+		{
+			marker:  "Missile_prop[]",
+			classID: "OBJ_MISSILES",
+			decode:  func(fields []string) (itemPropertyRow, error) { return missileRow(fields, vocabulary) },
+		},
+		{
+			marker:  "Food_prop[]",
+			classID: "OBJ_FOOD",
+			decode:  foodRow,
+		},
 	} {
 		inside, base, err := v.initializer(table.marker)
 		if err != nil {
@@ -619,8 +741,8 @@ func parsePropertyTables(path string, data []byte, vocabulary content.ItemVocabu
 				return nil, fmt.Errorf("%s:%d: %s: %w", path, line, fields[0], err)
 			}
 			key := itemKey{
-				table.classID,
-				fields[0],
+				ClassID:   table.classID,
+				SubtypeID: fields[0],
 			}
 			if _, found := result[key]; found {
 				return nil, fmt.Errorf("%s:%d: duplicate property row %s", path, line, fields[0])

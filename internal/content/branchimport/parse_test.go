@@ -38,7 +38,8 @@ func TestParseTag34BranchRows(t *testing.T) {
 	if err != nil || len(branches) != 2 {
 		t.Fatalf("table %+v, %v", branches, err)
 	}
-	if branches[1].ParentID != "BRANCH_DUNGEON" || branches[1].EntryMessage != "Welcome inside.\\n" || branches[1].MonDieSizeExpr != "" || len(branches[1].Runes) != 2 || len(branches[1].Flags) != 2 {
+	if branches[1].ParentID != "BRANCH_DUNGEON" || branches[1].EntryMessage != "Welcome inside.\\n" ||
+		branches[1].MonDieSizeExpr != "" || len(branches[1].Runes) != 2 || len(branches[1].Flags) != 2 {
 		t.Fatalf("Temple %+v", branches[1])
 	}
 	if err := reconcile(ids, branches); err != nil {

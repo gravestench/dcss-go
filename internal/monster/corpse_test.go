@@ -5,8 +5,12 @@ import (
 	"testing"
 )
 
-type corpseRoll struct{ bound, value int }
-type corpseRoller struct{ rolls []corpseRoll }
+type corpseRoll struct {
+	bound, value int
+}
+type corpseRoller struct {
+	rolls []corpseRoll
+}
 
 func (r *corpseRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "corpse" || len(r.rolls) == 0 || r.rolls[0].bound != bound {
@@ -23,9 +27,44 @@ func TestRatCorpseDropRolls(t *testing.T) {
 		want        int
 		wantDropped bool
 	}{
-		{[]corpseRoll{{2, 1}}, 0, false},
-		{[]corpseRoll{{2, 0}, {255, 0}}, 1, true},
-		{[]corpseRoll{{2, 0}, {255, 254}}, 255, true},
+		{
+			rolls: []corpseRoll{
+				{
+					bound: 2,
+					value: 1,
+				},
+			},
+			want:        0,
+			wantDropped: false,
+		},
+		{
+			rolls: []corpseRoll{
+				{
+					bound: 2,
+					value: 0,
+				},
+				{
+					bound: 255,
+					value: 0,
+				},
+			},
+			want:        1,
+			wantDropped: true,
+		},
+		{
+			rolls: []corpseRoll{
+				{
+					bound: 2,
+					value: 0,
+				},
+				{
+					bound: 255,
+					value: 254,
+				},
+			},
+			want:        255,
+			wantDropped: true,
+		},
 	} {
 		r := &corpseRoller{rolls: tc.rolls}
 		appearance, dropped, err := RollCorpse(r)
@@ -36,7 +75,14 @@ func TestRatCorpseDropRolls(t *testing.T) {
 }
 
 func TestRatCorpseDecayAndSkeleton(t *testing.T) {
-	r := &corpseRoller{rolls: []corpseRoll{{255, 9}}}
+	r := &corpseRoller{
+		rolls: []corpseRoll{
+			{
+				bound: 255,
+				value: 9,
+			},
+		},
+	}
 	kind, freshness, appearance, alive, err := AgeCorpse(r, "CORPSE_BODY", 110, 200)
 	if err != nil || !alive || kind != "CORPSE_BODY" || freshness != 100 || appearance != 0 {
 		t.Fatalf("first decay %q %d %d %v %v", kind, freshness, appearance, alive, err)

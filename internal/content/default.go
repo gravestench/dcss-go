@@ -45,7 +45,15 @@ var defaultDungeonPopulationJSON []byte
 
 // LoadDefault builds a fresh catalog from the checked-in source-traced artifacts.
 func LoadDefault() (Catalog, error) {
-	catalog, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, defaultPresentationJSON, defaultMonsterJSON)
+	catalog, err := loadDefault(
+		defaultSpeciesJSON,
+		defaultJobsJSON,
+		defaultItemsJSON,
+		defaultItemIdentitiesJSON,
+		defaultStartingGearJSON,
+		defaultPresentationJSON,
+		defaultMonsterJSON,
+	)
 	if err != nil {
 		return Catalog{}, err
 	}
@@ -63,7 +71,15 @@ func LoadDefault() (Catalog, error) {
 // LoadDefinitionsForImport reads committed gameplay definitions without needing
 // the presentation artifact that the refresh tool is about to regenerate.
 func LoadDefinitionsForImport() (Catalog, error) {
-	catalog, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, nil, defaultMonsterJSON)
+	catalog, err := loadDefault(
+		defaultSpeciesJSON,
+		defaultJobsJSON,
+		defaultItemsJSON,
+		defaultItemIdentitiesJSON,
+		defaultStartingGearJSON,
+		nil,
+		defaultMonsterJSON,
+	)
 	if err != nil {
 		return Catalog{}, err
 	}
@@ -159,7 +175,8 @@ func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 	if err := artifact.Validate(); err != nil {
 		return Catalog{}, err
 	}
-	if artifact.SourceRevision != catalog.SourceRevision() || len(artifact.Spells) != 403 || len(artifact.SourceFiles) != 6 {
+	if artifact.SourceRevision != catalog.SourceRevision() || len(artifact.Spells) != 403 ||
+		len(artifact.SourceFiles) != 6 {
 		return Catalog{}, fmt.Errorf("spell catalog has incomplete pinned coverage")
 	}
 	statusCounts := map[SpellStatus]int{}
@@ -182,10 +199,18 @@ func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
 	}
 	const pinnedIdentities = "6246d8bef43a5201f5f1010c6be0baddacd23be041bf08a598bf3a1b9817d1ed"
 	const pinnedSources = "643fd960be29d053774c841f2970f5e32de898c8da826a37292e3c4ca6a486ec"
-	if hex.EncodeToString(identityHash.Sum(nil)) != pinnedIdentities || hex.EncodeToString(sourceHash.Sum(nil)) != pinnedSources {
+	if hex.EncodeToString(identityHash.Sum(nil)) != pinnedIdentities ||
+		hex.EncodeToString(sourceHash.Sum(nil)) != pinnedSources {
 		return Catalog{}, fmt.Errorf("spell catalog differs from pinned identities, statuses, or source hashes")
 	}
-	for _, name := range []string{"tag-version.h", "spell-type.h", "spl-data.h", "spl-util.cc", "spl-util.h", "spl-cast.h"} {
+	for _, name := range []string{
+		"tag-version.h",
+		"spell-type.h",
+		"spl-data.h",
+		"spl-util.cc",
+		"spl-util.h",
+		"spl-cast.h",
+	} {
 		if _, found := paths["crawl-ref/source/"+name]; !found {
 			return Catalog{}, fmt.Errorf("spell catalog lacks source %s", name)
 		}
@@ -272,7 +297,10 @@ func validSourceFiles(files []JobSourceFile, name string) (map[string]string, er
 	return paths, nil
 }
 
-func loadDefault(speciesData, jobData, itemData, identityData, gearData, presentationData, monsterData []byte) (Catalog, error) {
+func loadDefault(
+	speciesData, jobData, itemData, identityData []byte,
+	gearData, presentationData, monsterData []byte,
+) (Catalog, error) {
 	var artifact SpeciesArtifact
 	if err := decodeArtifact(speciesData, "species", &artifact); err != nil {
 		return Catalog{}, err
@@ -311,7 +339,8 @@ func loadDefault(speciesData, jobData, itemData, identityData, gearData, present
 	if err := decodeArtifact(jobData, "job", &jobs); err != nil {
 		return Catalog{}, err
 	}
-	if jobs.SchemaVersion != 1 || jobs.SourceRevision != artifact.SourceRevision || jobs.TagMajorVersion != artifact.TagMajorVersion {
+	if jobs.SchemaVersion != 1 || jobs.SourceRevision != artifact.SourceRevision ||
+		jobs.TagMajorVersion != artifact.TagMajorVersion {
 		return Catalog{}, fmt.Errorf("unsupported or mismatched job artifact schema/revision/tag")
 	}
 	if len(jobs.Jobs) != 31 || len(jobs.SourceFiles) != 6 {
@@ -367,7 +396,8 @@ func loadDefault(speciesData, jobData, itemData, identityData, gearData, present
 	if err := decodeArtifact(gearData, "starting gear", &gear); err != nil {
 		return Catalog{}, err
 	}
-	if gear.SchemaVersion != 2 || gear.SourceRevision != artifact.SourceRevision || gear.TagMajorVersion != artifact.TagMajorVersion {
+	if gear.SchemaVersion != 2 || gear.SourceRevision != artifact.SourceRevision ||
+		gear.TagMajorVersion != artifact.TagMajorVersion {
 		return Catalog{}, fmt.Errorf("unsupported or mismatched starting gear artifact schema/revision/tag")
 	}
 	if len(gear.Jobs) != 25 || len(gear.SourceFiles) != 14 {
@@ -396,7 +426,20 @@ func loadDefault(speciesData, jobData, itemData, identityData, gearData, present
 			return Catalog{}, fmt.Errorf("starting gear artifact lacks job source %s", path)
 		}
 	}
-	for _, id := range []string{"POT_CURING", "WPN_SHORT_SWORD", "WPN_MACE", "WPN_HAND_AXE", "WPN_SPEAR", "WPN_FALCHION", "WPN_QUARTERSTAFF", "WPN_RAPIER", "WPN_FLAIL", "WPN_WAR_AXE", "WPN_TRIDENT", "WPN_LONG_SWORD"} {
+	for _, id := range []string{
+		"POT_CURING",
+		"WPN_SHORT_SWORD",
+		"WPN_MACE",
+		"WPN_HAND_AXE",
+		"WPN_SPEAR",
+		"WPN_FALCHION",
+		"WPN_QUARTERSTAFF",
+		"WPN_RAPIER",
+		"WPN_FLAIL",
+		"WPN_WAR_AXE",
+		"WPN_TRIDENT",
+		"WPN_LONG_SWORD",
+	} {
 		if _, found := catalog.items[id]; !found {
 			return Catalog{}, fmt.Errorf("item catalog lacks required item kind %s", id)
 		}
@@ -432,7 +475,8 @@ func loadDefault(speciesData, jobData, itemData, identityData, gearData, present
 	if err := decodeArtifact(monsterData, "monster", &monsters); err != nil {
 		return Catalog{}, err
 	}
-	if monsters.SchemaVersion != 1 || monsters.SourceRevision != artifact.SourceRevision || monsters.TagMajorVersion != artifact.TagMajorVersion {
+	if monsters.SchemaVersion != 1 || monsters.SourceRevision != artifact.SourceRevision ||
+		monsters.TagMajorVersion != artifact.TagMajorVersion {
 		return Catalog{}, fmt.Errorf("unsupported or mismatched monster artifact schema/revision/tag")
 	}
 	if len(monsters.Monsters) != 700 || len(monsters.SourceFiles) != 11 {
@@ -452,7 +496,19 @@ func loadDefault(speciesData, jobData, itemData, identityData, gearData, present
 	if err != nil {
 		return Catalog{}, err
 	}
-	for _, name := range []string{"colour.h", "defines.h", "mon-data.h", "mon-enum.h", "mon-flags.h", "mon-holy-type.h", "mon-mst.h", "mon-util.h", "monster-type.h", "size-type.h", "tag-version.h"} {
+	for _, name := range []string{
+		"colour.h",
+		"defines.h",
+		"mon-data.h",
+		"mon-enum.h",
+		"mon-flags.h",
+		"mon-holy-type.h",
+		"mon-mst.h",
+		"mon-util.h",
+		"monster-type.h",
+		"size-type.h",
+		"tag-version.h",
+	} {
 		if _, found := monsterPaths["crawl-ref/source/"+name]; !found {
 			return Catalog{}, fmt.Errorf("monster artifact lacks source %s", name)
 		}

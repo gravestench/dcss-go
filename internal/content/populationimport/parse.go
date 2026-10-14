@@ -9,7 +9,11 @@ import (
 	"dcrawl-go/internal/content"
 )
 
-var populationRow = regexp.MustCompile(`^\s*\{\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(\d+)\s*,\s*(FLAT|SEMI|PEAK|RISE|FALL)\s*,\s*(MONS_[A-Z0-9_]+)\s*\}\s*,?\s*(?://.*)?$`)
+var populationRow = regexp.MustCompile(
+	`^\s*\{\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(\d+)\s*,` +
+		`\s*(FLAT|SEMI|PEAK|RISE|FALL)\s*,\s*(MONS_[A-Z0-9_]+)` +
+		`\s*\}\s*,?\s*(?://.*)?$`,
+)
 
 func parseDungeonRows(source []byte) ([]content.DungeonPopEntry, error) {
 	lines := strings.Split(string(source), "\n")

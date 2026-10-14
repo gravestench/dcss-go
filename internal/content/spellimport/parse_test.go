@@ -44,7 +44,8 @@ AXED_SPELL(SPELL_OLD, "Old")
 	if err != nil || len(spells) != 3 {
 		t.Fatalf("spells %+v, %v", spells, err)
 	}
-	if spells["SPELL_FOO"].Name != "Foo" || len(spells["SPELL_FOO"].Schools) != 2 || spells["SPELL_FOO"].MinRangeExpr != "LOS_RADIUS" || len(spells["SPELL_FOO"].Flags) != 2 {
+	if spells["SPELL_FOO"].Name != "Foo" || len(spells["SPELL_FOO"].Schools) != 2 ||
+		spells["SPELL_FOO"].MinRangeExpr != "LOS_RADIUS" || len(spells["SPELL_FOO"].Flags) != 2 {
 		t.Fatalf("Foo %+v", spells["SPELL_FOO"])
 	}
 	removedIDs, err := parseRemoved("spl-util.cc", removed)
@@ -54,10 +55,26 @@ AXED_SPELL(SPELL_OLD, "Old")
 	if err := reconcile(ids, spells, removedIDs); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := parseSpells("spl-data.h", []byte(strings.Replace(string(data), "spflag::none, 7, 0", "spflag::none, 6, 0", 1))); err == nil {
+	if _, err := parseSpells(
+		"spl-data.h",
+		[]byte(strings.Replace(
+			string(data),
+			"spflag::none, 7, 0",
+			"spflag::none, 6, 0",
+			1,
+		)),
+	); err == nil {
 		t.Fatal("accepted changed AXED_SPELL expansion")
 	}
-	if _, err := parseSpells("spl-data.h", []byte(strings.Replace(string(data), "AXED_SPELL(SPELL_OLD, \"Old\")", "AXED_SPELL(SPELL_OLD, \"Old\")\nAXED_SPELL(SPELL_UNKNOWN, 42)", 1))); err == nil {
+	if _, err := parseSpells(
+		"spl-data.h",
+		[]byte(strings.Replace(
+			string(data),
+			"AXED_SPELL(SPELL_OLD, \"Old\")",
+			"AXED_SPELL(SPELL_OLD, \"Old\")\nAXED_SPELL(SPELL_UNKNOWN, 42)",
+			1,
+		)),
+	); err == nil {
 		t.Fatal("silently skipped malformed extra AXED_SPELL row")
 	}
 	delete(spells, "SPELL_FOO")

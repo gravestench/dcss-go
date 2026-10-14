@@ -20,7 +20,8 @@ func TestLoadDefaultMonstersAndSourceFields(t *testing.T) {
 		}
 		counts[status]++
 	}
-	if len(c.MonsterIDs()) != 700 || counts[MonsterDefined] != 562 || counts[MonsterRemoved] != 120 || counts[MonsterEnumOnly] != 18 {
+	if len(c.MonsterIDs()) != 700 || counts[MonsterDefined] != 562 || counts[MonsterRemoved] != 120 ||
+		counts[MonsterEnumOnly] != 18 {
 		t.Fatalf("monster partition: %d %+v", len(c.MonsterIDs()), counts)
 	}
 	rat, err := c.Monster("MONS_RAT")
@@ -55,68 +56,104 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 		name string
 		edit func(*MonsterArtifact)
 	}{
-		{"schema", func(a *MonsterArtifact) { a.SchemaVersion = 2 }},
-		{"revision", func(a *MonsterArtifact) { a.SourceRevision = "other" }},
-		{"tag", func(a *MonsterArtifact) { a.TagMajorVersion = 35 }},
-		{"provenance", func(a *MonsterArtifact) {
-			for i := range a.SourceFiles {
-				if strings.HasSuffix(a.SourceFiles[i].Path, "/tag-version.h") {
-					a.SourceFiles[i].SHA256 = strings.Repeat("0", 64)
-					break
+		{
+			name: "schema",
+			edit: func(a *MonsterArtifact) { a.SchemaVersion = 2 },
+		},
+		{
+			name: "revision",
+			edit: func(a *MonsterArtifact) { a.SourceRevision = "other" },
+		},
+		{
+			name: "tag",
+			edit: func(a *MonsterArtifact) { a.TagMajorVersion = 35 },
+		},
+		{
+			name: "provenance",
+			edit: func(a *MonsterArtifact) {
+				for i := range a.SourceFiles {
+					if strings.HasSuffix(a.SourceFiles[i].Path, "/tag-version.h") {
+						a.SourceFiles[i].SHA256 = strings.Repeat("0", 64)
+						break
+					}
 				}
-			}
-		}},
-		{"order", func(a *MonsterArtifact) { a.Monsters[0], a.Monsters[1] = a.Monsters[1], a.Monsters[0] }},
-		{"duplicate", func(a *MonsterArtifact) { a.Monsters[1] = a.Monsters[0] }},
-		{"genus", func(a *MonsterArtifact) {
-			for i := range a.Monsters {
-				if a.Monsters[i].ID == "MONS_RAT" {
-					a.Monsters[i].GenusID = "MONS_UNKNOWN"
-					break
+			},
+		},
+		{
+			name: "order",
+			edit: func(a *MonsterArtifact) { a.Monsters[0], a.Monsters[1] = a.Monsters[1], a.Monsters[0] },
+		},
+		{
+			name: "duplicate",
+			edit: func(a *MonsterArtifact) { a.Monsters[1] = a.Monsters[0] },
+		},
+		{
+			name: "genus",
+			edit: func(a *MonsterArtifact) {
+				for i := range a.Monsters {
+					if a.Monsters[i].ID == "MONS_RAT" {
+						a.Monsters[i].GenusID = "MONS_UNKNOWN"
+						break
+					}
 				}
-			}
-		}},
-		{"species", func(a *MonsterArtifact) {
-			for i := range a.Monsters {
-				if a.Monsters[i].ID == "MONS_RAT" {
-					a.Monsters[i].SpeciesID = "MONS_UNKNOWN"
-					break
+			},
+		},
+		{
+			name: "species",
+			edit: func(a *MonsterArtifact) {
+				for i := range a.Monsters {
+					if a.Monsters[i].ID == "MONS_RAT" {
+						a.Monsters[i].SpeciesID = "MONS_UNKNOWN"
+						break
+					}
 				}
-			}
-		}},
-		{"unknown attack", func(a *MonsterArtifact) {
-			for i := range a.Monsters {
-				if a.Monsters[i].ID == "MONS_RAT" {
-					a.Monsters[i].Attacks[1].TypeID = "AT_MADE_UP"
-					break
+			},
+		},
+		{
+			name: "unknown attack",
+			edit: func(a *MonsterArtifact) {
+				for i := range a.Monsters {
+					if a.Monsters[i].ID == "MONS_RAT" {
+						a.Monsters[i].Attacks[1].TypeID = "AT_MADE_UP"
+						break
+					}
 				}
-			}
-		}},
-		{"unknown spellbook", func(a *MonsterArtifact) {
-			for i := range a.Monsters {
-				if a.Monsters[i].ID == "MONS_RAT" {
-					a.Monsters[i].SpellbookID = "MST_MADE_UP"
-					break
+			},
+		},
+		{
+			name: "unknown spellbook",
+			edit: func(a *MonsterArtifact) {
+				for i := range a.Monsters {
+					if a.Monsters[i].ID == "MONS_RAT" {
+						a.Monsters[i].SpellbookID = "MST_MADE_UP"
+						break
+					}
 				}
-			}
-		}},
-		{"unknown flag", func(a *MonsterArtifact) {
-			for i := range a.Monsters {
-				if a.Monsters[i].ID == "MONS_RAT" {
-					a.Monsters[i].Flags = append(a.Monsters[i].Flags, "M_MADE_UP")
-					break
+			},
+		},
+		{
+			name: "unknown flag",
+			edit: func(a *MonsterArtifact) {
+				for i := range a.Monsters {
+					if a.Monsters[i].ID == "MONS_RAT" {
+						a.Monsters[i].Flags = append(a.Monsters[i].Flags, "M_MADE_UP")
+						break
+					}
 				}
-			}
-		}},
-		{"same-count identity swap", func(a *MonsterArtifact) {
-			for i := range a.Monsters {
-				if a.Monsters[i].ID == "MONS_BUMBLEBEE" {
-					a.Monsters[i].ID = "MONS_ZZZ_MADE_UP"
-					break
+			},
+		},
+		{
+			name: "same-count identity swap",
+			edit: func(a *MonsterArtifact) {
+				for i := range a.Monsters {
+					if a.Monsters[i].ID == "MONS_BUMBLEBEE" {
+						a.Monsters[i].ID = "MONS_ZZZ_MADE_UP"
+						break
+					}
 				}
-			}
-			sort.Slice(a.Monsters, func(i, j int) bool { return a.Monsters[i].ID < a.Monsters[j].ID })
-		}},
+				sort.Slice(a.Monsters, func(i, j int) bool { return a.Monsters[i].ID < a.Monsters[j].ID })
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			data := append([]byte(nil), defaultMonsterJSON...)
@@ -126,7 +163,15 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 			}
 			tc.edit(&a)
 			bad, _ := json.Marshal(a)
-			if _, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, defaultPresentationJSON, bad); err == nil {
+			if _, err := loadDefault(
+				defaultSpeciesJSON,
+				defaultJobsJSON,
+				defaultItemsJSON,
+				defaultItemIdentitiesJSON,
+				defaultStartingGearJSON,
+				defaultPresentationJSON,
+				bad,
+			); err == nil {
 				t.Fatal("bad monster artifact accepted")
 			}
 		})

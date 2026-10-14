@@ -118,10 +118,18 @@ func TestItemIdentityEnums(t *testing.T) {
 		byID[identity.ID] = identity.SubtypeValue
 		classes[identity.ClassID] = identity.ClassValue
 	}
-	if byID["WPN_CLUB"] != 0 || byID["WPN_DAGGER"] != 3 || byID["OBJ_GOLD"] != 0 || classes["OBJ_GOLD"] != 13 || len(classes) != 16 {
+	if byID["WPN_CLUB"] != 0 || byID["WPN_DAGGER"] != 3 || byID["OBJ_GOLD"] != 0 ||
+		classes["OBJ_GOLD"] != 13 || len(classes) != 16 {
 		t.Fatalf("wrong numeric identities: ids=%v classes=%v", byID, classes)
 	}
-	for _, pseudo := range []string{"WPN_ALIAS", "WPN_UNARMED", "MI_NONE", "MISC_DECK_UNKNOWN", "OBJ_RANDOM", "NUM_WEAPONS"} {
+	for _, pseudo := range []string{
+		"WPN_ALIAS",
+		"WPN_UNARMED",
+		"MI_NONE",
+		"MISC_DECK_UNKNOWN",
+		"OBJ_RANDOM",
+		"NUM_WEAPONS",
+	} {
 		if _, found := byID[pseudo]; found {
 			t.Fatalf("pseudo/alias %s became a concrete identity", pseudo)
 		}
@@ -136,12 +144,22 @@ func TestItemIdentityEnums(t *testing.T) {
 		t.Fatalf("orb numeric value = %d", got)
 	}
 	bad := identityFixture()
-	bad["item-prop-enum.h"] = []byte(strings.Replace(string(bad["item-prop-enum.h"]), "WPN_DAGGER = 3", "WPN_DAGGER = unknown()", 1))
+	bad["item-prop-enum.h"] = []byte(strings.Replace(
+		string(bad["item-prop-enum.h"]),
+		"WPN_DAGGER = 3",
+		"WPN_DAGGER = unknown()",
+		1,
+	))
 	if _, _, err := parseIdentities(bad); err == nil || !strings.Contains(err.Error(), "item-prop-enum.h") {
 		t.Fatalf("unsupported numeric expression was accepted: %v", err)
 	}
 	bad = identityFixture()
-	bad["item-prop-enum.h"] = []byte(strings.Replace(string(bad["item-prop-enum.h"]), "WPN_DAGGER = 3", "WPN_DAGGER = 0", 1))
+	bad["item-prop-enum.h"] = []byte(strings.Replace(
+		string(bad["item-prop-enum.h"]),
+		"WPN_DAGGER = 3",
+		"WPN_DAGGER = 0",
+		1,
+	))
 	if _, _, err := parseIdentities(bad); err == nil {
 		t.Fatal("duplicate numeric class/subtype pair was accepted")
 	}
@@ -162,14 +180,14 @@ func TestRemovedItemsIndependent(t *testing.T) {
 		t.Fatal(err)
 	}
 	if len(removed) != 2 || !removed[itemKey{
-		"OBJ_POTIONS",
-		"POT_OLD",
+		ClassID:   "OBJ_POTIONS",
+		SubtypeID: "POT_OLD",
 	}] || !removed[itemKey{
-		"OBJ_BOOKS",
-		"BOOK_OLD",
+		ClassID:   "OBJ_BOOKS",
+		SubtypeID: "BOOK_OLD",
 	}] || removed[itemKey{
-		"OBJ_POTIONS",
-		"POT_OTHER",
+		ClassID:   "OBJ_POTIONS",
+		SubtypeID: "POT_OTHER",
 	}] {
 		t.Fatalf("wrong explicit removal set: %v", removed)
 	}
@@ -178,7 +196,8 @@ func TestRemovedItemsIndependent(t *testing.T) {
 		t.Fatal("duplicate explicit removal accepted")
 	}
 	malformed := []byte(strings.Replace(string(source), "#if TAG_MAJOR_VERSION == 34", "#if OTHER_FLAG", 1))
-	if _, err := parseRemovedItems("item-prop.cc", malformed); err == nil || !strings.Contains(err.Error(), "item-prop.cc") {
+	if _, err := parseRemovedItems("item-prop.cc", malformed); err == nil ||
+		!strings.Contains(err.Error(), "item-prop.cc") {
 		t.Fatalf("unsupported conditional was accepted: %v", err)
 	}
 }
@@ -212,7 +231,9 @@ ARMF_VUL_FIRE = ard(ARMF_RES_FIRE, -1),
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(v.ArmourFlags) != 2 || v.ArmourFlags[0] != "ARMF_RES_FIRE" || v.ArmourFlags[1] != "ARMF_VUL_FIRE" || len(v.DamageFlags) != 2 || v.DamageFlags[0] != "DAMV_PIERCING" || v.DamageFlags[1] != "DAM_PIERCE" {
+	if len(v.ArmourFlags) != 2 || v.ArmourFlags[0] != "ARMF_RES_FIRE" ||
+		v.ArmourFlags[1] != "ARMF_VUL_FIRE" || len(v.DamageFlags) != 2 ||
+		v.DamageFlags[0] != "DAMV_PIERCING" || v.DamageFlags[1] != "DAM_PIERCE" {
 		t.Fatalf("symbolic vocabulary was lost: %+v", v)
 	}
 }

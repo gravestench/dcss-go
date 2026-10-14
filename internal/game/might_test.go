@@ -74,7 +74,8 @@ func TestMightRepeatQuaffCapsAtEightyTurns(t *testing.T) {
 		Kind:   CommandQuaff,
 		ItemID: id,
 	})
-	if err != nil || result.View.MightAut != 790 || item.Quantity != 1 || !containsEvent(result.Events, "You feel mightier all of a sudden.") {
+	if err != nil || result.View.MightAut != 790 || item.Quantity != 1 ||
+		!containsEvent(result.Events, "You feel mightier all of a sudden.") {
 		t.Fatalf("repeat might = %+v, %v; stack %+v", result, err, item)
 	}
 }
@@ -124,7 +125,8 @@ func TestMightSaveContinuationAndLegacyDefault(t *testing.T) {
 	defer loaded.Close()
 	left, leftErr := g.Step(Command{Kind: CommandWait})
 	right, rightErr := loaded.Step(Command{Kind: CommandWait})
-	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
+	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
+		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("might continuation = %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 	}
 	legacy := newStepGame(t).Snapshot()
@@ -145,9 +147,18 @@ func TestMightRestoreRejectsBadOwnershipAndRange(t *testing.T) {
 		name string
 		edit func(*ecs.Durations, *ecs.Durations)
 	}{
-		{"negative", func(player, monster *ecs.Durations) { player.MightAut = -1 }},
-		{"over cap", func(player, monster *ecs.Durations) { player.MightAut = 801 }},
-		{"monster", func(player, monster *ecs.Durations) { monster.MightAut = 10 }},
+		{
+			name: "negative",
+			edit: func(player, monster *ecs.Durations) { player.MightAut = -1 },
+		},
+		{
+			name: "over cap",
+			edit: func(player, monster *ecs.Durations) { player.MightAut = 801 },
+		},
+		{
+			name: "monster",
+			edit: func(player, monster *ecs.Durations) { monster.MightAut = 10 },
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			bad := base

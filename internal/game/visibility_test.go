@@ -150,15 +150,30 @@ func TestRestoreRejectsInvalidKnowledge(t *testing.T) {
 		name   string
 		change func(*save.Snapshot)
 	}{
-		{"missing", func(s *save.Snapshot) { s.Levels[0].Known = nil }},
-		{"short rows", func(s *save.Snapshot) { s.Levels[0].Known = s.Levels[0].Known[:1] }},
-		{"short row", func(s *save.Snapshot) { s.Levels[0].Known[0] = s.Levels[0].Known[0][:2] }},
-		{"long row", func(s *save.Snapshot) { s.Levels[0].Known[0] += " " }},
-		{"bad glyph", func(s *save.Snapshot) {
-			row := []byte(s.Levels[0].Known[0])
-			row[0] = '?'
-			s.Levels[0].Known[0] = string(row)
-		}},
+		{
+			name:   "missing",
+			change: func(s *save.Snapshot) { s.Levels[0].Known = nil },
+		},
+		{
+			name:   "short rows",
+			change: func(s *save.Snapshot) { s.Levels[0].Known = s.Levels[0].Known[:1] },
+		},
+		{
+			name:   "short row",
+			change: func(s *save.Snapshot) { s.Levels[0].Known[0] = s.Levels[0].Known[0][:2] },
+		},
+		{
+			name:   "long row",
+			change: func(s *save.Snapshot) { s.Levels[0].Known[0] += " " },
+		},
+		{
+			name: "bad glyph",
+			change: func(s *save.Snapshot) {
+				row := []byte(s.Levels[0].Known[0])
+				row[0] = '?'
+				s.Levels[0].Known[0] = string(row)
+			},
+		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {

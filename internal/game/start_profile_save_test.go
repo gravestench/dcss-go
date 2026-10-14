@@ -39,13 +39,17 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 		t.Fatal("start profile changed across save/restore")
 	}
 	view := restored.View()
-	if view.PlayerHP != 7 || view.PlayerMaxHP != 18 || view.PlayerMP != 0 || view.PlayerMaxMP != 1 || len(view.Skills) != 4 {
+	if view.PlayerHP != 7 || view.PlayerMaxHP != 18 || view.PlayerMP != 0 || view.PlayerMaxMP != 1 ||
+		len(view.Skills) != 4 {
 		t.Fatalf("restored profile = %+v", view)
 	}
-	for _, command := range []Command{{Kind: CommandWait}, {
-		Kind: CommandMove,
-		DX:   1,
-	}} {
+	for _, command := range []Command{
+		{Kind: CommandWait},
+		{
+			Kind: CommandMove,
+			DX:   1,
+		},
+	} {
 		left, leftErr := g.Step(command)
 		right, rightErr := restored.Step(command)
 		if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) {
@@ -78,83 +82,136 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 		name   string
 		mutate func(*save.Snapshot)
 	}{
-		{"duplicate skill", func(s *save.Snapshot) {
-			p := savedPlayer(t, s)
-			p.Skills.Entries[1] = p.Skills.Entries[0]
-		}},
-		{"reordered skills", func(s *save.Snapshot) {
-			p := savedPlayer(t, s)
-			p.Skills.Entries[0], p.Skills.Entries[1] = p.Skills.Entries[1], p.Skills.Entries[0]
-		}},
-		{"unknown skill", func(s *save.Snapshot) {
-			savedPlayer(t, s).Skills.Entries[0].ID = "SK_UNKNOWN"
-		}},
-		{"changed points", func(s *save.Snapshot) {
-			savedPlayer(t, s).Skills.Entries[0].Points++
-		}},
-		{"changed level", func(s *save.Snapshot) {
-			savedPlayer(t, s).Skills.Entries[0].Level++
-		}},
-		{"missing skills", func(s *save.Snapshot) {
-			savedPlayer(t, s).Skills = nil
-		}},
-		{"missing magic", func(s *save.Snapshot) {
-			savedPlayer(t, s).Magic = nil
-		}},
-		{"monster skills", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].AI != nil {
-					s.Entities[i].Skills = &ecs.Skills{Entries: []character.Skill{{
-						ID:     "SK_FIGHTING",
-						Level:  3,
-						Points: 301,
-					}}}
-				}
-			}
-		}},
-		{"item skills", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Item != nil {
-					s.Entities[i].Skills = &ecs.Skills{Entries: []character.Skill{{
-						ID:     "SK_FIGHTING",
-						Level:  3,
-						Points: 301,
-					}}}
-					return
-				}
-			}
-		}},
-		{"monster magic", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].AI != nil {
-					s.Entities[i].Magic = &ecs.Magic{
-						Current: 1,
-						Max:     1,
+		{
+			name: "duplicate skill",
+			mutate: func(s *save.Snapshot) {
+				p := savedPlayer(t, s)
+				p.Skills.Entries[1] = p.Skills.Entries[0]
+			},
+		},
+		{
+			name: "reordered skills",
+			mutate: func(s *save.Snapshot) {
+				p := savedPlayer(t, s)
+				p.Skills.Entries[0], p.Skills.Entries[1] = p.Skills.Entries[1], p.Skills.Entries[0]
+			},
+		},
+		{
+			name: "unknown skill",
+			mutate: func(s *save.Snapshot) {
+				savedPlayer(t, s).Skills.Entries[0].ID = "SK_UNKNOWN"
+			},
+		},
+		{
+			name: "changed points",
+			mutate: func(s *save.Snapshot) {
+				savedPlayer(t, s).Skills.Entries[0].Points++
+			},
+		},
+		{
+			name: "changed level",
+			mutate: func(s *save.Snapshot) {
+				savedPlayer(t, s).Skills.Entries[0].Level++
+			},
+		},
+		{
+			name: "missing skills",
+			mutate: func(s *save.Snapshot) {
+				savedPlayer(t, s).Skills = nil
+			},
+		},
+		{
+			name: "missing magic",
+			mutate: func(s *save.Snapshot) {
+				savedPlayer(t, s).Magic = nil
+			},
+		},
+		{
+			name: "monster skills",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].AI != nil {
+						s.Entities[i].Skills = &ecs.Skills{
+							Entries: []character.Skill{
+								{
+									ID:     "SK_FIGHTING",
+									Level:  3,
+									Points: 301,
+								},
+							},
+						}
 					}
 				}
-			}
-		}},
-		{"item magic", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Item != nil {
-					s.Entities[i].Magic = &ecs.Magic{
-						Current: 1,
-						Max:     1,
+			},
+		},
+		{
+			name: "item skills",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Item != nil {
+						s.Entities[i].Skills = &ecs.Skills{
+							Entries: []character.Skill{
+								{
+									ID:     "SK_FIGHTING",
+									Level:  3,
+									Points: 301,
+								},
+							},
+						}
+						return
 					}
-					return
 				}
-			}
-		}},
-		{"negative MP", func(s *save.Snapshot) {
-			savedPlayer(t, s).Magic.Current = -1
-		}},
-		{"over-max MP", func(s *save.Snapshot) {
-			savedPlayer(t, s).Magic.Current = 2
-		}},
-		{"changed max MP", func(s *save.Snapshot) {
-			savedPlayer(t, s).Magic.Max = 2
-		}},
-		{"version three", func(s *save.Snapshot) { s.Version = 3 }},
+			},
+		},
+		{
+			name: "monster magic",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].AI != nil {
+						s.Entities[i].Magic = &ecs.Magic{
+							Current: 1,
+							Max:     1,
+						}
+					}
+				}
+			},
+		},
+		{
+			name: "item magic",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Item != nil {
+						s.Entities[i].Magic = &ecs.Magic{
+							Current: 1,
+							Max:     1,
+						}
+						return
+					}
+				}
+			},
+		},
+		{
+			name: "negative MP",
+			mutate: func(s *save.Snapshot) {
+				savedPlayer(t, s).Magic.Current = -1
+			},
+		},
+		{
+			name: "over-max MP",
+			mutate: func(s *save.Snapshot) {
+				savedPlayer(t, s).Magic.Current = 2
+			},
+		},
+		{
+			name: "changed max MP",
+			mutate: func(s *save.Snapshot) {
+				savedPlayer(t, s).Magic.Max = 2
+			},
+		},
+		{
+			name:   "version three",
+			mutate: func(s *save.Snapshot) { s.Version = 3 },
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			g := newStepGame(t)

@@ -24,7 +24,8 @@ func TestCommittedBranchCatalogCoverageAndCopies(t *testing.T) {
 		t.Fatalf("Dungeon %+v, %v", dungeon, err)
 	}
 	swamp, err := catalog.Branch("BRANCH_SWAMP")
-	if err != nil || swamp.ParentID != "BRANCH_LAIR" || swamp.MinDepth != 2 || swamp.MaxDepth != 3 || len(swamp.Runes) != 1 || swamp.Runes[0] != "RUNE_SWAMP" {
+	if err != nil || swamp.ParentID != "BRANCH_LAIR" || swamp.MinDepth != 2 || swamp.MaxDepth != 3 ||
+		len(swamp.Runes) != 1 || swamp.Runes[0] != "RUNE_SWAMP" {
 		t.Fatalf("Swamp %+v, %v", swamp, err)
 	}
 	swamp.Runes[0] = "RUNE_BOGUS"

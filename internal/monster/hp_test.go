@@ -5,8 +5,12 @@ import (
 	"testing"
 )
 
-type scriptedRoll struct{ bound, value int }
-type scriptedRoller struct{ rolls []scriptedRoll }
+type scriptedRoll struct {
+	bound, value int
+}
+type scriptedRoller struct {
+	rolls []scriptedRoll
+}
 
 func (s *scriptedRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "monster_hp" || len(s.rolls) == 0 || s.rolls[0].bound != bound {
@@ -23,18 +27,57 @@ func TestRatHPSourceRollOrderAndBounds(t *testing.T) {
 		rolls []scriptedRoll
 		want  int
 	}{
-		{"minimum", append([]scriptedRoll{{100, 25}, {16, 0}}, append(sevenRolls(17, 0), scriptedRoll{
-			10,
-			7,
-		})...), 1},
-		{"maximum", append([]scriptedRoll{{100, 25}, {16, 15}}, append(sevenRolls(17, 16), scriptedRoll{
-			10,
-			0,
-		})...), 4},
-		{"variance-round-up", append([]scriptedRoll{{100, 0}, {18, 9}}, append(sevenRolls(19, 9), scriptedRoll{
-			10,
-			0,
-		})...), 3},
+		{
+			name: "minimum",
+			rolls: append([]scriptedRoll{
+				{
+					bound: 100,
+					value: 25,
+				},
+				{
+					bound: 16,
+					value: 0,
+				},
+			}, append(sevenRolls(17, 0), scriptedRoll{
+				bound: 10,
+				value: 7,
+			})...),
+			want: 1,
+		},
+		{
+			name: "maximum",
+			rolls: append([]scriptedRoll{
+				{
+					bound: 100,
+					value: 25,
+				},
+				{
+					bound: 16,
+					value: 15,
+				},
+			}, append(sevenRolls(17, 16), scriptedRoll{
+				bound: 10,
+				value: 0,
+			})...),
+			want: 4,
+		},
+		{
+			name: "variance-round-up",
+			rolls: append([]scriptedRoll{
+				{
+					bound: 100,
+					value: 0,
+				},
+				{
+					bound: 18,
+					value: 9,
+				},
+			}, append(sevenRolls(19, 9), scriptedRoll{
+				bound: 10,
+				value: 0,
+			})...),
+			want: 3,
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			rng := &scriptedRoller{rolls: tc.rolls}
@@ -50,8 +93,8 @@ func sevenRolls(bound, value int) []scriptedRoll {
 	rolls := make([]scriptedRoll, 7)
 	for i := range rolls {
 		rolls[i] = scriptedRoll{
-			bound,
-			value,
+			bound: bound,
+			value: value,
 		}
 	}
 	return rolls
@@ -66,7 +109,14 @@ func TestRollHPRejectsInvalidInputsAndRolls(t *testing.T) {
 	if _, err := RollHP(nil, 25); err == nil {
 		t.Fatal("nil roller accepted")
 	}
-	if _, err := RollHP(&scriptedRoller{rolls: []scriptedRoll{{100, 100}}}, 25); err == nil {
+	if _, err := RollHP(&scriptedRoller{
+		rolls: []scriptedRoll{
+			{
+				bound: 100,
+				value: 100,
+			},
+		},
+	}, 25); err == nil {
 		t.Fatal("out-of-range roll accepted")
 	}
 }

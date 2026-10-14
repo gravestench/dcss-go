@@ -71,7 +71,9 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 	}).Update(nil, time.Duration(9)); err != nil {
 		t.Fatal(err)
 	}
-	if health.Current != want.HP || magic.Current != want.MP || progress.HPProgress != want.HPProgress || progress.MPProgress != want.MPProgress || !reflect.DeepEqual(g.rng.States(), expectedRNG.States()) {
+	if health.Current != want.HP || magic.Current != want.MP ||
+		progress.HPProgress != want.HPProgress || progress.MPProgress != want.MPProgress ||
+		!reflect.DeepEqual(g.rng.States(), expectedRNG.States()) {
 		t.Fatalf("9-aut system got HP %+v MP %+v regen %+v, want %+v", health, magic, progress, want)
 	}
 }
@@ -95,7 +97,8 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 	defer loaded.Close()
 	left, leftErr := g.Step(Command{Kind: CommandWait})
 	right, rightErr := loaded.Step(Command{Kind: CommandWait})
-	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
+	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) ||
+		!reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("regen continuation %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 	}
 	legacy := newStepGame(t).Snapshot()
@@ -119,35 +122,47 @@ func TestRegenerationRestoreRejectsInvalidCountersAndOwnership(t *testing.T) {
 		name   string
 		mutate func(*save.Snapshot)
 	}{
-		{"negative HP", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Player != nil {
-					s.Entities[i].Regeneration.HPProgress = -1
+		{
+			name: "negative HP",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Player != nil {
+						s.Entities[i].Regeneration.HPProgress = -1
+					}
 				}
-			}
-		}},
-		{"MP overflow", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Player != nil {
-					s.Entities[i].Regeneration.MPProgress = 100
+			},
+		},
+		{
+			name: "MP overflow",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Player != nil {
+						s.Entities[i].Regeneration.MPProgress = 100
+					}
 				}
-			}
-		}},
-		{"monster component", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].AI != nil {
-					s.Entities[i].Regeneration = &ecs.Regeneration{}
+			},
+		},
+		{
+			name: "monster component",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].AI != nil {
+						s.Entities[i].Regeneration = &ecs.Regeneration{}
+					}
 				}
-			}
-		}},
-		{"item component", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Item != nil {
-					s.Entities[i].Regeneration = &ecs.Regeneration{}
-					break
+			},
+		},
+		{
+			name: "item component",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Item != nil {
+						s.Entities[i].Regeneration = &ecs.Regeneration{}
+						break
+					}
 				}
-			}
-		}},
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			bad := g.Snapshot()

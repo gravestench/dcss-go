@@ -121,11 +121,19 @@ func generateFromSource(sourceDir, revision string) ([]byte, error) {
 		seen[species.ID] = label
 		definitions = append(definitions, species)
 	}
-	legacySpecies, legacySpeciesPath, err := readSource(sourceDir, "util/species-gen/species-data-deprecated-species.txt", &files)
+	legacySpecies, legacySpeciesPath, err := readSource(
+		sourceDir,
+		"util/species-gen/species-data-deprecated-species.txt",
+		&files,
+	)
 	if err != nil {
 		return nil, err
 	}
-	legacyAptitudes, legacyAptitudesPath, err := readSource(sourceDir, "util/species-gen/aptitudes-deprecated-species.txt", &files)
+	legacyAptitudes, legacyAptitudesPath, err := readSource(
+		sourceDir,
+		"util/species-gen/aptitudes-deprecated-species.txt",
+		&files,
+	)
 	if err != nil {
 		return nil, err
 	}

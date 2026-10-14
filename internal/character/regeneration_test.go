@@ -5,8 +5,12 @@ import (
 	"testing"
 )
 
-type regenRoll struct{ bound, value int }
-type regenRoller struct{ rolls []regenRoll }
+type regenRoll struct {
+	bound, value int
+}
+type regenRoller struct {
+	rolls []regenRoll
+}
 
 func (r *regenRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "regeneration" || len(r.rolls) == 0 || r.rolls[0].bound != bound {
@@ -55,7 +59,18 @@ func TestRegenFullHPAccumulatesButFullMPFreezes(t *testing.T) {
 }
 
 func TestRegenVariableAutUsesHPThenMPRounding(t *testing.T) {
-	rng := &regenRoller{rolls: []regenRoll{{10, 0}, {10, 9}}}
+	rng := &regenRoller{
+		rolls: []regenRoll{
+			{
+				bound: 10,
+				value: 0,
+			},
+			{
+				bound: 10,
+				value: 9,
+			},
+		},
+	}
 	state := Vitality{
 		HP:         10,
 		MaxHP:      18,
@@ -83,24 +98,28 @@ func TestRegenCanRestoreSeveralPointsAndRejectsBadState(t *testing.T) {
 	if err != nil || got.HP != 12 || got.HPProgress != 15 || got.MP != 2 || got.MPProgress != 55 {
 		t.Fatalf("long action regen = %+v, %v", got, err)
 	}
-	for _, bad := range []Vitality{{
-		HP:    -1,
-		MaxHP: 18,
-		MP:    0,
-		MaxMP: 1,
-	}, {
-		HP:         18,
-		MaxHP:      18,
-		MP:         1,
-		MaxMP:      1,
-		HPProgress: 100,
-	}, {
-		HP:         18,
-		MaxHP:      18,
-		MP:         1,
-		MaxMP:      1,
-		MPProgress: -1,
-	}} {
+	for _, bad := range []Vitality{
+		{
+			HP:    -1,
+			MaxHP: 18,
+			MP:    0,
+			MaxMP: 1,
+		},
+		{
+			HP:         18,
+			MaxHP:      18,
+			MP:         1,
+			MaxMP:      1,
+			HPProgress: 100,
+		},
+		{
+			HP:         18,
+			MaxHP:      18,
+			MP:         1,
+			MaxMP:      1,
+			MPProgress: -1,
+		},
+	} {
 		if _, err := Regenerate(&regenRoller{}, bad, 10); err == nil {
 			t.Fatalf("accepted invalid vitality %+v", bad)
 		}

@@ -8,13 +8,33 @@ import (
 )
 
 func TestScenarioInstallsStartingProfile(t *testing.T) {
-	for _, tc := range []struct{ weapon, skill string }{
-		{"WPN_RAPIER", "SK_SHORT_BLADES"},
-		{"WPN_FLAIL", "SK_MACES_FLAILS"},
-		{"WPN_WAR_AXE", "SK_AXES"},
-		{"WPN_TRIDENT", "SK_POLEARMS"},
-		{"WPN_LONG_SWORD", "SK_LONG_BLADES"},
-		{"WPN_UNARMED", "SK_UNARMED_COMBAT"},
+	for _, tc := range []struct {
+		weapon, skill string
+	}{
+		{
+			weapon: "WPN_RAPIER",
+			skill:  "SK_SHORT_BLADES",
+		},
+		{
+			weapon: "WPN_FLAIL",
+			skill:  "SK_MACES_FLAILS",
+		},
+		{
+			weapon: "WPN_WAR_AXE",
+			skill:  "SK_AXES",
+		},
+		{
+			weapon: "WPN_TRIDENT",
+			skill:  "SK_POLEARMS",
+		},
+		{
+			weapon: "WPN_LONG_SWORD",
+			skill:  "SK_LONG_BLADES",
+		},
+		{
+			weapon: "WPN_UNARMED",
+			skill:  "SK_UNARMED_COMBAT",
+		},
 	} {
 		t.Run(tc.weapon, func(t *testing.T) {
 			g, err := NewScenario(37, testCatalog(t), tc.weapon, "Tester")
@@ -23,7 +43,8 @@ func TestScenarioInstallsStartingProfile(t *testing.T) {
 			}
 			defer g.Close()
 			view := g.View()
-			if view.CurrentAut != 0 || view.PlayerHP != 18 || view.PlayerMaxHP != 18 || view.PlayerMP != 1 || view.PlayerMaxMP != 1 {
+			if view.CurrentAut != 0 || view.PlayerHP != 18 || view.PlayerMaxHP != 18 || view.PlayerMP != 1 ||
+				view.PlayerMaxMP != 1 {
 				t.Fatalf("start clocks and pools = %+v", view)
 			}
 			want := []character.Skill{

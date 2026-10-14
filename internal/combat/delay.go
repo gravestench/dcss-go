@@ -42,11 +42,16 @@ type weightedDelay struct {
 // source weight by d even when division is exact. No draw occurs here.
 func roundedValues(numerator, denominator int) []weightedDelay {
 	whole, remainder := numerator/denominator, numerator%denominator
-	values := []weightedDelay{{whole, denominator - remainder}}
+	values := []weightedDelay{
+		{
+			value:  whole,
+			weight: denominator - remainder,
+		},
+	}
 	if remainder > 0 {
 		values = append(values, weightedDelay{
-			whole + 1,
-			remainder,
+			value:  whole + 1,
+			weight: remainder,
 		})
 	}
 	return values

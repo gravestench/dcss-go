@@ -70,7 +70,26 @@ func TestFrilledLizardExperienceUsesSourceOrdinaryBite(t *testing.T) {
 }
 
 func TestHumanFirstLevelProgressUsesNineXPThreshold(t *testing.T) {
-	for _, tc := range []struct{ xp, percent int }{{0, 0}, {1, 11}, {4, 44}, {8, 88}} {
+	for _, tc := range []struct {
+		xp, percent int
+	}{
+		{
+			xp:      0,
+			percent: 0,
+		},
+		{
+			xp:      1,
+			percent: 11,
+		},
+		{
+			xp:      4,
+			percent: 44,
+		},
+		{
+			xp:      8,
+			percent: 88,
+		},
+	} {
 		got, err := HumanLevelProgress(tc.xp, 1)
 		if err != nil || got != tc.percent {
 			t.Fatalf("XP %d => %d%%, %v; want %d%%", tc.xp, got, err, tc.percent)
@@ -88,24 +107,33 @@ func TestRatExperienceRejectsWrongKindAndHP(t *testing.T) {
 		rat content.MonsterDef
 		hp  int
 	}{
-		{content.MonsterDef{
-			ID:         "MONS_ORC",
-			HD:         1,
-			Speed:      10,
-			XPModifier: 1,
-		}, 4},
-		{content.MonsterDef{
-			ID:         "MONS_RAT",
-			HD:         1,
-			Speed:      10,
-			XPModifier: 1,
-		}, 0},
-		{content.MonsterDef{
-			ID:         "MONS_RAT",
-			HD:         2,
-			Speed:      10,
-			XPModifier: 1,
-		}, 4},
+		{
+			rat: content.MonsterDef{
+				ID:         "MONS_ORC",
+				HD:         1,
+				Speed:      10,
+				XPModifier: 1,
+			},
+			hp: 4,
+		},
+		{
+			rat: content.MonsterDef{
+				ID:         "MONS_RAT",
+				HD:         1,
+				Speed:      10,
+				XPModifier: 1,
+			},
+			hp: 0,
+		},
+		{
+			rat: content.MonsterDef{
+				ID:         "MONS_RAT",
+				HD:         2,
+				Speed:      10,
+				XPModifier: 1,
+			},
+			hp: 4,
+		},
 	} {
 		if _, err := OrdinaryAnimalExperience(tc.rat, tc.hp); err == nil {
 			t.Fatalf("accepted rat %+v with HP %d", tc.rat, tc.hp)

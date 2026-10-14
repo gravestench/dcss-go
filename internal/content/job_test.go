@@ -18,13 +18,16 @@ func testJob(id, abbreviation string) JobDef {
 		Spells:             []string{"SPELL_SHOCK"},
 		Equipment:          []string{"scale mail", "buckler"},
 		WeaponChoice:       "WCHOICE_GOOD",
-		Skills: []JobSkillGrant{{
-			ID:    "SK_FIGHTING",
-			Level: 3,
-		}, {
-			ID:    "SK_WEAPON",
-			Level: 2,
-		}},
+		Skills: []JobSkillGrant{
+			{
+				ID:    "SK_FIGHTING",
+				Level: 3,
+			},
+			{
+				ID:    "SK_WEAPON",
+				Level: 2,
+			},
+		},
 		Selectable: true,
 	}
 }
@@ -32,10 +35,12 @@ func testJob(id, abbreviation string) JobDef {
 func TestJobCatalogCopiesAndSorts(t *testing.T) {
 	first := testJob("JOB_Z", "Zz")
 	second := testJob("JOB_A", "Aa")
-	catalog := Catalog{jobs: map[string]JobDef{
-		first.ID:  first,
-		second.ID: second,
-	}}
+	catalog := Catalog{
+		jobs: map[string]JobDef{
+			first.ID:  first,
+			second.ID: second,
+		},
+	}
 	ids := catalog.JobIDs()
 	if !reflect.DeepEqual(ids, []string{"JOB_A", "JOB_Z"}) {
 		t.Fatalf("job IDs = %v", ids)
@@ -70,28 +75,84 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 		name string
 		jobs []JobDef
 	}{
-		{"duplicate ID", []JobDef{valid, valid}},
-		{"duplicate abbreviation", []JobDef{valid, testJob("JOB_OTHER", "Fi")}},
-		{"empty name", []JobDef{func() JobDef { j := valid; j.Name = ""; return j }()}},
-		{"invalid weapon choice", []JobDef{func() JobDef { j := valid; j.WeaponChoice = "WCHOICE_UNKNOWN"; return j }()}},
-		{"selectable without recommendations", []JobDef{func() JobDef { j := valid; j.RecommendedSpecies = nil; return j }()}},
-		{"removed with recommendations", []JobDef{func() JobDef { j := valid; j.Selectable = false; return j }()}},
-		{"negative skill", []JobDef{func() JobDef {
-			j := valid
-			j.Skills = []JobSkillGrant{{
-				ID:    "SK_FIGHTING",
-				Level: -1,
-			}}
-			return j
-		}()}},
-		{"skill above cap", []JobDef{func() JobDef {
-			j := valid
-			j.Skills = []JobSkillGrant{{
-				ID:    "SK_FIGHTING",
-				Level: 28,
-			}}
-			return j
-		}()}},
+		{
+			name: "duplicate ID",
+			jobs: []JobDef{valid, valid},
+		},
+		{
+			name: "duplicate abbreviation",
+			jobs: []JobDef{valid, testJob("JOB_OTHER", "Fi")},
+		},
+		{
+			name: "empty name",
+			jobs: []JobDef{
+				func() JobDef {
+					job := valid
+					job.Name = ""
+					return job
+				}(),
+			},
+		},
+		{
+			name: "invalid weapon choice",
+			jobs: []JobDef{
+				func() JobDef {
+					job := valid
+					job.WeaponChoice = "WCHOICE_UNKNOWN"
+					return job
+				}(),
+			},
+		},
+		{
+			name: "selectable without recommendations",
+			jobs: []JobDef{
+				func() JobDef {
+					job := valid
+					job.RecommendedSpecies = nil
+					return job
+				}(),
+			},
+		},
+		{
+			name: "removed with recommendations",
+			jobs: []JobDef{
+				func() JobDef {
+					job := valid
+					job.Selectable = false
+					return job
+				}(),
+			},
+		},
+		{
+			name: "negative skill",
+			jobs: []JobDef{
+				func() JobDef {
+					j := valid
+					j.Skills = []JobSkillGrant{
+						{
+							ID:    "SK_FIGHTING",
+							Level: -1,
+						},
+					}
+					return j
+				}(),
+			},
+		},
+		{
+			name: "skill above cap",
+			jobs: []JobDef{
+				func() JobDef {
+					j := valid
+					j.Skills = []JobSkillGrant{
+						{
+							ID:    "SK_FIGHTING",
+							Level: 28,
+						},
+					}
+					return j
+				}(),
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			artifact := JobArtifact{

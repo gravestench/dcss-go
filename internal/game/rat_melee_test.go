@@ -11,8 +11,12 @@ import (
 	"dcrawl-go/internal/save"
 )
 
-type combatRoll struct{ bound, value int }
-type combatRoller struct{ rolls []combatRoll }
+type combatRoll struct {
+	bound, value int
+}
+type combatRoller struct {
+	rolls []combatRoll
+}
 
 func (r *combatRoller) Intn(stream string, bound int) (int, error) {
 	if stream != "melee" || len(r.rolls) == 0 || r.rolls[0].bound != bound {
@@ -29,10 +33,166 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 		rolls          []combatRoll
 		hpLoss, blocks int
 	}{
-		{"dodge", "dodge", []combatRoll{{20, 0}, {10, 5}, {11, 5}, {100, 10}, {15, 14}, {18, 0}, {19, 0}}, 0, 0},
-		{"block", "block", []combatRoll{{20, 0}, {10, 5}, {11, 5}, {100, 10}, {15, 0}, {18, 17}, {19, 18}}, 0, 1},
-		{"absorb", "no damage", []combatRoll{{20, 19}, {10, 0}, {11, 0}, {100, 10}, {15, 14}, {18, 0}, {19, 0}, {3, 2}, {7, 6}}, 0, 0},
-		{"hit", "bites you", []combatRoll{{20, 19}, {10, 0}, {11, 0}, {100, 10}, {15, 14}, {18, 0}, {19, 0}, {3, 2}, {7, 0}}, 3, 0},
+		{
+			name:    "dodge",
+			message: "dodge",
+			rolls: []combatRoll{
+				{
+					bound: 20,
+					value: 0,
+				},
+				{
+					bound: 10,
+					value: 5,
+				},
+				{
+					bound: 11,
+					value: 5,
+				},
+				{
+					bound: 100,
+					value: 10,
+				},
+				{
+					bound: 15,
+					value: 14,
+				},
+				{
+					bound: 18,
+					value: 0,
+				},
+				{
+					bound: 19,
+					value: 0,
+				},
+			},
+			hpLoss: 0,
+			blocks: 0,
+		},
+		{
+			name:    "block",
+			message: "block",
+			rolls: []combatRoll{
+				{
+					bound: 20,
+					value: 0,
+				},
+				{
+					bound: 10,
+					value: 5,
+				},
+				{
+					bound: 11,
+					value: 5,
+				},
+				{
+					bound: 100,
+					value: 10,
+				},
+				{
+					bound: 15,
+					value: 0,
+				},
+				{
+					bound: 18,
+					value: 17,
+				},
+				{
+					bound: 19,
+					value: 18,
+				},
+			},
+			hpLoss: 0,
+			blocks: 1,
+		},
+		{
+			name:    "absorb",
+			message: "no damage",
+			rolls: []combatRoll{
+				{
+					bound: 20,
+					value: 19,
+				},
+				{
+					bound: 10,
+					value: 0,
+				},
+				{
+					bound: 11,
+					value: 0,
+				},
+				{
+					bound: 100,
+					value: 10,
+				},
+				{
+					bound: 15,
+					value: 14,
+				},
+				{
+					bound: 18,
+					value: 0,
+				},
+				{
+					bound: 19,
+					value: 0,
+				},
+				{
+					bound: 3,
+					value: 2,
+				},
+				{
+					bound: 7,
+					value: 6,
+				},
+			},
+			hpLoss: 0,
+			blocks: 0,
+		},
+		{
+			name:    "hit",
+			message: "bites you",
+			rolls: []combatRoll{
+				{
+					bound: 20,
+					value: 19,
+				},
+				{
+					bound: 10,
+					value: 0,
+				},
+				{
+					bound: 11,
+					value: 0,
+				},
+				{
+					bound: 100,
+					value: 10,
+				},
+				{
+					bound: 15,
+					value: 14,
+				},
+				{
+					bound: 18,
+					value: 0,
+				},
+				{
+					bound: 19,
+					value: 0,
+				},
+				{
+					bound: 3,
+					value: 2,
+				},
+				{
+					bound: 7,
+					value: 0,
+				},
+			},
+			hpLoss: 3,
+			blocks: 0,
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			g := newStepGame(t)
@@ -86,7 +246,13 @@ func TestFighterViewDisplaysSourceDefense(t *testing.T) {
 	g := newStepGame(t)
 	view := g.View()
 	if !view.DefenseKnown || view.PlayerAC != 6 || view.PlayerEV != 5 || view.PlayerSH != 4 {
-		t.Fatalf("Fighter defense in view = AC %d EV %d SH %d known %v", view.PlayerAC, view.PlayerEV, view.PlayerSH, view.DefenseKnown)
+		t.Fatalf(
+			"Fighter defense in view = AC %d EV %d SH %d known %v",
+			view.PlayerAC,
+			view.PlayerEV,
+			view.PlayerSH,
+			view.DefenseKnown,
+		)
 	}
 }
 
@@ -133,7 +299,8 @@ func TestCombatSaveRejectsNegativeBlocksAndOldVersion(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()
 	snapshot.Version = 5
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil || !strings.Contains(err.Error(), "unsupported save version") {
+	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+		!strings.Contains(err.Error(), "unsupported save version") {
 		t.Fatalf("version-5 restore error = %v", err)
 	}
 	snapshot.Version = save.Version
@@ -152,27 +319,39 @@ func TestRestoreRejectsCombatStateItCannotRun(t *testing.T) {
 		name, want string
 		mutate     func(*save.Snapshot)
 	}{
-		{"cataloged non-rat", "unsupported melee attacker", func(snapshot *save.Snapshot) {
-			for i := range snapshot.Entities {
-				if snapshot.Entities[i].AI != nil {
-					snapshot.Entities[i].Actor.KindID = "MONS_ORC"
+		{
+			name: "cataloged non-rat",
+			want: "unsupported melee attacker",
+			mutate: func(snapshot *save.Snapshot) {
+				for i := range snapshot.Entities {
+					if snapshot.Entities[i].AI != nil {
+						snapshot.Entities[i].Actor.KindID = "MONS_ORC"
+					}
 				}
-			}
-		}},
-		{"body armour enchantment", "defense", func(snapshot *save.Snapshot) {
-			for i := range snapshot.Entities {
-				if snapshot.Entities[i].Item != nil && snapshot.Entities[i].Item.KindID == "ARM_SCALE_MAIL" {
-					snapshot.Entities[i].Item.Plus = 101
+			},
+		},
+		{
+			name: "body armour enchantment",
+			want: "defense",
+			mutate: func(snapshot *save.Snapshot) {
+				for i := range snapshot.Entities {
+					if snapshot.Entities[i].Item != nil && snapshot.Entities[i].Item.KindID == "ARM_SCALE_MAIL" {
+						snapshot.Entities[i].Item.Plus = 101
+					}
 				}
-			}
-		}},
-		{"shield enchantment", "defense", func(snapshot *save.Snapshot) {
-			for i := range snapshot.Entities {
-				if snapshot.Entities[i].Item != nil && snapshot.Entities[i].Item.KindID == "ARM_BUCKLER" {
-					snapshot.Entities[i].Item.Plus = 101
+			},
+		},
+		{
+			name: "shield enchantment",
+			want: "defense",
+			mutate: func(snapshot *save.Snapshot) {
+				for i := range snapshot.Entities {
+					if snapshot.Entities[i].Item != nil && snapshot.Entities[i].Item.KindID == "ARM_BUCKLER" {
+						snapshot.Entities[i].Item.Plus = 101
+					}
 				}
-			}
-		}},
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			g := newStepGame(t)

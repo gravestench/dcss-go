@@ -28,7 +28,8 @@ type DungeonPopulationArtifact struct {
 var populationMonsterID = regexp.MustCompile(`^MONS_[A-Z0-9_]+$`)
 
 func (entry DungeonPopEntry) validate() error {
-	if entry.MinDepth < 0 || entry.MaxDepth < entry.MinDepth || entry.Rarity <= 0 || entry.SourceLine <= 0 || !populationMonsterID.MatchString(entry.MonsterID) {
+	if entry.MinDepth < 0 || entry.MaxDepth < entry.MinDepth || entry.Rarity <= 0 ||
+		entry.SourceLine <= 0 || !populationMonsterID.MatchString(entry.MonsterID) {
 		return fmt.Errorf("invalid Dungeon population row %+v", entry)
 	}
 	switch entry.Curve {
@@ -40,7 +41,8 @@ func (entry DungeonPopEntry) validate() error {
 }
 
 func (artifact DungeonPopulationArtifact) Validate() error {
-	if artifact.SchemaVersion != 1 || artifact.SourceRevision != sourceRevision || artifact.TagMajorVersion != 34 || len(artifact.SourceFiles) == 0 || len(artifact.Rows) == 0 {
+	if artifact.SchemaVersion != 1 || artifact.SourceRevision != sourceRevision ||
+		artifact.TagMajorVersion != 34 || len(artifact.SourceFiles) == 0 || len(artifact.Rows) == 0 {
 		return fmt.Errorf("invalid Dungeon population metadata")
 	}
 	if _, err := validSourceFiles(artifact.SourceFiles, "Dungeon population"); err != nil {
@@ -96,4 +98,6 @@ func absInt(value int) int {
 	return value
 }
 
-func (c Catalog) DungeonPopulation() []DungeonPopEntry { return slices.Clone(c.dungeonPopulation) }
+func (c Catalog) DungeonPopulation() []DungeonPopEntry {
+	return slices.Clone(c.dungeonPopulation)
+}

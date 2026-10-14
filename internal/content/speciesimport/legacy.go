@@ -12,7 +12,10 @@ import (
 )
 
 var legacyRecord = regexp.MustCompile(`(?s)\{\s*(SP_[A-Z_]+)\s*,\s*\{(.*?)\}\s*\}\s*,`)
-var legacyAptitude = regexp.MustCompile(`^\{\s*(SP_[A-Z_]+)\s*,\s*(SK_[A-Z_]+)\s*,\s*(-?\d+|UNUSABLE_SKILL)\s*\}\s*,?\s*$`)
+var legacyAptitude = regexp.MustCompile(
+	`^\{\s*(SP_[A-Z_]+)\s*,\s*(SK_[A-Z_]+)\s*,\s*` +
+		`(-?\d+|UNUSABLE_SKILL)\s*\}\s*,?\s*$`,
+)
 
 func splitLegacyFields(body string) ([]string, error) {
 	var fields []string
@@ -81,7 +84,8 @@ func parseLegacySpecies(path, id, body string) (content.SpeciesDef, error) {
 			return content.SpeciesDef{}, fmt.Errorf("%s: %s: invalid integer %s", path, id, fields[i])
 		}
 	}
-	if !strings.HasPrefix(fields[9], "MONS_") || !strings.HasPrefix(fields[10], "HT_") || !allowedUndead[fields[11]] || !strings.HasPrefix(fields[12], "SIZE_") {
+	if !strings.HasPrefix(fields[9], "MONS_") || !strings.HasPrefix(fields[10], "HT_") ||
+		!allowedUndead[fields[11]] || !strings.HasPrefix(fields[12], "SIZE_") {
 		return content.SpeciesDef{}, fmt.Errorf("%s: %s: invalid monster/habitat/undead/size fields", path, id)
 	}
 	statsField := strings.TrimSpace(fields[16])
@@ -135,7 +139,12 @@ func parseLegacySpecies(path, id, body string) (content.SpeciesDef, error) {
 	return s, nil
 }
 
-func parseLegacy(speciesPath string, speciesText []byte, aptitudePath string, aptitudeText []byte) ([]content.SpeciesDef, error) {
+func parseLegacy(
+	speciesPath string,
+	speciesText []byte,
+	aptitudePath string,
+	aptitudeText []byte,
+) ([]content.SpeciesDef, error) {
 	speciesLines, err := sourceparse.Tag34Lines(speciesPath, speciesText)
 	if err != nil {
 		return nil, err

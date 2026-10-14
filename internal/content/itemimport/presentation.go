@@ -140,8 +140,8 @@ func parseItemNames(path string, data []byte, identities []content.ItemIdentity)
 	result := map[itemKey]content.ItemName{}
 	add := func(identity content.ItemIdentity, text, kind string, line int) {
 		result[itemKey{
-			identity.ClassID,
-			identity.ID,
+			ClassID:   identity.ClassID,
+			SubtypeID: identity.ID,
 		}] = content.ItemName{
 			Text:       text,
 			Kind:       kind,
@@ -339,7 +339,8 @@ func showClassCodes(path string, data []byte) (map[string]string, error) {
 		}
 		codes[match[1]] = match[2]
 	}
-	if !strings.Contains(body, "jewellery_is_amulet(item) ? SHOW_ITEM_AMULET : SHOW_ITEM_RING") || !strings.Contains(body, "item.sub_type == CORPSE_SKELETON") {
+	if !strings.Contains(body, "jewellery_is_amulet(item) ? SHOW_ITEM_AMULET : SHOW_ITEM_RING") ||
+		!strings.Contains(body, "item.sub_type == CORPSE_SKELETON") {
 		return nil, fmt.Errorf("%s: missing subtype-dependent item show cases", path)
 	}
 	codes["OBJ_JEWELLERY"] = "SHOW_ITEM_RING"
@@ -347,12 +348,25 @@ func showClassCodes(path string, data []byte) (map[string]string, error) {
 	return codes, nil
 }
 
-func parseASCIIItemGlyphs(showPath string, showData []byte, showHeader []byte, dcharHeader []byte, viewPath string, viewData []byte, identities []content.ItemIdentity) (map[itemKey]rune, error) {
+func parseASCIIItemGlyphs(
+	showPath string,
+	showData []byte,
+	showHeader []byte,
+	dcharHeader []byte,
+	viewPath string,
+	viewData []byte,
+	identities []content.ItemIdentity,
+) (map[itemKey]rune, error) {
 	showEntries, err := enumBeforeCount("crawl-ref/source/show.h", showHeader, "show_item_type", "NUM_SHOW_ITEMS")
 	if err != nil {
 		return nil, err
 	}
-	dcharEntries, err := enumBeforeCount("crawl-ref/source/dungeon-char-type.h", dcharHeader, "dungeon_char_type", "NUM_DCHAR_TYPES")
+	dcharEntries, err := enumBeforeCount(
+		"crawl-ref/source/dungeon-char-type.h",
+		dcharHeader,
+		"dungeon_char_type",
+		"NUM_DCHAR_TYPES",
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -384,7 +398,12 @@ func parseASCIIItemGlyphs(showPath string, showData []byte, showHeader []byte, d
 		return nil, err
 	}
 	if len(chars) != len(dcharEntries) {
-		return nil, fmt.Errorf("%s: ASCII glyph count %d differs from dchar count %d", viewPath, len(chars), len(dcharEntries))
+		return nil, fmt.Errorf(
+			"%s: ASCII glyph count %d differs from dchar count %d",
+			viewPath,
+			len(chars),
+			len(dcharEntries),
+		)
 	}
 	codes, err := showClassCodes(showPath, showData)
 	if err != nil {
@@ -407,8 +426,8 @@ func parseASCIIItemGlyphs(showPath string, showData []byte, showHeader []byte, d
 			return nil, fmt.Errorf("%s: unknown show glyph reference %s", showPath, code)
 		}
 		result[itemKey{
-			identity.ClassID,
-			identity.ID,
+			ClassID:   identity.ClassID,
+			SubtypeID: identity.ID,
 		}] = chars[index]
 	}
 	return result, nil

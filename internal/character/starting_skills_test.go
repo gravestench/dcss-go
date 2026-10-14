@@ -16,12 +16,30 @@ func TestStartingSkillsHumanFighterWeapons(t *testing.T) {
 	for _, tc := range []struct {
 		weapon, skill string
 	}{
-		{"WPN_RAPIER", "SK_SHORT_BLADES"},
-		{"WPN_FLAIL", "SK_MACES_FLAILS"},
-		{"WPN_WAR_AXE", "SK_AXES"},
-		{"WPN_TRIDENT", "SK_POLEARMS"},
-		{"WPN_LONG_SWORD", "SK_LONG_BLADES"},
-		{"WPN_UNARMED", "SK_UNARMED_COMBAT"},
+		{
+			weapon: "WPN_RAPIER",
+			skill:  "SK_SHORT_BLADES",
+		},
+		{
+			weapon: "WPN_FLAIL",
+			skill:  "SK_MACES_FLAILS",
+		},
+		{
+			weapon: "WPN_WAR_AXE",
+			skill:  "SK_AXES",
+		},
+		{
+			weapon: "WPN_TRIDENT",
+			skill:  "SK_POLEARMS",
+		},
+		{
+			weapon: "WPN_LONG_SWORD",
+			skill:  "SK_LONG_BLADES",
+		},
+		{
+			weapon: "WPN_UNARMED",
+			skill:  "SK_UNARMED_COMBAT",
+		},
 	} {
 		t.Run(tc.weapon, func(t *testing.T) {
 			got, err := StartingSkills(catalog, "SP_HUMAN", "JOB_FIGHTER", tc.weapon)
@@ -67,10 +85,24 @@ func TestStartingSkillsRejectsUnsupportedChoice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, tc := range []struct{ species, job, weapon string }{
-		{"SP_HILL_ORC", "JOB_FIGHTER", "WPN_FLAIL"},
-		{"SP_HUMAN", "JOB_GLADIATOR", "WPN_FLAIL"},
-		{"SP_HUMAN", "JOB_FIGHTER", "WPN_QUARTERSTAFF"},
+	for _, tc := range []struct {
+		species, job, weapon string
+	}{
+		{
+			species: "SP_HILL_ORC",
+			job:     "JOB_FIGHTER",
+			weapon:  "WPN_FLAIL",
+		},
+		{
+			species: "SP_HUMAN",
+			job:     "JOB_GLADIATOR",
+			weapon:  "WPN_FLAIL",
+		},
+		{
+			species: "SP_HUMAN",
+			job:     "JOB_FIGHTER",
+			weapon:  "WPN_QUARTERSTAFF",
+		},
 	} {
 		got, err := StartingSkills(catalog, tc.species, tc.job, tc.weapon)
 		if err == nil || len(got) != 0 || !strings.Contains(err.Error(), tc.job) {

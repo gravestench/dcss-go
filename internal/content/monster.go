@@ -21,11 +21,11 @@ func (m MonsterDef) MarshalJSON() ([]byte, error) {
 		SourceLine int           `json:"source_line"`
 		Name       string        `json:"name,omitempty"`
 	}{
-		m.ID,
-		m.Status,
-		m.SourcePath,
-		m.SourceLine,
-		m.Name,
+		ID:         m.ID,
+		Status:     m.Status,
+		SourcePath: m.SourcePath,
+		SourceLine: m.SourceLine,
+		Name:       m.Name,
 	})
 }
 
@@ -121,7 +121,10 @@ func (m MonsterDef) validate() error {
 	}
 	switch m.Status {
 	case MonsterDefined:
-		if m.SourceLine == 0 || m.ColourID == "" || m.GenusID == "" || m.SpeciesID == "" || m.SpellbookID == "" || m.ShoutID == "" || m.IntelligenceID == "" || m.HabitatID == "" || m.ItemUseID == "" || m.SizeID == "" || m.ShapeID == "" || m.Tile.ID == "" || m.Tile.VariationID == "" || m.CorpseTileID == "" || len(m.Holiness) == 0 {
+		if m.SourceLine == 0 || m.ColourID == "" || m.GenusID == "" || m.SpeciesID == "" ||
+			m.SpellbookID == "" || m.ShoutID == "" || m.IntelligenceID == "" || m.HabitatID == "" ||
+			m.ItemUseID == "" || m.SizeID == "" || m.ShapeID == "" || m.Tile.ID == "" ||
+			m.Tile.VariationID == "" || m.CorpseTileID == "" || len(m.Holiness) == 0 {
 			return fmt.Errorf("incomplete monster definition %s", m.ID)
 		}
 		for _, attack := range m.Attacks {

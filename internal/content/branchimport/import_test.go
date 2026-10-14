@@ -34,7 +34,19 @@ func TestGenerateAndCheckUseOnlyExplicitBranchSources(t *testing.T) {
 	if err := Write(dir, out, true); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "branch-data.h"), []byte(strings.Replace(syntheticTable, "the Dungeon", "a Dungeon", 1)), 0600); err != nil {
+	if err := os.WriteFile(
+		filepath.Join(
+			dir,
+			"branch-data.h",
+		),
+		[]byte(strings.Replace(
+			syntheticTable,
+			"the Dungeon",
+			"a Dungeon",
+			1,
+		)),
+		0600,
+	); err != nil {
 		t.Fatal(err)
 	}
 	if err := Write(dir, out, true); err == nil {

@@ -23,10 +23,15 @@ func TestHumanFighterWeaponOptions(t *testing.T) {
 			t.Fatalf("unnamed option: %+v", option)
 		}
 	}
-	if !slices.Equal(ids, []string{"WPN_RAPIER", "WPN_FLAIL", "WPN_WAR_AXE", "WPN_TRIDENT", "WPN_LONG_SWORD", "WPN_UNARMED"}) {
+	if !slices.Equal(
+		ids,
+		[]string{"WPN_RAPIER", "WPN_FLAIL", "WPN_WAR_AXE", "WPN_TRIDENT", "WPN_LONG_SWORD", "WPN_UNARMED"},
+	) {
 		t.Fatalf("Fighter choices = %v", ids)
 	}
-	if options[0].Restriction != Restricted || options[1].Restriction != Recommended || options[2].Restriction != Recommended || options[3].Restriction != Recommended || options[4].Restriction != Recommended || options[5].Restriction != Restricted {
+	if options[0].Restriction != Restricted || options[1].Restriction != Recommended ||
+		options[2].Restriction != Recommended || options[3].Restriction != Recommended ||
+		options[4].Restriction != Recommended || options[5].Restriction != Restricted {
 		t.Fatalf("Fighter recommendations = %+v", options)
 	}
 	for _, id := range ids {
@@ -47,10 +52,26 @@ func TestWeaponChoiceRestrictions(t *testing.T) {
 	for _, tc := range []struct {
 		species, job, want string
 	}{
-		{"SP_KOBOLD", "JOB_FIGHTER", "WPN_SPEAR"},
-		{"SP_HUMAN", "JOB_GLADIATOR", "WPN_QUARTERSTAFF"},
-		{"SP_FORMICID", "JOB_FIGHTER", "WPN_QUARTERSTAFF"},
-		{"SP_FELID", "JOB_FIGHTER", "WPN_UNARMED"},
+		{
+			species: "SP_KOBOLD",
+			job:     "JOB_FIGHTER",
+			want:    "WPN_SPEAR",
+		},
+		{
+			species: "SP_HUMAN",
+			job:     "JOB_GLADIATOR",
+			want:    "WPN_QUARTERSTAFF",
+		},
+		{
+			species: "SP_FORMICID",
+			job:     "JOB_FIGHTER",
+			want:    "WPN_QUARTERSTAFF",
+		},
+		{
+			species: "SP_FELID",
+			job:     "JOB_FIGHTER",
+			want:    "WPN_UNARMED",
+		},
 	} {
 		options, err := WeaponOptions(catalog, tc.species, tc.job)
 		if err != nil {
@@ -59,18 +80,39 @@ func TestWeaponChoiceRestrictions(t *testing.T) {
 		if !slices.ContainsFunc(options, func(o WeaponOption) bool { return o.ID == tc.want }) {
 			t.Fatalf("%s/%s lacks %s: %+v", tc.species, tc.job, tc.want, options)
 		}
-		if tc.species == "SP_KOBOLD" && slices.ContainsFunc(options, func(o WeaponOption) bool { return o.ID == "WPN_TRIDENT" }) {
+		if tc.species == "SP_KOBOLD" && slices.ContainsFunc(
+			options,
+			func(o WeaponOption) bool { return o.ID == "WPN_TRIDENT" },
+		) {
 			t.Fatal("small Fighter spear was upgraded to trident")
 		}
 		if tc.species == "SP_FELID" && (len(options) != 1 || options[0].Restriction != Recommended) {
 			t.Fatalf("no-grasping Felid has grasped choices: %+v", options)
 		}
 	}
-	for _, tc := range []struct{ species, job, weapon string }{
-		{"SP_UNKNOWN", "JOB_FIGHTER", "WPN_RAPIER"},
-		{"SP_HUMAN", "JOB_UNKNOWN", "WPN_RAPIER"},
-		{"SP_HUMAN", "JOB_FIGHTER", "WPN_UNKNOWN"},
-		{"SP_FELID", "JOB_GLADIATOR", "WPN_UNARMED"},
+	for _, tc := range []struct {
+		species, job, weapon string
+	}{
+		{
+			species: "SP_UNKNOWN",
+			job:     "JOB_FIGHTER",
+			weapon:  "WPN_RAPIER",
+		},
+		{
+			species: "SP_HUMAN",
+			job:     "JOB_UNKNOWN",
+			weapon:  "WPN_RAPIER",
+		},
+		{
+			species: "SP_HUMAN",
+			job:     "JOB_FIGHTER",
+			weapon:  "WPN_UNKNOWN",
+		},
+		{
+			species: "SP_FELID",
+			job:     "JOB_GLADIATOR",
+			weapon:  "WPN_UNARMED",
+		},
 	} {
 		if err := ValidateWeaponChoice(catalog, tc.species, tc.job, tc.weapon); err == nil {
 			t.Fatalf("invalid choice accepted: %+v", tc)

@@ -15,9 +15,10 @@ func jobSourceFixture(t *testing.T) string {
 	t.Helper()
 	root := t.TempDir()
 	files := map[string]string{
-		"tag-version.h":  "#define TAG_MAJOR_VERSION 34\n",
-		"job-data.h":     jobFixture,
-		"job-type.h":     "enum job_type {\n JOB_FIGHTER,\n#if TAG_MAJOR_VERSION == 34\n JOB_PRIEST,\n#endif\n NUM_JOBS,\n};\n",
+		"tag-version.h": "#define TAG_MAJOR_VERSION 34\n",
+		"job-data.h":    jobFixture,
+		"job-type.h": "enum job_type {\n JOB_FIGHTER,\n#if TAG_MAJOR_VERSION == 34\n JOB_PRIEST,\n" +
+			"#endif\n NUM_JOBS,\n};\n",
 		"species-type.h": "enum species_type {\n SP_HUMAN,\n SP_MINOTAUR,\n NUM_SPECIES,\n};\n",
 		"spell-type.h":   "enum spell_type {\n SPELL_NO_SPELL,\n SPELL_SHOCK,\n SPELL_BLINK,\n NUM_SPELLS,\n};\n",
 		"skill-type.h":   "enum skill_type {\n SK_FIGHTING,\n NUM_SKILLS,\n SK_BLANK_LINE,\n SK_WEAPON,\n};\n",
@@ -62,10 +63,12 @@ func TestGenerateJobArtifactDeterministic(t *testing.T) {
 	if err := json.Unmarshal(first, &artifact); err != nil {
 		t.Fatal(err)
 	}
-	if artifact.SchemaVersion != 1 || artifact.SourceRevision != pinnedRevision || artifact.TagMajorVersion != 34 || len(artifact.SourceFiles) != 6 || len(artifact.Jobs) != 2 {
+	if artifact.SchemaVersion != 1 || artifact.SourceRevision != pinnedRevision ||
+		artifact.TagMajorVersion != 34 || len(artifact.SourceFiles) != 6 || len(artifact.Jobs) != 2 {
 		t.Fatalf("unexpected artifact metadata/counts: %+v", artifact)
 	}
-	if artifact.Jobs[0].ID != "JOB_FIGHTER" || artifact.Jobs[1].ID != "JOB_PRIEST" || artifact.Jobs[0].Equipment[1] != "wand of flame charges:15, q:2" {
+	if artifact.Jobs[0].ID != "JOB_FIGHTER" || artifact.Jobs[1].ID != "JOB_PRIEST" ||
+		artifact.Jobs[0].Equipment[1] != "wand of flame charges:15, q:2" {
 		t.Fatalf("job order or equipment changed: %+v", artifact.Jobs)
 	}
 	for i, file := range artifact.SourceFiles {
@@ -76,18 +79,86 @@ func TestGenerateJobArtifactDeterministic(t *testing.T) {
 }
 
 func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
-	for _, tc := range []struct{ name, file, old, replacement, want string }{
-		{"missing enum job", "job-type.h", " JOB_PRIEST,", " JOB_EXTRA,\n JOB_PRIEST,", "JOB_EXTRA"},
-		{"extra definition", "job-type.h", " JOB_PRIEST,", "", "JOB_PRIEST"},
-		{"duplicate ID", "job-data.h", "JOB_PRIEST", "JOB_FIGHTER", "duplicate"},
-		{"duplicate abbreviation", "job-data.h", `"Pr", "Priest"`, `"Fi", "Priest"`, "abbreviation"},
-		{"unknown species", "job-data.h", "SP_MINOTAUR", "SP_UNKNOWN", "SP_UNKNOWN"},
-		{"unknown spell", "job-data.h", "SPELL_BLINK", "SPELL_UNKNOWN", "SPELL_UNKNOWN"},
-		{"pseudo spell", "job-data.h", "SPELL_BLINK", "SPELL_NO_SPELL", "SPELL_NO_SPELL"},
-		{"unknown skill", "job-data.h", "SK_FIGHTING", "SK_UNKNOWN", "SK_UNKNOWN"},
-		{"pseudo skill", "job-data.h", "SK_FIGHTING", "SK_BLANK_LINE", "SK_BLANK_LINE"},
-		{"wrong tag", "tag-version.h", "VERSION 34", "VERSION 35", "tag-version.h"},
-		{"unsupported conditional", "job-data.h", "#if TAG_MAJOR_VERSION == 34", "#if FEATURE_X", "FEATURE_X"},
+	for _, tc := range []struct {
+		name, file, old, replacement, want string
+	}{
+		{
+			name:        "missing enum job",
+			file:        "job-type.h",
+			old:         " JOB_PRIEST,",
+			replacement: " JOB_EXTRA,\n JOB_PRIEST,",
+			want:        "JOB_EXTRA",
+		},
+		{
+			name:        "extra definition",
+			file:        "job-type.h",
+			old:         " JOB_PRIEST,",
+			replacement: "",
+			want:        "JOB_PRIEST",
+		},
+		{
+			name:        "duplicate ID",
+			file:        "job-data.h",
+			old:         "JOB_PRIEST",
+			replacement: "JOB_FIGHTER",
+			want:        "duplicate",
+		},
+		{
+			name:        "duplicate abbreviation",
+			file:        "job-data.h",
+			old:         `"Pr", "Priest"`,
+			replacement: `"Fi", "Priest"`,
+			want:        "abbreviation",
+		},
+		{
+			name:        "unknown species",
+			file:        "job-data.h",
+			old:         "SP_MINOTAUR",
+			replacement: "SP_UNKNOWN",
+			want:        "SP_UNKNOWN",
+		},
+		{
+			name:        "unknown spell",
+			file:        "job-data.h",
+			old:         "SPELL_BLINK",
+			replacement: "SPELL_UNKNOWN",
+			want:        "SPELL_UNKNOWN",
+		},
+		{
+			name:        "pseudo spell",
+			file:        "job-data.h",
+			old:         "SPELL_BLINK",
+			replacement: "SPELL_NO_SPELL",
+			want:        "SPELL_NO_SPELL",
+		},
+		{
+			name:        "unknown skill",
+			file:        "job-data.h",
+			old:         "SK_FIGHTING",
+			replacement: "SK_UNKNOWN",
+			want:        "SK_UNKNOWN",
+		},
+		{
+			name:        "pseudo skill",
+			file:        "job-data.h",
+			old:         "SK_FIGHTING",
+			replacement: "SK_BLANK_LINE",
+			want:        "SK_BLANK_LINE",
+		},
+		{
+			name:        "wrong tag",
+			file:        "tag-version.h",
+			old:         "VERSION 34",
+			replacement: "VERSION 35",
+			want:        "tag-version.h",
+		},
+		{
+			name:        "unsupported conditional",
+			file:        "job-data.h",
+			old:         "#if TAG_MAJOR_VERSION == 34",
+			replacement: "#if FEATURE_X",
+			want:        "FEATURE_X",
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			root := jobSourceFixture(t)
@@ -98,7 +169,8 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			}
 		})
 	}
-	if _, err := generateFromSource(jobSourceFixture(t), "wrong-revision"); err == nil || !strings.Contains(err.Error(), "revision") {
+	if _, err := generateFromSource(jobSourceFixture(t), "wrong-revision"); err == nil ||
+		!strings.Contains(err.Error(), "revision") {
 		t.Fatalf("wrong revision accepted: %v", err)
 	}
 }

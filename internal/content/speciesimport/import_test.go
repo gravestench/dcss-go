@@ -17,9 +17,10 @@ func sourceFixture(t *testing.T) string {
 	files := map[string][]byte{
 		"dat/species/human.yaml": []byte(humanYAML),
 		"tag-version.h":          []byte("#define TAG_MAJOR_VERSION 34\n"),
-		"species-type.h":         []byte("enum species_type {\n SP_HUMAN,\n#if TAG_MAJOR_VERSION == 34\n SP_HIGH_ELF,\n SP_LAVA_ORC,\n SP_SLUDGE_ELF,\n#endif\n NUM_SPECIES,\n};\n"),
-		"monster-type.h":         []byte("enum monster_type {\n MONS_HUMAN,\n MONS_ELF,\n MONS_LAVA_ORC,\n};\n"),
-		"job-type.h":             []byte("enum job_type {\n JOB_FIGHTER,\n NUM_JOBS,\n};\n"),
+		"species-type.h": []byte("enum species_type {\n SP_HUMAN,\n#if TAG_MAJOR_VERSION == 34\n SP_HIGH_ELF,\n " +
+			"SP_LAVA_ORC,\n SP_SLUDGE_ELF,\n#endif\n NUM_SPECIES,\n};\n"),
+		"monster-type.h": []byte("enum monster_type {\n MONS_HUMAN,\n MONS_ELF,\n MONS_LAVA_ORC,\n};\n"),
+		"job-type.h":     []byte("enum job_type {\n JOB_FIGHTER,\n NUM_JOBS,\n};\n"),
 	}
 	legacy, aptitudes := legacyFixtures(t)
 	files["util/species-gen/species-data-deprecated-species.txt"] = legacy
@@ -68,7 +69,8 @@ func TestGenerateSpeciesArtifactDeterministic(t *testing.T) {
 	if err := json.Unmarshal(first, &artifact); err != nil {
 		t.Fatal(err)
 	}
-	if artifact.SchemaVersion != 1 || artifact.SourceRevision != pinnedRevision || artifact.TagMajorVersion != 34 || len(artifact.Species) != 4 || len(artifact.SourceFiles) != 7 {
+	if artifact.SchemaVersion != 1 || artifact.SourceRevision != pinnedRevision ||
+		artifact.TagMajorVersion != 34 || len(artifact.Species) != 4 || len(artifact.SourceFiles) != 7 {
 		t.Fatalf("wrong artifact metadata/counts: %+v", artifact)
 	}
 	for i := 1; i < len(artifact.Species); i++ {
@@ -89,13 +91,51 @@ func TestGenerateSpeciesArtifactDeterministic(t *testing.T) {
 }
 
 func TestGenerateSpeciesArtifactRejectsSourceErrors(t *testing.T) {
-	cases := []struct{ name, path, old, replacement, want string }{
-		{"duplicate ID", "dat/species/human.yaml", "SP_HUMAN", "SP_HIGH_ELF", "SP_HIGH_ELF"},
-		{"missing active species", "species-type.h", " SP_HUMAN,", " SP_EXTRA, SP_HUMAN,", "SP_EXTRA"},
-		{"missing monster reference", "dat/species/human.yaml", "MONS_HUMAN", "MONS_MISSING", "MONS_MISSING"},
-		{"missing job reference", "dat/species/human.yaml", "JOB_FIGHTER", "JOB_MISSING", "JOB_MISSING"},
-		{"wrong tag", "tag-version.h", "VERSION 34", "VERSION 35", "tag-version.h"},
-		{"unsupported conditional", "species-type.h", "TAG_MAJOR_VERSION == 34", "FEATURE_X", "FEATURE_X"},
+	cases := []struct {
+		name, path, old, replacement, want string
+	}{
+		{
+			name:        "duplicate ID",
+			path:        "dat/species/human.yaml",
+			old:         "SP_HUMAN",
+			replacement: "SP_HIGH_ELF",
+			want:        "SP_HIGH_ELF",
+		},
+		{
+			name:        "missing active species",
+			path:        "species-type.h",
+			old:         " SP_HUMAN,",
+			replacement: " SP_EXTRA, SP_HUMAN,",
+			want:        "SP_EXTRA",
+		},
+		{
+			name:        "missing monster reference",
+			path:        "dat/species/human.yaml",
+			old:         "MONS_HUMAN",
+			replacement: "MONS_MISSING",
+			want:        "MONS_MISSING",
+		},
+		{
+			name:        "missing job reference",
+			path:        "dat/species/human.yaml",
+			old:         "JOB_FIGHTER",
+			replacement: "JOB_MISSING",
+			want:        "JOB_MISSING",
+		},
+		{
+			name:        "wrong tag",
+			path:        "tag-version.h",
+			old:         "VERSION 34",
+			replacement: "VERSION 35",
+			want:        "tag-version.h",
+		},
+		{
+			name:        "unsupported conditional",
+			path:        "species-type.h",
+			old:         "TAG_MAJOR_VERSION == 34",
+			replacement: "FEATURE_X",
+			want:        "FEATURE_X",
+		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -108,7 +148,8 @@ func TestGenerateSpeciesArtifactRejectsSourceErrors(t *testing.T) {
 		})
 	}
 	root := sourceFixture(t)
-	if _, err := generateFromSource(root, "unexpected-revision"); err == nil || !strings.Contains(err.Error(), "revision") {
+	if _, err := generateFromSource(root, "unexpected-revision"); err == nil ||
+		!strings.Contains(err.Error(), "revision") {
 		t.Fatalf("wrong revision accepted: %v", err)
 	}
 }

@@ -15,7 +15,14 @@ func TestNewScenarioStartingGear(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, weaponID := range []string{"WPN_RAPIER", "WPN_FLAIL", "WPN_WAR_AXE", "WPN_TRIDENT", "WPN_LONG_SWORD", "WPN_UNARMED"} {
+	for _, weaponID := range []string{
+		"WPN_RAPIER",
+		"WPN_FLAIL",
+		"WPN_WAR_AXE",
+		"WPN_TRIDENT",
+		"WPN_LONG_SWORD",
+		"WPN_UNARMED",
+	} {
 		t.Run(weaponID, func(t *testing.T) {
 			g, err := NewScenario(7, catalog, weaponID, "Tester")
 			if err != nil {
@@ -85,15 +92,18 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer g.Close()
-	for _, extra := range []ecs.Item{{
-		KindID:   "WAND_CHARMING",
-		Quantity: 1,
-		Charges:  15,
-	}, {
-		KindID:   "MI_DART",
-		Quantity: 3,
-		Ego:      "curare",
-	}} {
+	for _, extra := range []ecs.Item{
+		{
+			KindID:   "WAND_CHARMING",
+			Quantity: 1,
+			Charges:  15,
+		},
+		{
+			KindID:   "MI_DART",
+			Quantity: 3,
+			Ego:      "curare",
+		},
+	} {
 		entity, err := g.world.CreateEntity()
 		if err != nil {
 			t.Fatal(err)
@@ -123,10 +133,13 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 	if !reflect.DeepEqual(before, restored.Snapshot()) {
 		t.Fatal("loadout properties or slots lost on restore")
 	}
-	for _, command := range []Command{{Kind: CommandWait}, {
-		Kind: CommandMove,
-		DX:   1,
-	}} {
+	for _, command := range []Command{
+		{Kind: CommandWait},
+		{
+			Kind: CommandMove,
+			DX:   1,
+		},
+	} {
 		left, leftErr := g.Step(command)
 		right, rightErr := restored.Step(command)
 		if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) {
@@ -143,75 +156,102 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 		name   string
 		mutate func(*save.Snapshot)
 	}{
-		{"duplicate slot", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "ARM_BUCKLER" {
-					s.Entities[i].Equipped.Slot = "body"
-				}
-			}
-		}},
-		{"equipped without carrier", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Equipped != nil {
-					s.Entities[i].CarriedBy = nil
-					s.Entities[i].Position = &ecs.Position{
-						LevelID: 1,
-						X:       2,
-						Y:       2,
+		{
+			name: "duplicate slot",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "ARM_BUCKLER" {
+						s.Entities[i].Equipped.Slot = "body"
 					}
-					return
 				}
-			}
-		}},
-		{"zero quantity", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Item != nil {
-					s.Entities[i].Item.Quantity = 0
-					return
+			},
+		},
+		{
+			name: "equipped without carrier",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Equipped != nil {
+						s.Entities[i].CarriedBy = nil
+						s.Entities[i].Position = &ecs.Position{
+							LevelID: 1,
+							X:       2,
+							Y:       2,
+						}
+						return
+					}
 				}
-			}
-		}},
-		{"charges on potion", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "POT_MIGHT" {
-					s.Entities[i].Item.Charges = 5
-					return
+			},
+		},
+		{
+			name: "zero quantity",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Item != nil {
+						s.Entities[i].Item.Quantity = 0
+						return
+					}
 				}
-			}
-		}},
-		{"ego on potion", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "POT_MIGHT" {
-					s.Entities[i].Item.Ego = "curare"
-					return
+			},
+		},
+		{
+			name: "charges on potion",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "POT_MIGHT" {
+						s.Entities[i].Item.Charges = 5
+						return
+					}
 				}
-			}
-		}},
-		{"changed selected weapon", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Player != nil {
-					s.Entities[i].Player.StartingWeaponID = "WPN_FLAIL"
-					return
+			},
+		},
+		{
+			name: "ego on potion",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "POT_MIGHT" {
+						s.Entities[i].Item.Ego = "curare"
+						return
+					}
 				}
-			}
-		}},
-		{"unknown kind", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Item != nil {
-					s.Entities[i].Item.KindID = "WPN_UNKNOWN"
-					return
+			},
+		},
+		{
+			name: "changed selected weapon",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Player != nil {
+						s.Entities[i].Player.StartingWeaponID = "WPN_FLAIL"
+						return
+					}
 				}
-			}
-		}},
-		{"missing weapon", func(s *save.Snapshot) {
-			for i := range s.Entities {
-				if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "WPN_RAPIER" {
-					s.Entities = append(s.Entities[:i], s.Entities[i+1:]...)
-					return
+			},
+		},
+		{
+			name: "unknown kind",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Item != nil {
+						s.Entities[i].Item.KindID = "WPN_UNKNOWN"
+						return
+					}
 				}
-			}
-		}},
-		{"version two", func(s *save.Snapshot) { s.Version = 2 }},
+			},
+		},
+		{
+			name: "missing weapon",
+			mutate: func(s *save.Snapshot) {
+				for i := range s.Entities {
+					if s.Entities[i].Item != nil && s.Entities[i].Item.KindID == "WPN_RAPIER" {
+						s.Entities = append(s.Entities[:i], s.Entities[i+1:]...)
+						return
+					}
+				}
+			},
+		},
+		{
+			name:   "version two",
+			mutate: func(s *save.Snapshot) { s.Version = 2 },
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			g, err := NewScenario(23, testCatalog(t), "WPN_RAPIER", "Tester")

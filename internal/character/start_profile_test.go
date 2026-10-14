@@ -13,9 +13,17 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, tc := range []struct{ weapon, skill string }{
-		{"WPN_FLAIL", "SK_MACES_FLAILS"},
-		{"WPN_UNARMED", "SK_UNARMED_COMBAT"},
+	for _, tc := range []struct {
+		weapon, skill string
+	}{
+		{
+			weapon: "WPN_FLAIL",
+			skill:  "SK_MACES_FLAILS",
+		},
+		{
+			weapon: "WPN_UNARMED",
+			skill:  "SK_UNARMED_COMBAT",
+		},
 	} {
 		t.Run(tc.weapon, func(t *testing.T) {
 			got, err := BuildStartProfile(catalog, "SP_HUMAN", "JOB_FIGHTER", tc.weapon)
@@ -92,9 +100,19 @@ func TestBuildStartProfileRejectsBadChoice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, tc := range []struct{ species, job, weapon string }{
-		{"SP_HUMAN", "JOB_FIGHTER", "WPN_QUARTERSTAFF"},
-		{"SP_HILL_ORC", "JOB_FIGHTER", "WPN_FLAIL"},
+	for _, tc := range []struct {
+		species, job, weapon string
+	}{
+		{
+			species: "SP_HUMAN",
+			job:     "JOB_FIGHTER",
+			weapon:  "WPN_QUARTERSTAFF",
+		},
+		{
+			species: "SP_HILL_ORC",
+			job:     "JOB_FIGHTER",
+			weapon:  "WPN_FLAIL",
+		},
 	} {
 		got, err := BuildStartProfile(catalog, tc.species, tc.job, tc.weapon)
 		if err == nil || !reflect.DeepEqual(got, StartProfile{}) || !strings.Contains(err.Error(), tc.job) {

@@ -226,7 +226,10 @@ func parseSpells(path string, body []byte) (map[string]content.SpellDef, error) 
 			continue
 		}
 		if macro && !macroBody && strings.HasPrefix(value, "{ tag, name,") {
-			if strings.Join(strings.Fields(value), " ") != "{ tag, name, spschool::none, spflag::none, 7, 0, -1, -1, 0, 0, TILEG_ERROR }," {
+			if strings.Join(
+				strings.Fields(value),
+				" ",
+			) != "{ tag, name, spschool::none, spflag::none, 7, 0, -1, -1, 0, 0, TILEG_ERROR }," {
 				return nil, fmt.Errorf("%s:%d: unsupported AXED_SPELL expansion", path, line.Number)
 			}
 			macroBody = true

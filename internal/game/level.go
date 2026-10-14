@@ -22,7 +22,9 @@ type Level struct {
 	stairs       map[point]StairLink
 }
 
-type point struct{ x, y int }
+type point struct {
+	x, y int
+}
 
 // StairLink connects a stair cell to an arrival cell on another level.
 // The level owns its outgoing links; the world validates destinations.
@@ -143,8 +145,8 @@ func (l *Level) Walkable(x, y int) bool {
 
 func (l *Level) ActorAt(x, y int) (akara.Entity, bool) {
 	actor, ok := l.actors[point{
-		x,
-		y,
+		x: x,
+		y: y,
 	}]
 	return actor, ok
 }
@@ -167,8 +169,8 @@ func (l *Level) PlaceActor(entity akara.Entity, x, y int) error {
 		return err
 	}
 	l.actors[point{
-		x,
-		y,
+		x: x,
+		y: y,
 	}] = entity
 	return nil
 }
@@ -176,8 +178,8 @@ func (l *Level) PlaceActor(entity akara.Entity, x, y int) error {
 func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 	position, found := l.positions.Get(entity)
 	if !found || position.LevelID != l.ID || l.actors[point{
-		position.X,
-		position.Y,
+		x: position.X,
+		y: position.Y,
 	}] != entity {
 		return fmt.Errorf("entity %d is not indexed on level %d", entity, l.ID)
 	}
@@ -188,13 +190,13 @@ func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 		return fmt.Errorf("level %d location (%d,%d) is occupied", l.ID, x, y)
 	}
 	delete(l.actors, point{
-		position.X,
-		position.Y,
+		x: position.X,
+		y: position.Y,
 	})
 	position.X, position.Y = x, y
 	l.actors[point{
-		x,
-		y,
+		x: x,
+		y: y,
 	}] = entity
 	return nil
 }
@@ -202,14 +204,14 @@ func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 func (l *Level) RemoveActor(entity akara.Entity) error {
 	position, found := l.positions.Get(entity)
 	if !found || position.LevelID != l.ID || l.actors[point{
-		position.X,
-		position.Y,
+		x: position.X,
+		y: position.Y,
 	}] != entity {
 		return fmt.Errorf("entity %d is not indexed on level %d", entity, l.ID)
 	}
 	delete(l.actors, point{
-		position.X,
-		position.Y,
+		x: position.X,
+		y: position.Y,
 	})
 	l.positions.Remove(entity)
 	return nil

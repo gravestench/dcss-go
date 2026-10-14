@@ -49,7 +49,16 @@ func WeaponOptions(c content.Catalog, speciesID, jobID string) ([]WeaponOption, 
 		return nil, nil
 	}
 	var options []WeaponOption
-	for _, base := range []string{"WPN_SHORT_SWORD", "WPN_MACE", "WPN_HAND_AXE", "WPN_SPEAR", "WPN_FALCHION", "WPN_QUARTERSTAFF", "WPN_UNARMED"} {
+	baseWeapons := []string{
+		"WPN_SHORT_SWORD",
+		"WPN_MACE",
+		"WPN_HAND_AXE",
+		"WPN_SPEAR",
+		"WPN_FALCHION",
+		"WPN_QUARTERSTAFF",
+		"WPN_UNARMED",
+	}
+	for _, base := range baseWeapons {
 		id := base
 		if job.WeaponChoice == "WCHOICE_GOOD" {
 			id = goodWeaponUpgrade(id, jobID, species.Size)
@@ -57,7 +66,10 @@ func WeaponOptions(c content.Catalog, speciesID, jobID string) ([]WeaponOption, 
 		if hasMutation(species, "MUT_NO_GRASPING") && id != "WPN_UNARMED" {
 			continue
 		}
-		if id == "WPN_QUARTERSTAFF" && jobID != "JOB_GLADIATOR" && !(jobID == "JOB_FIGHTER" && hasMutation(species, "MUT_QUADRUMANOUS")) {
+		fighterCanUseStaff := jobID == "JOB_FIGHTER" &&
+			hasMutation(species, "MUT_QUADRUMANOUS")
+		if id == "WPN_QUARTERSTAFF" &&
+			jobID != "JOB_GLADIATOR" && !fighterCanUseStaff {
 			continue
 		}
 		option := WeaponOption{

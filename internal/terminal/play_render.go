@@ -112,7 +112,9 @@ func drawDungeon(canvas *Canvas, region Region, view game.View) {
 func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	drawDungeon(canvas, layout.Dungeon, view)
 	h := layout.HUD
-	hud := func(x, y int, value string, color Color) { writeClipped(canvas, h.X+x, h.Y+y, h.W-x, value, color) }
+	hud := func(x, y int, value string, color Color) {
+		writeClipped(canvas, h.X+x, h.Y+y, h.W-x, value, color)
+	}
 	hud(0, 0, view.PlayerName+" the Shield-Bearer", Yellow) // source/skills.cc:91; current Fighter only
 	hud(0, 1, "Human", Yellow)
 	for _, stat := range []struct {
@@ -120,12 +122,33 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 		label                             string
 		current, maximum, yellowAt, redAt int
 	}{
-		{2, "Health: ", view.PlayerHP, view.PlayerMaxHP, 70, 40},
-		{3, "Magic:  ", view.PlayerMP, view.PlayerMaxMP, 50, 25},
+		{
+			y:        2,
+			label:    "Health: ",
+			current:  view.PlayerHP,
+			maximum:  view.PlayerMaxHP,
+			yellowAt: 70,
+			redAt:    40,
+		},
+		{
+			y:        3,
+			label:    "Magic:  ",
+			current:  view.PlayerMP,
+			maximum:  view.PlayerMaxMP,
+			yellowAt: 50,
+			redAt:    25,
+		},
 	} {
 		hud(0, stat.y, stat.label, Brown)
-		hud(len(stat.label), stat.y, fmt.Sprintf("%d", stat.current), statusValueColor(stat.current, stat.maximum, stat.yellowAt, stat.redAt))
-		hud(len(stat.label)+len(fmt.Sprintf("%d", stat.current)), stat.y, fmt.Sprintf("/%d", stat.maximum), LightGrey)
+		value := fmt.Sprintf("%d", stat.current)
+		color := statusValueColor(
+			stat.current,
+			stat.maximum,
+			stat.yellowAt,
+			stat.redAt,
+		)
+		hud(len(stat.label), stat.y, value, color)
+		hud(len(stat.label)+len(value), stat.y, fmt.Sprintf("/%d", stat.maximum), LightGrey)
 	}
 	drawMeter(canvas, h.X+18, h.Y+2, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
 	drawMeter(canvas, h.X+18, h.Y+3, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
@@ -145,9 +168,21 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 		label string
 		value int
 	}{
-		{4, "Str: ", view.Attributes.Strength},
-		{5, "Int: ", view.Attributes.Intelligence},
-		{6, "Dex: ", view.Attributes.Dexterity},
+		{
+			y:     4,
+			label: "Str: ",
+			value: view.Attributes.Strength,
+		},
+		{
+			y:     5,
+			label: "Int: ",
+			value: view.Attributes.Intelligence,
+		},
+		{
+			y:     6,
+			label: "Dex: ",
+			value: view.Attributes.Dexterity,
+		},
 	} {
 		hud(18, stat.y, stat.label, Brown)
 		color := LightGrey

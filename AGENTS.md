@@ -20,6 +20,8 @@ for a human reader to follow.
 - Run `gofmt` on changed Go files. Keep each commit to one contiguous problem
   category, then run the relevant tests and broader verification at that
   category boundary.
+- Run `sh scripts/check-go-style.sh` at each category boundary to catch line
+  length and formatting regressions across handwritten Go code.
 
 ## State ownership
 

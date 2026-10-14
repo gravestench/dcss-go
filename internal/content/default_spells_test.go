@@ -20,7 +20,8 @@ func TestCommittedSpellCatalogCoverageAndCopies(t *testing.T) {
 		t.Fatal("spell IDs alias catalog")
 	}
 	magic, err := catalog.Spell("SPELL_MAGIC_DART")
-	if err != nil || magic.NumericID != 3 || magic.Name != "Magic Dart" || magic.Level != 1 || magic.PowerCap != 25 || magic.MinRangeExpr != "LOS_RADIUS" || magic.TileID != "TILEG_MAGIC_DART" {
+	if err != nil || magic.NumericID != 3 || magic.Name != "Magic Dart" || magic.Level != 1 ||
+		magic.PowerCap != 25 || magic.MinRangeExpr != "LOS_RADIUS" || magic.TileID != "TILEG_MAGIC_DART" {
 		t.Fatalf("magic dart %+v, %v", magic, err)
 	}
 	magic.Schools[0] = "changed"
@@ -64,13 +65,40 @@ func TestCommittedSpellArtifactRejectsMissingOrCorruptRows(t *testing.T) {
 	if _, err := attachDefaultSpells(scenarioCatalog(), []byte(`{"schema_version":1}`)); err == nil {
 		t.Fatal("accepted incomplete spell catalog")
 	}
-	if _, err := attachDefaultSpells(scenarioCatalog(), []byte(strings.Replace(string(defaultSpellJSON), `"numeric_id": 3`, `"numeric_id": 999`, 1))); err == nil {
+	if _, err := attachDefaultSpells(
+		scenarioCatalog(),
+		[]byte(strings.Replace(
+			string(defaultSpellJSON),
+			`"numeric_id": 3`,
+			`"numeric_id": 999`,
+			1,
+		)),
+	); err == nil {
 		t.Fatal("accepted corrupted artifact")
 	}
-	if _, err := attachDefaultSpells(scenarioCatalog(), []byte(strings.Replace(string(defaultSpellJSON), "SPELL_MAGIC_DART", "SPELL_BOGUS", 1))); err == nil {
+	if _, err := attachDefaultSpells(
+		scenarioCatalog(),
+		[]byte(strings.Replace(
+			string(defaultSpellJSON),
+			"SPELL_MAGIC_DART",
+			"SPELL_BOGUS",
+			1,
+		)),
+	); err == nil {
 		t.Fatal("accepted same-count identity substitution")
 	}
-	if _, err := attachDefaultSpells(scenarioCatalog(), []byte(strings.Replace(string(defaultSpellJSON), "91be664ef01f81d4401e4fd4ef0aff709a96f464c7035558435fb1bc135da2e1", strings.Repeat("0", 64), 1))); err == nil {
+	if _, err := attachDefaultSpells(
+		scenarioCatalog(),
+		[]byte(strings.Replace(
+			string(defaultSpellJSON),
+			"91be664ef01f81d4401e4fd4ef0aff709a96f464c7035558435fb1bc135da2e1",
+			strings.Repeat(
+				"0",
+				64,
+			),
+			1,
+		)),
+	); err == nil {
 		t.Fatal("accepted substituted source hash")
 	}
 }

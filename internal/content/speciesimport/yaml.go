@@ -41,10 +41,34 @@ type sourceSpecies struct {
 }
 
 var ordinarySkills = []string{
-	"fighting", "short_blades", "long_blades", "axes", "maces_and_flails", "polearms", "staves", "ranged weapons",
-	"throwing", "armour", "dodging", "stealth", "shields", "unarmed_combat", "spellcasting", "conjurations", "hexes",
-	"summoning", "necromancy", "transmutations", "translocations", "fire_magic", "ice_magic", "air_magic", "earth_magic",
-	"poison_magic", "invocations", "evocations",
+	"fighting",
+	"short_blades",
+	"long_blades",
+	"axes",
+	"maces_and_flails",
+	"polearms",
+	"staves",
+	"ranged weapons",
+	"throwing",
+	"armour",
+	"dodging",
+	"stealth",
+	"shields",
+	"unarmed_combat",
+	"spellcasting",
+	"conjurations",
+	"hexes",
+	"summoning",
+	"necromancy",
+	"transmutations",
+	"translocations",
+	"fire_magic",
+	"ice_magic",
+	"air_magic",
+	"earth_magic",
+	"poison_magic",
+	"invocations",
+	"evocations",
 }
 
 var allowedFlags = map[string]bool{
@@ -157,7 +181,8 @@ func validateSourceShape(path string, root *yaml.Node) error {
 			if err := scalar(path, name, value, "!!int"); err != nil {
 				return err
 			}
-		case "enum", "monster", "name", "short_name", "adjective", "genus", "undead_type", "size", "walking_verb", "altar_action":
+		case "enum", "monster", "name", "short_name", "adjective",
+			"genus", "undead_type", "size", "walking_verb", "altar_action":
 			if err := scalar(path, name, value, "!!str"); err != nil {
 				return err
 			}
@@ -230,7 +255,17 @@ func validateSourceShape(path string, root *yaml.Node) error {
 			return fmt.Errorf("%s: unknown field %s", path, name)
 		}
 	}
-	for _, name := range []string{"enum", "monster", "name", "difficulty", "aptitudes", "str", "int", "dex", "levelup_stat_frequency"} {
+	for _, name := range []string{
+		"enum",
+		"monster",
+		"name",
+		"difficulty",
+		"aptitudes",
+		"str",
+		"int",
+		"dex",
+		"levelup_stat_frequency",
+	} {
 		if !seen[name] {
 			return fmt.Errorf("%s: required field %s is missing", path, name)
 		}

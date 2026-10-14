@@ -62,13 +62,16 @@ func cloneDescriptions(descriptions map[string]string) map[string]string {
 	return copy
 }
 
-func (c Catalog) Presentation() PresentationArtifact { return c.presentation.clone() }
+func (c Catalog) Presentation() PresentationArtifact {
+	return c.presentation.clone()
+}
 
 func (a PresentationArtifact) validate(c Catalog) error {
 	if a.SchemaVersion != 1 || a.SourceRevision != sourceRevision || a.SourceVersion == "" || a.TagMajorVersion != 34 {
 		return fmt.Errorf("unsupported presentation artifact schema/revision/tag")
 	}
-	if len(a.SpeciesGroups) != 3 || len(a.JobGroups) != 5 || len(a.SourceFiles) != 7 || len(a.StartupModes) != 8 || len(a.SkillColumns) != 2 || len(a.SkillColumns[0]) != 16 || len(a.SkillColumns[1]) != 16 {
+	if len(a.SpeciesGroups) != 3 || len(a.JobGroups) != 5 || len(a.SourceFiles) != 7 ||
+		len(a.StartupModes) != 8 || len(a.SkillColumns) != 2 || len(a.SkillColumns[0]) != 16 || len(a.SkillColumns[1]) != 16 {
 		return fmt.Errorf("presentation has incomplete groups or provenance")
 	}
 	seenSkills := map[string]bool{}
@@ -106,7 +109,13 @@ func (a PresentationArtifact) validate(c Catalog) error {
 	return nil
 }
 
-func validateMenuGroups[T interface{ SpeciesDef | JobDef }](groups []MenuGroup, descriptions map[string]string, definitions map[string]T, expected int, kind string) error {
+func validateMenuGroups[T interface{ SpeciesDef | JobDef }](
+	groups []MenuGroup,
+	descriptions map[string]string,
+	definitions map[string]T,
+	expected int,
+	kind string,
+) error {
 	seen := make(map[string]bool, expected)
 	for _, group := range groups {
 		if group.Label == "" || len(group.IDs) == 0 {
@@ -137,7 +146,13 @@ func validateMenuGroups[T interface{ SpeciesDef | JobDef }](groups []MenuGroup, 
 		}
 	}
 	if len(seen) != expected || len(descriptions) != expected {
-		return fmt.Errorf("%s presentation has %d menu IDs and %d descriptions, want %d", kind, len(seen), len(descriptions), expected)
+		return fmt.Errorf(
+			"%s presentation has %d menu IDs and %d descriptions, want %d",
+			kind,
+			len(seen),
+			len(descriptions),
+			expected,
+		)
 	}
 	for id := range descriptions {
 		if !seen[id] {

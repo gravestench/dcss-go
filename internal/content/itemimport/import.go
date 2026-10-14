@@ -18,9 +18,22 @@ import (
 const pinnedRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 
 var sourceNames = []string{
-	"object-class-type.h", "item-prop-enum.h", "potion-type.h", "book-type.h", "orb-type.h",
-	"item-prop.cc", "item-name.cc", "show.cc", "show.h", "dungeon-char-type.h", "viewchar.cc",
-	"tag-version.h", "equipment-type.h", "skill-type.h", "size-type.h", "item-prop.h",
+	"object-class-type.h",
+	"item-prop-enum.h",
+	"potion-type.h",
+	"book-type.h",
+	"orb-type.h",
+	"item-prop.cc",
+	"item-name.cc",
+	"show.cc",
+	"show.h",
+	"dungeon-char-type.h",
+	"viewchar.cc",
+	"tag-version.h",
+	"equipment-type.h",
+	"skill-type.h",
+	"size-type.h",
+	"item-prop.h",
 }
 
 var identitySourceNames = map[string]bool{
@@ -56,12 +69,17 @@ func readSources(sourceDir string) (map[string][]byte, []content.JobSourceFile, 
 	return data, files, nil
 }
 
-func joinItemViews(identities []content.ItemIdentity, rows map[itemKey]itemPropertyRow, names map[itemKey]content.ItemName, glyphs map[itemKey]rune) ([]content.ItemDef, error) {
+func joinItemViews(
+	identities []content.ItemIdentity,
+	rows map[itemKey]itemPropertyRow,
+	names map[itemKey]content.ItemName,
+	glyphs map[itemKey]rune,
+) ([]content.ItemDef, error) {
 	known := make(map[itemKey]bool, len(identities))
 	for _, id := range identities {
 		key := itemKey{
-			id.ClassID,
-			id.ID,
+			ClassID:   id.ClassID,
+			SubtypeID: id.ID,
 		}
 		if known[key] {
 			return nil, fmt.Errorf("duplicate identity %s/%s", key.ClassID, key.SubtypeID)
@@ -86,8 +104,8 @@ func joinItemViews(identities []content.ItemIdentity, rows map[itemKey]itemPrope
 	items := make([]content.ItemDef, 0, len(identities))
 	for _, identity := range identities {
 		key := itemKey{
-			identity.ClassID,
-			identity.ID,
+			ClassID:   identity.ClassID,
+			SubtypeID: identity.ID,
 		}
 		row, hasRow := rows[key]
 		name, hasName := names[key]
@@ -95,7 +113,8 @@ func joinItemViews(identities []content.ItemIdentity, rows map[itemKey]itemPrope
 		if !hasGlyph || glyph == 0 {
 			return nil, fmt.Errorf("missing ASCII glyph for %s", identity.ID)
 		}
-		expectsRow := identity.ClassID == "OBJ_WEAPONS" || identity.ClassID == "OBJ_ARMOUR" || identity.ClassID == "OBJ_MISSILES" || identity.ClassID == "OBJ_FOOD"
+		expectsRow := identity.ClassID == "OBJ_WEAPONS" || identity.ClassID == "OBJ_ARMOUR" ||
+			identity.ClassID == "OBJ_MISSILES" || identity.ClassID == "OBJ_FOOD"
 		if expectsRow && !hasRow {
 			return nil, fmt.Errorf("missing property row for %s", identity.ID)
 		}
@@ -194,8 +213,8 @@ func generateFromSource(sourceDir, revision string) ([]byte, []byte, error) {
 	}
 	for i := range identities {
 		key := itemKey{
-			identities[i].ClassID,
-			identities[i].ID,
+			ClassID:   identities[i].ClassID,
+			SubtypeID: identities[i].ID,
 		}
 		if removed[key] {
 			identities[i].ExplicitlyRemoved = true
@@ -217,7 +236,15 @@ func generateFromSource(sourceDir, revision string) ([]byte, []byte, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	glyphs, err := parseASCIIItemGlyphs("crawl-ref/source/show.cc", data["show.cc"], data["show.h"], data["dungeon-char-type.h"], "crawl-ref/source/viewchar.cc", data["viewchar.cc"], identities)
+	glyphs, err := parseASCIIItemGlyphs(
+		"crawl-ref/source/show.cc",
+		data["show.cc"],
+		data["show.h"],
+		data["dungeon-char-type.h"],
+		"crawl-ref/source/viewchar.cc",
+		data["viewchar.cc"],
+		identities,
+	)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -277,7 +304,11 @@ func Generate(sourceDir string) ([]byte, []byte, error) {
 		return nil, nil, fmt.Errorf("source revision: %w", err)
 	}
 	if strings.TrimSpace(string(revision)) != pinnedRevision {
-		return nil, nil, fmt.Errorf("source revision %s differs from pinned %s", strings.TrimSpace(string(revision)), pinnedRevision)
+		return nil, nil, fmt.Errorf(
+			"source revision %s differs from pinned %s",
+			strings.TrimSpace(string(revision)),
+			pinnedRevision,
+		)
 	}
 	args := append([]string{"-C", sourceDir, "status", "--porcelain", "--untracked-files=no", "--"}, sourceNames...)
 	status, err := exec.Command("git", args...).Output()
@@ -341,7 +372,16 @@ func writePair(outPath string, check bool, generate func() ([]byte, []byte, erro
 		for _, entry := range []struct {
 			path string
 			data []byte
-		}{{outPath, items}, {manifestPath, identities}} {
+		}{
+			{
+				path: outPath,
+				data: items,
+			},
+			{
+				path: manifestPath,
+				data: identities,
+			},
+		} {
 			current, err := os.ReadFile(entry.path)
 			if err != nil {
 				return err

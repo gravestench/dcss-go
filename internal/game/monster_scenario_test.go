@@ -27,7 +27,8 @@ func TestRatScenarioRollsSourceHPAndKeepsCatalogedBite(t *testing.T) {
 	}
 	combat, ok := g.stores.Combat.Get(rat)
 	definition, err := g.catalog.Monster("MONS_RAT")
-	if !ok || combat.ShieldBlocks != 0 || err != nil || definition.HD != 1 || definition.AverageHP10x != 25 || definition.Attacks[0].Damage != 3 {
+	if !ok || combat.ShieldBlocks != 0 || err != nil || definition.HD != 1 ||
+		definition.AverageHP10x != 25 || definition.Attacks[0].Damage != 3 {
 		t.Fatalf("rat combat/source = %+v/%+v, found %v, error %v", combat, definition, ok, err)
 	}
 }

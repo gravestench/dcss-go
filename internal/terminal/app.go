@@ -74,7 +74,9 @@ func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppMod
 	}, nil
 }
 
-func (m *AppModel) Init() tea.Cmd { return nil }
+func (m *AppModel) Init() tea.Cmd {
+	return nil
+}
 
 func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := message.(type) {

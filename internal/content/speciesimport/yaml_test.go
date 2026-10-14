@@ -97,26 +97,71 @@ altar_action: kneel at
 	if err != nil {
 		t.Fatal(err)
 	}
-	if tag != 34 || s.ShortName != "Hm" || s.Habitat != "HT_WATER" || s.UndeadType != "US_SEMI_UNDEAD" || s.Size != "SIZE_SMALL" {
+	if tag != 34 || s.ShortName != "Hm" || s.Habitat != "HT_WATER" ||
+		s.UndeadType != "US_SEMI_UNDEAD" || s.Size != "SIZE_SMALL" {
 		t.Fatalf("tag/optional fields lost: %+v tag %d", s, tag)
 	}
-	if len(s.Flags) != 1 || s.Flags[0] != "SPF_NO_HAIR" || len(s.LevelUpStats) != 1 || s.LevelUpStats[0] != "int" || len(s.FakeMutations) != 1 || s.FakeMutations[0].Short != "short description" || len(s.RecommendedWeapons) != 1 || s.AltarAction != "kneel at" {
+	if len(s.Flags) != 1 || s.Flags[0] != "SPF_NO_HAIR" || len(s.LevelUpStats) != 1 ||
+		s.LevelUpStats[0] != "int" || len(s.FakeMutations) != 1 ||
+		s.FakeMutations[0].Short != "short description" || len(s.RecommendedWeapons) != 1 || s.AltarAction != "kneel at" {
 		t.Fatalf("optional details lost: %+v", s)
 	}
 }
 
 func TestParseYAMLRejectsMalformedSource(t *testing.T) {
-	cases := []struct{ name, input, field string }{
-		{"unknown field", humanYAML + "unknown_field: yes\n", "unknown_field"},
-		{"duplicate key", humanYAML + "name: Duplicate\n", "name"},
-		{"bad aptitude", strings.Replace(humanYAML, "spellcasting: 3", "spellcasting: many", 1), "spellcasting"},
-		{"bad stat", strings.Replace(humanYAML, "str: 8", "str: 0", 1), "str"},
-		{"bad mutation level", humanYAML + "mutations:\n  28:\n    MUT_CLAWS: 1\n", "mutations"},
-		{"bad mutation amount", humanYAML + "mutations:\n  1:\n    MUT_CLAWS: 4\n", "MUT_CLAWS"},
-		{"bad difficulty", strings.Replace(humanYAML, "Intermediate", "Impossible", 1), "difficulty"},
-		{"bad flag", humanYAML + "species_flags:\n  - SPF_UNKNOWN\n", "SPF_UNKNOWN"},
-		{"bad skill", strings.Replace(humanYAML, "spellcasting: 3", "speling: 3", 1), "speling"},
-		{"missing jobs", strings.Replace(humanYAML, "recommended_jobs:\n  - JOB_FIGHTER\n", "", 1), "recommended_jobs"},
+	cases := []struct {
+		name, input, field string
+	}{
+		{
+			name:  "unknown field",
+			input: humanYAML + "unknown_field: yes\n",
+			field: "unknown_field",
+		},
+		{
+			name:  "duplicate key",
+			input: humanYAML + "name: Duplicate\n",
+			field: "name",
+		},
+		{
+			name:  "bad aptitude",
+			input: strings.Replace(humanYAML, "spellcasting: 3", "spellcasting: many", 1),
+			field: "spellcasting",
+		},
+		{
+			name:  "bad stat",
+			input: strings.Replace(humanYAML, "str: 8", "str: 0", 1),
+			field: "str",
+		},
+		{
+			name:  "bad mutation level",
+			input: humanYAML + "mutations:\n  28:\n    MUT_CLAWS: 1\n",
+			field: "mutations",
+		},
+		{
+			name:  "bad mutation amount",
+			input: humanYAML + "mutations:\n  1:\n    MUT_CLAWS: 4\n",
+			field: "MUT_CLAWS",
+		},
+		{
+			name:  "bad difficulty",
+			input: strings.Replace(humanYAML, "Intermediate", "Impossible", 1),
+			field: "difficulty",
+		},
+		{
+			name:  "bad flag",
+			input: humanYAML + "species_flags:\n  - SPF_UNKNOWN\n",
+			field: "SPF_UNKNOWN",
+		},
+		{
+			name:  "bad skill",
+			input: strings.Replace(humanYAML, "spellcasting: 3", "speling: 3", 1),
+			field: "speling",
+		},
+		{
+			name:  "missing jobs",
+			input: strings.Replace(humanYAML, "recommended_jobs:\n  - JOB_FIGHTER\n", "", 1),
+			field: "recommended_jobs",
+		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -129,11 +174,29 @@ func TestParseYAMLRejectsMalformedSource(t *testing.T) {
 }
 
 func TestParseYAMLRejectsCoercionAndTrailingDocument(t *testing.T) {
-	cases := []struct{ name, input, field string }{
-		{"fractional strength", strings.Replace(humanYAML, "str: 8", "str: 8.9", 1), "str"},
-		{"numeric name", strings.Replace(humanYAML, "name: Human", "name: 123", 1), "name"},
-		{"null frequency", strings.Replace(humanYAML, "levelup_stat_frequency: 4", "levelup_stat_frequency: null", 1), "levelup_stat_frequency"},
-		{"second document", humanYAML + "---\nunknown_field: yes\n", "document"},
+	cases := []struct {
+		name, input, field string
+	}{
+		{
+			name:  "fractional strength",
+			input: strings.Replace(humanYAML, "str: 8", "str: 8.9", 1),
+			field: "str",
+		},
+		{
+			name:  "numeric name",
+			input: strings.Replace(humanYAML, "name: Human", "name: 123", 1),
+			field: "name",
+		},
+		{
+			name:  "null frequency",
+			input: strings.Replace(humanYAML, "levelup_stat_frequency: 4", "levelup_stat_frequency: null", 1),
+			field: "levelup_stat_frequency",
+		},
+		{
+			name:  "second document",
+			input: humanYAML + "---\nunknown_field: yes\n",
+			field: "document",
+		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
