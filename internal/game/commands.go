@@ -18,12 +18,14 @@ const (
 	CommandPickup
 	CommandWait
 	CommandInspect
+	CommandQuaff
 )
 
 type Command struct {
-	Kind CommandKind
-	DX   int
-	DY   int
+	Kind   CommandKind
+	DX     int
+	DY     int
+	ItemID uint64
 }
 
 type Event struct {
@@ -39,10 +41,11 @@ type StepResult struct {
 
 // TurnContext is updated by Game before ordered Akara systems run.
 type TurnContext struct {
-	Actor  akara.Entity
-	Events []Event
-	Deaths []akara.Entity
-	Pickup akara.Entity
+	Actor   akara.Entity
+	Events  []Event
+	Deaths  []akara.Entity
+	Pickup  akara.Entity
+	Consume akara.Entity
 }
 
 func (g *Game) Step(command Command) (StepResult, error) {
@@ -101,6 +104,27 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			return g.noTime("There is nothing to pick up here."), nil
 		}
 		intent = ecs.Intent{Kind: ecs.IntentPickup}
+	case CommandQuaff:
+		itemID := akara.Entity(command.ItemID)
+		item, found := g.stores.Items.Get(itemID)
+		carrier, carried := g.stores.CarriedBy.Get(itemID)
+		if !found || !carried || carrier.Holder != g.player {
+			return g.noTime("You are not carrying that potion."), nil
+		}
+		kind, err := g.catalog.Item(item.KindID)
+		if err != nil {
+			return StepResult{}, err
+		}
+		if err := validateItemProperties(*item, kind); err != nil {
+			return StepResult{}, fmt.Errorf("cannot quaff item %d: %w", itemID, err)
+		}
+		if kind.Class != "OBJ_POTIONS" {
+			return g.noTime("You cannot drink that."), nil
+		}
+		if item.KindID != "POT_CURING" {
+			return g.noTime("That potion's effect is unavailable in the Go port."), nil
+		}
+		intent = ecs.Intent{Kind: ecs.IntentQuaff, ItemID: itemID}
 	default:
 		return g.noTime("Unknown command."), nil
 	}
@@ -158,6 +182,7 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	g.turn.Events = nil
 	g.turn.Deaths = nil
 	g.turn.Pickup = 0
+	g.turn.Consume = 0
 	err := g.world.Update(time.Duration(cost))
 	g.stores.Intents.Remove(actor)
 	if err != nil {
@@ -173,6 +198,17 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 		}
 	}
 	buffer := akara.NewCommandBuffer()
+	if itemID := g.turn.Consume; itemID != 0 {
+		item, found := g.stores.Items.Get(itemID)
+		if !found || item.Quantity <= 0 {
+			return nil, fmt.Errorf("%s actor %d consumed invalid item %d", phase, actor, itemID)
+		}
+		if item.Quantity == 1 {
+			buffer.Destroy(g.world, itemID)
+		} else {
+			item.Quantity--
+		}
+	}
 	for _, dead := range g.turn.Deaths {
 		if position, found := g.stores.Positions.Get(dead); found {
 			if err := g.levels[position.LevelID].RemoveActor(dead); err != nil {

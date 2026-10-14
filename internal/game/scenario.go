@@ -132,6 +132,9 @@ func registerSystems(g *Game) error {
 	if _, err := world.AddSystem(&pickupSystem{positions: stores.Positions, items: stores.Items, carried: stores.CarriedBy, intents: stores.Intents, turn: &g.turn}); err != nil {
 		return err
 	}
+	if _, err := world.AddSystem(&quaffSystem{game: g, turn: &g.turn}); err != nil {
+		return err
+	}
 	if _, err := world.AddSystem(&movementSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
 		return err
 	}

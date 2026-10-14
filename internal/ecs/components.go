@@ -83,10 +83,12 @@ const (
 	IntentUpstairs
 	IntentDownstairs
 	IntentWait
+	IntentQuaff
 )
 
 type Intent struct {
-	Kind IntentKind
-	DX   int
-	DY   int
+	Kind   IntentKind
+	DX     int
+	DY     int
+	ItemID akara.Entity
 }
