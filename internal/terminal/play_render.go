@@ -95,6 +95,12 @@ func drawDungeon(canvas *Canvas, region Region, view game.View) {
 				color = Brown
 			case "item":
 				color = LightGreen
+				if entity.KindID == "CORPSE_BODY" {
+					color = Brown
+				}
+				if entity.KindID == "CORPSE_SKELETON" {
+					color = LightGrey
+				}
 			}
 			canvas.Put(sx, sy, entity.Glyph, color, Black)
 		}

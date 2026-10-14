@@ -76,6 +76,7 @@ func (s *stairSystem) Update(_ *akara.World, _ time.Duration) error {
 		_ = from.PlaceActor(s.turn.Actor, oldX, oldY)
 		return err
 	}
+	s.turn.StairFrom, s.turn.StairTo = from.ID, to.ID
 	s.turn.Events = append(s.turn.Events, Event{Kind: "stairs", Text: "You take the stairs."})
 	return nil
 }

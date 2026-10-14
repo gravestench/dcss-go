@@ -36,7 +36,7 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 		return nil, err
 	}
 	g := &Game{world: world, stores: stores, levels: map[int]*Level{1: first, 2: second}, catalog: catalog, seed: seed,
-		rng: NewRNGStreams(seed), scheduler: TurnScheduler{actors: stores.Actors}}
+		rng: NewRNGStreams(seed), scheduler: TurnScheduler{actors: stores.Actors}, levelAwaySince: make(map[int]Aut)}
 
 	g.player, err = world.CreateEntity()
 	if err != nil {
@@ -142,7 +142,7 @@ func registerSystems(g *Game) error {
 	if _, err := world.AddSystem(&stairSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&pickupSystem{positions: stores.Positions, items: stores.Items, carried: stores.CarriedBy, intents: stores.Intents, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(&pickupSystem{positions: stores.Positions, items: stores.Items, corpses: stores.Corpses, carried: stores.CarriedBy, intents: stores.Intents, turn: &g.turn}); err != nil {
 		return err
 	}
 	if _, err := world.AddSystem(&quaffSystem{game: g, turn: &g.turn}); err != nil {

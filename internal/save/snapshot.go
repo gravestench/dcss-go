@@ -17,9 +17,10 @@ type Snapshot struct {
 }
 
 type LevelRecord struct {
-	ID    int      `json:"id"`
-	Rows  []string `json:"rows"`
-	Known []string `json:"known"`
+	ID           int      `json:"id"`
+	Rows         []string `json:"rows"`
+	Known        []string `json:"known"`
+	AwaySinceAut *int64   `json:"away_since_aut,omitempty"`
 }
 
 type EntityRecord struct {
@@ -37,6 +38,7 @@ type EntityRecord struct {
 	Attributes   *ecs.Attributes       `json:"attributes,omitempty"`
 	AI           *ecs.MonsterAI        `json:"ai,omitempty"`
 	Item         *ecs.Item             `json:"item,omitempty"`
+	Corpse       *ecs.Corpse           `json:"corpse,omitempty"`
 	CarriedBy    *ecs.CarriedBy        `json:"carried_by,omitempty"`
 	Equipped     *ecs.Equipped         `json:"equipped,omitempty"`
 }

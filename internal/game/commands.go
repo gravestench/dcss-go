@@ -47,6 +47,9 @@ type TurnContext struct {
 	Pickup     akara.Entity
 	Consume    akara.Entity
 	PlayerKill akara.Entity
+	Corpse     *pendingCorpse
+	StairFrom  int
+	StairTo    int
 }
 
 func (g *Game) Step(command Command) (StepResult, error) {
@@ -101,8 +104,12 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	case CommandWait:
 		intent = ecs.Intent{Kind: ecs.IntentWait}
 	case CommandPickup:
-		if _, found := g.floorItemAt(*position); !found {
+		item, found := g.floorItemAt(*position)
+		if !found {
 			return g.noTime("There is nothing to pick up here."), nil
+		}
+		if g.stores.Corpses.Has(item) {
+			return g.noTime("You can't pick that up."), nil
 		}
 		intent = ecs.Intent{Kind: ecs.IntentPickup}
 	case CommandQuaff:
@@ -132,9 +139,19 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	if combat, found := g.stores.Combat.Get(g.player); found {
 		combat.ShieldBlocks = 0
 	}
+	startAut := g.currentAut
 	events, err := g.runAction(g.player, intent, cost, "movement")
 	if err != nil {
 		return StepResult{}, err
+	}
+	if g.turn.StairFrom != 0 {
+		g.levelAwaySince[g.turn.StairFrom] = startAut
+		if awayAt, away := g.levelAwaySince[g.turn.StairTo]; away {
+			if err := g.ageCorpsesOnLevel(g.turn.StairTo, int(startAut-awayAt)); err != nil {
+				return StepResult{}, err
+			}
+			delete(g.levelAwaySince, g.turn.StairTo)
+		}
 	}
 	for !g.playerDead() {
 		actor, at, found := g.scheduler.Next()
@@ -153,6 +170,9 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		}
 		events = append(events, Event{Kind: "monster", Text: "The rat acts."})
 		events = append(events, monsterEvents...)
+	}
+	if err := g.ageCorpses(startAut, startAut+cost); err != nil {
+		return StepResult{}, err
 	}
 	if err := g.refreshVisibility(); err != nil {
 		return StepResult{}, err
@@ -185,6 +205,8 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	g.turn.Pickup = 0
 	g.turn.Consume = 0
 	g.turn.PlayerKill = 0
+	g.turn.Corpse = nil
+	g.turn.StairFrom, g.turn.StairTo = 0, 0
 	err := g.world.Update(time.Duration(cost))
 	g.stores.Intents.Remove(actor)
 	if err != nil {
@@ -221,6 +243,11 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	}
 	if err := buffer.Apply(); err != nil {
 		return nil, fmt.Errorf("%s actor %d deaths: %w", phase, actor, err)
+	}
+	if g.turn.Corpse != nil {
+		if err := g.placeCorpse(*g.turn.Corpse); err != nil {
+			return nil, fmt.Errorf("%s actor %d corpse: %w", phase, actor, err)
+		}
 	}
 	if g.stores.Actors.Has(actor) {
 		if err := g.scheduler.ScheduleAfter(actor, cost); err != nil {

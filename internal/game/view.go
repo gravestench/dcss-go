@@ -140,6 +140,11 @@ func (g *Game) View() View {
 			if definition, err := g.catalog.Item(item.KindID); err == nil {
 				glyph = definition.Glyph
 				name = definition.Name
+				if corpse, found := g.stores.Corpses.Get(entity); found {
+					if source, err := g.catalog.Monster(corpse.MonsterID); err == nil {
+						name = source.Name + " " + definition.Name
+					}
+				}
 			}
 		}
 		view.Entities = append(view.Entities, EntityView{ID: uint64(entity), X: location.X, Y: location.Y, Glyph: glyph, KindID: kindID, Name: name, Role: role})

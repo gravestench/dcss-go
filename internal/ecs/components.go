@@ -80,6 +80,13 @@ type Item struct {
 	Ego      string
 }
 
+// Corpse records source freshness and appearance for a floor corpse or skeleton.
+type Corpse struct {
+	MonsterID  string
+	Freshness  int
+	Appearance int
+}
+
 // CarriedBy and Position are mutually exclusive on an item.
 type CarriedBy struct {
 	Holder akara.Entity

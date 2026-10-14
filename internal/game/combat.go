@@ -6,6 +6,7 @@ import (
 
 	"dcrawl-go/internal/combat"
 	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/monster"
 	"github.com/gravestench/akara"
 )
 
@@ -190,6 +191,23 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 			if entity == s.turn.PlayerKill {
 				if err := s.game.awardRatExperience(entity, health.Max); err != nil {
 					return err
+				}
+				definition, err := s.game.catalog.Monster("MONS_RAT")
+				if err != nil {
+					return err
+				}
+				if definition.LeavesCorpse {
+					appearance, dropped, err := monster.RollCorpse(s.game.rng)
+					if err != nil {
+						return err
+					}
+					if dropped {
+						position, found := s.game.stores.Positions.Get(entity)
+						if !found {
+							return fmt.Errorf("killed rat %d has no position", entity)
+						}
+						s.turn.Corpse = &pendingCorpse{Position: *position, Appearance: appearance}
+					}
 				}
 			}
 			s.turn.Deaths = append(s.turn.Deaths, entity)
