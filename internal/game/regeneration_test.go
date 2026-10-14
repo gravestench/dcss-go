@@ -54,7 +54,8 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 		t.Fatal(err)
 	}
 	g.turn.Actor = g.player
-	if err := (&regenerationSystem{game: g, turn: &g.turn}).Update(nil, time.Duration(9)); err != nil {
+	if err := (&regenerationSystem{player: g.player, health: g.stores.Health, magic: g.stores.Magic,
+		regeneration: g.stores.Regeneration, rng: g.rng, turn: &g.turn}).Update(nil, time.Duration(9)); err != nil {
 		t.Fatal(err)
 	}
 	if health.Current != want.HP || magic.Current != want.MP || progress.HPProgress != want.HPProgress || progress.MPProgress != want.MPProgress || !reflect.DeepEqual(g.rng.States(), expectedRNG.States()) {

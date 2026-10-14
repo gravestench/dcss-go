@@ -1,6 +1,6 @@
 # ECS architecture assessment and roadmap
 
-This is the implementation strategy for the ongoing faithful DCSS-to-Go port. It supplements [port-inventory.md](port-inventory.md), which tracks gameplay and content coverage. The current baseline is Go `main` at `ff5b06d` and Akara `v0.1.4`; the C++ reference is pinned at `e60ba3568b0c26447ad36ec5c7b963eb04b2778f`.
+This is the implementation strategy for the ongoing faithful DCSS-to-Go port. It supplements [port-inventory.md](port-inventory.md), which tracks gameplay and content coverage. The Go port works from local `main` and uses Akara `v0.1.4`; the C++ reference is pinned at `e60ba3568b0c26447ad36ec5c7b963eb04b2778f`.
 
 ## Decision
 
@@ -38,6 +38,8 @@ Each numbered phase is a contiguous commit category, with the relevant gameplay 
 5. **Level simulation.** Move corpse aging and other entity timers into systems. Keep per-level clocks, terrain, branch position, and explored grids in level/world owners. Make active-floor scheduling explicit so off-floor entities are not repeatedly given no-op turns. Procedural generation produces a grid first and requests entity placement second.
 6. **Save and read-model cleanup.** Refactor the large restore validator into per-domain validators over an explicit component schema. Save only authoritative components and level/session state; rebuild occupancy and visibility on load. Keep `Game.View` a read-only projection and Bubble Tea a pure client of commands and views.
 7. **Repeat for remaining domains.** For spells, religion, mutations, forms, shops, traps, clouds, allies, and branch mechanics, first identify mutable per-entity state, then add the smallest component and an ordered system for its behavior. Static rules and committed content remain catalog/pure functions; map-wide data remains grids or world state. Track feature fidelity in `port-inventory.md` separately from ECS migration progress.
+
+Phase 1 progress: quaff, duration decay, and regeneration systems now receive only their required Akara stores, player entity, RNG interface, and action context. Combat and death still receive `*Game`; the action barrier is still coordinated in `Game.runAction`.
 
 ## Slice rule and acceptance checks
 

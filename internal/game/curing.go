@@ -10,54 +10,59 @@ import (
 )
 
 type quaffSystem struct {
-	game *Game
-	turn *TurnContext
+	player    akara.Entity
+	intents   *akara.Store[ecs.Intent]
+	items     *akara.Store[ecs.Item]
+	carried   *akara.Store[ecs.CarriedBy]
+	health    *akara.Store[ecs.Health]
+	durations *akara.Store[ecs.Durations]
+	rng       character.Roller
+	turn      *TurnContext
 }
 
 func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
-	g := s.game
-	intent, found := g.stores.Intents.Get(s.turn.Actor)
+	intent, found := s.intents.Get(s.turn.Actor)
 	if !found || intent.Kind != ecs.IntentQuaff {
 		return nil
 	}
-	if s.turn.Actor != g.player || intent.ItemID == 0 {
+	if s.turn.Actor != s.player || intent.ItemID == 0 {
 		return fmt.Errorf("unsupported quaff actor or item")
 	}
-	item, found := g.stores.Items.Get(intent.ItemID)
-	carrier, carried := g.stores.CarriedBy.Get(intent.ItemID)
-	if !found || !carried || carrier.Holder != g.player || item.Quantity <= 0 {
+	item, found := s.items.Get(intent.ItemID)
+	carrier, carried := s.carried.Get(intent.ItemID)
+	if !found || !carried || carrier.Holder != s.player || item.Quantity <= 0 {
 		return fmt.Errorf("potion %d is no longer carried", intent.ItemID)
 	}
 	var message string
 	switch item.KindID {
 	case "POT_CURING":
-		health, found := g.stores.Health.Get(g.player)
+		health, found := s.health.Get(s.player)
 		if !found {
 			return fmt.Errorf("player has no health for curing")
 		}
-		newHP, err := character.CuringHP(g.rng, health.Current, health.Max)
+		newHP, err := character.CuringHP(s.rng, health.Current, health.Max)
 		if err != nil {
 			return err
 		}
 		health.Current = newHP
 		message = "You feel better."
 	case "POT_HEAL_WOUNDS":
-		health, found := g.stores.Health.Get(g.player)
+		health, found := s.health.Get(s.player)
 		if !found || health.Current == health.Max {
 			return fmt.Errorf("player cannot use heal wounds at current health")
 		}
-		newHP, err := character.HealWoundsHP(g.rng, health.Current, health.Max)
+		newHP, err := character.HealWoundsHP(s.rng, health.Current, health.Max)
 		if err != nil {
 			return err
 		}
 		health.Current = newHP
 		message = "You feel much better."
 	case "POT_MIGHT":
-		durations, found := g.stores.Durations.Get(g.player)
+		durations, found := s.durations.Get(s.player)
 		if !found {
 			return fmt.Errorf("player has no duration state for might")
 		}
-		remaining, text, err := character.MightPotionDuration(g.rng, durations.MightAut)
+		remaining, text, err := character.MightPotionDuration(s.rng, durations.MightAut)
 		if err != nil {
 			return err
 		}

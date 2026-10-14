@@ -131,7 +131,8 @@ func registerSystems(g *Game) error {
 	if _, err := world.AddSystem(&pickupSystem{positions: stores.Positions, items: stores.Items, corpses: stores.Corpses, carried: stores.CarriedBy, intents: stores.Intents, turn: &g.turn}); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&quaffSystem{game: g, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(&quaffSystem{player: g.player, intents: stores.Intents, items: stores.Items, carried: stores.CarriedBy,
+		health: stores.Health, durations: stores.Durations, rng: g.rng, turn: &g.turn}); err != nil {
 		return err
 	}
 	if _, err := world.AddSystem(&movementSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
@@ -143,10 +144,11 @@ func registerSystems(g *Game) error {
 	if _, err := world.AddSystem(&deathSystem{game: g, health: stores.Health, player: g.player, turn: &g.turn}); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&durationSystem{game: g, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(&durationSystem{player: g.player, durations: stores.Durations, turn: &g.turn}); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&regenerationSystem{game: g, turn: &g.turn}); err != nil {
+	if _, err := world.AddSystem(&regenerationSystem{player: g.player, health: stores.Health, magic: stores.Magic,
+		regeneration: stores.Regeneration, rng: g.rng, turn: &g.turn}); err != nil {
 		return err
 	}
 	return nil
