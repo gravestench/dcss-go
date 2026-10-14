@@ -46,7 +46,7 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 	for _, entity := range g.stores.AI.Entities() {
 		actor, found := g.stores.Actors.Get(entity)
 
-		if !found || !isOrdinaryAnimal(actor.KindID) {
+		if !found || !isOrdinaryMonster(actor.KindID) {
 			t.Fatalf("unsupported populated actor %+v", actor)
 		}
 
@@ -84,7 +84,7 @@ func TestEarlyDungeonPopulationPoolIncludesPlainBiteKinds(t *testing.T) {
 
 	for _, depth := range []int{1, 2} {
 		pool := catalog.DungeonMonsterPool(depth, func(id string) bool {
-			return !isOrdinaryAnimal(id)
+			return !isOrdinaryMonster(id)
 		})
 
 		seen := make(map[string]bool)

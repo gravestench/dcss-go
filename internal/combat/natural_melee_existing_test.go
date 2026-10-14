@@ -27,8 +27,8 @@ func (s *scriptedRoller) Intn(stream string, bound int) (int, error) {
 	return value, nil
 }
 
-func ratAttack() AnimalBite {
-	return AnimalBite{
+func ratAttack() NaturalAttack {
+	return NaturalAttack{
 		HD:        1,
 		Damage:    3,
 		TypeID:    "AT_BITE",
@@ -61,14 +61,14 @@ func TestPoisonBiteKeepsOrdinaryDamageRolls(t *testing.T) {
 		},
 	}
 
-	attack := AnimalBite{
+	attack := NaturalAttack{
 		HD:        2,
 		Damage:    4,
 		TypeID:    "AT_BITE",
 		FlavourID: "AF_POISON",
 	}
 
-	outcome, err := ResolveAnimalBite(roller, attack, Defense{})
+	outcome, err := ResolveNaturalAttack(roller, attack, Defense{})
 
 	if err != nil ||
 		outcome.Kind != Hit ||
@@ -308,7 +308,7 @@ func TestRatBiteDodgesWithoutShield(t *testing.T) {
 		},
 	}
 
-	got, err := ResolveAnimalBite(rng, ratAttack(), Defense{EV: 10})
+	got, err := ResolveNaturalAttack(rng, ratAttack(), Defense{EV: 10})
 
 	if err != nil ||
 		got.Kind != Dodge ||
@@ -353,7 +353,7 @@ func TestRatBiteAutomaticMissAndHit(t *testing.T) {
 		},
 	}
 
-	got, err := ResolveAnimalBite(miss, ratAttack(), Defense{EV: 10})
+	got, err := ResolveNaturalAttack(miss, ratAttack(), Defense{EV: 10})
 
 	if err != nil ||
 		got.Kind != Miss || len(miss.rolls) != 0 {
@@ -399,7 +399,7 @@ func TestRatBiteAutomaticMissAndHit(t *testing.T) {
 		},
 	}
 
-	got, err = ResolveAnimalBite(hit, ratAttack(), Defense{EV: 10})
+	got, err = ResolveNaturalAttack(hit, ratAttack(), Defense{EV: 10})
 
 	if err != nil ||
 		got.Kind != Hit ||
@@ -449,7 +449,7 @@ func TestRatShieldBlockPrecedesDodge(t *testing.T) {
 		},
 	}
 
-	got, err := ResolveAnimalBite(rng, ratAttack(), Defense{
+	got, err := ResolveNaturalAttack(rng, ratAttack(), Defense{
 		EV:          10,
 		ShieldClass: 9,
 	})
@@ -521,7 +521,7 @@ func TestRatBiteArmourCanAbsorbOrPassDamage(t *testing.T) {
 				},
 			}
 
-			got, err := ResolveAnimalBite(rng, ratAttack(), Defense{
+			got, err := ResolveNaturalAttack(rng, ratAttack(), Defense{
 				EV:  5,
 				AC:  6,
 				GDR: 25,
@@ -562,7 +562,7 @@ func TestQuokkaPlainBiteUsesCataloguedFiveDamage(t *testing.T) {
 		},
 	}
 
-	outcome, err := ResolveAnimalBite(roller, AnimalBite{
+	outcome, err := ResolveNaturalAttack(roller, NaturalAttack{
 		HD:        1,
 		Damage:    5,
 		TypeID:    "AT_BITE",

@@ -57,7 +57,7 @@ func (s monsterCatchupSystem) TickLevel(level *Level, turns int) error {
 		}
 
 		ai, _ := s.ai.Get(entity)
-		definition, err := ordinaryAnimal(s.catalog, actor.KindID)
+		definition, err := ordinaryMonster(s.catalog, actor.KindID)
 
 		if err != nil {
 			return fmt.Errorf("monster %d catch-up: %w", entity, err)

@@ -123,17 +123,17 @@ func validateSavedCorpse(record save.EntityRecord, catalog content.Catalog) erro
 	if record.Position == nil ||
 		record.CarriedBy != nil ||
 		record.Equipped != nil || item.Quantity != 1 {
-		return fmt.Errorf("item %d has invalid ordinary animal corpse state", record.ID)
+		return fmt.Errorf("item %d has invalid ordinary monster corpse state", record.ID)
 	}
 
-	if !isOrdinaryAnimal(corpse.MonsterID) ||
+	if !isOrdinaryMonster(corpse.MonsterID) ||
 		corpse.Freshness < 1 ||
 		corpse.Freshness > 110 ||
 		corpse.Appearance < 1 || corpse.Appearance > 255 {
-		return fmt.Errorf("item %d has invalid ordinary animal corpse state", record.ID)
+		return fmt.Errorf("item %d has invalid ordinary monster corpse state", record.ID)
 	}
 
-	definition, err := ordinaryAnimal(catalog, corpse.MonsterID)
+	definition, err := ordinaryMonster(catalog, corpse.MonsterID)
 
 	if err != nil {
 		return fmt.Errorf("item %d corpse: %w", record.ID, err)
@@ -272,7 +272,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		)
 	}
 
-	scenarioAnimals, err := scenarioAnimalIDs(snapshot.ScenarioID)
+	scenarioMonsters, err := scenarioMonsterIDs(snapshot.ScenarioID)
 
 	if err != nil {
 		return nil, err
@@ -325,7 +325,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 
 	if err := g.validateAndRegisterSavedEntities(
 		snapshot,
-		scenarioAnimals,
+		scenarioMonsters,
 		usesPopulation,
 	); err != nil {
 		return nil, err

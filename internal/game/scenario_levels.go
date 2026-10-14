@@ -30,7 +30,7 @@ func buildScenarioLevels(
 	rng *RNGStreams,
 ) (scenarioLevels, error) {
 	switch scenarioID {
-	case ordinaryAnimalScenarioID, populationScenarioID:
+	case ordinaryMonsterScenarioID, populationScenarioID:
 		return buildFixedScenarioLevels(scenarioID, positions)
 
 	case generatedDungeonScenarioID:

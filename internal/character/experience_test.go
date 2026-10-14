@@ -20,12 +20,45 @@ func TestFixedRatGrantsOneSourceExperience(t *testing.T) {
 	}
 
 	for hp := 1; hp <= 4; hp++ {
-		got, err := OrdinaryAnimalExperience(rat, hp)
+		got, err := OrdinaryNaturalExperience(rat, hp)
 
 		if err != nil ||
 			got != 1 {
 			t.Fatalf("rat with %d HP XP = %d, %v; want 1", hp, got, err)
 		}
+	}
+}
+
+func TestBatPlainHitProfileAndSpeedExperience(t *testing.T) {
+	catalog, err := content.LoadDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bat, err := catalog.Monster("MONS_BAT")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile, found := OrdinaryNaturalProfileFor(bat.ID)
+
+	if !found ||
+		profile.MinHP != 2 ||
+		profile.MaxHP != 5 ||
+		profile.Speed != 30 {
+		t.Fatalf("bat profile = %+v, found %v", profile, found)
+	}
+
+	xp, err := OrdinaryNaturalExperience(bat, 4)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if xp != 2 {
+		t.Fatalf("bat with 4 HP grants %d XP, want 2", xp)
 	}
 }
 
@@ -42,7 +75,7 @@ func TestAdderPoisonBiteUsesActualMaximumHPForExperience(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	profile, found := OrdinaryAnimalProfile(adder.ID)
+	profile, found := OrdinaryNaturalProfileFor(adder.ID)
 
 	if !found ||
 		!profile.Poison ||
@@ -51,14 +84,14 @@ func TestAdderPoisonBiteUsesActualMaximumHPForExperience(t *testing.T) {
 	}
 
 	for hp := profile.MinHP; hp <= profile.MaxHP; hp++ {
-		if _, err := OrdinaryAnimalExperience(adder, hp); err != nil {
+		if _, err := OrdinaryNaturalExperience(adder, hp); err != nil {
 			t.Fatalf("adder with %d maximum HP: %v", hp, err)
 		}
 	}
 
 	adder.Attacks[0].FlavourID = "AF_PLAIN"
 
-	if _, err := OrdinaryAnimalExperience(adder, 11); err == nil {
+	if _, err := OrdinaryNaturalExperience(adder, 11); err == nil {
 		t.Fatal("accepted an adder without its source poison bite")
 	}
 }
@@ -77,7 +110,7 @@ func TestQuokkaOrdinaryExperienceUsesActualMaximumHP(t *testing.T) {
 	}
 
 	for hp := 3; hp <= 8; hp++ {
-		got, err := OrdinaryAnimalExperience(quokka, hp)
+		got, err := OrdinaryNaturalExperience(quokka, hp)
 		want := 2
 
 		if hp == 3 {
@@ -91,7 +124,7 @@ func TestQuokkaOrdinaryExperienceUsesActualMaximumHP(t *testing.T) {
 	}
 
 	for _, hp := range []int{2, 9} {
-		if _, err := OrdinaryAnimalExperience(quokka, hp); err == nil {
+		if _, err := OrdinaryNaturalExperience(quokka, hp); err == nil {
 			t.Fatalf("accepted unsupported quokka max HP %d", hp)
 		}
 	}
@@ -111,7 +144,7 @@ func TestFrilledLizardExperienceUsesSourceOrdinaryBite(t *testing.T) {
 	}
 
 	for hp := 1; hp <= 3; hp++ {
-		got, err := OrdinaryAnimalExperience(lizard, hp)
+		got, err := OrdinaryNaturalExperience(lizard, hp)
 
 		if err != nil ||
 			got != 1 {
@@ -119,7 +152,7 @@ func TestFrilledLizardExperienceUsesSourceOrdinaryBite(t *testing.T) {
 		}
 	}
 
-	if _, err := OrdinaryAnimalExperience(lizard, 4); err == nil {
+	if _, err := OrdinaryNaturalExperience(lizard, 4); err == nil {
 		t.Fatal("accepted impossible frilled-lizard maximum HP")
 	}
 }
@@ -165,7 +198,7 @@ func TestCockroachAndWormPlainBiteExperience(t *testing.T) {
 			tc.atHP,
 			tc.maxHP,
 		} {
-			got, err := OrdinaryAnimalExperience(definition, hp)
+			got, err := OrdinaryNaturalExperience(definition, hp)
 
 			if err != nil {
 				t.Fatalf("%s at %d HP: %v", tc.id, hp, err)
@@ -177,7 +210,7 @@ func TestCockroachAndWormPlainBiteExperience(t *testing.T) {
 		}
 
 		for _, hp := range []int{tc.minHP - 1, tc.maxHP + 1} {
-			if _, err := OrdinaryAnimalExperience(definition, hp); err == nil {
+			if _, err := OrdinaryNaturalExperience(definition, hp); err == nil {
 				t.Fatalf("accepted impossible %s maximum HP %d", tc.id, hp)
 			}
 		}
@@ -198,7 +231,7 @@ func TestJackalPlainBiteExperience(t *testing.T) {
 	}
 
 	for hp := 3; hp <= 8; hp++ {
-		got, err := OrdinaryAnimalExperience(jackal, hp)
+		got, err := OrdinaryNaturalExperience(jackal, hp)
 
 		if err != nil {
 			t.Fatalf("jackal at %d HP: %v", hp, err)
@@ -216,7 +249,7 @@ func TestJackalPlainBiteExperience(t *testing.T) {
 	}
 
 	for _, hp := range []int{2, 9} {
-		if _, err := OrdinaryAnimalExperience(jackal, hp); err == nil {
+		if _, err := OrdinaryNaturalExperience(jackal, hp); err == nil {
 			t.Fatalf("accepted impossible jackal HP %d", hp)
 		}
 	}
@@ -297,7 +330,7 @@ func TestRatExperienceRejectsWrongKindAndHP(t *testing.T) {
 			hp: 4,
 		},
 	} {
-		if _, err := OrdinaryAnimalExperience(tc.rat, tc.hp); err == nil {
+		if _, err := OrdinaryNaturalExperience(tc.rat, tc.hp); err == nil {
 			t.Fatalf("accepted rat %+v with HP %d", tc.rat, tc.hp)
 		}
 	}

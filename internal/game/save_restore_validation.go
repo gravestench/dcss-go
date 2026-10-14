@@ -33,10 +33,10 @@ func newSavedMonsterValidation() savedMonsterValidation {
 // savedEntityValidator owns bookkeeping only for one restore attempt.
 // Each record is checked before its entity ID is registered in Akara.
 type savedEntityValidator struct {
-	game            *Game
-	snapshot        save.Snapshot
-	scenarioAnimals []string
-	usesPopulation  bool
+	game             *Game
+	snapshot         save.Snapshot
+	scenarioMonsters []string
+	usesPopulation   bool
 
 	seen        map[uint64]bool
 	recordsByID map[uint64]save.EntityRecord
@@ -52,14 +52,14 @@ type savedEntityValidator struct {
 
 func (g *Game) validateAndRegisterSavedEntities(
 	snapshot save.Snapshot,
-	scenarioAnimals []string,
+	scenarioMonsters []string,
 	usesPopulation bool,
 ) error {
 	validator := savedEntityValidator{
-		game:            g,
-		snapshot:        snapshot,
-		scenarioAnimals: scenarioAnimals,
-		usesPopulation:  usesPopulation,
+		game:             g,
+		snapshot:         snapshot,
+		scenarioMonsters: scenarioMonsters,
+		usesPopulation:   usesPopulation,
 
 		seen:        make(map[uint64]bool),
 		recordsByID: make(map[uint64]save.EntityRecord),
@@ -131,7 +131,7 @@ func (v *savedEntityValidator) validateRecord(record save.EntityRecord) error {
 func (v *savedEntityValidator) validateItemRole(record save.EntityRecord) error {
 	if record.Item != nil {
 		if record.Corpse != nil &&
-			!slices.Contains(v.scenarioAnimals, record.Corpse.MonsterID) {
+			!slices.Contains(v.scenarioMonsters, record.Corpse.MonsterID) {
 			return fmt.Errorf("fixed Dungeon save has unsupported corpse %s", record.Corpse.MonsterID)
 		}
 
@@ -204,7 +204,7 @@ func (v *savedEntityValidator) validateMonsterRole(record save.EntityRecord) err
 	if err := v.game.validateSavedMonster(
 		record,
 		v.snapshot.CurrentAut,
-		v.scenarioAnimals,
+		v.scenarioMonsters,
 		v.playerAlive,
 	); err != nil {
 		return err
@@ -291,7 +291,7 @@ func (v *savedEntityValidator) validateFinalState() error {
 
 	if err := v.game.validateSavedExperience(
 		v.player.xp,
-		v.scenarioAnimals,
+		v.scenarioMonsters,
 		v.usesPopulation,
 		v.monsters,
 	); err != nil {

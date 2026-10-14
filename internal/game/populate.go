@@ -13,7 +13,7 @@ import (
 // Keeping monsters away from an entry prevents an immediate spawn collision.
 const spawnDistanceFromEntry = 5
 
-func (g *Game) spawnFixtureAnimals() error {
+func (g *Game) spawnFixtureMonsters() error {
 	factory := newOrdinaryMonsterFactory(g)
 
 	if _, err := factory.Spawn("MONS_RAT", 1, 4, 1); err != nil {
@@ -36,6 +36,18 @@ func (g *Game) spawnFixtureAnimals() error {
 // independent, and their states travel with the run's save.
 func (g *Game) populateDungeon(entries map[int]point) error {
 	factory := newOrdinaryMonsterFactory(g)
+	allowedIDs, err := scenarioMonsterIDs(g.scenarioID)
+
+	if err != nil {
+		return err
+	}
+
+	allowed := make(map[string]bool, len(allowedIDs))
+
+	for _, id := range allowedIDs {
+		allowed[id] = true
+	}
+
 	levelIDs := make([]int, 0, len(g.levels))
 
 	for id := range g.levels {
@@ -53,7 +65,7 @@ func (g *Game) populateDungeon(entries map[int]point) error {
 		}
 
 		pool := g.catalog.DungeonMonsterPool(levelID, func(id string) bool {
-			return !isOrdinaryAnimal(id)
+			return !allowed[id]
 		})
 
 		if pool.TotalWeight() == 0 {

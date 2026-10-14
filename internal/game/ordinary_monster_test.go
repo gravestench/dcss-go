@@ -48,7 +48,7 @@ func TestQuokkaScenarioUsesCatalogSpeedHPAndSave(t *testing.T) {
 		t.Fatalf("quokka actor %+v position %+v health %+v definition %+v: %v", actor, position, health, definition, err)
 	}
 
-	if _, err := character.OrdinaryAnimalExperience(definition, health.Max); err != nil {
+	if _, err := character.OrdinaryNaturalExperience(definition, health.Max); err != nil {
 		t.Fatal(err)
 	}
 
@@ -136,7 +136,7 @@ func TestQuokkaMeleeDeathExperienceAndCorpse(t *testing.T) {
 	health.Current = 1
 
 	definition, _ := g.catalog.Monster("MONS_QUOKKA")
-	wantXP, err := character.OrdinaryAnimalExperience(definition, health.Max)
+	wantXP, err := character.OrdinaryNaturalExperience(definition, health.Max)
 
 	if err != nil {
 		t.Fatal(err)

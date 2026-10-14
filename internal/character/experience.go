@@ -7,24 +7,26 @@ import (
 	"dcrawl-go/internal/content"
 )
 
-// OrdinaryBiteProfile is the supported source-backed subset of monsters with
-// one ordinary bite and no spell or equipment behavior.
-type OrdinaryBiteProfile struct {
+// OrdinaryNaturalProfile is the supported source-backed subset of monsters with
+// one natural attack and no spell or equipment behavior.
+type OrdinaryNaturalProfile struct {
 	HitDice      int
 	AverageHP10x int
 	MinHP        int
 	MaxHP        int
 
-	Damage int
-	Speed  int
+	Damage       int
+	Speed        int
+	AttackTypeID string
 
 	XPModifier int
 	FastRegen  bool
 	NoSkeleton bool
 	Poison     bool
+	Batty      bool
 }
 
-var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
+var ordinaryNaturalProfiles = map[string]OrdinaryNaturalProfile{
 	"MONS_RAT": {
 		HitDice:      1,
 		AverageHP10x: 25,
@@ -32,6 +34,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		MaxHP:        4,
 		Damage:       3,
 		Speed:        10,
+		AttackTypeID: "AT_BITE",
 		XPModifier:   1,
 	},
 
@@ -42,6 +45,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		MaxHP:        8,
 		Damage:       5,
 		Speed:        12,
+		AttackTypeID: "AT_BITE",
 		XPModifier:   10,
 	},
 
@@ -52,6 +56,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		MaxHP:        3,
 		Damage:       3,
 		Speed:        10,
+		AttackTypeID: "AT_BITE",
 		XPModifier:   10,
 	},
 
@@ -62,6 +67,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		MaxHP:        7,
 		Damage:       2,
 		Speed:        12,
+		AttackTypeID: "AT_BITE",
 		XPModifier:   10,
 		NoSkeleton:   true,
 	},
@@ -73,6 +79,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		MaxHP:        24,
 		Damage:       12,
 		Speed:        6,
+		AttackTypeID: "AT_BITE",
 		XPModifier:   3,
 		FastRegen:    true,
 		NoSkeleton:   true,
@@ -85,6 +92,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		MaxHP:        8,
 		Damage:       3,
 		Speed:        14,
+		AttackTypeID: "AT_BITE",
 		XPModifier:   10,
 	},
 
@@ -94,29 +102,42 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		MinHP:        7,
 		MaxHP:        15,
 
-		Damage: 4,
-		Speed:  13,
+		Damage:       4,
+		Speed:        13,
+		AttackTypeID: "AT_BITE",
 
 		XPModifier: 10,
 		Poison:     true,
 	},
+
+	"MONS_BAT": {
+		HitDice:      1,
+		AverageHP10x: 35,
+		MinHP:        2,
+		MaxHP:        5,
+		Damage:       1,
+		Speed:        30,
+		AttackTypeID: "AT_HIT",
+		XPModifier:   4,
+		Batty:        true,
+	},
 }
 
-func OrdinaryAnimalProfile(id string) (OrdinaryBiteProfile, bool) {
-	profile, found := ordinaryBiteProfiles[id]
+func OrdinaryNaturalProfileFor(id string) (OrdinaryNaturalProfile, bool) {
+	profile, found := ordinaryNaturalProfiles[id]
 
 	return profile, found
 }
 
-// OrdinaryAnimalExperience evaluates the source's ordinary bite path of
+// OrdinaryNaturalExperience evaluates the source's ordinary melee path of
 // mon-util.cc:2345-2535 against live maximum HP. Difficulty adjustment is
 // zero except for the worm's source fast-regeneration adjustment. These
-// supported animals have no spells, equipment, or large fast melee attack.
-func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error) {
-	profile, found := OrdinaryAnimalProfile(animal.ID)
+// supported monsters have no spells, equipment, or large fast melee attack.
+func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, error) {
+	profile, found := OrdinaryNaturalProfileFor(definition.ID)
 
 	if !found {
-		return 0, fmt.Errorf("unsupported ordinary animal %s", animal.ID)
+		return 0, fmt.Errorf("unsupported ordinary monster %s", definition.ID)
 	}
 
 	flavourID := "AF_PLAIN"
@@ -125,37 +146,38 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 		flavourID = "AF_POISON"
 	}
 
-	if animal.HD != profile.HitDice ||
-		animal.AverageHP10x != profile.AverageHP10x ||
-		animal.Speed != profile.Speed ||
-		animal.XPModifier != profile.XPModifier ||
-		animal.SpellbookID != "MST_NO_SPELLS" ||
-		animal.ItemUseID != "MONUSE_NOTHING" ||
-		animal.Attacks[0] != (content.MonsterAttack{
-			TypeID:    "AT_BITE",
+	if definition.HD != profile.HitDice ||
+		definition.AverageHP10x != profile.AverageHP10x ||
+		definition.Speed != profile.Speed ||
+		definition.XPModifier != profile.XPModifier ||
+		definition.SpellbookID != "MST_NO_SPELLS" ||
+		definition.ItemUseID != "MONUSE_NOTHING" ||
+		definition.Attacks[0] != (content.MonsterAttack{
+			TypeID:    profile.AttackTypeID,
 			FlavourID: flavourID,
 			Damage:    profile.Damage,
 		}) ||
-		slices.Contains(animal.Flags, "M_NO_EXP_GAIN") ||
-		slices.Contains(animal.Flags, "M_FIGHTER") ||
-		slices.Contains(animal.Flags, "M_FAST_REGEN") != profile.FastRegen ||
-		slices.Contains(animal.Flags, "M_NO_SKELETON") != profile.NoSkeleton ||
+		slices.Contains(definition.Flags, "M_NO_EXP_GAIN") ||
+		slices.Contains(definition.Flags, "M_FIGHTER") ||
+		slices.Contains(definition.Flags, "M_FAST_REGEN") != profile.FastRegen ||
+		slices.Contains(definition.Flags, "M_NO_SKELETON") != profile.NoSkeleton ||
+		slices.Contains(definition.Flags, "M_BATTY") != profile.Batty ||
 		maxHP < profile.MinHP || maxHP > profile.MaxHP {
-		return 0, fmt.Errorf("unsupported %s experience inputs at %d HP", animal.ID, maxHP)
+		return 0, fmt.Errorf("unsupported %s experience inputs at %d HP", definition.ID, maxHP)
 	}
 
-	for _, extra := range animal.Attacks[1:] {
+	for _, extra := range definition.Attacks[1:] {
 		if extra.TypeID != "AT_NONE" || extra.Damage != 0 {
-			return 0, fmt.Errorf("unsupported extra %s attack %+v", animal.ID, extra)
+			return 0, fmt.Errorf("unsupported extra %s attack %+v", definition.ID, extra)
 		}
 	}
 
 	return OrdinaryMonsterExperience(OrdinaryMonsterXPInput{
-		HitDice:      animal.HD,
+		HitDice:      definition.HD,
 		MaxHP:        maxHP,
-		Speed:        animal.Speed,
-		Modifier:     animal.XPModifier,
-		AttackDamage: [4]int{animal.Attacks[0].Damage},
+		Speed:        definition.Speed,
+		Modifier:     definition.XPModifier,
+		AttackDamage: [4]int{definition.Attacks[0].Damage},
 		FastRegen:    profile.FastRegen,
 	})
 }

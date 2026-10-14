@@ -12,7 +12,7 @@ func NewScenario(
 	catalog content.Catalog,
 	weaponID, name string,
 ) (_ *Game, err error) {
-	return newScenario(seed, catalog, catalog.Player(), weaponID, name, ordinaryAnimalScenarioID)
+	return newScenario(seed, catalog, catalog.Player(), weaponID, name, ordinaryMonsterScenarioID)
 }
 
 // NewPopulatedScenario keeps the current fixed map while selecting its
@@ -108,10 +108,10 @@ func newScenario(
 		return nil, err
 	}
 
-	if scenarioID != ordinaryAnimalScenarioID {
+	if scenarioID != ordinaryMonsterScenarioID {
 		err = g.populateDungeon(setup.populationEntries)
 	} else {
-		err = g.spawnFixtureAnimals()
+		err = g.spawnFixtureMonsters()
 	}
 
 	if err != nil {

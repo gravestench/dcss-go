@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"slices"
 	"time"
 
 	"dcrawl-go/internal/combat"
@@ -19,6 +20,7 @@ type combatSystem struct {
 	health    *akara.Store[ecs.Health]
 	combat    *akara.Store[ecs.Combatant]
 	poison    *akara.Store[ecs.Poison]
+	ai        *akara.Store[ecs.MonsterAI]
 
 	levels  map[int]*Level
 	catalog content.Catalog
@@ -40,6 +42,7 @@ func newCombatSystem(g *Game) *combatSystem {
 		health:    s.Health,
 		combat:    s.Combat,
 		poison:    s.Poison,
+		ai:        s.AI,
 
 		levels:  g.levels,
 		catalog: g.catalog,
@@ -89,7 +92,7 @@ func (s *combatSystem) Update(_ *akara.World, _ time.Duration) error {
 		return fmt.Errorf("unsupported non-player melee defender %d", target)
 	}
 
-	return s.resolveAnimalMelee(victim)
+	return s.resolveMonsterMelee(victim)
 }
 
 func (s *combatSystem) resolvePlayerMelee(
@@ -98,11 +101,11 @@ func (s *combatSystem) resolvePlayerMelee(
 ) error {
 	actor, found := s.actors.Get(target)
 
-	if !found || !isOrdinaryAnimal(actor.KindID) {
+	if !found || !isOrdinaryMonster(actor.KindID) {
 		return fmt.Errorf("unsupported player melee target %d", target)
 	}
 
-	defender, err := ordinaryAnimal(s.catalog, actor.KindID)
+	defender, err := ordinaryMonster(s.catalog, actor.KindID)
 
 	if err != nil {
 		return err
@@ -230,14 +233,14 @@ func (s *combatSystem) applyPoisonBite(animal content.MonsterDef) error {
 	return nil
 }
 
-func (s *combatSystem) resolveAnimalMelee(victim *ecs.Health) error {
+func (s *combatSystem) resolveMonsterMelee(victim *ecs.Health) error {
 	actor, found := s.actors.Get(s.turn.Actor)
 
-	if !found || !isOrdinaryAnimal(actor.KindID) {
+	if !found || !isOrdinaryMonster(actor.KindID) {
 		return fmt.Errorf("unsupported melee attacker %d", s.turn.Actor)
 	}
 
-	animal, err := ordinaryAnimal(s.catalog, actor.KindID)
+	animal, err := ordinaryMonster(s.catalog, actor.KindID)
 
 	if err != nil {
 		return err
@@ -249,7 +252,7 @@ func (s *combatSystem) resolveAnimalMelee(victim *ecs.Health) error {
 		return err
 	}
 
-	outcome, err := combat.ResolveAnimalBite(s.roller, combat.AnimalBite{
+	outcome, err := combat.ResolveNaturalAttack(s.roller, combat.NaturalAttack{
 		HD:        animal.HD,
 		Damage:    animal.Attacks[0].Damage,
 		TypeID:    animal.Attacks[0].TypeID,
@@ -269,7 +272,7 @@ func (s *combatSystem) resolveAnimalMelee(victim *ecs.Health) error {
 	state.ShieldBlocks = outcome.ShieldBlocks
 	victim.Current = max(0, victim.Current-outcome.Damage)
 
-	if err := s.practiceAnimalAttack(outcome, defense); err != nil {
+	if err := s.practiceMonsterAttack(outcome, defense); err != nil {
 		return err
 	}
 
@@ -286,14 +289,20 @@ func (s *combatSystem) resolveAnimalMelee(victim *ecs.Health) error {
 		message = fmt.Sprintf("You block the %s's attack.", animal.Name)
 
 	case combat.Hit:
+		verb := "bites"
+
+		if animal.Attacks[0].TypeID == "AT_HIT" {
+			verb = "hits"
+		}
+
 		if outcome.Damage == 0 {
-			message = fmt.Sprintf("The %s bites you, but does no damage.", animal.Name)
+			message = fmt.Sprintf("The %s %s you, but does no damage.", animal.Name, verb)
 		} else {
-			message = fmt.Sprintf("The %s bites you for %d damage.", animal.Name, outcome.Damage)
+			message = fmt.Sprintf("The %s %s you for %d damage.", animal.Name, verb, outcome.Damage)
 		}
 
 	default:
-		return fmt.Errorf("unknown animal bite outcome %d", outcome.Kind)
+		return fmt.Errorf("unknown natural attack outcome %d", outcome.Kind)
 	}
 
 	s.turn.Events = append(s.turn.Events, Event{
@@ -305,6 +314,21 @@ func (s *combatSystem) resolveAnimalMelee(victim *ecs.Health) error {
 		if err := s.resolveReflexiveHeadbutt(animal.Name, actor.KindID); err != nil {
 			return err
 		}
+	}
+
+	if slices.Contains(animal.Flags, "M_BATTY") {
+		ai, found := s.ai.Get(s.turn.Actor)
+
+		if !found {
+			return fmt.Errorf("batty monster %d has no AI", s.turn.Actor)
+		}
+
+		ai.Behavior = "wander"
+		ai.TargetX = 0
+		ai.TargetY = 0
+		ai.MemoryUntilAut = 0
+		// DCSS counts the attack action itself toward BATTY_TURNS.
+		ai.BatRetreatActions = max(2, animal.Speed/10) - 1
 	}
 
 	if outcome.Kind == combat.Hit && animal.Attacks[0].FlavourID == "AF_POISON" {

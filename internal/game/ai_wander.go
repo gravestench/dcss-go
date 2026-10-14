@@ -49,7 +49,7 @@ func (s *monsterDecisionSystem) updateWanderTarget(
 }
 
 // chooseWanderTarget follows Crawl's 150 attempts with offsets in [-6, 6].
-// A failed search leaves the animal waiting until its next decision.
+// A failed search leaves the monster waiting until its next decision.
 func (s *monsterDecisionSystem) chooseWanderTarget(
 	actor akara.Entity,
 	ai *ecs.MonsterAI,

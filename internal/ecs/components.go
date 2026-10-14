@@ -117,10 +117,11 @@ type Attributes struct {
 }
 
 type MonsterAI struct {
-	Behavior       string
-	TargetX        int
-	TargetY        int
-	MemoryUntilAut int64
+	Behavior          string
+	TargetX           int
+	TargetY           int
+	MemoryUntilAut    int64
+	BatRetreatActions int
 }
 
 // BandFollower keeps the original leader identity even after that leader

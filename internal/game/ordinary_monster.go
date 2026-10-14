@@ -12,7 +12,7 @@ import (
 
 const legacyAnimalScenarioID = "fixed-dungeon-rat-quokka-v1"
 
-const ordinaryAnimalScenarioID = "fixed-dungeon-rat-quokka-lizard-v2"
+const ordinaryMonsterScenarioID = "fixed-dungeon-rat-quokka-lizard-v2"
 
 const populationScenarioID = "fixed-dungeon-population-v1"
 
@@ -20,13 +20,13 @@ const generatedDungeonScenarioID = "generated-dungeon-basic-v1"
 
 const populationMonstersPerLevel = 2
 
-var supportedOrdinaryAnimals = []string{
+var supportedFixedMonsters = []string{
 	"MONS_RAT",
 	"MONS_QUOKKA",
 	"MONS_FRILLED_LIZARD",
 }
 
-var supportedPopulationAnimals = []string{
+var supportedPopulationMonsters = []string{
 	"MONS_RAT",
 	"MONS_QUOKKA",
 	"MONS_FRILLED_LIZARD",
@@ -36,7 +36,7 @@ var supportedPopulationAnimals = []string{
 	"MONS_ADDER",
 }
 
-func scenarioAnimalIDs(scenarioID string) ([]string, error) {
+func scenarioMonsterIDs(scenarioID string) ([]string, error) {
 	switch scenarioID {
 	case "":
 		return []string{"MONS_RAT"}, nil
@@ -44,31 +44,33 @@ func scenarioAnimalIDs(scenarioID string) ([]string, error) {
 	case legacyAnimalScenarioID:
 		return []string{"MONS_RAT", "MONS_QUOKKA"}, nil
 
-	case ordinaryAnimalScenarioID:
-		return append([]string(nil), supportedOrdinaryAnimals...), nil
+	case ordinaryMonsterScenarioID:
+		return append([]string(nil), supportedFixedMonsters...), nil
 
 	case populationScenarioID:
-		return append([]string(nil), supportedPopulationAnimals...), nil
+		return append([]string(nil), supportedPopulationMonsters...), nil
 
 	case generatedDungeonScenarioID:
-		return append([]string(nil), supportedPopulationAnimals...), nil
+		ids := append([]string(nil), supportedPopulationMonsters...)
+
+		return append(ids, "MONS_BAT"), nil
 
 	default:
 		return nil, fmt.Errorf("unsupported scenario ID %q", scenarioID)
 	}
 }
 
-func isOrdinaryAnimal(id string) bool {
-	_, supported := character.OrdinaryAnimalProfile(id)
+func isOrdinaryMonster(id string) bool {
+	_, supported := character.OrdinaryNaturalProfileFor(id)
 
 	return supported
 }
 
-func ordinaryAnimal(catalog content.Catalog, id string) (content.MonsterDef, error) {
-	profile, supported := character.OrdinaryAnimalProfile(id)
+func ordinaryMonster(catalog content.Catalog, id string) (content.MonsterDef, error) {
+	profile, supported := character.OrdinaryNaturalProfileFor(id)
 
 	if !supported {
-		return content.MonsterDef{}, fmt.Errorf("unsupported ordinary animal %s", id)
+		return content.MonsterDef{}, fmt.Errorf("unsupported ordinary monster %s", id)
 	}
 
 	definition, err := catalog.Monster(id)
@@ -79,10 +81,10 @@ func ordinaryAnimal(catalog content.Catalog, id string) (content.MonsterDef, err
 
 	if definition.AverageHP10x != profile.AverageHP10x ||
 		!definition.LeavesCorpse {
-		return content.MonsterDef{}, fmt.Errorf("unsupported ordinary animal definition %s", id)
+		return content.MonsterDef{}, fmt.Errorf("unsupported ordinary monster definition %s", id)
 	}
 
-	if _, err := character.OrdinaryAnimalExperience(definition, profile.MinHP); err != nil {
+	if _, err := character.OrdinaryNaturalExperience(definition, profile.MinHP); err != nil {
 		return content.MonsterDef{}, err
 	}
 
@@ -114,7 +116,7 @@ func (f ordinaryMonsterFactory) Spawn(
 	id string,
 	levelID, x, y int,
 ) (_ akara.Entity, err error) {
-	definition, err := ordinaryAnimal(f.catalog, id)
+	definition, err := ordinaryMonster(f.catalog, id)
 
 	if err != nil {
 		return 0, err
@@ -136,7 +138,7 @@ func (f ordinaryMonsterFactory) Spawn(
 		return 0, err
 	}
 
-	if _, err := character.OrdinaryAnimalExperience(definition, hp); err != nil {
+	if _, err := character.OrdinaryNaturalExperience(definition, hp); err != nil {
 		return 0, err
 	}
 

@@ -103,7 +103,7 @@ func TestSeededEarlyDungeonBitesSurviveSaveAndAwardXP(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			g, err := NewDungeonGame(1, testCatalog(t), "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER", "Tester")
+			g, err := NewPopulatedScenario(1, testCatalog(t), "WPN_RAPIER", "Tester")
 
 			if err != nil {
 				t.Fatal(err)
@@ -118,7 +118,7 @@ func TestSeededEarlyDungeonBitesSurviveSaveAndAwardXP(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			wantXP, err := character.OrdinaryAnimalExperience(definition, health.Max)
+			wantXP, err := character.OrdinaryNaturalExperience(definition, health.Max)
 
 			if err != nil {
 				t.Fatal(err)

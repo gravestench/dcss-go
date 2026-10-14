@@ -315,7 +315,7 @@ func (g *Game) prepareMoveCommand(
 	if target, occupied := level.ActorAt(x, y); occupied {
 		actor, found := g.stores.Actors.Get(target)
 
-		if !found || !isOrdinaryAnimal(actor.KindID) {
+		if !found || !isOrdinaryMonster(actor.KindID) {
 			return preparedCommand{}, fmt.Errorf("unsupported player melee target %d", target)
 		}
 

@@ -723,7 +723,7 @@ func TestSupportedCombatEventsProduceSkillPractice(t *testing.T) {
 	}
 
 	for i := 0; i < 100; i++ {
-		if err := system.practiceAnimalAttack(
+		if err := system.practiceMonsterAttack(
 			combat.Outcome{Kind: combat.Hit},
 			combat.Defense{
 				BodyEV:      -100,

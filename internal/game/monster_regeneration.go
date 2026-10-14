@@ -12,7 +12,7 @@ import (
 )
 
 // monsterRegenerationSystem runs before a monster chooses its action.
-// The supported HD-1 and HD-2 animals have a one-in-25 natural roll; a worm's
+// The supported HD-1 and HD-2 monsters have a one-in-25 natural roll; a worm's
 // M_FAST_REGEN heals one point without a draw. Source: mon-act.cc:125-160,1724.
 type monsterRegenerationSystem struct {
 	actors  *akara.Store[ecs.Actor]
@@ -53,11 +53,11 @@ func (s *monsterRegenerationSystem) Update(_ *akara.World, _ time.Duration) erro
 		return nil
 	}
 
-	if _, err := ordinaryAnimal(s.catalog, actor.KindID); err != nil {
+	if _, err := ordinaryMonster(s.catalog, actor.KindID); err != nil {
 		return err
 	}
 
-	profile, _ := character.OrdinaryAnimalProfile(actor.KindID)
+	profile, _ := character.OrdinaryNaturalProfileFor(actor.KindID)
 
 	if profile.FastRegen {
 		health.Current++

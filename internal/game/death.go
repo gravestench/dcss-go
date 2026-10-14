@@ -63,14 +63,14 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 				return fmt.Errorf("dead monster %d has no actor", entity)
 			}
 
-			definition, err := ordinaryAnimal(s.catalog, actor.KindID)
+			definition, err := ordinaryMonster(s.catalog, actor.KindID)
 
 			if err != nil {
 				return err
 			}
 
 			if entity == s.turn.PlayerKill {
-				if err := s.awardAnimalExperience(definition, health.Max); err != nil {
+				if err := s.awardMonsterExperience(definition, health.Max); err != nil {
 					return err
 				}
 
@@ -85,7 +85,7 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 						position, found := s.positions.Get(entity)
 
 						if !found {
-							return fmt.Errorf("killed animal %d has no position", entity)
+							return fmt.Errorf("killed monster %d has no position", entity)
 						}
 
 						s.turn.Corpse = &pendingCorpse{
@@ -108,8 +108,8 @@ func (s *deathSystem) Update(_ *akara.World, _ time.Duration) error {
 	return nil
 }
 
-func (s *deathSystem) awardAnimalExperience(definition content.MonsterDef, maxHP int) error {
-	amount, err := character.OrdinaryAnimalExperience(definition, maxHP)
+func (s *deathSystem) awardMonsterExperience(definition content.MonsterDef, maxHP int) error {
+	amount, err := character.OrdinaryNaturalExperience(definition, maxHP)
 
 	if err != nil {
 		return err

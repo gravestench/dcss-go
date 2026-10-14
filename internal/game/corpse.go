@@ -34,7 +34,7 @@ func (g *Game) placeCorpse(drop pendingCorpse) error {
 		return err
 	}
 
-	if _, err := ordinaryAnimal(g.catalog, drop.MonsterID); err != nil {
+	if _, err := ordinaryMonster(g.catalog, drop.MonsterID); err != nil {
 		return err
 	}
 
@@ -94,7 +94,7 @@ func (s corpseAgingSystem) TickLevel(levelID, elapsed int) error {
 			continue
 		}
 
-		definition, err := ordinaryAnimal(s.catalog, corpse.MonsterID)
+		definition, err := ordinaryMonster(s.catalog, corpse.MonsterID)
 
 		if err != nil {
 			return fmt.Errorf("corpse %d: %w", entity, err)

@@ -113,7 +113,7 @@ func (g *Game) validateSavedPlayer(
 func (g *Game) validateSavedMonster(
 	record save.EntityRecord,
 	currentAut int64,
-	scenarioAnimals []string,
+	scenarioMonsters []string,
 	playerAlive bool,
 ) error {
 	if record.Actor == nil ||
@@ -144,25 +144,25 @@ func (g *Game) validateSavedMonster(
 		return err
 	}
 
-	if !slices.Contains(scenarioAnimals, record.Actor.KindID) {
+	if !slices.Contains(scenarioMonsters, record.Actor.KindID) {
 		return fmt.Errorf(
 			"unsupported melee attacker %s in fixed Dungeon scenario",
 			record.Actor.KindID,
 		)
 	}
 
-	if _, err := character.OrdinaryAnimalExperience(
+	if _, err := character.OrdinaryNaturalExperience(
 		definition, record.Health.Max,
 	); err != nil {
 		return fmt.Errorf(
-			"impossible fixed animal maximum HP %d: %w",
+			"impossible fixed monster maximum HP %d: %w",
 			record.Health.Max, err,
 		)
 	}
 
 	if record.Actor.Speed != definition.Speed {
 		return fmt.Errorf(
-			"fixed animal %s has wrong speed %d",
+			"fixed monster %s has wrong speed %d",
 			record.Actor.KindID, record.Actor.Speed,
 		)
 	}
@@ -175,6 +175,19 @@ func (g *Game) validateSavedMonsterAI(
 	currentAut int64,
 ) error {
 	ai := record.AI
+	definition, err := g.catalog.Monster(record.Actor.KindID)
+
+	if err != nil {
+		return err
+	}
+
+	if ai.BatRetreatActions < 0 ||
+		ai.BatRetreatActions > max(2, definition.Speed/10)-1 ||
+		ai.BatRetreatActions > 0 &&
+			(!slices.Contains(definition.Flags, "M_BATTY") ||
+				ai.Behavior != "wander") {
+		return fmt.Errorf("monster %d has invalid bat retreat state", record.ID)
+	}
 
 	switch ai.Behavior {
 	case "chase":
@@ -216,13 +229,13 @@ func (g *Game) validateSavedMonsterAI(
 
 func (g *Game) validateSavedExperience(
 	savedXP int,
-	scenarioAnimals []string,
+	scenarioMonsters []string,
 	usesPopulation bool,
 	monsters savedMonsterValidation,
 ) error {
 	maxEarnedXP := 0
 
-	for _, id := range scenarioAnimals {
+	for _, id := range scenarioMonsters {
 		if !usesPopulation && monsters.liveByKind[id] {
 			continue
 		}
@@ -233,8 +246,8 @@ func (g *Game) validateSavedExperience(
 			return err
 		}
 
-		profile, _ := character.OrdinaryAnimalProfile(id)
-		amount, err := character.OrdinaryAnimalExperience(
+		profile, _ := character.OrdinaryNaturalProfileFor(id)
+		amount, err := character.OrdinaryNaturalExperience(
 			definition, profile.MaxHP,
 		)
 

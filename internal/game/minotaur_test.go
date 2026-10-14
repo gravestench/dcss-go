@@ -101,7 +101,7 @@ func TestMinotaurReflexiveMissAndSaveRestore(t *testing.T) {
 
 	before := playerHealth.Current
 
-	if err := system.resolveAnimalMelee(playerHealth); err != nil {
+	if err := system.resolveMonsterMelee(playerHealth); err != nil {
 		t.Fatal(err)
 	}
 

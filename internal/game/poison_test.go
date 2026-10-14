@@ -12,7 +12,7 @@ import (
 
 func TestAdderPoisonBiteAddsPlayerOwnedStatus(t *testing.T) {
 	g := newStepGame(t)
-	adder, err := ordinaryAnimal(g.catalog, "MONS_ADDER")
+	adder, err := ordinaryMonster(g.catalog, "MONS_ADDER")
 
 	if err != nil {
 		t.Fatal(err)
@@ -210,7 +210,7 @@ func TestCuringClearsPoisonAtFullHealth(t *testing.T) {
 
 func TestAdderJoinsDungeonPopulationAndDeathRules(t *testing.T) {
 	g := newStepGame(t)
-	ids, err := scenarioAnimalIDs(generatedDungeonScenarioID)
+	ids, err := scenarioMonsterIDs(generatedDungeonScenarioID)
 
 	if err != nil ||
 		!slices.Contains(ids, "MONS_ADDER") {
@@ -218,7 +218,7 @@ func TestAdderJoinsDungeonPopulationAndDeathRules(t *testing.T) {
 	}
 
 	pool := g.catalog.DungeonMonsterPool(2, func(id string) bool {
-		return !isOrdinaryAnimal(id)
+		return !isOrdinaryMonster(id)
 	})
 
 	foundAdder := false
@@ -263,7 +263,7 @@ func TestAdderJoinsDungeonPopulationAndDeathRules(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	wantXP, err := character.OrdinaryAnimalExperience(adder, before)
+	wantXP, err := character.OrdinaryNaturalExperience(adder, before)
 
 	if err != nil {
 		t.Fatal(err)

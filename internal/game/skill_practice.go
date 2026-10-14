@@ -80,7 +80,7 @@ func (s *combatSystem) practicePlayerHit(
 	return nil
 }
 
-func (s *combatSystem) practiceAnimalAttack(
+func (s *combatSystem) practiceMonsterAttack(
 	outcome combat.Outcome,
 	defense combat.Defense,
 ) error {

@@ -100,8 +100,20 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 
 	playerVisible := visible[player.Y*level.width+player.X]
 
-	if err := s.updateMonsterTarget(ai, *position, *player, playerVisible); err != nil {
-		return ecs.Intent{}, err
+	retreating := ai.BatRetreatActions > 0
+
+	if retreating {
+		ai.BatRetreatActions--
+		// Batty monsters choose a new wander target on every retreat action.
+		ai.Behavior = "wander"
+		ai.TargetX = 0
+		ai.TargetY = 0
+	}
+
+	if !retreating {
+		if err := s.updateMonsterTarget(ai, *position, *player, playerVisible); err != nil {
+			return ecs.Intent{}, err
+		}
 	}
 
 	if ai.Behavior == "wander" {
@@ -114,7 +126,20 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 		}
 	}
 
-	return s.followMonsterTarget(actor, *ai, level, *position, *player, visible), nil
+	intent := s.followMonsterTarget(actor, *ai, level, *position, *player, visible)
+
+	if retreating && ai.BatRetreatActions == 0 {
+		// Source mon-act.cc resumes seeking after the second later wander.
+		ai.Behavior = "seek"
+		ai.TargetX = player.X
+		ai.TargetY = player.Y
+	}
+
+	if retreating && intent.Kind == ecs.IntentMelee {
+		return ecs.Intent{Kind: ecs.IntentWait}, nil
+	}
+
+	return intent, nil
 }
 
 func (s *monsterDecisionSystem) updateMonsterTarget(
