@@ -28,7 +28,7 @@ func TestBumpAttacksInsteadOfMoving(t *testing.T) {
 	}
 	playerPos, _ := g.stores.Positions.Get(g.player)
 	ratPos, ratAlive := g.stores.Positions.Get(rat)
-	if playerPos.X != 3 || (ratAlive && ratPos.X != 4) || result.Spent != 10 {
+	if playerPos.X != 3 || (ratAlive && ratPos.X != 4) || result.Spent < 11 || result.Spent > 12 {
 		t.Fatalf("bump moved entities: player %+v rat %+v spent %d", playerPos, ratPos, result.Spent)
 	}
 	foundCombat := false

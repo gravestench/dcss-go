@@ -69,13 +69,17 @@ func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 	if leftErr != nil || rightErr != nil || !reflect.DeepEqual(left, right) || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("post-load bump differs: %+v/%v vs %+v/%v", left, leftErr, right, rightErr)
 	}
-	if left.Spent != 10 || left.View.CurrentAut != 10 {
+	if (left.Spent != 11 && left.Spent != 12) || left.View.CurrentAut != left.Spent {
 		t.Fatalf("bump cost = %d at aut %d", left.Spent, left.View.CurrentAut)
 	}
 }
 
 func TestPlayerLethalBumpClearsRatOccupancy(t *testing.T) {
-	g := newStepGame(t)
+	g, err := NewScenario(7, testCatalog(t), "WPN_RAPIER", "Tester")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer g.Close()
 	rat := ratID(t, g)
 	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
 		t.Fatal(err)
@@ -86,7 +90,7 @@ func TestPlayerLethalBumpClearsRatOccupancy(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if result.Spent != 10 || g.world.EntityExists(rat) {
+	if (result.Spent != 11 && result.Spent != 12) || g.world.EntityExists(rat) {
 		t.Fatalf("lethal bump spent %d aut, rat still exists %v; events %+v", result.Spent, g.world.EntityExists(rat), result.Events)
 	}
 	if _, occupied := g.levels[1].ActorAt(4, 1); occupied {

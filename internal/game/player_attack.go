@@ -83,3 +83,72 @@ func (g *Game) playerAttackInput() (combat.PlayerAttackInput, error) {
 	}
 	return in, nil
 }
+
+// playerAttackDelayInput reads the same live weapon and stored skill points
+// used by accuracy and damage, plus the currently equipped shield.
+func (g *Game) playerAttackDelayInput() (combat.AttackDelayInput, error) {
+	attack, err := g.playerAttackInput()
+	if err != nil {
+		return combat.AttackDelayInput{}, err
+	}
+	if _, err := g.fighterDefense(); err != nil {
+		return combat.AttackDelayInput{}, err
+	}
+	in := combat.AttackDelayInput{Unarmed: attack.Unarmed, WeaponSkillID: attack.WeaponSkillID}
+	skills, _ := g.stores.Skills.Get(g.player)
+	weaponSkillFound, shieldSkillFound := false, false
+	for _, skill := range skills.Entries {
+		if skill.ID == in.WeaponSkillID {
+			in.WeaponSkill10 = character.ScaledSkill(skill, 10)
+			weaponSkillFound = true
+		}
+		if skill.ID == "SK_SHIELDS" {
+			in.ShieldsSkill10 = character.ScaledSkill(skill, 10)
+			shieldSkillFound = true
+		}
+	}
+	if !weaponSkillFound || !shieldSkillFound {
+		return combat.AttackDelayInput{}, fmt.Errorf("player attack timing lacks weapon or Shields skill")
+	}
+	shieldFound := false
+	for _, entity := range g.stores.Equipped.Entities() {
+		equipped, _ := g.stores.Equipped.Get(entity)
+		carrier, carried := g.stores.CarriedBy.Get(entity)
+		if !carried || carrier.Holder != g.player {
+			continue
+		}
+		if equipped.Slot != "weapon" && equipped.Slot != "shield" {
+			continue
+		}
+		item, found := g.stores.Items.Get(entity)
+		if !found {
+			return combat.AttackDelayInput{}, fmt.Errorf("equipped item %d is missing", entity)
+		}
+		kind, err := g.catalog.Item(item.KindID)
+		if err != nil {
+			return combat.AttackDelayInput{}, err
+		}
+		if equipped.Slot == "weapon" {
+			if kind.Weapon == nil || in.Unarmed {
+				return combat.AttackDelayInput{}, fmt.Errorf("unsupported equipped attack weapon %s", kind.ID)
+			}
+			in.WeaponSpeed = kind.Weapon.Speed
+		} else {
+			if shieldFound || kind.Armour == nil || kind.Slot != "shield" {
+				return combat.AttackDelayInput{}, fmt.Errorf("unsupported equipped shield %s", kind.ID)
+			}
+			if err := validateItemProperties(*item, kind); err != nil {
+				return combat.AttackDelayInput{}, fmt.Errorf("equipped shield %d has %w", entity, err)
+			}
+			in.ShieldEV = kind.Armour.EV
+			shieldFound = true
+		}
+	}
+	if !shieldFound {
+		return combat.AttackDelayInput{}, fmt.Errorf("player attack timing lacks equipped shield")
+	}
+	if err := in.Validate(); err != nil {
+		return combat.AttackDelayInput{}, err
+	}
+	return in, nil
+}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"dcrawl-go/internal/combat"
 	"dcrawl-go/internal/ecs"
 	"github.com/gravestench/akara"
 )
@@ -54,7 +55,8 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	}
 	level := g.levels[position.LevelID]
 	var intent ecs.Intent
-	const cost Aut = 10
+	const monsterCost Aut = 10
+	cost := monsterCost
 	switch command.Kind {
 	case CommandInspect:
 		return StepResult{View: g.View()}, nil
@@ -71,9 +73,15 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			if !found || actor.KindID != "MONS_RAT" {
 				return StepResult{}, fmt.Errorf("unsupported player melee target %d", target)
 			}
-			if _, err := g.playerAttackInput(); err != nil {
+			input, err := g.playerAttackDelayInput()
+			if err != nil {
 				return StepResult{}, err
 			}
+			delay, err := combat.PlayerAttackDelay(g.rng, input)
+			if err != nil {
+				return StepResult{}, err
+			}
+			cost = Aut(delay)
 		}
 		intent = ecs.Intent{Kind: ecs.IntentMove, DX: command.DX, DY: command.DY}
 	case CommandUpstairs:
@@ -114,7 +122,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		if err != nil {
 			return StepResult{}, err
 		}
-		monsterEvents, err := g.runAction(actor, intent, cost, "monster")
+		monsterEvents, err := g.runAction(actor, intent, monsterCost, "monster")
 		if err != nil {
 			return StepResult{}, err
 		}

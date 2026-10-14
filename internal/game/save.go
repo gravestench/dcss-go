@@ -323,8 +323,8 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	if _, err := g.fighterDefense(); err != nil {
 		return nil, fmt.Errorf("unsupported saved player defense: %w", err)
 	}
-	if _, err := g.playerAttackInput(); err != nil {
-		return nil, fmt.Errorf("unsupported saved player attack: %w", err)
+	if _, err := g.playerAttackDelayInput(); err != nil {
+		return nil, fmt.Errorf("unsupported saved player attack timing: %w", err)
 	}
 	if err := registerSystems(g); err != nil {
 		return nil, err
