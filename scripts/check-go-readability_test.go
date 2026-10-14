@@ -21,6 +21,7 @@ type Key struct {
 	SubtypeID string
 }
 
+
 func sample() {
 	_ = map[Key]int{
 		{
@@ -63,6 +64,76 @@ func sample() {
 }
 `,
 			want: 1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "sample.go")
+
+			if err := os.WriteFile(path, []byte(test.source), 0600); err != nil {
+				t.Fatal(err)
+			}
+
+			got, err := checkFile(path)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if got != test.want {
+				t.Fatalf("issues = %d, want %d", got, test.want)
+			}
+		})
+	}
+}
+
+func TestStructCollectionValueSpacing(t *testing.T) {
+	tests := []struct {
+		name   string
+		source string
+		want   int
+	}{
+		{
+			name: "positional struct in slice",
+			source: `package example
+
+type Point struct {
+	X int
+	Y int
+}
+
+func sample() {
+	_ = []Point{
+		{1, 2},
+	}
+}
+`,
+			want: 1,
+		},
+		{
+			name: "anonymous struct in array",
+			source: `package example
+
+func sample() {
+	_ = [...]struct{ X, Y int }{
+		{1, 2},
+	}
+}
+`,
+			want: 2,
+		},
+		{
+			name: "fixed array pair stays compact",
+			source: `package example
+
+func sample() {
+	_ = [][2]int{
+		{1, 2},
+	}
+}
+`,
+			want: 0,
 		},
 	}
 

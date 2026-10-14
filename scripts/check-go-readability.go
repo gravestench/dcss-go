@@ -279,6 +279,14 @@ func checkFile(path string) (int, error) {
 			checkStatements(value.Body)
 
 		case *ast.CompositeLit:
+			checkCollectionStructValues(
+				fset,
+				value,
+				types,
+				importedTypes,
+				report,
+			)
+
 			keyIsStruct := false
 
 			switch literalType := value.Type.(type) {
@@ -346,6 +354,44 @@ func checkFile(path string) (int, error) {
 	}
 
 	return issues, nil
+}
+
+func checkCollectionStructValues(
+	fset *token.FileSet,
+	literal *ast.CompositeLit,
+	local localTypes,
+	imports map[string]localTypes,
+	report func(token.Pos, string),
+) {
+	var elementType ast.Expr
+
+	switch collection := literal.Type.(type) {
+	case *ast.ArrayType:
+		elementType = collection.Elt
+
+	case *ast.MapType:
+		elementType = collection.Value
+	}
+
+	if !isStructLiteralType(elementType, local, imports) {
+		return
+	}
+
+	for _, element := range literal.Elts {
+		if entry, keyed := element.(*ast.KeyValueExpr); keyed {
+			element = entry.Value
+		}
+
+		value, composite := element.(*ast.CompositeLit)
+
+		if !composite || value.Type != nil || len(value.Elts) < 2 {
+			continue
+		}
+
+		if entriesShareLine(fset, value) {
+			report(value.Lbrace, "put positional struct fields on separate lines")
+		}
+	}
 }
 
 func sameLine(fset *token.FileSet, left, right token.Pos) bool {
