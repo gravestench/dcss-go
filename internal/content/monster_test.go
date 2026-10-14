@@ -194,6 +194,7 @@ func TestMonsterCatalogCopiesAndStatuses(t *testing.T) {
 	first.Flags[0] = "M_CANT_SPAWN"
 	first.Holiness[0] = "MH_UNDEAD"
 	first.Resistances[0].Level = 3
+
 	ids := c.MonsterIDs()
 
 	if !reflect.DeepEqual(ids, []string{
@@ -205,6 +206,7 @@ func TestMonsterCatalogCopiesAndStatuses(t *testing.T) {
 	}
 
 	ids[0] = "changed"
+
 	again, err := c.Monster("MONS_RAT")
 
 	if err != nil ||

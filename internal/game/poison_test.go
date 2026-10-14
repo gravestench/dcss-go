@@ -67,6 +67,7 @@ func TestAdderZeroDamageBiteStillPoisonsPlayer(t *testing.T) {
 	}
 
 	g.turn.Actor = adder
+
 	rolls := []combatRoll{
 		{
 			bound: 22,
@@ -127,6 +128,7 @@ func TestAdderZeroDamageBiteStillPoisonsPlayer(t *testing.T) {
 	system := newCombatSystem(g)
 
 	system.roller = &combatRoller{rolls: rolls}
+
 	health, _ := g.stores.Health.Get(g.player)
 	before := health.Current
 

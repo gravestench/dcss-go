@@ -137,6 +137,7 @@ func TestPlayerLethalBumpClearsRatOccupancy(t *testing.T) {
 	health, _ := g.stores.Health.Get(rat)
 
 	health.Current = 1
+
 	result, err := g.Step(Command{
 		Kind: CommandMove,
 		DX:   1,

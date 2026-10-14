@@ -309,6 +309,7 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 
 	known[3] = '.'
 	snapshot.Levels[0].Known[3] = string(known)
+
 	restored, err := game.Restore(snapshot, catalog)
 
 	if err != nil {

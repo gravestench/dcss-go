@@ -96,6 +96,7 @@ func TestMightRepeatQuaffCapsAtEightyTurns(t *testing.T) {
 	status, _ := g.stores.Durations.Get(g.player)
 
 	status.MightAut = 790
+
 	result, err := g.Step(Command{
 		Kind:   CommandQuaff,
 		ItemID: id,
@@ -119,6 +120,7 @@ func TestMightDecaysByVariableMeleeActionCost(t *testing.T) {
 	status, _ := g.stores.Durations.Get(g.player)
 
 	status.MightAut = 20
+
 	attack, err := newPlayerCombat(g).attackInput("MONS_RAT")
 
 	if err != nil ||

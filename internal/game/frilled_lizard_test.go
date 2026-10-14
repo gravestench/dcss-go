@@ -197,6 +197,7 @@ func TestPreviousTwoAnimalScenarioSaveStillLoads(t *testing.T) {
 	}
 
 	previous.RNG = previousRNG.States()
+
 	loaded, err := Restore(previous, testCatalog(t))
 
 	if err != nil {

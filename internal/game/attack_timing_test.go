@@ -135,6 +135,7 @@ func TestShortUnarmedBumpLeavesRatBelowActionThreshold(t *testing.T) {
 
 	health.Current = 100
 	health.Max = 100
+
 	result, err := g.Step(Command{
 		Kind: CommandMove,
 		DX:   1,
@@ -195,6 +196,7 @@ func TestAttackDelaySaveContinuation(t *testing.T) {
 	health, _ := g.stores.Health.Get(rat)
 
 	health.Current = health.Max
+
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))
 
 	if err != nil {

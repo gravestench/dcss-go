@@ -19,6 +19,7 @@ func TestHumanAdvancementScalesVitalsAndWaitsForStatChoice(t *testing.T) {
 
 	health.Current = 9
 	regeneration.HPProgress = 50
+
 	oldMaxHP := health.Max
 	startStrength := attributes.Strength
 

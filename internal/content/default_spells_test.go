@@ -40,6 +40,7 @@ func TestCommittedSpellCatalogCoverageAndCopies(t *testing.T) {
 	}
 
 	magic.Schools[0] = "changed"
+
 	again, _ := catalog.Spell("SPELL_MAGIC_DART")
 
 	if again.Schools[0] != "conjuration" {

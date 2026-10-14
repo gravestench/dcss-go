@@ -102,6 +102,7 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 	m.jobID = "JOB_FIGHTER"
 
 	m.focus = 9 // Human, restricted for Fighter.
+
 	c := m.renderCanvas()
 	x, y, offset := 0, 0, 0
 
@@ -124,6 +125,7 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 	m.jobID = ""
 
 	m.speciesID = "SP_BARACHI"
+
 	ids := flattenGroups(m.presentation.JobGroups)
 
 	for i, id := range ids {
@@ -231,6 +233,7 @@ func TestDeathPageExplainsUnportedRecords(t *testing.T) {
 	m := playingModel(t)
 
 	m.screen = ScreenDeath
+
 	page := strings.ToLower(plainApp(m))
 
 	if !strings.Contains(page, "morgue") ||

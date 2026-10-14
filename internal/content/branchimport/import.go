@@ -38,6 +38,7 @@ func Generate(sourceDir string) ([]byte, error) {
 		}
 
 		sources[name] = body
+
 		hash := sha256.Sum256(body)
 		files = append(files, content.JobSourceFile{
 			Path:   "crawl-ref/source/" + name,

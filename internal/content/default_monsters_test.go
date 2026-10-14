@@ -51,6 +51,7 @@ func TestLoadDefaultMonstersAndSourceFields(t *testing.T) {
 	}
 
 	rat.Flags[0] = "changed"
+
 	again, _ := c.Monster("MONS_RAT")
 
 	if again.Flags[0] != "M_WARM_BLOOD" {

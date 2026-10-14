@@ -304,6 +304,7 @@ func parseLegacyRecords(path, source string) ([]content.SpeciesDef, error) {
 		}
 
 		seen[id] = true
+
 		record, err := parseLegacySpecies(path, id, source[match[4]:match[5]])
 
 		if err != nil {

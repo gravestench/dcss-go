@@ -221,6 +221,7 @@ func TestItemImportPair(t *testing.T) {
 	missing := artifact
 
 	missing.Items = missing.Items[:1]
+
 	encoded, err := json.Marshal(missing.Items)
 
 	if err != nil {

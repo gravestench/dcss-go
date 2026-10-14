@@ -134,6 +134,7 @@ func TestMonsterEnergySurvivesSaveAndNextTurn(t *testing.T) {
 	energy, _ := g.stores.MonsterEnergy.Get(rat)
 
 	energy.Points = 75
+
 	snapshot := g.Snapshot()
 	restored, err := Restore(snapshot, testCatalog(t))
 
@@ -212,6 +213,7 @@ func TestRestoreAllowsReadyEnergyAfterPlayerDeath(t *testing.T) {
 	// The player can die before the queued monsters spend their action energy.
 	playerHealth.Current = 0
 	ratEnergy.Points = monster.ActionEnergyThreshold
+
 	snapshot := g.Snapshot()
 	restored, err := Restore(snapshot, testCatalog(t))
 

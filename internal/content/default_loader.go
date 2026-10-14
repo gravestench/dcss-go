@@ -53,6 +53,7 @@ func (l *defaultCatalogLoader) loadSpecies(speciesData []byte) error {
 	catalog := &l.catalog
 
 	catalog.species = make(map[string]SpeciesDef, len(artifact.Species))
+
 	previous := ""
 
 	for _, species := range artifact.Species {
@@ -265,6 +266,7 @@ func (l *defaultCatalogLoader) installGear(entries []JobStartingGear) error {
 	}
 
 	catalog.startingGear = make(map[string][]StartingGrant, len(entries))
+
 	previous := ""
 
 	for _, entry := range entries {
@@ -390,6 +392,7 @@ func (l *defaultCatalogLoader) installMonsters(
 	monsterPaths map[string]string,
 ) error {
 	l.catalog.monsters = make(map[string]MonsterDef, len(entries))
+
 	counts := map[MonsterStatus]int{}
 
 	for _, monster := range entries {

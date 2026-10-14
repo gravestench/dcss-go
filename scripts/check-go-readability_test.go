@@ -73,6 +73,22 @@ func sample(values []int) {
 		},
 
 		{
+			name: "compound mutation",
+			source: `package example
+
+type State struct {
+	Value int
+}
+
+func sample(state *State) {
+	increment := 2
+	state.Value += increment
+}
+			`,
+			want: 1,
+		},
+
+		{
 			name: "pointer mutation",
 			source: `package example
 
@@ -101,6 +117,97 @@ func sample(target *int) {
 
 			if got != test.want {
 				t.Fatalf("issues = %d, want %d", got, test.want)
+			}
+		})
+	}
+}
+
+func TestMutationCalculationSpacing(t *testing.T) {
+	source := `package example
+
+type State struct {
+	Value int
+}
+
+func sample(state *State) int {
+	state.Value += 2
+	next := state.Value + 1
+
+	return next
+}
+`
+
+	path := filepath.Join(t.TempDir(), "sample.go")
+
+	if err := os.WriteFile(path, []byte(source), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	got, err := checkFile(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if got != 1 {
+		t.Fatalf("issues = %d, want 1", got)
+	}
+}
+
+func TestMutationCalculationSpacingAccepted(t *testing.T) {
+	tests := []struct {
+		name   string
+		source string
+	}{
+		{
+			name: "separated state mutation",
+			source: `package example
+
+type State struct {
+	Value int
+}
+
+func sample(state *State) int {
+	state.Value = 2
+
+	next := state.Value + 1
+
+	return next
+}
+			`,
+		},
+
+		{
+			name: "local variable assignment",
+			source: `package example
+
+func sample() int {
+	value := 1
+	value = 2
+	next := value + 1
+
+	return next
+}
+			`,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "sample.go")
+
+			if err := os.WriteFile(path, []byte(test.source), 0600); err != nil {
+				t.Fatal(err)
+			}
+
+			got, err := checkFile(path)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if got != 0 {
+				t.Fatalf("issues = %d, want 0", got)
 			}
 		})
 	}

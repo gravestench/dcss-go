@@ -18,6 +18,7 @@ func TestPlayerRatKillAwardsOneExperienceOnlyOnce(t *testing.T) {
 	current, _ := g.stores.Health.Get(rat)
 
 	current.Current = 1
+
 	playerHealth, _ := g.stores.Health.Get(g.player)
 
 	playerHealth.Current = 100
@@ -84,6 +85,7 @@ func TestExperienceSaveRoundTripAndOlderFieldDefault(t *testing.T) {
 	progress, _ := g.stores.Progression.Get(g.player)
 
 	progress.TotalXP = 1
+
 	training, _ := g.stores.SkillTraining.Get(g.player)
 
 	training.AvailableXP = 10

@@ -53,6 +53,7 @@ func TestJobCatalogCopiesAndSorts(t *testing.T) {
 	}
 
 	ids[0] = "changed"
+
 	returned, err := catalog.Job("JOB_Z")
 
 	if err != nil {
@@ -64,6 +65,7 @@ func TestJobCatalogCopiesAndSorts(t *testing.T) {
 	returned.Equipment[0] = "changed"
 
 	returned.Skills[0].Level = 27
+
 	again, err := catalog.Job("JOB_Z")
 
 	if err != nil {

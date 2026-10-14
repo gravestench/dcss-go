@@ -48,6 +48,7 @@ func TestCommittedBranchCatalogCoverageAndCopies(t *testing.T) {
 
 	swamp.Runes[0] = "RUNE_BOGUS"
 	swamp.Flags[0] = "bogus"
+
 	again, _ := catalog.Branch("BRANCH_SWAMP")
 
 	if again.Runes[0] != "RUNE_SWAMP" || again.Flags[0] == "bogus" {

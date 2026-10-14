@@ -129,6 +129,7 @@ func (g *Game) applyPickup(actor, itemID akara.Entity, buffer *akara.CommandBuff
 
 	if carriedID, found := g.compatibleCarriedStack(actor, *item); found {
 		carried, _ := g.stores.Items.Get(carriedID)
+
 		carried.Quantity += item.Quantity
 		buffer.Destroy(g.world, itemID)
 

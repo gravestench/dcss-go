@@ -43,6 +43,7 @@ func Generate(sourceDir string) ([]byte, error) {
 		}
 
 		sources[name] = body
+
 		hash := sha256.Sum256(body)
 		actual := hex.EncodeToString(hash[:])
 

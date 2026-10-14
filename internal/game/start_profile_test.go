@@ -137,6 +137,7 @@ func TestViewCopiesSkills(t *testing.T) {
 	first := g.View()
 
 	first.Skills[0].Points = -99
+
 	second := g.View()
 
 	if second.Skills[0].Points != 301 {

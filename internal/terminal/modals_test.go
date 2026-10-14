@@ -109,6 +109,7 @@ func TestSkillsPageShowsProgressWithinLevel(t *testing.T) {
 	view := m.game.View()
 
 	view.Skills[0].Points = 320
+
 	canvas := NewCanvas(79, 24)
 
 	DrawSkills(canvas, view, m.catalog, false)

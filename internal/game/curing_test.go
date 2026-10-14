@@ -80,6 +80,7 @@ func TestQuaffAtFullHPStillConsumesOnePotion(t *testing.T) {
 	health, _ := g.stores.Health.Get(g.player)
 
 	health.Current = health.Max
+
 	first, err := g.Step(Command{
 		Kind:   CommandQuaff,
 		ItemID: itemID,

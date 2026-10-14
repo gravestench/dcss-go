@@ -123,6 +123,7 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 	}
 
 	grants[0].KindID = "POT_CURING"
+
 	again, err := LoadDefault()
 
 	if err != nil {

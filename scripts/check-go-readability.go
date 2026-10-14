@@ -158,16 +158,23 @@ func checkFile(path string) (int, error) {
 
 			adjacent := previousEndLine+1 == nextStartLine
 			_, returns := next.(*ast.ReturnStmt)
-			calculation, declared := previous.(*ast.AssignStmt)
-			mutation, assigned := next.(*ast.AssignStmt)
+			previousAssignment, previousIsAssignment := previous.(*ast.AssignStmt)
+			nextAssignment, nextIsAssignment := next.(*ast.AssignStmt)
 
 			if adjacent &&
-				declared &&
-				calculation.Tok == token.DEFINE &&
-				assigned &&
-				mutation.Tok == token.ASSIGN &&
-				assignsOwnedState(mutation) {
+				previousIsAssignment &&
+				previousAssignment.Tok == token.DEFINE &&
+				nextIsAssignment &&
+				assignsOwnedState(nextAssignment) {
 				report(next.Pos(), "separate calculation from state mutation")
+			}
+
+			if adjacent &&
+				previousIsAssignment &&
+				assignsOwnedState(previousAssignment) &&
+				nextIsAssignment &&
+				nextAssignment.Tok == token.DEFINE {
+				report(next.Pos(), "separate state mutation from calculation")
 			}
 
 			if isControl(next) &&
@@ -450,6 +457,10 @@ func checkFile(path string) (int, error) {
 }
 
 func assignsOwnedState(statement *ast.AssignStmt) bool {
+	if statement.Tok == token.DEFINE {
+		return false
+	}
+
 	for _, target := range statement.Lhs {
 		switch target.(type) {
 		case *ast.SelectorExpr, *ast.IndexExpr, *ast.StarExpr:

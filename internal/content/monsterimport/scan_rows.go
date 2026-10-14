@@ -51,6 +51,7 @@ func activeMonsterTable(path string, data []byte) (string, []int, []sourceparse.
 		line := lines[i]
 
 		starts[i] = body.Len()
+
 		text := line.Text
 
 		if strings.Contains(text, "static monsterentry mondata") {

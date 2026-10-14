@@ -87,6 +87,7 @@ func TestStartingSkillsHumanFighterWeapons(t *testing.T) {
 			}
 
 			got[0].Points = -1
+
 			again, err := StartingSkills(catalog, "SP_HUMAN", "JOB_FIGHTER", tc.weapon)
 
 			if err != nil ||

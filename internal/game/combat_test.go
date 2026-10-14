@@ -108,6 +108,7 @@ func TestPlayerDeathEndsTurnLoop(t *testing.T) {
 	health, _ := g.stores.Health.Get(g.player)
 
 	health.Current = 0
+
 	result, err := g.Step(Command{Kind: CommandWait})
 
 	if err != nil {

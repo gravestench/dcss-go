@@ -76,6 +76,7 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 			}
 
 			got.Skills[0].Points = -1
+
 			again, err := BuildStartProfile(catalog, "SP_HUMAN", "JOB_FIGHTER", tc.weapon)
 
 			if err != nil ||

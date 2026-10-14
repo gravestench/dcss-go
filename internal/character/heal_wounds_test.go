@@ -16,6 +16,7 @@ func (r *healWoundsRoller) Intn(stream string, bound int) (int, error) {
 	}
 
 	r.bounds = append(r.bounds, bound)
+
 	value := r.values[0]
 
 	r.values = r.values[1:]

@@ -66,6 +66,7 @@ func TestOldVersionFourSaveWithoutNameDisplaysAdventurer(t *testing.T) {
 	snapshot := g.Snapshot()
 
 	savedPlayer(t, &snapshot).Player.Name = ""
+
 	encoded, err := json.Marshal(snapshot)
 
 	if err != nil {

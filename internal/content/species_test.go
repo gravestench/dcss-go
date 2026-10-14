@@ -104,6 +104,7 @@ func TestSpeciesCatalogRejectsDuplicateOrInvalidRecord(t *testing.T) {
 	invalid := valid
 
 	invalid.Name = ""
+
 	artifact := SpeciesArtifact{
 		SchemaVersion:   1,
 		SourceRevision:  sourceRevision,

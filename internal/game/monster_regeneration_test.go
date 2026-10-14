@@ -33,6 +33,7 @@ func TestWormRegeneratesBeforeItsActionWithoutRandomDraw(t *testing.T) {
 	}
 
 	health.Current = health.Max - 2
+
 	before := g.rng.States()["monster_regen"]
 
 	if _, err := g.runAction(worm, ecs.Intent{}, 10, "monster"); err != nil {
@@ -58,6 +59,7 @@ func TestInjuredRatUsesNaturalRegenerationRollOnItsTurn(t *testing.T) {
 	}
 
 	health.Current = health.Max - 1
+
 	expectedRNG := RestoreRNGStreams(g.seed, g.rng.States())
 	roll, err := expectedRNG.Intn("monster_regen", 25)
 
@@ -84,6 +86,7 @@ func TestInjuredRatUsesNaturalRegenerationRollOnItsTurn(t *testing.T) {
 	}
 
 	health.Current = health.Max
+
 	before := g.rng.States()["monster_regen"]
 
 	if _, err := g.runAction(rat, ecs.Intent{}, 10, "monster"); err != nil {
@@ -122,6 +125,7 @@ func TestInjuredAdderUsesNaturalRegenerationOnItsTurn(t *testing.T) {
 	}
 
 	health.Current = health.Max - 1
+
 	expectedRNG := RestoreRNGStreams(g.seed, g.rng.States())
 	roll, err := expectedRNG.Intn("monster_regen", 25)
 

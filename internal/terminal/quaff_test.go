@@ -197,6 +197,7 @@ func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 
 	m.game.Close()
 	m.game = restored
+
 	before := m.game.View().CurrentAut
 	m.handleKey("q")
 

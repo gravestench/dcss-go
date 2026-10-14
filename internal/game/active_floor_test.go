@@ -31,6 +31,7 @@ func TestFirstEntryDoesNotReplayInactiveMonsterTurns(t *testing.T) {
 	rat, _ := g.stores.MonsterEnergy.Get(ratID(t, g))
 
 	rat.Points = 0
+
 	quokka := quokkaID(t, g)
 
 	if err := g.levels[2].MoveActor(quokka, 2, 1); err != nil {

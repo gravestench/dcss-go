@@ -85,6 +85,7 @@ func TestHastedWieldUsesTruncatedSourceCosts(t *testing.T) {
 			durations, _ := g.stores.Durations.Get(g.player)
 
 			durations.HasteAut = 100
+
 			expectedSpeedState := nextSpeedStreamState(t, g, test.speedRoll)
 			command := Command{
 				Kind: CommandWield,
@@ -227,6 +228,7 @@ func TestHasteScalesMeleeAndDurationByTheSameAction(t *testing.T) {
 	durations, _ := g.stores.Durations.Get(g.player)
 
 	durations.HasteAut = 100
+
 	result, err := g.Step(Command{
 		Kind: CommandMove,
 		DX:   1,

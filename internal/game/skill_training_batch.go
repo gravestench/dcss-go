@@ -260,6 +260,7 @@ func (s *skillTrainingSystem) trainChunk(
 	}
 
 	spent := points * cost
+
 	skill.Points += points
 	training.AvailableXP -= spent
 	training.SpentXP += spent

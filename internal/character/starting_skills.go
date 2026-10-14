@@ -103,6 +103,7 @@ func StartingSkills(c content.Catalog, speciesID, jobID, weaponID string) ([]Ski
 		}
 
 		seen[id] = true
+
 		points, err := humanSkillPoints(grant.Level)
 
 		if err != nil {

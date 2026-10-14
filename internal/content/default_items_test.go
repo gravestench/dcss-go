@@ -65,6 +65,7 @@ func TestDefaultItemManifest(t *testing.T) {
 	}
 
 	artifact.Items[0].ID = "ARM_SUBSTITUTED"
+
 	changed, err := json.Marshal(artifact)
 
 	if err != nil {

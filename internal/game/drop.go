@@ -123,6 +123,7 @@ func (g *Game) applyDrop(drop pendingItemDrop, buffer *akara.CommandBuffer) erro
 
 	if floorID, found := g.compatibleFloorStack(*position, *item, drop.itemID); found {
 		floor, _ := g.stores.Items.Get(floorID)
+
 		floor.Quantity += drop.quantity
 
 		if drop.quantity == item.Quantity {

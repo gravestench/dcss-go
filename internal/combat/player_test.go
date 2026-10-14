@@ -328,6 +328,7 @@ func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 	in := fighterFlailAttack()
 
 	in.Mighty = true
+
 	rng := &scriptedRoller{
 		rolls: []scriptedRoll{
 			{
@@ -438,6 +439,7 @@ func TestPlayerMeleeMightRollPrecedesEnchantmentRoll(t *testing.T) {
 
 	in.Mighty = true
 	in.WeaponPlus = 2
+
 	rng := &scriptedRoller{
 		rolls: []scriptedRoll{
 			{

@@ -105,6 +105,7 @@ func TestLoadDefaultJobs(t *testing.T) {
 	}
 
 	fighter.Equipment[0] = "altered"
+
 	second, err := LoadDefault()
 
 	if err != nil {

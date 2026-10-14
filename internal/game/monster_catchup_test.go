@@ -39,6 +39,7 @@ func TestReturnedWormHealsAtFastRate(t *testing.T) {
 	health, _ := g.stores.Health.Get(worm)
 
 	health.Current = health.Max - 3
+
 	away := Aut(0)
 
 	g.levels[2].awaySinceAut = &away
@@ -176,6 +177,7 @@ func TestReturnedMonsterHealingStopsAtMaximum(t *testing.T) {
 	health, _ := g.stores.Health.Get(rat)
 
 	health.Current = health.Max - 1
+
 	away := Aut(0)
 
 	g.levels[1].awaySinceAut = &away

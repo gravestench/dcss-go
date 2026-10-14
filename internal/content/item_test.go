@@ -60,6 +60,7 @@ func TestItemDefCopies(t *testing.T) {
 
 	first.Weapon.DamageFlags[0] = "BROKEN"
 	first.Weapon.BrandWeights[0].Weight = 0
+
 	second, err := c.Item("WPN_MACE")
 
 	if err != nil {
@@ -84,9 +85,11 @@ func TestItemDefCopies(t *testing.T) {
 	}
 
 	c.items["ARM_ROBE"] = armour
+
 	firstArmour, _ := c.Item("ARM_ROBE")
 
 	firstArmour.Armour.Flags[0].Level = 9
+
 	secondArmour, _ := c.Item("ARM_ROBE")
 
 	if secondArmour.Armour.Flags[0].Level != 2 {

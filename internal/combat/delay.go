@@ -131,6 +131,7 @@ func PlayerAttackDelay(r Roller, in AttackDelayInput, timeTaken int) (int, error
 
 			for _, scaled := range roundedValues(delay*timeTaken, 10) {
 				value := max(2, scaled.value)
+
 				weights[value] += reduction.weight * shield.weight * scaled.weight
 			}
 		}

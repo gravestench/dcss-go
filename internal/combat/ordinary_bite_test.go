@@ -164,6 +164,7 @@ func TestFighterDefenseUsesTrainedDodgingSkill(t *testing.T) {
 	}
 
 	base.DodgingSkill10 = 100
+
 	trained, err := ProjectFighter(base)
 
 	if err != nil {

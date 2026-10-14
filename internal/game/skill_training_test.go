@@ -47,6 +47,7 @@ func TestPlayerTrainingStateIsOwnedByAkaraAndSnapshotIsIsolated(t *testing.T) {
 	}
 
 	saved.Settings[0].Enabled = true
+
 	restored, err := Restore(snapshot, testCatalog(t))
 
 	if err != nil {
@@ -133,6 +134,7 @@ func TestBatchTrainingWeightScaling(t *testing.T) {
 	}
 
 	skills[2].Level = character.HumanMaxSkillLevel
+
 	maxed := scaledTrainingWeights(skills, training)
 
 	if !reflect.DeepEqual(maxed, []int{
@@ -482,6 +484,7 @@ func TestFightingPracticeRecalculatesHPBeforeAdvancement(t *testing.T) {
 	}
 
 	health.Current = health.Max
+
 	before := health.Max
 	system := newSkillTrainingSystem(g)
 
@@ -581,6 +584,7 @@ func TestMaxedSkillsLeaveSkillExperienceUnspent(t *testing.T) {
 	}
 
 	training.AvailableXP = 100
+
 	system := newSkillTrainingSystem(g)
 
 	if err := system.Update(nil, time.Duration(10)); err != nil {
@@ -626,6 +630,7 @@ func TestSkillRNGAndPracticeContinueAfterRestore(t *testing.T) {
 
 	training.AvailableXP = 10
 	training.Manual = true
+
 	firstBefore := skills.Entries[0].Points
 	secondBefore := skills.Entries[1].Points
 

@@ -134,6 +134,7 @@ func TestQuokkaMeleeDeathExperienceAndCorpse(t *testing.T) {
 	health, _ := g.stores.Health.Get(quokka)
 
 	health.Current = 1
+
 	definition, _ := g.catalog.Monster("MONS_QUOKKA")
 	wantXP, err := character.OrdinaryAnimalExperience(definition, health.Max)
 

@@ -16,7 +16,7 @@ already says. The repository's `AGENTS.md` carries this standard into each
 implementation slice. The style check now enforces line length, formatting,
 expanded literals and blocks, space around control-flow blocks, separated
 error guards, space after multiline raw source fixtures, and space between
-calculation declarations and writes to owned state.
+calculations and writes to owned state in either order.
 Review functions over roughly 100 lines for mixed responsibilities. In
 particular, project terrain, player state, entities, and inventory in
 separate named steps, and split setup from turn decisions. A syntactic

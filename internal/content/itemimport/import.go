@@ -62,6 +62,7 @@ func readSources(sourceDir string) (map[string][]byte, []content.JobSourceFile, 
 		}
 
 		data[name] = body
+
 		hash := sha256.Sum256(body)
 		files = append(files, content.JobSourceFile{
 			Path:   "crawl-ref/source/" + name,

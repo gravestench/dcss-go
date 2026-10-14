@@ -316,6 +316,7 @@ func TestStackTransfersDoNotOverflowQuantity(t *testing.T) {
 		}
 
 		carried.Quantity = maxInt
+
 		position, _ := g.stores.Positions.Get(g.player)
 		floorID, _ := g.floorItemAt(*position)
 

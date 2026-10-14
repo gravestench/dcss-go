@@ -106,6 +106,7 @@ func TestLoadDefaultReturnsFreshCatalogs(t *testing.T) {
 	}
 
 	human.Aptitudes["SK_FIGHTING"] = SpeciesAptitude{Allowed: false}
+
 	second, err := LoadDefault()
 
 	if err != nil {
