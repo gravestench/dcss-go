@@ -60,6 +60,62 @@ func TestHobgoblinNaturalAttackAndEquipmentUseExperience(t *testing.T) {
 	}
 }
 
+func TestGoblinAndKoboldSourceProfiles(t *testing.T) {
+	catalog, err := content.LoadDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, test := range []struct {
+		monsterID    string
+		averageHP10x int
+		minHP        int
+		maxHP        int
+	}{
+		{
+			monsterID:    "MONS_GOBLIN",
+			averageHP10x: 40,
+			minHP:        2,
+			maxHP:        6,
+		},
+
+		{
+			monsterID:    "MONS_KOBOLD",
+			averageHP10x: 35,
+			minHP:        2,
+			maxHP:        5,
+		},
+	} {
+		definition, err := catalog.Monster(test.monsterID)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		profile, found := OrdinaryNaturalProfileFor(test.monsterID)
+
+		if !found ||
+			profile.HitDice != 1 ||
+			profile.AverageHP10x != test.averageHP10x ||
+			profile.MinHP != test.minHP ||
+			profile.MaxHP != test.maxHP ||
+			profile.Damage != 1 ||
+			profile.Speed != 10 ||
+			profile.AttackTypeID != "AT_HIT" ||
+			profile.ItemUseID != "MONUSE_WEAPONS_ARMOUR" ||
+			profile.XPModifier != 10 {
+			t.Fatalf("%s profile = %+v, found %v", test.monsterID, profile, found)
+		}
+
+		for hp := test.minHP; hp <= test.maxHP; hp++ {
+			if _, err := OrdinaryNaturalExperience(definition, hp); err != nil {
+				t.Fatalf("%s with %d HP: %v", test.monsterID, hp, err)
+			}
+		}
+	}
+}
+
 func TestBatPlainHitProfileAndSpeedExperience(t *testing.T) {
 	catalog, err := content.LoadDefault()
 

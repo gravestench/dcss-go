@@ -169,6 +169,20 @@ var ordinaryNaturalProfiles = map[string]OrdinaryNaturalProfile{
 		NoSkeleton: true,
 	},
 
+	"MONS_GOBLIN": {
+		HitDice:      1,
+		AverageHP10x: 40,
+		MinHP:        2,
+		MaxHP:        6,
+
+		Damage:       1,
+		Speed:        10,
+		AttackTypeID: "AT_HIT",
+		ItemUseID:    "MONUSE_WEAPONS_ARMOUR",
+
+		XPModifier: 10,
+	},
+
 	"MONS_HOBGOBLIN": {
 		HitDice:      1,
 		AverageHP10x: 55,
@@ -176,6 +190,20 @@ var ordinaryNaturalProfiles = map[string]OrdinaryNaturalProfile{
 		MaxHP:        8,
 
 		Damage:       5,
+		Speed:        10,
+		AttackTypeID: "AT_HIT",
+		ItemUseID:    "MONUSE_WEAPONS_ARMOUR",
+
+		XPModifier: 10,
+	},
+
+	"MONS_KOBOLD": {
+		HitDice:      1,
+		AverageHP10x: 35,
+		MinHP:        2,
+		MaxHP:        5,
+
+		Damage:       1,
 		Speed:        10,
 		AttackTypeID: "AT_HIT",
 		ItemUseID:    "MONUSE_WEAPONS_ARMOUR",
