@@ -78,7 +78,7 @@ func (g *Game) Snapshot() save.Snapshot {
 		PlayerID: uint64(g.player), CurrentAut: int64(g.currentAut), Seed: g.seed,
 		RNG: g.rng.States(), Messages: append([]string(nil), g.messages...)}
 	for id, level := range g.levels {
-		snapshot.Levels = append(snapshot.Levels, save.LevelRecord{ID: id, Rows: append([]string(nil), level.terrain...)})
+		snapshot.Levels = append(snapshot.Levels, save.LevelRecord{ID: id, Rows: append([]string(nil), level.terrain...), Known: level.KnownRows()})
 	}
 	sort.Slice(snapshot.Levels, func(i, j int) bool { return snapshot.Levels[i].ID < snapshot.Levels[j].ID })
 	for _, entity := range g.world.Entities() {
@@ -134,10 +134,19 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		if levelErr != nil {
 			return nil, levelErr
 		}
+		if knownErr := level.LoadKnownRows(record.Known); knownErr != nil {
+			return nil, knownErr
+		}
 		g.levels[record.ID] = level
 	}
 	if g.levels[1] == nil || g.levels[2] == nil {
 		return nil, fmt.Errorf("save is missing a Dungeon floor")
+	}
+	if _, _, ok := g.levels[1].FindUniqueTerrain('>'); !ok {
+		return nil, fmt.Errorf("Dungeon:1 must have one down stair")
+	}
+	if _, _, ok := g.levels[2].FindUniqueTerrain('<'); !ok {
+		return nil, fmt.Errorf("Dungeon:2 must have one up stair")
 	}
 	seen := make(map[uint64]bool)
 	playerCount := 0
@@ -325,6 +334,9 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		}
 	}
 	if err := registerSystems(g); err != nil {
+		return nil, err
+	}
+	if err := g.refreshVisibility(); err != nil {
 		return nil, err
 	}
 	return g, nil

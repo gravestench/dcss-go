@@ -91,3 +91,61 @@ func TestDrawPlayUnarmedUsesSourceWeaponSlot(t *testing.T) {
 		t.Fatalf("unarmed weapon row: %q", got)
 	}
 }
+
+func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
+	catalog, err := content.LoadDefault()
+	if err != nil {
+		t.Fatal(err)
+	}
+	run, err := game.NewScenario(7, catalog, "WPN_RAPIER", "Alice")
+	if err != nil {
+		t.Fatal(err)
+	}
+	snapshot := run.Snapshot()
+	run.Close()
+	for i := range snapshot.Entities {
+		if snapshot.Entities[i].AI != nil {
+			snapshot.Entities[i].Position.X = 3
+			snapshot.Entities[i].Position.Y = 3
+		}
+	}
+	known := []byte(snapshot.Levels[0].Known[3])
+	known[3] = '.'
+	snapshot.Levels[0].Known[3] = string(known)
+	restored, err := game.Restore(snapshot, catalog)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer restored.Close()
+	view := restored.View()
+	if view.Cells[3*view.Width+3].State != game.Explored {
+		t.Fatal("fixture floor is not remembered")
+	}
+	for _, size := range [][2]int{{79, 24}, {120, 40}} {
+		canvas := NewCanvas(size[0], size[1])
+		layout, ok := ComputeLayout(size[0], size[1])
+		if !ok {
+			t.Fatal("layout rejected")
+		}
+		DrawPlay(canvas, layout, view, "")
+		at := func(x, y int) cell {
+			sx := layout.Dungeon.X + layout.Dungeon.W/2 + x - view.PlayerX
+			sy := layout.Dungeon.Y + layout.Dungeon.H/2 + y - view.PlayerY
+			return canvas.cells[sy*canvas.width+sx]
+		}
+		if got := at(3, 3); got.text != "." || got.fg != DarkGrey {
+			t.Fatalf("%dx%d remembered floor = %+v", size[0], size[1], got)
+		}
+		if got := at(15, 7); got.text != " " {
+			t.Fatalf("%dx%d unknown terrain leaked: %+v", size[0], size[1], got)
+		}
+		if got := at(1, 2); got.text != "." || got.fg != LightGrey {
+			t.Fatalf("%dx%d visible floor = %+v", size[0], size[1], got)
+		}
+		for y := layout.Monsters.Y; y < layout.Monsters.Y+layout.Monsters.H; y++ {
+			if strings.Contains(canvas.PlainRows()[y][layout.Monsters.X:], "rat") {
+				t.Fatal("hidden rat leaked into nearby-monster pane")
+			}
+		}
+	}
+}

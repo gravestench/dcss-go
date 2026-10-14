@@ -9,11 +9,12 @@ import (
 
 // Level owns terrain and its actor occupancy index. Position remains the source of truth.
 type Level struct {
-	ID        int
-	terrain   []string
-	width     int
-	positions *akara.Store[ecs.Position]
-	actors    map[point]akara.Entity
+	ID         int
+	terrain    []string
+	remembered []byte
+	width      int
+	positions  *akara.Store[ecs.Position]
+	actors     map[point]akara.Entity
 }
 
 type point struct{ x, y int }
@@ -35,7 +36,7 @@ func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Lev
 			}
 		}
 	}
-	return &Level{ID: id, terrain: append([]string(nil), rows...), width: width, positions: positions, actors: make(map[point]akara.Entity)}, nil
+	return &Level{ID: id, terrain: append([]string(nil), rows...), remembered: make([]byte, width*len(rows)), width: width, positions: positions, actors: make(map[point]akara.Entity)}, nil
 }
 
 func (l *Level) inBounds(x, y int) bool {
@@ -93,4 +94,77 @@ func (l *Level) RemoveActor(entity akara.Entity) error {
 	delete(l.actors, point{position.X, position.Y})
 	l.positions.Remove(entity)
 	return nil
+}
+
+// KnownRows returns the player's remembered terrain. Spaces mean unseen cells.
+func (l *Level) KnownRows() []string {
+	rows := make([]string, len(l.terrain))
+	for y := range rows {
+		row := make([]byte, l.width)
+		for x := range row {
+			if glyph := l.remembered[y*l.width+x]; glyph != 0 {
+				row[x] = glyph
+			} else {
+				row[x] = ' '
+			}
+		}
+		rows[y] = string(row)
+	}
+	return rows
+}
+
+// LoadKnownRows validates and replaces saved map knowledge without exposing
+// live terrain at cells the player has not seen.
+func (l *Level) LoadKnownRows(rows []string) error {
+	if len(rows) != len(l.terrain) {
+		return fmt.Errorf("level %d has %d known rows, want %d", l.ID, len(rows), len(l.terrain))
+	}
+	known := make([]byte, l.width*len(rows))
+	for y, row := range rows {
+		if len(row) != l.width {
+			return fmt.Errorf("level %d known row %d has width %d, want %d", l.ID, y, len(row), l.width)
+		}
+		for x := 0; x < len(row); x++ {
+			switch row[x] {
+			case ' ':
+			case '#', '.', '<', '>':
+				known[y*l.width+x] = row[x]
+			default:
+				return fmt.Errorf("level %d invalid remembered terrain %q at (%d,%d)", l.ID, row[x], x, y)
+			}
+		}
+	}
+	l.remembered = known
+	return nil
+}
+
+func (l *Level) Remember(visible []bool) error {
+	if len(visible) != len(l.remembered) {
+		return fmt.Errorf("level %d sight mask has %d cells, want %d", l.ID, len(visible), len(l.remembered))
+	}
+	for y, row := range l.terrain {
+		for x := 0; x < l.width; x++ {
+			if visible[y*l.width+x] {
+				l.remembered[y*l.width+x] = row[x]
+			}
+		}
+	}
+	return nil
+}
+
+// FindUniqueTerrain finds the sole stair of a given kind on a fixed floor.
+func (l *Level) FindUniqueTerrain(glyph byte) (x, y int, ok bool) {
+	found := false
+	for row, terrain := range l.terrain {
+		for column := 0; column < l.width; column++ {
+			if terrain[column] != glyph {
+				continue
+			}
+			if found {
+				return 0, 0, false
+			}
+			x, y, found = column, row, true
+		}
+	}
+	return x, y, found
 }

@@ -50,11 +50,18 @@ func (s *stairSystem) Update(_ *akara.World, _ time.Duration) error {
 		return fmt.Errorf("stair actor %d has no position", s.turn.Actor)
 	}
 	from := s.levels[position.LevelID]
-	toID, x, y := 2, 1, 1
+	toID, glyph := 2, byte('<')
 	if intent.Kind == ecs.IntentUpstairs {
-		toID, x, y = 1, 7, 3
+		toID, glyph = 1, '>'
 	}
 	to := s.levels[toID]
+	if to == nil {
+		return fmt.Errorf("destination floor %d is missing", toID)
+	}
+	x, y, unique := to.FindUniqueTerrain(glyph)
+	if !unique {
+		return fmt.Errorf("destination floor %d lacks a unique %q stair", toID, glyph)
+	}
 	if !to.Walkable(x, y) {
 		return fmt.Errorf("destination stair is blocked")
 	}

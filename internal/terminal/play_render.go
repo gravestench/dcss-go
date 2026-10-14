@@ -57,21 +57,26 @@ func statusValueColor(current, maximum, yellowAt, redAt int) Color {
 
 func drawDungeon(canvas *Canvas, region Region, view game.View) {
 	centerX, centerY := region.X+region.W/2, region.Y+region.H/2
-	for y, row := range view.Terrain {
-		for x, glyph := range row {
-			sx, sy := centerX+x-view.PlayerX, centerY+y-view.PlayerY
-			if sx < region.X || sy < region.Y || sx >= region.X+region.W || sy >= region.Y+region.H {
-				continue
-			}
-			color := DarkGrey
-			switch glyph {
-			case '#':
-				color = LightGrey
-			case '<', '>':
+	if view.Width <= 0 {
+		return
+	}
+	for i, cell := range view.Cells {
+		if cell.State == game.Unknown {
+			continue
+		}
+		x, y := i%view.Width, i/view.Width
+		sx, sy := centerX+x-view.PlayerX, centerY+y-view.PlayerY
+		if sx < region.X || sy < region.Y || sx >= region.X+region.W || sy >= region.Y+region.H {
+			continue
+		}
+		color := DarkGrey
+		if cell.State == game.Visible {
+			color = LightGrey
+			if cell.Glyph == '<' || cell.Glyph == '>' {
 				color = Yellow
 			}
-			canvas.Put(sx, sy, glyph, color, Black)
 		}
+		canvas.Put(sx, sy, cell.Glyph, color, Black)
 	}
 	for _, playerPass := range []bool{false, true} {
 		for _, entity := range view.Entities {

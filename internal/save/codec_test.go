@@ -30,3 +30,13 @@ func TestFailedWritePreservesOldSave(t *testing.T) {
 		t.Fatalf("old save lost: %+v, %v", snapshot, err)
 	}
 }
+
+func TestRejectVersionFourSave(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "old.json")
+	if err := os.WriteFile(path, []byte(`{"version":4}`), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Read(path); err == nil || !strings.Contains(err.Error(), "version") {
+		t.Fatalf("old save error = %v", err)
+	}
+}

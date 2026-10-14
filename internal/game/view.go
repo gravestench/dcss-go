@@ -5,6 +5,19 @@ import (
 	"dcrawl-go/internal/ecs"
 )
 
+type CellState uint8
+
+const (
+	Unknown CellState = iota
+	Explored
+	Visible
+)
+
+type CellView struct {
+	Glyph rune
+	State CellState
+}
+
 type EntityView struct {
 	ID     uint64
 	X, Y   int
@@ -30,7 +43,8 @@ type View struct {
 	PlayerX, PlayerY      int
 	PlayerDead            bool
 	PlayerName            string
-	Terrain               []string
+	Width, Height         int
+	Cells                 []CellView
 	Entities              []EntityView
 	PlayerHP, PlayerMaxHP int
 	PlayerMP, PlayerMaxMP int
@@ -48,8 +62,16 @@ func (g *Game) View() View {
 		return View{}
 	}
 	level := g.levels[position.LevelID]
-	view := View{LevelID: position.LevelID, PlayerX: position.X, PlayerY: position.Y, Terrain: append([]string(nil), level.terrain...), CurrentAut: g.currentAut,
+	view := View{LevelID: position.LevelID, PlayerX: position.X, PlayerY: position.Y, Width: level.width, Height: len(level.terrain), Cells: make([]CellView, len(level.remembered)), CurrentAut: g.currentAut,
 		Messages: append([]string(nil), g.messages...)}
+	for i, glyph := range level.remembered {
+		switch {
+		case g.visibleLevelID == level.ID && i < len(g.visible) && g.visible[i]:
+			view.Cells[i] = CellView{Glyph: rune(level.terrain[i/level.width][i%level.width]), State: Visible}
+		case glyph != 0:
+			view.Cells[i] = CellView{Glyph: rune(glyph), State: Explored}
+		}
+	}
 	if health, ok := g.stores.Health.Get(g.player); ok {
 		view.PlayerHP, view.PlayerMaxHP = health.Current, health.Max
 		view.PlayerDead = health.Current <= 0
@@ -77,6 +99,9 @@ func (g *Game) View() View {
 	for _, entity := range g.stores.Positions.Entities() {
 		location, _ := g.stores.Positions.Get(entity)
 		if location.LevelID != position.LevelID {
+			continue
+		}
+		if entity != g.player && (g.visibleLevelID != level.ID || location.Y*level.width+location.X >= len(g.visible) || !g.visible[location.Y*level.width+location.X]) {
 			continue
 		}
 		glyph := rune('?')

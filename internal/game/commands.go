@@ -109,6 +109,9 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		events = append(events, Event{Kind: "monster", Text: "The rat acts."})
 		events = append(events, monsterEvents...)
 	}
+	if err := g.refreshVisibility(); err != nil {
+		return StepResult{}, err
+	}
 	return StepResult{Spent: cost, Events: events, View: g.View()}, nil
 }
 

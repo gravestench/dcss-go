@@ -2,7 +2,7 @@ package save
 
 import "dcrawl-go/internal/ecs"
 
-const Version = 4
+const Version = 5
 
 type Snapshot struct {
 	Version        int               `json:"version"`
@@ -17,8 +17,9 @@ type Snapshot struct {
 }
 
 type LevelRecord struct {
-	ID   int      `json:"id"`
-	Rows []string `json:"rows"`
+	ID    int      `json:"id"`
+	Rows  []string `json:"rows"`
+	Known []string `json:"known"`
 }
 
 type EntityRecord struct {

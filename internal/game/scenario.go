@@ -26,11 +26,11 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 		}
 	}()
 	stores := ecs.Register(world)
-	first, err := NewLevel(1, []string{"#########", "#.......#", "#.......#", "#......>#", "#########"}, stores.Positions)
+	first, err := NewLevel(1, []string{"#################", "#.......#.......#", "#.#.....#.......#", "#......>#.......#", "#...............#", "#.......#.......#", "#.......#.......#", "#.......#.......#", "#################"}, stores.Positions)
 	if err != nil {
 		return nil, err
 	}
-	second, err := NewLevel(2, []string{"#########", "#<......#", "#.......#", "#########"}, stores.Positions)
+	second, err := NewLevel(2, []string{"#################", "#<......#.......#", "#.......#.......#", "#.......#.......#", "#...............#", "#.......#.......#", "#.......#.......#", "#.......#.......#", "#################"}, stores.Positions)
 	if err != nil {
 		return nil, err
 	}
@@ -115,6 +115,9 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 		return nil, err
 	}
 	if err = registerSystems(g); err != nil {
+		return nil, err
+	}
+	if err = g.refreshVisibility(); err != nil {
 		return nil, err
 	}
 	return g, nil

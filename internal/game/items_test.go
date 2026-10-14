@@ -51,12 +51,12 @@ func TestViewIsCopied(t *testing.T) {
 		t.Fatal(err)
 	}
 	view := g.View()
-	view.Terrain[0] = "changed"
+	view.Cells[0].Glyph = '?'
 	view.Entities[0].X = 99
 	view.Messages[0] = "changed"
 	view.Inventory[0].Name = "changed"
 	again := g.View()
-	if again.Terrain[0] == "changed" || again.Entities[0].X == 99 || again.Messages[0] == "changed" || again.Inventory[0].Name == "changed" {
+	if again.Cells[0].Glyph == '?' || again.Entities[0].X == 99 || again.Messages[0] == "changed" || again.Inventory[0].Name == "changed" {
 		t.Fatalf("view aliases game state: %+v", again)
 	}
 }
