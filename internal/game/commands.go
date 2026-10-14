@@ -52,8 +52,9 @@ type StepResult struct {
 type TurnContext struct {
 	Actor akara.Entity
 
-	Events []Event
-	Deaths []akara.Entity
+	Events   []Event
+	Deaths   []akara.Entity
+	Practice []string
 
 	Pickup  akara.Entity
 	Consume akara.Entity

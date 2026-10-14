@@ -82,6 +82,12 @@ func minimumWeaponDelay(speed int, skillID string) int {
 	return max(3, minimum, speed-14) // MAX_SKILL_LEVEL 27, rounded half 14
 }
 
+// WeaponMinDelaySkill follows fight.cc:weapon_min_delay_skill for supported
+// ordinary melee weapons.
+func WeaponMinDelaySkill(speed int, skillID string) int {
+	return 2 * (speed - minimumWeaponDelay(speed, skillID))
+}
+
 // PlayerAttackDelay is the normal-speed primary attack cost in auts.
 func PlayerAttackDelay(r Roller, in AttackDelayInput) (int, error) {
 	if r == nil {

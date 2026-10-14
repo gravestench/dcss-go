@@ -45,7 +45,7 @@ func TestInventoryPageSourceCategoriesAndLetters(t *testing.T) {
 	}
 }
 
-func TestSkillsPageLevelsAptitudesAndUnavailableTraining(t *testing.T) {
+func TestSkillsPageLevelsAptitudesAndTrainingControls(t *testing.T) {
 	m := playingModel(t)
 	aut := m.game.View().CurrentAut
 	m.handleKey("m")
@@ -69,7 +69,7 @@ func TestSkillsPageLevelsAptitudesAndUnavailableTraining(t *testing.T) {
 		"3.0",
 		"2.0",
 		"+0",
-		"--",
+		"Automatic training",
 	} {
 		if !strings.Contains(page, want) {
 			t.Fatalf("skills missing %q", want)
@@ -78,8 +78,41 @@ func TestSkillsPageLevelsAptitudesAndUnavailableTraining(t *testing.T) {
 
 	m.handleKey("a")
 
+	if m.game.View().SkillTraining.Settings[0].Enabled ||
+		m.game.View().CurrentAut != aut {
+		t.Fatal("skill toggle changed time or failed")
+	}
+
+	m.handleKey("/")
+	m.handleKey("|")
+	m.handleKey("a")
+
+	view := m.game.View()
+
+	if !view.SkillTraining.Manual ||
+		!view.SkillTraining.Settings[0].Enabled ||
+		!view.SkillTraining.Settings[0].Focused ||
+		view.CurrentAut != aut {
+		t.Fatalf("manual focus state %+v at aut %d", view.SkillTraining, view.CurrentAut)
+	}
+
+	m.handleKey("=")
+
 	if !strings.Contains(plainApp(m), "unavailable") || m.game.View().CurrentAut != aut {
-		t.Fatal("training control changed turn or lacked explanation")
+		t.Fatal("unported target control lacked explanation or spent time")
+	}
+}
+
+func TestSkillsPageShowsProgressWithinLevel(t *testing.T) {
+	m := playingModel(t)
+	view := m.game.View()
+	view.Skills[0].Points = 320
+	canvas := NewCanvas(79, 24)
+
+	DrawSkills(canvas, view, m.catalog, false)
+
+	if !strings.Contains(strings.Join(canvas.PlainRows(), "\n"), "3.1") {
+		t.Fatal("skills page hid fractional Fighting progress")
 	}
 }
 

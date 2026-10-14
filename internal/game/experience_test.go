@@ -79,6 +79,9 @@ func TestExperienceSaveRoundTripAndOlderFieldDefault(t *testing.T) {
 
 	progress, _ := g.stores.Progression.Get(g.player)
 	progress.TotalXP = 1
+	training, _ := g.stores.SkillTraining.Get(g.player)
+	training.AvailableXP = 10
+
 	loaded, err := Restore(g.Snapshot(), testCatalog(t))
 
 	if err != nil {
@@ -95,6 +98,7 @@ func TestExperienceSaveRoundTripAndOlderFieldDefault(t *testing.T) {
 	for i := range old.Entities {
 		if old.Entities[i].ID == old.PlayerID {
 			old.Entities[i].Progression = nil
+			old.Entities[i].SkillTraining.AvailableXP = 0
 		}
 	}
 

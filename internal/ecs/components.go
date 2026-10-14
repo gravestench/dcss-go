@@ -30,9 +30,37 @@ type Magic struct {
 	Max     int
 }
 
-// Skills records level and training points for each starting skill.
+// Skills records the player's authoritative skill levels and points.
 type Skills struct {
 	Entries []character.Skill
+}
+
+// SkillTrainingSetting controls whether a skill receives earned experience.
+type SkillTrainingSetting struct {
+	ID      string
+	Enabled bool
+	Focused bool
+}
+
+// SkillTraining owns unspent XP and the recent practice used to divide it.
+// The two queues retain their order so a restored run makes the same choices.
+type SkillTraining struct {
+	AvailableXP int
+	SpentXP     int
+	CostLevel   int
+	Manual      bool
+
+	Settings       []SkillTrainingSetting
+	RecentPractice []string
+	RecentAll      []string
+}
+
+func (training SkillTraining) Clone() SkillTraining {
+	training.Settings = append([]SkillTrainingSetting(nil), training.Settings...)
+	training.RecentPractice = append([]string(nil), training.RecentPractice...)
+	training.RecentAll = append([]string(nil), training.RecentAll...)
+
+	return training
 }
 
 // Progression owns earned XP and the applied level. A pending stat choice

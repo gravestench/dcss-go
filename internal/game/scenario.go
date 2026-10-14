@@ -204,6 +204,18 @@ func (g *Game) initializeCharacter(definition content.PlayerDef, weaponID string
 		return err
 	}
 
+	training, err := newPlayerSkillTraining(skills, g.rng)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = g.stores.SkillTraining.Set(g.player, training)
+
+	if err != nil {
+		return err
+	}
+
 	_, err = g.stores.Progression.Set(g.player, ecs.Progression{Level: 1})
 
 	if err != nil {
@@ -428,6 +440,10 @@ func registerInteractionAndCombatSystems(g *Game) error {
 
 func registerEndTurnSystems(g *Game) error {
 	world, stores := g.world, g.stores
+
+	if _, err := world.AddSystem(newSkillTrainingSystem(g)); err != nil {
+		return err
+	}
 
 	advancement, err := newAdvancementSystem(g)
 

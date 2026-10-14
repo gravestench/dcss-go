@@ -60,12 +60,13 @@ type AppModel struct {
 	width        int
 	height       int
 
-	name      string
-	speciesID string
-	jobID     string
-	weaponID  string
-	options   []character.WeaponOption
-	focus     int
+	name             string
+	speciesID        string
+	jobID            string
+	weaponID         string
+	options          []character.WeaponOption
+	focus            int
+	skillFocusAction bool
 
 	notice          string
 	confirm         confirmation
@@ -149,8 +150,11 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenStatChoice:
 		m.handleStatChoiceKey(key)
 
-	case ScreenInventory, ScreenSkills:
+	case ScreenInventory:
 		m.handleModalKey(key)
+
+	case ScreenSkills:
+		m.handleSkillsKey(key)
 
 	case ScreenQuaff:
 		return m.handleQuaffKey(key)
@@ -235,7 +239,7 @@ func (m *AppModel) renderCanvas() *Canvas {
 
 	case ScreenSkills:
 		if m.game != nil {
-			DrawSkills(canvas, m.game.View(), m.catalog)
+			DrawSkills(canvas, m.game.View(), m.catalog, m.skillFocusAction)
 		}
 
 		m.drawModalNotice(canvas)

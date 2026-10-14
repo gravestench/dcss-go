@@ -2,7 +2,6 @@ package game
 
 import (
 	"fmt"
-	"slices"
 
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
@@ -22,10 +21,6 @@ func validateSavedHumanAdvancement(
 
 	if record.Progression != nil {
 		progress = *record.Progression
-	}
-
-	if !slices.Equal(record.Skills.Entries, profile.Skills) {
-		return 0, fmt.Errorf("invalid player skills for entity %d", record.ID)
 	}
 
 	if progress.Level < 1 || progress.Level > character.HumanMaxLevel {

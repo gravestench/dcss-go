@@ -61,6 +61,14 @@ func (g *Game) restoreActorComponents(
 		}
 	}
 
+	if record.SkillTraining != nil {
+		copy := record.SkillTraining.Clone()
+
+		if _, err := g.stores.SkillTraining.Set(entity, copy); err != nil {
+			return err
+		}
+	}
+
 	if record.Player != nil {
 		progress := ecs.Progression{Level: 1}
 

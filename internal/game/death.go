@@ -16,6 +16,7 @@ type deathSystem struct {
 	positions   *akara.Store[ecs.Position]
 	health      *akara.Store[ecs.Health]
 	progression *akara.Store[ecs.Progression]
+	training    *akara.Store[ecs.SkillTraining]
 
 	catalog content.Catalog
 	rng     *RNGStreams
@@ -32,6 +33,7 @@ func newDeathSystem(g *Game) *deathSystem {
 		positions:   s.Positions,
 		health:      s.Health,
 		progression: s.Progression,
+		training:    s.SkillTraining,
 
 		catalog: g.catalog,
 		rng:     g.rng,
@@ -114,12 +116,14 @@ func (s *deathSystem) awardAnimalExperience(definition content.MonsterDef, maxHP
 	}
 
 	progress, found := s.progression.Get(s.player)
+	training, hasTraining := s.training.Get(s.player)
 
-	if !found || progress.TotalXP < 0 {
+	if !found || !hasTraining || progress.TotalXP < 0 {
 		return fmt.Errorf("invalid Dungeon experience state")
 	}
 
 	progress.TotalXP += amount
+	training.AvailableXP += 10 * amount
 
 	return nil
 }

@@ -23,6 +23,7 @@ type combatSystem struct {
 	catalog content.Catalog
 	fighter playerCombat
 	roller  combat.Roller
+	rng     *RNGStreams
 	turn    *TurnContext
 }
 
@@ -42,6 +43,7 @@ func newCombatSystem(g *Game) *combatSystem {
 		catalog: g.catalog,
 		fighter: newPlayerCombat(g),
 		roller:  g.rng,
+		rng:     g.rng,
 		turn:    &g.turn,
 	}
 }
@@ -126,6 +128,10 @@ func (s *combatSystem) resolvePlayerMelee(
 	message := fmt.Sprintf("You miss the %s.", defender.Name)
 
 	if outcome.Kind == combat.Hit {
+		if err := s.practicePlayerHit(input, actor.KindID); err != nil {
+			return err
+		}
+
 		message = fmt.Sprintf("You hit the %s.", defender.Name)
 
 		if outcome.Damage == 0 {
@@ -179,6 +185,11 @@ func (s *combatSystem) resolveAnimalMelee(victim *ecs.Health) error {
 
 	state.ShieldBlocks = outcome.ShieldBlocks
 	victim.Current = max(0, victim.Current-outcome.Damage)
+
+	if err := s.practiceAnimalAttack(outcome, defense); err != nil {
+		return err
+	}
+
 	message := ""
 
 	switch outcome.Kind {

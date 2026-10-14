@@ -34,6 +34,21 @@ func copySkillsComponent(store *akara.Store[ecs.Skills], entity akara.Entity) *e
 	return copy
 }
 
+func copySkillTrainingComponent(
+	store *akara.Store[ecs.SkillTraining],
+	entity akara.Entity,
+) *ecs.SkillTraining {
+	value, found := store.Get(entity)
+
+	if !found {
+		return nil
+	}
+
+	copy := value.Clone()
+
+	return &copy
+}
+
 func validateSavedItem(
 	record save.EntityRecord,
 	catalog content.Catalog,
@@ -131,6 +146,7 @@ func savedItemHasActorComponents(record save.EntityRecord) bool {
 	return record.Health != nil ||
 		record.Magic != nil ||
 		record.Skills != nil ||
+		record.SkillTraining != nil ||
 		record.Progression != nil ||
 		record.Durations != nil ||
 		record.Regeneration != nil ||
@@ -194,12 +210,13 @@ func (g *Game) Snapshot() save.Snapshot {
 			Actor:    copyComponent(g.stores.Actors, entity),
 			Health:   copyComponent(g.stores.Health, entity),
 
-			Magic:        copyComponent(g.stores.Magic, entity),
-			Skills:       copySkillsComponent(g.stores.Skills, entity),
-			Progression:  copyComponent(g.stores.Progression, entity),
-			Durations:    copyComponent(g.stores.Durations, entity),
-			Regeneration: copyComponent(g.stores.Regeneration, entity),
-			Combatant:    copyComponent(g.stores.Combat, entity),
+			Magic:         copyComponent(g.stores.Magic, entity),
+			Skills:        copySkillsComponent(g.stores.Skills, entity),
+			SkillTraining: copySkillTrainingComponent(g.stores.SkillTraining, entity),
+			Progression:   copyComponent(g.stores.Progression, entity),
+			Durations:     copyComponent(g.stores.Durations, entity),
+			Regeneration:  copyComponent(g.stores.Regeneration, entity),
+			Combatant:     copyComponent(g.stores.Combat, entity),
 
 			Player:     copyComponent(g.stores.Players, entity),
 			Attributes: copyComponent(g.stores.Attributes, entity),

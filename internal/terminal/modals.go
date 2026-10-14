@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
+	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/game"
 )
 
@@ -223,8 +225,13 @@ func skillName(id string) string {
 	return strings.Title(strings.ToLower(strings.ReplaceAll(name, "_", " ")))
 }
 
-// DrawSkills uses the source's two columns and labels for unavailable controls.
-func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
+// DrawSkills uses the source's two columns and shows live training choices.
+func DrawSkills(
+	canvas *Canvas,
+	view game.View,
+	catalog content.Catalog,
+	focusAction bool,
+) {
 	canvas.Write(0, 0, "Skills", White, Black)
 
 	for _, x := range []int{1, 40} {
@@ -233,9 +240,14 @@ func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
 
 	species, _ := catalog.Species("SP_HUMAN")
 	levels := make(map[string]int, len(view.Skills))
+	settings := make(map[string]ecs.SkillTrainingSetting, len(view.SkillTraining.Settings))
 
 	for _, skill := range view.Skills {
-		levels[skill.ID] = skill.Level
+		levels[skill.ID] = character.ScaledSkill(skill, 10)
+	}
+
+	for _, setting := range view.SkillTraining.Settings {
+		settings[setting.ID] = setting
 	}
 
 	letter := 0
@@ -255,12 +267,24 @@ func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
 				color = LightGrey
 			}
 
+			training := "--"
+			setting := settings[id]
+
+			if setting.Enabled {
+				training = fmt.Sprintf("%d%%", view.SkillPercent[id])
+			}
+
+			if setting.Focused {
+				training = "*" + training
+			}
+
 			label := fmt.Sprintf(
-				"%c - %-19s %4.1f %+2d  --",
+				"%c - %-18s %4.1f %+2d %5s",
 				menuLetter(letter),
 				skillName(id),
-				float64(levels[id]),
+				float64(levels[id])/10,
 				apt.Value,
+				training,
 			)
 			writeClipped(canvas, x, 3+row, 38, label, color)
 			letter++
@@ -273,8 +297,26 @@ func DrawSkills(canvas *Canvas, view game.View, catalog content.Catalog) {
 	writeClipped(canvas, 0, canvas.height-4, canvas.width,
 		"= - target    ? - help    Esc - Return", Brown)
 
-	writeClipped(canvas, 0, canvas.height-3, canvas.width,
-		"Training controls are unavailable in the Go port.", Brown)
+	mode := "Automatic training"
+
+	if view.SkillTraining.Manual {
+		mode = "Manual training"
+	}
+
+	action := "toggle"
+
+	if focusAction {
+		action = "focus"
+	}
+
+	writeClipped(
+		canvas,
+		0,
+		canvas.height-3,
+		canvas.width,
+		fmt.Sprintf("%s | Skill letters: %s", mode, action),
+		Brown,
+	)
 }
 
 // DrawHelp keeps the source command meanings visible for supported and stubbed actions.

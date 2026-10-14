@@ -29,7 +29,7 @@ func TestRatScenarioRollsSourceHPAndKeepsCatalogedBite(t *testing.T) {
 	if !ok ||
 		health.Current != want ||
 		health.Max != want ||
-		!reflect.DeepEqual(expected.States(), g.rng.States()) {
+		expected.States()["monster_hp"] != g.rng.States()["monster_hp"] {
 		t.Fatalf("rat health = %+v, found %v", health, ok)
 	}
 

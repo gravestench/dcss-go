@@ -2,7 +2,7 @@ package save
 
 import "dcrawl-go/internal/ecs"
 
-const Version = 9
+const Version = 10
 
 type Snapshot struct {
 	Version        int    `json:"version"`
@@ -45,14 +45,15 @@ type EntityRecord struct {
 	Health   *ecs.Health   `json:"health,omitempty"`
 	Magic    *ecs.Magic    `json:"magic,omitempty"`
 
-	Skills       *ecs.Skills           `json:"skills,omitempty"`
-	Progression  *ecs.Progression      `json:"progression,omitempty"`
-	Durations    *ecs.Durations        `json:"durations,omitempty"`
-	Regeneration *ecs.Regeneration     `json:"regeneration,omitempty"`
-	Combatant    *ecs.Combatant        `json:"combatant,omitempty"`
-	Player       *ecs.PlayerControlled `json:"player,omitempty"`
-	Attributes   *ecs.Attributes       `json:"attributes,omitempty"`
-	Equipment    *ecs.EquipmentDelay   `json:"equipment_delay,omitempty"`
+	Skills        *ecs.Skills           `json:"skills,omitempty"`
+	SkillTraining *ecs.SkillTraining    `json:"skill_training,omitempty"`
+	Progression   *ecs.Progression      `json:"progression,omitempty"`
+	Durations     *ecs.Durations        `json:"durations,omitempty"`
+	Regeneration  *ecs.Regeneration     `json:"regeneration,omitempty"`
+	Combatant     *ecs.Combatant        `json:"combatant,omitempty"`
+	Player        *ecs.PlayerControlled `json:"player,omitempty"`
+	Attributes    *ecs.Attributes       `json:"attributes,omitempty"`
+	Equipment     *ecs.EquipmentDelay   `json:"equipment_delay,omitempty"`
 
 	AI           *ecs.MonsterAI    `json:"ai,omitempty"`
 	BandFollower *ecs.BandFollower `json:"band_follower,omitempty"`

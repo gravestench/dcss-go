@@ -377,6 +377,7 @@ func TestRestoreRejectsExperienceWithoutPopulationKill(t *testing.T) {
 		}
 
 		record.Progression.TotalXP = 1
+		record.SkillTraining.AvailableXP = 10
 		break
 	}
 

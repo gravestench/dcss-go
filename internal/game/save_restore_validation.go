@@ -174,6 +174,7 @@ func (v *savedEntityValidator) validateCharacterRole(record save.EntityRecord) e
 		v.playerCount++
 		v.player = validated
 	} else if record.Attributes != nil || record.Skills != nil ||
+		record.SkillTraining != nil ||
 		record.Magic != nil || record.Progression != nil ||
 		record.Durations != nil || record.Regeneration != nil ||
 		record.Equipment != nil {

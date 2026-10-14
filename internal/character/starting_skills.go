@@ -32,7 +32,9 @@ func humanSkillPoints(level int) (int, error) {
 		return 0, fmt.Errorf("unsupported Human starting skill level %d", level)
 	}
 
-	return 25*level*(level+1) + 1, nil
+	needed, _ := HumanSkillPointsNeeded(level)
+
+	return needed + 1, nil
 }
 
 // StartingSkills resolves Fighter's SK_WEAPON grant after the weapon choice.

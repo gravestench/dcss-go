@@ -309,6 +309,9 @@ func (c playerCombat) defense() (combat.Defense, error) {
 
 		case "SK_SHIELDS":
 			input.ShieldsSkill = skill.Level
+
+		case "SK_DODGING":
+			input.DodgingSkill10 = character.ScaledSkill(skill, 10)
 		}
 	}
 
@@ -360,4 +363,20 @@ func (c playerCombat) defense() (combat.Defense, error) {
 	}
 
 	return combat.ProjectFighter(input)
+}
+
+func (c playerCombat) skillLevel(id string) int {
+	skills, found := c.skills.Get(c.player)
+
+	if !found {
+		return 0
+	}
+
+	for _, skill := range skills.Entries {
+		if skill.ID == id {
+			return skill.Level
+		}
+	}
+
+	return 0
 }

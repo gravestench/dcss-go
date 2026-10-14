@@ -19,10 +19,11 @@ type ArmourPiece struct {
 
 // FighterDefense contains the live parts of an ordinary Human Fighter's defence.
 type FighterDefense struct {
-	Strength     int
-	Dexterity    int
-	ArmourSkill  int
-	ShieldsSkill int
+	Strength       int
+	Dexterity      int
+	ArmourSkill    int
+	ShieldsSkill   int
+	DodgingSkill10 int
 
 	Body      ArmourPiece
 	Shield    ArmourPiece
@@ -38,6 +39,7 @@ type Defense struct {
 	ShieldClass  int
 	GDR          int
 	ShieldBlocks int
+	BodyEV       int
 }
 
 // AnimalBite is a plain first bite from a supported ordinary animal.
@@ -67,7 +69,8 @@ type Outcome struct {
 // stored in hundredths in the committed catalog, as in item-prop.cc.
 func ProjectFighter(in FighterDefense) (Defense, error) {
 	invalidStats := in.Strength <= 0 || in.Dexterity < 0 ||
-		in.ArmourSkill < 0 || in.ShieldsSkill < 0
+		in.ArmourSkill < 0 || in.ShieldsSkill < 0 ||
+		in.DodgingSkill10 < 0
 	invalidArmour := invalidArmourPiece(in.Body)
 	invalidShield := invalidArmourPiece(in.Shield) || in.ShieldBlocks < 0
 
@@ -108,7 +111,8 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 		}
 	}
 
-	dodgeBonus := 800 * scale / 20 / 10 / 10 // zero Dodging at the supported start
+	dodgeBonus := (800 + in.DodgingSkill10*in.Dexterity*8) *
+		scale / 20 / 10 / 10
 	armourDodgePenalty := bodyEncumbrance - 3
 
 	if armourDodgePenalty > 0 {
@@ -161,6 +165,7 @@ func ProjectFighter(in FighterDefense) (Defense, error) {
 		ShieldClass:  shieldClass,
 		GDR:          gdr,
 		ShieldBlocks: in.ShieldBlocks,
+		BodyEV:       in.Body.EV,
 	}, nil
 }
 

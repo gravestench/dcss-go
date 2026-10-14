@@ -9,14 +9,15 @@ type Stores struct {
 	Health    *akara.Store[Health]
 	Magic     *akara.Store[Magic]
 
-	Skills       *akara.Store[Skills]
-	Progression  *akara.Store[Progression]
-	Durations    *akara.Store[Durations]
-	Regeneration *akara.Store[Regeneration]
-	Combat       *akara.Store[Combatant]
-	Players      *akara.Store[PlayerControlled]
-	Attributes   *akara.Store[Attributes]
-	Equipment    *akara.Store[EquipmentDelay]
+	Skills        *akara.Store[Skills]
+	SkillTraining *akara.Store[SkillTraining]
+	Progression   *akara.Store[Progression]
+	Durations     *akara.Store[Durations]
+	Regeneration  *akara.Store[Regeneration]
+	Combat        *akara.Store[Combatant]
+	Players       *akara.Store[PlayerControlled]
+	Attributes    *akara.Store[Attributes]
+	Equipment     *akara.Store[EquipmentDelay]
 
 	AI        *akara.Store[MonsterAI]
 	Followers *akara.Store[BandFollower]
@@ -36,14 +37,15 @@ func Register(world *akara.World) Stores {
 		Health:    akara.Register[Health](world),
 		Magic:     akara.Register[Magic](world),
 
-		Skills:       akara.Register[Skills](world),
-		Progression:  akara.Register[Progression](world),
-		Durations:    akara.Register[Durations](world),
-		Regeneration: akara.Register[Regeneration](world),
-		Combat:       akara.Register[Combatant](world),
-		Players:      akara.Register[PlayerControlled](world),
-		Attributes:   akara.Register[Attributes](world),
-		Equipment:    akara.Register[EquipmentDelay](world),
+		Skills:        akara.Register[Skills](world),
+		SkillTraining: akara.Register[SkillTraining](world),
+		Progression:   akara.Register[Progression](world),
+		Durations:     akara.Register[Durations](world),
+		Regeneration:  akara.Register[Regeneration](world),
+		Combat:        akara.Register[Combatant](world),
+		Players:       akara.Register[PlayerControlled](world),
+		Attributes:    akara.Register[Attributes](world),
+		Equipment:     akara.Register[EquipmentDelay](world),
 
 		AI:        akara.Register[MonsterAI](world),
 		Followers: akara.Register[BandFollower](world),

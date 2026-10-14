@@ -63,6 +63,30 @@ func TestHumanFighterDefenseUsesEquippedScaleMailAndBuckler(t *testing.T) {
 	}
 }
 
+func TestFighterDefenseUsesTrainedDodgingSkill(t *testing.T) {
+	base := FighterDefense{
+		Strength:  16,
+		Dexterity: 12,
+	}
+
+	before, err := ProjectFighter(base)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	base.DodgingSkill10 = 100
+	trained, err := ProjectFighter(base)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if trained.EV <= before.EV {
+		t.Fatalf("Dodging skill left EV at %d, starting EV %d", trained.EV, before.EV)
+	}
+}
+
 func TestFighterDefenseAddsAuxiliaryArmourBeforeRounding(t *testing.T) {
 	// player.cc base_ac_with_specific_items sums scaled pieces first.
 	got, err := ProjectFighter(FighterDefense{

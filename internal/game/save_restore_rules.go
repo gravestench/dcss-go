@@ -25,6 +25,7 @@ func (g *Game) validateSavedPlayer(
 		record.Player.SpeciesID != definition.SpeciesID ||
 		record.Player.JobID != definition.JobID ||
 		record.Attributes == nil || record.Skills == nil ||
+		record.SkillTraining == nil ||
 		record.Magic == nil {
 		return savedPlayerValidation{}, fmt.Errorf("invalid player entity %d", record.ID)
 	}
@@ -38,7 +39,18 @@ func (g *Game) validateSavedPlayer(
 		return savedPlayerValidation{}, fmt.Errorf("invalid player choice: %w", err)
 	}
 
-	xp, err := validateSavedHumanAdvancement(record, profile, g.catalog)
+	xp := 0
+
+	if record.Progression != nil {
+		xp = record.Progression.TotalXP
+	}
+
+	// Skill points and levels must be checked before HP projects Fighting.
+	if err := validateSavedSkillTraining(record, profile, g.catalog, xp); err != nil {
+		return savedPlayerValidation{}, err
+	}
+
+	xp, err = validateSavedHumanAdvancement(record, profile, g.catalog)
 
 	if err != nil {
 		return savedPlayerValidation{}, err

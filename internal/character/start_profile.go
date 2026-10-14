@@ -10,10 +10,14 @@ type StartProfile struct {
 	MaxMP      int
 }
 
-// ScaledSkill projects the stored starting points at a source skill scale.
+// ScaledSkill projects stored Human skill points at a source skill scale.
 func ScaledSkill(skill Skill, scale int) int {
-	previous := 25 * skill.Level * (skill.Level + 1)
-	next := 25 * (skill.Level + 1) * (skill.Level + 2)
+	if skill.Level == HumanMaxSkillLevel {
+		return skill.Level * scale
+	}
+
+	previous, _ := HumanSkillPointsNeeded(skill.Level)
+	next, _ := HumanSkillPointsNeeded(skill.Level + 1)
 
 	return skill.Level*scale + (skill.Points-previous)*scale/(next-previous)
 }

@@ -139,13 +139,7 @@ func (s *advancementSystem) applyLevel(level int) error {
 		}
 	}
 
-	// calc_hp scales the current HP and fractional regeneration together.
-	hpHundred := (health.Current*100 + regeneration.HPProgress) * nextHP / health.Max
-	hpHundred = max(100, hpHundred)
-
-	health.Max = nextHP
-	health.Current = min(nextHP, hpHundred/100)
-	regeneration.HPProgress = hpHundred % 100
+	rescaleHealth(health, regeneration, nextHP)
 
 	if magic.Max > 0 {
 		magic.Current = magic.Current * nextMP / magic.Max

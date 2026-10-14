@@ -65,6 +65,8 @@ type View struct {
 	CharacterName    string
 	Attributes       ecs.Attributes
 	Skills           []character.Skill
+	SkillTraining    ecs.SkillTraining
+	SkillPercent     map[string]int
 	ExperienceLevel  int
 	NextLevelPercent int
 	PendingStatLevel int
@@ -137,6 +139,11 @@ func (g *Game) fillPlayerView(view *View) {
 
 	if skills, ok := g.stores.Skills.Get(g.player); ok {
 		view.Skills = append([]character.Skill(nil), skills.Entries...)
+	}
+
+	if training, ok := g.stores.SkillTraining.Get(g.player); ok {
+		view.SkillTraining = training.Clone()
+		view.SkillPercent = skillTrainingPercent(view.Skills, &view.SkillTraining)
 	}
 
 	if progression, ok := g.stores.Progression.Get(g.player); ok {
