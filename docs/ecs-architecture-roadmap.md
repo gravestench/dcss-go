@@ -36,9 +36,9 @@ Use Akara as the source of truth for **mutable, independently addressable game e
 | Actors and character state | `ecs.Actor`, `PlayerTurn`, `MonsterEnergy`, `Position`, `Health`, `Magic`, `Attributes`, `Skills`, `SkillTraining`, `Progression` (XP, applied level, and pending stat choice), `Combatant`, `Durations`, `Regeneration`, and `PlayerControlled` are Akara components. `TurnScheduler` grants and spends active-floor monster energy; only the player has a logical turn clock. | **Already ECS.** Keep one live value per actor. Split a component only when a new mechanic needs different membership or lifecycle; do not create a component for every catalog field. |
 | Monsters | `ecs.MonsterAI` owns behavior, target, and memory. An ordered Akara AI system chooses monster `Intent`; a source-backed factory can create fourteen ordinary monsters with live ECS components, while generated Dungeon selects twelve. A return-time system heals and moves those monsters through their component stores. | **Decision, creation, and supported off-level catch-up use ECS.** The level builder uses the factory with caller-owned population and placement RNG streams. Add capability components only for actual differences such as spellcasting or special movement. |
 | Movement and stairs | Akara systems read `Intent`, `Position`, and level grids. Each `Level` owns saved links from stair cells to destination cells; travel no longer chooses fixed floor IDs or requires a unique stair glyph. | **Partly ECS.** Keep the active-turn context explicit. Grid collision and occupancy remain level services derived from `Position`; branch identity and generation still need world ownership. |
-| Combat and death | Registered Akara systems mutate `Health`, `Combatant`, and `Progression` through injected stores. `playerCombat` reads the live Fighter's components and catalog for attack, delay, and defense projections. The live attacker set uses a source-validated natural-melee profile for rat, quokka, frilled lizard, giant cockroach, worm, jackal, adder, bat, ball python, and endoplasm. | **System ownership is explicit; lifecycle coordination remains.** Generalize attack effects from components plus immutable definitions as new monsters arrive. Keep corpse creation and entity removal queued at the post-system barrier. |
+| Combat and death | Registered Akara systems mutate `Health`, `Combatant`, and `Progression` through injected stores. `playerCombat` reads the live Fighter's components and catalog for attack, delay, and defense projections. The factory supports fourteen ordinary monster profiles; generated Dungeon selects twelve. Equipped monster weapons contribute melee damage, enchantment, supported brands, and protection AC. | **System ownership is explicit; lifecycle coordination remains.** Finish the remaining brand and ranged effects before admitting geared humanoids to generated floors. Keep corpse creation and entity removal queued at the post-system barrier. |
 | Items and equipment | Floor items, inventory links, equipped slots, quantities, and corpses are entities/components. `pickupSystem` and `quaffSystem` run in Akara; quaff receives its exact stores, RNG, and action context but still handles four supported potions explicitly. | **State is already ECS; behavior is partial.** Keep item definitions in the catalog. Make pickup text derive from the item. Add effect handlers as content is ported; use components for persistent effects, not for each potion identity. |
-| Status and regeneration | `Durations.MightAut`, `Durations.HasteAut`, `Regeneration`, and optional `Poison` are components; their systems receive narrow store dependencies and action context. The adder poison system runs after player regeneration and curing removes the component. Haste shares the player duration owner with might; its action speed is calculated once before systems run. | **Partly ECS.** Add another optional typed component when a new status has a distinct lifecycle. Shared resistances and monster poison rules remain future work. |
+| Status and regeneration | `Durations.MightAut`, `Durations.HasteAut`, `Regeneration`, and optional `Poison` are components; their systems receive narrow store dependencies and action context. Adder bites and venom weapons write the same player poison component. The poison system runs after regeneration and curing removes the component. Haste shares the player duration owner with might; its action speed is calculated once before systems run. | **Partly ECS.** Add another optional typed component when a new status has a distinct lifecycle. Resistance and broader poison rules remain future work. |
 | Corpses and floor timers | Corpses are ECS entities. `corpseAgingSystem` owns their item/corpse mutations and removal, while each `Level` owns its away clock. The turn coordinator invokes the system at the post-action 200-aut boundary and on floor return. | **ECS-owned lifecycle.** Preserve this timer barrier when adding other timed floor entities; do not run rot once per acting monster. |
 | World, visibility, and generation | `Level` owns terrain, remembered cells, and occupancy; `Game` holds a derived current visibility mask. Population weights are immutable catalog data; `levelgen` builds D:1–2 `layout_basic` geometry as a temporary grid for live play. | **Keep grids outside ECS.** Treat `Level` as map service, not a tile entity collection. The level builder produces grids; the game then requests Akara entity creation. Recompute derived sight instead of persisting it as a component. |
 | Saves and views | `Game.Snapshot` and `Restore` manually copy/validate components in one large file; `Game.View` projects component and level state; Bubble Tea renders the view. | **Keep adapters outside ECS.** Split save validation by component/domain and build read-only projections from stores. Maintain one explicit component serialization schema. UI must never mutate stores. |
@@ -74,19 +74,22 @@ and saves their states. Live D:1–2 counts follow the pinned three-dice rule;
 the fixed test fixture still chooses two monsters per floor.
 
 Monster weapon ownership: the 162 primary and 16 secondary declarative
-loadouts now live in immutable, committed content. The next monster equipment
-slice will turn source choices into Akara item entities during creation.
-The pure early-humanoid policy already chooses goblin and kobold weapon
-kinds, including the goblin sling override and its alternate melee weapon.
-Combat reads the equipped entity state; item quality and live assignment
-remain to port.
+loadouts are immutable, committed content. A pure rule chooses goblin and
+kobold weapons, the goblin sling override and alternate melee weapon, quality,
+and kobold ammunition in source draw order. Their factory creates real Akara
+item entities linked by `CarriedBy` and `Equipped`; the level generator still
+excludes these monsters while ranged and complex brand behavior is unfinished.
 
-Monster inventory lifecycle progress: the save validator now accepts one
-equipped weapon item per live monster, restores its carrier relationship, and
-the death barrier releases that same item entity onto the monster's cell.
-The combat system reads that live item for `AT_HIT` melee accuracy, damage,
-and enchantment rolls. Source weapon selection still needs to equip generated
-humanoids; brands, alternate weapons, and ranged behavior remain to port.
+Monster inventory lifecycle progress: save and restore preserve primary and
+alternate weapons plus one missile stack, including plus, brand, and carrier.
+The death barrier releases those same entities onto the floor. The combat
+system projects the live selected melee weapon into `AT_HIT` accuracy, damage,
+and enchantment rolls. Venom changes the player's ECS `Poison`; protection
+changes the monster's projected AC. Flaming, freezing, electrocution, and
+vorpal use pure source rolls for extra unresisted damage. Unsupported melee
+brands fail explicitly. Ranged attacks, elemental resistance, and the
+remaining brand effects are next; no parallel monster inventory path is
+needed.
 
 Phase 5 progress: corpse state remains in Akara stores, and a focused aging system owns its decay and removal. The `Level` owns its away clock. `Game.Step` supplies elapsed aut only after all actor actions, preserving the source's 200-aut timer phase and inactive-floor catch-up. The scheduler grants source-rounded energy only to monsters on the player's floor and acts with the highest-energy ready monster first. Inactive monster energy stays frozen. On return to a visited floor, an event-driven system applies the generated roster's source HP recovery, including the worm’s fast rate and direct movement toward a saved target before ordinary energy grants resume. First entry skips this update. Bat retreat actions are mutable `MonsterAI` state and survive saves; its plain natural hit and two wandering actions share the existing combat and AI systems. The ball python adds one optional player `Constricted` component, with its constrictor entity and escape attempts. The post-action constriction system owns damage and release, while movement uses a pure escape roll. Save validation checks the cross-entity link. Summons, pacification, enchantments, broader ranged behavior, and other monster capabilities still need their source return-time rules.
 
@@ -107,9 +110,17 @@ player component when ported.
 
 Before each implementation slice, write a small ownership note: **which entity owns new mutable state, which system changes it, which immutable definition it reads, and what belongs to a level/session instead**. Add a component only if an actual feature or invariant uses it. Keep each behavior in one path; remove its former `Game` implementation in the same category. A completed slice must show deterministic turn/RNG continuation, save/restore of new authoritative state, correct system order, and no rendering or catalog import dependency in the simulation. Run focused tests during development and full test/vet/build plus review at the category boundary.
 
-The next categories are source-backed level generation and action-barrier cleanup as broader combat and level mechanics arrive.
+The next geared-monster categories are remaining brand effects, sling and
+missile attacks, and source AI decisions for choosing them. Admit goblins and
+kobolds to the generated Dungeon pool only when their selected gear can act
+faithfully. In parallel, continue source-backed level generation and action
+barrier cleanup as broader mechanics arrive.
 
-Adder poison progress: the seventh supported ordinary animal keeps its static bite data in the committed monster catalog. The combat system rolls poison on landed adder bites and attaches optional `Poison` to the player. An ordered Akara status system decays it after regeneration only on player actions; curing removes it. Snapshot, restore, view, and HUD read the same component. Other monsters, resistance, and broader status families remain future slices.
+Poison progress: the adder's cataloged bite and a wielded venom weapon both
+attach optional `Poison` to the player using their distinct source rolls. An
+ordered Akara status system decays it after regeneration only on player
+actions; curing removes it. Snapshot, restore, view, and HUD read the same
+component. Resistance and broader status families remain future slices.
 
 Haste progress: the fourth supported potion uses the committed item catalog and a fixed Dungeon:2 floor placement. `Durations.HasteAut` is owned by the Akara player; quaff and end-turn systems mutate it. `Game.Step` chooses one source-rounded player speed for each accepted action, and melee delay, scheduling, saves, view, and the `Fast` HUD consume that same state.
 
