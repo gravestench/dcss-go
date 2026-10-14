@@ -73,3 +73,14 @@ func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 		t.Fatalf("mighty miss = %+v, %v; rolls %+v", got, err, rng.rolls)
 	}
 }
+
+func TestPlayerMeleeMightRollPrecedesEnchantmentRoll(t *testing.T) {
+	in := fighterFlailAttack()
+	in.Mighty = true
+	in.WeaponPlus = 2
+	rng := &scriptedRoller{rolls: []scriptedRoll{{400, 300}, {300, 200}, {29, 28}, {100, 10}, {29, 0}, {10, 9}, {201, 200}, {301, 300}, {10, 4}, {3, 2}, {2, 1}, {2, 1}}}
+	got, err := PlayerMelee(rng, in)
+	if err != nil || got.Kind != Hit || got.Damage != 15 || len(rng.rolls) != 0 {
+		t.Fatalf("enchanted mighty hit = %+v, %v; rolls %+v", got, err, rng.rolls)
+	}
+}

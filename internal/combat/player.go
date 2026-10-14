@@ -120,6 +120,13 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 		return Outcome{}, err
 	}
 	damage = damage * (3000 + fightingBonus) / 3000
+	if in.Mighty {
+		bonus, bonusErr := random2(r, 10)
+		if bonusErr != nil {
+			return Outcome{}, bonusErr
+		}
+		damage += 1 + bonus
+	}
 	if in.WeaponPlus >= 0 {
 		bonus, bonusErr := random2(r, 1+in.WeaponPlus)
 		if bonusErr != nil {
@@ -132,13 +139,6 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 			return Outcome{}, penaltyErr
 		}
 		damage -= penalty
-	}
-	if in.Mighty {
-		bonus, bonusErr := random2(r, 10)
-		if bonusErr != nil {
-			return Outcome{}, bonusErr
-		}
-		damage += 1 + bonus
 	}
 	saved, err := random2(r, in.DefenderAC+1)
 	if err != nil {
