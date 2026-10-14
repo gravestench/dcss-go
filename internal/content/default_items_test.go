@@ -44,6 +44,7 @@ func TestDefaultItemManifest(t *testing.T) {
 			itemData:     []byte(`{"items":`),
 			identityData: defaultItemIdentitiesJSON,
 		},
+
 		{
 			name:         "bad identity bytes",
 			itemData:     defaultItemsJSON,

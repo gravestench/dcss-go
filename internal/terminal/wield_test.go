@@ -57,6 +57,7 @@ func TestWieldMenuKeepsInventoryLetters(t *testing.T) {
 				Name:  "potion of might",
 				Class: "OBJ_POTIONS",
 			},
+
 			{
 				Name:  "rapier",
 				Class: "OBJ_WEAPONS",

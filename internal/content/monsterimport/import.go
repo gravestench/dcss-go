@@ -214,66 +214,79 @@ func sourceSymbols(data map[string][]byte) (symbolSets, error) {
 			file:   "mon-enum.h",
 			name:   "attack_type",
 		},
+
 		{
 			target: &s.attackFlavour,
 			file:   "mon-enum.h",
 			name:   "attack_flavour",
 		},
+
 		{
 			target: &s.spellbook,
 			file:   "mon-mst.h",
 			name:   "mon_spellbook_type",
 		},
+
 		{
 			target: &s.classFlag,
 			file:   "mon-flags.h",
 			name:   "monclass_flag_type",
 		},
+
 		{
 			target: &s.resistance,
 			file:   "mon-enum.h",
 			name:   "mon_resist_flags",
 		},
+
 		{
 			target: &s.holiness,
 			file:   "mon-holy-type.h",
 			name:   "mon_holy_type_flags",
 		},
+
 		{
 			target: &s.shout,
 			file:   "mon-enum.h",
 			name:   "shout_type",
 		},
+
 		{
 			target: &s.intelligence,
 			file:   "mon-enum.h",
 			name:   "mon_intel_type",
 		},
+
 		{
 			target: &s.habitat,
 			file:   "mon-enum.h",
 			name:   "habitat_type",
 		},
+
 		{
 			target: &s.itemUse,
 			file:   "mon-enum.h",
 			name:   "mon_itemuse_type",
 		},
+
 		{
 			target: &s.size,
 			file:   "size-type.h",
 			name:   "size_type",
 		},
+
 		{
 			target: &s.shape,
 			file:   "mon-enum.h",
 			name:   "mon_body_shape",
 		},
+
 		{
 			target: &s.colour,
 			file:   "defines.h",
 			name:   "COLOURS",
 		},
+
 		{
 			target: &s.tileVariation,
 			file:   "mon-util.h",
@@ -629,6 +642,7 @@ func Write(sourceDir, outPath string, check bool) error {
 				path:     outPath,
 				expected: definitions,
 			},
+
 			{
 				path:     manifestPath,
 				expected: vocabulary,

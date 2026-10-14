@@ -294,10 +294,12 @@ func (p *jobParser) job() (job content.JobDef, err error) {
 			field:  "strength",
 			target: &job.Strength,
 		},
+
 		{
 			field:  "intelligence",
 			target: &job.Intelligence,
 		},
+
 		{
 			field:  "dexterity",
 			target: &job.Dexterity,

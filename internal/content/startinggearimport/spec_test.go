@@ -21,6 +21,7 @@ func TestParseEquipmentSpec(t *testing.T) {
 				Quantity: 1,
 			},
 		},
+
 		{
 			raw:  "potion of invisibility q:2",
 			name: "potion of invisibility",
@@ -29,6 +30,7 @@ func TestParseEquipmentSpec(t *testing.T) {
 				Quantity: 2,
 			},
 		},
+
 		{
 			raw:  "wand of flame charges:15",
 			name: "wand of flame",
@@ -38,6 +40,7 @@ func TestParseEquipmentSpec(t *testing.T) {
 				Charges:  15,
 			},
 		},
+
 		{
 			raw:  "dart ego:curare q:3",
 			name: "dart",
@@ -47,6 +50,7 @@ func TestParseEquipmentSpec(t *testing.T) {
 				Ego:      "curare",
 			},
 		},
+
 		{
 			raw:  "scroll of fog no_exclude",
 			name: "scroll of fog",
@@ -56,6 +60,7 @@ func TestParseEquipmentSpec(t *testing.T) {
 				NoExclude: true,
 			},
 		},
+
 		{
 			raw:  "piece from Xom's chessboard",
 			name: "piece from Xom's chessboard",
@@ -64,6 +69,7 @@ func TestParseEquipmentSpec(t *testing.T) {
 				Quantity: 1,
 			},
 		},
+
 		{
 			raw:  "dagger plus:2",
 			name: "dagger",

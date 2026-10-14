@@ -87,6 +87,7 @@ func TestRegenVariableAutUsesHPThenMPRounding(t *testing.T) {
 				bound: 10,
 				value: 0,
 			},
+
 			{
 				bound: 10,
 				value: 9,
@@ -142,6 +143,7 @@ func TestRegenCanRestoreSeveralPointsAndRejectsBadState(t *testing.T) {
 			MP:    0,
 			MaxMP: 1,
 		},
+
 		{
 			HP:         18,
 			MaxHP:      18,
@@ -149,6 +151,7 @@ func TestRegenCanRestoreSeveralPointsAndRejectsBadState(t *testing.T) {
 			MaxMP:      1,
 			HPProgress: 100,
 		},
+
 		{
 			HP:         18,
 			MaxHP:      18,

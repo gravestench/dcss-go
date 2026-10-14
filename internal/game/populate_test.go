@@ -271,6 +271,7 @@ func TestRestoreRejectsInvalidJackalBandState(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "understated initial actors",
 			change: func(snapshot *save.Snapshot) {

@@ -17,6 +17,7 @@ func TestHumanPoisonDecayMatchesSourceRateRegions(t *testing.T) {
 			wantAmount: 3000,
 			wantDamage: 1,
 		},
+
 		{
 			name:       "ordinary exponential rate",
 			amount:     100000,
@@ -24,6 +25,7 @@ func TestHumanPoisonDecayMatchesSourceRateRegions(t *testing.T) {
 			wantAmount: 80000,
 			wantDamage: 20,
 		},
+
 		{
 			name:       "maximum rate",
 			amount:     500000,
@@ -31,6 +33,7 @@ func TestHumanPoisonDecayMatchesSourceRateRegions(t *testing.T) {
 			wantAmount: 450000,
 			wantDamage: 50,
 		},
+
 		{
 			name:       "partial action",
 			amount:     2000,
@@ -38,6 +41,7 @@ func TestHumanPoisonDecayMatchesSourceRateRegions(t *testing.T) {
 			wantAmount: 1500,
 			wantDamage: 1,
 		},
+
 		{
 			name:       "status ends below one point",
 			amount:     1000,
@@ -77,10 +81,12 @@ func TestHumanPoisonDecayRejectsInvalidInputs(t *testing.T) {
 			amount: 999,
 			aut:    10,
 		},
+
 		{
 			amount: 2147483648,
 			aut:    10,
 		},
+
 		{
 			amount: 1000,
 			aut:    0,

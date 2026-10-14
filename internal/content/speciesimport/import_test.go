@@ -123,6 +123,7 @@ func TestGenerateSpeciesArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "SP_HIGH_ELF",
 			want:        "SP_HIGH_ELF",
 		},
+
 		{
 			name:        "missing active species",
 			path:        "species-type.h",
@@ -130,6 +131,7 @@ func TestGenerateSpeciesArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: " SP_EXTRA, SP_HUMAN,",
 			want:        "SP_EXTRA",
 		},
+
 		{
 			name:        "missing monster reference",
 			path:        "dat/species/human.yaml",
@@ -137,6 +139,7 @@ func TestGenerateSpeciesArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "MONS_MISSING",
 			want:        "MONS_MISSING",
 		},
+
 		{
 			name:        "missing job reference",
 			path:        "dat/species/human.yaml",
@@ -144,6 +147,7 @@ func TestGenerateSpeciesArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "JOB_MISSING",
 			want:        "JOB_MISSING",
 		},
+
 		{
 			name:        "wrong tag",
 			path:        "tag-version.h",
@@ -151,6 +155,7 @@ func TestGenerateSpeciesArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "VERSION 35",
 			want:        "tag-version.h",
 		},
+
 		{
 			name:        "unsupported conditional",
 			path:        "species-type.h",

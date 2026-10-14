@@ -49,6 +49,7 @@ func TestLongCompositeLiteralGrouping(t *testing.T) {
 			source: longLiteralSource,
 			want:   1,
 		},
+
 		{
 			name: "blank line groups fields",
 			source: strings.Replace(
@@ -59,6 +60,7 @@ func TestLongCompositeLiteralGrouping(t *testing.T) {
 			),
 			want: 0,
 		},
+
 		{
 			name: "comment alone does not group fields",
 			source: strings.Replace(
@@ -69,6 +71,7 @@ func TestLongCompositeLiteralGrouping(t *testing.T) {
 			),
 			want: 1,
 		},
+
 		{
 			name: "generic struct",
 			source: strings.NewReplacer(
@@ -78,6 +81,7 @@ func TestLongCompositeLiteralGrouping(t *testing.T) {
 			).Replace(longLiteralSource),
 			want: 1,
 		},
+
 		{
 			name: "unknown qualified map stays unrestricted",
 			source: strings.Replace(
@@ -88,6 +92,7 @@ func TestLongCompositeLiteralGrouping(t *testing.T) {
 			),
 			want: 0,
 		},
+
 		{
 			name: "imported project struct",
 			source: strings.NewReplacer(

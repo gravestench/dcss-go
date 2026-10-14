@@ -79,30 +79,35 @@ func TestRestoreRejectsInvalidSkillTrainingState(t *testing.T) {
 				record.SkillTraining = nil
 			},
 		},
+
 		{
 			name: "skill experience exceeds earned experience",
 			mutate: func(record *save.EntityRecord) {
 				record.SkillTraining.AvailableXP = 1
 			},
 		},
+
 		{
 			name: "wrong cost level",
 			mutate: func(record *save.EntityRecord) {
 				record.SkillTraining.CostLevel = 2
 			},
 		},
+
 		{
 			name: "skill level disagrees with points",
 			mutate: func(record *save.EntityRecord) {
 				record.Skills.Entries[0].Level = 26
 			},
 		},
+
 		{
 			name: "invalid Fighting level cannot reach HP projection",
 			mutate: func(record *save.EntityRecord) {
 				record.Skills.Entries[0].Level = 28
 			},
 		},
+
 		{
 			name: "unsupported magic skill",
 			mutate: func(record *save.EntityRecord) {
@@ -119,6 +124,7 @@ func TestRestoreRejectsInvalidSkillTrainingState(t *testing.T) {
 				)
 			},
 		},
+
 		{
 			name: "practice queue is too long",
 			mutate: func(record *save.EntityRecord) {
@@ -244,6 +250,7 @@ func TestRareFocusedAutomaticSkillReceivesSourceWeight(t *testing.T) {
 				Enabled: true,
 				Focused: true,
 			},
+
 			{
 				ID:      "SK_DODGING",
 				Enabled: true,

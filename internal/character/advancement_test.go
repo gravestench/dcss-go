@@ -101,14 +101,17 @@ func TestHumanExperienceProgressAndVitalGrowth(t *testing.T) {
 			level: 1,
 			mp:    1,
 		},
+
 		{
 			level: 2,
 			mp:    2,
 		},
+
 		{
 			level: 23,
 			mp:    23,
 		},
+
 		{
 			level: 27,
 			mp:    23,

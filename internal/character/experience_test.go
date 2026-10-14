@@ -141,6 +141,7 @@ func TestCockroachAndWormPlainBiteExperience(t *testing.T) {
 			atHP:   5,
 			wantXP: 2,
 		},
+
 		{
 			id:     "MONS_WORM",
 			minHP:  12,
@@ -226,14 +227,17 @@ func TestHumanFirstLevelProgressUsesNineXPThreshold(t *testing.T) {
 			xp:      0,
 			percent: 0,
 		},
+
 		{
 			xp:      1,
 			percent: 11,
 		},
+
 		{
 			xp:      4,
 			percent: 44,
 		},
+
 		{
 			xp:      8,
 			percent: 88,
@@ -267,6 +271,7 @@ func TestRatExperienceRejectsWrongKindAndHP(t *testing.T) {
 			},
 			hp: 4,
 		},
+
 		{
 			rat: content.MonsterDef{
 				ID:         "MONS_RAT",
@@ -276,6 +281,7 @@ func TestRatExperienceRejectsWrongKindAndHP(t *testing.T) {
 			},
 			hp: 0,
 		},
+
 		{
 			rat: content.MonsterDef{
 				ID:         "MONS_RAT",

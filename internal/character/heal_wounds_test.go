@@ -39,6 +39,7 @@ func TestHealWoundsUsesSourceThreeRollAverage(t *testing.T) {
 			maximum: 40,
 			want:    11,
 		},
+
 		{
 			values: []int{
 				27,
@@ -49,6 +50,7 @@ func TestHealWoundsUsesSourceThreeRollAverage(t *testing.T) {
 			maximum: 40,
 			want:    38,
 		},
+
 		{
 			values: []int{
 				1,
@@ -59,6 +61,7 @@ func TestHealWoundsUsesSourceThreeRollAverage(t *testing.T) {
 			maximum: 40,
 			want:    13,
 		},
+
 		{
 			values: []int{
 				27,
@@ -101,10 +104,12 @@ func TestHealWoundsRejectsInvalidInputAndDraws(t *testing.T) {
 			current: 0,
 			maximum: 18,
 		},
+
 		{
 			current: 19,
 			maximum: 18,
 		},
+
 		{
 			current: 1,
 			maximum: 0,

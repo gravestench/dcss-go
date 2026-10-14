@@ -25,6 +25,7 @@ func TestAdderPoisonBiteAddsPlayerOwnedStatus(t *testing.T) {
 				bound: 3,
 				value: 0,
 			},
+
 			{
 				bound: 5,
 				value: 4,
@@ -69,42 +70,52 @@ func TestAdderZeroDamageBiteStillPoisonsPlayer(t *testing.T) {
 			bound: 22,
 			value: 21,
 		},
+
 		{
 			bound: 10,
 			value: 0,
 		},
+
 		{
 			bound: 11,
 			value: 0,
 		},
+
 		{
 			bound: 100,
 			value: 10,
 		},
+
 		{
 			bound: 16,
 			value: 15,
 		},
+
 		{
 			bound: 18,
 			value: 0,
 		},
+
 		{
 			bound: 19,
 			value: 0,
 		},
+
 		{
 			bound: 4,
 			value: 0,
 		},
+
 		{
 			bound: 7,
 			value: 6,
 		},
+
 		{
 			bound: 3,
 			value: 0,
 		},
+
 		{
 			bound: 5,
 			value: 4,

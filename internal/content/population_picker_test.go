@@ -12,6 +12,7 @@ func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
 				Curve:     "FLAT",
 				MonsterID: "MONS_RAT",
 			},
+
 			{
 				MinDepth:  2,
 				MaxDepth:  4,
@@ -19,6 +20,7 @@ func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
 				Curve:     "RISE",
 				MonsterID: "MONS_QUOKKA",
 			},
+
 			{
 				MinDepth:  2,
 				MaxDepth:  4,
@@ -44,22 +46,27 @@ func TestDungeonMonsterPoolPreservesSourceRowsAndBoundaries(t *testing.T) {
 			roll: 0,
 			want: "MONS_RAT",
 		},
+
 		{
 			roll: first - 1,
 			want: "MONS_RAT",
 		},
+
 		{
 			roll: first,
 			want: "MONS_QUOKKA",
 		},
+
 		{
 			roll: first + second - 1,
 			want: "MONS_QUOKKA",
 		},
+
 		{
 			roll: first + second,
 			want: "MONS_RAT",
 		},
+
 		{
 			roll: pool.TotalWeight() - 1,
 			want: "MONS_RAT",
@@ -89,6 +96,7 @@ func TestDungeonMonsterPoolVetoAndEmpty(t *testing.T) {
 				Curve:     "FLAT",
 				MonsterID: "MONS_RAT",
 			},
+
 			{
 				MinDepth:  1,
 				MaxDepth:  2,
@@ -96,6 +104,7 @@ func TestDungeonMonsterPoolVetoAndEmpty(t *testing.T) {
 				Curve:     "FLAT",
 				MonsterID: "MONS_QUOKKA",
 			},
+
 			{
 				MinDepth:  1,
 				MaxDepth:  2,
@@ -151,10 +160,12 @@ func TestDefaultDungeonMonsterPoolUsesPinnedD1Rows(t *testing.T) {
 			roll: 0,
 			want: "MONS_BAT",
 		},
+
 		{
 			roll: 1000*2520 - 1,
 			want: "MONS_BAT",
 		},
+
 		{
 			roll: 1000 * 2520,
 			want: "MONS_RAT",

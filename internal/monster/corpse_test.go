@@ -41,12 +41,14 @@ func TestRatCorpseDropRolls(t *testing.T) {
 			want:        0,
 			wantDropped: false,
 		},
+
 		{
 			rolls: []corpseRoll{
 				{
 					bound: 2,
 					value: 0,
 				},
+
 				{
 					bound: 255,
 					value: 0,
@@ -55,12 +57,14 @@ func TestRatCorpseDropRolls(t *testing.T) {
 			want:        1,
 			wantDropped: true,
 		},
+
 		{
 			rolls: []corpseRoll{
 				{
 					bound: 2,
 					value: 0,
 				},
+
 				{
 					bound: 255,
 					value: 254,

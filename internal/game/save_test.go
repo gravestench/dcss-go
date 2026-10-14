@@ -196,6 +196,7 @@ func TestRestoreRejectsCorruptAttributesWithoutChangingLiveGame(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "mismatched attributes",
 			mutate: func(snapshot *save.Snapshot) {
@@ -206,6 +207,7 @@ func TestRestoreRejectsCorruptAttributesWithoutChangingLiveGame(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "nonpositive attributes",
 			mutate: func(snapshot *save.Snapshot) {
@@ -216,6 +218,7 @@ func TestRestoreRejectsCorruptAttributesWithoutChangingLiveGame(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "monster attributes",
 			mutate: func(snapshot *save.Snapshot) {
@@ -230,6 +233,7 @@ func TestRestoreRejectsCorruptAttributesWithoutChangingLiveGame(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "item attributes",
 			mutate: func(snapshot *save.Snapshot) {
@@ -244,6 +248,7 @@ func TestRestoreRejectsCorruptAttributesWithoutChangingLiveGame(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "version 1",
 			mutate: func(snapshot *save.Snapshot) {
@@ -284,6 +289,7 @@ func TestRestoreRejectsCorruptComponents(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "item health",
 			mutate: func(snapshot *save.Snapshot) {

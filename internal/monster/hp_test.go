@@ -38,6 +38,7 @@ func TestRatHPSourceRollOrderAndBounds(t *testing.T) {
 					bound: 100,
 					value: 25,
 				},
+
 				{
 					bound: 16,
 					value: 0,
@@ -48,6 +49,7 @@ func TestRatHPSourceRollOrderAndBounds(t *testing.T) {
 			})...),
 			want: 1,
 		},
+
 		{
 			name: "maximum",
 			rolls: append([]scriptedRoll{
@@ -55,6 +57,7 @@ func TestRatHPSourceRollOrderAndBounds(t *testing.T) {
 					bound: 100,
 					value: 25,
 				},
+
 				{
 					bound: 16,
 					value: 15,
@@ -65,6 +68,7 @@ func TestRatHPSourceRollOrderAndBounds(t *testing.T) {
 			})...),
 			want: 4,
 		},
+
 		{
 			name: "variance-round-up",
 			rolls: append([]scriptedRoll{
@@ -72,6 +76,7 @@ func TestRatHPSourceRollOrderAndBounds(t *testing.T) {
 					bound: 100,
 					value: 0,
 				},
+
 				{
 					bound: 18,
 					value: 9,

@@ -98,11 +98,13 @@ func TestLoadDefaultStartingGear(t *testing.T) {
 			slot:  "",
 			skill: "",
 		},
+
 		"ARM_SCALE_MAIL": {
 			class: "OBJ_ARMOUR",
 			slot:  "body",
 			skill: "",
 		},
+
 		"WPN_FLAIL": {
 			class: "OBJ_WEAPONS",
 			slot:  "weapon",
@@ -144,12 +146,14 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 				a.SourceRevision = "wrong"
 			},
 		},
+
 		{
 			name: "wrong tag",
 			mutate: func(a *StartingGearArtifact) {
 				a.TagMajorVersion = 35
 			},
 		},
+
 		{
 			name: "shared source hash",
 			mutate: func(a *StartingGearArtifact) {
@@ -162,18 +166,21 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "duplicate job",
 			mutate: func(a *StartingGearArtifact) {
 				a.Jobs = append(a.Jobs, a.Jobs[0])
 			},
 		},
+
 		{
 			name: "missing job",
 			mutate: func(a *StartingGearArtifact) {
 				a.Jobs = a.Jobs[1:]
 			},
 		},
+
 		{
 			name: "changed raw spec",
 			mutate: func(a *StartingGearArtifact) {
@@ -186,6 +193,7 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "changed grant order",
 			mutate: func(a *StartingGearArtifact) {
@@ -198,6 +206,7 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "unknown kind",
 			mutate: func(a *StartingGearArtifact) {
@@ -210,6 +219,7 @@ func TestLoadDefaultRejectsBadStartingGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "wrong valid kind",
 			mutate: func(a *StartingGearArtifact) {
@@ -310,6 +320,7 @@ func TestStartingGearArtifactValidation(t *testing.T) {
 				a.Jobs = append(a.Jobs, a.Jobs[0])
 			},
 		},
+
 		{
 			name: "unknown kind",
 			want: "unknown",
@@ -317,6 +328,7 @@ func TestStartingGearArtifactValidation(t *testing.T) {
 				a.Jobs[0].Grants[0].KindID = "POT_UNKNOWN"
 			},
 		},
+
 		{
 			name: "undefined legacy kind",
 			want: "unknown",
@@ -324,6 +336,7 @@ func TestStartingGearArtifactValidation(t *testing.T) {
 				a.Jobs[0].Grants[0].KindID = "POT_GAIN_STRENGTH"
 			},
 		},
+
 		{
 			name: "zero quantity",
 			want: "quantity",
@@ -331,6 +344,7 @@ func TestStartingGearArtifactValidation(t *testing.T) {
 				a.Jobs[0].Grants[0].Quantity = 0
 			},
 		},
+
 		{
 			name: "potion charges",
 			want: "charges",
@@ -338,6 +352,7 @@ func TestStartingGearArtifactValidation(t *testing.T) {
 				a.Jobs[0].Grants[0].Charges = 3
 			},
 		},
+
 		{
 			name: "potion ego",
 			want: "ego",

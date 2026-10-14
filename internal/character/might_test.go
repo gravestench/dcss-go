@@ -33,12 +33,14 @@ func TestMightPotionDurationAndCap(t *testing.T) {
 			want:    350,
 			message: "You feel very mighty all of a sudden.",
 		},
+
 		{
 			old:     0,
 			roll:    39,
 			want:    740,
 			message: "You feel very mighty all of a sudden.",
 		},
+
 		{
 			old:     350,
 			roll:    39,
@@ -71,18 +73,21 @@ func TestMightDurationDecay(t *testing.T) {
 			want:  340,
 			ended: false,
 		},
+
 		{
 			old:   9,
 			cost:  9,
 			want:  0,
 			ended: true,
 		},
+
 		{
 			old:   9,
 			cost:  10,
 			want:  0,
 			ended: true,
 		},
+
 		{
 			old:   0,
 			cost:  10,

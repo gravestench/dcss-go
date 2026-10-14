@@ -28,6 +28,8 @@ for a human reader to follow.
   values may stay inline.
 - In long struct literals, leave blank lines between groups of related fields.
   Keep the existing field order when grouping saved or imported data.
+- Separate consecutive multiline entries in a table, map, or test fixture with
+  blank lines so each entry can be scanned on its own.
 - Leave a blank line after a multiline literal before the next statement.
 - Declare each struct field on its own line, including fields in test case
   tables. In large state and catalog structs, separate fields into conceptually

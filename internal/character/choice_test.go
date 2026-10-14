@@ -93,84 +93,98 @@ func TestDirectionalRecommendationsAndBans(t *testing.T) {
 			forward: Restricted,
 			reverse: Restricted,
 		},
+
 		{
 			species: "SP_BARACHI",
 			job:     "JOB_ARCANE_MARKSMAN",
 			forward: Recommended,
 			reverse: Restricted,
 		},
+
 		{
 			species: "SP_FELID",
 			job:     "JOB_GLADIATOR",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_FELID",
 			job:     "JOB_BRIGAND",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_FELID",
 			job:     "JOB_HUNTER",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_FELID",
 			job:     "JOB_ARCANE_MARKSMAN",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_DEMIGOD",
 			job:     "JOB_BERSERKER",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_DEMIGOD",
 			job:     "JOB_CHAOS_KNIGHT",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_DEMIGOD",
 			job:     "JOB_ABYSSAL_KNIGHT",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_DEMIGOD",
 			job:     "JOB_CINDER_ACOLYTE",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_DEMIGOD",
 			job:     "JOB_MONK",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_GHOUL",
 			job:     "JOB_TRANSMUTER",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_MUMMY",
 			job:     "JOB_TRANSMUTER",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_HUMAN",
 			job:     "JOB_HEALER",
 			forward: Banned,
 			reverse: Banned,
 		},
+
 		{
 			species: "SP_HIGH_ELF",
 			job:     "JOB_FIGHTER",

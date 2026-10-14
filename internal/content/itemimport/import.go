@@ -322,6 +322,7 @@ func writePair(outPath string, check bool, generate func() ([]byte, []byte, erro
 				path: outPath,
 				data: items,
 			},
+
 			{
 				path: manifestPath,
 				data: identities,

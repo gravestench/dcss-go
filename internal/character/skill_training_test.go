@@ -11,38 +11,47 @@ func TestHumanSkillPointThresholds(t *testing.T) {
 			level: 0,
 			want:  0,
 		},
+
 		{
 			level: 1,
 			want:  50,
 		},
+
 		{
 			level: 2,
 			want:  150,
 		},
+
 		{
 			level: 3,
 			want:  300,
 		},
+
 		{
 			level: 9,
 			want:  2250,
 		},
+
 		{
 			level: 10,
 			want:  2775,
 		},
+
 		{
 			level: 18,
 			want:  9675,
 		},
+
 		{
 			level: 19,
 			want:  10900,
 		},
+
 		{
 			level: 26,
 			want:  22275,
 		},
+
 		{
 			level: 27,
 			want:  24325,
@@ -73,30 +82,37 @@ func TestHumanSkillLevelFromPoints(t *testing.T) {
 			points: 0,
 			want:   0,
 		},
+
 		{
 			points: 49,
 			want:   0,
 		},
+
 		{
 			points: 50,
 			want:   1,
 		},
+
 		{
 			points: 150,
 			want:   2,
 		},
+
 		{
 			points: 300,
 			want:   3,
 		},
+
 		{
 			points: 2775,
 			want:   10,
 		},
+
 		{
 			points: 24325,
 			want:   27,
 		},
+
 		{
 			points: 30000,
 			want:   27,
@@ -127,21 +143,25 @@ func TestSkillCostBoundaries(t *testing.T) {
 			level: 1,
 			cost:  1,
 		},
+
 		{
 			spent: 116,
 			level: 1,
 			cost:  1,
 		},
+
 		{
 			spent: 117,
 			level: 2,
 			cost:  2,
 		},
+
 		{
 			spent: 376,
 			level: 2,
 			cost:  2,
 		},
+
 		{
 			spent: 377,
 			level: 3,

@@ -279,6 +279,8 @@ func checkFile(path string) (int, error) {
 			checkStatements(value.Body)
 
 		case *ast.CompositeLit:
+			checkNestedLiteralSpacing(fset, value, report)
+
 			checkCollectionStructValues(
 				fset,
 				value,
@@ -354,6 +356,41 @@ func checkFile(path string) (int, error) {
 	}
 
 	return issues, nil
+}
+
+func checkNestedLiteralSpacing(
+	fset *token.FileSet,
+	collection *ast.CompositeLit,
+	report func(token.Pos, string),
+) {
+	for index := 1; index < len(collection.Elts); index++ {
+		previous, previousOK := nestedLiteral(collection.Elts[index-1])
+		next, nextOK := nestedLiteral(collection.Elts[index])
+
+		if !previousOK || !nextOK {
+			continue
+		}
+
+		previousStart := fset.Position(previous.Pos()).Line
+		previousEnd := fset.Position(previous.End() - 1).Line
+		nextStart := fset.Position(next.Pos()).Line
+		nextEnd := fset.Position(next.End() - 1).Line
+
+		if previousEnd > previousStart && nextEnd > nextStart &&
+			previousEnd+1 == nextStart {
+			report(next.Pos(), "leave a blank line between multiline literal entries")
+		}
+	}
+}
+
+func nestedLiteral(element ast.Expr) (*ast.CompositeLit, bool) {
+	if keyed, ok := element.(*ast.KeyValueExpr); ok {
+		element = keyed.Value
+	}
+
+	literal, ok := element.(*ast.CompositeLit)
+
+	return literal, ok
 }
 
 func checkCollectionStructValues(

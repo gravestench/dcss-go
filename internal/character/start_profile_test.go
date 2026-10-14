@@ -23,6 +23,7 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 			weapon: "WPN_FLAIL",
 			skill:  "SK_MACES_FLAILS",
 		},
+
 		{
 			weapon: "WPN_UNARMED",
 			skill:  "SK_UNARMED_COMBAT",
@@ -49,16 +50,19 @@ func TestBuildStartProfileHumanFighter(t *testing.T) {
 					Level:  3,
 					Points: 301,
 				},
+
 				{
 					ID:     "SK_SHIELDS",
 					Level:  3,
 					Points: 301,
 				},
+
 				{
 					ID:     "SK_ARMOUR",
 					Level:  3,
 					Points: 301,
 				},
+
 				{
 					ID:     tc.skill,
 					Level:  2,
@@ -123,6 +127,7 @@ func TestBuildStartProfileRejectsBadChoice(t *testing.T) {
 			job:     "JOB_FIGHTER",
 			weapon:  "WPN_QUARTERSTAFF",
 		},
+
 		{
 			species: "SP_HILL_ORC",
 			job:     "JOB_FIGHTER",

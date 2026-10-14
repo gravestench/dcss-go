@@ -156,14 +156,17 @@ func TestForcedDoorPushDoesNotAdvanceRNG(t *testing.T) {
 			x: 3,
 			y: 1,
 		},
+
 		{
 			x: 1,
 			y: 2,
 		},
+
 		{
 			x: 2,
 			y: 2,
 		},
+
 		{
 			x: 3,
 			y: 2,
@@ -240,31 +243,37 @@ func TestClosingDoorRejectsJammedGroupWithoutTime(t *testing.T) {
 			y:     1,
 			glyph: '\'',
 		},
+
 		{
 			x:     3,
 			y:     1,
 			glyph: '\'',
 		},
+
 		{
 			x:     4,
 			y:     1,
 			glyph: '\'',
 		},
+
 		{
 			x:     5,
 			y:     1,
 			glyph: '#',
 		},
+
 		{
 			x:     3,
 			y:     2,
 			glyph: '#',
 		},
+
 		{
 			x:     4,
 			y:     2,
 			glyph: '#',
 		},
+
 		{
 			x:     5,
 			y:     2,
@@ -405,10 +414,12 @@ func TestInvalidDoorTargetsDoNotSpendTimeOrRNG(t *testing.T) {
 			Kind: CommandCloseDoor,
 			DX:   1,
 		},
+
 		{
 			Kind: CommandOpenDoor,
 			DX:   2,
 		},
+
 		{
 			Kind: CommandOpenDoor,
 			DY:   1,

@@ -30,6 +30,7 @@ func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 			SourcePath:   files[0].Path,
 			SourceLine:   10,
 		},
+
 		{
 			ID:           "POT_CURING",
 			ClassID:      "OBJ_POTIONS",
@@ -56,6 +57,7 @@ func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 				SourcePath: files[0].Path,
 				SourceLine: 10,
 			},
+
 			Evidence: content.ItemEvidence{
 				PropertySource: files[0].Path,
 				PropertyLine:   10,
@@ -77,6 +79,7 @@ func artifactPairFixture(t *testing.T) ([]byte, []byte) {
 				},
 			},
 		},
+
 		{
 			ID:           "POT_CURING",
 			Name:         "potion of curing",
@@ -162,30 +165,35 @@ func TestItemImportPair(t *testing.T) {
 				a.Items = a.Items[:1]
 			},
 		},
+
 		{
 			name: "same-count ID substitution",
 			change: func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) {
 				a.Items[1].ID = "POT_MAGIC"
 			},
 		},
+
 		{
 			name: "wrong numeric subtype",
 			change: func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) {
 				a.Items[1].SubtypeValue = 99
 			},
 		},
+
 		{
 			name: "swapped removal membership",
 			change: func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) {
 				a.Items[1].ExplicitlyRemoved = true
 			},
 		},
+
 		{
 			name: "unknown property symbol",
 			change: func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) {
 				a.Items[0].Weapon.SkillID = "SK_NOT_REAL"
 			},
 		},
+
 		{
 			name: "source hash mismatch",
 			change: func(a *content.ItemArtifact, _ *content.ItemIdentityManifest) {
@@ -232,6 +240,7 @@ func TestItemImportPair(t *testing.T) {
 			ClassValue:   0,
 			SubtypeValue: 3,
 		},
+
 		{
 			ID:                "POT_OLD",
 			ClassID:           "OBJ_POTIONS",

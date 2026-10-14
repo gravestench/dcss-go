@@ -29,18 +29,22 @@ func TestPlayerMeleeMissAndAutomaticOverrides(t *testing.T) {
 					bound: 400,
 					value: 0,
 				},
+
 				{
 					bound: 300,
 					value: 0,
 				},
+
 				{
 					bound: 22,
 					value: 0,
 				},
+
 				{
 					bound: 100,
 					value: 10,
 				},
+
 				{
 					bound: 15,
 					value: 0,
@@ -48,6 +52,7 @@ func TestPlayerMeleeMissAndAutomaticOverrides(t *testing.T) {
 			},
 			want: Miss,
 		},
+
 		{
 			name: "automatic miss",
 			rolls: []scriptedRoll{
@@ -55,22 +60,27 @@ func TestPlayerMeleeMissAndAutomaticOverrides(t *testing.T) {
 					bound: 400,
 					value: 0,
 				},
+
 				{
 					bound: 300,
 					value: 0,
 				},
+
 				{
 					bound: 22,
 					value: 21,
 				},
+
 				{
 					bound: 100,
 					value: 0,
 				},
+
 				{
 					bound: 2,
 					value: 0,
 				},
+
 				{
 					bound: 25,
 					value: 0,
@@ -78,6 +88,7 @@ func TestPlayerMeleeMissAndAutomaticOverrides(t *testing.T) {
 			},
 			want: Miss,
 		},
+
 		{
 			name: "automatic hit",
 			rolls: []scriptedRoll{
@@ -85,42 +96,52 @@ func TestPlayerMeleeMissAndAutomaticOverrides(t *testing.T) {
 					bound: 400,
 					value: 0,
 				},
+
 				{
 					bound: 300,
 					value: 0,
 				},
+
 				{
 					bound: 22,
 					value: 0,
 				},
+
 				{
 					bound: 100,
 					value: 0,
 				},
+
 				{
 					bound: 2,
 					value: 1,
 				},
+
 				{
 					bound: 15,
 					value: 0,
 				},
+
 				{
 					bound: 10,
 					value: 9,
 				},
+
 				{
 					bound: 201,
 					value: 0,
 				},
+
 				{
 					bound: 301,
 					value: 0,
 				},
+
 				{
 					bound: 2,
 					value: 0,
 				},
+
 				{
 					bound: 2,
 					value: 1,
@@ -153,6 +174,7 @@ func TestPlayerMeleeWeaponDamageAndRatArmour(t *testing.T) {
 			acRoll:     1,
 			want:       0,
 		},
+
 		{
 			name:       "damaging",
 			damageRoll: 9,
@@ -167,38 +189,47 @@ func TestPlayerMeleeWeaponDamageAndRatArmour(t *testing.T) {
 						bound: 400,
 						value: 300,
 					},
+
 					{
 						bound: 300,
 						value: 200,
 					},
+
 					{
 						bound: 27,
 						value: 26,
 					},
+
 					{
 						bound: 100,
 						value: 10,
 					},
+
 					{
 						bound: 28,
 						value: 0,
 					},
+
 					{
 						bound: 10,
 						value: tc.damageRoll,
 					},
+
 					{
 						bound: 201,
 						value: 200,
 					},
+
 					{
 						bound: 301,
 						value: 300,
 					},
+
 					{
 						bound: 2,
 						value: tc.acRoll,
 					},
+
 					{
 						bound: 2,
 						value: 1,
@@ -234,38 +265,47 @@ func TestPlayerMeleeUnarmedUsesNormalFormBaseAndNoWeaponSkillMultiplier(t *testi
 				bound: 400,
 				value: 0,
 			},
+
 			{
 				bound: 300,
 				value: 0,
 			},
+
 			{
 				bound: 23,
 				value: 22,
 			},
+
 			{
 				bound: 100,
 				value: 10,
 			},
+
 			{
 				bound: 26,
 				value: 0,
 			},
+
 			{
 				bound: 256,
 				value: 0,
 			},
+
 			{
 				bound: 7,
 				value: 6,
 			},
+
 			{
 				bound: 301,
 				value: 0,
 			},
+
 			{
 				bound: 2,
 				value: 0,
 			},
+
 			{
 				bound: 2,
 				value: 1,
@@ -292,42 +332,52 @@ func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 				bound: 400,
 				value: 300,
 			},
+
 			{
 				bound: 300,
 				value: 200,
 			},
+
 			{
 				bound: 27,
 				value: 26,
 			},
+
 			{
 				bound: 100,
 				value: 10,
 			},
+
 			{
 				bound: 28,
 				value: 0,
 			},
+
 			{
 				bound: 10,
 				value: 9,
 			},
+
 			{
 				bound: 201,
 				value: 200,
 			},
+
 			{
 				bound: 301,
 				value: 300,
 			},
+
 			{
 				bound: 10,
 				value: 4,
 			},
+
 			{
 				bound: 2,
 				value: 1,
 			},
+
 			{
 				bound: 2,
 				value: 1,
@@ -350,18 +400,22 @@ func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
 				bound: 400,
 				value: 0,
 			},
+
 			{
 				bound: 300,
 				value: 0,
 			},
+
 			{
 				bound: 22,
 				value: 0,
 			},
+
 			{
 				bound: 100,
 				value: 10,
 			},
+
 			{
 				bound: 15,
 				value: 0,
@@ -386,46 +440,57 @@ func TestPlayerMeleeMightRollPrecedesEnchantmentRoll(t *testing.T) {
 				bound: 400,
 				value: 300,
 			},
+
 			{
 				bound: 300,
 				value: 200,
 			},
+
 			{
 				bound: 29,
 				value: 28,
 			},
+
 			{
 				bound: 100,
 				value: 10,
 			},
+
 			{
 				bound: 29,
 				value: 0,
 			},
+
 			{
 				bound: 10,
 				value: 9,
 			},
+
 			{
 				bound: 201,
 				value: 200,
 			},
+
 			{
 				bound: 301,
 				value: 300,
 			},
+
 			{
 				bound: 10,
 				value: 4,
 			},
+
 			{
 				bound: 3,
 				value: 2,
 			},
+
 			{
 				bound: 2,
 				value: 1,
 			},
+
 			{
 				bound: 2,
 				value: 1,

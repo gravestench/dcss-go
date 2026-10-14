@@ -34,10 +34,12 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 			id:  fields[5],
 			set: vocabulary.Slots,
 		},
+
 		{
 			id:  fields[6],
 			set: vocabulary.Sizes,
 		},
+
 		{
 			id:  fields[7],
 			set: vocabulary.Sizes,
@@ -62,10 +64,12 @@ func armourRow(fields []string, vocabulary content.ItemVocabulary) (itemProperty
 			raw:    fields[2],
 			target: &p.AC,
 		},
+
 		{
 			raw:    fields[3],
 			target: &p.EV,
 		},
+
 		{
 			raw:    fields[4],
 			target: &p.Price,
@@ -140,14 +144,17 @@ func weaponRow(
 			id:  p.SkillID,
 			set: vocabulary.Skills,
 		},
+
 		{
 			id:  p.Min2HSizeID,
 			set: vocabulary.Sizes,
 		},
+
 		{
 			id:  p.Min1HSizeID,
 			set: vocabulary.Sizes,
 		},
+
 		{
 			id:  p.AmmoID,
 			set: vocabulary.Ammo,
@@ -166,22 +173,27 @@ func weaponRow(
 			raw:    fields[2],
 			target: &p.Damage,
 		},
+
 		{
 			raw:    fields[3],
 			target: &p.Hit,
 		},
+
 		{
 			raw:    fields[4],
 			target: &p.Speed,
 		},
+
 		{
 			raw:    fields[10],
 			target: &p.Commonness,
 		},
+
 		{
 			raw:    fields[11],
 			target: &p.AcquireWeight,
 		},
+
 		{
 			raw:    fields[12],
 			target: &p.Price,
@@ -239,10 +251,12 @@ func missileRow(fields []string, vocabulary content.ItemVocabulary) (itemPropert
 			raw:    fields[2],
 			target: &p.Damage,
 		},
+
 		{
 			raw:    fields[3],
 			target: &p.MulchRate,
 		},
+
 		{
 			raw:    fields[4],
 			target: &p.Price,
@@ -282,10 +296,12 @@ func foodRow(fields []string) (itemPropertyRow, error) {
 			raw:    fields[2],
 			target: &p.NormalNutrition,
 		},
+
 		{
 			raw:    fields[3],
 			target: &p.CarnivoreNutrition,
 		},
+
 		{
 			raw:    fields[4],
 			target: &p.HerbivoreNutrition,

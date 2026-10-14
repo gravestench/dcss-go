@@ -123,34 +123,42 @@ func validateMonsterVocabularyEntry(
 			category: "colour",
 			value:    m.ColourID,
 		},
+
 		{
 			category: "spellbook",
 			value:    m.SpellbookID,
 		},
+
 		{
 			category: "shout",
 			value:    m.ShoutID,
 		},
+
 		{
 			category: "intelligence",
 			value:    m.IntelligenceID,
 		},
+
 		{
 			category: "habitat",
 			value:    m.HabitatID,
 		},
+
 		{
 			category: "item_use",
 			value:    m.ItemUseID,
 		},
+
 		{
 			category: "size",
 			value:    m.SizeID,
 		},
+
 		{
 			category: "shape",
 			value:    m.ShapeID,
 		},
+
 		{
 			category: "tile_variation",
 			value:    m.Tile.VariationID,

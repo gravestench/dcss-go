@@ -119,6 +119,7 @@ func TestVisibilityInputValidation(t *testing.T) {
 			y:    0,
 			r:    7,
 		},
+
 		{
 			name: "ragged",
 			rows: []string{"...", ".."},
@@ -126,6 +127,7 @@ func TestVisibilityInputValidation(t *testing.T) {
 			y:    0,
 			r:    7,
 		},
+
 		{
 			name: "unknown",
 			rows: []string{".?."},
@@ -133,6 +135,7 @@ func TestVisibilityInputValidation(t *testing.T) {
 			y:    0,
 			r:    7,
 		},
+
 		{
 			name: "opaque origin",
 			rows: []string{"#.."},
@@ -140,6 +143,7 @@ func TestVisibilityInputValidation(t *testing.T) {
 			y:    0,
 			r:    7,
 		},
+
 		{
 			name: "negative origin",
 			rows: []string{"..."},
@@ -147,6 +151,7 @@ func TestVisibilityInputValidation(t *testing.T) {
 			y:    0,
 			r:    7,
 		},
+
 		{
 			name: "outside origin",
 			rows: []string{"..."},
@@ -154,6 +159,7 @@ func TestVisibilityInputValidation(t *testing.T) {
 			y:    0,
 			r:    7,
 		},
+
 		{
 			name: "zero radius",
 			rows: []string{"..."},
@@ -161,6 +167,7 @@ func TestVisibilityInputValidation(t *testing.T) {
 			y:    0,
 			r:    0,
 		},
+
 		{
 			name: "large radius",
 			rows: []string{"..."},

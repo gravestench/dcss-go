@@ -107,6 +107,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: " JOB_EXTRA,\n JOB_PRIEST,",
 			want:        "JOB_EXTRA",
 		},
+
 		{
 			name:        "extra definition",
 			file:        "job-type.h",
@@ -114,6 +115,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "",
 			want:        "JOB_PRIEST",
 		},
+
 		{
 			name:        "duplicate ID",
 			file:        "job-data.h",
@@ -121,6 +123,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "JOB_FIGHTER",
 			want:        "duplicate",
 		},
+
 		{
 			name:        "duplicate abbreviation",
 			file:        "job-data.h",
@@ -128,6 +131,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: `"Fi", "Priest"`,
 			want:        "abbreviation",
 		},
+
 		{
 			name:        "unknown species",
 			file:        "job-data.h",
@@ -135,6 +139,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "SP_UNKNOWN",
 			want:        "SP_UNKNOWN",
 		},
+
 		{
 			name:        "unknown spell",
 			file:        "job-data.h",
@@ -142,6 +147,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "SPELL_UNKNOWN",
 			want:        "SPELL_UNKNOWN",
 		},
+
 		{
 			name:        "pseudo spell",
 			file:        "job-data.h",
@@ -149,6 +155,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "SPELL_NO_SPELL",
 			want:        "SPELL_NO_SPELL",
 		},
+
 		{
 			name:        "unknown skill",
 			file:        "job-data.h",
@@ -156,6 +163,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "SK_UNKNOWN",
 			want:        "SK_UNKNOWN",
 		},
+
 		{
 			name:        "pseudo skill",
 			file:        "job-data.h",
@@ -163,6 +171,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "SK_BLANK_LINE",
 			want:        "SK_BLANK_LINE",
 		},
+
 		{
 			name:        "wrong tag",
 			file:        "tag-version.h",
@@ -170,6 +179,7 @@ func TestGenerateJobArtifactRejectsSourceErrors(t *testing.T) {
 			replacement: "VERSION 35",
 			want:        "tag-version.h",
 		},
+
 		{
 			name:        "unsupported conditional",
 			file:        "job-data.h",

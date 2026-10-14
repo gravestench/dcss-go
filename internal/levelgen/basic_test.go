@@ -126,6 +126,7 @@ func assertBasicLayout(t *testing.T, layout Layout) {
 				point: pair.Up,
 				glyph: '<',
 			},
+
 			{
 				point: pair.Down,
 				glyph: '>',
@@ -183,14 +184,17 @@ func assertBasicLayout(t *testing.T, layout Layout) {
 				X: 0,
 				Y: -1,
 			},
+
 			{
 				X: 1,
 				Y: 0,
 			},
+
 			{
 				X: 0,
 				Y: 1,
 			},
+
 			{
 				X: -1,
 				Y: 0,

@@ -101,12 +101,14 @@ func (b *builder) build(depth int) ([3]StairPair, error) {
 			Y:      35,
 			Height: 20,
 		},
+
 		{
 			X:      10,
 			Width:  15,
 			Y:      10,
 			Height: 15,
 		},
+
 		{
 			X:      50,
 			Width:  20,

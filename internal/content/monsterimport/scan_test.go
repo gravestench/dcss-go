@@ -96,18 +96,22 @@ func TestParseRowsRejectsMalformed(t *testing.T) {
 			name: "short row",
 			body: "{ MONS_RAT, 'r' },\n};",
 		},
+
 		{
 			name: "unbalanced",
 			body: "{ MONS_RAT, 'r',\n};",
 		},
+
 		{
 			name: "string",
 			body: "{ MONS_RAT, \"unterminated },\n};",
 		},
+
 		{
 			name: "unknown macro",
 			body: "UNKNOWN(MONS_RAT)\n};",
 		},
+
 		{
 			name: "unknown conditional",
 			body: "#if FEATURE\nfoo\n#endif\n};",

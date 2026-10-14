@@ -41,14 +41,17 @@ func TestPoisonBiteKeepsOrdinaryDamageRolls(t *testing.T) {
 				bound: 22,
 				value: 0,
 			},
+
 			{
 				bound: 100,
 				value: 50,
 			},
+
 			{
 				bound: 16,
 				value: 0,
 			},
+
 			{
 				bound: 4,
 				value: 3,
@@ -79,6 +82,7 @@ func TestPoisonBiteRollsSourceTriggerAndAmount(t *testing.T) {
 				bound: 3,
 				value: 0,
 			},
+
 			{
 				bound: 5,
 				value: 4,
@@ -123,6 +127,7 @@ func TestHumanFighterDefenseUsesEquippedScaleMailAndBuckler(t *testing.T) {
 			AC: 6,
 			EV: -100,
 		},
+
 		Shield: ArmourPiece{
 			AC: 3,
 			EV: -50,
@@ -176,10 +181,12 @@ func TestFighterDefenseAddsAuxiliaryArmourBeforeRounding(t *testing.T) {
 			AC: 6,
 			EV: -100,
 		},
+
 		Shield: ArmourPiece{
 			AC: 3,
 			EV: -50,
 		},
+
 		Auxiliary: []ArmourPiece{
 			{
 				AC:   1,
@@ -209,6 +216,7 @@ func TestFighterDefenseCountsAuxiliaryEvasionPenalty(t *testing.T) {
 			AC: 6,
 			EV: -100,
 		},
+
 		Auxiliary: []ArmourPiece{
 			{EV: -30},
 		},
@@ -229,15 +237,18 @@ func TestFighterDefenseRejectsInvalidInputs(t *testing.T) {
 			Strength:  0,
 			Dexterity: 12,
 		},
+
 		{
 			Strength:  16,
 			Dexterity: -1,
 		},
+
 		{
 			Strength:     16,
 			Dexterity:    12,
 			ShieldBlocks: -1,
 		},
+
 		{
 			Strength:  16,
 			Dexterity: 12,
@@ -245,6 +256,7 @@ func TestFighterDefenseRejectsInvalidInputs(t *testing.T) {
 				{AC: -1},
 			},
 		},
+
 		{
 			Strength:  16,
 			Dexterity: 12,
@@ -266,18 +278,22 @@ func TestRatBiteDodgesWithoutShield(t *testing.T) {
 				bound: 20,
 				value: 0,
 			},
+
 			{
 				bound: 20,
 				value: 5,
 			},
+
 			{
 				bound: 21,
 				value: 5,
 			},
+
 			{
 				bound: 100,
 				value: 10,
 			},
+
 			{
 				bound: 15,
 				value: 0,
@@ -302,22 +318,27 @@ func TestRatBiteAutomaticMissAndHit(t *testing.T) {
 				bound: 20,
 				value: 19,
 			},
+
 			{
 				bound: 20,
 				value: 0,
 			},
+
 			{
 				bound: 21,
 				value: 0,
 			},
+
 			{
 				bound: 100,
 				value: 0,
 			},
+
 			{
 				bound: 2,
 				value: 0,
 			},
+
 			{
 				bound: 15,
 				value: 0,
@@ -337,26 +358,32 @@ func TestRatBiteAutomaticMissAndHit(t *testing.T) {
 				bound: 20,
 				value: 0,
 			},
+
 			{
 				bound: 20,
 				value: 19,
 			},
+
 			{
 				bound: 21,
 				value: 20,
 			},
+
 			{
 				bound: 100,
 				value: 0,
 			},
+
 			{
 				bound: 2,
 				value: 1,
 			},
+
 			{
 				bound: 15,
 				value: 0,
 			},
+
 			{
 				bound: 3,
 				value: 2,
@@ -381,26 +408,32 @@ func TestRatShieldBlockPrecedesDodge(t *testing.T) {
 				bound: 20,
 				value: 0,
 			},
+
 			{
 				bound: 20,
 				value: 5,
 			},
+
 			{
 				bound: 21,
 				value: 5,
 			},
+
 			{
 				bound: 100,
 				value: 10,
 			},
+
 			{
 				bound: 15,
 				value: 0,
 			},
+
 			{
 				bound: 18,
 				value: 17,
 			},
+
 			{
 				bound: 19,
 				value: 18,
@@ -433,6 +466,7 @@ func TestRatBiteArmourCanAbsorbOrPassDamage(t *testing.T) {
 			acRoll: 6,
 			want:   0,
 		},
+
 		{
 			name:   "damaging",
 			acRoll: 0,
@@ -446,26 +480,32 @@ func TestRatBiteArmourCanAbsorbOrPassDamage(t *testing.T) {
 						bound: 20,
 						value: 19,
 					},
+
 					{
 						bound: 10,
 						value: 0,
 					},
+
 					{
 						bound: 11,
 						value: 0,
 					},
+
 					{
 						bound: 100,
 						value: 10,
 					},
+
 					{
 						bound: 15,
 						value: 0,
 					},
+
 					{
 						bound: 3,
 						value: 2,
 					},
+
 					{
 						bound: 7,
 						value: tc.acRoll,
@@ -496,14 +536,17 @@ func TestQuokkaPlainBiteUsesCataloguedFiveDamage(t *testing.T) {
 				bound: 20,
 				value: 19,
 			},
+
 			{
 				bound: 100,
 				value: 10,
 			},
+
 			{
 				bound: 15,
 				value: 14,
 			},
+
 			{
 				bound: 5,
 				value: 4,

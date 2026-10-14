@@ -95,6 +95,7 @@ func TestSeededEarlyDungeonBitesSurviveSaveAndAwardXP(t *testing.T) {
 			kindID:  "MONS_GIANT_COCKROACH",
 			levelID: 1,
 		},
+
 		{
 			name:    "worm on D:2",
 			kindID:  "MONS_WORM",

@@ -34,6 +34,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		Speed:        10,
 		XPModifier:   1,
 	},
+
 	"MONS_QUOKKA": {
 		HitDice:      1,
 		AverageHP10x: 55,
@@ -43,6 +44,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		Speed:        12,
 		XPModifier:   10,
 	},
+
 	"MONS_FRILLED_LIZARD": {
 		HitDice:      1,
 		AverageHP10x: 20,
@@ -52,6 +54,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		Speed:        10,
 		XPModifier:   10,
 	},
+
 	"MONS_GIANT_COCKROACH": {
 		HitDice:      1,
 		AverageHP10x: 50,
@@ -62,6 +65,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		XPModifier:   10,
 		NoSkeleton:   true,
 	},
+
 	"MONS_WORM": {
 		HitDice:      4,
 		AverageHP10x: 180,
@@ -73,6 +77,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		FastRegen:    true,
 		NoSkeleton:   true,
 	},
+
 	"MONS_JACKAL": {
 		HitDice:      1,
 		AverageHP10x: 55,
@@ -82,6 +87,7 @@ var ordinaryBiteProfiles = map[string]OrdinaryBiteProfile{
 		Speed:        14,
 		XPModifier:   10,
 	},
+
 	"MONS_ADDER": {
 		HitDice:      2,
 		AverageHP10x: 110,

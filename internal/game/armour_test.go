@@ -273,14 +273,17 @@ func TestHumanWearsAuxiliaryArmourAcrossSavedDelay(t *testing.T) {
 			kindID: "ARM_HELMET",
 			slot:   "head",
 		},
+
 		{
 			kindID: "ARM_CLOAK",
 			slot:   "cloak",
 		},
+
 		{
 			kindID: "ARM_GLOVES",
 			slot:   "gloves",
 		},
+
 		{
 			kindID: "ARM_BOOTS",
 			slot:   "boots",
@@ -381,14 +384,17 @@ func TestAuxiliaryArmourChangesDefenseWhenDelayFinishes(t *testing.T) {
 			kindID: "ARM_HELMET",
 			wantAC: 7,
 		},
+
 		{
 			kindID: "ARM_CLOAK",
 			wantAC: 9,
 		},
+
 		{
 			kindID: "ARM_GLOVES",
 			wantAC: 10,
 		},
+
 		{
 			kindID: "ARM_BOOTS",
 			wantAC: 11,

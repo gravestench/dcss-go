@@ -32,24 +32,28 @@ func ComputeLayout(width, height int) (Layout, bool) {
 			W: dungeonW,
 			H: dungeonH,
 		},
+
 		Gutter: Region{
 			X: dungeonW,
 			Y: 0,
 			W: 4,
 			H: dungeonH,
 		},
+
 		HUD: Region{
 			X: dungeonW + 4,
 			Y: 0,
 			W: 42,
 			H: 13,
 		},
+
 		Monsters: Region{
 			X: dungeonW + 4,
 			Y: 13,
 			W: 42,
 			H: dungeonH - 13,
 		},
+
 		Messages: Region{
 			X: 0,
 			Y: dungeonH,

@@ -23,11 +23,13 @@ func TestDrawDungeonKeepsPlayerAboveFloorItems(t *testing.T) {
 				State: game.Visible,
 			},
 		},
+
 		Entities: []game.EntityView{
 			{
 				Role:  "player",
 				Glyph: '@',
 			},
+
 			{
 				Role:  "item",
 				Glyph: '!',

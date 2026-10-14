@@ -51,6 +51,7 @@ func TestParseJobDataPreservesAllFieldsAndOrder(t *testing.T) {
 					ID:    "SK_FIGHTING",
 					Level: 3,
 				},
+
 				{
 					ID:    "SK_WEAPON",
 					Level: 2,
@@ -58,6 +59,7 @@ func TestParseJobDataPreservesAllFieldsAndOrder(t *testing.T) {
 			},
 			Selectable: true,
 		},
+
 		{
 			ID:           "JOB_PRIEST",
 			SourcePath:   "job-data.h",
@@ -85,24 +87,28 @@ func TestParseJobDataRejectsMalformedDefinitions(t *testing.T) {
 			replacement: "JOB_FIGHTER",
 			want:        "duplicate",
 		},
+
 		{
 			name:        "missing field",
 			old:         "WCHOICE_GOOD,",
 			replacement: "",
 			want:        "JOB_FIGHTER",
 		},
+
 		{
 			name:        "unknown token",
 			old:         "WCHOICE_GOOD",
 			replacement: "WCHOICE_MISSING",
 			want:        "weapon",
 		},
+
 		{
 			name:        "malformed string",
 			old:         `"Fi", "Fighter"`,
 			replacement: `"Fi, "Fighter"`,
 			want:        "job-data.h",
 		},
+
 		{
 			name:        "unsupported conditional",
 			old:         "#if TAG_MAJOR_VERSION == 34",

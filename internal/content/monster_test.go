@@ -24,6 +24,7 @@ func testMonster(id string) MonsterDef {
 				Level: 1,
 			},
 		},
+
 		XPModifier: 1,
 		GenusID:    id,
 		SpeciesID:  id,
@@ -34,19 +35,23 @@ func testMonster(id string) MonsterDef {
 				FlavourID: "AF_PLAIN",
 				Damage:    3,
 			},
+
 			{
 				TypeID:    "AT_NONE",
 				FlavourID: "AF_PLAIN",
 			},
+
 			{
 				TypeID:    "AT_NONE",
 				FlavourID: "AF_PLAIN",
 			},
+
 			{
 				TypeID:    "AT_NONE",
 				FlavourID: "AF_PLAIN",
 			},
 		},
+
 		HD:             1,
 		AverageHP10x:   25,
 		AC:             1,
@@ -67,6 +72,7 @@ func testMonster(id string) MonsterDef {
 			Item:          10,
 			PickupPercent: 100,
 		},
+
 		ItemUseID: "MONUSE_NOTHING",
 		SizeID:    "SIZE_TINY",
 		ShapeID:   "MON_SHAPE_QUADRUPED",
@@ -74,6 +80,7 @@ func testMonster(id string) MonsterDef {
 			ID:          "TILEP_MONS_RAT",
 			VariationID: "TVARY_NONE",
 		},
+
 		CorpseTileID: "TILE_CORPSE_RAT",
 	}
 }
@@ -107,30 +114,35 @@ func TestMonsterArtifactValidation(t *testing.T) {
 				a.Monsters = append(a.Monsters, rat)
 			},
 		},
+
 		{
 			name: "unsorted",
 			edit: func(a *MonsterArtifact) {
 				a.Monsters = append(a.Monsters, testMonster("MONS_AAA"))
 			},
 		},
+
 		{
 			name: "bad status",
 			edit: func(a *MonsterArtifact) {
 				a.Monsters[0].Status = "bogus"
 			},
 		},
+
 		{
 			name: "missing attack",
 			edit: func(a *MonsterArtifact) {
 				a.Monsters[0].Attacks[0].TypeID = ""
 			},
 		},
+
 		{
 			name: "removed live data",
 			edit: func(a *MonsterArtifact) {
 				a.Monsters[0].Status = MonsterRemoved
 			},
 		},
+
 		{
 			name: "enum-only live data",
 			edit: func(a *MonsterArtifact) {
@@ -163,6 +175,7 @@ func TestMonsterCatalogCopiesAndStatuses(t *testing.T) {
 				SourcePath: "crawl-ref/source/mon-data.h",
 				Name:       "bumblebee",
 			},
+
 			"MONS_BEAR": {
 				ID:         "MONS_BEAR",
 				Status:     MonsterEnumOnly,

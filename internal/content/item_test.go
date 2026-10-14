@@ -20,6 +20,7 @@ func testWeaponItem() ItemDef {
 			SourcePath: "crawl-ref/source/item-prop.cc",
 			SourceLine: 7,
 		},
+
 		Evidence: ItemEvidence{
 			PropertySource: "crawl-ref/source/item-prop.cc",
 			PropertyLine:   7,
@@ -38,6 +39,7 @@ func testWeaponItem() ItemDef {
 					BrandID: "SPWPN_NORMAL",
 					Weight:  58,
 				},
+
 				{
 					BrandID: "SPWPN_VENOM",
 					Weight:  16,
@@ -101,6 +103,7 @@ func TestItemIdentityInspection(t *testing.T) {
 				SourcePath:   "crawl-ref/source/item-prop-enum.h",
 				SourceLine:   4,
 			},
+
 			"WPN_OLD": {
 				ID:           "WPN_OLD",
 				ClassID:      "OBJ_WEAPONS",
@@ -171,6 +174,7 @@ func TestItemShapeValidation(t *testing.T) {
 			BrandID: "SPWPN_VENOM",
 			Weight:  16,
 		},
+
 		{
 			BrandID: "SPWPN_NORMAL",
 			Weight:  58,

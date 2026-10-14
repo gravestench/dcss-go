@@ -18,24 +18,28 @@ func TestLayoutMatchesMinimumAndExpandedConsole(t *testing.T) {
 					W: 33,
 					H: 17,
 				},
+
 				Gutter: Region{
 					X: 33,
 					Y: 0,
 					W: 4,
 					H: 17,
 				},
+
 				HUD: Region{
 					X: 37,
 					Y: 0,
 					W: 42,
 					H: 13,
 				},
+
 				Monsters: Region{
 					X: 37,
 					Y: 13,
 					W: 42,
 					H: 4,
 				},
+
 				Messages: Region{
 					X: 0,
 					Y: 17,
@@ -44,6 +48,7 @@ func TestLayoutMatchesMinimumAndExpandedConsole(t *testing.T) {
 				},
 			},
 		},
+
 		{
 			width:  120,
 			height: 40,
@@ -54,24 +59,28 @@ func TestLayoutMatchesMinimumAndExpandedConsole(t *testing.T) {
 					W: 74,
 					H: 33,
 				},
+
 				Gutter: Region{
 					X: 74,
 					Y: 0,
 					W: 4,
 					H: 33,
 				},
+
 				HUD: Region{
 					X: 78,
 					Y: 0,
 					W: 42,
 					H: 13,
 				},
+
 				Monsters: Region{
 					X: 78,
 					Y: 13,
 					W: 42,
 					H: 20,
 				},
+
 				Messages: Region{
 					X: 0,
 					Y: 33,

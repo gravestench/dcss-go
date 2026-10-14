@@ -13,67 +13,83 @@ func presentationIdentities() []content.ItemIdentity {
 			ID:      "WPN_MACE",
 			ClassID: "OBJ_WEAPONS",
 		},
+
 		{
 			ID:      "POT_CURING",
 			ClassID: "OBJ_POTIONS",
 		},
+
 		{
 			ID:      "BOOK_MINOR_MAGIC",
 			ClassID: "OBJ_BOOKS",
 		},
+
 		{
 			ID:      "BOOK_MANUAL",
 			ClassID: "OBJ_BOOKS",
 		},
+
 		{
 			ID:      "CORPSE_BODY",
 			ClassID: "OBJ_CORPSES",
 		},
+
 		{
 			ID:      "CORPSE_SKELETON",
 			ClassID: "OBJ_CORPSES",
 		},
+
 		{
 			ID:      "OBJ_GOLD",
 			ClassID: "OBJ_GOLD",
 		},
+
 		{
 			ID:      "ORB_ZOT",
 			ClassID: "OBJ_ORBS",
 		},
+
 		{
 			ID:      "RUNE_SWAMP",
 			ClassID: "OBJ_RUNES",
 		},
+
 		{
 			ID:      "RING_PROTECTION",
 			ClassID: "OBJ_JEWELLERY",
 		},
+
 		{
 			ID:      "AMU_FAITH",
 			ClassID: "OBJ_JEWELLERY",
 		},
+
 		{
 			ID:      "MISC_XOMS_CHESSBOARD",
 			ClassID: "OBJ_MISCELLANY",
 		},
+
 		{
 			ID:                "MISC_DECK_OF_ESCAPE",
 			ClassID:           "OBJ_MISCELLANY",
 			ExplicitlyRemoved: true,
 		},
+
 		{
 			ID:      "STAFF_FIRE",
 			ClassID: "OBJ_STAVES",
 		},
+
 		{
 			ID:      "FOOD_RATION",
 			ClassID: "OBJ_FOOD",
 		},
+
 		{
 			ID:      "WAND_FLAME",
 			ClassID: "OBJ_WANDS",
 		},
+
 		{
 			ID:      "SCR_IDENTIFY",
 			ClassID: "OBJ_SCROLLS",
@@ -177,6 +193,7 @@ func presentationGlyphFixture() (show, showHeader, dcharHeader, view []byte) {
     default: return SHOW_ITEM_ORB;
     }
 }`)
+
 	showHeader = []byte(`enum show_item_type
 {
 SHOW_ITEM_NONE,
@@ -192,6 +209,7 @@ SHOW_ITEM_GOLD,
 SHOW_ITEM_AMULET,
 NUM_SHOW_ITEMS
 };`)
+
 	dcharHeader = []byte(`enum dungeon_char_type
 {
 DCHAR_WALL,
@@ -207,6 +225,7 @@ DCHAR_ITEM_GOLD,
 DCHAR_ITEM_AMULET,
 NUM_DCHAR_TYPES
 };`)
+
 	view = []byte(`static const char32_t dchar_table[NUM_CSET][NUM_DCHAR_TYPES] =
 {
     // CSET_ASCII

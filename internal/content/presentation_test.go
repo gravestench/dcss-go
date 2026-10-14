@@ -136,6 +136,7 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 			},
 			want: "SP_HUMAN",
 		},
+
 		{
 			name: "duplicate menu ID",
 			change: func(a *PresentationArtifact) {
@@ -143,6 +144,7 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 			},
 			want: "SP_HILL_ORC",
 		},
+
 		{
 			name: "unknown catalog ID",
 			change: func(a *PresentationArtifact) {
@@ -150,6 +152,7 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 			},
 			want: "JOB_NOT_REAL",
 		},
+
 		{
 			name: "unknown skill ID",
 			change: func(a *PresentationArtifact) {
@@ -157,6 +160,7 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 			},
 			want: "SK_NOT_REAL",
 		},
+
 		{
 			name: "duplicate skill ID",
 			change: func(a *PresentationArtifact) {
@@ -164,6 +168,7 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 			},
 			want: "SK_FIGHTING",
 		},
+
 		{
 			name: "nonselectable catalog ID",
 			change: func(a *PresentationArtifact) {

@@ -133,6 +133,7 @@ func (h hudRenderer) drawVitals(view game.View) {
 			yellowAt: 70,
 			redAt:    40,
 		},
+
 		{
 			y:        3,
 			label:    "Magic:  ",
@@ -194,11 +195,13 @@ func (h hudRenderer) drawAttributes(view game.View) {
 			label: "Str: ",
 			value: view.Attributes.Strength,
 		},
+
 		{
 			y:     5,
 			label: "Int: ",
 			value: view.Attributes.Intelligence,
 		},
+
 		{
 			y:     6,
 			label: "Dex: ",

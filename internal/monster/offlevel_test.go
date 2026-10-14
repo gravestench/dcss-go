@@ -33,23 +33,27 @@ func TestOffLevelRecoveryUsesSourceFractionalRound(t *testing.T) {
 			turns: 0,
 			want:  0,
 		},
+
 		{
 			name:   "fraction rounds up",
 			turns:  9,
 			values: []int{89},
 			want:   1,
 		},
+
 		{
 			name:   "fraction rounds down",
 			turns:  9,
 			values: []int{90},
 			want:   0,
 		},
+
 		{
 			name:  "whole point consumes no draw",
 			turns: 10,
 			want:  1,
 		},
+
 		{
 			name:   "whole point plus fraction",
 			turns:  19,
@@ -88,16 +92,19 @@ func TestOffLevelMoveCountUsesSourceSpeedAndCap(t *testing.T) {
 			speed: 12,
 			want:  0,
 		},
+
 		{
 			turns: 1,
 			speed: 12,
 			want:  1,
 		},
+
 		{
 			turns: 9,
 			speed: 12,
 			want:  10,
 		},
+
 		{
 			turns: 100,
 			speed: 12,

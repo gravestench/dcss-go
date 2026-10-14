@@ -143,24 +143,28 @@ func TestLoadDefaultRejectsBadArtifact(t *testing.T) {
 				a.SchemaVersion = 2
 			},
 		},
+
 		{
 			name: "revision",
 			mutate: func(a *SpeciesArtifact) {
 				a.SourceRevision = "wrong"
 			},
 		},
+
 		{
 			name: "tag",
 			mutate: func(a *SpeciesArtifact) {
 				a.TagMajorVersion = 35
 			},
 		},
+
 		{
 			name: "duplicate",
 			mutate: func(a *SpeciesArtifact) {
 				a.Species = append(a.Species, a.Species[0])
 			},
 		},
+
 		{
 			name: "missing player species",
 			mutate: func(a *SpeciesArtifact) {

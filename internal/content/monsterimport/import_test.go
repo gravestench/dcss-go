@@ -121,18 +121,21 @@ func TestGenerateRejectsBadSource(t *testing.T) {
 			old:  "34",
 			next: "35",
 		},
+
 		{
 			name: "missing",
 			file: "mon-data.h",
 			old:  "MONS_RAT,",
 			next: "MONS_MISSING,",
 		},
+
 		{
 			name: "duplicate",
 			file: "mon-data.h",
 			old:  "};\n",
 			next: row("MONS_RAT", `"rat"`) + "};\n",
 		},
+
 		{
 			name: "unknown reference",
 			file: "mon-data.h",

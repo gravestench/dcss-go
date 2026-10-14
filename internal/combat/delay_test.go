@@ -25,24 +25,28 @@ func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
 			speed: 12,
 			fast:  11,
 		},
+
 		{
 			name:  "flail",
 			skill: "SK_MACES_FLAILS",
 			speed: 14,
 			fast:  13,
 		},
+
 		{
 			name:  "war axe",
 			skill: "SK_AXES",
 			speed: 15,
 			fast:  14,
 		},
+
 		{
 			name:  "trident",
 			skill: "SK_POLEARMS",
 			speed: 13,
 			fast:  12,
 		},
+
 		{
 			name:  "long sword",
 			skill: "SK_LONG_BLADES",
@@ -59,14 +63,17 @@ func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
 					roll: 0,
 					want: tc.fast,
 				},
+
 				{
 					roll: 2399,
 					want: tc.fast,
 				},
+
 				{
 					roll: 2400,
 					want: tc.fast + 1,
 				},
+
 				{
 					roll: 3999,
 					want: tc.fast + 1,
@@ -103,22 +110,27 @@ func TestFractionalWeaponSkillCombinesBeforeOneDraw(t *testing.T) {
 			roll: 0,
 			want: 10,
 		},
+
 		{
 			roll: 119,
 			want: 10,
 		},
+
 		{
 			roll: 120,
 			want: 11,
 		},
+
 		{
 			roll: 2479,
 			want: 11,
 		},
+
 		{
 			roll: 2480,
 			want: 12,
 		},
+
 		{
 			roll: 3999,
 			want: 12,
@@ -158,22 +170,27 @@ func TestUnarmedSamplesOneCombinedSourceDistribution(t *testing.T) {
 			roll: 0,
 			want: 9,
 		},
+
 		{
 			roll: 2399,
 			want: 9,
 		},
+
 		{
 			roll: 2400,
 			want: 10,
 		},
+
 		{
 			roll: 8079,
 			want: 10,
 		},
+
 		{
 			roll: 8080,
 			want: 11,
 		},
+
 		{
 			roll: 10799,
 			want: 11,
@@ -206,6 +223,7 @@ func TestAttackDelayRejectsUnsupportedInput(t *testing.T) {
 			WeaponSpeed:   12,
 			ShieldEV:      -50,
 		},
+
 		{
 			Unarmed:       true,
 			WeaponSkillID: "SK_UNARMED_COMBAT",

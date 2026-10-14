@@ -138,6 +138,7 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 			want:        "tag-version.h",
 			jobs:        nil,
 		},
+
 		{
 			name:        "missing item",
 			file:        "",
@@ -151,6 +152,7 @@ func TestGenerateStartingGearRejectsSourceErrors(t *testing.T) {
 				return jobs
 			},
 		},
+
 		{
 			name:        "unknown ego",
 			file:        "",

@@ -96,14 +96,17 @@ func (b *builder) roomConnections(left, top, right, bottom int) (int, int) {
 			X: left,
 			Y: top,
 		},
+
 		{
 			X: right,
 			Y: top,
 		},
+
 		{
 			X: left,
 			Y: bottom,
 		},
+
 		{
 			X: right,
 			Y: bottom,

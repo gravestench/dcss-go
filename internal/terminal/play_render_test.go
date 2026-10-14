@@ -51,71 +51,85 @@ func TestDrawPlayMinimumHUDAndCenteredMap(t *testing.T) {
 			x:    37,
 			text: "Alice the Shield-Bearer",
 		},
+
 		{
 			y:    1,
 			x:    37,
 			text: "Human",
 		},
+
 		{
 			y:    2,
 			x:    37,
 			text: "Health: 18/18",
 		},
+
 		{
 			y:    3,
 			x:    37,
 			text: "Magic:  1/1",
 		},
+
 		{
 			y:    4,
 			x:    37,
 			text: "AC: 6",
 		},
+
 		{
 			y:    5,
 			x:    37,
 			text: "EV: 5",
 		},
+
 		{
 			y:    6,
 			x:    37,
 			text: "SH: 4",
 		},
+
 		{
 			y:    4,
 			x:    55,
 			text: "Str: 16",
 		},
+
 		{
 			y:    5,
 			x:    55,
 			text: "Int: 8",
 		},
+
 		{
 			y:    6,
 			x:    55,
 			text: "Dex: 12",
 		},
+
 		{
 			y:    7,
 			x:    37,
 			text: "XL:  1 Next:  0%",
 		},
+
 		{
 			y:    7,
 			x:    55,
 			text: "Place: D:1",
 		},
+
 		{
 			y:    8,
 			x:    37,
 			text: "Noise: --",
 		},
+
 		{
 			y:    9,
 			x:    37,
 			text: "a) +0 rapier",
 		},
+
 		{
 			y:    10,
 			x:    37,

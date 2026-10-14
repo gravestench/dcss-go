@@ -38,6 +38,7 @@ func parsePropertyTables(
 				return armourRow(fields, vocabulary)
 			},
 		},
+
 		{
 			marker:  "Weapon_prop[]",
 			classID: "OBJ_WEAPONS",
@@ -45,6 +46,7 @@ func parsePropertyTables(
 				return weaponRow(fields, named, vocabulary)
 			},
 		},
+
 		{
 			marker:  "Missile_prop[]",
 			classID: "OBJ_MISSILES",
@@ -52,6 +54,7 @@ func parsePropertyTables(
 				return missileRow(fields, vocabulary)
 			},
 		},
+
 		{
 			marker:  "Food_prop[]",
 			classID: "OBJ_FOOD",

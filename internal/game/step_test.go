@@ -57,6 +57,7 @@ func TestBlockedMoveIsFree(t *testing.T) {
 			Kind: CommandMove,
 			DX:   -1,
 		},
+
 		{
 			Kind: CommandMove,
 			DX:   -2,

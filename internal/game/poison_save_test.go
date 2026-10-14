@@ -71,6 +71,7 @@ func TestRestoreRejectsInvalidPoisonOwnershipAndValue(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "above source integer limit",
 			mutate: func(snapshot *save.Snapshot) {
@@ -80,6 +81,7 @@ func TestRestoreRejectsInvalidPoisonOwnershipAndValue(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "wrong poison source",
 			mutate: func(snapshot *save.Snapshot) {
@@ -89,6 +91,7 @@ func TestRestoreRejectsInvalidPoisonOwnershipAndValue(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "monster owns poison",
 			mutate: func(snapshot *save.Snapshot) {

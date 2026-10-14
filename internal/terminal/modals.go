@@ -31,22 +31,27 @@ func DrawInventory(canvas *Canvas, view game.View) {
 			class: "OBJ_WEAPONS",
 			title: "Hand Weapons",
 		},
+
 		{
 			class: "OBJ_MISSILES",
 			title: "Missiles",
 		},
+
 		{
 			class: "OBJ_ARMOUR",
 			title: "Armour",
 		},
+
 		{
 			class: "OBJ_WANDS",
 			title: "Wands",
 		},
+
 		{
 			class: "OBJ_SCROLLS",
 			title: "Scrolls",
 		},
+
 		{
 			class: "OBJ_POTIONS",
 			title: "Potions",

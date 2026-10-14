@@ -47,26 +47,32 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 					bound: 20,
 					value: 0,
 				},
+
 				{
 					bound: 10,
 					value: 5,
 				},
+
 				{
 					bound: 11,
 					value: 5,
 				},
+
 				{
 					bound: 100,
 					value: 10,
 				},
+
 				{
 					bound: 15,
 					value: 14,
 				},
+
 				{
 					bound: 18,
 					value: 0,
 				},
+
 				{
 					bound: 19,
 					value: 0,
@@ -75,6 +81,7 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 			hpLoss: 0,
 			blocks: 0,
 		},
+
 		{
 			name:    "block",
 			message: "block",
@@ -83,26 +90,32 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 					bound: 20,
 					value: 0,
 				},
+
 				{
 					bound: 10,
 					value: 5,
 				},
+
 				{
 					bound: 11,
 					value: 5,
 				},
+
 				{
 					bound: 100,
 					value: 10,
 				},
+
 				{
 					bound: 15,
 					value: 0,
 				},
+
 				{
 					bound: 18,
 					value: 17,
 				},
+
 				{
 					bound: 19,
 					value: 18,
@@ -111,6 +124,7 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 			hpLoss: 0,
 			blocks: 1,
 		},
+
 		{
 			name:    "absorb",
 			message: "no damage",
@@ -119,34 +133,42 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 					bound: 20,
 					value: 19,
 				},
+
 				{
 					bound: 10,
 					value: 0,
 				},
+
 				{
 					bound: 11,
 					value: 0,
 				},
+
 				{
 					bound: 100,
 					value: 10,
 				},
+
 				{
 					bound: 15,
 					value: 14,
 				},
+
 				{
 					bound: 18,
 					value: 0,
 				},
+
 				{
 					bound: 19,
 					value: 0,
 				},
+
 				{
 					bound: 3,
 					value: 2,
 				},
+
 				{
 					bound: 7,
 					value: 6,
@@ -155,6 +177,7 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 			hpLoss: 0,
 			blocks: 0,
 		},
+
 		{
 			name:    "hit",
 			message: "bites you",
@@ -163,34 +186,42 @@ func TestRatBiteAppliesSourceDefenseToLiveFighter(t *testing.T) {
 					bound: 20,
 					value: 19,
 				},
+
 				{
 					bound: 10,
 					value: 0,
 				},
+
 				{
 					bound: 11,
 					value: 0,
 				},
+
 				{
 					bound: 100,
 					value: 10,
 				},
+
 				{
 					bound: 15,
 					value: 14,
 				},
+
 				{
 					bound: 18,
 					value: 0,
 				},
+
 				{
 					bound: 19,
 					value: 0,
 				},
+
 				{
 					bound: 3,
 					value: 2,
 				},
+
 				{
 					bound: 7,
 					value: 0,
@@ -369,6 +400,7 @@ func TestRestoreRejectsCombatStateItCannotRun(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "body armour enchantment",
 			want: "defense",
@@ -380,6 +412,7 @@ func TestRestoreRejectsCombatStateItCannotRun(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "shield enchantment",
 			want: "defense",

@@ -78,16 +78,19 @@ func TestWeaponChoiceRestrictions(t *testing.T) {
 			job:     "JOB_FIGHTER",
 			want:    "WPN_SPEAR",
 		},
+
 		{
 			species: "SP_HUMAN",
 			job:     "JOB_GLADIATOR",
 			want:    "WPN_QUARTERSTAFF",
 		},
+
 		{
 			species: "SP_FORMICID",
 			job:     "JOB_FIGHTER",
 			want:    "WPN_QUARTERSTAFF",
 		},
+
 		{
 			species: "SP_FELID",
 			job:     "JOB_FIGHTER",
@@ -130,16 +133,19 @@ func TestWeaponChoiceRestrictions(t *testing.T) {
 			job:     "JOB_FIGHTER",
 			weapon:  "WPN_RAPIER",
 		},
+
 		{
 			species: "SP_HUMAN",
 			job:     "JOB_UNKNOWN",
 			weapon:  "WPN_RAPIER",
 		},
+
 		{
 			species: "SP_HUMAN",
 			job:     "JOB_FIGHTER",
 			weapon:  "WPN_UNKNOWN",
 		},
+
 		{
 			species: "SP_FELID",
 			job:     "JOB_GLADIATOR",

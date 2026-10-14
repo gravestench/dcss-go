@@ -131,6 +131,7 @@ func TestDropEquipmentRulesAndInvalidRequests(t *testing.T) {
 			Kind:   CommandDrop,
 			ItemID: 999999,
 		},
+
 		{
 			Kind:     CommandDrop,
 			ItemID:   uint64(weapon),

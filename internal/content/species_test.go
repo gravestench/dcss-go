@@ -43,6 +43,7 @@ func testSpecies(id string) SpeciesDef {
 				Amount: 1,
 			},
 		},
+
 		FakeMutations: []SpeciesFakeMutation{
 			{
 				Long:  "long",

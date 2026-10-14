@@ -41,14 +41,17 @@ func TestLoadDefaultJobs(t *testing.T) {
 				ID:    "SK_FIGHTING",
 				Level: 3,
 			},
+
 			{
 				ID:    "SK_SHIELDS",
 				Level: 3,
 			},
+
 			{
 				ID:    "SK_ARMOUR",
 				Level: 3,
 			},
+
 			{
 				ID:    "SK_WEAPON",
 				Level: 2,
@@ -131,42 +134,49 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 				a.SourceRevision = "wrong"
 			},
 		},
+
 		{
 			name: "wrong tag",
 			mutate: func(a *JobArtifact) {
 				a.TagMajorVersion = 35
 			},
 		},
+
 		{
 			name: "wrong schema",
 			mutate: func(a *JobArtifact) {
 				a.SchemaVersion = 2
 			},
 		},
+
 		{
 			name: "duplicate",
 			mutate: func(a *JobArtifact) {
 				a.Jobs = append(a.Jobs, a.Jobs[0])
 			},
 		},
+
 		{
 			name: "missing",
 			mutate: func(a *JobArtifact) {
 				a.Jobs = a.Jobs[1:]
 			},
 		},
+
 		{
 			name: "unknown species",
 			mutate: func(a *JobArtifact) {
 				a.Jobs[0].RecommendedSpecies = []string{"SP_MISSING"}
 			},
 		},
+
 		{
 			name: "bad hash",
 			mutate: func(a *JobArtifact) {
 				a.SourceFiles[0].SHA256 = "zzz"
 			},
 		},
+
 		{
 			name: "mismatched shared hash",
 			mutate: func(a *JobArtifact) {
@@ -178,12 +188,14 @@ func TestLoadDefaultRejectsBadJobArtifact(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "unsorted hashes",
 			mutate: func(a *JobArtifact) {
 				a.SourceFiles[0], a.SourceFiles[1] = a.SourceFiles[1], a.SourceFiles[0]
 			},
 		},
+
 		{
 			name: "wrong source path",
 			mutate: func(a *JobArtifact) {

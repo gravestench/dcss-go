@@ -192,12 +192,14 @@ func TestMightRestoreRejectsBadOwnershipAndRange(t *testing.T) {
 				player.MightAut = -1
 			},
 		},
+
 		{
 			name: "over cap",
 			edit: func(player, monster *ecs.Durations) {
 				player.MightAut = 801
 			},
 		},
+
 		{
 			name: "monster",
 			edit: func(player, monster *ecs.Durations) {

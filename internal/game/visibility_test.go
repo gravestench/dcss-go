@@ -193,24 +193,28 @@ func TestRestoreRejectsInvalidKnowledge(t *testing.T) {
 				s.Levels[0].Known = nil
 			},
 		},
+
 		{
 			name: "short rows",
 			change: func(s *save.Snapshot) {
 				s.Levels[0].Known = s.Levels[0].Known[:1]
 			},
 		},
+
 		{
 			name: "short row",
 			change: func(s *save.Snapshot) {
 				s.Levels[0].Known[0] = s.Levels[0].Known[0][:2]
 			},
 		},
+
 		{
 			name: "long row",
 			change: func(s *save.Snapshot) {
 				s.Levels[0].Known[0] += " "
 			},
 		},
+
 		{
 			name: "bad glyph",
 			change: func(s *save.Snapshot) {

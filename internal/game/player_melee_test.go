@@ -166,24 +166,28 @@ func TestPlayerBumpRejectsInvalidWeaponBeforeSpendingTime(t *testing.T) {
 				item.Plus = 101
 			},
 		},
+
 		{
 			name: "zero quantity",
 			mutate: func(item *ecs.Item) {
 				item.Quantity = 0
 			},
 		},
+
 		{
 			name: "duplicate weapon quantity",
 			mutate: func(item *ecs.Item) {
 				item.Quantity = 2
 			},
 		},
+
 		{
 			name: "charges on weapon",
 			mutate: func(item *ecs.Item) {
 				item.Charges = 1
 			},
 		},
+
 		{
 			name: "unsupported ego",
 			mutate: func(item *ecs.Item) {
@@ -239,6 +243,7 @@ func TestRestoreRejectsUnsupportedPlayerMeleeState(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "mismatched weapon",
 			want: "weapon",

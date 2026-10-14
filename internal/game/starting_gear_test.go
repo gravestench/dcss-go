@@ -132,6 +132,7 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 			Quantity: 1,
 			Charges:  15,
 		},
+
 		{
 			KindID:   "MI_DART",
 			Quantity: 3,
@@ -213,6 +214,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "equipped without carrier",
 			mutate: func(s *save.Snapshot) {
@@ -230,6 +232,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "zero quantity",
 			mutate: func(s *save.Snapshot) {
@@ -242,6 +245,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "charges on potion",
 			mutate: func(s *save.Snapshot) {
@@ -254,6 +258,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "ego on potion",
 			mutate: func(s *save.Snapshot) {
@@ -266,6 +271,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "changed selected weapon",
 			mutate: func(s *save.Snapshot) {
@@ -278,6 +284,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "unknown kind",
 			mutate: func(s *save.Snapshot) {
@@ -290,6 +297,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "missing weapon",
 			mutate: func(s *save.Snapshot) {
@@ -302,6 +310,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "version two",
 			mutate: func(s *save.Snapshot) {

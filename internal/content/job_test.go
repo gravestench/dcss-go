@@ -26,6 +26,7 @@ func testJob(id, abbreviation string) JobDef {
 				ID:    "SK_FIGHTING",
 				Level: 3,
 			},
+
 			{
 				ID:    "SK_WEAPON",
 				Level: 2,
@@ -93,10 +94,12 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 			name: "duplicate ID",
 			jobs: []JobDef{valid, valid},
 		},
+
 		{
 			name: "duplicate abbreviation",
 			jobs: []JobDef{valid, testJob("JOB_OTHER", "Fi")},
 		},
+
 		{
 			name: "empty name",
 			jobs: []JobDef{
@@ -108,6 +111,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 				}(),
 			},
 		},
+
 		{
 			name: "invalid weapon choice",
 			jobs: []JobDef{
@@ -119,6 +123,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 				}(),
 			},
 		},
+
 		{
 			name: "selectable without recommendations",
 			jobs: []JobDef{
@@ -130,6 +135,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 				}(),
 			},
 		},
+
 		{
 			name: "removed with recommendations",
 			jobs: []JobDef{
@@ -141,6 +147,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 				}(),
 			},
 		},
+
 		{
 			name: "negative skill",
 			jobs: []JobDef{
@@ -157,6 +164,7 @@ func TestJobArtifactRejectsInvalidRecord(t *testing.T) {
 				}(),
 			},
 		},
+
 		{
 			name: "skill above cap",
 			jobs: []JobDef{

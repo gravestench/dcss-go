@@ -23,22 +23,27 @@ func TestStartingSkillsHumanFighterWeapons(t *testing.T) {
 			weapon: "WPN_RAPIER",
 			skill:  "SK_SHORT_BLADES",
 		},
+
 		{
 			weapon: "WPN_FLAIL",
 			skill:  "SK_MACES_FLAILS",
 		},
+
 		{
 			weapon: "WPN_WAR_AXE",
 			skill:  "SK_AXES",
 		},
+
 		{
 			weapon: "WPN_TRIDENT",
 			skill:  "SK_POLEARMS",
 		},
+
 		{
 			weapon: "WPN_LONG_SWORD",
 			skill:  "SK_LONG_BLADES",
 		},
+
 		{
 			weapon: "WPN_UNARMED",
 			skill:  "SK_UNARMED_COMBAT",
@@ -57,16 +62,19 @@ func TestStartingSkillsHumanFighterWeapons(t *testing.T) {
 					Level:  3,
 					Points: 301,
 				},
+
 				{
 					ID:     "SK_SHIELDS",
 					Level:  3,
 					Points: 301,
 				},
+
 				{
 					ID:     "SK_ARMOUR",
 					Level:  3,
 					Points: 301,
 				},
+
 				{
 					ID:     tc.skill,
 					Level:  2,
@@ -105,11 +113,13 @@ func TestStartingSkillsRejectsUnsupportedChoice(t *testing.T) {
 			job:     "JOB_FIGHTER",
 			weapon:  "WPN_FLAIL",
 		},
+
 		{
 			species: "SP_HUMAN",
 			job:     "JOB_GLADIATOR",
 			weapon:  "WPN_FLAIL",
 		},
+
 		{
 			species: "SP_HUMAN",
 			job:     "JOB_FIGHTER",

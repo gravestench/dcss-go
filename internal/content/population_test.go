@@ -11,18 +11,22 @@ func TestDungeonPopulationWeightCurves(t *testing.T) {
 			curve: "FLAT",
 			want:  [3]int{25200, 25200, 25200},
 		},
+
 		{
 			curve: "SEMI",
 			want:  [3]int{12600, 25200, 12600},
 		},
+
 		{
 			curve: "PEAK",
 			want:  [3]int{12600, 25200, 12600},
 		},
+
 		{
 			curve: "RISE",
 			want:  [3]int{8400, 16800, 25200},
 		},
+
 		{
 			curve: "FALL",
 			want:  [3]int{25200, 16800, 8400},
@@ -60,6 +64,7 @@ func TestDungeonPopulationArtifactRejectsMalformedRows(t *testing.T) {
 				SHA256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 			},
 		},
+
 		Rows: []DungeonPopEntry{
 			{
 				MinDepth:   1,
@@ -85,6 +90,7 @@ func TestDungeonPopulationArtifactRejectsMalformedRows(t *testing.T) {
 			MonsterID:  "MONS_RAT",
 			SourceLine: 60,
 		},
+
 		{
 			MinDepth:   1,
 			MaxDepth:   3,
@@ -93,6 +99,7 @@ func TestDungeonPopulationArtifactRejectsMalformedRows(t *testing.T) {
 			MonsterID:  "MONS_RAT",
 			SourceLine: 60,
 		},
+
 		{
 			MinDepth:   1,
 			MaxDepth:   3,
@@ -101,6 +108,7 @@ func TestDungeonPopulationArtifactRejectsMalformedRows(t *testing.T) {
 			MonsterID:  "MONS_RAT",
 			SourceLine: 60,
 		},
+
 		{
 			MinDepth:   1,
 			MaxDepth:   3,

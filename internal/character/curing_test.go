@@ -34,18 +34,21 @@ func TestCuringHealsSourceRangeAndCapsAtMax(t *testing.T) {
 			roll:    0,
 			want:    6,
 		},
+
 		{
 			current: 1,
 			max:     18,
 			roll:    6,
 			want:    12,
 		},
+
 		{
 			current: 15,
 			max:     18,
 			roll:    6,
 			want:    18,
 		},
+
 		{
 			current: 18,
 			max:     18,
@@ -84,14 +87,17 @@ func TestCuringRejectsInvalidHPAndRollWithoutDraw(t *testing.T) {
 			current: -1,
 			max:     18,
 		},
+
 		{
 			current: 19,
 			max:     18,
 		},
+
 		{
 			current: 1,
 			max:     0,
 		},
+
 		{
 			current: 0,
 			max:     18,

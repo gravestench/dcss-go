@@ -40,6 +40,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"WPN_"},
 		End:     "NUM_WEAPONS",
 	},
+
 	{
 		ClassID: "OBJ_MISSILES",
 		File:    "item-prop-enum.h",
@@ -47,6 +48,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"MI_"},
 		End:     "NUM_MISSILES",
 	},
+
 	{
 		ClassID: "OBJ_ARMOUR",
 		File:    "item-prop-enum.h",
@@ -54,6 +56,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"ARM_"},
 		End:     "NUM_ARMOURS",
 	},
+
 	{
 		ClassID: "OBJ_WANDS",
 		File:    "item-prop-enum.h",
@@ -61,6 +64,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"WAND_"},
 		End:     "NUM_WANDS",
 	},
+
 	{
 		ClassID: "OBJ_FOOD",
 		File:    "item-prop-enum.h",
@@ -68,6 +72,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"FOOD_"},
 		End:     "NUM_FOODS",
 	},
+
 	{
 		ClassID: "OBJ_SCROLLS",
 		File:    "item-prop-enum.h",
@@ -75,6 +80,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"SCR_"},
 		End:     "NUM_SCROLLS",
 	},
+
 	{
 		ClassID: "OBJ_JEWELLERY",
 		File:    "item-prop-enum.h",
@@ -82,6 +88,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"RING_", "AMU_"},
 		End:     "NUM_JEWELLERY",
 	},
+
 	{
 		ClassID: "OBJ_POTIONS",
 		File:    "potion-type.h",
@@ -89,6 +96,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"POT_"},
 		End:     "NUM_POTIONS",
 	},
+
 	{
 		ClassID: "OBJ_BOOKS",
 		File:    "book-type.h",
@@ -96,6 +104,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"BOOK_"},
 		End:     "NUM_BOOKS",
 	},
+
 	{
 		ClassID: "OBJ_STAVES",
 		File:    "item-prop-enum.h",
@@ -103,6 +112,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"STAFF_"},
 		End:     "NUM_STAVES",
 	},
+
 	{
 		ClassID: "OBJ_ORBS",
 		File:    "orb-type.h",
@@ -110,6 +120,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"ORB_"},
 		End:     "",
 	},
+
 	{
 		ClassID: "OBJ_MISCELLANY",
 		File:    "item-prop-enum.h",
@@ -117,6 +128,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"MISC_"},
 		End:     "NUM_MISCELLANY",
 	},
+
 	{
 		ClassID: "OBJ_CORPSES",
 		File:    "item-prop-enum.h",
@@ -124,6 +136,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"CORPSE_"},
 		End:     "",
 	},
+
 	{
 		ClassID: "OBJ_RODS",
 		File:    "item-prop-enum.h",
@@ -131,6 +144,7 @@ var itemClassSources = []classSource{
 		Prefix:  []string{"ROD_"},
 		End:     "NUM_RODS",
 	},
+
 	{
 		ClassID: "OBJ_RUNES",
 		File:    "item-prop-enum.h",
@@ -631,24 +645,28 @@ func parseVocabulary(source map[string][]byte) (content.ItemVocabulary, error) {
 			enum:     "equipment_type",
 			prefixes: []string{"EQ_"},
 		},
+
 		{
 			place:    &v.Skills,
 			file:     "skill-type.h",
 			enum:     "skill_type",
 			prefixes: []string{"SK_"},
 		},
+
 		{
 			place:    &v.Sizes,
 			file:     "size-type.h",
 			enum:     "size_type",
 			prefixes: []string{"SIZE_", "NUM_SIZE_LEVELS"},
 		},
+
 		{
 			place:    &v.Ammo,
 			file:     "item-prop-enum.h",
 			enum:     "missile_type",
 			prefixes: []string{"MI_"},
 		},
+
 		{
 			place: &v.DamageFlags,
 			file:  "item-prop-enum.h",
@@ -659,12 +677,14 @@ func parseVocabulary(source map[string][]byte) (content.ItemVocabulary, error) {
 				"DVORP_",
 			},
 		},
+
 		{
 			place:    &v.Brands,
 			file:     "item-prop-enum.h",
 			enum:     "brand_type",
 			prefixes: []string{"SPWPN_"},
 		},
+
 		{
 			place:    &v.ArmourFlags,
 			file:     "item-prop.h",

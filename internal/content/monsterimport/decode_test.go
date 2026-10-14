@@ -273,21 +273,25 @@ func TestDecodeRejectsUnknownExpressions(t *testing.T) {
 			field: 4,
 			value: "M_UNKNOWN",
 		},
+
 		{
 			name:  "enum",
 			field: 16,
 			value: "MST_UNKNOWN",
 		},
+
 		{
 			name:  "energy macro",
 			field: 22,
 			value: "TURBO_ENERGY(4)",
 		},
+
 		{
 			name:  "arithmetic",
 			field: 12,
 			value: "1 + UNKNOWN",
 		},
+
 		{
 			name:  "attack",
 			field: 11,

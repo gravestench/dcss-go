@@ -64,6 +64,7 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 			intelligence: 11,
 			dexterity:    10,
 		},
+
 		{
 			id:           "SP_LAVA_ORC",
 			monster:      "MONS_LAVA_ORC",
@@ -71,6 +72,7 @@ func TestParseLegacyThreeSpecies(t *testing.T) {
 			intelligence: 8,
 			dexterity:    6,
 		},
+
 		{
 			id:           "SP_SLUDGE_ELF",
 			monster:      "MONS_ELF",
@@ -118,12 +120,14 @@ func TestParseLegacyRejectsBadRows(t *testing.T) {
 			aptitudes: aptitudes,
 			want:      "SP_SLUDGE_ELF",
 		},
+
 		{
 			name:      "bad aptitude",
 			source:    source,
 			aptitudes: []byte(strings.Replace(string(aptitudes), "SK_FIGHTING,        0", "SK_FIGHTING,        bogus", 1)),
 			want:      "SK_FIGHTING",
 		},
+
 		{
 			name:      "unsupported conditional",
 			source:    []byte(strings.Replace(string(source), "TAG_MAJOR_VERSION == 34", "FEATURE_X", 1)),

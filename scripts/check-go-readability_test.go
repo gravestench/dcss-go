@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -32,6 +33,7 @@ func sample() {
 `,
 			want: 1,
 		},
+
 		{
 			name: "named array key",
 			source: `package example
@@ -46,6 +48,7 @@ func sample() {
 `,
 			want: 0,
 		},
+
 		{
 			name: "named map with struct key",
 			source: `package example
@@ -111,6 +114,7 @@ func sample() {
 `,
 			want: 1,
 		},
+
 		{
 			name: "anonymous struct in array",
 			source: `package example
@@ -123,6 +127,7 @@ func sample() {
 `,
 			want: 2,
 		},
+
 		{
 			name: "fixed array pair stays compact",
 			source: `package example
@@ -175,6 +180,7 @@ func sample(a, b, c, d bool) {
 `,
 			want: 1,
 		},
+
 		{
 			name: "one check per line",
 			source: `package example
@@ -189,6 +195,7 @@ func sample(a, b, c, d bool) {
 `,
 			want: 0,
 		},
+
 		{
 			name: "ignore conditions inside a function literal",
 			source: `package example
@@ -202,6 +209,7 @@ func sample(a, b, c, d bool) {
 `,
 			want: 0,
 		},
+
 		{
 			name: "count a nested if only once",
 			source: `package example
@@ -239,5 +247,59 @@ func sample(a, b, c, d bool) {
 				t.Fatalf("issues = %d, want %d", got, test.want)
 			}
 		})
+	}
+}
+
+func TestMultilineLiteralEntrySpacing(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "sample.go")
+	source := `package example
+
+type Row struct {
+	Name string
+	Value int
+}
+
+func sample() {
+	_ = []Row{
+		{
+			Name: "first",
+			Value: 1,
+		},
+		{
+			Name: "second",
+			Value: 2,
+		},
+	}
+}
+`
+
+	if err := os.WriteFile(path, []byte(source), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	crowded, err := checkFile(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if crowded != 1 {
+		t.Fatalf("crowded table issues = %d, want 1", crowded)
+	}
+
+	separated := strings.Replace(source, "},\n\t\t{", "},\n\n\t\t{", 1)
+
+	if err := os.WriteFile(path, []byte(separated), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	issues, err := checkFile(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if issues != 0 {
+		t.Fatalf("separated table issues = %d, want 0", issues)
 	}
 }

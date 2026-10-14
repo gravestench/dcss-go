@@ -259,21 +259,25 @@ func TestPropertyScannerRejectsLoss(t *testing.T) {
 			from: "EQ_BODY_ARMOUR, SIZE_LITTLE",
 			to:   "SIZE_LITTLE",
 		},
+
 		{
 			name: "unknown macro",
 			from: "DRAGON_ARMOUR(FIRE",
 			to:   "DRAGON_SHIELD(FIRE",
 		},
+
 		{
 			name: "unknown symbol",
 			from: "SK_MACES_FLAILS",
 			to:   "SK_NOT_REAL",
 		},
+
 		{
 			name: "duplicate row",
 			from: "{ MI_NEEDLE, \"needle\", 0, 12, 2 },",
 			to:   "{ MI_NEEDLE, \"needle\", 0, 12, 2 },\n    { MI_NEEDLE, \"needle\", 0, 12, 2 },",
 		},
+
 		{
 			name: "extra table row",
 			from: "{ MI_NEEDLE, \"needle\", 0, 12, 2 },",

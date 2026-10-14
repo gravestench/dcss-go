@@ -19,6 +19,7 @@ func TestOrdinaryMonsterExperienceMatchesSourceIntegerStages(t *testing.T) {
 			},
 			want: 1,
 		},
+
 		{
 			name: "quokka speed",
 			in: OrdinaryMonsterXPInput{
@@ -30,6 +31,7 @@ func TestOrdinaryMonsterExperienceMatchesSourceIntegerStages(t *testing.T) {
 			},
 			want: 2,
 		},
+
 		{
 			name: "large melee",
 			in: OrdinaryMonsterXPInput{
@@ -41,6 +43,7 @@ func TestOrdinaryMonsterExperienceMatchesSourceIntegerStages(t *testing.T) {
 			},
 			want: 151,
 		},
+
 		{
 			name: "fast large melee",
 			in: OrdinaryMonsterXPInput{
@@ -52,6 +55,7 @@ func TestOrdinaryMonsterExperienceMatchesSourceIntegerStages(t *testing.T) {
 			},
 			want: 201,
 		},
+
 		{
 			name: "fast regeneration and slow",
 			in: OrdinaryMonsterXPInput{
@@ -64,6 +68,7 @@ func TestOrdinaryMonsterExperienceMatchesSourceIntegerStages(t *testing.T) {
 			},
 			want: 56,
 		},
+
 		{
 			name: "high value stepdowns",
 			in: OrdinaryMonsterXPInput{
@@ -74,6 +79,7 @@ func TestOrdinaryMonsterExperienceMatchesSourceIntegerStages(t *testing.T) {
 			},
 			want: 1209,
 		},
+
 		{
 			name: "zero modifier skips stage",
 			in: OrdinaryMonsterXPInput{

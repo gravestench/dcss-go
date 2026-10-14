@@ -168,6 +168,7 @@ func TestRegenerationRestoreRejectsInvalidCountersAndOwnership(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "MP overflow",
 			mutate: func(s *save.Snapshot) {
@@ -178,6 +179,7 @@ func TestRegenerationRestoreRejectsInvalidCountersAndOwnership(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "monster component",
 			mutate: func(s *save.Snapshot) {
@@ -188,6 +190,7 @@ func TestRegenerationRestoreRejectsInvalidCountersAndOwnership(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "item component",
 			mutate: func(s *save.Snapshot) {

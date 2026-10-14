@@ -121,10 +121,12 @@ func buildFixedScenarioLevels(
 			1: entry,
 			2: entry,
 		},
+
 		curing: point{
 			x: 4,
 			y: 2,
 		},
+
 		heal: point{
 			x: 2,
 			y: 1,

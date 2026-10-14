@@ -147,46 +147,55 @@ func TestParseYAMLRejectsMalformedSource(t *testing.T) {
 			input: humanYAML + "unknown_field: yes\n",
 			field: "unknown_field",
 		},
+
 		{
 			name:  "duplicate key",
 			input: humanYAML + "name: Duplicate\n",
 			field: "name",
 		},
+
 		{
 			name:  "bad aptitude",
 			input: strings.Replace(humanYAML, "spellcasting: 3", "spellcasting: many", 1),
 			field: "spellcasting",
 		},
+
 		{
 			name:  "bad stat",
 			input: strings.Replace(humanYAML, "str: 8", "str: 0", 1),
 			field: "str",
 		},
+
 		{
 			name:  "bad mutation level",
 			input: humanYAML + "mutations:\n  28:\n    MUT_CLAWS: 1\n",
 			field: "mutations",
 		},
+
 		{
 			name:  "bad mutation amount",
 			input: humanYAML + "mutations:\n  1:\n    MUT_CLAWS: 4\n",
 			field: "MUT_CLAWS",
 		},
+
 		{
 			name:  "bad difficulty",
 			input: strings.Replace(humanYAML, "Intermediate", "Impossible", 1),
 			field: "difficulty",
 		},
+
 		{
 			name:  "bad flag",
 			input: humanYAML + "species_flags:\n  - SPF_UNKNOWN\n",
 			field: "SPF_UNKNOWN",
 		},
+
 		{
 			name:  "bad skill",
 			input: strings.Replace(humanYAML, "spellcasting: 3", "speling: 3", 1),
 			field: "speling",
 		},
+
 		{
 			name:  "missing jobs",
 			input: strings.Replace(humanYAML, "recommended_jobs:\n  - JOB_FIGHTER\n", "", 1),
@@ -216,16 +225,19 @@ func TestParseYAMLRejectsCoercionAndTrailingDocument(t *testing.T) {
 			input: strings.Replace(humanYAML, "str: 8", "str: 8.9", 1),
 			field: "str",
 		},
+
 		{
 			name:  "numeric name",
 			input: strings.Replace(humanYAML, "name: Human", "name: 123", 1),
 			field: "name",
 		},
+
 		{
 			name:  "null frequency",
 			input: strings.Replace(humanYAML, "levelup_stat_frequency: 4", "levelup_stat_frequency: null", 1),
 			field: "levelup_stat_frequency",
 		},
+
 		{
 			name:  "second document",
 			input: humanYAML + "---\nunknown_field: yes\n",

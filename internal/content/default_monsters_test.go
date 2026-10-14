@@ -81,18 +81,21 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 				a.SchemaVersion = 2
 			},
 		},
+
 		{
 			name: "revision",
 			edit: func(a *MonsterArtifact) {
 				a.SourceRevision = "other"
 			},
 		},
+
 		{
 			name: "tag",
 			edit: func(a *MonsterArtifact) {
 				a.TagMajorVersion = 35
 			},
 		},
+
 		{
 			name: "provenance",
 			edit: func(a *MonsterArtifact) {
@@ -104,18 +107,21 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "order",
 			edit: func(a *MonsterArtifact) {
 				a.Monsters[0], a.Monsters[1] = a.Monsters[1], a.Monsters[0]
 			},
 		},
+
 		{
 			name: "duplicate",
 			edit: func(a *MonsterArtifact) {
 				a.Monsters[1] = a.Monsters[0]
 			},
 		},
+
 		{
 			name: "genus",
 			edit: func(a *MonsterArtifact) {
@@ -127,6 +133,7 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "species",
 			edit: func(a *MonsterArtifact) {
@@ -138,6 +145,7 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "unknown attack",
 			edit: func(a *MonsterArtifact) {
@@ -149,6 +157,7 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "unknown spellbook",
 			edit: func(a *MonsterArtifact) {
@@ -160,6 +169,7 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "unknown flag",
 			edit: func(a *MonsterArtifact) {
@@ -171,6 +181,7 @@ func TestLoadDefaultRejectsBadMonsterArtifact(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "same-count identity swap",
 			edit: func(a *MonsterArtifact) {

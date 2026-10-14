@@ -111,6 +111,7 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 				p.Skills.Entries[1] = p.Skills.Entries[0]
 			},
 		},
+
 		{
 			name: "reordered skills",
 			mutate: func(s *save.Snapshot) {
@@ -118,36 +119,42 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 				p.Skills.Entries[0], p.Skills.Entries[1] = p.Skills.Entries[1], p.Skills.Entries[0]
 			},
 		},
+
 		{
 			name: "unknown skill",
 			mutate: func(s *save.Snapshot) {
 				savedPlayer(t, s).Skills.Entries[0].ID = "SK_UNKNOWN"
 			},
 		},
+
 		{
 			name: "changed points",
 			mutate: func(s *save.Snapshot) {
 				savedPlayer(t, s).Skills.Entries[0].Points++
 			},
 		},
+
 		{
 			name: "changed level",
 			mutate: func(s *save.Snapshot) {
 				savedPlayer(t, s).Skills.Entries[0].Level++
 			},
 		},
+
 		{
 			name: "missing skills",
 			mutate: func(s *save.Snapshot) {
 				savedPlayer(t, s).Skills = nil
 			},
 		},
+
 		{
 			name: "missing magic",
 			mutate: func(s *save.Snapshot) {
 				savedPlayer(t, s).Magic = nil
 			},
 		},
+
 		{
 			name: "monster skills",
 			mutate: func(s *save.Snapshot) {
@@ -166,6 +173,7 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "item skills",
 			mutate: func(s *save.Snapshot) {
@@ -186,6 +194,7 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "monster magic",
 			mutate: func(s *save.Snapshot) {
@@ -199,6 +208,7 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "item magic",
 			mutate: func(s *save.Snapshot) {
@@ -214,24 +224,28 @@ func TestRestoreRejectsInvalidStartProfile(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "negative MP",
 			mutate: func(s *save.Snapshot) {
 				savedPlayer(t, s).Magic.Current = -1
 			},
 		},
+
 		{
 			name: "over-max MP",
 			mutate: func(s *save.Snapshot) {
 				savedPlayer(t, s).Magic.Current = 2
 			},
 		},
+
 		{
 			name: "changed max MP",
 			mutate: func(s *save.Snapshot) {
 				savedPlayer(t, s).Magic.Max = 2
 			},
 		},
+
 		{
 			name: "version three",
 			mutate: func(s *save.Snapshot) {

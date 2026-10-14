@@ -26,6 +26,7 @@ func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 				DY:   1,
 			},
 		},
+
 		{
 			name:          "diagonal pursuit",
 			playerX:       2,
@@ -37,6 +38,7 @@ func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 				DY:   1,
 			},
 		},
+
 		{
 			name:          "blocked sight routes around wall",
 			playerX:       2,
@@ -47,6 +49,7 @@ func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 				DY:   1,
 			},
 		},
+
 		{
 			name:          "cardinal melee",
 			playerX:       3,

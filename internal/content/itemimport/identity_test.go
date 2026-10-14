@@ -32,6 +32,7 @@ OBJ_UNASSIGNED = 100,
 OBJ_RANDOM,
 OBJ_DETECTED,
 };`),
+
 		"item-prop-enum.h": []byte(`enum weapon_type
 {
 WPN_CLUB,
@@ -98,6 +99,7 @@ enum rune_type
 RUNE_SWAMP,
 NUM_RUNE_TYPES,
 };`),
+
 		"potion-type.h": []byte("enum potion_type\n{\nPOT_CURING,\nNUM_POTIONS,\n};\n"),
 		"book-type.h":   []byte("enum book_type\n{\nBOOK_MINOR_MAGIC,\nNUM_BOOKS,\n};\n"),
 		"orb-type.h":    []byte("enum orb_type\n{\nORB_ZOT,\n};\n"),
