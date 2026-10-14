@@ -7,8 +7,8 @@ import (
 	"dcrawl-go/internal/content"
 )
 
-// OrdinaryNaturalProfile is the supported source-backed subset of monsters with
-// natural melee and no equipment behavior. Spellbooks are explicit.
+// OrdinaryNaturalProfile describes supported source-backed natural melee.
+// An equipment-capable monster can still use this path when it starts unarmed.
 type OrdinaryNaturalProfile struct {
 	HitDice      int
 	AverageHP10x int
@@ -20,6 +20,7 @@ type OrdinaryNaturalProfile struct {
 	AttackTypeID    string
 	ConstrictDamage int
 	SpellbookID     string
+	ItemUseID       string
 
 	XPModifier int
 	FastRegen  bool
@@ -167,6 +168,20 @@ var ordinaryNaturalProfiles = map[string]OrdinaryNaturalProfile{
 		XPModifier: 40,
 		NoSkeleton: true,
 	},
+
+	"MONS_HOBGOBLIN": {
+		HitDice:      1,
+		AverageHP10x: 55,
+		MinHP:        3,
+		MaxHP:        8,
+
+		Damage:       5,
+		Speed:        10,
+		AttackTypeID: "AT_HIT",
+		ItemUseID:    "MONUSE_WEAPONS_ARMOUR",
+
+		XPModifier: 10,
+	},
 }
 
 func OrdinaryNaturalProfileFor(id string) (OrdinaryNaturalProfile, bool) {
@@ -175,10 +190,9 @@ func OrdinaryNaturalProfileFor(id string) (OrdinaryNaturalProfile, bool) {
 	return profile, found
 }
 
-// OrdinaryNaturalExperience evaluates the source's ordinary melee path of
-// mon-util.cc:2345-2535 against live maximum HP. Difficulty adjustment is
-// zero except for the worm's source fast-regeneration adjustment. Their
-// supported spellbooks add no XP difficulty bonus; slow casters keep full XP.
+// OrdinaryNaturalExperience evaluates mon-util.cc:2345-2535 against live
+// maximum HP. Supported spellbooks add no spell difficulty bonus; equipment
+// users receive the source's difficulty bonus even when they start unarmed.
 func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, error) {
 	profile, found := OrdinaryNaturalProfileFor(definition.ID)
 
@@ -212,13 +226,18 @@ func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, e
 	}
 
 	expectedCorpse := !profile.NoCorpse
+	itemUseID := profile.ItemUseID
+
+	if itemUseID == "" {
+		itemUseID = "MONUSE_NOTHING"
+	}
 
 	if definition.HD != profile.HitDice ||
 		definition.AverageHP10x != profile.AverageHP10x ||
 		definition.Speed != profile.Speed ||
 		definition.XPModifier != profile.XPModifier ||
 		definition.SpellbookID != spellbookID ||
-		definition.ItemUseID != "MONUSE_NOTHING" ||
+		definition.ItemUseID != itemUseID ||
 		definition.Attacks[0] != (content.MonsterAttack{
 			TypeID:    profile.AttackTypeID,
 			FlavourID: flavourID,
@@ -247,12 +266,13 @@ func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, e
 	}
 
 	return OrdinaryMonsterExperience(OrdinaryMonsterXPInput{
-		HitDice:      definition.HD,
-		MaxHP:        maxHP,
-		Speed:        definition.Speed,
-		Modifier:     definition.XPModifier,
-		AttackDamage: attackDamage,
-		FastRegen:    profile.FastRegen,
-		Spellcaster:  profile.SpellbookID != "",
+		HitDice:       definition.HD,
+		MaxHP:         maxHP,
+		Speed:         definition.Speed,
+		Modifier:      definition.XPModifier,
+		AttackDamage:  attackDamage,
+		FastRegen:     profile.FastRegen,
+		Spellcaster:   profile.SpellbookID != "",
+		EquipmentUser: profile.ItemUseID != "",
 	})
 }

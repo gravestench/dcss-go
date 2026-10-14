@@ -29,6 +29,37 @@ func TestFixedRatGrantsOneSourceExperience(t *testing.T) {
 	}
 }
 
+func TestHobgoblinNaturalAttackAndEquipmentUseExperience(t *testing.T) {
+	catalog, err := content.LoadDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	hobgoblin, err := catalog.Monster("MONS_HOBGOBLIN")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile, found := OrdinaryNaturalProfileFor(hobgoblin.ID)
+
+	if !found ||
+		profile.MinHP != 3 ||
+		profile.MaxHP != 8 ||
+		profile.Damage != 5 ||
+		profile.AttackTypeID != "AT_HIT" ||
+		profile.ItemUseID != "MONUSE_WEAPONS_ARMOUR" {
+		t.Fatalf("hobgoblin profile = %+v, found %v", profile, found)
+	}
+
+	for hp := profile.MinHP; hp <= profile.MaxHP; hp++ {
+		if _, err := OrdinaryNaturalExperience(hobgoblin, hp); err != nil {
+			t.Fatalf("hobgoblin with %d HP: %v", hp, err)
+		}
+	}
+}
+
 func TestBatPlainHitProfileAndSpeedExperience(t *testing.T) {
 	catalog, err := content.LoadDefault()
 

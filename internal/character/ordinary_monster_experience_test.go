@@ -90,6 +90,32 @@ func TestOrdinaryMonsterExperienceMatchesSourceIntegerStages(t *testing.T) {
 			},
 			want: 2,
 		},
+
+		{
+			name: "equipment users get source difficulty bonus",
+			in: OrdinaryMonsterXPInput{
+				HitDice:       5,
+				MaxHP:         40,
+				Speed:         10,
+				Modifier:      10,
+				AttackDamage:  [4]int{5},
+				EquipmentUser: true,
+			},
+			want: 161,
+		},
+
+		{
+			name: "slow equipment users keep full speed-scaled experience",
+			in: OrdinaryMonsterXPInput{
+				HitDice:       5,
+				MaxHP:         40,
+				Speed:         7,
+				Modifier:      10,
+				AttackDamage:  [4]int{5},
+				EquipmentUser: true,
+			},
+			want: 120,
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			got, err := OrdinaryMonsterExperience(tc.in)

@@ -58,6 +58,7 @@ func scenarioMonsterIDs(scenarioID string) ([]string, error) {
 			"MONS_BALL_PYTHON",
 			"MONS_ENDOPLASM",
 			"MONS_DART_SLUG",
+			"MONS_HOBGOBLIN",
 		), nil
 
 	default:
