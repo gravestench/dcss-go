@@ -40,6 +40,11 @@ type Progression struct {
 	TotalXP int
 }
 
+// Durations owns temporary player effects in action-time units (aut).
+type Durations struct {
+	MightAut int
+}
+
 type Combatant struct {
 	ShieldBlocks int
 }

@@ -89,6 +89,7 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 		item, _ := g.stores.Items.Get(entity)
 		if item.KindID == "POT_MIGHT" {
 			mightID = uint64(entity)
+			item.KindID = "POT_HASTE" // another carried catalogued potion is still unsupported
 			break
 		}
 	}

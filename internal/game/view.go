@@ -58,6 +58,7 @@ type View struct {
 	Attributes                        ecs.Attributes
 	Skills                            []character.Skill
 	ExperienceLevel, NextLevelPercent int
+	MightAut                          int
 }
 
 func (g *Game) View() View {
@@ -90,6 +91,9 @@ func (g *Game) View() View {
 		if percent, err := character.HumanFirstLevelProgress(progression.TotalXP); err == nil {
 			view.ExperienceLevel, view.NextLevelPercent = 1, percent
 		}
+	}
+	if durations, ok := g.stores.Durations.Get(g.player); ok {
+		view.MightAut = durations.MightAut
 	}
 	if player, ok := g.stores.Players.Get(g.player); ok {
 		view.PlayerName = player.Name

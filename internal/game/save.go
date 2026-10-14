@@ -41,7 +41,7 @@ func validateSavedItem(record save.EntityRecord, catalog content.Catalog, player
 	if (record.Position == nil) == (record.CarriedBy == nil) || record.Actor != nil {
 		return fmt.Errorf("item %d must have exactly one of position or carrier, never both", record.ID)
 	}
-	if record.Health != nil || record.Magic != nil || record.Skills != nil || record.Progression != nil || record.Combatant != nil || record.Player != nil || record.AI != nil || record.Attributes != nil {
+	if record.Health != nil || record.Magic != nil || record.Skills != nil || record.Progression != nil || record.Durations != nil || record.Combatant != nil || record.Player != nil || record.AI != nil || record.Attributes != nil {
 		return fmt.Errorf("item %d has actor components", record.ID)
 	}
 	if record.Equipped == nil {
@@ -71,6 +71,7 @@ func (g *Game) Snapshot() save.Snapshot {
 			Actor: copyComponent(g.stores.Actors, entity), Health: copyComponent(g.stores.Health, entity),
 			Magic: copyComponent(g.stores.Magic, entity), Skills: copySkillsComponent(g.stores.Skills, entity),
 			Progression: copyComponent(g.stores.Progression, entity),
+			Durations:   copyComponent(g.stores.Durations, entity),
 			Combatant:   copyComponent(g.stores.Combat, entity), Player: copyComponent(g.stores.Players, entity),
 			Attributes: copyComponent(g.stores.Attributes, entity),
 			AI:         copyComponent(g.stores.AI, entity), Item: copyComponent(g.stores.Items, entity),
@@ -197,9 +198,12 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 			if record.Progression != nil {
 				savedXP = record.Progression.TotalXP
 			}
+			if record.Durations != nil && (record.Durations.MightAut < 0 || record.Durations.MightAut > character.MightCapAut) {
+				return nil, fmt.Errorf("invalid player might duration for entity %d", record.ID)
+			}
 			playerNext = record.Actor.NextAut
 			playerAlive = record.Health.Current > 0
-		} else if record.Attributes != nil || record.Skills != nil || record.Magic != nil || record.Progression != nil {
+		} else if record.Attributes != nil || record.Skills != nil || record.Magic != nil || record.Progression != nil || record.Durations != nil {
 			return nil, fmt.Errorf("non-player entity %d has character components", record.ID)
 		}
 		if record.AI != nil {
@@ -287,6 +291,13 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 				progress = *record.Progression
 			}
 			if _, err := stores.Progression.Set(entity, progress); err != nil {
+				return nil, err
+			}
+			durations := ecs.Durations{}
+			if record.Durations != nil {
+				durations = *record.Durations
+			}
+			if _, err := stores.Durations.Set(entity, durations); err != nil {
 				return nil, err
 			}
 		}

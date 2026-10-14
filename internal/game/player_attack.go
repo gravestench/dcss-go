@@ -28,6 +28,9 @@ func (g *Game) playerAttackInput() (combat.PlayerAttackInput, error) {
 	}
 	in := combat.PlayerAttackInput{Strength: attributes.Strength, Dexterity: attributes.Dexterity,
 		DefenderEV: rat.EV, DefenderAC: rat.AC, Unarmed: player.StartingWeaponID == "WPN_UNARMED"}
+	if durations, found := g.stores.Durations.Get(g.player); found {
+		in.Mighty = durations.MightAut > 0
+	}
 	if in.Unarmed {
 		in.WeaponSkillID = "SK_UNARMED_COMBAT"
 	}

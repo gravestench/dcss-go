@@ -25,19 +25,36 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 	}
 	item, found := g.stores.Items.Get(intent.ItemID)
 	carrier, carried := g.stores.CarriedBy.Get(intent.ItemID)
-	if !found || !carried || carrier.Holder != g.player || item.KindID != "POT_CURING" || item.Quantity <= 0 {
-		return fmt.Errorf("curing potion %d is no longer carried", intent.ItemID)
+	if !found || !carried || carrier.Holder != g.player || item.Quantity <= 0 {
+		return fmt.Errorf("potion %d is no longer carried", intent.ItemID)
 	}
-	health, found := g.stores.Health.Get(g.player)
-	if !found {
-		return fmt.Errorf("player has no health for curing")
+	var message string
+	switch item.KindID {
+	case "POT_CURING":
+		health, found := g.stores.Health.Get(g.player)
+		if !found {
+			return fmt.Errorf("player has no health for curing")
+		}
+		newHP, err := character.CuringHP(g.rng, health.Current, health.Max)
+		if err != nil {
+			return err
+		}
+		health.Current = newHP
+		message = "You feel better."
+	case "POT_MIGHT":
+		durations, found := g.stores.Durations.Get(g.player)
+		if !found {
+			return fmt.Errorf("player has no duration state for might")
+		}
+		remaining, text, err := character.MightPotionDuration(g.rng, durations.MightAut)
+		if err != nil {
+			return err
+		}
+		durations.MightAut, message = remaining, text
+	default:
+		return fmt.Errorf("unsupported potion %s", item.KindID)
 	}
-	newHP, err := character.CuringHP(g.rng, health.Current, health.Max)
-	if err != nil {
-		return err
-	}
-	health.Current = newHP
 	s.turn.Consume = intent.ItemID
-	s.turn.Events = append(s.turn.Events, Event{Kind: "quaff", Text: "You feel better."})
+	s.turn.Events = append(s.turn.Events, Event{Kind: "quaff", Text: message})
 	return nil
 }

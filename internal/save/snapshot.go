@@ -30,6 +30,7 @@ type EntityRecord struct {
 	Magic       *ecs.Magic            `json:"magic,omitempty"`
 	Skills      *ecs.Skills           `json:"skills,omitempty"`
 	Progression *ecs.Progression      `json:"progression,omitempty"`
+	Durations   *ecs.Durations        `json:"durations,omitempty"`
 	Combatant   *ecs.Combatant        `json:"combatant,omitempty"`
 	Player      *ecs.PlayerControlled `json:"player,omitempty"`
 	Attributes  *ecs.Attributes       `json:"attributes,omitempty"`

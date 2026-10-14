@@ -122,7 +122,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		if kind.Class != "OBJ_POTIONS" {
 			return g.noTime("You cannot drink that."), nil
 		}
-		if item.KindID != "POT_CURING" {
+		if item.KindID != "POT_CURING" && item.KindID != "POT_MIGHT" {
 			return g.noTime("That potion's effect is unavailable in the Go port."), nil
 		}
 		intent = ecs.Intent{Kind: ecs.IntentQuaff, ItemID: itemID}

@@ -10,6 +10,7 @@ type Stores struct {
 	Magic       *akara.Store[Magic]
 	Skills      *akara.Store[Skills]
 	Progression *akara.Store[Progression]
+	Durations   *akara.Store[Durations]
 	Combat      *akara.Store[Combatant]
 	Players     *akara.Store[PlayerControlled]
 	Attributes  *akara.Store[Attributes]
@@ -28,6 +29,7 @@ func Register(world *akara.World) Stores {
 		Magic:       akara.Register[Magic](world),
 		Skills:      akara.Register[Skills](world),
 		Progression: akara.Register[Progression](world),
+		Durations:   akara.Register[Durations](world),
 		Combat:      akara.Register[Combatant](world),
 		Players:     akara.Register[PlayerControlled](world),
 		Attributes:  akara.Register[Attributes](world),
