@@ -95,6 +95,22 @@ func (s *quaffSystem) Update(_ *akara.World, _ time.Duration) error {
 
 		durations.MightAut, message = remaining, text
 
+	case "POT_HASTE":
+		durations, found := s.durations.Get(s.player)
+
+		if !found {
+			return fmt.Errorf("player has no duration state for haste")
+		}
+
+		remaining, text, err := character.HastePotionDuration(s.rng, durations.HasteAut)
+
+		if err != nil {
+			return err
+		}
+
+		durations.HasteAut = remaining
+		message = text
+
 	default:
 		return fmt.Errorf("unsupported potion %s", item.KindID)
 	}

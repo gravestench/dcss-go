@@ -71,6 +71,7 @@ type View struct {
 	NextLevelPercent   int
 	PendingStatLevel   int
 	MightAut           int
+	HasteAut           int
 	PoisonAmountScaled int
 
 	Inventory      []ItemView
@@ -159,6 +160,7 @@ func (g *Game) fillPlayerView(view *View) {
 
 	if durations, ok := g.stores.Durations.Get(g.player); ok {
 		view.MightAut = durations.MightAut
+		view.HasteAut = durations.HasteAut
 	}
 
 	if poison, ok := g.stores.Poison.Get(g.player); ok {

@@ -85,6 +85,16 @@ func (g *Game) prepareWieldCommand(rawItemID uint64) (preparedCommand, error) {
 	}, 5), nil
 }
 
+// wieldActionCost follows item-use.cc:1009-1015,1094-1095. Both short
+// actions truncate integer division rather than drawing another speed roll.
+func wieldActionCost(timeTaken int, itemID akara.Entity) Aut {
+	if itemID == 0 {
+		return Aut(timeTaken * 3 / 10)
+	}
+
+	return Aut(timeTaken / 2)
+}
+
 // weaponConflictsWithShield follows basic_hands_reqd and
 // is_shield_incompatible in item-prop.cc:1588-1604,2796-2804.
 func (g *Game) weaponConflictsWithShield(kind content.ItemDef) (bool, error) {

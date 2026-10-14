@@ -88,10 +88,16 @@ func WeaponMinDelaySkill(speed int, skillID string) int {
 	return 2 * (speed - minimumWeaponDelay(speed, skillID))
 }
 
-// PlayerAttackDelay is the normal-speed primary attack cost in auts.
-func PlayerAttackDelay(r Roller, in AttackDelayInput) (int, error) {
+// PlayerAttackDelay applies the player's already chosen action time to the
+// source's primary-attack distribution. The same time is used for the whole
+// command, including status decay and scheduling.
+func PlayerAttackDelay(r Roller, in AttackDelayInput, timeTaken int) (int, error) {
 	if r == nil {
 		return 0, fmt.Errorf("attack delay requires a roller")
+	}
+
+	if timeTaken != 6 && timeTaken != 7 && timeTaken != 10 {
+		return 0, fmt.Errorf("unsupported player action time %d", timeTaken)
 	}
 
 	if err := in.Validate(); err != nil {
@@ -114,14 +120,18 @@ func PlayerAttackDelay(r Roller, in AttackDelayInput) (int, error) {
 	shieldPenalty20 := 2 * baseShieldPenalty * baseShieldPenalty *
 		(270 - in.ShieldsSkill10) * 20 / (5 * 20) / 270
 	// C++ builds one random_var: skill reduction, max(3), and shield
-	// penalty combine as weighted distributions. The final normal-speed
-	// div_rand_round(attk_delay*10, 10) multiplies all weights by 10.
+	// penalty combine as weighted distributions. The final source
+	// div_rand_round(attk_delay*time_taken, 10) scales every delay outcome.
 	weights := make(map[int]int)
 
 	for _, reduction := range roundedValues(reductionNumerator, reductionDenominator) {
 		for _, shield := range roundedValues(shieldPenalty20, 20) {
 			delay := max(2, max(3, base-reduction.value)+shield.value)
-			weights[delay] += reduction.weight * shield.weight * 10
+
+			for _, scaled := range roundedValues(delay*timeTaken, 10) {
+				value := max(2, scaled.value)
+				weights[value] += reduction.weight * shield.weight * scaled.weight
+			}
 		}
 	}
 

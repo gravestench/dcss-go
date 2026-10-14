@@ -40,8 +40,8 @@ func TestScenarioHasTwoFloors(t *testing.T) {
 
 	items := game.stores.Items.Entities()
 
-	if len(items) != 6 {
-		t.Fatalf("item count = %d, want 6", len(items))
+	if len(items) != 7 {
+		t.Fatalf("item count = %d, want 7", len(items))
 	}
 
 	itemPosition, ok := game.stores.Positions.Get(potionID(t, game))

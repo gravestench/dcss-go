@@ -74,6 +74,7 @@ type Progression struct {
 // Durations owns temporary player effects in action-time units (aut).
 type Durations struct {
 	MightAut int
+	HasteAut int
 }
 
 // Poison is the remaining damage carried by one affected actor. The source

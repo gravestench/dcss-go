@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"slices"
 
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/levelgen"
@@ -20,6 +21,7 @@ type scenarioLevels struct {
 	populationEntries map[int]point
 	curing            point
 	heal              point
+	haste             point
 }
 
 func buildScenarioLevels(
@@ -131,6 +133,11 @@ func buildFixedScenarioLevels(
 			x: 2,
 			y: 1,
 		},
+
+		haste: point{
+			x: 3,
+			y: 1,
+		},
 	}, nil
 }
 
@@ -204,6 +211,12 @@ func buildGeneratedDungeonLevels(
 		return scenarioLevels{}, err
 	}
 
+	haste, err := nearestOpenFloor(second, secondEntry, heal)
+
+	if err != nil {
+		return scenarioLevels{}, err
+	}
+
 	levels := map[int]*Level{
 		1: first,
 		2: second,
@@ -222,6 +235,7 @@ func buildGeneratedDungeonLevels(
 		},
 		curing: curing,
 		heal:   heal,
+		haste:  haste,
 	}, nil
 }
 
@@ -298,7 +312,7 @@ func sourceDungeonMonsterCount(rng *RNGStreams, depth int) (int, error) {
 
 // Find an item cell reachable from its arrival stair without placing the item
 // on a stair or behind a completely disconnected pocket.
-func nearestOpenFloor(level *Level, start point) (point, error) {
+func nearestOpenFloor(level *Level, start point, exclude ...point) (point, error) {
 	queue := []point{start}
 	seen := map[point]bool{start: true}
 	directions := [4]point{
@@ -312,7 +326,7 @@ func nearestOpenFloor(level *Level, start point) (point, error) {
 		cell := queue[0]
 		queue = queue[1:]
 
-		if level.terrain[cell.y][cell.x] == '.' {
+		if level.terrain[cell.y][cell.x] == '.' && !slices.Contains(exclude, cell) {
 			return cell, nil
 		}
 

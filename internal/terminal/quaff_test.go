@@ -6,6 +6,7 @@ import (
 
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/game"
+	"dcrawl-go/internal/save"
 	"github.com/gravestench/akara"
 )
 
@@ -56,6 +57,45 @@ func TestQuaffChoiceCancelAndStartingMight(t *testing.T) {
 
 	if !strings.Contains(plainApp(m), "Might") {
 		t.Fatal("might status light is missing")
+	}
+}
+
+func TestQuaffHasteFromInventoryShowsFastLight(t *testing.T) {
+	m := playingModel(t)
+	snapshot := m.game.Snapshot()
+	var lastID uint64
+
+	for _, record := range snapshot.Entities {
+		lastID = max(lastID, record.ID)
+	}
+
+	snapshot.Entities = append(snapshot.Entities, save.EntityRecord{
+		ID: lastID + 1,
+		Item: &ecs.Item{
+			KindID:   "POT_HASTE",
+			Quantity: 1,
+		},
+		CarriedBy: &ecs.CarriedBy{
+			Holder: akara.Entity(snapshot.PlayerID),
+		},
+	})
+
+	loaded, err := game.Restore(snapshot, m.catalog)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m.game.Close()
+	m.game = loaded
+	m.handleKey("q")
+	m.handleKey(potionLetter(t, m, "POT_HASTE"))
+
+	if m.screen != ScreenPlay || m.notice != "" ||
+		m.game.View().HasteAut == 0 ||
+		!strings.Contains(plainApp(m), "Fast") {
+		t.Fatalf("haste quaff screen %d, notice %q, duration %d",
+			m.screen, m.notice, m.game.View().HasteAut)
 	}
 }
 

@@ -256,7 +256,11 @@ func (g *Game) createStartingFloorItems(setup scenarioLevels) error {
 		return err
 	}
 
-	return g.spawnScenarioPotion("POT_HEAL_WOUNDS", 2, setup.heal)
+	if err := g.spawnScenarioPotion("POT_HEAL_WOUNDS", 2, setup.heal); err != nil {
+		return err
+	}
+
+	return g.spawnScenarioPotion("POT_HASTE", 2, setup.haste)
 }
 
 func (g *Game) spawnScenarioPotion(kindID string, levelID int, cell point) error {
@@ -461,6 +465,7 @@ func registerEndTurnSystems(g *Game) error {
 	if _, err := world.AddSystem(&durationSystem{
 		player:    g.player,
 		durations: stores.Durations,
+		rng:       g.rng,
 		turn:      &g.turn,
 	}); err != nil {
 		return err

@@ -64,6 +64,14 @@ func (g *Game) validateSavedPlayer(
 		)
 	}
 
+	if record.Durations != nil &&
+		(record.Durations.HasteAut < 0 ||
+			record.Durations.HasteAut > character.HasteCapAut) {
+		return savedPlayerValidation{}, fmt.Errorf(
+			"invalid player haste duration for entity %d", record.ID,
+		)
+	}
+
 	if record.Poison != nil &&
 		(record.Poison.AmountScaled < 1000 ||
 			record.Poison.AmountScaled > 2147483647 ||

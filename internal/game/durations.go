@@ -14,6 +14,7 @@ import (
 type durationSystem struct {
 	player    akara.Entity
 	durations *akara.Store[ecs.Durations]
+	rng       character.Roller
 	turn      *TurnContext
 }
 
@@ -40,6 +41,21 @@ func (s *durationSystem) Update(_ *akara.World, delta time.Duration) error {
 		s.turn.Events = append(s.turn.Events, Event{
 			Kind: "duration",
 			Text: "You feel a little less mighty now.",
+		})
+	}
+
+	haste, message, err := character.DecayHaste(s.rng, status.HasteAut, int(delta))
+
+	if err != nil {
+		return err
+	}
+
+	status.HasteAut = haste
+
+	if message != "" {
+		s.turn.Events = append(s.turn.Events, Event{
+			Kind: "duration",
+			Text: message,
 		})
 	}
 

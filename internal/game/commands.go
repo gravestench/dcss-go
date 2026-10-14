@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/combat"
 	"dcrawl-go/internal/ecs"
 	"github.com/gravestench/akara"
@@ -119,8 +120,13 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		return prepared.response, nil
 	}
 
+	cost, err := g.playerActionCost(prepared)
+
+	if err != nil {
+		return StepResult{}, err
+	}
+
 	intent := prepared.intent
-	cost := prepared.cost
 
 	if combat, found := g.stores.Combat.Get(g.player); found {
 		combat.ShieldBlocks = 0
@@ -168,19 +174,52 @@ func (g *Game) Step(command Command) (StepResult, error) {
 // preparedCommand separates validation and no-time responses from action
 // execution. Only an accepted action reaches the scheduler and spends aut.
 type preparedCommand struct {
-	intent     ecs.Intent
-	cost       Aut
-	response   StepResult
-	spendsTime bool
-	equipment  *ecs.EquipmentDelay
+	intent      ecs.Intent
+	baseCost    Aut
+	response    StepResult
+	spendsTime  bool
+	equipment   *ecs.EquipmentDelay
+	attackDelay *combat.AttackDelayInput
 }
 
 func spendingCommand(intent ecs.Intent, cost Aut) preparedCommand {
 	return preparedCommand{
 		intent:     intent,
-		cost:       cost,
+		baseCost:   cost,
 		spendsTime: true,
 	}
+}
+
+// playerActionCost chooses speed once after a command is accepted. Melee
+// and wielding then apply their own source timing rules to that speed.
+func (g *Game) playerActionCost(prepared preparedCommand) (Aut, error) {
+	durations, found := g.stores.Durations.Get(g.player)
+
+	if !found {
+		return 0, fmt.Errorf("player has no duration state for action timing")
+	}
+
+	timeTaken, err := character.PlayerActionTime(g.rng, durations.HasteAut > 0)
+
+	if err != nil {
+		return 0, err
+	}
+
+	if prepared.attackDelay != nil {
+		delay, err := combat.PlayerAttackDelay(g.rng, *prepared.attackDelay, timeTaken)
+
+		return Aut(delay), err
+	}
+
+	if prepared.intent.Kind == ecs.IntentWield {
+		return wieldActionCost(timeTaken, prepared.intent.ItemID), nil
+	}
+
+	if prepared.baseCost != 10 {
+		return 0, fmt.Errorf("unsupported action cost %d", prepared.baseCost)
+	}
+
+	return Aut(timeTaken), nil
 }
 
 func freeCommand(response StepResult) preparedCommand {
@@ -265,7 +304,7 @@ func (g *Game) prepareMoveCommand(
 		return freeCommand(g.noTime("You cannot move there.")), nil
 	}
 
-	cost := Aut(10)
+	var attackDelay *combat.AttackDelayInput
 
 	if target, occupied := level.ActorAt(x, y); occupied {
 		actor, found := g.stores.Actors.Get(target)
@@ -280,20 +319,18 @@ func (g *Game) prepareMoveCommand(
 			return preparedCommand{}, err
 		}
 
-		delay, err := combat.PlayerAttackDelay(g.rng, input)
-
-		if err != nil {
-			return preparedCommand{}, err
-		}
-
-		cost = Aut(delay)
+		attackDelay = &input
 	}
 
-	return spendingCommand(ecs.Intent{
+	prepared := spendingCommand(ecs.Intent{
 		Kind: ecs.IntentMove,
 		DX:   command.DX,
 		DY:   command.DY,
-	}, cost), nil
+	}, 10)
+
+	prepared.attackDelay = attackDelay
+
+	return prepared, nil
 }
 
 func (g *Game) prepareStairCommand(
@@ -363,6 +400,7 @@ func (g *Game) prepareQuaffCommand(itemID uint64) (preparedCommand, error) {
 
 	if item.KindID != "POT_CURING" &&
 		item.KindID != "POT_MIGHT" &&
+		item.KindID != "POT_HASTE" &&
 		item.KindID != "POT_HEAL_WOUNDS" {
 		return freeCommand(g.noTime("That potion's effect is unavailable in the Go port.")), nil
 	}

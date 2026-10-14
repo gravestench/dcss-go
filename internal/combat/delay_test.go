@@ -2,6 +2,52 @@ package combat
 
 import "testing"
 
+func TestPlayerAttackDelayUsesChosenHasteActionTime(t *testing.T) {
+	input := AttackDelayInput{
+		Unarmed:       true,
+		WeaponSkillID: "SK_UNARMED_COMBAT",
+	}
+
+	for _, test := range []struct {
+		actionTime int
+		want       int
+	}{
+		{
+			actionTime: 10,
+			want:       10,
+		},
+
+		{
+			actionTime: 7,
+			want:       7,
+		},
+
+		{
+			actionTime: 6,
+			want:       6,
+		},
+	} {
+		rng := &scriptedRoller{
+			rolls: []scriptedRoll{
+				{
+					bound: 10800,
+					value: 0,
+				},
+			},
+		}
+
+		got, err := PlayerAttackDelay(rng, input, test.actionTime)
+
+		if err != nil || got != test.want || len(rng.rolls) != 0 {
+			t.Fatalf("action time %d: delay %d, err %v", test.actionTime, got, err)
+		}
+	}
+
+	if _, err := PlayerAttackDelay(&scriptedRoller{}, input, 0); err == nil {
+		t.Fatal("zero action time accepted")
+	}
+}
+
 func starterDelay(speed int, skill string) AttackDelayInput {
 	return AttackDelayInput{
 		WeaponSpeed:    speed,
@@ -88,7 +134,7 @@ func TestStartingWeaponsSampleOneSourceDistribution(t *testing.T) {
 					},
 				}
 
-				got, err := PlayerAttackDelay(rng, starterDelay(tc.speed, tc.skill))
+				got, err := PlayerAttackDelay(rng, starterDelay(tc.speed, tc.skill), 10)
 
 				if err != nil || got != boundary.want || len(rng.rolls) != 0 {
 					t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", boundary.roll, got, err, rng.rolls, boundary.want)
@@ -145,7 +191,7 @@ func TestFractionalWeaponSkillCombinesBeforeOneDraw(t *testing.T) {
 			},
 		}
 
-		got, err := PlayerAttackDelay(rng, in)
+		got, err := PlayerAttackDelay(rng, in, 10)
 
 		if err != nil || got != tc.want || len(rng.rolls) != 0 {
 			t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", tc.roll, got, err, rng.rolls, tc.want)
@@ -205,7 +251,7 @@ func TestUnarmedSamplesOneCombinedSourceDistribution(t *testing.T) {
 			},
 		}
 
-		got, err := PlayerAttackDelay(rng, in)
+		got, err := PlayerAttackDelay(rng, in, 10)
 
 		if err != nil || got != tc.want || len(rng.rolls) != 0 {
 			t.Fatalf("roll %d: delay %d, err %v, rolls %+v, want %d", tc.roll, got, err, rng.rolls, tc.want)
@@ -230,7 +276,7 @@ func TestAttackDelayRejectsUnsupportedInput(t *testing.T) {
 			ShieldEV:      5,
 		},
 	} {
-		if _, err := PlayerAttackDelay(&scriptedRoller{}, in); err == nil {
+		if _, err := PlayerAttackDelay(&scriptedRoller{}, in, 10); err == nil {
 			t.Fatalf("accepted unsupported delay input %+v", in)
 		}
 	}

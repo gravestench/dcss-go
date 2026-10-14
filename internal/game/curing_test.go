@@ -123,7 +123,7 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 
 		if item.KindID == "POT_MIGHT" {
 			mightID = uint64(entity)
-			item.KindID = "POT_HASTE" // another carried catalogued potion is still unsupported
+			item.KindID = "POT_FLIGHT" // another carried catalogued potion is still unsupported
 			break
 		}
 	}

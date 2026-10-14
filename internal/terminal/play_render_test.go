@@ -210,6 +210,27 @@ func TestDrawPlayShowsPoisonOnlyWhileActive(t *testing.T) {
 	}
 }
 
+func TestDrawPlayShowsFastOnlyWhileHasted(t *testing.T) {
+	view := playView(t)
+	canvas := NewCanvas(79, 24)
+	layout, _ := ComputeLayout(79, 24)
+	view.HasteAut = 100
+
+	DrawPlay(canvas, layout, view, "")
+
+	if !strings.Contains(canvas.PlainRows()[11][37:], "Fast") {
+		t.Fatal("active haste status is missing from the HUD")
+	}
+
+	view.HasteAut = 0
+	canvas = NewCanvas(79, 24)
+	DrawPlay(canvas, layout, view, "")
+
+	if strings.Contains(canvas.PlainRows()[11][37:], "Fast") {
+		t.Fatal("expired haste status remains on the HUD")
+	}
+}
+
 func TestDrawPlayExpandedViewportUsesFullTerminal(t *testing.T) {
 	view := playView(t)
 	canvas := NewCanvas(120, 40)
