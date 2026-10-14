@@ -2,6 +2,7 @@ package content
 
 import (
 	"bytes"
+	"crypto/sha256"
 	_ "embed"
 	"encoding/hex"
 	"encoding/json"
@@ -33,15 +34,76 @@ var defaultMonsterJSON []byte
 //go:embed generated/monster-vocabulary.json
 var defaultMonsterVocabularyJSON []byte
 
+//go:embed generated/spells.json
+var defaultSpellJSON []byte
+
 // LoadDefault builds a fresh catalog from the checked-in source-traced artifacts.
 func LoadDefault() (Catalog, error) {
-	return loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, defaultPresentationJSON, defaultMonsterJSON)
+	catalog, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, defaultPresentationJSON, defaultMonsterJSON)
+	if err != nil {
+		return Catalog{}, err
+	}
+	return attachDefaultSpells(catalog, defaultSpellJSON)
 }
 
 // LoadDefinitionsForImport reads committed gameplay definitions without needing
 // the presentation artifact that the refresh tool is about to regenerate.
 func LoadDefinitionsForImport() (Catalog, error) {
-	return loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, nil, defaultMonsterJSON)
+	catalog, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, nil, defaultMonsterJSON)
+	if err != nil {
+		return Catalog{}, err
+	}
+	return attachDefaultSpells(catalog, defaultSpellJSON)
+}
+
+func attachDefaultSpells(catalog Catalog, data []byte) (Catalog, error) {
+	var artifact SpellArtifact
+	if err := decodeArtifact(data, "spells", &artifact); err != nil {
+		return Catalog{}, err
+	}
+	if err := artifact.Validate(); err != nil {
+		return Catalog{}, err
+	}
+	if artifact.SourceRevision != catalog.SourceRevision() || len(artifact.Spells) != 403 || len(artifact.SourceFiles) != 6 {
+		return Catalog{}, fmt.Errorf("spell catalog has incomplete pinned coverage")
+	}
+	statusCounts := map[SpellStatus]int{}
+	for _, spell := range artifact.Spells {
+		statusCounts[spell.Status]++
+	}
+	if statusCounts[SpellDefined] != 316 || statusCounts[SpellRemoved] != 86 || statusCounts[SpellSentinel] != 1 {
+		return Catalog{}, fmt.Errorf("spell catalog has incorrect status partition")
+	}
+	paths, err := validSourceFiles(artifact.SourceFiles, "spell")
+	if err != nil {
+		return Catalog{}, err
+	}
+	identityHash, sourceHash := sha256.New(), sha256.New()
+	for _, spell := range artifact.Spells {
+		_, _ = fmt.Fprintf(identityHash, "%d:%s:%s\n", spell.NumericID, spell.ID, spell.Status)
+	}
+	for _, file := range artifact.SourceFiles {
+		_, _ = fmt.Fprintf(sourceHash, "%s:%s\n", file.Path, file.SHA256)
+	}
+	const pinnedIdentities = "6246d8bef43a5201f5f1010c6be0baddacd23be041bf08a598bf3a1b9817d1ed"
+	const pinnedSources = "643fd960be29d053774c841f2970f5e32de898c8da826a37292e3c4ca6a486ec"
+	if hex.EncodeToString(identityHash.Sum(nil)) != pinnedIdentities || hex.EncodeToString(sourceHash.Sum(nil)) != pinnedSources {
+		return Catalog{}, fmt.Errorf("spell catalog differs from pinned identities, statuses, or source hashes")
+	}
+	for _, name := range []string{"tag-version.h", "spell-type.h", "spl-data.h", "spl-util.cc", "spl-util.h", "spl-cast.h"} {
+		if _, found := paths["crawl-ref/source/"+name]; !found {
+			return Catalog{}, fmt.Errorf("spell catalog lacks source %s", name)
+		}
+	}
+	catalog.spells = make(map[string]SpellDef, len(artifact.Spells))
+	for _, spell := range artifact.Spells {
+		catalog.spells[spell.ID] = spell.clone()
+		catalog.spellOrder = append(catalog.spellOrder, spell.ID)
+	}
+	if err := catalog.Validate(); err != nil {
+		return Catalog{}, err
+	}
+	return catalog, nil
 }
 
 // LoadItemsForImport reads only the committed item pair, so the starting-gear

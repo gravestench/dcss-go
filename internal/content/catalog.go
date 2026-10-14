@@ -13,6 +13,8 @@ type Catalog struct {
 	version        int
 	sourceRevision string
 	monsters       map[string]MonsterDef
+	spells         map[string]SpellDef
+	spellOrder     []string
 	items          map[string]ItemDef
 	itemIdentities map[string]ItemIdentity
 	species        map[string]SpeciesDef
@@ -38,6 +40,27 @@ func (c Catalog) Monster(id string) (MonsterDef, error) {
 	}
 	return definition.clone(), nil
 }
+
+func (c Catalog) Spell(id string) (SpellDef, error) {
+	definition, found := c.spells[id]
+	if !found {
+		return SpellDef{}, fmt.Errorf("unknown spell ID %q", id)
+	}
+	if definition.Status != SpellDefined {
+		return SpellDef{}, fmt.Errorf("spell ID %q is %s and cannot be cast", id, definition.Status)
+	}
+	return definition.clone(), nil
+}
+
+func (c Catalog) SpellStatus(id string) (SpellStatus, error) {
+	definition, found := c.spells[id]
+	if !found {
+		return "", fmt.Errorf("unknown spell ID %q", id)
+	}
+	return definition.Status, nil
+}
+
+func (c Catalog) SpellIDs() []string { return append([]string(nil), c.spellOrder...) }
 
 func (c Catalog) Item(id string) (ItemDef, error) {
 	definition, found := c.items[id]
@@ -83,6 +106,15 @@ func (c Catalog) Validate() error {
 	for id, monster := range c.monsters {
 		if id == "" || monster.ID != id || monster.validate() != nil {
 			return fmt.Errorf("invalid monster definition %q", id)
+		}
+	}
+	if len(c.spells) != len(c.spellOrder) {
+		return fmt.Errorf("spell catalog and order disagree")
+	}
+	for i, id := range c.spellOrder {
+		spell, found := c.spells[id]
+		if !found || spell.NumericID != i || spell.validate() != nil {
+			return fmt.Errorf("invalid spell definition %s", id)
 		}
 	}
 	for id, item := range c.items {
