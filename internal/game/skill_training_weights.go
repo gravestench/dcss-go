@@ -2,10 +2,72 @@ package game
 
 import (
 	"fmt"
+	"sort"
 
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/ecs"
 )
+
+// scaledTrainingWeights follows skills.cc:_scale_array. Automatic mode
+// distributes the leftover percent by ascending remainder, as the source
+// does; manual mode keeps the truncated shares.
+func scaledTrainingWeights(
+	skills []character.Skill,
+	training *ecs.SkillTraining,
+) []int {
+	weights := trainingWeights(skills, training)
+	total := 0
+
+	for _, weight := range weights {
+		total += weight
+	}
+
+	if total == 0 {
+		return weights
+	}
+
+	type remainder struct {
+		index int
+		value int
+	}
+
+	var remainders []remainder
+	scaledTotal := 0
+
+	for index, weight := range weights {
+		if weight == 0 {
+			continue
+		}
+
+		product := weight * 100
+		weights[index] = product / total
+		scaledTotal += weights[index]
+
+		if rest := product % total; rest > 0 {
+			remainders = append(remainders, remainder{
+				index: index,
+				value: rest,
+			})
+		}
+	}
+
+	if !training.Manual {
+		sort.SliceStable(remainders, func(i, j int) bool {
+			return remainders[i].value < remainders[j].value
+		})
+
+		for _, rest := range remainders {
+			if scaledTotal == 100 {
+				break
+			}
+
+			weights[rest.index]++
+			scaledTotal++
+		}
+	}
+
+	return weights
+}
 
 func trainingWeights(
 	skills []character.Skill,
@@ -86,20 +148,11 @@ func skillTrainingPercent(
 	skills []character.Skill,
 	training *ecs.SkillTraining,
 ) map[string]int {
-	weights := trainingWeights(skills, training)
+	weights := scaledTrainingWeights(skills, training)
 	percent := make(map[string]int, len(skills))
-	total := 0
-
-	for _, weight := range weights {
-		total += weight
-	}
-
-	if total == 0 {
-		return percent
-	}
 
 	for i, skill := range skills {
-		percent[skill.ID] = weights[i] * 100 / total
+		percent[skill.ID] = weights[i]
 	}
 
 	return percent

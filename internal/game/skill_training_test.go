@@ -67,6 +67,169 @@ func TestPlayerTrainingStateIsOwnedByAkaraAndSnapshotIsIsolated(t *testing.T) {
 	}
 }
 
+func TestBatchTrainingWeightScaling(t *testing.T) {
+	skills := []character.Skill{
+		{ID: "SK_FIGHTING"},
+		{ID: "SK_ARMOUR"},
+		{ID: "SK_SHIELDS"},
+	}
+
+	training := &ecs.SkillTraining{
+		Manual: true,
+		Settings: []ecs.SkillTrainingSetting{
+			{
+				ID:      "SK_FIGHTING",
+				Enabled: true,
+			},
+
+			{
+				ID:      "SK_ARMOUR",
+				Enabled: true,
+			},
+
+			{
+				ID:      "SK_SHIELDS",
+				Enabled: true,
+			},
+		},
+	}
+
+	manual := scaledTrainingWeights(skills, training)
+
+	if !reflect.DeepEqual(manual, []int{
+		33,
+		33,
+		33,
+	}) {
+		t.Fatalf("manual truncated weights = %v", manual)
+	}
+
+	training.Manual = false
+	training.RecentPractice = []string{
+		"SK_FIGHTING",
+		"SK_ARMOUR",
+		"SK_ARMOUR",
+		"SK_SHIELDS",
+		"SK_SHIELDS",
+		"SK_SHIELDS",
+	}
+
+	automatic := scaledTrainingWeights(skills, training)
+
+	if !reflect.DeepEqual(automatic, []int{
+		16,
+		34,
+		50,
+	}) {
+		t.Fatalf("automatic exact weights = %v", automatic)
+	}
+
+	percent := skillTrainingPercent(skills, training)
+
+	if percent["SK_FIGHTING"] != 16 ||
+		percent["SK_ARMOUR"] != 34 ||
+		percent["SK_SHIELDS"] != 50 {
+		t.Fatalf("displayed training differs from spending weights: %v", percent)
+	}
+
+	skills[2].Level = character.HumanMaxSkillLevel
+	maxed := scaledTrainingWeights(skills, training)
+
+	if !reflect.DeepEqual(maxed, []int{
+		34,
+		66,
+		0,
+	}) {
+		t.Fatalf("maxed skill retained training weight: %v", maxed)
+	}
+}
+
+func TestSkillBatchGivesEqualManualSkillsTheirAllocatedXP(t *testing.T) {
+	g := newStepGame(t)
+	skills, _ := g.stores.Skills.Get(g.player)
+	training, _ := g.stores.SkillTraining.Get(g.player)
+	training.Manual = true
+	training.AvailableXP = 100
+
+	for index := range training.Settings {
+		training.Settings[index].Enabled = index < 2
+	}
+
+	firstBefore := skills.Entries[0].Points
+	secondBefore := skills.Entries[1].Points
+
+	if err := newSkillTrainingSystem(g).spend(skills, training); err != nil {
+		t.Fatal(err)
+	}
+
+	firstGain := skills.Entries[0].Points - firstBefore
+	secondGain := skills.Entries[1].Points - secondBefore
+
+	if firstGain != 50 || secondGain != 50 {
+		t.Fatalf("batch allocation = %d/%d, want 50/50", firstGain, secondGain)
+	}
+
+	if training.AvailableXP != 0 || training.SpentXP != 100 {
+		t.Fatalf("batch XP accounting = %+v", *training)
+	}
+}
+
+func TestSmallSkillShareSkipsFirstAllocationPhase(t *testing.T) {
+	shares, skip := allocatedSkillShares([]int{99, 1}, 10, 1)
+
+	if !skip || !reflect.DeepEqual(shares, []int{9, 0}) {
+		t.Fatalf("small training share = %v, skip %v", shares, skip)
+	}
+
+	shares, skip = allocatedSkillShares([]int{50, 50}, 100, 1)
+
+	if skip || !reflect.DeepEqual(shares, []int{50, 50}) {
+		t.Fatalf("sufficient training shares = %v, skip %v", shares, skip)
+	}
+}
+
+func TestMaxedSkillShareLeavesWeightedRemainderDraws(t *testing.T) {
+	g := newStepGame(t)
+	skills, _ := g.stores.Skills.Get(g.player)
+	training, _ := g.stores.SkillTraining.Get(g.player)
+	maximum, err := character.HumanSkillPointsNeeded(character.HumanMaxSkillLevel)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	skills.Entries[0].Level = character.HumanMaxSkillLevel - 1
+	skills.Entries[0].Points = maximum - 1
+	training.Manual = true
+	training.AvailableXP = 100
+
+	for index := range training.Settings {
+		training.Settings[index].Enabled = index < 2
+	}
+
+	expectedRNG := RestoreRNGStreams(g.seed, g.rng.States())
+
+	if _, err := expectedRNG.Intn("skill", 2); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := expectedRNG.Intn("skill", 100); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := newSkillTrainingSystem(g).spend(skills, training); err != nil {
+		t.Fatal(err)
+	}
+
+	if training.AvailableXP != 0 || skills.Entries[0].Points != maximum {
+		t.Fatalf("maxed skill batch state = %+v, %+v", *training, skills.Entries[0])
+	}
+
+	if !reflect.DeepEqual(g.rng.States(), expectedRNG.States()) {
+		t.Fatalf("maxed skill used an extra remainder draw")
+	}
+}
+
 func TestRestoreRejectsInvalidSkillTrainingState(t *testing.T) {
 	g := newStepGame(t)
 
@@ -456,7 +619,15 @@ func TestTrainingChangesCostAtSpentExperienceBoundary(t *testing.T) {
 func TestSkillRNGAndPracticeContinueAfterRestore(t *testing.T) {
 	g := newStepGame(t)
 	training, _ := g.stores.SkillTraining.Get(g.player)
+	skills, _ := g.stores.Skills.Get(g.player)
 	training.AvailableXP = 10
+	training.Manual = true
+	firstBefore := skills.Entries[0].Points
+	secondBefore := skills.Entries[1].Points
+
+	for index := range training.Settings {
+		training.Settings[index].Enabled = index < 2
+	}
 
 	progress, _ := g.stores.Progression.Get(g.player)
 	progress.TotalXP = 1
@@ -491,6 +662,11 @@ func TestSkillRNGAndPracticeContinueAfterRestore(t *testing.T) {
 
 	if !reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
 		t.Fatal("skill practice or RNG diverged after restore")
+	}
+
+	if skills.Entries[0].Points != firstBefore+5 ||
+		skills.Entries[1].Points != secondBefore+5 {
+		t.Fatalf("restored batch allocation = %+v", skills.Entries)
 	}
 }
 

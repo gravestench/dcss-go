@@ -181,50 +181,14 @@ func (s *skillTrainingSystem) spend(
 	training *ecs.SkillTraining,
 ) error {
 	for {
-		cost, err := character.SkillPointCost(training.CostLevel)
+		spent, err := s.spendBatch(skills, training)
 
 		if err != nil {
 			return err
 		}
 
-		if training.AvailableXP < cost {
+		if spent == 0 {
 			return nil
-		}
-
-		weights := trainingWeights(skills.Entries, training)
-		chosen, err := chooseWeightedSkill(weights, s.rng)
-
-		if err != nil {
-			return err
-		}
-
-		if chosen < 0 {
-			return nil
-		}
-
-		skill := &skills.Entries[chosen]
-		skill.Points++
-		training.AvailableXP -= cost
-		training.SpentXP += cost
-
-		level, err := character.HumanSkillLevel(skill.Points)
-
-		if err != nil {
-			return err
-		}
-
-		if level > skill.Level {
-			skill.Level = level
-			s.turn.Events = append(s.turn.Events, Event{
-				Kind: "skill-up",
-				Text: fmt.Sprintf("Your %s skill increases to level %d!", skill.ID, level),
-			})
-		}
-
-		training.CostLevel, err = character.SkillCostLevel(training.SpentXP)
-
-		if err != nil {
-			return err
 		}
 	}
 }
