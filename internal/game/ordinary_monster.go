@@ -66,6 +66,22 @@ func scenarioMonsterIDs(scenarioID string) ([]string, error) {
 	}
 }
 
+// Restorable monsters include factory-created kinds that the current
+// generator does not select yet. Population and XP rules keep their narrower
+// source-supported roster until those monsters can act faithfully.
+func restorableMonsterIDs(scenarioID string, populationIDs []string) []string {
+	ids := append([]string(nil), populationIDs...)
+
+	if scenarioID == generatedDungeonScenarioID {
+		ids = append(ids,
+			"MONS_GOBLIN",
+			"MONS_KOBOLD",
+		)
+	}
+
+	return ids
+}
+
 func isOrdinaryMonster(id string) bool {
 	_, supported := character.OrdinaryNaturalProfileFor(id)
 
@@ -101,7 +117,8 @@ func ordinaryMonster(catalog content.Catalog, id string) (content.MonsterDef, er
 
 // ordinaryMonsterFactory creates a live ECS actor from an immutable catalog
 // definition. Scenario layout chooses the kind and position; the factory owns
-// the HP draw and the complete component set.
+// the HP draw and the complete component set. Population callers account for
+// each successful spawn in the level's initial actor budget.
 type ordinaryMonsterFactory struct {
 	world   *akara.World
 	stores  ecs.Stores
@@ -150,14 +167,37 @@ func (f ordinaryMonsterFactory) Spawn(
 		return 0, err
 	}
 
+	var loadout monster.EarlyHumanoidLoadout
+
+	if id == "MONS_GOBLIN" || id == "MONS_KOBOLD" {
+		// The current two Dungeon levels use their level IDs as absolute depth.
+		// Branch placement must supply its own absolute depth here later.
+		loadout, err = monster.RollEarlyHumanoidLoadout(
+			f.rng,
+			f.catalog,
+			id,
+			levelID,
+		)
+
+		if err != nil {
+			return 0, err
+		}
+	}
+
 	entity, err := f.world.CreateEntity()
 
 	if err != nil {
 		return 0, err
 	}
 
+	var createdItems []akara.Entity
+
 	defer func() {
 		if err != nil {
+			for _, itemID := range createdItems {
+				f.world.DestroyEntity(itemID)
+			}
+
 			f.world.DestroyEntity(entity)
 		}
 	}()
@@ -188,6 +228,14 @@ func (f ordinaryMonsterFactory) Spawn(
 
 	if _, err = f.stores.AI.Set(entity, ecs.MonsterAI{Behavior: "wander"}); err != nil {
 		return 0, err
+	}
+
+	if loadout.Primary.KindID != "" {
+		createdItems, err = f.createEarlyHumanoidItems(entity, loadout)
+
+		if err != nil {
+			return 0, err
+		}
 	}
 
 	if err = level.PlaceActor(entity, x, y); err != nil {

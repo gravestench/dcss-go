@@ -294,6 +294,11 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		return nil, err
 	}
 
+	restorableMonsters := restorableMonsterIDs(
+		snapshot.ScenarioID,
+		scenarioMonsters,
+	)
+
 	usesPopulation := snapshot.ScenarioID == populationScenarioID ||
 		snapshot.ScenarioID == generatedDungeonScenarioID
 
@@ -342,6 +347,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	if err := g.validateAndRegisterSavedEntities(
 		snapshot,
 		scenarioMonsters,
+		restorableMonsters,
 		usesPopulation,
 	); err != nil {
 		return nil, err

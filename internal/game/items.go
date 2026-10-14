@@ -34,6 +34,16 @@ func validateItemProperties(item ecs.Item, kind content.ItemDef) error {
 	}
 
 	if item.Ego != "" {
+		if kind.Class == "OBJ_WEAPONS" && kind.Weapon != nil {
+			for _, brand := range kind.Weapon.BrandWeights {
+				if brand.BrandID == item.Ego &&
+					brand.Weight > 0 &&
+					item.Ego != "SPWPN_NORMAL" {
+					return nil
+				}
+			}
+		}
+
 		switch item.Ego {
 		case "poisoned", "curare", "dispersal":
 			if kind.Class != "OBJ_MISSILES" {
