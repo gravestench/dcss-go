@@ -33,7 +33,7 @@
 
 **Interfaces:** `type Roller interface { Intn(string, int) (int, error) }`; `type FighterDefense struct { Strength, Dexterity, ArmourSkill, ShieldsSkill, BodyAC, BodyEV, BodyPlus, ShieldAC, ShieldEV, ShieldPlus, ShieldBlocks int }`; `func ProjectFighter(FighterDefense) (Defense, error)` where `Defense` carries `EV`, `AC`, `ShieldClass`, `GDR`, `ShieldBlocks`; `func RatBite(Roller, RatAttack, Defense) (Outcome, error)` where `RatAttack` has `HD`, `Damage`, `TypeID`, `FlavourID`, and `Outcome` carries kind, damage, and updated shield-block count.
 
-- [ ] Write table tests for Human/Fighter scale mail and buckler baseline (`EV 8`, `AC 6`, `ShieldClass 9`), plus invalid negative input.
+- [ ] Write table tests for Human/Fighter scale mail and buckler baseline (`EV 5`, `AC 6`, `ShieldClass 9`), plus invalid negative input.
 - [ ] Run `GOCACHE=/private/tmp/dcrawl-go-melee-cache go test ./internal/combat` and observe failure.
 - [ ] Implement the pinned player integer formulas from `player.cc:1926-2100`, `2117-2190`, `5616-5661`, `5747-5766`, and `5970-6084`; use `math.Sqrt` only for `GDR` as `player.cc:6100-6113` does.
 - [ ] Write scripted-roller tests for EV dodge, 5% automatic miss/hit, shield block before dodge, armour absorption, and damaging hit; assert roll bounds/call order.
