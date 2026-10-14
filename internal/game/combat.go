@@ -355,11 +355,13 @@ func (s *combatSystem) resolveMonsterMelee(victim *ecs.Health) error {
 
 	if outcome.Kind == combat.Hit &&
 		weapon != nil &&
-		victim.Current > 0 {
+		(victim.Current > 0 || brandCanTriggerAfterDeath(weapon.Brand)) {
 		if err := s.applyMonsterWeaponBrand(
 			weapon.Brand,
 			outcome.Damage,
 			actor.KindID,
+			animal.Name,
+			victim,
 		); err != nil {
 			return err
 		}

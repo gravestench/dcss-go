@@ -94,7 +94,7 @@ func TestUnportedMonsterBrandRejectsAttackBeforeDamage(t *testing.T) {
 		t.Fatal("missing test weapon")
 	}
 
-	weapon.Ego = "SPWPN_ELECTROCUTION"
+	weapon.Ego = "SPWPN_DISTORTION"
 	g.turn.Actor = monsterID
 
 	playerHealth, found := g.stores.Health.Get(g.player)
@@ -109,7 +109,7 @@ func TestUnportedMonsterBrandRejectsAttackBeforeDamage(t *testing.T) {
 	system.roller = maximumMeleeRoller{}
 
 	if err := system.resolveMonsterMelee(playerHealth); err == nil {
-		t.Fatal("unported electrocution brand attacked as mundane")
+		t.Fatal("unported distortion brand attacked as mundane")
 	}
 
 	if playerHealth.Current != beforeHP {
