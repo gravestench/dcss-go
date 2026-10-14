@@ -32,10 +32,10 @@ func OrdinaryAnimalExperience(animal content.MonsterDef, maxHP int) (int, error)
 			return 0, fmt.Errorf("unsupported extra %s attack %+v", animal.ID, extra)
 		}
 	}
-	value := (16 + maxHP) * animal.HD * animal.HD / 10
-	value = value * animal.Speed / 10
-	value = value * animal.XPModifier / 10
-	return max(1, value), nil
+	return OrdinaryMonsterExperience(OrdinaryMonsterXPInput{
+		HitDice: animal.HD, MaxHP: maxHP, Speed: animal.Speed, Modifier: animal.XPModifier,
+		AttackDamage: [4]int{animal.Attacks[0].Damage},
+	})
 }
 
 // HumanFirstLevelProgress follows exp_needed(1)=0, exp_needed(2)=9 and
