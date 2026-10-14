@@ -3,6 +3,8 @@ package game
 import (
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/modfs"
+	"dcrawl-go/internal/script"
 	"github.com/gravestench/akara"
 )
 
@@ -13,6 +15,8 @@ type Game struct {
 	levels  map[int]*Level
 	player  akara.Entity
 	catalog content.Catalog
+	rules   modfs.Ruleset
+	scripts *script.Runtime
 
 	seed       uint64
 	scenarioID string
@@ -33,6 +37,10 @@ type Game struct {
 func (g *Game) Close() error {
 	if g == nil || g.world == nil {
 		return nil
+	}
+
+	if g.scripts != nil {
+		g.scripts.Close()
 	}
 
 	return g.world.Close()

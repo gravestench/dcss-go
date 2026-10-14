@@ -9,6 +9,7 @@ import (
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/game"
+	"dcrawl-go/internal/modfs"
 	"dcrawl-go/internal/save"
 )
 
@@ -48,11 +49,13 @@ type equipmentTick struct {
 
 // AppModel owns terminal navigation; the Game owns every turn-changing state.
 type AppModel struct {
-	catalog      content.Catalog
-	presentation content.PresentationArtifact
-	seed         uint64
-	savePath     string
-	game         *game.Game
+	catalog       content.Catalog
+	presentation  content.PresentationArtifact
+	seed          uint64
+	savePath      string
+	rules         modfs.Ruleset
+	restorePolicy game.RestorePolicy
+	game          *game.Game
 
 	screen       ScreenID
 	previous     ScreenID
@@ -76,6 +79,28 @@ type AppModel struct {
 }
 
 func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppModel, error) {
+	rules, err := modfs.Load("")
+
+	if err != nil {
+		return nil, err
+	}
+
+	return NewAppModelWithRules(
+		catalog,
+		seed,
+		savePath,
+		rules,
+		game.RestorePolicy{},
+	)
+}
+
+func NewAppModelWithRules(
+	catalog content.Catalog,
+	seed uint64,
+	savePath string,
+	rules modfs.Ruleset,
+	policy game.RestorePolicy,
+) (*AppModel, error) {
 	if err := catalog.Validate(); err != nil {
 		return nil, err
 	}
@@ -85,13 +110,15 @@ func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppMod
 	}
 
 	return &AppModel{
-		catalog:      catalog,
-		presentation: catalog.Presentation(),
-		seed:         seed,
-		savePath:     savePath,
-		screen:       ScreenStartup,
-		width:        79,
-		height:       24,
+		catalog:       catalog,
+		presentation:  catalog.Presentation(),
+		seed:          seed,
+		savePath:      savePath,
+		rules:         rules,
+		restorePolicy: policy,
+		screen:        ScreenStartup,
+		width:         79,
+		height:        24,
 	}, nil
 }
 
@@ -314,7 +341,12 @@ func (m *AppModel) loadSavedRun() {
 		return
 	}
 
-	restored, err := game.Restore(snapshot, m.catalog)
+	restored, err := game.RestoreWithRules(
+		snapshot,
+		m.catalog,
+		m.rules,
+		m.restorePolicy,
+	)
 
 	if err != nil {
 		m.notice = fmt.Sprintf("Load failed: %v", err)

@@ -1,137 +1,110 @@
-# ECS architecture assessment and roadmap
+# Lua-first ECS architecture roadmap
 
-This is the implementation strategy for the ongoing faithful DCSS-to-Go port. It supplements [port-inventory.md](port-inventory.md), which tracks gameplay and content coverage. The Go port works from local `main` and uses Akara `v0.1.4`; the C++ reference is pinned at `e60ba3568b0c26447ad36ec5c7b963eb04b2778f`.
+The Go port's end goal is a faithful, extensible DCSS whose game-specific
+behavior is written and registered in Lua. This roadmap supersedes the
+previous Go-rule migration sequence. The design contract is in
+[the Lua-first runtime spec](superpowers/specs/2026-10-14-lua-first-mod-runtime-design.md).
+The pinned C++ reference is `e60ba3568b0c26447ad36ec5c7b963eb04b2778f`.
+The default Lua rules remain source-traced to that revision. The primary Go
+branch is `main`; the unfinished early melee-brand branch is preserved as WIP
+and does not define the new architecture.
 
-## Human readability contract
+## Target boundary
 
-The port should be digestible to a developer reading one file at a time.
-Handwritten Go lines have a hard maximum of 120 characters and should stay
-near 80 when practical. Put each populated field of a multi-field struct
-literal on its own line. Give validation, calculation, mutation, and event
-emission separate visual space; avoid code cuddling and long compound
-conditions that hide the reason for a failure. Comments explain ownership,
-invariants, source-specific order, and surprising rules, with pinned C++
-source references where helpful. They should not repeat what the next line
-already says. The repository's `AGENTS.md` carries this standard into each
-implementation slice. The style check now enforces line length, formatting,
-expanded literals and blocks, space around control-flow blocks, separated
-error guards, space after multiline raw source fixtures, and space between
-calculations and writes to owned state in either order.
-Review functions over roughly 100 lines for mixed responsibilities. In
-particular, project terrain, player state, entities, and inventory in
-separate named steps, and split setup from turn decisions. A syntactic
-style check cannot establish that a long function is easy to follow or that
-statement groups match the game concepts they represent.
+Go owns the reusable kernel: Akara world and runtime component storage,
+deterministic system scheduling, entity lifecycle barriers, dense grid and
+spatial services, named RNG streams, save codec, Lua VM and virtual filesystem,
+terminal I/O and drawing primitives. It should have no growing switch over
+DCSS species, jobs, monsters, brands, spells, items, or branches.
 
-## Decision
+Lua owns game definitions and rules: component schemas, ECS systems, character
+creation and advancement, item use, combat effects, monster decisions, map
+generation, branch policy, commands, keymaps, and screen policy. Registered
+behavior reads and changes authoritative Akara state through a narrow host
+API. Static source content is committed as Lua modules; developer importers
+regenerate it only for intentional upstream refreshes.
 
-Use Akara as the source of truth for **mutable, independently addressable game entities** and run their repeatable behavior in systems. Keep dense terrain and exploration grids with each level; keep immutable source content in the catalog; keep the terminal, save codec, RNG streams, and turn coordinator outside ECS. An ECS component is warranted when a value varies by entity, must survive turns or saves, or controls which entities a system processes. A system is warranted when a behavior acts on a set of entities or combines components in an ordered turn phase. Neither a static definition nor a one-off calculation needs an entity.
+The bundled Lua tree is embedded in the executable. One optional overlay
+folder replaces matching relative paths and adds new files. The effective
+path-and-byte SHA-256 manifest identifies the exact ruleset. Exact bundled
+bytes count as vanilla even when copied into an overlay. Saves record the
+effective hash and dynamic schema versions; changed rules require an explicit
+opt-in or migration on restore.
 
-“Pure ECS” for this port means entity behavior and mutable entity state have one Akara-backed path. It does **not** mean representing every wall, source definition, screen cell, random stream, or session clock as a singleton entity. This preserves the previously chosen dynamic-entities-in-ECS / terrain-as-grids boundary.
+## Current state at the pivot
 
-## Current-state audit
+The playable Go slice includes four Fighter species, a source-shaped terminal,
+D:1-2 terrain and population, Akara actors/items/status, basic melee,
+projectile and spell intents, equipment, training, XP, and Go saves. Source
+content is committed mainly as JSON under `internal/content/generated`; each
+normal build uses that committed content without the C++ checkout. Gameplay
+behavior is still mostly Go. The current `combatSystem` and monster decision
+system are becoming difficult to extend because they route by content IDs.
+Those rules should move to Lua as whole intent and domain slices rather than
+accumulating more Go cases.
 
-| Area | Current implementation | Assessment and next move |
-| --- | --- | --- |
-| Actors and character state | `ecs.Actor`, `PlayerTurn`, `MonsterEnergy`, `Position`, `Health`, `Magic`, `Attributes`, `Skills`, `SkillTraining`, `Progression` (XP, applied level, and pending stat choice), `Combatant`, `Durations`, `Regeneration`, and `PlayerControlled` are Akara components. `TurnScheduler` grants and spends active-floor monster energy; only the player has a logical turn clock. | **Already ECS.** Keep one live value per actor. Split a component only when a new mechanic needs different membership or lifecycle; do not create a component for every catalog field. |
-| Monsters | `ecs.MonsterAI` owns behavior, target, and memory. An ordered Akara AI system chooses monster `Intent`; a source-backed factory can create fourteen ordinary monsters with live ECS components, while generated Dungeon selects twelve. A return-time system heals and moves those monsters through their component stores. | **Decision, creation, and supported off-level catch-up use ECS.** The level builder uses the factory with caller-owned population and placement RNG streams. Add capability components only for actual differences such as spellcasting or special movement. |
-| Movement and stairs | Akara systems read `Intent`, `Position`, and level grids. Each `Level` owns saved links from stair cells to destination cells; travel no longer chooses fixed floor IDs or requires a unique stair glyph. | **Partly ECS.** Keep the active-turn context explicit. Grid collision and occupancy remain level services derived from `Position`; branch identity and generation still need world ownership. |
-| Combat and death | Registered Akara systems mutate `Health`, `Combatant`, and `Progression` through injected stores. `playerCombat` reads the live Fighter's components and catalog for attack, delay, and defense projections. The factory supports fourteen ordinary monster profiles; generated Dungeon selects twelve. Equipped monster weapons contribute melee damage, enchantment, supported brands, and protection AC. | **System ownership is explicit; lifecycle coordination remains.** Finish the remaining complex brand effects before admitting geared humanoids to generated floors. Goblin sling and kobold throw choices and resolution use live equipment and transient intents. Keep corpse creation and entity removal queued at the post-system barrier. |
-| Items and equipment | Floor items, inventory links, equipped slots, quantities, and corpses are entities/components. `pickupSystem` and `quaffSystem` run in Akara; quaff receives its exact stores, RNG, and action context but still handles four supported potions explicitly. | **State is already ECS; behavior is partial.** Keep item definitions in the catalog. Make pickup text derive from the item. Add effect handlers as content is ported; use components for persistent effects, not for each potion identity. |
-| Status and regeneration | `Durations.MightAut`, `Durations.HasteAut`, `Regeneration`, and optional `Poison` are components; their systems receive narrow store dependencies and action context. Adder bites and venom weapons write the same player poison component. The poison system runs after regeneration and curing removes the component. Haste shares the player duration owner with might; its action speed is calculated once before systems run. | **Partly ECS.** Add another optional typed component when a new status has a distinct lifecycle. Resistance and broader poison rules remain future work. |
-| Corpses and floor timers | Corpses are ECS entities. `corpseAgingSystem` owns their item/corpse mutations and removal, while each `Level` owns its away clock. The turn coordinator invokes the system at the post-action 200-aut boundary and on floor return. | **ECS-owned lifecycle.** Preserve this timer barrier when adding other timed floor entities; do not run rot once per acting monster. |
-| World, visibility, and generation | `Level` owns terrain, remembered cells, and occupancy; `Game` holds a derived current visibility mask. Population weights are immutable catalog data; `levelgen` builds D:1–2 `layout_basic` geometry as a temporary grid for live play. | **Keep grids outside ECS.** Treat `Level` as map service, not a tile entity collection. The level builder produces grids; the game then requests Akara entity creation. Recompute derived sight instead of persisting it as a component. |
-| Saves and views | `Game.Snapshot` and `Restore` manually copy/validate components in one large file; `Game.View` projects component and level state; Bubble Tea renders the view. | **Keep adapters outside ECS.** Split save validation by component/domain and build read-only projections from stores. Maintain one explicit component serialization schema. UI must never mutate stores. |
-| Session services | `Game` owns Akara world, catalog, levels, player ID, RNG streams, clock, messages, and an action context. | **Appropriate composition root.** Keep services outside entity stores. Reduce `Game` methods that implement entity behavior; retain orchestration, lifecycle, save, and view entry points. |
-
-## Akara-specific constraints
-
-Akara `World.Update` runs registered systems sequentially in registration order. It has typed component stores and a command buffer, but no separate resource API in the version used here. The current game invokes one update per acting entity: player `Intent` is submitted before the update, while the AI system writes monster `Intent` during it. Preserve deterministic system order and named RNG stream draw order in every conversion. Use a small explicit action context for the active actor, elapsed aut, events, and queued structural effects; do not invent a singleton “game entity” to carry session services. Create or destroy entities only at a clear post-update barrier unless a system's lifecycle contract proves it safe.
+Akara v0.1.4 already has `RegisterSchema` and dynamic component stores. Lua
+can register new schema-backed components without a Go type declaration.
+Dense terrain and visibility stay grid services rather than tile entities.
+Mutable state on actors and items remains in Akara, whether the schema was
+originally Go-defined or Lua-defined.
 
 ## Migration sequence
 
-Each numbered phase contains contiguous problem categories, committed separately, with the relevant gameplay feature added in the same category when practical. It is acceptable for a branch to be temporarily uncompilable during a category; verify before its commit. Do not maintain duplicate old/new execution paths or compatibility adapters solely to make intermediate edits compile.
+Each numbered phase is a coherent category. A phase can temporarily break
+compilation on its branch while the old path is replaced. Commit when the
+category works, rather than making one commit per monster or one effect. Keep
+one authoritative execution path per migrated behavior.
 
-1. **Action pipeline and system dependencies.** Make `Game.Step` validate commands, choose the active actor, submit player `Intent` or request a monster decision, run ordered systems, commit queued structural changes, and assemble events. Replace `*Game` fields inside quaff, combat, death, duration, and regeneration systems with the exact stores/services they use. Keep the current save and turn behavior. This makes system boundaries visible before more monster and effect rules arrive.
-2. **Monster decisions and creation.** Move `chooseMonsterIntent` into an ordered AI system that writes the active monster's `Intent`. Centralize actor/component creation in a monster factory. Use the committed Dungeon population picker from a level builder with a caller-owned RNG stream. Introduce a component only when a monster's mutable ability or behavior differs from the shared ordinary path. Avoid a switch per monster ID. Include the frilled-lizard and later ordinary-monster slices here, after the system seam exists.
-3. **Combat, effects, and lifecycle.** Generalize ordinary attacks and defenses without copying catalog stats into components. Model mutable wounds, cooldowns, enchantments, and status durations on affected entities. Separate attack resolution from text projection. Make death, XP attribution, corpse creation, and loot drops consume explicit system outputs and commit together.
-4. **Items and status families.** Keep inventory and equipment relations as ECS components. Add item-use handlers grouped by effect semantics, then status systems that query only affected entities. Move from the current four-potion switch when a new effect family is implemented, not as a speculative framework.
-5. **Level simulation.** Move corpse aging and other entity timers into systems. Keep per-level clocks, terrain, branch position, and explored grids in level/world owners. Make active-floor scheduling explicit so off-floor entities are not repeatedly given no-op turns. Procedural generation produces a grid first and requests entity placement second.
-6. **Save and read-model cleanup.** Refactor the large restore validator into per-domain validators over an explicit component schema. Save only authoritative components and level/session state; rebuild occupancy and visibility on load. Keep `Game.View` a read-only projection and Bubble Tea a pure client of commands and views.
-7. **Repeat for remaining domains.** For spells, religion, mutations, forms, shops, traps, clouds, allies, and branch mechanics, first identify mutable per-entity state, then add the smallest component and an ordered system for its behavior. Static rules and committed content remain catalog/pure functions; map-wide data remains grids or world state. Track feature fidelity in `port-inventory.md` separately from ECS migration progress.
+1. **Mod runtime foundation.** Embed the Lua tree, resolve one overlay by
+   relative path, hash the effective files, bootstrap a per-game Lua VM,
+   register Lua component schemas and ordered systems with Akara, and persist
+   dynamic component state and ruleset identity. A real game action must run
+   an overlay-defined system before this phase is complete.
+2. **Character domain.** Move the full active source species and job catalogs, starting
+   equipment, restrictions, attributes, skills, HP/MP, XP, and advancement
+   policies to Lua registrations together. Keep source-generated definitions
+   committed as small Lua modules. Remove the corresponding Go rule path.
+3. **Item and status domain.** Move all currently playable item use,
+   equipment policy, poison, haste, might, curing, regeneration, and timed
+   status behavior to Lua systems. Akara components remain authoritative;
+   status creation, decay, removal, and save continuation use one path.
+4. **Attack intent domain.** Move all implemented melee, launched, thrown,
+   and spell intent behavior into Lua capability, resolution, and effect
+   modules. Shared hit geometry and dice primitives may remain Go services.
+   No monster-ID or brand-ID switch remains in the Go kernel. Complete
+   reachable early humanoid effects and their world consequences before
+   admitting those monsters to generated floors.
+5. **Monster and world domain.** Move monster decisions, inventories, spawn
+   policy, generated population, level layouts, branch travel, vaults, and
+   map generation to Lua registrations. Go continues to provide grids,
+   occupancy, pathfinding, visibility, and transactional movement services.
+6. **Client and policy domain.** Move game command policy, keymaps, messages,
+   screen layout decisions, and unported-feature handling into Lua while Go
+   keeps Bubble Tea/Lip Gloss terminal mechanics. Preserve the full-terminal
+   DCSS presentation and minimum 79×24 layout.
+7. **Remaining DCSS domains.** Add religion, mutations, forms, allies,
+   shops, traps, clouds, runes, endgame, and full branch/content coverage as
+   whole Lua domain slices. Extend the Go kernel only for reusable capability
+   primitives that cannot be expressed cleanly through the existing API.
 
-Phase 1 progress: quaff, combat, death, duration decay, and regeneration systems now receive their required Akara stores and services rather than holding `*Game`. The Fighter's attack, timing, and defense projections live in `playerCombat`. The action barrier remains coordinated in `Game.runAction`.
+## Slice checks
 
-Phase 2 progress: the ordered Akara monster-decision system reads the acting monster's `MonsterAI` and `Position`, advances the serializable `ai` stream, and writes its transient `Intent` before movement. `Game.Step` no longer selects monster actions. A focused factory can create fourteen source-validated ordinary monsters with mutable ECS state. The playable generated map chooses twelve of them from the committed Dungeon population table and places them through the factory. The population selector owns the `population` RNG stream, the placement policy owns the `placement` stream, and each monster's mutable state lives in Akara. The source D:1–2 monster-count dice now set population choices; jackal choices create linked packs of two to four ECS actors, with the actual initial actor count saved for validation. The full species pool, other monster capabilities, and other level layouts remain next.
+At each category boundary, verify deterministic turn and RNG continuation,
+round-trip saves of new authoritative state, exact ruleset identity, stable
+system order, and source-shaped behavior for the supported features. Use
+representative whole-flow tests plus focused tests for unusual source rules.
+Run full Go test, vet, build, style, and diff checks once at the coherent
+category boundary. Review the whole branch before merging to local `main`.
+Update [the port inventory](port-inventory.md) with precise playable coverage.
 
-Dungeon population ownership: each spawned monster owns `Actor`, `Health`,
-`Combatant`, `MonsterAI`, and `Position` components. Jackal followers also own
-`BandFollower`, which stores their leader entity. Ordered monster systems
-change those components during turns. The immutable catalog supplies Dungeon
-weights and monster definitions. The scenario builder chooses kinds and cells;
-the level supplies walkability and occupancy. The game owns named layout, count, population, and placement RNG streams
-and saves their states. Live D:1–2 counts follow the pinned three-dice rule;
-the fixed test fixture still chooses two monsters per floor.
+## Readability contract
 
-Monster weapon ownership: the 162 primary and 16 secondary declarative
-loadouts are immutable, committed content. A pure rule chooses goblin and
-kobold weapons, the goblin sling override and alternate melee weapon, quality,
-and kobold ammunition in source draw order. Their factory creates real Akara
-item entities linked by `CarriedBy` and `Equipped`; the level generator still
-excludes these monsters while complex melee brand behavior is unfinished. A goblin can shoot a temporary catalog bullet; a kobold can throw live stones or poisoned darts through source-backed ranged intents.
-
-Monster inventory lifecycle progress: save and restore preserve primary and
-alternate weapons plus one missile stack, including plus, brand, and carrier.
-The death barrier releases those same entities onto the floor. The combat
-system projects the live selected melee weapon into `AT_HIT` accuracy, damage,
-and enchantment rolls. Venom changes the player's ECS `Poison`; protection
-changes the monster's projected AC. Flaming, freezing, electrocution, and
-vorpal use pure source rolls for extra unresisted damage. Unsupported melee
-brands fail explicitly. Ranged attacks, elemental resistance, and the
-remaining brand effects are next; no parallel monster inventory path is
-needed.
-
-Phase 5 progress: corpse state remains in Akara stores, and a focused aging system owns its decay and removal. The `Level` owns its away clock. `Game.Step` supplies elapsed aut only after all actor actions, preserving the source's 200-aut timer phase and inactive-floor catch-up. The scheduler grants source-rounded energy only to monsters on the player's floor and acts with the highest-energy ready monster first. Inactive monster energy stays frozen. On return to a visited floor, an event-driven system applies the generated roster's source HP recovery, including the worm’s fast rate and direct movement toward a saved target before ordinary energy grants resume. First entry skips this update. Bat retreat actions are mutable `MonsterAI` state and survive saves; its plain natural hit and two wandering actions share the existing combat and AI systems. The ball python adds one optional player `Constricted` component, with its constrictor entity and escape attempts. The post-action constriction system owns damage and release, while movement uses a pure escape roll. Save validation checks the cross-entity link. Summons, pacification, enchantments, broader ranged behavior, and other monster capabilities still need their source return-time rules.
-
-Level travel progress: each stair cell has an explicit destination level and arrival cell owned by its `Level`. The new Go save schema stores those links, and restore validates linked destinations and explicit unported boundaries. A pure D:1–2 `layout_basic` builder now produces source-shaped terrain and stair pairs. The generated two-floor scenario is now playable, with connected doors, three stair pairs, source monster-count dice, and explicit boundary exits. Other weighted layouts, vaults, deeper floors, and branch travel are next.
-
-Advancement ownership: the death system credits source-derived XP to the player's `Progression` component and tenfold skill XP to `SkillTraining`. An ordered Akara skill system spends from that player-owned pool before the advancement system applies the selected species' source XP thresholds, recalculates supported species HP/MP, gives periodic random stat gains, and records a pending manual stat choice before levels 3, 9, 15, 21, and 27. Combat writes transient practice events to `TurnContext`; the training system owns both recent-practice queues and the named `skill` RNG stream. The terminal submits no-aut training and stat choices through game methods and renders copied views. Immutable XP and species skill thresholds, baseline species HP/MP live in `character`; skill-cost thresholds keep the source's fixed XP aptitude regardless of species. Training, combat, save validation, and the skills screen read the selected species' skill aptitudes from the ECS player identity and committed catalog. Version-12 saves validate skill points, queues, cost level, XP conservation, player turn time, and monster action energy. Live source-sized D:1–2 monster budgets permit natural level-up. Fighter training now divides each XP batch among enabled skills, shuffles first-phase spending, and uses weighted remainder choices with source-sized chunks. Remaining species' starting profiles, full HP/MP growth, training special cases, manuals, targets, and cross-training remain to port.
-
-Playable starts now include Human, Hill Orc, Deep Elf, and Minotaur
-Fighters. The four species share ECS player components and Fighter gear; their
-selected identity drives attributes, aptitude-reassessed skills, HP/MP, XP,
-periodic stat gains, terminal labels, and save validation. Minotaur's innate
-horns stay in the immutable species catalog. The combat system projects that
-identity and live ECS skills into pure auxiliary and reflexive headbutt rules;
-equipment fit reads the same identity. Acquired mutable mutations will need a
-player component when ported.
-
-## Slice rule and acceptance checks
-
-Before each implementation slice, write a small ownership note: **which entity owns new mutable state, which system changes it, which immutable definition it reads, and what belongs to a level/session instead**. Add a component only if an actual feature or invariant uses it. Keep each behavior in one path; remove its former `Game` implementation in the same category. A completed slice must show deterministic turn/RNG continuation, save/restore of new authoritative state, correct system order, and no rendering or catalog import dependency in the simulation. Run focused tests during development and full test/vet/build plus review at the category boundary.
-
-The next geared-monster categories are remaining melee brand effects and
-population admission. Goblin sling and kobold thrown-missile selection,
-physical hit or poison resolution, and generated sling brands are in place. Admit goblins and
-kobolds to the generated Dungeon pool only when their selected gear can act
-faithfully. In parallel, continue source-backed level generation and action
-barrier cleanup as broader mechanics arrive.
-
-Poison progress: the adder's cataloged bite and a wielded venom weapon both
-attach optional `Poison` to the player using their distinct source rolls. An
-ordered Akara status system decays it after regeneration only on player
-actions; curing removes it. Snapshot, restore, view, and HUD read the same
-component. Resistance and broader status families remain future slices.
-
-Haste progress: the fourth supported potion uses the committed item catalog and a fixed Dungeon:2 floor placement. `Durations.HasteAut` is owned by the Akara player; quaff and end-turn systems mutate it. `Game.Step` chooses one source-rounded player speed for each accepted action, and melee delay, scheduling, saves, view, and the `Fast` HUD consume that same state.
-
-Monster spell progress: all 285 active source spellbooks and 697 ordered
-slots are committed as immutable content, including frequencies and flags.
-The importer runs only for an intentional upstream refresh. The decision
-system chooses transient `IntentSpell` for endoplasm Freeze and dart slug
-Slug Dart from live ECS identity and position. The level owns clear-shot
-queries; the ordered spell system projects live fighter defense into a pure
-projectile rule before movement or melee. The same ECS energy component pays
-the cataloged spell cost, and the named `monster_spell` stream saves selection
-and damage draws. Other book behaviors will enter that path as their
-targeting and effects are ported.
+A modder should find a rule from its Lua registration and change it without
+tracing a Go content dispatcher. Keep domain files small enough to read in
+one sitting. Use names that reveal game concepts, separate validation,
+calculation, mutation, and event emission, and cite pinned C++ source for
+unusual rules and roll order. Handwritten Go lines have a hard 120-character
+limit and prefer 80. Multi-field literals use one populated field per line;
+Lua tables follow the same spirit. Comments explain ownership and invariants,
+not obvious statements. `AGENTS.md` carries the repository-wide style rules.

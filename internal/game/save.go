@@ -8,7 +8,9 @@ import (
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/modfs"
 	"dcrawl-go/internal/save"
+	"dcrawl-go/internal/script"
 	"github.com/gravestench/akara"
 )
 
@@ -186,11 +188,18 @@ func (g *Game) Snapshot() save.Snapshot {
 		Version:        save.Version,
 		SourceRevision: g.catalog.SourceRevision(),
 		ScenarioID:     g.scenarioID,
-		PlayerID:       uint64(g.player),
-		CurrentAut:     int64(g.currentAut),
-		Seed:           g.seed,
-		RNG:            g.rng.States(),
-		Messages:       append([]string(nil), g.messages...),
+
+		RulesetHash:    g.rules.Hash(),
+		LuaDialect:     luaDialect,
+		RulesetFiles:   g.savedRulesetFiles(),
+		RulesetChanges: g.rules.Changes(),
+		LuaSchemas:     g.savedLuaSchemas(),
+
+		PlayerID:   uint64(g.player),
+		CurrentAut: int64(g.currentAut),
+		Seed:       g.seed,
+		RNG:        g.rng.States(),
+		Messages:   append([]string(nil), g.messages...),
 	}
 
 	for id, level := range g.levels {
@@ -257,6 +266,8 @@ func (g *Game) Snapshot() save.Snapshot {
 			Corpse:    copyComponent(g.stores.Corpses, entity),
 			CarriedBy: copyComponent(g.stores.CarriedBy, entity),
 			Equipped:  copyComponent(g.stores.Equipped, entity),
+
+			Dynamic: g.savedLuaComponents(entity),
 		})
 	}
 
@@ -268,13 +279,54 @@ func (g *Game) Snapshot() save.Snapshot {
 }
 
 func (g *Game) Restore(snapshot save.Snapshot) (*Game, error) {
-	return Restore(snapshot, g.catalog)
+	return RestoreWithRules(snapshot, g.catalog, g.rules, RestorePolicy{})
 }
 
-// Restore builds a separate game. The caller replaces its live game only after success.
-func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err error) {
+// Restore builds a separate game using the bundled ruleset.
+func Restore(snapshot save.Snapshot, catalog content.Catalog) (*Game, error) {
+	rules, err := modfs.Load("")
+
+	if err != nil {
+		return nil, err
+	}
+
+	return RestoreWithRules(snapshot, catalog, rules, RestorePolicy{})
+}
+
+// RestorePolicy makes a changed Lua ruleset an explicit load decision.
+type RestorePolicy struct {
+	AllowRulesetMismatch bool
+}
+
+// RestoreWithRules builds a separate game. The caller replaces its live game
+// only after validation and registration succeed.
+func RestoreWithRules(
+	snapshot save.Snapshot,
+	catalog content.Catalog,
+	rules modfs.Ruleset,
+	policy RestorePolicy,
+) (_ *Game, err error) {
 	if snapshot.Version != save.Version {
 		return nil, fmt.Errorf("unsupported save version %d", snapshot.Version)
+	}
+
+	if snapshot.LuaDialect != luaDialect {
+		return nil, fmt.Errorf("unsupported Lua dialect %q", snapshot.LuaDialect)
+	}
+
+	currentFiles := currentRulesetFiles(rules)
+
+	if snapshot.RulesetHash != rules.Hash() {
+		if !policy.AllowRulesetMismatch {
+			return nil, fmt.Errorf(
+				"save ruleset %s differs from current %s; changed Lua paths: %v",
+				snapshot.RulesetHash,
+				rules.Hash(),
+				changedRulesetPaths(snapshot.RulesetFiles, currentFiles),
+			)
+		}
+	} else if !rulesetFilesEqual(snapshot.RulesetFiles, currentFiles) {
+		return nil, fmt.Errorf("save Lua manifest differs from its ruleset hash")
 	}
 
 	if err := catalog.Validate(); err != nil {
@@ -324,6 +376,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		player: akara.Entity(snapshot.PlayerID),
 
 		catalog:    catalog,
+		rules:      rules,
 		seed:       snapshot.Seed,
 		scenarioID: snapshot.ScenarioID,
 		rng:        rng,
@@ -340,6 +393,36 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		messages:   append([]string(nil), snapshot.Messages...),
 	}
 
+	g.scripts, err = script.New(world, rules, script.Services{
+		ActiveActor: func() akara.Entity {
+			return g.turn.Actor
+		},
+		Random: g.rng.Intn,
+		Emit: func(kind, message string) {
+			g.turn.Events = append(g.turn.Events, Event{
+				Kind: kind,
+				Text: message,
+			})
+		},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err != nil {
+			g.scripts.Close()
+		}
+	}()
+
+	if err := g.validateSavedLuaSchemas(
+		snapshot.LuaSchemas,
+		policy.AllowRulesetMismatch,
+	); err != nil {
+		return nil, err
+	}
+
 	if err := g.restoreLevels(snapshot.Levels, snapshot.CurrentAut); err != nil {
 		return nil, err
 	}
@@ -354,6 +437,10 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}
 
 	if err := g.restoreEntityComponents(snapshot.Entities); err != nil {
+		return nil, err
+	}
+
+	if err := g.restoreLuaComponents(snapshot.Entities); err != nil {
 		return nil, err
 	}
 

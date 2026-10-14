@@ -42,6 +42,32 @@ func (m *AppModel) drawStartup(canvas *Canvas) {
 		writeClipped(canvas, 1, 20, m.width-2, description, Brown)
 	}
 
+	status := "Rules: bundled "
+	changes := m.rules.Changes()
+
+	if !m.rules.Vanilla() {
+		status = "Rules: modified "
+
+		if len(changes) > 0 {
+			changed := "Changed Lua: " + changes[0]
+
+			if len(changes) > 1 {
+				changed += fmt.Sprintf(" (+%d more)", len(changes)-1)
+			}
+
+			writeClipped(canvas, 1, 21, m.width-2, changed, Brown)
+		}
+	}
+
+	writeClipped(
+		canvas,
+		1,
+		22,
+		m.width-2,
+		status+m.rules.Hash()[:12],
+		LightGrey,
+	)
+
 	if m.notice != "" {
 		writeClipped(canvas, 1, 23, m.width-2, m.notice, LightRed)
 	}

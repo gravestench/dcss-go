@@ -548,11 +548,17 @@ func (g *Game) runAction(
 	g.stores.Intents.Remove(actor)
 
 	if err != nil {
+		g.scripts.DiscardPending()
+
 		return nil, fmt.Errorf("%s actor %d: %w", phase, actor, err)
 	}
 
 	if !producedIntent {
 		return nil, fmt.Errorf("%s actor %d produced no intent", phase, actor)
+	}
+
+	if err := g.scripts.ApplyPending(); err != nil {
+		return nil, fmt.Errorf("%s actor %d Lua structural changes: %w", phase, actor, err)
 	}
 
 	g.turn.ResolvedIntent = resolvedKind

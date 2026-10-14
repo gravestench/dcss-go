@@ -4,6 +4,8 @@ import (
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/modfs"
+	"dcrawl-go/internal/script"
 	"github.com/gravestench/akara"
 )
 
@@ -25,11 +27,35 @@ func NewPopulatedScenario(
 	return newScenario(seed, catalog, catalog.Player(), weaponID, name, populationScenarioID)
 }
 
-// NewDungeonGame starts the live client on generated D:1-2 basic layouts.
+// NewDungeonGame starts the live client with the bundled Lua ruleset.
 func NewDungeonGame(
 	seed uint64,
 	catalog content.Catalog,
 	speciesID, jobID, weaponID, name string,
+) (_ *Game, err error) {
+	rules, err := modfs.Load("")
+
+	if err != nil {
+		return nil, err
+	}
+
+	return NewDungeonGameWithRules(
+		seed,
+		catalog,
+		speciesID,
+		jobID,
+		weaponID,
+		name,
+		rules,
+	)
+}
+
+// NewDungeonGameWithRules starts the same game with an effective Lua tree.
+func NewDungeonGameWithRules(
+	seed uint64,
+	catalog content.Catalog,
+	speciesID, jobID, weaponID, name string,
+	rules modfs.Ruleset,
 ) (_ *Game, err error) {
 	// The source's base player speed is 10 aut for these playable species.
 	definition := content.PlayerDef{
@@ -38,7 +64,15 @@ func NewDungeonGame(
 		Speed:     10,
 	}
 
-	return newScenario(seed, catalog, definition, weaponID, name, generatedDungeonScenarioID)
+	return newScenarioWithRules(
+		seed,
+		catalog,
+		definition,
+		weaponID,
+		name,
+		generatedDungeonScenarioID,
+		rules,
+	)
 }
 
 func newScenario(
@@ -47,6 +81,31 @@ func newScenario(
 	playerDef content.PlayerDef,
 	weaponID, name string,
 	scenarioID string,
+) (_ *Game, err error) {
+	rules, err := modfs.Load("")
+
+	if err != nil {
+		return nil, err
+	}
+
+	return newScenarioWithRules(
+		seed,
+		catalog,
+		playerDef,
+		weaponID,
+		name,
+		scenarioID,
+		rules,
+	)
+}
+
+func newScenarioWithRules(
+	seed uint64,
+	catalog content.Catalog,
+	playerDef content.PlayerDef,
+	weaponID, name string,
+	scenarioID string,
+	rules modfs.Ruleset,
 ) (_ *Game, err error) {
 	if err := catalog.Validate(); err != nil {
 		return nil, err
@@ -86,6 +145,7 @@ func newScenario(
 		levels: setup.levels,
 
 		catalog: catalog,
+		rules:   rules,
 		seed:    seed,
 		rng:     rng,
 
@@ -99,6 +159,29 @@ func newScenario(
 
 		scenarioID: scenarioID,
 	}
+
+	g.scripts, err = script.New(world, rules, script.Services{
+		ActiveActor: func() akara.Entity {
+			return g.turn.Actor
+		},
+		Random: g.rng.Intn,
+		Emit: func(kind, message string) {
+			g.turn.Events = append(g.turn.Events, Event{
+				Kind: kind,
+				Text: message,
+			})
+		},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err != nil {
+			g.scripts.Close()
+		}
+	}()
 
 	if err = g.createPlayerActor(playerDef, weaponID, name, setup); err != nil {
 		return nil, err
@@ -303,209 +386,4 @@ func (g *Game) spawnScenarioPotion(kindID string, levelID int, cell point) error
 	})
 
 	return err
-}
-
-// Registration order is the action resolution order in Akara. Keep these
-// groups in turn order when adding a new system.
-func registerSystems(g *Game) error {
-	world, stores := g.world, g.stores
-
-	g.corpseAging = corpseAgingSystem{
-		world:     world,
-		items:     stores.Items,
-		corpses:   stores.Corpses,
-		positions: stores.Positions,
-		catalog:   g.catalog,
-		rng:       g.rng,
-	}
-
-	g.monsterCatchup = monsterCatchupSystem{
-		actors:    stores.Actors,
-		health:    stores.Health,
-		positions: stores.Positions,
-		ai:        stores.AI,
-		catalog:   g.catalog,
-		rng:       g.rng,
-	}
-
-	if err := registerMonsterSystems(g); err != nil {
-		return err
-	}
-
-	if err := registerTravelAndItemSystems(g); err != nil {
-		return err
-	}
-
-	if err := registerInteractionAndCombatSystems(g); err != nil {
-		return err
-	}
-
-	return registerEndTurnSystems(g)
-}
-
-func registerMonsterSystems(g *Game) error {
-	world, stores := g.world, g.stores
-
-	if _, err := world.AddSystem(&monsterRegenerationSystem{
-		actors:  stores.Actors,
-		health:  stores.Health,
-		ai:      stores.AI,
-		catalog: g.catalog,
-		rng:     g.rng,
-		turn:    &g.turn,
-	}); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(newMonsterDecisionSystem(g)); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func registerTravelAndItemSystems(g *Game) error {
-	world, stores := g.world, g.stores
-
-	if _, err := world.AddSystem(&stairSystem{
-		positions: stores.Positions,
-		intents:   stores.Intents,
-		levels:    g.levels,
-		turn:      &g.turn,
-	}); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(&pickupSystem{
-		positions: stores.Positions,
-		items:     stores.Items,
-		corpses:   stores.Corpses,
-		carried:   stores.CarriedBy,
-		intents:   stores.Intents,
-		catalog:   g.catalog,
-		turn:      &g.turn,
-	}); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(&dropSystem{
-		items:   stores.Items,
-		carried: stores.CarriedBy,
-		intents: stores.Intents,
-		catalog: g.catalog,
-		turn:    &g.turn,
-	}); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(&wieldSystem{
-		items:   stores.Items,
-		carried: stores.CarriedBy,
-		intents: stores.Intents,
-		catalog: g.catalog,
-		turn:    &g.turn,
-	}); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(&quaffSystem{
-		player:    g.player,
-		intents:   stores.Intents,
-		items:     stores.Items,
-		carried:   stores.CarriedBy,
-		health:    stores.Health,
-		durations: stores.Durations,
-		poison:    stores.Poison,
-		rng:       g.rng,
-		turn:      &g.turn,
-	}); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func registerInteractionAndCombatSystems(g *Game) error {
-	world, stores := g.world, g.stores
-
-	if _, err := world.AddSystem(&doorSystem{
-		game:    g,
-		intents: stores.Intents,
-		turn:    &g.turn,
-	}); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(newMonsterSpellSystem(g)); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(newMovementSystem(g)); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(newCombatSystem(g)); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(newConstrictSystem(g)); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(newDeathSystem(g)); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func registerEndTurnSystems(g *Game) error {
-	world, stores := g.world, g.stores
-
-	if _, err := world.AddSystem(newSkillTrainingSystem(g)); err != nil {
-		return err
-	}
-
-	advancement, err := newAdvancementSystem(g)
-
-	if err != nil {
-		return err
-	}
-
-	g.advancement = advancement
-
-	if _, err := world.AddSystem(advancement); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(&durationSystem{
-		player:    g.player,
-		durations: stores.Durations,
-		rng:       g.rng,
-		turn:      &g.turn,
-	}); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(&regenerationSystem{
-		player:       g.player,
-		health:       stores.Health,
-		magic:        stores.Magic,
-		regeneration: stores.Regeneration,
-		rng:          g.rng,
-		turn:         &g.turn,
-	}); err != nil {
-		return err
-	}
-
-	if _, err := world.AddSystem(&poisonSystem{
-		player: g.player,
-		health: stores.Health,
-		poison: stores.Poison,
-		turn:   &g.turn,
-	}); err != nil {
-		return err
-	}
-
-	return nil
 }

@@ -1,13 +1,22 @@
 package save
 
-import "dcrawl-go/internal/ecs"
+import (
+	"encoding/json"
 
-const Version = 12
+	"dcrawl-go/internal/ecs"
+)
+
+const Version = 13
 
 type Snapshot struct {
-	Version        int    `json:"version"`
-	SourceRevision string `json:"source_revision"`
-	ScenarioID     string `json:"scenario_id,omitempty"`
+	Version        int               `json:"version"`
+	SourceRevision string            `json:"source_revision"`
+	ScenarioID     string            `json:"scenario_id,omitempty"`
+	RulesetHash    string            `json:"ruleset_hash"`
+	LuaDialect     string            `json:"lua_dialect"`
+	RulesetFiles   []RulesetFile     `json:"ruleset_files,omitempty"`
+	RulesetChanges []string          `json:"ruleset_changes,omitempty"`
+	LuaSchemas     []LuaSchemaRecord `json:"lua_schemas,omitempty"`
 
 	PlayerID   uint64            `json:"player_id"`
 	CurrentAut int64             `json:"current_aut"`
@@ -17,6 +26,21 @@ type Snapshot struct {
 	Levels   []LevelRecord  `json:"levels"`
 	Entities []EntityRecord `json:"entities"`
 	Messages []string       `json:"messages"`
+}
+
+type RulesetFile struct {
+	Path   string `json:"path"`
+	SHA256 string `json:"sha256"`
+}
+
+type LuaSchemaRecord struct {
+	Name    string `json:"name"`
+	Version uint32 `json:"version"`
+}
+
+type DynamicComponentRecord struct {
+	Schema string                     `json:"schema"`
+	Values map[string]json.RawMessage `json:"values"`
 }
 
 type LevelRecord struct {
@@ -66,4 +90,6 @@ type EntityRecord struct {
 	Corpse    *ecs.Corpse    `json:"corpse,omitempty"`
 	CarriedBy *ecs.CarriedBy `json:"carried_by,omitempty"`
 	Equipped  *ecs.Equipped  `json:"equipped,omitempty"`
+
+	Dynamic []DynamicComponentRecord `json:"dynamic,omitempty"`
 }

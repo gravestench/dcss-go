@@ -66,3 +66,23 @@ Use Akara components for mutable state of dynamic entities and ordered
 systems for their turn behavior. Keep dense terrain and exploration grids,
 immutable content, RNG streams, save codecs, and terminal rendering with
 their focused owners outside ECS. See `docs/ecs-architecture-roadmap.md`.
+
+## Lua-first game rules
+
+The default DCSS rules and mod extension API belong in embedded Lua. Go owns
+only reusable kernel services: Akara storage and scheduling, virtual files,
+RNG, grids, saves, and terminal primitives. Register component schemas,
+systems, content, generation, and policy in Lua. Do not add a Go switch over
+content IDs or a second Go behavior path while migrating a domain. See
+`docs/superpowers/specs/2026-10-14-lua-first-mod-runtime-design.md`.
+
+Keep handwritten Lua readable: prefer lines near 80 characters, never exceed
+120, put fields of multi-field tables on separate lines, and leave space
+between validation, calculation, mutation, and event emission. Explain
+source-specific roll order and ownership in comments. A Lua module should
+have one clear domain responsibility and a stable registration name. Mutable
+state that must survive save/restore belongs in Akara components or explicit
+session/level stores, not an untracked module global.
+
+Keep all Lua source in `.lua` files under the embedded mod tree or a test mod
+directory. Do not put Lua source in Go strings, including Go test fixtures.

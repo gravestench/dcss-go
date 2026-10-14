@@ -356,13 +356,14 @@ func (m *AppModel) handleNameKey(key string) {
 }
 
 func (m *AppModel) startGame() {
-	started, err := game.NewDungeonGame(
+	started, err := game.NewDungeonGameWithRules(
 		m.seed,
 		m.catalog,
 		m.speciesID,
 		m.jobID,
 		m.weaponID,
 		strings.TrimSpace(m.name),
+		m.rules,
 	)
 
 	if err != nil {
