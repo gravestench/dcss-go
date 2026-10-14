@@ -10,20 +10,21 @@ type PlayerDef struct {
 
 // Catalog owns immutable definitions for one run. Its maps are private.
 type Catalog struct {
-	version        int
-	sourceRevision string
-	monsters       map[string]MonsterDef
-	spells         map[string]SpellDef
-	spellOrder     []string
-	branches       map[string]BranchDef
-	branchOrder    []string
-	items          map[string]ItemDef
-	itemIdentities map[string]ItemIdentity
-	species        map[string]SpeciesDef
-	jobs           map[string]JobDef
-	startingGear   map[string][]StartingGrant
-	presentation   PresentationArtifact
-	player         PlayerDef
+	version           int
+	sourceRevision    string
+	monsters          map[string]MonsterDef
+	spells            map[string]SpellDef
+	spellOrder        []string
+	branches          map[string]BranchDef
+	branchOrder       []string
+	dungeonPopulation []DungeonPopEntry
+	items             map[string]ItemDef
+	itemIdentities    map[string]ItemIdentity
+	species           map[string]SpeciesDef
+	jobs              map[string]JobDef
+	startingGear      map[string][]StartingGrant
+	presentation      PresentationArtifact
+	player            PlayerDef
 }
 
 func (c Catalog) Version() int { return c.version }
@@ -88,6 +89,14 @@ func (c Catalog) Validate() error {
 	}
 	if c.player.SpeciesID == "" || c.player.JobID == "" || c.player.Speed <= 0 {
 		return fmt.Errorf("catalog has an invalid player fixture")
+	}
+	for _, row := range c.dungeonPopulation {
+		if err := row.validate(); err != nil {
+			return err
+		}
+		if _, found := c.monsters[row.MonsterID]; !found {
+			return fmt.Errorf("Dungeon population references missing monster %s", row.MonsterID)
+		}
 	}
 	if len(c.species) > 0 {
 		if _, found := c.species[c.player.SpeciesID]; !found {

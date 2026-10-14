@@ -40,6 +40,9 @@ var defaultSpellJSON []byte
 //go:embed generated/branches.json
 var defaultBranchJSON []byte
 
+//go:embed generated/dungeon-population.json
+var defaultDungeonPopulationJSON []byte
+
 // LoadDefault builds a fresh catalog from the checked-in source-traced artifacts.
 func LoadDefault() (Catalog, error) {
 	catalog, err := loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultItemsJSON, defaultItemIdentitiesJSON, defaultStartingGearJSON, defaultPresentationJSON, defaultMonsterJSON)
@@ -50,7 +53,11 @@ func LoadDefault() (Catalog, error) {
 	if err != nil {
 		return Catalog{}, err
 	}
-	return attachDefaultBranches(catalog, defaultBranchJSON)
+	catalog, err = attachDefaultBranches(catalog, defaultBranchJSON)
+	if err != nil {
+		return Catalog{}, err
+	}
+	return attachDefaultDungeonPopulation(catalog, defaultDungeonPopulationJSON)
 }
 
 // LoadDefinitionsForImport reads committed gameplay definitions without needing
@@ -64,7 +71,48 @@ func LoadDefinitionsForImport() (Catalog, error) {
 	if err != nil {
 		return Catalog{}, err
 	}
-	return attachDefaultBranches(catalog, defaultBranchJSON)
+	catalog, err = attachDefaultBranches(catalog, defaultBranchJSON)
+	if err != nil {
+		return Catalog{}, err
+	}
+	return attachDefaultDungeonPopulation(catalog, defaultDungeonPopulationJSON)
+}
+
+func attachDefaultDungeonPopulation(catalog Catalog, data []byte) (Catalog, error) {
+	const pinnedArtifactSHA256 = "d37becdb7daa03d0e02f1b9ca5e3c42d875022ba623d71721082fb64c640fe7b"
+	hash := sha256.Sum256(data)
+	if hex.EncodeToString(hash[:]) != pinnedArtifactSHA256 {
+		return Catalog{}, fmt.Errorf("Dungeon population differs from pinned content")
+	}
+	var artifact DungeonPopulationArtifact
+	if err := decodeArtifact(data, "Dungeon population", &artifact); err != nil {
+		return Catalog{}, err
+	}
+	if err := artifact.Validate(); err != nil {
+		return Catalog{}, err
+	}
+	if artifact.SourceRevision != catalog.SourceRevision() || len(artifact.Rows) != 125 || len(artifact.SourceFiles) != 3 {
+		return Catalog{}, fmt.Errorf("Dungeon population has incomplete pinned coverage")
+	}
+	paths, err := validSourceFiles(artifact.SourceFiles, "Dungeon population")
+	if err != nil {
+		return Catalog{}, err
+	}
+	for _, name := range []string{"mon-pick-data.h", "random-pick.h", "tag-version.h"} {
+		if _, found := paths["crawl-ref/source/"+name]; !found {
+			return Catalog{}, fmt.Errorf("Dungeon population lacks source %s", name)
+		}
+	}
+	for _, row := range artifact.Rows {
+		if _, err := catalog.Monster(row.MonsterID); err != nil {
+			return Catalog{}, fmt.Errorf("Dungeon population row %d: %w", row.SourceLine, err)
+		}
+	}
+	catalog.dungeonPopulation = append([]DungeonPopEntry(nil), artifact.Rows...)
+	if err := catalog.Validate(); err != nil {
+		return Catalog{}, err
+	}
+	return catalog, nil
 }
 
 func attachDefaultBranches(catalog Catalog, data []byte) (Catalog, error) {
