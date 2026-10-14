@@ -1,0 +1,232 @@
+{
+  "sourceRevision": "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
+  "sourcePath": "crawl-ref/source/dat/des/test/suite-los.des",
+  "sourceSHA256": "850a05146a96e8d778c3f666ee07d7b6a056afc499081e2ca30ecd631380ed10",
+  "maps": [
+    {
+      "name": "los_empty",
+      "rows": [
+        "@.......cc",
+        "........cc",
+        "........cc",
+        "........cc",
+        "........cc",
+        "........cc",
+        "........cc",
+        "........cc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_edge",
+      "rows": [
+        "@......xcc",
+        ".......xcc",
+        ".......xcc",
+        ".......xcc",
+        ".......xcc",
+        ".......xcc",
+        ".......xcc",
+        "xxxxxxxxcc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_blocking_wall",
+      "rows": [
+        "@..xwwwwcc",
+        "..xxwwwwcc",
+        ".xxwwwwwcc",
+        "xxwwwwwwcc",
+        "wwwwwwwwcc",
+        "wwwwwwwwcc",
+        "wwwwwwwwcc",
+        "wwwwwwwwcc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_corner",
+      "rows": [
+        "@xcccccccc",
+        "x.......cc",
+        "cxxxxxxxcc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_corner_2",
+      "rows": [
+        "@.xccccccc",
+        "xx......cc",
+        "cccxxxxxcc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_corner_3",
+      "rows": [
+        "@..xcccccc",
+        "xxx.....cc",
+        "cccccxxxcc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_corner_4",
+      "rows": [
+        "@...xccccc",
+        "xxxx....cc",
+        "cccccccxcc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_corner_5",
+      "rows": [
+        "@....xcccc",
+        "xxxxx...cc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_corner_6",
+      "rows": [
+        "@.....xccc",
+        "xxxxxx..cc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_corner_7",
+      "rows": [
+        "@......xcc",
+        "xxxxxxx.cc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_corner_8",
+      "rows": [
+        "@.......cc",
+        "xxxxxxxxcc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_gap",
+      "rows": [
+        "@.xccccccc",
+        "x.xccccccc",
+        "c...cccccc",
+        "c.....cccc",
+        "c.......cc",
+        "c.......cc",
+        "c.......cc",
+        "c.......cc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_gap2",
+      "rows": [
+        "@.xccccccc",
+        "x.xccccccc",
+        "c.xccccccc",
+        "c..ccccccc",
+        "c...cccccc",
+        "c....ccccc",
+        "c.....cccc",
+        "c......ccc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_diag",
+      "rows": [
+        "@xcccccccc",
+        "x.xccccccc",
+        "cx.xcccccc",
+        "ccx.xccccc",
+        "cccx.xcccc",
+        "ccccx.xccc",
+        "cccccx.xcc",
+        "ccccccx.cc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    },
+    {
+      "name": "los_diag_gap",
+      "rows": [
+        "@xcccccccc",
+        "x.xccccccc",
+        "cx..cccccc",
+        "cc....cccc",
+        "ccc.....cc",
+        "ccc.....cc",
+        "cccc....cc",
+        "cccc....cc",
+        "cccccccccc",
+        "cccccccccc"
+      ]
+    }
+  ]
+}
