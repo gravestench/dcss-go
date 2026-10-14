@@ -2,29 +2,64 @@ package game
 
 import (
 	"fmt"
+	"time"
 
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/visibility"
 	"github.com/gravestench/akara"
 )
 
-func (g *Game) chooseMonsterIntent(actor akara.Entity) (ecs.Intent, error) {
-	position, found := g.stores.Positions.Get(actor)
+// monsterDecisionSystem turns an active monster's saved AI state into its
+// transient action intent before movement and combat systems run.
+type monsterDecisionSystem struct {
+	player    akara.Entity
+	positions *akara.Store[ecs.Position]
+	ai        *akara.Store[ecs.MonsterAI]
+	intents   *akara.Store[ecs.Intent]
+	levels    map[int]*Level
+	rng       *RNGStreams
+	clock     *Aut
+	turn      *TurnContext
+}
+
+func newMonsterDecisionSystem(g *Game) *monsterDecisionSystem {
+	return &monsterDecisionSystem{player: g.player, positions: g.stores.Positions, ai: g.stores.AI,
+		intents: g.stores.Intents, levels: g.levels, rng: g.rng, clock: &g.currentAut, turn: &g.turn}
+}
+
+func (s *monsterDecisionSystem) Update(_ *akara.World, _ time.Duration) error {
+	actor := s.turn.Actor
+	if !s.ai.Has(actor) {
+		return nil
+	}
+	if s.intents.Has(actor) {
+		return fmt.Errorf("monster %d already has an intent", actor)
+	}
+	intent, err := s.chooseIntent(actor)
+	if err != nil {
+		return err
+	}
+	_, err = s.intents.Set(actor, intent)
+	return err
+}
+
+func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, error) {
+	position, found := s.positions.Get(actor)
 	if !found {
 		return ecs.Intent{}, fmt.Errorf("monster %d has no position", actor)
 	}
-	player, found := g.stores.Positions.Get(g.player)
+	player, found := s.positions.Get(s.player)
 	if !found {
-		return ecs.Intent{}, fmt.Errorf("player %d has no position", g.player)
+		return ecs.Intent{}, fmt.Errorf("player %d has no position", s.player)
 	}
 	if position.LevelID != player.LevelID {
 		return ecs.Intent{Kind: ecs.IntentWait}, nil
 	}
-	ai, found := g.stores.AI.Get(actor)
+	ai, found := s.ai.Get(actor)
 	if !found {
 		return ecs.Intent{}, fmt.Errorf("monster %d has no AI", actor)
 	}
-	level := g.levels[position.LevelID]
+	level := s.levels[position.LevelID]
 	if level == nil {
 		return ecs.Intent{}, fmt.Errorf("monster level %d is missing", position.LevelID)
 	}
@@ -33,18 +68,18 @@ func (g *Game) chooseMonsterIntent(actor akara.Entity) (ecs.Intent, error) {
 		return ecs.Intent{}, err
 	}
 	if visible[player.Y*level.width+player.X] {
-		memoryRoll, err := g.rng.Intn("ai", 301)
+		memoryRoll, err := s.rng.Intn("ai", 301)
 		if err != nil {
 			return ecs.Intent{}, err
 		}
 		ai.Behavior, ai.TargetX, ai.TargetY = "seek", player.X, player.Y
-		ai.MemoryUntilAut = int64(g.currentAut) + int64(250+memoryRoll)
+		ai.MemoryUntilAut = int64(*s.clock) + int64(250+memoryRoll)
 	} else if ai.Behavior == "seek" {
 		if ai.MemoryUntilAut == 0 {
 			// Pre-memory version-6 saves carried a target but no deadline.
-			ai.MemoryUntilAut = int64(g.currentAut) + 250
+			ai.MemoryUntilAut = int64(*s.clock) + 250
 		}
-		if int64(g.currentAut) >= ai.MemoryUntilAut {
+		if int64(*s.clock) >= ai.MemoryUntilAut {
 			ai.Behavior, ai.TargetX, ai.TargetY, ai.MemoryUntilAut = "wander", 0, 0, 0
 		}
 	} else if ai.Behavior != "seek" && ai.Behavior != "wander" {
@@ -57,14 +92,14 @@ func (g *Game) chooseMonsterIntent(actor akara.Entity) (ecs.Intent, error) {
 	if ai.Behavior == "wander" {
 		retarget := ai.TargetX == 0 && ai.TargetY == 0
 		if !retarget {
-			roll, err := g.rng.Intn("ai", 20)
+			roll, err := s.rng.Intn("ai", 20)
 			if err != nil {
 				return ecs.Intent{}, err
 			}
 			retarget = roll == 0
 		}
 		if retarget {
-			if err := g.chooseWanderTarget(ai, level, position.X, position.Y); err != nil {
+			if err := s.chooseWanderTarget(ai, level, position.X, position.Y); err != nil {
 				return ecs.Intent{}, err
 			}
 		}
@@ -75,7 +110,7 @@ func (g *Game) chooseMonsterIntent(actor akara.Entity) (ecs.Intent, error) {
 	dx, dy := sign(ai.TargetX-position.X), sign(ai.TargetY-position.Y)
 	goalActor := akara.Entity(0)
 	if ai.TargetX == player.X && ai.TargetY == player.Y {
-		goalActor = g.player
+		goalActor = s.player
 	}
 	if !visible[ai.TargetY*level.width+ai.TargetX] {
 		pathDX, pathDY, found := level.RouteStep(position.X, position.Y, ai.TargetX, ai.TargetY, goalActor)
@@ -94,8 +129,8 @@ func (g *Game) chooseMonsterIntent(actor akara.Entity) (ecs.Intent, error) {
 		if x == player.X && y == player.Y {
 			return ecs.Intent{Kind: ecs.IntentMelee, DX: step[0], DY: step[1]}, nil
 		}
-		if g.levels[position.LevelID].Walkable(x, y) {
-			if _, occupied := g.levels[position.LevelID].ActorAt(x, y); !occupied {
+		if level.Walkable(x, y) {
+			if _, occupied := level.ActorAt(x, y); !occupied {
 				return ecs.Intent{Kind: ecs.IntentMove, DX: step[0], DY: step[1]}, nil
 			}
 		}
@@ -115,14 +150,14 @@ func monsterStepIntent(nextX, nextY, playerX, playerY, dx, dy int) ecs.Intent {
 
 // chooseWanderTarget follows Crawl's 150 attempts with offsets in [-6, 6].
 // A failed search leaves the animal waiting until its next decision.
-func (g *Game) chooseWanderTarget(ai *ecs.MonsterAI, level *Level, x, y int) error {
+func (s *monsterDecisionSystem) chooseWanderTarget(ai *ecs.MonsterAI, level *Level, x, y int) error {
 	ai.TargetX, ai.TargetY = 0, 0
 	for attempt := 0; attempt < 150; attempt++ {
-		dx, err := g.rng.Intn("ai", 13)
+		dx, err := s.rng.Intn("ai", 13)
 		if err != nil {
 			return err
 		}
-		dy, err := g.rng.Intn("ai", 13)
+		dy, err := s.rng.Intn("ai", 13)
 		if err != nil {
 			return err
 		}

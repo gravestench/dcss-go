@@ -41,8 +41,10 @@ Each numbered phase is a contiguous commit category, with the relevant gameplay 
 
 Phase 1 progress: quaff, duration decay, and regeneration systems now receive only their required Akara stores, player entity, RNG interface, and action context. Combat and death still receive `*Game`; the action barrier is still coordinated in `Game.runAction`.
 
+Phase 2 progress: the ordered Akara monster-decision system now reads the acting monster's `MonsterAI` and `Position`, advances the serializable `ai` stream, and writes its transient `Intent` before movement. `Game.Step` no longer selects monster actions. Monster creation and broader capability composition remain next.
+
 ## Slice rule and acceptance checks
 
 Before each implementation slice, write a small ownership note: **which entity owns new mutable state, which system changes it, which immutable definition it reads, and what belongs to a level/session instead**. Add a component only if an actual feature or invariant uses it. Keep each behavior in one path; remove its former `Game` implementation in the same category. A completed slice must show deterministic turn/RNG continuation, save/restore of new authoritative state, correct system order, and no rendering or catalog import dependency in the simulation. Run focused tests during development and full test/vet/build plus review at the category boundary.
 
-The next implementation category is phase 1, starting with the current registered systems that hold `*Game`. The frilled-lizard encounter branch was created but no product code was written; its work resumes under phase 2.
+The next categories are combat and death dependency cleanup, monster creation, and source-backed frilled-lizard placement. The previously created frilled-lizard branch contains no product changes.

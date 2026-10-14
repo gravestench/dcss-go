@@ -169,11 +169,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			break
 		}
 		g.currentAut = at
-		intent, err := g.chooseMonsterIntent(actor)
-		if err != nil {
-			return StepResult{}, err
-		}
-		monsterEvents, err := g.runAction(actor, intent, monsterCost, "monster")
+		monsterEvents, err := g.runAction(actor, ecs.Intent{}, monsterCost, "monster")
 		if err != nil {
 			return StepResult{}, err
 		}
@@ -215,8 +211,12 @@ func (g *Game) playerDead() bool {
 
 // runAction is the only bridge from logical auts to Akara's duration argument.
 func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase string) ([]Event, error) {
-	if _, err := g.stores.Intents.Set(actor, intent); err != nil {
-		return nil, fmt.Errorf("%s actor %d intent: %w", phase, actor, err)
+	if intent.Kind != 0 {
+		if _, err := g.stores.Intents.Set(actor, intent); err != nil {
+			return nil, fmt.Errorf("%s actor %d intent: %w", phase, actor, err)
+		}
+	} else if g.stores.Intents.Has(actor) {
+		return nil, fmt.Errorf("%s actor %d has a stale intent", phase, actor)
 	}
 	g.turn.Actor = actor
 	g.turn.Events = nil
@@ -227,9 +227,13 @@ func (g *Game) runAction(actor akara.Entity, intent ecs.Intent, cost Aut, phase 
 	g.turn.Corpse = nil
 	g.turn.StairFrom, g.turn.StairTo = 0, 0
 	err := g.world.Update(time.Duration(cost))
+	producedIntent := g.stores.Intents.Has(actor)
 	g.stores.Intents.Remove(actor)
 	if err != nil {
 		return nil, fmt.Errorf("%s actor %d: %w", phase, actor, err)
+	}
+	if !producedIntent {
+		return nil, fmt.Errorf("%s actor %d produced no intent", phase, actor)
 	}
 	if item := g.turn.Pickup; item != 0 {
 		// World.Update has completed; this is the structural pickup barrier.

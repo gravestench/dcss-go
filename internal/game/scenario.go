@@ -125,6 +125,9 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 
 func registerSystems(g *Game) error {
 	world, stores := g.world, g.stores
+	if _, err := world.AddSystem(newMonsterDecisionSystem(g)); err != nil {
+		return err
+	}
 	if _, err := world.AddSystem(&stairSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
 		return err
 	}

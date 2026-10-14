@@ -27,14 +27,14 @@ func TestRatUsesEightDirectionContactAndPursuit(t *testing.T) {
 			if tc.blockDiagonal {
 				// Acquire the player before the new wall cuts sight; routing
 				// then uses the remembered target and avoids the blocked corner.
-				if _, err := g.chooseMonsterIntent(ratID(t, g)); err != nil {
+				if _, err := newMonsterDecisionSystem(g).chooseIntent(ratID(t, g)); err != nil {
 					t.Fatal(err)
 				}
 				row := []byte(g.levels[1].terrain[2])
 				row[3] = '#'
 				g.levels[1].terrain[2] = string(row)
 			}
-			intent, err := g.chooseMonsterIntent(ratID(t, g))
+			intent, err := newMonsterDecisionSystem(g).chooseIntent(ratID(t, g))
 			if err != nil || intent != tc.want {
 				t.Fatalf("intent %+v, error %v, want %+v", intent, err, tc.want)
 			}
@@ -51,7 +51,7 @@ func TestQuokkaAcquiresPlayerOnlyInItsOwnSight(t *testing.T) {
 	if err := g.levels[2].PlaceActor(g.player, 1, 1); err != nil {
 		t.Fatal(err)
 	}
-	intent, err := g.chooseMonsterIntent(quokka)
+	intent, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
 	if err != nil || intent.Kind == ecs.IntentMelee {
 		t.Fatalf("hidden quokka intent %+v, %v", intent, err)
 	}
@@ -62,7 +62,7 @@ func TestQuokkaAcquiresPlayerOnlyInItsOwnSight(t *testing.T) {
 	if err := g.levels[2].MoveActor(g.player, 14, 6); err != nil {
 		t.Fatal(err)
 	}
-	intent, err = g.chooseMonsterIntent(quokka)
+	intent, err = newMonsterDecisionSystem(g).chooseIntent(quokka)
 	if err != nil || intent.Kind != ecs.IntentMelee || intent.DX != 0 || intent.DY != -1 {
 		t.Fatalf("visible quokka intent %+v, %v", intent, err)
 	}
@@ -80,20 +80,20 @@ func TestQuokkaPursuesLastSeenTileThenStops(t *testing.T) {
 	if err := g.levels[2].PlaceActor(g.player, 14, 5); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := g.chooseMonsterIntent(quokka); err != nil {
+	if _, err := newMonsterDecisionSystem(g).chooseIntent(quokka); err != nil {
 		t.Fatal(err)
 	}
 	if err := g.levels[2].MoveActor(g.player, 1, 1); err != nil {
 		t.Fatal(err)
 	}
-	intent, err := g.chooseMonsterIntent(quokka)
+	intent, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
 	if err != nil || intent != (ecs.Intent{Kind: ecs.IntentMove, DY: -1}) {
 		t.Fatalf("quokka did not pursue last seen tile: %+v, %v", intent, err)
 	}
 	if err := g.levels[2].MoveActor(quokka, 14, 5); err != nil {
 		t.Fatal(err)
 	}
-	intent, err = g.chooseMonsterIntent(quokka)
+	intent, err = newMonsterDecisionSystem(g).chooseIntent(quokka)
 	if err != nil || intent.Kind == ecs.IntentMelee {
 		t.Fatalf("quokka attacked at an unseen target: %+v, %v", intent, err)
 	}
@@ -112,7 +112,7 @@ func TestMonsterAwarenessSurvivesSaveAndRejectsInvalidTarget(t *testing.T) {
 	if err := g.levels[2].PlaceActor(g.player, 14, 5); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := g.chooseMonsterIntent(quokka); err != nil {
+	if _, err := newMonsterDecisionSystem(g).chooseIntent(quokka); err != nil {
 		t.Fatal(err)
 	}
 	if err := g.levels[2].MoveActor(g.player, 1, 1); err != nil {
@@ -130,11 +130,11 @@ func TestMonsterAwarenessSurvivesSaveAndRejectsInvalidTarget(t *testing.T) {
 	if !reflect.DeepEqual(snapshot, loaded.Snapshot()) {
 		t.Fatal("monster target changed across save")
 	}
-	want, err := g.chooseMonsterIntent(quokka)
+	want, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
 	if err != nil {
 		t.Fatal(err)
 	}
-	got, err := loaded.chooseMonsterIntent(quokka)
+	got, err := newMonsterDecisionSystem(loaded).chooseIntent(quokka)
 	if err != nil || got != want {
 		t.Fatalf("restored pursuit %+v, %v; want %+v", got, err, want)
 	}
@@ -173,7 +173,7 @@ func TestLegacyChaseSaveStillLoadsAndStopsBlindPursuit(t *testing.T) {
 	if err := loaded.levels[2].PlaceActor(loaded.player, 1, 1); err != nil {
 		t.Fatal(err)
 	}
-	intent, err := loaded.chooseMonsterIntent(quokka)
+	intent, err := newMonsterDecisionSystem(loaded).chooseIntent(quokka)
 	if err != nil || intent.Kind == ecs.IntentMelee {
 		t.Fatalf("legacy quokka pursued unseen player: %+v, %v", intent, err)
 	}
@@ -193,7 +193,7 @@ func TestQuokkaWanderTargetAndMemoryUseSerializableAIStream(t *testing.T) {
 		t.Fatal(err)
 	}
 	before := g.rng.States()
-	if _, err := g.chooseMonsterIntent(quokka); err != nil {
+	if _, err := newMonsterDecisionSystem(g).chooseIntent(quokka); err != nil {
 		t.Fatal(err)
 	}
 	ai, _ := g.stores.AI.Get(quokka)
@@ -215,11 +215,11 @@ func TestQuokkaWanderTargetAndMemoryUseSerializableAIStream(t *testing.T) {
 	if !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatal("wander target or RNG stream changed on save")
 	}
-	want, err := g.chooseMonsterIntent(quokka)
+	want, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
 	if err != nil {
 		t.Fatal(err)
 	}
-	got, err := loaded.chooseMonsterIntent(quokka)
+	got, err := newMonsterDecisionSystem(loaded).chooseIntent(quokka)
 	if err != nil || got != want || !reflect.DeepEqual(g.Snapshot(), loaded.Snapshot()) {
 		t.Fatalf("wander continuation diverged: got %+v, %v; want %+v", got, err, want)
 	}
@@ -234,7 +234,7 @@ func TestQuokkaFoeMemoryExpiresAfterSourceRange(t *testing.T) {
 	if err := g.levels[2].PlaceActor(g.player, 14, 5); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := g.chooseMonsterIntent(quokka); err != nil {
+	if _, err := newMonsterDecisionSystem(g).chooseIntent(quokka); err != nil {
 		t.Fatal(err)
 	}
 	ai, _ := g.stores.AI.Get(quokka)
@@ -245,11 +245,11 @@ func TestQuokkaFoeMemoryExpiresAfterSourceRange(t *testing.T) {
 		t.Fatal(err)
 	}
 	g.currentAut = Aut(ai.MemoryUntilAut - 1)
-	if _, err := g.chooseMonsterIntent(quokka); err != nil || ai.Behavior != "seek" {
+	if _, err := newMonsterDecisionSystem(g).chooseIntent(quokka); err != nil || ai.Behavior != "seek" {
 		t.Fatalf("animal forgot too soon: %+v, %v", ai, err)
 	}
 	g.currentAut = Aut(ai.MemoryUntilAut)
-	if _, err := g.chooseMonsterIntent(quokka); err != nil || ai.Behavior != "wander" || ai.MemoryUntilAut != 0 {
+	if _, err := newMonsterDecisionSystem(g).chooseIntent(quokka); err != nil || ai.Behavior != "wander" || ai.MemoryUntilAut != 0 {
 		t.Fatalf("animal retained expired foe memory: %+v, %v", ai, err)
 	}
 }
@@ -277,7 +277,7 @@ func TestLegacyZeroDeadlineSeekGetsFiniteMemory(t *testing.T) {
 	if !reflect.DeepEqual(legacy, loaded.Snapshot()) {
 		t.Fatal("legacy seek save changed during load")
 	}
-	if _, err := loaded.chooseMonsterIntent(quokka); err != nil {
+	if _, err := newMonsterDecisionSystem(loaded).chooseIntent(quokka); err != nil {
 		t.Fatal(err)
 	}
 	loadedAI, _ := loaded.stores.AI.Get(quokka)
@@ -285,7 +285,7 @@ func TestLegacyZeroDeadlineSeekGetsFiniteMemory(t *testing.T) {
 		t.Fatalf("legacy seek memory deadline = %d, want 250", loadedAI.MemoryUntilAut)
 	}
 	loaded.currentAut = 250
-	if _, err := loaded.chooseMonsterIntent(quokka); err != nil || loadedAI.Behavior != "wander" || loadedAI.MemoryUntilAut != 0 {
+	if _, err := newMonsterDecisionSystem(loaded).chooseIntent(quokka); err != nil || loadedAI.Behavior != "wander" || loadedAI.MemoryUntilAut != 0 {
 		t.Fatalf("legacy seek did not expire: %+v, %v", loadedAI, err)
 	}
 }
@@ -299,7 +299,7 @@ func TestRestoreRejectsImpossibleAnimalMemoryDeadline(t *testing.T) {
 	if err := g.levels[2].PlaceActor(g.player, 14, 5); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := g.chooseMonsterIntent(quokka); err != nil {
+	if _, err := newMonsterDecisionSystem(g).chooseIntent(quokka); err != nil {
 		t.Fatal(err)
 	}
 	if err := g.refreshVisibility(); err != nil {
@@ -333,12 +333,12 @@ func TestQuokkaRoutesAroundCentralWallToRememberedTarget(t *testing.T) {
 	}
 	ai, _ := g.stores.AI.Get(quokka)
 	ai.Behavior, ai.TargetX, ai.TargetY, ai.MemoryUntilAut = "seek", 7, 1, 550
-	first, err := g.chooseMonsterIntent(quokka)
+	first, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
 	if err != nil || first != (ecs.Intent{Kind: ecs.IntentMove, DY: 1}) {
 		t.Fatalf("first route step %+v, %v; want south around wall", first, err)
 	}
 	for turn := 0; turn < 12; turn++ {
-		intent, err := g.chooseMonsterIntent(quokka)
+		intent, err := newMonsterDecisionSystem(g).chooseIntent(quokka)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -385,7 +385,7 @@ func TestRatWaitsWhenPlayerIsOnAnotherFloor(t *testing.T) {
 	if err := g.levels[2].PlaceActor(g.player, 1, 1); err != nil {
 		t.Fatal(err)
 	}
-	intent, err := g.chooseMonsterIntent(ratID(t, g))
+	intent, err := newMonsterDecisionSystem(g).chooseIntent(ratID(t, g))
 	if err != nil || intent.Kind != ecs.IntentWait {
 		t.Fatalf("off-floor intent %+v, %v", intent, err)
 	}
