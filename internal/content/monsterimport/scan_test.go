@@ -33,7 +33,7 @@ func TestParsePinnedRowsWhenRequested(t *testing.T) {
 }
 
 func row(id, name string) string {
-	return "{\n" + id + `, 'r', BROWN, ` + name + `, M_WARM_BLOOD, mrd(MR_RES_FIRE |` + "\n" + ` MR_RES_COLD, 3) | MR_VUL_POISON, 1, ` + id + `, ` + id + `, MH_NATURAL, 0, { {AT_BITE, AF_PLAIN, 3}, AT_NO_ATK, AT_NO_ATK, AT_NO_ATK }, 1, 25, 1, 10, MST_NO_SPELLS, true, S_SILENT, I_ANIMAL, HT_LAND, 10, DEFAULT_ENERGY, MONUSE_NOTHING, SIZE_TINY, MON_SHAPE_QUADRUPED, {TILEP_MONS_RAT}, TILE_CORPSE_RAT\n}, // trailing comment\n`
+	return "{\n" + id + `, 'r', BROWN, ` + name + `, M_WARM_BLOOD, mrd(MR_RES_FIRE |` + "\n" + ` MR_RES_COLD, 3) | MR_VUL_POISON, 1, ` + id + `, ` + id + `, MH_NATURAL, 0, { {AT_BITE, AF_PLAIN, 3}, AT_NO_ATK, AT_NO_ATK, AT_NO_ATK }, 1, 25, 1, 10, MST_NO_SPELLS, true, S_SILENT, I_ANIMAL, HT_LAND, 10, DEFAULT_ENERGY, MONUSE_NOTHING, SIZE_TINY, MON_SHAPE_QUADRUPED, {TILEP_MONS_RAT}, TILE_CORPSE_RAT` + "\n}, // trailing comment\n"
 }
 
 func TestParseRowsNestedAndRemoved(t *testing.T) {
