@@ -86,6 +86,9 @@ func newScenario(
 		scheduler: TurnScheduler{
 			actors:    stores.Actors,
 			positions: stores.Positions,
+			energies:  stores.MonsterEnergy,
+			catalog:   catalog,
+			rng:       rng,
 		},
 
 		scenarioID: scenarioID,
@@ -134,6 +137,10 @@ func (g *Game) createPlayerActor(
 	player, err := g.world.CreateEntity()
 
 	if err != nil {
+		return err
+	}
+
+	if _, err := g.stores.PlayerTurn.Set(player, ecs.PlayerTurn{}); err != nil {
 		return err
 	}
 

@@ -149,6 +149,8 @@ func validateSavedCorpse(record save.EntityRecord, catalog content.Catalog) erro
 
 func savedItemHasActorComponents(record save.EntityRecord) bool {
 	return record.Health != nil ||
+		record.PlayerTurn != nil ||
+		record.MonsterEnergy != nil ||
 		record.Magic != nil ||
 		record.Skills != nil ||
 		record.SkillTraining != nil ||
@@ -212,9 +214,11 @@ func (g *Game) Snapshot() save.Snapshot {
 		snapshot.Entities = append(snapshot.Entities, save.EntityRecord{
 			ID: uint64(entity),
 
-			Position: copyComponent(g.stores.Positions, entity),
-			Actor:    copyComponent(g.stores.Actors, entity),
-			Health:   copyComponent(g.stores.Health, entity),
+			Position:      copyComponent(g.stores.Positions, entity),
+			Actor:         copyComponent(g.stores.Actors, entity),
+			PlayerTurn:    copyComponent(g.stores.PlayerTurn, entity),
+			MonsterEnergy: copyComponent(g.stores.MonsterEnergy, entity),
+			Health:        copyComponent(g.stores.Health, entity),
 
 			Magic:         copyComponent(g.stores.Magic, entity),
 			Skills:        copySkillsComponent(g.stores.Skills, entity),
@@ -290,6 +294,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 	}()
 
 	stores := ecs.Register(world)
+	rng := RestoreRNGStreams(snapshot.Seed, snapshot.RNG)
 	g := &Game{
 		world:  world,
 		stores: stores,
@@ -299,11 +304,14 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		catalog:    catalog,
 		seed:       snapshot.Seed,
 		scenarioID: snapshot.ScenarioID,
-		rng:        RestoreRNGStreams(snapshot.Seed, snapshot.RNG),
+		rng:        rng,
 
 		scheduler: TurnScheduler{
 			actors:    stores.Actors,
 			positions: stores.Positions,
+			energies:  stores.MonsterEnergy,
+			catalog:   catalog,
+			rng:       rng,
 		},
 
 		currentAut: Aut(snapshot.CurrentAut),

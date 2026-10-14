@@ -144,10 +144,10 @@ func TestHasteQuaffUsesOldSpeedThenSpeedsLaterActions(t *testing.T) {
 		t.Fatalf("hasted wait = %+v, %v", wait, err)
 	}
 
-	actor, _ := g.stores.Actors.Get(g.player)
+	playerTurn, _ := g.stores.PlayerTurn.Get(g.player)
 
-	if actor.NextAut != int64(10+wait.Spent) {
-		t.Fatalf("player deadline = %d, spent %d", actor.NextAut, wait.Spent)
+	if playerTurn.NextAut != int64(10+wait.Spent) {
+		t.Fatalf("player clock = %d, spent %d", playerTurn.NextAut, wait.Spent)
 	}
 
 	streams := g.rng.States()
@@ -234,10 +234,9 @@ func TestHasteScalesMeleeAndDurationByTheSameAction(t *testing.T) {
 	}
 }
 
-func TestHasteSchedulesPlayerBeforeLaterMonsterDeadline(t *testing.T) {
+func TestHasteLeavesRatShortOfActionEnergy(t *testing.T) {
 	g := newStepGame(t)
-	rat, _ := g.stores.Actors.Get(ratID(t, g))
-	rat.NextAut = 10
+	rat, _ := g.stores.MonsterEnergy.Get(ratID(t, g))
 	durations, _ := g.stores.Durations.Get(g.player)
 	durations.HasteAut = 100
 
@@ -246,10 +245,10 @@ func TestHasteSchedulesPlayerBeforeLaterMonsterDeadline(t *testing.T) {
 	if err != nil ||
 		(result.Spent != 6 &&
 			result.Spent != 7) ||
-		rat.NextAut != 10 ||
+		rat.Points != 70+int(result.Spent) ||
 		g.currentAut != result.Spent {
-		t.Fatalf("haste deadline = %d, rat %d, clock %d, err %v",
-			result.Spent, rat.NextAut, g.currentAut, err)
+		t.Fatalf("haste turn = %d, rat energy %d, clock %d, err %v",
+			result.Spent, rat.Points, g.currentAut, err)
 	}
 }
 

@@ -51,7 +51,8 @@ type StepResult struct {
 
 // TurnContext is updated by Game before ordered Akara systems run.
 type TurnContext struct {
-	Actor akara.Entity
+	Actor          akara.Entity
+	ResolvedIntent ecs.IntentKind
 
 	Events   []Event
 	Deaths   []akara.Entity
@@ -428,7 +429,7 @@ func (g *Game) prepareQuaffCommand(itemID uint64) (preparedCommand, error) {
 }
 
 // finishTurn resumes the scheduled monster phase after a level-up prompt.
-// The player action has already spent its aut and set the next deadline.
+// The player action has already spent its aut and advanced its turn clock.
 func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error) {
 	const monsterCost Aut = 10
 	position, located := g.stores.Positions.Get(g.player)
@@ -437,15 +438,17 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 		return StepResult{}, fmt.Errorf("player has no position for scheduling")
 	}
 
-	for !g.playerDead() {
-		actor, at, found := g.scheduler.Next(position.LevelID)
+	if err := g.scheduler.Grant(position.LevelID, cost); err != nil {
+		return StepResult{}, err
+	}
 
-		if !found || actor == g.player {
-			g.currentAut = at
+	for !g.playerDead() {
+		actor, ready := g.scheduler.NextReady(position.LevelID)
+
+		if !ready {
 			break
 		}
 
-		g.currentAut = at
 		monsterEvents, err := g.runAction(actor, ecs.Intent{}, monsterCost, "monster")
 
 		if err != nil {
@@ -453,7 +456,21 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 		}
 
 		events = append(events, monsterEvents...)
+
+		if g.stores.MonsterEnergy.Has(actor) {
+			if err := g.scheduler.Spend(actor, g.turn.ResolvedIntent); err != nil {
+				return StepResult{}, err
+			}
+		}
 	}
+
+	playerTurn, found := g.stores.PlayerTurn.Get(g.player)
+
+	if !found {
+		return StepResult{}, fmt.Errorf("player has no turn clock")
+	}
+
+	g.currentAut = Aut(playerTurn.NextAut)
 
 	if elapsed := corpseTickElapsed(startAut, startAut+cost); elapsed > 0 {
 		position, found := g.stores.Positions.Get(g.player)
@@ -519,7 +536,13 @@ func (g *Game) runAction(
 	g.turn = TurnContext{Actor: actor}
 
 	err := g.world.Update(time.Duration(cost))
-	producedIntent := g.stores.Intents.Has(actor)
+	resolved, producedIntent := g.stores.Intents.Get(actor)
+	var resolvedKind ecs.IntentKind
+
+	if producedIntent {
+		resolvedKind = resolved.Kind
+	}
+
 	g.stores.Intents.Remove(actor)
 
 	if err != nil {
@@ -529,6 +552,8 @@ func (g *Game) runAction(
 	if !producedIntent {
 		return nil, fmt.Errorf("%s actor %d produced no intent", phase, actor)
 	}
+
+	g.turn.ResolvedIntent = resolvedKind
 
 	buffer := akara.NewCommandBuffer()
 
@@ -585,10 +610,14 @@ func (g *Game) runAction(
 		}
 	}
 
-	if g.stores.Actors.Has(actor) {
-		if err := g.scheduler.ScheduleAfter(actor, cost); err != nil {
-			return nil, fmt.Errorf("%s actor %d schedule: %w", phase, actor, err)
+	if actor == g.player {
+		playerTurn, found := g.stores.PlayerTurn.Get(actor)
+
+		if !found {
+			return nil, fmt.Errorf("player %d has no turn clock", actor)
 		}
+
+		playerTurn.NextAut += int64(cost)
 	}
 
 	events := append([]Event(nil), g.turn.Events...)

@@ -75,10 +75,11 @@ func TestRatActsBeforeNextPlayerTurn(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	actor, _ := g.stores.Actors.Get(rat)
+	energy, _ := g.stores.MonsterEnergy.Get(rat)
 
-	if actor.NextAut != 10 {
-		t.Fatalf("rat deadline = %d, want 10 after its action; events %+v", actor.NextAut, result.Events)
+	if energy.Points != 70 {
+		t.Fatalf("rat energy = %d, want 70 after its action; events %+v",
+			energy.Points, result.Events)
 	}
 }
 

@@ -46,8 +46,7 @@ type savedEntityValidator struct {
 	equippedSlots map[string]string
 
 	activeLevelID int
-	earliestID    uint64
-	earliestAut   int64
+	playerAlive   bool
 }
 
 func (g *Game) validateAndRegisterSavedEntities(
@@ -75,6 +74,10 @@ func (v *savedEntityValidator) validate() error {
 	for _, record := range v.snapshot.Entities {
 		if record.ID == v.snapshot.PlayerID && record.Position != nil {
 			v.activeLevelID = record.Position.LevelID
+
+			if record.Health != nil {
+				v.playerAlive = record.Health.Current > 0
+			}
 
 			break
 		}
@@ -180,6 +183,7 @@ func (v *savedEntityValidator) validateCharacterRole(record save.EntityRecord) e
 		record.Skills != nil ||
 		record.SkillTraining != nil ||
 		record.Magic != nil ||
+		record.PlayerTurn != nil ||
 		record.Progression != nil ||
 		record.Durations != nil ||
 		record.Regeneration != nil ||
@@ -200,6 +204,7 @@ func (v *savedEntityValidator) validateMonsterRole(record save.EntityRecord) err
 		record,
 		v.snapshot.CurrentAut,
 		v.scenarioAnimals,
+		v.playerAlive,
 	); err != nil {
 		return err
 	}
@@ -231,7 +236,6 @@ func (v *savedEntityValidator) validateMonsterRole(record save.EntityRecord) err
 func (v *savedEntityValidator) validateActorState(record save.EntityRecord) error {
 	if record.Actor != nil &&
 		(record.Actor.Speed <= 0 ||
-			record.Actor.NextAut < 0 ||
 			record.Health == nil ||
 			record.Combatant == nil || record.Position == nil) {
 		return fmt.Errorf("invalid actor %d", record.ID)
@@ -247,21 +251,6 @@ func (v *savedEntityValidator) validateActorState(record save.EntityRecord) erro
 	if record.Actor != nil &&
 		record.Player == nil && record.AI == nil {
 		return fmt.Errorf("actor %d has no player or monster role", record.ID)
-	}
-
-	if record.Actor != nil &&
-		record.Position != nil &&
-		record.Position.LevelID == v.activeLevelID {
-		if record.Actor.NextAut < v.snapshot.CurrentAut {
-			return fmt.Errorf("actor %d deadline precedes save clock", record.ID)
-		}
-
-		if v.earliestID == 0 ||
-			record.Actor.NextAut < v.earliestAut ||
-			(record.Actor.NextAut == v.earliestAut && record.ID < v.earliestID) {
-			v.earliestID = record.ID
-			v.earliestAut = record.Actor.NextAut
-		}
 	}
 
 	if record.Health != nil &&
@@ -323,14 +312,13 @@ func (v *savedEntityValidator) validateFinalState() error {
 	}
 
 	// A stat prompt pauses before the monster phase at the start of the
-	// player's spent turn. Its next deadline is therefore still in the future.
+	// player's spent turn. Its next turn clock is therefore still in the future.
 	if v.player.alive {
 		if v.player.pendingStat {
 			if v.player.nextAut <= v.snapshot.CurrentAut {
 				return fmt.Errorf("invalid pending player turn clock")
 			}
-		} else if v.player.nextAut != v.snapshot.CurrentAut ||
-			v.earliestID != v.snapshot.PlayerID {
+		} else if v.player.nextAut != v.snapshot.CurrentAut {
 			return fmt.Errorf("save clock does not match the next player turn")
 		}
 	}

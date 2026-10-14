@@ -228,12 +228,12 @@ func TestSavedInactiveMonsterReturnsWithSameCatchup(t *testing.T) {
 	health, _ := g.stores.Health.Get(rat)
 
 	ai, _ := g.stores.AI.Get(rat)
-	actor, _ := g.stores.Actors.Get(rat)
+	energy, _ := g.stores.MonsterEnergy.Get(rat)
 
 	health.Current = 1
 	ai.TargetX = 7
 	ai.TargetY = 1
-	actor.NextAut = 1000
+	energy.Points = 0
 
 	if err := g.levels[1].MoveActor(g.player, 7, 3); err != nil {
 		t.Fatal(err)

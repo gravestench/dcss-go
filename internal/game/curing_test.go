@@ -62,10 +62,10 @@ func TestQuaffCuringHealsConsumesAndSchedules(t *testing.T) {
 		t.Fatal("quaff used the wrong number of potion draws")
 	}
 
-	actor, _ := g.stores.Actors.Get(ratID(t, g))
+	energy, _ := g.stores.MonsterEnergy.Get(ratID(t, g))
 
-	if actor.NextAut <= int64(start) {
-		t.Fatalf("rat deadline = %d, want an action during quaff starting at %d", actor.NextAut, start)
+	if energy.Points != 70 {
+		t.Fatalf("rat energy = %d, want an action during quaff", energy.Points)
 	}
 }
 

@@ -143,11 +143,11 @@ func TestStatChoiceInterruptsMonsterPhase(t *testing.T) {
 	progress.Level = 2
 	progress.TotalXP = 29
 
-	monsterDeadlines := make(map[uint64]int64)
+	monsterEnergy := make(map[uint64]int)
 
 	for _, entity := range g.stores.AI.Entities() {
-		actor, _ := g.stores.Actors.Get(entity)
-		monsterDeadlines[uint64(entity)] = actor.NextAut
+		energy, _ := g.stores.MonsterEnergy.Get(entity)
+		monsterEnergy[uint64(entity)] = energy.Points
 	}
 
 	result, err := g.Step(Command{Kind: CommandWait})
@@ -161,9 +161,9 @@ func TestStatChoiceInterruptsMonsterPhase(t *testing.T) {
 	}
 
 	for _, entity := range g.stores.AI.Entities() {
-		actor, _ := g.stores.Actors.Get(entity)
+		energy, _ := g.stores.MonsterEnergy.Get(entity)
 
-		if actor.NextAut != monsterDeadlines[uint64(entity)] {
+		if energy.Points != monsterEnergy[uint64(entity)] {
 			t.Fatalf("monster %d acted before stat choice", entity)
 		}
 	}

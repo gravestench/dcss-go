@@ -159,6 +159,12 @@ func (f ordinaryMonsterFactory) Spawn(
 		return 0, err
 	}
 
+	if _, err = f.stores.MonsterEnergy.Set(entity, ecs.MonsterEnergy{
+		Points: monster.InitialActionEnergy,
+	}); err != nil {
+		return 0, err
+	}
+
 	if _, err = f.stores.Health.Set(entity, ecs.Health{
 		Current: hp,
 		Max:     hp,

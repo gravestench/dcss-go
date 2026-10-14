@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"dcrawl-go/internal/character"
+	"dcrawl-go/internal/monster"
 	"dcrawl-go/internal/save"
 )
 
@@ -29,7 +30,10 @@ func (g *Game) validateSavedPlayer(
 		record.Attributes == nil ||
 		record.Skills == nil ||
 		record.SkillTraining == nil ||
-		record.Magic == nil {
+		record.Magic == nil ||
+		record.PlayerTurn == nil ||
+		record.PlayerTurn.NextAut < 0 ||
+		record.MonsterEnergy != nil {
 		return savedPlayerValidation{}, fmt.Errorf("invalid player entity %d", record.ID)
 	}
 
@@ -97,7 +101,7 @@ func (g *Game) validateSavedPlayer(
 	return savedPlayerValidation{
 		xp:       xp,
 		weaponID: weaponID,
-		nextAut:  record.Actor.NextAut,
+		nextAut:  record.PlayerTurn.NextAut,
 		alive:    record.Health.Current > 0,
 		pendingStat: record.Progression != nil &&
 			record.Progression.PendingStatLevel != 0,
@@ -108,10 +112,20 @@ func (g *Game) validateSavedMonster(
 	record save.EntityRecord,
 	currentAut int64,
 	scenarioAnimals []string,
+	playerAlive bool,
 ) error {
 	if record.Actor == nil ||
-		record.Health == nil || record.Position == nil {
+		record.Health == nil ||
+		record.Position == nil ||
+		record.MonsterEnergy == nil ||
+		record.PlayerTurn != nil {
 		return fmt.Errorf("invalid monster entity %d", record.ID)
+	}
+
+	if record.MonsterEnergy.Points < 0 ||
+		(playerAlive &&
+			record.MonsterEnergy.Points >= monster.ActionEnergyThreshold) {
+		return fmt.Errorf("monster %d has invalid action energy", record.ID)
 	}
 
 	if record.Health.Current <= 0 {

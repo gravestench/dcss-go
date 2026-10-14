@@ -202,13 +202,13 @@ func (g *Game) ChooseStat(id string) (StepResult, error) {
 		return g.noTime("Choose Strength, Intelligence, or Dexterity."), nil
 	}
 
-	actor, found := g.stores.Actors.Get(g.player)
+	playerTurn, found := g.stores.PlayerTurn.Get(g.player)
 
-	if !found || actor.NextAut < int64(g.currentAut) {
-		return StepResult{}, fmt.Errorf("player has no pending turn deadline")
+	if !found || playerTurn.NextAut < int64(g.currentAut) {
+		return StepResult{}, fmt.Errorf("player has no pending turn clock")
 	}
 
-	turnCost := Aut(actor.NextAut) - g.currentAut
+	turnCost := Aut(playerTurn.NextAut) - g.currentAut
 	startAut := g.currentAut
 
 	if err := increaseStat(attributes, id, 2); err != nil {

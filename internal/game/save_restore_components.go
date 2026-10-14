@@ -39,6 +39,18 @@ func (g *Game) restoreActorComponents(
 		}
 	}
 
+	if record.PlayerTurn != nil {
+		if _, err := g.stores.PlayerTurn.Set(entity, *record.PlayerTurn); err != nil {
+			return err
+		}
+	}
+
+	if record.MonsterEnergy != nil {
+		if _, err := g.stores.MonsterEnergy.Set(entity, *record.MonsterEnergy); err != nil {
+			return err
+		}
+	}
+
 	if record.Health != nil {
 		if _, err := g.stores.Health.Set(entity, *record.Health); err != nil {
 			return err

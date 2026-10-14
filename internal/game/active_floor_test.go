@@ -5,12 +5,11 @@ import (
 	"testing"
 )
 
-// An inactive floor keeps its actors' deadlines until its return catch-up.
-// Advancing them through no-op turns consumes work and hides an invalid clock.
-func TestInactiveFloorMonsterDeadlineStaysFrozen(t *testing.T) {
+// An inactive floor keeps its monster energy until the player returns.
+func TestInactiveFloorMonsterEnergyStaysFrozen(t *testing.T) {
 	g := newStepGame(t)
 	quokka := quokkaID(t, g)
-	actor, _ := g.stores.Actors.Get(quokka)
+	energy, _ := g.stores.MonsterEnergy.Get(quokka)
 
 	for turn := 0; turn < 4; turn++ {
 		if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
@@ -18,8 +17,8 @@ func TestInactiveFloorMonsterDeadlineStaysFrozen(t *testing.T) {
 		}
 	}
 
-	if actor.NextAut != 0 {
-		t.Fatalf("inactive quokka deadline = %d, want frozen at 0", actor.NextAut)
+	if energy.Points != 70 {
+		t.Fatalf("inactive quokka energy = %d, want 70", energy.Points)
 	}
 
 	if g.currentAut != 40 {
@@ -29,8 +28,8 @@ func TestInactiveFloorMonsterDeadlineStaysFrozen(t *testing.T) {
 
 func TestFirstEntryDoesNotReplayInactiveMonsterTurns(t *testing.T) {
 	g := newStepGame(t)
-	rat, _ := g.stores.Actors.Get(ratID(t, g))
-	rat.NextAut = 1000
+	rat, _ := g.stores.MonsterEnergy.Get(ratID(t, g))
+	rat.Points = 0
 	quokka := quokkaID(t, g)
 
 	if err := g.levels[2].MoveActor(quokka, 2, 1); err != nil {
@@ -65,14 +64,13 @@ func TestFirstEntryDoesNotReplayInactiveMonsterTurns(t *testing.T) {
 		}
 	}
 
-	// A speed-12 quokka gets its ordinary turns at aut 40 and 49 before
-	// the player's next deadline at 50. A replay from aut 0 adds more.
-	if combatEvents != 2 || result.View.CurrentAut != 50 {
-		t.Fatalf("first entry gave %d attacks at aut %d, want two at aut 50", combatEvents, result.View.CurrentAut)
+	// Only the entry action grants energy on this floor.
+	if combatEvents != 1 || result.View.CurrentAut != 50 {
+		t.Fatalf("first entry gave %d attacks at aut %d, want one at aut 50", combatEvents, result.View.CurrentAut)
 	}
 }
 
-func TestReturnRebasesFrozenMonsterDeadlineAndSaveContinues(t *testing.T) {
+func TestReturnUsesFrozenMonsterEnergyAndSaveContinues(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
 
@@ -90,17 +88,17 @@ func TestReturnRebasesFrozenMonsterDeadlineAndSaveContinues(t *testing.T) {
 		}
 	}
 
-	ratActor, _ := g.stores.Actors.Get(rat)
+	ratEnergy, _ := g.stores.MonsterEnergy.Get(rat)
 
-	if ratActor.NextAut != 0 {
-		t.Fatalf("away rat deadline = %d, want frozen at 0", ratActor.NextAut)
+	if ratEnergy.Points != 70 {
+		t.Fatalf("away rat energy = %d, want frozen at 70", ratEnergy.Points)
 	}
 
 	snapshot := g.Snapshot()
 	restored, err := Restore(snapshot, testCatalog(t))
 
 	if err != nil {
-		t.Fatalf("frozen off-floor deadline should survive save: %v", err)
+		t.Fatalf("frozen off-floor energy should survive save: %v", err)
 	}
 
 	defer restored.Close()
@@ -116,10 +114,10 @@ func TestReturnRebasesFrozenMonsterDeadlineAndSaveContinues(t *testing.T) {
 			t.Fatalf("return clock = %d, want %d", result.View.CurrentAut, snapshot.CurrentAut+10)
 		}
 
-		actor, _ := run.stores.Actors.Get(rat)
+		energy, _ := run.stores.MonsterEnergy.Get(rat)
 
-		if actor.NextAut != int64(run.currentAut) {
-			t.Fatalf("returned rat deadline = %d, want %d", actor.NextAut, run.currentAut)
+		if energy.Points != 70 {
+			t.Fatalf("returned rat energy = %d, want 70", energy.Points)
 		}
 
 		position, _ := run.stores.Positions.Get(rat)
@@ -134,7 +132,7 @@ func TestReturnRebasesFrozenMonsterDeadlineAndSaveContinues(t *testing.T) {
 	}
 }
 
-func TestRestoreRejectsPastDeadlineOnActiveFloor(t *testing.T) {
+func TestRestoreRejectsReadyMonsterEnergy(t *testing.T) {
 	g := newStepGame(t)
 
 	if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
@@ -147,7 +145,7 @@ func TestRestoreRejectsPastDeadlineOnActiveFloor(t *testing.T) {
 		record := &snapshot.Entities[index]
 
 		if record.AI != nil && record.Position.LevelID == 1 {
-			record.Actor.NextAut = snapshot.CurrentAut - 1
+			record.MonsterEnergy.Points = 80
 
 			break
 		}
@@ -155,6 +153,6 @@ func TestRestoreRejectsPastDeadlineOnActiveFloor(t *testing.T) {
 
 	if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
 		restored.Close()
-		t.Fatal("active monster with past deadline restored")
+		t.Fatal("ready monster energy restored")
 	}
 }

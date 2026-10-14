@@ -61,7 +61,7 @@ func TestAttackDelayProjectionUsesEveryFighterStart(t *testing.T) {
 	}
 }
 
-func TestRapierBumpCostSchedulesTwoRatActions(t *testing.T) {
+func TestTwelveAutRapierBumpGrantsOneRatAction(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
 
@@ -82,22 +82,22 @@ func TestRapierBumpCostSchedulesTwoRatActions(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if result.Spent != 11 && result.Spent != 12 {
-		t.Fatalf("rapier bump cost = %d, want 11 or 12", result.Spent)
+	if result.Spent != 12 {
+		t.Fatalf("rapier bump cost = %d, want 12", result.Spent)
 	}
 
 	if result.View.CurrentAut != result.Spent {
 		t.Fatalf("view time %d differs from spent %d", result.View.CurrentAut, result.Spent)
 	}
 
-	actor, _ := g.stores.Actors.Get(rat)
+	energy, _ := g.stores.MonsterEnergy.Get(rat)
 
-	if actor.NextAut != 20 {
-		t.Fatalf("rat deadline = %d, want 20", actor.NextAut)
+	if energy.Points != 72 {
+		t.Fatalf("rat energy = %d after 12-aut bump, want 72", energy.Points)
 	}
 }
 
-func TestShortUnarmedBumpSchedulesOnlyOneRatAction(t *testing.T) {
+func TestShortUnarmedBumpLeavesRatBelowActionThreshold(t *testing.T) {
 	var seed uint64
 
 	for candidate := uint64(1); candidate < 10000; candidate++ {
@@ -144,11 +144,12 @@ func TestShortUnarmedBumpSchedulesOnlyOneRatAction(t *testing.T) {
 		t.Fatalf("unarmed bump = %+v, %v", result, err)
 	}
 
-	playerActor, _ := g.stores.Actors.Get(g.player)
-	ratActor, _ := g.stores.Actors.Get(rat)
+	playerTurn, _ := g.stores.PlayerTurn.Get(g.player)
+	ratEnergy, _ := g.stores.MonsterEnergy.Get(rat)
 
-	if playerActor.NextAut != 9 || ratActor.NextAut != 10 {
-		t.Fatalf("player deadline %d, rat deadline %d; want 9 and 10", playerActor.NextAut, ratActor.NextAut)
+	if playerTurn.NextAut != 9 || ratEnergy.Points != 79 {
+		t.Fatalf("player aut %d, rat energy %d; want 9 and 79",
+			playerTurn.NextAut, ratEnergy.Points)
 	}
 }
 

@@ -4,10 +4,12 @@ import "github.com/gravestench/akara"
 
 // Stores contains this run's component handles. It is created with its world.
 type Stores struct {
-	Positions *akara.Store[Position]
-	Actors    *akara.Store[Actor]
-	Health    *akara.Store[Health]
-	Magic     *akara.Store[Magic]
+	Positions     *akara.Store[Position]
+	Actors        *akara.Store[Actor]
+	PlayerTurn    *akara.Store[PlayerTurn]
+	MonsterEnergy *akara.Store[MonsterEnergy]
+	Health        *akara.Store[Health]
+	Magic         *akara.Store[Magic]
 
 	Skills        *akara.Store[Skills]
 	SkillTraining *akara.Store[SkillTraining]
@@ -33,10 +35,12 @@ type Stores struct {
 
 func Register(world *akara.World) Stores {
 	return Stores{
-		Positions: akara.Register[Position](world),
-		Actors:    akara.Register[Actor](world),
-		Health:    akara.Register[Health](world),
-		Magic:     akara.Register[Magic](world),
+		Positions:     akara.Register[Position](world),
+		Actors:        akara.Register[Actor](world),
+		PlayerTurn:    akara.Register[PlayerTurn](world),
+		MonsterEnergy: akara.Register[MonsterEnergy](world),
+		Health:        akara.Register[Health](world),
+		Magic:         akara.Register[Magic](world),
 
 		Skills:        akara.Register[Skills](world),
 		SkillTraining: akara.Register[SkillTraining](world),

@@ -101,8 +101,7 @@ func TestArmourSwapSavesMidDelayAndChangesDefenseAtFinish(t *testing.T) {
 	startDefense := g.View().PlayerAC
 	rat := ratID(t, g)
 
-	ratActor, _ := g.stores.Actors.Get(rat)
-	initialMonsterAut := ratActor.NextAut
+	ratEnergy, _ := g.stores.MonsterEnergy.Get(rat)
 
 	first, err := g.Step(Command{
 		Kind:   CommandWear,
@@ -114,11 +113,9 @@ func TestArmourSwapSavesMidDelayAndChangesDefenseAtFinish(t *testing.T) {
 		t.Fatalf("armour swap start = %+v, %v", first, err)
 	}
 
-	if ratActor.NextAut <= initialMonsterAut {
-		t.Fatal("monster did not act during armour swap command turn")
+	if ratEnergy.Points != 70 {
+		t.Fatalf("rat energy after swap start = %d, want 70", ratEnergy.Points)
 	}
-
-	monsterAutAfterStart := ratActor.NextAut
 
 	restored, err := Restore(g.Snapshot(), testCatalog(t))
 
@@ -127,7 +124,7 @@ func TestArmourSwapSavesMidDelayAndChangesDefenseAtFinish(t *testing.T) {
 	}
 
 	defer restored.Close()
-	restoredRat, _ := restored.stores.Actors.Get(rat)
+	restoredRat, _ := restored.stores.MonsterEnergy.Get(rat)
 
 	if !reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
 		t.Fatal("equipment delay changed across save and restore")
@@ -145,8 +142,8 @@ func TestArmourSwapSavesMidDelayAndChangesDefenseAtFinish(t *testing.T) {
 		}
 
 		if turn == 5 {
-			if restoredRat.NextAut <= monsterAutAfterStart {
-				t.Fatal("monster did not act during removal phase")
+			if restoredRat.Points != 70 {
+				t.Fatalf("rat energy during removal = %d, want 70", restoredRat.Points)
 			}
 
 			if restored.stores.Equipped.Has(old) || restored.stores.Equipped.Has(plate) {
@@ -179,8 +176,8 @@ func TestArmourSwapSavesMidDelayAndChangesDefenseAtFinish(t *testing.T) {
 		t.Fatal("plate armour did not raise final AC")
 	}
 
-	if restoredRat.NextAut <= monsterAutAfterStart {
-		t.Fatal("monster did not act during wear phase")
+	if restoredRat.Points != 70 {
+		t.Fatalf("rat energy during wear = %d, want 70", restoredRat.Points)
 	}
 }
 

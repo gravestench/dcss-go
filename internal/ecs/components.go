@@ -12,11 +12,20 @@ type Position struct {
 	Y       int
 }
 
-// Actor stores the source-defined kind and logical scheduling state.
+// Actor stores source-defined identity and base speed.
 type Actor struct {
-	KindID  string
-	Speed   int
+	KindID string
+	Speed  int
+}
+
+// PlayerTurn owns the next logical action time for the player.
+type PlayerTurn struct {
 	NextAut int64
+}
+
+// MonsterEnergy is the source's speed_increment for one live monster.
+type MonsterEnergy struct {
+	Points int
 }
 
 type Health struct {
