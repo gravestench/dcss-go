@@ -115,7 +115,7 @@ func TestLoadDefaultRejectsMalformedPresentation(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			_, err = loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultStartingGearJSON, data)
+			_, err = loadDefault(defaultSpeciesJSON, defaultJobsJSON, defaultStartingGearJSON, data, defaultMonsterJSON)
 			if err == nil || !strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("want %s error, got %v", tc.want, err)
 			}

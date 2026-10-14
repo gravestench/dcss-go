@@ -40,8 +40,11 @@ func (c Catalog) Player() PlayerDef { return c.player }
 
 func (c Catalog) Monster(id string) (MonsterDef, error) {
 	definition, found := c.monsters[id]
-	if !found || definition.Status != MonsterDefined {
+	if !found {
 		return MonsterDef{}, fmt.Errorf("unknown monster ID %q", id)
+	}
+	if definition.Status != MonsterDefined {
+		return MonsterDef{}, fmt.Errorf("monster ID %q is %s and cannot be instantiated", id, definition.Status)
 	}
 	return definition.clone(), nil
 }
