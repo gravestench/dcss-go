@@ -122,7 +122,7 @@ func (s *monsterDecisionSystem) chooseIntent(actor akara.Entity) (ecs.Intent, er
 	}
 
 	if playerVisible && !retreating {
-		spell, cast, err := s.chooseEndoplasmSpell(actor, *position, *player)
+		spell, cast, err := s.chooseMonsterSpell(actor, *position, *player)
 
 		if err != nil {
 			return ecs.Intent{}, err

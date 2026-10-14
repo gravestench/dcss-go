@@ -232,7 +232,7 @@ func TestEndoplasmFreezeRequiresAdjacentPlayer(t *testing.T) {
 		t.Skip("generated endoplasm already adjacent")
 	}
 
-	spell, cast, err := newMonsterDecisionSystem(g).chooseEndoplasmSpell(
+	spell, cast, err := newMonsterDecisionSystem(g).chooseMonsterSpell(
 		entity,
 		*position,
 		*player,
@@ -265,7 +265,7 @@ func TestEndoplasmSpellChoiceIncludesFrequencyBoundary(t *testing.T) {
 
 		g.rng = NewRNGStreams(seed)
 
-		spell, cast, err := newMonsterDecisionSystem(g).chooseEndoplasmSpell(
+		spell, cast, err := newMonsterDecisionSystem(g).chooseMonsterSpell(
 			entity,
 			*position,
 			*player,

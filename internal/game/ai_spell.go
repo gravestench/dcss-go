@@ -7,10 +7,10 @@ import (
 	"github.com/gravestench/akara"
 )
 
-// chooseEndoplasmSpell handles the first supported monster spellbook.
-// Freeze can only target an adjacent foe. Source selection compares
-// frequency >= the 0..199 roll, so frequency 70 covers 71 draws.
-func (s *monsterDecisionSystem) chooseEndoplasmSpell(
+// chooseMonsterSpell handles the supported one-slot natural books. Source
+// selection compares frequency >= the 0..199 roll, so a frequency of 60
+// covers 61 draws.
+func (s *monsterDecisionSystem) chooseMonsterSpell(
 	entity akara.Entity,
 	position ecs.Position,
 	player ecs.Position,
@@ -21,8 +21,25 @@ func (s *monsterDecisionSystem) chooseEndoplasmSpell(
 		return "", false, fmt.Errorf("monster %d has no actor for spell choice", entity)
 	}
 
-	if actor.KindID != "MONS_ENDOPLASM" ||
-		!adjacentActors(position, player) {
+	spellID := ""
+
+	switch actor.KindID {
+	case "MONS_ENDOPLASM":
+		if adjacentActors(position, player) {
+			spellID = "SPELL_FREEZE"
+		}
+
+	case "MONS_DART_SLUG":
+		level := s.levels[position.LevelID]
+
+		if level != nil &&
+			position.LevelID == player.LevelID &&
+			level.ClearProjectilePath(position.X, position.Y, player.X, player.Y) {
+			spellID = "SPELL_SLUG_DART"
+		}
+	}
+
+	if spellID == "" {
 		return "", false, nil
 	}
 
@@ -38,8 +55,8 @@ func (s *monsterDecisionSystem) chooseEndoplasmSpell(
 		return "", false, err
 	}
 
-	if len(slots) != 1 || slots[0].SpellID != "SPELL_FREEZE" {
-		return "", false, fmt.Errorf("unsupported endoplasm spellbook %s", definition.SpellbookID)
+	if len(slots) != 1 || slots[0].SpellID != spellID {
+		return "", false, fmt.Errorf("unsupported %s spellbook %s", actor.KindID, definition.SpellbookID)
 	}
 
 	roll, err := s.rng.Intn("monster_spell", 200)
@@ -48,5 +65,5 @@ func (s *monsterDecisionSystem) chooseEndoplasmSpell(
 		return "", false, err
 	}
 
-	return slots[0].SpellID, roll <= slots[0].Frequency, nil
+	return spellID, roll <= slots[0].Frequency, nil
 }

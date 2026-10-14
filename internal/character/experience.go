@@ -152,6 +152,21 @@ var ordinaryNaturalProfiles = map[string]OrdinaryNaturalProfile{
 		NoSkeleton: true,
 		NoCorpse:   true,
 	},
+
+	"MONS_DART_SLUG": {
+		HitDice:      1,
+		AverageHP10x: 100,
+		MinHP:        6,
+		MaxHP:        14,
+
+		Damage:       3,
+		Speed:        7,
+		AttackTypeID: "AT_BITE",
+		SpellbookID:  "MST_DART_SLUG",
+
+		XPModifier: 40,
+		NoSkeleton: true,
+	},
 }
 
 func OrdinaryNaturalProfileFor(id string) (OrdinaryNaturalProfile, bool) {
@@ -162,8 +177,8 @@ func OrdinaryNaturalProfileFor(id string) (OrdinaryNaturalProfile, bool) {
 
 // OrdinaryNaturalExperience evaluates the source's ordinary melee path of
 // mon-util.cc:2345-2535 against live maximum HP. Difficulty adjustment is
-// zero except for the worm's source fast-regeneration adjustment. These
-// supported monsters have no spells, equipment, or large fast melee attack.
+// zero except for the worm's source fast-regeneration adjustment. Their
+// supported spellbooks add no XP difficulty bonus; slow casters keep full XP.
 func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, error) {
 	profile, found := OrdinaryNaturalProfileFor(definition.ID)
 
@@ -238,5 +253,6 @@ func OrdinaryNaturalExperience(definition content.MonsterDef, maxHP int) (int, e
 		Modifier:     definition.XPModifier,
 		AttackDamage: attackDamage,
 		FastRegen:    profile.FastRegen,
+		Spellcaster:  profile.SpellbookID != "",
 	})
 }

@@ -3,7 +3,7 @@ package character
 import "fmt"
 
 // OrdinaryMonsterXPInput contains the source stats for a monster with no
-// spells, equipment, zombie state, or per-instance XP adjustment. The caller
+// equipment, zombie state, or per-instance XP adjustment. The caller
 // decides whether that ordinary subset applies and whether the kill grants XP.
 type OrdinaryMonsterXPInput struct {
 	HitDice      int
@@ -12,10 +12,12 @@ type OrdinaryMonsterXPInput struct {
 	Modifier     int
 	AttackDamage [4]int
 	FastRegen    bool
+	Spellcaster  bool
 }
 
 // OrdinaryMonsterExperience follows the integer stages of exper_value in
-// mon-util.cc for its no-spell, no-item, unmerged ordinary-monster path.
+// mon-util.cc for its no-item, unmerged ordinary-monster path. Supported
+// spellbooks have no spells that add a difficulty modifier.
 func OrdinaryMonsterExperience(in OrdinaryMonsterXPInput) (int, error) {
 	// These generous bounds cover the committed catalog while keeping every
 	// intermediate product below signed 64-bit range on supported platforms.
@@ -62,7 +64,7 @@ func OrdinaryMonsterExperience(in OrdinaryMonsterXPInput) (int, error) {
 	xp = xp * (100 + difficulty) / 100
 	xp = xp * in.Speed / 10
 
-	if in.Speed < 10 {
+	if in.Speed < 10 && !in.Spellcaster {
 		xp /= 2
 	}
 

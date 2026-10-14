@@ -198,6 +198,60 @@ func (l *Level) Walkable(x, y int) bool {
 		l.terrain[y][x] != '+'
 }
 
+// ClearProjectilePath traces the cell-centre ray between two actors. Walls,
+// closed doors, and other actors stop an ordinary physical projectile.
+func (l *Level) ClearProjectilePath(fromX, fromY, toX, toY int) bool {
+	if !l.Walkable(fromX, fromY) ||
+		!l.Walkable(toX, toY) ||
+		(fromX == toX && fromY == toY) {
+		return false
+	}
+
+	dx := max(toX-fromX, fromX-toX)
+	dy := max(toY-fromY, fromY-toY)
+	stepX := 1
+	stepY := 1
+
+	if toX < fromX {
+		stepX = -1
+	}
+
+	if toY < fromY {
+		stepY = -1
+	}
+
+	x, y := fromX, fromY
+	stepsX, stepsY := 0, 0
+
+	for stepsX < dx || stepsY < dy {
+		crossing := (1+2*stepsX)*dy - (1+2*stepsY)*dx
+
+		if crossing <= 0 {
+			x += stepX
+			stepsX++
+		}
+
+		if crossing >= 0 {
+			y += stepY
+			stepsY++
+		}
+
+		if !l.Walkable(x, y) {
+			return false
+		}
+
+		if x == toX && y == toY {
+			return true
+		}
+
+		if _, occupied := l.ActorAt(x, y); occupied {
+			return false
+		}
+	}
+
+	return true
+}
+
 // OpenDoor changes the entire four-connected closed-door group, as the pinned
 // terrain.cc:751-785 does for a multi-cell door. Known cells also update when
 // an opened segment lies outside current sight.
