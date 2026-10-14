@@ -240,7 +240,7 @@ func TestItemImportPair(t *testing.T) {
 		},
 	}
 
-	rows := map[itemKey]itemPropertyRow{{"OBJ_WEAPONS", "WPN_MACE"}: {
+	rows := map[itemKey]itemPropertyRow{itemKeyFor("OBJ_WEAPONS", "WPN_MACE"): {
 		Name:   "mace",
 		Line:   11,
 		Weapon: &content.WeaponProperties{SkillID: "SK_MACES_FLAILS"},
@@ -248,8 +248,8 @@ func TestItemImportPair(t *testing.T) {
 
 	names := map[itemKey]content.ItemName{}
 	glyphs := map[itemKey]rune{
-		{"OBJ_WEAPONS", "WPN_MACE"}: ')',
-		{"OBJ_POTIONS", "POT_OLD"}:  '!',
+		itemKeyFor("OBJ_WEAPONS", "WPN_MACE"): ')',
+		itemKeyFor("OBJ_POTIONS", "POT_OLD"):  '!',
 	}
 
 	joined, err := joinItemViews(identities, rows, names, glyphs)
@@ -279,18 +279,18 @@ func TestItemImportPair(t *testing.T) {
 				SubtypeValue: 0,
 			},
 		},
-		map[itemKey]itemPropertyRow{{"OBJ_FOOD", "FOOD_RATION"}: {
+		map[itemKey]itemPropertyRow{itemKeyFor("OBJ_FOOD", "FOOD_RATION"): {
 			Name: "buggy ration",
 			Line: 40,
 			Food: &content.FoodProperties{NormalNutrition: 3400},
 		}},
-		map[itemKey]content.ItemName{{"OBJ_FOOD", "FOOD_RATION"}: {
+		map[itemKey]content.ItemName{itemKeyFor("OBJ_FOOD", "FOOD_RATION"): {
 			Text:       "removed food",
 			Kind:       "static",
 			SourcePath: "crawl-ref/source/item-name.cc",
 			SourceLine: 20,
 		}},
-		map[itemKey]rune{{"OBJ_FOOD", "FOOD_RATION"}: '%'},
+		map[itemKey]rune{itemKeyFor("OBJ_FOOD", "FOOD_RATION"): '%'},
 	)
 
 	if err != nil || len(food) != 1 || food[0].Name != "removed food" || food[0].PropertyName != "buggy ration" {

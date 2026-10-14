@@ -11,6 +11,13 @@ import (
 	"strings"
 )
 
+type localTypes struct {
+	structs       map[string]bool
+	structKeyMaps map[string]bool
+}
+
+var typesByDir = map[string]localTypes{}
+
 func main() {
 	issues := 0
 
@@ -47,6 +54,12 @@ func main() {
 
 func checkFile(path string) (int, error) {
 	source, err := os.ReadFile(path)
+
+	if err != nil {
+		return 0, err
+	}
+
+	types, err := declaredTypes(filepath.Dir(path))
 
 	if err != nil {
 		return 0, err
@@ -209,6 +222,20 @@ func checkFile(path string) (int, error) {
 			checkStatements(value.Body)
 
 		case *ast.CompositeLit:
+			keyIsStruct := false
+
+			switch literalType := value.Type.(type) {
+			case *ast.MapType:
+				keyIsStruct = isStructType(literalType.Key, types.structs)
+
+			case *ast.Ident:
+				keyIsStruct = types.structKeyMaps[literalType.Name]
+			}
+
+			if keyIsStruct {
+				checkStructMapKeys(fset, value, report)
+			}
+
 			if len(value.Elts) < 2 {
 				break
 			}
@@ -253,6 +280,110 @@ func checkFile(path string) (int, error) {
 
 func sameLine(fset *token.FileSet, left, right token.Pos) bool {
 	return fset.Position(left).Line == fset.Position(right).Line
+}
+
+func checkStructMapKeys(
+	fset *token.FileSet,
+	literal *ast.CompositeLit,
+	report func(token.Pos, string),
+) {
+	for _, element := range literal.Elts {
+		entry, ok := element.(*ast.KeyValueExpr)
+
+		if !ok {
+			continue
+		}
+
+		key, ok := entry.Key.(*ast.CompositeLit)
+
+		if !ok || key.Type != nil || len(key.Elts) < 2 {
+			continue
+		}
+
+		if entriesShareLine(fset, key) {
+			report(key.Lbrace, "put multi-field struct keys on separate lines")
+		}
+	}
+}
+
+func isStructType(expression ast.Expr, structs map[string]bool) bool {
+	switch keyType := expression.(type) {
+	case *ast.StructType:
+		return true
+
+	case *ast.Ident:
+		return structs[keyType.Name]
+	}
+
+	return false
+}
+
+func declaredTypes(dir string) (localTypes, error) {
+	if known, found := typesByDir[dir]; found {
+		return known, nil
+	}
+
+	entries, err := os.ReadDir(dir)
+
+	if err != nil {
+		return localTypes{}, err
+	}
+
+	types := localTypes{
+		structs:       map[string]bool{},
+		structKeyMaps: map[string]bool{},
+	}
+
+	var declarations []*ast.TypeSpec
+
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".go") {
+			continue
+		}
+
+		path := filepath.Join(dir, entry.Name())
+		file, err := parser.ParseFile(token.NewFileSet(), path, nil, 0)
+
+		if err != nil {
+			return localTypes{}, err
+		}
+
+		for _, declaration := range file.Decls {
+			group, ok := declaration.(*ast.GenDecl)
+
+			if !ok {
+				continue
+			}
+
+			for _, spec := range group.Specs {
+				typeSpec, ok := spec.(*ast.TypeSpec)
+
+				if !ok {
+					continue
+				}
+
+				declarations = append(declarations, typeSpec)
+
+				if _, isStruct := typeSpec.Type.(*ast.StructType); isStruct {
+					types.structs[typeSpec.Name.Name] = true
+				}
+			}
+		}
+	}
+
+	for _, typeSpec := range declarations {
+		mapType, ok := typeSpec.Type.(*ast.MapType)
+
+		if !ok {
+			continue
+		}
+
+		types.structKeyMaps[typeSpec.Name.Name] = isStructType(mapType.Key, types.structs)
+	}
+
+	typesByDir[dir] = types
+
+	return types, nil
 }
 
 func scalarElements(elements []ast.Expr) bool {

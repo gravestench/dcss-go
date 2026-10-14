@@ -225,18 +225,18 @@ func TestPinnedItemNamesAndGlyphs(t *testing.T) {
 	}
 
 	for key, want := range map[itemKey]string{
-		{"OBJ_POTIONS", "POT_CURING"}:              "potion of curing",
-		{"OBJ_BOOKS", "BOOK_MINOR_MAGIC"}:          "book of Minor Magic",
-		{"OBJ_ORBS", "ORB_ZOT"}:                    "Orb of Zot",
-		{"OBJ_GOLD", "OBJ_GOLD"}:                   "gold piece",
-		{"OBJ_RUNES", "RUNE_SWAMP"}:                "decaying rune of Zot",
-		{"OBJ_JEWELLERY", "RING_PROTECTION"}:       "ring of protection",
-		{"OBJ_JEWELLERY", "AMU_FAITH"}:             "amulet of faith",
-		{"OBJ_MISCELLANY", "MISC_XOMS_CHESSBOARD"}: "piece from Xom's chessboard",
-		{"OBJ_MISCELLANY", "MISC_DECK_OF_ESCAPE"}:  "removed deck",
-		{"OBJ_STAVES", "STAFF_FIRE"}:               "staff of fire",
-		{"OBJ_WANDS", "WAND_FLAME"}:                "wand of flame",
-		{"OBJ_SCROLLS", "SCR_IDENTIFY"}:            "scroll of identify",
+		itemKeyFor("OBJ_POTIONS", "POT_CURING"):              "potion of curing",
+		itemKeyFor("OBJ_BOOKS", "BOOK_MINOR_MAGIC"):          "book of Minor Magic",
+		itemKeyFor("OBJ_ORBS", "ORB_ZOT"):                    "Orb of Zot",
+		itemKeyFor("OBJ_GOLD", "OBJ_GOLD"):                   "gold piece",
+		itemKeyFor("OBJ_RUNES", "RUNE_SWAMP"):                "decaying rune of Zot",
+		itemKeyFor("OBJ_JEWELLERY", "RING_PROTECTION"):       "ring of protection",
+		itemKeyFor("OBJ_JEWELLERY", "AMU_FAITH"):             "amulet of faith",
+		itemKeyFor("OBJ_MISCELLANY", "MISC_XOMS_CHESSBOARD"): "piece from Xom's chessboard",
+		itemKeyFor("OBJ_MISCELLANY", "MISC_DECK_OF_ESCAPE"):  "removed deck",
+		itemKeyFor("OBJ_STAVES", "STAFF_FIRE"):               "staff of fire",
+		itemKeyFor("OBJ_WANDS", "WAND_FLAME"):                "wand of flame",
+		itemKeyFor("OBJ_SCROLLS", "SCR_IDENTIFY"):            "scroll of identify",
 	} {
 		if names[key].Text != want || names[key].Kind != "static" || names[key].SourceLine <= 0 {
 			t.Errorf("%v: got %+v, want %q", key, names[key], want)
@@ -272,16 +272,16 @@ func TestPinnedItemNamesAndGlyphs(t *testing.T) {
 	}
 
 	for key, want := range map[itemKey]rune{
-		{"OBJ_WEAPONS", "WPN_MACE"}:          ')',
-		{"OBJ_POTIONS", "POT_CURING"}:        '!',
-		{"OBJ_BOOKS", "BOOK_MANUAL"}:         ':',
-		{"OBJ_CORPSES", "CORPSE_BODY"}:       '%',
-		{"OBJ_CORPSES", "CORPSE_SKELETON"}:   '%',
-		{"OBJ_GOLD", "OBJ_GOLD"}:             '$',
-		{"OBJ_ORBS", "ORB_ZOT"}:              '}',
-		{"OBJ_RUNES", "RUNE_SWAMP"}:          '{',
-		{"OBJ_JEWELLERY", "RING_PROTECTION"}: '=',
-		{"OBJ_JEWELLERY", "AMU_FAITH"}:       '"',
+		itemKeyFor("OBJ_WEAPONS", "WPN_MACE"):          ')',
+		itemKeyFor("OBJ_POTIONS", "POT_CURING"):        '!',
+		itemKeyFor("OBJ_BOOKS", "BOOK_MANUAL"):         ':',
+		itemKeyFor("OBJ_CORPSES", "CORPSE_BODY"):       '%',
+		itemKeyFor("OBJ_CORPSES", "CORPSE_SKELETON"):   '%',
+		itemKeyFor("OBJ_GOLD", "OBJ_GOLD"):             '$',
+		itemKeyFor("OBJ_ORBS", "ORB_ZOT"):              '}',
+		itemKeyFor("OBJ_RUNES", "RUNE_SWAMP"):          '{',
+		itemKeyFor("OBJ_JEWELLERY", "RING_PROTECTION"): '=',
+		itemKeyFor("OBJ_JEWELLERY", "AMU_FAITH"):       '"',
 	} {
 		if glyphs[key] != want {
 			t.Errorf("%v: got %q, want %q", key, glyphs[key], want)

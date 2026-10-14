@@ -101,12 +101,12 @@ func TestPinnedItemPresentationCoverage(t *testing.T) {
 	}
 
 	for key, want := range map[itemKey]string{
-		{"OBJ_POTIONS", "POT_CURING"}:  "potion of curing",
-		{"OBJ_BOOKS", "BOOK_MANUAL"}:   "manual",
-		{"OBJ_ORBS", "ORB_ZOT"}:        "Orb of Zot",
-		{"OBJ_GOLD", "OBJ_GOLD"}:       "gold piece",
-		{"OBJ_JEWELLERY", "AMU_FAITH"}: "amulet of faith",
-		{"OBJ_RUNES", "RUNE_SWAMP"}:    "decaying rune of Zot",
+		itemKeyFor("OBJ_POTIONS", "POT_CURING"):  "potion of curing",
+		itemKeyFor("OBJ_BOOKS", "BOOK_MANUAL"):   "manual",
+		itemKeyFor("OBJ_ORBS", "ORB_ZOT"):        "Orb of Zot",
+		itemKeyFor("OBJ_GOLD", "OBJ_GOLD"):       "gold piece",
+		itemKeyFor("OBJ_JEWELLERY", "AMU_FAITH"): "amulet of faith",
+		itemKeyFor("OBJ_RUNES", "RUNE_SWAMP"):    "decaying rune of Zot",
 	} {
 		if names[key].Text != want {
 			t.Errorf("%v: got %+v, want %q", key, names[key], want)
@@ -114,11 +114,11 @@ func TestPinnedItemPresentationCoverage(t *testing.T) {
 	}
 
 	for key, want := range map[itemKey]rune{
-		{"OBJ_POTIONS", "POT_CURING"}:      '!',
-		{"OBJ_WEAPONS", "WPN_MACE"}:        ')',
-		{"OBJ_BOOKS", "BOOK_MANUAL"}:       ':',
-		{"OBJ_JEWELLERY", "AMU_FAITH"}:     '"',
-		{"OBJ_CORPSES", "CORPSE_SKELETON"}: '%',
+		itemKeyFor("OBJ_POTIONS", "POT_CURING"):      '!',
+		itemKeyFor("OBJ_WEAPONS", "WPN_MACE"):        ')',
+		itemKeyFor("OBJ_BOOKS", "BOOK_MANUAL"):       ':',
+		itemKeyFor("OBJ_JEWELLERY", "AMU_FAITH"):     '"',
+		itemKeyFor("OBJ_CORPSES", "CORPSE_SKELETON"): '%',
 	} {
 		if glyphs[key] != want {
 			t.Errorf("%v: got %q, want %q", key, glyphs[key], want)

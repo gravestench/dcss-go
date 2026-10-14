@@ -70,7 +70,10 @@ func dragonArmourRows(raw string, vocabulary content.ItemVocabulary) (map[itemKe
 	scalesID := "ARM_" + args[0] + "_DRAGON_ARMOUR"
 
 	return map[itemKey]itemPropertyRow{
-		{"OBJ_ARMOUR", hideID}: {
+		itemKey{
+			ClassID:   "OBJ_ARMOUR",
+			SubtypeID: hideID,
+		}: {
 			Name: "removed " + name + " dragon hide",
 			Armour: &content.ArmourProperties{
 				SlotID:   "EQ_BODY_ARMOUR",
@@ -79,7 +82,10 @@ func dragonArmourRows(raw string, vocabulary content.ItemVocabulary) (map[itemKe
 				Flags:    copyFlags(),
 			},
 		},
-		{"OBJ_ARMOUR", scalesID}: {
+		itemKey{
+			ClassID:   "OBJ_ARMOUR",
+			SubtypeID: scalesID,
+		}: {
 			Name: name + " dragon scales",
 			Armour: &content.ArmourProperties{
 				AC:            ac,
