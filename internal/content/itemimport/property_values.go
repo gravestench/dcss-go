@@ -152,6 +152,7 @@ func parseBrandWeights(
 	}
 
 	var weights []content.ItemBrandWeight
+	seen := make(map[string]bool)
 
 	for _, part := range parts {
 		fields, err := rowFields(part.text)
@@ -171,20 +172,16 @@ func parseBrandWeights(
 			return nil, fmt.Errorf("unknown or invalid brand %s", fields[0])
 		}
 
+		if seen[fields[0]] {
+			return nil, fmt.Errorf("duplicate weapon brand %s", fields[0])
+		}
+
+		seen[fields[0]] = true
+
 		weights = append(weights, content.ItemBrandWeight{
 			BrandID: fields[0],
 			Weight:  weight,
 		})
-	}
-
-	sort.Slice(weights, func(i, j int) bool {
-		return weights[i].BrandID < weights[j].BrandID
-	})
-
-	for i := 1; i < len(weights); i++ {
-		if weights[i].BrandID == weights[i-1].BrandID {
-			return nil, fmt.Errorf("duplicate weapon brand %s", weights[i].BrandID)
-		}
 	}
 
 	return weights, nil

@@ -366,14 +366,16 @@ func (d ItemDef) validateProperties() error {
 	}
 
 	if d.Weapon != nil {
-		previous := ""
+		seen := make(map[string]bool)
 
 		for _, brand := range d.Weapon.BrandWeights {
-			if brand.BrandID <= previous || brand.Weight < 0 {
+			if brand.BrandID == "" ||
+				seen[brand.BrandID] ||
+				brand.Weight < 0 {
 				return fmt.Errorf("item %s has invalid brand weights", d.ID)
 			}
 
-			previous = brand.BrandID
+			seen[brand.BrandID] = true
 		}
 	}
 

@@ -34,6 +34,23 @@ static const food_def Food_prop[] =
 };`)
 }
 
+func TestWeaponBrandWeightsKeepSourceOrder(t *testing.T) {
+	vocabulary := propertyVocabulary()
+	raw := "{{ SPWPN_VENOM, 28 }, { SPWPN_NORMAL, 20 }}"
+
+	weights, err := parseBrandWeights(raw, nil, vocabulary)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(weights) != 2 ||
+		weights[0].BrandID != "SPWPN_VENOM" ||
+		weights[1].BrandID != "SPWPN_NORMAL" {
+		t.Fatalf("brand order changed: %+v", weights)
+	}
+}
+
 func TestPinnedPropertyTableCoverage(t *testing.T) {
 	root := os.Getenv("DCSS_SOURCE_DIR")
 

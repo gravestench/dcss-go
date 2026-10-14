@@ -184,12 +184,12 @@ func TestItemShapeValidation(t *testing.T) {
 		},
 
 		{
-			BrandID: "SPWPN_NORMAL",
+			BrandID: "SPWPN_VENOM",
 			Weight:  58,
 		},
 	}
 
 	if err := bad.validate(); err == nil {
-		t.Fatal("unsorted brand weights accepted")
+		t.Fatal("duplicate brand weights accepted")
 	}
 }

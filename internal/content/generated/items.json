@@ -157,48 +157,48 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 34
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 7
+            "brand_id": "SPWPN_VENOM",
+            "weight": 16
           },
           {
             "brand_id": "SPWPN_ELECTROCUTION",
             "weight": 16
           },
           {
-            "brand_id": "SPWPN_FLAMING",
-            "weight": 6
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 7
           },
           {
             "brand_id": "SPWPN_FREEZING",
             "weight": 6
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 3
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 34
-          },
-          {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 4
+            "brand_id": "SPWPN_FLAMING",
+            "weight": 6
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
             "weight": 5
           },
           {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 16
+            "brand_id": "SPWPN_PAIN",
+            "weight": 4
+          },
+          {
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 3
+          },
+          {
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
           }
         ]
       }
@@ -242,40 +242,40 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 15
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 30
           },
           {
             "brand_id": "SPWPN_NORMAL",
             "weight": 28
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 15
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 30
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 14
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_VENOM",
             "weight": 5
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 14
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
           }
         ]
       }
@@ -319,40 +319,40 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 15
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 30
           },
           {
             "brand_id": "SPWPN_NORMAL",
             "weight": 28
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 15
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 30
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 14
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_VENOM",
             "weight": 5
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 14
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
           }
         ]
       }
@@ -396,40 +396,40 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 15
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 30
           },
           {
             "brand_id": "SPWPN_NORMAL",
             "weight": 28
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 15
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 30
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 14
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_VENOM",
             "weight": 5
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 14
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
           }
         ]
       }
@@ -474,16 +474,28 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 30
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 15
+          },
+          {
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 15
           },
           {
             "brand_id": "SPWPN_DRAINING",
             "weight": 10
+          },
+          {
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 9
+          },
+          {
+            "brand_id": "SPWPN_VENOM",
+            "weight": 5
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -494,32 +506,20 @@
             "weight": 4
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 15
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 15
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
           },
           {
             "brand_id": "SPWPN_PAIN",
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 30
-          },
-          {
             "brand_id": "SPWPN_VAMPIRISM",
             "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 9
           }
         ]
       }
@@ -604,40 +604,40 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 15
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 30
           },
           {
             "brand_id": "SPWPN_NORMAL",
             "weight": 28
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 15
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 30
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 14
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_VENOM",
             "weight": 5
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 14
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
           }
         ]
       }
@@ -682,24 +682,12 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 30
           },
           {
             "brand_id": "SPWPN_DRAINING",
             "weight": 19
-          },
-          {
-            "brand_id": "SPWPN_FLAMING",
-            "weight": 6
-          },
-          {
-            "brand_id": "SPWPN_FREEZING",
-            "weight": 6
           },
           {
             "brand_id": "SPWPN_HOLY_WRATH",
@@ -710,24 +698,36 @@
             "weight": 8
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 30
-          },
-          {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 2
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 6
           },
           {
             "brand_id": "SPWPN_VENOM",
             "weight": 6
           },
           {
-            "brand_id": "SPWPN_VORPAL",
+            "brand_id": "SPWPN_FLAMING",
             "weight": 6
+          },
+          {
+            "brand_id": "SPWPN_FREEZING",
+            "weight": 6
+          },
+          {
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 2
           }
         ]
       }
@@ -771,40 +771,40 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 15
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 30
           },
           {
             "brand_id": "SPWPN_NORMAL",
             "weight": 28
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 15
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 30
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 14
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_VENOM",
             "weight": 5
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 14
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
           }
         ]
       }
@@ -848,20 +848,36 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
+            "brand_id": "SPWPN_VENOM",
+            "weight": 28
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 1
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 20
+          },
+          {
+            "brand_id": "SPWPN_SPEED",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_DRAINING",
             "weight": 9
           },
           {
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 6
+          },
+          {
             "brand_id": "SPWPN_ELECTROCUTION",
             "weight": 6
+          },
+          {
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 4
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -872,32 +888,16 @@
             "weight": 4
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 20
-          },
-          {
             "brand_id": "SPWPN_PAIN",
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 6
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 1
           },
           {
-            "brand_id": "SPWPN_SPEED",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 4
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 28
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
           }
         ]
       }
@@ -981,20 +981,36 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 33
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 1
+            "brand_id": "SPWPN_VENOM",
+            "weight": 17
+          },
+          {
+            "brand_id": "SPWPN_SPEED",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_DRAINING",
             "weight": 9
           },
           {
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 6
+          },
+          {
             "brand_id": "SPWPN_ELECTROCUTION",
             "weight": 6
+          },
+          {
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 4
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -1005,28 +1021,12 @@
             "weight": 4
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 5
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 1
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 33
-          },
-          {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 6
-          },
-          {
-            "brand_id": "SPWPN_SPEED",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 4
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 17
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
           }
         ]
       }
@@ -1070,20 +1070,36 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 33
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 1
+            "brand_id": "SPWPN_VENOM",
+            "weight": 17
+          },
+          {
+            "brand_id": "SPWPN_SPEED",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_DRAINING",
             "weight": 9
           },
           {
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 6
+          },
+          {
             "brand_id": "SPWPN_ELECTROCUTION",
             "weight": 6
+          },
+          {
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 4
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -1094,28 +1110,12 @@
             "weight": 4
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 5
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 1
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 33
-          },
-          {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 6
-          },
-          {
-            "brand_id": "SPWPN_SPEED",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 4
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 17
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
           }
         ]
       }
@@ -1159,30 +1159,6 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_ELECTROCUTION",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_FLAMING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_FREEZING",
-            "weight": 5
-          },
-          {
             "brand_id": "SPWPN_HOLY_WRATH",
             "weight": 23
           },
@@ -1191,12 +1167,28 @@
             "weight": 19
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 15
+          },
+          {
+            "brand_id": "SPWPN_ELECTROCUTION",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_PROTECTION",
             "weight": 8
+          },
+          {
+            "brand_id": "SPWPN_FREEZING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_FLAMING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 5
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
@@ -1207,8 +1199,16 @@
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 15
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
           }
         ]
       }
@@ -1252,30 +1252,6 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_ELECTROCUTION",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_FLAMING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_FREEZING",
-            "weight": 5
-          },
-          {
             "brand_id": "SPWPN_HOLY_WRATH",
             "weight": 23
           },
@@ -1284,12 +1260,28 @@
             "weight": 19
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 15
+          },
+          {
+            "brand_id": "SPWPN_ELECTROCUTION",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_PROTECTION",
             "weight": 8
+          },
+          {
+            "brand_id": "SPWPN_FREEZING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_FLAMING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 5
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
@@ -1300,8 +1292,16 @@
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 15
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
           }
         ]
       }
@@ -1345,30 +1345,6 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_ELECTROCUTION",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_FLAMING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_FREEZING",
-            "weight": 5
-          },
-          {
             "brand_id": "SPWPN_HOLY_WRATH",
             "weight": 23
           },
@@ -1377,12 +1353,28 @@
             "weight": 19
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 15
+          },
+          {
+            "brand_id": "SPWPN_ELECTROCUTION",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_PROTECTION",
             "weight": 8
+          },
+          {
+            "brand_id": "SPWPN_FREEZING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_FLAMING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 5
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
@@ -1393,8 +1385,16 @@
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 15
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
           }
         ]
       }
@@ -1438,30 +1438,6 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_ELECTROCUTION",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_FLAMING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_FREEZING",
-            "weight": 5
-          },
-          {
             "brand_id": "SPWPN_HOLY_WRATH",
             "weight": 23
           },
@@ -1470,12 +1446,28 @@
             "weight": 19
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 15
+          },
+          {
+            "brand_id": "SPWPN_ELECTROCUTION",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_PROTECTION",
             "weight": 8
+          },
+          {
+            "brand_id": "SPWPN_FREEZING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_FLAMING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 5
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
@@ -1486,8 +1478,16 @@
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 15
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
           }
         ]
       }
@@ -1531,16 +1531,12 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 31
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 3
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 16
           },
           {
             "brand_id": "SPWPN_ELECTROCUTION",
@@ -1555,28 +1551,32 @@
             "weight": 10
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 31
-          },
-          {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_VENOM",
+            "weight": 8
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
             "weight": 5
           },
           {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 8
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 3
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 16
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 1
           }
         ]
       }
@@ -1620,16 +1620,12 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 31
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 3
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 16
           },
           {
             "brand_id": "SPWPN_ELECTROCUTION",
@@ -1644,28 +1640,32 @@
             "weight": 10
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 31
-          },
-          {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_VENOM",
+            "weight": 8
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
             "weight": 5
           },
           {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 8
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 3
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 16
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 1
           }
         ]
       }
@@ -1709,16 +1709,12 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 31
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 3
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 16
           },
           {
             "brand_id": "SPWPN_ELECTROCUTION",
@@ -1733,28 +1729,32 @@
             "weight": 10
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 31
-          },
-          {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_VENOM",
+            "weight": 8
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
             "weight": 5
           },
           {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 8
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 3
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 16
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 1
           }
         ]
       }
@@ -1798,16 +1798,12 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 31
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 3
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 16
           },
           {
             "brand_id": "SPWPN_ELECTROCUTION",
@@ -1822,28 +1818,32 @@
             "weight": 10
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 31
-          },
-          {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_VENOM",
+            "weight": 8
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
             "weight": 5
           },
           {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 8
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 3
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 16
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 1
           }
         ]
       }
@@ -1887,16 +1887,12 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 31
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 3
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 16
           },
           {
             "brand_id": "SPWPN_ELECTROCUTION",
@@ -1911,28 +1907,32 @@
             "weight": 10
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 31
-          },
-          {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_VENOM",
+            "weight": 8
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
             "weight": 5
           },
           {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 8
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 3
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 16
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 1
           }
         ]
       }
@@ -1976,12 +1976,16 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 46
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
+            "brand_id": "SPWPN_VENOM",
+            "weight": 17
+          },
+          {
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 12
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -1992,24 +1996,20 @@
             "weight": 7
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 46
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
           },
           {
             "brand_id": "SPWPN_PAIN",
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 17
-          },
-          {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 12
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
           }
         ]
       }
@@ -2053,12 +2053,20 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 36
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
+            "brand_id": "SPWPN_VENOM",
+            "weight": 17
+          },
+          {
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 12
+          },
+          {
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 9
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -2069,32 +2077,24 @@
             "weight": 7
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 1
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 5
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 36
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
           },
           {
             "brand_id": "SPWPN_PAIN",
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 12
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
           },
           {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 17
-          },
-          {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 9
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 1
           }
         ]
       }
@@ -2139,12 +2139,20 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 36
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
+            "brand_id": "SPWPN_VENOM",
+            "weight": 17
+          },
+          {
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 12
+          },
+          {
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 9
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -2155,32 +2163,24 @@
             "weight": 7
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 1
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 5
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 36
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
           },
           {
             "brand_id": "SPWPN_PAIN",
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 12
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
           },
           {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 17
-          },
-          {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 9
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 1
           }
         ]
       }
@@ -2224,12 +2224,20 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 36
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
+            "brand_id": "SPWPN_VENOM",
+            "weight": 17
+          },
+          {
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 12
+          },
+          {
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 9
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -2240,32 +2248,24 @@
             "weight": 7
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 1
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 5
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 36
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
           },
           {
             "brand_id": "SPWPN_PAIN",
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 12
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
           },
           {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 17
-          },
-          {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 9
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 1
           }
         ]
       }
@@ -2309,12 +2309,20 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 36
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
+            "brand_id": "SPWPN_VENOM",
+            "weight": 17
+          },
+          {
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 12
+          },
+          {
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 9
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -2325,32 +2333,24 @@
             "weight": 7
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 1
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 5
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 36
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
           },
           {
             "brand_id": "SPWPN_PAIN",
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 12
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
           },
           {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 17
-          },
-          {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 9
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 1
           }
         ]
       }
@@ -2434,16 +2434,16 @@
         ],
         "brand_weights": [
           {
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 58
+          },
+          {
             "brand_id": "SPWPN_FLAMING",
             "weight": 16
           },
           {
             "brand_id": "SPWPN_FREEZING",
             "weight": 16
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 58
           },
           {
             "brand_id": "SPWPN_VORPAL",
@@ -2491,16 +2491,16 @@
         ],
         "brand_weights": [
           {
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 58
+          },
+          {
             "brand_id": "SPWPN_FLAMING",
             "weight": 16
           },
           {
             "brand_id": "SPWPN_FREEZING",
             "weight": 16
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 58
           },
           {
             "brand_id": "SPWPN_VORPAL",
@@ -2548,16 +2548,16 @@
         ],
         "brand_weights": [
           {
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 58
+          },
+          {
             "brand_id": "SPWPN_FLAMING",
             "weight": 16
           },
           {
             "brand_id": "SPWPN_FREEZING",
             "weight": 16
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 58
           },
           {
             "brand_id": "SPWPN_VORPAL",
@@ -2605,16 +2605,20 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 3
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 27
           },
           {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 10
+            "brand_id": "SPWPN_VENOM",
+            "weight": 19
           },
           {
             "brand_id": "SPWPN_ELECTROCUTION",
             "weight": 16
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -2625,20 +2629,16 @@
             "weight": 7
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 27
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 7
           },
           {
             "brand_id": "SPWPN_PAIN",
             "weight": 4
           },
           {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 7
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 19
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 3
           }
         ]
       }
@@ -2781,16 +2781,20 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 3
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 27
           },
           {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 10
+            "brand_id": "SPWPN_VENOM",
+            "weight": 19
           },
           {
             "brand_id": "SPWPN_ELECTROCUTION",
             "weight": 16
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -2801,20 +2805,16 @@
             "weight": 7
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 27
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 7
           },
           {
             "brand_id": "SPWPN_PAIN",
             "weight": 4
           },
           {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 7
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 19
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 3
           }
         ]
       }
@@ -2858,30 +2858,6 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_ELECTROCUTION",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_FLAMING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_FREEZING",
-            "weight": 5
-          },
-          {
             "brand_id": "SPWPN_HOLY_WRATH",
             "weight": 23
           },
@@ -2890,12 +2866,28 @@
             "weight": 19
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 15
+          },
+          {
+            "brand_id": "SPWPN_ELECTROCUTION",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_PROTECTION",
             "weight": 8
+          },
+          {
+            "brand_id": "SPWPN_FREEZING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_FLAMING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 5
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
@@ -2906,8 +2898,16 @@
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 15
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
           }
         ]
       }
@@ -2951,30 +2951,6 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 1
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_ELECTROCUTION",
-            "weight": 10
-          },
-          {
-            "brand_id": "SPWPN_FLAMING",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_FREEZING",
-            "weight": 5
-          },
-          {
             "brand_id": "SPWPN_HOLY_WRATH",
             "weight": 23
           },
@@ -2983,12 +2959,28 @@
             "weight": 19
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 1
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 15
+          },
+          {
+            "brand_id": "SPWPN_ELECTROCUTION",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_PROTECTION",
             "weight": 8
+          },
+          {
+            "brand_id": "SPWPN_FREEZING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_FLAMING",
+            "weight": 5
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 5
           },
           {
             "brand_id": "SPWPN_VAMPIRISM",
@@ -2999,8 +2991,16 @@
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 15
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 1
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 1
           }
         ]
       }
@@ -3044,16 +3044,20 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 3
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 27
           },
           {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 10
+            "brand_id": "SPWPN_VENOM",
+            "weight": 19
           },
           {
             "brand_id": "SPWPN_ELECTROCUTION",
             "weight": 16
+          },
+          {
+            "brand_id": "SPWPN_DRAINING",
+            "weight": 10
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -3064,20 +3068,16 @@
             "weight": 7
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 27
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 7
           },
           {
             "brand_id": "SPWPN_PAIN",
             "weight": 4
           },
           {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 7
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 19
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 3
           }
         ]
       }
@@ -3121,12 +3121,20 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 36
           },
           {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
+            "brand_id": "SPWPN_VENOM",
+            "weight": 17
+          },
+          {
+            "brand_id": "SPWPN_PROTECTION",
+            "weight": 12
+          },
+          {
+            "brand_id": "SPWPN_VORPAL",
+            "weight": 9
           },
           {
             "brand_id": "SPWPN_FLAMING",
@@ -3137,32 +3145,24 @@
             "weight": 7
           },
           {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 1
+            "brand_id": "SPWPN_VAMPIRISM",
+            "weight": 5
           },
           {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 36
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
           },
           {
             "brand_id": "SPWPN_PAIN",
             "weight": 2
           },
           {
-            "brand_id": "SPWPN_PROTECTION",
-            "weight": 12
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
           },
           {
-            "brand_id": "SPWPN_VAMPIRISM",
-            "weight": 5
-          },
-          {
-            "brand_id": "SPWPN_VENOM",
-            "weight": 17
-          },
-          {
-            "brand_id": "SPWPN_VORPAL",
-            "weight": 9
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 1
           }
         ]
       }
@@ -3246,40 +3246,40 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 2
-          },
-          {
-            "brand_id": "SPWPN_DRAINING",
-            "weight": 8
-          },
-          {
-            "brand_id": "SPWPN_HOLY_WRATH",
-            "weight": 2
-          },
-          {
             "brand_id": "SPWPN_NORMAL",
             "weight": 50
-          },
-          {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 2
           },
           {
             "brand_id": "SPWPN_SPECTRAL",
             "weight": 18
           },
           {
-            "brand_id": "SPWPN_SPEED",
+            "brand_id": "SPWPN_DRAINING",
             "weight": 8
           },
           {
             "brand_id": "SPWPN_VORPAL",
             "weight": 8
+          },
+          {
+            "brand_id": "SPWPN_SPEED",
+            "weight": 8
+          },
+          {
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_HOLY_WRATH",
+            "weight": 2
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 2
           }
         ]
       }
@@ -3323,31 +3323,15 @@
         ],
         "brand_weights": [
           {
-            "brand_id": "SPWPN_ANTIMAGIC",
-            "weight": 4
-          },
-          {
-            "brand_id": "SPWPN_DISTORTION",
-            "weight": 3
-          },
-          {
-            "brand_id": "SPWPN_ELECTROCUTION",
-            "weight": 12
-          },
-          {
             "brand_id": "SPWPN_NORMAL",
             "weight": 34
           },
           {
-            "brand_id": "SPWPN_PAIN",
-            "weight": 7
-          },
-          {
-            "brand_id": "SPWPN_SPECTRAL",
-            "weight": 9
-          },
-          {
             "brand_id": "SPWPN_SPEED",
+            "weight": 12
+          },
+          {
+            "brand_id": "SPWPN_ELECTROCUTION",
             "weight": 12
           },
           {
@@ -3355,8 +3339,24 @@
             "weight": 12
           },
           {
+            "brand_id": "SPWPN_SPECTRAL",
+            "weight": 9
+          },
+          {
             "brand_id": "SPWPN_VENOM",
             "weight": 7
+          },
+          {
+            "brand_id": "SPWPN_PAIN",
+            "weight": 7
+          },
+          {
+            "brand_id": "SPWPN_ANTIMAGIC",
+            "weight": 4
+          },
+          {
+            "brand_id": "SPWPN_DISTORTION",
+            "weight": 3
           }
         ]
       }
@@ -3400,16 +3400,16 @@
         ],
         "brand_weights": [
           {
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 58
+          },
+          {
             "brand_id": "SPWPN_FLAMING",
             "weight": 16
           },
           {
             "brand_id": "SPWPN_FREEZING",
             "weight": 16
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 58
           },
           {
             "brand_id": "SPWPN_VORPAL",
@@ -3832,16 +3832,16 @@
         ],
         "brand_weights": [
           {
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 58
+          },
+          {
             "brand_id": "SPWPN_FLAMING",
             "weight": 16
           },
           {
             "brand_id": "SPWPN_FREEZING",
             "weight": 16
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 58
           },
           {
             "brand_id": "SPWPN_VORPAL",
@@ -3889,16 +3889,16 @@
         ],
         "brand_weights": [
           {
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 58
+          },
+          {
             "brand_id": "SPWPN_FLAMING",
             "weight": 16
           },
           {
             "brand_id": "SPWPN_FREEZING",
             "weight": 16
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 58
           },
           {
             "brand_id": "SPWPN_VORPAL",
@@ -3946,16 +3946,16 @@
         ],
         "brand_weights": [
           {
+            "brand_id": "SPWPN_NORMAL",
+            "weight": 58
+          },
+          {
             "brand_id": "SPWPN_FLAMING",
             "weight": 16
           },
           {
             "brand_id": "SPWPN_FREEZING",
             "weight": 16
-          },
-          {
-            "brand_id": "SPWPN_NORMAL",
-            "weight": 58
           },
           {
             "brand_id": "SPWPN_VORPAL",
