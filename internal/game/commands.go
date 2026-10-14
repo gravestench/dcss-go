@@ -87,6 +87,9 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	default:
 		return g.noTime("Unknown command."), nil
 	}
+	if combat, found := g.stores.Combat.Get(g.player); found {
+		combat.ShieldBlocks = 0
+	}
 	events, err := g.runAction(g.player, intent, cost, "movement")
 	if err != nil {
 		return StepResult{}, err

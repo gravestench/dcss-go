@@ -47,8 +47,8 @@ func TestNewScenarioStartingGear(t *testing.T) {
 				t.Fatalf("scenario start changed time or HP: %+v", view)
 			}
 			combat, found := g.stores.Combat.Get(g.player)
-			if !found || combat.BaseDamage != 4 {
-				t.Fatalf("fixture combat changed: %+v", combat)
+			if !found || combat.ShieldBlocks != 0 {
+				t.Fatalf("initial combat state = %+v", combat)
 			}
 			floorPotion, carried := false, 0
 			for _, record := range g.Snapshot().Entities {

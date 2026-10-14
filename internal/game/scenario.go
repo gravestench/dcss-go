@@ -44,7 +44,7 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if _, err = stores.Actors.Set(g.player, ecs.Actor{KindID: "player", Speed: playerDef.Speed}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Combat.Set(g.player, ecs.Combatant{BaseDamage: playerDef.BaseDamage}); err != nil {
+	if _, err = stores.Combat.Set(g.player, ecs.Combatant{}); err != nil {
 		return nil, err
 	}
 	if _, err = stores.Players.Set(g.player, ecs.PlayerControlled{Name: name, SpeciesID: playerDef.SpeciesID, JobID: playerDef.JobID, StartingWeaponID: weaponID}); err != nil {
@@ -77,8 +77,9 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if err != nil {
 		return nil, err
 	}
-	if ratDef.Attacks[0] != (content.MonsterAttack{TypeID: "AT_BITE", FlavourID: "AF_PLAIN", Damage: 3}) {
-		return nil, fmt.Errorf("fixed rat scenario expects the pinned three-damage bite")
+	if ratDef.HD != 1 || ratDef.AC != 1 || ratDef.EV != 10 ||
+		ratDef.Attacks[0] != (content.MonsterAttack{TypeID: "AT_BITE", FlavourID: "AF_PLAIN", Damage: 3}) {
+		return nil, fmt.Errorf("fixed rat scenario expects the pinned ordinary bite and defense")
 	}
 	rat, err := world.CreateEntity()
 	if err != nil {
@@ -91,7 +92,7 @@ func NewScenario(seed uint64, catalog content.Catalog, weaponID, name string) (_
 	if _, err = stores.Health.Set(rat, ecs.Health{Current: scenarioRatHP, Max: scenarioRatHP}); err != nil {
 		return nil, err
 	}
-	if _, err = stores.Combat.Set(rat, ecs.Combatant{BaseDamage: ratDef.Attacks[0].Damage}); err != nil {
+	if _, err = stores.Combat.Set(rat, ecs.Combatant{}); err != nil {
 		return nil, err
 	}
 	if _, err = stores.AI.Set(rat, ecs.MonsterAI{Behavior: "chase"}); err != nil {
@@ -134,7 +135,7 @@ func registerSystems(g *Game) error {
 	if _, err := world.AddSystem(&movementSystem{positions: stores.Positions, intents: stores.Intents, levels: g.levels, turn: &g.turn}); err != nil {
 		return err
 	}
-	if _, err := world.AddSystem(&combatSystem{positions: stores.Positions, intents: stores.Intents, combat: stores.Combat, health: stores.Health, levels: g.levels, rng: g.rng, turn: &g.turn, player: g.player}); err != nil {
+	if _, err := world.AddSystem(&combatSystem{game: g, roller: g.rng, turn: &g.turn}); err != nil {
 		return err
 	}
 	if _, err := world.AddSystem(&deathSystem{health: stores.Health, player: g.player, turn: &g.turn}); err != nil {

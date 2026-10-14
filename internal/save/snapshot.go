@@ -2,7 +2,7 @@ package save
 
 import "dcrawl-go/internal/ecs"
 
-const Version = 5
+const Version = 6
 
 type Snapshot struct {
 	Version        int               `json:"version"`

@@ -27,7 +27,7 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 	magic, _ := g.stores.Magic.Get(g.player)
 	magic.Current = 0
 	before := g.Snapshot()
-	if before.Version != 5 || savedPlayer(t, &before).Player.StartingWeaponID != "WPN_RAPIER" {
+	if before.Version != 6 || savedPlayer(t, &before).Player.StartingWeaponID != "WPN_RAPIER" {
 		t.Fatalf("unexpected save header or choice: %+v", before)
 	}
 	restored, err := Restore(before, testCatalog(t))

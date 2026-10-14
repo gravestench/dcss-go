@@ -36,7 +36,7 @@ type Skills struct {
 }
 
 type Combatant struct {
-	BaseDamage int
+	ShieldBlocks int
 }
 
 type PlayerControlled struct {

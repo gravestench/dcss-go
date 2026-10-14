@@ -220,7 +220,7 @@ func Restore(snapshot save.Snapshot, catalog content.Catalog) (_ *Game, err erro
 		if record.Actor != nil && (record.Actor.Speed <= 0 || record.Actor.NextAut < 0 || record.Health == nil || record.Combatant == nil || record.Position == nil) {
 			return nil, fmt.Errorf("invalid actor %d", record.ID)
 		}
-		if record.Combatant != nil && (record.Actor == nil || record.Combatant.BaseDamage < 0 || record.Combatant.BaseDamage == int(^uint(0)>>1)) {
+		if record.Combatant != nil && (record.Actor == nil || record.Combatant.ShieldBlocks < 0 || record.Combatant.ShieldBlocks > 100) {
 			return nil, fmt.Errorf("invalid combat stats for entity %d", record.ID)
 		}
 		if record.Actor != nil && record.Player == nil && record.AI == nil {

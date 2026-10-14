@@ -123,7 +123,15 @@ func DrawPlay(canvas *Canvas, layout Layout, view game.View, notice string) {
 	}
 	drawMeter(canvas, h.X+18, h.Y+2, 24, view.PlayerHP, view.PlayerMaxHP, LightGreen)
 	drawMeter(canvas, h.X+18, h.Y+3, 24, view.PlayerMP, view.PlayerMaxMP, LightBlue)
-	for i, label := range []string{"AC: --", "EV: --", "SH: --"} {
+	defenseLabels := []string{"AC: --", "EV: --", "SH: --"}
+	if view.DefenseKnown {
+		defenseLabels = []string{
+			fmt.Sprintf("AC: %d", view.PlayerAC),
+			fmt.Sprintf("EV: %d", view.PlayerEV),
+			fmt.Sprintf("SH: %d", view.PlayerSH),
+		}
+	}
+	for i, label := range defenseLabels {
 		hud(0, 4+i, label, Brown)
 	}
 	for _, stat := range []struct {

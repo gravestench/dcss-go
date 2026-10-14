@@ -133,8 +133,8 @@ func TestScenarioAttributesAndView(t *testing.T) {
 	if view.CharacterName != "Human Fighter" || view.Attributes != *attributes || view.PlayerHP != 18 {
 		t.Fatalf("view = %+v", view)
 	}
-	if snapshot := g.Snapshot(); snapshot.Version != 5 {
-		t.Fatalf("save version = %d, want 4", snapshot.Version)
+	if snapshot := g.Snapshot(); snapshot.Version != 6 {
+		t.Fatalf("save version = %d, want 6", snapshot.Version)
 	}
 }
 
@@ -201,10 +201,10 @@ func TestRestoreRejectsCorruptComponents(t *testing.T) {
 		name   string
 		mutate func(*save.Snapshot)
 	}{
-		{"negative damage", func(snapshot *save.Snapshot) {
+		{"negative shield blocks", func(snapshot *save.Snapshot) {
 			for i := range snapshot.Entities {
 				if snapshot.Entities[i].Player != nil {
-					snapshot.Entities[i].Combatant.BaseDamage = -1
+					snapshot.Entities[i].Combatant.ShieldBlocks = -1
 				}
 			}
 		}},

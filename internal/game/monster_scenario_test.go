@@ -2,7 +2,7 @@ package game
 
 import "testing"
 
-func TestRatScenarioKeepsFourHPAndThreeDamage(t *testing.T) {
+func TestRatScenarioKeepsFourHPAndCatalogedBite(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)
 	health, ok := g.stores.Health.Get(rat)
@@ -10,7 +10,8 @@ func TestRatScenarioKeepsFourHPAndThreeDamage(t *testing.T) {
 		t.Fatalf("rat health = %+v, found %v", health, ok)
 	}
 	combat, ok := g.stores.Combat.Get(rat)
-	if !ok || combat.BaseDamage != 3 {
-		t.Fatalf("rat damage = %+v, found %v", combat, ok)
+	definition, err := g.catalog.Monster("MONS_RAT")
+	if !ok || combat.ShieldBlocks != 0 || err != nil || definition.HD != 1 || definition.Attacks[0].Damage != 3 {
+		t.Fatalf("rat combat/source = %+v/%+v, found %v, error %v", combat, definition, ok, err)
 	}
 }

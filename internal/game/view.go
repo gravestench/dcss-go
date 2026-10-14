@@ -39,21 +39,23 @@ type ItemView struct {
 }
 
 type View struct {
-	LevelID               int
-	PlayerX, PlayerY      int
-	PlayerDead            bool
-	PlayerName            string
-	Width, Height         int
-	Cells                 []CellView
-	Entities              []EntityView
-	PlayerHP, PlayerMaxHP int
-	PlayerMP, PlayerMaxMP int
-	CurrentAut            Aut
-	Messages              []string
-	Inventory             []ItemView
-	CharacterName         string
-	Attributes            ecs.Attributes
-	Skills                []character.Skill
+	LevelID                      int
+	PlayerX, PlayerY             int
+	PlayerDead                   bool
+	PlayerName                   string
+	Width, Height                int
+	Cells                        []CellView
+	Entities                     []EntityView
+	PlayerHP, PlayerMaxHP        int
+	PlayerMP, PlayerMaxMP        int
+	PlayerAC, PlayerEV, PlayerSH int
+	DefenseKnown                 bool
+	CurrentAut                   Aut
+	Messages                     []string
+	Inventory                    []ItemView
+	CharacterName                string
+	Attributes                   ecs.Attributes
+	Skills                       []character.Skill
 }
 
 func (g *Game) View() View {
@@ -95,6 +97,10 @@ func (g *Game) View() View {
 	}
 	if attributes, ok := g.stores.Attributes.Get(g.player); ok {
 		view.Attributes = *attributes
+	}
+	if defense, err := g.fighterDefense(); err == nil {
+		view.PlayerAC, view.PlayerEV, view.PlayerSH = defense.AC, defense.EV, defense.ShieldClass/2
+		view.DefenseKnown = true
 	}
 	for _, entity := range g.stores.Positions.Entities() {
 		location, _ := g.stores.Positions.Get(entity)
