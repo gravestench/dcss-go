@@ -58,3 +58,18 @@ func TestPlayerMeleeUnarmedUsesNormalFormBaseAndNoWeaponSkillMultiplier(t *testi
 		t.Fatalf("unarmed attack = %+v, err %v, rolls %+v", got, err, rng.rolls)
 	}
 }
+
+func TestPlayerMeleeMightBonusAfterDamageAndBeforeArmour(t *testing.T) {
+	in := fighterFlailAttack()
+	in.Mighty = true
+	rng := &scriptedRoller{rolls: []scriptedRoll{{400, 300}, {300, 200}, {27, 26}, {100, 10}, {28, 0}, {10, 9}, {201, 200}, {301, 300}, {10, 4}, {2, 1}, {2, 1}}}
+	got, err := PlayerMelee(rng, in)
+	if err != nil || got.Kind != Hit || got.Damage != 13 || len(rng.rolls) != 0 {
+		t.Fatalf("mighty hit = %+v, %v; rolls %+v", got, err, rng.rolls)
+	}
+	rng = &scriptedRoller{rolls: []scriptedRoll{{400, 0}, {300, 0}, {22, 0}, {100, 10}, {15, 0}}}
+	got, err = PlayerMelee(rng, in)
+	if err != nil || got.Kind != Miss || len(rng.rolls) != 0 {
+		t.Fatalf("mighty miss = %+v, %v; rolls %+v", got, err, rng.rolls)
+	}
+}

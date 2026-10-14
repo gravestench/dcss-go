@@ -12,6 +12,7 @@ type PlayerAttackInput struct {
 	WeaponDamage, WeaponHit, WeaponPlus int
 	Unarmed                             bool
 	DefenderEV, DefenderAC              int
+	Mighty                              bool
 }
 
 // Validate rejects inputs outside the supported Human Fighter scenario.
@@ -39,7 +40,7 @@ func (in PlayerAttackInput) Validate() error {
 }
 
 // PlayerMelee follows the supported C++ primary attack phases. Rat shields,
-// status effects, auxiliary strikes, and brands are absent in this slice.
+// auxiliary strikes, brands, and statuses beyond might are absent in this slice.
 func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 	if r == nil {
 		return Outcome{}, fmt.Errorf("player melee requires a roller")
@@ -131,6 +132,13 @@ func PlayerMelee(r Roller, in PlayerAttackInput) (Outcome, error) {
 			return Outcome{}, penaltyErr
 		}
 		damage -= penalty
+	}
+	if in.Mighty {
+		bonus, bonusErr := random2(r, 10)
+		if bonusErr != nil {
+			return Outcome{}, bonusErr
+		}
+		damage += 1 + bonus
 	}
 	saved, err := random2(r, in.DefenderAC+1)
 	if err != nil {
