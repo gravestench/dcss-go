@@ -43,9 +43,14 @@ const (
 	ScreenTakeOff
 	ScreenThrow
 	ScreenAim
+	ScreenSpells
 )
 
 type equipmentTick struct {
+	id uint64
+}
+
+type spellTick struct {
 	id uint64
 }
 
@@ -86,10 +91,13 @@ type AppModel struct {
 	dropQuantity    string
 	pendingDoor     game.CommandKind
 	equipmentTickID uint64
+	spellTickID     uint64
 	aimKind         game.CommandKind
 	aimItemID       uint64
+	aimSpellID      string
 	aimX            int
 	aimY            int
+	spellMode       string
 }
 
 func NewAppModel(seed uint64, savePath string) (*AppModel, error) {
@@ -157,8 +165,16 @@ func (m *AppModel) presentationPolicy(name string, input map[string]any) (map[st
 }
 
 func (m *AppModel) Init() tea.Cmd {
-	if m.game != nil && m.game.View().EquipmentDelay != nil {
-		return m.nextEquipmentTick()
+	if m.game != nil {
+		view := m.game.View()
+
+		if view.EquipmentDelay != nil {
+			return m.nextEquipmentTick()
+		}
+
+		if view.LearningRemaining > 0 {
+			return m.nextSpellTick()
+		}
 	}
 
 	return nil
@@ -183,6 +199,15 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 		return m, m.stepPlayCommand(game.Command{
 			Kind: game.CommandContinueEquipment,
 		})
+
+	case spellTick:
+		if msg.id != m.spellTickID ||
+			m.screen != ScreenPlay ||
+			m.game == nil || m.game.View().LearningRemaining == 0 {
+			return m, nil
+		}
+
+		return m, m.stepPlayCommand(game.Command{Kind: game.CommandWait})
 	}
 
 	return m, nil
@@ -240,7 +265,12 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 		return m.routeInventoryInput("throw", key)
 
 	case ScreenAim:
-		return m.routeInput("aim", key)
+		return m.routeInput("aim", key, map[string]any{
+			"casting": m.aimSpellID != "",
+		})
+
+	case ScreenSpells:
+		return m.routeSpellInput(key)
 
 	case ScreenConfirm:
 		return m.routeConfirmationInput(key)
@@ -292,7 +322,7 @@ func (m *AppModel) renderCanvas() *Canvas {
 		}
 
 	case ScreenInventory, ScreenSkills, ScreenQuaff, ScreenDrop,
-		ScreenWield, ScreenWear, ScreenTakeOff, ScreenThrow:
+		ScreenWield, ScreenWear, ScreenTakeOff, ScreenThrow, ScreenSpells:
 		m.drawGameMenu(canvas)
 
 	case ScreenHelp:
@@ -344,6 +374,9 @@ func (m *AppModel) drawGameMenu(canvas *Canvas) {
 
 		case ScreenThrow:
 			drawInventoryModal(canvas, view, "throw", "", m.presentationPolicy)
+
+		case ScreenSpells:
+			DrawSpells(canvas, view, m.spellMode, m.presentationPolicy)
 		}
 	}
 
@@ -356,6 +389,15 @@ func (m *AppModel) nextEquipmentTick() tea.Cmd {
 
 	return tea.Tick(80*time.Millisecond, func(time.Time) tea.Msg {
 		return equipmentTick{id: id}
+	})
+}
+
+func (m *AppModel) nextSpellTick() tea.Cmd {
+	m.spellTickID++
+	id := m.spellTickID
+
+	return tea.Tick(80*time.Millisecond, func(time.Time) tea.Msg {
+		return spellTick{id: id}
 	})
 }
 

@@ -1,8 +1,8 @@
 local generated = {}
 local abyss = require("policy.world.abyss")
 
-local function glyph(level, x, y)
-    return level.rows[y + 1]:sub(x + 1, x + 1)
+local function feature(level, x, y)
+    return level.cells[y + 1][x + 1]
 end
 
 local function stair_at(level, x, y)
@@ -29,11 +29,13 @@ local function reciprocal(levels, depth, link)
         return false
     end
 
-    local from_glyph = glyph(levels[depth], link.x, link.y)
-    local to_glyph = glyph(target, link.to_x, link.to_y)
+    local from_feature = feature(levels[depth], link.x, link.y)
+    local to_feature = feature(target, link.to_x, link.to_y)
 
-    return (depth == 1 and from_glyph == ">" and to_glyph == "<") or
-        (depth == 2 and from_glyph == "<" and to_glyph == ">")
+    return (depth == 1 and from_feature == "DNGN_STONE_STAIRS_DOWN_I" and
+        to_feature == "DNGN_STONE_STAIRS_UP_I") or
+        (depth == 2 and from_feature == "DNGN_STONE_STAIRS_UP_I" and
+        to_feature == "DNGN_STONE_STAIRS_DOWN_I")
 end
 
 function generated.validate(levels, by_id)
@@ -45,7 +47,7 @@ function generated.validate(levels, by_id)
     for depth = 1, 2 do
         local level = by_id[depth]
 
-        if #level.rows[1] ~= 80 or #level.rows ~= 70 or #level.stairs ~= 6 then
+        if #level.cells[1] ~= 80 or #level.cells ~= 70 or #level.stairs ~= 6 then
             error("generated Dungeon:" .. depth .. " has invalid geometry or stair count")
         end
 
@@ -59,19 +61,19 @@ function generated.validate(levels, by_id)
         local down_count = 0
 
         for _, link in ipairs(level.stairs) do
-            local stair_glyph = glyph(level, link.x, link.y)
+            local stair_feature = feature(level, link.x, link.y)
 
-            if stair_glyph == "<" then
+            if stair_feature == "DNGN_STONE_STAIRS_UP_I" then
                 up_count = up_count + 1
             else
                 down_count = down_count + 1
             end
 
-            if depth == 1 and stair_glyph == "<" then
+            if depth == 1 and stair_feature == "DNGN_STONE_STAIRS_UP_I" then
                 if link.unavailable == "" then
                     error("generated Dungeon:1 has an invalid exit")
                 end
-            elseif depth == 2 and stair_glyph == ">" then
+            elseif depth == 2 and stair_feature == "DNGN_STONE_STAIRS_DOWN_I" then
                 if link.unavailable == "" then
                     error("generated Dungeon:2 has an invalid exit")
                 end

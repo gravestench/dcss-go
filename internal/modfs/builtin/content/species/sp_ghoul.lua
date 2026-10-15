@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/ghoul.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_GHOUL",
     monster_id = "MONS_GHOUL",
-    source_path = "crawl-ref/source/dat/species/ghoul.yaml",
     name = "Ghoul",
     short_name = "Gh",
     adjective = "Ghoulish",
@@ -187,3 +188,7 @@ register.species{
         "SK_UNARMED_COMBAT",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

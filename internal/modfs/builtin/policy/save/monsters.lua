@@ -6,6 +6,8 @@ local links = require("policy.save.links")
 local net = require("policy.combat.net")
 local poison = require("policy.combat.monster_poison")
 local slow = require("policy.combat.monster_slow")
+local sticky_flame = require("policy.magic.effects.zaps.sticky_flame")
+local summons = require("policy.save.summons")
 
 local function has_flag(definition, id)
     for _, flag in ipairs(definition.flags or {}) do
@@ -46,85 +48,127 @@ local function validate_ai(ctx, entity, ai, position, definition, current_aut)
     end
 end
 
+local function validate_roster_monster(ctx, entity, actor, health, position,
+    ai, state)
+    local polymorph = ctx:get(entity, "magic.monster_polymorph")
+    local roster_id = polymorph and polymorph.original_kind_id or actor.kind_id
+
+    if not state.fixed then
+        local level_id = position.level_id
+        local count = (state.live_by_level[level_id] or 0) + 1
+
+        if count > (state.budgets[level_id] or 0) then
+            error("Dungeon:" .. level_id .. " has too many live monsters")
+        end
+
+        state.live_by_level[level_id] = count
+    end
+
+    if not state.allowed[roster_id] then
+        error("unsupported melee attacker " .. roster_id ..
+            " in fixed Dungeon scenario")
+    end
+
+    local definition = catalog.get("monsters", actor.kind_id)
+    local profile = roster.profile(roster_id)
+
+    if state.fixed and state.seen[roster_id] then
+        error("duplicate fixed animal " .. roster_id)
+    end
+
+    state.seen[roster_id] = true
+
+    if polymorph and (roster_id == actor.kind_id or
+        health.max <= 0 or health.current > health.max) then
+        error("invalid polymorphed monster " .. ctx:id(entity))
+    end
+
+    if not polymorph and
+        (health.max < profile.minimum or health.max > profile.maximum) then
+        error("impossible fixed monster maximum HP " .. health.max)
+    end
+
+    if not slow.validate(ctx, entity, definition, actor) then
+        error("fixed monster " .. actor.kind_id ..
+            " has wrong speed " .. actor.speed)
+    end
+
+    validate_ai(ctx, entity, ai, position, definition, state.current_aut)
+    net.validate(ctx, entity, position)
+    poison.validate(ctx, entity)
+    sticky_flame.validate(ctx, entity)
+end
+
+local module = {}
+
+function module.run(ctx, input)
+    entities.validate(ctx)
+    inventory.validate(ctx)
+    links.validate(ctx)
+
+    local allowed = roster.allowed(input.scenario_id)
+    local fixed = input.scenario_id ~= "fixed-dungeon-population-v1" and
+        input.scenario_id ~= "generated-dungeon-basic-v1"
+    local seen = {}
+    local budgets = {}
+    local live_by_level = {}
+
+    if not fixed then
+        for _, level in ipairs(input.levels) do
+            budgets[level.id] = level.initial_actors
+        end
+    end
+
+    if input.scenario_id == "generated-dungeon-basic-v1" then
+        allowed.MONS_GOBLIN = true
+        allowed.MONS_KOBOLD = true
+    end
+
+    local roster_state = {
+        allowed = allowed,
+        fixed = fixed,
+        seen = seen,
+        budgets = budgets,
+        live_by_level = live_by_level,
+        current_aut = input.current_aut,
+    }
+
+    for _, entity in ipairs(ctx:query({ "core.ai" })) do
+        local actor = ctx:get(entity, "core.actor")
+        local health = ctx:get(entity, "core.health")
+        local position = ctx:get(entity, "core.position")
+        local energy = ctx:get(entity, "core.monster_energy")
+        local ai = ctx:get(entity, "core.ai")
+
+        if not actor or not health or not position or not energy then
+            error("invalid monster entity " .. ctx:id(entity))
+        end
+
+        if energy.points < 0 or (input.player_alive and energy.points >= 80) then
+            error("monster " .. ctx:id(entity) .. " has invalid action energy")
+        end
+
+        if health.current <= 0 then
+            error("saved monster " .. ctx:id(entity) .. " has no remaining HP")
+        end
+
+        local summon = ctx:get(entity, "magic.summon")
+
+        if summon then
+            summons.validate(ctx, entity, actor, position, ai,
+                summon, input.current_aut)
+        else
+            validate_roster_monster(ctx, entity, actor, health,
+                position, ai, roster_state)
+        end
+    end
+
+    return {}
+end
+
 register.policy({
     id = "save.validate_monsters",
-    run = function(ctx, input)
-        entities.validate(ctx)
-        inventory.validate(ctx)
-        links.validate(ctx)
-
-        local allowed = roster.allowed(input.scenario_id)
-        local fixed = input.scenario_id ~= "fixed-dungeon-population-v1" and
-            input.scenario_id ~= "generated-dungeon-basic-v1"
-        local seen = {}
-        local budgets = {}
-        local live_by_level = {}
-
-        if not fixed then
-            for _, level in ipairs(input.levels) do
-                budgets[level.id] = level.initial_actors
-            end
-        end
-
-        if input.scenario_id == "generated-dungeon-basic-v1" then
-            allowed.MONS_GOBLIN = true
-            allowed.MONS_KOBOLD = true
-        end
-
-        for _, entity in ipairs(ctx:query({ "core.ai" })) do
-            local actor = ctx:get(entity, "core.actor")
-            local health = ctx:get(entity, "core.health")
-            local position = ctx:get(entity, "core.position")
-            local energy = ctx:get(entity, "core.monster_energy")
-            local ai = ctx:get(entity, "core.ai")
-
-            if not actor or not health or not position or not energy then
-                error("invalid monster entity " .. ctx:id(entity))
-            end
-
-            if energy.points < 0 or (input.player_alive and energy.points >= 80) then
-                error("monster " .. ctx:id(entity) .. " has invalid action energy")
-            end
-
-            if health.current <= 0 then
-                error("saved monster " .. ctx:id(entity) .. " has no remaining HP")
-            end
-
-            if not fixed then
-                local level_id = position.level_id
-                live_by_level[level_id] = (live_by_level[level_id] or 0) + 1
-
-                if live_by_level[level_id] > (budgets[level_id] or 0) then
-                    error("Dungeon:" .. level_id .. " has too many live monsters")
-                end
-            end
-
-            if not allowed[actor.kind_id] then
-                error("unsupported melee attacker " .. actor.kind_id .. " in fixed Dungeon scenario")
-            end
-
-            local definition = catalog.get("monsters", actor.kind_id)
-            local profile = roster.profile(actor.kind_id)
-
-            if fixed and seen[actor.kind_id] then
-                error("duplicate fixed animal " .. actor.kind_id)
-            end
-
-            seen[actor.kind_id] = true
-
-            if health.max < profile.minimum or health.max > profile.maximum then
-                error("impossible fixed monster maximum HP " .. health.max)
-            end
-
-            if not slow.validate(ctx, entity, definition, actor) then
-                error("fixed monster " .. actor.kind_id .. " has wrong speed " .. actor.speed)
-            end
-
-            validate_ai(ctx, entity, ai, position, definition, input.current_aut)
-            net.validate(ctx, entity, position)
-            poison.validate(ctx, entity)
-        end
-
-        return {}
-    end,
+    run = module.run,
 })
+
+return module

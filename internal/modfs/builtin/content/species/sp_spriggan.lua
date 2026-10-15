@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/spriggan.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_SPRIGGAN",
     monster_id = "MONS_SPRIGGAN",
-    source_path = "crawl-ref/source/dat/species/spriggan.yaml",
     name = "Spriggan",
     short_name = "Sp",
     selectable = true,
@@ -166,3 +167,7 @@ register.species{
         "SK_SHORT_BLADES",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

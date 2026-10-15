@@ -61,7 +61,7 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 		level := g.levels[position.LevelID]
 
 		if level == nil ||
-			level.terrain[position.Y][position.X] != '.' ||
+			fixtureGlyph(level.terrain[position.Y][position.X]) != '.' ||
 			max(
 				position.X-entry.x,
 				entry.x-position.X,

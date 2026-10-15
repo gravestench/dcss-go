@@ -64,7 +64,7 @@ func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 
 	position, _ := g.stores.Positions.Get(g.player)
 
-	if g.levels[1].terrain[position.Y][position.X] != '<' {
+	if fixtureGlyph(g.levels[1].terrain[position.Y][position.X]) != '<' {
 		t.Fatal("player did not start on an up stair")
 	}
 
@@ -161,11 +161,9 @@ func TestWalkingIntoClosedDoorOpensAndSavesIt(t *testing.T) {
 	g := newStepGame(t)
 	level := g.levels[1]
 
-	row := []byte(level.terrain[1])
-
-	row[2], row[3] = '+', '+'
-	level.terrain[1] = string(row)
-	level.remembered[1*level.width+4] = 0
+	level.terrain[1][2] = fixtureFeature('+')
+	level.terrain[1][3] = fixtureFeature('+')
+	level.remembered[1*level.width+4] = ""
 
 	if err := g.refreshVisibility(); err != nil {
 		t.Fatal(err)
@@ -185,7 +183,7 @@ func TestWalkingIntoClosedDoorOpensAndSavesIt(t *testing.T) {
 	if err != nil ||
 		result.Spent != 10 ||
 		result.View.PlayerX != 1 ||
-		level.terrain[1][2] != '\'' || level.terrain[1][3] != '\'' {
+		fixtureGlyph(level.terrain[1][2]) != '\'' || fixtureGlyph(level.terrain[1][3]) != '\'' {
 		t.Fatalf("opening by movement = %+v, %v", result, err)
 	}
 

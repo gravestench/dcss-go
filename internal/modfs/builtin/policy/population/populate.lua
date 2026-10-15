@@ -4,6 +4,10 @@ local roster = require("policy.population.roster")
 local catalog = require("policy.catalog")
 local abyss = require("policy.world.abyss")
 
+local function level_order(left, right)
+    return left.id < right.id
+end
+
 local function free_cells(ctx, level)
     local cells = {}
 
@@ -12,7 +16,7 @@ local function free_cells(ctx, level)
         for x = 0, level.width - 1 do
             local distance = math.max(math.abs(x - level.entry_x), math.abs(y - level.entry_y))
 
-            if ctx:cell(level.id, x, y) == "." and distance >= 5 and
+            if ctx:cell(level.id, x, y) == "DNGN_FLOOR" and distance >= 5 and
                 not ctx:actor_at(level.id, x, y) then
                 cells[#cells + 1] = { x = x, y = y }
             end
@@ -54,12 +58,12 @@ local function jackal_followers(ctx, level, leader, origin)
     return placed
 end
 
-local function populate_level(ctx, level, allowed)
+local function populate_level(ctx, level, allowed, scenario_id)
     if level.budget <= 0 then
         error("Dungeon:" .. level.id .. " has no population budget")
     end
 
-    local choices, total = pool.at_depth(level.id, allowed)
+    local choices, total = pool.at_depth(level.id, allowed, scenario_id)
 
     if total == 0 then
         error("Dungeon:" .. level.id .. " has no supported population")
@@ -129,42 +133,46 @@ local function floor_items(ctx, input)
     floor_potion(ctx, "POT_HASTE", 2, input.haste)
 end
 
+local module = {}
+
+function module.run(ctx, input)
+    local scenario_id = input.scenario_id
+    roster.allowed(scenario_id)
+
+    local counts = {}
+
+    if scenario_id == "fixed-dungeon-rat-quokka-lizard-v2" then
+        counts = fixture(ctx)
+    else
+        local allowed = roster.allowed(scenario_id)
+        local levels = input.levels or {}
+
+        table.sort(levels, level_order)
+
+        for _, level in ipairs(levels) do
+            if level.entry_x == nil or level.entry_y == nil or not level.width or
+                not level.height then
+                error("Dungeon:" .. tostring(level.id) .. " has no population entry")
+            end
+
+            local count = 0
+
+            if level.id ~= abyss.level_id then
+                count = populate_level(ctx, level, allowed, scenario_id)
+            end
+
+            counts[#counts + 1] = { id = level.id, count = count }
+        end
+    end
+
+    floor_items(ctx, input)
+
+    return { initial_actors = counts }
+end
+
 register.policy({
     id = "world.populate",
-    run = function(ctx, input)
-        local scenario_id = input.scenario_id
-        roster.allowed(scenario_id)
-
-        local counts = {}
-
-        if scenario_id == "fixed-dungeon-rat-quokka-lizard-v2" then
-            counts = fixture(ctx)
-        else
-            local allowed = roster.allowed(scenario_id)
-            local levels = input.levels or {}
-
-            table.sort(levels, function(left, right)
-                return left.id < right.id
-            end)
-
-            for _, level in ipairs(levels) do
-                if level.entry_x == nil or level.entry_y == nil or not level.width or
-                    not level.height then
-                    error("Dungeon:" .. tostring(level.id) .. " has no population entry")
-                end
-
-                local count = 0
-
-                if level.id ~= abyss.level_id then
-                    count = populate_level(ctx, level, allowed)
-                end
-
-                counts[#counts + 1] = { id = level.id, count = count }
-            end
-        end
-
-        floor_items(ctx, input)
-
-        return { initial_actors = counts }
-    end,
+    run = module.run,
 })
+
+return module

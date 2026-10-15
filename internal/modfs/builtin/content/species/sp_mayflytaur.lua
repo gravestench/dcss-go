@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/mayflytaur.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_MAYFLYTAUR",
     monster_id = "MONS_BUTTERFLY",
-    source_path = "crawl-ref/source/dat/species/mayflytaur.yaml",
     name = "Mayflytaur",
     short_name = "My",
     selectable = false,
@@ -188,3 +189,7 @@ register.species{
     size = "SIZE_MEDIUM",
     undead_type = "US_ALIVE",
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/gargoyle.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_GARGOYLE",
     monster_id = "MONS_GARGOYLE",
-    source_path = "crawl-ref/source/dat/species/gargoyle.yaml",
     name = "Gargoyle",
     short_name = "Gr",
     selectable = true,
@@ -193,3 +194,7 @@ register.species{
         "SK_STAVES",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

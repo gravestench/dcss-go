@@ -1,6 +1,8 @@
 local fighter = require("policy.combat.fighter")
 local player_attack = require("policy.combat.player_attack")
 local roll = require("policy.combat.roll")
+local statuses = require("policy.magic.effects.statuses.player")
+local forms = require("policy.magic.effects.forms.player")
 
 local melee = {}
 
@@ -8,8 +10,7 @@ function melee.player(ctx, input)
     return player_attack.resolve(ctx, input)
 end
 
-local function headbutt_damage(ctx, input)
-    local base = 5 + input.horns * 3
+local function auxiliary_damage(ctx, input, base)
     local potential = math.floor(base * math.max(2, 150 + 5 * input.strength) / 2 / 100)
     local damage = roll.melee(ctx, potential)
     local fighting = roll.melee(ctx, input.fighting100 + 1)
@@ -18,6 +19,9 @@ local function headbutt_damage(ctx, input)
     if input.mighty then
         damage = damage + 1 + roll.melee(ctx, 10)
     end
+
+    damage = damage + roll.melee(ctx,
+        statuses.wereblood_slay(ctx, ctx:player()) + 1)
 
     local saved = roll.armour(ctx, input.defender_ac)
 
@@ -29,18 +33,66 @@ function melee.headbutt_input(ctx, defender)
     local attributes = ctx:get(player, "core.attributes")
     local progress = ctx:get(player, "core.progression")
     local durations = ctx:get(player, "core.durations")
+    local form = forms.modifiers(ctx, player)
 
     return {
         level = progress.level,
         horns = fighter.mutation(ctx, "MUT_HORNS"),
+        hooves = fighter.mutation(ctx, "MUT_HOOVES"),
+        talons = fighter.mutation(ctx, "MUT_TALONS"),
+        tentacle_spike = fighter.mutation(ctx, "MUT_TENTACLE_SPIKE"),
         reflexive = fighter.mutation(ctx, "MUT_REFLEXIVE_HEADBUTT") > 0,
-        strength = attributes.strength,
-        dexterity = attributes.dexterity,
+        strength = attributes.strength + form.strength,
+        dexterity = attributes.dexterity + form.dexterity,
         fighting100 = fighter.skill(ctx, "SK_FIGHTING", 100),
         fighting30 = fighter.skill(ctx, "SK_FIGHTING", 30),
         defender_ev = defender.ev or 0,
         defender_ac = defender.ac or 0,
         mighty = durations and durations.might_aut > 0 or false,
+    }
+end
+
+-- Source: melee-attack.cc:AuxKick and player_aux_unarmed. The chance scales
+-- with XL; the contact and damage rolls share the headbutt aux path.
+function melee.auxiliary_kick(ctx, input)
+    local base
+    local verb
+
+    if input.hooves > 0 then
+        base = 5 + math.floor(input.hooves * 5 / 3)
+        verb = "kick"
+    elseif input.talons > 0 then
+        base = 6 + input.talons
+        verb = "claw"
+    elseif input.tentacle_spike > 0 then
+        base = 5 + input.tentacle_spike
+        verb = "pierce"
+    else
+        return { attempted = false }
+    end
+
+    local chance = math.floor(100 * (30 + input.level) / 59)
+
+    if roll.melee(ctx, 100) >= chance then
+        return { attempted = false }
+    end
+
+    local hit_base = math.floor((1300 + input.dexterity * 75 + input.fighting30) / 100)
+    local vertigo = statuses.vertigo_active(ctx, ctx:player()) and 5 or 0
+    local to_hit = roll.melee(ctx, hit_base - vertigo)
+    local auto_hit = roll.melee(ctx, 30)
+
+    if to_hit < input.defender_ev and auto_hit ~= 0 then
+        return { attempted = true, hit = false, verb = verb }
+    end
+
+    roll.melee(ctx, 15 + math.floor(to_hit / 2))
+
+    return {
+        attempted = true,
+        hit = true,
+        damage = auxiliary_damage(ctx, input, base),
+        verb = verb,
     }
 end
 
@@ -56,7 +108,8 @@ function melee.auxiliary_headbutt(ctx, input)
     end
 
     local hit_base = math.floor((1300 + input.dexterity * 75 + input.fighting30) / 100)
-    local to_hit = roll.melee(ctx, hit_base)
+    local vertigo = statuses.vertigo_active(ctx, ctx:player()) and 5 or 0
+    local to_hit = roll.melee(ctx, hit_base - vertigo)
     local auto_hit = roll.melee(ctx, 30)
 
     if to_hit < input.defender_ev and auto_hit ~= 0 then
@@ -68,7 +121,7 @@ function melee.auxiliary_headbutt(ctx, input)
     return {
         attempted = true,
         hit = true,
-        damage = headbutt_damage(ctx, input),
+        damage = auxiliary_damage(ctx, input, 5 + input.horns * 3),
     }
 end
 
@@ -84,7 +137,7 @@ function melee.reflexive_headbutt(ctx, input)
     return {
         attempted = true,
         hit = true,
-        damage = headbutt_damage(ctx, input),
+        damage = auxiliary_damage(ctx, input, 5 + input.horns * 3),
     }
 end
 

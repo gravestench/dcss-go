@@ -5,6 +5,45 @@ local route = require("policy.ai.route")
 local spell = require("policy.ai.spell")
 local ranged = require("policy.ai.ranged")
 local net = require("policy.combat.net")
+local enchant = require("policy.combat.monster_enchant")
+local confusion = require("policy.magic.effects.statuses.confusing_touch")
+local habitat = require("policy.combat.monster_habitat")
+local fear = require("policy.ai.fear")
+local targets = require("policy.ai.targets")
+local statuses = require("policy.magic.effects.statuses.player")
+
+local function choose_actor_target(ctx, entity, state, position)
+    local target = targets.nearest(ctx, entity, position, 7)
+    local attack_goal = target ~= nil
+
+    if not target then
+        if not targets.allied(ctx, entity) then
+            return nil
+        end
+
+        target = ctx:player()
+    end
+
+    local destination = ctx:get(target, "core.position")
+
+    if not destination or destination.level_id ~= position.level_id then
+        return state, { kind = 6 }
+    end
+
+    state.behavior = "seek"
+    state.target_x = destination.x
+    state.target_y = destination.y
+    state.memory_until_aut = ctx:aut() + 250
+
+    if not attack_goal and
+        math.max(math.abs(position.x - destination.x),
+            math.abs(position.y - destination.y)) <= 1 then
+        return state, { kind = 6 }
+    end
+
+    return state, route.follow(ctx, entity, state, position,
+        destination, target, attack_goal)
+end
 
 local function choose_intent(ctx, entity, state)
     local position = ctx:get(entity, "core.position")
@@ -28,7 +67,8 @@ local function choose_intent(ctx, entity, state)
         error("monster level " .. position.level_id .. " is missing")
     end
 
-    local player_visible = ctx:visible(
+    local player_visible = not enchant.blinded(ctx, entity) and
+        not statuses.enfeeble_blinded(ctx, entity) and ctx:visible(
         position.level_id,
         position.x,
         position.y,
@@ -92,53 +132,132 @@ local function choose_intent(ctx, entity, state)
     return state, intent
 end
 
+local system = {}
+
+function system.update(ctx, entity)
+    if not ctx:has(entity, "core.ai") then
+        return
+    end
+
+    local health = ctx:get(entity, "core.health")
+
+    if not health or health.current <= 0 then
+        return
+    end
+
+    local combat = ctx:get(entity, "core.combat")
+
+    if combat then
+        combat.shield_blocks = 0
+        ctx:set(entity, "core.combat", combat)
+    end
+
+    if ctx:has(entity, "core.intent") then
+        if ctx:has(entity, "magic.summon") then
+            return
+        end
+
+        error("monster " .. ctx:id(entity) .. " already has an intent")
+    end
+
+    local state = ctx:get(entity, "core.ai")
+
+    if not state then
+        error("monster " .. ctx:id(entity) .. " has no AI")
+    end
+
+    if ctx:has(entity, "zap.paralysis") then
+        ctx:add(entity, "core.intent", {
+            kind = 6,
+        })
+
+        return
+    end
+
+    if statuses.hibernating(ctx, entity) or
+        statuses.petrified(ctx, entity) then
+        ctx:add(entity, "core.intent", {
+            kind = 6,
+        })
+
+        return
+    end
+
+    if statuses.enfeeble_dazed(ctx, entity) then
+        ctx:add(entity, "core.intent", {
+            kind = 6,
+        })
+
+        return
+    end
+
+    local held = ctx:get(entity, "projectile.held")
+
+    if held then
+        net.struggle(ctx, entity, held)
+        ctx:add(entity, "core.intent", {
+            kind = 6,
+        })
+
+        return
+    end
+
+    if confusion.active(ctx, entity) then
+        local position = ctx:get(entity, "core.position")
+        local player_position = ctx:get(ctx:player(), "core.position")
+        local dx = ctx:random("ai", 3) - 1
+        local dy = ctx:random("ai", 3) - 1
+        local x = position.x + dx
+        local y = position.y + dy
+        local intent = { kind = 6 }
+
+        if x == player_position.x and y == player_position.y then
+            intent = { kind = 2, dx = dx, dy = dy }
+        elseif (dx ~= 0 or dy ~= 0) and
+            habitat.at(ctx, entity, position.level_id, x, y) and
+            not ctx:actor_at(position.level_id, x, y) then
+            intent = { kind = 1, dx = dx, dy = dy }
+        end
+
+        ctx:add(entity, "core.intent", intent)
+
+        return
+    end
+
+    if statuses.fear_active(ctx, entity) then
+        local position = ctx:get(entity, "core.position")
+        local player_position = ctx:get(ctx:player(), "core.position")
+        local intent = fear.flee(ctx, entity, position, player_position)
+
+        ctx:add(entity, "core.intent", intent)
+
+        return
+    end
+
+    if targets.allied(ctx, entity) or statuses.frenzied(ctx, entity) then
+        local next_state, intent = choose_actor_target(ctx, entity,
+            state, ctx:get(entity, "core.position"))
+
+        if next_state then
+            ctx:set(entity, "core.ai", next_state)
+            ctx:add(entity, "core.intent", intent)
+
+            return
+        end
+    end
+
+    local next_state, intent = choose_intent(ctx, entity, state)
+    ctx:set(entity, "core.ai", next_state)
+    ctx:add(entity, "core.intent", intent)
+end
+
 register.system({
     id = "monster.decision",
     scope = "active",
     query = {},
     after = { "monster.regeneration" },
     before = { "world.stairs" },
-    update = function(ctx, entity)
-        if not ctx:has(entity, "core.ai") then
-            return
-        end
-
-        local health = ctx:get(entity, "core.health")
-
-        if not health or health.current <= 0 then
-            return
-        end
-
-        local combat = ctx:get(entity, "core.combat")
-
-        if combat then
-            combat.shield_blocks = 0
-            ctx:set(entity, "core.combat", combat)
-        end
-
-        if ctx:has(entity, "core.intent") then
-            error("monster " .. ctx:id(entity) .. " already has an intent")
-        end
-
-        local state = ctx:get(entity, "core.ai")
-
-        if not state then
-            error("monster " .. ctx:id(entity) .. " has no AI")
-        end
-
-        local held = ctx:get(entity, "projectile.held")
-
-        if held then
-            net.struggle(ctx, entity, held)
-            ctx:add(entity, "core.intent", {
-                kind = 6,
-            })
-
-            return
-        end
-
-        local next_state, intent = choose_intent(ctx, entity, state)
-        ctx:set(entity, "core.ai", next_state)
-        ctx:add(entity, "core.intent", intent)
-    end,
+    update = system.update,
 })
+
+return system

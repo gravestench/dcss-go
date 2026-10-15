@@ -13,7 +13,7 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 			return fmt.Errorf("duplicate level %d", record.ID)
 		}
 
-		level, levelErr := NewLevel(record.ID, record.Rows, g.stores.Positions)
+		level, levelErr := NewLevel(record.ID, record.Cells, g.stores.Positions)
 
 		if levelErr != nil {
 			return levelErr
@@ -22,7 +22,7 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 		level.initialMonsters = record.InitialMonsters
 		level.initialActors = record.InitialActors
 
-		if knownErr := level.LoadKnownRows(record.Known); knownErr != nil {
+		if knownErr := level.LoadKnownCells(record.Known); knownErr != nil {
 			return knownErr
 		}
 
@@ -95,7 +95,7 @@ func scenarioLevelPolicyRecords(levels map[int]*Level) []any {
 
 		records = append(records, map[string]any{
 			"id":               id,
-			"rows":             level.terrain,
+			"cells":            level.Cells(),
 			"stairs":           stairs,
 			"initial_monsters": level.initialMonsters,
 			"initial_actors":   level.initialActors,

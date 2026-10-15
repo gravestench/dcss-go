@@ -6,6 +6,8 @@ import (
 	"math"
 	"time"
 
+	"dcrawl-go/internal/terrain"
+
 	"github.com/gravestench/akara"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -162,6 +164,17 @@ func (r *Runtime) policyValue(value any) (lua.LValue, error) {
 		}
 
 		return r.policyValue(entries)
+
+	case [][]terrain.ID:
+		rows := make([]any, len(typed))
+		for y, row := range typed {
+			cells := make([]any, len(row))
+			for x, feature := range row {
+				cells[x] = string(feature)
+			}
+			rows[y] = cells
+		}
+		return r.policyValue(rows)
 
 	default:
 		return nil, fmt.Errorf("unsupported policy value %T", value)

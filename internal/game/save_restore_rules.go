@@ -28,6 +28,8 @@ func (g *Game) validateSavedPlayer(
 		record.Magic == nil ||
 		record.PlayerTurn == nil ||
 		record.PlayerTurn.NextAut < 0 ||
+		record.PlayerTurn.Count < 0 ||
+		record.PlayerTurn.Count > record.PlayerTurn.NextAut ||
 		record.MonsterEnergy != nil {
 		return savedPlayerValidation{}, fmt.Errorf("invalid player entity %d", record.ID)
 	}

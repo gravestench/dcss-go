@@ -1,4 +1,6 @@
 local roll = require("policy.combat.roll")
+local forms = require("policy.magic.effects.forms.player")
+local statuses = require("policy.magic.effects.statuses.player")
 
 local player_attack = {}
 
@@ -43,7 +45,13 @@ end
 function player_attack.contact(ctx, input)
     local fighting = maybe_random_div(ctx, input.fighting100, 100)
     local weapon_skill = maybe_random_div(ctx, input.weapon100, 100)
-    local hit_base = 15 + math.floor(input.dexterity / 2) + fighting + weapon_skill
+    local hit_base = 15 + math.floor(input.dexterity / 2) + fighting +
+        weapon_skill + (input.slay or 0) + (input.hit_bonus or 0) +
+        statuses.confusing_touch_hit_bonus(ctx, ctx:player(), input.dexterity)
+
+    if statuses.vertigo_active(ctx, ctx:player()) then
+        hit_base = hit_base - 5
+    end
 
     if not input.using_weapon then
         hit_base = hit_base + 2
@@ -84,7 +92,8 @@ function player_attack.damage(ctx, input)
     local potential = input.weapon_damage
 
     if input.unarmed then
-        potential = 3 + math.floor(input.unarmed256 / 256)
+        potential = forms.unarmed_base(ctx, ctx:player()) +
+            math.floor(input.unarmed256 / 256)
         local remainder = input.unarmed256 % 256
 
         if remainder ~= 0 and roll.melee(ctx, 256) < remainder then
@@ -114,15 +123,18 @@ function player_attack.damage(ctx, input)
         damage = damage + 1 + roll.melee(ctx, 10)
     end
 
-    if input.weapon_plus >= 0 then
-        damage = damage + roll.melee(ctx, 1 + input.weapon_plus)
+    local slaying = input.weapon_plus + (input.slay or 0)
+
+    if slaying >= 0 then
+        damage = damage + roll.melee(ctx, 1 + slaying)
     else
-        damage = damage - roll.melee(ctx, 1 - input.weapon_plus)
+        damage = damage - roll.melee(ctx, 1 - slaying)
     end
 
     local saved = roll.armour(ctx, input.defender_ac)
 
-    return math.max(0, damage - saved)
+    return statuses.confusing_touch_damage(ctx, ctx:player(),
+        math.max(0, damage - saved))
 end
 
 function player_attack.resolve(ctx, input)

@@ -18,6 +18,10 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 		return m.routeInput("equipment_delay", key)
 	}
 
+	if m.game.View().LearningRemaining > 0 {
+		return m.routeInput("memorisation_delay", key)
+	}
+
 	if m.pendingDoor != 0 {
 		return m.routeInput("door", key)
 	}
@@ -26,26 +30,30 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 }
 
 var inputScreens = map[string]ScreenID{
-	"startup":    ScreenStartup,
-	"species":    ScreenSpecies,
-	"background": ScreenBackground,
-	"weapon":     ScreenWeapon,
-	"name":       ScreenName,
-	"play":       ScreenPlay,
-	"inventory":  ScreenInventory,
-	"skills":     ScreenSkills,
-	"help":       ScreenHelp,
-	"quaff":      ScreenQuaff,
-	"drop":       ScreenDrop,
-	"wield":      ScreenWield,
-	"throw":      ScreenThrow,
-	"wear":       ScreenWear,
-	"take_off":   ScreenTakeOff,
+	"startup":        ScreenStartup,
+	"species":        ScreenSpecies,
+	"background":     ScreenBackground,
+	"weapon":         ScreenWeapon,
+	"name":           ScreenName,
+	"play":           ScreenPlay,
+	"inventory":      ScreenInventory,
+	"skills":         ScreenSkills,
+	"help":           ScreenHelp,
+	"quaff":          ScreenQuaff,
+	"drop":           ScreenDrop,
+	"wield":          ScreenWield,
+	"throw":          ScreenThrow,
+	"wear":           ScreenWear,
+	"take_off":       ScreenTakeOff,
+	"spell_cast":     ScreenSpells,
+	"spell_force":    ScreenSpells,
+	"spell_memorise": ScreenSpells,
 }
 
 var gameInputActions = map[string]bool{
 	"aim":                true,
 	"cancel_equipment":   true,
+	"cancel_memorise":    true,
 	"change_skill":       true,
 	"choose_stat":        true,
 	"confirm":            true,
@@ -60,6 +68,7 @@ var gameInputActions = map[string]bool{
 	"move_aim":           true,
 	"save_exit":          true,
 	"step":               true,
+	"spell_step":         true,
 	"toggle_skill_focus": true,
 	"toggle_skill_mode":  true,
 }
@@ -120,10 +129,10 @@ func (m *AppModel) applyInputDecision(decision map[string]any) tea.Cmd {
 		return m.applyNavigationDecision(action, decision)
 
 	case "confirm", "save_exit", "cancel_equipment", "choose_stat",
-		"confirm_cancel", "confirm_accept":
+		"cancel_memorise", "confirm_cancel", "confirm_accept":
 		return m.applySessionDecision(action, decision)
 
-	case "aim", "door", "step":
+	case "aim", "door", "step", "spell_step":
 		return m.applyGameplayDecision(action, decision)
 
 	case "drop_quantity", "item_step":
@@ -176,6 +185,10 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 
 	if result.View.EquipmentDelay != nil && m.screen == ScreenPlay {
 		return m.nextEquipmentTick()
+	}
+
+	if result.View.LearningRemaining > 0 && m.screen == ScreenPlay {
+		return m.nextSpellTick()
 	}
 
 	return nil

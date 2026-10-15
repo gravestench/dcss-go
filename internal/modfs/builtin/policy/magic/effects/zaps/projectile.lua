@@ -1,0 +1,314 @@
+local component = require("constants.component")
+local catalog = require("policy.catalog")
+local defense = require("policy.combat.monster_defense")
+local equipment = require("policy.combat.equipment")
+local fighter = require("policy.combat.fighter")
+local magic_damage = require("policy.magic.damage")
+local monster_poison = require("policy.combat.monster_poison")
+local player_health = require("policy.combat.player_health")
+local spell_range = require("policy.magic.range")
+local registry = require("policy.magic.effects.registry")
+local trajectory = require("policy.combat.trajectory")
+
+local projectile = { specs = {} }
+
+local function random(ctx, bound)
+    if bound <= 1 then
+        return 0
+    end
+
+    return ctx:random("spell", bound)
+end
+
+local function dice(ctx, count, sides)
+    local total = 0
+
+    for _ = 1, count do
+        total = total + 1 + random(ctx, sides)
+    end
+
+    return total
+end
+
+local function damage_dice(ctx, spec, power)
+    local amount = spec.damage.base +
+        math.floor(power * spec.damage.numerator / spec.damage.denominator)
+
+    if spec.damage.kind == "calcdice" then
+        if amount <= spec.damage.count then
+            return math.max(0, amount), 1
+        end
+
+        local count = spec.damage.count
+        local sides = math.floor(amount / count)
+        local remainder = amount % count
+
+        if remainder > 0 and random(ctx, count) < remainder then
+            sides = sides + 1
+        end
+
+        return count, sides
+    end
+
+    return spec.damage.count, amount
+end
+
+local function shield_bonus(ctx, shield, definition)
+    local size = {
+        SIZE_LITTLE = 1,
+        SIZE_SMALL = 2,
+        SIZE_MEDIUM = 3,
+        SIZE_LARGE = 4,
+        SIZE_GIANT = 5,
+    }
+    local value = size[definition.size_id]
+
+    if not value then
+        error("unsupported monster shield body size " .. tostring(definition.size_id))
+    end
+
+    local base = (shield.definition.armour.ac + shield.item.plus * 2) * 2 +
+        (value - size.SIZE_MEDIUM) * (shield.definition.subtype_value - 14)
+    local bound = base + math.floor(definition.hd * 4 / 3)
+
+    if bound <= 0 then
+        return -100
+    end
+
+    return math.floor((random(ctx, bound) + random(ctx, bound + 1)) / 4)
+end
+
+local function blocked(ctx, target, definition, to_hit)
+    local shield = equipment.monster_shield(ctx, target)
+
+    if not shield then
+        return false
+    end
+
+    local bonus = shield_bonus(ctx, shield, definition)
+
+    if bonus <= 0 then
+        return false
+    end
+
+    local combat = ctx:get(target, component.COMBAT)
+    local bound = math.floor(to_hit * 130 / 100) +
+        4 * combat.shield_blocks * combat.shield_blocks
+
+    if random(ctx, bound) >= bonus then
+        return false
+    end
+
+    combat.shield_blocks = combat.shield_blocks + 1
+    ctx:set(target, component.COMBAT, combat)
+
+    return true
+end
+
+local function hit(ctx, spec, power, evasion)
+    if spec.auto_hit then
+        return true
+    end
+
+    local to_hit = spec.hit.base +
+        math.floor(power * spec.hit.numerator / spec.hit.denominator)
+    local random_ev = random(ctx, evasion)
+    local attack = random(ctx, to_hit)
+    local defense = math.floor((random(ctx, random_ev) +
+        random(ctx, random_ev + 1)) / 2)
+
+    return attack >= defense
+end
+
+local function armour(ctx, spec, target, definition)
+    local ac = defense.armour(ctx, target, definition)
+
+    if spec.ac_rule == "none" then
+        return 0
+    end
+
+    if spec.ac_rule == "triple" then
+        return random(ctx, ac + 1) + random(ctx, ac + 1) +
+            random(ctx, ac + 1)
+    end
+
+    if spec.ac_rule == "half" then
+        return math.floor(random(ctx, ac + 1) / 2)
+    end
+
+    return random(ctx, ac + 1)
+end
+
+local function poison_arrow_damage(raw, definition)
+    -- fight.cc:resist_adjust_damage: 70% of a poison arrow is resistible.
+    -- Poison is a boolean resistance, so monster rPois uses 2 + r*r.
+    local resistance = monster_poison.resistance(definition)
+    local resistible = math.floor(raw * 70 / 100)
+    local solid = raw - resistible
+
+    if resistance >= 3 then
+        resistible = 0
+    elseif resistance > 0 then
+        resistible = math.floor(resistible /
+            (2 + resistance * resistance))
+    elseif resistance < 0 then
+        resistible = math.floor(resistible * 3 / 2)
+    end
+
+    return solid + resistible, resistance
+end
+
+local function can_target(ctx, player, spell)
+    local source = ctx:get(player, component.POSITION)
+    local range = spell_range.for_spell(ctx, player, spell)
+
+    for _, target in ipairs(ctx:query({
+        component.ACTOR,
+        component.POSITION,
+        component.HEALTH,
+    })) do
+        if target ~= player then
+            local location = ctx:get(target, component.POSITION)
+            local health = ctx:get(target, component.HEALTH)
+            local distance = math.max(math.abs(location.x - source.x),
+                math.abs(location.y - source.y))
+
+            if health.current > 0 and
+                location.level_id == source.level_id and
+                distance <= range and
+                ctx:visible(source.level_id, source.x, source.y, range,
+                    location.x, location.y) and
+                ctx:projectile_clear(location.level_id, source.x, source.y,
+                    location.x, location.y) then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+local function resolve(ctx, player, intent, spell, spec, power)
+    local source = ctx:get(player, component.POSITION)
+    local range = spell_range.for_spell(ctx, player, spell)
+    local ray
+
+    if spec.bounce then
+        ray = trajectory.bouncing(ctx, source.level_id,
+            source.x, source.y,
+            source.x + intent.dx, source.y + intent.dy,
+            range, spec.bounce)
+    else
+        ray = trajectory.trace(ctx, source.level_id,
+            source.x, source.y,
+            source.x + intent.dx, source.y + intent.dy, range)
+    end
+
+    for _, contact in ipairs(ray.contacts) do
+        local target = contact.actor
+
+        if target == player then
+            local zap_power = math.min(power, spec.cap)
+            local count, sides = damage_dice(ctx, spec, zap_power)
+            local raw = dice(ctx, count, sides)
+
+            if hit(ctx, spec, zap_power, fighter.defense(ctx).ev) then
+                local after_ac = magic_damage.player_armour(ctx,
+                    player, raw, spec.ac_rule)
+                local amount = magic_damage.player_elemental(ctx,
+                    player, after_ac, spec.element)
+
+                player_health.damage(ctx, player, amount)
+                ctx:emit("spell", "The " .. spec.name .. " hits you.")
+            else
+                ctx:emit("spell", "The " .. spec.name .. " misses you.")
+            end
+
+        else
+            local actor = ctx:get(target, component.ACTOR)
+            local health = ctx:get(target, component.HEALTH)
+
+            if not actor or not health then
+                error(spec.name .. " struck an actor without health")
+            end
+
+            local definition = catalog.get("monsters", actor.kind_id)
+            local zap_power = math.min(power, spec.cap)
+            local count, sides = damage_dice(ctx, spec, zap_power)
+            local raw = dice(ctx, count, sides)
+            local amount = math.max(0, raw - armour(ctx, spec, target, definition))
+
+            local poison_resistance
+
+            if spec.poison_arrow then
+                amount, poison_resistance = poison_arrow_damage(amount, definition)
+            elseif spec.element then
+                amount = magic_damage.monster_elemental(ctx, target,
+                    amount, spec.element)
+            end
+            local to_hit = spec.hit.base +
+                math.floor(zap_power * spec.hit.numerator / spec.hit.denominator)
+
+            if not spec.beam and blocked(ctx, target, definition, to_hit) then
+                ctx:emit("spell", "The " .. definition.name .. " blocks the " .. spec.name .. ".")
+                return
+            elseif not hit(ctx, spec, zap_power,
+                defense.evasion(ctx, target, definition)) then
+                ctx:emit("spell", "The " .. spec.name .. " misses the " .. definition.name .. ".")
+            else
+                if spec.poison_arrow then
+                    local stacks = 1
+
+                    if poison_resistance > 0 then
+                        stacks = random(ctx, 2)
+                    end
+
+                    monster_poison.apply(ctx, target, definition, stacks,
+                        player, true)
+                end
+
+                local remaining = magic_damage.apply(ctx, target, amount)
+
+                if remaining > 0 and spec.after_hit then
+                    spec.after_hit(ctx, player, target, definition, amount)
+                end
+
+                ctx:emit("spell", "The " .. spec.name .. " hits the " .. definition.name .. ".")
+
+                if not spec.beam then
+                    return
+                end
+            end
+
+        end
+    end
+
+    if #ray.contacts == 0 then
+        ctx:emit("spell", "The " .. spec.name .. " dissipates.")
+    end
+end
+
+function projectile.fire(ctx, player, intent, spell, spec, power)
+    return resolve(ctx, player, intent, spell, spec, power)
+end
+
+function projectile.can_target(ctx, player, spell)
+    return can_target(ctx, player, spell)
+end
+
+function projectile.resolve(ctx, player, intent, spell, power)
+    local spec = projectile.specs[spell.id]
+
+    if not spec then
+        error("missing projectile specification for " .. spell.id)
+    end
+
+    return resolve(ctx, player, intent, spell, spec, power)
+end
+
+function projectile.register(id, spec)
+    projectile.specs[id] = spec
+    registry.add(id, projectile)
+end
+
+return projectile

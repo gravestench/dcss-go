@@ -1,5 +1,5 @@
 -- Numeric command kinds are the engine's stable intent envelope.
-return {
+local commands = {
     move = 1,
     upstairs = 2,
     downstairs = 3,
@@ -15,4 +15,10 @@ return {
     cancel_equipment = 15,
     fire = 16,
     throw = 17,
+    memorise = 18,
+    cancel_memorise = 19,
+    cast = 20,
+    force_cast = 21,
 }
+
+return commands

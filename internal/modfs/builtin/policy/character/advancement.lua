@@ -1,5 +1,7 @@
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
+local spell_records = require("policy.character.spell_records")
+local forms = require("policy.magic.effects.forms.player")
 
 local advancement = {}
 
@@ -44,7 +46,9 @@ function advancement.apply_level(ctx, actor, level, species)
 
     local drain = ctx:get(actor, "status.drain")
     local drain_loss = drain and drain.amount or 0
-    local next_hp = math.max(1, formulas.max_hp(level, species, skills.entries) - drain_loss)
+    local base_hp = math.max(1,
+        formulas.max_hp(level, species, skills.entries) - drain_loss)
+    local next_hp = forms.scale_hp(ctx, actor, base_hp)
     local next_mp = formulas.max_mp(level, species, skills.entries)
     local stat_frequency = species.levelup_stat_frequency
     local stat_options = type(species.levelup_stats) == "table" and species.levelup_stats or {}
@@ -69,6 +73,7 @@ function advancement.apply_level(ctx, actor, level, species)
     ctx:set(actor, "core.magic", magic)
     ctx:set(actor, "core.regeneration", regeneration)
     ctx:set(actor, "core.progression", progress)
+    spell_records.grant_scheduled(ctx, actor, level)
 
     local message = "You have reached level " .. level .. "!"
 
@@ -141,11 +146,13 @@ function advancement.choose_stat(ctx, actor, id)
     return { chosen = true }
 end
 
+function advancement.choose_stat_policy(ctx, input)
+    return advancement.choose_stat(ctx, ctx:player(), input.stat)
+end
+
 register.policy({
     id = "character.choose_stat",
-    run = function(ctx, input)
-        return advancement.choose_stat(ctx, ctx:player(), input.stat)
-    end,
+    run = advancement.choose_stat_policy,
 })
 
 return advancement

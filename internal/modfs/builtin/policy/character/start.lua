@@ -4,6 +4,7 @@ local wanderer = require("policy.character.wanderer")
 local traits = require("policy.character.traits")
 local innate_spells = require("policy.character.innate_spells")
 local starting_profile = require("policy.character.starting_profile")
+local spell_records = require("policy.character.spell_records")
 
 local start = {}
 
@@ -68,7 +69,7 @@ local function joined_mutations(species)
     return table.concat(values, ";")
 end
 
-local function origin(ctx, species, job, profile, generated)
+local function starting_state(ctx, species, job, profile, generated)
     local initial = {}
 
     for _, skill in ipairs(profile.skills) do
@@ -107,64 +108,71 @@ local function origin(ctx, species, job, profile, generated)
             ctx:random("character", 40) + ctx:random("character", 40))
     end
 
-    return {
+    local origin = {
         initial_skills = table.concat(initial, ";"),
         strength_bonus = profile.attributes.strength - species.strength - job.strength,
         intelligence_bonus = profile.attributes.intelligence - species.intelligence - job.intelligence,
         dexterity_bonus = profile.attributes.dexterity - species.dexterity - job.dexterity,
         innate_mutations = joined_mutations(species),
-        library_spells = table.concat(library, ";"),
-        memorized_spells = table.concat(memorized, ";"),
-        future_innate_spells = table.concat(future, ";"),
         religion = worship and worship.god or "GOD_NO_GOD",
         piety = worship and worship.piety or 0,
         gift_timeout = timeout,
     }
+
+    return origin, library, memorized, future
+end
+
+function start.run_start(ctx, input)
+    local player = ctx:player()
+    local species = catalog.get("species", input.species_id)
+    local job = catalog.get("jobs", input.job_id)
+    validate_weapon(species, job, input.weapon_id)
+    local generated = job.id == "JOB_WANDERER" and
+        wanderer.generate(ctx, species) or nil
+    local grants = generated and generated.equipment or nil
+    local weapon_skill = gear.give(ctx, player, species, job, input.weapon_id, grants)
+    local profile = starting_profile.build(ctx, species, job,
+        weapon_skill, generated)
+
+    ctx:add(player, "core.attributes", profile.attributes)
+    ctx:add(player, "core.skills", { entries = profile.skills })
+    ctx:add(player, "core.skill_training", profile.training)
+    ctx:add(player, "core.progression", { level = 1 })
+    ctx:add(player, "core.durations", {})
+    ctx:add(player, "core.regeneration", {})
+    ctx:add(player, "core.health", {
+        current = profile.max_hp,
+        max = profile.max_hp,
+    })
+    ctx:add(player, "core.magic", {
+        current = profile.max_mp,
+        max = profile.max_mp,
+    })
+    local origin, library, memorized, future = starting_state(
+        ctx, species, job, profile, generated)
+
+    ctx:add(player, "character.origin", origin)
+    spell_records.start(ctx, player, library, memorized, future)
+
+    return {}
 end
 
 register.policy({
     id = "character.start",
-    run = function(ctx, input)
-        local player = ctx:player()
-        local species = catalog.get("species", input.species_id)
-        local job = catalog.get("jobs", input.job_id)
-        validate_weapon(species, job, input.weapon_id)
-        local generated = job.id == "JOB_WANDERER" and
-            wanderer.generate(ctx, species) or nil
-        local grants = generated and generated.equipment or nil
-        local weapon_skill = gear.give(ctx, player, species, job, input.weapon_id, grants)
-        local profile = starting_profile.build(ctx, species, job,
-            weapon_skill, generated)
-
-        ctx:add(player, "core.attributes", profile.attributes)
-        ctx:add(player, "core.skills", { entries = profile.skills })
-        ctx:add(player, "core.skill_training", profile.training)
-        ctx:add(player, "core.progression", { level = 1 })
-        ctx:add(player, "core.durations", {})
-        ctx:add(player, "core.regeneration", {})
-        ctx:add(player, "core.health", {
-            current = profile.max_hp,
-            max = profile.max_hp,
-        })
-        ctx:add(player, "core.magic", {
-            current = profile.max_mp,
-            max = profile.max_mp,
-        })
-        ctx:add(player, "character.origin", origin(ctx, species, job, profile, generated))
-
-        return {}
-    end,
+    run = start.run_start,
 })
+
+function start.actor_speed(_, input)
+    catalog.get("species", input.species_id)
+
+    -- The source's base player action speed is 10 aut. Movement
+    -- modifiers are resolved by movement rules.
+    return { speed = 10 }
+end
 
 register.policy({
     id = "character.actor_speed",
-    run = function(_, input)
-        catalog.get("species", input.species_id)
-
-        -- The source's base player action speed is 10 aut. Movement
-        -- modifiers are resolved by movement rules.
-        return { speed = 10 }
-    end,
+    run = start.actor_speed,
 })
 
 return start

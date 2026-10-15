@@ -1,67 +1,30 @@
 -- Generated from a committed DCSS import. Refresh deliberately.
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/colour.h
+-- SHA-256: cefabc7e9cc171cc18a36be4da03bb06b56682209bbcf6ab39e7534976168141
 -- Source: crawl-ref/source/defines.h
+-- SHA-256: 86e3fd013a5129b6053f730298065c9ad403c52aeb395070f19efa8e9851f56c
 -- Source: crawl-ref/source/mon-data.h
+-- SHA-256: bc958bfc9109896e612132203d8118f72dc6268dc8444a4a5f8746c53547d723
 -- Source: crawl-ref/source/mon-enum.h
+-- SHA-256: 9753f72a8a16e4491efbb9a51091a5db51830c746596b27fae8c08942399c7b2
 -- Source: crawl-ref/source/mon-flags.h
+-- SHA-256: b34ea9524663351a9128a9f654c15c12a97a325b7863f0d5a8e68c309a912031
 -- Source: crawl-ref/source/mon-holy-type.h
+-- SHA-256: 9c26ad15563593c655c61b7270b45a772ab5b58bf474fb3498f18798332cdec2
 -- Source: crawl-ref/source/mon-mst.h
+-- SHA-256: d73ad1c8ad8fbd4c82a1f56847c193ffbdd41f617f1b77f98969a1e4fe98f800
 -- Source: crawl-ref/source/mon-util.h
+-- SHA-256: 00b485e079febfef5b0ea16ad1d23b1140977cecf9bd0799db2bc8523c702d04
 -- Source: crawl-ref/source/monster-type.h
+-- SHA-256: 5fd11afcb7c7acd729048a76a0706e9b4d1be4060d4d624d37b01afeb1eaed5a
 -- Source: crawl-ref/source/size-type.h
+-- SHA-256: 044e924bfc581721cef6ca0caaeee40f131cf4caf55d981d8f0cd92b8525955e
 -- Source: crawl-ref/source/tag-version.h
+-- SHA-256: 2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa
 
-return {
+local catalog = {
     schema_version = 1,
-    source_revision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
-    tag_major_version = 34,
-    source_files = {
-        {
-            path = "crawl-ref/source/colour.h",
-            sha256 = "cefabc7e9cc171cc18a36be4da03bb06b56682209bbcf6ab39e7534976168141",
-        },
-        {
-            path = "crawl-ref/source/defines.h",
-            sha256 = "86e3fd013a5129b6053f730298065c9ad403c52aeb395070f19efa8e9851f56c",
-        },
-        {
-            path = "crawl-ref/source/mon-data.h",
-            sha256 = "bc958bfc9109896e612132203d8118f72dc6268dc8444a4a5f8746c53547d723",
-        },
-        {
-            path = "crawl-ref/source/mon-enum.h",
-            sha256 = "9753f72a8a16e4491efbb9a51091a5db51830c746596b27fae8c08942399c7b2",
-        },
-        {
-            path = "crawl-ref/source/mon-flags.h",
-            sha256 = "b34ea9524663351a9128a9f654c15c12a97a325b7863f0d5a8e68c309a912031",
-        },
-        {
-            path = "crawl-ref/source/mon-holy-type.h",
-            sha256 = "9c26ad15563593c655c61b7270b45a772ab5b58bf474fb3498f18798332cdec2",
-        },
-        {
-            path = "crawl-ref/source/mon-mst.h",
-            sha256 = "d73ad1c8ad8fbd4c82a1f56847c193ffbdd41f617f1b77f98969a1e4fe98f800",
-        },
-        {
-            path = "crawl-ref/source/mon-util.h",
-            sha256 = "00b485e079febfef5b0ea16ad1d23b1140977cecf9bd0799db2bc8523c702d04",
-        },
-        {
-            path = "crawl-ref/source/monster-type.h",
-            sha256 = "5fd11afcb7c7acd729048a76a0706e9b4d1be4060d4d624d37b01afeb1eaed5a",
-        },
-        {
-            path = "crawl-ref/source/size-type.h",
-            sha256 = "044e924bfc581721cef6ca0caaeee40f131cf4caf55d981d8f0cd92b8525955e",
-        },
-        {
-            path = "crawl-ref/source/tag-version.h",
-            sha256 = "2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa",
-        },
-    },
     identities = {
         {
             id = "MONS_ABOMINATION_LARGE",
@@ -3519,3 +3482,5 @@ return {
         },
     },
 }
+
+return catalog

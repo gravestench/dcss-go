@@ -22,6 +22,7 @@ func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err err
 		"dy":       command.DY,
 		"item_id":  command.ItemID,
 		"quantity": command.Quantity,
+		"spell_id": command.SpellID,
 	})
 
 	if err != nil {
@@ -77,6 +78,7 @@ func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err err
 	}
 
 	intent.SpellID, _ = values["spell_id"].(string)
+	intent.Forced, _ = values["forced"].(bool)
 
 	cost, err := decisionInteger(decision, "cost")
 

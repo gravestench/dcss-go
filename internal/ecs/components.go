@@ -18,9 +18,10 @@ type Actor struct {
 	Speed  int
 }
 
-// PlayerTurn owns the next logical action time for the player.
+// PlayerTurn owns the player's logical action time and action count.
 type PlayerTurn struct {
 	NextAut int64
+	Count   int64
 }
 
 // MonsterEnergy is the source's speed_increment for one live monster.
@@ -189,6 +190,9 @@ const (
 	IntentWield
 	IntentSpell
 	IntentRanged
+	IntentMemorise
+	IntentPlayerSpell
+	IntentChannelWait
 )
 
 type Intent struct {
@@ -198,4 +202,5 @@ type Intent struct {
 	ItemID   akara.Entity
 	Quantity int
 	SpellID  string
+	Forced   bool
 }

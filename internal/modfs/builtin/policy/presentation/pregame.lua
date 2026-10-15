@@ -1,3 +1,5 @@
+local items = require("ids.items")
+local skills = require("ids.skills")
 local catalog = require("policy.catalog")
 local colors = require("policy.presentation.colors")
 local source = require("data.presentation")
@@ -235,9 +237,9 @@ local function weapon_rows(input, writes)
     write(writes, 1, 1, "Please select your starting weapon.", colors.light_grey)
 
     for index, option in ipairs(input.options) do
-        local aptitude = species.aptitudes.SK_UNARMED_COMBAT.value
+        local aptitude = species.aptitudes[skills.SK_UNARMED_COMBAT].value
 
-        if option.id ~= "WPN_UNARMED" then
+        if option.id ~= items.WPN_UNARMED then
             local item = catalog.get("items", option.id)
             aptitude = species.aptitudes[item.weapon_skill].value
         end
@@ -327,27 +329,33 @@ function pregame.rows(input)
     return { writes = writes, wraps = wraps }
 end
 
+function pregame.run_rows(_, input)
+    return pregame.rows(input)
+end
+
+function pregame.run_welcome(_, input)
+    return { text = pregame.welcome(input) }
+end
+
+function pregame.run_choice_color(_, input)
+    local fg, bg = choice_color(input.choice, input.focused, input.has_other)
+
+    return { fg = fg, bg = bg }
+end
+
 register.policy({
     id = "presentation.pregame",
-    run = function(_, input)
-        return pregame.rows(input)
-    end,
+    run = pregame.run_rows,
 })
 
 register.policy({
     id = "presentation.welcome",
-    run = function(_, input)
-        return { text = pregame.welcome(input) }
-    end,
+    run = pregame.run_welcome,
 })
 
 register.policy({
     id = "presentation.choice_color",
-    run = function(_, input)
-        local fg, bg = choice_color(input.choice, input.focused, input.has_other)
-
-        return { fg = fg, bg = bg }
-    end,
+    run = pregame.run_choice_color,
 })
 
 return pregame

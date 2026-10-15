@@ -3,7 +3,9 @@ package game
 import (
 	"fmt"
 
+	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/script"
+	"dcrawl-go/internal/terrain"
 	"dcrawl-go/internal/visibility"
 	"github.com/gravestench/akara"
 )
@@ -74,11 +76,21 @@ type scriptGrid struct {
 	levels map[int]*Level
 }
 
-func (grid scriptGrid) Cell(levelID, x, y int) (byte, bool) {
+func (grid scriptGrid) Size(levelID int) (int, int, bool) {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return 0, 0, false
+	}
+
+	return level.width, len(level.terrain), true
+}
+
+func (grid scriptGrid) Cell(levelID, x, y int) (terrain.ID, bool) {
 	level := grid.levels[levelID]
 
 	if level == nil || !level.inBounds(x, y) {
-		return 0, false
+		return terrain.Unseen, false
 	}
 
 	return level.terrain[y][x], true
@@ -156,14 +168,14 @@ func (grid scriptGrid) ProjectileClear(
 	return level != nil && level.ClearProjectilePath(fromX, fromY, toX, toY)
 }
 
-func (grid scriptGrid) SetCell(levelID, x, y int, glyph byte) error {
+func (grid scriptGrid) SetCell(levelID, x, y int, feature terrain.ID) error {
 	level := grid.levels[levelID]
 
 	if level == nil {
 		return fmt.Errorf("missing level %d", levelID)
 	}
 
-	return level.SetCell(x, y, glyph)
+	return level.SetCell(x, y, feature)
 }
 
 func (grid scriptGrid) MoveActor(entity akara.Entity, levelID, x, y int) error {
@@ -199,6 +211,87 @@ func (grid scriptGrid) MoveActor(entity akara.Entity, levelID, x, y int) error {
 		_ = from.PlaceActor(entity, oldX, oldY)
 
 		return err
+	}
+
+	return nil
+}
+
+// MoveActors validates the whole permutation before changing occupancy.
+// It supports cycles, such as a vortex rotating actors around its caster.
+func (grid scriptGrid) MoveActors(moves []script.ActorMove) error {
+	type destination struct {
+		levelID int
+		x       int
+		y       int
+	}
+
+	moving := make(map[akara.Entity]bool, len(moves))
+	occupied := make(map[destination]bool, len(moves))
+	positions := make(map[akara.Entity]*ecs.Position, len(moves))
+
+	for _, move := range moves {
+		level := grid.levels[move.LevelID]
+		next := destination{
+			levelID: move.LevelID,
+			x:       move.X,
+			y:       move.Y,
+		}
+
+		if level == nil || !level.Walkable(move.X, move.Y) ||
+			moving[move.Actor] || occupied[next] {
+			return fmt.Errorf("invalid simultaneous actor move %d", move.Actor)
+		}
+
+		position, found := level.positions.Get(move.Actor)
+
+		if !found {
+			return fmt.Errorf("actor %d has no position", move.Actor)
+		}
+
+		moving[move.Actor] = true
+		occupied[next] = true
+		positions[move.Actor] = position
+	}
+
+	for _, move := range moves {
+		position := positions[move.Actor]
+		from := grid.levels[position.LevelID]
+		to := grid.levels[move.LevelID]
+
+		if from == nil || from.actors[point{
+			x: position.X,
+			y: position.Y,
+		}] != move.Actor {
+			return fmt.Errorf("actor %d is not indexed", move.Actor)
+		}
+
+		if other, found := to.ActorAt(move.X, move.Y); found &&
+			!moving[other] {
+			return fmt.Errorf("actor %d destination is occupied", move.Actor)
+		}
+	}
+
+	for _, move := range moves {
+		position := positions[move.Actor]
+		from := grid.levels[position.LevelID]
+
+		delete(from.actors, point{
+			x: position.X,
+			y: position.Y,
+		})
+	}
+
+	for _, move := range moves {
+		position := positions[move.Actor]
+		to := grid.levels[move.LevelID]
+
+		position.LevelID = move.LevelID
+		position.X = move.X
+		position.Y = move.Y
+		to.actors[point{
+			x: move.X,
+			y: move.Y,
+		}] = move.Actor
 	}
 
 	return nil

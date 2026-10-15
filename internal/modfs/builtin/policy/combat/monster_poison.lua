@@ -36,8 +36,20 @@ local function duration(ctx, speed, degree)
     return math.max(15, raw + fuzz - low)
 end
 
-function poison.apply(ctx, monster, definition, levels, source)
-    if levels <= 0 or poison.resistance(definition) > 0 then
+function poison.apply(ctx, monster, definition, levels, source, force)
+    if levels <= 0 then
+        return false
+    end
+
+    -- mon-util.cc:monster_resists_this_poison. Forced poison can affect
+    -- partially resistant monsters, while rPois 3 remains immune.
+    local resistance = poison.resistance(definition)
+
+    if resistance >= 3 then
+        return false
+    end
+
+    if not force and resistance >= 1 and roll.melee(ctx, 3) < 2 then
         return false
     end
 

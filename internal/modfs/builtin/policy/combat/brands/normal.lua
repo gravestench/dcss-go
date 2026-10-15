@@ -1,4 +1,6 @@
-return {
-    apply = function()
-    end,
-}
+local brand = {}
+
+function brand.apply()
+end
+
+return brand

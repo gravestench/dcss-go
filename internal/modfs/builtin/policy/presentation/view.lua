@@ -1,3 +1,4 @@
+local items = require("ids.items")
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
 local fighter = require("policy.combat.fighter")
@@ -88,9 +89,9 @@ function view.entity_color(input)
     end
 
     if input.role == "item" then
-        if input.kind_id == "CORPSE_BODY" then
+        if input.kind_id == items.CORPSE_BODY then
             return { fg = colors.brown }
-        elseif input.kind_id == "CORPSE_SKELETON" then
+        elseif input.kind_id == items.CORPSE_SKELETON then
             return { fg = colors.light_grey }
         end
 
@@ -100,32 +101,45 @@ function view.entity_color(input)
     return { fg = colors.light_grey }
 end
 
-local function install(name, run)
-    register.policy({
-        id = name,
-        run = function(_, input)
-            return run(input)
-        end,
-    })
+function view.run_player(_, input)
+    return view.player(input)
 end
 
-install("presentation.player", view.player)
-install("presentation.entity", view.entity)
-install("presentation.inventory_item", view.inventory_item)
-install("presentation.terrain_color", view.terrain_color)
-install("presentation.entity_color", view.entity_color)
+function view.run_entity(_, input)
+    return view.entity(input)
+end
+
+function view.run_inventory_item(_, input)
+    return view.inventory_item(input)
+end
+
+function view.run_terrain_color(_, input)
+    return view.terrain_color(input)
+end
+
+function view.run_entity_color(_, input)
+    return view.entity_color(input)
+end
+
+function view.run_defense(ctx)
+    local defense = fighter.defense(ctx)
+
+    return {
+        ac = defense.ac,
+        ev = defense.ev,
+        sh = math.floor(defense.shield_class / 2),
+    }
+end
+
+register.policy({ id = "presentation.player", run = view.run_player })
+register.policy({ id = "presentation.entity", run = view.run_entity })
+register.policy({ id = "presentation.inventory_item", run = view.run_inventory_item })
+register.policy({ id = "presentation.terrain_color", run = view.run_terrain_color })
+register.policy({ id = "presentation.entity_color", run = view.run_entity_color })
 
 register.policy({
     id = "presentation.defense",
-    run = function(ctx)
-        local defense = fighter.defense(ctx)
-
-        return {
-            ac = defense.ac,
-            ev = defense.ev,
-            sh = math.floor(defense.shield_class / 2),
-        }
-    end,
+    run = view.run_defense,
 })
 
 return view

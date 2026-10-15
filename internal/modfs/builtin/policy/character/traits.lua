@@ -2,16 +2,17 @@
 -- Fake mutations such as Formicid stasis are gameplay rules, not HUD text.
 local traits = {}
 
-function traits.mutation_level(species, id)
-    local level = 0
+function traits.mutation_level(species, id, level)
+    local amount = 0
+    local current_level = level or 1
 
     for _, mutation in ipairs(species.mutations or {}) do
-        if mutation.id == id and mutation.level <= 1 then
-            level = level + mutation.amount
+        if mutation.id == id and mutation.level <= current_level then
+            amount = amount + mutation.amount
         end
     end
 
-    return level
+    return amount
 end
 
 function traits.stasis(species)

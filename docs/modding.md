@@ -1,15 +1,17 @@
-# Lua mods: current runtime API
+# Lua mods: discoverable files
 
 DCrawl embeds its Lua rules under `internal/modfs/builtin/`. Run with
 `--mod-dir=/path/to/mod` to replace a bundled file with a file at the same
 relative path, or to add a file. The effective tree is loaded once per game
 session. Changes to files on disk take effect when a new session starts.
+The mod directory can contain just one Lua file; no manifest, copied base
+tree, or generated registry is required.
 Lua source lives in `.lua` files in this tree and in test mod directories;
 Go source does not contain inline Lua programs.
 
 The bundled `init.lua` loads `schemas/`, `content/`, `policy/`, `systems/`,
-`generation/`, and `ui/` in that order. Paths within each tree load in sorted order. A new
-file under one of these directories is discovered automatically. Put helpers
+`generation/`, and `ui/` in that order. Paths within each tree load in sorted
+order. A new file under one of these directories is discovered automatically. Put helpers
 under `lib/` and load them with `require("lib.helper")`. `require` reads the
 effective embedded-plus-overlay tree; it cannot read arbitrary disk files.
 
@@ -18,7 +20,7 @@ effective embedded-plus-overlay tree; it cannot read arbitrary disk files.
 A file such as `schemas/turn_counter.lua` may register a component:
 
 ```lua
-register.component{
+local schema = {
     id = "my_mod.turn_counter",
     version = 1,
     fields = {
@@ -28,6 +30,10 @@ register.component{
         },
     },
 }
+
+register.component(schema)
+
+return schema
 ```
 
 IDs must be unique. Field types currently supported by Akara's dynamic
@@ -41,19 +47,25 @@ handles, not numeric IDs. Registered dynamic components are included in saves.
 A file such as `systems/turn_counter.lua` may register a system:
 
 ```lua
-register.system{
+local system = {}
+
+function system.update(ctx, entity, delta)
+    local turns = ctx:get(entity, "my_mod.turn_counter")
+
+    ctx:set(entity, "my_mod.turn_counter", {
+        count = turns.count + 1,
+    })
+end
+
+register.system({
     id = "my_mod.count_turns",
     scope = "active",
     after = { "status.poison" },
     query = { "my_mod.turn_counter" },
-    update = function(ctx, entity, delta)
-        local turns = ctx:get(entity, "my_mod.turn_counter")
+    update = system.update,
+})
 
-        ctx:set(entity, "my_mod.turn_counter", {
-            count = turns.count + 1,
-        })
-    end,
-}
+return system
 ```
 
 `scope = "all"` is the default and visits matching entities in Akara's
@@ -82,16 +94,92 @@ Bootstrap has a five-second execution deadline and each system callback has
 a two-second deadline. A looping or unusually slow Lua file fails with an
 error instead of freezing the client.
 
-Component CRUD currently reaches Lua-registered dynamic components. The
-existing Go-defined components, grids, most content domains, and command
-handlers still use their Go APIs. Later domain migrations will expose the
-reusable host services those Lua rules require.
+The runtime also exposes the Go engine's existing components and grid through
+`core.*` component names and context methods. Game behavior is moving into
+Lua rules while Go retains generic ECS, VFS, save, and terminal services.
+
+## Content files
+
+Put one definition in one file below `content/<category>/`. The recognized
+base categories are `species`, `jobs`, `monsters`, `spells`, `items`,
+`branches`, and `monster_spellbooks`. The registration API accepts additional
+category names for mod-defined catalogs. For example,
+`content/monsters/my_moss.lua` can contain:
+
+```lua
+local categories = require("constants.catalog")
+
+local definition = {
+    id = "MY_MOD_MOSS",
+    name = "moss creature",
+    status = "defined",
+    habitat_id = "HT_LAND",
+    spellbook_id = "MST_NO_SPELLS",
+    average_hp_10x = 25,
+    speed = 10,
+    hd = 1,
+    attacks = {
+        {
+            type_id = "AT_BITE",
+            flavour_id = "AF_PLAIN",
+            damage = 3,
+        },
+    },
+    energy = {
+        move = 10,
+        swim = 10,
+        attack = 10,
+        missile = 10,
+        spell = 10,
+        special = 10,
+        item = 10,
+    },
+    population = {
+        {
+            scenario_id = "generated-dungeon-basic-v1",
+            min_depth = 1,
+            max_depth = 3,
+            rarity = 1000,
+            curve = "FLAT",
+        },
+    },
+}
+
+register.definition(categories.MONSTERS, definition)
+
+return definition
+```
+
+The file is loaded automatically. Its population entry puts the monster into
+the generated Dungeon roster without editing a central list. The example
+uses the current basic monster behavior and combat rules. Invalid spawn data
+fails at startup with the content path and field name.
+
+A rule imports `constants.catalog`,
+`ids.monsters`, and `policy.catalog` where needed, then reads it with
+`catalog.get(categories.MONSTERS, monsters.MY_MOD_MOSS)`. The ID module
+reflects added files; no generated index needs editing. A spell,
+item, branch, or monster spellbook uses the same form in its directory.
+Unique items are item definitions with a stable unique ID and the required
+item fields. A new item class appears in `ids.object_classes`.
+
+Definitions supply facts. A spell with a new effect needs a Lua effect or
+system file. Existing engine paths still
+support only the domain mechanics already ported, so a registered definition
+alone does not make every new behavior playable. Keep each behavior in its
+own discoverable `policy/` or `systems/` file.
+
+The effective tree is sorted by path. A file at the same relative path as a
+bundled file replaces it before Lua starts. A new path adds a definition.
+Registering the same category and ID from two effective paths fails at
+startup and names both paths. Generated base filenames contain an order
+prefix, which preserves source ordering for selection rules.
 
 ## Character definitions and choices
 
 The embedded `content/species/` and `content/jobs/` trees contain one Lua file
-per pinned species and job. Each calls `register.species{...}` or
-`register.job{...}` with the full source-traced definition. Replace a file at
+per pinned species and job. Each calls `register.definition` with a local
+table. Replace a file at
 the same path in your mod directory to edit that definition. New files in
 either tree load in sorted path order. Duplicate IDs, invalid fields, and
 missing required definitions stop startup with an error. The species and job
@@ -118,6 +206,9 @@ also requires its gameplay rules and equipment behavior to be implemented.
 character Lua files with the pinned importer artifacts. Run the generator
 without `--check` only for an intentional upstream refresh, then review and
 commit its output. Normal builds and game launches do not run the generator.
+`python3 scripts/export-catalog-lua.py --check` checks the other committed
+content files. The JSON importer artifacts are offline refresh inputs and
+are not loaded by Lua at game startup.
 
 ## Saves and identity
 

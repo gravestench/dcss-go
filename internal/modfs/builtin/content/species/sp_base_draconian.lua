@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/draconian-base.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_BASE_DRACONIAN",
     monster_id = "MONS_DRACONIAN",
-    source_path = "crawl-ref/source/dat/species/draconian-base.yaml",
     name = "Draconian",
     short_name = "Dr",
     selectable = true,
@@ -170,3 +171,7 @@ register.species{
         "SK_RANGED_WEAPONS",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

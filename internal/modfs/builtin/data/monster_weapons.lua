@@ -1,25 +1,16 @@
 -- Generated from a committed DCSS import. Refresh deliberately.
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/mon-gear.cc
+-- SHA-256: f46190735b99a7c0f1a2aaa07ac378fc6a900766399f541ceb5f4ef33e46a4e1
 -- Source: crawl-ref/source/tag-version.h
+-- SHA-256: 2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa
 
-return {
+local catalog = {
     schema_version = 1,
-    source_revision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
-    source_files = {
-        {
-            path = "crawl-ref/source/mon-gear.cc",
-            sha256 = "f46190735b99a7c0f1a2aaa07ac378fc6a900766399f541ceb5f4ef33e46a4e1",
-        },
-        {
-            path = "crawl-ref/source/tag-version.h",
-            sha256 = "2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa",
-        },
-    },
     primary = {
+        -- Source line: 429
         {
             monster_id = "MONS_ROBIN",
-            source_line = 429,
             spec_line = 430,
             weapon_list_line = 430,
             brand_list_line = 0,
@@ -66,9 +57,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 439
         {
             monster_id = "MONS_GOBLIN",
-            source_line = 439,
             spec_line = 439,
             weapon_list_line = 293,
             brand_list_line = 0,
@@ -91,9 +82,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 440
         {
             monster_id = "MONS_JESSICA",
-            source_line = 440,
             spec_line = 440,
             weapon_list_line = 293,
             brand_list_line = 0,
@@ -116,9 +107,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 441
         {
             monster_id = "MONS_IJYB",
-            source_line = 441,
             spec_line = 441,
             weapon_list_line = 293,
             brand_list_line = 0,
@@ -141,9 +132,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 442
         {
             monster_id = "MONS_WIGHT",
-            source_line = 442,
             spec_line = 443,
             weapon_list_line = 443,
             brand_list_line = 0,
@@ -222,9 +213,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 460
         {
             monster_id = "MONS_EDMUND",
-            source_line = 460,
             spec_line = 461,
             weapon_list_line = 461,
             brand_list_line = 463,
@@ -248,9 +239,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 464
         {
             monster_id = "MONS_DEATH_KNIGHT",
-            source_line = 464,
             spec_line = 465,
             weapon_list_line = 465,
             brand_list_line = 0,
@@ -293,9 +284,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 473
         {
             monster_id = "MONS_GNOLL",
-            source_line = 473,
             spec_line = 473,
             weapon_list_line = 296,
             brand_list_line = 0,
@@ -330,9 +321,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 474
         {
             monster_id = "MONS_OGRE_MAGE",
-            source_line = 474,
             spec_line = 474,
             weapon_list_line = 296,
             brand_list_line = 0,
@@ -367,9 +358,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 475
         {
             monster_id = "MONS_NAGA_MAGE",
-            source_line = 475,
             spec_line = 475,
             weapon_list_line = 296,
             brand_list_line = 0,
@@ -404,9 +395,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 476
         {
             monster_id = "MONS_NAGARAJA",
-            source_line = 476,
             spec_line = 476,
             weapon_list_line = 296,
             brand_list_line = 0,
@@ -441,9 +432,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 477
         {
             monster_id = "MONS_GNOLL_BOUDA",
-            source_line = 477,
             spec_line = 478,
             weapon_list_line = 478,
             brand_list_line = 0,
@@ -466,9 +457,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 481
         {
             monster_id = "MONS_GNOLL_SERGEANT",
-            source_line = 481,
             spec_line = 482,
             weapon_list_line = 482,
             brand_list_line = 484,
@@ -492,9 +483,9 @@ return {
             },
             good_chance = 3,
         },
+        -- Source line: 485
         {
             monster_id = "MONS_PIKEL",
-            source_line = 485,
             spec_line = 485,
             weapon_list_line = 485,
             brand_list_line = 485,
@@ -526,9 +517,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 490
         {
             monster_id = "MONS_GRUM",
-            source_line = 490,
             spec_line = 491,
             weapon_list_line = 491,
             brand_list_line = 0,
@@ -555,9 +546,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 495
         {
             monster_id = "MONS_GRUNN",
-            source_line = 495,
             spec_line = 496,
             weapon_list_line = 496,
             brand_list_line = 498,
@@ -585,9 +576,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 499
         {
             monster_id = "MONS_CRAZY_YIUF",
-            source_line = 499,
             spec_line = 500,
             weapon_list_line = 500,
             brand_list_line = 502,
@@ -611,9 +602,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 503
         {
             monster_id = "MONS_JOSEPH",
-            source_line = 503,
             spec_line = 503,
             weapon_list_line = 503,
             brand_list_line = 0,
@@ -632,9 +623,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 504
         {
             monster_id = "MONS_SPRIGGAN_DRUID",
-            source_line = 504,
             spec_line = 504,
             weapon_list_line = 504,
             brand_list_line = 0,
@@ -653,9 +644,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 505
         {
             monster_id = "MONS_BAI_SUZHEN",
-            source_line = 505,
             spec_line = 505,
             weapon_list_line = 505,
             brand_list_line = 0,
@@ -674,9 +665,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 506
         {
             monster_id = "MONS_ORC",
-            source_line = 506,
             spec_line = 506,
             weapon_list_line = 302,
             brand_list_line = 0,
@@ -735,9 +726,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 507
         {
             monster_id = "MONS_ORC_PRIEST",
-            source_line = 507,
             spec_line = 507,
             weapon_list_line = 302,
             brand_list_line = 0,
@@ -796,9 +787,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 508
         {
             monster_id = "MONS_DRACONIAN",
-            source_line = 508,
             spec_line = 508,
             weapon_list_line = 302,
             brand_list_line = 0,
@@ -857,9 +848,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 509
         {
             monster_id = "MONS_TERENCE",
-            source_line = 509,
             spec_line = 510,
             weapon_list_line = 510,
             brand_list_line = 0,
@@ -902,9 +893,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 518
         {
             monster_id = "MONS_DUVESSA",
-            source_line = 518,
             spec_line = 519,
             weapon_list_line = 519,
             brand_list_line = 0,
@@ -927,9 +918,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 522
         {
             monster_id = "MONS_ASTERION",
-            source_line = 522,
             spec_line = 522,
             weapon_list_line = 523,
             brand_list_line = 528,
@@ -965,9 +956,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 530
         {
             monster_id = "MONS_AMAEMON",
-            source_line = 530,
             spec_line = 530,
             weapon_list_line = 531,
             brand_list_line = 532,
@@ -991,9 +982,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 533
         {
             monster_id = "MONS_MARA",
-            source_line = 533,
             spec_line = 534,
             weapon_list_line = 534,
             brand_list_line = 537,
@@ -1021,9 +1012,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 538
         {
             monster_id = "MONS_RAKSHASA",
-            source_line = 538,
             spec_line = 539,
             weapon_list_line = 539,
             brand_list_line = 0,
@@ -1050,9 +1041,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 543
         {
             monster_id = "MONS_DEEP_ELF_KNIGHT",
-            source_line = 543,
             spec_line = 543,
             weapon_list_line = 314,
             brand_list_line = 0,
@@ -1087,9 +1078,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 544
         {
             monster_id = "MONS_DEEP_ELF_HIGH_PRIEST",
-            source_line = 544,
             spec_line = 544,
             weapon_list_line = 314,
             brand_list_line = 0,
@@ -1124,9 +1115,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 545
         {
             monster_id = "MONS_DEEP_ELF_BLADEMASTER",
-            source_line = 545,
             spec_line = 546,
             weapon_list_line = 546,
             brand_list_line = 0,
@@ -1153,9 +1144,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 550
         {
             monster_id = "MONS_DEEP_ELF_ARCHER",
-            source_line = 550,
             spec_line = 551,
             weapon_list_line = 551,
             brand_list_line = 0,
@@ -1178,9 +1169,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 554
         {
             monster_id = "MONS_DEEP_ELF_MASTER_ARCHER",
-            source_line = 554,
             spec_line = 554,
             weapon_list_line = 554,
             brand_list_line = 0,
@@ -1199,9 +1190,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 555
         {
             monster_id = "MONS_DEEP_ELF_AIR_MAGE",
-            source_line = 555,
             spec_line = 555,
             weapon_list_line = 320,
             brand_list_line = 0,
@@ -1232,9 +1223,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 556
         {
             monster_id = "MONS_DEEP_ELF_FIRE_MAGE",
-            source_line = 556,
             spec_line = 556,
             weapon_list_line = 320,
             brand_list_line = 0,
@@ -1265,9 +1256,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 557
         {
             monster_id = "MONS_DEEP_ELF_ANNIHILATOR",
-            source_line = 557,
             spec_line = 557,
             weapon_list_line = 320,
             brand_list_line = 0,
@@ -1298,9 +1289,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 558
         {
             monster_id = "MONS_DEEP_ELF_DEATH_MAGE",
-            source_line = 558,
             spec_line = 558,
             weapon_list_line = 320,
             brand_list_line = 0,
@@ -1331,9 +1322,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 559
         {
             monster_id = "MONS_DEEP_ELF_DEMONOLOGIST",
-            source_line = 559,
             spec_line = 559,
             weapon_list_line = 320,
             brand_list_line = 0,
@@ -1364,9 +1355,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 560
         {
             monster_id = "MONS_DEEP_ELF_SORCERER",
-            source_line = 560,
             spec_line = 560,
             weapon_list_line = 320,
             brand_list_line = 0,
@@ -1397,9 +1388,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 561
         {
             monster_id = "MONS_DEEP_ELF_ELEMENTALIST",
-            source_line = 561,
             spec_line = 561,
             weapon_list_line = 320,
             brand_list_line = 0,
@@ -1430,9 +1421,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 562
         {
             monster_id = "MONS_DRACONIAN_SHIFTER",
-            source_line = 562,
             spec_line = 562,
             weapon_list_line = 325,
             brand_list_line = 0,
@@ -1467,9 +1458,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 563
         {
             monster_id = "MONS_DRACONIAN_SCORCHER",
-            source_line = 563,
             spec_line = 563,
             weapon_list_line = 325,
             brand_list_line = 0,
@@ -1504,9 +1495,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 564
         {
             monster_id = "MONS_DRACONIAN_ANNIHILATOR",
-            source_line = 564,
             spec_line = 564,
             weapon_list_line = 325,
             brand_list_line = 0,
@@ -1541,9 +1532,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 565
         {
             monster_id = "MONS_DRACONIAN_STORMCALLER",
-            source_line = 565,
             spec_line = 565,
             weapon_list_line = 325,
             brand_list_line = 0,
@@ -1578,9 +1569,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 566
         {
             monster_id = "MONS_RAGGED_HIEROPHANT",
-            source_line = 566,
             spec_line = 566,
             weapon_list_line = 325,
             brand_list_line = 0,
@@ -1615,9 +1606,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 567
         {
             monster_id = "MONS_VASHNIA",
-            source_line = 567,
             spec_line = 567,
             weapon_list_line = 331,
             brand_list_line = 567,
@@ -1689,9 +1680,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 568
         {
             monster_id = "MONS_NAGA_SHARPSHOOTER",
-            source_line = 568,
             spec_line = 568,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -1762,9 +1753,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 569
         {
             monster_id = "MONS_NAGA",
-            source_line = 569,
             spec_line = 569,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -1835,9 +1826,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 570
         {
             monster_id = "MONS_NAGA_WARRIOR",
-            source_line = 570,
             spec_line = 570,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -1908,9 +1899,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 571
         {
             monster_id = "MONS_ORC_WARRIOR",
-            source_line = 571,
             spec_line = 571,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -1981,9 +1972,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 572
         {
             monster_id = "MONS_ORC_HIGH_PRIEST",
-            source_line = 572,
             spec_line = 572,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2054,9 +2045,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 573
         {
             monster_id = "MONS_BLORK_THE_ORC",
-            source_line = 573,
             spec_line = 573,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2127,9 +2118,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 574
         {
             monster_id = "MONS_DANCING_WEAPON",
-            source_line = 574,
             spec_line = 574,
             weapon_list_line = 331,
             brand_list_line = 574,
@@ -2201,9 +2192,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 575
         {
             monster_id = "MONS_SPECTRAL_WEAPON",
-            source_line = 575,
             spec_line = 575,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2274,9 +2265,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 576
         {
             monster_id = "MONS_FRANCES",
-            source_line = 576,
             spec_line = 576,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2347,9 +2338,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 577
         {
             monster_id = "MONS_HAROLD",
-            source_line = 577,
             spec_line = 577,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2420,9 +2411,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 578
         {
             monster_id = "MONS_SKELETAL_WARRIOR",
-            source_line = 578,
             spec_line = 578,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2493,9 +2484,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 579
         {
             monster_id = "MONS_PALE_DRACONIAN",
-            source_line = 579,
             spec_line = 579,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2566,9 +2557,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 580
         {
             monster_id = "MONS_RED_DRACONIAN",
-            source_line = 580,
             spec_line = 580,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2639,9 +2630,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 581
         {
             monster_id = "MONS_WHITE_DRACONIAN",
-            source_line = 581,
             spec_line = 581,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2712,9 +2703,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 582
         {
             monster_id = "MONS_GREEN_DRACONIAN",
-            source_line = 582,
             spec_line = 582,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2785,9 +2776,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 583
         {
             monster_id = "MONS_BLACK_DRACONIAN",
-            source_line = 583,
             spec_line = 583,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2858,9 +2849,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 584
         {
             monster_id = "MONS_YELLOW_DRACONIAN",
-            source_line = 584,
             spec_line = 584,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -2931,9 +2922,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 585
         {
             monster_id = "MONS_PURPLE_DRACONIAN",
-            source_line = 585,
             spec_line = 585,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -3004,9 +2995,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 586
         {
             monster_id = "MONS_GREY_DRACONIAN",
-            source_line = 586,
             spec_line = 586,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -3077,9 +3068,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 587
         {
             monster_id = "MONS_TENGU",
-            source_line = 587,
             spec_line = 587,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -3150,9 +3141,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 588
         {
             monster_id = "MONS_NAGA_RITUALIST",
-            source_line = 588,
             spec_line = 588,
             weapon_list_line = 331,
             brand_list_line = 0,
@@ -3223,9 +3214,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 589
         {
             monster_id = "MONS_TIAMAT",
-            source_line = 589,
             spec_line = 590,
             weapon_list_line = 590,
             brand_list_line = 593,
@@ -3253,9 +3244,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 594
         {
             monster_id = "MONS_RUPERT",
-            source_line = 594,
             spec_line = 597,
             weapon_list_line = 597,
             brand_list_line = 602,
@@ -3291,9 +3282,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 603
         {
             monster_id = "MONS_TENGU_REAVER",
-            source_line = 603,
             spec_line = 359,
             weapon_list_line = 346,
             brand_list_line = 359,
@@ -3349,9 +3340,9 @@ return {
             },
             good_chance = 3,
         },
+        -- Source line: 604
         {
             monster_id = "MONS_VAULT_WARDEN",
-            source_line = 604,
             spec_line = 359,
             weapon_list_line = 346,
             brand_list_line = 359,
@@ -3407,9 +3398,9 @@ return {
             },
             good_chance = 3,
         },
+        -- Source line: 605
         {
             monster_id = "MONS_ORC_WARLORD",
-            source_line = 605,
             spec_line = 359,
             weapon_list_line = 346,
             brand_list_line = 359,
@@ -3465,9 +3456,9 @@ return {
             },
             good_chance = 3,
         },
+        -- Source line: 606
         {
             monster_id = "MONS_SAINT_ROKA",
-            source_line = 606,
             spec_line = 359,
             weapon_list_line = 346,
             brand_list_line = 359,
@@ -3523,9 +3514,9 @@ return {
             },
             good_chance = 3,
         },
+        -- Source line: 607
         {
             monster_id = "MONS_DRACONIAN_KNIGHT",
-            source_line = 607,
             spec_line = 359,
             weapon_list_line = 346,
             brand_list_line = 359,
@@ -3581,9 +3572,9 @@ return {
             },
             good_chance = 3,
         },
+        -- Source line: 608
         {
             monster_id = "MONS_ORC_KNIGHT",
-            source_line = 608,
             spec_line = 357,
             weapon_list_line = 346,
             brand_list_line = 0,
@@ -3638,9 +3629,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 609
         {
             monster_id = "MONS_TENGU_WARRIOR",
-            source_line = 609,
             spec_line = 357,
             weapon_list_line = 346,
             brand_list_line = 0,
@@ -3695,9 +3686,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 610
         {
             monster_id = "MONS_VAULT_GUARD",
-            source_line = 610,
             spec_line = 357,
             weapon_list_line = 346,
             brand_list_line = 0,
@@ -3752,9 +3743,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 611
         {
             monster_id = "MONS_VAMPIRE_KNIGHT",
-            source_line = 611,
             spec_line = 357,
             weapon_list_line = 346,
             brand_list_line = 0,
@@ -3809,9 +3800,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 612
         {
             monster_id = "MONS_LOUISE",
-            source_line = 612,
             spec_line = 613,
             weapon_list_line = 613,
             brand_list_line = 617,
@@ -3843,9 +3834,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 618
         {
             monster_id = "MONS_JORY",
-            source_line = 618,
             spec_line = 619,
             weapon_list_line = 619,
             brand_list_line = 622,
@@ -3873,9 +3864,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 623
         {
             monster_id = "MONS_VAULT_SENTINEL",
-            source_line = 623,
             spec_line = 624,
             weapon_list_line = 624,
             brand_list_line = 0,
@@ -3906,9 +3897,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 629
         {
             monster_id = "MONS_IRONBOUND_CONVOKER",
-            source_line = 629,
             spec_line = 629,
             weapon_list_line = 361,
             brand_list_line = 0,
@@ -3943,9 +3934,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 630
         {
             monster_id = "MONS_IRONBOUND_PRESERVER",
-            source_line = 630,
             spec_line = 630,
             weapon_list_line = 361,
             brand_list_line = 0,
@@ -3980,9 +3971,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 631
         {
             monster_id = "MONS_SIGMUND",
-            source_line = 631,
             spec_line = 631,
             weapon_list_line = 631,
             brand_list_line = 0,
@@ -4001,9 +3992,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 632
         {
             monster_id = "MONS_REAPER",
-            source_line = 632,
             spec_line = 632,
             weapon_list_line = 632,
             brand_list_line = 632,
@@ -4023,9 +4014,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 633
         {
             monster_id = "MONS_BALRUG",
-            source_line = 633,
             spec_line = 633,
             weapon_list_line = 633,
             brand_list_line = 0,
@@ -4044,9 +4035,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 634
         {
             monster_id = "MONS_RED_DEVIL",
-            source_line = 634,
             spec_line = 635,
             weapon_list_line = 635,
             brand_list_line = 0,
@@ -4069,9 +4060,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 638
         {
             monster_id = "MONS_TWO_HEADED_OGRE",
-            source_line = 638,
             spec_line = 638,
             weapon_list_line = 370,
             brand_list_line = 0,
@@ -4102,9 +4093,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 639
         {
             monster_id = "MONS_IRON_GIANT",
-            source_line = 639,
             spec_line = 639,
             weapon_list_line = 370,
             brand_list_line = 0,
@@ -4135,9 +4126,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 640
         {
             monster_id = "MONS_LODUL",
-            source_line = 640,
             spec_line = 641,
             weapon_list_line = 641,
             brand_list_line = 0,
@@ -4160,9 +4151,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 644
         {
             monster_id = "MONS_IRONBOUND_THUNDERHULK",
-            source_line = 644,
             spec_line = 645,
             weapon_list_line = 645,
             brand_list_line = 0,
@@ -4185,9 +4176,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 648
         {
             monster_id = "MONS_ETTIN",
-            source_line = 648,
             spec_line = 649,
             weapon_list_line = 649,
             brand_list_line = 0,
@@ -4210,9 +4201,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 652
         {
             monster_id = "MONS_OGRE",
-            source_line = 652,
             spec_line = 652,
             weapon_list_line = 367,
             brand_list_line = 0,
@@ -4235,9 +4226,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 653
         {
             monster_id = "MONS_EROLCHA",
-            source_line = 653,
             spec_line = 653,
             weapon_list_line = 367,
             brand_list_line = 0,
@@ -4260,9 +4251,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 654
         {
             monster_id = "MONS_ILSUIW",
-            source_line = 654,
             spec_line = 654,
             weapon_list_line = 655,
             brand_list_line = 657,
@@ -4286,9 +4277,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 659
         {
             monster_id = "MONS_MERFOLK_IMPALER",
-            source_line = 659,
             spec_line = 660,
             weapon_list_line = 660,
             brand_list_line = 0,
@@ -4311,9 +4302,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 663
         {
             monster_id = "MONS_MERFOLK_AQUAMANCER",
-            source_line = 663,
             spec_line = 663,
             weapon_list_line = 663,
             brand_list_line = 663,
@@ -4333,9 +4324,9 @@ return {
             },
             good_chance = 2,
         },
+        -- Source line: 664
         {
             monster_id = "MONS_MERFOLK_JAVELINEER",
-            source_line = 664,
             spec_line = 664,
             weapon_list_line = 664,
             brand_list_line = 0,
@@ -4354,9 +4345,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 665
         {
             monster_id = "MONS_SPRIGGAN_RIDER",
-            source_line = 665,
             spec_line = 665,
             weapon_list_line = 665,
             brand_list_line = 0,
@@ -4375,9 +4366,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 666
         {
             monster_id = "MONS_MERFOLK",
-            source_line = 666,
             spec_line = 666,
             weapon_list_line = 666,
             brand_list_line = 0,
@@ -4396,9 +4387,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 667
         {
             monster_id = "MONS_MERFOLK_SIREN",
-            source_line = 667,
             spec_line = 668,
             weapon_list_line = 668,
             brand_list_line = 0,
@@ -4421,9 +4412,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 671
         {
             monster_id = "MONS_CENTAUR",
-            source_line = 671,
             spec_line = 671,
             weapon_list_line = 671,
             brand_list_line = 0,
@@ -4442,9 +4433,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 672
         {
             monster_id = "MONS_CENTAUR_WARRIOR",
-            source_line = 672,
             spec_line = 673,
             weapon_list_line = 673,
             brand_list_line = 0,
@@ -4467,9 +4458,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 676
         {
             monster_id = "MONS_FAUN",
-            source_line = 676,
             spec_line = 676,
             weapon_list_line = 375,
             brand_list_line = 0,
@@ -4496,9 +4487,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 677
         {
             monster_id = "MONS_SATYR",
-            source_line = 677,
             spec_line = 677,
             weapon_list_line = 375,
             brand_list_line = 0,
@@ -4525,9 +4516,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 678
         {
             monster_id = "MONS_SERVANT_OF_WHISPERS",
-            source_line = 678,
             spec_line = 678,
             weapon_list_line = 375,
             brand_list_line = 0,
@@ -4554,9 +4545,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 679
         {
             monster_id = "MONS_NESSOS",
-            source_line = 679,
             spec_line = 679,
             weapon_list_line = 680,
             brand_list_line = 682,
@@ -4580,9 +4571,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 684
         {
             monster_id = "MONS_YAKTAUR",
-            source_line = 684,
             spec_line = 684,
             weapon_list_line = 684,
             brand_list_line = 0,
@@ -4601,9 +4592,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 685
         {
             monster_id = "MONS_YAKTAUR_CAPTAIN",
-            source_line = 685,
             spec_line = 685,
             weapon_list_line = 685,
             brand_list_line = 0,
@@ -4626,9 +4617,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 689
         {
             monster_id = "MONS_EFREET",
-            source_line = 689,
             spec_line = 379,
             weapon_list_line = 379,
             brand_list_line = 381,
@@ -4652,9 +4643,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 690
         {
             monster_id = "MONS_ERICA",
-            source_line = 690,
             spec_line = 379,
             weapon_list_line = 379,
             brand_list_line = 381,
@@ -4678,9 +4669,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 691
         {
             monster_id = "MONS_AZRAEL",
-            source_line = 691,
             spec_line = 379,
             weapon_list_line = 379,
             brand_list_line = 381,
@@ -4704,9 +4695,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 692
         {
             monster_id = "MONS_ANGEL",
-            source_line = 692,
             spec_line = 692,
             weapon_list_line = 693,
             brand_list_line = 696,
@@ -4734,9 +4725,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 698
         {
             monster_id = "MONS_CHERUB",
-            source_line = 698,
             spec_line = 699,
             weapon_list_line = 699,
             brand_list_line = 704,
@@ -4772,9 +4763,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 706
         {
             monster_id = "MONS_SERAPH",
-            source_line = 706,
             spec_line = 706,
             weapon_list_line = 707,
             brand_list_line = 709,
@@ -4798,9 +4789,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 711
         {
             monster_id = "MONS_DAEVA",
-            source_line = 711,
             spec_line = 383,
             weapon_list_line = 383,
             brand_list_line = 387,
@@ -4832,9 +4823,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 712
         {
             monster_id = "MONS_PROFANE_SERVITOR",
-            source_line = 712,
             spec_line = 713,
             weapon_list_line = 713,
             brand_list_line = 0,
@@ -4857,9 +4848,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 717
         {
             monster_id = "MONS_MENNAS",
-            source_line = 717,
             spec_line = 717,
             weapon_list_line = 718,
             brand_list_line = 722,
@@ -4891,9 +4882,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 724
         {
             monster_id = "MONS_DONALD",
-            source_line = 724,
             spec_line = 725,
             weapon_list_line = 725,
             brand_list_line = 0,
@@ -4936,9 +4927,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 733
         {
             monster_id = "MONS_HELL_KNIGHT",
-            source_line = 733,
             spec_line = 734,
             weapon_list_line = 734,
             brand_list_line = 389,
@@ -5026,9 +5017,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 749
         {
             monster_id = "MONS_MAGGIE",
-            source_line = 749,
             spec_line = 750,
             weapon_list_line = 750,
             brand_list_line = 389,
@@ -5096,9 +5087,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 760
         {
             monster_id = "MONS_MARGERY",
-            source_line = 760,
             spec_line = 761,
             weapon_list_line = 761,
             brand_list_line = 389,
@@ -5186,9 +5177,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 776
         {
             monster_id = "MONS_URUG",
-            source_line = 776,
             spec_line = 776,
             weapon_list_line = 397,
             brand_list_line = 0,
@@ -5251,9 +5242,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 777
         {
             monster_id = "MONS_FREDERICK",
-            source_line = 777,
             spec_line = 777,
             weapon_list_line = 397,
             brand_list_line = 0,
@@ -5316,9 +5307,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 778
         {
             monster_id = "MONS_FIRE_GIANT",
-            source_line = 778,
             spec_line = 778,
             weapon_list_line = 779,
             brand_list_line = 780,
@@ -5342,9 +5333,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 782
         {
             monster_id = "MONS_FROST_GIANT",
-            source_line = 782,
             spec_line = 782,
             weapon_list_line = 783,
             brand_list_line = 784,
@@ -5368,9 +5359,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 786
         {
             monster_id = "MONS_CACTUS_GIANT",
-            source_line = 786,
             spec_line = 786,
             weapon_list_line = 786,
             brand_list_line = 0,
@@ -5389,9 +5380,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 787
         {
             monster_id = "MONS_ORC_WIZARD",
-            source_line = 787,
             spec_line = 787,
             weapon_list_line = 787,
             brand_list_line = 0,
@@ -5410,9 +5401,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 788
         {
             monster_id = "MONS_ORC_SORCERER",
-            source_line = 788,
             spec_line = 788,
             weapon_list_line = 788,
             brand_list_line = 0,
@@ -5431,9 +5422,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 789
         {
             monster_id = "MONS_NERGALLE",
-            source_line = 789,
             spec_line = 789,
             weapon_list_line = 789,
             brand_list_line = 0,
@@ -5452,9 +5443,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 790
         {
             monster_id = "MONS_DOWAN",
-            source_line = 790,
             spec_line = 790,
             weapon_list_line = 790,
             brand_list_line = 0,
@@ -5473,9 +5464,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 791
         {
             monster_id = "MONS_KOBOLD_DEMONOLOGIST",
-            source_line = 791,
             spec_line = 791,
             weapon_list_line = 791,
             brand_list_line = 0,
@@ -5494,9 +5485,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 792
         {
             monster_id = "MONS_NECROMANCER",
-            source_line = 792,
             spec_line = 792,
             weapon_list_line = 792,
             brand_list_line = 0,
@@ -5515,9 +5506,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 793
         {
             monster_id = "MONS_WIZARD",
-            source_line = 793,
             spec_line = 793,
             weapon_list_line = 793,
             brand_list_line = 0,
@@ -5536,9 +5527,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 794
         {
             monster_id = "MONS_JOSEPHINE",
-            source_line = 794,
             spec_line = 794,
             weapon_list_line = 794,
             brand_list_line = 0,
@@ -5557,9 +5548,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 795
         {
             monster_id = "MONS_PSYCHE",
-            source_line = 795,
             spec_line = 795,
             weapon_list_line = 796,
             brand_list_line = 798,
@@ -5587,9 +5578,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 801
         {
             monster_id = "MONS_AGNES",
-            source_line = 801,
             spec_line = 801,
             weapon_list_line = 801,
             brand_list_line = 0,
@@ -5608,9 +5599,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 802
         {
             monster_id = "MONS_SONJA",
-            source_line = 802,
             spec_line = 802,
             weapon_list_line = 803,
             brand_list_line = 805,
@@ -5646,9 +5637,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 809
         {
             monster_id = "MONS_MAURICE",
-            source_line = 809,
             spec_line = 810,
             weapon_list_line = 810,
             brand_list_line = 0,
@@ -5671,9 +5662,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 813
         {
             monster_id = "MONS_EUSTACHIO",
-            source_line = 813,
             spec_line = 814,
             weapon_list_line = 814,
             brand_list_line = 0,
@@ -5696,9 +5687,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 817
         {
             monster_id = "MONS_NIKOLA",
-            source_line = 817,
             spec_line = 817,
             weapon_list_line = 818,
             brand_list_line = 820,
@@ -5722,9 +5713,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 822
         {
             monster_id = "MONS_SALAMANDER_MYSTIC",
-            source_line = 822,
             spec_line = 823,
             weapon_list_line = 823,
             brand_list_line = 0,
@@ -5751,9 +5742,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 827
         {
             monster_id = "MONS_SPRIGGAN",
-            source_line = 827,
             spec_line = 828,
             weapon_list_line = 828,
             brand_list_line = 0,
@@ -5780,9 +5771,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 832
         {
             monster_id = "MONS_SPRIGGAN_BERSERKER",
-            source_line = 832,
             spec_line = 832,
             weapon_list_line = 833,
             brand_list_line = 839,
@@ -5830,9 +5821,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 842
         {
             monster_id = "MONS_SPRIGGAN_DEFENDER",
-            source_line = 842,
             spec_line = 842,
             weapon_list_line = 410,
             brand_list_line = 842,
@@ -5868,9 +5859,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 843
         {
             monster_id = "MONS_THE_ENCHANTRESS",
-            source_line = 843,
             spec_line = 843,
             weapon_list_line = 410,
             brand_list_line = 843,
@@ -5906,9 +5897,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 844
         {
             monster_id = "MONS_HELLBINDER",
-            source_line = 844,
             spec_line = 844,
             weapon_list_line = 844,
             brand_list_line = 0,
@@ -5927,9 +5918,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 845
         {
             monster_id = "MONS_IGNACIO",
-            source_line = 845,
             spec_line = 845,
             weapon_list_line = 846,
             brand_list_line = 848,
@@ -5953,9 +5944,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 850
         {
             monster_id = "MONS_ANCIENT_CHAMPION",
-            source_line = 850,
             spec_line = 850,
             weapon_list_line = 851,
             brand_list_line = 855,
@@ -6007,9 +5998,9 @@ return {
             },
             good_chance = 0,
         },
+        -- Source line: 862
         {
             monster_id = "MONS_SOJOBO",
-            source_line = 862,
             spec_line = 862,
             weapon_list_line = 863,
             brand_list_line = 865,
@@ -6041,9 +6032,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 869
         {
             monster_id = "MONS_ZENATA",
-            source_line = 869,
             spec_line = 869,
             weapon_list_line = 870,
             brand_list_line = 0,
@@ -6078,9 +6069,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 877
         {
             monster_id = "MONS_DEMONSPAWN_CORRUPTER",
-            source_line = 877,
             spec_line = 877,
             weapon_list_line = 416,
             brand_list_line = 0,
@@ -6119,9 +6110,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 878
         {
             monster_id = "MONS_DEMONSPAWN_BLACK_SUN",
-            source_line = 878,
             spec_line = 878,
             weapon_list_line = 416,
             brand_list_line = 0,
@@ -6160,9 +6151,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 879
         {
             monster_id = "MONS_DEMONSPAWN_BLOOD_SAINT",
-            source_line = 879,
             spec_line = 879,
             weapon_list_line = 880,
             brand_list_line = 0,
@@ -6185,9 +6176,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 883
         {
             monster_id = "MONS_DEMONSPAWN_WARMONGER",
-            source_line = 883,
             spec_line = 883,
             weapon_list_line = 884,
             brand_list_line = 895,
@@ -6247,9 +6238,9 @@ return {
             },
             good_chance = 1,
         },
+        -- Source line: 897
         {
             monster_id = "MONS_GARGOYLE",
-            source_line = 897,
             spec_line = 897,
             weapon_list_line = 423,
             brand_list_line = 0,
@@ -6280,9 +6271,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 898
         {
             monster_id = "MONS_MOLTEN_GARGOYLE",
-            source_line = 898,
             spec_line = 898,
             weapon_list_line = 423,
             brand_list_line = 0,
@@ -6313,9 +6304,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 899
         {
             monster_id = "MONS_WAR_GARGOYLE",
-            source_line = 899,
             spec_line = 899,
             weapon_list_line = 900,
             brand_list_line = 905,
@@ -6351,9 +6342,9 @@ return {
             },
             good_chance = 4,
         },
+        -- Source line: 907
         {
             monster_id = "MONS_MELIAI",
-            source_line = 907,
             spec_line = 907,
             weapon_list_line = 908,
             brand_list_line = 0,
@@ -6380,9 +6371,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 912
         {
             monster_id = "MONS_IMPERIAL_MYRMIDON",
-            source_line = 912,
             spec_line = 912,
             weapon_list_line = 913,
             brand_list_line = 0,
@@ -6409,9 +6400,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 917
         {
             monster_id = "MONS_KILLER_KLOWN",
-            source_line = 917,
             spec_line = 917,
             weapon_list_line = 918,
             brand_list_line = 920,
@@ -6481,9 +6472,9 @@ return {
         },
     },
     secondary = {
+        -- Source line: 940
         {
             monster_id = "MONS_JOSEPH",
-            source_line = 940,
             spec_line = 940,
             weapon_list_line = 940,
             brand_list_line = 0,
@@ -6502,9 +6493,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 941
         {
             monster_id = "MONS_DEEP_ELF_ARCHER",
-            source_line = 941,
             spec_line = 942,
             weapon_list_line = 942,
             brand_list_line = 0,
@@ -6527,9 +6518,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 945
         {
             monster_id = "MONS_VASHNIA",
-            source_line = 945,
             spec_line = 946,
             weapon_list_line = 946,
             brand_list_line = 0,
@@ -6552,9 +6543,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 949
         {
             monster_id = "MONS_NAGA_SHARPSHOOTER",
-            source_line = 949,
             spec_line = 950,
             weapon_list_line = 950,
             brand_list_line = 0,
@@ -6581,9 +6572,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 954
         {
             monster_id = "MONS_VAULT_WARDEN",
-            source_line = 954,
             spec_line = 954,
             weapon_list_line = 936,
             brand_list_line = 0,
@@ -6606,9 +6597,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 955
         {
             monster_id = "MONS_ORC_WARLORD",
-            source_line = 955,
             spec_line = 955,
             weapon_list_line = 936,
             brand_list_line = 0,
@@ -6631,9 +6622,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 956
         {
             monster_id = "MONS_SAINT_ROKA",
-            source_line = 956,
             spec_line = 956,
             weapon_list_line = 936,
             brand_list_line = 0,
@@ -6656,9 +6647,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 957
         {
             monster_id = "MONS_ORC_KNIGHT",
-            source_line = 957,
             spec_line = 957,
             weapon_list_line = 936,
             brand_list_line = 0,
@@ -6681,9 +6672,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 958
         {
             monster_id = "MONS_ORC_WARRIOR",
-            source_line = 958,
             spec_line = 958,
             weapon_list_line = 936,
             brand_list_line = 0,
@@ -6706,9 +6697,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 959
         {
             monster_id = "MONS_TENGU_WARRIOR",
-            source_line = 959,
             spec_line = 960,
             weapon_list_line = 960,
             brand_list_line = 0,
@@ -6735,9 +6726,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 964
         {
             monster_id = "MONS_VAULT_SENTINEL",
-            source_line = 964,
             spec_line = 965,
             weapon_list_line = 965,
             brand_list_line = 0,
@@ -6764,9 +6755,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 969
         {
             monster_id = "MONS_FAUN",
-            source_line = 969,
             spec_line = 969,
             weapon_list_line = 969,
             brand_list_line = 0,
@@ -6785,9 +6776,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 970
         {
             monster_id = "MONS_SATYR",
-            source_line = 970,
             spec_line = 970,
             weapon_list_line = 970,
             brand_list_line = 0,
@@ -6806,9 +6797,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 971
         {
             monster_id = "MONS_CHERUB",
-            source_line = 971,
             spec_line = 972,
             weapon_list_line = 972,
             brand_list_line = 0,
@@ -6835,9 +6826,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 977
         {
             monster_id = "MONS_SALAMANDER",
-            source_line = 977,
             spec_line = 977,
             weapon_list_line = 978,
             brand_list_line = 0,
@@ -6872,9 +6863,9 @@ return {
             brands = mod.null,
             good_chance = 0,
         },
+        -- Source line: 985
         {
             monster_id = "MONS_DEMONSPAWN_WARMONGER",
-            source_line = 985,
             spec_line = 985,
             weapon_list_line = 986,
             brand_list_line = 990,
@@ -6908,3 +6899,5 @@ return {
         },
     },
 }
+
+return catalog

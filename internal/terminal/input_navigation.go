@@ -115,6 +115,10 @@ func (m *AppModel) applyNavigationDecision(action string, decision map[string]an
 			}
 		}
 
+		if screen == ScreenSpells {
+			m.spellMode = name
+		}
+
 	}
 
 	return nil

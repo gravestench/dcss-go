@@ -26,7 +26,7 @@ function innate.generate(ctx, species, known)
     end
 
     local future = {}
-    local catalog = require("data.spells").spells
+    local catalog = require("policy.catalog").all("spells")
 
     for index = 1, #minimum do
         local chosen

@@ -307,10 +307,7 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 		}
 	}
 
-	known := []byte(snapshot.Levels[0].Known[3])
-
-	known[3] = '.'
-	snapshot.Levels[0].Known[3] = string(known)
+	snapshot.Levels[0].Known[3][3] = "DNGN_FLOOR"
 
 	restored, err := game.Restore(snapshot)
 

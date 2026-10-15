@@ -1,16 +1,34 @@
 -- Runtime definitions stay in Lua. Import artifacts have their own offline
 -- validation; these checks protect the effective modded ruleset at boot.
 local validation = {}
+local categories = require("constants.catalog")
+local books = require("ids.monster_spellbooks")
+local skill_ids = require("ids.skills")
+local source_population = require("data.dungeon_population").rows
+
+local population_monsters = {}
+
+for _, row in ipairs(source_population) do
+    population_monsters[row.monster_id] = true
+end
+
+local population_curves = {
+    FLAT = true,
+    SEMI = true,
+    PEAK = true,
+    RISE = true,
+    FALL = true,
+}
 
 -- Skills that the bundled screens and rules can ask any species to train.
 local ordinary_skills = {
-    "SK_FIGHTING", "SK_SHORT_BLADES", "SK_LONG_BLADES", "SK_AXES",
-    "SK_MACES_FLAILS", "SK_POLEARMS", "SK_STAVES", "SK_RANGED_WEAPONS",
-    "SK_THROWING", "SK_ARMOUR", "SK_DODGING", "SK_STEALTH",
-    "SK_SHIELDS", "SK_UNARMED_COMBAT", "SK_SPELLCASTING", "SK_CONJURATIONS",
-    "SK_HEXES", "SK_SUMMONINGS", "SK_NECROMANCY", "SK_TRANSMUTATIONS",
-    "SK_TRANSLOCATIONS", "SK_FIRE_MAGIC", "SK_ICE_MAGIC", "SK_AIR_MAGIC",
-    "SK_EARTH_MAGIC", "SK_POISON_MAGIC", "SK_INVOCATIONS", "SK_EVOCATIONS",
+    skill_ids.SK_FIGHTING, skill_ids.SK_SHORT_BLADES, skill_ids.SK_LONG_BLADES, skill_ids.SK_AXES,
+    skill_ids.SK_MACES_FLAILS, skill_ids.SK_POLEARMS, skill_ids.SK_STAVES, skill_ids.SK_RANGED_WEAPONS,
+    skill_ids.SK_THROWING, skill_ids.SK_ARMOUR, skill_ids.SK_DODGING, skill_ids.SK_STEALTH,
+    skill_ids.SK_SHIELDS, skill_ids.SK_UNARMED_COMBAT, skill_ids.SK_SPELLCASTING, skill_ids.SK_CONJURATIONS,
+    skill_ids.SK_HEXES, skill_ids.SK_SUMMONINGS, skill_ids.SK_NECROMANCY, skill_ids.SK_TRANSMUTATIONS,
+    skill_ids.SK_TRANSLOCATIONS, skill_ids.SK_FIRE_MAGIC, skill_ids.SK_ICE_MAGIC, skill_ids.SK_AIR_MAGIC,
+    skill_ids.SK_EARTH_MAGIC, skill_ids.SK_POISON_MAGIC, skill_ids.SK_INVOCATIONS, skill_ids.SK_EVOCATIONS,
 }
 
 local function fail(category, id, detail)
@@ -73,7 +91,7 @@ local function validate_species(species)
     end
 
     for _, field in ipairs({
-        "monster_id", "source_path", "name", "short_name",
+        "monster_id", "name", "short_name",
         "habitat", "size", "undead_type",
     }) do
         if required("species", species, field, "string") == "" then
@@ -138,7 +156,7 @@ local function validate_job(job)
         fail("jobs", id, "has an invalid ID")
     end
 
-    for _, field in ipairs({ "source_path", "abbreviation", "name", "weapon_choice" }) do
+    for _, field in ipairs({ "abbreviation", "name", "weapon_choice" }) do
         if required("jobs", job, field, "string") == "" then
             fail("jobs", id, "has an empty " .. field)
         end
@@ -225,7 +243,7 @@ local function validate_early_brands()
     local brands = require("policy.combat.brands")
     local items = {}
 
-    for _, definition in ipairs(require("data.items").items) do
+    for _, definition in ipairs(require("policy.catalog").all("items")) do
         items[definition.id] = definition
     end
 
@@ -249,7 +267,144 @@ local function validate_early_brands()
     end
 end
 
+local function positive_number(category, definition, field)
+    local value = required(category, definition, field, "number")
+
+    if value <= 0 then
+        fail(category, definition.id, field .. " must be positive")
+    end
+end
+
+local function validate_population_row(monster, row)
+    local category = categories.MONSTERS
+
+    if type(row) ~= "table" then
+        fail(category, monster.id, "population entries must be tables")
+    end
+
+    if type(row.scenario_id) ~= "string" or row.scenario_id == "" then
+        fail(category, monster.id, "population scenario_id must be nonempty text")
+    end
+
+    for _, field in ipairs({ "min_depth", "max_depth", "rarity" }) do
+        if type(row[field]) ~= "number" or row[field] % 1 ~= 0 or row[field] < 1 then
+            fail(category, monster.id, "population " .. field .. " must be a positive integer")
+        end
+    end
+
+    if row.min_depth > row.max_depth then
+        fail(category, monster.id, "population min_depth exceeds max_depth")
+    end
+
+    if not population_curves[row.curve] then
+        fail(category, monster.id, "population curve is unsupported")
+    end
+end
+
+local function validate_spawnable_monster(monster)
+    local category = categories.MONSTERS
+
+    for _, field in ipairs({ "average_hp_10x", "speed", "hd" }) do
+        positive_number(category, monster, field)
+    end
+
+    local energy = required(category, monster, "energy", "table")
+
+    for _, field in ipairs({
+        "move", "swim", "attack", "missile", "spell", "special", "item",
+    }) do
+        if type(energy[field]) ~= "number" or energy[field] <= 0 then
+            fail(category, monster.id, "energy." .. field .. " must be positive")
+        end
+    end
+
+    local attacks = required(category, monster, "attacks", "table")
+
+    if #attacks == 0 then
+        fail(category, monster.id, "attacks must include a primary attack")
+    end
+
+    for _, attack in ipairs(attacks) do
+        if type(attack) ~= "table" or type(attack.type_id) ~= "string" or
+            type(attack.flavour_id) ~= "string" or type(attack.damage) ~= "number" then
+            fail(category, monster.id, "attacks contain an invalid attack")
+        end
+    end
+end
+
+local function validate_registered_catalogs()
+    for _, id in ipairs(register.ids(categories.MONSTERS)) do
+        local monster = register.get(categories.MONSTERS, id)
+        local population = optional_list(categories.MONSTERS, monster, "population")
+
+        for _, row in ipairs(population) do
+            validate_population_row(monster, row)
+        end
+
+        if monster.status == "defined" then
+            required(categories.MONSTERS, monster, "name", "string")
+            required(categories.MONSTERS, monster, "habitat_id", "string")
+
+            local book_id = required(categories.MONSTERS, monster, "spellbook_id", "string")
+
+            if book_id ~= books.MST_NO_SPELLS and book_id ~= books.MST_GHOST then
+                local found = pcall(register.get, categories.MONSTER_SPELLBOOKS, book_id)
+
+                if not found then
+                    fail(categories.MONSTERS, id, "has missing spellbook_id " .. book_id)
+                end
+            end
+
+            if population_monsters[id] or #population > 0 then
+                validate_spawnable_monster(monster)
+            end
+        elseif #population > 0 then
+            fail(categories.MONSTERS, id, "population requires status defined")
+        end
+    end
+
+    for _, id in ipairs(register.ids(categories.SPELLS)) do
+        local spell = register.get(categories.SPELLS, id)
+
+        if spell.status == "defined" then
+            required(categories.SPELLS, spell, "name", "string")
+            required(categories.SPELLS, spell, "level", "number")
+        end
+    end
+
+    for _, id in ipairs(register.ids(categories.ITEMS)) do
+        local item = register.get(categories.ITEMS, id)
+
+        required(categories.ITEMS, item, "name", "string")
+        required(categories.ITEMS, item, "class", "string")
+    end
+
+    for _, id in ipairs(register.ids(categories.BRANCHES)) do
+        local branch = register.get(categories.BRANCHES, id)
+
+        required(categories.BRANCHES, branch, "short_name", "string")
+        required(categories.BRANCHES, branch, "long_name", "string")
+    end
+
+    for _, id in ipairs(register.ids(categories.MONSTER_SPELLBOOKS)) do
+        local book = register.get(categories.MONSTER_SPELLBOOKS, id)
+
+        for _, slot in ipairs(optional_list(categories.MONSTER_SPELLBOOKS, book, "slots")) do
+            local spell_id = slot.spell_id
+            local found = type(spell_id) == "string" and
+                pcall(register.get, categories.SPELLS, spell_id)
+
+            if not found then
+                fail(categories.MONSTER_SPELLBOOKS, id,
+                    "has missing slots[].spell_id " .. tostring(spell_id))
+            end
+        end
+    end
+end
+
 function validation.check()
+    require("ids.catalog").finalize()
+
     local species_ids = register.ids("species")
     local job_ids = register.ids("jobs")
 
@@ -264,6 +419,8 @@ function validation.check()
     for _, id in ipairs(job_ids) do
         validate_job(register.get("jobs", id))
     end
+
+    validate_registered_catalogs()
 
     local presentation = require("data.presentation")
 

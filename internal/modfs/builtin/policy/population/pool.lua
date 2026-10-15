@@ -1,4 +1,5 @@
 local rows = require("data.dungeon_population").rows
+local catalog = require("policy.catalog")
 
 local pool = {}
 
@@ -39,7 +40,7 @@ local function weight_at_depth(row, depth)
     error("unsupported population curve " .. tostring(row.curve))
 end
 
-function pool.at_depth(depth, allowed)
+function pool.at_depth(depth, allowed, scenario_id)
     local choices = {}
     local total = 0
 
@@ -54,6 +55,25 @@ function pool.at_depth(depth, allowed)
                     weight = weight,
                 }
                 total = total + weight
+            end
+        end
+    end
+
+    -- Mod rows follow source rows, preserving the source picker order.
+    for _, definition in ipairs(catalog.all("monsters")) do
+        if allowed[definition.id] then
+            for _, row in ipairs(definition.population or {}) do
+                if row.scenario_id == scenario_id then
+                    local weight = weight_at_depth(row, depth)
+
+                    if weight > 0 then
+                        choices[#choices + 1] = {
+                            id = definition.id,
+                            weight = weight,
+                        }
+                        total = total + weight
+                    end
+                end
             end
         end
     end

@@ -13,10 +13,7 @@ func setFixtureTerrain(t *testing.T, g *Game, x, y int, glyph byte) {
 	t.Helper()
 
 	level := g.levels[1]
-	row := []byte(level.terrain[y])
-
-	row[x] = glyph
-	level.terrain[y] = string(row)
+	level.terrain[y][x] = fixtureFeature(glyph)
 
 	if err := g.refreshVisibility(); err != nil {
 		t.Fatal(err)
@@ -30,14 +27,14 @@ func TestExplicitDoorOpenCloseAndRestore(t *testing.T) {
 	opened, err := g.Step(Command{Kind: CommandOpenDoor})
 
 	if err != nil ||
-		opened.Spent != 10 || g.levels[1].terrain[1][2] != '\'' {
+		opened.Spent != 10 || fixtureGlyph(g.levels[1].terrain[1][2]) != '\'' {
 		t.Fatalf("open door = %+v, %v, row %q", opened, err, g.levels[1].terrain[1])
 	}
 
 	closed, err := g.Step(Command{Kind: CommandCloseDoor})
 
 	if err != nil ||
-		closed.Spent != 10 || g.levels[1].terrain[1][2] != '+' {
+		closed.Spent != 10 || fixtureGlyph(g.levels[1].terrain[1][2]) != '+' {
 		t.Fatalf("close door = %+v, %v, row %q", closed, err, g.levels[1].terrain[1])
 	}
 
@@ -74,7 +71,7 @@ func TestExplicitDoorDirectionAndConnectedGroup(t *testing.T) {
 
 	if err != nil ||
 		opened.Spent != 10 ||
-		g.levels[1].terrain[1][2] != '\'' || g.levels[1].terrain[2][2] != '\'' {
+		fixtureGlyph(g.levels[1].terrain[1][2]) != '\'' || fixtureGlyph(g.levels[1].terrain[2][2]) != '\'' {
 		t.Fatalf("connected door = %+v, %v", opened, err)
 	}
 
@@ -85,7 +82,7 @@ func TestExplicitDoorDirectionAndConnectedGroup(t *testing.T) {
 
 	if err != nil ||
 		closed.Spent != 10 ||
-		g.levels[1].terrain[1][2] != '+' || g.levels[1].terrain[2][2] != '+' {
+		fixtureGlyph(g.levels[1].terrain[1][2]) != '+' || fixtureGlyph(g.levels[1].terrain[2][2]) != '+' {
 		t.Fatalf("connected close = %+v, %v", closed, err)
 	}
 }
@@ -134,7 +131,7 @@ func TestClosingDoorPushesFloorItems(t *testing.T) {
 	} {
 		pushed, _ := g.stores.Positions.Get(entity)
 
-		if g.levels[1].terrain[1][2] != '+' ||
+		if fixtureGlyph(g.levels[1].terrain[1][2]) != '+' ||
 			(pushed.X == 2 &&
 				pushed.Y == 1) ||
 			!g.levels[1].Walkable(pushed.X, pushed.Y) {
@@ -316,7 +313,7 @@ func TestClosingDoorRejectsJammedGroupWithoutTime(t *testing.T) {
 	if err != nil ||
 		result.Spent != 0 ||
 		!reflect.DeepEqual(before, after) ||
-		level.terrain[1][4] != '\'' {
+		fixtureGlyph(level.terrain[1][4]) != '\'' {
 		t.Fatalf("jammed door = %+v, %v", result, err)
 	}
 }
@@ -347,7 +344,7 @@ func TestUnseenDoorBlockerConsumesTurnWithoutClosing(t *testing.T) {
 
 	if err != nil ||
 		result.Spent != 10 ||
-		g.levels[1].terrain[1][2] != '\'' ||
+		fixtureGlyph(g.levels[1].terrain[1][2]) != '\'' ||
 		!strings.Contains(result.Events[0].Text, "Something is blocking") {
 		t.Fatalf("unseen blocker = %+v, %v", result, err)
 	}

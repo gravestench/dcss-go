@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 
 	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/terrain"
 )
 
-const Version = 14
+const Version = 15
 
 type Snapshot struct {
 	Version        int               `json:"version"`
@@ -43,13 +44,13 @@ type DynamicComponentRecord struct {
 }
 
 type LevelRecord struct {
-	ID              int           `json:"id"`
-	Rows            []string      `json:"rows"`
-	Known           []string      `json:"known"`
-	Stairs          []StairRecord `json:"stairs,omitempty"`
-	InitialMonsters int           `json:"initial_monsters,omitempty"`
-	InitialActors   int           `json:"initial_actors,omitempty"`
-	AwaySinceAut    *int64        `json:"away_since_aut,omitempty"`
+	ID              int            `json:"id"`
+	Cells           [][]terrain.ID `json:"cells"`
+	Known           [][]terrain.ID `json:"known"`
+	Stairs          []StairRecord  `json:"stairs,omitempty"`
+	InitialMonsters int            `json:"initial_monsters,omitempty"`
+	InitialActors   int            `json:"initial_actors,omitempty"`
+	AwaySinceAut    *int64         `json:"away_since_aut,omitempty"`
 }
 
 type StairRecord struct {

@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local equipment = require("policy.inventory.equipment")
 local items = require("policy.inventory.items")
 local trajectory = require("policy.combat.trajectory")
+local statuses = require("policy.magic.effects.statuses.player")
 
 local projectiles = {}
 
@@ -76,6 +77,22 @@ function projectiles.prepare(ctx, player, firing, item_id, dx, dy)
     if math.max(math.abs(dx), math.abs(dy)) > 7 or
         not ctx:visible(position.level_id, position.x, position.y, 7, x, y) then
         return { message = "You cannot see that target." }
+    end
+
+    if statuses.portal_projectile_active(ctx, player) then
+        if not ctx:walkable(position.level_id, x, y) then
+            return { message = "You cannot target solid terrain." }
+        end
+
+        return {
+            intent = {
+                kind = 13,
+                dx = dx,
+                dy = dy,
+                item_id = entity,
+            },
+            cost = 10,
+        }
     end
 
     local impact = trajectory.trace(ctx, position.level_id, position.x, position.y, x, y)

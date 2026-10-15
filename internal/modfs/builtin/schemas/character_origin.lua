@@ -29,21 +29,6 @@ register.component{
             default = "",
         },
 
-        library_spells = {
-            type = "string",
-            default = "",
-        },
-
-        memorized_spells = {
-            type = "string",
-            default = "",
-        },
-
-        future_innate_spells = {
-            type = "string",
-            default = "",
-        },
-
         religion = {
             type = "string",
             default = "GOD_NO_GOD",

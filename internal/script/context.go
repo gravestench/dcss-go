@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"slices"
 
+	"dcrawl-go/internal/terrain"
+
 	"github.com/gravestench/akara"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -22,6 +24,7 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "entity", r.state.NewFunction(r.luaEntityByID))
 	r.state.SetField(context, "id", r.state.NewFunction(r.luaEntityID))
 	r.state.SetField(context, "cell", r.state.NewFunction(r.luaGridCell))
+	r.state.SetField(context, "level_size", r.state.NewFunction(r.luaGridLevelSize))
 	r.state.SetField(context, "set_cell", r.state.NewFunction(r.luaGridSetCell))
 	r.state.SetField(context, "walkable", r.state.NewFunction(r.luaGridWalkable))
 	r.state.SetField(context, "actor_at", r.state.NewFunction(r.luaGridActorAt))
@@ -30,6 +33,7 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "route_step", r.state.NewFunction(r.luaGridRouteStep))
 	r.state.SetField(context, "projectile_clear", r.state.NewFunction(r.luaGridProjectileClear))
 	r.state.SetField(context, "move_actor", r.state.NewFunction(r.luaGridMoveActor))
+	r.state.SetField(context, "move_actors", r.state.NewFunction(r.luaGridMoveActors))
 	r.state.SetField(context, "place_actor", r.state.NewFunction(r.luaGridPlaceActor))
 	r.state.SetField(context, "remove_actor", r.state.NewFunction(r.luaGridRemoveActor))
 	r.state.SetField(context, "aut", r.state.NewFunction(r.luaCurrentAut))
@@ -267,12 +271,29 @@ func (r *Runtime) luaGridCell(state *lua.LState) int {
 	return 1
 }
 
+func (r *Runtime) luaGridLevelSize(state *lua.LState) int {
+	levelID := state.CheckInt(2)
+	width, height, found := r.services.Grid.Size(levelID)
+
+	if !found {
+		state.Push(lua.LNil)
+		state.Push(lua.LNil)
+
+		return 2
+	}
+
+	state.Push(lua.LNumber(width))
+	state.Push(lua.LNumber(height))
+
+	return 2
+}
+
 func (r *Runtime) luaGridSetCell(state *lua.LState) int {
 	levelID, x, y := r.gridArgs(state)
-	glyph := state.CheckString(5)
+	feature := terrain.ID(state.CheckString(5))
 
-	if len(glyph) != 1 {
-		state.RaiseError("grid cell must be one byte")
+	if !terrain.Valid(feature) {
+		state.RaiseError("invalid grid terrain %q", feature)
 
 		return 0
 	}
@@ -283,46 +304,36 @@ func (r *Runtime) luaGridSetCell(state *lua.LState) int {
 		return 0
 	}
 
-	switch glyph[0] {
-	case '#', '.', '+', '\'', '<', '>':
-
-	default:
-		state.RaiseError("invalid grid terrain %q", glyph)
-
-		return 0
-	}
-
 	cellKey := gridCell{
 		levelID: levelID,
 		x:       x,
 		y:       y,
 	}
 
-	if glyph == "#" || glyph == "+" {
+	if !terrain.Walkable(feature) {
 		if _, occupied := r.stagedActorAt(cellKey); occupied {
-			state.RaiseError("terrain %q would block an actor", glyph)
+			state.RaiseError("terrain %q would block an actor", feature)
 
 			return 0
 		}
 	}
 
 	if _, linked := r.services.Grid.StairAt(levelID, x, y); linked &&
-		glyph != "<" &&
-		glyph != ">" {
+		!terrain.IsStair(feature) {
 		state.RaiseError("terrain would remove a stair link")
 
 		return 0
 	}
 
-	r.pendingCells[cellKey] = glyph[0]
+	r.pendingCells[cellKey] = feature
 
-	var previous byte
+	var previous terrain.ID
 
 	r.pending = append(r.pending, structuralCommand{
 		apply: func() error {
 			previous, _ = r.services.Grid.Cell(levelID, x, y)
 
-			return r.services.Grid.SetCell(levelID, x, y, glyph[0])
+			return r.services.Grid.SetCell(levelID, x, y, feature)
 		},
 		undo: func() error {
 			return r.services.Grid.SetCell(levelID, x, y, previous)
@@ -523,7 +534,12 @@ func (r *Runtime) luaGridPlaceActor(state *lua.LState) int {
 		return 0
 	}
 
-	if !r.stagedWalkable(next) {
+	feature, _ := r.services.Grid.Cell(next.levelID, next.x, next.y)
+	if pending, changed := r.pendingCells[next]; changed {
+		feature = pending
+	}
+
+	if !r.stagedWalkable(next) && feature != terrain.MalignGateway {
 		state.RaiseError("place actor %d destination is blocked", entity)
 
 		return 0

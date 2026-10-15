@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/halfling.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_HALFLING",
     monster_id = "MONS_HALFLING",
-    source_path = "crawl-ref/source/dat/species/halfling.yaml",
     name = "Halfling",
     short_name = "Ha",
     selectable = false,
@@ -145,3 +146,7 @@ register.species{
     size = "SIZE_SMALL",
     undead_type = "US_ALIVE",
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

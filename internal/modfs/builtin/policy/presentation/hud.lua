@@ -1,3 +1,4 @@
+local time = require("constants.time")
 local colors = require("policy.presentation.colors")
 local abyss = require("policy.world.abyss")
 
@@ -102,7 +103,8 @@ function hud.rows(view)
         "D:" .. view.level_id
     write(18, 7, "Place: " .. place, colors.brown)
     write(0, 8, "Noise: --", colors.brown)
-    write(18, 8, string.format("Time: %.1f", view.current_aut / 10), colors.brown)
+    write(18, 8, string.format("Time: %.1f",
+        view.current_aut / time.AUT_PER_TURN), colors.brown)
     write(0, 9, weapon_label(view.inventory), colors.light_grey)
     write(0, 10, "Quiver: --", colors.brown)
 
@@ -125,11 +127,13 @@ function hud.rows(view)
     return { writes = writes, meters = meters }
 end
 
+function hud.run(_, input)
+    return hud.rows(input.view)
+end
+
 register.policy({
     id = "presentation.hud",
-    run = function(_, input)
-        return hud.rows(input.view)
-    end,
+    run = hud.run,
 })
 
 return hud

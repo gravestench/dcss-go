@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/kobold.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_KOBOLD",
     monster_id = "MONS_KOBOLD",
-    source_path = "crawl-ref/source/dat/species/kobold.yaml",
     name = "Kobold",
     short_name = "Ko",
     selectable = true,
@@ -162,3 +163,7 @@ register.species{
         "SK_STAVES",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

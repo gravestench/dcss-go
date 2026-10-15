@@ -176,61 +176,35 @@ func newRuntimeWithHostComponents(
 	t.Helper()
 
 	stores := ecs.Register(world)
-	components := make(map[string]HostComponent)
+	components, err := BindHosts([]HostBinding{
+		Host("core.position", stores.Positions),
+		Host("core.actor", stores.Actors),
+		Host("core.player_turn", stores.PlayerTurn),
+		Host("core.monster_energy", stores.MonsterEnergy),
+		Host("core.health", stores.Health),
+		Host("core.magic", stores.Magic),
+		Host("core.skills", stores.Skills),
+		Host("core.skill_training", stores.SkillTraining),
+		Host("core.player", stores.Players),
+		Host("core.progression", stores.Progression),
+		Host("core.attributes", stores.Attributes),
+		Host("core.durations", stores.Durations),
+		Host("core.poison", stores.Poison),
+		Host("core.regeneration", stores.Regeneration),
+		Host("core.combat", stores.Combat),
+		Host("core.constricted", stores.Constricted),
+		Host("core.equipment_delay", stores.Equipment),
+		Host("core.ai", stores.AI),
+		Host("core.follower", stores.Followers),
+		Host("core.item", stores.Items),
+		Host("core.corpse", stores.Corpses),
+		Host("core.carried_by", stores.CarriedBy),
+		Host("core.equipped", stores.Equipped),
+		Host("core.intent", stores.Intents),
+	})
 
-	for _, binding := range []struct {
-		name string
-		bind func() (HostComponent, error)
-	}{
-		{
-			name: "core.player",
-			bind: func() (HostComponent, error) {
-				return BindHostComponent("core.player", stores.Players)
-			},
-		},
-
-		{
-			name: "core.health",
-			bind: func() (HostComponent, error) {
-				return BindHostComponent("core.health", stores.Health)
-			},
-		},
-
-		{
-			name: "core.magic",
-			bind: func() (HostComponent, error) {
-				return BindHostComponent("core.magic", stores.Magic)
-			},
-		},
-
-		{
-			name: "core.durations",
-			bind: func() (HostComponent, error) {
-				return BindHostComponent("core.durations", stores.Durations)
-			},
-		},
-
-		{
-			name: "core.poison",
-			bind: func() (HostComponent, error) {
-				return BindHostComponent("core.poison", stores.Poison)
-			},
-		},
-
-		{
-			name: "core.regeneration",
-			bind: func() (HostComponent, error) {
-				return BindHostComponent("core.regeneration", stores.Regeneration)
-			},
-		},
-	} {
-		component, err := binding.bind()
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		components[binding.name] = component
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	services.HostComponents = components

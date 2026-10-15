@@ -1,0 +1,34 @@
+-- Generated from a committed DCSS import. Refresh deliberately.
+-- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Name Source: crawl-ref/source/item-name.cc
+-- Name Line: 1700
+-- Property Source: crawl-ref/source/item-prop.cc
+-- Property Line: 718
+
+local categories = require("constants.catalog")
+
+local definition = {
+    id = "FOOD_PIZZA",
+    name = "removed food",
+    property_name = "buggy fruit",
+    glyph = 37,
+    class = "OBJ_FOOD",
+    class_value = 4,
+    subtype_value = 8,
+    stackable = true,
+    -- Source: crawl-ref/source/item-name.cc:1700
+    naming = {
+        text = "removed food",
+        kind = "static",
+    },
+    explicitly_removed = false,
+    food = {
+        normal_nutrition = 1500,
+        carnivore_nutrition = 0,
+        herbivore_nutrition = 0,
+    },
+}
+
+register.definition(categories.ITEMS, definition)
+
+return definition

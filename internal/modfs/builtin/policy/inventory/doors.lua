@@ -6,6 +6,11 @@ local function key(x, y)
     return x .. ":" .. y
 end
 
+local function cell_order(left, right)
+    return left.x < right.x or
+        (left.x == right.x and left.y < right.y)
+end
+
 function doors.group(ctx, level, x, y, glyph)
     if ctx:cell(level, x, y) ~= glyph then
         error("level " .. level .. " has no " .. glyph .. " door at (" .. x .. "," .. y .. ")")
@@ -31,9 +36,7 @@ function doors.group(ctx, level, x, y, glyph)
         end
     end
 
-    table.sort(found, function(a, b)
-        return a.x < b.x or (a.x == b.x and a.y < b.y)
-    end)
+    table.sort(found, cell_order)
 
     return found
 end
@@ -106,7 +109,7 @@ function doors.prepare(ctx, actor, opening, dx, dy)
         error("door actor " .. ctx:id(actor) .. " has no position")
     end
 
-    local glyph = opening and "+" or "'"
+    local glyph = opening and "DNGN_CLOSED_DOOR" or "DNGN_OPEN_DOOR"
     local verb = opening and "open" or "close"
     dx = dx or 0
     dy = dy or 0

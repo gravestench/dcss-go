@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/felid.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_FELID",
     monster_id = "MONS_FELID",
-    source_path = "crawl-ref/source/dat/species/felid.yaml",
     name = "Felid",
     short_name = "Fe",
     adjective = "Feline",
@@ -214,3 +215,7 @@ register.species{
     },
     altar_action = "sit before",
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

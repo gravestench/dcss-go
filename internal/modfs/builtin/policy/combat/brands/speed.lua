@@ -1,5 +1,7 @@
 -- The action delay is applied by policy.monster_energy before this hit.
-return {
-    apply = function()
-    end,
-}
+local brand = {}
+
+function brand.apply()
+end
+
+return brand

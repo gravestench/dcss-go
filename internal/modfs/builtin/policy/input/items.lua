@@ -3,6 +3,26 @@ local menu = require("policy.input.menu")
 
 local items = {}
 
+function items.any_item()
+    return true
+end
+
+function items.potion(candidate)
+    return candidate.class == "OBJ_POTIONS"
+end
+
+function items.weapon(candidate)
+    return candidate.class == "OBJ_WEAPONS"
+end
+
+function items.worn_armour(candidate)
+    return candidate.class == "OBJ_ARMOUR" and candidate.slot ~= ""
+end
+
+function items.unworn_armour(candidate)
+    return candidate.class == "OBJ_ARMOUR" and candidate.slot == ""
+end
+
 local function notice(text)
     return {
         action = "notice",
@@ -26,9 +46,7 @@ function items.quaff(input)
         return navigation
     end
 
-    local item = menu.item(input, function(candidate)
-        return candidate.class == "OBJ_POTIONS"
-    end)
+    local item = menu.item(input, items.potion)
 
     if item then
         return item_step(commands.quaff, item.id)
@@ -66,9 +84,7 @@ function items.drop(input)
         }
     end
 
-    local item = menu.item(input, function()
-        return true
-    end)
+    local item = menu.item(input, items.any_item)
 
     if not item then
         return notice("Select an item by its inventory letter.")
@@ -108,9 +124,7 @@ function items.wield(input)
         return item_step(commands.wield, 0)
     end
 
-    local item = menu.item(input, function(candidate)
-        return candidate.class == "OBJ_WEAPONS"
-    end)
+    local item = menu.item(input, items.weapon)
 
     if item then
         return item_step(commands.wield, item.id)
@@ -126,11 +140,8 @@ local function armour(input, remove)
         return navigation
     end
 
-    local item = menu.item(input, function(candidate)
-        return candidate.class == "OBJ_ARMOUR" and
-            ((remove and candidate.slot ~= "") or
-                (not remove and candidate.slot == ""))
-    end)
+    local accepted = remove and items.worn_armour or items.unworn_armour
+    local item = menu.item(input, accepted)
 
     if item then
         local kind = remove and commands.take_off or commands.wear
@@ -156,9 +167,7 @@ function items.throw(input)
         return navigation
     end
 
-    local selected = menu.item(input, function()
-        return true
-    end)
+    local selected = menu.item(input, items.any_item)
 
     if not selected then
         return notice("Select a missile by its inventory letter.")

@@ -65,11 +65,13 @@ function menu.presentation()
     }
 end
 
+function menu.run_presentation()
+    return menu.presentation()
+end
+
 register.policy({
     id = "character.menu",
-    run = function()
-        return menu.presentation()
-    end,
+    run = menu.run_presentation,
 })
 
 return menu

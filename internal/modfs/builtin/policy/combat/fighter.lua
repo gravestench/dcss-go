@@ -1,5 +1,7 @@
 local catalog = require("policy.catalog")
 local equipment = require("policy.combat.equipment")
+local statuses = require("policy.magic.effects.statuses.player")
+local forms = require("policy.magic.effects.forms.player")
 
 local fighter = {}
 
@@ -81,21 +83,23 @@ function fighter.mutation(ctx, id)
         end
     end
 
-    return total
+    return total + forms.mutation_level(ctx, ctx:player(), id)
 end
 
 function fighter.attack(ctx, defender)
     local player = ctx:player()
     local attributes = required(ctx, player, "core.attributes")
+    local form = forms.modifiers(ctx, player)
     local worn = equipment.worn(ctx, player, { weapon = true })
     local weapon = worn.weapon
     local input = {
-        strength = attributes.strength,
-        dexterity = attributes.dexterity,
+        strength = attributes.strength + form.strength,
+        dexterity = attributes.dexterity + form.dexterity,
         fighting100 = fighter.skill(ctx, "SK_FIGHTING", 100),
         defender_ev = defender.ev or 0,
         defender_ac = defender.ac or 0,
         mighty = false,
+        slay = statuses.wereblood_slay(ctx, player),
     }
 
     local durations = ctx:get(player, "core.durations")
@@ -152,6 +156,7 @@ end
 function fighter.defense(ctx)
     local player = ctx:player()
     local attributes = required(ctx, player, "core.attributes")
+    local form = forms.modifiers(ctx, player)
     local state = required(ctx, player, "core.combat")
     local worn = equipment.worn(ctx, player, {
         body = true,
@@ -175,8 +180,8 @@ function fighter.defense(ctx)
     local armour_skill = fighter.skill_level(ctx, "SK_ARMOUR")
     local shields_skill = fighter.skill_level(ctx, "SK_SHIELDS")
     local dodge10 = fighter.skill(ctx, "SK_DODGING", 10)
-    local strength = attributes.strength
-    local dexterity = attributes.dexterity
+    local strength = attributes.strength + form.strength
+    local dexterity = attributes.dexterity + form.dexterity
     local body_encumbrance = math.floor(-body.ev / 10)
     local body_penalty = math.floor(
         2 * body_encumbrance ^ 2 * (450 - armour_skill * 10) * 100 /
@@ -208,8 +213,10 @@ function fighter.defense(ctx)
         end
     end
 
+    local vertigo_penalty = statuses.vertigo_active(ctx, player) and 500 or 0
     local natural_ev = math.max(100,
-        1000 + dodge_bonus - piece_penalty - body_penalty - shield_penalty)
+        1000 + dodge_bonus - piece_penalty - body_penalty -
+            shield_penalty - vertigo_penalty)
     local ev = math.floor((natural_ev + 99) / 100)
     local factor = 440 + armour_skill * 20
     local scaled_ac = math.floor(body.ac * 100 * factor / 440) + body.plus * 100
@@ -217,6 +224,10 @@ function fighter.defense(ctx)
     for _, piece in ipairs(auxiliary) do
         scaled_ac = scaled_ac + math.floor(piece.ac * 100 * factor / 440) + piece.plus * 100
     end
+
+    scaled_ac = scaled_ac + statuses.ice_armour_bonus_x100(ctx, player,
+        body_encumbrance)
+    scaled_ac = scaled_ac + form.ac_x100
 
     local ac = math.max(0, math.floor(scaled_ac / 100))
     local shield_class = 0

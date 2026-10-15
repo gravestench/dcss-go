@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/terrain"
 	"github.com/gravestench/akara"
 )
 
@@ -54,13 +55,13 @@ func (g *Game) buildScriptScenario(
 			return scenarioLevels{}, err
 		}
 
-		rows, err := luaScenarioRows(record["rows"])
+		cells, err := luaScenarioCells(record["cells"])
 
 		if err != nil {
 			return scenarioLevels{}, fmt.Errorf("Lua level %d: %w", id, err)
 		}
 
-		level, err := NewLevel(id, rows, positions)
+		level, err := NewLevel(id, cells, positions)
 
 		if err != nil {
 			return scenarioLevels{}, err
@@ -155,26 +156,33 @@ func (g *Game) buildScriptScenario(
 	}, nil
 }
 
-func luaScenarioRows(value any) ([]string, error) {
+func luaScenarioCells(value any) ([][]terrain.ID, error) {
 	entries, ok := value.([]any)
 
 	if !ok {
-		return nil, fmt.Errorf("terrain rows are not a list")
+		return nil, fmt.Errorf("terrain cells are not a list")
 	}
 
-	rows := make([]string, len(entries))
+	cells := make([][]terrain.ID, len(entries))
 
 	for index, entry := range entries {
-		row, ok := entry.(string)
+		row, ok := entry.([]any)
 
 		if !ok {
-			return nil, fmt.Errorf("terrain row %d is not text", index)
+			return nil, fmt.Errorf("terrain row %d is not a list", index)
 		}
 
-		rows[index] = row
+		cells[index] = make([]terrain.ID, len(row))
+		for x, value := range row {
+			feature, ok := value.(string)
+			if !ok {
+				return nil, fmt.Errorf("terrain cell (%d,%d) is not a feature ID", x, index)
+			}
+			cells[index][x] = terrain.ID(feature)
+		}
 	}
 
-	return rows, nil
+	return cells, nil
 }
 
 func luaScenarioPoint(value any) (point, error) {

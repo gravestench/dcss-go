@@ -34,7 +34,7 @@ func TestScenarioHasDungeonAndAbyss(t *testing.T) {
 		t.Fatal("rat absent at (4,1)")
 	}
 
-	if game.levels[1].terrain[3][7] != '>' || game.levels[2].terrain[1][1] != '<' {
+	if fixtureGlyph(game.levels[1].terrain[3][7]) != '>' || fixtureGlyph(game.levels[2].terrain[1][1]) != '<' {
 		t.Fatal("stair terrain is wrong")
 	}
 
@@ -89,7 +89,7 @@ func TestLevelRejectsInvalidTerrain(t *testing.T) {
 		},
 		{"###", "##"},
 	} {
-		if _, err := NewLevel(1, rows, positions); err == nil {
+		if _, err := NewLevel(1, fixtureCells(rows), positions); err == nil {
 			t.Fatalf("accepted invalid terrain %q", rows)
 		}
 	}
@@ -99,11 +99,11 @@ func TestOccupancyRejectsSecondActor(t *testing.T) {
 	world := akara.NewWorld()
 	defer world.Close()
 	positions := ecs.Register(world).Positions
-	level, err := NewLevel(1, []string{
+	level, err := NewLevel(1, fixtureCells([]string{
 		"###",
 		"#.#",
 		"###",
-	}, positions)
+	}), positions)
 
 	if err != nil {
 		t.Fatal(err)
@@ -130,12 +130,12 @@ func TestClosedDoorBlocksMovementAndOpensConnectedGroup(t *testing.T) {
 	defer world.Close()
 
 	positions := ecs.Register(world).Positions
-	level, err := NewLevel(1, []string{
+	level, err := NewLevel(1, fixtureCells([]string{
 		"#######",
 		"#..++.#",
 		"#.....#",
 		"#######",
-	}, positions)
+	}), positions)
 
 	if err != nil {
 		t.Fatal(err)
@@ -152,7 +152,7 @@ func TestClosedDoorBlocksMovementAndOpensConnectedGroup(t *testing.T) {
 		t.Fatalf("opened door group = %d, %v", opened, err)
 	}
 
-	if level.terrain[1] != "#..''.#" || !level.Walkable(3, 1) {
+	if fixtureRow(level.terrain[1]) != "#..''.#" || !level.Walkable(3, 1) {
 		t.Fatalf("open door terrain = %q", level.terrain[1])
 	}
 }

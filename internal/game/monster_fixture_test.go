@@ -18,7 +18,7 @@ func spawnWormForTest(t *testing.T, g *Game, levelID int) akara.Entity {
 
 	for y, row := range level.terrain {
 		for x := range row {
-			if row[x] != '.' {
+			if fixtureGlyph(row[x]) != '.' {
 				continue
 			}
 

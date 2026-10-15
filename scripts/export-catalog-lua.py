@@ -17,18 +17,65 @@ SOURCE = ROOT / "internal/content/generated"
 DESTINATION = ROOT / "internal/modfs/builtin/data"
 
 CATALOGS = (
-    "branches",
     "dungeon-population",
     "item-identities",
-    "items",
-    "monster-spellbooks",
     "monster-vocabulary",
     "monster-weapons",
-    "monsters",
     "presentation",
-    "spells",
     "starting-gear",
 )
+
+DEFINITIONS = {
+    "branches": ("branches", "branches"),
+    "items": ("items", "items"),
+    "monster-spellbooks": ("books", "monster_spellbooks"),
+    "monsters": ("monsters", "monsters"),
+    "spells": ("spells", "spells"),
+}
+
+CONTENT = ROOT / "internal/modfs/builtin/content"
+
+PROVENANCE_FIELDS = frozenset({
+    "source_revision",
+    "source_files",
+    "source_path",
+    "source_line",
+    "enum_line",
+    "name_source",
+    "property_source",
+    "evidence",
+    "tag_major_version",
+})
+
+
+def source_comments(value):
+    if not isinstance(value, dict):
+        return []
+
+    comments = []
+    path = value.get("source_path")
+    line = value.get("source_line")
+
+    if path:
+        comments.append(f"Source: {path}" + (f":{line}" if line else ""))
+    elif line:
+        comments.append(f"Source line: {line}")
+
+    if value.get("enum_line"):
+        comments.append(f"Enum line: {value['enum_line']}")
+
+    for field in ("name_source", "property_source"):
+        if value.get(field):
+            comments.append(f"{field.replace('_', ' ').title()}: {value[field]}")
+
+    evidence = value.get("evidence")
+
+    if isinstance(evidence, dict):
+        for field, line in evidence.items():
+            if line:
+                comments.append(f"{field.replace('_', ' ').title()}: {line}")
+
+    return comments
 
 
 def lua_string(value):
@@ -107,6 +154,12 @@ def lines_for(value, depth=0):
         result = ["{"]
 
         for key, child in entries:
+            if isinstance(value, dict) and key in PROVENANCE_FIELDS:
+                continue
+
+            for comment in source_comments(child):
+                result.append(indent + "    -- " + comment)
+
             prefix = key_name(key) + " = " if isinstance(key, str) else ""
 
             if isinstance(child, str):
@@ -145,17 +198,53 @@ def render(name):
     source = SOURCE / f"{name}.json"
     artifact = json.loads(source.read_text())
     revision = artifact["source_revision"]
-    source_lines = [entry["path"] for entry in artifact["source_files"]]
     header = [
         "-- Generated from a committed DCSS import. Refresh deliberately.",
         f"-- Revision: {revision}",
     ]
 
-    for path in source_lines:
-        header.append(f"-- Source: {path}")
+    for entry in artifact["source_files"]:
+        header.append(f"-- Source: {entry['path']}")
+        header.append(f"-- SHA-256: {entry['sha256']}")
 
     body = lines_for(artifact)
-    return "\n".join(header + ["", "return " + body[0]] + body[1:]) + "\n"
+    body[0] = "local catalog = " + body[0]
+
+    return "\n".join(header + [""] + body + ["", "return catalog"]) + "\n"
+
+
+def render_definition(category, revision, definition):
+    header = [
+        "-- Generated from a committed DCSS import. Refresh deliberately.",
+        f"-- Revision: {revision}",
+    ]
+
+    header.extend("-- " + comment for comment in source_comments(definition))
+    header.extend(["", 'local categories = require("constants.catalog")'])
+    body = lines_for(definition)
+    body[0] = "local definition = " + body[0]
+    footer = [
+        "",
+        f"register.definition(categories.{category.upper()}, definition)",
+        "",
+        "return definition",
+    ]
+
+    return "\n".join(header + [""] + body + footer) + "\n"
+
+
+def output_files():
+    for name in CATALOGS:
+        yield DESTINATION / f"{name.replace('-', '_')}.lua", render(name)
+
+    for name, (field, category) in DEFINITIONS.items():
+        artifact = json.loads((SOURCE / f"{name}.json").read_text())
+        revision = artifact["source_revision"]
+
+        for index, definition in enumerate(artifact[field], start=1):
+            filename = f"{index:04d}_{definition['id'].lower()}.lua"
+            path = CONTENT / category / filename
+            yield path, render_definition(category, revision, definition)
 
 
 def main():
@@ -163,19 +252,39 @@ def main():
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     stale = []
+    files = dict(output_files())
 
-    if not args.check:
-        DESTINATION.mkdir(parents=True, exist_ok=True)
-
-    for name in CATALOGS:
-        path = DESTINATION / f"{name.replace('-', '_')}.lua"
-        expected = render(name)
+    for path, expected in files.items():
 
         if args.check:
             if not path.exists() or path.read_text() != expected:
                 stale.append(str(path.relative_to(ROOT)))
         else:
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(expected)
+
+    for _, category in DEFINITIONS.values():
+        directory = CONTENT / category
+
+        for path in directory.glob("*.lua"):
+            if path in files:
+                continue
+
+            if args.check:
+                stale.append(str(path.relative_to(ROOT)))
+            else:
+                path.unlink()
+
+    for name in DEFINITIONS:
+        legacy = DESTINATION / f"{name.replace('-', '_')}.lua"
+
+        if not legacy.exists():
+            continue
+
+        if args.check:
+            stale.append(str(legacy.relative_to(ROOT)))
+        else:
+            legacy.unlink()
 
     if stale:
         raise SystemExit("stale Lua catalogs: " + ", ".join(stale))

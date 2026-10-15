@@ -1,0 +1,47 @@
+-- Generated from a committed DCSS import. Refresh deliberately.
+-- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Source line: 504
+
+local categories = require("constants.catalog")
+
+local definition = {
+    id = "MST_HALAZID_WARLOCK",
+    slots = {
+        -- Source line: 506
+        {
+            spell_id = "SPELL_GHOSTLY_SACRIFICE",
+            frequency = 20,
+            flags = {
+                "MON_SPELL_WIZARD",
+            },
+        },
+        -- Source line: 507
+        {
+            spell_id = "SPELL_BOLT_OF_DRAINING",
+            frequency = 20,
+            flags = {
+                "MON_SPELL_WIZARD",
+            },
+        },
+        -- Source line: 508
+        {
+            spell_id = "SPELL_BOLT_OF_COLD",
+            frequency = 20,
+            flags = {
+                "MON_SPELL_WIZARD",
+            },
+        },
+        -- Source line: 509
+        {
+            spell_id = "SPELL_SHADOW_CREATURES",
+            frequency = 20,
+            flags = {
+                "MON_SPELL_WIZARD",
+            },
+        },
+    },
+}
+
+register.definition(categories.MONSTER_SPELLBOOKS, definition)
+
+return definition

@@ -58,7 +58,7 @@ function choice.allowed(species, job)
     return true
 end
 
-register.choice_policy(function(species, job, species_first)
+function choice.policy(species, job, species_first)
     if not choice.allowed(species, job) then
         return "banned", false
     end
@@ -73,6 +73,8 @@ register.choice_policy(function(species, job, species_first)
 
     local restriction = recommended and "recommended" or "restricted"
     return restriction, true
-end)
+end
+
+register.choice_policy(choice.policy)
 
 return choice

@@ -1,5 +1,6 @@
 local dispersal = require("policy.combat.dispersal")
 local roll = require("policy.combat.roll")
+local player_health = require("policy.combat.player_health")
 local abyss = require("policy.world.abyss")
 
 local distortion = {}
@@ -16,7 +17,8 @@ local function warp_damage(ctx, hit, small)
         message = "Space warps horribly around you!"
     end
 
-    hit.health.current = math.max(0, hit.health.current - amount)
+    hit.health = player_health.damage(ctx, hit.defender, amount,
+        false, hit.attacker)
     ctx:emit("combat", message)
 end
 

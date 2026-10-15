@@ -28,6 +28,10 @@ const (
 	CommandCancelEquipment
 	CommandFire
 	CommandThrow
+	CommandMemorise
+	CommandCancelMemorise
+	CommandCast
+	CommandForceCast
 )
 
 type Command struct {
@@ -36,6 +40,7 @@ type Command struct {
 	DY       int
 	ItemID   uint64
 	Quantity int
+	SpellID  string
 }
 
 type Event struct {
@@ -320,12 +325,20 @@ func (g *Game) runActionStarted(
 	resolved, producedIntent := g.stores.Intents.Get(actor)
 
 	if !producedIntent {
-		return nil, fmt.Errorf("%s actor %d produced no intent", phase, actor)
+		if actor == g.player || g.stores.Actors.Has(actor) {
+			return nil, fmt.Errorf("%s actor %d produced no intent", phase, actor)
+		}
+
+		// A status or terrain effect can kill the active monster before its
+		// intent resolves. It has no remaining energy to spend.
+		resolved = &ecs.Intent{Kind: ecs.IntentWait}
 	}
 
 	g.turn.ResolvedIntent = resolved.Kind
 	g.turn.ResolvedItemID = resolved.ItemID
-	g.stores.Intents.Remove(actor)
+	if producedIntent {
+		g.stores.Intents.Remove(actor)
+	}
 
 	if actor == g.player {
 		playerTurn, found := g.stores.PlayerTurn.Get(actor)
@@ -335,6 +348,7 @@ func (g *Game) runActionStarted(
 		}
 
 		playerTurn.NextAut += int64(cost)
+		playerTurn.Count++
 	}
 
 	events := append([]Event(nil), g.turn.Events...)

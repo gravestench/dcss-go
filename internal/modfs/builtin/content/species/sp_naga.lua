@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/naga.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_NAGA",
     monster_id = "MONS_NAGA",
-    source_path = "crawl-ref/source/dat/species/naga.yaml",
     name = "Naga",
     short_name = "Na",
     selectable = true,
@@ -203,3 +204,7 @@ register.species{
     walking_verb = "Slither",
     altar_action = "coil in front of",
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

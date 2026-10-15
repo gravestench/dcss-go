@@ -1,82 +1,36 @@
 -- Generated from a committed DCSS import. Refresh deliberately.
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/item-name.cc
+-- SHA-256: 33acc31b8bb3eea0029a7ac19c9acf38976d45b3cd331e40c45fa2a4ffd32310
 -- Source: crawl-ref/source/item-prop-enum.h
+-- SHA-256: 61b0272b6c03dd00167f9cd04b1720e18c3800118e2c1dc675cea24834203d38
 -- Source: crawl-ref/source/item-prop.cc
+-- SHA-256: 46cf9a4d404a74333fd275b490b0f3c2eec5a919f96687d70986c97c45625111
 -- Source: crawl-ref/source/job-data.h
+-- SHA-256: 1a7da93427bdab2e45baf83495748af60d0e7d89797035127923cfdfb622c7db
 -- Source: crawl-ref/source/job-type.h
+-- SHA-256: 49346fb46b4f1a68bf88db6a46c1c32eac7d81e3c074880cda840b50ca6c62ad
 -- Source: crawl-ref/source/jobs.cc
+-- SHA-256: 7695807df222b49c2b049b00da28faf576787376a830617777a7245f9da529cf
 -- Source: crawl-ref/source/newgame.cc
+-- SHA-256: 32e2055c3b71002a2a3610c322fa05b35f8a8b05f00411df46f1de70adf8ef69
 -- Source: crawl-ref/source/ng-restr.cc
+-- SHA-256: 11195795ee1037a7c44411d1b03b7cdf1f096ff58a08de7c74f0995e8c1ddf2d
 -- Source: crawl-ref/source/ng-setup.cc
+-- SHA-256: 43b56d862c75b7243979831fe9216ecb3269e96fe5c8d788db277ceae6d7a865
 -- Source: crawl-ref/source/potion-type.h
+-- SHA-256: bd368d1829afd0151e94322f4d3d15a895341801cadd49ea89f5e6fccc62bad9
 -- Source: crawl-ref/source/skill-type.h
+-- SHA-256: 41db7cbdd07c188228a007d3769cd20a68cce42fe0f5b2ae6023c1e677a243ee
 -- Source: crawl-ref/source/species-type.h
+-- SHA-256: 45a610e690e3c02f0a091c0e78647d128636ecb0c02dffe0cbe9f9951f42bdb7
 -- Source: crawl-ref/source/spell-type.h
+-- SHA-256: 91be664ef01f81d4401e4fd4ef0aff709a96f464c7035558435fb1bc135da2e1
 -- Source: crawl-ref/source/tag-version.h
+-- SHA-256: 2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa
 
-return {
+local catalog = {
     schema_version = 2,
-    source_revision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
-    tag_major_version = 34,
-    source_files = {
-        {
-            path = "crawl-ref/source/item-name.cc",
-            sha256 = "33acc31b8bb3eea0029a7ac19c9acf38976d45b3cd331e40c45fa2a4ffd32310",
-        },
-        {
-            path = "crawl-ref/source/item-prop-enum.h",
-            sha256 = "61b0272b6c03dd00167f9cd04b1720e18c3800118e2c1dc675cea24834203d38",
-        },
-        {
-            path = "crawl-ref/source/item-prop.cc",
-            sha256 = "46cf9a4d404a74333fd275b490b0f3c2eec5a919f96687d70986c97c45625111",
-        },
-        {
-            path = "crawl-ref/source/job-data.h",
-            sha256 = "1a7da93427bdab2e45baf83495748af60d0e7d89797035127923cfdfb622c7db",
-        },
-        {
-            path = "crawl-ref/source/job-type.h",
-            sha256 = "49346fb46b4f1a68bf88db6a46c1c32eac7d81e3c074880cda840b50ca6c62ad",
-        },
-        {
-            path = "crawl-ref/source/jobs.cc",
-            sha256 = "7695807df222b49c2b049b00da28faf576787376a830617777a7245f9da529cf",
-        },
-        {
-            path = "crawl-ref/source/newgame.cc",
-            sha256 = "32e2055c3b71002a2a3610c322fa05b35f8a8b05f00411df46f1de70adf8ef69",
-        },
-        {
-            path = "crawl-ref/source/ng-restr.cc",
-            sha256 = "11195795ee1037a7c44411d1b03b7cdf1f096ff58a08de7c74f0995e8c1ddf2d",
-        },
-        {
-            path = "crawl-ref/source/ng-setup.cc",
-            sha256 = "43b56d862c75b7243979831fe9216ecb3269e96fe5c8d788db277ceae6d7a865",
-        },
-        {
-            path = "crawl-ref/source/potion-type.h",
-            sha256 = "bd368d1829afd0151e94322f4d3d15a895341801cadd49ea89f5e6fccc62bad9",
-        },
-        {
-            path = "crawl-ref/source/skill-type.h",
-            sha256 = "41db7cbdd07c188228a007d3769cd20a68cce42fe0f5b2ae6023c1e677a243ee",
-        },
-        {
-            path = "crawl-ref/source/species-type.h",
-            sha256 = "45a610e690e3c02f0a091c0e78647d128636ecb0c02dffe0cbe9f9951f42bdb7",
-        },
-        {
-            path = "crawl-ref/source/spell-type.h",
-            sha256 = "91be664ef01f81d4401e4fd4ef0aff709a96f464c7035558435fb1bc135da2e1",
-        },
-        {
-            path = "crawl-ref/source/tag-version.h",
-            sha256 = "2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa",
-        },
-    },
     jobs = {
         {
             job_id = "JOB_ABYSSAL_KNIGHT",
@@ -533,3 +487,5 @@ return {
         },
     },
 }
+
+return catalog

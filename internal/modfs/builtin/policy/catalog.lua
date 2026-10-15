@@ -1,56 +1,25 @@
--- Source-traced catalogs are committed Lua modules. Load only the catalog a
--- rule needs, then index it once so gameplay never scans records by ID.
-
-local collections = {
-    branches = { module = "data.branches", field = "branches" },
-    items = { module = "data.items", field = "items" },
-    monsters = { module = "data.monsters", field = "monsters" },
-    monster_spellbooks = {
-        module = "data.monster_spellbooks",
-        field = "books",
-    },
-    spells = { module = "data.spells", field = "spells" },
-}
-
-local indexes = {}
+-- Every content record is registered by its own discoverable Lua file.
 local catalog = {}
 
 function catalog.get(category, id)
-    if category == "species" or category == "jobs" then
-        return register.get(category, id)
-    end
+    local definition = register.get(category, id)
 
-    local collection = collections[category]
-
-    if not collection then
-        error("unknown catalog " .. tostring(category))
-    end
-
-    local index = indexes[category]
-
-    if not index then
-        index = {}
-        local artifact = require(collection.module)
-
-        for _, definition in ipairs(artifact[collection.field]) do
-            if index[definition.id] then
-                error("duplicate " .. category .. " ID " .. definition.id)
-            end
-
-            index[definition.id] = definition
-        end
-
-        indexes[category] = index
-    end
-
-    local definition = index[id]
-
-    if not definition or definition.status == "removed" or
-        definition.status == "enum_only" then
+    if definition.status == "removed" or definition.status == "enum_only" then
         error("unknown active " .. category .. " ID " .. tostring(id))
     end
 
     return definition
+end
+
+function catalog.all(category)
+    local definitions = {}
+
+    -- Registration order preserves the source catalog's selection order.
+    for _, id in ipairs(register.ordered_ids(category)) do
+        definitions[#definitions + 1] = register.get(category, id)
+    end
+
+    return definitions
 end
 
 return catalog

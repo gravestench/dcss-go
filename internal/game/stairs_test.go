@@ -11,12 +11,12 @@ import (
 
 func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 	g := newStepGame(t)
-	third, err := NewLevel(3, []string{
+	third, err := NewLevel(3, fixtureCells([]string{
 		"#####",
 		"#<..#",
 		"#...#",
 		"#####",
-	}, g.stores.Positions)
+	}), g.stores.Positions)
 
 	if err != nil {
 		t.Fatal(err)
@@ -25,10 +25,7 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 	g.levels[3] = third
 
 	second := g.levels[2]
-	row := []byte(second.terrain[3])
-
-	row[3] = '>'
-	second.terrain[3] = string(row)
+	second.terrain[3][3] = fixtureFeature('>')
 
 	if err := second.AddStairLink(StairLink{
 		X:         3,
@@ -153,10 +150,7 @@ func TestRestoreRejectsMissingStairLink(t *testing.T) {
 func TestLevelAllowsMultipleStairsOfOneKind(t *testing.T) {
 	g := newStepGame(t)
 	level := g.levels[1]
-	row := []byte(level.terrain[3])
-
-	row[3] = '>'
-	level.terrain[3] = string(row)
+	level.terrain[3][3] = fixtureFeature('>')
 
 	if err := level.AddStairLink(StairLink{
 		X:         3,

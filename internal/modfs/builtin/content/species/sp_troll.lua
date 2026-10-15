@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/troll.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_TROLL",
     monster_id = "MONS_TROLL",
-    source_path = "crawl-ref/source/dat/species/troll.yaml",
     name = "Troll",
     short_name = "Tr",
     adjective = "Trollish",
@@ -175,3 +176,7 @@ register.species{
         "SK_UNARMED_COMBAT",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

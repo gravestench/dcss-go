@@ -49,7 +49,7 @@ local function pick(ctx, species, school, minimum, maximum, seen)
     local chosen
     local count = 0
 
-    for _, spell in ipairs(require("data.spells").spells) do
+    for _, spell in ipairs(require("policy.catalog").all("spells")) do
         if eligible(species, spell, school, minimum, maximum, seen) then
             count = count + 1
 

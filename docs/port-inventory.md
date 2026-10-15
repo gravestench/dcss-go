@@ -14,22 +14,22 @@ the implemented character, item, combat, monster, generation, command, save
 semantics, and presentation policies. The implemented entity systems are
 registered in `internal/modfs/builtin/systems`.
 
-Species and jobs are registered from their individual files under
-`content/species` and `content/jobs`. Gameplay and the pregame menu read
-those same registered tables, so an overlay changes both together. Lua
-validates the effective definitions and can retain mod-added fields.
-Other imported content is committed under `data`; Lua
-`policy/catalog.lua` indexes active IDs. Normal launch and restore read
+Species, jobs, monsters, spells, items, branches, and monster spellbooks are
+registered from individual files under `content/<category>`. Gameplay and
+the pregame menu read those same registered tables, so an overlay changes
+both together. Lua validates the effective definitions and can retain
+mod-added fields. Other imported content remains committed under `data`.
+Normal launch and restore read
 neither the C++ checkout nor the generated JSON artifacts. Those JSON files
 remain source-traced inputs for deliberate import refreshes and tests.
-`scripts/export-catalog-lua.py` refreshes the eleven aggregate Lua catalogs
-when upstream content changes.
+`scripts/export-catalog-lua.py` refreshes the per-record files and remaining
+aggregate Lua catalogs when upstream content changes.
 The player-book spell ID set is also committed as
 `data/player_book_spells.lua`; it is read at runtime without the C++ tree.
 
 An optional mod directory replaces bundled Lua files by relative path and
 may add files. Effective file bytes determine the ruleset hash recorded by
-saves. Lua may register systems, policies, species, jobs, and Akara component
+saves. Lua may register systems, policies, content definitions, and Akara component
 schemas. The runtime exposes one generic component and grid context rather
 than a handler API for each game domain.
 
@@ -42,6 +42,7 @@ than a handler API for each game domain.
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; item and spell capability dispatch without monster-ID handlers | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
 | Combat | Fighter melee and headbutts; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
 | Items and status | Pickup/drop, wielding, armour delays, quaffing curing/heal wounds/might/haste, ammunition stacks and landing, poison, curare slow, trapping nets, regeneration, and duration decay | `policy/inventory`, `policy/potions.lua`, `systems/item_*`, `systems/player_status.lua`, `systems/monster_*` |
+| Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, and forms; one remaining player-use effect is intentionally unavailable until its saved mutation state exists | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
 | Persistence | Version-14 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
 
@@ -57,8 +58,8 @@ the effective ruleset hash without adding a Go keymap.
 
 ## Committed source content
 
-The import artifacts account for 43 species, 31 jobs, 700 active non-alias
-monster IDs, 403 spell identities, 285 monster spellbooks, 408 concrete item
+The import artifacts account for 43 species, 31 jobs, 700 monster rows,
+403 spell identities, 285 monster spellbooks, 408 concrete item
 identities, 38 branches, ordered Dungeon population rows, monster weapon
 loadouts, starting grants, and console presentation metadata. Import tools
 under `cmd/import*` are for reviewed upstream refreshes. Content coverage
@@ -82,7 +83,7 @@ Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition
 and the complete source spell-usability filter remain to be ported.
-Major missing domains include player spellcasting and learning, religion
+Major missing domains include the remaining spell mechanics, religion
 actions,
 mutations and forms, full monster abilities, vaults and Lua vault scripts,
 more layouts and branches, the Abyss monster roster and shifting terrain,

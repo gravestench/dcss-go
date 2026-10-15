@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/deep-dwarf.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_DEEP_DWARF",
     monster_id = "MONS_DEEP_DWARF",
-    source_path = "crawl-ref/source/dat/species/deep-dwarf.yaml",
     name = "Deep Dwarf",
     short_name = "DD",
     adjective = "Dwarven",
@@ -178,3 +179,7 @@ register.species{
     size = "SIZE_MEDIUM",
     undead_type = "US_ALIVE",
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"math"
 	"sort"
+
+	"dcrawl-go/internal/terrain"
 )
 
 const maxRadius = 8
@@ -156,7 +158,7 @@ func buildRays() []ray {
 }
 
 // Compute returns a row-major mask of cells visible from the origin.
-func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
+func Compute(rows [][]terrain.ID, originX, originY, radius int) ([]bool, error) {
 	if radius < 1 || radius > maxRadius {
 		return nil, fmt.Errorf("visibility radius %d outside 1..%d", radius, maxRadius)
 	}
@@ -172,12 +174,9 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 			return nil, fmt.Errorf("terrain row %d has width %d, want %d", y, len(row), width)
 		}
 
-		for x := 0; x < width; x++ {
-			switch row[x] {
-			case '#', '.', '+', '\'', '<', '>':
-
-			default:
-				return nil, fmt.Errorf("unknown terrain %q at (%d,%d)", row[x], x, y)
+		for x, feature := range row {
+			if !terrain.Valid(feature) {
+				return nil, fmt.Errorf("unknown terrain %q at (%d,%d)", feature, x, y)
 			}
 		}
 	}
@@ -186,7 +185,8 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 		originX >= width ||
 		originY < 0 ||
 		originY >= len(rows) ||
-		rows[originY][originX] == '#' || rows[originY][originX] == '+' {
+		(!terrain.Walkable(rows[originY][originX]) &&
+			rows[originY][originX] != terrain.MalignGateway) {
 		return nil, fmt.Errorf("invalid sight origin (%d,%d)", originX, originY)
 	}
 
@@ -217,7 +217,7 @@ func Compute(rows []string, originX, originY, radius int) ([]bool, error) {
 
 				visible[y*width+x] = true
 
-				if rows[y][x] == '#' || rows[y][x] == '+' {
+				if terrain.Opaque(rows[y][x]) {
 					break
 				}
 			}

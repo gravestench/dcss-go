@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/deprecated-centaur.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_CENTAUR",
     monster_id = "MONS_CENTAUR",
-    source_path = "crawl-ref/source/dat/species/deprecated-centaur.yaml",
     name = "Centaur",
     short_name = "Ce",
     selectable = false,
@@ -165,3 +166,7 @@ register.species{
     size = "SIZE_LARGE",
     undead_type = "US_ALIVE",
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

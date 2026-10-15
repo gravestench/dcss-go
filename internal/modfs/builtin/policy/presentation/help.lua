@@ -140,24 +140,26 @@ function help.status(input)
     return { writes = writes }
 end
 
-register.policy({ id = "presentation.help", run = function()
-    return help.rows()
-end })
-
-register.policy({ id = "presentation.nearby", run = function(_, input)
+function help.run_nearby(_, input)
     return help.nearby(input)
-end })
+end
 
-register.policy({ id = "presentation.messages", run = function(_, input)
+function help.run_messages(_, input)
     return help.messages(input)
-end })
+end
 
-register.policy({ id = "presentation.confirm", run = function(_, input)
+function help.run_confirm(_, input)
     return help.confirm(input)
-end })
+end
 
-register.policy({ id = "presentation.status", run = function(_, input)
+function help.run_status(_, input)
     return help.status(input)
-end })
+end
+
+register.policy({ id = "presentation.help", run = help.rows })
+register.policy({ id = "presentation.nearby", run = help.run_nearby })
+register.policy({ id = "presentation.messages", run = help.run_messages })
+register.policy({ id = "presentation.confirm", run = help.run_confirm })
+register.policy({ id = "presentation.status", run = help.run_status })
 
 return help

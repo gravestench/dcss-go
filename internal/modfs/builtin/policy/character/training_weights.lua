@@ -1,5 +1,13 @@
 local weights = {}
 
+local function remainder_before(left, right)
+    if left.value == right.value then
+        return left.index < right.index
+    end
+
+    return left.value < right.value
+end
+
 function weights.setting(training, id)
     for _, setting in ipairs(training.settings) do
         if setting.id == id then
@@ -97,13 +105,7 @@ function weights.scaled(skills, training)
     end
 
     if not training.manual then
-        table.sort(remainders, function(a, b)
-            if a.value == b.value then
-                return a.index < b.index
-            end
-
-            return a.value < b.value
-        end)
+        table.sort(remainders, remainder_before)
 
         for _, rest in ipairs(remainders) do
             if scaled_total == 100 then

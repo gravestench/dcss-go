@@ -2,7 +2,7 @@ package game
 
 import (
 	"fmt"
-	"strings"
+	"reflect"
 	"testing"
 
 	"dcrawl-go/internal/modfs"
@@ -208,28 +208,22 @@ func TestDistinctCharacterStartFamiliesReachDungeon(t *testing.T) {
 				t.Fatalf("starting god = %v, want %s", god, wantGod)
 			}
 
-			if tc.spellID != "" {
-				memorized, err := origin.Get("memorized_spells")
+			spells := playerSpellRecords(t, started)
 
-				if err != nil {
-					t.Fatal(err)
-				}
-
-				spells := strings.Split(memorized.(string), ";")
-
-				if spells[0] != tc.spellID {
-					t.Fatalf("memorized spells = %v, want %s", memorized, tc.spellID)
-				}
+			if tc.spellID != "" && spells[tc.spellID].KnownSlot == 0 {
+				t.Fatalf("starting spell %s is not known", tc.spellID)
 			}
 
 			if tc.speciesID == "SP_DJINNI" {
-				future, futureErr := origin.Get("future_innate_spells")
+				future := 0
 
-				if futureErr != nil {
-					t.Fatal(futureErr)
+				for _, spell := range spells {
+					if spell.FutureLevel > 0 {
+						future++
+					}
 				}
 
-				if len(strings.Split(future.(string), ";")) != 13 {
+				if future != 13 {
 					t.Fatalf("Djinni has no durable future spell list: %v", future)
 				}
 			}
@@ -258,9 +252,6 @@ func TestDistinctCharacterStartFamiliesReachDungeon(t *testing.T) {
 			for _, field := range []string{
 				"initial_skills",
 				"innate_mutations",
-				"library_spells",
-				"memorized_spells",
-				"future_innate_spells",
 				"religion",
 				"piety",
 				"gift_timeout",
@@ -273,6 +264,10 @@ func TestDistinctCharacterStartFamiliesReachDungeon(t *testing.T) {
 					beforeValue != afterValue {
 					t.Fatalf("restore changed %s: %v to %v", field, beforeValue, afterValue)
 				}
+			}
+
+			if !reflect.DeepEqual(spells, playerSpellRecords(t, restored)) {
+				t.Fatal("restore changed starting spell records")
 			}
 		})
 	}
@@ -342,24 +337,9 @@ func TestRestrictedSpeciesStartEquipmentAndSpells(t *testing.T) {
 				t.Fatalf("Formicid equipment = %v", slots)
 			}
 
-			origin, found := started.scripts.Components()["character.origin"].Get(
-				started.player,
-			)
-
-			if !found {
-				t.Fatal("start lacks origin")
-			}
-
-			memorized, err := origin.Get("memorized_spells")
-
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			hasBlockedSpell := tc.missingSpell != "" && strings.Contains(
-				memorized.(string),
-				tc.missingSpell,
-			)
+			spells := playerSpellRecords(t, started)
+			hasBlockedSpell := tc.missingSpell != "" &&
+				spells[tc.missingSpell].KnownSlot != 0
 
 			if hasBlockedSpell {
 				t.Fatalf("memorized useless spell %s", tc.missingSpell)
@@ -582,21 +562,16 @@ func TestWandererMagicGiftsAreSaved(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		origin, found := g.scripts.Components()["character.origin"].Get(g.player)
+		spells := playerSpellRecords(t, g)
+		library := false
 
-		if !found {
-			g.Close()
-			t.Fatal("Wanderer lacks durable origin")
+		for _, state := range spells {
+			if state.InLibrary {
+				library = true
+			}
 		}
 
-		spells, err := origin.Get("library_spells")
-
-		if err != nil {
-			g.Close()
-			t.Fatal(err)
-		}
-
-		if spells != "" {
+		if library {
 			withSpells++
 			loaded, restoreErr := Restore(g.Snapshot())
 
@@ -605,12 +580,9 @@ func TestWandererMagicGiftsAreSaved(t *testing.T) {
 				t.Fatalf("Wanderer spell gift did not survive restore: %v", restoreErr)
 			}
 
-			loadedOrigin, _ := loaded.scripts.Components()["character.origin"].Get(
-				loaded.player,
-			)
-			loadedSpells, _ := loadedOrigin.Get("library_spells")
+			loadedSpells := playerSpellRecords(t, loaded)
 
-			if loadedSpells != spells {
+			if !reflect.DeepEqual(loadedSpells, spells) {
 				loaded.Close()
 				g.Close()
 				t.Fatalf("Wanderer spells changed from %v to %v", spells, loadedSpells)

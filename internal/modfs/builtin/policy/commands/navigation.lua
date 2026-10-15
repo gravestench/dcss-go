@@ -3,23 +3,6 @@ local catalog = require("policy.catalog")
 local fighter = require("policy.combat.fighter")
 local abyss = require("policy.world.abyss")
 
-local ordinary_monsters = {
-    MONS_RAT = true,
-    MONS_QUOKKA = true,
-    MONS_FRILLED_LIZARD = true,
-    MONS_GIANT_COCKROACH = true,
-    MONS_WORM = true,
-    MONS_JACKAL = true,
-    MONS_ADDER = true,
-    MONS_BAT = true,
-    MONS_BALL_PYTHON = true,
-    MONS_ENDOPLASM = true,
-    MONS_DART_SLUG = true,
-    MONS_GOBLIN = true,
-    MONS_HOBGOBLIN = true,
-    MONS_KOBOLD = true,
-}
-
 function navigation.move(ctx, position, dx, dy)
     if dx < -1 or dx > 1 or dy < -1 or dy > 1 or (dx == 0 and dy == 0) then
         return {
@@ -37,7 +20,7 @@ function navigation.move(ctx, position, dx, dy)
         }
     end
 
-    if cell == "+" then
+    if cell == "DNGN_CLOSED_DOOR" then
         return {
             intent = {
                 kind = 8,
@@ -59,8 +42,8 @@ function navigation.move(ctx, position, dx, dy)
     if target then
         local actor = ctx:get(target, "core.actor")
 
-        if not actor or not ordinary_monsters[actor.kind_id] then
-            error("unsupported player melee target " .. ctx:id(target))
+        if not actor then
+            error("player melee target has no actor " .. ctx:id(target))
         end
 
         local attack = fighter.attack(ctx, catalog.get("monsters", actor.kind_id))
@@ -82,7 +65,8 @@ function navigation.move(ctx, position, dx, dy)
 end
 
 function navigation.stairs(ctx, position, downstairs)
-    local glyph = downstairs and ">" or "<"
+    local glyph = downstairs and "DNGN_STONE_STAIRS_DOWN_I" or
+        "DNGN_STONE_STAIRS_UP_I"
     local missing = downstairs and "There are no stairs down here." or
         "There are no stairs up here."
     local cell = ctx:cell(position.level_id, position.x, position.y)

@@ -5,6 +5,7 @@ local fighter = require("policy.combat.fighter")
 local items = require("policy.inventory.items")
 local practice = require("policy.combat.practice")
 local projectiles = require("policy.combat.monster_projectiles")
+local player_health = require("policy.combat.player_health")
 
 local actions = {}
 
@@ -36,7 +37,7 @@ local function target(ctx, attacker)
     return catalog.get("monsters", actor.kind_id), fighter.defense(ctx), health
 end
 
-local function apply(ctx, outcome, health, defense)
+local function apply(ctx, outcome, health, defense, attacker)
     local player = ctx:player()
     local state = ctx:get(player, "core.combat")
 
@@ -45,13 +46,15 @@ local function apply(ctx, outcome, health, defense)
     end
 
     state.shield_blocks = outcome.shield_blocks
-    health.current = math.max(0, health.current - outcome.damage)
     ctx:set(player, "core.combat", state)
-    ctx:set(player, "core.health", health)
+    local updated = player_health.damage(ctx, player, outcome.damage,
+        false, attacker)
 
     if outcome.kind == "block" then
         practice.incoming_shield(ctx, outcome, defense)
     end
+
+    return updated
 end
 
 local function hit_message(name, outcome, include_damage)
@@ -74,7 +77,7 @@ local function hit_message(name, outcome, include_damage)
     return "The " .. name .. " hits you."
 end
 
-local function launcher_attack(ctx, launcher, definition, defense, health)
+local function launcher_attack(ctx, attacker, launcher, definition, defense, health)
     local weapon = launcher.definition.weapon
     local projectile = catalog.get("items", weapon.ammo_id)
     local brand = launcher.item.ego or ""
@@ -93,7 +96,7 @@ local function launcher_attack(ctx, launcher, definition, defense, health)
     local outcome = effect.resolve_launcher(ctx, definition, defense,
         weapon, launcher.item, projectile)
 
-    apply(ctx, outcome, health, defense)
+    health = apply(ctx, outcome, health, defense, attacker)
     ctx:emit("combat", "The " .. definition.name .. " shoots " ..
         items.phrase(projectile.name, 1) .. ".")
     ctx:emit("combat", hit_message(projectile.name, outcome, true))
@@ -102,11 +105,10 @@ local function launcher_attack(ctx, launcher, definition, defense, health)
         (health.current > 0 or brands.after_death(brand)) then
         brands.apply(ctx, brand, outcome.damage, definition.id,
             projectile.name, health)
-        ctx:set(ctx:player(), "core.health", health)
     end
 end
 
-local function missile_attack(ctx, missile, definition, defense, health)
+local function missile_attack(ctx, attacker, missile, definition, defense, health)
     local kind = missile.definition
     local item = missile.item
 
@@ -118,7 +120,7 @@ local function missile_attack(ctx, missile, definition, defense, health)
     effect.validate(item)
     local outcome, poison, name = effect.resolve(ctx, definition, defense, kind)
 
-    apply(ctx, outcome, health, defense)
+    apply(ctx, outcome, health, defense, attacker)
 
     ctx:emit("combat", "The " .. definition.name .. " throws " ..
         items.phrase(name, 1) .. ".")
@@ -148,20 +150,21 @@ function actions.monster(ctx, attacker, intent)
     })
 
     if worn.weapon and worn.weapon.entity == intent.item_id then
-        launcher_attack(ctx, worn.weapon, definition, defense, health)
+        launcher_attack(ctx, attacker, worn.weapon, definition, defense, health)
 
         return
     end
 
     if worn.alternate_weapon and worn.alternate_weapon.entity == intent.item_id then
         swap_launcher(ctx, worn)
-        launcher_attack(ctx, worn.alternate_weapon, definition, defense, health)
+        launcher_attack(ctx, attacker, worn.alternate_weapon,
+            definition, defense, health)
 
         return
     end
 
     if worn.missile and worn.missile.entity == intent.item_id then
-        missile_attack(ctx, worn.missile, definition, defense, health)
+        missile_attack(ctx, attacker, worn.missile, definition, defense, health)
 
         return
     end

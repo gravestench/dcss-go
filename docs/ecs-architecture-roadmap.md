@@ -47,14 +47,41 @@ Mutable state on actors and items remains in Akara, whether the schema was
 originally Go-defined or Lua-defined.
 
 The Lua runtime registers all 43 species and 31 jobs from per-definition
-files. Character choice and the pregame menu read the registered Lua tables
-directly; normal launch no longer loads the parallel Go content catalog.
+files. Monsters, spells, items, branches, and monster spellbooks now use the
+same per-file registration path. Character choice and the pregame menu read
+the registered Lua tables directly; normal launch no longer loads the
+parallel Go content catalog.
 Four playable Fighter starts, combat, equipment, statuses, monster behavior,
-generated floors, save semantics, and screen policy use Lua. Other aggregate
-source content is committed as generated Lua modules. One generic typed-store
+generated floors, save semantics, and screen policy use Lua. Remaining
+aggregate source content is committed as generated Lua modules. One generic typed-store
 context exposes authoritative Akara state to those rules. The
 [one-pass conversion contract](superpowers/specs/2026-10-14-one-pass-lua-gameplay-design.md)
 sets the boundary for this implementation.
+
+## File-based extension contract
+
+The effective mod tree auto-loads new files under `schemas/`, `content/`,
+`policy/`, `systems/`, `generation/`, and `ui/`. Content files register one
+definition in `content/<category>/`; registration works for bundled and
+overlay files alike. A matching relative path replaces a bundled file. A
+different path adds content, and duplicate category/ID pairs fail with both
+file origins. The effective source bytes set the vanilla hash and save
+identity. There is no central list to edit when adding a definition.
+
+Static definition and executable behavior are separate. A new monster file
+makes the monster available to Lua catalogs and shared ID imports. Spawn
+tables and special actions use their own discoverable Lua files. A spell
+needs its effect rule, and an item type needs its interaction rules. This
+lets a mod introduce a simple data variant in one file and a new mechanic
+with a small set of files, while keeping each file's purpose obvious. See
+[modding.md](modding.md) for the exact directory and registration contract.
+
+The next architecture work is to turn the remaining aggregate categories
+into per-file content where mod authors would reasonably extend them:
+population entries, item identity and starting gear, vault templates, and
+presentation data. The generated files stay committed. Import tools run
+only during deliberate upstream refreshes. New mechanics must be wired
+through Lua discovery and generic engine capabilities, not a Go ID switch.
 
 ## Conversion coverage
 

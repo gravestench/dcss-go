@@ -3,6 +3,7 @@ package game
 import (
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/terrain"
 	"fmt"
 )
 
@@ -42,6 +43,13 @@ type ItemView struct {
 	Slot     string
 }
 
+type SpellView struct {
+	ID         string
+	InLibrary  bool
+	KnownSlot  int
+	LetterSlot int
+}
+
 type View struct {
 	LevelID  int
 	Width    int
@@ -78,10 +86,14 @@ type View struct {
 	PoisonAmountScaled int
 	Constricted        bool
 
-	Inventory      []ItemView
-	EquipmentDelay *ecs.EquipmentDelay
-	CurrentAut     Aut
-	Messages       []string
+	Inventory         []ItemView
+	Spells            []SpellView
+	LastSpellID       string
+	LearningSpellID   string
+	LearningRemaining int
+	EquipmentDelay    *ecs.EquipmentDelay
+	CurrentAut        Aut
+	Messages          []string
 }
 
 func (g *Game) View() (view View) {
@@ -124,6 +136,7 @@ func (g *Game) View() (view View) {
 	g.fillPlayerView(&view)
 	g.fillEntityView(&view, level, position.LevelID)
 	g.fillInventoryView(&view)
+	g.fillSpellView(&view)
 
 	return view
 }
@@ -145,19 +158,19 @@ func (g *Game) mustPresentationPolicy(name string, input map[string]any) map[str
 }
 
 func (g *Game) fillTerrainView(view *View, level *Level) {
-	for i, glyph := range level.remembered {
+	for i, feature := range level.remembered {
 		switch {
 		case g.visibleLevelID == level.ID &&
 			i < len(g.visible) &&
 			g.visible[i]:
 			view.Cells[i] = CellView{
-				Glyph: rune(level.terrain[i/level.width][i%level.width]),
+				Glyph: terrain.Glyph(level.terrain[i/level.width][i%level.width]),
 				State: Visible,
 			}
 
-		case glyph != 0:
+		case feature != terrain.Unseen:
 			view.Cells[i] = CellView{
-				Glyph: rune(glyph),
+				Glyph: terrain.Glyph(feature),
 				State: Explored,
 			}
 		}

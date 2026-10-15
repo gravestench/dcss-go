@@ -118,6 +118,44 @@ func TestOverlayIdentityAndOrder(t *testing.T) {
 	}
 }
 
+func TestSingleContentFileParticipatesInRulesetIdentity(t *testing.T) {
+	bundled, err := Load("")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	overlay := t.TempDir()
+	path := "content/monsters/0001_mons_abomination_large.lua"
+	data, err := bundled.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	writeTestFile(t, overlay, path, data)
+
+	unchanged, err := Load(overlay)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !unchanged.Vanilla() || unchanged.Hash() != bundled.Hash() {
+		t.Fatal("identical content override changed vanilla identity")
+	}
+
+	newPath := "content/monsters/zz_mod_moss.lua"
+	writeTestFile(t, overlay, newPath, []byte("return {}\n"))
+
+	added, err := Load(overlay)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if added.Vanilla() || added.Hash() == bundled.Hash() ||
+		!reflect.DeepEqual(added.Changes(), []string{newPath}) {
+		t.Fatalf("added content file has wrong identity: %+v", added)
+	}
+}
+
 func TestOverlayRejectsInvalidPathsAndSymlinks(t *testing.T) {
 	for _, name := range []string{
 		"README.txt",

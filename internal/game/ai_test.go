@@ -20,10 +20,7 @@ func TestFixedAnimalRouteAvoidsOccupantsAndUnreachableTarget(t *testing.T) {
 	}
 
 	second := g.levels[2]
-	row := []byte(second.terrain[4])
-
-	row[8] = '#'
-	second.terrain[4] = string(row)
+	second.terrain[4][8] = fixtureFeature('#')
 
 	if _, _, ok := second.RouteStep(9, 1, 7, 1, 0); ok {
 		t.Fatal("route crossed a sealed central wall")

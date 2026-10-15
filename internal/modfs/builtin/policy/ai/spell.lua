@@ -1,15 +1,24 @@
 local catalog = require("policy.catalog")
 local effects = require("policy.combat.monster_spells")
+local statuses = require("policy.magic.effects.statuses.player")
 
 local books_by_id = {}
 
-for _, book in ipairs(require("data.monster_spellbooks").books) do
+for _, book in ipairs(catalog.all("monster_spellbooks")) do
     books_by_id[book.id] = book
 end
 
 local spell = {}
 
 function spell.choose(ctx, entity, position, player)
+    local radius = statuses.silence_radius(ctx, ctx:player())
+    local distance = math.max(math.abs(position.x - player.x),
+        math.abs(position.y - player.y))
+
+    if radius >= 0 and distance <= radius then
+        return nil
+    end
+
     local actor = ctx:get(entity, "core.actor")
 
     if not actor then
@@ -35,6 +44,10 @@ function spell.choose(ctx, entity, position, player)
     end
 
     if ctx:random("monster_spell", 200) <= slot.frequency then
+        if statuses.enfeeble_antimagic(ctx, entity, slot.flags) then
+            return nil
+        end
+
         return {
             kind = 12,
             spell_id = slot.spell_id,

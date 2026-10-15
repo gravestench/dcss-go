@@ -1,0 +1,288 @@
+-- Source: monster.cc:can_polymorph and mon-poly.cc:init_poly_set,
+-- monster_polymorph and change_monster_type.
+local monsters = require("ids.monsters")
+local component = require("constants.component")
+local catalog = require("policy.catalog")
+local hit_points = require("policy.population.hit_points")
+local range = require("policy.magic.range")
+local trajectory = require("policy.combat.trajectory")
+local will = require("policy.magic.effects.zaps.will")
+
+local polymorph = {}
+local definitions = catalog.all("monsters")
+
+local function has(values, wanted)
+    for _, value in ipairs(values or {}) do
+        if value == wanted then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function same_holiness(left, right)
+    for _, value in ipairs(left or {}) do
+        if has(right, value) then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function can_polymorph(definition)
+    if definition.id == monsters.MONS_CHAOS_SPAWN then
+        return true
+    end
+
+    if definition.id == monsters.MONS_ABOMINATION_SMALL or
+        definition.id == monsters.MONS_ABOMINATION_LARGE then
+        return false
+    end
+
+    return not has(definition.holiness, "MH_UNDEAD") and
+        not has(definition.holiness, "MH_NONLIVING") and
+        not has(definition.flags, "M_NO_POLY_TO")
+end
+
+local function same_habitat(source, target)
+    local old = source.habitat_id
+    local next_kind = target.habitat_id
+
+    if has(target.flags, "M_FLIES") then
+        return true
+    end
+
+    if has(source.flags, "M_FLIES") then
+        return false
+    end
+
+    if old == "HT_LAND" then
+        return next_kind == "HT_LAND" or next_kind == "HT_AMPHIBIOUS" or
+            next_kind == "HT_AMPHIBIOUS_LAVA"
+    end
+
+    if old == "HT_WATER" then
+        return next_kind == "HT_WATER" or next_kind == "HT_AMPHIBIOUS"
+    end
+
+    if old == "HT_LAVA" then
+        return next_kind == "HT_LAVA" or next_kind == "HT_AMPHIBIOUS_LAVA"
+    end
+
+    return old == next_kind
+end
+
+local function feature_safe(ctx, position, definition)
+    local feature = ctx:cell(position.level_id, position.x, position.y)
+    local habitat = definition.habitat_id
+
+    if has(definition.flags, "M_FLIES") then
+        return true
+    end
+
+    if feature == "DNGN_LAVA" then
+        return habitat == "HT_LAVA" or habitat == "HT_AMPHIBIOUS_LAVA"
+    end
+
+    if feature == "DNGN_DEEP_WATER" then
+        return habitat == "HT_WATER" or habitat == "HT_AMPHIBIOUS"
+    end
+
+    return habitat ~= "HT_LAVA" and habitat ~= "HT_WATER"
+end
+
+local function candidate(source, target)
+    if target.status ~= "defined" or not target.average_hp_10x or
+        target.average_hp_10x <= 0 or not target.speed or target.speed <= 0 or
+        target.id == source.id or target.species_id ~= target.id or
+        target.species_id == source.species_id or
+        not same_holiness(source.holiness, target.holiness) or
+        not same_habitat(source, target) then
+        return false
+    end
+
+    for _, flag in ipairs({
+        "M_UNFINISHED", "M_CANT_SPAWN", "M_NO_POLY_TO", "M_UNIQUE",
+        "M_STATIONARY", "M_NO_THREAT",
+    }) do
+        if has(target.flags, flag) then
+            return false
+        end
+    end
+
+    return true
+end
+
+local function weighted_candidates(ctx, source, position)
+    local choices = {}
+
+    for _, definition in ipairs(definitions) do
+        if candidate(source, definition) and
+            feature_safe(ctx, position, definition) then
+            local delta = math.abs(source.hd - definition.hd)
+
+            if definition.hd > source.hd then
+                delta = delta * 2
+            end
+
+            if delta <= 8 then
+                choices[#choices + 1] = {
+                    definition = definition,
+                    weight = 2 ^ (8 - delta),
+                }
+            end
+        end
+    end
+
+    local shortlist = {}
+
+    for _ = 1, math.min(3, #choices) do
+        local total = 0
+
+        for _, choice in ipairs(choices) do
+            total = total + choice.weight
+        end
+
+        local draw = ctx:random("spell", total)
+
+        for index, choice in ipairs(choices) do
+            draw = draw - choice.weight
+
+            if draw < 0 then
+                shortlist[#shortlist + 1] = choice.definition
+                table.remove(choices, index)
+                break
+            end
+        end
+    end
+
+    return shortlist
+end
+
+local function drop_inventory(ctx, monster, position)
+    for _, item in ipairs(ctx:query({ component.ITEM, component.CARRIED_BY })) do
+        local carrier = ctx:get(item, component.CARRIED_BY)
+
+        if carrier.holder == monster then
+            if ctx:has(item, component.EQUIPPED) then
+                ctx:remove(item, component.EQUIPPED)
+            end
+
+            ctx:remove(item, component.CARRIED_BY)
+            ctx:add(item, component.POSITION, {
+                level_id = position.level_id,
+                x = position.x,
+                y = position.y,
+            })
+        end
+    end
+end
+
+local function transform(ctx, target, source, definition)
+    local actor = ctx:get(target, component.ACTOR)
+    local health = ctx:get(target, component.HEALTH)
+    local position = ctx:get(target, component.POSITION)
+    local marker = ctx:get(target, component.MONSTER_POLYMORPH)
+    local original = marker and marker.original_kind_id or source.id
+    local maximum = hit_points.roll(ctx, definition.average_hp_10x)
+    local current = math.floor(maximum * health.current / health.max) +
+        ctx:random("spell", maximum)
+
+    actor.kind_id = definition.id
+    actor.speed = definition.speed
+    health.max = maximum
+    health.current = math.max(1, math.min(maximum, current))
+    ctx:set(target, component.ACTOR, actor)
+    ctx:set(target, component.HEALTH, health)
+
+    local energy = ctx:get(target, component.MONSTER_ENERGY)
+
+    if energy then
+        energy.points = 67 + ctx:random("speed", 6)
+        ctx:set(target, component.MONSTER_ENERGY, energy)
+    end
+
+    drop_inventory(ctx, target, position)
+
+    if not marker then
+        ctx:add(target, component.MONSTER_POLYMORPH, {
+            original_kind_id = original,
+        })
+    end
+
+    ctx:emit("spell", "The " .. source.name ..
+        " evaporates and reforms as a " .. definition.name .. "!")
+end
+
+local function can_target(ctx, player, spell)
+    local origin = ctx:get(player, component.POSITION)
+    local reach = range.for_spell(ctx, player, spell)
+
+    for _, target in ipairs(ctx:query({
+        component.ACTOR, component.POSITION, component.HEALTH,
+    })) do
+        if target ~= player then
+            local position = ctx:get(target, component.POSITION)
+            local health = ctx:get(target, component.HEALTH)
+            local distance = math.max(math.abs(position.x - origin.x),
+                math.abs(position.y - origin.y))
+
+            if health.current > 0 and position.level_id == origin.level_id and
+                distance <= reach and
+                ctx:visible(origin.level_id, origin.x, origin.y, reach,
+                    position.x, position.y) and
+                ctx:projectile_clear(origin.level_id, origin.x, origin.y,
+                    position.x, position.y) then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+function polymorph.can_target(ctx, player, spell)
+    return can_target(ctx, player, spell)
+end
+
+function polymorph.cast(ctx, player, intent, spell, power)
+    local origin = ctx:get(player, component.POSITION)
+    local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,
+        origin.x + intent.dx, origin.y + intent.dy,
+        range.for_spell(ctx, player, spell))
+    local contact = ray.contacts[1]
+
+    if not contact then
+        ctx:emit("spell", "The mutagenic magic dissipates.")
+        return
+    end
+
+    local target = contact.actor
+    local actor = ctx:get(target, component.ACTOR)
+    local source = catalog.get("monsters", actor.kind_id)
+
+    if not can_polymorph(source) then
+        ctx:emit("spell", "The " .. source.name .. " is unaffected.")
+        return
+    end
+
+    if will.resists(ctx, source, power) then
+        ctx:emit("spell", "The " .. source.name .. " resists polymorph.")
+        return
+    end
+
+    local position = ctx:get(target, component.POSITION)
+    local choices = weighted_candidates(ctx, source, position)
+
+    if #choices == 0 then
+        ctx:emit("spell", "The " .. source.name .. " shudders.")
+        return
+    end
+
+    local definition = choices[ctx:random("spell", #choices) + 1]
+    transform(ctx, target, source, definition)
+end
+
+return polymorph

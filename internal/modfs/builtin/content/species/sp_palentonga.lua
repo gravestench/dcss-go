@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/palentonga.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_PALENTONGA",
     monster_id = "MONS_PALENTONGA",
-    source_path = "crawl-ref/source/dat/species/palentonga.yaml",
     name = "Palentonga",
     short_name = "Pa",
     selectable = true,
@@ -191,3 +192,7 @@ register.species{
         "SK_STAVES",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

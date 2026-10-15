@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/gnoll.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_GNOLL",
     monster_id = "MONS_GNOLL",
-    source_path = "crawl-ref/source/dat/species/gnoll.yaml",
     name = "Gnoll",
     short_name = "Gn",
     selectable = true,
@@ -174,3 +175,7 @@ register.species{
         "SK_RANGED_WEAPONS",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

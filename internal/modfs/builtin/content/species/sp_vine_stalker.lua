@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/vine-stalker.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_VINE_STALKER",
     monster_id = "MONS_VINE_STALKER",
-    source_path = "crawl-ref/source/dat/species/vine-stalker.yaml",
     name = "Vine Stalker",
     short_name = "VS",
     selectable = true,
@@ -190,3 +191,7 @@ register.species{
     },
     walking_verb = "Stalk",
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

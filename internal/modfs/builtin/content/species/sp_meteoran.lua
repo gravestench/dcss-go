@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/meteoran.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_METEORAN",
     monster_id = "MONS_METEORAN",
-    source_path = "crawl-ref/source/dat/species/meteoran.yaml",
     name = "Meteoran",
     short_name = "Me",
     adjective = "Meteoric",
@@ -189,3 +190,7 @@ register.species{
         "SK_LONG_BLADES",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

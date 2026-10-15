@@ -1,5 +1,6 @@
 local formulas = require("policy.character.formulas")
 local roll = require("policy.combat.roll")
+local player_health = require("policy.combat.player_health")
 
 local draining = {}
 
@@ -47,7 +48,8 @@ function draining.apply(ctx, hit)
     local state = old or { amount = 0 }
     local real_max = hit.health.max + state.amount
     local extra = math.floor((1 + roll.melee(ctx, hit.damage_done)) / 2)
-    hit.health.current = math.max(0, hit.health.current - extra)
+    hit.health = player_health.damage(ctx, hit.defender, extra,
+        false, hit.attacker)
 
     -- ouch.cc:378-413: drain_player(1 + damage_done) lowers temporary
     -- max HP by at least one, capped so the real player retains one HP.
@@ -62,6 +64,7 @@ function draining.apply(ctx, hit)
     state.amount = state.amount + loss
     hit.health.max = hit.health.max - loss
     hit.health.current = math.min(hit.health.current, hit.health.max)
+    ctx:set(hit.defender, "core.health", hit.health)
 
     if old then
         ctx:set(hit.defender, "status.drain", state)

@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/draconian-green.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_GREEN_DRACONIAN",
     monster_id = "MONS_GREEN_DRACONIAN",
-    source_path = "crawl-ref/source/dat/species/draconian-green.yaml",
     name = "Green Draconian",
     short_name = "Dr",
     adjective = "Draconian",
@@ -168,3 +169,7 @@ register.species{
     size = "SIZE_MEDIUM",
     undead_type = "US_ALIVE",
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

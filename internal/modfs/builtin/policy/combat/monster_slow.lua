@@ -68,6 +68,21 @@ function slow.tick(ctx, monster)
     ctx:remove(monster, "projectile.slow")
 end
 
+function slow.remove(ctx, monster)
+    local state = ctx:get(monster, "projectile.slow")
+
+    if not state then
+        return false
+    end
+
+    local actor = ctx:get(monster, "core.actor")
+    actor.speed = state.base_speed
+    ctx:set(monster, "core.actor", actor)
+    ctx:remove(monster, "projectile.slow")
+
+    return true
+end
+
 function slow.validate(ctx, monster, definition, actor)
     local state = ctx:get(monster, "projectile.slow")
 

@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/barachi.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_BARACHI",
     monster_id = "MONS_BARACHI",
-    source_path = "crawl-ref/source/dat/species/barachi.yaml",
     name = "Barachi",
     short_name = "Ba",
     adjective = "Barachian",
@@ -185,3 +186,7 @@ register.species{
         "SK_RANGED_WEAPONS",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

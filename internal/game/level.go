@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/terrain"
 	"github.com/gravestench/akara"
 )
 
@@ -12,8 +13,8 @@ import (
 // Position remains the source of truth for actor location.
 type Level struct {
 	ID         int
-	terrain    []string
-	remembered []byte
+	terrain    [][]terrain.ID
+	remembered []terrain.ID
 	width      int
 
 	// Population choices may generate bands with multiple actors.
@@ -44,35 +45,36 @@ type StairLink struct {
 	Unavailable string
 }
 
-func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Level, error) {
+func NewLevel(id int, cells [][]terrain.ID, positions *akara.Store[ecs.Position]) (*Level, error) {
 	if id <= 0 ||
 		positions == nil ||
-		len(rows) == 0 ||
-		len(rows[0]) == 0 {
+		len(cells) == 0 ||
+		len(cells[0]) == 0 {
 		return nil, fmt.Errorf("invalid level definition")
 	}
 
-	width := len(rows[0])
+	width := len(cells[0])
 
-	for y, row := range rows {
+	for y, row := range cells {
 		if len(row) != width {
 			return nil, fmt.Errorf("level %d row %d has width %d, want %d", id, y, len(row), width)
 		}
 
-		for x := range row {
-			switch row[x] {
-			case '#', '.', '+', '\'', '<', '>':
-
-			default:
-				return nil, fmt.Errorf("level %d unknown terrain %q at (%d,%d)", id, row[x], x, y)
+		for x, feature := range row {
+			if !terrain.Valid(feature) {
+				return nil, fmt.Errorf("level %d unknown terrain %q at (%d,%d)", id, feature, x, y)
 			}
 		}
+	}
+	owned := make([][]terrain.ID, len(cells))
+	for y, row := range cells {
+		owned[y] = append([]terrain.ID(nil), row...)
 	}
 
 	return &Level{
 		ID:         id,
-		terrain:    append([]string(nil), rows...),
-		remembered: make([]byte, width*len(rows)),
+		terrain:    owned,
+		remembered: make([]terrain.ID, width*len(cells)),
 		width:      width,
 
 		positions: positions,
@@ -84,7 +86,7 @@ func NewLevel(id int, rows []string, positions *akara.Store[ecs.Position]) (*Lev
 
 func (l *Level) AddStairLink(link StairLink) error {
 	if !l.inBounds(link.X, link.Y) ||
-		(l.terrain[link.Y][link.X] != '<' && l.terrain[link.Y][link.X] != '>') {
+		!terrain.IsStair(l.terrain[link.Y][link.X]) {
 		return fmt.Errorf("level %d has invalid stair link at (%d,%d)", l.ID, link.X, link.Y)
 	}
 
@@ -156,7 +158,7 @@ func validateStairLinks(levels map[int]*Level) error {
 
 		for y, row := range level.terrain {
 			for x := range row {
-				if row[x] != '<' && row[x] != '>' {
+				if !terrain.IsStair(row[x]) {
 					continue
 				}
 
@@ -192,10 +194,16 @@ func (l *Level) inBounds(x, y int) bool {
 		x < l.width
 }
 
+func (l *Level) Cells() [][]terrain.ID {
+	cells := make([][]terrain.ID, len(l.terrain))
+	for y, row := range l.terrain {
+		cells[y] = append([]terrain.ID(nil), row...)
+	}
+	return cells
+}
+
 func (l *Level) Walkable(x, y int) bool {
-	return l.inBounds(x, y) &&
-		l.terrain[y][x] != '#' &&
-		l.terrain[y][x] != '+'
+	return l.inBounds(x, y) && terrain.Walkable(l.terrain[y][x])
 }
 
 // ClearProjectilePath traces the cell-centre ray between two actors. Walls,
@@ -256,13 +264,13 @@ func (l *Level) ClearProjectilePath(fromX, fromY, toX, toY int) bool {
 // terrain.cc:751-785 does for a multi-cell door. Known cells also update when
 // an opened segment lies outside current sight.
 func (l *Level) OpenDoor(x, y int) (int, error) {
-	cells, err := l.doorGroup(x, y, '+')
+	cells, err := l.doorGroup(x, y, terrain.ClosedDoor)
 
 	if err != nil {
 		return 0, err
 	}
 
-	l.changeDoorCells(cells, '\'')
+	l.changeDoorCells(cells, terrain.OpenDoor)
 
 	return len(cells), nil
 }
@@ -270,7 +278,7 @@ func (l *Level) OpenDoor(x, y int) (int, error) {
 // CloseDoor changes one connected open-door group after the caller has moved
 // floor items away. No actor may stand in any segment of the group.
 func (l *Level) CloseDoor(x, y int) (int, error) {
-	cells, err := l.doorGroup(x, y, '\'')
+	cells, err := l.doorGroup(x, y, terrain.OpenDoor)
 
 	if err != nil {
 		return 0, err
@@ -282,15 +290,15 @@ func (l *Level) CloseDoor(x, y int) (int, error) {
 		}
 	}
 
-	l.changeDoorCells(cells, '+')
+	l.changeDoorCells(cells, terrain.ClosedDoor)
 
 	return len(cells), nil
 }
 
 // doorGroup follows find_connected_identical in terrain.cc:751-785.
-func (l *Level) doorGroup(x, y int, glyph byte) ([]point, error) {
-	if !l.inBounds(x, y) || l.terrain[y][x] != glyph {
-		return nil, fmt.Errorf("level %d has no %q door at (%d,%d)", l.ID, glyph, x, y)
+func (l *Level) doorGroup(x, y int, feature terrain.ID) ([]point, error) {
+	if !l.inBounds(x, y) || l.terrain[y][x] != feature {
+		return nil, fmt.Errorf("level %d has no %q door at (%d,%d)", l.ID, feature, x, y)
 	}
 
 	queue := []point{
@@ -309,7 +317,7 @@ func (l *Level) doorGroup(x, y int, glyph byte) ([]point, error) {
 
 		if seen[cell] ||
 			!l.inBounds(cell.x, cell.y) ||
-			l.terrain[cell.y][cell.x] != glyph {
+			l.terrain[cell.y][cell.x] != feature {
 			continue
 		}
 
@@ -348,46 +356,39 @@ func (l *Level) doorGroup(x, y int, glyph byte) ([]point, error) {
 	return cells, nil
 }
 
-func (l *Level) changeDoorCells(cells []point, glyph byte) {
+func (l *Level) changeDoorCells(cells []point, feature terrain.ID) {
 	for _, cell := range cells {
-		row := []byte(l.terrain[cell.y])
-
-		row[cell.x] = glyph
-		l.terrain[cell.y] = string(row)
+		l.terrain[cell.y][cell.x] = feature
 
 		index := cell.y*l.width + cell.x
 
-		if l.remembered[index] != 0 {
-			l.remembered[index] = glyph
+		if l.remembered[index] != terrain.Unseen {
+			l.remembered[index] = feature
 		}
 	}
 }
 
 // SetCell is the grid mutation primitive used by Lua generation and terrain
 // policy. It keeps explored terrain in sync with the authoritative grid.
-func (l *Level) SetCell(x, y int, glyph byte) error {
+func (l *Level) SetCell(x, y int, feature terrain.ID) error {
 	if !l.inBounds(x, y) {
 		return fmt.Errorf("level %d has no cell at (%d,%d)", l.ID, x, y)
 	}
 
-	switch glyph {
-	case '#', '.', '+', '\'', '<', '>':
-
-	default:
-		return fmt.Errorf("level %d has invalid terrain %q", l.ID, glyph)
+	if !terrain.Valid(feature) {
+		return fmt.Errorf("level %d has invalid terrain %q", l.ID, feature)
 	}
 
 	occupant, found := l.ActorAt(x, y)
 
-	if found &&
-		(glyph == '#' || glyph == '+') {
-		return fmt.Errorf("terrain %q would block actor %d", glyph, occupant)
+	if found && !terrain.Walkable(feature) {
+		return fmt.Errorf("terrain %q would block actor %d", feature, occupant)
 	}
 
 	_, linked := l.StairAt(x, y)
 
 	if linked &&
-		glyph != '<' && glyph != '>' {
+		!terrain.IsStair(feature) {
 		return fmt.Errorf("terrain would remove stair link at (%d,%d)", x, y)
 	}
 
@@ -396,7 +397,7 @@ func (l *Level) SetCell(x, y int, glyph byte) error {
 			x: x,
 			y: y,
 		},
-	}, glyph)
+	}, feature)
 
 	return nil
 }
@@ -411,7 +412,8 @@ func (l *Level) ActorAt(x, y int) (akara.Entity, bool) {
 }
 
 func (l *Level) PlaceActor(entity akara.Entity, x, y int) error {
-	if !l.Walkable(x, y) {
+	if !l.Walkable(x, y) &&
+		(!l.inBounds(x, y) || l.terrain[y][x] != terrain.MalignGateway) {
 		return fmt.Errorf("level %d location (%d,%d) is blocked", l.ID, x, y)
 	}
 
@@ -494,51 +496,35 @@ func (l *Level) RemoveActor(entity akara.Entity) error {
 	return nil
 }
 
-// KnownRows returns the player's remembered terrain. Spaces mean unseen cells.
-func (l *Level) KnownRows() []string {
-	rows := make([]string, len(l.terrain))
-
-	for y := range rows {
-		row := make([]byte, l.width)
-
-		for x := range row {
-			if glyph := l.remembered[y*l.width+x]; glyph != 0 {
-				row[x] = glyph
-			} else {
-				row[x] = ' '
-			}
-		}
-
-		rows[y] = string(row)
+// KnownCells returns the player's remembered feature IDs. Empty IDs are unseen.
+func (l *Level) KnownCells() [][]terrain.ID {
+	cells := make([][]terrain.ID, len(l.terrain))
+	for y := range cells {
+		start := y * l.width
+		cells[y] = append([]terrain.ID(nil), l.remembered[start:start+l.width]...)
 	}
-
-	return rows
+	return cells
 }
 
-// LoadKnownRows validates and replaces saved map knowledge without exposing
+// LoadKnownCells validates and replaces saved map knowledge without exposing
 // live terrain at cells the player has not seen.
-func (l *Level) LoadKnownRows(rows []string) error {
-	if len(rows) != len(l.terrain) {
-		return fmt.Errorf("level %d has %d known rows, want %d", l.ID, len(rows), len(l.terrain))
+func (l *Level) LoadKnownCells(cells [][]terrain.ID) error {
+	if len(cells) != len(l.terrain) {
+		return fmt.Errorf("level %d has %d known rows, want %d", l.ID, len(cells), len(l.terrain))
 	}
 
-	known := make([]byte, l.width*len(rows))
+	known := make([]terrain.ID, l.width*len(cells))
 
-	for y, row := range rows {
+	for y, row := range cells {
 		if len(row) != l.width {
 			return fmt.Errorf("level %d known row %d has width %d, want %d", l.ID, y, len(row), l.width)
 		}
 
-		for x := 0; x < len(row); x++ {
-			switch row[x] {
-			case ' ':
-
-			case '#', '.', '+', '\'', '<', '>':
-				known[y*l.width+x] = row[x]
-
-			default:
-				return fmt.Errorf("level %d invalid remembered terrain %q at (%d,%d)", l.ID, row[x], x, y)
+		for x, feature := range row {
+			if feature != terrain.Unseen && !terrain.Valid(feature) {
+				return fmt.Errorf("level %d invalid remembered terrain %q at (%d,%d)", l.ID, feature, x, y)
 			}
+			known[y*l.width+x] = feature
 		}
 	}
 

@@ -6,6 +6,10 @@ local items = require("policy.inventory.items")
 local equipment = require("policy.inventory.equipment")
 local doors = require("policy.inventory.doors")
 local projectiles = require("policy.commands.projectiles")
+local cast = require("policy.commands.cast")
+local spell_learning = require("policy.character.spell_learning")
+local confusion = require("policy.magic.player_confusion")
+local passwall = require("policy.magic.effects.translocation.passwall")
 
 local function wait_command()
     return {
@@ -25,6 +29,21 @@ local function prepare(ctx, input)
             message = "You die.",
             event_kind = "death",
         }
+    end
+
+    local paralysis = ctx:get(player, "magic.player_paralysis")
+
+    if paralysis and paralysis.remaining_aut > 0 then
+        ctx:emit("status", "You are paralysed!")
+        return wait_command()
+    end
+
+    if ctx:has(player, "magic.passwall_delay") then
+        if input.kind == 19 then
+            return { message = passwall.cancel(ctx, player) }
+        end
+
+        return wait_command()
     end
 
     local kind = input.kind
@@ -48,6 +67,22 @@ local function prepare(ctx, input)
         }
     end
 
+    local learning_state = ctx:get(player, "character.spellcasting")
+
+    if learning_state and learning_state.learning_remaining > 0 then
+        if kind == 19 then
+            return { message = spell_learning.interrupt(ctx, player) }
+        end
+
+        if kind ~= 5 then
+            return {
+                message = "You are memorising a spell. Press Esc to stop.",
+            }
+        end
+    elseif kind == 19 then
+        return { message = "You are not memorising a spell." }
+    end
+
     local progress = ctx:get(player, "core.progression")
 
     if progress and progress.pending_stat_level ~= 0 and kind ~= 6 then
@@ -67,11 +102,28 @@ local function prepare(ctx, input)
     local item_id = input.item_id or 0
 
     if kind == 1 then
+        local confused_dx, confused_dy, lost = confusion.move(ctx, player,
+            position, dx, dy)
+
+        if lost then
+            ctx:emit("status", "You're too confused to move!")
+            return wait_command()
+        end
+
+        dx = confused_dx
+        dy = confused_dy
+
         return navigation.move(ctx, position, dx, dy)
     elseif kind == 2 or kind == 3 then
         return navigation.stairs(ctx, position, kind == 3)
     elseif kind == 4 then
         return items.prepare_pickup(ctx, player)
+    elseif kind == 5 and not delay and
+        ctx:has(player, "magic.channel") then
+        return {
+            intent = { kind = 16 },
+            cost = 10,
+        }
     elseif kind == 5 or kind == 14 then
         return wait_command()
     elseif kind == 6 then
@@ -88,6 +140,23 @@ local function prepare(ctx, input)
         return equipment.prepare_armour(ctx, player, item_id, kind == 13)
     elseif kind == 16 or kind == 17 then
         return projectiles.prepare(ctx, player, kind == 16, item_id, dx, dy)
+    elseif kind == 18 then
+        local spell_id = input.spell_id
+        local rejection = spell_learning.cannot_begin(ctx, player, spell_id)
+
+        if rejection then
+            return { message = rejection }
+        end
+
+        return {
+            intent = {
+                kind = 14,
+                spell_id = spell_id,
+            },
+            cost = 10,
+        }
+    elseif kind == 20 or kind == 21 then
+        return cast.prepare(ctx, player, input)
     end
 
     return {

@@ -1,3 +1,4 @@
+local skills = require("ids.skills")
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
 local colors = require("policy.presentation.colors")
@@ -6,11 +7,15 @@ local presentation = require("data.presentation")
 local skills_policy = {}
 
 local special_names = {
-    SK_MACES_FLAILS = "Maces & Flails",
-    SK_UNARMED_COMBAT = "Unarmed Combat",
-    SK_SHORT_BLADES = "Short Blades",
-    SK_LONG_BLADES = "Long Blades",
+    [skills.SK_MACES_FLAILS] = "Maces & Flails",
+    [skills.SK_UNARMED_COMBAT] = "Unarmed Combat",
+    [skills.SK_SHORT_BLADES] = "Short Blades",
+    [skills.SK_LONG_BLADES] = "Long Blades",
 }
+
+local function capitalize(word)
+    return word:sub(1, 1):upper() .. word:sub(2)
+end
 
 local function skill_name(id)
     if special_names[id] then
@@ -19,9 +24,7 @@ local function skill_name(id)
 
     local name = id:gsub("^SK_", ""):gsub("_", " "):lower()
 
-    return name:gsub("%a+", function(word)
-        return word:sub(1, 1):upper() .. word:sub(2)
-    end)
+    return name:gsub("%a+", capitalize)
 end
 
 local function letter(index)
@@ -100,11 +103,13 @@ function skills_policy.rows(input)
     return { writes = writes }
 end
 
+function skills_policy.run(_, input)
+    return skills_policy.rows(input)
+end
+
 register.policy({
     id = "presentation.skills",
-    run = function(_, input)
-        return skills_policy.rows(input)
-    end,
+    run = skills_policy.run,
 })
 
 return skills_policy

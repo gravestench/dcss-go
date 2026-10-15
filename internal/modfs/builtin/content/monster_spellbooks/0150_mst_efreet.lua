@@ -1,0 +1,31 @@
+-- Generated from a committed DCSS import. Refresh deliberately.
+-- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Source line: 1171
+
+local categories = require("constants.catalog")
+
+local definition = {
+    id = "MST_EFREET",
+    slots = {
+        -- Source line: 1173
+        {
+            spell_id = "SPELL_BOLT_OF_FIRE",
+            frequency = 29,
+            flags = {
+                "MON_SPELL_MAGICAL",
+            },
+        },
+        -- Source line: 1174
+        {
+            spell_id = "SPELL_FIREBALL",
+            frequency = 29,
+            flags = {
+                "MON_SPELL_MAGICAL",
+            },
+        },
+    },
+}
+
+register.definition(categories.MONSTER_SPELLBOOKS, definition)
+
+return definition

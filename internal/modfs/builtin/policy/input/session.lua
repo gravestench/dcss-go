@@ -68,4 +68,33 @@ function session.equipment_delay(input)
     }
 end
 
+function session.memorisation_delay(input)
+    if input.key == "esc" then
+        return {
+            action = "cancel_memorise",
+            kind = commands.cancel_memorise,
+        }
+    end
+
+    if input.key == "S" then
+        return {
+            action = "confirm",
+            confirmation = "save",
+            interrupt_tick = true,
+        }
+    end
+
+    if input.key == "ctrl+s" then
+        return {
+            action = "save_exit",
+            interrupt_tick = true,
+        }
+    end
+
+    return {
+        action = "notice",
+        text = "You are memorising a spell. Esc interrupts.",
+    }
+end
+
 return session

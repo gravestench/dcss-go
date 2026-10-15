@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"dcrawl-go/internal/modfs"
+	"dcrawl-go/internal/terrain"
 	"github.com/gravestench/akara"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -29,19 +30,29 @@ type Services struct {
 }
 
 // Grid exposes reusable spatial reads. Game rules decide how to interpret
-// terrain glyphs, stair links, occupancy, and walkability.
+// terrain features, stair links, occupancy, and walkability.
 type Grid interface {
-	Cell(levelID, x, y int) (byte, bool)
+	Cell(levelID, x, y int) (terrain.ID, bool)
+	Size(levelID int) (int, int, bool)
 	Walkable(levelID, x, y int) bool
 	ActorAt(levelID, x, y int) (akara.Entity, bool)
 	StairAt(levelID, x, y int) (Stair, bool)
 	Visible(levelID, fromX, fromY, radius, targetX, targetY int) (bool, error)
 	RouteStep(levelID, fromX, fromY, toX, toY int, goal akara.Entity) (int, int, bool)
 	ProjectileClear(levelID, fromX, fromY, toX, toY int) bool
-	SetCell(levelID, x, y int, glyph byte) error
+	SetCell(levelID, x, y int, feature terrain.ID) error
 	MoveActor(entity akara.Entity, levelID, x, y int) error
+	MoveActors(moves []ActorMove) error
 	PlaceActor(entity akara.Entity, levelID, x, y int) error
 	RemoveActor(entity akara.Entity, levelID int) error
+}
+
+// ActorMove is one destination in an atomic simultaneous grid movement.
+type ActorMove struct {
+	Actor   akara.Entity
+	LevelID int
+	X       int
+	Y       int
 }
 
 type gridCell struct {
@@ -69,6 +80,9 @@ type Runtime struct {
 	hostComponents    map[string]HostComponent
 	definitions       map[string]map[string]*lua.LTable
 	definitionOrigins map[string]map[string]string
+	definitionOrder   map[string][]string
+	definitionRefs    []definitionReference
+	definitionsReady  bool
 	choicePolicy      *lua.LFunction
 	policies          map[string]*lua.LFunction
 	systems           []System
@@ -77,7 +91,7 @@ type Runtime struct {
 	pending           []structuralCommand
 	pendingViews      map[componentTarget]*pendingComponent
 	pendingDestroy    map[akara.Entity]bool
-	pendingCells      map[gridCell]byte
+	pendingCells      map[gridCell]terrain.ID
 	pendingActors     map[gridCell]akara.Entity
 	pendingPositions  map[akara.Entity]*gridCell
 	created           []akara.Entity
@@ -125,26 +139,21 @@ func newRuntime(
 		state:    state,
 		services: services,
 
-		components:     make(map[string]*akara.DynamicStore),
-		hostComponents: services.HostComponents,
-		definitions: map[string]map[string]*lua.LTable{
-			"species": make(map[string]*lua.LTable),
-			"jobs":    make(map[string]*lua.LTable),
-		},
-		definitionOrigins: map[string]map[string]string{
-			"species": make(map[string]string),
-			"jobs":    make(map[string]string),
-		},
-		policies:         make(map[string]*lua.LFunction),
-		loaded:           make(map[string]lua.LValue),
-		loading:          make(map[string]bool),
-		handles:          make(map[akara.Entity]*lua.LUserData),
-		pendingViews:     make(map[componentTarget]*pendingComponent),
-		pendingDestroy:   make(map[akara.Entity]bool),
-		pendingCells:     make(map[gridCell]byte),
-		pendingActors:    make(map[gridCell]akara.Entity),
-		pendingPositions: make(map[akara.Entity]*gridCell),
-		signals:          make(map[string][]lua.LValue),
+		components:        make(map[string]*akara.DynamicStore),
+		hostComponents:    services.HostComponents,
+		definitions:       make(map[string]map[string]*lua.LTable),
+		definitionOrigins: make(map[string]map[string]string),
+		definitionOrder:   make(map[string][]string),
+		policies:          make(map[string]*lua.LFunction),
+		loaded:            make(map[string]lua.LValue),
+		loading:           make(map[string]bool),
+		handles:           make(map[akara.Entity]*lua.LUserData),
+		pendingViews:      make(map[componentTarget]*pendingComponent),
+		pendingDestroy:    make(map[akara.Entity]bool),
+		pendingCells:      make(map[gridCell]terrain.ID),
+		pendingActors:     make(map[gridCell]akara.Entity),
+		pendingPositions:  make(map[akara.Entity]*gridCell),
+		signals:           make(map[string][]lua.LValue),
 	}
 
 	defer func() {

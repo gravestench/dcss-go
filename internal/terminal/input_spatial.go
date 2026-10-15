@@ -27,10 +27,11 @@ func inputDirection(decision map[string]any) (int, int, error) {
 func (m *AppModel) fireAim() tea.Cmd {
 	view := m.game.View()
 	command := game.Command{
-		Kind:   m.aimKind,
-		DX:     m.aimX - view.PlayerX,
-		DY:     m.aimY - view.PlayerY,
-		ItemID: m.aimItemID,
+		Kind:    m.aimKind,
+		DX:      m.aimX - view.PlayerX,
+		DY:      m.aimY - view.PlayerY,
+		ItemID:  m.aimItemID,
+		SpellID: m.aimSpellID,
 	}
 
 	m.openScreen(ScreenPlay)

@@ -11,27 +11,45 @@ import (
 // mod.null keeps an explicit null distinct from an omitted Lua field.
 type definitionNull struct{}
 
-func (r *Runtime) luaRegisterSpecies(state *lua.LState) int {
-	return r.registerDefinition(state, "species")
+type definitionReference struct {
+	category string
+	id       string
+	origin   string
 }
 
-func (r *Runtime) luaRegisterJob(state *lua.LState) int {
-	return r.registerDefinition(state, "jobs")
-}
-
-func (r *Runtime) registerDefinition(state *lua.LState, category string) int {
+func (r *Runtime) luaRegisterDefinition(state *lua.LState) int {
 	if r.frozen {
 		state.RaiseError("Lua registration is closed")
 
 		return 0
 	}
 
-	table := state.CheckTable(1)
+	category := state.CheckString(1)
+
+	if !validDefinitionCategory(category) {
+		state.RaiseError("invalid content category %q", category)
+
+		return 0
+	}
+
+	table := state.CheckTable(2)
 	id := requiredString(state, table, "id")
 	entries := r.definitions[category]
 
+	if entries == nil {
+		entries = make(map[string]*lua.LTable)
+		r.definitions[category] = entries
+		r.definitionOrigins[category] = make(map[string]string)
+	}
+
 	if _, found := entries[id]; found {
-		state.RaiseError("duplicate %s %s", category, id)
+		state.RaiseError(
+			"duplicate %s %s in %s and %s",
+			category,
+			id,
+			r.definitionOrigins[category][id],
+			r.currentModule(),
+		)
 
 		return 0
 	}
@@ -44,8 +62,27 @@ func (r *Runtime) registerDefinition(state *lua.LState, category string) int {
 
 	entries[id] = copyDefinitionTable(state, table)
 	r.definitionOrigins[category][id] = r.currentModule()
+	r.definitionOrder[category] = append(r.definitionOrder[category], id)
 
 	return 0
+}
+
+func validDefinitionCategory(category string) bool {
+	if category == "" || category[0] < 'a' || category[0] > 'z' {
+		return false
+	}
+
+	for _, char := range category {
+		if char == '_' ||
+			char >= 'a' && char <= 'z' ||
+			char >= '0' && char <= '9' {
+			continue
+		}
+
+		return false
+	}
+
+	return true
 }
 
 func (r *Runtime) DefinitionIDs(category string) []string {
@@ -79,6 +116,86 @@ func (r *Runtime) luaRegisteredIDs(state *lua.LState) int {
 	state.Push(result)
 
 	return 1
+}
+
+func (r *Runtime) luaRegisteredOrderedIDs(state *lua.LState) int {
+	category := state.CheckString(1)
+	ids, found := r.definitionOrder[category]
+
+	if !found {
+		state.RaiseError("unknown registered content category %s", category)
+
+		return 0
+	}
+
+	result := state.NewTable()
+
+	for index, id := range ids {
+		result.RawSetInt(index+1, lua.LString(id))
+	}
+
+	state.Push(result)
+
+	return 1
+}
+
+func (r *Runtime) luaRegisteredReference(state *lua.LState) int {
+	category := state.CheckString(1)
+	id := state.CheckString(2)
+
+	if !validDefinitionCategory(category) || id == "" {
+		state.RaiseError("invalid content reference %q %q", category, id)
+
+		return 0
+	}
+
+	reference := definitionReference{
+		category: category,
+		id:       id,
+		origin:   r.currentModule(),
+	}
+
+	if r.definitionsReady {
+		if err := r.validateDefinitionReference(reference); err != nil {
+			state.RaiseError("%v", err)
+
+			return 0
+		}
+	} else {
+		r.definitionRefs = append(r.definitionRefs, reference)
+	}
+
+	state.Push(lua.LString(id))
+
+	return 1
+}
+
+func (r *Runtime) luaValidateDefinitionReferences(state *lua.LState) int {
+	for _, reference := range r.definitionRefs {
+		if err := r.validateDefinitionReference(reference); err != nil {
+			state.RaiseError("%v", err)
+
+			return 0
+		}
+	}
+
+	r.definitionsReady = true
+	r.definitionRefs = nil
+
+	return 0
+}
+
+func (r *Runtime) validateDefinitionReference(reference definitionReference) error {
+	if _, found := r.definitions[reference.category][reference.id]; !found {
+		return fmt.Errorf(
+			"%s references missing %s ID %s",
+			reference.origin,
+			reference.category,
+			reference.id,
+		)
+	}
+
+	return nil
 }
 
 func (r *Runtime) luaRegisteredOrigin(state *lua.LState) int {

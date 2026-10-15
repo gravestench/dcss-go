@@ -51,6 +51,7 @@ func (s TurnScheduler) Grant(levelID int, elapsed Aut) error {
 		}
 
 		monsters = append(monsters, map[string]any{
+			"entity":   uint64(entity),
 			"level_id": position.LevelID,
 			"speed":    speed,
 			"points":   energy.Points,

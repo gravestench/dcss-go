@@ -1,5 +1,7 @@
 local catalog = require("policy.catalog")
 local items = require("policy.inventory.items")
+local enchant = require("policy.combat.monster_enchant")
+local forms = require("policy.magic.effects.forms.player")
 
 local equipment = {}
 
@@ -20,7 +22,9 @@ function equipment.worn(ctx, holder, slots)
         local carrier = ctx:get(entity, "core.carried_by")
         local equipped = ctx:get(entity, "core.equipped")
 
-        if carrier.holder == holder and slots[equipped.slot] then
+        if carrier.holder == holder and slots[equipped.slot] and
+            (holder ~= ctx:player() or
+                forms.slot_usable(ctx, holder, equipped.slot)) then
             if result[equipped.slot] then
                 error("duplicate equipped " .. equipped.slot)
             end
@@ -106,12 +110,13 @@ end
 
 function equipment.protection_ac(ctx, monster)
     local weapon = equipment.monster_melee(ctx, monster)
+    local bonus = enchant.corroded(ctx, monster) and -8 or 0
 
     if weapon and weapon.brand == "SPWPN_PROTECTION" then
-        return 5
+        bonus = bonus + 5
     end
 
-    return 0
+    return bonus
 end
 
 return equipment

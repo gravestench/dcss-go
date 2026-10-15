@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"dcrawl-go/internal/save"
+	"dcrawl-go/internal/terrain"
 )
 
 func TestNewRunSightAndOcclusion(t *testing.T) {
@@ -86,7 +87,7 @@ func TestMovementRemembersTerrainButHidesEntities(t *testing.T) {
 
 func TestFailedMoveDoesNotChangeKnowledge(t *testing.T) {
 	g := newStepGame(t)
-	before := g.levels[1].KnownRows()
+	before := g.levels[1].KnownCells()
 	result, err := g.Step(Command{
 		Kind: CommandMove,
 		DX:   -1,
@@ -97,18 +98,18 @@ func TestFailedMoveDoesNotChangeKnowledge(t *testing.T) {
 		t.Fatalf("blocked move: %+v %v", result, err)
 	}
 
-	if after := g.levels[1].KnownRows(); !reflect.DeepEqual(before, after) {
+	if after := g.levels[1].KnownCells(); !reflect.DeepEqual(before, after) {
 		t.Fatalf("blocked move changed map knowledge: %q -> %q", before, after)
 	}
 }
 
 func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 	g := newStepGame(t)
-	firstBefore := g.levels[1].KnownRows()
+	firstBefore := g.levels[1].KnownCells()
 
-	for _, row := range g.levels[2].KnownRows() {
+	for _, row := range g.levels[2].KnownCells() {
 		for _, cell := range row {
-			if cell != ' ' {
+			if cell != terrain.Unseen {
 				t.Fatal("unvisited floor already explored")
 			}
 		}
@@ -129,19 +130,19 @@ func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 		t.Fatalf("downstairs: %+v %v", result, err)
 	}
 
-	firstAfter := g.levels[1].KnownRows()
+	firstAfter := g.levels[1].KnownCells()
 
 	for y, row := range firstBefore {
 		for x := range row {
-			if row[x] != ' ' && firstAfter[y][x] != row[x] {
+			if row[x] != terrain.Unseen && firstAfter[y][x] != row[x] {
 				t.Fatal("first-floor knowledge lost")
 			}
 		}
 	}
 
-	second := g.levels[2].KnownRows()
+	second := g.levels[2].KnownCells()
 
-	if second[1][1] != '<' {
+	if second[1][1] != terrain.StairsUp {
 		t.Fatal("destination stair not seen")
 	}
 
@@ -152,7 +153,7 @@ func TestStairTravelPreservesPerFloorKnowledge(t *testing.T) {
 		t.Fatalf("upstairs: %+v %v", result, err)
 	}
 
-	if !reflect.DeepEqual(second, g.levels[2].KnownRows()) {
+	if !reflect.DeepEqual(second, g.levels[2].KnownCells()) {
 		t.Fatal("inactive floor knowledge changed")
 	}
 }
@@ -220,17 +221,14 @@ func TestRestoreRejectsInvalidKnowledge(t *testing.T) {
 		{
 			name: "long row",
 			change: func(s *save.Snapshot) {
-				s.Levels[0].Known[0] += " "
+				s.Levels[0].Known[0] = append(s.Levels[0].Known[0], terrain.Unseen)
 			},
 		},
 
 		{
-			name: "bad glyph",
+			name: "bad feature",
 			change: func(s *save.Snapshot) {
-				row := []byte(s.Levels[0].Known[0])
-
-				row[0] = '?'
-				s.Levels[0].Known[0] = string(row)
+				s.Levels[0].Known[0][0] = "DNGN_INVALID"
 			},
 		},
 	}

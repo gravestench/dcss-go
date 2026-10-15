@@ -184,10 +184,16 @@ local function validate(ctx)
     fighter.attack(ctx, { ev = 0, ac = 0 })
 end
 
+local module = {}
+
+function module.run(ctx)
+    validate(ctx)
+    return {}
+end
+
 register.policy({
     id = "save.validate_equipment",
-    run = function(ctx)
-        validate(ctx)
-        return {}
-    end,
+    run = module.run,
 })
+
+return module

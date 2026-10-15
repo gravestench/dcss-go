@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/deep-elf.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_DEEP_ELF",
     monster_id = "MONS_ELF",
-    source_path = "crawl-ref/source/dat/species/deep-elf.yaml",
     name = "Deep Elf",
     short_name = "DE",
     adjective = "Elven",
@@ -157,3 +158,7 @@ register.species{
         "SK_STAVES",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

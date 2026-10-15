@@ -6,6 +6,14 @@ local equipment = require("policy.inventory.equipment")
 
 local starting_profile = {}
 
+local function remainder_before(left, right)
+    if left.value == right.value then
+        return left.index < right.index
+    end
+
+    return left.value < right.value
+end
+
 local magic_schools = {
     SK_CONJURATIONS = true,
     SK_HEXES = true,
@@ -192,21 +200,19 @@ local function seed_queue(ctx, skills)
         counts[index] = math.floor(scaled / total)
         remainders[index] = scaled % total
         assigned = assigned + counts[index]
-        order[index] = index
+        order[index] = {
+            index = index,
+            value = remainders[index],
+        }
     end
 
-    table.sort(order, function(a, b)
-        if remainders[a] == remainders[b] then
-            return a < b
-        end
-
-        return remainders[a] < remainders[b]
-    end)
+    table.sort(order, remainder_before)
 
     local extra = 1
 
     while assigned < 100 do
-        counts[order[extra]] = counts[order[extra]] + 1
+        local index = order[extra].index
+        counts[index] = counts[index] + 1
         assigned = assigned + 1
         extra = extra + 1
     end

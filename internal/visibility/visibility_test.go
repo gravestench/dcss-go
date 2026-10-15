@@ -4,7 +4,27 @@ import (
 	"encoding/json"
 	"os"
 	"testing"
+
+	"dcrawl-go/internal/terrain"
 )
+
+func featureRows(rows []string) [][]terrain.ID {
+	cells := make([][]terrain.ID, len(rows))
+	for y, row := range rows {
+		cells[y] = make([]terrain.ID, len(row))
+		for x := range row {
+			switch row[x] {
+			case '.':
+				cells[y][x] = terrain.Floor
+			case '#':
+				cells[y][x] = terrain.RockWall
+			default:
+				cells[y][x] = terrain.ID(string(row[x]))
+			}
+		}
+	}
+	return cells
+}
 
 type goldenFile struct {
 	SourceRevision string `json:"sourceRevision"`
@@ -89,7 +109,7 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 					rows[y] = string(row)
 				}
 
-				got, err := Compute(rows, origin, origin, 7)
+				got, err := Compute(featureRows(rows), origin, origin, 7)
 
 				if err != nil {
 					t.Fatal(err)
@@ -184,7 +204,7 @@ func TestVisibilityInputValidation(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			if _, err := Compute(tc.rows, tc.x, tc.y, tc.r); err == nil {
+			if _, err := Compute(featureRows(tc.rows), tc.x, tc.y, tc.r); err == nil {
 				t.Fatal("accepted invalid input")
 			}
 		})
@@ -198,7 +218,7 @@ func TestOpenTerrainChebyshevRange(t *testing.T) {
 		rows[y] = "..................."
 	}
 
-	visible, err := Compute(rows, 9, 9, 7)
+	visible, err := Compute(featureRows(rows), 9, 9, 7)
 
 	if err != nil {
 		t.Fatal(err)

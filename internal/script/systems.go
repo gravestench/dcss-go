@@ -6,6 +6,8 @@ import (
 	"slices"
 	"time"
 
+	"dcrawl-go/internal/terrain"
+
 	"github.com/gravestench/akara"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -258,7 +260,7 @@ func (r *Runtime) DiscardPending() {
 		r.pending = nil
 		r.pendingViews = make(map[componentTarget]*pendingComponent)
 		r.pendingDestroy = make(map[akara.Entity]bool)
-		r.pendingCells = make(map[gridCell]byte)
+		r.pendingCells = make(map[gridCell]terrain.ID)
 		r.pendingActors = make(map[gridCell]akara.Entity)
 		r.pendingPositions = make(map[akara.Entity]*gridCell)
 	}
@@ -326,7 +328,7 @@ func (r *Runtime) ApplyPending() error {
 	r.created = nil
 	r.pendingViews = make(map[componentTarget]*pendingComponent)
 	r.pendingDestroy = make(map[akara.Entity]bool)
-	r.pendingCells = make(map[gridCell]byte)
+	r.pendingCells = make(map[gridCell]terrain.ID)
 	r.pendingActors = make(map[gridCell]akara.Entity)
 	r.pendingPositions = make(map[akara.Entity]*gridCell)
 

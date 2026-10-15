@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/merfolk.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_MERFOLK",
     monster_id = "MONS_MERFOLK",
-    source_path = "crawl-ref/source/dat/species/merfolk.yaml",
     name = "Merfolk",
     short_name = "Mf",
     adjective = "Merfolkian",
@@ -167,3 +168,7 @@ register.species{
         "SK_LONG_BLADES",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

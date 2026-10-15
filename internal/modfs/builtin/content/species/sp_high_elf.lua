@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/util/species-gen/species-data-deprecated-species.txt
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_HIGH_ELF",
     monster_id = "MONS_ELF",
-    source_path = "crawl-ref/source/util/species-gen/species-data-deprecated-species.txt",
     name = "High Elf",
     short_name = "HE",
     adjective = "Elven",
@@ -161,3 +162,7 @@ register.species{
     size = "SIZE_MEDIUM",
     undead_type = "US_ALIVE",
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

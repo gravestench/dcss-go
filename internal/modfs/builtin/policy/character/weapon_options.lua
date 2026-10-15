@@ -99,11 +99,13 @@ function weapons.options(species_id, job_id)
     return options
 end
 
+function weapons.run_options(_, input)
+    return { options = weapons.options(input.species_id, input.job_id) }
+end
+
 register.policy({
     id = "character.weapon_options",
-    run = function(_, input)
-        return { options = weapons.options(input.species_id, input.job_id) }
-    end,
+    run = weapons.run_options,
 })
 
 return weapons

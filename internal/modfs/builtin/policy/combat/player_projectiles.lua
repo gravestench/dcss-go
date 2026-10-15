@@ -8,6 +8,8 @@ local effects = require("policy.combat.projectile_effects")
 local practice = require("policy.combat.practice")
 local roll = require("policy.combat.roll")
 local trajectory = require("policy.combat.trajectory")
+local statuses = require("policy.magic.effects.statuses.player")
+local monster_defense = require("policy.combat.monster_defense")
 
 local projectiles = {}
 
@@ -109,9 +111,10 @@ local function attack_input(ctx, player, missile, launcher, item, target, defend
         using_weapon = launcher ~= nil,
         weapon_damage = missile.missile.damage + (weapon and weapon.damage or throwing_bonus),
         weapon_hit = weapon and weapon.hit or 0,
+        hit_bonus = statuses.portal_projectile_hit_bonus(ctx, player),
         weapon_plus = weapon and item.plus or 0,
-        defender_ev = defender.ev or 0,
-        defender_ac = (defender.ac or 0) + equipment.protection_ac(ctx, target),
+        defender_ev = monster_defense.evasion(ctx, target, defender),
+        defender_ac = monster_defense.armour(ctx, target, defender),
         penetrating = missile.id == "MI_JAVELIN",
         mighty = false,
     }
@@ -172,6 +175,9 @@ local function resolve_target(ctx, player, missile, launcher, item, target)
                     item.ego, missile, defender, outcome.damage)
             end
 
+            statuses.wake_hibernating(ctx, target)
+            outcome.damage = statuses.petrified_damage(ctx, target,
+                outcome.damage)
             health.current = math.max(0, health.current - outcome.damage)
 
             if health.current > 0 and not launcher then
@@ -180,6 +186,8 @@ local function resolve_target(ctx, player, missile, launcher, item, target)
                     health.current)
             end
 
+            brand_damage = statuses.petrified_damage(ctx, target,
+                brand_damage)
             health.current = math.max(0, health.current - brand_damage)
             ctx:set(target, "core.health", health)
 
@@ -209,8 +217,24 @@ function projectiles.resolve(ctx, player, intent)
     local entity = intent.item_id
     local missile, launched, launcher, item = missile_for(ctx, entity)
     local penetrating = not launched and missile.id == "MI_JAVELIN"
-    local impact = trajectory.trace(ctx, position.level_id, position.x, position.y,
-        position.x + intent.dx, position.y + intent.dy, 7)
+    local portal = statuses.portal_projectile_active(ctx, player)
+    local impact
+
+    if portal then
+        local x = position.x + intent.dx
+        local y = position.y + intent.dy
+        local target = ctx:actor_at(position.level_id, x, y)
+        local contacts = {}
+
+        if target then
+            contacts[1] = { actor = target, x = x, y = y }
+        end
+
+        impact = { x = x, y = y, contacts = contacts }
+    else
+        impact = trajectory.trace(ctx, position.level_id, position.x, position.y,
+            position.x + intent.dx, position.y + intent.dy, 7)
+    end
     local verb = launched and "shoot" or "throw"
 
     ctx:emit("combat", "You " .. verb .. " " .. items.phrase(missile.name, 1) .. ".")
@@ -247,6 +271,10 @@ function projectiles.resolve(ctx, player, intent)
         if caught then
             net.catch(ctx, caught_target, floor_item, defender)
         end
+    end
+
+    if portal then
+        statuses.portal_projectile_pay(ctx, player)
     end
 end
 

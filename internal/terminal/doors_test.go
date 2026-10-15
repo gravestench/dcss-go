@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"dcrawl-go/internal/game"
+	"dcrawl-go/internal/terrain"
 )
 
 func doorModel(t *testing.T, cells map[[2]int]byte) *AppModel {
@@ -22,10 +23,11 @@ func doorModel(t *testing.T, cells map[[2]int]byte) *AppModel {
 
 	for cell, glyph := range cells {
 		x, y := cell[0], cell[1]
-		row := []byte(snapshot.Levels[0].Rows[y])
-
-		row[x] = glyph
-		snapshot.Levels[0].Rows[y] = string(row)
+		if glyph == '+' {
+			snapshot.Levels[0].Cells[y][x] = terrain.ClosedDoor
+		} else {
+			snapshot.Levels[0].Cells[y][x] = terrain.OpenDoor
+		}
 	}
 
 	m.game, err = game.Restore(snapshot)

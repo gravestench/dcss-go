@@ -23,6 +23,9 @@ local screens = {
     F = { name = "throw" },
     W = { name = "wear" },
     T = { name = "take_off" },
+    z = { name = "spell_cast" },
+    Z = { name = "spell_force" },
+    M = { name = "spell_memorise" },
 }
 
 local play = {}

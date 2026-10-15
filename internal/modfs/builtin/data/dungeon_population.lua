@@ -1,1027 +1,1016 @@
 -- Generated from a committed DCSS import. Refresh deliberately.
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/mon-pick-data.h
+-- SHA-256: 055cc0f1a9837044a99acb04560231403d8c4d5f58c64d9d006f131016d168ea
 -- Source: crawl-ref/source/random-pick.h
+-- SHA-256: 0820634c324892fe114d0731aa85627aeb6399f35b24ab322d2053ea26ecafbc
 -- Source: crawl-ref/source/tag-version.h
+-- SHA-256: 2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa
 
-return {
+local catalog = {
     schema_version = 1,
-    source_revision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
-    tag_major_version = 34,
-    source_files = {
-        {
-            path = "crawl-ref/source/mon-pick-data.h",
-            sha256 = "055cc0f1a9837044a99acb04560231403d8c4d5f58c64d9d006f131016d168ea",
-        },
-        {
-            path = "crawl-ref/source/random-pick.h",
-            sha256 = "0820634c324892fe114d0731aa85627aeb6399f35b24ab322d2053ea26ecafbc",
-        },
-        {
-            path = "crawl-ref/source/tag-version.h",
-            sha256 = "2f8ed7610ca03ba6014044f78ca9f9b9392208a37d3539119ef04bd853ab1dfa",
-        },
-    },
     rows = {
+        -- Source line: 62
         {
             min_depth = 1,
             max_depth = 3,
             rarity = 1000,
             curve = "FLAT",
             monster_id = "MONS_BAT",
-            source_line = 62,
         },
+        -- Source line: 63
         {
             min_depth = 1,
             max_depth = 3,
             rarity = 1000,
             curve = "FLAT",
             monster_id = "MONS_RAT",
-            source_line = 63,
         },
+        -- Source line: 64
         {
             min_depth = 1,
             max_depth = 3,
             rarity = 640,
             curve = "FLAT",
             monster_id = "MONS_FRILLED_LIZARD",
-            source_line = 64,
         },
+        -- Source line: 67
         {
             min_depth = 1,
             max_depth = 4,
             rarity = 1000,
             curve = "FLAT",
             monster_id = "MONS_BALL_PYTHON",
-            source_line = 67,
         },
+        -- Source line: 68
         {
             min_depth = 1,
             max_depth = 4,
             rarity = 500,
             curve = "FLAT",
             monster_id = "MONS_GIANT_COCKROACH",
-            source_line = 68,
         },
+        -- Source line: 69
         {
             min_depth = 1,
             max_depth = 4,
             rarity = 1000,
             curve = "FLAT",
             monster_id = "MONS_GOBLIN",
-            source_line = 69,
         },
+        -- Source line: 70
         {
             min_depth = 1,
             max_depth = 4,
             rarity = 1000,
             curve = "FLAT",
             monster_id = "MONS_KOBOLD",
-            source_line = 70,
         },
+        -- Source line: 71
         {
             min_depth = 1,
             max_depth = 4,
             rarity = 1000,
             curve = "FLAT",
             monster_id = "MONS_HOBGOBLIN",
-            source_line = 71,
         },
+        -- Source line: 72
         {
             min_depth = 1,
             max_depth = 4,
             rarity = 1000,
             curve = "FLAT",
             monster_id = "MONS_ENDOPLASM",
-            source_line = 72,
         },
+        -- Source line: 73
         {
             min_depth = 1,
             max_depth = 3,
             rarity = 350,
             curve = "FLAT",
             monster_id = "MONS_DART_SLUG",
-            source_line = 73,
         },
+        -- Source line: 74
         {
             min_depth = 1,
             max_depth = 3,
             rarity = 500,
             curve = "FLAT",
             monster_id = "MONS_QUOKKA",
-            source_line = 74,
         },
+        -- Source line: 75
         {
             min_depth = 1,
             max_depth = 3,
             rarity = 200,
             curve = "FLAT",
             monster_id = "MONS_JACKAL",
-            source_line = 75,
         },
+        -- Source line: 76
         {
             min_depth = 4,
             max_depth = 5,
             rarity = 200,
             curve = "FALL",
             monster_id = "MONS_JACKAL",
-            source_line = 76,
         },
+        -- Source line: 77
         {
             min_depth = 4,
             max_depth = 5,
             rarity = 500,
             curve = "FALL",
             monster_id = "MONS_QUOKKA",
-            source_line = 77,
         },
+        -- Source line: 78
         {
             min_depth = 4,
             max_depth = 5,
             rarity = 350,
             curve = "FALL",
             monster_id = "MONS_DART_SLUG",
-            source_line = 78,
         },
+        -- Source line: 79
         {
             min_depth = 1,
             max_depth = 8,
             rarity = 200,
             curve = "PEAK",
             monster_id = "MONS_GNOLL",
-            source_line = 79,
         },
+        -- Source line: 82
         {
             min_depth = 2,
             max_depth = 5,
             rarity = 500,
             curve = "FALL",
             monster_id = "MONS_WORM",
-            source_line = 82,
         },
+        -- Source line: 83
         {
             min_depth = 2,
             max_depth = 6,
             rarity = 1000,
             curve = "FLAT",
             monster_id = "MONS_ADDER",
-            source_line = 83,
         },
+        -- Source line: 84
         {
             min_depth = 3,
             max_depth = 8,
             rarity = 1000,
             curve = "FLAT",
             monster_id = "MONS_ORC",
-            source_line = 84,
         },
+        -- Source line: 87
         {
             min_depth = 4,
             max_depth = 7,
             rarity = 800,
             curve = "PEAK",
             monster_id = "MONS_SCORPION",
-            source_line = 87,
         },
+        -- Source line: 88
         {
             min_depth = 4,
             max_depth = 7,
             rarity = 1000,
             curve = "PEAK",
             monster_id = "MONS_HOUND",
-            source_line = 88,
         },
+        -- Source line: 89
         {
             min_depth = 4,
             max_depth = 7,
             rarity = 350,
             curve = "PEAK",
             monster_id = "MONS_UFETUBUS",
-            source_line = 89,
         },
+        -- Source line: 90
         {
             min_depth = 4,
             max_depth = 7,
             rarity = 500,
             curve = "PEAK",
             monster_id = "MONS_OGRE",
-            source_line = 90,
         },
+        -- Source line: 91
         {
             min_depth = 4,
             max_depth = 7,
             rarity = 1000,
             curve = "PEAK",
             monster_id = "MONS_IGUANA",
-            source_line = 91,
         },
+        -- Source line: 92
         {
             min_depth = 4,
             max_depth = 7,
             rarity = 350,
             curve = "PEAK",
             monster_id = "MONS_PHANTOM",
-            source_line = 92,
         },
+        -- Source line: 93
         {
             min_depth = 4,
             max_depth = 8,
             rarity = 500,
             curve = "PEAK",
             monster_id = "MONS_JELLY",
-            source_line = 93,
         },
+        -- Source line: 94
         {
             min_depth = 4,
             max_depth = 8,
             rarity = 350,
             curve = "PEAK",
             monster_id = "MONS_NECROPHAGE",
-            source_line = 94,
         },
+        -- Source line: 95
         {
             min_depth = 4,
             max_depth = 8,
             rarity = 350,
             curve = "PEAK",
             monster_id = "MONS_BLACK_BEAR",
-            source_line = 95,
         },
+        -- Source line: 97
         {
             min_depth = 4,
             max_depth = 10,
             rarity = 200,
             curve = "PEAK",
             monster_id = "MONS_GNOLL_BOUDA",
-            source_line = 97,
         },
+        -- Source line: 98
         {
             min_depth = 4,
             max_depth = 12,
             rarity = 150,
             curve = "PEAK",
             monster_id = "MONS_ORC_PRIEST",
-            source_line = 98,
         },
+        -- Source line: 99
         {
             min_depth = 4,
             max_depth = 14,
             rarity = 500,
             curve = "PEAK",
             monster_id = "MONS_ORC_WIZARD",
-            source_line = 99,
         },
+        -- Source line: 100
         {
             min_depth = 4,
             max_depth = 14,
             rarity = 350,
             curve = "PEAK",
             monster_id = "MONS_HOWLER_MONKEY",
-            source_line = 100,
         },
+        -- Source line: 101
         {
             min_depth = 5,
             max_depth = 8,
             rarity = 500,
             curve = "PEAK",
             monster_id = "MONS_WHITE_IMP",
-            source_line = 101,
         },
+        -- Source line: 102
         {
             min_depth = 5,
             max_depth = 8,
             rarity = 300,
             curve = "PEAK",
             monster_id = "MONS_SHADOW_IMP",
-            source_line = 102,
         },
+        -- Source line: 103
         {
             min_depth = 5,
             max_depth = 8,
             rarity = 500,
             curve = "PEAK",
             monster_id = "MONS_ICE_BEAST",
-            source_line = 103,
         },
+        -- Source line: 104
         {
             min_depth = 5,
             max_depth = 9,
             rarity = 400,
             curve = "PEAK",
             monster_id = "MONS_WATER_MOCCASIN",
-            source_line = 104,
         },
+        -- Source line: 105
         {
             min_depth = 5,
             max_depth = 13,
             rarity = 600,
             curve = "PEAK",
             monster_id = "MONS_CENTAUR",
-            source_line = 105,
         },
+        -- Source line: 106
         {
             min_depth = 5,
             max_depth = 13,
             rarity = 200,
             curve = "PEAK",
             monster_id = "MONS_GNOLL_SERGEANT",
-            source_line = 106,
         },
+        -- Source line: 108
         {
             min_depth = 6,
             max_depth = 8,
             rarity = 500,
             curve = "PEAK",
             monster_id = "MONS_SKY_BEAST",
-            source_line = 108,
         },
+        -- Source line: 109
         {
             min_depth = 6,
             max_depth = 9,
             rarity = 1000,
             curve = "PEAK",
             monster_id = "MONS_BULLFROG",
-            source_line = 109,
         },
+        -- Source line: 110
         {
             min_depth = 6,
             max_depth = 10,
             rarity = 500,
             curve = "PEAK",
             monster_id = "MONS_WIGHT",
-            source_line = 110,
         },
+        -- Source line: 111
         {
             min_depth = 6,
             max_depth = 10,
             rarity = 350,
             curve = "PEAK",
             monster_id = "MONS_STEAM_DRAGON",
-            source_line = 111,
         },
+        -- Source line: 112
         {
             min_depth = 6,
             max_depth = 11,
             rarity = 500,
             curve = "PEAK",
             monster_id = "MONS_KOBOLD_BRIGAND",
-            source_line = 112,
         },
+        -- Source line: 113
         {
             min_depth = 6,
             max_depth = 12,
             rarity = 600,
             curve = "PEAK",
             monster_id = "MONS_ORC_WARRIOR",
-            source_line = 113,
         },
+        -- Source line: 114
         {
             min_depth = 7,
             max_depth = 11,
             rarity = 500,
             curve = "PEAK",
             monster_id = "MONS_KILLER_BEE",
-            source_line = 114,
         },
+        -- Source line: 115
         {
             min_depth = 7,
             max_depth = 11,
             rarity = 200,
             curve = "PEAK",
             monster_id = "MONS_HORNET",
-            source_line = 115,
         },
+        -- Source line: 116
         {
             min_depth = 7,
             max_depth = 11,
             rarity = 350,
             curve = "PEAK",
             monster_id = "MONS_WYVERN",
-            source_line = 116,
         },
+        -- Source line: 117
         {
             min_depth = 8,
             max_depth = 12,
             rarity = 800,
             curve = "PEAK",
             monster_id = "MONS_YAK",
-            source_line = 117,
         },
+        -- Source line: 118
         {
             min_depth = 8,
             max_depth = 14,
             rarity = 350,
             curve = "PEAK",
             monster_id = "MONS_ACID_DRAGON",
-            source_line = 118,
         },
+        -- Source line: 119
         {
             min_depth = 8,
             max_depth = 14,
             rarity = 600,
             curve = "PEAK",
             monster_id = "MONS_TWO_HEADED_OGRE",
-            source_line = 119,
         },
+        -- Source line: 120
         {
             min_depth = 9,
             max_depth = 13,
             rarity = 350,
             curve = "PEAK",
             monster_id = "MONS_SHADOW",
-            source_line = 120,
         },
+        -- Source line: 121
         {
             min_depth = 9,
             max_depth = 14,
             rarity = 200,
             curve = "PEAK",
             monster_id = "MONS_KOBOLD_DEMONOLOGIST",
-            source_line = 121,
         },
+        -- Source line: 122
         {
             min_depth = 9,
             max_depth = 14,
             rarity = 500,
             curve = "PEAK",
             monster_id = "MONS_WRAITH",
-            source_line = 122,
         },
+        -- Source line: 123
         {
             min_depth = 9,
             max_depth = 14,
             rarity = 800,
             curve = "PEAK",
             monster_id = "MONS_TROLL",
-            source_line = 123,
         },
+        -- Source line: 124
         {
             min_depth = 9,
             max_depth = 14,
             rarity = 200,
             curve = "PEAK",
             monster_id = "MONS_VAMPIRE",
-            source_line = 124,
         },
+        -- Source line: 125
         {
             min_depth = 10,
             max_depth = 13,
             rarity = 350,
             curve = "PEAK",
             monster_id = "MONS_UNSEEN_HORROR",
-            source_line = 125,
         },
+        -- Source line: 126
         {
             min_depth = 10,
             max_depth = 13,
             rarity = 200,
             curve = "PEAK",
             monster_id = "MONS_KOMODO_DRAGON",
-            source_line = 126,
         },
+        -- Source line: 127
         {
             min_depth = 10,
             max_depth = 14,
             rarity = 350,
             curve = "PEAK",
             monster_id = "MONS_GARGOYLE",
-            source_line = 127,
         },
+        -- Source line: 128
         {
             min_depth = 10,
             max_depth = 15,
             rarity = 500,
             curve = "PEAK",
             monster_id = "MONS_VAMPIRE_MOSQUITO",
-            source_line = 128,
         },
+        -- Source line: 129
         {
             min_depth = 11,
             max_depth = 18,
             rarity = 800,
             curve = "PEAK",
             monster_id = "MONS_UGLY_THING",
-            source_line = 129,
         },
+        -- Source line: 130
         {
             min_depth = 11,
             max_depth = 21,
             rarity = 520,
             curve = "SEMI",
             monster_id = "MONS_MANTICORE",
-            source_line = 130,
         },
+        -- Source line: 131
         {
             min_depth = 11,
             max_depth = 21,
             rarity = 825,
             curve = "SEMI",
             monster_id = "MONS_CYCLOPS",
-            source_line = 131,
         },
+        -- Source line: 132
         {
             min_depth = 11,
             max_depth = 21,
             rarity = 285,
             curve = "PEAK",
             monster_id = "MONS_BASILISK",
-            source_line = 132,
         },
+        -- Source line: 133
         {
             min_depth = 11,
             max_depth = 21,
             rarity = 192,
             curve = "PEAK",
             monster_id = "MONS_SKELETAL_WARRIOR",
-            source_line = 133,
         },
+        -- Source line: 134
         {
             min_depth = 11,
             max_depth = 23,
             rarity = 540,
             curve = "SEMI",
             monster_id = "MONS_HYDRA",
-            source_line = 134,
         },
+        -- Source line: 135
         {
             min_depth = 11,
             max_depth = 23,
             rarity = 540,
             curve = "SEMI",
             monster_id = "MONS_BOULDER_BEETLE",
-            source_line = 135,
         },
+        -- Source line: 136
         {
             min_depth = 12,
             max_depth = 19,
             rarity = 475,
             curve = "SEMI",
             monster_id = "MONS_DEEP_ELF_FIRE_MAGE",
-            source_line = 136,
         },
+        -- Source line: 137
         {
             min_depth = 12,
             max_depth = 22,
             rarity = 440,
             curve = "FALL",
             monster_id = "MONS_SLIME_CREATURE",
-            source_line = 137,
         },
+        -- Source line: 138
         {
             min_depth = 13,
             max_depth = 20,
             rarity = 150,
             curve = "SEMI",
             monster_id = "MONS_MELIAI",
-            source_line = 138,
         },
+        -- Source line: 139
         {
             min_depth = 13,
             max_depth = 21,
             rarity = 192,
             curve = "PEAK",
             monster_id = "MONS_DEATH_KNIGHT",
-            source_line = 139,
         },
+        -- Source line: 140
         {
             min_depth = 13,
             max_depth = 21,
             rarity = 89,
             curve = "PEAK",
             monster_id = "MONS_RAKSHASA",
-            source_line = 140,
         },
+        -- Source line: 141
         {
             min_depth = 13,
             max_depth = 17,
             rarity = 925,
             curve = "FLAT",
             monster_id = "MONS_CENTAUR_WARRIOR",
-            source_line = 141,
         },
+        -- Source line: 142
         {
             min_depth = 18,
             max_depth = 23,
             rarity = 925,
             curve = "FALL",
             monster_id = "MONS_CENTAUR_WARRIOR",
-            source_line = 142,
         },
+        -- Source line: 143
         {
             min_depth = 13,
             max_depth = 19,
             rarity = 365,
             curve = "SEMI",
             monster_id = "MONS_TENGU_WARRIOR",
-            source_line = 143,
         },
+        -- Source line: 144
         {
             min_depth = 13,
             max_depth = 19,
             rarity = 205,
             curve = "SEMI",
             monster_id = "MONS_TENGU_CONJURER",
-            source_line = 144,
         },
+        -- Source line: 145
         {
             min_depth = 13,
             max_depth = 19,
             rarity = 285,
             curve = "SEMI",
             monster_id = "MONS_EFREET",
-            source_line = 145,
         },
+        -- Source line: 146
         {
             min_depth = 13,
             max_depth = 23,
             rarity = 675,
             curve = "SEMI",
             monster_id = "MONS_SHAPESHIFTER",
-            source_line = 146,
         },
+        -- Source line: 147
         {
             min_depth = 13,
             max_depth = 27,
             rarity = 89,
             curve = "FALL",
             monster_id = "MONS_CATOBLEPAS",
-            source_line = 147,
         },
+        -- Source line: 148
         {
             min_depth = 14,
             max_depth = 19,
             rarity = 140,
             curve = "FLAT",
             monster_id = "MONS_WIZARD",
-            source_line = 148,
         },
+        -- Source line: 149
         {
             min_depth = 14,
             max_depth = 22,
             rarity = 260,
             curve = "SEMI",
             monster_id = "MONS_FREEZING_WRAITH",
-            source_line = 149,
         },
+        -- Source line: 150
         {
             min_depth = 14,
             max_depth = 22,
             rarity = 270,
             curve = "SEMI",
             monster_id = "MONS_SIMULACRUM",
-            source_line = 150,
         },
+        -- Source line: 151
         {
             min_depth = 14,
             max_depth = 22,
             rarity = 115,
             curve = "SEMI",
             monster_id = "MONS_BOGGART",
-            source_line = 151,
         },
+        -- Source line: 152
         {
             min_depth = 14,
             max_depth = 27,
             rarity = 192,
             curve = "PEAK",
             monster_id = "MONS_FIRE_DRAGON",
-            source_line = 152,
         },
+        -- Source line: 153
         {
             min_depth = 15,
             max_depth = 20,
             rarity = 335,
             curve = "SEMI",
             monster_id = "MONS_YAKTAUR",
-            source_line = 153,
         },
+        -- Source line: 154
         {
             min_depth = 15,
             max_depth = 24,
             rarity = 345,
             curve = "FALL",
             monster_id = "MONS_ORC_KNIGHT",
-            source_line = 154,
         },
+        -- Source line: 155
         {
             min_depth = 15,
             max_depth = 25,
             rarity = 315,
             curve = "FALL",
             monster_id = "MONS_OGRE_MAGE",
-            source_line = 155,
         },
+        -- Source line: 156
         {
             min_depth = 15,
             max_depth = 25,
             rarity = 275,
             curve = "PEAK",
             monster_id = "MONS_WOLF_SPIDER",
-            source_line = 156,
         },
+        -- Source line: 157
         {
             min_depth = 16,
             max_depth = 24,
             rarity = 89,
             curve = "PEAK",
             monster_id = "MONS_REDBACK",
-            source_line = 157,
         },
+        -- Source line: 158
         {
             min_depth = 16,
             max_depth = 24,
             rarity = 25,
             curve = "PEAK",
             monster_id = "MONS_SHADOW_WRAITH",
-            source_line = 158,
         },
+        -- Source line: 159
         {
             min_depth = 16,
             max_depth = 27,
             rarity = 92,
             curve = "PEAK",
             monster_id = "MONS_ICE_DRAGON",
-            source_line = 159,
         },
+        -- Source line: 160
         {
             min_depth = 17,
             max_depth = 23,
             rarity = 89,
             curve = "PEAK",
             monster_id = "MONS_VERY_UGLY_THING",
-            source_line = 160,
         },
+        -- Source line: 161
         {
             min_depth = 17,
             max_depth = 24,
             rarity = 102,
             curve = "SEMI",
             monster_id = "MONS_GREAT_ORB_OF_EYES",
-            source_line = 161,
         },
+        -- Source line: 162
         {
             min_depth = 17,
             max_depth = 24,
             rarity = 52,
             curve = "SEMI",
             monster_id = "MONS_NECROMANCER",
-            source_line = 162,
         },
+        -- Source line: 163
         {
             min_depth = 17,
             max_depth = 25,
             rarity = 136,
             curve = "SEMI",
             monster_id = "MONS_DEEP_ELF_KNIGHT",
-            source_line = 163,
         },
+        -- Source line: 164
         {
             min_depth = 17,
             max_depth = 25,
             rarity = 136,
             curve = "SEMI",
             monster_id = "MONS_DEEP_ELF_ARCHER",
-            source_line = 164,
         },
+        -- Source line: 165
         {
             min_depth = 17,
             max_depth = 25,
             rarity = 136,
             curve = "SEMI",
             monster_id = "MONS_HORNET",
-            source_line = 165,
         },
+        -- Source line: 166
         {
             min_depth = 17,
             max_depth = 25,
             rarity = 89,
             curve = "PEAK",
             monster_id = "MONS_FIRE_CRAB",
-            source_line = 166,
         },
+        -- Source line: 167
         {
             min_depth = 17,
             max_depth = 25,
             rarity = 89,
             curve = "PEAK",
             monster_id = "MONS_HARPY",
-            source_line = 167,
         },
+        -- Source line: 168
         {
             min_depth = 17,
             max_depth = 25,
             rarity = 136,
             curve = "SEMI",
             monster_id = "MONS_DEEP_ELF_AIR_MAGE",
-            source_line = 168,
         },
+        -- Source line: 169
         {
             min_depth = 18,
             max_depth = 24,
             rarity = 52,
             curve = "SEMI",
             monster_id = "MONS_GLOWING_ORANGE_BRAIN",
-            source_line = 169,
         },
+        -- Source line: 170
         {
             min_depth = 18,
             max_depth = 28,
             rarity = 180,
             curve = "PEAK",
             monster_id = "MONS_FLAYED_GHOST",
-            source_line = 170,
         },
+        -- Source line: 171
         {
             min_depth = 19,
             max_depth = 25,
             rarity = 35,
             curve = "PEAK",
             monster_id = "MONS_ORC_HIGH_PRIEST",
-            source_line = 171,
         },
+        -- Source line: 172
         {
             min_depth = 19,
             max_depth = 26,
             rarity = 136,
             curve = "SEMI",
             monster_id = "MONS_DEEP_TROLL",
-            source_line = 172,
         },
+        -- Source line: 173
         {
             min_depth = 19,
             max_depth = 27,
             rarity = 89,
             curve = "RISE",
             monster_id = "MONS_SPHINX",
-            source_line = 173,
         },
+        -- Source line: 174
         {
             min_depth = 20,
             max_depth = 30,
             rarity = 310,
             curve = "FALL",
             monster_id = "MONS_YAKTAUR_CAPTAIN",
-            source_line = 174,
         },
+        -- Source line: 175
         {
             min_depth = 20,
             max_depth = 30,
             rarity = 136,
             curve = "SEMI",
             monster_id = "MONS_FIRE_GIANT",
-            source_line = 175,
         },
+        -- Source line: 176
         {
             min_depth = 20,
             max_depth = 30,
             rarity = 136,
             curve = "SEMI",
             monster_id = "MONS_FROST_GIANT",
-            source_line = 176,
         },
+        -- Source line: 177
         {
             min_depth = 21,
             max_depth = 27,
             rarity = 25,
             curve = "PEAK",
             monster_id = "MONS_ORC_SORCERER",
-            source_line = 177,
         },
+        -- Source line: 178
         {
             min_depth = 21,
             max_depth = 27,
             rarity = 310,
             curve = "FALL",
             monster_id = "MONS_STONE_GIANT",
-            source_line = 178,
         },
+        -- Source line: 179
         {
             min_depth = 21,
             max_depth = 31,
             rarity = 192,
             curve = "PEAK",
             monster_id = "MONS_ETTIN",
-            source_line = 179,
         },
+        -- Source line: 180
         {
             min_depth = 22,
             max_depth = 30,
             rarity = 136,
             curve = "SEMI",
             monster_id = "MONS_DEEP_TROLL_EARTH_MAGE",
-            source_line = 180,
         },
+        -- Source line: 181
         {
             min_depth = 23,
             max_depth = 27,
             rarity = 89,
             curve = "RISE",
             monster_id = "MONS_STORM_DRAGON",
-            source_line = 181,
         },
+        -- Source line: 182
         {
             min_depth = 23,
             max_depth = 27,
             rarity = 28,
             curve = "SEMI",
             monster_id = "MONS_ORC_WARLORD",
-            source_line = 182,
         },
+        -- Source line: 183
         {
             min_depth = 23,
             max_depth = 29,
             rarity = 25,
             curve = "PEAK",
             monster_id = "MONS_HELL_KNIGHT",
-            source_line = 183,
         },
+        -- Source line: 184
         {
             min_depth = 23,
             max_depth = 31,
             rarity = 89,
             curve = "PEAK",
             monster_id = "MONS_PHANTASMAL_WARRIOR",
-            source_line = 184,
         },
+        -- Source line: 185
         {
             min_depth = 23,
             max_depth = 27,
             rarity = 136,
             curve = "FLAT",
             monster_id = "MONS_GLOWING_SHAPESHIFTER",
-            source_line = 185,
         },
+        -- Source line: 186
         {
             min_depth = 24,
             max_depth = 27,
             rarity = 22,
             curve = "RISE",
             monster_id = "MONS_DEEP_ELF_ANNIHILATOR",
-            source_line = 186,
         },
+        -- Source line: 187
         {
             min_depth = 24,
             max_depth = 27,
             rarity = 22,
             curve = "RISE",
             monster_id = "MONS_DEEP_ELF_HIGH_PRIEST",
-            source_line = 187,
         },
+        -- Source line: 188
         {
             min_depth = 24,
             max_depth = 27,
             rarity = 22,
             curve = "RISE",
             monster_id = "MONS_VAMPIRE_KNIGHT",
-            source_line = 188,
         },
+        -- Source line: 189
         {
             min_depth = 24,
             max_depth = 27,
             rarity = 136,
             curve = "RISE",
             monster_id = "MONS_TENGU_REAVER",
-            source_line = 189,
         },
+        -- Source line: 190
         {
             min_depth = 24,
             max_depth = 27,
             rarity = 8,
             curve = "RISE",
             monster_id = "MONS_DANCING_WEAPON",
-            source_line = 190,
         },
+        -- Source line: 191
         {
             min_depth = 24,
             max_depth = 27,
             rarity = 25,
             curve = "FLAT",
             monster_id = "MONS_WAR_GARGOYLE",
-            source_line = 191,
         },
+        -- Source line: 192
         {
             min_depth = 25,
             max_depth = 27,
             rarity = 12,
             curve = "RISE",
             monster_id = "MONS_CRYSTAL_GUARDIAN",
-            source_line = 192,
         },
+        -- Source line: 193
         {
             min_depth = 27,
             max_depth = 27,
             rarity = 18,
             curve = "FLAT",
             monster_id = "MONS_SHADOW_DRAGON",
-            source_line = 193,
         },
+        -- Source line: 194
         {
             min_depth = 27,
             max_depth = 27,
             rarity = 8,
             curve = "FLAT",
             monster_id = "MONS_IRON_DRAGON",
-            source_line = 194,
         },
     },
 }
+
+return catalog

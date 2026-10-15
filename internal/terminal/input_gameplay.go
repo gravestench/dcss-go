@@ -11,7 +11,8 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 	switch action {
 	case "aim":
 		kind, ok := inputCommandKind(decision,
-			game.CommandFire, game.CommandThrow)
+			game.CommandFire, game.CommandThrow,
+			game.CommandCast, game.CommandForceCast)
 
 		if !ok {
 			m.notice = "Input policy returned an invalid aim command."
@@ -33,7 +34,22 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 			return nil
 		}
 
+		spellID := ""
+
+		if kind == game.CommandCast || kind == game.CommandForceCast {
+			selected, valid := decision["spell_id"].(string)
+
+			if !valid || selected == "" {
+				m.notice = "Input policy returned an invalid spell."
+
+				return nil
+			}
+
+			spellID = selected
+		}
+
 		m.startAim(kind, itemID)
+		m.aimSpellID = spellID
 
 	case "door":
 		kind, ok := inputCommandKind(decision, game.CommandOpenDoor,
@@ -57,6 +73,9 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 		}
 
 		return m.stepPlayCommand(command)
+
+	case "spell_step":
+		return m.applySpellStep(decision)
 
 	}
 

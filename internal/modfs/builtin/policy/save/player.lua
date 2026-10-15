@@ -1,6 +1,8 @@
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
 local choice = require("policy.character_choice")
+local spell_records = require("policy.character.spell_records")
+local forms = require("policy.magic.effects.forms.player")
 
 local function valid_stat_gains(deltas, manual_choices, species_gains, allowed_stats)
     local allowed = {}
@@ -113,10 +115,7 @@ local function validate(ctx)
         error("invalid player attribute gains for entity " .. ctx:id(entity))
     end
 
-    local drain = ctx:get(entity, "status.drain")
-    local drain_loss = drain and drain.amount or 0
-
-    if health.max ~= math.max(1, formulas.max_hp(progress.level, species, skills.entries) - drain_loss) then
+    if health.max ~= forms.max_hp(ctx, entity) then
         error("invalid player max HP for entity " .. ctx:id(entity))
     end
 
@@ -125,12 +124,52 @@ local function validate(ctx)
     if magic.max ~= max_mp or magic.current < 0 or magic.current > max_mp then
         error("invalid player MP for entity " .. ctx:id(entity))
     end
+
+    local status = ctx:get(entity, "magic.player_status")
+
+    if status and (status.blink_cooldown_aut < 0 or
+        status.disjunction_aut < 0 or status.vertigo_aut < 0) then
+        error("invalid player spell status duration")
+    end
+
+    local permanent_loss = ctx:get(entity, "magic.permanent_hp_loss")
+
+    if permanent_loss and permanent_loss.amount < 0 then
+        error("invalid permanent HP loss")
+    end
+
+    local paralysis = ctx:get(entity, "magic.player_paralysis")
+
+    if paralysis and paralysis.remaining_aut <= 0 then
+        error("invalid player paralysis duration")
+    end
+
+    local confusion = ctx:get(entity, "zap.player_confusion")
+
+    if confusion and confusion.remaining_aut <= 0 then
+        error("invalid player confusion duration")
+    end
+
+    local channel = ctx:get(entity, "magic.channel")
+
+    if channel and (channel.spell_id == "" or channel.power < 0 or
+        channel.stage < 1) then
+        error("invalid player spell channel")
+    end
+
+    spell_records.validate(ctx, entity)
+end
+
+local module = {}
+
+function module.run(ctx)
+    validate(ctx)
+    return {}
 end
 
 register.policy({
     id = "save.validate_player",
-    run = function(ctx)
-        validate(ctx)
-        return {}
-    end,
+    run = module.run,
 })
+
+return module

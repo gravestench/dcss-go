@@ -3,6 +3,10 @@
 local wanderer = {}
 local gifts = require("policy.character.wanderer_gifts")
 
+local function grant_before(left, right)
+    return left.id < right.id
+end
+
 local offense = {
     "SK_AXES", "SK_MACES_FLAILS", "SK_RANGED_WEAPONS", "SK_POLEARMS",
     "SK_SHORT_BLADES", "SK_LONG_BLADES", "SK_STAVES", "SK_UNARMED_COMBAT",
@@ -274,9 +278,7 @@ local function skills(ctx, species, roles, has_spells)
         end
     end
 
-    table.sort(grants, function(a, b)
-        return a.id < b.id
-    end)
+    table.sort(grants, grant_before)
 
     return grants
 end

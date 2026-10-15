@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/deprecated-draconian-mottled.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_MOTTLED_DRACONIAN",
     monster_id = "MONS_MOTTLED_DRACONIAN",
-    source_path = "crawl-ref/source/dat/species/deprecated-draconian-mottled.yaml",
     name = "Mottled Draconian",
     short_name = "Dr",
     adjective = "Draconian",
@@ -161,3 +162,7 @@ register.species{
     size = "SIZE_MEDIUM",
     undead_type = "US_ALIVE",
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

@@ -1,3 +1,5 @@
+local terrain = require("constants.terrain")
+
 register.policy({
     id = "test.invalid_output",
     run = function(ctx)
@@ -14,7 +16,7 @@ register.policy({
         local health = ctx:get(player, "core.health")
         health.current = health.current - 1
         ctx:set(player, "core.health", health)
-        ctx:set_cell(input.level_id, input.x, input.y, "#")
+        ctx:set_cell(input.level_id, input.x, input.y, terrain.DNGN_ROCK_WALL)
 
         return {}
     end,

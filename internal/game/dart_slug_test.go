@@ -114,17 +114,13 @@ func TestProjectilePathStopsAtTerrainAndActors(t *testing.T) {
 		t.Fatal("open corridor did not admit shot")
 	}
 
-	row := []byte(level.terrain[1])
-
-	row[3] = '#'
-	level.terrain[1] = string(row)
+	level.terrain[1][3] = fixtureFeature('#')
 
 	if level.ClearProjectilePath(4, 1, 1, 1) {
 		t.Fatal("wall did not stop shot")
 	}
 
-	row[3] = '.'
-	level.terrain[1] = string(row)
+	level.terrain[1][3] = fixtureFeature('.')
 
 	blocker, err := g.world.CreateEntity()
 
@@ -140,12 +136,12 @@ func TestProjectilePathStopsAtTerrainAndActors(t *testing.T) {
 		t.Fatal("actor did not stop shot")
 	}
 
-	slope, err := NewLevel(3, []string{
+	slope, err := NewLevel(3, fixtureCells([]string{
 		"#####",
 		"#...#",
 		"#...#",
 		"#####",
-	}, g.stores.Positions)
+	}), g.stores.Positions)
 
 	if err != nil {
 		t.Fatal(err)
@@ -155,7 +151,7 @@ func TestProjectilePathStopsAtTerrainAndActors(t *testing.T) {
 		t.Fatal("open shallow ray did not admit shot")
 	}
 
-	slope.terrain[2] = "#.#.#"
+	slope.terrain[2] = fixtureCells([]string{"#.#.#"})[0]
 
 	if slope.ClearProjectilePath(1, 1, 3, 2) {
 		t.Fatal("shallow ray skipped the crossed wall")

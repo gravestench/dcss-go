@@ -1,5 +1,7 @@
 local catalog = require("policy.catalog")
 local equipment = require("policy.combat.equipment")
+local liquefaction = require("policy.magic.effects.translocation.liquefaction")
+local statuses = require("policy.magic.effects.statuses.player")
 
 local energy = {}
 
@@ -32,6 +34,11 @@ function energy.grant(ctx, input)
 
         if monster.level_id == input.active_level then
             local speed = monster.speed
+
+            if monster.entity then
+                local actor = ctx:entity(monster.entity)
+                speed = statuses.frenzy_speed(ctx, actor, speed)
+            end
 
             if not valid_integer(speed) or speed <= 0 then
                 error("invalid monster speed " .. tostring(speed))
@@ -152,30 +159,41 @@ function energy.spend(ctx, input)
 
     if field == "attack" or field == "missile" then
         cost = speed_brand_cost(ctx, input, field, cost)
+    elseif field == "move" and input.actor then
+        local actor = ctx:entity(input.actor)
+        local position = ctx:get(actor, "core.position")
+
+        if position and liquefaction.at(ctx, position.level_id,
+            position.x, position.y) then
+            cost = cost + 6
+        end
+    end
+
+    if input.actor and statuses.petrifying(ctx,
+        ctx:entity(input.actor)) then
+        cost = math.floor(cost * 3 / 2)
     end
 
     return { points = input.points - cost, cost = cost }
 end
 
+function energy.next_ready_policy(_, input)
+    return energy.next_ready(input)
+end
+
 register.policy({
     id = "scheduler.grant",
-    run = function(ctx, input)
-        return energy.grant(ctx, input)
-    end,
+    run = energy.grant,
 })
 
 register.policy({
     id = "scheduler.next_ready",
-    run = function(_, input)
-        return energy.next_ready(input)
-    end,
+    run = energy.next_ready_policy,
 })
 
 register.policy({
     id = "scheduler.spend",
-    run = function(ctx, input)
-        return energy.spend(ctx, input)
-    end,
+    run = energy.spend,
 })
 
 return energy

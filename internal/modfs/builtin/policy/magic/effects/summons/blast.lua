@@ -1,0 +1,103 @@
+local component = require("constants.component")
+local catalog = require("policy.catalog")
+local damage = require("policy.magic.damage")
+local defense = require("policy.combat.monster_defense")
+local player_health = require("policy.combat.player_health")
+local summons = require("policy.magic.effects.summons.common")
+
+local blast = {}
+
+local function distance(left, right)
+    return math.max(math.abs(left.x - right.x), math.abs(left.y - right.y))
+end
+
+function blast.nearest_hostile(ctx, origin, reach)
+    local chosen, closest
+
+    for _, entity in ipairs(ctx:query({ component.ACTOR, component.POSITION, component.HEALTH })) do
+        if entity ~= ctx:player() and not ctx:has(entity, component.SUMMON) then
+            local position = ctx:get(entity, component.POSITION)
+            local health = ctx:get(entity, component.HEALTH)
+            local radius = distance(origin, position)
+
+            if position.level_id == origin.level_id and health.current > 0 and
+                radius <= reach and (not closest or radius < closest) and
+                ctx:visible(origin.level_id, origin.x, origin.y,
+                    reach, position.x, position.y) then
+                chosen, closest = entity, radius
+            end
+        end
+    end
+
+    return chosen, closest
+end
+
+function blast.hit(ctx, target, raw, resistance_id)
+    local definition
+    local ac = 0
+
+    if target ~= ctx:player() then
+        local actor = ctx:get(target, component.ACTOR)
+        definition = catalog.get("monsters", actor.kind_id)
+        ac = defense.armour(ctx, target, definition)
+    end
+
+    local amount = math.max(0, raw - summons.roll(ctx, ac + 1))
+
+    if resistance_id and definition then
+        amount = damage.monster_elemental(ctx, target, amount, resistance_id)
+    elseif resistance_id then
+        amount = damage.player_elemental(ctx, target, amount, resistance_id)
+    end
+
+    local health = ctx:get(target, component.HEALTH)
+
+    if health and health.current > 0 then
+        if target == ctx:player() then
+            player_health.damage(ctx, target, amount)
+
+            return
+        end
+
+        health.current = math.max(0, health.current - amount)
+        ctx:set(target, component.HEALTH, health)
+
+        if health.current == 0 and target ~= ctx:player() and
+            not ctx:has(target, component.SUMMON) then
+            ctx:signal("player_kill", target)
+        end
+    end
+end
+
+function blast.area(ctx, source, radius, dice, sides, resistance_id)
+    local origin = ctx:get(source, component.POSITION)
+
+    for _, target in ipairs(ctx:query({ component.POSITION, component.HEALTH })) do
+        local position = ctx:get(target, component.POSITION)
+
+        if target ~= source and position.level_id == origin.level_id and
+            distance(origin, position) <= radius and
+            ctx:visible(origin.level_id, origin.x, origin.y,
+                radius, position.x, position.y) then
+            local raw = 0
+
+            for _ = 1, dice do
+                raw = raw + 1 + summons.roll(ctx, math.max(1, sides))
+            end
+
+            blast.hit(ctx, target, raw, resistance_id)
+        end
+    end
+end
+
+function blast.finish(ctx, entity, marker)
+    local state = ctx:get(entity, component.SUMMON_CONSTRUCT)
+    local summon = ctx:get(entity, component.SUMMON)
+
+    state.charge = marker
+    summon.expires_aut = ctx:aut()
+    ctx:set(entity, component.SUMMON_CONSTRUCT, state)
+    ctx:set(entity, component.SUMMON, summon)
+end
+
+return blast

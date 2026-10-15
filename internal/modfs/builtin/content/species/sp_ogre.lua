@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/ogre.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_OGRE",
     monster_id = "MONS_OGRE",
-    source_path = "crawl-ref/source/dat/species/ogre.yaml",
     name = "Ogre",
     short_name = "Og",
     adjective = "Ogreish",
@@ -162,3 +163,7 @@ register.species{
         "SK_AXES",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

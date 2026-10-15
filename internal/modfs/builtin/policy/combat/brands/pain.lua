@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local roll = require("policy.combat.roll")
+local player_health = require("policy.combat.player_health")
 
 local function necromancy_book(book_id)
     if book_id == "MST_NO_SPELLS" then
@@ -40,22 +41,25 @@ local function skill(ctx, attacker)
     return roll.random_divide(ctx, definition.hd * 128, 256)
 end
 
-return {
-    apply = function(ctx, hit)
-        local level = skill(ctx, hit.attacker)
+local brand = {}
 
-        -- attack.cc:552-568: one_chance_in(skill + 1) prevents pain.
-        if roll.melee(ctx, level + 1) == 0 then
-            return
-        end
+function brand.apply(ctx, hit)
+    local level = skill(ctx, hit.attacker)
 
-        -- Source rolls the skill again for damage, independently of the
-        -- skill roll that decided whether pain activates.
-        local bonus = roll.melee(ctx, skill(ctx, hit.attacker) + 1)
-        hit.health.current = math.max(0, hit.health.current - bonus)
+    -- attack.cc:552-568: one_chance_in(skill + 1) prevents pain.
+    if roll.melee(ctx, level + 1) == 0 then
+        return
+    end
 
-        if bonus > 0 then
-            ctx:emit("combat", "You writhe in agony!")
-        end
-    end,
-}
+    -- Source rolls the skill again for damage, independently of the
+    -- skill roll that decided whether pain activates.
+    local bonus = roll.melee(ctx, skill(ctx, hit.attacker) + 1)
+    hit.health = player_health.damage(ctx, hit.defender, bonus,
+        false, hit.attacker)
+
+    if bonus > 0 then
+        ctx:emit("combat", "You writhe in agony!")
+    end
+end
+
+return brand

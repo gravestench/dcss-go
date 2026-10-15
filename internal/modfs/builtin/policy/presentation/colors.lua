@@ -1,5 +1,5 @@
 -- DCSS COLOURS uses IRGB order; the terminal owns ANSI conversion.
-return {
+local colors = {
     black = 0,
     blue = 1,
     green = 2,
@@ -17,3 +17,5 @@ return {
     yellow = 14,
     white = 15,
 }
+
+return colors

@@ -103,6 +103,9 @@ func TestBundledLuaCharacterCatalogMatchesPinnedImport(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		// Runtime Lua declarations keep source locations in comments.
+		pinned.SourcePath = ""
+
 		if !reflect.DeepEqual(definition, pinned) {
 			t.Fatalf("Lua species %s differs from pinned import", id)
 		}
@@ -115,6 +118,8 @@ func TestBundledLuaCharacterCatalogMatchesPinnedImport(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		pinned.SourcePath = ""
 
 		if !reflect.DeepEqual(definition, pinned) {
 			t.Fatalf("Lua job %s differs from pinned import", id)

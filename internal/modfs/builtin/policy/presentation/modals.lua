@@ -1,14 +1,15 @@
+local object_classes = require("ids.object_classes")
 local colors = require("policy.presentation.colors")
 
 local modals = {}
 
 local classes = {
-    { id = "OBJ_WEAPONS", title = "Hand Weapons" },
-    { id = "OBJ_MISSILES", title = "Missiles" },
-    { id = "OBJ_ARMOUR", title = "Armour" },
-    { id = "OBJ_WANDS", title = "Wands" },
-    { id = "OBJ_SCROLLS", title = "Scrolls" },
-    { id = "OBJ_POTIONS", title = "Potions" },
+    { id = object_classes.OBJ_WEAPONS, title = "Hand Weapons" },
+    { id = object_classes.OBJ_MISSILES, title = "Missiles" },
+    { id = object_classes.OBJ_ARMOUR, title = "Armour" },
+    { id = object_classes.OBJ_WANDS, title = "Wands" },
+    { id = object_classes.OBJ_SCROLLS, title = "Scrolls" },
+    { id = object_classes.OBJ_POTIONS, title = "Potions" },
 }
 
 local function letter(index)
@@ -93,7 +94,7 @@ function modals.rows(input)
         local y = 4
 
         for index, item in ipairs(inventory) do
-            if item.class == "OBJ_WEAPONS" then
+            if item.class == object_classes.OBJ_WEAPONS then
                 local label = item.name
 
                 if item.slot == "weapon" then
@@ -114,7 +115,7 @@ function modals.rows(input)
         for index, item in ipairs(inventory) do
             local worn = item.slot ~= ""
 
-            if item.class == "OBJ_ARMOUR" and
+            if item.class == object_classes.OBJ_ARMOUR and
                 ((mode == "take_off" and worn) or (mode == "wear" and not worn)) then
                 local label = item.name
 
@@ -131,7 +132,8 @@ function modals.rows(input)
     elseif mode == "quaff" or mode == "throw" then
         local choosing_throw = mode == "throw"
         local title = choosing_throw and "Throw which missile?" or "Quaff which potion?"
-        local class = choosing_throw and "OBJ_MISSILES" or "OBJ_POTIONS"
+        local class = choosing_throw and object_classes.OBJ_MISSILES or
+            object_classes.OBJ_POTIONS
         write(writes, 0, 0, title, colors.white)
         local y = 2
 
@@ -162,11 +164,13 @@ function modals.rows(input)
     return { writes = writes }
 end
 
+function modals.run(_, input)
+    return modals.rows(input)
+end
+
 register.policy({
     id = "presentation.inventory_modal",
-    run = function(_, input)
-        return modals.rows(input)
-    end,
+    run = modals.run,
 })
 
 return modals

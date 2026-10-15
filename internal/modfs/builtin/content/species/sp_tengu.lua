@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/tengu.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_TENGU",
     monster_id = "MONS_TENGU",
-    source_path = "crawl-ref/source/dat/species/tengu.yaml",
     name = "Tengu",
     short_name = "Te",
     selectable = true,
@@ -179,3 +180,7 @@ register.species{
     },
     walking_verb = "Glid",
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

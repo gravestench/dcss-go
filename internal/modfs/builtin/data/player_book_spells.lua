@@ -1,7 +1,7 @@
 -- Committed source catalog for Djinni future spells and Wanderer gifts.
 -- Source: crawl-ref/source/book-data.h at e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- SHA-256: 4fbfb07a35b1acf4917ed747ba862569cf4f52b73e7a25de13c398b52a71df5e
-return {
+local catalog = {
     SPELL_AGONY = true,
     SPELL_AIRSTRIKE = true,
     SPELL_ANGUISH = true,
@@ -112,3 +112,5 @@ return {
     SPELL_VIOLENT_UNRAVELLING = true,
     SPELL_WEREBLOOD = true,
 }
+
+return catalog

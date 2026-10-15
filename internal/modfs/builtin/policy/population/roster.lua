@@ -1,4 +1,5 @@
 local roster = {}
+local catalog = require("policy.catalog")
 
 local fixed = {
     "MONS_RAT",
@@ -39,25 +40,6 @@ local scenarios = {
     ["generated-dungeon-basic-v1"] = generated,
 }
 
--- These bounds come from the ordinary natural profiles, not the broad
--- imported monster catalog. They guard the current playable roster.
-local profiles = {
-    MONS_RAT = { average = 25, minimum = 1, maximum = 4 },
-    MONS_QUOKKA = { average = 55, minimum = 3, maximum = 8 },
-    MONS_FRILLED_LIZARD = { average = 20, minimum = 1, maximum = 3 },
-    MONS_GIANT_COCKROACH = { average = 50, minimum = 3, maximum = 7 },
-    MONS_WORM = { average = 180, minimum = 12, maximum = 24 },
-    MONS_JACKAL = { average = 55, minimum = 3, maximum = 8 },
-    MONS_ADDER = { average = 110, minimum = 7, maximum = 15 },
-    MONS_BAT = { average = 35, minimum = 2, maximum = 5 },
-    MONS_BALL_PYTHON = { average = 35, minimum = 2, maximum = 5 },
-    MONS_ENDOPLASM = { average = 60, minimum = 4, maximum = 8 },
-    MONS_DART_SLUG = { average = 100, minimum = 6, maximum = 14 },
-    MONS_GOBLIN = { average = 40, minimum = 2, maximum = 6 },
-    MONS_HOBGOBLIN = { average = 55, minimum = 3, maximum = 8 },
-    MONS_KOBOLD = { average = 35, minimum = 2, maximum = 5 },
-}
-
 function roster.allowed(scenario_id)
     local ids = scenarios[scenario_id]
 
@@ -71,17 +53,27 @@ function roster.allowed(scenario_id)
         allowed[id] = true
     end
 
+    for _, definition in ipairs(catalog.all("monsters")) do
+        for _, row in ipairs(definition.population or {}) do
+            if row.scenario_id == scenario_id then
+                allowed[definition.id] = true
+            end
+        end
+    end
+
     return allowed
 end
 
 function roster.profile(id)
-    local profile = profiles[id]
+    local definition = catalog.get("monsters", id)
+    local average = definition.average_hp_10x
+    local variance = math.ceil(average * 33 / 100)
 
-    if not profile then
-        error("unsupported ordinary monster " .. tostring(id))
-    end
-
-    return profile
+    return {
+        average = average,
+        minimum = math.max(1, math.floor((average - variance) / 10)),
+        maximum = math.min(10000, math.ceil((average + variance) / 10)),
+    }
 end
 
 return roster

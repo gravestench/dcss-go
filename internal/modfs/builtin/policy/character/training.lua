@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
+local forms = require("policy.magic.effects.forms.player")
 local weights = require("policy.character.training_weights")
 
 local training_rules = {}
@@ -250,7 +251,13 @@ function training_rules.update(ctx, actor)
             error("player lacks Fighting HP state")
         end
 
-        formulas.rescale_health(health, regeneration, formulas.max_hp(progress.level, species, skills))
+        local drain = ctx:get(actor, "status.drain")
+        local drain_loss = drain and drain.amount or 0
+        local base_hp = math.max(1,
+            formulas.max_hp(progress.level, species, skills) - drain_loss)
+
+        formulas.rescale_health(health, regeneration,
+            forms.scale_hp(ctx, actor, base_hp))
         ctx:set(actor, "core.health", health)
         ctx:set(actor, "core.regeneration", regeneration)
     end
@@ -272,69 +279,75 @@ function training_rules.update(ctx, actor)
     end
 end
 
+function training_rules.training_mode(ctx, input)
+    local actor = ctx:player()
+    local training = ctx:get(actor, "core.skill_training")
+
+    if not training then
+        error("player has no skill training")
+    end
+
+    training.manual = input.manual
+    ctx:set(actor, "core.skill_training", training)
+
+    return { changed = true }
+end
+
 register.policy({
     id = "character.training_mode",
-    run = function(ctx, input)
-        local actor = ctx:player()
-        local training = ctx:get(actor, "core.skill_training")
-
-        if not training then
-            error("player has no skill training")
-        end
-
-        training.manual = input.manual
-        ctx:set(actor, "core.skill_training", training)
-
-        return { changed = true }
-    end,
+    run = training_rules.training_mode,
 })
+
+function training_rules.training_change(ctx, input)
+    local actor = ctx:player()
+    local player = ctx:get(actor, "core.player")
+
+    if not player then
+        error("player has no selected species")
+    end
+
+    local skills = ctx:get(actor, "core.skills")
+    local training = ctx:get(actor, "core.skill_training")
+
+    if not skills or not training then
+        error("player lacks skill training state")
+    end
+
+    local species = catalog.get("species", player.species_id)
+    training_rules.change(skills.entries, training, species, input.id, input.focus)
+    ctx:set(actor, "core.skills", skills)
+    ctx:set(actor, "core.skill_training", training)
+
+    return { changed = true }
+end
 
 register.policy({
     id = "character.training_change",
-    run = function(ctx, input)
-        local actor = ctx:player()
-        local player = ctx:get(actor, "core.player")
-
-        if not player then
-            error("player has no selected species")
-        end
-
-        local skills = ctx:get(actor, "core.skills")
-        local training = ctx:get(actor, "core.skill_training")
-
-        if not skills or not training then
-            error("player lacks skill training state")
-        end
-
-        local species = catalog.get("species", player.species_id)
-        training_rules.change(skills.entries, training, species, input.id, input.focus)
-        ctx:set(actor, "core.skills", skills)
-        ctx:set(actor, "core.skill_training", training)
-
-        return { changed = true }
-    end,
+    run = training_rules.training_change,
 })
+
+function training_rules.training_percent(ctx, _)
+    local actor = ctx:player()
+    local skills = ctx:get(actor, "core.skills")
+    local training = ctx:get(actor, "core.skill_training")
+
+    if not skills or not training then
+        error("player lacks skill training state")
+    end
+
+    local scaled = weights.scaled(skills.entries, training)
+    local percent = {}
+
+    for index, skill in ipairs(skills.entries) do
+        percent[skill.id] = scaled[index]
+    end
+
+    return percent
+end
 
 register.policy({
     id = "character.training_percent",
-    run = function(ctx, _)
-        local actor = ctx:player()
-        local skills = ctx:get(actor, "core.skills")
-        local training = ctx:get(actor, "core.skill_training")
-
-        if not skills or not training then
-            error("player lacks skill training state")
-        end
-
-        local scaled = weights.scaled(skills.entries, training)
-        local percent = {}
-
-        for index, skill in ipairs(skills.entries) do
-            percent[skill.id] = scaled[index]
-        end
-
-        return percent
-    end,
+    run = training_rules.training_percent,
 })
 
 return training_rules

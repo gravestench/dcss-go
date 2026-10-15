@@ -1,8 +1,10 @@
+local categories = require("constants.catalog")
+
 -- Generated from the pinned DCSS import. Refresh deliberately.
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/human.yaml
 
-register.species{
+local definition = {
     id = "SP_HUMAN",
     monster_id = "MONS_HUMAN",
     source_path = "crawl-ref/source/dat/species/human.yaml",
@@ -154,3 +156,7 @@ register.species{
         "SK_RANGED_WEAPONS",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

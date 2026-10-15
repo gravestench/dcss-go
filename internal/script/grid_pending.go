@@ -3,6 +3,7 @@ package script
 import (
 	"fmt"
 
+	"dcrawl-go/internal/terrain"
 	"github.com/gravestench/akara"
 )
 
@@ -19,8 +20,8 @@ func (r *Runtime) stagedActorAt(cell gridCell) (akara.Entity, bool) {
 }
 
 func (r *Runtime) stagedWalkable(cell gridCell) bool {
-	if glyph, changed := r.pendingCells[cell]; changed {
-		return glyph != '#' && glyph != '+'
+	if feature, changed := r.pendingCells[cell]; changed {
+		return terrain.Walkable(feature)
 	}
 
 	return r.services.Grid.Walkable(cell.levelID, cell.x, cell.y)

@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/mummy.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_MUMMY",
     monster_id = "MONS_MUMMY",
-    source_path = "crawl-ref/source/dat/species/mummy.yaml",
     name = "Mummy",
     short_name = "Mu",
     selectable = true,
@@ -195,3 +196,7 @@ register.species{
         "SK_RANGED_WEAPONS",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

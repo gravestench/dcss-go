@@ -1,5 +1,7 @@
 local items = require("policy.inventory.items")
 local potions = require("policy.potions")
+local player_health = require("policy.combat.player_health")
+local forms = require("policy.magic.effects.forms.player")
 
 local quaff = {}
 
@@ -23,6 +25,12 @@ function quaff.prepare(ctx, player, item_id)
         }
     end
 
+    if not forms.can_drink(ctx, player) then
+        return {
+            message = "You cannot drink in this form.",
+        }
+    end
+
     if not potions[item.kind_id] then
         return {
             message = "That potion's effect is unavailable in the Go port.",
@@ -30,6 +38,12 @@ function quaff.prepare(ctx, player, item_id)
     end
 
     if item.kind_id == "POT_HEAL_WOUNDS" then
+        if not player_health.can_heal(ctx, player) then
+            return {
+                message = "You cannot heal while in death's door.",
+            }
+        end
+
         local health = ctx:get(player, "core.health")
 
         if not health then
@@ -41,6 +55,14 @@ function quaff.prepare(ctx, player, item_id)
                 message = "Your health is already full.",
             }
         end
+    end
+
+    if item.kind_id == "POT_CURING" and
+        not player_health.can_heal(ctx, player) and
+        not ctx:has(player, "core.poison") then
+        return {
+            message = "You can't heal while in death's door.",
+        }
     end
 
     return {

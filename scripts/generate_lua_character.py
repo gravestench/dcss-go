@@ -21,6 +21,7 @@ LUA_KEYWORDS = {
     "function", "if", "in", "local", "nil", "not", "or", "repeat",
     "return", "then", "true", "until", "while",
 }
+PROVENANCE_FIELDS = frozenset({"source_path"})
 
 
 def quote(value: str) -> str:
@@ -65,7 +66,11 @@ def table_lines(value: object, depth: int) -> list[str]:
     lines = [indent + "{"]
 
     if isinstance(value, dict):
-        entries = [(key_text(key), item) for key, item in value.items()]
+        entries = [
+            (key_text(key), item)
+            for key, item in value.items()
+            if key not in PROVENANCE_FIELDS
+        ]
     else:
         entries = [("", item) for item in value]
 
@@ -97,11 +102,20 @@ def module_text(kind: str, revision: str, row: dict[str, object]) -> str:
         f"-- Revision: {revision}",
         f"-- Source: {source}",
         "",
+        'local categories = require("constants.catalog")',
+        "",
     ]
     lines = table_lines(row, 0)
-    lines[0] = f"register.{kind}" + lines[0]
+    lines[0] = "local definition = " + lines[0]
 
-    return "\n".join(header + lines) + "\n"
+    footer = [
+        "",
+        f"register.definition(categories.{kind.upper()}, definition)",
+        "",
+        "return definition",
+    ]
+
+    return "\n".join(header + lines + footer) + "\n"
 
 
 def generated_files() -> dict[Path, str]:
@@ -109,7 +123,7 @@ def generated_files() -> dict[Path, str]:
 
     for category, row_key, singular in (
         ("species", "species", "species"),
-        ("jobs", "jobs", "job"),
+        ("jobs", "jobs", "jobs"),
     ):
         artifact = json.loads((SOURCE / f"{category}.json").read_text())
         revision = artifact["source_revision"]

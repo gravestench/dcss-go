@@ -6,6 +6,7 @@ local play = require("policy.input.play")
 local pregame = require("policy.input.pregame")
 local session = require("policy.input.session")
 local skills = require("policy.input.skills")
+local spells = require("policy.input.spells")
 
 local screens = {
     aim = aim.route,
@@ -20,6 +21,7 @@ local screens = {
     name = pregame.name,
     species = pregame.choice,
     skills = skills.route,
+    spells = spells.route,
     startup = pregame.startup,
     take_off = items.take_off,
     throw = items.throw,
@@ -28,19 +30,25 @@ local screens = {
     wield = items.wield,
     confirm = session.confirm,
     equipment_delay = session.equipment_delay,
+    memorisation_delay = session.memorisation_delay,
     stat_choice = session.stat,
 }
 
+local terminal_input = {}
+
+function terminal_input.run(ctx, input)
+    local route = screens[input.screen]
+
+    if not route then
+        error("unknown terminal input screen " .. tostring(input.screen))
+    end
+
+    return route(input, ctx)
+end
+
 register.policy({
     id = "terminal.input",
-
-    run = function(ctx, input)
-        local route = screens[input.screen]
-
-        if not route then
-            error("unknown terminal input screen " .. tostring(input.screen))
-        end
-
-        return route(input, ctx)
-    end,
+    run = terminal_input.run,
 })
+
+return terminal_input

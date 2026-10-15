@@ -28,6 +28,7 @@ func (m *AppModel) applySessionDecision(action string, decision map[string]any) 
 
 		if interrupt {
 			m.equipmentTickID++
+			m.spellTickID++
 		}
 
 		if name == "save" {
@@ -47,6 +48,7 @@ func (m *AppModel) applySessionDecision(action string, decision map[string]any) 
 
 		if interrupt {
 			m.equipmentTickID++
+			m.spellTickID++
 		}
 
 		return m.saveAndExit()
@@ -62,6 +64,20 @@ func (m *AppModel) applySessionDecision(action string, decision map[string]any) 
 
 		return m.stepPlayCommand(game.Command{
 			Kind: game.CommandCancelEquipment,
+		})
+
+	case "cancel_memorise":
+		if _, ok := inputCommandKind(decision,
+			game.CommandCancelMemorise); !ok {
+			m.notice = "Input policy returned an invalid spell command."
+
+			return nil
+		}
+
+		m.spellTickID++
+
+		return m.stepPlayCommand(game.Command{
+			Kind: game.CommandCancelMemorise,
 		})
 
 	case "choose_stat":
@@ -94,6 +110,10 @@ func (m *AppModel) applySessionDecision(action string, decision map[string]any) 
 
 		if m.game != nil && m.game.View().EquipmentDelay != nil {
 			return m.nextEquipmentTick()
+		}
+
+		if m.game != nil && m.game.View().LearningRemaining > 0 {
+			return m.nextSpellTick()
 		}
 
 	case "confirm_accept":

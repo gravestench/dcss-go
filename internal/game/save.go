@@ -117,8 +117,8 @@ func (g *Game) Snapshot() save.Snapshot {
 	for id, level := range g.levels {
 		record := save.LevelRecord{
 			ID:              id,
-			Rows:            append([]string(nil), level.terrain...),
-			Known:           level.KnownRows(),
+			Cells:           level.Cells(),
+			Known:           level.KnownCells(),
 			InitialMonsters: level.initialMonsters,
 			InitialActors:   level.initialActors,
 		}

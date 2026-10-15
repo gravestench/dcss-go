@@ -126,10 +126,16 @@ local function validate(ctx)
     end
 end
 
+local module = {}
+
+function module.run(ctx)
+    validate(ctx)
+    return {}
+end
+
 register.policy({
     id = "save.validate_training",
-    run = function(ctx)
-        validate(ctx)
-        return {}
-    end,
+    run = module.run,
 })
+
+return module

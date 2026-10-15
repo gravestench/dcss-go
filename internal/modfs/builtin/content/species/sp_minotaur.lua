@@ -2,10 +2,11 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/minotaur.yaml
 
-register.species{
+local categories = require("constants.catalog")
+
+local definition = {
     id = "SP_MINOTAUR",
     monster_id = "MONS_MINOTAUR",
-    source_path = "crawl-ref/source/dat/species/minotaur.yaml",
     name = "Minotaur",
     short_name = "Mi",
     selectable = true,
@@ -169,3 +170,7 @@ register.species{
         "SK_RANGED_WEAPONS",
     },
 }
+
+register.definition(categories.SPECIES, definition)
+
+return definition

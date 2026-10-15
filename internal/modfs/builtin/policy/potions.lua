@@ -2,6 +2,7 @@
 -- shared transaction; each handler owns one source effect and its RNG draws.
 
 local potions = {}
+local player_health = require("policy.combat.player_health")
 
 local function required(ctx, entity, name)
     local component = ctx:get(entity, name)
@@ -13,11 +14,13 @@ local function required(ctx, entity, name)
     return component
 end
 
-potions.POT_CURING = function(ctx, player)
+function potions.POT_CURING(ctx, player)
     local health = required(ctx, player, "core.health")
     local roll = ctx:random("potion", 7)
 
-    health.current = math.min(health.max, health.current + 5 + roll)
+    if player_health.can_heal(ctx, player) then
+        health.current = math.min(health.max, health.current + 5 + roll)
+    end
 
     ctx:set(player, "core.health", health)
 
@@ -28,7 +31,7 @@ potions.POT_CURING = function(ctx, player)
     return "You feel better."
 end
 
-potions.POT_HEAL_WOUNDS = function(ctx, player)
+function potions.POT_HEAL_WOUNDS(ctx, player)
     local health = required(ctx, player, "core.health")
 
     if health.current == health.max then
@@ -49,7 +52,7 @@ potions.POT_HEAL_WOUNDS = function(ctx, player)
     return "You feel much better."
 end
 
-potions.POT_MIGHT = function(ctx, player)
+function potions.POT_MIGHT(ctx, player)
     local durations = required(ctx, player, "core.durations")
     local previous = durations.might_aut
     local roll = ctx:random("potion", 40)
@@ -77,7 +80,7 @@ local function rounded_two_thirds(ctx, value)
     return whole
 end
 
-potions.POT_HASTE = function(ctx, player)
+function potions.POT_HASTE(ctx, player)
     local durations = required(ctx, player, "core.durations")
     local previous = durations.haste_aut
     local roll = ctx:random("potion", 40)
