@@ -338,11 +338,13 @@ func (r *Runtime) runModule(name string) (lua.LValue, error) {
 		r.moduleStack = r.moduleStack[:len(r.moduleStack)-1]
 	}()
 
-	chunk, err := r.state.Load(strings.NewReader(string(data)), name)
+	proto, err := compiledPrototype(r.state, name, data)
 
 	if err != nil {
 		return nil, fmt.Errorf("compile Lua module %s: %w", name, err)
 	}
+
+	chunk := r.state.NewFunctionFromProto(proto)
 
 	if err := r.state.CallByParam(lua.P{
 		Fn:      chunk,
