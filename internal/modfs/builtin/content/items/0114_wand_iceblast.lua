@@ -14,7 +14,7 @@ local definition = {
     class_value = 3,
     subtype_value = 12,
     stackable = false,
-    -- Source: crawl-ref/source/spl-book.cc:90-101
+    -- Source: crawl-ref/source/spl-book.cc:94
     wand_spell_id = spells.SPELL_ICEBLAST,
     -- Source: crawl-ref/source/item-name.cc:632
     naming = {

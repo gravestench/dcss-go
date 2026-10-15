@@ -1,6 +1,7 @@
 local harness = require("tests.harness")
-local items = require("ids.items")
-local spells = require("ids.spells")
+local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
+local classes = require("ids.object_classes")
 local effects = require("policy.magic.effects.registry")
 local component = require("constants.component")
 local mutations = require("ids.mutations")
@@ -11,28 +12,17 @@ local wands = require("policy.inventory.wands")
 local test = {}
 
 function test.run(ctx)
-    local expected = {
-        [items.WAND_FLAME] = spells.SPELL_THROW_FLAME,
-        [items.WAND_PARALYSIS] = spells.SPELL_PARALYSE,
-        [items.WAND_DIGGING] = spells.SPELL_DIG,
-        [items.WAND_ICEBLAST] = spells.SPELL_ICEBLAST,
-        [items.WAND_POLYMORPH] = spells.SPELL_POLYMORPH,
-        [items.WAND_CHARMING] = spells.SPELL_CHARMING,
-        [items.WAND_ACID] = spells.SPELL_CORROSIVE_BOLT,
-        [items.WAND_LIGHT] = spells.SPELL_BOLT_OF_LIGHT,
-        [items.WAND_QUICKSILVER] = spells.SPELL_QUICKSILVER_BOLT,
-        [items.WAND_MINDBURST] = spells.SPELL_MINDBURST,
-        [items.WAND_ROOTS] = spells.SPELL_FASTROOT,
-    }
-
     local count = 0
 
-    for wand_id, spell_id in pairs(expected) do
-        harness.equal(wands.spell(wand_id), spell_id,
-            "source wand spell mapping " .. wand_id)
-        harness.truthy(effects.get(spell_id),
-            "mapped wand effect must be registered: " .. spell_id)
-        count = count + 1
+    for _, definition in ipairs(catalog.all(categories.ITEMS)) do
+        if definition.class == classes.OBJ_WANDS then
+            harness.equal(wands.spell(definition.id),
+                definition.wand_spell_id,
+                "wand resolver uses the registered spell link")
+            harness.truthy(effects.get(definition.wand_spell_id),
+                "mapped wand effect must be registered")
+            count = count + 1
+        end
     end
 
     harness.equal(count, 11, "all source wand kinds are covered")

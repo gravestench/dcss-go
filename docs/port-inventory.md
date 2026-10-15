@@ -68,6 +68,10 @@ identities, 38 branches, ordered Dungeon population rows, monster weapon
 loadouts, starting grants, and console presentation metadata. Import tools
 under `cmd/import*` are for reviewed upstream refreshes. Content coverage
 does not imply that its behavior is playable.
+The 11 wand-to-spell links come from the committed `wand-spells.json`
+artifact. `scripts/import_wand_spells.py` refreshes that artifact from the
+pinned `spl-book.cc`; `scripts/export-catalog-lua.py` then writes each link
+into its own wand Lua definition. Neither tool runs during normal play.
 
 The pinned C++ source anchors for live behavior are `newgame.cc`,
 `ng-setup.cc`, `player.cc`, `skills.cc`, `item-use.cc`, `potion.cc`,

@@ -14,7 +14,7 @@ local definition = {
     class_value = 3,
     subtype_value = 17,
     stackable = false,
-    -- Source: crawl-ref/source/spl-book.cc:90-101
+    -- Source: crawl-ref/source/spl-book.cc:97
     wand_spell_id = spells.SPELL_CORROSIVE_BOLT,
     -- Source: crawl-ref/source/item-name.cc:635
     naming = {

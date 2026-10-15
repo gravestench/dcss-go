@@ -9,7 +9,10 @@ copies are the data that game rules can load and override by relative path.
 import argparse
 import json
 import math
+import re
 from pathlib import Path
+
+from import_wand_spells import validate_links
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,6 +47,8 @@ PROVENANCE_FIELDS = frozenset({
     "property_source",
     "evidence",
     "tag_major_version",
+    "wand_spell_source_path",
+    "wand_spell_source_line",
 })
 
 
@@ -220,8 +225,27 @@ def render_definition(category, revision, definition):
 
     header.extend("-- " + comment for comment in source_comments(definition))
     header.extend(["", 'local categories = require("constants.catalog")'])
+    wand_spell = definition.get("wand_spell_id")
+
+    if wand_spell:
+        header.append('local spells = require("ids.spells")')
+
     body = lines_for(definition)
     body[0] = "local definition = " + body[0]
+
+    if wand_spell:
+        if re.fullmatch(r"SPELL_[A-Z0-9_]+", wand_spell) is None:
+            raise ValueError(f"invalid wand spell ID {wand_spell}")
+
+        original = f"    wand_spell_id = {lua_string(wand_spell)},"
+        index = body.index(original)
+        source_path = definition["wand_spell_source_path"]
+        source_line = definition["wand_spell_source_line"]
+        body[index:index + 1] = [
+            f"    -- Source: {source_path}:{source_line}",
+            f"    wand_spell_id = spells.{wand_spell},",
+        ]
+
     footer = [
         "",
         f"register.definition(categories.{category.upper()}, definition)",
@@ -232,6 +256,41 @@ def render_definition(category, revision, definition):
     return "\n".join(header + [""] + body + footer) + "\n"
 
 
+def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
+    revision = items_artifact["source_revision"]
+
+    if links_artifact["source_revision"] != revision:
+        raise ValueError("wand spell and item source revisions differ")
+
+    validate_links(links_artifact["links"], items_artifact, spells_artifact)
+    by_wand = {
+        link["wand_id"]: link
+        for link in links_artifact["links"]
+    }
+    definitions = []
+
+    for item in items_artifact["items"]:
+        link = by_wand.get(item["id"])
+
+        if link is None:
+            definitions.append(item)
+            continue
+
+        definition = {}
+
+        for key, value in item.items():
+            definition[key] = value
+
+            if key == "stackable":
+                definition["wand_spell_id"] = link["spell_id"]
+
+        definition["wand_spell_source_path"] = links_artifact["source_path"]
+        definition["wand_spell_source_line"] = link["source_line"]
+        definitions.append(definition)
+
+    return definitions
+
+
 def output_files():
     for name in CATALOGS:
         yield DESTINATION / f"{name.replace('-', '_')}.lua", render(name)
@@ -239,8 +298,14 @@ def output_files():
     for name, (field, category) in DEFINITIONS.items():
         artifact = json.loads((SOURCE / f"{name}.json").read_text())
         revision = artifact["source_revision"]
+        definitions = artifact[field]
 
-        for index, definition in enumerate(artifact[field], start=1):
+        if name == "items":
+            links = json.loads((SOURCE / "wand-spells.json").read_text())
+            spells = json.loads((SOURCE / "spells.json").read_text())
+            definitions = enrich_item_definitions(artifact, links, spells)
+
+        for index, definition in enumerate(definitions, start=1):
             filename = f"{index:04d}_{definition['id'].lower()}.lua"
             path = CONTENT / category / filename
             yield path, render_definition(category, revision, definition)

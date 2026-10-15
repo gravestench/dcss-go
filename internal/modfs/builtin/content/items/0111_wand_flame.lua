@@ -14,7 +14,7 @@ local definition = {
     class_value = 3,
     subtype_value = 0,
     stackable = false,
-    -- Source: crawl-ref/source/spl-book.cc:90-101
+    -- Source: crawl-ref/source/spl-book.cc:91
     wand_spell_id = spells.SPELL_THROW_FLAME,
     -- Source: crawl-ref/source/item-name.cc:629
     naming = {
