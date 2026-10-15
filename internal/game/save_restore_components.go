@@ -191,10 +191,12 @@ func (g *Game) restoreLocationComponents(
 	if record.Position != nil {
 		level, found := g.levels[record.Position.LevelID]
 
-		gateway := found && level.inBounds(record.Position.X, record.Position.Y) &&
+		gateway := found &&
+			level.inBounds(record.Position.X, record.Position.Y) &&
 			level.terrain[record.Position.Y][record.Position.X] == terrain.MalignGateway
 		portalOccupant := record.Item != nil ||
 			(record.Actor != nil && record.Actor.KindID == "MONS_ELDRITCH_TENTACLE")
+
 		if !found || (!level.Walkable(record.Position.X, record.Position.Y) &&
 			!(gateway && portalOccupant)) {
 			return fmt.Errorf("entity %d has invalid position %+v", record.ID, *record.Position)

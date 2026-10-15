@@ -34,7 +34,8 @@ func TestScenarioHasDungeonAndAbyss(t *testing.T) {
 		t.Fatal("rat absent at (4,1)")
 	}
 
-	if fixtureGlyph(game.levels[1].terrain[3][7]) != '>' || fixtureGlyph(game.levels[2].terrain[1][1]) != '<' {
+	if fixtureGlyph(game.levels[1].terrain[3][7]) != '>' ||
+		fixtureGlyph(game.levels[2].terrain[1][1]) != '<' {
 		t.Fatal("stair terrain is wrong")
 	}
 
@@ -87,7 +88,11 @@ func TestLevelRejectsInvalidTerrain(t *testing.T) {
 			"#?#",
 			"###",
 		},
-		{"###", "##"},
+
+		{
+			"###",
+			"##",
+		},
 	} {
 		if _, err := NewLevel(1, fixtureCells(rows), positions); err == nil {
 			t.Fatalf("accepted invalid terrain %q", rows)

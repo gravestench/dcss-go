@@ -192,10 +192,12 @@ func TestSpellRangeUsesSourceBoundsAndVisionCap(t *testing.T) {
 			spellID: "SPELL_FREEZE",
 			want:    1,
 		},
+
 		{
 			spellID: "SPELL_MAGIC_DART",
 			want:    7,
 		},
+
 		{
 			spellID: "SPELL_LIGHTNING_BOLT",
 			want:    4,

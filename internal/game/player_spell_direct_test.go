@@ -133,7 +133,9 @@ func TestDirectTargetEffectsRunFromLua(t *testing.T) {
 			level := g.levels[position.LevelID]
 			dx, dy := 0, 0
 
-			for y := -1; y <= 1 && dx == 0 && dy == 0; y++ {
+			for y := -1; y <= 1 &&
+				dx == 0 &&
+				dy == 0; y++ {
 				for x := -1; x <= 1; x++ {
 					if (x != 0 || y != 0) &&
 						level.Walkable(position.X+x, position.Y+y) {

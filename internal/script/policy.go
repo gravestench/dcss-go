@@ -167,13 +167,17 @@ func (r *Runtime) policyValue(value any) (lua.LValue, error) {
 
 	case [][]terrain.ID:
 		rows := make([]any, len(typed))
+
 		for y, row := range typed {
 			cells := make([]any, len(row))
+
 			for x, feature := range row {
 				cells[x] = string(feature)
 			}
+
 			rows[y] = cells
 		}
+
 		return r.policyValue(rows)
 
 	default:

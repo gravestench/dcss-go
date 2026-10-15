@@ -103,7 +103,10 @@ func TestGeneratedDungeonSaveContinuation(t *testing.T) {
 		t.Fatal("generated terrain, stair links, or population changed on load")
 	}
 
-	for _, run := range []*Game{g, restored} {
+	for _, run := range []*Game{
+		g,
+		restored,
+	} {
 		if _, err := run.Step(Command{Kind: CommandWait}); err != nil {
 			t.Fatal(err)
 		}
@@ -183,7 +186,8 @@ func TestWalkingIntoClosedDoorOpensAndSavesIt(t *testing.T) {
 	if err != nil ||
 		result.Spent != 10 ||
 		result.View.PlayerX != 1 ||
-		fixtureGlyph(level.terrain[1][2]) != '\'' || fixtureGlyph(level.terrain[1][3]) != '\'' {
+		fixtureGlyph(level.terrain[1][2]) != '\'' ||
+		fixtureGlyph(level.terrain[1][3]) != '\'' {
 		t.Fatalf("opening by movement = %+v, %v", result, err)
 	}
 

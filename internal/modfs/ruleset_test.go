@@ -120,6 +120,7 @@ func TestOverlayIdentityAndOrder(t *testing.T) {
 
 func TestSingleContentFileParticipatesInRulesetIdentity(t *testing.T) {
 	bundled, err := Load("")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -127,6 +128,7 @@ func TestSingleContentFileParticipatesInRulesetIdentity(t *testing.T) {
 	overlay := t.TempDir()
 	path := "content/monsters/0001_mons_abomination_large.lua"
 	data, err := bundled.ReadFile(path)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -134,6 +136,7 @@ func TestSingleContentFileParticipatesInRulesetIdentity(t *testing.T) {
 	writeTestFile(t, overlay, path, data)
 
 	unchanged, err := Load(overlay)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -146,11 +149,13 @@ func TestSingleContentFileParticipatesInRulesetIdentity(t *testing.T) {
 	writeTestFile(t, overlay, newPath, []byte("return {}\n"))
 
 	added, err := Load(overlay)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if added.Vanilla() || added.Hash() == bundled.Hash() ||
+	if added.Vanilla() ||
+		added.Hash() == bundled.Hash() ||
 		!reflect.DeepEqual(added.Changes(), []string{newPath}) {
 		t.Fatalf("added content file has wrong identity: %+v", added)
 	}

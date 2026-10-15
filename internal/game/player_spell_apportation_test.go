@@ -12,9 +12,11 @@ func TestApportationPullsVisibleGroundItem(t *testing.T) {
 	g := newStepGame(t)
 	grantTestSpell(t, g, "SPELL_APPORTATION")
 	attributes, _ := g.stores.Attributes.Get(g.player)
+
 	attributes.Intelligence = 100
 
 	skills, _ := g.stores.Skills.Get(g.player)
+
 	skills.Entries = append(skills.Entries, character.Skill{
 		ID:    "SK_TRANSLOCATIONS",
 		Level: 27,
@@ -50,7 +52,9 @@ func TestApportationPullsVisibleGroundItem(t *testing.T) {
 
 	position, found := g.stores.Positions.Get(item)
 
-	if !found || position.X != 1 || position.Y != 1 {
+	if !found ||
+		position.X != 1 ||
+		position.Y != 1 {
 		t.Fatalf("Apportation item position = %+v, found %v", position, found)
 	}
 }

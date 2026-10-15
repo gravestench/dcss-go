@@ -13,6 +13,7 @@ func setFixtureTerrain(t *testing.T, g *Game, x, y int, glyph byte) {
 	t.Helper()
 
 	level := g.levels[1]
+
 	level.terrain[y][x] = fixtureFeature(glyph)
 
 	if err := g.refreshVisibility(); err != nil {
@@ -71,7 +72,8 @@ func TestExplicitDoorDirectionAndConnectedGroup(t *testing.T) {
 
 	if err != nil ||
 		opened.Spent != 10 ||
-		fixtureGlyph(g.levels[1].terrain[1][2]) != '\'' || fixtureGlyph(g.levels[1].terrain[2][2]) != '\'' {
+		fixtureGlyph(g.levels[1].terrain[1][2]) != '\'' ||
+		fixtureGlyph(g.levels[1].terrain[2][2]) != '\'' {
 		t.Fatalf("connected door = %+v, %v", opened, err)
 	}
 
@@ -82,7 +84,8 @@ func TestExplicitDoorDirectionAndConnectedGroup(t *testing.T) {
 
 	if err != nil ||
 		closed.Spent != 10 ||
-		fixtureGlyph(g.levels[1].terrain[1][2]) != '+' || fixtureGlyph(g.levels[1].terrain[2][2]) != '+' {
+		fixtureGlyph(g.levels[1].terrain[1][2]) != '+' ||
+		fixtureGlyph(g.levels[1].terrain[2][2]) != '+' {
 		t.Fatalf("connected close = %+v, %v", closed, err)
 	}
 }

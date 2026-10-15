@@ -10,19 +10,24 @@ import (
 
 func featureRows(rows []string) [][]terrain.ID {
 	cells := make([][]terrain.ID, len(rows))
+
 	for y, row := range rows {
 		cells[y] = make([]terrain.ID, len(row))
+
 		for x := range row {
 			switch row[x] {
 			case '.':
 				cells[y][x] = terrain.Floor
+
 			case '#':
 				cells[y][x] = terrain.RockWall
+
 			default:
 				cells[y][x] = terrain.ID(string(row[x]))
 			}
 		}
 	}
+
 	return cells
 }
 
@@ -60,7 +65,10 @@ func TestSourceGoldenSightMaps(t *testing.T) {
 
 	for _, mapCase := range fixture.Maps {
 		t.Run(mapCase.Name, func(t *testing.T) {
-			for _, mirrored := range []bool{false, true} {
+			for _, mirrored := range []bool{
+				false,
+				true,
+			} {
 				origin := 0
 				size := 10
 
@@ -147,10 +155,13 @@ func TestVisibilityInputValidation(t *testing.T) {
 
 		{
 			name: "ragged",
-			rows: []string{"...", ".."},
-			x:    0,
-			y:    0,
-			r:    7,
+			rows: []string{
+				"...",
+				"..",
+			},
+			x: 0,
+			y: 0,
+			r: 7,
 		},
 
 		{
@@ -225,10 +236,25 @@ func TestOpenTerrainChebyshevRange(t *testing.T) {
 	}
 
 	for _, offset := range [][2]int{
-		{7, 7},
-		{-7, -7},
-		{7, -7},
-		{-7, 7},
+		{
+			7,
+			7,
+		},
+
+		{
+			-7,
+			-7,
+		},
+
+		{
+			7,
+			-7,
+		},
+
+		{
+			-7,
+			7,
+		},
 	} {
 		x, y := 9+offset[0], 9+offset[1]
 
@@ -238,10 +264,25 @@ func TestOpenTerrainChebyshevRange(t *testing.T) {
 	}
 
 	for _, offset := range [][2]int{
-		{8, 0},
-		{-8, 0},
-		{0, 8},
-		{0, -8},
+		{
+			8,
+			0,
+		},
+
+		{
+			-8,
+			0,
+		},
+
+		{
+			0,
+			8,
+		},
+
+		{
+			0,
+			-8,
+		},
 	} {
 		x, y := 9+offset[0], 9+offset[1]
 

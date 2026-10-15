@@ -10,9 +10,11 @@ func TestBlinkMovesPlayerAndRejectsCooldown(t *testing.T) {
 	g := newStepGame(t)
 	grantTestSpell(t, g, "SPELL_BLINK")
 	attributes, _ := g.stores.Attributes.Get(g.player)
+
 	attributes.Intelligence = 100
 
 	skills, _ := g.stores.Skills.Get(g.player)
+
 	skills.Entries = append(skills.Entries, character.Skill{
 		ID:    "SK_TRANSLOCATIONS",
 		Level: 27,
@@ -45,6 +47,7 @@ func TestBlinkMovesPlayerAndRejectsCooldown(t *testing.T) {
 	}
 
 	status := testPlayerStatus()
+
 	status["blink_cooldown_aut"] = int64(30)
 
 	if _, err := g.scripts.Components()["magic.player_status"].Set(g.player, status); err != nil {

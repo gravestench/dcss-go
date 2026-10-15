@@ -173,11 +173,14 @@ func luaScenarioCells(value any) ([][]terrain.ID, error) {
 		}
 
 		cells[index] = make([]terrain.ID, len(row))
+
 		for x, value := range row {
 			feature, ok := value.(string)
+
 			if !ok {
 				return nil, fmt.Errorf("terrain cell (%d,%d) is not a feature ID", x, index)
 			}
+
 			cells[index][x] = terrain.ID(feature)
 		}
 	}

@@ -11,6 +11,7 @@ import (
 
 func TestOverlayAddsIndependentContentFiles(t *testing.T) {
 	rules, err := modfs.Load("testdata/add-definitions")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -19,12 +20,15 @@ func TestOverlayAddsIndependentContentFiles(t *testing.T) {
 	defer world.Close()
 
 	runtime, err := NewCatalog(world, rules)
+
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer runtime.Close()
 
 	result, err := runtime.Policy("test.content", nil)
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,13 +49,38 @@ func TestOverlayAddsIndependentContentFiles(t *testing.T) {
 		id       string
 		name     string
 	}{
-		{category: "monsters", id: "MONS_TEST_MOSS", name: "test moss"},
-		{category: "spells", id: "SPELL_TEST_SPARK", name: "Test Spark"},
-		{category: "items", id: "UNRAND_TEST_RELIC", name: "test relic"},
-		{category: "items", id: "MY_MOD_TOKEN", name: "test token"},
-		{category: "items", id: "MY_MOD_FUTURE_SPELL_ITEM", name: "future spell token"},
+		{
+			category: "monsters",
+			id:       "MONS_TEST_MOSS",
+			name:     "test moss",
+		},
+
+		{
+			category: "spells",
+			id:       "SPELL_TEST_SPARK",
+			name:     "Test Spark",
+		},
+
+		{
+			category: "items",
+			id:       "UNRAND_TEST_RELIC",
+			name:     "test relic",
+		},
+
+		{
+			category: "items",
+			id:       "MY_MOD_TOKEN",
+			name:     "test token",
+		},
+
+		{
+			category: "items",
+			id:       "MY_MOD_FUTURE_SPELL_ITEM",
+			name:     "future spell token",
+		},
 	} {
 		definition := runtime.definitions[entry.category][entry.id]
+
 		if definition == nil {
 			t.Fatalf("missing %s %s", entry.category, entry.id)
 		}
@@ -61,6 +90,7 @@ func TestOverlayAddsIndependentContentFiles(t *testing.T) {
 		}
 
 		origin := runtime.definitionOrigins[entry.category][entry.id]
+
 		if !strings.HasPrefix(origin, "content/"+entry.category+"/") {
 			t.Fatalf("%s %s origin = %q", entry.category, entry.id, origin)
 		}
@@ -74,6 +104,7 @@ func TestOverlayAddsIndependentContentFiles(t *testing.T) {
 	}
 
 	item := runtime.definitions["items"]["MY_MOD_FUTURE_SPELL_ITEM"]
+
 	if item.RawGetString("spell_id") != lua.LString("SPELL_TEST_SPARK") {
 		t.Fatalf("early item did not resolve later spell ID: %v", item)
 	}
@@ -81,6 +112,7 @@ func TestOverlayAddsIndependentContentFiles(t *testing.T) {
 
 func TestSamePathOverlayReplacesBundledDefinition(t *testing.T) {
 	rules, err := modfs.Load("testdata/override-monster")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -89,13 +121,16 @@ func TestSamePathOverlayReplacesBundledDefinition(t *testing.T) {
 	defer world.Close()
 
 	runtime, err := NewCatalog(world, rules)
+
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer runtime.Close()
 
 	id := "MONS_ABOMINATION_LARGE"
 	definition := runtime.definitions["monsters"][id]
+
 	if got := definition.RawGetString("name"); got != lua.LString("renamed abomination") {
 		t.Fatalf("monster name = %s", got)
 	}
@@ -107,6 +142,7 @@ func TestSamePathOverlayReplacesBundledDefinition(t *testing.T) {
 
 func TestDuplicateDefinitionReportsBothPaths(t *testing.T) {
 	rules, err := modfs.Load("testdata/duplicate-monster")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,6 +151,7 @@ func TestDuplicateDefinitionReportsBothPaths(t *testing.T) {
 	defer world.Close()
 
 	runtime, err := NewCatalog(world, rules)
+
 	if runtime != nil {
 		runtime.Close()
 	}
@@ -135,6 +172,7 @@ func TestDuplicateDefinitionReportsBothPaths(t *testing.T) {
 
 func TestInvalidContentReferenceNamesFileAndField(t *testing.T) {
 	rules, err := modfs.Load("testdata/invalid-monster-reference")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -143,6 +181,7 @@ func TestInvalidContentReferenceNamesFileAndField(t *testing.T) {
 	defer world.Close()
 
 	runtime, err := NewCatalog(world, rules)
+
 	if runtime != nil {
 		runtime.Close()
 	}
@@ -163,6 +202,7 @@ func TestInvalidContentReferenceNamesFileAndField(t *testing.T) {
 
 func TestEarlyIDImportChecksMissingDefinitionAfterDiscovery(t *testing.T) {
 	rules, err := modfs.Load("testdata/invalid-early-reference")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -171,6 +211,7 @@ func TestEarlyIDImportChecksMissingDefinitionAfterDiscovery(t *testing.T) {
 	defer world.Close()
 
 	runtime, err := NewCatalog(world, rules)
+
 	if runtime != nil {
 		runtime.Close()
 	}
@@ -191,6 +232,7 @@ func TestEarlyIDImportChecksMissingDefinitionAfterDiscovery(t *testing.T) {
 
 func TestSpawnableMonsterOverrideFailsAtBootWhenIncomplete(t *testing.T) {
 	rules, err := modfs.Load("testdata/invalid-spawnable-monster")
+
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -199,6 +241,7 @@ func TestSpawnableMonsterOverrideFailsAtBootWhenIncomplete(t *testing.T) {
 	defer world.Close()
 
 	runtime, err := NewCatalog(world, rules)
+
 	if runtime != nil {
 		runtime.Close()
 	}

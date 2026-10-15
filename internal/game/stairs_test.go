@@ -25,6 +25,7 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 	g.levels[3] = third
 
 	second := g.levels[2]
+
 	second.terrain[3][3] = fixtureFeature('>')
 
 	if err := second.AddStairLink(StairLink{
@@ -90,7 +91,10 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 		t.Fatal("stair graph changed across restore")
 	}
 
-	for _, run := range []*Game{g, restored} {
+	for _, run := range []*Game{
+		g,
+		restored,
+	} {
 		if _, err := run.Step(Command{Kind: CommandUpstairs}); err != nil {
 			t.Fatal(err)
 		}
@@ -150,6 +154,7 @@ func TestRestoreRejectsMissingStairLink(t *testing.T) {
 func TestLevelAllowsMultipleStairsOfOneKind(t *testing.T) {
 	g := newStepGame(t)
 	level := g.levels[1]
+
 	level.terrain[3][3] = fixtureFeature('>')
 
 	if err := level.AddStairLink(StairLink{

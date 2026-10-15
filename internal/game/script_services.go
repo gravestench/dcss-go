@@ -237,7 +237,8 @@ func (grid scriptGrid) MoveActors(moves []script.ActorMove) error {
 			y:       move.Y,
 		}
 
-		if level == nil || !level.Walkable(move.X, move.Y) ||
+		if level == nil ||
+			!level.Walkable(move.X, move.Y) ||
 			moving[move.Actor] || occupied[next] {
 			return fmt.Errorf("invalid simultaneous actor move %d", move.Actor)
 		}

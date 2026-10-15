@@ -17,7 +17,8 @@ type stagedActorMove struct {
 func batchInteger(table *lua.LTable, name string) (int, error) {
 	value, ok := table.RawGetString(name).(lua.LNumber)
 
-	if !ok || math.Trunc(float64(value)) != float64(value) ||
+	if !ok ||
+		math.Trunc(float64(value)) != float64(value) ||
 		math.Abs(float64(value)) > maxExactLuaInteger {
 		return 0, fmt.Errorf("batch move %s must be an exact integer", name)
 	}
@@ -34,7 +35,9 @@ func (r *Runtime) decodeActorMove(table *lua.LTable) (stagedActorMove, error) {
 
 	actor, ok := handle.Value.(akara.Entity)
 
-	if !ok || !r.world.EntityExists(actor) || r.pendingDestroy[actor] {
+	if !ok ||
+		!r.world.EntityExists(actor) ||
+		r.pendingDestroy[actor] {
 		return stagedActorMove{}, fmt.Errorf("batch move actor is not live")
 	}
 
@@ -114,7 +117,8 @@ func (r *Runtime) luaGridMoveActors(state *lua.LState) int {
 			return 0
 		}
 
-		if moving[move.actor] || destinations[move.next] ||
+		if moving[move.actor] ||
+			destinations[move.next] ||
 			!r.stagedWalkable(move.next) {
 			state.RaiseError("invalid batch move %d", index)
 
@@ -151,6 +155,7 @@ func (r *Runtime) luaGridMoveActors(state *lua.LState) int {
 			X:       move.next.x,
 			Y:       move.next.y,
 		})
+
 		reverse = append(reverse, ActorMove{
 			Actor:   move.actor,
 			LevelID: move.old.levelID,

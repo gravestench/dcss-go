@@ -23,6 +23,7 @@ func doorModel(t *testing.T, cells map[[2]int]byte) *AppModel {
 
 	for cell, glyph := range cells {
 		x, y := cell[0], cell[1]
+
 		if glyph == '+' {
 			snapshot.Levels[0].Cells[y][x] = terrain.ClosedDoor
 		} else {
@@ -43,7 +44,10 @@ func doorModel(t *testing.T, cells map[[2]int]byte) *AppModel {
 
 func TestDoorKeysActAutomaticallyForOneNeighbor(t *testing.T) {
 	m := doorModel(t, map[[2]int]byte{
-		{2, 1}: '+',
+		{
+			2,
+			1,
+		}: '+',
 	})
 
 	start := m.game.View().CurrentAut
@@ -65,8 +69,15 @@ func TestDoorKeysActAutomaticallyForOneNeighbor(t *testing.T) {
 
 func TestDoorDirectionPromptAndCancel(t *testing.T) {
 	m := doorModel(t, map[[2]int]byte{
-		{2, 1}: '+',
-		{2, 2}: '+',
+		{
+			2,
+			1,
+		}: '+',
+
+		{
+			2,
+			2,
+		}: '+',
 	})
 
 	start := m.game.View().CurrentAut

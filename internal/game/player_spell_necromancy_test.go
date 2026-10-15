@@ -36,9 +36,11 @@ func TestSublimationTradesHealthForMagic(t *testing.T) {
 	g := newStepGame(t)
 	grantTestSpell(t, g, "SPELL_SUBLIMATION_OF_BLOOD")
 	attributes, _ := g.stores.Attributes.Get(g.player)
+
 	attributes.Intelligence = 100
 
 	skills, _ := g.stores.Skills.Get(g.player)
+
 	skills.Entries = append(skills.Entries, character.Skill{
 		ID:    "SK_NECROMANCY",
 		Level: 27,
@@ -49,7 +51,9 @@ func TestSublimationTradesHealthForMagic(t *testing.T) {
 	}
 
 	magic, _ := g.stores.Magic.Get(g.player)
+
 	magic.Current = 3
+
 	beforeHP, _ := g.stores.Health.Get(g.player)
 	previousHP := beforeHP.Current
 	result, err := g.Step(Command{
@@ -103,9 +107,11 @@ func TestRevivificationHealsWithPermanentLossAndParalysis(t *testing.T) {
 	g := newStepGame(t)
 	grantTestSpell(t, g, "SPELL_BORGNJORS_REVIVIFICATION")
 	attributes, _ := g.stores.Attributes.Get(g.player)
+
 	attributes.Intelligence = 100
 
 	skills, _ := g.stores.Skills.Get(g.player)
+
 	skills.Entries = append(skills.Entries, character.Skill{
 		ID:    "SK_NECROMANCY",
 		Level: 27,
@@ -116,6 +122,7 @@ func TestRevivificationHealsWithPermanentLossAndParalysis(t *testing.T) {
 	}
 
 	health, _ := g.stores.Health.Get(g.player)
+
 	health.Max = 166
 	health.Current = 3
 
@@ -124,6 +131,7 @@ func TestRevivificationHealsWithPermanentLossAndParalysis(t *testing.T) {
 	}
 
 	status := testPlayerStatus()
+
 	status["death_door_aut"] = int64(100)
 	status["death_door_hp"] = int64(3)
 
@@ -172,7 +180,9 @@ func TestRevivificationHealsWithPermanentLossAndParalysis(t *testing.T) {
 
 	position, _ = g.stores.Positions.Get(g.player)
 
-	if wait.Spent == 0 || position.X != beforeX || position.Y != beforeY {
+	if wait.Spent == 0 ||
+		position.X != beforeX ||
+		position.Y != beforeY {
 		t.Fatal("paralysed player moved or spent no time")
 	}
 }

@@ -66,7 +66,9 @@ func NewLevel(id int, cells [][]terrain.ID, positions *akara.Store[ecs.Position]
 			}
 		}
 	}
+
 	owned := make([][]terrain.ID, len(cells))
+
 	for y, row := range cells {
 		owned[y] = append([]terrain.ID(nil), row...)
 	}
@@ -196,9 +198,11 @@ func (l *Level) inBounds(x, y int) bool {
 
 func (l *Level) Cells() [][]terrain.ID {
 	cells := make([][]terrain.ID, len(l.terrain))
+
 	for y, row := range l.terrain {
 		cells[y] = append([]terrain.ID(nil), row...)
 	}
+
 	return cells
 }
 
@@ -499,10 +503,13 @@ func (l *Level) RemoveActor(entity akara.Entity) error {
 // KnownCells returns the player's remembered feature IDs. Empty IDs are unseen.
 func (l *Level) KnownCells() [][]terrain.ID {
 	cells := make([][]terrain.ID, len(l.terrain))
+
 	for y := range cells {
 		start := y * l.width
+
 		cells[y] = append([]terrain.ID(nil), l.remembered[start:start+l.width]...)
 	}
+
 	return cells
 }
 
@@ -524,6 +531,7 @@ func (l *Level) LoadKnownCells(cells [][]terrain.ID) error {
 			if feature != terrain.Unseen && !terrain.Valid(feature) {
 				return fmt.Errorf("level %d invalid remembered terrain %q at (%d,%d)", l.ID, feature, x, y)
 			}
+
 			known[y*l.width+x] = feature
 		}
 	}

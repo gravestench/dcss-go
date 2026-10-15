@@ -48,7 +48,8 @@ func TestPlayerActionCountSurvivesVariableCostsAndRestore(t *testing.T) {
 
 	reloaded, found := restored.stores.PlayerTurn.Get(restored.player)
 
-	if !found || reloaded.Count != turn.Count ||
+	if !found ||
+		reloaded.Count != turn.Count ||
 		reloaded.NextAut != turn.NextAut {
 		t.Fatalf("restored turn = %+v, want %+v", reloaded, turn)
 	}

@@ -47,62 +47,170 @@ type Feature struct {
 }
 
 var definitions = map[ID]Feature{
-	Floor:              {Glyph: '.', Walkable: true},
-	RockWall:           {Glyph: '#', Opaque: true, Diggable: true},
-	StoneWall:          {Glyph: '#', Opaque: true},
-	MetalWall:          {Glyph: '#', Opaque: true},
-	CrystalWall:        {Glyph: '#', Opaque: true},
-	PermaRockWall:      {Glyph: '#', Opaque: true},
-	ClearRockWall:      {Glyph: '#', Diggable: true},
+	Floor: {
+		Glyph:    '.',
+		Walkable: true,
+	},
+
+	RockWall: {
+		Glyph:    '#',
+		Opaque:   true,
+		Diggable: true,
+	},
+
+	StoneWall: {
+		Glyph:  '#',
+		Opaque: true,
+	},
+
+	MetalWall: {
+		Glyph:  '#',
+		Opaque: true,
+	},
+
+	CrystalWall: {
+		Glyph:  '#',
+		Opaque: true,
+	},
+
+	PermaRockWall: {
+		Glyph:  '#',
+		Opaque: true,
+	},
+
+	ClearRockWall: {
+		Glyph:    '#',
+		Diggable: true,
+	},
 	ClearStoneWall:     {Glyph: '#'},
 	ClearPermaRockWall: {Glyph: '#'},
-	SlimyWall:          {Glyph: '#', Opaque: true, Diggable: true},
-	Grate:              {Glyph: '#', Diggable: true},
-	OrcishIdol:         {Glyph: '#', Diggable: true},
-	GraniteStatue:      {Glyph: '#', Diggable: true},
-	PetrifiedTree:      {Glyph: '#', Opaque: true, Diggable: true},
-	Tree:               {Glyph: '#', Opaque: true},
-	Mangrove:           {Glyph: '#', Opaque: true},
-	DemonicTree:        {Glyph: '#', Opaque: true},
-	OpenSea:            {Glyph: '#', Watery: true},
-	LavaSea:            {Glyph: '#'},
-	ShallowWater:       {Glyph: '~', Walkable: true, Watery: true},
-	ToxicBog:           {Glyph: '~', Walkable: true, Watery: true},
-	DeepWater:          {Glyph: '~', Walkable: true, Watery: true},
-	Lava:               {Glyph: '~', Walkable: true},
-	ClosedDoor:         {Glyph: '+', Opaque: true},
-	OpenDoor:           {Glyph: '\'', Walkable: true},
-	StairsUp:           {Glyph: '<', Walkable: true},
-	StairsDown:         {Glyph: '>', Walkable: true},
-	MalignGateway:      {Glyph: 'w'},
-	PassageOfGolubria:  {Glyph: '^', Walkable: true},
+	SlimyWall: {
+		Glyph:    '#',
+		Opaque:   true,
+		Diggable: true,
+	},
+
+	Grate: {
+		Glyph:    '#',
+		Diggable: true,
+	},
+
+	OrcishIdol: {
+		Glyph:    '#',
+		Diggable: true,
+	},
+
+	GraniteStatue: {
+		Glyph:    '#',
+		Diggable: true,
+	},
+
+	PetrifiedTree: {
+		Glyph:    '#',
+		Opaque:   true,
+		Diggable: true,
+	},
+
+	Tree: {
+		Glyph:  '#',
+		Opaque: true,
+	},
+
+	Mangrove: {
+		Glyph:  '#',
+		Opaque: true,
+	},
+
+	DemonicTree: {
+		Glyph:  '#',
+		Opaque: true,
+	},
+
+	OpenSea: {
+		Glyph:  '#',
+		Watery: true,
+	},
+	LavaSea: {Glyph: '#'},
+	ShallowWater: {
+		Glyph:    '~',
+		Walkable: true,
+		Watery:   true,
+	},
+
+	ToxicBog: {
+		Glyph:    '~',
+		Walkable: true,
+		Watery:   true,
+	},
+
+	DeepWater: {
+		Glyph:    '~',
+		Walkable: true,
+		Watery:   true,
+	},
+
+	Lava: {
+		Glyph:    '~',
+		Walkable: true,
+	},
+
+	ClosedDoor: {
+		Glyph:  '+',
+		Opaque: true,
+	},
+
+	OpenDoor: {
+		Glyph:    '\'',
+		Walkable: true,
+	},
+
+	StairsUp: {
+		Glyph:    '<',
+		Walkable: true,
+	},
+
+	StairsDown: {
+		Glyph:    '>',
+		Walkable: true,
+	},
+	MalignGateway: {Glyph: 'w'},
+	PassageOfGolubria: {
+		Glyph:    '^',
+		Walkable: true,
+	},
 }
 
 func Lookup(id ID) (Feature, bool) {
 	feature, found := definitions[id]
+
 	return feature, found
 }
 
 func Valid(id ID) bool {
 	_, found := Lookup(id)
+
 	return found
 }
 
 func Walkable(id ID) bool {
 	feature, found := Lookup(id)
+
 	return found && feature.Walkable
 }
 
 func Opaque(id ID) bool {
 	feature, found := Lookup(id)
+
 	return !found || feature.Opaque
 }
 
 func Glyph(id ID) rune {
 	feature, found := Lookup(id)
+
 	if !found {
 		return ' '
 	}
+
 	return feature.Glyph
 }
 

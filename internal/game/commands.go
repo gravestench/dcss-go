@@ -336,6 +336,7 @@ func (g *Game) runActionStarted(
 
 	g.turn.ResolvedIntent = resolved.Kind
 	g.turn.ResolvedItemID = resolved.ItemID
+
 	if producedIntent {
 		g.stores.Intents.Remove(actor)
 	}

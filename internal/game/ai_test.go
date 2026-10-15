@@ -20,6 +20,7 @@ func TestFixedAnimalRouteAvoidsOccupantsAndUnreachableTarget(t *testing.T) {
 	}
 
 	second := g.levels[2]
+
 	second.terrain[4][8] = fixtureFeature('#')
 
 	if _, _, ok := second.RouteStep(9, 1, 7, 1, 0); ok {

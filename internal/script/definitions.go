@@ -68,7 +68,9 @@ func (r *Runtime) luaRegisterDefinition(state *lua.LState) int {
 }
 
 func validDefinitionCategory(category string) bool {
-	if category == "" || category[0] < 'a' || category[0] > 'z' {
+	if category == "" ||
+		category[0] < 'a' ||
+		category[0] > 'z' {
 		return false
 	}
 

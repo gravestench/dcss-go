@@ -535,6 +535,7 @@ func (r *Runtime) luaGridPlaceActor(state *lua.LState) int {
 	}
 
 	feature, _ := r.services.Grid.Cell(next.levelID, next.x, next.y)
+
 	if pending, changed := r.pendingCells[next]; changed {
 		feature = pending
 	}

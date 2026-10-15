@@ -79,6 +79,7 @@ func TestLuaRules(t *testing.T) {
 				NRet:    0,
 				Protect: true,
 			}, runtime.context)
+
 			runtime.state.RemoveContext()
 
 			if err != nil {
