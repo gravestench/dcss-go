@@ -9,6 +9,30 @@ tree, or generated registry is required.
 Lua source lives in `.lua` files in this tree and in test mod directories;
 Go source does not contain inline Lua programs.
 
+This is a two-layer virtual filesystem. The embedded tree is the base layer.
+The directory passed to `--mod-dir` is the user layer. Its files win when the
+relative paths match, and its new paths join the effective tree. All Lua
+modules, including `require` calls, read that one effective tree. An overlay
+does not need to repeat the rest of the base game.
+
+| To add | Put the file here | Add another file when |
+| --- | --- | --- |
+| Monster | `content/monsters/<name>.lua` | It needs a new AI or other behavior. |
+| Spell | `content/spells/<name>.lua` | It needs a new resolver under `policy/magic/effects/`. |
+| Item or unique item | `content/items/<name>.lua` | It needs a new use, combat, or equipment rule. |
+| Item class | An item file with a new `class` ID | It needs class-specific rules or UI. |
+| Mutation | `content/mutations/<name>.lua` | It needs an effect under `policy/mutations/effects/`. |
+| ECS component | `schemas/<name>.lua` | Its behavior needs a system. |
+| ECS system | `systems/<name>.lua` | Its state needs a new component. |
+| Game policy | `policy/<area>/<name>.lua` | It needs new content or a component. |
+
+A data-only addition takes one file when existing rules already understand
+it. A genuinely new mechanic takes a small set of files: its definition,
+focused policy or system, and a `_test.lua` file using the production schema.
+Each file registers itself when discovered. There is no central switch to
+edit for each new monster, spell, item, component, or system. The loader
+rejects duplicate IDs and invalid definitions with their source paths.
+
 The bundled `init.lua` loads `schemas/`, `content/`, `policy/`, `systems/`,
 `generation/`, and `ui/` in that order. Paths within each tree load in sorted
 order. A new file under one of these directories is discovered automatically. Put helpers
@@ -102,7 +126,7 @@ Lua rules while Go retains generic ECS, VFS, save, and terminal services.
 
 Put one definition in one file below `content/<category>/`. The recognized
 base categories are `species`, `jobs`, `monsters`, `spells`, `items`,
-`branches`, and `monster_spellbooks`. The registration API accepts additional
+`mutations`, `branches`, and `monster_spellbooks`. The registration API accepts additional
 category names for mod-defined catalogs. For example,
 `content/monsters/my_moss.lua` can contain:
 
@@ -168,6 +192,22 @@ system file. Existing engine paths still
 support only the domain mechanics already ported, so a registered definition
 alone does not make every new behavior playable. Keep each behavior in its
 own discoverable `policy/` or `systems/` file.
+
+For a player spell, set `player_scope = scopes.BOOK` or
+`player_scope = scopes.INVOKED` in its definition and import
+`constants.spell_scopes` as `scopes` in that file. Put its resolver in a
+separate file under `policy/magic/effects/` and call
+`registry.add(spells.MY_SPELL, { resolve = effect.resolve })`, importing
+`ids.spells` and `policy.magic.effects.registry` there. Both files load
+automatically. Existing DCSS spell scope is supplied by the committed
+source catalog when the definition has no `player_scope` field.
+
+Put a player mutation in `content/mutations/<name>.lua`. The content tree
+registers it automatically, and `ids.mutations` exposes the new ID to other
+Lua files. A behavioral mutation also needs a focused file under
+`policy/mutations/effects/`; an ordinary scalar mutation can use the shared
+effect policy. The mutation rules are being ported as one domain, so new
+definitions should not be made selectable until their effect is implemented.
 
 The effective tree is sorted by path. A file at the same relative path as a
 bundled file replaces it before Lua starts. A new path adds a definition.

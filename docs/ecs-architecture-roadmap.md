@@ -68,10 +68,18 @@ different path adds content, and duplicate category/ID pairs fail with both
 file origins. The effective source bytes set the vanilla hash and save
 identity. There is no central list to edit when adding a definition.
 
+Treat this as an extension contract, not just a way to package the port.
+Any new content or behavior must become discoverable by placement in its
+domain directory. A mod should never need to edit a central ID table, Go
+switch, or bundled manifest. A user can supply a directory containing only
+one new file. The same loader and validation run for bundled and user files.
+The runtime validates the complete effective content tree before gameplay
+policy runs, so a new file may refer to another file loaded later.
+
 Static definition and executable behavior are separate. A new monster file
 makes the monster available to Lua catalogs and shared ID imports. Spawn
-tables and special actions use their own discoverable Lua files. A spell
-needs its effect rule, and an item type needs its interaction rules. This
+data may live in that definition; special actions use discoverable Lua files.
+A spell needs its effect rule, and an item type needs its interaction rules. This
 lets a mod introduce a simple data variant in one file and a new mechanic
 with a small set of files, while keeping each file's purpose obvious. See
 [modding.md](modding.md) for the exact directory and registration contract.
