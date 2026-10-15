@@ -23,13 +23,13 @@ function system.update(ctx, actor)
         error("potion is no longer carried")
     end
 
-    local effect = potions[item.kind_id]
+    local effect = potions.get(item.kind_id)
 
     if not effect then
         error("unsupported potion " .. item.kind_id)
     end
 
-    local message = effect(ctx, player)
+    local message = effect.apply(ctx, player)
 
     if item.quantity == 1 then
         ctx:destroy(intent.item_id)

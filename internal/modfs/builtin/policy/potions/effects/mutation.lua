@@ -1,13 +1,24 @@
 local classes = require("constants.mutation_classes")
 local choices = require("constants.mutation_choices")
-local item_ids = require("ids.items")
+local items = require("ids.items")
 local potions = require("policy.potions")
 local transition = require("policy.mutations.transition")
+local physiology = require("policy.mutations.physiology")
 
 local effect = {}
 
--- Source: potion.cc:PotionMutation::effect. The count rolls happen before
--- either loop, and every attempt may be blocked by mutation resistance.
+function effect.can_quaff(ctx, player)
+    if not physiology.can_safely_mutate(ctx, player) then
+        if physiology.can_safely_mutate(ctx, player, false) then
+            return "You cannot mutate at present."
+        end
+
+        return "You cannot mutate."
+    end
+end
+
+-- Source: potion.cc:PotionMutation::effect. Both count rolls precede the
+-- removal and addition loops; resistance can block each attempt.
 function effect.apply(ctx, player)
     ctx:emit("quaff", "You feel extremely strange.")
 
@@ -29,6 +40,6 @@ function effect.apply(ctx, player)
     end
 end
 
-potions[item_ids.POT_MUTATION] = effect.apply
+potions.register(items.POT_MUTATION, effect)
 
 return effect

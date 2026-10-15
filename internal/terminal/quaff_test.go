@@ -61,6 +61,86 @@ func TestQuaffChoiceCancelAndStartingMight(t *testing.T) {
 	}
 }
 
+func TestSharedActionConfirmationCanQuaffAnItem(t *testing.T) {
+	m := playingModel(t)
+	var mightID uint64
+
+	for _, item := range m.game.View().Inventory {
+		if item.KindID == "POT_MIGHT" {
+			mightID = item.ID
+			break
+		}
+	}
+
+	if mightID == 0 {
+		t.Fatal("starting might potion is missing")
+	}
+
+	before := m.game.View().CurrentAut
+	command := game.Command{
+		Kind:   game.CommandQuaff,
+		ItemID: mightID,
+	}
+
+	m.pendingAction = command
+	m.pendingActionPrompt = "Really quaff this potion?"
+	m.openScreen(ScreenActionConfirm)
+	m.handleKey("n")
+
+	if m.screen != ScreenPlay || m.game.View().CurrentAut != before {
+		t.Fatal("declining a potion spent time")
+	}
+
+	m.pendingAction = command
+	m.pendingActionPrompt = "Really quaff this potion?"
+	m.openScreen(ScreenActionConfirm)
+	m.handleKey("y")
+
+	if m.screen != ScreenPlay ||
+		m.game.View().CurrentAut != before+10 ||
+		m.game.View().MightAut == 0 {
+		t.Fatalf("confirmed potion did not execute: screen %d, view %+v",
+			m.screen, m.game.View())
+	}
+}
+
+func TestExperiencePotionOpensSavedSkillAllocation(t *testing.T) {
+	m := playingModel(t)
+	snapshot := m.game.Snapshot()
+
+	for i := range snapshot.Entities {
+		item := snapshot.Entities[i].Item
+
+		if item != nil && item.KindID == "POT_MIGHT" {
+			item.KindID = "POT_EXPERIENCE"
+		}
+	}
+
+	restored, err := game.Restore(snapshot)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m.game.Close()
+	m.game = restored
+	m.handleKey("q")
+	m.handleKey(potionLetter(t, m, "POT_EXPERIENCE"))
+
+	if m.screen != ScreenSkills ||
+		m.game.View().PendingSkillExperience != 7500 ||
+		!strings.Contains(plainApp(m), "skill experience remains") {
+		t.Fatalf("experience screen %d pending %d: %s",
+			m.screen, m.game.View().PendingSkillExperience, plainApp(m))
+	}
+
+	m.handleKey("a")
+
+	if m.game.View().PendingSkillExperience >= 7500 {
+		t.Fatal("skill allocation did not spend experience")
+	}
+}
+
 func TestQuaffHasteFromInventoryShowsFastLight(t *testing.T) {
 	m := playingModel(t)
 	snapshot := m.game.Snapshot()

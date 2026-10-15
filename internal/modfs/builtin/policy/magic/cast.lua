@@ -24,7 +24,8 @@ function cast.resolve(ctx, player, intent, aut)
 
     casting.last_spell_id = spell_id
     ctx:set(player, "character.spellcasting", casting)
-    resources.pay(ctx, player, spell.level)
+    resources.pay(ctx, player,
+        resources.spell_cost(ctx, player, spell.level))
 
     local profile = failure.profile(ctx, player, spell)
 

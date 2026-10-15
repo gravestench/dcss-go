@@ -8,6 +8,7 @@ local component = require("constants.component")
 local item_ids = require("ids.items")
 local spell_ids = require("ids.spells")
 local form_catalog = require("policy.magic.effects.forms.catalog")
+local potion_resistance = require("policy.potions.resistance")
 
 local resistance = {}
 local willpower_pip = 40
@@ -16,6 +17,7 @@ local form_poison = {
     spider = -1,
     ice_beast = 1,
     dragon = 1,
+    tree = 1,
 }
 
 -- Source: player.cc:player_res_poison and form-data.h. Only live equipment
@@ -34,6 +36,10 @@ function resistance.poison(ctx, player)
 
     local value = effects.sum(ctx, player,
         capabilities.POISON_RESISTANCE)
+
+    if potion_resistance.active(ctx, player) then
+        value = value + 1
+    end
 
     if value >= 3 then
         return 3
@@ -145,8 +151,11 @@ function resistance.torment(ctx, player)
     local petrification = ctx:get(player,
         component.PLAYER_PETRIFICATION)
 
+    local forms = require("policy.magic.effects.forms.player")
+
     return effects.sum(ctx, player,
         capabilities.TORMENT_RESISTANCE) >= 2 or
+        forms.torment_immune(ctx, player) or
         active_form(ctx, player, spell_ids.SPELL_NECROMUTATION) or
         (petrification and petrification.petrified_aut > 0) or false
 end

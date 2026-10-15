@@ -33,6 +33,7 @@ local function validate(ctx)
     local skills_component = ctx:get(actor, component.SKILLS)
     local training = ctx:get(actor, component.SKILL_TRAINING)
     local progress = ctx:get(actor, component.PROGRESSION)
+    local potion = ctx:get(actor, component.POTION_EXPERIENCE)
 
     if not player or not skills_component or not training or not progress then
         error("player lacks saved training state")
@@ -49,8 +50,18 @@ local function validate(ctx)
     local entries = skills_component.entries
     local available = training.available_xp
     local spent = training.spent_xp
+    local level_adjustment = potion and potion.untrained_level_xp or 0
+    local bonus = potion and potion.bonus_skill_xp or 0
+    local pending = potion and potion.pending_skill_xp or 0
 
-    if available < 0 or spent < 0 or available + spent ~= progress.total_xp * 10 then
+    if level_adjustment < 0 or level_adjustment > progress.total_xp or
+        bonus < 0 or pending < 0 or pending > bonus then
+        error("invalid experience potion ledger")
+    end
+
+    if available < 0 or spent < 0 or
+        available + spent + pending ~= (progress.total_xp -
+            level_adjustment) * 10 + bonus then
         error("player skill experience disagrees with earned XP")
     end
 

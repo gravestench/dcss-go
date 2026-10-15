@@ -112,6 +112,10 @@ function forms.rejection(ctx, player, spell_id)
 
     local active, previous = record(ctx, player)
 
+    if active and active.uncancellable then
+        return "You are stuck in your current form!"
+    end
+
     if active and active.form_id == destination.id then
         return nil
     end
@@ -300,6 +304,7 @@ function forms.cast(ctx, player, spell_id, power)
         power = power,
         appendage_mask = profile.id == "appendage" and
             appendage_mask(ctx, player) or 0,
+        uncancellable = false,
     }
 
     if existing then
@@ -362,6 +367,8 @@ function forms.finish(ctx, player)
         appendage_message(ctx, active.appendage_mask, true)
     elseif active.form_id == "bat" then
         ctx:emit("duration", "You feel less batty.")
+    elseif active.form_id == "tree" then
+        ctx:emit("duration", "You feel less wooden.")
     else
         ctx:emit("duration", "Your transformation has ended.")
     end
@@ -371,8 +378,14 @@ function forms.finish(ctx, player)
 end
 
 function forms.end_rejection(ctx, player)
-    if not ctx:has(player, component.PLAYER_FORM) then
+    local active = ctx:get(player, component.PLAYER_FORM)
+
+    if not active then
         return "You are not transformed."
+    end
+
+    if active.uncancellable then
+        return "You are stuck in your current form!"
     end
 
     local position = ctx:get(player, component.POSITION)
@@ -459,11 +472,23 @@ function forms.modifiers(ctx, player)
         }
     end
 
+    local armour = profile.ac_flat * 100 + profile.ac_power * active.power
+
+    if profile.ac_level and profile.ac_level > 0 then
+        local progression = ctx:get(player, component.PROGRESSION)
+
+        if not progression then
+            error("level-scaled player form needs progression")
+        end
+
+        armour = armour + profile.ac_level * progression.level
+    end
+
     return {
         strength = profile.strength,
         dexterity = profile.dexterity,
         hp_tenths = profile.hp_tenths,
-        ac_x100 = profile.ac_flat * 100 + profile.ac_power * active.power,
+        ac_x100 = armour,
         res_fire = profile.res_fire,
         res_cold = profile.res_cold,
         unarmed_base = profile.unarmed_base,
@@ -503,6 +528,13 @@ local blocked = {
     hands = { weapon = true, shield = true, gloves = true },
     head_foot = { head = true, boots = true },
     statue = { gloves = true, boots = true, body = true },
+    tree = {
+        gloves = true,
+        boots = true,
+        body = true,
+        head = true,
+        cloak = true,
+    },
     physical = {
         weapon = true,
         shield = true,
@@ -549,6 +581,18 @@ function forms.can_drink(ctx, player)
     local _, profile = record(ctx, player)
 
     return not profile or profile.id ~= "lich"
+end
+
+function forms.stasis(ctx, player)
+    local _, profile = record(ctx, player)
+
+    return profile ~= nil and profile.stasis == true
+end
+
+function forms.torment_immune(ctx, player)
+    local _, profile = record(ctx, player)
+
+    return profile ~= nil and profile.torment_immune == true
 end
 
 -- Source: transform.h:Form::can_offhand_punch and the three form overrides

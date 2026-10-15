@@ -170,7 +170,7 @@ local function prepare(ctx, input)
     elseif kind == 6 then
         return {}
     elseif kind == 7 then
-        return quaff.prepare(ctx, player, item_id)
+        return quaff.prepare(ctx, player, item_id, input.forced)
     elseif kind == 8 then
         return items.prepare_drop(ctx, player, item_id, input.quantity or 0)
     elseif kind == 9 then

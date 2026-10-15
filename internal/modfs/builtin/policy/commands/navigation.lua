@@ -2,6 +2,14 @@ local navigation = {}
 local catalog = require("policy.catalog")
 local fighter = require("policy.combat.fighter")
 local abyss = require("policy.world.abyss")
+local component = require("constants.component")
+
+local function rooted(ctx)
+    local form = ctx:get(ctx:player(), component.PLAYER_FORM)
+
+    return form and form.form_id == "tree" and
+        form.remaining_aut > 0
+end
 
 function navigation.move(ctx, position, dx, dy)
     if dx < -1 or dx > 1 or dy < -1 or dy > 1 or (dx == 0 and dy == 0) then
@@ -17,6 +25,12 @@ function navigation.move(ctx, position, dx, dy)
     if not cell then
         return {
             message = "You cannot move there.",
+        }
+    end
+
+    if rooted(ctx) and not ctx:actor_at(position.level_id, x, y) then
+        return {
+            message = "Your roots keep you in place.",
         }
     end
 
@@ -65,6 +79,12 @@ function navigation.move(ctx, position, dx, dy)
 end
 
 function navigation.stairs(ctx, position, downstairs)
+    if rooted(ctx) then
+        return {
+            message = "Your roots keep you in place.",
+        }
+    end
+
     local glyph = downstairs and "DNGN_STONE_STAIRS_DOWN_I" or
         "DNGN_STONE_STAIRS_UP_I"
     local missing = downstairs and "There are no stairs down here." or

@@ -54,7 +54,8 @@ function cast.prepare(ctx, player, input)
         return { message = "You aren't experienced enough to cast this spell." }
     end
 
-    local no_resource = resources.cannot_pay(ctx, player, spell.level)
+    local cost = resources.spell_cost(ctx, player, spell.level)
+    local no_resource = resources.cannot_pay(ctx, player, cost)
 
     if no_resource then
         return { message = no_resource }

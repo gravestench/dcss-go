@@ -18,8 +18,9 @@ func (m *AppModel) routeSkillInput(key string) tea.Cmd {
 	}
 
 	return m.routeInput("skills", key, map[string]any{
-		"skill_ids":  ids,
-		"adjustable": m.game.View().SkillTrainingAdjustable,
+		"skill_ids":          ids,
+		"adjustable":         m.game.View().SkillTrainingAdjustable,
+		"pending_experience": m.game.View().PendingSkillExperience,
 	})
 }
 
@@ -53,6 +54,25 @@ func (m *AppModel) applySkillDecision(action string, decision map[string]any) te
 			m.notice = fmt.Sprintf("Training choice failed: %v", err)
 		} else {
 			m.notice = ""
+		}
+
+	case "spend_experience_skill":
+		id, ok := decision["id"].(string)
+
+		if !ok || !m.hasSkillID(id) {
+			m.notice = "Input policy returned an invalid skill."
+
+			return nil
+		}
+
+		if err := m.game.SpendPotionExperienceSkill(id); err != nil {
+			m.notice = err.Error()
+		} else {
+			m.notice = ""
+
+			if m.game.View().PendingSkillExperience == 0 {
+				m.openScreen(ScreenPlay)
+			}
 		}
 	}
 

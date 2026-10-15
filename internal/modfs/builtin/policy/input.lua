@@ -1,5 +1,6 @@
 local aim = require("policy.input.aim")
 local abilities = require("policy.input.abilities")
+local action_confirmation = require("policy.input.action_confirmation")
 local door = require("policy.input.door")
 local items = require("policy.input.items")
 local modal = require("policy.input.modal")
@@ -13,7 +14,7 @@ local spells = require("policy.input.spells")
 local screens = {
     abilities = abilities.route,
     ability_confirm = abilities.confirm,
-    spell_confirm = spells.confirm,
+    action_confirm = action_confirmation.route,
     aim = aim.route,
     background = pregame.choice,
     death = modal.death,

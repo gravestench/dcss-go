@@ -1,5 +1,6 @@
 local capabilities = require("constants.mutation_capabilities")
 local effects = require("policy.mutations.effects.registry")
+local brilliance = require("policy.potions.brilliance")
 
 local enhancement = {}
 
@@ -8,6 +9,10 @@ local enhancement = {}
 function enhancement.apply(ctx, player, spell, centis)
     local levels = effects.sum(ctx, player,
         capabilities.SPELL_ENHANCER, spell)
+
+    if brilliance.active(ctx, player) then
+        levels = levels + 1
+    end
     levels = math.max(-3, math.min(3, levels))
 
     if levels > 0 then

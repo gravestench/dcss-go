@@ -26,6 +26,16 @@ function module.run(ctx)
     local sanguine_armour = ctx:get(player, component.SANGUINE_ARMOUR)
     local agility = ctx:get(player, component.AGILITY)
     local damage_safety = ctx:get(player, component.DAMAGE_SAFETY)
+    local potion_resistance = ctx:get(player,
+        component.POTION_RESISTANCE)
+    local potion_brilliance = ctx:get(player,
+        component.POTION_BRILLIANCE)
+    local potion_ambrosia = ctx:get(player,
+        component.POTION_AMBROSIA)
+    local potion_attraction = ctx:get(player,
+        component.POTION_ATTRACTION)
+    local potion_invisibility = ctx:get(player,
+        component.POTION_INVISIBILITY)
     local powered = ctx:get(player, component.POWERED_BY_DEATH)
     local banishment = ctx:get(player, "world.banishment")
     local petrification = ctx:get(player,
@@ -53,6 +63,36 @@ function module.run(ctx)
         regeneration.hp_progress >= 100 or regeneration.mp_progress < 0 or
         regeneration.mp_progress >= 100) then
         error("invalid player regeneration counters")
+    end
+
+    if potion_resistance and
+        (potion_resistance.remaining_aut < 1 or
+            potion_resistance.remaining_aut > 2147483647) then
+        error("invalid potion resistance duration")
+    end
+
+    if potion_brilliance and
+        (potion_brilliance.remaining_aut < 1 or
+            potion_brilliance.remaining_aut > 800) then
+        error("invalid potion brilliance duration")
+    end
+
+    if potion_ambrosia and
+        (potion_ambrosia.remaining_aut < 1 or
+            potion_ambrosia.remaining_aut > 2147483647) then
+        error("invalid potion ambrosia duration")
+    end
+
+    if potion_attraction and
+        (potion_attraction.remaining_aut < 1 or
+            potion_attraction.remaining_aut > 2147483647) then
+        error("invalid potion attraction duration")
+    end
+
+    if potion_invisibility and
+        (potion_invisibility.remaining_aut < 1 or
+            potion_invisibility.remaining_aut > 1000) then
+        error("invalid potion invisibility duration")
     end
 
     if drain and (drain.amount < 1 or drain.amount > 32767) then

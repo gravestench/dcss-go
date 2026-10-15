@@ -10,6 +10,7 @@ local flags = {
     STASIS = "M_STASIS",
     STATIONARY = "M_STATIONARY",
     INVISIBLE = "M_INVIS",
+    SEE_INVISIBLE = "M_SEE_INVIS",
     BATTY = "M_BATTY",
     COLD_BLOOD = "M_COLD_BLOOD",
     WARM_BLOOD = "M_WARM_BLOOD",

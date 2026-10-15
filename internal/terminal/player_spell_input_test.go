@@ -36,25 +36,25 @@ func TestSpellConfirmationShowsPromptAndCancelSpendsNoTime(t *testing.T) {
 	m := conjurerModel(t)
 	before := m.game.View().CurrentAut
 
-	m.pendingSpell = game.Command{
+	m.pendingAction = game.Command{
 		Kind:    game.CommandForceCast,
 		SpellID: "SPELL_VIOLENT_UNRAVELLING",
 		DX:      1,
 	}
 
-	m.pendingSpellPrompt = "You can't see anything there. Cast anyway?"
-	m.openScreen(ScreenSpellConfirm)
+	m.pendingActionPrompt = "You can't see anything there. Cast anyway?"
+	m.openScreen(ScreenActionConfirm)
 
 	rows := strings.Join(m.renderCanvas().PlainRows(), "\n")
 
-	if !strings.Contains(rows, m.pendingSpellPrompt) {
+	if !strings.Contains(rows, m.pendingActionPrompt) {
 		t.Fatalf("spell confirmation omitted prompt:\n%s", rows)
 	}
 
 	m.handleKey("n")
 
 	if m.screen != ScreenPlay ||
-		m.pendingSpellPrompt != "" ||
+		m.pendingActionPrompt != "" ||
 		m.game.View().CurrentAut != before {
 		t.Fatal("declining spell confirmation changed the game turn")
 	}

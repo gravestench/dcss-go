@@ -108,12 +108,12 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 	case "ability_confirm_accept":
 		return m.acceptAbilityConfirmation()
 
-	case "spell_confirm_accept":
-		return m.acceptSpellConfirmation()
+	case "action_confirm_accept":
+		return m.acceptActionConfirmation()
 
-	case "spell_confirm_cancel":
-		m.pendingSpell = game.Command{}
-		m.pendingSpellPrompt = ""
+	case "action_confirm_cancel":
+		m.pendingAction = game.Command{}
+		m.pendingActionPrompt = ""
 		m.openScreen(ScreenPlay)
 
 	}

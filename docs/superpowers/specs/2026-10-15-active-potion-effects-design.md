@@ -33,7 +33,9 @@ move to the same contract. No Go potion-ID dispatch or giant Lua switch is
 introduced.
 
 The command preflights common drink and form restrictions, then calls the
-effect's preflight rule. Rejection spends no turn and consumes no item. A
+effect's preflight rule. That rule may return a refusal or a confirmation
+prompt; the latter replays the command with its generic forced flag after
+the player accepts. Rejection spends no turn and consumes no item. A
 successful command creates the current ECS quaff intent. The item system
 calls the effect and consumes one quantity once, after successful
 resolution. An effect that is allowed but partially resisted still consumes

@@ -69,7 +69,7 @@ for its transaction or save consequence.
   `docs/ecs-architecture-roadmap.md`
 
 **Interfaces:** `potions.register(id, effect)` accepts an object with
-`can_quaff(ctx, player) -> nil|string` and
+`can_quaff(ctx, player, forced) -> refusal?, confirmation?` and
 `apply(ctx, player) -> nil|string`; `potions.get(id)` returns it;
 `potions.validate()` rejects missing active definitions, duplicate IDs,
 and malformed handlers. The command and ECS system use those methods.
@@ -77,7 +77,7 @@ Existing advancement, training, rage, mutation transition, stat loss, and
 form owners remain authoritative; potion modules call them rather than
 editing their fields through a second rule path.
 
-- [ ] **Write the failing tests.** Cover the 17-ID active roster; duplicate,
+- [x] **Write the failing tests.** Cover the 17-ID active roster; duplicate,
   malformed, and missing handlers; legal and rejected quaff transactions;
   a one-item stack; save continuation; and the five Review Focus conditions.
   Pin the source rolls: curing `5 + random2(7)`, both heal wounds and magic
@@ -88,21 +88,21 @@ editing their fields through a second rule path.
   additions and optional good addition. Test real gameplay consequences,
   a mod override, and missing-effect startup. Run the named focused tests
   and confirm RED for the missing behavior.
-- [ ] **Implement in one pass.** Replace the function-valued potion table
+- [x] **Implement in one pass.** Replace the function-valued potion table
   with the registry, add all 17 focused effect modules, then connect
   preflight and consumption to the registry. Add only the durable status,
   contamination, tree-form, and pending-choice owners that the effects need.
   Each timed effect must have at least one real gameplay consumer. Do not
   add compatibility adapters or a second Go potion dispatch.
-- [ ] **Refine together.** Run the focused Lua, game, and terminal potion
+- [x] **Refine together.** Run the focused Lua, game, and terminal potion
   tests. Fix integration failures until all pass; then inspect the source
   roster and each effect file for a missing preflight or consequence.
-- [ ] **Verify the category once.** Run `go test ./... -timeout 30m`,
+- [x] **Verify the category once.** Run `go test ./... -timeout 30m`,
   `go vet ./...`, `go build ./...`, `sh scripts/check-go-style.sh`, and
   `git diff --check`. Verify that every spec section has implementing code
   and tests. Update the three listed docs with precise remaining religion
   and item-identification integration debt.
-- [ ] **Review and commit.** Obtain one read-only whole-category review.
+- [x] **Review and commit.** Obtain one read-only whole-category review.
   Fix Important/Critical findings with failing tests, stage only this
   category, and commit once as `feat: port active potion effects to Lua`.
   Fast-forward local `main` to the tested commit, leave the continuing

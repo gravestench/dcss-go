@@ -60,12 +60,13 @@ func DrawSkills(canvas *Canvas, view game.View, focusAction bool, policy present
 	}
 
 	result := runPresentation(policy, "presentation.skills", map[string]any{
-		"species_id":     view.SpeciesID,
-		"skills":         skillInput(view),
-		"skill_training": trainingInput(view),
-		"skill_percent":  percent,
-		"focus_action":   focusAction,
-		"height":         canvas.height,
+		"species_id":         view.SpeciesID,
+		"skills":             skillInput(view),
+		"skill_training":     trainingInput(view),
+		"skill_percent":      percent,
+		"focus_action":       focusAction,
+		"pending_experience": view.PendingSkillExperience,
+		"height":             canvas.height,
 	})
 
 	drawPresentation(canvas, fullRegion(canvas), result)

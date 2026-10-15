@@ -2,8 +2,34 @@
 -- crawl-ref e60ba356. Names and capabilities remain source spell rules.
 local spells = require("ids.spells")
 local abilities = require("ids.abilities")
+local items = require("ids.items")
 local size = require("constants.size")
 local forms = {
+    -- Source: form-data.h:transformation::tree.
+    [items.POT_LIGNIFY] = {
+        id = "tree",
+        keeps_mutations = true,
+        description = "a tree",
+        base_turns = 30,
+        scale = "none",
+        max_turns = 30,
+        strength = 0,
+        dexterity = 0,
+        hp_tenths = 15,
+        ac_flat = 20,
+        ac_power = 0,
+        ac_level = 50,
+        res_fire = 0,
+        res_cold = 0,
+        unarmed_base = 12,
+        spell_penalty = 0,
+        blocks = "tree",
+        flight = "forbid",
+        swim = "forbid",
+        can_bleed = false,
+        stasis = true,
+        torment_immune = true,
+    },
     [abilities.BAT_FORM] = {
         id = "bat",
         size = size.TINY,

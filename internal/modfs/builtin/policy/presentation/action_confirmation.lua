@@ -4,7 +4,7 @@ local confirmation = {}
 
 function confirmation.run(_, input)
     if type(input.message) ~= "string" or input.message == "" then
-        error("spell confirmation requires a message")
+        error("action confirmation requires a message")
     end
 
     return {
@@ -26,7 +26,7 @@ function confirmation.run(_, input)
 end
 
 register.policy({
-    id = "presentation.spell_confirmation",
+    id = "presentation.action_confirmation",
     run = confirmation.run,
 })
 

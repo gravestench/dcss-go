@@ -56,7 +56,7 @@ var inputScreens = map[string]ScreenID{
 	"spell_memorise":  ScreenSpells,
 	"abilities":       ScreenAbilities,
 	"ability_confirm": ScreenAbilityConfirm,
-	"spell_confirm":   ScreenSpellConfirm,
+	"action_confirm":  ScreenActionConfirm,
 }
 
 var gameInputActions = map[string]bool{
@@ -85,10 +85,11 @@ var gameInputActions = map[string]bool{
 	"ability_step":           true,
 	"confirm_ability":        true,
 	"ability_confirm_accept": true,
-	"spell_confirm_accept":   true,
-	"spell_confirm_cancel":   true,
+	"action_confirm_accept":  true,
+	"action_confirm_cancel":  true,
 	"toggle_skill_focus":     true,
 	"toggle_skill_mode":      true,
+	"spend_experience_skill": true,
 }
 
 func (m *AppModel) routeInput(screen, key string, extra ...map[string]any) tea.Cmd {
@@ -152,7 +153,7 @@ func (m *AppModel) applyInputDecision(decision map[string]any) tea.Cmd {
 
 	case "aim", "door", "step", "spell_step", "ability_step",
 		"confirm_ability", "ability_confirm_accept",
-		"spell_confirm_accept", "spell_confirm_cancel":
+		"action_confirm_accept", "action_confirm_cancel":
 		return m.applyGameplayDecision(action, decision)
 
 	case "drop_quantity", "item_step":
@@ -166,7 +167,8 @@ func (m *AppModel) applyInputDecision(decision map[string]any) tea.Cmd {
 		"select_choice", "select_weapon", "return_weapon", "start_game":
 		return m.applyPregameDecision(action, decision)
 
-	case "toggle_skill_mode", "toggle_skill_focus", "change_skill":
+	case "toggle_skill_mode", "toggle_skill_focus", "change_skill",
+		"spend_experience_skill":
 		return m.applySkillDecision(action, decision)
 
 	case "mutation_page", "mutation_detail", "mutation_close_detail":
@@ -206,16 +208,15 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 	m.notice = ""
 
 	if result.Confirmation != "" {
-		if command.Kind != game.CommandCast &&
-			command.Kind != game.CommandForceCast {
-			m.notice = "Only a spell can request spell confirmation."
+		m.pendingAction = command
+		m.pendingActionPrompt = result.Confirmation
+		m.openScreen(ScreenActionConfirm)
 
-			return nil
-		}
+		return nil
+	}
 
-		m.pendingSpell = command
-		m.pendingSpellPrompt = result.Confirmation
-		m.openScreen(ScreenSpellConfirm)
+	if result.Spent == 0 && len(result.Events) > 0 {
+		m.notice = result.Events[0].Text
 
 		return nil
 	}
@@ -242,5 +243,7 @@ func (m *AppModel) afterStep(result game.StepResult) {
 		m.screen = ScreenDeath
 	} else if result.View.PendingStatLevel != 0 {
 		m.screen = ScreenStatChoice
+	} else if result.View.PendingSkillExperience > 0 {
+		m.screen = ScreenSkills
 	}
 }

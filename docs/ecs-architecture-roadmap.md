@@ -112,9 +112,11 @@ extends the game beyond the present D:1–2 slice.
    rules with their equipment, spell, and religion needs. Keep generated
    definitions committed as small Lua modules.
 3. **Item and status domain.** Playable item use, equipment policy, poison,
-   haste, might, curing, regeneration, and timed statuses use Lua systems.
-   Add more items and effects as complete Lua rule slices. Akara components
-   remain authoritative through creation, decay, removal, and saves.
+   all 17 active potions, regeneration, and timed statuses use Lua systems.
+   Each potion has a discoverable Lua effect. Lasting buffs, tree form, and
+   pending skill experience use saved Akara state consumed by live rules.
+   Add other item classes as complete Lua rule slices; item identification
+   and religious conduct still need their respective domains.
 4. **Attack intent domain.** Implemented melee, launched, thrown, and spell
    intents use Lua capability, resolution, and effect modules. The Go kernel
    has no monster-ID or brand-ID effect switch. Expand the complete effect

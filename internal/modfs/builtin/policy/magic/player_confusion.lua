@@ -1,4 +1,20 @@
 local confusion = {}
+local zap = require("policy.magic.effects.zaps.ids").component
+
+function confusion.extend(ctx, player, turns)
+    local state = ctx:get(player, zap.PLAYER_CONFUSION)
+    local added = turns * 10
+
+    if state then
+        state.remaining_aut = math.min(400,
+            state.remaining_aut + added)
+        ctx:set(player, zap.PLAYER_CONFUSION, state)
+    else
+        ctx:add(player, zap.PLAYER_CONFUSION, {
+            remaining_aut = math.min(400, added),
+        })
+    end
+end
 
 function confusion.active(ctx, player)
     local state = ctx:get(player, "zap.player_confusion")

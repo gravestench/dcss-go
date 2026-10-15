@@ -9,7 +9,14 @@ function skills.route(input)
         return navigation
     end
 
-    if input.adjustable == false then
+    if (input.pending_experience or 0) > 0 and
+        (input.key == "/" or input.key == "|" or
+            input.key == "*" or input.key == "=") then
+        return { action = "none" }
+    end
+
+    if input.adjustable == false and
+        (input.pending_experience or 0) == 0 then
         if input.key == "/" or input.key == "|" or
             input.key == "*" or input.key == "=" then
             return { action = "none" }
@@ -33,7 +40,8 @@ function skills.route(input)
     for index, id in ipairs(input.skill_ids or {}) do
         if input.key == menu.letter(index) then
             return {
-                action = "change_skill",
+                action = (input.pending_experience or 0) > 0 and
+                    "spend_experience_skill" or "change_skill",
                 id = id,
             }
         end

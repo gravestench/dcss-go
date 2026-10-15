@@ -94,7 +94,7 @@ func TestQuaffAtFullHPStillConsumesOnePotion(t *testing.T) {
 	}
 }
 
-func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
+func TestQuaffRejectsWrongCarrierAndUsesAnotherPotion(t *testing.T) {
 	g := newStepGame(t)
 	itemID := uint64(potionID(t, g))
 	before := g.Snapshot()
@@ -122,7 +122,7 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 
 		if item.KindID == "POT_MIGHT" {
 			mightID = uint64(entity)
-			item.KindID = "POT_FLIGHT" // another carried catalogued potion is still unsupported
+			item.KindID = "POT_FLIGHT"
 			break
 		}
 	}
@@ -133,15 +133,17 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 		ItemID: mightID,
 	})
 
-	if err != nil ||
-		result.Spent != 0 ||
-		!strings.Contains(strings.ToLower(result.Events[0].Text), "unavailable") {
-		t.Fatalf("unsupported quaff = %+v, %v", result, err)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	if g.currentAut != Aut(before.CurrentAut) ||
-		!reflect.DeepEqual(g.rng.States(), before.RNG) {
-		t.Fatal("unsupported quaff spent time or RNG")
+	if result.Spent != 10 ||
+		!strings.Contains(strings.ToLower(result.Events[0].Text), "buoyant") {
+		t.Fatalf("flight quaff = %+v, %v", result, err)
+	}
+
+	if g.currentAut != Aut(before.CurrentAut)+10 {
+		t.Fatal("flight quaff did not spend a turn")
 	}
 }
 

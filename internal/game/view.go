@@ -83,6 +83,7 @@ type View struct {
 	ExperienceLevel         int
 	NextLevelPercent        int
 	PendingStatLevel        int
+	PendingSkillExperience  int
 	MightAut                int
 	HasteAut                int
 	PoisonAmountScaled      int
@@ -217,6 +218,18 @@ func (g *Game) fillPlayerView(view *View) {
 		}
 
 		view.VampireRitualRemaining = int(remaining.(int64))
+	}
+
+	if store := g.scripts.Components()["character.potion_experience"]; store != nil {
+		if state, ok := store.Get(g.player); ok {
+			pending, err := state.Get("pending_skill_xp")
+
+			if err != nil {
+				panic(err)
+			}
+
+			view.PendingSkillExperience = int(pending.(int64))
+		}
 	}
 
 	if skills, ok := g.stores.Skills.Get(g.player); ok {

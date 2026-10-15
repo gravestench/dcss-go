@@ -13,6 +13,7 @@ local targets = require("policy.ai.targets")
 local statuses = require("policy.magic.effects.statuses.player")
 local allies = require("policy.character.allies")
 local awareness = require("policy.ai.awareness")
+local invisibility = require("policy.potions.invisibility")
 
 local function choose_actor_target(ctx, entity, state, position)
     local target = targets.nearest(ctx, entity, position, 7)
@@ -70,7 +71,8 @@ local function choose_intent(ctx, entity, state)
     end
 
     local player_visible = not enchant.blinded(ctx, entity) and
-        not statuses.enfeeble_blinded(ctx, entity) and ctx:visible(
+        not statuses.enfeeble_blinded(ctx, entity) and
+        invisibility.visible_to(ctx, player_entity, entity) and ctx:visible(
         position.level_id,
         position.x,
         position.y,

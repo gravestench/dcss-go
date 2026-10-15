@@ -31,8 +31,16 @@ local function ensure_setting(skills, training, id)
     local setting = weights.setting(training, id)
 
     if not setting then
-        skills[#skills + 1] = { id = id, level = 0, points = 0 }
-        setting = { id = id, enabled = not training.manual, focused = false }
+        skills[#skills + 1] = {
+            id = id,
+            level = 0,
+            points = 0,
+        }
+        setting = {
+            id = id,
+            enabled = not training.manual,
+            focused = false,
+        }
         training.settings[#training.settings + 1] = setting
     end
 
@@ -91,8 +99,11 @@ local function trainable(ctx, actor, skill, training)
         not availability.forbidden_skill(ctx, actor, skill.id)
 end
 
-local function train_chunk(ctx, actor, skill, training, species, budget)
-    if not trainable(ctx, actor, skill, training) then
+local function train_chunk(ctx, actor, skill, training, species, budget,
+    forced)
+    if (not forced and not trainable(ctx, actor, skill, training)) or
+        skill.level >= 27 or
+        availability.forbidden_skill(ctx, actor, skill.id) then
         return 0
     end
 
@@ -231,42 +242,8 @@ local function spend_batch(ctx, actor, skills, training, species)
     return batch_xp - remaining
 end
 
-function training_rules.update(ctx, actor)
-    local skills_component = ctx:get(actor, component.SKILLS)
-    local training = ctx:get(actor, component.SKILL_TRAINING)
-
-    if not skills_component or not training then
-        error("player lacks skill training state")
-    end
-
-    local player = ctx:get(actor, component.PLAYER)
-
-    if not player then
-        error("player has no selected species")
-    end
-
-    local species = catalog.get("species", player.species_id)
-    local skills = skills_component.entries
-
-    for _, id in ipairs(ctx:signals("practice")) do
-        training_rules.record_practice(ctx, actor, skills, training,
-            species, id)
-    end
-
-    local fighting_before = find_skill(skills, "SK_FIGHTING")
-    local points_before = fighting_before and fighting_before.points or 0
-
-    if distributed.active(ctx, actor) then
-        while distributed.spend(ctx, actor, skills, training, species) > 0 do
-        end
-    else
-        while spend_batch(ctx, actor, skills, training, species) > 0 do
-        end
-    end
-
-    skills_component.entries = skills
-    ctx:set(actor, component.SKILLS, skills_component)
-    ctx:set(actor, component.SKILL_TRAINING, training)
+local function refresh_resources(ctx, actor, species, skills,
+    points_before)
     local fighting_after = find_skill(skills, "SK_FIGHTING")
 
     if fighting_after and fighting_after.points ~= points_before then
@@ -305,6 +282,90 @@ function training_rules.update(ctx, actor)
         magic.current = math.min(magic.current, maximum)
         ctx:set(actor, component.MAGIC, magic)
     end
+end
+
+function training_rules.spend_experience(ctx, actor, id, budget)
+    local identity = ctx:get(actor, component.PLAYER)
+    local skills_component = ctx:get(actor, component.SKILLS)
+    local training = ctx:get(actor, component.SKILL_TRAINING)
+
+    if not identity or not skills_component or not training then
+        error("player lacks skill training state")
+    end
+
+    local species = catalog.get("species", identity.species_id)
+    local aptitude = species.aptitudes[id]
+
+    if not aptitude or not aptitude.allowed or
+        availability.forbidden_skill(ctx, actor, id) then
+        return 0
+    end
+
+    local skills = skills_component.entries
+    local fighting = find_skill(skills, "SK_FIGHTING")
+    local points_before = fighting and fighting.points or 0
+
+    ensure_setting(skills, training, id)
+
+    local skill = find_skill(skills, id)
+    local available_before = training.available_xp
+    local amount = math.min(2650, budget)
+
+    training.available_xp = training.available_xp + amount
+
+    local spent = train_chunk(ctx, actor, skill, training, species,
+        amount, true)
+
+    training.available_xp = available_before
+
+    if spent == 0 then
+        return 0
+    end
+
+    ctx:set(actor, component.SKILLS, skills_component)
+    ctx:set(actor, component.SKILL_TRAINING, training)
+    refresh_resources(ctx, actor, species, skills, points_before)
+
+    return spent
+end
+
+function training_rules.update(ctx, actor)
+    local skills_component = ctx:get(actor, component.SKILLS)
+    local training = ctx:get(actor, component.SKILL_TRAINING)
+
+    if not skills_component or not training then
+        error("player lacks skill training state")
+    end
+
+    local player = ctx:get(actor, component.PLAYER)
+
+    if not player then
+        error("player has no selected species")
+    end
+
+    local species = catalog.get("species", player.species_id)
+    local skills = skills_component.entries
+
+    for _, id in ipairs(ctx:signals("practice")) do
+        training_rules.record_practice(ctx, actor, skills, training,
+            species, id)
+    end
+
+    local fighting_before = find_skill(skills, "SK_FIGHTING")
+    local points_before = fighting_before and fighting_before.points or 0
+
+    if distributed.active(ctx, actor) then
+        while distributed.spend(ctx, actor, skills, training, species) > 0 do
+        end
+    else
+        while spend_batch(ctx, actor, skills, training, species) > 0 do
+        end
+    end
+
+    skills_component.entries = skills
+    ctx:set(actor, component.SKILLS, skills_component)
+    ctx:set(actor, component.SKILL_TRAINING, training)
+    refresh_resources(ctx, actor, species, skills, points_before)
 end
 
 function training_rules.training_mode(ctx, input)

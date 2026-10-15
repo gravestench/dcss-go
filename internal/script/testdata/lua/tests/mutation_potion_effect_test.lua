@@ -109,7 +109,7 @@ function test.run(ctx)
         return value
     end
 
-    potions[item_ids.POT_MUTATION](potion_ctx, mutable)
+    potions.get(item_ids.POT_MUTATION).apply(potion_ctx, mutable)
 
     harness.equal(next_potion_draw, 3,
         "mutation potion draws both counts and the good-mutation coinflip")
@@ -191,7 +191,7 @@ function test.run(ctx)
 
     local before = ctx:get(reduced, "core.health").current
 
-    potions.POT_CURING(ctx, reduced)
+    potions.get(item_ids.POT_CURING).apply(ctx, reduced)
 
     harness.equal(ctx:get(reduced, "core.health").current, before,
         "curing does not heal through No Potion Heal level two")

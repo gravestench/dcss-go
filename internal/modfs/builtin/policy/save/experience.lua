@@ -1,12 +1,14 @@
 local catalog = require("policy.catalog")
 local death = require("policy.death")
 local roster = require("policy.population.roster")
+local component = require("constants.component")
 
 local module = {}
 
 function module.run(ctx, input)
     local player = ctx:player()
     local progress = ctx:get(player, "core.progression")
+    local potion = ctx:get(player, component.POTION_EXPERIENCE)
     local allowed = roster.allowed(input.scenario_id)
     local uses_population = input.scenario_id == "fixed-dungeon-population-v1" or
         input.scenario_id == "generated-dungeon-basic-v1"
@@ -42,7 +44,10 @@ function module.run(ctx, input)
         maximum = maximum * (input.initial_count - live_count)
     end
 
-    if progress.total_xp > maximum then
+    local level_adjustment = potion and potion.untrained_level_xp or 0
+
+    if level_adjustment < 0 or level_adjustment > progress.total_xp or
+        progress.total_xp - level_adjustment > maximum then
         error("saved experience exceeds possible Dungeon kills")
     end
 

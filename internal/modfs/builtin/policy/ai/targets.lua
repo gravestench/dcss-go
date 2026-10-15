@@ -1,6 +1,7 @@
 -- Actor allegiance is game policy. Decisions and attacks share this rule.
 local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
 local component = require("constants.component")
+local invisibility = require("policy.potions.invisibility")
 
 local targets = {}
 
@@ -37,7 +38,9 @@ function targets.nearest(ctx, attacker, origin, sight)
     for _, entity in ipairs(ctx:query({
         "core.actor", "core.position", "core.health",
     })) do
-        if targets.enemy(ctx, attacker, entity) then
+        if targets.enemy(ctx, attacker, entity) and
+            (entity ~= ctx:player() or
+                invisibility.visible_to(ctx, entity, attacker)) then
             local position = ctx:get(entity, "core.position")
             local health = ctx:get(entity, "core.health")
             local distance = math.max(math.abs(position.x - origin.x),

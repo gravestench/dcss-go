@@ -111,26 +111,5 @@ func (m *AppModel) applyItemStep(decision map[string]any) tea.Cmd {
 	m.openScreen(ScreenPlay)
 	m.dropQuantity = ""
 
-	result, err := m.game.Step(command)
-
-	if err != nil {
-		m.notice = fmt.Sprintf("Item action failed: %v", err)
-
-		return nil
-	}
-
-	if result.Spent == 0 && len(result.Events) > 0 {
-		m.notice = result.Events[0].Text
-
-		return nil
-	}
-
-	m.notice = ""
-	m.afterStep(result)
-
-	if result.View.EquipmentDelay != nil && m.screen == ScreenPlay {
-		return m.nextEquipmentTick()
-	}
-
-	return nil
+	return m.stepPlayCommand(command)
 }

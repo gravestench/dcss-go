@@ -22,6 +22,10 @@ local schema = {
             type = "int64",
             default = 0,
         },
+        uncancellable = {
+            type = "bool",
+            default = false,
+        },
     },
 }
 

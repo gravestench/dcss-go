@@ -76,33 +76,3 @@ func DrawSpells(
 
 	drawPresentation(canvas, fullRegion(canvas), result)
 }
-
-func (m *AppModel) acceptSpellConfirmation() tea.Cmd {
-	if m.pendingSpellPrompt == "" {
-		m.notice = "No spell is awaiting confirmation."
-
-		return nil
-	}
-
-	command := m.pendingSpell
-
-	command.Forced = true
-	m.pendingSpell = game.Command{}
-	m.pendingSpellPrompt = ""
-	m.openScreen(ScreenPlay)
-
-	return m.stepPlayCommand(command)
-}
-
-func DrawSpellConfirmation(
-	canvas *Canvas,
-	policy presentationPolicy,
-	message string,
-) {
-	result := runPresentation(policy,
-		"presentation.spell_confirmation", map[string]any{
-			"message": message,
-		})
-
-	drawPresentation(canvas, fullRegion(canvas), result)
-}

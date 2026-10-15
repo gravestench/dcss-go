@@ -1,7 +1,18 @@
 local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
+local brilliance = require("policy.potions.brilliance")
 
 local resources = {}
+
+-- Source: spl-util.cc:spell_mana. Only ordinary spell casts use this
+-- reduction; evocations and other spell-like sources keep their own costs.
+function resources.spell_cost(ctx, player, level)
+    if brilliance.active(ctx, player) then
+        return math.floor((level + 1) / 2)
+    end
+
+    return level
+end
 
 local function state(ctx, player)
     local health = ctx:get(player, "core.health")

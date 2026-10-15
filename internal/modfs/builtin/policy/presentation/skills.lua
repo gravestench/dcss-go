@@ -95,7 +95,15 @@ function skills_policy.rows(ctx, input)
         end
     end
 
-    if distributed.active(ctx, player) then
+    if (input.pending_experience or 0) > 0 then
+        write(writes, 0, input.height - 4,
+            "Choose skills for potion experience. Esc - Return",
+            colors.brown)
+        write(writes, 0, input.height - 3,
+            tostring(input.pending_experience) ..
+                " skill experience remains | Letters: train skill",
+            colors.brown)
+    elseif distributed.active(ctx, player) then
         write(writes, 0, input.height - 4,
             "! - view    ? - help    Esc - Return", colors.brown)
         write(writes, 0, input.height - 3,

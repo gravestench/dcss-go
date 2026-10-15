@@ -77,13 +77,15 @@ function rage.can_begin(ctx, player)
     local species = catalog.get("species", choice.species_id)
     local status = ctx:get(player, component.PLAYER_STATUS)
 
-    return not traits.stasis(species) and
+    local forms = require("policy.magic.effects.forms.player")
+
+    return not traits.stasis(species) and not forms.stasis(ctx, player) and
         species.undead_type ~= undead_states.UNDEAD and
         not (status and status.death_door_aut > 0) and
         effects.sum(ctx, player, capabilities.CLARITY) == 0
 end
 
-function rage.begin(ctx, player)
+function rage.begin(ctx, player, stream)
     if not rage.can_begin(ctx, player) then
         return false
     end
@@ -95,8 +97,10 @@ function rage.begin(ctx, player)
         error("rage requires live player health and regeneration")
     end
 
-    local average = math.floor((ctx:random("mutation", 19) +
-        ctx:random("mutation", 20)) / 2)
+    stream = stream or "mutation"
+
+    local average = math.floor((ctx:random(stream, 19) +
+        ctx:random(stream, 20)) / 2)
     local turns = math.floor((20 + average) / 2)
     local value = {
         remaining_aut = turns * 10,

@@ -15,6 +15,7 @@ local icy_defense = require("policy.character.icy_defense")
 local cold_blooded = require("policy.character.cold_blooded")
 local monster_health = require("policy.combat.monster_health")
 local component = require("constants.component")
+local potion_resistance = require("policy.potions.resistance")
 
 local damage = {}
 
@@ -147,6 +148,14 @@ function damage.player_resistance(ctx, player, resistance_id)
     end
 
     local value = mutation_effects.sum(ctx, player, capability)
+
+    if potion_resistance.active(ctx, player) and
+        (resistance_id == resistances.FIRE or
+            resistance_id == resistances.COLD or
+            resistance_id == resistances.ELECTRICITY or
+            resistance_id == resistances.ACID) then
+        value = value + 1
+    end
 
     local form = forms.modifiers(ctx, player)
 

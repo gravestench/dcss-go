@@ -224,6 +224,17 @@ Lua files. A behavioral mutation also needs a focused file under
 effect policy. Make a new definition selectable only after its full
 consequence path is implemented and tested. Startup validates that each
 active definition has registered behavior.
+
+For a potion, add an item definition under `content/items/` with class
+`OBJ_POTIONS` and a focused effect under `policy/potions/effects/`. The
+effect imports its ID from `ids.items`, builds a local object with named
+`can_quaff(ctx, player, forced)` and `apply(ctx, player)` methods, calls
+`potions.register(id, effect)`, and returns that object. The command and
+item system call the registered methods. `can_quaff` may return a refusal
+string or a second confirmation string; accepting the prompt replays the
+command with `forced = true`. Startup refuses an active potion
+definition without an effect. A sparse overlay can replace one base effect
+file at the same relative path or add a new potion and its effect files.
 Several effect files may register distinct capabilities for the same
 mutation. A duplicate mutation/capability pair fails at startup. This lets
 one mod split a mutation's combat, spell, and turn effects into readable

@@ -47,7 +47,7 @@ const (
 	ScreenSpells
 	ScreenAbilities
 	ScreenAbilityConfirm
-	ScreenSpellConfirm
+	ScreenActionConfirm
 	ScreenEvokeWand
 )
 
@@ -100,23 +100,23 @@ type AppModel struct {
 	mutationSelected string
 	mutationOptions  map[string]string
 
-	notice             string
-	confirm            confirmation
-	dropQuantity       string
-	pendingDoor        game.CommandKind
-	equipmentTickID    uint64
-	spellTickID        uint64
-	vampireTickID      uint64
-	aimKind            game.CommandKind
-	aimItemID          uint64
-	aimSpellID         string
-	aimAbilityID       string
-	pendingAbilityID   string
-	pendingSpell       game.Command
-	pendingSpellPrompt string
-	aimX               int
-	aimY               int
-	spellMode          string
+	notice              string
+	confirm             confirmation
+	dropQuantity        string
+	pendingDoor         game.CommandKind
+	equipmentTickID     uint64
+	spellTickID         uint64
+	vampireTickID       uint64
+	aimKind             game.CommandKind
+	aimItemID           uint64
+	aimSpellID          string
+	aimAbilityID        string
+	pendingAbilityID    string
+	pendingAction       game.Command
+	pendingActionPrompt string
+	aimX                int
+	aimY                int
+	spellMode           string
 }
 
 func NewAppModel(seed uint64, savePath string) (*AppModel, error) {
@@ -313,8 +313,8 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenAbilityConfirm:
 		return m.routeInput("ability_confirm", key)
 
-	case ScreenSpellConfirm:
-		return m.routeInput("spell_confirm", key)
+	case ScreenActionConfirm:
+		return m.routeInput("action_confirm", key)
 
 	case ScreenConfirm:
 		return m.routeConfirmationInput(key)
@@ -367,7 +367,7 @@ func (m *AppModel) renderCanvas() *Canvas {
 
 	case ScreenInventory, ScreenSkills, ScreenMutations, ScreenQuaff, ScreenEvokeWand, ScreenDrop,
 		ScreenWield, ScreenWear, ScreenTakeOff, ScreenThrow, ScreenSpells,
-		ScreenAbilities, ScreenAbilityConfirm, ScreenSpellConfirm:
+		ScreenAbilities, ScreenAbilityConfirm, ScreenActionConfirm:
 		m.drawGameMenu(canvas)
 
 	case ScreenHelp:
@@ -436,9 +436,9 @@ func (m *AppModel) drawGameMenu(canvas *Canvas) {
 		case ScreenAbilityConfirm:
 			DrawAbilityConfirmation(canvas, m.presentationPolicy, m.pendingAbilityID)
 
-		case ScreenSpellConfirm:
-			DrawSpellConfirmation(canvas, m.presentationPolicy,
-				m.pendingSpellPrompt)
+		case ScreenActionConfirm:
+			DrawActionConfirmation(canvas, m.presentationPolicy,
+				m.pendingActionPrompt)
 		}
 	}
 
@@ -544,6 +544,8 @@ func (m *AppModel) loadSavedRun() {
 
 	if restored.View().PendingStatLevel != 0 {
 		m.screen = ScreenStatChoice
+	} else if restored.View().PendingSkillExperience > 0 {
+		m.screen = ScreenSkills
 	}
 
 	m.notice = ""

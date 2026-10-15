@@ -109,7 +109,9 @@ function teleportitis.tick(ctx, player, aut)
     local choice = ctx:get(player, component.PLAYER)
     local species = catalog.get("species", choice.species_id)
 
-    if traits.stasis(species) or
+    local forms = require("policy.magic.effects.forms.player")
+
+    if traits.stasis(species) or forms.stasis(ctx, player) or
         ctx:random("mutation", 100) >= math.min(100, aut) or
         ctx:random("mutation", math.floor(100 / level)) ~= 0 then
         return
