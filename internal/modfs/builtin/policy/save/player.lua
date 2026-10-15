@@ -13,6 +13,7 @@ local gods = require("constants.gods")
 local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
 local vampire = require("policy.character.vampire")
+local identification = require("policy.items.identification")
 
 local function valid_stat_gains(deltas, manual_choices, manual_amount,
     species_gains, allowed_stats)
@@ -216,6 +217,7 @@ local function validate(ctx)
 
     evolution.validate(ctx, entity)
     spell_records.validate(ctx, entity)
+    identification.validate(ctx, entity)
 end
 
 local module = {}

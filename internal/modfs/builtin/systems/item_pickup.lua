@@ -1,4 +1,5 @@
 local items = require("policy.inventory.items")
+local identification = require("policy.items.identification")
 
 local system = {}
 
@@ -18,8 +19,8 @@ function system.update(ctx, actor)
     for _, entity in ipairs(items.at(ctx, position)) do
         if not ctx:has(entity, "core.corpse") then
             local item = ctx:get(entity, "core.item")
-            local kind = items.kind(item)
-            local stack = items.carried_stack(ctx, actor, item)
+            local name = identification.name(ctx, ctx:player(), entity)
+            local stack = items.carried_stack(ctx, actor, entity)
 
             if stack then
                 local carried = ctx:get(stack, "core.item")
@@ -31,7 +32,7 @@ function system.update(ctx, actor)
                 ctx:add(entity, "core.carried_by", { holder = actor })
             end
 
-            ctx:emit("pickup", "You pick up " .. items.phrase(kind.name, item.quantity) .. ".")
+            ctx:emit("pickup", "You pick up " .. items.phrase(name, item.quantity) .. ".")
 
             return
         end

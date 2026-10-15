@@ -4,6 +4,7 @@ local formulas = require("policy.character.formulas")
 local experience_limit = require("policy.character.experience_limit")
 local fighter = require("policy.combat.fighter")
 local colors = require("policy.presentation.colors")
+local identification = require("policy.items.identification")
 
 local view = {}
 
@@ -27,7 +28,7 @@ function view.player(ctx, input)
     }
 end
 
-function view.entity(input)
+function view.entity(ctx, input)
     local role = input.role
     local kind_id = input.kind_id or ""
     local name = ""
@@ -46,7 +47,8 @@ function view.entity(input)
         glyph = string.byte("{")
     elseif role == "item" then
         local item = catalog.get("items", kind_id)
-        name = item.name
+        local entity = ctx:entity(input.item_entity_id)
+        name = identification.name(ctx, ctx:player(), entity)
         glyph = item.glyph
 
         if input.corpse_monster_id and input.corpse_monster_id ~= "" then
@@ -58,17 +60,15 @@ function view.entity(input)
     return { kind_id = kind_id, role = role, name = name, glyph = glyph }
 end
 
-function view.inventory_item(input)
+function view.inventory_item(ctx, input)
     local item = catalog.get("items", input.kind_id)
+    local entity = ctx:entity(input.item_entity_id)
 
     return {
         kind_id = input.kind_id,
-        name = item.name,
+        name = identification.name(ctx, ctx:player(), entity),
         class = item.class,
         quantity = input.quantity,
-        plus = input.plus,
-        charges = input.charges,
-        ego = input.ego,
         slot = input.slot or "",
     }
 end
@@ -120,12 +120,12 @@ function view.run_player(ctx, input)
     return view.player(ctx, input)
 end
 
-function view.run_entity(_, input)
-    return view.entity(input)
+function view.run_entity(ctx, input)
+    return view.entity(ctx, input)
 end
 
-function view.run_inventory_item(_, input)
-    return view.inventory_item(input)
+function view.run_inventory_item(ctx, input)
+    return view.inventory_item(ctx, input)
 end
 
 function view.run_terrain_color(_, input)

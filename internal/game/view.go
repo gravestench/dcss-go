@@ -38,9 +38,6 @@ type ItemView struct {
 	Class  string
 
 	Quantity int
-	Plus     int
-	Charges  int
-	Ego      string
 	Slot     string
 }
 
@@ -369,6 +366,10 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 		input["role"] = role
 		input["kind_id"] = kindID
 
+		if role == "item" {
+			input["item_entity_id"] = uint64(entity)
+		}
+
 		presentation := g.mustPresentationPolicy("presentation.entity", input)
 
 		entityID := uint64(entity)
@@ -410,12 +411,10 @@ func (g *Game) fillInventoryView(view *View) {
 		}
 
 		presentation := g.mustPresentationPolicy("presentation.inventory_item", map[string]any{
-			"kind_id":  item.KindID,
-			"quantity": item.Quantity,
-			"plus":     item.Plus,
-			"charges":  item.Charges,
-			"ego":      item.Ego,
-			"slot":     slot,
+			"item_entity_id": uint64(entity),
+			"kind_id":        item.KindID,
+			"quantity":       item.Quantity,
+			"slot":           slot,
 		})
 
 		view.Inventory = append(view.Inventory, ItemView{
@@ -424,9 +423,6 @@ func (g *Game) fillInventoryView(view *View) {
 			Name:     presentation["name"].(string),
 			Class:    presentation["class"].(string),
 			Quantity: item.Quantity,
-			Plus:     item.Plus,
-			Charges:  item.Charges,
-			Ego:      item.Ego,
 			Slot:     slot,
 		})
 	}

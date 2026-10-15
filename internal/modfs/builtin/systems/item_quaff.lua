@@ -1,4 +1,5 @@
 local potions = require("policy.potions")
+local identification = require("policy.items.identification")
 
 local system = {}
 
@@ -30,6 +31,7 @@ function system.update(ctx, actor)
     end
 
     local message = effect.apply(ctx, player)
+    identification.reveal_type(ctx, player, intent.item_id)
 
     if item.quantity == 1 then
         ctx:destroy(intent.item_id)

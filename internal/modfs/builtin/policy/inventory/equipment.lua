@@ -1,4 +1,5 @@
 local items = require("policy.inventory.items")
+local identification = require("policy.items.identification")
 local catalog = require("policy.catalog")
 local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
@@ -327,7 +328,9 @@ function equipment.prepare_armour(ctx, actor, item_id, taking_off)
 end
 
 local function finish_message(ctx, entity, format)
-    return string.format(format, items.kind(ctx:get(entity, "core.item")).name)
+    local name = identification.name(ctx, ctx:player(), entity)
+
+    return string.format(format, name)
 end
 
 -- The command bridge calls this after the initial wear or removal turn.

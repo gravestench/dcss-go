@@ -1,4 +1,5 @@
 local items = require("policy.inventory.items")
+local identification = require("policy.items.identification")
 
 local system = {}
 
@@ -24,7 +25,7 @@ function system.update(ctx, actor)
         error("drop actor " .. ctx:id(actor) .. " has no position")
     end
 
-    local kind = items.kind(item)
+    local name = identification.name(ctx, ctx:player(), entity)
     local floor = items.floor_stack(ctx, position, item, entity)
 
     if floor then
@@ -53,12 +54,13 @@ function system.update(ctx, actor)
         }
 
         ctx:add(dropped, "core.item", copy)
+        identification.copy(ctx, entity, dropped)
         ctx:add(dropped, "core.position", position)
         item.quantity = item.quantity - intent.quantity
         ctx:set(entity, "core.item", item)
     end
 
-    ctx:emit("drop", "You drop " .. items.phrase(kind.name, intent.quantity) .. ".")
+    ctx:emit("drop", "You drop " .. items.phrase(name, intent.quantity) .. ".")
 end
 
 register.system({

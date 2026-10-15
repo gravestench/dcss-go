@@ -14,6 +14,7 @@ local component = require("constants.component")
 local vampire = require("policy.character.vampire")
 local gods = require("constants.gods")
 local weapon_choices = require("constants.weapon_choices")
+local identification = require("policy.items.identification")
 
 local start = {}
 
@@ -118,6 +119,7 @@ function start.run_start(ctx, input)
     validate_weapon(species, job, input.weapon_id)
     mutation_records.grant_starting(ctx, player, species)
     vampire.start(ctx, player)
+    identification.initialize(ctx, player)
     local generated = job.id == "JOB_WANDERER" and
         wanderer.generate(ctx, species) or nil
     local weapon_skill = gear.give(ctx, player, species, job,

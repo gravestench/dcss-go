@@ -49,10 +49,6 @@ local function inventory_rows(writes, inventory, height)
                     label = item.quantity .. " " .. label
                 end
 
-                if item.plus ~= 0 then
-                    label = string.format("%+d %s", item.plus, label)
-                end
-
                 if item.slot ~= "" then
                     label = label .. " (" .. item.slot .. ")"
                 end
@@ -148,10 +144,6 @@ function modals.rows(input)
 
                 if item.quantity > 1 then
                     label = item.quantity .. " " .. label
-                end
-
-                if choosing_wand then
-                    label = label .. " (" .. item.charges .. " charges)"
                 end
 
                 write(writes, 1, y, letter(index - 1) .. " - " .. label, colors.light_grey)

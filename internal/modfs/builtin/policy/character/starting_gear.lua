@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local items = require("policy.inventory.items")
+local identification = require("policy.items.identification")
 local equipment = require("policy.inventory.equipment")
 local traits = require("policy.character.traits")
 local mutation_levels = require("policy.mutations.levels")
@@ -118,6 +119,17 @@ local function add_grant(ctx, player, species, grant, occupied)
     local entity = ctx:create()
     ctx:add(entity, "core.item", item)
     ctx:add(entity, "core.carried_by", { holder = player })
+    identification.reveal_type(ctx, player, entity)
+
+    if kind.class == classes.OBJ_WEAPONS or
+        kind.class == classes.OBJ_ARMOUR or
+        kind.class == classes.OBJ_JEWELLERY or
+        kind.class == classes.OBJ_STAVES then
+        identification.reveal_item(ctx, entity, {
+            pluses = true,
+            properties = true,
+        })
+    end
 
     local hand_conflict = kind.slot == "shield" and occupied.weapon and
         equipment.needs_second_hand(ctx, player, occupied.weapon, species) or

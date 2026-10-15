@@ -40,7 +40,7 @@ end
 local function weapon_label(inventory)
     for index, item in ipairs(inventory) do
         if item.slot == "weapon" then
-            return string.format("%s) %+d %s", letter(index - 1), item.plus, item.name)
+            return string.format("%s) %s", letter(index - 1), item.name)
         end
     end
 

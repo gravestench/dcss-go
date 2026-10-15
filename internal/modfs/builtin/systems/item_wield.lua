@@ -1,5 +1,6 @@
 local items = require("policy.inventory.items")
 local equipment = require("policy.inventory.equipment")
+local identification = require("policy.items.identification")
 
 local system = {}
 
@@ -32,7 +33,8 @@ function system.update(ctx, actor)
             error("wield actor " .. ctx:id(actor) .. " has invalid item " .. item_id)
         end
 
-        message = "You are now wielding " .. items.phrase(items.kind(item).name, 1) .. "."
+        local name = identification.name(ctx, actor, entity)
+        message = "You are now wielding " .. items.phrase(name, 1) .. "."
     end
 
     if current then

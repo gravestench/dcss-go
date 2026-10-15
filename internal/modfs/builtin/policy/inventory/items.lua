@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local armour_egos = require("constants.armour_egos")
+local identification = require("policy.items.identification")
 
 local items = {}
 local supported_armour_egos = {
@@ -167,7 +168,9 @@ function items.at(ctx, position)
     return found
 end
 
-function items.carried_stack(ctx, actor, item)
+function items.carried_stack(ctx, actor, source)
+    local item = ctx:get(source, "core.item")
+
     if not items.kind(item).stackable then
         return nil
     end
@@ -175,7 +178,9 @@ function items.carried_stack(ctx, actor, item)
     for _, entity in ipairs(ctx:query({ "core.carried_by", "core.item" })) do
         local carrier = ctx:get(entity, "core.carried_by")
 
-        if carrier.holder == actor and items.matches(ctx:get(entity, "core.item"), item) then
+        if carrier.holder == actor and
+            items.matches(ctx:get(entity, "core.item"), item) and
+            identification.compatible(ctx, entity, source) then
             return entity
         end
     end
@@ -190,7 +195,9 @@ function items.floor_stack(ctx, position, item, exclude)
 
     for _, entity in ipairs(items.at(ctx, position)) do
         if entity ~= exclude and not ctx:has(entity, "core.corpse") and
-            items.matches(ctx:get(entity, "core.item"), item) then
+            items.matches(ctx:get(entity, "core.item"), item) and
+            (not exclude or
+                identification.compatible(ctx, entity, exclude)) then
             return entity
         end
     end

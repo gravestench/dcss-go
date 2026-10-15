@@ -24,6 +24,20 @@ func potionLetter(t *testing.T, m *AppModel, kind string) string {
 	return ""
 }
 
+func potionDisplayName(t *testing.T, m *AppModel, kind string) string {
+	t.Helper()
+
+	for _, item := range m.game.View().Inventory {
+		if item.KindID == kind {
+			return item.Name
+		}
+	}
+
+	t.Fatalf("no carried %s", kind)
+
+	return ""
+}
+
 func TestQuaffChoiceCancelAndStartingMight(t *testing.T) {
 	m := playingModel(t)
 	aut := m.game.View().CurrentAut
@@ -230,11 +244,13 @@ func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 
 	aut := m.game.View().CurrentAut
 	letter := potionLetter(t, m, "POT_CURING")
+	visibleName := potionDisplayName(t, m, "POT_CURING")
 	m.handleKey("q")
 
 	if m.screen != ScreenQuaff ||
-		!strings.Contains(plainApp(m), "potion of curing") {
-		t.Fatalf("curing absent from quaff list: %s", plainApp(m))
+		strings.Contains(visibleName, "curing") ||
+		!strings.Contains(plainApp(m), letter+" - "+visibleName) {
+		t.Fatalf("unknown curing potion is displayed incorrectly: %s", plainApp(m))
 	}
 
 	m.handleKey(letter)
@@ -279,11 +295,14 @@ func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 	m.game = restored
 
 	before := m.game.View().CurrentAut
+	visibleName := potionDisplayName(t, m, "POT_HEAL_WOUNDS")
 	m.handleKey("q")
 
 	if m.screen != ScreenQuaff ||
-		!strings.Contains(plainApp(m), "potion of heal wounds") {
-		t.Fatalf("heal wounds missing from quaff menu: %s", plainApp(m))
+		strings.Contains(visibleName, "heal wounds") ||
+		!strings.Contains(plainApp(m),
+			potionLetter(t, m, "POT_HEAL_WOUNDS")+" - "+visibleName) {
+		t.Fatalf("unknown heal wounds potion is displayed incorrectly: %s", plainApp(m))
 	}
 
 	m.handleKey(potionLetter(t, m, "POT_HEAL_WOUNDS"))

@@ -8,6 +8,7 @@ local power = require("policy.magic.power")
 local range = require("policy.magic.range")
 local resources = require("policy.magic.resources")
 local skill_ids = require("ids.skills")
+local identification = require("policy.items.identification")
 
 local wands = {}
 
@@ -143,6 +144,8 @@ function wands.resolve(ctx, player, chosen, aut)
 
         return outcome
     end
+
+    identification.reveal_type(ctx, player, entity)
 
     item.charges = item.charges - 1
 
