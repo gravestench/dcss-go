@@ -4,6 +4,7 @@ local items = require("policy.inventory.items")
 local net = require("policy.combat.net")
 local player_attack = require("policy.combat.player_attack")
 local effects = require("policy.combat.projectile_effects")
+local launcher_brands = require("policy.combat.launcher_brands")
 local practice = require("policy.combat.practice")
 local roll = require("policy.combat.roll")
 local trajectory = require("policy.combat.trajectory")
@@ -160,7 +161,7 @@ local function resolve_target(ctx, player, missile, launcher, item, target)
             local brand_damage = 0
 
             if launcher then
-                brand_damage, effect_message = effects.launcher(ctx,
+                brand_damage, effect_message = launcher_brands.apply(ctx,
                     item.ego, missile, defender, outcome.damage)
             end
 

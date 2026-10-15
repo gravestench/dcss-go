@@ -1,13 +1,14 @@
 local common = require("policy.ai.common")
 local equipment = require("policy.ai.equipment")
 local projectiles = require("policy.combat.monster_projectiles")
+local ammunition = require("ids.ammunition")
 
 local ranged = {}
 
 local function ranged_weapon(kind)
     local weapon = kind and kind.weapon
 
-    if not weapon or weapon.ammo_id == "MI_NONE" then
+    if not weapon or weapon.ammo_id == ammunition.NONE then
         return false
     end
 

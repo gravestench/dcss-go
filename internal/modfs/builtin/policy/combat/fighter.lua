@@ -14,6 +14,7 @@ local water = require("policy.character.water")
 local size = require("constants.size")
 local component = require("constants.component")
 local rage = require("policy.character.rage")
+local ammunition = require("ids.ammunition")
 
 local fighter = {}
 
@@ -115,7 +116,7 @@ function fighter.attack(ctx, defender)
         end
 
         local launcher = definition.weapon.ammo_id ~= nil and
-            definition.weapon.ammo_id ~= "MI_NONE"
+            definition.weapon.ammo_id ~= ammunition.NONE
         input.held_non_melee = launcher
         input.using_weapon = not launcher
         input.weapon_skill = launcher and "SK_FIGHTING" or

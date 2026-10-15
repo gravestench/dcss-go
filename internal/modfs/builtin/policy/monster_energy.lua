@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local equipment = require("policy.combat.equipment")
 local liquefaction = require("policy.magic.effects.translocation.liquefaction")
 local statuses = require("policy.magic.effects.statuses.player")
+local ammunition = require("ids.ammunition")
 
 local energy = {}
 
@@ -114,7 +115,7 @@ local function speed_brand_cost(ctx, input, field, base_cost)
             local weapon = selected and selected.definition.weapon
 
             if selected and selected.entity == item and weapon and
-                weapon.ammo_id ~= "MI_NONE" then
+                weapon.ammo_id ~= ammunition.NONE then
                 brand = selected.item.ego
                 break
             end
