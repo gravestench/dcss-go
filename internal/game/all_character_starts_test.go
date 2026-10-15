@@ -251,7 +251,6 @@ func TestDistinctCharacterStartFamiliesReachDungeon(t *testing.T) {
 
 			for _, field := range []string{
 				"initial_skills",
-				"innate_mutations",
 				"religion",
 				"piety",
 				"gift_timeout",

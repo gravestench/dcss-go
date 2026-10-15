@@ -1,6 +1,7 @@
 local spells = require("ids.spells")
 local component = require("constants.component")
 local golem = require("policy.magic.effects.summons.guardian_golem")
+local targets = require("policy.ai.targets")
 
 -- Source: monster::hurt splits half of incoming damage, rounded down,
 -- to the living aligned guardian. Observe at the last pre-death phase so
@@ -11,7 +12,7 @@ function system.update(ctx, active)
     local active_summon = ctx:get(active, component.SUMMON)
 
     if active_summon and
-        active_summon.spell_id == spells.SPELL_SUMMON_GUARDIAN_GOLEM then
+        active_summon.source_id == spells.SPELL_SUMMON_GUARDIAN_GOLEM then
         golem.bond(ctx, active)
     end
 
@@ -27,8 +28,9 @@ function system.update(ctx, active)
         local health = ctx:get(ally, component.HEALTH)
 
         if not protector or not protector_health or
-            protector.spell_id ~= spells.SPELL_SUMMON_GUARDIAN_GOLEM or
+            protector.source_id ~= spells.SPELL_SUMMON_GUARDIAN_GOLEM or
             protector.owner ~= ctx:get(ally, component.SUMMON).owner or
+            targets.enemy(ctx, guardian, ally) or
             protector_health.current <= 0 then
             ctx:remove(ally, component.SUMMON_BOND)
         else

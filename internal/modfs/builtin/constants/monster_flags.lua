@@ -8,6 +8,11 @@ local flags = {
     SPINY = "M_SPINY",
     NO_THREAT = "M_NO_THREAT",
     STASIS = "M_STASIS",
+    STATIONARY = "M_STATIONARY",
+    INVISIBLE = "M_INVIS",
+    BATTY = "M_BATTY",
+    COLD_BLOOD = "M_COLD_BLOOD",
+    WARM_BLOOD = "M_WARM_BLOOD",
 }
 
 return flags

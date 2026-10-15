@@ -4,6 +4,10 @@ local death_hooks = require("policy.combat.death_hooks")
 local draining = require("policy.combat.brands.draining")
 local net = require("policy.combat.net")
 local statuses = require("policy.magic.effects.statuses.player")
+local stat_loss = require("policy.character.stat_loss")
+local temporary_mutations = require("policy.mutations.temporary")
+local evolution = require("policy.mutations.evolution")
+local kill_effects = require("policy.combat.player_kill_effects")
 
 local system = {}
 
@@ -45,7 +49,11 @@ function system.update(ctx)
                     training.available_xp = training.available_xp + 10 * xp
                     ctx:set(player, "core.progression", progress)
                     ctx:set(player, "core.skill_training", training)
+                    temporary_mutations.gain_experience(ctx, player, xp)
+                    evolution.gain_experience(ctx, player, xp)
+                    stat_loss.gain_experience(ctx, player, xp, training.cost_level)
                     draining.recover(ctx, player, xp)
+                    kill_effects.run(ctx, player, definition, xp)
                     local adjacent = player_pos.level_id == position.level_id and
                         math.abs(player_pos.x - position.x) <= 1 and
                         math.abs(player_pos.y - position.y) <= 1

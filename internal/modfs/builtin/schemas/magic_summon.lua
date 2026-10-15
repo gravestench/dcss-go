@@ -1,13 +1,20 @@
 -- Player summons keep their origin and timeout through save and restore.
+local categories = require("constants.catalog")
+
 local schema = {
     id = "magic.summon",
-    version = 1,
+    version = 3,
     fields = {
         owner = {
             type = "entity",
         },
 
-        spell_id = {
+        source_category = {
+            type = "string",
+            default = categories.SPELLS,
+        },
+
+        source_id = {
             type = "string",
             default = "",
         },
@@ -20,6 +27,11 @@ local schema = {
         heads = {
             type = "int64",
             default = 0,
+        },
+
+        hostile = {
+            type = "bool",
+            default = false,
         },
     },
 }

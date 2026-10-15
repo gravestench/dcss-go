@@ -3,12 +3,13 @@ local monsters = require("ids.monsters")
 local component = require("constants.component")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
+local targets = require("policy.ai.targets")
 
 local function visible_enemy(ctx, player)
     local origin = ctx:get(player, component.POSITION)
 
     for _, entity in ipairs(ctx:query({ component.ACTOR, component.POSITION, component.HEALTH })) do
-        if entity ~= player and not ctx:has(entity, component.SUMMON) then
+        if targets.enemy(ctx, player, entity) then
             local position = ctx:get(entity, component.POSITION)
             local health = ctx:get(entity, component.HEALTH)
             local range = math.max(math.abs(position.x - origin.x),
@@ -52,8 +53,7 @@ function spell_effects.resolve(ctx, player, intent, _, power)
     local y = origin.y + intent.dy
     local target = ctx:actor_at(origin.level_id, x, y)
 
-    if not target or target == player or
-        ctx:has(target, component.SUMMON) then
+    if not target or not targets.enemy(ctx, player, target) then
         ctx:emit("spell", "An evil force gathers, but it quickly dissipates.")
 
         return

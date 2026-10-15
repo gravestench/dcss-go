@@ -3,32 +3,20 @@ package terminal
 import (
 	"testing"
 
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/script"
-	"github.com/gravestench/akara"
+	"dcrawl-go/internal/game"
 )
 
 func testPresentationPolicy(t *testing.T) presentationPolicy {
 	t.Helper()
-	rules, err := modfs.Load("")
+	g, err := game.NewScenario(7, "WPN_RAPIER", "Presenter")
 
 	if err != nil {
-		t.Fatal(err)
-	}
-
-	world := akara.NewWorld()
-	runtime, err := script.NewCatalog(world, rules)
-
-	if err != nil {
-		world.Close()
-
 		t.Fatal(err)
 	}
 
 	t.Cleanup(func() {
-		runtime.Close()
-		world.Close()
+		g.Close()
 	})
 
-	return runtime.Policy
+	return g.PresentationPolicy
 }

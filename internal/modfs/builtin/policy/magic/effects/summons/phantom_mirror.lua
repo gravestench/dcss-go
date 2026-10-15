@@ -3,6 +3,7 @@ local component = require("constants.component")
 local catalog = require("policy.catalog")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
+local monster_stats = require("policy.combat.monster_stats")
 
 local spell_id = spells.SPELL_PHANTOM_MIRROR
 local uncloneable = {
@@ -75,12 +76,12 @@ function spell_effects.resolve(ctx, player, intent, _, power)
         math.max(1, willpower + 5 + 3 * evo + power))
     local duration = math.min(6, math.max(1,
         math.floor((math.floor(evo / 4) + 1) * (100 - resistance) / 100)))
+    local hd = monster_stats.hit_dice(ctx, target, definition)
     local clone = summons.spawn(ctx, player, spell_id, actor.kind_id,
         duration, 1, {
             anchor = position,
             hp = health.current,
-            hd = math.max(1, definition.hd -
-                summons.divide(ctx, definition.hd, 3)),
+            hd = math.max(1, hd - summons.divide(ctx, hd, 3)),
         })
 
     if clone then

@@ -21,13 +21,35 @@ func (g *Game) refreshVisibility() error {
 		return fmt.Errorf("player level %d is missing", position.LevelID)
 	}
 
-	visible, err := visibility.Compute(level.terrain, position.X, position.Y, 7)
+	sight, err := g.scripts.Policy("character.vision", nil)
 
 	if err != nil {
 		return err
 	}
 
-	if err := level.Remember(visible); err != nil {
+	radius, ok := sight["radius"].(int64)
+
+	if !ok {
+		return fmt.Errorf("Lua character vision has no integer radius")
+	}
+
+	visible, err := visibility.Compute(level.terrain, position.X, position.Y, int(radius))
+
+	if err != nil {
+		return err
+	}
+
+	newlySeen, err := level.Remember(visible)
+
+	if err != nil {
+		return err
+	}
+
+	if err := g.applyExploration(level, newlySeen); err != nil {
+		return err
+	}
+
+	if err := g.applyItemDetection(level, position.X, position.Y, visible); err != nil {
 		return err
 	}
 

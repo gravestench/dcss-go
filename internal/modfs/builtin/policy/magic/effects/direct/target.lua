@@ -1,3 +1,5 @@
+local targets = require("policy.ai.targets")
+
 local target = {}
 
 function target.visible_hostile(ctx, player, reach, needs_path)
@@ -8,7 +10,7 @@ function target.visible_hostile(ctx, player, reach, needs_path)
         "core.position",
         "core.health",
     })) do
-        if monster ~= player and not ctx:get(monster, "magic.summon") then
+        if targets.enemy(ctx, player, monster) then
             local location = ctx:get(monster, "core.position")
             local health = ctx:get(monster, "core.health")
             local distance = math.max(

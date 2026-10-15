@@ -4,6 +4,7 @@
 -- Name Line: 638
 
 local categories = require("constants.catalog")
+local spells = require("ids.spells")
 
 local definition = {
     id = "WAND_QUICKSILVER",
@@ -13,6 +14,8 @@ local definition = {
     class_value = 3,
     subtype_value = 23,
     stackable = false,
+    -- Source: crawl-ref/source/spl-book.cc:90-101
+    wand_spell_id = spells.SPELL_QUICKSILVER_BOLT,
     -- Source: crawl-ref/source/item-name.cc:638
     naming = {
         text = "wand of quicksilver",

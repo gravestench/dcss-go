@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local roll = require("policy.combat.roll")
+local monster_health = require("policy.combat.monster_health")
 
 local poison = {}
 
@@ -109,8 +110,7 @@ function poison.tick(ctx, monster)
     end
 
     if damage > 0 then
-        health.current = math.max(0, health.current - damage)
-        ctx:set(monster, "core.health", health)
+        health = monster_health.damage(ctx, monster, damage, state.source)
 
         if health.current == 0 and state.source == ctx:player() then
             ctx:signal("player_kill", monster)

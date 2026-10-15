@@ -1591,6 +1591,22 @@ func TestIgnitePoisonSetsNearbyToxicBogAblaze(t *testing.T) {
 	t.Fatal("Ignite Poison made no fire cloud on visible toxic bog")
 }
 
+func placeAuraVictim(t *testing.T, g *Game, rat akara.Entity) {
+	t.Helper()
+
+	if err := g.levels[1].MoveActor(rat, 4, 1); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := g.refreshVisibility(); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCorpseRotAuraCreatesSavedMiasmaOnKill(t *testing.T) {
 	g := newZapGame(t)
 	grantSelfStatusSpell(t, g, "SPELL_CORPSE_ROT")
@@ -1612,12 +1628,13 @@ func TestCorpseRotAuraCreatesSavedMiasmaOnKill(t *testing.T) {
 	health, _ := g.stores.Health.Get(rat)
 
 	health.Current = 1
+	placeAuraVictim(t, g, rat)
 
-	for range 100 {
-		if _, err := g.Step(Command{
-			Kind: CommandMove,
+	for range 20 {
+		if _, err := g.runAction(g.player, ecs.Intent{
+			Kind: ecs.IntentMove,
 			DX:   1,
-		}); err != nil {
+		}, 10, "player"); err != nil {
 			t.Fatal(err)
 		}
 
@@ -1628,7 +1645,10 @@ func TestCorpseRotAuraCreatesSavedMiasmaOnKill(t *testing.T) {
 
 	if health.Current > 0 ||
 		len(g.scripts.Components()["magic.miasma_cloud"].Entities()) == 0 {
-		t.Fatal("Corpse Rot kill did not create miasma")
+		playerPosition, _ := g.stores.Positions.Get(g.player)
+		ratPosition, _ := g.stores.Positions.Get(rat)
+		t.Fatalf("Corpse Rot kill did not create miasma: HP=%d player=%+v rat=%+v",
+			health.Current, playerPosition, ratPosition)
 	}
 }
 
@@ -1654,12 +1674,13 @@ func TestInfestationMarksMonsterAndRaisesDeathScarab(t *testing.T) {
 	health, _ := g.stores.Health.Get(rat)
 
 	health.Current = 1
+	placeAuraVictim(t, g, rat)
 
-	for range 100 {
-		if _, err := g.Step(Command{
-			Kind: CommandMove,
+	for range 20 {
+		if _, err := g.runAction(g.player, ecs.Intent{
+			Kind: ecs.IntentMove,
 			DX:   1,
-		}); err != nil {
+		}, 10, "player"); err != nil {
 			t.Fatal(err)
 		}
 
@@ -1669,7 +1690,10 @@ func TestInfestationMarksMonsterAndRaisesDeathScarab(t *testing.T) {
 	}
 
 	if health.Current > 0 {
-		t.Fatal("player did not kill infested rat")
+		playerPosition, _ := g.stores.Positions.Get(g.player)
+		ratPosition, _ := g.stores.Positions.Get(rat)
+		t.Fatalf("player did not kill infested rat: HP=%d player=%+v rat=%+v",
+			health.Current, playerPosition, ratPosition)
 	}
 
 	for _, entity := range g.stores.Actors.Entities() {
@@ -1686,7 +1710,7 @@ func TestInfestationMarksMonsterAndRaisesDeathScarab(t *testing.T) {
 func TestMiasmaSlowUsesSavedActionTiming(t *testing.T) {
 	g := newStepGame(t)
 
-	if _, err := g.scripts.Components()["magic.miasma_slow"].Set(g.player,
+	if _, err := g.scripts.Components()["character.slow"].Set(g.player,
 		map[string]any{"remaining_aut": int64(100)}); err != nil {
 		t.Fatal(err)
 	}
@@ -1734,7 +1758,7 @@ func TestStatueFormResistsCorpseRotMiasma(t *testing.T) {
 	testPlayerWait(t, g)
 
 	if g.stores.Poison.Has(g.player) ||
-		g.scripts.Components()["magic.miasma_slow"].Has(g.player) {
+		g.scripts.Components()["character.slow"].Has(g.player) {
 		t.Fatal("statue form took miasma poison or slow")
 	}
 }

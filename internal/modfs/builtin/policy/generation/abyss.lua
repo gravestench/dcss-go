@@ -1,5 +1,6 @@
 local abyss = {}
 local world_abyss = require("policy.world.abyss")
+local branches = require("ids.branches")
 
 local width = 80
 local height = 70
@@ -38,6 +39,7 @@ function abyss.generate(ctx)
 
     return {
         id = world_abyss.level_id,
+        branch_id = branches.BRANCH_ABYSS,
         rows = rows,
         stairs = {
             {

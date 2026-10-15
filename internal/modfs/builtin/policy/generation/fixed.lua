@@ -1,3 +1,5 @@
+local branches = require("ids.branches")
+
 local fixed = {}
 
 local first_rows = {
@@ -31,6 +33,7 @@ function fixed.generate(populated)
         levels = {
             {
                 id = 1,
+                branch_id = branches.BRANCH_DUNGEON,
                 rows = first_rows,
                 entry_x = 1,
                 entry_y = 1,
@@ -48,6 +51,7 @@ function fixed.generate(populated)
             },
             {
                 id = 2,
+                branch_id = branches.BRANCH_DUNGEON,
                 rows = second_rows,
                 entry_x = 1,
                 entry_y = 1,

@@ -4,6 +4,7 @@ local actions = require("policy.combat.melee_actions")
 local common = require("policy.magic.effects.translocation.common")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
+local enemy = require("policy.ai.targets")
 
 local function targets(ctx, player)
     local origin = ctx:get(player, component.POSITION)
@@ -12,7 +13,7 @@ local function targets(ctx, player)
     for _, monster in ipairs(common.monsters(ctx, origin.level_id)) do
         local distance = common.distance(origin, monster.position)
 
-        if distance <= 7 and not ctx:has(monster.entity, component.SUMMON) and
+        if distance <= 7 and enemy.enemy(ctx, player, monster.entity) and
             not common.flag(monster.definition, "M_STATIONARY") and
             not common.flag(monster.definition, "M_PROJECTILE") and
             ctx:visible(origin.level_id, origin.x, origin.y, 7,

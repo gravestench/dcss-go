@@ -1,6 +1,18 @@
 local catalog = require("policy.catalog")
+local armour_egos = require("constants.armour_egos")
 
 local items = {}
+local supported_armour_egos = {
+    [armour_egos.PROTECTION] = true,
+    [armour_egos.RESISTANCE] = true,
+    [armour_egos.FIRE_RESISTANCE] = true,
+    [armour_egos.COLD_RESISTANCE] = true,
+    [armour_egos.POSITIVE_ENERGY] = true,
+    [armour_egos.SPIRIT_SHIELD] = true,
+    [armour_egos.WILLPOWER] = true,
+    [armour_egos.GUILE] = true,
+    [armour_egos.STEALTH] = true,
+}
 
 function items.kind(item)
     return catalog.get("items", item.kind_id)
@@ -60,7 +72,7 @@ function items.validate(item, kind)
         end
     end
 
-    if kind.class == "OBJ_ARMOUR" and item.ego == "SPARM_PROTECTION" then
+    if kind.class == "OBJ_ARMOUR" and supported_armour_egos[item.ego] then
         return
     end
 

@@ -2,6 +2,10 @@ local items = require("policy.inventory.items")
 local potions = require("policy.potions")
 local player_health = require("policy.combat.player_health")
 local forms = require("policy.magic.effects.forms.player")
+local potion_rules = require("policy.character.potion_rules")
+local item_ids = require("ids.items")
+local physiology = require("policy.mutations.physiology")
+local intent = require("constants.intent")
 
 local quaff = {}
 
@@ -25,6 +29,12 @@ function quaff.prepare(ctx, player, item_id)
         }
     end
 
+    if not potion_rules.can_drink(ctx, player) then
+        return {
+            message = "You can't drink.",
+        }
+    end
+
     if not forms.can_drink(ctx, player) then
         return {
             message = "You cannot drink in this form.",
@@ -37,7 +47,23 @@ function quaff.prepare(ctx, player, item_id)
         }
     end
 
-    if item.kind_id == "POT_HEAL_WOUNDS" then
+    if item.kind_id == item_ids.POT_MUTATION and
+        not physiology.can_safely_mutate(ctx, player) then
+        local temporary = physiology.can_safely_mutate(ctx, player, false)
+
+        return {
+            message = temporary and "You cannot mutate at present." or
+                "You cannot mutate.",
+        }
+    end
+
+    if item.kind_id == item_ids.POT_HEAL_WOUNDS then
+        if not potion_rules.can_heal(ctx, player) then
+            return {
+                message = "You cannot be healed by potions.",
+            }
+        end
+
         if not player_health.can_heal(ctx, player) then
             return {
                 message = "You cannot heal while in death's door.",
@@ -57,17 +83,18 @@ function quaff.prepare(ctx, player, item_id)
         end
     end
 
-    if item.kind_id == "POT_CURING" and
-        not player_health.can_heal(ctx, player) and
+    if item.kind_id == item_ids.POT_CURING and
+        (not player_health.can_heal(ctx, player) or
+            not potion_rules.can_heal(ctx, player)) and
         not ctx:has(player, "core.poison") then
         return {
-            message = "You can't heal while in death's door.",
+            message = "You have no ailments to cure.",
         }
     end
 
     return {
         intent = {
-            kind = 7,
+            kind = intent.QUAFF,
             item_id = entity,
         },
         cost = 10,

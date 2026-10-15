@@ -1,28 +1,23 @@
 local roll = require("policy.combat.roll")
 local forms = require("policy.magic.effects.forms.player")
 local statuses = require("policy.magic.effects.statuses.player")
+local accuracy = require("policy.character.accuracy")
+local stab = require("policy.combat.stab")
+local size = require("constants.size")
 
 local player_attack = {}
 
-local size_value = {
-    SIZE_LITTLE = 1,
-    SIZE_SMALL = 2,
-    SIZE_MEDIUM = 3,
-    SIZE_LARGE = 4,
-    SIZE_GIANT = 5,
-}
-
 local function shield_bonus(ctx, shield)
-    local size = size_value[shield.size]
+    local body_size = size.rank[shield.size]
 
-    if not size then
+    if not body_size then
         error("unsupported monster shield body size " .. tostring(shield.size))
     end
 
     -- monster.cc:2996-3029 rolls monster SH from shield AC, enchantment,
     -- body size, and HD. A nonpositive result cannot block.
     local base = (shield.ac + shield.plus * 2) * 2 +
-        (size - size_value.SIZE_MEDIUM) * (shield.subtype - 14)
+        (body_size - size.rank[size.MEDIUM]) * (shield.subtype - 14)
     local bound = base + math.floor(shield.hit_dice * 4 / 3)
 
     if bound <= 0 then
@@ -32,6 +27,19 @@ local function shield_bonus(ctx, shield)
     local bonus = math.floor(roll.average_two(ctx, "melee", bound) / 2)
 
     return bonus > 0 and bonus or -100
+end
+
+-- Source: attack.cc:attack_shield_blocked. The bypass roll precedes the
+-- defender's shield roll, and each successful block raises later penalties.
+function player_attack.shield_contact(ctx, input, to_hit)
+    local shield = input.defender_shield
+    local penalty = shield and 4 * shield.blocks * shield.blocks or 0
+    local bypass = roll.melee(ctx, 15 + math.floor(to_hit / 2) + penalty)
+    local bonus = shield and shield_bonus(ctx, shield) or -100
+    local would_block = bonus >= bypass
+
+    return would_block and not input.penetrating,
+        would_block and input.penetrating
 end
 
 local function maybe_random_div(ctx, numerator, denominator)
@@ -47,7 +55,8 @@ function player_attack.contact(ctx, input)
     local weapon_skill = maybe_random_div(ctx, input.weapon100, 100)
     local hit_base = 15 + math.floor(input.dexterity / 2) + fighting +
         weapon_skill + (input.slay or 0) + (input.hit_bonus or 0) +
-        statuses.confusing_touch_hit_bonus(ctx, ctx:player(), input.dexterity)
+        statuses.confusing_touch_hit_bonus(ctx, ctx:player(), input.dexterity) +
+        accuracy.hit_bonus(ctx, ctx:player())
 
     if statuses.vertigo_active(ctx, ctx:player()) then
         hit_base = hit_base - 5
@@ -60,6 +69,7 @@ function player_attack.contact(ctx, input)
     end
 
     local to_hit = roll.melee(ctx, hit_base)
+    to_hit = accuracy.melee_to_hit(ctx, ctx:player(), to_hit)
     local auto_chance = roll.melee(ctx, 100)
     local auto_miss = false
     local auto_hit = false
@@ -70,16 +80,12 @@ function player_attack.contact(ctx, input)
         auto_hit = coin ~= 0
     end
 
-    local shield = input.defender_shield
-    local bonus = shield and shield_bonus(ctx, shield) or -100
-    local penalty = shield and 4 * shield.blocks * shield.blocks or 0
-    local bypass = roll.melee(ctx, 15 + math.floor(to_hit / 2) + penalty)
+    local blocked, pierced_shield = player_attack.shield_contact(ctx,
+        input, to_hit)
 
-    if bonus >= bypass and not input.penetrating then
+    if blocked then
         return { kind = "block", damage = 0 }
     end
-
-    local pierced_shield = bonus >= bypass and input.penetrating
 
     if auto_miss or (not auto_hit and to_hit < input.defender_ev) then
         return { kind = "miss", damage = 0, pierced_shield = pierced_shield }
@@ -131,6 +137,13 @@ function player_attack.damage(ctx, input)
         damage = damage - roll.melee(ctx, 1 - slaying)
     end
 
+    if input.roll_distance and input.roll_distance > 0 then
+        local extra = math.floor(damage * input.roll_distance / 3)
+        damage = damage + math.min(damage, extra)
+    end
+
+    damage = stab.damage(ctx, ctx:player(), input, input.stab_plan, damage)
+
     local saved = roll.armour(ctx, input.defender_ac)
 
     return statuses.confusing_touch_damage(ctx, ctx:player(),
@@ -139,6 +152,16 @@ end
 
 function player_attack.resolve(ctx, input)
     local outcome = player_attack.contact(ctx, input)
+
+    if input.stab_target then
+        input.stab_plan = stab.prepare(ctx, ctx:player(),
+            input.stab_target, input)
+
+        if input.stab_plan.bonus > 0 then
+            outcome.kind = "hit"
+            outcome.pierced_shield = false
+        end
+    end
 
     if outcome.kind == "hit" then
         outcome.damage = player_attack.damage(ctx, input)

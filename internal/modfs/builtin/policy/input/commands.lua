@@ -17,8 +17,11 @@ local commands = {
     throw = 17,
     memorise = 18,
     cancel_memorise = 19,
+    cancel_vampire = 19,
     cast = 20,
     force_cast = 21,
+    ability = 22,
+    evoke_wand = 23,
 }
 
 return commands

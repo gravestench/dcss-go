@@ -2,6 +2,9 @@ local catalog = require("policy.catalog")
 local items = require("policy.inventory.items")
 local equipment = require("policy.inventory.equipment")
 local traits = require("policy.character.traits")
+local mutation_levels = require("policy.mutations.levels")
+local mutations = require("ids.mutations")
+local potion_rules = require("policy.character.potion_rules")
 
 local gear = {}
 local jobs = {}
@@ -19,19 +22,10 @@ local sizes = {
     SIZE_GIANT = 5,
 }
 
-local function has_mutation(species, id)
-    for _, mutation in ipairs(species.mutations or {}) do
-        if mutation.id == id and mutation.level <= 1 and mutation.amount > 0 then
-            return true
-        end
-    end
-
-    return false
-end
-
-local function can_use(species, kind)
+local function can_use(ctx, player, species, kind)
     if kind.class == "OBJ_WEAPONS" then
-        return not has_mutation(species, "MUT_NO_GRASPING") and
+        return mutation_levels.effective(ctx, player,
+            mutations.MUT_NO_GRASPING) == 0 and
             sizes[species.size] >= sizes[kind.weapon.min_2h_size_id]
     end
 
@@ -39,15 +33,17 @@ local function can_use(species, kind)
         return true
     end
 
-    return equipment.can_wear(species, kind)
+    return equipment.can_wear(ctx, player, species, kind)
 end
 
-local function useful_kind(species, kind)
-    if kind.class == "OBJ_POTIONS" and has_mutation(species, "MUT_NO_DRINK") then
+local function useful_kind(ctx, player, species, kind)
+    if kind.class == "OBJ_POTIONS" and
+        not potion_rules.can_drink(ctx, player) then
         return nil
     end
 
-    if kind.id == "POT_MAGIC" and has_mutation(species, "MUT_HP_CASTING") then
+    if kind.id == "POT_MAGIC" and
+        mutation_levels.effective(ctx, player, mutations.MUT_HP_CASTING) > 0 then
         return nil
     end
 
@@ -60,7 +56,7 @@ local function useful_kind(species, kind)
         kind = catalog.get("items", "ARM_BUCKLER")
     end
 
-    if kind.class == "OBJ_ARMOUR" and not can_use(species, kind) then
+    if kind.class == "OBJ_ARMOUR" and not can_use(ctx, player, species, kind) then
         local replacement = "ARM_ROBE"
 
         if kind.id == "ARM_HELMET" or kind.id == "ARM_HAT" then
@@ -74,7 +70,7 @@ local function useful_kind(species, kind)
         kind = catalog.get("items", replacement)
     end
 
-    if not can_use(species, kind) then
+    if not can_use(ctx, player, species, kind) then
         return nil
     end
 
@@ -82,7 +78,8 @@ local function useful_kind(species, kind)
 end
 
 local function add_grant(ctx, player, species, grant, occupied)
-    local kind = useful_kind(species, catalog.get("items", grant.kind_id))
+    local kind = useful_kind(ctx, player, species,
+        catalog.get("items", grant.kind_id))
 
     if not kind then
         return
@@ -103,9 +100,9 @@ local function add_grant(ctx, player, species, grant, occupied)
     ctx:add(entity, "core.carried_by", { holder = player })
 
     local hand_conflict = kind.slot == "shield" and occupied.weapon and
-        equipment.needs_second_hand(occupied.weapon, species) or
+        equipment.needs_second_hand(ctx, player, occupied.weapon, species) or
         kind.slot == "weapon" and occupied.shield and
-        equipment.needs_second_hand(kind, species)
+        equipment.needs_second_hand(ctx, player, kind, species)
 
     if kind.slot and kind.slot ~= "" and not occupied[kind.slot] and
         not hand_conflict then

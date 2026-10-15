@@ -51,7 +51,8 @@ function flame.resolve(ctx, player, intent, spell, power)
     local definition = catalog.get("monsters", actor.kind_id)
 
     if health.current <= 0 or ctx:has(target, component.INNER_FLAME) or
-        will.resists(ctx, definition, math.min(power, 100) * 3) then
+        will.resists(ctx, definition, math.min(power, 100) * 3,
+            target) then
         return
     end
 

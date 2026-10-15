@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local forms = require("policy.magic.effects.forms.player")
 local registry = require("policy.magic.effects.registry")
 local statuses = require("policy.magic.effects.statuses.player")
+local vampire = require("policy.character.vampire")
 
 local sublimation = {}
 
@@ -11,7 +12,8 @@ local function can_bleed(ctx, player)
     local form = ctx:get(player, "magic.player_form")
     local active_form = form and form.remaining_aut > 0 and form.form_id or ""
 
-    return species.undead_type ~= "US_UNDEAD" and
+    return not vampire.bloodless(ctx, player) and
+        species.undead_type ~= "US_UNDEAD" and
         species.id ~= "SP_GARGOYLE" and
         species.id ~= "SP_DJINNI" and
         active_form ~= "lich" and active_form ~= "statue" and
@@ -94,3 +96,5 @@ function sublimation.resolve(ctx, player, _, _, power)
 end
 
 registry.add("SPELL_SUBLIMATION_OF_BLOOD", sublimation)
+
+return sublimation

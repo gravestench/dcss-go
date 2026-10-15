@@ -1,5 +1,8 @@
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
+local availability = require("policy.character.skill_availability")
+local component = require("constants.component")
+local distributed = require("policy.character.distributed_training")
 
 local function initial_skills(origin)
     local skills = {}
@@ -26,10 +29,10 @@ end
 
 local function validate(ctx)
     local actor = ctx:player()
-    local player = ctx:get(actor, "core.player")
-    local skills_component = ctx:get(actor, "core.skills")
-    local training = ctx:get(actor, "core.skill_training")
-    local progress = ctx:get(actor, "core.progression")
+    local player = ctx:get(actor, component.PLAYER)
+    local skills_component = ctx:get(actor, component.SKILLS)
+    local training = ctx:get(actor, component.SKILL_TRAINING)
+    local progress = ctx:get(actor, component.PROGRESSION)
 
     if not player or not skills_component or not training or not progress then
         error("player lacks saved training state")
@@ -66,15 +69,27 @@ local function validate(ctx)
     end
 
     local seen = {}
+    local by_id = {}
     local gained = 0
 
     for index, skill in ipairs(entries) do
-        local aptitude = species.aptitudes[skill.id]
-        local allowed = aptitude and aptitude.allowed
+        local declared = species.aptitudes[skill.id]
+        local allowed = declared and declared.allowed
+        local forbidden = availability.forbidden_skill(ctx, actor,
+            skill.id)
 
-        if not allowed or seen[skill.id] or
-            skill.points < (starting_points[skill.id] or 0) or
-            skill.points > formulas.skill_points_needed(27, aptitude.value) then
+        if not allowed or seen[skill.id] then
+            error("invalid player skill " .. tostring(skill.id))
+        end
+
+        local aptitude = formulas.effective_skill_aptitude(ctx, actor,
+            species, skill.id)
+        local minimum = forbidden and 0 or
+            (starting_points[skill.id] or 0)
+
+        if skill.points < minimum or
+            skill.points > formulas.skill_points_needed(27, aptitude) or
+            (forbidden and skill.points ~= 0) then
             error("invalid player skill " .. tostring(skill.id))
         end
 
@@ -82,11 +97,12 @@ local function validate(ctx)
             error("starting player skill order changed at " .. (index - 1))
         end
 
-        if skill.level ~= formulas.skill_level(skill.points, aptitude.value) then
+        if skill.level ~= formulas.skill_level(skill.points, aptitude) then
             error("invalid player skill level for " .. skill.id)
         end
 
         seen[skill.id] = true
+        by_id[skill.id] = skill
         gained = gained + skill.points - (starting_points[skill.id] or 0)
     end
 
@@ -109,6 +125,28 @@ local function validate(ctx)
         end
 
         settings[setting.id] = true
+    end
+
+    if distributed.active(ctx, actor) then
+        if not training.manual then
+            error("distributed training cannot be automatic")
+        end
+
+        for _, setting in ipairs(training.settings) do
+            if setting.focused or
+                (by_id[setting.id].level < 27 and not setting.enabled) then
+                error("invalid distributed training setting " .. setting.id)
+            end
+        end
+
+        local expected = {}
+        distributed.include_skills(expected, species)
+
+        for _, skill in ipairs(expected) do
+            if not seen[skill.id] then
+                error("distributed training lacks skill " .. skill.id)
+            end
+        end
     end
 
     if #training.settings ~= #entries then

@@ -1,0 +1,39 @@
+-- Generated from a pinned DCSS mutation table. Refresh deliberately.
+-- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Source: crawl-ref/source/mutation-data.h:1227
+-- Source: crawl-ref/source/dat/descript/mutations.txt
+
+local categories = require("constants.catalog")
+
+local definition = {
+    id = "MUT_MANA_SHIELD",
+    status = "active",
+    weight = 0,
+    max_level = 1,
+    uses = {
+        "good",
+    },
+    form_based = false,
+    short_description = "magic shield",
+    description =
+        "When you are harmed, some damage is redirected to deplete your magic reserves\ninstead.",
+    have = {
+        "When hurt, damage is shared between your health and your magic reserves.",
+        "",
+        "",
+    },
+    gain = {
+        "You feel your magical essence form a protective shroud around your flesh.",
+        "",
+        "",
+    },
+    lose = {
+        "",
+        "",
+        "",
+    },
+}
+
+register.definition(categories.MUTATIONS, definition)
+
+return definition

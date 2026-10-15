@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local constriction = require("policy.combat.constriction")
+local player_constriction = require("policy.combat.player_constriction")
 local targets = require("policy.ai.targets")
 local clutch = require("policy.magic.effects.statuses.vile_clutch")
 local fastroot = require("policy.magic.effects.zaps.fastroot")
@@ -63,7 +64,8 @@ function system.update(ctx, actor)
     end
 
     if actor ~= ctx:player() then
-        if not clutch.escape(ctx, actor) or
+        if not player_constriction.escape(ctx, actor) or
+            not clutch.escape(ctx, actor) or
             not fastroot.escape(ctx, actor) then
             intent.kind = intent_ids.WAIT
             ctx:set(actor, component.INTENT, intent)

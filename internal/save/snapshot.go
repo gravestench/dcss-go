@@ -7,7 +7,7 @@ import (
 	"dcrawl-go/internal/terrain"
 )
 
-const Version = 15
+const Version = 18
 
 type Snapshot struct {
 	Version        int               `json:"version"`
@@ -45,8 +45,11 @@ type DynamicComponentRecord struct {
 
 type LevelRecord struct {
 	ID              int            `json:"id"`
+	BranchID        string         `json:"branch_id"`
 	Cells           [][]terrain.ID `json:"cells"`
 	Known           [][]terrain.ID `json:"known"`
+	Seen            [][]bool       `json:"seen"`
+	DetectedItems   [][]bool       `json:"detected_items"`
 	Stairs          []StairRecord  `json:"stairs,omitempty"`
 	InitialMonsters int            `json:"initial_monsters,omitempty"`
 	InitialActors   int            `json:"initial_actors,omitempty"`

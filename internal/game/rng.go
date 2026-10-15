@@ -65,6 +65,11 @@ func (r *RNGStreams) Intn(name string, n int) (int, error) {
 		return 0, fmt.Errorf("RNG stream name and positive bound required")
 	}
 
+	// DCSS random2(1) returns zero without drawing from its generator.
+	if n == 1 {
+		return 0, nil
+	}
+
 	bound := uint64(n)
 	threshold := -bound % bound
 

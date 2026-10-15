@@ -1,11 +1,21 @@
 -- Actor allegiance is game policy. Decisions and attacks share this rule.
 local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
+local component = require("constants.component")
 
 local targets = {}
 
 local function allied(ctx, entity)
-    return entity == ctx:player() or ctx:has(entity, "magic.summon") or
-        allegiance.charmed(ctx, entity)
+    if entity == ctx:player() then
+        return true
+    end
+
+    local summon = ctx:get(entity, component.SUMMON)
+
+    if summon and not summon.hostile then
+        return true
+    end
+
+    return allegiance.charmed(ctx, entity)
 end
 
 function targets.enemy(ctx, attacker, defender)

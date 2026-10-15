@@ -2,6 +2,10 @@ local commands = require("policy.input.commands")
 local directions = require("policy.input.directions")
 
 local screens = {
+    a = {
+        name = "abilities",
+        returnable = true,
+    },
     i = {
         name = "inventory",
         returnable = true,
@@ -10,12 +14,20 @@ local screens = {
         name = "skills",
         returnable = true,
     },
+    A = {
+        name = "mutations",
+        returnable = true,
+    },
     ["?"] = {
         name = "help",
         returnable = true,
     },
     q = {
         name = "quaff",
+        returnable = true,
+    },
+    V = {
+        name = "evoke_wand",
         returnable = true,
     },
     d = { name = "drop" },

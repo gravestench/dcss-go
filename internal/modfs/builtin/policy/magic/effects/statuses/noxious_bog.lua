@@ -10,6 +10,7 @@ local damage = require("policy.magic.damage")
 local poison = require("policy.combat.monster_poison")
 local brands = require("policy.combat.brands")
 local player_health = require("policy.combat.player_health")
+local causes = require("constants.damage_causes")
 local player_resistance = require("policy.combat.player_resistance")
 local flight = require("policy.combat.flight")
 local range = require("policy.magic.range")
@@ -153,7 +154,8 @@ function bog.tick(ctx, actor, aut)
             math.max(1, aut) / time.AUT_PER_TURN)
 
         if amount > 0 then
-            player_health.damage(ctx, actor, amount)
+            player_health.damage(ctx, actor, amount,
+                false, nil, causes.CLOUD)
             brands.poison(ctx, resistance > 0 and 7 or 21,
                 "toxic bog")
             ctx:emit("warning", "You fester in the toxic bog!")

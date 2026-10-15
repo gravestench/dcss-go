@@ -103,6 +103,124 @@ func TestRegenerationSystemUsesVariableActionAut(t *testing.T) {
 	}
 }
 
+func TestMutationRegenerationRatesReachPlayerTurnSystem(t *testing.T) {
+	g := newStepGame(t)
+	health, _ := g.stores.Health.Get(g.player)
+	magic, _ := g.stores.Magic.Get(g.player)
+	progress, _ := g.stores.Regeneration.Get(g.player)
+
+	health.Max = 30
+	health.Current = 5
+	magic.Max = 4
+	magic.Current = 0
+	progress.HPProgress = 0
+	progress.MPProgress = 0
+
+	for _, id := range []string{
+		"MUT_REGENERATION",
+		"MUT_MANA_REGENERATION",
+	} {
+		entity, err := g.world.CreateEntity()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		store := g.scripts.Components()["character.mutation"]
+
+		if _, err := store.Set(entity, map[string]any{
+			"owner":       g.player,
+			"mutation_id": id,
+			"acquired":    int64(1),
+		}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	g.turn.Actor = g.player
+
+	updateLuaSystem(t, g, "status.regeneration", 10)
+
+	if progress.HPProgress != 90 || progress.MPProgress != 18 {
+		t.Fatalf("mutation regeneration counters = %+v", *progress)
+	}
+}
+
+func TestNoRegenerationMutationStopsPlayerHealing(t *testing.T) {
+	g := newStepGame(t)
+	health, _ := g.stores.Health.Get(g.player)
+	progress, _ := g.stores.Regeneration.Get(g.player)
+
+	health.Current = 5
+	progress.HPProgress = 99
+
+	entity, err := g.world.CreateEntity()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	store := g.scripts.Components()["character.mutation"]
+
+	if _, err := store.Set(entity, map[string]any{
+		"owner":       g.player,
+		"mutation_id": "MUT_NO_REGENERATION",
+		"acquired":    int64(1),
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	g.turn.Actor = g.player
+
+	updateLuaSystem(t, g, "status.regeneration", 10)
+
+	if health.Current != 5 || progress.HPProgress != 99 {
+		t.Fatalf("No Regeneration still healed: HP=%d progress=%d",
+			health.Current, progress.HPProgress)
+	}
+}
+
+func TestInhibitedRegenerationStopsNearVisibleRat(t *testing.T) {
+	g := newStepGame(t)
+	health, _ := g.stores.Health.Get(g.player)
+	progress, _ := g.stores.Regeneration.Get(g.player)
+
+	health.Current = 5
+	progress.HPProgress = 99
+
+	entity, err := g.world.CreateEntity()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	store := g.scripts.Components()["character.mutation"]
+
+	if _, err := store.Set(entity, map[string]any{
+		"owner":       g.player,
+		"mutation_id": "MUT_INHIBITED_REGENERATION",
+		"acquired":    int64(1),
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	g.turn.Actor = g.player
+
+	updateLuaSystem(t, g, "status.regeneration", 10)
+
+	if health.Current != 5 || progress.HPProgress != 99 {
+		t.Fatalf("visible rat did not inhibit healing: HP=%d progress=%d",
+			health.Current, progress.HPProgress)
+	}
+
+	moveRatToOtherFloor(t, g)
+	updateLuaSystem(t, g, "status.regeneration", 10)
+
+	if health.Current != 6 {
+		t.Fatalf("healing did not resume after rat left: HP=%d", health.Current)
+	}
+}
+
 func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 	g := newStepGame(t)
 	moveRatToOtherFloor(t, g)

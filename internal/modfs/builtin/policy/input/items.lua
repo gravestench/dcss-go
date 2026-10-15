@@ -11,6 +11,10 @@ function items.potion(candidate)
     return candidate.class == "OBJ_POTIONS"
 end
 
+function items.wand(candidate)
+    return candidate.class == "OBJ_WANDS"
+end
+
 function items.weapon(candidate)
     return candidate.class == "OBJ_WEAPONS"
 end
@@ -53,6 +57,26 @@ function items.quaff(input)
     end
 
     return notice("Select a potion by its inventory letter.")
+end
+
+function items.evoke_wand(input)
+    local navigation = menu.close_or_help(input)
+
+    if navigation then
+        return navigation
+    end
+
+    local item = menu.item(input, items.wand)
+
+    if item then
+        return {
+            action = "aim",
+            kind = commands.evoke_wand,
+            item_id = item.id,
+        }
+    end
+
+    return notice("Select a wand by its inventory letter.")
 end
 
 function items.drop(input)

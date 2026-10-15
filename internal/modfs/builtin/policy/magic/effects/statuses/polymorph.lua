@@ -268,7 +268,7 @@ function polymorph.cast(ctx, player, intent, spell, power)
         return
     end
 
-    if will.resists(ctx, source, power) then
+    if will.resists(ctx, source, power, target) then
         ctx:emit("spell", "The " .. source.name .. " resists polymorph.")
         return
     end

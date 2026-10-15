@@ -6,6 +6,7 @@ local projectile = require("policy.magic.effects.zaps.projectile")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
+local targets = require("policy.ai.targets")
 
 local searing_ray = {}
 
@@ -34,7 +35,7 @@ local function friendly_in_ray(ctx, player, x, y, spell)
         x, y, range.for_spell(ctx, player, spell))
 
     for _, contact in ipairs(ray.contacts) do
-        if ctx:has(contact.actor, component.SUMMON) then
+        if targets.allied(ctx, contact.actor) then
             return true
         end
     end

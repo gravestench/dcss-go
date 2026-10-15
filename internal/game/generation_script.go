@@ -67,6 +67,14 @@ func (g *Game) buildScriptScenario(
 			return scenarioLevels{}, err
 		}
 
+		branchID, ok := record["branch_id"].(string)
+
+		if !ok || branchID == "" {
+			return scenarioLevels{}, fmt.Errorf("Lua level %d has no branch ID", id)
+		}
+
+		level.BranchID = branchID
+
 		level.initialMonsters, err = decisionInteger(record, "initial_monsters")
 
 		if err != nil {

@@ -1,5 +1,6 @@
 local equipment = require("policy.combat.equipment")
 local fighter = require("policy.combat.fighter")
+local player_attributes = require("policy.character.attributes")
 local roll = require("policy.combat.roll")
 local items = require("policy.inventory.items")
 
@@ -162,7 +163,7 @@ function delay.projectile(ctx, time_taken, item_id)
         local worn = equipment.worn(ctx, ctx:player(), { body = true })
         local body = worn.body and worn.body.definition.armour or nil
         local encumbrance = body and math.max(0, math.floor(-body.ev / 10)) or 0
-        local attributes = ctx:get(ctx:player(), "core.attributes")
+        local attributes = player_attributes.current(ctx, ctx:player())
         local armour10 = fighter.skill(ctx, "SK_ARMOUR", 10)
         armour_penalty20 = math.floor(2 * encumbrance ^ 2 *
             (450 - armour10) * 20 / (5 * (attributes.strength + 3)) / 450)

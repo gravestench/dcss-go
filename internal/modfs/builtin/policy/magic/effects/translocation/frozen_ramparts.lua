@@ -1,5 +1,6 @@
 local spells = require("ids.spells")
 local component = require("constants.component")
+local targets = require("policy.ai.targets")
 local terrain_ids = require("constants.terrain")
 local catalog = require("policy.catalog")
 local defense = require("policy.combat.monster_defense")
@@ -104,7 +105,8 @@ function ramparts.tick(ctx, actor, aut)
         return
     end
 
-    if not ctx:has(actor, component.AI) or ctx:has(actor, component.SUMMON) then
+    if not ctx:has(actor, component.AI) or
+        not targets.enemy(ctx, player, actor) then
         return
     end
 

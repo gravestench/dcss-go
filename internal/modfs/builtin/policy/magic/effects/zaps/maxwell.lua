@@ -6,6 +6,7 @@ local channel = require("policy.magic.channel")
 local damage = require("policy.magic.damage")
 local death_hooks = require("policy.combat.death_hooks")
 local registry = require("policy.magic.effects.registry")
+local targets = require("policy.ai.targets")
 
 local maxwell = { continuation_mp = 0 }
 
@@ -27,7 +28,7 @@ local function nearest(ctx, player, visible)
     for _, target in ipairs(ctx:query({
         component.ACTOR, component.HEALTH, component.POSITION,
     })) do
-        if target ~= player and not ctx:has(target, component.SUMMON) then
+        if targets.enemy(ctx, player, target) then
             local position = ctx:get(target, component.POSITION)
             local health = ctx:get(target, component.HEALTH)
             local actor = ctx:get(target, component.ACTOR)

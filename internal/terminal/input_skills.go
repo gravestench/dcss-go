@@ -18,7 +18,8 @@ func (m *AppModel) routeSkillInput(key string) tea.Cmd {
 	}
 
 	return m.routeInput("skills", key, map[string]any{
-		"skill_ids": ids,
+		"skill_ids":  ids,
+		"adjustable": m.game.View().SkillTrainingAdjustable,
 	})
 }
 

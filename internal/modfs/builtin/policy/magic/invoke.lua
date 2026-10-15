@@ -30,7 +30,8 @@ function invoke.resolve(ctx, player, input)
     local dy = input.dy or 0
 
     if effect.prepare then
-        local rejected = effect.prepare(ctx, player, spell, dx, dy)
+        local rejected = effect.prepare(ctx, player, spell, dx, dy,
+            { forced = true })
 
         if rejected then
             return { message = rejected }

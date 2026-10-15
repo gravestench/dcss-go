@@ -9,8 +9,17 @@ local player_health = require("policy.combat.player_health")
 local spell_range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
+local accuracy = require("policy.character.accuracy")
+local monster_stats = require("policy.combat.monster_stats")
 
 local projectile = { specs = {} }
+
+function projectile.to_hit(ctx, player, spec, power)
+    local base = spec.hit.base +
+        math.floor(power * spec.hit.numerator / spec.hit.denominator)
+
+    return accuracy.zap_to_hit(ctx, player, base)
+end
 
 local function random(ctx, bound)
     if bound <= 1 then
@@ -53,7 +62,7 @@ local function damage_dice(ctx, spec, power)
     return spec.damage.count, amount
 end
 
-local function shield_bonus(ctx, shield, definition)
+local function shield_bonus(ctx, target, shield, definition)
     local size = {
         SIZE_LITTLE = 1,
         SIZE_SMALL = 2,
@@ -69,7 +78,8 @@ local function shield_bonus(ctx, shield, definition)
 
     local base = (shield.definition.armour.ac + shield.item.plus * 2) * 2 +
         (value - size.SIZE_MEDIUM) * (shield.definition.subtype_value - 14)
-    local bound = base + math.floor(definition.hd * 4 / 3)
+    local hd = monster_stats.hit_dice(ctx, target, definition)
+    local bound = base + math.floor(hd * 4 / 3)
 
     if bound <= 0 then
         return -100
@@ -85,7 +95,7 @@ local function blocked(ctx, target, definition, to_hit)
         return false
     end
 
-    local bonus = shield_bonus(ctx, shield, definition)
+    local bonus = shield_bonus(ctx, target, shield, definition)
 
     if bonus <= 0 then
         return false
@@ -105,13 +115,11 @@ local function blocked(ctx, target, definition, to_hit)
     return true
 end
 
-local function hit(ctx, spec, power, evasion)
+local function hit(ctx, spec, to_hit, evasion)
     if spec.auto_hit then
         return true
     end
 
-    local to_hit = spec.hit.base +
-        math.floor(power * spec.hit.numerator / spec.hit.denominator)
     local random_ev = random(ctx, evasion)
     local attack = random(ctx, to_hit)
     local defense = math.floor((random(ctx, random_ev) +
@@ -190,7 +198,7 @@ end
 
 local function resolve(ctx, player, intent, spell, spec, power)
     local source = ctx:get(player, component.POSITION)
-    local range = spell_range.for_spell(ctx, player, spell)
+    local range = spec.range or spell_range.for_spell(ctx, player, spell)
     local ray
 
     if spec.bounce then
@@ -246,13 +254,12 @@ local function resolve(ctx, player, intent, spell, spec, power)
                 amount = magic_damage.monster_elemental(ctx, target,
                     amount, spec.element)
             end
-            local to_hit = spec.hit.base +
-                math.floor(zap_power * spec.hit.numerator / spec.hit.denominator)
+            local to_hit = projectile.to_hit(ctx, player, spec, zap_power)
 
             if not spec.beam and blocked(ctx, target, definition, to_hit) then
                 ctx:emit("spell", "The " .. definition.name .. " blocks the " .. spec.name .. ".")
                 return
-            elseif not hit(ctx, spec, zap_power,
+            elseif not hit(ctx, spec, to_hit,
                 defense.evasion(ctx, target, definition)) then
                 ctx:emit("spell", "The " .. spec.name .. " misses the " .. definition.name .. ".")
             else

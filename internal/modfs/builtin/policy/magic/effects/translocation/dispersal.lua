@@ -20,7 +20,8 @@ function spell_effects.resolve(ctx, player, _, spell, power)
     for _, monster in ipairs(common.monsters(ctx, center.level_id)) do
         if common.distance(center, monster.position) <= radius and
             not teleport.no_tele(monster.actor, monster.definition) then
-            if will.resists(ctx, monster.definition, power) then
+            if will.resists(ctx, monster.definition, power,
+                monster.entity) then
                 moved = blink.blink(ctx, player, monster.entity,
                     monster.definition) or moved
             else
@@ -31,7 +32,8 @@ function spell_effects.resolve(ctx, player, _, spell, power)
                     net.release(ctx, monster.entity)
                     ctx:move_actor(monster.entity, center.level_id, x, y)
                     moved = true
-                    if not will.resists(ctx, monster.definition, power) then
+                    if not will.resists(ctx, monster.definition, power,
+                        monster.entity) then
                         confusion.apply_innate(ctx, monster.entity,
                             monster.definition)
                     end

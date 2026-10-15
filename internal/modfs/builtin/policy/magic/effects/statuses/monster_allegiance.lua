@@ -6,6 +6,7 @@ local range = require("policy.magic.range")
 local roll = require("policy.combat.roll")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
+local monster_stats = require("policy.combat.monster_stats")
 
 local allegiance = {}
 
@@ -43,7 +44,8 @@ local function charm_duration(ctx, target, definition)
     local actor = ctx:get(target, component.ACTOR)
     local speed = math.max(1, actor.speed)
     local scaled_hd = math.max(1,
-        math.floor((definition.hd + 10) * 10 / speed))
+        math.floor((monster_stats.hit_dice(ctx, target, definition) + 10) *
+            10 / speed))
     local centiturns = math.max(2, math.floor(500 / scaled_hd))
     local raw = centiturns * roll.random_divide(ctx, 100, speed)
     local low = math.floor(raw * 60 / 100)
@@ -129,7 +131,7 @@ function allegiance.cast_charm(ctx, player, intent, spell, power)
     local actor = ctx:get(target, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)
 
-    if will.resists(ctx, definition, power) then
+    if will.resists(ctx, definition, power, target) then
         ctx:emit("spell", "The " .. definition.name .. " resists charm.")
         return
     end
@@ -161,7 +163,8 @@ function allegiance.cast_discord(ctx, player, power)
                 if can_frenzy(ctx, target, definition) then
                     messaged = true
 
-                    if will.resists(ctx, definition, enchant_power) then
+                    if will.resists(ctx, definition, enchant_power,
+                        target) then
                         ctx:emit("spell", "The " .. definition.name .. " resists.")
                     else
                         local value = ensure(ctx, target)

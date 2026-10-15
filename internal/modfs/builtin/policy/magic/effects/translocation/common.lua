@@ -1,5 +1,6 @@
 local component = require("constants.component")
 local catalog = require("policy.catalog")
+local monster_health = require("policy.combat.monster_health")
 
 local common = {}
 
@@ -47,12 +48,10 @@ function common.hit(ctx, target, amount)
         return
     end
 
-    local health = ctx:get(target, component.HEALTH)
-    local before = health.current
-    health.current = math.max(0, health.current - amount)
-    ctx:set(target, component.HEALTH, health)
+    local health, dealt = monster_health.damage(ctx, target, amount,
+        ctx:player())
 
-    if before > 0 and health.current == 0 then
+    if dealt > 0 and health.current == 0 then
         ctx:signal("player_kill", target)
     end
 end

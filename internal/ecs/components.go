@@ -193,14 +193,17 @@ const (
 	IntentMemorise
 	IntentPlayerSpell
 	IntentChannelWait
+	IntentPlayerAbility
+	IntentEvokeWand
 )
 
 type Intent struct {
-	Kind     IntentKind
-	DX       int
-	DY       int
-	ItemID   akara.Entity
-	Quantity int
-	SpellID  string
-	Forced   bool
+	Kind      IntentKind
+	DX        int
+	DY        int
+	ItemID    akara.Entity
+	Quantity  int
+	SpellID   string
+	AbilityID string
+	Forced    bool
 }

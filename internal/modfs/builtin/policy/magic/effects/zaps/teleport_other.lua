@@ -10,6 +10,16 @@ local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 
 local teleport = {}
+local tentacles = {
+    [monsters.MONS_KRAKEN_TENTACLE] = true,
+    [monsters.MONS_KRAKEN_TENTACLE_SEGMENT] = true,
+    [monsters.MONS_STARSPAWN_TENTACLE] = true,
+    [monsters.MONS_STARSPAWN_TENTACLE_SEGMENT] = true,
+    [monsters.MONS_ELDRITCH_TENTACLE] = true,
+    [monsters.MONS_ELDRITCH_TENTACLE_SEGMENT] = true,
+    [monsters.MONS_SNAPLASHER_VINE] = true,
+    [monsters.MONS_SNAPLASHER_VINE_SEGMENT] = true,
+}
 
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
@@ -27,10 +37,7 @@ local function no_tele(actor, definition)
     return has_flag(definition, "M_STATIONARY") or
         has_flag(definition, "M_PROJECTILE") or
         has_flag(definition, "M_STASIS") or
-        actor.kind_id == monsters.MONS_TENTACLE or
-        actor.kind_id == monsters.MONS_TENTACLE_SEGMENT or
-        actor.kind_id == monsters.MONS_ELDRITCH_TENTACLE or
-        actor.kind_id == monsters.MONS_ELDRITCH_TENTACLE_SEGMENT
+        tentacles[actor.kind_id] == true
 end
 
 local function destination(ctx, target, position)
@@ -122,7 +129,7 @@ function teleport.resolve(ctx, player, intent, spell, power)
 
     -- zap-data.h:ZAP_TELEPORT_OTHER has player enchant power 3*power/2.
     if will.resists(ctx, definition,
-        math.floor(math.min(power, 100) * 3 / 2)) then
+        math.floor(math.min(power, 100) * 3 / 2), target) then
         ctx:emit("spell", "The " .. definition.name ..
             " resists teleportation.")
         return

@@ -35,7 +35,8 @@ function innate.generate(ctx, species, known)
         for _, spell in ipairs(catalog) do
             if player_books[spell.id] and spell.status == "defined" and
                 not seen[spell.id] and not forbidden_flags(spell) and
-                traits.start_spell_usable(species, spell.id) and
+                traits.start_spell_usable(ctx, ctx:player(), species,
+                    spell.id) and
                 spell.level >= minimum[index] and
                 spell.level <= maximum[index] then
                 candidates = candidates + 1

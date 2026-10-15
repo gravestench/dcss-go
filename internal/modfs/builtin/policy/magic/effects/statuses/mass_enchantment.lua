@@ -4,6 +4,7 @@ local component = require("constants.component")
 local catalog = require("policy.catalog")
 local roll = require("policy.combat.roll")
 local will = require("policy.magic.effects.zaps.will")
+local monster_stats = require("policy.combat.monster_stats")
 
 local mass = {}
 
@@ -28,7 +29,9 @@ local function duration(ctx, monster, definition, kind)
 
     if kind == "fear_aut" then
         centiturns = math.floor(150 /
-            (1 + scaled_speed(definition.hd + 5, speed)))
+            (1 + scaled_speed(
+                monster_stats.hit_dice(ctx, monster, definition) + 5,
+                speed)))
     else
         centiturns = math.floor(1000 / scaled_speed(25, speed))
     end
@@ -77,7 +80,7 @@ local function apply(ctx, target, definition, kind, power)
         return false
     end
 
-    if will.resists(ctx, definition, power) then
+    if will.resists(ctx, definition, power, target) then
         ctx:emit("spell", "The " .. definition.name .. " resists.")
         return true
     end
@@ -94,6 +97,29 @@ local function apply(ctx, target, definition, kind, power)
     ctx:emit("spell", "The " .. definition.name ..
         (kind == "fear_aut" and " looks frightened!" or
             " is haunted by guilt!"))
+
+    return true
+end
+
+function mass.apply_innate_fear(ctx, target, definition)
+    if not can_fear(definition) then
+        return false
+    end
+
+    local current = ctx:get(target, component.MONSTER_MASS_ENCHANT) or {
+        fear_aut = 0,
+        anguish_aut = 0,
+    }
+
+    current.fear_aut = duration(ctx, target, definition, "fear_aut")
+
+    if ctx:has(target, component.MONSTER_MASS_ENCHANT) then
+        ctx:set(target, component.MONSTER_MASS_ENCHANT, current)
+    else
+        ctx:add(target, component.MONSTER_MASS_ENCHANT, current)
+    end
+
+    ctx:emit("mutation", "The " .. definition.name .. " looks frightened!")
 
     return true
 end

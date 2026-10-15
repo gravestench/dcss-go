@@ -3,6 +3,9 @@ local equipment = require("policy.inventory.equipment")
 local items = require("policy.inventory.items")
 local trajectory = require("policy.combat.trajectory")
 local statuses = require("policy.magic.effects.statuses.player")
+local vision = require("policy.character.vision")
+local mutation_effects = require("policy.mutations.effects.registry")
+local mutation_capabilities = require("constants.mutation_capabilities")
 
 local projectiles = {}
 
@@ -60,6 +63,11 @@ local function selected_item(ctx, player, firing, item_id)
 end
 
 function projectiles.prepare(ctx, player, firing, item_id, dx, dy)
+    if mutation_effects.sum(ctx, player,
+        mutation_capabilities.HANDHELD_USE_FORBIDDEN) > 0 then
+        return { message = "You cannot fire or throw without grasping hands." }
+    end
+
     local entity, _, message = selected_item(ctx, player, firing, item_id)
 
     if message then
@@ -69,13 +77,15 @@ function projectiles.prepare(ctx, player, firing, item_id, dx, dy)
     local position = ctx:get(player, "core.position")
     local x = position.x + dx
     local y = position.y + dy
+    local sight = vision.radius(ctx, player)
 
     if dx == 0 and dy == 0 then
         return { message = "Choose a target for your projectile." }
     end
 
-    if math.max(math.abs(dx), math.abs(dy)) > 7 or
-        not ctx:visible(position.level_id, position.x, position.y, 7, x, y) then
+    if math.max(math.abs(dx), math.abs(dy)) > sight or
+        not ctx:visible(position.level_id, position.x, position.y,
+            sight, x, y) then
         return { message = "You cannot see that target." }
     end
 

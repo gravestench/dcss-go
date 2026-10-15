@@ -16,7 +16,7 @@ function system.update(ctx, active)
         for _, head in ipairs(ctx:query({ component.SUMMON, component.POSITION })) do
             local state = ctx:get(head, component.SUMMON)
 
-            if state.spell_id == spells.SPELL_MALIGN_GATEWAY and
+            if state.source_id == spells.SPELL_MALIGN_GATEWAY and
                 not ctx:has(head, component.SUMMON_SEGMENT) then
                 tentacle.refresh(ctx, head)
             end
@@ -25,7 +25,7 @@ function system.update(ctx, active)
         not ctx:has(active, component.SUMMON_SEGMENT) then
         local state = ctx:get(active, component.SUMMON)
 
-        if state.spell_id == spells.SPELL_MALIGN_GATEWAY and
+        if state.source_id == spells.SPELL_MALIGN_GATEWAY and
             not ctx:has(active, component.SUMMON_SEGMENT) then
             tentacle.refresh(ctx, active)
         end

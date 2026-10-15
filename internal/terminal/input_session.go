@@ -29,6 +29,7 @@ func (m *AppModel) applySessionDecision(action string, decision map[string]any) 
 		if interrupt {
 			m.equipmentTickID++
 			m.spellTickID++
+			m.vampireTickID++
 		}
 
 		if name == "save" {
@@ -49,6 +50,7 @@ func (m *AppModel) applySessionDecision(action string, decision map[string]any) 
 		if interrupt {
 			m.equipmentTickID++
 			m.spellTickID++
+			m.vampireTickID++
 		}
 
 		return m.saveAndExit()
@@ -75,9 +77,24 @@ func (m *AppModel) applySessionDecision(action string, decision map[string]any) 
 		}
 
 		m.spellTickID++
+		m.vampireTickID++
 
 		return m.stepPlayCommand(game.Command{
 			Kind: game.CommandCancelMemorise,
+		})
+
+	case "cancel_vampire":
+		if _, ok := inputCommandKind(decision,
+			game.CommandCancelVampire); !ok {
+			m.notice = "Input policy returned an invalid blood ritual command."
+
+			return nil
+		}
+
+		m.vampireTickID++
+
+		return m.stepPlayCommand(game.Command{
+			Kind: game.CommandCancelVampire,
 		})
 
 	case "choose_stat":

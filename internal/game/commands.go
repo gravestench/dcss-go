@@ -32,15 +32,21 @@ const (
 	CommandCancelMemorise
 	CommandCast
 	CommandForceCast
+	CommandAbility
+	CommandEvokeWand
 )
 
+const CommandCancelVampire = CommandCancelMemorise
+
 type Command struct {
-	Kind     CommandKind
-	DX       int
-	DY       int
-	ItemID   uint64
-	Quantity int
-	SpellID  string
+	Kind      CommandKind
+	DX        int
+	DY        int
+	ItemID    uint64
+	Quantity  int
+	SpellID   string
+	AbilityID string
+	Forced    bool
 }
 
 type Event struct {
@@ -49,9 +55,10 @@ type Event struct {
 }
 
 type StepResult struct {
-	Spent  Aut
-	Events []Event
-	View   View
+	Spent        Aut
+	Events       []Event
+	View         View
+	Confirmation string
 }
 
 // TurnContext is updated by Game before ordered Akara systems run.
@@ -64,6 +71,12 @@ type TurnContext struct {
 }
 
 func (g *Game) Step(command Command) (StepResult, error) {
+	revivalEvents, err := g.resumePendingRevival()
+
+	if err != nil {
+		return StepResult{}, err
+	}
+
 	position, found := g.stores.Positions.Get(g.player)
 
 	if !found {
@@ -77,7 +90,14 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	}
 
 	if !prepared.spendsTime {
+		prepared.response.Events = append(revivalEvents,
+			prepared.response.Events...)
+
 		return prepared.response, nil
+	}
+
+	for _, event := range prepared.response.Events {
+		g.messages = append(g.messages, event.Text)
 	}
 
 	// Timing policies run inside this action context. Source projectile
@@ -103,6 +123,9 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	if err != nil {
 		return StepResult{}, err
 	}
+
+	events = append(prepared.response.Events, events...)
+	events = append(revivalEvents, events...)
 
 	if arrived, found := g.stores.Positions.Get(g.player); found &&
 		arrived.LevelID != position.LevelID {
@@ -158,6 +181,7 @@ func (g *Game) playerActionCost(prepared preparedCommand) (Aut, error) {
 		"attack_target": prepared.attackTarget != 0,
 		"intent_kind":   int(prepared.intent.Kind),
 		"item_id":       uint64(prepared.intent.ItemID),
+		"ability_id":    prepared.intent.AbilityID,
 	})
 
 	if err != nil {
@@ -238,6 +262,28 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 	}
 
 	g.currentAut = Aut(playerTurn.NextAut)
+
+	if !g.playerDead() {
+		arrived, found := g.stores.Positions.Get(g.player)
+
+		if !found {
+			return StepResult{}, fmt.Errorf("player has no position after turn")
+		}
+
+		activeLevel := g.levels[arrived.LevelID]
+
+		if activeLevel == nil {
+			return StepResult{}, fmt.Errorf("player is on missing level %d", arrived.LevelID)
+		}
+
+		if err := g.runWorldPolicy("world.zot_clock", map[string]any{
+			"level_id":    arrived.LevelID,
+			"branch_id":   activeLevel.BranchID,
+			"elapsed_aut": int64(cost),
+		}); err != nil {
+			return StepResult{}, err
+		}
+	}
 
 	if err := g.runWorldPolicy("world.age_corpses", map[string]any{
 		"level_id":  activeLevelID,

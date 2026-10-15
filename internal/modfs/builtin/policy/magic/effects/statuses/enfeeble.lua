@@ -5,6 +5,8 @@ local catalog = require("policy.catalog")
 local range = require("policy.magic.range")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
+local monster_stats = require("policy.combat.monster_stats")
+local roll = require("policy.combat.roll")
 
 local enfeeble = {}
 local books = {}
@@ -37,10 +39,32 @@ local function spell_sensitive(definition)
 end
 
 local function has_attacks(definition)
-    local attack = definition.attacks and definition.attacks[1]
+    for _, attack in ipairs(definition.attacks or {}) do
+        if attack.type_id ~= "AT_NONE" and attack.damage > 0 then
+            return true
+        end
+    end
 
-    return attack ~= nil and attack.type_id ~= "AT_NONE" and
-        attack.damage > 0
+    return false
+end
+
+local function status(ctx, target)
+    local current = ctx:get(target, component.MONSTER_ENFEEBLE)
+
+    return current or {
+        weak_aut = 0,
+        antimagic_aut = 0,
+        blind_aut = 0,
+        dazed_aut = 0,
+    }, current ~= nil
+end
+
+local function save_status(ctx, target, value, existed)
+    if existed then
+        ctx:set(target, component.MONSTER_ENFEEBLE, value)
+    else
+        ctx:add(target, component.MONSTER_ENFEEBLE, value)
+    end
 end
 
 local function divide_randomly(ctx, numerator, denominator)
@@ -71,7 +95,7 @@ end
 local function apply(ctx, target, definition, power)
     local weak = has_attacks(definition)
     local antimagic = spell_sensitive(definition)
-    local resisted = will.resists(ctx, definition, power)
+    local resisted = will.resists(ctx, definition, power, target)
     local blind = not resisted and not has(definition.flags, "M_UNBLINDABLE")
     local dazed = not resisted
 
@@ -81,13 +105,7 @@ local function apply(ctx, target, definition, power)
     end
 
     local lasting = duration(ctx, power)
-    local current = ctx:get(target, component.MONSTER_ENFEEBLE)
-    local next_state = current or {
-        weak_aut = 0,
-        antimagic_aut = 0,
-        blind_aut = 0,
-        dazed_aut = 0,
-    }
+    local next_state, existed = status(ctx, target)
 
     if weak then
         next_state.weak_aut = math.max(next_state.weak_aut, lasting)
@@ -105,17 +123,66 @@ local function apply(ctx, target, definition, power)
         next_state.dazed_aut = math.max(next_state.dazed_aut, lasting)
     end
 
-    if current then
-        ctx:set(target, component.MONSTER_ENFEEBLE, next_state)
-    else
-        ctx:add(target, component.MONSTER_ENFEEBLE, next_state)
-    end
+    save_status(ctx, target, next_state, existed)
 
     if resisted then
         ctx:emit("spell", "The " .. definition.name .. " partially resists.")
     end
 
     ctx:emit("spell", "The " .. definition.name .. " is enfeebled!")
+end
+
+function enfeeble.antimagic_susceptible(definition)
+    return spell_sensitive(definition)
+end
+
+function enfeeble.has_attacks(definition)
+    return has_attacks(definition)
+end
+
+-- Source: beam.cc:BEAM_DRAIN_MAGIC. Power is damage dealt times eight for
+-- Black Mark; the saved antimagic duration disrupts later wizard magic.
+function enfeeble.apply_antimagic(ctx, target, definition, power)
+    if not spell_sensitive(definition) then
+        return false
+    end
+
+    local hd = monster_stats.hit_dice(ctx, target, definition)
+    local upper = roll.random_divide(ctx, power, hd)
+    local duration = roll.melee(ctx, upper + 1) * 10
+
+    if duration <= 0 then
+        return false
+    end
+
+    local next_state, existed = status(ctx, target)
+
+    next_state.antimagic_aut = next_state.antimagic_aut + duration
+    save_status(ctx, target, next_state, existed)
+    ctx:emit("combat", "The " .. definition.name ..
+        "'s magic leaks into the air.")
+
+    return true
+end
+
+-- Source: monster.cc:monster::weaken with power six for Black Mark.
+function enfeeble.apply_weak(ctx, target, definition, power)
+    if not has_attacks(definition) then
+        return false
+    end
+
+    local next_state, existed = status(ctx, target)
+    local was_weak = next_state.weak_aut > 0
+    local duration = (power + ctx:random("mutation", power + 3)) * 10
+
+    next_state.weak_aut = next_state.weak_aut + duration
+    save_status(ctx, target, next_state, existed)
+
+    if not was_weak then
+        ctx:emit("combat", "The " .. definition.name .. " looks weaker.")
+    end
+
+    return true
 end
 
 function enfeeble.can_target(ctx, player, spell)

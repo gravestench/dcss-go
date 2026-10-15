@@ -1,0 +1,15 @@
+-- Source ability-type.h names used by innate mutation abilities.
+local abilities = {
+    HOP = "ABIL_HOP",
+    HURL_DAMNATION = "ABIL_DAMNATION",
+    WORD_OF_CHAOS = "ABIL_WORD_OF_CHAOS",
+    SPIT_POISON = "ABIL_SPIT_POISON",
+    BREATHE_POISON = "ABIL_BREATHE_POISON",
+    ROLLING_CHARGE = "ABIL_ROLLING_CHARGE",
+    EXSANGUINATE = "ABIL_EXSANGUINATE",
+    REVIVIFY = "ABIL_REVIVIFY",
+    BAT_FORM = "ABIL_TRAN_BAT",
+    END_TRANSFORMATION = "ABIL_END_TRANSFORMATION",
+}
+
+return abilities

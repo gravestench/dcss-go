@@ -1,4 +1,5 @@
 local ranged = require("policy.combat.ranged")
+local monster_stats = require("policy.combat.monster_stats")
 
 local stone = {}
 stone.show_damage = true
@@ -9,9 +10,9 @@ function stone.validate(item)
     end
 end
 
-function stone.resolve(ctx, definition, defense, kind)
+function stone.resolve(ctx, attacker, definition, defense, kind)
     return ranged.shot(ctx, {
-        hd = definition.hd,
+        hd = monster_stats.hit_dice(ctx, attacker, definition),
         weapon_damage = 0,
         projectile_damage = kind.missile.damage,
         natural_damage = definition.attacks[1].damage,

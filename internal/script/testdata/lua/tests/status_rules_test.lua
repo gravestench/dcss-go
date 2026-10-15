@@ -17,13 +17,13 @@ function test.run(ctx)
     harness.falsy(mass.fear_active(ctx, monster),
         "fear should end when its saved mark is removed")
 
-    local player = harness.actor_with(ctx, component.MIASMA_SLOW, {
+    local player = harness.actor_with(ctx, component.PLAYER_SLOW, {
         remaining_aut = 20,
     })
 
     harness.truthy(statuses.slow_active(ctx, player),
         "saved miasma should slow player timing")
-    ctx:remove(player, component.MIASMA_SLOW)
+    ctx:remove(player, component.PLAYER_SLOW)
     harness.falsy(statuses.slow_active(ctx, player),
         "miasma slow should end with its saved duration")
 end

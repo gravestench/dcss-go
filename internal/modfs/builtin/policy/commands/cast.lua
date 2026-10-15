@@ -5,6 +5,7 @@ local records = require("policy.character.spell_records")
 local resources = require("policy.magic.resources")
 local statuses = require("policy.magic.effects.statuses.player")
 local confusion = require("policy.magic.player_confusion")
+local availability = require("policy.character.skill_availability")
 
 local cast = {}
 
@@ -41,6 +42,10 @@ function cast.prepare(ctx, player, input)
     local spell = catalog.get("spells", spell_id)
     local progress = ctx:get(player, "core.progression")
 
+    if availability.forbidden_spell(ctx, player, spell) then
+        return { message = "You cannot use spells of this school." }
+    end
+
     if statuses.silence_radius(ctx, player) >= 0 then
         return { message = "You cannot cast spells when silenced!" }
     end
@@ -76,9 +81,15 @@ function cast.prepare(ctx, player, input)
     end
 
     if effect.prepare then
-        local rejection = effect.prepare(ctx, player, spell, dx, dy)
+        local rejection = effect.prepare(ctx, player, spell, dx, dy,
+            input)
 
         if rejection then
+            if type(rejection) == "table" and
+                type(rejection.confirmation) == "string" then
+                return rejection
+            end
+
             return { message = rejection }
         end
     end

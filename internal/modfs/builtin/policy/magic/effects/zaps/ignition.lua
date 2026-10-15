@@ -3,6 +3,7 @@ local spells = require("ids.spells")
 local catalog = require("policy.catalog")
 local explosive = require("policy.magic.effects.zaps.explosive")
 local registry = require("policy.magic.effects.registry")
+local targets = require("policy.ai.targets")
 
 local ignition = {}
 
@@ -29,7 +30,7 @@ local function has_flag(definition, wanted)
 end
 
 local function friendly(ctx, actor, player)
-    return actor == player or ctx:has(actor, component.SUMMON)
+    return not targets.enemy(ctx, player, actor)
 end
 
 local function blast_sources(ctx, player, origin)

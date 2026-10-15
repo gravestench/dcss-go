@@ -6,6 +6,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"dcrawl-go/internal/character"
+	"dcrawl-go/internal/game"
 )
 
 func TestInventoryPageSourceCategoriesAndLetters(t *testing.T) {
@@ -102,6 +103,53 @@ func TestSkillsPageLevelsAptitudesAndTrainingControls(t *testing.T) {
 	if !strings.Contains(plainApp(m), "unavailable") ||
 		m.game.View().CurrentAut != aut {
 		t.Fatal("unported target control lacked explanation or spent time")
+	}
+}
+
+func TestGnollSkillsPageHasFixedTrainingControls(t *testing.T) {
+	m := pregameModel(t)
+	g, err := game.NewDungeonGame(
+		43,
+		"SP_GNOLL",
+		"JOB_FIGHTER",
+		"WPN_WAR_AXE",
+		"Gnoll",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m.game = g
+	m.screen = ScreenSkills
+
+	page := plainApp(m)
+
+	if !strings.Contains(page, "Gnolls train all skills equally") ||
+		strings.Contains(page, "/ - mode") ||
+		strings.Contains(page, "= - target") {
+		t.Fatalf("Gnoll skills page has adjustable controls:\n%s", page)
+	}
+
+	before := m.game.View()
+
+	for _, key := range []string{
+		"/",
+		"|",
+		"a",
+		"=",
+	} {
+		m.handleKey(key)
+	}
+
+	after := m.game.View()
+
+	if after.CurrentAut != before.CurrentAut ||
+		!after.SkillTraining.Manual ||
+		!after.SkillTraining.Settings[0].Enabled ||
+		m.skillFocusAction || m.notice != "" {
+		t.Fatalf("Gnoll changed training controls: %+v / %q",
+			after.SkillTraining, m.notice)
 	}
 }
 

@@ -31,11 +31,12 @@ function roll.average_three(ctx, stream, bound)
     return math.floor((first + second + third) / 3)
 end
 
-function roll.random_divide(ctx, numerator, denominator)
+function roll.random_divide(ctx, numerator, denominator, stream)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
 
-    if remainder > 0 and roll.melee(ctx, denominator) < remainder then
+    if remainder > 0 and
+        roll.draw(ctx, stream or "melee", denominator) < remainder then
         quotient = quotient + 1
     end
 

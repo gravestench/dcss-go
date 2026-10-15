@@ -2,6 +2,10 @@ local roll = require("policy.combat.roll")
 local slow = require("policy.combat.monster_slow")
 local component = require("constants.component")
 local catalog = require("policy.catalog")
+local monster_flags = require("constants.monster_flags")
+local monsters = require("ids.monsters")
+local resistance_ids = require("constants.resistance_ids")
+local monster_stats = require("policy.combat.monster_stats")
 
 local enchant = {}
 
@@ -58,7 +62,7 @@ end
 
 local function partial_effects(ctx, monster)
     if active_fields(ctx:get(monster, component.MONSTER_ENCHANT), {
-        "blind_aut", "corrosion_aut",
+        "blind_aut", "corrosion_aut", "invisible_aut",
     }) then
         return true
     end
@@ -101,6 +105,7 @@ local function state(ctx, monster)
     return ctx:get(monster, "magic.monster_enchant") or {
         blind_aut = 0,
         corrosion_aut = 0,
+        invisible_aut = 0,
     }
 end
 
@@ -135,13 +140,13 @@ end
 function enchant.blinded(ctx, monster)
     local value = ctx:get(monster, "magic.monster_enchant")
 
-    return value ~= nil and value.blind_aut > 0
+    return value ~= nil and (value.blind_aut or 0) > 0
 end
 
 function enchant.corroded(ctx, monster)
     local value = ctx:get(monster, "magic.monster_enchant")
 
-    return value ~= nil and value.corrosion_aut > 0
+    return value ~= nil and (value.corrosion_aut or 0) > 0
 end
 
 -- beam.cc:4629-4636 adds ENCH_BLIND once with a HD-scaled duration.
@@ -157,7 +162,7 @@ function enchant.blind(ctx, monster, definition)
     end
 
     local base = math.max(1, roll.random_divide(ctx, 54,
-        math.max(1, definition.hd))) * 10
+        monster_stats.hit_dice(ctx, monster, definition))) * 10
     value.blind_aut = base + roll.melee(ctx, base + 1)
     save(ctx, monster, value)
     ctx:emit("spell", "The " .. definition.name .. " is blinded.")
@@ -165,17 +170,12 @@ function enchant.blind(ctx, monster, definition)
     return true
 end
 
--- monster.cc:acid_corrode gives a 2/3 application chance below rAcid 3.
 -- mon-ench.cc gives corrosion the same duration class as slow.
-function enchant.corrode(ctx, monster, definition)
-    if resistance(definition, "MR_RES_ACID") >= 3 or
-        roll.melee(ctx, 3) == 0 then
-        return false
-    end
-
+local function apply_corrosion(ctx, monster, definition, source)
     local actor = ctx:get(monster, "core.actor")
     local modified_speed = math.max(1,
-        math.floor((definition.hd + 10) * 10 / math.max(1, actor.speed)))
+        math.floor((monster_stats.hit_dice(ctx, monster, definition) + 10) *
+            10 / math.max(1, actor.speed)))
     local centiturns = math.max(2,
         math.floor(250 / (1 + modified_speed)))
     local speed_duration = roll.random_divide(ctx, 100, actor.speed)
@@ -191,10 +191,37 @@ function enchant.corrode(ctx, monster, definition)
     save(ctx, monster, value)
 
     if not was_corroded then
-        ctx:emit("spell", "The " .. definition.name .. " corrodes!")
+        ctx:emit("spell", source or
+            ("The " .. definition.name .. " corrodes!"))
     end
 
     return true
+end
+
+-- monster.cc:acid_corrode gives a 2/3 application chance below rAcid 3.
+function enchant.corrode(ctx, monster, definition)
+    if resistance(definition, resistance_ids.ACID) >= 3 or
+        roll.melee(ctx, 3) == 0 then
+        return false
+    end
+
+    return apply_corrosion(ctx, monster, definition)
+end
+
+-- monster.cc:corrode_equipment gives rCorr a 50% protection chance.
+function enchant.corrode_equipment(ctx, monster, definition, source)
+    if flag(definition, monster_flags.AVATAR) or
+        definition.id == monsters.MONS_PLAYER_SHADOW then
+        return false
+    end
+
+    if resistance(definition, resistance_ids.ACID) > 0 and
+        roll.melee(ctx, 2) == 0 then
+        return false
+    end
+
+    return apply_corrosion(ctx, monster, definition,
+        source .. " corrodes the " .. definition.name .. "!")
 end
 
 -- spl-goditem.cc:debuff_monster removes dispellable enchantments. Known
@@ -203,7 +230,9 @@ function enchant.dispel(ctx, monster, definition)
     local changed = slow.remove(ctx, monster)
     local value = ctx:get(monster, component.MONSTER_ENCHANT)
 
-    if value and (value.blind_aut > 0 or value.corrosion_aut > 0) then
+    if value and ((value.blind_aut or 0) > 0 or
+        (value.corrosion_aut or 0) > 0 or
+        (value.invisible_aut or 0) > 0) then
         ctx:remove(monster, component.MONSTER_ENCHANT)
         changed = true
     end
@@ -271,6 +300,10 @@ function enchant.tick(ctx, monster)
     local actor = ctx:get(monster, "core.actor")
     local changed = false
 
+    value.blind_aut = value.blind_aut or 0
+    value.corrosion_aut = value.corrosion_aut or 0
+    value.invisible_aut = value.invisible_aut or 0
+
     if value.blind_aut > 0 then
         value.blind_aut = math.max(0, value.blind_aut - 10)
         changed = true
@@ -291,8 +324,19 @@ function enchant.tick(ctx, monster)
         end
     end
 
+    if value.invisible_aut > 0 then
+        value.invisible_aut = math.max(0, value.invisible_aut - 10)
+        changed = true
+
+        if value.invisible_aut == 0 then
+            ctx:emit("duration", "The " .. actor.kind_id ..
+                " becomes visible again.")
+        end
+    end
+
     if changed then
-        if value.blind_aut == 0 and value.corrosion_aut == 0 then
+        if value.blind_aut == 0 and value.corrosion_aut == 0 and
+            value.invisible_aut == 0 then
             ctx:remove(monster, "magic.monster_enchant")
         else
             ctx:set(monster, "magic.monster_enchant", value)

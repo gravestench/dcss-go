@@ -79,15 +79,18 @@ func TestLuaCollectionsSurviveSaveAndRejectDanglingEntity(t *testing.T) {
 	ints := values["ints"].([]any)
 	refs := values["entity_map"].(map[string]any)
 
-	if ints[0] != int64(-5) || ints[1] != int64(8) ||
+	if ints[0] != int64(-5) ||
+		ints[1] != int64(8) ||
 		refs["target"] != target {
 		t.Fatalf("restored values = %v", values)
 	}
 
 	ints[0] = int64(99)
+
 	restoredInts, err := component.Get("ints")
 
-	if err != nil || restoredInts.([]any)[0] != int64(-5) {
+	if err != nil ||
+		restoredInts.([]any)[0] != int64(-5) {
 		t.Fatalf("snapshot aliased restored component: %v, %v", restoredInts, err)
 	}
 
@@ -109,7 +112,8 @@ func TestLuaCollectionsSurviveSaveAndRejectDanglingEntity(t *testing.T) {
 
 	_, err = RestoreWithRules(snapshot, rules, RestorePolicy{})
 
-	if err == nil || !strings.Contains(err.Error(), "references missing entity") {
+	if err == nil ||
+		!strings.Contains(err.Error(), "references missing entity") {
 		t.Fatalf("expected dangling entity rejection, got %v", err)
 	}
 }

@@ -31,9 +31,10 @@ local function contains(values, wanted)
     return false
 end
 
-local function eligible(species, spell, school, minimum, maximum, seen)
+local function eligible(ctx, species, spell, school, minimum, maximum, seen)
     if spell.status ~= "defined" or not player_books[spell.id] or
-        not traits.start_spell_usable(species, spell.id) or seen[spell.id] or
+        not traits.start_spell_usable(ctx, ctx:player(), species,
+            spell.id) or seen[spell.id] or
         spell.level < minimum or spell.level > maximum then
         return false
     end
@@ -50,7 +51,7 @@ local function pick(ctx, species, school, minimum, maximum, seen)
     local count = 0
 
     for _, spell in ipairs(require("policy.catalog").all("spells")) do
-        if eligible(species, spell, school, minimum, maximum, seen) then
+        if eligible(ctx, species, spell, school, minimum, maximum, seen) then
             count = count + 1
 
             if ctx:random("character", count) == 0 then

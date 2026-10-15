@@ -38,7 +38,7 @@ function foxfire.act(ctx, entity, origin)
         local raw = 1 + summons.roll(ctx, sides)
 
         -- Source: zap-data.h:ZAP_FOXFIRE, an automatic 1d(4 + pow/5) hit.
-        blast.hit(ctx, target, raw, "MR_RES_FIRE")
+        blast.hit(ctx, target, raw, "MR_RES_FIRE", entity)
         blast.finish(ctx, entity, 1)
         ctx:emit("combat", "Your foxfire strikes a nearby creature.")
 

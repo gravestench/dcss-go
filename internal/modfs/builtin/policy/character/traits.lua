@@ -1,35 +1,14 @@
 -- Starting item and spell usability derives from the species definition.
 -- Fake mutations such as Formicid stasis are gameplay rules, not HUD text.
+local mutation_levels = require("policy.mutations.levels")
+local mutations = require("ids.mutations")
+local species_traits = require("policy.character.species_traits")
+
 local traits = {}
 
-function traits.mutation_level(species, id, level)
-    local amount = 0
-    local current_level = level or 1
+traits.stasis = species_traits.stasis
 
-    for _, mutation in ipairs(species.mutations or {}) do
-        if mutation.id == id and mutation.level <= current_level then
-            amount = amount + mutation.amount
-        end
-    end
-
-    return amount
-end
-
-function traits.stasis(species)
-    if traits.mutation_level(species, "MUT_STASIS") > 0 then
-        return true
-    end
-
-    for _, mutation in ipairs(species.fake_mutations or {}) do
-        if mutation.short == "permanent stasis" then
-            return true
-        end
-    end
-
-    return false
-end
-
-function traits.start_spell_usable(species, spell_id)
+function traits.start_spell_usable(ctx, player, species, spell_id)
     if traits.stasis(species) and
         (spell_id == "SPELL_BLINK" or spell_id == "SPELL_TELEPORT_SELF" or
             spell_id == "SPELL_SWIFTNESS") then
@@ -56,7 +35,8 @@ function traits.start_spell_usable(species, spell_id)
     end
 
     if spell_id == "SPELL_PORTAL_PROJECTILE" and
-        traits.mutation_level(species, "MUT_NO_GRASPING") > 0 then
+        mutation_levels.effective(ctx, player,
+            mutations.MUT_NO_GRASPING) > 0 then
         return false
     end
 

@@ -1,5 +1,6 @@
 local basic = require("policy.generation.basic")
 local nearest = require("policy.generation.nearest")
+local branches = require("ids.branches")
 
 local generated = {}
 
@@ -82,6 +83,7 @@ function generated.generate(ctx)
         levels = {
             {
                 id = 1,
+                branch_id = branches.BRANCH_DUNGEON,
                 rows = first.rows,
                 stairs = first_links,
                 entry_x = entry.x,
@@ -90,6 +92,7 @@ function generated.generate(ctx)
             },
             {
                 id = 2,
+                branch_id = branches.BRANCH_DUNGEON,
                 rows = second.rows,
                 stairs = second_links,
                 entry_x = second_entry.x,

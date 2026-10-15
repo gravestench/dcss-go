@@ -1,4 +1,5 @@
 local roll = require("policy.combat.roll")
+local monster_stats = require("policy.combat.monster_stats")
 
 local slow = {}
 
@@ -22,7 +23,8 @@ function slow.apply(ctx, monster, definition)
     local current = ctx:get(monster, "projectile.slow")
     local actor = ctx:get(monster, "core.actor")
     local base_speed = current and current.base_speed or actor.speed
-    local added_aut = duration(ctx, base_speed, definition.hd)
+    local added_aut = duration(ctx, base_speed,
+        monster_stats.hit_dice(ctx, monster, definition))
 
     if current then
         current.remaining_aut = current.remaining_aut + added_aut

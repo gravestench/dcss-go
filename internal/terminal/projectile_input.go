@@ -10,6 +10,7 @@ func (m *AppModel) startAim(kind game.CommandKind, itemID uint64) {
 	m.aimKind = kind
 	m.aimItemID = itemID
 	m.aimSpellID = ""
+	m.aimAbilityID = ""
 	m.aimX = view.PlayerX + 1
 	m.aimY = view.PlayerY
 
@@ -81,6 +82,7 @@ func (m *AppModel) drawAim(canvas *Canvas, layout Layout) {
 	result := runPresentation(m.presentationPolicy, "presentation.aim", map[string]any{
 		"throwing": m.aimKind == game.CommandThrow,
 		"casting":  m.aimSpellID != "",
+		"evoking":  m.aimKind == game.CommandEvokeWand,
 		"x":        m.aimX,
 		"y":        m.aimY,
 	})

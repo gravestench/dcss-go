@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local brands = require("policy.combat.brands")
 local equipment = require("policy.combat.equipment")
+local auxiliary = require("policy.combat.auxiliary")
 local fighter = require("policy.combat.fighter")
 local melee = require("policy.combat.melee")
 local practice = require("policy.combat.practice")
@@ -10,6 +11,16 @@ local targets = require("policy.ai.targets")
 local summon_melee = require("policy.combat.summon_melee")
 local confusion = require("policy.magic.effects.statuses.confusing_touch")
 local monster_defense = require("policy.combat.monster_defense")
+local player_reactions = require("policy.combat.player_reactions")
+local engulf = require("policy.combat.engulf")
+local monster_health = require("policy.combat.monster_health")
+local mutation_effects = require("policy.mutations.effects.registry")
+local mutation_capabilities = require("constants.mutation_capabilities")
+local rage = require("policy.character.rage")
+local monster_stats = require("policy.combat.monster_stats")
+local stab = require("policy.combat.stab")
+local vampire = require("policy.character.vampire")
+local auxiliary_attacks = require("constants.auxiliary_attacks")
 
 local actions = {}
 
@@ -23,31 +34,45 @@ local function has_flag(flags, wanted)
     return false
 end
 
+local function player_adjacent_to(ctx, target)
+    local player = ctx:get(ctx:player(), "core.position")
+    local monster = ctx:get(target, "core.position")
+
+    return player and monster and player.level_id == monster.level_id and
+        math.max(math.abs(player.x - monster.x),
+            math.abs(player.y - monster.y)) == 1
+end
+
 local function damage(ctx, target, amount, player_kill, attacker)
     if target == ctx:player() then
         return player_health.damage(ctx, target, amount, false, attacker)
     end
 
-    local health = ctx:get(target, "core.health")
+    local health, dealt = monster_health.damage(ctx, target, amount,
+        attacker or ctx:player())
 
-    if not health then
-        error("combat target has no health")
-    end
-
-    local before = health.current
-    statuses.wake_hibernating(ctx, target)
-    amount = statuses.petrified_damage(ctx, target, amount)
-    health.current = math.max(0, health.current - amount)
-    ctx:set(target, "core.health", health)
-
-    if player_kill and before > 0 and health.current == 0 then
+    if player_kill and dealt > 0 and health.current == 0 then
         ctx:signal("player_kill", target)
     end
 
     return health
 end
 
-function actions.player(ctx, target)
+local function after_player_melee_hit(ctx, target, amount, health)
+    if amount <= 0 or health.current <= 0 then
+        return
+    end
+
+    local hit = {
+        target = target,
+        damage = amount,
+    }
+
+    mutation_effects.trigger(ctx, ctx:player(),
+        mutation_capabilities.AFTER_MELEE_HIT, hit)
+end
+
+function actions.player(ctx, target, options)
     local actor = ctx:get(target, "core.actor")
 
     if not actor then
@@ -55,13 +80,36 @@ function actions.player(ctx, target)
     end
 
     local defender = catalog.get("monsters", actor.kind_id)
+
+    rage.melee(ctx, ctx:player())
+    mutation_effects.trigger(ctx, ctx:player(),
+        mutation_capabilities.ON_MELEE_ATTEMPT, {
+            target = target,
+        })
+
     local input = fighter.attack(ctx, defender)
+    input.stab_target = target
+    input.roll_distance = options and options.roll_distance or 0
     input.defender_ev = monster_defense.evasion(ctx, target, defender)
     input.defender_ac = monster_defense.armour(ctx, target, defender)
+    input.defender_shield = monster_defense.shield(ctx, target, defender)
 
     local outcome = melee.player(ctx, input)
     local health = damage(ctx, target, outcome.damage, true)
     local message = "You miss the " .. defender.name .. "."
+    local blood_drawn = false
+
+    if outcome.kind == "hit" and input.stab_plan and
+        input.stab_plan.bonus > 0 and player_adjacent_to(ctx, target) then
+        blood_drawn = vampire.draw_blood(ctx, ctx:player(), target,
+            defender, outcome.damage)
+    end
+
+    if outcome.kind == "hit" and input.stab_plan and
+        input.stab_plan.bonus > 0 then
+        ctx:emit("combat", stab.message(ctx, ctx:player(),
+            input.stab_plan, defender.name))
+    end
 
     if outcome.kind == "hit" then
         practice.player_hit(ctx, input)
@@ -70,6 +118,9 @@ function actions.player(ctx, target)
         if outcome.damage == 0 then
             message = "You hit the " .. defender.name .. " but do no damage."
         end
+    elseif outcome.kind == "block" then
+        monster_defense.register_block(ctx, target)
+        message = "The " .. defender.name .. " blocks your attack."
     end
 
     ctx:emit("combat", message)
@@ -82,34 +133,68 @@ function actions.player(ctx, target)
         return
     end
 
-    local auxiliary_input = melee.headbutt_input(ctx, defender)
+    if outcome.kind == "hit" and outcome.damage > 0 then
+        after_player_melee_hit(ctx, target, outcome.damage, health)
+        health = ctx:get(target, "core.health")
+
+        if health.current > 0 then
+            engulf.on_player_hit(ctx, target, outcome.damage)
+        end
+    end
+
+    local auxiliary_input = auxiliary.input(ctx, target, defender)
     auxiliary_input.defender_ev = monster_defense.evasion(ctx, target,
         defender)
     auxiliary_input.defender_ac = monster_defense.armour(ctx, target,
         defender)
+    auxiliary_input.defender_shield = monster_defense.shield(ctx, target,
+        defender)
 
-    for _, resolve in ipairs({
-        melee.auxiliary_kick,
-        melee.auxiliary_headbutt,
-    }) do
+    for _, attack in ipairs(auxiliary.all()) do
         if health.current <= 0 then
             break
         end
 
-        local auxiliary = resolve(ctx, auxiliary_input)
+        local result = auxiliary.resolve_one(ctx, auxiliary_input, attack)
 
-        if auxiliary.attempted then
-            local verb = auxiliary.verb or "headbutt"
-            local name = verb == "headbutt" and "headbutt" or "kick"
-            message = "Your " .. name .. " misses the " .. defender.name .. "."
+        if result.attempted then
+            message = "Your " .. result.name .. " misses the " ..
+                defender.name .. "."
 
-            if auxiliary.hit then
-                health = damage(ctx, target, auxiliary.damage, true)
-                message = "You " .. verb .. " the " .. defender.name .. "."
+            if result.blocked then
+                local blocks = monster_defense.register_block(ctx, target)
 
-                if auxiliary.damage == 0 then
-                    message = "You " .. verb .. " the " .. defender.name ..
+                auxiliary_input.defender_shield.blocks = blocks
+                message = "The " .. defender.name .. " blocks your " ..
+                    result.name .. "."
+            elseif result.hit then
+                health = damage(ctx, target, result.damage, true)
+                message = "You " .. result.verb .. " the " ..
+                    defender.name .. "."
+
+                if attack.id == auxiliary_attacks.BITE.id and
+                    not blood_drawn then
+                    vampire.draw_blood(ctx, ctx:player(), target,
+                        defender, result.damage)
+                end
+
+                if result.damage == 0 and not attack.contact_only then
+                    message = "You " .. result.verb .. " the " .. defender.name ..
                         ", but do no damage."
+                end
+
+                if health.current > 0 and attack.on_hit then
+                    local extra = attack.on_hit(ctx, target, defender,
+                        result) or 0
+
+                    if extra > 0 then
+                        health = damage(ctx, target, extra, true)
+                    end
+                end
+
+                if result.damage > 0 then
+                    after_player_melee_hit(ctx, target, result.damage, health)
+                    health = ctx:get(target, "core.health")
                 end
             end
 
@@ -128,28 +213,6 @@ local function update_shield(ctx, outcome)
 
     state.shield_blocks = outcome.shield_blocks
     ctx:set(player, "core.combat", state)
-end
-
-local function retaliate(ctx, attacker, definition)
-    local input = melee.headbutt_input(ctx, definition)
-    input.defender_ev = monster_defense.evasion(ctx, attacker, definition)
-    input.defender_ac = monster_defense.armour(ctx, attacker, definition)
-    local outcome = melee.reflexive_headbutt(ctx, input)
-
-    if not outcome.attempted then
-        return
-    end
-
-    damage(ctx, attacker, outcome.damage, true)
-    ctx:emit("combat", "You furiously retaliate!")
-
-    local message = "You headbutt the " .. definition.name .. "."
-
-    if outcome.damage == 0 then
-        message = "You headbutt the " .. definition.name .. ", but do no damage."
-    end
-
-    ctx:emit("combat", message)
 end
 
 local function retreat_bat(ctx, attacker, definition)
@@ -181,7 +244,7 @@ local function grab(ctx, attacker, definition, player_health)
 
     local defense = fighter.defense(ctx)
     local outcome = melee.monster(ctx, {
-        hd = definition.hd,
+        hd = monster_stats.hit_dice(ctx, attacker, definition),
         damage = attack.damage,
         type_id = attack.type_id,
         flavour_id = attack.flavour_id,
@@ -232,17 +295,29 @@ function actions.monster(ctx, attacker)
         end
     end
 
-    local outcome = melee.monster(ctx, {
-        hd = definition.hd,
+    local attack_input = {
+        hd = monster_stats.hit_dice(ctx, attacker, definition),
         damage = attack.damage,
         type_id = attack.type_id,
         flavour_id = attack.flavour_id,
         weapon = weapon,
-    }, defense)
+    }
+    local outcome = melee.monster_contact(ctx, attack_input, defense)
 
     update_shield(ctx, outcome)
+
+    if outcome.kind ~= "block" and
+        not player_reactions.before_contact(ctx, attacker, definition) then
+        return
+    end
+
+    if outcome.kind == "hit" then
+        outcome.damage = melee.monster_damage(ctx, attack_input, defense)
+    end
+
     local player = ctx:player()
-    local health = damage(ctx, player, outcome.damage, false, attacker)
+    local health, dealt = damage(ctx, player, outcome.damage, false,
+        attacker)
     practice.incoming_melee(ctx, outcome, defense)
 
     local message = ""
@@ -256,10 +331,10 @@ function actions.monster(ctx, attacker)
     elseif outcome.kind == "hit" then
         local verb = attack.type_id == "AT_HIT" and "hits" or "bites"
 
-        if outcome.damage == 0 then
+        if dealt == 0 then
             message = "The " .. definition.name .. " " .. verb .. " you, but does no damage."
         else
-            message = "The " .. definition.name .. " " .. verb .. " you for " .. outcome.damage .. " damage."
+            message = "The " .. definition.name .. " " .. verb .. " you for " .. dealt .. " damage."
         end
     end
 
@@ -270,12 +345,13 @@ function actions.monster(ctx, attacker)
         brands.apply(ctx, weapon.brand, outcome.damage, actor.kind_id, definition.name, health)
     end
 
+    if outcome.kind == "hit" and not player_reactions.after_hit(ctx,
+        attacker, definition, dealt) then
+        return
+    end
+
     if outcome.kind == "miss" or outcome.kind == "dodge" then
-        retaliate(ctx, attacker, definition)
-
-        local attacker_health = ctx:get(attacker, "core.health")
-
-        if not attacker_health or attacker_health.current <= 0 then
+        if not player_reactions.after_miss(ctx, attacker, definition) then
             return
         end
     end
@@ -283,10 +359,13 @@ function actions.monster(ctx, attacker)
     retreat_bat(ctx, attacker, definition)
 
     if outcome.kind == "hit" and attack.flavour_id == "AF_POISON" then
-        brands.poison_bite(ctx, definition.hd, actor.kind_id)
+        brands.poison_bite(ctx,
+            monster_stats.hit_dice(ctx, attacker, definition),
+            actor.kind_id)
     end
 
     grab(ctx, attacker, definition, ctx:get(player, "core.health"))
+    player_reactions.after_attack(ctx, attacker, definition)
 end
 
 function actions.monster_target(ctx, attacker, target)
@@ -325,7 +404,8 @@ function actions.monster_target(ctx, attacker, target)
         shield_blocks = combat and combat.shield_blocks or 0,
     }
     local outcome = melee.monster(ctx, {
-        hd = summon_stats and summon_stats.hd or attacker_def.hd,
+        hd = monster_stats.hit_dice(ctx, attacker, attacker_def,
+            summon_stats and summon_stats.hd or nil),
         damage = attack.damage,
         type_id = attack.type_id,
         flavour_id = attack.flavour_id,

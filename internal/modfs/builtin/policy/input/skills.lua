@@ -9,6 +9,19 @@ function skills.route(input)
         return navigation
     end
 
+    if input.adjustable == false then
+        if input.key == "/" or input.key == "|" or
+            input.key == "*" or input.key == "=" then
+            return { action = "none" }
+        end
+
+        for index in ipairs(input.skill_ids or {}) do
+            if input.key == menu.letter(index) then
+                return { action = "none" }
+            end
+        end
+    end
+
     if input.key == "/" then
         return { action = "toggle_skill_mode" }
     end

@@ -114,7 +114,9 @@ func goComponentFieldValue(field akara.Field, value lua.LValue) (any, error) {
 
 			number, ok := key.(lua.LNumber)
 
-			if !ok || number < 1 || number > lua.LNumber(length) ||
+			if !ok ||
+				number < 1 ||
+				number > lua.LNumber(length) ||
 				math.Trunc(float64(number)) != float64(number) {
 				valid = false
 			}

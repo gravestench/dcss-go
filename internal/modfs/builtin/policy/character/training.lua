@@ -1,7 +1,11 @@
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
 local forms = require("policy.magic.effects.forms.player")
+local rage = require("policy.character.rage")
+local availability = require("policy.character.skill_availability")
+local component = require("constants.component")
 local weights = require("policy.character.training_weights")
+local distributed = require("policy.character.distributed_training")
 
 local training_rules = {}
 
@@ -35,7 +39,12 @@ local function ensure_setting(skills, training, id)
     return setting
 end
 
-function training_rules.record_practice(skills, training, species, id)
+function training_rules.record_practice(ctx, actor, skills, training,
+    species, id)
+    if availability.forbidden_skill(ctx, actor, id) then
+        return
+    end
+
     local skill = find_skill(skills, id)
 
     if skill and skill.level == 27 then
@@ -51,7 +60,13 @@ function training_rules.record_practice(skills, training, species, id)
     end
 end
 
-function training_rules.change(skills, training, species, id, focus)
+function training_rules.change(ctx, actor, skills, training, species,
+    id, focus)
+    if distributed.active(ctx, actor) or
+        availability.forbidden_skill(ctx, actor, id) then
+        return false
+    end
+
     formulas.skill_aptitude(species, id)
     local setting = ensure_setting(skills, training, id)
 
@@ -65,21 +80,25 @@ function training_rules.change(skills, training, species, id, focus)
             setting.focused = false
         end
     end
+
+    return true
 end
 
-local function trainable(skill, training)
+local function trainable(ctx, actor, skill, training)
     local setting = weights.setting(training, skill.id)
 
-    return setting and setting.enabled and skill.level < 27
+    return setting and setting.enabled and skill.level < 27 and
+        not availability.forbidden_skill(ctx, actor, skill.id)
 end
 
-local function train_chunk(ctx, skill, training, species, budget)
-    if not trainable(skill, training) then
+local function train_chunk(ctx, actor, skill, training, species, budget)
+    if not trainable(ctx, actor, skill, training) then
         return 0
     end
 
     local cost = formulas.skill_point_cost(training.cost_level)
-    local aptitude = formulas.skill_aptitude(species, skill.id)
+    local aptitude = formulas.effective_skill_aptitude(ctx, actor,
+        species, skill.id)
     local maximum = formulas.skill_points_needed(27, aptitude)
     local limit = math.min(2650, budget, training.available_xp)
     local points = math.min(math.floor(limit / cost), maximum - skill.points)
@@ -126,7 +145,7 @@ local function batch_limit(training, cost)
     return math.min(training.available_xp, until_next + cost - 1)
 end
 
-local function spend_batch(ctx, skills, training, species)
+local function spend_batch(ctx, actor, skills, training, species)
     local cost = formulas.skill_point_cost(training.cost_level)
 
     if training.available_xp < cost then
@@ -160,7 +179,8 @@ local function spend_batch(ctx, skills, training, species)
         for _, index in ipairs(order) do
             while shares[index] > 0 do
                 local spent = train_chunk(
-                    ctx, skills[index], training, species, math.min(shares[index], remaining))
+                    ctx, actor, skills[index], training, species,
+                    math.min(shares[index], remaining))
 
                 if spent == 0 then
                     break
@@ -169,7 +189,7 @@ local function spend_batch(ctx, skills, training, species)
                 shares[index] = shares[index] - spent
                 remaining = remaining - spent
 
-                if not trainable(skills[index], training) then
+                if not trainable(ctx, actor, skills[index], training) then
                     shares[index] = 0
                 end
             end
@@ -189,7 +209,7 @@ local function spend_batch(ctx, skills, training, species)
             chosen = weights.choose(ctx, shares)
         end
 
-        if not chosen or not trainable(skills[chosen], training) then
+        if not chosen or not trainable(ctx, actor, skills[chosen], training) then
             chosen = weights.choose(ctx, weights.scaled(skills, training))
         end
 
@@ -197,7 +217,8 @@ local function spend_batch(ctx, skills, training, species)
             break
         end
 
-        local spent = train_chunk(ctx, skills[chosen], training, species, remaining)
+        local spent = train_chunk(ctx, actor, skills[chosen], training,
+            species, remaining)
 
         if spent == 0 then
             break
@@ -211,14 +232,14 @@ local function spend_batch(ctx, skills, training, species)
 end
 
 function training_rules.update(ctx, actor)
-    local skills_component = ctx:get(actor, "core.skills")
-    local training = ctx:get(actor, "core.skill_training")
+    local skills_component = ctx:get(actor, component.SKILLS)
+    local training = ctx:get(actor, component.SKILL_TRAINING)
 
     if not skills_component or not training then
         error("player lacks skill training state")
     end
 
-    local player = ctx:get(actor, "core.player")
+    local player = ctx:get(actor, component.PLAYER)
 
     if not player then
         error("player has no selected species")
@@ -228,24 +249,30 @@ function training_rules.update(ctx, actor)
     local skills = skills_component.entries
 
     for _, id in ipairs(ctx:signals("practice")) do
-        training_rules.record_practice(skills, training, species, id)
+        training_rules.record_practice(ctx, actor, skills, training,
+            species, id)
     end
 
     local fighting_before = find_skill(skills, "SK_FIGHTING")
     local points_before = fighting_before and fighting_before.points or 0
 
-    while spend_batch(ctx, skills, training, species) > 0 do
+    if distributed.active(ctx, actor) then
+        while distributed.spend(ctx, actor, skills, training, species) > 0 do
+        end
+    else
+        while spend_batch(ctx, actor, skills, training, species) > 0 do
+        end
     end
 
     skills_component.entries = skills
-    ctx:set(actor, "core.skills", skills_component)
-    ctx:set(actor, "core.skill_training", training)
+    ctx:set(actor, component.SKILLS, skills_component)
+    ctx:set(actor, component.SKILL_TRAINING, training)
     local fighting_after = find_skill(skills, "SK_FIGHTING")
 
     if fighting_after and fighting_after.points ~= points_before then
-        local progress = ctx:get(actor, "core.progression")
-        local health = ctx:get(actor, "core.health")
-        local regeneration = ctx:get(actor, "core.regeneration")
+        local progress = ctx:get(actor, component.PROGRESSION)
+        local health = ctx:get(actor, component.HEALTH)
+        local regeneration = ctx:get(actor, component.REGENERATION)
 
         if not progress or not health or not regeneration then
             error("player lacks Fighting HP state")
@@ -254,41 +281,42 @@ function training_rules.update(ctx, actor)
         local drain = ctx:get(actor, "status.drain")
         local drain_loss = drain and drain.amount or 0
         local base_hp = math.max(1,
-            formulas.max_hp(progress.level, species, skills) - drain_loss)
+            formulas.max_hp(ctx, actor, progress.level, species, skills) - drain_loss)
 
         formulas.rescale_health(health, regeneration,
-            forms.scale_hp(ctx, actor, base_hp))
-        ctx:set(actor, "core.health", health)
-        ctx:set(actor, "core.regeneration", regeneration)
+            rage.scale_hp(ctx, actor,
+                forms.scale_hp(ctx, actor, base_hp)))
+        ctx:set(actor, component.HEALTH, health)
+        ctx:set(actor, component.REGENERATION, regeneration)
     end
 
-    local progress = ctx:get(actor, "core.progression")
-    local magic = ctx:get(actor, "core.magic")
+    local progress = ctx:get(actor, component.PROGRESSION)
+    local magic = ctx:get(actor, component.MAGIC)
 
     if not progress or not magic then
         error("player lacks MP training state")
     end
 
-    local maximum = formulas.max_mp(progress.level, species, skills)
+    local maximum = formulas.max_mp(ctx, actor, progress.level, species, skills)
 
     if magic.max ~= maximum then
         -- Source calc_mp() preserves current MP when a skill changes.
         magic.max = maximum
         magic.current = math.min(magic.current, maximum)
-        ctx:set(actor, "core.magic", magic)
+        ctx:set(actor, component.MAGIC, magic)
     end
 end
 
 function training_rules.training_mode(ctx, input)
     local actor = ctx:player()
-    local training = ctx:get(actor, "core.skill_training")
+    local training = ctx:get(actor, component.SKILL_TRAINING)
 
     if not training then
         error("player has no skill training")
     end
 
-    training.manual = input.manual
-    ctx:set(actor, "core.skill_training", training)
+    training.manual = distributed.active(ctx, actor) or input.manual
+    ctx:set(actor, component.SKILL_TRAINING, training)
 
     return { changed = true }
 end
@@ -300,23 +328,32 @@ register.policy({
 
 function training_rules.training_change(ctx, input)
     local actor = ctx:player()
-    local player = ctx:get(actor, "core.player")
+    local player = ctx:get(actor, component.PLAYER)
 
     if not player then
         error("player has no selected species")
     end
 
-    local skills = ctx:get(actor, "core.skills")
-    local training = ctx:get(actor, "core.skill_training")
+    local skills = ctx:get(actor, component.SKILLS)
+    local training = ctx:get(actor, component.SKILL_TRAINING)
 
     if not skills or not training then
         error("player lacks skill training state")
     end
 
     local species = catalog.get("species", player.species_id)
-    training_rules.change(skills.entries, training, species, input.id, input.focus)
-    ctx:set(actor, "core.skills", skills)
-    ctx:set(actor, "core.skill_training", training)
+    local changed = training_rules.change(ctx, actor, skills.entries,
+        training, species, input.id, input.focus)
+
+    if not changed then
+        return {
+            changed = false,
+            message = "You cannot train that skill.",
+        }
+    end
+
+    ctx:set(actor, component.SKILLS, skills)
+    ctx:set(actor, component.SKILL_TRAINING, training)
 
     return { changed = true }
 end
@@ -328,14 +365,20 @@ register.policy({
 
 function training_rules.training_percent(ctx, _)
     local actor = ctx:player()
-    local skills = ctx:get(actor, "core.skills")
-    local training = ctx:get(actor, "core.skill_training")
+    local skills = ctx:get(actor, component.SKILLS)
+    local training = ctx:get(actor, component.SKILL_TRAINING)
 
     if not skills or not training then
         error("player lacks skill training state")
     end
 
-    local scaled = weights.scaled(skills.entries, training)
+    local scaled
+
+    if distributed.active(ctx, actor) then
+        scaled = distributed.percent(ctx, actor, skills.entries, training)
+    else
+        scaled = weights.scaled(skills.entries, training)
+    end
     local percent = {}
 
     for index, skill in ipairs(skills.entries) do
@@ -348,6 +391,17 @@ end
 register.policy({
     id = "character.training_percent",
     run = training_rules.training_percent,
+})
+
+function training_rules.training_controls(ctx)
+    return {
+        adjustable = not distributed.active(ctx, ctx:player()),
+    }
+end
+
+register.policy({
+    id = "character.training_controls",
+    run = training_rules.training_controls,
 })
 
 return training_rules

@@ -231,6 +231,41 @@ func TestRestoreRejectsInvalidKnowledge(t *testing.T) {
 				s.Levels[0].Known[0][0] = "DNGN_INVALID"
 			},
 		},
+
+		{
+			name: "missing seen rows",
+			change: func(s *save.Snapshot) {
+				s.Levels[0].Seen = nil
+			},
+		},
+
+		{
+			name: "short seen row",
+			change: func(s *save.Snapshot) {
+				s.Levels[0].Seen[0] = s.Levels[0].Seen[0][:2]
+			},
+		},
+
+		{
+			name: "seen without known terrain",
+			change: func(s *save.Snapshot) {
+				s.Levels[0].Known[1][1] = terrain.Unseen
+			},
+		},
+
+		{
+			name: "missing detected item rows",
+			change: func(s *save.Snapshot) {
+				s.Levels[0].DetectedItems = nil
+			},
+		},
+
+		{
+			name: "short detected item row",
+			change: func(s *save.Snapshot) {
+				s.Levels[0].DetectedItems[0] = s.Levels[0].DetectedItems[0][:2]
+			},
+		},
 	}
 
 	for _, tc := range cases {

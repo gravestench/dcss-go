@@ -5,6 +5,7 @@ local catalog = {
     JOBS = "jobs",
     MONSTER_SPELLBOOKS = "monster_spellbooks",
     MONSTERS = "monsters",
+    MUTATIONS = "mutations",
     SPECIES = "species",
     SPELLS = "spells",
 }

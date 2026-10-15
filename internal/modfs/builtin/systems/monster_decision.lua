@@ -11,6 +11,8 @@ local habitat = require("policy.combat.monster_habitat")
 local fear = require("policy.ai.fear")
 local targets = require("policy.ai.targets")
 local statuses = require("policy.magic.effects.statuses.player")
+local allies = require("policy.character.allies")
+local awareness = require("policy.ai.awareness")
 
 local function choose_actor_target(ctx, entity, state, position)
     local target = targets.nearest(ctx, entity, position, 7)
@@ -76,6 +78,8 @@ local function choose_intent(ctx, entity, state)
         player.x,
         player.y
     )
+    local player_detected = awareness.detects(ctx, entity, state,
+        player_visible)
     local retreating = state.bat_retreat_actions > 0
 
     if retreating then
@@ -84,10 +88,10 @@ local function choose_intent(ctx, entity, state)
         state.target_x = 0
         state.target_y = 0
     else
-        memory.update(ctx, state, position, player, player_visible)
+        memory.update(ctx, state, position, player, player_detected)
     end
 
-    if player_visible and not retreating then
+    if player_detected and not retreating then
         local intent = spell.choose(ctx, entity, position, player)
 
         if not intent then
@@ -115,7 +119,8 @@ local function choose_intent(ctx, entity, state)
         end
     end
 
-    local intent = route.follow(ctx, entity, state, position, player, player_entity)
+    local intent = route.follow(ctx, entity, state, position, player,
+        player_entity, state.behavior ~= "wander")
 
     if retreating and state.bat_retreat_actions == 0 then
         state.behavior = "seek"
@@ -144,6 +149,8 @@ function system.update(ctx, entity)
     if not health or health.current <= 0 then
         return
     end
+
+    allies.on_monster_turn(ctx, entity)
 
     local combat = ctx:get(entity, "core.combat")
 

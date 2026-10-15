@@ -4,7 +4,11 @@ local defense = require("policy.combat.monster_defense")
 local enchant = require("policy.combat.monster_enchant")
 local explosion = require("policy.combat.explosion")
 local irradiate = require("policy.magic.effects.zaps.irradiate")
+local malmutate = require("policy.mutations.malmutate")
+local player_health = require("policy.combat.player_health")
 local range = require("policy.magic.range")
+local registry = require("policy.magic.effects.registry")
+local spells = require("ids.spells")
 local summons = require("policy.magic.effects.summons.common")
 
 local unravelling = {}
@@ -20,7 +24,7 @@ local function roll_damage(ctx, power)
     return amount
 end
 
-function unravelling.prepare(ctx, player, spell, dx, dy)
+function unravelling.prepare(ctx, player, spell, dx, dy, input)
     local origin = ctx:get(player, component.POSITION)
     local x = origin.x + dx
     local y = origin.y + dy
@@ -35,13 +39,31 @@ function unravelling.prepare(ctx, player, spell, dx, dy)
 
     local target = ctx:actor_at(origin.level_id, x, y)
 
-    if not target or target == player then
+    if target == player then
         return "There are no magical effects to unravel."
     end
 
-    if not enchant.can_dispel(ctx, target) and
+    if target and not enchant.can_dispel(ctx, target) and
         not ctx:has(target, component.SUMMON) then
         return "There are no magical effects to unravel."
+    end
+
+    if not input.forced then
+        local prompts = {}
+
+        if not target then
+            prompts[#prompts + 1] =
+                "You can't see anything there. Cast anyway?"
+        end
+
+        if math.max(math.abs(dx), math.abs(dy)) <= 1 then
+            prompts[#prompts + 1] =
+                "The unravelling is likely to hit you. Continue anyway?"
+        end
+
+        if #prompts > 0 then
+            return { confirmation = table.concat(prompts, " ") }
+        end
     end
 end
 
@@ -52,14 +74,24 @@ function unravelling.affect_monster(ctx, target, power)
         return
     end
 
-    -- beam.cc applies the mutagenic enchantment before normal blast damage.
-    irradiate.wretch(ctx, target, definition)
-
     local raw = roll_damage(ctx, power)
     local ac = defense.armour(ctx, target, definition)
     local amount = math.max(0, raw - ctx:random("spell", ac + 1))
 
     damage.apply(ctx, target, amount)
+
+    if ctx:get(target, component.HEALTH).current > 0 then
+        irradiate.wretch(ctx, target, definition)
+    end
+end
+
+function unravelling.affect_player(ctx, player, power)
+    local raw = roll_damage(ctx, power)
+    local amount = damage.player_armour(ctx, player, raw, "normal")
+
+    player_health.damage(ctx, player, amount, false, player)
+    ctx:emit("spell", "Strange energies course through your body.")
+    malmutate.apply(ctx, player, spells.SPELL_VIOLENT_UNRAVELLING)
 end
 
 function unravelling.resolve(ctx, player, intent, _, power)
@@ -69,6 +101,7 @@ function unravelling.resolve(ctx, player, intent, _, power)
     local target = ctx:actor_at(origin.level_id, x, y)
 
     if not target then
+        ctx:emit("spell", "The spell fizzles.")
         return
     end
 
@@ -87,13 +120,13 @@ function unravelling.resolve(ctx, player, intent, _, power)
         local victim = ctx:actor_at(origin.level_id, cell.x, cell.y)
 
         if victim == player then
-            error("Unravelling requires saved player malmutation support")
+            unravelling.affect_player(ctx, player, power)
         elseif victim then
             unravelling.affect_monster(ctx, victim, power)
         end
     end
 end
 
--- Registration waits for a saved player mutation domain. The one-cell blast
--- can reach its caster, so enabling this early would silently omit malmutation.
+registry.add(spells.SPELL_VIOLENT_UNRAVELLING, unravelling)
+
 return unravelling

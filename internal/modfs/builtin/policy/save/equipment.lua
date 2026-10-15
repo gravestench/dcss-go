@@ -2,6 +2,8 @@ local catalog = require("policy.catalog")
 local items = require("policy.inventory.items")
 local equipment = require("policy.inventory.equipment")
 local fighter = require("policy.combat.fighter")
+local mutation_levels = require("policy.mutations.levels")
+local mutations = require("ids.mutations")
 
 local armour_slots = {
     body = true,
@@ -153,12 +155,9 @@ local function validate(ctx)
 
     local head = slots.head and catalog.get("items", slots.head)
 
-    if head and head.id == "ARM_HELMET" then
-        for _, mutation in ipairs(species.mutations or {}) do
-            if mutation.id == "MUT_HORNS" and mutation.level <= 1 and mutation.amount > 0 then
-                error("saved helmet conflicts with horns")
-            end
-        end
+    if head and head.id == "ARM_HELMET" and
+        mutation_levels.effective(ctx, player, mutations.MUT_HORNS) > 0 then
+        error("saved helmet conflicts with horns")
     end
 
     local weapon = slots.weapon and catalog.get("items", slots.weapon)
@@ -169,7 +168,8 @@ local function validate(ctx)
             error("unsupported equipped weapon " .. weapon.id)
         end
 
-        if slots.shield and equipment.needs_second_hand(weapon, species) then
+        if slots.shield and
+            equipment.needs_second_hand(ctx, player, weapon, species) then
             error("equipped weapon " .. weapon.id .. " conflicts with shield")
         end
     end

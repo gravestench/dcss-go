@@ -32,7 +32,9 @@ function aim.route(input)
     return {
         action = "notice",
         text = "Move the target with direction keys; Enter " ..
-            (input.casting and "casts" or "fires") .. ", Esc cancels.",
+            (input.casting and "casts" or
+                (input.evoking and "evokes" or "fires")) ..
+            ", Esc cancels.",
     }
 end
 

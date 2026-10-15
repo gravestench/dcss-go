@@ -1,7 +1,9 @@
 local armour = require("policy.magic.armour")
 local catalog = require("policy.catalog")
 local power = require("policy.magic.power")
-local traits = require("policy.character.traits")
+local mutation_effects = require("policy.mutations.effects.registry")
+local mutation_capabilities = require("constants.mutation_capabilities")
+local player_attributes = require("policy.character.attributes")
 local forms = require("policy.magic.effects.forms.player")
 local statuses = require("policy.magic.effects.statuses.player")
 
@@ -54,9 +56,7 @@ function failure.raw(input)
     local raw = math.max(0, divide(numerator, 262144))
 
     raw = raw + (input.form_penalty or 0)
-    raw = raw - 2 * (input.subdued_magic or 0)
-    raw = raw + 4 * (input.wild_magic or 0)
-    raw = raw + 4 * (input.anti_wizardry or 0)
+    raw = raw + (input.mutation_adjustment or 0)
 
     if input.vertigo then
         raw = raw + 7
@@ -121,26 +121,20 @@ end
 
 function failure.profile(ctx, player, spell)
     local character = ctx:get(player, "core.player")
-    local progress = ctx:get(player, "core.progression")
-    local attributes = ctx:get(player, "core.attributes")
+    local attributes = player_attributes.current(ctx, player)
 
-    if not character or not progress or not attributes then
+    if not character or not attributes then
         error("player lacks spell failure state")
     end
 
-    local species = catalog.get("species", character.species_id)
     local raw = failure.raw({
         power6 = power.failure(ctx, player, spell),
         intelligence = attributes.intelligence,
         armour_penalty = armour.spell_penalty(ctx, player),
         form_penalty = forms.modifiers(ctx, player).spell_penalty,
         spell_level = spell.level,
-        subdued_magic = traits.mutation_level(species,
-            "MUT_SUBDUED_MAGIC", progress.level),
-        wild_magic = traits.mutation_level(species,
-            "MUT_WILD_MAGIC", progress.level),
-        anti_wizardry = traits.mutation_level(species,
-            "MUT_ANTI_WIZARDRY", progress.level),
+        mutation_adjustment = mutation_effects.sum(ctx, player,
+            mutation_capabilities.SPELL_FAILURE_ADJUSTMENT),
         vertigo = statuses.vertigo_active(ctx, player),
     })
 

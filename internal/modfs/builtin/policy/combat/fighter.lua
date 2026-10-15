@@ -2,6 +2,18 @@ local catalog = require("policy.catalog")
 local equipment = require("policy.combat.equipment")
 local statuses = require("policy.magic.effects.statuses.player")
 local forms = require("policy.magic.effects.forms.player")
+local mutation_levels = require("policy.mutations.levels")
+local player_attributes = require("policy.character.attributes")
+local mutation_effects = require("policy.mutations.effects.registry")
+local mutation_capabilities = require("constants.mutation_capabilities")
+local formulas = require("policy.character.formulas")
+local agility = require("policy.character.agility")
+local player_slay = require("policy.combat.player_slay")
+local flight = require("policy.combat.flight")
+local water = require("policy.character.water")
+local size = require("constants.size")
+local component = require("constants.component")
+local rage = require("policy.character.rage")
 
 local fighter = {}
 
@@ -37,11 +49,8 @@ end
 function fighter.skill(ctx, id, scale)
     local skills = required(ctx, ctx:player(), "core.skills")
     local species = fighter.species(ctx)
-    local aptitude = species.aptitudes[id]
-
-    if not aptitude or not aptitude.allowed then
-        error("fighter cannot use skill " .. id)
-    end
+    local aptitude = formulas.effective_skill_aptitude(ctx,
+        ctx:player(), species, id)
 
     for _, entry in ipairs(skills.entries) do
         if entry.id == id then
@@ -49,8 +58,8 @@ function fighter.skill(ctx, id, scale)
                 return 27 * scale
             end
 
-            local previous = cost(entry.level, aptitude.value)
-            local next_cost = cost(entry.level + 1, aptitude.value)
+            local previous = cost(entry.level, aptitude)
+            local next_cost = cost(entry.level + 1, aptitude)
 
             return entry.level * scale +
                 math.floor((entry.points - previous) * scale / (next_cost - previous))
@@ -73,22 +82,12 @@ function fighter.skill_level(ctx, id)
 end
 
 function fighter.mutation(ctx, id)
-    local species = fighter.species(ctx)
-    local progress = required(ctx, ctx:player(), "core.progression")
-    local total = 0
-
-    for _, mutation in ipairs(species.mutations or {}) do
-        if mutation.id == id and mutation.level <= progress.level then
-            total = total + mutation.amount
-        end
-    end
-
-    return total + forms.mutation_level(ctx, ctx:player(), id)
+    return mutation_levels.effective(ctx, ctx:player(), id)
 end
 
 function fighter.attack(ctx, defender)
     local player = ctx:player()
-    local attributes = required(ctx, player, "core.attributes")
+    local attributes = player_attributes.current(ctx, player)
     local form = forms.modifiers(ctx, player)
     local worn = equipment.worn(ctx, player, { weapon = true })
     local weapon = worn.weapon
@@ -96,14 +95,17 @@ function fighter.attack(ctx, defender)
         strength = attributes.strength + form.strength,
         dexterity = attributes.dexterity + form.dexterity,
         fighting100 = fighter.skill(ctx, "SK_FIGHTING", 100),
+        stealth50 = fighter.skill(ctx, "SK_STEALTH", 50),
+        stealth100 = fighter.skill(ctx, "SK_STEALTH", 100),
         defender_ev = defender.ev or 0,
         defender_ac = defender.ac or 0,
         mighty = false,
-        slay = statuses.wereblood_slay(ctx, player),
+        slay = player_slay.total(ctx, player),
     }
 
     local durations = ctx:get(player, "core.durations")
-    input.mighty = durations and durations.might_aut > 0 or false
+    input.mighty = (durations and durations.might_aut > 0 or false) or
+        rage.active(ctx, player)
 
     if weapon then
         local definition = weapon.definition
@@ -123,6 +125,8 @@ function fighter.attack(ctx, defender)
         input.weapon_speed = definition.weapon.speed
         input.weapon_plus = launcher and 0 or weapon.item.plus
         input.weapon100 = fighter.skill(ctx, input.weapon_skill, 100)
+        input.weapon50 = fighter.skill(ctx, input.weapon_skill, 50)
+        input.weapon_id = definition.id
     else
         input.unarmed = true
         input.using_weapon = false
@@ -131,6 +135,7 @@ function fighter.attack(ctx, defender)
         input.weapon_hit = 0
         input.weapon_plus = 0
         input.weapon100 = fighter.skill(ctx, input.weapon_skill, 100)
+        input.weapon50 = fighter.skill(ctx, input.weapon_skill, 50)
         input.unarmed256 = fighter.skill(ctx, input.weapon_skill, 256)
     end
 
@@ -155,7 +160,7 @@ end
 
 function fighter.defense(ctx)
     local player = ctx:player()
-    local attributes = required(ctx, player, "core.attributes")
+    local attributes = player_attributes.current(ctx, player)
     local form = forms.modifiers(ctx, player)
     local state = required(ctx, player, "core.combat")
     local worn = equipment.worn(ctx, player, {
@@ -182,7 +187,10 @@ function fighter.defense(ctx)
     local dodge10 = fighter.skill(ctx, "SK_DODGING", 10)
     local strength = attributes.strength + form.strength
     local dexterity = attributes.dexterity + form.dexterity
-    local body_encumbrance = math.floor(-body.ev / 10)
+    local sturdy_reduction = mutation_effects.sum(ctx, player,
+        mutation_capabilities.BODY_ENCUMBRANCE_REDUCTION)
+    local body_encumbrance = math.max(0,
+        math.floor(-body.ev / 10) - sturdy_reduction)
     local body_penalty = math.floor(
         2 * body_encumbrance ^ 2 * (450 - armour_skill * 10) * 100 /
         (5 * (strength + 3)) / 450
@@ -217,9 +225,48 @@ function fighter.defense(ctx)
     local natural_ev = math.max(100,
         1000 + dodge_bonus - piece_penalty - body_penalty -
             shield_penalty - vertigo_penalty)
+    local petrification = ctx:get(player,
+        component.PLAYER_PETRIFICATION)
+
+    if petrification and petrification.petrifying_aut > 0 then
+        natural_ev = math.floor(natural_ev / 2)
+    end
+
+    if water.at(ctx, player) and
+        mutation_effects.sum(ctx, player,
+            mutation_capabilities.SWIMMER_LEVEL) >= 2 then
+        natural_ev = natural_ev + math.max(200,
+            math.floor(natural_ev / 4))
+    elseif flight.tengu_perk(ctx, player) then
+        natural_ev = natural_ev + math.max(100,
+            math.floor(natural_ev / 5))
+    end
+
     local ev = math.floor((natural_ev + 99) / 100)
+    ev = ev + mutation_effects.sum(ctx, player,
+        mutation_capabilities.EVASION_BONUS)
+    ev = ev + agility.evasion_bonus(ctx, player)
+
+    if petrification and petrification.petrified_aut > 0 then
+        local species = fighter.species(ctx)
+        local body_size = form.size or species.size
+        local size_factor = 2 * (size.rank[size.MEDIUM] -
+            size.rank[body_size])
+
+        ev = math.max(1, 2 + size_factor / 2)
+    end
+
     local factor = 440 + armour_skill * 20
-    local scaled_ac = math.floor(body.ac * 100 * factor / 440) + body.plus * 100
+    local body_ac = math.floor(body.ac * 100 * factor / 440)
+
+    if mutation_effects.sum(ctx, player,
+        mutation_capabilities.BODY_ARMOUR_AC_PENALTY) > 0 then
+        -- Source: player.cc:base_ac_from subtracts half the unscaled base
+        -- AC once, even if both mutations are present.
+        body_ac = body_ac - body.ac * 50
+    end
+
+    local scaled_ac = body_ac + body.plus * 100
 
     for _, piece in ipairs(auxiliary) do
         scaled_ac = scaled_ac + math.floor(piece.ac * 100 * factor / 440) + piece.plus * 100
@@ -228,6 +275,10 @@ function fighter.defense(ctx)
     scaled_ac = scaled_ac + statuses.ice_armour_bonus_x100(ctx, player,
         body_encumbrance)
     scaled_ac = scaled_ac + form.ac_x100
+    scaled_ac = scaled_ac + mutation_effects.sum(ctx, player,
+        mutation_capabilities.AC_PARTIAL_X100)
+    scaled_ac = scaled_ac + mutation_effects.full_sum(ctx, player,
+        mutation_capabilities.AC_FULL_X100)
 
     local ac = math.max(0, math.floor(scaled_ac / 100))
     local shield_class = 0
@@ -240,6 +291,9 @@ function fighter.defense(ctx)
         shield_class = math.max(0, math.floor((value + 50) / 100))
     end
 
+    shield_class = shield_class + mutation_effects.sum(ctx, player,
+        mutation_capabilities.SHIELD_CLASS_BONUS)
+
     if ctx:has(player, "core.constricted") then
         ev = math.max(0, ev - 3)
     end
@@ -251,6 +305,10 @@ function fighter.defense(ctx)
         gdr = math.floor(16 * math.sqrt(math.sqrt(ac))),
         shield_blocks = state.shield_blocks,
         body_ev = body.ev,
+        visible_hit_modifier = mutation_effects.sum(ctx, player,
+            mutation_capabilities.VISIBLE_DEFENDER_HIT_MODIFIER),
+        missile_repulsion = mutation_effects.sum(ctx, player,
+            mutation_capabilities.MISSILE_REPULSION) > 0,
     }
 end
 

@@ -1,10 +1,21 @@
 local catalog = require("policy.catalog")
+local component = require("constants.component")
 local formulas = require("policy.character.formulas")
+local experience_limit = require("policy.character.experience_limit")
+local extra_lives = require("policy.character.extra_lives")
 local choice = require("policy.character_choice")
 local spell_records = require("policy.character.spell_records")
+local mutation_records = require("policy.mutations.records")
+local evolution = require("policy.mutations.evolution")
 local forms = require("policy.magic.effects.forms.player")
+local rage = require("policy.character.rage")
+local gods = require("constants.gods")
+local mutation_effects = require("policy.mutations.effects.registry")
+local mutation_capabilities = require("constants.mutation_capabilities")
+local vampire = require("policy.character.vampire")
 
-local function valid_stat_gains(deltas, manual_choices, species_gains, allowed_stats)
+local function valid_stat_gains(deltas, manual_choices, manual_amount,
+    species_gains, allowed_stats)
     local allowed = {}
 
     for _, stat in ipairs(allowed_stats or {}) do
@@ -15,9 +26,9 @@ local function valid_stat_gains(deltas, manual_choices, species_gains, allowed_s
         for intelligence = 0, manual_choices - strength do
             local dexterity = manual_choices - strength - intelligence
             local remaining = {
-                str = deltas.str - 2 * strength,
-                int = deltas.int - 2 * intelligence,
-                dex = deltas.dex - 2 * dexterity,
+                str = deltas.str - manual_amount * strength,
+                int = deltas.int - manual_amount * intelligence,
+                dex = deltas.dex - manual_amount * dexterity,
             }
 
             if remaining.str >= 0 and remaining.int >= 0 and remaining.dex >= 0 and
@@ -60,7 +71,12 @@ local function validate(ctx)
         error("player lacks character origin")
     end
 
-    if progress.level < 1 or progress.level > 27 then
+    local historical_level = extra_lives.validate(ctx, entity,
+        progress, health)
+
+    local maximum = experience_limit.max_level(ctx, entity)
+
+    if progress.level < 1 or progress.level > maximum then
         error("invalid player level " .. progress.level)
     end
 
@@ -68,14 +84,16 @@ local function validate(ctx)
         error("player XL" .. progress.level .. " lacks experience")
     end
 
-    local earned = formulas.level_for_experience(progress.total_xp, species.xp)
+    local earned = formulas.level_for_experience(progress.total_xp,
+        species.xp, maximum)
     local pending = progress.pending_stat_level
 
     if pending == 0 then
         if progress.level ~= earned then
             error("player level " .. progress.level .. " disagrees with experience")
         end
-    elseif pending ~= progress.level + 1 or not formulas.needs_manual_stat(pending) or
+    elseif pending ~= progress.level + 1 or pending > maximum or
+        not formulas.needs_manual_stat(ctx, entity, pending) or
         progress.total_xp < formulas.experience_needed(pending, species.xp) then
         error("invalid pending player stat choice at XL" .. pending)
     end
@@ -93,13 +111,15 @@ local function validate(ctx)
 
     local manual_gains = 0
     local random_gains = 0
+    local levelup_stats = type(species.levelup_stats) == "table" and
+        species.levelup_stats or {}
 
-    for level = 2, progress.level do
-        if formulas.needs_manual_stat(level) then
+    for level = 2, historical_level do
+        if formulas.needs_manual_stat(ctx, entity, level) then
             manual_gains = manual_gains + 1
         end
 
-        if species.levelup_stat_frequency > 0 and #species.levelup_stats > 0 and
+        if species.levelup_stat_frequency > 0 and #levelup_stats > 0 and
             level % species.levelup_stat_frequency == 0 then
             random_gains = random_gains + 1
         end
@@ -111,21 +131,49 @@ local function validate(ctx)
         dex = attributes.dexterity - base.dexterity,
     }
 
-    if not valid_stat_gains(deltas, manual_gains, random_gains, species.levelup_stats) then
+    local manual_amount = formulas.manual_stat_amount(ctx, entity)
+
+    if not valid_stat_gains(deltas, manual_gains, manual_amount,
+        random_gains, levelup_stats) then
         error("invalid player attribute gains for entity " .. ctx:id(entity))
     end
 
-    if health.max ~= forms.max_hp(ctx, entity) then
-        error("invalid player max HP for entity " .. ctx:id(entity))
+    local expected_hp = rage.scale_hp(ctx, entity,
+        forms.max_hp(ctx, entity))
+
+    if health.max ~= expected_hp then
+        error("invalid player max HP for entity " .. ctx:id(entity) ..
+            ": got " .. health.max .. ", want " .. expected_hp)
     end
 
-    local max_mp = formulas.max_mp(progress.level, species, skills.entries)
+    local max_mp = formulas.max_mp(ctx, entity, progress.level, species, skills.entries)
 
     if magic.max ~= max_mp or magic.current < 0 or magic.current > max_mp then
         error("invalid player MP for entity " .. ctx:id(entity))
     end
 
     local status = ctx:get(entity, "magic.player_status")
+
+    local ability_cooldowns = ctx:get(entity,
+        component.ABILITY_COOLDOWNS)
+
+    if ability_cooldowns and
+        (ability_cooldowns.hop_aut < 0 or
+            ability_cooldowns.word_of_chaos_aut < 0) then
+        error("invalid player ability cooldown")
+    end
+
+    local breath = ctx:get(entity, component.BREATH_COOLDOWN)
+
+    if breath and breath.remaining_aut < 0 then
+        error("invalid player breath cooldown")
+    end
+
+    local guardian = ctx:get(entity, component.DEMONIC_GUARDIAN)
+
+    if guardian and guardian.cooldown_aut < 0 then
+        error("invalid demonic guardian cooldown")
+    end
 
     if status and (status.blink_cooldown_aut < 0 or
         status.disjunction_aut < 0 or status.vertigo_aut < 0) then
@@ -157,6 +205,16 @@ local function validate(ctx)
         error("invalid player spell channel")
     end
 
+    mutation_records.validate(ctx, entity, species, historical_level)
+    vampire.validate(ctx, entity)
+
+    if origin.religion ~= gods.NO_GOD and
+        mutation_effects.sum(ctx, entity,
+            mutation_capabilities.WORSHIP_FORBIDDEN) > 0 then
+        error("Forlorn player cannot worship a god")
+    end
+
+    evolution.validate(ctx, entity)
     spell_records.validate(ctx, entity)
 end
 

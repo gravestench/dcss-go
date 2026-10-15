@@ -1,4 +1,5 @@
 local ranged = require("policy.combat.ranged")
+local monster_stats = require("policy.combat.monster_stats")
 
 local dart = {}
 dart.show_damage = false
@@ -9,8 +10,9 @@ function dart.validate(item)
     end
 end
 
-function dart.resolve(ctx, definition, defense)
-    local outcome, poison = ranged.poison_dart(ctx, definition.hd, defense)
+function dart.resolve(ctx, attacker, definition, defense)
+    local hd = monster_stats.hit_dice(ctx, attacker, definition)
+    local outcome, poison = ranged.poison_dart(ctx, hd, defense)
 
     return outcome, poison, "poisoned dart"
 end

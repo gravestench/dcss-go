@@ -4,15 +4,17 @@ local time = require("constants.time")
 local component = require("constants.component")
 local species_ids = require("ids.species")
 local death_hooks = require("policy.combat.death_hooks")
-local cloud = require("policy.magic.effects.zaps.cloud")
+local miasma = require("policy.magic.effects.statuses.miasma_cloud")
 local poison = require("policy.combat.monster_poison")
 local catalog = require("policy.catalog")
 local slow = require("policy.combat.monster_slow")
 local brands = require("policy.combat.brands")
 local player_resistance = require("policy.combat.player_resistance")
 local statuses = require("policy.magic.effects.statuses.player")
-local fighter = require("policy.combat.fighter")
+local effects = require("policy.mutations.effects.registry")
+local capabilities = require("constants.mutation_capabilities")
 local common = require("policy.magic.effects.statuses.common")
+local player_slow = require("policy.character.slow")
 
 local rot = {}
 
@@ -41,7 +43,8 @@ local function monster_immune(definition)
 end
 
 local function player_immune(ctx, player)
-    if fighter.mutation(ctx, "MUT_FOUL_STENCH") > 0 then
+    if effects.sum(ctx, player,
+        capabilities.MIASMA_IMMUNITY) > 0 then
         return true
     end
 
@@ -94,40 +97,16 @@ function rot.cast(ctx, player, _, _, power)
     ctx:emit("spell", "You radiate decay.")
 end
 
-local function occupied(ctx, level_id, x, y)
-    if cloud.at(ctx, level_id, x, y) then
-        return true
-    end
-
-    for _, marker in ipairs(ctx:query({ component.MIASMA_CLOUD })) do
-        local state = ctx:get(marker, component.MIASMA_CLOUD)
-
-        if state.level_id == level_id and state.x == x and state.y == y and
-            state.expires_aut > ctx:aut() then
-            return true
-        end
-    end
-
-    return false
-end
-
 local function place(ctx, origin, x, y)
-    if not ctx:walkable(origin.level_id, x, y) or
-        occupied(ctx, origin.level_id, x, y) then
+    if not miasma.available(ctx, origin.level_id, x, y) then
         return false
     end
 
     local duration = 2 + math.floor((ctx:random("spell", 8) +
         ctx:random("spell", 9)) / 2)
-    local marker = ctx:create()
-    ctx:add(marker, component.MIASMA_CLOUD, {
-        level_id = origin.level_id,
-        x = x,
-        y = y,
-        expires_aut = ctx:aut() + duration * time.AUT_PER_TURN,
-    })
 
-    return true
+    return miasma.place(ctx, origin.level_id, x, y,
+        duration * time.AUT_PER_TURN) ~= nil
 end
 
 -- Called by actor.death after the victim has left the map.
@@ -172,22 +151,6 @@ end
 function rot.tick(ctx, actor)
     local position = ctx:get(actor, component.POSITION)
 
-    if actor == ctx:player() then
-        local slowed = ctx:get(actor, component.MIASMA_SLOW)
-
-        if slowed then
-            slowed.remaining_aut = math.max(0,
-                slowed.remaining_aut - time.AUT_PER_TURN)
-
-            if slowed.remaining_aut == 0 then
-                ctx:remove(actor, component.MIASMA_SLOW)
-                ctx:emit("duration", "You feel yourself speed up.")
-            else
-                ctx:set(actor, component.MIASMA_SLOW, slowed)
-            end
-        end
-    end
-
     for _, marker in ipairs(ctx:query({ component.MIASMA_CLOUD })) do
         local state = ctx:get(marker, component.MIASMA_CLOUD)
 
@@ -215,16 +178,8 @@ function rot.tick(ctx, actor)
                         if ctx:random("spell", 3) == 0 then
                             local duration = (10 + ctx:random("spell", 5)) *
                                 time.AUT_PER_TURN
-                            local slowed = ctx:get(actor, component.MIASMA_SLOW)
-
-                            if slowed then
-                                slowed.remaining_aut = slowed.remaining_aut + duration
-                                ctx:set(actor, component.MIASMA_SLOW, slowed)
-                            else
-                                ctx:add(actor, component.MIASMA_SLOW, {
-                                    remaining_aut = duration,
-                                })
-                            end
+                            player_slow.apply(ctx, actor,
+                                math.floor(duration / time.AUT_PER_TURN))
                         end
                     end
                 else

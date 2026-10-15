@@ -17,16 +17,33 @@ func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err err
 	}()
 
 	decision, err := g.scripts.Policy("command.prepare", map[string]any{
-		"kind":     int(command.Kind),
-		"dx":       command.DX,
-		"dy":       command.DY,
-		"item_id":  command.ItemID,
-		"quantity": command.Quantity,
-		"spell_id": command.SpellID,
+		"kind":       int(command.Kind),
+		"dx":         command.DX,
+		"dy":         command.DY,
+		"item_id":    command.ItemID,
+		"quantity":   command.Quantity,
+		"spell_id":   command.SpellID,
+		"ability_id": command.AbilityID,
+		"forced":     command.Forced,
 	})
 
 	if err != nil {
 		return preparedCommand{}, err
+	}
+
+	if confirmation, found := decision["confirmation"].(string); found {
+		if confirmation == "" {
+			return preparedCommand{}, fmt.Errorf("Lua command has empty confirmation")
+		}
+
+		if err := g.scripts.ApplyPending(); err != nil {
+			return preparedCommand{}, err
+		}
+
+		return freeCommand(StepResult{
+			Confirmation: confirmation,
+			View:         g.View(),
+		}), nil
 	}
 
 	if message, found := decision["message"].(string); found {
@@ -78,6 +95,7 @@ func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err err
 	}
 
 	intent.SpellID, _ = values["spell_id"].(string)
+	intent.AbilityID, _ = values["ability_id"].(string)
 	intent.Forced, _ = values["forced"].(bool)
 
 	cost, err := decisionInteger(decision, "cost")
@@ -87,6 +105,13 @@ func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err err
 	}
 
 	prepared := spendingCommand(intent, Aut(cost))
+	events, err := commandDecisionEvents(decision["events"])
+
+	if err != nil {
+		return preparedCommand{}, err
+	}
+
+	prepared.response.Events = events
 
 	if values, found := decision["delay"].(map[string]any); found {
 		delay, err := equipmentDelayFromDecision(values)
@@ -103,6 +128,45 @@ func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err err
 	}
 
 	return prepared, nil
+}
+
+func commandDecisionEvents(value any) ([]Event, error) {
+	if value == nil {
+		return nil, nil
+	}
+
+	rows, ok := value.([]any)
+
+	if !ok {
+		return nil, fmt.Errorf("Lua command events are not a list")
+	}
+
+	events := make([]Event, 0, len(rows))
+
+	for index, row := range rows {
+		fields, ok := row.(map[string]any)
+
+		if !ok {
+			return nil, fmt.Errorf("Lua command event %d is not a record", index+1)
+		}
+
+		kind, kindOK := fields["kind"].(string)
+		message, messageOK := fields["text"].(string)
+
+		if !kindOK ||
+			kind == "" ||
+			!messageOK ||
+			message == "" {
+			return nil, fmt.Errorf("Lua command event %d has invalid kind or text", index+1)
+		}
+
+		events = append(events, Event{
+			Kind: kind,
+			Text: message,
+		})
+	}
+
+	return events, nil
 }
 
 func decisionInteger(values map[string]any, field string) (int, error) {

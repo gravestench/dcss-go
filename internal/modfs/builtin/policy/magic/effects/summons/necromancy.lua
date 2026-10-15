@@ -142,7 +142,7 @@ function necromancy.resolve_animate_dead(ctx, player, _, _, power)
         local state = ctx:get(entity, component.SUMMON)
         local actor = ctx:get(entity, component.ACTOR)
 
-        if state.owner == player and state.spell_id ==
+        if state.owner == player and state.source_id ==
             spells.SPELL_ANIMATE_DEAD and actor.kind_id == monsters.MONS_ZOMBIE then
             summons.expire(ctx, entity)
             dismissed = true

@@ -16,8 +16,9 @@ const (
 )
 
 type CellView struct {
-	Glyph rune
-	State CellState
+	Glyph        rune
+	State        CellState
+	DetectedItem bool
 }
 
 type EntityView struct {
@@ -71,29 +72,31 @@ type View struct {
 	PlayerSH     int
 	DefenseKnown bool
 
-	CharacterName      string
-	SpeciesID          string
-	SpeciesName        string
-	Attributes         ecs.Attributes
-	Skills             []character.Skill
-	SkillTraining      ecs.SkillTraining
-	SkillPercent       map[string]int
-	ExperienceLevel    int
-	NextLevelPercent   int
-	PendingStatLevel   int
-	MightAut           int
-	HasteAut           int
-	PoisonAmountScaled int
-	Constricted        bool
+	CharacterName           string
+	SpeciesID               string
+	SpeciesName             string
+	Attributes              ecs.Attributes
+	Skills                  []character.Skill
+	SkillTraining           ecs.SkillTraining
+	SkillTrainingAdjustable bool
+	SkillPercent            map[string]int
+	ExperienceLevel         int
+	NextLevelPercent        int
+	PendingStatLevel        int
+	MightAut                int
+	HasteAut                int
+	PoisonAmountScaled      int
+	Constricted             bool
 
-	Inventory         []ItemView
-	Spells            []SpellView
-	LastSpellID       string
-	LearningSpellID   string
-	LearningRemaining int
-	EquipmentDelay    *ecs.EquipmentDelay
-	CurrentAut        Aut
-	Messages          []string
+	Inventory              []ItemView
+	Spells                 []SpellView
+	LastSpellID            string
+	LearningSpellID        string
+	LearningRemaining      int
+	VampireRitualRemaining int
+	EquipmentDelay         *ecs.EquipmentDelay
+	CurrentAut             Aut
+	Messages               []string
 }
 
 func (g *Game) View() (view View) {
@@ -158,6 +161,8 @@ func (g *Game) mustPresentationPolicy(name string, input map[string]any) map[str
 }
 
 func (g *Game) fillTerrainView(view *View, level *Level) {
+	detectedGlyph := rune(0)
+
 	for i, feature := range level.remembered {
 		switch {
 		case g.visibleLevelID == level.ID &&
@@ -172,6 +177,19 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 			view.Cells[i] = CellView{
 				Glyph: terrain.Glyph(feature),
 				State: Explored,
+			}
+		}
+
+		if level.detectedItems[i] {
+			if detectedGlyph == 0 {
+				presentation := g.mustPresentationPolicy("presentation.detected_item", nil)
+				detectedGlyph = rune(presentation["glyph"].(int64))
+			}
+
+			view.Cells[i] = CellView{
+				Glyph:        detectedGlyph,
+				State:        Explored,
+				DetectedItem: true,
 			}
 		}
 	}
@@ -191,12 +209,26 @@ func (g *Game) fillPlayerView(view *View) {
 		view.PlayerMaxMP = magic.Max
 	}
 
+	if state, ok := g.scripts.Components()["character.vampire"].Get(g.player); ok {
+		remaining, err := state.Get("ritual_remaining_aut")
+
+		if err != nil {
+			panic(err)
+		}
+
+		view.VampireRitualRemaining = int(remaining.(int64))
+	}
+
 	if skills, ok := g.stores.Skills.Get(g.player); ok {
 		view.Skills = append([]character.Skill(nil), skills.Entries...)
 	}
 
 	if training, ok := g.stores.SkillTraining.Get(g.player); ok {
 		view.SkillTraining = training.Clone()
+
+		controls := g.mustPresentationPolicy("character.training_controls", nil)
+
+		view.SkillTrainingAdjustable = controls["adjustable"].(bool)
 
 		percent := g.mustPresentationPolicy("character.training_percent", map[string]any{})
 
@@ -245,8 +277,12 @@ func (g *Game) fillPlayerView(view *View) {
 		view.SpeciesID = player.SpeciesID
 	}
 
-	if attributes, ok := g.stores.Attributes.Get(g.player); ok {
-		view.Attributes = *attributes
+	attributes := g.mustPresentationPolicy("character.attributes", map[string]any{})
+
+	view.Attributes = ecs.Attributes{
+		Strength:     int(attributes["strength"].(int64)),
+		Intelligence: int(attributes["intelligence"].(int64)),
+		Dexterity:    int(attributes["dexterity"].(int64)),
 	}
 
 	defense := g.mustPresentationPolicy("presentation.defense", map[string]any{})
@@ -270,7 +306,9 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 			index < len(g.visible) &&
 			g.visible[index]
 
-		if entity != g.player && !visible {
+		if entity != g.player &&
+			!visible &&
+			!g.stores.AI.Has(entity) {
 			continue
 		}
 
@@ -283,6 +321,26 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 			input["player_name"] = view.PlayerName
 
 		case g.stores.AI.Has(entity):
+			perception := g.mustPresentationPolicy(
+				"character.monster_perception",
+				map[string]any{
+					"monster":      entity,
+					"cell_visible": visible,
+					"cell_known":   view.Cells[index].State != Unknown,
+				},
+			)
+
+			mode := perception["mode"].(string)
+
+			if mode == "unseen" {
+				continue
+			}
+
+			if mode == "detected" {
+				role = "disturbance"
+				break
+			}
+
 			actor, _ := g.stores.Actors.Get(entity)
 			kindID, role = actor.KindID, "monster"
 
@@ -300,8 +358,14 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 
 		presentation := g.mustPresentationPolicy("presentation.entity", input)
 
+		entityID := uint64(entity)
+
+		if role == "disturbance" {
+			entityID = 0
+		}
+
 		view.Entities = append(view.Entities, EntityView{
-			ID:     uint64(entity),
+			ID:     entityID,
 			X:      location.X,
 			Y:      location.Y,
 			Glyph:  rune(presentation["glyph"].(int64)),

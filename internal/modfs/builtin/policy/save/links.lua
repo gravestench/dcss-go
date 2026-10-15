@@ -1,3 +1,5 @@
+local component = require("constants.component")
+
 local links = {}
 
 local function adjacent(a, b)
@@ -65,9 +67,64 @@ local function validate_constriction(ctx)
     end
 end
 
+local function validate_player_grips(ctx)
+    local player = ctx:player()
+    local player_health = ctx:get(player, component.HEALTH)
+    local player_position = ctx:get(player, component.POSITION)
+    local count = 0
+
+    for _, monster in ipairs(ctx:query({
+        component.PLAYER_CONSTRICTION,
+    })) do
+        local grip = ctx:get(monster, component.PLAYER_CONSTRICTION)
+        local actor = ctx:get(monster, component.ACTOR)
+        local ai = ctx:get(monster, component.AI)
+        local health = ctx:get(monster, component.HEALTH)
+        local position = ctx:get(monster, component.POSITION)
+
+        if monster == player or grip.by ~= player or
+            grip.held_aut < 0 or grip.escape_attempts < 0 or
+            grip.escape_attempts > 1000 or not player_health or
+            player_health.current <= 0 or not player_position or
+            not actor or not ai or not health or health.current <= 0 or
+            not position or not adjacent(player_position, position) then
+            error("monster has invalid direct player constriction link")
+        end
+
+        count = count + 1
+    end
+
+    if count > 8 then
+        error("player has too many direct constriction links")
+    end
+end
+
+local function validate_water_holds(ctx)
+    local player = ctx:player()
+    local player_health = ctx:get(player, component.HEALTH)
+    local player_position = ctx:get(player, component.POSITION)
+
+    for _, monster in ipairs(ctx:query({ component.WATER_HOLD })) do
+        local hold = ctx:get(monster, component.WATER_HOLD)
+        local actor = ctx:get(monster, component.ACTOR)
+        local health = ctx:get(monster, component.HEALTH)
+        local position = ctx:get(monster, component.POSITION)
+
+        if monster == player or hold.by ~= player or
+            hold.elapsed_aut < 1 or not player_health or
+            player_health.current <= 0 or not player_position or
+            not actor or not health or health.current <= 0 or
+            not position or not adjacent(player_position, position) then
+            error("monster has invalid engulf water-hold link")
+        end
+    end
+end
+
 function links.validate(ctx)
     validate_followers(ctx)
     validate_constriction(ctx)
+    validate_player_grips(ctx)
+    validate_water_holds(ctx)
 end
 
 return links

@@ -54,16 +54,16 @@ function system.update(ctx, entity)
     end
 
     local state = ctx:get(entity, component.SUMMON)
-    local action = actions[state.spell_id]
+    local action = actions[state.source_id]
     local intent
 
     if ctx:has(entity, component.SUMMON_SEGMENT) then
         intent = { kind = intent_ids.MONSTER_WAIT }
-    elseif state.spell_id == spells.SPELL_MALIGN_GATEWAY then
+    elseif state.source_id == spells.SPELL_MALIGN_GATEWAY then
         intent = tentacle.act(ctx, entity, position)
     elseif action then
         intent = action(ctx, entity, position)
-    elseif state.spell_id == spells.SPELL_BATTLESPHERE then
+    elseif state.source_id == spells.SPELL_BATTLESPHERE then
         intent = follow_owner(ctx, state, position)
     end
 

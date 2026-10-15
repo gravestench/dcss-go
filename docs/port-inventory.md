@@ -27,11 +27,12 @@ aggregate Lua catalogs when upstream content changes.
 The player-book spell ID set is also committed as
 `data/player_book_spells.lua`; it is read at runtime without the C++ tree.
 
-An optional mod directory replaces bundled Lua files by relative path and
-may add files. Effective file bytes determine the ruleset hash recorded by
-saves. Lua may register systems, policies, content definitions, and Akara component
-schemas. The runtime exposes one generic component and grid context rather
-than a handler API for each game domain.
+Optional mod directories replace bundled Lua files by relative path and may
+add files. Repeated `--mod-dir` flags apply sparse layers in order; the last
+file at a path wins. Effective file bytes determine the ruleset hash recorded
+by saves. Lua may register systems, policies, content definitions, and Akara
+component schemas. The runtime exposes one generic component and grid
+context rather than a handler API for each game domain.
 
 ## Playable coverage
 
@@ -42,9 +43,10 @@ than a handler API for each game domain.
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; item and spell capability dispatch without monster-ID handlers | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
 | Combat | Fighter melee and headbutts; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
 | Items and status | Pickup/drop, wielding, armour delays, quaffing curing/heal wounds/might/haste, ammunition stacks and landing, poison, curare slow, trapping nets, regeneration, and duration decay | `policy/inventory`, `policy/potions.lua`, `systems/item_*`, `systems/player_status.lua`, `systems/monster_*` |
-| Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, and forms; one remaining player-use effect is intentionally unavailable until its saved mutation state exists | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
+| Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
+| Player mutations | Source definitions and Lua-owned mutation records, transitions, passive effects, abilities, and saved state; Vampire blood rituals and Bat Form are implemented; source consumers in other unported domains remain inventoried below | `content/mutations`, `policy/mutations`, `policy/abilities`, `schemas/character_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
-| Persistence | Version-14 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
+| Persistence | Version-18 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
 
 Core Akara components remain typed Go stores where the generic engine must
 read them; Lua systems and policies change their authoritative values through
@@ -84,13 +86,19 @@ minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition
 and the complete source spell-usability filter remain to be ported.
 Major missing domains include the remaining spell mechanics, religion
-actions,
-mutations and forms, full monster abilities, vaults and Lua vault scripts,
+actions, mutation-adjacent systems, unported forms, full monster abilities,
+vaults and Lua vault scripts,
 more layouts and branches, the Abyss monster roster and shifting terrain,
 player weapon brand effects including the spectral ally, traps, clouds,
 shops, runes, endgame, and the
 complete item and equipment system. Native C++ saves, tiles, and network
 client compatibility are outside this Go port.
+
+The mutation source audit also found Vampire references in weapon equip
+messages, unrand item effects, religious evil status, monster spell choice,
+and extended character status. Those consumers belong to the item, religion,
+monster AI spell, and status screen slices; they must read the saved Vampire
+state when those domains are implemented.
 
 For each new domain, convert the full rule category in one pass. Put its
 definitions, policies, and ECS systems in actual Lua files; extend Go only

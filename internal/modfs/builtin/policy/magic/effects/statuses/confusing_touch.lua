@@ -2,6 +2,7 @@
 local component = require("constants.component")
 local will = require("policy.magic.effects.zaps.will")
 local roll = require("policy.combat.roll")
+local monster_stats = require("policy.combat.monster_stats")
 
 local touch = {}
 
@@ -18,7 +19,7 @@ function touch.apply(ctx, target, definition, power)
         return false, true
     end
 
-    if will.resists(ctx, definition, power) then
+    if will.resists(ctx, definition, power, target) then
         return false, false
     end
 
@@ -43,7 +44,8 @@ end
 function touch.apply_innate(ctx, target, definition)
     local actor = ctx:get(target, component.ACTOR)
     local speed = math.max(1, actor.speed)
-    local scaled_speed = math.max(1, math.floor((definition.hd + 5) * 10 / speed))
+    local hd = monster_stats.hit_dice(ctx, target, definition)
+    local scaled_speed = math.max(1, math.floor((hd + 5) * 10 / speed))
     local centiturns = math.max(3, math.floor(100 / scaled_speed))
     local raw = centiturns * roll.random_divide(ctx, 100, speed)
     local low = math.floor(raw * 60 / 100)

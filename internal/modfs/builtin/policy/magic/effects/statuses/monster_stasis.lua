@@ -6,6 +6,7 @@ local range = require("policy.magic.range")
 local roll = require("policy.combat.roll")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
+local monster_stats = require("policy.combat.monster_stats")
 
 local stasis = {}
 
@@ -53,7 +54,7 @@ end
 local function duration(ctx, target, definition, kind)
     local actor = ctx:get(target, component.ACTOR)
     local speed = math.max(1, actor.speed)
-    local hd = definition.hd
+    local hd = monster_stats.hit_dice(ctx, target, definition)
     local centiturns
 
     if kind == "petrifying" then
@@ -151,7 +152,7 @@ function stasis.cast_hibernation(ctx, player, intent, spell, power)
         return
     end
 
-    if will.resists(ctx, definition, math.min(power, 50)) then
+    if will.resists(ctx, definition, math.min(power, 50), target) then
         ctx:emit("spell", "The " .. definition.name .. " resists sleep.")
         return
     end
@@ -179,7 +180,7 @@ function stasis.cast_petrify(ctx, player, intent, spell, power)
         return
     end
 
-    if will.resists(ctx, definition, power) then
+    if will.resists(ctx, definition, power, target) then
         ctx:emit("spell", "The " .. definition.name .. " resists petrification.")
         return
     end

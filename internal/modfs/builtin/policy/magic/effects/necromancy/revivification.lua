@@ -1,4 +1,7 @@
 local catalog = require("policy.catalog")
+local component = require("constants.component")
+local player_constriction = require("policy.combat.player_constriction")
+local spells = require("ids.spells")
 local traits = require("policy.character.traits")
 local forms = require("policy.magic.effects.forms.player")
 local registry = require("policy.magic.effects.registry")
@@ -7,7 +10,7 @@ local statuses = require("policy.magic.effects.statuses.player")
 local revivification = {}
 
 local function undead(ctx, player)
-    local origin = ctx:get(player, "core.player")
+    local origin = ctx:get(player, component.PLAYER)
     local species = catalog.get("species", origin.species_id)
     local form = ctx:get(player, "magic.player_form")
 
@@ -18,7 +21,7 @@ end
 -- Source: spl-util.cc:casting_uselessness_reason. These abort before MP and
 -- action time are spent.
 function revivification.prepare(ctx, player)
-    local health = ctx:get(player, "core.health")
+    local health = ctx:get(player, component.HEALTH)
 
     if health.current >= health.max then
         return "You cannot be healed further."
@@ -49,42 +52,44 @@ local function hp_loss_percent(ctx, power)
 end
 
 function revivification.resolve(ctx, player, _, _, power)
-    local health = ctx:get(player, "core.health")
+    local health = ctx:get(player, component.HEALTH)
     local percent = hp_loss_percent(ctx, power)
     local lost = math.floor(percent * health.max / 100)
-    local permanent = ctx:get(player, "magic.permanent_hp_loss")
+    local permanent = ctx:get(player, component.PERMANENT_HP_LOSS)
 
     if permanent then
         permanent.amount = permanent.amount + lost
-        ctx:set(player, "magic.permanent_hp_loss", permanent)
+        ctx:set(player, component.PERMANENT_HP_LOSS, permanent)
     else
-        ctx:add(player, "magic.permanent_hp_loss", {
+        ctx:add(player, component.PERMANENT_HP_LOSS, {
             amount = lost,
         })
     end
 
     forms.rescale_health(ctx, player, forms.max_hp(ctx, player))
-    health = ctx:get(player, "core.health")
+    health = ctx:get(player, component.HEALTH)
     health.current = health.max
-    ctx:set(player, "core.health", health)
+    ctx:set(player, component.HEALTH, health)
     ctx:emit("spell", "Your body is healed in an amazingly painful way.")
 
     if statuses.clear_death_door(ctx, player) then
         ctx:emit("duration", "Your life is in your own hands once again.")
 
-        local origin = ctx:get(player, "core.player")
+        local origin = ctx:get(player, component.PLAYER)
         local species = catalog.get("species", origin.species_id)
 
         if not traits.stasis(species) then
+            player_constriction.release_all(ctx, player)
+
             local turns = 2 + ctx:random("spell", 4)
-            local paralysis = ctx:get(player, "magic.player_paralysis")
+            local paralysis = ctx:get(player, component.PLAYER_PARALYSIS)
             local remaining = turns * 10
 
             if paralysis then
                 paralysis.remaining_aut = remaining
-                ctx:set(player, "magic.player_paralysis", paralysis)
+                ctx:set(player, component.PLAYER_PARALYSIS, paralysis)
             else
-                ctx:add(player, "magic.player_paralysis", {
+                ctx:add(player, component.PLAYER_PARALYSIS, {
                     remaining_aut = remaining,
                 })
             end
@@ -94,4 +99,6 @@ function revivification.resolve(ctx, player, _, _, power)
     end
 end
 
-registry.add("SPELL_BORGNJORS_REVIVIFICATION", revivification)
+registry.add(spells.SPELL_BORGNJORS_REVIVIFICATION, revivification)
+
+return revivification

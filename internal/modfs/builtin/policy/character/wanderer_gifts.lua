@@ -2,7 +2,10 @@
 local catalog = require("policy.catalog")
 local equipment = require("policy.inventory.equipment")
 local traits = require("policy.character.traits")
+local mutation_levels = require("policy.mutations.levels")
+local mutations = require("ids.mutations")
 local spells = require("policy.character.wanderer_spells")
+local potion_rules = require("policy.character.potion_rules")
 
 local gifts = {}
 
@@ -71,7 +74,7 @@ local function weighted(ctx, options)
 end
 
 local function consumable(ctx, species, good)
-    local no_drink = traits.mutation_level(species, "MUT_NO_DRINK") > 0
+    local no_drink = not potion_rules.can_drink(ctx, ctx:player())
     local stasis = traits.stasis(species)
     local lifeless = species.undead_type == "US_UNDEAD"
     local options
@@ -93,7 +96,7 @@ local function consumable(ctx, species, good)
             {
                 id = "POT_HEAL_WOUNDS",
                 weight = (no_drink or
-                    traits.mutation_level(species, "MUT_NO_POTION_HEAL") >= 2) and 0 or 2,
+                    not potion_rules.can_heal(ctx, ctx:player())) and 0 or 2,
             },
             {
                 id = "POT_HASTE",
@@ -237,7 +240,8 @@ local function aux_armour(ctx, species, grants, plus)
     local seen = 0
 
     for _, id in ipairs(auxiliary) do
-        if equipment.can_wear(species, catalog.get("items", id)) then
+        if equipment.can_wear(ctx, ctx:player(), species,
+            catalog.get("items", id)) then
             seen = seen + 1
 
             if roll(ctx, seen) == 0 then
@@ -304,7 +308,8 @@ function gifts.good(ctx, species, skill, grants, weapon_roles)
     elseif skill == "SK_DODGING" then
         local plus = roll(ctx, 2) == 0 and 2 or 0
 
-        if equipment.can_wear(species, catalog.get("items", "ARM_LEATHER_ARMOUR")) then
+        if equipment.can_wear(ctx, ctx:player(), species,
+            catalog.get("items", "ARM_LEATHER_ARMOUR")) then
             add(grants, "ARM_LEATHER_ARMOUR", 1, plus)
         else
             aux_armour(ctx, species, grants, plus)
@@ -345,10 +350,11 @@ function gifts.decent(ctx, species, skill, grants, received)
     local weapon_kind = current_weapon and
         catalog.get("items", current_weapon.kind_id) or nil
     local occupied_hands = weapon_kind and
-        equipment.needs_second_hand(weapon_kind, species)
+        equipment.needs_second_hand(ctx, ctx:player(), weapon_kind, species)
 
     if skill == "SK_SHIELDS" and
-        (traits.mutation_level(species, "MUT_MISSING_HAND") > 0 or
+        (mutation_levels.effective(ctx, ctx:player(),
+            mutations.MUT_MISSING_HAND) > 0 or
             received.SK_RANGED_WEAPONS or occupied_hands) then
         skill = roll(ctx, 2) == 0 and "SK_DODGING" or "SK_ARMOUR"
     end
@@ -369,7 +375,8 @@ function gifts.decent(ctx, species, skill, grants, received)
     elseif skill == "SK_ARMOUR" then
         local id = roll(ctx, 2) == 0 and "ARM_SCALE_MAIL" or "ARM_RING_MAIL"
 
-        if equipment.can_wear(species, catalog.get("items", id)) then
+        if equipment.can_wear(ctx, ctx:player(), species,
+            catalog.get("items", id)) then
             add(grants, id)
         else
             aux_armour(ctx, species, grants)

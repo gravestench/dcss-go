@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local effects = require("policy.combat.monster_spells")
+local targets = require("policy.ai.targets")
 
 local spellbooks = {}
 
@@ -18,7 +19,8 @@ function system.update(ctx, caster)
 
     -- Construct abilities resolve in their own Lua decision policy.
     -- They retain spell-speed energy without using a monster spellbook.
-    if ctx:has(caster, "magic.summon") then
+    if ctx:has(caster, "magic.summon") and
+        targets.allied(ctx, caster) then
         return
     end
 

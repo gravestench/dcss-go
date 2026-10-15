@@ -34,6 +34,7 @@ type Services struct {
 type Grid interface {
 	Cell(levelID, x, y int) (terrain.ID, bool)
 	Size(levelID int) (int, int, bool)
+	Branch(levelID int) (string, bool)
 	Walkable(levelID, x, y int) bool
 	ActorAt(levelID, x, y int) (akara.Entity, bool)
 	StairAt(levelID, x, y int) (Stair, bool)

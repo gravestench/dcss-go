@@ -3,6 +3,7 @@ local monsters = require("ids.monsters")
 local component = require("constants.component")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
+local targets = require("policy.ai.targets")
 
 local dragons = {}
 
@@ -33,7 +34,7 @@ local function hostile_in_sight(ctx, player)
     local visible = {}
 
     for _, entity in ipairs(ctx:query({ component.ACTOR, component.POSITION, component.HEALTH })) do
-        if entity ~= player and not ctx:has(entity, component.SUMMON) then
+        if targets.enemy(ctx, player, entity) then
             local position = ctx:get(entity, component.POSITION)
             local health = ctx:get(entity, component.HEALTH)
             local range = math.max(math.abs(position.x - origin.x),
@@ -60,7 +61,7 @@ local function count(ctx, player)
     for _, entity in ipairs(ctx:query({ component.SUMMON })) do
         local state = ctx:get(entity, component.SUMMON)
 
-        if state.owner == player and state.spell_id == spells.SPELL_DRAGON_CALL then
+        if state.owner == player and state.source_id == spells.SPELL_DRAGON_CALL then
             total = total + 1
         end
     end

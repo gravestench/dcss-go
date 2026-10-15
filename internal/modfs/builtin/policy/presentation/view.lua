@@ -1,16 +1,19 @@
 local items = require("ids.items")
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
+local experience_limit = require("policy.character.experience_limit")
 local fighter = require("policy.combat.fighter")
 local colors = require("policy.presentation.colors")
 
 local view = {}
 
-function view.player(input)
+function view.player(ctx, input)
     local name = input.name or ""
     local species = catalog.get("species", input.species_id)
     local job = catalog.get("jobs", input.job_id)
-    local percent = formulas.level_progress(input.total_xp, input.level, species.xp)
+    local maximum = experience_limit.max_level(ctx, ctx:player())
+    local percent = formulas.level_progress(input.total_xp, input.level,
+        species.xp, maximum)
 
     if name == "" then
         name = "Adventurer"
@@ -38,6 +41,9 @@ function view.entity(input)
         local monster = catalog.get("monsters", kind_id)
         name = monster.name
         glyph = monster.glyph
+    elseif role == "disturbance" then
+        name = "disturbance in the air"
+        glyph = string.byte("{")
     elseif role == "item" then
         local item = catalog.get("items", kind_id)
         name = item.name
@@ -68,6 +74,10 @@ function view.inventory_item(input)
 end
 
 function view.terrain_color(input)
+    if input.detected_item then
+        return { fg = colors.green }
+    end
+
     if input.state ~= 2 then
         return { fg = colors.dark_grey }
     end
@@ -77,6 +87,11 @@ function view.terrain_color(input)
     end
 
     return { fg = colors.light_grey }
+end
+
+function view.detected_item()
+    -- Source: viewchar.cc, CSET_ASCII item_detected.
+    return { glyph = string.byte("{") }
 end
 
 function view.entity_color(input)
@@ -101,8 +116,8 @@ function view.entity_color(input)
     return { fg = colors.light_grey }
 end
 
-function view.run_player(_, input)
-    return view.player(input)
+function view.run_player(ctx, input)
+    return view.player(ctx, input)
 end
 
 function view.run_entity(_, input)
@@ -131,11 +146,35 @@ function view.run_defense(ctx)
     }
 end
 
-register.policy({ id = "presentation.player", run = view.run_player })
-register.policy({ id = "presentation.entity", run = view.run_entity })
-register.policy({ id = "presentation.inventory_item", run = view.run_inventory_item })
-register.policy({ id = "presentation.terrain_color", run = view.run_terrain_color })
-register.policy({ id = "presentation.entity_color", run = view.run_entity_color })
+register.policy({
+    id = "presentation.player",
+    run = view.run_player,
+})
+
+register.policy({
+    id = "presentation.entity",
+    run = view.run_entity,
+})
+
+register.policy({
+    id = "presentation.inventory_item",
+    run = view.run_inventory_item,
+})
+
+register.policy({
+    id = "presentation.terrain_color",
+    run = view.run_terrain_color,
+})
+
+register.policy({
+    id = "presentation.entity_color",
+    run = view.run_entity_color,
+})
+
+register.policy({
+    id = "presentation.detected_item",
+    run = view.detected_item,
+})
 
 register.policy({
     id = "presentation.defense",

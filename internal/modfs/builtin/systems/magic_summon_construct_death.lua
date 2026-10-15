@@ -19,17 +19,17 @@ function system.update(ctx, active)
         local health = ctx:get(entity, component.HEALTH)
         local timed_out = active == ctx:player() and
             summon.expires_aut > 0 and ctx:aut() >= summon.expires_aut
-        local finished = (summon.spell_id == spells.SPELL_FULMINANT_PRISM and
+        local finished = (summon.source_id == spells.SPELL_FULMINANT_PRISM and
             state.charge >= 3) or
-            (summon.spell_id == spells.SPELL_FOXFIRE and state.charge >= 1) or
-            (summon.spell_id == spells.SPELL_CONJURE_BALL_LIGHTNING and
+            (summon.source_id == spells.SPELL_FOXFIRE and state.charge >= 1) or
+            (summon.source_id == spells.SPELL_CONJURE_BALL_LIGHTNING and
                 state.charge >= 1)
 
         if health.current <= 0 or timed_out or
             (active == ctx:player() and finished) then
-            if summon.spell_id == spells.SPELL_CONJURE_BALL_LIGHTNING then
+            if summon.source_id == spells.SPELL_CONJURE_BALL_LIGHTNING then
                 lightning.explode(ctx, entity)
-            elseif summon.spell_id == spells.SPELL_FULMINANT_PRISM and
+            elseif summon.source_id == spells.SPELL_FULMINANT_PRISM and
                 state.charge == 1 then
                 local hd = math.max(1, math.floor(state.power / 10))
                 local sides = 6 + math.floor(hd * 7 / 4)

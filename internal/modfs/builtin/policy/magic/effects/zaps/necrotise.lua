@@ -9,6 +9,7 @@ local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
+local allies = require("policy.character.allies")
 
 local necrotise = {}
 
@@ -95,7 +96,8 @@ function necrotise.resolve(ctx, player, intent, spell, power)
     -- zap-data.h:ZAP_NECROTISE caps at 100 and enchants at 7*power/2.
     local capped = math.min(power, 100)
 
-    if will.resists(ctx, definition, math.floor(capped * 7 / 2)) then
+    if will.resists(ctx, definition, math.floor(capped * 7 / 2),
+        target) then
         ctx:emit("spell", "The " .. definition.name .. " resists necrotising.")
         return
     end
@@ -107,7 +109,8 @@ function necrotise.resolve(ctx, player, intent, spell, power)
         return
     end
 
-    if can_skeletonize(ctx, target, definition) then
+    if not allies.forbidden(ctx, player) and
+        can_skeletonize(ctx, target, definition) then
         local mark = {
             source = player,
             expires_aut = ctx:aut() + 10,
@@ -128,7 +131,12 @@ function necrotise.on_death(ctx, monster, definition, position,
     _, consumed_corpse)
     local mark = ctx:get(monster, zap_ids.component.NECROTISE)
 
-    if not mark or consumed_corpse or ctx:aut() > mark.expires_aut then
+    if not mark or consumed_corpse or
+        allies.forbidden(ctx, mark.source) then
+        return false
+    end
+
+    if ctx:aut() > mark.expires_aut then
         return false
     end
 

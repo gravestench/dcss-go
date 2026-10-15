@@ -12,10 +12,14 @@ import (
 // Level owns terrain, stair links, away time, and its actor occupancy index.
 // Position remains the source of truth for actor location.
 type Level struct {
-	ID         int
-	terrain    [][]terrain.ID
-	remembered []terrain.ID
-	width      int
+	ID            int
+	BranchID      string
+	terrain       [][]terrain.ID
+	remembered    []terrain.ID
+	seen          []bool
+	detectedItems []bool
+	width         int
+	mappingLevel  int
 
 	// Population choices may generate bands with multiple actors.
 	initialMonsters int
@@ -74,10 +78,12 @@ func NewLevel(id int, cells [][]terrain.ID, positions *akara.Store[ecs.Position]
 	}
 
 	return &Level{
-		ID:         id,
-		terrain:    owned,
-		remembered: make([]terrain.ID, width*len(cells)),
-		width:      width,
+		ID:            id,
+		terrain:       owned,
+		remembered:    make([]terrain.ID, width*len(cells)),
+		seen:          make([]bool, width*len(cells)),
+		detectedItems: make([]bool, width*len(cells)),
+		width:         width,
 
 		positions: positions,
 		actors:    make(map[point]akara.Entity),
@@ -513,6 +519,62 @@ func (l *Level) KnownCells() [][]terrain.ID {
 	return cells
 }
 
+// SeenCells records actual sight separately from magic-mapped terrain.
+// Mapped cells can become newly seen later and trigger exploration effects.
+func (l *Level) SeenCells() [][]bool {
+	cells := make([][]bool, len(l.terrain))
+
+	for y := range cells {
+		start := y * l.width
+
+		cells[y] = append([]bool(nil), l.seen[start:start+l.width]...)
+	}
+
+	return cells
+}
+
+func (l *Level) DetectedItems() [][]bool {
+	cells := make([][]bool, len(l.terrain))
+
+	for y := range cells {
+		start := y * l.width
+
+		cells[y] = append([]bool(nil), l.detectedItems[start:start+l.width]...)
+	}
+
+	return cells
+}
+
+func (l *Level) LoadDetectedItems(cells [][]bool) error {
+	if len(cells) != len(l.terrain) {
+		return fmt.Errorf("level %d has %d detected item rows, want %d", l.ID, len(cells), len(l.terrain))
+	}
+
+	detected := make([]bool, l.width*len(cells))
+
+	for y, row := range cells {
+		if len(row) != l.width {
+			return fmt.Errorf("level %d detected item row %d has width %d, want %d", l.ID, y, len(row), l.width)
+		}
+
+		copy(detected[y*l.width:(y+1)*l.width], row)
+	}
+
+	l.detectedItems = detected
+
+	return nil
+}
+
+func (l *Level) DetectItem(x, y int) error {
+	if !l.inBounds(x, y) {
+		return fmt.Errorf("level %d cannot detect item at (%d,%d)", l.ID, x, y)
+	}
+
+	l.detectedItems[y*l.width+x] = true
+
+	return nil
+}
+
 // LoadKnownCells validates and replaces saved map knowledge without exposing
 // live terrain at cells the player has not seen.
 func (l *Level) LoadKnownCells(cells [][]terrain.ID) error {
@@ -541,9 +603,37 @@ func (l *Level) LoadKnownCells(cells [][]terrain.ID) error {
 	return nil
 }
 
-func (l *Level) Remember(visible []bool) error {
+func (l *Level) LoadSeenCells(cells [][]bool) error {
+	if len(cells) != len(l.terrain) {
+		return fmt.Errorf("level %d has %d seen rows, want %d", l.ID, len(cells), len(l.terrain))
+	}
+
+	seen := make([]bool, l.width*len(cells))
+
+	for y, row := range cells {
+		if len(row) != l.width {
+			return fmt.Errorf("level %d seen row %d has width %d, want %d", l.ID, y, len(row), l.width)
+		}
+
+		for x, value := range row {
+			index := y*l.width + x
+
+			if value && l.remembered[index] == terrain.Unseen {
+				return fmt.Errorf("level %d seen cell (%d,%d) lacks known terrain", l.ID, x, y)
+			}
+
+			seen[index] = value
+		}
+	}
+
+	l.seen = seen
+
+	return nil
+}
+
+func (l *Level) Remember(visible []bool) ([]point, error) {
 	if len(visible) != len(l.remembered) {
-		return fmt.Errorf(
+		return nil, fmt.Errorf(
 			"level %d sight mask has %d cells, want %d",
 			l.ID,
 			len(visible),
@@ -551,13 +641,71 @@ func (l *Level) Remember(visible []bool) error {
 		)
 	}
 
+	newlySeen := make([]point, 0)
+
 	for y, row := range l.terrain {
 		for x := 0; x < l.width; x++ {
-			if visible[y*l.width+x] {
-				l.remembered[y*l.width+x] = row[x]
+			index := y*l.width + x
+
+			if visible[index] {
+				l.remembered[index] = row[x]
+				l.detectedItems[index] = false
+
+				if !l.seen[index] {
+					l.seen[index] = true
+					newlySeen = append(newlySeen, point{
+						x: x,
+						y: y,
+					})
+				}
 			}
 		}
 	}
+
+	return newlySeen, nil
+}
+
+// MapCell remembers terrain without treating it as actually seen. Solid
+// interior cells remain hidden until one of their neighbours opens.
+func (l *Level) MapCell(x, y int) error {
+	if !l.inBounds(x, y) {
+		return fmt.Errorf("level %d cannot map cell (%d,%d)", l.ID, x, y)
+	}
+
+	index := y*l.width + x
+
+	if l.seen[index] || l.remembered[index] != terrain.Unseen {
+		return nil
+	}
+
+	feature := l.terrain[y][x]
+
+	if !terrain.Walkable(feature) && feature != terrain.ClosedDoor {
+		open := false
+
+		for dy := -1; dy <= 1 && !open; dy++ {
+			for dx := -1; dx <= 1; dx++ {
+				if dx == 0 && dy == 0 {
+					continue
+				}
+
+				nx, ny := x+dx, y+dy
+
+				if l.inBounds(nx, ny) &&
+					(!terrain.Opaque(l.terrain[ny][nx]) ||
+						l.terrain[ny][nx] == terrain.ClosedDoor) {
+					open = true
+					break
+				}
+			}
+		}
+
+		if !open {
+			return nil
+		}
+	}
+
+	l.remembered[index] = feature
 
 	return nil
 }

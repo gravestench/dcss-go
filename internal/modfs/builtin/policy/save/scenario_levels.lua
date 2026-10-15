@@ -2,6 +2,7 @@ local roster = require("policy.population.roster")
 local generated = require("policy.save.generated_levels")
 local abyss = require("policy.save.abyss_levels")
 local world_abyss = require("policy.world.abyss")
+local branches = require("ids.branches")
 
 local population_id = "fixed-dungeon-population-v1"
 local generated_id = "generated-dungeon-basic-v1"
@@ -21,13 +22,28 @@ function module.run(_, input)
         local choices = level.initial_monsters
 
         if level.id == world_abyss.level_id then
+            if level.branch_id ~= branches.BRANCH_ABYSS then
+                error("Abyss level has the wrong branch owner")
+            end
+
             abyss.validate(level)
         elseif scenario_id == generated_id or scenario_id == population_id then
+            if level.branch_id ~= branches.BRANCH_DUNGEON then
+                error("Dungeon level has the wrong branch owner")
+            end
+
             if level.initial_actors < choices or level.initial_actors > 4 * choices then
                 error("Dungeon:" .. level.id .. " has invalid initial actor count")
             end
-        elseif level.initial_actors ~= 0 then
-            error("fixture Dungeon:" .. level.id .. " has an initial actor count")
+        else
+            if level.branch_id ~= branches.BRANCH_DUNGEON then
+                error("fixture Dungeon level has the wrong branch owner")
+            end
+
+            if level.initial_actors ~= 0 then
+                error("fixture Dungeon:" .. level.id ..
+                    " has an initial actor count")
+            end
         end
     end
 

@@ -4,6 +4,7 @@ local failure = require("policy.magic.failure")
 local power = require("policy.magic.power")
 local records = require("policy.character.spell_records")
 local resources = require("policy.magic.resources")
+local demonic_magic = require("policy.character.demonic_magic")
 
 local cast = {}
 
@@ -35,6 +36,7 @@ function cast.resolve(ctx, player, intent, aut)
 
     effect.resolve(ctx, player, intent, spell,
         power.cast(ctx, player, spell), aut)
+    demonic_magic.on_success(ctx, player, spell)
 
     return "success"
 end

@@ -2,6 +2,7 @@ local spells = require("ids.spells")
 local monsters = require("ids.monsters")
 local component = require("constants.component")
 local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
 local net = require("policy.combat.net")
 local poison = require("policy.combat.monster_poison")
 local slow = require("policy.combat.monster_slow")
@@ -12,21 +13,25 @@ local summons = {}
 -- Summoned creatures belong to their caster, not the scenario's starting
 -- population. Their ownership and expiry survive a save and restore.
 function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
-    local permanent_spell = state.spell_id == spells.SPELL_SIMULACRUM or
-        state.spell_id == spells.SPELL_DEATH_CHANNEL or
-        state.spell_id == spells.SPELL_ANIMATE_DEAD or
-        state.spell_id == spells.SPELL_NECROTISE
+    local permanent_spell = state.source_category == categories.SPELLS and
+        (state.source_id == spells.SPELL_SIMULACRUM or
+            state.source_id == spells.SPELL_DEATH_CHANNEL or
+            state.source_id == spells.SPELL_ANIMATE_DEAD or
+            state.source_id == spells.SPELL_NECROTISE)
     local permanent = permanent_spell and state.expires_aut == 0
 
-    if state.owner ~= ctx:player() or state.spell_id == "" or
+    if state.owner ~= ctx:player() or state.source_id == "" or
         (not permanent and state.expires_aut <= current_aut) or
         state.heads < 0 then
         error("summon " .. ctx:id(entity) .. " has invalid ownership or expiry")
     end
 
-    if not catalog.get("spells", state.spell_id) then
-        error("summon " .. ctx:id(entity) .. " has unknown origin spell")
+    if state.source_category ~= categories.SPELLS and
+        state.source_category ~= categories.MUTATIONS then
+        error("summon " .. ctx:id(entity) .. " has invalid origin category")
     end
+
+    catalog.get(state.source_category, state.source_id)
 
     local wander = ai.behavior == "wander" and
         ai.memory_until_aut == 0 and
@@ -48,9 +53,9 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         local marker = ctx:get(segment.gateway, component.SUMMON_GATEWAY)
         local head_actor = ctx:get(segment.head, component.ACTOR)
 
-        if state.spell_id ~= spells.SPELL_MALIGN_GATEWAY or
+        if state.source_id ~= spells.SPELL_MALIGN_GATEWAY or
             actor.kind_id ~= monsters.MONS_ELDRITCH_TENTACLE_SEGMENT or
-            not head or head.spell_id ~= state.spell_id or
+            not head or head.source_id ~= state.source_id or
             head.owner ~= state.owner or
             not marker or marker.tentacle_id ~= ctx:id(segment.head) or
             not head_actor or head_actor.kind_id ~= monsters.MONS_ELDRITCH_TENTACLE or

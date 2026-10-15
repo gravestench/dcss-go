@@ -3,6 +3,7 @@ local formulas = require("policy.character.formulas")
 local records = require("policy.character.spell_records")
 local player_scope = require("policy.magic.player_scope")
 local traits = require("policy.character.traits")
+local availability = require("policy.character.skill_availability")
 
 local learning = {}
 
@@ -22,7 +23,8 @@ function learning.levels(ctx, player)
 
     for _, skill in ipairs(skills.entries) do
         if skill.id == "SK_SPELLCASTING" then
-            local aptitude = formulas.skill_aptitude(species, skill.id)
+            local aptitude = formulas.effective_skill_aptitude(ctx, player,
+                species, skill.id)
             spellcasting = formulas.scaled_skill(skill, 2, aptitude)
             break
         end
@@ -68,7 +70,11 @@ function learning.cannot_begin(ctx, player, spell_id)
     local species = catalog.get("species", character.species_id)
     local spell = catalog.get("spells", spell_id)
 
-    if not traits.start_spell_usable(species, spell_id) then
+    if availability.forbidden_spell(ctx, player, spell) then
+        return "You cannot memorise that spell."
+    end
+
+    if not traits.start_spell_usable(ctx, player, species, spell_id) then
         return "You cannot memorise that spell."
     end
 

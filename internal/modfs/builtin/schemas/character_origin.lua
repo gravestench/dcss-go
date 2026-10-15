@@ -24,11 +24,6 @@ register.component{
             default = 0,
         },
 
-        innate_mutations = {
-            type = "string",
-            default = "",
-        },
-
         religion = {
             type = "string",
             default = "GOD_NO_GOD",

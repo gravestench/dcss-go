@@ -6,6 +6,8 @@ local defense = require("policy.combat.monster_defense")
 local melee = require("policy.combat.melee")
 local magic_damage = require("policy.magic.damage")
 local armour = require("policy.magic.effects.summons.animate_armour")
+local monster_health = require("policy.combat.monster_health")
+local monster_stats = require("policy.combat.monster_stats")
 
 local summon_melee = {}
 
@@ -24,7 +26,7 @@ local function fire_vortex_attack(ctx, summon, target, attacker)
     local victim_def = catalog.get("monsters", victim.kind_id)
     local combat = ctx:get(target, "core.combat")
     local outcome = melee.monster(ctx, {
-        hd = attacker_def.hd,
+        hd = monster_stats.hit_dice(ctx, summon, attacker_def),
         damage = 0,
         type_id = "AT_HIT",
         flavour_id = "AF_PURE_FIRE",
@@ -42,15 +44,16 @@ local function fire_vortex_attack(ctx, summon, target, attacker)
     end
 
     if outcome.kind == "hit" then
-        local raw = math.floor(attacker_def.hd * 3 / 2) +
-            ctx:random("spell", attacker_def.hd)
+        local hd = monster_stats.hit_dice(ctx, summon, attacker_def)
+        local raw = math.floor(hd * 3 / 2) +
+            ctx:random("spell", hd)
         local ac = defense.armour(ctx, target, victim_def)
         local after_ac = math.max(0, raw -
             math.floor(ctx:random("spell", ac + 1) / 2))
         local amount = magic_damage.monster_elemental(ctx, target,
             after_ac, "MR_RES_FIRE")
 
-        magic_damage.apply(ctx, target, amount)
+        magic_damage.apply(ctx, target, amount, summon)
         vortex_health.current = 0
         ctx:set(summon, component.HEALTH, vortex_health)
         ctx:emit("combat", "Your fire vortex burns the " ..
@@ -133,7 +136,8 @@ function summon_melee.attack(ctx, summon, target)
     local attacker_def = catalog.get("monsters", attacker.kind_id)
     local victim_def = catalog.get("monsters", victim.kind_id)
     local attacks, cold_copy = strikes(ctx, summon, attacker, state)
-    local hd = adjusted and adjusted.hd or attacker_def.hd
+    local hd = monster_stats.hit_dice(ctx, summon, attacker_def,
+        adjusted and adjusted.hd or nil)
     local copied = ctx:has(summon, "magic.summon_simulacrum") or
         ctx:has(summon, "magic.summon_undead")
     local combat = ctx:get(target, "core.combat")
@@ -181,11 +185,10 @@ function summon_melee.attack(ctx, summon, target)
             end
 
             if dealt > 0 then
-                local alive = health.current > 0
-                health.current = math.max(0, health.current - dealt)
-                ctx:set(target, component.HEALTH, health)
+                health, dealt = monster_health.damage(ctx, target, dealt,
+                    summon)
 
-                if alive and health.current == 0 then
+                if dealt > 0 and health.current == 0 then
                     ctx:signal("player_kill", target)
                 end
             end

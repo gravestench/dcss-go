@@ -32,6 +32,7 @@ const (
 	ScreenPlay
 	ScreenInventory
 	ScreenSkills
+	ScreenMutations
 	ScreenHelp
 	ScreenConfirm
 	ScreenDeath
@@ -44,6 +45,10 @@ const (
 	ScreenThrow
 	ScreenAim
 	ScreenSpells
+	ScreenAbilities
+	ScreenAbilityConfirm
+	ScreenSpellConfirm
+	ScreenEvokeWand
 )
 
 type equipmentTick struct {
@@ -51,6 +56,10 @@ type equipmentTick struct {
 }
 
 type spellTick struct {
+	id uint64
+}
+
+type vampireTick struct {
 	id uint64
 }
 
@@ -85,19 +94,29 @@ type AppModel struct {
 	options          []menuWeaponOption
 	focus            int
 	skillFocusAction bool
+	mutationPage     int
+	mutationListPage int
+	mutationPages    int
+	mutationSelected string
+	mutationOptions  map[string]string
 
-	notice          string
-	confirm         confirmation
-	dropQuantity    string
-	pendingDoor     game.CommandKind
-	equipmentTickID uint64
-	spellTickID     uint64
-	aimKind         game.CommandKind
-	aimItemID       uint64
-	aimSpellID      string
-	aimX            int
-	aimY            int
-	spellMode       string
+	notice             string
+	confirm            confirmation
+	dropQuantity       string
+	pendingDoor        game.CommandKind
+	equipmentTickID    uint64
+	spellTickID        uint64
+	vampireTickID      uint64
+	aimKind            game.CommandKind
+	aimItemID          uint64
+	aimSpellID         string
+	aimAbilityID       string
+	pendingAbilityID   string
+	pendingSpell       game.Command
+	pendingSpellPrompt string
+	aimX               int
+	aimY               int
+	spellMode          string
 }
 
 func NewAppModel(seed uint64, savePath string) (*AppModel, error) {
@@ -208,6 +227,15 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		return m, m.stepPlayCommand(game.Command{Kind: game.CommandWait})
+
+	case vampireTick:
+		if msg.id != m.vampireTickID ||
+			m.screen != ScreenPlay ||
+			m.game == nil || m.game.View().VampireRitualRemaining == 0 {
+			return m, nil
+		}
+
+		return m, m.stepPlayCommand(game.Command{Kind: game.CommandWait})
 	}
 
 	return m, nil
@@ -246,8 +274,14 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenSkills:
 		return m.routeSkillInput(key)
 
+	case ScreenMutations:
+		return m.handleMutationInput(key)
+
 	case ScreenQuaff:
 		return m.routeInventoryInput("quaff", key)
+
+	case ScreenEvokeWand:
+		return m.routeInventoryInput("evoke_wand", key)
 
 	case ScreenDrop:
 		return m.routeInventoryInput("drop", key)
@@ -267,10 +301,20 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenAim:
 		return m.routeInput("aim", key, map[string]any{
 			"casting": m.aimSpellID != "",
+			"evoking": m.aimKind == game.CommandEvokeWand,
 		})
 
 	case ScreenSpells:
 		return m.routeSpellInput(key)
+
+	case ScreenAbilities:
+		return m.routeAbilityInput(key)
+
+	case ScreenAbilityConfirm:
+		return m.routeInput("ability_confirm", key)
+
+	case ScreenSpellConfirm:
+		return m.routeInput("spell_confirm", key)
 
 	case ScreenConfirm:
 		return m.routeConfirmationInput(key)
@@ -321,8 +365,9 @@ func (m *AppModel) renderCanvas() *Canvas {
 			m.drawStatus(canvas, "stat_choice")
 		}
 
-	case ScreenInventory, ScreenSkills, ScreenQuaff, ScreenDrop,
-		ScreenWield, ScreenWear, ScreenTakeOff, ScreenThrow, ScreenSpells:
+	case ScreenInventory, ScreenSkills, ScreenMutations, ScreenQuaff, ScreenEvokeWand, ScreenDrop,
+		ScreenWield, ScreenWear, ScreenTakeOff, ScreenThrow, ScreenSpells,
+		ScreenAbilities, ScreenAbilityConfirm, ScreenSpellConfirm:
 		m.drawGameMenu(canvas)
 
 	case ScreenHelp:
@@ -360,8 +405,15 @@ func (m *AppModel) drawGameMenu(canvas *Canvas) {
 		case ScreenSkills:
 			DrawSkills(canvas, view, m.skillFocusAction, m.presentationPolicy)
 
+		case ScreenMutations:
+			DrawMutations(canvas, m.mutationPage, m.mutationSelected,
+				m.presentationPolicy)
+
 		case ScreenQuaff:
 			DrawQuaff(canvas, view, m.presentationPolicy)
+
+		case ScreenEvokeWand:
+			drawInventoryModal(canvas, view, "evoke_wand", "", m.presentationPolicy)
 
 		case ScreenDrop:
 			DrawDrop(canvas, view, m.dropQuantity, m.presentationPolicy)
@@ -377,6 +429,16 @@ func (m *AppModel) drawGameMenu(canvas *Canvas) {
 
 		case ScreenSpells:
 			DrawSpells(canvas, view, m.spellMode, m.presentationPolicy)
+
+		case ScreenAbilities:
+			DrawAbilities(canvas, m.presentationPolicy)
+
+		case ScreenAbilityConfirm:
+			DrawAbilityConfirmation(canvas, m.presentationPolicy, m.pendingAbilityID)
+
+		case ScreenSpellConfirm:
+			DrawSpellConfirmation(canvas, m.presentationPolicy,
+				m.pendingSpellPrompt)
 		}
 	}
 
@@ -398,6 +460,15 @@ func (m *AppModel) nextSpellTick() tea.Cmd {
 
 	return tea.Tick(80*time.Millisecond, func(time.Time) tea.Msg {
 		return spellTick{id: id}
+	})
+}
+
+func (m *AppModel) nextVampireTick() tea.Cmd {
+	m.vampireTickID++
+	id := m.vampireTickID
+
+	return tea.Tick(80*time.Millisecond, func(time.Time) tea.Msg {
+		return vampireTick{id: id}
 	})
 }
 

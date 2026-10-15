@@ -2,22 +2,38 @@
 -- world updates, and equipment completion remain with the command bridge.
 local navigation = require("policy.commands.navigation")
 local quaff = require("policy.commands.quaff")
+local wands = require("policy.inventory.wands")
 local items = require("policy.inventory.items")
 local equipment = require("policy.inventory.equipment")
 local doors = require("policy.inventory.doors")
 local projectiles = require("policy.commands.projectiles")
 local cast = require("policy.commands.cast")
+local abilities = require("policy.commands.abilities")
 local spell_learning = require("policy.character.spell_learning")
 local confusion = require("policy.magic.player_confusion")
 local passwall = require("policy.magic.effects.translocation.passwall")
+local rage = require("policy.character.rage")
+local vampire = require("policy.character.vampire")
+local component = require("constants.component")
 
-local function wait_command()
-    return {
+local function wait_command(message)
+    local decision = {
         intent = {
             kind = 6,
         },
         cost = 10,
     }
+
+    if message then
+        decision.events = {
+            {
+                kind = "status",
+                text = message,
+            },
+        }
+    end
+
+    return decision
 end
 
 local function prepare(ctx, input)
@@ -31,11 +47,17 @@ local function prepare(ctx, input)
         }
     end
 
+    local petrification = ctx:get(player,
+        component.PLAYER_PETRIFICATION)
+
+    if petrification and petrification.petrified_aut > 0 then
+        return wait_command("You are petrified!")
+    end
+
     local paralysis = ctx:get(player, "magic.player_paralysis")
 
     if paralysis and paralysis.remaining_aut > 0 then
-        ctx:emit("status", "You are paralysed!")
-        return wait_command()
+        return wait_command("You are paralysed!")
     end
 
     if ctx:has(player, "magic.passwall_delay") then
@@ -48,6 +70,26 @@ local function prepare(ctx, input)
 
     local kind = input.kind
     local delay = ctx:get(player, "core.equipment_delay")
+
+    local blood_state = ctx:get(player, component.VAMPIRE)
+
+    if blood_state and blood_state.ritual_remaining_aut > 0 then
+        if kind == 19 then
+            return { message = vampire.interrupt(ctx, player) }
+        end
+
+        if kind ~= 5 then
+            return {
+                message = "You are performing a blood ritual. Press Esc to stop.",
+            }
+        end
+    end
+
+    local rage_rejection = rage.command_restriction(ctx, player, kind)
+
+    if rage_rejection then
+        return { message = rage_rejection }
+    end
 
     if delay then
         if kind == 15 then
@@ -106,8 +148,7 @@ local function prepare(ctx, input)
             position, dx, dy)
 
         if lost then
-            ctx:emit("status", "You're too confused to move!")
-            return wait_command()
+            return wait_command("You're too confused to move!")
         end
 
         dx = confused_dx
@@ -157,6 +198,10 @@ local function prepare(ctx, input)
         }
     elseif kind == 20 or kind == 21 then
         return cast.prepare(ctx, player, input)
+    elseif kind == 22 then
+        return abilities.prepare(ctx, player, input)
+    elseif kind == 23 then
+        return wands.prepare(ctx, player, item_id, dx, dy)
     end
 
     return {

@@ -63,16 +63,21 @@ func TestOverlayAddsIndependentContentFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	missing, ok := coverage["missing"].([]any)
-
-	if !ok {
-		t.Fatalf("spell coverage returned %T", coverage["missing"])
-	}
-
-	for _, id := range missing {
-		if id == "SPELL_TEST_SPARK" {
-			t.Fatal("added spell resolver was not discovered")
+	switch missing := coverage["missing"].(type) {
+	case []any:
+		for _, id := range missing {
+			if id == "SPELL_TEST_SPARK" {
+				t.Fatal("added spell resolver was not discovered")
+			}
 		}
+
+	case map[string]any:
+		if len(missing) != 0 {
+			t.Fatalf("unexpected spell coverage: %v", missing)
+		}
+
+	default:
+		t.Fatalf("spell coverage returned %T", coverage["missing"])
 	}
 
 	for _, entry := range []struct {

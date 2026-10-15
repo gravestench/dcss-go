@@ -1,22 +1,18 @@
-local catalog = require("policy.catalog")
-local traits = require("policy.character.traits")
+local mutation_effects = require("policy.mutations.effects.registry")
+local mutation_capabilities = require("constants.mutation_capabilities")
 
 local resources = {}
 
 local function state(ctx, player)
-    local character = ctx:get(player, "core.player")
-    local progress = ctx:get(player, "core.progression")
     local health = ctx:get(player, "core.health")
     local magic = ctx:get(player, "core.magic")
 
-    if not character or not progress or not health or not magic then
+    if not health or not magic then
         error("player lacks spell resource state")
     end
 
-    local species = catalog.get("species", character.species_id)
-
-    local from_hp = traits.mutation_level(species, "MUT_HP_CASTING",
-        progress.level) > 0
+    local from_hp = mutation_effects.sum(ctx, player,
+        mutation_capabilities.HP_CASTING) > 0
 
     return health, magic, from_hp
 end
@@ -51,6 +47,18 @@ function resources.pay(ctx, player, cost)
         ctx:set(player, "core.health", health)
     else
         magic.current = magic.current - cost
+        ctx:set(player, "core.magic", magic)
+    end
+end
+
+function resources.refund(ctx, player, cost)
+    local health, magic, from_hp = state(ctx, player)
+
+    if from_hp then
+        health.current = math.min(health.max, health.current + cost)
+        ctx:set(player, "core.health", health)
+    else
+        magic.current = math.min(magic.max, magic.current + cost)
         ctx:set(player, "core.magic", magic)
     end
 end

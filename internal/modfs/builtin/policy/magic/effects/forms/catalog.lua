@@ -1,9 +1,34 @@
 -- Source: form-data.h:formdata and transform.cc:DEFAULT_DURATION at
 -- crawl-ref e60ba356. Names and capabilities remain source spell rules.
 local spells = require("ids.spells")
+local abilities = require("ids.abilities")
+local size = require("constants.size")
 local forms = {
+    [abilities.BAT_FORM] = {
+        id = "bat",
+        size = size.TINY,
+        keeps_mutations = false,
+        description = "a vampire bat",
+        base_turns = 20,
+        scale = "double",
+        max_turns = 100,
+        strength = 0,
+        dexterity = 5,
+        hp_tenths = 10,
+        ac_flat = 0,
+        ac_power = 0,
+        res_fire = 0,
+        res_cold = 0,
+        unarmed_base = 1,
+        spell_penalty = 0,
+        blocks = "physical",
+        flight = "enable",
+        swim = "forbid",
+        can_bleed = true,
+    },
     [spells.SPELL_BEASTLY_APPENDAGE] = {
         id = "appendage",
+        keeps_mutations = true,
         description = "beastly appendages",
         base_turns = 10,
         scale = "double",
@@ -24,6 +49,8 @@ local forms = {
     },
     [spells.SPELL_SPIDER_FORM] = {
         id = "spider",
+        size = size.TINY,
+        keeps_mutations = false,
         description = "a venomous arachnid creature",
         base_turns = 10,
         scale = "double",
@@ -44,6 +71,7 @@ local forms = {
     },
     [spells.SPELL_BLADE_HANDS] = {
         id = "blade_hands",
+        keeps_mutations = true,
         description = "blades for hands",
         base_turns = 10,
         scale = "single",
@@ -64,6 +92,7 @@ local forms = {
     },
     [spells.SPELL_STATUE_FORM] = {
         id = "statue",
+        keeps_mutations = true,
         description = "a living statue of rough stone",
         base_turns = 20,
         scale = "double",
@@ -80,10 +109,12 @@ local forms = {
         blocks = "statue",
         flight = "default",
         swim = "forbid",
-        can_bleed = true,
+        can_bleed = false,
     },
     [spells.SPELL_ICE_FORM] = {
         id = "ice_beast",
+        size = size.LARGE,
+        keeps_mutations = false,
         description = "a creature of crystalline ice",
         base_turns = 30,
         scale = "double",
@@ -104,6 +135,7 @@ local forms = {
     },
     [spells.SPELL_DRAGON_FORM] = {
         id = "dragon",
+        keeps_mutations = false,
         description = "a fearsome dragon",
         base_turns = 20,
         scale = "double",
@@ -120,11 +152,12 @@ local forms = {
         blocks = "physical",
         flight = "enable",
         swim = "forbid",
-        size = "giant",
-        can_bleed = false,
+        size = size.GIANT,
+        can_bleed = true,
     },
     [spells.SPELL_NECROMUTATION] = {
         id = "lich",
+        keeps_mutations = true,
         description = "an undead lich",
         base_turns = 20,
         scale = "double",
@@ -141,10 +174,11 @@ local forms = {
         blocks = "none",
         flight = "default",
         swim = "default",
-        can_bleed = true,
+        can_bleed = false,
     },
     [spells.SPELL_STORM_FORM] = {
         id = "storm",
+        keeps_mutations = false,
         description = "a lightning-filled tempest",
         base_turns = 20,
         scale = "double",

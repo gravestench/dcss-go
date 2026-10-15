@@ -4,6 +4,8 @@ local damage = require("policy.magic.damage")
 local defense = require("policy.combat.monster_defense")
 local player_health = require("policy.combat.player_health")
 local summons = require("policy.magic.effects.summons.common")
+local targets = require("policy.ai.targets")
+local monster_health = require("policy.combat.monster_health")
 
 local blast = {}
 
@@ -15,7 +17,7 @@ function blast.nearest_hostile(ctx, origin, reach)
     local chosen, closest
 
     for _, entity in ipairs(ctx:query({ component.ACTOR, component.POSITION, component.HEALTH })) do
-        if entity ~= ctx:player() and not ctx:has(entity, component.SUMMON) then
+        if targets.enemy(ctx, ctx:player(), entity) then
             local position = ctx:get(entity, component.POSITION)
             local health = ctx:get(entity, component.HEALTH)
             local radius = distance(origin, position)
@@ -32,7 +34,7 @@ function blast.nearest_hostile(ctx, origin, reach)
     return chosen, closest
 end
 
-function blast.hit(ctx, target, raw, resistance_id)
+function blast.hit(ctx, target, raw, resistance_id, source)
     local definition
     local ac = 0
 
@@ -59,8 +61,7 @@ function blast.hit(ctx, target, raw, resistance_id)
             return
         end
 
-        health.current = math.max(0, health.current - amount)
-        ctx:set(target, component.HEALTH, health)
+        health = monster_health.damage(ctx, target, amount, source)
 
         if health.current == 0 and target ~= ctx:player() and
             not ctx:has(target, component.SUMMON) then
@@ -85,7 +86,7 @@ function blast.area(ctx, source, radius, dice, sides, resistance_id)
                 raw = raw + 1 + summons.roll(ctx, math.max(1, sides))
             end
 
-            blast.hit(ctx, target, raw, resistance_id)
+            blast.hit(ctx, target, raw, resistance_id, source)
         end
     end
 end

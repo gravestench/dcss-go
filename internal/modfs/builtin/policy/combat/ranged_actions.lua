@@ -6,6 +6,9 @@ local items = require("policy.inventory.items")
 local practice = require("policy.combat.practice")
 local projectiles = require("policy.combat.monster_projectiles")
 local player_health = require("policy.combat.player_health")
+local jelly = require("policy.mutations.effects.projectiles.jelly_missile")
+local classes = require("constants.item_classes")
+local categories = require("constants.catalog")
 
 local actions = {}
 
@@ -34,7 +37,8 @@ local function target(ctx, attacker)
         error("monster has no clear shot")
     end
 
-    return catalog.get("monsters", actor.kind_id), fighter.defense(ctx), health
+    return catalog.get(categories.MONSTERS, actor.kind_id),
+        fighter.defense(ctx), health
 end
 
 local function apply(ctx, outcome, health, defense, attacker)
@@ -79,10 +83,10 @@ end
 
 local function launcher_attack(ctx, attacker, launcher, definition, defense, health)
     local weapon = launcher.definition.weapon
-    local projectile = catalog.get("items", weapon.ammo_id)
+    local projectile = catalog.get(categories.ITEMS, weapon.ammo_id)
     local brand = launcher.item.ego or ""
 
-    if projectile.class ~= "OBJ_MISSILES" or not projectile.missile then
+    if projectile.class ~= classes.MISSILES or not projectile.missile then
         error("monster launcher has invalid projectile")
     end
 
@@ -93,7 +97,7 @@ local function launcher_attack(ctx, attacker, launcher, definition, defense, hea
     end
 
     effect.validate_launcher(launcher.item)
-    local outcome = effect.resolve_launcher(ctx, definition, defense,
+    local outcome = effect.resolve_launcher(ctx, attacker, definition, defense,
         weapon, launcher.item, projectile)
 
     health = apply(ctx, outcome, health, defense, attacker)
@@ -106,19 +110,24 @@ local function launcher_attack(ctx, attacker, launcher, definition, defense, hea
         brands.apply(ctx, brand, outcome.damage, definition.id,
             projectile.name, health)
     end
+
+    if outcome.kind == "hit" then
+        jelly.absorb(ctx, ctx:player(), projectile.id, outcome.damage)
+    end
 end
 
 local function missile_attack(ctx, attacker, missile, definition, defense, health)
     local kind = missile.definition
     local item = missile.item
 
-    if item.quantity <= 0 or kind.class ~= "OBJ_MISSILES" or not kind.missile then
+    if item.quantity <= 0 or kind.class ~= classes.MISSILES or not kind.missile then
         error("monster has no matching missile stack")
     end
 
     local effect = projectiles.effect(kind.id)
     effect.validate(item)
-    local outcome, poison, name = effect.resolve(ctx, definition, defense, kind)
+    local outcome, poison, name = effect.resolve(ctx, attacker,
+        definition, defense, kind)
 
     apply(ctx, outcome, health, defense, attacker)
 
@@ -128,6 +137,10 @@ local function missile_attack(ctx, attacker, missile, definition, defense, healt
 
     if poison > 0 then
         brands.poison(ctx, poison, definition.id)
+    end
+
+    if outcome.kind == "hit" then
+        jelly.absorb(ctx, ctx:player(), kind.id, outcome.damage)
     end
 end
 

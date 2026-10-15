@@ -41,6 +41,21 @@ func (g *Game) ChooseStat(id string) (StepResult, error) {
 		g.messages = append(g.messages, event.Text)
 	}
 
+	// A large XP award can cross several stat-choice levels at once. Keep
+	// the spent turn paused until the final choice has been made.
+	if progress, found := g.stores.Progression.Get(g.player); found &&
+		progress.PendingStatLevel != 0 {
+		if err := g.refreshVisibility(); err != nil {
+			return StepResult{}, err
+		}
+
+		return StepResult{
+			Spent:  turnCost,
+			Events: events,
+			View:   g.View(),
+		}, nil
+	}
+
 	if turnCost > 0 {
 		return g.finishTurn(startAut, turnCost, events)
 	}

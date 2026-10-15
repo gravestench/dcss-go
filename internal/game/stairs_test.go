@@ -22,6 +22,7 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	third.BranchID = g.levels[2].BranchID
 	g.levels[3] = third
 
 	second := g.levels[2]

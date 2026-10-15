@@ -4,9 +4,11 @@ local aim = {}
 
 function aim.run(_, input)
     local action = input.casting and "Cast" or
-        (input.throwing and "Throw" or "Fire")
+        (input.evoking and "Evoke" or
+            (input.throwing and "Throw" or "Fire"))
     local verb = input.casting and "cast" or
-        (input.throwing and "throw" or "fire")
+        (input.evoking and "evoke" or
+            (input.throwing and "throw" or "fire"))
 
     return {
         writes = {

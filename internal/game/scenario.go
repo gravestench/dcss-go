@@ -218,6 +218,26 @@ func newScenarioWithRules(
 		return nil, err
 	}
 
+	position, found := g.stores.Positions.Get(g.player)
+
+	if !found {
+		return nil, fmt.Errorf("new player has no starting position")
+	}
+
+	startingLevel := g.levels[position.LevelID]
+
+	if startingLevel == nil {
+		return nil, fmt.Errorf("new player starts on missing level %d", position.LevelID)
+	}
+
+	if err = g.runWorldPolicy("world.zot_clock", map[string]any{
+		"level_id":    position.LevelID,
+		"branch_id":   startingLevel.BranchID,
+		"elapsed_aut": int64(0),
+	}); err != nil {
+		return nil, err
+	}
+
 	if err = g.populateFromScript(setup); err != nil {
 		return nil, err
 	}

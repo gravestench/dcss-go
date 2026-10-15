@@ -3,6 +3,9 @@ local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
 local choice = require("policy.character_choice")
 local equipment = require("policy.inventory.equipment")
+local mutation_levels = require("policy.mutations.levels")
+local mutations = require("ids.mutations")
+local distributed = require("policy.character.distributed_training")
 
 local starting_profile = {}
 
@@ -34,17 +37,7 @@ local armour_choice_jobs = {
     JOB_ABYSSAL_KNIGHT = true,
 }
 
-local function mutation(species, id)
-    for _, entry in ipairs(species.mutations or {}) do
-        if entry.id == id and entry.level <= 1 and entry.amount > 0 then
-            return true
-        end
-    end
-
-    return false
-end
-
-local function starting_skills(species, job, weapon_skill, generated)
+local function starting_skills(ctx, species, job, weapon_skill, generated)
     local levels = {}
     local grant_order = {}
     local granted = {}
@@ -65,7 +58,8 @@ local function starting_skills(species, job, weapon_skill, generated)
     end
 
     if job.id == "JOB_BERSERKER" then
-        if not equipment.can_wear(species, catalog.get("items", "ARM_ROBE")) then
+        if not equipment.can_wear(ctx, ctx:player(), species,
+            catalog.get("items", "ARM_ROBE")) then
             levels.SK_DODGING = (levels.SK_DODGING or 0) + 1
         else
             levels.SK_ARMOUR = (levels.SK_ARMOUR or 0) + 2
@@ -81,7 +75,8 @@ local function starting_skills(species, job, weapon_skill, generated)
         end
     end
 
-    if mutation(species, "MUT_NO_GRASPING") then
+    if mutation_levels.effective(ctx, ctx:player(),
+        mutations.MUT_NO_GRASPING) > 0 then
         levels.SK_THROWING = nil
 
         if job.id == "JOB_FIGHTER" then
@@ -89,19 +84,21 @@ local function starting_skills(species, job, weapon_skill, generated)
         end
     end
 
-    if mutation(species, "MUT_NO_ARMOUR") then
+    if mutation_levels.effective(ctx, ctx:player(),
+        mutations.MUT_NO_ARMOUR) > 0 then
         levels.SK_SHIELDS = nil
     end
 
     if levels.SK_ARMOUR and
-        (not equipment.can_wear(species,
+        (not equipment.can_wear(ctx, ctx:player(), species,
             catalog.get("items", "ARM_CRYSTAL_PLATE_ARMOUR")) or
             not species.aptitudes.SK_ARMOUR.allowed) then
         levels.SK_DODGING = (levels.SK_DODGING or 0) + levels.SK_ARMOUR
         levels.SK_ARMOUR = nil
     end
 
-    if mutation(species, "MUT_INNATE_CASTER") then
+    if mutation_levels.effective(ctx, ctx:player(),
+        mutations.MUT_INNATE_CASTER) > 0 then
         local highest = levels.SK_SPELLCASTING or 0
 
         for id in pairs(magic_schools) do
@@ -245,8 +242,13 @@ function starting_profile.build(ctx, species, job, weapon_skill, generated)
         error("banned character choice " .. species_id .. "/" .. job_id)
     end
 
-    local skills = starting_skills(species, job, weapon_skill,
+    local skills = starting_skills(ctx, species, job, weapon_skill,
         generated and generated.skills)
+
+    if distributed.active(ctx, ctx:player()) then
+        distributed.include_skills(skills, species)
+    end
+
     local settings = {}
     local attributes = {
         strength = species.strength + job.strength,
@@ -285,13 +287,13 @@ function starting_profile.build(ctx, species, job, weapon_skill, generated)
     return {
         attributes = attributes,
         skills = skills,
-        max_hp = formulas.max_hp(1, species, skills),
-        max_mp = formulas.max_mp(1, species, skills),
+        max_hp = formulas.max_hp(ctx, ctx:player(), 1, species, skills),
+        max_mp = formulas.max_mp(ctx, ctx:player(), 1, species, skills),
         training = {
             available_xp = 0,
             spent_xp = 0,
             cost_level = 1,
-            manual = false,
+            manual = distributed.active(ctx, ctx:player()),
             settings = settings,
             recent_practice = seed_queue(ctx, skills),
             recent_all = seed_queue(ctx, skills),

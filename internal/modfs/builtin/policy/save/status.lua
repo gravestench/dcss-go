@@ -5,6 +5,13 @@ local poison_sources = {
 }
 
 local abyss = require("policy.world.abyss")
+local component = require("constants.component")
+local mutation_levels = require("policy.mutations.levels")
+local mutations = require("ids.mutations")
+local stats = require("constants.stats")
+local restrictions = require("constants.safety_restrictions")
+local rage = require("policy.character.rage")
+local zot_clock = require("policy.world.zot_clock")
 
 local module = {}
 
@@ -14,7 +21,16 @@ function module.run(ctx)
     local poison = ctx:get(player, "core.poison")
     local regeneration = ctx:get(player, "core.regeneration")
     local drain = ctx:get(player, "status.drain")
+    local stat_loss = ctx:get(player, component.STAT_LOSS)
+    local icy_defense = ctx:get(player, component.ICY_DEFENSE)
+    local sanguine_armour = ctx:get(player, component.SANGUINE_ARMOUR)
+    local agility = ctx:get(player, component.AGILITY)
+    local damage_safety = ctx:get(player, component.DAMAGE_SAFETY)
+    local powered = ctx:get(player, component.POWERED_BY_DEATH)
     local banishment = ctx:get(player, "world.banishment")
+    local petrification = ctx:get(player,
+        component.PLAYER_PETRIFICATION)
+    local horror = ctx:get(player, component.HORROR)
     local position = ctx:get(player, "core.position")
 
     if durations then
@@ -43,6 +59,77 @@ function module.run(ctx)
         error("invalid player HP drain")
     end
 
+    if stat_loss then
+        local drained = false
+
+        for _, field in ipairs(stats.ORDER) do
+            local amount = stat_loss[field]
+
+            if amount < 0 or amount > 100 then
+                error("invalid player stat loss")
+            end
+
+            drained = drained or amount > 0
+        end
+
+        if (drained and stat_loss.remaining_xp <= 0) or
+            (not drained and stat_loss.remaining_xp ~= 0) then
+            error("invalid player stat loss recovery timer")
+        end
+    end
+
+    if icy_defense and (icy_defense.remaining_aut < 0 or
+        icy_defense.remaining_aut > 300) then
+        error("invalid player icy defense depletion")
+    end
+
+    if sanguine_armour and (sanguine_armour.remaining_aut < 0 or
+        sanguine_armour.remaining_aut > 100) then
+        error("invalid player sanguine armour duration")
+    end
+
+    if agility and (agility.remaining_aut < 0 or
+        agility.remaining_aut > 800) then
+        error("invalid player Agility duration")
+    end
+
+    if damage_safety then
+        for _, restriction in ipairs({
+            restrictions.POTIONS,
+            restrictions.SCROLLS,
+        }) do
+            local remaining = damage_safety[restriction]
+
+            if remaining < 0 or remaining > 300 then
+                error("invalid player damage safety duration")
+            end
+        end
+    end
+
+    if powered and (powered.strength < 0 or powered.strength > 12 or
+        powered.remaining_aut < 0 or powered.remaining_aut > 50 or
+        (powered.strength > 0 and powered.remaining_aut == 0)) then
+        error("invalid player Powered by Death state")
+    end
+
+    if petrification and (
+        petrification.petrifying_aut < 0 or
+        petrification.petrifying_aut > 30 or
+        petrification.petrified_aut < 0 or
+        petrification.petrified_aut > 99 or
+        (petrification.petrifying_aut == 0 and
+            petrification.petrified_aut == 0) or
+        (petrification.petrifying_aut > 0 and
+            petrification.petrified_aut > 0)) then
+        error("invalid player petrification")
+    end
+
+    if horror and (horror.penalty <= 0 or
+        mutation_levels.effective(ctx, player,
+            mutations.MUT_COWARDICE) == 0) then
+        error("invalid player horror")
+    end
+
     if position and position.level_id == abyss.level_id then
         if not banishment then
             error("Abyss player has no banishment origin")
@@ -57,6 +144,9 @@ function module.run(ctx)
             banishment.origin_x, banishment.origin_y)) then
         error("invalid player banishment origin")
     end
+
+    rage.validate(ctx, player)
+    zot_clock.validate(ctx, player)
 
     return {}
 end

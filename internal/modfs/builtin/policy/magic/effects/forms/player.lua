@@ -1,9 +1,15 @@
 local species_ids = require("ids.species")
 local component = require("constants.component")
 local terrain_ids = require("constants.terrain")
+local size = require("constants.size")
 local catalog = require("policy.magic.effects.forms.catalog")
 local character_catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
+local rage = require("policy.character.rage")
+local mutation_levels = require("policy.mutations.levels")
+local mutations = require("ids.mutations")
+local player_attributes = require("policy.character.attributes")
+local vampire = require("policy.character.vampire")
 
 local forms = {}
 
@@ -27,42 +33,30 @@ local function has_flag(species, flag)
     return false
 end
 
-local function species_mutation(species, id, level)
-    local total = 0
-
-    for _, mutation in ipairs(species.mutations or {}) do
-        if mutation.id == id and mutation.level <= level then
-            total = total + mutation.amount
-        end
-    end
-
-    return total
-end
-
 -- Source: transform.cc:appendages and physiology_mutation_conflict.
 local function appendage_mask(ctx, player)
     local origin = ctx:get(player, component.PLAYER)
-    local progress = ctx:get(player, component.PROGRESSION)
     local species = character_catalog.get("species", origin.species_id)
-    local level = progress.level
     local function has(id)
-        return species_mutation(species, id, level) > 0
+        return mutation_levels.base(ctx, player, id) > 0
     end
 
     local mask = 0
 
-    if not has("MUT_HORNS") and not has("MUT_ANTENNAE") and
+    if not has(mutations.MUT_HORNS) and not has(mutations.MUT_ANTENNAE) and
         not has_flag(species, "SPF_NO_BONES") then
         mask = mask + 1
     end
 
-    if not has("MUT_TENTACLE_SPIKE") and has("MUT_TENTACLE_ARMS") then
+    if not has(mutations.MUT_TENTACLE_SPIKE) and
+        has(mutations.MUT_TENTACLE_ARMS) then
         mask = mask + 2
     end
 
-    if not has("MUT_TALONS") and not has("MUT_MERTAIL") and
-        not has("MUT_CONSTRICTING_TAIL") and not has("MUT_FLOAT") and
-        not has("MUT_PAWS") and not has("MUT_TENTACLE_ARMS") then
+    if not has(mutations.MUT_TALONS) and not has(mutations.MUT_MERTAIL) and
+        not has(mutations.MUT_CONSTRICTING_TAIL) and
+        not has(mutations.MUT_FLOAT) and not has(mutations.MUT_PAWS) and
+        not has(mutations.MUT_TENTACLE_ARMS) then
         mask = mask + 4
     end
 
@@ -127,12 +121,18 @@ function forms.rejection(ctx, player, spell_id)
     end
 
     local origin = ctx:get(player, component.PLAYER)
-    local attributes = ctx:get(player, component.ATTRIBUTES)
+    local attributes = player_attributes.current(ctx, player)
     local species = character_catalog.get("species", origin.species_id)
 
     if species.undead_type == "US_UNDEAD" or
         (species.id == species_ids.SP_VAMPIRE and destination.id == "lich") then
         return "Your unliving flesh cannot be transformed in this way."
+    end
+
+    if mutation_levels.base(ctx, player, mutations.MUT_VAMPIRISM) > 0 and
+        ((vampire.bloodless(ctx, player) and destination.id ~= "bat") or
+            (vampire.alive(ctx, player) and destination.id == "bat")) then
+        return "Your blood state cannot sustain that transformation."
     end
 
     local statuses = ctx:get(player, component.PLAYER_STATUS)
@@ -171,7 +171,7 @@ function forms.rejection(ctx, player, spell_id)
     end
 
     local likes_water = destination.swim == "enable" or
-        destination.size == "giant" or
+        destination.size == size.GIANT or
         (species.habitat == "HT_WATER" or
             species.habitat == "HT_AMPHIBIOUS") and
         (destination.id == "statue" or destination.swim ~= "forbid")
@@ -199,7 +199,8 @@ local function base_hp(ctx, player)
     local loss = (drain and drain.amount or 0) +
         (permanent and permanent.amount or 0)
 
-    return math.max(1, formulas.max_hp(progress.level, species, skills.entries) - loss)
+    return math.max(1,
+        formulas.max_hp(ctx, player, progress.level, species, skills.entries) - loss)
 end
 
 -- Source: player.cc:get_real_hp multiplies the untransformed maximum after
@@ -227,7 +228,8 @@ function forms.rescale_health(ctx, player, next_max)
 
     -- Source: player.cc:calc_hp(scale=true,set=false) carries the fractional
     -- regeneration amount through each change and floors current HP.
-    formulas.rescale_health(health, regeneration, next_max)
+    formulas.rescale_health(health, regeneration,
+        rage.scale_hp(ctx, player, next_max))
     ctx:set(player, component.HEALTH, health)
     ctx:set(player, component.REGENERATION, regeneration)
 end
@@ -306,6 +308,11 @@ function forms.cast(ctx, player, spell_id, power)
         ctx:add(player, component.PLAYER_FORM, value)
     end
 
+    if not profile.keeps_mutations then
+        -- Source: transform.cc:transform ends direct grips for these forms.
+        require("policy.combat.player_constriction").release_all(ctx, player)
+    end
+
     forms.rescale_health(ctx, player,
         math.max(1, math.floor(base_hp(ctx, player) * profile.hp_tenths / 10)))
 end
@@ -314,6 +321,14 @@ function forms.tick(ctx, player, aut)
     local active = ctx:get(player, component.PLAYER_FORM)
 
     if not active or active.remaining_aut <= 0 or aut <= 0 then
+        return
+    end
+
+    -- Source: player-reacts.cc keeps voluntary Vampire Bat Form until the
+    -- player ends it or a blood-state change makes it impossible.
+    if active.form_id == "bat" and
+        mutation_levels.effective(ctx, player,
+            mutations.MUT_VAMPIRISM) >= 2 then
         return
     end
 
@@ -330,16 +345,60 @@ function forms.tick(ctx, player, aut)
     active.remaining_aut = math.max(0, remaining)
 
     if active.remaining_aut == 0 then
-        if active.form_id == "appendage" then
-            appendage_message(ctx, active.appendage_mask, true)
-        else
-            ctx:emit("duration", "Your transformation has ended.")
-        end
-        ctx:remove(player, component.PLAYER_FORM)
-        forms.rescale_health(ctx, player, base_hp(ctx, player))
+        forms.finish(ctx, player)
     else
         ctx:set(player, component.PLAYER_FORM, active)
     end
+end
+
+function forms.finish(ctx, player)
+    local active = ctx:get(player, component.PLAYER_FORM)
+
+    if not active then
+        return
+    end
+
+    if active.form_id == "appendage" then
+        appendage_message(ctx, active.appendage_mask, true)
+    elseif active.form_id == "bat" then
+        ctx:emit("duration", "You feel less batty.")
+    else
+        ctx:emit("duration", "Your transformation has ended.")
+    end
+
+    ctx:remove(player, component.PLAYER_FORM)
+    forms.rescale_health(ctx, player, base_hp(ctx, player))
+end
+
+function forms.end_rejection(ctx, player)
+    if not ctx:has(player, component.PLAYER_FORM) then
+        return "You are not transformed."
+    end
+
+    local position = ctx:get(player, component.POSITION)
+    local feature = ctx:cell(position.level_id, position.x, position.y)
+    local wind = ctx:get(player, component.ZAP_FLIGHT)
+    local flight = require("policy.combat.flight")
+    local airborne = flight.permanent(ctx, player) or
+        (wind and wind.remaining_aut > 0)
+
+    if feature == terrain_ids.DNGN_LAVA and not airborne then
+        return "Turning back right now would cause you to burn!"
+    end
+
+    local origin = ctx:get(player, component.PLAYER)
+    local species = character_catalog.get("species", origin.species_id)
+    local habitats = require("constants.monster_habitats")
+    local swimmer = species.habitat == habitats.WATER or
+        species.habitat == habitats.AMPHIBIOUS or
+        (size.rank[species.size] or 0) >= size.rank[size.GIANT]
+
+    if feature == terrain_ids.DNGN_DEEP_WATER and
+        not airborne and not swimmer then
+        return "Turning back right now would cause you to drown!"
+    end
+
+    return nil
 end
 
 -- Source: transform.cc:_beastly_level. Temporary mutation levels are a
@@ -396,6 +455,7 @@ function forms.modifiers(ctx, player)
             blocks = "none",
             flight = "default",
             swim = "default",
+            size = nil,
         }
     end
 
@@ -411,6 +471,7 @@ function forms.modifiers(ctx, player)
         blocks = profile.blocks,
         flight = profile.flight,
         swim = profile.swim,
+        size = profile.size,
     }
 end
 
@@ -473,10 +534,31 @@ function forms.action_delay(ctx, player, base_aut)
     return base_aut
 end
 
+-- Source: transform.cc:form_base_movespeed and movement.cc minimum delay.
+function forms.move_speed(ctx, player)
+    local _, profile = record(ctx, player)
+
+    if profile and profile.id == "bat" then
+        return 5
+    end
+
+    return 10
+end
+
 function forms.can_drink(ctx, player)
     local _, profile = record(ctx, player)
 
     return not profile or profile.id ~= "lich"
+end
+
+-- Source: transform.h:Form::can_offhand_punch and the three form overrides
+-- in transform.cc. Blade Hands can already wield, while Dragon and Storm
+-- explicitly keep their extra offhand attack.
+function forms.can_offhand_punch(ctx, player)
+    local _, profile = record(ctx, player)
+
+    return not profile or profile.blocks ~= "physical" or
+        profile.id == "dragon" or profile.id == "storm"
 end
 
 -- Source: form-data.h:can_bleed and transform.cc:form_can_bleed.

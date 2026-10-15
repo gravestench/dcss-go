@@ -4,14 +4,16 @@ local catalog = require("policy.catalog")
 local poison = require("policy.combat.monster_poison")
 local resistance = require("policy.combat.player_resistance")
 local roll = require("policy.combat.roll")
+local monster_stats = require("policy.combat.monster_stats")
 
 local mephitic = {}
 
-local function monster_duration(ctx, actor, definition)
+local function monster_duration(ctx, target, actor, definition)
     -- mon-ench.cc:ENCH_CONFUSION falls back to its speed/HD duration when
     -- cloud.cc applies BEAM_CONFUSION with enchant power zero.
     local speed = math.max(1, math.min(100, actor.speed))
-    local modded = math.max(1, math.floor((definition.hd + 5) * 10 / speed))
+    local hd = monster_stats.hit_dice(ctx, target, definition)
+    local modded = math.max(1, math.floor((hd + 5) * 10 / speed))
     local centiturns = math.max(3, math.floor(100 / modded))
     local raw = centiturns * roll.random_divide(ctx, 100, speed)
     local low = math.floor(60 * raw / 100)
@@ -65,7 +67,7 @@ function mephitic.apply(ctx, target)
     end
 
     -- cloud.cc:_mephitic_cloud_roll. High-HD monsters retain a 1/50 chance.
-    local hd = definition.hd
+    local hd = monster_stats.hit_dice(ctx, target, definition)
     local affected
 
     if hd >= 21 then
@@ -78,7 +80,7 @@ function mephitic.apply(ctx, target)
         return
     end
 
-    local duration = monster_duration(ctx, actor, definition)
+    local duration = monster_duration(ctx, target, actor, definition)
     local state = ctx:get(target, component.MONSTER_CONFUSION)
 
     if state then

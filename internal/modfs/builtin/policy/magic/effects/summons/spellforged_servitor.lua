@@ -106,7 +106,7 @@ local function fire(ctx, entity, target, position, state)
             raw = raw + 1 + summons.roll(ctx, sides)
         end
 
-        blast.hit(ctx, target, raw)
+        blast.hit(ctx, target, raw, nil, entity)
     end
 
     ctx:emit("combat", "Your spellforged servitor casts " ..

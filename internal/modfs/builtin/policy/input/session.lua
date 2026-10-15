@@ -97,4 +97,33 @@ function session.memorisation_delay(input)
     }
 end
 
+function session.vampire_delay(input)
+    if input.key == "esc" then
+        return {
+            action = "cancel_vampire",
+            kind = commands.cancel_vampire,
+        }
+    end
+
+    if input.key == "S" then
+        return {
+            action = "confirm",
+            confirmation = "save",
+            interrupt_tick = true,
+        }
+    end
+
+    if input.key == "ctrl+s" then
+        return {
+            action = "save_exit",
+            interrupt_tick = true,
+        }
+    end
+
+    return {
+        action = "notice",
+        text = "You are performing a blood ritual. Esc interrupts.",
+    }
+end
+
 return session

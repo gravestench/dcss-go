@@ -4,6 +4,22 @@ local menu = require("policy.input.menu")
 
 local spells = {}
 
+function spells.confirm(input)
+    if input.key == "y" then
+        return { action = "spell_confirm_accept" }
+    end
+
+    if input.key == "n" or input.key == "esc" or
+        input.key == "enter" then
+        return { action = "spell_confirm_cancel" }
+    end
+
+    return {
+        action = "notice",
+        text = "Answer y or n.",
+    }
+end
+
 local function memorise_before(left, right)
     local a = catalog.get("spells", left.id)
     local b = catalog.get("spells", right.id)

@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local effects = require("policy.combat.monster_spells")
 local statuses = require("policy.magic.effects.statuses.player")
+local engulf = require("policy.combat.engulf")
 
 local books_by_id = {}
 
@@ -11,6 +12,10 @@ end
 local spell = {}
 
 function spell.choose(ctx, entity, position, player)
+    if engulf.silenced(ctx, entity) then
+        return nil
+    end
+
     local radius = statuses.silence_radius(ctx, ctx:player())
     local distance = math.max(math.abs(position.x - player.x),
         math.abs(position.y - player.y))

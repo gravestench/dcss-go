@@ -15,10 +15,12 @@ func grantSummonForSavedFixture(t *testing.T, g *Game, id string) func() {
 	progress, _ := g.stores.Progression.Get(g.player)
 	attributes, _ := g.stores.Attributes.Get(g.player)
 	magic, _ := g.stores.Magic.Get(g.player)
+	health, _ := g.stores.Health.Get(g.player)
 	skills, _ := g.stores.Skills.Get(g.player)
 	startProgress := *progress
 	startAttributes := *attributes
 	startMagic := *magic
+	startHealth := *health
 	startSkills := append([]character.Skill(nil), skills.Entries...)
 	grantSummonForTest(t, g, id)
 
@@ -29,6 +31,7 @@ func grantSummonForSavedFixture(t *testing.T, g *Game, id string) func() {
 		progress.TotalXP = earnedXP
 		*attributes = startAttributes
 		*magic = startMagic
+		*health = startHealth
 		skills.Entries = startSkills
 	}
 }
@@ -557,7 +560,7 @@ func TestNecromancyAurasRaiseKilledMonster(t *testing.T) {
 
 				for _, undead := range loaded.scripts.Components()["magic.summon"].Entities() {
 					state, _ := loaded.scripts.Components()["magic.summon"].Get(undead)
-					origin, _ := state.Get("spell_id")
+					origin, _ := state.Get("source_id")
 
 					if origin == tc.spellID {
 						t.Fatal("Animate Dead recast retained an older zombie")
@@ -687,7 +690,7 @@ func TestSmallMammalSummonHasOwnerAndTimeout(t *testing.T) {
 	entity := store.Entities()[0]
 	state, _ := store.Get(entity)
 	owner, _ := state.Get("owner")
-	spellID, _ := state.Get("spell_id")
+	spellID, _ := state.Get("source_id")
 	expires, _ := state.Get("expires_aut")
 
 	if owner != g.player ||
@@ -742,7 +745,7 @@ func TestSmallMammalSummonSurvivesRestore(t *testing.T) {
 
 	state, _ := store.Get(store.Entities()[0])
 	owner, _ := state.Get("owner")
-	spellID, _ := state.Get("spell_id")
+	spellID, _ := state.Get("source_id")
 
 	if owner != restored.player || spellID != "SPELL_SUMMON_SMALL_MAMMAL" {
 		t.Fatalf("restored summon link = %v, %v", owner, spellID)
@@ -1547,7 +1550,7 @@ func TestFireStormVortexBurnsOnContactAndLeavesCloud(t *testing.T) {
 
 	if _, err := g.scripts.Components()["magic.summon"].Set(vortex, map[string]any{
 		"owner":       g.player,
-		"spell_id":    "SPELL_FIRE_STORM",
+		"source_id":   "SPELL_FIRE_STORM",
 		"expires_aut": int64(g.currentAut + 90),
 		"heads":       int64(0),
 	}); err != nil {

@@ -5,6 +5,8 @@ local categories = require("constants.catalog")
 local books = require("ids.monster_spellbooks")
 local skill_ids = require("ids.skills")
 local spell_scopes = require("constants.spell_scopes")
+local object_classes = require("ids.object_classes")
+local uses = require("constants.mutation_uses")
 local source_population = require("data.dungeon_population").rows
 
 local population_monsters = {}
@@ -19,6 +21,14 @@ local population_curves = {
     PEAK = true,
     RISE = true,
     FALL = true,
+}
+
+local mutation_uses = {
+    [uses.GOOD] = true,
+    [uses.BAD] = true,
+    [uses.JIYVA] = true,
+    [uses.QAZLAL] = true,
+    [uses.XOM] = true,
 }
 
 -- Skills that the bundled screens and rules can ask any species to train.
@@ -333,7 +343,69 @@ local function validate_spawnable_monster(monster)
     end
 end
 
+local function validate_mutation(mutation)
+    local category = categories.MUTATIONS
+    local id = mutation.id
+
+    if not id:match("^MUT_[A-Z0-9_]+$") then
+        fail(category, id, "has an invalid ID")
+    end
+
+    if mutation.status ~= "active" and mutation.status ~= "removed" then
+        fail(category, id, "has an invalid status")
+    end
+
+    local weight = required(category, mutation, "weight", "number")
+    local maximum = required(category, mutation, "max_level", "number")
+
+    if weight < 0 or weight % 1 ~= 0 then
+        fail(category, id, "weight must be a nonnegative integer")
+    end
+
+    if maximum < 1 or maximum > 3 or maximum % 1 ~= 0 then
+        fail(category, id, "max_level must be an integer from 1 to 3")
+    end
+
+    required(category, mutation, "form_based", "boolean")
+
+    local name = required(category, mutation, "short_description", "string")
+
+    if name == "" then
+        fail(category, id, "short_description must be nonempty")
+    end
+
+    local uses = optional_list(category, mutation, "uses")
+
+    for _, use in ipairs(uses) do
+        if not mutation_uses[use] then
+            fail(category, id, "has an invalid use flag " .. tostring(use))
+        end
+    end
+
+    for _, field in ipairs({ "have", "gain", "lose" }) do
+        local messages = optional_list(category, mutation, field)
+
+        if #messages ~= 3 then
+            fail(category, id, field .. " must have three level messages")
+        end
+
+        for _, message in ipairs(messages) do
+            if type(message) ~= "string" then
+                fail(category, id, field .. " messages must be text")
+            end
+        end
+    end
+
+    if mutation.tile_id ~= nil and type(mutation.tile_id) ~= "string" then
+        fail(category, id, "tile_id must be text")
+    end
+end
+
 local function validate_registered_catalogs()
+    for _, id in ipairs(register.ids(categories.MUTATIONS)) do
+        validate_mutation(register.get(categories.MUTATIONS, id))
+    end
+
     for _, id in ipairs(register.ids(categories.MONSTERS)) do
         local monster = register.get(categories.MONSTERS, id)
         local population = optional_list(categories.MONSTERS, monster, "population")
@@ -385,6 +457,20 @@ local function validate_registered_catalogs()
 
         required(categories.ITEMS, item, "name", "string")
         required(categories.ITEMS, item, "class", "string")
+
+        if item.class == object_classes.OBJ_WANDS then
+            local spell_id = required(categories.ITEMS, item,
+                "wand_spell_id", "string")
+            local found = pcall(register.get, categories.SPELLS, spell_id)
+
+            if not found then
+                fail(categories.ITEMS, id,
+                    "has missing wand_spell_id " .. spell_id)
+            end
+        elseif item.wand_spell_id ~= nil then
+            fail(categories.ITEMS, id,
+                "wand_spell_id requires the wand class")
+        end
     end
 
     for _, id in ipairs(register.ids(categories.BRANCHES)) do

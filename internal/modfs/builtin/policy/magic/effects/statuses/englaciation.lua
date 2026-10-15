@@ -2,6 +2,7 @@
 local component = require("constants.component")
 local catalog = require("policy.catalog")
 local common = require("policy.magic.effects.statuses.common")
+local monster_stats = require("policy.combat.monster_stats")
 
 local englaciation = {}
 
@@ -38,7 +39,8 @@ local function apply(ctx, monster, definition, power)
         duration = duration + 1 + ctx:random("spell", math.max(1, power))
     end
 
-    duration = math.floor(duration / 6) - math.floor(definition.hd / 2)
+    duration = math.floor(duration / 6) - math.floor(
+        monster_stats.hit_dice(ctx, monster, definition) / 2)
 
     if duration <= 0 then
         ctx:emit("spell", "The " .. definition.name .. " resists.")

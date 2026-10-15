@@ -1,5 +1,9 @@
 local items = require("policy.inventory.items")
 local catalog = require("policy.catalog")
+local mutation_levels = require("policy.mutations.levels")
+local mutations = require("ids.mutations")
+local mutation_effects = require("policy.mutations.effects.registry")
+local mutation_capabilities = require("constants.mutation_capabilities")
 
 local equipment = {}
 
@@ -47,18 +51,6 @@ local function rank(id)
     return value
 end
 
-local function mutation_level(species, id)
-    local level = 0
-
-    for _, mutation in ipairs(species.mutations or {}) do
-        if mutation.id == id and mutation.level <= 1 then
-            level = level + mutation.amount
-        end
-    end
-
-    return level
-end
-
 local function has_flag(species, id)
     for _, flag in ipairs(species.flags or {}) do
         if flag == id then
@@ -69,9 +61,14 @@ local function has_flag(species, id)
     return false
 end
 
-function equipment.can_wear(species, kind)
+function equipment.can_wear(ctx, actor, species, kind)
+    local function mutation_level(id)
+        return mutation_levels.effective(ctx, actor, id)
+    end
+
     if kind.class ~= "OBJ_ARMOUR" or not kind.armour or
-        mutation_level(species, "MUT_NO_ARMOUR") > 0 then
+        mutation_effects.sum(ctx, actor,
+            mutation_capabilities.ARMOUR_USE_FORBIDDEN) > 0 then
         return false
     end
 
@@ -84,35 +81,36 @@ function equipment.can_wear(species, kind)
         return false
     end
 
-    if kind.slot == "shield" and mutation_level(species, "MUT_MISSING_HAND") > 0 then
+    if kind.slot == "shield" and
+        mutation_level(mutations.MUT_MISSING_HAND) > 0 then
         return false
     end
 
     if kind.slot == "gloves" and
-        (mutation_level(species, "MUT_CLAWS") >= 3 or
-            mutation_level(species, "MUT_DEMONIC_TOUCH") >= 3) then
+        (mutation_level(mutations.MUT_CLAWS) >= 3 or
+            mutation_level(mutations.MUT_DEMONIC_TOUCH) >= 3) then
         return false
     end
 
     if kind.slot == "boots" and
         (has_flag(species, "SPF_BARDING") or
-            mutation_level(species, "MUT_FLOAT") > 0 or
-            mutation_level(species, "MUT_CONSTRICTING_TAIL") > 0 or
-            mutation_level(species, "MUT_PAWS") > 0 or
-            mutation_level(species, "MUT_TENTACLE_ARMS") > 0 or
-            mutation_level(species, "MUT_HOOVES") >= 3 or
-            mutation_level(species, "MUT_TALONS") >= 3) then
+            mutation_level(mutations.MUT_FLOAT) > 0 or
+            mutation_level(mutations.MUT_CONSTRICTING_TAIL) > 0 or
+            mutation_level(mutations.MUT_PAWS) > 0 or
+            mutation_level(mutations.MUT_TENTACLE_ARMS) > 0 or
+            mutation_level(mutations.MUT_HOOVES) >= 3 or
+            mutation_level(mutations.MUT_TALONS) >= 3) then
         return false
     end
 
     if kind.slot == "cloak" and
-        mutation_level(species, "MUT_WEAKNESS_STINGER") >= 3 then
+        mutation_level(mutations.MUT_WEAKNESS_STINGER) >= 3 then
         return false
     end
 
     if kind.slot == "head" then
-        local horns = mutation_level(species, "MUT_HORNS")
-        local antennae = mutation_level(species, "MUT_ANTENNAE")
+        local horns = mutation_level(mutations.MUT_HORNS)
+        local antennae = mutation_level(mutations.MUT_ANTENNAE)
 
         if horns >= 3 or antennae >= 3 then
             return false
@@ -120,7 +118,7 @@ function equipment.can_wear(species, kind)
 
         if kind.id == "ARM_HELMET" and
             (horns > 0 or antennae > 0 or species.id == "SP_OCTOPODE" or
-                mutation_level(species, "MUT_BEAK") > 0 or
+                mutation_level(mutations.MUT_BEAK) > 0 or
                 species.id:find("^SP_.*DRACONIAN")) then
             return false
         end
@@ -149,8 +147,9 @@ function equipment.in_slot(ctx, actor, slot)
     return found
 end
 
-function equipment.needs_second_hand(kind, species)
-    if mutation_level(species, "MUT_QUADRUMANOUS") > 0 and
+function equipment.needs_second_hand(ctx, actor, kind, species)
+    if mutation_levels.effective(ctx, actor,
+        mutations.MUT_QUADRUMANOUS) > 0 and
         rank(kind.weapon.min_2h_size_id) <= rank("SIZE_MEDIUM") then
         return false
     end
@@ -171,6 +170,11 @@ function equipment.prepare_wield(ctx, actor, item_id)
 
     if item_id == 0 then
         return { intent = { kind = 11 }, cost = 3 }
+    end
+
+    if mutation_effects.sum(ctx, actor,
+        mutation_capabilities.HANDHELD_USE_FORBIDDEN) > 0 then
+        return { message = "You cannot wield weapons without grasping hands." }
     end
 
     local item = entity and ctx:get(entity, "core.item")
@@ -206,7 +210,7 @@ function equipment.prepare_wield(ctx, actor, item_id)
 
         local species = catalog.get("species", player.species_id)
 
-        if equipment.needs_second_hand(kind, species) then
+        if equipment.needs_second_hand(ctx, actor, kind, species) then
             return { message = "You cannot wield that with only one hand." }
         end
     end
@@ -227,14 +231,16 @@ function equipment.validate_fit(ctx, actor, kind)
         return "You can't wear that!"
     end
 
-    if not equipment.can_wear(species, kind) then
+    if not equipment.can_wear(ctx, actor, species, kind) then
         if kind.id == "ARM_HELMET" and
-            mutation_level(species, "MUT_HORNS") > 0 then
+            mutation_levels.effective(ctx, actor,
+                mutations.MUT_HORNS) > 0 then
             return "You can't wear that with your horns!"
         end
 
         if kind.id == "ARM_HELMET" and
-            mutation_level(species, "MUT_ANTENNAE") > 0 then
+            mutation_levels.effective(ctx, actor,
+                mutations.MUT_ANTENNAE) > 0 then
             return "You can't wear that with your antennae!"
         end
 
@@ -248,7 +254,7 @@ function equipment.validate_fit(ctx, actor, kind)
             local weapon = ctx:get(weapon_id, "core.item")
             local weapon_kind = items.kind(weapon)
 
-            if equipment.needs_second_hand(weapon_kind, species) then
+            if equipment.needs_second_hand(ctx, actor, weapon_kind, species) then
                 return "You cannot use that shield with your weapon."
             end
         end

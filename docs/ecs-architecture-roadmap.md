@@ -127,7 +127,8 @@ extends the game beyond the present D:1–2 slice.
    layout, and unavailable-feature handling use Lua. Expand keymaps and
    screens there while Go keeps Bubble Tea/Lip Gloss terminal mechanics.
    Preserve the full-terminal DCSS presentation and minimum 79×24 layout.
-7. **Remaining DCSS domains.** Add religion, mutations, forms, allies,
+7. **Remaining DCSS domains.** Complete the mutation source audit, then add
+   religion, unported forms, allies,
    shops, traps, clouds, runes, endgame, and full branch/content coverage as
    whole Lua domain slices. Extend the Go kernel only for reusable capability
    primitives that cannot be expressed cleanly through the existing API.

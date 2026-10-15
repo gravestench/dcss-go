@@ -1,5 +1,4 @@
 local catalog = require("policy.catalog")
-local equipment = require("policy.combat.equipment")
 local fighter = require("policy.combat.fighter")
 local items = require("policy.inventory.items")
 local net = require("policy.combat.net")
@@ -10,6 +9,10 @@ local roll = require("policy.combat.roll")
 local trajectory = require("policy.combat.trajectory")
 local statuses = require("policy.magic.effects.statuses.player")
 local monster_defense = require("policy.combat.monster_defense")
+local player_attributes = require("policy.character.attributes")
+local vision = require("policy.character.vision")
+local player_slay = require("policy.combat.player_slay")
+local monster_health = require("policy.combat.monster_health")
 
 local projectiles = {}
 
@@ -88,12 +91,10 @@ local function land(ctx, item, kind, entity, position, separate)
 end
 
 local function attack_input(ctx, player, missile, launcher, item, target, defender)
-    local attributes = ctx:get(player, "core.attributes")
+    local attributes = player_attributes.current(ctx, player)
     local weapon = launcher and launcher.weapon or nil
     local skill_id = weapon and weapon.skill_id or "SK_THROWING"
     local throwing_bonus = 0
-    local shield = equipment.monster_shield(ctx, target)
-    local combat = ctx:get(target, "core.combat")
 
     if not launcher then
         local throwing100 = fighter.skill(ctx, "SK_THROWING", 100)
@@ -112,24 +113,14 @@ local function attack_input(ctx, player, missile, launcher, item, target, defend
         weapon_damage = missile.missile.damage + (weapon and weapon.damage or throwing_bonus),
         weapon_hit = weapon and weapon.hit or 0,
         hit_bonus = statuses.portal_projectile_hit_bonus(ctx, player),
+        slay = player_slay.total(ctx, player),
         weapon_plus = weapon and item.plus or 0,
         defender_ev = monster_defense.evasion(ctx, target, defender),
         defender_ac = monster_defense.armour(ctx, target, defender),
+        defender_shield = monster_defense.shield(ctx, target, defender),
         penetrating = missile.id == "MI_JAVELIN",
         mighty = false,
     }
-
-    if shield then
-        input.defender_shield = {
-            ac = shield.definition.armour.ac,
-            plus = shield.item.plus,
-            subtype = shield.definition.subtype_value,
-            size = defender.size_id,
-            hit_dice = defender.hd,
-            blocks = combat.shield_blocks,
-            name = shield.definition.name,
-        }
-    end
 
     return input
 end
@@ -156,9 +147,7 @@ local function resolve_target(ctx, player, missile, launcher, item, target)
     end
 
     if outcome.kind == "block" then
-        local combat = ctx:get(target, "core.combat")
-        combat.shield_blocks = combat.shield_blocks + 1
-        ctx:set(target, "core.combat", combat)
+        monster_defense.register_block(ctx, target)
         message = "The " .. defender.name .. " blocks the " .. missile.name .. "."
     elseif outcome.kind == "hit" then
         message = "The " .. missile.name .. " hits the " .. defender.name .. "."
@@ -175,10 +164,8 @@ local function resolve_target(ctx, player, missile, launcher, item, target)
                     item.ego, missile, defender, outcome.damage)
             end
 
-            statuses.wake_hibernating(ctx, target)
-            outcome.damage = statuses.petrified_damage(ctx, target,
-                outcome.damage)
-            health.current = math.max(0, health.current - outcome.damage)
+            health, outcome.damage = monster_health.damage(ctx, target,
+                outcome.damage, player)
 
             if health.current > 0 and not launcher then
                 brand_damage = brand_damage + effects.missile(ctx,
@@ -186,10 +173,7 @@ local function resolve_target(ctx, player, missile, launcher, item, target)
                     health.current)
             end
 
-            brand_damage = statuses.petrified_damage(ctx, target,
-                brand_damage)
-            health.current = math.max(0, health.current - brand_damage)
-            ctx:set(target, "core.health", health)
+            health = monster_health.damage(ctx, target, brand_damage, player)
 
             if health.current == 0 then
                 ctx:signal("player_kill", target)
@@ -233,7 +217,8 @@ function projectiles.resolve(ctx, player, intent)
         impact = { x = x, y = y, contacts = contacts }
     else
         impact = trajectory.trace(ctx, position.level_id, position.x, position.y,
-            position.x + intent.dx, position.y + intent.dy, 7)
+            position.x + intent.dx, position.y + intent.dy,
+            vision.radius(ctx, player))
     end
     local verb = launched and "shoot" or "throw"
 

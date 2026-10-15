@@ -1,4 +1,5 @@
 local ranged = require("policy.combat.ranged")
+local monster_stats = require("policy.combat.monster_stats")
 
 local sling_bullet = {}
 
@@ -15,10 +16,10 @@ function sling_bullet.validate_launcher(item)
     end
 end
 
-function sling_bullet.resolve_launcher(ctx, definition, defense,
+function sling_bullet.resolve_launcher(ctx, attacker, definition, defense,
     weapon, launcher, projectile)
     return ranged.shot(ctx, {
-        hd = definition.hd,
+        hd = monster_stats.hit_dice(ctx, attacker, definition),
         weapon_damage = weapon.damage,
         weapon_hit = weapon.hit,
         weapon_plus = launcher.plus,

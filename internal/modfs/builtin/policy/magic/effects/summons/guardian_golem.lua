@@ -3,6 +3,7 @@ local monsters = require("ids.monsters")
 local component = require("constants.component")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
+local targets = require("policy.ai.targets")
 
 local golem = {}
 
@@ -21,7 +22,9 @@ function golem.bond(ctx, guardian)
         component.POSITION,
         component.HEALTH,
     })) do
-        if ally ~= guardian and not ctx:has(ally, component.SUMMON_BOND) then
+        if ally ~= guardian and
+            not ctx:has(ally, component.SUMMON_BOND) and
+            not targets.enemy(ctx, guardian, ally) then
             local state = ctx:get(ally, component.SUMMON)
             local position = ctx:get(ally, component.POSITION)
             local health = ctx:get(ally, component.HEALTH)

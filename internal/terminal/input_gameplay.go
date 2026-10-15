@@ -12,7 +12,8 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 	case "aim":
 		kind, ok := inputCommandKind(decision,
 			game.CommandFire, game.CommandThrow,
-			game.CommandCast, game.CommandForceCast)
+			game.CommandCast, game.CommandForceCast,
+			game.CommandAbility, game.CommandEvokeWand)
 
 		if !ok {
 			m.notice = "Input policy returned an invalid aim command."
@@ -20,7 +21,8 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 			return nil
 		}
 
-		itemID, err := inputItemID(decision, kind == game.CommandThrow)
+		itemID, err := inputItemID(decision,
+			kind == game.CommandThrow || kind == game.CommandEvokeWand)
 
 		if err != nil {
 			m.notice = err.Error()
@@ -34,7 +36,14 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 			return nil
 		}
 
+		if kind == game.CommandEvokeWand && itemID == 0 {
+			m.notice = "Input policy returned an invalid wand."
+
+			return nil
+		}
+
 		spellID := ""
+		abilityID := ""
 
 		if kind == game.CommandCast || kind == game.CommandForceCast {
 			selected, valid := decision["spell_id"].(string)
@@ -48,8 +57,21 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 			spellID = selected
 		}
 
+		if kind == game.CommandAbility {
+			selected, valid := decision["ability_id"].(string)
+
+			if !valid || selected == "" {
+				m.notice = "Input policy returned an invalid ability."
+
+				return nil
+			}
+
+			abilityID = selected
+		}
+
 		m.startAim(kind, itemID)
 		m.aimSpellID = spellID
+		m.aimAbilityID = abilityID
 
 	case "door":
 		kind, ok := inputCommandKind(decision, game.CommandOpenDoor,
@@ -76,6 +98,23 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 
 	case "spell_step":
 		return m.applySpellStep(decision)
+
+	case "ability_step":
+		return m.applyAbilityStep(decision)
+
+	case "confirm_ability":
+		return m.beginAbilityConfirmation(decision)
+
+	case "ability_confirm_accept":
+		return m.acceptAbilityConfirmation()
+
+	case "spell_confirm_accept":
+		return m.acceptSpellConfirmation()
+
+	case "spell_confirm_cancel":
+		m.pendingSpell = game.Command{}
+		m.pendingSpellPrompt = ""
+		m.openScreen(ScreenPlay)
 
 	}
 

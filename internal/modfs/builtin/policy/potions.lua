@@ -3,6 +3,8 @@
 
 local potions = {}
 local player_health = require("policy.combat.player_health")
+local potion_rules = require("policy.character.potion_rules")
+local might = require("policy.character.might")
 
 local function required(ctx, entity, name)
     local component = ctx:get(entity, name)
@@ -16,10 +18,13 @@ end
 
 function potions.POT_CURING(ctx, player)
     local health = required(ctx, player, "core.health")
-    local roll = ctx:random("potion", 7)
 
-    if player_health.can_heal(ctx, player) then
-        health.current = math.min(health.max, health.current + 5 + roll)
+    if player_health.can_heal(ctx, player) and
+        potion_rules.can_heal(ctx, player) then
+        local amount = 5 + ctx:random("potion", 7)
+
+        health.current = math.min(health.max,
+            health.current + potion_rules.scale_healing(ctx, player, amount))
     end
 
     ctx:set(player, "core.health", health)
@@ -42,10 +47,10 @@ function potions.POT_HEAL_WOUNDS(ctx, player)
         ctx:random("potion", 29) +
         ctx:random("potion", 29)
 
-    health.current = math.min(
-        health.max,
-        health.current + 10 + math.floor(total / 3)
-    )
+    local amount = 10 + math.floor(total / 3)
+
+    health.current = math.min(health.max,
+        health.current + potion_rules.scale_healing(ctx, player, amount))
 
     ctx:set(player, "core.health", health)
 
@@ -53,19 +58,7 @@ function potions.POT_HEAL_WOUNDS(ctx, player)
 end
 
 function potions.POT_MIGHT(ctx, player)
-    local durations = required(ctx, player, "core.durations")
-    local previous = durations.might_aut
-    local roll = ctx:random("potion", 40)
-
-    durations.might_aut = math.min(800, previous + (35 + roll) * 10)
-
-    ctx:set(player, "core.durations", durations)
-
-    if previous > 0 then
-        return "You feel mightier all of a sudden."
-    end
-
-    return "You feel very mighty all of a sudden."
+    return might.apply(ctx, player, 40, "potion")
 end
 
 local function rounded_two_thirds(ctx, value)

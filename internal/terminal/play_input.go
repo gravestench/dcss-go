@@ -22,6 +22,10 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 		return m.routeInput("memorisation_delay", key)
 	}
 
+	if m.game.View().VampireRitualRemaining > 0 {
+		return m.routeInput("vampire_delay", key)
+	}
+
 	if m.pendingDoor != 0 {
 		return m.routeInput("door", key)
 	}
@@ -30,47 +34,61 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 }
 
 var inputScreens = map[string]ScreenID{
-	"startup":        ScreenStartup,
-	"species":        ScreenSpecies,
-	"background":     ScreenBackground,
-	"weapon":         ScreenWeapon,
-	"name":           ScreenName,
-	"play":           ScreenPlay,
-	"inventory":      ScreenInventory,
-	"skills":         ScreenSkills,
-	"help":           ScreenHelp,
-	"quaff":          ScreenQuaff,
-	"drop":           ScreenDrop,
-	"wield":          ScreenWield,
-	"throw":          ScreenThrow,
-	"wear":           ScreenWear,
-	"take_off":       ScreenTakeOff,
-	"spell_cast":     ScreenSpells,
-	"spell_force":    ScreenSpells,
-	"spell_memorise": ScreenSpells,
+	"startup":         ScreenStartup,
+	"species":         ScreenSpecies,
+	"background":      ScreenBackground,
+	"weapon":          ScreenWeapon,
+	"name":            ScreenName,
+	"play":            ScreenPlay,
+	"inventory":       ScreenInventory,
+	"skills":          ScreenSkills,
+	"mutations":       ScreenMutations,
+	"help":            ScreenHelp,
+	"quaff":           ScreenQuaff,
+	"evoke_wand":      ScreenEvokeWand,
+	"drop":            ScreenDrop,
+	"wield":           ScreenWield,
+	"throw":           ScreenThrow,
+	"wear":            ScreenWear,
+	"take_off":        ScreenTakeOff,
+	"spell_cast":      ScreenSpells,
+	"spell_force":     ScreenSpells,
+	"spell_memorise":  ScreenSpells,
+	"abilities":       ScreenAbilities,
+	"ability_confirm": ScreenAbilityConfirm,
+	"spell_confirm":   ScreenSpellConfirm,
 }
 
 var gameInputActions = map[string]bool{
-	"aim":                true,
-	"cancel_equipment":   true,
-	"cancel_memorise":    true,
-	"change_skill":       true,
-	"choose_stat":        true,
-	"confirm":            true,
-	"confirm_accept":     true,
-	"confirm_cancel":     true,
-	"cycle_aim":          true,
-	"door":               true,
-	"drop_quantity":      true,
-	"finish_door":        true,
-	"fire_aim":           true,
-	"item_step":          true,
-	"move_aim":           true,
-	"save_exit":          true,
-	"step":               true,
-	"spell_step":         true,
-	"toggle_skill_focus": true,
-	"toggle_skill_mode":  true,
+	"aim":                    true,
+	"cancel_equipment":       true,
+	"cancel_memorise":        true,
+	"cancel_vampire":         true,
+	"change_skill":           true,
+	"choose_stat":            true,
+	"confirm":                true,
+	"confirm_accept":         true,
+	"confirm_cancel":         true,
+	"cycle_aim":              true,
+	"door":                   true,
+	"drop_quantity":          true,
+	"finish_door":            true,
+	"fire_aim":               true,
+	"item_step":              true,
+	"move_aim":               true,
+	"mutation_page":          true,
+	"mutation_detail":        true,
+	"mutation_close_detail":  true,
+	"save_exit":              true,
+	"step":                   true,
+	"spell_step":             true,
+	"ability_step":           true,
+	"confirm_ability":        true,
+	"ability_confirm_accept": true,
+	"spell_confirm_accept":   true,
+	"spell_confirm_cancel":   true,
+	"toggle_skill_focus":     true,
+	"toggle_skill_mode":      true,
 }
 
 func (m *AppModel) routeInput(screen, key string, extra ...map[string]any) tea.Cmd {
@@ -129,10 +147,12 @@ func (m *AppModel) applyInputDecision(decision map[string]any) tea.Cmd {
 		return m.applyNavigationDecision(action, decision)
 
 	case "confirm", "save_exit", "cancel_equipment", "choose_stat",
-		"cancel_memorise", "confirm_cancel", "confirm_accept":
+		"cancel_memorise", "cancel_vampire", "confirm_cancel", "confirm_accept":
 		return m.applySessionDecision(action, decision)
 
-	case "aim", "door", "step", "spell_step":
+	case "aim", "door", "step", "spell_step", "ability_step",
+		"confirm_ability", "ability_confirm_accept",
+		"spell_confirm_accept", "spell_confirm_cancel":
 		return m.applyGameplayDecision(action, decision)
 
 	case "drop_quantity", "item_step":
@@ -148,6 +168,9 @@ func (m *AppModel) applyInputDecision(decision map[string]any) tea.Cmd {
 
 	case "toggle_skill_mode", "toggle_skill_focus", "change_skill":
 		return m.applySkillDecision(action, decision)
+
+	case "mutation_page", "mutation_detail", "mutation_close_detail":
+		return m.applyMutationDecision(action, decision)
 
 	default:
 		m.notice = fmt.Sprintf("Input policy returned unsupported action %q.", action)
@@ -181,6 +204,22 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 	}
 
 	m.notice = ""
+
+	if result.Confirmation != "" {
+		if command.Kind != game.CommandCast &&
+			command.Kind != game.CommandForceCast {
+			m.notice = "Only a spell can request spell confirmation."
+
+			return nil
+		}
+
+		m.pendingSpell = command
+		m.pendingSpellPrompt = result.Confirmation
+		m.openScreen(ScreenSpellConfirm)
+
+		return nil
+	}
+
 	m.afterStep(result)
 
 	if result.View.EquipmentDelay != nil && m.screen == ScreenPlay {
@@ -189,6 +228,10 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 
 	if result.View.LearningRemaining > 0 && m.screen == ScreenPlay {
 		return m.nextSpellTick()
+	}
+
+	if result.View.VampireRitualRemaining > 0 && m.screen == ScreenPlay {
+		return m.nextVampireTick()
 	}
 
 	return nil

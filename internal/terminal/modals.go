@@ -71,6 +71,22 @@ func DrawSkills(canvas *Canvas, view game.View, focusAction bool, policy present
 	drawPresentation(canvas, fullRegion(canvas), result)
 }
 
+func DrawMutations(
+	canvas *Canvas,
+	page int,
+	selected string,
+	policy presentationPolicy,
+) {
+	result := runPresentation(policy, "presentation.mutations", map[string]any{
+		"height":   canvas.height,
+		"width":    canvas.width,
+		"page":     page,
+		"selected": selected,
+	})
+
+	drawPresentation(canvas, fullRegion(canvas), result)
+}
+
 func DrawHelp(canvas *Canvas, policy presentationPolicy) {
 	result := runPresentation(policy, "presentation.help", map[string]any{})
 	drawPresentation(canvas, fullRegion(canvas), result)

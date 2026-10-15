@@ -221,8 +221,23 @@ Put a player mutation in `content/mutations/<name>.lua`. The content tree
 registers it automatically, and `ids.mutations` exposes the new ID to other
 Lua files. A behavioral mutation also needs a focused file under
 `policy/mutations/effects/`; an ordinary scalar mutation can use the shared
-effect policy. The mutation rules are being ported as one domain, so new
-definitions should not be made selectable until their effect is implemented.
+effect policy. Make a new definition selectable only after its full
+consequence path is implemented and tested. Startup validates that each
+active definition has registered behavior.
+Several effect files may register distinct capabilities for the same
+mutation. A duplicate mutation/capability pair fails at startup. This lets
+one mod split a mutation's combat, spell, and turn effects into readable
+files without editing a central registry.
+Damage reactions use `policy.combat.player_damage_reactions`. A file under
+`policy/mutations/effects/damage/` can register a callback with `add_before`
+for a pre-HP-loss effect or `add` for an effect after surviving HP damage.
+Each phase has its own registration names, so one mutation may participate
+in both. The mod loader discovers the effect file automatically.
+Kill rewards use `policy.combat.player_kill_effects`. A focused file under
+`policy/mutations/effects/kill/` registers one callback by mutation ID.
+It runs for a credited, XP-eligible monster death and receives the player,
+monster definition, and effective mutation level. Keep any lasting buff in
+a Lua ECS component so save/restore preserves it.
 
 The effective tree is sorted by path. A file at the same relative path as a
 bundled file replaces it before Lua starts. A new path adds a definition.

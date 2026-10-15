@@ -18,6 +18,8 @@ local ids = {
         EMBERS = "CLOUD_EMBERS",
         FIRE = "CLOUD_FIRE",
         MEPHITIC = "CLOUD_MEPHITIC",
+        DUST = "CLOUD_DUST",
+        TLOC_ENERGY = "CLOUD_TLOC_ENERGY",
     },
 }
 

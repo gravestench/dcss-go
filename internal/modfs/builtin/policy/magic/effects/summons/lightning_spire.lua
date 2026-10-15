@@ -8,6 +8,7 @@ local defense = require("policy.combat.monster_defense")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
 local trajectory = require("policy.combat.trajectory")
+local targets = require("policy.ai.targets")
 
 local spire = {}
 
@@ -16,8 +17,7 @@ local function target(ctx, entity, origin)
     local chosen = nil
 
     for _, hostile in ipairs(ctx:query({ component.ACTOR, component.POSITION, component.HEALTH })) do
-        if hostile ~= ctx:player() and hostile ~= entity and
-            not ctx:has(hostile, component.SUMMON) then
+        if targets.enemy(ctx, entity, hostile) then
             local position = ctx:get(hostile, component.POSITION)
             local health = ctx:get(hostile, component.HEALTH)
             local range = math.max(math.abs(position.x - origin.x),
@@ -66,7 +66,7 @@ function spire.act(ctx, entity, origin)
                 damage = damage + 1 + summons.roll(ctx, sides)
             end
 
-            blast.hit(ctx, hostile, damage, "MR_RES_ELEC")
+            blast.hit(ctx, hostile, damage, "MR_RES_ELEC", entity)
         end
 
         ctx:emit("combat", "Your lightning spire zaps the " .. definition.name .. ".")

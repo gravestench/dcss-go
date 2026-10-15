@@ -16,12 +16,12 @@ function system.update(ctx, active)
         local expired = active == player and state.expires_aut > 0 and
             ctx:aut() >= state.expires_aut
 
-        local dead_vortex = state.spell_id == spells.SPELL_FIRE_STORM and
+        local dead_vortex = state.source_id == spells.SPELL_FIRE_STORM and
             health and health.current <= 0
 
         if entity ~= active and not dead_vortex and (expired or not health or
             health.current <= 0) then
-            if expired and state.spell_id == spells.SPELL_FIRE_STORM then
+            if expired and state.source_id == spells.SPELL_FIRE_STORM then
                 vortex.dissipate(ctx, entity)
             else
                 summons.expire(ctx, entity)

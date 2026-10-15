@@ -70,7 +70,7 @@ end
 local function fire_cloud(ctx, entity, position)
     local state = ctx:get(entity, component.SUMMON)
 
-    if not state or state.spell_id ~= spells.SPELL_FIRE_STORM then
+    if not state or state.source_id ~= spells.SPELL_FIRE_STORM then
         return
     end
 

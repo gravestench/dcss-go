@@ -9,6 +9,9 @@ local enfeeble = require("policy.magic.effects.statuses.enfeeble")
 local stasis = require("policy.magic.effects.statuses.monster_stasis")
 local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
 local resources = require("policy.magic.resources")
+local player_slow = require("policy.character.slow")
+local mutation_effects = require("policy.mutations.effects.registry")
+local mutation_capabilities = require("constants.mutation_capabilities")
 
 local function roll(ctx, bound)
     if bound <= 0 then
@@ -592,23 +595,22 @@ end
 
 function statuses.silence_radius(ctx, player)
     local value = state(ctx, player)
+    local aura = mutation_effects.sum(ctx, player,
+        mutation_capabilities.SILENCE_RADIUS)
 
     if not value or value.silence_aut <= 0 then
-        return -1
+        return aura > 0 and aura or -1
     end
 
     local turns = math.floor(value.silence_aut / 10)
     local squared = math.max(0, math.min(math.floor(3 * (turns - 5) / 4), 25))
 
-    return math.floor(math.sqrt(squared))
+    return math.max(aura, math.floor(math.sqrt(squared)))
 end
 
--- Source: player.cc:miasma_player and player_speed. The timing policy
--- consumes this saved slow without knowing which cloud caused it.
+-- Source: player.cc:player_speed. All slowing effects share one duration.
 function statuses.slow_active(ctx, player)
-    local slowed = ctx:get(player, component.MIASMA_SLOW)
-
-    return slowed ~= nil and slowed.remaining_aut > 0
+    return player_slow.active(ctx, player)
 end
 
 return statuses

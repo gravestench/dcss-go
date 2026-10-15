@@ -1,6 +1,7 @@
 local fighter = require("policy.combat.fighter")
 local spells = require("policy.combat.spells")
 local player_health_policy = require("policy.combat.player_health")
+local monster_stats = require("policy.combat.monster_stats")
 
 local slug_dart = {}
 
@@ -13,7 +14,8 @@ end
 function slug_dart.resolve(ctx, caster, _, definition, player_health)
     local player = ctx:player()
     local defense = fighter.defense(ctx)
-    local outcome = spells.slug_dart(ctx, definition.hd, defense)
+    local outcome = spells.slug_dart(ctx,
+        monster_stats.hit_dice(ctx, caster, definition), defense)
     local combat = ctx:get(player, "core.combat")
 
     if not combat then

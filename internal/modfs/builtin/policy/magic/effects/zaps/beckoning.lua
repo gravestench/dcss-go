@@ -1,6 +1,5 @@
 local component = require("constants.component")
 local spells = require("ids.spells")
-local monsters = require("ids.monsters")
 local catalog = require("policy.catalog")
 local habitat = require("policy.combat.monster_habitat")
 local net = require("policy.combat.net")
@@ -20,12 +19,10 @@ local function has_flag(definition, wanted)
     return false
 end
 
-local function movable(actor, definition)
-    return not has_flag(definition, "M_STATIONARY") and
-        actor.kind_id ~= monsters.MONS_TENTACLE and
-        actor.kind_id ~= monsters.MONS_TENTACLE_SEGMENT and
-        actor.kind_id ~= monsters.MONS_ELDRITCH_TENTACLE and
-        actor.kind_id ~= monsters.MONS_ELDRITCH_TENTACLE_SEGMENT
+local function movable(definition)
+    -- Every source tentacle and segment is stationary in the imported
+    -- catalog, so this same flag covers the source's tentacle exception.
+    return not has_flag(definition, "M_STATIONARY")
 end
 
 function beckoning.resolve(ctx, player, intent, spell)
@@ -50,7 +47,7 @@ function beckoning.resolve(ctx, player, intent, spell)
 
     local definition = catalog.get("monsters", actor.kind_id)
 
-    if health.current <= 0 or not movable(actor, definition) then
+    if health.current <= 0 or not movable(definition) then
         return
     end
 

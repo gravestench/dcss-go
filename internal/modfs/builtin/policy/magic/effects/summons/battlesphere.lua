@@ -6,6 +6,8 @@ local defense = require("policy.combat.monster_defense")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
 local trajectory = require("policy.combat.trajectory")
+local targets = require("policy.ai.targets")
+local monster_health = require("policy.combat.monster_health")
 
 local sphere = {}
 
@@ -40,8 +42,7 @@ local function target(ctx, entity, origin)
     local chosen = nil
 
     for _, hostile in ipairs(ctx:query({ component.ACTOR, component.POSITION, component.HEALTH })) do
-        if hostile ~= ctx:player() and hostile ~= entity and
-            not ctx:has(hostile, component.SUMMON) then
+        if targets.enemy(ctx, entity, hostile) then
             local position = ctx:get(hostile, component.POSITION)
             local health = ctx:get(hostile, component.HEALTH)
             local range = math.max(math.abs(position.x - origin.x),
@@ -100,8 +101,7 @@ function sphere.fire(ctx, player)
 
     local ac = defense.armour(ctx, hostile, definition)
     damage = math.max(0, damage - summons.roll(ctx, ac + 1))
-    health.current = math.max(0, health.current - damage)
-    ctx:set(hostile, component.HEALTH, health)
+    health = monster_health.damage(ctx, hostile, damage, entity)
 
     if health.current == 0 then
         ctx:signal("player_kill", hostile)

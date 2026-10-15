@@ -1,7 +1,11 @@
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
+local experience_limit = require("policy.character.experience_limit")
+local extra_lives = require("policy.character.extra_lives")
 local spell_records = require("policy.character.spell_records")
+local mutation_transition = require("policy.mutations.transition")
 local forms = require("policy.magic.effects.forms.player")
+local rage = require("policy.character.rage")
 
 local advancement = {}
 
@@ -35,21 +39,28 @@ function advancement.apply_level(ctx, actor, level, species)
     local progress = ctx:get(actor, "core.progression")
     local attributes = ctx:get(actor, "core.attributes")
     local skills = ctx:get(actor, "core.skills")
-    local health = ctx:get(actor, "core.health")
-    local magic = ctx:get(actor, "core.magic")
-    local regeneration = ctx:get(actor, "core.regeneration")
-
-    if not attributes or not skills or not health or not magic or not regeneration or
-        health.max <= 0 or magic.max < 0 then
+    if not attributes or not skills then
         error("player lacks advancement components")
     end
 
     local drain = ctx:get(actor, "status.drain")
     local drain_loss = drain and drain.amount or 0
+    mutation_transition.grant_scheduled(ctx, actor, species, level)
+
+    local health = ctx:get(actor, "core.health")
+    local magic = ctx:get(actor, "core.magic")
+    local regeneration = ctx:get(actor, "core.regeneration")
+
+    if not health or not magic or not regeneration or
+        health.max <= 0 or magic.max < 0 then
+        error("player lacks advancement resources")
+    end
+
     local base_hp = math.max(1,
-        formulas.max_hp(level, species, skills.entries) - drain_loss)
-    local next_hp = forms.scale_hp(ctx, actor, base_hp)
-    local next_mp = formulas.max_mp(level, species, skills.entries)
+        formulas.max_hp(ctx, actor, level, species, skills.entries) - drain_loss)
+    local next_hp = rage.scale_hp(ctx, actor,
+        forms.scale_hp(ctx, actor, base_hp))
+    local next_mp = formulas.max_mp(ctx, actor, level, species, skills.entries)
     local stat_frequency = species.levelup_stat_frequency
     local stat_options = type(species.levelup_stats) == "table" and species.levelup_stats or {}
 
@@ -68,6 +79,7 @@ function advancement.apply_level(ctx, actor, level, species)
 
     magic.max = next_mp
     progress.level = level
+    extra_lives.on_level(ctx, actor, level)
     ctx:set(actor, "core.attributes", attributes)
     ctx:set(actor, "core.health", health)
     ctx:set(actor, "core.magic", magic)
@@ -77,8 +89,13 @@ function advancement.apply_level(ctx, actor, level, species)
 
     local message = "You have reached level " .. level .. "!"
 
+    local maximum = experience_limit.max_level(ctx, actor)
+
     if level == 27 then
         message = "You have reached level 27, the final one!"
+    elseif level == maximum then
+        message = "You have reached level " .. level ..
+            ", the highest you will ever reach!"
     end
 
     ctx:emit("level-up", message)
@@ -97,7 +114,9 @@ function advancement.advance(ctx, actor)
 
     local species = selected_species(ctx, actor)
 
-    while progress.level < 27 do
+    local maximum = experience_limit.max_level(ctx, actor)
+
+    while progress.level < maximum do
         local next_level = progress.level + 1
         local needed = formulas.experience_needed(next_level, species.xp)
 
@@ -105,7 +124,7 @@ function advancement.advance(ctx, actor)
             break
         end
 
-        if formulas.needs_manual_stat(next_level) then
+        if formulas.needs_manual_stat(ctx, actor, next_level) then
             progress.pending_stat_level = next_level
             ctx:set(actor, "core.progression", progress)
             ctx:emit("stat-choice", "Your experience leads to an increase in your attributes!")
@@ -115,6 +134,8 @@ function advancement.advance(ctx, actor)
         advancement.apply_level(ctx, actor, next_level, species)
         progress.level = next_level
     end
+
+    extra_lives.on_experience(ctx, actor)
 end
 
 function advancement.choose_stat(ctx, actor, id)
@@ -134,7 +155,8 @@ function advancement.choose_stat(ctx, actor, id)
         return { message = "Choose Strength, Intelligence, or Dexterity." }
     end
 
-    increase_stat(attributes, id, 2)
+    increase_stat(attributes, id,
+        formulas.manual_stat_amount(ctx, actor))
     local next_level = progress.pending_stat_level
     progress.pending_stat_level = 0
     ctx:set(actor, "core.attributes", attributes)

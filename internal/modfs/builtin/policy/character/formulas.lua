@@ -1,3 +1,6 @@
+local mutation_effects = require("policy.mutations.effects.registry")
+local mutation_capabilities = require("constants.mutation_capabilities")
+
 local formulas = {}
 
 formulas.max_level = 27
@@ -112,8 +115,8 @@ local function historical_experience(level)
 end
 
 function formulas.experience_needed(level, xp_aptitude)
-    if level < 1 or level > 27 then
-        error("experience level " .. level .. " is outside 1..27")
+    if level < 1 or level > 128 then
+        error("experience level " .. level .. " is outside 1..128")
     end
 
     local factor = aptitude_factor(xp_aptitude - 1)
@@ -125,28 +128,31 @@ function formulas.experience_needed(level, xp_aptitude)
     return math.floor(float32((historical_experience(level) - 1) * factor))
 end
 
-function formulas.level_for_experience(total_xp, xp_aptitude)
+function formulas.level_for_experience(total_xp, xp_aptitude, maximum)
     if total_xp < 0 then
         error("negative experience " .. total_xp)
     end
 
     local level = 1
 
-    while level < 27 and total_xp >= formulas.experience_needed(level + 1, xp_aptitude) do
+    maximum = maximum or formulas.max_level
+
+    while level < maximum and
+        total_xp >= formulas.experience_needed(level + 1, xp_aptitude) do
         level = level + 1
     end
 
     return level
 end
 
-function formulas.level_progress(total_xp, level, xp_aptitude)
+function formulas.level_progress(total_xp, level, xp_aptitude, maximum)
     local current = formulas.experience_needed(level, xp_aptitude)
 
     if total_xp < current then
         error("XL" .. level .. " needs at least " .. current .. " experience")
     end
 
-    if level == 27 then
+    if level >= (maximum or formulas.max_level) then
         return 0
     end
 
@@ -192,7 +198,17 @@ function formulas.skill_aptitude(species, id)
     return aptitude.value
 end
 
-function formulas.max_hp(level, species, skills)
+-- Source: skills.cc:species_apt subtracts Unskilled after the species
+-- aptitude lookup. This applies to training, skill progress, and display.
+function formulas.effective_skill_aptitude(ctx, player, species, id)
+    local aptitude = formulas.skill_aptitude(species, id)
+    local penalty = mutation_effects.sum(ctx, player,
+        mutation_capabilities.SKILL_APTITUDE_PENALTY)
+
+    return aptitude - penalty
+end
+
+function formulas.max_hp(ctx, player, level, species, skills)
     if level < 1 or level > 27 then
         error("invalid HP level " .. level)
     end
@@ -211,7 +227,8 @@ function formulas.max_hp(level, species, skills)
         points = 0,
     }
 
-    local aptitude = formulas.skill_aptitude(species, "SK_FIGHTING")
+    local aptitude = formulas.effective_skill_aptitude(ctx, player,
+        species, "SK_FIGHTING")
     local fighting5 = formulas.scaled_skill(fighting, 5, aptitude)
     local fighting3 = formulas.scaled_skill(fighting, 3, aptitude)
     local hp = math.floor(level * 11 / 2) + 8
@@ -219,41 +236,22 @@ function formulas.max_hp(level, species, skills)
 
     hp = math.floor(hp * (10 + species.hp) / 10)
 
-    for _, mutation in ipairs(species.mutations or {}) do
-        if mutation.level <= level and mutation.id == "MUT_FLAT_HP" then
-            hp = hp + mutation.amount * 4
-        end
-    end
+    hp = hp + mutation_effects.sum(ctx, player,
+        mutation_capabilities.HP_FLAT)
 
-    local percent = 100
-
-    for _, mutation in ipairs(species.mutations or {}) do
-        if mutation.level <= level then
-            if mutation.id == "MUT_ROBUST" then
-                percent = percent + mutation.amount * 10
-            elseif mutation.id == "MUT_FRAIL" then
-                percent = percent - mutation.amount * 10
-            end
-        end
-    end
+    local percent = 100 + mutation_effects.sum(ctx, player,
+        mutation_capabilities.HP_PERCENT)
 
     return math.max(1, math.floor(hp * percent / 100))
 end
 
-function formulas.max_mp(level, species, skills)
+function formulas.max_mp(ctx, player, level, species, skills)
     if level < 1 or level > 27 then
         error("unsupported baseline MP inputs at XL" .. level .. " for " .. species.id)
     end
 
-    local mutations = {}
-
-    for _, mutation in ipairs(species.mutations or {}) do
-        if mutation.level <= level then
-            mutations[mutation.id] = mutation.amount
-        end
-    end
-
-    if mutations.MUT_HP_CASTING then
+    if mutation_effects.sum(ctx, player,
+        mutation_capabilities.HP_CASTING) > 0 then
         return 0
     end
 
@@ -262,10 +260,12 @@ function formulas.max_mp(level, species, skills)
 
     for _, skill in ipairs(skills or {}) do
         if skill.id == "SK_SPELLCASTING" then
-            local aptitude = formulas.skill_aptitude(species, skill.id)
+            local aptitude = formulas.effective_skill_aptitude(ctx, player,
+                species, skill.id)
             spellcasting = formulas.scaled_skill(skill, 100, aptitude)
         elseif skill.id == "SK_INVOCATIONS" then
-            local aptitude = formulas.skill_aptitude(species, skill.id)
+            local aptitude = formulas.effective_skill_aptitude(ctx, player,
+                species, skill.id)
             invocations = formulas.scaled_skill(skill, 100, aptitude)
         end
     end
@@ -274,14 +274,32 @@ function formulas.max_mp(level, species, skills)
     local scaled = math.min(2300, level * 100)
     scaled = scaled + highest + math.floor(math.min(800, highest, level * 100) / 2)
     scaled = math.floor(scaled *
-        (100 + (mutations.MUT_HIGH_MAGIC or 0) * 10 -
-            (mutations.MUT_LOW_MAGIC or 0) * 10) / 100)
+        (100 + mutation_effects.sum(ctx, player,
+            mutation_capabilities.MP_PERCENT)) / 100)
 
     return math.max(0, math.floor(scaled / 100) + species.mp_mod)
 end
 
-function formulas.needs_manual_stat(level)
-    return level >= 3 and level <= 27 and level % 6 == 3
+function formulas.needs_manual_stat(ctx, player, level)
+    if level < 3 or level > 27 then
+        return false
+    end
+
+    if mutation_effects.base_sum(ctx, player,
+        mutation_capabilities.DIVINE_ATTRIBUTES) > 0 then
+        return level % 3 == 0
+    end
+
+    return level % 6 == 3
+end
+
+function formulas.manual_stat_amount(ctx, player)
+    if mutation_effects.base_sum(ctx, player,
+        mutation_capabilities.DIVINE_ATTRIBUTES) > 0 then
+        return 4
+    end
+
+    return 2
 end
 
 function formulas.rescale_health(health, regeneration, next_max)

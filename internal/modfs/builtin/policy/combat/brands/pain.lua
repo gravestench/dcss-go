@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local roll = require("policy.combat.roll")
 local player_health = require("policy.combat.player_health")
+local monster_stats = require("policy.combat.monster_stats")
 
 local function necromancy_book(book_id)
     if book_id == "MST_NO_SPELLS" then
@@ -33,12 +34,14 @@ local function skill(ctx, attacker)
     end
 
     if necromancy_book(definition.spellbook_id) then
-        return definition.hd
+        return monster_stats.hit_dice(ctx, attacker, definition)
     end
 
     -- actor::skill_rdiv asks for 256-scaled skill before rounding.
     -- HD 1 therefore has a 50% chance to count as skill 1.
-    return roll.random_divide(ctx, definition.hd * 128, 256)
+    local hd = monster_stats.hit_dice(ctx, attacker, definition)
+
+    return roll.random_divide(ctx, hd * 128, 256)
 end
 
 local brand = {}

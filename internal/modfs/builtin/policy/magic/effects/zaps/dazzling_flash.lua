@@ -3,6 +3,7 @@ local spells = require("ids.spells")
 local catalog = require("policy.catalog")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
+local monster_stats = require("policy.combat.monster_stats")
 
 local dazzling_flash = {}
 
@@ -60,7 +61,8 @@ function dazzling_flash.resolve(ctx, player, _, spell, power)
 
     for _, target in ipairs(targets(ctx, player, spell)) do
         local definition = target.definition
-        local numerator = 95 - definition.hd * 4
+        local hd = monster_stats.hit_dice(ctx, target.entity, definition)
+        local numerator = 95 - hd * 4
 
         if numerator > 0 and
             (numerator >= denominator or

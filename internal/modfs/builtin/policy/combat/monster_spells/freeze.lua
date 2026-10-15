@@ -1,5 +1,8 @@
 local spells = require("policy.combat.spells")
 local player_health_policy = require("policy.combat.player_health")
+local magic_damage = require("policy.magic.damage")
+local resistances = require("constants.resistance_ids")
+local monster_stats = require("policy.combat.monster_stats")
 
 local freeze = {}
 
@@ -12,7 +15,10 @@ end
 
 function freeze.resolve(ctx, caster, _, definition, player_health)
     local player = ctx:player()
-    local damage = spells.freeze(ctx, definition.hd)
+    local damage = magic_damage.player_elemental(ctx, player,
+        spells.freeze(ctx,
+            monster_stats.hit_dice(ctx, caster, definition)),
+        resistances.COLD)
     player_health_policy.damage(ctx, player, damage, false, caster)
     ctx:emit("combat", "You are frozen.")
 end

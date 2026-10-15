@@ -1,128 +1,11 @@
-local fighter = require("policy.combat.fighter")
+local auxiliary = require("policy.combat.auxiliary")
 local player_attack = require("policy.combat.player_attack")
 local roll = require("policy.combat.roll")
-local statuses = require("policy.magic.effects.statuses.player")
-local forms = require("policy.magic.effects.forms.player")
 
 local melee = {}
 
 function melee.player(ctx, input)
     return player_attack.resolve(ctx, input)
-end
-
-local function auxiliary_damage(ctx, input, base)
-    local potential = math.floor(base * math.max(2, 150 + 5 * input.strength) / 2 / 100)
-    local damage = roll.melee(ctx, potential)
-    local fighting = roll.melee(ctx, input.fighting100 + 1)
-    damage = math.floor(damage * (4000 + fighting) / 4000)
-
-    if input.mighty then
-        damage = damage + 1 + roll.melee(ctx, 10)
-    end
-
-    damage = damage + roll.melee(ctx,
-        statuses.wereblood_slay(ctx, ctx:player()) + 1)
-
-    local saved = roll.armour(ctx, input.defender_ac)
-
-    return math.max(0, damage - saved)
-end
-
-function melee.headbutt_input(ctx, defender)
-    local player = ctx:player()
-    local attributes = ctx:get(player, "core.attributes")
-    local progress = ctx:get(player, "core.progression")
-    local durations = ctx:get(player, "core.durations")
-    local form = forms.modifiers(ctx, player)
-
-    return {
-        level = progress.level,
-        horns = fighter.mutation(ctx, "MUT_HORNS"),
-        hooves = fighter.mutation(ctx, "MUT_HOOVES"),
-        talons = fighter.mutation(ctx, "MUT_TALONS"),
-        tentacle_spike = fighter.mutation(ctx, "MUT_TENTACLE_SPIKE"),
-        reflexive = fighter.mutation(ctx, "MUT_REFLEXIVE_HEADBUTT") > 0,
-        strength = attributes.strength + form.strength,
-        dexterity = attributes.dexterity + form.dexterity,
-        fighting100 = fighter.skill(ctx, "SK_FIGHTING", 100),
-        fighting30 = fighter.skill(ctx, "SK_FIGHTING", 30),
-        defender_ev = defender.ev or 0,
-        defender_ac = defender.ac or 0,
-        mighty = durations and durations.might_aut > 0 or false,
-    }
-end
-
--- Source: melee-attack.cc:AuxKick and player_aux_unarmed. The chance scales
--- with XL; the contact and damage rolls share the headbutt aux path.
-function melee.auxiliary_kick(ctx, input)
-    local base
-    local verb
-
-    if input.hooves > 0 then
-        base = 5 + math.floor(input.hooves * 5 / 3)
-        verb = "kick"
-    elseif input.talons > 0 then
-        base = 6 + input.talons
-        verb = "claw"
-    elseif input.tentacle_spike > 0 then
-        base = 5 + input.tentacle_spike
-        verb = "pierce"
-    else
-        return { attempted = false }
-    end
-
-    local chance = math.floor(100 * (30 + input.level) / 59)
-
-    if roll.melee(ctx, 100) >= chance then
-        return { attempted = false }
-    end
-
-    local hit_base = math.floor((1300 + input.dexterity * 75 + input.fighting30) / 100)
-    local vertigo = statuses.vertigo_active(ctx, ctx:player()) and 5 or 0
-    local to_hit = roll.melee(ctx, hit_base - vertigo)
-    local auto_hit = roll.melee(ctx, 30)
-
-    if to_hit < input.defender_ev and auto_hit ~= 0 then
-        return { attempted = true, hit = false, verb = verb }
-    end
-
-    roll.melee(ctx, 15 + math.floor(to_hit / 2))
-
-    return {
-        attempted = true,
-        hit = true,
-        damage = auxiliary_damage(ctx, input, base),
-        verb = verb,
-    }
-end
-
-function melee.auxiliary_headbutt(ctx, input)
-    if input.horns == 0 then
-        return { attempted = false }
-    end
-
-    local chance = math.floor(67 * (30 + input.level) / 59)
-
-    if roll.melee(ctx, 100) >= chance then
-        return { attempted = false }
-    end
-
-    local hit_base = math.floor((1300 + input.dexterity * 75 + input.fighting30) / 100)
-    local vertigo = statuses.vertigo_active(ctx, ctx:player()) and 5 or 0
-    local to_hit = roll.melee(ctx, hit_base - vertigo)
-    local auto_hit = roll.melee(ctx, 30)
-
-    if to_hit < input.defender_ev and auto_hit ~= 0 then
-        return { attempted = true, hit = false }
-    end
-
-    roll.melee(ctx, 15 + math.floor(to_hit / 2))
-
-    return {
-        attempted = true,
-        hit = true,
-        damage = auxiliary_damage(ctx, input, 5 + input.horns * 3),
-    }
 end
 
 function melee.reflexive_headbutt(ctx, input)
@@ -137,12 +20,14 @@ function melee.reflexive_headbutt(ctx, input)
     return {
         attempted = true,
         hit = true,
-        damage = auxiliary_damage(ctx, input, 5 + input.horns * 3),
+        damage = auxiliary.damage(ctx, input, 5 + input.horns * 3),
     }
 end
 
 local function contact(ctx, hd, hit, plus, defense)
-    local to_hit = roll.melee(ctx, 19 + math.floor(hd * 3 / 2) + hit + plus)
+    local hit_bound = 19 + math.floor(hd * 3 / 2) + hit + plus +
+        (defense.visible_hit_modifier or 0)
+    local to_hit = roll.melee(ctx, hit_bound)
     local ev_roll = roll.average_two(ctx, "melee", 2 * defense.ev)
     local auto_chance = roll.melee(ctx, 100)
     local auto_miss = false
@@ -178,13 +63,17 @@ local function contact(ctx, hd, hit, plus, defense)
     return { kind = "hit", damage = 0, shield_blocks = defense.shield_blocks }
 end
 
-function melee.monster(ctx, attack, defense)
+function melee.monster_contact(ctx, attack, defense)
     local weapon = attack.weapon
-    local outcome = contact(ctx, attack.hd, weapon and weapon.hit or 0,
+    return contact(ctx, attack.hd, weapon and weapon.hit or 0,
         weapon and weapon.plus or 0, defense)
+end
 
-    if outcome.kind ~= "hit" or attack.type_id == "AT_CONSTRICT" then
-        return outcome
+function melee.monster_damage(ctx, attack, defense)
+    local weapon = attack.weapon
+
+    if attack.type_id == "AT_CONSTRICT" then
+        return 0
     end
 
     local weapon_damage = 0
@@ -200,7 +89,15 @@ function melee.monster(ctx, attack, defense)
     local base = roll.melee(ctx, attack.damage)
     local damage = weapon_damage + 1 + base
     local saved = roll.gdr_armour(ctx, defense, potential)
-    outcome.damage = math.max(0, damage - saved)
+    return math.max(0, damage - saved)
+end
+
+function melee.monster(ctx, attack, defense)
+    local outcome = melee.monster_contact(ctx, attack, defense)
+
+    if outcome.kind == "hit" then
+        outcome.damage = melee.monster_damage(ctx, attack, defense)
+    end
 
     return outcome
 end

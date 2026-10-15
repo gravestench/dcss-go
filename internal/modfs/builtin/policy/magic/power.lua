@@ -1,25 +1,31 @@
 local catalog = require("policy.catalog")
 local cap = require("policy.magic.cap")
 local formulas = require("policy.character.formulas")
-local traits = require("policy.character.traits")
+local mutation_effects = require("policy.mutations.effects.registry")
+local mutation_capabilities = require("constants.mutation_capabilities")
+local player_attributes = require("policy.character.attributes")
+local schools = require("constants.spell_schools")
+local skill_ids = require("ids.skills")
+local enhancement = require("policy.magic.enhancement")
+local horror = require("policy.character.horror")
 
 local power = {}
 
 local school_skills = {
-    conjuration = "SK_CONJURATIONS",
-    hexes = "SK_HEXES",
-    summoning = "SK_SUMMONINGS",
-    necromancy = "SK_NECROMANCY",
-    translocation = "SK_TRANSLOCATIONS",
-    transmutation = "SK_TRANSMUTATIONS",
-    fire = "SK_FIRE_MAGIC",
-    ice = "SK_ICE_MAGIC",
-    air = "SK_AIR_MAGIC",
-    earth = "SK_EARTH_MAGIC",
-    poison = "SK_POISON_MAGIC",
+    [schools.CONJURATION] = skill_ids.SK_CONJURATIONS,
+    [schools.HEXES] = skill_ids.SK_HEXES,
+    [schools.SUMMONING] = skill_ids.SK_SUMMONINGS,
+    [schools.NECROMANCY] = skill_ids.SK_NECROMANCY,
+    [schools.TRANSLOCATION] = skill_ids.SK_TRANSLOCATIONS,
+    [schools.TRANSMUTATION] = skill_ids.SK_TRANSMUTATIONS,
+    [schools.FIRE] = skill_ids.SK_FIRE_MAGIC,
+    [schools.ICE] = skill_ids.SK_ICE_MAGIC,
+    [schools.AIR] = skill_ids.SK_AIR_MAGIC,
+    [schools.EARTH] = skill_ids.SK_EARTH_MAGIC,
+    [schools.POISON] = skill_ids.SK_POISON_MAGIC,
 }
 
-local function scaled_skill(skills, species, id, scale)
+local function scaled_skill(ctx, player, skills, species, id, scale)
     local aptitude = species.aptitudes[id]
 
     if not aptitude or not aptitude.allowed then
@@ -28,7 +34,8 @@ local function scaled_skill(skills, species, id, scale)
 
     for _, skill in ipairs(skills.entries) do
         if skill.id == id then
-            return formulas.scaled_skill(skill, scale, aptitude.value)
+            return formulas.scaled_skill(skill, scale,
+                formulas.effective_skill_aptitude(ctx, player, species, id))
         end
     end
 
@@ -45,17 +52,16 @@ function power.training(ctx, player, id, scale)
 
     local species = catalog.get("species", character.species_id)
 
-    return scaled_skill(skills, species, id, scale)
+    return scaled_skill(ctx, player, skills, species, id, scale)
 end
 
 -- Source: spl-cast.cc:_skill_power. Schools are averaged before the
 -- Spellcasting contribution; innate casters use Spellcasting instead.
 function power.skill(ctx, player, spell)
     local character = ctx:get(player, "core.player")
-    local progression = ctx:get(player, "core.progression")
     local skills = ctx:get(player, "core.skills")
 
-    if not character or not progression or not skills then
+    if not character or not skills then
         error("player lacks spell power state")
     end
 
@@ -64,14 +70,15 @@ function power.skill(ctx, player, spell)
     local count = 0
 
     for _, school in ipairs(spell.schools) do
-        if school ~= "none" then
+        if school ~= schools.NONE then
             local skill_id = school_skills[school]
 
             if not skill_id then
                 error("unknown spell school " .. school)
             end
 
-            sum = sum + scaled_skill(skills, species, skill_id, 200)
+            sum = sum + scaled_skill(ctx, player, skills, species,
+                skill_id, 200)
             count = count + 1
         end
     end
@@ -82,15 +89,12 @@ function power.skill(ctx, player, spell)
         school_power = math.floor(sum / count)
     end
 
-    local spellcasting_scale = 50
-
-    if traits.mutation_level(species, "MUT_INNATE_CASTER",
-        progression.level) > 0 then
-        spellcasting_scale = 250
-    end
+    local spellcasting_scale = 50 + mutation_effects.sum(ctx, player,
+        mutation_capabilities.SPELLCASTING_SCALE_BONUS)
 
     return school_power +
-        scaled_skill(skills, species, "SK_SPELLCASTING", spellcasting_scale)
+        scaled_skill(ctx, player, skills, species,
+            skill_ids.SK_SPELLCASTING, spellcasting_scale)
 end
 
 -- Source: spl-cast.cc:calc_spell_power(fail_rate_check=true, scale=6).
@@ -103,23 +107,27 @@ end
 -- ordinary scale-one cast path. Equipment enhancers are applied separately
 -- when their equipment effects enter the Lua ruleset.
 function power.cast(ctx, player, spell)
-    local attributes = ctx:get(player, "core.attributes")
+    local attributes = player_attributes.current(ctx, player)
     local character = ctx:get(player, "core.player")
-    local progress = ctx:get(player, "core.progression")
 
-    if not attributes or not character or not progress then
+    if not attributes or not character then
         error("player lacks cast power state")
     end
 
-    local species = catalog.get("species", character.species_id)
     local centis = math.floor(power.skill(ctx, player, spell) *
         attributes.intelligence / 10)
-    local wild = traits.mutation_level(species, "MUT_WILD_MAGIC",
-        progress.level)
-    local subdued = traits.mutation_level(species, "MUT_SUBDUED_MAGIC",
-        progress.level)
+    centis = enhancement.apply(ctx, player, spell, centis)
+    local wild = mutation_effects.sum(ctx, player,
+        mutation_capabilities.SPELL_POWER_GAIN)
+    local subdued = mutation_effects.sum(ctx, player,
+        mutation_capabilities.SPELL_POWER_LOSS)
 
-    centis = math.floor(centis * (10 + 3 * wild) / (10 + 3 * subdued))
+    centis = math.floor(centis * (10 + wild) / (10 + subdued))
+
+    local augmentation = mutation_effects.sum(ctx, player,
+        mutation_capabilities.AUGMENTATION)
+    centis = math.floor(centis * (10 + 4 * augmentation) / 10)
+    centis = horror.spell_power(centis, horror.penalty(ctx, player))
 
     local millis = centis * 10
 

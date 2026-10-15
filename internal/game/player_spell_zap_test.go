@@ -1431,15 +1431,21 @@ func TestBeckoningPullsMonsterToNearestHabitablePathCell(t *testing.T) {
 	}
 
 	rat := ratID(t, g)
+	var lastEvents []Event
 
 	for attempt := 0; attempt < 8; attempt++ {
-		if _, err := g.Step(Command{
-			Kind:    CommandForceCast,
+		events, err := g.runAction(g.player, ecs.Intent{
+			Kind:    ecs.IntentPlayerSpell,
 			SpellID: "SPELL_BECKONING",
 			DX:      3,
-		}); err != nil {
+			Forced:  true,
+		}, 10, "player")
+
+		if err != nil {
 			t.Fatal(err)
 		}
+
+		lastEvents = events
 
 		position, _ := g.stores.Positions.Get(rat)
 
@@ -1448,7 +1454,9 @@ func TestBeckoningPullsMonsterToNearestHabitablePathCell(t *testing.T) {
 		}
 	}
 
-	t.Fatal("Beckoning never pulled the rat next to its caster")
+	position, _ := g.stores.Positions.Get(rat)
+	t.Fatalf("Beckoning never pulled the rat next to its caster: position=%+v events=%+v",
+		position, lastEvents)
 }
 
 func TestBeckoningKeepsAquaticAndLavaCreaturesInHabitat(t *testing.T) {
@@ -2379,6 +2387,14 @@ func TestInnerFlameMarkedDeathExplodesAndCreatesFireClouds(t *testing.T) {
 
 	playerHealth.Current = 100
 	playerHealth.Max = 100
+
+	if err := g.levels[1].MoveActor(rat, 4, 1); err != nil {
+		t.Fatal(err)
+	}
+
+	playerPosition, _ := g.stores.Positions.Get(g.player)
+	ratPosition, _ := g.stores.Positions.Get(rat)
+
 	ratHealth.Current = 0
 
 	if _, err := g.runAction(g.player, ecs.Intent{
@@ -2390,7 +2406,8 @@ func TestInnerFlameMarkedDeathExplodesAndCreatesFireClouds(t *testing.T) {
 	playerHealth, _ = g.stores.Health.Get(g.player)
 
 	if playerHealth.Current >= 100 {
-		t.Fatal("adjacent Inner Flame explosion did not hurt its caster")
+		t.Fatalf("adjacent Inner Flame explosion did not hurt its caster: player=%+v rat=%+v",
+			playerPosition, ratPosition)
 	}
 
 	if g.world.EntityExists(rat) {

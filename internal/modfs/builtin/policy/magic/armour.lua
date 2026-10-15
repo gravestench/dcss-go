@@ -1,7 +1,9 @@
 local catalog = require("policy.catalog")
 local equipment = require("policy.combat.equipment")
 local power = require("policy.magic.power")
-local traits = require("policy.character.traits")
+local mutation_effects = require("policy.mutations.effects.registry")
+local mutation_capabilities = require("constants.mutation_capabilities")
+local player_attributes = require("policy.character.attributes")
 
 local armour = {}
 
@@ -18,10 +20,9 @@ local sizes = {
 -- adjusted_body_armour_penalty, and adjusted_shield_penalty.
 function armour.spell_penalty(ctx, player)
     local character = ctx:get(player, "core.player")
-    local attributes = ctx:get(player, "core.attributes")
-    local progress = ctx:get(player, "core.progression")
+    local attributes = player_attributes.current(ctx, player)
 
-    if not character or not attributes or not progress then
+    if not character or not attributes then
         error("player lacks armour penalty state")
     end
 
@@ -35,9 +36,9 @@ function armour.spell_penalty(ctx, player)
 
     if worn.body then
         local ev = worn.body.definition.armour.ev
-        local sturdy = traits.mutation_level(species, "MUT_STURDY_FRAME",
-            progress.level)
-        local base = math.max(0, math.floor(-ev / 10) - sturdy * 2)
+        local sturdy = mutation_effects.sum(ctx, player,
+            mutation_capabilities.BODY_ENCUMBRANCE_REDUCTION)
+        local base = math.max(0, math.floor(-ev / 10) - sturdy)
         local armour_skill = power.training(ctx, player, "SK_ARMOUR", 10)
         local numerator = 2 * base * base * (450 - armour_skill) * 100
 
@@ -51,8 +52,8 @@ function armour.spell_penalty(ctx, player)
         local shield_skill = power.training(ctx, player, "SK_SHIELDS", 10)
         local racial_factor = 2 * (sizes.SIZE_MEDIUM - sizes[species.size])
 
-        if traits.mutation_level(species, "MUT_QUADRUMANOUS",
-            progress.level) > 0 then
+        if mutation_effects.sum(ctx, player,
+            mutation_capabilities.QUADRUMANOUS_SHIELDS) > 0 then
             racial_factor = -2
         end
 

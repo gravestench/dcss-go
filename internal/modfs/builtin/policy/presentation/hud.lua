@@ -1,6 +1,15 @@
 local time = require("constants.time")
 local colors = require("policy.presentation.colors")
 local abyss = require("policy.world.abyss")
+local agility = require("policy.character.agility")
+local safety = require("policy.character.damage_safety")
+local restrictions = require("constants.safety_restrictions")
+local powered = require("policy.character.powered_by_death")
+local flight = require("policy.combat.flight")
+local curl = require("policy.character.curl")
+local horror = require("policy.character.horror")
+local rage = require("policy.character.rage")
+local component = require("constants.component")
 
 local hud = {}
 
@@ -38,12 +47,17 @@ local function weapon_label(inventory)
     return "-) Unarmed"
 end
 
-function hud.rows(view)
+function hud.rows(view, extras)
     local writes = {}
     local meters = {}
 
     local function write(x, y, text, fg)
-        writes[#writes + 1] = { x = x, y = y, text = text, fg = fg }
+        writes[#writes + 1] = {
+            x = x,
+            y = y,
+            text = text,
+            fg = fg,
+        }
     end
 
     write(0, 0, view.player_name .. " the Shield-Bearer", colors.yellow)
@@ -108,27 +122,174 @@ function hud.rows(view)
     write(0, 9, weapon_label(view.inventory), colors.light_grey)
     write(0, 10, "Quiver: --", colors.brown)
 
+    local statuses = {}
+
+    if extras.berserk then
+        statuses[#statuses + 1] = {
+            label = "Berserk",
+            color = colors.blue,
+        }
+    elseif extras.berserk_cooldown then
+        statuses[#statuses + 1] = {
+            label = "-Berserk",
+            color = colors.yellow,
+        }
+    end
+
     if view.might_aut > 0 then
-        write(0, 11, "Might", colors.light_blue)
+        statuses[#statuses + 1] = {
+            label = "Might",
+            color = colors.light_blue,
+        }
+    end
+
+    if extras.agile then
+        statuses[#statuses + 1] = {
+            label = "Agi",
+            color = colors.light_blue,
+        }
+    end
+
+    if extras.death_power > 0 then
+        statuses[#statuses + 1] = {
+            label = "Regen (" .. extras.death_power .. ")",
+            color = colors.light_magenta,
+        }
+    end
+
+    if extras.flying then
+        statuses[#statuses + 1] = {
+            label = "Fly",
+            color = extras.permanent_flight and colors.white or colors.blue,
+        }
+    end
+
+    if extras.curled then
+        statuses[#statuses + 1] = {
+            label = "Curl",
+            color = colors.blue,
+        }
+    end
+
+    if extras.horror > 0 then
+        local color = colors.yellow
+
+        if extras.horror >= 5 then
+            color = colors.red
+        elseif extras.horror >= 3 then
+            color = colors.light_red
+        end
+
+        statuses[#statuses + 1] = {
+            label = "Horr(-" .. extras.horror .. ")",
+            color = color,
+        }
     end
 
     if view.poison_amount_scaled > 0 then
-        write(10, 11, "Poisoned", colors.light_green)
+        statuses[#statuses + 1] = {
+            label = "Poisoned",
+            color = colors.light_green,
+        }
     end
 
     if view.haste_aut > 0 then
-        write(20, 11, "Fast", colors.light_blue)
+        statuses[#statuses + 1] = {
+            label = "Fast",
+            color = colors.light_blue,
+        }
+    end
+
+    if extras.petrifying then
+        statuses[#statuses + 1] = {
+            label = "Petr",
+            color = colors.light_red,
+        }
+    elseif extras.petrified then
+        statuses[#statuses + 1] = {
+            label = "Stone",
+            color = colors.red,
+        }
     end
 
     if view.constricted then
-        write(26, 11, "Constr", colors.light_red)
+        statuses[#statuses + 1] = {
+            label = "Constr",
+            color = colors.light_red,
+        }
+    end
+
+    if extras.no_potions then
+        statuses[#statuses + 1] = {
+            label = "-Potion",
+            color = colors.red,
+        }
+    end
+
+    if extras.no_scrolls then
+        statuses[#statuses + 1] = {
+            label = "-Scroll",
+            color = colors.red,
+        }
+    end
+
+    if extras.vampire_alive then
+        statuses[#statuses + 1] = {
+            label = "Alive",
+            color = colors.green,
+        }
+    elseif extras.vampire_bloodless then
+        statuses[#statuses + 1] = {
+            label = "Bloodless",
+            color = colors.light_red,
+        }
+    end
+
+    local x = 0
+    local y = 11
+    local width = 42
+
+    for _, status in ipairs(statuses) do
+        if x + #status.label > width then
+            x = 0
+            y = y + 1
+        end
+
+        write(x, y, status.label, status.color)
+        x = x + #status.label + 1
     end
 
     return { writes = writes, meters = meters }
 end
 
-function hud.run(_, input)
-    return hud.rows(input.view)
+function hud.run(ctx, input)
+    local player = ctx:player()
+    local status = player and ctx:get(player,
+        component.PLAYER_PETRIFICATION)
+    local rage_state = player and ctx:get(player, component.RAGE)
+    local vampire_state = player and ctx:get(player, component.VAMPIRE)
+    local extras = {
+        berserk = player and rage.active(ctx, player) or false,
+        berserk_cooldown = rage_state and rage_state.cooldown_aut > 0 or false,
+        agile = player and agility.active(ctx, player) or false,
+        no_potions = player and
+            safety.active(ctx, player, restrictions.POTIONS) or false,
+        no_scrolls = player and
+            safety.active(ctx, player, restrictions.SCROLLS) or false,
+        death_power = player and powered.strength(ctx, player) or 0,
+        flying = player and flight.active(ctx, player) or false,
+        permanent_flight = player and
+            flight.permanent(ctx, player) or false,
+        curled = player and curl.active(ctx, player) or false,
+        horror = player and horror.penalty(ctx, player) or 0,
+        petrifying = status and status.petrifying_aut > 0 or false,
+        petrified = status and status.petrified_aut > 0 or false,
+        vampire_alive = vampire_state and vampire_state.alive or false,
+        vampire_bloodless = vampire_state and
+            not vampire_state.alive or false,
+    }
+
+    return hud.rows(input.view, extras)
 end
 
 register.policy({

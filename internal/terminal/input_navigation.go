@@ -119,6 +119,16 @@ func (m *AppModel) applyNavigationDecision(action string, decision map[string]an
 			m.spellMode = name
 		}
 
+		if screen == ScreenMutations {
+			m.mutationPage = 0
+			m.mutationListPage = 0
+			m.mutationSelected = ""
+		}
+
+		if screen == ScreenAbilities {
+			m.pendingAbilityID = ""
+		}
+
 	}
 
 	return nil

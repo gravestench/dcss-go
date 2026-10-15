@@ -265,9 +265,8 @@ func TestDrawPlayShowsConstrictedStatus(t *testing.T) {
 
 	DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
 	row := canvas.PlainRows()[11]
-	start := layout.HUD.X + 26
 
-	if row[start:start+6] != "Constr" {
+	if !strings.Contains(row[layout.HUD.X:], "Constr") {
 		t.Fatalf("constricted status row = %q", row)
 	}
 }

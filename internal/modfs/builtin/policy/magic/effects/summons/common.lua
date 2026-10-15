@@ -3,6 +3,8 @@ local terrain_ids = require("constants.terrain")
 local catalog = require("policy.catalog")
 local energy = require("policy.monster_energy")
 local hit_points = require("policy.population.hit_points")
+local allies = require("policy.character.allies")
+local categories = require("constants.catalog")
 
 local summons = {}
 
@@ -108,13 +110,15 @@ local function earlier_expiry(left, right)
     return left.expires_aut < right.expires_aut
 end
 
-local function cap_oldest(ctx, owner, spell_id, cap)
+local function cap_oldest(ctx, owner, source_category, source_id, cap)
     local existing = {}
 
     for _, entity in ipairs(ctx:query({ component.SUMMON })) do
         local state = ctx:get(entity, component.SUMMON)
 
-        if state.owner == owner and state.spell_id == spell_id then
+        if state.owner == owner and
+            state.source_category == source_category and
+            state.source_id == source_id then
             existing[#existing + 1] = {
                 entity = entity,
                 entity_id = ctx:id(entity),
@@ -150,7 +154,7 @@ end
 -- Source: spl-summoning.cc:_summon_data and mon-ench.cc:ENCH_ABJ.
 -- The source applies broad random fuzz to these nominal durations; this
 -- runtime preserves the source degree's nominal aut until that RNG exists.
-function summons.spawn(ctx, owner, spell_id, kind_id, degree, cap, options)
+function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
     local origin = options and options.anchor or ctx:get(owner, component.POSITION)
     local x, y
 
@@ -174,6 +178,7 @@ function summons.spawn(ctx, owner, spell_id, kind_id, degree, cap, options)
 
     local definition = catalog.get("monsters", kind_id)
     local hp = options and options.hp or hit_points.roll(ctx, definition.average_hp_10x)
+    local hostile = allies.hostile_spawn(ctx, owner, definition)
     local actor = ctx:create()
 
     ctx:add(actor, component.ACTOR, {
@@ -187,20 +192,31 @@ function summons.spawn(ctx, owner, spell_id, kind_id, degree, cap, options)
     })
     ctx:add(actor, "core.combat", { shield_blocks = 0 })
     ctx:add(actor, component.AI, { behavior = "wander" })
+    local source_category = options and options.source_category or
+        categories.SPELLS
+
     ctx:add(actor, component.SUMMON, {
         owner = owner,
-        spell_id = spell_id,
+        source_category = source_category,
+        source_id = source_id,
         expires_aut = options and options.expires_aut or
             (degree == 0 and 0 or ctx:aut() +
                 abjuration_duration_aut[degree]),
         heads = options and options.heads or 0,
+        hostile = hostile,
     })
 
     if options and options.hd then
         ctx:add(actor, component.SUMMON_STATS, { hd = options.hd })
     end
     ctx:place_actor(actor, origin.level_id, x, y)
-    cap_oldest(ctx, owner, spell_id, cap)
+
+    if hostile then
+        ctx:emit("monster", "The " .. definition.name ..
+            " feels only hate for you!")
+    end
+
+    cap_oldest(ctx, owner, source_category, source_id, cap)
 
     return actor
 end

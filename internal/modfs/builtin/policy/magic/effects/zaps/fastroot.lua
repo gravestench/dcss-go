@@ -7,6 +7,7 @@ local roll = require("policy.combat.roll")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
+local targets = require("policy.ai.targets")
 
 local fastroot = {}
 
@@ -77,8 +78,7 @@ function fastroot.resolve(ctx, player, intent, spell, power)
     for _, cell in ipairs(explosion.cells(ctx, origin.level_id, x, y, 1)) do
         local target = ctx:actor_at(origin.level_id, cell.x, cell.y)
 
-        if target and target ~= player and
-            not ctx:has(target, component.SUMMON) then
+        if target and targets.enemy(ctx, player, target) then
             local actor = ctx:get(target, component.ACTOR)
             local health = ctx:get(target, component.HEALTH)
 

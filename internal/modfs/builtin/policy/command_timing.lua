@@ -1,18 +1,20 @@
 local delay = require("policy.combat.delay")
 local projectiles = require("policy.combat.player_projectiles")
 local statuses = require("policy.magic.effects.statuses.player")
+local movement = require("policy.character.movement")
 local forms = require("policy.magic.effects.forms.player")
+local rage = require("policy.character.rage")
 local channel = require("policy.magic.channel")
 local component = require("constants.component")
 local intent = require("constants.intent")
 local time = require("constants.time")
+local abilities = require("ids.abilities")
 
 local timing = {}
 
 local SLOWED_AUT_PER_TURN = 15
 local HASTE_NUMERATOR = 2
 local HASTE_DENOMINATOR = 3
-local LIQUEFACTION_MOVE_PENALTY = 3
 
 function timing.player_speed(ctx, player)
     local duration = ctx:get(player, component.DURATIONS)
@@ -21,10 +23,21 @@ function timing.player_speed(ctx, player)
         error("player has no duration state for action timing")
     end
 
+    local petrification = ctx:get(player,
+        component.PLAYER_PETRIFICATION)
+
+    if petrification and petrification.petrified_aut > 0 then
+        return time.AUT_PER_TURN
+    end
+
     local time_taken = statuses.slow_active(ctx, player) and
         SLOWED_AUT_PER_TURN or time.AUT_PER_TURN
 
-    if duration.haste_aut == 0 then
+    if petrification and petrification.petrifying_aut > 0 then
+        time_taken = math.floor(time_taken * 15 / 10)
+    end
+
+    if duration.haste_aut == 0 and not rage.active(ctx, player) then
         return time_taken
     end
 
@@ -40,19 +53,24 @@ function timing.player_speed(ctx, player)
 end
 
 function timing.action_cost(ctx, player, input, time_taken)
+    if input.intent_kind == intent.PLAYER_ABILITY and
+        input.ability_id == abilities.ROLLING_CHARGE then
+        local movement_delay = movement.scale(ctx,
+            movement.base(ctx, player), time_taken)
+
+        return math.max(time_taken, movement_delay,
+            delay.player(ctx, time_taken))
+    end
+
     if input.attack_target then
         return delay.player(ctx, time_taken)
     end
 
     if input.intent_kind == intent.MOVE then
-        local cost = statuses.move_delay(ctx, player, time_taken, false)
-        local aura = ctx:get(player, component.LIQUEFACTION)
+        local base = movement.base(ctx, player)
+        local swift = statuses.move_delay(ctx, player, base, false)
 
-        if aura and aura.remaining_aut > 0 then
-            cost = cost + LIQUEFACTION_MOVE_PENALTY
-        end
-
-        return cost
+        return movement.scale(ctx, swift, time_taken)
     end
 
     if input.intent_kind == intent.RANGED then

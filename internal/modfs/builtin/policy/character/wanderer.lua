@@ -2,6 +2,8 @@
 -- its role skills and grants cannot live in the static job catalog.
 local wanderer = {}
 local gifts = require("policy.character.wanderer_gifts")
+local mutation_levels = require("policy.mutations.levels")
+local mutations = require("ids.mutations")
 
 local function grant_before(left, right)
     return left.id < right.id
@@ -64,14 +66,8 @@ local flexible_skills = {
     SK_THROWING = true,
 }
 
-local function mutation(species, id)
-    for _, entry in ipairs(species.mutations or {}) do
-        if entry.id == id and entry.level <= 1 and entry.amount > 0 then
-            return true
-        end
-    end
-
-    return false
+local function mutation(ctx, id)
+    return mutation_levels.effective(ctx, ctx:player(), id) > 0
 end
 
 local function weighted(ctx, choices)
@@ -112,12 +108,12 @@ local function role(ctx, species, pool)
 end
 
 local function offense_role(ctx, species)
-    if mutation(species, "MUT_INNATE_CASTER") and
+    if mutation(ctx, mutations.MUT_INNATE_CASTER) and
         ctx:random("character", 2) == 0 then
         return "SK_SPELLCASTING"
     end
 
-    if mutation(species, "MUT_NO_GRASPING") and
+    if mutation(ctx, mutations.MUT_NO_GRASPING) and
         ctx:random("character", 3) == 0 then
         return role(ctx, species, physical)
     end
@@ -182,7 +178,7 @@ local function skills(ctx, species, roles, has_spells)
             distinct[id] = true
             local target = id
 
-            if mutation(species, "MUT_INNATE_CASTER") and
+            if mutation(ctx, mutations.MUT_INNATE_CASTER) and
                 id:match("_MAGIC$") then
                 target = "SK_SPELLCASTING"
             end

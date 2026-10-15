@@ -25,6 +25,7 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "id", r.state.NewFunction(r.luaEntityID))
 	r.state.SetField(context, "cell", r.state.NewFunction(r.luaGridCell))
 	r.state.SetField(context, "level_size", r.state.NewFunction(r.luaGridLevelSize))
+	r.state.SetField(context, "level_branch", r.state.NewFunction(r.luaGridLevelBranch))
 	r.state.SetField(context, "set_cell", r.state.NewFunction(r.luaGridSetCell))
 	r.state.SetField(context, "walkable", r.state.NewFunction(r.luaGridWalkable))
 	r.state.SetField(context, "actor_at", r.state.NewFunction(r.luaGridActorAt))
@@ -286,6 +287,21 @@ func (r *Runtime) luaGridLevelSize(state *lua.LState) int {
 	state.Push(lua.LNumber(height))
 
 	return 2
+}
+
+func (r *Runtime) luaGridLevelBranch(state *lua.LState) int {
+	levelID := state.CheckInt(2)
+	branchID, found := r.services.Grid.Branch(levelID)
+
+	if !found {
+		state.Push(lua.LNil)
+
+		return 1
+	}
+
+	state.Push(lua.LString(branchID))
+
+	return 1
 }
 
 func (r *Runtime) luaGridSetCell(state *lua.LState) int {
@@ -677,6 +693,7 @@ func (r *Runtime) luaSetComponent(state *lua.LState) int {
 
 		return 0
 	}
+
 	converted = withDynamicDefaults(store, converted)
 
 	target := componentTarget{
@@ -724,6 +741,7 @@ func (r *Runtime) luaAddComponent(state *lua.LState) int {
 
 		return 0
 	}
+
 	converted = withDynamicDefaults(store, converted)
 
 	if !r.world.EntityExists(entity) {

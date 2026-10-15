@@ -3,13 +3,18 @@ local fire = require("policy.magic.effects.zaps.cloud_fire")
 local cold = require("policy.magic.effects.zaps.cloud_cold")
 local embers = require("policy.magic.effects.zaps.cloud_embers")
 local mephitic = require("policy.magic.effects.zaps.cloud_mephitic")
+local dust = require("policy.magic.effects.zaps.cloud_dust")
+local tloc_energy = require("policy.magic.effects.zaps.cloud_tloc_energy")
+local ids = require("policy.magic.effects.zaps.ids")
 
 local cloud = {}
 local handlers = {
-    CLOUD_FIRE = fire,
-    CLOUD_COLD = cold,
-    CLOUD_EMBERS = embers,
-    CLOUD_MEPHITIC = mephitic,
+    [ids.cloud.FIRE] = fire,
+    [ids.cloud.COLD] = cold,
+    [ids.cloud.EMBERS] = embers,
+    [ids.cloud.MEPHITIC] = mephitic,
+    [ids.cloud.DUST] = dust,
+    [ids.cloud.TLOC_ENERGY] = tloc_energy,
 }
 
 function cloud.at(ctx, level_id, x, y)

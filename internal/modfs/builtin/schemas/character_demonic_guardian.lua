@@ -1,9 +1,10 @@
--- Source: player.cc:miasma_player applies a 10-14 turn slow.
+local component = require("constants.component")
+
 local schema = {
-    id = "magic.miasma_slow",
+    id = component.DEMONIC_GUARDIAN,
     version = 1,
     fields = {
-        remaining_aut = {
+        cooldown_aut = {
             type = "int64",
             default = 0,
         },

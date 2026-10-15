@@ -1,7 +1,9 @@
 -- Player status rules run once after each player action. The engine provides
 -- authoritative Akara components and named RNG; this file owns the policy.
 local player_health_policy = require("policy.combat.player_health")
+local damage_causes = require("constants.damage_causes")
 local statuses = require("policy.magic.effects.statuses.player")
+local regeneration = require("policy.character.regeneration")
 
 local system = {}
 
@@ -124,25 +126,25 @@ function system.regeneration(ctx, entity, aut)
         error("invalid player regeneration state")
     end
 
-    local hp_rate = math.floor(health.max / 3)
-
-    if hp_rate > 20 then
-        hp_rate = 20 + math.floor((hp_rate - 20) / 2)
-    end
-
-    hp_rate = math.max(1, hp_rate)
-    if statuses.hp_regen_allowed(ctx, entity) then
+    local hp_rate, mp_rate = regeneration.rates(ctx, entity,
+        health.max, magic.max)
+    if statuses.hp_regen_allowed(ctx, entity) and
+        regeneration.hp_allowed(ctx, entity) then
         progress.hp_progress = progress.hp_progress +
             regeneration_count(ctx, hp_rate, aut)
     end
 
     while progress.hp_progress >= 100 do
-        health.current = math.min(health.max, health.current + 1)
+        if regeneration.hp_restores_magic(ctx, entity, magic) then
+            magic.current = math.min(magic.max, magic.current + 1)
+        else
+            health.current = math.min(health.max, health.current + 1)
+        end
+
         progress.hp_progress = progress.hp_progress - 100
     end
 
     if magic.current < magic.max then
-        local mp_rate = 7 + math.floor(magic.max / 2)
         progress.mp_progress = progress.mp_progress +
             regeneration_count(ctx, mp_rate, aut)
     end
@@ -254,7 +256,8 @@ function system.poison(ctx, entity, aut)
     local damage = math.floor(poison.amount_scaled / 1000) -
         math.modf(next_amount / 1000)
 
-    health = player_health_policy.damage(ctx, entity, damage)
+    health = player_health_policy.damage(ctx, entity, damage,
+        false, nil, damage_causes.POISON)
 
     if health.current < before then
         ctx:emit("poison", sickness_message(damage))

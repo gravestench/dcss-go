@@ -152,6 +152,7 @@ func inventoryInput(items []game.ItemView) []any {
 			"class":    item.Class,
 			"quantity": item.Quantity,
 			"plus":     item.Plus,
+			"charges":  item.Charges,
 			"slot":     item.Slot,
 		})
 	}

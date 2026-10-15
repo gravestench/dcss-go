@@ -86,6 +86,16 @@ func (grid scriptGrid) Size(levelID int) (int, int, bool) {
 	return level.width, len(level.terrain), true
 }
 
+func (grid scriptGrid) Branch(levelID int) (string, bool) {
+	level := grid.levels[levelID]
+
+	if level == nil || level.BranchID == "" {
+		return "", false
+	}
+
+	return level.BranchID, true
+}
+
 func (grid scriptGrid) Cell(levelID, x, y int) (terrain.ID, bool) {
 	level := grid.levels[levelID]
 

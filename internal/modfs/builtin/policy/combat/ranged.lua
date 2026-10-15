@@ -4,7 +4,14 @@ local ranged = {}
 
 local function contact(ctx, hd, weapon_hit, weapon_plus, defense)
     local hit_base = math.max(0, 18 + math.floor(hd * 3 / 2) + weapon_hit + weapon_plus)
-    local to_hit = roll.melee(ctx, hit_base + 1)
+    local modifier = defense.visible_hit_modifier or 0
+
+    if defense.missile_repulsion then
+        -- ranged-attack.cc applies this to the pre-roll monster hit value.
+        modifier = modifier - math.floor((hit_base + 1) / 2)
+    end
+
+    local to_hit = roll.melee(ctx, hit_base + modifier + 1)
     local ev_roll = roll.average_two(ctx, "melee", 2 * defense.ev)
     local auto_chance = roll.melee(ctx, 100)
     local auto_miss = false

@@ -38,7 +38,9 @@ function system.update(ctx, actor)
         ctx:set(intent.item_id, "core.item", item)
     end
 
-    ctx:emit("quaff", message)
+    if message then
+        ctx:emit("quaff", message)
+    end
 end
 
 register.system({
