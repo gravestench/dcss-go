@@ -25,7 +25,7 @@ func newGeneratedTestGame(t *testing.T, seed uint64) *Game {
 func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 	g := newGeneratedTestGame(t, 41)
 
-	if len(g.levels) != 2 || len(g.stores.AI.Entities()) !=
+	if len(g.levels) != 3 || len(g.stores.AI.Entities()) !=
 		g.levels[1].initialActors+g.levels[2].initialActors {
 		t.Fatalf(
 			"generated levels or monster counts are incomplete: levels=%d actors=%d initial=%d+%d",
@@ -37,6 +37,10 @@ func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 	}
 
 	for depth, level := range g.levels {
+		if depth > 2 {
+			continue
+		}
+
 		if len(level.terrain) != 70 ||
 			level.width != 80 ||
 			len(level.StairLinks()) != 6 {

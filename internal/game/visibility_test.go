@@ -170,7 +170,7 @@ func TestKnowledgeSaveRoundTrip(t *testing.T) {
 	snapshot := g.Snapshot()
 
 	if snapshot.Version != save.Version ||
-		len(snapshot.Levels) != 2 ||
+		len(snapshot.Levels) != 3 ||
 		len(snapshot.Levels[0].Known) == 0 {
 		t.Fatalf("snapshot knowledge missing: %+v", snapshot.Levels)
 	}

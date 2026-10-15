@@ -1,4 +1,5 @@
 local colors = require("policy.presentation.colors")
+local abyss = require("policy.world.abyss")
 
 local hud = {}
 
@@ -97,7 +98,9 @@ function hud.rows(view)
 
     write(0, 7, string.format("XL: %2d Next: %2d%%",
         view.experience_level, view.next_level_percent), colors.brown)
-    write(18, 7, "Place: D:" .. view.level_id, colors.brown)
+    local place = view.level_id == abyss.level_id and "Abyss" or
+        "D:" .. view.level_id
+    write(18, 7, "Place: " .. place, colors.brown)
     write(0, 8, "Noise: --", colors.brown)
     write(18, 8, string.format("Time: %.1f", view.current_aut / 10), colors.brown)
     write(0, 9, weapon_label(view.inventory), colors.light_grey)

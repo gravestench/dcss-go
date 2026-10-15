@@ -5,6 +5,10 @@ local collections = {
     branches = { module = "data.branches", field = "branches" },
     items = { module = "data.items", field = "items" },
     monsters = { module = "data.monsters", field = "monsters" },
+    monster_spellbooks = {
+        module = "data.monster_spellbooks",
+        field = "books",
+    },
     spells = { module = "data.spells", field = "spells" },
 }
 

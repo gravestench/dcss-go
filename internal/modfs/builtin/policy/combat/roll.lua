@@ -23,6 +23,14 @@ function roll.average_two(ctx, stream, bound)
     return math.floor((first + second) / 2)
 end
 
+function roll.average_three(ctx, stream, bound)
+    local first = roll.draw(ctx, stream, bound)
+    local second = roll.draw(ctx, stream, bound + 1)
+    local third = roll.draw(ctx, stream, bound + 1)
+
+    return math.floor((first + second + third) / 3)
+end
+
 function roll.random_divide(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator

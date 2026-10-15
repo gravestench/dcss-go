@@ -109,7 +109,10 @@ local function validate(ctx)
         error("invalid player attribute gains for entity " .. ctx:id(entity))
     end
 
-    if health.max ~= formulas.max_hp(progress.level, species, skills.entries) then
+    local drain = ctx:get(entity, "status.drain")
+    local drain_loss = drain and drain.amount or 0
+
+    if health.max ~= math.max(1, formulas.max_hp(progress.level, species, skills.entries) - drain_loss) then
         error("invalid player max HP for entity " .. ctx:id(entity))
     end
 

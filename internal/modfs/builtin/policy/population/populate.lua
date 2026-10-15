@@ -2,6 +2,7 @@ local factory = require("policy.population.factory")
 local pool = require("policy.population.pool")
 local roster = require("policy.population.roster")
 local catalog = require("policy.catalog")
+local abyss = require("policy.world.abyss")
 
 local function free_cells(ctx, level)
     local cells = {}
@@ -95,6 +96,7 @@ local function fixture(ctx)
     return {
         { id = 1, count = 0 },
         { id = 2, count = 0 },
+        { id = abyss.level_id, count = 0 },
     }
 end
 
@@ -151,10 +153,13 @@ register.policy({
                     error("Dungeon:" .. tostring(level.id) .. " has no population entry")
                 end
 
-                counts[#counts + 1] = {
-                    id = level.id,
-                    count = populate_level(ctx, level, allowed),
-                }
+                local count = 0
+
+                if level.id ~= abyss.level_id then
+                    count = populate_level(ctx, level, allowed)
+                end
+
+                counts[#counts + 1] = { id = level.id, count = count }
             end
         end
 

@@ -7,7 +7,7 @@ import (
 	"github.com/gravestench/akara"
 )
 
-func TestScenarioHasTwoFloors(t *testing.T) {
+func TestScenarioHasDungeonAndAbyss(t *testing.T) {
 	game, err := NewScenario(1, "WPN_RAPIER", "Tester")
 
 	if err != nil {
@@ -16,8 +16,8 @@ func TestScenarioHasTwoFloors(t *testing.T) {
 
 	defer game.Close()
 
-	if len(game.levels) != 2 {
-		t.Fatalf("level count = %d, want 2", len(game.levels))
+	if len(game.levels) != 3 {
+		t.Fatalf("level count = %d, want 3", len(game.levels))
 	}
 
 	player, ok := game.stores.Positions.Get(game.player)

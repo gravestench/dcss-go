@@ -1,6 +1,7 @@
 local navigation = {}
 local catalog = require("policy.catalog")
 local fighter = require("policy.combat.fighter")
+local abyss = require("policy.world.abyss")
 
 local ordinary_monsters = {
     MONS_RAT = true,
@@ -93,7 +94,10 @@ function navigation.stairs(ctx, position, downstairs)
         }
     end
 
-    if stair.unavailable ~= "" then
+    local abyss_exit = position.level_id == abyss.level_id and not downstairs and
+        ctx:has(ctx:player(), "world.banishment")
+
+    if stair.unavailable ~= "" and not abyss_exit then
         return {
             message = stair.unavailable,
         }

@@ -1,4 +1,5 @@
 local generated = {}
+local abyss = require("policy.world.abyss")
 
 local function glyph(level, x, y)
     return level.rows[y + 1]:sub(x + 1, x + 1)
@@ -36,12 +37,13 @@ local function reciprocal(levels, depth, link)
 end
 
 function generated.validate(levels, by_id)
-    if #levels ~= 2 or not by_id[1] or not by_id[2] then
-        error("generated Dungeon save needs exactly D:1-2")
+    if #levels ~= 3 or not by_id[1] or not by_id[2] or
+        not by_id[abyss.level_id] then
+        error("generated Dungeon save needs D:1-2 and the Abyss")
     end
 
-    for _, level in ipairs(levels) do
-        local depth = level.id
+    for depth = 1, 2 do
+        local level = by_id[depth]
 
         if #level.rows[1] ~= 80 or #level.rows ~= 70 or #level.stairs ~= 6 then
             error("generated Dungeon:" .. depth .. " has invalid geometry or stair count")

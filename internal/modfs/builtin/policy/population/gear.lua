@@ -79,13 +79,11 @@ local function ordinary_brand(ctx, weights)
     error("ordinary weapon brand table failed to select")
 end
 
-local supported_weapon = {
-    WPN_DAGGER = true,
-    WPN_CLUB = true,
-    WPN_SHORT_SWORD = true,
-    WPN_WHIP = true,
-    WPN_SLING = true,
-}
+local supported_weapon = {}
+
+for _, id in ipairs(require("data.early_weapons")) do
+    supported_weapon[id] = true
+end
 
 local function quality(ctx, kind_id, depth)
     if not supported_weapon[kind_id] then

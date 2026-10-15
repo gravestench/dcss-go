@@ -1,5 +1,7 @@
 local roster = require("policy.population.roster")
 local generated = require("policy.save.generated_levels")
+local abyss = require("policy.save.abyss_levels")
+local world_abyss = require("policy.world.abyss")
 
 local population_id = "fixed-dungeon-population-v1"
 local generated_id = "generated-dungeon-basic-v1"
@@ -18,7 +20,9 @@ register.policy({
             by_id[level.id] = level
             local choices = level.initial_monsters
 
-            if scenario_id == generated_id or scenario_id == population_id then
+            if level.id == world_abyss.level_id then
+                abyss.validate(level)
+            elseif scenario_id == generated_id or scenario_id == population_id then
                 if level.initial_actors < choices or level.initial_actors > 4 * choices then
                     error("Dungeon:" .. level.id .. " has invalid initial actor count")
                 end
@@ -32,19 +36,27 @@ register.policy({
             return {}
         end
 
-        for _, level in ipairs(levels) do
-            for _, link in ipairs(level.stairs) do
-                if link.unavailable ~= "" then
-                    error("fixed Dungeon:" .. level.id .. " has an unavailable stair")
-                end
-            end
+        if not by_id[1] or not by_id[2] or
+            not by_id[world_abyss.level_id] then
+            error("fixed Dungeon save needs D:1-2 and the Abyss")
+        end
 
-            if scenario_id == population_id then
-                if level.initial_monsters ~= 2 then
-                    error("fixed Dungeon:" .. level.id .. " has invalid monster budget")
+        for _, level in ipairs(levels) do
+            if level.id ~= world_abyss.level_id then
+
+                for _, link in ipairs(level.stairs) do
+                    if link.unavailable ~= "" then
+                        error("fixed Dungeon:" .. level.id .. " has an unavailable stair")
+                    end
                 end
-            elseif level.initial_monsters ~= 0 then
-                error("fixture Dungeon:" .. level.id .. " has a monster budget")
+
+                if scenario_id == population_id then
+                    if level.initial_monsters ~= 2 then
+                        error("fixed Dungeon:" .. level.id .. " has invalid monster budget")
+                    end
+                elseif level.initial_monsters ~= 0 then
+                    error("fixture Dungeon:" .. level.id .. " has a monster budget")
+                end
             end
         end
 

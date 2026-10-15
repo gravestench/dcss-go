@@ -221,6 +221,34 @@ local function validate_groups(category, groups, descriptions)
     end
 end
 
+local function validate_early_brands()
+    local brands = require("policy.combat.brands")
+    local items = {}
+
+    for _, definition in ipairs(require("data.items").items) do
+        items[definition.id] = definition
+    end
+
+    for _, id in ipairs(require("data.early_weapons")) do
+        local definition = items[id]
+
+        if not definition or not definition.weapon then
+            error("early monster weapon " .. id .. " has no definition")
+        end
+
+        for _, weight in ipairs(definition.weapon.brand_weights or {}) do
+            if weight.weight > 0 then
+                local ok, reason = pcall(brands.check, weight.brand_id)
+
+                if not ok then
+                    error("early monster weapon " .. id .. " has unresolved brand " ..
+                        weight.brand_id .. ": " .. reason)
+                end
+            end
+        end
+    end
+end
+
 function validation.check()
     local species_ids = register.ids("species")
     local job_ids = register.ids("jobs")
@@ -241,6 +269,7 @@ function validation.check()
 
     validate_groups("species", presentation.species_groups, presentation.species_descriptions)
     validate_groups("jobs", presentation.job_groups, presentation.job_descriptions)
+    validate_early_brands()
 end
 
 return validation

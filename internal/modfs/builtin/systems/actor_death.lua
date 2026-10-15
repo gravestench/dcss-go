@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local death = require("policy.death")
+local draining = require("policy.combat.brands.draining")
 local net = require("policy.combat.net")
 
 register.system({
@@ -45,6 +46,7 @@ register.system({
                         training.available_xp = training.available_xp + 10 * xp
                         ctx:set(player, "core.progression", progress)
                         ctx:set(player, "core.skill_training", training)
+                        draining.recover(ctx, player, xp)
                         death.corpse(ctx, definition, position)
                     end
 

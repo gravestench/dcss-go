@@ -1,3 +1,5 @@
+local abyss = require("policy.world.abyss")
+
 register.system({
     id = "world.stairs",
     scope = "active",
@@ -21,6 +23,16 @@ register.system({
 
         if ctx:cell(position.level_id, position.x, position.y) ~= glyph then
             error("stair actor " .. ctx:id(actor) .. " is not on a stair")
+        end
+
+        if position.level_id == abyss.level_id then
+            if glyph ~= "<" or actor ~= ctx:player() then
+                error("only the player can use an Abyss exit")
+            end
+
+            abyss.escape(ctx, actor)
+
+            return
         end
 
         local link = ctx:stair_at(position.level_id, position.x, position.y)

@@ -135,7 +135,7 @@ func (s TurnScheduler) NextReady(levelID int) (akara.Entity, bool, error) {
 }
 
 // Spend uses the final intent after movement has turned a bump into melee.
-func (s TurnScheduler) Spend(entity akara.Entity, intent ecs.IntentKind) error {
+func (s TurnScheduler) Spend(entity akara.Entity, intent ecs.Intent) error {
 	actor, found := s.actors.Get(entity)
 
 	if !found {
@@ -149,8 +149,10 @@ func (s TurnScheduler) Spend(entity akara.Entity, intent ecs.IntentKind) error {
 	}
 
 	result, err := s.policy("scheduler.spend", map[string]any{
+		"actor":   uint64(entity),
 		"kind_id": actor.KindID,
-		"intent":  int(intent),
+		"intent":  int(intent.Kind),
+		"item_id": uint64(intent.ItemID),
 		"points":  energy.Points,
 	})
 

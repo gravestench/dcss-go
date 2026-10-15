@@ -36,6 +36,8 @@ local function nearby_space(ctx, position)
     return nil
 end
 
+dispersal.nearby_space = nearby_space
+
 function dispersal.blink(ctx, attacker, monster, definition)
     local origin = ctx:get(monster, "core.position")
     local first = nearby_space(ctx, origin)

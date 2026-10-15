@@ -2,6 +2,21 @@ package game
 
 import "fmt"
 
+// activateTransition keeps away clocks correct when either a player action
+// or a monster effect moves the player to another level.
+func (g *Game) activateTransition(fromID, toID int, now Aut) error {
+	from := g.levels[fromID]
+	to := g.levels[toID]
+
+	if from == nil || to == nil {
+		return fmt.Errorf("level transition %d -> %d has a missing level", fromID, toID)
+	}
+
+	from.awaySinceAut = &now
+
+	return g.activateLevel(to, now)
+}
+
 // activateLevel applies supported return-time effects. Inactive monsters keep
 // their energy while the player is away. Crawl updates a returned level once
 // instead of giving its monsters ordinary turns off-level

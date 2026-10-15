@@ -53,6 +53,7 @@ type StepResult struct {
 type TurnContext struct {
 	Actor          akara.Entity
 	ResolvedIntent ecs.IntentKind
+	ResolvedItemID akara.Entity
 
 	Events []Event
 }
@@ -100,12 +101,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 
 	if arrived, found := g.stores.Positions.Get(g.player); found &&
 		arrived.LevelID != position.LevelID {
-		from := g.levels[position.LevelID]
-		to := g.levels[arrived.LevelID]
-
-		from.awaySinceAut = &startAut
-
-		if err := g.activateLevel(to, startAut); err != nil {
+		if err := g.activateTransition(position.LevelID, arrived.LevelID, startAut); err != nil {
 			return StepResult{}, err
 		}
 	}
@@ -184,12 +180,14 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 		return StepResult{}, fmt.Errorf("player has no position for scheduling")
 	}
 
-	if err := g.scheduler.Grant(position.LevelID, cost); err != nil {
+	activeLevelID := position.LevelID
+
+	if err := g.scheduler.Grant(activeLevelID, cost); err != nil {
 		return StepResult{}, err
 	}
 
 	for !g.playerDead() {
-		actor, ready, err := g.scheduler.NextReady(position.LevelID)
+		actor, ready, err := g.scheduler.NextReady(activeLevelID)
 
 		if err != nil {
 			return StepResult{}, err
@@ -208,9 +206,23 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 		events = append(events, monsterEvents...)
 
 		if g.stores.MonsterEnergy.Has(actor) {
-			if err := g.scheduler.Spend(actor, g.turn.ResolvedIntent); err != nil {
+			if err := g.scheduler.Spend(actor, ecs.Intent{
+				Kind:   g.turn.ResolvedIntent,
+				ItemID: g.turn.ResolvedItemID,
+			}); err != nil {
 				return StepResult{}, err
 			}
+		}
+
+		arrived, found := g.stores.Positions.Get(g.player)
+
+		if found && arrived.LevelID != activeLevelID {
+			if err := g.activateTransition(activeLevelID, arrived.LevelID,
+				startAut+cost); err != nil {
+				return StepResult{}, err
+			}
+
+			break
 		}
 	}
 
@@ -223,7 +235,7 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 	g.currentAut = Aut(playerTurn.NextAut)
 
 	if err := g.runWorldPolicy("world.age_corpses", map[string]any{
-		"level_id":  position.LevelID,
+		"level_id":  activeLevelID,
 		"start_aut": int64(startAut),
 		"end_aut":   int64(startAut + cost),
 	}); err != nil {
@@ -312,6 +324,7 @@ func (g *Game) runActionStarted(
 	}
 
 	g.turn.ResolvedIntent = resolved.Kind
+	g.turn.ResolvedItemID = resolved.ItemID
 	g.stores.Intents.Remove(actor)
 
 	if actor == g.player {

@@ -2,31 +2,32 @@ local roll = require("policy.combat.roll")
 
 local brands = {}
 
-local supported = {
-    [""] = true,
-    SPWPN_NORMAL = true,
-    SPWPN_PROTECTION = true,
-    SPWPN_VENOM = true,
-    SPWPN_FLAMING = true,
-    SPWPN_FREEZING = true,
-    SPWPN_ELECTROCUTION = true,
-    SPWPN_VORPAL = true,
-}
-
-local after_death = {
-    SPWPN_FLAMING = true,
-    SPWPN_FREEZING = true,
-    SPWPN_ELECTROCUTION = true,
-}
-
-function brands.check(brand)
-    if not supported[brand or ""] then
-        error("unsupported monster melee brand " .. tostring(brand))
+local function effect(id)
+    if id == "" then
+        id = "SPWPN_NORMAL"
     end
+
+    local name = id:match("^SPWPN_([A-Z_]+)$")
+
+    if not name then
+        error("invalid weapon brand " .. tostring(id))
+    end
+
+    local module = require("policy.combat.brands." .. name:lower())
+
+    if type(module) ~= "table" or type(module.apply) ~= "function" then
+        error("weapon brand " .. id .. " has no apply function")
+    end
+
+    return module
 end
 
-function brands.after_death(brand)
-    return after_death[brand] or false
+function brands.check(id)
+    effect(id)
+end
+
+function brands.after_death(id)
+    return effect(id).after_death == true
 end
 
 function brands.poison(ctx, amount, source_id)
@@ -59,61 +60,17 @@ function brands.poison_bite(ctx, hit_dice, source_id)
     brands.poison(ctx, 2 * hit_dice + roll.melee(ctx, 2 * hit_dice + 1), source_id)
 end
 
-function brands.apply(ctx, brand, damage_done, source_id, attacker_name, health)
-    brand = brand or ""
-    brands.check(brand)
+function brands.apply(ctx, id, damage_done, source_id, attacker_name, health)
+    local impact = {
+        damage_done = damage_done,
+        source_id = source_id,
+        attacker_name = attacker_name,
+        health = health,
+        attacker = ctx:actor(),
+        defender = ctx:player(),
+    }
 
-    if brand == "" or brand == "SPWPN_NORMAL" or brand == "SPWPN_PROTECTION" then
-        return
-    end
-
-    if brand == "SPWPN_VENOM" then
-        if roll.melee(ctx, 4) == 0 then
-            return
-        end
-
-        local base = roll.melee(ctx, 8)
-        local bonus = roll.melee(ctx, math.floor(damage_done * 3 / 2))
-        brands.poison(ctx, 6 + base + bonus, source_id)
-
-        return
-    end
-
-    local bonus = 0
-
-    if brand == "SPWPN_FLAMING" or brand == "SPWPN_FREEZING" then
-        if damage_done == 0 then
-            return
-        end
-
-        bonus = 1 + math.floor(roll.melee(ctx, damage_done) / 2)
-    elseif brand == "SPWPN_VORPAL" then
-        if damage_done == 0 then
-            return
-        end
-
-        bonus = 1 + math.floor(roll.melee(ctx, damage_done) / 3)
-    elseif brand == "SPWPN_ELECTROCUTION" then
-        if roll.melee(ctx, 4) ~= 0 then
-            return
-        end
-
-        bonus = 8 + roll.melee(ctx, 13)
-    end
-
-    health.current = math.max(0, health.current - bonus)
-
-    if bonus == 0 then
-        return
-    end
-
-    if brand == "SPWPN_FLAMING" then
-        ctx:emit("combat", "The " .. attacker_name .. " burns you.")
-    elseif brand == "SPWPN_FREEZING" then
-        ctx:emit("combat", "The " .. attacker_name .. " freezes you.")
-    elseif brand == "SPWPN_ELECTROCUTION" then
-        ctx:emit("combat", bonus >= 18 and "You are electrocuted!!" or "You are electrocuted!")
-    end
+    effect(id).apply(ctx, impact, brands)
 end
 
 return brands

@@ -86,7 +86,7 @@ func TestEnergySchedulerOrdersReadyMonstersByEnergy(t *testing.T) {
 		t.Fatalf("first ready = %d/%v, want jackal", first, ready)
 	}
 
-	if err := scheduler.Spend(first, ecs.IntentWait); err != nil {
+	if err := scheduler.Spend(first, ecs.Intent{Kind: ecs.IntentWait}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -100,7 +100,7 @@ func TestEnergySchedulerOrdersReadyMonstersByEnergy(t *testing.T) {
 		t.Fatalf("second ready = %d/%v, want rat", second, ready)
 	}
 
-	if err := scheduler.Spend(second, ecs.IntentWait); err != nil {
+	if err := scheduler.Spend(second, ecs.Intent{Kind: ecs.IntentWait}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -133,7 +133,7 @@ func TestEnergySchedulerOrdersReadyMonstersByEnergy(t *testing.T) {
 			t.Fatalf("next ready = %d/%v, want %d", entity, ready, want)
 		}
 
-		if err := scheduler.Spend(entity, ecs.IntentWait); err != nil {
+		if err := scheduler.Spend(entity, ecs.Intent{Kind: ecs.IntentWait}); err != nil {
 			t.Fatal(err)
 		}
 	}

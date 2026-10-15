@@ -36,9 +36,9 @@ than a handler API for each game domain.
 | Domain | Implemented now | Main Lua location |
 | --- | --- | --- |
 | Character | Human, Hill Orc, Deep Elf, and Minotaur Fighters; weapon choice, starting gear, attributes, skills, HP/MP, training, XP, level gains, stat choice | `policy/character`, `systems/character_*` |
-| Dungeon | Seeded basic-layout D:1–2, rooms, corridors, doors, paired stairs, source-sized population, fixed test scenario | `policy/generation`, `policy/population`, `systems/world_*` |
+| Dungeon | Seeded basic-layout D:1–2, rooms, corridors, doors, paired stairs, source-sized population, fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; item and spell capability dispatch without monster-ID handlers | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
-| Combat | Fighter melee and headbutts; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, Lua effect modules for Freeze, Slug Dart, sling bullets, stones, and poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
+| Combat | Fighter melee and headbutts; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
 | Items and status | Pickup/drop, wielding, armour delays, quaffing curing/heal wounds/might/haste, ammunition stacks and landing, poison, curare slow, trapping nets, regeneration, and duration decay | `policy/inventory`, `policy/potions.lua`, `systems/item_*`, `systems/player_status.lua`, `systems/monster_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `internal/terminal` |
 | Persistence | Version-14 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
@@ -72,7 +72,9 @@ through the current D:1–2 slice. The many imported species, jobs, monsters,
 spells, items, and branches still need behavior, generation, and UI flows.
 Major missing domains include player spellcasting and learning, religion,
 mutations and forms, full monster abilities, vaults and Lua vault scripts,
-more layouts and branches, traps, clouds, shops, runes, endgame, and the
+more layouts and branches, the Abyss monster roster and shifting terrain,
+player weapon brand effects including the spectral ally, traps, clouds,
+shops, runes, endgame, and the
 complete item and equipment system. Native C++ saves, tiles, and network
 client compatibility are outside this Go port.
 

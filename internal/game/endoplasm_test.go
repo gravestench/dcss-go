@@ -116,7 +116,10 @@ func TestEndoplasmFreezeUsesSpellIntentAndEnergy(t *testing.T) {
 			events, before, playerHealth.Current, g.turn.ResolvedIntent)
 	}
 
-	if err := g.scheduler.Spend(entity, g.turn.ResolvedIntent); err != nil {
+	if err := g.scheduler.Spend(entity, ecs.Intent{
+		Kind:   g.turn.ResolvedIntent,
+		ItemID: g.turn.ResolvedItemID,
+	}); err != nil {
 		t.Fatal(err)
 	}
 
