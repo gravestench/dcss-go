@@ -1,19 +1,28 @@
 # Lua mods: discoverable files
 
-DCrawl embeds its Lua rules under `internal/modfs/builtin/`. Run with
-`--mod-dir=/path/to/mod` to replace a bundled file with a file at the same
-relative path, or to add a file. The effective tree is loaded once per game
-session. Changes to files on disk take effect when a new session starts.
-The mod directory can contain just one Lua file; no manifest, copied base
-tree, or generated registry is required.
+DCrawl embeds its Lua rules under `internal/modfs/builtin/`. Add one or more
+mod directories by repeating `--mod-dir` in the order they should apply:
+
+```text
+dcrawl --mod-dir=/path/to/extra-monsters --mod-dir=/path/to/spell-changes
+```
+
+For example, the first directory can contain only
+`content/monsters/my_monster.lua`; the second can override the bundled
+`content/spells/0106_spell_airstrike.lua`. A file with the same relative
+path in a later directory replaces the earlier file. A new path joins the
+effective tree.
+Each directory can contain just one Lua file; no manifest, copied base tree,
+or generated registry is required. The effective tree is loaded once per
+game session. Changes on disk take effect when a new session starts.
 Lua source lives in `.lua` files in this tree and in test mod directories;
 Go source does not contain inline Lua programs.
 
-This is a two-layer virtual filesystem. The embedded tree is the base layer.
-The directory passed to `--mod-dir` is the user layer. Its files win when the
-relative paths match, and its new paths join the effective tree. All Lua
-modules, including `require` calls, read that one effective tree. An overlay
-does not need to repeat the rest of the base game.
+The embedded tree is the base layer. Each `--mod-dir` adds a sparse layer;
+later layers win when paths match. All Lua modules, including `require`
+calls and automatically discovered files, read the resolved tree. Save
+identity uses the final relative paths and file bytes. Moving a mod directory
+without changing its effective Lua files does not change that identity.
 
 | To add | Put the file here | Add another file when |
 | --- | --- | --- |

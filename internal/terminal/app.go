@@ -101,7 +101,7 @@ type AppModel struct {
 }
 
 func NewAppModel(seed uint64, savePath string) (*AppModel, error) {
-	rules, err := modfs.Load("")
+	rules, err := modfs.Load()
 
 	if err != nil {
 		return nil, err

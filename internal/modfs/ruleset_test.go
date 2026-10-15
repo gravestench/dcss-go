@@ -12,13 +12,13 @@ import (
 )
 
 func TestBundledRulesetHasStableIdentity(t *testing.T) {
-	first, err := Load("")
+	first, err := Load()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	second, err := Load("")
+	second, err := Load()
 
 	if err != nil {
 		t.Fatal(err)
@@ -61,7 +61,7 @@ func TestBundledRulesetHasStableIdentity(t *testing.T) {
 }
 
 func TestOverlayIdentityAndOrder(t *testing.T) {
-	bundled, err := Load("")
+	bundled, err := Load()
 
 	if err != nil {
 		t.Fatal(err)
@@ -119,7 +119,7 @@ func TestOverlayIdentityAndOrder(t *testing.T) {
 }
 
 func TestSingleContentFileParticipatesInRulesetIdentity(t *testing.T) {
-	bundled, err := Load("")
+	bundled, err := Load()
 
 	if err != nil {
 		t.Fatal(err)
@@ -209,7 +209,7 @@ func TestOverlayRejectsInvalidPathsAndSymlinks(t *testing.T) {
 }
 
 func TestReadFileRejectsTraversal(t *testing.T) {
-	rules, err := Load("")
+	rules, err := Load()
 
 	if err != nil {
 		t.Fatal(err)
@@ -225,6 +225,174 @@ func TestReadFileRejectsTraversal(t *testing.T) {
 			t.Errorf("accepted path %q", name)
 		}
 	}
+}
+
+func TestOrderedSparseLayers(t *testing.T) {
+	first := t.TempDir()
+	second := t.TempDir()
+
+	copyLayerFixtureAs(t, first,
+		"first/content/monsters/first.lua", "content/monsters/first.lua")
+	copyLayerFixtureAs(t, second,
+		"second/content/spells/second.lua", "content/spells/second.lua")
+	copyLayerFixtureAs(t, first, "first/lib/shared.lua", "lib/shared.lua")
+	copyLayerFixtureAs(t, second, "second/lib/shared.lua", "lib/shared.lua")
+
+	forward, err := Load(first, second)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	reverse, err := Load(second, first)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, name := range []string{
+		"content/monsters/first.lua",
+		"content/spells/second.lua",
+	} {
+		if _, err := forward.ReadFile(name); err != nil {
+			t.Fatalf("missing sparse layer file %s: %v", name, err)
+		}
+	}
+
+	winner, err := forward.ReadFile("lib/shared.lua")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected, err := os.ReadFile("testdata/layers/second/lib/shared.lua")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(winner, expected) || forward.Hash() == reverse.Hash() {
+		t.Fatalf("wrong precedence or hash: winner=%q", winner)
+	}
+}
+
+func TestLayerCaseCollision(t *testing.T) {
+	overlay := t.TempDir()
+
+	copyLuaFixtureAs(t, overlay, "init.lua", "Init.lua")
+
+	_, err := Load(overlay)
+
+	if err == nil {
+		t.Fatal("case collision accepted")
+	}
+
+	if !strings.Contains(err.Error(), overlay) ||
+		!strings.Contains(err.Error(), "Init.lua") {
+		t.Fatalf("case collision lacks layer and path: %v", err)
+	}
+}
+
+func TestLayerIdentity(t *testing.T) {
+	bundled, err := Load()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	init, err := bundled.ReadFile("init.lua")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	first := t.TempDir()
+	second := t.TempDir()
+
+	writeTestFile(t, first, "init.lua", init)
+	writeTestFile(t, second, "init.lua", init)
+
+	withCopies, err := Load(first, second)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !withCopies.Vanilla() ||
+		withCopies.Hash() != bundled.Hash() ||
+		!reflect.DeepEqual(withCopies.Manifest(), bundled.Manifest()) ||
+		!reflect.DeepEqual(withCopies.Changes(), bundled.Changes()) {
+		t.Fatal("byte-identical layers changed effective identity")
+	}
+
+	copyLayerFixtureAs(t, first, "identical.lua", "lib/addition.lua")
+	copyLayerFixtureAs(t, second, "identical.lua", "lib/addition.lua")
+
+	forward, err := Load(first, second)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	reverse, err := Load(second, first)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if forward.Vanilla() ||
+		forward.Hash() != reverse.Hash() ||
+		!reflect.DeepEqual(forward.Manifest(), reverse.Manifest()) ||
+		!reflect.DeepEqual(forward.Changes(), reverse.Changes()) {
+		t.Fatal("equivalent effective trees have different identity")
+	}
+}
+
+func TestInvalidLaterLayer(t *testing.T) {
+	for _, name := range []string{"README.txt", "escape.lua"} {
+		t.Run(name, func(t *testing.T) {
+			first := t.TempDir()
+			second := t.TempDir()
+
+			copyLayerFixtureAs(t, first, "identical.lua", "lib/valid.lua")
+
+			if name == "escape.lua" {
+				outside := filepath.Join(t.TempDir(), "outside.lua")
+
+				copyLayerFixtureAs(t, filepath.Dir(outside), "identical.lua",
+					filepath.Base(outside))
+
+				if err := os.Symlink(outside, filepath.Join(second, name)); err != nil {
+					t.Skipf("symlinks unavailable: %v", err)
+				}
+			} else {
+				writeTestFile(t, second, name, []byte("invalid\n"))
+			}
+
+			_, err := Load(first, second)
+
+			if err == nil {
+				t.Fatal("invalid later layer accepted")
+			}
+
+			if !strings.Contains(err.Error(), second) ||
+				!strings.Contains(err.Error(), name) {
+				t.Fatalf("invalid later layer lacks context: %v", err)
+			}
+		})
+	}
+}
+
+func copyLayerFixtureAs(t *testing.T, root, source, name string) {
+	t.Helper()
+
+	data, err := os.ReadFile(filepath.Join("testdata/layers", source))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	writeTestFile(t, root, name, data)
 }
 
 func copyLuaFixture(t *testing.T, root, name string) {

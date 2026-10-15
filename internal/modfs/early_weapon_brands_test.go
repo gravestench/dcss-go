@@ -17,7 +17,7 @@ func TestGeneratedEarlyWeaponBrandsHaveLuaEffects(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	rules, err := modfs.Load("")
+	rules, err := modfs.Load()
 
 	if err != nil {
 		t.Fatal(err)

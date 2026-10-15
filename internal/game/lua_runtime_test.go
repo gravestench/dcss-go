@@ -428,6 +428,81 @@ func checkLuaCounter(t *testing.T, g *Game, want int64) {
 	}
 }
 
+func TestLayeredRulesetRestore(t *testing.T) {
+	first := "testdata/turn-counter-mod"
+	second := "testdata/turn-counter-changed"
+
+	rules, err := modfs.Load(first, second)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	g, err := newScenarioWithRules(
+		1,
+		startChoice{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+		},
+		"WPN_RAPIER",
+		"Tester",
+		ordinaryMonsterScenarioID,
+		rules,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer g.Close()
+
+	if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
+		t.Fatal(err)
+	}
+
+	checkLuaCounter(t, g, 2)
+
+	snapshot := g.Snapshot()
+	merged := t.TempDir()
+
+	copyLuaDirectory(t, merged, first)
+	copyLuaDirectory(t, merged, second)
+
+	equivalent, err := modfs.Load(merged)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if equivalent.Hash() != rules.Hash() {
+		t.Fatal("equivalent effective ruleset has different identity")
+	}
+
+	restored, err := RestoreWithRules(snapshot, equivalent, RestorePolicy{})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	checkLuaCounter(t, restored, 2)
+
+	reversed, err := modfs.Load(second, first)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if reversed.Hash() == rules.Hash() {
+		t.Fatal("reversing layers did not change the winning bytes")
+	}
+
+	if _, err := RestoreWithRules(snapshot, reversed, RestorePolicy{}); err == nil {
+		t.Fatal("changed winning bytes restored without mismatch approval")
+	}
+}
+
 // copyLuaDirectory assembles a test overlay from real Lua files. Later
 // copies replace earlier files at the same relative path.
 func copyLuaDirectory(t *testing.T, target, source string) {

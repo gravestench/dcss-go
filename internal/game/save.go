@@ -196,7 +196,7 @@ func (g *Game) Restore(snapshot save.Snapshot) (*Game, error) {
 
 // Restore builds a separate game using the bundled ruleset.
 func Restore(snapshot save.Snapshot) (*Game, error) {
-	rules, err := modfs.Load("")
+	rules, err := modfs.Load()
 
 	if err != nil {
 		return nil, err

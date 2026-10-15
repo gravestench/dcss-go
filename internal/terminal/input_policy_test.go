@@ -9,7 +9,7 @@ import (
 )
 
 func TestLuaPlayKeyOverrideChangesBindingAndRulesetHash(t *testing.T) {
-	bundled, err := modfs.Load("")
+	bundled, err := modfs.Load()
 
 	if err != nil {
 		t.Fatal(err)

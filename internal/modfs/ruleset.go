@@ -1,4 +1,4 @@
-// Package modfs resolves bundled Lua and an optional file overlay into one
+// Package modfs resolves bundled Lua and ordered file overlays into one
 // immutable, hash-identified ruleset for a game session.
 package modfs
 
@@ -28,9 +28,9 @@ type Ruleset struct {
 	bundledHash string
 }
 
-// Load resolves the bundled Lua tree with one optional overlay directory.
-// An overlay file replaces a bundled file with the same relative path.
-func Load(overlayDir string) (Ruleset, error) {
+// Load resolves the bundled Lua tree with sparse overlays in argument order.
+// The last layer containing a relative path supplies its bytes.
+func Load(overlayDirs ...string) (Ruleset, error) {
 	root, err := fs.Sub(builtin, "builtin")
 
 	if err != nil {
@@ -45,9 +45,17 @@ func Load(overlayDir string) (Ruleset, error) {
 
 	effective := copyFiles(bundled)
 
-	if overlayDir != "" {
+	for _, overlayDir := range overlayDirs {
+		if overlayDir == "" {
+			return Ruleset{}, fmt.Errorf("Lua overlay root must not be empty")
+		}
+
 		if err := applyOverlay(effective, overlayDir); err != nil {
-			return Ruleset{}, err
+			return Ruleset{}, fmt.Errorf("Lua overlay %q: %w", overlayDir, err)
+		}
+
+		if err := checkCaseCollisions(effective); err != nil {
+			return Ruleset{}, fmt.Errorf("Lua overlay %q: %w", overlayDir, err)
 		}
 	}
 

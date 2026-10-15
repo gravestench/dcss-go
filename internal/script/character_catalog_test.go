@@ -69,7 +69,7 @@ func TestBundledLuaCharacterCatalogMatchesPinnedImport(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	rules, err := modfs.Load("")
+	rules, err := modfs.Load()
 
 	if err != nil {
 		t.Fatal(err)
@@ -156,7 +156,7 @@ func TestBundledLuaCharacterCatalogMatchesPinnedImport(t *testing.T) {
 }
 
 func TestCharacterOverrideChangesEffectiveCatalog(t *testing.T) {
-	bundled, err := modfs.Load("")
+	bundled, err := modfs.Load()
 
 	if err != nil {
 		t.Fatal(err)

@@ -141,6 +141,44 @@ func TestOverlayAddsIndependentContentFiles(t *testing.T) {
 	}
 }
 
+func TestLayeredDiscoveryAndRequire(t *testing.T) {
+	rules, err := modfs.Load(
+		"testdata/add-definitions",
+		"testdata/layered-helper",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	world := akara.NewWorld()
+	defer world.Close()
+
+	runtime, err := NewCatalog(world, rules)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer runtime.Close()
+
+	content, err := runtime.Policy("test.content", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	marker, err := runtime.Policy("test.layer_marker", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if content["monster"] != "test moss" || marker["value"] != "second layer" {
+		t.Fatalf("layered discovery or require failed: content=%v marker=%v", content, marker)
+	}
+}
+
 func TestSamePathOverlayReplacesBundledDefinition(t *testing.T) {
 	rules, err := modfs.Load("testdata/override-monster")
 

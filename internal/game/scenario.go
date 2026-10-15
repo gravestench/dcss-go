@@ -43,7 +43,7 @@ func NewDungeonGame(
 	seed uint64,
 	speciesID, jobID, weaponID, name string,
 ) (_ *Game, err error) {
-	rules, err := modfs.Load("")
+	rules, err := modfs.Load()
 
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func newScenario(
 	weaponID, name string,
 	scenarioID string,
 ) (_ *Game, err error) {
-	rules, err := modfs.Load("")
+	rules, err := modfs.Load()
 
 	if err != nil {
 		return nil, err

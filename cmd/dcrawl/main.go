@@ -14,7 +14,8 @@ import (
 func run() error {
 	seed := flag.Uint64("seed", 1, "deterministic scenario seed")
 	savePath := flag.String("save", "dcrawl-save.json", "save file path")
-	modDir := flag.String("mod-dir", "", "optional Lua overlay directory")
+	var modDirectories modDirs
+	flag.Var(&modDirectories, "mod-dir", "ordered Lua mod directory (repeatable)")
 	allowMismatch := flag.Bool(
 		"allow-ruleset-mismatch",
 		false,
@@ -22,7 +23,7 @@ func run() error {
 	)
 	flag.Parse()
 
-	rules, err := modfs.Load(*modDir)
+	rules, err := modfs.Load(modDirectories...)
 
 	if err != nil {
 		return fmt.Errorf("load Lua rules: %w", err)

@@ -11,7 +11,7 @@ import (
 )
 
 func TestEveryLegalCharacterChoiceIsPlayable(t *testing.T) {
-	rules, err := modfs.Load("")
+	rules, err := modfs.Load()
 
 	if err != nil {
 		t.Fatal(err)
@@ -400,7 +400,7 @@ func TestWandererGiftsAcrossSpeciesAndSeeds(t *testing.T) {
 }
 
 func TestEveryLegalCharacterStartReachesDungeon(t *testing.T) {
-	rules, err := modfs.Load("")
+	rules, err := modfs.Load()
 
 	if err != nil {
 		t.Fatal(err)
