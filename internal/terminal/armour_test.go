@@ -19,9 +19,11 @@ func TestTakeOffAndWearArmourMenusKeepInventoryLetters(t *testing.T) {
 		t.Fatal("takeoff menu missing")
 	}
 
-	m.handleKey(shieldLetter)
+	command := m.handleKey(shieldLetter)
 
-	if m.screen != ScreenPlay || m.game.View().EquipmentDelay == nil {
+	if m.screen != ScreenPlay ||
+		m.game.View().EquipmentDelay == nil ||
+		command == nil {
 		t.Fatal("takeoff did not start a scheduled delay")
 	}
 

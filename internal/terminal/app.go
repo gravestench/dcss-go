@@ -206,62 +206,61 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 
 	switch m.screen {
 	case ScreenStartup:
-		return m.handleStartupKey(key)
+		return m.routePregameInput("startup", key)
 
-	case ScreenSpecies, ScreenBackground:
-		m.handleCharacterChoiceKey(key)
+	case ScreenSpecies:
+		return m.routePregameInput("species", key)
+
+	case ScreenBackground:
+		return m.routePregameInput("background", key)
 
 	case ScreenWeapon:
-		m.handleWeaponKey(key)
+		return m.routePregameInput("weapon", key)
 
 	case ScreenName:
-		m.handleNameKey(key)
+		return m.routePregameInput("name", key)
 
 	case ScreenPlay:
 		return m.handlePlayKey(key)
 
 	case ScreenStatChoice:
-		m.handleStatChoiceKey(key)
+		return m.routeInput("stat_choice", key)
 
 	case ScreenInventory:
-		m.handleModalKey(key)
+		return m.routeInput("modal", key)
 
 	case ScreenSkills:
-		m.handleSkillsKey(key)
+		return m.routeSkillInput(key)
 
 	case ScreenQuaff:
-		return m.handleQuaffKey(key)
+		return m.routeInventoryInput("quaff", key)
 
 	case ScreenDrop:
-		return m.handleDropKey(key)
+		return m.routeInventoryInput("drop", key)
 
 	case ScreenWield:
-		return m.handleWieldKey(key)
+		return m.routeInventoryInput("wield", key)
 
-	case ScreenWear, ScreenTakeOff:
-		return m.handleArmourKey(key)
+	case ScreenWear:
+		return m.routeInventoryInput("wear", key)
+
+	case ScreenTakeOff:
+		return m.routeInventoryInput("take_off", key)
 
 	case ScreenThrow:
-		return m.handleThrowKey(key)
+		return m.routeInventoryInput("throw", key)
 
 	case ScreenAim:
-		return m.handleAimKey(key)
+		return m.routeInput("aim", key)
 
 	case ScreenConfirm:
-		return m.handleConfirmKey(key)
+		return m.routeConfirmationInput(key)
 
 	case ScreenDeath:
-		if key == "esc" || key == "enter" {
-			m.returnToStartup()
-		}
+		return m.routeInput("death", key)
 
 	case ScreenHelp:
-		if key == "esc" {
-			m.screen = m.previous
-			m.notice = ""
-		} else {
-			m.notice = "This help control is unavailable in the Go port."
-		}
+		return m.routeInput("help", key)
 	}
 
 	return nil

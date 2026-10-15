@@ -4,70 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	tea "charm.land/bubbletea/v2"
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/game"
 	"dcrawl-go/internal/script"
 	"github.com/mattn/go-runewidth"
 )
-
-func (m *AppModel) handleStartupKey(key string) tea.Cmd {
-	count := len(m.presentation.StartupModes)
-
-	if m.savedRunExists() {
-		count++
-	}
-
-	switch key {
-	case "esc":
-		return tea.Quit
-
-	case "up":
-		m.focus = (m.focus - 1 + count) % count
-
-	case "down":
-		m.focus = (m.focus + 1) % count
-
-	case "enter":
-		if m.focus == len(m.presentation.StartupModes) && m.savedRunExists() {
-			m.loadSavedRun()
-
-			if m.game != nil && m.game.View().EquipmentDelay != nil {
-				return m.nextEquipmentTick()
-			}
-
-			return nil
-		}
-
-		if m.focus == 0 {
-			m.startNewCharacter()
-		} else {
-			m.notice = "This game mode is unavailable in the Go port."
-		}
-
-	case "backspace":
-		if len(m.name) > 0 {
-			runes := []rune(m.name)
-
-			m.name = string(runes[:len(runes)-1])
-		}
-
-	case "ctrl+u":
-		m.name = ""
-
-	case "ctrl+p":
-		m.notice = "RC file information is unavailable in the Go port."
-
-	case "?":
-		m.previous = m.screen
-		m.screen = ScreenHelp
-
-	default:
-		m.appendNameKey(key)
-	}
-
-	return nil
-}
 
 func (m *AppModel) startNewCharacter() {
 	if m.name != "" {
@@ -83,20 +24,16 @@ func (m *AppModel) startNewCharacter() {
 	m.notice = ""
 }
 
-func (m *AppModel) appendNameKey(key string) {
-	if key == "space" {
-		key = " "
-	}
-
-	if len([]rune(key)) != 1 {
+func (m *AppModel) appendNameCharacter(value string) {
+	if len([]rune(value)) != 1 {
 		return
 	}
 
-	if key == " " && m.name == "" {
+	if value == " " && m.name == "" {
 		return
 	}
 
-	candidate := m.name + key
+	candidate := m.name + value
 
 	if runewidth.StringWidth(candidate) > 30 {
 		m.notice = "Name exceeds 30 display columns"
@@ -113,122 +50,6 @@ func (m *AppModel) appendNameKey(key string) {
 
 	m.name = candidate
 	m.notice = ""
-}
-
-func (m *AppModel) handleCharacterChoiceKey(key string) {
-	groups := m.presentation.SpeciesGroups
-
-	if m.screen == ScreenBackground {
-		groups = m.presentation.JobGroups
-	}
-
-	ids := flattenGroups(groups)
-
-	if len(ids) == 0 {
-		m.notice = "No character choices are available in this ruleset."
-
-		return
-	}
-
-	switch key {
-	case "esc":
-		m.screen = ScreenStartup
-		m.focus = 0
-		m.notice = ""
-
-		return
-
-	case "backspace":
-		if m.screen == ScreenBackground {
-			m.jobID = ""
-			m.screen = ScreenSpecies
-		} else {
-			m.speciesID = ""
-			m.screen = ScreenBackground
-		}
-
-		m.focus = 0
-		m.notice = ""
-
-		return
-
-	case "space":
-		if m.screen == ScreenSpecies {
-			m.screen = ScreenBackground
-		} else {
-			m.screen = ScreenSpecies
-		}
-
-		m.focus = 0
-		m.notice = ""
-
-		return
-
-	case "up":
-		m.focus = (m.focus - 1 + len(ids)) % len(ids)
-
-		return
-
-	case "down":
-		m.focus = (m.focus + 1) % len(ids)
-
-		return
-
-	case "left":
-		m.focus = (m.focus - 9 + len(ids)) % len(ids)
-
-		return
-
-	case "right":
-		m.focus = (m.focus + 9) % len(ids)
-
-		return
-
-	case "?":
-		m.previous = m.screen
-		m.screen = ScreenHelp
-
-		return
-
-	case "enter":
-		start, _, _ := characterChoicePage(groups, m.focus, m.screen)
-		key = string(menuLetter(m.focus - start))
-
-	case "+", "#", "%", "*", "!":
-		m.notice = "This character option is unavailable in the Go port."
-
-		return
-	}
-
-	m.selectCharacterChoice(key, ids)
-}
-
-func (m *AppModel) selectCharacterChoice(key string, ids []string) {
-	groups := m.presentation.SpeciesGroups
-
-	if m.screen == ScreenBackground {
-		groups = m.presentation.JobGroups
-	}
-
-	start, end, _ := characterChoicePage(groups, m.focus, m.screen)
-
-	for index := start; index < end; index++ {
-		if key != string(menuLetter(index-start)) {
-			continue
-		}
-
-		id := ids[index]
-
-		m.focus = index
-
-		if m.screen == ScreenSpecies {
-			m.selectSpecies(id)
-		} else {
-			m.selectBackground(id)
-		}
-
-		return
-	}
 }
 
 func (m *AppModel) selectSpecies(id string) {
@@ -388,91 +209,6 @@ func projectSupportedStarts(
 	return supported, nil
 }
 
-func (m *AppModel) handleWeaponKey(key string) {
-	switch key {
-	case "esc", "backspace":
-		m.screen = m.weaponReturn
-		m.focus = 0
-		m.notice = ""
-
-		return
-
-	case "up":
-		m.focus = (m.focus - 1 + len(m.options)) % len(m.options)
-
-		return
-
-	case "down":
-		m.focus = (m.focus + 1) % len(m.options)
-
-		return
-
-	case "?":
-		m.previous = m.screen
-		m.screen = ScreenHelp
-
-		return
-
-	case "enter":
-		key = string(menuLetter(m.focus))
-
-	case "+", "*", "%":
-		m.notice = "This weapon option is unavailable in the Go port."
-
-		return
-	}
-
-	for i, option := range m.options {
-		if key != string(menuLetter(i)) {
-			continue
-		}
-
-		m.weaponID = option.ID
-		m.focus = i
-
-		m.notice = ""
-
-		if m.name == "" {
-			m.screen = ScreenName
-
-			return
-		}
-
-		m.startGame()
-
-		return
-	}
-}
-
-func (m *AppModel) handleNameKey(key string) {
-	switch key {
-	case "esc":
-		m.screen = ScreenWeapon
-		m.notice = ""
-
-		return
-
-	case "backspace":
-		if len(m.name) > 0 {
-			runes := []rune(m.name)
-
-			m.name = string(runes[:len(runes)-1])
-		}
-
-	case "enter":
-		if err := character.ValidateName(m.name); err != nil {
-			m.notice = err.Error()
-
-			return
-		}
-
-		m.startGame()
-
-	default:
-		m.appendNameKey(key)
-	}
-}
-
 func (m *AppModel) startGame() {
 	started, err := game.NewDungeonGameWithRules(
 		m.seed,
@@ -503,12 +239,4 @@ func flattenGroups(groups []script.MenuGroup) []string {
 	}
 
 	return ids
-}
-
-func menuLetter(index int) rune {
-	if index < 26 {
-		return rune('a' + index)
-	}
-
-	return rune('A' + index - 26)
 }

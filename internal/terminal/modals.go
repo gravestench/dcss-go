@@ -84,22 +84,6 @@ func (m *AppModel) drawConfirm(canvas *Canvas) {
 	drawPresentation(canvas, fullRegion(canvas), result)
 }
 
-func (m *AppModel) handleModalKey(key string) {
-	switch key {
-	case "esc":
-		m.screen = ScreenPlay
-		m.notice = ""
-
-	case "?":
-		m.previous = m.screen
-		m.screen = ScreenHelp
-		m.notice = ""
-
-	default:
-		m.notice = "This menu control is unavailable in the Go port."
-	}
-}
-
 func (m *AppModel) drawModalNotice(canvas *Canvas) {
 	if m.notice != "" {
 		m.drawStatus(canvas, "modal_notice")

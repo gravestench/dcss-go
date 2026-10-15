@@ -1,7 +1,6 @@
 package terminal
 
 import (
-	tea "charm.land/bubbletea/v2"
 	"dcrawl-go/internal/game"
 )
 
@@ -22,96 +21,6 @@ func (m *AppModel) startAim(kind game.CommandKind, itemID uint64) {
 	}
 
 	m.openScreen(ScreenAim)
-}
-
-func (m *AppModel) handleThrowKey(key string) tea.Cmd {
-	if key == "esc" {
-		m.openScreen(ScreenPlay)
-
-		return nil
-	}
-
-	if key == "?" {
-		m.openReturnableScreen(ScreenHelp)
-
-		return nil
-	}
-
-	for index, item := range m.game.View().Inventory {
-		if key != string(menuLetter(index)) {
-			continue
-		}
-
-		if item.Class != "OBJ_MISSILES" {
-			m.notice = "That is not a missile."
-
-			return nil
-		}
-
-		m.startAim(game.CommandThrow, item.ID)
-
-		return nil
-	}
-
-	m.notice = "Select a missile by its inventory letter."
-
-	return nil
-}
-
-func (m *AppModel) handleAimKey(key string) tea.Cmd {
-	if key == "esc" {
-		m.openScreen(ScreenPlay)
-
-		return nil
-	}
-
-	if key == "enter" {
-		view := m.game.View()
-		command := game.Command{
-			Kind:   m.aimKind,
-			DX:     m.aimX - view.PlayerX,
-			DY:     m.aimY - view.PlayerY,
-			ItemID: m.aimItemID,
-		}
-
-		m.openScreen(ScreenPlay)
-
-		return m.stepPlayCommand(command)
-	}
-
-	if key == "tab" {
-		m.cycleAimTarget()
-
-		return nil
-	}
-
-	command, found := CommandForKey(key)
-
-	if !found || command.Kind != game.CommandMove {
-		m.notice = "Move the target with direction keys; Enter fires, Esc cancels."
-
-		return nil
-	}
-
-	view := m.game.View()
-	x := m.aimX + command.DX
-	y := m.aimY + command.DY
-
-	if x < 0 ||
-		y < 0 ||
-		x >= view.Width ||
-		y >= view.Height ||
-		view.Cells[y*view.Width+x].State != game.Visible {
-		m.notice = "You cannot aim there."
-
-		return nil
-	}
-
-	m.aimX = x
-	m.aimY = y
-	m.notice = ""
-
-	return nil
 }
 
 func (m *AppModel) cycleAimTarget() {

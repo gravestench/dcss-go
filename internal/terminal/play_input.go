@@ -15,123 +15,134 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 	}
 
 	if m.game.View().EquipmentDelay != nil {
-		return m.handleEquipmentDelayKey(key)
+		return m.routeInput("equipment_delay", key)
 	}
 
 	if m.pendingDoor != 0 {
-		return m.handleDoorDirectionKey(key)
+		return m.routeInput("door", key)
 	}
 
-	switch key {
-	case "i":
-		m.openReturnableScreen(ScreenInventory)
-
-		return nil
-
-	case "m":
-		m.openReturnableScreen(ScreenSkills)
-
-		return nil
-
-	case "?":
-		m.openReturnableScreen(ScreenHelp)
-
-		return nil
-
-	case "S":
-		m.openConfirmation(confirmSave)
-
-		return nil
-
-	case "ctrl+s":
-		return m.saveAndExit()
-
-	case "ctrl+q":
-		m.openConfirmation(confirmAbandon)
-
-		return nil
-
-	case "q":
-		m.openReturnableScreen(ScreenQuaff)
-
-		return nil
-
-	case "d":
-		m.openScreen(ScreenDrop)
-		m.dropQuantity = ""
-
-		return nil
-
-	case "w":
-		m.openScreen(ScreenWield)
-
-		return nil
-
-	case "f":
-		m.startAim(game.CommandFire, 0)
-
-		return nil
-
-	case "F":
-		m.openScreen(ScreenThrow)
-
-		return nil
-
-	case "W":
-		m.openScreen(ScreenWear)
-
-		return nil
-
-	case "T":
-		m.openScreen(ScreenTakeOff)
-
-		return nil
-
-	case "O":
-		return m.startDoorCommand(game.CommandOpenDoor)
-
-	case "C":
-		return m.startDoorCommand(game.CommandCloseDoor)
-
-	case "L":
-		m.notice = "Running is unavailable in the Go port."
-
-		return nil
-	}
-
-	command, ok := CommandForKey(key)
-
-	if !ok {
-		m.notice = fmt.Sprintf("Command %q is unavailable in the Go port.", key)
-
-		return nil
-	}
-
-	return m.stepPlayCommand(command)
+	return m.routeInput("play", key)
 }
 
-func (m *AppModel) handleEquipmentDelayKey(key string) tea.Cmd {
-	switch key {
-	case "esc":
-		m.equipmentTickID++
+var inputScreens = map[string]ScreenID{
+	"startup":    ScreenStartup,
+	"species":    ScreenSpecies,
+	"background": ScreenBackground,
+	"weapon":     ScreenWeapon,
+	"name":       ScreenName,
+	"play":       ScreenPlay,
+	"inventory":  ScreenInventory,
+	"skills":     ScreenSkills,
+	"help":       ScreenHelp,
+	"quaff":      ScreenQuaff,
+	"drop":       ScreenDrop,
+	"wield":      ScreenWield,
+	"throw":      ScreenThrow,
+	"wear":       ScreenWear,
+	"take_off":   ScreenTakeOff,
+}
 
-		return m.stepPlayCommand(game.Command{
-			Kind: game.CommandCancelEquipment,
-		})
+var gameInputActions = map[string]bool{
+	"aim":                true,
+	"cancel_equipment":   true,
+	"change_skill":       true,
+	"choose_stat":        true,
+	"confirm":            true,
+	"confirm_accept":     true,
+	"confirm_cancel":     true,
+	"cycle_aim":          true,
+	"door":               true,
+	"drop_quantity":      true,
+	"finish_door":        true,
+	"fire_aim":           true,
+	"item_step":          true,
+	"move_aim":           true,
+	"save_exit":          true,
+	"step":               true,
+	"toggle_skill_focus": true,
+	"toggle_skill_mode":  true,
+}
 
-	case "S":
-		m.equipmentTickID++
-		m.openConfirmation(confirmSave)
-
-		return nil
-
-	case "ctrl+s":
-		m.equipmentTickID++
-
-		return m.saveAndExit()
+func (m *AppModel) routeInput(screen, key string, extra ...map[string]any) tea.Cmd {
+	input := map[string]any{
+		"screen": screen,
+		"key":    key,
 	}
 
-	m.notice = "You are changing your equipment. Esc interrupts."
+	for _, fields := range extra {
+		for name, value := range fields {
+			input[name] = value
+		}
+	}
+
+	decision, err := m.presentationRuntime.PolicyReadOnly("terminal.input", input)
+
+	if err != nil {
+		m.notice = fmt.Sprintf("Input policy failed: %v", err)
+
+		return nil
+	}
+
+	return m.applyInputDecision(decision)
+}
+
+func (m *AppModel) routeInventoryInput(screen, key string) tea.Cmd {
+	if m.game == nil {
+		m.notice = "Input policy requested inventory before game start."
+
+		return nil
+	}
+
+	return m.routeInput(screen, key, map[string]any{
+		"inventory":     inventoryInput(m.game.View().Inventory),
+		"drop_quantity": m.dropQuantity,
+	})
+}
+
+func (m *AppModel) applyInputDecision(decision map[string]any) tea.Cmd {
+	action, ok := decision["action"].(string)
+
+	if !ok {
+		m.notice = "Input policy returned no action."
+
+		return nil
+	}
+
+	if m.game == nil && gameInputActions[action] {
+		m.notice = "Input policy requested a game action before game start."
+
+		return nil
+	}
+
+	switch action {
+	case "none", "return_screen", "return_to_startup", "notice", "screen":
+		return m.applyNavigationDecision(action, decision)
+
+	case "confirm", "save_exit", "cancel_equipment", "choose_stat",
+		"confirm_cancel", "confirm_accept":
+		return m.applySessionDecision(action, decision)
+
+	case "aim", "door", "step":
+		return m.applyGameplayDecision(action, decision)
+
+	case "drop_quantity", "item_step":
+		return m.applyItemDecision(action, decision)
+
+	case "fire_aim", "cycle_aim", "move_aim", "cancel_door",
+		"finish_door":
+		return m.applySpatialDecision(action, decision)
+
+	case "focus", "quit", "load_saved", "start_new", "name_edit",
+		"select_choice", "select_weapon", "return_weapon", "start_game":
+		return m.applyPregameDecision(action, decision)
+
+	case "toggle_skill_mode", "toggle_skill_focus", "change_skill":
+		return m.applySkillDecision(action, decision)
+
+	default:
+		m.notice = fmt.Sprintf("Input policy returned unsupported action %q.", action)
+	}
 
 	return nil
 }

@@ -28,15 +28,26 @@ func playingModel(t *testing.T) *AppModel {
 }
 
 func TestPlayKeysSourceBindingsAndTurnCost(t *testing.T) {
+	keymap := pregameModel(t)
+
 	expect := func(key string, kind game.CommandKind, dx, dy int) {
 		t.Helper()
-		command, ok := CommandForKey(key)
+		decision, err := keymap.presentationPolicy("terminal.input", map[string]any{
+			"screen": "play",
+			"key":    key,
+		})
 
-		if !ok ||
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		command, err := playCommandFromDecision(decision)
+
+		if err != nil ||
 			command.Kind != kind ||
 			command.DX != dx ||
 			command.DY != dy {
-			t.Fatalf("%q: %+v, %v", key, command, ok)
+			t.Fatalf("%q: %+v, %v", key, command, err)
 		}
 	}
 
@@ -75,7 +86,16 @@ func TestPlayKeysSourceBindingsAndTurnCost(t *testing.T) {
 		"ctrl+s",
 		"ctrl+q",
 	} {
-		if _, ok := CommandForKey(key); ok {
+		decision, err := keymap.presentationPolicy("terminal.input", map[string]any{
+			"screen": "play",
+			"key":    key,
+		})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if decision["action"] == "step" {
 			t.Fatalf("UI/stub key %q became a game command", key)
 		}
 	}
@@ -239,7 +259,7 @@ func TestStatChoiceTransitionAfterStep(t *testing.T) {
 		t.Fatal("stat choice prompt is missing")
 	}
 
-	m.handleStatChoiceKey("x")
+	m.handleKey("x")
 
 	if m.screen != ScreenStatChoice || m.notice == "" {
 		t.Fatalf("invalid stat key changed screen: %d, notice %q", m.screen, m.notice)

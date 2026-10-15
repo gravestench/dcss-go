@@ -147,6 +147,7 @@ func inventoryInput(items []game.ItemView) []any {
 
 	for _, item := range items {
 		result = append(result, map[string]any{
+			"id":       item.ID,
 			"name":     item.Name,
 			"class":    item.Class,
 			"quantity": item.Quantity,

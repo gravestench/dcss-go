@@ -41,6 +41,20 @@ func (r *Runtime) luaRegisterPolicy(state *lua.LState) int {
 }
 
 func (r *Runtime) Policy(name string, input map[string]any) (map[string]any, error) {
+	return r.policyWithContext(name, input, r.context)
+}
+
+// PolicyReadOnly denies host mutations while evaluating a Lua decision.
+// Callers must provide the state the policy needs through input.
+func (r *Runtime) PolicyReadOnly(name string, input map[string]any) (map[string]any, error) {
+	return r.policyWithContext(name, input, r.state.NewTable())
+}
+
+func (r *Runtime) policyWithContext(
+	name string,
+	input map[string]any,
+	hostContext lua.LValue,
+) (map[string]any, error) {
 	callback, found := r.policies[name]
 
 	if !found {
@@ -63,7 +77,7 @@ func (r *Runtime) Policy(name string, input map[string]any) (map[string]any, err
 		Fn:      callback,
 		NRet:    1,
 		Protect: true,
-	}, r.context, argument)
+	}, hostContext, argument)
 
 	r.state.RemoveContext()
 	cancel()

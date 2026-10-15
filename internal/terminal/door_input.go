@@ -45,30 +45,3 @@ func (m *AppModel) startDoorCommand(kind game.CommandKind) tea.Cmd {
 
 	return m.stepPlayCommand(game.Command{Kind: kind})
 }
-
-func (m *AppModel) handleDoorDirectionKey(key string) tea.Cmd {
-	if key == "esc" {
-		m.pendingDoor = 0
-		m.notice = ""
-
-		return nil
-	}
-
-	direction, ok := CommandForKey(key)
-
-	if !ok || direction.Kind != game.CommandMove {
-		m.notice = "Choose a movement direction or Esc to cancel."
-
-		return nil
-	}
-
-	command := game.Command{
-		Kind: m.pendingDoor,
-		DX:   direction.DX,
-		DY:   direction.DY,
-	}
-
-	m.pendingDoor = 0
-
-	return m.stepPlayCommand(command)
-}
