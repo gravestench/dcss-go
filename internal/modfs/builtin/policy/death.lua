@@ -1,4 +1,8 @@
 local catalog = require("policy.catalog")
+local monster_flags = require("constants.monster_flags")
+local item_use = require("constants.monster_item_use")
+local books = require("ids.monster_spellbooks")
+local spell_weights = require("data.monster_spell_xp")
 
 local death = {}
 
@@ -12,7 +16,11 @@ local function has_flag(definition, wanted)
     return false
 end
 
-function death.experience(definition, max_hp)
+function death.experience(definition, max_hp, legacy)
+    if has_flag(definition, monster_flags.NO_EXP_GAIN) then
+        return 0
+    end
+
     local max_melee = 0
 
     for _, attack in ipairs(definition.attacks or {}) do
@@ -22,7 +30,18 @@ function death.experience(definition, max_hp)
     local xp = math.floor((16 + max_hp) * definition.hd * definition.hd / 10)
     local difficulty = 0
 
-    if has_flag(definition, "M_FAST_REGEN") then
+    local spellcaster = definition.spellbook_id ~= books.MST_NO_SPELLS
+
+    if spellcaster and definition.spellbook_id ~= books.MST_GHOST then
+        local book = catalog.get("monster_spellbooks",
+            definition.spellbook_id)
+
+        for _, slot in ipairs(book.slots) do
+            difficulty = difficulty + (spell_weights[slot.spell_id] or 0)
+        end
+    end
+
+    if has_flag(definition, monster_flags.FAST_REGEN) then
         difficulty = difficulty + 15
     end
 
@@ -31,15 +50,18 @@ function death.experience(definition, max_hp)
             math.floor(max_melee / 2) or max_melee)
     end
 
-    local equipment_user = definition.item_use_id ~= "MONUSE_NOTHING"
-    local spellcaster = definition.spellbook_id ~= "MST_NO_SPELLS"
+    local equipment_user = definition.item_use_id ~= item_use.NOTHING and
+        definition.item_use_id ~= item_use.OPEN_DOORS
 
     if equipment_user then
         difficulty = difficulty + 30
     end
 
     xp = math.floor(xp * (100 + math.min(100, difficulty)) / 100)
-    xp = math.floor(xp * definition.speed / 10)
+
+    if definition.speed > 0 then
+        xp = math.floor(xp * definition.speed / 10)
+    end
 
     if definition.speed < 10 and not spellcaster and not equipment_user then
         xp = math.floor(xp / 2)
@@ -54,7 +76,7 @@ function death.experience(definition, max_hp)
     end
 
     if xp > 750 then
-        xp = 750 + math.floor((xp - 750) / 6)
+        xp = 750 + math.floor((xp - 750) / (legacy and 3 or 6))
     end
 
     return math.max(1, xp)

@@ -1,0 +1,13 @@
+local flags = {
+    CONJURED = "M_CONJURED",
+    PROJECTILE = "M_PROJECTILE",
+    AVATAR = "M_AVATAR",
+    NO_EXP_GAIN = "M_NO_EXP_GAIN",
+    FAST_REGEN = "M_FAST_REGEN",
+    INSUBSTANTIAL = "M_INSUBSTANTIAL",
+    SPINY = "M_SPINY",
+    NO_THREAT = "M_NO_THREAT",
+    STASIS = "M_STASIS",
+}
+
+return flags
