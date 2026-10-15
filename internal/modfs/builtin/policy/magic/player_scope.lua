@@ -1,28 +1,33 @@
 local catalog = require("policy.catalog")
 local player_ids = require("data.player_spell_ids")
+local scopes = require("constants.spell_scopes")
 
 local scope = {}
 
 function scope.of(id)
     if type(id) ~= "string" or id == "" then
-        return "none"
+        return scopes.NONE
     end
 
     local found, spell = pcall(catalog.get, "spells", id)
 
     if not found or spell.status ~= "defined" then
-        return "none"
+        return scopes.NONE
+    end
+
+    if spell.player_scope then
+        return spell.player_scope
     end
 
     if player_ids.books[id] then
-        return "book"
+        return scopes.BOOK
     end
 
     if player_ids.invoked[id] then
-        return "invoked"
+        return scopes.INVOKED
     end
 
-    return "none"
+    return scopes.NONE
 end
 
 function scope.run_policy(_, input)

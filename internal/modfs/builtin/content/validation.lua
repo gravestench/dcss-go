@@ -4,6 +4,7 @@ local validation = {}
 local categories = require("constants.catalog")
 local books = require("ids.monster_spellbooks")
 local skill_ids = require("ids.skills")
+local spell_scopes = require("constants.spell_scopes")
 local source_population = require("data.dungeon_population").rows
 
 local population_monsters = {}
@@ -369,6 +370,13 @@ local function validate_registered_catalogs()
         if spell.status == "defined" then
             required(categories.SPELLS, spell, "name", "string")
             required(categories.SPELLS, spell, "level", "number")
+
+            if spell.player_scope ~= nil and
+                spell.player_scope ~= spell_scopes.NONE and
+                spell.player_scope ~= spell_scopes.BOOK and
+                spell.player_scope ~= spell_scopes.INVOKED then
+                fail(categories.SPELLS, id, "has invalid player_scope")
+            end
         end
     end
 

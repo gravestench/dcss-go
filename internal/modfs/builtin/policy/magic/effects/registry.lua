@@ -1,6 +1,8 @@
 local effects = {}
 local registered = {}
 local player_ids = require("data.player_spell_ids")
+local catalog = require("policy.catalog")
+local scopes = require("constants.spell_scopes")
 
 function effects.add(id, effect)
     if type(id) ~= "string" or id == "" or registered[id] then
@@ -28,6 +30,14 @@ function effects.missing()
 
     for id in pairs(player_ids.invoked) do
         seen[id] = true
+    end
+
+    for _, spell in ipairs(catalog.all("spells")) do
+        if spell.status == "defined" and
+            (spell.player_scope == scopes.BOOK or
+                spell.player_scope == scopes.INVOKED) then
+            seen[spell.id] = true
+        end
     end
 
     for id in pairs(seen) do

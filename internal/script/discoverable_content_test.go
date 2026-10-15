@@ -44,6 +44,37 @@ func TestOverlayAddsIndependentContentFiles(t *testing.T) {
 		t.Fatalf("Lua catalog did not see added definitions: %+v", result)
 	}
 
+	scope, err := runtime.Policy(
+		"magic.player_scope",
+		map[string]any{"spell_id": "SPELL_TEST_SPARK"},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if scope["scope"] != "book" {
+		t.Fatalf("added spell scope = %v", scope["scope"])
+	}
+
+	coverage, err := runtime.Policy("magic.effect_coverage", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	missing, ok := coverage["missing"].([]any)
+
+	if !ok {
+		t.Fatalf("spell coverage returned %T", coverage["missing"])
+	}
+
+	for _, id := range missing {
+		if id == "SPELL_TEST_SPARK" {
+			t.Fatal("added spell resolver was not discovered")
+		}
+	}
+
 	for _, entry := range []struct {
 		category string
 		id       string
@@ -137,6 +168,32 @@ func TestSamePathOverlayReplacesBundledDefinition(t *testing.T) {
 
 	if origin := runtime.definitionOrigins["monsters"][id]; origin != "content/monsters/0001_mons_abomination_large.lua" {
 		t.Fatalf("monster origin = %q", origin)
+	}
+}
+
+func TestInvalidPlayerSpellScopeNamesContentFile(t *testing.T) {
+	rules, err := modfs.Load("testdata/invalid-player-scope")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	world := akara.NewWorld()
+	defer world.Close()
+
+	runtime, err := NewCatalog(world, rules)
+
+	if runtime != nil {
+		runtime.Close()
+	}
+
+	if err == nil {
+		t.Fatal("invalid player scope was accepted")
+	}
+
+	if !strings.Contains(err.Error(), "zz_bad.lua") ||
+		!strings.Contains(err.Error(), "player_scope") {
+		t.Fatalf("invalid scope error omitted its source: %v", err)
 	}
 }
 

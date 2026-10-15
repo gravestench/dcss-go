@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local effects = require("policy.magic.effects.registry")
-local player_ids = require("data.player_spell_ids")
+local player_scope = require("policy.magic.player_scope")
+local scopes = require("constants.spell_scopes")
 
 local invoke = {}
 
@@ -10,7 +11,7 @@ local invoke = {}
 function invoke.resolve(ctx, player, input)
     local spell_id = input.spell_id
 
-    if not player_ids.invoked[spell_id] then
+    if player_scope.of(spell_id) ~= scopes.INVOKED then
         error("invalid invoked player effect " .. tostring(spell_id))
     end
 
