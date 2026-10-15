@@ -8,8 +8,27 @@ local stat_loss = require("policy.character.stat_loss")
 local temporary_mutations = require("policy.mutations.temporary")
 local evolution = require("policy.mutations.evolution")
 local kill_effects = require("policy.combat.player_kill_effects")
+local component = require("constants.component")
 
 local system = {}
+
+local function record_clone_reward(ctx, player, monster, xp)
+    if not ctx:has(monster, component.CHAOS_CLONE) then
+        return
+    end
+
+    local rewards = ctx:get(player, component.CHAOS_CLONE_REWARDS) or {
+        earned_xp = 0,
+    }
+
+    rewards.earned_xp = rewards.earned_xp + xp
+
+    if ctx:has(player, component.CHAOS_CLONE_REWARDS) then
+        ctx:set(player, component.CHAOS_CLONE_REWARDS, rewards)
+    else
+        ctx:add(player, component.CHAOS_CLONE_REWARDS, rewards)
+    end
+end
 
 function system.update(ctx)
     local kills = {}
@@ -49,6 +68,8 @@ function system.update(ctx)
                     training.available_xp = training.available_xp + 10 * xp
                     ctx:set(player, "core.progression", progress)
                     ctx:set(player, "core.skill_training", training)
+                    record_clone_reward(ctx, player, entity, xp)
+
                     temporary_mutations.gain_experience(ctx, player, xp)
                     evolution.gain_experience(ctx, player, xp)
                     stat_loss.gain_experience(ctx, player, xp, training.cost_level)

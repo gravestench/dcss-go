@@ -1,0 +1,401 @@
+-- Source: attack.cc:570-745. Chaos selected as its own brand chooses one
+-- eligible monster effect by weight, then applies that effect to the actor.
+local component = require("constants.component")
+local effect_ids = require("constants.chaos_effects")
+local attack_types = require("constants.monster_attack_types")
+local flags = require("constants.monster_flags")
+local holiness = require("constants.monster_holiness")
+local resistances = require("constants.resistance_ids")
+local status = require("policy.combat.player_brands.chaos_status")
+local slow = require("policy.combat.monster_slow")
+local polymorph = require("policy.magic.effects.statuses.polymorph")
+local roll = require("policy.combat.roll")
+
+local effects = {}
+
+local function has(values, wanted)
+    for _, value in ipairs(values or {}) do
+        if value == wanted then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function resistance(definition, wanted)
+    for _, entry in ipairs(definition.resistances or {}) do
+        if entry.id == wanted then
+            return entry.level
+        end
+    end
+
+    return 0
+end
+
+local function firewood(hit)
+    return has(hit.definition.flags, flags.STATIONARY) and
+        has(hit.definition.flags, flags.NO_THREAT)
+end
+
+local function slowable(_, hit)
+    return not has(hit.definition.flags, flags.STATIONARY)
+end
+
+local function polyable(_, hit)
+    return not firewood(hit) and
+        not has(hit.definition.holiness, holiness.UNDEAD) and
+        not has(hit.definition.holiness, holiness.NONLIVING) and
+        (hit.definition.willpower or 0) < 5000
+end
+
+local function cloneable(ctx, hit)
+    return not has(hit.definition.flags, flags.UNIQUE) and
+        not ctx:has(hit.defender, component.SUMMON_CONSTRUCT) and
+        not ctx:has(hit.defender, component.SUMMON_SEGMENT) and
+        not ctx:has(hit.defender, component.SPECTRAL_WEAPON)
+end
+
+local function shifter(ctx, hit)
+    return polyable(ctx, hit) and
+        has(hit.definition.holiness, holiness.NATURAL) and
+        not status.shifter_active(ctx, hit.defender)
+end
+
+local function rageable(ctx, hit)
+    local attack = hit.definition.attacks and hit.definition.attacks[1]
+    local kind = hit.definition.holiness
+    local berserkable = has(kind, holiness.NATURAL) or
+        has(kind, holiness.DEMONIC) or has(kind, holiness.HOLY)
+    local allegiance = ctx:get(hit.defender, component.MONSTER_ALLEGIANCE)
+    local stasis = ctx:get(hit.defender, component.MONSTER_STASIS)
+
+    return berserkable and attack and attack.damage > 0 and
+        attack.type_id ~= attack_types.NONE and
+        not ctx:has(hit.defender, component.PARALYSIS) and
+        (not allegiance or allegiance.frenzy_aut == 0 and
+            allegiance.fatigue_aut == 0) and
+        (not stasis or stasis.petrifying_aut == 0 and
+            stasis.petrified_aut == 0)
+end
+
+local function petrifiable(ctx, hit)
+    return slowable(ctx, hit) and
+        resistance(hit.definition, resistances.PETRIFY) <= 0
+end
+
+local function free_cell(ctx, position)
+    local seen = 0
+    local selected
+
+    for y = position.y - 1, position.y + 1 do
+        for x = position.x - 1, position.x + 1 do
+            if (x ~= position.x or y ~= position.y) and
+                ctx:walkable(position.level_id, x, y) and
+                not ctx:actor_at(position.level_id, x, y) then
+                seen = seen + 1
+
+                if roll.melee(ctx, seen) == 0 then
+                    selected = {
+                        x = x,
+                        y = y,
+                    }
+                end
+            end
+        end
+    end
+
+    return selected
+end
+
+local function copy_inventory(ctx, source, twin)
+    for _, item in ipairs(ctx:query({
+        component.ITEM,
+        component.CARRIED_BY,
+        component.EQUIPPED,
+    })) do
+        local carrier = ctx:get(item, component.CARRIED_BY)
+
+        if carrier.holder == source then
+            local copy = ctx:create()
+
+            ctx:add(copy, component.ITEM,
+                ctx:get(item, component.ITEM))
+            ctx:add(copy, component.CARRIED_BY, { holder = twin })
+            ctx:add(copy, component.EQUIPPED,
+                ctx:get(item, component.EQUIPPED))
+        end
+    end
+end
+
+local function clone(ctx, hit)
+    local position = ctx:get(hit.defender, component.POSITION)
+    local destination = position and free_cell(ctx, position)
+
+    if not destination then
+        return
+    end
+
+    local source = ctx:get(hit.defender, component.ACTOR)
+    local health = ctx:get(hit.defender, component.HEALTH)
+    local twin = ctx:create()
+
+    ctx:add(twin, component.ACTOR, {
+        kind_id = source.kind_id,
+        speed = source.speed,
+    })
+    ctx:add(twin, component.MONSTER_ENERGY, { points = 70 })
+    ctx:add(twin, component.HEALTH, {
+        current = health.current,
+        max = health.max,
+    })
+    ctx:add(twin, component.COMBAT, { shield_blocks = 0 })
+    ctx:add(twin, component.AI, { behavior = "wander" })
+
+    local slow_state = ctx:get(hit.defender, component.PROJECTILE_SLOW)
+
+    if slow_state then
+        ctx:add(twin, component.PROJECTILE_SLOW, slow_state)
+    end
+
+    local summon = ctx:get(hit.defender, component.SUMMON)
+
+    if summon then
+        ctx:add(twin, component.SUMMON, summon)
+
+        local summon_stats = ctx:get(hit.defender, component.SUMMON_STATS)
+
+        if summon_stats then
+            ctx:add(twin, component.SUMMON_STATS, summon_stats)
+        end
+    end
+
+    local old_form = ctx:get(hit.defender, component.MONSTER_POLYMORPH)
+
+    ctx:add(twin, component.CHAOS_CLONE, {
+        roster_kind_id = old_form and old_form.original_kind_id or
+            source.kind_id,
+        created_aut = ctx:aut(),
+    })
+    copy_inventory(ctx, hit.defender, twin)
+    ctx:place_actor(twin, position.level_id,
+        destination.x, destination.y)
+    ctx:emit("combat", "The " .. hit.definition.name .. " splits in two!")
+end
+
+local function transform(ctx, hit)
+    polymorph.chaos(ctx, hit.defender, hit.definition,
+        hit.damage_done)
+end
+
+local function make_shifter(ctx, hit)
+    status.make_shifter(ctx, hit.defender)
+    polymorph.shapeshift(ctx, hit.defender, hit.definition)
+end
+
+local function rage(ctx, hit)
+    local value = ctx:get(hit.defender, component.MONSTER_ALLEGIANCE) or {
+        charm_aut = 0,
+        frenzy_aut = 0,
+        fatigue_aut = 0,
+    }
+
+    value.frenzy_aut = math.max(value.frenzy_aut, 120)
+
+    if ctx:has(hit.defender, component.MONSTER_ALLEGIANCE) then
+        ctx:set(hit.defender, component.MONSTER_ALLEGIANCE, value)
+    else
+        ctx:add(hit.defender, component.MONSTER_ALLEGIANCE, value)
+    end
+
+    ctx:emit("combat", "The " .. hit.definition.name ..
+        " flies into a frenzy!")
+end
+
+local function haste(ctx, hit)
+    status.apply(ctx, hit.defender, effect_ids.HASTE, 100)
+    ctx:emit("combat", "The " .. hit.definition.name .. " speeds up!")
+end
+
+local function might(ctx, hit)
+    status.apply(ctx, hit.defender, effect_ids.MIGHT, 100)
+    ctx:emit("combat", "The " .. hit.definition.name .. " grows stronger!")
+end
+
+local function agility(ctx, hit)
+    status.apply(ctx, hit.defender, effect_ids.AGILITY, 100)
+    ctx:emit("combat", "The " .. hit.definition.name .. " becomes agile!")
+end
+
+local function invisible(ctx, hit)
+    local value = ctx:get(hit.defender, component.MONSTER_ENCHANT) or {
+        blind_aut = 0,
+        corrosion_aut = 0,
+        invisible_aut = 0,
+    }
+
+    value.invisible_aut = math.max(value.invisible_aut, 100)
+
+    if ctx:has(hit.defender, component.MONSTER_ENCHANT) then
+        ctx:set(hit.defender, component.MONSTER_ENCHANT, value)
+    else
+        ctx:add(hit.defender, component.MONSTER_ENCHANT, value)
+    end
+
+    ctx:emit("combat", "The " .. hit.definition.name ..
+        " vanishes from sight!")
+end
+
+local function paralyze(ctx, hit)
+    local value = ctx:get(hit.defender, component.PARALYSIS)
+
+    if value then
+        value.remaining_aut = math.max(value.remaining_aut, 50)
+        ctx:set(hit.defender, component.PARALYSIS, value)
+    else
+        ctx:add(hit.defender, component.PARALYSIS, {
+            remaining_aut = 50,
+        })
+    end
+
+    ctx:emit("combat", "The " .. hit.definition.name ..
+        " suddenly stops moving!")
+end
+
+local function petrify(ctx, hit)
+    local value = ctx:get(hit.defender, component.MONSTER_STASIS) or {
+        hibernating = false,
+        sleep_wary_aut = 0,
+        petrifying_aut = 0,
+        petrified_aut = 0,
+    }
+
+    value.petrifying_aut = math.max(value.petrifying_aut, 50)
+
+    if ctx:has(hit.defender, component.MONSTER_STASIS) then
+        ctx:set(hit.defender, component.MONSTER_STASIS, value)
+    else
+        ctx:add(hit.defender, component.MONSTER_STASIS, value)
+    end
+
+    ctx:emit("combat", "The " .. hit.definition.name ..
+        " begins to turn to stone!")
+end
+
+local function slow_monster(ctx, hit)
+    slow.apply(ctx, hit.defender, hit.definition)
+end
+
+local choices = {
+    {
+        name = effect_ids.CLONE,
+        weight = 1,
+        valid = cloneable,
+        apply = clone,
+    },
+
+    {
+        name = effect_ids.POLYMORPH,
+        weight = 2,
+        valid = polyable,
+        apply = transform,
+    },
+
+    {
+        name = effect_ids.SHIFTER,
+        weight = 1,
+        valid = shifter,
+        apply = make_shifter,
+    },
+
+    {
+        name = effect_ids.RAGE,
+        weight = 5,
+        valid = rageable,
+        apply = rage,
+    },
+
+    {
+        name = effect_ids.HASTE,
+        weight = 10,
+        valid = slowable,
+        apply = haste,
+    },
+
+    {
+        name = effect_ids.MIGHT,
+        weight = 10,
+        apply = might,
+    },
+
+    {
+        name = effect_ids.AGILITY,
+        weight = 10,
+        apply = agility,
+    },
+
+    {
+        name = effect_ids.INVISIBLE,
+        weight = 10,
+        apply = invisible,
+    },
+
+    {
+        name = effect_ids.SLOW,
+        weight = 10,
+        valid = slowable,
+        apply = slow_monster,
+    },
+
+    {
+        name = effect_ids.PARALYSIS,
+        weight = 5,
+        valid = slowable,
+        apply = paralyze,
+    },
+
+    {
+        name = effect_ids.PETRIFY,
+        weight = 5,
+        valid = petrifiable,
+        apply = petrify,
+    },
+}
+
+function effects.apply_named(ctx, name, hit)
+    for _, choice in ipairs(choices) do
+        if choice.name == name then
+            choice.apply(ctx, hit)
+            return
+        end
+    end
+
+    error("unknown chaos effect " .. tostring(name))
+end
+
+function effects.apply(ctx, hit)
+    local total = 0
+
+    for _, choice in ipairs(choices) do
+        if not choice.valid or choice.valid(ctx, hit) then
+            total = total + choice.weight
+        end
+    end
+
+    local draw = roll.melee(ctx, total)
+
+    for _, choice in ipairs(choices) do
+        if not choice.valid or choice.valid(ctx, hit) then
+            draw = draw - choice.weight
+
+            if draw < 0 then
+                choice.apply(ctx, hit)
+                return choice.name
+            end
+        end
+    end
+
+    error("chaos has no eligible monster effect")
+end
+
+return effects

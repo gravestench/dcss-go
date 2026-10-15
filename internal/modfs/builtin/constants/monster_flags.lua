@@ -14,6 +14,8 @@ local flags = {
     BATTY = "M_BATTY",
     COLD_BLOOD = "M_COLD_BLOOD",
     WARM_BLOOD = "M_WARM_BLOOD",
+    UNIQUE = "M_UNIQUE",
+    CLARITY = "M_CLARITY",
 }
 
 return flags

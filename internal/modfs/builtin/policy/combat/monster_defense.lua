@@ -4,6 +4,7 @@ local equipment = require("policy.combat.equipment")
 local component = require("constants.component")
 local size = require("constants.size")
 local monster_stats = require("policy.combat.monster_stats")
+local chaos_status = require("policy.combat.player_brands.chaos_status")
 
 local defense = {}
 
@@ -19,7 +20,7 @@ function defense.evasion(ctx, monster, definition)
         ev = math.floor(ev / divisor)
     end
 
-    return math.max(0, ev)
+    return math.max(0, chaos_status.evasion(ctx, monster, ev))
 end
 
 function defense.armour(ctx, monster, definition)

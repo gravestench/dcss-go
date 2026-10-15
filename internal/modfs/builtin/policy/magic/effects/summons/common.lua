@@ -185,7 +185,9 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
         kind_id = kind_id,
         speed = definition.speed,
     })
-    ctx:add(actor, "core.monster_energy", { points = energy.initial })
+    ctx:add(actor, "core.monster_energy", {
+        points = options and options.passive and 0 or energy.initial,
+    })
     ctx:add(actor, component.HEALTH, {
         current = hp,
         max = hp,

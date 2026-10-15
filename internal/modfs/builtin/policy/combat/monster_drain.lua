@@ -90,8 +90,9 @@ function drain.resistance(ctx, monster, definition)
     return math.min(3, equipped_resistance(ctx, monster, definition))
 end
 
-function drain.apply(ctx, target, definition, source)
+function drain.apply(ctx, target, definition, source, stream)
     local resistance = drain.resistance(ctx, target, definition)
+    local random_stream = stream or "mutation"
 
     if resistance >= 3 then
         return false
@@ -100,7 +101,7 @@ function drain.apply(ctx, target, definition, source)
     ctx:emit("combat", "The " .. definition.name .. " is drained!")
 
     local health, dealt = monster_health.damage(ctx, target,
-        2 + ctx:random("mutation", 3), source)
+        2 + ctx:random(random_stream, 3), source)
 
     if dealt > 0 and health.current == 0 then
         if source and ctx:has(source, component.PLAYER) then
@@ -112,8 +113,8 @@ function drain.apply(ctx, target, definition, source)
 
     local current = ctx:get(target, component.MONSTER_DRAINED)
     local remaining = current and current.remaining_aut or 0
-    local duration = 200 + ctx:random("mutation", 100)
-    local cap = 300 - remaining - ctx:random("mutation", 50)
+    local duration = 200 + ctx:random(random_stream, 100)
+    local cap = 300 - remaining - ctx:random(random_stream, 50)
 
     duration = math.min(duration, cap)
 

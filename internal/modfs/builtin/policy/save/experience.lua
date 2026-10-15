@@ -9,6 +9,7 @@ function module.run(ctx, input)
     local player = ctx:player()
     local progress = ctx:get(player, "core.progression")
     local potion = ctx:get(player, component.POTION_EXPERIENCE)
+    local clone_rewards = ctx:get(player, component.CHAOS_CLONE_REWARDS)
     local allowed = roster.allowed(input.scenario_id)
     local uses_population = input.scenario_id == "fixed-dungeon-population-v1" or
         input.scenario_id == "generated-dungeon-basic-v1"
@@ -16,7 +17,8 @@ function module.run(ctx, input)
     local live_count = 0
 
     for _, entity in ipairs(ctx:query({ "core.ai", "core.actor" })) do
-        if not ctx:get(entity, "magic.summon") then
+        if not ctx:has(entity, component.SUMMON) and
+            not ctx:has(entity, component.CHAOS_CLONE) then
             local actor = ctx:get(entity, "core.actor")
 
             live[actor.kind_id] = true
@@ -45,9 +47,11 @@ function module.run(ctx, input)
     end
 
     local level_adjustment = potion and potion.untrained_level_xp or 0
+    local clone_xp = clone_rewards and clone_rewards.earned_xp or 0
 
-    if level_adjustment < 0 or level_adjustment > progress.total_xp or
-        progress.total_xp - level_adjustment > maximum then
+    if level_adjustment < 0 or clone_xp < 0 or
+        level_adjustment + clone_xp > progress.total_xp or
+        progress.total_xp - level_adjustment - clone_xp > maximum then
         error("saved experience exceeds possible Dungeon kills")
     end
 

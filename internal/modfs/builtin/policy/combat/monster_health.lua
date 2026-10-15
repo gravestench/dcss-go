@@ -2,8 +2,32 @@ local component = require("constants.component")
 local capabilities = require("constants.mutation_capabilities")
 local effects = require("policy.mutations.effects.registry")
 local statuses = require("policy.magic.effects.statuses.player")
+local player_health = require("policy.combat.player_health")
 
 local monster_health = {}
+
+local function share_spectral_damage(ctx, target, source, dealt)
+    if dealt < 2 or not source or
+        not ctx:has(target, component.SPECTRAL_WEAPON) then
+        return
+    end
+
+    local summon = ctx:get(target, component.SUMMON)
+    local owner = summon and summon.owner
+
+    if not owner or source == owner or
+        not ctx:has(owner, component.PLAYER) then
+        return
+    end
+
+    local health = ctx:get(owner, component.HEALTH)
+    local shared = math.min(math.floor(dealt / 2), health.current - 1)
+
+    if shared > 0 then
+        ctx:emit("combat", "Your spectral weapon shares its damage with you!")
+        player_health.damage(ctx, owner, shared, false)
+    end
+end
 
 -- Shared monster HP loss lets mutation effects observe damage actually
 -- dealt after petrification, with an explicit source actor.
@@ -27,6 +51,8 @@ function monster_health.damage(ctx, target, amount, source)
 
     health.current = before - dealt
     ctx:set(target, component.HEALTH, health)
+
+    share_spectral_damage(ctx, target, source, dealt)
 
     if dealt > 0 and health.current > 0 and source and
         ctx:has(source, component.PLAYER) then

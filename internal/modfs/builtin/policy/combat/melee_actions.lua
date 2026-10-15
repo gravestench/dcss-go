@@ -21,6 +21,8 @@ local monster_stats = require("policy.combat.monster_stats")
 local stab = require("policy.combat.stab")
 local vampire = require("policy.character.vampire")
 local auxiliary_attacks = require("constants.auxiliary_attacks")
+local player_brands = require("policy.combat.player_brands")
+local chaos_status = require("policy.combat.player_brands.chaos_status")
 
 local actions = {}
 
@@ -125,9 +127,27 @@ function actions.player(ctx, target, options)
 
     ctx:emit("combat", message)
 
+    local hit = {
+        attacker = ctx:player(),
+        defender = target,
+        definition = defender,
+        damage_done = outcome.damage,
+        health = health,
+        weapon_id = input.weapon_id,
+        weapon_entity = input.weapon_entity,
+    }
+
     if outcome.kind == "hit" then
-        statuses.confusing_touch_contact(ctx, ctx:player(), target, defender)
+        player_brands.apply(ctx, input.weapon_brand, hit)
+        health = hit.health
+
+        if not hit.banished and not hit.moved then
+            statuses.confusing_touch_contact(ctx, ctx:player(), target,
+                defender)
+        end
     end
+
+    player_brands.after_attack(ctx, input.weapon_brand, hit)
 
     if health.current == 0 then
         return
@@ -137,9 +157,13 @@ function actions.player(ctx, target, options)
         after_player_melee_hit(ctx, target, outcome.damage, health)
         health = ctx:get(target, "core.health")
 
-        if health.current > 0 then
+        if health.current > 0 and not hit.banished and not hit.moved then
             engulf.on_player_hit(ctx, target, outcome.damage)
         end
+    end
+
+    if hit.banished or hit.moved then
+        return
     end
 
     local auxiliary_input = auxiliary.input(ctx, target, defender)
@@ -313,6 +337,9 @@ function actions.monster(ctx, attacker)
 
     if outcome.kind == "hit" then
         outcome.damage = melee.monster_damage(ctx, attack_input, defense)
+        outcome.damage = statuses.frenzy_melee_damage(ctx, attacker,
+            outcome.damage)
+        outcome.damage = chaos_status.damage(ctx, attacker, outcome.damage)
     end
 
     local player = ctx:player()
@@ -420,6 +447,7 @@ function actions.monster_target(ctx, attacker, target)
     local dealt = statuses.enfeeble_melee_damage(ctx, attacker,
         outcome.damage)
     dealt = statuses.frenzy_melee_damage(ctx, attacker, dealt)
+    dealt = chaos_status.damage(ctx, attacker, dealt)
     local health = damage(ctx, target, dealt,
         targets.allied(ctx, attacker) or statuses.frenzied(ctx, attacker),
         attacker)

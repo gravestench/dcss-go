@@ -1,3 +1,6 @@
+local relocation = require("policy.world.monster_relocation")
+local component = require("constants.component")
+
 local abyss = {}
 
 -- Keep branch levels outside the Dungeon depth IDs.
@@ -25,7 +28,7 @@ function abyss.banish(ctx, player)
     end
 
     local x, y = landing(ctx)
-    ctx:add(player, "world.banishment", {
+    ctx:add(player, component.BANISHMENT, {
         origin_level_id = position.level_id,
         origin_x = position.x,
         origin_y = position.y,
@@ -34,8 +37,31 @@ function abyss.banish(ctx, player)
     ctx:emit("banishment", "You are cast into the Abyss!")
 end
 
+-- Distortion moves a monster to the existing Abyss level without a kill.
+-- Its origin is saved so future Abyss and branch rules can find the actor.
+function abyss.banish_monster(ctx, monster, definition)
+    local position = ctx:get(monster, "core.position")
+
+    if not position or position.level_id == abyss.level_id then
+        return false
+    end
+
+    local x, y = landing(ctx)
+
+    ctx:add(monster, component.BANISHMENT, {
+        origin_level_id = position.level_id,
+        origin_x = position.x,
+        origin_y = position.y,
+    })
+    relocation.move(ctx, monster, abyss.level_id, x, y)
+    ctx:emit("banishment", "The " .. definition.name ..
+        " is cast into the Abyss!")
+
+    return true
+end
+
 function abyss.escape(ctx, player)
-    local return_to = ctx:get(player, "world.banishment")
+    local return_to = ctx:get(player, component.BANISHMENT)
 
     if not return_to then
         error("Abyss escape has no banishment origin")
@@ -79,7 +105,7 @@ function abyss.escape(ctx, player)
     end
 
     ctx:move_actor(player, level_id, x, y)
-    ctx:remove(player, "world.banishment")
+    ctx:remove(player, component.BANISHMENT)
     ctx:emit("stairs", "You escape the Abyss!")
 end
 

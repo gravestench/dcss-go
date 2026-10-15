@@ -1,4 +1,4 @@
--- Return location for a player banished from the Dungeon.
+-- Return location for an actor banished from the Dungeon.
 register.component{
     id = "world.banishment",
     version = 1,

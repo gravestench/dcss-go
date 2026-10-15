@@ -8,6 +8,25 @@ local poison = require("policy.combat.monster_poison")
 local slow = require("policy.combat.monster_slow")
 local sticky_flame = require("policy.magic.effects.zaps.sticky_flame")
 local summons = require("policy.save.summons")
+local abyss = require("policy.world.abyss")
+local component = require("constants.component")
+
+local function validate_banishment(ctx, entity, position)
+    local origin = ctx:get(entity, component.BANISHMENT)
+
+    if not origin then
+        return
+    end
+
+    if position.level_id ~= abyss.level_id or
+        origin.origin_level_id <= 0 or
+        origin.origin_level_id == abyss.level_id or
+        not ctx:walkable(origin.origin_level_id,
+            origin.origin_x, origin.origin_y) then
+        error("monster " .. ctx:id(entity) ..
+            " has invalid banishment origin")
+    end
+end
 
 local function has_flag(definition, id)
     for _, flag in ipairs(definition.flags or {}) do
@@ -51,10 +70,19 @@ end
 local function validate_roster_monster(ctx, entity, actor, health, position,
     ai, state)
     local polymorph = ctx:get(entity, "magic.monster_polymorph")
-    local roster_id = polymorph and polymorph.original_kind_id or actor.kind_id
+    local clone = ctx:get(entity, component.CHAOS_CLONE)
+    local roster_id = clone and clone.roster_kind_id or
+        polymorph and polymorph.original_kind_id or actor.kind_id
 
-    if not state.fixed then
-        local level_id = position.level_id
+    if clone and (clone.roster_kind_id == "" or
+        clone.created_aut > state.current_aut) then
+        error("monster " .. ctx:id(entity) .. " has invalid chaos clone")
+    end
+
+    if not state.fixed and not clone then
+        local banishment = ctx:get(entity, component.BANISHMENT)
+        local level_id = banishment and banishment.origin_level_id or
+            position.level_id
         local count = (state.live_by_level[level_id] or 0) + 1
 
         if count > (state.budgets[level_id] or 0) then
@@ -72,18 +100,20 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     local definition = catalog.get("monsters", actor.kind_id)
     local profile = roster.profile(roster_id)
 
-    if state.fixed and state.seen[roster_id] then
+    if state.fixed and state.seen[roster_id] and not clone then
         error("duplicate fixed animal " .. roster_id)
     end
 
-    state.seen[roster_id] = true
+    if not clone then
+        state.seen[roster_id] = true
+    end
 
     if polymorph and (roster_id == actor.kind_id or
         health.max <= 0 or health.current > health.max) then
         error("invalid polymorphed monster " .. ctx:id(entity))
     end
 
-    if not polymorph and
+    if not polymorph and not clone and
         (health.max < profile.minimum or health.max > profile.maximum) then
         error("impossible fixed monster maximum HP " .. health.max)
     end
@@ -151,6 +181,8 @@ function module.run(ctx, input)
         if health.current <= 0 then
             error("saved monster " .. ctx:id(entity) .. " has no remaining HP")
         end
+
+        validate_banishment(ctx, entity, position)
 
         local summon = ctx:get(entity, "magic.summon")
 

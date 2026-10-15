@@ -2,6 +2,7 @@ local equipment = require("policy.combat.equipment")
 local fighter = require("policy.combat.fighter")
 local player_attributes = require("policy.character.attributes")
 local roll = require("policy.combat.roll")
+local brands = require("constants.weapon_brands")
 local items = require("policy.inventory.items")
 
 local delay = {}
@@ -129,7 +130,8 @@ function delay.player(ctx, time_taken)
 
     -- The source combines random_var distributions before making one melee draw.
     return action_cost(ctx, time_taken, base, reduction, denominator,
-        shield_penalty(ctx), 3, nil, false)
+        shield_penalty(ctx), 3, nil,
+        attack.using_weapon and attack.weapon_brand == brands.SPEED)
 end
 
 function delay.projectile(ctx, time_taken, item_id)
@@ -158,7 +160,7 @@ function delay.projectile(ctx, time_taken, item_id)
 
         reduction = math.min(skill10, 20 * (base - minimum_delay))
         minimum = 3
-        speed_brand = item.ego == "SPWPN_SPEED"
+        speed_brand = item.ego == brands.SPEED
 
         local worn = equipment.worn(ctx, ctx:player(), { body = true })
         local body = worn.body and worn.body.definition.armour or nil

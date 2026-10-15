@@ -115,7 +115,7 @@ local function candidate(source, target)
     return true
 end
 
-local function weighted_candidates(ctx, source, position)
+local function weighted_candidates(ctx, source, position, stream)
     local choices = {}
 
     for _, definition in ipairs(definitions) do
@@ -145,7 +145,7 @@ local function weighted_candidates(ctx, source, position)
             total = total + choice.weight
         end
 
-        local draw = ctx:random("spell", total)
+        local draw = ctx:random(stream or "spell", total)
 
         for index, choice in ipairs(choices) do
             draw = draw - choice.weight
@@ -180,7 +180,7 @@ local function drop_inventory(ctx, monster, position)
     end
 end
 
-local function transform(ctx, target, source, definition)
+local function transform(ctx, target, source, definition, stream)
     local actor = ctx:get(target, component.ACTOR)
     local health = ctx:get(target, component.HEALTH)
     local position = ctx:get(target, component.POSITION)
@@ -188,7 +188,7 @@ local function transform(ctx, target, source, definition)
     local original = marker and marker.original_kind_id or source.id
     local maximum = hit_points.roll(ctx, definition.average_hp_10x)
     local current = math.floor(maximum * health.current / health.max) +
-        ctx:random("spell", maximum)
+        ctx:random(stream or "spell", maximum)
 
     actor.kind_id = definition.id
     actor.speed = definition.speed
@@ -283,6 +283,34 @@ function polymorph.cast(ctx, player, intent, spell, power)
 
     local definition = choices[ctx:random("spell", #choices) + 1]
     transform(ctx, target, source, definition)
+end
+
+-- Chaos melee uses the same legal forms and saved transformation as the
+-- spell, but spends its own combat RNG stream.
+function polymorph.chaos(ctx, target, source, power)
+    if not can_polymorph(source) or
+        will.resists(ctx, source, math.max(1, power), target) then
+        return false
+    end
+
+    return polymorph.shapeshift(ctx, target, source)
+end
+
+-- The shifter chaos effect transforms immediately without an enchantment
+-- resistance check; later shape changes use this same actor transition.
+function polymorph.shapeshift(ctx, target, source)
+    local position = ctx:get(target, component.POSITION)
+    local choices = weighted_candidates(ctx, source, position, "melee")
+
+    if #choices == 0 then
+        return false
+    end
+
+    local definition = choices[ctx:random("melee", #choices) + 1]
+
+    transform(ctx, target, source, definition, "melee")
+
+    return true
 end
 
 return polymorph

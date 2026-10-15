@@ -3,6 +3,9 @@ local equipment = require("policy.combat.equipment")
 local liquefaction = require("policy.magic.effects.translocation.liquefaction")
 local statuses = require("policy.magic.effects.statuses.player")
 local ammunition = require("ids.ammunition")
+local component = require("constants.component")
+local brands = require("constants.weapon_brands")
+local chaos_status = require("policy.combat.player_brands.chaos_status")
 
 local energy = {}
 
@@ -32,13 +35,18 @@ function energy.grant(ctx, input)
 
     for index, monster in ipairs(input.monsters) do
         local current = monster.points
+        local active = monster.level_id == input.active_level
+        local actor = active and monster.entity and
+            ctx:entity(monster.entity)
+        local passive = actor and ctx:has(actor,
+            component.SPECTRAL_WEAPON)
 
-        if monster.level_id == input.active_level then
+        if active and not passive then
             local speed = monster.speed
 
-            if monster.entity then
-                local actor = ctx:entity(monster.entity)
+            if actor then
                 speed = statuses.frenzy_speed(ctx, actor, speed)
+                speed = chaos_status.speed(ctx, actor, speed)
             end
 
             if not valid_integer(speed) or speed <= 0 then
@@ -122,7 +130,7 @@ local function speed_brand_cost(ctx, input, field, base_cost)
         end
     end
 
-    if brand ~= "SPWPN_SPEED" then
+    if brand ~= brands.SPEED then
         return base_cost
     end
 

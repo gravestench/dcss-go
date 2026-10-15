@@ -15,6 +15,7 @@ local size = require("constants.size")
 local component = require("constants.component")
 local rage = require("policy.character.rage")
 local ammunition = require("ids.ammunition")
+local weapon_brands = require("constants.weapon_brands")
 
 local fighter = {}
 
@@ -128,6 +129,9 @@ function fighter.attack(ctx, defender)
         input.weapon100 = fighter.skill(ctx, input.weapon_skill, 100)
         input.weapon50 = fighter.skill(ctx, input.weapon_skill, 50)
         input.weapon_id = definition.id
+        input.weapon_entity = weapon.entity
+        input.weapon_brand = launcher and weapon_brands.NORMAL or
+            weapon.item.ego
     else
         input.unarmed = true
         input.using_weapon = false
@@ -138,6 +142,7 @@ function fighter.attack(ctx, defender)
         input.weapon100 = fighter.skill(ctx, input.weapon_skill, 100)
         input.weapon50 = fighter.skill(ctx, input.weapon_skill, 50)
         input.unarmed256 = fighter.skill(ctx, input.weapon_skill, 256)
+        input.weapon_brand = weapon_brands.NORMAL
     end
 
     return input
@@ -165,6 +170,7 @@ function fighter.defense(ctx)
     local form = forms.modifiers(ctx, player)
     local state = required(ctx, player, "core.combat")
     local worn = equipment.worn(ctx, player, {
+        weapon = true,
         body = true,
         shield = true,
         head = true,
@@ -280,6 +286,10 @@ function fighter.defense(ctx)
         mutation_capabilities.AC_PARTIAL_X100)
     scaled_ac = scaled_ac + mutation_effects.full_sum(ctx, player,
         mutation_capabilities.AC_FULL_X100)
+
+    if worn.weapon and worn.weapon.item.ego == weapon_brands.PROTECTION then
+        scaled_ac = scaled_ac + 500
+    end
 
     local ac = math.max(0, math.floor(scaled_ac / 100))
     local shield_class = 0

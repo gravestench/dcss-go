@@ -7,6 +7,7 @@ local net = require("policy.combat.net")
 local poison = require("policy.combat.monster_poison")
 local slow = require("policy.combat.monster_slow")
 local sticky_flame = require("policy.magic.effects.zaps.sticky_flame")
+local brands = require("constants.weapon_brands")
 
 local summons = {}
 
@@ -26,12 +27,36 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         error("summon " .. ctx:id(entity) .. " has invalid ownership or expiry")
     end
 
+    local spectral = ctx:get(entity, component.SPECTRAL_WEAPON)
+    local item_source = state.source_category == categories.ITEMS and
+        actor.kind_id == monsters.MONS_SPECTRAL_WEAPON and spectral
+
     if state.source_category ~= categories.SPELLS and
-        state.source_category ~= categories.MUTATIONS then
+        state.source_category ~= categories.MUTATIONS and
+        not item_source then
         error("summon " .. ctx:id(entity) .. " has invalid origin category")
     end
 
     catalog.get(state.source_category, state.source_id)
+
+    if spectral then
+        local source = ctx:get(spectral.source_weapon, component.ITEM)
+        local carrier = ctx:get(spectral.source_weapon,
+            component.CARRIED_BY)
+        local equipped = ctx:get(spectral.source_weapon,
+            component.EQUIPPED)
+        local energy = ctx:get(entity, component.MONSTER_ENERGY)
+
+        if not item_source or not source or not carrier or not equipped or
+            source.kind_id ~= state.source_id or
+            source.ego ~= brands.SPECTRAL or
+            carrier.holder ~= state.owner or
+            equipped.slot ~= "weapon" or
+            not energy or energy.points ~= 0 or
+            spectral.triggered_aut > current_aut then
+            error("summon " .. ctx:id(entity) .. " has invalid spectral bond")
+        end
+    end
 
     local wander = ai.behavior == "wander" and
         ai.memory_until_aut == 0 and
