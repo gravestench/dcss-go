@@ -24,6 +24,8 @@ neither the C++ checkout nor the generated JSON artifacts. Those JSON files
 remain source-traced inputs for deliberate import refreshes and tests.
 `scripts/export-catalog-lua.py` refreshes the eleven aggregate Lua catalogs
 when upstream content changes.
+The player-book spell ID set is also committed as
+`data/player_book_spells.lua`; it is read at runtime without the C++ tree.
 
 An optional mod directory replaces bundled Lua files by relative path and
 may add files. Effective file bytes determine the ruleset hash recorded by
@@ -35,7 +37,7 @@ than a handler API for each game domain.
 
 | Domain | Implemented now | Main Lua location |
 | --- | --- | --- |
-| Character | Human, Hill Orc, Deep Elf, and Minotaur Fighters; weapon choice, starting gear, attributes, skills, HP/MP, training, XP, level gains, stat choice | `policy/character`, `systems/character_*` |
+| Character | Every legal selectable species/job pair starts; Lua owns chosen or fixed weapons, starting gear, species adjustments, attributes, skills, HP/MP, spell knowledge, Djinni's future spell schedule, religion, and durable origin state; training, XP, level gains, stat choice | `policy/character`, `schemas/character_origin.lua`, `systems/character_*` |
 | Dungeon | Seeded basic-layout D:1–2, rooms, corridors, doors, paired stairs, source-sized population, fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; item and spell capability dispatch without monster-ID handlers | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
 | Combat | Fighter melee and headbutts; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
@@ -72,10 +74,16 @@ and preserve unusual roll order.
 
 ## Remaining full-game work
 
-Only four species/job combinations and twelve early monster kinds can play
-through the current D:1–2 slice. The many imported species, jobs, monsters,
-spells, items, and branches still need behavior, generation, and UI flows.
-Major missing domains include player spellcasting and learning, religion,
+All legal selectable species/job combinations now enter the current D:1–2
+slice. Their starting state is Lua-owned and saved; most later species and
+job abilities are still unavailable. The many imported monsters, spells,
+items, and branches still need behavior, generation, and UI flows.
+Wanderer's broad gift branches are in Lua, but per-run item-set choices,
+minor themed books, and exact source RNG sequence still need parity work.
+Djinni's future spell list is durable, but later innate spell acquisition
+and the complete source spell-usability filter remain to be ported.
+Major missing domains include player spellcasting and learning, religion
+actions,
 mutations and forms, full monster abilities, vaults and Lua vault scripts,
 more layouts and branches, the Abyss monster roster and shifting terrain,
 player weapon brand effects including the spectral ally, traps, clouds,
@@ -83,16 +91,16 @@ shops, runes, endgame, and the
 complete item and equipment system. Native C++ saves, tiles, and network
 client compatibility are outside this Go port.
 
-For each new domain, add its complete Lua definition and policy slice,
-register systems where Akara state changes, then extend Go only for reusable
-engine primitives. Replace any old rule path in the same pass; do not keep
-compatibility adapters. Keep generated content checked in and refresh it
-explicitly.
+For each new domain, convert the full rule category in one pass. Put its
+definitions, policies, and ECS systems in actual Lua files; extend Go only
+for reusable engine primitives. Delete the previous rule path in the same
+change. Do not add compatibility adapters or parallel implementations. Keep
+generated content checked in and refresh it explicitly.
 
 ## Running the slice
 
 `go run ./cmd/dcrawl -seed 1 -save dcrawl-save.json` starts the terminal
-client. Choose Dungeon Crawl, one of the four playable Fighter species, a
-weapon, and a name. Use the in-game `?` help for commands. Unsupported
-choices remain visible and explain that their gameplay is unavailable
-without spending a turn.
+client. Choose Dungeon Crawl, any legal selectable species and background,
+a weapon when that background offers a choice, and a name. Use the in-game
+`?` help for commands. Commands whose gameplay is not yet ported remain
+visible and explain that they are unavailable without spending a turn.

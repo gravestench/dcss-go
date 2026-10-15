@@ -151,18 +151,12 @@ func TestCreationRecommendationAndFocusColors(t *testing.T) {
 		t.Fatal("recommended entry absent")
 	}
 
-	// Lua recommends this pair, but the missing start mechanics mark it unavailable.
-	found := false
+	fg, bg := m.characterChoiceColors("JOB_ARCANE_MARKSMAN", m.focus)
 
-	for _, entry := range c.cells {
-		if entry.bg == DarkGrey && entry.fg == White {
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		t.Fatal("unavailable recommended start is not marked")
+	if !choice.Playable ||
+		fg != White ||
+		bg != Green {
+		t.Fatalf("playable recommended start colors: %v/%v", fg, bg)
 	}
 }
 

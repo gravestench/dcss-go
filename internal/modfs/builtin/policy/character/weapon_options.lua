@@ -1,5 +1,5 @@
 local catalog = require("policy.catalog")
-local start = require("policy.character.start")
+local choice = require("policy.character_choice")
 
 local weapons = {}
 
@@ -51,14 +51,10 @@ local function upgrade(id, job_id, size)
 end
 
 function weapons.options(species_id, job_id)
-    if not start.supported(species_id, job_id) then
-        error("unsupported starting skills for " .. species_id .. "/" .. job_id)
-    end
-
     local species = catalog.get("species", species_id)
     local job = catalog.get("jobs", job_id)
 
-    if not species.selectable or not job.selectable then
+    if not choice.allowed(species, job) then
         error(species_id .. "/" .. job_id .. " is not a legal normal Dungeon start")
     end
 

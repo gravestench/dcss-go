@@ -58,7 +58,6 @@ type menuWeaponOption struct {
 // AppModel owns terminal navigation; the Game owns every turn-changing state.
 type AppModel struct {
 	choices             map[script.ChoiceKey]script.Choice
-	supportedStarts     map[script.ChoiceKey]bool
 	presentation        script.MenuPresentation
 	seed                uint64
 	savePath            string
@@ -133,19 +132,9 @@ func NewAppModelWithRules(
 		return nil, err
 	}
 
-	supportedStarts, err := projectSupportedStarts(presentationRuntime, presentation)
-
-	if err != nil {
-		presentationRuntime.Close()
-		presentationWorld.Close()
-
-		return nil, err
-	}
-
 	return &AppModel{
-		choices:         choices,
-		supportedStarts: supportedStarts,
-		presentation:    presentation,
+		choices:      choices,
+		presentation: presentation,
 
 		seed:                seed,
 		savePath:            savePath,

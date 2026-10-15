@@ -4,23 +4,6 @@ local weights = require("policy.character.training_weights")
 
 local training_rules = {}
 
-local supported = {
-    SK_FIGHTING = true,
-    SK_SHORT_BLADES = true,
-    SK_LONG_BLADES = true,
-    SK_MACES_FLAILS = true,
-    SK_AXES = true,
-    SK_POLEARMS = true,
-    SK_UNARMED_COMBAT = true,
-    SK_RANGED_WEAPONS = true,
-    SK_THROWING = true,
-    SK_ARMOUR = true,
-    SK_DODGING = true,
-    SK_SHIELDS = true,
-}
-
-training_rules.supported = supported
-
 local function append_recent(queue, id)
     if #queue == 100 then
         table.remove(queue, 1)
@@ -52,10 +35,6 @@ local function ensure_setting(skills, training, id)
 end
 
 function training_rules.record_practice(skills, training, species, id)
-    if not supported[id] then
-        error("unsupported Dungeon skill practice " .. id)
-    end
-
     local skill = find_skill(skills, id)
 
     if skill and skill.level == 27 then
@@ -72,10 +51,6 @@ function training_rules.record_practice(skills, training, species, id)
 end
 
 function training_rules.change(skills, training, species, id, focus)
-    if not supported[id] then
-        error("training " .. id .. " is unavailable in this Dungeon slice")
-    end
-
     formulas.skill_aptitude(species, id)
     local setting = ensure_setting(skills, training, id)
 
@@ -278,6 +253,22 @@ function training_rules.update(ctx, actor)
         formulas.rescale_health(health, regeneration, formulas.max_hp(progress.level, species, skills))
         ctx:set(actor, "core.health", health)
         ctx:set(actor, "core.regeneration", regeneration)
+    end
+
+    local progress = ctx:get(actor, "core.progression")
+    local magic = ctx:get(actor, "core.magic")
+
+    if not progress or not magic then
+        error("player lacks MP training state")
+    end
+
+    local maximum = formulas.max_mp(progress.level, species, skills)
+
+    if magic.max ~= maximum then
+        -- Source calc_mp() preserves current MP when a skill changes.
+        magic.max = maximum
+        magic.current = math.min(magic.current, maximum)
+        ctx:set(actor, "core.magic", magic)
     end
 end
 

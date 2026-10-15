@@ -434,25 +434,17 @@ func TestMinotaurFighterMenuStartAndSaveRestore(t *testing.T) {
 	}
 }
 
-func TestPregamePostWeaponNamePromptAndUnavailableChoices(t *testing.T) {
+func TestPregamePostWeaponNamePromptAndAvailableChoices(t *testing.T) {
 	m := pregameModel(t)
+	m.selectSpecies("SP_BARACHI")
+	m.selectBackground("JOB_GLADIATOR")
+
+	if m.screen != ScreenWeapon || m.jobID != "JOB_GLADIATOR" {
+		t.Fatal("legal Gladiator choice did not reach its weapon menu")
+	}
+
+	m = pregameModel(t)
 	pressApp(m, "enter")
-	pressApp(m, "c")
-
-	if m.screen != ScreenSpecies ||
-		m.game != nil ||
-		!strings.Contains(m.notice, "unavailable") {
-		t.Fatal("unported species started a game")
-	}
-
-	pressApp(m, "space")
-	pressApp(m, "b")
-
-	if m.screen != ScreenBackground ||
-		m.game != nil ||
-		!strings.Contains(m.notice, "unavailable") {
-		t.Fatal("unported Gladiator started a game")
-	}
 
 	pressApp(m, "a")
 	pressApp(m, "j")

@@ -21,6 +21,7 @@ local supported_weapons = {
     SK_POLEARMS = true,
     SK_RANGED_WEAPONS = true,
     SK_THROWING = true,
+    SK_STAVES = true,
 }
 
 function equipment.weapon_supported(skill_id)
@@ -46,6 +47,89 @@ local function rank(id)
     return value
 end
 
+local function mutation_level(species, id)
+    local level = 0
+
+    for _, mutation in ipairs(species.mutations or {}) do
+        if mutation.id == id and mutation.level <= 1 then
+            level = level + mutation.amount
+        end
+    end
+
+    return level
+end
+
+local function has_flag(species, id)
+    for _, flag in ipairs(species.flags or {}) do
+        if flag == id then
+            return true
+        end
+    end
+
+    return false
+end
+
+function equipment.can_wear(species, kind)
+    if kind.class ~= "OBJ_ARMOUR" or not kind.armour or
+        mutation_level(species, "MUT_NO_ARMOUR") > 0 then
+        return false
+    end
+
+    if species.id == "SP_OCTOPODE" and kind.slot ~= "head" and
+        kind.slot ~= "shield" then
+        return false
+    end
+
+    if species.id:find("^SP_.*DRACONIAN") and kind.slot == "body" then
+        return false
+    end
+
+    if kind.slot == "shield" and mutation_level(species, "MUT_MISSING_HAND") > 0 then
+        return false
+    end
+
+    if kind.slot == "gloves" and
+        (mutation_level(species, "MUT_CLAWS") >= 3 or
+            mutation_level(species, "MUT_DEMONIC_TOUCH") >= 3) then
+        return false
+    end
+
+    if kind.slot == "boots" and
+        (has_flag(species, "SPF_BARDING") or
+            mutation_level(species, "MUT_FLOAT") > 0 or
+            mutation_level(species, "MUT_CONSTRICTING_TAIL") > 0 or
+            mutation_level(species, "MUT_PAWS") > 0 or
+            mutation_level(species, "MUT_TENTACLE_ARMS") > 0 or
+            mutation_level(species, "MUT_HOOVES") >= 3 or
+            mutation_level(species, "MUT_TALONS") >= 3) then
+        return false
+    end
+
+    if kind.slot == "cloak" and
+        mutation_level(species, "MUT_WEAKNESS_STINGER") >= 3 then
+        return false
+    end
+
+    if kind.slot == "head" then
+        local horns = mutation_level(species, "MUT_HORNS")
+        local antennae = mutation_level(species, "MUT_ANTENNAE")
+
+        if horns >= 3 or antennae >= 3 then
+            return false
+        end
+
+        if kind.id == "ARM_HELMET" and
+            (horns > 0 or antennae > 0 or species.id == "SP_OCTOPODE" or
+                mutation_level(species, "MUT_BEAK") > 0 or
+                species.id:find("^SP_.*DRACONIAN")) then
+            return false
+        end
+    end
+
+    return rank(species.size) >= rank(kind.armour.fit_min_id) and
+        rank(species.size) <= rank(kind.armour.fit_max_id)
+end
+
 function equipment.in_slot(ctx, actor, slot)
     local found
 
@@ -65,8 +149,13 @@ function equipment.in_slot(ctx, actor, slot)
     return found
 end
 
-function equipment.needs_second_hand(kind, size)
-    return rank(size) < rank(kind.weapon.min_1h_size_id)
+function equipment.needs_second_hand(kind, species)
+    if mutation_level(species, "MUT_QUADRUMANOUS") > 0 and
+        rank(kind.weapon.min_2h_size_id) <= rank("SIZE_MEDIUM") then
+        return false
+    end
+
+    return rank(species.size) < rank(kind.weapon.min_1h_size_id)
 end
 
 -- A prepared result gives the command bridge a free message or an intent and
@@ -117,7 +206,7 @@ function equipment.prepare_wield(ctx, actor, item_id)
 
         local species = catalog.get("species", player.species_id)
 
-        if equipment.needs_second_hand(kind, species.size) then
+        if equipment.needs_second_hand(kind, species) then
             return { message = "You cannot wield that with only one hand." }
         end
     end
@@ -138,19 +227,17 @@ function equipment.validate_fit(ctx, actor, kind)
         return "You can't wear that!"
     end
 
-    if kind.id == "ARM_HELMET" then
-        local mutations = type(species.mutations) == "table" and species.mutations or {}
-
-        for _, mutation in ipairs(mutations) do
-            if mutation.id == "MUT_HORNS" and mutation.level <= 1 and mutation.amount > 0 then
-                return "You can't wear that with your horns!"
-            end
+    if not equipment.can_wear(species, kind) then
+        if kind.id == "ARM_HELMET" and
+            mutation_level(species, "MUT_HORNS") > 0 then
+            return "You can't wear that with your horns!"
         end
-    end
 
-    local size = rank(species.size)
+        if kind.id == "ARM_HELMET" and
+            mutation_level(species, "MUT_ANTENNAE") > 0 then
+            return "You can't wear that with your antennae!"
+        end
 
-    if size < rank(kind.armour.fit_min_id) or size > rank(kind.armour.fit_max_id) then
         return "That armour does not fit you."
     end
 
@@ -161,7 +248,7 @@ function equipment.validate_fit(ctx, actor, kind)
             local weapon = ctx:get(weapon_id, "core.item")
             local weapon_kind = items.kind(weapon)
 
-            if equipment.needs_second_hand(weapon_kind, species.size) then
+            if equipment.needs_second_hand(weapon_kind, species) then
                 return "You cannot use that shield with your weapon."
             end
         end

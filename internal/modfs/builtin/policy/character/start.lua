@@ -1,190 +1,140 @@
 local catalog = require("policy.catalog")
-local formulas = require("policy.character.formulas")
+local gear = require("policy.character.starting_gear")
+local wanderer = require("policy.character.wanderer")
+local traits = require("policy.character.traits")
+local innate_spells = require("policy.character.innate_spells")
+local starting_profile = require("policy.character.starting_profile")
 
 local start = {}
 
-local fighter_species = {
-    SP_HUMAN = true,
-    SP_HILL_ORC = true,
-    SP_DEEP_ELF = true,
-    SP_MINOTAUR = true,
+local religions = {
+    JOB_BERSERKER = {
+        god = "GOD_TROG",
+        piety = 35,
+    },
+    JOB_CHAOS_KNIGHT = {
+        god = "GOD_XOM",
+        piety = 100,
+    },
+    JOB_ABYSSAL_KNIGHT = {
+        god = "GOD_LUGONU",
+        piety = 60,
+    },
+    JOB_CINDER_ACOLYTE = {
+        god = "GOD_IGNIS",
+        piety = 150,
+    },
 }
 
-local fighter_weapons = {
-    WPN_RAPIER = true,
-    WPN_FLAIL = true,
-    WPN_WAR_AXE = true,
-    WPN_TRIDENT = true,
-    WPN_LONG_SWORD = true,
-    WPN_UNARMED = true,
-}
+local function mutation(species, id)
+    for _, entry in ipairs(species.mutations or {}) do
+        if entry.id == id and entry.level <= 1 and entry.amount > 0 then
+            return true
+        end
+    end
 
-function start.supported(species_id, job_id)
-    return fighter_species[species_id] == true and job_id == "JOB_FIGHTER"
+    return false
 end
 
-local function starting_skills(species, job, weapon_id)
-    if not fighter_weapons[weapon_id] then
-        error("weapon " .. weapon_id .. " is not a legal choice for " .. species.id .. "/" .. job.id)
+local function validate_weapon(species, job, weapon_id)
+    if job.weapon_choice == "WCHOICE_NONE" then
+        if weapon_id ~= "" then
+            error(job.id .. " does not choose a starting weapon")
+        end
+
+        return
     end
 
-    local weapon_skill = "SK_UNARMED_COMBAT"
+    local choices = require("policy.character.weapon_options").options(species.id, job.id)
 
-    if weapon_id ~= "WPN_UNARMED" then
-        local kind = catalog.get("items", weapon_id)
-
-        if kind.class ~= "OBJ_WEAPONS" or not kind.weapon_skill then
-            error("weapon " .. weapon_id .. " has no usable weapon skill")
+    for _, option in ipairs(choices) do
+        if option.id == weapon_id then
+            return
         end
-
-        weapon_skill = kind.weapon_skill
-        formulas.skill_aptitude(species, weapon_skill)
     end
 
-    local skills = {}
-    local seen = {}
+    error("invalid starting weapon " .. tostring(weapon_id) .. " for " .. species.id .. "/" .. job.id)
+end
 
-    for _, grant in ipairs(job.skills) do
-        local id = grant.id == "SK_WEAPON" and weapon_skill or grant.id
-        local aptitude = formulas.skill_aptitude(species, id)
+local function joined_mutations(species)
+    local values = {}
 
-        if seen[id] then
-            error(species.id .. "/" .. job.id .. " has duplicate starting skill " .. id)
+    for _, entry in ipairs(species.mutations or {}) do
+        if entry.level <= 1 and entry.amount > 0 then
+            values[#values + 1] = entry.id .. ":" .. entry.amount
         end
+    end
 
-        seen[id] = true
+    return table.concat(values, ";")
+end
 
-        if grant.level < 1 or grant.level > 9 then
-            error("unsupported Human starting skill level " .. grant.level)
-        end
+local function origin(ctx, species, job, profile, generated)
+    local initial = {}
 
-        local points = formulas.skill_points_needed(grant.level, 0) + 1
-        local level = 0
+    for _, skill in ipairs(profile.skills) do
+        initial[#initial + 1] = skill.id .. ":" .. skill.points
+    end
 
-        for next_level = 1, 8 do
-            if points <= formulas.skill_points_needed(next_level, aptitude) then
-                break
+    local library = generated and generated.spells or
+        (type(job.spells) == "table" and job.spells or {})
+    local memorized = {}
+
+    if #library > 0 then
+        if mutation(species, "MUT_INNATE_CASTER") then
+            for _, id in ipairs(library) do
+                memorized[#memorized + 1] = id
             end
+        else
+            local first = catalog.get("spells", library[1])
 
-            level = next_level
-        end
-
-        skills[#skills + 1] = { id = id, level = level, points = points }
-    end
-
-    return skills
-end
-
-start.starting_skills = starting_skills
-
-local function seed_queue(ctx, skills)
-    local counts = {}
-    local remainders = {}
-    local total = 0
-
-    for _, skill in ipairs(skills) do
-        total = total + skill.points * skill.points
-    end
-
-    if total == 0 then
-        error("cannot seed training without starting points")
-    end
-
-    local assigned = 0
-    local order = {}
-
-    for index, skill in ipairs(skills) do
-        local scaled = skill.points * skill.points * 100
-        counts[index] = math.floor(scaled / total)
-        remainders[index] = scaled % total
-        assigned = assigned + counts[index]
-        order[index] = index
-    end
-
-    table.sort(order, function(a, b)
-        if remainders[a] == remainders[b] then
-            return a < b
-        end
-
-        return remainders[a] < remainders[b]
-    end)
-
-    local extra = 1
-
-    while assigned < 100 do
-        counts[order[extra]] = counts[order[extra]] + 1
-        assigned = assigned + 1
-        extra = extra + 1
-    end
-
-    local queue = {}
-
-    for remaining = 100, 1, -1 do
-        local choice = ctx:random("skill", remaining)
-
-        for index, count in ipairs(counts) do
-            if choice < count then
-                queue[#queue + 1] = skills[index].id
-                counts[index] = count - 1
-                break
+            if first.level == 1 and
+                traits.start_spell_usable(species, first.id) then
+                memorized[1] = first.id
             end
-
-            choice = choice - count
         end
     end
 
-    return queue
-end
+    local worship = religions[job.id]
+    local timeout = 0
+    local future = {}
 
-function start.profile(ctx, species_id, job_id, weapon_id)
-    if not start.supported(species_id, job_id) then
-        error("unsupported starting skills for " .. species_id .. "/" .. job_id)
+    if mutation(species, "MUT_INNATE_CASTER") then
+        future = innate_spells.generate(ctx, species, memorized)
     end
 
-    local species = catalog.get("species", species_id)
-    local job = catalog.get("jobs", job_id)
-
-    if not species.selectable or not job.selectable then
-        error("banned character choice " .. species_id .. "/" .. job_id)
-    end
-
-    local skills = starting_skills(species, job, weapon_id)
-    local settings = {}
-
-    for _, skill in ipairs(skills) do
-        settings[#settings + 1] = {
-            id = skill.id,
-            enabled = true,
-            focused = false,
-        }
+    if job.id == "JOB_CHAOS_KNIGHT" then
+        timeout = math.max(5,
+            ctx:random("character", 40) + ctx:random("character", 40))
     end
 
     return {
-        attributes = {
-            strength = species.strength + job.strength,
-            intelligence = species.intelligence + job.intelligence,
-            dexterity = species.dexterity + job.dexterity,
-        },
-        skills = skills,
-        max_hp = formulas.max_hp(1, species, skills),
-        max_mp = formulas.max_mp(1, species),
-        training = {
-            available_xp = 0,
-            spent_xp = 0,
-            cost_level = 1,
-            manual = false,
-            settings = settings,
-            recent_practice = seed_queue(ctx, skills),
-            recent_all = seed_queue(ctx, skills),
-        },
+        initial_skills = table.concat(initial, ";"),
+        strength_bonus = profile.attributes.strength - species.strength - job.strength,
+        intelligence_bonus = profile.attributes.intelligence - species.intelligence - job.intelligence,
+        dexterity_bonus = profile.attributes.dexterity - species.dexterity - job.dexterity,
+        innate_mutations = joined_mutations(species),
+        library_spells = table.concat(library, ";"),
+        memorized_spells = table.concat(memorized, ";"),
+        future_innate_spells = table.concat(future, ";"),
+        religion = worship and worship.god or "GOD_NO_GOD",
+        piety = worship and worship.piety or 0,
+        gift_timeout = timeout,
     }
 end
 
 register.policy({
     id = "character.start",
     run = function(ctx, input)
-        local profile = start.profile(ctx, input.species_id, input.job_id, input.weapon_id)
         local player = ctx:player()
+        local species = catalog.get("species", input.species_id)
+        local job = catalog.get("jobs", input.job_id)
+        validate_weapon(species, job, input.weapon_id)
+        local generated = job.id == "JOB_WANDERER" and
+            wanderer.generate(ctx, species) or nil
+        local grants = generated and generated.equipment or nil
+        local weapon_skill = gear.give(ctx, player, species, job, input.weapon_id, grants)
+        local profile = starting_profile.build(ctx, species, job,
+            weapon_skill, generated)
 
         ctx:add(player, "core.attributes", profile.attributes)
         ctx:add(player, "core.skills", { entries = profile.skills })
@@ -200,15 +150,9 @@ register.policy({
             current = profile.max_mp,
             max = profile.max_mp,
         })
+        ctx:add(player, "character.origin", origin(ctx, species, job, profile, generated))
 
         return {}
-    end,
-})
-
-register.policy({
-    id = "character.supported_start",
-    run = function(_, input)
-        return { supported = start.supported(input.species_id, input.job_id) }
     end,
 })
 
@@ -217,22 +161,9 @@ register.policy({
     run = function(_, input)
         catalog.get("species", input.species_id)
 
-        -- The source's base player speed is 10 aut. Species modifiers
-        -- belong here when their starts become playable.
+        -- The source's base player action speed is 10 aut. Movement
+        -- modifiers are resolved by movement rules.
         return { speed = 10 }
-    end,
-})
-
-register.policy({
-    id = "character.supported_starts",
-    run = function(_, input)
-        local supported = {}
-
-        for index, pair in ipairs(input.pairs) do
-            supported[index] = start.supported(pair.species_id, pair.job_id)
-        end
-
-        return { supported = supported }
     end,
 })
 

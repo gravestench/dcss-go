@@ -1,7 +1,28 @@
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
-local start = require("policy.character.start")
-local training_rules = require("policy.character.training")
+
+local function initial_skills(origin)
+    local skills = {}
+
+    for encoded in origin.initial_skills:gmatch("[^;]+") do
+        local id, points = encoded:match("^(SK_[A-Z_]+):(%d+)$")
+
+        if not id then
+            error("invalid initial skill record")
+        end
+
+        skills[#skills + 1] = {
+            id = id,
+            points = tonumber(points),
+        }
+    end
+
+    if #skills == 0 then
+        error("missing initial skill record")
+    end
+
+    return skills
+end
 
 local function validate(ctx)
     local actor = ctx:player()
@@ -15,8 +36,13 @@ local function validate(ctx)
     end
 
     local species = catalog.get("species", player.species_id)
-    local job = catalog.get("jobs", player.job_id)
-    local starting = start.starting_skills(species, job, player.starting_weapon_id)
+    local origin = ctx:get(actor, "character.origin")
+
+    if not origin then
+        error("player lacks character origin")
+    end
+
+    local starting = initial_skills(origin)
     local entries = skills_component.entries
     local available = training.available_xp
     local spent = training.spent_xp
@@ -44,7 +70,7 @@ local function validate(ctx)
 
     for index, skill in ipairs(entries) do
         local aptitude = species.aptitudes[skill.id]
-        local allowed = training_rules.supported[skill.id] and aptitude and aptitude.allowed
+        local allowed = aptitude and aptitude.allowed
 
         if not allowed or seen[skill.id] or
             skill.points < (starting_points[skill.id] or 0) or
@@ -93,7 +119,7 @@ local function validate(ctx)
         for _, id in ipairs(queue) do
             local aptitude = species.aptitudes[id]
 
-            if not training_rules.supported[id] or not aptitude or not aptitude.allowed then
+            if not aptitude or not aptitude.allowed then
                 error("unknown recent skill " .. tostring(id))
             end
         end

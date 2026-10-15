@@ -103,10 +103,7 @@ func (m *AppModel) hasPlayableChoice(
 			SpeciesFirst: speciesFirst,
 		}]
 
-		return choice.Playable && m.supportedStarts[script.ChoiceKey{
-			SpeciesID: speciesID,
-			JobID:     jobID,
-		}]
+		return choice.Playable
 	}
 
 	if speciesID == "" {
@@ -154,59 +151,21 @@ func (m *AppModel) enterWeaponChoice() {
 
 	m.weaponReturn = m.screen
 	m.options = options
+	m.weaponID = ""
+
+	if len(options) == 0 {
+		m.focus = 0
+		m.screen = ScreenName
+
+		if m.name != "" {
+			m.startGame()
+		}
+
+		return
+	}
 
 	m.screen = ScreenWeapon
 	m.focus = 0
-}
-
-func projectSupportedStarts(
-	runtime *script.Runtime,
-	presentation script.MenuPresentation,
-) (map[script.ChoiceKey]bool, error) {
-	pairs := make([]any, 0)
-	keys := make([]script.ChoiceKey, 0)
-
-	for _, speciesID := range presentation.SpeciesIDs() {
-		for _, jobID := range presentation.JobIDs() {
-			keys = append(keys, script.ChoiceKey{
-				SpeciesID: speciesID,
-				JobID:     jobID,
-			})
-
-			pairs = append(pairs, map[string]any{
-				"species_id": speciesID,
-				"job_id":     jobID,
-			})
-		}
-	}
-
-	result, err := runtime.Policy("character.supported_starts", map[string]any{
-		"pairs": pairs,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	rows := policyRows(result["supported"])
-
-	if len(rows) != len(keys) {
-		return nil, fmt.Errorf("Lua start support returned %d choices for %d pairs", len(rows), len(keys))
-	}
-
-	supported := make(map[script.ChoiceKey]bool, len(keys))
-
-	for index, key := range keys {
-		value, ok := rows[index].(bool)
-
-		if !ok {
-			return nil, fmt.Errorf("Lua start support %d has type %T", index, rows[index])
-		}
-
-		supported[key] = value
-	}
-
-	return supported, nil
 }
 
 func (m *AppModel) startGame() {

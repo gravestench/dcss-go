@@ -45,16 +45,16 @@ func TestAddedLuaSpeciesAppearsOnModdedMenuPage(t *testing.T) {
 
 	color, background := model.characterChoiceColors("SP_MOON_HUMAN", 27)
 
-	if color != White || background != DarkGrey {
+	if color != White || background == DarkGrey {
 		t.Fatalf(
-			"unsupported modded choice is not visibly unavailable: %v/%v",
+			"modded choice is not visibly available: %v/%v",
 			color, background,
 		)
 	}
 
 	model.selectSpecies("SP_MOON_HUMAN")
 
-	if model.screen != ScreenSpecies || model.notice == "" {
-		t.Fatal("unsupported modded species entered character creation")
+	if model.screen != ScreenBackground || model.speciesID != "SP_MOON_HUMAN" {
+		t.Fatal("modded species did not enter character creation")
 	}
 }

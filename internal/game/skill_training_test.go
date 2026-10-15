@@ -118,16 +118,16 @@ func TestRestoreRejectsInvalidSkillTrainingState(t *testing.T) {
 		},
 
 		{
-			name: "unsupported magic skill",
+			name: "unknown skill",
 			mutate: func(record *save.EntityRecord) {
 				record.Skills.Entries = append(record.Skills.Entries, character.Skill{
-					ID: "SK_SPELLCASTING",
+					ID: "SK_UNKNOWN",
 				})
 
 				record.SkillTraining.Settings = append(
 					record.SkillTraining.Settings,
 					ecs.SkillTrainingSetting{
-						ID:      "SK_SPELLCASTING",
+						ID:      "SK_UNKNOWN",
 						Enabled: true,
 					},
 				)
@@ -239,12 +239,54 @@ func TestSkillTrainingChoicesDoNotSpendTime(t *testing.T) {
 		t.Fatal("accepted unknown training skill")
 	}
 
-	if err := g.ChangeSkillTraining("SK_SPELLCASTING", true); err == nil {
-		t.Fatal("accepted training for an unavailable spell skill")
+	if err := g.ChangeSkillTraining("SK_SPELLCASTING", true); err != nil {
+		t.Fatalf("could not train a catalog spell skill: %v", err)
 	}
 
 	if g.currentAut != beforeAut {
 		t.Fatal("rejected skill choice spent game time")
+	}
+}
+
+func TestSpellcastingTrainingRecalculatesMagic(t *testing.T) {
+	g, err := NewDungeonGame(19, "SP_HUMAN", "JOB_FIRE_ELEMENTALIST", "", "Tester")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer g.Close()
+	initialMagic, found := g.stores.Magic.Get(g.player)
+
+	if !found {
+		t.Fatal("caster has no magic component")
+	}
+
+	before := initialMagic.Max
+	training, found := g.stores.SkillTraining.Get(g.player)
+
+	if !found {
+		t.Fatal("caster has no skill training")
+	}
+
+	training.Manual = true
+	training.AvailableXP = 10000
+
+	for index := range training.Settings {
+		setting := &training.Settings[index]
+		enabled := setting.ID == "SK_SPELLCASTING"
+
+		setting.Enabled = enabled
+		setting.Focused = setting.Enabled
+	}
+
+	g.turn.Actor = g.player
+	updateLuaSystem(t, g, "character.training", 10)
+
+	magic, found := g.stores.Magic.Get(g.player)
+
+	if !found || magic.Max <= before {
+		t.Fatalf("trained Spellcasting left MP at %+v, want more than %d", magic, before)
 	}
 }
 

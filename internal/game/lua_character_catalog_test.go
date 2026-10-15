@@ -62,23 +62,30 @@ func TestGameRespectsLuaCharacterChoicePolicy(t *testing.T) {
 	}
 }
 
-func TestLuaPolicyCannotEnableUnimplementedStart(t *testing.T) {
+func TestLuaPolicyCanEnableModdedCharacterCombination(t *testing.T) {
 	rules, err := modfs.Load("../script/testdata/allow-all")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = NewDungeonGameWithRules(
+	g, err := NewDungeonGameWithRules(
 		1,
-		"SP_HUMAN",
-		"JOB_BERSERKER",
-		"",
+		"SP_FELID",
+		"JOB_GLADIATOR",
+		"WPN_UNARMED",
 		"Tester",
 		rules,
 	)
 
-	if err == nil {
-		t.Fatal("Lua policy enabled an unimplemented start")
+	if err != nil {
+		t.Fatalf("Lua choice override could not start its character: %v", err)
+	}
+
+	defer g.Close()
+
+	if g.View().SpeciesID != "SP_FELID" ||
+		g.View().CharacterName != "Felid Gladiator" {
+		t.Fatal("modded character combination changed after start")
 	}
 }

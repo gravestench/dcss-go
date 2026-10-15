@@ -1,4 +1,5 @@
 local catalog = require("policy.catalog")
+local items = require("policy.inventory.items")
 
 local equipment = {}
 
@@ -10,43 +11,6 @@ local function has_flag(flags, wanted)
     end
 
     return false
-end
-
-local function validate_item(item, definition)
-    if item.quantity <= 0 or (not definition.stackable and item.quantity ~= 1) then
-        error("equipped item has impossible quantity")
-    end
-
-    if item.charges < 0 or (item.charges ~= 0 and definition.class ~= "OBJ_WANDS") then
-        error("equipped item has impossible charges")
-    end
-
-    if item.plus < -32768 or item.plus > 32767 or
-        (item.plus ~= 0 and definition.class ~= "OBJ_WEAPONS" and
-            definition.class ~= "OBJ_ARMOUR") then
-        error("equipped item has impossible enchantment")
-    end
-
-    local ego = item.ego or ""
-
-    if ego == "" then
-        return
-    end
-
-    if definition.class == "OBJ_WEAPONS" and definition.weapon then
-        for _, brand in ipairs(definition.weapon.brand_weights or {}) do
-            if brand.brand_id == ego and brand.weight > 0 and ego ~= "SPWPN_NORMAL" then
-                return
-            end
-        end
-    end
-
-    if definition.class == "OBJ_MISSILES" and
-        (ego == "poisoned" or ego == "curare" or ego == "dispersal") then
-        return
-    end
-
-    error("equipped item has incompatible ego " .. ego)
 end
 
 function equipment.worn(ctx, holder, slots)
@@ -68,7 +32,7 @@ function equipment.worn(ctx, holder, slots)
             end
 
             local definition = catalog.get("items", item.kind_id)
-            validate_item(item, definition)
+            items.validate(item, definition)
 
             result[equipped.slot] = {
                 entity = entity,

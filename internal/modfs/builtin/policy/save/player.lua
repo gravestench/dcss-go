@@ -1,6 +1,6 @@
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
-local start = require("policy.character.start")
+local choice = require("policy.character_choice")
 
 local function valid_stat_gains(deltas, manual_choices, species_gains, allowed_stats)
     local allowed = {}
@@ -46,13 +46,17 @@ local function validate(ctx)
         error("invalid player entity " .. ctx:id(entity))
     end
 
-    if not start.supported(player.species_id, player.job_id) then
-        error("invalid player choice")
-    end
-
     local species = catalog.get("species", player.species_id)
     local job = catalog.get("jobs", player.job_id)
-    start.starting_skills(species, job, player.starting_weapon_id)
+
+    if not choice.allowed(species, job) then
+        error("invalid player choice")
+    end
+    local origin = ctx:get(entity, "character.origin")
+
+    if not origin then
+        error("player lacks character origin")
+    end
 
     if progress.level < 1 or progress.level > 27 then
         error("invalid player level " .. progress.level)
@@ -75,9 +79,9 @@ local function validate(ctx)
     end
 
     local base = {
-        strength = species.strength + job.strength,
-        intelligence = species.intelligence + job.intelligence,
-        dexterity = species.dexterity + job.dexterity,
+        strength = species.strength + job.strength + origin.strength_bonus,
+        intelligence = species.intelligence + job.intelligence + origin.intelligence_bonus,
+        dexterity = species.dexterity + job.dexterity + origin.dexterity_bonus,
     }
 
     if attributes.strength < base.strength or attributes.intelligence < base.intelligence or
@@ -116,7 +120,7 @@ local function validate(ctx)
         error("invalid player max HP for entity " .. ctx:id(entity))
     end
 
-    local max_mp = formulas.max_mp(progress.level, species)
+    local max_mp = formulas.max_mp(progress.level, species, skills.entries)
 
     if magic.max ~= max_mp or magic.current < 0 or magic.current > max_mp then
         error("invalid player MP for entity " .. ctx:id(entity))

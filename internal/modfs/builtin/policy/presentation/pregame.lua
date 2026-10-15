@@ -56,8 +56,8 @@ function pregame.welcome(input)
         who = who .. " " .. catalog.get("species", input.species_id).name
     end
 
-    if input.job_id == "JOB_FIGHTER" then
-        who = who .. " Fighter"
+    if input.job_id and input.job_id ~= "" then
+        who = who .. " " .. catalog.get("jobs", input.job_id).name
     end
 
     return "Welcome, " .. who .. "."

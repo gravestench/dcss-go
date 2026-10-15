@@ -45,7 +45,7 @@ function advancement.apply_level(ctx, actor, level, species)
     local drain = ctx:get(actor, "status.drain")
     local drain_loss = drain and drain.amount or 0
     local next_hp = math.max(1, formulas.max_hp(level, species, skills.entries) - drain_loss)
-    local next_mp = formulas.max_mp(level, species)
+    local next_mp = formulas.max_mp(level, species, skills.entries)
     local stat_frequency = species.levelup_stat_frequency
     local stat_options = type(species.levelup_stats) == "table" and species.levelup_stats or {}
 

@@ -233,8 +233,7 @@ func newScenarioWithRules(
 	return g, nil
 }
 
-// createPlayerActor establishes identity, position, and starting equipment.
-// These must exist before character rules project the starting profile.
+// createPlayerActor establishes identity and position before Lua starts the character.
 func (g *Game) createPlayerActor(
 	definition startChoice,
 	weaponID, name string,
@@ -282,19 +281,10 @@ func (g *Game) createPlayerActor(
 		return err
 	}
 
-	_, err = g.scripts.Policy("character.starting_gear", map[string]any{
-		"job_id":    definition.JobID,
-		"weapon_id": weaponID,
-	})
-
-	if err != nil {
-		return err
-	}
-
-	return g.scripts.ApplyPending()
+	return nil
 }
 
-// initializeCharacter stores the source-derived Fighter state on the player.
+// initializeCharacter runs the complete Lua-owned starting transaction.
 func (g *Game) initializeCharacter(definition startChoice, weaponID string) error {
 	_, err := g.scripts.Policy("character.start", map[string]any{
 		"species_id": definition.SpeciesID,

@@ -206,9 +206,10 @@ function formulas.max_hp(level, species, skills)
         end
     end
 
-    if not fighting then
-        error(species.id .. " lacks Fighting skill")
-    end
+    fighting = fighting or {
+        level = 0,
+        points = 0,
+    }
 
     local aptitude = formulas.skill_aptitude(species, "SK_FIGHTING")
     local fighting5 = formulas.scaled_skill(fighting, 5, aptitude)
@@ -216,15 +217,67 @@ function formulas.max_hp(level, species, skills)
     local hp = math.floor(level * 11 / 2) + 8
     hp = hp + math.floor(level * fighting5 / 70) + math.floor((fighting3 + 1) / 2)
 
-    return math.max(1, math.floor(hp * (10 + species.hp) / 10))
+    hp = math.floor(hp * (10 + species.hp) / 10)
+
+    for _, mutation in ipairs(species.mutations or {}) do
+        if mutation.level <= level and mutation.id == "MUT_FLAT_HP" then
+            hp = hp + mutation.amount * 4
+        end
+    end
+
+    local percent = 100
+
+    for _, mutation in ipairs(species.mutations or {}) do
+        if mutation.level <= level then
+            if mutation.id == "MUT_ROBUST" then
+                percent = percent + mutation.amount * 10
+            elseif mutation.id == "MUT_FRAIL" then
+                percent = percent - mutation.amount * 10
+            end
+        end
+    end
+
+    return math.max(1, math.floor(hp * percent / 100))
 end
 
-function formulas.max_mp(level, species)
+function formulas.max_mp(level, species, skills)
     if level < 1 or level > 27 then
         error("unsupported baseline MP inputs at XL" .. level .. " for " .. species.id)
     end
 
-    return math.max(0, math.min(23, level) + species.mp_mod)
+    local mutations = {}
+
+    for _, mutation in ipairs(species.mutations or {}) do
+        if mutation.level <= level then
+            mutations[mutation.id] = mutation.amount
+        end
+    end
+
+    if mutations.MUT_HP_CASTING then
+        return 0
+    end
+
+    local spellcasting = 0
+    local invocations = 0
+
+    for _, skill in ipairs(skills or {}) do
+        if skill.id == "SK_SPELLCASTING" then
+            local aptitude = formulas.skill_aptitude(species, skill.id)
+            spellcasting = formulas.scaled_skill(skill, 100, aptitude)
+        elseif skill.id == "SK_INVOCATIONS" then
+            local aptitude = formulas.skill_aptitude(species, skill.id)
+            invocations = formulas.scaled_skill(skill, 100, aptitude)
+        end
+    end
+
+    local highest = math.max(spellcasting, math.floor(invocations / 2))
+    local scaled = math.min(2300, level * 100)
+    scaled = scaled + highest + math.floor(math.min(800, highest, level * 100) / 2)
+    scaled = math.floor(scaled *
+        (100 + (mutations.MUT_HIGH_MAGIC or 0) * 10 -
+            (mutations.MUT_LOW_MAGIC or 0) * 10) / 100)
+
+    return math.max(0, math.floor(scaled / 100) + species.mp_mod)
 end
 
 function formulas.needs_manual_stat(level)

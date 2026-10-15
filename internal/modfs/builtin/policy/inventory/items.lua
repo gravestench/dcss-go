@@ -44,6 +44,12 @@ function items.validate(item, kind)
     end
 
     if kind.class == "OBJ_WEAPONS" and kind.weapon then
+        -- Chaos Knight starts with a forced chaos brand. Generation weights
+        -- describe random rolls, not every brand the source can place.
+        if item.ego == "SPWPN_CHAOS" then
+            return
+        end
+
         local brands = type(kind.weapon.brand_weights) == "table" and
             kind.weapon.brand_weights or {}
 
@@ -54,7 +60,13 @@ function items.validate(item, kind)
         end
     end
 
-    if item.ego == "poisoned" or item.ego == "curare" or item.ego == "dispersal" then
+    if kind.class == "OBJ_ARMOUR" and item.ego == "SPARM_PROTECTION" then
+        return
+    end
+
+    if item.ego == "poisoned" or item.ego == "curare" or
+        item.ego == "dispersal" or item.ego == "blinding" or
+        item.ego == "frenzy" then
         if kind.class == "OBJ_MISSILES" then
             return
         end

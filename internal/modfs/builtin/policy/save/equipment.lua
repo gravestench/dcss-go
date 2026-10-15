@@ -108,7 +108,8 @@ local function validate(ctx)
     local identity = ctx:get(player, "core.player")
     local species = catalog.get("species", identity.species_id)
     local slots = {}
-    local starting_weapon_found = identity.starting_weapon_id == "WPN_UNARMED"
+    local starting_weapon_found = identity.starting_weapon_id == "WPN_UNARMED" or
+        identity.starting_weapon_id == ""
 
     for _, entity in ipairs(ctx:query({ "core.item" })) do
         local item = ctx:get(entity, "core.item")
@@ -168,7 +169,7 @@ local function validate(ctx)
             error("unsupported equipped weapon " .. weapon.id)
         end
 
-        if slots.shield and equipment.needs_second_hand(weapon, species.size) then
+        if slots.shield and equipment.needs_second_hand(weapon, species) then
             error("equipped weapon " .. weapon.id .. " conflicts with shield")
         end
     end
