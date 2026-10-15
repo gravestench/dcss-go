@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"slices"
+	"strings"
 
 	"github.com/gravestench/akara"
 	lua "github.com/yuin/gopher-lua"
@@ -236,7 +237,7 @@ func parseFields(table *lua.LTable) ([]akara.Field, error) {
 			return
 		}
 
-		kind, err := fieldKind(string(kindName))
+		kind, elementKind, err := fieldType(string(kindName))
 
 		if err != nil {
 			parseErr = fmt.Errorf("field %s: %w", name, err)
@@ -248,7 +249,10 @@ func parseFields(table *lua.LTable) ([]akara.Field, error) {
 		defaultLua := options.RawGetString("default")
 
 		if defaultLua != lua.LNil {
-			defaultValue, err = goFieldValue(kind, defaultLua)
+			defaultValue, err = goComponentFieldValue(akara.Field{
+				Kind:        kind,
+				ElementKind: elementKind,
+			}, defaultLua)
 
 			if err != nil {
 				parseErr = fmt.Errorf("field %s default: %w", name, err)
@@ -258,9 +262,10 @@ func parseFields(table *lua.LTable) ([]akara.Field, error) {
 		}
 
 		byName[string(name)] = akara.Field{
-			Name:    string(name),
-			Kind:    kind,
-			Default: defaultValue,
+			Name:        string(name),
+			Kind:        kind,
+			ElementKind: elementKind,
+			Default:     defaultValue,
 		}
 	})
 
@@ -283,6 +288,24 @@ func parseFields(table *lua.LTable) ([]akara.Field, error) {
 	}
 
 	return fields, nil
+}
+
+func fieldType(name string) (akara.FieldKind, akara.FieldKind, error) {
+	if strings.HasPrefix(name, "list<") && strings.HasSuffix(name, ">") {
+		element, err := fieldKind(name[5 : len(name)-1])
+
+		return akara.FieldList, element, err
+	}
+
+	if strings.HasPrefix(name, "map<string,") && strings.HasSuffix(name, ">") {
+		element, err := fieldKind(name[11 : len(name)-1])
+
+		return akara.FieldMap, element, err
+	}
+
+	kind, err := fieldKind(name)
+
+	return kind, 0, err
 }
 
 func fieldKind(name string) (akara.FieldKind, error) {

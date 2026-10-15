@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	charm.land/bubbletea/v2 v2.0.2
 	charm.land/lipgloss/v2 v2.0.2
-	github.com/gravestench/akara v0.1.4
+	github.com/gravestench/akara v0.1.5-0.20261015182417-1844da229108
 	github.com/mattn/go-runewidth v0.0.19
 	gopkg.in/yaml.v3 v3.0.1
 )

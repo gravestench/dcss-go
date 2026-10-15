@@ -40,11 +40,16 @@ content is committed as Lua gameplay data and source-traced JSON import
 artifacts. No normal build uses the C++ checkout. Implemented gameplay rules
 now execute from the embedded Lua tree; Go owns generic engine services.
 
-Akara v0.1.4 already has `RegisterSchema` and dynamic component stores. Lua
+Akara has `RegisterSchema` and dynamic component stores. Lua
 can register new schema-backed components without a Go type declaration.
 Dense terrain and visibility stay grid services rather than tile entities.
 Mutable state on actors and items remains in Akara, whether the schema was
 originally Go-defined or Lua-defined.
+Lua component schemas support homogeneous lists and string-keyed maps of
+the six scalar field types. Akara validates and copies collection values at
+store boundaries; the Lua bridge enforces dense list and typed map shapes,
+and the save codec restores typed elements and validates entity references.
+This allows branch clocks and other keyed game state to have one ECS owner.
 
 The Lua runtime registers all 43 species and 31 jobs from per-definition
 files. Monsters, spells, items, branches, and monster spellbooks now use the

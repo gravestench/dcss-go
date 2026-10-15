@@ -71,6 +71,12 @@ return schema
 
 IDs must be unique. Field types currently supported by Akara's dynamic
 schemas are `bool`, `int64`, `uint64`, `float64`, `string`, and `entity`.
+For each scalar type `T`, schemas may also declare `list<T>` and
+`map<string,T>`. For example, `list<entity>` holds entity handles and
+`map<string,int64>` holds named counters. Collections default to empty tables;
+they cannot contain nested collections. Lists require consecutive integer keys
+starting at 1, and maps require string keys. Component reads return detached
+tables, so call `ctx:set` after editing one.
 Integer values passed through Lua must be exactly representable in its
 numeric type (absolute value at most 2^53). Entity values are userdata
 handles, not numeric IDs. Registered dynamic components are included in saves.

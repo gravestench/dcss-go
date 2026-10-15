@@ -677,6 +677,7 @@ func (r *Runtime) luaSetComponent(state *lua.LState) int {
 
 		return 0
 	}
+	converted = withDynamicDefaults(store, converted)
 
 	target := componentTarget{
 		entity: entity,
@@ -723,6 +724,7 @@ func (r *Runtime) luaAddComponent(state *lua.LState) int {
 
 		return 0
 	}
+	converted = withDynamicDefaults(store, converted)
 
 	if !r.world.EntityExists(entity) {
 		state.RaiseError("add %s on missing entity %d", name, entity)

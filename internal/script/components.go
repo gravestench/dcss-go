@@ -89,6 +89,86 @@ func goFieldValue(kind akara.FieldKind, value lua.LValue) (any, error) {
 	}
 }
 
+func goComponentFieldValue(field akara.Field, value lua.LValue) (any, error) {
+	if field.Kind != akara.FieldList && field.Kind != akara.FieldMap {
+		return goFieldValue(field.Kind, value)
+	}
+
+	if value == lua.LNil {
+		return nil, nil
+	}
+
+	table, ok := value.(*lua.LTable)
+
+	if !ok {
+		return nil, fmt.Errorf("expected table for collection")
+	}
+
+	if field.Kind == akara.FieldList {
+		length := table.Len()
+		count := 0
+		valid := true
+
+		table.ForEach(func(key, _ lua.LValue) {
+			count++
+
+			number, ok := key.(lua.LNumber)
+
+			if !ok || number < 1 || number > lua.LNumber(length) ||
+				math.Trunc(float64(number)) != float64(number) {
+				valid = false
+			}
+		})
+
+		if !valid || count != length {
+			return nil, fmt.Errorf("expected dense list with integer keys from 1")
+		}
+
+		entries := make([]any, length)
+
+		for index := 1; index <= length; index++ {
+			entry, err := goFieldValue(field.ElementKind, table.RawGetInt(index))
+
+			if err != nil {
+				return nil, fmt.Errorf("entry %d: %w", index, err)
+			}
+
+			entries[index-1] = entry
+		}
+
+		return entries, nil
+	}
+
+	entries := make(map[string]any)
+	var conversionErr error
+
+	table.ForEach(func(key, value lua.LValue) {
+		if conversionErr != nil {
+			return
+		}
+
+		name, ok := key.(lua.LString)
+
+		if !ok {
+			conversionErr = fmt.Errorf("expected string map key")
+
+			return
+		}
+
+		entry, err := goFieldValue(field.ElementKind, value)
+
+		if err != nil {
+			conversionErr = fmt.Errorf("key %s: %w", name, err)
+
+			return
+		}
+
+		entries[string(name)] = entry
+	})
+
+	return entries, conversionErr
+}
+
 func exactLuaNumber(value lua.LValue) (float64, error) {
 	number, ok := value.(lua.LNumber)
 
@@ -176,10 +256,10 @@ func componentValues(
 	schema akara.Schema,
 	table *lua.LTable,
 ) (map[string]any, error) {
-	fields := make(map[string]akara.FieldKind, len(schema.Fields))
+	fields := make(map[string]akara.Field, len(schema.Fields))
 
 	for _, field := range schema.Fields {
-		fields[field.Name] = field.Kind
+		fields[field.Name] = field
 	}
 
 	values := make(map[string]any)
@@ -198,7 +278,7 @@ func componentValues(
 			return
 		}
 
-		kind, found := fields[string(name)]
+		field, found := fields[string(name)]
 
 		if !found {
 			conversionErr = fmt.Errorf("unknown component field %q", name)
@@ -206,7 +286,7 @@ func componentValues(
 			return
 		}
 
-		converted, err := goFieldValue(kind, value)
+		converted, err := goComponentFieldValue(field, value)
 
 		if err != nil {
 			conversionErr = fmt.Errorf("field %s: %w", name, err)
@@ -220,4 +300,19 @@ func componentValues(
 	})
 
 	return values, conversionErr
+}
+
+// Pending Lua reads must see the same defaults that Akara applies at commit.
+func withDynamicDefaults(store *akara.DynamicStore, values map[string]any) map[string]any {
+	if store == nil {
+		return values
+	}
+
+	for _, field := range store.Schema().Fields {
+		if _, supplied := values[field.Name]; !supplied {
+			values[field.Name] = field.Default
+		}
+	}
+
+	return values
 }

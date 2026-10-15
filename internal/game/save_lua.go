@@ -149,10 +149,10 @@ func decodeLuaValues(
 	values map[string]json.RawMessage,
 	known map[akara.Entity]bool,
 ) (map[string]any, error) {
-	fields := make(map[string]akara.FieldKind, len(schema.Fields))
+	fields := make(map[string]akara.Field, len(schema.Fields))
 
 	for _, field := range schema.Fields {
-		fields[field.Name] = field.Kind
+		fields[field.Name] = field
 	}
 
 	if len(values) != len(fields) {
@@ -162,13 +162,13 @@ func decodeLuaValues(
 	decoded := make(map[string]any, len(values))
 
 	for name, raw := range values {
-		kind, found := fields[name]
+		field, found := fields[name]
 
 		if !found {
 			return nil, fmt.Errorf("unknown field %s", name)
 		}
 
-		value, err := decodeLuaField(kind, raw, known)
+		value, err := decodeLuaField(field, raw, known)
 
 		if err != nil {
 			return nil, fmt.Errorf("field %s: %w", name, err)
@@ -181,7 +181,7 @@ func decodeLuaValues(
 }
 
 func decodeLuaField(
-	kind akara.FieldKind,
+	field akara.Field,
 	raw json.RawMessage,
 	known map[akara.Entity]bool,
 ) (any, error) {
@@ -189,7 +189,51 @@ func decodeLuaField(
 		return nil, fmt.Errorf("null is not a valid component field")
 	}
 
-	switch kind {
+	switch field.Kind {
+	case akara.FieldList:
+		var rawEntries []json.RawMessage
+
+		if err := json.Unmarshal(raw, &rawEntries); err != nil {
+			return nil, err
+		}
+
+		entries := make([]any, len(rawEntries))
+		element := akara.Field{Kind: field.ElementKind}
+
+		for index, entry := range rawEntries {
+			value, err := decodeLuaField(element, entry, known)
+
+			if err != nil {
+				return nil, fmt.Errorf("entry %d: %w", index+1, err)
+			}
+
+			entries[index] = value
+		}
+
+		return entries, nil
+
+	case akara.FieldMap:
+		var rawEntries map[string]json.RawMessage
+
+		if err := json.Unmarshal(raw, &rawEntries); err != nil {
+			return nil, err
+		}
+
+		entries := make(map[string]any, len(rawEntries))
+		element := akara.Field{Kind: field.ElementKind}
+
+		for name, entry := range rawEntries {
+			value, err := decodeLuaField(element, entry, known)
+
+			if err != nil {
+				return nil, fmt.Errorf("key %s: %w", name, err)
+			}
+
+			entries[name] = value
+		}
+
+		return entries, nil
+
 	case akara.FieldBool:
 		var value bool
 		err := json.Unmarshal(raw, &value)
@@ -236,7 +280,7 @@ func decodeLuaField(
 		return entity, nil
 
 	default:
-		return nil, fmt.Errorf("unsupported Lua field kind %d", kind)
+		return nil, fmt.Errorf("unsupported Lua field kind %d", field.Kind)
 	}
 }
 
