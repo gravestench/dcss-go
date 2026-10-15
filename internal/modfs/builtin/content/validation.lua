@@ -6,6 +6,8 @@ local books = require("ids.monster_spellbooks")
 local skill_ids = require("ids.skills")
 local spell_scopes = require("constants.spell_scopes")
 local object_classes = require("ids.object_classes")
+local item_rules = require("policy.inventory.items")
+local weapon_choices = require("constants.weapon_choices")
 local uses = require("constants.mutation_uses")
 local source_population = require("data.dungeon_population").rows
 
@@ -190,9 +192,9 @@ local function validate_job(job)
         fail("jobs", id, "selectability disagrees with recommendations")
     end
 
-    if job.weapon_choice ~= "WCHOICE_NONE" and
-        job.weapon_choice ~= "WCHOICE_PLAIN" and
-        job.weapon_choice ~= "WCHOICE_GOOD" then
+    if job.weapon_choice ~= weapon_choices.NONE and
+        job.weapon_choice ~= weapon_choices.PLAIN and
+        job.weapon_choice ~= weapon_choices.GOOD then
         fail("jobs", id, "has an invalid weapon choice")
     end
 
@@ -209,6 +211,69 @@ local function validate_job(job)
 
         if not found then
             fail("jobs", id, "recommends missing species " .. species_id)
+        end
+    end
+
+    local grants = job.starting_grants
+
+    if grants == nil then
+        fail("jobs", id, "requires starting_grants")
+    end
+
+    if grants == mod.null then
+        return
+    end
+
+    for _, grant in ipairs(optional_list("jobs", job, "starting_grants")) do
+        if type(grant) ~= "table" or type(grant.kind_id) ~= "string" then
+            fail("jobs", id, "has an invalid starting grant")
+        end
+
+        local found, item = pcall(register.get, categories.ITEMS,
+            grant.kind_id)
+
+        if not found or item.status == "removed" or
+            item.status == "enum_only" then
+            fail("jobs", id,
+                "has unknown starting item " .. grant.kind_id)
+        end
+
+        if type(grant.quantity) ~= "number" or grant.quantity < 1 or
+            grant.quantity % 1 ~= 0 then
+            fail("jobs", id, "has invalid starting item quantity")
+        end
+
+        for _, field in ipairs({ "plus", "charges" }) do
+            local value = grant[field]
+
+            if value ~= nil and (type(value) ~= "number" or
+                value % 1 ~= 0) then
+                fail("jobs", id,
+                    "has invalid starting item " .. field)
+            end
+        end
+
+        if grant.ego ~= nil and type(grant.ego) ~= "string" then
+            fail("jobs", id, "has invalid starting item ego")
+        end
+
+        if grant.no_exclude ~= nil and
+            type(grant.no_exclude) ~= "boolean" then
+            fail("jobs", id, "has invalid starting item no_exclude")
+        end
+
+        local initial_item = {
+            kind_id = grant.kind_id,
+            quantity = grant.quantity,
+            plus = grant.plus or 0,
+            charges = grant.charges or 0,
+            ego = grant.ego or "",
+        }
+        local valid, reason = pcall(item_rules.validate, initial_item, item)
+
+        if not valid then
+            fail("jobs", id, "has invalid starting item " .. grant.kind_id ..
+                ": " .. tostring(reason))
         end
     end
 end

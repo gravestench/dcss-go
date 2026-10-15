@@ -19,6 +19,8 @@ registered from individual files under `content/<category>`. Gameplay and
 the pregame menu read those same registered tables, so an overlay changes
 both together. Lua validates the effective definitions and can retain
 mod-added fields. Other imported content remains committed under `data`.
+Each job file includes its fixed starting grants. Wanderer keeps an explicit
+dynamic marker; its generated equipment comes from its Lua starting rule.
 Normal launch and restore read
 neither the C++ checkout nor the generated JSON artifacts. Those JSON files
 remain source-traced inputs for deliberate import refreshes and tests.

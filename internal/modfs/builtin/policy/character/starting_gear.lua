@@ -5,31 +5,47 @@ local traits = require("policy.character.traits")
 local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
 local potion_rules = require("policy.character.potion_rules")
+local classes = require("ids.object_classes")
+local item_ids = require("ids.items")
+local skill_ids = require("ids.skills")
+local size = require("constants.size")
+local weapon_choices = require("constants.weapon_choices")
 
 local gear = {}
-local jobs = {}
+local job_rules = {}
 
-for _, job in ipairs(require("data.starting_gear").jobs) do
-    jobs[job.job_id] = job.grants
-end
+function gear.register(job_id, rule)
+    catalog.get("jobs", job_id)
 
-local sizes = {
-    SIZE_TINY = 0,
-    SIZE_LITTLE = 1,
-    SIZE_SMALL = 2,
-    SIZE_MEDIUM = 3,
-    SIZE_LARGE = 4,
-    SIZE_GIANT = 5,
-}
-
-local function can_use(ctx, player, species, kind)
-    if kind.class == "OBJ_WEAPONS" then
-        return mutation_levels.effective(ctx, player,
-            mutations.MUT_NO_GRASPING) == 0 and
-            sizes[species.size] >= sizes[kind.weapon.min_2h_size_id]
+    if job_rules[job_id] then
+        error("duplicate starting-gear rule for " .. job_id)
     end
 
-    if kind.class ~= "OBJ_ARMOUR" then
+    if type(rule) ~= "table" then
+        error("starting-gear rule for " .. job_id .. " must be a table")
+    end
+
+    if rule.prepare_weapon ~= nil and
+        type(rule.prepare_weapon) ~= "function" then
+        error("starting-gear prepare_weapon must be a function for " .. job_id)
+    end
+
+    if rule.extra ~= nil and type(rule.extra) ~= "function" then
+        error("starting-gear extra must be a function for " .. job_id)
+    end
+
+    job_rules[job_id] = rule
+end
+
+local function can_use(ctx, player, species, kind)
+    if kind.class == classes.OBJ_WEAPONS then
+        return mutation_levels.effective(ctx, player,
+            mutations.MUT_NO_GRASPING) == 0 and
+            size.rank[species.size] >=
+            size.rank[kind.weapon.min_2h_size_id]
+    end
+
+    if kind.class ~= classes.OBJ_ARMOUR then
         return true
     end
 
@@ -37,34 +53,38 @@ local function can_use(ctx, player, species, kind)
 end
 
 local function useful_kind(ctx, player, species, kind)
-    if kind.class == "OBJ_POTIONS" and
+    if kind.class == classes.OBJ_POTIONS and
         not potion_rules.can_drink(ctx, player) then
         return nil
     end
 
-    if kind.id == "POT_MAGIC" and
+    if kind.id == item_ids.POT_MAGIC and
         mutation_levels.effective(ctx, player, mutations.MUT_HP_CASTING) > 0 then
         return nil
     end
 
-    if (kind.id == "SCR_BLINKING" or kind.id == "SCR_TELEPORTATION") and
+    if (kind.id == item_ids.SCR_BLINKING or
+        kind.id == item_ids.SCR_TELEPORTATION) and
         traits.stasis(species) then
         return nil
     end
 
-    if kind.id == "ARM_KITE_SHIELD" and sizes[species.size] < sizes.SIZE_MEDIUM then
-        kind = catalog.get("items", "ARM_BUCKLER")
+    if kind.id == item_ids.ARM_KITE_SHIELD and
+        size.rank[species.size] < size.rank[size.MEDIUM] then
+        kind = catalog.get("items", item_ids.ARM_BUCKLER)
     end
 
-    if kind.class == "OBJ_ARMOUR" and not can_use(ctx, player, species, kind) then
-        local replacement = "ARM_ROBE"
+    if kind.class == classes.OBJ_ARMOUR and
+        not can_use(ctx, player, species, kind) then
+        local replacement = item_ids.ARM_ROBE
 
-        if kind.id == "ARM_HELMET" or kind.id == "ARM_HAT" then
-            replacement = "ARM_HAT"
-        elseif kind.id == "ARM_BUCKLER" then
-            replacement = "ARM_KITE_SHIELD"
+        if kind.id == item_ids.ARM_HELMET or
+            kind.id == item_ids.ARM_HAT then
+            replacement = item_ids.ARM_HAT
+        elseif kind.id == item_ids.ARM_BUCKLER then
+            replacement = item_ids.ARM_KITE_SHIELD
         elseif kind.slot == "shield" then
-            replacement = "ARM_BUCKLER"
+            replacement = item_ids.ARM_BUCKLER
         end
 
         kind = catalog.get("items", replacement)
@@ -112,7 +132,8 @@ local function add_grant(ctx, player, species, grant, occupied)
 end
 
 function gear.give(ctx, player, species, job, weapon_id, generated)
-    local grants = generated or job.starting_grants or jobs[job.id]
+    local grants = generated and generated.equipment or job.starting_grants
+    local rule = job_rules[job.id]
 
     if not grants then
         error("unknown starting gear job " .. job.id)
@@ -120,19 +141,15 @@ function gear.give(ctx, player, species, job, weapon_id, generated)
 
     local occupied = {}
 
-    if job.weapon_choice ~= "WCHOICE_NONE" and weapon_id ~= "WPN_UNARMED" then
+    if job.weapon_choice ~= weapon_choices.NONE and
+        weapon_id ~= item_ids.WPN_UNARMED then
         local chosen = {
             kind_id = weapon_id,
             quantity = 1,
         }
 
-        if job.id == "JOB_ABYSSAL_KNIGHT" then
-            chosen.plus = 1
-        elseif job.id == "JOB_CHAOS_KNIGHT" then
-            chosen.ego = "SPWPN_CHAOS"
-        elseif job.id == "JOB_CINDER_ACOLYTE" then
-            chosen.plus = -1
-            chosen.ego = "SPWPN_FLAMING"
+        if rule and rule.prepare_weapon then
+            rule.prepare_weapon(chosen)
         end
 
         add_grant(ctx, player, species, chosen, occupied)
@@ -144,51 +161,14 @@ function gear.give(ctx, player, species, job, weapon_id, generated)
         end
     end
 
-    if job.id == "JOB_GLADIATOR" then
-        local ammo
-        local quantity
-
-        if sizes[species.size] >= sizes.SIZE_LARGE then
-            ammo = "MI_LARGE_ROCK"
-            quantity = 1
-        elseif sizes[species.size] <= sizes.SIZE_SMALL then
-            ammo = "MI_BOOMERANG"
-            quantity = 2
-        else
-            ammo = "MI_JAVELIN"
-            quantity = 1
-        end
-
-        add_grant(ctx, player, species, {
-            kind_id = ammo,
-            quantity = quantity,
-        }, occupied)
-    end
-
-    if job.id == "JOB_WANDERER" then
-        local attributes = generated and generated.attributes or {}
-        local strength = species.strength + (attributes.strength or 0)
-        local intelligence = species.intelligence + (attributes.intelligence or 0)
-        local dexterity = species.dexterity + (attributes.dexterity or 0)
-
-        if not occupied.body then
-            local armour = strength > intelligence and "ARM_LEATHER_ARMOUR" or "ARM_ROBE"
-            add_grant(ctx, player, species, {
-                kind_id = armour,
-                quantity = 1,
-            }, occupied)
-        end
-
-        if not occupied.weapon then
-            local weapon = dexterity > strength and "WPN_DAGGER" or "WPN_CLUB"
-            add_grant(ctx, player, species, {
-                kind_id = weapon,
-                quantity = 1,
-            }, occupied)
+    if rule and rule.extra then
+        for _, grant in ipairs(rule.extra(species, generated, occupied)) do
+            add_grant(ctx, player, species, grant, occupied)
         end
     end
 
-    return occupied.weapon and occupied.weapon.weapon_skill or "SK_UNARMED_COMBAT"
+    return occupied.weapon and occupied.weapon.weapon_skill or
+        skill_ids.SK_UNARMED_COMBAT
 end
 
 return gear

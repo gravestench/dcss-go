@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local choice = require("policy.character_choice")
+local weapon_choices = require("constants.weapon_choices")
 
 local weapons = {}
 
@@ -58,7 +59,7 @@ function weapons.options(species_id, job_id)
         error(species_id .. "/" .. job_id .. " is not a legal normal Dungeon start")
     end
 
-    if job.weapon_choice == "WCHOICE_NONE" then
+    if job.weapon_choice == weapon_choices.NONE then
         return {}
     end
 
@@ -67,7 +68,7 @@ function weapons.options(species_id, job_id)
     for _, base in ipairs(bases) do
         local id = base
 
-        if job.weapon_choice == "WCHOICE_GOOD" then
+        if job.weapon_choice == weapon_choices.GOOD then
             id = upgrade(id, job_id, species.size)
         end
 

@@ -29,6 +29,7 @@ without changing its effective Lua files does not change that identity.
 | Monster | `content/monsters/<name>.lua` | It needs a new AI or other behavior. |
 | Spell | `content/spells/<name>.lua` | It needs a new resolver under `policy/magic/effects/`. |
 | Item or unique item | `content/items/<name>.lua` | It needs a new use, combat, or equipment rule. |
+| Job | `content/jobs/<name>.lua` | It needs a new starting-gear rule or other behavior. |
 | Item class | An item file with a new `class` ID | It needs class-specific rules or UI. |
 | Mutation | `content/mutations/<name>.lua` | It needs an effect under `policy/mutations/effects/`. |
 | ECS component | `schemas/<name>.lua` | Its behavior needs a system. |
@@ -265,23 +266,33 @@ the same path in your mod directory to edit that definition. New files in
 either tree load in sorted path order. Duplicate IDs, invalid fields, and
 missing required definitions stop startup with an error. The species and job
 tables in Lua are the effective definitions used by the game and the
-character creation screen. Go's typed catalog is a projection for domains
-that have not yet moved to Lua; it is rebuilt from the effective files.
+character creation screen. Normal launch reads these committed Lua files;
+the Go import artifacts are used only for deliberate source refreshes.
 Use `mod.null` when a present field intentionally has a null value; omitting
 a required field is an error. Newly selectable definitions appear on a
 separate modded menu page. They need implemented start mechanics before a
 policy can make them playable.
+
+Each job file also owns `starting_grants`: a list of item grants with
+`kind_id` and positive `quantity`, plus optional `plus`, `charges`, and
+`ego`. The effective file is the only fixed-grant source at runtime.
+Wanderer uses `mod.null` because its grants are generated during character
+creation. To change a job's fixed equipment, replace its job file; a shared
+starting-gear table is no longer involved. Special job rules such as
+Gladiator ammunition live in discoverable
+`policy/character/starting_gear/jobs/` files and can be replaced at the
+same path. New jobs with ordinary fixed grants need no special rule file.
 
 The `policy/character_choice.lua` file calls `register.choice_policy` once.
 Its function receives copied species and job tables and a boolean indicating
 whether the menu is species-first. It returns a restriction string
 (`banned`, `restricted`, or `recommended`) and whether the start is currently
 playable. The bundled policy preserves the source bans and recommendations.
-Only Human, Hill Orc, Deep Elf, and Minotaur Fighters have complete starts
-today; other source options remain visible and explain that they are not yet
-available. The game constructor checks the same Lua policy before creating a
-player. A policy can narrow supported starts; adding a new playable start
-also requires its gameplay rules and equipment behavior to be implemented.
+Every legal selectable source species/job pair starts in the current Dungeon
+slice. Many later job abilities remain unavailable and explain that limit in
+the client. The game constructor checks the same Lua choice policy before
+creating a player. A policy can narrow supported starts; a new job also needs
+valid starting rules for the game behavior it introduces.
 
 `python3 scripts/generate_lua_character.py --check` compares the committed
 character Lua files with the pinned importer artifacts. Run the generator

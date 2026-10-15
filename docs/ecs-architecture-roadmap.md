@@ -24,8 +24,8 @@ behavior reads and changes authoritative Akara state through a narrow host
 API. Static source content is committed as Lua modules; developer importers
 regenerate it only for intentional upstream refreshes.
 
-The bundled Lua tree is embedded in the executable. One optional overlay
-folder replaces matching relative paths and adds new files. The effective
+The bundled Lua tree is embedded in the executable. Ordered optional overlay
+folders replace matching relative paths and add new files. The effective
 path-and-byte SHA-256 manifest identifies the exact ruleset. Exact bundled
 bytes count as vanilla even when copied into an overlay. Saves record the
 effective hash and dynamic schema versions; changed rules require an explicit
@@ -33,7 +33,8 @@ opt-in or migration on restore.
 
 ## Current implemented slice
 
-The playable Go slice includes four Fighter species, a source-shaped terminal,
+The playable Go slice includes every legal selectable species/job start, a
+source-shaped terminal,
 D:1-2 terrain and population, Akara actors/items/status, basic melee,
 projectile and spell intents, equipment, training, XP, and Go saves. Source
 content is committed as Lua gameplay data and source-traced JSON import
@@ -56,7 +57,7 @@ files. Monsters, spells, items, branches, and monster spellbooks now use the
 same per-file registration path. Character choice and the pregame menu read
 the registered Lua tables directly; normal launch no longer loads the
 parallel Go content catalog.
-Four playable Fighter starts, combat, equipment, statuses, monster behavior,
+All legal selectable starts, combat, equipment, statuses, monster behavior,
 generated floors, save semantics, and screen policy use Lua. Remaining
 aggregate source content is committed as generated Lua modules. One generic typed-store
 context exposes authoritative Akara state to those rules. The
@@ -91,7 +92,7 @@ with a small set of files, while keeping each file's purpose obvious. See
 
 The next architecture work is to turn the remaining aggregate categories
 into per-file content where mod authors would reasonably extend them:
-population entries, item identity and starting gear, vault templates, and
+population entries, item identity, vault templates, and
 presentation data. The generated files stay committed. Import tools run
 only during deliberate upstream refreshes. New mechanics must be wired
 through Lua discovery and generic engine capabilities, not a Go ID switch.
@@ -107,10 +108,11 @@ extends the game beyond the present D:1–2 slice.
    register Lua component schemas and ordered systems with Akara, and persist
    dynamic component state and ruleset identity. A real game action must run
    an overlay-defined system before this phase is complete.
-2. **Character domain.** Species/job catalogs, choice policy, and four
-   playable Fighter starts now live in Lua. Add remaining starts as complete
-   rules with their equipment, spell, and religion needs. Keep generated
-   definitions committed as small Lua modules.
+2. **Character domain.** Species/job catalogs, choice policy, and every legal
+   selectable start live in Lua. Each job file owns its fixed grants; special
+   starting gear rules are discoverable Lua files. Add later job abilities
+   as complete rules. Keep generated definitions committed as small Lua
+   modules.
 3. **Item and status domain.** Playable item use, equipment policy, poison,
    all 17 active potions, regeneration, and timed statuses use Lua systems.
    Each potion has a discoverable Lua effect. Lasting buffs, tree form, and

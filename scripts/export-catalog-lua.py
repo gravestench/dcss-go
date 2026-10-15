@@ -22,7 +22,6 @@ CATALOGS = (
     "monster-vocabulary",
     "monster-weapons",
     "presentation",
-    "starting-gear",
 )
 
 DEFINITIONS = {
@@ -285,6 +284,14 @@ def main():
             stale.append(str(legacy.relative_to(ROOT)))
         else:
             legacy.unlink()
+
+    old_gear = DESTINATION / "starting_gear.lua"
+
+    if old_gear.exists():
+        if args.check:
+            stale.append(str(old_gear.relative_to(ROOT)))
+        else:
+            old_gear.unlink()
 
     if stale:
         raise SystemExit("stale Lua catalogs: " + ", ".join(stale))

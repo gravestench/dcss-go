@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -24,6 +25,12 @@ LUA_KEYWORDS = {
 PROVENANCE_FIELDS = frozenset({"source_path"})
 
 
+@dataclass(frozen=True)
+class LuaReference:
+    module: str
+    name: str
+
+
 def quote(value: str) -> str:
     return json.dumps(value, ensure_ascii=False)
 
@@ -36,6 +43,12 @@ def key_text(key: str) -> str:
 
 
 def scalar(value: object) -> str:
+    if isinstance(value, LuaReference):
+        if not IDENTIFIER.fullmatch(value.name):
+            raise ValueError(f"invalid Lua reference {value.name}")
+
+        return f"{value.module}.{value.name}"
+
     if value is None:
         return "mod.null"
 
@@ -97,14 +110,35 @@ def table_lines(value: object, depth: int) -> list[str]:
 
 def module_text(kind: str, revision: str, row: dict[str, object]) -> str:
     source = row["source_path"]
+    grants = row.get("starting_grants") if kind == "jobs" else None
+
+    if isinstance(grants, list):
+        row = dict(row)
+        row["starting_grants"] = [
+            {
+                **grant,
+                "kind_id": LuaReference("item_ids", grant["kind_id"]),
+            }
+            for grant in grants
+        ]
+
     header = [
         "-- Generated from the pinned DCSS import. Refresh deliberately.",
         f"-- Revision: {revision}",
         f"-- Source: {source}",
-        "",
-        'local categories = require("constants.catalog")',
-        "",
     ]
+
+    if kind == "jobs":
+        header.append(
+            "-- Starting grants: internal/content/generated/starting-gear.json"
+        )
+
+    header.extend(["", 'local categories = require("constants.catalog")'])
+
+    if grants:
+        header.append('local item_ids = require("ids.items")')
+
+    header.append("")
     lines = table_lines(row, 0)
     lines[0] = "local definition = " + lines[0]
 
@@ -118,6 +152,56 @@ def module_text(kind: str, revision: str, row: dict[str, object]) -> str:
     return "\n".join(header + lines + footer) + "\n"
 
 
+def merge_job_grants(
+    jobs_artifact: dict[str, object],
+    gear_artifact: dict[str, object],
+) -> list[dict[str, object]]:
+    if jobs_artifact["source_revision"] != gear_artifact["source_revision"]:
+        raise ValueError("job and starting-gear revisions differ")
+
+    jobs = jobs_artifact["jobs"]
+    job_ids = {job["id"] for job in jobs}
+    gear_by_id = {}
+
+    for row in gear_artifact["jobs"]:
+        job_id = row["job_id"]
+
+        if job_id not in job_ids:
+            raise ValueError(f"unknown starting-gear job {job_id}")
+
+        if job_id in gear_by_id:
+            raise ValueError(f"duplicate starting-gear job {job_id}")
+
+        gear_by_id[job_id] = row["grants"]
+
+    merged = []
+
+    for job in jobs:
+        job_id = job["id"]
+
+        if job_id not in gear_by_id:
+            if job["selectable"]:
+                raise ValueError(f"selectable job {job_id} has no starting gear")
+
+            grants = []
+        else:
+            grants = gear_by_id[job_id]
+
+        definition = dict(job)
+
+        if grants is None:
+            definition["starting_grants"] = None
+        else:
+            definition["starting_grants"] = [
+                {key: value for key, value in grant.items() if key != "raw"}
+                for grant in grants
+            ]
+
+        merged.append(definition)
+
+    return merged
+
+
 def generated_files() -> dict[Path, str]:
     output: dict[Path, str] = {}
 
@@ -127,8 +211,15 @@ def generated_files() -> dict[Path, str]:
     ):
         artifact = json.loads((SOURCE / f"{category}.json").read_text())
         revision = artifact["source_revision"]
+        rows = artifact[row_key]
 
-        for row in artifact[row_key]:
+        if category == "jobs":
+            gear_artifact = json.loads(
+                (SOURCE / "starting-gear.json").read_text()
+            )
+            rows = merge_job_grants(artifact, gear_artifact)
+
+        for row in rows:
             name = row["id"].lower() + ".lua"
             path = DESTINATION / category / name
             output[path] = module_text(singular, revision, row)

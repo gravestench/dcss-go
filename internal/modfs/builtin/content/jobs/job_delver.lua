@@ -1,8 +1,10 @@
 -- Generated from the pinned DCSS import. Refresh deliberately.
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/job-data.h
+-- Starting grants: internal/content/generated/starting-gear.json
 
 local categories = require("constants.catalog")
+local item_ids = require("ids.items")
 
 local definition = {
     id = "JOB_DELVER",
@@ -47,6 +49,34 @@ local definition = {
         },
     },
     selectable = true,
+    starting_grants = {
+        {
+            kind_id = item_ids.ARM_LEATHER_ARMOUR,
+            quantity = 1,
+        },
+        {
+            kind_id = item_ids.SCR_FOG,
+            quantity = 1,
+            no_exclude = true,
+        },
+        {
+            kind_id = item_ids.SCR_MAGIC_MAPPING,
+            quantity = 1,
+        },
+        {
+            kind_id = item_ids.SCR_FEAR,
+            quantity = 1,
+        },
+        {
+            kind_id = item_ids.POT_HASTE,
+            quantity = 1,
+        },
+        {
+            kind_id = item_ids.WAND_DIGGING,
+            quantity = 1,
+            charges = 3,
+        },
+    },
 }
 
 register.definition(categories.JOBS, definition)

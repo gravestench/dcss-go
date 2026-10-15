@@ -13,6 +13,7 @@ local mutation_levels = require("policy.mutations.levels")
 local component = require("constants.component")
 local vampire = require("policy.character.vampire")
 local gods = require("constants.gods")
+local weapon_choices = require("constants.weapon_choices")
 
 local start = {}
 
@@ -36,7 +37,7 @@ local religions = {
 }
 
 local function validate_weapon(species, job, weapon_id)
-    if job.weapon_choice == "WCHOICE_NONE" then
+    if job.weapon_choice == weapon_choices.NONE then
         if weapon_id ~= "" then
             error(job.id .. " does not choose a starting weapon")
         end
@@ -119,8 +120,8 @@ function start.run_start(ctx, input)
     vampire.start(ctx, player)
     local generated = job.id == "JOB_WANDERER" and
         wanderer.generate(ctx, species) or nil
-    local grants = generated and generated.equipment or nil
-    local weapon_skill = gear.give(ctx, player, species, job, input.weapon_id, grants)
+    local weapon_skill = gear.give(ctx, player, species, job,
+        input.weapon_id, generated)
     local profile = starting_profile.build(ctx, species, job,
         weapon_skill, generated)
 
