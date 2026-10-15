@@ -1,7 +1,6 @@
 package game
 
 import (
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/modfs"
 	"dcrawl-go/internal/script"
@@ -14,7 +13,6 @@ type Game struct {
 	stores  ecs.Stores
 	levels  map[int]*Level
 	player  akara.Entity
-	catalog content.Catalog
 	rules   modfs.Ruleset
 	scripts *script.Runtime
 

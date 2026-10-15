@@ -176,7 +176,7 @@ func TestHasteSaveContinuationAndLegacyDefault(t *testing.T) {
 	}
 
 	snapshot := g.Snapshot()
-	loaded, err := Restore(snapshot, testCatalog(t))
+	loaded, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -208,7 +208,7 @@ func TestHasteSaveContinuationAndLegacyDefault(t *testing.T) {
 		}
 	}
 
-	old, err := Restore(legacy, testCatalog(t))
+	old, err := Restore(legacy)
 
 	if err != nil ||
 		old.View().HasteAut != 0 {
@@ -329,7 +329,7 @@ func TestRestoreRejectsHasteOutsideItsSourceCap(t *testing.T) {
 			}
 		}
 
-		loaded, err := Restore(bad, testCatalog(t))
+		loaded, err := Restore(bad)
 
 		if loaded != nil {
 			loaded.Close()

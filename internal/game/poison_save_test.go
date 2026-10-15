@@ -31,7 +31,7 @@ func TestPoisonLivesOnPlayerAndSurvivesSnapshot(t *testing.T) {
 		t.Fatalf("snapshot lost poison: %+v", saved)
 	}
 
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -114,7 +114,7 @@ func TestRestoreRejectsInvalidPoisonOwnershipAndValue(t *testing.T) {
 			snapshot := g.Snapshot()
 			test.mutate(&snapshot)
 
-			if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
+			if restored, err := Restore(snapshot); err == nil {
 				restored.Close()
 				t.Fatal("accepted invalid poison save")
 			}

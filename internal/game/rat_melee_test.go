@@ -31,7 +31,7 @@ func (r *combatRoller) Intn(stream string, bound int) (int, error) {
 }
 
 func TestRatBiteWorksForUnarmedFighterAndCostsOneTurn(t *testing.T) {
-	g, err := NewScenario(31, testCatalog(t), "WPN_UNARMED", "Barehands")
+	g, err := NewScenario(31, "WPN_UNARMED", "Barehands")
 
 	if err != nil {
 		t.Fatal(err)
@@ -100,7 +100,7 @@ func TestCombatStateAndMeleeRNGContinueThroughSave(t *testing.T) {
 		t.Fatalf("combat save version %d, want %d", snapshot.Version, save.Version)
 	}
 
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -127,7 +127,7 @@ func TestCombatSaveRejectsNegativeBlocksAndOldVersion(t *testing.T) {
 
 	snapshot.Version = 5
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "unsupported save version") {
 		t.Fatalf("version-5 restore error = %v", err)
 	}
@@ -140,7 +140,7 @@ func TestCombatSaveRejectsNegativeBlocksAndOldVersion(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "combat") {
 		t.Fatalf("negative shield-block restore error = %v", err)
 	}

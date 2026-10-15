@@ -24,7 +24,7 @@ func TestSaveContinuationMatches(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -66,7 +66,7 @@ func TestRejectUnknownCatalogID(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "MONS_NOT_IN_CATALOG") {
 		t.Fatalf("unknown catalog ID error = %v", err)
 	}
@@ -79,7 +79,7 @@ func TestRejectUnknownCatalogID(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "POT_NOT_IN_CATALOG") {
 		t.Fatalf("unknown item ID error = %v", err)
 	}
@@ -103,7 +103,7 @@ func TestKnownIncompleteItemRestore(t *testing.T) {
 		t.Fatal("scenario has no item to test")
 	}
 
-	if restored, err := Restore(invalid, testCatalog(t)); err == nil {
+	if restored, err := Restore(invalid); err == nil {
 		restored.Close()
 		t.Fatal("known but undefined legacy item restored")
 	}
@@ -123,7 +123,7 @@ func TestRejectDoubleLocatedItem(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "both") {
 		t.Fatalf("double location error = %v", err)
 	}
@@ -143,7 +143,7 @@ func TestRejectDuplicateOccupancy(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "occupied") {
 		t.Fatalf("duplicate occupancy error = %v", err)
 	}
@@ -156,7 +156,7 @@ func TestFailedLoadLeavesLiveGame(t *testing.T) {
 
 	invalid.Version = 2
 
-	if _, err := Restore(invalid, testCatalog(t)); err == nil {
+	if _, err := Restore(invalid); err == nil {
 		t.Fatal("invalid save accepted")
 	}
 
@@ -271,7 +271,7 @@ func TestRestoreRejectsCorruptAttributesWithoutChangingLiveGame(t *testing.T) {
 			invalid := g.Snapshot()
 			tc.mutate(&invalid)
 
-			if restored, err := Restore(invalid, testCatalog(t)); err == nil {
+			if restored, err := Restore(invalid); err == nil {
 				restored.Close()
 				t.Fatal("corrupt attributes accepted")
 			}
@@ -318,7 +318,7 @@ func TestRestoreRejectsCorruptComponents(t *testing.T) {
 			snapshot := g.Snapshot()
 			test.mutate(&snapshot)
 
-			if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
+			if restored, err := Restore(snapshot); err == nil {
 				restored.Close()
 				t.Fatal("corrupt components accepted")
 			}
@@ -332,7 +332,7 @@ func TestRestoreRejectsClockMismatch(t *testing.T) {
 
 	snapshot.CurrentAut = 100
 
-	if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
+	if restored, err := Restore(snapshot); err == nil {
 		restored.Close()
 		t.Fatal("clock mismatch accepted")
 	}
@@ -359,7 +359,7 @@ func TestRestoreAcceptsDeadPlayerClock(t *testing.T) {
 		t.Fatal("rat did not kill the low-health player")
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatalf("valid dead-player snapshot rejected: %v", err)

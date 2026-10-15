@@ -64,7 +64,7 @@ func TestShortUnarmedBumpLeavesRatBelowActionThreshold(t *testing.T) {
 		t.Fatal("no seed yielded a 9-aut unarmed attack")
 	}
 
-	g, err := NewScenario(seed, testCatalog(t), "WPN_UNARMED", "Tester")
+	g, err := NewScenario(seed, "WPN_UNARMED", "Tester")
 
 	if err != nil {
 		t.Fatal(err)
@@ -143,7 +143,7 @@ func TestAttackDelaySaveContinuation(t *testing.T) {
 
 	health.Current = health.Max
 
-	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+	loaded, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)

@@ -33,7 +33,7 @@ func TestQuokkaScenarioUsesCatalogSpeedHPAndSave(t *testing.T) {
 	position, _ := g.stores.Positions.Get(quokka)
 	health, _ := g.stores.Health.Get(quokka)
 
-	definition, err := g.catalog.Monster("MONS_QUOKKA")
+	definition, err := testCatalog(t).Monster("MONS_QUOKKA")
 
 	if err != nil ||
 		actor.Speed != definition.Speed ||
@@ -47,7 +47,7 @@ func TestQuokkaScenarioUsesCatalogSpeedHPAndSave(t *testing.T) {
 		t.Fatalf("quokka actor %+v position %+v health %+v definition %+v: %v", actor, position, health, definition, err)
 	}
 
-	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+	loaded, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -97,7 +97,7 @@ func TestUnseenQuokkaDoesNotAnnounceItsTurns(t *testing.T) {
 }
 
 func TestQuokkaMeleeDeathExperienceAndCorpse(t *testing.T) {
-	g, err := NewScenario(corpseDropSeed(t, true), testCatalog(t), "WPN_RAPIER", "Tester")
+	g, err := NewScenario(corpseDropSeed(t, true), "WPN_RAPIER", "Tester")
 
 	if err != nil {
 		t.Fatal(err)
@@ -189,7 +189,7 @@ func TestQuokkaMeleeDeathExperienceAndCorpse(t *testing.T) {
 		}
 	}
 
-	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+	loaded, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -216,7 +216,7 @@ func TestLegacyRatOnlySaveStillLoads(t *testing.T) {
 		}
 	}
 
-	loaded, err := Restore(legacy, testCatalog(t))
+	loaded, err := Restore(legacy)
 
 	if err != nil {
 		t.Fatal(err)

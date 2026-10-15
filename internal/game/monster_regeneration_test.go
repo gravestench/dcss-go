@@ -55,7 +55,7 @@ func TestInjuredRatUsesNaturalRegenerationRollOnItsTurn(t *testing.T) {
 }
 
 func TestRestoreRejectsZeroHPWorm(t *testing.T) {
-	g, err := NewDungeonGame(1, testCatalog(t), "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER", "Tester")
+	g, err := NewDungeonGame(1, "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER", "Tester")
 
 	if err != nil {
 		t.Fatal(err)
@@ -83,7 +83,7 @@ func TestRestoreRejectsZeroHPWorm(t *testing.T) {
 		t.Fatal("seed 1 has no worm")
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil {
+	if _, err := Restore(snapshot); err == nil {
 		t.Fatal("accepted a dead worm as a live saved actor")
 	}
 }

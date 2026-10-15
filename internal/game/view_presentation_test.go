@@ -3,7 +3,7 @@ package game
 import "testing"
 
 func TestViewPresentationIdentifiesEntitiesAndItemClass(t *testing.T) {
-	g, err := NewScenario(7, testCatalog(t), "WPN_RAPIER", "Alice")
+	g, err := NewScenario(7, "WPN_RAPIER", "Alice")
 
 	if err != nil {
 		t.Fatal(err)

@@ -82,7 +82,7 @@ func TestQuaffHasteFromInventoryShowsFastLight(t *testing.T) {
 		},
 	})
 
-	loaded, err := game.Restore(snapshot, m.catalog)
+	loaded, err := game.Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -135,7 +135,7 @@ func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 		}
 	}
 
-	restored, err := game.Restore(snapshot, m.catalog)
+	restored, err := game.Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -189,7 +189,7 @@ func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 		}
 	}
 
-	restored, err := game.Restore(snapshot, m.catalog)
+	restored, err := game.Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)

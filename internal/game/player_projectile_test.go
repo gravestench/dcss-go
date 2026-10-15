@@ -56,7 +56,7 @@ func TestRangedEquipmentAndThrownStackSurviveSave(t *testing.T) {
 	equipPlayerLauncher(t, g, "WPN_SLING")
 	givePlayerProjectileItem(t, g, "MI_BOOMERANG", 2, "")
 	snapshot := g.Snapshot()
-	loaded, err := Restore(snapshot, testCatalog(t))
+	loaded, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -292,7 +292,7 @@ func TestSmallPlayerCannotThrowJavelinOrLargeRock(t *testing.T) {
 
 func TestThrownNetCatchesMonsterAndSavesHeldState(t *testing.T) {
 	for seed := uint64(1); seed <= 20; seed++ {
-		g, err := NewScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)
@@ -342,7 +342,7 @@ func TestThrownNetCatchesMonsterAndSavesHeldState(t *testing.T) {
 			t.Fatalf("caught net missing from save: held=%v net=%v", heldSaved, netSaved)
 		}
 
-		loaded, err := Restore(snapshot, testCatalog(t))
+		loaded, err := Restore(snapshot)
 		g.Close()
 
 		if err != nil {
@@ -381,7 +381,7 @@ func TestThrownNetCatchesMonsterAndSavesHeldState(t *testing.T) {
 
 func TestFlamingLauncherAppliesLuaBrandEffect(t *testing.T) {
 	for seed := uint64(1); seed <= 20; seed++ {
-		g, err := NewScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)
@@ -425,7 +425,7 @@ func TestFlamingLauncherAppliesLuaBrandEffect(t *testing.T) {
 
 func TestPoisonedDartStoresMonsterPoisonThroughSave(t *testing.T) {
 	for seed := uint64(1); seed <= 30; seed++ {
-		g, err := NewScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)
@@ -469,7 +469,7 @@ func TestPoisonedDartStoresMonsterPoisonThroughSave(t *testing.T) {
 			continue
 		}
 
-		loaded, err := Restore(snapshot, testCatalog(t))
+		loaded, err := Restore(snapshot)
 		g.Close()
 
 		if err != nil {
@@ -490,7 +490,7 @@ func TestPoisonedDartStoresMonsterPoisonThroughSave(t *testing.T) {
 
 func TestCurareDartSlowsSurvivingMonster(t *testing.T) {
 	for seed := uint64(1); seed <= 20; seed++ {
-		g, err := NewScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)
@@ -547,7 +547,7 @@ func TestCurareDartSlowsSurvivingMonster(t *testing.T) {
 
 func TestDispersalJavelinMovesSurvivingMonster(t *testing.T) {
 	for seed := uint64(1); seed <= 20; seed++ {
-		g, err := NewScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)
@@ -680,7 +680,7 @@ func TestJavelinPenetratesTwoMonstersOnItsRay(t *testing.T) {
 
 func shieldedGoblinScenario(t *testing.T, seed uint64) *Game {
 	t.Helper()
-	g, err := NewScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+	g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 	if err != nil {
 		t.Fatal(err)
@@ -692,7 +692,7 @@ func shieldedGoblinScenario(t *testing.T, seed uint64) *Game {
 	}
 
 	rat := ratID(t, g)
-	goblin, err := g.catalog.Monster("MONS_GOBLIN")
+	goblin, err := testCatalog(t).Monster("MONS_GOBLIN")
 
 	if err != nil {
 		g.Close()

@@ -18,7 +18,7 @@ func TestRatScenarioRollsSourceHPAndKeepsCatalogedBite(t *testing.T) {
 	}
 
 	combat, ok := g.stores.Combat.Get(rat)
-	definition, err := g.catalog.Monster("MONS_RAT")
+	definition, err := testCatalog(t).Monster("MONS_RAT")
 
 	if !ok ||
 		combat.ShieldBlocks != 0 ||
@@ -32,7 +32,7 @@ func TestRatScenarioRollsSourceHPAndKeepsCatalogedBite(t *testing.T) {
 func TestRatRolledHPSurvivesSaveWithoutReroll(t *testing.T) {
 	g := newStepGame(t)
 	before := g.Snapshot()
-	loaded, err := Restore(before, testCatalog(t))
+	loaded, err := Restore(before)
 
 	if err != nil {
 		t.Fatal(err)
@@ -52,7 +52,7 @@ func TestRatRolledHPSurvivesSaveWithoutReroll(t *testing.T) {
 		}
 	}
 
-	legacy, err := Restore(before, testCatalog(t))
+	legacy, err := Restore(before)
 
 	if err != nil {
 		t.Fatalf("old 4-HP rat save rejected: %v", err)
@@ -74,7 +74,7 @@ func TestRatRestoreRejectsImpossibleMaxHP(t *testing.T) {
 			}
 		}
 
-		if loaded, err := Restore(bad, testCatalog(t)); err == nil {
+		if loaded, err := Restore(bad); err == nil {
 			loaded.Close()
 			t.Fatalf("impossible rat max HP %d accepted", hp)
 		}

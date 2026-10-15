@@ -3,18 +3,11 @@ package terminal
 import (
 	"testing"
 
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/game"
 	"dcrawl-go/internal/modfs"
 )
 
 func TestAddedLuaSpeciesAppearsOnModdedMenuPage(t *testing.T) {
-	base, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	rules, err := modfs.Load("../script/testdata/add-species")
 
 	if err != nil {
@@ -22,7 +15,6 @@ func TestAddedLuaSpeciesAppearsOnModdedMenuPage(t *testing.T) {
 	}
 
 	model, err := NewAppModelWithRules(
-		base,
 		1,
 		"",
 		rules,

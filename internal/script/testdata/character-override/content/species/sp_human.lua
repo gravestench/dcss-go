@@ -7,6 +7,7 @@ register.species{
     monster_id = "MONS_HUMAN",
     source_path = "crawl-ref/source/dat/species/human.yaml",
     name = "Moon Human",
+    description = "Moon Humans are at home under moonlight.",
     short_name = "Hu",
     selectable = true,
     difficulty = "Intermediate",

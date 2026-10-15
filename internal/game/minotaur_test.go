@@ -26,7 +26,6 @@ func newMinotaurGame(t *testing.T) *Game {
 	t.Helper()
 	g, err := NewDungeonGame(
 		1,
-		testCatalog(t),
 		"SP_MINOTAUR",
 		"JOB_FIGHTER",
 		"WPN_FLAIL",
@@ -83,7 +82,7 @@ func TestMinotaurHardHelmetCannotBeWornOrRestored(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if restored, err := Restore(g.Snapshot(), testCatalog(t)); err == nil {
+	if restored, err := Restore(g.Snapshot()); err == nil {
 		restored.Close()
 		t.Fatal("restored equipped hard helmet on horns")
 	} else if !strings.Contains(err.Error(), "horns") {
@@ -101,7 +100,7 @@ func TestMinotaurHardHelmetCannotBeWornOrRestored(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if restored, err := Restore(g.Snapshot(), testCatalog(t)); err == nil {
+	if restored, err := Restore(g.Snapshot()); err == nil {
 		restored.Close()
 		t.Fatal("restored pending hard helmet wear")
 	} else if !strings.Contains(err.Error(), "horns") {

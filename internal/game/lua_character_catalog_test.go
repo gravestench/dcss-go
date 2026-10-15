@@ -13,11 +13,12 @@ func TestGameUsesEffectiveLuaCharacterDefinitions(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	base := testCatalog(t)
 	g, err := newScenarioWithRules(
 		1,
-		base,
-		base.Player(),
+		startChoice{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+		},
 		"WPN_RAPIER",
 		"Tester",
 		ordinaryMonsterScenarioID,
@@ -29,16 +30,6 @@ func TestGameUsesEffectiveLuaCharacterDefinitions(t *testing.T) {
 	}
 
 	defer g.Close()
-
-	human, err := g.catalog.Species("SP_HUMAN")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if human.Name != "Moon Human" {
-		t.Fatalf("game ignored effective Lua species: %q", human.Name)
-	}
 
 	attributes, found := g.stores.Attributes.Get(g.player)
 
@@ -54,11 +45,12 @@ func TestGameRespectsLuaCharacterChoicePolicy(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	base := testCatalog(t)
 	_, err = newScenarioWithRules(
 		1,
-		base,
-		base.Player(),
+		startChoice{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+		},
 		"WPN_RAPIER",
 		"Tester",
 		ordinaryMonsterScenarioID,
@@ -79,7 +71,6 @@ func TestLuaPolicyCannotEnableUnimplementedStart(t *testing.T) {
 
 	_, err = NewDungeonGameWithRules(
 		1,
-		testCatalog(t),
 		"SP_HUMAN",
 		"JOB_BERSERKER",
 		"",

@@ -117,7 +117,7 @@ func TestPoisonContinuationMatchesRestoredRun(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)

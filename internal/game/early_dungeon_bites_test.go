@@ -102,7 +102,7 @@ func TestSeededEarlyDungeonBitesSurviveSaveAndAwardXP(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			g, err := NewPopulatedScenario(1, testCatalog(t), "WPN_RAPIER", "Tester")
+			g, err := NewPopulatedScenario(1, "WPN_RAPIER", "Tester")
 
 			if err != nil {
 				t.Fatal(err)
@@ -111,7 +111,7 @@ func TestSeededEarlyDungeonBitesSurviveSaveAndAwardXP(t *testing.T) {
 			defer g.Close()
 			seededPlainBiteMonster(t, g, tc.kindID, tc.levelID)
 			snapshot := g.Snapshot()
-			loaded, err := Restore(snapshot, testCatalog(t))
+			loaded, err := Restore(snapshot)
 
 			if err != nil {
 				t.Fatal(err)

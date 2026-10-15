@@ -8,7 +8,7 @@ import (
 func TestRestoreRejectsRemovedAndEnumOnlyMonsters(t *testing.T) {
 	for _, id := range []string{"MONS_BUMBLEBEE", "MONS_BEAR"} {
 		t.Run(id, func(t *testing.T) {
-			g, err := NewScenario(42, testCatalog(t), "WPN_RAPIER", "Hero")
+			g, err := NewScenario(42, "WPN_RAPIER", "Hero")
 
 			if err != nil {
 				t.Fatal(err)

@@ -54,6 +54,22 @@ func Read(path string) (Snapshot, error) {
 	}
 
 	defer file.Close()
+	var header struct {
+		Version int `json:"version"`
+	}
+
+	if err := json.NewDecoder(file).Decode(&header); err != nil {
+		return Snapshot{}, fmt.Errorf("decode save: %w", err)
+	}
+
+	if header.Version != Version {
+		return Snapshot{}, fmt.Errorf("unsupported save version %d", header.Version)
+	}
+
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		return Snapshot{}, err
+	}
+
 	decoder := json.NewDecoder(file)
 	decoder.DisallowUnknownFields()
 	var snapshot Snapshot

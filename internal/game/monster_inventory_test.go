@@ -56,7 +56,7 @@ func TestRestoreRejectsMonsterItemInWrongSlot(t *testing.T) {
 	monsterID := ratID(t, g)
 	giveTestMonsterItem(t, g, monsterID, "MI_STONE", "weapon", 4)
 
-	if loaded, err := Restore(g.Snapshot(), testCatalog(t)); err == nil {
+	if loaded, err := Restore(g.Snapshot()); err == nil {
 		loaded.Close()
 		t.Fatal("accepted a missile in a weapon slot")
 	}
@@ -69,7 +69,7 @@ func TestMonsterWeaponOwnershipSurvivesSaveRestore(t *testing.T) {
 	rat := ratID(t, g)
 	weapon := giveTestMonsterWeapon(t, g, rat)
 	snapshot := g.Snapshot()
-	loaded, err := Restore(snapshot, testCatalog(t))
+	loaded, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -109,7 +109,7 @@ func TestMonsterWeaponOwnershipSurvivesSaveRestore(t *testing.T) {
 	snapshot.Entities[itemIndex], snapshot.Entities[monsterIndex] =
 		snapshot.Entities[monsterIndex], snapshot.Entities[itemIndex]
 
-	reordered, err := Restore(snapshot, testCatalog(t))
+	reordered, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -131,7 +131,7 @@ func TestRestoreRejectsWeaponPlusOutsideSourceShort(t *testing.T) {
 
 	weapon.Plus = 32768
 
-	if _, err := Restore(g.Snapshot(), testCatalog(t)); err == nil {
+	if _, err := Restore(g.Snapshot()); err == nil {
 		t.Fatal("restored a weapon enchantment outside C++ short range")
 	}
 }
@@ -150,7 +150,7 @@ func TestRestoreRejectsInvalidMonsterWeaponOwner(t *testing.T) {
 		}
 	}
 
-	if loaded, err := Restore(snapshot, testCatalog(t)); err == nil {
+	if loaded, err := Restore(snapshot); err == nil {
 		loaded.Close()
 		t.Fatal("accepted item carried by a missing monster")
 	}
@@ -164,7 +164,7 @@ func TestRestoreRejectsTwoEquippedMonsterWeapons(t *testing.T) {
 	giveTestMonsterWeapon(t, g, rat)
 	giveTestMonsterWeapon(t, g, rat)
 
-	if loaded, err := Restore(g.Snapshot(), testCatalog(t)); err == nil {
+	if loaded, err := Restore(g.Snapshot()); err == nil {
 		loaded.Close()
 		t.Fatal("accepted two weapons in one monster equipment slot")
 	}
@@ -219,7 +219,7 @@ func TestDeadMonsterDropsItsWeaponEntity(t *testing.T) {
 	playerHealth.Max = originalMax
 	playerHealth.Current = originalMax
 
-	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+	loaded, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)

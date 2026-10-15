@@ -148,7 +148,7 @@ func TestQuaffRejectsWrongItemAndCarrierWithoutTimeOrDraw(t *testing.T) {
 func TestQuaffSaveContinuation(t *testing.T) {
 	g := newStepGame(t)
 	itemID := carryCuring(t, g)
-	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+	loaded, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)

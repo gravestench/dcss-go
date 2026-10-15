@@ -90,7 +90,7 @@ func TestExperienceSaveRoundTripAndOlderFieldDefault(t *testing.T) {
 
 	training.AvailableXP = 10
 
-	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+	loaded, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -110,7 +110,7 @@ func TestExperienceSaveRoundTripAndOlderFieldDefault(t *testing.T) {
 		}
 	}
 
-	loaded, err = Restore(old, testCatalog(t))
+	loaded, err = Restore(old)
 
 	if err != nil {
 		t.Fatal(err)
@@ -135,7 +135,7 @@ func TestRestoreRejectsClaimedRatXPWhileRatAlive(t *testing.T) {
 		}
 	}
 
-	if loaded, err := Restore(bad, testCatalog(t)); err == nil {
+	if loaded, err := Restore(bad); err == nil {
 		loaded.Close()
 		t.Fatal("restored XP already awarded for a living rat")
 	}
@@ -161,7 +161,7 @@ func TestExperienceRestoreRejectsMalformedProgression(t *testing.T) {
 			}
 		}
 
-		if restored, err := Restore(bad, testCatalog(t)); err == nil {
+		if restored, err := Restore(bad); err == nil {
 			restored.Close()
 			t.Fatalf("restored impossible fixed-scenario XP %d", xp)
 		}

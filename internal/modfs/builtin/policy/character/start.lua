@@ -213,6 +213,17 @@ register.policy({
 })
 
 register.policy({
+    id = "character.actor_speed",
+    run = function(_, input)
+        catalog.get("species", input.species_id)
+
+        -- The source's base player speed is 10 aut. Species modifiers
+        -- belong here when their starts become playable.
+        return { speed = 10 }
+    end,
+})
+
+register.policy({
     id = "character.supported_starts",
     run = function(_, input)
         local supported = {}

@@ -81,7 +81,7 @@ func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 	}
 
 	snapshot := g.Snapshot()
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -117,7 +117,7 @@ func TestRestoreRejectsInvalidStairDestination(t *testing.T) {
 
 	snapshot.Levels[0].Stairs[0].ToLevelID = 99
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "invalid destination") {
 		t.Fatalf("invalid stair destination error = %v", err)
 	}
@@ -133,7 +133,7 @@ func TestFixedScenarioRestoreRejectsForgedUnavailableStair(t *testing.T) {
 	stair.ToY = 0
 	stair.Unavailable = "Dungeon:2 is unavailable."
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil {
+	if _, err := Restore(snapshot); err == nil {
 		t.Fatal("fixed scenario accepted an unavailable stair")
 	}
 }
@@ -144,7 +144,7 @@ func TestRestoreRejectsMissingStairLink(t *testing.T) {
 
 	snapshot.Levels[0].Stairs = nil
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "missing stair link") {
 		t.Fatalf("missing stair link error = %v", err)
 	}
@@ -204,7 +204,7 @@ func TestOlderSaveVersionCannotLoseStairLinksSilently(t *testing.T) {
 
 	snapshot.Version = save.Version - 1
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "unsupported save version") {
 		t.Fatalf("older save version error = %v", err)
 	}

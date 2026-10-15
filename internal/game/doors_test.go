@@ -41,7 +41,7 @@ func TestExplicitDoorOpenCloseAndRestore(t *testing.T) {
 		t.Fatalf("close door = %+v, %v, row %q", closed, err, g.levels[1].terrain[1])
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -142,7 +142,7 @@ func TestClosingDoorPushesFloorItems(t *testing.T) {
 		}
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)

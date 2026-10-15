@@ -7,20 +7,13 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/game"
 	"dcrawl-go/internal/save"
 )
 
 func pregameModel(t *testing.T) *AppModel {
 	t.Helper()
-	catalog, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	m, err := NewAppModel(catalog, 17, filepath.Join(t.TempDir(), "run.json"))
+	m, err := NewAppModel(17, filepath.Join(t.TempDir(), "run.json"))
 
 	if err != nil {
 		t.Fatal(err)
@@ -342,7 +335,7 @@ func TestHillOrcFighterMenuStartAndSaveRestore(t *testing.T) {
 		t.Fatalf("Hill Orc view: %+v", view)
 	}
 
-	restored, err := game.Restore(m.game.Snapshot(), m.catalog)
+	restored, err := game.Restore(m.game.Snapshot())
 
 	if err != nil {
 		t.Fatalf("Hill Orc restore: %v", err)
@@ -384,7 +377,7 @@ func TestDeepElfFighterMenuStartAndSaveRestore(t *testing.T) {
 		t.Fatalf("Deep Elf view: %+v", view)
 	}
 
-	restored, err := game.Restore(m.game.Snapshot(), m.catalog)
+	restored, err := game.Restore(m.game.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -424,7 +417,7 @@ func TestMinotaurFighterMenuStartAndSaveRestore(t *testing.T) {
 		t.Fatalf("Minotaur view: %+v", view)
 	}
 
-	restored, err := game.Restore(m.game.Snapshot(), m.catalog)
+	restored, err := game.Restore(m.game.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -516,13 +509,7 @@ func TestStartupLoadKeepsStateOnCorruptSave(t *testing.T) {
 		t.Fatalf("corrupt load changed state: %v / %q", m.screen, m.notice)
 	}
 
-	catalog, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	g, err := game.NewScenario(17, catalog, "WPN_RAPIER", "Alice")
+	g, err := game.NewScenario(17, "WPN_RAPIER", "Alice")
 
 	if err != nil {
 		t.Fatal(err)

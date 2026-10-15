@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/modfs"
 	"github.com/gravestench/akara"
 	lua "github.com/yuin/gopher-lua"
@@ -66,30 +65,27 @@ type Runtime struct {
 	state    *lua.LState
 	services Services
 
-	components       map[string]*akara.DynamicStore
-	hostComponents   map[string]HostComponent
-	species          map[string]content.SpeciesDef
-	jobs             map[string]content.JobDef
-	speciesTables    map[string]*lua.LTable
-	jobTables        map[string]*lua.LTable
-	definitions      map[string]map[string]*lua.LTable
-	choicePolicy     *lua.LFunction
-	policies         map[string]*lua.LFunction
-	systems          []System
-	context          *lua.LTable
-	handles          map[akara.Entity]*lua.LUserData
-	pending          []structuralCommand
-	pendingViews     map[componentTarget]*pendingComponent
-	pendingDestroy   map[akara.Entity]bool
-	pendingCells     map[gridCell]byte
-	pendingActors    map[gridCell]akara.Entity
-	pendingPositions map[akara.Entity]*gridCell
-	created          []akara.Entity
-	signals          map[string][]lua.LValue
-	loaded           map[string]lua.LValue
-	loading          map[string]bool
-	moduleStack      []string
-	frozen           bool
+	components        map[string]*akara.DynamicStore
+	hostComponents    map[string]HostComponent
+	definitions       map[string]map[string]*lua.LTable
+	definitionOrigins map[string]map[string]string
+	choicePolicy      *lua.LFunction
+	policies          map[string]*lua.LFunction
+	systems           []System
+	context           *lua.LTable
+	handles           map[akara.Entity]*lua.LUserData
+	pending           []structuralCommand
+	pendingViews      map[componentTarget]*pendingComponent
+	pendingDestroy    map[akara.Entity]bool
+	pendingCells      map[gridCell]byte
+	pendingActors     map[gridCell]akara.Entity
+	pendingPositions  map[akara.Entity]*gridCell
+	created           []akara.Entity
+	signals           map[string][]lua.LValue
+	loaded            map[string]lua.LValue
+	loading           map[string]bool
+	moduleStack       []string
+	frozen            bool
 }
 
 // New loads and validates the effective Lua source tree for one world.
@@ -131,13 +127,13 @@ func newRuntime(
 
 		components:     make(map[string]*akara.DynamicStore),
 		hostComponents: services.HostComponents,
-		species:        make(map[string]content.SpeciesDef),
-		jobs:           make(map[string]content.JobDef),
-		speciesTables:  make(map[string]*lua.LTable),
-		jobTables:      make(map[string]*lua.LTable),
 		definitions: map[string]map[string]*lua.LTable{
 			"species": make(map[string]*lua.LTable),
 			"jobs":    make(map[string]*lua.LTable),
+		},
+		definitionOrigins: map[string]map[string]string{
+			"species": make(map[string]string),
+			"jobs":    make(map[string]string),
 		},
 		policies:         make(map[string]*lua.LFunction),
 		loaded:           make(map[string]lua.LValue),

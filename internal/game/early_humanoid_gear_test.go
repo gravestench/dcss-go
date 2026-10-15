@@ -13,7 +13,7 @@ func TestSaveAcceptsCatalogedMonsterWeaponBrand(t *testing.T) {
 
 	weapon.Ego = "SPWPN_VENOM"
 
-	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+	loaded, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)

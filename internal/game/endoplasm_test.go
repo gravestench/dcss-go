@@ -29,7 +29,6 @@ func newEndoplasmGame(
 
 		g, err := NewDungeonGame(
 			seed,
-			testCatalog(t),
 			"SP_HUMAN",
 			"JOB_FIGHTER",
 			"WPN_FLAIL",
@@ -66,7 +65,7 @@ func newEndoplasmGame(
 
 func TestEndoplasmUsesSourcePopulationProfile(t *testing.T) {
 	g, entity := newEndoplasmGame(t, true)
-	definition, err := g.catalog.Monster("MONS_ENDOPLASM")
+	definition, err := testCatalog(t).Monster("MONS_ENDOPLASM")
 
 	if err != nil {
 		t.Fatal(err)
@@ -131,7 +130,7 @@ func TestEndoplasmFreezeUsesSpellIntentAndEnergy(t *testing.T) {
 	}
 
 	beforeSave := g.Snapshot()
-	loaded, err := Restore(beforeSave, g.catalog)
+	loaded, err := Restore(beforeSave)
 
 	if err != nil {
 		t.Fatal(err)
@@ -226,7 +225,7 @@ func TestRestoreRejectsEndoplasmCorpse(t *testing.T) {
 
 	corpse.MonsterID = "MONS_ENDOPLASM"
 
-	if loaded, err := Restore(g.Snapshot(), g.catalog); err == nil {
+	if loaded, err := Restore(g.Snapshot()); err == nil {
 		loaded.Close()
 		t.Fatal("accepted impossible endoplasm corpse")
 	}

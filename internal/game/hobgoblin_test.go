@@ -30,7 +30,7 @@ func TestGeneratedDungeonIncludesSourceHobgoblinsAndSaves(t *testing.T) {
 	}
 
 	before := encountered.Snapshot()
-	loaded, err := Restore(before, testCatalog(t))
+	loaded, err := Restore(before)
 
 	if err != nil {
 		t.Fatal(err)

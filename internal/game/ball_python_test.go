@@ -1,7 +1,6 @@
 package game
 
 import (
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"github.com/gravestench/akara"
 	"reflect"
@@ -17,15 +16,8 @@ func newBallPythonGameForSpecies(
 	speciesID string,
 ) (*Game, akara.Entity) {
 	t.Helper()
-	catalog, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	g, err := NewDungeonGame(
 		1,
-		catalog,
 		speciesID,
 		"JOB_FIGHTER",
 		"WPN_FLAIL",
@@ -69,7 +61,7 @@ func TestBallPythonDeathAwardsSourceXP(t *testing.T) {
 	g, pythonID := newBallPythonGame(t)
 	dx, dy := placePlayerBesideMonster(t, g, pythonID)
 	health, _ := g.stores.Health.Get(pythonID)
-	definition, _ := g.catalog.Monster("MONS_BALL_PYTHON")
+	definition, _ := testCatalog(t).Monster("MONS_BALL_PYTHON")
 
 	if !definition.LeavesCorpse {
 		t.Fatal("source ball python is not corpse eligible")
@@ -140,7 +132,7 @@ func TestConstrictedPlayerSaveRoundTrip(t *testing.T) {
 	}
 
 	snapshot := g.Snapshot()
-	loaded, err := Restore(snapshot, g.catalog)
+	loaded, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -177,7 +169,7 @@ func TestRestoreRejectsNegativePythonEnergy(t *testing.T) {
 		}
 	}
 
-	if loaded, err := Restore(snapshot, g.catalog); err == nil {
+	if loaded, err := Restore(snapshot); err == nil {
 		loaded.Close()
 		t.Fatal("restored impossible negative python energy")
 	}
@@ -224,7 +216,7 @@ func TestRestoreRejectsInvalidBallPythonGripLinks(t *testing.T) {
 				}
 			}
 
-			if loaded, err := Restore(snapshot, g.catalog); err == nil {
+			if loaded, err := Restore(snapshot); err == nil {
 				loaded.Close()
 				t.Fatal("restored invalid constriction link")
 			}

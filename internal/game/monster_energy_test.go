@@ -152,7 +152,7 @@ func TestMonsterEnergySurvivesSaveAndNextTurn(t *testing.T) {
 	energy.Points = 75
 
 	snapshot := g.Snapshot()
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -212,7 +212,7 @@ func TestRestoreRejectsMissingTimingRoleComponents(t *testing.T) {
 			invalid.Entities = append([]save.EntityRecord(nil), snapshot.Entities...)
 			test.mutate(&invalid)
 
-			if restored, err := Restore(invalid, testCatalog(t)); err == nil {
+			if restored, err := Restore(invalid); err == nil {
 				restored.Close()
 				t.Fatal("restored entity without its timing component")
 			}
@@ -231,7 +231,7 @@ func TestRestoreAllowsReadyEnergyAfterPlayerDeath(t *testing.T) {
 	ratEnergy.Points = 80
 
 	snapshot := g.Snapshot()
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -296,7 +296,7 @@ func TestPoisonDeathPreservesReadyMonsterEnergyInSave(t *testing.T) {
 	}
 
 	snapshot := g.Snapshot()
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatalf("terminal snapshot did not restore: %v", err)

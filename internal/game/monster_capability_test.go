@@ -9,10 +9,9 @@ import (
 
 // A mod can equip another cataloged actor without adding an ID handler.
 func TestEquippedMonsterUsesLauncherCapability(t *testing.T) {
-	catalog := testCatalog(t)
 
 	for seed := uint64(1); seed <= 30; seed++ {
-		g, err := NewScenario(seed, catalog, "WPN_RAPIER", "Tester")
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)
@@ -44,10 +43,9 @@ func TestEquippedMonsterUsesLauncherCapability(t *testing.T) {
 }
 
 func TestMonsterUsesAlternateLauncherAndSwapsWeapons(t *testing.T) {
-	catalog := testCatalog(t)
 
 	for seed := uint64(1); seed <= 30; seed++ {
-		g, err := NewScenario(seed, catalog, "WPN_RAPIER", "Tester")
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)
@@ -91,16 +89,15 @@ func TestMonsterUsesAlternateLauncherAndSwapsWeapons(t *testing.T) {
 }
 
 func TestMonsterLauncherPreventsFallbackThrow(t *testing.T) {
-	catalog := testCatalog(t)
 
 	for seed := uint64(1); seed <= 30; seed++ {
-		withMissile, err := NewScenario(seed, catalog, "WPN_RAPIER", "Tester")
+		withMissile, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		withoutMissile, err := NewScenario(seed, catalog, "WPN_RAPIER", "Tester")
+		withoutMissile, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			withMissile.Close()

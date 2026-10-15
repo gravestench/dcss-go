@@ -24,8 +24,7 @@ func TestFailedWritePreservesOldSave(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "run.json")
 
 	if err := Write(path, Snapshot{
-		Version:        Version,
-		SourceRevision: "old",
+		Version: Version,
 	}); err != nil {
 		t.Fatal(err)
 	}
@@ -37,7 +36,7 @@ func TestFailedWritePreservesOldSave(t *testing.T) {
 	snapshot, err := Read(path)
 
 	if err != nil ||
-		snapshot.SourceRevision != "old" {
+		snapshot.Version != Version {
 		t.Fatalf("old save lost: %+v, %v", snapshot, err)
 	}
 }
@@ -51,6 +50,22 @@ func TestRejectVersionFourSave(t *testing.T) {
 
 	if _, err := Read(path); err == nil ||
 		!strings.Contains(err.Error(), "version") {
+		t.Fatalf("old save error = %v", err)
+	}
+}
+
+func TestOldSaveReportsVersionBeforeRetiredFields(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "old.json")
+	data := []byte(`{"version":13,"source_revision":"old"}`)
+
+	if err := os.WriteFile(path, data, 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err := Read(path)
+
+	if err == nil ||
+		err.Error() != "unsupported save version 13" {
 		t.Fatalf("old save error = %v", err)
 	}
 }

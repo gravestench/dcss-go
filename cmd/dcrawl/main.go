@@ -6,7 +6,6 @@ import (
 	"os"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/game"
 	"dcrawl-go/internal/modfs"
 	"dcrawl-go/internal/terminal"
@@ -29,14 +28,7 @@ func run() error {
 		return fmt.Errorf("load Lua rules: %w", err)
 	}
 
-	catalog, err := content.LoadDefault()
-
-	if err != nil {
-		return fmt.Errorf("load content: %w", err)
-	}
-
 	model, err := terminal.NewAppModelWithRules(
-		catalog,
 		*seed,
 		*savePath,
 		rules,

@@ -1,108 +1,25 @@
 package script
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"math"
 	"slices"
 
-	"dcrawl-go/internal/content"
 	lua "github.com/yuin/gopher-lua"
 )
 
-// mod.null keeps a present JSON null distinct from an omitted Lua field.
+// mod.null keeps an explicit null distinct from an omitted Lua field.
 type definitionNull struct{}
 
-// The Lua files are the authority. These typed values are projections for
-// existing engine readers while their rule domains migrate to Lua.
-func (r *Runtime) SpeciesDefinitions() []content.SpeciesDef {
-	ids := make([]string, 0, len(r.species))
-
-	for id := range r.species {
-		ids = append(ids, id)
-	}
-
-	slices.Sort(ids)
-
-	definitions := make([]content.SpeciesDef, 0, len(ids))
-
-	for _, id := range ids {
-		definitions = append(definitions, r.species[id])
-	}
-
-	return definitions
-}
-
-func (r *Runtime) JobDefinitions() []content.JobDef {
-	ids := make([]string, 0, len(r.jobs))
-
-	for id := range r.jobs {
-		ids = append(ids, id)
-	}
-
-	slices.Sort(ids)
-
-	definitions := make([]content.JobDef, 0, len(ids))
-
-	for _, id := range ids {
-		definitions = append(definitions, r.jobs[id])
-	}
-
-	return definitions
-}
-
 func (r *Runtime) luaRegisterSpecies(state *lua.LState) int {
-	if r.frozen {
-		state.RaiseError("Lua registration is closed")
-
-		return 0
-	}
-
-	table := state.CheckTable(1)
-	id := requiredString(state, table, "id")
-
-	if _, found := r.species[id]; found {
-		state.RaiseError("duplicate species %s", id)
-
-		return 0
-	}
-
-	var definition content.SpeciesDef
-
-	if err := requiredDefinitionFields(table, &definition); err != nil {
-		state.RaiseError("species %s in %s: %v", id, r.currentModule(), err)
-
-		return 0
-	}
-
-	if err := decodeDefinition(table, &definition); err != nil {
-		state.RaiseError("species %s in %s: %v", id, r.currentModule(), err)
-
-		return 0
-	}
-
-	if err := definition.Validate(); err != nil {
-		state.RaiseError("species %s in %s: %v", id, r.currentModule(), err)
-
-		return 0
-	}
-
-	if definition.ID != id {
-		state.RaiseError("species registration ID changed during decode")
-
-		return 0
-	}
-
-	r.species[id] = definition
-	r.speciesTables[id] = copyDefinitionTable(state, table)
-	r.definitions["species"][id] = r.speciesTables[id]
-
-	return 0
+	return r.registerDefinition(state, "species")
 }
 
 func (r *Runtime) luaRegisterJob(state *lua.LState) int {
+	return r.registerDefinition(state, "jobs")
+}
+
+func (r *Runtime) registerDefinition(state *lua.LState, category string) int {
 	if r.frozen {
 		state.RaiseError("Lua registration is closed")
 
@@ -111,48 +28,83 @@ func (r *Runtime) luaRegisterJob(state *lua.LState) int {
 
 	table := state.CheckTable(1)
 	id := requiredString(state, table, "id")
+	entries := r.definitions[category]
 
-	if _, found := r.jobs[id]; found {
-		state.RaiseError("duplicate job %s", id)
-
-		return 0
-	}
-
-	var definition content.JobDef
-
-	if err := requiredDefinitionFields(table, &definition); err != nil {
-		state.RaiseError("job %s in %s: %v", id, r.currentModule(), err)
+	if _, found := entries[id]; found {
+		state.RaiseError("duplicate %s %s", category, id)
 
 		return 0
 	}
 
-	if err := decodeDefinition(table, &definition); err != nil {
-		state.RaiseError("job %s in %s: %v", id, r.currentModule(), err)
+	if _, err := luaDefinitionValue(table, make(map[*lua.LTable]bool)); err != nil {
+		state.RaiseError("%s %s in %s: %v", category, id, r.currentModule(), err)
 
 		return 0
 	}
 
-	if err := definition.Validate(); err != nil {
-		state.RaiseError("job %s in %s: %v", id, r.currentModule(), err)
-
-		return 0
-	}
-
-	if definition.ID != id {
-		state.RaiseError("job registration ID changed during decode")
-
-		return 0
-	}
-
-	r.jobs[id] = definition
-	r.jobTables[id] = copyDefinitionTable(state, table)
-	r.definitions["jobs"][id] = r.jobTables[id]
+	entries[id] = copyDefinitionTable(state, table)
+	r.definitionOrigins[category][id] = r.currentModule()
 
 	return 0
 }
 
-// Lua policy reads the same registered definitions used by the character
-// menu, so a same-path mod override cannot split menu and gameplay rules.
+func (r *Runtime) DefinitionIDs(category string) []string {
+	entries := r.definitions[category]
+	ids := make([]string, 0, len(entries))
+
+	for id := range entries {
+		ids = append(ids, id)
+	}
+
+	slices.Sort(ids)
+
+	return ids
+}
+
+func (r *Runtime) luaRegisteredIDs(state *lua.LState) int {
+	category := state.CheckString(1)
+
+	if _, found := r.definitions[category]; !found {
+		state.RaiseError("unknown registered content category %s", category)
+
+		return 0
+	}
+
+	result := state.NewTable()
+
+	for index, id := range r.DefinitionIDs(category) {
+		result.RawSetInt(index+1, lua.LString(id))
+	}
+
+	state.Push(result)
+
+	return 1
+}
+
+func (r *Runtime) luaRegisteredOrigin(state *lua.LState) int {
+	category := state.CheckString(1)
+	id := state.CheckString(2)
+	origins, found := r.definitionOrigins[category]
+
+	if !found {
+		state.RaiseError("unknown registered %s ID %s", category, id)
+
+		return 0
+	}
+
+	origin, found := origins[id]
+
+	if !found {
+		state.RaiseError("unknown registered %s ID %s", category, id)
+
+		return 0
+	}
+
+	state.Push(lua.LString(origin))
+
+	return 1
+}
+
 func (r *Runtime) luaRegisteredDefinition(state *lua.LState) int {
 	category := state.CheckString(1)
 	id := state.CheckString(2)
@@ -183,35 +135,6 @@ func (r *Runtime) currentModule() string {
 	}
 
 	return r.moduleStack[len(r.moduleStack)-1]
-}
-
-func decodeDefinition(table *lua.LTable, target any) error {
-	value, err := luaDefinitionValue(table, make(map[*lua.LTable]bool))
-
-	if err != nil {
-		return err
-	}
-
-	data, err := json.Marshal(value)
-
-	if err != nil {
-		return err
-	}
-
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-
-	if err := decoder.Decode(target); err != nil {
-		return err
-	}
-
-	var trailing any
-
-	if err := decoder.Decode(&trailing); err != io.EOF {
-		return fmt.Errorf("definition has trailing JSON data")
-	}
-
-	return nil
 }
 
 func luaDefinitionValue(

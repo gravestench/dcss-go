@@ -6,7 +6,7 @@ import (
 )
 
 func TestReturnedWormHealsAtFastRate(t *testing.T) {
-	g, err := NewDungeonGame(1, testCatalog(t), "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER", "Tester")
+	g, err := NewDungeonGame(1, "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER", "Tester")
 
 	if err != nil {
 		t.Fatal(err)
@@ -246,7 +246,7 @@ func TestSavedInactiveMonsterReturnsWithSameCatchup(t *testing.T) {
 	}
 
 	snapshot := g.Snapshot()
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)

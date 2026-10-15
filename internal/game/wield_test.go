@@ -73,7 +73,7 @@ func TestWieldRecoveredStartingWeaponAfterBareHands(t *testing.T) {
 		t.Fatalf("re-wield = %+v, %v; equipped=%v", wielded, err, g.stores.Equipped.Has(weapon))
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -102,7 +102,7 @@ func TestWieldAlternateCarriedWeaponAndRestore(t *testing.T) {
 		t.Fatalf("weapon switch = %+v, %v", result, err)
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatalf("alternate equipped weapon was rejected: %v", err)
@@ -174,7 +174,7 @@ func TestRestoreRejectsUnsupportedEquippedWeapon(t *testing.T) {
 				}
 			}
 
-			_, err := Restore(snapshot, testCatalog(t))
+			_, err := Restore(snapshot)
 
 			if err == nil ||
 				!strings.Contains(err.Error(), "equipped weapon") {

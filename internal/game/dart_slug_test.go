@@ -11,7 +11,6 @@ func newDartSlugGame(t *testing.T) (*Game, akara.Entity) {
 	for seed := uint64(1); seed <= 100; seed++ {
 		g, err := NewDungeonGame(
 			seed,
-			testCatalog(t),
 			"SP_HUMAN",
 			"JOB_FIGHTER",
 			"WPN_FLAIL",
@@ -87,7 +86,7 @@ func placePlayerInSlugLine(t *testing.T, g *Game, slug akara.Entity) {
 
 func TestDartSlugSourceProfileAndExperience(t *testing.T) {
 	g, entity := newDartSlugGame(t)
-	definition, err := g.catalog.Monster("MONS_DART_SLUG")
+	definition, err := testCatalog(t).Monster("MONS_DART_SLUG")
 
 	if err != nil {
 		t.Fatal(err)

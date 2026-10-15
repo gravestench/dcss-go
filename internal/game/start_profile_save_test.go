@@ -40,7 +40,7 @@ func TestStartProfileSaveRoundTrip(t *testing.T) {
 		t.Fatalf("unexpected save header or choice: %+v", before)
 	}
 
-	restored, err := Restore(before, testCatalog(t))
+	restored, err := Restore(before)
 
 	if err != nil {
 		t.Fatal(err)
@@ -91,7 +91,7 @@ func TestSaveProfileSlicesDoNotAlias(t *testing.T) {
 	}
 
 	input := g.Snapshot()
-	restored, err := Restore(input, testCatalog(t))
+	restored, err := Restore(input)
 
 	if err != nil {
 		t.Fatal(err)

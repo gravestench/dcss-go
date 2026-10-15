@@ -122,7 +122,7 @@ func TestPartialDropMergesMatchingFloorStackAndSaves(t *testing.T) {
 		t.Fatalf("merged drop = %+v, %v; floor=%+v; old item=%v", second, err, dropped, g.stores.Items.Has(itemID))
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -197,7 +197,7 @@ func TestDropEquipmentRulesAndInvalidRequests(t *testing.T) {
 		t.Fatal("unwielded weapon is not on the floor")
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatalf("save with dropped weapon was rejected: %v", err)
@@ -267,7 +267,7 @@ func TestRestoreAfterPickingUpDroppedWeapon(t *testing.T) {
 		t.Fatal("picked up weapon should remain carried and unequipped")
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatalf("save with carried unequipped weapon was rejected: %v", err)

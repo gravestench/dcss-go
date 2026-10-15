@@ -6,7 +6,6 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/game"
 	"dcrawl-go/internal/modfs"
 	"dcrawl-go/internal/save"
@@ -58,10 +57,9 @@ type menuWeaponOption struct {
 
 // AppModel owns terminal navigation; the Game owns every turn-changing state.
 type AppModel struct {
-	catalog             content.Catalog
 	choices             map[script.ChoiceKey]script.Choice
 	supportedStarts     map[script.ChoiceKey]bool
-	presentation        content.PresentationArtifact
+	presentation        script.MenuPresentation
 	seed                uint64
 	savePath            string
 	rules               modfs.Ruleset
@@ -95,7 +93,7 @@ type AppModel struct {
 	aimY            int
 }
 
-func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppModel, error) {
+func NewAppModel(seed uint64, savePath string) (*AppModel, error) {
 	rules, err := modfs.Load("")
 
 	if err != nil {
@@ -103,7 +101,6 @@ func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppMod
 	}
 
 	return NewAppModelWithRules(
-		catalog,
 		seed,
 		savePath,
 		rules,
@@ -112,19 +109,18 @@ func NewAppModel(catalog content.Catalog, seed uint64, savePath string) (*AppMod
 }
 
 func NewAppModelWithRules(
-	catalog content.Catalog,
 	seed uint64,
 	savePath string,
 	rules modfs.Ruleset,
 	policy game.RestorePolicy,
 ) (*AppModel, error) {
-	projected, choices, err := script.ProjectCharacterCatalog(catalog, rules)
+	presentation, choices, err := script.ProjectCharacterMenu(rules)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if len(projected.Presentation().SpeciesGroups) < 3 {
+	if len(presentation.SpeciesGroups) < 3 {
 		return nil, fmt.Errorf("catalog lacks console presentation")
 	}
 
@@ -137,7 +133,7 @@ func NewAppModelWithRules(
 		return nil, err
 	}
 
-	supportedStarts, err := projectSupportedStarts(presentationRuntime, projected)
+	supportedStarts, err := projectSupportedStarts(presentationRuntime, presentation)
 
 	if err != nil {
 		presentationRuntime.Close()
@@ -147,10 +143,9 @@ func NewAppModelWithRules(
 	}
 
 	return &AppModel{
-		catalog:         projected,
 		choices:         choices,
 		supportedStarts: supportedStarts,
-		presentation:    projected.Presentation(),
+		presentation:    presentation,
 
 		seed:                seed,
 		savePath:            savePath,
@@ -429,7 +424,6 @@ func (m *AppModel) loadSavedRun() {
 
 	restored, err := game.RestoreWithRules(
 		snapshot,
-		m.catalog,
 		m.rules,
 		m.restorePolicy,
 	)

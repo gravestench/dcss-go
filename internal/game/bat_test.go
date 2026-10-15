@@ -1,7 +1,6 @@
 package game
 
 import (
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"github.com/gravestench/akara"
 	"reflect"
@@ -10,15 +9,8 @@ import (
 
 func newBatGame(t *testing.T) (*Game, akara.Entity) {
 	t.Helper()
-	catalog, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	g, err := NewDungeonGame(
 		1,
-		catalog,
 		"SP_HUMAN",
 		"JOB_FIGHTER",
 		"WPN_FLAIL",
@@ -54,7 +46,7 @@ func TestGeneratedBatUsesCatalogStateAndSurvivesSave(t *testing.T) {
 	g, batID := newBatGame(t)
 	actor, _ := g.stores.Actors.Get(batID)
 	health, _ := g.stores.Health.Get(batID)
-	definition, _ := g.catalog.Monster("MONS_BAT")
+	definition, _ := testCatalog(t).Monster("MONS_BAT")
 
 	if actor.Speed != 30 ||
 		definition.Speed != 30 ||
@@ -63,7 +55,7 @@ func TestGeneratedBatUsesCatalogStateAndSurvivesSave(t *testing.T) {
 		t.Fatalf("bat actor %+v, health %+v", actor, health)
 	}
 
-	loaded, err := Restore(g.Snapshot(), g.catalog)
+	loaded, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -86,7 +78,7 @@ func TestVisibleBatUsesCatalogGlyphInDungeonView(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	definition, _ := g.catalog.Monster("MONS_BAT")
+	definition, _ := testCatalog(t).Monster("MONS_BAT")
 
 	for _, entity := range g.View().Entities {
 		if entity.ID != uint64(batID) {
@@ -107,7 +99,7 @@ func TestGeneratedBatDeathAwardsSourceXPAndCanLeaveCorpse(t *testing.T) {
 	g, batID := newBatGame(t)
 	dx, dy := placePlayerBesideMonster(t, g, batID)
 	health, _ := g.stores.Health.Get(batID)
-	definition, _ := g.catalog.Monster("MONS_BAT")
+	definition, _ := testCatalog(t).Monster("MONS_BAT")
 
 	if !definition.LeavesCorpse {
 		t.Fatal("source bat is not corpse eligible")
@@ -154,7 +146,7 @@ func TestRestoreRejectsImpossibleBatRetreatCounters(t *testing.T) {
 		}
 	}
 
-	if loaded, err := Restore(batSnapshot, g.catalog); err == nil {
+	if loaded, err := Restore(batSnapshot); err == nil {
 		loaded.Close()
 		t.Fatal("restored bat with impossible retreat counter")
 	}
@@ -179,7 +171,7 @@ func TestRestoreRejectsImpossibleBatRetreatCounters(t *testing.T) {
 		t.Fatal("generated Dungeon has no non-bat comparison")
 	}
 
-	if loaded, err := Restore(nonBatSnapshot, g.catalog); err == nil {
+	if loaded, err := Restore(nonBatSnapshot); err == nil {
 		loaded.Close()
 		t.Fatal("restored a non-bat retreat counter")
 	}

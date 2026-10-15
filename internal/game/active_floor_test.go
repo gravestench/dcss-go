@@ -98,7 +98,7 @@ func TestReturnUsesFrozenMonsterEnergyAndSaveContinues(t *testing.T) {
 	}
 
 	snapshot := g.Snapshot()
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatalf("frozen off-floor energy should survive save: %v", err)
@@ -154,7 +154,7 @@ func TestRestoreRejectsReadyMonsterEnergy(t *testing.T) {
 		}
 	}
 
-	if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
+	if restored, err := Restore(snapshot); err == nil {
 		restored.Close()
 		t.Fatal("ready monster energy restored")
 	}

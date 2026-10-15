@@ -4,19 +4,12 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/game"
 )
 
 func playView(t *testing.T) game.View {
 	t.Helper()
-	catalog, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	g, err := game.NewScenario(7, catalog, "WPN_RAPIER", "Alice")
+	g, err := game.NewScenario(7, "WPN_RAPIER", "Alice")
 
 	if err != nil {
 		t.Fatal(err)
@@ -280,13 +273,7 @@ func TestDrawPlayShowsConstrictedStatus(t *testing.T) {
 }
 
 func TestDrawPlayUnarmedUsesSourceWeaponSlot(t *testing.T) {
-	catalog, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	g, err := game.NewScenario(7, catalog, "WPN_UNARMED", "Alice")
+	g, err := game.NewScenario(7, "WPN_UNARMED", "Alice")
 
 	if err != nil {
 		t.Fatal(err)
@@ -303,13 +290,7 @@ func TestDrawPlayUnarmedUsesSourceWeaponSlot(t *testing.T) {
 }
 
 func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
-	catalog, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	run, err := game.NewScenario(7, catalog, "WPN_RAPIER", "Alice")
+	run, err := game.NewScenario(7, "WPN_RAPIER", "Alice")
 
 	if err != nil {
 		t.Fatal(err)
@@ -331,7 +312,7 @@ func TestDrawPlayFogAndRememberedTerrain(t *testing.T) {
 	known[3] = '.'
 	snapshot.Levels[0].Known[3] = string(known)
 
-	restored, err := game.Restore(snapshot, catalog)
+	restored, err := game.Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)

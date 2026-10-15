@@ -11,7 +11,7 @@ import (
 
 func newPopulatedTestGame(t *testing.T, seed uint64) *Game {
 	t.Helper()
-	g, err := NewPopulatedScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+	g, err := NewPopulatedScenario(seed, "WPN_RAPIER", "Tester")
 
 	if err != nil {
 		t.Fatal(err)
@@ -48,7 +48,7 @@ func TestPopulationPlacesSupportedMonstersOnFixedDungeon(t *testing.T) {
 			t.Fatalf("unsupported populated actor %+v", actor)
 		}
 
-		if _, err := g.catalog.Monster(actor.KindID); err != nil {
+		if _, err := testCatalog(t).Monster(actor.KindID); err != nil {
 			t.Fatalf("unsupported populated actor %+v: %v", actor, err)
 		}
 
@@ -92,7 +92,7 @@ func newJackalBandTestGame(t *testing.T) *Game {
 	var g *Game
 
 	for seed := uint64(1); seed <= 64; seed++ {
-		candidate, err := NewPopulatedScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+		candidate, err := NewPopulatedScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)
@@ -153,7 +153,7 @@ func TestRestoreRejectsInvalidJackalBandState(t *testing.T) {
 			snapshot := g.Snapshot()
 			testCase.change(&snapshot)
 
-			if _, err := Restore(snapshot, testCatalog(t)); err == nil {
+			if _, err := Restore(snapshot); err == nil {
 				t.Fatal("accepted invalid jackal band save")
 			}
 		})
@@ -168,7 +168,7 @@ func TestPopulationSaveAndTurnContinuation(t *testing.T) {
 		t.Fatal("same seed produced different population")
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -200,7 +200,7 @@ func TestRestoreRejectsFixedPopulationSaveWithoutBudgets(t *testing.T) {
 		snapshot.Levels[index].InitialActors = 0
 	}
 
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err == nil {
 		restored.Close()
@@ -230,7 +230,7 @@ func TestRestoreRejectsOverfullPopulationLevel(t *testing.T) {
 		break
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "too many live monsters") {
 		t.Fatalf("overfull population error = %v", err)
 	}
@@ -252,7 +252,7 @@ func TestRestoreRejectsExperienceWithoutPopulationKill(t *testing.T) {
 		break
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "exceeds possible Dungeon kills") {
 		t.Fatalf("unearned experience error = %v", err)
 	}

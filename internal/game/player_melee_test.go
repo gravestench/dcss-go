@@ -16,7 +16,7 @@ func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+	loaded, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -46,7 +46,7 @@ func TestPlayerBumpAndSaveContinueWithSourceMelee(t *testing.T) {
 }
 
 func TestPlayerLethalBumpClearsRatOccupancy(t *testing.T) {
-	g, err := NewScenario(7, testCatalog(t), "WPN_RAPIER", "Tester")
+	g, err := NewScenario(7, "WPN_RAPIER", "Tester")
 
 	if err != nil {
 		t.Fatal(err)

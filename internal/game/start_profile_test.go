@@ -43,7 +43,7 @@ func TestScenarioInstallsStartingProfile(t *testing.T) {
 		},
 	} {
 		t.Run(tc.weapon, func(t *testing.T) {
-			g, err := NewScenario(37, testCatalog(t), tc.weapon, "Tester")
+			g, err := NewScenario(37, tc.weapon, "Tester")
 
 			if err != nil {
 				t.Fatal(err)

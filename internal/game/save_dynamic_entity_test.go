@@ -13,11 +13,12 @@ func TestRestoreKeepsEntityWithOnlyLuaComponents(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	base := testCatalog(t)
 	g, err := newScenarioWithRules(
 		1,
-		base,
-		base.Player(),
+		startChoice{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+		},
 		"WPN_RAPIER",
 		"Tester",
 		ordinaryMonsterScenarioID,
@@ -45,7 +46,7 @@ func TestRestoreKeepsEntityWithOnlyLuaComponents(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	loaded, err := RestoreWithRules(g.Snapshot(), base, rules, RestorePolicy{})
+	loaded, err := RestoreWithRules(g.Snapshot(), rules, RestorePolicy{})
 
 	if err != nil {
 		t.Fatal(err)

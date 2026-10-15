@@ -6,11 +6,10 @@ import (
 	"dcrawl-go/internal/ecs"
 )
 
-const Version = 13
+const Version = 14
 
 type Snapshot struct {
 	Version        int               `json:"version"`
-	SourceRevision string            `json:"source_revision"`
 	ScenarioID     string            `json:"scenario_id,omitempty"`
 	RulesetHash    string            `json:"ruleset_hash"`
 	LuaDialect     string            `json:"lua_dialect"`

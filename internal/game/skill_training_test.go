@@ -55,7 +55,7 @@ func TestPlayerTrainingStateIsOwnedByAkaraAndSnapshotIsIsolated(t *testing.T) {
 
 	saved.Settings[0].Enabled = true
 
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -154,7 +154,7 @@ func TestRestoreRejectsInvalidSkillTrainingState(t *testing.T) {
 				}
 			}
 
-			if restored, err := Restore(bad, testCatalog(t)); err == nil {
+			if restored, err := Restore(bad); err == nil {
 				restored.Close()
 				t.Fatal("restored invalid skill training state")
 			}
@@ -304,7 +304,7 @@ func TestDisabledTrainingKeepsExperienceUntilEnabled(t *testing.T) {
 		t.Fatalf("disabled training spent XP: %+v", *training)
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -357,7 +357,7 @@ func TestSkillRNGAndPracticeContinueAfterRestore(t *testing.T) {
 		t.Fatal("could not remove killed rat")
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)

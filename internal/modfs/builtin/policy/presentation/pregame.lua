@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local colors = require("policy.presentation.colors")
 local source = require("data.presentation")
+local menu = require("policy.character.menu")
 
 local pregame = {}
 
@@ -163,8 +164,10 @@ end
 local function choice_rows(input, writes, wraps)
     local screen = input.screen
     local species_screen = screen == "species"
-    local groups = species_screen and source.species_groups or source.job_groups
-    local descriptions = species_screen and source.species_descriptions or source.job_descriptions
+    local presentation = menu.presentation()
+    local groups = species_screen and presentation.species_groups or presentation.job_groups
+    local descriptions = species_screen and
+        presentation.species_descriptions or presentation.job_descriptions
     local choice_title = species_screen and "species" or "background"
     local other_title = species_screen and "background" or "species"
     local other_id = species_screen and input.job_id or input.species_id

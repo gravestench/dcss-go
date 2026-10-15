@@ -15,14 +15,15 @@ semantics, and presentation policies. The implemented entity systems are
 registered in `internal/modfs/builtin/systems`.
 
 Species and jobs are registered from their individual files under
-`content/species` and `content/jobs`. Gameplay reads those same registered
-tables, so an overlay of a definition changes the menu and game rules
-together. Other imported content is committed under `data`; the Lua
-`policy/catalog.lua` indexes active IDs. No normal build or game launch
-reads the C++ checkout or runs an importer. The matching JSON artifacts under
-`internal/content/generated` remain source-traced import and Go projection
-data. `scripts/export-catalog-lua.py` refreshes the eleven aggregate Lua
-catalogs deliberately when upstream content changes.
+`content/species` and `content/jobs`. Gameplay and the pregame menu read
+those same registered tables, so an overlay changes both together. Lua
+validates the effective definitions and can retain mod-added fields.
+Other imported content is committed under `data`; Lua
+`policy/catalog.lua` indexes active IDs. Normal launch and restore read
+neither the C++ checkout nor the generated JSON artifacts. Those JSON files
+remain source-traced inputs for deliberate import refreshes and tests.
+`scripts/export-catalog-lua.py` refreshes the eleven aggregate Lua catalogs
+when upstream content changes.
 
 An optional mod directory replaces bundled Lua files by relative path and
 may add files. Effective file bytes determine the ruleset hash recorded by
@@ -40,7 +41,7 @@ than a handler API for each game domain.
 | Combat | Fighter melee and headbutts; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, Lua effect modules for Freeze, Slug Dart, sling bullets, stones, and poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
 | Items and status | Pickup/drop, wielding, armour delays, quaffing curing/heal wounds/might/haste, ammunition stacks and landing, poison, curare slow, trapping nets, regeneration, and duration decay | `policy/inventory`, `policy/potions.lua`, `systems/item_*`, `systems/player_status.lua`, `systems/monster_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `internal/terminal` |
-| Persistence | Version-12 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
+| Persistence | Version-14 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
 
 Core Akara components remain typed Go stores where the generic engine must
 read them; Lua systems and policies change their authoritative values through

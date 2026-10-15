@@ -10,7 +10,7 @@ import (
 )
 
 func TestPlayerNameSurvivesGoSaveAndRestore(t *testing.T) {
-	g, err := NewScenario(19, testCatalog(t), "WPN_RAPIER", "Alice")
+	g, err := NewScenario(19, "WPN_RAPIER", "Alice")
 
 	if err != nil {
 		t.Fatal(err)
@@ -42,7 +42,7 @@ func TestPlayerNameSurvivesGoSaveAndRestore(t *testing.T) {
 		t.Fatalf("saved player: %+v", snapshot)
 	}
 
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -56,7 +56,7 @@ func TestPlayerNameSurvivesGoSaveAndRestore(t *testing.T) {
 }
 
 func TestOldVersionFourSaveWithoutNameDisplaysAdventurer(t *testing.T) {
-	g, err := NewScenario(19, testCatalog(t), "WPN_RAPIER", "Alice")
+	g, err := NewScenario(19, "WPN_RAPIER", "Alice")
 
 	if err != nil {
 		t.Fatal(err)
@@ -83,7 +83,7 @@ func TestOldVersionFourSaveWithoutNameDisplaysAdventurer(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	restored, err := Restore(old, testCatalog(t))
+	restored, err := Restore(old)
 
 	if err != nil {
 		t.Fatal(err)
@@ -97,7 +97,7 @@ func TestOldVersionFourSaveWithoutNameDisplaysAdventurer(t *testing.T) {
 }
 
 func TestRestoreRejectsInvalidSavedName(t *testing.T) {
-	g, err := NewScenario(19, testCatalog(t), "WPN_RAPIER", "Alice")
+	g, err := NewScenario(19, "WPN_RAPIER", "Alice")
 
 	if err != nil {
 		t.Fatal(err)
@@ -108,7 +108,7 @@ func TestRestoreRejectsInvalidSavedName(t *testing.T) {
 
 	savedPlayer(t, &snapshot).Player.Name = "Bad!"
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil ||
+	if _, err := Restore(snapshot); err == nil ||
 		!strings.Contains(err.Error(), "name") {
 		t.Fatalf("bad saved name accepted: %v", err)
 	}

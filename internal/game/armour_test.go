@@ -117,7 +117,7 @@ func TestArmourSwapSavesMidDelayAndChangesDefenseAtFinish(t *testing.T) {
 		t.Fatalf("rat energy after swap start = %d, want 70", ratEnergy.Points)
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -151,7 +151,7 @@ func TestArmourSwapSavesMidDelayAndChangesDefenseAtFinish(t *testing.T) {
 				t.Fatal("swap did not leave the body slot empty after removal")
 			}
 
-			midSwap, restoreErr := Restore(restored.Snapshot(), testCatalog(t))
+			midSwap, restoreErr := Restore(restored.Snapshot())
 
 			if restoreErr != nil {
 				t.Fatal(restoreErr)
@@ -201,7 +201,7 @@ func TestRestoreRejectsEquipmentDelayWithMissingItem(t *testing.T) {
 		}
 	}
 
-	if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
+	if restored, err := Restore(snapshot); err == nil {
 		restored.Close()
 		t.Fatal("missing delay item was accepted")
 	}
@@ -236,7 +236,7 @@ func TestRestoreRejectsPendingShieldWithTwoHandedWeapon(t *testing.T) {
 		}
 	}
 
-	if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
+	if restored, err := Restore(snapshot); err == nil {
 		restored.Close()
 		t.Fatal("incompatible delayed shield wear was accepted")
 	}
@@ -261,7 +261,7 @@ func TestRestoreRejectsImpossibleRemovalTurnCount(t *testing.T) {
 		}
 	}
 
-	if restored, err := Restore(snapshot, testCatalog(t)); err == nil {
+	if restored, err := Restore(snapshot); err == nil {
 		restored.Close()
 		t.Fatal("impossible removal turn count was accepted")
 	}
@@ -314,7 +314,7 @@ func TestHumanWearsAuxiliaryArmourAcrossSavedDelay(t *testing.T) {
 				t.Fatalf("%s was equipped before its delay", test.kindID)
 			}
 
-			restored, err := Restore(g.Snapshot(), testCatalog(t))
+			restored, err := Restore(g.Snapshot())
 
 			if err != nil {
 				t.Fatal(err)
@@ -487,7 +487,7 @@ func TestRestoreRejectsHumanWearingBarding(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err == nil {
 		restored.Close()
@@ -526,7 +526,7 @@ func TestRestoreRejectsQueuedBarding(t *testing.T) {
 					t.Fatal(err)
 				}
 
-				restored, err := Restore(g.Snapshot(), testCatalog(t))
+				restored, err := Restore(g.Snapshot())
 
 				if err == nil {
 					restored.Close()
@@ -564,7 +564,7 @@ func TestAuxiliaryArmourSwapTakesTenTurnsAcrossSave(t *testing.T) {
 		t.Fatalf("swap start: spent %d, err %v", first.Spent, err)
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)

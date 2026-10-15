@@ -4,35 +4,43 @@ import (
 	"fmt"
 
 	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/modfs"
 	"dcrawl-go/internal/script"
 	"github.com/gravestench/akara"
 )
 
+type startChoice struct {
+	SpeciesID string
+	JobID     string
+	Speed     int
+}
+
 func NewScenario(
 	seed uint64,
-	catalog content.Catalog,
 	weaponID, name string,
 ) (_ *Game, err error) {
-	return newScenario(seed, catalog, catalog.Player(), weaponID, name, ordinaryMonsterScenarioID)
+	return newScenario(seed, startChoice{
+		SpeciesID: "SP_HUMAN",
+		JobID:     "JOB_FIGHTER",
+	}, weaponID, name, ordinaryMonsterScenarioID)
 }
 
 // NewPopulatedScenario keeps the current fixed map while selecting its
 // supported monsters from the committed Dungeon population table.
 func NewPopulatedScenario(
 	seed uint64,
-	catalog content.Catalog,
 	weaponID, name string,
 ) (_ *Game, err error) {
-	return newScenario(seed, catalog, catalog.Player(), weaponID, name, populationScenarioID)
+	return newScenario(seed, startChoice{
+		SpeciesID: "SP_HUMAN",
+		JobID:     "JOB_FIGHTER",
+	}, weaponID, name, populationScenarioID)
 }
 
 // NewDungeonGame starts the live client with the bundled Lua ruleset.
 func NewDungeonGame(
 	seed uint64,
-	catalog content.Catalog,
 	speciesID, jobID, weaponID, name string,
 ) (_ *Game, err error) {
 	rules, err := modfs.Load("")
@@ -43,7 +51,6 @@ func NewDungeonGame(
 
 	return NewDungeonGameWithRules(
 		seed,
-		catalog,
 		speciesID,
 		jobID,
 		weaponID,
@@ -55,21 +62,17 @@ func NewDungeonGame(
 // NewDungeonGameWithRules starts the same game with an effective Lua tree.
 func NewDungeonGameWithRules(
 	seed uint64,
-	catalog content.Catalog,
 	speciesID, jobID, weaponID, name string,
 	rules modfs.Ruleset,
 ) (_ *Game, err error) {
-	// The source's base player speed is 10 aut for these playable species.
-	definition := content.PlayerDef{
+	choice := startChoice{
 		SpeciesID: speciesID,
 		JobID:     jobID,
-		Speed:     10,
 	}
 
 	return newScenarioWithRules(
 		seed,
-		catalog,
-		definition,
+		choice,
 		weaponID,
 		name,
 		generatedDungeonScenarioID,
@@ -79,8 +82,7 @@ func NewDungeonGameWithRules(
 
 func newScenario(
 	seed uint64,
-	catalog content.Catalog,
-	playerDef content.PlayerDef,
+	playerDef startChoice,
 	weaponID, name string,
 	scenarioID string,
 ) (_ *Game, err error) {
@@ -92,7 +94,6 @@ func newScenario(
 
 	return newScenarioWithRules(
 		seed,
-		catalog,
 		playerDef,
 		weaponID,
 		name,
@@ -103,16 +104,11 @@ func newScenario(
 
 func newScenarioWithRules(
 	seed uint64,
-	catalog content.Catalog,
-	playerDef content.PlayerDef,
+	playerDef startChoice,
 	weaponID, name string,
 	scenarioID string,
 	rules modfs.Ruleset,
 ) (_ *Game, err error) {
-	if err := catalog.Validate(); err != nil {
-		return nil, err
-	}
-
 	if err := character.ValidateName(name); err != nil {
 		return nil, err
 	}
@@ -132,10 +128,9 @@ func newScenarioWithRules(
 		stores: stores,
 		levels: make(map[int]*Level),
 
-		catalog: catalog,
-		rules:   rules,
-		seed:    seed,
-		rng:     rng,
+		rules: rules,
+		seed:  seed,
+		rng:   rng,
 
 		scheduler: TurnScheduler{
 			actors:    stores.Actors,
@@ -172,15 +167,6 @@ func newScenarioWithRules(
 		return nil, err
 	}
 
-	g.catalog, err = g.catalog.WithCharacterDefinitions(
-		g.scripts.SpeciesDefinitions(),
-		g.scripts.JobDefinitions(),
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
 	choice, err := g.scripts.CharacterChoice(
 		playerDef.SpeciesID,
 		playerDef.JobID,
@@ -210,6 +196,20 @@ func newScenarioWithRules(
 		)
 	}
 
+	speedProfile, err := g.scripts.Policy("character.actor_speed", map[string]any{
+		"species_id": playerDef.SpeciesID,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	playerDef.Speed, err = decisionInteger(speedProfile, "speed")
+
+	if err != nil {
+		return nil, err
+	}
+
 	if err = g.createPlayerActor(playerDef, weaponID, name, setup); err != nil {
 		return nil, err
 	}
@@ -236,7 +236,7 @@ func newScenarioWithRules(
 // createPlayerActor establishes identity, position, and starting equipment.
 // These must exist before character rules project the starting profile.
 func (g *Game) createPlayerActor(
-	definition content.PlayerDef,
+	definition startChoice,
 	weaponID, name string,
 	setup scenarioLevels,
 ) error {
@@ -295,7 +295,7 @@ func (g *Game) createPlayerActor(
 }
 
 // initializeCharacter stores the source-derived Fighter state on the player.
-func (g *Game) initializeCharacter(definition content.PlayerDef, weaponID string) error {
+func (g *Game) initializeCharacter(definition startChoice, weaponID string) error {
 	_, err := g.scripts.Policy("character.start", map[string]any{
 		"species_id": definition.SpeciesID,
 		"job_id":     definition.JobID,

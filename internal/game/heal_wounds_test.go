@@ -56,7 +56,7 @@ func TestHealWoundsFloorPickupQuaffAndSaveContinuation(t *testing.T) {
 
 	health.Current = 1
 
-	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+	loaded, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)

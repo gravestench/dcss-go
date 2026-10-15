@@ -47,11 +47,12 @@ Mutable state on actors and items remains in Akara, whether the schema was
 originally Go-defined or Lua-defined.
 
 The Lua runtime registers all 43 species and 31 jobs from per-definition
-files. Character choice, four playable Fighter starts, combat, equipment,
-statuses, monster behavior, generated floors, save semantics, and screen
-policy use Lua. Other aggregate source content is committed as generated
-Lua modules. One generic typed-store context exposes authoritative Akara
-state to those rules. The
+files. Character choice and the pregame menu read the registered Lua tables
+directly; normal launch no longer loads the parallel Go content catalog.
+Four playable Fighter starts, combat, equipment, statuses, monster behavior,
+generated floors, save semantics, and screen policy use Lua. Other aggregate
+source content is committed as generated Lua modules. One generic typed-store
+context exposes authoritative Akara state to those rules. The
 [one-pass conversion contract](superpowers/specs/2026-10-14-one-pass-lua-gameplay-design.md)
 sets the boundary for this implementation.
 

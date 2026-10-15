@@ -119,7 +119,7 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 	}
 
 	snapshot := g.Snapshot()
-	loaded, err := Restore(snapshot, testCatalog(t))
+	loaded, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -142,7 +142,7 @@ func TestRegenerationSaveContinuationAndLegacyDefault(t *testing.T) {
 		legacy.Entities[i].Regeneration = nil
 	}
 
-	old, err := Restore(legacy, testCatalog(t))
+	old, err := Restore(legacy)
 
 	if err != nil {
 		t.Fatal(err)
@@ -212,7 +212,7 @@ func TestRegenerationRestoreRejectsInvalidCountersAndOwnership(t *testing.T) {
 			bad := g.Snapshot()
 			tc.mutate(&bad)
 
-			if loaded, err := Restore(bad, testCatalog(t)); err == nil {
+			if loaded, err := Restore(bad); err == nil {
 				loaded.Close()
 				t.Fatal("invalid regeneration save accepted")
 			}

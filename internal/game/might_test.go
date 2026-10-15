@@ -154,7 +154,7 @@ func TestMightSaveContinuationAndLegacyDefault(t *testing.T) {
 	}
 
 	snapshot := g.Snapshot()
-	loaded, err := Restore(snapshot, testCatalog(t))
+	loaded, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -177,7 +177,7 @@ func TestMightSaveContinuationAndLegacyDefault(t *testing.T) {
 		legacy.Entities[i].Durations = nil
 	}
 
-	old, err := Restore(legacy, testCatalog(t))
+	old, err := Restore(legacy)
 
 	if err != nil ||
 		old.View().MightAut != 0 {
@@ -250,7 +250,7 @@ func TestMightRestoreRejectsBadOwnershipAndRange(t *testing.T) {
 
 			tc.edit(player, monster)
 
-			if _, err := Restore(bad, testCatalog(t)); err == nil {
+			if _, err := Restore(bad); err == nil {
 				t.Fatal("bad duration save accepted")
 			}
 		})

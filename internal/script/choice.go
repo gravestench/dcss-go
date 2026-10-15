@@ -36,13 +36,13 @@ func (r *Runtime) CharacterChoice(
 		return Choice{}, fmt.Errorf("Lua character choice policy is missing")
 	}
 
-	species, found := r.speciesTables[speciesID]
+	species, found := r.definitions["species"][speciesID]
 
 	if !found {
 		return Choice{}, fmt.Errorf("unknown Lua species %s", speciesID)
 	}
 
-	job, found := r.jobTables[jobID]
+	job, found := r.definitions["jobs"][jobID]
 
 	if !found {
 		return Choice{}, fmt.Errorf("unknown Lua job %s", jobID)

@@ -74,7 +74,7 @@ func TestCockroachCorpseCannotBecomeSkeleton(t *testing.T) {
 	corpse.MonsterID = "MONS_GIANT_COCKROACH"
 
 	snapshot := g.Snapshot()
-	loaded, err := Restore(snapshot, testCatalog(t))
+	loaded, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -99,7 +99,7 @@ func TestCockroachCorpseCannotBecomeSkeleton(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil {
+	if _, err := Restore(snapshot); err == nil {
 		t.Fatal("accepted impossible cockroach skeleton save")
 	}
 }
@@ -107,7 +107,7 @@ func TestCockroachCorpseCannotBecomeSkeleton(t *testing.T) {
 func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 	for _, drop := range []bool{false, true} {
 		seed := corpseDropSeed(t, drop)
-		g, err := NewScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)
@@ -184,7 +184,7 @@ func TestRatDeathCorpseDropAndNoDrop(t *testing.T) {
 }
 
 func TestPreDeadRatLeavesNoCorpse(t *testing.T) {
-	g, err := NewScenario(corpseDropSeed(t, true), testCatalog(t), "WPN_RAPIER", "Tester")
+	g, err := NewScenario(corpseDropSeed(t, true), "WPN_RAPIER", "Tester")
 
 	if err != nil {
 		t.Fatal(err)
@@ -275,7 +275,7 @@ func TestCorpseDecaysAtTwoHundredAutAndSurvivesSave(t *testing.T) {
 	}
 
 	snapshot := g.Snapshot()
-	loaded, err := Restore(snapshot, testCatalog(t))
+	loaded, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -378,7 +378,7 @@ func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 	}
 
 	snapshot := g.Snapshot()
-	loaded, err := Restore(snapshot, testCatalog(t))
+	loaded, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -444,7 +444,7 @@ func TestRestoreRejectsMalformedCorpseState(t *testing.T) {
 			}
 		}
 
-		if loaded, err := Restore(bad, testCatalog(t)); err == nil {
+		if loaded, err := Restore(bad); err == nil {
 			loaded.Close()
 			t.Fatal("accepted malformed corpse")
 		}
@@ -470,7 +470,7 @@ func TestRestoreRejectsInvalidCorpseFloorClock(t *testing.T) {
 
 	active.Levels[0].AwaySinceAut = &zero
 
-	if loaded, err := Restore(active, testCatalog(t)); err == nil {
+	if loaded, err := Restore(active); err == nil {
 		loaded.Close()
 		t.Fatal("accepted active floor marked away")
 	}
@@ -483,7 +483,7 @@ func TestRestoreRejectsInvalidCorpseFloorClock(t *testing.T) {
 		}
 	}
 
-	if loaded, err := Restore(inactive, testCatalog(t)); err == nil {
+	if loaded, err := Restore(inactive); err == nil {
 		loaded.Close()
 		t.Fatal("accepted inactive corpse without away clock")
 	}

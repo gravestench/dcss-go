@@ -3,7 +3,6 @@ package terminal
 import (
 	"strings"
 
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/script"
 	"github.com/mattn/go-runewidth"
 )
@@ -140,10 +139,10 @@ func (m *AppModel) welcomeText() string {
 
 // The menu input handler uses the same page geometry as the Lua presentation policy.
 func characterChoicePage(
-	groups []content.MenuGroup,
+	groups []script.MenuGroup,
 	focus int,
 	screen ScreenID,
-) (int, int, []content.MenuGroup) {
+) (int, int, []script.MenuGroup) {
 	baseGroups := 3
 	pageSize := 27
 	columnCapacity := []int{
@@ -179,7 +178,7 @@ func characterChoicePage(
 	page := (focus - baseCount) / pageSize
 	first := page * pageSize
 	last := min(first+pageSize, len(added))
-	visible := make([]content.MenuGroup, 0, baseGroups)
+	visible := make([]script.MenuGroup, 0, baseGroups)
 	column := first
 
 	for _, capacity := range columnCapacity {
@@ -194,7 +193,7 @@ func characterChoicePage(
 			label = "Modded choices"
 		}
 
-		visible = append(visible, content.MenuGroup{
+		visible = append(visible, script.MenuGroup{
 			Label: label,
 			IDs:   added[column:end],
 		})

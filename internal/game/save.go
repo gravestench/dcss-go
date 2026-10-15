@@ -5,7 +5,6 @@ import (
 	"sort"
 
 	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/modfs"
 	"dcrawl-go/internal/save"
@@ -99,9 +98,8 @@ func savedItemHasActorComponents(record save.EntityRecord) bool {
 
 func (g *Game) Snapshot() save.Snapshot {
 	snapshot := save.Snapshot{
-		Version:        save.Version,
-		SourceRevision: g.catalog.SourceRevision(),
-		ScenarioID:     g.scenarioID,
+		Version:    save.Version,
+		ScenarioID: g.scenarioID,
 
 		RulesetHash:    g.rules.Hash(),
 		LuaDialect:     luaDialect,
@@ -193,18 +191,18 @@ func (g *Game) Snapshot() save.Snapshot {
 }
 
 func (g *Game) Restore(snapshot save.Snapshot) (*Game, error) {
-	return RestoreWithRules(snapshot, g.catalog, g.rules, RestorePolicy{})
+	return RestoreWithRules(snapshot, g.rules, RestorePolicy{})
 }
 
 // Restore builds a separate game using the bundled ruleset.
-func Restore(snapshot save.Snapshot, catalog content.Catalog) (*Game, error) {
+func Restore(snapshot save.Snapshot) (*Game, error) {
 	rules, err := modfs.Load("")
 
 	if err != nil {
 		return nil, err
 	}
 
-	return RestoreWithRules(snapshot, catalog, rules, RestorePolicy{})
+	return RestoreWithRules(snapshot, rules, RestorePolicy{})
 }
 
 // RestorePolicy makes a changed Lua ruleset an explicit load decision.
@@ -216,7 +214,6 @@ type RestorePolicy struct {
 // only after validation and registration succeed.
 func RestoreWithRules(
 	snapshot save.Snapshot,
-	catalog content.Catalog,
 	rules modfs.Ruleset,
 	policy RestorePolicy,
 ) (_ *Game, err error) {
@@ -243,17 +240,6 @@ func RestoreWithRules(
 		return nil, fmt.Errorf("save Lua manifest differs from its ruleset hash")
 	}
 
-	if err := catalog.Validate(); err != nil {
-		return nil, err
-	}
-
-	if snapshot.SourceRevision != catalog.SourceRevision() {
-		return nil, fmt.Errorf(
-			"save source revision %q does not match catalog",
-			snapshot.SourceRevision,
-		)
-	}
-
 	if snapshot.PlayerID == 0 ||
 		snapshot.CurrentAut < 0 ||
 		len(snapshot.Levels) == 0 {
@@ -275,7 +261,6 @@ func RestoreWithRules(
 		levels: make(map[int]*Level),
 		player: akara.Entity(snapshot.PlayerID),
 
-		catalog:    catalog,
 		rules:      rules,
 		seed:       snapshot.Seed,
 		scenarioID: snapshot.ScenarioID,
@@ -310,15 +295,6 @@ func RestoreWithRules(
 			g.scripts.Close()
 		}
 	}()
-
-	g.catalog, err = g.catalog.WithCharacterDefinitions(
-		g.scripts.SpeciesDefinitions(),
-		g.scripts.JobDefinitions(),
-	)
-
-	if err != nil {
-		return nil, err
-	}
 
 	if err := g.validateSavedLuaSchemas(
 		snapshot.LuaSchemas,

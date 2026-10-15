@@ -9,7 +9,7 @@ import (
 func newGeneratedTestGame(t *testing.T, seed uint64) *Game {
 	t.Helper()
 
-	g, err := NewDungeonGame(seed, testCatalog(t), "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER", "Tester")
+	g, err := NewDungeonGame(seed, "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER", "Tester")
 
 	if err != nil {
 		t.Fatal(err)
@@ -87,7 +87,7 @@ func TestGeneratedDungeonSaveContinuation(t *testing.T) {
 		t.Fatal("same seed produced a different Dungeon")
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -189,7 +189,7 @@ func TestWalkingIntoClosedDoorOpensAndSavesIt(t *testing.T) {
 		t.Fatal("sight did not pass through the open door")
 	}
 
-	restored, err := Restore(g.Snapshot(), testCatalog(t))
+	restored, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)
@@ -208,7 +208,7 @@ func TestGeneratedDungeonRejectsInvalidSavedBoundaryAndBudget(t *testing.T) {
 
 	snapshot.Levels[0].InitialMonsters = 0
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil {
+	if _, err := Restore(snapshot); err == nil {
 		t.Fatal("accepted a generated level without its initial monster count")
 	}
 
@@ -224,22 +224,21 @@ func TestGeneratedDungeonRejectsInvalidSavedBoundaryAndBudget(t *testing.T) {
 		}
 	}
 
-	if _, err := Restore(snapshot, testCatalog(t)); err == nil {
+	if _, err := Restore(snapshot); err == nil {
 		t.Fatal("accepted an unlinked generated exit")
 	}
 }
 
 func TestGeneratedDungeonBuildsAcrossSeeds(t *testing.T) {
-	catalog := testCatalog(t)
 
 	for seed := uint64(1); seed <= 16; seed++ {
-		g, err := NewDungeonGame(seed, catalog, "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER", "Tester")
+		g, err := NewDungeonGame(seed, "SP_HUMAN", "JOB_FIGHTER", "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatalf("seed %d: %v", seed, err)
 		}
 
-		restored, err := Restore(g.Snapshot(), catalog)
+		restored, err := Restore(g.Snapshot())
 
 		if err != nil {
 			t.Fatalf("seed %d restore: %v", seed, err)

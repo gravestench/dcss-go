@@ -5,18 +5,11 @@ import (
 	"slices"
 	"testing"
 
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/save"
 )
 
 func TestNewScenarioStartingGear(t *testing.T) {
-	catalog, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	for _, weaponID := range []string{
 		"WPN_RAPIER",
 		"WPN_FLAIL",
@@ -26,7 +19,7 @@ func TestNewScenarioStartingGear(t *testing.T) {
 		"WPN_UNARMED",
 	} {
 		t.Run(weaponID, func(t *testing.T) {
-			g, err := NewScenario(7, catalog, weaponID, "Tester")
+			g, err := NewScenario(7, weaponID, "Tester")
 
 			if err != nil {
 				t.Fatal(err)
@@ -112,14 +105,14 @@ func TestNewScenarioStartingGear(t *testing.T) {
 		})
 	}
 
-	if g, err := NewScenario(7, catalog, "WPN_QUARTERSTAFF", "Tester"); err == nil {
+	if g, err := NewScenario(7, "WPN_QUARTERSTAFF", "Tester"); err == nil {
 		g.Close()
 		t.Fatal("banned weapon accepted")
 	}
 }
 
 func TestSaveStartingGearContinuation(t *testing.T) {
-	g, err := NewScenario(19, testCatalog(t), "WPN_RAPIER", "Tester")
+	g, err := NewScenario(19, "WPN_RAPIER", "Tester")
 
 	if err != nil {
 		t.Fatal(err)
@@ -168,7 +161,7 @@ func TestSaveStartingGearContinuation(t *testing.T) {
 	}
 
 	before := g.Snapshot()
-	restored, err := Restore(before, testCatalog(t))
+	restored, err := Restore(before)
 
 	if err != nil {
 		t.Fatal(err)
@@ -323,7 +316,7 @@ func TestRestoreRejectsCorruptGear(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			g, err := NewScenario(23, testCatalog(t), "WPN_RAPIER", "Tester")
+			g, err := NewScenario(23, "WPN_RAPIER", "Tester")
 
 			if err != nil {
 				t.Fatal(err)

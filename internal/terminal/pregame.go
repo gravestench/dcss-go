@@ -6,7 +6,6 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/content"
 	"dcrawl-go/internal/game"
 	"dcrawl-go/internal/script"
 	"github.com/mattn/go-runewidth"
@@ -290,7 +289,7 @@ func (m *AppModel) hasPlayableChoice(
 	}
 
 	if speciesID == "" {
-		for _, candidate := range m.catalog.SpeciesIDs() {
+		for _, candidate := range m.presentation.SpeciesIDs() {
 			if m.hasPlayableChoice(candidate, jobID, speciesFirst) {
 				return true
 			}
@@ -299,7 +298,7 @@ func (m *AppModel) hasPlayableChoice(
 		return false
 	}
 
-	for _, candidate := range m.catalog.JobIDs() {
+	for _, candidate := range m.presentation.JobIDs() {
 		if m.hasPlayableChoice(speciesID, candidate, speciesFirst) {
 			return true
 		}
@@ -341,13 +340,13 @@ func (m *AppModel) enterWeaponChoice() {
 
 func projectSupportedStarts(
 	runtime *script.Runtime,
-	catalog content.Catalog,
+	presentation script.MenuPresentation,
 ) (map[script.ChoiceKey]bool, error) {
 	pairs := make([]any, 0)
 	keys := make([]script.ChoiceKey, 0)
 
-	for _, speciesID := range catalog.SpeciesIDs() {
-		for _, jobID := range catalog.JobIDs() {
+	for _, speciesID := range presentation.SpeciesIDs() {
+		for _, jobID := range presentation.JobIDs() {
 			keys = append(keys, script.ChoiceKey{
 				SpeciesID: speciesID,
 				JobID:     jobID,
@@ -477,7 +476,6 @@ func (m *AppModel) handleNameKey(key string) {
 func (m *AppModel) startGame() {
 	started, err := game.NewDungeonGameWithRules(
 		m.seed,
-		m.catalog,
 		m.speciesID,
 		m.jobID,
 		m.weaponID,
@@ -497,7 +495,7 @@ func (m *AppModel) startGame() {
 	m.notice = ""
 }
 
-func flattenGroups(groups []content.MenuGroup) []string {
+func flattenGroups(groups []script.MenuGroup) []string {
 	var ids []string
 
 	for _, group := range groups {

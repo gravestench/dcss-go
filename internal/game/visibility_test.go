@@ -175,7 +175,7 @@ func TestKnowledgeSaveRoundTrip(t *testing.T) {
 		t.Fatalf("snapshot knowledge missing: %+v", snapshot.Levels)
 	}
 
-	restored, err := Restore(snapshot, testCatalog(t))
+	restored, err := Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
@@ -240,7 +240,7 @@ func TestRestoreRejectsInvalidKnowledge(t *testing.T) {
 			bad := g.Snapshot()
 			tc.change(&bad)
 
-			if replacement, err := Restore(bad, testCatalog(t)); err == nil {
+			if replacement, err := Restore(bad); err == nil {
 				replacement.Close()
 				t.Fatal("malformed knowledge restored")
 			}

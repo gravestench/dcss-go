@@ -8,6 +8,7 @@ register.species{
     source_path = "crawl-ref/source/dat/species/human.yaml",
     name = "Moon Human",
     short_name = "Hu",
+    lunar_affinity = 7,
     selectable = true,
     difficulty = "Intermediate",
     difficulty_priority = 100,

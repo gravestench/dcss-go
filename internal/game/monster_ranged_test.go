@@ -25,10 +25,9 @@ func equipTestGoblinSling(t *testing.T, g *Game) (akara.Entity, akara.Entity) {
 }
 
 func TestGoblinSlingRunsThroughOrderedMonsterSystems(t *testing.T) {
-	catalog := testCatalog(t)
 
 	for seed := uint64(1); seed <= 30; seed++ {
-		g, err := NewScenario(seed, catalog, "WPN_RAPIER", "Tester")
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)

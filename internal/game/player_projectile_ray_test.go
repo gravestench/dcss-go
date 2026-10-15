@@ -48,7 +48,7 @@ func cloneRatOnRay(t *testing.T, g *Game, x, y int) {
 
 func TestMissedProjectileContinuesToSecondActor(t *testing.T) {
 	for seed := uint64(1); seed <= 20; seed++ {
-		g, err := NewScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)
@@ -164,7 +164,7 @@ func TestNeedleCanBeThrownWithoutLauncher(t *testing.T) {
 
 func TestWieldedLauncherHasNoMeleeWeaponDamage(t *testing.T) {
 	for seed := uint64(1); seed <= 20; seed++ {
-		g, err := NewScenario(seed, testCatalog(t), "WPN_RAPIER", "Tester")
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
 
 		if err != nil {
 			t.Fatal(err)

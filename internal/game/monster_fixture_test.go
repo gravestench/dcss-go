@@ -10,7 +10,7 @@ import (
 func spawnWormForTest(t *testing.T, g *Game, levelID int) akara.Entity {
 	t.Helper()
 	level := g.levels[levelID]
-	definition, err := g.catalog.Monster("MONS_WORM")
+	definition, err := testCatalog(t).Monster("MONS_WORM")
 
 	if err != nil {
 		t.Fatal(err)

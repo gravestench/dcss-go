@@ -19,11 +19,12 @@ func TestFailedLuaActionDoesNotMoveActorOrChangeHealth(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	base := testCatalog(t)
 	g, err := newScenarioWithRules(
 		1,
-		base,
-		base.Player(),
+		startChoice{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+		},
 		"WPN_RAPIER",
 		"Tester",
 		ordinaryMonsterScenarioID,
@@ -125,11 +126,12 @@ func TestMalformedLuaPresentationReportsErrorInView(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	base := testCatalog(t)
 	g, err := newScenarioWithRules(
 		1,
-		base,
-		base.Player(),
+		startChoice{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+		},
 		"WPN_RAPIER",
 		"Tester",
 		ordinaryMonsterScenarioID,
@@ -223,11 +225,12 @@ func newRollbackGame(t *testing.T) *Game {
 		t.Fatal(err)
 	}
 
-	base := testCatalog(t)
 	g, err := newScenarioWithRules(
 		1,
-		base,
-		base.Player(),
+		startChoice{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+		},
 		"WPN_RAPIER",
 		"Tester",
 		ordinaryMonsterScenarioID,
@@ -254,8 +257,10 @@ func TestOverlaySystemRunsInGameAndSurvivesSave(t *testing.T) {
 
 	g, err := newScenarioWithRules(
 		1,
-		testCatalog(t),
-		testCatalog(t).Player(),
+		startChoice{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+		},
 		"WPN_RAPIER",
 		"Tester",
 		ordinaryMonsterScenarioID,
@@ -305,7 +310,6 @@ func TestOverlaySystemRunsInGameAndSurvivesSave(t *testing.T) {
 
 	loaded, err := RestoreWithRules(
 		fromDisk,
-		testCatalog(t),
 		rules,
 		RestorePolicy{},
 	)
@@ -337,7 +341,6 @@ func TestOverlaySystemRunsInGameAndSurvivesSave(t *testing.T) {
 
 	_, err = RestoreWithRules(
 		snapshot,
-		testCatalog(t),
 		changed,
 		RestorePolicy{},
 	)
@@ -352,7 +355,6 @@ func TestOverlaySystemRunsInGameAndSurvivesSave(t *testing.T) {
 
 	reinterpreted, err := RestoreWithRules(
 		snapshot,
-		testCatalog(t),
 		changed,
 		RestorePolicy{
 			AllowRulesetMismatch: true,
@@ -380,7 +382,6 @@ func TestOverlaySystemRunsInGameAndSurvivesSave(t *testing.T) {
 
 	withExtra, err := RestoreWithRules(
 		snapshot,
-		testCatalog(t),
 		extraRules,
 		RestorePolicy{
 			AllowRulesetMismatch: true,

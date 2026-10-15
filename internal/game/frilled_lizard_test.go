@@ -26,7 +26,7 @@ func frilledLizardID(t *testing.T, g *Game) akara.Entity {
 }
 
 func TestFrilledLizardUsesOrdinaryMeleeDeathAndExperience(t *testing.T) {
-	g, err := NewScenario(corpseDropSeed(t, true), testCatalog(t), "WPN_RAPIER", "Tester")
+	g, err := NewScenario(corpseDropSeed(t, true), "WPN_RAPIER", "Tester")
 
 	if err != nil {
 		t.Fatal(err)
@@ -103,7 +103,7 @@ func TestFrilledLizardUsesOrdinaryMeleeDeathAndExperience(t *testing.T) {
 	}
 
 	before := g.Snapshot()
-	loaded, err := Restore(before, testCatalog(t))
+	loaded, err := Restore(before)
 
 	if err != nil {
 		t.Fatal(err)
@@ -119,7 +119,7 @@ func TestFrilledLizardUsesOrdinaryMeleeDeathAndExperience(t *testing.T) {
 func TestFrilledLizardEncounterUsesCatalogAndSurvivesSave(t *testing.T) {
 	g := newStepGame(t)
 	lizard := frilledLizardID(t, g)
-	definition, err := g.catalog.Monster("MONS_FRILLED_LIZARD")
+	definition, err := testCatalog(t).Monster("MONS_FRILLED_LIZARD")
 
 	if err != nil {
 		t.Fatal(err)
@@ -145,7 +145,7 @@ func TestFrilledLizardEncounterUsesCatalogAndSurvivesSave(t *testing.T) {
 		t.Fatalf("lizard definition %+v actor %+v health %+v position %+v AI %+v", definition, actor, health, position, ai)
 	}
 
-	loaded, err := Restore(g.Snapshot(), testCatalog(t))
+	loaded, err := Restore(g.Snapshot())
 
 	if err != nil {
 		t.Fatal(err)

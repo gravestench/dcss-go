@@ -11,7 +11,7 @@ func doorModel(t *testing.T, cells map[[2]int]byte) *AppModel {
 	t.Helper()
 
 	m := pregameModel(t)
-	started, err := game.NewScenario(1, m.catalog, "WPN_RAPIER", "Alice")
+	started, err := game.NewScenario(1, "WPN_RAPIER", "Alice")
 
 	if err != nil {
 		t.Fatal(err)
@@ -28,7 +28,7 @@ func doorModel(t *testing.T, cells map[[2]int]byte) *AppModel {
 		snapshot.Levels[0].Rows[y] = string(row)
 	}
 
-	m.game, err = game.Restore(snapshot, m.catalog)
+	m.game, err = game.Restore(snapshot)
 
 	if err != nil {
 		t.Fatal(err)
