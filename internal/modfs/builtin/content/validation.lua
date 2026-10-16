@@ -11,20 +11,14 @@ local staves = require("policy.inventory.staves")
 local jewellery = require("policy.inventory.jewellery")
 local weapon_choices = require("constants.weapon_choices")
 local uses = require("constants.mutation_uses")
-local source_population = require("data.dungeon_population").rows
-
-local population_monsters = {}
-
-for _, row in ipairs(source_population) do
-    population_monsters[row.monster_id] = true
-end
+local curves = require("constants.population_curves")
 
 local population_curves = {
-    FLAT = true,
-    SEMI = true,
-    PEAK = true,
-    RISE = true,
-    FALL = true,
+    [curves.FLAT] = true,
+    [curves.SEMI] = true,
+    [curves.PEAK] = true,
+    [curves.RISE] = true,
+    [curves.FALL] = true,
 }
 
 local mutation_uses = {
@@ -360,8 +354,16 @@ local function validate_population_row(monster, row)
         fail(category, monster.id, "population entries must be tables")
     end
 
-    if type(row.scenario_id) ~= "string" or row.scenario_id == "" then
-        fail(category, monster.id, "population scenario_id must be nonempty text")
+    if row.source_order ~= nil then
+        if type(row.source_order) ~= "number" or
+            row.source_order < 1 or row.source_order % 1 ~= 0 or
+            row.scenario_id ~= nil then
+            fail(category, monster.id,
+                "population source_order must be a positive integer without scenario_id")
+        end
+    elseif type(row.scenario_id) ~= "string" or row.scenario_id == "" then
+        fail(category, monster.id,
+            "population scenario_id must be nonempty text")
     end
 
     for _, field in ipairs({ "min_depth", "max_depth", "rarity" }) do
@@ -379,12 +381,33 @@ local function validate_population_row(monster, row)
     end
 end
 
-local function validate_spawnable_monster(monster)
-    local category = categories.MONSTERS
+function validation.population_rows(monsters)
+    local source_orders = {}
 
-    for _, field in ipairs({ "average_hp_10x", "speed", "hd" }) do
-        positive_number(category, monster, field)
+    for _, monster in ipairs(monsters) do
+        local population = optional_list(categories.MONSTERS, monster,
+            "population")
+
+        for _, row in ipairs(population) do
+            validate_population_row(monster, row)
+
+            if row.source_order then
+                local previous = source_orders[row.source_order]
+
+                if previous then
+                    fail(categories.MONSTERS, monster.id,
+                        "population source_order " .. row.source_order ..
+                        " duplicates " .. previous)
+                end
+
+                source_orders[row.source_order] = monster.id
+            end
+        end
     end
+end
+
+local function validate_defined_monster(monster)
+    local category = categories.MONSTERS
 
     local energy = required(category, monster, "energy", "table")
 
@@ -407,6 +430,24 @@ local function validate_spawnable_monster(monster)
             type(attack.flavour_id) ~= "string" or type(attack.damage) ~= "number" then
             fail(category, monster.id, "attacks contain an invalid attack")
         end
+    end
+end
+
+local function has_combat_profile(monster)
+    for _, field in ipairs({
+        "energy", "attacks", "average_hp_10x", "speed", "hd",
+    }) do
+        if monster[field] ~= nil then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function validate_spawnable_monster(monster)
+    for _, field in ipairs({ "average_hp_10x", "speed", "hd" }) do
+        positive_number(categories.MONSTERS, monster, field)
     end
 end
 
@@ -469,17 +510,21 @@ local function validate_mutation(mutation)
 end
 
 local function validate_registered_catalogs()
+    local monsters = {}
+
+    for _, id in ipairs(register.ids(categories.MONSTERS)) do
+        monsters[#monsters + 1] = register.get(categories.MONSTERS, id)
+    end
+
+    validation.population_rows(monsters)
+
     for _, id in ipairs(register.ids(categories.MUTATIONS)) do
         validate_mutation(register.get(categories.MUTATIONS, id))
     end
 
-    for _, id in ipairs(register.ids(categories.MONSTERS)) do
-        local monster = register.get(categories.MONSTERS, id)
+    for _, monster in ipairs(monsters) do
+        local id = monster.id
         local population = optional_list(categories.MONSTERS, monster, "population")
-
-        for _, row in ipairs(population) do
-            validate_population_row(monster, row)
-        end
 
         if monster.status == "defined" then
             required(categories.MONSTERS, monster, "name", "string")
@@ -495,7 +540,11 @@ local function validate_registered_catalogs()
                 end
             end
 
-            if population_monsters[id] or #population > 0 then
+            if #population > 0 or has_combat_profile(monster) then
+                validate_defined_monster(monster)
+            end
+
+            if #population > 0 then
                 validate_spawnable_monster(monster)
             end
         elseif #population > 0 then

@@ -173,6 +173,7 @@ category names for mod-defined catalogs. For example,
 
 ```lua
 local categories = require("constants.catalog")
+local curves = require("constants.population_curves")
 
 local definition = {
     id = "MY_MOD_MOSS",
@@ -205,7 +206,7 @@ local definition = {
             min_depth = 1,
             max_depth = 3,
             rarity = 1000,
-            curve = "FLAT",
+            curve = curves.FLAT,
         },
     },
 }
@@ -219,6 +220,9 @@ The file is loaded automatically. Its population entry puts the monster into
 the generated Dungeon roster without editing a central list. The example
 uses the current basic monster behavior and combat rules. Invalid spawn data
 fails at startup with the content path and field name.
+Bundled source rows live in their monster files too, with a
+`source_order` preserving DCSS selection order. New mod rows need only a
+`scenario_id`, depth range, rarity, and curve; they follow the source rows.
 
 A rule imports `constants.catalog`,
 `ids.monsters`, and `policy.catalog` where needed, then reads it with

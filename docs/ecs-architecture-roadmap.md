@@ -92,7 +92,7 @@ with a small set of files, while keeping each file's purpose obvious. See
 
 The next architecture work is to turn the remaining aggregate categories
 into per-file content where mod authors would reasonably extend them:
-population entries, item identity, vault templates, and
+item identity, vault templates, and
 presentation data. The generated files stay committed. Import tools run
 only during deliberate upstream refreshes. New mechanics must be wired
 through Lua discovery and generic engine capabilities, not a Go ID switch.

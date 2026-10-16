@@ -1,6 +1,8 @@
 package script
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -211,6 +213,84 @@ func TestSamePathOverlayReplacesBundledDefinition(t *testing.T) {
 
 	if origin := runtime.definitionOrigins["monsters"][id]; origin != "content/monsters/0001_mons_abomination_large.lua" {
 		t.Fatalf("monster origin = %q", origin)
+	}
+}
+
+func TestSamePathPopulationOverrideKeepsSourceOrder(t *testing.T) {
+	const path = "content/monsters/0495_mons_rat.lua"
+
+	bundled, err := modfs.Load()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	source, err := bundled.ReadFile(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	const oldRarity = "rarity = 1000,"
+	const newRarity = "rarity = 777,"
+
+	if strings.Count(string(source), oldRarity) != 1 {
+		t.Fatal("rat source population row changed")
+	}
+
+	root := t.TempDir()
+	file := filepath.Join(root, filepath.FromSlash(path))
+
+	if err := os.MkdirAll(filepath.Dir(file), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	changed := strings.Replace(string(source), oldRarity, newRarity, 1)
+
+	if err := os.WriteFile(file, []byte(changed), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	rules, err := modfs.Load(root)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	world := akara.NewWorld()
+	defer world.Close()
+
+	runtime, err := NewCatalog(world, rules)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer runtime.Close()
+
+	definition := runtime.definitions["monsters"]["MONS_RAT"]
+	rows, ok := definition.RawGetString("population").(*lua.LTable)
+
+	if !ok {
+		t.Fatal("population override lost rat rows")
+	}
+
+	row, ok := rows.RawGetInt(1).(*lua.LTable)
+
+	if !ok {
+		t.Fatalf("rat override row = %v", rows.RawGetInt(1))
+	}
+
+	if row.RawGetString("source_order") != lua.LNumber(2) {
+		t.Fatalf("rat override source order = %v", row.RawGetString("source_order"))
+	}
+
+	if row.RawGetString("rarity") != lua.LNumber(777) {
+		t.Fatalf("rat override row = %v", rows.RawGetInt(1))
+	}
+
+	if rules.Hash() == bundled.Hash() {
+		t.Fatal("population override did not change ruleset identity")
 	}
 }
 

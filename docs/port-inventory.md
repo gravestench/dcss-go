@@ -77,9 +77,10 @@ the effective ruleset hash without adding a Go keymap.
 
 The import artifacts account for 43 species, 31 jobs, 700 monster rows,
 403 spell identities, 285 monster spellbooks, 408 concrete item
-identities, 38 branches, ordered Dungeon population rows, monster weapon
-loadouts, starting grants, and console presentation metadata. Import tools
-under `cmd/import*` are for reviewed upstream refreshes. Content coverage
+identities, 38 branches, 125 ordered Dungeon population rows inside their
+monster definitions, monster weapon loadouts, starting grants, and console
+presentation metadata. Import tools under `cmd/import*` are for reviewed
+upstream refreshes. Content coverage
 does not imply that its behavior is playable.
 The 11 wand-to-spell links come from the committed `wand-spells.json`
 artifact. `scripts/import_wand_spells.py` refreshes that artifact from the

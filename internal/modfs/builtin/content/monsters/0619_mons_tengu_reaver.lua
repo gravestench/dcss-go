@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/mon-data.h:4259
 
 local categories = require("constants.catalog")
+local curves = require("constants.population_curves")
 
 local definition = {
     id = "MONS_TENGU_REAVER",
@@ -74,6 +75,16 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
+    population = {
+        -- Source line: 189
+        {
+            source_order = 120,
+            min_depth = 24,
+            max_depth = 27,
+            rarity = 136,
+            curve = curves.RISE,
+        },
+    },
 }
 
 register.definition(categories.MONSTERS, definition)

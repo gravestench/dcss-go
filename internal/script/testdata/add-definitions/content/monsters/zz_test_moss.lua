@@ -1,4 +1,5 @@
 local categories = require("constants.catalog")
+local curves = require("constants.population_curves")
 
 local definition = {
     id = "MONS_TEST_MOSS",
@@ -31,7 +32,7 @@ local definition = {
             min_depth = 1,
             max_depth = 3,
             rarity = 1000,
-            curve = "FLAT",
+            curve = curves.FLAT,
         },
     },
 }

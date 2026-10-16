@@ -163,6 +163,19 @@ func TestRestoreRejectsInvalidJackalBandState(t *testing.T) {
 func TestPopulationSaveAndTurnContinuation(t *testing.T) {
 	g := newPopulatedTestGame(t, 41)
 	sameSeed := newPopulatedTestGame(t, 41)
+	var spawned []string
+
+	for _, entity := range g.Snapshot().Entities {
+		if entity.AI != nil && entity.Actor != nil {
+			spawned = append(spawned, entity.Actor.KindID)
+		}
+	}
+
+	const wantedSpawns = "MONS_GIANT_COCKROACH,MONS_RAT,MONS_ADDER,MONS_GIANT_COCKROACH"
+
+	if got, want := strings.Join(spawned, ","), wantedSpawns; got != want {
+		t.Fatalf("seed 41 monster sequence = %q, want %q", got, want)
+	}
 
 	if !reflect.DeepEqual(g.Snapshot(), sameSeed.Snapshot()) {
 		t.Fatal("same seed produced different population")

@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/mon-data.h:1263
 
 local categories = require("constants.catalog")
+local curves = require("constants.population_curves")
 
 local definition = {
     id = "MONS_BLACK_BEAR",
@@ -70,6 +71,16 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_BLACK_BEAR",
+    population = {
+        -- Source line: 95
+        {
+            source_order = 28,
+            min_depth = 4,
+            max_depth = 8,
+            rarity = 350,
+            curve = curves.PEAK,
+        },
+    },
 }
 
 register.definition(categories.MONSTERS, definition)

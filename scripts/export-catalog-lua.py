@@ -20,7 +20,6 @@ SOURCE = ROOT / "internal/content/generated"
 DESTINATION = ROOT / "internal/modfs/builtin/data"
 
 CATALOGS = (
-    "dungeon-population",
     "item-identities",
     "monster-vocabulary",
     "monster-weapons",
@@ -228,6 +227,7 @@ def render_definition(category, revision, definition):
     wand_spell = definition.get("wand_spell_id")
     staff = definition.get("staff")
     jewellery = definition.get("jewellery")
+    population = definition.get("population")
 
     if wand_spell:
         header.append('local spells = require("ids.spells")')
@@ -249,8 +249,18 @@ def render_definition(category, revision, definition):
                 'local magnitudes = require("constants.jewellery_magnitudes")'
             )
 
+    if population:
+        header.append('local curves = require("constants.population_curves")')
+
     body = lines_for(definition)
     body[0] = "local definition = " + body[0]
+
+    if population:
+        for index, line in enumerate(body):
+            match = re.fullmatch(r'(\s*curve = )"([A-Z]+)",', line)
+
+            if match:
+                body[index] = f"{match.group(1)}curves.{match.group(2)},"
 
     if wand_spell:
         if re.fullmatch(r"SPELL_[A-Z0-9_]+", wand_spell) is None:
@@ -447,6 +457,36 @@ def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
     return definitions
 
 
+def enrich_monster_definitions(monsters_artifact, population_artifact):
+    revision = monsters_artifact["source_revision"]
+
+    if population_artifact["source_revision"] != revision:
+        raise ValueError("monster and population source revisions differ")
+
+    definitions = [dict(monster) for monster in monsters_artifact["monsters"]]
+    by_id = {monster["id"]: monster for monster in definitions}
+
+    if len(by_id) != len(definitions):
+        raise ValueError("monster catalog contains duplicate IDs")
+
+    for order, row in enumerate(population_artifact["rows"], start=1):
+        monster_id = row["monster_id"]
+        monster = by_id.get(monster_id)
+
+        if monster is None or monster["status"] != "defined":
+            raise ValueError(f"population row {order} has undefined {monster_id}")
+
+        owned = {"source_order": order}
+        owned.update({
+            field: value
+            for field, value in row.items()
+            if field != "monster_id"
+        })
+        monster.setdefault("population", []).append(owned)
+
+    return definitions
+
+
 def output_files():
     for name in CATALOGS:
         yield DESTINATION / f"{name.replace('-', '_')}.lua", render(name)
@@ -460,6 +500,10 @@ def output_files():
             links = json.loads((SOURCE / "wand-spells.json").read_text())
             spells = json.loads((SOURCE / "spells.json").read_text())
             definitions = enrich_item_definitions(artifact, links, spells)
+
+        if name == "monsters":
+            population = json.loads((SOURCE / "dungeon-population.json").read_text())
+            definitions = enrich_monster_definitions(artifact, population)
 
         for index, definition in enumerate(definitions, start=1):
             filename = f"{index:04d}_{definition['id'].lower()}.lua"
@@ -505,6 +549,14 @@ def main():
             stale.append(str(legacy.relative_to(ROOT)))
         else:
             legacy.unlink()
+
+    legacy_population = DESTINATION / "dungeon_population.lua"
+
+    if legacy_population.exists():
+        if args.check:
+            stale.append(str(legacy_population.relative_to(ROOT)))
+        else:
+            legacy_population.unlink()
 
     old_gear = DESTINATION / "starting_gear.lua"
 
