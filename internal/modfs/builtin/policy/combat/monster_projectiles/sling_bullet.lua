@@ -2,6 +2,7 @@ local ranged = require("policy.combat.ranged")
 local monster_stats = require("policy.combat.monster_stats")
 
 local sling_bullet = {}
+sling_bullet.reflectable = true
 
 local supported_brands = {
     SPWPN_NORMAL = true,

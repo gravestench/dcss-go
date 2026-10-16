@@ -63,8 +63,10 @@ projection gives an item existing stat, resistance, regeneration, vision,
 flight, spirit-shield, and acrobat behavior without an item-ID branch.
 Set `pluses = true` when an effect uses `magnitudes.ITEM_PLUS`. The shared
 equipment policy provides ring and amulet slots, `P`/`R` input, and save
-validation. Faith piety and projectile reflection need their later event
-domains; declaring those capabilities alone does not enable their events.
+validation. `REFLECTION` returns the currently supported blocked hostile
+missiles and Slug Dart to their shooter. Each projectile or spell effect
+declares whether it is reflectable; new effects can opt in using the same
+return resolver. Faith piety needs its later religion event domain.
 
 The bundled `init.lua` loads `schemas/`, `content/`, `policy/`, `systems/`,
 `generation/`, and `ui/` in that order. Paths within each tree load in sorted

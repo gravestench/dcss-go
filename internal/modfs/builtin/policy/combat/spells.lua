@@ -1,4 +1,5 @@
 local roll = require("policy.combat.roll")
+local monster_defense = require("policy.combat.monster_defense")
 
 local spells = {}
 
@@ -14,7 +15,16 @@ function spells.slug_dart(ctx, hd, defense)
     local to_hit = 14 + math.floor(power / 35)
     local die_sides = 3 + math.floor(power / 25)
 
-    if defense.shield_class > 0 then
+    if defense.monster_shield then
+        if monster_defense.beam_block(ctx, defense.monster_shield,
+            to_hit) then
+            return {
+                kind = "block",
+                damage = 0,
+                shield_blocks = defense.shield_blocks + 1,
+            }
+        end
+    elseif defense.shield_class > 0 then
         local bypass = math.floor(to_hit * 130 / 100) + 5 * defense.shield_blocks ^ 2
         local bypass_roll = roll.spell(ctx, bypass)
         local shield_roll = roll.average_two(ctx, "monster_spell", defense.shield_class * 2)

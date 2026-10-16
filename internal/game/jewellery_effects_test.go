@@ -111,3 +111,41 @@ func TestJewelleryAttunementAndAcrobatSurviveRestore(t *testing.T) {
 		t.Fatal("acrobat action window changed after restore")
 	}
 }
+
+func TestReflectorWearingStateSurvivesRestore(t *testing.T) {
+	g := newStepGame(t)
+	removeFixtureRat(t, g)
+	baseline := g.View().PlayerSH
+	amulet := addCarriedArmour(t, g, "AMU_REFLECTION")
+
+	if _, err := g.Step(Command{
+		Kind:   CommandWear,
+		ItemID: uint64(amulet),
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	for turn := 0; turn < 4; turn++ {
+		if _, err := g.Step(Command{Kind: CommandContinueEquipment}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if !g.stores.Equipped.Has(amulet) || g.View().PlayerSH <= baseline {
+		t.Fatal("reflector did not increase the worn player's shield")
+	}
+
+	snapshot := g.Snapshot()
+	restored, err := Restore(snapshot)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	if !reflect.DeepEqual(snapshot, restored.Snapshot()) ||
+		restored.View().PlayerSH != g.View().PlayerSH {
+		t.Fatal("reflector wearing state or shield changed after restore")
+	}
+}

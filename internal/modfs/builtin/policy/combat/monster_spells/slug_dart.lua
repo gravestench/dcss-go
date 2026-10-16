@@ -2,8 +2,10 @@ local fighter = require("policy.combat.fighter")
 local spells = require("policy.combat.spells")
 local player_health_policy = require("policy.combat.player_health")
 local monster_stats = require("policy.combat.monster_stats")
+local reflection = require("policy.combat.reflection")
 
 local slug_dart = {}
+slug_dart.reflectable = true
 
 function slug_dart.can_cast(ctx, caster_pos, player_pos)
     return caster_pos.level_id == player_pos.level_id and
@@ -35,6 +37,22 @@ function slug_dart.resolve(ctx, caster, _, definition, player_health)
     end
 
     ctx:emit("combat", message)
+
+    if outcome.kind == "block" and slug_dart.reflectable and
+        reflection.active(ctx, player) then
+        local returned = reflection.return_defense(ctx, caster,
+            definition)
+
+        if returned then
+            reflection.begin(ctx, "slug dart")
+
+            local rebound = spells.slug_dart(ctx,
+                monster_stats.hit_dice(ctx, caster, definition), returned)
+
+            reflection.return_outcome(ctx, player, caster, definition,
+                "slug dart", rebound)
+        end
+    end
 end
 
 return slug_dart

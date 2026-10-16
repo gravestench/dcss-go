@@ -5,6 +5,9 @@ local fighter = require("policy.combat.fighter")
 local items = require("policy.inventory.items")
 local practice = require("policy.combat.practice")
 local projectiles = require("policy.combat.monster_projectiles")
+local reflection = require("policy.combat.reflection")
+local monster_poison = require("policy.combat.monster_poison")
+local launcher_brands = require("policy.combat.launcher_brands")
 local player_health = require("policy.combat.player_health")
 local jelly = require("policy.mutations.effects.projectiles.jelly_missile")
 local classes = require("constants.item_classes")
@@ -81,6 +84,72 @@ local function hit_message(name, outcome, include_damage)
     return "The " .. name .. " hits you."
 end
 
+local function return_launcher(ctx, attacker, launcher, definition,
+    projectile, effect, outcome)
+    if outcome.kind ~= "block" or not effect.reflectable or
+        not reflection.active(ctx, ctx:player()) then
+        return
+    end
+
+    local defense = reflection.return_defense(ctx, attacker,
+        definition, true)
+
+    if not defense then
+        return
+    end
+
+    reflection.begin(ctx, projectile.name)
+
+    local weapon = launcher.definition.weapon
+    local rebound = effect.resolve_launcher(ctx, attacker, definition,
+        defense, weapon, launcher.item, projectile)
+    local extra = 0
+    local extra_message
+
+    if rebound.kind == "hit" then
+        extra, extra_message = launcher_brands.apply(ctx,
+            launcher.item.ego or "", projectile, definition, rebound.damage)
+    end
+
+    local remaining = reflection.return_outcome(ctx, ctx:player(), attacker,
+        definition, projectile.name, rebound)
+
+    if remaining and remaining.current > 0 then
+        reflection.extra_damage(ctx, ctx:player(), attacker, extra)
+    end
+
+    if extra_message then
+        ctx:emit("combat", extra_message)
+    end
+end
+
+local function return_missile(ctx, attacker, definition, kind, effect,
+    name, outcome)
+    if outcome.kind ~= "block" or not effect.reflectable or
+        not reflection.active(ctx, ctx:player()) then
+        return
+    end
+
+    local defense = reflection.return_defense(ctx, attacker,
+        definition, true)
+
+    if not defense then
+        return
+    end
+
+    reflection.begin(ctx, name)
+
+    local rebound, poison = effect.resolve(ctx, attacker, definition,
+        defense, kind)
+    local remaining = reflection.return_outcome(ctx, ctx:player(), attacker,
+        definition, name, rebound)
+
+    if remaining and remaining.current > 0 and (poison or 0) > 0 then
+        monster_poison.apply(ctx, attacker, definition, poison,
+            ctx:player(), true)
+    end
+end
+
 local function launcher_attack(ctx, attacker, launcher, definition, defense, health)
     local weapon = launcher.definition.weapon
     local projectile = catalog.get(categories.ITEMS, weapon.ammo_id)
@@ -104,6 +173,9 @@ local function launcher_attack(ctx, attacker, launcher, definition, defense, hea
     ctx:emit("combat", "The " .. definition.name .. " shoots " ..
         items.phrase(projectile.name, 1) .. ".")
     ctx:emit("combat", hit_message(projectile.name, outcome, true))
+
+    return_launcher(ctx, attacker, launcher, definition,
+        projectile, effect, outcome)
 
     if outcome.kind == "hit" and
         (health.current > 0 or brands.after_death(brand)) then
@@ -134,6 +206,8 @@ local function missile_attack(ctx, attacker, missile, definition, defense, healt
     ctx:emit("combat", "The " .. definition.name .. " throws " ..
         items.phrase(name, 1) .. ".")
     ctx:emit("combat", hit_message(name, outcome, effect.show_damage))
+
+    return_missile(ctx, attacker, definition, kind, effect, name, outcome)
 
     if poison > 0 then
         brands.poison(ctx, poison, definition.id)

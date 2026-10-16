@@ -3,6 +3,7 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local stone = {}
 stone.show_damage = true
+stone.reflectable = true
 
 function stone.validate(item)
     if item.ego ~= "" then

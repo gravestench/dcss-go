@@ -3,6 +3,7 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local dart = {}
 dart.show_damage = false
+dart.reflectable = true
 
 function dart.validate(item)
     if item.ego ~= "poisoned" then

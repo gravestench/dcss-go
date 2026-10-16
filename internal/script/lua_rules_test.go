@@ -41,6 +41,7 @@ func TestModJewelleryRule(t *testing.T) {
 	}
 
 	runLuaRule(t, rules, "tests/jewellery_mod_test.lua")
+	runLuaRule(t, rules, "tests/reflector_mod_test.lua")
 }
 
 func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {

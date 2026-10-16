@@ -57,8 +57,11 @@ curare, trapping nets, regeneration, duration decay, unknown appearances,
 type discovery, enchantment, and property knowledge. Lua declarations now
 project jewellery stat, resistance, vision, flight, MP, wizardry, acrobat,
 guardian-spirit, and attuned regeneration effects from the worn ECS items.
-The Faith piety event and blocked-projectile return from reflection remain
-for the religion and ranged-combat domain slices.
+Blocked hostile stones, poisoned darts, sling bullets, and Slug Dart now
+return to their shooter when an amulet of reflection is worn and the shot is
+still clear. The Faith piety event remains for the religion domain slice.
+Other beam types, armour reflection ego, and monster reflectors remain for
+their later combat domains.
 
 Core Akara components remain typed Go stores where the generic engine must
 read them; Lua systems and policies change their authoritative values through
