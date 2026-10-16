@@ -6,6 +6,7 @@ local fighter = require("policy.combat.fighter")
 local colors = require("policy.presentation.colors")
 local clouds = require("policy.presentation.clouds")
 local identification = require("policy.items.identification")
+local component = require("constants.component")
 
 local view = {}
 
@@ -34,6 +35,7 @@ function view.entity(ctx, input)
     local kind_id = input.kind_id or ""
     local name = ""
     local glyph = string.byte("?")
+    local color_id = ""
 
     if role == "player" then
         kind_id = "player"
@@ -43,6 +45,13 @@ function view.entity(ctx, input)
         local monster = catalog.get("monsters", kind_id)
         name = monster.name
         glyph = monster.glyph
+
+        if input.monster_entity_id then
+            local actor = ctx:entity(input.monster_entity_id)
+            local overrides = ctx:get(actor, component.VAULT_ACTOR_OVERRIDES)
+
+            color_id = overrides and overrides.colour or ""
+        end
     elseif role == "disturbance" then
         name = "disturbance in the air"
         glyph = string.byte("{")
@@ -61,7 +70,13 @@ function view.entity(ctx, input)
         end
     end
 
-    return { kind_id = kind_id, role = role, name = name, glyph = glyph }
+    return {
+        kind_id = kind_id,
+        role = role,
+        name = name,
+        glyph = glyph,
+        color_id = color_id,
+    }
 end
 
 function view.inventory_item(ctx, input)
@@ -99,6 +114,11 @@ function view.detected_item()
 end
 
 function view.entity_color(input)
+    local source = input.color_id and colors.source[input.color_id:upper()]
+
+    if source then
+        return { fg = source }
+    end
     if input.role == "cloud" then
         return { fg = clouds.get(input.kind_id).color }
     end

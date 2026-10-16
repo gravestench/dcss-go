@@ -1,6 +1,9 @@
 -- Stable ECS component IDs shared across game policies.
 local component = {
+    CORPSE = "core.corpse",
     ACTOR = "core.actor",
+    VAULT_ORIGIN = "vault.origin",
+    VAULT_ACTOR_OVERRIDES = "vault.actor_overrides",
     PLAYER = "core.player",
     PLAYER_TURN = "core.player_turn",
     POSITION = "core.position",

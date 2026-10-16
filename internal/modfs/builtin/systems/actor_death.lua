@@ -91,7 +91,8 @@ function system.update(ctx)
                     kills[ctx:id(entity)] == true)
 
                 if kills[ctx:id(entity)] and not consumed_corpse then
-                    death.corpse(ctx, definition, position)
+                    death.corpse(ctx, definition, position,
+                        ctx:get(entity, component.VAULT_ORIGIN))
                 end
 
                 ctx:destroy(entity)

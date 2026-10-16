@@ -1,4 +1,6 @@
 local catalog = require("policy.catalog")
+local component = require("constants.component")
+local item_ids = require("ids.items")
 
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
@@ -63,6 +65,13 @@ local function age_corpses(ctx, input)
                 corpse.appearance = ctx:random("corpse", 255) + 1
                 ctx:set(entity, "core.item", item)
                 ctx:set(entity, "core.corpse", corpse)
+
+                local origin = ctx:get(entity, component.VAULT_ORIGIN)
+
+                if origin then
+                    origin.kind_id = item_ids.CORPSE_SKELETON
+                    ctx:set(entity, component.VAULT_ORIGIN, origin)
+                end
             end
         end
     end
@@ -96,8 +105,11 @@ local function catchup_monsters(ctx, input)
 
             local definition = catalog.get("monsters", actor.kind_id)
 
-            if actor.speed ~= definition.speed then
-                error("monster " .. ctx:id(entity) .. " has incorrect catch-up speed")
+            if actor.speed ~= (definition.speed or 0) then
+                error("monster " .. ctx:id(entity) .. " (" .. actor.kind_id ..
+                    ") has incorrect catch-up speed: actor=" ..
+                    tostring(actor.speed) .. " definition=" ..
+                    tostring(definition.speed))
             end
 
             local rate = has_flag(definition, "M_FAST_REGEN") and 100 or 10

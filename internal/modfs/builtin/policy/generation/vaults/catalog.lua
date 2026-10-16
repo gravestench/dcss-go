@@ -1,6 +1,7 @@
 local categories = require("constants.catalog")
 local des = require("policy.generation.vaults.des")
 local hooks = require("policy.generation.vaults.hooks")
+local entity_specs = require("policy.generation.vaults.specs.validate")
 
 local catalog = {}
 local loaded = false
@@ -28,6 +29,11 @@ local function ordered_definitions()
         local source = mod.read(path)
         local definition = des.parse(path, source)
         hooks.validate(definition)
+
+        for _, operation in ipairs(definition.operations) do
+            entity_specs.operation(definition, operation)
+        end
+
         local prior = origins[definition.id]
 
         if prior then

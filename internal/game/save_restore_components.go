@@ -227,6 +227,12 @@ func (g *Game) restoreLocationComponents(
 }
 
 func (g *Game) validateRestoredPlacement() error {
+	if _, err := g.scripts.Policy("save.validate_vault_entities", map[string]any{
+		"levels": g.vaultValidationLevels(),
+	}); err != nil {
+		return err
+	}
+
 	if _, err := g.scripts.Policy("save.validate_training", nil); err != nil {
 		return err
 	}
@@ -269,6 +275,7 @@ func (g *Game) validateRestoredPlacement() error {
 	if _, err := g.scripts.Policy("save.validate_experience", map[string]any{
 		"scenario_id":   g.scenarioID,
 		"initial_count": initialCount,
+		"vault_levels":  g.vaultValidationLevels(),
 	}); err != nil {
 		return err
 	}

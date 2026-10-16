@@ -2,6 +2,7 @@
 local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
 local component = require("constants.component")
 local invisibility = require("policy.potions.invisibility")
+local attitudes = require("constants.vault_attitude")
 
 local targets = {}
 
@@ -16,7 +17,21 @@ local function allied(ctx, entity)
         return true
     end
 
+    local authored = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
+
+    if authored and (authored.attitude == attitudes.FRIENDLY or
+        authored.attitude == attitudes.GOOD_NEUTRAL or
+        authored.attitude == attitudes.FELLOW_SLIME) then
+        return true
+    end
+
     return allegiance.charmed(ctx, entity)
+end
+
+local function neutral(ctx, entity)
+    local authored = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
+
+    return authored and authored.attitude == attitudes.NEUTRAL
 end
 
 function targets.enemy(ctx, attacker, defender)
@@ -26,6 +41,10 @@ function targets.enemy(ctx, attacker, defender)
 
     if allegiance.frenzied(ctx, attacker) then
         return true
+    end
+
+    if neutral(ctx, attacker) or neutral(ctx, defender) then
+        return false
     end
 
     return allied(ctx, attacker) ~= allied(ctx, defender)

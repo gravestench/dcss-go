@@ -8,6 +8,8 @@ local definition = {
     id = "MONS_ELF",
     status = "defined",
     name = "elf",
+    -- Arrival corpse and skeleton declarations use the species name.
+    vault_aliases = { "deep elf" },
     glyph = 101,
     colour_id = "LIGHTRED",
     flags = {

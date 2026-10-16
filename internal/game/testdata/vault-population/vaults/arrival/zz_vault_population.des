@@ -1,0 +1,10 @@
+NAME: zz_vault_population
+TAGS: arrival
+WEIGHT: 100000000
+KMONS: 1 = plant
+KMONS: 2 = goblin ; stone
+KITEM: d = human skeleton
+KITEM: e = stone q:4
+MAP
+@12de
+ENDMAP

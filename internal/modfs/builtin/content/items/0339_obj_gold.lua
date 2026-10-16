@@ -8,6 +8,8 @@ local categories = require("constants.catalog")
 local definition = {
     id = "OBJ_GOLD",
     name = "gold piece",
+    -- Source vault expressions use the short spelling.
+    vault_aliases = { "gold" },
     glyph = 36,
     class = "OBJ_GOLD",
     class_value = 13,

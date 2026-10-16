@@ -44,6 +44,7 @@ context rather than a handler API for each game domain.
 | --- | --- | --- |
 | Character | Every legal selectable species/job pair starts; Lua owns chosen or fixed weapons, starting gear, species adjustments, attributes, skills, HP/MP, spell knowledge, Djinni's future spell schedule, religion, and durable origin state; training, XP, level gains, stat choice | `policy/character`, `schemas/character_origin.lua`, `systems/character_*` |
 | Dungeon | Seeded basic-layout D:1–2, rooms, corridors, doors, paired stairs, source-sized population, fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
+| Arrival vault population | All 337 selectable source arrivals resolve authored monster and item expressions through Lua content catalogs, place Akara entities with vault origins, and retain source selection in level records; a mod can add a monster and arrival file by path | `policy/generation/vaults/specs`, `policy/population/vaults.lua`, `schemas/vault_origin.lua` |
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; item and spell capability dispatch without monster-ID handlers | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
 | Combat | Fighter melee and headbutts; generated player melee brands and Chaos Knight's forced chaos brand in Lua, including saved spectral allies with damage sharing, distortion banishment, and chaos monster effects; all seven active magical staves with source skill procs and AC/resistance routes; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
 | Items and status | Equipment, consumables, statuses, and identification | `policy/inventory`, `policy/items`, `systems/item_*` |
@@ -69,6 +70,16 @@ Core Akara components remain typed Go stores where the generic engine must
 read them; Lua systems and policies change their authoritative values through
 the same context used by Lua-defined components. Dense terrain, exploration,
 and occupancy remain level grids.
+
+Arrival monsters and items use the same Akara actor, inventory, and corpse
+components as ordinary population. A Lua-owned `vault.origin` component
+links each live entity to a saved level record. Restore validates that link
+and never rerolls the source expression; moved or dead monsters and picked-up
+or consumed items retain their natural lifecycle. Authored monsters do not
+consume the ambient Dungeon population budget. Source terrain and marker
+effects remain typed level records where their gameplay is still pending;
+special monster and item behavior beyond the current generic systems remains
+for later domain slices.
 
 Terminal key and menu policy lives in the embedded `policy/input` Lua modules.
 The Go terminal applies their validated decisions and handles drawing, saves,
@@ -113,8 +124,13 @@ Djinni's future spell list is durable, but later innate spell acquisition
 and the complete source spell-usability filter remain to be ported.
 The D:1 arrival catalog contains all 339 source definitions: 337 selectable
 arrivals and two helpers. Their map directives and 36 Lua script blocks are
-ported, while terrain and entity effects outside the current game remain
-typed pending records for later slices.
+ported. Authored monsters and items now materialize as ECS entities; terrain,
+markers, and other unimplemented effects remain typed pending level records.
+Authored water and lava monsters convert their spawn cells to their primary
+habitat. Random arrival items use source class weights and preserve ordinary,
+depth-boosted `*`, good, and superb requests. Subtype distributions and
+artefact properties still need the full item-generation domain; current
+gear uses the ordinary item schema for enchantment and charges.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,

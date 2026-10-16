@@ -1,0 +1,294 @@
+local directives = require("constants.vault_directives")
+local effects = require("constants.vault_effects")
+local grid = require("policy.generation.grid")
+local harness = require("tests.harness")
+local placement = require("policy.generation.vaults.placement")
+local catalog = require("policy.generation.vaults.catalog")
+local entity_specs = require("policy.generation.vaults.specs.validate")
+local materializer = require("policy.population.vaults")
+local component = require("constants.component")
+local monsters = require("ids.monsters")
+local items = require("ids.items")
+
+local test = {}
+
+local function builder_context()
+    local context = {}
+    local next_value = 1
+
+    function context:random_u64()
+        next_value = (next_value * 1664525 + 1013904223) % 4294967296
+
+        return 0, next_value
+    end
+
+    return context
+end
+
+local function resolved_entity_records()
+    local source = {
+        id = "resolved_fixture",
+        path = "vaults/arrival/resolved_fixture.des",
+        rows = { "@ABd" },
+        orientation = "centre",
+        operations = {
+            {
+                kind = directives.KMONS,
+                argument = "AB : rat",
+                line = 4,
+            },
+            {
+                kind = directives.ITEM,
+                argument = "stone q:4",
+                line = 5,
+            },
+        },
+    }
+    local context = builder_context()
+    local placed = placement.place(context, grid.new(context), source)
+    local actors = 0
+    local stack
+
+    for _, record in ipairs(placed.records) do
+        if record.kind == effects.MONSTER then
+            actors = actors + 1
+            harness.equal(record.arguments.kind_id, monsters.MONS_RAT,
+                "authored monster stable ID")
+            harness.equal(record.arguments.expression, "rat",
+                "original expression retained")
+        elseif record.kind == effects.ITEM and record.source == "d" then
+            stack = record
+        end
+    end
+
+    harness.equal(actors, 2, "keyed monster cells")
+    harness.truthy(stack, "item cell missing")
+    harness.equal(stack.arguments.kind_id, items.MI_STONE,
+        "authored item stable ID")
+    harness.equal(stack.arguments.quantity, 4,
+        "authored item quantity")
+end
+
+local function absence_is_resolved()
+    local source = {
+        id = "nothing_fixture",
+        path = "vaults/arrival/nothing_fixture.des",
+        rows = { "@1" },
+        orientation = "centre",
+        operations = {
+            {
+                kind = directives.MONS,
+                argument = "nothing",
+                line = 4,
+            },
+        },
+    }
+    local context = builder_context()
+    local placed = placement.place(context, grid.new(context), source)
+
+    for _, record in ipairs(placed.records) do
+        if record.kind == effects.MONSTER then
+            harness.falsy(record.pending, "nothing remains pending")
+            harness.truthy(record.arguments.no_spawn,
+                "nothing lacks typed no-spawn outcome")
+        end
+    end
+end
+
+local function source_slot_order_prevents_double_actor(ctx)
+    local source = {
+        id = "same_cell_fixture",
+        path = "vaults/arrival/same_cell_fixture.des",
+        rows = { "@1" },
+        orientation = "centre",
+        operations = {
+            {
+                kind = directives.KMONS,
+                argument = "1 = rat",
+                line = 4,
+            },
+            {
+                kind = directives.KMONS,
+                argument = "1 = plant",
+                line = 5,
+            },
+        },
+    }
+    local builder = builder_context()
+    local placed = placement.place(builder, grid.new(builder), source)
+    local records = {}
+
+    for _, record in ipairs(placed.records) do
+        if record.kind == effects.MONSTER then
+            record.index = #records + 1
+            record.source_id = source.id
+            records[#records + 1] = record
+        end
+    end
+
+    local occupied
+    local world = setmetatable({}, { __index = ctx })
+
+    function world:random()
+        return 0
+    end
+
+    function world:walkable()
+        return true
+    end
+
+    function world:actor_at()
+        return occupied
+    end
+
+    function world:place_actor(actor, level_id, x, y)
+        occupied = actor
+        ctx:add(actor, component.POSITION, {
+            level_id = level_id,
+            x = x,
+            y = y,
+        })
+    end
+
+    local ok, reason = pcall(materializer.materialize, world, {
+        id = 1,
+        vault_records = records,
+    })
+
+    harness.falsy(ok, "two authored actors occupied one cell")
+    harness.truthy(reason:find("two actors", 1, true),
+        "overlap error lacks source rule")
+    harness.equal(ctx:get(occupied, component.ACTOR).kind_id,
+        monsters.MONS_RAT, "source slot order changed")
+end
+
+local function invalid_declaration_has_source_site()
+    local source = {
+        id = "invalid_fixture",
+        path = "vaults/arrival/invalid_fixture.des",
+    }
+    local operation = {
+        kind = directives.MONS,
+        argument = "rat bogus:3",
+        line = 7,
+    }
+    local ok, reason = pcall(entity_specs.operation, source, operation)
+
+    harness.falsy(ok, "invalid static source expression accepted")
+    harness.truthy(reason:find(source.path, 1, true),
+        "invalid expression lacks source path")
+end
+
+local function source_unique_is_not_duplicated(ctx)
+    local source = {
+        id = "unique_fixture",
+        path = "vaults/arrival/unique_fixture.des",
+        rows = { "@12" },
+        orientation = "centre",
+        operations = {
+            {
+                kind = directives.KMONS,
+                argument = "1 = Sigmund",
+                line = 4,
+            },
+            {
+                kind = directives.KMONS,
+                argument = "2 = Sigmund",
+                line = 5,
+            },
+        },
+    }
+    local builder = builder_context()
+    local placed = placement.place(builder, grid.new(builder), source)
+    local records = {}
+
+    for _, record in ipairs(placed.records) do
+        if record.kind == effects.MONSTER then
+            record.index = #records + 1
+            record.source_id = source.id
+            records[#records + 1] = record
+        end
+    end
+
+    local world = setmetatable({}, { __index = ctx })
+
+    function world:random()
+        return 0
+    end
+
+    function world:walkable()
+        return true
+    end
+
+    function world:actor_at()
+        return nil
+    end
+
+    function world:place_actor(actor, level_id, x, y)
+        ctx:add(actor, component.POSITION, {
+            level_id = level_id,
+            x = x,
+            y = y,
+        })
+    end
+
+    local actors, outcomes = materializer.materialize(world, {
+        id = 1,
+        vault_records = records,
+    })
+
+    harness.equal(actors, 1, "duplicate source unique spawned")
+    harness.truthy(outcomes[2].no_spawn,
+        "duplicate unique lacks typed no-spawn result")
+end
+
+local function temple_helper_entities_resolve()
+    local vault = catalog.get("erik_arrival_cave_to_civilisation")
+
+    for branch = 0, 3 do
+        local context = builder_context()
+        local builder = grid.new(context)
+
+        function builder:roll(bound)
+            if bound == 15 then
+                return 14
+            elseif bound == 9 then
+                return branch
+            end
+
+            return 0
+        end
+
+        local placed = placement.place(context, builder, vault)
+        local count = 0
+
+        for _, record in ipairs(placed.records) do
+            if record.kind == effects.MONSTER and
+                record.vault_id == "erik_arrival_cave_to_temple" then
+                local arguments = record.arguments or {}
+
+                harness.truthy(arguments.kind_id ~= nil,
+                    "helper monster has no selected identity")
+                harness.truthy(arguments.no_spawn or arguments.kind_id ~= "",
+                    "helper monster remained unresolved")
+                harness.truthy(arguments.path:find("erik_arrival_cave_to_temple", 1, true),
+                    "helper entity lost its source path")
+
+                count = count + 1
+            end
+        end
+
+        harness.truthy(count > 0, "temple tenant branch has no monster records")
+    end
+end
+
+function test.run(ctx)
+    resolved_entity_records()
+    absence_is_resolved()
+    source_slot_order_prevents_double_actor(ctx)
+    invalid_declaration_has_source_site()
+    source_unique_is_not_duplicated(ctx)
+    temple_helper_entities_resolve()
+end
+
+return test

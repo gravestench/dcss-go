@@ -18,4 +18,23 @@ local colors = {
     white = 15,
 }
 
+colors.source = {
+    BLACK = colors.black,
+    BLUE = colors.blue,
+    GREEN = colors.green,
+    CYAN = colors.cyan,
+    RED = colors.red,
+    MAGENTA = colors.magenta,
+    BROWN = colors.brown,
+    LIGHTGREY = colors.light_grey,
+    DARKGREY = colors.dark_grey,
+    LIGHTBLUE = colors.light_blue,
+    LIGHTGREEN = colors.light_green,
+    LIGHTCYAN = colors.light_cyan,
+    LIGHTRED = colors.light_red,
+    LIGHTMAGENTA = colors.light_magenta,
+    YELLOW = colors.yellow,
+    WHITE = colors.white,
+}
+
 return colors

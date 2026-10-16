@@ -39,7 +39,7 @@ local function has_flag(definition, id)
 end
 
 local function validate_ai(ctx, entity, ai, position, definition, current_aut)
-    local retreat_limit = math.max(2, math.floor(definition.speed / 10)) - 1
+    local retreat_limit = math.max(2, math.floor((definition.speed or 0) / 10)) - 1
 
     if ai.bat_retreat_actions < 0 or ai.bat_retreat_actions > retreat_limit or
         (ai.bat_retreat_actions > 0 and
@@ -131,6 +131,33 @@ end
 
 local module = {}
 
+local function validate_vault_monster(ctx, entity, actor, health, position,
+    ai, current_aut)
+    local definition = catalog.get("monsters", actor.kind_id)
+    local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
+    local profile_id = overrides and overrides.base_id ~= "" and
+        overrides.base_id or actor.kind_id
+    local profile = roster.profile(profile_id)
+    local base_speed = definition.speed or 0
+
+    if health.max < profile.minimum or health.max > profile.maximum then
+        error("vault monster " .. ctx:id(entity) .. " has impossible HP")
+    end
+
+    if base_speed == 0 then
+        if actor.speed ~= 0 then
+            error("stationary vault monster has wrong speed")
+        end
+    elseif not slow.validate(ctx, entity, definition, actor) then
+        error("vault monster " .. actor.kind_id .. " has wrong speed")
+    end
+
+    validate_ai(ctx, entity, ai, position, definition, current_aut)
+    net.validate(ctx, entity, position)
+    poison.validate(ctx, entity)
+    sticky_flame.validate(ctx, entity)
+end
+
 function module.run(ctx, input)
     entities.validate(ctx)
     inventory.validate(ctx)
@@ -189,6 +216,9 @@ function module.run(ctx, input)
         if summon then
             summons.validate(ctx, entity, actor, position, ai,
                 summon, input.current_aut)
+        elseif ctx:get(entity, component.VAULT_ORIGIN) then
+            validate_vault_monster(ctx, entity, actor, health,
+                position, ai, input.current_aut)
         else
             validate_roster_monster(ctx, entity, actor, health,
                 position, ai, roster_state)

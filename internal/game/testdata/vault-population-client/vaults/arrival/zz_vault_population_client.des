@@ -1,0 +1,13 @@
+NAME: zz_vault_population_client
+TAGS: arrival
+WEIGHT: 100000000
+KMONS: 1 = plant att:neutral
+KMONS: 2 = goblin ; stone
+KMONS: 3 = vault sprout att:friendly col:red
+KMONS: 4 = 0
+KITEM: d = human skeleton
+KITEM: e = stone q:4
+KITEM: f = random_gold
+MAP
+@1234def
+ENDMAP

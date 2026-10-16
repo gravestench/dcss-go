@@ -21,14 +21,16 @@ function inventory.validate(ctx)
             local equipped = ctx:get(entity, "core.equipped")
 
             if not actor or not ai or not health or health.current <= 0 or
-                not position or not item or not equipped then
+                not position or not item then
                 error("item " .. ctx:id(entity) .. " has invalid monster carrier " .. holder_id)
             end
 
             local kind = catalog.get("items", item.kind_id)
-            local slot = equipped.slot
+            local slot = equipped and equipped.slot
 
-            if slot == "weapon" or slot == "alternate_weapon" then
+            if not slot then
+                -- Source monster inventories can carry an unequipped item.
+            elseif slot == "weapon" or slot == "alternate_weapon" then
                 if kind.class ~= "OBJ_WEAPONS" or not kind.weapon then
                     error("item " .. ctx:id(entity) .. " is not a monster weapon")
                 end
@@ -45,13 +47,15 @@ function inventory.validate(ctx)
                 error("item " .. ctx:id(entity) .. " has unsupported monster slot " .. tostring(slot))
             end
 
-            slots[holder_id] = slots[holder_id] or {}
+            if slot then
+                slots[holder_id] = slots[holder_id] or {}
 
-            if slots[holder_id][slot] then
-                error("monster " .. holder_id .. " has duplicate " .. slot .. " slot")
+                if slots[holder_id][slot] then
+                    error("monster " .. holder_id .. " has duplicate " .. slot .. " slot")
+                end
+
+                slots[holder_id][slot] = true
             end
-
-            slots[holder_id][slot] = true
         end
     end
 end

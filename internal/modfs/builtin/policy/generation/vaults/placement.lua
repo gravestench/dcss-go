@@ -3,6 +3,10 @@ local effects = require("constants.vault_effects")
 local implicit = require("constants.vault_implicit")
 local operations = require("policy.generation.vaults.operations")
 local transforms = require("policy.generation.vaults.transforms")
+local choice = require("policy.generation.vaults.specs.choice")
+local monster_specs = require("policy.generation.vaults.specs.monster")
+local item_specs = require("policy.generation.vaults.specs.item")
+local resolve = require("policy.generation.vaults.specs.resolve")
 
 -- Fit one source map on the established Dungeon grid, preserving the source
 -- glyph and location of every dynamic or pending placement.
@@ -219,40 +223,57 @@ local function draw_map(vault, cells, builder, left, top, records)
     return entry, exits, occupied
 end
 
-local function weighted_identity(expression, random)
-    if not expression or not expression:find("/", 1, true) then
-        return expression
+local function choice_context(random)
+    local context = {}
+
+    function context:random(_, bound)
+        return random:roll(bound)
     end
 
-    local choices = {}
-    local total = 0
+    return context
+end
 
-    for part in (expression .. "/"):gmatch("(.-)/") do
-        local weight = part:match("w:(%d+)") or part:match("weight:(%d+)")
-        local identity = part:gsub("weight:%d+", ""):gsub("w:%d+", "")
+local function select_entity(record, vault, random)
+    local parser = record.kind == effects.MONSTER and monster_specs or item_specs
+    local resolver = record.kind == effects.MONSTER and resolve.monster or resolve.item
+    local site = {
+        path = record.path or vault.path,
+        vault_id = record.vault_id or vault.id,
+        line = record.line,
+        directive = record.directive,
+        glyph = record.source,
+    }
+    local expression = record.identity
+    local slots = parser.parse(expression, site)
 
-        identity = identity:match("^%s*(.-)%s*$")
-
-        local value = tonumber(weight) or 10
-
-        if identity == "" or value <= 0 then
-            error("invalid weighted vault identity " .. expression)
-        end
-
-        total = total + value
-        choices[#choices + 1] = {
-            identity = identity,
-            ceiling = total,
-        }
+    if #slots ~= 1 then
+        choice.fail(site, expression, "one cell has multiple entity slots")
     end
 
-    local draw = random:roll(total)
+    local selected = choice.pick(random, slots[1])
+    local resolved = resolver(choice_context(random), selected, 1, site)
+    local arguments = record.arguments or {}
 
-    for _, choice in ipairs(choices) do
-        if draw < choice.ceiling then
-            return choice.identity
-        end
-    end
+    arguments.expression = expression
+    arguments.path = site.path
+    arguments.selected_expression = selected.source
+    arguments.no_spawn = resolved.no_spawn or false
+    arguments.kind_id = resolved.kind_id or ""
+    arguments.base_id = resolved.base_id or ""
+    arguments.variant = resolved.variant or ""
+    arguments.colour = resolved.colour or ""
+    arguments.attitude = resolved.attitude or ""
+    arguments.spells = resolved.spells and table.concat(resolved.spells, "|") or ""
+    arguments.quantity = resolved.quantity or 1
+    arguments.quality = resolved.quality or ""
+    arguments.request = resolved.request or ""
+    arguments.generation_depth = resolved.generation_depth or 1
+
+    record.identity = selected.name
+    record.arguments = arguments
+    record.pending = not resolved.no_spawn
+
+    return record
 end
 
 local function copy_record(source, x, y)
@@ -296,13 +317,14 @@ local function rotated_point(record, width_before, height_before, turns)
 end
 
 local function locate_records(source_records, cells, left, top, entry,
-    width_before, height_before, turns, random)
+    width_before, height_before, turns, random, vault)
     local located = {}
+    local shared_local = {}
 
     for _, record in ipairs(source_records) do
         local targets = matching_targets(record)
         local count = 0
-        local shared_identity
+        local shared_selection
 
         if record.local_x and record.local_y then
             local x, y = rotated_point(record, width_before, height_before, turns)
@@ -310,6 +332,31 @@ local function locate_records(source_records, cells, left, top, entry,
 
             placed.local_x = nil
             placed.local_y = nil
+
+            if placed.kind == effects.ITEM or placed.kind == effects.MONSTER then
+                local key = table.concat({
+                    placed.vault_id,
+                    placed.line,
+                    placed.kind,
+                    placed.identity,
+                    placed.targets or "",
+                }, ":")
+
+                if record.assignment_mode == ":" and shared_local[key] then
+                    local prior = shared_local[key]
+
+                    placed.identity = prior.identity
+                    placed.arguments = prior.arguments
+                    placed.pending = prior.pending
+                else
+                    select_entity(placed, vault, random)
+
+                    if record.assignment_mode == ":" then
+                        shared_local[key] = placed
+                    end
+                end
+            end
+
             located[#located + 1] = placed
             count = 1
         elseif targets then
@@ -324,15 +371,15 @@ local function locate_records(source_records, cells, left, top, entry,
                         if placed.kind == effects.ITEM or
                             placed.kind == effects.MONSTER then
                             if record.assignment_mode == ":" then
-                                shared_identity = shared_identity or
-                                    weighted_identity(placed.identity, random)
-                                placed.identity = shared_identity
-                            else
-                                placed.identity = weighted_identity(placed.identity, random)
-                            end
+                                if not shared_selection then
+                                    shared_selection = select_entity(placed, vault, random)
+                                end
 
-                            if placed.identity == "nothing" then
-                                placed.pending = false
+                                placed.identity = shared_selection.identity
+                                placed.arguments = shared_selection.arguments
+                                placed.pending = shared_selection.pending
+                            else
+                                select_entity(placed, vault, random)
                             end
                         end
 
@@ -376,7 +423,7 @@ function placement.place(_, builder, vault, player)
     local records = {}
     local entry, exits, occupied = draw_map(vault, cells, builder, left, top, records)
     local intents = locate_records(source_records, cells, left, top, entry,
-        width_before, height_before, turns, builder)
+        width_before, height_before, turns, builder, vault)
 
     for _, record in ipairs(intents) do
         records[#records + 1] = record
@@ -386,7 +433,7 @@ function placement.place(_, builder, vault, player)
 
     for _, record in ipairs(intents) do
         if (record.kind == effects.ITEM or record.kind == effects.MONSTER) and
-            record.targets and record.targets ~= "" and not record.pending then
+            record.targets and record.targets ~= "" then
             explicit[record.kind .. ":" .. record.x .. ":" .. record.y] = true
         end
     end
@@ -397,6 +444,11 @@ function placement.place(_, builder, vault, player)
         local key = record.kind .. ":" .. record.x .. ":" .. record.y
 
         if not record.implicit or not explicit[key] then
+            if record.implicit and (record.kind == effects.ITEM or
+                record.kind == effects.MONSTER) then
+                select_entity(record, vault, builder)
+            end
+
             filtered[#filtered + 1] = record
         end
     end

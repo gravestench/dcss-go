@@ -44,6 +44,35 @@ func TestModJewelleryRule(t *testing.T) {
 	runLuaRule(t, rules, "tests/reflector_mod_test.lua")
 }
 
+func TestVaultDuplicateAlias(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/vault-duplicate-alias")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	world := akara.NewWorld()
+	defer world.Close()
+
+	runtime, err := NewCatalog(world, rules)
+
+	if err == nil {
+		runtime.Close()
+		t.Fatal("duplicate effective vault alias passed catalog validation")
+	}
+
+	for _, expected := range []string{
+		"ambiguous monsters name",
+		"MONS_RAT",
+		"MONS_TEST_DUPLICATE_ALIAS",
+		"vaults/arrival/",
+	} {
+		if !strings.Contains(err.Error(), expected) {
+			t.Fatalf("catalog diagnostic lacks %q: %v", expected, err)
+		}
+	}
+}
+
 func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {
 	t.Helper()
 
@@ -92,7 +121,9 @@ func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {
 	limitDuration := 5 * time.Second
 
 	if name == "tests/arrival_placement_test.lua" {
-		// This one test drives every source arrival through placement and BFS.
+		// Source connectivity visits all 337 arrivals on full-sized grids.
+		limitDuration = 180 * time.Second
+	} else if name == "tests/vault_population_all_test.lua" {
 		limitDuration = 60 * time.Second
 	}
 

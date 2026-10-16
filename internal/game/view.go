@@ -23,13 +23,14 @@ type CellView struct {
 }
 
 type EntityView struct {
-	ID     uint64
-	X      int
-	Y      int
-	Glyph  rune
-	KindID string
-	Name   string
-	Role   string
+	ID      uint64
+	X       int
+	Y       int
+	Glyph   rune
+	KindID  string
+	Name    string
+	Role    string
+	ColorID string
 }
 
 type ItemView struct {
@@ -428,6 +429,7 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 
 			actor, _ := g.stores.Actors.Get(entity)
 			kindID, role = actor.KindID, "monster"
+			input["monster_entity_id"] = uint64(entity)
 
 		case g.stores.Items.Has(entity):
 			item, _ := g.stores.Items.Get(entity)
@@ -454,13 +456,14 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 		}
 
 		view.Entities = append(view.Entities, EntityView{
-			ID:     entityID,
-			X:      location.X,
-			Y:      location.Y,
-			Glyph:  rune(presentation["glyph"].(int64)),
-			KindID: presentation["kind_id"].(string),
-			Name:   presentation["name"].(string),
-			Role:   presentation["role"].(string),
+			ID:      entityID,
+			X:       location.X,
+			Y:       location.Y,
+			Glyph:   rune(presentation["glyph"].(int64)),
+			KindID:  presentation["kind_id"].(string),
+			Name:    presentation["name"].(string),
+			Role:    presentation["role"].(string),
+			ColorID: presentation["color_id"].(string),
 		})
 	}
 }

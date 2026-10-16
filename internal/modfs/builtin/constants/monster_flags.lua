@@ -15,6 +15,7 @@ local flags = {
     COLD_BLOOD = "M_COLD_BLOOD",
     WARM_BLOOD = "M_WARM_BLOOD",
     UNIQUE = "M_UNIQUE",
+    NO_SKELETON = "M_NO_SKELETON",
     CLARITY = "M_CLARITY",
 }
 

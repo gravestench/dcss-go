@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local roster = require("policy.population.roster")
+local component = require("constants.component")
 
 local function flag(definition, wanted)
     for _, id in ipairs(definition.flags or {}) do
@@ -25,6 +26,7 @@ function module.run(ctx, input)
         local corpse = ctx:get(entity, "core.corpse")
         local item = ctx:get(entity, "core.item")
         local position = ctx:get(entity, "core.position")
+        local origin = ctx:get(entity, component.VAULT_ORIGIN)
 
         if not item or not position or ctx:has(entity, "core.carried_by") or
             ctx:has(entity, "core.equipped") or item.quantity ~= 1 or
@@ -33,7 +35,7 @@ function module.run(ctx, input)
             error("item " .. ctx:id(entity) .. " has invalid ordinary monster corpse state")
         end
 
-        if not allowed[corpse.monster_id] then
+        if not allowed[corpse.monster_id] and not origin then
             error("fixed Dungeon save has unsupported corpse " .. corpse.monster_id)
         end
 

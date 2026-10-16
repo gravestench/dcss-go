@@ -2,6 +2,8 @@ local catalog = require("policy.catalog")
 local effects = require("policy.combat.monster_spells")
 local statuses = require("policy.magic.effects.statuses.player")
 local engulf = require("policy.combat.engulf")
+local component = require("constants.component")
+local vault_spells = require("constants.vault_spell_override")
 
 local books_by_id = {}
 
@@ -28,6 +30,12 @@ function spell.choose(ctx, entity, position, player)
 
     if not actor then
         error("monster " .. ctx:id(entity) .. " has no actor for spell choice")
+    end
+
+    local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
+
+    if overrides and overrides.spells[1] == vault_spells.EMPTY_BOOK then
+        return nil
     end
 
     local monster = catalog.get("monsters", actor.kind_id)

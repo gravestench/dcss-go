@@ -75,17 +75,7 @@ local function ordinary_brand(ctx, weights)
     error("ordinary weapon brand table failed to select")
 end
 
-local supported_weapon = {}
-
-for _, id in ipairs(require("data.early_weapons")) do
-    supported_weapon[id] = true
-end
-
 function gear.quality(ctx, kind_id, depth)
-    if not supported_weapon[kind_id] then
-        error("unsupported ordinary weapon " .. tostring(kind_id))
-    end
-
     local definition = catalog.get(categories.ITEMS, kind_id)
 
     if definition.class ~= classes.OBJ_WEAPONS or not definition.weapon then
@@ -121,7 +111,52 @@ function gear.quality(ctx, kind_id, depth)
 end
 
 function gear.loadout(ctx, monster_id, depth)
-    return registry.loadout(ctx, monster_id, depth)
+    local special = registry.loadout(ctx, monster_id, depth)
+
+    if special then
+        return special
+    end
+
+    local definition = catalog.get(categories.MONSTERS, monster_id)
+    local owned = definition.weapon_gear
+
+    if not owned then
+        return nil
+    end
+
+    local loadout = {}
+
+    for _, slot in ipairs({ "primary", "secondary" }) do
+        local spec = owned[slot]
+
+        if spec then
+            local kind_id = gear.weighted(ctx, spec.weapons)
+
+            if kind_id ~= "" then
+                local selected = {
+                    kind_id = kind_id,
+                    quality = gear.quality(ctx, kind_id, depth),
+                }
+
+                if slot == "primary" then
+                    loadout.primary = selected
+                else
+                    loadout.alternate = selected
+                end
+            end
+        end
+    end
+
+    if not loadout.primary and not loadout.alternate then
+        return nil
+    end
+
+    if not loadout.primary then
+        loadout.primary = loadout.alternate
+        loadout.alternate = nil
+    end
+
+    return loadout
 end
 
 gear.nice_plusses = nice_plusses

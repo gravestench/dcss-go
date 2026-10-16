@@ -101,15 +101,16 @@ func (r dungeonRenderer) drawEntity(entity game.EntityView) {
 }
 
 func (r dungeonRenderer) entityColor(entity game.EntityView) Color {
-	key := entity.Role + ":" + entity.KindID
+	key := entity.Role + ":" + entity.KindID + ":" + entity.ColorID
 
 	if color, found := r.entityColors[key]; found {
 		return color
 	}
 
 	result := runPresentation(r.policy, "presentation.entity_color", map[string]any{
-		"role":    entity.Role,
-		"kind_id": entity.KindID,
+		"role":     entity.Role,
+		"kind_id":  entity.KindID,
+		"color_id": entity.ColorID,
 	})
 
 	color := policyColor(result["fg"])

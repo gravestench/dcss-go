@@ -3,6 +3,9 @@ local monster_flags = require("constants.monster_flags")
 local item_use = require("constants.monster_item_use")
 local books = require("ids.monster_spellbooks")
 local spell_weights = require("data.monster_spell_xp")
+local component = require("constants.component")
+local origin_policy = require("policy.population.origin")
+local item_ids = require("ids.items")
 
 local death = {}
 
@@ -98,20 +101,31 @@ function death.drop_inventory(ctx, monster, position)
     end
 end
 
-function death.corpse(ctx, definition, position)
+function death.corpse(ctx, definition, position, source_origin)
     if not definition.leaves_corpse or ctx:random("corpse", 2) == 1 then
         return
     end
 
-    catalog.get("items", "CORPSE_BODY")
+    catalog.get("items", item_ids.CORPSE_BODY)
     local corpse = ctx:create()
-    ctx:add(corpse, "core.item", { kind_id = "CORPSE_BODY", quantity = 1 })
+    ctx:add(corpse, "core.item", {
+        kind_id = item_ids.CORPSE_BODY,
+        quantity = 1,
+    })
     ctx:add(corpse, "core.corpse", {
         monster_id = definition.id,
         freshness = 110,
         appearance = ctx:random("corpse", 255) + 1,
     })
     ctx:add(corpse, "core.position", position)
+
+    if source_origin then
+        ctx:add(corpse, component.VAULT_ORIGIN,
+            origin_policy.for_entity(source_origin, item_ids.CORPSE_BODY,
+                origin_policy.CORPSE_OCCURRENCE))
+    end
+
+    return corpse
 end
 
 return death

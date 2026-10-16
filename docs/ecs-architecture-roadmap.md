@@ -82,6 +82,15 @@ one new file. The same loader and validation run for bundled and user files.
 The runtime validates the complete effective content tree before gameplay
 policy runs, so a new file may refer to another file loaded later.
 
+Arrival vaults now exercise this extension path end to end. Lua parses the
+committed `.des` monster and item declarations, resolves IDs through the
+effective per-file catalogs, and creates actors, carried gear, corpses, and
+floor items as Akara entities. A saved `vault.origin` component identifies
+the source record for each live entity. A mod-added monster file is eligible
+for a mod-added arrival without a Go switch or central registration edit.
+Generation resolves random requests once; restore validates saved entities
+and records without rerunning Lua generation.
+
 Static definition and executable behavior are separate. A new monster file
 makes the monster available to Lua catalogs and shared ID imports. Spawn
 data may live in that definition; special actions use discoverable Lua files.

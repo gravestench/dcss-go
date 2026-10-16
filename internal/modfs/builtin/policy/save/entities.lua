@@ -7,7 +7,7 @@ function entities.validate(ctx)
         local combat = ctx:get(entity, "core.combat")
         local position = ctx:get(entity, "core.position")
 
-        if actor.speed <= 0 or not health or not combat or not position then
+        if actor.speed < 0 or not health or not combat or not position then
             error("invalid actor " .. ctx:id(entity))
         end
     end

@@ -3,6 +3,7 @@ local effects = require("constants.vault_effects")
 local hooks = require("policy.generation.vaults.hooks")
 local transforms = require("policy.generation.vaults.transforms")
 local catalog = require("policy.generation.vaults.catalog")
+local entity_specs = require("policy.generation.vaults.specs.validate")
 
 -- Walk declarations in source order. Hooks insert operations at their exact
 -- source position, and non-terrain effects become typed level intent.
@@ -382,6 +383,8 @@ function operations.apply(vault, cells, random, depth, player)
     }
 
     local function apply_operation(operation)
+        entity_specs.operation(vault, operation)
+
         if operation.kind == directives.HOOK_VETO then
             records[#records + 1] = {
                 kind = effects.VETO,
@@ -444,6 +447,7 @@ function operations.apply(vault, cells, random, depth, player)
 
     for _, record in ipairs(records) do
         record.vault_id = record.vault_id or vault.id
+        record.path = record.path or vault.path
     end
 
     return records

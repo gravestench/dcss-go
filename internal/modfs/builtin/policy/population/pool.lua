@@ -46,7 +46,7 @@ local function ordered_rows(allowed, scenario_id)
     local added = {}
 
     for _, definition in ipairs(catalog.all(categories.MONSTERS)) do
-        if allowed[definition.id] then
+        if not allowed or allowed[definition.id] then
             for _, row in ipairs(definition.population or {}) do
                 local entry = {
                     id = definition.id,

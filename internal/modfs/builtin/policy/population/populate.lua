@@ -170,14 +170,15 @@ function module.run(ctx, input)
                 error("Dungeon:" .. tostring(level.id) .. " has no population entry")
             end
 
-            local count, placed = vaults.materialize(ctx, level, allowed)
+            local _, placed = vaults.materialize(ctx, level, allowed)
+            local count = 0
 
             for _, record in ipairs(placed) do
                 materialized[#materialized + 1] = record
             end
 
             if level.id ~= abyss.level_id then
-                count = count + populate_level(ctx, level, allowed, scenario_id)
+                count = populate_level(ctx, level, allowed, scenario_id)
             end
 
             counts[#counts + 1] = { id = level.id, count = count }

@@ -49,32 +49,38 @@ function energy.grant(ctx, input)
                 speed = chaos_status.speed(ctx, actor, speed)
             end
 
-            if not valid_integer(speed) or speed <= 0 then
+            if not valid_integer(speed) or speed < 0 then
                 error("invalid monster speed " .. tostring(speed))
             end
 
-            local product = speed * elapsed
+            if speed == 0 then
+                -- Source stationary actors keep their energy below the
+                -- action threshold, even while other monsters take turns.
+                points[index] = current
+            else
+                local product = speed * elapsed
 
-            if not valid_integer(product) then
-                error("invalid monster energy product")
-            end
-
-            local gain = math.floor(product / 10)
-            local remainder = product % 10
-
-            if remainder ~= 0 then
-                local roll = ctx:random("monster_energy", 10)
-
-                if not valid_integer(roll) or roll < 0 or roll >= 10 then
-                    error("monster energy draw " .. tostring(roll) .. " outside [0,10)")
+                if not valid_integer(product) then
+                    error("invalid monster energy product")
                 end
 
-                if roll < remainder then
-                    gain = gain + 1
-                end
-            end
+                local gain = math.floor(product / 10)
+                local remainder = product % 10
 
-            points[index] = current + math.max(1, gain)
+                if remainder ~= 0 then
+                    local roll = ctx:random("monster_energy", 10)
+
+                    if not valid_integer(roll) or roll < 0 or roll >= 10 then
+                        error("monster energy draw " .. tostring(roll) .. " outside [0,10)")
+                    end
+
+                    if roll < remainder then
+                        gain = gain + 1
+                    end
+                end
+
+                points[index] = current + math.max(1, gain)
+            end
         else
             points[index] = current
         end

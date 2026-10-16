@@ -7,6 +7,8 @@ import (
 	"dcrawl-go/internal/vault"
 )
 
+const vaultCorpseOccurrence = 1000
+
 // populateFromScript gives the effective Lua ruleset the established level
 // grids. The policy creates actors and floor items through the shared ECS API.
 func (g *Game) populateFromScript(setup scenarioLevels) error {
@@ -127,28 +129,53 @@ func populationVaultRecords(level *Level) []any {
 			continue
 		}
 
-		targeted := false
+		arguments := vaultRecordArguments(record)
+		selected := false
 
 		for _, argument := range record.Arguments {
-			if argument.Name == "targets" && argument.String != "" {
-				targeted = true
+			if argument.Name == "kind_id" && argument.String != "" {
+				selected = true
 			}
 		}
 
-		if !targeted {
+		if !selected {
 			continue
 		}
 
 		records = append(records, map[string]any{
-			"index":    index + 1,
-			"kind":     string(record.Kind),
-			"identity": record.Identity,
-			"x":        record.X,
-			"y":        record.Y,
+			"index":     index + 1,
+			"kind":      string(record.Kind),
+			"identity":  record.Identity,
+			"source_id": record.SourceID,
+			"source":    record.SourceGlyph,
+			"directive": record.Directive,
+			"line":      record.Line,
+			"x":         record.X,
+			"y":         record.Y,
+			"arguments": arguments,
 		})
 	}
 
 	return records
+}
+
+func vaultRecordArguments(record vault.Record) map[string]any {
+	arguments := make(map[string]any, len(record.Arguments))
+
+	for _, argument := range record.Arguments {
+		switch argument.Kind {
+		case vault.ValueBool:
+			arguments[argument.Name] = argument.Bool
+
+		case vault.ValueInt:
+			arguments[argument.Name] = argument.Int
+
+		case vault.ValueString:
+			arguments[argument.Name] = argument.String
+		}
+	}
+
+	return arguments
 }
 
 func (g *Game) markMaterializedVaultRecords(value any) error {
@@ -197,6 +224,67 @@ func (g *Game) markMaterializedVaultRecords(value any) error {
 		}
 
 		record.Pending = false
+
+		if gear, hasGear := fields["gear"]; hasGear && gear != nil {
+			entries, list := gear.([]any)
+
+			if !list {
+				return fmt.Errorf("Lua population returned invalid vault gear")
+			}
+
+			for _, entry := range entries {
+				item, object := entry.(map[string]any)
+
+				if !object {
+					return fmt.Errorf("Lua population returned invalid vault gear item")
+				}
+
+				occurrence, err := decisionInteger(item, "occurrence")
+
+				if err != nil {
+					return err
+				}
+
+				if occurrence < 2 || occurrence >= vaultCorpseOccurrence {
+					return fmt.Errorf("Lua population returned invalid vault gear occurrence")
+				}
+
+				kindID, valid := item["kind_id"].(string)
+
+				if !valid || kindID == "" {
+					return fmt.Errorf("Lua population returned invalid vault gear kind")
+				}
+
+				record.Arguments = append(record.Arguments, vault.Argument{
+					Name:   fmt.Sprintf("gear_%d_kind_id", occurrence),
+					Kind:   vault.ValueString,
+					String: kindID,
+				})
+			}
+		}
+
+		if noSpawn, _ := fields["no_spawn"].(bool); noSpawn {
+			found := false
+
+			for argumentIndex := range record.Arguments {
+				argument := &record.Arguments[argumentIndex]
+
+				if argument.Name == "no_spawn" {
+					argument.Bool = true
+					found = true
+
+					break
+				}
+			}
+
+			if !found {
+				record.Arguments = append(record.Arguments, vault.Argument{
+					Name: "no_spawn",
+					Kind: vault.ValueBool,
+					Bool: true,
+				})
+			}
+		}
 	}
 
 	return nil

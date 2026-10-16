@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local death = require("policy.death")
 local roster = require("policy.population.roster")
 local component = require("constants.component")
+local effects = require("constants.vault_effects")
 
 local module = {}
 
@@ -15,14 +16,23 @@ function module.run(ctx, input)
         input.scenario_id == "generated-dungeon-basic-v1"
     local live = {}
     local live_count = 0
+    local live_vault = {}
 
     for _, entity in ipairs(ctx:query({ "core.ai", "core.actor" })) do
         if not ctx:has(entity, component.SUMMON) and
             not ctx:has(entity, component.CHAOS_CLONE) then
             local actor = ctx:get(entity, "core.actor")
 
-            live[actor.kind_id] = true
-            live_count = live_count + 1
+            local origin = ctx:get(entity, component.VAULT_ORIGIN)
+
+            if origin then
+                local key = origin.level_id .. ":" .. origin.record_index
+
+                live_vault[key] = true
+            else
+                live[actor.kind_id] = true
+                live_count = live_count + 1
+            end
         end
     end
 
@@ -44,6 +54,26 @@ function module.run(ctx, input)
 
     if uses_population then
         maximum = maximum * (input.initial_count - live_count)
+    end
+
+    for _, level in ipairs(input.vault_levels or {}) do
+        for index, record in ipairs(level.vault_records or {}) do
+            local arguments = record.arguments or {}
+            local key = level.id .. ":" .. index
+
+            if record.kind == effects.MONSTER and not record.pending and
+                not arguments.no_spawn and arguments.kind_id and
+                arguments.kind_id ~= "" and
+                not live_vault[key] then
+                local profile_id = arguments.base_id and
+                    arguments.base_id ~= "" and
+                    arguments.base_id or arguments.kind_id
+                local definition = catalog.get("monsters", profile_id)
+                local profile = roster.profile(profile_id)
+
+                maximum = maximum + death.experience(definition, profile.maximum)
+            end
+        end
     end
 
     local level_adjustment = potion and potion.untrained_level_xp or 0
