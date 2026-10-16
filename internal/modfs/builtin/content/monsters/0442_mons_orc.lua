@@ -4,6 +4,7 @@
 
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local item_ids = require("ids.items")
 
 local definition = {
     id = "MONS_ORC",
@@ -78,6 +79,67 @@ local definition = {
             max_depth = 8,
             rarity = 1000,
             curve = curves.FLAT,
+        },
+    },
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:506
+        -- Spec: crawl-ref/source/mon-gear.cc:506
+        -- Weapon list: crawl-ref/source/mon-gear.cc:302
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_CLUB,
+                    weight = 100,
+                },
+                {
+                    id = item_ids.WPN_DAGGER,
+                    weight = 80,
+                },
+                {
+                    id = item_ids.WPN_FLAIL,
+                    weight = 60,
+                },
+                {
+                    id = item_ids.WPN_SHORT_SWORD,
+                    weight = 60,
+                },
+                {
+                    id = item_ids.WPN_HAND_AXE,
+                    weight = 80,
+                },
+                {
+                    id = item_ids.WPN_WHIP,
+                    weight = 45,
+                },
+                {
+                    id = item_ids.WPN_MACE,
+                    weight = 40,
+                },
+                {
+                    id = item_ids.WPN_TRIDENT,
+                    weight = 20,
+                },
+                {
+                    id = item_ids.WPN_FALCHION,
+                    weight = 20,
+                },
+                {
+                    id = item_ids.WPN_WAR_AXE,
+                    weight = 14,
+                },
+                {
+                    id = item_ids.WPN_MORNINGSTAR,
+                    weight = 6,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = mod.null,
+            good_chance = 0,
         },
     },
 }

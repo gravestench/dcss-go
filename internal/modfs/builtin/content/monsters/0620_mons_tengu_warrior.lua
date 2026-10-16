@@ -4,6 +4,8 @@
 
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local item_ids = require("ids.items")
+local sentinels = require("constants.monster_gear_sentinels")
 
 local definition = {
     id = "MONS_TENGU_WARRIOR",
@@ -83,6 +85,90 @@ local definition = {
             max_depth = 19,
             rarity = 365,
             curve = curves.SEMI,
+        },
+    },
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:609
+        -- Spec: crawl-ref/source/mon-gear.cc:357
+        -- Weapon list: crawl-ref/source/mon-gear.cc:346
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_GREAT_SWORD,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_LONG_SWORD,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_BATTLEAXE,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_WAR_AXE,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_GREAT_MACE,
+                    weight = 3,
+                },
+                {
+                    id = item_ids.WPN_DIRE_FLAIL,
+                    weight = 2,
+                },
+                {
+                    id = item_ids.WPN_BARDICHE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_GLAIVE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_BROAD_AXE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_HALBERD,
+                    weight = 1,
+                },
+            },
+            plus = {
+                odds = 4,
+                min = 1,
+                max = 3,
+                rolls = 0,
+            },
+            brands = mod.null,
+            good_chance = 0,
+        },
+        -- Source: crawl-ref/source/mon-gear.cc:959
+        -- Spec: crawl-ref/source/mon-gear.cc:960
+        -- Weapon list: crawl-ref/source/mon-gear.cc:960
+        secondary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_ARBALEST,
+                    weight = 3,
+                },
+                {
+                    id = item_ids.WPN_LONGBOW,
+                    weight = 1,
+                },
+                {
+                    id = sentinels.NO_WEAPON,
+                    weight = 32,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = mod.null,
+            good_chance = 0,
         },
     },
 }

@@ -4,6 +4,9 @@
 
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local item_ids = require("ids.items")
+local brands = require("constants.weapon_brands")
+local sentinels = require("constants.monster_gear_sentinels")
 
 local definition = {
     id = "MONS_HELL_KNIGHT",
@@ -86,6 +89,97 @@ local definition = {
             max_depth = 29,
             rarity = 25,
             curve = curves.PEAK,
+        },
+    },
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:733
+        -- Spec: crawl-ref/source/mon-gear.cc:734
+        -- Weapon list: crawl-ref/source/mon-gear.cc:734
+        -- Brand list: crawl-ref/source/mon-gear.cc:389
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_DEMON_WHIP,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_DEMON_BLADE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_DEMON_TRIDENT,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_HALBERD,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_GLAIVE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_WAR_AXE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_GREAT_MACE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_BATTLEAXE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_LONG_SWORD,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_SCIMITAR,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_GREAT_SWORD,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_BROAD_AXE,
+                    weight = 1,
+                },
+            },
+            plus = {
+                odds = 1,
+                min = 0,
+                max = 5,
+                rolls = 0,
+            },
+            brands = {
+                {
+                    id = brands.FLAMING,
+                    weight = 13,
+                },
+                {
+                    id = brands.DRAINING,
+                    weight = 4,
+                },
+                {
+                    id = brands.VORPAL,
+                    weight = 4,
+                },
+                {
+                    id = brands.DISTORTION,
+                    weight = 2,
+                },
+                {
+                    id = brands.PAIN,
+                    weight = 2,
+                },
+                {
+                    id = sentinels.NO_FORCED_BRAND,
+                    weight = 20,
+                },
+            },
+            good_chance = 0,
         },
     },
 }

@@ -3,6 +3,9 @@
 -- Source: crawl-ref/source/mon-data.h:1317
 
 local categories = require("constants.catalog")
+local item_ids = require("ids.items")
+local brands = require("constants.weapon_brands")
+local sentinels = require("constants.monster_gear_sentinels")
 
 local definition = {
     id = "MONS_SPRIGGAN_BERSERKER",
@@ -73,6 +76,57 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:832
+        -- Spec: crawl-ref/source/mon-gear.cc:832
+        -- Weapon list: crawl-ref/source/mon-gear.cc:833
+        -- Brand list: crawl-ref/source/mon-gear.cc:839
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_QUARTERSTAFF,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_HAND_AXE,
+                    weight = 9,
+                },
+                {
+                    id = item_ids.WPN_WAR_AXE,
+                    weight = 12,
+                },
+                {
+                    id = item_ids.WPN_BROAD_AXE,
+                    weight = 5,
+                },
+                {
+                    id = item_ids.WPN_FLAIL,
+                    weight = 5,
+                },
+                {
+                    id = item_ids.WPN_RAPIER,
+                    weight = 10,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = {
+                {
+                    id = brands.ANTIMAGIC,
+                    weight = 1,
+                },
+                {
+                    id = sentinels.NO_FORCED_BRAND,
+                    weight = 3,
+                },
+            },
+            good_chance = 0,
+        },
+    },
 }
 
 register.definition(categories.MONSTERS, definition)

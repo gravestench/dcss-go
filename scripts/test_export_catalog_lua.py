@@ -123,11 +123,22 @@ class PopulationExportTest(unittest.TestCase):
                 },
             ],
         }
+        self.gear = {
+            "source_revision": "pinned",
+            "primary": [],
+            "secondary": [],
+        }
+        self.items = {
+            "source_revision": "pinned",
+            "items": [],
+        }
 
     def test_rows_are_embedded_in_their_monster_file(self):
         enrich = EXPORTER["enrich_monster_definitions"]
         render = EXPORTER["render_definition"]
-        definition = enrich(self.monsters, self.population)[0]
+        definition = enrich(
+            self.monsters, self.population, self.gear, self.items
+        )[0]
         output = render("monsters", "pinned", definition)
 
         self.assertEqual(len(definition["population"]), 2)
@@ -142,13 +153,13 @@ class PopulationExportTest(unittest.TestCase):
         self.population["rows"][0]["monster_id"] = "MONS_MISSING"
 
         with self.assertRaisesRegex(ValueError, "MONS_MISSING"):
-            enrich(self.monsters, self.population)
+            enrich(self.monsters, self.population, self.gear, self.items)
 
         self.population["rows"][0]["monster_id"] = "MONS_TEST_RAT"
         self.population["source_revision"] = "different"
 
         with self.assertRaisesRegex(ValueError, "revision"):
-            enrich(self.monsters, self.population)
+            enrich(self.monsters, self.population, self.gear, self.items)
 
     def test_committed_source_rows_all_have_monster_owners(self):
         source = EXPORTER["SOURCE"]
@@ -157,7 +168,9 @@ class PopulationExportTest(unittest.TestCase):
             (source / "dungeon-population.json").read_text()
         )
         definitions = EXPORTER["enrich_monster_definitions"](
-            monsters, population
+            monsters, population,
+            json.loads((source / "monster-weapons.json").read_text()),
+            json.loads((source / "items.json").read_text()),
         )
         owned_rows = [
             row
@@ -170,6 +183,135 @@ class PopulationExportTest(unittest.TestCase):
             sorted(row["source_order"] for row in owned_rows),
             list(range(1, 126)),
         )
+
+
+class MonsterGearExportTest(unittest.TestCase):
+    def setUp(self):
+        self.monsters = {
+            "source_revision": "pinned",
+            "monsters": [{"id": "MONS_TEST_RAT", "status": "defined"}],
+        }
+        self.population = {
+            "source_revision": "pinned",
+            "rows": [],
+        }
+        self.items = {
+            "source_revision": "pinned",
+            "items": [{
+                "id": "WPN_DAGGER",
+                "status": "defined",
+                "class": "OBJ_WEAPONS",
+            }],
+        }
+        self.gear = {
+            "source_revision": "pinned",
+            "primary": [{
+                "monster_id": "MONS_TEST_RAT",
+                "source_line": 40,
+                "spec_line": 41,
+                "weapon_list_line": 42,
+                "brand_list_line": 43,
+                "weapons": [{"id": "WPN_DAGGER", "weight": 3}],
+                "plus": {"odds": 0, "min": 0, "max": 0, "rolls": 0},
+                "brands": [{"id": "SPWPN_FLAMING", "weight": 1}],
+                "good_chance": 0,
+            }],
+            "secondary": [{
+                "monster_id": "MONS_TEST_RAT",
+                "source_line": 50,
+                "weapons": [{"id": "NUM_WEAPONS", "weight": 1}],
+                "plus": {"odds": 0, "min": 0, "max": 0, "rolls": 0},
+                "brands": None,
+                "good_chance": 0,
+            }],
+        }
+
+    def definitions(self):
+        return EXPORTER["enrich_monster_definitions"](
+            self.monsters, self.population, self.gear, self.items
+        )
+
+    def test_primary_and_secondary_are_owned_and_named(self):
+        definition = self.definitions()[0]
+        output = EXPORTER["render_definition"](
+            "monsters", "pinned", definition
+        )
+
+        self.assertEqual(definition["weapon_gear"]["primary"]["weapons"][0]["id"], "WPN_DAGGER")
+        self.assertIn("weapon_gear = {", output)
+        self.assertIn("item_ids.WPN_DAGGER", output)
+        self.assertIn("brands.FLAMING", output)
+        self.assertIn("sentinels.NO_WEAPON", output)
+        self.assertIn("-- Source: crawl-ref/source/mon-gear.cc:40", output)
+        self.assertIn("-- Spec: crawl-ref/source/mon-gear.cc:41", output)
+        self.assertIn("-- Weapon list: crawl-ref/source/mon-gear.cc:42", output)
+        self.assertIn("-- Brand list: crawl-ref/source/mon-gear.cc:43", output)
+        self.assertNotIn("spec_line =", output)
+        self.assertNotIn("monster_id =", output)
+
+    def test_gear_imports_only_used_namespaces(self):
+        self.gear["primary"][0]["brands"] = None
+        self.gear["secondary"] = []
+        output = EXPORTER["render_definition"](
+            "monsters", "pinned", self.definitions()[0]
+        )
+
+        self.assertIn('local item_ids = require("ids.items")', output)
+        self.assertNotIn('local brands = require("constants.weapon_brands")', output)
+        self.assertNotIn('local sentinels = require("constants.monster_gear_sentinels")', output)
+
+    def test_bad_revision_owner_slot_and_item_fail(self):
+        self.gear["source_revision"] = "different"
+
+        with self.assertRaisesRegex(ValueError, "revision"):
+            self.definitions()
+
+        self.gear["source_revision"] = "pinned"
+        self.gear["primary"].append(dict(self.gear["primary"][0]))
+
+        with self.assertRaisesRegex(ValueError, "duplicate.*MONS_TEST_RAT"):
+            self.definitions()
+
+        self.gear["primary"].pop()
+        self.gear["primary"][0]["monster_id"] = "MONS_MISSING"
+
+        with self.assertRaisesRegex(ValueError, "MONS_MISSING"):
+            self.definitions()
+
+        self.gear["primary"][0]["monster_id"] = "MONS_TEST_RAT"
+        self.gear["primary"][0]["weapons"][0]["id"] = "WPN_MISSING"
+
+        with self.assertRaisesRegex(ValueError, "WPN_MISSING"):
+            self.definitions()
+
+        self.gear["primary"][0]["weapons"][0]["id"] = "WPN_DAGGER"
+        self.items["items"][0]["status"] = "removed"
+
+        with self.assertRaisesRegex(ValueError, "WPN_DAGGER"):
+            self.definitions()
+
+        self.items["items"][0]["status"] = "defined"
+        self.gear["primary"][0]["brands"][0]["id"] = "SPWPN_MISSING"
+
+        with self.assertRaisesRegex(ValueError, "SPWPN_MISSING"):
+            self.definitions()
+
+    def test_all_committed_gear_rows_have_owners(self):
+        source = EXPORTER["SOURCE"]
+        definitions = EXPORTER["enrich_monster_definitions"](
+            json.loads((source / "monsters.json").read_text()),
+            json.loads((source / "dungeon-population.json").read_text()),
+            json.loads((source / "monster-weapons.json").read_text()),
+            json.loads((source / "items.json").read_text()),
+        )
+        primary = sum(
+            "primary" in row.get("weapon_gear", {}) for row in definitions
+        )
+        secondary = sum(
+            "secondary" in row.get("weapon_gear", {}) for row in definitions
+        )
+
+        self.assertEqual((primary, secondary), (162, 16))
 
 
 class PresentationExportTest(unittest.TestCase):

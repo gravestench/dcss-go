@@ -3,6 +3,8 @@
 -- Source: crawl-ref/source/mon-data.h:1927
 
 local categories = require("constants.catalog")
+local item_ids = require("ids.items")
+local brands = require("constants.weapon_brands")
 
 local definition = {
     id = "MONS_KILLER_KLOWN",
@@ -74,6 +76,77 @@ local definition = {
         variation_id = "TVARY_RANDOM",
     },
     corpse_tile_id = "TILE_CORPSE_KILLER_KLOWN",
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:917
+        -- Spec: crawl-ref/source/mon-gear.cc:917
+        -- Weapon list: crawl-ref/source/mon-gear.cc:918
+        -- Brand list: crawl-ref/source/mon-gear.cc:920
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_CLUB,
+                    weight = 10,
+                },
+            },
+            plus = {
+                odds = 1,
+                min = 8,
+                max = 12,
+                rolls = 0,
+            },
+            brands = {
+                {
+                    id = brands.NORMAL,
+                    weight = 20,
+                },
+                {
+                    id = brands.FLAMING,
+                    weight = 20,
+                },
+                {
+                    id = brands.FREEZING,
+                    weight = 10,
+                },
+                {
+                    id = brands.VORPAL,
+                    weight = 10,
+                },
+                {
+                    id = brands.ELECTROCUTION,
+                    weight = 10,
+                },
+                {
+                    id = brands.VENOM,
+                    weight = 10,
+                },
+                {
+                    id = brands.VAMPIRISM,
+                    weight = 5,
+                },
+                {
+                    id = brands.ANTIMAGIC,
+                    weight = 5,
+                },
+                {
+                    id = brands.PAIN,
+                    weight = 4,
+                },
+                {
+                    id = brands.HOLY_WRATH,
+                    weight = 3,
+                },
+                {
+                    id = brands.DISTORTION,
+                    weight = 2,
+                },
+                {
+                    id = brands.CHAOS,
+                    weight = 1,
+                },
+            },
+            good_chance = 0,
+        },
+    },
 }
 
 register.definition(categories.MONSTERS, definition)

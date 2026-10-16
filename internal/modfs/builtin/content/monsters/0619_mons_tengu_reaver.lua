@@ -4,6 +4,7 @@
 
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local item_ids = require("ids.items")
 
 local definition = {
     id = "MONS_TENGU_REAVER",
@@ -83,6 +84,65 @@ local definition = {
             max_depth = 27,
             rarity = 136,
             curve = curves.RISE,
+        },
+    },
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:603
+        -- Spec: crawl-ref/source/mon-gear.cc:359
+        -- Weapon list: crawl-ref/source/mon-gear.cc:346
+        -- Brand list: crawl-ref/source/mon-gear.cc:359
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_GREAT_SWORD,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_LONG_SWORD,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_BATTLEAXE,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_WAR_AXE,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_GREAT_MACE,
+                    weight = 3,
+                },
+                {
+                    id = item_ids.WPN_DIRE_FLAIL,
+                    weight = 2,
+                },
+                {
+                    id = item_ids.WPN_BARDICHE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_GLAIVE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_BROAD_AXE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_HALBERD,
+                    weight = 1,
+                },
+            },
+            plus = {
+                odds = 4,
+                min = 1,
+                max = 3,
+                rolls = 0,
+            },
+            brands = {
+            },
+            good_chance = 3,
         },
     },
 }

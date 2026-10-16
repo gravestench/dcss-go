@@ -3,6 +3,8 @@
 -- Source: crawl-ref/source/mon-data.h:5579
 
 local categories = require("constants.catalog")
+local item_ids = require("ids.items")
+local sentinels = require("constants.monster_gear_sentinels")
 
 local definition = {
     id = "MONS_DEMONSPAWN_WARMONGER",
@@ -73,6 +75,102 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:883
+        -- Spec: crawl-ref/source/mon-gear.cc:883
+        -- Weapon list: crawl-ref/source/mon-gear.cc:884
+        -- Brand list: crawl-ref/source/mon-gear.cc:895
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_DEMON_BLADE,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_DEMON_WHIP,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_DEMON_TRIDENT,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_BATTLEAXE,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_GREAT_SWORD,
+                    weight = 5,
+                },
+                {
+                    id = item_ids.WPN_DOUBLE_SWORD,
+                    weight = 2,
+                },
+                {
+                    id = item_ids.WPN_DIRE_FLAIL,
+                    weight = 5,
+                },
+                {
+                    id = item_ids.WPN_GREAT_MACE,
+                    weight = 2,
+                },
+                {
+                    id = item_ids.WPN_GLAIVE,
+                    weight = 5,
+                },
+                {
+                    id = item_ids.WPN_BARDICHE,
+                    weight = 2,
+                },
+                {
+                    id = item_ids.WPN_LAJATANG,
+                    weight = 1,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = {
+            },
+            good_chance = 1,
+        },
+        -- Source: crawl-ref/source/mon-gear.cc:985
+        -- Spec: crawl-ref/source/mon-gear.cc:985
+        -- Weapon list: crawl-ref/source/mon-gear.cc:986
+        -- Brand list: crawl-ref/source/mon-gear.cc:990
+        secondary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_LONGBOW,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_ARBALEST,
+                    weight = 9,
+                },
+                {
+                    id = item_ids.WPN_TRIPLE_CROSSBOW,
+                    weight = 1,
+                },
+                {
+                    id = sentinels.NO_WEAPON,
+                    weight = 40,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = {
+            },
+            good_chance = 1,
+        },
+    },
 }
 
 register.definition(categories.MONSTERS, definition)

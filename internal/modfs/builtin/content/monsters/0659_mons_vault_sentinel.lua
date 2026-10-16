@@ -3,6 +3,8 @@
 -- Source: crawl-ref/source/mon-data.h:1836
 
 local categories = require("constants.catalog")
+local item_ids = require("ids.items")
+local sentinels = require("constants.monster_gear_sentinels")
 
 local definition = {
     id = "MONS_VAULT_SENTINEL",
@@ -73,6 +75,66 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:623
+        -- Spec: crawl-ref/source/mon-gear.cc:624
+        -- Weapon list: crawl-ref/source/mon-gear.cc:624
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_LONG_SWORD,
+                    weight = 5,
+                },
+                {
+                    id = item_ids.WPN_FALCHION,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_WAR_AXE,
+                    weight = 3,
+                },
+                {
+                    id = item_ids.WPN_MORNINGSTAR,
+                    weight = 3,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = mod.null,
+            good_chance = 0,
+        },
+        -- Source: crawl-ref/source/mon-gear.cc:964
+        -- Spec: crawl-ref/source/mon-gear.cc:965
+        -- Weapon list: crawl-ref/source/mon-gear.cc:965
+        secondary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_ARBALEST,
+                    weight = 19,
+                },
+                {
+                    id = item_ids.WPN_HAND_CROSSBOW,
+                    weight = 1,
+                },
+                {
+                    id = sentinels.NO_WEAPON,
+                    weight = 40,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = mod.null,
+            good_chance = 0,
+        },
+    },
 }
 
 register.definition(categories.MONSTERS, definition)

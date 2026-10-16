@@ -3,6 +3,9 @@
 -- Source: crawl-ref/source/mon-data.h:7674
 
 local categories = require("constants.catalog")
+local item_ids = require("ids.items")
+local brands = require("constants.weapon_brands")
+local sentinels = require("constants.monster_gear_sentinels")
 
 local definition = {
     id = "MONS_MAGGIE",
@@ -72,6 +75,77 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:749
+        -- Spec: crawl-ref/source/mon-gear.cc:750
+        -- Weapon list: crawl-ref/source/mon-gear.cc:750
+        -- Brand list: crawl-ref/source/mon-gear.cc:389
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_HALBERD,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_GLAIVE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_WAR_AXE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_MORNINGSTAR,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_LONG_SWORD,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_SCIMITAR,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_BROAD_AXE,
+                    weight = 1,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = {
+                {
+                    id = brands.FLAMING,
+                    weight = 13,
+                },
+                {
+                    id = brands.DRAINING,
+                    weight = 4,
+                },
+                {
+                    id = brands.VORPAL,
+                    weight = 4,
+                },
+                {
+                    id = brands.DISTORTION,
+                    weight = 2,
+                },
+                {
+                    id = brands.PAIN,
+                    weight = 2,
+                },
+                {
+                    id = sentinels.NO_FORCED_BRAND,
+                    weight = 20,
+                },
+            },
+            good_chance = 0,
+        },
+    },
 }
 
 register.definition(categories.MONSTERS, definition)

@@ -81,7 +81,8 @@ The import artifacts account for 43 species, 31 jobs, 700 monster rows,
 403 spell identities, 285 monster spellbooks, 408 item
 identities, 38 branches, 125 ordered Dungeon population rows inside their
 monster definitions, monster weapon loadouts, starting grants, and console
-presentation metadata. Import tools under `cmd/import*` are for reviewed
+presentation metadata. All 162 primary and 16 secondary weapon specs live in
+their owning monster Lua files. Import tools under `cmd/import*` are for reviewed
 upstream refreshes. Content coverage
 does not imply that its behavior is playable.
 The 11 wand-to-spell links come from the committed `wand-spells.json`

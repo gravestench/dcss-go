@@ -23,7 +23,6 @@ CONSTANTS = ROOT / "internal/modfs/builtin/constants"
 
 CATALOGS = (
     "monster-vocabulary",
-    "monster-weapons",
     "presentation",
 )
 
@@ -49,6 +48,9 @@ PROVENANCE_FIELDS = frozenset({
     "tag_major_version",
     "wand_spell_source_path",
     "wand_spell_source_line",
+    "spec_line",
+    "weapon_list_line",
+    "brand_list_line",
 })
 
 
@@ -60,7 +62,18 @@ def source_comments(value):
     path = value.get("source_path")
     line = value.get("source_line")
 
-    if path:
+    if "spec_line" in value:
+        gear_path = "crawl-ref/source/mon-gear.cc"
+
+        for label, field in (
+            ("Source", "source_line"),
+            ("Spec", "spec_line"),
+            ("Weapon list", "weapon_list_line"),
+            ("Brand list", "brand_list_line"),
+        ):
+            if value.get(field):
+                comments.append(f"{label}: {gear_path}:{value[field]}")
+    elif path:
         comments.append(f"Source: {path}" + (f":{line}" if line else ""))
     elif line:
         comments.append(f"Source line: {line}")
@@ -286,6 +299,7 @@ def render_definition(category, revision, definition):
     staff = definition.get("staff")
     jewellery = definition.get("jewellery")
     population = definition.get("population")
+    weapon_gear = definition.get("weapon_gear")
 
     if wand_spell:
         header.append('local spells = require("ids.spells")')
@@ -310,6 +324,25 @@ def render_definition(category, revision, definition):
     if population:
         header.append('local curves = require("constants.population_curves")')
 
+    if weapon_gear:
+        gear_ids = {
+            choice["id"]
+            for spec in weapon_gear.values()
+            for field in ("weapons", "brands")
+            for choice in (spec.get(field) or [])
+        }
+
+        if any(identifier.startswith("WPN_") for identifier in gear_ids):
+            header.append('local item_ids = require("ids.items")')
+
+        if any(identifier.startswith("SPWPN_") for identifier in gear_ids):
+            header.append('local brands = require("constants.weapon_brands")')
+
+        if gear_ids.intersection({"NUM_WEAPONS", "NUM_SPECIAL_WEAPONS"}):
+            header.append(
+                'local sentinels = require("constants.monster_gear_sentinels")'
+            )
+
     body = lines_for(definition)
     body[0] = "local definition = " + body[0]
 
@@ -319,6 +352,31 @@ def render_definition(category, revision, definition):
 
             if match:
                 body[index] = f"{match.group(1)}curves.{match.group(2)},"
+
+    if weapon_gear:
+        replacements = {
+            "NUM_WEAPONS": "sentinels.NO_WEAPON",
+            "NUM_SPECIAL_WEAPONS": "sentinels.NO_FORCED_BRAND",
+        }
+
+        for index, line in enumerate(body):
+            match = re.fullmatch(
+                r'(\s*id = )"(WPN_[A-Z0-9_]+|SPWPN_[A-Z0-9_]+|'
+                r'NUM_WEAPONS|NUM_SPECIAL_WEAPONS)",', line
+            )
+
+            if not match:
+                continue
+
+            identifier = match.group(2)
+            value = replacements.get(identifier)
+
+            if value is None and identifier.startswith("WPN_"):
+                value = f"item_ids.{identifier}"
+            elif value is None and identifier.startswith("SPWPN_"):
+                value = f"brands.{identifier.removeprefix('SPWPN_')}"
+
+            body[index] = f"{match.group(1)}{value},"
 
     if wand_spell:
         if re.fullmatch(r"SPELL_[A-Z0-9_]+", wand_spell) is None:
@@ -515,11 +573,18 @@ def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
     return definitions
 
 
-def enrich_monster_definitions(monsters_artifact, population_artifact):
+def enrich_monster_definitions(
+    monsters_artifact, population_artifact, gear_artifact, items_artifact
+):
     revision = monsters_artifact["source_revision"]
 
-    if population_artifact["source_revision"] != revision:
-        raise ValueError("monster and population source revisions differ")
+    for name, artifact in (
+        ("population", population_artifact),
+        ("gear", gear_artifact),
+        ("items", items_artifact),
+    ):
+        if artifact["source_revision"] != revision:
+            raise ValueError(f"monster and {name} source revisions differ")
 
     definitions = [dict(monster) for monster in monsters_artifact["monsters"]]
     by_id = {monster["id"]: monster for monster in definitions}
@@ -541,6 +606,49 @@ def enrich_monster_definitions(monsters_artifact, population_artifact):
             if field != "monster_id"
         })
         monster.setdefault("population", []).append(owned)
+
+    weapons = {
+        item["id"] for item in items_artifact["items"]
+        if item.get("class") == "OBJ_WEAPONS"
+        and item.get("status") not in ("removed", "enum_only")
+    }
+    brand_source = (CONSTANTS / "weapon_brands.lua").read_text()
+    brands = set(re.findall(
+        r'^\s+[A-Z_]+ = "(SPWPN_[A-Z_]+)",$',
+        brand_source,
+        re.MULTILINE,
+    ))
+
+    for slot in ("primary", "secondary"):
+        seen = set()
+
+        for row in gear_artifact[slot]:
+            monster_id = row["monster_id"]
+            monster = by_id.get(monster_id)
+
+            if monster_id in seen:
+                raise ValueError(f"duplicate {slot} monster gear {monster_id}")
+
+            if monster is None or monster["status"] != "defined":
+                raise ValueError(f"{slot} monster gear has undefined {monster_id}")
+
+            for choice in row["weapons"]:
+                identifier = choice["id"]
+
+                if identifier not in weapons and identifier != "NUM_WEAPONS":
+                    raise ValueError(f"{monster_id} has invalid weapon {identifier}")
+
+            for choice in row["brands"] or []:
+                identifier = choice["id"]
+
+                if identifier not in brands and identifier != "NUM_SPECIAL_WEAPONS":
+                    raise ValueError(f"{monster_id} has invalid brand {identifier}")
+
+            seen.add(monster_id)
+            monster.setdefault("weapon_gear", {})[slot] = {
+                field: value for field, value in row.items()
+                if field != "monster_id"
+            }
 
     return definitions
 
@@ -564,7 +672,11 @@ def output_files():
 
         if name == "monsters":
             population = json.loads((SOURCE / "dungeon-population.json").read_text())
-            definitions = enrich_monster_definitions(artifact, population)
+            gear = json.loads((SOURCE / "monster-weapons.json").read_text())
+            items = json.loads((SOURCE / "items.json").read_text())
+            definitions = enrich_monster_definitions(
+                artifact, population, gear, items
+            )
 
         for index, definition in enumerate(definitions, start=1):
             filename = f"{index:04d}_{definition['id'].lower()}.lua"
@@ -611,7 +723,10 @@ def main():
         else:
             legacy.unlink()
 
-    for legacy_name in ("dungeon_population.lua", "item_identities.lua"):
+    for legacy_name in (
+        "dungeon_population.lua", "item_identities.lua",
+        "monster_weapons.lua",
+    ):
         legacy = DESTINATION / legacy_name
 
         if legacy.exists():

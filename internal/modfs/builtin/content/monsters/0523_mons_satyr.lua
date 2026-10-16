@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/mon-data.h:515
 
 local categories = require("constants.catalog")
+local item_ids = require("ids.items")
 
 local definition = {
     id = "MONS_SATYR",
@@ -73,6 +74,54 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_SATYR",
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:677
+        -- Spec: crawl-ref/source/mon-gear.cc:677
+        -- Weapon list: crawl-ref/source/mon-gear.cc:375
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_SPEAR,
+                    weight = 2,
+                },
+                {
+                    id = item_ids.WPN_CLUB,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_QUARTERSTAFF,
+                    weight = 1,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = mod.null,
+            good_chance = 0,
+        },
+        -- Source: crawl-ref/source/mon-gear.cc:970
+        -- Spec: crawl-ref/source/mon-gear.cc:970
+        -- Weapon list: crawl-ref/source/mon-gear.cc:970
+        secondary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_LONGBOW,
+                    weight = 1,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = mod.null,
+            good_chance = 0,
+        },
+    },
 }
 
 register.definition(categories.MONSTERS, definition)

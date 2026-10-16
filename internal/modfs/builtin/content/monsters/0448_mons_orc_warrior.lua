@@ -4,6 +4,8 @@
 
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local item_ids = require("ids.items")
+local sentinels = require("constants.monster_gear_sentinels")
 
 local definition = {
     id = "MONS_ORC_WARRIOR",
@@ -80,6 +82,102 @@ local definition = {
             max_depth = 12,
             rarity = 600,
             curve = curves.PEAK,
+        },
+    },
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:571
+        -- Spec: crawl-ref/source/mon-gear.cc:571
+        -- Weapon list: crawl-ref/source/mon-gear.cc:331
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_LONG_SWORD,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_SHORT_SWORD,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_SCIMITAR,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_BATTLEAXE,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_HAND_AXE,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_HALBERD,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_GLAIVE,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_MACE,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_DIRE_FLAIL,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_TRIDENT,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_WAR_AXE,
+                    weight = 9,
+                },
+                {
+                    id = item_ids.WPN_FLAIL,
+                    weight = 9,
+                },
+                {
+                    id = item_ids.WPN_BROAD_AXE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_MORNINGSTAR,
+                    weight = 1,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = mod.null,
+            good_chance = 0,
+        },
+        -- Source: crawl-ref/source/mon-gear.cc:958
+        -- Spec: crawl-ref/source/mon-gear.cc:958
+        -- Weapon list: crawl-ref/source/mon-gear.cc:936
+        secondary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_ARBALEST,
+                    weight = 1,
+                },
+                {
+                    id = sentinels.NO_WEAPON,
+                    weight = 8,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = mod.null,
+            good_chance = 0,
         },
     },
 }

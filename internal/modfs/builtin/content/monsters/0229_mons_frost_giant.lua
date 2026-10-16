@@ -4,6 +4,8 @@
 
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local item_ids = require("ids.items")
+local brands = require("constants.weapon_brands")
 
 local definition = {
     id = "MONS_FROST_GIANT",
@@ -88,6 +90,33 @@ local definition = {
             max_depth = 30,
             rarity = 136,
             curve = curves.SEMI,
+        },
+    },
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:782
+        -- Spec: crawl-ref/source/mon-gear.cc:782
+        -- Weapon list: crawl-ref/source/mon-gear.cc:783
+        -- Brand list: crawl-ref/source/mon-gear.cc:784
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_BATTLEAXE,
+                    weight = 1,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = {
+                {
+                    id = brands.FREEZING,
+                    weight = 1,
+                },
+            },
+            good_chance = 0,
         },
     },
 }

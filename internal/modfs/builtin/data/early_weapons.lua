@@ -1,10 +1,12 @@
 -- Weapon kinds selected by the ordinary early monster gear policy.
+local items = require("ids.items")
+
 local catalog = {
-    "WPN_DAGGER",
-    "WPN_CLUB",
-    "WPN_SHORT_SWORD",
-    "WPN_WHIP",
-    "WPN_SLING",
+    items.WPN_DAGGER,
+    items.WPN_CLUB,
+    items.WPN_SHORT_SWORD,
+    items.WPN_WHIP,
+    items.WPN_SLING,
 }
 
 return catalog

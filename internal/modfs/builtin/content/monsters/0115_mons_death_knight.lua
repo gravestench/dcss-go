@@ -4,6 +4,7 @@
 
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local item_ids = require("ids.items")
 
 local definition = {
     id = "MONS_DEATH_KNIGHT",
@@ -81,6 +82,51 @@ local definition = {
             max_depth = 21,
             rarity = 192,
             curve = curves.PEAK,
+        },
+    },
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:464
+        -- Spec: crawl-ref/source/mon-gear.cc:465
+        -- Weapon list: crawl-ref/source/mon-gear.cc:465
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_MORNINGSTAR,
+                    weight = 5,
+                },
+                {
+                    id = item_ids.WPN_GREAT_MACE,
+                    weight = 5,
+                },
+                {
+                    id = item_ids.WPN_HALBERD,
+                    weight = 5,
+                },
+                {
+                    id = item_ids.WPN_GREAT_SWORD,
+                    weight = 5,
+                },
+                {
+                    id = item_ids.WPN_GLAIVE,
+                    weight = 8,
+                },
+                {
+                    id = item_ids.WPN_BROAD_AXE,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_BATTLEAXE,
+                    weight = 15,
+                },
+            },
+            plus = {
+                odds = 2,
+                min = 1,
+                max = 4,
+                rolls = 0,
+            },
+            brands = mod.null,
+            good_chance = 0,
         },
     },
 }

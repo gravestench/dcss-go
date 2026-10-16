@@ -4,6 +4,7 @@
 
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local item_ids = require("ids.items")
 
 local definition = {
     id = "MONS_WIGHT",
@@ -81,6 +82,87 @@ local definition = {
             max_depth = 10,
             rarity = 500,
             curve = curves.PEAK,
+        },
+    },
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:442
+        -- Spec: crawl-ref/source/mon-gear.cc:443
+        -- Weapon list: crawl-ref/source/mon-gear.cc:443
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_MORNINGSTAR,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_DIRE_FLAIL,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_WAR_AXE,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_TRIDENT,
+                    weight = 4,
+                },
+                {
+                    id = item_ids.WPN_MACE,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_FLAIL,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_FALCHION,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_DAGGER,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_SHORT_SWORD,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_LONG_SWORD,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_SCIMITAR,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_GREAT_SWORD,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_HAND_AXE,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_BATTLEAXE,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_SPEAR,
+                    weight = 7,
+                },
+                {
+                    id = item_ids.WPN_HALBERD,
+                    weight = 7,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = mod.null,
+            good_chance = 0,
         },
     },
 }

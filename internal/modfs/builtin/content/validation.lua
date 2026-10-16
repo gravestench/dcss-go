@@ -13,6 +13,16 @@ local weapon_choices = require("constants.weapon_choices")
 local uses = require("constants.mutation_uses")
 local curves = require("constants.population_curves")
 local menu_groups = require("constants.menu_groups")
+local gear_sentinels = require("constants.monster_gear_sentinels")
+local weapon_brands = require("constants.weapon_brands")
+
+local known_brands = {
+    [gear_sentinels.NO_FORCED_BRAND] = true,
+}
+
+for _, id in pairs(weapon_brands) do
+    known_brands[id] = true
+end
 
 local population_curves = {
     [curves.FLAT] = true,
@@ -424,6 +434,107 @@ function validation.population_rows(monsters)
     end
 end
 
+local function nonnegative_integer(category, monster, value, field)
+    if type(value) ~= "number" or value < 0 or value % 1 ~= 0 then
+        fail(category, monster.id, field .. " must be a nonnegative integer")
+    end
+end
+
+local function weapon_choices(monster, spec, field)
+    local category = categories.MONSTERS
+    local owner = {
+        id = monster.id,
+        [field] = spec[field],
+    }
+    local choices = optional_list(category, owner, field)
+
+    if field == "weapons" and #choices == 0 then
+        fail(category, monster.id, "weapon gear requires weapon choices")
+    end
+
+    for _, choice in ipairs(choices) do
+        if type(choice) ~= "table" or type(choice.id) ~= "string" then
+            fail(category, monster.id, "weapon gear has an invalid " .. field .. " ID")
+        end
+
+        if type(choice.weight) ~= "number" or choice.weight <= 0 or
+            choice.weight % 1 ~= 0 then
+            fail(category, monster.id, "weapon gear " .. field .. " weight must be positive")
+        end
+
+        if field == "brands" then
+            if not known_brands[choice.id] then
+                fail(category, monster.id, "weapon gear has unknown brand " .. choice.id)
+            end
+        elseif choice.id ~= gear_sentinels.NO_WEAPON then
+            local found, item = pcall(register.get, categories.ITEMS, choice.id)
+
+            if not found or item.status == "removed" or item.status == "enum_only" or
+                item.class ~= object_classes.OBJ_WEAPONS then
+                fail(category, monster.id, "weapon gear has unknown weapon " .. choice.id)
+            end
+        end
+    end
+end
+
+local function weapon_spec(monster, spec, slot)
+    local category = categories.MONSTERS
+
+    if type(spec) ~= "table" then
+        fail(category, monster.id, "weapon gear " .. slot .. " must be a table")
+    end
+
+    weapon_choices(monster, spec, "weapons")
+    weapon_choices(monster, spec, "brands")
+
+    local plus = spec.plus
+
+    if type(plus) ~= "table" then
+        fail(category, monster.id, "weapon gear plus must be a table")
+    end
+
+    for _, field in ipairs({ "odds", "rolls" }) do
+        nonnegative_integer(category, monster, plus[field], "weapon gear plus." .. field)
+    end
+
+    for _, field in ipairs({ "min", "max" }) do
+        if type(plus[field]) ~= "number" or plus[field] % 1 ~= 0 then
+            fail(category, monster.id, "weapon gear plus." .. field .. " must be an integer")
+        end
+    end
+
+    if plus.odds > 0 and plus.min > plus.max then
+        fail(category, monster.id, "weapon gear plus.min exceeds plus.max")
+    end
+
+    nonnegative_integer(category, monster, spec.good_chance,
+        "weapon gear good_chance")
+end
+
+function validation.weapon_gear(monsters)
+    for _, monster in ipairs(monsters) do
+        local owned = monster.weapon_gear
+
+        if owned ~= nil then
+            if monster.status ~= "defined" or type(owned) ~= "table" then
+                fail(categories.MONSTERS, monster.id,
+                    "weapon gear requires a defined monster and table")
+            end
+
+            if owned.primary == nil and owned.secondary == nil then
+                fail(categories.MONSTERS, monster.id,
+                    "weapon gear requires primary or secondary")
+            end
+
+            for _, slot in ipairs({ "primary", "secondary" }) do
+                if owned[slot] ~= nil then
+                    weapon_spec(monster, owned[slot], slot)
+                end
+            end
+        end
+    end
+end
+
 local function validate_defined_monster(monster)
     local category = categories.MONSTERS
 
@@ -535,6 +646,7 @@ local function validate_registered_catalogs()
     end
 
     validation.population_rows(monsters)
+    validation.weapon_gear(monsters)
 
     for _, id in ipairs(register.ids(categories.MUTATIONS)) do
         validate_mutation(register.get(categories.MUTATIONS, id))

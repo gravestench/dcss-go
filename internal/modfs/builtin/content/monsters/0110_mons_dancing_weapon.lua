@@ -4,6 +4,7 @@
 
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local item_ids = require("ids.items")
 
 local definition = {
     id = "MONS_DANCING_WEAPON",
@@ -96,6 +97,81 @@ local definition = {
             max_depth = 27,
             rarity = 8,
             curve = curves.RISE,
+        },
+    },
+    weapon_gear = {
+        -- Source: crawl-ref/source/mon-gear.cc:574
+        -- Spec: crawl-ref/source/mon-gear.cc:574
+        -- Weapon list: crawl-ref/source/mon-gear.cc:331
+        -- Brand list: crawl-ref/source/mon-gear.cc:574
+        primary = {
+            weapons = {
+                {
+                    id = item_ids.WPN_LONG_SWORD,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_SHORT_SWORD,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_SCIMITAR,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_BATTLEAXE,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_HAND_AXE,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_HALBERD,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_GLAIVE,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_MACE,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_DIRE_FLAIL,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_TRIDENT,
+                    weight = 10,
+                },
+                {
+                    id = item_ids.WPN_WAR_AXE,
+                    weight = 9,
+                },
+                {
+                    id = item_ids.WPN_FLAIL,
+                    weight = 9,
+                },
+                {
+                    id = item_ids.WPN_BROAD_AXE,
+                    weight = 1,
+                },
+                {
+                    id = item_ids.WPN_MORNINGSTAR,
+                    weight = 1,
+                },
+            },
+            plus = {
+                odds = 0,
+                min = 0,
+                max = 0,
+                rolls = 0,
+            },
+            brands = {
+            },
+            good_chance = 1,
         },
     },
 }

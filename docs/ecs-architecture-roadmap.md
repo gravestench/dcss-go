@@ -93,7 +93,9 @@ with a small set of files, while keeping each file's purpose obvious. See
 Species and job menu text and ordering now live in their respective content
 files. The unused item identity Lua aggregate has been removed; the source
 identity artifact remains for import validation. The next ownership work
-targets monster gear and vault templates. The generated files stay committed.
+targets vault templates. All 178 imported monster weapon specs now live in
+their owning monster files, and active gear handlers are discoverable Lua
+modules. The generated files stay committed.
 Import tools run only during deliberate upstream refreshes. New mechanics
 must be wired through Lua discovery and generic engine capabilities, not a
 Go ID switch.

@@ -343,6 +343,23 @@ commit its output. Normal builds and game launches do not run the generator.
 content files. The JSON importer artifacts are offline refresh inputs and
 are not loaded by Lua at game startup.
 
+## Monster weapon gear
+
+Each imported weapon spec lives under `weapon_gear.primary` or
+`weapon_gear.secondary` in its owning `content/monsters/` file. A same-path
+override changes that monster's gear data and the effective ruleset hash.
+Weapon choices import `ids.items`; brand choices import
+`constants.weapon_brands`. The source's no-weapon and no-forced-brand values
+come from `constants.monster_gear_sentinels`.
+
+The active Dungeon slice has discoverable Goblin and Kobold gear handlers
+under `policy/population/gear/handlers/`. Add a handler file that calls
+`registry.register(monster_id, handler)` for a new monster with special gear
+rules, or replace a bundled handler at the same relative path. The handler
+receives the game context and depth and returns an ordinary loadout. The
+other imported gear specs are available to Lua but their monsters are not
+yet part of the playable population.
+
 ## Saves and identity
 
 The startup screen shows a short effective ruleset hash and whether its Lua
