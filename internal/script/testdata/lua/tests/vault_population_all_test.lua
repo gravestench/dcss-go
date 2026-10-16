@@ -3,6 +3,7 @@ local component = require("constants.component")
 local effects = require("constants.vault_effects")
 local grid = require("policy.generation.grid")
 local harness = require("tests.harness")
+local history = require("policy.item_generation.artefacts.history")
 local placement = require("policy.generation.vaults.placement")
 local population = require("policy.population.vaults")
 local selection = require("policy.generation.vaults.selection")
@@ -44,6 +45,18 @@ local function entity_context()
 
     function world:get(entity, kind)
         return self.entities[entity] and self.entities[entity][kind]
+    end
+
+    function world:has(entity, kind)
+        return self:get(entity, kind) ~= nil
+    end
+
+    function world:set(entity, kind, value)
+        self.entities[entity][kind] = value
+    end
+
+    function world:player()
+        return self.player_id
     end
 
     function world:query(kinds)
@@ -95,6 +108,9 @@ local function entity_context()
             y = y,
         })
     end
+
+    world.player_id = world:create()
+    history.initialise(world, world.player_id)
 
     return world
 end

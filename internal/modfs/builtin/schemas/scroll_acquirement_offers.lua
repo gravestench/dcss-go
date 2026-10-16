@@ -3,16 +3,10 @@ local component = require("constants.component")
 
 local schema = {
     id = component.SCROLL_ACQUIREMENT,
-    version = 1,
+    version = 2,
     fields = {
-        kind_ids = {
-            type = "list<string>",
-        },
-        pluses = {
-            type = "list<int64>",
-        },
-        quantities = {
-            type = "list<int64>",
+        offer_ids = {
+            type = "list<entity>",
         },
     },
 }

@@ -30,6 +30,10 @@ local definition = {
         kind = "static",
     },
     explicitly_removed = false,
+    -- Source: crawl-ref/source/makeitem.cc
+    generation = {
+        mode = "random",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

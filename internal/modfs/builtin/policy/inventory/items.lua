@@ -1,21 +1,21 @@
 local catalog = require("policy.catalog")
 local armour_egos = require("constants.armour_egos")
+local missile_brands = require("constants.missile_brands")
 local identification = require("policy.items.identification")
 local brand_pool = require("policy.inventory.brand_pool")
 local classes = require("ids.object_classes")
 
 local items = {}
-local supported_armour_egos = {
-    [armour_egos.PROTECTION] = true,
-    [armour_egos.RESISTANCE] = true,
-    [armour_egos.FIRE_RESISTANCE] = true,
-    [armour_egos.COLD_RESISTANCE] = true,
-    [armour_egos.POSITIVE_ENERGY] = true,
-    [armour_egos.SPIRIT_SHIELD] = true,
-    [armour_egos.WILLPOWER] = true,
-    [armour_egos.GUILE] = true,
-    [armour_egos.STEALTH] = true,
-}
+local supported_armour_egos = {}
+local supported_missile_brands = {}
+
+for _, ego in pairs(armour_egos) do
+    supported_armour_egos[ego] = true
+end
+
+for _, brand in pairs(missile_brands) do
+    supported_missile_brands[brand] = true
+end
 
 function items.kind(item)
     return catalog.get("items", item.kind_id)
@@ -88,10 +88,8 @@ function items.validate(item, kind)
         return
     end
 
-    if item.ego == "poisoned" or item.ego == "curare" or
-        item.ego == "dispersal" or item.ego == "blinding" or
-        item.ego == "frenzy" then
-        if kind.class == "OBJ_MISSILES" then
+    if kind.class == classes.OBJ_MISSILES then
+        if supported_missile_brands[item.ego] then
             return
         end
 

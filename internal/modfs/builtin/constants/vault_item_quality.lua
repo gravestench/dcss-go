@@ -3,6 +3,7 @@ local quality = {
     STAR = "star",
     GOOD = "good",
     SUPERB = "superb",
+    RANDART = "randart",
 }
 
 return quality

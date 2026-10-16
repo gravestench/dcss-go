@@ -26,6 +26,10 @@ local definition = {
         mulch_rate = 1,
         price = 2,
     },
+    -- Source: crawl-ref/source/makeitem.cc
+    generation = {
+        mode = "none",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

@@ -27,6 +27,10 @@ local definition = {
         carnivore_nutrition = -20,
         herbivore_nutrition = 20,
     },
+    -- Source: crawl-ref/source/makeitem.cc
+    generation = {
+        mode = "none",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

@@ -14,7 +14,7 @@ local function saved_offers(ctx, player, scroll)
         return state
     end
 
-    state = offers.generate(ctx, player)
+    state = offers.generate(ctx, player, scroll)
     ctx:add(scroll, component.SCROLL_ACQUIREMENT, state)
 
     return state
@@ -31,7 +31,7 @@ function effect.prepare(ctx, player, request)
     end
 
     local state = saved_offers(ctx, player, request.scroll)
-    local options = offers.options(state)
+    local options = offers.options(ctx, player, state)
 
     if request.target_id == "" then
         return {
@@ -59,7 +59,7 @@ function effect.apply(ctx, player, request)
     local index = tonumber(request.target_id)
 
     if not state or not index or index < 1 or
-        index > #state.kind_ids then
+        index > #state.offer_ids then
         error("acquirement has no selected offer")
     end
 

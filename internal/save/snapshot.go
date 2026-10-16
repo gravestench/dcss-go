@@ -8,7 +8,7 @@ import (
 	"dcrawl-go/internal/vault"
 )
 
-const Version = 18
+const Version = 19
 
 type Snapshot struct {
 	Version        int               `json:"version"`
@@ -92,10 +92,11 @@ type EntityRecord struct {
 	AI           *ecs.MonsterAI    `json:"ai,omitempty"`
 	BandFollower *ecs.BandFollower `json:"band_follower,omitempty"`
 
-	Item      *ecs.Item      `json:"item,omitempty"`
-	Corpse    *ecs.Corpse    `json:"corpse,omitempty"`
-	CarriedBy *ecs.CarriedBy `json:"carried_by,omitempty"`
-	Equipped  *ecs.Equipped  `json:"equipped,omitempty"`
+	Item       *ecs.Item       `json:"item,omitempty"`
+	Corpse     *ecs.Corpse     `json:"corpse,omitempty"`
+	CarriedBy  *ecs.CarriedBy  `json:"carried_by,omitempty"`
+	ReservedBy *ecs.ReservedBy `json:"reserved_by,omitempty"`
+	Equipped   *ecs.Equipped   `json:"equipped,omitempty"`
 
 	Dynamic []DynamicComponentRecord `json:"dynamic,omitempty"`
 }

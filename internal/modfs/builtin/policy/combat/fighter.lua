@@ -20,6 +20,8 @@ local staves = require("policy.inventory.staves")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
 local acrobat = require("policy.jewellery.acrobat")
+local artefact_properties = require("policy.item_generation.artefacts.properties")
+local artefact_ids = require("ids.artefact_properties")
 
 local fighter = {}
 
@@ -127,16 +129,22 @@ function fighter.attack(ctx, defender)
         input.using_weapon = not launcher
         input.weapon_skill = launcher and "SK_FIGHTING" or
             profile.skill_id
-        input.weapon_damage = launcher and 0 or profile.damage
-        input.weapon_hit = launcher and 0 or profile.hit
-        input.weapon_speed = profile.speed
+        input.weapon_damage = launcher and 0 or
+            profile.damage + artefact_properties.value(ctx,
+                weapon.entity, artefact_ids.BASE_DAMAGE)
+        input.weapon_hit = launcher and 0 or
+            profile.hit + artefact_properties.value(ctx,
+                weapon.entity, artefact_ids.BASE_ACCURACY)
+        input.weapon_speed = profile.speed +
+            artefact_properties.value(ctx, weapon.entity,
+                artefact_ids.BASE_DELAY)
         input.weapon_plus = launcher and 0 or weapon.item.plus
         input.weapon100 = fighter.skill(ctx, input.weapon_skill, 100)
         input.weapon50 = fighter.skill(ctx, input.weapon_skill, 50)
         input.weapon_id = definition.id
         input.weapon_entity = weapon.entity
         input.weapon_brand = launcher and weapon_brands.NORMAL or
-            weapon.item.ego
+            weapon.ego
     else
         input.unarmed = true
         input.using_weapon = false
@@ -260,6 +268,8 @@ function fighter.defense(ctx)
     ev = ev + agility.evasion_bonus(ctx, player)
     ev = ev + jewellery_effects.sum(ctx, player,
         jewellery_capabilities.EV)
+    ev = ev + artefact_properties.sum_worn(ctx, player,
+        artefact_ids.EVASION)
     ev = ev + acrobat.bonus(ctx, player)
 
     if petrification and petrification.petrified_aut > 0 then
@@ -296,8 +306,10 @@ function fighter.defense(ctx)
         mutation_capabilities.AC_FULL_X100)
     scaled_ac = scaled_ac + 100 * jewellery_effects.sum(ctx, player,
         jewellery_capabilities.AC)
+    scaled_ac = scaled_ac + 100 * artefact_properties.sum_worn(ctx,
+        player, artefact_ids.AC)
 
-    if worn.weapon and worn.weapon.item.ego == weapon_brands.PROTECTION then
+    if worn.weapon and worn.weapon.ego == weapon_brands.PROTECTION then
         scaled_ac = scaled_ac + 500
     end
 
@@ -316,6 +328,8 @@ function fighter.defense(ctx)
         mutation_capabilities.SHIELD_CLASS_BONUS)
     shield_class = shield_class + 10 * jewellery_effects.sum(ctx, player,
         jewellery_capabilities.REFLECTION)
+    shield_class = shield_class + 2 * artefact_properties.sum_worn(ctx,
+        player, artefact_ids.SHIELDING)
 
     if ctx:has(player, "core.constricted") then
         ev = math.max(0, ev - 3)

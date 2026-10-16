@@ -6,6 +6,9 @@ local definition = {
     name = "future spell token",
     class = "OBJ_TEST_RELICS",
     spell_id = spells.SPELL_TEST_SPARK,
+    generation = {
+        mode = "none",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

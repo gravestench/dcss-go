@@ -130,7 +130,7 @@ local function speed_brand_cost(ctx, input, field, base_cost)
 
             if selected and selected.entity == item and weapon and
                 weapon.ammo_id ~= ammunition.NONE then
-                brand = selected.item.ego
+                brand = selected.ego
                 break
             end
         end

@@ -19,6 +19,10 @@ local definition = {
         kind = "static",
     },
     explicitly_removed = true,
+    -- Source: crawl-ref/source/makeitem.cc
+    generation = {
+        mode = "none",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

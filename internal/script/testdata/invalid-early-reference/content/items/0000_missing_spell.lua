@@ -6,6 +6,9 @@ local definition = {
     name = "bad spell token",
     class = "OBJ_TEST_RELICS",
     spell_id = spells.SPELL_NOT_REAL,
+    generation = {
+        mode = "none",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

@@ -9,6 +9,9 @@ local definition = {
     name = "amulet of mirrored moss",
     class = classes.OBJ_JEWELLERY,
     stackable = false,
+    generation = {
+        mode = "none",
+    },
     jewellery = {
         kind = kinds.AMULET,
         effects = {

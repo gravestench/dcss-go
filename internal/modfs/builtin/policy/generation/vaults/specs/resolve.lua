@@ -273,16 +273,11 @@ function resolve.item(ctx, selected, depth, site)
 
     if random_item_names[name] then
         request = name
-        kind_id = random_items.pick(ctx, name, generation_depth, site)
+        local described = random_items.describe(name, generation_depth)
 
-        if name == "good_item" then
-            quality = item_quality.GOOD
-        elseif name == "*" then
-            quality = item_quality.STAR
-            generation_depth = 5 + generation_depth * 2
-        elseif name == "superb_item" or name == "|" then
-            quality = item_quality.SUPERB
-        end
+        kind_id = described.kind_id
+        quality = described.quality
+        generation_depth = described.depth
     elseif name == "corpse" or name == "skeleton" then
         variant = name
         kind_id = name == "corpse" and item_ids.CORPSE_BODY or item_ids.CORPSE_SKELETON

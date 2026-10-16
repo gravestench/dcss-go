@@ -4,6 +4,7 @@
 -- Name Line: 1194
 
 local categories = require("constants.catalog")
+local spells = require("ids.spells")
 
 local definition = {
     id = "BOOK_AKASHIC_RECORD",
@@ -19,6 +20,15 @@ local definition = {
         kind = "static",
     },
     explicitly_removed = true,
+    -- Source: crawl-ref/source/book-data.h
+    generation = {
+        mode = "none",
+        spells = {
+            spells.SPELL_DISPERSAL,
+            spells.SPELL_MALIGN_GATEWAY,
+            spells.SPELL_DISJUNCTION,
+        },
+    },
 }
 
 register.definition(categories.ITEMS, definition)

@@ -6,6 +6,7 @@
 -- Property Line: 371
 
 local categories = require("constants.catalog")
+local brands = require("constants.weapon_brands")
 
 local definition = {
     id = "WPN_CLUB",
@@ -39,14 +40,19 @@ local definition = {
         },
         brand_weights = {
             {
-                brand_id = "SPWPN_NORMAL",
+                brand_id = brands.NORMAL,
                 weight = 9,
             },
             {
-                brand_id = "SPWPN_SPECTRAL",
+                brand_id = brands.SPECTRAL,
                 weight = 1,
             },
         },
+    },
+    -- Source: crawl-ref/source/item-prop.cc
+    generation = {
+        mode = "random",
+        commonness = 10,
     },
 }
 

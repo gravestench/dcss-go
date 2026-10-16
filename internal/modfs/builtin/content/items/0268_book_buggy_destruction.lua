@@ -19,6 +19,12 @@ local definition = {
         kind = "static",
     },
     explicitly_removed = true,
+    -- Source: crawl-ref/source/book-data.h
+    generation = {
+        mode = "none",
+        spells = {
+        },
+    },
 }
 
 register.definition(categories.ITEMS, definition)

@@ -6,6 +6,7 @@
 -- Property Line: 503
 
 local categories = require("constants.catalog")
+local brands = require("constants.weapon_brands")
 
 local definition = {
     id = "WPN_EUDEMON_BLADE",
@@ -39,10 +40,15 @@ local definition = {
         },
         brand_weights = {
             {
-                brand_id = "SPWPN_HOLY_WRATH",
+                brand_id = brands.HOLY_WRATH,
                 weight = 100,
             },
         },
+    },
+    -- Source: crawl-ref/source/item-prop.cc
+    generation = {
+        mode = "random",
+        commonness = 0,
     },
 }
 

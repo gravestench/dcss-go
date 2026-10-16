@@ -6,6 +6,7 @@
 -- Property Line: 633
 
 local categories = require("constants.catalog")
+local brands = require("constants.weapon_brands")
 
 local definition = {
     id = "WPN_HAND_CROSSBOW",
@@ -39,22 +40,27 @@ local definition = {
         },
         brand_weights = {
             {
-                brand_id = "SPWPN_NORMAL",
+                brand_id = brands.NORMAL,
                 weight = 58,
             },
             {
-                brand_id = "SPWPN_FLAMING",
+                brand_id = brands.FLAMING,
                 weight = 16,
             },
             {
-                brand_id = "SPWPN_FREEZING",
+                brand_id = brands.FREEZING,
                 weight = 16,
             },
             {
-                brand_id = "SPWPN_VORPAL",
+                brand_id = brands.VORPAL,
                 weight = 10,
             },
         },
+    },
+    -- Source: crawl-ref/source/item-prop.cc
+    generation = {
+        mode = "random",
+        commonness = 0,
     },
 }
 

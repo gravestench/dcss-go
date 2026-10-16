@@ -17,6 +17,10 @@ local excluded_armour = {
 }
 
 function enchantable.weapon(ctx, player, entity)
+    if ctx:has(entity, component.ITEM_ARTEFACT) then
+        return false
+    end
+
     local item = ctx:get(entity, component.ITEM)
     local kind = catalog.get("items", item.kind_id)
 
@@ -50,6 +54,10 @@ function enchantable.armour_cap(kind)
 end
 
 function enchantable.armour(ctx, player, entity)
+    if ctx:has(entity, component.ITEM_ARTEFACT) then
+        return false
+    end
+
     local item = ctx:get(entity, component.ITEM)
     local kind = catalog.get("items", item.kind_id)
     local cap = enchantable.armour_cap(kind)

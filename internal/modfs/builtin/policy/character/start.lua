@@ -15,6 +15,8 @@ local vampire = require("policy.character.vampire")
 local gods = require("constants.gods")
 local weapon_choices = require("constants.weapon_choices")
 local identification = require("policy.items.identification")
+local item_sets = require("policy.item_generation.item_sets")
+local unique_history = require("policy.item_generation.artefacts.history")
 
 local start = {}
 
@@ -120,6 +122,8 @@ function start.run_start(ctx, input)
     mutation_records.grant_starting(ctx, player, species)
     vampire.start(ctx, player)
     identification.initialize(ctx, player)
+    item_sets.initialise(ctx, player)
+    unique_history.initialise(ctx, player)
     local generated = job.id == "JOB_WANDERER" and
         wanderer.generate(ctx, species) or nil
     local weapon_skill = gear.give(ctx, player, species, job,

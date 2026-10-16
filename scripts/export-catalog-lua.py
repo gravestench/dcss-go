@@ -27,6 +27,7 @@ CATALOGS = (
 )
 
 DEFINITIONS = {
+    "unrands": ("artefacts", "artefacts"),
     "branches": ("branches", "branches"),
     "items": ("items", "items"),
     "monster-spellbooks": ("books", "monster_spellbooks"),
@@ -51,6 +52,7 @@ PROVENANCE_FIELDS = frozenset({
     "spec_line",
     "weapon_list_line",
     "brand_list_line",
+    "vault_alias_source_path",
 })
 
 
@@ -295,14 +297,44 @@ def render_definition(category, revision, definition):
 
     header.extend("-- " + comment for comment in source_comments(definition))
     header.extend(["", 'local categories = require("constants.catalog")'])
+
+    if category == "artefacts":
+        header.extend([
+            'local artefact_ids = require("ids.artefacts")',
+            'local classes = require("ids.object_classes")',
+            'local item_ids = require("ids.items")',
+        ])
+
+        artefact_brands = {
+            definition.get("brand", ""),
+            definition.get("fallback_brand", ""),
+        }
+
+        if any(brand.startswith("SPWPN_") for brand in artefact_brands):
+            header.append('local brands = require("constants.weapon_brands")')
+
+        if any(brand.startswith("SPARM_") for brand in artefact_brands):
+            header.append('local armour_egos = require("constants.armour_egos")')
+
+        if definition["kind_id"] in ("250", "RING_FIRST_RING") or \
+                definition.get("fallback", "").endswith("/OBJ_RANDOM"):
+            header.append(
+                'local sentinels = require("constants.artefact_base_sentinels")'
+            )
+
     wand_spell = definition.get("wand_spell_id")
     staff = definition.get("staff")
     jewellery = definition.get("jewellery")
     population = definition.get("population")
     weapon_gear = definition.get("weapon_gear")
+    weapon_brands = (definition.get("weapon") or {}).get("brand_weights") or []
+    book_spells = definition.get("generation", {}).get("spells", [])
 
-    if wand_spell:
+    if wand_spell or book_spells:
         header.append('local spells = require("ids.spells")')
+
+    if weapon_brands:
+        header.append('local brands = require("constants.weapon_brands")')
 
     if staff:
         header.append('local schools = require("constants.spell_schools")')
@@ -345,6 +377,71 @@ def render_definition(category, revision, definition):
 
     body = lines_for(definition)
     body[0] = "local definition = " + body[0]
+
+    if definition.get("vault_alias_source_path"):
+        alias_line = body.index("    vault_aliases = {")
+        body.insert(
+            alias_line,
+            "    -- Source: " + definition["vault_alias_source_path"],
+        )
+
+    if category == "artefacts":
+        replacements = {
+            f'    id = {lua_string(definition["id"])},':
+                f'    id = artefact_ids.{definition["id"]},',
+            f'    class = {lua_string(definition["class"])},':
+                f'    class = classes.{definition["class"]},',
+        }
+        kind_id = definition["kind_id"]
+
+        if kind_id == "RING_FIRST_RING":
+            replacement = "sentinels.RANDOM_RING"
+        elif kind_id == "250":
+            replacement = "sentinels.DUMMY_UNASSIGNED"
+        else:
+            replacement = f"item_ids.{kind_id}"
+
+        replacements[
+            f'    kind_id = {lua_string(kind_id)},'
+        ] = f"    kind_id = {replacement},"
+
+        body = [replacements.get(line, line) for line in body]
+
+        for field in ("brand", "fallback_brand"):
+            brand = definition.get(field, "")
+
+            if not brand:
+                continue
+
+            if brand.startswith("SPWPN_"):
+                reference = f"brands.{brand.removeprefix('SPWPN_')}"
+            elif brand.startswith("SPARM_"):
+                reference = f"armour_egos.{brand.removeprefix('SPARM_')}"
+            else:
+                raise ValueError(f"unknown artefact {field}: {brand}")
+
+            old_line = f"    {field} = {lua_string(brand)},"
+            body[body.index(old_line)] = f"    {field} = {reference},"
+
+        fallback = definition.get("fallback", "")
+
+        if fallback:
+            fallback_class, fallback_kind = fallback.split("/", 1)
+            kind_reference = (
+                "sentinels.DUMMY_UNASSIGNED"
+                if fallback_kind == "250"
+                else "sentinels.RANDOM_KIND"
+                if fallback_kind == "OBJ_RANDOM"
+                else f"item_ids.{fallback_kind}"
+            )
+            fallback_line = f"    fallback = {lua_string(fallback)},"
+            fallback_index = body.index(fallback_line)
+            body[fallback_index:fallback_index + 1] = [
+                "    fallback = {",
+                f"        class = classes.{fallback_class},",
+                f"        kind_id = {kind_reference},",
+                "    },",
+            ]
 
     if population:
         for index, line in enumerate(body):
@@ -390,6 +487,19 @@ def render_definition(category, revision, definition):
             f"    -- Source: {source_path}:{source_line}",
             f"    wand_spell_id = spells.{wand_spell},",
         ]
+
+    if book_spells:
+        for spell in book_spells:
+            original = f'            {lua_string(spell)},'
+            body[body.index(original)] = f'            spells.{spell},'
+
+    if weapon_brands:
+        for entry in weapon_brands:
+            identifier = entry["brand_id"]
+            original = f'                brand_id = {lua_string(identifier)},'
+            body[body.index(original)] = (
+                f'                brand_id = brands.{identifier.removeprefix("SPWPN_")},'
+            )
 
     if staff:
         school = staff["school"]
@@ -468,6 +578,74 @@ def render_definition(category, revision, definition):
     ]
 
     return "\n".join(header + [""] + body + footer) + "\n"
+
+
+def enrich_item_generation(definitions, artifact, revision):
+    if artifact["source_revision"] != revision:
+        raise ValueError("item generation and item source revisions differ")
+
+    rows = artifact["items"]
+    by_id = {row["id"]: row for row in rows}
+
+    if len(by_id) != len(rows):
+        raise ValueError("duplicate item generation ID")
+
+    if set(by_id) != {definition["id"] for definition in definitions}:
+        raise ValueError("item generation must cover every base item")
+
+    enriched = []
+
+    for definition in definitions:
+        row = by_id[definition["id"]]
+
+        if row["class"] != definition["class"]:
+            raise ValueError(f"item generation class mismatch {definition['id']}")
+
+        generation = row["generation"]
+        commonness = generation.get("commonness")
+        weapon = definition.get("weapon")
+
+        if commonness is not None and (
+            weapon is None or commonness != weapon.get("commonness")
+        ):
+            raise ValueError(f"item generation commonness mismatch {definition['id']}")
+
+        enriched.append({**definition, "generation": generation})
+
+    return enriched
+
+
+def enrich_vault_aliases(definitions, artifact, category, revision):
+    if artifact["source_revision"] != revision:
+        raise ValueError("vault alias and catalog source revisions differ")
+
+    rows = artifact[category]
+    by_id = {row["id"]: row for row in rows}
+
+    if len(by_id) != len(rows):
+        raise ValueError(f"duplicate {category} vault alias ID")
+
+    known = {definition["id"] for definition in definitions}
+
+    if not set(by_id).issubset(known):
+        raise ValueError(f"unknown {category} vault alias ID")
+
+    enriched = []
+
+    for definition in definitions:
+        row = by_id.get(definition["id"])
+
+        if row is None:
+            enriched.append(definition)
+            continue
+
+        enriched.append({
+            **definition,
+            "vault_aliases": row["aliases"],
+            "vault_alias_source_path": row.get("source_path", ""),
+        })
+
+    return enriched
 
 
 def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
@@ -655,6 +833,7 @@ def enrich_monster_definitions(
 
 def output_files():
     presentation = json.loads((SOURCE / "presentation.json").read_text())
+    vault_aliases = json.loads((SOURCE / "vault-aliases.json").read_text())
     yield CONSTANTS / "menu_groups.lua", render_menu_groups(presentation)
 
     for name in CATALOGS:
@@ -669,6 +848,8 @@ def output_files():
             links = json.loads((SOURCE / "wand-spells.json").read_text())
             spells = json.loads((SOURCE / "spells.json").read_text())
             definitions = enrich_item_definitions(artifact, links, spells)
+            generation = json.loads((SOURCE / "item-generation.json").read_text())
+            definitions = enrich_item_generation(definitions, generation, revision)
 
         if name == "monsters":
             population = json.loads((SOURCE / "dungeon-population.json").read_text())
@@ -676,6 +857,11 @@ def output_files():
             items = json.loads((SOURCE / "items.json").read_text())
             definitions = enrich_monster_definitions(
                 artifact, population, gear, items
+            )
+
+        if category in ("items", "monsters"):
+            definitions = enrich_vault_aliases(
+                definitions, vault_aliases, category, revision
             )
 
         for index, definition in enumerate(definitions, start=1):

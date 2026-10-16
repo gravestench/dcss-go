@@ -6,6 +6,7 @@
 -- Property Line: 457
 
 local categories = require("constants.catalog")
+local brands = require("constants.weapon_brands")
 
 local definition = {
     id = "WPN_DAGGER",
@@ -39,58 +40,63 @@ local definition = {
         },
         brand_weights = {
             {
-                brand_id = "SPWPN_VENOM",
+                brand_id = brands.VENOM,
                 weight = 28,
             },
             {
-                brand_id = "SPWPN_NORMAL",
+                brand_id = brands.NORMAL,
                 weight = 20,
             },
             {
-                brand_id = "SPWPN_SPEED",
+                brand_id = brands.SPEED,
                 weight = 10,
             },
             {
-                brand_id = "SPWPN_DRAINING",
+                brand_id = brands.DRAINING,
                 weight = 9,
             },
             {
-                brand_id = "SPWPN_PROTECTION",
+                brand_id = brands.PROTECTION,
                 weight = 6,
             },
             {
-                brand_id = "SPWPN_ELECTROCUTION",
+                brand_id = brands.ELECTROCUTION,
                 weight = 6,
             },
             {
-                brand_id = "SPWPN_HOLY_WRATH",
+                brand_id = brands.HOLY_WRATH,
                 weight = 5,
             },
             {
-                brand_id = "SPWPN_VAMPIRISM",
+                brand_id = brands.VAMPIRISM,
                 weight = 4,
             },
             {
-                brand_id = "SPWPN_FLAMING",
+                brand_id = brands.FLAMING,
                 weight = 4,
             },
             {
-                brand_id = "SPWPN_FREEZING",
+                brand_id = brands.FREEZING,
                 weight = 4,
             },
             {
-                brand_id = "SPWPN_PAIN",
+                brand_id = brands.PAIN,
                 weight = 2,
             },
             {
-                brand_id = "SPWPN_DISTORTION",
+                brand_id = brands.DISTORTION,
                 weight = 1,
             },
             {
-                brand_id = "SPWPN_ANTIMAGIC",
+                brand_id = brands.ANTIMAGIC,
                 weight = 1,
             },
         },
+    },
+    -- Source: crawl-ref/source/item-prop.cc
+    generation = {
+        mode = "random",
+        commonness = 10,
     },
 }
 

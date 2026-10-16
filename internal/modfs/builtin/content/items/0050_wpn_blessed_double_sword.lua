@@ -39,6 +39,11 @@ local definition = {
         },
         brand_weights = mod.null,
     },
+    -- Source: crawl-ref/source/item-prop.cc
+    generation = {
+        mode = "random",
+        commonness = 0,
+    },
 }
 
 register.definition(categories.ITEMS, definition)

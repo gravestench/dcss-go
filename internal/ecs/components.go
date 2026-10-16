@@ -153,9 +153,15 @@ type Corpse struct {
 	Appearance int
 }
 
-// CarriedBy and Position are mutually exclusive on an item.
+// An item has exactly one location: Position, CarriedBy, or ReservedBy.
 type CarriedBy struct {
 	Holder akara.Entity
+}
+
+// ReservedBy keeps a generated offer live without putting it on a level or
+// in inventory. The owner is the source item whose menu references it.
+type ReservedBy struct {
+	Owner akara.Entity
 }
 
 // Equipped records a player equipment slot or a monster inventory slot.

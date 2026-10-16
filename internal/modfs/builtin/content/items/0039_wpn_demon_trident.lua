@@ -6,6 +6,7 @@
 -- Property Line: 578
 
 local categories = require("constants.catalog")
+local brands = require("constants.weapon_brands")
 
 local definition = {
     id = "WPN_DEMON_TRIDENT",
@@ -39,42 +40,47 @@ local definition = {
         },
         brand_weights = {
             {
-                brand_id = "SPWPN_NORMAL",
+                brand_id = brands.NORMAL,
                 weight = 27,
             },
             {
-                brand_id = "SPWPN_VENOM",
+                brand_id = brands.VENOM,
                 weight = 19,
             },
             {
-                brand_id = "SPWPN_ELECTROCUTION",
+                brand_id = brands.ELECTROCUTION,
                 weight = 16,
             },
             {
-                brand_id = "SPWPN_DRAINING",
+                brand_id = brands.DRAINING,
                 weight = 10,
             },
             {
-                brand_id = "SPWPN_FLAMING",
+                brand_id = brands.FLAMING,
                 weight = 7,
             },
             {
-                brand_id = "SPWPN_FREEZING",
+                brand_id = brands.FREEZING,
                 weight = 7,
             },
             {
-                brand_id = "SPWPN_VAMPIRISM",
+                brand_id = brands.VAMPIRISM,
                 weight = 7,
             },
             {
-                brand_id = "SPWPN_PAIN",
+                brand_id = brands.PAIN,
                 weight = 4,
             },
             {
-                brand_id = "SPWPN_ANTIMAGIC",
+                brand_id = brands.ANTIMAGIC,
                 weight = 3,
             },
         },
+    },
+    -- Source: crawl-ref/source/item-prop.cc
+    generation = {
+        mode = "random",
+        commonness = 0,
     },
 }
 

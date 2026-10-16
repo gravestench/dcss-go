@@ -26,10 +26,11 @@ type Stores struct {
 	AI        *akara.Store[MonsterAI]
 	Followers *akara.Store[BandFollower]
 
-	Items     *akara.Store[Item]
-	Corpses   *akara.Store[Corpse]
-	CarriedBy *akara.Store[CarriedBy]
-	Equipped  *akara.Store[Equipped]
+	Items      *akara.Store[Item]
+	Corpses    *akara.Store[Corpse]
+	CarriedBy  *akara.Store[CarriedBy]
+	ReservedBy *akara.Store[ReservedBy]
+	Equipped   *akara.Store[Equipped]
 
 	Intents *akara.Store[Intent]
 }
@@ -58,10 +59,11 @@ func Register(world *akara.World) Stores {
 		AI:        akara.Register[MonsterAI](world),
 		Followers: akara.Register[BandFollower](world),
 
-		Items:     akara.Register[Item](world),
-		Corpses:   akara.Register[Corpse](world),
-		CarriedBy: akara.Register[CarriedBy](world),
-		Equipped:  akara.Register[Equipped](world),
+		Items:      akara.Register[Item](world),
+		Corpses:    akara.Register[Corpse](world),
+		CarriedBy:  akara.Register[CarriedBy](world),
+		ReservedBy: akara.Register[ReservedBy](world),
+		Equipped:   akara.Register[Equipped](world),
 
 		Intents: akara.Register[Intent](world),
 	}

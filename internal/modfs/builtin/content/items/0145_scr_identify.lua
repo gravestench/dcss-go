@@ -19,6 +19,12 @@ local definition = {
         kind = "static",
     },
     explicitly_removed = false,
+    -- Source: crawl-ref/source/item-prop.cc
+    generation = {
+        mode = "random",
+        rarity = "RARITY_VERY_COMMON",
+        weight = 200,
+    },
 }
 
 register.definition(categories.ITEMS, definition)

@@ -155,8 +155,30 @@ function identification.initialize(ctx, player)
 
     ctx:add(player, component.ITEM_KNOWLEDGE, {
         known_types = {},
+        seen_types = {},
         appearance_seeds = seeds,
     })
+end
+
+function identification.record_seen(ctx, player, kind_ids)
+    local known = knowledge(ctx, player)
+    known.seen_types = known.seen_types or {}
+    local changed = false
+
+    for _, id in ipairs(kind_ids) do
+        local kind = catalog.get("items", id)
+
+        if (kind.class == classes.OBJ_WEAPONS or
+            kind.class == classes.OBJ_ARMOUR) and
+            not known.seen_types[id] then
+            known.seen_types[id] = true
+            changed = true
+        end
+    end
+
+    if changed then
+        ctx:set(player, component.ITEM_KNOWLEDGE, known)
+    end
 end
 
 function identification.known(ctx, player, entity)
@@ -240,6 +262,17 @@ function identification.name(ctx, player, entity)
     local pool = appearances.pool(kind)
     local state = identification.known(ctx, player, entity)
     local name = kind.name
+    local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
+
+    if artefact then
+        local named = state.type and artefact.name or artefact.appearance
+
+        if shows_pluses(kind, state) then
+            return string.format("%+d %s", item.plus, named)
+        end
+
+        return named
+    end
 
     if pool and not state.type then
         local seed = knowledge(ctx, player).appearance_seeds[item.kind_id]
@@ -309,6 +342,16 @@ function identification.validate(ctx, player)
         end
     end
 
+    for id, value in pairs(known.seen_types or {}) do
+        local okay, kind = pcall(catalog.get, "items", id)
+
+        if not okay or value ~= true or
+            (kind.class ~= classes.OBJ_WEAPONS and
+                kind.class ~= classes.OBJ_ARMOUR) then
+            error("invalid seen item type " .. id)
+        end
+    end
+
     for _, entity in ipairs(ctx:query({ component.ITEM_IDENTIFICATION })) do
         local item = ctx:get(entity, component.ITEM)
         local state = ctx:get(entity, component.ITEM_IDENTIFICATION)
@@ -322,13 +365,15 @@ function identification.validate(ctx, player)
             kind.class == classes.OBJ_ARMOUR or
             kind.class == classes.OBJ_JEWELLERY or
             kind.class == classes.OBJ_STAVES
+        local manual = kind.id == item_ids.BOOK_MANUAL
 
-        if state.known_type and not appearances.pool(kind) then
+        if state.known_type and not appearances.pool(kind) and
+            not manual then
             error("non-identifiable item has type knowledge")
         end
 
         if (state.known_pluses or state.known_properties) and
-            not equipment then
+            not equipment and not manual then
             error("non-equipment item has equipment knowledge")
         end
 

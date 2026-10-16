@@ -4,6 +4,7 @@
 -- Name Line: 1183
 
 local categories = require("constants.catalog")
+local spells = require("ids.spells")
 
 local definition = {
     id = "BOOK_THERE_AND_BACK",
@@ -19,6 +20,15 @@ local definition = {
         kind = "static",
     },
     explicitly_removed = false,
+    -- Source: crawl-ref/source/book-data.h
+    generation = {
+        mode = "random",
+        spells = {
+            spells.SPELL_GRAVITAS,
+            spells.SPELL_TELEPORT_OTHER,
+            spells.SPELL_DISPERSAL,
+        },
+    },
 }
 
 register.definition(categories.ITEMS, definition)

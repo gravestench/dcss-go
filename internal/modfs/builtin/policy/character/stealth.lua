@@ -37,7 +37,7 @@ local function armour_bonus(worn)
                 end
             end
 
-            if entry.item.ego == armour_egos.STEALTH then
+            if entry.ego == armour_egos.STEALTH then
                 bonus = bonus + 50
             end
         end

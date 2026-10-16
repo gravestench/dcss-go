@@ -46,6 +46,10 @@ local definition = {
             },
         },
     },
+    -- Source: crawl-ref/source/makeitem.cc
+    generation = {
+        mode = "forced",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

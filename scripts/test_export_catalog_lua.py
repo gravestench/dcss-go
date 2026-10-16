@@ -13,6 +13,118 @@ EXPORTER = runpy.run_path(
 )
 
 
+class ItemGenerationExportTest(unittest.TestCase):
+    def test_vault_aliases_join_without_changing_go_catalog_schema(self):
+        enrich = EXPORTER["enrich_vault_aliases"]
+        definitions = [{"id": "OBJ_GOLD", "name": "gold piece"}]
+        aliases = {
+            "source_revision": "pinned",
+            "items": [{
+                "id": "OBJ_GOLD",
+                "aliases": ["gold"],
+            }],
+        }
+
+        result = enrich(definitions, aliases, "items", "pinned")
+
+        self.assertEqual(result[0]["vault_aliases"], ["gold"])
+        self.assertNotIn("vault_aliases", definitions[0])
+
+        aliases["source_revision"] = "other"
+
+        with self.assertRaisesRegex(ValueError, "revision"):
+            enrich(definitions, aliases, "items", "pinned")
+
+    def test_item_generation_metadata_joins_by_id(self):
+        enrich = EXPORTER["enrich_item_generation"]
+        items = [{
+            "id": "WPN_MACE",
+            "class": "OBJ_WEAPONS",
+            "weapon": {"commonness": 9},
+        }]
+        artifact = {
+            "source_revision": "pinned",
+            "items": [{
+                "id": "WPN_MACE",
+                "class": "OBJ_WEAPONS",
+                "generation": {
+                    "mode": "random",
+                    "commonness": 9,
+                    "source_path": "crawl-ref/source/item-prop.cc",
+                },
+            }],
+        }
+
+        definition = enrich(items, artifact, "pinned")[0]
+        output = EXPORTER["render_definition"](
+            "items", "pinned", definition
+        )
+
+        self.assertIn("-- Source: crawl-ref/source/item-prop.cc", output)
+        self.assertIn('mode = "random"', output)
+        self.assertIn("commonness = 9", output)
+        self.assertNotIn("source_path =", output)
+
+        artifact["items"][0]["generation"]["commonness"] = 10
+
+        with self.assertRaisesRegex(ValueError, "WPN_MACE"):
+            enrich(items, artifact, "pinned")
+
+    def test_unique_definition_imports_ids(self):
+        definition = {
+            "id": "UNRAND_SINGING_SWORD",
+            "name": "Singing Sword",
+            "class": "OBJ_WEAPONS",
+            "kind_id": "WPN_DOUBLE_SWORD",
+            "generation": {"mode": "random"},
+        }
+        output = EXPORTER["render_definition"](
+            "artefacts", "pinned", definition
+        )
+
+        self.assertIn('require("ids.artefacts")', output)
+        self.assertIn("id = artefact_ids.UNRAND_SINGING_SWORD", output)
+        self.assertIn("kind_id = item_ids.WPN_DOUBLE_SWORD", output)
+        self.assertIn("class = classes.OBJ_WEAPONS", output)
+
+    def test_unique_source_sentinel_is_not_an_item_reference(self):
+        definition = {
+            "id": "UNRAND_OCTOPUS_KING_RING",
+            "name": "ring of the Octopus King",
+            "class": "OBJ_JEWELLERY",
+            "kind_id": "RING_FIRST_RING",
+            "generation": {"mode": "random"},
+        }
+        output = EXPORTER["render_definition"](
+            "artefacts", "pinned", definition
+        )
+
+        self.assertIn('require("constants.artefact_base_sentinels")', output)
+        self.assertIn("kind_id = sentinels.RANDOM_RING", output)
+        self.assertNotIn("item_ids.RING_FIRST_RING", output)
+
+    def test_unique_fallback_and_brands_import_shared_ids(self):
+        definition = {
+            "id": "UNRAND_GUARD",
+            "name": "glaive of the Guard",
+            "class": "OBJ_WEAPONS",
+            "kind_id": "WPN_GLAIVE",
+            "fallback": "OBJ_WEAPONS/WPN_BARDICHE",
+            "brand": "SPWPN_ELECTROCUTION",
+            "fallback_brand": "SPWPN_VORPAL",
+            "generation": {"mode": "random"},
+        }
+        output = EXPORTER["render_definition"](
+            "artefacts", "pinned", definition
+        )
+
+        self.assertIn('require("constants.weapon_brands")', output)
+        self.assertIn("kind_id = item_ids.WPN_BARDICHE", output)
+        self.assertIn("brand = brands.ELECTROCUTION", output)
+        self.assertIn("fallback_brand = brands.VORPAL", output)
+        self.assertNotIn('"OBJ_WEAPONS/WPN_BARDICHE"', output)
+
+
 class WandExportTest(unittest.TestCase):
     def setUp(self):
         directory = tempfile.TemporaryDirectory()

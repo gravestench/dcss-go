@@ -5,6 +5,9 @@ local definition = {
     name = "test token",
     class = "OBJ_TEST_RELICS",
     stackable = true,
+    generation = {
+        mode = "none",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

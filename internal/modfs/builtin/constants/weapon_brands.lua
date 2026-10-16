@@ -1,5 +1,6 @@
 -- Source: item-prop-enum.h:special_weapon_type.
 local brands = {
+    ACID = "SPWPN_ACID",
     ANTIMAGIC = "SPWPN_ANTIMAGIC",
     CHAOS = "SPWPN_CHAOS",
     CONFUSE = "SPWPN_CONFUSE",
@@ -11,7 +12,9 @@ local brands = {
     HOLY_WRATH = "SPWPN_HOLY_WRATH",
     NORMAL = "SPWPN_NORMAL",
     PAIN = "SPWPN_PAIN",
+    PENETRATION = "SPWPN_PENETRATION",
     PROTECTION = "SPWPN_PROTECTION",
+    REAPING = "SPWPN_REAPING",
     SPECTRAL = "SPWPN_SPECTRAL",
     SPEED = "SPWPN_SPEED",
     VAMPIRISM = "SPWPN_VAMPIRISM",

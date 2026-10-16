@@ -5,6 +5,9 @@ local definition = {
     name = "test relic",
     class = "OBJ_TEST_RELICS",
     unique = true,
+    generation = {
+        mode = "none",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

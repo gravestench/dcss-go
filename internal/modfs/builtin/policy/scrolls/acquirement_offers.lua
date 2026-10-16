@@ -1,13 +1,26 @@
--- Source: acquire.cc:shuffled_acquirement_classes and acquirement_menu.
+-- Source: crawl-ref/source/acquire.cc:shuffled_acquirement_classes and
+-- acquirement_menu. Each offer is a real, reserved ECS item.
 local catalog = require("policy.catalog")
 local classes = require("ids.object_classes")
 local component = require("constants.component")
 local equipment = require("policy.inventory.equipment")
-local enchantable = require("policy.scrolls.enchantable")
+local generation = require("policy.item_generation")
+local history = require("policy.item_generation.artefacts.history")
 local item_ids = require("ids.items")
 local items = require("policy.inventory.items")
 local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
+local quality = require("constants.vault_item_quality")
+local purpose = require("constants.item_generation_purpose")
+local streams = require("constants.rng_streams")
+local armour = require("policy.scrolls.acquirement.armour")
+local weapons = require("policy.scrolls.acquirement.weapons")
+local accessories = require("policy.scrolls.acquirement.accessories")
+local books = require("policy.scrolls.acquirement.books")
+local selection = require("policy.scrolls.acquirement.selection")
+local source = require("policy.item_generation.source_roll")
+local random_artefact = require("policy.item_generation.artefacts.random")
+local post_roll = require("policy.scrolls.acquirement.post_roll")
 
 local offers = {}
 
@@ -35,7 +48,7 @@ local function classes_for(ctx, player)
     end
 
     for index = #choices, 2, -1 do
-        local other = 1 + ctx:random("acquirement", index)
+        local other = 1 + ctx:random(streams.ACQUIREMENT, index)
 
         choices[index], choices[other] = choices[other], choices[index]
     end
@@ -43,9 +56,10 @@ local function classes_for(ctx, player)
     return choices
 end
 
-local function eligible(ctx, player, species, kind, class_id)
-    if kind.class ~= class_id or kind.explicitly_removed or
-        kind.status == "removed" or kind.status == "enum_only" then
+local function compatible(ctx, player, species, rolled, class_id)
+    local kind = catalog.get("items", rolled.kind_id)
+
+    if kind.class ~= class_id then
         return false
     end
 
@@ -61,108 +75,167 @@ local function eligible(ctx, player, species, kind, class_id)
     return true
 end
 
-local function pick_kind(ctx, player, class_id)
+local subtype_picker = {
+    [classes.OBJ_ARMOUR] = armour.pick,
+    [classes.OBJ_WEAPONS] = weapons.pick,
+    [classes.OBJ_STAVES] = accessories.staff,
+    [classes.OBJ_JEWELLERY] = accessories.jewellery,
+    [classes.OBJ_BOOKS] = books.pick,
+}
+
+local function roll_class(ctx, player, scroll, class_id, depth)
     local choice = ctx:get(player, component.PLAYER)
     local species = catalog.get("species", choice.species_id)
-    local candidates = {}
 
-    for _, kind in ipairs(catalog.all("items")) do
-        if eligible(ctx, player, species, kind, class_id) then
-            candidates[#candidates + 1] = kind
+    for _ = 1, 40 do
+        local kind_id, extra = subtype_picker[class_id](ctx, player, depth)
+        local request = {
+            class_id = class_id,
+            kind_id = kind_id,
+            depth = depth,
+            quality = quality.GOOD,
+            allow_uniques = true,
+            purpose = purpose.ACQUIREMENT,
+            site = "acquirement scroll " .. ctx:id(scroll),
+        }
+
+        for key, value in pairs(extra or {}) do
+            request[key] = value
+        end
+
+        local rolled = generation.roll(ctx, request)
+
+        post_roll.adjust(ctx, rolled, depth)
+
+        if class_id == classes.OBJ_JEWELLERY and
+            not rolled.components[component.ITEM_ARTEFACT] and
+            source.chance(ctx, 1, 2) then
+            random_artefact.apply(ctx, catalog.get("items", rolled.kind_id),
+                rolled)
+        end
+
+        local seen_plain_armour = class_id == classes.OBJ_ARMOUR and
+            not rolled.components[component.ITEM_ARTEFACT] and
+            selection.seen(ctx, player, rolled.kind_id) and
+            source.chance(ctx, 2, 3)
+
+        if compatible(ctx, player, species, rolled, class_id) and
+            not seen_plain_armour then
+            return rolled
+        end
+
+        local artefact = rolled.components[component.ITEM_ARTEFACT]
+
+        if artefact and artefact.unique_id ~= "" then
+            history.release(ctx, player, artefact.unique_id)
         end
     end
 
-    if #candidates == 0 then
-        return nil
-    end
-
-    return candidates[1 + ctx:random("acquirement", #candidates)]
+    error("acquirement scroll " .. ctx:id(scroll) ..
+        " could not generate compatible " .. class_id)
 end
 
-local function append(result, kind, plus, quantity)
-    result.kind_ids[#result.kind_ids + 1] = kind.id
-    result.pluses[#result.pluses + 1] = plus
-    result.quantities[#result.quantities + 1] = quantity
+local function reserve(ctx, scroll, rolled)
+    return generation.create(ctx, rolled, {
+        reservation = scroll,
+    })
 end
 
-function offers.generate(ctx, player)
-    local result = {
-        kind_ids = {},
-        pluses = {},
-        quantities = {},
+function offers.generate(ctx, player, scroll)
+    local position = ctx:get(player, component.POSITION)
+    local state = {
+        offer_ids = {},
     }
 
     for _, class_id in ipairs(classes_for(ctx, player)) do
-        if #result.kind_ids == 3 then
+        if #state.offer_ids == 3 then
             break
         end
 
-        local kind = pick_kind(ctx, player, class_id)
+        local rolled = roll_class(ctx, player, scroll, class_id,
+            position.level_id)
 
-        if kind then
-            local plus = 0
-
-            if class_id == classes.OBJ_WEAPONS or
-                class_id == classes.OBJ_ARMOUR then
-                plus = 2 + ctx:random("acquirement", 5)
-            end
-
-            if class_id == classes.OBJ_ARMOUR then
-                plus = math.min(plus, enchantable.armour_cap(kind))
-            end
-
-            append(result, kind, plus, 1)
-        end
+        state.offer_ids[#state.offer_ids + 1] = reserve(ctx, scroll, rolled)
     end
 
-    local gold = catalog.get("items", item_ids.OBJ_GOLD)
-    local quantity = 200 + 2 * ctx:random("acquirement", 601)
+    local gold = generation.roll(ctx, {
+        kind_id = item_ids.OBJ_GOLD,
+        depth = position.level_id,
+        quality = quality.GOOD,
+        allow_uniques = false,
+        purpose = purpose.ACQUIREMENT,
+        site = "acquirement gold " .. ctx:id(scroll),
+    })
 
-    append(result, gold, 0, quantity)
+    state.offer_ids[#state.offer_ids + 1] = reserve(ctx, scroll, gold)
 
-    return result
+    return state
 end
 
-function offers.options(state)
+local function label(ctx, entity)
+    local item = ctx:get(entity, component.ITEM)
+
+    if not item then
+        error("acquirement offer has no item")
+    end
+
+    local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
+
+    if artefact then
+        return artefact.name
+    end
+
+    local kind = catalog.get("items", item.kind_id)
+    local label = items.phrase(kind.name, item.quantity)
+
+    if item.plus > 0 then
+        label = "+" .. item.plus .. " " .. label
+    end
+
+    return label
+end
+
+function offers.options(ctx, _, state)
     local options = {}
 
-    for index, kind_id in ipairs(state.kind_ids) do
-        local kind = catalog.get("items", kind_id)
-        local quantity = state.quantities[index]
-        local plus = state.pluses[index]
-        local label = items.phrase(kind.name, quantity)
-
-        if plus > 0 then
-            label = "+" .. plus .. " " .. label
-        end
-
+    for index, entity in ipairs(state.offer_ids) do
         options[#options + 1] = {
             id = tostring(index),
-            label = label,
+            label = label(ctx, entity),
         }
     end
 
     return options
 end
 
+local function retire(ctx, player, entity)
+    local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
+
+    if artefact and artefact.unique_id ~= "" then
+        history.release(ctx, player, artefact.unique_id)
+    end
+
+    ctx:destroy(entity)
+end
+
 function offers.grant(ctx, player, state, index)
-    local kind_id = state.kind_ids[index]
-    local kind = catalog.get("items", kind_id)
-    local item = {
-        kind_id = kind_id,
-        quantity = state.quantities[index],
-        plus = state.pluses[index],
-        charges = 0,
-        ego = "",
-    }
+    local selected = state.offer_ids[index]
+    local reservation = selected and ctx:get(selected, component.RESERVED_BY)
 
-    items.validate(item, kind)
+    if not reservation then
+        error("acquirement selected offer is no longer reserved")
+    end
 
-    local entity = ctx:create()
+    for other_index, entity in ipairs(state.offer_ids) do
+        if other_index ~= index then
+            retire(ctx, player, entity)
+        end
+    end
+
     local position = ctx:get(player, component.POSITION)
 
-    ctx:add(entity, component.ITEM, item)
-    ctx:add(entity, component.POSITION, {
+    ctx:remove(selected, component.RESERVED_BY)
+    ctx:add(selected, component.POSITION, {
         level_id = position.level_id,
         x = position.x,
         y = position.y,
@@ -170,14 +243,14 @@ function offers.grant(ctx, player, state, index)
 
     local identification = require("policy.items.identification")
 
-    identification.reveal_type(ctx, player, entity)
-    identification.reveal_item(ctx, entity, {
+    identification.reveal_type(ctx, player, selected)
+    identification.reveal_item(ctx, selected, {
         type = true,
         pluses = true,
         properties = true,
     })
 
-    return entity
+    return selected
 end
 
 return offers

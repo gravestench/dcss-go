@@ -1,0 +1,3807 @@
+{
+  "schema_version": 1,
+  "source_revision": "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
+  "artefacts": [
+    {
+      "id": "UNRAND_DUMMY1",
+      "name": "DUMMY UNRANDART 1",
+      "source_order": 1,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 180,
+      "class": "OBJ_UNASSIGNED",
+      "kind_id": "250",
+      "fallback": "OBJ_UNASSIGNED/250",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "BLACK",
+      "tile": "",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 250
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_SINGING_SWORD",
+      "name": "Singing Sword",
+      "source_order": 2,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 190,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_DOUBLE_SWORD",
+      "fallback": "",
+      "brand": "SPWPN_VORPAL",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "sonic wave",
+      "description": "",
+      "brand_description": "It radiates damaging sonic waves as it strikes, especially in combat\ninvolving dangerous or numerous foes.",
+      "colour": "ETC_GOLD",
+      "tile": "spwpn_singing_sword",
+      "tile_equipment": "singing_sword",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 7,
+        "value": 1000
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_TROG",
+      "name": "Wrath of Trog",
+      "source_order": 3,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 202,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_BATTLEAXE",
+      "fallback": "OBJ_WEAPONS/WPN_EXECUTIONERS_AXE",
+      "brand": "SPWPN_ANTIMAGIC",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "It causes slowness and exhaustion when equipped.\n+It extends the wielder's berserk rage when killing foes.",
+      "brand_description": "",
+      "colour": "ETC_BLOOD",
+      "tile": "spwpn_wrath_of_trog",
+      "tile_equipment": "axe_trog",
+      "type": "",
+      "flags": [
+        "rampage"
+      ],
+      "properties": {
+        "angry": 50,
+        "plus": 8,
+        "value": 800
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_VARIABILITY",
+      "name": "mace of Variability",
+      "source_order": 4,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 216,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_GREAT_MACE",
+      "fallback": "OBJ_WEAPONS/OBJ_RANDOM",
+      "brand": "SPWPN_CHAOS",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "chain chaos",
+      "description": "",
+      "brand_description": "Each time it hits an enemy it has a different, random effect.\n+\n+It occasionally unleashes arcs of chaos on nearby creatures upon striking a\nfoe.",
+      "colour": "ETC_RANDOM",
+      "tile": "spwpn_mace_of_variability",
+      "tile_equipment": "mace_of_variability",
+      "type": "",
+      "flags": [
+        "skip_ego"
+      ],
+      "properties": {
+        "plus": 7,
+        "value": 600
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_PRUNE",
+      "name": "glaive of Prune",
+      "source_order": 5,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 232,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_GLAIVE",
+      "fallback": "",
+      "brand": "SPWPN_VORPAL",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "It halves damage taken while paralysed, petrified or unconscious.",
+      "brand_description": "",
+      "colour": "LIGHTMAGENTA",
+      "tile": "spwpn_glaive_of_prune",
+      "tile_equipment": "glaive_of_prune",
+      "type": "",
+      "flags": [
+        "chaotic"
+      ],
+      "properties": {
+        "plus": 12
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_POWER",
+      "name": "sword of Power",
+      "source_order": 6,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 242,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_GREAT_SWORD",
+      "fallback": "",
+      "brand": "SPWPN_VORPAL",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "It occasionally discharges a powerful but inaccurate bolt of energy\nupon striking a foe, with increased chance the greater the wielder's current\nhealth.",
+      "colour": "RED",
+      "tile": "spwpn_sword_of_power",
+      "tile_equipment": "sword_of_power",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 5,
+        "value": 800
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_OLGREB",
+      "name": "staff of Olgreb",
+      "source_order": 7,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 254,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_STAFF",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "rPois∞",
+      "description": "It enhances your poison magic.\n+It grants immunity to poison.\n+It can be activated via the 'a'bility menu to radiate toxic energy, with\neffectiveness depending on Evocations skill.",
+      "brand_description": "If the wielder is skilled in Evocations, they can envenom those struck\nby it, dealing poison damage which bypasses armour.",
+      "colour": "ETC_POISON",
+      "tile": "spwpn_staff_of_olgreb",
+      "tile_equipment": "olgreb",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 9,
+        "value": 1000
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_WUCAD_MU",
+      "name": "staff of Wucad Mu",
+      "source_order": 8,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 269,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_STAFF",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "*channel",
+      "description": "It occasionally powers its wielder's spells, but with a chance of\ncausing confusion or draining the wielder's intelligence.\n+It becomes more likely to activate and less likely to backfire with increased\nEvocations skill.",
+      "brand_description": "",
+      "colour": "ETC_MAGIC",
+      "tile": "spwpn_wucad_mu",
+      "tile_equipment": "wucad_mu",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 9,
+        "value": 1000
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_VAMPIRES_TOOTH",
+      "name": "Vampire's Tooth",
+      "source_order": 9,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 282,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_QUICK_BLADE",
+      "fallback": "",
+      "brand": "SPWPN_VAMPIRISM",
+      "fallback_brand": "SPWPN_VAMPIRISM",
+      "appearance": "",
+      "inscription": "vamp",
+      "description": "",
+      "brand_description": "It occasionally heals its wielder for the full amount of damage dealt\nwhen it wounds a living foe.",
+      "colour": "ETC_BONE",
+      "tile": "spwpn_vampires_tooth",
+      "tile_equipment": "vampires_tooth",
+      "type": "",
+      "flags": [
+        "skip_ego"
+      ],
+      "properties": {
+        "plus": 8,
+        "value": 600
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_CURSES",
+      "name": "scythe of Curses",
+      "source_order": 10,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 297,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_HALBERD",
+      "fallback": "OBJ_WEAPONS/WPN_BARDICHE",
+      "brand": "SPWPN_DRAINING",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "It inflicts powerful necromantic curses on any living foe it strikes.",
+      "colour": "ETC_DEATH",
+      "tile": "spwpn_scythe_of_curses",
+      "tile_equipment": "finisher",
+      "type": "scythe",
+      "flags": [
+        "drain"
+      ],
+      "properties": {
+        "base_dam": 1,
+        "base_delay": 5,
+        "plus": 13,
+        "value": 800
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_TORMENT",
+      "name": "sceptre of Torment",
+      "source_order": 11,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 312,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_EVENINGSTAR",
+      "fallback": "",
+      "brand": "SPWPN_PAIN",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "torment",
+      "description": "",
+      "brand_description": "It occasionally torments all nearby living foes when it strikes in\ncombat.",
+      "colour": "ETC_GOLD",
+      "tile": "spwpn_sceptre_of_torment",
+      "tile_equipment": "sceptre_of_torment",
+      "type": "",
+      "flags": [
+        "evil"
+      ],
+      "properties": {
+        "plus": 7,
+        "value": 1200
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_ZONGULDROK",
+      "name": "sword of Zonguldrok",
+      "source_order": 12,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 325,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_DOUBLE_SWORD",
+      "fallback": "",
+      "brand": "SPWPN_REAPING",
+      "fallback_brand": "SPWPN_PAIN",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_BONE",
+      "tile": "spwpn_sword_of_zonguldrok",
+      "tile_equipment": "zonguldrok",
+      "type": "",
+      "flags": [
+        "evil"
+      ],
+      "properties": {
+        "plus": 9,
+        "value": 800
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_CEREBOV",
+      "name": "sword of Cerebov",
+      "source_order": 13,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 336,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_GREAT_SWORD",
+      "fallback": "",
+      "brand": "SPWPN_FLAMING",
+      "fallback_brand": "",
+      "appearance": "great serpentine sword",
+      "inscription": "",
+      "description": "",
+      "brand_description": "It temporarily reduces the fire resistance of those it strikes.",
+      "colour": "ETC_FIRE",
+      "tile": "spwpn_sword_of_cerebov",
+      "tile_equipment": "sword_twist",
+      "type": "flamberge",
+      "flags": [
+        "evil",
+        "nogen"
+      ],
+      "properties": {
+        "base_acc": 1,
+        "base_dam": 1,
+        "plus": 6
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_DISPATER",
+      "name": "staff of Dispater",
+      "source_order": 14,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 350,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_STAFF",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "golden staff",
+      "inscription": "",
+      "description": "It can be evoked to hurl damnation at the cost of health and magic,\nwith strength depending on Evocations skill.",
+      "brand_description": "",
+      "colour": "ETC_GOLD",
+      "tile": "spwpn_staff_of_dispater",
+      "tile_equipment": "dispater",
+      "type": "",
+      "flags": [
+        "evil",
+        "nogen"
+      ],
+      "properties": {
+        "plus": 4
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_ASMODEUS",
+      "name": "sceptre of Asmodeus",
+      "source_order": 15,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 361,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_STAFF",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "ruby sceptre",
+      "inscription": "",
+      "description": "It can be evoked to summon fiery demons, with success rate depending\non Evocations skill. Those summoned this way will remain friendly only for a\nlimited time.",
+      "brand_description": "",
+      "colour": "ETC_BLOOD",
+      "tile": "spwpn_sceptre_of_asmodeus",
+      "tile_equipment": "asmodeus",
+      "type": "",
+      "flags": [
+        "evil",
+        "nogen"
+      ],
+      "properties": {
+        "plus": 7
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_FAERIE",
+      "name": "faerie dragon scales",
+      "source_order": 16,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 373,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_ACID_DRAGON_ARMOUR",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_JEWEL",
+      "tile": "urand_faerie",
+      "tile_equipment": "faerie_dragon_armour",
+      "type": "",
+      "flags": [
+        "nogen",
+        "no_upgrade"
+      ],
+      "properties": {
+        "plus": 3
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_BLOODBANE",
+      "name": "demon blade \"Bloodbane\"",
+      "source_order": 17,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 384,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_DEMON_BLADE",
+      "fallback": "",
+      "brand": "SPWPN_VORPAL",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_DARK",
+      "tile": "urand_bloodbane",
+      "tile_equipment": "bloodbane",
+      "type": "",
+      "flags": [
+        "nogen"
+      ],
+      "properties": {
+        "angry": 5,
+        "plus": 8,
+        "stealth": -1
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_FLAMING_DEATH",
+      "name": "scimitar of Flaming Death",
+      "source_order": 18,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 397,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_SCIMITAR",
+      "fallback": "",
+      "brand": "SPWPN_FLAMING",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "sticky flame,",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_FIRE",
+      "tile": "urand_flaming_death",
+      "tile_equipment": "flaming_death",
+      "type": "",
+      "flags": [
+        "poison",
+        "skip_ego",
+        "nogen"
+      ],
+      "properties": {
+        "cold": -1,
+        "fire": 2,
+        "plus": 6,
+        "will": 1
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_BRILLIANCE",
+      "name": "eveningstar \"Brilliance\"",
+      "source_order": 19,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 412,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_EVENINGSTAR",
+      "fallback": "",
+      "brand": "SPWPN_HOLY_WRATH",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_HOLY",
+      "tile": "urand_brilliance",
+      "tile_equipment": "mace_of_brilliance",
+      "type": "",
+      "flags": [
+        "nogen"
+      ],
+      "properties": {
+        "ac": 5,
+        "int": 5,
+        "life": 1,
+        "plus": 1
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_LEECH",
+      "name": "demon blade \"Leech\"",
+      "source_order": 20,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 426,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_DEMON_BLADE",
+      "fallback": "",
+      "brand": "SPWPN_VAMPIRISM",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "vamp,",
+      "description": "",
+      "brand_description": "It heals its wielder for a portion of the damage dealt every time it\nstrikes a living foe.",
+      "colour": "ETC_DARK",
+      "tile": "urand_leech",
+      "tile_equipment": "leech",
+      "type": "",
+      "flags": [
+        "drain",
+        "harm",
+        "skip_ego"
+      ],
+      "properties": {
+        "life": 1,
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_CHILLY_DEATH",
+      "name": "dagger of Chilly Death",
+      "source_order": 21,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 439,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_DAGGER",
+      "fallback": "",
+      "brand": "SPWPN_FREEZING",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "flash freeze,",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_ICE",
+      "tile": "urand_chilly_death",
+      "tile_equipment": "chilly_death",
+      "type": "",
+      "flags": [
+        "poison",
+        "skip_ego",
+        "nogen"
+      ],
+      "properties": {
+        "cold": 2,
+        "fire": -1,
+        "plus": 9,
+        "will": 1
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_MORG",
+      "name": "dagger \"Morg\"",
+      "source_order": 22,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 454,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_DAGGER",
+      "fallback": "",
+      "brand": "SPWPN_PAIN",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTRED",
+      "tile": "urand_morg",
+      "tile_equipment": "morg",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "int": 5,
+        "plus": 4,
+        "will": 1
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 9
+      }
+    },
+    {
+      "id": "UNRAND_FINISHER",
+      "name": "scythe \"Finisher\"",
+      "source_order": 23,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 464,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_HALBERD",
+      "fallback": "OBJ_WEAPONS/WPN_BARDICHE",
+      "brand": "SPWPN_SPEED",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "eviscerate",
+      "description": "",
+      "brand_description": "It may eviscerate those it strikes, slaying them instantly, with a\ndecreasing chance against stronger foes.",
+      "colour": "ETC_DARK",
+      "tile": "urand_finisher",
+      "tile_equipment": "finisher",
+      "type": "scythe",
+      "flags": [],
+      "properties": {
+        "base_dam": 1,
+        "base_delay": 5,
+        "plus": 5
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_PUNK",
+      "name": "greatsling \"Punk\"",
+      "source_order": 24,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 479,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_SLING",
+      "fallback": "",
+      "brand": "SPWPN_ACID",
+      "fallback_brand": "SPWPN_NORMAL",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_SLIME",
+      "tile": "urand_punk",
+      "tile_equipment": "punk",
+      "type": "greatsling",
+      "flags": [
+        "rCorr"
+      ],
+      "properties": {
+        "base_dam": 3,
+        "plus": 3
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_ZEPHYR",
+      "name": "longbow \"Zephyr\"",
+      "source_order": 25,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 492,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_LONGBOW",
+      "fallback": "",
+      "brand": "SPWPN_SPEED",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_GOLD",
+      "tile": "urand_zephyr",
+      "tile_equipment": "zephyr",
+      "type": "",
+      "flags": [
+        "seeinv"
+      ],
+      "properties": {
+        "dex": 3,
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_SKULLCRUSHER",
+      "name": "giant club \"Skullcrusher\"",
+      "source_order": 26,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 502,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_GIANT_CLUB",
+      "fallback": "",
+      "brand": "SPWPN_SPEED",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "BROWN",
+      "tile": "urand_skullcrusher",
+      "tile_equipment": "giant_club_slant",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 3,
+        "str": 7
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_GUARD",
+      "name": "glaive of the Guard",
+      "source_order": 27,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 511,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_GLAIVE",
+      "fallback": "OBJ_WEAPONS/WPN_BARDICHE",
+      "brand": "SPWPN_ELECTROCUTION",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "spectral,",
+      "description": "",
+      "brand_description": "When it strikes, its spirit leaps out and fights alongside the\nwielder.",
+      "colour": "ETC_ELECTRICITY",
+      "tile": "urand_guard",
+      "tile_equipment": "glaive_of_the_guard",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "ac": 5,
+        "plus": 5
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_ZEALOT_SWORD",
+      "name": "zealot's sword",
+      "source_order": 28,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 524,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_EUDEMON_BLADE",
+      "fallback": "",
+      "brand": "SPWPN_HOLY_WRATH",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "Whenever the wielder enters a berserk rage, their allies are\nberserked alongside them.",
+      "brand_description": "",
+      "colour": "ETC_HOLY",
+      "tile": "unrand_zealot_sword",
+      "tile_equipment": "zealot_sword",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "angry": 20,
+        "ev": 3,
+        "life": 1,
+        "plus": 10
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_DAMNATION",
+      "name": "arbalest \"Damnation\"",
+      "source_order": 29,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 539,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_ARBALEST",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "SPWPN_FLAMING",
+      "appearance": "",
+      "inscription": "damnation",
+      "description": "",
+      "brand_description": "Any ammunition fired from it explodes in a burst of damnation on\nstriking a foe, dealing damage which bypasses armour.",
+      "colour": "ETC_FIRE",
+      "tile": "urand_damnation",
+      "tile_equipment": "crossbow_fire",
+      "type": "",
+      "flags": [
+        "evil"
+      ],
+      "properties": {
+        "plus": 6,
+        "value": 800
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_DOOM_KNIGHT",
+      "name": "sword of the Doom Knight",
+      "source_order": 30,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 552,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_GREAT_SWORD",
+      "fallback": "",
+      "brand": "SPWPN_PAIN",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "BLUE",
+      "tile": "urand_doom_knight",
+      "tile_equipment": "doom_knight",
+      "type": "",
+      "flags": [
+        "nospell",
+        "nogen"
+      ],
+      "properties": {
+        "plus": 13,
+        "will": 1
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_EOS",
+      "name": "morningstar \"Eos\"",
+      "source_order": 31,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 564,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_MORNINGSTAR",
+      "fallback": "",
+      "brand": "SPWPN_ELECTROCUTION",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "Halo",
+      "description": "It grants its wielder a halo, revealing invisible creatures and\nincreasing accuracy against all within it other than the wielder.",
+      "brand_description": "",
+      "colour": "ETC_JEWEL",
+      "tile": "urand_eos",
+      "tile_equipment": "eos",
+      "type": "",
+      "flags": [
+        "elec"
+      ],
+      "properties": {
+        "plus": 10
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_BOTONO",
+      "name": "spear of the Botono",
+      "source_order": 32,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 576,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_SPEAR",
+      "fallback": "",
+      "brand": "SPWPN_REAPING",
+      "fallback_brand": "SPWPN_PAIN",
+      "appearance": "",
+      "inscription": "Hex",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_UNHOLY",
+      "tile": "urand_botono",
+      "tile_equipment": "botono",
+      "type": "",
+      "flags": [
+        "poison",
+        "nogen"
+      ],
+      "properties": {
+        "hp": -6,
+        "life": 1,
+        "plus": 6
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_OCTOPUS_KING",
+      "name": "trident of the Octopus King",
+      "source_order": 33,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 595,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_TRIDENT",
+      "fallback": "",
+      "brand": "SPWPN_VENOM",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_WATER",
+      "tile": "urand_octopus_king",
+      "tile_equipment": "trident_octopus_king",
+      "type": "",
+      "flags": [
+        "elec",
+        "poison",
+        "no_upgrade"
+      ],
+      "properties": {
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 11
+      }
+    },
+    {
+      "id": "UNRAND_ARGA",
+      "name": "mithril axe \"Arga\"",
+      "source_order": 34,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 604,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_BROAD_AXE",
+      "fallback": "",
+      "brand": "SPWPN_SPEED",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "WHITE",
+      "tile": "urand_arga",
+      "tile_equipment": "arga",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 8,
+        "will": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_ELEMENTAL_STAFF",
+      "name": "Elemental Staff",
+      "source_order": 35,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 613,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_STAFF",
+      "fallback": "OBJ_WEAPONS/WPN_LAJATANG",
+      "brand": "",
+      "fallback_brand": "SPWPN_FREEZING",
+      "appearance": "",
+      "inscription": "",
+      "description": "It enhances your fire, ice, earth and air magic.",
+      "brand_description": "If the wielder is skilled in Evocations, they can discharge powerful\nblasts of elemental energy when striking with it.",
+      "colour": "DARKGREY",
+      "tile": "urand_elemental",
+      "tile_equipment": "elemental_staff",
+      "type": "",
+      "flags": [
+        "elec"
+      ],
+      "properties": {
+        "ac": 5,
+        "cold": 2,
+        "fire": 2,
+        "plus": 3
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_SNIPER",
+      "name": "heavy crossbow \"Sniper\"",
+      "source_order": 36,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 629,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_TRIPLE_CROSSBOW",
+      "fallback": "",
+      "brand": "SPWPN_VORPAL",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "Acc+∞",
+      "description": "Any ammunition fired from it never misses its target.",
+      "brand_description": "",
+      "colour": "ETC_DARK",
+      "tile": "urand_sniper",
+      "tile_equipment": "sniper",
+      "type": "heavy crossbow",
+      "flags": [
+        "seeinv"
+      ],
+      "properties": {
+        "base_delay": 4,
+        "plus": 9
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_PIERCER",
+      "name": "longbow \"Piercer\"",
+      "source_order": 37,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 642,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_LONGBOW",
+      "fallback": "",
+      "brand": "SPWPN_PENETRATION",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "CYAN",
+      "tile": "urand_piercer",
+      "tile_equipment": "great_bow",
+      "type": "",
+      "flags": [
+        "nogen"
+      ],
+      "properties": {
+        "ev": -2,
+        "plus": 7
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_BLOWGUN_ASSASSIN",
+      "name": "blowgun of the Assassin",
+      "source_order": 38,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 654,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_BLOWGUN",
+      "fallback": "OBJ_WEAPONS/WPN_LONGBOW",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "stab,",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_DEATH",
+      "tile": "urand_blowgun",
+      "tile_equipment": "blowgun",
+      "type": "",
+      "flags": [
+        "inv",
+        "tilerim",
+        "nogen"
+      ],
+      "properties": {
+        "plus": 6,
+        "stealth": 2
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_WYRMBANE",
+      "name": "lance \"Wyrmbane\"",
+      "source_order": 39,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 669,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_SPEAR",
+      "fallback": "OBJ_WEAPONS/WPN_DEMON_TRIDENT",
+      "brand": "",
+      "fallback_brand": "SPWPN_VORPAL",
+      "appearance": "",
+      "inscription": "slay drac,",
+      "description": "",
+      "brand_description": "It inflicts extra damage against dragons and draconians.",
+      "colour": "LIGHTGREEN",
+      "tile": "urand_wyrmbane",
+      "tile_equipment": "wyrmbane",
+      "type": "lance",
+      "flags": [
+        "poison",
+        "no_upgrade"
+      ],
+      "properties": {
+        "ac": 3,
+        "base_dam": 2,
+        "cold": 1,
+        "fire": 1,
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_SPRIGGANS_KNIFE",
+      "name": "Spriggan's Knife",
+      "source_order": 40,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 686,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_DAGGER",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "stab,",
+      "description": "It is more effective when stabbing unaware enemies, sometimes treating\nthem as though they were completely helpless.",
+      "brand_description": "",
+      "colour": "LIGHTCYAN",
+      "tile": "urand_spriggans_knife",
+      "tile_equipment": "spriggans_knife",
+      "type": "knife",
+      "flags": [],
+      "properties": {
+        "ev": 4,
+        "plus": 7,
+        "stealth": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_PLUTONIUM_SWORD",
+      "name": "plutonium sword",
+      "source_order": 41,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 699,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_TRIPLE_SWORD",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "SPWPN_CHAOS",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "It occasionally inflicts wild transmutation effects on those it\nstrikes, inflicting malmutation or extra damage, or polymorphing them into a\nnew form.",
+      "colour": "ETC_MUTAGENIC",
+      "tile": "urand_plutonium",
+      "tile_equipment": "plutonium_sword",
+      "type": "",
+      "flags": [
+        "mutate",
+        "chaotic"
+      ],
+      "properties": {
+        "plus": 11,
+        "stealth": -1,
+        "value": 1000
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_UNDEADHUNTER",
+      "name": "great mace \"Undeadhunter\"",
+      "source_order": 42,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 713,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_GREAT_MACE",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "SPWPN_HOLY_WRATH",
+      "appearance": "",
+      "inscription": "disrupt,",
+      "description": "",
+      "brand_description": "It inflicts significantly more damage against the undead.",
+      "colour": "LIGHTGREY",
+      "tile": "urand_undeadhunter",
+      "tile_equipment": "undeadhunter",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "life": 1,
+        "plus": 7
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_SNAKEBITE",
+      "name": "whip \"Snakebite\"",
+      "source_order": 43,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 724,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_WHIP",
+      "fallback": "OBJ_WEAPONS/WPN_DEMON_WHIP",
+      "brand": "SPWPN_VENOM",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "curare,",
+      "description": "",
+      "brand_description": "It occasionally inflicts asphyxiating poison on those it strikes,\ndealing poison damage and causing slowness.",
+      "colour": "DARKGREY",
+      "tile": "urand_snakebite",
+      "tile_equipment": "snakebite",
+      "type": "",
+      "flags": [
+        "poison"
+      ],
+      "properties": {
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_ACCURACY",
+      "name": "knife of Accuracy",
+      "source_order": 44,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 737,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_DAGGER",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTCYAN",
+      "tile": "urand_knife_of_accuracy",
+      "tile_equipment": "knife_of_accuracy",
+      "type": "knife",
+      "flags": [
+        "tilerim",
+        "nogen"
+      ],
+      "properties": {
+        "plus": 27
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_CRYSTAL_SPEAR",
+      "name": "Lehudib's crystal spear",
+      "source_order": 45,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 748,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_SPEAR",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "GREEN",
+      "tile": "urand_crystal_spear",
+      "tile_equipment": "crystal_spear",
+      "type": "",
+      "flags": [
+        "nogen"
+      ],
+      "properties": {
+        "int": 3,
+        "plus": 6
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_CAPTAIN",
+      "name": "captain's cutlass",
+      "source_order": 46,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 761,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_RAPIER",
+      "fallback": "",
+      "brand": "SPWPN_SPEED",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "disarm",
+      "description": "",
+      "brand_description": "It may disarm weapon-wielding foes when striking them, dealing\nextra damage in the process.",
+      "colour": "DARKGREY",
+      "tile": "urand_cutlass",
+      "tile_equipment": "capt_cutlass",
+      "type": "cutlass",
+      "flags": [],
+      "properties": {
+        "plus": 7
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_STORM_BOW",
+      "name": "storm bow",
+      "source_order": 47,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 774,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_LONGBOW",
+      "fallback": "",
+      "brand": "SPWPN_ELECTROCUTION",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "penet",
+      "description": "",
+      "brand_description": "Any ammunition fired by it passes through the targets it hits,\npotentially hitting all targets in its path until it reaches maximum range.",
+      "colour": "BLUE",
+      "tile": "urand_storm_bow",
+      "tile_equipment": "storm_bow",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_IGNORANCE",
+      "name": "tower shield of Ignorance",
+      "source_order": 48,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 785,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_TOWER_SHIELD",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "BROWN",
+      "tile": "urand_ignorance",
+      "tile_equipment": "tower_shield_of_ignorance",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "int": -4,
+        "life": 1,
+        "plus": 10
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_AUGMENTATION",
+      "name": "robe of Augmentation",
+      "source_order": 49,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 794,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_ROBE",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTRED",
+      "tile": "urand_augmentation",
+      "tile_equipment": "robe_white_blue",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "dex": 4,
+        "int": 4,
+        "plus": 4,
+        "str": 4
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 11
+      }
+    },
+    {
+      "id": "UNRAND_THIEF",
+      "name": "cloak of the Thief",
+      "source_order": 50,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 804,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_CLOAK",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "SPARM_INVISIBILITY",
+      "appearance": "",
+      "inscription": "*Fog",
+      "description": "It may release a thick cloud of smoke when the wearer is hurt.",
+      "brand_description": "",
+      "colour": "ETC_DARK",
+      "tile": "urand_thief",
+      "tile_equipment": "black",
+      "type": "",
+      "flags": [
+        "seeinv"
+      ],
+      "properties": {
+        "plus": 2,
+        "slay": -2,
+        "stealth": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_BULLSEYE",
+      "name": "tower shield \"Bullseye\"",
+      "source_order": 51,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 817,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_TOWER_SHIELD",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "RED",
+      "tile": "urand_bullseye",
+      "tile_equipment": "kite_shield_bullseye",
+      "type": "",
+      "flags": [
+        "nogen"
+      ],
+      "properties": {
+        "ev": -5,
+        "plus": 15
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_DYROVEPREVA",
+      "name": "crown of Dyrovepreva",
+      "source_order": 52,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 828,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_HAT",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "SPARM_SEE_INVISIBLE",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_JEWEL",
+      "tile": "urand_dyrovepreva",
+      "tile_equipment": "dyrovepreva",
+      "type": "",
+      "flags": [
+        "elec",
+        "seeinv"
+      ],
+      "properties": {
+        "int": 2,
+        "plus": 3
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_BEAR_SPIRIT",
+      "name": "hat of the Bear Spirit",
+      "source_order": 53,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 838,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_HAT",
+      "fallback": "",
+      "brand": "SPARM_SPIRIT_SHIELD",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "Going berserk makes the wearer tougher, and they're slowed less afterward.",
+      "colour": "DARKGREY",
+      "tile": "urand_bear",
+      "tile_equipment": "bear",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "angry": 20,
+        "plus": 2,
+        "will": 2
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_MISFORTUNE",
+      "name": "robe of Misfortune",
+      "source_order": 54,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 850,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_ROBE",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "SPARM_PONDEROUSNESS",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTMAGENTA",
+      "tile": "urand_misfortune",
+      "tile_equipment": "robe_misfortune",
+      "type": "",
+      "flags": [
+        "harm",
+        "slow",
+        "corrode"
+      ],
+      "properties": {
+        "ev": 5,
+        "plus": 5
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_FLASH",
+      "name": "cloak of Flash",
+      "source_order": 55,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 861,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_CLOAK",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_FLASH",
+      "tile": "urand_flash",
+      "tile_equipment": "red",
+      "type": "",
+      "flags": [
+        "fly",
+        "nogen"
+      ],
+      "properties": {
+        "ev": 4,
+        "plus": 3
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_HOOD_ASSASSIN",
+      "name": "hood of the Assassin",
+      "source_order": 56,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 872,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_HAT",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "SPARM_SEE_INVISIBLE",
+      "appearance": "",
+      "inscription": "Detection Stab+",
+      "description": "It allows the wearer to sense nearby creatures.\n+It allows the wearer to make particularly effective stabbing attacks against\nhelpless or unaware enemies with any weapon.",
+      "brand_description": "",
+      "colour": "BROWN",
+      "tile": "urand_hood_assassin",
+      "tile_equipment": "hood_assassin",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 2,
+        "stealth": 2,
+        "value": 600
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_LEAR",
+      "name": "Lear's hauberk",
+      "source_order": 57,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 887,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_CHAIN_MAIL",
+      "fallback": "OBJ_ARMOUR/ARM_PLATE_ARMOUR",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_GOLD",
+      "tile": "urand_lear",
+      "tile_equipment": "lears_hauberk",
+      "type": "",
+      "flags": [
+        "special"
+      ],
+      "properties": {
+        "plus": 18
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 11
+      }
+    },
+    {
+      "id": "UNRAND_ZHOR",
+      "name": "skin of Zhor",
+      "source_order": 58,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 897,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_ANIMAL_SKIN",
+      "fallback": "OBJ_ARMOUR/ARM_STEAM_DRAGON_ARMOUR",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "*Englaciate",
+      "description": "It radiates cold, occasionally slowing all nearby creatures who are\nnot resistant to cold.",
+      "brand_description": "",
+      "colour": "BROWN",
+      "tile": "urand_zhor",
+      "tile_equipment": "zhor",
+      "type": "",
+      "flags": [
+        "seeinv"
+      ],
+      "properties": {
+        "cold": 3,
+        "plus": 4
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_SALAMANDER",
+      "name": "salamander hide armour",
+      "source_order": 59,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 912,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_LEATHER_ARMOUR",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "SPARM_FIRE_RESISTANCE",
+      "appearance": "",
+      "inscription": "Flames",
+      "description": "It surrounds you with a cloud of flames.\n+It grants immunity to clouds of flame.\n+It enhances your fire magic.",
+      "brand_description": "",
+      "colour": "ETC_FIRE",
+      "tile": "urand_salamander",
+      "tile_equipment": "leather_red",
+      "type": "",
+      "flags": [
+        "special"
+      ],
+      "properties": {
+        "cold": -2,
+        "fire": 2,
+        "plus": 3
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_WAR",
+      "name": "gauntlets of War",
+      "source_order": 60,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 928,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_GLOVES",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "BROWN",
+      "tile": "urand_war",
+      "tile_equipment": "glove_black",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 3,
+        "slay": 5
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_RESISTANCE",
+      "name": "shield of Resistance",
+      "source_order": 61,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 936,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_KITE_SHIELD",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTRED",
+      "tile": "urand_resistance",
+      "tile_equipment": "kite_shield_of_resistance",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "cold": 2,
+        "fire": 2,
+        "plus": 2,
+        "will": 2
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_FOLLY",
+      "name": "robe of Folly",
+      "source_order": 62,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 946,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_ROBE",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "Brilliance Will-∞",
+      "description": "It increases the power of your magical spells.\n+It halves the magic cost of your spells (rounding up).\n+It reduces your willpower to zero.",
+      "brand_description": "",
+      "colour": "LIGHTGREY",
+      "tile": "urand_folly",
+      "tile_equipment": "robe_red2",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "int": 8,
+        "plus": 4
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_MAXWELL",
+      "name": "Maxwell's patent armour",
+      "source_order": 63,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 958,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_PLATE_ARMOUR",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTGREEN",
+      "tile": "urand_maxwell",
+      "tile_equipment": "maxwell",
+      "type": "",
+      "flags": [
+        "nospell",
+        "notelep",
+        "elec",
+        "rCorr"
+      ],
+      "properties": {
+        "plus": 15,
+        "will": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_DRAGONMASK",
+      "name": "mask of the Dragon",
+      "source_order": 64,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 968,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_HAT",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_SHIMMER_BLUE",
+      "tile": "urand_dragonmask",
+      "tile_equipment": "art_dragonhelm",
+      "type": "",
+      "flags": [
+        "seeinv"
+      ],
+      "properties": {
+        "slay": 3,
+        "will": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_NIGHT",
+      "name": "robe of Night",
+      "source_order": 65,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 978,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_ROBE",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "Dark",
+      "description": "It shrouds the wearer in darkness, reducing the range at which they\ncan see and be seen by others.",
+      "brand_description": "",
+      "colour": "ETC_DARK",
+      "tile": "urand_night",
+      "tile_equipment": "robe_of_night",
+      "type": "",
+      "flags": [
+        "seeinv"
+      ],
+      "properties": {
+        "plus": 5,
+        "value": 600,
+        "will": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_DRAGON_KING",
+      "name": "scales of the Dragon King",
+      "source_order": 66,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 992,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_GOLD_DRAGON_ARMOUR",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_GOLD",
+      "tile": "urand_dragon_king",
+      "tile_equipment": "dragonarm_gold",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 9,
+        "will": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_ALCHEMIST",
+      "name": "hat of the Alchemist",
+      "source_order": 67,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1000,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_HAT",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTMAGENTA",
+      "tile": "urand_alchemist",
+      "tile_equipment": "turban_purple",
+      "type": "",
+      "flags": [
+        "elec",
+        "poison",
+        "rMut",
+        "rCorr"
+      ],
+      "properties": {
+        "cold": 1,
+        "fire": 1,
+        "life": 1,
+        "plus": -2,
+        "will": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_FENCERS",
+      "name": "fencer's gloves",
+      "source_order": 68,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1012,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_GLOVES",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "Riposte",
+      "description": "It allows the wearer to riposte with melee\nweapons, swiftly retaliating against missed or blocked melee attacks.",
+      "brand_description": "",
+      "colour": "WHITE",
+      "tile": "urand_fencer",
+      "tile_equipment": "glove_white",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "dex": 3,
+        "plus": 0,
+        "value": 400
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_STARLIGHT",
+      "name": "cloak of Starlight",
+      "source_order": 69,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1025,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_CLOAK",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "*Dazzle",
+      "description": "It may blind those who miss an attack against the wearer in melee\ncombat.",
+      "brand_description": "",
+      "colour": "ETC_ICE",
+      "tile": "urand_starlight",
+      "tile_equipment": "white",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "ev": 4,
+        "plus": 1,
+        "stealth": -2
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_RATSKIN_CLOAK",
+      "name": "ratskin cloak",
+      "source_order": 70,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1037,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_CLOAK",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "*Rats",
+      "description": "When the wearer is hurt, rats may emerge from it to assist them.",
+      "brand_description": "",
+      "colour": "ETC_BEOGH",
+      "tile": "urand_ratskin_cloak",
+      "tile_equipment": "ratskin",
+      "type": "",
+      "flags": [
+        "poison"
+      ],
+      "properties": {
+        "dex": 1,
+        "int": -1,
+        "life": 1,
+        "plus": 2,
+        "str": -1
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 11
+      }
+    },
+    {
+      "id": "UNRAND_GONG",
+      "name": "shield of the Gong",
+      "source_order": 71,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1051,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_KITE_SHIELD",
+      "fallback": "OBJ_ARMOUR/ARM_TOWER_SHIELD",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "It is deafeningly noisy when blocking attacks.",
+      "brand_description": "",
+      "colour": "ETC_GOLD",
+      "tile": "urand_gong",
+      "tile_equipment": "kite_shield_gong",
+      "type": "",
+      "flags": [
+        "elec"
+      ],
+      "properties": {
+        "ev": -5,
+        "life": 1,
+        "plus": 18,
+        "will": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_AIR",
+      "name": "amulet of the Air",
+      "source_order": 72,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1064,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "AMU_NOTHING",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "Inacc Air",
+      "description": "It reduces the accuracy of all your attacks.\n+It enhances your air magic.",
+      "brand_description": "",
+      "colour": "ETC_ELECTRICITY",
+      "tile": "urand_air",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [
+        "elec",
+        "fly",
+        "rmsl"
+      ],
+      "properties": {},
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_SHADOWS",
+      "name": "ring of Shadows",
+      "source_order": 73,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1073,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "RING_STEALTH",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "Umbra",
+      "description": "It surrounds you with an aura of shadow, increasing your stealth and\nreducing the accuracy of all others within it.",
+      "brand_description": "",
+      "colour": "ETC_DARK",
+      "tile": "urand_shadows",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [
+        "inv"
+      ],
+      "properties": {
+        "value": 400
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_CEKUGOB",
+      "name": "amulet of Cekugob",
+      "source_order": 74,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1083,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "AMU_ACROBAT",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_SILVER",
+      "tile": "urand_cekugob",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [
+        "elec",
+        "poison",
+        "notelep",
+        "nogen"
+      ],
+      "properties": {
+        "ac": 1,
+        "ev": 1,
+        "life": 2
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_FOUR_WINDS",
+      "name": "amulet of the Four Winds",
+      "source_order": 75,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1094,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "AMU_NOTHING",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_POISON",
+      "tile": "urand_four_winds",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [
+        "clarity"
+      ],
+      "properties": {
+        "life": 1,
+        "will": 3
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_BLOODLUST",
+      "name": "necklace of Bloodlust",
+      "source_order": 76,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1102,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "AMU_NOTHING",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "It extends the wearer's berserk rage when killing foes.",
+      "brand_description": "",
+      "colour": "ETC_BLOOD",
+      "tile": "urand_bloodlust",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "angry": 50,
+        "int": -3,
+        "slay": 6,
+        "will": 2
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_HARE",
+      "name": "ring of the Hare",
+      "source_order": 77,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1112,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "RING_EVASION",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_POISON",
+      "tile": "urand_hare",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_TORTOISE",
+      "name": "ring of the Tortoise",
+      "source_order": 78,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1118,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "RING_PROTECTION",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_GOLD",
+      "tile": "urand_tortoise",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_MAGE",
+      "name": "ring of the Mage",
+      "source_order": 79,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1124,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "RING_WIZARDRY",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_ENCHANT",
+      "tile": "urand_mage",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [
+        "archmagi"
+      ],
+      "properties": {},
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_SHIELDING",
+      "name": "brooch of Shielding",
+      "source_order": 80,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1130,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "AMU_GUARDIAN_SPIRIT",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_MAGIC",
+      "tile": "urand_brooch_of_shielding",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "sh": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_RCLOUDS",
+      "name": "robe of Clouds",
+      "source_order": 81,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1136,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_ROBE",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "*Thunder rCloud",
+      "description": "It occasionally creates storm clouds above nearby enemies.\n+It grants its wearer immunity to clouds.",
+      "brand_description": "",
+      "colour": "ETC_MIST",
+      "tile": "urand_clouds",
+      "tile_equipment": "robe_clouds",
+      "type": "",
+      "flags": [
+        "elec"
+      ],
+      "properties": {
+        "plus": 3
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_PONDERING",
+      "name": "hat of Pondering",
+      "source_order": 82,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1148,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_HAT",
+      "fallback": "",
+      "brand": "SPARM_PONDEROUSNESS",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTRED",
+      "tile": "urand_pondering",
+      "tile_equipment": "wizard_bluegreen",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "int": 5,
+        "mp": 10,
+        "plus": 3,
+        "will": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_DEMON_AXE",
+      "name": "obsidian axe",
+      "source_order": 83,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1159,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_BROAD_AXE",
+      "fallback": "",
+      "brand": "SPWPN_VORPAL",
+      "fallback_brand": "SPWPN_PAIN",
+      "appearance": "",
+      "inscription": "Mesm",
+      "description": "Its wielder is mesmerised by any visible foes.\n+It cannot be unequipped while any foes are visible.",
+      "brand_description": "It occasionally summons demons to assist the wielder when it strikes\nin combat.",
+      "colour": "ETC_UNHOLY",
+      "tile": "spwpn_demon_axe",
+      "tile_equipment": "demon_axe",
+      "type": "",
+      "flags": [
+        "evil",
+        "seeinv",
+        "fly",
+        "drain"
+      ],
+      "properties": {
+        "plus": 14
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_LIGHTNING_SCALES",
+      "name": "lightning scales",
+      "source_order": 84,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1175,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_BARDING",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "swift,",
+      "description": "It allows the wearer to cover ground more swiftly.",
+      "brand_description": "",
+      "colour": "ETC_ELECTRICITY",
+      "tile": "urand_lightning_scales",
+      "tile_equipment": "lightning_scales",
+      "type": "",
+      "flags": [
+        "elec"
+      ],
+      "properties": {
+        "plus": 6
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_BLACK_KNIGHT_HORSE",
+      "name": "Black Knight's barding",
+      "source_order": 85,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1185,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_BARDING",
+      "fallback": "",
+      "brand": "SPARM_PONDEROUSNESS",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_UNHOLY",
+      "tile": "urand_bk_barding",
+      "tile_equipment": "black_knight",
+      "type": "",
+      "flags": [
+        "poison",
+        "evil"
+      ],
+      "properties": {
+        "life": 1,
+        "plus": 10
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_VITALITY",
+      "name": "amulet of Vitality",
+      "source_order": 86,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1196,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "AMU_MANA_REGENERATION",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "RegenMP++",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_MUTAGENIC",
+      "tile": "urand_vitality",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [
+        "skip_ego",
+        "evil"
+      ],
+      "properties": {
+        "regen": 2,
+        "value": 1000
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_AUTUMN_KATANA",
+      "name": "autumn katana",
+      "source_order": 87,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1205,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_LONG_SWORD",
+      "fallback": "OBJ_WEAPONS/WPN_DOUBLE_SWORD",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "vorpal, manifold assault",
+      "description": "It sometimes launches melee attacks against multiple visible enemies.",
+      "brand_description": "",
+      "colour": "LIGHTRED",
+      "tile": "urand_katana",
+      "tile_equipment": "katana_slant",
+      "type": "katana",
+      "flags": [],
+      "properties": {
+        "base_acc": 2,
+        "base_dam": 4,
+        "base_delay": -2,
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_DEVASTATOR",
+      "name": "shillelagh \"Devastator\"",
+      "source_order": 88,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1219,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_CLUB",
+      "fallback": "OBJ_WEAPONS/WPN_EVENINGSTAR",
+      "brand": "",
+      "fallback_brand": "SPWPN_VORPAL",
+      "appearance": "",
+      "inscription": "shatter",
+      "description": "",
+      "brand_description": "It releases a powerful concussive burst when it strikes, dealing\nextra damage to the target and all other foes adjacent to them.",
+      "colour": "WHITE",
+      "tile": "urand_shillelagh",
+      "tile_equipment": "shillelagh",
+      "type": "shillelagh",
+      "flags": [
+        "special"
+      ],
+      "properties": {
+        "base_dam": 3,
+        "plus": 6,
+        "value": 600
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 11
+      }
+    },
+    {
+      "id": "UNRAND_DRAGONSKIN",
+      "name": "dragonskin cloak",
+      "source_order": 89,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1236,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_CLOAK",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "opalescent scaly cloak",
+      "inscription": "",
+      "description": "It grants the wearer a chance to resist fire, cold, poison,\nelectricity, acid, and negative energy.",
+      "brand_description": "",
+      "colour": "ETC_HEAL",
+      "tile": "urand_dragonskin",
+      "tile_equipment": "dragonskin",
+      "type": "",
+      "flags": [
+        "nogen"
+      ],
+      "properties": {
+        "plus": 4
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_OCTOPUS_KING_RING",
+      "name": "ring of the Octopus King",
+      "source_order": 90,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1249,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "RING_FIRST_RING",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_WATER",
+      "tile": "urand_octoring",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [
+        "unided",
+        "no_upgrade"
+      ],
+      "properties": {
+        "ac": 2,
+        "ev": 2,
+        "hp": 2,
+        "sh": 2
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_WOE",
+      "name": "Axe of Woe",
+      "source_order": 91,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1260,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_EXECUTIONERS_AXE",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_BLOOD",
+      "tile": "urand_axe_of_woe",
+      "tile_equipment": "axe_of_woe",
+      "type": "",
+      "flags": [
+        "nogen",
+        "no_upgrade"
+      ],
+      "properties": {},
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_MOON_TROLL_LEATHER_ARMOUR",
+      "name": "moon troll leather armour",
+      "source_order": 92,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1271,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_TROLL_LEATHER_ARMOUR",
+      "fallback": "",
+      "brand": "SPARM_SPIRIT_SHIELD",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_SHIMMER_BLUE",
+      "tile": "urand_moon_troll_leather_armour",
+      "tile_equipment": "moon_troll_leather_armour",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "mp": 5,
+        "plus": 4,
+        "regen": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_FINGER_AMULET",
+      "name": "macabre finger necklace",
+      "source_order": 93,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1281,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "AMU_NOTHING",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "It enables you to equip an extra ring.",
+      "brand_description": "",
+      "colour": "ETC_BONE",
+      "tile": "urand_finger",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "life": 1,
+        "value": 400
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_SPIDER",
+      "name": "boots of the spider",
+      "source_order": 94,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1290,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_BOOTS",
+      "fallback": "",
+      "brand": "SPARM_JUMPING",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTMAGENTA",
+      "tile": "urand_spider",
+      "tile_equipment": "spider",
+      "type": "",
+      "flags": [
+        "nogen"
+      ],
+      "properties": {
+        "plus": 3,
+        "stealth": 1
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_DARK_MAUL",
+      "name": "dark maul",
+      "source_order": 95,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1303,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_GREAT_MACE",
+      "fallback": "",
+      "brand": "SPWPN_VORPAL",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTRED",
+      "tile": "urand_dark_maul",
+      "tile_equipment": "dark_maul",
+      "type": "maul",
+      "flags": [],
+      "properties": {
+        "base_acc": 2,
+        "base_dam": 35,
+        "base_delay": 13,
+        "plus": 10
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_HIGH_COUNCIL",
+      "name": "hat of the High Council",
+      "source_order": 96,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1315,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_HAT",
+      "fallback": "",
+      "brand": "SPARM_ARCHMAGI",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "Wiz-",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTGREEN",
+      "tile": "urand_high_council",
+      "tile_equipment": "wizard_lightgreen",
+      "type": "",
+      "flags": [
+        "nogen"
+      ],
+      "properties": {
+        "plus": 2,
+        "stealth": -1
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_ARC_BLADE",
+      "name": "arc blade",
+      "source_order": 97,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1329,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_RAPIER",
+      "fallback": "OBJ_WEAPONS/WPN_QUICK_BLADE",
+      "brand": "",
+      "fallback_brand": "SPWPN_ELECTROCUTION",
+      "appearance": "",
+      "inscription": "discharge,",
+      "description": "",
+      "brand_description": "It occasionally unleashes powerful arcs of lightning upon striking a\nfoe. These may arc to other adjacent creatures (including the wielder, but\ndealing reduced damage to them) before grounding out.",
+      "colour": "ETC_ELECTRICITY",
+      "tile": "urand_arc_blade",
+      "tile_equipment": "arc_blade",
+      "type": "",
+      "flags": [
+        "elec"
+      ],
+      "properties": {
+        "plus": 8,
+        "value": 600
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_SPELLBINDER",
+      "name": "demon whip \"Spellbinder\"",
+      "source_order": 98,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1344,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_DEMON_WHIP",
+      "fallback": "",
+      "brand": "SPWPN_ANTIMAGIC",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "It unleashes wild and unpredictable magical effects upon striking\na wizard or a creature with magical abilities.",
+      "colour": "ETC_ENCHANT",
+      "tile": "urand_spellbinder",
+      "tile_equipment": "spellbinder",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 5,
+        "will": 1
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_ORDER",
+      "name": "lajatang of Order",
+      "source_order": 99,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1356,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_LAJATANG",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "SPWPN_HOLY_WRATH",
+      "appearance": "",
+      "inscription": "silver,",
+      "description": "",
+      "brand_description": "It inflicts extra damage upon those it strikes, and deals\nsubstantially increased damage to chaotic, mutated and magically transformed\nbeings.",
+      "colour": "ETC_SILVER",
+      "tile": "urand_order",
+      "tile_equipment": "order",
+      "type": "",
+      "flags": [
+        "rMut"
+      ],
+      "properties": {
+        "plus": 7
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_FIRESTARTER",
+      "name": "great mace \"Firestarter\"",
+      "source_order": 100,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1370,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_GREAT_MACE",
+      "fallback": "",
+      "brand": "SPWPN_FLAMING",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "inner flame,",
+      "description": "It grants immunity to clouds of flame.",
+      "brand_description": "It burns those it strikes, dealing additional fire damage.\n+\n+It fills those it strikes with an explosive inner flame.",
+      "colour": "RED",
+      "tile": "urand_firestarter",
+      "tile_equipment": "firestarter",
+      "type": "",
+      "flags": [
+        "skip_ego"
+      ],
+      "properties": {
+        "fire": 2,
+        "plus": 7
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_ORANGE_CRYSTAL_PLATE_ARMOUR",
+      "name": "orange crystal plate armour",
+      "source_order": 101,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1386,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_CRYSTAL_PLATE_ARMOUR",
+      "fallback": "",
+      "brand": "SPARM_ARCHMAGI",
+      "fallback_brand": "SPWPN_NORMAL",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "LIGHTRED",
+      "tile": "urand_orange_crystal",
+      "tile_equipment": "orange_crystal",
+      "type": "",
+      "flags": [
+        "clarity"
+      ],
+      "properties": {
+        "int": 3,
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_MAJIN",
+      "name": "Majin-Bo",
+      "source_order": 102,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1397,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_QUARTERSTAFF",
+      "fallback": "OBJ_WEAPONS/WPN_LAJATANG",
+      "brand": "SPWPN_VAMPIRISM",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "vamp,",
+      "description": "Its wielder's spells cost health as well as magical power.",
+      "brand_description": "It heals its wielder for a portion of the damage dealt\nwhen they wound a living foe with it or with a spell.",
+      "colour": "ETC_UNHOLY",
+      "tile": "spwpn_majin",
+      "tile_equipment": "majin",
+      "type": "",
+      "flags": [
+        "skip_ego"
+      ],
+      "properties": {
+        "int": 6,
+        "mp": 6,
+        "plus": 6
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_GYRE",
+      "name": "pair of quick blades \"Gyre\" and \"Gimble\"",
+      "source_order": 103,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1414,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_QUICK_BLADE",
+      "fallback": "",
+      "brand": "SPWPN_PROTECTION",
+      "fallback_brand": "SPWPN_VORPAL",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_ENCHANT",
+      "tile": "urand_gyre",
+      "tile_equipment": "gyre",
+      "type": "pair of quick blades",
+      "flags": [],
+      "properties": {
+        "plus": 12
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_ETHERIC_CAGE",
+      "name": "Maxwell's etheric cage",
+      "source_order": 104,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1425,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_HELMET",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "RegenMP+",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_ELECTRICITY",
+      "tile": "urand_etheric_cage",
+      "tile_equipment": "etheric_cage",
+      "type": "",
+      "flags": [
+        "mutate",
+        "elec",
+        "chaotic",
+        "nogen"
+      ],
+      "properties": {
+        "mp": 4,
+        "plus": 0,
+        "value": 400
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_ETERNAL_TORMENT",
+      "name": "crown of Eternal Torment",
+      "source_order": 105,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1439,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_HAT",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "rTorment HP--",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_DARK",
+      "tile": "urand_eternal_torment",
+      "tile_equipment": "eternal_torment",
+      "type": "",
+      "flags": [
+        "evil",
+        "seeinv",
+        "nogen",
+        "drain"
+      ],
+      "properties": {
+        "life": 3,
+        "plus": 3
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_VINES",
+      "name": "robe of Vines",
+      "source_order": 106,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1452,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_ROBE",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "NoPotionHeal",
+      "description": "Its wearer cannot be healed by potions.",
+      "brand_description": "",
+      "colour": "GREEN",
+      "tile": "urand_vines",
+      "tile_equipment": "vines",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 1,
+        "regen": 4,
+        "value": 800
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_KRYIAS",
+      "name": "Kryia's mail coat",
+      "source_order": 107,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1464,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_SCALE_MAIL",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "PotionHeal*2",
+      "description": "Potions are twice as effective at healing its wearer.",
+      "brand_description": "",
+      "colour": "LIGHTCYAN",
+      "tile": "urand_kryias",
+      "tile_equipment": "kryias",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "cold": 1,
+        "plus": 7,
+        "value": 600
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 11
+      }
+    },
+    {
+      "id": "UNRAND_FROSTBITE",
+      "name": "frozen axe \"Frostbite\"",
+      "source_order": 108,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1476,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_EXECUTIONERS_AXE",
+      "fallback": "",
+      "brand": "SPWPN_FREEZING",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "freezing cloud,",
+      "description": "It grants immunity to clouds of freezing vapour.",
+      "brand_description": "It freezes those it strikes, dealing additional cold damage. It can\nalso slow down cold-blooded creatures.\n+\n+It occasionally leaves clouds of freezing vapour upon striking a foe.",
+      "colour": "ETC_ICE",
+      "tile": "urand_frostbite",
+      "tile_equipment": "frostbite",
+      "type": "",
+      "flags": [
+        "skip_ego",
+        "fly",
+        "noises"
+      ],
+      "properties": {
+        "cold": 1,
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_TALOS",
+      "name": "armour of Talos",
+      "source_order": 109,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1493,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_PLATE_ARMOUR",
+      "fallback": "",
+      "brand": "SPARM_PONDEROUSNESS",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_FIRE",
+      "tile": "urand_talos",
+      "tile_equipment": "talos",
+      "type": "",
+      "flags": [
+        "nogen"
+      ],
+      "properties": {
+        "fire": 1,
+        "plus": 12
+      },
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_WARLOCK_MIRROR",
+      "name": "warlock's mirror",
+      "source_order": 110,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1506,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_BUCKLER",
+      "fallback": "",
+      "brand": "SPARM_REFLECTION",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "It can block and reflect piercing ranged attacks and magical attacks\nagainst the wielder's willpower.",
+      "brand_description": "",
+      "colour": "ETC_SILVER",
+      "tile": "urand_warlock",
+      "tile_equipment": "buckler_warlock",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 3,
+        "value": 400
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_INVISIBILITY",
+      "name": "amulet of invisibility",
+      "source_order": 111,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1518,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "AMU_NOTHING",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "WHITE",
+      "tile": "urand_cekugob",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [
+        "inv",
+        "nogen"
+      ],
+      "properties": {},
+      "generation": {
+        "mode": "none"
+      }
+    },
+    {
+      "id": "UNRAND_THERMIC_ENGINE",
+      "name": "Maxwell's thermic engine",
+      "source_order": 112,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1525,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_DOUBLE_SWORD",
+      "fallback": "",
+      "brand": "SPWPN_FLAMING",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "freeze,",
+      "description": "It becomes more effective when it hits something. This effect fades\nover time.",
+      "brand_description": "It freezes those it strikes, dealing additional cold damage. It can\nalso slow down cold-blooded creatures.",
+      "colour": "ETC_VEHUMET",
+      "tile": "urand_thermic_engine",
+      "tile_equipment": "thermic_engine",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 2
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_RIFT",
+      "name": "demon trident \"Rift\"",
+      "source_order": 113,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1539,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_DEMON_TRIDENT",
+      "fallback": "",
+      "brand": "SPWPN_DISTORTION",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "reach+",
+      "description": "",
+      "brand_description": "It can reach especially far, and its reaching attacks ignore other\ncreatures in the way.",
+      "colour": "ETC_WARP",
+      "tile": "urand_rift",
+      "tile_equipment": "rift",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_BATTLE",
+      "name": "staff of Battle",
+      "source_order": 114,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1551,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_STAFF",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "It enhances your conjuration magic.\n+It summons a battlesphere in combat, with strength depending on Conjurations\nskill.\n+Its strikes trigger the battlesphere's blasts.",
+      "brand_description": "",
+      "colour": "ETC_MAGIC",
+      "tile": "urand_staff_of_battle",
+      "tile_equipment": "battle_staff",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 0,
+        "value": 800
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_EMBRACE",
+      "name": "Cigotuvi's embrace",
+      "source_order": 115,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1564,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_LEATHER_ARMOUR",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "rMiasma",
+      "description": "It gathers nearby corpses to temporarily increase the armour it\nprovides.\n+It protects you from foul pestilence.",
+      "brand_description": "",
+      "colour": "ETC_UNHOLY",
+      "tile": "urand_cigotuvi",
+      "tile_equipment": "bplate_green",
+      "type": "",
+      "flags": [
+        "drain",
+        "evil",
+        "special",
+        "no_upgrade"
+      ],
+      "properties": {
+        "life": 1,
+        "plus": 4
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_SEVEN_LEAGUE_BOOTS",
+      "name": "seven-league boots",
+      "source_order": 116,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1579,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_BOOTS",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "Rampage+∞",
+      "description": "Its wearer moves as far as possible in that direction when moving\ntowards enemies.",
+      "brand_description": "",
+      "colour": "ETC_ENCHANT",
+      "tile": "urand_seven_league_boots",
+      "tile_equipment": "seven_league_boots",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 3,
+        "value": 400
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_POWER_GLOVES",
+      "name": "Mad Mage's Maulers",
+      "source_order": 117,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1590,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_GLOVES",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "Infuse+∞ RegenMP",
+      "description": "It empowers its wearer's blows with all of their magic.\n+It causes its wearer's magical reserves to regenerate more quickly.",
+      "brand_description": "",
+      "colour": "ETC_MAGIC",
+      "tile": "urand_power_gloves",
+      "tile_equipment": "glove_brown",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "int": -3,
+        "plus": 3,
+        "value": 400
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_DREAMSHARD_NECKLACE",
+      "name": "dreamshard necklace",
+      "source_order": 118,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1603,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "AMU_NOTHING",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "*Dream",
+      "description": "It shatters if its wearer takes lethal or near-lethal damage,\npreventing the blow and releasing protective dreams that heal and fight\nfor the wearer.",
+      "brand_description": "",
+      "colour": "ETC_SILVER",
+      "tile": "urand_dreamshard",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [
+        "drain",
+        "special"
+      ],
+      "properties": {
+        "value": 2000
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_DELATRAS_GLOVES",
+      "name": "Delatra's gloves",
+      "source_order": 119,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1614,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_GLOVES",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "ID++",
+      "description": "It heals its wearer when they drink unknown potions.\n+It restores its wearer's MP when they read unknown scrolls.",
+      "brand_description": "",
+      "colour": "BLUE",
+      "tile": "urand_delatra",
+      "tile_equipment": "glove_blue",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 1,
+        "value": 100
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 6
+      }
+    },
+    {
+      "id": "UNRAND_WOODCUTTERS_AXE",
+      "name": "woodcutter's axe",
+      "source_order": 120,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1625,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_BATTLEAXE",
+      "fallback": "",
+      "brand": "SPWPN_VORPAL",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "BROWN",
+      "tile": "urand_woodcutters_axe",
+      "tile_equipment": "axe_short",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "base_delay": -7,
+        "plus": 3
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 9
+      }
+    },
+    {
+      "id": "UNRAND_THROATCUTTER",
+      "name": "Throatcutter",
+      "source_order": 121,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1634,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_LONG_SWORD",
+      "fallback": "OBJ_WEAPONS/WPN_SCIMITAR",
+      "brand": "SPWPN_DRAINING",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "coup de grace",
+      "description": "",
+      "brand_description": "It may instantly kill foes which have little health.",
+      "colour": "LIGHTRED",
+      "tile": "urand_throatcutter",
+      "tile_equipment": "throatcutter",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 7
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 9
+      }
+    },
+    {
+      "id": "UNRAND_MEEK",
+      "name": "staff of the Meek",
+      "source_order": 122,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1645,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_QUARTERSTAFF",
+      "fallback": "",
+      "brand": "SPWPN_PROTECTION",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "meekguard",
+      "description": "",
+      "brand_description": "It provides extra protection to wielders with little health.",
+      "colour": "WHITE",
+      "tile": "urand_meek",
+      "tile_equipment": "staff_mage_two",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 7
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 11
+      }
+    },
+    {
+      "id": "UNRAND_CONDEMNATION",
+      "name": "trishula \"Condemnation\"",
+      "source_order": 123,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1655,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_TRISHULA",
+      "fallback": "",
+      "brand": "SPWPN_HOLY_WRATH",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "anguish,",
+      "description": "",
+      "brand_description": "It inflicts anguish, making its victims' attacks reflect back on\nthem.",
+      "colour": "ETC_HOLY",
+      "tile": "urand_condemnation",
+      "tile_equipment": "condemnation",
+      "type": "",
+      "flags": [
+        "fly",
+        "noises"
+      ],
+      "properties": {
+        "life": 1,
+        "plus": 8
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_ELEMENTAL_VULNERABILITY",
+      "name": "amulet of Elemental Vulnerability",
+      "source_order": 124,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1669,
+      "class": "OBJ_JEWELLERY",
+      "kind_id": "AMU_NOTHING",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "ETC_VEHUMET",
+      "tile": "urand_elemental_vulnerability",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [
+        "poison"
+      ],
+      "properties": {
+        "ac": 8,
+        "cold": -2,
+        "fire": -2
+      },
+      "generation": {
+        "mode": "random",
+        "preferred_max_depth": 11
+      }
+    },
+    {
+      "id": "UNRAND_MOUNTAIN_BOOTS",
+      "name": "mountain boots",
+      "source_order": 125,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1678,
+      "class": "OBJ_ARMOUR",
+      "kind_id": "ARM_BOOTS",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "steadfast,",
+      "description": "",
+      "brand_description": "It prevents involuntary movement, except for blinking,\nteleportation, or banishment.",
+      "colour": "ETC_MOUNTAIN",
+      "tile": "urand_mountain",
+      "tile_equipment": "spider",
+      "type": "",
+      "flags": [
+        "special"
+      ],
+      "properties": {
+        "cold": 1,
+        "plus": 3
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_LOCHABER_AXE",
+      "name": "lochaber axe",
+      "source_order": 126,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1690,
+      "class": "OBJ_WEAPONS",
+      "kind_id": "WPN_BARDICHE",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "reach-cleave, poleaxe",
+      "description": "",
+      "brand_description": "It can be evoked to extend its reach, and strikes at all foes within reach, dealing less damage to those not targeted.\n+It uses either Axes or Polearms skill, whichever is higher.",
+      "colour": "ETC_IRON",
+      "tile": "urand_lochaber_axe",
+      "tile_equipment": "lochaber_axe",
+      "type": "lochaber axe",
+      "flags": [],
+      "properties": {
+        "base_acc": -1,
+        "base_dam": 1,
+        "base_delay": 1,
+        "plus": 5
+      },
+      "generation": {
+        "mode": "random"
+      }
+    },
+    {
+      "id": "UNRAND_DUMMY2",
+      "name": "DUMMY UNRANDART 2",
+      "source_order": 127,
+      "source_path": "crawl-ref/source/art-data.txt",
+      "source_line": 1704,
+      "class": "OBJ_UNASSIGNED",
+      "kind_id": "250",
+      "fallback": "",
+      "brand": "",
+      "fallback_brand": "",
+      "appearance": "",
+      "inscription": "",
+      "description": "",
+      "brand_description": "",
+      "colour": "BLACK",
+      "tile": "",
+      "tile_equipment": "",
+      "type": "",
+      "flags": [],
+      "properties": {
+        "plus": 250
+      },
+      "generation": {
+        "mode": "none"
+      }
+    }
+  ]
+}

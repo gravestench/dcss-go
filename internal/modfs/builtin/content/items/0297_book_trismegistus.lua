@@ -4,6 +4,7 @@
 -- Name Line: 1189
 
 local categories = require("constants.catalog")
+local spells = require("ids.spells")
 
 local definition = {
     id = "BOOK_TRISMEGISTUS",
@@ -19,6 +20,15 @@ local definition = {
         kind = "static",
     },
     explicitly_removed = false,
+    -- Source: crawl-ref/source/book-data.h
+    generation = {
+        mode = "random",
+        spells = {
+            spells.SPELL_IGNITE_POISON,
+            spells.SPELL_MEPHITIC_CLOUD,
+            spells.SPELL_FREEZING_CLOUD,
+        },
+    },
 }
 
 register.definition(categories.ITEMS, definition)

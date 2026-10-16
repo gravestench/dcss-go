@@ -50,12 +50,30 @@ func copySkillTrainingComponent(
 }
 
 func validateSavedItem(record save.EntityRecord) error {
-	if (record.Position == nil) == (record.CarriedBy == nil) ||
-		record.Actor != nil {
+	locations := 0
+
+	if record.Position != nil {
+		locations++
+	}
+
+	if record.CarriedBy != nil {
+		locations++
+	}
+
+	if record.ReservedBy != nil {
+		locations++
+	}
+
+	if locations != 1 || record.Actor != nil {
 		return fmt.Errorf(
-			"item %d must have exactly one of position or carrier, never both",
+			"item %d must have exactly one position, carrier, or reservation",
 			record.ID,
 		)
+	}
+
+	if record.ReservedBy != nil &&
+		(record.ReservedBy.Owner == 0 || uint64(record.ReservedBy.Owner) == record.ID) {
+		return fmt.Errorf("item %d has invalid reservation owner", record.ID)
 	}
 
 	if savedItemHasActorComponents(record) {
@@ -69,6 +87,7 @@ func validateSavedItem(record save.EntityRecord) error {
 	if record.CarriedBy == nil ||
 		record.CarriedBy.Holder == 0 ||
 		record.Position != nil ||
+		record.ReservedBy != nil ||
 		record.Equipped.Slot == "" {
 		return fmt.Errorf("item %d has invalid equipped slot or carrier", record.ID)
 	}
@@ -182,10 +201,11 @@ func (g *Game) Snapshot() save.Snapshot {
 			AI:           copyComponent(g.stores.AI, entity),
 			BandFollower: copyComponent(g.stores.Followers, entity),
 
-			Item:      copyComponent(g.stores.Items, entity),
-			Corpse:    copyComponent(g.stores.Corpses, entity),
-			CarriedBy: copyComponent(g.stores.CarriedBy, entity),
-			Equipped:  copyComponent(g.stores.Equipped, entity),
+			Item:       copyComponent(g.stores.Items, entity),
+			Corpse:     copyComponent(g.stores.Corpses, entity),
+			CarriedBy:  copyComponent(g.stores.CarriedBy, entity),
+			ReservedBy: copyComponent(g.stores.ReservedBy, entity),
+			Equipped:   copyComponent(g.stores.Equipped, entity),
 
 			Dynamic: g.savedLuaComponents(entity),
 		})

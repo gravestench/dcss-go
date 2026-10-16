@@ -2,6 +2,8 @@ local catalog = require("policy.catalog")
 local items = require("policy.inventory.items")
 local enchant = require("policy.combat.monster_enchant")
 local forms = require("policy.magic.effects.forms.player")
+local component = require("constants.component")
+local artefact_ids = require("ids.artefact_properties")
 
 local equipment = {}
 
@@ -37,11 +39,15 @@ function equipment.worn(ctx, holder, slots)
 
             local definition = catalog.get("items", item.kind_id)
             items.validate(item, definition)
+            local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
+            local ego = artefact and artefact.brand ~= "" and
+                artefact.brand or item.ego
 
             result[equipped.slot] = {
                 entity = entity,
                 item = item,
                 definition = definition,
+                ego = ego,
             }
         end
     end
@@ -77,11 +83,18 @@ function equipment.monster_melee(ctx, monster)
             end
 
             if not has_flag(definition.weapon.damage_flags, "DAMV_NON_MELEE") then
+                local properties = require(
+                    "policy.item_generation.artefacts.properties")
+
                 return {
-                    damage = definition.weapon.damage,
-                    hit = definition.weapon.hit,
+                    damage = definition.weapon.damage +
+                        properties.value(ctx, entry.entity,
+                            artefact_ids.BASE_DAMAGE),
+                    hit = definition.weapon.hit +
+                        properties.value(ctx, entry.entity,
+                            artefact_ids.BASE_ACCURACY),
                     plus = entry.item.plus,
-                    brand = entry.item.ego,
+                    brand = entry.ego,
                 }
             end
         end

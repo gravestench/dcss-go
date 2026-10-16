@@ -1,0 +1,3819 @@
+{
+  "schema_version": 1,
+  "source_revision": "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
+  "items": [
+    {
+      "id": "WPN_CLUB",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 10
+      }
+    },
+    {
+      "id": "WPN_WHIP",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 4
+      }
+    },
+    {
+      "id": "WPN_HAMMER",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_MACE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 9
+      }
+    },
+    {
+      "id": "WPN_FLAIL",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 8
+      }
+    },
+    {
+      "id": "WPN_MORNINGSTAR",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 7
+      }
+    },
+    {
+      "id": "WPN_SPIKED_FLAIL",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_DIRE_FLAIL",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 2
+      }
+    },
+    {
+      "id": "WPN_EVENINGSTAR",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_GREAT_MACE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 3
+      }
+    },
+    {
+      "id": "WPN_DAGGER",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 10
+      }
+    },
+    {
+      "id": "WPN_QUICK_BLADE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_SHORT_SWORD",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 8
+      }
+    },
+    {
+      "id": "WPN_RAPIER",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 8
+      }
+    },
+    {
+      "id": "WPN_FALCHION",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 7
+      }
+    },
+    {
+      "id": "WPN_LONG_SWORD",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 7
+      }
+    },
+    {
+      "id": "WPN_SCIMITAR",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 6
+      }
+    },
+    {
+      "id": "WPN_GREAT_SWORD",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 6
+      }
+    },
+    {
+      "id": "WPN_HAND_AXE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 9
+      }
+    },
+    {
+      "id": "WPN_WAR_AXE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 7
+      }
+    },
+    {
+      "id": "WPN_BROAD_AXE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 4
+      }
+    },
+    {
+      "id": "WPN_BATTLEAXE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 6
+      }
+    },
+    {
+      "id": "WPN_EXECUTIONERS_AXE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_SPEAR",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 8
+      }
+    },
+    {
+      "id": "WPN_TRIDENT",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 6
+      }
+    },
+    {
+      "id": "WPN_HALBERD",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 5
+      }
+    },
+    {
+      "id": "WPN_GLAIVE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 5
+      }
+    },
+    {
+      "id": "WPN_BARDICHE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 1
+      }
+    },
+    {
+      "id": "WPN_BLOWGUN",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_ARBALEST",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 5
+      }
+    },
+    {
+      "id": "WPN_SHORTBOW",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 8
+      }
+    },
+    {
+      "id": "WPN_LONGBOW",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 2
+      }
+    },
+    {
+      "id": "WPN_DEMON_WHIP",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_GIANT_CLUB",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 1
+      }
+    },
+    {
+      "id": "WPN_GIANT_SPIKED_CLUB",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 1
+      }
+    },
+    {
+      "id": "WPN_DEMON_BLADE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_DOUBLE_SWORD",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_TRIPLE_SWORD",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_DEMON_TRIDENT",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_SCYTHE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_STAFF",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_QUARTERSTAFF",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 8
+      }
+    },
+    {
+      "id": "WPN_LAJATANG",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 2
+      }
+    },
+    {
+      "id": "WPN_SLING",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 8
+      }
+    },
+    {
+      "id": "WPN_BLESSED_FALCHION",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_BLESSED_LONG_SWORD",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_BLESSED_SCIMITAR",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_BLESSED_GREAT_SWORD",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_EUDEMON_BLADE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_BLESSED_DOUBLE_SWORD",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_BLESSED_TRIPLE_SWORD",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_SACRED_SCOURGE",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_TRISHULA",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_FUSTIBALUS",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_HAND_CROSSBOW",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_TRIPLE_CROSSBOW",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "WPN_CUTLASS",
+      "class": "OBJ_WEAPONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "commonness": 0
+      }
+    },
+    {
+      "id": "MI_DART",
+      "class": "OBJ_MISSILES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MI_NEEDLE",
+      "class": "OBJ_MISSILES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MI_ARROW",
+      "class": "OBJ_MISSILES",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MI_BOLT",
+      "class": "OBJ_MISSILES",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MI_JAVELIN",
+      "class": "OBJ_MISSILES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MI_STONE",
+      "class": "OBJ_MISSILES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MI_LARGE_ROCK",
+      "class": "OBJ_MISSILES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MI_SLING_BULLET",
+      "class": "OBJ_MISSILES",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MI_THROWING_NET",
+      "class": "OBJ_MISSILES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MI_BOOMERANG",
+      "class": "OBJ_MISSILES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_ROBE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_LEATHER_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_RING_MAIL",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_SCALE_MAIL",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_CHAIN_MAIL",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_PLATE_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_CLOAK",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_CAP",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_HAT",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_HELMET",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_GLOVES",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_BOOTS",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_BUCKLER",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_KITE_SHIELD",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_TOWER_SHIELD",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_CRYSTAL_PLATE_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_ANIMAL_SKIN",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_TROLL_HIDE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_TROLL_LEATHER_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_FIRE_DRAGON_HIDE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_FIRE_DRAGON_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_ICE_DRAGON_HIDE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_ICE_DRAGON_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_STEAM_DRAGON_HIDE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_STEAM_DRAGON_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_ACID_DRAGON_HIDE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_ACID_DRAGON_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_STORM_DRAGON_HIDE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_STORM_DRAGON_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_GOLD_DRAGON_HIDE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_GOLD_DRAGON_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_SWAMP_DRAGON_HIDE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_SWAMP_DRAGON_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_PEARL_DRAGON_HIDE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_PEARL_DRAGON_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_CENTAUR_BARDING",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_BARDING",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_SHADOW_DRAGON_HIDE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_SHADOW_DRAGON_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_QUICKSILVER_DRAGON_HIDE",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_QUICKSILVER_DRAGON_ARMOUR",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_SCARF",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ARM_ORB",
+      "class": "OBJ_ARMOUR",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "WAND_FLAME",
+      "class": "OBJ_WANDS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "WAND_PARALYSIS",
+      "class": "OBJ_WANDS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "WAND_DIGGING",
+      "class": "OBJ_WANDS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "WAND_ICEBLAST",
+      "class": "OBJ_WANDS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "WAND_POLYMORPH",
+      "class": "OBJ_WANDS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "WAND_CHARMING",
+      "class": "OBJ_WANDS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "WAND_ACID",
+      "class": "OBJ_WANDS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "WAND_MINDBURST",
+      "class": "OBJ_WANDS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "WAND_LIGHT",
+      "class": "OBJ_WANDS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "WAND_QUICKSILVER",
+      "class": "OBJ_WANDS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "WAND_ROOTS",
+      "class": "OBJ_WANDS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_RATION",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_BREAD_RATION",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_PEAR",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_APPLE",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_CHOKO",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_ROYAL_JELLY",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_UNUSED",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_FRUIT",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_PIZZA",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_APRICOT",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_ORANGE",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_BANANA",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_STRAWBERRY",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_RAMBUTAN",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_LEMON",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_GRAPE",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_SULTANA",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_LYCHEE",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_BEEF_JERKY",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_CHEESE",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_SAUSAGE",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_CHUNK",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "FOOD_AMBROSIA",
+      "class": "OBJ_FOOD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "SCR_IDENTIFY",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_VERY_COMMON",
+        "weight": 200
+      }
+    },
+    {
+      "id": "SCR_TELEPORTATION",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_COMMON",
+        "weight": 100
+      }
+    },
+    {
+      "id": "SCR_FEAR",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "SCR_NOISE",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "SCR_SUMMONING",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_RARE",
+        "weight": 15
+      }
+    },
+    {
+      "id": "SCR_ENCHANT_WEAPON",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "SCR_ENCHANT_ARMOUR",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "SCR_TORMENT",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_RARE",
+        "weight": 15
+      }
+    },
+    {
+      "id": "SCR_CURSE_WEAPON",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_NONE",
+        "weight": 0
+      }
+    },
+    {
+      "id": "SCR_CURSE_ARMOUR",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_NONE",
+        "weight": 0
+      }
+    },
+    {
+      "id": "SCR_IMMOLATION",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "SCR_BLINKING",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "SCR_MAGIC_MAPPING",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "SCR_FOG",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "SCR_ACQUIREMENT",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_VERY_RARE",
+        "weight": 9
+      }
+    },
+    {
+      "id": "SCR_BRAND_WEAPON",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_RARE",
+        "weight": 15
+      }
+    },
+    {
+      "id": "SCR_HOLY_WORD",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_NONE",
+        "weight": 0
+      }
+    },
+    {
+      "id": "SCR_VULNERABILITY",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "SCR_SILENCE",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_RARE",
+        "weight": 15
+      }
+    },
+    {
+      "id": "SCR_AMNESIA",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "SCR_CURSE_JEWELLERY",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_NONE",
+        "weight": 0
+      }
+    },
+    {
+      "id": "SCR_POISON",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "SCR_BUTTERFLIES",
+      "class": "OBJ_SCROLLS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 36
+      }
+    },
+    {
+      "id": "RING_REGENERATION",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_PROTECTION",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_PROTECTION_FROM_FIRE",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_POISON_RESISTANCE",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_PROTECTION_FROM_COLD",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_STRENGTH",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_SLAYING",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_SEE_INVISIBLE",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_RESIST_CORROSION",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_ATTENTION",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_TELEPORTATION",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_EVASION",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_SUSTAIN_ATTRIBUTES",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_STEALTH",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_DEXTERITY",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_INTELLIGENCE",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_WIZARDRY",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_MAGICAL_POWER",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_FLIGHT",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_LIFE_PROTECTION",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_WILLPOWER",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_FIRE",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_ICE",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RING_TELEPORT_CONTROL",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_RAGE",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_HARM",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_ACROBAT",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_MANA_REGENERATION",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_THE_GOURMAND",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_CONSERVATION",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_CONTROLLED_FLIGHT",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_INACCURACY",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_NOTHING",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_GUARDIAN_SPIRIT",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_FAITH",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_REFLECTION",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "AMU_REGENERATION",
+      "class": "OBJ_JEWELLERY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "POT_CURING",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_VERY_COMMON",
+        "weight": 192
+      }
+    },
+    {
+      "id": "POT_HEAL_WOUNDS",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_COMMON",
+        "weight": 105
+      }
+    },
+    {
+      "id": "POT_HASTE",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 67
+      }
+    },
+    {
+      "id": "POT_MIGHT",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 67
+      }
+    },
+    {
+      "id": "POT_BRILLIANCE",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 67
+      }
+    },
+    {
+      "id": "POT_ATTRACTION",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 67
+      }
+    },
+    {
+      "id": "POT_FLIGHT",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 67
+      }
+    },
+    {
+      "id": "POT_CANCELLATION",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_RARE",
+        "weight": 35
+      }
+    },
+    {
+      "id": "POT_AMBROSIA",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_RARE",
+        "weight": 35
+      }
+    },
+    {
+      "id": "POT_INVISIBILITY",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_RARE",
+        "weight": 35
+      }
+    },
+    {
+      "id": "POT_DEGENERATION",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 67
+      }
+    },
+    {
+      "id": "POT_EXPERIENCE",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_VERY_RARE",
+        "weight": 2
+      }
+    },
+    {
+      "id": "POT_MAGIC",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_RARE",
+        "weight": 35
+      }
+    },
+    {
+      "id": "POT_BERSERK_RAGE",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_RARE",
+        "weight": 35
+      }
+    },
+    {
+      "id": "POT_MUTATION",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 67
+      }
+    },
+    {
+      "id": "POT_RESISTANCE",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_RARE",
+        "weight": 35
+      }
+    },
+    {
+      "id": "POT_LIGNIFY",
+      "class": "OBJ_POTIONS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/item-prop.cc",
+        "rarity": "RARITY_UNCOMMON",
+        "weight": 67
+      }
+    },
+    {
+      "id": "BOOK_MINOR_MAGIC",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_MAGIC_DART",
+          "SPELL_CALL_IMP",
+          "SPELL_MEPHITIC_CLOUD"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_CONJURATIONS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_MAGIC_DART",
+          "SPELL_SEARING_RAY",
+          "SPELL_FULMINANT_PRISM"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_FLAMES",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_FOXFIRE",
+          "SPELL_CONJURE_FLAME",
+          "SPELL_INNER_FLAME",
+          "SPELL_FLAME_WAVE"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_FROST",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_FREEZE",
+          "SPELL_FROZEN_RAMPARTS",
+          "SPELL_HAILSTORM"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_WILDERNESS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SUMMON_FOREST",
+          "SPELL_SUMMON_MANA_VIPER",
+          "SPELL_SUMMON_CACTUS"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_FIRE",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_FIREBALL",
+          "SPELL_STARBURST",
+          "SPELL_IGNITION"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_ICE",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_FREEZING_CLOUD",
+          "SPELL_SIMULACRUM",
+          "SPELL_POLAR_VORTEX"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_SPATIAL_TRANSLOCATIONS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_BLINK",
+          "SPELL_BECKONING",
+          "SPELL_MANIFOLD_ASSAULT"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_HEXES",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_INNER_FLAME",
+          "SPELL_CAUSE_FEAR",
+          "SPELL_DISCORD"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_YOUNG_POISONERS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_STING",
+          "SPELL_POISONOUS_VAPOURS",
+          "SPELL_OLGREBS_TOXIC_RADIANCE"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_LIGHTNING",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_DISCHARGE",
+          "SPELL_LIGHTNING_BOLT",
+          "SPELL_MAXWELLS_COUPLING"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_DEATH",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_ANIMATE_DEAD",
+          "SPELL_HAUNT",
+          "SPELL_INFESTATION"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_MISFORTUNE",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_CONFUSING_TOUCH",
+          "SPELL_VIOLENT_UNRAVELLING",
+          "SPELL_ENFEEBLE"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_CHANGES",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_BEASTLY_APPENDAGE",
+          "SPELL_WEREBLOOD",
+          "SPELL_SPIDER_FORM"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_TRANSFIGURATIONS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_IRRADIATE",
+          "SPELL_BLADE_HANDS",
+          "SPELL_DRAGON_FORM"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_FEN",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SUMMON_FOREST",
+          "SPELL_NOXIOUS_BOG",
+          "SPELL_SUMMON_HYDRA"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_VAPOURS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_POISONOUS_VAPOURS",
+          "SPELL_CORPSE_ROT"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_NECROMANCY",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_NECROTISE",
+          "SPELL_VAMPIRIC_DRAINING",
+          "SPELL_AGONY"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_CALLINGS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SUMMON_SMALL_MAMMAL",
+          "SPELL_CALL_CANINE_FAMILIAR",
+          "SPELL_SUMMON_GUARDIAN_GOLEM"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_MALEDICT",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_ANGUISH",
+          "SPELL_ENFEEBLE"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_AIR",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SHOCK",
+          "SPELL_SWIFTNESS",
+          "SPELL_AIRSTRIKE"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_SKY",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SUMMON_LIGHTNING_SPIRE",
+          "SPELL_STORM_FORM",
+          "SPELL_MAXWELLS_COUPLING"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_WARP",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_DISPERSAL",
+          "SPELL_DISJUNCTION"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_ENVENOMATIONS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SPIDER_FORM",
+          "SPELL_OLGREBS_TOXIC_RADIANCE",
+          "SPELL_INTOXICATE"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_UNLIFE",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_ANIMATE_DEAD",
+          "SPELL_BORGNJORS_VILE_CLUTCH",
+          "SPELL_DEATH_CHANNEL"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_CONTROL",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_ENGLACIATION"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_BATTLE",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_WEREBLOOD",
+          "SPELL_OZOCUBUS_ARMOUR"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_GEOMANCY",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SANDBLAST",
+          "SPELL_PASSWALL",
+          "SPELL_STONE_ARROW"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_STONE",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_LEDAS_LIQUEFACTION",
+          "SPELL_STATUE_FORM"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_WIZARDRY",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_AGONY",
+          "SPELL_SPELLFORGED_SERVITOR"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_POWER",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_BATTLESPHERE",
+          "SPELL_IRON_SHOT",
+          "SPELL_SPELLFORGED_SERVITOR"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_CANTRIPS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_NECROTISE",
+          "SPELL_SUMMON_SMALL_MAMMAL",
+          "SPELL_APPORTATION"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_PARTY_TRICKS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_APPORTATION",
+          "SPELL_INTOXICATE"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_AKASHIC_RECORD",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_DISPERSAL",
+          "SPELL_MALIGN_GATEWAY",
+          "SPELL_DISJUNCTION"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_DEBILITATION",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SLOW",
+          "SPELL_VAMPIRIC_DRAINING",
+          "SPELL_CONFUSING_TOUCH"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_DRAGON",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_CAUSE_FEAR",
+          "SPELL_DRAGON_FORM",
+          "SPELL_DRAGON_CALL"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_BURGLARY",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_PASSWALL",
+          "SPELL_HIBERNATION",
+          "SPELL_SWIFTNESS"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_DREAMS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_HIBERNATION",
+          "SPELL_SPIDER_FORM",
+          "SPELL_ANGUISH"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_ALCHEMY",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SUBLIMATION_OF_BLOOD",
+          "SPELL_PETRIFY",
+          "SPELL_IRRADIATE"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_BEASTS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SUMMON_ICE_BEAST",
+          "SPELL_SUMMON_MANA_VIPER",
+          "SPELL_MONSTROUS_MENAGERIE"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_ANNIHILATIONS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_CHAIN_LIGHTNING",
+          "SPELL_FIRE_STORM",
+          "SPELL_SHATTER"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_GRAND_GRIMOIRE",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_MALIGN_GATEWAY",
+          "SPELL_SUMMON_HORRIBLE_THINGS"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_NECRONOMICON",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_BORGNJORS_REVIVIFICATION",
+          "SPELL_NECROMUTATION",
+          "SPELL_DEATHS_DOOR"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_RANDART_LEVEL",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": []
+      }
+    },
+    {
+      "id": "BOOK_RANDART_THEME",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": []
+      }
+    },
+    {
+      "id": "BOOK_MANUAL",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": []
+      }
+    },
+    {
+      "id": "BOOK_BUGGY_DESTRUCTION",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": []
+      }
+    },
+    {
+      "id": "BOOK_SPECTACLE",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_DAZZLING_FLASH",
+          "SPELL_ISKENDERUNS_MYSTIC_BLAST",
+          "SPELL_STARBURST"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_WINTER",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_OZOCUBUS_ARMOUR",
+          "SPELL_ENGLACIATION",
+          "SPELL_SIMULACRUM"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_SPHERES",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_BATTLESPHERE",
+          "SPELL_FIREBALL",
+          "SPELL_CONJURE_BALL_LIGHTNING",
+          "SPELL_IOOD"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_ARMAMENTS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_STONE_ARROW",
+          "SPELL_ANIMATE_ARMOUR",
+          "SPELL_LEHUDIBS_CRYSTAL_SPEAR"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_PAIN",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_NECROTISE",
+          "SPELL_AGONY"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_DECAY",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_CORPSE_ROT",
+          "SPELL_DISPEL_UNDEAD",
+          "SPELL_DEATH_CHANNEL"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_DISPLACEMENT",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_BECKONING",
+          "SPELL_GRAVITAS",
+          "SPELL_TELEPORT_OTHER"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_RIME",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_FROZEN_RAMPARTS",
+          "SPELL_ICE_FORM",
+          "SPELL_SUMMON_ICE_BEAST"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_EVERBURNING",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_CONJURE_FLAME",
+          "SPELL_IGNITE_POISON",
+          "SPELL_STICKY_FLAME"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_EARTH",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_LEDAS_LIQUEFACTION",
+          "SPELL_LRD",
+          "SPELL_STATUE_FORM"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_OZOCUBU",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_OZOCUBUS_ARMOUR",
+          "SPELL_OZOCUBUS_REFRIGERATION"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_SENSES",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_DAZZLING_FLASH",
+          "SPELL_AGONY",
+          "SPELL_SILENCE"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_MOON",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_GOLUBRIAS_PASSAGE",
+          "SPELL_SILENCE",
+          "SPELL_LEHUDIBS_CRYSTAL_SPEAR"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_BLASTING",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_FULMINANT_PRISM",
+          "SPELL_ISKENDERUNS_MYSTIC_BLAST",
+          "SPELL_LRD"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_IRON",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_ANIMATE_ARMOUR",
+          "SPELL_BLADE_HANDS",
+          "SPELL_IRON_SHOT"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_NEARBY",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_BLINK",
+          "SPELL_MANIFOLD_ASSAULT",
+          "SPELL_STORM_FORM"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_TUNDRA",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_HAILSTORM",
+          "SPELL_ICE_FORM",
+          "SPELL_SIMULACRUM"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_STORMS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_AIRSTRIKE",
+          "SPELL_SUMMON_LIGHTNING_SPIRE",
+          "SPELL_LIGHTNING_BOLT"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_WEAPONS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_TUKIMAS_DANCE",
+          "SPELL_PORTAL_PROJECTILE",
+          "SPELL_BLADE_HANDS"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_SLOTH",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_PETRIFY",
+          "SPELL_ENGLACIATION",
+          "SPELL_STATUE_FORM"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_BLOOD",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SUBLIMATION_OF_BLOOD",
+          "SPELL_WEREBLOOD",
+          "SPELL_SUMMON_HYDRA"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_THERE_AND_BACK",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_GRAVITAS",
+          "SPELL_TELEPORT_OTHER",
+          "SPELL_DISPERSAL"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_DANGEROUS_FRIENDS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SUMMON_GUARDIAN_GOLEM",
+          "SPELL_IOOD",
+          "SPELL_SPELLFORGED_SERVITOR"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_TOUCH",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_DISCHARGE",
+          "SPELL_STICKY_FLAME",
+          "SPELL_DISPEL_UNDEAD"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_CHAOS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_CONJURE_BALL_LIGHTNING",
+          "SPELL_DISJUNCTION",
+          "SPELL_DISCORD"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_UNRESTRAINED",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_OLGREBS_TOXIC_RADIANCE",
+          "SPELL_OZOCUBUS_REFRIGERATION",
+          "SPELL_IGNITION"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_BIOGRAPHIES_II",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_INTOXICATE",
+          "SPELL_BORGNJORS_VILE_CLUTCH",
+          "SPELL_NOXIOUS_BOG"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_BIOGRAPHIES_VII",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_TUKIMAS_DANCE",
+          "SPELL_GOLUBRIAS_PASSAGE",
+          "SPELL_VIOLENT_UNRAVELLING"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_TRISMEGISTUS",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_IGNITE_POISON",
+          "SPELL_MEPHITIC_CLOUD",
+          "SPELL_FREEZING_CLOUD"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_HUNTER",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_CALL_CANINE_FAMILIAR",
+          "SPELL_PORTAL_PROJECTILE",
+          "SPELL_LEDAS_LIQUEFACTION"
+        ]
+      }
+    },
+    {
+      "id": "BOOK_SCORCHING",
+      "class": "OBJ_BOOKS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/book-data.h",
+        "spells": [
+          "SPELL_SCORCH",
+          "SPELL_FLAME_WAVE",
+          "SPELL_SUMMON_CACTUS"
+        ]
+      }
+    },
+    {
+      "id": "STAFF_FIRE",
+      "class": "OBJ_STAVES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "STAFF_COLD",
+      "class": "OBJ_STAVES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "STAFF_POISON",
+      "class": "OBJ_STAVES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "STAFF_DEATH",
+      "class": "OBJ_STAVES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "STAFF_CONJURATION",
+      "class": "OBJ_STAVES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "STAFF_AIR",
+      "class": "OBJ_STAVES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "STAFF_EARTH",
+      "class": "OBJ_STAVES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ORB_ZOT",
+      "class": "OBJ_ORBS",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_BOTTLED_EFREET",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_FAN_OF_GALES",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_LAMP_OF_FIRE",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_STONE_OF_TREMORS",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_BUGGY_LANTERN_OF_SHADOWS",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_HORN_OF_GERYON",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_BOX_OF_BEASTS",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_CRYSTAL_BALL_OF_ENERGY",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_BUGGY_EBONY_CASKET",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_LIGHTNING_ROD",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_DECK_OF_ESCAPE",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_DECK_OF_DESTRUCTION",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_DECK_OF_DUNGEONS",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_DECK_OF_SUMMONING",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_DECK_OF_WONDERS",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_DECK_OF_PUNISHMENT",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_DECK_OF_WAR",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_DECK_OF_CHANGES",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_DECK_OF_DEFENCE",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_RUNE_OF_ZOT",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_QUAD_DAMAGE",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_PHIAL_OF_FLOODS",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_SACK_OF_SPIDERS",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_ZIGGURAT",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_PHANTOM_MIRROR",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_DECK_OF_ODDITIES",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_XOMS_CHESSBOARD",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_TIN_OF_TREMORSTONES",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "MISC_CONDENSER_VANE",
+      "class": "OBJ_MISCELLANY",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "CORPSE_BODY",
+      "class": "OBJ_CORPSES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "CORPSE_SKELETON",
+      "class": "OBJ_CORPSES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "OBJ_GOLD",
+      "class": "OBJ_GOLD",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "random",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ROD_LIGHTNING",
+      "class": "OBJ_RODS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ROD_SWARM",
+      "class": "OBJ_RODS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ROD_IGNITION",
+      "class": "OBJ_RODS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ROD_CLOUDS",
+      "class": "OBJ_RODS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ROD_DESTRUCTION",
+      "class": "OBJ_RODS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ROD_INACCURACY",
+      "class": "OBJ_RODS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ROD_WARDING",
+      "class": "OBJ_RODS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ROD_SHADOWS",
+      "class": "OBJ_RODS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ROD_IRON",
+      "class": "OBJ_RODS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "ROD_VENOM",
+      "class": "OBJ_RODS",
+      "explicitly_removed": true,
+      "generation": {
+        "mode": "none",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_SWAMP",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_SNAKE",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_SHOALS",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_SLIME",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_ELF",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_VAULTS",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_TOMB",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_DIS",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_GEHENNA",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_COCYTUS",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_TARTARUS",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_ABYSSAL",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_DEMONIC",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_MNOLEG",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_LOM_LOBON",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_CEREBOV",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_GLOORX_VLOQ",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_SPIDER",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    },
+    {
+      "id": "RUNE_FOREST",
+      "class": "OBJ_RUNES",
+      "explicitly_removed": false,
+      "generation": {
+        "mode": "forced",
+        "source_path": "crawl-ref/source/makeitem.cc"
+      }
+    }
+  ]
+}

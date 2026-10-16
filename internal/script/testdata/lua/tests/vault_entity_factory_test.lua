@@ -10,6 +10,7 @@ local spell = require("policy.ai.spell")
 local vault_items = require("policy.population.vault_items")
 local vault_spells = require("constants.vault_spell_override")
 local quality = require("constants.vault_item_quality")
+local weapon_brands = require("constants.weapon_brands")
 local terrain = require("constants.terrain")
 
 local test = {}
@@ -148,11 +149,13 @@ local function vault_items_keep_variant_and_quantity(ctx)
         kind_id = items.WPN_DAGGER,
         request = "good_item",
         quality = quality.GOOD,
+        allow_uniques = false,
     }, 1, 19, 10, origin)
     local superb_armour = vault_items.create(world, {
         kind_id = items.ARM_ROBE,
         request = "superb_item",
         quality = quality.SUPERB,
+        allow_uniques = false,
     }, 1, 20, 10, origin)
     local wand = vault_items.create(world, {
         kind_id = items.WAND_FLAME,
@@ -161,10 +164,10 @@ local function vault_items_keep_variant_and_quantity(ctx)
 
     harness.equal(ctx:get(exact_gold, component.ITEM).quantity, 17,
         "explicit gold quantity overrides random source quantity")
-    harness.equal(ctx:get(good_weapon, component.ITEM).plus, 2,
-        "good source weapon carries enchantment")
-    harness.equal(ctx:get(superb_armour, component.ITEM).plus, 5,
-        "superb source armour carries enchantment")
+    harness.equal(ctx:get(good_weapon, component.ITEM).ego,
+        weapon_brands.VENOM, "good source weapon uses brand table")
+    harness.equal(ctx:get(superb_armour, component.ITEM).plus, 0,
+        "source good armour may have zero enchantment")
     harness.equal(ctx:get(wand, component.ITEM).charges, 1,
         "source wand has usable charges")
 end

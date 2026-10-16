@@ -1,5 +1,6 @@
 -- Registered content domains. Definition files import the domain they use.
 local catalog = {
+    ARTEFACTS = "artefacts",
     BRANCHES = "branches",
     ITEMS = "items",
     JOBS = "jobs",

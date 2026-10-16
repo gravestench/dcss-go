@@ -4,6 +4,9 @@ local player_attributes = require("policy.character.attributes")
 local roll = require("policy.combat.roll")
 local brands = require("constants.weapon_brands")
 local items = require("policy.inventory.items")
+local component = require("constants.component")
+local artefact_properties = require("policy.item_generation.artefacts.properties")
+local artefact_ids = require("ids.artefact_properties")
 
 local delay = {}
 
@@ -35,9 +38,10 @@ function delay.minimum_skill(speed, skill_id)
     return 2 * (speed - delay.minimum_weapon(speed, skill_id))
 end
 
-function delay.minimum_launcher(kind)
+function delay.minimum_launcher(kind, speed)
     local weapon = kind.weapon
-    local minimum = delay.minimum_weapon(weapon.speed, weapon.skill_id)
+    local minimum = delay.minimum_weapon(speed or weapon.speed,
+        weapon.skill_id)
 
     -- fight.cc:912-960 gives crossbows a 10 aut minimum and longbows 6.
     if weapon.ammo_id == "MI_BOLT" then
@@ -153,14 +157,19 @@ function delay.projectile(ctx, time_taken, item_id)
         base = 10 + math.floor(kind.missile.damage / 2)
         reduction = fighter.skill(ctx, "SK_THROWING", 10)
     elseif kind.class == "OBJ_WEAPONS" and kind.weapon then
-        base = kind.weapon.speed
+        base = kind.weapon.speed + artefact_properties.value(ctx,
+            entity, artefact_ids.BASE_DELAY)
         local skill_id = kind.weapon.skill_id
         local skill10 = fighter.skill(ctx, skill_id, 10)
-        local minimum_delay = delay.minimum_launcher(kind)
+        local minimum_delay = delay.minimum_launcher(kind, base)
 
         reduction = math.min(skill10, 20 * (base - minimum_delay))
         minimum = 3
-        speed_brand = item.ego == brands.SPEED
+        local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
+        local effective_brand = artefact and artefact.brand ~= "" and
+            artefact.brand or item.ego
+
+        speed_brand = effective_brand == brands.SPEED
 
         local worn = equipment.worn(ctx, ctx:player(), { body = true })
         local body = worn.body and worn.body.definition.armour or nil

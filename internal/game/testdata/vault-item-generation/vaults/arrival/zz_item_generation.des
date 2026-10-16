@@ -1,0 +1,9 @@
+NAME: zz_item_generation
+TAGS: arrival
+WEIGHT: 100000000
+KITEM: d = random_item
+KITEM: e = good_item
+KITEM: f = random_gold q:17
+MAP
+@def
+ENDMAP

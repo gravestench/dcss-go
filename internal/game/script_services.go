@@ -39,6 +39,7 @@ func (g *Game) scriptServices() (script.Services, error) {
 		script.Host("core.item", stores.Items),
 		script.Host("core.corpse", stores.Corpses),
 		script.Host("core.carried_by", stores.CarriedBy),
+		script.Host("core.reserved_by", stores.ReservedBy),
 		script.Host("core.equipped", stores.Equipped),
 		script.Host("core.intent", stores.Intents),
 	}

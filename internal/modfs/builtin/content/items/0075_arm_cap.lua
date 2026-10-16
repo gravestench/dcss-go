@@ -33,6 +33,10 @@ local definition = {
         mundane = true,
         flags = mod.null,
     },
+    -- Source: crawl-ref/source/makeitem.cc
+    generation = {
+        mode = "forced",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

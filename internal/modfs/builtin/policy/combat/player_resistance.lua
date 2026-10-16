@@ -12,6 +12,8 @@ local staves = require("policy.inventory.staves")
 local resistance_ids = require("constants.resistance_ids")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
+local artefacts = require("policy.item_generation.artefacts.properties")
+local artefact_properties = require("ids.artefact_properties")
 
 local resistance = {}
 local willpower_pip = 40
@@ -41,6 +43,8 @@ function resistance.poison(ctx, player)
         capabilities.POISON_RESISTANCE)
     value = value + jewellery_effects.sum(ctx, player,
         jewellery_capabilities.POISON_RESISTANCE)
+    value = value + artefacts.sum_worn(ctx, player,
+        artefact_properties.POISON)
 
     if potion_resistance.active(ctx, player) then
         value = value + 1
@@ -61,7 +65,7 @@ function resistance.poison(ctx, player)
 
     for _, entry in pairs(worn) do
         if staves.resistance(entry.definition, resistance_ids.POISON) > 0 or
-            entry.item.ego == "SPARM_POISON_RESISTANCE" then
+            entry.ego == armour_egos.POISON_RESISTANCE then
             value = value + 1
         end
     end
@@ -75,10 +79,10 @@ function resistance.poison(ctx, player)
     return math.max(-1, value)
 end
 
--- The current item model has no artefact property record. Species mutations
--- are the represented source of clarity until artefacts join the catalog.
 function resistance.clarity(ctx, player)
-    return effects.sum(ctx, player, capabilities.CLARITY) > 0
+    return effects.sum(ctx, player, capabilities.CLARITY) > 0 or
+        artefacts.sum_worn(ctx, player,
+            artefact_properties.CLARITY) > 0
 end
 
 local function armour_willpower(entry)
@@ -109,6 +113,8 @@ function resistance.willpower(ctx, player)
     local pips = effects.sum(ctx, player, capabilities.WILLPOWER_PIPS)
     pips = pips + jewellery_effects.sum(ctx, player,
         jewellery_capabilities.WILLPOWER_PIPS)
+    pips = pips + artefacts.sum_worn(ctx, player,
+        artefact_properties.WILLPOWER)
     local worn = equipment.worn(ctx, player, {
         body = true,
         cloak = true,
@@ -122,9 +128,9 @@ function resistance.willpower(ctx, player)
             pips = pips + armour_willpower(entry)
         end
 
-        if entry.item.ego == armour_egos.WILLPOWER then
+        if entry.ego == armour_egos.WILLPOWER then
             pips = pips + 1
-        elseif entry.item.ego == armour_egos.GUILE then
+        elseif entry.ego == armour_egos.GUILE then
             pips = pips - 2
         end
 

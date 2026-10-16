@@ -10,6 +10,9 @@ local definition = {
     name = "ring of warding",
     class = classes.OBJ_JEWELLERY,
     stackable = false,
+    generation = {
+        mode = "none",
+    },
     jewellery = {
         kind = jewellery_kinds.RING,
         pluses = true,

@@ -217,6 +217,12 @@ func (g *Game) restoreLocationComponents(
 		}
 	}
 
+	if record.ReservedBy != nil {
+		if _, err := g.stores.ReservedBy.Set(entity, *record.ReservedBy); err != nil {
+			return err
+		}
+	}
+
 	if record.Equipped != nil {
 		if _, err := g.stores.Equipped.Set(entity, *record.Equipped); err != nil {
 			return err
@@ -227,6 +233,18 @@ func (g *Game) restoreLocationComponents(
 }
 
 func (g *Game) validateRestoredPlacement() error {
+	if _, err := g.scripts.Policy("save.validate_item_generation", nil); err != nil {
+		return err
+	}
+
+	if _, err := g.scripts.Policy("save.validate_artefacts", nil); err != nil {
+		return err
+	}
+
+	if _, err := g.scripts.Policy("save.validate_reservations", nil); err != nil {
+		return err
+	}
+
 	if _, err := g.scripts.Policy("save.validate_vault_entities", map[string]any{
 		"levels": g.vaultValidationLevels(),
 	}); err != nil {

@@ -27,7 +27,8 @@ local function eligible(ctx, _, entity)
     local item = ctx:get(entity, component.ITEM)
     local kind = catalog.get("items", item.kind_id)
 
-    return pool.eligible(kind)
+    return not ctx:has(entity, component.ITEM_ARTEFACT) and
+        pool.eligible(kind)
 end
 
 function brand_weapon.prepare(ctx, player, request)

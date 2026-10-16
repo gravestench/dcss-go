@@ -51,7 +51,7 @@ local function equipped_resistance(ctx, monster, definition)
             (slot == "body" or slot == "shield") then
             value = value + armour_resistance(kind)
 
-            if item.ego == armour_egos.POSITIVE_ENERGY then
+            if entry.ego == armour_egos.POSITIVE_ENERGY then
                 value = value + 1
             end
         elseif slot == "jewellery" and

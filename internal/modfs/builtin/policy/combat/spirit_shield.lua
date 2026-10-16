@@ -30,7 +30,7 @@ function spirit_shield.active(ctx, player)
     local worn = equipment.worn(ctx, player, armour_slots)
 
     for _, entry in pairs(worn) do
-        if entry.item.ego == armour_egos.SPIRIT_SHIELD then
+        if entry.ego == armour_egos.SPIRIT_SHIELD then
             return true
         end
     end

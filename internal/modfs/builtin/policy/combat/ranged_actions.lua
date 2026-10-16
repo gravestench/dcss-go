@@ -12,8 +12,28 @@ local player_health = require("policy.combat.player_health")
 local jelly = require("policy.mutations.effects.projectiles.jelly_missile")
 local classes = require("constants.item_classes")
 local categories = require("constants.catalog")
+local artefact_properties = require("policy.item_generation.artefacts.properties")
+local artefact_ids = require("ids.artefact_properties")
 
 local actions = {}
+
+local function launcher_profile(ctx, launcher)
+    local source = launcher.definition.weapon
+    local profile = {}
+
+    for name, value in pairs(source) do
+        profile[name] = value
+    end
+
+    profile.damage = profile.damage + artefact_properties.value(ctx,
+        launcher.entity, artefact_ids.BASE_DAMAGE)
+    profile.hit = profile.hit + artefact_properties.value(ctx,
+        launcher.entity, artefact_ids.BASE_ACCURACY)
+    profile.speed = profile.speed + artefact_properties.value(ctx,
+        launcher.entity, artefact_ids.BASE_DELAY)
+
+    return profile
+end
 
 local function adjacent(a, b)
     return a.level_id == b.level_id and
@@ -100,7 +120,7 @@ local function return_launcher(ctx, attacker, launcher, definition,
 
     reflection.begin(ctx, projectile.name)
 
-    local weapon = launcher.definition.weapon
+    local weapon = launcher_profile(ctx, launcher)
     local rebound = effect.resolve_launcher(ctx, attacker, definition,
         defense, weapon, launcher.item, projectile)
     local extra = 0
@@ -108,7 +128,7 @@ local function return_launcher(ctx, attacker, launcher, definition,
 
     if rebound.kind == "hit" then
         extra, extra_message = launcher_brands.apply(ctx,
-            launcher.item.ego or "", projectile, definition, rebound.damage)
+            launcher.ego or "", projectile, definition, rebound.damage)
     end
 
     local remaining = reflection.return_outcome(ctx, ctx:player(), attacker,
@@ -151,9 +171,9 @@ local function return_missile(ctx, attacker, definition, kind, effect,
 end
 
 local function launcher_attack(ctx, attacker, launcher, definition, defense, health)
-    local weapon = launcher.definition.weapon
+    local weapon = launcher_profile(ctx, launcher)
     local projectile = catalog.get(categories.ITEMS, weapon.ammo_id)
-    local brand = launcher.item.ego or ""
+    local brand = launcher.ego or ""
 
     if projectile.class ~= classes.MISSILES or not projectile.missile then
         error("monster launcher has invalid projectile")

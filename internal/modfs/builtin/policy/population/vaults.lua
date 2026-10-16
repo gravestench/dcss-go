@@ -62,6 +62,7 @@ local function item_selection(record)
         quality = arguments.quality,
         request = arguments.request ~= "" and arguments.request or nil,
         generation_depth = arguments.generation_depth or 1,
+        site = site,
     }
 end
 
@@ -142,8 +143,10 @@ function vaults.materialize(ctx, level)
                     actors = actors + 1
                 end
             elseif record.kind == effects.ITEM then
-                vault_items.create(ctx, item_selection(record), level.id,
+                local _, actual_kind = vault_items.create(ctx,
+                    item_selection(record), level.id,
                     record.x, record.y, origin(level, record))
+                arguments.kind_id = actual_kind
             end
 
             materialized[#materialized + 1] = {
@@ -151,6 +154,8 @@ function vaults.materialize(ctx, level)
                 index = record.index,
                 no_spawn = no_spawn,
                 gear = gear,
+                kind_id = record.kind == effects.ITEM and
+                    arguments.kind_id or nil,
             }
         end
     end

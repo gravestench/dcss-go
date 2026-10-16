@@ -225,6 +225,24 @@ func (g *Game) markMaterializedVaultRecords(value any) error {
 
 		record.Pending = false
 
+		if record.Kind == vault.KindItem {
+			kindID, valid := fields["kind_id"].(string)
+
+			if !valid || kindID == "" {
+				return fmt.Errorf("Lua population returned no generated item kind")
+			}
+
+			for argumentIndex := range record.Arguments {
+				argument := &record.Arguments[argumentIndex]
+
+				if argument.Name == "kind_id" {
+					argument.String = kindID
+
+					break
+				}
+			}
+		}
+
 		if gear, hasGear := fields["gear"]; hasGear && gear != nil {
 			entries, list := gear.([]any)
 

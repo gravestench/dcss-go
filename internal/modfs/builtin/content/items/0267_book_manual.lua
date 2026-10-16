@@ -19,6 +19,12 @@ local definition = {
         kind = "manual_skill",
     },
     explicitly_removed = false,
+    -- Source: crawl-ref/source/book-data.h
+    generation = {
+        mode = "random",
+        spells = {
+        },
+    },
 }
 
 register.definition(categories.ITEMS, definition)

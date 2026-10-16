@@ -8,8 +8,6 @@ local categories = require("constants.catalog")
 local definition = {
     id = "OBJ_GOLD",
     name = "gold piece",
-    -- Source vault expressions use the short spelling.
-    vault_aliases = { "gold" },
     glyph = 36,
     class = "OBJ_GOLD",
     class_value = 13,
@@ -21,6 +19,14 @@ local definition = {
         kind = "static",
     },
     explicitly_removed = false,
+    -- Source: crawl-ref/source/makeitem.cc
+    generation = {
+        mode = "random",
+    },
+    -- Source: vaults/arrival/giann_wishing_wells.des:4
+    vault_aliases = {
+        "gold",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

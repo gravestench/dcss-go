@@ -67,5 +67,47 @@ func (g *Game) refreshVisibility() error {
 	g.visible = visible
 	g.visibleLevelID = position.LevelID
 
+	seenKinds := make([]any, 0)
+
+	for _, entity := range g.stores.Positions.Entities() {
+		location, found := g.stores.Positions.Get(entity)
+
+		if !found || location.LevelID != position.LevelID {
+			continue
+		}
+
+		index := location.Y*level.width + location.X
+
+		if index < 0 || index >= len(visible) || !visible[index] {
+			continue
+		}
+
+		if item, found := g.stores.Items.Get(entity); found {
+			seenKinds = append(seenKinds, item.KindID)
+		}
+	}
+
+	for _, entity := range g.stores.CarriedBy.Entities() {
+		carrier, found := g.stores.CarriedBy.Get(entity)
+
+		if !found || carrier.Holder != g.player {
+			continue
+		}
+
+		if item, found := g.stores.Items.Get(entity); found {
+			seenKinds = append(seenKinds, item.KindID)
+		}
+	}
+
+	if _, err := g.scripts.Policy("character.record_seen_items", map[string]any{
+		"kind_ids": seenKinds,
+	}); err != nil {
+		return err
+	}
+
+	if err := g.scripts.ApplyPending(); err != nil {
+		return err
+	}
+
 	return nil
 }

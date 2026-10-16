@@ -18,8 +18,18 @@ local component = require("constants.component")
 local potion_resistance = require("policy.potions.resistance")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
+local artefacts = require("policy.item_generation.artefacts.properties")
+local artefact_properties = require("ids.artefact_properties")
 
 local damage = {}
+
+local artefact_resistances = {
+    [resistances.FIRE] = artefact_properties.FIRE,
+    [resistances.COLD] = artefact_properties.COLD,
+    [resistances.ELECTRICITY] = artefact_properties.ELECTRICITY,
+    [resistances.ACID] = artefact_properties.RCORR,
+    [resistances.NEGATIVE_ENERGY] = artefact_properties.NEGATIVE_ENERGY,
+}
 
 function damage.monster(ctx, target)
     local actor = ctx:get(target, "core.actor")
@@ -186,7 +196,6 @@ function damage.player_resistance(ctx, player, resistance_id)
     })
 
     for slot, entry in pairs(worn) do
-        local item = entry.item
         local definition = entry.definition
 
         if slot == "weapon" then
@@ -195,15 +204,15 @@ function damage.player_resistance(ctx, player, resistance_id)
 
         if definition.class == object_classes.OBJ_ARMOUR then
             if resistance_id == resistances.FIRE and
-                (item.ego == armour_egos.RESISTANCE or
-                    item.ego == armour_egos.FIRE_RESISTANCE) then
+                (entry.ego == armour_egos.RESISTANCE or
+                    entry.ego == armour_egos.FIRE_RESISTANCE) then
                 value = value + 1
             elseif resistance_id == resistances.COLD and
-                (item.ego == armour_egos.RESISTANCE or
-                    item.ego == armour_egos.COLD_RESISTANCE) then
+                (entry.ego == armour_egos.RESISTANCE or
+                    entry.ego == armour_egos.COLD_RESISTANCE) then
                 value = value + 1
             elseif resistance_id == resistances.NEGATIVE_ENERGY and
-                item.ego == armour_egos.POSITIVE_ENERGY then
+                entry.ego == armour_egos.POSITIVE_ENERGY then
                 value = value + 1
             end
 
@@ -220,6 +229,12 @@ function damage.player_resistance(ctx, player, resistance_id)
                     armour_flags.RES_NEGATIVE_ENERGY)
             end
         end
+    end
+
+    local property = artefact_resistances[resistance_id]
+
+    if property then
+        value = value + artefacts.sum_worn(ctx, player, property)
     end
 
     if resistance_id == resistances.ELECTRICITY then

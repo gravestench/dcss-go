@@ -1,0 +1,67 @@
+local catalog = require("policy.catalog")
+local classes = require("ids.object_classes")
+local generation_catalog = require("policy.item_generation.catalog")
+local harness = require("tests.harness")
+local item_ids = require("ids.items")
+local validation = require("policy.item_generation.validate")
+
+local test = {}
+
+local function eligible()
+    return true
+end
+
+local function weight()
+    return 1
+end
+
+local function roll()
+end
+
+local function expect_error(expected, fn, ...)
+    local okay, message = pcall(fn, ...)
+
+    harness.falsy(okay, "expected generation validation error")
+    harness.truthy(tostring(message):find(expected, 1, true),
+        "missing error text " .. expected)
+end
+
+function test.run()
+    local mace = catalog.get("items", item_ids.WPN_MACE)
+    local origin = register.origin("items", mace.id)
+    local policy = {
+        eligible = eligible,
+        weight = weight,
+        roll = roll,
+    }
+    local test_class = classes.OBJ_TEST_GENERATION
+
+    generation_catalog.register(test_class, policy)
+    harness.equal(generation_catalog.policy(test_class), policy,
+        "registered class policy")
+
+    expect_error("duplicate", generation_catalog.register, test_class, policy)
+
+    local malformed = {
+        id = mace.id,
+        class = mace.class,
+        generation = {
+            mode = "random",
+            weight = -1,
+        },
+    }
+
+    expect_error(origin, validation.definition, malformed)
+
+    malformed.generation.weight = 1
+    malformed.generation.mode = "unknown"
+
+    expect_error("mode", validation.definition, malformed)
+
+    malformed.generation.mode = "random"
+    malformed.generation.property_id = "IMPOSSIBLE_PROPERTY"
+
+    expect_error("IMPOSSIBLE_PROPERTY", validation.definition, malformed)
+end
+
+return test

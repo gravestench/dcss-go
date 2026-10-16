@@ -8,8 +8,6 @@ local definition = {
     id = "MONS_ELF",
     status = "defined",
     name = "elf",
-    -- Arrival corpse and skeleton declarations use the species name.
-    vault_aliases = { "deep elf" },
     glyph = 101,
     colour_id = "LIGHTRED",
     flags = {
@@ -74,6 +72,10 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_ELF",
+    -- Source: vaults/arrival/dreamdust_arrival_sigmund_warning.des:10
+    vault_aliases = {
+        "deep elf",
+    },
 }
 
 register.definition(categories.MONSTERS, definition)

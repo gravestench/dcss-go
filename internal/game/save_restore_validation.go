@@ -19,6 +19,7 @@ type savedEntityValidator struct {
 	game     *Game
 	snapshot save.Snapshot
 	seen     map[uint64]bool
+	records  map[uint64]save.EntityRecord
 
 	player        savedPlayerValidation
 	playerCount   int
@@ -30,7 +31,8 @@ func (g *Game) validateAndRegisterSavedEntities(snapshot save.Snapshot) error {
 		game:     g,
 		snapshot: snapshot,
 
-		seen: make(map[uint64]bool),
+		seen:    make(map[uint64]bool),
+		records: make(map[uint64]save.EntityRecord),
 	}
 
 	return validator.validate()
@@ -55,6 +57,20 @@ func (v *savedEntityValidator) validate() error {
 		}
 	}
 
+	for _, record := range v.snapshot.Entities {
+		if record.ReservedBy == nil {
+			continue
+		}
+
+		owner := record.ReservedBy.Owner
+		ownerRecord, found := v.records[uint64(owner)]
+
+		if !found || ownerRecord.ReservedBy != nil ||
+			ownerRecord.Item == nil {
+			return fmt.Errorf("item %d has dead or reserved reservation owner %d", record.ID, owner)
+		}
+	}
+
 	return v.validateFinalState()
 }
 
@@ -64,6 +80,7 @@ func (v *savedEntityValidator) validateRecord(record save.EntityRecord) error {
 	}
 
 	v.seen[record.ID] = true
+	v.records[record.ID] = record
 
 	if err := v.validateItemRole(record); err != nil {
 		return err
@@ -90,9 +107,10 @@ func (v *savedEntityValidator) validateItemRole(record save.EntityRecord) error 
 			return err
 		}
 	} else if record.CarriedBy != nil ||
+		record.ReservedBy != nil ||
 		record.Equipped != nil ||
 		record.Corpse != nil {
-		return fmt.Errorf("non-item %d has carrier or equipment slot", record.ID)
+		return fmt.Errorf("non-item %d has item location or equipment slot", record.ID)
 	}
 
 	if record.Actor == nil &&

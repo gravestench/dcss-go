@@ -78,6 +78,47 @@ func addIdentificationTestItem(
 	return entity
 }
 
+func TestWeaponSightingsSurviveItemRemovalAndRestore(t *testing.T) {
+	game := newStepGame(t)
+	weapon := addIdentificationTestItem(t, game, "WPN_DAGGER", false)
+
+	if err := game.refreshVisibility(); err != nil {
+		t.Fatal(err)
+	}
+
+	if !game.world.DestroyEntity(weapon) {
+		t.Fatal("could not remove seen weapon")
+	}
+
+	before := game.Snapshot()
+	loaded, err := Restore(before)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer loaded.Close()
+
+	store := loaded.scripts.Components()["character.item_knowledge"]
+	state, found := store.Get(loaded.player)
+
+	if !found {
+		t.Fatal("restored player has no item knowledge")
+	}
+
+	value, err := state.Get("seen_types")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	seen := value.(map[string]any)
+
+	if seen["WPN_DAGGER"] != true {
+		t.Fatalf("dropped weapon sighting was lost: %#v", seen)
+	}
+}
+
 func TestItemAppearanceDiscoveryUpdatesFloorAndSurvivesSave(t *testing.T) {
 	g := newStepGame(t)
 	carried := addIdentificationTestItem(t, g, "POT_CURING", true)
