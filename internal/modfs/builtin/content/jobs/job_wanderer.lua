@@ -4,6 +4,7 @@
 -- Starting grants: internal/content/generated/starting-gear.json
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "JOB_WANDERER",
@@ -27,6 +28,11 @@ local definition = {
     skills = mod.null,
     selectable = true,
     starting_grants = mod.null,
+    -- Source: crawl-ref/source/dat/descript/backgrounds.txt
+    description = "Wanderers start with random equipment and skills.",
+    -- Source: crawl-ref/source/newgame.cc
+    menu_group = groups.JOB_ADVENTURER,
+    menu_order = 2,
 }
 
 register.definition(categories.JOBS, definition)

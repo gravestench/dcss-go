@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/gargoyle.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_GARGOYLE",
@@ -10,7 +11,7 @@ local definition = {
     name = "Gargoyle",
     short_name = "Gr",
     selectable = true,
-    difficulty = "Simple",
+    difficulty = groups.SPECIES_SIMPLE,
     difficulty_priority = 70,
     xp = 0,
     hp = -2,
@@ -193,6 +194,10 @@ local definition = {
         "SK_MACES_FLAILS",
         "SK_STAVES",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Made of living stone, Gargoyles have a preternatural " ..
+        "affinity for the earth.\nThey have low health, but their " ..
+        "stone bodies are incredibly tough.",
 }
 
 register.definition(categories.SPECIES, definition)

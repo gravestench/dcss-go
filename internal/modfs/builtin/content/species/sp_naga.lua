@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/naga.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_NAGA",
@@ -10,7 +11,7 @@ local definition = {
     name = "Naga",
     short_name = "Na",
     selectable = true,
-    difficulty = "Advanced",
+    difficulty = groups.SPECIES_ADVANCED,
     difficulty_priority = 60,
     xp = 0,
     hp = 2,
@@ -203,6 +204,10 @@ local definition = {
     },
     walking_verb = "Slither",
     altar_action = "coil in front of",
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Nagas are hybrids; human from the waist up, with a " ..
+        "snake-like tail instead of\nlegs. They move very slowly but " ..
+        "are naturally resilient.",
 }
 
 register.definition(categories.SPECIES, definition)

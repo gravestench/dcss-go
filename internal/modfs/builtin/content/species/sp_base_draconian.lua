@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/draconian-base.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_BASE_DRACONIAN",
@@ -10,7 +11,7 @@ local definition = {
     name = "Draconian",
     short_name = "Dr",
     selectable = true,
-    difficulty = "Simple",
+    difficulty = groups.SPECIES_SIMPLE,
     difficulty_priority = 50,
     xp = -1,
     hp = 1,
@@ -170,6 +171,9 @@ local definition = {
         "SK_STAVES",
         "SK_RANGED_WEAPONS",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Draconians are versatile hybrids. They mature when reaching " ..
+        "level 7 and develop\na colour.",
 }
 
 register.definition(categories.SPECIES, definition)

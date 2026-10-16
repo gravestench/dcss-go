@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/demigod.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_DEMIGOD",
@@ -11,7 +12,7 @@ local definition = {
     short_name = "Dg",
     adjective = "Divine",
     selectable = true,
-    difficulty = "Advanced",
+    difficulty = groups.SPECIES_ADVANCED,
     difficulty_priority = 80,
     xp = -2,
     hp = 1,
@@ -172,6 +173,10 @@ local definition = {
         "SK_STAVES",
         "SK_RANGED_WEAPONS",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Demigods refuse to worship any god, but make up for this " ..
+        "with divine attributes\nand high reserves of health and " ..
+        "magic.",
 }
 
 register.definition(categories.SPECIES, definition)

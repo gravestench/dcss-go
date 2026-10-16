@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/kobold.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_KOBOLD",
@@ -10,7 +11,7 @@ local definition = {
     name = "Kobold",
     short_name = "Ko",
     selectable = true,
-    difficulty = "Intermediate",
+    difficulty = groups.SPECIES_INTERMEDIATE,
     difficulty_priority = 90,
     xp = 1,
     hp = -2,
@@ -162,6 +163,10 @@ local definition = {
         "SK_MACES_FLAILS",
         "SK_STAVES",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Kobolds are attuned to the shadows and can only see or be " ..
+        "seen at a close range.\nThey are small and a little fragile, " ..
+        "and are talented in most skills.",
 }
 
 register.definition(categories.SPECIES, definition)

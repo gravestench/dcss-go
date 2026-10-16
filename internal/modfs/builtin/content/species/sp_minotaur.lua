@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/minotaur.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_MINOTAUR",
@@ -10,7 +11,7 @@ local definition = {
     name = "Minotaur",
     short_name = "Mi",
     selectable = true,
-    difficulty = "Simple",
+    difficulty = groups.SPECIES_SIMPLE,
     difficulty_priority = 90,
     xp = -1,
     hp = 1,
@@ -169,6 +170,9 @@ local definition = {
         "SK_STAVES",
         "SK_RANGED_WEAPONS",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Minotaurs are large muscular humans with bovine heads. They " ..
+        "excel at all forms\nof close and ranged combat.",
 }
 
 register.definition(categories.SPECIES, definition)

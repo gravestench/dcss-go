@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/ghoul.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_GHOUL",
@@ -11,7 +12,7 @@ local definition = {
     short_name = "Gh",
     adjective = "Ghoulish",
     selectable = true,
-    difficulty = "Simple",
+    difficulty = groups.SPECIES_SIMPLE,
     difficulty_priority = 30,
     xp = 0,
     hp = 1,
@@ -187,6 +188,10 @@ local definition = {
     recommended_weapons = {
         "SK_UNARMED_COMBAT",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Ghouls are undead creatures, damned to rot eternally. They " ..
+        "have sharp claws,\nand they heal from the death of the " ..
+        "living.",
 }
 
 register.definition(categories.SPECIES, definition)

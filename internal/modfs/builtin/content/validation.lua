@@ -12,6 +12,7 @@ local jewellery = require("policy.inventory.jewellery")
 local weapon_choices = require("constants.weapon_choices")
 local uses = require("constants.mutation_uses")
 local curves = require("constants.population_curves")
+local menu_groups = require("constants.menu_groups")
 
 local population_curves = {
     [curves.FLAT] = true,
@@ -274,41 +275,58 @@ local function validate_job(job)
     end
 end
 
-local function validate_groups(category, groups, descriptions)
-    if type(groups) ~= "table" or type(descriptions) ~= "table" then
-        error("data/presentation.lua: " .. category .. " menu groups and descriptions are required")
+function validation.menu_fields(category, definitions, labels, group_field,
+    order_field)
+    local allowed = {}
+    local positions = {}
+
+    for _, label in ipairs(labels) do
+        allowed[label] = true
+        positions[label] = {}
     end
 
-    if #groups == 0 then
-        error("data/presentation.lua: " .. category .. " menu has no groups")
-    end
+    for _, definition in ipairs(definitions) do
+        if definition.selectable then
+            local id = definition.id
+            local label = definition[group_field]
+            local order = definition[order_field]
 
-    local seen = {}
+            if label ~= nil or order ~= nil then
+                if not allowed[label] then
+                    fail(category, id, "has an invalid menu group")
+                end
 
-    for _, group in ipairs(groups) do
-        if type(group) ~= "table" or type(group.label) ~= "string" or
-            group.label == "" or type(group.ids) ~= "table" then
-            error("data/presentation.lua: invalid " .. category .. " menu group")
+                if type(order) ~= "number" or order < 1 or order % 1 ~= 0 then
+                    fail(category, id, "requires a positive menu order")
+                end
+
+                if type(definition.description) ~= "string" or
+                    definition.description == "" then
+                    fail(category, id, "requires a menu description")
+                end
+
+                local previous = positions[label][order]
+
+                if previous then
+                    fail(category, id, "duplicates menu order " ..
+                        order .. " in " .. label .. " with " ..
+                        register.origin(category, previous))
+                end
+
+                positions[label][order] = id
+            end
         end
-
-        for _, id in ipairs(group.ids) do
-            if type(id) ~= "string" or seen[id] then
-                error("data/presentation.lua: duplicate or invalid " .. category .. " menu ID " .. tostring(id))
-            end
-
-            seen[id] = true
-
-            local found = pcall(register.get, category, id)
-
-            if not found then
-                error("data/presentation.lua: unknown " .. category .. " menu ID " .. id)
-            end
-
-            if type(descriptions[id]) ~= "string" or descriptions[id] == "" then
-                error("data/presentation.lua: missing " .. category .. " description for " .. id)
-            end
-        end
     end
+end
+
+local function registered_definitions(category)
+    local definitions = {}
+
+    for _, id in ipairs(register.ids(category)) do
+        definitions[#definitions + 1] = register.get(category, id)
+    end
+
+    return definitions
 end
 
 local function validate_early_brands()
@@ -642,10 +660,10 @@ function validation.check()
 
     validate_registered_catalogs()
 
-    local presentation = require("data.presentation")
-
-    validate_groups("species", presentation.species_groups, presentation.species_descriptions)
-    validate_groups("jobs", presentation.job_groups, presentation.job_descriptions)
+    validation.menu_fields("species", registered_definitions("species"),
+        menu_groups.species, "difficulty", "difficulty_priority")
+    validation.menu_fields("jobs", registered_definitions("jobs"),
+        menu_groups.jobs, "menu_group", "menu_order")
     validate_early_brands()
 end
 

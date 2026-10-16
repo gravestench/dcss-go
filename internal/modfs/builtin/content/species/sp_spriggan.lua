@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/spriggan.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_SPRIGGAN",
@@ -10,7 +11,7 @@ local definition = {
     name = "Spriggan",
     short_name = "Sp",
     selectable = true,
-    difficulty = "Intermediate",
+    difficulty = groups.SPECIES_INTERMEDIATE,
     difficulty_priority = 60,
     xp = -1,
     hp = -3,
@@ -166,6 +167,9 @@ local definition = {
     recommended_weapons = {
         "SK_SHORT_BLADES",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Very small, very frail and very fast, Spriggans are highly " ..
+        "competent stabbers\nand spellcasters.",
 }
 
 register.definition(categories.SPECIES, definition)

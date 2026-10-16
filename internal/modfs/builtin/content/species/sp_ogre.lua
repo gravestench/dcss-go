@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/ogre.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_OGRE",
@@ -11,7 +12,7 @@ local definition = {
     short_name = "Og",
     adjective = "Ogreish",
     selectable = true,
-    difficulty = "Intermediate",
+    difficulty = groups.SPECIES_INTERMEDIATE,
     difficulty_priority = 30,
     xp = 0,
     hp = 3,
@@ -162,6 +163,10 @@ local definition = {
         "SK_STAVES",
         "SK_AXES",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Large, strong, and extremely robust, Ogres are competent at " ..
+        "all forms of melee.\nNot merely brutes, they are also quite " ..
+        "capable spellcasters.",
 }
 
 register.definition(categories.SPECIES, definition)

@@ -5,6 +5,7 @@
 
 local categories = require("constants.catalog")
 local item_ids = require("ids.items")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "JOB_WARPER",
@@ -79,6 +80,13 @@ local definition = {
             ego = "dispersal",
         },
     },
+    -- Source: crawl-ref/source/dat/descript/backgrounds.txt
+    description = "Warpers start with a weapon of their choice, a scroll of " ..
+        "blinking, boomerangs\nof dispersal, and some Translocation " ..
+        "spells in their library.",
+    -- Source: crawl-ref/source/newgame.cc
+    menu_group = groups.JOB_WARRIOR_MAGE,
+    menu_order = 2,
 }
 
 register.definition(categories.JOBS, definition)

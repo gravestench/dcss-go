@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/barachi.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_BARACHI",
@@ -12,7 +13,7 @@ local definition = {
     adjective = "Barachian",
     genus = "Frog",
     selectable = true,
-    difficulty = "Intermediate",
+    difficulty = groups.SPECIES_INTERMEDIATE,
     difficulty_priority = 20,
     xp = 0,
     hp = 0,
@@ -185,6 +186,10 @@ local definition = {
         "SK_STAVES",
         "SK_RANGED_WEAPONS",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Barachim are slow-moving, amphibious humanoids who can hop " ..
+        "long distances.\nTheir extended range of vision also allows " ..
+        "them to be seen from further away.",
 }
 
 register.definition(categories.SPECIES, definition)

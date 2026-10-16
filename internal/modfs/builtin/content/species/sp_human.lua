@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/human.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_HUMAN",
@@ -10,7 +11,7 @@ local definition = {
     name = "Human",
     short_name = "Hu",
     selectable = true,
-    difficulty = "Intermediate",
+    difficulty = groups.SPECIES_INTERMEDIATE,
     difficulty_priority = 100,
     xp = 1,
     hp = 0,
@@ -157,6 +158,9 @@ local definition = {
         "SK_STAVES",
         "SK_RANGED_WEAPONS",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Humans advance quickly in levels and have equal abilities in " ..
+        "most skills.",
 }
 
 register.definition(categories.SPECIES, definition)

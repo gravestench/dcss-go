@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/felid.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_FELID",
@@ -12,7 +13,7 @@ local definition = {
     adjective = "Feline",
     genus = "Cat",
     selectable = true,
-    difficulty = "Advanced",
+    difficulty = groups.SPECIES_ADVANCED,
     difficulty_priority = 40,
     xp = -1,
     hp = -4,
@@ -214,6 +215,10 @@ local definition = {
         "SK_UNARMED_COMBAT",
     },
     altar_action = "sit before",
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Felids are many-lived cats possessing sentience. They are " ..
+        "incapable of advanced\nitem manipulation or the use of armour " ..
+        "or weapons.",
 }
 
 register.definition(categories.SPECIES, definition)

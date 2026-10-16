@@ -19,6 +19,8 @@ registered from individual files under `content/<category>`. Gameplay and
 the pregame menu read those same registered tables, so an overlay changes
 both together. Lua validates the effective definitions and can retain
 mod-added fields. Other imported content remains committed under `data`.
+Species and job files own their menu descriptions and ordering; the shared
+presentation module retains only startup modes, skill columns, and version.
 Each job file includes its fixed starting grants. Wanderer keeps an explicit
 dynamic marker; its generated equipment comes from its Lua starting rule.
 Normal launch and restore read
@@ -76,7 +78,7 @@ the effective ruleset hash without adding a Go keymap.
 ## Committed source content
 
 The import artifacts account for 43 species, 31 jobs, 700 monster rows,
-403 spell identities, 285 monster spellbooks, 408 concrete item
+403 spell identities, 285 monster spellbooks, 408 item
 identities, 38 branches, 125 ordered Dungeon population rows inside their
 monster definitions, monster weapon loadouts, starting grants, and console
 presentation metadata. Import tools under `cmd/import*` are for reviewed

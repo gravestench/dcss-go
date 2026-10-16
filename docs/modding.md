@@ -302,6 +302,18 @@ a required field is an error. Newly selectable definitions appear on a
 separate modded menu page. They need implemented start mechanics before a
 policy can make them playable.
 
+Each selectable source species owns its `description`, `difficulty`, and
+`difficulty_priority` in its species file. Each source job owns its
+`description`, `menu_group`, and `menu_order` in its job file. Group names
+come from `constants.menu_groups`; the menu assembles them from registered
+definitions. A new species or job with no group fields appears on the Modded
+choices page and uses its name when no description is supplied. To place a
+definition in a source group, import the group constant, provide a positive
+order unique within that group, and supply a description. A same-path
+override can change its menu text or position through that one file. Pinned
+groups have fixed screen space: extra entries flow to the Modded page. Removing
+both group fields from an override moves that choice to the Modded page too.
+
 Each job file also owns `starting_grants`: a list of item grants with
 `kind_id` and positive `quantity`, plus optional `plus`, `charges`, and
 `ego`. The effective file is the only fixed-grant source at runtime.

@@ -5,6 +5,7 @@
 
 local categories = require("constants.catalog")
 local item_ids = require("ids.items")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "JOB_ENCHANTER",
@@ -71,6 +72,13 @@ local definition = {
             quantity = 2,
         },
     },
+    -- Source: crawl-ref/source/dat/descript/backgrounds.txt
+    description = "Enchanters know a variety of Hexes that can incapacitate " ..
+        "their foes, and are\nequipped with an enchanted dagger and " ..
+        "potions of invisibility.",
+    -- Source: crawl-ref/source/newgame.cc
+    menu_group = groups.JOB_WARRIOR_MAGE,
+    menu_order = 4,
 }
 
 register.definition(categories.JOBS, definition)

@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/merfolk.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_MERFOLK",
@@ -11,7 +12,7 @@ local definition = {
     short_name = "Mf",
     adjective = "Merfolkian",
     selectable = true,
-    difficulty = "Simple",
+    difficulty = groups.SPECIES_SIMPLE,
     difficulty_priority = 80,
     xp = 0,
     hp = 0,
@@ -167,6 +168,10 @@ local definition = {
         "SK_POLEARMS",
         "SK_LONG_BLADES",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Half fish, half human, Merfolk are citizens of both water " ..
+        "and land. They are\nstrong combatants, and adept at using " ..
+        "magic to assist in battle.",
 }
 
 register.definition(categories.SPECIES, definition)

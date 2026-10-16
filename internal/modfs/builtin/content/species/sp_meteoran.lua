@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/meteoran.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_METEORAN",
@@ -11,7 +12,7 @@ local definition = {
     short_name = "Me",
     adjective = "Meteoric",
     selectable = true,
-    difficulty = "Advanced",
+    difficulty = groups.SPECIES_ADVANCED,
     difficulty_priority = 30,
     xp = 2,
     hp = 1,
@@ -189,6 +190,9 @@ local definition = {
         "SK_STAVES",
         "SK_LONG_BLADES",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "A celestial being fallen to earth, brilliant and fearsome... " ..
+        "but with little\ntime before darkness snuffs them out.",
 }
 
 register.definition(categories.SPECIES, definition)

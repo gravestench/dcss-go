@@ -13,6 +13,8 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+from menu_group_keys import group_key
+
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "internal/content/generated"
 DESTINATION = ROOT / "internal/modfs/builtin/content"
@@ -108,6 +110,37 @@ def table_lines(value: object, depth: int) -> list[str]:
     return lines
 
 
+def description_lines(value: str) -> list[str]:
+    first = "    description = " + quote(value) + ","
+
+    if len(first) <= 80:
+        return [first]
+
+    chunks = []
+    remaining = value
+
+    while len(remaining) > 60:
+        end = remaining.rfind(" ", 0, 61)
+
+        if end < 1:
+            end = 60
+        else:
+            end += 1
+
+        chunks.append(remaining[:end])
+        remaining = remaining[end:]
+
+    chunks.append(remaining)
+    output = []
+
+    for index, chunk in enumerate(chunks):
+        prefix = "    description = " if index == 0 else "        "
+        suffix = "," if index == len(chunks) - 1 else " .."
+        output.append(prefix + quote(chunk) + suffix)
+
+    return output
+
+
 def module_text(kind: str, revision: str, row: dict[str, object]) -> str:
     source = row["source_path"]
     grants = row.get("starting_grants") if kind == "jobs" else None
@@ -138,9 +171,30 @@ def module_text(kind: str, revision: str, row: dict[str, object]) -> str:
     if grants:
         header.append('local item_ids = require("ids.items")')
 
+    if isinstance(row.get("difficulty"), LuaReference) or \
+            isinstance(row.get("menu_group"), LuaReference):
+        header.append('local groups = require("constants.menu_groups")')
+
     header.append("")
     lines = table_lines(row, 0)
     lines[0] = "local definition = " + lines[0]
+
+    if kind == "jobs" and row.get("menu_group"):
+        for index, line in enumerate(lines):
+            if line.startswith("    menu_group = "):
+                lines.insert(index, "    -- Source: crawl-ref/source/newgame.cc")
+                break
+
+    if row.get("description"):
+        for index, line in enumerate(lines):
+            if line.startswith("    description = "):
+                source_kind = "species" if kind == "species" else "backgrounds"
+                lines[index:index + 1] = [
+                    "    -- Source: crawl-ref/source/dat/descript/" +
+                    source_kind + ".txt",
+                    *description_lines(row["description"]),
+                ]
+                break
 
     footer = [
         "",
@@ -202,8 +256,79 @@ def merge_job_grants(
     return merged
 
 
+def merge_presentation(
+    category: str,
+    artifact: dict[str, object],
+    presentation: dict[str, object],
+) -> list[dict[str, object]]:
+    if artifact["source_revision"] != presentation["source_revision"]:
+        raise ValueError(f"{category} and presentation revisions differ")
+
+    rows = [dict(row) for row in artifact[category]]
+    by_id = {row["id"]: row for row in rows}
+
+    if len(by_id) != len(rows):
+        raise ValueError(f"duplicate {category} definition ID")
+
+    menu_kind = "species" if category == "species" else "job"
+    groups = presentation[f"{menu_kind}_groups"]
+    descriptions = presentation[f"{menu_kind}_descriptions"]
+    seen = set()
+
+    for group in groups:
+        label = group["label"]
+        key = group_key(category, label)
+
+        for order, identifier in enumerate(group["ids"], start=1):
+            if identifier in seen:
+                raise ValueError(f"duplicate {category} menu ID {identifier}")
+
+            row = by_id.get(identifier)
+
+            if row is None or not row["selectable"]:
+                raise ValueError(f"unknown selectable {category} {identifier}")
+
+            description = descriptions.get(identifier)
+
+            if not isinstance(description, str) or not description:
+                raise ValueError(f"missing {category} description {identifier}")
+
+            row["description"] = description
+
+            if category == "species":
+                if row.get("difficulty") != label:
+                    raise ValueError(f"species group differs for {identifier}")
+
+                row["difficulty"] = LuaReference("groups", key)
+            else:
+                row["menu_group"] = LuaReference("groups", key)
+                row["menu_order"] = order
+
+            seen.add(identifier)
+
+    for row in rows:
+        if row["selectable"] and row["id"] not in seen:
+            raise ValueError(f"missing {category} menu entry {row['id']}")
+
+    if set(descriptions) != seen:
+        raise ValueError(f"{category} descriptions differ from menu IDs")
+
+    if category == "species":
+        for group in groups:
+            actual = sorted(group["ids"],
+                            key=lambda identifier: by_id[identifier][
+                                "difficulty_priority"],
+                            reverse=True)
+
+            if actual != group["ids"]:
+                raise ValueError(f"species priority differs for {group['label']}")
+
+    return rows
+
+
 def generated_files() -> dict[Path, str]:
     output: dict[Path, str] = {}
+    presentation = json.loads((SOURCE / "presentation.json").read_text())
 
     for category, row_key, singular in (
         ("species", "species", "species"),
@@ -218,6 +343,12 @@ def generated_files() -> dict[Path, str]:
                 (SOURCE / "starting-gear.json").read_text()
             )
             rows = merge_job_grants(artifact, gear_artifact)
+
+        rows = merge_presentation(
+            category,
+            {"source_revision": revision, category: rows},
+            presentation,
+        )
 
         for row in rows:
             name = row["id"].lower() + ".lua"

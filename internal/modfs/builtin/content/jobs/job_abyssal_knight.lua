@@ -5,6 +5,7 @@
 
 local categories = require("constants.catalog")
 local item_ids = require("ids.items")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "JOB_ABYSSAL_KNIGHT",
@@ -56,6 +57,12 @@ local definition = {
             quantity = 1,
         },
     },
+    -- Source: crawl-ref/source/dat/descript/backgrounds.txt
+    description = "Abyssal Knights worship Lugonu, and are sent from the Abyss " ..
+        "into the Dungeon to\nspread corruption and chaos.",
+    -- Source: crawl-ref/source/newgame.cc
+    menu_group = groups.JOB_ZEALOT,
+    menu_order = 2,
 }
 
 register.definition(categories.JOBS, definition)

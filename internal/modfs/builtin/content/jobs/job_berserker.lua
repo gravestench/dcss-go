@@ -5,6 +5,7 @@
 
 local categories = require("constants.catalog")
 local item_ids = require("ids.items")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "JOB_BERSERKER",
@@ -47,6 +48,13 @@ local definition = {
             quantity = 1,
         },
     },
+    -- Source: crawl-ref/source/dat/descript/backgrounds.txt
+    description = "Berserkers believe in Trog, the magic-hating god of frenzy. " ..
+        "Not much can stop a\nraging berserker early on, apart from " ..
+        "hubris.",
+    -- Source: crawl-ref/source/newgame.cc
+    menu_group = groups.JOB_ZEALOT,
+    menu_order = 1,
 }
 
 register.definition(categories.JOBS, definition)

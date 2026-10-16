@@ -5,6 +5,7 @@
 
 local categories = require("constants.catalog")
 local item_ids = require("ids.items")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "JOB_CINDER_ACOLYTE",
@@ -53,6 +54,12 @@ local definition = {
             quantity = 1,
         },
     },
+    -- Source: crawl-ref/source/dat/descript/backgrounds.txt
+    description = "Cinder Acolytes worship Ignis, drawing upon the flame of a " ..
+        "dying god until\nthere is nothing left.",
+    -- Source: crawl-ref/source/newgame.cc
+    menu_group = groups.JOB_ZEALOT,
+    menu_order = 3,
 }
 
 register.definition(categories.JOBS, definition)

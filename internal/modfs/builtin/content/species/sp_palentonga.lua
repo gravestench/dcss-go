@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/palentonga.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_PALENTONGA",
@@ -10,7 +11,7 @@ local definition = {
     name = "Palentonga",
     short_name = "Pa",
     selectable = true,
-    difficulty = "Simple",
+    difficulty = groups.SPECIES_SIMPLE,
     difficulty_priority = 60,
     xp = -1,
     hp = 0,
@@ -191,6 +192,9 @@ local definition = {
         "SK_AXES",
         "SK_STAVES",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Scaled mammals the size of horses, Palentongas are able to " ..
+        "launch powerful\nrolling charges.",
 }
 
 register.definition(categories.SPECIES, definition)

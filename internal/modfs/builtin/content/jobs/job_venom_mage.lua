@@ -5,6 +5,7 @@
 
 local categories = require("constants.catalog")
 local item_ids = require("ids.items")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "JOB_VENOM_MAGE",
@@ -66,6 +67,12 @@ local definition = {
             quantity = 1,
         },
     },
+    -- Source: crawl-ref/source/dat/descript/backgrounds.txt
+    description = "Venom Mages start with the Sting spell, and their poison " ..
+        "magic is very\neffective against susceptible foes.",
+    -- Source: crawl-ref/source/newgame.cc
+    menu_group = groups.JOB_MAGE,
+    menu_order = 9,
 }
 
 register.definition(categories.JOBS, definition)

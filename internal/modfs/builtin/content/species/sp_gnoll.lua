@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/gnoll.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_GNOLL",
@@ -10,7 +11,7 @@ local definition = {
     name = "Gnoll",
     short_name = "Gn",
     selectable = true,
-    difficulty = "Simple",
+    difficulty = groups.SPECIES_SIMPLE,
     difficulty_priority = 10,
     xp = 0,
     hp = 0,
@@ -174,6 +175,10 @@ local definition = {
         "SK_STAVES",
         "SK_RANGED_WEAPONS",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Gnolls are canine-like humanoids. They are unable to " ..
+        "specialise in any single\nskill, but instead gradually become " ..
+        "proficient in all skills at once.",
 }
 
 register.definition(categories.SPECIES, definition)

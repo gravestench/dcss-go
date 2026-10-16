@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/formicid.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_FORMICID",
@@ -11,7 +12,7 @@ local definition = {
     short_name = "Fo",
     genus = "Ant",
     selectable = true,
-    difficulty = "Advanced",
+    difficulty = groups.SPECIES_ADVANCED,
     difficulty_priority = 70,
     xp = 1,
     hp = 0,
@@ -181,6 +182,10 @@ local definition = {
         "SK_POLEARMS",
         "SK_STAVES",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Formicids are humanoid ants adept at digging. Their limbs " ..
+        "are exceptionally\nstrong and they live in a state of " ..
+        "permanent stasis.",
 }
 
 register.definition(categories.SPECIES, definition)

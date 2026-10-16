@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/vampire.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_VAMPIRE",
@@ -11,7 +12,7 @@ local definition = {
     short_name = "Vp",
     adjective = "Vampiric",
     selectable = true,
-    difficulty = "Advanced",
+    difficulty = groups.SPECIES_ADVANCED,
     difficulty_priority = 90,
     xp = -1,
     hp = 0,
@@ -177,6 +178,9 @@ local definition = {
         "SK_AXES",
         "SK_LONG_BLADES",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Shifting between the states of life and undeath at will, " ..
+        "Vampires are\naccomplished stabbers and casters.",
 }
 
 register.definition(categories.SPECIES, definition)

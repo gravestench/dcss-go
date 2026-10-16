@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/hill-orc.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_HILL_ORC",
@@ -10,7 +11,7 @@ local definition = {
     name = "Hill Orc",
     short_name = "HO",
     selectable = true,
-    difficulty = "Simple",
+    difficulty = groups.SPECIES_SIMPLE,
     difficulty_priority = 100,
     xp = 0,
     hp = 1,
@@ -153,6 +154,9 @@ local definition = {
         "SK_AXES",
         "SK_POLEARMS",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Hill Orcs are skilled in close combat, and often dabble in " ..
+        "offensive magic. Only\nthey may worship the Orc god Beogh.",
 }
 
 register.definition(categories.SPECIES, definition)

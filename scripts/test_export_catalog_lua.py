@@ -172,5 +172,25 @@ class PopulationExportTest(unittest.TestCase):
         )
 
 
+class PresentationExportTest(unittest.TestCase):
+    def test_shared_presentation_has_no_character_id_lists(self):
+        source = EXPORTER["SOURCE"]
+        artifact = json.loads((source / "presentation.json").read_text())
+        groups = EXPORTER["render_menu_groups"](artifact)
+        shared = EXPORTER["render"]("presentation")
+
+        self.assertIn('SPECIES_SIMPLE = "Simple"', groups)
+        self.assertIn('JOB_WARRIOR_MAGE = "Warrior-mage"', groups)
+        self.assertIn("groups.species_capacities = {\n    9,", groups)
+        self.assertIn("groups.jobs_capacities = {\n    5,", groups)
+        self.assertNotIn("SP_HUMAN", groups)
+        self.assertNotIn("JOB_FIGHTER", groups)
+        self.assertIn("startup_modes =", shared)
+        self.assertIn("skill_columns =", shared)
+        self.assertNotIn("species_groups =", shared)
+        self.assertNotIn("job_groups =", shared)
+        self.assertNotIn("species_descriptions =", shared)
+
+
 if __name__ == "__main__":
     unittest.main()

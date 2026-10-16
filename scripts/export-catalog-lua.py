@@ -13,14 +13,15 @@ import re
 from pathlib import Path
 
 from import_wand_spells import validate_links
+from menu_group_keys import group_key
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "internal/content/generated"
 DESTINATION = ROOT / "internal/modfs/builtin/data"
+CONSTANTS = ROOT / "internal/modfs/builtin/constants"
 
 CATALOGS = (
-    "item-identities",
     "monster-vocabulary",
     "monster-weapons",
     "presentation",
@@ -201,6 +202,16 @@ def render(name):
     source = SOURCE / f"{name}.json"
     artifact = json.loads(source.read_text())
     revision = artifact["source_revision"]
+
+    if name == "presentation":
+        artifact = {
+            key: value
+            for key, value in artifact.items()
+            if key not in {
+                "species_groups", "job_groups",
+                "species_descriptions", "job_descriptions",
+            }
+        }
     header = [
         "-- Generated from a committed DCSS import. Refresh deliberately.",
         f"-- Revision: {revision}",
@@ -214,6 +225,53 @@ def render(name):
     body[0] = "local catalog = " + body[0]
 
     return "\n".join(header + [""] + body + ["", "return catalog"]) + "\n"
+
+
+def render_menu_groups(artifact):
+    lines = [
+        "-- Generated from a committed DCSS import. Refresh deliberately.",
+        f"-- Revision: {artifact['source_revision']}",
+        "-- Source: crawl-ref/source/species-groups.h",
+        "-- Source: crawl-ref/source/newgame.cc",
+        "",
+        "local groups = {",
+        '    MODDED_SPECIES = "Modded species",',
+        '    MODDED_BACKGROUNDS = "Modded backgrounds",',
+    ]
+
+    for category, field in (
+        ("species", "species_groups"),
+        ("job", "job_groups"),
+    ):
+        for entry in artifact[field]:
+            key = group_key(category, entry["label"])
+            lines.append(f"    {key} = {lua_string(entry['label'])},")
+
+    lines.append("}")
+
+    for category, field in (
+        ("species", "species_groups"),
+        ("job", "job_groups"),
+    ):
+        name = "species" if category == "species" else "jobs"
+        lines.extend(["", f"groups.{name} = {{"])
+
+        for entry in artifact[field]:
+            key = group_key(category, entry["label"])
+            lines.append(f"    groups.{key},")
+
+        lines.append("}")
+
+        lines.extend(["", f"groups.{name}_capacities = {{"])
+
+        for entry in artifact[field]:
+            lines.append(f"    {len(entry['ids'])},")
+
+        lines.append("}")
+
+    lines.extend(["", "return groups"])
+
+    return "\n".join(lines) + "\n"
 
 
 def render_definition(category, revision, definition):
@@ -488,6 +546,9 @@ def enrich_monster_definitions(monsters_artifact, population_artifact):
 
 
 def output_files():
+    presentation = json.loads((SOURCE / "presentation.json").read_text())
+    yield CONSTANTS / "menu_groups.lua", render_menu_groups(presentation)
+
     for name in CATALOGS:
         yield DESTINATION / f"{name.replace('-', '_')}.lua", render(name)
 
@@ -550,13 +611,14 @@ def main():
         else:
             legacy.unlink()
 
-    legacy_population = DESTINATION / "dungeon_population.lua"
+    for legacy_name in ("dungeon_population.lua", "item_identities.lua"):
+        legacy = DESTINATION / legacy_name
 
-    if legacy_population.exists():
-        if args.check:
-            stale.append(str(legacy_population.relative_to(ROOT)))
-        else:
-            legacy_population.unlink()
+        if legacy.exists():
+            if args.check:
+                stale.append(str(legacy.relative_to(ROOT)))
+            else:
+                legacy.unlink()
 
     old_gear = DESTINATION / "starting_gear.lua"
 

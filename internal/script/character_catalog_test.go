@@ -2,6 +2,8 @@ package script
 
 import (
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -152,6 +154,54 @@ func TestBundledLuaCharacterCatalogMatchesPinnedImport(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+func TestBundledCharacterMenuMatchesPinnedPresentation(t *testing.T) {
+	base, err := content.LoadDefault()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rules, err := modfs.Load()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	menu, _, err := ProjectCharacterMenu(rules)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	pinned := base.Presentation()
+
+	if len(menu.SpeciesGroups) != len(pinned.SpeciesGroups) ||
+		len(menu.JobGroups) != len(pinned.JobGroups) {
+		t.Fatal("bundled menu group counts differ from the pinned source")
+	}
+
+	for index, group := range pinned.SpeciesGroups {
+		actual := menu.SpeciesGroups[index]
+
+		if actual.Label != group.Label || !reflect.DeepEqual(actual.IDs, group.IDs) {
+			t.Fatalf("species group %d differs from pinned source: %+v", index, actual)
+		}
+	}
+
+	for index, group := range pinned.JobGroups {
+		actual := menu.JobGroups[index]
+
+		if actual.Label != group.Label || !reflect.DeepEqual(actual.IDs, group.IDs) {
+			t.Fatalf("job group %d differs from pinned source: %+v", index, actual)
+		}
+	}
+
+	if !reflect.DeepEqual(menu.SpeciesDescriptions, pinned.SpeciesDescriptions) ||
+		!reflect.DeepEqual(menu.JobDescriptions, pinned.JobDescriptions) {
+		t.Fatal("bundled menu descriptions differ from the pinned source")
 	}
 }
 
@@ -376,6 +426,101 @@ func TestLuaSelectabilityOverrideRemovesMenuEntry(t *testing.T) {
 	}
 }
 
+func replaceBundledCharacterText(
+	t *testing.T,
+	path string,
+	original string,
+	replacement string,
+) (modfs.Ruleset, modfs.Ruleset) {
+	t.Helper()
+	bundled, err := modfs.Load()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	source, err := bundled.ReadFile(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if strings.Count(string(source), original) != 1 {
+		t.Fatalf("character source field %q changed", original)
+	}
+
+	root := t.TempDir()
+	file := filepath.Join(root, filepath.FromSlash(path))
+
+	if err := os.MkdirAll(filepath.Dir(file), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	changed := strings.Replace(string(source), original, replacement, 1)
+
+	if err := os.WriteFile(file, []byte(changed), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	rules, err := modfs.Load(root)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return bundled, rules
+}
+
+func TestSamePathSpeciesDescriptionOverrideChangesMenu(t *testing.T) {
+	const path = "content/species/sp_human.lua"
+	const original = "Humans advance quickly"
+	const replacement = "Moon humans advance quickly"
+
+	bundled, rules := replaceBundledCharacterText(
+		t, path, original, replacement)
+
+	menu, _, err := ProjectCharacterMenu(rules)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !strings.Contains(menu.SpeciesDescriptions["SP_HUMAN"], replacement) {
+		t.Fatalf("Human menu description = %q",
+			menu.SpeciesDescriptions["SP_HUMAN"])
+	}
+
+	if rules.Hash() == bundled.Hash() {
+		t.Fatal("description override did not change ruleset identity")
+	}
+}
+
+func TestSamePathSpeciesGroupRemovalMovesChoiceToModdedPage(t *testing.T) {
+	_, rules := replaceBundledCharacterText(
+		t,
+		"content/species/sp_human.lua",
+		"    difficulty = groups.SPECIES_INTERMEDIATE,\n"+
+			"    difficulty_priority = 100,\n",
+		"",
+	)
+
+	menu, _, err := ProjectCharacterMenu(rules)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	groups := menu.SpeciesGroups
+
+	if len(groups) != 4 || groups[3].Label != "Modded species" {
+		t.Fatalf("missing Modded species group: %+v", groups)
+	}
+
+	if len(groups[3].IDs) != 1 || groups[3].IDs[0] != "SP_HUMAN" {
+		t.Fatalf("Human was not moved to Modded species: %+v", groups[3])
+	}
+}
+
 func TestIncompleteLuaDefinitionNamesPathAndField(t *testing.T) {
 	rules, err := modfs.Load("testdata/incomplete-species")
 
@@ -446,12 +591,13 @@ func TestMissingRecommendationNamesOwningDefinition(t *testing.T) {
 	}
 }
 
-func TestDuplicateMenuIDFailsDuringLuaBoot(t *testing.T) {
-	rules, err := modfs.Load("testdata/duplicate-menu")
-
-	if err != nil {
-		t.Fatal(err)
-	}
+func TestDuplicateMenuOrderFailsDuringLuaBoot(t *testing.T) {
+	_, rules := replaceBundledCharacterText(
+		t,
+		"content/species/sp_human.lua",
+		"difficulty_priority = 100,",
+		"difficulty_priority = 90,",
+	)
 
 	world := akara.NewWorld()
 	defer world.Close()
@@ -463,8 +609,8 @@ func TestDuplicateMenuIDFailsDuringLuaBoot(t *testing.T) {
 	}
 
 	if err == nil ||
-		!strings.Contains(err.Error(), "data/presentation.lua") ||
-		!strings.Contains(err.Error(), "duplicate") {
-		t.Fatalf("duplicate menu ID did not fail at boot: %v", err)
+		!strings.Contains(err.Error(), "content/species/sp_human.lua") ||
+		!strings.Contains(err.Error(), "duplicates menu order") {
+		t.Fatalf("duplicate menu order did not fail at boot: %v", err)
 	}
 }

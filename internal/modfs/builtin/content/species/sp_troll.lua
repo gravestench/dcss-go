@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/troll.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_TROLL",
@@ -11,7 +12,7 @@ local definition = {
     short_name = "Tr",
     adjective = "Trollish",
     selectable = true,
-    difficulty = "Simple",
+    difficulty = groups.SPECIES_SIMPLE,
     difficulty_priority = 40,
     xp = -1,
     hp = 3,
@@ -175,6 +176,9 @@ local definition = {
         "SK_MACES_FLAILS",
         "SK_UNARMED_COMBAT",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Trolls are monstrous creatures with powerful claws. They " ..
+        "regenerate health\nrapidly.",
 }
 
 register.definition(categories.SPECIES, definition)

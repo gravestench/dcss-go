@@ -5,6 +5,7 @@
 
 local categories = require("constants.catalog")
 local item_ids = require("ids.items")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "JOB_ICE_ELEMENTALIST",
@@ -61,6 +62,12 @@ local definition = {
             quantity = 1,
         },
     },
+    -- Source: crawl-ref/source/dat/descript/backgrounds.txt
+    description = "Ice Elementalists begin with the Freeze spell. The spells in " ..
+        "their starting\nlibrary are quite versatile.",
+    -- Source: crawl-ref/source/newgame.cc
+    menu_group = groups.JOB_MAGE,
+    menu_order = 6,
 }
 
 register.definition(categories.JOBS, definition)

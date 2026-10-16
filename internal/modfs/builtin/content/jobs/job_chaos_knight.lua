@@ -5,6 +5,7 @@
 
 local categories = require("constants.catalog")
 local item_ids = require("ids.items")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "JOB_CHAOS_KNIGHT",
@@ -58,6 +59,12 @@ local definition = {
             quantity = 1,
         },
     },
+    -- Source: crawl-ref/source/dat/descript/backgrounds.txt
+    description = "Chaos Knights are playthings of the unpredictable Xom, and " ..
+        "are subject to the\ngod's constantly changing moods.",
+    -- Source: crawl-ref/source/newgame.cc
+    menu_group = groups.JOB_ZEALOT,
+    menu_order = 4,
 }
 
 register.definition(categories.JOBS, definition)

@@ -5,6 +5,7 @@
 
 local categories = require("constants.catalog")
 local item_ids = require("ids.items")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "JOB_EARTH_ELEMENTALIST",
@@ -65,6 +66,13 @@ local definition = {
             quantity = 1,
         },
     },
+    -- Source: crawl-ref/source/dat/descript/backgrounds.txt
+    description = "Earth Elementalists know the Sandblast spell, and can later " ..
+        "learn more earthen\nspells suitable for subtle stabbing or " ..
+        "brute-force blasting.",
+    -- Source: crawl-ref/source/newgame.cc
+    menu_group = groups.JOB_MAGE,
+    menu_order = 8,
 }
 
 register.definition(categories.JOBS, definition)

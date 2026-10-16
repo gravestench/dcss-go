@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/octopode.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_OCTOPODE",
@@ -12,7 +13,7 @@ local definition = {
     adjective = "Octopoid",
     genus = "Octopus",
     selectable = true,
-    difficulty = "Advanced",
+    difficulty = groups.SPECIES_ADVANCED,
     difficulty_priority = 50,
     xp = 0,
     hp = -1,
@@ -195,6 +196,9 @@ local definition = {
     },
     walking_verb = "Wriggl",
     altar_action = "curl up in front of",
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Octopodes are a species of amphibious cephalopods. They can " ..
+        "wear eight rings,\nbut almost no armour fits them.",
 }
 
 register.definition(categories.SPECIES, definition)

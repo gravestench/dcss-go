@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/djinni.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_DJINNI",
@@ -10,7 +11,7 @@ local definition = {
     name = "Djinni",
     short_name = "Dj",
     selectable = true,
-    difficulty = "Intermediate",
+    difficulty = groups.SPECIES_INTERMEDIATE,
     difficulty_priority = 70,
     xp = 1,
     hp = -1,
@@ -192,6 +193,9 @@ local definition = {
         "SK_SHORT_BLADES",
         "SK_LONG_BLADES",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Djinn are ever-burning spirits. They learn spells innately, " ..
+        "without books, and\ncast by drawing down their own fires.",
 }
 
 register.definition(categories.SPECIES, definition)

@@ -5,6 +5,7 @@
 
 local categories = require("constants.catalog")
 local item_ids = require("ids.items")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "JOB_ARTIFICER",
@@ -79,6 +80,13 @@ local definition = {
             no_exclude = true,
         },
     },
+    -- Source: crawl-ref/source/dat/descript/backgrounds.txt
+    description = "Artificers start with a few magic wands and a club. They'll " ..
+        "need to find better\nweapons and armour before their wands " ..
+        "run out.",
+    -- Source: crawl-ref/source/newgame.cc
+    menu_group = groups.JOB_ADVENTURER,
+    menu_order = 1,
 }
 
 register.definition(categories.JOBS, definition)

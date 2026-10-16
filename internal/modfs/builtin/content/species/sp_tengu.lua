@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/tengu.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_TENGU",
@@ -10,7 +11,7 @@ local definition = {
     name = "Tengu",
     short_name = "Te",
     selectable = true,
-    difficulty = "Intermediate",
+    difficulty = groups.SPECIES_INTERMEDIATE,
     difficulty_priority = 50,
     xp = 0,
     hp = -2,
@@ -179,6 +180,10 @@ local definition = {
         "SK_STAVES",
     },
     walking_verb = "Glid",
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Tengu are bird-people who love to fight, both with weapons " ..
+        "and spells. They are\nquite fragile, but they learn to fly " ..
+        "swiftly later on.",
 }
 
 register.definition(categories.SPECIES, definition)

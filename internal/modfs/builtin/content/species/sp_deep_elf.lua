@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/deep-elf.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_DEEP_ELF",
@@ -12,7 +13,7 @@ local definition = {
     adjective = "Elven",
     genus = "Elf",
     selectable = true,
-    difficulty = "Intermediate",
+    difficulty = groups.SPECIES_INTERMEDIATE,
     difficulty_priority = 40,
     xp = -1,
     hp = -2,
@@ -157,6 +158,9 @@ local definition = {
         "SK_SHORT_BLADES",
         "SK_STAVES",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Deep Elves have a strong affinity for all kinds of magic, " ..
+        "but are very fragile.",
 }
 
 register.definition(categories.SPECIES, definition)

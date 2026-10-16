@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/mummy.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_MUMMY",
@@ -10,7 +11,7 @@ local definition = {
     name = "Mummy",
     short_name = "Mu",
     selectable = true,
-    difficulty = "Advanced",
+    difficulty = groups.SPECIES_ADVANCED,
     difficulty_priority = 20,
     xp = -1,
     hp = 0,
@@ -195,6 +196,10 @@ local definition = {
         "SK_STAVES",
         "SK_RANGED_WEAPONS",
     },
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Compelled to walk by an ancient curse, Mummies are adept at " ..
+        "Necromancy but\nlearn other skills very slowly. They are " ..
+        "unable to consume potions.",
 }
 
 register.definition(categories.SPECIES, definition)

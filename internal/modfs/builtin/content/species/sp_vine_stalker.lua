@@ -3,6 +3,7 @@
 -- Source: crawl-ref/source/dat/species/vine-stalker.yaml
 
 local categories = require("constants.catalog")
+local groups = require("constants.menu_groups")
 
 local definition = {
     id = "SP_VINE_STALKER",
@@ -10,7 +11,7 @@ local definition = {
     name = "Vine Stalker",
     short_name = "VS",
     selectable = true,
-    difficulty = "Advanced",
+    difficulty = groups.SPECIES_ADVANCED,
     difficulty_priority = 100,
     xp = 0,
     hp = -3,
@@ -190,6 +191,10 @@ local definition = {
         "SK_STAVES",
     },
     walking_verb = "Stalk",
+    -- Source: crawl-ref/source/dat/descript/species.txt
+    description = "Frail symbionts, Vine Stalkers cannot regain health from " ..
+        "potions. Their magical\nreserves absorb damage, and they pack " ..
+        "a magic-restoring bite.",
 }
 
 register.definition(categories.SPECIES, definition)
