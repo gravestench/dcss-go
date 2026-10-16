@@ -45,6 +45,8 @@ var inputScreens = map[string]ScreenID{
 	"mutations":       ScreenMutations,
 	"help":            ScreenHelp,
 	"quaff":           ScreenQuaff,
+	"read":            ScreenRead,
+	"selection":       ScreenSelection,
 	"evoke_wand":      ScreenEvokeWand,
 	"drop":            ScreenDrop,
 	"wield":           ScreenWield,
@@ -75,6 +77,9 @@ var gameInputActions = map[string]bool{
 	"finish_door":            true,
 	"fire_aim":               true,
 	"item_step":              true,
+	"selection_choose":       true,
+	"selection_cancel":       true,
+	"cancel_read_aim":        true,
 	"move_aim":               true,
 	"mutation_page":          true,
 	"mutation_detail":        true,
@@ -153,11 +158,15 @@ func (m *AppModel) applyInputDecision(decision map[string]any) tea.Cmd {
 
 	case "aim", "door", "step", "spell_step", "ability_step",
 		"confirm_ability", "ability_confirm_accept",
-		"action_confirm_accept", "action_confirm_cancel":
+		"action_confirm_accept", "action_confirm_cancel",
+		"cancel_read_aim":
 		return m.applyGameplayDecision(action, decision)
 
 	case "drop_quantity", "item_step":
 		return m.applyItemDecision(action, decision)
+
+	case "selection_choose", "selection_cancel":
+		return m.applySelectionDecision(action, decision)
 
 	case "fire_aim", "cycle_aim", "move_aim", "cancel_door",
 		"finish_door":
@@ -206,6 +215,19 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 	}
 
 	m.notice = ""
+
+	if result.Selection != nil {
+		m.pendingAction = command
+		m.pendingSelection = result.Selection
+
+		if result.Selection.Kind == "cell" {
+			m.startAim(command.Kind, command.ItemID)
+		} else {
+			m.openScreen(ScreenSelection)
+		}
+
+		return nil
+	}
 
 	if result.Confirmation != "" {
 		m.pendingAction = command

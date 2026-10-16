@@ -1,4 +1,6 @@
+local sources = require("constants.poison_sources")
 local poison_sources = {
+    [sources.PLAYER] = true,
     MONS_ADDER = true,
     MONS_GOBLIN = true,
     MONS_KOBOLD = true,

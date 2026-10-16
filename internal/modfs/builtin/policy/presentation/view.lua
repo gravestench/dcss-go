@@ -4,6 +4,7 @@ local formulas = require("policy.character.formulas")
 local experience_limit = require("policy.character.experience_limit")
 local fighter = require("policy.combat.fighter")
 local colors = require("policy.presentation.colors")
+local clouds = require("policy.presentation.clouds")
 local identification = require("policy.items.identification")
 
 local view = {}
@@ -45,6 +46,9 @@ function view.entity(ctx, input)
     elseif role == "disturbance" then
         name = "disturbance in the air"
         glyph = string.byte("{")
+    elseif role == "cloud" then
+        name = clouds.get(kind_id).name
+        glyph = string.byte("#")
     elseif role == "item" then
         local item = catalog.get("items", kind_id)
         local entity = ctx:entity(input.item_entity_id)
@@ -95,6 +99,10 @@ function view.detected_item()
 end
 
 function view.entity_color(input)
+    if input.role == "cloud" then
+        return { fg = clouds.get(input.kind_id).color }
+    end
+
     if input.role == "player" then
         return { fg = colors.white }
     end

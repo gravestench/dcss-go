@@ -31,6 +31,26 @@ func featureRows(rows []string) [][]terrain.ID {
 	return cells
 }
 
+func TestTransientOpaqueCloudBlocksSightBeyondItsCell(t *testing.T) {
+	rows := featureRows([]string{"....."})
+	visible, err := ComputeWithOpacity(
+		rows, 0, 0, 7,
+		func(x, y int) bool {
+			return x == 2 && y == 0
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !visible[2] ||
+		visible[3] ||
+		visible[4] {
+		t.Fatalf("opaque cloud sight mask: %v", visible)
+	}
+}
+
 type goldenFile struct {
 	SourceRevision string `json:"sourceRevision"`
 	SourcePath     string `json:"sourcePath"`

@@ -33,6 +33,9 @@ type Services struct {
 // terrain features, stair links, occupancy, and walkability.
 type Grid interface {
 	Cell(levelID, x, y int) (terrain.ID, bool)
+	Remembered(levelID, x, y int) (terrain.ID, bool)
+	MapCell(levelID, x, y int) error
+	RestoreRemembered(levelID, x, y int, feature terrain.ID) error
 	Size(levelID int) (int, int, bool)
 	Branch(levelID int) (string, bool)
 	Walkable(levelID, x, y int) bool

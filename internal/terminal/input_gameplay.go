@@ -116,6 +116,24 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 		m.pendingActionPrompt = ""
 		m.openScreen(ScreenPlay)
 
+	case "cancel_read_aim":
+		if m.screen != ScreenAim ||
+			m.pendingSelection == nil ||
+			m.pendingSelection.Kind != "cell" {
+			m.notice = "No scroll target is pending."
+
+			return nil
+		}
+
+		command := m.pendingAction
+
+		command.Cancelled = true
+		m.pendingAction = game.Command{}
+		m.pendingSelection = nil
+		m.openScreen(ScreenPlay)
+
+		return m.stepPlayCommand(command)
+
 	}
 
 	return nil

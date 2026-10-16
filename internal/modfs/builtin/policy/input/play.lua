@@ -26,6 +26,10 @@ local screens = {
         name = "quaff",
         returnable = true,
     },
+    r = {
+        name = "read",
+        returnable = true,
+    },
     V = {
         name = "evoke_wand",
         returnable = true,

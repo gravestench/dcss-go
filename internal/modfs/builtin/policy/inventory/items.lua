@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local armour_egos = require("constants.armour_egos")
 local identification = require("policy.items.identification")
+local brand_pool = require("policy.inventory.brand_pool")
 
 local items = {}
 local supported_armour_egos = {
@@ -60,6 +61,10 @@ function items.validate(item, kind)
         -- Chaos Knight starts with a forced chaos brand. Generation weights
         -- describe random rolls, not every brand the source can place.
         if item.ego == "SPWPN_CHAOS" then
+            return
+        end
+
+        if brand_pool.contains(kind, item.ego) then
             return
         end
 

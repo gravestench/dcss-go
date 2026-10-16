@@ -24,6 +24,7 @@ local forbidden_commands = {
     [command_kind.CAST] = true,
     [command_kind.FORCE_CAST] = true,
     [command_kind.EVOKE_WAND] = true,
+    [command_kind.READ] = true,
 }
 
 local noncombat_warnings = {

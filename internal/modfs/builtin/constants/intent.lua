@@ -20,6 +20,7 @@ local intent = {
     CHANNEL_WAIT = 16,
     PLAYER_ABILITY = 17,
     EVOKE_WAND = 18,
+    READ = 19,
     MONSTER_MOVE = 1,
     MONSTER_MELEE = 2,
     MONSTER_WAIT = 6,

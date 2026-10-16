@@ -23,6 +23,7 @@ local command_kind = {
     FORCE_CAST = 21,
     ABILITY = 22,
     EVOKE_WAND = 23,
+    READ = 24,
 }
 
 return command_kind

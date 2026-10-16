@@ -47,6 +47,7 @@ local function ensure(ctx, player)
         wereblood_aut = 0,
         wereblood_bonus = 0,
         silence_aut = 0,
+        lowered_will_aut = 0,
         ice_armour_aut = 0,
         ice_armour_power = 0,
         death_door_aut = 0,
@@ -202,6 +203,10 @@ function statuses.tick(ctx, player, aut)
 
     if decay(ctx, value, "silence_aut", aut, nil, 50, 0) then
         ctx:emit("duration", "Your hearing returns.")
+    end
+
+    if decay(ctx, value, "lowered_will_aut", aut, nil, 0, 0) then
+        ctx:emit("duration", "Your willpower returns.")
     end
 
     local ice_loss = 0
@@ -606,6 +611,18 @@ function statuses.silence_radius(ctx, player)
     local squared = math.max(0, math.min(math.floor(3 * (turns - 5) / 4), 25))
 
     return math.max(aura, math.floor(math.sqrt(squared)))
+end
+
+function statuses.lower_will(ctx, player, duration_aut)
+    local value = ensure(ctx, player)
+    value.lowered_will_aut = math.max(value.lowered_will_aut,
+        duration_aut)
+
+    if state(ctx, player) then
+        ctx:set(player, component.PLAYER_STATUS, value)
+    else
+        ctx:add(player, component.PLAYER_STATUS, value)
+    end
 end
 
 -- Source: player.cc:player_speed. All slowing effects share one duration.

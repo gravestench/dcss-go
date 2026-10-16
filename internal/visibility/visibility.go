@@ -159,6 +159,15 @@ func buildRays() []ray {
 
 // Compute returns a row-major mask of cells visible from the origin.
 func Compute(rows [][]terrain.ID, originX, originY, radius int) ([]bool, error) {
+	return ComputeWithOpacity(rows, originX, originY, radius, nil)
+}
+
+// ComputeWithOpacity includes transient blockers such as opaque clouds.
+func ComputeWithOpacity(
+	rows [][]terrain.ID,
+	originX, originY, radius int,
+	opaque func(x, y int) bool,
+) ([]bool, error) {
 	if radius < 1 || radius > maxRadius {
 		return nil, fmt.Errorf("visibility radius %d outside 1..%d", radius, maxRadius)
 	}
@@ -217,7 +226,8 @@ func Compute(rows [][]terrain.ID, originX, originY, radius int) ([]bool, error) 
 
 				visible[y*width+x] = true
 
-				if terrain.Opaque(rows[y][x]) {
+				if terrain.Opaque(rows[y][x]) ||
+					(opaque != nil && opaque(x, y)) {
 					break
 				}
 			}

@@ -1,4 +1,5 @@
 local commands = require("policy.input.commands")
+local classes = require("ids.object_classes")
 local menu = require("policy.input.menu")
 
 local items = {}
@@ -8,7 +9,11 @@ function items.any_item()
 end
 
 function items.potion(candidate)
-    return candidate.class == "OBJ_POTIONS"
+    return candidate.class == classes.OBJ_POTIONS
+end
+
+function items.scroll(candidate)
+    return candidate.class == classes.OBJ_SCROLLS
 end
 
 function items.wand(candidate)
@@ -57,6 +62,22 @@ function items.quaff(input)
     end
 
     return notice("Select a potion by its inventory letter.")
+end
+
+function items.read(input)
+    local navigation = menu.close_or_help(input)
+
+    if navigation then
+        return navigation
+    end
+
+    local item = menu.item(input, items.scroll)
+
+    if item then
+        return item_step(commands.read, item.id)
+    end
+
+    return notice("Select a scroll by its inventory letter.")
 end
 
 function items.evoke_wand(input)

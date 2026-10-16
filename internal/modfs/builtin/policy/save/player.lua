@@ -177,9 +177,12 @@ local function validate(ctx)
     end
 
     if status and (status.blink_cooldown_aut < 0 or
+        status.lowered_will_aut < 0 or
         status.disjunction_aut < 0 or status.vertigo_aut < 0) then
         error("invalid player spell status duration")
     end
+
+    require("policy.magic.player_teleport").validate(ctx, entity)
 
     local permanent_loss = ctx:get(entity, "magic.permanent_hp_loss")
 

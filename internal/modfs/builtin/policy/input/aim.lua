@@ -4,6 +4,12 @@ local aim = {}
 
 function aim.route(input)
     if input.key == "esc" then
+        if input.reading then
+            return {
+                action = "cancel_read_aim",
+            }
+        end
+
         return {
             action = "screen",
             screen = "play",

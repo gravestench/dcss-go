@@ -27,6 +27,7 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "level_size", r.state.NewFunction(r.luaGridLevelSize))
 	r.state.SetField(context, "level_branch", r.state.NewFunction(r.luaGridLevelBranch))
 	r.state.SetField(context, "set_cell", r.state.NewFunction(r.luaGridSetCell))
+	r.state.SetField(context, "map_cell", r.state.NewFunction(r.luaGridMapCell))
 	r.state.SetField(context, "walkable", r.state.NewFunction(r.luaGridWalkable))
 	r.state.SetField(context, "actor_at", r.state.NewFunction(r.luaGridActorAt))
 	r.state.SetField(context, "stair_at", r.state.NewFunction(r.luaGridStairAt))
@@ -357,6 +358,36 @@ func (r *Runtime) luaGridSetCell(state *lua.LState) int {
 	})
 
 	return 0
+}
+
+func (r *Runtime) luaGridMapCell(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	previous, found := r.services.Grid.Remembered(levelID, x, y)
+
+	if !found {
+		state.RaiseError("cannot map missing grid cell")
+
+		return 0
+	}
+
+	if previous != terrain.Unseen {
+		state.Push(lua.LBool(false))
+
+		return 1
+	}
+
+	r.pending = append(r.pending, structuralCommand{
+		apply: func() error {
+			return r.services.Grid.MapCell(levelID, x, y)
+		},
+		undo: func() error {
+			return r.services.Grid.RestoreRemembered(levelID, x, y, previous)
+		},
+	})
+
+	state.Push(lua.LBool(true))
+
+	return 1
 }
 
 func (r *Runtime) luaGridWalkable(state *lua.LState) int {

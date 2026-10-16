@@ -1,5 +1,6 @@
 local spells = require("ids.spells")
 local monsters = require("ids.monsters")
+local items = require("ids.items")
 local component = require("constants.component")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
@@ -30,10 +31,13 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     local spectral = ctx:get(entity, component.SPECTRAL_WEAPON)
     local item_source = state.source_category == categories.ITEMS and
         actor.kind_id == monsters.MONS_SPECTRAL_WEAPON and spectral
+    local scroll_source = state.source_category == categories.ITEMS and
+        (state.source_id == items.SCR_SUMMONING or
+            state.source_id == items.SCR_BUTTERFLIES)
 
     if state.source_category ~= categories.SPELLS and
         state.source_category ~= categories.MUTATIONS and
-        not item_source then
+        not item_source and not scroll_source then
         error("summon " .. ctx:id(entity) .. " has invalid origin category")
     end
 

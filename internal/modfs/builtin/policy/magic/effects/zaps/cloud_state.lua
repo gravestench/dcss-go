@@ -12,6 +12,7 @@ register.component{
         x = { type = "int64", default = 0 },
         y = { type = "int64", default = 0 },
         expires_aut = { type = "int64", default = 0 },
+        opaque = { type = "bool", default = false },
     },
 }
 

@@ -12,6 +12,29 @@ local classes = {
     { id = object_classes.OBJ_POTIONS, title = "Potions" },
 }
 
+local item_modes = {
+    quaff = {
+        title = "Quaff which potion?",
+        class = object_classes.OBJ_POTIONS,
+        empty = "You have no potions.",
+    },
+    read = {
+        title = "Read which scroll?",
+        class = object_classes.OBJ_SCROLLS,
+        empty = "You have no scrolls.",
+    },
+    throw = {
+        title = "Throw which missile?",
+        class = object_classes.OBJ_MISSILES,
+        empty = "You have no missiles.",
+    },
+    evoke_wand = {
+        title = "Evoke which wand?",
+        class = object_classes.OBJ_WANDS,
+        empty = "You have no wands.",
+    },
+}
+
 local function letter(index)
     if index < 26 then
         return string.char(string.byte("a") + index)
@@ -125,21 +148,13 @@ function modals.rows(input)
         end
 
         write(writes, 0, height - 2, "Esc - Cancel    ? - Help", colors.brown)
-    elseif mode == "quaff" or mode == "throw" or
-        mode == "evoke_wand" then
-        local choosing_throw = mode == "throw"
-        local choosing_wand = mode == "evoke_wand"
-        local title = choosing_throw and "Throw which missile?" or
-            (choosing_wand and "Evoke which wand?" or
-                "Quaff which potion?")
-        local class = choosing_throw and object_classes.OBJ_MISSILES or
-            (choosing_wand and object_classes.OBJ_WANDS or
-                object_classes.OBJ_POTIONS)
-        write(writes, 0, 0, title, colors.white)
+    elseif item_modes[mode] then
+        local chosen = item_modes[mode]
+        write(writes, 0, 0, chosen.title, colors.white)
         local y = 2
 
         for index, item in ipairs(inventory) do
-            if item.class == class then
+            if item.class == chosen.class then
                 local label = item.name
 
                 if item.quantity > 1 then
@@ -152,10 +167,7 @@ function modals.rows(input)
         end
 
         if y == 2 then
-            local empty = choosing_throw and "You have no missiles." or
-                (choosing_wand and "You have no wands." or
-                    "You have no potions.")
-            write(writes, 1, y, empty, colors.brown)
+            write(writes, 1, y, chosen.empty, colors.brown)
         end
 
         write(writes, 0, height - 2, "Esc - Cancel    ? - Help", colors.brown)

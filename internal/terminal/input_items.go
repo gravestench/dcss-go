@@ -70,6 +70,7 @@ func (m *AppModel) applyItemStep(decision map[string]any) tea.Cmd {
 		game.CommandWield,
 		game.CommandWear,
 		game.CommandTakeOff,
+		game.CommandRead,
 	)
 
 	if !ok {

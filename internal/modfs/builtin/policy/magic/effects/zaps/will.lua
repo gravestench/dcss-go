@@ -3,11 +3,15 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local will = {}
 
+function will.invulnerable(definition)
+    return (definition.willpower or 0) >= 5000
+end
+
 -- Source: actor.cc:check_willpower and beam.cc:ench_power_stepdown.
 function will.resists(ctx, definition, enchant_power, target)
     local resistance = definition.willpower or 0
 
-    if resistance >= 5000 then
+    if will.invulnerable(definition) then
         return true
     end
 

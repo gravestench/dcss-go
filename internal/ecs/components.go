@@ -195,6 +195,7 @@ const (
 	IntentChannelWait
 	IntentPlayerAbility
 	IntentEvokeWand
+	IntentRead
 )
 
 type Intent struct {
@@ -205,5 +206,7 @@ type Intent struct {
 	Quantity  int
 	SpellID   string
 	AbilityID string
+	TargetID  string
+	Cancelled bool
 	Forced    bool
 }

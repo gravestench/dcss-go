@@ -20,6 +20,11 @@ local ids = {
         MEPHITIC = "CLOUD_MEPHITIC",
         DUST = "CLOUD_DUST",
         TLOC_ENERGY = "CLOUD_TLOC_ENERGY",
+        POISON = "CLOUD_POISON",
+        GREY_SMOKE = "CLOUD_GREY_SMOKE",
+        BLUE_SMOKE = "CLOUD_BLUE_SMOKE",
+        BLACK_SMOKE = "CLOUD_BLACK_SMOKE",
+        PURPLE_SMOKE = "CLOUD_PURPLE_SMOKE",
     },
 }
 

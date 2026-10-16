@@ -8,6 +8,7 @@ local mutations = require("policy.input.mutations")
 local play = require("policy.input.play")
 local pregame = require("policy.input.pregame")
 local session = require("policy.input.session")
+local selection = require("policy.input.selection")
 local skills = require("policy.input.skills")
 local spells = require("policy.input.spells")
 
@@ -23,6 +24,8 @@ local screens = {
     evoke_wand = items.evoke_wand,
     help = modal.help,
     quaff = items.quaff,
+    read = items.read,
+    selection = selection.route,
     modal = modal.route,
     mutations = mutations.route,
     play = play.route,

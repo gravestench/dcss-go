@@ -44,7 +44,7 @@ context rather than a handler API for each game domain.
 | Dungeon | Seeded basic-layout D:1–2, rooms, corridors, doors, paired stairs, source-sized population, fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; item and spell capability dispatch without monster-ID handlers | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
 | Combat | Fighter melee and headbutts; generated player melee brands and Chaos Knight's forced chaos brand in Lua, including saved spectral allies with damage sharing, distortion banishment, and chaos monster effects; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
-| Items and status | Pickup/drop, wielding, armour delays, all 17 active source potions through Lua effect files, saved potion buffs and tree form, ammunition stacks and landing, poison, curare slow, trapping nets, regeneration, and duration decay; per-run unknown appearances and shared type discovery for wands, potions, scrolls, jewellery, and staves; per-item enchantment and property knowledge | `policy/inventory`, `policy/items`, `policy/potions/effects`, `systems/item_*`, `systems/potion_*`, `schemas/item_identification.lua` |
+| Items and status | Pickup/drop, wielding, armour delays, all 17 active potions and 19 active scrolls through Lua effect files, saved potion buffs and tree form, ammunition stacks and landing, poison, curare slow, trapping nets, regeneration, and duration decay; per-run unknown appearances and shared type discovery for wands, potions, scrolls, jewellery, and staves; per-item enchantment and property knowledge | `policy/inventory`, `policy/items`, `policy/potions/effects`, `policy/scrolls/effects`, `systems/item_*`, `systems/potion_*` |
 | Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
 | Player mutations | Source definitions and Lua-owned mutation records, transitions, passive effects, abilities, and saved state; Vampire blood rituals and Bat Form are implemented; source consumers in other unported domains remain inventoried below | `content/mutations`, `policy/mutations`, `policy/abilities`, `schemas/character_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
@@ -115,7 +115,7 @@ saved, unique appearance and discovers all copies when a potion is quaffed
 or a wand is successfully evoked. The current scroll label generator keeps
 unique deterministic labels but does not yet reproduce DCSS's exact
 `make_name` syllable algorithm or its RNG sequence. Artefact exceptions,
-scroll reading effects, item-inscription UI, and item naming details beyond
+item-inscription UI, and item naming details beyond
 the implemented non-artefact classes remain. Source religion conduct
 remains part of the religion domain.
 The experience potion keeps level XP separate from allocatable skill XP; its
@@ -123,7 +123,15 @@ saved pending pool is spent on the skills screen. Lignification confirms
 before entering tree form in a live fire or cold cloud; additional cloud
 types will join that rule when their damage is ported. Potion effects are
 registered by file, and a mod-added active
-potion without an effect fails during startup.
+potion or scroll without an effect fails during startup.
+
+The first scroll-reading pass covers every active scroll ID and uses saved
+cloud, summon, teleport, vulnerability, acquirement-offer, and map state.
+The acquirement item picker follows the source class shuffle and guaranteed
+gold offer, but its subtype weighting, artefact generation, and god filters
+still need the wider item and religion domains. Fog uses opaque smoke in
+the map view and sight calculation; exact cloud spread and wind effects
+remain to be ported.
 
 For each new domain, convert the full rule category in one pass. Put its
 definitions, policies, and ECS systems in actual Lua files; extend Go only

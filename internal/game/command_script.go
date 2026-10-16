@@ -24,11 +24,36 @@ func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err err
 		"quantity":   command.Quantity,
 		"spell_id":   command.SpellID,
 		"ability_id": command.AbilityID,
+		"target_id":  command.TargetID,
+		"cancelled":  command.Cancelled,
 		"forced":     command.Forced,
 	})
 
 	if err != nil {
 		return preparedCommand{}, err
+	}
+
+	if selection, found := decision["selection"]; found {
+		if decision["intent"] != nil ||
+			decision["message"] != nil ||
+			decision["confirmation"] != nil {
+			return preparedCommand{}, fmt.Errorf("Lua selection conflicts with another decision")
+		}
+
+		request, err := selectionFromDecision(selection)
+
+		if err != nil {
+			return preparedCommand{}, err
+		}
+
+		if err := g.scripts.ApplyPending(); err != nil {
+			return preparedCommand{}, err
+		}
+
+		return freeCommand(StepResult{
+			Selection: request,
+			View:      g.View(),
+		}), nil
 	}
 
 	if confirmation, found := decision["confirmation"].(string); found {
@@ -96,6 +121,8 @@ func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err err
 
 	intent.SpellID, _ = values["spell_id"].(string)
 	intent.AbilityID, _ = values["ability_id"].(string)
+	intent.TargetID, _ = values["target_id"].(string)
+	intent.Cancelled, _ = values["cancelled"].(bool)
 	intent.Forced, _ = values["forced"].(bool)
 
 	cost, err := decisionInteger(decision, "cost")

@@ -132,8 +132,14 @@ function resistance.willpower(ctx, player)
         end
     end
 
-    return math.max(0, progress.level * species.mr +
-        pips * willpower_pip)
+    local value = progress.level * species.mr + pips * willpower_pip
+    local status = ctx:get(player, component.PLAYER_STATUS)
+
+    if status and status.lowered_will_aut > 0 then
+        value = math.floor(value / 2)
+    end
+
+    return math.max(0, value)
 end
 
 local function active_form(ctx, player, spell_id)

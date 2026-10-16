@@ -7,6 +7,7 @@ local resistances = {
     NEGATIVE_ENERGY = "MR_RES_NEG",
     POISON = "MR_RES_POISON",
     PETRIFY = "MR_RES_PETRIFY",
+    TORMENT = "MR_RES_TORMENT",
 }
 
 return resistances

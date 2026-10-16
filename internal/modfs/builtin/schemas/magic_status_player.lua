@@ -34,6 +34,11 @@ local schema = {
             default = 0,
         },
 
+        lowered_will_aut = {
+            type = "int64",
+            default = 0,
+        },
+
         ice_armour_aut = {
             type = "int64",
             default = 0,

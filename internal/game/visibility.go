@@ -33,7 +33,18 @@ func (g *Game) refreshVisibility() error {
 		return fmt.Errorf("Lua character vision has no integer radius")
 	}
 
-	visible, err := visibility.Compute(level.terrain, position.X, position.Y, int(radius))
+	blockers := g.opaqueClouds(position.LevelID)
+	visible, err := visibility.ComputeWithOpacity(
+		level.terrain, position.X, position.Y, int(radius),
+		func(x, y int) bool {
+			cell := point{
+				x: x,
+				y: y,
+			}
+
+			return blockers[cell]
+		},
+	)
 
 	if err != nil {
 		return err

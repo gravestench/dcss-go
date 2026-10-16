@@ -5,6 +5,8 @@ local embers = require("policy.magic.effects.zaps.cloud_embers")
 local mephitic = require("policy.magic.effects.zaps.cloud_mephitic")
 local dust = require("policy.magic.effects.zaps.cloud_dust")
 local tloc_energy = require("policy.magic.effects.zaps.cloud_tloc_energy")
+local poison = require("policy.magic.effects.zaps.cloud_poison")
+local smoke = require("policy.magic.effects.zaps.cloud_smoke")
 local ids = require("policy.magic.effects.zaps.ids")
 
 local cloud = {}
@@ -15,6 +17,11 @@ local handlers = {
     [ids.cloud.MEPHITIC] = mephitic,
     [ids.cloud.DUST] = dust,
     [ids.cloud.TLOC_ENERGY] = tloc_energy,
+    [ids.cloud.POISON] = poison,
+    [ids.cloud.GREY_SMOKE] = smoke,
+    [ids.cloud.BLUE_SMOKE] = smoke,
+    [ids.cloud.BLACK_SMOKE] = smoke,
+    [ids.cloud.PURPLE_SMOKE] = smoke,
 }
 
 function cloud.at(ctx, level_id, x, y)
@@ -49,6 +56,7 @@ function cloud.place(ctx, kind_id, owner, level_id, x, y, duration)
         x = x,
         y = y,
         expires_aut = ctx:aut() + duration,
+        opaque = handlers[kind_id].opaque == true,
     })
 
     return entity

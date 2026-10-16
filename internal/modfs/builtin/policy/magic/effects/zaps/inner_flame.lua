@@ -12,6 +12,19 @@ local will = require("policy.magic.effects.zaps.will")
 
 local flame = {}
 
+function flame.mark(ctx, source, target)
+    if ctx:has(target, component.INNER_FLAME) then
+        return false
+    end
+
+    ctx:add(target, component.INNER_FLAME, {
+        source = source,
+        remaining_aut = (25 + ctx:random("spell", 11)) * 10,
+    })
+
+    return true
+end
+
 local function profile(definition)
     -- mon-explode.cc:_setup_inner_flame_explosion.
     if definition.size_id == "SIZE_GIANT" then
@@ -57,10 +70,7 @@ function flame.resolve(ctx, player, intent, spell, power)
     end
 
     -- mon-ench.cc:ENCH_INNER_FLAME lasts random_range(25,35) turns.
-    ctx:add(target, component.INNER_FLAME, {
-        source = player,
-        remaining_aut = (25 + ctx:random("spell", 11)) * 10,
-    })
+    flame.mark(ctx, player, target)
     ctx:emit("spell", "The " .. definition.name ..
         " is filled with an inner flame.")
 end

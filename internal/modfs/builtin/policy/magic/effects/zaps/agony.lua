@@ -6,41 +6,9 @@ local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
+local torment = require("policy.combat.torment")
 
 local agony = {}
-
-local function has_holiness(definition, wanted)
-    for _, holiness in ipairs(definition.holiness or {}) do
-        if holiness == wanted then
-            return true
-        end
-    end
-
-    return false
-end
-
-local function resistance(definition, wanted)
-    for _, entry in ipairs(definition.resistances or {}) do
-        if entry.id == wanted then
-            return entry.level
-        end
-    end
-
-    return 0
-end
-
-local function susceptible(definition)
-    return resistance(definition, "MR_RES_TORMENT") <= 0
-end
-
-local function negative_resistance(definition)
-    if not has_holiness(definition, "MH_NATURAL") and
-        not has_holiness(definition, "MH_PLANT") then
-        return 3
-    end
-
-    return math.min(3, resistance(definition, "MR_RES_NEG"))
-end
 
 function agony.can_target(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
@@ -59,7 +27,7 @@ function agony.can_target(ctx, player, spell)
             local distance = math.max(math.abs(location.x - origin.x),
                 math.abs(location.y - origin.y))
 
-            if health.current > 0 and susceptible(definition) and
+            if health.current > 0 and torment.susceptible(definition) and
                 distance <= reach and location.level_id == origin.level_id and
                 ctx:visible(origin.level_id, origin.x, origin.y, reach,
                     location.x, location.y) and
@@ -92,7 +60,7 @@ function agony.resolve(ctx, player, intent, spell, power)
         error("Agony struck an actor without health")
     end
 
-    if not susceptible(definition) or health.current <= 0 then
+    if not torment.susceptible(definition) or health.current <= 0 then
         ctx:emit("spell", "The " .. definition.name .. " is unaffected.")
         return
     end
@@ -107,9 +75,7 @@ function agony.resolve(ctx, player, intent, spell, power)
 
     -- spl-goditem.cc:torment_cell cuts current HP by 50%-5% per rN,
     -- less one point, so Agony itself never kills the target.
-    local fraction = 50 - negative_resistance(definition) * 5
-    local amount = math.max(0,
-        math.floor(health.current * fraction / 100) - 1)
+    local amount = torment.monster_loss(definition, health.current)
 
     damage.apply(ctx, target, amount)
     ctx:emit("spell", "The " .. definition.name .. " convulses!")

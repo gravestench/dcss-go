@@ -67,13 +67,17 @@ func (g *Game) scriptServices() (script.Services, error) {
 				Text: message,
 			})
 		},
-		Grid:           scriptGrid{levels: g.levels},
+		Grid: scriptGrid{
+			levels: g.levels,
+			opaque: g.opaqueClouds,
+		},
 		HostComponents: components,
 	}, nil
 }
 
 type scriptGrid struct {
 	levels map[int]*Level
+	opaque func(levelID int) map[point]bool
 }
 
 func (grid scriptGrid) Size(levelID int) (int, int, bool) {
@@ -104,6 +108,41 @@ func (grid scriptGrid) Cell(levelID, x, y int) (terrain.ID, bool) {
 	}
 
 	return level.terrain[y][x], true
+}
+
+func (grid scriptGrid) Remembered(levelID, x, y int) (terrain.ID, bool) {
+	level := grid.levels[levelID]
+
+	if level == nil || !level.inBounds(x, y) {
+		return terrain.Unseen, false
+	}
+
+	return level.remembered[y*level.width+x], true
+}
+
+func (grid scriptGrid) MapCell(levelID, x, y int) error {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return fmt.Errorf("missing level %d", levelID)
+	}
+
+	return level.MapCell(x, y)
+}
+
+func (grid scriptGrid) RestoreRemembered(
+	levelID, x, y int,
+	feature terrain.ID,
+) error {
+	level := grid.levels[levelID]
+
+	if level == nil || !level.inBounds(x, y) {
+		return fmt.Errorf("missing level %d cell (%d,%d)", levelID, x, y)
+	}
+
+	level.remembered[y*level.width+x] = feature
+
+	return nil
 }
 
 func (grid scriptGrid) Walkable(levelID, x, y int) bool {
@@ -148,7 +187,18 @@ func (grid scriptGrid) Visible(
 		return false, nil
 	}
 
-	visible, err := visibility.Compute(level.terrain, fromX, fromY, radius)
+	blockers := grid.opaque(levelID)
+	visible, err := visibility.ComputeWithOpacity(
+		level.terrain, fromX, fromY, radius,
+		func(x, y int) bool {
+			cell := point{
+				x: x,
+				y: y,
+			}
+
+			return blockers[cell]
+		},
+	)
 
 	if err != nil {
 		return false, err

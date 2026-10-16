@@ -31,7 +31,14 @@ func drawDungeon(canvas *Canvas, region Region, view game.View, policy presentat
 	}
 
 	renderer.drawTerrain()
+	renderer.drawClouds()
 	renderer.drawEntities()
+}
+
+func (r dungeonRenderer) drawClouds() {
+	for _, cloud := range r.view.Clouds {
+		r.drawEntity(cloud)
+	}
 }
 
 func (r dungeonRenderer) drawTerrain() {

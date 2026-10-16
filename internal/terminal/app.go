@@ -49,6 +49,8 @@ const (
 	ScreenAbilityConfirm
 	ScreenActionConfirm
 	ScreenEvokeWand
+	ScreenRead
+	ScreenSelection
 )
 
 type equipmentTick struct {
@@ -114,6 +116,7 @@ type AppModel struct {
 	pendingAbilityID    string
 	pendingAction       game.Command
 	pendingActionPrompt string
+	pendingSelection    *game.SelectionRequest
 	aimX                int
 	aimY                int
 	spellMode           string
@@ -280,6 +283,14 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenQuaff:
 		return m.routeInventoryInput("quaff", key)
 
+	case ScreenRead:
+		return m.routeInventoryInput("read", key)
+
+	case ScreenSelection:
+		return m.routeInput("selection", key, map[string]any{
+			"options": selectionOptions(m.pendingSelection),
+		})
+
 	case ScreenEvokeWand:
 		return m.routeInventoryInput("evoke_wand", key)
 
@@ -302,6 +313,8 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 		return m.routeInput("aim", key, map[string]any{
 			"casting": m.aimSpellID != "",
 			"evoking": m.aimKind == game.CommandEvokeWand,
+			"reading": m.pendingSelection != nil &&
+				m.pendingSelection.Kind == "cell",
 		})
 
 	case ScreenSpells:
@@ -365,7 +378,8 @@ func (m *AppModel) renderCanvas() *Canvas {
 			m.drawStatus(canvas, "stat_choice")
 		}
 
-	case ScreenInventory, ScreenSkills, ScreenMutations, ScreenQuaff, ScreenEvokeWand, ScreenDrop,
+	case ScreenInventory, ScreenSkills, ScreenMutations, ScreenQuaff, ScreenRead, ScreenSelection,
+		ScreenEvokeWand, ScreenDrop,
 		ScreenWield, ScreenWear, ScreenTakeOff, ScreenThrow, ScreenSpells,
 		ScreenAbilities, ScreenAbilityConfirm, ScreenActionConfirm:
 		m.drawGameMenu(canvas)
@@ -411,6 +425,12 @@ func (m *AppModel) drawGameMenu(canvas *Canvas) {
 
 		case ScreenQuaff:
 			DrawQuaff(canvas, view, m.presentationPolicy)
+
+		case ScreenRead:
+			drawInventoryModal(canvas, view, "read", "", m.presentationPolicy)
+
+		case ScreenSelection:
+			m.drawSelection(canvas)
 
 		case ScreenEvokeWand:
 			drawInventoryModal(canvas, view, "evoke_wand", "", m.presentationPolicy)

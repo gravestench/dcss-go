@@ -34,6 +34,7 @@ const (
 	CommandForceCast
 	CommandAbility
 	CommandEvokeWand
+	CommandRead
 )
 
 const CommandCancelVampire = CommandCancelMemorise
@@ -46,6 +47,8 @@ type Command struct {
 	Quantity  int
 	SpellID   string
 	AbilityID string
+	TargetID  string
+	Cancelled bool
 	Forced    bool
 }
 
@@ -59,6 +62,7 @@ type StepResult struct {
 	Events       []Event
 	View         View
 	Confirmation string
+	Selection    *SelectionRequest
 }
 
 // TurnContext is updated by Game before ordered Akara systems run.

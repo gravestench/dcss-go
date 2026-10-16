@@ -35,6 +35,15 @@ func (m *AppModel) fireAim() tea.Cmd {
 		AbilityID: m.aimAbilityID,
 	}
 
+	if m.pendingSelection != nil &&
+		m.pendingSelection.Kind == "cell" {
+		command = m.pendingAction
+		command.DX = m.aimX - view.PlayerX
+		command.DY = m.aimY - view.PlayerY
+		m.pendingAction = game.Command{}
+		m.pendingSelection = nil
+	}
+
 	m.openScreen(ScreenPlay)
 
 	return m.stepPlayCommand(command)

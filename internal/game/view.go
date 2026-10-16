@@ -53,6 +53,7 @@ type View struct {
 	Width    int
 	Height   int
 	Cells    []CellView
+	Clouds   []EntityView
 	Entities []EntityView
 
 	PlayerX    int
@@ -134,12 +135,40 @@ func (g *Game) View() (view View) {
 	}
 
 	g.fillTerrainView(&view, level)
+	g.fillCloudView(&view, level)
 	g.fillPlayerView(&view)
 	g.fillEntityView(&view, level, position.LevelID)
 	g.fillInventoryView(&view)
 	g.fillSpellView(&view)
 
 	return view
+}
+
+func (g *Game) fillCloudView(view *View, level *Level) {
+	for _, cloud := range g.cloudsOnLevel(level.ID) {
+		index := cloud.y*level.width + cloud.x
+
+		if g.visibleLevelID != level.ID ||
+			index < 0 ||
+			index >= len(g.visible) ||
+			!g.visible[index] {
+			continue
+		}
+
+		presentation := g.mustPresentationPolicy("presentation.entity", map[string]any{
+			"role":    "cloud",
+			"kind_id": cloud.kindID,
+		})
+
+		view.Clouds = append(view.Clouds, EntityView{
+			X:      cloud.x,
+			Y:      cloud.y,
+			Glyph:  rune(presentation["glyph"].(int64)),
+			KindID: cloud.kindID,
+			Name:   presentation["name"].(string),
+			Role:   "cloud",
+		})
+	}
 }
 
 // PresentationPolicy runs a pure, named screen decision against this game's
