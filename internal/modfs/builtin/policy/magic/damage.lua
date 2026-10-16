@@ -10,6 +10,7 @@ local resistances = require("constants.resistance_ids")
 local armour_flags = require("constants.armour_flags")
 local armour_egos = require("constants.armour_egos")
 local item_ids = require("ids.items")
+local staves = require("policy.inventory.staves")
 local object_classes = require("ids.object_classes")
 local icy_defense = require("policy.character.icy_defense")
 local cold_blooded = require("policy.character.cold_blooded")
@@ -94,24 +95,19 @@ local elemental_gear = {
         [item_ids.RING_PROTECTION_FROM_FIRE] = 1,
         [item_ids.RING_FIRE] = 1,
         [item_ids.RING_ICE] = -1,
-        [item_ids.STAFF_FIRE] = 1,
     },
     [resistances.COLD] = {
         [item_ids.RING_PROTECTION_FROM_COLD] = 1,
         [item_ids.RING_ICE] = 1,
         [item_ids.RING_FIRE] = -1,
-        [item_ids.STAFF_COLD] = 1,
     },
-    [resistances.ELECTRICITY] = {
-        [item_ids.STAFF_AIR] = 1,
-    },
+    [resistances.ELECTRICITY] = {},
     [resistances.ACID] = {
         [item_ids.RING_RESIST_CORROSION] = 1,
     },
     [resistances.STEAM] = {},
     [resistances.NEGATIVE_ENERGY] = {
         [item_ids.RING_LIFE_PROTECTION] = 1,
-        [item_ids.STAFF_DEATH] = 1,
     },
 }
 
@@ -203,6 +199,10 @@ function damage.player_resistance(ctx, player, resistance_id)
         local definition = entry.definition
 
         value = value + (gear[item.kind_id] or 0)
+
+        if slot == "weapon" then
+            value = value + staves.resistance(definition, resistance_id)
+        end
 
         if definition.class == object_classes.OBJ_ARMOUR then
             if resistance_id == resistances.FIRE and

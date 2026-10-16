@@ -1,6 +1,8 @@
 local capabilities = require("constants.mutation_capabilities")
 local effects = require("policy.mutations.effects.registry")
 local brilliance = require("policy.potions.brilliance")
+local equipment = require("policy.combat.equipment")
+local staves = require("policy.inventory.staves")
 
 local enhancement = {}
 
@@ -9,6 +11,11 @@ local enhancement = {}
 function enhancement.apply(ctx, player, spell, centis)
     local levels = effects.sum(ctx, player,
         capabilities.SPELL_ENHANCER, spell)
+    local worn = equipment.worn(ctx, player, { weapon = true })
+
+    if worn.weapon then
+        levels = levels + staves.enhances(worn.weapon.definition, spell)
+    end
 
     if brilliance.active(ctx, player) then
         levels = levels + 1

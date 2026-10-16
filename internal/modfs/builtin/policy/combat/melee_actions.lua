@@ -22,6 +22,7 @@ local stab = require("policy.combat.stab")
 local vampire = require("policy.character.vampire")
 local auxiliary_attacks = require("constants.auxiliary_attacks")
 local player_brands = require("policy.combat.player_brands")
+local player_staves = require("policy.combat.player_staves")
 local chaos_status = require("policy.combat.player_brands.chaos_status")
 
 local actions = {}
@@ -139,6 +140,10 @@ function actions.player(ctx, target, options)
 
     if outcome.kind == "hit" then
         player_brands.apply(ctx, input.weapon_brand, hit)
+        local weapon = input.weapon_id and catalog.get("items", input.weapon_id)
+
+        player_staves.apply(ctx, hit, player_brands, weapon,
+            input.defender_ac)
         health = hit.health
 
         if not hit.banished and not hit.moved then

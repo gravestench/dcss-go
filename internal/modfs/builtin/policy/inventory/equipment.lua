@@ -5,6 +5,7 @@ local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
 local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
+local staves = require("policy.inventory.staves")
 
 local equipment = {}
 
@@ -149,13 +150,15 @@ function equipment.in_slot(ctx, actor, slot)
 end
 
 function equipment.needs_second_hand(ctx, actor, kind, species)
+    local weapon = staves.weapon(kind)
+
     if mutation_levels.effective(ctx, actor,
         mutations.MUT_QUADRUMANOUS) > 0 and
-        rank(kind.weapon.min_2h_size_id) <= rank("SIZE_MEDIUM") then
+        rank(weapon.min_2h_size_id) <= rank("SIZE_MEDIUM") then
         return false
     end
 
-    return rank(species.size) < rank(kind.weapon.min_1h_size_id)
+    return rank(species.size) < rank(weapon.min_1h_size_id)
 end
 
 -- A prepared result gives the command bridge a free message or an intent and
@@ -188,11 +191,13 @@ function equipment.prepare_wield(ctx, actor, item_id)
     local kind = items.kind(item)
     items.validate(item, kind)
 
-    if kind.class ~= "OBJ_WEAPONS" or not kind.weapon then
+    local weapon = staves.weapon(kind)
+
+    if not weapon then
         return { message = "You cannot wield that item." }
     end
 
-    if not equipment.weapon_supported(kind.weapon.skill_id) then
+    if not equipment.weapon_supported(weapon.skill_id) then
         return { message = "That weapon's combat is unavailable in the Go port." }
     end
 

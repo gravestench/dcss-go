@@ -1,0 +1,72 @@
+{
+  "source_revision": "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
+  "staves": [
+    {
+      "id": "STAFF_FIRE",
+      "school": "fire",
+      "skill_id": "SK_FIRE_MAGIC",
+      "resistance_id": "MR_RES_FIRE",
+      "message": "You burn the %s!",
+      "source_path": "crawl-ref/source/melee-attack.cc",
+      "source_line": 2091
+    },
+    {
+      "id": "STAFF_COLD",
+      "school": "ice",
+      "skill_id": "SK_ICE_MAGIC",
+      "resistance_id": "MR_RES_COLD",
+      "message": "You freeze the %s!",
+      "source_path": "crawl-ref/source/melee-attack.cc",
+      "source_line": 2057
+    },
+    {
+      "id": "STAFF_POISON",
+      "school": "poison",
+      "skill_id": "SK_POISON_MAGIC",
+      "resistance_id": "MR_RES_POISON",
+      "poison_level": 2,
+      "message": "You envenom the %s!",
+      "source_path": "crawl-ref/source/melee-attack.cc",
+      "source_line": 2110
+    },
+    {
+      "id": "STAFF_DEATH",
+      "school": "necromancy",
+      "skill_id": "SK_NECROMANCY",
+      "resistance_id": "MR_RES_NEG",
+      "negative_energy": true,
+      "message": "The %s writhes in agony!",
+      "source_path": "crawl-ref/source/melee-attack.cc",
+      "source_line": 2127
+    },
+    {
+      "id": "STAFF_CONJURATION",
+      "school": "conjuration",
+      "skill_id": "SK_CONJURATIONS",
+      "ac_rolls": 1,
+      "message": "You blast the %s!",
+      "source_path": "crawl-ref/source/melee-attack.cc",
+      "source_line": 2144
+    },
+    {
+      "id": "STAFF_AIR",
+      "school": "air",
+      "skill_id": "SK_AIR_MAGIC",
+      "resistance_id": "MR_RES_ELEC",
+      "message": "The %s is electrocuted!",
+      "source_path": "crawl-ref/source/melee-attack.cc",
+      "source_line": 2040
+    },
+    {
+      "id": "STAFF_EARTH",
+      "school": "earth",
+      "skill_id": "SK_EARTH_MAGIC",
+      "ac_rolls": 3,
+      "damage_numerator": 4,
+      "damage_denominator": 3,
+      "message": "You shatter the %s!",
+      "source_path": "crawl-ref/source/melee-attack.cc",
+      "source_line": 2076
+    }
+  ]
+}

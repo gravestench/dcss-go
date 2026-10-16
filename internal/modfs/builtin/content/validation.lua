@@ -7,6 +7,7 @@ local skill_ids = require("ids.skills")
 local spell_scopes = require("constants.spell_scopes")
 local object_classes = require("ids.object_classes")
 local item_rules = require("policy.inventory.items")
+local staves = require("policy.inventory.staves")
 local weapon_choices = require("constants.weapon_choices")
 local uses = require("constants.mutation_uses")
 local source_population = require("data.dungeon_population").rows
@@ -535,6 +536,11 @@ local function validate_registered_catalogs()
         elseif item.wand_spell_id ~= nil then
             fail(categories.ITEMS, id,
                 "wand_spell_id requires the wand class")
+        end
+
+        if item.class == object_classes.OBJ_STAVES and
+            item.status == "defined" then
+            staves.weapon(item)
         end
     end
 

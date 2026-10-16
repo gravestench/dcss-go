@@ -4,6 +4,7 @@ local equipment = require("policy.inventory.equipment")
 local fighter = require("policy.combat.fighter")
 local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
+local staves = require("policy.inventory.staves")
 
 local armour_slots = {
     body = true,
@@ -163,8 +164,10 @@ local function validate(ctx)
     local weapon = slots.weapon and catalog.get("items", slots.weapon)
 
     if weapon then
-        if weapon.class ~= "OBJ_WEAPONS" or not weapon.weapon or
-            not equipment.weapon_supported(weapon.weapon.skill_id) then
+        local profile = staves.weapon(weapon)
+
+        if not profile or
+            not equipment.weapon_supported(profile.skill_id) then
             error("unsupported equipped weapon " .. weapon.id)
         end
 

@@ -16,6 +16,7 @@ local component = require("constants.component")
 local rage = require("policy.character.rage")
 local ammunition = require("ids.ammunition")
 local weapon_brands = require("constants.weapon_brands")
+local staves = require("policy.inventory.staves")
 
 local fighter = {}
 
@@ -111,20 +112,21 @@ function fighter.attack(ctx, defender)
 
     if weapon then
         local definition = weapon.definition
+        local profile = staves.weapon(definition)
 
-        if not definition.weapon then
+        if not profile then
             error("equipped weapon lacks melee properties")
         end
 
-        local launcher = definition.weapon.ammo_id ~= nil and
-            definition.weapon.ammo_id ~= ammunition.NONE
+        local launcher = profile.ammo_id ~= nil and
+            profile.ammo_id ~= ammunition.NONE
         input.held_non_melee = launcher
         input.using_weapon = not launcher
         input.weapon_skill = launcher and "SK_FIGHTING" or
-            definition.weapon.skill_id
-        input.weapon_damage = launcher and 0 or definition.weapon.damage
-        input.weapon_hit = launcher and 0 or definition.weapon.hit
-        input.weapon_speed = definition.weapon.speed
+            profile.skill_id
+        input.weapon_damage = launcher and 0 or profile.damage
+        input.weapon_hit = launcher and 0 or profile.hit
+        input.weapon_speed = profile.speed
         input.weapon_plus = launcher and 0 or weapon.item.plus
         input.weapon100 = fighter.skill(ctx, input.weapon_skill, 100)
         input.weapon50 = fighter.skill(ctx, input.weapon_skill, 50)

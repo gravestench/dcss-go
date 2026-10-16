@@ -104,8 +104,8 @@ function power.failure(ctx, player, spell)
 end
 
 -- Source: spl-cast.cc:calc_spell_power and _stepdown_spellpower, with the
--- ordinary scale-one cast path. Equipment enhancers are applied separately
--- when their equipment effects enter the Lua ruleset.
+-- ordinary scale-one cast path. Wielded staff enhancement is included in
+-- enhancement.apply alongside mutation and brilliance effects.
 function power.cast(ctx, player, spell)
     local attributes = player_attributes.current(ctx, player)
     local character = ctx:get(player, "core.player")

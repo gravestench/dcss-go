@@ -9,6 +9,8 @@ local item_ids = require("ids.items")
 local spell_ids = require("ids.spells")
 local form_catalog = require("policy.magic.effects.forms.catalog")
 local potion_resistance = require("policy.potions.resistance")
+local staves = require("policy.inventory.staves")
+local resistance_ids = require("constants.resistance_ids")
 
 local resistance = {}
 local willpower_pip = 40
@@ -58,7 +60,7 @@ function resistance.poison(ctx, player)
 
     for _, entry in pairs(worn) do
         if entry.item.kind_id == "RING_POISON_RESISTANCE" or
-            entry.item.kind_id == "STAFF_POISON" or
+            staves.resistance(entry.definition, resistance_ids.POISON) > 0 or
             entry.item.ego == "SPARM_POISON_RESISTANCE" then
             value = value + 1
         end

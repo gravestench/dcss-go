@@ -21,7 +21,8 @@ function items.wand(candidate)
 end
 
 function items.weapon(candidate)
-    return candidate.class == "OBJ_WEAPONS"
+    return candidate.class == classes.OBJ_WEAPONS or
+        candidate.class == classes.OBJ_STAVES
 end
 
 function items.worn_armour(candidate)

@@ -29,6 +29,7 @@ without changing its effective Lua files does not change that identity.
 | Monster | `content/monsters/<name>.lua` | It needs a new AI or other behavior. |
 | Spell | `content/spells/<name>.lua` | It needs a new resolver under `policy/magic/effects/`. |
 | Item or unique item | `content/items/<name>.lua` | It needs a new use, combat, or equipment rule. |
+| Magical staff | `content/items/<name>.lua` with a `staff` record | Its proc needs a rule beyond the shared school, resistance, and AC behavior. |
 | Job | `content/jobs/<name>.lua` | It needs a new starting-gear rule or other behavior. |
 | Item class | An item file with a new `class` ID | It needs class-specific rules or UI. |
 | Mutation | `content/mutations/<name>.lua` | It needs an effect under `policy/mutations/effects/`. |
@@ -42,6 +43,15 @@ focused policy or system, and a `_test.lua` file using the production schema.
 Each file registers itself when discovered. There is no central switch to
 edit for each new monster, spell, item, component, or system. The loader
 rejects duplicate IDs and invalid definitions with their source paths.
+
+Magical staves use the shared staff weapon profile and wield command. Set
+`class` to `OBJ_STAVES`, `slot` to `weapon`, and add a `staff` table with
+`school`, `skill_id`, and `message`. Add either `resistance_id` for an
+elemental proc or `ac_rolls` for a physical proc. Optional fields are
+`damage_numerator`, `damage_denominator`, and `poison_level`. Import spell
+school and resistance IDs from `constants.spell_schools` and
+`constants.resistance_ids`. A new file with this metadata also gets the
+matching spell enhancer, player resistance, wield picker, and save checks.
 
 The bundled `init.lua` loads `schemas/`, `content/`, `policy/`, `systems/`,
 `generation/`, and `ui/` in that order. Paths within each tree load in sorted

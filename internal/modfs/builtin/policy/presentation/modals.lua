@@ -1,10 +1,12 @@
 local object_classes = require("ids.object_classes")
 local colors = require("policy.presentation.colors")
+local input_items = require("policy.input.items")
 
 local modals = {}
 
 local classes = {
     { id = object_classes.OBJ_WEAPONS, title = "Hand Weapons" },
+    { id = object_classes.OBJ_STAVES, title = "Magical Staves" },
     { id = object_classes.OBJ_MISSILES, title = "Missiles" },
     { id = object_classes.OBJ_ARMOUR, title = "Armour" },
     { id = object_classes.OBJ_WANDS, title = "Wands" },
@@ -113,7 +115,7 @@ function modals.rows(input)
         local y = 4
 
         for index, item in ipairs(inventory) do
-            if item.class == object_classes.OBJ_WEAPONS then
+            if input_items.weapon(item) then
                 local label = item.name
 
                 if item.slot == "weapon" then

@@ -226,9 +226,16 @@ def render_definition(category, revision, definition):
     header.extend("-- " + comment for comment in source_comments(definition))
     header.extend(["", 'local categories = require("constants.catalog")'])
     wand_spell = definition.get("wand_spell_id")
+    staff = definition.get("staff")
 
     if wand_spell:
         header.append('local spells = require("ids.spells")')
+
+    if staff:
+        header.append('local schools = require("constants.spell_schools")')
+
+        if staff.get("resistance_id"):
+            header.append('local resistances = require("constants.resistance_ids")')
 
     body = lines_for(definition)
     body[0] = "local definition = " + body[0]
@@ -245,6 +252,33 @@ def render_definition(category, revision, definition):
             f"    -- Source: {source_path}:{source_line}",
             f"    wand_spell_id = spells.{wand_spell},",
         ]
+
+    if staff:
+        school = staff["school"]
+        original = f"        school = {lua_string(school)},"
+        body[body.index(original)] = f"        school = schools.{school.upper()},"
+
+        resistance = staff.get("resistance_id")
+
+        if resistance:
+            keys = {
+                "MR_RES_FIRE": "FIRE",
+                "MR_RES_COLD": "COLD",
+                "MR_RES_POISON": "POISON",
+                "MR_RES_NEG": "NEGATIVE_ENERGY",
+                "MR_RES_ELEC": "ELECTRICITY",
+            }
+            key = keys.get(resistance)
+
+            if key is None:
+                raise ValueError(f"unknown staff resistance {resistance}")
+
+            original = f"        resistance_id = {lua_string(resistance)},"
+            body[body.index(original)] = f"        resistance_id = resistances.{key},"
+
+        naming = body.index("    naming = {")
+        separator = naming - 1 if body[naming - 1].lstrip().startswith("--") else naming
+        body.insert(separator, "")
 
     footer = [
         "",
@@ -263,6 +297,21 @@ def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
         raise ValueError("wand spell and item source revisions differ")
 
     validate_links(links_artifact["links"], items_artifact, spells_artifact)
+    staff_rules = json.loads((SOURCE / "staff-rules.json").read_text())
+
+    if staff_rules["source_revision"] != revision:
+        raise ValueError("staff rules and item source revisions differ")
+
+    by_staff = {rule["id"]: rule for rule in staff_rules["staves"]}
+    active_staves = {
+        item["id"]
+        for item in items_artifact["items"]
+        if item["class"] == "OBJ_STAVES" and not item["explicitly_removed"]
+    }
+
+    if set(by_staff) != active_staves or len(by_staff) != len(staff_rules["staves"]):
+        raise ValueError("staff rules must cover each active magical staff once")
+
     by_wand = {
         link["wand_id"]: link
         for link in links_artifact["links"]
@@ -271,8 +320,9 @@ def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
 
     for item in items_artifact["items"]:
         link = by_wand.get(item["id"])
+        staff = by_staff.get(item["id"])
 
-        if link is None:
+        if link is None and staff is None:
             definitions.append(item)
             continue
 
@@ -281,11 +331,22 @@ def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
         for key, value in item.items():
             definition[key] = value
 
-            if key == "stackable":
+            if key == "class" and staff:
+                definition["slot"] = "weapon"
+
+            if key == "stackable" and staff:
+                definition["staff"] = {
+                    field: value
+                    for field, value in staff.items()
+                    if field != "id"
+                }
+
+            if key == "stackable" and link:
                 definition["wand_spell_id"] = link["spell_id"]
 
-        definition["wand_spell_source_path"] = links_artifact["source_path"]
-        definition["wand_spell_source_line"] = link["source_line"]
+        if link:
+            definition["wand_spell_source_path"] = links_artifact["source_path"]
+            definition["wand_spell_source_line"] = link["source_line"]
         definitions.append(definition)
 
     return definitions

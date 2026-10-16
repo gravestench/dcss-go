@@ -4,15 +4,26 @@
 -- Name Line: 1094
 
 local categories = require("constants.catalog")
+local schools = require("constants.spell_schools")
+local resistances = require("constants.resistance_ids")
 
 local definition = {
     id = "STAFF_FIRE",
     name = "staff of fire",
     glyph = 124,
     class = "OBJ_STAVES",
+    slot = "weapon",
     class_value = 9,
     subtype_value = 2,
     stackable = false,
+    -- Source: crawl-ref/source/melee-attack.cc:2091
+    staff = {
+        school = schools.FIRE,
+        skill_id = "SK_FIRE_MAGIC",
+        resistance_id = resistances.FIRE,
+        message = "You burn the %s!",
+    },
+
     -- Source: crawl-ref/source/item-name.cc:1094
     naming = {
         text = "staff of fire",
