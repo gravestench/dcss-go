@@ -1,0 +1,34 @@
+NAME:    elethiomel_arrival_fortress_basement
+# Source: crawl-ref/source/dat/des/arrival/large.des:11
+TAGS:    arrival no_monster_gen no_rotate transparent
+ORIENT:  float
+WEIGHT:  2
+SHUFFLE: {[(
+SUBST:   [( = .
+SUBST:   c : cx
+TILE:    c = wall_stone_smooth
+FTILE:   . = floor_cobble_blood
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xcccccccxxxxxxxxxxxxxxxxxxxcccccccx
+xc.....ccccccccccccccccccccc.....cx
+xc.....+...................+.....cx
+xc....[cccccccccc+cccccccccc{....cx
+xccc+cccxxxxxxccc.cccxxxxxxccc+cccx
+xxxc.cxxxxxxxxc.....cxxxxxxxxc.cxxx
+xxxc.cxxxxxxxxc.0...cxxxxxxxxc.cxxx
+xxxc.cxxxxxxxxc$....cxxxxxxxxcx.xxx
+xxxc.cxxxxxxxxcccccccxxxxxxxxc...xx
+xxxc.cxxxxxxxxxxxxxxxxxxxxxxxc..x.x
+xxxc.cxxxxxxxxxxxxxxxxxxxxxxxcx..x.
+xxxc.cxxxxxxxxxxxxxxxxxxxxxxxc..xxx
+xccc+ccxxxxxxxxxxxxxxxxxxxxccc+cccx
+xxx...xxcccccccccccccccccccc(....cx
+xxx.x..+...................+.....cx
+xc...x.ccccccccccccccccccccc.....cx
+xccx.xccxxxxxxxxxxxxxxxxxxxcccccccx
+xxxx@xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################
+# 46 x 14

@@ -1,0 +1,25 @@
+NAME:    arrival_aquarium_a
+# Source: crawl-ref/source/dat/des/arrival/small.des:2231
+TAGS:    arrival
+ORIENT:  float
+KMASK:   w = no_monster_gen
+KMONS:   Z = electric eel
+KFEAT:   Z = w
+KMASK:   Z = no_monster_gen
+SHUFFLE: TTV
+WEIGHT:  5
+KMASK:   T = no_monster_gen
+KPROP:   wZ = no_tele_into
+MAP
+xxxxxxxxxxxxxxxxxxxxxxx
+x.....................x
+x.............G...G...x
+x..nnnnnnnnn..........x
+@..nwwwwwwwn.T......T.x
+@..nwwwZwwwn....{.....x
+@..nwwwwwwwn.T......T.x
+x..nnnnnnnnn..........x
+x.............G...G...x
+x.....................x
+xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

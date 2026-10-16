@@ -1,0 +1,13 @@
+{
+  "id": "dreamdust_arrival_sigmund_warning",
+  "source_file": "small.des",
+  "edits": [
+    {
+      "start_line": 3625,
+      "end_line": 3625,
+      "sha256": "ec6562ef5fd198b45dc07a4ccbb24836d052e7051fd17ce30793748deb703b24",
+      "method": "name_warning_statue",
+      "stage": "run"
+    }
+  ]
+}

@@ -264,9 +264,27 @@ func (r *Runtime) installModuleAPI() {
 	null.Value = definitionNull{}
 
 	r.state.SetField(mod, "load_tree", r.state.NewFunction(r.luaLoadTree))
+	r.state.SetField(mod, "paths", r.state.NewFunction(r.luaModPaths))
+	r.state.SetField(mod, "read", r.state.NewFunction(r.luaModRead))
+	r.state.SetField(mod, "bundled", r.state.NewFunction(r.luaModBundled))
 	r.state.SetField(mod, "null", null)
 	r.state.SetGlobal("mod", mod)
 	r.state.SetGlobal("require", r.state.NewFunction(r.luaRequire))
+}
+
+func (r *Runtime) luaModBundled(state *lua.LState) int {
+	name := state.CheckString(1)
+	data, found := r.rules.BundledFile(name)
+
+	if !found {
+		state.Push(lua.LNil)
+
+		return 1
+	}
+
+	state.Push(lua.LString(data))
+
+	return 1
 }
 
 func (r *Runtime) luaLoadTree(state *lua.LState) int {
@@ -281,7 +299,8 @@ func (r *Runtime) luaLoadTree(state *lua.LState) int {
 	prefix := root + "/"
 
 	for _, name := range r.rules.Paths() {
-		if !strings.HasPrefix(name, prefix) {
+		if !strings.HasPrefix(name, prefix) ||
+			!strings.HasSuffix(name, ".lua") {
 			continue
 		}
 
@@ -293,6 +312,48 @@ func (r *Runtime) luaLoadTree(state *lua.LState) int {
 	}
 
 	return 0
+}
+
+func (r *Runtime) luaModPaths(state *lua.LState) int {
+	root := state.CheckString(1)
+	suffix := state.CheckString(2)
+
+	if !fs.ValidPath(root) ||
+		root == "." ||
+		(suffix != ".lua" && suffix != ".des") {
+		state.RaiseError("invalid rule path filter %q, %q", root, suffix)
+
+		return 0
+	}
+
+	paths := state.NewTable()
+	prefix := root + "/"
+
+	for _, name := range r.rules.Paths() {
+		if strings.HasPrefix(name, prefix) &&
+			strings.HasSuffix(name, suffix) {
+			paths.Append(lua.LString(name))
+		}
+	}
+
+	state.Push(paths)
+
+	return 1
+}
+
+func (r *Runtime) luaModRead(state *lua.LState) int {
+	name := state.CheckString(1)
+	data, err := r.rules.ReadFile(name)
+
+	if err != nil {
+		state.RaiseError("read rule %q: %v", name, err)
+
+		return 0
+	}
+
+	state.Push(lua.LString(data))
+
+	return 1
 }
 
 func (r *Runtime) luaRequire(state *lua.LState) int {

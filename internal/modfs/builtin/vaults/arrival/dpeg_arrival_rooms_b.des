@@ -1,0 +1,20 @@
+NAME:    dpeg_arrival_rooms_b
+# Source: crawl-ref/source/dat/des/arrival/small.des:743
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SHUFFLE: cvb
+NSUBST:  . = 1:d / *:.
+ITEM:    stone
+MAP
+xxxxxxxxxxxxxxx
+xcccccccx.....x
+xc.....cx..G..x
+xc..{..cx.....x
+xc..c..cxxxx+xx
+xc..c..cx......
+xc.....+......@
+xcccccccx......
+xxxxxxxxx..@...
+ENDMAP
+
+##############################################################################

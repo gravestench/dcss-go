@@ -1,0 +1,20 @@
+NAME:   ncdulo_halloftheorcs
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1360
+TAGS:   arrival transparent
+ORIENT: float
+MAP
+     ccc+ccc
+    cc.....cc
+   cc.T...T.cc
+  cc....I....cc
+ccc...T...T...ccc
+c...............c
+c.G.G.vvvvv.G.G.c
+c..I..v.{.v..I..c
+c.G.G.v+v+v.G.G.c
+c...............c
+ccccccccccccccccc
+ENDMAP
+
+##############################################################################
+# ldierk's gardens

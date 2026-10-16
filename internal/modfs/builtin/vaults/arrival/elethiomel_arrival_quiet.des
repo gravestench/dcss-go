@@ -1,0 +1,26 @@
+NAME:    elethiomel_arrival_quiet
+# Source: crawl-ref/source/dat/des/arrival/small.des:2017
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SHUFFLE: '"XY/ABVW, !?/CD
+SUBST:   ':., ":+, A:x, B:x, !:., ?:+, C:x, D:x, V=x, W=x, Y=@x
+SUBST:   c : cxx
+KFEAT:   X = teleport trap / floor
+MAP
+         x@x
+         x.x
+       ccc+ccc
+       c.G.G.c
+       c.....c
+       c.....c
+       c.G.G.c
+       c.....c
+xxcccccc.....ccccccxx
+YX''''"..G.G..?!!!!!!
+xxcccccc.....ccccccxx
+      cG.....Gc
+      c...{...c
+      ccccccccc
+ENDMAP
+
+##############################################################

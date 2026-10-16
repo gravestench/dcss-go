@@ -1,0 +1,22 @@
+NAME:    dpeg_arrival_rooms_c
+# Source: crawl-ref/source/dat/des/arrival/small.des:762
+TAGS:    arrival no_monster_gen no_pool_fixup
+ORIENT:  float
+SHUFFLE: cvb
+MAP
+xxxxxxxxxxxx
+xvcvcvcvcvcx
+xc........vx
+xv........cx
+xc.{......vx
+xv........cx
+xc........vx
+xvcvcv+vcvcx
+xxxxxx.xxxxx
+x..........x
+x.G..wwww..x
+x..........x
+xxxxxxxxxx@x
+ENDMAP
+
+#############################################################################

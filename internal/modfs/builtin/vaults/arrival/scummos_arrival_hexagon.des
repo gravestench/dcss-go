@@ -1,0 +1,15 @@
+NAME:   scummos_arrival_hexagon
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1640
+TAGS:   arrival no_monster_gen no_rotate transparent
+ORIENT: float
+MAP
+    .......
+   ..xxxxx..
+  ..x.....x..
+ ..x.......x..
+..x....{....x..
+ ..x.......x..
+  ..x.....x..
+   ..xxxxx..
+    .......
+ENDMAP

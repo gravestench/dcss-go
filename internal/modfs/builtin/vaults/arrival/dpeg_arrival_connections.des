@@ -1,0 +1,23 @@
+NAME:    dpeg_arrival_connections
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:305
+TAGS:    arrival no_tele_into
+ORIENT:  float
+SHUFFLE: {1F/[2G/(3H/]4I, Aa/Bb/Cc/Dd/Ee
+SUBST:   ([ = .
+SUBST:   A=+, a=...>, BCDEbcde=x, GHI=.
+SUBST:   1=@, F=>, 2:2., 3:33., 4:444., 234:x
+MAP
+22222222xxxxx333
+2[......BeeeD..3
+2.G.....EbbdE..3
+xAxxECxDxxdbB.(3
+xxAxxecxddxaAH.3
+x..FEcddxDAxxCxx
+x.{.DdcbB.I....4
+x...Bbbcx..]...4
+x...CccxC......4
+x111xxxxx4444444
+ENDMAP
+
+###################################################
+# A simple little maze-like thing

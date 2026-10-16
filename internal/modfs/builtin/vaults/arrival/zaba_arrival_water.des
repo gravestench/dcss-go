@@ -1,0 +1,33 @@
+NAME:   zaba_arrival_water
+# Source: crawl-ref/source/dat/des/arrival/small.des:1316
+TAGS:   arrival no_monster_gen no_rotate
+ORIENT: float
+SUBST:  T = TV, ? = wW, > = >d
+ITEM:   stone
+MAP
+xxx+xxx+xxx+xxx
+x.............x
+x.G.TTT>TTT.G.x
+x.............x
+xw?W?wwWww?W?wx
+xwwW?wwWww?Wwwx
+xwwWWwwWwwWWwwx
+xww?WwwWwwW?wwx
+xwwwW?wWw?Wwwwx
+xwwwWWwWwWWwwwx
+xwww?WwWwW?wwwx
+xwwwwWwWwWwwwwx
+xwwwwWWWWWwwwwx
+xwwww?WWW?wwwwx
+xwww?WWWWW?wwwx
+xww?WW...WW?wwx
+xw?WW..{..WW?wx
+xww?WW...WW?wwx
+xwww?WWWWW?wwwx
+xwwww?????wwwwx
+xwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwx
+xxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

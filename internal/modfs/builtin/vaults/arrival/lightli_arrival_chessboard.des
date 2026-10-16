@@ -1,0 +1,14 @@
+NAME: lightli_arrival_chessboard
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1833
+TAGS: arrival no_monster_gen
+ORIENT: float
+MAP
+.c.c.c.c
+c.c.c.c.
+.c.c.c.c
+c.c{c.c.
+.c.c.c.c
+c.c.c.c.
+.c.c.c.c
+c.c.c.c.
+ENDMAP

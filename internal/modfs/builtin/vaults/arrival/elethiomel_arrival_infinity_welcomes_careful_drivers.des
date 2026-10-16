@@ -1,0 +1,27 @@
+NAME:    elethiomel_arrival_infinity_welcomes_careful_drivers
+# Source: crawl-ref/source/dat/des/arrival/large.des:44
+TAGS:    arrival no_rotate transparent
+ORIENT:  northwest
+KMASK:   a = no_monster_gen
+SUBST:   a : .
+SUBST:   ' : . x ':40, '=x.
+SUBST:   c : cxxx
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxx....xxxxxxxxxxxxxxx....xx..xxx.''xxxxxx
+xxxxx''........xx...''.........''...'..xx...xx
+xxx'....ccccc...xxx.....ccccc......'......x..@
+x....ccccaaacccc.....ccccaaacccc.......''..xxx
+x..cccaaaaaaaaaccc+cccaaaaaaaaaccc....''..xxxx
+x'.caaaaaa{aaaaaa+a+aaaaaaTaaaaaa+.........xxx
+x'.cccaaaaaaaaaccc+cccaaaaaaaaaccc...''...xxxx
+x....ccccaaacccc.....ccccaaacccc......'..'.xxx
+x.......ccccc......'....ccccc......'.....xxxxx
+x'................'..xx........'....'....xxxxx
+x.''..xxx...''.....'..xx....'''..''.xxx''.xxxx
+x'xxxxxxxxxxxxxx..xxx.xxx..xxx....xxxxxx...xxx
+xxxxxxxxxxxxxxxxx@xxxxxxxx@xxxxxx@xxxxxxxx@xxx
+ENDMAP
+
+##############################################################################
+# 33 x 25

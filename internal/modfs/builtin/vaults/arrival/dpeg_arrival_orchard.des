@@ -1,0 +1,22 @@
+NAME:    dpeg_arrival_orchard
+# Source: crawl-ref/source/dat/des/arrival/small.des:1689
+TAGS:    arrival
+ORIENT:  float
+MONS:    plant
+SHUFFLE: 1x
+SUBST:   x = '
+NSUBST:  ' = 2:d / *:'
+NSUBST:  . = '.
+FTILE:   '1{ = floor_grass
+COLOUR:  ' = green
+MAP
+  .....
+ .x...x.
+ '''''''
+..''{''..
+ '''''''
+ .x...x.
+  .....
+ENDMAP
+
+##############################################################################

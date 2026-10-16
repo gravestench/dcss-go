@@ -1,0 +1,29 @@
+NAME:   co_arrival_hexagon_in_a_hexagon
+# Source: crawl-ref/source/dat/des/arrival/large.des:554
+TAGS:   arrival transparent
+ORIENT: float
+WEIGHT: 1
+MONS:   plant
+MAP
+     xxxxx@xxxxxxxxx
+    xxxxxx.xxxxxxxxxx
+   xxxxxxx.xxxxxxxxxxx
+  xxxxxxxx.xxxxxxxxxxxx
+ xxxxxxxxx.1111xxxxxxxxx
+xxxxxxxxx1.....1xxxxxxxxx
+xxxxxxxx1.......1xxxxxxxx
+xxxxxxx1...WWW...1xxxxxxx
+xxxxxx1...WWWWW...1xxxxxx
+@........WWW{WWW........@
+xxxxxx1...WWWWW...1xxxxxx
+xxxxxxx1...WWW...1xxxxxxx
+xxxxxxxx1.......1xxxxxxxx
+xxxxxxxxx1.....1xxxxxxxxx
+ xxxxxxxxx1111.xxxxxxxxx
+  xxxxxxxxxxxx.xxxxxxxx
+   xxxxxxxxxxx.xxxxxxx
+    xxxxxxxxxx.xxxxxx
+     xxxxxxxxx@xxxxx
+ENDMAP
+
+##############################################################################

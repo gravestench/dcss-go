@@ -1,0 +1,13 @@
+NAME:   saegor_arrival_simple_c
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1566
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+SHUFFLE: {([
+MAP
+xxxxxxx
+x..{..x
+xx...xx
+x.vvv.x
+xG+++Gx
+xxv@vxx
+ENDMAP

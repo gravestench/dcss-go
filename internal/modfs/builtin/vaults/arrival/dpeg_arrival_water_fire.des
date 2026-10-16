@@ -1,0 +1,72 @@
+NAME:   dpeg_arrival_water_fire
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:14
+TAGS:   arrival no_monster_gen no_pool_fixup no_rotate
+ORIENT: float
+: vault.run("choose_water_fire_layout")
+# source: : local rnd = crawl.random2(12)
+# source: : if rnd == 0 then
+# source: NSUBST: A=*:., a=1:./*:l, b=1:./*:l
+# source: : elseif rnd == 1 then
+# source: NSUBST: B=*:., c=1:./*:l, d=1:./*:l, e=1:./*:l, f=1:./*:l, g=1:./*:l
+# source: : elseif rnd == 2 then
+# source: NSUBST: C=*:., h=1:./*:l, i=1:./*:l, j=1:./*:l, k=1:./*:l
+# source: : elseif rnd == 3 then
+# source: NSUBST: D=*:., m=1:./*:w, n=1:./*:w, o=1:./*:w, p=1:./*:w
+# source: : elseif rnd == 4 then
+# source: NSUBST: E=*:., q=1:./*:w, r=1:./*:w, s=1:./*:w
+# source: : elseif rnd == 5 then
+# source: NSUBST: F=*:., t=1:./*:w, u=1:./*:w, v=1:./*:w
+# source: : else
+# source: SUBST:  X=+, Y:YYY+
+# source: NSUBST: Y=1:+/*:x
+# source: : end
+SUBST:  XY=x, ABCabcdefghijk=l, DEFmnopqrstuv=w
+KPROP:  1G = no_tele_into
+MONS:   bush w:1 / plant w:6 / fungus w:9 / nothing w:45
+MONS:   fungus / nothing w:20
+SUBST:  "=2', '=2..., 2:222.WW
+: vault.run("choose_exit_layout")
+# source: : if crawl.coinflip() then
+# source: SUBST:  Z=x, z=+, V=x
+# source: : elseif crawl.coinflip() then
+# source: SUBST:  Z=x, V=+
+# source: NSUBST: z = 1:+ / *:x
+# source: : else
+# source: SUBST:  Zz=., V=x
+# source: : end
+MARKER: { = lua:props_marker { arrival_stairs=1 }
+: vault.veto("check_exit_marker")
+# source: veto {{
+# source:   local slave = dgn.find_marker_positions_by_prop( "arrival_stairs", 1 )
+# source:   if slave == nil then return false end
+# source:   if slave[1] == nil then return false end
+# source:   crawl.mpr("(".. slave[1].x .. "," .. slave[1].y .. ")")
+# source:   return not dgn.has_exit_from(slave[1])
+# source: }}
+MAP
+            xxxxxx@xxxxxx
+       xxxxxx'''''''''''xxxxxx
+   xxxxx.......'"""""'.......xxxxx
+ xxx..........lll222www..........xxx
+xx......lllkkklll222wwwppwwww......xx
+x....gllglllCllll222wwwwDwwwwwww....x
+x.lllffBxlljjjlxxXXXxxwwoowwxwwssww.x
+xlAlxlBlxlllCxxx11111xxxwDwwxwwExwvvx
+xllAxeeexllCxx111111111xxnnwxwEwxwFwx
+xlbbxlBlxliix11111111111xwDwxrrrxwuux
+xlAlxlddxlClx11111G11111xmmwxwEwxwwFx
+xaalxlccxhhhx11111111111xwDwxqqqxwttx
+x...x...x...xx111111111xx...x...x...x
+x...V...V...xxYx11111xYxx...V...V...x
+xZzZx...x...xx.xxxYxxx.xx...x...xZzZx
+x..ZxZ..x...V...V...V...V...x..ZxZ..x
+x....ZzZx...x...x.}.x...x...xZzZ....x
+xx......xZzZxZzZx...xZzZxZzZx......xx
+ xxx...........ZxZzZxZ...........xxx
+   xxxxx.....................xxxxx
+       xxxxxx.....{.....xxxxxx
+            xxxxxxxxxxxxx
+ENDMAP
+
+#########################################
+# Representatives of all player genuses, locked up.

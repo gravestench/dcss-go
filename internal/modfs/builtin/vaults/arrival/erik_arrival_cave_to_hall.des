@@ -1,0 +1,20 @@
+NAME:    erik_arrival_cave_to_hall
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:380
+TAGS:    cave_to_hall_subvault no_rotate
+SHUFFLE: TTGGVY
+NSUBST:  a = + / c
+KMASK:   T = no_monster_gen
+MAP
+...T....ccc.
+.......ccccc
+.......ccccc
+.caac...ccc.
+cn00nc......
+a>cc%a...T..
+cnc%nc......
+.caac...ccc.
+.......ccccc
+.......ccccc
+...T....ccc.
+  .........
+ENDMAP

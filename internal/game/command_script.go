@@ -4,12 +4,16 @@ import (
 	"fmt"
 
 	"dcrawl-go/internal/ecs"
+	"dcrawl-go/internal/vault"
 	"github.com/gravestench/akara"
 )
 
 // prepareScriptCommand decodes the one generic Lua command decision. The
 // command language and its validation live in the effective mod ruleset.
-func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err error) {
+func (g *Game) prepareScriptCommand(
+	command Command,
+	position *ecs.Position,
+) (_ preparedCommand, err error) {
 	defer func() {
 		if err != nil {
 			g.scripts.DiscardPending()
@@ -17,16 +21,17 @@ func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err err
 	}()
 
 	decision, err := g.scripts.Policy("command.prepare", map[string]any{
-		"kind":       int(command.Kind),
-		"dx":         command.DX,
-		"dy":         command.DY,
-		"item_id":    command.ItemID,
-		"quantity":   command.Quantity,
-		"spell_id":   command.SpellID,
-		"ability_id": command.AbilityID,
-		"target_id":  command.TargetID,
-		"cancelled":  command.Cancelled,
-		"forced":     command.Forced,
+		"kind":               int(command.Kind),
+		"dx":                 command.DX,
+		"dy":                 command.DY,
+		"item_id":            command.ItemID,
+		"quantity":           command.Quantity,
+		"spell_id":           command.SpellID,
+		"ability_id":         command.AbilityID,
+		"target_id":          command.TargetID,
+		"cancelled":          command.Cancelled,
+		"forced":             command.Forced,
+		"pending_vault_item": g.pendingVaultItemAt(position),
 	})
 
 	if err != nil {
@@ -158,6 +163,29 @@ func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err err
 	}
 
 	return prepared, nil
+}
+
+func (g *Game) pendingVaultItemAt(position *ecs.Position) string {
+	if position == nil {
+		return ""
+	}
+
+	level := g.levels[position.LevelID]
+
+	if level == nil {
+		return ""
+	}
+
+	for _, record := range level.vaultRecords {
+		if record.Kind == vault.KindItem &&
+			record.Pending &&
+			record.X == position.X &&
+			record.Y == position.Y {
+			return record.Identity
+		}
+	}
+
+	return ""
 }
 
 func commandDecisionEvents(value any) ([]Event, error) {

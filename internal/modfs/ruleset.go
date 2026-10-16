@@ -1,4 +1,4 @@
-// Package modfs resolves bundled Lua and ordered file overlays into one
+// Package modfs resolves bundled Lua and DES files plus ordered overlays into one
 // immutable, hash-identified ruleset for a game session.
 package modfs
 
@@ -18,23 +18,24 @@ import (
 //go:embed builtin
 var builtin embed.FS
 
-// Ruleset is the exact Lua source tree used to start a game. It owns copies
+// Ruleset is the exact rule source tree used to start a game. It owns copies
 // of the source bytes so changes to an overlay after Load cannot change a run.
 type Ruleset struct {
 	files       map[string][]byte
+	bundled     map[string][]byte
 	paths       []string
 	changes     []string
 	hash        string
 	bundledHash string
 }
 
-// Load resolves the bundled Lua tree with sparse overlays in argument order.
+// Load resolves the bundled rule tree with sparse overlays in argument order.
 // The last layer containing a relative path supplies its bytes.
 func Load(overlayDirs ...string) (Ruleset, error) {
 	root, err := fs.Sub(builtin, "builtin")
 
 	if err != nil {
-		return Ruleset{}, fmt.Errorf("bundled Lua root: %w", err)
+		return Ruleset{}, fmt.Errorf("bundled rule root: %w", err)
 	}
 
 	bundled, err := readBundled(root)
@@ -47,15 +48,15 @@ func Load(overlayDirs ...string) (Ruleset, error) {
 
 	for _, overlayDir := range overlayDirs {
 		if overlayDir == "" {
-			return Ruleset{}, fmt.Errorf("Lua overlay root must not be empty")
+			return Ruleset{}, fmt.Errorf("rule overlay root must not be empty")
 		}
 
 		if err := applyOverlay(effective, overlayDir); err != nil {
-			return Ruleset{}, fmt.Errorf("Lua overlay %q: %w", overlayDir, err)
+			return Ruleset{}, fmt.Errorf("rule overlay %q: %w", overlayDir, err)
 		}
 
 		if err := checkCaseCollisions(effective); err != nil {
-			return Ruleset{}, fmt.Errorf("Lua overlay %q: %w", overlayDir, err)
+			return Ruleset{}, fmt.Errorf("rule overlay %q: %w", overlayDir, err)
 		}
 	}
 
@@ -68,6 +69,7 @@ func Load(overlayDirs ...string) (Ruleset, error) {
 
 	return Ruleset{
 		files:       effective,
+		bundled:     bundled,
 		paths:       paths,
 		changes:     changes,
 		hash:        hashFiles(effective),
@@ -75,12 +77,22 @@ func Load(overlayDirs ...string) (Ruleset, error) {
 	}, nil
 }
 
+// BundledFile returns the committed source at a path, before overlays.
+// Catalogs use it only for stable source order when a mod replaces a file.
+func (r Ruleset) BundledFile(name string) ([]byte, bool) {
+	if !validRulesetPath(name) {
+		return nil, false
+	}
+
+	data, found := r.bundled[name]
+
+	return slices.Clone(data), found
+}
+
 // ReadFile returns a copy so callers cannot alter a loaded ruleset.
 func (r Ruleset) ReadFile(name string) ([]byte, error) {
-	if !fs.ValidPath(name) ||
-		name == "." ||
-		!strings.HasSuffix(name, ".lua") {
-		return nil, fmt.Errorf("invalid Lua path %q", name)
+	if !validRulesetPath(name) {
+		return nil, fmt.Errorf("invalid rule path %q", name)
 	}
 
 	data, found := r.files[name]
@@ -100,7 +112,7 @@ func (r Ruleset) Changes() []string {
 	return slices.Clone(r.changes)
 }
 
-// FileHash identifies the bytes loaded at one normalized Lua path.
+// FileHash identifies the bytes loaded at one normalized rule path.
 type FileHash struct {
 	Path   string `json:"path"`
 	SHA256 string `json:"sha256"`
@@ -145,8 +157,8 @@ func readBundled(root fs.FS) (map[string][]byte, error) {
 			return nil
 		}
 
-		if !validLuaPath(name) {
-			return fmt.Errorf("invalid bundled Lua path %q", name)
+		if !validRulesetPath(name) {
+			return fmt.Errorf("invalid bundled rule path %q", name)
 		}
 
 		data, err := fs.ReadFile(root, name)
@@ -161,7 +173,7 @@ func readBundled(root fs.FS) (map[string][]byte, error) {
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("read bundled Lua: %w", err)
+		return nil, fmt.Errorf("read bundled rules: %w", err)
 	}
 
 	if _, found := files["init.lua"]; !found {
@@ -175,11 +187,11 @@ func applyOverlay(files map[string][]byte, root string) error {
 	info, err := os.Lstat(root)
 
 	if err != nil {
-		return fmt.Errorf("Lua overlay: %w", err)
+		return fmt.Errorf("rule overlay: %w", err)
 	}
 
 	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
-		return fmt.Errorf("Lua overlay root is not a real directory")
+		return fmt.Errorf("rule overlay root is not a real directory")
 	}
 
 	return filepath.WalkDir(root, func(full string, entry fs.DirEntry, walkErr error) error {
@@ -192,7 +204,7 @@ func applyOverlay(files map[string][]byte, root string) error {
 		}
 
 		if entry.Type()&os.ModeSymlink != 0 {
-			return fmt.Errorf("Lua overlay contains symlink %q", full)
+			return fmt.Errorf("rule overlay contains symlink %q", full)
 		}
 
 		if entry.IsDir() {
@@ -200,7 +212,7 @@ func applyOverlay(files map[string][]byte, root string) error {
 		}
 
 		if !entry.Type().IsRegular() {
-			return fmt.Errorf("Lua overlay contains nonregular file %q", full)
+			return fmt.Errorf("rule overlay contains nonregular file %q", full)
 		}
 
 		relative, err := filepath.Rel(root, full)
@@ -211,8 +223,8 @@ func applyOverlay(files map[string][]byte, root string) error {
 
 		name := filepath.ToSlash(relative)
 
-		if !validLuaPath(name) {
-			return fmt.Errorf("invalid Lua overlay path %q", name)
+		if !validRulesetPath(name) {
+			return fmt.Errorf("invalid rule overlay path %q", name)
 		}
 
 		data, err := os.ReadFile(full)
@@ -227,10 +239,11 @@ func applyOverlay(files map[string][]byte, root string) error {
 	})
 }
 
-func validLuaPath(name string) bool {
+func validRulesetPath(name string) bool {
 	return fs.ValidPath(name) &&
 		name != "." &&
-		strings.HasSuffix(name, ".lua")
+		(strings.HasSuffix(name, ".lua") ||
+			strings.HasSuffix(name, ".des"))
 }
 
 func checkCaseCollisions(files map[string][]byte) error {
@@ -240,7 +253,7 @@ func checkCaseCollisions(files map[string][]byte) error {
 		key := strings.ToLower(name)
 
 		if previous, found := folded[key]; found && previous != name {
-			return fmt.Errorf("Lua paths differ only by case: %q and %q", previous, name)
+			return fmt.Errorf("rule paths differ only by case: %q and %q", previous, name)
 		}
 
 		folded[key] = name

@@ -47,7 +47,7 @@ function generated.validate(levels, by_id)
     for depth = 1, 2 do
         local level = by_id[depth]
 
-        if #level.cells[1] ~= 80 or #level.cells ~= 70 or #level.stairs ~= 6 then
+        if #level.cells[1] ~= 80 or #level.cells ~= 70 or #level.stairs < 6 then
             error("generated Dungeon:" .. depth .. " has invalid geometry or stair count")
         end
 
@@ -82,8 +82,8 @@ function generated.validate(levels, by_id)
             end
         end
 
-        if up_count ~= 3 or down_count ~= 3 then
-            error("generated Dungeon:" .. depth .. " needs three stair pairs")
+        if up_count < 3 or down_count < 3 then
+            error("generated Dungeon:" .. depth .. " has too few stair links")
         end
     end
 end

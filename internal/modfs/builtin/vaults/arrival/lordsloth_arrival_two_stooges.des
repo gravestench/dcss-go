@@ -1,0 +1,31 @@
+NAME:    lordsloth_arrival_two_stooges
+# Source: crawl-ref/source/dat/des/arrival/small.des:2281
+ORIENT:  float
+TAGS:    arrival no_rotate no_monster_gen
+SUBST:   ':l...' , '=l. , l:lllWw , n:nv , v:vvvc
+KMONS:   1 = orc / goblin / kobold
+KFEAT:   1 = .
+KPROP:   1 = no_tele_into
+KMASK:   1 = no_item_gen
+MAP
+.....................
+.....................
+..vvvvnnnnnnnnnvvvv..
+..vlllllll{lllllllv..
+..vlllllll.lllllllv..
+..vllll''...''llllv..
+..vll'.........'llv..
+..vl'...........'lv..
+..vl.............lv..
+..vmm..G.vvv.G..mmv..
+..v1m...........m1v..
+..vvvvvvv+++vvvvvvv..
+...vv...........vv...
+ ..vv...........vv..
+ ...vvv.......vvv...
+   ...vv+++++vv...
+    .............
+ENDMAP
+
+##############################################
+# Angband town! (Shiori)

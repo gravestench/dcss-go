@@ -6,6 +6,7 @@ import (
 
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/terrain"
+	"dcrawl-go/internal/vault"
 	"github.com/gravestench/akara"
 )
 
@@ -31,6 +32,8 @@ type Level struct {
 	// nil while active or before the player first visits this floor.
 	awaySinceAut *Aut
 	stairs       map[point]StairLink
+	vaultID      string
+	vaultRecords []vault.Record
 }
 
 type point struct {
@@ -150,6 +153,38 @@ func (l *Level) StairLinks() []StairLink {
 	})
 
 	return links
+}
+
+func (l *Level) SetVaultID(id string) error {
+	if id == "" || l.vaultID != "" {
+		return fmt.Errorf("level %d has invalid vault identity %q", l.ID, id)
+	}
+
+	l.vaultID = id
+
+	return nil
+}
+
+func (l *Level) VaultID() string {
+	return l.vaultID
+}
+
+func (l *Level) AddVaultRecord(record vault.Record) error {
+	if l.vaultID == "" {
+		return fmt.Errorf("level %d has no vault identity", l.ID)
+	}
+
+	if err := record.Validate(l.width, len(l.terrain)); err != nil {
+		return fmt.Errorf("level %d: %w", l.ID, err)
+	}
+
+	l.vaultRecords = append(l.vaultRecords, vault.Clone([]vault.Record{record})[0])
+
+	return nil
+}
+
+func (l *Level) VaultRecords() []vault.Record {
+	return vault.Clone(l.vaultRecords)
 }
 
 func validateStairLinks(levels map[int]*Level) error {

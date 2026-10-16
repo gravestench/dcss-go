@@ -1,0 +1,25 @@
+NAME:    shiori_arrival_maze
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:327
+ORIENT:  float
+TAGS:    arrival no_monster_gen
+NSUBST:  A= 2= + / 2= +x / *= x
+NSUBST:  B= 2= + / 2= +x / *= x
+NSUBST:  C= 2= + / *= +x
+SUBST:   @ = @+
+MAP
+xxx@xxx@xxx@xxx
+@.....B0B.....@
+xCx.xAxxxAx.xCx
+@.x.A.....A.x.@
+x.x.x.....x.x.x
+x.xBx..>..xBx.x
+x.x.x..{..x.x.x
+@.x.A.....A.x.@
+xCx.xAxxxAx.xCx
+@.....B0B.....@
+xxx@xxx@xxx@xxx
+ENDMAP
+
+##############################################################################
+# 41 x 20 -- this one is huge and twisted, but hopefully worth it.
+# From cave/forest to hall.

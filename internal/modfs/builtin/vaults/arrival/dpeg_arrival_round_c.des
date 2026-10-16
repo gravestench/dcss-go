@@ -1,0 +1,22 @@
+NAME:    dpeg_arrival_round_c
+# Source: crawl-ref/source/dat/des/arrival/small.des:1779
+TAGS:    arrival
+ORIENT:  float
+SUBST:   ' : . x ':40, '=x., " : . c ":40, "=.c , c:cxx
+NSUBST:  { = 1:{ / *:.
+MAP
+    xxxxxxx
+  xxx.....xxxx
+ xx'.."""....xxxxx
+xx'.."ccc"..{.....xxxxxxx
+x...cccccc"...cc...xxx.@
+x.{.ccccc"..'.."cc..x.x.
+x....cc....'xx.."c".'xx.
+xx......{.'xxxx'....'xx.
+ x'..''...xxxxxxxx.'xxx.
+ x'..''xxxxxxxxxxxx.xxx.
+ xx''xxxxxxxxxxxxxx.xxx.
+  xxxxxxxxxxxxxxxxx@...@
+ENDMAP
+
+##############################################################################

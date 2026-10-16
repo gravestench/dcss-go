@@ -1,0 +1,20 @@
+NAME:   reono_arrival_mine
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2575
+TAGS:   arrival no_monster_gen no_trap_gen
+ORIENT: float
+SUBST:  x = x:10 c:5 v:3 b:3
+MAP
+xxxxxxxx@xxxx
+xxxxxxx.xxxxx
+xxxxxxxx.xxxx
+xxxxxxx.xxxxx
+@x.x.xxx.xxxx
+x.x.x.x.xxxxx
+xxxxxx{xxxxxx
+xxxxx.x.x.x.x
+xxxx.xxx.x.x@
+xxxxx.xxxxxxx
+xxxx.xxxxxxxx
+xxxxx.xxxxxxx
+xxxx@xxxxxxxx
+ENDMAP

@@ -1,0 +1,32 @@
+NAME:   sevenhm_arrival_forest_fort_small_1
+# Source: crawl-ref/source/dat/des/arrival/small.des:2652
+TAGS:   arrival no_monster_gen
+ORIENT: float
+WEIGHT: 1
+KPROP: 1 = no_tele_into
+NSUBST: { = { / T> , z = + / n+
+SUBST:  T = TTG
+: vault.run("choose_fort_gate")
+# source: : if crawl.one_chance_in(4) then
+# source: SUBST:  " : +, ' : . , - : ccc.
+# source: : else
+# source: SUBST:  "'- : c
+# source: : end
+MONS:   bullfrog / cane toad / yak / death yak w:1 / elephant
+MAP
+          ccccccccc
+       cccctccccctcccc
+      cctt1tc...ct1ttcc
+    ccctttttc.{.ctttttccc
+    ccccccccn...ncccccccc
+    WWcc..+.......+..ccWW
+   @WWz..."'-----'"...zWW@
+    WWcc..+.......+..ccWW
+    ccccccccn...ncccccccc
+    ccctttttc.{.ctttttccc
+      cctt1tc...ct1ttcc
+       cccctccccctcccc
+          ccccccccc
+ENDMAP
+
+##############################################################################

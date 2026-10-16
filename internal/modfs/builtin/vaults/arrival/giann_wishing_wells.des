@@ -1,0 +1,16 @@
+NAME:   giann_wishing_wells
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2116
+TAGS:   arrival no_monster_gen no_item_gen no_rotate
+KITEM:  $ = gold q:1
+SUBST:  S = $.
+ORIENT: float
+MAP
+xxxxxxxxxxx+xxxxxxxxxxx
+x........+G.G+........x
+x...S....x...x....S...x
+x..STS...xx+xx...STS..x
+xx..S.............S..xx
+ xxxxxx....{....xxxxxx
+      xx.......xx
+       xxxxxxxxx
+ENDMAP

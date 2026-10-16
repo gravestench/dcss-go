@@ -1,0 +1,20 @@
+NAME:   reono_arrival_forest_river
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2555
+TAGS:   arrival no_monster_gen no_trap_gen no_pool_fixup
+ORIENT: float
+SUBST:  . = t:1 w:1
+MAP
+@WtttttW@
+WW.....WW
+t.WWWWW.t
+t.WWWWW.t
+t.WWWWW.t
+t.WWWWW.t
+t.WW{WW.t
+t.WWWWW.t
+t.WWWWW.t
+t.WWWWW.t
+t.WWWWW.t
+WW.....WW
+@WtttttW@
+ENDMAP

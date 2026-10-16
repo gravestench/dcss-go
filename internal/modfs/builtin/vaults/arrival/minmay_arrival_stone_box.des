@@ -1,0 +1,24 @@
+NAME:    minmay_arrival_stone_box
+# Source: crawl-ref/source/dat/des/arrival/small.des:355
+TAGS:    arrival
+ORIENT:  float
+NSUBST:  A = 1:+ / 1=c+ / *:c
+NSUBST:  B = 1:+ / *:c
+SUBST:   C = .
+SHUFFLE: >TVGl
+KMASK:   TlC = no_monster_gen
+MAP
+...........
+...........
+..cnAAAnc..
+..ncCCCcn..
+..ACBBBCA..
+..ACB>BCA..
+..ACBBBCA..
+..ncCCCcn..
+..cnAAAnc..
+.{.........
+...........
+ENDMAP
+
+##############################################################

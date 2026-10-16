@@ -1,0 +1,35 @@
+NAME:   evilmike_arrival_home_sweet_home
+# Source: crawl-ref/source/dat/des/arrival/small.des:9
+WEIGHT: 3
+TAGS:   arrival no_monster_gen
+ORIENT: float
+COLOUR: ' = brown
+COLOUR: `1 = green
+COLOUR: - = darkgrey
+COLOUR: t = lightgreen
+FTILE:  `1t = floor_grass
+FTILE:  ' = floor_dirt
+FTILE:  -{V = floor_vault
+TILE:   c = wall_stone_smooth
+MONS: bush
+SUBST: `'-: .
+MAP
+........@........
+.................
+..11111`'`11111..
+..1`````'`````1..
+..1``t``'``t``1..
+..1`````'`````1..
+..ccmccc+cccmcc..
+..c---c---c---c..
+..c{--+---+---m..
+..ccccccc-c---m..
+..c-----c-c---c..
+..m-----+-ccccc..
+..m-----c-+---c..
+..c-----c-c-VVc..
+..cccmccccccmcc..
+.................
+ENDMAP
+
+###############################################################################

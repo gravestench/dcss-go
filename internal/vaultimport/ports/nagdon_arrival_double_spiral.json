@@ -1,0 +1,13 @@
+{
+  "id": "nagdon_arrival_double_spiral",
+  "source_file": "twisted.des",
+  "edits": [
+    {
+      "start_line": 787,
+      "end_line": 804,
+      "sha256": "3408c6dc6361c31880198d4f158abc6105c3539d0b98952dd1d68d43a290d905",
+      "method": "choose_spiral_variant",
+      "stage": "run"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "psy_arrival_spokes",
+  "source_file": "small.des",
+  "edits": [
+    {
+      "start_line": 3154,
+      "end_line": 3156,
+      "sha256": "28fcb8c174a0293e8c106963500bf000fc7c3d45d0451890eede62f5c17c5345",
+      "method": "choose_spoke_gate",
+      "stage": "run"
+    }
+  ]
+}

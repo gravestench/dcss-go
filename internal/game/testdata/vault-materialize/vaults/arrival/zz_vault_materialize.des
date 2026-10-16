@@ -1,0 +1,8 @@
+NAME: zz_vault_materialize
+TAGS: arrival
+WEIGHT: 100000000
+KMONS: 1 = rat
+KITEM: % = potion of curing
+MAP
+@1%
+ENDMAP

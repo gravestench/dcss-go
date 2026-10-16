@@ -1,0 +1,22 @@
+NAME:    dpeg_arrival_signposts
+# Source: crawl-ref/source/dat/des/arrival/small.des:1842
+TAGS:    arrival no_monster_gen no_rotate
+ORIENT:  float
+SHUFFLE: DX'/CY"
+SUBST:   D = c, XC" = x, 'Y = .
+SHUFFLE: cvb
+NSUBST:  . = 1:d / *:.
+ITEM:    stone
+MAP
+          xxxxxxxxxxx
+     xxxxxx...xxxx..xx
+xxxxxx..xD.xxx.xx.xx.xxxxx
+x..Cx.x.x.xxx'xxxx.x'x....
+x....xx'X.'xx'Dx..xx.x.cx.
+x{.xxxXx..x'x...'xxxx..xx@
+x....xxX'CX'x.xCXx..xX.cx.
+x..Dx...xx.XXx'''.Xx.x....
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

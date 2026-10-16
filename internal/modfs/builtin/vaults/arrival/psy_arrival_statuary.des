@@ -1,0 +1,26 @@
+NAME:       psy_arrival_statuary
+# Source: crawl-ref/source/dat/des/arrival/small.des:3180
+TAGS:       arrival no_monster_gen
+ORIENT:     float
+FTILE:      'p{ = floor_pebble_darkgray
+COLOUR:     . = cyan
+SHUFFLE:    pqr
+SUBST:      p : GGT
+SUBST:      s : Gxxxb
+MAP
+xxxxxxx@xxxxxxx
+xxxxxxx+xxxxxxx
+xx''..'''..''xx
+xx''..'''..''xx
+xx..p'...'p..xx
+xx..''...''..xx
+xx''..'''..''xx
+xs''..'{'..''sx
+xx''..'''..''xx
+xx..''...''..xx
+xx..p'...'p..xx
+xx''..'''..''xx
+xx''..'''..''xx
+xxxxxxx+xxxxxxx
+xxxxxxx@xxxxxxx
+ENDMAP

@@ -1,0 +1,21 @@
+NAME:   scummos_arrival_checkerplants
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1710
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+KMONS:  b = fungus
+MAP
+............
+.ttttttttt..
+.tbb..bb..t.
+.tbb..b...t.
+.t..bb...bt.
+.t..b.{.bbt.
+.tbb...b..t.
+.tb...bb..t.
+.t...b..bbt.
+.t..bb..bbt.
+..ttttttttt.
+............
+ENDMAP
+
+##############################################################################

@@ -1,0 +1,30 @@
+NAME:    sevenhm_arrival_forest_fort_small_2
+# Source: crawl-ref/source/dat/des/arrival/small.des:2682
+TAGS:    arrival no_pool_fixup no_monster_gen
+ORIENT:  float
+WEIGHT:  1
+KPROP: 1 = no_tele_into
+: vault.run("choose_fort_gate")
+# source: : if crawl.one_chance_in(4) then
+# source: SUBST:   w : x, u : x, r : @
+# source: : else
+# source: SUBST:   r : x, u : @
+# source: NSUBST:  w = @ / w
+# source: NSUBST:  z = 1:@ / *:x
+# source: SUBST:   w : wwwwwwtt.
+# source: : end
+NSUBST:  y = { / .....> / .
+KMASK:   W = no_monster_gen
+MONS:    anaconda / death yak / black mamba / elephant / hydra
+MAP
+  xxxxxx
+xxxccccxxx
+xtttyytttx
+xt1tyyt1tx
+xcnc..cncx
+x..c++c..x
+r........r
+xuwwwwwwux
+ENDMAP
+
+##############################################################################

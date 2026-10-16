@@ -1,0 +1,36 @@
+NAME:    dpeg_arrival_central
+# Source: crawl-ref/source/dat/des/arrival/large.des:70
+TAGS:    arrival transparent
+ORIENT:  float
+SHUFFLE: @ABC
+SUBST:   A=@x, B=@x, C=@x
+MAP
+          xxxxxx@xxxxxx
+        xxx...........xxx
+      xxx...xxx...xxx...xxx
+     xx...xxxx.....xxxx...xx
+    xx..xxxxx...]...xxxxx..xx
+   xx..xxxxx.........xxxxx..xx
+  xx..xxxxx...........xxxxx..xx
+ xx..xxxxx......x......xxxxx..xx
+xx..xxxxx......xxx......xxxxx..x
+xx.xxxxx......xxxxx......xxxxx.xx
+x..xxxx......xxxxxxx......xxxx..x
+x.xxxx......xxxxxxxxx......xxxx.x
+A..........xxxxxxxxxxx..........C
+x.xxxx......xxxxxxxxx......xxxx.x
+x..xxxx......xxxxxxx......xxxx..x
+xx.xxxxx......xxxxx......xxxxx.xx
+ x..xxxxx......xxx......xxxxx..x
+ xx..xxxxx......x......xxxxx..xx
+  xx..xxxxx...........xxxxx..xx
+   xx..xxxxx.........xxxxx..xx
+    xx..xxxxx...{...xxxxx..xx
+     xx...xxxx.....xxxx...xx
+      xxx...xxx...xxx...xxx
+        xxx...........xxx
+          xxxxxxBxxxxxx
+ENDMAP
+
+##############################################################################
+# 29 x 22

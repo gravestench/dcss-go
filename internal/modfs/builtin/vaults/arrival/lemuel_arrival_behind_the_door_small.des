@@ -1,0 +1,17 @@
+NAME:    lemuel_arrival_behind_the_door_small
+# Source: crawl-ref/source/dat/des/arrival/small.des:1453
+TAGS:    arrival no_monster_gen
+WEIGHT:  5
+ORIENT:  float
+SUBST:   b : bcvxxx
+MAP
+xxxxxxxxxxx
+x....{....x
+x.b.....b.x
+x.b.....b.x
+x.........x
+xb+bb+bb+bx
+x....@....x
+ENDMAP
+
+##############################################################################

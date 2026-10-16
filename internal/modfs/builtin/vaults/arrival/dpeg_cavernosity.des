@@ -1,0 +1,42 @@
+NAME:    dpeg_cavernosity
+# Source: crawl-ref/source/dat/des/arrival/large.des:143
+TAGS:    arrival no_monster_gen no_rotate transparent
+ORIENT:  float
+MONS:    fungus
+SHUFFLE: {[(, UVW, XYZ
+SUBST:   [( = T
+SUBST:   '=.x, U=+, V=x, W=x, X=+, Y=x, Z=x, b:xxxbcv
+RTILE:   x = wall_pebble_lightgray
+SUBST:   = : + x
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxx''xxxxxxxxxxxxxxxxx.xxxxxxxxxxxxx
+xxx...x''...x...xxxxxxxxxxx.0..xxxxxxxxxxx
+xx..(....xx..''..xxxxxxxxxx.x.xxxxxxxxxxxx
+xx.....xxx'.xxx..xxxx''xxxx...xxxxxxxxxxxx
+xxx...xxxx=xxxxx.'xx'..'xxxx0xxxxxxxxxxxxx
+xxxxxxx'x=xxxxxx'.x..x.'xxx.xxxxxxxxxxxx..
+xxxxx''...'xxxxxx'..xx..'xxx..xxxxxxx.....
+xxxxx'..x'..xxxxxx'x'..x'xxxxx.xxxx.......
+xxxx..'xxx..'xxxxxxx'.xxxxxxx0x.Wx........
+xxxx..xxxxx..'xxxxx.....xxxx.xxxx.........
+xxxxx...xx'x..'xxx.......xxx0xxxx.........
+xxxx.....x'x..'xx...bbb...xUxVxx..........
+xxxx..{..xx..x''x..bbbbb....x'...........@
+xxxxx...xx''.xxx...bbbbb..x....x..........
+xxxxxxxxxxxx.'x.....bbb...xxxYxxx.........
+xxxxxxxxxxxxx....x.......xXx.xxxx.........
+xxxxxxxxxxxxxxx'xxx.....xxx..xxxxx........
+xxxxxxxxxxxxxx=xxxxxx..xxx..xxxxxxx.......
+xxxxxx'xxxxxx=xxxxxx.''xxx.xxxxxxxxxx.....
+xx...x.'xxxxx'.xxxxx'...Z1.xxxxxxxxxxxxx..
+x..[.......'...'x'xxx..'xx..xxxxxwxxwwxxxx
+x.....xxx...'x'..xxx..'xxxx1...wwwwwxxwxxx
+xx...xxxx''x'xxx'..'.xxxxxxxxx.wwwxxxxxxxx
+xxxxxxxxxxxxxxxxxx..xxxxxxxxxxwwxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################
+# 30x25
+# The Diamond Age, or A Young Lady's Illustrated Primer

@@ -1,0 +1,17 @@
+NAME:    minmay_arrival_plants_in_alcoves
+# Source: crawl-ref/source/dat/des/arrival/simple.des:853
+TAGS:    arrival transparent
+ORIENT:  float
+SHUFFLE: 11123t
+MONS:    plant, fungus, bush
+MAP
+xxxxxxxxxxx
+x1x1x1x1x1xxx
+@...........x
+.......11..{x
+@...........x
+x1x1x1x1x1xxx
+xxxxxxxxxxx
+ENDMAP
+
+##############################################################

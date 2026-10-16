@@ -1,0 +1,22 @@
+NAME:   lightli_arrival_noodles
+# Source: crawl-ref/source/dat/des/arrival/small.des:2876
+ORIENT: float
+TAGS:   arrival no_monster_gen
+MAP
+xxxxxxxxxx
+xG..{...Gx
+xl......lx
+xl......lx
+xl......lx
+xl..GG..lx
+xl......lx
+xl......lx
+xl......lx
+xG......Gx
+xxxx++xxxx
+..........
+..xxxxxx..
+..........
+ENDMAP
+
+##############################################################################

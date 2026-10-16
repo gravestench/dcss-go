@@ -1,0 +1,23 @@
+NAME:    minmay_arrival_pointy
+# Source: crawl-ref/source/dat/des/arrival/simple.des:199
+TAGS:    arrival no_monster_gen transparent
+WEIGHT:  4
+ORIENT:  float
+MAP
+xxx                     xxx
+x{xx                   xx.x
+xx.xx                 xx.xx
+ x..xx               xx..x
+ xx..xx             xx..xx
+  x...xx           xx...x
+  xx...xx         xx...xx
+   x....xxxxxxxxxxx....x
+   xx....xx.....xx....xx
+    x......xxxxx......x
+    xx.....xxxxx.....xx
+     x......xxx......x
+     xx......x......xx
+      x.............x
+ENDMAP
+
+##############################################################

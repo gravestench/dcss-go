@@ -1,0 +1,36 @@
+NAME: nicolae_arrival_memento_mori
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:908
+TAGS: arrival no_monster_gen no_trap_gen
+ORIENT: float
+SUBST: n = nN
+KPROP: u = no_tele_into
+KPROP: Nu = bloody
+SUBST: N = n, u = uU
+KMASK: uU = no_item_gen
+: vault.run("schedule_named_remains")
+# source: : local race = you.race()
+# source: : local mons = you.monster()
+# source: : local skeltype = "skeleton"
+# source: : local yourname = string.gsub(you.name(), " ", "_")
+# source: : -- The corpseless. Before the game starts, you.monster() is "program bug".
+# source: : if (not crawl.game_started()) or race == "Vampire"
+# source: :     or race == "Mummy" or race == "Ghoul"
+# source: :     or race == "Gargoyle" or race == "Vine Stalker"
+# source: :     or race == "Djinni" or race == "Yak" then
+# source: :   mons = "human"
+# source: : end
+# source: : if you.race() == "Formicid" or you.race() == "Octopode" then
+# source: :   skeltype = "corpse"
+# source: : end
+# source: :
+# source: : dgn.delayed_decay(_G, 'u', mons .. " name:" .. yourname .. " corpse")
+# source: : dgn.delayed_decay(_G, 'U', mons .. " name:" .. yourname .. " " .. skeltype )
+MAP
+xxxxxxxxxxx
+x.........x
+x...nnn...x
+x.{.nun...+
+x...nnn...x
+x.........x
+xxxxxxxxxxx
+ENDMAP

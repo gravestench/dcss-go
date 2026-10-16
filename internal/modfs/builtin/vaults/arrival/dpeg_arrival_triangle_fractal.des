@@ -1,0 +1,22 @@
+NAME:    dpeg_arrival_triangle_fractal
+# Source: crawl-ref/source/dat/des/arrival/simple.des:621
+TAGS:    arrival no_monster_gen no_rotate transparent
+WEIGHT:  2
+ORIENT:  float
+MAP
+xxxxxxxxxxxxxxxxxxxxxxx@x
+xxxxx.xxxxx.xxxxxxxxxxx.x
+xxxx..xxxx..xxxxxxxxxx..x
+xxx...xxx...xxxxxxxxx...x
+xx..{.xx....xxxxxxxx....x
+x.....+.....xxxxxxx.....x
+xxxxx+xxxxx+xxxxxx...x..x
+xxxxx.xxxxx.xxxxx...xx..x
+xxxx..xxxx..xxxx...xxx..x
+xxx...xxx...xxx...xxxx..x
+xx....xx..T.xx...xxxxx..x
+x.....+.....+...........x
+xxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

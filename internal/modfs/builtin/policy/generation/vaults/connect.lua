@@ -1,0 +1,281 @@
+local connect = {}
+local effects = require("constants.vault_effects")
+local hooks = require("policy.generation.vaults.hooks")
+
+-- Every source exit must reach the surrounding Dungeon. The connector marks
+-- any source terrain it carves through so projection does not restore it.
+local function key(x, y)
+    return x .. ":" .. y
+end
+
+local function outside(bounds, x, y)
+    return x < bounds.x or x >= bounds.x + bounds.width or
+        y < bounds.y or y >= bounds.y + bounds.height
+end
+
+local function closest_edge(point, bounds)
+    local candidates = {
+        { distance = point.x - bounds.x, x = bounds.x - 1, y = point.y },
+        {
+            distance = bounds.x + bounds.width - 1 - point.x,
+            x = bounds.x + bounds.width,
+            y = point.y,
+        },
+        { distance = point.y - bounds.y, x = point.x, y = bounds.y - 1 },
+        {
+            distance = bounds.y + bounds.height - 1 - point.y,
+            x = point.x,
+            y = bounds.y + bounds.height,
+        },
+    }
+    local chosen = candidates[1]
+
+    for _, candidate in ipairs(candidates) do
+        if candidate.distance < chosen.distance then
+            chosen = candidate
+        end
+    end
+
+    return chosen
+end
+
+local function carve(builder, from, to, carved)
+    local x = from.x
+    local y = from.y
+
+    while x ~= to.x or y ~= to.y do
+        if x < to.x then
+            x = x + 1
+        elseif x > to.x then
+            x = x - 1
+        elseif y < to.y then
+            y = y + 1
+        else
+            y = y - 1
+        end
+
+        local glyph = builder:cell(x, y)
+
+        if glyph ~= "<" and glyph ~= ">" then
+            builder:set(x, y, ".")
+            carved[key(x, y)] = true
+        end
+    end
+end
+
+local function nearest_outside_floor(builder, bounds, from)
+    local best
+    local best_distance
+
+    for y = 1, 68 do
+        for x = 1, 78 do
+            if outside(bounds, x, y) and builder:cell(x, y) == "." then
+                local distance = math.abs(x - from.x) + math.abs(y - from.y)
+
+                if not best_distance or distance < best_distance then
+                    best = { x = x, y = y }
+                    best_distance = distance
+                end
+            end
+        end
+    end
+
+    return best
+end
+
+local directions = {
+    { x = 1, y = 0 },
+    { x = -1, y = 0 },
+    { x = 0, y = 1 },
+    { x = 0, y = -1 },
+}
+
+local function interior(builder, x, y)
+    return x > 0 and y > 0 and x < 79 and y < 69 and
+        builder:cell(x, y) ~= nil
+end
+
+local function reachable(builder, start)
+    local seen = { [key(start.x, start.y)] = true }
+    local queue = { start }
+    local cursor = 1
+
+    while cursor <= #queue do
+        local point = queue[cursor]
+
+        cursor = cursor + 1
+
+        for _, direction in ipairs(directions) do
+            local x = point.x + direction.x
+            local y = point.y + direction.y
+            local id = key(x, y)
+
+            if interior(builder, x, y) and not seen[id] and
+                builder:cell(x, y) ~= "#" then
+                seen[id] = true
+                queue[#queue + 1] = { x = x, y = y }
+            end
+        end
+    end
+
+    return seen
+end
+
+-- A zero-one search cuts the fewest walls needed to join an isolated source
+-- stair to the already connected map. Existing walkable source cells cost zero.
+local function bridge(builder, from, connected, carved)
+    local queue = { [0] = from }
+    local head = 0
+    local tail = 0
+    local distance = { [key(from.x, from.y)] = 0 }
+    local previous = {}
+
+    while head <= tail do
+        local point = queue[head]
+        local id = key(point.x, point.y)
+
+        queue[head] = nil
+        head = head + 1
+
+        if connected[id] then
+            while previous[id] do
+                if builder:cell(point.x, point.y) == "#" then
+                    builder:set(point.x, point.y, ".")
+                    carved[id] = true
+                end
+
+                point = previous[id]
+                id = key(point.x, point.y)
+            end
+
+            return
+        end
+
+        for _, direction in ipairs(directions) do
+            local x = point.x + direction.x
+            local y = point.y + direction.y
+            local next_id = key(x, y)
+
+            if interior(builder, x, y) then
+                local cost = builder:cell(x, y) == "#" and 1 or 0
+                local next_distance = distance[id] + cost
+
+                if not distance[next_id] or next_distance < distance[next_id] then
+                    local next_point = { x = x, y = y }
+
+                    distance[next_id] = next_distance
+                    previous[next_id] = point
+
+                    if cost == 0 then
+                        head = head - 1
+                        queue[head] = next_point
+                    else
+                        tail = tail + 1
+                        queue[tail] = next_point
+                    end
+                end
+            end
+        end
+    end
+
+    error("arrival source exit cannot reach the surrounding Dungeon")
+end
+
+local function check_vetoes(placed)
+    local api = {}
+
+    function api:marker_positions(property, value)
+        local found = {}
+        local needle = property .. "=" .. tostring(value)
+
+        for _, record in ipairs(placed.records) do
+            if record.kind == effects.MARKER and
+                record.identity and record.identity:find(needle, 1, true) then
+                found[#found + 1] = {
+                    x = record.x,
+                    y = record.y,
+                }
+            end
+        end
+
+        return #found > 0 and found or nil
+    end
+
+    function api:has_exit(point)
+        for _, exit in ipairs(placed.exits) do
+            if exit.x == point.x and exit.y == point.y then
+                return true
+            end
+        end
+
+        return false
+    end
+
+    for _, record in ipairs(placed.records) do
+        if record.kind == effects.VETO and
+            hooks.run(placed, record.method, api) then
+            error(string.format("%s:%d: vault %s: veto %s rejected placement",
+                placed.path, record.line or 0, placed.id, record.method))
+        end
+    end
+end
+
+function connect.finish(_, builder, placed, required)
+    check_vetoes(placed)
+    local carved = {}
+    local connectors = {}
+
+    for _, exit in ipairs(placed.exits) do
+        if exit.source == "@" or exit.source == "+" or exit.source == "=" then
+            connectors[#connectors + 1] = exit
+        end
+    end
+
+    if #connectors == 0 then
+        connectors[1] = placed.entry
+    end
+
+    for _, from in ipairs(connectors) do
+        local edge = closest_edge(from, placed.bounds)
+        local target = nearest_outside_floor(builder, placed.bounds, edge)
+
+        if not target then
+            error(string.format("%s: vault %s: no ordinary Dungeon floor to connect",
+                placed.path, placed.id))
+        end
+
+        carve(builder, from, edge, carved)
+        carve(builder, edge, target, carved)
+    end
+
+    local points = { placed.entry }
+
+    for _, exit in ipairs(placed.exits) do
+        points[#points + 1] = exit
+    end
+
+    for _, point in ipairs(required or {}) do
+        points[#points + 1] = point
+    end
+
+    local connected = reachable(builder, connectors[1])
+
+    for _, point in ipairs(points) do
+        if not connected[key(point.x, point.y)] then
+            bridge(builder, point, connected, carved)
+            connected = reachable(builder, connectors[1])
+        end
+    end
+
+    for _, record in ipairs(placed.records) do
+        if (record.kind == effects.SOURCE_FEATURE or
+            record.kind == effects.FEATURE) and
+            carved[key(record.x, record.y)] then
+            record.overridden = true
+        end
+    end
+
+    return placed
+end
+
+return connect

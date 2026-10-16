@@ -1,0 +1,18 @@
+NAME:    dpeg_arrival_radiant
+# Source: crawl-ref/source/dat/des/arrival/simple.des:348
+TAGS:    arrival no_rotate no_monster_gen transparent
+ORIENT:  float
+NSUBST:  ' = 2:@ / *=.x
+MAP
+'xxxxxxx'xxxxxxx'
+x.xxxxxx.xxxxxx.x
+xx..xxxx+xxxx..xx
+xxxx..+...+..xxxx
+xxxxxxx.{.xxxxxxx
+xxxx..+...+..xxxx
+xx..xxxx+xxxx..xx
+x.xxxxxx.xxxxxx.x
+'xxxxxxx'xxxxxxx'
+ENDMAP
+
+##############################################################################

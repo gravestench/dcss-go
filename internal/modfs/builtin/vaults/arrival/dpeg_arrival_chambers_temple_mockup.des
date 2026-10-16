@@ -1,0 +1,30 @@
+NAME:    dpeg_arrival_chambers_temple_mockup
+# Source: crawl-ref/source/dat/des/arrival/small.des:879
+TAGS:    arrival no_rotate
+ORIENT:  float
+SHUFFLE: cxxx
+SUBST:   T = TVVVV
+KMASK:   T = no_monster_gen
+MAP
+cccccccccccccc@ccccccccccccccc
+cccc......................cccc
+cc....c.cccc.cccc.cccc.cc...cc
+c..ccc...cc...cc...cc...ccc..c
+c.cccc.T.cc.T.cc.T.cc.T.cccc.c
+c.cccc...cc...cc...cc...cccc.c
+c...ccc.cccc.cccc.cccc.ccc...c
+c.T.ccc.cccc.cccc.cccc.ccc.T.c
+c............................c
+cc.cc.........{..........cc.cc
+c............................c
+c.T.ccc.cccc.cccc.cccc.ccc.T.c
+c...ccc.cccc.cccc.cccc.ccc...c
+c.cccc...cc...cc...cc...cccc.c
+c.cccc.T.cc.T.cc.T.cc.T.cccc.c
+c..ccc...cc...cc...cc...ccc..c
+cc...cc.cccc.cccc.cccc.cc...cc
+cccc......................cccc
+cccccccccccccccccccccccccccccc
+ENDMAP
+
+##############################################################################

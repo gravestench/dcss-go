@@ -1,0 +1,43 @@
+NAME:    minmay_arrival_shoal_huts
+# Source: crawl-ref/source/dat/des/arrival/large.des:512
+WEIGHT:  5
+TAGS:    arrival transparent
+ORIENT:  float
+SHUFFLE: {[(
+SUBST:   ([ = .
+SUBST:   y = w:39 W:1, Y = A:5 w:1, W = W:19 .:1, A = W
+TILE:    x = wall_pebble_lightgray
+MAP
+             ..........@.......
+         .....WWWWW........WWW...
+      ....WWWWYYYYYWW.....WYYYWW...
+    ...WWWYYYYyyyyyYYW....WYyyYYWW..
+   ..WWYYYyyywwwwwwyYW....xxxxxyYYW..
+  ..WYYyyywwwwwwwwyYW....xx...xxyyYW..
+  .WYyywwwwwwwwwwwyYW....x.....xwwyYW.
+ ..WYywwwwwwwwwwyyyYW....+..(>.xwwyYW.
+ .WYywwwwwwwwyyyYYYW.....x.....xwyYW..
+ .WYywwxxxxxyYYYWWW......xx...xxwyYW.
+..WYywxx...xxWWW........WWxxxxxwwyYW.
+.WYywwx.....x.........WWYYYywwwwwyYW.
+.WYywwx.>{..+........WYYyyywwwwwyYW..
+.WYywwx.....x.WWW....WYywwwwwwwwyYW.
+..WYywxx...xxWYYYW...WYywwwwwwwwyYW.
+ .WYywwxxxxxYYyyYW....WYywwwwwwwyYW.
+ .WYywwwwwwwyywwyYW...WYywwwwwwyYW..
+ .WYywwwwwwwwwwwyYxx+xxYywwwwwyYW..
+ ..WYywwwwwwwwwwwxx...xxywwwwwyYW.
+  .WYywwwwwwwwwwwx.....xwwwwwwyYW..
+  ..WYywwwwwwwwwwx..[..xwwwwwwwyYW.
+   ..WYywwwwwwwwwx..>..xwwwwwwwyYW..
+    ..WYyywwwwwwwxx...xxwwwwwwwwyYW.
+     ..WYYyyywwwwwxxxxxwwwwwwwwyYW..
+      ..WWYYYyyyywwwwwyyyywwwyyYW..
+       ...WWWYYYYyyyyyYYYYyyyYYW..
+         ....WWWWYYYYYWWWWYYYWW..
+            .....WWWWW....WWW...
+                .......  .....
+ENDMAP
+
+##############################################################################
+# 25x25

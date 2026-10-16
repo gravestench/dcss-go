@@ -1,0 +1,26 @@
+NAME:    dpeg_arrival_boxes_within_box
+# Source: crawl-ref/source/dat/des/arrival/simple.des:579
+TAGS:    arrival transparent
+ORIENT:  float
+SHUFFLE: {[(
+SUBST:   [=., (=.
+MAP
+xxxxxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxx
+x.................................x
+x.................................x
+x...xxxxxxx..xxxxxxxxxxx..xxxxx...x
+x...xxxxxxx..xxxxxxxxxxx..xxxxx...x
+x...xxx........xxxxxxxxx..xxxxx...x
+x............{.xxxxx......xxxxx...x
+x...xxx..[........................x
+x...xxx........x........(.xxxxx...x
+x...xxxxxx..xxxx.xxx......xxxxx...x
+x...xxxxxx..xxxx.xxx......xxxxx...x
+x...xxxxxx..xxxx.xxxx...xxxxxxx...x
+x...xxxxxx..xxxx.xxxx...xxxxxxx...x
+x.................................x
+x.................................x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

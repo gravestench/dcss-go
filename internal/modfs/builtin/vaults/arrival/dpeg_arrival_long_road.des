@@ -1,0 +1,21 @@
+NAME:    dpeg_arrival_long_road
+# Source: crawl-ref/source/dat/des/arrival/simple.des:642
+TAGS:    arrival transparent
+ORIENT:  float
+SHUFFLE: {[(
+SUBST:   [=., (=.
+MAP
+xx.(.@x..xx@
+xx...xx...+.
+.....xxx..xx
+....xxx...x.
+x...xx....x.
+x..xxx...xx.
+...xx....x..
+..xxx.{.xxx.
+..xx>...xx>.
+@xxxx..xx...
+xxx....xx@.[
+ENDMAP
+
+##############################################################################

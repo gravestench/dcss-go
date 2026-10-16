@@ -1,0 +1,19 @@
+NAME:   mrwooster_arrival_arrow
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1755
+TAGS:   arrival no_monster_gen
+ORIENT: float
+MAP
+xxxxxxxxxxxxx
+xxxxxx.xxxxxx
+xxxxx...xxxxx
+xxxx.....xxxx
+xxx.......xxx
+xx.........xx
++.....{.....+
+xxxxx...xxxxx
+    xx.xx
+     x.x
+     x.x
+     x.x
+     x+x
+ENDMAP

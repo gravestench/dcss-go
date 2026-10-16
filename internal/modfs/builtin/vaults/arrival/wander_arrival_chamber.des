@@ -1,0 +1,13 @@
+NAME:   wander_arrival_chamber
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2397
+TAGS:   arrival no_monster_gen no_item_gen no_pool_fixup
+ORIENT: float
+MAP
+   xxxxxxx
+ xxxwwwwwxx+x
+xxx........Gxxx
+xx..{.........+
+xxx........Gxxx
+ xxxwwwwwxx+x
+   xxxxxxx
+ENDMAP

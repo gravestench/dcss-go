@@ -1,0 +1,25 @@
+NAME:    minmay_arrival_five_plusses
+# Source: crawl-ref/source/dat/des/arrival/small.des:467
+TAGS:    arrival
+ORIENT:  float
+SHUFFLE: {>, AB
+SUBST:   A = ., B = x
+SUBST:   x : xxxxxxccbvwl
+KMASK:   wl = no_monster_gen
+MAP
+.............
+..B...A...B..
+.BBB.AAA.BBB.
+..B...A...B..
+.............
+..A...x>..A..
+.AAA.xxx.AAA.
+..A..{x...A..
+.............
+..B...A...B..
+.BBB.AAA.BBB.
+..B...A...B..
+.............
+ENDMAP
+
+##############################################################

@@ -1,0 +1,9 @@
+NAME:   saegor_arrival_simple_a
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1546
+TAGS:   arrival transparent
+ORIENT: float
+MAP
+ccc
+c{c
+.@.
+ENDMAP

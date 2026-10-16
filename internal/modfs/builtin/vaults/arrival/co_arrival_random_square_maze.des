@@ -1,0 +1,32 @@
+NAME:    co_arrival_random_square_maze
+# Source: crawl-ref/source/dat/des/arrival/small.des:2621
+TAGS:    arrival
+ORIENT:  float
+NSUBST:  A = 3:+ / x
+NSUBST:  B = 1:+ / "
+NSUBST:  C = 11:+ / x
+NSUBST:  D = 3:+ / "
+SUBST:   " = xxxxxxxxxxxxxxxxx+
+SUBST:   ! = ....V
+SUBST:   x : cxxx
+MAP
+xxDxxxDxxxDxxxDxx
+x...x...x...x...x
+D.!.C.!.C.!.C.!.D
+x...x...x...x...x
+xxCxxxBxxxBxxxCxx
+x...x...x...x...x
+D.!.B.!.A.!.B.!.D
+x...x...x...x...x
+xxCxxxAxxxAxxxCxx
+x...x...x...x...x
+D.!.B.{.A.!.B.!.D
+x...x...x...x...x
+xxCxxxBxxxBxxxCxx
+x...x...x...x...x
+D.!.C.!.C.!.C.!.D
+x...x...x...x...x
+xxDxxxDxxxDxxxDxx
+ENDMAP
+
+##############################################################################

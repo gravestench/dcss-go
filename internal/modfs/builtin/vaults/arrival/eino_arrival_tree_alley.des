@@ -1,0 +1,15 @@
+NAME:    eino_arrival_tree_alley
+# Source: crawl-ref/source/dat/des/arrival/simple.des:160
+TAGS:    arrival no_monster_gen transparent
+ORIENT:  float
+MONS:    plant
+SHUFFLE: 1t
+MAP
+xxxxxxxxxxxxxxxxx
+.111111111111111.
+@.......{.......@
+.111111111111111.
+xxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

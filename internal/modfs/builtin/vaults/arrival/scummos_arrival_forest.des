@@ -1,0 +1,15 @@
+NAME:   scummos_arrival_forest
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1675
+TAGS:   arrival no_monster_gen no_rotate transparent
+ORIENT: float
+MAP
+...............
+..xxttt.tttxx..
+..xttttTttttx..
+..ttttt.ttttt..
+.....T.{.T.....
+..ttttt.ttttt..
+..xttttTttttx..
+..xxttt.tttxx..
+...............
+ENDMAP

@@ -1,0 +1,14 @@
+NAME:   tarquinn_simple_flora_water_d
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1500
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+MONS:   plant, fungus
+MAP
+xxxxxxxxxx
++....t1x2xxx
+xWWW..t1x.txx
+xxWG....{txx
+xWWW..t1x.txx
++....t1x2xxx
+xxxxxxxxxx
+ENDMAP

@@ -1,0 +1,38 @@
+NAME:   minmay_arrival_widening_spiral_wide
+# Source: crawl-ref/source/dat/des/arrival/small.des:513
+TAGS:   arrival no_monster_gen
+WEIGHT: 8
+ORIENT: float
+: vault.run("choose_spiral_entrance")
+# source: : if crawl.one_chance_in(4) then
+# source: SUBST:  ABCDEFGHJ = +
+# source: SUBST:  abcdefghj = x
+# source: : else
+# source: SUBST:  a=A, b=B, c=C, d=D, e=E, f=F, g=G, h=H, j=J
+# source: NSUBST: A = 1:+ / *:X , B = 1:+ / *:X , C = 1:+ / *:X , D = 1:+ / *:X
+# source: NSUBST: E = 1:+ / *:X , F = 1:+ / *:X , G = 1:+ / *:X , H = 1:+ / *:X
+# source: NSUBST: J = 1:+ / *:X
+# source: SUBST:  X:Xxxx+, X=xx+
+# source: : end
+MAP
+xJjjxxxxxxx
+x.........H
+x.........h
+x.........h
+x...xxxxxxxxxxxxxx
+x...x.....D......x
+x...x.G...d....G.x
+x...x.....d......x
+x...x...xxxxxx...x
+x...x...x{+..x...x
+xHhhxCccxxx..x...x
+x...x....xxaAxeeEx
+x...x....b...x...x
+x...x....b...x...x
+x...x....B...x...x
+x...xxxxxxxxxx...x
+x........f.......x
+x.G......f.....G.x
+x........F.......x
+xxxxxxxxxxxxxxxxxx
+ENDMAP

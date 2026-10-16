@@ -1,0 +1,28 @@
+NAME:   minmay_arrival_glassed_features
+# Source: crawl-ref/source/dat/des/arrival/small.des:2436
+TAGS:   arrival no_monster_gen
+ORIENT: float
+KPROP:  'I = no_tele_into
+SUBST:  I : G T I:4 A:1
+KFEAT:  A = enter_abyss
+MAP
+mmmmm.....mmmmm
+m'''m.....m'''m
+m'I'm.....m'I'm
+m'''m.....m'''m
+mmmmm.....mmmmm
+...............
+...............
+.......{.......
+...............
+...............
+mmmmm.....mmmmm
+m'''m.....m'''m
+m'I'm.....m'I'm
+m'''m.....m'''m
+mmmmm.....mmmmm
+ENDMAP
+
+##############################################################
+# This map provides no space to run around/away, so there is
+# either some staircase or a shaft.

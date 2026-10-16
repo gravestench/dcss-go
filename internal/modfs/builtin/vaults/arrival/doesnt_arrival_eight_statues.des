@@ -1,0 +1,15 @@
+NAME:   doesnt_arrival_eight_statues
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2000
+TAGS:   arrival no_monster_gen
+ORIENT: float
+MAP
+xxxx+xxxx
+x.......x
+x.G.G.G.x
+x.......x
++.G.{.G.+
+x.......x
+x.G.G.G.x
+x.......x
+xxxx+xxxx
+ENDMAP

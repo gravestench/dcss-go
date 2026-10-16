@@ -1,0 +1,66 @@
+NAME:    shiori_arrival_elements
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:491
+TAGS:    arrival no_monster_gen no_tele_into
+ORIENT:  float
+MARKER:  D = lua:fog_machine { \
+             pow_max = 10, delay_min = 50, delay_max = 300, \
+             size = 8, start_clouds = 1, \
+             cloud_type = "noxious fumes" }
+SUBST:   D = E
+FTILE:   EF = floor_slime
+COLOUR:  EF = lightgreen
+SUBST:   E = E n:1
+MARKER:  W = lua:fog_machine{\
+             pow_max = 10, delay_min = 50, delay_max = 300, \
+             size = 8, start_clouds = 1, \
+             cloud_type = "freezing vapour"}
+SUBST:   W = w, w : HIWw, I = HWww
+FTILE:   H = floor_rough_blue
+COLOUR:  H = blue
+SUBST:   J = w
+MARKER:  K = lua:fog_machine {\
+             pow_max = 10, delay_min = 50, delay_max = 300, \
+             size = 8, start_clouds = 1, \
+             cloud_type = "flame"}
+SUBST:   K = l, l : LMMl , M = Lll
+FTILE:   L = floor_rough_red
+COLOUR:  L = red
+SUBST:   N = l
+MARKER:  O = lua:fog_machine{\
+             pow_max = 20, delay_min = 50, delay_max = 300, \
+             size = 12, start_clouds = 1, \
+             cloud_type = "black smoke"}
+SUBST:   O = P
+FTILE:   PQ = floor_mud
+COLOUR:  PQ = brown
+SUBST:   P = P n:1
+SUBST:   X : c.
+NSUBST:  > : 1:> / *:.
+KMASK:   EFHLW = no_item_gen
+MAP
+          ...
+       cccnnnccc
+      ccFFEEEFFcc
+      cFEEEDEEEFc
+      cFFEEEEEFFc
+      ccFFFEFFFcc
+  cccccccnnnnnccccccc
+ ccHHccccc...cccccLLcc
+ cHwHHccccc+cccccLLlLc
+ cHwwHnccX...XccnLllLc
+.nwwwHnJc..>..cNnLllln.
+.nwWwwn.+.>{>.+.nllKln.
+.nwwwHnJc..>..cNnLllln.
+ cHwwHnccX...XccnLllLc
+ cHwHHccccc+cccccLLlLc
+ ccHHcccccG.GcccccLLcc
+  cccccccnn+nnccccccc
+      ccQQQPQQQcc
+      cQQPPPPPQQc
+      cQPPPOPPPQc
+      ccQQPPPQQcc
+       ccc+++ccc
+ENDMAP
+
+##############################################################################
+# Three arrival vaults containing the same river.

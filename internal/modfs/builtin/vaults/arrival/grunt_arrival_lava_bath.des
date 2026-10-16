@@ -1,0 +1,19 @@
+NAME:    grunt_arrival_lava_bath
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1899
+ORIENT:  float
+TAGS:    arrival no_monster_gen
+KITEM:   % = %
+KFEAT:   % = >
+MAP
+    .@...xxxxx
+   ....G.ccccx
+  .......lllcx
+ .......llllcx
+@.G..G{.lll%cx
+ .......llllcx
+  .......lllcx
+   ....G.ccccx
+    .@...xxxxx
+ENDMAP
+
+###############################################################################

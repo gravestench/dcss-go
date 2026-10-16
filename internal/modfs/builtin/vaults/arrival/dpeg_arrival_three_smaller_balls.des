@@ -1,0 +1,25 @@
+NAME:    dpeg_arrival_three_smaller_balls
+# Source: crawl-ref/source/dat/des/arrival/simple.des:999
+TAGS:    arrival no_rotate transparent
+ORIENT:  float
+WEIGHT:  5
+MAP
+   xxxxx  x@x  xxxxx
+ xxx...xxxx+xxxx...xxx
+xx.......xx.x........xx
+x.........x.x.........x
+x.........+.+.........x
+x.........x.x.........x
+xx.......xx.xx.......xx
+ xxx...xxxx+xxx....xxx
+  xx+xxxxx...xxxxx+xx
+  xx.xxx.......xxx.xx
+  x...x.........x...x
+  x...+....{....+...x
+  x...x.........x...x
+  x..xxx.......xxx.xx
+  xx.xxxxx...xxxxx.x
+   x..xxxxx+xxxxx..x
+   xx.............xx
+    xxxxxxxxxxxxxxx
+ENDMAP

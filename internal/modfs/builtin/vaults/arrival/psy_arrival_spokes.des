@@ -1,0 +1,30 @@
+NAME:       psy_arrival_spokes
+# Source: crawl-ref/source/dat/des/arrival/small.des:3151
+TAGS:       arrival no_monster_gen
+ORIENT:     float
+: vault.run("choose_spoke_gate")
+# source: : if crawl.coinflip() then
+# source: SUBST:      q : @, r : x, p : .
+# source: :end
+CLEAR:      pqr
+MAP
+     rqx@@@xqr
+     rpx...xpr
+     rpx...xpr
+     rpx...xpr
+     rpx...xpr
+     rpx...xpr
+     rpx...xpr
+    rrpx...xprr
+   rrpxx.{.xxprr
+  rrpxx.....xxprr
+ rrpxx..}.G..xxprr
+rrpxx.........xxprr
+rpxx.....x.....xxpr
+qxx.....xxx.....xxq
+xx.....xxpxx.....xx
+x.....xxprpxx.....x
+@@...xxprrrpxx...@@
+ @@.xxprr rrpxx.@@
+  @xxqrr   rrqxx@
+ENDMAP

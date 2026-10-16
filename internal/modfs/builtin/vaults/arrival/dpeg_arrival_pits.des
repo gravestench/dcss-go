@@ -1,0 +1,37 @@
+NAME:    dpeg_arrival_pits
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:681
+TAGS:    arrival no_monster_gen no_rotate no_pool_fixup
+WEIGHT:  20
+ORIENT:  float
+: vault.run("choose_pit_layout")
+# source: : if crawl.one_chance_in(4) then
+# source: SUBST:   Yy=w, Zz=l, Xx"'=b
+# source: NSUBST:  U = 1:} / *:{
+# source: : elseif crawl.one_chance_in(3) then
+# source: SUBST:   U=., Yy=w, Zz=l
+# source: SHUFFLE: x_/'"
+# source: SUBST:   x=+, '=b, ":".b
+# source: NSUBST:  X = 1:} / *:{
+# source: : elseif crawl.one_chance_in(2) then
+# source: SUBST:   U=., Zz=l, Xx"'=b
+# source: NSUBST:  Y = 1:} / *:{, y = 1:. / *:w
+# source: : else
+# source: SUBST:   U=., Yy=w, Xx"'=b
+# source: NSUBST:  Z = 1:} / *:{, z = 1:. / *:l
+# source: : end
+SHUFFLE: bxxx
+MAP
+ .......    .......
+..wwww...  ...llll..
+.wywwyw......lzllzl.
+.wwYYww..UU..llZZll.
+.wywwyw......lzllzl.
+..wwww..b'bb..llll..
+ ......bx"bxb......
+      .'"XX"'.
+      .bx"bxb.
+      ..b'bb..
+       ......
+ENDMAP
+
+###############################################################################

@@ -1,0 +1,27 @@
+NAME:    minmay_arrival_split_and_join
+# Source: crawl-ref/source/dat/des/arrival/small.des:260
+TAGS:    arrival no_rotate
+ORIENT:  float
+SUBST:   T = TV
+KMASK:   T = no_monster_gen
+MAP
+xxxxxxxxxxxx@xxxxxxxxxxxx
+xxxxxxxxxxx...xxxxxxxxxxx
+xxxxxxxxx...x...xxxxxxxxx
+xxxxxx....xxxxx....xxxxxx
+xxxx...xxxxxxxxxxx...xxxx
+xxx..xxxxxxxxxxxxxxx..xxx
+xxx+xxxxxxxx>xxxxxxxx+xxx
+xx...xxxxxx...xxxxxx...xx
+x.......................x
+x..T........T........T..x
+x.......................x
+xx...xxxxxx...xxxxxx...xx
+xxxxxxxxxxxx+xxxxxxxxxxxx
+xxxxxxxx.........xxxxxxxx
+xxxxxxx..t..{..t..xxxxxxx
+xxxxxxxx.........xxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################

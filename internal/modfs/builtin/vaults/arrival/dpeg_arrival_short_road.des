@@ -1,0 +1,20 @@
+NAME:    dpeg_arrival_short_road
+# Source: crawl-ref/source/dat/des/arrival/small.des:1800
+TAGS:    arrival
+ORIENT:  float
+SUBST:   %=%.
+NSUBST:  { = 1:{ / *:.
+MAP
+xxxxxx@.xxx
+x{.xx..xxxx
+x..x...+..x
+x..x..xx.{x
+x..+..xx..x
+x+xx..xxxxx
+x%+..xxxxxx
+xxx..x...{x
+xx...+....x
+xx.@xxxxxxx
+ENDMAP
+
+##############################################################################

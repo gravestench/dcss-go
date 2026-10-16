@@ -1,0 +1,34 @@
+NAME:    lemuel_arrival_river_ford
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:589
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+WEIGHT:  6
+SHUFFLE: {}, XYZ
+SUBST:   X=W, Y=w, Z=w
+: vault.run("choose_ford")
+# source: : if crawl.random2(3) > 0 then
+# source: SUBST:   T=x, "=., '=.
+# source: : else
+# source: SUBST:   "=T.., '=T...., T:Tttt, T=t x:1
+# source: : end
+MAP
+xxxxxxxxxxxxxxxxxxx
+xTTTTTTTTTTTTTTTTTx
+xTTTT{"""""""}TTTTx
+xTTTT"."..."."TTTTx
+xwTTT"'.''..."TTTTx
+xwwTT".'""".'"TTTTx
+xwwwT.''"""'."TTTTx
+xTwwX".'.''.'"TTTTx
+xTwwXw..'..''"TTTTx
+xTTXwwwwwww.."TTTTx
+xTTTXwwwwYYwwZTTTTx
+xTTTTXwwYwwwwwZwTTx
+xTTTT'..wwwwwZwwwTx
+xTTTT''..''..wwwwTx
+xTTTT''.''.'''Twwwx
+xTTTT'.'.''.''TTwwx
+xTTTT.........TTTwx
+xxxxx.........xxxxx
+xxxxx....@....xxxxx
+ENDMAP

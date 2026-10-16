@@ -1,0 +1,12 @@
+NAME:   amcnicky_arrival_choice
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2486
+TAGS:   arrival no_monster_gen no_trap_gen
+ORIENT: float
+SUBST:  p:}}>
+MAP
+    xxx
+xxxxxpx
+x{....x
+xxxxx.x
+    x+x
+ENDMAP

@@ -1,0 +1,17 @@
+NAME: lightli_arrival_maybe_door_vault
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1863
+ORIENT: float
+TAGS: arrival
+MARKER: + = lua: props_marker { connected_exclude="true" }
+MAP
+   @@
+ ++++++
+ +....+
+@+.{..+@
+@+....+@
+ +....+
+ ++++++
+   @@
+ENDMAP
+
+##############################################################

@@ -1,0 +1,28 @@
+NAME:   co_arrival_two_rings
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1081
+TAGS:   arrival transparent
+ORIENT: float
+WEIGHT: 1
+SUBST:  c : ccb
+MAP
+ ..........
+...ccccccc..
+..cc.....cc....
+.cc.......cc....
+.c.........c....
+.c.........c....
+.c......ccc+ccc..
+.c.....cc..c..cc..
+.c....cc.>.c...cc.
+.cc...c.{.cc....c.
+..cc..c..cc.....c.
+ ..ccc+ccc......c.
+  ....c.........c.
+  ....c.........c.
+  ....cc.......cc.
+   ....cc.....cc..
+      ..ccccccc...
+       ..........
+ENDMAP
+
+##############################################################################

@@ -1,0 +1,39 @@
+NAME:    dpeg_arrival_morbid_curiosity
+# Source: crawl-ref/source/dat/des/arrival/large.des:223
+TAGS:    arrival no_rotate no_monster_gen transparent
+ORIENT:  float
+MONS:    goblin ; stone
+MONS:    hobgoblin ; stone
+MONS:    kobold ; mace
+SHUFFLE: ABCD
+NSUBST:  X = 1:+ / *:x
+NSUBST:  Y = 1:+ / *:x
+SUBST:   A=@, B=@xx, C=@xxxx, D=x
+MAP
+     xxxxxxxxxBxxxxxxxxx
+    xxxxx...........xxxxx
+   xxx...xxxxx+xxxxx...xxx
+  xx..xxxxxlllllllxxxxx..xx
+ xx.xxxxxlll.....lllxxxxx.xx
+xx.xxxxxx3..........xxxxxx.xx
+xx.xxxxxxxxxxx+xxxxxxxxxxx.xx
+xx.xxxxxxxxxGXGXGxxxxxxxxx.xx
+x.xx...xxx.........xxx..lxx.x
+x.x....xx...........xx1.llx.x
+x.x....x............Yx...lx.x
+A.+...........{.....G+..1l+.C
+x.x....x............Yx...lx.x
+x.x....xx...........xx..llx.x
+x.xx...xxx.........xxx..lxx.x
+xx.xxxxxxxxxxG+Gxxxxxxxxxxx.x
+xx.xxxxxxxxxxx+xxxxxxxxxxx.xx
+xx.xxxxxx...........xxxxxx.xx
+xxx.xxxxxlll2..2.lllxxxxx.xx
+ xxx..xxxxxlllllllxxxxx..xx
+   xxx...xxxxx+xxxxx...xxx
+    xxxxx...........xxxxx
+     xxxxxxxxxDxxxxxxxxx
+ENDMAP
+
+##############################################################################
+# 29 x 21

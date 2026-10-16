@@ -1,0 +1,36 @@
+NAME:    lemuel_arrival_muddy
+# Source: crawl-ref/source/dat/des/arrival/small.des:1376
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SHUFFLE: {[(
+SUBST:   [( = .
+SUBST:   ? = w'
+NSUBST:  ' = 12:W12" / 24=W"12 / *:.
+SUBST:   " = . W:1
+MONS:    nothing / plant, nothing / fungus
+MAP
+xxxxxxxxxxxxxxxxxxx
+xxxxx{''1''('1ww'[x
+xxxxx1'''1'''11ww'x
+xxxx?x''w.11''??1'x
+xxx??x''''''''2'1'x
+xxx?WW''11'''''?w'x
+xxxxWW?''''''''''xx
+xxx?W?11?'22'2'''.x
+xxx?W11?''''w2''''x
+xxxx???''1''???''xx
+xxxxx?''1??''??'xxx
+xxxx?x'''''2?''"xxx
+xxxxWx'''2''''""xxx
+xxxx?W''''2''"""xxx
+xxxxx'22w""""""xxxx
+xxxxxxx""2"""""xxxx
+xxxxxxx""2""22xxxxx
+xxx.....""""xxxxxxx
+xx..xx......xxxxxxx
+@..xxxxx.....xxxxxx
+xxxxxxxxxx....xxxxx
+xxxxxxxxxxxx.@.xxxx
+ENDMAP
+
+##############################################################################

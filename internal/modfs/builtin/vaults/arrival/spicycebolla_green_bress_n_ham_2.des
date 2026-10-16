@@ -1,0 +1,20 @@
+NAME:     spicycebolla_green_bress_n_ham_2
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2535
+TAGS:     arrival no_monster_gen no_trap_gen
+ORIENT:   float
+MAP
+m       c@c  m
+ m     cc.c m
+  m  ccc.ccm
+cccm c.c.cm
+@.ccmcc.cm
+cc..cmc.mccc
+ ccc..WWcc{c
+  cAccWW..ccc
+  cccm.cmc..cc
+    mc.ccmcc.@
+   mc.c.c mccc
+  mcc.ccc  m
+ m c.cc     m
+m  c@c       m
+ENDMAP

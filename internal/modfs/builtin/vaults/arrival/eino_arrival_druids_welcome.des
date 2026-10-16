@@ -1,0 +1,20 @@
+NAME:    eino_arrival_druids_welcome
+# Source: crawl-ref/source/dat/des/arrival/simple.des:104
+TAGS:    arrival no_monster_gen transparent
+ORIENT:  float
+MONS:    plant
+MAP
+x1......@......1x
+xw1...........1wx
+xww1.........1wwx
+xwww1.......1wwwx
+xwwww1.....1wwwwx
+xwwwww1.{.1wwwwwx
+xwwww1.....1wwwwx
+xwww1.......1wwwx
+xww1.........1wwx
+xw1...........1wx
+x1......@......1x
+ENDMAP
+
+###########################################################

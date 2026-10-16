@@ -1,0 +1,30 @@
+NAME:   minmay_arrival_hallway
+# Source: crawl-ref/source/dat/des/arrival/small.des:2463
+TAGS:   arrival no_monster_gen
+ORIENT: float
+SUBST:  x : x:10 c:2 v:1
+SUBST:  a : ab
+NSUBST: a = 2:> / *:.
+NSUBST: b = 1:b / 1:b. / *:.
+KFEAT:  b = shaft trap
+SUBST:  G : G T t
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxx
+@..xxx...xxx...xxx...xxx
+@..xxx.a.xxx.a.xxx.G.xxx
+@..xxx...xxx...xxx...xxx
+@....................xxx
+@..................{.xxx
+@....................xxx
+@..xxx...xxx...xxx...xxx
+@..xxx.a.xxx.a.xxx.G.xxx
+@..xxx...xxx...xxx...xxx
+xxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################
+# The map can make it hard to get away, so reduced weight.

@@ -1,0 +1,29 @@
+NAME:     erik_arrival_cave_to_civilisation
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:351
+TAGS:     arrival no_rotate
+WEIGHT:   20
+ORIENT:   float
+SHUFFLE:  {[(
+SUBST:    ?=C., !=CCC., C:ccxxt, ([ = .
+SUBVAULT: _ : cave_to_hall_subvault / cave_to_temple_subvault w:5
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+xCCCCCCCCCCCCCCCCCCCCCCCCCxxxxxxxxxxxxxxx
+xC[!..C...CC.??...C?....................x
+xC..CC..CC.?C...C.?..C....C.............x
+xC!C..C..C.C..?..C..?C.?.C____________..x
+xC..CC!C.CC..C?.CC.......?____________..x
+xC.CC...C.C..C..??..C..?C.____________..x
+xC!.C.CCC.?C.?.C..CC...C..____________..x
+xCC..CCC.C.C..C...?..C....____________..x
+xC{CCC..CC.CC......CC.....____________..@
+xC.C...C.CC.C..?C.........____________..x
+xC!.CCCCCC.C...C..C?.CC...____________..x
+xCCCC.C...C..C...C...?....____________..x
+xC!!.!.CCC.C?....?.C...?..____________..x
+xC..C!.C.C...C?...CC?...CC____________..x
+xCC..CC.?C.CC....C....C...C._________...x
+xC(.C..C.CC...C?.....??.................x
+xCCCCCCCCCCCCCCCCCCCCCCCCCCxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,33 @@
+NAME:   roderic_dead_forest
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1134
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+SUBST:  T : t.TTTTT
+SUBST:  T = t:66 .:33 >:1
+COLOUR: . = brown
+COLOUR: t = lightgrey w:5 / brown
+TILE:   t = dngn_tree_dead
+: vault.run("name_dead_trees")
+# source: : set_feature_name("tree", "dead tree")
+MAP
+xxxxxxxx@xxxxxxxx
+xttttttT.TTtttxxx
+xttttttTT.Ttttttx
+xttttttT.TTtttttxx
+xxtttttT.TTttttttx
+xttttttTT.Tttttttx
+xtttttttT.Tttttttx
+xxtttttTT.TTttttx
+ xtttttT...Tttttx
+ xtttttT.{.Tttttx
+ xtttttT...Tttttx
+ xtttttTT.TTtttxx
+ xttttTT.TTttttx
+xxttttT.TTttttxx
+xtttttTT.Ttttttx
+xttttTT.TTttttxx
+xttttT..Tttttttx
+xxxxxx@@xxxxxxxx
+ENDMAP
+
+##############################################################################

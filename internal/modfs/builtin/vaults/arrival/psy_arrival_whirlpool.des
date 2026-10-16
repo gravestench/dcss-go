@@ -1,0 +1,19 @@
+NAME:       psy_arrival_whirlpool
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2362
+TAGS:       arrival no_monster_gen
+ORIENT:     float
+MAP
+ xxxxxxxxxx@
+xxWWWWWWWW.G@
+xWW.....WWW.x
+xW..WWW..WW.x
+x..WWWWW..W.x
+x.WW...WW.W.+
++.W..W{W..W.+
++.W.WW...WW.x
+x.W..WWWWW..x
+x.WW..WWW..Wx
+x.WWW.....WWx
+@G.WWWWWWWWxx
+ @xxxxxxxxxx
+ENDMAP

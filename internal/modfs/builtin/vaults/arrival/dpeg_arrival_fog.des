@@ -1,0 +1,18 @@
+NAME:    dpeg_arrival_fog
+# Source: crawl-ref/source/dat/des/arrival/small.des:677
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SHUFFLE: <>/>< , {}/}{
+MARKER:  # = lua:fog_machine { \
+             pow_max = 5, delay_min = 10, delay_max = 150, \
+             size = 5, start_clouds = 1}
+MAP
+xxxxxx
+x.{}.x
+x....x
+x....x
+x....x
+x@##.x
+ENDMAP
+
+##############################################################

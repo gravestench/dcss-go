@@ -1,0 +1,28 @@
+NAME:    wander_arrival_abandoned_jail
+# Source: crawl-ref/source/dat/des/arrival/large.des:1060
+TAGS:    arrival no_monster_gen no_item_gen transparent
+ORIENT:  float
+ITEM:    human skeleton / orc skeleton, \
+         goblin skeleton / gnoll skeleton, \
+         kobold skeleton / ogre skeleton
+SHUFFLE: {def
+KFEAT:   x = iron_grate
+MAP
+ cc++cc
+ccG..Gcc
+cxx..xxc
+c{+..+dc
+cxx..xxc
+cG....Gc
+cxx..xxc
+ce+..+dc
+cxx..xxc
+cG....Gc
+cxx..xxc
+ce+..+fc
+cxx..xxc
+ccG..Gcc
+ cc++cc
+ENDMAP
+
+##############################################################################

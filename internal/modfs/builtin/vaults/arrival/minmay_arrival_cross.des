@@ -1,0 +1,29 @@
+NAME:    minmay_arrival_cross
+# Source: crawl-ref/source/dat/des/arrival/small.des:2408
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SUBST:   x : x:10 c:2 v:1
+SHUFFLE: ABC
+SUBST:   A=+, B=+x, C=+xx
+MAP
+xxxxxxx+xxxxxxx
+xxxxxx...xxxxxx
+xxxxxx...xxxxxx
+xxxxxx...xxxxxx
+xxxx{......xxxx
+xxxx.......xxxx
+x.............x
+A......T......B
+x.............x
+xxxx.......xxxx
+xxxx.......xxxx
+xxxxxx...xxxxxx
+xxxxxx...xxxxxx
+xxxxxx...xxxxxx
+xxxxxxxCxxxxxxx
+ENDMAP
+
+##############################################################
+# Background for the Abyss portals: someone made them, probably with
+# an evil mind. The upright citizens and adventurers were not able
+# to destroy those portals, so they sealed them instead.

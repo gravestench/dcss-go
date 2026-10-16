@@ -1,0 +1,28 @@
+NAME:   evilmike_arrival_fibonacci_small
+# Source: crawl-ref/source/dat/des/arrival/small.des:112
+TAGS:   arrival no_monster_gen no_trap_gen
+ORIENT: float
+WEIGHT: 6
+NSUBST: U = 1:+ / *:x, V = 1:+ / *:x, W = 1:+ / *:x, X = 1:+ / *:x
+NSUBST: Y = 1:+ / *:x, Z = 1:+ / *:x
+MAP
+      xxxxxxxYYx
+      x........Y
+      x........Y
+      x........x
+      x........x
+xZZxxxx........x
+Z.....W........x
+Z.....W........x
+x.....W........x
+x..G..W........x
+x.....xxxxxXXXXx
+x.....x{+.x
+xxxxVVxxx+x
+   x...U..x
+   x...U..x
+   x...xxxx
+   xxxxx
+ENDMAP
+
+###############################################################################

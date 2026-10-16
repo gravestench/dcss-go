@@ -1,0 +1,10 @@
+NAME:   dpeg_arrival_tiny_i
+# Source: crawl-ref/source/dat/des/arrival/simple.des:478
+TAGS:   arrival transparent
+WEIGHT: 4
+ORIENT: float
+MAP
+xxxxx
+.>{.@
+xxxxx
+ENDMAP

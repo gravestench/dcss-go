@@ -1,0 +1,13 @@
+{
+  "id": "beargit_arrival_diablo_church",
+  "source_file": "large.des",
+  "edits": [
+    {
+      "start_line": 1129,
+      "end_line": 1129,
+      "sha256": "a5ff9edb36f5fa6701440228e75c7ba0cac72c9626c5a07d7698bb0c691726ce",
+      "method": "schedule_skeleton_decay",
+      "stage": "run"
+    }
+  ]
+}

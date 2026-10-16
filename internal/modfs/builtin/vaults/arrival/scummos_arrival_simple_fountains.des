@@ -1,0 +1,13 @@
+NAME:   scummos_arrival_simple_fountains
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1610
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+MAP
+.......
+.T...T.
+..mmm..
+..m{+..
+..mmm..
+.T...T.
+.......
+ENDMAP

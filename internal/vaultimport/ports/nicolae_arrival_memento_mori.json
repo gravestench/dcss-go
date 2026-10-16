@@ -1,0 +1,13 @@
+{
+  "id": "nicolae_arrival_memento_mori",
+  "source_file": "twisted.des",
+  "edits": [
+    {
+      "start_line": 916,
+      "end_line": 932,
+      "sha256": "6d37ab886bc76462f03823574104a935bb2fd5fe810e6313360af5ff2573b122",
+      "method": "schedule_named_remains",
+      "stage": "run"
+    }
+  ]
+}

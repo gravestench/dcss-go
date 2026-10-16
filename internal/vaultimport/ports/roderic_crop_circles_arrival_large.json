@@ -1,0 +1,13 @@
+{
+  "id": "roderic_crop_circles_arrival_large",
+  "source_file": "large.des",
+  "edits": [
+    {
+      "start_line": 818,
+      "end_line": 822,
+      "sha256": "6c6ed8a904396a9038ac9ef60fdaced44cf2e9dac1940a23c7f943fc35721d2b",
+      "method": "choose_crop_colour",
+      "stage": "run"
+    }
+  ]
+}

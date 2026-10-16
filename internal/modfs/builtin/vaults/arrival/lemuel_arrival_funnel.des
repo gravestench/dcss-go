@@ -1,0 +1,26 @@
+NAME:   lemuel_arrival_funnel
+# Source: crawl-ref/source/dat/des/arrival/simple.des:174
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+SUBST:  c : ccccwlx
+MAP
+xxxxxxxxxxxxxxx
+x......{......x
+x.............x
+xx...ccccc...xx
+ x...ccccc...x
+ xx...ccc...xx
+  x...ccc...x
+  xx...c...xx
+   x...c...x
+   xx.....xx
+    x.....x
+    xx...xx
+     x...x
+     x...x
+     x+++x
+     x.@.x
+ENDMAP
+
+##############################################################
+# Reduced weight because of size and shape.

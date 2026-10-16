@@ -1,0 +1,29 @@
+NAME:    lemuel_arrival_river_passageway
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:622
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SHUFFLE: {}, ABC
+SUBST:   A:+, B:x, C:x
+WEIGHT:  1
+MAP
+xxxxxxxxxxxxxxxxxxx
+xxxWA{.......}xxxxx
+xxwWx.........xxxxx
+xwwWB.........xxxxx
+xwwWx.........xxxxx
+xwwWC.........xxxxx
+xxWwx.........xxxxx
+xxWwwwww......xxxxx
+xWxwwwwwwwwww.xxxxx
+xWxxwwwwwwwwwwxxxxx
+xxWxxwwwwwwwwwwwxxx
+xxWxx.wwwwwwwwwwwxx
+xxwWx......wwwwwwxx
+xwxw+.........xwwwx
+xwxxx.........xxwwx
+xxxxx.........xxxwx
+xxxxx.........xxxxx
+xxxxx.........xxxxx
+ENDMAP
+
+##############################################################################

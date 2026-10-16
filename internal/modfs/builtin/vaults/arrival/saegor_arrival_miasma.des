@@ -1,0 +1,30 @@
+NAME:   saegor_arrival_miasma
+# Source: crawl-ref/source/dat/des/arrival/small.des:2827
+TAGS:   arrival no_monster_gen no_trap_gen
+ORIENT: float
+COLOUR: W# = lightgreen
+NSUBST: W = 6:% / 7:#
+KITEM:  % = nothing / w:5 river rat skeleton
+MARKER: # = lua:fog_machine { cloud_type = "foul pestilence", pow_max = 10, \
+                              delay = 5, size = 5, excl_rad = 0 }
+KFEAT:  %# = W
+KPROP:  W#% = no_tele_into
+MAP
+ xxxxxxxxxxx
+xxWWWWWWWWWxx
+xWWWWWWWWWWWx
+xWWvWW#WvWWWx
+xWWWWWWWWWWWx
+xWWWWWWWWWWWx
+xxxmmxxxmmxxx
+@+....{....+@
+xxxmmxxxmmxxx
+xWWWWWWWWWWWx
+xWWWWWWWWWWWx
+xWWvW#WWvWWWx
+xWWWWWWWWWWWx
+xxWWWWWWWWWxx
+ xxxxxxxxxxx
+ENDMAP
+
+##############################################################################

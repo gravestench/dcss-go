@@ -1,0 +1,23 @@
+NAME:     amcnicky_arrival_wind_blow
+# Source: crawl-ref/source/dat/des/arrival/small.des:3545
+TAGS:     arrival no_monster_gen no_trap_gen
+ORIENT:   float
+NSUBST:   _ = 4:p / 4=p:2 . / *=.
+: vault.run("schedule_skeleton_decay")
+# source: : dgn.delayed_decay(_G, 'p', 'deep dwarf skeleton')
+MAP
+      xxxxx
+      x__{xxx
+     xx.__..x
+     x_.....xx  xxxx
+    xx_...__.x xx..@
+xxxxx._.xx...xxx__.@
+x.___._.xxx......xx@
+x....__xx xx._.__xx@
+x.xx___x   x..._...@
+x.xx._.xx  xxxxxx..@
+x.._._..xx      xxxx
+x____.._.x
+xxxxxxx..x
+      x@@x
+ENDMAP

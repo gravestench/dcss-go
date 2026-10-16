@@ -1,0 +1,18 @@
+NAME:    onia_arrival_mini_spirals
+# Source: crawl-ref/source/dat/des/arrival/simple.des:900
+TAGS:    arrival no_monster_gen transparent
+ORIENT:  float
+SHUFFLE: ({[<, GT, vcxxxx
+SUBST:   [=., (=., <=.
+MAP
+vvvvvvvvvvv
+vv...+...vv
+vv[v.v.v(vv
+vvvv.v.vvvv
+v.........v
+v.vv...vv.v
+v.<v...v{.v
+vvvv.@.vvvv
+ENDMAP
+
+###########################################################

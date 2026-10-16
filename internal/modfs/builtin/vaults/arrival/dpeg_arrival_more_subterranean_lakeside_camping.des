@@ -1,0 +1,24 @@
+NAME:    dpeg_arrival_more_subterranean_lakeside_camping
+# Source: crawl-ref/source/dat/des/arrival/small.des:1649
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+NSUBST:  { = 1:{ / *:.
+SUBST:   ? : . w ?:40, ' : . x ':40
+SUBST:   ? = .w, ' = .x
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+xwwwwwwwww?......'''....''.
+xwwwwww??...?w?......'.....
+xwww??....w.www??...'x'..'.
+xww??...?ww.w.ww.?..xx.....
+xw?....?ww{www..w.?..'.....
+xw?.{.?wwwwwwwww......'...@
+xw?....wW{wwww..w....'x.'..
+xww??...?wwww?.ww?....x.''.
+xwww??.....?wwww...x..'....
+xwwwwww??....???..'x....xx'
+xwwwwwwww??''...........'''
+xxxxxxxxxxxxxxxxx..@....'''
+ENDMAP
+
+##############################################################################

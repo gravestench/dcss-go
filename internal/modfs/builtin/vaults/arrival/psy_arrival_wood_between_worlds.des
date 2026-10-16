@@ -1,0 +1,37 @@
+NAME:       psy_arrival_wood_between_worlds
+# Source: crawl-ref/source/dat/des/arrival/large.des:990
+TAGS:       arrival no_monster_gen no_trap_gen no_pool_fixup transparent
+ORIENT:     float
+WEIGHT:     3
+FTILE:      t.qG^P{ = floor_grass
+COLOUR:     . = green
+KMONS:      P = plant / bush
+KFEAT:      ^ = teleport trap
+KFEAT:      p = W
+KMONS:      p = plant
+NSUBST:     p = 10=p / W, q = 10=P / .
+MAP
+ xxxxxxxxx@@@xxxxxxxxx
+xxtttttttx...xtttttttxx
+xttpW.qttx...xttq.Wpttx
+xtGWW^...........^WWGtx
+xttpW.qtqqq.qqqtq.Wpttx
+xxttttttttq.qttttttttxx
+xxtttqPtttq.qtttPqtttxx
+xttpW.qtqqq.qqqtq.Wpttx
+xtGWW^...........^WWGtx
+xttpW.qt.......tq.Wpttx
+xxtttttt.......ttttttxx
+xxtttttt...{...ttttttxx
+xttpW.qt.......tq.Wpttx
+xtGWW^...........^WWGtx
+xttpW.qt.......tq.Wpttx
+xxtttqPtt.ttt.ttPqtttxx
+ xxxttttP.PtP.Pttttxxx
+   xxxxt.^.t.^.txxxx
+      xtWWWtWWWtx
+      xtpWptpWptx
+      xttGtttGttx
+      xxtttxtttxx
+       xxxxxxxxx
+ENDMAP

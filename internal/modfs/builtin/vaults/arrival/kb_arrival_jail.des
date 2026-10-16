@@ -1,0 +1,68 @@
+NAME:    kb_arrival_jail
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:82
+TAGS:    arrival no_monster_gen no_trap_gen
+ORIENT:  north
+SUBST:   - = apqrsuyzDEFHJKLMNOPQRSTZ
+SHUFFLE: apqrsuyzDEFHJKLMNOPQRSTZ
+KPROP:   apqrsuyzDEFHJKLMNOPQRSTZ = no_tele_into
+KMASK:   apqrsuyzDEFHJKLMNOPQRSTZ = no_item_gen
+KMONS:   a = human ; nothing
+KMONS:   p = elf ; nothing
+KMONS:   q = meteoran ; nothing
+KMONS:   r = orc ; nothing
+KMONS:   s = merfolk ; nothing
+KMONS:   u = naga ; nothing
+KMONS:   y = kobold ; nothing
+KMONS:   z = spriggan ; nothing
+KMONS:   D = ogre ; nothing
+KMONS:   E = troll
+KMONS:   F = minotaur ; nothing
+KMONS:   H = tengu ; nothing
+KMONS:   J = draconian ; nothing
+KMONS:   K = demonspawn ; nothing
+KMONS:   L = mummy
+KMONS:   M = felid
+KMONS:   N = ghoul
+KMONS:   O = vampire spells:. ; nothing
+KMONS:   P = demigod ; nothing
+KMONS:   Q = octopode ; nothing
+KMONS:   R = formicid ; nothing
+KMONS:   S = gargoyle ; nothing
+KMONS:   T = palentonga ; nothing
+KMONS:   Z = vine stalker ; nothing
+MAP
+ ccccc
+ c.{.c
+ c...c
+ccc+ccc
+can.npc
+ccc.ccc
+cqn.nrc
+ccc.ccc
+csn.nuc
+ccc.ccc
+cyn.nzc
+ccc.ccc
+cDn.nEc
+ccc.ccc
+cFn.nHc
+ccc.ccc
+cJn.nKc
+ccc.ccc
+cLn.nMc
+ccc.ccc
+cNn.nOc
+ccc.ccc
+cPn.nQc
+ccc.ccc
+cRn.nSc
+ccc.ccc
+cZn.n-c
+ccc.ccc
+c-n.n-c
+ccc+ccc
+  c@c
+ENDMAP
+
+#########################################
+# A horror show for the beginning adventurer

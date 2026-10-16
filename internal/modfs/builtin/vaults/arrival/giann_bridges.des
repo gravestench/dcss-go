@@ -1,0 +1,19 @@
+NAME:   giann_bridges
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2097
+TAGS:   arrival no_monster_gen
+KPROP:  W = no_tele_into
+MONS:   plant
+ORIENT: float
+MAP
+.........................
+.1wwwwwwww1...1wwwwwwww1.
+.wwwWWWWwww...wwwWWWWwww.
+.wwwWWWWwww...wwwWWWWwww.
+.1wwwwwwww.....wwwwwwww1.
+............{............
+.1wwwwwwww.....wwwwwwww1.
+.wwwWWWWwww...wwwWWWWwww.
+.wwwWWWWwww...wwwWWWWwww.
+.1wwwwwwww1...1wwwwwwww1.
+.........................
+ENDMAP

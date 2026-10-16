@@ -1,0 +1,24 @@
+NAME:    heliophobic_arrival_henge
+# Source: crawl-ref/source/dat/des/arrival/small.des:3432
+TAGS:    arrival no_monster_gen no_trap_gen
+ORIENT:  float
+FTILE:  .t{A = floor_moss
+COLOUR: .t = green
+SUBST:   ? = >:30 T V:5
+MAP
+    .......
+   ..tt.tt..
+  .tttt.tttt.
+?.ttttA.Atttt.?
+..ttA.....Att..
+.ttA..ttt..Att.
+.ttA...{...Att.
+.ttA..ttt..Att.
+..ttA.....Att..
+?.ttt.AAAt.tt.?
+  .t.ttttt...
+   ..ttttt..
+    .......
+ENDMAP
+
+##############################################################

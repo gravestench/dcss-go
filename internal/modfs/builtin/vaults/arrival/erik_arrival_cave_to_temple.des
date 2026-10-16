@@ -1,0 +1,51 @@
+NAME:    erik_arrival_cave_to_temple
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:400
+# Intentionally higher chances for the non-Temple gods.
+TAGS:    cave_to_temple_subvault no_rotate no_trap_gen
+KPROP:   'tCD> = no_tele_into
+NSUBST:  ' = 12=1 / 4=2 / 3 / '
+KMASK:   'CDUT> = no_item_gen
+KMASK:   'CDUT> = no_monster_gen
+: vault.run("choose_temple_tenant")
+# source: : local rnd = crawl.random2(9)
+# source: : if rnd == 0 then
+# source: KFEAT:   C = altar_beogh
+# source: SUBST:   DG = I
+# source: KMONS:   1 = orc / nothing
+# source: KMONS:   2 = orc wizard / orc priest / orc / nothing
+# source: KMONS:   3 = orc warrior
+# source: : elseif rnd == 1 then
+# source: KFEAT:   C = altar_lugonu
+# source: KFEAT:   D = enter_abyss
+# source: KMONS:   1 = iron imp / ufetubus / shadow imp / crimson imp / quasit w:5 \
+# source:          / white imp w:5
+# source: SUBST:   t : U'''', 23 = 0
+# source: : elseif rnd == 2 then
+# source: KFEAT:   C = altar_jiyva
+# source: SUBST:   D = .
+# source: KMONS:   1 = jelly / endoplasm
+# source: SUBST:   t : U'''', 23 = 0
+# source: : else
+# source: SUBST:   D = V
+# source: KMONS:   1 : gnoll / orc / 0 w:20
+# source: KMONS:   2 : ogre / 0 w:70
+# source: KMONS:   3 : troll / 0 w:70
+# source: SUBST:   t = T
+# source: : end
+MAP
+...T....ccc.
+............
+...xxxxxxxx.
+..xxxxt't>x.
+.xxxxx''''x.
+.G.x$x'C''x.
+....0=''''x.
+....0=''''x.
+.G.x$x'D''x.
+.xxxxx''''x.
+..xxxxt't>x.
+  .xxxxxxxx
+ENDMAP
+
+###########################################################
+# Basic island, with variations

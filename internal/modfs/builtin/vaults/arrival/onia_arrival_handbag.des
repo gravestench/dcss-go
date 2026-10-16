@@ -1,0 +1,20 @@
+NAME:    onia_arrival_handbag
+# Source: crawl-ref/source/dat/des/arrival/small.des:2094
+TAGS:    arrival
+ORIENT:  float
+MONS:    w:30 rat / endoplasm / ball python
+SHUFFLE: {[
+SUBST:   [=.
+MAP
+.......@........
+.xx..xx>x{x..xx.
+.....xxx.xx.....
+.xx1xxxxxxxx1xx.
+.>xxxxxxxxxxxx>.
+.xx1xxxxxxxx1xx.
+.....xx.xxx.....
+.xx..x[x>xx..xx.
+.......@........
+ENDMAP
+
+##############################################################

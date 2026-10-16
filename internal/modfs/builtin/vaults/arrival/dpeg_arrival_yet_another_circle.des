@@ -1,0 +1,27 @@
+NAME:    dpeg_arrival_yet_another_circle
+# Source: crawl-ref/source/dat/des/arrival/small.des:1938
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+WEIGHT:  5
+SHUFFLE: lw
+MAP
+      xxxxx@xxxxx
+   xxxx.........xxxx
+  xx...xxxx+xxxx...xx
+ xx.xxxxwwwwwwwxxxx.xx
+ x.xxxxxww...wwxxxxx.x
+xx.xxxxx.......xxxxx.xx
+x.xxxxxxxxx+xxxxxxxxx.x
+x.x..x...........x..x.x
+x.+..+.....{.....+..+.x
+x.x..x...........x..x.x
+x.xxxxxxxxx+xxxxxxxxx.x
+xx.xxxxx.......xxxxx.xx
+ x.xxxxxww...wwxxxxx.x
+ xx.xxxxwwwwwwwxxxx.xx
+  xx...xxxxxxxxx...x
+   xxxx.........xxxx
+      xxxxx@xxxxx
+ENDMAP
+
+##############################################################################

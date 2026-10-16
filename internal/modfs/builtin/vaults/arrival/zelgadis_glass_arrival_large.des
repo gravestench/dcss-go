@@ -1,0 +1,28 @@
+NAME:    zelgadis_glass_arrival_large
+# Source: crawl-ref/source/dat/des/arrival/small.des:1069
+TAGS:    arrival
+ORIENT:  float
+WEIGHT:  1
+NSUBST:  X = 4:+ / *:x
+MAP
+mxmxmxmxmxmxxmxxmx
+x................m
+m.xmXmxmxmxmxmXm.x
+x.m............x.m
+m.x.mxmxmXmxmx.m.x
+x.m.x........m.X.m
+m.X.m.xmxmxx.x.m.x
+x.m.x.m....x.m.x.m
+m.x.m.x.mx.m.X.m.x
+x.m.X.m....x.m.x.m
+m.x.m.x.{x.m.x.m.x
+x.m.x.xmxx.x.m.x.m
+m.X.m......m.x.m.x
+x.m.xxmXmxmx.m.x.m
+m.x..........x.m.x
+x.xmXmxmxmxmXm.X.m
+m..............m.x
+xxmxmxmxmxmxmxmx@m
+ENDMAP
+
+##############################################################################

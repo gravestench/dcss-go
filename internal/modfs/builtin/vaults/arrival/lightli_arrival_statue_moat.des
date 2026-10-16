@@ -1,0 +1,16 @@
+NAME: lightli_arrival_statue_moat
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1817
+TAGS: arrival no_monster_gen
+ORIENT: float
+MAP
+xxxx.xxxx
+xx.....xx
+x.xGwGx.x
+x.xwwwx.x
+x.xGwGx.x
+x.xwwwx.x
+x.xGwGx.x
+xx.....xx
+xxx.{.xxx
+xxxxxxxxx
+ENDMAP

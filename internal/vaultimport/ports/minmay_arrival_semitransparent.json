@@ -1,0 +1,13 @@
+{
+  "id": "minmay_arrival_semitransparent",
+  "source_file": "small.des",
+  "edits": [
+    {
+      "start_line": 381,
+      "end_line": 386,
+      "sha256": "24ac6e6e2ae77f40b549f3f0b0e31965a86d3185ef8c834a2b57a60e2c4830fb",
+      "method": "choose_wall_opacity",
+      "stage": "run"
+    }
+  ]
+}

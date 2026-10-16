@@ -1,0 +1,32 @@
+NAME:    saegor_arrival_fortress
+# Source: crawl-ref/source/dat/des/arrival/small.des:2523
+TAGS:    arrival no_monster_gen no_pool_fixup
+ORIENT:  float
+KPROP:   W = no_tele_into
+NSUBST:  { = 1:{ / 1:> / *:.
+MAP
+wwwwwwwwwcccccwwwwwwwww
+wcccccccwcWtWcwcccccccw
+wc{...GccccGccccG...{cw
+wc.....+.......+.....cw
+wcG...GccGc+cGccG...Gcw
+wccc+cccccc+cccccc+cccw
+wcWc.cctt.....ttcc.cWcw
+wttG.ctW.......Wtc.Gttw
+wcWc.Gc.........cG.cWcw
+wccc.cc...WtW...cc.cccw
+@++..++...tGt...++..++@
+wccc.cc...WtW...cc.cccw
+wcWc.Gc.........cG.cWcw
+wttG.ctW.......Wtc.Gttw
+wcWc.cctt.....ttcc.cWcw
+wccc+cccccc+cccccc+cccw
+wcG...GccGc+cGccG...Gcw
+wc.....+.......+.....cw
+wc{...GccccGccccG...{cw
+wcccccccwcWtWcwcccccccw
+wwwwwwwwwcccccwwwwwwwww
+ENDMAP
+
+##############################################################
+# A small-room arrival with wooden doors and big ring of trees and rocks.

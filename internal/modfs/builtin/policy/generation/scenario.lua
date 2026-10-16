@@ -14,7 +14,7 @@ function module.run(ctx, input)
     elseif scenario_id == "fixed-dungeon-population-v1" then
         result = fixed.generate(true)
     elseif scenario_id == "generated-dungeon-basic-v1" then
-        result = generated.generate(ctx)
+        result = generated.generate(ctx, input)
     else
         error(string.format("unsupported scenario ID %q", tostring(scenario_id)))
     end
@@ -23,6 +23,9 @@ function module.run(ctx, input)
 
     for _, level in ipairs(result.levels) do
         level.cells = features.decode_source_rows(level.rows)
+        if level.vault_records then
+            level.vault_records = features.apply_vault_terrain(level.cells, level.vault_records)
+        end
         level.rows = nil
     end
 

@@ -1,0 +1,22 @@
+NAME:    minmay_arrival_statue_studded
+# Source: crawl-ref/source/dat/des/arrival/small.des:417
+TAGS:    arrival
+ORIENT:  float
+WEIGHT:  1
+SUBST:   c : cccx
+KMASK:   T = no_monster_gen
+MAP
+...........
+.GcGcGcGcG.
+.ccccccccc.
+.Gc..{..cG.
+.cc.....cc.
+..+..T..+..
+.cc.....cc.
+.Gc.....cG.
+.cccc+cccc.
+.GcGc.cGcG.
+...........
+ENDMAP
+
+##############################################################

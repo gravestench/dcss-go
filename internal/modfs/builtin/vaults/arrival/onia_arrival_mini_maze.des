@@ -1,0 +1,26 @@
+NAME:    onia_arrival_mini_maze
+# Source: crawl-ref/source/dat/des/arrival/small.des:2042
+TAGS:    arrival
+WEIGHT:  5
+ORIENT:  float
+ITEM:    nothing w:20 / stone
+SHUFFLE: Aa, Bb, Cc, Ee, Ff
+MONS:    w:30 nothing / w:10 plant / w:5 fungus / w:10 rat
+SUBST:   A=x, B=x, C=x, E=x, F=x, a=., b=., c=., e=., f=.
+SUBST:   X = xxxxxxxxxxxxxxxxx+
+NSUBST:  { = 1:{ / *:.
+MAP
+xxxxxxxxx@xxxxxxx
+x.......A.a.....x
+x.xxxxXexXxBxxx.x
+x.xd1.......x1f.x
+x.xxxxxxxXxbx.x.x
+x.X...x.......X.x
+xEx.x.x.xxxxx.xFx
+x...x.c...1dx...x
+xxxxxCxxxxxxxx.xx
+x...............x
+x.xx.xxx.xx.xxx.x
+x.....{x{x{.....x
+xxxxxxxxxxxxxxxxx
+ENDMAP

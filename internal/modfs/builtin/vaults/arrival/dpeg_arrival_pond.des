@@ -1,0 +1,23 @@
+NAME:   dpeg_arrival_pond
+# Source: crawl-ref/source/dat/des/arrival/small.des:1496
+TAGS:   arrival no_monster_gen no_pool_fixup
+ORIENT: float
+SUBST:  0 = 0 .
+SUBST:  ' = w'
+NSUBST: . = 1:d / *:.
+NSUBST: " = 1:@ / *:.
+ITEM:   stone
+MAP
+".0.0....0."
+xxwwwwwwwxxx
+xwwwwwwwwwwx
+xwwww'wwwwwx
+xwwwW...'wwx
+xwwWww...'wx
+x'.......'wx
+x....{..'wwx
+.........wwx
+@........xxx
+ENDMAP
+
+##############################################################################

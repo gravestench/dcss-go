@@ -1,0 +1,21 @@
+NAME:    grunt_arrival_crossed_arrows
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1879
+ORIENT:  float
+TAGS:    arrival no_monster_gen transparent
+MAP
+....G....
+.xx...xx.
+..xx.xx..
+ ..x+x..
+ ..x+x..
+..xxTxx..
+.++T{T++.
+..xxTxx..
+ ..x+x..
+ ..x+x..
+..xx.xx..
+.xx...xx.
+....G....
+ENDMAP
+
+# Come back for the item later if you want it.

@@ -1,0 +1,6 @@
+NAME: zz_inline
+TAGS: arrival
+: crawl.coinflip()
+MAP
+@.
+ENDMAP

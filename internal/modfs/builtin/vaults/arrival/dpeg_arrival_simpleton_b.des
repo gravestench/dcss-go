@@ -1,0 +1,24 @@
+NAME:    dpeg_arrival_simpleton_b
+# Source: crawl-ref/source/dat/des/arrival/small.des:1169
+TAGS:    arrival
+ORIENT:  float
+ITEM:    nothing, nothing
+SHUFFLE: TVG
+SUBST:   c:cxx
+KMASK:   T = no_monster_gen
+MAP
+xx@...@xxxxxxxx
+xx+xxx+xxxxxxxx
+x.......x......
+x.......+..)..@
+x.T.G.T.x......
+x.......xxx+xxx
+x.......xcc+ccx
+xxxxxxxxxc...cx
+xccccccccc.{.cx
+@........+...cx
+xcccccccccccccx
+xxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

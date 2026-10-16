@@ -1,0 +1,27 @@
+NAME:     eino_arrival_cavern_d
+# Source: crawl-ref/source/dat/des/arrival/small.des:2183
+TAGS:     arrival no_rotate
+ORIENT:   northeast
+SHUFFLE:  bvc
+SUBST:    ' : x.
+WEIGHT:   4
+SHUFFLE:  IJ
+SUBST:    J = .
+MAP
+xxxxxxxxxxxxxx
+xxxxxxxxx{xxxx
+xxxxxxxx...xxx
+xxxxxx.....xxx
+xxxxx.....''xx
+xxx.......''xx
+xx.........'xx
+......J.....'x
+@.....ccI..''x
+x....Icc...''x
+x......J...''x
+...........'xx
+@.........''xx
+x........''xxx
+xx.....xxxxxxx
+xxx.@.xxxxxxxx
+ENDMAP

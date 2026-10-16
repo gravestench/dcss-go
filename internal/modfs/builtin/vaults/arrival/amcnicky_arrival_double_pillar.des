@@ -1,0 +1,23 @@
+NAME:     amcnicky_arrival_double_pillar
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2410
+TAGS:     arrival no_monster_gen no_item_gen no_pool_fixup
+ORIENT:   float
+SHUFFLE:  JK
+SUBST:    p:xxxwwwlvt, J:x, K:@
+MAP
+JKKKKKKKJ
+J.......J
+J.pp....J
+J.pp....J
+x......xx
+x.xxxx.xx
+x.x....xx
+xxx.{.xxx
+xx....x.x
+xx.xxxx.x
+xx......x
+J....pp.J
+J....pp.J
+J.......J
+JKKKKKKKJ
+ENDMAP

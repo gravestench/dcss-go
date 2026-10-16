@@ -89,7 +89,14 @@ func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {
 		t.Fatalf("%s must have a named run function", name)
 	}
 
-	limit, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	limitDuration := 5 * time.Second
+
+	if name == "tests/arrival_placement_test.lua" {
+		// This one test drives every source arrival through placement and BFS.
+		limitDuration = 60 * time.Second
+	}
+
+	limit, cancel := context.WithTimeout(context.Background(), limitDuration)
 	defer cancel()
 
 	runtime.state.SetContext(limit)

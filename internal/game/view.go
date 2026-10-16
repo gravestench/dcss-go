@@ -4,6 +4,7 @@ import (
 	"dcrawl-go/internal/character"
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/terrain"
+	"dcrawl-go/internal/vault"
 	"fmt"
 )
 
@@ -135,6 +136,7 @@ func (g *Game) View() (view View) {
 	}
 
 	g.fillTerrainView(&view, level)
+	g.fillVaultView(&view, level)
 	g.fillCloudView(&view, level)
 	g.fillPlayerView(&view)
 	g.fillEntityView(&view, level, position.LevelID)
@@ -142,6 +144,50 @@ func (g *Game) View() (view View) {
 	g.fillSpellView(&view)
 
 	return view
+}
+
+func (g *Game) fillVaultView(view *View, level *Level) {
+	for _, record := range level.vaultRecords {
+		if !record.Pending ||
+			record.Overridden ||
+			!vaultVisibleKind(record.Kind) {
+			continue
+		}
+
+		index := record.Y*level.width + record.X
+
+		if g.visibleLevelID != level.ID ||
+			index < 0 ||
+			index >= len(g.visible) ||
+			!g.visible[index] {
+			continue
+		}
+
+		glyph := '?'
+
+		if record.SourceGlyph != "" {
+			glyph = []rune(record.SourceGlyph)[0]
+		}
+
+		view.Entities = append(view.Entities, EntityView{
+			X:      record.X,
+			Y:      record.Y,
+			Glyph:  glyph,
+			KindID: string(record.Kind),
+			Name:   record.Identity + " (unavailable)",
+			Role:   "vault_pending",
+		})
+	}
+}
+
+func vaultVisibleKind(kind vault.Kind) bool {
+	switch kind {
+	case vault.KindSourceFeature, vault.KindFeature,
+		vault.KindItem, vault.KindMonster, vault.KindMarker:
+		return true
+	}
+
+	return false
 }
 
 func (g *Game) fillCloudView(view *View, level *Level) {

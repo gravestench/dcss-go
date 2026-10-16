@@ -1,0 +1,17 @@
+NAME:   scummos_arrival_simple_crosswalls
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1623
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+MAP
+...........
+..x.....x..
+.xxGxxxGxx.
+..x........
+..x.....x..
+..x..{..x..
+..x.....x..
+........x..
+.xxGxxxGxx.
+. x.....x..
+...........
+ENDMAP

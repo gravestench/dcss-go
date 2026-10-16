@@ -1,0 +1,13 @@
+{
+  "id": "dpeg_arrival_round_a",
+  "source_file": "small.des",
+  "edits": [
+    {
+      "start_line": 1715,
+      "end_line": 1735,
+      "sha256": "877b9ee8c0dd75603f90ee9688bc519d3fb3d187c699458a0ea78ac63a97f1e1",
+      "method": "choose_round_layout",
+      "stage": "run"
+    }
+  ]
+}

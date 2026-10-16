@@ -1,0 +1,29 @@
+NAME:   dpeg_arrival_three_same_balls
+# Source: crawl-ref/source/dat/des/arrival/small.des:937
+TAGS:   arrival no_rotate no_monster_gen
+ORIENT: float
+SUBST:  ' = .x
+SUBST:  G : GTVt
+NSUBST: d = 1:d / *:'
+ITEM:   stone
+MAP
+               xxxxx
+             xxx...xxx
+   xxxxxxxxxxx.......xx
+ xxx...xxxxxx.........x
+xx.......xx......G....x
+x..........xx.........x
+x....{....xxxx.......xx
+x.........xxxxxx...xxx
+xx.......xxxxxx.xxxx
+xxxx...xxxxxx...xxxx
+xxxxxxxxxxx.......xx
+xxx...''...........x
+x'.''d..xx....G....x
+x'.'xx'xxx.........x
+xd..'d...xx.......xx
+xx''..''..xxx...xxx
+ xxxxxxxx@xxxxxxx
+ENDMAP
+
+#############################################################################

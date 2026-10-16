@@ -1,0 +1,30 @@
+NAME:   minmay_arrival_widening_spiral_narrow
+# Source: crawl-ref/source/dat/des/arrival/small.des:550
+TAGS:   arrival no_monster_gen no_trap_gen
+WEIGHT: 2
+ORIENT: float
+MAP
+xxxxxxxxxxxxxxxxxx
+x.........+.......
+x.xxxxxxxxx.xxxxx.
+x.x.......+.......
+x.x.xxxxxxxxxxxxxx
+x.x.x.....+......x
+x.x.x.xxxxxxxxxx.x
+x.x.x.x...+....x.x
+x.x.x.x.xxxxxx.x.x
+x.x.x.x.x{+..x.x.x
+x+x+x+x+xxx..x.x.x
+x.x.x.x.xxxx+x+x+x
+x.x.x.x..+}x.x.x.x
+x.x.x.xxxxxx.x.x.x
+x.x.x....+...x.x.x
+x.x.xxxxxxxxxx.x.x
+x.x......+.....x.x
+x.xxxxxxxxxxxxxx.x
+x........+.......x
+xxxxxxxxxxxxxxxxxx
+ENDMAP
+
+
+##############################################################

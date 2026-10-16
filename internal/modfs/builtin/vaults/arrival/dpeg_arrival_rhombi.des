@@ -1,0 +1,28 @@
+NAME:    dpeg_arrival_rhombi
+# Source: crawl-ref/source/dat/des/arrival/small.des:1518
+TAGS:    arrival no_monster_gen
+SHUFFLE: WYZ{/wyz(
+SUBST:   {=., [=.
+SUBST:   Z=x, Y=x, W=@, C=+x
+SUBST:   z=@, y=+, w=x
+NSUBST:  . = 1:d / *:.
+ITEM:    stone
+ORIENT:  float
+MAP
+  xZxxx
+  xYxxxxxx
+ xx.xxxx.xx
+xx...xx.x+x
+x..{..+xx.xx
+xx...xxx...xx
+xxx+xxx.....xx
+xxx.+....(...W
+xxx+xxx.....xx
+xx...xxx...xx
+x..[..+xx.xx
+xx...xx.x+x
+ xx.xxxx.xx
+  xxxxxxxx
+ENDMAP
+
+##############################################################################

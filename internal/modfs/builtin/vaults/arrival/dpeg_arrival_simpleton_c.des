@@ -1,0 +1,23 @@
+NAME:    dpeg_arrival_simpleton_c
+# Source: crawl-ref/source/dat/des/arrival/small.des:1192
+TAGS:    arrival
+ORIENT:  float
+ITEM:    nothing, nothing
+SUBST:   d : GTVt
+SHUFFLE: a+, cx
+SUBST:   a = x
+MAP
+@.........@
+...xx+xx...
+...x...x...
+.xxx.d.xxx.
+.x.......x.
+.a.d.{.d.a.
+.x.......x.
+.xxx.d.xxx.
+...x...x...
+...xx+xx...
+@.........@
+ENDMAP
+
+##############################################################################

@@ -1,0 +1,26 @@
+NAME:    sevenhm_arrival_forest_fort_large_2
+# Source: crawl-ref/source/dat/des/arrival/large.des:686
+TAGS:    arrival no_rotate no_monster_gen transparent
+ORIENT:  northwest
+SUBST:   T : TTTV, p = tt., G = GGGG., z = ...T
+SHUFFLE: {[
+SUBST:   [ = T
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xccccccccccccccccccctttttxxxx
+xc....c...G...c....cttppttxxx
+xc.{..c.G...G.+..[.cttpzpttxx
+xc....c...T...c....cttp...ptx
+xc....+.G...G.c....cttp...ptx
+xccc..c.......c..ccctp....ptx
+xxxcccc..G.G..cccctpp......px
+xxtttcc.......ccttp.........x
+xxp.ttccc...ccctp...........@
+xxp..pptc+++ctpp....pppxxxxxx
+xxp..............pxxxxxx
+xxxxtt.......pttxxx
+xxxxxtttt...pptxx
+xxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

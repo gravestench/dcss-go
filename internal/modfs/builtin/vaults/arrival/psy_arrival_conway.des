@@ -1,0 +1,22 @@
+NAME:       psy_arrival_conway
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2226
+TAGS:       arrival no_monster_gen no_pool_fixup no_trap_gen
+ORIENT:     float
+KMONS:      P = plant / bush
+KFEAT:      P = W
+MAP
+xxxxxxxxxxxxxx
+xWPW.........x
+xWWPxx.xxx.{.x
+xPWPxx.xxx...x
+x.xxPWPxxxxx.x
+x.xxWPPxxxxx.x
+x...WPWxxxxx.x
+x.xxxxxWWP...x
+x.xxxxxPWPxx.x
+x.xxxxxWPPxx.x
+x...xxx.xxPWWx
+@...xxx.xxWPPx
+x.........PPWx
+xx@xxxxxxxxxxx
+ENDMAP

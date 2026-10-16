@@ -1,0 +1,28 @@
+NAME:   matt_arrival_diagonals
+# Source: crawl-ref/source/dat/des/arrival/small.des:1964
+TAGS:   arrival no_monster_gen
+ORIENT: float
+SUBST:  ':x., ":x., ?:x., _:x.
+MAP
+xxxxxxxxxx@xxxxxxxxxx
+xx..........'......xx
+x.x......_.x......x.x
+x..x......x......x..x
+x...x....x.x."..x...x
+x....x..x...x..x....x
+x.....xx...".xx.....x
+x.....x...x...x.....x
+x..x.x.?.x.....x....@
+@...x...x.{...x.x...x
+x..'.x.".x...x..._..x
+x.'...x...x.x.x.....x
+x....x.x...x...x....x
+x...x...x...x...x...x
+x..x.....x...?...x..x
+x.x.......x.......x.x
+xx.................xx
+xxxxxxxxxx@xxxxxxxxxx
+ENDMAP
+
+##############################################################
+# A Maze of Twisty Passages, All Alike

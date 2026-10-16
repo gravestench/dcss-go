@@ -1,0 +1,14 @@
+NAME:   ncdulo_smallfort
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1346
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+MAP
+xxxxxxxxx
+x.......x
+x.xx+xx.x
+x.x...x.x
+x.x.{.x.x
+x.xx+xx.x
+x.....+.+
+xxxxxxx+x
+ENDMAP

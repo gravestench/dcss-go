@@ -1,0 +1,19 @@
+NAME:   lightli_arrival_boilingwater
+# Source: crawl-ref/source/dat/des/arrival/small.des:2945
+ORIENT: float
+TAGS:   arrival no_monster_gen
+MAP
+  @@@@@@
+WWWllllWWW
+WGWWllWWGW
+WWGWWWWGWW
+lWWb++bWWl
+llWm..mWll
+llWm{.mWll
+lWWbmmbWWl
+WWGWWWWGWW
+WGWWllWWGW
+WWWllllWWW
+ENDMAP
+
+##############################################################################

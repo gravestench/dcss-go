@@ -1,0 +1,38 @@
+NAME:    evilmike_arrival_grusome_pit
+# Source: crawl-ref/source/dat/des/arrival/small.des:139
+WEIGHT: 1
+TAGS:    arrival no_rotate
+ORIENT:  northwest
+# the exit will be placed elsewhere 25% of the time
+SUBST:   { = {:30 .
+ITEM:    skeleton, corpse
+SUBST:   Y = A.
+KFEAT:   A = shaft trap
+SUBST:   ` = de `:60
+SUBST:   . = ' .:120
+SUBST:   ` = ''., V = Xx, U = Xxxx, x = X x:60
+KPROP:   X' = bloody
+SUBST:   X = x, ' = .
+SUBST:   . = .:320 d:5 e:20 f:5
+SUBST:   y : x
+MAP
+yyyyyyyyyyyy
+yyVVVVVyyyyy
+yVV...VVyyyy
+yV.YYY`VVyyyyyyyyyyyyyyyyyyyyyyy
+yV.YAY`.Vyyyyyyyyyyyyyyxxxxyxxxy
+yV.YYY`.UUyyyyxxxxxxyxxx..xxxxxy
+yVV.````.UUUyUU....xxx.........@
+yyVVVVU.``.UUU................xy
+yyyyyyUU.`````......`.`.`.`...xy
+     yyUUU..`.``...``........xxy
+     yyyyUUUU..``.``.......xxxyy
+     yyyyyyyUU............xxyyyy
+     yyyyyyyyxxxx...{..xxxxyy
+     yyyyyyyyyyyxx...xxxyyyyy
+     yyyyyyyyyyyyxxxxxyyyyyyy
+     yyyyyyyyyyyyyyyyyyyyyyyy
+ENDMAP
+
+##############################################################################
+# Was evilmike_arrival_teleporters

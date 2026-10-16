@@ -1,0 +1,18 @@
+NAME: lightli_arrival_lavapool
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1963
+ORIENT: float
+TAGS: arrival no_monster_gen
+MAP
+   vvvv
+  vvvvvv
+ vv....vv
+vvv.ll.vvv
+v{+.ll.+.+
+v.+.ll.+.+
+vvv.ll.vvv
+ vv....vv
+  vvvvvv
+   vvvv
+ENDMAP
+
+###############################################################################

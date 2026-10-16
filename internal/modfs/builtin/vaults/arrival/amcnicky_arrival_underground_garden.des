@@ -1,0 +1,15 @@
+NAME:     amcnicky_arrival_underground_garden
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2498
+TAGS:     arrival no_monster_gen no_trap_gen
+ORIENT:   float
+MAP
+  ttttttttttx
+ tt.....tx.{t
+tt..........t
+t....t.t...tx
+t.....T.....t
+t....t.t....t
+tt.........tt
+ tt.......tt
+  ttt@@@ttt
+ENDMAP

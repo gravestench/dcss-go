@@ -1,0 +1,21 @@
+NAME:    minmay_arrival_wavy_path
+# Source: crawl-ref/source/dat/des/arrival/simple.des:60
+TAGS:    arrival no_monster_gen transparent
+ORIENT:  float
+NSUBST:  { = 1:{ / .
+MAP
+xxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxx
+@..xxxx....xxxx....xxx
+@...xx......xx......xx
+xx..xx..xx..xx..xx..xx
+xx..xx..x.{{.x..xx..xx
+xx..xx..x.{{.x..xx..xx
+xx..xx..xx..xx..xx..xx
+xx......xx......xx...@
+xxx....xxxx....xxxx..@
+xxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

@@ -9,6 +9,16 @@ import (
 	"github.com/gravestench/akara"
 )
 
+func TestLoadTreeSkipsDES(t *testing.T) {
+	rules, err := modfs.Load("testdata/des-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/des_mod_test.lua")
+}
+
 func TestOverlayCanRegisterComponentAndSystem(t *testing.T) {
 	rules, err := modfs.Load("testdata/valid-mod")
 

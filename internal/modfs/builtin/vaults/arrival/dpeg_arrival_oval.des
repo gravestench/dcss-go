@@ -1,0 +1,28 @@
+NAME:    dpeg_arrival_oval
+# Source: crawl-ref/source/dat/des/arrival/small.des:1469
+TAGS:    arrival no_rotate
+ORIENT:  float
+SHUFFLE: @X
+SUBST:   v:vxxx, c:vxxxxc
+SUBST:   X=x
+NSUBST:  { = 1:{ / *:.
+MAP
+        xxxxxxx@xxxxxxx
+    xxxxx.............xxxxx
+  xxx.......vxvxvxv.......xxx
+ xx......xvx.......xvx......xx
+ x....vxv......{......vxv....x
+xx...x....{.ccccccc.{....x...xx
+x...v..{..ccccccccccc..{..v...x
+x...x....ccccccccccccc....x...X
+x...v....ccccccccccccc....v...x
+x...x..{..ccccccccccc..{..x...x
+xx...v....{.ccccccc.{....v...xx
+ x....xvx......{......xvx....x
+ xx......vxv.......vxv......xx
+  xxx.......xvxvxvx.......xxx
+    xxxxx.............xxxxx
+        xxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

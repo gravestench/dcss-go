@@ -5,7 +5,7 @@
 > checkbox (`- [ ]`) syntax for tracking. The user chose native execution.
 
 **Goal:** Make all 337 source-tagged Dungeon arrival vaults selectable and
-placeable from committed `.des` files, with their 35 scripted definitions
+placeable from committed `.des` files, with their 36 scripted definitions
 ported to readable Lua and their effects preserved through saves.
 
 **Architecture:** The layered mod filesystem serves both `.lua` and `.des`.
@@ -59,7 +59,7 @@ and the pinned DCSS `.des` files at revision
 - `internal/modfs/builtin/policy/generation/vaults/des.lua` parses DES;
   `catalog.lua` registers it; `hooks.lua` dispatches named handler methods;
   `operations.lua`, `transforms.lua`, `selection.lua`, `placement.lua`, and
-  `connect.lua` own the distinct generation steps. The 35 scripted vaults
+  `connect.lua` own the distinct generation steps. The 36 scripted vaults
   each get `policy/generation/vaults/arrival/<id>.lua`.
 - `internal/modfs/builtin/constants/catalog.lua` names the `VAULTS` category;
   `ids/vaults.lua` resolves registered names where policy needs them.
@@ -115,7 +115,8 @@ and hash and replaces it with `: vault.run("method")` or
 - [ ] Add `TestPinnedArrivalImport` asserting 339 unique names, 337
   `arrival` tags,
   two helper names, exact map rows, all directive families, all 35 source
-  script owners, one veto, and rejection of unknown directives, source
+  `:` script owners, one additional `{{...}}` script owner, one veto, and
+  rejection of unknown directives, source
   drift, or recipe drift. `TestArrivalImportCheck` must fail when one
   committed output byte is changed.
 - [ ] Run `go test ./internal/vaultimport -p 1`; confirm failure.
@@ -128,7 +129,7 @@ and hash and replaces it with `: vault.run("method")` or
   go run ./cmd/importvaults \
     -source ../crawl/crawl-ref/source/dat/des/arrival \
     -ports internal/vaultimport/ports \
-    -out internal/modfs/builtin/vaults/arrival \
+    -out internal/modfs/builtin \
     -check
   ```
 
@@ -163,13 +164,13 @@ named `vault.run` and `vault.veto` hook calls in executable `:` lines.
   new Lua tests fail.
 - [ ] Implement the reader, catalog, and hook contract; load the catalog
   during `init.lua` before registrations freeze. Resolve handler methods
-  when invoked; Task 4 adds eager validation once all 35 methods exist.
+  when invoked; Task 4 adds eager validation once all 36 modules exist.
   Keep parse errors annotated with path, vault name, line, and operation.
 - [ ] Run `go test ./internal/script -run TestLuaRules -p 1`; confirm pass.
 
 ### Task 4: Port all source Lua behavior to named handlers
 
-**Files:** Create the 35 corresponding
+**Files:** Create the 36 corresponding
 `internal/modfs/builtin/policy/generation/vaults/arrival/<id>.lua` modules
 and `internal/script/testdata/lua/tests/arrival_handlers_test.lua`.
 
@@ -180,7 +181,7 @@ must be rejected. No handler imports the old `crawl`, `dgn`, `you`, or
 `util` API. Shared constants and IDs are imported where used.
 
 - [ ] Add `arrival_handlers_test.lua` as one table-driven test enumerating
-  all 35 scripted vaults,
+  all 36 scripted vaults,
   verifies every DES hook has a method, forces each random branch, and checks
   the output operation or effect type against the pinned script. Include the
   marker-based veto, delayed decay, feature naming, and species-dependent
@@ -188,7 +189,7 @@ must be rejected. No handler imports the old `crawl`, `dgn`, `you`, or
   `SUBST` appears between `COLOUR` and `KMASK`.
 - [ ] Run `go test ./internal/script -run TestLuaRules -p 1`; confirm failure
   on missing methods or divergent behavior.
-- [ ] Port all 35 modules. Keep functions flat and named, and make each
+- [ ] Port all 36 modules. Keep functions flat and named, and make each
   method's source-specific roll order visible in a comment. Enable eager
   hook validation at catalog load, so a missing or misspelled method fails
   before play.
@@ -264,7 +265,7 @@ identity and its unavailable interaction.
 ## Category boundary
 
 - [ ] Run the pinned importer `-check` and verify 339 committed definitions,
-  337 candidates, 35 handlers, and one ported veto.
+  337 candidates, 36 handlers, one raw map-shaping block, and one ported veto.
 - [ ] Run `go test ./... -p 1`, `go vet ./...`, `go build ./...`, and
   `sh scripts/check-go-style.sh`; resolve failures in this category.
 - [ ] Review the diff for unported inline source Lua, dropped directives,

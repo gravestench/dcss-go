@@ -1,0 +1,15 @@
+NAME:       psy_arrival_basics
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2211
+TAGS:       arrival no_monster_gen
+ORIENT:     float
+MAP
+xxxxxxxxxxxxG@
+x............@
+x.xxxxx...xxG@
+x.xxxx.....xx
+x.xxxxx.{.xxx
+x.xxxx.....xx
+x.xxxxx...xxG@
+x............@
+xxxxxxxxxxxxG@
+ENDMAP

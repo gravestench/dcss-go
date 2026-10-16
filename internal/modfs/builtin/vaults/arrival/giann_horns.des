@@ -1,0 +1,14 @@
+NAME:   giann_horns
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2083
+TAGS:   arrival no_monster_gen
+ORIENT: float
+MAP
+x@xx...................xx@x
+x..xx.................xx..x
+x...xx..G..xx+xx..G..xx...x
+x....xx...xx...xx...xx....x
+x.....xxxxx.....xxxxx.....x
+x............{............x
+xx.......................xx
+ xxxxxxxxxxxx+xxxxxxxxxxxx
+ENDMAP

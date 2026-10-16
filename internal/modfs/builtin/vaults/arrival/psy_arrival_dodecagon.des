@@ -1,0 +1,33 @@
+NAME:       psy_arrival_dodecagon
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2248
+TAGS:       arrival no_monster_gen transparent
+ORIENT:     float
+SUBST:      p:Wvb
+SUBST:      q:..xl
+MAP
+            .
+           ...
+          ..x..
+   ........x.x........
+   .......x...x.......
+   ..xxxxxxx.xxxxxxx..
+   ..xppx.......xppx..
+   ..xpx.........xpx..
+   ..xx...........xx..
+   ..x.............x..
+  ..xx.............xx..
+ ..xqx.............xqx..
+..xqqq......{......qqqx..
+ ..xqx.............xqx..
+  ..xx.............xx..
+   ..x.............x..
+   ..xx...........xx..
+   ..xpx.........xpx..
+   ..xppx.......xppx..
+   ..xxxxxxx.xxxxxxx..
+   .......x...x.......
+   ........x.x........
+          ..x..
+           ...
+            .
+ENDMAP

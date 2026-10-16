@@ -1,0 +1,13 @@
+{
+  "id": "wander_arrival_peaceful_grave",
+  "source_file": "small.des",
+  "edits": [
+    {
+      "start_line": 3281,
+      "end_line": 3281,
+      "sha256": "32475712a3cec7ab80caf7c2b7b089f169d00eb352a23bc939ea06e32b4394e2",
+      "method": "name_gravestone",
+      "stage": "run"
+    }
+  ]
+}

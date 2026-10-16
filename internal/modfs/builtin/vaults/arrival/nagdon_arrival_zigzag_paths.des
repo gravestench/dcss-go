@@ -1,0 +1,78 @@
+NAME:    nagdon_arrival_zigzag_paths
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:832
+TAGS:    arrival no_trap_gen no_monster_gen
+ORIENT:  float
+MONS:    plant, toadstool
+ITEM:    orc skeleton / kobold skeleton / goblin skeleton / place:D:1 skeleton
+: vault.run("choose_zigzag_layout")
+# source: : if crawl.one_chance_in(3) then
+# source:   SUBST:   GHIJ = x
+# source:   SUBST:   " = .
+# source:   SUBST:   & = @
+# source: :   if crawl.coinflip() then
+# source:     SUBST:   ' = .
+# source:     SUBST:   + = +:40 .:30 1:5 2:5
+# source: :     if not crawl.one_chance_in(3) then
+# source:       SHUFFLE: [({
+# source: :     end
+# source: :   else
+# source:     SUBST:   '(+ = x
+# source: :   end
+# source: : else
+# source:   SUBST:   "['(& = x
+# source:   SUBST:   + = H
+# source: :   if crawl.coinflip() then
+# source:     SUBST:   GIJ = G
+# source:     SUBST:   G : x.
+# source:     SUBST:   H : xGc
+# source: :   else
+# source: :     if crawl.coinflip() then
+# source:       SUBST:   H = x
+# source:       SHUFFLE: GHI
+# source:       SUBST:   G = I
+# source:       SUBST:   H = x
+# source:       SUBST:   I : G:3 1:5 2
+# source:       SUBST:   J : x d e A V >:5 2:5 1:1
+# source:       SUBST:   e = dx
+# source: :     else
+# source: :       if crawl.coinflip() then
+# source:         SUBST:   H : .:20 + 1:1
+# source:         SUBST:   J = H
+# source:         SUBST:   GI =  x
+# source: :       end
+# source:         SUBST:   GIJ : x b:1
+# source:         SUBST:   H : G T V:5 1:5 2:1 A:1
+# source: :     end
+# source: :   end
+# source: : end
+SUBST:   x : x c:1
+: vault.run("choose_zigzag_growth")
+# source: : if crawl.one_chance_in(3) then
+# source:   SUBST:   G = t
+# source: : elseif crawl.one_chance_in(10) then
+# source:   SUBST:   x = t
+# source:   SUBST:   1 : 2 T
+# source: : end
+KFEAT:   A = abandoned_shop / stone_arch / shaft trap / teleport trap
+NSUBST:  A = A / x
+SUBST:   X = x
+SUBST:   ([ = .
+MAP
+    XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+ XXXXxxxxxxxxxxxxxxxxxxxx"xxxxxx
+ Xxxxxxxxxxxxx"xxxxxxxxx"x"xxxxxxx&
+ Xxxxxx"xxxxx"x"xxxxxxx"Jxx"xxxxx"x
+XXxx[x"x"xxx"Jxx"xxxxx"GHIxx"xxx"xx
+XXxxx"Jxx"x"GHIxx"xxx"xx.xxxx"x"xxx
+XxxxxGHIxx"xx.xxxx"x"xx.x.xxxx"xxx&
+Xxxxxx.xxxxx.x.xxxx"xx.xxx.xxxx"x"x
+Xxx{x.x.xxx.xxx.xxxxx.xxxxx.xxxx"xx
+Xxxx.xxx.x.xxxxx.xxx.xxxxxxx.xxxxx@
+XxxGHIxxx.xx'xxxx.x.xxxxXxxxx.xxx.@
+XxxxJxx'GHI'x'xxxx.xxxxXXXxxxx.x.xx
+Xxxxxx(x'J'xxx'xxG+IxxXX XXxxxx.x.x
+XXxxxxxxx'xxxxx'x'JxxXX   XXxxGHIx@
+ XXXxxxxxxxxxxxx'xxxxXX    XxxxJxxx
+   XXXXxxxxXXXxxxxxxXX     Xxxxxxxx
+      XXXXXX XXXXXXXXX     XXxxxxx
+ENDMAP

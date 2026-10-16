@@ -1,0 +1,19 @@
+NAME: nzn_arrival_crosshair
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2015
+TAGS: arrival no_monster_gen
+ORIENT: float
+MAP
+     x+x
+  cccx.xccc
+ cc..x.x..cc
+ c.c.x.x.c.c
+ c..c...c..c
+xxxx.....xxxx
++.....{.....+
+xxxx.....xxxx
+ c..c...c..c
+ c.c.x.x.c.c
+ cc..x.x..cc
+  cccx.xccc
+     x+x
+ENDMAP

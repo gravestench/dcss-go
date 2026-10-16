@@ -118,6 +118,120 @@ func TestOverlayIdentityAndOrder(t *testing.T) {
 	}
 }
 
+func TestDESOverlayIdentity(t *testing.T) {
+	bundled, err := Load()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	firstLayer := t.TempDir()
+	secondLayer := t.TempDir()
+	path := "vaults/arrival/zz_mod_entry.des"
+	firstBody := []byte("NAME: zz_mod_entry\nMAP\n@\nENDMAP\n")
+	secondBody := []byte("NAME: zz_mod_entry\nMAP\n.@\nENDMAP\n")
+
+	writeTestFile(t, firstLayer, path, firstBody)
+	writeTestFile(t, secondLayer, path, secondBody)
+
+	first, err := Load(firstLayer)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if first.Vanilla() || first.Hash() == bundled.Hash() {
+		t.Fatal("added DES file did not change ruleset identity")
+	}
+
+	if !reflect.DeepEqual(first.Changes(), []string{path}) ||
+		!slices.Contains(first.Paths(), path) ||
+		!slices.IsSorted(first.Paths()) {
+		t.Fatalf("DES overlay missing from sorted manifest: %v", first.Paths())
+	}
+
+	manifestCount := 0
+
+	for _, entry := range first.Manifest() {
+		if entry.Path == path {
+			manifestCount++
+		}
+	}
+
+	if manifestCount != 1 {
+		t.Fatalf("DES manifest count = %d, want 1", manifestCount)
+	}
+
+	copyLayer := t.TempDir()
+	writeTestFile(t, copyLayer, path, firstBody)
+
+	unchanged, err := Load(firstLayer, copyLayer)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if unchanged.Hash() != first.Hash() {
+		t.Fatal("byte-identical DES replacement changed hash")
+	}
+
+	replaced, err := Load(firstLayer, secondLayer)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	winner, err := replaced.ReadFile(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(winner, secondBody) || replaced.Hash() == first.Hash() {
+		t.Fatalf("last DES layer did not win: %q", winner)
+	}
+
+	winner[0] = 'x'
+
+	again, err := replaced.ReadFile(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(again, secondBody) {
+		t.Fatal("DES read exposed mutable ruleset bytes")
+	}
+}
+
+func TestDESPathValidation(t *testing.T) {
+	rules, err := Load()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, path := range []string{
+		"../vaults/entry.des",
+		"/vaults/entry.des",
+		"vaults/entry.txt",
+	} {
+		if _, err := rules.ReadFile(path); err == nil {
+			t.Errorf("accepted invalid DES path %q", path)
+		}
+	}
+
+	first := t.TempDir()
+	second := t.TempDir()
+	writeTestFile(t, first, "vaults/Entry.des", []byte("NAME: entry\n"))
+	writeTestFile(t, second, "vaults/entry.des", []byte("NAME: entry\n"))
+
+	if _, err := Load(first, second); err == nil ||
+		!strings.Contains(err.Error(), "case") {
+		t.Fatalf("DES case collision: %v", err)
+	}
+}
+
 func TestSingleContentFileParticipatesInRulesetIdentity(t *testing.T) {
 	bundled, err := Load()
 

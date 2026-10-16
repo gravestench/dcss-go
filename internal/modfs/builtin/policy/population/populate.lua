@@ -3,12 +3,23 @@ local pool = require("policy.population.pool")
 local roster = require("policy.population.roster")
 local catalog = require("policy.catalog")
 local abyss = require("policy.world.abyss")
+local vaults = require("policy.population.vaults")
 
 local function level_order(left, right)
     return left.id < right.id
 end
 
-local function free_cells(ctx, level)
+local function exclusion_set(level)
+    local excluded = {}
+
+    for _, point in ipairs(level.spawn_exclusions or {}) do
+        excluded[point.x .. ":" .. point.y] = true
+    end
+
+    return excluded
+end
+
+local function free_cells(ctx, level, excluded)
     local cells = {}
 
     -- Go's spawnCellsAwayFrom visits terrain in row-major source order.
@@ -17,6 +28,7 @@ local function free_cells(ctx, level)
             local distance = math.max(math.abs(x - level.entry_x), math.abs(y - level.entry_y))
 
             if ctx:cell(level.id, x, y) == "DNGN_FLOOR" and distance >= 5 and
+                not excluded[x .. ":" .. y] and
                 not ctx:actor_at(level.id, x, y) then
                 cells[#cells + 1] = { x = x, y = y }
             end
@@ -26,12 +38,13 @@ local function free_cells(ctx, level)
     return cells
 end
 
-local function follower_cell(ctx, level, origin)
+local function follower_cell(ctx, level, origin, excluded)
     for _ = 1, 1000 do
         local x = origin.x + ctx:random("placement", 7) - 3
         local y = origin.y + ctx:random("placement", 7) - 3
 
         if ctx:walkable(level.id, x, y) and
+            not excluded[x .. ":" .. y] and
             ctx:visible(level.id, origin.x, origin.y, 7, x, y) and
             not ctx:actor_at(level.id, x, y) then
             return { x = x, y = y }
@@ -41,12 +54,12 @@ local function follower_cell(ctx, level, origin)
     return nil
 end
 
-local function jackal_followers(ctx, level, leader, origin)
+local function jackal_followers(ctx, level, leader, origin, excluded)
     local count = ctx:random("bands", 3) + 1
     local placed = 0
 
     for _ = 1, count do
-        local cell = follower_cell(ctx, level, origin)
+        local cell = follower_cell(ctx, level, origin, excluded)
 
         if cell then
             local follower = factory.spawn(ctx, "MONS_JACKAL", level.id, cell.x, cell.y)
@@ -70,9 +83,10 @@ local function populate_level(ctx, level, allowed, scenario_id)
     end
 
     local actors = 0
+    local excluded = exclusion_set(level)
 
     for _ = 1, level.budget do
-        local cells = free_cells(ctx, level)
+        local cells = free_cells(ctx, level, excluded)
 
         if #cells == 0 then
             error("Dungeon:" .. level.id .. " has no free monster spawn cell")
@@ -84,7 +98,7 @@ local function populate_level(ctx, level, allowed, scenario_id)
         actors = actors + 1
 
         if monster_id == "MONS_JACKAL" then
-            actors = actors + jackal_followers(ctx, level, leader, cell)
+            actors = actors + jackal_followers(ctx, level, leader, cell, excluded)
         end
     end
 
@@ -140,6 +154,7 @@ function module.run(ctx, input)
     roster.allowed(scenario_id)
 
     local counts = {}
+    local materialized = {}
 
     if scenario_id == "fixed-dungeon-rat-quokka-lizard-v2" then
         counts = fixture(ctx)
@@ -155,10 +170,14 @@ function module.run(ctx, input)
                 error("Dungeon:" .. tostring(level.id) .. " has no population entry")
             end
 
-            local count = 0
+            local count, placed = vaults.materialize(ctx, level, allowed)
+
+            for _, record in ipairs(placed) do
+                materialized[#materialized + 1] = record
+            end
 
             if level.id ~= abyss.level_id then
-                count = populate_level(ctx, level, allowed, scenario_id)
+                count = count + populate_level(ctx, level, allowed, scenario_id)
             end
 
             counts[#counts + 1] = { id = level.id, count = count }
@@ -167,7 +186,10 @@ function module.run(ctx, input)
 
     floor_items(ctx, input)
 
-    return { initial_actors = counts }
+    return {
+        initial_actors = counts,
+        materialized = materialized,
+    }
 end
 
 register.policy({

@@ -1,0 +1,28 @@
+NAME:   sevenhm_arrival_forest_fort_small_3
+# Source: crawl-ref/source/dat/des/arrival/small.des:2710
+TAGS:   arrival no_pool_fixup no_monster_gen
+ORIENT: float
+: vault.run("choose_fort_gate")
+# source: : if crawl.one_chance_in(4) then
+# source: SUBST:  z : @ , Z : + , X = xx. , p : tR , m : c
+# source: : else
+# source: SUBST:  X : @, Z : c, z : x, p : x, m : .
+# source: : end
+NSUBST: {OA = { / . , y = + / c+ / c+ , r = + / c+
+SUBST:  G = GGTTU, R : Ltt1Ww, L : tttw1
+MONS:   plant / bush
+MAP
+xXxxxxzxxxXx
+x..........x
+x..cyyycL.Lx
+x.Rc...cLGLx
+x.Rc.t.cLLLx
+xGRc...cxxxx
+xxccrrccccx
+ pcm..c{{cx
+ pccc.+{{cx
+  ppcccZccx
+   pppxzxx
+ENDMAP
+
+##############################################################################

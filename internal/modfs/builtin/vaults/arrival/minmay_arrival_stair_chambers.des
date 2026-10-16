@@ -1,0 +1,23 @@
+NAME:    minmay_arrival_stair_chambers
+# Source: crawl-ref/source/dat/des/arrival/small.des:303
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SHUFFLE: {[(
+SUBST:   T = T V G b:3 .:3
+SUBST:   [ = G
+SUBST:   ( = G
+MAP
+    x+xxx+x
+xxxxx.....xxxxx
+x...m.....m...x
+x.{.+..T..+.[.x
+x...m.....m...x
+xxxxx.....xxxxx
+xxxxxxm+mxxxxxx
+xxxxxx...xxxxxx
+   xxx.(.xxx
+   xxx...xxx
+   xxxxxxxxx
+ENDMAP
+
+##############################################################

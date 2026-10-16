@@ -1,0 +1,34 @@
+NAME:    dpeg_arrival_solitude
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:272
+TAGS:    arrival no_monster_gen transparent
+ORIENT:  float
+SHUFFLE: C{! / B(' / V["
+SUBST:   ([ = x
+# TODO: there are ways for " and ' to get to @, which seems odd. (It'll cause
+# issues if this map isn't transparent, at least.)
+SUBST:   C=., !=@
+SHUFFLE: B' / xx, V" / xx
+SUBST:   B=., '=+, V=., "=+
+NSUBST:  . = 1:d / *:.
+ITEM:    stone
+MAP
+xxxxxxxxxxxxxxxxxxx....@
+xxxxxxxCCCCCCCxxxxx.....
+xxxxxCCxxxxxxxCCxxx.....
+xxxxCxxxVVVVxxxxCxx.....
+xxxCxxVVxxxxVVxxxCx.....
+xxCxxVxxxBBxxxVxxCxxxxx'
+!xCxVxxxBxx(xxxVxxCxxxBx
+xCxxVxxBxxxxbxxVxxCxxxBx
+xCxxVxBxx{cvxxVxxxCxxxBx
+xCxVxxBxCxxx[VxxxCxxxBxx
+xCxVxxBxxCCxxxxCCxxxBxxx
+xCxVxxxBxxxCCCCxxxBBxxxx
+xCxxVxxxBBxxxxxxBBxx'xxx
+!xxxxVxxxxBBBBBBxxx.....
+xxxxxxVVVxxxxxxxxV".....
+xxxxxxxxxVVVVVVVVxx.....
+xxxxxxxx"xxxxxxxxxx....@
+ENDMAP
+
+##############################################################################

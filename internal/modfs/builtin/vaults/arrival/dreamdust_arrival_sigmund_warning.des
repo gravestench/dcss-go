@@ -1,0 +1,34 @@
+NAME:    dreamdust_arrival_sigmund_warning
+# Source: crawl-ref/source/dat/des/arrival/small.des:3620
+TAGS:    arrival no_monster_gen transparent
+ORIENT:  float
+WEIGHT:  5
+TILE:    G = dngn_statue_sigmund
+: vault.run("name_warning_statue")
+# source: : set_feature_name("granite_statue", "a statue of a dreadful foe")
+# Bunch of player species
+KITEM:   ? = palentonga skeleton / deep elf skeleton / demigod skeleton / \
+             demonspawn skeleton / draconian skeleton / felid skeleton / \
+             formicid skeleton / ghoul skeleton / gnoll skeleton / \
+             orc skeleton / human skeleton / kobold skeleton / \
+             merfolk skeleton / minotaur skeleton / naga skeleton / \
+             octopode skeleton / ogre skeleton / spriggan skeleton / \
+             tengu skeleton / troll skeleton
+MAP
+   vvv
+vvvv>vvvv
+vY.???.Yv
+v..?G?..v
+v..???..v
+v.l...l.v
+v.l.{.l.v
+v.l...l.v
+v.l...l.v
+v.l...l.v
+v.......v
+vvv...vvv
+ENDMAP
+
+##############################################################################
+# Most transpoter vaults are dangerous, especially for new players. Here's a
+# no-stress scenario in which they can try out transporters.

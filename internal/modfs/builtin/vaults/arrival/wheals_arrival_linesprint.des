@@ -1,0 +1,13 @@
+NAME:   wheals_arrival_linesprint
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1918
+ORIENT: float
+TAGS:   arrival no_monster_gen
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+x{.......................x
+x+xxxxxxxxxxxxxxxxxxxxxx.x
+x........................x
+x.xxxxxxxxxxxxxxxxxxxxxxxx
+x........................@
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

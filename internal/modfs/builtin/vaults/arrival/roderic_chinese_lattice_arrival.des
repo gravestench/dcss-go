@@ -1,0 +1,24 @@
+NAME:   roderic_chinese_lattice_arrival
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1190
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+MAP
+    x.xxx.x
+    x.....x
+  xxx.x.x.xxx
+  x.........x
+xxx.x.x.x.x.xxx
+......x.x......
+x.x.xxx.xxx.x.x
+x......{......x
+x.x.xxx.xxx.x.x
+......x.x......
+xxx.x.x.x.x.xxx
+  x.........x
+  xxx.x.x.xxx
+    x.....x
+    x.xxx.x
+ENDMAP
+
+##############################################################################
+# denvon's houses (hot, water, plant)

@@ -1,0 +1,26 @@
+NAME:   arrival_aquarium_b
+# Source: crawl-ref/source/dat/des/arrival/small.des:2256
+TAGS:   arrival
+ORIENT: float
+KMASK:  w = no_monster_gen
+KMONS:  Z = electric eel
+KFEAT:  Z = w
+KMASK:  Z = no_monster_gen
+KPROP:  wZ = no_tele_into
+WEIGHT: 5
+MAP
+xxxxxxxxxxxxxxx
+x......{......x
+x.G.xxxxxxx.G.x
+x.............x
+x.nnnnn.nnnnn.x
+x.nwwwn.nwwwn.x
+x.nwZwn.nwZwn.x
+x.nwwwn.nwwwn.x
+x.nnnnn.nnnnn.x
+x.............x
+xx@xxxxxxxxx@xx
+ENDMAP
+
+###########################################################
+# Eye to eye with the dorky.

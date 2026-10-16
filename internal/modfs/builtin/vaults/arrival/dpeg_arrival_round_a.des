@@ -1,0 +1,46 @@
+NAME:    dpeg_arrival_round_a
+# Source: crawl-ref/source/dat/des/arrival/small.des:1710
+TAGS:    arrival
+ORIENT:  float
+# Equal chance of passable, blocked at ?, blocked at A, and blocked at a.
+# Blocking the path at two points would create a disconnected bubble.
+: vault.run("choose_round_layout")
+# source: : local r = crawl.random2(4)
+# source: : if r == 0 then
+# source: :   subst("? = x")
+# source: :   subst("A = .")
+# source: :   subst("a = +")
+# source: : elseif r == 1 then
+# source: :   subst("? = +")
+# source: :   subst("A = .")
+# source: :   subst("a = x")
+# source: : else
+# source: :   subst("? = +")
+# source: :   subst("A = '")
+# source: :   subst("a = +")
+# source: : end
+# source: : if crawl.random2(3) == 0 then
+# source: :   subst("B = .")
+# source: :   subst("b = x")
+# source: : else
+# source: :   subst("B = '")
+# source: :   subst("b = x")
+# source: : end
+SUBST:   ' = x. , v : cvxxxx
+NSUBST:  { = 1:{ / *:.
+MAP
+xxxxxxxxxxxxxxxx.@
+@...xxxxxx.Axx.a..
+xxx'.xxxx.xx..xx..
+xxxx.'xxx?xxxxxx..
+xxxxx.xxx.xxxxxx..
+xx{x.......xxxxx..
+xx...vvvv..'xxxx..
+x'.vvvvvvv....xx..
+x..vvvvvv..xx'.x..
+xx..vv....xxxxBx..
+x{x'...xx{xxxxbb..
+xxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

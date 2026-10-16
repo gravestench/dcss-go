@@ -1,0 +1,24 @@
+NAME:   evilmike_arrival_crescent
+# Source: crawl-ref/source/dat/des/arrival/small.des:43
+TAGS:   arrival no_monster_gen
+ORIENT: float
+MAP
+xxxxxxxxxx
+xx.{.xxxxx
+xxx...xxxx
+x>xx...xxx
+xw.x...xxx
+xw.xx...xx
+xww.x...xx
+xwwWxx...x
+xwwwW+...+
+xwwWxx...x
+xww.x...xx
+xw.xx...xx
+xw.x...xxx
+x<xx...xxx
+xxx...xxxx
+xx@@@xxxxx
+ENDMAP
+
+###############################################################################

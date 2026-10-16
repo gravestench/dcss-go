@@ -1,0 +1,23 @@
+NAME:    dpeg_arrival_rooms_with_view
+# Source: crawl-ref/source/dat/des/arrival/simple.des:365
+TAGS:    arrival no_monster_gen no_pool_fixup transparent
+ORIENT:  float
+SHUFFLE: {[, lw
+SUBST:   [=.
+MAP
+.......xxxxxx@0
+@+xlllxx......@
+.x.....x......x
+.l..{..l......x
+.l..T..l..%...x
+.x.....x......x
+xxxlllxxxwwwxxx
+x......x.....x.
+x...%..w..T..w.
+x......w..[..w.
+x......x.....x.
+@......xxwwwx+.
+0@xxxxxx......@
+ENDMAP
+
+##############################################################################

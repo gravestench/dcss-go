@@ -1,0 +1,28 @@
+NAME:    lemuel_arrival_rhombus
+# Source: crawl-ref/source/dat/des/arrival/small.des:990
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SHUFFLE: abc
+SUBST:   a:+, b=x, c=x
+MAP
+      x@x
+    xax.xcx
+   xx.....xx
+  xb.......bx
+ xx.........xx
+xc...........ax
+x.............x
+x.............x
+x......{......x
+x.............x
+x.............x
+xx...........xx
+ xc.........bx
+  xx.......xx
+   xa.....xc
+    xx...xx
+     bx.xa
+      x@x
+ENDMAP
+
+##############################################################################

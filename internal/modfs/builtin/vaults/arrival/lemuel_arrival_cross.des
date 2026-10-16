@@ -1,0 +1,26 @@
+NAME:    lemuel_arrival_cross
+# Source: crawl-ref/source/dat/des/arrival/simple.des:277
+TAGS:    arrival no_monster_gen transparent
+ORIENT:  float
+SHUFFLE: >d
+ITEM:    stone
+MAP
+      xxx
+      x{x
+      x.x
+      x.x
+      x.x
+xxxxxxx.xxxxxxx
+@.............@
+xxxxxxx.xxxxxxx
+      x.x
+      x.x
+      x.x
+     xx.xx
+     xG>Gx
+     xx.xx
+      x.x
+      x@x
+ENDMAP
+
+##############################################################################

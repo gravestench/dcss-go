@@ -1,0 +1,29 @@
+NAME:    lemuel_arrival_tunnels
+# Source: crawl-ref/source/dat/des/arrival/small.des:1348
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SUBST:   ? = x.
+SHUFFLE: {[(
+SUBST:   [( = .
+MAP
+xxx
+x{xx          xxxxx
+x..xxxxxxxxxxxx[x?x
+xx.?xxxxx(xxxx?...x
+x?..xxxx..xxxx.??.x
+x..?.?..?xxxx.x??.x
+x.?xx..xxxxx?.....x
+x.?xx.?xxxx?x.x???x
+xx..?.xxxx??..xxxxx
+ xx...?x??x..xx
+  xxx.xx....xx
+    x..x.??xx
+    xx.?.xxx
+     x..??xx
+     x?x.xxx
+     xx?.?xx
+      xx..?x
+       xxx@x
+ENDMAP
+
+##############################################################################

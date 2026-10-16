@@ -1,0 +1,15 @@
+NAME:   tarquinn_simple_flora_water_e
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1514
+TAGS:   arrival no_monster_gen
+ORIENT: float
+FTILE:  1 = floor_grass
+MONS:   plant
+MAP
+  x+x
+xxx.xx
+x1w.tx
+x1W{.+
+x1w.tx
+xxx.xx
+  x+x
+ENDMAP

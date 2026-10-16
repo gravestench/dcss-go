@@ -1,0 +1,22 @@
+NAME:   wander_arrival_lonely_grave
+# Source: crawl-ref/source/dat/des/arrival/small.des:3256
+TAGS:   arrival no_monster_gen no_item_gen
+ORIENT: float
+FTILE:  ? = floor_pebble_darkgray:20 / none
+TILE:   t = dngn_tree_dead, \
+        G = dngn_gravestone
+: vault.run("name_gravestone")
+# source: : set_feature_name("granite_statue", "a gravestone")
+COLOUR: ? = darkgrey:20 / lightgrey, \
+        t = brown
+MAP
+.........
+..?????..
+.???????.
+.??t????.
+.???G???.
+.???????.
+..?????..
+...??{...
+.....@...
+ENDMAP

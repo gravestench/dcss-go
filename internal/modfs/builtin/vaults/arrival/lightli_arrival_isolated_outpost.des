@@ -1,0 +1,26 @@
+NAME:   lightli_arrival_isolated_outpost
+# Source: crawl-ref/source/dat/des/arrival/small.des:2898
+ORIENT: float
+TAGS:   arrival no_pool_fixup no_monster_gen
+MAP
+WWWWWWWW@@WWWWWWWW
+W..G..G....G..G..W
+W.cccccn++nccccc.W
+WGcWWWWW..WWWWWcGW
+W.cW..........Wc.W
+w.cW.cccccccc.Wc.W
+W.cW..........Wc.W
+W.cWWWWW..WWWWWc.W
+W.cccccn++nccccc.W
+W.c............c.W
+W.clllll..lllllc.W
+W.clllll..lllllc.W
+W.c............c.W
+W.cvvvvv++vvvvvc.W
+WGc.....{......cGW
+W.cccccccccccccc.W
+W..G..........G..W
+WWWWWWWWWWWWWWWWWW
+ENDMAP
+
+##############################################################################

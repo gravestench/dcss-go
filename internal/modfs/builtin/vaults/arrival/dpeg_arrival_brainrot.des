@@ -1,0 +1,26 @@
+NAME:    dpeg_arrival_brainrot
+# Source: crawl-ref/source/dat/des/arrival/small.des:1888
+TAGS:    arrival no_monster_gen
+MONS:    jackal / worm
+ORIENT:  float
+SUBST:   l = l.
+NSUBST:  { = 1:{ / *:.
+MAP
+xxxxxxxxxxxxxxxxx@xxx
+@.xx...xx..xx..xx.xxx
+xx..xl.x.xxx..x..x.xx
+xxlll.xxx...xxllxx.xx
+xxxll.xx.xxxx.xx.xxxx
+@..xxl.x.x...x..x.xxx
+xxx..lx.x..xxxxxx.x.x
+xx%xx.x.xxxx...{x.x.x
+xlxlxxxx.xxx....xx.xx
+x.xlx.xl..x.xxllxxxxx
+xx.x.x.xxx.x.x..xxxxx
+x.xxxxx.lxxxx.xxlllll
+x..x..x.....x.xxl%1>l
+x{...x.x.xll..xxlllll
+xxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

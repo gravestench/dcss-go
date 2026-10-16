@@ -3,6 +3,8 @@ package game
 import (
 	"fmt"
 	"sort"
+
+	"dcrawl-go/internal/vault"
 )
 
 // populateFromScript gives the effective Lua ruleset the established level
@@ -25,13 +27,24 @@ func (g *Game) populateFromScript(setup scenarioLevels) error {
 			return fmt.Errorf("level %d has no population entry", id)
 		}
 
+		excluded := make([]any, 0, len(setup.spawnExclusions[id]))
+
+		for _, cell := range setup.spawnExclusions[id] {
+			excluded = append(excluded, map[string]any{
+				"x": cell.x,
+				"y": cell.y,
+			})
+		}
+
 		levels = append(levels, map[string]any{
-			"id":      id,
-			"entry_x": entry.x,
-			"entry_y": entry.y,
-			"budget":  level.initialMonsters,
-			"width":   level.width,
-			"height":  len(level.terrain),
+			"id":               id,
+			"entry_x":          entry.x,
+			"entry_y":          entry.y,
+			"budget":           level.initialMonsters,
+			"width":            level.width,
+			"height":           len(level.terrain),
+			"vault_records":    populationVaultRecords(level),
+			"spawn_exclusions": excluded,
 		})
 	}
 
@@ -94,6 +107,96 @@ func (g *Game) populateFromScript(setup scenarioLevels) error {
 		}
 
 		level.initialActors = count
+	}
+
+	if err := g.markMaterializedVaultRecords(result["materialized"]); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func populationVaultRecords(level *Level) []any {
+	records := []any{}
+
+	for index, record := range level.vaultRecords {
+		if !record.Pending ||
+			record.Overridden ||
+			(record.Kind != vault.KindItem &&
+				record.Kind != vault.KindMonster) {
+			continue
+		}
+
+		targeted := false
+
+		for _, argument := range record.Arguments {
+			if argument.Name == "targets" && argument.String != "" {
+				targeted = true
+			}
+		}
+
+		if !targeted {
+			continue
+		}
+
+		records = append(records, map[string]any{
+			"index":    index + 1,
+			"kind":     string(record.Kind),
+			"identity": record.Identity,
+			"x":        record.X,
+			"y":        record.Y,
+		})
+	}
+
+	return records
+}
+
+func (g *Game) markMaterializedVaultRecords(value any) error {
+	entries, ok := value.([]any)
+
+	if !ok {
+		if empty, isMap := value.(map[string]any); isMap && len(empty) == 0 {
+			return nil
+		}
+
+		return fmt.Errorf("Lua population has invalid materialized vault list")
+	}
+
+	for _, entry := range entries {
+		fields, isMap := entry.(map[string]any)
+
+		if !isMap {
+			return fmt.Errorf("Lua population materialized entry is not a record")
+		}
+
+		levelID, err := decisionInteger(fields, "level_id")
+
+		if err != nil {
+			return err
+		}
+
+		index, err := decisionInteger(fields, "index")
+
+		if err != nil {
+			return err
+		}
+
+		level := g.levels[levelID]
+
+		if level == nil ||
+			index < 1 ||
+			index > len(level.vaultRecords) {
+			return fmt.Errorf("Lua population materialized an unknown vault record")
+		}
+
+		record := &level.vaultRecords[index-1]
+
+		if !record.Pending ||
+			(record.Kind != vault.KindItem && record.Kind != vault.KindMonster) {
+			return fmt.Errorf("Lua population materialized an invalid vault record")
+		}
+
+		record.Pending = false
 	}
 
 	return nil

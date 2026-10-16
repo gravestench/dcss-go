@@ -1,0 +1,15 @@
+NAME:   saegor_arrival_simple_d
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1579
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+MAP
+xxxcccxxx
+xccc{cccx
+xc.c.c>cx
+xt.....tx
+xwt...twx
+xwwt.twwx
+xwwt.twwx
+xxwt.twxx
+xxxx+xxxx
+ENDMAP

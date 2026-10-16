@@ -1,0 +1,19 @@
+NAME:    dpeg_arrival_ternary
+# Source: crawl-ref/source/dat/des/arrival/simple.des:662
+TAGS:    arrival transparent
+ORIENT:  float
+SHUFFLE: cv
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+xcxcxcxcxcxcxcxcxcxcxcxxcx
+x.x..c.....x..c.....x..c.x
+x.......x..x..x..c..c..c.x
+@.........................
+..x..x..x.....x..x..x..x.@
+x.c..c..x.....x..........x
+x.x.....c..{.....c..x....x
+xcxcxcxcxcxcxcxcxcxcxcxxcx
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

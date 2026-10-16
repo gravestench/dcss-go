@@ -1,0 +1,38 @@
+NAME:   co_arrival_hall_of_pillars
+# Source: crawl-ref/source/dat/des/arrival/large.des:582
+TAGS:   arrival transparent
+ORIENT: float
+WEIGHT: 1
+SUBST:  c : cccccvvb
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxx...{...xxxxxxxxxx
+xxxxxxx.............xxxxxxx
+xxxxx...c..c...c..c...xxxxx
+xxxx...................xxxx
+xxxx...................xxxx
+xxx..c..c..c...c..c..c..xxx
+xxx.....................xxx
+xxx.....................xxx
+xxx..c..c..c...c..c..c..xxx
+xxx.....................xxx
+xxx.....................xxx
+xxx..c..c..G...G..c..c..xxx
+xxx.....................xxx
+xxx.....................xxx
+xxx..c..c..c...c..c..c..xxx
+xxx.....................xxx
+xxx.....................xxx
+xxx..c..c..c...c..c..c..xxx
+xxx.....................xxx
+xxx.....................xxx
+xxx..c..c..c...c..c..c..xxx
+xx.......................xx
+x.........................x
+...........................
+...........................
+@...@...@...@@@...@...@...@
+ENDMAP
+
+##############################################################################

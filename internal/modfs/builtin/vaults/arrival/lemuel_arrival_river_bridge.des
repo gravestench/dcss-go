@@ -1,0 +1,34 @@
+NAME:    lemuel_arrival_river_bridge
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:556
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SHUFFLE: {}, XXT
+COLOUR:  ' : brown / white
+FTILE:   ' = floor_dirt
+SUBST:   '=., X=x, T:tttT, T=t x:1
+: vault.run("choose_pool_fixup")
+# source: : if not is_validating() and crawl.coinflip() then
+# source: TAGS:    no_pool_fixup
+# source: : end
+WEIGHT:  3
+MAP
+xxxxxxxxxxxxxxxxxxx
+xXXXXXXXXXXXXXXXXXx
+xXXXX{.......}XXXXx
+xXXXX.........XXXXx
+xwXXX.........XXXXx
+xwwXX.........XXXXx
+xwwwX.........XXXXx
+xXwwX.........XXXXx
+xXwwww........XXXXx
+xXXwwwwww'w...XXXXx
+xXXXwwwww'wwwwXXXXx
+xXXXXwwww'wwwwwwXXx
+xXXXX...w'wwwwwwwXx
+xXXXX........wwwwXx
+xXXXX.........Xwwwx
+xXXXX.........XXwwx
+xXXXX.........XXXwx
+xxxxx.........xxxxx
+xxxxx....@....xxxxx
+ENDMAP

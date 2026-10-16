@@ -1,0 +1,24 @@
+NAME:    lemuel_arrival_broad_hall
+# Source: crawl-ref/source/dat/des/arrival/small.des:1411
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SUBST:   ? : xxcvG
+MAP
+xxxxxxxxxxx
+x....(....x
+x.........x
+x.?.....?.x
+x.........x
+x.........x
+x.?.....?.x
+x.........x
+x.........x
+x.?.....?.x
+x.........x
+x.........x
+x.?.....?.x
+x.........x
+x>.@.>.@.>x
+ENDMAP
+
+##############################################################################

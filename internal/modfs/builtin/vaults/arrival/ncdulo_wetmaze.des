@@ -1,0 +1,16 @@
+NAME:   ncdulo_wetmaze
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1315
+TAGS:   arrival no_monster_gen no_trap_gen transparent
+ORIENT: float
+MAP
+xxxx+xxxx
+xwwwwwwwx
+xWxW{Wxwx
+xWxxxWxWx
+xxWWWWWWx
+xWxxxxxxx
+xxWWWx..+
+xWxxWxx.x
+x.xx....x
+x+xxxxxxx
+ENDMAP

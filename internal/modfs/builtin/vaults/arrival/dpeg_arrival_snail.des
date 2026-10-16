@@ -1,0 +1,29 @@
+NAME:   dpeg_arrival_snail
+# Source: crawl-ref/source/dat/des/arrival/simple.des:971
+TAGS:   arrival no_monster_gen no_rotate transparent
+ORIENT: float
+NSUBST: . = 1:d / *:.
+ITEM:   stone
+MAP
+         xxxxxxxxxxxxxxxxx
+      xxxxxxxx.......xxxxxxx
+   xxxxxxx.............xxxxxx
+  xxxxxx.................xxxxx
+ xxxxxx.........xxxx......xxxx
+xxxxxx........xxxxxxxx.....xxx
+xxxxx.......xxxx....xxx.....xx
+xxxxx......xxx........xx....xx
+xxxx.......xx...xxx...xxx....x
+xxxx......xxx..x+xxx...xx....x
+xxx.......xx..xxx.{xx..xx....x
+xxx......xxx..xxx.xx..xxx....x
+xxx......xxx...xx.....xx....xx
+xx........xx....xxxxxxx....xxx
+xx........xxx....xxxx......xxx
+xx........xxxx............xxxx
+xx........xxxxxxx......xxxxxx
+x....>.....xxxxxxxxxxxxxxxxx
+x....@.....xxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

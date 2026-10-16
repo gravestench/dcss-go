@@ -1,0 +1,18 @@
+NAME:    pf_arrival_petrified_forest
+# Source: crawl-ref/source/dat/des/arrival/simple.des:238
+TAGS:    arrival transparent
+ORIENT:  float
+KFEAT:   t = petrified_tree
+MAP
+  xxx
+xxxtxx
+xxt{txx
+xxt..txx
+xxx..txx
+@xt.txx@
+x..t.t.x
+xxxxt.xx
+xxxxxxxx
+ENDMAP
+
+##############################################################

@@ -1,0 +1,24 @@
+NAME:    spicycebolla_arrival_risky_transporter
+# Source: crawl-ref/source/dat/des/arrival/small.des:3721
+TAGS:    arrival transparent
+ORIENT:  float
+# the actual transporters
+SHUFFLE: JKF
+MARKER:  E = lua:transp_loc("tut_risky")
+MARKER:  F = lua:transp_dest_loc("tut_risky")
+# minor cosmetic variations
+SHUFFLE: NO
+SUBST:   N:x, O:.
+SUBST:   x : xxxxxxccvb
+MAP
+ @@@.N.OO@
+@...NNOO..
+@...NxO...
+@..FxxK...
+.xxxmxmxxx
+xxxxxmmxx.
+...JmmEx.x
+...OxNx{x@
+..OONx.x.x
+@OO.x.x@x
+ENDMAP

@@ -1,0 +1,23 @@
+NAME:    dpeg_arrival_arbitrary_c
+# Source: crawl-ref/source/dat/des/arrival/small.des:1600
+TAGS:    arrival
+ORIENT:  float
+SHUFFLE: TV
+KMASK:   T = no_monster_gen
+MAP
+  xx..@..xx
+ xx...x...xx
+ x...xxx...x
+ x...xxx...x
+xx..xxxxx..xx
+x...........x
+x...........x
+x.T...{...T.x
+x...........x
+x...........x
+xxxx..x..xxxx
+   xx...xx
+   x..@..x
+ENDMAP
+
+##############################################################################

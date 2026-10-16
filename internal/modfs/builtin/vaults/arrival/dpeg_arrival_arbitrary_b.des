@@ -1,0 +1,26 @@
+NAME:    dpeg_arrival_arbitrary_b
+# Source: crawl-ref/source/dat/des/arrival/small.des:1575
+TAGS:    arrival
+ORIENT:  float
+SUBST:   ' : . x ':40, '=.x
+NSUBST:  { = 1:{ / *:.
+MAP
+     xx'.@.'xxx
+   xxx'..'...'x
+  xx'...xxxx..xx
+  x...'xxxxx'.'x
+ xx.{.'xxxxxx..xx
+ x'....'xxxxx'..x
+xx...'...xxxxx'.'
+x..''xx'..'xx...@
+..'xxxxx.'.'...'x
+@.'xxxx'.....{.'x
+'..'x'....''...xx
+x'.....{.'xxx'.'x
+xx'''....xxxx'.xx
+ xxxx.'xxxxxxx.xx
+   xx.x'xxxxx.'xx
+   x'..@''xx.@.'x
+ENDMAP
+
+##############################################################################

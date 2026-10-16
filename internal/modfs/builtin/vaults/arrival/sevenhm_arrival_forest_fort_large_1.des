@@ -1,0 +1,33 @@
+NAME:    sevenhm_arrival_forest_fort_large_1
+# Source: crawl-ref/source/dat/des/arrival/large.des:654
+TAGS:    arrival no_monster_gen no_pool_fixup no_rotate transparent
+ORIENT:  southeast
+WEIGHT:  3
+SUBST:   z = W., I = IG, r : cccvt., E = wW, ' : @x', ' = @x
+MONS:    rat w:20 / ball python / frilled lizard / bat / nothing w:25
+SHUFFLE: {[(
+SUBST:   ([ = G
+MAP
+xxx'WWWxxxxxxx''xxxxxxxxxxxxxxxxxxx
+xxwwwwWWxxxxxx..xxxxxxxxxxxxxxxtxxx
+wwwwcccccccccc..ccxxxxxxxxxxxxtttxx
+EwwwWc.1..............xxxxxxxtttttx
+EwwWWc...cccc+cc.cc+cccccxxxxcccctx
+EwwwWcc++c.....c.c......cccccc.(ctx
+xxwwwWW..c..1..cIczzz...+....+..ntx
+@+.......cccccccccWWWzz.cccccc..ctx
+.+.............1.cWWWWzzc....c+cctx
+xxwwwwwW.........cccccccc........tx
+WwwwwwwwWWwwwww.................ttx
+wwwwWwwWWwrrrrwWW..............ttxx
+EwwW..wWwrr..rrwwwwWW.........ttxxx
+EwW.1..Wwr.{.................tttxxx
+ E....WWwrr..rrwwwwwwwwW.....tttxxx
+ ...tttwwwrrrrwwwwwwwWW..[.ttttxxxx
+@.ttttttxxxxxxxxxxx........ttxxxxxx
+ xtttttxxxxxxxxxxxxxxxtttttttxxxxxx
+ xxxttxxxxxxxxxxxxxxxxxtttttxxxxxxx
+   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

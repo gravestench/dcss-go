@@ -1,0 +1,39 @@
+NAME: nicolae_arrival_washed_ashore
+# Source: crawl-ref/source/dat/des/arrival/small.des:2987
+ORIENT: northwest
+TAGS: arrival no_monster_gen no_pool_fixup
+NSUBST: b = 4:G, *:b
+SUBST: B = bb., S = bWW, Z = WWw
+COLOUR: b : brown
+FTILE: b{G = floor_sand
+TILE:  G = dngn_crumbled_column
+: vault.run("name_wreckage")
+# source: :set_feature_name("granite_statue", "broken wreckage")
+KFEAT: O = open_sea
+KFEAT: b = .
+MAP
+OOOOOOOOOOOOOOOOOOOOOx
+Owwwwwwwwwwwwwwwwxxxxx
+OwwwwwwwwZZZZZZZZxx
+OwwwwwwZZZSSSSSSZxx
+OwwwwwZZSSSSSSSSSxx
+OwwwwZZSSSSSbbbbbxx
+OwwwZZSSSSbbbbbbxxx
+OwwZZSSSSbbbbbbbxxx
+OwwZSSSS{bbbbbbbxxx
+OwZZSSSbbbbbbbbbBxx
+OwZSSSbbbbbbbbbbBxx
+OwZSSSbbbbbbbbbbBxx
+OwZSSbbbbbbbbbbbBBx
+OwZSSbbbbbbbbbbbBBx
+OwZSSbbbbbbbbbbbBB@
+OwZSSbbbbbbbbbbbBB@
+OwZZSbxxxBBBBBBBBB@
+OxxxxxxxxxxxBBBBBB@
+Oxxxxxxxxxxxxx@@@@@
+Ox
+Ox
+xx
+ENDMAP
+
+##############################################################

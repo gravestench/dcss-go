@@ -1,0 +1,24 @@
+NAME:     amcnicky_arrival_gap_in_the_tavern_cellar
+# Source: crawl-ref/source/dat/des/arrival/small.des:3521
+TAGS:     arrival no_monster_gen no_pool_fixup no_trap_gen
+ORIENT:   float
+SHUFFLE:  su
+SUBST:    c=cx, -=-.
+KPROP:    c-V = bloody
+SUBST:    c:x
+SUBST:    r:xxxxvvWl, s:@, u:x
+MAP
+    xxxxxxx
+    xT...Tx
+    x..{..x
+    x.....x
+    x..>..x
+    xT...Vxc
+    xxxxxx-cc
+    xxxxxcc-c
+   s....cc-cc
+   s.rr.-c-c
+   s.rr.--cc
+   s....ccc
+    uuuu
+ENDMAP

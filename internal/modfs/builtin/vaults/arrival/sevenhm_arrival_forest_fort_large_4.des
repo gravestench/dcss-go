@@ -1,0 +1,36 @@
+NAME:    sevenhm_arrival_forest_fort_large_4
+# Source: crawl-ref/source/dat/des/arrival/large.des:746
+TAGS:    arrival transparent
+ORIENT:  northwest
+SUBST:   p = 11., G = G..
+NSUBST:  { = { / ., [ = [ / .
+NSUBST:  + = 1:c / *=+
+SHUFFLE: {[
+SUBST:   [ = .
+MONS:    plant / bush
+MAP
+xxxxxxxxxxxxxxxxxxxxxxx
+xxccccxxxxxxxxccccxxxxx
+xcc[[cccccccccc{{ccxxxx
+xc{...+......c...[ccxxx
+xc{...c......+...[cxxxx
+xcc..cccccccccc..ccttxx
+xxcc+cG..G...Gcc+c..ttxxxxxx
+xxc..c.p.p.p..c..c...tttxxxx
+xxc..c..p.p.p.c..c.....ttxxx
+xxc..c.p.p.p.Gc..c......ttxx
+xxc..cG.p.p.p.c..c.......txx
+xxc..c.p.p.p..c..c.......txx
+xxc..c..p.p...............xx
+xxc+ccG..G...............xxx
+xcc..ccccccc...............@
+xc{...c....................@
+xc{...+..........ttttxxxxxxx
+xcc[[ccccccc...ttttxxx
+xxccccxxxxxtttttxxxxxx
+xxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################
+# Crop circle vaults (Roderic)
+# Season indicated by colouring. Something special for tiles wanted? --dpeg

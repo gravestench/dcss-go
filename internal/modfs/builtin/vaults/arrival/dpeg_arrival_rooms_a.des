@@ -1,0 +1,21 @@
+NAME:    dpeg_arrival_rooms_a
+# Source: crawl-ref/source/dat/des/arrival/simple.des:933
+TAGS:    arrival no_monster_gen transparent
+ORIENT:  float
+SHUFFLE: cvb
+MAP
+xxxxxxxxx@.xxxxxx
+xvvvvvvvx..xbbbbx
+xv.....vx..xb..bx
+xv..{..+...xb..bx
+xv.....vx..xb..bx
+xvvvvvvvx...+..bx
+xxxxxxxxx..xb..bx
+@..........xb..bx
+.........T.xb..bx
+xxxxxxxx...xbbbbx
+xxxxxxxx.@.xxxxxx
+ENDMAP
+
+############################################################################
+# A spiral sometimes made entirely of glass

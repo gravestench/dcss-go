@@ -1,0 +1,25 @@
+NAME:    matt_arrival_spirals
+# Source: crawl-ref/source/dat/des/arrival/simple.des:80
+TAGS:    arrival no_monster_gen transparent
+ORIENT:  float
+SHUFFLE: {[(
+SUBST:   [=., (=.
+MAP
+xxxxxxxx@xxxxxxxxx
+x......x.x.x.....x
+x.xxxx.x.x.x.xxx.x
+x.x{.x.x.x.x..(x.x
+x.xx.x.x.x.xxxxx.x
+x....x.x.x.......x
+xxxxxx.x.x.xxxxxxx
+@................@
+x.xxxxxxxxxxxxxx.x
+x.x..........x...x
+x.x.xxxxxxxx.x.x.x
+x.x.x...[....x.x.x
+x.x.x.xxxxxxxx.x.x
+x...x..........x.x
+xxxxxxxxxxxxxxxxxx
+ENDMAP
+
+###########################################################

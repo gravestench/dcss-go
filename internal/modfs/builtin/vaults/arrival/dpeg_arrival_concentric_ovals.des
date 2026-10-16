@@ -1,0 +1,30 @@
+NAME:    dpeg_arrival_concentric_ovals
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:243
+TAGS:    arrival no_monster_gen no_rotate
+ORIENT:  float
+SUBST:   ' : Wlncxxxv, " : Wlncxxxv
+MAP
+.........................
+.......xxxxx+xxxxx.......
+....xxxxxxxx.xxxxxxxx....
+...xxxxxx.......xxxxxx...
+..xxxxx...........xxxxx..
+..xxxx....'''''....xxxx..
+..xxx...'''''''''...xxx..
+.xxxx..''.......''..xxxx.
+.xxx...'..""+""..'...xxx.
+.xxx..''.""..."".''..xxx.
+.xxx..''."".{."".''..xxx.
+.xxx..''.""..."".''..xxx.
+.xxx...'.."""""..'...xxx.
+.xxxx..''.......''..xxxx.
+..xxx...''''.''''...xxx..
+..xxxx....''+''....xxxx..
+..xxxxx...........xxxxx..
+...xxxxxx.......xxxxxx...
+....xxxxxxxxxxxxxxxxx....
+.......xxxxxxxxxxx.......
+.........................
+ENDMAP
+
+##############################################################################

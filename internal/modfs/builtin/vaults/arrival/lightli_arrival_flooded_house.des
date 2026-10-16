@@ -1,0 +1,17 @@
+NAME: lightli_arrival_flooded_house
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1946
+ORIENT: float
+TAGS: arrival no_monster_gen no_tele_into no_pool_fixup
+SUBST: 1 = 1WWw.
+MONS: plant
+MAP
+ccccccccc
+c1111111+
+c111111.c
+c11111.1c
+c1....11c
+c.c111.1c
+c.c1111.c
+c{c11111+
+ccccccccc
+ENDMAP

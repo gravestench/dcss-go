@@ -1,0 +1,13 @@
+{
+  "id": "erik_arrival_orb_chamber",
+  "source_file": "small.des",
+  "edits": [
+    {
+      "start_line": 607,
+      "end_line": 607,
+      "sha256": "ec8fe54dbc1c7356df0b2f0ba0afb19ea1d06b6dce02963790adfe9468cf5834",
+      "method": "name_orb_statue",
+      "stage": "run"
+    }
+  ]
+}

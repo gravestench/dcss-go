@@ -1,0 +1,34 @@
+NAME:    spicycebolla_arrival_transporter_tutorial
+# Source: crawl-ref/source/dat/des/arrival/small.des:3652
+TAGS:    arrival no_monster_gen no_pool_fixup
+ORIENT:  float
+SUBST:   a = wW, G : GATUVYt
+SHUFFLE: -!
+SUBST:   - : !:40 W
+COLOUR:  . : blue
+FTILE:   .GATUVYt>{EFJK : floor_pebble_blue
+MARKER:  E = lua:transp_loc("tut_entry")
+MARKER:  F = lua:transp_dest_loc("tut_entry")
+MARKER:  J = lua:transp_loc("tut_hatch")
+MARKER:  K = lua:transp_dest_loc("tut_hatch")
+MAP
+ aaaa@aaa
+awww!wwwwa
+www!wwwwwwa
+wwaW!Wawwww
+waW...Wawwa
+wW.E>K.Wwwwa
+waW.G.Wawwww
+wwaWWWawwwwa
+awwwwwwwwwwwa
+ awwwwaWWWaww
+ wwwwaW.G.Waw
+ awwwW.F{J.Ww
+  awwaW...Waw
+  wwwwaW-Waww
+  awwwwww-www
+   awwww-wwwa
+    aaa@aaaa
+ENDMAP
+
+##############################################################

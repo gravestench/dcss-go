@@ -1,0 +1,21 @@
+NAME:   lightli_arrival_windingriver
+# Source: crawl-ref/source/dat/des/arrival/small.des:2924
+ORIENT: float
+TAGS:   arrival no_monster_gen
+KMONS:  P = plant
+KPROP:  q = no_tele_into
+SUBST:  p = Pw, q = Pw
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxx
+xqwqqwqqqqqqwqqp.p.p...x
+xwwwwwwqqqqqwwqpp..w...x
+xwwwwwwwqwqwwwwqpwwwwp.x
+xwwwwwwwwwwwwwwwwww..w.+
+xw.wwwwwwwwwwwwwww.....+
+xp..w..wwwww..www..p.t.x
+x.xp.px.w.w.xx.w.xxx...x
+x{xxxxxx.p.xxxx.xxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

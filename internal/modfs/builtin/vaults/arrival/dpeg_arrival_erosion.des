@@ -1,0 +1,18 @@
+NAME:   dpeg_arrival_erosion
+# Source: crawl-ref/source/dat/des/arrival/small.des:1672
+TAGS:   arrival no_monster_gen
+ORIENT: float
+SUBST:  '=cx., "=+.x, c:xxc
+MAP
+xxxxxxxxxxxxxxxxxxxx
+xccccccx.......x..c.
+xccccccc..ccx'.x..x.
+xcc....c..'..c.'+''.
+xcc.{..+..c..+.x.."@
+xcc....c..cxxc.'..x.
+xccccccc..x....'xx'.
+xcccccxxc...cc......
+xxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

@@ -1,0 +1,21 @@
+NAME:   minmay_arrival_doors
+# Source: crawl-ref/source/dat/des/arrival/simple.des:9
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+MAP
+     x+x
+     x.x
+     x+x
+     x.x
+    xx+xx
+xxxxx...xxxxx
++.+.+.{.+.+.+
+xxxxx...xxxxx
+    xx+xx
+     x.x
+     x+x
+     x.x
+     x+x
+ENDMAP
+
+##############################################################

@@ -1,0 +1,20 @@
+NAME:   lightli_arrival_statuegarden
+# Source: crawl-ref/source/dat/des/arrival/small.des:2856
+TAGS:   arrival no_monster_gen
+ORIENT: float
+MONS:   plant
+MAP
+@..xxxG+Gxxx..@
+..xxwwW.Wwwxx..
+.xxwww.1.wwwxx.
+xxww1..G..1wwxx
+xwwW.......wwwx
+xw1.G..{..G.1wx
+xwww.......wwwx
+xxww1..G..1wwxx
+.xxwww.1.wwwxx.
+..xxwwW.Wwwxx..
+@..xxxG+Gxxx..@
+ENDMAP
+
+##############################################################################

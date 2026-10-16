@@ -1,0 +1,15 @@
+NAME:   ncdulo_watergridlock
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1331
+TAGS:   arrival no_monster_gen no_pool_fixup transparent
+ORIENT: float
+MAP
+x.x.x.x.x.x.x
+.x.x.x.x.x.x.
+x.x.wwwww.x.x
+.x.xw.{.wx.x.
+x.x.w...w.x.x
+.x.xw...wx.x.
+x.x.WWWWW.x.x
+.x.x.x.x.x.x.
+x.x.x.x.x.x.x
+ENDMAP

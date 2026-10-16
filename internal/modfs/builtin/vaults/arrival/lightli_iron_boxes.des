@@ -1,0 +1,16 @@
+NAME: lightli_iron_boxes
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1847
+TAGS: arrival no_monster_gen
+ORIENT: float
+MAP
+..vv..vv..
+..vv..vv..
+vv..vv..vv
+vv..vv..vv
+..vv{.vv..
+..vv..vv..
+vv..vv..vv
+vv..vv..vv
+..vv..vv..
+..vv..vv..
+ENDMAP

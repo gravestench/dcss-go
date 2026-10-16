@@ -1,0 +1,32 @@
+NAME:    dpeg_arrival_caged_fury
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:650
+TAGS:    arrival no_rotate
+MONS:    w:30 nothing / giant cockroach / w:2 worm
+MONS:    w:30 nothing / endoplasm
+MONS:    w:20 nothing / jackal / rat
+MONS:    w:30 nothing / endoplasm / w:2 jelly / giant cockroach / w:2 worm / \
+         w:5 jackal / w:5 rat
+ORIENT:  float
+FTILE:   1234ABCDEabcdem = floor_dirt
+SHUFFLE: abcde / fghij
+SUBST:   f=A, g=B, h=C, i=D, j=E
+SUBST:   abcde = mx
+SUBST:   ABCDE : mx
+SHUFFLE: xc, 123
+KMASK:   T = no_monster_gen
+MAP
+.................
+.xxxxxxxxxxxxxxx.
+.x4441321331444x.
+.x4312132211324x.
+.x4123213123134x.
+.xABCDEm=medcbax.
+.x.............x.
+.+T....xxx....T+.
+.x......{......x.
+.x..T...]...T..x.
+.xxx+xxxxxxx+xxx.
+.................
+ENDMAP
+
+##############################################################################

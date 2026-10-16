@@ -1,0 +1,27 @@
+NAME:    heliophobic_arrival_glass_houses
+# Source: crawl-ref/source/dat/des/arrival/small.des:3455
+TAGS:    arrival no_monster_gen no_pool_fixup no_trap_gen
+ORIENT:  float
+SHUFFLE: bnv
+SUBST:   ? = >:20 A G T V:5
+MAP
+wwwwwwwwwwwwwww
+wbbbbwwwwwbbbbw
+wb{.bbbbbbb.?bw
+wb..+.....+..bw
+wbb+bbb+bbb+bbw
+wwb.b.....b.bww
+wwb.b..b..b.bww
+wwb.b..b..b.bww
+@.+.+.GbG.+.+.@
+wwb.b..b..b.bww
+wwb.b..b..b.bww
+wwb.b.....b.bww
+wbb+bbb+bbb+bbw
+wb..+.....+..bw
+wb?.bbbbbbb.?bw
+wbbbbwwwwwbbbbw
+wwwwwwwwwwwwwww
+ENDMAP
+
+##############################################################

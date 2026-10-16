@@ -1,0 +1,23 @@
+NAME:   giann_forest_graveyard
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2132
+TAGS:   arrival no_monster_gen
+MONS:   plant
+ORIENT: float
+SUBST:  s = hhh..
+: vault.run("schedule_skeleton_decay")
+# source: : dgn.delayed_decay(_G, 'h', 'human skeleton')
+MAP
+xxxxxxxxxxxxxx.xxxxxxxxxxxxxx
+ tt.......................tt
+ tt..G..G...........G..G..tt
+ tt...ss.............ss...tt
+ttt...ss.............ss...ttt
+tt...G..G...........G..G...tt
+tt............{............tt
+tt...G..G...........G..G...tt
+ttt...ss.............ss...ttt
+ tt...ss.............ss...tt
+ tt..G..G...........G..G..tt
+ tt.......................tt
+xxxxxxxxxxxxxx.xxxxxxxxxxxxxx
+ENDMAP

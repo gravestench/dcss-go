@@ -1,0 +1,15 @@
+NAME:   wheals_arrival_shading
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1931
+ORIENT: float
+TAGS:   arrival no_monster_gen
+SUBST:  a = xc
+SUBST:  b = cv
+MAP
+xxxxaaacccbbbvvv
+x..............@
+x{...aa...bb...@
+x..............@
+xxxxaaacccbbbvvv
+ENDMAP
+
+###############################################################################

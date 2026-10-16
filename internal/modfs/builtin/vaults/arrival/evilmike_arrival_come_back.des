@@ -1,0 +1,21 @@
+NAME:    evilmike_arrival_come_back
+# Source: crawl-ref/source/dat/des/arrival/small.des:66
+WEIGHT:  2
+TAGS:    arrival
+ORIENT:  float
+NSUBST:  % = 1:1 / 1:0 / 1:> / *=%...
+MONS:    gnoll / ogre / bullfrog / centaur
+MAP
+xxxxxxxxxx
+x.......{x
+x.xxxxxx.x
+x.x%%%%x.x
+..x%%%%x.x
+..m%%%%x.x
+..m%%%%x.x
+..mmmxxx.x
+.........x
+ .....xxxx
+ENDMAP
+
+###############################################################################

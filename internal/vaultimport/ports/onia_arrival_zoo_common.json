@@ -1,0 +1,13 @@
+{
+  "id": "onia_arrival_zoo_common",
+  "source_file": "small.des",
+  "edits": [
+    {
+      "start_line": 2342,
+      "end_line": 2359,
+      "sha256": "ef5a90471968ea7d5117eac2208d67b1abef590be4dffb40e41ef7fa02852038",
+      "method": "choose_zoo_roster",
+      "stage": "run"
+    }
+  ]
+}

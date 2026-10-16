@@ -1,0 +1,14 @@
+NAME:   mrwooster_arrival_statue_2
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1786
+TAGS:   arrival no_monster_gen
+ORIENT: float
+MAP
+xxxxxxxxxxxxx
+xxxxxG{Gxxxxx
+xx.........xx
+xG.........Gx
+x...G...G...x
+xG.........Gx
+xx.........xx
+.............
+ENDMAP

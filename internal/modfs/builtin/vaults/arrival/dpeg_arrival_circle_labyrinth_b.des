@@ -1,0 +1,32 @@
+NAME:   dpeg_arrival_circle_labyrinth_b
+# Source: crawl-ref/source/dat/des/arrival/large.des:367
+TAGS:   arrival no_monster_gen no_rotate transparent
+WEIGHT: 1
+ORIENT: float
+NSUBST: . = 1:d / *:.
+ITEM:   stone
+MAP
+          xxxxxxxxxxxxx
+       xxxx......x....xxxx
+    xxxx.........x.......xxxx
+   xx.......xxxx.xxxx.......xx
+  xx.....xxxx..x....xxxx.....xx
+ xx....xxx.....x.......xxx....xx
+ x....xx.....xxxxxxx.....xx....x
+xx...xx....xxx.....xxx....xx...xx
+.....x....xx.........xx....x....x
+@...xx...xx...xx.xx...xx...xx...x
+....x........xx...xx...x....x...x
+xxxxxxxxxxxxxxx.{.xx...x........x
+x............xx...xx...xxxxxx...x
+x...xxxxxxx...xxxxx...xx...xx...x
+x....x....xx.........xx....x....x
+xx...xx....xxx.....xxx....xx...xx
+ x...........xxx.xxx.....xx....x
+ xx....xxx.....x.......x.x....x
+  xx..xx.xxxx..x....xxxx.....xx
+   xxxx.....xxxxxxxxx.......xx
+      xx.................xxxx
+       xxxx...........xxxx
+          xxxxxxxxxxxxx
+ENDMAP

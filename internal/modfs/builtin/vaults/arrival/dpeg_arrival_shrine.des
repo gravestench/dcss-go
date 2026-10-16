@@ -1,0 +1,20 @@
+NAME:    dpeg_arrival_shrine
+# Source: crawl-ref/source/dat/des/arrival/small.des:783
+TAGS:    arrival no_monster_gen no_pool_fixup no_rotate
+SHUFFLE: lw
+ORIENT:  float
+MAP
+xxxxxxxx@xxxxxxxx
+xlllllll.lllllllx
+xlllll.....lllllx
+xll....WWW....llx
+xl...WWW.WWW...lx
+@...WWW.{..WW..lx
+xl...WWW.WWW...lx
+xll....WWW....llx
+xlllll.....lllllx
+xlllllllllllllllx
+xxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

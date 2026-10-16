@@ -1,0 +1,30 @@
+NAME:    minmay_arrival_four_circles
+# Source: crawl-ref/source/dat/des/arrival/small.des:438
+TAGS:    arrival
+ORIENT:  float
+SHUFFLE: AB
+SUBST:   A = ., B = x
+SUBST:   x : xxxcbv
+MAP
+...................
+..AAA...BBB...AAA..
+.AAAAA.BBBBB.AAAAA.
+.AAAAA.BBBBB.AAAAA.
+.AAAAA.BBBBB.AAAAA.
+..AAA...BBB...AAA..
+...................
+..BBB.........BBB..
+.BBBBB.......BBBBB.
+.BBBBB...{...BBBBB.
+.BBBBB.......BBBBB.
+..BBB.........BBB..
+...................
+..AAA...BBB...AAA..
+.AAAAA.BBBBB.AAAAA.
+.AAAAA.BBBBB.AAAAA.
+.AAAAA.BBBBB.AAAAA.
+..AAA...BBB...AAA..
+...................
+ENDMAP
+
+##############################################################

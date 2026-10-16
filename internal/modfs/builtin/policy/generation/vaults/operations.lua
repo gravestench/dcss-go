@@ -1,0 +1,452 @@
+local directives = require("constants.vault_directives")
+local effects = require("constants.vault_effects")
+local hooks = require("policy.generation.vaults.hooks")
+local transforms = require("policy.generation.vaults.transforms")
+local catalog = require("policy.generation.vaults.catalog")
+
+-- Walk declarations in source order. Hooks insert operations at their exact
+-- source position, and non-terrain effects become typed level intent.
+local operations = {}
+
+local informational = {
+    [directives.TAGS] = true,
+    [directives.ORIENT] = true,
+    [directives.WEIGHT] = true,
+}
+
+local intent_kinds = {
+    [directives.KFEAT] = effects.FEATURE,
+    [directives.KMONS] = effects.MONSTER,
+    [directives.KITEM] = effects.ITEM,
+    [directives.MARKER] = effects.MARKER,
+    [directives.COLOUR] = effects.COLOUR,
+    [directives.FTILE] = effects.TILE,
+    [directives.RTILE] = effects.TILE,
+    [directives.TILE] = effects.TILE,
+    [directives.KMASK] = effects.MASK,
+    [directives.KPROP] = effects.PROPERTY,
+    [directives.MONS] = effects.MONSTER,
+    [directives.ITEM] = effects.ITEM,
+}
+
+local function assignment(argument)
+    local target, mode, value = argument:match("^%s*(%S+)%s+([=:])%s*(.-)%s*$")
+
+    if not target then
+        target, mode, value = argument:match("^%s*([^=:]+)([=:])%s*(.-)%s*$")
+    end
+
+    if not target then
+        target, mode, value = argument:match("^%s*([=:])([=:])%s*(.-)%s*$")
+    end
+
+    if target then
+        return target:gsub("%s", ""), mode, value
+    end
+end
+
+local function declaration_record(vault, operation, argument)
+    local kind = intent_kinds[operation.kind]
+
+    if not kind then
+        error(string.format("%s:%d: vault %s: unknown placement operation %s",
+            vault.path, operation.line or 0, vault.id, operation.kind))
+    end
+
+    local targets, mode, identity = assignment(argument)
+
+    if not targets then
+        if operation.kind == directives.MONS or operation.kind == directives.ITEM then
+            targets = ""
+            identity = argument
+        else
+            error(string.format("%s:%d: vault %s: invalid %s declaration %s",
+                vault.path, operation.line or 0, vault.id,
+                operation.kind, argument))
+        end
+    end
+
+    return {
+        kind = kind,
+        directive = operation.kind,
+        targets = targets,
+        identity = identity,
+        assignment_mode = mode,
+        line = operation.line,
+        vault_id = vault.id,
+    }
+end
+
+local function declaration_records(vault, operation)
+    if operation.kind == directives.MARKER then
+        return { declaration_record(vault, operation, operation.argument) }
+    end
+
+    local records = {}
+
+    for part in (operation.argument .. ","):gmatch("(.-),") do
+        local targets = assignment(part)
+
+        if targets or #records == 0 then
+            records[#records + 1] = declaration_record(vault, operation, part)
+        else
+            local prior = records[#records]
+
+            prior.identity = prior.identity .. "," .. part
+        end
+    end
+
+    return records
+end
+
+local function array_records(vault, operation, first_slot)
+    local glyphs = operation.kind == directives.MONS and "1234567" or "defghijk"
+    local records = {}
+
+    for part in (operation.argument .. ","):gmatch("(.-),") do
+        local identity = part:match("^%s*(.-)%s*$")
+        local index = first_slot + #records
+
+        if identity == "" or index > #glyphs then
+            error(string.format("%s:%d: vault %s: invalid %s array",
+                vault.path, operation.line or 0, vault.id, operation.kind))
+        end
+
+        records[#records + 1] = {
+            kind = intent_kinds[operation.kind],
+            directive = operation.kind,
+            targets = glyphs:sub(index, index),
+            identity = identity,
+            line = operation.line,
+            vault_id = vault.id,
+        }
+    end
+
+    return records, first_slot + #records
+end
+
+local function helper_choice(argument, random)
+    local source, choices = argument:match("^%s*(%S+)%s*:%s*(.-)%s*$")
+
+    if not source or #source ~= 1 then
+        error("SUBVAULT needs one source glyph and a tag choice")
+    end
+
+    local options = {}
+    local total = 0
+
+    for part in (choices .. "/"):gmatch("(.-)/") do
+        local tag, weight = part:match("^%s*(%S+)%s+w:(%d+)%s*$")
+
+        if not tag then
+            tag = part:match("^%s*(%S+)%s*$")
+            weight = 10
+        end
+
+        if not tag then
+            error("SUBVAULT has an invalid tag choice " .. part)
+        end
+
+        total = total + tonumber(weight)
+        options[#options + 1] = {
+            tag = tag,
+            weight = tonumber(weight),
+        }
+    end
+
+    local roll = random:roll(total)
+
+    for _, option in ipairs(options) do
+        if roll < option.weight then
+            return source, option.tag
+        end
+
+        roll = roll - option.weight
+    end
+
+    error("SUBVAULT tag choice exceeded its total weight")
+end
+
+local function helper_for_tag(tag)
+    local categories = require("constants.catalog")
+
+    for _, id in ipairs(register.ordered_ids(categories.VAULTS)) do
+        local candidate = register.get(categories.VAULTS, id)
+
+        if candidate.tags[tag] then
+            return catalog.get(id)
+        end
+    end
+
+    error("SUBVAULT has no helper tagged " .. tag)
+end
+
+local function helper_matrix(vault)
+    local width = 0
+    local cells = {}
+
+    for _, row in ipairs(vault.rows) do
+        width = math.max(width, #row)
+    end
+
+    for y, row in ipairs(vault.rows) do
+        cells[y] = {}
+
+        for x = 1, width do
+            local glyph = row:sub(x, x)
+
+            cells[y][x] = glyph == "" and " " or glyph
+        end
+    end
+
+    return cells, width
+end
+
+local function localize_helper_records(records, cells, low_x, low_y)
+    local located = {}
+
+    for _, record in ipairs(records) do
+        local targets = record.targets or
+            (record.arguments and record.arguments.glyph)
+        local count = 0
+
+        if targets and targets ~= "" then
+            for y, row in ipairs(cells) do
+                for x, glyph in ipairs(row) do
+                    if glyph ~= " " and targets:find(glyph, 1, true) then
+                        local copy = {}
+
+                        for key, value in pairs(record) do
+                            copy[key] = value
+                        end
+
+                        copy.local_x = low_x + x - 1
+                        copy.local_y = low_y + y - 1
+                        copy.source = glyph
+                        located[#located + 1] = copy
+                        count = count + 1
+                    end
+                end
+            end
+        end
+
+        if count == 0 then
+            record.local_x = low_x
+            record.local_y = low_y
+            record.pending = true
+            located[#located + 1] = record
+        end
+    end
+
+    return located
+end
+
+local function embed_helper(cells, source, helper, random, depth, player)
+    if depth > 4 then
+        error("SUBVAULT recursion exceeds four levels")
+    end
+
+    local low_x, low_y, high_x, high_y
+
+    for y, row in ipairs(cells) do
+        for x, glyph in ipairs(row) do
+            if glyph == source then
+                low_x = math.min(low_x or x, x)
+                low_y = math.min(low_y or y, y)
+                high_x = math.max(high_x or x, x)
+                high_y = math.max(high_y or y, y)
+            end
+        end
+    end
+
+    if not low_x then
+        error("SUBVAULT source glyph " .. source .. " is absent")
+    end
+
+    local helper_cells, helper_width = helper_matrix(helper)
+
+    if helper_width > high_x - low_x + 1 or #helper_cells > high_y - low_y + 1 then
+        error("SUBVAULT helper " .. helper.id .. " cannot fit its source region")
+    end
+
+    local nested_records = operations.apply(helper, helper_cells, random, depth + 1, player)
+
+    for y, row in ipairs(helper_cells) do
+        for x, glyph in ipairs(row) do
+            if glyph ~= " " then
+                cells[low_y + y - 1][low_x + x - 1] = glyph
+            end
+        end
+    end
+
+    return localize_helper_records(nested_records, helper_cells, low_x, low_y)
+end
+
+local function apply_subvault(vault, cells, operation, random, depth, player)
+    local source, tag = helper_choice(operation.argument, random)
+    local helper = helper_for_tag(tag)
+    local ok, result = pcall(embed_helper, cells, source, helper, random, depth, player)
+
+    if not ok then
+        error(string.format("%s:%d: vault %s: SUBVAULT %s: %s",
+            vault.path, operation.line or 0, vault.id, helper.id, result))
+    end
+
+    return result
+end
+
+local function hook_api(random, events, line, player)
+    local api = {}
+
+    player = player or {}
+
+    function api:roll(bound)
+        return random:roll(bound)
+    end
+
+    function api:one_in(bound)
+        return random:one_in(bound)
+    end
+
+    function api:coinflip()
+        return random:one_in(2)
+    end
+
+    function api:random_from(values)
+        return values[random:roll(#values) + 1]
+    end
+
+    function api:random_range(first, last)
+        return first + random:roll(last - first + 1)
+    end
+
+    function api:record(kind, arguments)
+        events[#events + 1] = {
+            type = "record",
+            value = {
+                kind = kind,
+                arguments = arguments,
+                line = line,
+            },
+        }
+    end
+
+    function api:emit(kind, argument)
+        events[#events + 1] = {
+            type = "directive",
+            value = {
+                kind = kind,
+                argument = argument,
+                line = line,
+            },
+        }
+    end
+
+    function api:player_species()
+        return player.species_id
+    end
+
+    function api:player_monster()
+        return player.monster
+    end
+
+    function api:player_name()
+        return player.name or "Player"
+    end
+
+    function api:game_started()
+        return player.started or false
+    end
+
+    function api:validating()
+        return false
+    end
+
+    function api:marker_positions()
+        return nil
+    end
+
+    function api:has_exit()
+        return true
+    end
+
+    return api
+end
+
+function operations.apply(vault, cells, random, depth, player)
+    depth = depth or 0
+    local records = {}
+    local array_slots = {
+        [directives.MONS] = 1,
+        [directives.ITEM] = 1,
+    }
+
+    local function apply_operation(operation)
+        if operation.kind == directives.HOOK_VETO then
+            records[#records + 1] = {
+                kind = effects.VETO,
+                method = operation.argument,
+                line = operation.line,
+                vault_id = vault.id,
+            }
+        elseif operation.kind == directives.SUBVAULT then
+            local nested = apply_subvault(vault, cells, operation, random, depth, player)
+
+            for _, record in ipairs(nested) do
+                records[#records + 1] = record
+            end
+        elseif operation.kind == directives.MONS or
+            operation.kind == directives.ITEM then
+            local entries, next_slot = array_records(
+                vault,
+                operation,
+                array_slots[operation.kind]
+            )
+
+            array_slots[operation.kind] = next_slot
+
+            for _, record in ipairs(entries) do
+                records[#records + 1] = record
+            end
+        elseif not informational[operation.kind] then
+            if not transforms.apply(cells, operation, random) then
+                for _, record in ipairs(declaration_records(vault, operation)) do
+                    records[#records + 1] = record
+                end
+            end
+        end
+    end
+
+    for _, operation in ipairs(vault.operations) do
+        if operation.kind == directives.HOOK_RUN then
+            local events = {}
+            local api = hook_api(random, events, operation.line, player)
+
+            hooks.run(vault, operation.argument, api)
+
+            for _, event in ipairs(events) do
+                if event.type == "directive" then
+                    apply_operation(event.value)
+                else
+                    local record = event.value
+
+                    if transforms.apply_effect(cells, record, random) then
+                        record.pending = false
+                    end
+
+                    records[#records + 1] = record
+                end
+            end
+        else
+            apply_operation(operation)
+        end
+    end
+
+    for _, record in ipairs(records) do
+        record.vault_id = record.vault_id or vault.id
+    end
+
+    return records
+end
+
+return operations

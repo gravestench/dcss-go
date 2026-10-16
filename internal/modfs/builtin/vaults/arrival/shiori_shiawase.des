@@ -1,0 +1,26 @@
+NAME:    shiori_shiawase
+# Source: crawl-ref/source/dat/des/arrival/small.des:1044
+TAGS:    arrival no_monster_gen no_rotate no_vmirror
+ORIENT:  float
+SHUFFLE: +=
+SUBST:   =:x , x:xvcb
+MAP
+      x+x
+      x.x
+    xxx.xxx
+    =..{..=
+xxxxxxx.xxxxxxx
++.............+
+xxxx.xxxxx.xxxx
+  xx.xxxxx.xx
+  +.........+
+ xxxxxx.xxxxxx
+ =...........=
+ xxxxxx.xxxxxx
+      x.x
+      x.x
+      x+x
+ENDMAP
+
+############################################################################
+# A spiral made of rock, with lots of "windows".

@@ -27,8 +27,8 @@ function entries.downstairs(ctx, _, _, position)
     return navigation.stairs(ctx, position, true)
 end
 
-function entries.pickup(ctx, player)
-    return items.prepare_pickup(ctx, player)
+function entries.pickup(ctx, player, input)
+    return items.prepare_pickup(ctx, player, input.pending_vault_item)
 end
 
 function entries.wait(ctx, player, _, _, delay)

@@ -1,0 +1,31 @@
+NAME:   roderic_octagonal_star
+# Source: crawl-ref/source/dat/des/arrival/large.des:851
+TAGS:   arrival transparent
+ORIENT: float
+MAP
+   xxxx+xxxxxxx+xxxx
+   xxxx.........xxxx
+   xxx...xxxxx...xxx
+xxxxx.x.x.xxx.x.x.xxxxx
+xxxx.xx.xx.x.xx.xx.xxxx
+xxx.xxx.xxx.xxx.xxx.xxx
+xx.xxxx.xx.x.xx.xxxx.xx
++......{..xxx.........+
+x..xxxx.xxxxxxx.xxxx..x
+x.x.xxx.xxxxxxx.xxx.x.x
+x.xx.x.xxxxxxxxx.x.xx.x
+x.xxx.xxxxxxxxxxx.xxx.x
+x.xx.x.xxxxxxxxx.x.xx.x
+x.x.xxx.xxxxxxx.xxx.x.x
+x..xxxx.xxxxxxx.xxxx..x
++.........xxx.........+
+xx.xxxx.xx.x.xx.xxxx.xx
+xxx.xxx.xxx.xxx.xxx.xxx
+xxxx.xx.xx.x.xx.xx.xxxx
+xxxxx.x.x.xxx.x.x.xxxxx
+   xxx...xxxxx...xxx
+   xxxx.........xxxx
+   xxxx+xxxxxxx+xxx
+ENDMAP
+
+##############################################################################

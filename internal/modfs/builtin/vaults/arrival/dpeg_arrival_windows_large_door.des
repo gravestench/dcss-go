@@ -1,0 +1,16 @@
+NAME:    dpeg_arrival_windows_large_door
+# Source: crawl-ref/source/dat/des/arrival/simple.des:512
+TAGS:    arrival no_monster_gen no_rotate transparent
+ORIENT:  float
+MAP
+.......
+.xx+++xx.
+.x.....x.
+.m..{..m.
+.m.....m.
+.x.....x.
+.xx+++xx.
+.........
+ENDMAP
+
+##############################################################################

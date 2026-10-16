@@ -1,0 +1,32 @@
+NAME:    dpeg_arrival_three_bigger_balls
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1024
+TAGS:    arrival no_rotate no_monster_gen transparent
+ORIENT:  float
+WEIGHT:  5
+SHUFFLE: }>
+MAP
+         xxxxx
+        xx...xx
+        x..{..x
+   xxxxxx.....xxxxxx
+ xxx...xxx...xxx...xxx
+xx.......xx+xx.......xx
+x.........x.x.........x
+x.........+.+.........x
+x.........x.x.........x
+xx.......xx+xx.......xx
+ xxx...xxxx.xxxx...xxx
+  xxxxxx.......xxxxxx
+  xxx.............xxx
+  xx...............xx
+  x.................x
+  x........T........x
+  x.......T}T.......x
+  x........T........x
+  xx...............xx
+   xx.............xx
+    xxxx.......xxxx
+       xxxx@xxxx
+ENDMAP
+
+##############################################################################

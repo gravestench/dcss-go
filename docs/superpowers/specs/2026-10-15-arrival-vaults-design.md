@@ -38,7 +38,8 @@ The pinned files use `NAME`, `TAGS`, `ORIENT`, `WEIGHT`, `MAP`, `CLEAR`,
 `SUBST`, `NSUBST`, `SHUFFLE`, `KFEAT`, `KMONS`, `KITEM`, `KMASK`, `KPROP`,
 `MONS`, `ITEM`, `COLOUR`, `FTILE`, `RTILE`, `TILE`, `MARKER`, and `SUBVAULT`.
 The importer must account for each directive. It also traces the 35
-vaults with `:` Lua lines and the one `veto` block to their ported Lua
+vaults with `:` Lua lines, one additional vault with a `{{...}}` Lua
+map-shaping block, and the one `veto` block to their ported Lua
 handlers. Source script text remains visible as nonexecuting provenance
 comments in the corresponding `.des` file. A short DES `:` hook at the
 source position calls the corresponding named Lua handler method. That
@@ -69,14 +70,15 @@ emits exactly the chosen `SUBST` operation at that position. Parsing both
 `SUBST` lines before calling the handler would change the vault.
 
 An added mod DES file uses the same hook syntax and a matching Lua
-handler. Arbitrary inline Lua and raw `veto {{...}}` bodies are rejected
+handler. Arbitrary inline Lua, raw `{{...}}` blocks, and raw
+`veto {{...}}` bodies are rejected
 with an actionable error. The source veto becomes a named handler hook
 at the veto stage, with its original body retained as comments. The
 bundled importer replaces source script blocks only after their handlers
 have been ported and checked. No script is silently discarded by the DES
 parser.
 
-The 35 arrival definitions containing source Lua receive focused
+The 36 arrival definitions containing source Lua receive focused
 `policy/generation/vaults/arrival/<vault-id>.lua` handlers. These are
 readable production Lua modules: named local functions, one local handler
 object, assigned methods, and a returned object. They use the port's
@@ -141,7 +143,7 @@ script-controlled directives, they compare each possible emitted branch
 and its position in the operation stream. Virtual filesystem tests
 confirm `.des` overlay, hash, and save identity behavior.
 Lua `_test.lua` files exercise production schemas and selection/transform
-code, including every directive family, all 35 handlers, the two helper
+code, including every directive family, all 36 handlers, the two helper
 vaults, and mod additions and replacements. Integrated tests force each
 of the 337 top-level vaults through placement with deterministic seeds.
 They validate terrain bounds and stair connectivity and compare placement

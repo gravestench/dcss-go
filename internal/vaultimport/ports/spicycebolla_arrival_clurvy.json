@@ -1,0 +1,34 @@
+{
+  "id": "spicycebolla_arrival_clurvy",
+  "source_file": "small.des",
+  "edits": [
+    {
+      "start_line": 3752,
+      "end_line": 3758,
+      "sha256": "b7bc4aea3139aca0f9ee6c39e4abd764abd1b553435456685f62d6569c7a374b",
+      "method": "choose_broken_pillar",
+      "stage": "run"
+    },
+    {
+      "start_line": 3759,
+      "end_line": 3761,
+      "sha256": "a37d57af45f4b5db41df3275732797b9d2cfc68971caf4ef1788e90ed9928076",
+      "method": "choose_altar_spot",
+      "stage": "run"
+    },
+    {
+      "start_line": 3762,
+      "end_line": 3764,
+      "sha256": "00bd6d626ce3f1c4a1241f4241e4a64e72144e6f51aaccf2cd062c05667a4eaf",
+      "method": "choose_debris_spot",
+      "stage": "run"
+    },
+    {
+      "start_line": 3765,
+      "end_line": 3771,
+      "sha256": "8da80c1ed2cd4d49e3a3237f71ce4de1186e0d0968288615848559dbbd348616",
+      "method": "choose_colour_ruin",
+      "stage": "run"
+    }
+  ]
+}

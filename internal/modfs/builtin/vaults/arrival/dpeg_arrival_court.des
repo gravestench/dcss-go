@@ -1,0 +1,24 @@
+NAME:    dpeg_arrival_court
+# Source: crawl-ref/source/dat/des/arrival/small.des:1819
+TAGS:    arrival
+ORIENT:  float
+SHUFFLE: TVG
+KMASK:   TA = no_monster_gen
+SUBST:   A=.
+NSUBST:  { = 1:{ / *:.
+MAP
+xxxxx.@.xxxxx
+x...........x
+x.xxx...xxx.x
+x.x.......x.x
+x.x.T.x.T.x.x
+x.....x.....x
+x...AxxxA...x
+xxxxAAxAAxxxx
+x..+AAAAA+..x
+x{.xxx+xxx..x
+x..x{....x.{x
+xxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

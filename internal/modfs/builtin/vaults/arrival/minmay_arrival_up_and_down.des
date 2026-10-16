@@ -1,0 +1,18 @@
+NAME:    minmay_arrival_up_and_down
+# Source: crawl-ref/source/dat/des/arrival/simple.des:221
+TAGS:    arrival transparent
+ORIENT:  float
+SHUFFLE: )]}
+MAP
+ccccccccc
+c.......c
++...{...+
+c.......c
+cnnnnnnnc
+c.......c
++.).].}.+
+c.......c
+ccccccccc
+ENDMAP
+
+##############################################################

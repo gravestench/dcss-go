@@ -1,0 +1,36 @@
+NAME:    sevenhm_arrival_forest_fort_large_3
+# Source: crawl-ref/source/dat/des/arrival/large.des:711
+TAGS:    arrival transparent
+ORIENT:  float
+WEIGHT:  3
+SUBST:   T : TTTV, p = tt., G = GGG.
+NSUBST:  z = + / c, Z = + / c, X = + / c, > = > / .
+SHUFFLE: {[(
+SUBST:   ([ = .
+MAP
+            xxxxx@@@@xxxxxx
+           xxtttp....pppp.xxx
+          xx................xxxx
+        xxx...pcccc+cccctt...ppxx
+     xxxxp....cc.......cctp....pxx
+    xxpp....ptc..czzzc..cttp....pxx
+    xtp....ttcc..z...z..ccttp...ptx
+    xtp....ttc>..z.(.z..>cttp....tx
+    xpp....ttc>..z...z..>cttp....tx
+   xxp...pccccccccccccccccccctt..txx
+   xt...ttc....X...G...Z....cttp..txx
+   xt...ttc.{..X.G...G.Z..[.cttp..ttxx
+   xxp..ttc....X...T...Z....cttp...ptx
+    xp..ttc....X.G...G.Z....cttp...ptx
+    xt..ttccc..X.......Z..ccctp....ptx
+    xt...tttcccc..G.G..cccctpp...pptxx
+    xxt...ptttcc.......ccttp....pptxx
+     xtp.....ttccc...ccctp.....pptxx
+     xxxxt....pptc+++ctpp....pppxxx
+        xxxp..............pxxxxxx
+          xxxtt.......pttxxx
+            xxtttt...pptxx
+             xxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

@@ -1,0 +1,23 @@
+NAME:    minmay_arrival_four_houses
+# Source: crawl-ref/source/dat/des/arrival/simple.des:326
+TAGS:    arrival no_monster_gen transparent
+ORIENT:  float
+SHUFFLE: xcvb, {[(>
+SUBST:   [=., (=.
+MAP
+.............
+.xxxxx.ccccc.
+.x...x.c...c.
+.x.{.x.+.[.c.
+.x...x.c...c.
+.xx+xx.ccccc.
+.............
+.vvvvv.bb+bb.
+.v...v.b...b.
+.v.(.+.b.>.b.
+.v...v.b...b.
+.vvvvv.bbbbb.
+.............
+ENDMAP
+
+##############################################################################

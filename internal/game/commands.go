@@ -87,7 +87,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		return StepResult{}, fmt.Errorf("player %d has no position", g.player)
 	}
 
-	prepared, err := g.prepareScriptCommand(command)
+	prepared, err := g.prepareScriptCommand(command, position)
 
 	if err != nil {
 		return StepResult{}, err

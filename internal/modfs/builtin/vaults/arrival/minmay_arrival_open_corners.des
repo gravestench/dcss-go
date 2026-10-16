@@ -1,0 +1,24 @@
+NAME:   minmay_arrival_open_corners
+# Source: crawl-ref/source/dat/des/arrival/simple.des:830
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+SUBST:  x : x:10 c:2 v:1 m:1
+MAP
+xxx...xxx...xxx
+x.............x
+x.............x
+...xxx...xxx...
+...x{......x...
+...x.......x...
+x.............x
+x......b......x
+x.............x
+...x.......x...
+...x......>x...
+...xxx...xxx...
+x.............x
+x.............x
+xxx...xxx...xxx
+ENDMAP
+
+##############################################################

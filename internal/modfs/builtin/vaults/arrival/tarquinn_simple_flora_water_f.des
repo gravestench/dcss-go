@@ -1,0 +1,17 @@
+NAME:   tarquinn_simple_flora_water_f
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1529
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+SHUFFLE: 123WWttt
+MONS:   plant, bush, fungus
+MAP
+xxxxxx+xxx
+x12213.1tx
+xw13.....+
+x.....w12x
+x{.w3132wx
+xxxxxxxxxx
+ENDMAP
+
+##############################################################################
+# Saegor's simple entries

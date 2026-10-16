@@ -1,0 +1,19 @@
+NAME:    zelgadis_glass_arrival_small
+# Source: crawl-ref/source/dat/des/arrival/simple.des:953
+TAGS:    arrival no_monster_gen transparent
+ORIENT:  float
+SHUFFLE: mvvcccxxxx
+MAP
+...mmmmmmmm...
+..............
+.mm.mmmmmm.mm.
+.mm.m....m.mm.
+.mm.m.mm.m.mm.
+.mm.m..m.m.mm.
+.mm.m.{m.m.mm.
+.mm.mmmm.m.mm.
+.........m.mm.
+...mmmmmmm....
+ENDMAP
+
+##############################################################################

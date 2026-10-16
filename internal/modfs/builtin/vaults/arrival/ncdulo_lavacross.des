@@ -1,0 +1,15 @@
+NAME:   ncdulo_lavacross
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1300
+TAGS:   arrival no_monster_gen no_trap_gen transparent
+ORIENT: float
+MAP
+xx+xxx+xx
+xl.lll.lx
+xll.l.llx
+xll...llx
+@.l.{.l.@
+xll...llx
+xll.l.llx
+xl.lll.lx
+xx+xxx+xx
+ENDMAP

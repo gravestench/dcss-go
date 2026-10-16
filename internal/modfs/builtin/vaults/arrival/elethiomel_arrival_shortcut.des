@@ -1,0 +1,21 @@
+NAME:    elethiomel_arrival_shortcut
+# Source: crawl-ref/source/dat/des/arrival/small.des:694
+TAGS:    arrival
+ORIENT:  float
+SHUFFLE: XY/AB
+KFEAT:   X = permanent teleport trap
+SUBST:   Y=x, A=., B=+
+MAP
+   xxxx@xxxxxxx.@.x
+   xxxx.xxxxxx...xx
+   xxxx.xxxxx...xxx
+   xx....xxx...xxxx
+   xx.....x...xxxxx
+xxxxx........xxxxxx
+x].XY........xxxxxxxxx
+xxxxx.{..............@
+xxxxx.........xxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################

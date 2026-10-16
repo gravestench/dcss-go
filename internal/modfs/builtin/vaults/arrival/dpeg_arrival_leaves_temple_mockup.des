@@ -1,0 +1,30 @@
+NAME:    dpeg_arrival_leaves_temple_mockup
+# Source: crawl-ref/source/dat/des/arrival/small.des:908
+TAGS:    arrival no_monster_gen no_rotate
+ORIENT:  float
+SHUFFLE: cxxx
+NSUBST:  . = 1:d / *:.
+ITEM:    stone
+SUBST:   T = TVVVV
+SUBST:   D = c@
+KMASK:   Z = no_trap_gen
+MAP
+   ccccccccccccccccc
+  cc>ccccccccccccc>cc
+ cc....ccccccccc....cc
+cc..T....ccccc....T..cc
+c.....T....c....T.....c
+c..T....T.....T....T..c
+c.....................c
+ccccccc....{....ccccccc
+ ccccccccc...ccccccccc
+  cccccccc...cccccccc
+   cccccc..T..cccccc
+    cccc.......cccc
+     cc..T...T..cc
+     @Z....T....Z@
+     ccc.......ccc
+       ccccDcccc
+ENDMAP
+
+##############################################################################

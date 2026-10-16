@@ -1,0 +1,38 @@
+NAME:    spicycebolla_arrival_xxxplode
+# Source: crawl-ref/source/dat/des/arrival/small.des:3685
+TAGS:    arrival transparent
+ORIENT:  float
+SUBST:   X : tXXXX
+SHUFFLE: xX
+SUBST:   X:xX, X:.mw, x:xxvc, t:tttgw
+TILE:    t = dngn_tree_dead
+COLOUR:  t = darkgrey / brown
+: vault.run("name_dead_trees")
+# source: : set_feature_name("tree", "dead tree")
+MAP
+    X           X
+   xxXxx  X  xxXxx
+  @xxxXxx . xxXxxx@
+ xx.xxxXx . xXxxx.xx
+Xxxx.xxXxx.xxXxx.xxxX
+ Xxxx.xxXx.xXxx.xxxX
+ xXxxx.xXx.xXx.xxxXx
+ xxXXxx.xx.xx.xxXXxx
+  xxxXXx.X.X.xXXxxx
+    xxxxX.X.Xxxxx
+ X.......X{X.......X
+    xxxxX.X.Xxxxx
+  xxxXXx.X.X.xXXxxx
+ xxXXxx.xx.xx.xxXXxx
+ xXxxx.xXx.xXx.xxxXx
+ Xxxx.xxXx.xXxx.xxxX
+Xxxx.xxXxx.xxXxx.xxxX
+ xx.xxxXx . xXxxx.xx
+  @xxxXxx . xxXxxx@
+   xxXxx  X  xxXxx
+    X           X
+ENDMAP
+
+##############################################################
+# Another transporter tutorial. This teaches that using a transporter can be
+# risky: the 'porter takes you from pretty safe terrain to a wide open space.

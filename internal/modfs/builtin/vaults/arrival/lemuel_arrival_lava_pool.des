@@ -1,0 +1,25 @@
+NAME:   lemuel_arrival_lava_pool
+# Source: crawl-ref/source/dat/des/arrival/simple.des:302
+TAGS:   arrival no_monster_gen
+ORIENT: float
+ITEM:   stone
+MAP
+    xxxxxxx
+   xx..{..xx
+   x.......x
+   x.......x
+   x.......x
+   x..lll..x
+   x.lllll.x
+   x.lldll.x
+   x.ll>ll.x
+   x.lldll.x
+   x.lllll.x
+   x..lll..x
+  xx.......xx
+xxx.........xxx
+x.............x
+x@.....@.....@x
+ENDMAP
+
+##############################################################

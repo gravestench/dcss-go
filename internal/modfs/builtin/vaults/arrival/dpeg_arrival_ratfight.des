@@ -1,0 +1,19 @@
+NAME:    dpeg_arrival_ratfight
+# Source: crawl-ref/source/dat/des/arrival/small.des:1261
+TAGS:    arrival
+MONS:    rat
+ORIENT:  float
+MAP
+xxxxxxxxxxxx..@
+xx.1.%1xxxxx...
+x%.1.....xxx...
+x1........xx...
+xxx...xx..xx...
+xxxxxxxxx.1x...
+xxxxxxxxxx+x+xx
+....xxxxxx....x
+....xxxxxx.{..x
+@...xxxxxxxx@xx
+ENDMAP
+
+##############################################################################

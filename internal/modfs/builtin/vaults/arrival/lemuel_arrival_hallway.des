@@ -1,0 +1,26 @@
+NAME:   lemuel_arrival_hallway
+# Source: crawl-ref/source/dat/des/arrival/small.des:965
+TAGS:   arrival no_rotate no_monster_gen
+ORIENT: float
+NSUBST: ! = 1:> / *:!
+SUBST:  !:cvxGT
+MAP
+     x.@.x
+     x.!.x
+     x...x
+     x.!.x
+     x...x
+     x.!.x
+     x...x
+     x.!.x
+     x...x
+xxxxxx.!.xxxxxx
+x.............x
+x.............x
+x......{......x
+x.............x
+x.............x
+xxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

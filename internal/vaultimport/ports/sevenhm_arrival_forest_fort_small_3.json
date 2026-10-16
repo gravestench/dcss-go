@@ -1,0 +1,13 @@
+{
+  "id": "sevenhm_arrival_forest_fort_small_3",
+  "source_file": "small.des",
+  "edits": [
+    {
+      "start_line": 2713,
+      "end_line": 2717,
+      "sha256": "0344fd12d8d144f655b4d6e549e3ee354694ee6bd7c9988e96dd747d4063fc5b",
+      "method": "choose_fort_gate",
+      "stage": "run"
+    }
+  ]
+}

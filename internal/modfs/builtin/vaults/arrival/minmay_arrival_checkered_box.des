@@ -1,0 +1,30 @@
+NAME:    minmay_arrival_checkered_box
+# Source: crawl-ref/source/dat/des/arrival/small.des:232
+TAGS:    arrival
+ORIENT:  float
+: vault.run("choose_floor_palette")
+# source: : if crawl.one_chance_in(4) then
+# source: COLOUR:  ' = blue
+# source: COLOUR:  " = green
+# source: FTILE:   '{ = floor_pebble_blue
+# source: FTILE:   " = floor_pebble_green
+# source: SUBST:   c = b, x = v
+# source: : else
+# source: COLOUR:  ' = brown
+# source: COLOUR:  " = lightgrey
+# source: FTILE:   '{ = floor_pebble_brown
+# source: # yes, this variation uses American spelling for some reason
+# source: FTILE:   " = floor_pebble_lightgray
+# source: : end
+SUBST:   ' = ., " = .
+MAP
+xcx+xcx
+c'"'"'c
+x"'"'"x
+c'"{"'c
+x"'"'"x
+c'"'"'c
+xcx+xcx
+ENDMAP
+
+##############################################################

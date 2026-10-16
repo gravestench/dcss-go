@@ -1,0 +1,24 @@
+NAME: nzn_arrival_water_spiral
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2035
+ORIENT: float
+TAGS: arrival no_monster_gen no_pool_fixup
+MAP
+           @
+    wwwwwwWwww
+   wwwwwwWwwwww
+  wwwwwwwWwwwwww
+ wwwGwwwwwWwwGwww
+ wwwwwwwwwwWwwwww
+@wwww...wwwWwwwww
+ .ww.www.wwWwwwww
+ w..wwww.}Wwwwwww
+ wwwwwwW{.wwww..w
+ wwwwwWww.www.ww.
+ wwwwwWwww...wwww@
+ wwwwwWwwwwwwwwww
+ wwwGwwWwwwwwGwww
+  wwwwwwWwwwwwww
+   wwwwwWwwwwww
+    wwwWwwwwww
+      @
+ENDMAP

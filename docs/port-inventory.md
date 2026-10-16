@@ -111,9 +111,13 @@ Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition
 and the complete source spell-usability filter remain to be ported.
+The D:1 arrival catalog contains all 339 source definitions: 337 selectable
+arrivals and two helpers. Their map directives and 36 Lua script blocks are
+ported, while terrain and entity effects outside the current game remain
+typed pending records for later slices.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
-vaults and Lua vault scripts,
+vault families beyond D:1 arrivals and their Lua scripts,
 more layouts and branches, the Abyss monster roster and shifting terrain,
 full source parity for chaos clone allegiance and shapeshifter form selection,
 artefact-specific identification and names, traps, clouds, shops, runes,

@@ -1,0 +1,28 @@
+NAME:       psy_arrival_terrarium
+# Source: crawl-ref/source/dat/des/arrival/small.des:3206
+TAGS:       arrival no_monster_gen
+ORIENT:     float
+FTILE:      Pqr' = floor_grass
+KMONS:      p = plant
+KMONS:      P = plant / bush
+KFEAT:      p = W
+KMASK:      WpPqr' = no_item_gen
+KPROP:      WpPqr' = no_tele_into
+SUBST:      q = P', r = P''
+MAP
+   xxxx+xxxx
+  xxppm.mPPxx
+ xxpWWm.mqqPxx
+xxpWWWm.mrrqPxx
+xpWWWWm.m''rqPx
+xpWWWWm.m''rqPx
+xmmmmmm.mmmmmmx
++......{......+
+xmmmmmm.mmmmmmx
+xPqr''m.mWWWWpx
+xPqr''m.mWWWWpx
+xxPqrrm.mWWWpxx
+ xxPqqm.mWWpxx
+  xxPPm.mppxx
+   xxxx+xxxx
+ENDMAP

@@ -1,0 +1,35 @@
+NAME:    moated_graveyard_arrival
+# Source: crawl-ref/source/dat/des/arrival/small.des:2588
+TAGS:    arrival no_monster_gen no_pool_fixup no_rotate
+ORIENT:  float
+FTILE:   t{G = FLOOR_PEBBLE_BROWN
+TILE:    ' = FLOOR_PEBBLE_BROWN / FLOOR_PEBBLE_DARKGRAY
+TILE:    t = DNGN_TREE_DEAD
+TILE:    G = DNGN_GRAVESTONE
+COLOUR:  ' = brown / darkgrey
+COLOUR:  t = brown
+SUBST:   t = t.
+: vault.run("name_gravestone")
+# source: : set_feature_name("granite_statue", "adventurer's gravestone")
+MAP
+    ....'....
+  ...'....'..
+ ..'....'...
+  ..'..'.'..
+  ....'''....
+  ..www'www...
+ ..wwt''''ww...
+..ww''G''t'ww..
+.ww't'''''''ww.
+.w'''''t'''''w.
+.w''t'''''G''w.
+.ww''G'{''t'ww.
+..ww''t''''ww..
+ ..ww'''t'ww..
+  ..wwwwwww..
+   .........
+ENDMAP
+
+##############################################################################
+#The maze will allways contain an exit to the rest of D:1, the player won't be
+#forced to D:2.

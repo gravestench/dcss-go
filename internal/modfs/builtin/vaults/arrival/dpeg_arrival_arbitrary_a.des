@@ -1,0 +1,31 @@
+NAME:    dpeg_arrival_arbitrary_a
+# Source: crawl-ref/source/dat/des/arrival/small.des:1545
+TAGS:    arrival transparent
+ORIENT:  float
+SUBST:   ' : . x ':40, '=.x
+NSUBST:  . = 1:d / *:.
+NSUBST:  { = 1:{ / *:.
+ITEM:    stone
+MAP
+    xxxxxxxxxxxxxxxxx
+   xx''xx'''x''xx''xx
+   x''..'..xxx.'x..'x
+  xx'.{...xx'......'x
+  x'.....x''..{...'xx
+  x'....'.......''xxx
+ xx'.........''xxxxxx
+ x'........'xxxxxxxxx
+xx'......''xxxxxxxxx.
+x'.....'xxxxxxxxxxx..
+x...''xxxxxxxxxxxxx.@
+x.'xxxxxxxxxxxxxx....
+x..'xxxxxx'..'x..'xxx
+x'...'''x'.xx..'xxxxx
+x'...........xxxxxxxx
+xx'..{.xxx'....''xxxx
+ xx'....xxxx''...''xx
+  xxxx'''xxxxx''...'x
+     xxxxxxxxxx..@..x
+ENDMAP
+
+##############################################################################

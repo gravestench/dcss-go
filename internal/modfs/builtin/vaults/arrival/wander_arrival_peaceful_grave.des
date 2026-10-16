@@ -1,0 +1,25 @@
+NAME:   wander_arrival_peaceful_grave
+# Source: crawl-ref/source/dat/des/arrival/small.des:3277
+TAGS:   arrival no_monster_gen no_item_gen
+ORIENT: float
+TILE:   G = dngn_gravestone
+: vault.run("name_gravestone")
+# source: : set_feature_name("granite_statue", "a gravestone")
+FTILE:  ? = floor_grass, \
+        ! = floor_grass:20 / none, \
+        { = floor_grass:20 / none, \
+        t = floor_grass, \
+        G = floor_grass
+COLOUR: ? = green / lightgreen, \
+        ! = green:20 / lightgrey
+MAP
+.........
+..!!!!!..
+.!!???!!.
+.!?t???!.
+.!??G??!.
+.!?????!.
+..!???!..
+...!!{...
+.....@...
+ENDMAP

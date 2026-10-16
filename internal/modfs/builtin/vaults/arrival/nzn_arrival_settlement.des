@@ -1,0 +1,36 @@
+NAME:   nzn_arrival_settlement
+# Source: crawl-ref/source/dat/des/arrival/small.des:3093
+TAGS:   arrival no_monster_gen
+ORIENT: float
+SUBST:  a = -'
+SHUFFLE: TG
+: vault.run("choose_settlement_layout")
+# source: : if crawl.coinflip() then
+# source: SUBST:  de = ', f = t, gh = ., ij = -, kpqr = x, s = @, uy = A
+# source: : else
+# source: SUBST: dhjsy = x, gfru = -, ep = A, iq = ., k = @
+# source: : end
+FTILE:  -G = floor_dirt, 'Tt = floor_grass
+COLOUR: ' = green, - = brown
+MAP
+               xkx
+            xxxxpxxx
+   xsx   xxxxqirrqxxx
+  xxyxxxxx-x.rur.''txx
+ xxhjjii.xAx--i.'aa'tx
+ xhhh..iii---..'ataaax
+ xddd.....-.....aaaatx
+ xdfeggggg-......a.aax
+ xded..'..-.---.....xx
+xx'g..'t'----T------xx
+xt'gg..'--..---.''xAx
+xt'.ggg--......'txxx@
+xx'...--.......'xx
+ xw----....aaaaax
+ xxx.{..a.aat''tx
+   xx..aaaaa'''ax
+    xxaataaaataxx
+     xxxxxxxxxxx
+ENDMAP
+
+################################################################################

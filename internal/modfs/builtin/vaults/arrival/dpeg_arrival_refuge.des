@@ -1,0 +1,24 @@
+NAME:   dpeg_arrival_refuge
+# Source: crawl-ref/source/dat/des/arrival/small.des:1238
+TAGS:   arrival
+ORIENT: float
+SUBST:  c:xxxc, %:%.T, T:TGv.
+KMASK:  T = no_monster_gen
+MAP
+.....................
+.....................
+..xxxxxxxx+xxxxxxxx..
+..xxxx.........xxxx..
+..xx...T.....%...xx..
+..x..T...c+c...%..x..
+..+.....cc{cc.....+..
+..+.....cc>cc.....+..
+..x..%...c+c...T..x..
+..xx...%.....T...xx..
+..xxxx.........xxxx..
+..xxxxxxxx+xxxxxxxx..
+.....................
+....................@
+ENDMAP
+
+##############################################################################

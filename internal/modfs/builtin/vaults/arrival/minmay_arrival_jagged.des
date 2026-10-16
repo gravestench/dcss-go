@@ -1,0 +1,18 @@
+NAME:    minmay_arrival_jagged
+# Source: crawl-ref/source/dat/des/arrival/small.des:286
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SUBST:   A = xx., B = x..
+KPROP:   A = no_tele_into
+MAP
+xxxxxxxxxxxx
+x{AAAAAAAAAA
+xA.BBBBBBBBB
+xAB.........
+xAB.........
+xA.BBBBBBBBB
+x>AAAAAAAAAA
+xxxxxxxxxxxx
+ENDMAP
+
+##############################################################

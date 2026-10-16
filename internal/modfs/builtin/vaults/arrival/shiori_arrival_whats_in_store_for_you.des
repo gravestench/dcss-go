@@ -1,0 +1,62 @@
+NAME:    shiori_arrival_whats_in_store_for_you
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:149
+TAGS:    arrival no_monster_gen no_pool_fixup no_trap_gen
+ORIENT:  west
+KPROP:   M = no_tele_into
+NSUBST:  M = 2=E / * = M E:2
+KFEAT:   E = permanent teleport trap
+KFEAT:   MNOQ = shallow_water
+SHUFFLE: M/N/O/P/Q
+SUBST:   P = MNO
+KMASK:   EMNOQ = no_item_gen
+#
+# Player monsters:
+KMONS: M = human / elf / orc; nothing / naga; nothing / draconian; nothing / \
+           ogre; nothing / minotaur; nothing / troll / kobold; nothing / \
+           mummy / ghoul / spriggan; nothing / dwarf; nothing / felid / \
+           octopode; nothing / vampire spells:. / formicid; nothing / \
+           gargoyle; nothing / vine stalker; nothing / \
+           merfolk; nothing / gnoll; nothing / barachi / \
+           demonspawn / demigod / tengu; nothing
+# Player monsters, zombie versions (undead, vine stalkers, gargoyles and djinni
+# don't leave corpses):
+KMONS: N = human zombie / elf zombie / orc zombie / naga zombie / \
+           draconian zombie / ogre zombie / minotaur zombie / troll zombie / \
+           kobold zombie / spriggan zombie / dwarf zombie / felid zombie / \
+           octopode zombie / formicid zombie / merfolk zombie / \
+           gnoll zombie / barachi zombie / demonspawn zombie / \
+           demigod zombie / tengu zombie
+# Player monsters, skeleton versions (octopodes and formicids drop out because
+# they have no skeletons):
+KMONS: O = human skeleton / elf skeleton / orc skeleton / naga skeleton / \
+           draconian skeleton / ogre skeleton / minotaur skeleton / \
+           troll skeleton / kobold skeleton / spriggan skeleton / \
+           dwarf skeleton / felid skeleton / merfolk skeleton / \
+           gnoll skeleton / barachi skeleton / demonspawn skeleton / \
+           demigod skeleton / tengu skeleton
+# And now for something completely different (if any of these turn out to be
+# able to escape or project spells out of their cells, they should be removed):
+KMONS: Q = orb of fire / ice dragon / shadow dragon / iron dragon / \
+           w:1 golden dragon / large abomination / tentacled monstrosity / \
+           w:1 black draconian; nothing / \
+           w:1 yellow draconian; nothing / w:2 green draconian; nothing / \
+           w:1 purple draconian; nothing / w:2 red draconian; nothing / \
+           w:1 white draconian; nothing / nothing
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxcccccccxxxxxcccccccccxx
+xxxxxxccMcMcMcccccccMcMcMcMcxx
+xxxxxcccncncncMcMcMcncncncncccc@c
+xxxxxcc......cncncnc.......nMcc+cc
+xxxxxc{..............cncnc.cnc...ccc
+xxxxxcc..........cncncMcMn.....>.nMc
+xxxxxcccncncncncncMcMcccccncnc...ccc
+xxxxxxccMcMcMcMcMcccccxxxcMcMcc+cc
+xxxxxxxcccccccccccxxxxxxxcccccc@c
+      xxxxxxxxxxxxx     xxxxxx
+ENDMAP
+
+#####################################
+# I am the great and powerful Oz! Pay no attention to the man behind
+# the curtain! ...if you stick close to the wall, you are always able
+# to avoid the flame clouds.

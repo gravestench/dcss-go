@@ -1,0 +1,21 @@
+NAME:   amcnicky_arrival_flooded_fountain
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2465
+TAGS:   arrival no_monster_gen no_pool_fixup no_trap_gen
+ORIENT: float
+MAP
+xxxxxxxx
+xVww{..x
+xwww...x
+xwww...x
+xww.xx.x
+xw..xx.x
+x......x
+xT.....+
+x......x
+x...xx.x
+x...xx.x
+x......x
+x......x
+xT..>..x
+xxxxxxxx
+ENDMAP

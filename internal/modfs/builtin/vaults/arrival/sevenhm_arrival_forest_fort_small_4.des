@@ -1,0 +1,21 @@
+NAME:   sevenhm_arrival_forest_fort_small_4
+# Source: crawl-ref/source/dat/des/arrival/small.des:2736
+TAGS:   arrival no_monster_gen no_trap_gen
+ORIENT: float
+NSUBST: { = { / . , @ = @ / t
+SUBST:  X : c@@@ , ' : 'tW
+SUBST:  + = ++. , t = tttW1, W : WWW.
+MONS:   plant / bush
+MAP
+ ccccccccc
+ ccc{{{ccc
+ 'tcc.cct'
+ WWtc+ctWW
+@WWWWWWWWW@
+ WWtc+ctWW
+ 'tcc.cct'
+ ccc{{{ccc
+ ccccccccc
+ENDMAP
+
+##############################################################################

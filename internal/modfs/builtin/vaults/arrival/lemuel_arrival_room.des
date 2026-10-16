@@ -1,0 +1,28 @@
+NAME:    lemuel_arrival_room
+# Source: crawl-ref/source/dat/des/arrival/small.des:1017
+TAGS:    arrival
+ORIENT:  float
+SHUFFLE: '?!
+SUBST:   ':.+, ?:x, !:x
+MAP
+xxxxxxxxxxx@xxxxxx
+xxxxxxxxxxx.xxxxxx
+xx..............xx
+xx..............xx
+xx..xx!?'xxxxx..xx
+xx..'........x..xx
+xx..!........x...@
+xx..?........x..xx
+xx..x...{....x..xx
+xx..x........?..xx
+@...x........!..xx
+xx..x........'..xx
+xx..xxxxx'?!xx..xx
+xx..............xx
+xx..............xx
+xxxxxx.xxxxxxxxxxx
+xxxxxx@xxxxxxxxxxx
+ENDMAP
+
+#########################################
+# good luck! (Shiori)

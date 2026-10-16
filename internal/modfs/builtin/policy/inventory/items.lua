@@ -101,7 +101,7 @@ function items.validate(item, kind)
     error("unknown ego " .. item.ego)
 end
 
-function items.prepare_pickup(ctx, actor)
+function items.prepare_pickup(ctx, actor, pending_vault_item)
     local position = ctx:get(actor, "core.position")
 
     if not position then
@@ -120,6 +120,10 @@ function items.prepare_pickup(ctx, actor)
 
     if corpse then
         return { message = "You can't pick that up." }
+    end
+
+    if pending_vault_item and pending_vault_item ~= "" then
+        return { message = "The " .. pending_vault_item .. " is unavailable in this port." }
     end
 
     return { message = "There is nothing to pick up here." }

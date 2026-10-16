@@ -1,0 +1,20 @@
+NAME:   scummos_arrival_gate
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1690
+TAGS:   arrival no_monster_gen
+ORIENT: float
+KFEAT:  y = floor
+FTILE:  y = floor_sandstone
+COLOUR: y = yellow
+MAP
+xxxxxxxxxxxxxxxxxx
+x.....x...WWWW...x
+x..{..x..........x
+x.....x....WW....xG.
+x+xxxxxyyyyyyyyyy+.@
+x.xtt.+yyyyyyyyyy+.@
+x.xt.txyyyyyyyyyy+.@
+x.xt.tx....ll....xG.
+x.+.ttx..........x
+xtxtttx...llll...x
+xxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,12 @@
+NAME:    minmay_arrival_three_doors
+# Source: crawl-ref/source/dat/des/arrival/simple.des:29
+TAGS:    arrival transparent
+ORIENT:  float
+MAP
+x+xxxx+xxxx+x
+x...........x
+xxxxxx{xxxxxx
+     xxx
+ENDMAP
+
+##############################################################

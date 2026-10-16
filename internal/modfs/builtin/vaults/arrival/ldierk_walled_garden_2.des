@@ -1,0 +1,20 @@
+NAME:    ldierk_walled_garden_2
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1403
+TAGS:    arrival no_monster_gen no_pool_fixup transparent
+ORIENT:  float
+SHUFFLE: 123t
+SUBST:   W : wW
+SUBST:   T : W.
+MONS:    plant, toadstool, bush
+MAP
+  xxx xxx
+ xxWx@xWxx
+xxW1WTW2Wxx
+xW1G1T2G2Wx
+xxW1.{.2Wxx
+xxW3...tWxx
+xW3G3.tGtWx
+xxW3...tWxx
+ xxWx@xWxx
+  xxx xxx
+ENDMAP

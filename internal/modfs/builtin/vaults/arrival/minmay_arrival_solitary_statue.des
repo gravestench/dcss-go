@@ -1,0 +1,17 @@
+NAME:    minmay_arrival_solitary_statue
+# Source: crawl-ref/source/dat/des/arrival/small.des:400
+TAGS:    arrival
+WEIGHT:  9
+ORIENT:  float
+SUBST:   d : c+
+SUBST:   e : c+
+SUBST:   c : cccx
+MAP
+.ccccccc.
+.c..{..c.
+.d.....e.
+.c..G..c.
+.d.....e.
+.c.....c.
+.cc+c+cc.
+ENDMAP

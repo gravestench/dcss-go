@@ -1,0 +1,16 @@
+NAME:   eino_arrival_water_cross
+# Source: crawl-ref/source/dat/des/arrival/simple.des:123
+TAGS:   arrival no_monster_gen transparent
+ORIENT: float
+MONS:   plant
+MAP
+...................
+..1xWx1.....1xWx1..
+.1xxWxx1...1xxWxx1.
+..WWWWW..{..WWWWW..
+.1xxWxx1...1xxWxx1.
+..1xWx1.....1xWx1..
+...................
+ENDMAP
+
+###########################################################

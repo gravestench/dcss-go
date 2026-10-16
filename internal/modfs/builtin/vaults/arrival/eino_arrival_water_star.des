@@ -1,0 +1,23 @@
+NAME:   eino_arrival_water_star
+# Source: crawl-ref/source/dat/des/arrival/simple.des:138
+TAGS:   arrival no_monster_gen no_rotate transparent
+ORIENT: float
+MAP
+..xxxxxxx@xxxxxxx..
+....xxxx...xxxx....
+x.....x..W..x.....x
+xG..W....W....W..Gx
+xx...W..WWW..W...xx
+x.....WWWWWWW.....x
+....WWWW...WWWW....
+..WWWWW..{..WWWWW..
+....WWWW...WWWW....
+x.....WWWWWWW.....x
+xx...W..WWW..W...xx
+xG..W....W....W..Gx
+x.....x..W..x.....x
+....xxxx...xxxx....
+..xxxxxxx@xxxxxxx..
+ENDMAP
+
+###########################################################

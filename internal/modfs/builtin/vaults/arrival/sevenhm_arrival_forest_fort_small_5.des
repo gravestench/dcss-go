@@ -1,0 +1,47 @@
+NAME:    sevenhm_arrival_forest_fort_small_5
+# Source: crawl-ref/source/dat/des/arrival/small.des:2756
+TAGS:    arrival no_pool_fixup no_monster_gen
+ORIENT:  float
+NSUBST:   X = x...
+: vault.run("choose_fort_gate")
+# source: : if crawl.one_chance_in(4) then
+# source: SUBST:   o = {
+# source: SUBST:   X : x, Y : @, p : ., Z: x
+# source: : else
+# source: NSUBST:  X = @ / @@xx., Z = @ / @@xx.
+# source: SUBST:   Y = x .:1 , o : . , p : [
+# source: : end
+NSUBST:  { = { / . , r = + / +c
+: vault.run("choose_fort_ruins")
+# source: : if crawl.one_chance_in(3) then
+# source: NSUBST:  R = + / +c
+# source: NSUBST:  N = n / *=nnc
+# source: SUBST:   z : c
+# source: : else
+# source: SUBST:   R : c, z : +
+# source: : end
+NSUBST:  H = G / WWW. , J = G / WWW.  , K = G / WWW.
+SUBST:   G = GGGW , N : c
+SHUFFLE: ({[
+MAP
+   xxxxxxxxxxxxx
+  xxtttWWWWttttxx
+ YxttWWWHHWWWWttxY
+xxYWWWWJJJJWWWWWYxxx
+xtttWWWWKKWWWWWccccx
+xtt....WWWW.cccc.{cx
+xt...cNNc...np+..{cx
+Z...cc{{cc..ccc..{cx
+Z...z...{c..+....{cx
+xt..cc...c..cccccccx
+xt..tccc+c.....ttttx
+xxx..ttc.ctt......tx
+  +...tc.cccccc....X
+  xxx.tc..r...R..ooX
+    xxtc..r...R..o.x
+     xxcccccccctttxx
+      xxxxxxtttttxx
+           xxxxxxx
+ENDMAP
+
+##############################################################################

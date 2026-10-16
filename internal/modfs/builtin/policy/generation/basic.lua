@@ -125,6 +125,7 @@ function basic.generate(ctx, depth)
             return {
                 rows = builder:rows(),
                 stairs = stairs,
+                builder = builder,
             }
         end
 

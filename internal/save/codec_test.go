@@ -3,8 +3,11 @@ package save
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
+
+	"dcrawl-go/internal/vault"
 )
 
 func TestRejectUnsupportedVersion(t *testing.T) {
@@ -17,6 +20,48 @@ func TestRejectUnsupportedVersion(t *testing.T) {
 	if _, err := Read(path); err == nil ||
 		!strings.Contains(err.Error(), "version") {
 		t.Fatalf("Read unsupported version = %v", err)
+	}
+}
+
+func TestVaultRecordCodec(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "vault.json")
+	original := Snapshot{
+		Version: Version,
+		Levels: []LevelRecord{
+			{
+				ID:      1,
+				VaultID: "enne_arrival_octagon_isle",
+				VaultRecords: []vault.Record{
+					{
+						Kind:     vault.KindOctaRoom,
+						SourceID: "enne_arrival_octagon_isle",
+						X:        12,
+						Y:        9,
+						Arguments: []vault.Argument{
+							{
+								Name: "oblique",
+								Kind: vault.ValueInt,
+								Int:  4,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	if err := Write(path, original); err != nil {
+		t.Fatal(err)
+	}
+
+	loaded, err := Read(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(original, loaded) {
+		t.Fatalf("vault save changed: %+v", loaded.Levels[0].VaultRecords)
 	}
 }
 

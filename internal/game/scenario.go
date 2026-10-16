@@ -161,7 +161,12 @@ func newScenarioWithRules(
 		}
 	}()
 
-	setup, err := g.buildScriptScenario(scenarioID, stores.Positions)
+	setup, err := g.buildScriptScenario(
+		scenarioID,
+		stores.Positions,
+		playerDef.SpeciesID,
+		name,
+	)
 
 	if err != nil {
 		return nil, err

@@ -1,0 +1,24 @@
+NAME:   minmay_arrival_loop
+# Source: crawl-ref/source/dat/des/arrival/small.des:579
+TAGS:   arrival no_monster_gen
+ORIENT: float
+NSUBST: B = 1:{ / *:.
+MAP
+      xxxxxxx
+    xxx.....xxx
+   xx.........xx
+  xx....Bx.....xx
+  x.....xxx.....x
+ xx....Bxxx.....xx
+ x.....xxxxx.....x
+ x..x..xxxxx..x..x
+ x..x..xxxxx..x..x
+ x.....xxxxx.....x
+ xx.....xxx.....xx
+  x.....xxx.....x
+  xx...........xx
+   xx...Bx....xx
+    xxxxxx@.xxx
+ENDMAP
+
+##############################################################################

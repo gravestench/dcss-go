@@ -1,0 +1,30 @@
+NAME:    denvon_arrival_hothouse
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1271
+TAGS:    arrival no_monster_gen no_pool_fixup transparent
+ORIENT:  float
+WEIGHT:  1
+SHUFFLE: {[
+SUBST:   [=.
+MAP
+         ........
+        ..xx++xx..
+      ...xxl..lxx...
+     ..xxxxllllxxxx..
+    ..xxccccccccccxx..
+    .xxccllllllllccxx.
+    .xxclll.{[.lllcxx.
+    .xxc..........cxx.
+    .xxc+cc....cc+cxx.
+   ..xcc..cc++cc..ccx..
+  ..xxcV..c....c..Vcxx..
+ ..xxxccccc....cccccxxx..
+ .xxxlll.....x....lllxxx.
+ .xllll...x........llllx.
+....ll...x...x..x...ll....
+.x..........lx.........lx.
+.....x....xxl..xxl.....xl.
+ .xl.....x....xl....x..lx.
+ ....   ...  ....  .......
+ENDMAP
+
+##############################################################################

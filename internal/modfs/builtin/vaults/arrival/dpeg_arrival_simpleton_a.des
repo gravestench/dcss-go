@@ -1,0 +1,21 @@
+NAME:   dpeg_arrival_simpleton_a
+# Source: crawl-ref/source/dat/des/arrival/small.des:1149
+TAGS:   arrival  no_monster_gen
+ORIENT: float
+NSUBST: . = 1:d / *:.
+ITEM:   stone
+MAP
+@xx           xx@
+x.xxxx     xxxx.x
+xx...xxx xxx...xx
+ xxx...xxx...xxx
+   xx.......xx
+    xxx.{.xxx
+   xx.......xx
+ xxx...xxx...xxx
+xx...xxx xxx...xx
+x.xxxx     xxxx.x
+@xx           xx@
+ENDMAP
+
+##############################################################################

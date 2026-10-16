@@ -1,0 +1,18 @@
+NAME:     eino_arrival_cavern_c
+# Source: crawl-ref/source/dat/des/arrival/small.des:2165
+TAGS:     arrival no_monster_gen no_rotate
+ORIENT:   northwest
+WEIGHT:   2
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x{.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxx.....xxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxx........xxxxxxxxxxxxxxxxxxxxxxx
+xxxxx.............xxxxxxxxxxxxxxxxx
+xxxxxxx.................xxxxxxxxxxx
+xxxxxxxxxx......................xxb
+xxxxxxxxxxxxx.....................@
+xxxxxxxxxxxxxxxxx.............xxxxb
+xxxxxxxxxxxxxxxxxxxb.@.bxxxxxxxxxxx
+ENDMAP

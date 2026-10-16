@@ -27,6 +27,18 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 		level.initialActors = record.InitialActors
 		level.BranchID = record.BranchID
 
+		if record.VaultID != "" {
+			if err := level.SetVaultID(record.VaultID); err != nil {
+				return err
+			}
+		}
+
+		for _, savedVault := range record.VaultRecords {
+			if err := level.AddVaultRecord(savedVault); err != nil {
+				return err
+			}
+		}
+
 		if knownErr := level.LoadKnownCells(record.Known); knownErr != nil {
 			return knownErr
 		}

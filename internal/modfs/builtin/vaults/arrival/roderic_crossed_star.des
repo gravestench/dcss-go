@@ -1,0 +1,26 @@
+NAME:    roderic_crossed_star
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1165
+# TODO: transparent
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SHUFFLE: ?', !"
+SUBST:   ?:.x , ':. , !:.x, ":.
+MAP
+   .........
+  ..x.....x..
+  ..xx...xx..
+....xxx.xxx....
+.xxx'xx?xx'xxx.
+..xxx'x?x'xxx..
+...xxx"!"xxx...
+....??!{!??....
+...xxx"!"xxx...
+..xxx'x?x'xxx..
+.xxx'xx?xx'xxx..
+....xxx.xxx....
+  ..xx...xx..
+  ..x.....x..
+   .........
+ENDMAP
+
+##############################################################################

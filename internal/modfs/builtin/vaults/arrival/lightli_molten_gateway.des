@@ -1,0 +1,24 @@
+NAME:   lightli_molten_gateway
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1731
+TAGS:   arrival no_monster_gen
+ORIENT: float
+MAP
+xxxxxxx++xxxxxxx
+xxxxxll..llxxxxx
+xxxllll..llllxxx
+xxlllvl..lvlllxx
+xxlllll..lllllxx
+xllllll..llllllx
+xlllllv..vlllllx
+xllvllv..vllvllx
+xlllllv{>vlllllx
+xlllllvvvvlllllx
+xllllllllllllllx
+xxllvllllllvllxx
+xxllllllllllllxx
+xxxllllllllllxxx
+xxxxxllllllxxxxx
+xxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

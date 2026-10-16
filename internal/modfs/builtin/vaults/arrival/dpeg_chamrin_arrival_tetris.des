@@ -1,0 +1,28 @@
+NAME:    dpeg_chamrin_arrival_tetris
+# Source: crawl-ref/source/dat/des/arrival/simple.des:527
+TAGS:    arrival transparent
+ORIENT:  float
+MAP
+          x.@.x
+         xx...xx
+        xx..x..xx
+       xx..xxx..xx
+      xx..xxxxx..xx
+     xx..xxxxxxx..xx
+    xx..xxxxxxxxx..xx
+xxxxx..xxxxxxxxxxx..xxxxx
+x.......................x
+x.b..bbb.b..b.bb.bbb..b.x
+x.bb.b..bbb.b.bb...b.bb.x
+x..b........b........b..x
+xx...xxxxxx.b.xxxxxx...xx
+ xx...xxxxx...xxxxx...xx
+  xx...xxxxxxxxxxx...xx
+   xx...xxx...xxx...xx
+    xx...x..{..x...xx
+     xx...........xx
+      xxx...x....xx
+        xxxxxxxxxx
+ENDMAP
+
+##############################################################################

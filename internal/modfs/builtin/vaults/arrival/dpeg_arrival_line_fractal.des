@@ -1,0 +1,17 @@
+NAME:    dpeg_arrival_line_fractal
+# Source: crawl-ref/source/dat/des/arrival/simple.des:917
+TAGS:    arrival no_monster_gen no_rotate transparent
+ORIENT:  float
+WEIGHT:  8
+SHUFFLE: cv
+MAP
+x@xxxxxxxxxxxxxxxxxxxx@x
+x......................x
+x.cccccc......cccccc...x
+x......................x
+x.vv..vv......vv..vv...x
+x......................x
+xxxxxxxxxx{}xxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

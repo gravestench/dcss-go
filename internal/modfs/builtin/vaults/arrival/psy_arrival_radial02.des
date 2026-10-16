@@ -1,0 +1,29 @@
+NAME:       psy_arrival_radial02
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2333
+TAGS:       arrival no_monster_gen no_pool_fixup
+ORIENT:     float
+SHUFFLE:    JKLM
+SUBST:      JKL:x, M:@, p:llWWvbx
+MAP
+pJxKxxxLxxxxMpppppppp
+p.x.x...x....p......J
+p.x.x.xxx.pppp.xxxxxx
+p.x.x.x...p.........K
+p.x.x.x.ppp.xxxxxxxxx
+p.x.x...p...........x
+p...x.ppp.ppppp.xxx.x
+ppp.x.p...p...p...x.L
+M.p.x.p.ppp.p.ppp.xxx
+x.p...p.....p...p...x
+x.ppp.ppp.{.ppp.ppp.x
+x...p...p.....p...p.x
+xxx.ppp.p.ppp.p.x.p.M
+L.x...p...p...p.x.ppp
+x.xxx.ppppp.ppp.x...p
+x...........p...x.x.p
+xxxxxxxxx.ppp.x.x.x.p
+K.........p...x.x.x.p
+xxxxxx.pppp.xxx.x.x.p
+J......p....x...x.x.p
+ppppppppMxxxxLxxxKxJp
+ENDMAP

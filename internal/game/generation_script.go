@@ -14,6 +14,7 @@ type scenarioLevels struct {
 	levels            map[int]*Level
 	entry             point
 	populationEntries map[int]point
+	spawnExclusions   map[int][]point
 	curing            point
 	heal              point
 	haste             point
@@ -24,9 +25,12 @@ type scenarioLevels struct {
 func (g *Game) buildScriptScenario(
 	scenarioID string,
 	positions *akara.Store[ecs.Position],
+	speciesID, playerName string,
 ) (scenarioLevels, error) {
 	result, err := g.scripts.Policy("world.generate_scenario", map[string]any{
-		"scenario_id": scenarioID,
+		"scenario_id":       scenarioID,
+		"player_species_id": speciesID,
+		"player_name":       playerName,
 	})
 
 	if err != nil {
@@ -40,6 +44,7 @@ func (g *Game) buildScriptScenario(
 	}
 
 	entries := make(map[int]point, len(records))
+	exclusions := make(map[int][]point, len(records))
 	links := make(map[int][]any, len(records))
 
 	for _, value := range records {
@@ -74,6 +79,44 @@ func (g *Game) buildScriptScenario(
 		}
 
 		level.BranchID = branchID
+
+		if raw, present := record["spawn_exclusions"]; present {
+			points, ok := raw.([]any)
+
+			if empty, isTable := raw.(map[string]any); isTable && len(empty) == 0 {
+				points = []any{}
+				ok = true
+			}
+
+			if !ok {
+				return scenarioLevels{}, fmt.Errorf("Lua level %d spawn exclusions are not a list", id)
+			}
+
+			for _, value := range points {
+				cell, pointErr := luaScenarioPoint(value)
+
+				if pointErr != nil {
+					return scenarioLevels{}, fmt.Errorf(
+						"Lua level %d spawn exclusion: %w",
+						id,
+						pointErr,
+					)
+				}
+
+				if cell.x < 0 ||
+					cell.x >= level.width ||
+					cell.y < 0 ||
+					cell.y >= len(level.terrain) {
+					return scenarioLevels{}, fmt.Errorf("Lua level %d has invalid spawn exclusion", id)
+				}
+
+				exclusions[id] = append(exclusions[id], cell)
+			}
+		}
+
+		if err := loadLuaVault(level, record); err != nil {
+			return scenarioLevels{}, err
+		}
 
 		level.initialMonsters, err = decisionInteger(record, "initial_monsters")
 
@@ -158,6 +201,7 @@ func (g *Game) buildScriptScenario(
 		levels:            g.levels,
 		entry:             entry,
 		populationEntries: entries,
+		spawnExclusions:   exclusions,
 		curing:            curing,
 		heal:              heal,
 		haste:             haste,

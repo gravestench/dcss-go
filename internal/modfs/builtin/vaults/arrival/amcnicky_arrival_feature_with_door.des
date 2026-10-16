@@ -1,0 +1,14 @@
+NAME:   amcnicky_arrival_feature_with_door
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2451
+TAGS:   arrival no_monster_gen no_pool_fixup no_trap_gen
+ORIENT: float
+SUBST:  p:xxxtttvblWAGTVY
+MAP
+xxxxxxxx+xxxxx
+x{...........@
+xxxxxx.......x
+     xx..p..xx
+      xx...xx
+       xx.xx
+        xxx
+ENDMAP

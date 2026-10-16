@@ -1,0 +1,26 @@
+NAME:    dpeg_arrival_boxorama
+# Source: crawl-ref/source/dat/des/arrival/simple.des:554
+TAGS:    arrival transparent
+ORIENT:  float
+SHUFFLE: {[(<
+SUBST:   [=., (=.
+MAP
+xxxxxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxx
+x.................................x
+x.................................x
+x...xxxxxxx...xxxxx...xxxx...xx...x
+x...xxxxxxx...xxxxx...xxxx...xx...x
+x...xxxxxxx...xxxxx...xxxx........x
+x...xxxxxxx...xxxxx........<..[...x
+x...xxxxxxx.......................x
+x.......................xxxxxxx...x
+x...(..{........xxxxx...xxxxxxx...x
+x........xxxx...xxxxx...xxxxxxx...x
+x...xx...xxxx...xxxxx...xxxxxxx...x
+x...xx...xxxx...xxxxx...xxxxxxx...x
+x.................................x
+x.................................x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

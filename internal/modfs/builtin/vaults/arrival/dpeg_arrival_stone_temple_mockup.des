@@ -1,0 +1,28 @@
+NAME:    dpeg_arrival_stone_temple_mockup
+# Source: crawl-ref/source/dat/des/arrival/small.des:827
+TAGS:    arrival no_monster_gen no_rotate no_pool_fixup
+ORIENT:  float
+SHUFFLE: cxxx
+NSUBST:  . = 1:d / *:.
+NSUBST:  e = 2:+ / *:.
+ITEM:    stone
+SUBST:   T = TVVVV
+MAP
+     ccccccccccc
+  cccc.........cccc
+ cc...............cc
+ e......T...T......e
+cc...T.........T...cc
+c.........w.........c
+c...T...........T...c
+c{.....w.....w......e
+c...T...........T...c
+c.........w.........c
+cc...T.........T...cc
+ e......T...T......e
+ cc...............cc
+  cccc.........cccc
+     ccccccccccc
+ENDMAP
+
+##############################################################################

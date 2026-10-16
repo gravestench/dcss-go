@@ -1,0 +1,28 @@
+NAME:    sevenhm_arrival_forest_fort_small_6
+# Source: crawl-ref/source/dat/des/arrival/small.des:2800
+TAGS:    arrival
+ORIENT:  float
+KPROP:   zC = no_tele_into
+SUBST:   z : l:40 G , C : C:40 lG
+KMASK:   l = no_monster_gen
+SUBST:   R : +R
+SUBST:   r : +ccc
+NSUBST:  R = + / ccc+
+SUBST:   = : cc+
+SUBST:   t : tT.
+SUBST:   s : ttc
+SUBST:   u : ttGGT
+SUBST:   T = tt.
+NSUBST:  { = 1:{ / *:.
+MAP
+     xxxxxxxx
+xxxxxxccccccxxxxxx
+xcccccc{{{{ccccccx
+xc>zll=....=llC>cx
+xcccccc.GG.ccccccx
+ .ttttc....ctt..
+  ....crRRrct.
+     .........
+ENDMAP
+
+##############################################################################

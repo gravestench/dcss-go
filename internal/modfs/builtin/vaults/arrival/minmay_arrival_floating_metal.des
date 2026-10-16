@@ -1,0 +1,32 @@
+NAME:    minmay_arrival_floating_metal
+# Source: crawl-ref/source/dat/des/arrival/small.des:2492
+TAGS:    arrival no_monster_gen
+WEIGHT:  3
+ORIENT:  southeast
+NSUBST:  V = 2:+ / 2=v+ / *:v
+NSUBST:  U = 1:+ / 2=v+ / *:v
+SUBST:   ' = .W
+NSUBST:  { = 1:{ / *:.
+MAP
+  '''''''''@'''''x
+ ''wwwwwwwwWwwwwwx
+''wwwwwvvvv+vwwwwx
+'wvvvvwv....vwwwwx
+@W+{>vwv.{>.vwwwwx
+'wvvvvwv....vwwwwx
+'wwwwwwvvvvvvwwwwx
+'wwwwwwwwwwwwwvvwx
+'wwwvvwwwwwwwwvvwx
+'wwwvvwwwwwwwwwwwx
+'wwwwwwwwwwwwwwwwx
+'wwwwwwwwwVVVVwwwx
+'WwwUUUwwwV<>Vwwwx
+'WwwU<UwwwVVVVwwwx
+'WwwU>Uwwwwwwwwwwx
+'wwwU+Uwwwwwwwwwwx
+'wwwwWwwwwwwwwwwwx
+xxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################
+# A simple fortress with double doors.

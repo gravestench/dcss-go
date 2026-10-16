@@ -1,0 +1,24 @@
+NAME:       psy_arrival_fountain
+# Source: crawl-ref/source/dat/des/arrival/small.des:3127
+TAGS:       arrival no_monster_gen no_trap_gen
+ORIENT:     float
+FTILE:      t.qpP{T = floor_grass
+COLOUR:     . = green
+SHUFFLE:    pq
+SUBST:      p = .P, q : .
+KMONS:      P = plant
+MAP
+xxxxxxxxxxxxx
+xtttttttttttx
+xt{.........+
+xt...tttttqtx
+xt....PtPtqtx
+xt.t....qtqtx
+xt.tt.T...qtx
+xt.tP....tttx
+xt.ttP.pttttx
+xt.ttt.tttttx
+xt.pppptttttx
+xt.tttttttttx
+xx+xxxxxxxxxx
+ENDMAP

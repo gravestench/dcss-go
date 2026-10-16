@@ -1,0 +1,22 @@
+NAME: beargit_arrival_greenhouse
+# Source: crawl-ref/source/dat/des/arrival/small.des:3234
+ORIENT: float
+TAGS: arrival no_monster_gen
+MONS: withered plant, plant
+KMASK: 12YUT = no_item_gen
+KPROP: 12YUT = no_tele_into
+MAP
+......@......
+.ncncn+ncncn.
+.c111c.c222c.
+.n1Y1n.n2U2n.
+.c111c.c222c.
+.ncncn.ncncn.
+@+....{....+@
+.ncncn.ncncn.
+.c222c.c222c.
+.n2T2n.n2U2n.
+.c222c.c222c.
+.ncncn+ncncn.
+......@......
+ENDMAP

@@ -5,6 +5,7 @@ import (
 
 	"dcrawl-go/internal/ecs"
 	"dcrawl-go/internal/terrain"
+	"dcrawl-go/internal/vault"
 )
 
 const Version = 18
@@ -54,6 +55,8 @@ type LevelRecord struct {
 	InitialMonsters int            `json:"initial_monsters,omitempty"`
 	InitialActors   int            `json:"initial_actors,omitempty"`
 	AwaySinceAut    *int64         `json:"away_since_aut,omitempty"`
+	VaultID         string         `json:"vault_id,omitempty"`
+	VaultRecords    []vault.Record `json:"vault_records,omitempty"`
 }
 
 type StairRecord struct {

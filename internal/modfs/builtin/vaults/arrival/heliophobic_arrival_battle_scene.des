@@ -1,0 +1,41 @@
+NAME:    heliophobic_arrival_battle_scene
+# Source: crawl-ref/source/dat/des/arrival/small.des:3332
+TAGS:    arrival no_monster_gen no_trap_gen no_pool_fixup
+ORIENT:  float
+NSUBST:  - = 6:u / 12:v / *:.
+KPROP:   uv = bloody
+KPROP:   . = bloody / w:30 nothing
+TILE:    c = wall_hall
+FTILE:   .{uvt+ = floor_marble
+COLOUR:  .c = white
+: vault.run("schedule_battle_remains")
+# source: : local race = you.race()
+# source: : local ally = you.monster()
+# source: : -- do the roll unconditionally, for seed stability
+# source: : local humanoid_ally = util.random_from({"dwarf", "human"})
+# source: : -- The corpseless. Before the game starts, you.monster() is "program bug".
+# source: : if (not crawl.game_started()) or race == "Vampire"
+# source: :     or race == "Mummy" or race == "Ghoul" or race == "Octopode"
+# source: :     or race == "Gargoyle" or race == "Vine Stalker"
+# source: :     or race == "Djinni" or race == "Yak" or race == "Formicid" then
+# source: :   ally = humanoid_ally
+# source: : end
+# source: :
+# source: : local axis = util.random_from({"goblin", "gnoll", "kobold", "orc"})
+# source: :
+# source: : dgn.delayed_decay(_G, 'u', ally .. " skeleton")
+# source: : dgn.delayed_decay(_G, 'v', axis .. " skeleton")
+MAP
+cc+ccc+cc
+cc-ccc-cc
+c--->---c
+c---c---c
+c---c---c
+c---c---c
+c-------c
+c---{---c
+c-------c
+ccccccccc
+ENDMAP
+
+##############################################################

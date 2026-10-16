@@ -1,0 +1,44 @@
+NAME:   enne_arrival_octagon_isle
+# Source: crawl-ref/source/dat/des/arrival/twisted.des:449
+ORIENT: float
+TAGS:   arrival no_monster_gen
+FTILE:  '{ = floor_sand
+SUBST:  ' = .
+: vault.run("shape_octagon_isle")
+# source: {{
+# source:     octa_room({
+# source:         oblique = crawl.random_range(3,7),
+# source:         replace = '.',
+# source:         outside = 'W',
+# source:         inside  = '.'
+# source:     })
+# source:     if crawl.coinflip() then
+# source:         smear_map({iterations=20, smear='x', onto='.W', boxy=true})
+# source:     end
+# source: }}
+SUBST: W:xw
+MAP
+ xxxxxxxxxxxxx
+x.............x
+x.............x
+x.............x
+x.............x
+......www......
+.....w'''w.....
+@....w'{'w....@
+.....w'''w.....
+......www......
+x.............x
+x.............x
+x.............x
+x.............x
+ xxxxxxxxxxxxx
+ENDMAP
+
+#######################################################################
+# Four elements.
+# Pretty hazardous, but the Earth side is always safe to leave through.
+# Players can safely watch at the clouds.
+# This vault is great. I've seen players marvel at it. If need be, we
+# may delegate it to another branch, where less caution measures are
+# demanded. But I'd like to keep it on D:1 (dp).

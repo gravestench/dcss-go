@@ -1,0 +1,26 @@
+NAME:    dpeg_arrival_renting
+# Source: crawl-ref/source/dat/des/arrival/small.des:1863
+TAGS:    arrival
+ORIENT:  float
+SHUFFLE: [>, {(, T), TcGv, XY
+SUBST:   ':.x, X=+x, Y=+x, (=., [=.
+KMASK:   T = no_monster_gen
+MAP
+xxxxxxxxxxxxxxxxxx..@
+x'''''''xxxxxxxxxx...
+x'.....'xxxx...xxx...
+x'.x+x.xxx'..T..'x...
+x..x.x.[xx.......Y...
+xxxx.xxxxx''x+x''x...
+xxxx.xxxxxxxx.xxxxxXx
+@...................@
+xxxxxx.xxxxxxxxxxx.xx
+xxxxxx+xxxxxx...'x.xx
+xxxx''.''xxxx.c..x.xx
+xxx'.....'xxx.{..+.xx
+xxx'.xxx.'xxx.c..xxxx
+xxxx..(..xxxx...'xxxx
+xxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################################

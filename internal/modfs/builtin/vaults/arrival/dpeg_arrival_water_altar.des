@@ -1,0 +1,27 @@
+NAME:    dpeg_arrival_water_altar
+# Source: crawl-ref/source/dat/des/arrival/small.des:651
+TAGS:    arrival no_monster_gen
+ORIENT:  northwest
+WEIGHT:  4
+MAP
+xxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxx
+xxxxxx>wwwwwwwwwwwwww.
+xxxxxxwCwwwwwwwwwww...
+xxxxxxwwwwwwwwwwww..
+xxxxxxwwwwwwwwwwww..
+xxxxxxwwwwwwwwwww...
+xxxxxxwwwwwwwwwww...
+xxxxxxwwwwwwwwww....
+xxxxxxwwwwwwwwww.cc.
+xxxxxxwwwwwwwwW..c{.
+xxxxxxwwwwwwww......
+xxxxxxwwwwww.....
+xxxxxxw..........
+ENDMAP
+
+##############################################################################

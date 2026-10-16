@@ -1,0 +1,6 @@
+NAME: zz_missing_hook
+TAGS: arrival
+: vault.run("missing_method")
+MAP
+@.
+ENDMAP

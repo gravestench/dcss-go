@@ -1,0 +1,27 @@
+NAME:    matt_arrival_grand_opening
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1055
+TAGS:    arrival transparent
+ORIENT:  float
+SHUFFLE: TV
+KMASK:   T = no_monster_gen
+MAP
+xxxxxxxxxx@xxxxxxxxxx
+x..x.............x..x
+x.x...............x.x
+xx.......x.x.......xx
+x......x.x.x.x......x
+x.....xx.x.x.xx.....x
+x.......Tx.xT.......x
+x..xxxxxxx.xxxxxxx..x
+@.........{.........@
+x..xxxxxxx.xxxxxxx..x
+x.......Tx.xT.......x
+x.....xx.x.x.xx.....x
+x......x.x.x.x......x
+xx.......x.x.......xx
+x.x...............x.x
+x..x.............x..x
+xxxxxxxxxx@xxxxxxxxxx
+ENDMAP
+
+##############################################################################

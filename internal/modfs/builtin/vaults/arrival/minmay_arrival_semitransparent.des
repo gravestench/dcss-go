@@ -1,0 +1,24 @@
+NAME:    minmay_arrival_semitransparent
+# Source: crawl-ref/source/dat/des/arrival/small.des:378
+TAGS:    arrival
+ORIENT:  float
+: vault.run("choose_wall_opacity")
+# source: : if crawl.coinflip() == true then
+# source: SUBST:   x : cccb
+# source: SUBST:   m : n
+# source: : else
+# source: SUBST:   x : xxxb
+# source: : end
+MAP
+...........
+.xmxmxmxmx.
+...........
+...........
+.....{.....
+...........
+...........
+.xmxmxmxmx.
+...........
+ENDMAP
+
+##############################################################

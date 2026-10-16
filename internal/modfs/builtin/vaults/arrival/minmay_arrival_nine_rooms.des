@@ -1,0 +1,23 @@
+NAME:   minmay_arrival_nine_rooms
+# Source: crawl-ref/source/dat/des/arrival/small.des:491
+TAGS:   arrival no_monster_gen
+ORIENT: float
+NSUBST: ? = 1:{ / *:TG.
+SUBST:  T = TV
+MAP
+xxxxxxxxxxxxxx+xx
+x...xxx...xxx...x
+x.?.....?.....?.x
+x...xxx...xxx...x
+xx.xxxxxxxxxxxxxx
+x...xxx...xxx...x
+x.?.....?.....?.x
+x...xxx...xxx...x
+xxxxxxxxxxxxxx.xx
+x...xxx...xxx...x
+x.?.....?.....?.x
+x...xxx...xxx...x
+xx+xxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################

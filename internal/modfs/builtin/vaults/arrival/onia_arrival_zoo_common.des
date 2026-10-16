@@ -1,0 +1,43 @@
+NAME:    onia_arrival_zoo_common
+# Source: crawl-ref/source/dat/des/arrival/small.des:2338
+TAGS:    arrival no_trap_gen
+ORIENT:  float
+KPROP:   12345 = no_tele_into
+: vault.run("choose_zoo_roster")
+# source: : if crawl.one_chance_in(10) then
+# source: SHUFFLE: 16
+# source: MONS:    centaur / centaur warrior / yaktaur / yaktaur captain
+# source: MONS:    rat / river rat / hell rat / quokka
+# source: MONS:    imperial myrmidon / servant of whispers / ragged hierophant
+# source: MONS:    worm / tyrant leech
+# source: MONS:    komodo dragon / iguana / basilisk
+# source: MONS:    ettin / frost giant / stone giant / fire giant
+# source: : else
+# source: SHUFFLE: 1234567
+# source: MONS:    frilled lizard / iguana / snapping turtle / komodo dragon
+# source: MONS:    hog / jackal / wolf / hound
+# source: MONS:    giant cockroach / scorpion / butterfly / killer bee / redback
+# source: MONS:    swamp worm / lindwurm / worm
+# source: MONS:    swamp drake / hydra / wyvern / rime drake
+# source: MONS:    polar bear / black bear
+# source: MONS:    black mamba / water moccasin / anaconda / salamander
+# source: : end
+KMASK:   ' = no_monster_gen
+SUBST:   ' = .
+MAP
+xxxxxxxx@xxxxxxxx
+xxxxxx.G.G.xxxxxx
+xxx.G.......G.xxx
+x...............x
+x.G..ccccccc..G.x
+x....c12345c....x
+x.G..cnnnnnc..G.x
+x...............x
+xxx...........''x
+xxxxxxxxxxxx''''x
+xxxxx{......''xxx
+xxxxxxxxxxxxxxxxx
+ENDMAP
+
+##############################################################
+# There's a large version (with WEIGHT 2) in the huge maps section.

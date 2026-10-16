@@ -1,0 +1,29 @@
+NAME:    denvon_arrival_waterhouse
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1242
+TAGS:    arrival no_monster_gen no_pool_fixup transparent
+ORIENT:  float
+WEIGHT:  3
+SHUFFLE: {[
+SUBST:   [=.
+MAP
+         ........
+        ..xx++xx..
+      ...xxW..Wxx...
+     ..xxxxWWWWxxxx..
+    ..xxccccccccccxx..
+    .xxccwWWWWWWwccxx.
+    .xxcWWW.{[.WWWcxx.
+    .xxc..........cxx.
+    .xxc+cc....cc+cxx.
+   ..xcc..cc++cc..ccx..
+  ..xxcT..c....c..Tcxx..
+ ..xxxccccc....cccccxxx..
+ .xxxwWW..........WWwxxx.
+ .xwwwW........x...Wwwwx.
+..WWWW...xxW........WWWW.
+.WWW.....Wxx...xx....WW..
+..W.. ..WWW..xxWWx...W...
+ ...  .Wxx....WW... ...
+      .....  .Wxx.
+             .....
+ENDMAP

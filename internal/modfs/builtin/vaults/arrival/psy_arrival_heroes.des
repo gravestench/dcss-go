@@ -1,0 +1,27 @@
+NAME:       psy_arrival_heroes
+# Source: crawl-ref/source/dat/des/arrival/simple.des:2281
+TAGS:       arrival no_monster_gen
+WEIGHT:     5
+ORIENT:     float
+SUBST:      p : c@
+MAP
+        ppp
+        cGc
+        c.c
+      ccc.ccc
+    ccc.....ccc
+    c.........c cccccccccccc.
+   cc.........cccGccGccGccGc.
+   c.G......................@
+pccc........................@
+pG.......{..................@
+pccc........................@
+   c.G......................@
+   cc.........cccGccGccGccGc.
+    c.........c cccccccccccc.
+    ccc.....ccc
+      ccc.ccc
+        c.c
+        cGc
+        ppp
+ENDMAP

@@ -1,0 +1,27 @@
+NAME:    elethiomel_arrival_maze
+# Source: crawl-ref/source/dat/des/arrival/small.des:1991
+TAGS:    arrival no_monster_gen
+ORIENT:  float
+SHUFFLE: WXYZ
+SUBST:   W=., X=X., X=x+., Y=Y., Y=x., Z=Z., Z=x+.
+NSUBST:  { = 1:{ / *:.
+MAP
+xx@xxxxxxxxxxxxxxxxxxxxxxxxxx
+xx.x.......xxxxx...xx......xx
+xx.xXxxxxx.xxxxx.x.xxxxxxx.xx
+xx...x{..x...x...x...x{xxx..@
+xxxx.xxx.x.x.x.xxxxx.x.xxx.xx
+@..x...x...x.....xxx...x...xx
+xx.xxx.xxxxxxxxx.xxxxxxx.xxxx
+xx.....xxxxx.x.....x.W...x..@
+xxxx.xxxxxxx.x.xxx.x.xxxxx.xx
+xx...xxxxxxx...xxx...x...Z.xx
+xx.xxxxxxxxx.x.xxx.xxx.xxx.xx
+xx...xxxxx...x.....x...x...xx
+xxxx.x{xxx.xxxxxxxxx.xxx.xxxx
+xxxx.....Y...........xxx...xx
+xxxxxxxxxxxxxxxxxxxxxxxxxx@xx
+ENDMAP
+
+##############################################################
+# It's quiet. Too quiet....

@@ -1,0 +1,19 @@
+NAME:   mushboom_english_gardens
+# Source: crawl-ref/source/dat/des/arrival/simple.des:1981
+ORIENT: float
+TAGS:   arrival no_monster_gen
+FTILE:  -T = floor_grass
+COLOUR: -T = green
+MAP
+xxxxx+xxxxx
+x.........x
+x.---.---.x
+x.-T-.-T-.x
+x.---.---.x
++....{....+
+x.---.---.x
+x.-T-.-T-.x
+x.---.---.x
+x.........x
+xxxxx+xxxxx
+ENDMAP
