@@ -39,6 +39,8 @@ local screens = {
     F = { name = "throw" },
     W = { name = "wear" },
     T = { name = "take_off" },
+    P = { name = "put_on" },
+    R = { name = "remove_jewellery" },
     z = { name = "spell_cast" },
     Z = { name = "spell_force" },
     M = { name = "spell_memorise" },

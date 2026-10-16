@@ -227,6 +227,7 @@ def render_definition(category, revision, definition):
     header.extend(["", 'local categories = require("constants.catalog")'])
     wand_spell = definition.get("wand_spell_id")
     staff = definition.get("staff")
+    jewellery = definition.get("jewellery")
 
     if wand_spell:
         header.append('local spells = require("ids.spells")')
@@ -236,6 +237,9 @@ def render_definition(category, revision, definition):
 
         if staff.get("resistance_id"):
             header.append('local resistances = require("constants.resistance_ids")')
+
+    if jewellery:
+        header.append('local jewellery_kinds = require("constants.jewellery_kind")')
 
     body = lines_for(definition)
     body[0] = "local definition = " + body[0]
@@ -280,6 +284,29 @@ def render_definition(category, revision, definition):
         separator = naming - 1 if body[naming - 1].lstrip().startswith("--") else naming
         body.insert(separator, "")
 
+    if jewellery:
+        kind = jewellery["kind"]
+        constant = "RING" if kind == "ring" else "AMULET"
+
+        if kind not in ("ring", "amulet"):
+            raise ValueError(f"unknown jewellery kind {kind}")
+
+        original = f"        kind = {lua_string(kind)},"
+        body[body.index(original)] = (
+            f"        kind = jewellery_kinds.{constant},"
+        )
+
+        if jewellery.get("pluses"):
+            body.insert(body.index("        pluses = true,"),
+                        "        -- Source: crawl-ref/source/item-prop.cc:2129-2135")
+
+        record = body.index("    jewellery = {")
+        body.insert(record,
+                    "    -- Source: crawl-ref/source/item-prop-enum.h:200-266")
+        naming = body.index("    naming = {")
+        separator = naming - 1 if body[naming - 1].lstrip().startswith("--") else naming
+        body.insert(separator, "")
+
     footer = [
         "",
         f"register.definition(categories.{category.upper()}, definition)",
@@ -316,13 +343,23 @@ def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
         link["wand_id"]: link
         for link in links_artifact["links"]
     }
+    jewellery_pluses = {
+        "RING_SLAYING",
+        "RING_PROTECTION",
+        "RING_EVASION",
+        "RING_STRENGTH",
+        "RING_INTELLIGENCE",
+        "RING_DEXTERITY",
+    }
     definitions = []
 
     for item in items_artifact["items"]:
         link = by_wand.get(item["id"])
         staff = by_staff.get(item["id"])
+        jewellery = (item["class"] == "OBJ_JEWELLERY" and
+                     not item["explicitly_removed"])
 
-        if link is None and staff is None:
+        if link is None and staff is None and not jewellery:
             definitions.append(item)
             continue
 
@@ -340,6 +377,15 @@ def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
                     for field, value in staff.items()
                     if field != "id"
                 }
+
+            if key == "stackable" and jewellery:
+                definition["jewellery"] = {
+                    "kind": "ring" if item["id"].startswith("RING_")
+                    else "amulet",
+                }
+
+                if item["id"] in jewellery_pluses:
+                    definition["jewellery"]["pluses"] = True
 
             if key == "stackable" and link:
                 definition["wand_spell_id"] = link["spell_id"]

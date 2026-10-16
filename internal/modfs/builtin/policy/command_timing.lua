@@ -9,6 +9,7 @@ local component = require("constants.component")
 local intent = require("constants.intent")
 local time = require("constants.time")
 local abilities = require("ids.abilities")
+local phases = require("constants.equipment_phases")
 
 local timing = {}
 
@@ -53,6 +54,12 @@ function timing.player_speed(ctx, player)
 end
 
 function timing.action_cost(ctx, player, input, time_taken)
+    local equipment_delay = ctx:get(player, component.EQUIPMENT_DELAY)
+
+    if equipment_delay and equipment_delay.phase == phases.RING_SWAP then
+        return math.floor(time_taken / 2)
+    end
+
     if input.intent_kind == intent.PLAYER_ABILITY and
         input.ability_id == abilities.ROLLING_CHARGE then
         local movement_delay = movement.scale(ctx,
@@ -79,7 +86,9 @@ function timing.action_cost(ctx, player, input, time_taken)
         return delay.projectile(ctx, time_taken, input.item_id)
     end
 
-    if input.intent_kind == intent.WIELD then
+    if input.intent_kind == intent.WIELD or
+        input.intent_kind == intent.JEWELLERY_ON or
+        input.intent_kind == intent.JEWELLERY_OFF then
         if input.item_id == 0 then
             return math.floor(time_taken * 3 / 10)
         end

@@ -6,6 +6,10 @@ local mutations = require("ids.mutations")
 local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
 local staves = require("policy.inventory.staves")
+local jewellery = require("policy.inventory.jewellery")
+local jewellery_kinds = require("constants.jewellery_kind")
+local jewellery_slots = require("constants.jewellery_slots")
+local phases = require("constants.equipment_phases")
 
 local equipment = {}
 
@@ -342,6 +346,18 @@ end
 function equipment.start(ctx, actor, delay)
     ctx:add(actor, "core.equipment_delay", delay)
 
+    if delay.phase == phases.RING_SWAP then
+        return "You start putting on your ring."
+    end
+
+    if delay.slot == jewellery_slots.AMULET then
+        if delay.phase == "remove" then
+            return "You start removing your amulet."
+        end
+
+        return "You start putting on your amulet."
+    end
+
     if delay.phase == "remove" then
         return "You start removing your armour."
     end
@@ -358,6 +374,18 @@ function equipment.cancel(ctx, actor)
 
     ctx:remove(actor, "core.equipment_delay")
 
+    if delay.phase == phases.RING_SWAP then
+        return "You stop putting on your ring."
+    end
+
+    if delay.slot == jewellery_slots.AMULET then
+        if delay.phase == "remove" then
+            return "You stop removing your amulet."
+        end
+
+        return "You stop putting on your amulet."
+    end
+
     if delay.phase == "remove" then
         return "You stop removing your armour."
     end
@@ -372,6 +400,26 @@ function equipment.advance(ctx, actor)
 
     if not delay then
         error("player has no equipment delay")
+    end
+
+    if delay.phase == phases.RING_SWAP then
+        local carrier = ctx:get(delay.item_id, "core.carried_by")
+        local available = jewellery.slot_allowed(ctx, actor,
+            jewellery_kinds.RING, delay.slot)
+
+        if not carrier or carrier.holder ~= actor or not available or
+            jewellery.in_slot(ctx, actor, delay.slot) then
+            ctx:remove(actor, "core.equipment_delay")
+
+            return { "You can no longer put on that ring." }
+        end
+
+        ctx:add(delay.item_id, "core.equipped", { slot = delay.slot })
+        ctx:remove(actor, "core.equipment_delay")
+
+        return {
+            finish_message(ctx, delay.item_id, "You put on your %s."),
+        }
     end
 
     local messages = {}
@@ -397,11 +445,16 @@ function equipment.advance(ctx, actor)
         messages[#messages + 1] = finish_message(
             ctx, delay.old_item_id, "You finish taking off your %s.")
 
-        if ctx:id(delay.item_id) ~= 0 then
+        if delay.item_id and ctx:id(delay.item_id) ~= 0 then
             delay.phase = "wear"
             delay.remaining = 5
             ctx:set(actor, "core.equipment_delay", delay)
-            messages[#messages + 1] = "You start putting on your armour."
+
+            if delay.slot == jewellery_slots.AMULET then
+                messages[#messages + 1] = "You start putting on your amulet."
+            else
+                messages[#messages + 1] = "You start putting on your armour."
+            end
         else
             ctx:remove(actor, "core.equipment_delay")
         end

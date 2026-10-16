@@ -29,6 +29,7 @@ local component = {
     BANISHMENT = "world.banishment",
     DURATIONS = "core.durations",
     EQUIPPED = "core.equipped",
+    EQUIPMENT_DELAY = "core.equipment_delay",
     CONSTRICTION = "core.constricted",
     PLAYER_CONSTRICTION = "combat.player_constriction",
     WATER_HOLD = "combat.water_hold",

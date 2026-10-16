@@ -4,6 +4,7 @@
 -- Name Line: 750
 
 local categories = require("constants.catalog")
+local jewellery_kinds = require("constants.jewellery_kind")
 
 local definition = {
     id = "RING_PROTECTION_FROM_FIRE",
@@ -13,6 +14,11 @@ local definition = {
     class_value = 6,
     subtype_value = 2,
     stackable = false,
+    -- Source: crawl-ref/source/item-prop-enum.h:200-266
+    jewellery = {
+        kind = jewellery_kinds.RING,
+    },
+
     -- Source: crawl-ref/source/item-name.cc:750
     naming = {
         text = "ring of protection from fire",

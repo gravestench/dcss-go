@@ -5,6 +5,11 @@ local fighter = require("policy.combat.fighter")
 local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
 local staves = require("policy.inventory.staves")
+local jewellery = require("policy.inventory.jewellery")
+local jewellery_kinds = require("constants.jewellery_kind")
+local jewellery_slots = require("constants.jewellery_slots")
+local classes = require("ids.object_classes")
+local phases = require("constants.equipment_phases")
 
 local armour_slots = {
     body = true,
@@ -28,7 +33,14 @@ local function held_item(ctx, id, player, slot)
 
     local kind = items.kind(item)
 
-    if kind.slot ~= slot then
+    local matched = kind.slot == slot
+
+    if kind.class == classes.OBJ_JEWELLERY then
+        matched = jewellery.slot_allowed(ctx, player,
+            jewellery.kind(kind), slot)
+    end
+
+    if not matched then
         error("saved equipment delay has invalid item " .. number)
     end
 
@@ -42,12 +54,36 @@ local function validate_delay(ctx, player, slots)
         return
     end
 
-    local item_id = ctx:id(delay.item_id)
-    local old_item_id = ctx:id(delay.old_item_id)
+    local item_id = delay.item_id and ctx:id(delay.item_id) or 0
+    local old_item_id = delay.old_item_id and
+        ctx:id(delay.old_item_id) or 0
+
+    if delay.phase == phases.RING_SWAP then
+        if delay.remaining ~= 1 or item_id == 0 or old_item_id == 0 or
+            item_id == old_item_id or slots[delay.slot] then
+            error("invalid saved ring swap")
+        end
+
+        local new, _, new_kind = held_item(ctx, delay.item_id,
+            player, delay.slot)
+        local old, _, old_kind = held_item(ctx, delay.old_item_id,
+            player, delay.slot)
+
+        if jewellery.kind(new_kind) ~= jewellery_kinds.RING or
+            jewellery.kind(old_kind) ~= jewellery_kinds.RING or
+            ctx:has(new, "core.equipped") or
+            ctx:has(old, "core.equipped") then
+            error("saved ring swap has invalid equipment")
+        end
+
+        return
+    end
 
     if delay.remaining < 1 or delay.remaining > 5 or
-        not armour_slots[delay.slot] or
-        (delay.phase ~= "wear" and delay.phase ~= "remove") then
+        (not armour_slots[delay.slot] and
+            delay.slot ~= jewellery_slots.AMULET) or
+        (delay.phase ~= phases.WEAR and
+            delay.phase ~= phases.REMOVE) then
         error("invalid saved equipment delay")
     end
 
@@ -94,11 +130,14 @@ local function validate_delay(ctx, player, slots)
     end
 
     if new then
-        if not new_kind.armour then
+        if not new_kind.armour and
+            (new_kind.class ~= classes.OBJ_JEWELLERY or
+                jewellery.kind(new_kind) ~= jewellery_kinds.AMULET) then
             error("saved wear item is not armour")
         end
 
-        local fit = equipment.validate_fit(ctx, player, new_kind)
+        local fit = new_kind.armour and
+            equipment.validate_fit(ctx, player, new_kind)
 
         if fit then
             error("saved wear item does not fit: " .. fit)
@@ -121,6 +160,11 @@ local function validate(ctx)
         local carrier = ctx:get(entity, "core.carried_by")
         local equipped = ctx:get(entity, "core.equipped")
 
+        if equipped and not carrier then
+            error("item " .. ctx:id(entity) ..
+                " is equipped without a carrier")
+        end
+
         if (kind.class == "OBJ_CORPSES") ~= ctx:has(entity, "core.corpse") then
             error("item " .. ctx:id(entity) .. " has mismatched corpse state")
         end
@@ -133,7 +177,14 @@ local function validate(ctx)
         if carrier and ctx:id(carrier.holder) == ctx:id(player) and equipped then
             local slot = equipped.slot
 
-            if not kind.slot or kind.slot ~= slot then
+            local matched = kind.slot == slot
+
+            if kind.class == classes.OBJ_JEWELLERY then
+                matched = jewellery.slot_allowed(ctx, player,
+                    jewellery.kind(kind), slot)
+            end
+
+            if not matched then
                 error("item " .. ctx:id(entity) .. " has invalid equipped slot")
             end
 

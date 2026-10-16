@@ -4,6 +4,7 @@
 -- Name Line: 775
 
 local categories = require("constants.catalog")
+local jewellery_kinds = require("constants.jewellery_kind")
 
 local definition = {
     id = "AMU_MANA_REGENERATION",
@@ -13,6 +14,11 @@ local definition = {
     class_value = 6,
     subtype_value = 38,
     stackable = false,
+    -- Source: crawl-ref/source/item-prop-enum.h:200-266
+    jewellery = {
+        kind = jewellery_kinds.AMULET,
+    },
+
     -- Source: crawl-ref/source/item-name.cc:775
     naming = {
         text = "amulet of magic regeneration",

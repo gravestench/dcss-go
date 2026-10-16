@@ -8,6 +8,7 @@ local lines = {
     "Movement: h j k l, y u b n, arrow keys",
     "Wait: . or s     Pick up: g ,     Drop: d     Wield: w",
     "Wear: W     Take off: T     Esc interrupts equipment delay",
+    "Put on jewellery: P     Remove jewellery: R",
     "Doors: O open, C close (direction if prompted)",
     "Fire: f     Throw: F     Aim: direction, Tab, Enter, Esc",
     "Evoke wand: V     Select by inventory letter, then aim",

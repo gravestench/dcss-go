@@ -9,6 +9,7 @@ local classes = {
     { id = object_classes.OBJ_STAVES, title = "Magical Staves" },
     { id = object_classes.OBJ_MISSILES, title = "Missiles" },
     { id = object_classes.OBJ_ARMOUR, title = "Armour" },
+    { id = object_classes.OBJ_JEWELLERY, title = "Jewellery" },
     { id = object_classes.OBJ_WANDS, title = "Wands" },
     { id = object_classes.OBJ_SCROLLS, title = "Scrolls" },
     { id = object_classes.OBJ_POTIONS, title = "Potions" },
@@ -128,16 +129,27 @@ function modals.rows(input)
         end
 
         write(writes, 0, height - 2, "- - Bare hands    Esc - Cancel    ? - Help", colors.brown)
-    elseif mode == "wear" or mode == "take_off" then
+    elseif mode == "wear" or mode == "take_off" or
+        mode == "put_on" or mode == "remove_jewellery" then
         local title = mode == "wear" and "Wear which item?" or "Take off which item?"
+
+        if mode == "put_on" then
+            title = "Put on which piece of jewellery?"
+        elseif mode == "remove_jewellery" then
+            title = "Remove which piece of jewellery?"
+        end
+
         write(writes, 0, 0, title, colors.white)
         local y = 2
 
         for index, item in ipairs(inventory) do
             local worn = item.slot ~= ""
+            local accepted = (mode == "wear" and input_items.unworn_armour(item)) or
+                (mode == "take_off" and input_items.worn_armour(item)) or
+                (mode == "put_on" and input_items.unworn_jewellery(item)) or
+                (mode == "remove_jewellery" and input_items.worn_jewellery(item))
 
-            if item.class == object_classes.OBJ_ARMOUR and
-                ((mode == "take_off" and worn) or (mode == "wear" and not worn)) then
+            if accepted then
                 local label = item.name
 
                 if worn then

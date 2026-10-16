@@ -8,15 +8,6 @@ local cosmetics = require("constants.item_cosmetics")
 local pools = require("constants.appearance_pools")
 
 local identification = {}
-local jewellery_pluses = {
-    [item_ids.RING_SLAYING] = true,
-    [item_ids.RING_PROTECTION] = true,
-    [item_ids.RING_EVASION] = true,
-    [item_ids.RING_STRENGTH] = true,
-    [item_ids.RING_INTELLIGENCE] = true,
-    [item_ids.RING_DEXTERITY] = true,
-}
-
 local unenchantable_armour = {
     [item_ids.ARM_QUICKSILVER_DRAGON_ARMOUR] = true,
     [item_ids.ARM_SCARF] = true,
@@ -49,7 +40,7 @@ local function shows_pluses(kind, state)
 
     return kind.class == classes.OBJ_JEWELLERY and
         (kind.identification_has_pluses == true or
-            jewellery_pluses[kind.id] == true)
+            (kind.jewellery and kind.jewellery.pluses == true))
 end
 
 local function active(kind)

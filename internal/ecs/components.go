@@ -196,6 +196,8 @@ const (
 	IntentPlayerAbility
 	IntentEvokeWand
 	IntentRead
+	IntentJewelleryOn
+	IntentJewelleryOff
 )
 
 type Intent struct {

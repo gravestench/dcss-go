@@ -33,6 +33,16 @@ function items.unworn_armour(candidate)
     return candidate.class == "OBJ_ARMOUR" and candidate.slot == ""
 end
 
+function items.worn_jewellery(candidate)
+    return candidate.class == classes.OBJ_JEWELLERY and
+        candidate.slot ~= ""
+end
+
+function items.unworn_jewellery(candidate)
+    return candidate.class == classes.OBJ_JEWELLERY and
+        candidate.slot == ""
+end
+
 local function notice(text)
     return {
         action = "notice",
@@ -204,6 +214,34 @@ end
 
 function items.take_off(input)
     return armour(input, true)
+end
+
+local function jewellery(input, remove)
+    local navigation = menu.close_or_help(input)
+
+    if navigation then
+        return navigation
+    end
+
+    local accepted = remove and items.worn_jewellery or
+        items.unworn_jewellery
+    local selected = menu.item(input, accepted)
+
+    if selected then
+        local kind = remove and commands.take_off or commands.wear
+
+        return item_step(kind, selected.id)
+    end
+
+    return notice("Choose jewellery by its inventory letter, or Esc to cancel.")
+end
+
+function items.put_on(input)
+    return jewellery(input, false)
+end
+
+function items.remove_jewellery(input)
+    return jewellery(input, true)
 end
 
 function items.throw(input)

@@ -29,7 +29,8 @@ without changing its effective Lua files does not change that identity.
 | Monster | `content/monsters/<name>.lua` | It needs a new AI or other behavior. |
 | Spell | `content/spells/<name>.lua` | It needs a new resolver under `policy/magic/effects/`. |
 | Item or unique item | `content/items/<name>.lua` | It needs a new use, combat, or equipment rule. |
-| Magical staff | `content/items/<name>.lua` with a `staff` record | Its proc needs a rule beyond the shared school, resistance, and AC behavior. |
+| Magical staff | `content/items/<name>.lua` | Its proc needs a new rule. |
+| Ring or amulet | `content/items/<name>.lua` | Its effect needs a new rule. |
 | Job | `content/jobs/<name>.lua` | It needs a new starting-gear rule or other behavior. |
 | Item class | An item file with a new `class` ID | It needs class-specific rules or UI. |
 | Mutation | `content/mutations/<name>.lua` | It needs an effect under `policy/mutations/effects/`. |
@@ -52,6 +53,15 @@ elemental proc or `ac_rolls` for a physical proc. Optional fields are
 school and resistance IDs from `constants.spell_schools` and
 `constants.resistance_ids`. A new file with this metadata also gets the
 matching spell enhancer, player resistance, wield picker, and save checks.
+
+Jewellery uses `class = OBJ_JEWELLERY` and a `jewellery` table with
+`kind = jewellery_kinds.RING` or `jewellery_kinds.AMULET`, imported from
+`constants.jewellery_kind`. The shared equipment policy gives it the source
+ring or amulet slot, `P`/`R` input, and save validation. The bundled item
+effects are being ported as a separate category; adding a new kind of effect
+still needs a Lua policy file. Set `pluses = true` in the `jewellery` table
+only when that item carries an enchantment value; otherwise nonzero pluses
+are rejected on save.
 
 The bundled `init.lua` loads `schemas/`, `content/`, `policy/`, `systems/`,
 `generation/`, and `ui/` in that order. Paths within each tree load in sorted

@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local armour_egos = require("constants.armour_egos")
 local identification = require("policy.items.identification")
 local brand_pool = require("policy.inventory.brand_pool")
+local classes = require("ids.object_classes")
 
 local items = {}
 local supported_armour_egos = {
@@ -45,7 +46,12 @@ function items.validate(item, kind)
         error("impossible charges")
     end
 
-    if item.plus ~= 0 and kind.class ~= "OBJ_WEAPONS" and kind.class ~= "OBJ_ARMOUR" then
+    local jewellery_pluses = kind.class == classes.OBJ_JEWELLERY and
+        kind.jewellery and
+        kind.jewellery.pluses == true
+
+    if item.plus ~= 0 and kind.class ~= "OBJ_WEAPONS" and
+        kind.class ~= "OBJ_ARMOUR" and not jewellery_pluses then
         error("impossible enchantment")
     end
 

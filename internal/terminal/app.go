@@ -42,6 +42,8 @@ const (
 	ScreenWield
 	ScreenWear
 	ScreenTakeOff
+	ScreenPutOn
+	ScreenRemoveJewellery
 	ScreenThrow
 	ScreenAim
 	ScreenSpells
@@ -306,6 +308,12 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenTakeOff:
 		return m.routeInventoryInput("take_off", key)
 
+	case ScreenPutOn:
+		return m.routeInventoryInput("put_on", key)
+
+	case ScreenRemoveJewellery:
+		return m.routeInventoryInput("remove_jewellery", key)
+
 	case ScreenThrow:
 		return m.routeInventoryInput("throw", key)
 
@@ -380,7 +388,8 @@ func (m *AppModel) renderCanvas() *Canvas {
 
 	case ScreenInventory, ScreenSkills, ScreenMutations, ScreenQuaff, ScreenRead, ScreenSelection,
 		ScreenEvokeWand, ScreenDrop,
-		ScreenWield, ScreenWear, ScreenTakeOff, ScreenThrow, ScreenSpells,
+		ScreenWield, ScreenWear, ScreenTakeOff, ScreenPutOn,
+		ScreenRemoveJewellery, ScreenThrow, ScreenSpells,
 		ScreenAbilities, ScreenAbilityConfirm, ScreenActionConfirm:
 		m.drawGameMenu(canvas)
 
@@ -443,6 +452,12 @@ func (m *AppModel) drawGameMenu(canvas *Canvas) {
 
 		case ScreenWear, ScreenTakeOff:
 			DrawArmour(canvas, view, m.screen == ScreenTakeOff, m.presentationPolicy)
+
+		case ScreenPutOn:
+			drawInventoryModal(canvas, view, "put_on", "", m.presentationPolicy)
+
+		case ScreenRemoveJewellery:
+			drawInventoryModal(canvas, view, "remove_jewellery", "", m.presentationPolicy)
 
 		case ScreenThrow:
 			drawInventoryModal(canvas, view, "throw", "", m.presentationPolicy)
