@@ -116,7 +116,8 @@ local function cap_oldest(ctx, owner, source_category, source_id, cap)
     for _, entity in ipairs(ctx:query({ component.SUMMON })) do
         local state = ctx:get(entity, component.SUMMON)
 
-        if state.owner == owner and
+        if not ctx:has(entity, component.SUMMON_SEGMENT) and
+            state.owner == owner and
             state.source_category == source_category and
             state.source_id == source_id then
             existing[#existing + 1] = {
@@ -218,7 +219,9 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
             " feels only hate for you!")
     end
 
-    cap_oldest(ctx, owner, source_category, source_id, cap)
+    if not (options and options.segment) then
+        cap_oldest(ctx, owner, source_category, source_id, cap)
+    end
 
     return actor
 end

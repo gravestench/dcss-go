@@ -203,6 +203,7 @@ function tentacle.refresh(ctx, head)
                     exact = { x = cell.x, y = cell.y },
                     hp = head_health.current,
                     expires_aut = head_state.expires_aut,
+                    segment = true,
                 })
 
             if segment then

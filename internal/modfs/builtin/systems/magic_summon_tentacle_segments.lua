@@ -16,7 +16,8 @@ function system.update(ctx, active)
         for _, head in ipairs(ctx:query({ component.SUMMON, component.POSITION })) do
             local state = ctx:get(head, component.SUMMON)
 
-            if state.source_id == spells.SPELL_MALIGN_GATEWAY and
+            -- Refresh can expire a segment that remains in this query snapshot.
+            if state and state.source_id == spells.SPELL_MALIGN_GATEWAY and
                 not ctx:has(head, component.SUMMON_SEGMENT) then
                 tentacle.refresh(ctx, head)
             end
