@@ -5,6 +5,8 @@
 
 local categories = require("constants.catalog")
 local jewellery_kinds = require("constants.jewellery_kind")
+local capabilities = require("constants.jewellery_capabilities")
+local magnitudes = require("constants.jewellery_magnitudes")
 
 local definition = {
     id = "RING_PROTECTION_FROM_FIRE",
@@ -17,6 +19,10 @@ local definition = {
     -- Source: crawl-ref/source/item-prop-enum.h:200-266
     jewellery = {
         kind = jewellery_kinds.RING,
+        -- Source: crawl-ref/source/artefact.cc:346-379
+        effects = {
+            [capabilities.FIRE_RESISTANCE] = 1,
+        },
     },
 
     -- Source: crawl-ref/source/item-name.cc:750

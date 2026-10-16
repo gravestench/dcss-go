@@ -2,6 +2,8 @@ local capabilities = require("constants.mutation_capabilities")
 local effects = require("policy.mutations.effects.registry")
 local statuses = require("policy.magic.effects.statuses.player")
 local horror = require("policy.character.horror")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local player_slay = {}
 
@@ -12,7 +14,8 @@ function player_slay.total(ctx, player)
         capabilities.AUGMENTATION)
 
     return statuses.wereblood_slay(ctx, player) + 3 * augmentation -
-        horror.penalty(ctx, player)
+        horror.penalty(ctx, player) +
+        jewellery_effects.sum(ctx, player, jewellery_capabilities.SLAYING)
 end
 
 return player_slay

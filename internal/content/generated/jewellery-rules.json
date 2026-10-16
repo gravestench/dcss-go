@@ -1,0 +1,107 @@
+{
+  "source_revision": "e60ba3568b0c26447ad36ec5c7b963eb04b2778f",
+  "rules": [
+    {
+      "id": "RING_PROTECTION",
+      "effects": { "AC": "item_plus" }
+    },
+    {
+      "id": "RING_PROTECTION_FROM_FIRE",
+      "effects": { "FIRE_RESISTANCE": 1 }
+    },
+    {
+      "id": "RING_POISON_RESISTANCE",
+      "effects": { "POISON_RESISTANCE": 1 }
+    },
+    {
+      "id": "RING_PROTECTION_FROM_COLD",
+      "effects": { "COLD_RESISTANCE": 1 }
+    },
+    {
+      "id": "RING_STRENGTH",
+      "effects": { "STRENGTH": "item_plus" }
+    },
+    {
+      "id": "RING_SLAYING",
+      "effects": { "SLAYING": "item_plus" }
+    },
+    {
+      "id": "RING_SEE_INVISIBLE",
+      "effects": { "SEE_INVISIBLE": 1 }
+    },
+    {
+      "id": "RING_RESIST_CORROSION",
+      "effects": { "CORROSION_RESISTANCE": 1 }
+    },
+    {
+      "id": "RING_EVASION",
+      "effects": { "EV": "item_plus" }
+    },
+    {
+      "id": "RING_DEXTERITY",
+      "effects": { "DEXTERITY": "item_plus" }
+    },
+    {
+      "id": "RING_INTELLIGENCE",
+      "effects": { "INTELLIGENCE": "item_plus" }
+    },
+    {
+      "id": "RING_WIZARDRY",
+      "effects": { "WIZARDRY": 1 }
+    },
+    {
+      "id": "RING_MAGICAL_POWER",
+      "effects": { "MAX_MP": 9 }
+    },
+    {
+      "id": "RING_FLIGHT",
+      "effects": { "PERMANENT_FLIGHT": 1 }
+    },
+    {
+      "id": "RING_LIFE_PROTECTION",
+      "effects": { "NEGATIVE_ENERGY_RESISTANCE": 1 }
+    },
+    {
+      "id": "RING_WILLPOWER",
+      "effects": { "WILLPOWER_PIPS": 1 }
+    },
+    {
+      "id": "RING_FIRE",
+      "effects": {
+        "FIRE_RESISTANCE": 1,
+        "COLD_RESISTANCE": -1
+      }
+    },
+    {
+      "id": "RING_ICE",
+      "effects": {
+        "COLD_RESISTANCE": 1,
+        "FIRE_RESISTANCE": -1
+      }
+    },
+    {
+      "id": "AMU_ACROBAT",
+      "effects": { "ACROBAT": 1 }
+    },
+    {
+      "id": "AMU_MANA_REGENERATION",
+      "effects": { "MP_REGEN": 40 }
+    },
+    {
+      "id": "AMU_GUARDIAN_SPIRIT",
+      "effects": { "SPIRIT_SHIELD": 1 }
+    },
+    {
+      "id": "AMU_FAITH",
+      "effects": { "FAITH": 1 }
+    },
+    {
+      "id": "AMU_REFLECTION",
+      "effects": { "REFLECTION": 1 }
+    },
+    {
+      "id": "AMU_REGENERATION",
+      "effects": { "HP_REGEN": 80 }
+    }
+  ]
+}

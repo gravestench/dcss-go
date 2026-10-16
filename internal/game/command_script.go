@@ -132,6 +132,9 @@ func (g *Game) prepareScriptCommand(command Command) (_ preparedCommand, err err
 	}
 
 	prepared := spendingCommand(intent, Aut(cost))
+
+	prepared.waitedExplicitly, _ = decision["explicit_wait"].(bool)
+
 	events, err := commandDecisionEvents(decision["events"])
 
 	if err != nil {

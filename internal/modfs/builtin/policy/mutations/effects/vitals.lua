@@ -1,9 +1,8 @@
 local capabilities = require("constants.mutation_capabilities")
 local mutations = require("ids.mutations")
 local registry = require("policy.mutations.effects.registry")
-local catalog = require("policy.catalog")
-local formulas = require("policy.character.formulas")
 local forms = require("policy.magic.effects.forms.player")
+local resources = require("policy.character.resources")
 
 local vitals = {}
 
@@ -40,22 +39,7 @@ function vitals.refresh_hp(ctx, owner)
 end
 
 function vitals.refresh_mp(ctx, owner)
-    local origin = ctx:get(owner, "core.player")
-    local progress = ctx:get(owner, "core.progression")
-    local skills = ctx:get(owner, "core.skills")
-    local magic = ctx:get(owner, "core.magic")
-
-    if not origin or not progress or not skills or not magic then
-        error("live mutation change requires player magic state")
-    end
-
-    local species = catalog.get("species", origin.species_id)
-    local maximum = formulas.max_mp(ctx, owner, progress.level, species,
-        skills.entries)
-
-    magic.max = maximum
-    magic.current = math.min(magic.current, maximum)
-    ctx:set(owner, "core.magic", magic)
+    resources.refresh_mp(ctx, owner)
 end
 
 registry.add(mutations.MUT_FLAT_HP, {

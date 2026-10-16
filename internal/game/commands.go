@@ -107,6 +107,19 @@ func (g *Game) Step(command Command) (StepResult, error) {
 	// Timing policies run inside this action context. Source projectile
 	// practice happens before the delay roll and remains visible to systems.
 	g.scripts.BeginAction()
+
+	if _, err := g.scripts.Policy("command.action_start", map[string]any{
+		"waited_explicitly": prepared.waitedExplicitly,
+	}); err != nil {
+		g.scripts.DiscardPending()
+
+		return StepResult{}, err
+	}
+
+	if err := g.scripts.ApplyPending(); err != nil {
+		return StepResult{}, err
+	}
+
 	cost, err := g.playerActionCost(prepared)
 
 	if err != nil {
@@ -164,11 +177,12 @@ func (g *Game) Step(command Command) (StepResult, error) {
 // preparedCommand separates validation and no-time responses from action
 // execution. Only an accepted action reaches the scheduler and spends aut.
 type preparedCommand struct {
-	intent       ecs.Intent
-	response     StepResult
-	spendsTime   bool
-	equipment    *ecs.EquipmentDelay
-	attackTarget akara.Entity
+	intent           ecs.Intent
+	response         StepResult
+	spendsTime       bool
+	equipment        *ecs.EquipmentDelay
+	attackTarget     akara.Entity
+	waitedExplicitly bool
 }
 
 func spendingCommand(intent ecs.Intent, cost Aut) preparedCommand {

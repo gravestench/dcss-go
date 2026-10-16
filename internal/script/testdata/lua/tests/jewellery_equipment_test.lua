@@ -5,14 +5,12 @@ local harness = require("tests.harness")
 local jewellery = require("policy.inventory.jewellery")
 local ids = require("ids.items")
 local species = require("ids.species")
-local jobs = require("ids.jobs")
 local input_items = require("policy.input.items")
 local input_commands = require("policy.input.commands")
 local modals = require("policy.presentation.modals")
 local jewellery_system = require("systems.item_jewellery")
 local save_equipment = require("policy.save.equipment")
 local intent_kinds = require("constants.intent")
-local component = require("constants.component")
 local equipment = require("policy.inventory.equipment")
 local play_input = require("policy.input.play")
 local mutation_records = require("policy.mutations.records")
@@ -20,8 +18,11 @@ local mutations = require("ids.mutations")
 local timing = require("policy.command_timing")
 local inventory_items = require("policy.inventory.items")
 local jewellery_kinds = require("constants.jewellery_kind")
+local fixture = require("tests.fixtures.jewellery")
 
 local test = {}
+local make_player = fixture.player
+local carry = fixture.carry
 
 local function check_catalog()
     local active = 0
@@ -75,58 +76,6 @@ local function check_catalog()
         plus = 4,
         ego = "",
     }, modded), "a mod-added enchanted ring can save its plus")
-end
-
-local function player_context(ctx, player)
-    local proxy = setmetatable({}, { __index = ctx })
-
-    function proxy.player()
-        return player
-    end
-
-    return proxy
-end
-
-local function make_player(ctx)
-    local player = ctx:create()
-
-    ctx:add(player, "core.player", {
-        species_id = species.SP_HUMAN,
-        job_id = jobs.JOB_FIGHTER,
-        name = "Jewellery test",
-        starting_weapon_id = ids.WPN_UNARMED,
-    })
-    ctx:add(player, "core.attributes", {
-        strength = 10,
-        intelligence = 10,
-        dexterity = 10,
-    })
-    ctx:add(player, "core.skills", { entries = {} })
-    ctx:add(player, "core.combat", { shield_blocks = 0 })
-    ctx:add(player, component.ITEM_KNOWLEDGE, {
-        known_types = {
-            [ids.RING_PROTECTION] = true,
-            [ids.AMU_REFLECTION] = true,
-        },
-        appearance_seeds = {},
-    })
-
-    return player_context(ctx, player), player
-end
-
-local function carry(ctx, player, id)
-    local entity = ctx:create()
-
-    ctx:add(entity, "core.item", {
-        kind_id = id,
-        quantity = 1,
-        plus = 0,
-        charges = 0,
-        ego = "",
-    })
-    ctx:add(entity, "core.carried_by", { holder = player })
-
-    return entity
 end
 
 local function check_commands(ctx)

@@ -2,6 +2,8 @@ local capabilities = require("constants.mutation_capabilities")
 local mutation_effects = require("policy.mutations.effects.registry")
 local stat_loss = require("policy.character.stat_loss")
 local stats = require("constants.stats")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local attributes = {}
 
@@ -18,15 +20,21 @@ function attributes.current(ctx, player)
         strength = math.max(0, math.min(maximum, base.strength -
             stat_loss.amount(ctx, player, stats.STRENGTH) +
             mutation_effects.base_sum(ctx, player,
-                capabilities.STRENGTH))),
+                capabilities.STRENGTH) +
+            jewellery_effects.sum(ctx, player,
+                jewellery_capabilities.STRENGTH))),
         intelligence = math.max(0, math.min(maximum, base.intelligence -
             stat_loss.amount(ctx, player, stats.INTELLIGENCE) +
             mutation_effects.base_sum(ctx, player,
-                capabilities.INTELLIGENCE))),
+                capabilities.INTELLIGENCE) +
+            jewellery_effects.sum(ctx, player,
+                jewellery_capabilities.INTELLIGENCE))),
         dexterity = math.max(0, math.min(maximum, base.dexterity -
             stat_loss.amount(ctx, player, stats.DEXTERITY) +
             mutation_effects.base_sum(ctx, player,
-                capabilities.DEXTERITY))),
+                capabilities.DEXTERITY) +
+            jewellery_effects.sum(ctx, player,
+                jewellery_capabilities.DEXTERITY))),
     }
 end
 

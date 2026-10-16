@@ -54,9 +54,11 @@ Items support pickup, drop, wielding, armour delays, and put-on/removal of all
 24 active jewellery records. All 17 active potions and 19 active scrolls have
 Lua effects. The saved rules also cover buffs, tree form, ammunition, poison,
 curare, trapping nets, regeneration, duration decay, unknown appearances,
-type discovery, enchantment, and property knowledge. Jewellery effects beyond
-the previously implemented hard-coded resistance and status cases remain for
-the next category.
+type discovery, enchantment, and property knowledge. Lua declarations now
+project jewellery stat, resistance, vision, flight, MP, wizardry, acrobat,
+guardian-spirit, and attuned regeneration effects from the worn ECS items.
+The Faith piety event and blocked-projectile return from reflection remain
+for the religion and ranged-combat domain slices.
 
 Core Akara components remain typed Go stores where the generic engine must
 read them; Lua systems and policies change their authoritative values through
@@ -117,6 +119,9 @@ messages, unrand item effects, religious evil status, monster spell choice,
 and extended character status. Those consumers belong to the item, religion,
 monster AI spell, and status screen slices; they must read the saved Vampire
 state when those domains are implemented.
+Ru's Missing Hand sacrifice must also release a newly unavailable ring slot
+and recalculate derived MP if that ring grants magical power. The current
+mutation has no playable acquisition path.
 
 The item identification policy now gives each active identifying type a
 saved, unique appearance and discovers all copies when a potion is quaffed

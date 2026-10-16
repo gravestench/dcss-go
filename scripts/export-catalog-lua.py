@@ -241,6 +241,14 @@ def render_definition(category, revision, definition):
     if jewellery:
         header.append('local jewellery_kinds = require("constants.jewellery_kind")')
 
+        if jewellery.get("effects"):
+            header.append(
+                'local capabilities = require("constants.jewellery_capabilities")'
+            )
+            header.append(
+                'local magnitudes = require("constants.jewellery_magnitudes")'
+            )
+
     body = lines_for(definition)
     body[0] = "local definition = " + body[0]
 
@@ -300,6 +308,25 @@ def render_definition(category, revision, definition):
             body.insert(body.index("        pluses = true,"),
                         "        -- Source: crawl-ref/source/item-prop.cc:2129-2135")
 
+        if jewellery.get("effects"):
+            for capability, magnitude in jewellery["effects"].items():
+                literal = (lua_string(magnitude) if isinstance(magnitude, str)
+                           else str(magnitude))
+                original = f"            {capability} = {literal},"
+                replacement = f"            [capabilities.{capability}] = "
+
+                if magnitude == "item_plus":
+                    replacement += "magnitudes.ITEM_PLUS,"
+                else:
+                    replacement += f"{magnitude},"
+
+                body[body.index(original)] = replacement
+
+            source = ("player-equip.cc:1000-1290" if kind == "amulet"
+                      else "artefact.cc:346-379")
+            body.insert(body.index("        effects = {"),
+                        f"        -- Source: crawl-ref/source/{source}")
+
         record = body.index("    jewellery = {")
         body.insert(record,
                     "    -- Source: crawl-ref/source/item-prop-enum.h:200-266")
@@ -325,11 +352,18 @@ def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
 
     validate_links(links_artifact["links"], items_artifact, spells_artifact)
     staff_rules = json.loads((SOURCE / "staff-rules.json").read_text())
+    jewellery_rules = json.loads((SOURCE / "jewellery-rules.json").read_text())
 
     if staff_rules["source_revision"] != revision:
         raise ValueError("staff rules and item source revisions differ")
 
+    if jewellery_rules["source_revision"] != revision:
+        raise ValueError("jewellery rules and item source revisions differ")
+
     by_staff = {rule["id"]: rule for rule in staff_rules["staves"]}
+    by_jewellery = {
+        rule["id"]: rule for rule in jewellery_rules["rules"]
+    }
     active_staves = {
         item["id"]
         for item in items_artifact["items"]
@@ -338,6 +372,17 @@ def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
 
     if set(by_staff) != active_staves or len(by_staff) != len(staff_rules["staves"]):
         raise ValueError("staff rules must cover each active magical staff once")
+
+    active_jewellery = {
+        item["id"]
+        for item in items_artifact["items"]
+        if item["class"] == "OBJ_JEWELLERY" and
+        not item["explicitly_removed"]
+    }
+
+    if (set(by_jewellery) != active_jewellery or
+            len(by_jewellery) != len(jewellery_rules["rules"])):
+        raise ValueError("jewellery rules must cover each active item once")
 
     by_wand = {
         link["wand_id"]: link
@@ -386,6 +431,10 @@ def enrich_item_definitions(items_artifact, links_artifact, spells_artifact):
 
                 if item["id"] in jewellery_pluses:
                     definition["jewellery"]["pluses"] = True
+
+                definition["jewellery"]["effects"] = by_jewellery[
+                    item["id"]
+                ]["effects"]
 
             if key == "stackable" and link:
                 definition["wand_spell_id"] = link["spell_id"]

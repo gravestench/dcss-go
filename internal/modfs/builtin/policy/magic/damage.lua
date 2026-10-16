@@ -9,7 +9,6 @@ local mutation_effects = require("policy.mutations.effects.registry")
 local resistances = require("constants.resistance_ids")
 local armour_flags = require("constants.armour_flags")
 local armour_egos = require("constants.armour_egos")
-local item_ids = require("ids.items")
 local staves = require("policy.inventory.staves")
 local object_classes = require("ids.object_classes")
 local icy_defense = require("policy.character.icy_defense")
@@ -17,6 +16,8 @@ local cold_blooded = require("policy.character.cold_blooded")
 local monster_health = require("policy.combat.monster_health")
 local component = require("constants.component")
 local potion_resistance = require("policy.potions.resistance")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local damage = {}
 
@@ -90,25 +91,12 @@ function damage.monster_elemental(ctx, target, raw, resistance_id)
     return elemental(raw, resistance, resistance_id)
 end
 
-local elemental_gear = {
-    [resistances.FIRE] = {
-        [item_ids.RING_PROTECTION_FROM_FIRE] = 1,
-        [item_ids.RING_FIRE] = 1,
-        [item_ids.RING_ICE] = -1,
-    },
-    [resistances.COLD] = {
-        [item_ids.RING_PROTECTION_FROM_COLD] = 1,
-        [item_ids.RING_ICE] = 1,
-        [item_ids.RING_FIRE] = -1,
-    },
-    [resistances.ELECTRICITY] = {},
-    [resistances.ACID] = {
-        [item_ids.RING_RESIST_CORROSION] = 1,
-    },
-    [resistances.STEAM] = {},
-    [resistances.NEGATIVE_ENERGY] = {
-        [item_ids.RING_LIFE_PROTECTION] = 1,
-    },
+local jewellery_resistance = {
+    [resistances.FIRE] = jewellery_capabilities.FIRE_RESISTANCE,
+    [resistances.COLD] = jewellery_capabilities.COLD_RESISTANCE,
+    [resistances.ACID] = jewellery_capabilities.CORROSION_RESISTANCE,
+    [resistances.NEGATIVE_ENERGY] =
+        jewellery_capabilities.NEGATIVE_ENERGY_RESISTANCE,
 }
 
 local elemental_capabilities = {
@@ -136,14 +124,19 @@ local function armour_flag_level(definition, wanted)
 end
 
 function damage.player_resistance(ctx, player, resistance_id)
-    local gear = elemental_gear[resistance_id]
     local capability = elemental_capabilities[resistance_id]
 
-    if not gear or not capability then
+    if not capability then
         error("unsupported player elemental resistance " .. resistance_id)
     end
 
     local value = mutation_effects.sum(ctx, player, capability)
+    local jewellery_capability = jewellery_resistance[resistance_id]
+
+    if jewellery_capability then
+        value = value + jewellery_effects.sum(ctx, player,
+            jewellery_capability)
+    end
 
     if potion_resistance.active(ctx, player) and
         (resistance_id == resistances.FIRE or
@@ -190,15 +183,11 @@ function damage.player_resistance(ctx, player, resistance_id)
         head = true,
         gloves = true,
         boots = true,
-        ring_left = true,
-        ring_right = true,
     })
 
     for slot, entry in pairs(worn) do
         local item = entry.item
         local definition = entry.definition
-
-        value = value + (gear[item.kind_id] or 0)
 
         if slot == "weapon" then
             value = value + staves.resistance(definition, resistance_id)

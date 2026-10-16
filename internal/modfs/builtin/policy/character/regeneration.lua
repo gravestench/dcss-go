@@ -4,6 +4,8 @@ local component = require("constants.component")
 local vision = require("policy.character.vision")
 local targets = require("policy.ai.targets")
 local powered = require("policy.character.powered_by_death")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local regeneration = {}
 
@@ -18,6 +20,8 @@ function regeneration.rates(ctx, player, maximum_hp, maximum_mp)
 
     hp = hp + mutation_effects.sum(ctx, player,
         capabilities.HP_REGEN_BONUS)
+    hp = hp + jewellery_effects.sum(ctx, player,
+        jewellery_capabilities.HP_REGEN)
     hp = hp + powered.strength(ctx, player) * 100
     hp = math.max(1, hp)
 
@@ -27,6 +31,9 @@ function regeneration.rates(ctx, player, maximum_hp, maximum_mp)
         capabilities.MP_REGEN_DOUBLE) > 0 then
         mp = mp * 2
     end
+
+    mp = mp + jewellery_effects.sum(ctx, player,
+        jewellery_capabilities.MP_REGEN)
 
     if mutation_effects.sum(ctx, player,
         capabilities.HP_CASTING) > 0 then

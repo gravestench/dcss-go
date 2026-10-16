@@ -9,6 +9,7 @@ local species = require("ids.species")
 local records = require("policy.mutations.records")
 local resistances = require("constants.resistance_ids")
 local harness = require("tests.harness")
+local jewellery_fixture = require("tests.fixtures.jewellery")
 
 local test = {}
 
@@ -134,12 +135,10 @@ function test.run(ctx)
         resistances.ACID), 1,
         "level-three Yellow Scales preserve corrosion resistance")
 
-    local geared = ctx:create()
+    local geared_ctx, geared = jewellery_fixture.player(ctx)
 
     equip(ctx, geared, item_ids.ARM_STEAM_DRAGON_ARMOUR, "body")
     equip(ctx, geared, item_ids.RING_RESIST_CORROSION, "ring_left")
-
-    local geared_ctx = player_context(ctx, geared)
 
     harness.equal(damage.player_resistance(geared_ctx, geared,
         resistances.STEAM), 2,
@@ -197,13 +196,13 @@ function test.run(ctx)
         resistances.NEGATIVE_ENERGY), 0,
         "three rN levels prevent negative energy beam damage")
 
-    local negative_gear = ctx:create()
+    local negative_ctx, negative_gear = jewellery_fixture.player(ctx)
 
     equip(ctx, negative_gear, item_ids.ARM_PEARL_DRAGON_ARMOUR, "body")
     equip(ctx, negative_gear, item_ids.RING_LIFE_PROTECTION, "ring_left")
 
     harness.equal(damage.player_resistance(
-        player_context(ctx, negative_gear), negative_gear,
+        negative_ctx, negative_gear,
         resistances.NEGATIVE_ENERGY), 2,
         "pearl dragon scales and life protection ring each grant rN")
 end

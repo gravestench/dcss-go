@@ -7,11 +7,16 @@ local mutation_levels = require("policy.mutations.levels")
 local catalog = require("policy.catalog")
 local identification = require("policy.items.identification")
 local intent = require("constants.intent")
-local forms = require("policy.magic.effects.forms.player")
 local phases = require("constants.equipment_phases")
-local combat_equipment = require("policy.combat.equipment")
+local capabilities = require("constants.jewellery_capabilities")
+local magnitudes = require("constants.jewellery_magnitudes")
 
 local jewellery = {}
+local known_capabilities = {}
+
+for _, capability in pairs(capabilities) do
+    known_capabilities[capability] = true
+end
 
 function jewellery.kind(definition)
     if definition.class ~= classes.OBJ_JEWELLERY then
@@ -32,6 +37,37 @@ function jewellery.kind(definition)
     end
 
     return kind
+end
+
+function jewellery.effects(definition)
+    jewellery.kind(definition)
+
+    local record = definition.jewellery
+    local effects = record.effects
+
+    if type(effects) ~= "table" or next(effects) == nil then
+        error("jewellery " .. tostring(definition.id) ..
+            " has no effect capabilities")
+    end
+
+    for capability, magnitude in pairs(effects) do
+        if not known_capabilities[capability] then
+            error("jewellery " .. tostring(definition.id) ..
+                " has unknown capability " .. tostring(capability))
+        end
+
+        local plus = magnitude == magnitudes.ITEM_PLUS
+        local numeric = type(magnitude) == "number" and
+            magnitude == magnitude and magnitude ~= math.huge and
+            magnitude ~= -math.huge
+
+        if (plus and not record.pluses) or (not plus and not numeric) then
+            error("jewellery " .. tostring(definition.id) ..
+                " has invalid magnitude for " .. capability)
+        end
+    end
+
+    return effects
 end
 
 -- Source: species.cc:507-527. A missing hand removes the first ordinary
@@ -95,6 +131,7 @@ function jewellery.in_slot(ctx, player, slot)
 end
 
 function jewellery.worn(ctx, player)
+    local combat_equipment = require("policy.combat.equipment")
     local selected = { [slots.AMULET] = true }
 
     for _, slot in ipairs(jewellery.ring_slots(ctx, player)) do
@@ -124,6 +161,7 @@ local function held(ctx, player, item_id)
 end
 
 local function replacement(ctx, player, input, available)
+    local forms = require("policy.magic.effects.forms.player")
     local chosen = input.target_id
 
     if chosen and chosen ~= "" then
@@ -164,6 +202,7 @@ local function replacement(ctx, player, input, available)
 end
 
 function jewellery.prepare_put_on(ctx, player, input)
+    local forms = require("policy.magic.effects.forms.player")
     if input.cancelled then
         return { message = "Okay." }
     end
@@ -249,6 +288,7 @@ function jewellery.prepare_put_on(ctx, player, input)
 end
 
 function jewellery.prepare_remove(ctx, player, input)
+    local forms = require("policy.magic.effects.forms.player")
     local entity, definition, message = held(ctx, player, input.item_id or 0)
 
     if message then

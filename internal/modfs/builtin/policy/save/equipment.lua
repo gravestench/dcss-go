@@ -10,6 +10,7 @@ local jewellery_kinds = require("constants.jewellery_kind")
 local jewellery_slots = require("constants.jewellery_slots")
 local classes = require("ids.object_classes")
 local phases = require("constants.equipment_phases")
+local save_jewellery = require("policy.save.jewellery")
 
 local armour_slots = {
     body = true,
@@ -229,6 +230,7 @@ local function validate(ctx)
     end
 
     validate_delay(ctx, player, slots)
+    save_jewellery.run(ctx, player)
 
     if not starting_weapon_found then
         error("save is missing selected starting weapon " .. identity.starting_weapon_id)

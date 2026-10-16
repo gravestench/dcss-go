@@ -4,6 +4,8 @@ local catalog = require("policy.catalog")
 local component = require("constants.component")
 local effects = require("policy.mutations.effects.registry")
 local flags = require("constants.monster_flags")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local senses = {}
 
@@ -18,7 +20,9 @@ local function has_flag(definition, wanted)
 end
 
 function senses.see_invisible(ctx, player)
-    return effects.sum(ctx, player, capabilities.SEE_INVISIBLE) > 0
+    return effects.sum(ctx, player, capabilities.SEE_INVISIBLE) > 0 or
+        jewellery_effects.has(ctx, player,
+            jewellery_capabilities.SEE_INVISIBLE)
 end
 
 function senses.detect_radius(ctx, player)

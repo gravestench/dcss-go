@@ -5,6 +5,8 @@
 
 local categories = require("constants.catalog")
 local jewellery_kinds = require("constants.jewellery_kind")
+local capabilities = require("constants.jewellery_capabilities")
+local magnitudes = require("constants.jewellery_magnitudes")
 
 local definition = {
     id = "AMU_FAITH",
@@ -17,6 +19,10 @@ local definition = {
     -- Source: crawl-ref/source/item-prop-enum.h:200-266
     jewellery = {
         kind = jewellery_kinds.AMULET,
+        -- Source: crawl-ref/source/player-equip.cc:1000-1290
+        effects = {
+            [capabilities.FAITH] = 1,
+        },
     },
 
     -- Source: crawl-ref/source/item-name.cc:787

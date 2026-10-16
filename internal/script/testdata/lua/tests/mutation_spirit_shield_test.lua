@@ -8,11 +8,12 @@ local records = require("policy.mutations.records")
 local effects = require("policy.mutations.effects.registry")
 local capabilities = require("constants.mutation_capabilities")
 local harness = require("tests.harness")
+local jewellery_fixture = require("tests.fixtures.jewellery")
 
 local test = {}
 
 local function player_with_vitals(ctx, hp, mp)
-    local player = ctx:create()
+    local _, player = jewellery_fixture.player(ctx)
 
     ctx:add(player, component.HEALTH, {
         current = hp,

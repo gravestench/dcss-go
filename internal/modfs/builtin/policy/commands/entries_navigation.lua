@@ -38,10 +38,14 @@ function entries.wait(ctx, player, _, _, delay)
                 kind = intent.CHANNEL_WAIT,
             },
             cost = 10,
+            explicit_wait = true,
         }
     end
 
-    return registry.wait()
+    local decision = registry.wait()
+    decision.explicit_wait = true
+
+    return decision
 end
 
 function entries.inspect()

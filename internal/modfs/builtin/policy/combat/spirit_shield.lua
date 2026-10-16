@@ -1,9 +1,10 @@
 local component = require("constants.component")
 local armour_egos = require("constants.armour_egos")
-local item_ids = require("ids.items")
 local equipment = require("policy.combat.equipment")
 local effects = require("policy.mutations.effects.registry")
 local capabilities = require("constants.mutation_capabilities")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local spirit_shield = {}
 
@@ -14,7 +15,6 @@ local armour_slots = {
     cloak = true,
     gloves = true,
     boots = true,
-    amulet = true,
 }
 
 function spirit_shield.active(ctx, player)
@@ -22,16 +22,15 @@ function spirit_shield.active(ctx, player)
         return true
     end
 
+    if jewellery_effects.has(ctx, player,
+        jewellery_capabilities.SPIRIT_SHIELD) then
+        return true
+    end
+
     local worn = equipment.worn(ctx, player, armour_slots)
 
-    for slot, entry in pairs(worn) do
-        if slot == "amulet" and
-            entry.item.kind_id == item_ids.AMU_GUARDIAN_SPIRIT then
-            return true
-        end
-
-        if slot ~= "amulet" and
-            entry.item.ego == armour_egos.SPIRIT_SHIELD then
+    for _, entry in pairs(worn) do
+        if entry.item.ego == armour_egos.SPIRIT_SHIELD then
             return true
         end
     end

@@ -10,6 +10,8 @@ local object_classes = require("ids.object_classes")
 local equipment = require("policy.combat.equipment")
 local monster_health = require("policy.combat.monster_health")
 local catalog = require("policy.catalog")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local drain = {}
 
@@ -53,8 +55,9 @@ local function equipped_resistance(ctx, monster, definition)
                 value = value + 1
             end
         elseif slot == "jewellery" and
-            item.kind_id == item_ids.RING_LIFE_PROTECTION then
-            value = value + 1
+            kind.jewellery then
+            value = value + jewellery_effects.value(item, kind,
+                jewellery_capabilities.NEGATIVE_ENERGY_RESISTANCE)
         elseif slot == "weapon" and
             item.kind_id == item_ids.STAFF_DEATH then
             value = value + 1

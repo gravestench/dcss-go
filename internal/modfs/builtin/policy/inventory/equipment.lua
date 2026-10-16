@@ -8,6 +8,8 @@ local mutation_capabilities = require("constants.mutation_capabilities")
 local staves = require("policy.inventory.staves")
 local jewellery = require("policy.inventory.jewellery")
 local jewellery_kinds = require("constants.jewellery_kind")
+local attunement = require("policy.jewellery.attunement")
+local acrobat = require("policy.jewellery.acrobat")
 local jewellery_slots = require("constants.jewellery_slots")
 local phases = require("constants.equipment_phases")
 
@@ -414,7 +416,19 @@ function equipment.advance(ctx, actor)
             return { "You can no longer put on that ring." }
         end
 
+        local effects = require("policy.inventory.jewellery_effects")
+        local capabilities = require("constants.jewellery_capabilities")
+        local magic_before = effects.sum(ctx, actor, capabilities.MAX_MP)
+
         ctx:add(delay.item_id, "core.equipped", { slot = delay.slot })
+        attunement.on_equip(ctx, actor, delay.item_id)
+
+        if effects.sum(ctx, actor, capabilities.MAX_MP) ~= magic_before then
+            local resources = require("policy.character.resources")
+
+            resources.refresh_mp(ctx, actor)
+        end
+
         ctx:remove(actor, "core.equipment_delay")
 
         return {
@@ -442,6 +456,10 @@ function equipment.advance(ctx, actor)
 
     if delay.phase == "remove" then
         ctx:remove(delay.old_item_id, "core.equipped")
+        if delay.slot == jewellery_slots.AMULET then
+            attunement.on_remove(ctx, delay.old_item_id)
+            acrobat.equipment_changed(ctx, actor)
+        end
         messages[#messages + 1] = finish_message(
             ctx, delay.old_item_id, "You finish taking off your %s.")
 
@@ -460,6 +478,9 @@ function equipment.advance(ctx, actor)
         end
     else
         ctx:add(delay.item_id, "core.equipped", { slot = delay.slot })
+        if delay.slot == jewellery_slots.AMULET then
+            attunement.on_equip(ctx, actor, delay.item_id)
+        end
         ctx:remove(actor, "core.equipment_delay")
         messages[#messages + 1] = finish_message(
             ctx, delay.item_id, "You finish putting on your %s.")

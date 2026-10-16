@@ -1,5 +1,6 @@
 local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local formulas = {}
 
@@ -277,7 +278,11 @@ function formulas.max_mp(ctx, player, level, species, skills)
         (100 + mutation_effects.sum(ctx, player,
             mutation_capabilities.MP_PERCENT)) / 100)
 
-    return math.max(0, math.floor(scaled / 100) + species.mp_mod)
+    local jewellery_effects = require("policy.inventory.jewellery_effects")
+
+    return math.max(0, math.floor(scaled / 100) + species.mp_mod +
+        jewellery_effects.sum(ctx, player,
+            jewellery_capabilities.MAX_MP))
 end
 
 function formulas.needs_manual_stat(ctx, player, level)

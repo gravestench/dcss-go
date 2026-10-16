@@ -4,6 +4,7 @@ local player_health_policy = require("policy.combat.player_health")
 local damage_causes = require("constants.damage_causes")
 local statuses = require("policy.magic.effects.statuses.player")
 local regeneration = require("policy.character.regeneration")
+local attunement = require("policy.jewellery.attunement")
 
 local system = {}
 
@@ -157,6 +158,7 @@ function system.regeneration(ctx, entity, aut)
     ctx:set(entity, "core.health", health)
     ctx:set(entity, "core.magic", magic)
     ctx:set(entity, "core.regeneration", progress)
+    attunement.refresh(ctx, entity)
 end
 
 register.system({

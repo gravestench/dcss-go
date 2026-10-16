@@ -6,6 +6,7 @@ local clutch = require("policy.magic.effects.statuses.vile_clutch")
 local fastroot = require("policy.magic.effects.zaps.fastroot")
 local component = require("constants.component")
 local intent_ids = require("constants.intent")
+local acrobat = require("policy.jewellery.acrobat")
 
 local function escape_grasp(ctx, actor, intent)
     local grip = ctx:get(actor, component.CONSTRICTION)
@@ -95,6 +96,10 @@ function system.update(ctx, actor)
     end
 
     ctx:move_actor(actor, position.level_id, x, y)
+
+    if actor == ctx:player() then
+        acrobat.moved(ctx, actor)
+    end
 end
 
 register.system({

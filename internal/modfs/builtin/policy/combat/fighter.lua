@@ -17,6 +17,9 @@ local rage = require("policy.character.rage")
 local ammunition = require("ids.ammunition")
 local weapon_brands = require("constants.weapon_brands")
 local staves = require("policy.inventory.staves")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
+local acrobat = require("policy.jewellery.acrobat")
 
 local fighter = {}
 
@@ -255,6 +258,9 @@ function fighter.defense(ctx)
     ev = ev + mutation_effects.sum(ctx, player,
         mutation_capabilities.EVASION_BONUS)
     ev = ev + agility.evasion_bonus(ctx, player)
+    ev = ev + jewellery_effects.sum(ctx, player,
+        jewellery_capabilities.EV)
+    ev = ev + acrobat.bonus(ctx, player)
 
     if petrification and petrification.petrified_aut > 0 then
         local species = fighter.species(ctx)
@@ -288,6 +294,8 @@ function fighter.defense(ctx)
         mutation_capabilities.AC_PARTIAL_X100)
     scaled_ac = scaled_ac + mutation_effects.full_sum(ctx, player,
         mutation_capabilities.AC_FULL_X100)
+    scaled_ac = scaled_ac + 100 * jewellery_effects.sum(ctx, player,
+        jewellery_capabilities.AC)
 
     if worn.weapon and worn.weapon.item.ego == weapon_brands.PROTECTION then
         scaled_ac = scaled_ac + 500
@@ -306,6 +314,8 @@ function fighter.defense(ctx)
 
     shield_class = shield_class + mutation_effects.sum(ctx, player,
         mutation_capabilities.SHIELD_CLASS_BONUS)
+    shield_class = shield_class + 10 * jewellery_effects.sum(ctx, player,
+        jewellery_capabilities.REFLECTION)
 
     if ctx:has(player, "core.constricted") then
         ev = math.max(0, ev - 3)

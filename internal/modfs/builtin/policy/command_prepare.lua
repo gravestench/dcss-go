@@ -9,7 +9,7 @@ local component = require("constants.component")
 local commands = require("policy.input.commands")
 local registry = require("policy.commands.registry")
 
-local function prepare(ctx, input)
+local function prepare_raw(ctx, input)
     local player = ctx:player()
     local health = ctx:get(player, "core.health")
 
@@ -118,7 +118,11 @@ local function prepare(ctx, input)
     return registry.dispatch(kind, ctx, player, input, position, delay)
 end
 
+local module = { run = prepare_raw }
+
 register.policy({
     id = "command.prepare",
-    run = prepare,
+    run = module.run,
 })
+
+return module

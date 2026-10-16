@@ -6,6 +6,8 @@ local mutation_capabilities = require("constants.mutation_capabilities")
 local player_attributes = require("policy.character.attributes")
 local forms = require("policy.magic.effects.forms.player")
 local statuses = require("policy.magic.effects.statuses.player")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local failure = {}
 
@@ -135,6 +137,8 @@ function failure.profile(ctx, player, spell)
         spell_level = spell.level,
         mutation_adjustment = mutation_effects.sum(ctx, player,
             mutation_capabilities.SPELL_FAILURE_ADJUSTMENT),
+        wizardry = jewellery_effects.sum(ctx, player,
+            jewellery_capabilities.WIZARDRY),
         vertigo = statuses.vertigo_active(ctx, player),
     })
 

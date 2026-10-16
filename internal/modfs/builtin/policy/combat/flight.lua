@@ -3,12 +3,16 @@ local component = require("constants.component")
 local forms = require("policy.magic.effects.forms.player")
 local capabilities = require("constants.mutation_capabilities")
 local effects = require("policy.mutations.effects.registry")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local flight = {}
 
 function flight.permanent(ctx, player)
     return forms.modifiers(ctx, player).flight ~= "forbid" and
-        effects.sum(ctx, player, capabilities.PERMANENT_FLIGHT) > 0
+        (effects.sum(ctx, player, capabilities.PERMANENT_FLIGHT) > 0 or
+            jewellery_effects.has(ctx, player,
+                jewellery_capabilities.PERMANENT_FLIGHT))
 end
 
 local function has_flag(flags, wanted)

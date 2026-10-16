@@ -546,7 +546,7 @@ local function validate_registered_catalogs()
 
         if item.class == object_classes.OBJ_JEWELLERY and
             item.status == "defined" then
-            jewellery.kind(item)
+            jewellery.effects(item)
         end
     end
 

@@ -5,6 +5,8 @@
 
 local categories = require("constants.catalog")
 local jewellery_kinds = require("constants.jewellery_kind")
+local capabilities = require("constants.jewellery_capabilities")
+local magnitudes = require("constants.jewellery_magnitudes")
 
 local definition = {
     id = "RING_DEXTERITY",
@@ -19,6 +21,10 @@ local definition = {
         kind = jewellery_kinds.RING,
         -- Source: crawl-ref/source/item-prop.cc:2129-2135
         pluses = true,
+        -- Source: crawl-ref/source/artefact.cc:346-379
+        effects = {
+            [capabilities.DEXTERITY] = magnitudes.ITEM_PLUS,
+        },
     },
 
     -- Source: crawl-ref/source/item-name.cc:762

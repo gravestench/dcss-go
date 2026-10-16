@@ -5,12 +5,13 @@ local capabilities = require("constants.mutation_capabilities")
 local armour_egos = require("constants.armour_egos")
 local armour_flags = require("constants.armour_flags")
 local component = require("constants.component")
-local item_ids = require("ids.items")
 local spell_ids = require("ids.spells")
 local form_catalog = require("policy.magic.effects.forms.catalog")
 local potion_resistance = require("policy.potions.resistance")
 local staves = require("policy.inventory.staves")
 local resistance_ids = require("constants.resistance_ids")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local resistance = {}
 local willpower_pip = 40
@@ -38,6 +39,8 @@ function resistance.poison(ctx, player)
 
     local value = effects.sum(ctx, player,
         capabilities.POISON_RESISTANCE)
+    value = value + jewellery_effects.sum(ctx, player,
+        jewellery_capabilities.POISON_RESISTANCE)
 
     if potion_resistance.active(ctx, player) then
         value = value + 1
@@ -54,13 +57,10 @@ function resistance.poison(ctx, player)
         head = true,
         gloves = true,
         boots = true,
-        ring_left = true,
-        ring_right = true,
     })
 
     for _, entry in pairs(worn) do
-        if entry.item.kind_id == "RING_POISON_RESISTANCE" or
-            staves.resistance(entry.definition, resistance_ids.POISON) > 0 or
+        if staves.resistance(entry.definition, resistance_ids.POISON) > 0 or
             entry.item.ego == "SPARM_POISON_RESISTANCE" then
             value = value + 1
         end
@@ -107,14 +107,14 @@ function resistance.willpower(ctx, player)
     local progress = ctx:get(player, component.PROGRESSION)
     local species = catalog.get("species", choice.species_id)
     local pips = effects.sum(ctx, player, capabilities.WILLPOWER_PIPS)
+    pips = pips + jewellery_effects.sum(ctx, player,
+        jewellery_capabilities.WILLPOWER_PIPS)
     local worn = equipment.worn(ctx, player, {
         body = true,
         cloak = true,
         head = true,
         gloves = true,
         boots = true,
-        ring_left = true,
-        ring_right = true,
     })
 
     for slot, entry in pairs(worn) do
@@ -128,10 +128,6 @@ function resistance.willpower(ctx, player)
             pips = pips - 2
         end
 
-        if (slot == "ring_left" or slot == "ring_right") and
-            entry.item.kind_id == item_ids.RING_WILLPOWER then
-            pips = pips + 1
-        end
     end
 
     local value = progress.level * species.mr + pips * willpower_pip
