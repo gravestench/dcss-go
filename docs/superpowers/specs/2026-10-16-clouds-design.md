@@ -64,9 +64,15 @@ effect file rather than a branch in a giant dispatcher.
 
 An actor exposure system checks only the cloud under that actor when its
 source-defined timing applies. Each cloud's effect module computes immunity,
-resistance, damage, status, and source attribution. A separate field system
-runs once per spent player action, after time advances: it handles terrain
-interactions, spread, special emissions, and dissipation in source order.
+resistance, armour-adjusted and time-scaled damage, status, and source
+attribution. One Lua danger policy also answers whether a monster should
+enter a cloud. It follows `cloud.cc:_mons_avoids_cloud`, including immunity,
+intelligence, current HP, status risk, berserk behavior, and the source rule
+that permits movement from one dangerous cloud to another. Monster path and
+placement decisions use this policy instead of a duplicate hazard table.
+A separate field system runs once per spent player action, after time
+advances. It handles terrain interactions, spread, special emissions, and
+dissipation in source order.
 The field system iterates a stable snapshot so newly spread clouds do not
 run their own field update in the same action. It consumes a named cloud RNG
 stream and persists every random outcome through the normal save state.
@@ -74,9 +80,11 @@ stream and persists every random outcome through the normal save state.
 Source behaviors include opacity changes, player-created nonopaque clouds
 vanishing outside sight, ink restricted to water, steam beside fire and
 water, forest fire consuming flammable terrain, spectral and other special
-effects, and source cloud replacement strengths. Wind, still-winds, and
-sanctuary rules must be represented as explicit capabilities or conditions;
-they must not silently fall through to a generic no-op. Where an adjacent
+effects, and source cloud replacement strengths. The policy distinguishes
+harmless clouds from clouds that have no direct damage but do have a negative
+status effect. Wind, still-winds, and sanctuary rules must be represented as
+explicit capabilities or conditions; they must not silently fall through to
+a generic no-op. Where an adjacent
 domain is not yet playable, a typed event and an inventory entry retain the
 specific missing consumer.
 
@@ -97,9 +105,10 @@ attribution, without rerolling random selectors.
 Lua `_test.lua` files import production definitions, schemas, and policies.
 They cover all 34 source IDs, pseudo-selector boundaries, source placement
 and replacement, field aging exactly once per player action, spread and
-terrain interactions, immunity and damage families, opacity, and mod-added
-files. Integrated Go scenarios cover existing cloud-producing spells,
-actor/item coexistence, visibility, save continuation, ruleset hash,
+terrain interactions, immunity and damage families, monster avoidance,
+opacity, and mod-added files. Integrated Go scenarios cover existing
+cloud-producing spells, actor/item coexistence, visibility, save
+continuation, ruleset hash,
 monster and player exposure, and a modded cloud. Run focused domain suites,
 build, vet, style, and diff checks after the whole category changes. Make
 one implementation commit for the cloud category and merge it into local
