@@ -1,0 +1,13 @@
+{
+  "id": "minmay_shop_mayhem",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 950,
+      "end_line": 973,
+      "sha256": "d368dd0c67bee93a74ae82dd67eb07ca1592f2f5fa6d14ec715b4ca822ce6aeb",
+      "method": "configure_mayhem_stock",
+      "stage": "run"
+    }
+  ]
+}

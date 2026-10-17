@@ -1,0 +1,26 @@
+NAME:    minmay_shop_damaged
+# Source: crawl-ref/source/dat/des/builder/shops.des:854
+TAGS:    transparent extra
+# not interesting after Lair
+DEPTH:   D:4-10
+KFEAT:   S = general shop type:Lightly-Used suffix:Armoury ; \
+             damaged ego:none demon whip | \
+             damaged ego:none eveningstar | \
+             damaged ego:none quick blade | \
+             damaged ego:none demon blade | \
+             damaged ego:none double sword | \
+             damaged ego:none triple sword | \
+             damaged ego:none executioner's axe | \
+             damaged ego:none demon trident | \
+             damaged ego:none bardiche | \
+             damaged ego:none lajatang | \
+             damaged ego:none hand crossbow | \
+             damaged ego:none triple crossbow | \
+             damaged ego:none longbow | \
+             damaged ego:none crystal plate armour | \
+             damaged ego:none barding | \
+             damaged ego:none pearl dragon scales | \
+             damaged ego:none gold dragon scales
+MAP
+S
+ENDMAP

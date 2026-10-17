@@ -1,0 +1,13 @@
+{
+  "id": "serial_shops",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 71,
+      "end_line": 84,
+      "sha256": "a03407a5360e6ef463c7b48e665db846a276c6134cd76e7853f135a63897c8cc",
+      "method": "place_serial_shops",
+      "stage": "post_place"
+    }
+  ]
+}

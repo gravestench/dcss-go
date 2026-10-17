@@ -1,0 +1,7 @@
+NAME:   shop_statue
+# Source: crawl-ref/source/dat/des/builder/shops.des:110
+TAGS:   allow_dup extra shop
+KFEAT:  O = any shop
+MAP
+@G.O.<.G@
+ENDMAP

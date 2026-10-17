@@ -90,7 +90,11 @@ local function parse_term(text, expression, site)
 
     result.name = table.concat(names, " ")
 
-    if result.name == "" then
+    if result.name == "" and result.place then
+        -- A standalone DES place: term requests a random monster from that
+        -- branch and depth. It occupies one MONS array slot.
+        result.name = "0"
+    elseif result.name == "" then
         choice.fail(site, expression, "missing monster name")
     end
 

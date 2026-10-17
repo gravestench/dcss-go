@@ -8,6 +8,9 @@ local component = require("constants.component")
 local monster_flags = require("constants.monster_flags")
 local origin_policy = require("policy.population.origin")
 local trap_placement = require("policy.traps.placement")
+local shop_spec = require("policy.generation.vaults.shop_spec")
+local shop_generation = require("policy.shops.generation")
+local streams = require("constants.rng_streams")
 
 local vaults = {}
 
@@ -113,6 +116,37 @@ local function generated_gear(ctx, level, record)
     return nil
 end
 
+local function materialize_shop(ctx, level, record)
+    local site = {
+        path = record.arguments and record.arguments.path or
+            "vaults/shop/" .. record.source_id .. ".des",
+        vault_id = record.source_id,
+        line = record.line,
+        directive = record.directive,
+        glyph = record.source,
+    }
+    local alternatives = shop_spec.parse(record.identity, site)
+    local random = {}
+
+    function random:roll(bound)
+        return ctx:random(streams.SHOP, bound)
+    end
+
+    local selected = shop_spec.choose(random, alternatives)
+
+    selected.level_id = level.id
+    selected.x = record.x
+    selected.y = record.y
+    selected.depth = level.id
+
+    shop_generation.place(ctx, selected)
+
+    return {
+        level_id = level.id,
+        index = record.index,
+    }
+end
+
 function vaults.materialize(ctx, level)
     local actors = 0
     local materialized = {}
@@ -120,7 +154,11 @@ function vaults.materialize(ctx, level)
     for _, record in ipairs(level.vault_records or {}) do
         local arguments = record.arguments or {}
 
-        if (record.kind == effects.FEATURE or
+        if record.kind == effects.FEATURE and
+            shop_spec.is_shop(record.identity) then
+            materialized[#materialized + 1] =
+                materialize_shop(ctx, level, record)
+        elseif (record.kind == effects.FEATURE or
             record.kind == effects.SOURCE_FEATURE) and
             trap_placement.is_trap(record) then
             local kind_id = trap_placement.materialize(ctx, level, record)

@@ -1,0 +1,35 @@
+NAME:   minmay_shop_mayhem
+# Source: crawl-ref/source/dat/des/builder/shops.des:944
+DEPTH:  D:4-, Depths, Orc, Elf, Shoals, Snake, Vaults
+TAGS:   transparent extra
+WEIGHT: 3
+# Only deals in items that damage multiple targets, only has spellbooks in which
+# ALL of the spells damage multiple targets.
+: vault.run("configure_mayhem_stock")
+# source: {{
+# source: local kstr = "S = general shop type:Mayhem suffix:Merchandise ; " ..
+# source:              "hand axe w:5 | " ..
+# source:              "war axe | " ..
+# source:              "broad axe w:5 | " ..
+# source:              "battleaxe | " ..
+# source:              "executioner's axe w:2 | " ..
+# source:              "book of fire w:5 | " ..
+# source:              "the unrestrained analects w:5 | " ..
+# source:              "wand of iceblast"
+# source:
+# source: -- Unfortunately this can still result in the unrandart being picked twice or
+# source: -- more in the shop (resulting in the shop having regular clubs/great maces).
+# source: -- unrandart axes aren't included here since one of the above axes can already
+# source: -- get turned into them.
+# source: if not you.unrands("devastator") then
+# source:       kstr = kstr .. "|devastator w:1"
+# source: end
+# source: if not you.unrands("firestarter") then
+# source:       kstr = kstr .. "|firestarter w:1"
+# source: end
+# source:
+# source: kfeat(kstr)
+# source: }}
+MAP
+S
+ENDMAP

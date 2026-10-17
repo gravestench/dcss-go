@@ -1,0 +1,13 @@
+{
+  "id": "nicolae_good_shop",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 628,
+      "end_line": 630,
+      "sha256": "03305759c53c53dde9f089923e0f3aebd7ca35ddcd83a1f51d6dff1d0e4d9701",
+      "method": "choose_good_altar",
+      "stage": "run"
+    }
+  ]
+}

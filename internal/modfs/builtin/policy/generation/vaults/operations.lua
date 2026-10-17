@@ -13,6 +13,9 @@ local informational = {
     [directives.TAGS] = true,
     [directives.ORIENT] = true,
     [directives.WEIGHT] = true,
+    [directives.DEPTH] = true,
+    [directives.CHANCE] = true,
+    [directives.HOOK_POST_PLACE] = true,
 }
 
 local intent_kinds = {
@@ -265,8 +268,24 @@ local function embed_helper(cells, source, helper, random, depth, player)
     end
 
     local helper_cells, helper_width = helper_matrix(helper)
+    local region_width = high_x - low_x + 1
+    local region_height = high_y - low_y + 1
 
-    if helper_width > high_x - low_x + 1 or #helper_cells > high_y - low_y + 1 then
+    if helper_width > region_width or #helper_cells > region_height then
+        for turns = 1, 3 do
+            local rotated = transforms.rotate(helper_cells, turns)
+
+            if #rotated[1] <= region_width and
+                #rotated <= region_height then
+                helper_cells = rotated
+                helper_width = #rotated[1]
+
+                break
+            end
+        end
+    end
+
+    if helper_width > region_width or #helper_cells > region_height then
         error("SUBVAULT helper " .. helper.id .. " cannot fit its source region")
     end
 
@@ -302,6 +321,10 @@ local function hook_api(random, events, line, player)
     player = player or {}
 
     function api:roll(bound)
+        if bound <= 1 then
+            return 0
+        end
+
         return random:roll(bound)
     end
 
@@ -319,6 +342,78 @@ local function hook_api(random, events, line, player)
 
     function api:random_range(first, last)
         return first + random:roll(last - first + 1)
+    end
+
+    function api:chance(numerator, denominator)
+        return numerator >= denominator or
+            (numerator > 0 and self:roll(denominator) < numerator)
+    end
+
+    function api:roll_dice(count, sides)
+        local total = 0
+
+        for _ = 1, count do
+            total = total + self:roll(sides) + 1
+        end
+
+        return total
+    end
+
+    function api:subset(values, count)
+        local remaining = {}
+        local selected = {}
+
+        for index, value in ipairs(values) do
+            remaining[index] = value
+        end
+
+        for _ = 1, count do
+            local index = self:roll(#remaining) + 1
+
+            selected[#selected + 1] = table.remove(remaining, index)
+        end
+
+        return selected
+    end
+
+    function api:branch_id()
+        return player.branch_id
+    end
+
+    function api:depth()
+        return player.depth
+    end
+
+    function api:absolute_depth()
+        return player.absolute_depth or player.depth
+    end
+
+    function api:depth_fraction()
+        return player.depth / player.branch_bottom
+    end
+
+    function api:map_tag()
+        return player.map_tag
+    end
+
+    function api:unique_generated(name)
+        return player.unique_items and player.unique_items[name] or false
+    end
+
+    function api:random_name()
+        local syllables = {
+            "an", "ar", "bel", "dar", "en", "far", "gil", "is",
+            "kor", "lin", "mor", "nar", "or", "ran", "sil", "vor",
+        }
+        local parts = {}
+
+        for _ = 1, 3 do
+            parts[#parts + 1] = self:random_from(syllables)
+        end
+
+        local name = table.concat(parts)
+
+        return name:sub(1, 1):upper() .. name:sub(2)
     end
 
     function api:record(kind, arguments)

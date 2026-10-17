@@ -20,7 +20,7 @@ func TestVaultCatalogAddsAndReplacesDESFiles(t *testing.T) {
 		{
 			name:       "add new vault",
 			overlay:    "testdata/vault-new",
-			wantCount:  340,
+			wantCount:  410,
 			wantID:     "zz_new_arrival",
 			wantWeight: 4,
 		},
@@ -28,7 +28,7 @@ func TestVaultCatalogAddsAndReplacesDESFiles(t *testing.T) {
 		{
 			name:       "replace one vault",
 			overlay:    "testdata/vault-replace",
-			wantCount:  339,
+			wantCount:  409,
 			wantID:     "roderic_crop_circles_arrival_small",
 			wantWeight: 7,
 		},

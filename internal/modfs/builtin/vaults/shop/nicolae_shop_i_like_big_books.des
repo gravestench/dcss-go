@@ -1,0 +1,19 @@
+NAME:   nicolae_shop_i_like_big_books
+# Source: crawl-ref/source/dat/des/builder/shops.des:1306
+TAGS:   transparent extra
+DEPTH:  D:4-, Depths, Elf, Snake
+KFEAT:  S = book shop type:Tremendous suffix:Tomes count:8 ; \
+            any randbook numspells:8
+KFEAT:  p = c
+COLOUR: p : blue / red / magenta / lightgreen / lightred / lightmagenta / yellow
+MAP
+...........
+.pppppppp..
+.cccccccpp.
+.......ccp.
+.......Scp.
+.......ccp.
+.cccccccpp.
+.pppppppp..
+...........
+ENDMAP

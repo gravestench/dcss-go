@@ -1,0 +1,21 @@
+NAME: nicolae_antique_artefacts
+# Source: crawl-ref/source/dat/des/builder/shops.des:753
+TAGS: transparent extra
+DEPTH: D:10-, Depths
+WEIGHT: 1
+SHUFFLE: -m
+SUBST: - = .
+KFEAT: m = iron_grate
+KFEAT: S = antiques shop type:Antique suffix:Artefacts count:6 ; \
+   any weapon randart | any armour randart | any jewellery randart w:4
+MAP
+.......
+.-vmv-.
+.v...v.
+.m.S.m.
+.v...v.
+.-vmv-.
+.......
+ENDMAP
+
+# Get away from it all.

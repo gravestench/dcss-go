@@ -233,7 +233,16 @@ func (g *Game) restoreLocationComponents(
 }
 
 func (g *Game) validateRestoredPlacement() error {
-	if _, err := g.scripts.Policy("save.validate_shops", nil); err != nil {
+	if _, err := g.scripts.Policy("save.validate_vault_ids", map[string]any{
+		"levels": g.vaultValidationLevels(),
+	}); err != nil {
+		return err
+	}
+
+	if _, err := g.scripts.Policy("save.validate_shops", map[string]any{
+		"scenario_id": g.scenarioID,
+		"levels":      g.vaultValidationLevels(),
+	}); err != nil {
 		return err
 	}
 

@@ -61,11 +61,13 @@ local function has_school(spell, first, second)
     return false
 end
 
-local function themed_spells(ctx)
+local function themed_spells(ctx, request)
     -- Source: crawl-ref/source/randbook.cc:27, 216-301.
-    local count = source.average(ctx, 4, 3) + 2
-    local first = school_order[ctx:random(streams.ITEM_GENERATION, #school_order) + 1]
-    local second = school_order[ctx:random(streams.ITEM_GENERATION, #school_order) + 1]
+    local count = request.numspells or source.average(ctx, 4, 3) + 2
+    local first = request.disc or
+        school_order[ctx:random(streams.ITEM_GENERATION, #school_order) + 1]
+    local second = request.disc or
+        school_order[ctx:random(streams.ITEM_GENERATION, #school_order) + 1]
     local spells = {}
     local used = {}
     local levels = 0
@@ -143,7 +145,7 @@ function random_books.roll(ctx, definition, request, result)
     local level
 
     if definition.id == ids.BOOK_RANDART_THEME then
-        spells, theme, level = themed_spells(ctx)
+        spells, theme, level = themed_spells(ctx, request)
     elseif definition.id == ids.BOOK_RANDART_LEVEL then
         spells, theme, level = level_spells(ctx, request)
     else

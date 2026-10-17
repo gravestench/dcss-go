@@ -10,6 +10,15 @@ import (
 )
 
 func writeGenerated(outDir string, files map[string][]byte, check bool) error {
+	return writeGeneratedFamily(ArrivalFamily, outDir, files, check)
+}
+
+func writeGeneratedFamily(
+	family Family,
+	outDir string,
+	files map[string][]byte,
+	check bool,
+) error {
 	if outDir == "" {
 		return fmt.Errorf("vault output root is required")
 	}
@@ -17,7 +26,7 @@ func writeGenerated(outDir string, files map[string][]byte, check bool) error {
 	paths := make([]string, 0, len(files))
 
 	for path := range files {
-		if !strings.HasPrefix(path, "vaults/arrival/") ||
+		if !strings.HasPrefix(path, family.outputPath+"/") ||
 			!strings.HasSuffix(path, ".des") {
 			return fmt.Errorf("invalid generated vault path %q", path)
 		}
@@ -76,15 +85,15 @@ func writeGenerated(outDir string, files map[string][]byte, check bool) error {
 		}
 	}
 
-	arrivalDir := filepath.Join(outDir, "vaults", "arrival")
-	entries, err := os.ReadDir(arrivalDir)
+	familyDir := filepath.Join(outDir, filepath.FromSlash(family.outputPath))
+	entries, err := os.ReadDir(familyDir)
 
 	if err != nil {
 		return fmt.Errorf("read generated vault directory: %w", err)
 	}
 
 	for _, entry := range entries {
-		path := filepath.ToSlash(filepath.Join("vaults", "arrival", entry.Name()))
+		path := filepath.ToSlash(filepath.Join(family.outputPath, entry.Name()))
 
 		if entry.IsDir() ||
 			!strings.HasSuffix(entry.Name(), ".des") ||

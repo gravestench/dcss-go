@@ -3,6 +3,8 @@ local component = require("constants.component")
 local content = require("policy.catalog")
 local classes = require("ids.object_classes")
 local terrain = require("constants.terrain")
+local effects = require("constants.vault_effects")
+local shop_spec = require("policy.generation.vaults.shop_spec")
 
 local shops = {}
 
@@ -42,22 +44,54 @@ local function validate_wallet(ctx)
     end
 end
 
-local function validate_shops(ctx)
+local function authored_cells(input)
+    local cells = {}
+
+    for _, level in ipairs(input.levels or {}) do
+        for _, record in ipairs(level.vault_records or {}) do
+            if record.kind == effects.FEATURE and
+                not record.overridden and
+                shop_spec.is_shop(record.identity) then
+                local key = string.format("%d:%d:%d",
+                    level.id, record.x, record.y)
+
+                if cells[key] or record.pending then
+                    error("authored shop record has duplicate or pending cell " ..
+                        key)
+                end
+
+                cells[key] = true
+            end
+        end
+    end
+
+    return cells
+end
+
+local function validate_shops(ctx, input)
     local occupied = {}
+    local authored = authored_cells(input)
+    local generated = input.scenario_id == "generated-dungeon-basic-v1"
 
     for _, entity in ipairs(ctx:query({ component.SHOP })) do
         local state = ctx:get(entity, component.SHOP)
         local known = pcall(content.get, categories.SHOPS, state.kind_id)
         local key = cell_key(state)
 
-        if not known or state.greed <= 0 or state.name == "" or
+        if not known or state.greed < 0 or state.name == "" or
             not ctx:walkable(state.level_id, state.x, state.y) or
             ctx:cell(state.level_id, state.x, state.y) ~= terrain.DNGN_ENTER_SHOP or
-            occupied[key] then
+            occupied[key] or (generated and not authored[key]) then
             error("shop " .. ctx:id(entity) .. " has invalid placement or kind")
         end
 
         occupied[key] = true
+    end
+
+    for key in pairs(authored) do
+        if not occupied[key] then
+            error("authored shop record has no shop entity at " .. key)
+        end
     end
 end
 
@@ -89,9 +123,11 @@ local function validate_stock(ctx)
     end
 end
 
-function shops.validate(ctx)
+function shops.validate(ctx, input)
+    input = input or {}
+
     validate_wallet(ctx)
-    validate_shops(ctx)
+    validate_shops(ctx, input)
     validate_stock(ctx)
 
     return {}

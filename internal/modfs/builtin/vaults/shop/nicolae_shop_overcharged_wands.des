@@ -1,0 +1,19 @@
+NAME:    nicolae_shop_overcharged_wands
+# Source: crawl-ref/source/dat/des/builder/shops.des:1085
+TAGS:    transparent
+DEPTH:   D:4-, Depths, Orc, Elf, Shoals, Snake, Vaults
+KFEAT:   S = general shop type:Overcharged suffix:Wands greed:15 count:6 ; \
+         wand of digging charges:11 | any blast wand charges:18 | \
+         any beam wand charges:18 | wand of charming charges:18 | \
+         wand of paralysis charges:18 | wand of polymorph charges:18 | \
+         wand of mindburst charges:30 | wand of flame charges:40
+SHUFFLE: bv/bc/cv/bm/vm/cm
+MAP
+.......
+..b.v..
+.b...v.
+...S...
+.v...b.
+..v.b..
+.......
+ENDMAP

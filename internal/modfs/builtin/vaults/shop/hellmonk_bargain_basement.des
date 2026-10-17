@@ -1,0 +1,24 @@
+NAME:   hellmonk_bargain_basement
+# Source: crawl-ref/source/dat/des/builder/shops.des:999
+DEPTH:  Zot:5
+WEIGHT: 3
+KFEAT:  S = general shop type:Last-Chance suffix:Deals greed:0 count:7 ; \
+ any ring randart w:15 | any amulet randart w:15 | quick blade randart | \
+ pearl dragon scales randart | executioner's axe randart | \
+ triple sword randart | triple crossbow randart | longbow randart | \
+ hand crossbow randart | bardiche randart | eveningstar randart | \
+ crystal plate armour randart | any armour good_item randart w:50
+MAP
+  t
+ ...
+T.S.T
+ ...
+  T
+ENDMAP
+
+# The last holdout in a failed strip mall. A chance to pick up items at a
+# potentially very steep discount... if there's anything good left, that is.
+# The greed can range from 0 to 9 with an average of 4.5.
+# The item count can range from 1 to 7 with an average of 4.
+# There is a 0.2% chance of rolling greed = 0, which makes everything in the
+# store cost one gold. Hopefully it's not just +0 robes and scrolls of noise.

@@ -1,0 +1,26 @@
+NAME:    minmay_shop_grove
+# Source: crawl-ref/source/dat/des/builder/shops.des:1345
+TAGS:    extra luniq_floating_shops transparent
+DEPTH:   D:4-, Depths, Elf, Snake
+ORIENT:  float
+MONS:    plant / bush w:2
+KFEAT:   B = book shop
+KFEAT:   C = jewellery shop
+SUBST:   1 : 1.
+SUBST:   1 = 1:9 .:1
+SUBST:   x : xc v:2 b:2
+SHUFFLE: BC
+# The empty arch is intentional!
+MAP
+  xxxxxxx
+ xxtttttxx
+xxtt1.1ttxx
+xtt..B..ttx
+xt.C...C.tx
+xt1..T..1tx
+xt11...11tx
+xttttAttttx
+xxxxx@xxxxx
+ENDMAP
+
+# 1 (33%) or 4 (66%) shops

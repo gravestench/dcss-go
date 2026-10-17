@@ -53,6 +53,8 @@ function test.run()
     harness.equal(value(pricing, item_ids.BOOK_MINOR_MAGIC,
         {}, known), 180, "book spell level value")
     harness.equal(pricing.price(12, 0), 1, "minimum shop price")
+    harness.equal(pricing.price(0, 110), 1,
+        "source clearance sale charges minimum one gold")
     harness.equal(pricing.price(12, 110), 132, "source greed multiplier")
 
     local unique = {

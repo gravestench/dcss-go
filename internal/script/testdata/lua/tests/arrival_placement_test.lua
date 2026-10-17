@@ -476,6 +476,7 @@ local function assert_source_veto_rejects_missing_exit()
     local builder = grid.new(context)
     local placed = {
         id = "dpeg_arrival_water_fire",
+        family = "arrival",
         path = "vaults/arrival/dpeg_arrival_water_fire.des",
         bounds = { x = 10, y = 10, width = 4, height = 4 },
         exits = { { x = 10, y = 10, source = "@" } },

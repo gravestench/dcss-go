@@ -1,0 +1,16 @@
+NAME:  nicolae_take_the_stairs
+# Source: crawl-ref/source/dat/des/builder/shops.des:398
+TAGS:  shop extra
+DEPTH: D:4-, !D:$, Depths, !Depths:$, Shoals, !Shoals:$, Snake, !Snake:$, \
+       Elf, !Elf:$
+KFEAT: O = any shop
+SUBST: } = }])
+MAP
+ .......
+.ccccccc.
+.n.....n.
+@n.O.}.n@
+.n.....n.
+.ccccccc.
+ .......
+ENDMAP

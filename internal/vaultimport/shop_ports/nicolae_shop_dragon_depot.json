@@ -1,0 +1,13 @@
+{
+  "id": "nicolae_shop_dragon_depot",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 1247,
+      "end_line": 1288,
+      "sha256": "fdfefcc3668bf2d800075879f1cd9f4a7e83fa0e415bb0a0e5bc3dbbd78799c3",
+      "method": "configure_dragon_depot",
+      "stage": "run"
+    }
+  ]
+}

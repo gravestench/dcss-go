@@ -1,0 +1,235 @@
+NAME: nicolae_alphabet_shops
+# Source: crawl-ref/source/dat/des/builder/alphashops.des:218
+# source prelude: {{
+# source prelude:    crawl_require("dlua/util.lua")
+# source prelude:
+# source prelude:    function ownername(s)
+# source prelude:      if s == "N" and crawl.one_chance_in( 20 ) then
+# source prelude:        return "Nicolae"
+# source prelude:      else
+# source prelude:        -- The string.lower and .gsub calls are to crunch names with spaces down
+# source prelude:        -- into a single word. Otherwise it messes up the "KFEAT" shop line.
+# source prelude:        local name = s .. string.sub(string.lower(crawl.make_name()), 2)
+# source prelude:        return string.gsub(name, " ", "")
+# source prelude:      end
+# source prelude:    end
+# source prelude:
+# source prelude:    function shopname(s)
+# source prelude:       -- Shop letters that have too few item types to generate still get names
+# source prelude:       -- on the off chance they do get five items someday.
+# source prelude:       -- X and Z are really hard letters to make shop names with, so it's
+# source prelude:       -- a good thing they'll probably be unused for a while.
+# source prelude:       local n
+# source prelude:       if     s == "A" then n = " type:Alliterative suffix:Accessories "
+# source prelude:       elseif s == "B" then n = " type:Bounteous suffix:Boutique "
+# source prelude:       elseif s == "C" then n = " type:Commerce suffix:Corner "
+# source prelude:       elseif s == "D" then n = " type:Desiderata suffix:Depot "
+# source prelude:       elseif s == "E" then n = " type:Eclectic suffix:Emporium "
+# source prelude:       elseif s == "F" then n = " type:Fabulous suffix:Fripperies "
+# source prelude:       elseif s == "G" then n = " type:Goods suffix:Gallery "
+# source prelude:       elseif s == "H" then n = " type:Humungous suffix:Hoard "
+# source prelude:       elseif s == "I" then n = " type:Incredible suffix:Inventory "
+# source prelude:       elseif s == "J" then n = " type:Jolly suffix:Junkyard "
+# source prelude:       elseif s == "K" then n = " type:Killer suffix:Kiosk "
+# source prelude:       elseif s == "L" then n = " type:Luxury suffix:Loot "
+# source prelude:       elseif s == "M" then n = " type:Merry suffix:Market "
+# source prelude:       elseif s == "N" then n = " type:Needful suffix:Niceties "
+# source prelude:       elseif s == "O" then n = " type:Offbeat suffix:Offerings "
+# source prelude:       elseif s == "P" then n = " type:Practical suffix:Paraphernalia "
+# source prelude:       elseif s == "Q" then n = " type:Quotidian suffix:Quintessences "
+# source prelude:       elseif s == "R" then n = " type:Retail suffix:Resort "
+# source prelude:       elseif s == "S" then n = " type:Superlative suffix:Supplies "
+# source prelude:       elseif s == "T" then n = " type:Tempting suffix:Trifles "
+# source prelude:       elseif s == "U" then n = " type:Unparalleled suffix:Utilities "
+# source prelude:       elseif s == "V" then n = " type:Vending suffix:Venue "
+# source prelude:       elseif s == "W" then n = " type:Whimsical suffix:Warehouse "
+# source prelude:       elseif s == "X" then n = " type:Xenial suffix:Xenodochy "
+# source prelude:       elseif s == "Y" then n = " type:Yearning suffix:Yield "
+# source prelude:       elseif s == "Z" then n = " type:Zaibatsu suffix:Zone "
+# source prelude:       end
+# source prelude:       return n
+# source prelude:    end
+# source prelude:
+# source prelude:    function shopcontents(s)
+# source prelude:       local i = {}
+# source prelude:       if s == "A" then i = { "arbalest", "book of alchemy", "book of air",
+# source prelude:        "manual of air magic", "book of annihilations",
+# source prelude:        "potion of ambrosia", "scroll of acquirement q:1",
+# source prelude:        "scroll of amnesia", "staff of air",
+# source prelude:        "manual of axes", "manual of armour", "wand of acid",
+# source prelude:        "acid dragon scales", "potion of attraction", "book of armaments" }
+# source prelude:
+# source prelude:       elseif s == "B" then i = { "bardiche", "battleaxe",
+# source prelude:        "book of burglary", "box of beasts", "book of blasting",
+# source prelude:        "book of blood", "buckler", "boomerang",
+# source prelude:        "broad axe", "pair of boots", "potion of berserk rage",
+# source prelude:        "potion of brilliance", "scroll of butterflies",
+# source prelude:        "scroll of blinking", "scroll of brand weapon" }
+# source prelude:
+# source prelude:       elseif s == "C" then i = { "book of callings", "book of cantrips",
+# source prelude:        "club", "book of changes", "book of conjurations",
+# source prelude:        "chain mail", "cloak", "crystal plate armour", "potion of cancellation",
+# source prelude:        "staff of cold", "staff of conjuration", "book of callings",
+# source prelude:        "book of chaos", "manual of conjurations",
+# source prelude:        "potion of curing", "condenser vane", "wand of charming" }
+# source prelude:
+# source prelude:       elseif s == "D" then i = { "book of death", "book of debilitation",
+# source prelude:        "book of dreams", "book of the dragon", "dagger",
+# source prelude:        "demon blade", "demon trident", "demon whip", "dire flail",
+# source prelude:        "double sword", "ring of dexterity", "manual of dodging",
+# source prelude:        "staff of death", "wand of digging", "dart", "book of dangerous friends",
+# source prelude:        "book of displacement", "book of decay"}
+# source prelude:
+# source prelude:       elseif s == "E" then i = { "manual of evocations",
+# source prelude:        "eveningstar", "ring of evasion", "executioner's axe",
+# source prelude:        "potion of experience q:1", "scroll of enchant armour", "staff of earth",
+# source prelude:        "book of the earth", "scroll of enchant weapon", "manual of earth magic",
+# source prelude:        "everburning encyclopedia" }
+# source prelude:
+# source prelude:       elseif s == "F" then i = { "book of fire", "book of flames", "flail",
+# source prelude:        "book of frost", "falchion", "fire dragon scales", "potion of flight",
+# source prelude:        "ring of fire", "scroll of fear", "staff of fire", "fen folio",
+# source prelude:        "ring of flight", "scroll of fog", "wand of flame",
+# source prelude:        "manual of fighting", "amulet of faith", "manual of fire magic" }
+# source prelude:
+# source prelude:       elseif s == "G" then i = { "amulet of guardian spirit", "giant club",
+# source prelude:        "giant spiked club", "book of geomancy",
+# source prelude:        "glaive", "gold dragon scales", "grand grimoire", "great mace",
+# source prelude:        "great sword", "pair of gloves", "great wizards, vol. ii",
+# source prelude:        "great wizards, vol. vii" }
+# source prelude:
+# source prelude:       elseif s == "H" then i = { "halberd", "hand axe",
+# source prelude:        "hand crossbow", "potion of heal wounds",
+# source prelude:        "potion of haste", "manual of hexes", "hat",
+# source prelude:        "helmet", "book of hexes", "book of the hunter" }
+# source prelude:
+# source prelude:       elseif s == "I" then i = { "ring of ice",
+# source prelude:        "scroll of immolation", "ice dragon scales", "book of ice",
+# source prelude:        "potion of invisibility", "ring of intelligence", "scroll of identify",
+# source prelude:        "wand of iceblast", "manual of invocations", "manual of ice magic",
+# source prelude:        "inescapable atlas", "book of iron" }
+# source prelude:
+# source prelude:       elseif s == "J" then i = { "javelin" }
+# source prelude:
+# source prelude:       elseif s == "K" then i = { "any" }
+# source prelude:
+# source prelude:       elseif s == "L" then i = { "manual of long blades", "large rock",
+# source prelude:        "leather armour", "long sword", "potion of lignification", "lajatang",
+# source prelude:        "longbow", "lightning rod", "book of lightning", "wand of light" }
+# source prelude:
+# source prelude:       elseif s == "M" then i = { "manual of maces & flails",
+# source prelude:        "book of minor magic", "book of misfortune", "book of maledictions",
+# source prelude:        "morningstar", "mace", "potion of magic", "wand of mindburst",
+# source prelude:        "ring of magical power", "amulet of magic regeneration", "potion of might",
+# source prelude:        "potion of mutation", "scroll of magic mapping", "book of the moon" }
+# source prelude:
+# source prelude:       elseif s == "N" then i = { "book of necromancy",
+# source prelude:        "necronomicon", "scroll of noise", "manual of necromancy" }
+# source prelude:
+# source prelude:       elseif s == "O" then i = { "ozocubu's autobiography" }
+# source prelude:
+# source prelude:       elseif s == "P" then i = { "book of party tricks", "book of power",
+# source prelude:        "pearl dragon scales", "phantom mirror", "phial of floods",
+# source prelude:        "plate armour", "ring of poison resistance", "manual of polearms",
+# source prelude:        "wand of polymorph", "ring of positive energy", "ring of protection",
+# source prelude:        "manual of poison magic", "wand of paralysis",
+# source prelude:        "ring of protection from fire", "staff of poison", "scroll of poison",
+# source prelude:        "ring of protection from cold" }
+# source prelude:
+# source prelude:       elseif s == "Q" then i = { "quarterstaff", "quicksilver dragon scales",
+# source prelude:        "quick blade" }
+# source prelude:
+# source prelude:       elseif s == "R" then i = { "amulet of reflection",
+# source prelude:        "manual of ranged weapons", "wand of roots",
+# source prelude:        "amulet of regeneration", "rapier", "ring of resist corrosion",
+# source prelude:        "potion of resistance", "robe", "ring mail", "book of rime" }
+# source prelude:
+# source prelude:       elseif s == "S" then i = { "scarf", "scimitar", "short sword",
+# source prelude:        "scale mail", "book of storms", "book of the sky",
+# source prelude:        "ring of see invisible", "ring of slaying", "spear",
+# source prelude:        "ring of strength", "manual of stealth", "scroll of summoning",
+# source prelude:        "book of spatial translocations", "scroll of silence",
+# source prelude:        "shortbow", "manual of staves", "steam dragon scales",
+# source prelude:        "shadow dragon scales", "storm dragon scales", "swamp dragon scales",
+# source prelude:        "manual of short blades", "manual of shields", "sling",
+# source prelude:        "manual of spellcasting", "manual of summonings", "stone",
+# source prelude:        "book of storms", "book of sloth", "book of the senses",
+# source prelude:        "book of spectacle", "book of the spheres", "book of scorching" }
+# source prelude:
+# source prelude:       elseif s == "T" then i = { "scroll of torment",
+# source prelude:        "book of transfigurations", "scroll of teleportation", "triple sword",
+# source prelude:        "triple crossbow", "troll leather armour", "manual of throwing",
+# source prelude:        "manual of translocations", "manual of transmutations",
+# source prelude:        "trident", "throwing net", "tower shield", "tin of tremorstones",
+# source prelude:        "book of the tundra", "book of touch", "there-and-back book",
+# source prelude:        "trismegistus codex"}
+# source prelude:
+# source prelude:       elseif s == "U" then i = { "book of unlife", "manual of unarmed combat",
+# source prelude:        "the unrestrained analects" }
+# source prelude:
+# source prelude:       elseif s == "V" then i = { "scroll of vulnerability", "book of vapours" }
+# source prelude:
+# source prelude:       elseif s == "W" then i = { "ring of wizardry", "book of the warp", "whip",
+# source prelude:        "war axe", "ring of willpower", "book of winter", "book of weapons",
+# source prelude:        "book of the wilderness" }
+# source prelude:
+# source prelude:       elseif s == "X" then i = { "piece from xom's chessboard" }
+# source prelude:
+# source prelude:       elseif s == "Y" then i = { "young poisoner's handbook" }
+# source prelude:
+# source prelude:       elseif s == "Z" then i = { "any" }
+# source prelude:
+# source prelude:       else i = { "any" }
+# source prelude:
+# source prelude:       end
+# source prelude:
+# source prelude:       return i
+# source prelude:    end
+# source prelude:
+# source prelude:    -- Automatically determine which letters have sufficient variety for a shop,
+# source prelude:    -- in other words, that have five or more items, and then pick one.
+# source prelude:    function pickletter()
+# source prelude:       local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+# source prelude:       for i=1, string.len(alphabet) do
+# source prelude:          local checkletter = string.sub(alphabet, i, i)
+# source prelude:          local itemlist = shopcontents(checkletter)
+# source prelude:          local itemcount = #itemlist
+# source prelude:          itemcount = itemcount + 1
+# source prelude:          if itemcount < 5 then
+# source prelude:             alphabet = string.gsub(alphabet, checkletter, "-")
+# source prelude:          end
+# source prelude:       end
+# source prelude:       local options = string.gsub(alphabet, "-", "")
+# source prelude:       local number = crawl.random2(string.len(options)) + 1
+# source prelude:       local letter = string.sub(options, number, number)
+# source prelude:       return letter
+# source prelude:    end
+# source prelude: }}
+TAGS: transparent allow_dup extra
+DEPTH: D:4-, Depths, Orc, Elf, Snake, Shoals
+WEIGHT: 5
+# We allow shop lists with no fewer than 5 item types, and place 5-15
+# items or place itemcount items, whichever is less, where itemcount is
+# the number of item types.
+: vault.run("configure_alphabet_shop")
+# source: {{
+# source: if is_validating() then return end
+# source: local letter = pickletter()
+# source: local itemlist = shopcontents(letter)
+# source: local itemcount = #itemlist
+# source: maxcount = math.min(15, itemcount)
+# source: -- random2 returns 0 for values <= 1
+# source: local shopcount = 5 + crawl.random2(maxcount - 4)
+# source: shopcount = math.min(itemcount, shopcount)
+# source: inventory = util.join(" | ", util.random_subset(itemlist, shopcount))
+# source: tags("uniq_alphashops_" .. letter)
+# source: kfeat("s = general shop name:" .. ownername(letter) .. shopname(letter) ..
+# source:       " count:" .. shopcount .. " use_all ; " .. inventory)
+# source: }}
+MAP
+ ...
+.....
+..s..
+.....
+ ...
+ENDMAP

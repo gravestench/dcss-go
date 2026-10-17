@@ -1,0 +1,31 @@
+NAME: nicolae_blasting_shop
+# Source: crawl-ref/source/dat/des/builder/shops.des:668
+DEPTH: D:8-, Depths
+TAGS: no_monster_gen no_item_gen transparent extra
+MARKER: s = lua:fog_machine { cloud_type = "flame", \
+             pow_min = 3, pow_max = 5, delay_min = 50, delay_max = 90, \
+             start_clouds = 1, size = 3, walk_dist = 0, spread_rate= 0 }
+KFEAT: s = general shop type:Demolitions suffix:Depot ; \
+   book of conjurations | book of power | book of annihilations | \
+   book of blasting |\
+   randbook disc:conjuration | book of storms | book of lightning | \
+   any blast wand | wand of flame | wand of mindburst | \
+   condenser vane | staff of conjuration | any beam wand | \
+   lightning rod | phial of floods | scroll of immolation | \
+   book of flames | book of fire | book of air | manual of conjurations | \
+   manual of evocations
+FTILE: ' = floor_rough_red
+COLOUR: ' = red
+MAP
+  ...
+ ..x..
+..'''..
+.x's'x.
+..'''..
+ ..x..
+  ...
+ENDMAP
+
+#####################################################
+# Contains only four items: two evocable items/wands, a staff, and a randbook,
+# associated with one of each of the four elemental schools.

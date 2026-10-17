@@ -1,0 +1,13 @@
+{
+  "id": "nicolae_sub_dead_trees",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 1190,
+      "end_line": 1190,
+      "sha256": "60772e7a8b1e041a4b2f95f6d7b096848f55f47922cfa5706ad4dd9bbf4f0257",
+      "method": "name_dead_trees",
+      "stage": "run"
+    }
+  ]
+}

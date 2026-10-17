@@ -1,0 +1,25 @@
+NAME:    nicolae_wooded_promenade
+# Source: crawl-ref/source/dat/des/builder/shops.des:1466
+TAGS:    extra luniq_floating_shops transparent no_pool_fixup
+DEPTH:   D:4-, Depths, Elf, Snake
+KFEAT:   s = any shop
+# s = shop, y and z = two different kinds of features
+# Unshuffled corresponds to ysyzyz
+SHUFFLE: DEFHJK/ysyyzy/syyyyz/syzzys/syyzzs/yszzsy/ysyzsz/sysyzy/syszyz/ \
+         ysyszs/ysyszs/sssyzy/sssyzy/ssyzzs/ssysyz/syssys/ssyyss/sssysy/ \
+         ssssys/ssssss
+SUBST:   DFJ = y, HK = z, E = s, y : GGTTUt, z : GGTTUt, - : ww.
+MAP
+    xxxxxxxxxxx
+    xtttttttttx
+    xt.......tx
+    xt.D.E.F.tx
+    @.........@
+wwwwwwwww-wwwwwwwww
+wwwwwwwww-wwwwwwwww
+    @.........@
+    xt.H.J.K.tx
+    xt.......tx
+    xtttttttttx
+    xxxxxxxxxxx
+ENDMAP

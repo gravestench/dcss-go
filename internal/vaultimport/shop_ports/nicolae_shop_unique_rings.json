@@ -1,0 +1,13 @@
+{
+  "id": "nicolae_shop_unique_rings",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 1212,
+      "end_line": 1232,
+      "sha256": "4a0113e0c27545f453d3e714c3a2cd60f50d74fe1262cdc209d16c2a6a62f45e",
+      "method": "configure_unique_rings",
+      "stage": "run"
+    }
+  ]
+}

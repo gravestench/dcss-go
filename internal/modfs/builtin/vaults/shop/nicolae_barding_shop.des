@@ -1,0 +1,25 @@
+NAME: nicolae_barding_shop
+# Source: crawl-ref/source/dat/des/builder/shops.des:645
+DEPTH: D:8-, Depths, Snake, !Snake:$
+WEIGHT: 1
+TAGS: transparent
+: vault.run("choose_barding_guard")
+# source: : if you.in_branch("Snake") then
+# source: KMONS: s = naga w:50 / naga warrior
+# source: : else
+# source: KMONS: s = centaur w:50 / centaur warrior
+# source: : end
+KFEAT: s = armour shop type:Specialty suffix:Armours count:3 use_all ; \
+   barding | barding | barding good_item
+MAP
+.......
+..xxx..
+.x...x.
+.x.s.x.
+.x...x.
+..xxx..
+.......
+ENDMAP
+
+#####################################################
+# Sells conjurations-heavy books, destructive wands, etc.

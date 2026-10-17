@@ -164,8 +164,13 @@ The shop domain follows the same ownership boundary: Lua definitions supply
 the ten active shop types, Lua policies own pricing, stock generation, and
 purchase rules, and Akara owns the wallet, shop, stock, and shopping-list
 state. Go supplies the grid entrance, save encoding, and terminal canvas.
-The next vault-content pass should feed typed `.des` shop specifications into
-this policy rather than adding a second shop implementation.
+All 70 source shop vault definitions now use the layered `.des` catalog.
+Focused Lua handlers port source scripts, and Lua parses authored stock into
+the existing Akara shop policy. Supplemental selection and placement use the
+same grid and source-record path as arrival vaults. Deeper branch generation
+can reuse these definitions without another shop implementation. Replace the
+temporary generic extra-vault frequency with selection from the full source
+secondary-vault pool once the remaining families are imported.
 
 ## Slice checks
 

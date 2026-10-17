@@ -57,13 +57,14 @@ local function name_index(category)
 
             for _, name in ipairs(names) do
                 if name and name ~= "" then
-                    local ids = index[name] or {}
+                    local key = name:lower()
+                    local ids = index[key] or {}
 
                     if ids[#ids] ~= definition.id then
                         ids[#ids + 1] = definition.id
                     end
 
-                    index[name] = ids
+                    index[key] = ids
                 end
             end
         end
@@ -75,7 +76,7 @@ local function name_index(category)
 end
 
 local function find_name(category, name, site)
-    local ids = name_index(category)[name]
+    local ids = name_index(category)[name:lower()]
 
     if not ids then
         choice.fail(site, name, "unknown " .. category .. " name")

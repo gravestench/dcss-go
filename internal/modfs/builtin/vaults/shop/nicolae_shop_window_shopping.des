@@ -1,0 +1,10 @@
+NAME: nicolae_shop_window_shopping
+# Source: crawl-ref/source/dat/des/builder/shops.des:230
+TAGS: allow_dup extra shop transparent
+WEIGHT: 5
+KFEAT: O = any shop
+MAP
+xxm.
++Om@
+xxm.
+ENDMAP

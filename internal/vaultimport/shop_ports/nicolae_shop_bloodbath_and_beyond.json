@@ -1,0 +1,13 @@
+{
+  "id": "nicolae_shop_bloodbath_and_beyond",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 492,
+      "end_line": 492,
+      "sha256": "4d3319050d6964382c72ec0d1811824806165a52d5a1543231186ebbf9c18b3e",
+      "method": "decay_corpse",
+      "stage": "run"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+NAME:  nicolae_shop_vocational
+# Source: crawl-ref/source/dat/des/builder/shops.des:1325
+TAGS:  transparent
+DEPTH: D, Depths, Orc, Elf, Shoals, Snake, Vaults
+KFEAT: S = book shop type:Vocational suffix:Training count:2 use_all ; \
+           manual of invocations | manual of evocations
+MAP
+.......
+.T...T.
+...S...
+.T...T.
+.......
+ENDMAP
+
+###############################################################################
+# <<3>> Multi
+#       Not tagged shop, and has no threats. Contain possibly multiple shops in
+#       a somewhat generic theme. Kept here for a certain ease of reference.
+#
+
+# 3 shops

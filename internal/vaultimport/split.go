@@ -17,6 +17,8 @@ type sourceLine struct {
 var sourceDirectives = map[string]bool{
 	"NAME":     true,
 	"TAGS":     true,
+	"DEPTH":    true,
+	"CHANCE":   true,
 	"ORIENT":   true,
 	"WEIGHT":   true,
 	"CLEAR":    true,
@@ -43,10 +45,21 @@ func splitSource(
 	body []byte,
 	ports map[string]portRecipe,
 ) (map[string][]byte, error) {
+	return splitSourceFamily(ArrivalFamily, fileName, body, ports)
+}
+
+func splitSourceFamily(
+	family Family,
+	fileName string,
+	body []byte,
+	ports map[string]portRecipe,
+) (map[string][]byte, error) {
 	lines := numberedLines(body)
 	output := make(map[string][]byte)
 	var current []sourceLine
+	var prelude []sourceLine
 	inMap := false
+	inPrelude := false
 
 	flush := func() error {
 		if len(current) == 0 {
@@ -67,19 +80,20 @@ func splitSource(
 			return fmt.Errorf("%s: recipe for %s names source %s", fileName, name, recipe.SourceFile)
 		}
 
-		generated, err := portVault(fileName, name, current, recipe)
+		generated, err := portVault(family, fileName, name, current, prelude, recipe)
 
 		if err != nil {
 			return err
 		}
 
-		filePath := path.Join("vaults/arrival", name+".des")
+		filePath := path.Join(family.outputPath, name+".des")
 
 		if _, duplicate := output[filePath]; duplicate {
 			return fmt.Errorf("%s: duplicate vault %s", fileName, name)
 		}
 
 		output[filePath] = generated
+		prelude = nil
 
 		return nil
 	}
@@ -95,6 +109,22 @@ func splitSource(
 		}
 
 		if len(current) == 0 {
+			if family.name == ShopFamily.name {
+				if line.text == "lua {{" || line.text == "{{" {
+					inPrelude = true
+				}
+
+				if inPrelude {
+					prelude = append(prelude, line)
+
+					if line.text == "}}" {
+						inPrelude = false
+					}
+
+					continue
+				}
+			}
+
 			if line.text != "" && !strings.HasPrefix(line.text, "#") {
 				return nil, fmt.Errorf("%s:%d: content before first NAME", fileName, line.number)
 			}
@@ -109,6 +139,10 @@ func splitSource(
 		} else if line.text == "ENDMAP" {
 			inMap = false
 		}
+	}
+
+	if inPrelude {
+		return nil, fmt.Errorf("%s: unterminated source Lua prelude", fileName)
 	}
 
 	if inMap {
@@ -148,9 +182,11 @@ func vaultName(line sourceLine) (string, error) {
 }
 
 func portVault(
+	family Family,
 	fileName string,
 	name string,
 	lines []sourceLine,
+	prelude []sourceLine,
 	recipe portRecipe,
 ) ([]byte, error) {
 	edits := slices.Clone(recipe.Edits)
@@ -162,10 +198,16 @@ func portVault(
 	output := make([]string, 0, len(lines)+2)
 	output = append(output, lines[0].text)
 	output = append(output, fmt.Sprintf(
-		"# Source: crawl-ref/source/dat/des/arrival/%s:%d",
+		"# Source: crawl-ref/source/dat/des/%s/%s:%d",
+		family.sourcePath,
 		fileName,
 		lines[0].number,
 	))
+
+	for _, source := range prelude {
+		output = append(output,
+			strings.TrimRight("# source prelude: "+source.text, " \t"))
+	}
 
 	inMap := false
 	editIndex := 0
@@ -189,15 +231,19 @@ func portVault(
 				return nil, fmt.Errorf("%s:%d: source script drift for %s", fileName, line.number, name)
 			}
 
-			if !validPortMethod(edit.Method) ||
-				(edit.Stage != "run" && edit.Stage != "veto") {
+			validStage := edit.Stage == "run" ||
+				edit.Stage == "veto" ||
+				edit.Stage == "post_place"
+
+			if !validPortMethod(edit.Method) || !validStage {
 				return nil, fmt.Errorf("%s:%d: invalid port hook for %s", fileName, line.number, name)
 			}
 
 			output = append(output, fmt.Sprintf(": vault.%s(%q)", edit.Stage, edit.Method))
 
 			for _, source := range block {
-				output = append(output, "# source: "+source.text)
+				output = append(output,
+					strings.TrimRight("# source: "+source.text, " \t"))
 			}
 
 			index = endIndex

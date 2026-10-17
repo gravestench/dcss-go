@@ -1,0 +1,18 @@
+NAME:    nicolae_shop_hallway_plus
+# Source: crawl-ref/source/dat/des/builder/shops.des:443
+TAGS:    allow_dup extra shop transparent no_pool_fixup
+KFEAT:   O = any shop
+SHUFFLE: Pp/Pp/Rr, Qq/Qq/Ss
+SUBST:   P : xxxw, p : _, R : mmmw, r : ...xmwGT, \
+         Q : xxxw, q : _, S : mmmw, s : ...xmwGT
+KPROP:   Gw = no_tele_into
+CLEAR:   _
+MAP
+  x+x
+ pP.Qq
+xPP.QQx
++..O..+
+xQQ.PPx
+ qQ.Pp
+  x+x
+ENDMAP

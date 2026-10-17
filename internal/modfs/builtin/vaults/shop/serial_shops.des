@@ -1,0 +1,77 @@
+NAME: serial_shops
+# Source: crawl-ref/source/dat/des/builder/shops.des:63
+# source prelude: lua {{
+# source prelude: crawl_require('dlua/vault.lua')
+# source prelude:
+# source prelude: MAX_RANDOM_SHOPS = 5
+# source prelude:
+# source prelude: -- If a level gets shops, how many there are.
+# source prelude: -- Just one most of the time; expected value is 1.42.
+# source prelude: function num_shops()
+# source prelude:     if crawl.x_chance_in_y(5, 6) then
+# source prelude:         return 1
+# source prelude:     else
+# source prelude:         return crawl.random_range(2, MAX_RANDOM_SHOPS)
+# source prelude:     end
+# source prelude: end
+# source prelude:
+# source prelude: function ks_shop_vault(e, glyphs)
+# source prelude:   if e.is_validating() then
+# source prelude:     e.subst('O = B')
+# source prelude:     return
+# source prelude:   end
+# source prelude:
+# source prelude:   local is_shop = false
+# source prelude:   local is_altar = false
+# source prelude:
+# source prelude:   local params = dgn.map_parameters()
+# source prelude:   if params ~= nil then
+# source prelude:     local tag = unpack(params)
+# source prelude:     if tag ~= nil then
+# source prelude:       if tag == "shop" then
+# source prelude:         is_shop = true
+# source prelude:       elseif string.find(tag, "temple_overflow_generic_") ~= nil then
+# source prelude:         is_altar = true
+# source prelude:       end
+# source prelude:     end
+# source prelude:   end
+# source prelude:
+# source prelude:   if is_shop then
+# source prelude:     e.kfeat('O = any shop')
+# source prelude:   elseif is_altar then
+# source prelude:     e.subst('O = B')
+# source prelude:   else
+# source prelude:     e.tags('extra decor')
+# source prelude:     e.subst('O = ' .. glyphs)
+# source prelude:   end
+# source prelude: end
+# source prelude: }}
+TAGS: allow_dup extra luniq
+DEPTH: D, Depths, Orc, Elf, Shoals, Snake, Vaults
+CHANCE: 15% (D)
+CHANCE: 20% (Depths)
+CHANCE: 30% (Orc)
+CHANCE: 40% (Elf, Vaults)
+CHANCE: 20% (Shoals, Snake)
+: vault.post_place("place_serial_shops")
+# source: {{
+# source: hook("post_place", function()
+# source:     local num = num_shops()
+# source:
+# source:     if you.absdepth() > 10 and you.absdepth() <= 27
+# source:       and crawl.one_chance_in(30 - (you.absdepth() - 1))
+# source:     then
+# source:         dgn.place_maps { tag = "bzr_entry", count = 1 }
+# source:         num = num - 1
+# source:     end
+# source:
+# source:     dgn.place_maps { tag = "shop", count = num }
+# source: end)
+# source: }}
+MAP
+ENDMAP
+
+###############################################################################
+# <<1>> Generic.
+#       Tagged shop, may only contain a single shop. No threats.
+#

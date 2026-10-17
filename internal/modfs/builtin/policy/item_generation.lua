@@ -6,6 +6,8 @@ local materialize = require("policy.item_generation.materialize")
 local quality = require("constants.vault_item_quality")
 local artefacts = require("policy.item_generation.artefacts")
 local source_level = require("policy.item_generation.source_level")
+local unique_artefacts =
+    require("policy.item_generation.artefacts.unique")
 
 local generation = {}
 
@@ -93,7 +95,23 @@ function generation.roll(ctx, request)
         source = request,
     }
 
-    if not artefacts.roll(ctx, definition, effective, result) then
+    local explicit_unique = request.unique_id and
+        catalog.get("artefacts", request.unique_id)
+    local artefact_applied
+
+    if explicit_unique then
+        artefact_applied =
+            unique_artefacts.apply(ctx, explicit_unique, request, result)
+
+        if not artefact_applied then
+            fail(request, "unique artefact " .. request.unique_id ..
+                " is already generated")
+        end
+    else
+        artefact_applied = artefacts.roll(ctx, definition, effective, result)
+    end
+
+    if not artefact_applied then
         if request.quality == quality.RANDART then
             fail(request, "cannot make random artefact from " ..
                 definition.id)
@@ -104,6 +122,27 @@ function generation.roll(ctx, request)
 
     if request.quantity then
         result.quantity = request.quantity
+    end
+
+    -- Authored item modifiers take precedence over the base generator's
+    -- random enchantment, charge, and brand rolls.
+    if request.plus then
+        result.plus = request.plus
+    end
+
+    if request.charges then
+        result.charges = request.charges
+    end
+
+    if request.ego then
+        result.ego = request.ego
+    end
+
+    if request.mundane then
+        result.plus = 0
+        result.ego = ""
+    elseif request.damaged then
+        result.plus = -1
     end
 
     return result

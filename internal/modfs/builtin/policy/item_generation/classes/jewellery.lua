@@ -42,7 +42,9 @@ function policy.pick(ctx, request)
     end
 
     -- Source: makeitem.cc:1606-1607. One quarter of jewellery is an amulet.
-    selected.amulet = source.chance(ctx, 1, 4)
+    if selected.amulet == nil then
+        selected.amulet = source.chance(ctx, 1, 4)
+    end
 
     local result = pool.select(ctx, classes.OBJ_JEWELLERY, selected, policy)
 

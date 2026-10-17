@@ -2,6 +2,8 @@ local directives = {
     TAGS = "TAGS",
     ORIENT = "ORIENT",
     WEIGHT = "WEIGHT",
+    DEPTH = "DEPTH",
+    CHANCE = "CHANCE",
     CLEAR = "CLEAR",
     SUBST = "SUBST",
     NSUBST = "NSUBST",
@@ -21,6 +23,7 @@ local directives = {
     SUBVAULT = "SUBVAULT",
     HOOK_RUN = "HOOK_RUN",
     HOOK_VETO = "HOOK_VETO",
+    HOOK_POST_PLACE = "HOOK_POST_PLACE",
 }
 
 return directives

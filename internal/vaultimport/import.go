@@ -1,4 +1,4 @@
-// Package vaultimport splits pinned DCSS arrival collections into committed
+// Package vaultimport splits pinned DCSS vault collections into committed
 // one-vault DES files. It runs only for an intentional upstream refresh.
 package vaultimport
 
@@ -13,15 +13,16 @@ import (
 
 const SourceRevision = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 
-var sourceFiles = map[string]string{
-	"large.des":   "5ae5d53469dc5713c70a3c1a35e82d8b0807e038585225f9b5e8d9ecab91880b",
-	"simple.des":  "9c1dcfac919d6ac52725692ca1a7f200909ace1f7be2c626db314c03de02d1d5",
-	"small.des":   "65a73745881c73d1f861d70efc3aa5f1f9643914c1ceba5f5834e9abb0761847",
-	"twisted.des": "4dbe0cf3c64a8d61ea22c8267aa0eeea3671ca75e40a2cd0c58b029a6f9a4e0d",
-}
-
 // Generate reads the pinned source and returns effective mod-relative paths.
 func Generate(sourceDir, portsDir string) (map[string][]byte, error) {
+	return GenerateFamily(ArrivalFamily, sourceDir, portsDir)
+}
+
+// GenerateFamily reads one pinned family for a deliberate content refresh.
+func GenerateFamily(
+	family Family,
+	sourceDir, portsDir string,
+) (map[string][]byte, error) {
 	if sourceDir == "" || portsDir == "" {
 		return nil, fmt.Errorf("source and port recipe directories are required")
 	}
@@ -32,9 +33,9 @@ func Generate(sourceDir, portsDir string) (map[string][]byte, error) {
 		return nil, err
 	}
 
-	names := make([]string, 0, len(sourceFiles))
+	names := make([]string, 0, len(family.sourceFiles))
 
-	for name := range sourceFiles {
+	for name := range family.sourceFiles {
 		names = append(names, name)
 	}
 
@@ -52,11 +53,11 @@ func Generate(sourceDir, portsDir string) (map[string][]byte, error) {
 
 		sum := sha256.Sum256(body)
 
-		if hex.EncodeToString(sum[:]) != sourceFiles[name] {
+		if hex.EncodeToString(sum[:]) != family.sourceFiles[name] {
 			return nil, fmt.Errorf("%s differs from pinned source %s", path, SourceRevision)
 		}
 
-		files, err := splitSource(name, body, ports)
+		files, err := splitSourceFamily(family, name, body, ports)
 
 		if err != nil {
 			return nil, err
@@ -73,13 +74,14 @@ func Generate(sourceDir, portsDir string) (map[string][]byte, error) {
 	}
 
 	for id := range ports {
-		if !usedPorts[filepath.Join("vaults", "arrival", id+".des")] {
+		if !usedPorts[filepath.Join(family.outputPath, id+".des")] {
 			return nil, fmt.Errorf("port recipe %s has no source vault", id)
 		}
 	}
 
-	if len(output) != 339 {
-		return nil, fmt.Errorf("arrival source has %d vaults, want 339", len(output))
+	if len(output) != family.wantNames {
+		return nil, fmt.Errorf("%s source has %d vaults, want %d",
+			family.name, len(output), family.wantNames)
 	}
 
 	return output, nil
@@ -87,11 +89,20 @@ func Generate(sourceDir, portsDir string) (map[string][]byte, error) {
 
 // Write writes a deliberate refresh or checks the committed effective files.
 func Write(sourceDir, portsDir, outDir string, check bool) error {
-	files, err := Generate(sourceDir, portsDir)
+	return WriteFamily(ArrivalFamily, sourceDir, portsDir, outDir, check)
+}
+
+// WriteFamily refreshes or checks one committed vault family.
+func WriteFamily(
+	family Family,
+	sourceDir, portsDir, outDir string,
+	check bool,
+) error {
+	files, err := GenerateFamily(family, sourceDir, portsDir)
 
 	if err != nil {
 		return err
 	}
 
-	return writeGenerated(outDir, files, check)
+	return writeGeneratedFamily(family, outDir, files, check)
 }

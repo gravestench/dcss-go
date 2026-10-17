@@ -1,0 +1,26 @@
+NAME: nicolae_island_escapes
+# Source: crawl-ref/source/dat/des/builder/shops.des:773
+DEPTH: D:7-, !D:$, Depths, !Depths:$, Shoals, !Shoals:$, Swamp, !Swamp:$
+TAGS: no_item_gen no_monster_gen water_ok no_tide no_pool_fixup
+WEIGHT: 5
+SHUFFLE: Aa/Bb
+SUBST: Aa = t, B = ..t, b = .
+KFEAT: S = general shop type:Island suffix:Escapes count:7 ; \
+ scroll of blinking | scroll of teleportation w:15 | any concealment scroll w:8 | \
+ potion of flight | potion of invisibility w:8 | potion of haste w:3 | \
+ ring of flight w:5 | wand of digging w:4
+MAP
+  wwwwwwwww
+ wwwwwwwwwww
+ wwwwwwwwwww
+ wwwwBABwwww
+@wwwa...Awww
+@wwwb.S>Bwww
+@wwwa...Awww
+ wwwwBABwwww
+ wwwwwwwwwww
+ wwwwwwwwwww
+  wwwwwwwww
+ENDMAP
+
+# Eat the purple.

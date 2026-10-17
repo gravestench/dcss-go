@@ -1,0 +1,16 @@
+NAME:  nicolae_shop_self_help
+# Source: crawl-ref/source/dat/des/builder/shops.des:1104
+TAGS:  transparent no_pool_fixup
+DEPTH: D:4-, Depths, Orc, Elf, Shoals, Snake, Vaults
+KFEAT: S = book shop type:Self-Improvement suffix:Boutique count:4 ; \
+           any manual
+SUBST: T : TUw
+MAP
+ ww.ww
+www.www
+wwT.Tww
+...S...
+wwT.Tww
+www.www
+ ww.ww
+ENDMAP

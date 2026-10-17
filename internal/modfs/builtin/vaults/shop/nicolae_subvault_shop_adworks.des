@@ -1,0 +1,13 @@
+NAME:  nicolae_subvault_shop_adworks
+# Source: crawl-ref/source/dat/des/builder/shops.des:430
+TAGS:  unrand transparent allow_dup nico_adshop
+KFEAT: O = any shop
+MAP
+.......
+.b...b.
+..b.b..
+...O...
+..b.b..
+.b...b.
+.......
+ENDMAP

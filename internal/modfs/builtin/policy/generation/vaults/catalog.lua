@@ -8,51 +8,75 @@ local loaded = false
 local paths_by_id = {}
 local parsed_by_id = {}
 
-local source_file_order = {
+local arrival_file_order = {
     ["large"] = 1,
     ["simple"] = 2,
     ["small"] = 3,
     ["twisted"] = 4,
 }
 
-local function source_position(source)
-    local file, line = source:match("# Source: crawl%-ref/source/dat/des/arrival/([a-z]+)%.des:(%d+)")
+local shop_file_order = {
+    ["alphashops"] = 1,
+    ["shops"] = 2,
+}
 
-    return source_file_order[file] or 5, tonumber(line) or 0
+local function source_position(family, source)
+    if family == "shop" then
+        local file, line = source:match(
+            "# Source: crawl%-ref/source/dat/des/builder/" ..
+            "([a-z]+)%.des:(%d+)")
+
+        return shop_file_order[file] or 3, tonumber(line) or 0
+    end
+
+    local file, line = source:match(
+        "# Source: crawl%-ref/source/dat/des/" .. family ..
+        "/([a-z]+)%.des:(%d+)")
+
+    return arrival_file_order[file] or 5, tonumber(line) or 0
 end
 
 local function ordered_definitions()
     local definitions = {}
     local origins = {}
 
-    for _, path in ipairs(mod.paths("vaults/arrival", ".des")) do
-        local source = mod.read(path)
-        local definition = des.parse(path, source)
-        hooks.validate(definition)
+    for family_order, family in ipairs({ "arrival", "shop" }) do
+        for _, path in ipairs(mod.paths("vaults/" .. family, ".des")) do
+            local source = mod.read(path)
+            local definition = des.parse(path, source)
+            hooks.validate(definition)
 
-        for _, operation in ipairs(definition.operations) do
-            entity_specs.operation(definition, operation)
+            for _, operation in ipairs(definition.operations) do
+                entity_specs.operation(definition, operation)
+            end
+
+            local prior = origins[definition.id]
+
+            if prior then
+                error(string.format("duplicate vault NAME %s in %s and %s",
+                    definition.id, prior, path))
+            end
+
+            origins[definition.id] = path
+
+            local file_order, line_order = source_position(family,
+                mod.bundled(path) or source)
+
+            definitions[#definitions + 1] = {
+                definition = definition,
+                path = path,
+                family_order = family_order,
+                file_order = file_order,
+                line_order = line_order,
+            }
         end
-
-        local prior = origins[definition.id]
-
-        if prior then
-            error(string.format("duplicate vault NAME %s in %s and %s", definition.id, prior, path))
-        end
-
-        origins[definition.id] = path
-
-        local file_order, line_order = source_position(mod.bundled(path) or source)
-
-        definitions[#definitions + 1] = {
-            definition = definition,
-            path = path,
-            file_order = file_order,
-            line_order = line_order,
-        }
     end
 
     table.sort(definitions, function(left, right)
+        if left.family_order ~= right.family_order then
+            return left.family_order < right.family_order
+        end
+
         if left.file_order ~= right.file_order then
             return left.file_order < right.file_order
         end
@@ -76,9 +100,12 @@ function catalog.load()
         local definition = entry.definition
         local selection = {
             id = definition.id,
+            family = definition.family,
             tags = definition.tags,
             orientation = definition.orientation,
             weight = definition.weight,
+            depths = definition.depths,
+            chances = definition.chances,
         }
 
         register.definition(categories.VAULTS, selection)

@@ -1,0 +1,13 @@
+{
+  "id": "nicolae_evil_shop",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 592,
+      "end_line": 608,
+      "sha256": "ff64b19c95de7b36c1b3bac655a9fb3d7bff92d1c2fa441d39a299265be8d30a",
+      "method": "configure_evil_shop",
+      "stage": "run"
+    }
+  ]
+}

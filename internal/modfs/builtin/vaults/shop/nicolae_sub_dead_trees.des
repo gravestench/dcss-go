@@ -1,0 +1,25 @@
+NAME:   nicolae_sub_dead_trees
+# Source: crawl-ref/source/dat/des/builder/shops.des:1185
+TAGS:   unrand nico_deadtrees
+SUBST:  t = tt.
+COLOUR: t = lightgrey / darkgrey
+TILE:   t = dngn_tree_dead
+: vault.run("name_dead_trees")
+# source: : set_feature_name("tree", "dead tree")
+MAP
+t   t
+tt tt
+ ttt
+ENDMAP
+
+# This shop sells only unique rings. At least one randart, and also ordinary
+# rings whose pluses have been set via vault syntax to something besides the
+# default pluses for that type of ring.
+# For each of the six rings that can have pluses, there is the possibility of
+# a ring of that type whose pluses are worse than default (which makes it a bit
+# less useful, but cheaper, and so possibly more enticing to poor players),
+# and a ring of that type whose pluses are better than default (which will be
+# accordingly more expensive).
+# Evasion and protection are limited to +7 so as not to step on the existing
+# AC/EV+8 unrands. Stat rings go up to +10. Slaying goes up to +9.
+# Default for dex/int/str: +6, default for ev/slay/prot: +4.

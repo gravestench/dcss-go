@@ -56,7 +56,7 @@ local function carve(builder, from, to, carved)
 
         local glyph = builder:cell(x, y)
 
-        if glyph ~= "<" and glyph ~= ">" then
+        if glyph ~= "<" and glyph ~= ">" and glyph ~= "." then
             builder:set(x, y, ".")
             carved[key(x, y)] = true
         end

@@ -1,0 +1,14 @@
+NAME:  nicolae_square_shop
+# Source: crawl-ref/source/dat/des/builder/shops.des:325
+TAGS:  allow_dup extra shop transparent
+KFEAT: O = any shop
+SUBST: c : cvbn
+MAP
+   ..cc
+ cc..cc
+ cc....
+...O...
+....cc
+cc..cc
+cc..
+ENDMAP

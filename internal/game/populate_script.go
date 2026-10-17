@@ -231,6 +231,16 @@ func (g *Game) markMaterializedVaultRecords(value any) error {
 
 		record.Pending = false
 
+		for argumentIndex, argument := range record.Arguments {
+			if argument.Name == "pending_reason" {
+				record.Arguments = append(
+					record.Arguments[:argumentIndex],
+					record.Arguments[argumentIndex+1:]...)
+
+				break
+			}
+		}
+
 		if record.Kind == vault.KindItem {
 			kindID, valid := fields["kind_id"].(string)
 

@@ -1,0 +1,25 @@
+NAME:    nicolae_shop_hallway_stairs
+# Source: crawl-ref/source/dat/des/builder/shops.des:461
+TAGS:    allow_dup extra shop transparent no_pool_fixup
+KFEAT:   O = any shop
+: vault.run("choose_hallway_stair")
+# source: : if you.depth() == 1 then
+# source: SUBST:   S = )}]
+# source: : elseif you.depth_fraction() < 1 then
+# source: SUBST:   S = (){}[]
+# source: : else
+# source: SUBST:   S = ({[
+# source: : end
+SHUFFLE: Pp/Qq, Rr/Ss
+SUBST:   P : xw_, p = _, Q : mw+, q = ., R : xw_, r = _, S : mw+, s = .
+CLEAR:   _
+MAP
+    pp
+xxxxPPxxxx
++..O..S..+
+xxxxRRxxxx
+    rr
+ENDMAP
+
+# Q: Why is there a dead body outside your shop with blood everywhere?
+# A: Don't worry about it. Are you going to buy something or not?

@@ -81,10 +81,39 @@ local function preferred_origin(vault, map_width, map_height, random)
     return left, top
 end
 
-local function origin(vault, map_width, map_height, builder)
-    local left, top = preferred_origin(vault, map_width, map_height, builder)
+local function protected_cell(builder, cells, left, top, protected)
+    for local_y, row in ipairs(cells) do
+        for local_x, source in ipairs(row) do
+            if source ~= " " then
+                local x = left + local_x - 1
+                local y = top + local_y - 1
+                local key = x .. ":" .. y
+                local present = builder:cell(x, y)
 
-    if not protected_stair(builder, left, top, map_width, map_height) then
+                if present == "<" or present == ">" or
+                    protected[key] then
+                    return true
+                end
+            end
+        end
+    end
+
+    return false
+end
+
+local function origin(vault, cells, map_width, map_height, builder, options)
+    local left, top = preferred_origin(vault, map_width, map_height, builder)
+    local protected = options and options.protected
+
+    local function conflict(x, y)
+        if protected then
+            return protected_cell(builder, cells, x, y, protected)
+        end
+
+        return protected_stair(builder, x, y, map_width, map_height)
+    end
+
+    if not conflict(left, top) then
         return left, top
     end
 
@@ -93,11 +122,11 @@ local function origin(vault, map_width, map_height, builder)
             vault.path, vault.id))
     end
 
-    for _ = 1, 32 do
+    for _ = 1, options and options.attempts or 32 do
         left = 2 + builder:roll(width - map_width - 3)
         top = 2 + builder:roll(height - map_height - 3)
 
-        if not protected_stair(builder, left, top, map_width, map_height) then
+        if not conflict(left, top) then
             return left, top
         end
     end
@@ -407,7 +436,7 @@ local function locate_records(source_records, cells, left, top, entry,
     return located
 end
 
-function placement.place(_, builder, vault, player)
+function placement.place(_, builder, vault, player, options)
     local cells, map_width, map_height = matrix(vault.rows)
     local width_before = map_width
     local height_before = map_height
@@ -422,7 +451,8 @@ function placement.place(_, builder, vault, player)
         map_height = #cells
     end
 
-    local left, top = origin(vault, map_width, map_height, builder)
+    local left, top = origin(vault, cells, map_width, map_height,
+        builder, options)
     local records = {}
     local entry, exits, occupied = draw_map(vault, cells, builder, left, top, records)
     local intents = locate_records(source_records, cells, left, top, entry,
@@ -459,6 +489,7 @@ function placement.place(_, builder, vault, player)
 
     return {
         id = vault.id,
+        family = vault.family,
         path = vault.path,
         entry = entry,
         exits = exits,

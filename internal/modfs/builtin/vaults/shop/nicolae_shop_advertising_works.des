@@ -1,0 +1,16 @@
+NAME:     nicolae_shop_advertising_works
+# Source: crawl-ref/source/dat/des/builder/shops.des:414
+TAGS:     extra shop transparent
+# Exploiting subvault placement behavior to get the shop a varying distance
+# from the arrow.
+SUBVAULT: - : nico_adshop
+CLEAR:    -
+MAP
+.........             -------------------------------
+.....b...             -------------------------------
+......b..             -------------------------------
+.bbbbbbb.             -------------------------------
+......b..             -------------------------------
+.....b...             -------------------------------
+.........             -------------------------------
+ENDMAP

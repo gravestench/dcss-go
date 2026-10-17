@@ -1,0 +1,31 @@
+NAME:    minmay_shop_star
+# Source: crawl-ref/source/dat/des/builder/shops.des:1391
+TAGS:    extra luniq_floating_shops transparent
+DEPTH:   D:4-, Depths, Elf, Snake
+ORIENT:  float
+KFEAT:   A = any shop
+SHUFFLE: AB
+SUBST:   b : x:20 cv b:5 .:5 m:5 G:5 t:5
+SUBST:   A : A:90 .xcvbmGtT
+SUBST:   B = A
+MAP
+       x@x
+       x.x
+      xx.xx
+      x...x
+xxxxxxxb.bxxxxxxx
+@.....b...b.....@
+xxx.....A.....xxx
+  xxx.b...b.xxx
+    xxx.B.xxx
+  xxx.b...b.xxx
+xxx.....A.....xxx
+@.....b...b.....@
+xxxxxxxb.bxxxxxxx
+      x...x
+      xx.xx
+       x.x
+       x@x
+ENDMAP
+
+# 2 (50%) or 4 (50%) shops

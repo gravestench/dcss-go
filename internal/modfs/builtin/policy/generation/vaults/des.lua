@@ -1,11 +1,14 @@
 local directives = require("constants.vault_directives")
+local depth = require("policy.generation.vaults.depth")
 
 local des = {}
 
 local known_directives = {}
 
 for _, kind in pairs(directives) do
-    if kind ~= directives.HOOK_RUN and kind ~= directives.HOOK_VETO then
+    if kind ~= directives.HOOK_RUN and
+        kind ~= directives.HOOK_VETO and
+        kind ~= directives.HOOK_POST_PLACE then
         known_directives[kind] = true
     end
 end
@@ -46,6 +49,10 @@ local function add_directive(vault, kind, argument, line)
         end
     elseif kind == directives.ORIENT then
         vault.orientation = argument
+    elseif kind == directives.DEPTH then
+        -- Read after continuations have joined their source lines.
+    elseif kind == directives.CHANCE then
+        -- Read after continuations have joined their source lines.
     elseif kind == directives.WEIGHT then
         local weight = tonumber(argument)
 
@@ -58,13 +65,20 @@ local function add_directive(vault, kind, argument, line)
 end
 
 local function add_hook(vault, text, line)
-    local stage, method = text:match('^:%s*vault%.([a-z]+)%s*%(%s*"([a-z][a-z0-9_]*)"%s*%)%s*$')
+    local stage, method = text:match('^:%s*vault%.([a-z_]+)%s*%(%s*"([a-z][a-z0-9_]*)"%s*%)%s*$')
 
-    if stage ~= "run" and stage ~= "veto" then
+    if stage ~= "run" and stage ~= "veto" and
+        stage ~= "post_place" then
         fail(vault.path, line, vault.id, "unported inline Lua or malformed vault hook")
     end
 
-    local kind = stage == "run" and directives.HOOK_RUN or directives.HOOK_VETO
+    local kind = directives.HOOK_VETO
+
+    if stage == "run" then
+        kind = directives.HOOK_RUN
+    elseif stage == "post_place" then
+        kind = directives.HOOK_POST_PLACE
+    end
 
     vault.operations[#vault.operations + 1] = {
         kind = kind,
@@ -106,9 +120,12 @@ end
 function des.parse(path, source)
     local vault = {
         path = path,
+        family = path:match("^vaults/([^/]+)/"),
         tags = {},
         orientation = "float",
         weight = 10,
+        depths = {},
+        chances = {},
         rows = {},
         operations = {},
     }
@@ -158,7 +175,30 @@ function des.parse(path, source)
         end
     end
 
-    if in_map or continuing or not map_seen or #vault.rows == 0 then
+    local post_place = false
+
+    for _, operation in ipairs(vault.operations) do
+        local site = {
+            path = vault.path,
+            line = operation.line,
+            id = vault.id,
+        }
+
+        if operation.kind == directives.DEPTH then
+            for _, rule in ipairs(depth.parse_rules(operation.argument, site)) do
+                vault.depths[#vault.depths + 1] = rule
+            end
+        elseif operation.kind == directives.CHANCE then
+            vault.chances[#vault.chances + 1] =
+                depth.parse_chance(operation.argument, site)
+        end
+
+        post_place = post_place or
+            operation.kind == directives.HOOK_POST_PLACE
+    end
+
+    if in_map or continuing or not map_seen or
+        (#vault.rows == 0 and not post_place) then
         fail(path, #source_lines(source), vault.id, "incomplete DES map or directive")
     end
 

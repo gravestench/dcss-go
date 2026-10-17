@@ -1,0 +1,9 @@
+NAME: nicolae_shop_crystal
+# Source: crawl-ref/source/dat/des/builder/shops.des:147
+TAGS: allow_dup extra shop transparent
+KFEAT: O = any shop
+MAP
+b.b
+.O.
+b.b
+ENDMAP

@@ -1,0 +1,30 @@
+NAME:   nicolae_shop_bloodbath_and_beyond
+# Source: crawl-ref/source/dat/des/builder/shops.des:484
+TAGS:   extra shop transparent
+KITEM:  D = mundane dagger / mundane club / mundane hand axe / mundane spear
+KFEAT:  O = weapon shop
+KFEAT:  E = x
+NSUBST: - = D / Z / -
+SUBST:  . = `.., - = `., ! = ``., x = Exx
+KPROP:  `DOEZ = bloody
+: vault.run("decay_corpse")
+# source: : dgn.delayed_decay(_G, "Z", "human corpse" )
+MAP
+xx...xx
+x-----x
+.-!!!-.
+.-!O!-.
+.-!!!-.
+x-----x
+xx...xx
+ENDMAP
+
+###############################################################################
+# <<2>> Themed.
+#       Not tagged shop, but still contains one. Can have threats, and can have
+#       have a specific custom item list. Even if the below examples don't show
+#       it, try to have some restraint with additions here.
+#
+
+#####################################################
+# Custom venom shop

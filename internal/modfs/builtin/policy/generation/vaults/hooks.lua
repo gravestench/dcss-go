@@ -3,7 +3,7 @@ local directives = require("constants.vault_directives")
 local hooks = {}
 
 local function handler_path(vault)
-    return "policy.generation.vaults.arrival." .. vault.id
+    return "policy.generation.vaults." .. vault.family .. "." .. vault.id
 end
 
 function hooks.validate(vault)
@@ -11,7 +11,8 @@ function hooks.validate(vault)
 
     for _, operation in ipairs(vault.operations) do
         if operation.kind == directives.HOOK_RUN or
-            operation.kind == directives.HOOK_VETO then
+            operation.kind == directives.HOOK_VETO or
+            operation.kind == directives.HOOK_POST_PLACE then
             if handler == nil then
                 local ok, loaded = pcall(require, handler_path(vault))
 

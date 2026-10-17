@@ -10,6 +10,9 @@ local categories = require("constants.catalog")
 local definition = {
     id = "ARM_BOOTS",
     name = "boots",
+    vault_aliases = {
+        "pair of boots",
+    },
     glyph = 91,
     class = "OBJ_ARMOUR",
     class_value = 2,

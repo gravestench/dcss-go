@@ -1,0 +1,9 @@
+NAME: nicolae_shop_behind_doors
+# Source: crawl-ref/source/dat/des/builder/shops.des:138
+TAGS: allow_dup extra shop transparent
+KFEAT: O = any shop
+MAP
+x+x
++O+
+x+x
+ENDMAP

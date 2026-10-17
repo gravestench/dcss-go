@@ -1,0 +1,30 @@
+NAME:    minmay_shoptagon
+# Source: crawl-ref/source/dat/des/builder/shops.des:1421
+TAGS:    extra luniq_floating_shops transparent
+DEPTH:   D:4-, Depths, Elf, Snake
+ORIENT:  float
+KFEAT:   A = any shop
+SUBST:   a : . m:1 G:1
+SUBST:   b : xcvbmGt
+SUBST:   d : .:60 cvbmGt
+SHUFFLE: AB, CD
+SUBST:   C : .:80 xcvbmGtT
+SUBST:   D : .:80 xcvbmGtT
+SUBST:   B : A.
+MAP
+    xxx@xxx
+   xxd...dxx
+  xxd..D..dxx
+ xxd.......dxx
+xxd....B....dxx
+xd...C...C...dx
+x.....aaa.....x
+@.D.A.aba.A.D.@
+x.....aaa.....x
+xd...C...C...dx
+xxd....B....dxx
+ xxd.......dxx
+  xxd..D..dxx
+   xxd...dxx
+    xxx@xxx
+ENDMAP

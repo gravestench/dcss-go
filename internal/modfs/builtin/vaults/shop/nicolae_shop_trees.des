@@ -1,0 +1,9 @@
+NAME: nicolae_shop_trees
+# Source: crawl-ref/source/dat/des/builder/shops.des:180
+TAGS: allow_dup extra shop transparent
+KFEAT: O = any shop
+MAP
+  t
+t.O.t
+  t
+ENDMAP

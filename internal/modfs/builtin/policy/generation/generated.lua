@@ -7,6 +7,7 @@ local vault_placement = require("policy.generation.vaults.placement")
 local vault_connect = require("policy.generation.vaults.connect")
 local vault_glyphs = require("constants.vault_glyphs")
 local vault_effects = require("constants.vault_effects")
+local vault_extra = require("policy.generation.vaults.extra")
 
 local generated = {}
 
@@ -39,32 +40,66 @@ local function source_stairs(placed)
     return up, down
 end
 
-local function add_second_level_arrivals(second, count)
+local function add_stair_landings(level, count, glyph, protected)
     local arrivals = {}
 
     for y = 1, 68 do
         for x = 1, 78 do
             if #arrivals == count then
-                second.rows = second.builder:rows()
+                level.rows = level.builder:rows()
 
                 return arrivals
             end
 
-            if second.builder:cell(x, y) == "." then
-                second.builder:set(x, y, "<")
+            local key = x .. ":" .. y
+
+            if level.builder:cell(x, y) == "." and
+                not protected[key] then
+                level.builder:set(x, y, glyph)
+                protected[key] = true
                 arrivals[#arrivals + 1] = { x = x, y = y }
             end
         end
     end
 
-    error("Dungeon:2 has too few floor cells for source arrival stairs")
+    error("Dungeon has too few floor cells for source vault stairs")
 end
 
-local function stair_links(first, second, placed)
+local function add_source_stairs(placed, up, down)
+    local source_up, source_down = source_stairs(placed)
+
+    for _, point in ipairs(source_up) do
+        up[#up + 1] = point
+    end
+
+    for _, point in ipairs(source_down) do
+        down[#down + 1] = point
+    end
+end
+
+local function stair_links(first, second, placed, first_extra,
+    second_extra, first_protected, second_protected)
     local first_links = {}
     local second_links = {}
-    local source_up, source_down = source_stairs(placed)
-    local extra_arrivals = add_second_level_arrivals(second, #source_down)
+    local first_up = {}
+    local first_down = {}
+    local second_up = {}
+    local second_down = {}
+
+    add_source_stairs(placed, first_up, first_down)
+
+    for _, map in ipairs(first_extra) do
+        add_source_stairs(map, first_up, first_down)
+    end
+
+    for _, map in ipairs(second_extra) do
+        add_source_stairs(map, second_up, second_down)
+    end
+
+    local second_arrivals = add_stair_landings(second, #first_down,
+        "<", second_protected)
+    local first_departures = add_stair_landings(first, #second_up,
+        ">", first_protected)
 
     for index, first_pair in ipairs(first.stairs) do
         local second_pair = second.stairs[index]
@@ -103,7 +138,7 @@ local function stair_links(first, second, placed)
         }
     end
 
-    for _, up in ipairs(source_up) do
+    for _, up in ipairs(first_up) do
         first_links[#first_links + 1] = {
             x = up.x,
             y = up.y,
@@ -114,8 +149,8 @@ local function stair_links(first, second, placed)
         }
     end
 
-    for index, down in ipairs(source_down) do
-        local arrival = extra_arrivals[index]
+    for index, down in ipairs(first_down) do
+        local arrival = second_arrivals[index]
 
         first_links[#first_links + 1] = {
             x = down.x,
@@ -132,6 +167,38 @@ local function stair_links(first, second, placed)
             to_x = down.x,
             to_y = down.y,
             unavailable = "",
+        }
+    end
+
+    for index, up in ipairs(second_up) do
+        local departure = first_departures[index]
+
+        first_links[#first_links + 1] = {
+            x = departure.x,
+            y = departure.y,
+            to_level_id = 2,
+            to_x = up.x,
+            to_y = up.y,
+            unavailable = "",
+        }
+        second_links[#second_links + 1] = {
+            x = up.x,
+            y = up.y,
+            to_level_id = 1,
+            to_x = departure.x,
+            to_y = departure.y,
+            unavailable = "",
+        }
+    end
+
+    for _, down in ipairs(second_down) do
+        second_links[#second_links + 1] = {
+            x = down.x,
+            y = down.y,
+            to_level_id = 0,
+            to_x = 0,
+            to_y = 0,
+            unavailable = third_unavailable,
         }
     end
 
@@ -191,6 +258,51 @@ end
 
 generated.spawn_exclusions = spawn_exclusions
 
+local function protected_cells(level, placed)
+    local cells = {}
+
+    for _, point in ipairs(placed and placed.occupied or {}) do
+        vault_extra.protect(cells, point)
+    end
+
+    for _, pair in ipairs(level.stairs) do
+        vault_extra.protect(cells, pair.up)
+        vault_extra.protect(cells, pair.down)
+    end
+
+    if placed then
+        vault_extra.protect(cells, placed.entry)
+    end
+
+    return cells
+end
+
+local function append_vault_records(target, maps)
+    for _, map in ipairs(maps) do
+        for _, record in ipairs(map.records) do
+            target[#target + 1] = record
+        end
+    end
+end
+
+local function extra_exclusions(base, maps)
+    local points = {}
+
+    for _, point in ipairs(base or {}) do
+        points[#points + 1] = point
+    end
+
+    for _, map in ipairs(maps) do
+        local vault = vault_catalog.get(map.id)
+
+        for _, point in ipairs(spawn_exclusions(map, vault)) do
+            points[#points + 1] = point
+        end
+    end
+
+    return points
+end
+
 function generated.generate(ctx, input)
     local player = {
         species_id = input.player_species_id,
@@ -208,9 +320,54 @@ function generated.generate(ctx, input)
     end
 
     vault_connect.finish(ctx, first.builder, placed, original_stairs)
-    first.rows = first.builder:rows()
+    local first_protected = protected_cells(first, placed)
+    local second_protected = protected_cells(second)
+    local first_extra = vault_extra.generate(ctx, first.builder, {
+        branch_id = branches.BRANCH_DUNGEON,
+        depth = 1,
+        branch_bottom = 15,
+        absolute_depth = 1,
+        protected = first_protected,
+        required = original_stairs,
+        player = {
+            species_id = player.species_id,
+            name = player.name,
+            started = false,
+            branch_id = branches.BRANCH_DUNGEON,
+            depth = 1,
+            branch_bottom = 15,
+            absolute_depth = 1,
+        },
+    })
+    local second_extra, second_controller =
+        vault_extra.generate(ctx, second.builder, {
+            branch_id = branches.BRANCH_DUNGEON,
+            depth = 2,
+            branch_bottom = 15,
+            absolute_depth = 2,
+            protected = second_protected,
+            required = {},
+            player = {
+                species_id = player.species_id,
+                name = player.name,
+                started = false,
+                branch_id = branches.BRANCH_DUNGEON,
+                depth = 2,
+                branch_bottom = 15,
+                absolute_depth = 2,
+            },
+        })
 
-    local first_links, second_links = stair_links(first, second, placed)
+    append_vault_records(placed.records, first_extra)
+    first.rows = first.builder:rows()
+    second.rows = second.builder:rows()
+
+    local second_records = {}
+
+    append_vault_records(second_records, second_extra)
+
+    local first_links, second_links = stair_links(first, second, placed,
+        first_extra, second_extra, first_protected, second_protected)
     local first_budget = monster_count(ctx, 1)
     local second_budget = monster_count(ctx, 2)
     local entry = first.stairs[1].up
@@ -244,7 +401,8 @@ function generated.generate(ctx, input)
                 initial_monsters = first_budget,
                 vault_id = placed.id,
                 vault_records = placed.records,
-                spawn_exclusions = spawn_exclusions(placed, vault),
+                spawn_exclusions = extra_exclusions(
+                    spawn_exclusions(placed, vault), first_extra),
             },
             {
                 id = 2,
@@ -254,6 +412,9 @@ function generated.generate(ctx, input)
                 entry_x = second_entry.x,
                 entry_y = second_entry.y,
                 initial_monsters = second_budget,
+                vault_id = #second_extra > 0 and second_controller or nil,
+                vault_records = #second_extra > 0 and second_records or nil,
+                spawn_exclusions = extra_exclusions(nil, second_extra),
             },
         },
         entry = {

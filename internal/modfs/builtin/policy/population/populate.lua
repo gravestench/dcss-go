@@ -141,27 +141,6 @@ local function shop_fixture(ctx)
     })
 end
 
-local function generated_shop(ctx, level, excluded)
-    if level.id ~= 2 then
-        return
-    end
-
-    local cells = free_cells(ctx, level, excluded)
-
-    if #cells == 0 then
-        return
-    end
-
-    local cell = cells[ctx:random(streams.SHOP, #cells) + 1]
-
-    shops.place(ctx, {
-        level_id = level.id,
-        x = cell.x,
-        y = cell.y,
-        depth = level.id,
-    })
-end
-
 local function floor_potion(ctx, kind_id, level_id, cell)
     if not cell or cell.x == nil or cell.y == nil then
         error("missing starting floor item location for " .. kind_id)
@@ -228,7 +207,6 @@ function module.run(ctx, input)
 
             if level.id ~= abyss.level_id then
                 count = populate_level(ctx, level, allowed, scenario_id)
-                generated_shop(ctx, level, exclusion_set(level))
             end
 
             counts[#counts + 1] = { id = level.id, count = count }

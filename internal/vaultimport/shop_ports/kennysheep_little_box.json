@@ -1,0 +1,13 @@
+{
+  "id": "kennysheep_little_box",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 283,
+      "end_line": 284,
+      "sha256": "6314c9f95ffb051a068fbb63e7f4a51938740198ca96ff0190fdb356b054728d",
+      "method": "configure_shop_or_temple",
+      "stage": "run"
+    }
+  ]
+}

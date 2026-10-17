@@ -46,7 +46,7 @@ context rather than a handler API for each game domain.
 | Dungeon | Seeded basic-layout D:1–2, rooms, corridors, doors, paired stairs, source-sized population, fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
 | Arrival vault population | All 337 selectable source arrivals resolve authored monster and item expressions through Lua content catalogs, place Akara entities with vault origins, and retain source selection in level records; a mod can add a monster and arrival file by path | `policy/generation/vaults/specs`, `policy/population/vaults.lua`, `schemas/vault_origin.lua` |
 | Item generation | Source-backed class and subtype selection feeds floor loot, monster equipment, vault requests, and acquirement; selected generated state is committed to saves | `policy/item_generation`, `systems/item_*` |
-| Shops | Ten active source shop types, saved wallet and stock, gold pickup, generated D:2 shop, fixed shop scenario, prices, shopping list, purchase, and terminal menu | `content/shops`, `policy/shops`, `schemas/*shop*` |
+| Shops | Ten active source shop types, 70 committed source shop vault definitions, scripted shop maps, authored stock and supplemental D:1–2 placement, saved wallet and stock, gold pickup, fixed shop scenario, prices, shopping list, purchase, and terminal menu | `vaults/shop`, `policy/generation/vaults/shop`, `policy/shops`, `schemas/*shop*` |
 | Traps | Ten active source trap definitions and effects in Lua; authored vault traps become saved Akara entities; entry, held state, marks, timed passages, Zot outcomes, visibility, and mod-added trap files use one catalog | `content/traps`, `policy/traps`, `systems/world_traps.lua` |
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; item and spell capability dispatch without monster-ID handlers | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
 | Combat | Fighter melee and headbutts; generated player melee brands and Chaos Knight's forced chaos brand in Lua, including saved spectral allies with damage sharing, distortion banishment, and chaos monster effects; all seven active magical staves with source skill procs and AC/resistance routes; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
@@ -147,12 +147,18 @@ client compatibility are outside this Go port.
 
 Shops now have ten source-backed active types, a saved player wallet, saved
 shop and stock entities, gold pickup, item-class valuation, purchases,
-shopping-list markers, and a full-terminal stock screen. The dedicated fixed
-Dungeon shop scenario and ordinary generated floor make the economy playable. Shop vault
-content in source `.des` files still needs importing into the broader vault
-pipeline. Keeper names, exact source RNG sequences, and every special price
-case still need parity review; the saved keeper seed leaves a place for that
-work without changing the ECS ownership model.
+shopping-list markers, and a full-terminal stock screen. The 70 source shop
+vault definitions are committed as `.des` files, with Lua ports for their
+scripts. Eligible maps place authored shops and stock in ordinary D:1–2
+generation; the fixed shop scenario remains available. Supplemental maps
+retain source IDs in saves, and sparse mod overlays can add a vault or replace
+one handler. The generic secondary-vault opportunity currently uses a 1-in-8
+roll while other vault families are unported; source DCSS draws from its full
+secondary-vault pool instead. Deeper branch placement needs the corresponding
+branch generator.
+Keeper names, exact source RNG sequences, and every special price case still
+need parity review; the saved keeper seed leaves a place for that work without
+changing the ECS ownership model.
 
 Trap placement and activation are playable for all ten active trap IDs. The
 pressure plate emits a position event; vault marker listeners remain for the

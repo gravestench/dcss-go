@@ -1,0 +1,12 @@
+NAME: nicolae_shop_waterfront
+# Source: crawl-ref/source/dat/des/builder/shops.des:189
+TAGS: allow_dup extra shop no_pool_fixup
+KFEAT: O = any shop
+SUBST: v = wW
+MAP
+ www
+wwvvW
+wwO.@
+wwvvW
+ www
+ENDMAP

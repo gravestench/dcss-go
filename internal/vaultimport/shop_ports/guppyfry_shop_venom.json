@@ -1,0 +1,13 @@
+{
+  "id": "guppyfry_shop_venom",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 522,
+      "end_line": 524,
+      "sha256": "81d0c54e6916d2a0470ff557da7736f4cbdd6383f01f0e3cbfe410b1fb9424d1",
+      "method": "choose_venom_population",
+      "stage": "run"
+    }
+  ]
+}

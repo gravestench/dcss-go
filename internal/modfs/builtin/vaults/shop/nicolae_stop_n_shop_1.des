@@ -1,0 +1,19 @@
+NAME:    nicolae_stop_n_shop_1
+# Source: crawl-ref/source/dat/des/builder/shops.des:363
+TAGS:    allow_dup extra shop transparent
+DEPTH:   D:4-, !D:$, Depths:2-, !Depths:$, Shoals:2-, !Shoals:$, Snake:2-, \
+         !Snake:$, Elf:2-, !Elf:$
+KFEAT:   O = any shop
+SHUFFLE: {}/[]/()
+SUBST:   D : G., E : G., F : G.
+MAP
+D...E
+.....
+..}...F
+.......
+E...O...E
+  .......
+  F...{..
+    .....
+    E...D
+ENDMAP

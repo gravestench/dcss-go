@@ -1,0 +1,16 @@
+NAME: nicolae_shop_competitors_out_of_business
+# Source: crawl-ref/source/dat/des/builder/shops.des:240
+TAGS: allow_dup extra shop transparent
+WEIGHT: 3
+KFEAT: O = any shop
+KFEAT: A = abandoned_shop
+MAP
+O.A
+...
+A.A
+ENDMAP
+
+####
+# These three vaults were originally plain minivaults.
+# They can still place as plain minivaults, in which case they have no
+# shops.

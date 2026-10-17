@@ -153,6 +153,17 @@ func luaVaultRecord(value any) (vault.Record, error) {
 		record.Arguments = append(record.Arguments, argument)
 	}
 
+	if record.Pending &&
+		(record.Kind == vault.KindFeature ||
+			record.Kind == vault.KindSourceFeature) {
+		record.Arguments = append(record.Arguments, vault.Argument{
+			Name: "pending_reason",
+			Kind: vault.ValueString,
+			String: fmt.Sprintf(
+				"feature %q has no active gameplay effect", record.Identity),
+		})
+	}
+
 	return record, nil
 }
 

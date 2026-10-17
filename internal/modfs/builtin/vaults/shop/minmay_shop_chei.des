@@ -1,0 +1,49 @@
+NAME:    minmay_shop_chei
+# Source: crawl-ref/source/dat/des/builder/shops.des:880
+TAGS:    transparent extra
+DEPTH:   D:7-
+WEIGHT:  5
+KFEAT:   _ = altar_cheibriados
+# Determine items and their enchantment for the shop.
+: vault.run("configure_chei_stock")
+# source: {{
+# source: -- The enchantment bonus for ponderousness only gets applied to naturally
+# source: -- generated items, so I have to duplicate it here in order to get the same
+# source: -- distribution of enchantments as naturally generated plate of ponderousness.
+# source: local plateEnchant = 3 + crawl.random2(3) + crawl.random2(8) +
+# source:     (crawl.x_chance_in_y(21 + you.absdepth(), 300) and crawl.random2(3) or 0)
+# source: if plateEnchant > 10 then plateEnchant = 10 end
+# source:
+# source: -- And that enchantment bonus is too good for CPA, so use a super complicated
+# source: -- custom formula for the CPA's enchantment.
+# source: local cpaEnchant = crawl.random2(6)
+# source:
+# source: -- Don't want to have the same items every time, but also don't want to pick
+# source: -- the same unrandart twice. So build a custom list...
+# source: local items = {"black knight's barding",
+# source:                "hat of pondering",
+# source:                "crystal plate armour ego:ponderousness plus:" .. cpaEnchant,
+# source:                "plate armour ego:ponderousness plus:" .. plateEnchant}
+# source: local itemCount = crawl.random2(2) + 1
+# source: local chosen = {}
+# source: local kstr =
+# source:     "S = armour shop name:Cheibriados type:Comfort suffix:Zone use_all ; "
+# source: local i = 0
+# source: while i < itemCount do
+# source:     local itm = items[crawl.random2(#items) + 1]
+# source:     if not (chosen[itm]) then
+# source:         i = i + 1
+# source:         chosen[itm] = true
+# source:         kstr = kstr .. itm
+# source:         if i < itemCount then kstr = kstr .. " | " end
+# source:     end
+# source: end
+# source: kfeat(kstr)
+# source: }}
+MAP
+ ...
+.._..
+.G.G.
+..S..
+ ...
+ENDMAP

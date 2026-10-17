@@ -1,0 +1,22 @@
+NAME:    minmay_shop_grid_forest
+# Source: crawl-ref/source/dat/des/builder/shops.des:1370
+TAGS:    extra luniq_floating_shops transparent
+DEPTH:   D:4-, Depths, Elf, Snake
+KFEAT:   A = any shop
+SHUFFLE: ABC
+SUBST:   t : t:11 x:1 c:1 b:1 v:1
+SUBST:   B : .:12 C:6 x:1 c:1 b:1 v:1 G:1 T:1
+SUBST:   C : T:12 x:1 c:1 b:1 v:1 G:1 t:1
+MAP
+.........
+.t.t.t.t.
+..B.C.B..
+.t.t.t.t.
+..C.A.C..
+.t.t.t.t.
+..B.C.B..
+.t.t.t.t.
+.........
+ENDMAP
+
+# 1 (25%), 2 (25%), or 3 (50%) shops

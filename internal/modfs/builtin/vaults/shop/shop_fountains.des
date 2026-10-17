@@ -1,0 +1,9 @@
+NAME:   shop_fountains
+# Source: crawl-ref/source/dat/des/builder/shops.des:101
+TAGS:   allow_dup extra shop transparent
+KFEAT:  O = any shop
+MAP
+T.T
+.O.
+T.T
+ENDMAP

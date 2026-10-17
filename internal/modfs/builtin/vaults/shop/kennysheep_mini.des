@@ -1,0 +1,12 @@
+NAME:  kennysheep_mini
+# Source: crawl-ref/source/dat/des/builder/shops.des:255
+TAGS:  shop temple_overflow_generic_1
+DEPTH: D:4-, Depths, !D:$, !Depths:$
+: vault.run("configure_shop_or_temple")
+# source: : ks_random_setup(_G)
+# source: : ks_shop_vault(_G, '{}CC')
+MAP
+cDc
+FOF
+c+c
+ENDMAP

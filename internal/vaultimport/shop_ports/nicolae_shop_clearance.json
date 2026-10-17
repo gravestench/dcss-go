@@ -1,0 +1,13 @@
+{
+  "id": "nicolae_shop_clearance",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 1025,
+      "end_line": 1030,
+      "sha256": "8ff1ae9b8bad8fa8d3e4c75e9f823d7fb72f9d012f515f3204fb81b066a129be",
+      "method": "configure_clearance_sale",
+      "stage": "run"
+    }
+  ]
+}

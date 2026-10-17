@@ -1,0 +1,16 @@
+NAME:  nicolae_lakefront_shop
+# Source: crawl-ref/source/dat/des/builder/shops.des:309
+TAGS:  allow_dup extra shop transparent no_pool_fixup
+KFEAT: O = any shop
+SUBST: G : GTUtwx, w : wl
+MAP
+xxxxxxxx
+x.....Gx
+..www..x
+.wwwww.x
+@wwwwwOx
+.wwwww.x
+..www..x
+x.....Gx
+xxxxxxxx
+ENDMAP

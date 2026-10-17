@@ -1,0 +1,17 @@
+NAME: nicolae_shop_overgrown_old_shop
+# Source: crawl-ref/source/dat/des/builder/shops.des:201
+TAGS: allow_dup extra shop transparent
+WEIGHT: 5
+KFEAT: O = antiques shop / antique weapon shop w:5 / antique armour shop w:5
+NSUBST: 1 = . / 1
+MONS: plant / nothing w:3
+MAP
+.....
+.111.
+.1O1.
+.111.
+.....
+ENDMAP
+
+# A shop owner has copied a temple entry for their shop. Is nothing sacred?
+# (minmay_temple_entry_statues_fountains)

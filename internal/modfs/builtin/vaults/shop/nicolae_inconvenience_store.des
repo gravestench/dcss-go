@@ -1,0 +1,24 @@
+NAME:    nicolae_inconvenience_store
+# Source: crawl-ref/source/dat/des/builder/shops.des:339
+TAGS:    extra shop transparent no_pool_fixup
+DEPTH:   D:4-, Depths
+WEIGHT:  5
+KFEAT:   a = iron_grate
+KFEAT:   O = any shop
+SHUFFLE: xm/cn/va/ll/ww
+MAP
+.............
+.xxxxxmxxxxx.
+.x...........
+.x.xxxmxxxxx.
+.x.x.......x.
+.x.x.xmxxx.x.
+.x.x.x...x.x.
+.m.m.mOm.m.m.
+.x.x.xmx.x.x.
+.x.x.....x.x.
+.x.xxxmxxx.x.
+.x.........x.
+.xxxxxmxxxxx.
+.............
+ENDMAP

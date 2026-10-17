@@ -8,6 +8,8 @@ local identification = require("policy.shops.identification")
 local quality = require("constants.vault_item_quality")
 local streams = require("constants.rng_streams")
 local terrain = require("constants.terrain")
+local stock_request = require("policy.shops.stock_request")
+local item_sets = require("policy.item_generation.item_sets")
 
 local generation = {}
 
@@ -37,7 +39,7 @@ local function weighted(ctx, rows, key)
 
     for _, row in ipairs(rows) do
         if draw < row.weight then
-            return row[key]
+            return key and row[key] or row
         end
 
         draw = draw - row.weight
@@ -108,11 +110,32 @@ local function candidate(ctx, definition, spec, index, stocked)
     }
 
     if spec.items and #spec.items > 0 then
-        local chosen = spec.use_all and spec.items[index] or
-            spec.items[ctx:random(streams.SHOP, #spec.items) + 1]
+        local chosen
+
+        if spec.use_all then
+            chosen = spec.items[index]
+        elseif type(spec.items[1]) == "table" then
+            chosen = weighted(ctx, spec.items, nil)
+        else
+            chosen = spec.items[ctx:random(streams.SHOP, #spec.items) + 1]
+        end
 
         if chosen then
-            request.kind_id = chosen
+            if type(chosen) == "table" then
+                local site = spec.site or {
+                    path = "shop " .. definition.id,
+                    line = 0,
+                    vault_id = definition.id,
+                }
+
+                stock_request.apply(ctx, request, chosen, site)
+
+                if request.no_spawn then
+                    return nil
+                end
+            else
+                request.kind_id = chosen
+            end
         end
     else
         local class_id = weighted(ctx, definition.class_weights, "class")
@@ -120,6 +143,11 @@ local function candidate(ctx, definition, spec, index, stocked)
         if class_id ~= classes.OBJ_RANDOM then
             request.class_id = class_id
         end
+    end
+
+    if request.set_id then
+        request.kind_id =
+            item_sets.choice(ctx, ctx:player(), request.set_id)
     end
 
     local rolled = item_generation.roll(isolated_rng(ctx), request)
@@ -224,8 +252,9 @@ function generation.place(ctx, spec)
     local shop_greed = spec.greed or greed(ctx, definition, spec.depth)
 
     if not positive_integer(count) or count > 64 or
-        not positive_integer(shop_greed) then
-        error("shop requires positive stock count and greed")
+        type(shop_greed) ~= "number" or shop_greed < 0 or
+        shop_greed % 1 ~= 0 then
+        error("shop requires positive stock count and nonnegative greed")
     end
 
     local stock = roll_stock(ctx, definition, spec, count)

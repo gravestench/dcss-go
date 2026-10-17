@@ -1,0 +1,13 @@
+{
+  "id": "nicolae_shop_hallway_stairs",
+  "source_file": "shops.des",
+  "edits": [
+    {
+      "start_line": 464,
+      "end_line": 470,
+      "sha256": "8d24911e6f08cdd4d0f04fe64bed1921aa73b309354463ebb5739e7d26ec1e33",
+      "method": "choose_hallway_stair",
+      "stage": "run"
+    }
+  ]
+}

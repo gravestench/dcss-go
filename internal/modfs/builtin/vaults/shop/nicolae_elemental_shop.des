@@ -1,0 +1,43 @@
+NAME: nicolae_elemental_shop
+# Source: crawl-ref/source/dat/des/builder/shops.des:698
+TAGS: no_monster_gen no_item_gen no_pool_fixup transparent extra
+DEPTH: D:4-, Depths
+SHUFFLE: AB
+NSUBST: A = a / l / w / x
+SUBST: B = .
+KPROP: l = no_cloud_gen
+MARKER: a = lua:fog_machine { cloud_type = "thin mist", \
+            pow_min = 100, pow_max = 100, delay = 1, \
+            size = 1, walk_dist = 0, start_clouds = 1 }
+# XXX: we should replace iceblast with something else when it's not
+# in this game's chosen item set.
+: vault.run("configure_elemental_stock")
+# source: {{
+# source:   local evocables = {"wand of flame","wand of iceblast",
+# source:                      "lightning rod","tin of tremorstones"}
+# source:   local staffs    = {"staff of fire","staff of cold",
+# source:                      "staff of air","staff of earth"}
+# source:   local randbooks = {"randbook disc:fire","randbook disc:ice",
+# source:                      "randbook disc:air","randbook disc:earth"}
+# source:   local choices   = {1, 2, 3, 4}
+# source:   local i, j, temp
+# source:   for i = 4, 2, -1 do
+# source:      j = crawl.random_range(1,i)
+# source:      temp = choices[j] ; choices[j] = choices[i] ; choices[i] = temp
+# source:   end
+# source:   local inventory = evocables[choices[1]] .. " | " .. evocables[choices[2]] ..
+# source:            " | " .. staffs[choices[3]] .. " | " .. randbooks[choices[4]]
+# source:   kfeat("s = general shop type:Elemental suffix:Accessories count:4 use_all ; "
+# source:          .. inventory )
+# source: }}
+MAP
+.......
+.B.A.B.
+.......
+.A.s.A.
+.......
+.B.A.B.
+.......
+ENDMAP
+
+# Sells only randbooks. All unique first editions with goofy names.

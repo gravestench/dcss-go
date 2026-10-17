@@ -1,0 +1,65 @@
+NAME:   nicolae_shop_dragon_depot
+# Source: crawl-ref/source/dat/des/builder/shops.des:1243
+TAGS:   transparent extra no_item_gen no_tide
+DEPTH:  D:4-, Depths, Elf, Snake, Shoals
+WEIGHT: 5
+: vault.run("configure_dragon_depot")
+# source: {{
+# source:   -- This shop is guaranteed to generate one of each type of dragon scales.
+# source:   -- About a half will get the good_item modifier. This keeps the shop
+# source:   -- inventory from just being a boring list of gray +0 scales 90% of the time.
+# source:   -- This also makes things slightly less of a guarantee, since if the scales
+# source:   -- you want get turned into a randart, they might become too expensive for
+# source:   -- you, or end up with some kind of negative artefact property like -Tele.
+# source:   local scales = { "steam dragon scales", "acid dragon scales",
+# source:     "swamp dragon scales", "fire dragon scales", "ice dragon scales",
+# source:     "pearl dragon scales", "shadow dragon scales", "storm dragon scales",
+# source:     "gold dragon scales", "quicksilver dragon scales" }
+# source:
+# source:   for i, sc in ipairs(scales) do
+# source:      if crawl.coinflip() then
+# source:        scales[ i ] = sc .. " good_item"
+# source:      end
+# source:   end
+# source:
+# source:   -- Mostly from the Wikipedia list of fictional/mythological dragonslayers,
+# source:   -- although some are from poking around elsewhere in dragon-related articles.
+# source:   -- Some dragonslayers have multiple spellings/alternates/variations of their
+# source:   -- names included, or have their first and last names listed separately.
+# source:   -- No videogame references, but there is some Tolkien in here. Some of these
+# source:   -- dragonslayers are better known for other works.
+# source:   local dragonslayers = { "Apollo", "Argus", "Assipattle", "Baal", "Bahram_Gur",
+# source:     "Bayajidda", "Benzaiten", "Beowulf", "Bulat", "Cadmus", "Daniel",
+# source:     "Dobrynya", "Earendil", "Egara", "El", "Enki", "Erlang", "Erlang_Shen",
+# source:     "Eurybarus", "Fat-Frumos", "Fereydun", "Fraech", "Garshasp", "Gawain",
+# source:     "George", "Gilgamesh", "Hadad", "Hadad-Baal", "Haida", "Haymon",
+# source:     "Heinrich", "Heracles", "Indra", "Ishkur", "John_Lambton", "Keresaspa",
+# source:     "Kirsasp", "Krakus", "Lancelot", "Li_Erlang", "Li_Ji", "Lodbrok", "Marduk",
+# source:     "Margaret", "Michael", "Moore", "Mwindo", "Nabu", "Nezha", "Ninurta",
+# source:     "Perseus", "Piers_Shonks", "Ra", "Ragnar", "Rammanu", "Rostam", "Sarasvati",
+# source:     "Schrutan", "Siegfried", "Sigurd", "Sikandar", "Susanowo", "Tanenaga",
+# source:     "Tarhunz", "Teodosio", "Teshub", "Thor", "Tishpak", "Tokoyo", "Tristan",
+# source:     "Turambar", "Vahagn", "Venera", "Vishabakagh", "Wada", "Winkelried",
+# source:     "Yahweh", "Yegara", "Zeus", "Zhao_Yu" }
+# source:   local shopname = dragonslayers[ crawl.random2( #dragonslayers ) + 1 ]
+# source:   kfeat( "P = armour shop name:" .. shopname ..
+# source:          " type:Dragon-Slaying suffix:Spoils count:10 use_all ; " ..
+# source:          util.join( " | ", scales ) )
+# source: }}
+KFEAT: N = b
+KPROP: PNWY' = bloody
+MAP
+   xxxxxxxx
+  xx......xx
+ xx...bb...xx
+xx'''NbWbb..xx
+xP''Nbbbbbb..@
+xY''Nbbbbbb..@
+xx'''NbWbb..xx
+ xx...bb...xx
+  xx......xx
+   xxxxxxxx
+ENDMAP
+
+# Now that most predefined books have been cut back to 3 spells,
+# there is a growing market for spellbooks with a little more thickness.

@@ -1,0 +1,14 @@
+NAME:  nicolae_diamond_shop
+# Source: crawl-ref/source/dat/des/builder/shops.des:295
+TAGS:  allow_dup extra shop transparent no_pool_fixup
+KFEAT: O = any shop
+SUBST: x : xcvbtGwl
+MAP
+...x...
+..x.x..
+.x...x.
+x..O..x
+.x...x.
+..x.x..
+...x...
+ENDMAP

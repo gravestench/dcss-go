@@ -34,6 +34,30 @@ local function parse_term(text, expression, site)
             end
 
             result.place = value
+        elseif key == "ego" or key == "disc" then
+            if value == "" then
+                choice.fail(site, expression, "empty item " .. key)
+            end
+
+            result[key] = value
+        elseif key == "plus" or key == "charges" or
+            key == "numspells" then
+            local number = tonumber(value)
+
+            if not number or number % 1 ~= 0 then
+                choice.fail(site, expression, "invalid item " .. key .. " " .. token)
+            end
+
+            result[key] = number
+        elseif token == "mundane" then
+            result.mundane = true
+        elseif token == "damaged" then
+            result.damaged = true
+        elseif (token == "good_item" or token == "good") and
+            text ~= token then
+            result.good_item = true
+        elseif token == "randart" then
+            result.randart = true
         elseif key then
             choice.fail(site, expression, "unknown item modifier " .. key)
         else
@@ -54,6 +78,12 @@ end
 
 function item.parse(expression, site)
     return choice.slots(expression, site, parse_term)
+end
+
+-- Shop stock already has an outer "|" separator. A single stock item may
+-- contain commas in its catalog name, such as Great Wizards, Vol. II.
+function item.term(expression, site)
+    return parse_term(expression, expression, site)
 end
 
 return item

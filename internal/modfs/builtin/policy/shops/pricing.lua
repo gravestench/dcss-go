@@ -100,7 +100,7 @@ function pricing.value(ctx, item_entity, identifies_stock)
 end
 
 function pricing.price(greed, value)
-    if type(greed) ~= "number" or greed <= 0 or greed % 1 ~= 0 or
+    if type(greed) ~= "number" or greed < 0 or greed % 1 ~= 0 or
         type(value) ~= "number" or value < 0 or value % 1 ~= 0 then
         error("invalid shop greed or item value")
     end

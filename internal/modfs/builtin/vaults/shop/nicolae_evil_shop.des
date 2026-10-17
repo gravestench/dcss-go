@@ -1,0 +1,34 @@
+NAME: nicolae_evil_shop
+# Source: crawl-ref/source/dat/des/builder/shops.des:586
+WEIGHT: 2
+TAGS: transparent
+DEPTH: D:6-, Depths
+SUBST: G : YlG
+# I couldn't decide on just one alliterative name.
+: vault.run("configure_evil_shop")
+# source: : local shopname = util.random_from({"type:Blasphemy suffix:Boutique",
+# source: :   "type:Evil suffix:Emporium", "type:Profane suffix:Products",
+# source: :   "type:Sacrilege suffix:Store", "type:Wicked suffix:Wares"})
+# source: : kfeat("s = general shop " .. shopname .. " ; \
+# source: :   any weapon ego:draining w:15 | any weapon ego:pain | \
+# source: :   any weapon ego:vampirism | any weapon ego:chaos w:1 | demon blade w:5 | \
+# source: :   demon trident w:5 | demon whip w:5 | scroll of torment | staff of death | \
+# source: :   book of necromancy | book of death | book of unlife | \
+# source: :   book of decay | \
+# source: :   randbook disc:necromancy w:5 | necronomicon w:1 | grand grimoire w:1 | \
+# source: :   sceptre_of_torment w:1 | scythe_of_curses w:1 | majin-bo w:1 | \
+# source: :   black_knights_barding w:1 | obsidian_axe w:1 | damnation w:1 | \
+# source: :   sword_of_zonguldrok w:1")
+# source: : if not you.in_branch("D") then
+# source: KFEAT: a = altar_kikubaaqudgha / altar_yredelemnul / altar_makhleb / \
+# source:            altar_beogh w:1 / altar_lugonu w:1
+# source: : end
+MAP
+...   ...
+.G.a.s.G.
+...   ...
+ENDMAP
+
+#####################################################
+# Items related to the good gods thematically; healing, silver, holy wrath,
+# etc.

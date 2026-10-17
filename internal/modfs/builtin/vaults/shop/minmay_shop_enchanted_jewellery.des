@@ -1,0 +1,16 @@
+NAME:   minmay_shop_enchanted_jewellery
+# Source: crawl-ref/source/dat/des/builder/shops.des:928
+DEPTH:  D:4-, Depths, Orc, Elf, Shoals, Snake, Vaults
+TAGS:   transparent extra
+WEIGHT: 5
+KFEAT:  S = jewellery shop ; \
+            ring of strength | \
+            ring of dexterity | \
+            ring of intelligence | \
+            amulet of reflection | \
+            ring of evasion | \
+            ring of protection | \
+            ring of slaying w:3
+MAP
+S
+ENDMAP

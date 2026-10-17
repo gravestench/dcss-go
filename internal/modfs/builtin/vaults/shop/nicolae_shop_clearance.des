@@ -1,0 +1,22 @@
+NAME:   nicolae_shop_clearance
+# Source: crawl-ref/source/dat/des/builder/shops.des:1022
+TAGS:   transparent
+DEPTH:  D:4-, Depths, Orc, Elf, Snake, Shoals, Vaults, Zot
+: vault.run("configure_clearance_sale")
+# source: {{
+# source: local greed = crawl.roll_dice(9, 2) - 9
+# source: local count = crawl.roll_dice(6, 2) - 5
+# source: kfeat("S = general shop type:CLEARANCE_SALE! \
+# source:            greed:" .. greed .. " count:" .. count)
+# source: }}
+KFEAT:  D = abandoned_shop
+NSUBST: D = S / D
+MAP
+xxxxxxx
+xD.D.Dx
+.......
+...V...
+.......
+xD.D.Dx
+xxxxxxx
+ENDMAP

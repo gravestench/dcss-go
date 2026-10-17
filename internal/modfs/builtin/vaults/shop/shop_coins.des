@@ -1,0 +1,10 @@
+NAME:   shop_coins
+# Source: crawl-ref/source/dat/des/builder/shops.des:117
+TAGS:   allow_dup extra shop transparent
+WEIGHT: 3
+KFEAT:  O = any shop
+MAP
+$$$
+$O$
+$$$
+ENDMAP

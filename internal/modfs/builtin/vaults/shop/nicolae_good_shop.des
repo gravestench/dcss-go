@@ -1,0 +1,29 @@
+NAME: nicolae_good_shop
+# Source: crawl-ref/source/dat/des/builder/shops.des:618
+WEIGHT: 2
+DEPTH: D:6-, Depths
+TAGS: no_monster_gen no_trap_gen transparent
+SHUFFLE: _s
+KFEAT: s = general shop type:Hallowed suffix:Reliquary ; \
+   potion of heal wounds | potion of curing | \
+   boomerang ego:silver w:2 | javelin ego:silver w:2 | \
+   any weapon ego:holy_wrath | any armour ego:positive_energy w:5 |\
+   amulet of faith w:2 | ring of positive energy w:5
+: vault.run("choose_good_altar")
+# source: : if not you.in_branch("D") then
+# source: KFEAT: _ = altar_the_shining_one / altar_zin / altar_elyvilon
+# source: : end
+KPROP: 1 = no_tele_into
+KMASK: 1 = opaque
+MONS: angel
+MAP
+nnn
+n1n
+nnn
+._.
+...
+.s.
+ENDMAP
+
+#####################################################
+# All bardings, all the time.

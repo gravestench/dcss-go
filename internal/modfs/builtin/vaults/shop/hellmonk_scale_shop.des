@@ -1,0 +1,27 @@
+NAME:   hellmonk_scale_shop
+# Source: crawl-ref/source/dat/des/builder/shops.des:1135
+TAGS:   transparent
+WEIGHT: 3
+DEPTH:  D:8-, Snake, Depths
+KFEAT:  D = armour shop type:Superior suffix:Scales count:3 ; \
+        scale mail randart
+: vault.run("choose_scale_guard")
+# source: : if you.in_branch("Depths") then
+# source: KMONS:  D = golden dragon / iron dragon / quicksilver dragon / storm dragon /\
+# source:         shadow dragon / pearl dragon w:1
+# source: : elseif you.in_branch("D") and you.absdepth() < 13 then
+# source: KMONS:  D = steam dragon / acid dragon
+# source: :else
+# source: KMONS:  D = fire dragon / ice dragon / swamp dragon
+# source: :end
+MAP
+ xxx
+xxll@
+xl..lx
+xlD.lx
+xxllxx
+ xxxx
+ENDMAP
+
+# Q: Why is the shop across from your fire supplies store burned down?
+# A: Don't worry about it. Are you going to buy something or not?

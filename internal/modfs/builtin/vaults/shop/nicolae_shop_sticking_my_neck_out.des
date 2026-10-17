@@ -1,0 +1,15 @@
+NAME:   nicolae_shop_sticking_my_neck_out
+# Source: crawl-ref/source/dat/des/builder/shops.des:1120
+TAGS:   transparent
+DEPTH:  D:4-, Depths, Elf, Snake
+KFEAT:  S = general shop type:Neck suffix:Hole count:7 use_all ; \
+        cloak | cloak | scarf | scarf | any amulet | any amulet | any amulet
+MAP
+cc     cc
+..c   c..
+...ccc...
+....S....
+...ccc...
+..c   c..
+cc     cc
+ENDMAP

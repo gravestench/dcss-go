@@ -1,0 +1,13 @@
+NAME: nicolae_shop_statue_plus
+# Source: crawl-ref/source/dat/des/builder/shops.des:156
+TAGS: allow_dup extra shop
+KFEAT: O = any shop
+MAP
+   @
+   G
+   <
+@G.O.G@
+   .
+   G
+   @
+ENDMAP

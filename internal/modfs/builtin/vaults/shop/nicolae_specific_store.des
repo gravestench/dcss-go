@@ -1,0 +1,16 @@
+NAME:  nicolae_specific_store
+# Source: crawl-ref/source/dat/des/builder/shops.des:1451
+TAGS:  extra transparent no_pool_fixup
+DEPTH: D:4-, Depths, Orc, Elf, Shoals, Snake
+KFEAT: D = general shop type:General suffix:Store
+KFEAT: E = general shop type:Specific suffix:Store count:1
+SUBST: G : GTUtwx, x : x:120 c:60 bv.
+MAP
+xx...xx
+xG...Gx
+xD...Ex
+xG...Gx
+xx...xx
+ENDMAP
+
+# Chance of X shops: 1: 15%, 2: 30%, 3: 30%, 4: 15%, 5: 5%, 6 : 5%
