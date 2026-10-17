@@ -45,11 +45,16 @@ and branch-specific chance rows used by these two source files. The empty
 reports path, line, and vault name. An added mod vault follows the same
 validation and ruleset-hash behavior as bundled content.
 
-The two shared source Lua preludes become focused Lua modules for shop count,
-shop-or-temple substitution, alphabetic item lists, and names. Source `:`
-lines and eight per-vault `{{...}}` blocks become named hooks at their
-original declaration position. Original script text remains as nonexecuting
-DES comments next to each hook. The ported handlers use named local
+The two shared source Lua preludes appear before the first `NAME`; the
+importer accounts for them by hash and stores their original text as
+nonexecuting provenance comments. They become focused Lua modules for shop
+count, shop-or-temple substitution, alphabetic item lists, and names. Source
+`:` lines and eight per-vault `{{...}}` blocks become named hooks at their
+original declaration position. The `serial_shops` source post-place hook
+becomes a named `HOOK_POST_PLACE` operation executed once after its controller
+map is placed, before the selected shop maps are materialized. Original
+script text remains as nonexecuting DES comments next to each hook. The
+ported handlers use named local
 functions assigned to a local handler object that is returned. A sparse mod
 may override a handler file independently. The importer pins each rewritten
 script span by hash and rejects changed upstream script bytes for review.
