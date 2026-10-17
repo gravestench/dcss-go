@@ -46,9 +46,11 @@ self-enchantment preference coin flip; a preferred self-enchantment uses
 weighted selection among spell definitions whose flags include `selfench`.
 Fleeing escape preference uses weighted selection among definitions with
 the `escape` flag. Selection never rerolls merely because the first
-200-point roll chose no spell. Existing silence, antimagic, target
-visibility, and source action-energy behavior remain in their current
-owners. A modded spellbook or spell definition uses these same rules.
+200-point roll chose no spell. Silence filters wizard, priest, and vocal
+slots before either normal or preferred selection; natural and magical
+abilities remain available. Antimagic, target visibility, and source
+action-energy behavior remain in their current owners. A modded spellbook
+or spell definition uses these same rules.
 
 The decision returns the selected slot's spell ID and flags. The `core.intent`
 schema need only carry the ID if execution can find the matching slot in

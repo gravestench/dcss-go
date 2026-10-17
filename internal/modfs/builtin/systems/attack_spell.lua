@@ -1,19 +1,15 @@
 local catalog = require("policy.catalog")
 local effects = require("policy.combat.monster_spells")
+local spellbook = require("policy.combat.monster_spellbook")
 local targets = require("policy.ai.targets")
-
-local spellbooks = {}
-
-for _, book in ipairs(catalog.all("monster_spellbooks")) do
-    spellbooks[book.id] = book
-end
+local intents = require("constants.intent")
 
 local system = {}
 
 function system.update(ctx, caster)
     local intent = ctx:get(caster, "core.intent")
 
-    if not intent or intent.kind ~= 12 then
+    if not intent or intent.kind ~= intents.SPELL then
         return
     end
 
@@ -40,12 +36,9 @@ function system.update(ctx, caster)
 
     local definition = catalog.get("monsters", actor.kind_id)
     catalog.get("spells", intent.spell_id)
-    local book = spellbooks[definition.spellbook_id]
+    local book = spellbook.for_actor(ctx, caster)
 
-    if not book or #book.slots ~= 1 or
-        book.slots[1].spell_id ~= intent.spell_id then
-        error(actor.kind_id .. " has invalid spell book")
-    end
+    spellbook.slot(book, intent.spell_slot, intent.spell_id)
 
     local effect = effects.effect(intent.spell_id)
 

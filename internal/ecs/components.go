@@ -213,6 +213,7 @@ type Intent struct {
 	ItemID    akara.Entity
 	Quantity  int
 	SpellID   string
+	SpellSlot int
 	AbilityID string
 	TargetID  string
 	Cancelled bool

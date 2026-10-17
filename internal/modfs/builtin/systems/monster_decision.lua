@@ -94,7 +94,7 @@ local function choose_intent(ctx, entity, state)
     end
 
     if player_detected and not retreating then
-        local intent = spell.choose(ctx, entity, position, player)
+        local intent = spell.choose(ctx, entity, position, player, false)
 
         if not intent then
             local launcher_intent, has_launcher = ranged.choose_launcher(ctx, entity, position, player)
@@ -236,7 +236,12 @@ function system.update(ctx, entity)
     if statuses.fear_active(ctx, entity) then
         local position = ctx:get(entity, "core.position")
         local player_position = ctx:get(ctx:player(), "core.position")
-        local intent = fear.flee(ctx, entity, position, player_position)
+        local intent = spell.choose(ctx, entity, position, player_position,
+            true)
+
+        if not intent then
+            intent = fear.flee(ctx, entity, position, player_position)
+        end
 
         ctx:add(entity, "core.intent", intent)
 

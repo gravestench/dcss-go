@@ -1,73 +1,95 @@
-local catalog = require("policy.catalog")
 local effects = require("policy.combat.monster_spells")
+local spellbook = require("policy.combat.monster_spellbook")
+local prospect = require("policy.ai.spell_prospect")
 local statuses = require("policy.magic.effects.statuses.player")
 local engulf = require("policy.combat.engulf")
 local component = require("constants.component")
-local vault_spells = require("constants.vault_spell_override")
-
-local books_by_id = {}
-
-for _, book in ipairs(catalog.all("monster_spellbooks")) do
-    books_by_id[book.id] = book
-end
+local intents = require("constants.intent")
+local spell_flags = require("constants.spell_flags")
 
 local spell = {}
 
-function spell.choose(ctx, entity, position, player)
+local function distance_between(position, target)
+    return math.max(math.abs(position.x - target.x),
+        math.abs(position.y - target.y))
+end
+
+local function silenced(ctx, entity, position, player)
     if engulf.silenced(ctx, entity) then
-        return nil
+        return true
     end
 
     local radius = statuses.silence_radius(ctx, ctx:player())
-    local distance = math.max(math.abs(position.x - player.x),
-        math.abs(position.y - player.y))
 
-    if radius >= 0 and distance <= radius then
-        return nil
+    return radius >= 0 and distance_between(position, player) <= radius
+end
+
+local function condition_for(ctx, entity, position, player, fleeing)
+    local health = ctx:get(entity, component.HEALTH)
+
+    if not health then
+        error("monster " .. ctx:id(entity) .. " has no health for spell choice")
     end
 
-    local actor = ctx:get(entity, "core.actor")
+    return {
+        hp = health.current,
+        max_hp = health.max,
+        distance = distance_between(position, player),
+        fleeing = fleeing,
+        silenced = silenced(ctx, entity, position, player),
+    }
+end
 
-    if not actor then
-        error("monster " .. ctx:id(entity) .. " has no actor for spell choice")
+local function select_targetable(ctx, book, condition, position, player)
+    local function random(bound)
+        return ctx:random("monster_spell", bound)
     end
 
-    local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
+    for attempt = 1, 2 do
+        local preference = nil
 
-    if overrides and overrides.spells[1] == vault_spells.EMPTY_BOOK then
-        return nil
+        if attempt == 2 and random(2) == 0 then
+            preference = spell_flags.SELF_ENCHANT
+        end
+
+        local slot, index = prospect.choose(book, condition, random,
+            preference)
+
+        -- Source does not retry when the 200-point roll chose no spell.
+        if not slot then
+            return nil
+        end
+
+        local effect = effects.effect(slot.spell_id)
+
+        if effect.can_cast(ctx, position, player) then
+            return slot, index
+        end
     end
 
-    local monster = catalog.get("monsters", actor.kind_id)
-    local book = books_by_id[monster.spellbook_id]
+    return nil
+end
+
+function spell.choose(ctx, entity, position, player, fleeing)
+    local book = spellbook.for_actor(ctx, entity)
 
     if not book then
         return nil
     end
 
-    if #book.slots ~= 1 then
-        error("unsupported " .. actor.kind_id .. " spellbook " .. tostring(monster.spellbook_id))
-    end
+    local condition = condition_for(ctx, entity, position, player, fleeing)
+    local slot, index = select_targetable(ctx, book, condition, position,
+        player)
 
-    local slot = book.slots[1]
-    local effect = effects.effect(slot.spell_id)
-
-    if not effect.can_cast(ctx, position, player) then
+    if not slot or statuses.enfeeble_antimagic(ctx, entity, slot.flags) then
         return nil
     end
 
-    if ctx:random("monster_spell", 200) <= slot.frequency then
-        if statuses.enfeeble_antimagic(ctx, entity, slot.flags) then
-            return nil
-        end
-
-        return {
-            kind = 12,
-            spell_id = slot.spell_id,
-        }
-    end
-
-    return nil
+    return {
+        kind = intents.SPELL,
+        spell_id = slot.spell_id,
+        spell_slot = index,
+    }
 end
 
 return spell

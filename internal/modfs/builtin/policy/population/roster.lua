@@ -1,5 +1,6 @@
 local roster = {}
 local catalog = require("policy.catalog")
+local spell_coverage = require("policy.combat.monster_spell_coverage")
 
 local fixed = {
     "MONS_RAT",
@@ -60,6 +61,16 @@ function roster.allowed(scenario_id)
                 allowed[definition.id] = true
             end
         end
+    end
+
+    local missing = spell_coverage.missing(allowed)
+
+    if #missing > 0 then
+        local first = missing[1]
+
+        error("population scenario " .. scenario_id .. " admits " ..
+            first.monster_id .. " with " .. first.reason .. " for " ..
+            first.book_id .. "/" .. first.spell_id)
     end
 
     return allowed

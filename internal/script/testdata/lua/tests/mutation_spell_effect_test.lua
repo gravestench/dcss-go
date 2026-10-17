@@ -1,5 +1,7 @@
 local capabilities = require("constants.mutation_capabilities")
+local component = require("constants.component")
 local effects = require("policy.mutations.effects.registry")
+local monsters = require("ids.monsters")
 local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
 local statuses = require("policy.magic.effects.statuses.player")
@@ -41,15 +43,33 @@ function test.run(ctx)
         "Silence Aura creates a permanent one-cell silence radius")
 
     local monster = ctx:create()
+
+    ctx:add(monster, component.ACTOR, {
+        kind_id = monsters.MONS_ORC_WIZARD,
+        speed = 10,
+    })
+
+    ctx:add(monster, component.HEALTH, {
+        current = 10,
+        max = 10,
+    })
+
     local encounter = setmetatable({}, { __index = ctx })
 
     function encounter.player()
         return player
     end
 
+    function encounter.random(_, stream, bound)
+        harness.equal(stream, "monster_spell", "spell selection stream")
+        harness.equal(bound, 200, "source spell roll bound")
+
+        return 0
+    end
+
     harness.equal(monster_spell.choose(encounter, monster,
         { x = 2, y = 1 }, { x = 1, y = 1 }), nil,
-        "Silence Aura prevents adjacent monster spell selection")
+        "Silence Aura prevents adjacent wizard spell selection")
 end
 
 return test
