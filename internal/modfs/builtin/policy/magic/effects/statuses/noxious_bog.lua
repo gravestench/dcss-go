@@ -15,7 +15,7 @@ local poison_sources = require("constants.poison_sources")
 local player_resistance = require("policy.combat.player_resistance")
 local flight = require("policy.combat.flight")
 local range = require("policy.magic.range")
-local terrain = require("policy.magic.effects.summons.terrain")
+local temporary_terrain = require("policy.world.temporary_terrain")
 
 local bog = {}
 
@@ -77,12 +77,13 @@ function bog.cast(ctx, player, _, spell, power)
     local cells = locations(ctx, player, spell)
     local bound = math.floor(power / 10)
     local turns = 5 + (bound > 0 and ctx:random("spell", bound) or 0)
-    local expires = ctx:aut() + turns * time.AUT_PER_TURN
+    local duration = turns * time.AUT_PER_TURN
     local origin = ctx:get(player, component.POSITION)
 
     for _, cell in ipairs(cells) do
-        terrain.temporary(ctx, player, spells.SPELL_NOXIOUS_BOG,
-            origin.level_id, cell.x, cell.y, terrain_ids.DNGN_TOXIC_BOG, expires)
+        temporary_terrain.place(ctx, player, spells.SPELL_NOXIOUS_BOG,
+            origin.level_id, cell.x, cell.y, terrain_ids.DNGN_TOXIC_BOG,
+            duration)
     end
 
     local state = ctx:get(player, component.AREA_STATUS) or {
@@ -92,8 +93,7 @@ function bog.cast(ctx, player, _, spell, power)
         toxic_radiance_power = 0,
         noxious_bog_aut = 0,
     }
-    state.noxious_bog_aut = state.noxious_bog_aut +
-        turns * time.AUT_PER_TURN
+    state.noxious_bog_aut = state.noxious_bog_aut + duration
 
     if ctx:has(player, component.AREA_STATUS) then
         ctx:set(player, component.AREA_STATUS, state)
