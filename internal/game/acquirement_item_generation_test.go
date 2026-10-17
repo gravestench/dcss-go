@@ -71,7 +71,11 @@ func TestAcquirementItemGenerationKeepsOfferedEntities(t *testing.T) {
 		TargetID: selected,
 	})
 
-	if err != nil || result.Spent != 10 {
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if result.Spent != 10 {
 		t.Fatalf("grant spent %d aut: %v", result.Spent, err)
 	}
 
@@ -177,6 +181,7 @@ func TestAcquirementUniqueOfferSurvivesRestore(t *testing.T) {
 			"plus":  int64(7),
 			"value": int64(1000),
 		},
+
 		"known": map[string]any{
 			"plus":  false,
 			"value": false,

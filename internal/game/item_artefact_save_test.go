@@ -44,6 +44,7 @@ func TestItemArtefactSave(t *testing.T) {
 		"properties": map[string]any{
 			"ARTP_FIRE": int64(1),
 		},
+
 		"known": map[string]any{
 			"ARTP_FIRE": true,
 		},

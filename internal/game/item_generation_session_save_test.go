@@ -61,6 +61,7 @@ func TestItemGenerationRejectsInvalidSavedChoices(t *testing.T) {
 			field:  "choices",
 			value:  json.RawMessage(`{}`),
 		},
+
 		{
 			name:   "unknown unique",
 			schema: "character.unique_history",

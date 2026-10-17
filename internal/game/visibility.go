@@ -78,7 +78,9 @@ func (g *Game) refreshVisibility() error {
 
 		index := location.Y*level.width + location.X
 
-		if index < 0 || index >= len(visible) || !visible[index] {
+		if index < 0 ||
+			index >= len(visible) ||
+			!visible[index] {
 			continue
 		}
 

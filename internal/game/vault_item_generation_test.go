@@ -81,7 +81,8 @@ func TestVaultItemGenerationUsesRolledRecords(t *testing.T) {
 	}
 
 	for _, record := range loaded.levels[1].VaultRecords() {
-		if record.Kind == vault.KindItem && strings.Contains(record.Identity, "random") &&
+		if record.Kind == vault.KindItem &&
+			strings.Contains(record.Identity, "random") &&
 			record.Pending {
 			t.Fatal("generated item was retried on restore")
 		}

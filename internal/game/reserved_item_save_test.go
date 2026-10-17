@@ -60,8 +60,10 @@ func TestReservedItemSaveRoundTrip(t *testing.T) {
 	snapshot := game.Snapshot()
 	record := reservedRecord(snapshot, uint64(offered))
 
-	if record == nil || record.ReservedBy == nil ||
-		record.ReservedBy.Owner != owner || record.Position != nil ||
+	if record == nil ||
+		record.ReservedBy == nil ||
+		record.ReservedBy.Owner != owner ||
+		record.Position != nil ||
 		record.CarriedBy != nil {
 		t.Fatalf("reserved item snapshot = %+v", record)
 	}
@@ -100,6 +102,7 @@ func TestReservedItemSaveRejectsBadLocations(t *testing.T) {
 				record.ReservedBy = &ecs.ReservedBy{}
 			},
 		},
+
 		{
 			name: "two locations",
 			mutate: func(record *save.EntityRecord) {
@@ -108,6 +111,7 @@ func TestReservedItemSaveRejectsBadLocations(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "dead owner",
 			mutate: func(record *save.EntityRecord) {
@@ -117,6 +121,7 @@ func TestReservedItemSaveRejectsBadLocations(t *testing.T) {
 				}
 			},
 		},
+
 		{
 			name: "self owner",
 			mutate: func(record *save.EntityRecord) {
@@ -124,6 +129,7 @@ func TestReservedItemSaveRejectsBadLocations(t *testing.T) {
 				record.ReservedBy = &ecs.ReservedBy{
 					Owner: 999999,
 				}
+
 				record.ID = 999999
 			},
 		},

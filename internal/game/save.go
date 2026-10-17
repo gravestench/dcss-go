@@ -72,7 +72,8 @@ func validateSavedItem(record save.EntityRecord) error {
 	}
 
 	if record.ReservedBy != nil &&
-		(record.ReservedBy.Owner == 0 || uint64(record.ReservedBy.Owner) == record.ID) {
+		(record.ReservedBy.Owner == 0 ||
+			uint64(record.ReservedBy.Owner) == record.ID) {
 		return fmt.Errorf("item %d has invalid reservation owner", record.ID)
 	}
 

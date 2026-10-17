@@ -65,7 +65,8 @@ func (v *savedEntityValidator) validate() error {
 		owner := record.ReservedBy.Owner
 		ownerRecord, found := v.records[uint64(owner)]
 
-		if !found || ownerRecord.ReservedBy != nil ||
+		if !found ||
+			ownerRecord.ReservedBy != nil ||
 			ownerRecord.Item == nil {
 			return fmt.Errorf("item %d has dead or reserved reservation owner %d", record.ID, owner)
 		}
