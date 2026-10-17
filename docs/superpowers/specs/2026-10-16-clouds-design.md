@@ -79,8 +79,11 @@ stream and persists every random outcome through the normal save state.
 
 Source behaviors include opacity changes, player-created nonopaque clouds
 vanishing outside sight, ink restricted to water, steam beside fire and
-water, forest fire consuming flammable terrain, spectral and other special
-effects, and source cloud replacement strengths. The policy distinguishes
+water, forest fire consuming flammable terrain, rain sometimes leaving
+temporary shallow or deep water when it dissipates, spectral and other
+special effects, and source cloud replacement strengths. Acid clouds
+apply the source corrosion duration and penalty to players as well as
+monsters. The policy distinguishes
 harmless clouds from clouds that have no direct damage but do have a negative
 status effect. Wind, still-winds, and sanctuary rules must be represented as
 explicit capabilities or conditions; they must not silently fall through to
@@ -106,7 +109,8 @@ Lua `_test.lua` files import production definitions, schemas, and policies.
 They cover all 34 source IDs, pseudo-selector boundaries, source placement
 and replacement, field aging exactly once per player action, spread and
 terrain interactions, immunity and damage families, monster avoidance,
-opacity, and mod-added files. Integrated Go scenarios cover existing
+rain flooding, player corrosion, opacity, and mod-added files. Integrated
+Go scenarios cover existing
 cloud-producing spells, actor/item coexistence, visibility, save
 continuation, ruleset hash,
 monster and player exposure, and a modded cloud. Run focused domain suites,
