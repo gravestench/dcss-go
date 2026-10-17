@@ -1,0 +1,38 @@
+local component = require("constants.component")
+local fillings = require("constants.pie_fillings")
+local statuses = require("policy.magic.effects.statuses.player")
+
+local blueberry = {
+    id = fillings.BLUEBERRY,
+    weight = 10,
+}
+
+function blueberry.valid()
+    return true
+end
+
+function blueberry.apply(ctx, _, target)
+    if ctx:has(target, component.PLAYER) then
+        statuses.add_silence(ctx, target,
+            4 + ctx:random("monster_spell", 7), 10)
+        ctx:emit("combat", "An unnatural silence engulfs you.")
+
+        return
+    end
+
+    local state = ctx:get(target, component.MONSTER_MUTE)
+    local added = 4 + 10 * ctx:random("monster_spell", 7)
+
+    if state then
+        state.remaining_aut = state.remaining_aut + added
+        ctx:set(target, component.MONSTER_MUTE, state)
+    else
+        ctx:add(target, component.MONSTER_MUTE, {
+            remaining_aut = added,
+        })
+    end
+
+    ctx:emit("combat", "The monster loses the ability to speak.")
+end
+
+return blueberry

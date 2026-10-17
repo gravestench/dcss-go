@@ -72,15 +72,9 @@ function miasma.immune(ctx, actor)
         monster_immune(catalog.get(categories.MONSTERS, state.kind_id)) or false
 end
 
-function miasma.apply(ctx, actor, state)
+function miasma.afflict(ctx, actor, source, stream, player_credit)
     if miasma.immune(ctx, actor) then
         return 0
-    end
-
-    local source
-
-    if state.source_actor_id and state.source_actor_id > 0 then
-        source = ctx:entity(state.source_actor_id)
     end
 
     if actor == ctx:player() then
@@ -88,15 +82,15 @@ function miasma.apply(ctx, actor, state)
             local amount = 5
 
             for _ = 1, 3 do
-                amount = amount + 1 + ctx:random(streams.CLOUDS, 12)
+                amount = amount + 1 + ctx:random(stream, 12)
             end
 
             brands.poison(ctx, amount, poison_sources.MIASMA)
         end
 
-        if ctx:random(streams.CLOUDS, 3) == 0 then
+        if ctx:random(stream, 3) == 0 then
             player_slow.apply(ctx, actor,
-                10 + ctx:random(streams.CLOUDS, 5))
+                10 + ctx:random(stream, 5))
         end
 
         return 0
@@ -106,13 +100,24 @@ function miasma.apply(ctx, actor, state)
     local definition = catalog.get(categories.MONSTERS, monster.kind_id)
 
     monster_poison.apply(ctx, actor, definition, 1, source, false,
-        state.kill_category == attribution.PLAYER)
+        player_credit)
 
-    if ctx:random(streams.CLOUDS, 3) == 0 then
+    if ctx:random(stream, 3) == 0 then
         monster_slow.apply(ctx, actor, definition)
     end
 
     return 0
+end
+
+function miasma.apply(ctx, actor, state)
+    local source
+
+    if state.source_actor_id and state.source_actor_id > 0 then
+        source = ctx:entity(state.source_actor_id)
+    end
+
+    return miasma.afflict(ctx, actor, source, streams.CLOUDS,
+        state.kill_category == attribution.PLAYER)
 end
 
 function miasma.avoid()

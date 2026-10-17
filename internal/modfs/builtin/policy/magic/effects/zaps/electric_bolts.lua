@@ -1,25 +1,10 @@
 local spells = require("ids.spells")
-local terrain = require("constants.terrain")
 local projectile = require("policy.magic.effects.zaps.projectile")
+local bounce = require("policy.combat.beam_bounce")
 
 local electric_bolts = {}
 
-local excluded = {
-    [terrain.DNGN_OPEN_SEA] = true,
-    [terrain.DNGN_LAVA_SEA] = true,
-    [terrain.DNGN_METAL_WALL] = true,
-    [terrain.DNGN_GRATE] = true,
-    [terrain.DNGN_TREE] = true,
-    [terrain.DNGN_MANGROVE] = true,
-    [terrain.DNGN_DEMONIC_TREE] = true,
-    [terrain.DNGN_PETRIFIED_TREE] = true,
-}
-
-function electric_bolts.bounceable(feature_id)
-    -- beam.cc:is_bouncy reflects electricity from solids except metal,
-    -- trees, and the level-edge sea features.
-    return feature_id ~= nil and not excluded[feature_id]
-end
+electric_bolts.bounceable = bounce.electric
 
 electric_bolts.shock = {
     name = "zap",

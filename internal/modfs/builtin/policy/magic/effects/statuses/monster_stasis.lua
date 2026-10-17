@@ -244,6 +244,21 @@ function stasis.hibernating(ctx, target)
     return current ~= nil and current.hibernating
 end
 
+-- Normal BEAM_SLEEP does not add the sleep-wary enchantment that
+-- Ensorcelled Hibernation uses. Damage wakes either kind of sleeper.
+function stasis.sleep(ctx, target)
+    local current = ensure(ctx, target)
+
+    if current.hibernating then
+        return false
+    end
+
+    current.hibernating = true
+    save(ctx, target, current)
+
+    return true
+end
+
 function stasis.petrifying(ctx, target)
     local current = state(ctx, target)
 

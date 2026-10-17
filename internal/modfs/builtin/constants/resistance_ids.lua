@@ -9,6 +9,7 @@ local resistances = {
     MIASMA = "MR_RES_MIASMA",
     PETRIFY = "MR_RES_PETRIFY",
     TORMENT = "MR_RES_TORMENT",
+    DAMNATION = "MR_RES_DAMNATION",
 }
 
 return resistances

@@ -33,6 +33,12 @@ local function prepare_raw(ctx, input)
         return registry.wait("You are paralysed!")
     end
 
+    local sleep = ctx:get(player, component.PLAYER_SLEEP)
+
+    if sleep and sleep.remaining_aut > 0 then
+        return registry.wait("You are asleep!")
+    end
+
     if ctx:has(player, "magic.passwall_delay") then
         if input.kind == commands.cancel_memorise then
             return { message = passwall.cancel(ctx, player) }

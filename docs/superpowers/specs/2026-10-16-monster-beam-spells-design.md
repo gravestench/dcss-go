@@ -42,6 +42,8 @@ Slug Dart, Petrify, and hex modules move to this contract in the same
 change, with no old-interface adapter. Failed plans use the existing
 source two-attempt monster selection. The decision and resolver share one
 effect module and retain the selected book slot in `core.intent`.
+That intent is temporary within an action. Saves occur at turn boundaries;
+save/restore checks compare resulting world state and RNG continuation.
 
 The current system targets the player. The beam contract must carry a
 generic caster and target entity internally so monster allies, summons,
@@ -55,14 +57,18 @@ represented in ECS or level state and survives save/restore.
 
 ## Source data and fidelity
 
-A deliberate importer reads the pinned `zap-data.h` definitions and the
-relevant `mon-cast.cc` setup rules to emit committed Lua source profiles.
+A deliberate importer reads the pinned `spl-zap.cc` mapping,
+`zap-data.h` definitions, and relevant `mon-cast.cc` setup rules to emit
+committed Lua source profiles. Range and casting noise remain in the
+existing committed spell definitions; the beam profile stores zap hit
+loudness and target shape without repeating those declarations.
 The generated Lua is checked in; build, test, and runtime never read C++.
 Source provenance belongs in comments next to declarations. The importer
 must fail on an unknown calculator, flavor, or source override rather than
 emit a generic damage effect. Handwritten Lua implements behavior that a
-profile cannot express plainly. Each source spell ID is imported from
-`ids.spells` where used; common flags, elements, and message channels come
+profile cannot express plainly. A generated profile declares its own
+canonical spell ID, as other content files do; effects import that ID from
+`ids.spells` where used. Common flags, elements, and message channels come
 from named constants.
 
 The source distinction between a beam, a bolt, an explosion, a cloud, a

@@ -16,22 +16,19 @@ local function active_roster_has_effects()
         "every active generated monster has its spell effects")
 end
 
-local function unused_book_does_not_block_launch()
+local function imported_beam_book_is_covered()
     local missing = coverage.missing({
         [monsters.MONS_ORC_WIZARD] = true,
     })
-    local found = false
+
+    harness.equal(#missing, 2,
+        "the orc wizard still needs two non-beam effects")
 
     for _, record in ipairs(missing) do
-        if record.monster_id == monsters.MONS_ORC_WIZARD and
-            record.spell_id == spells.SPELL_MAGIC_DART then
-            found = true
-            harness.truthy(record.reason:find("missing", 1, true),
-                "missing effect has an explicit reason")
-        end
+        harness.falsy(record.spell_id == spells.SPELL_MAGIC_DART or
+            record.spell_id == spells.SPELL_THROW_FLAME,
+            "the imported beam slots no longer appear missing")
     end
-
-    harness.truthy(found, "unimplemented source book is reported")
 end
 
 local function malformed_effect_is_reported()
@@ -39,8 +36,8 @@ local function malformed_effect_is_reported()
 
     effects.effect = function()
         return {
-            can_cast = function()
-                return true
+            plan = function()
+                return {}
             end,
         }
     end
@@ -59,16 +56,17 @@ local function malformed_effect_is_reported()
 end
 
 local function newly_admitted_monster_requires_effects()
-    local wizard = catalog.get("monsters", monsters.MONS_ORC_WIZARD)
+    local sorcerer = catalog.get("monsters", monsters.MONS_ORC_SORCERER)
     local original_get = register.get
 
-    wizard.population[#wizard.population + 1] = {
+    sorcerer.population[#sorcerer.population + 1] = {
         scenario_id = "generated-dungeon-basic-v1",
     }
 
     register.get = function(category, id)
-        if category == "monsters" and id == monsters.MONS_ORC_WIZARD then
-            return wizard
+        if category == "monsters" and id ==
+            monsters.MONS_ORC_SORCERER then
+            return sorcerer
         end
 
         return original_get(category, id)
@@ -80,13 +78,13 @@ local function newly_admitted_monster_requires_effects()
     register.get = original_get
 
     harness.falsy(okay, "newly admitted caster needs live effects")
-    harness.truthy(tostring(problem):find(monsters.MONS_ORC_WIZARD,
+    harness.truthy(tostring(problem):find(monsters.MONS_ORC_SORCERER,
         1, true), "coverage error names the monster")
 end
 
 function test.run()
     active_roster_has_effects()
-    unused_book_does_not_block_launch()
+    imported_beam_book_is_covered()
     malformed_effect_is_reported()
     newly_admitted_monster_requires_effects()
 end

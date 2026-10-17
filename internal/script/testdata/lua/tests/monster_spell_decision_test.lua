@@ -5,6 +5,7 @@ local harness = require("tests.harness")
 local monsters = require("ids.monsters")
 local spells = require("ids.spells")
 local spell = require("policy.ai.spell")
+local target_kind = require("constants.target_kind")
 
 local test = {}
 
@@ -14,15 +15,21 @@ local monster_position = { level_id = 1, x = 5, y = 5 }
 local near_player = { level_id = 1, x = 6, y = 5 }
 local far_player = { level_id = 1, x = 7, y = 5 }
 
-local function context(draws, silenced)
+local function context(draws, silenced, player_position)
     local ctx = {
         used = 0,
-        silenced = silenced,
+        silence_aura = silenced,
+        player_position = player_position or near_player,
     }
 
     function ctx:get(entity, id)
+        if id == component.POSITION then
+            return entity == monster_entity and monster_position or
+                self.player_position
+        end
+
         if entity == player_entity and
-            id == component.PLAYER_STATUS and self.silenced then
+            id == component.PLAYER_STATUS and self.silence_aura then
             return { silence_aut = 300 }
         end
 
@@ -39,6 +46,10 @@ local function context(draws, silenced)
 
     function ctx:query()
         return {}
+    end
+
+    function ctx:has()
+        return false
     end
 
     function ctx:player()
@@ -75,6 +86,45 @@ local function natural_spell_survives_silence()
 
     harness.equal(intent.spell_id, spells.SPELL_FREEZE,
         "natural Freeze survives a silence aura")
+end
+
+local function carries_a_selected_entity_plan()
+    local original_effect = effects.effect
+    local planned = 0
+
+    effects.effect = function()
+        return {
+            plan = function(ctx, caster, foe)
+                harness.equal(caster, monster_entity,
+                    "the source actor plans its own spell")
+                harness.equal(foe, player_entity,
+                    "the current foe is the plan target")
+                planned = planned + 1
+                harness.equal(ctx:random("monster_spell", 2), 1,
+                    "target choice consumes one source draw")
+
+                return {
+                    kind = target_kind.ENTITY,
+                    entity = foe,
+                }
+            end,
+        }
+    end
+
+    local ctx = context({ 0, 1 })
+    local okay, intent = pcall(spell.choose, ctx, monster_entity,
+        monster_position, near_player, false)
+
+    effects.effect = original_effect
+
+    harness.truthy(okay, "spell planning succeeds: " .. tostring(intent))
+    harness.equal(planned, 1, "selected target is planned once")
+    harness.equal(ctx.used, 2,
+        "one prospect and one target draw are consumed")
+    harness.equal(intent.target_kind, target_kind.ENTITY,
+        "intent carries an entity plan")
+    harness.equal(intent.target_entity, player_entity,
+        "intent retains the planned foe")
 end
 
 local function with_slots(slots, check)
@@ -128,7 +178,7 @@ local function retries_only_after_bad_target()
         { spell_id = spells.SPELL_SLUG_DART, frequency = 18,
             flags = freeze.flags },
     }, function()
-        local ctx = context({ 0, 1, 10 })
+        local ctx = context({ 0, 1, 10 }, false, far_player)
         local intent = spell.choose(ctx, monster_entity, monster_position,
             far_player, false)
 
@@ -139,7 +189,7 @@ local function retries_only_after_bad_target()
         harness.equal(ctx.used, 3,
             "failed target uses a preference coin and second roll")
 
-        ctx = context({ 199 })
+        ctx = context({ 199 }, false, far_player)
         intent = spell.choose(ctx, monster_entity, monster_position,
             far_player, false)
 
@@ -161,8 +211,11 @@ local function fleeing_prefers_escape_spell()
     }, function()
         effects.effect = function()
             return {
-                can_cast = function()
-                    return true
+                plan = function()
+                    return {
+                        kind = target_kind.ENTITY,
+                        entity = player_entity,
+                    }
                 end,
             }
         end
@@ -182,6 +235,7 @@ end
 
 function test.run()
     natural_spell_survives_silence()
+    carries_a_selected_entity_plan()
     chooses_second_slot()
     retries_only_after_bad_target()
     fleeing_prefers_escape_spell()

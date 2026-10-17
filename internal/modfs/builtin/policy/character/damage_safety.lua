@@ -19,6 +19,28 @@ function safety.active(ctx, player, restriction)
     return safety.remaining(ctx, player, restriction) > 0
 end
 
+function safety.add_duration(ctx, player, restriction, turns,
+    maximum_turns)
+    local state = ctx:get(player, component.DAMAGE_SAFETY)
+    local created = not state
+
+    if created then
+        state = {
+            [restrictions.POTIONS] = 0,
+            [restrictions.SCROLLS] = 0,
+        }
+    end
+
+    state[restriction] = math.min(maximum_turns * 10,
+        state[restriction] + turns * 10)
+
+    if created then
+        ctx:add(player, component.DAMAGE_SAFETY, state)
+    else
+        ctx:set(player, component.DAMAGE_SAFETY, state)
+    end
+end
+
 -- Source: ouch.cc:ouch increases the status by 1+random2(damage) turns,
 -- capped at 30 turns, and warns only on its first activation.
 function safety.apply(ctx, player, restriction, damage, warning)

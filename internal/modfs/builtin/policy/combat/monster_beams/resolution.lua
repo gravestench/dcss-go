@@ -1,0 +1,168 @@
+local blast = require("policy.combat.monster_beams.explosion")
+local bounce = require("policy.combat.beam_bounce")
+local calculators = require("policy.combat.monster_beams.calculators")
+local catalog = require("policy.catalog")
+local component = require("constants.component")
+local contact_rules = require("policy.combat.monster_beams.contact")
+local beam_power = require("policy.combat.monster_beams.power")
+local spell_flags = require("constants.spell_flags")
+local target_kind = require("constants.target_kind")
+local trajectory = require("policy.combat.trajectory")
+
+local resolution = {}
+
+local function has_flag(flags, wanted)
+    for _, flag in ipairs(flags or {}) do
+        if flag == wanted then
+            return true
+        end
+    end
+
+    return false
+end
+
+function resolution.resolve(ctx, caster, foe, profile, plan, hook)
+    if not plan then
+        error("monster beam has no target plan")
+    end
+
+    local source = ctx:get(caster, component.POSITION)
+
+    if not source then
+        error("monster beam caster has no position")
+    end
+
+    local destination
+    local area_target = plan.kind == target_kind.CELL
+
+    if area_target then
+        local spell = catalog.get("spells", profile.id)
+
+        if not profile.is_explosion and
+            not has_flag(spell.flags, spell_flags.CLOUD) then
+            error("non-area monster beam received a cell plan")
+        end
+
+        destination = {
+            level_id = plan.level_id,
+            x = plan.x,
+            y = plan.y,
+        }
+    elseif plan.kind == target_kind.ENTITY and plan.entity == foe then
+        destination = ctx:get(foe, component.POSITION)
+    else
+        error("monster beam target plan does not match the selected foe")
+    end
+
+    if not destination or
+        source.level_id ~= destination.level_id then
+        error("monster beam target moved off the caster's level")
+    end
+
+    if plan.dx ~= destination.x - source.x or
+        plan.dy ~= destination.y - source.y then
+        error("monster beam direction changed after planning")
+    end
+
+    local power = beam_power.caster_power(ctx, caster, profile)
+    local reach = beam_power.spell_range(ctx, caster, profile)
+    local to_hit = calculators.to_hit(profile, power)
+    local outcomes = {}
+    local leg_source = source
+    local remaining = reach
+    local trace
+
+    local can_bounce = bounce.for_profile(profile, hook)
+
+    if area_target then
+        trace = trajectory.to_target(ctx, source.level_id,
+            source.x, source.y, destination.x, destination.y, remaining)
+    elseif can_bounce then
+        trace = trajectory.bouncing(ctx, source.level_id,
+            source.x, source.y, destination.x, destination.y,
+            remaining, can_bounce)
+    else
+        trace = trajectory.trace(ctx, source.level_id,
+            source.x, source.y, destination.x, destination.y, remaining)
+    end
+
+    local endpoint = {
+        level_id = source.level_id,
+        x = trace.x,
+        y = trace.y,
+        path = trace.path,
+    }
+
+    if profile.is_explosion then
+        return blast.resolve(ctx, caster, profile, trace,
+            destination, power, to_hit, hook)
+    end
+
+    while trace do
+        local next_trace = nil
+        local stopped = false
+
+        for _, contact in ipairs(trace.contacts) do
+            local outcome = contact_rules.resolve(ctx, caster, contact.actor,
+                profile, power, to_hit, hook, leg_source)
+            outcomes[#outcomes + 1] = outcome
+
+            if outcome.kind == "hit" then
+                if not profile.can_beam then
+                    endpoint.x = contact.x
+                    endpoint.y = contact.y
+                    stopped = true
+                    break
+                end
+            elseif outcome.kind == "reflect" then
+                contact_rules.register_block(ctx, contact.actor)
+                local distance = math.max(
+                    math.abs(contact.x - leg_source.x),
+                    math.abs(contact.y - leg_source.y))
+                remaining = remaining - distance
+
+                if remaining > 0 then
+                    -- beam.cc:bolt::reflect chooses a reverse ray, which
+                    -- keeps travelling past the old source if range remains.
+                    next_trace = trajectory.trace(ctx,
+                        source.level_id, contact.x, contact.y,
+                        leg_source.x, leg_source.y, remaining)
+                    endpoint.x = next_trace.x
+                    endpoint.y = next_trace.y
+                    endpoint.path = next_trace.path
+                    leg_source = {
+                        level_id = source.level_id,
+                        x = contact.x,
+                        y = contact.y,
+                    }
+                else
+                    endpoint.x = contact.x
+                    endpoint.y = contact.y
+                end
+
+                stopped = true
+                break
+            elseif outcome.kind == "block" then
+                contact_rules.register_block(ctx, contact.actor)
+                endpoint.x = contact.x
+                endpoint.y = contact.y
+                stopped = true
+                break
+            end
+        end
+
+        if stopped and not next_trace then
+            break
+        end
+
+        trace = next_trace
+    end
+
+    if hook and hook.after_endpoint then
+        hook.after_endpoint(ctx, caster, profile, plan, endpoint)
+    end
+
+    return outcomes
+end
+
+return resolution

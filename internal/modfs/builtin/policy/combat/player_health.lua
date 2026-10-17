@@ -6,6 +6,7 @@ local reactions = require("policy.combat.player_damage_reactions")
 local curl = require("policy.character.curl")
 local extra_lives = require("policy.character.extra_lives")
 local petrification = require("policy.combat.player_petrification")
+local sleep = require("policy.character.sleep")
 
 local health_policy = {}
 
@@ -25,6 +26,12 @@ function health_policy.damage(ctx, player, amount, fatal_exception, attacker,
         fatal_exception or false)
     local damage_cause = cause or causes.HIT
 
+    -- Source: ouch.cc wakes the player from ordinary nonfatal damage.
+    if dealt > 0 and dealt < health.current and
+        damage_cause ~= causes.POISON then
+        sleep.awaken(ctx, player)
+    end
+
     curl.on_damage(ctx, player, dealt, damage_cause)
 
     if cause ~= causes.POISON then
@@ -33,6 +40,11 @@ function health_policy.damage(ctx, player, amount, fatal_exception, attacker,
 
     if cause ~= causes.POISON and cause ~= causes.FLAY then
         dealt = spirit_shield.absorb(ctx, player, dealt, health.current)
+    end
+
+    if dealt > 0 and dealt < health.current and
+        damage_cause ~= causes.POISON then
+        sleep.awaken(ctx, player)
     end
 
     health.current = math.max(0, health.current - dealt)

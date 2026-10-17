@@ -29,6 +29,11 @@ function movement.base(ctx, player)
         delay = delay + 3
     end
 
+    -- player.cc:player_movement_speed adds three while encased in ice.
+    if ctx:has(player, component.FLASH_FROZEN) then
+        delay = delay + 3
+    end
+
     delay = delay - mutation_effects.sum(ctx, player,
         capabilities.MOVE_FAST_REDUCTION)
 

@@ -1,0 +1,127 @@
+local beam_power = require("policy.combat.monster_beams.power")
+local calculators = require("policy.combat.monster_beams.calculators")
+local catalog = require("policy.catalog")
+local component = require("constants.component")
+local hex = require("policy.combat.monster_spells.hex")
+local holiness = require("constants.monster_holiness")
+local monster_flags = require("constants.monster_flags")
+local player_resistance = require("policy.combat.player_resistance")
+local rage = require("policy.character.rage")
+local stasis = require("policy.magic.effects.statuses.monster_stasis")
+local undead_states = require("constants.undead_states")
+local will = require("policy.magic.effects.zaps.will")
+
+local sleep = {}
+
+local sleepless = {
+    [holiness.UNDEAD] = true,
+    [holiness.NONLIVING] = true,
+    [holiness.PLANT] = true,
+}
+
+local function has(values, wanted)
+    for _, value in ipairs(values or {}) do
+        if value == wanted then
+            return true
+        end
+    end
+
+    return false
+end
+
+function sleep.skip_damage()
+    return true
+end
+
+local function player_can_sleep(ctx, target)
+    local state = ctx:get(target, component.PLAYER_SLEEP)
+
+    if state and (state.remaining_aut > 0 or
+        state.immunity_aut > 0) then
+        return false
+    end
+
+    local choice = ctx:get(target, component.PLAYER)
+    local species = catalog.get("species", choice.species_id)
+
+    return species.undead_type ~= undead_states.UNDEAD and
+        not player_resistance.clarity(ctx, target) and
+        not rage.active(ctx, target) and
+        not ctx:has(target, component.PLAYER_PARALYSIS)
+end
+
+local function player_duration(ctx, power)
+    local size = math.max(1, math.floor(power / 10))
+    local total = 0
+
+    for _ = 1, 5 do
+        total = total + ctx:random("monster_spell", size)
+    end
+
+    return 10 * (5 + math.floor(total / 5))
+end
+
+local function sleep_player(ctx, caster, target, profile)
+    if not player_can_sleep(ctx, target) then
+        return
+    end
+
+    local actor = ctx:get(caster, component.ACTOR)
+    local definition = catalog.get("monsters", actor.kind_id)
+
+    if hex.resisted(ctx, caster, target, definition) then
+        ctx:emit("combat", "You resist sleep.")
+        return
+    end
+
+    local power = beam_power.caster_power(ctx, caster, profile)
+    local enchantment = calculators.enchantment_power(profile, power)
+
+    ctx:add(target, component.PLAYER_SLEEP, {
+        remaining_aut = player_duration(ctx, enchantment),
+        immunity_aut = 0,
+    })
+    ctx:emit("combat", "You fall asleep.")
+end
+
+local function monster_can_sleep(ctx, target, definition)
+    for _, kind in ipairs(definition.holiness or {}) do
+        if sleepless[kind] then
+            return false
+        end
+    end
+
+    return not has(definition.flags, monster_flags.CLARITY) and
+        not stasis.hibernating(ctx, target)
+end
+
+local function sleep_monster(ctx, caster, target, profile)
+    local actor = ctx:get(target, component.ACTOR)
+    local definition = catalog.get("monsters", actor.kind_id)
+
+    if not monster_can_sleep(ctx, target, definition) then
+        return
+    end
+
+    local power = beam_power.caster_power(ctx, caster, profile)
+    local enchantment = calculators.enchantment_power(profile, power)
+
+    if will.resists(ctx, definition, enchantment, target) then
+        return
+    end
+
+    stasis.sleep(ctx, target)
+    ctx:emit("combat", "The " .. definition.name .. " falls asleep!")
+end
+
+-- beam.cc:BEAM_SLEEP is an enchantment: no HP roll, with willpower and
+-- biological eligibility checked at contact rather than during tracing.
+function sleep.after_hit(ctx, caster, defender, profile)
+    if ctx:has(defender, component.PLAYER) then
+        sleep_player(ctx, caster, defender, profile)
+    else
+        sleep_monster(ctx, caster, defender, profile)
+    end
+end
+
+return sleep

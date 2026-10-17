@@ -46,6 +46,16 @@ local function can_polymorph(definition)
         not has(definition.flags, "M_NO_POLY_TO")
 end
 
+function polymorph.can_actor(ctx, target)
+    local actor = ctx:get(target, component.ACTOR)
+
+    if not actor then
+        return false
+    end
+
+    return can_polymorph(catalog.get("monsters", actor.kind_id))
+end
+
 local function same_habitat(source, target)
     local old = source.habitat_id
     local next_kind = target.habitat_id

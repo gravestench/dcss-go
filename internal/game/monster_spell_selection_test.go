@@ -10,10 +10,13 @@ import (
 	"github.com/gravestench/akara"
 )
 
-func moddedEndoplasmGame(t *testing.T) (*Game, akara.Entity, modfs.Ruleset) {
+func moddedEndoplasmGame(
+	t *testing.T,
+	path string,
+) (*Game, akara.Entity, modfs.Ruleset) {
 	t.Helper()
 
-	rules, err := modfs.Load("testdata/monster-spell-selection")
+	rules, err := modfs.Load(path)
 
 	if err != nil {
 		t.Fatal(err)
@@ -69,7 +72,8 @@ func moddedEndoplasmGame(t *testing.T) (*Game, akara.Entity, modfs.Ruleset) {
 }
 
 func TestModdedMonsterBookCastsSecondSlotAndRestores(t *testing.T) {
-	g, entity, rules := moddedEndoplasmGame(t)
+	g, entity, rules := moddedEndoplasmGame(t,
+		"testdata/monster-spell-selection")
 	placePlayerInSlugLine(t, g, entity)
 
 	energy, _ := g.stores.MonsterEnergy.Get(entity)

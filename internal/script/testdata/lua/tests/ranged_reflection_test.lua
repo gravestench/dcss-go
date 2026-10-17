@@ -258,11 +258,10 @@ end
 local function reflected_slug_dart(ctx)
     local battle, player, shooter = fixture.scene(ctx, ids.MI_STONE,
         true, monsters.MONS_DART_SLUG)
-    local definition = catalog.get("monsters", monsters.MONS_DART_SLUG)
-
     fixture.slug_dart_block_then_return(battle)
-    slug_dart.resolve(battle, shooter, nil, definition,
-        ctx:get(player, component.HEALTH))
+    local plan = slug_dart.plan(battle, shooter, player)
+
+    slug_dart.resolve(battle, shooter, player, nil, plan)
 
     harness.equal(ctx:get(player, component.HEALTH).current, 20,
         "blocked Slug Dart does not hurt the player")
@@ -273,12 +272,11 @@ end
 local function slug_dart_return_blocked(ctx)
     local battle, player, shooter = fixture.scene(ctx, ids.MI_STONE,
         true, monsters.MONS_DART_SLUG)
-    local definition = catalog.get("monsters", monsters.MONS_DART_SLUG)
-
     fixture.enemy_shield(ctx, shooter)
     fixture.slug_dart_block_twice(battle)
-    slug_dart.resolve(battle, shooter, nil, definition,
-        ctx:get(player, component.HEALTH))
+    local plan = slug_dart.plan(battle, shooter, player)
+
+    slug_dart.resolve(battle, shooter, player, nil, plan)
 
     harness.equal(ctx:get(shooter, component.HEALTH).current, 40,
         "original shooter can block a returned Slug Dart")

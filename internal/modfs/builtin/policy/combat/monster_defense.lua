@@ -2,6 +2,7 @@
 -- Source: monster.cc:melee_evasion and armour_class.
 local equipment = require("policy.combat.equipment")
 local component = require("constants.component")
+local armour_egos = require("constants.armour_egos")
 local size = require("constants.size")
 local monster_stats = require("policy.combat.monster_stats")
 local chaos_status = require("policy.combat.player_brands.chaos_status")
@@ -72,6 +73,7 @@ function defense.shield(ctx, monster, definition)
         hit_dice = monster_stats.hit_dice(ctx, monster, definition),
         blocks = combat.shield_blocks,
         name = shield.definition.name,
+        reflects = shield.ego == armour_egos.REFLECTION,
     }
 end
 

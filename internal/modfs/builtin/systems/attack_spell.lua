@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local effects = require("policy.combat.monster_spells")
 local spellbook = require("policy.combat.monster_spellbook")
+local target = require("policy.combat.monster_spell_target")
 local targets = require("policy.ai.targets")
 local intents = require("constants.intent")
 
@@ -34,20 +35,15 @@ function system.update(ctx, caster)
         error("monster cannot cast on distant or dead player")
     end
 
-    local definition = catalog.get("monsters", actor.kind_id)
     catalog.get("spells", intent.spell_id)
     local book = spellbook.for_actor(ctx, caster)
 
-    spellbook.slot(book, intent.spell_slot, intent.spell_id)
+    local slot = spellbook.slot(book, intent.spell_slot, intent.spell_id)
 
     local effect = effects.effect(intent.spell_id)
+    local plan = target.read(intent)
 
-    if not effect.can_cast(ctx, caster_pos, player_pos) then
-        error(actor.kind_id .. " cannot cast " .. intent.spell_id ..
-            " at the player")
-    end
-
-    effect.resolve(ctx, caster, player, definition, player_health)
+    effect.resolve(ctx, caster, player, slot, plan)
 end
 
 register.system({

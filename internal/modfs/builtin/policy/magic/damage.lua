@@ -163,6 +163,13 @@ function damage.player_resistance(ctx, player, resistance_id)
             resistances.FIRE)
     elseif resistance_id == resistances.FIRE then
         value = value + form.res_fire
+
+        local vulnerability = ctx:get(player,
+            component.FIRE_VULNERABILITY)
+
+        if vulnerability and vulnerability.remaining_aut > 0 then
+            value = value - 1
+        end
     elseif resistance_id == resistances.COLD then
         value = value + form.res_cold
     elseif resistance_id == resistances.ELECTRICITY then
@@ -370,6 +377,7 @@ function damage.apply(ctx, target, amount, source)
         credited_source)
 
     if dealt > 0 and health.current == 0 and
+        ctx:has(credited_source, component.PLAYER) and
         not ctx:has(target, "magic.summon") then
         ctx:signal("player_kill", target)
     end

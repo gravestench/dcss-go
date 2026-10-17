@@ -49,6 +49,7 @@ context rather than a handler API for each game domain.
 | Shops | Ten active source shop types, 70 committed source shop vault definitions, scripted shop maps, authored stock and supplemental D:1–2 placement, saved wallet and stock, gold pickup, fixed shop scenario, prices, shopping list, purchase, and terminal menu | `vaults/shop`, `policy/generation/vaults/shop`, `policy/shops`, `schemas/*shop*` |
 | Traps | Ten active source trap definitions and effects in Lua; authored vault traps become saved Akara entities; entry, held state, marks, timed passages, Zot outcomes, visibility, and mod-added trap files use one catalog | `content/traps`, `policy/traps`, `systems/world_traps.lua` |
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; all 285 committed monster spellbooks use source-order weighted and conditional slot selection, with effect coverage required before a monster enters the live roster | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
+| Monster beam spells | Forty-four source-backed monster beam profiles and Lua effects, including piercing and reflected rays, explosions, clouds, displacement, sleep, poison, and temporary terrain; typed target plans carry the selected destination through resolution | `content/monster_beams`, `policy/combat/monster_beams`, `policy/combat/monster_spells` |
 | Combat | Fighter melee and headbutts; generated player melee brands and Chaos Knight's forced chaos brand in Lua, including saved spectral allies with damage sharing, distortion banishment, and chaos monster effects; all seven active magical staves with source skill procs and AC/resistance routes; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
 | Items and status | Equipment, consumables, statuses, and identification | `policy/inventory`, `policy/items`, `systems/item_*` |
 | Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
@@ -66,8 +67,9 @@ guardian-spirit, and attuned regeneration effects from the worn ECS items.
 Blocked hostile stones, poisoned darts, sling bullets, and Slug Dart now
 return to their shooter when an amulet of reflection is worn and the shot is
 still clear. The Faith piety event remains for the religion domain slice.
-Other beam types, armour reflection ego, and monster reflectors remain for
-their later combat domains.
+The monster beam family now includes player amulet reflection and monster
+shield reflection. Armour reflection ego and further spell families remain
+for their later combat domains.
 
 Core Akara components remain typed Go stores where the generic engine must
 read them; Lua systems and policies change their authoritative values through
@@ -100,8 +102,8 @@ their owning monster Lua files. Import tools under `cmd/import*` are for reviewe
 upstream refreshes. Content coverage
 does not imply that its behavior is playable. Monster spell selection accepts
 every committed book's slot structure, including repeated spell IDs with
-distinct flags. Live monster effects still cover only the early roster's
-Freeze and Slug Dart plus the existing Petrify handler. Missing effects are
+distinct flags. Live monster effects include the early roster's Freeze and
+Slug Dart, Petrify, and 44 source beam spells. Missing effects are
 reported before a monster joins a generation roster; the remaining effects
 are a prerequisite for deeper Dungeon population.
 The 11 wand-to-spell links come from the committed `wand-spells.json`

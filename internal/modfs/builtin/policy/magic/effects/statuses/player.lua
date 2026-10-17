@@ -518,7 +518,7 @@ function statuses.vertigo_active(ctx, player)
 end
 
 -- Source: spl-other.cc:cast_intoxicate, increase_duration(DUR_VERTIGO).
-function statuses.add_vertigo(ctx, player, turns)
+function statuses.add_vertigo(ctx, player, turns, maximum_turns)
     if turns <= 0 then
         return
     end
@@ -526,6 +526,25 @@ function statuses.add_vertigo(ctx, player, turns)
     local current = state(ctx, player)
     local value = current or ensure(ctx, player)
     value.vertigo_aut = value.vertigo_aut + turns * 10
+
+    if maximum_turns then
+        value.vertigo_aut = math.min(value.vertigo_aut,
+            maximum_turns * 10)
+    end
+
+    if current then
+        ctx:set(player, component.PLAYER_STATUS, value)
+    else
+        ctx:add(player, component.PLAYER_STATUS, value)
+    end
+end
+
+function statuses.add_silence(ctx, player, turns, maximum_turns)
+    local current = state(ctx, player)
+    local value = current or ensure(ctx, player)
+
+    value.silence_aut = math.min(maximum_turns * 10,
+        value.silence_aut + turns * 10)
 
     if current then
         ctx:set(player, component.PLAYER_STATUS, value)

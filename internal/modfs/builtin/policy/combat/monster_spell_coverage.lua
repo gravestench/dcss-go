@@ -29,9 +29,9 @@ local function inspect_book(missing, monster_id, book_id)
             add(missing, monster_id, book_id, slot.spell_id,
                 "missing effect module")
         elseif type(effect) ~= "table" or
-            type(effect.can_cast) ~= "function" then
+            type(effect.plan) ~= "function" then
             add(missing, monster_id, book_id, slot.spell_id,
-                "effect has no can_cast method")
+                "effect has no plan method")
         elseif type(effect.resolve) ~= "function" then
             add(missing, monster_id, book_id, slot.spell_id,
                 "effect has no resolve method")

@@ -14,7 +14,7 @@ profiles. Lua `policy.combat.monster_beams` handles actor-neutral tracing,
 hit resolution, defenses, elemental/status/cloud effects, and source
 attribution. One effect module per spell uses that kernel and any named
 spell-specific rule. The existing spell intent carries the chosen book
-slot and typed target plan through execution and saves.
+slot and typed target plan through execution. Saves occur after the action.
 
 **Tech Stack:** Go, Akara ECS, gopher-lua, embedded layered Lua mods,
 Lua `_test.lua` rules tests.
@@ -35,6 +35,12 @@ Lua `_test.lua` rules tests.
 - Run broad tests once at the category boundary, not after every file.
 
 ## Review Focus
+
+Implementation note: all 44 effects, the source-profile importer, typed
+target plans, and integrated Lua/Go tests landed in one family commit. The
+full Lua suite and 100 relevant game tests passed. The complete game package
+and two exhaustive character-start tests exceeded the chosen feedback window
+and were not used as completion gates.
 
 1. A reflected beam preserves its monster source and cannot hit an
    unrelated actor after changing direction.
@@ -65,8 +71,9 @@ Lua `_test.lua` rules tests.
   book slot, then calls `effect.resolve` using the saved target plan.
 - `internal/ecs/components.go` and the host intent codec: named entity or
   cell target fields, serialized without arbitrary Lua tables.
-- Current `freeze.lua`, `slug_dart.lua`, `petrify.lua`, and `hex.lua`:
-  migrate to the same plan/resolve interface in one change.
+- Current `freeze.lua`, `slug_dart.lua`, and `petrify.lua`: migrate to
+  the same plan/resolve interface in one change; `hex.lua` remains a
+  shared resistance helper.
 - `internal/script/testdata/lua/tests/monster_beam_*_test.lua`: real
   production profiles and effects under the shared Lua harness.
 - `internal/game/monster_beam_*_test.go`: integrated actor, beam,
@@ -76,9 +83,10 @@ Lua `_test.lua` rules tests.
 
 **Produces:** `content/monster_beams/<spell>.lua` for each of the 44
 appendix IDs. Each profile names its zap, monster power rule, damage and
-to-hit calculators, flavor, shape, range, noise, source overrides, and
+to-hit calculators, flavor, shape, hit loudness, source overrides, and
 any required special hook. A missing or unsupported source construct is
-an importer error.
+an importer error. Range and casting noise come from the existing spell
+catalog rather than a second declaration.
 
 - [ ] Add importer tests using small pinned `zap-data.h` and
   `mon-cast.cc` fixtures. Assert monster calculators, hex helpers,
@@ -101,8 +109,8 @@ changes until resolution.
 
 - [ ] Add Lua decision/execution tests for one entity target, one empty
   cell, source targeting rejection, duplicate book-slot IDs, and exactly
-  one target RNG sequence through decision and execution. Add a Go save
-  round-trip test for every new intent field.
+  one target RNG sequence through decision and execution. Add a Go host
+  bridge round-trip test for every new intent field.
 - [ ] Run those tests red on the old `can_cast`/`resolve` contract.
 - [ ] Add typed intent fields and host conversion; migrate the four
   existing monster effects, decision policy, resolver, and coverage

@@ -105,6 +105,77 @@ func TestLuaHostComponentUsesAuthoritativeStore(t *testing.T) {
 	}
 }
 
+func TestLuaHostMonsterTargetPlanRoundTrip(t *testing.T) {
+	rules, err := modfs.Load("testdata/host-monster-target")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	world := akara.NewWorld()
+	defer world.Close()
+
+	stores := ecs.Register(world)
+	entity, err := world.CreateEntity()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = stores.Intents.Set(entity, ecs.Intent{
+		Kind:          ecs.IntentSpell,
+		SpellID:       "SPELL_MAGIC_DART",
+		SpellSlot:     2,
+		TargetKind:    "cell",
+		TargetEntity:  9,
+		TargetLevelID: 2,
+		TargetX:       7,
+		TargetY:       4,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runtime, err := newRuntimeWithHostComponents(t, world, rules,
+		Services{})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer runtime.Close()
+
+	for _, system := range runtime.Systems() {
+		if system.Name != "test.monster_target" {
+			continue
+		}
+
+		if err := system.Update(world, time.Duration(10)); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := runtime.ApplyPending(); err != nil {
+			t.Fatal(err)
+		}
+
+		intent, found := stores.Intents.Get(entity)
+
+		if !found ||
+			intent.TargetX != 8 ||
+			intent.TargetY != 4 ||
+			intent.TargetLevelID != 2 ||
+			intent.TargetEntity != 9 ||
+			intent.TargetKind != "cell" {
+			t.Fatalf("target plan did not round trip: %+v", intent)
+		}
+
+		return
+	}
+
+	t.Fatal("missing monster target host system")
+}
+
 func TestLuaHostRemovalIsDiscardedAfterCallbackFailure(t *testing.T) {
 	rules, err := modfs.Load("testdata/host-remove-fail")
 

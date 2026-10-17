@@ -1,4 +1,7 @@
 local species_ids = require("ids.species")
+local abilities = require("ids.abilities")
+local form_ids = require("constants.form_ids")
+local jewellery_slots = require("constants.jewellery_slots")
 local component = require("constants.component")
 local terrain_ids = require("constants.terrain")
 local size = require("constants.size")
@@ -246,6 +249,8 @@ local function duration(ctx, profile, power)
 
         if profile.scale == "double" then
             turns = turns + ctx:random("spell", power)
+        elseif profile.scale == "one_and_half" then
+            turns = turns + ctx:random("spell", math.floor(power / 2))
         end
     end
 
@@ -320,6 +325,47 @@ function forms.cast(ctx, player, spell_id, power)
 
     forms.rescale_health(ctx, player,
         math.max(1, math.floor(base_hp(ctx, player) * profile.hp_tenths / 10)))
+end
+
+local polymorph_forms = {
+    abilities.BAT_FORM,
+    form_ids.WISP,
+    form_ids.PIG,
+}
+
+function forms.can_polymorph(ctx, player)
+    local active = ctx:get(player, component.PLAYER_FORM)
+    local choice = ctx:get(player, component.PLAYER)
+    local species = character_catalog.get("species", choice.species_id)
+
+    return not (active and active.uncancellable) and
+        species.undead_type ~= "US_UNDEAD"
+end
+
+-- player.cc:player::polymorph tries at most three of Bat, Wisp, and Pig;
+-- Throw Pie disallows the immobile forms and makes success uncancellable.
+function forms.polymorph(ctx, player, power)
+    if not forms.can_polymorph(ctx, player) then
+        return false
+    end
+
+    for _ = 1, 3 do
+        local index = ctx:random("monster_spell", #polymorph_forms) + 1
+        local form_key = polymorph_forms[index]
+
+        if not forms.rejection(ctx, player, form_key) then
+            forms.cast(ctx, player, form_key, power)
+
+            local active = ctx:get(player, component.PLAYER_FORM)
+
+            active.uncancellable = true
+            ctx:set(player, component.PLAYER_FORM, active)
+
+            return true
+        end
+    end
+
+    return false
 end
 
 function forms.tick(ctx, player, aut)
@@ -544,7 +590,35 @@ local blocked = {
         head = true,
         cloak = true,
     },
+    physical_rings = {
+        weapon = true,
+        shield = true,
+        gloves = true,
+        boots = true,
+        body = true,
+        head = true,
+        cloak = true,
+        [jewellery_slots.LEFT] = true,
+        [jewellery_slots.RIGHT] = true,
+    },
+    all = {
+        weapon = true,
+        shield = true,
+        gloves = true,
+        boots = true,
+        body = true,
+        head = true,
+        cloak = true,
+        [jewellery_slots.LEFT] = true,
+        [jewellery_slots.RIGHT] = true,
+        [jewellery_slots.AMULET] = true,
+    },
 }
+
+for _, slot in ipairs(jewellery_slots.OCTO) do
+    blocked.physical_rings[slot] = true
+    blocked.all[slot] = true
+end
 
 -- Source: transform.cc:EQF_* slot masks. A false result means equipped
 -- items in that slot are melded for live stat and attack projections.

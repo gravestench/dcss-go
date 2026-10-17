@@ -1,6 +1,7 @@
 local effects = require("policy.combat.monster_spells")
 local spellbook = require("policy.combat.monster_spellbook")
 local prospect = require("policy.ai.spell_prospect")
+local target = require("policy.combat.monster_spell_target")
 local statuses = require("policy.magic.effects.statuses.player")
 local engulf = require("policy.combat.engulf")
 local component = require("constants.component")
@@ -15,6 +16,10 @@ local function distance_between(position, target)
 end
 
 local function silenced(ctx, entity, position, player)
+    if ctx:has(entity, component.MONSTER_MUTE) then
+        return true
+    end
+
     if engulf.silenced(ctx, entity) then
         return true
     end
@@ -40,7 +45,7 @@ local function condition_for(ctx, entity, position, player, fleeing)
     }
 end
 
-local function select_targetable(ctx, book, condition, position, player)
+local function select_targetable(ctx, entity, book, condition)
     local function random(bound)
         return ctx:random("monster_spell", bound)
     end
@@ -62,8 +67,10 @@ local function select_targetable(ctx, book, condition, position, player)
 
         local effect = effects.effect(slot.spell_id)
 
-        if effect.can_cast(ctx, position, player) then
-            return slot, index
+        local plan = effect.plan(ctx, entity, ctx:player(), slot)
+
+        if plan then
+            return slot, index, plan
         end
     end
 
@@ -78,18 +85,20 @@ function spell.choose(ctx, entity, position, player, fleeing)
     end
 
     local condition = condition_for(ctx, entity, position, player, fleeing)
-    local slot, index = select_targetable(ctx, book, condition, position,
-        player)
+    local slot, index, plan = select_targetable(ctx, entity, book,
+        condition)
 
     if not slot or statuses.enfeeble_antimagic(ctx, entity, slot.flags) then
         return nil
     end
 
-    return {
+    local intent = {
         kind = intents.SPELL,
         spell_id = slot.spell_id,
         spell_slot = index,
     }
+
+    return target.write(intent, plan)
 end
 
 return spell

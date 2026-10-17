@@ -182,6 +182,12 @@ function energy.spend(ctx, input)
             position.x, position.y) then
             cost = cost + 6
         end
+
+        -- monster.cc:monster::energy_cost adds four movement energy while
+        -- ENCH_FROZEN is active. Attacks and spells keep their usual cost.
+        if ctx:has(actor, component.FLASH_FROZEN) then
+            cost = cost + 4
+        end
     end
 
     if input.actor and statuses.petrifying(ctx,

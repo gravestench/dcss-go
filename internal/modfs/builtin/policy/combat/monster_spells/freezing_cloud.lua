@@ -1,0 +1,33 @@
+local area = require("policy.clouds.area")
+local beam = require("policy.combat.monster_beams")
+local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
+local cloud_sizes = require("constants.cloud_sizes")
+local clouds = require("ids.clouds")
+local spells = require("ids.spells")
+
+local freezing_cloud = {}
+local profile = catalog.get(categories.MONSTER_BEAMS,
+    spells.SPELL_FREEZING_CLOUD)
+
+function freezing_cloud.plan(ctx, caster, foe)
+    return beam.plan(ctx, caster, foe, profile, {
+        cloud_max_size = cloud_sizes.FIXED_LARGE,
+    })
+end
+
+function freezing_cloud.after_endpoint(ctx, caster, _, plan)
+    local power = cloud_sizes.VARIABLE_POWER_MIN +
+        ctx:random("monster_spell", cloud_sizes.VARIABLE_POWER_MAX -
+            cloud_sizes.VARIABLE_POWER_MIN + 1)
+
+    area.place(ctx, clouds.CLOUD_COLD, caster,
+        plan.level_id, plan.x, plan.y, power,
+        cloud_sizes.FIXED_LARGE, "monster_spell")
+end
+
+function freezing_cloud.resolve(ctx, caster, foe, _, plan)
+    return beam.resolve(ctx, caster, foe, profile, plan, freezing_cloud)
+end
+
+return freezing_cloud
