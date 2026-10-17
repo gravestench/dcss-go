@@ -46,6 +46,7 @@ context rather than a handler API for each game domain.
 | Dungeon | Seeded basic-layout D:1–2, rooms, corridors, doors, paired stairs, source-sized population, fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
 | Arrival vault population | All 337 selectable source arrivals resolve authored monster and item expressions through Lua content catalogs, place Akara entities with vault origins, and retain source selection in level records; a mod can add a monster and arrival file by path | `policy/generation/vaults/specs`, `policy/population/vaults.lua`, `schemas/vault_origin.lua` |
 | Item generation | Source-backed class and subtype selection feeds floor loot, monster equipment, vault requests, and acquirement; selected generated state is committed to saves | `policy/item_generation`, `systems/item_*` |
+| Shops | Ten active source shop types, saved wallet and stock, gold pickup, generated D:2 shop, fixed shop scenario, prices, shopping list, purchase, and terminal menu | `content/shops`, `policy/shops`, `schemas/*shop*` |
 | Traps | Ten active source trap definitions and effects in Lua; authored vault traps become saved Akara entities; entry, held state, marks, timed passages, Zot outcomes, visibility, and mod-added trap files use one catalog | `content/traps`, `policy/traps`, `systems/world_traps.lua` |
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; item and spell capability dispatch without monster-ID handlers | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
 | Combat | Fighter melee and headbutts; generated player melee brands and Chaos Knight's forced chaos brand in Lua, including saved spectral allies with damage sharing, distortion banishment, and chaos monster effects; all seven active magical staves with source skill procs and AC/resistance routes; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
@@ -53,7 +54,7 @@ context rather than a handler API for each game domain.
 | Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
 | Player mutations | Source definitions and Lua-owned mutation records, transitions, passive effects, abilities, and saved state; Vampire blood rituals and Bat Form are implemented; source consumers in other unported domains remain inventoried below | `content/mutations`, `policy/mutations`, `policy/abilities`, `schemas/character_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
-| Persistence | Version-18 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
+| Persistence | Version-21 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
 
 Items support pickup, drop, wielding, armour delays, and put-on/removal of all
 24 active jewellery records. All 17 active potions and 19 active scrolls have
@@ -139,10 +140,19 @@ actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,
 more layouts and branches, the Abyss monster roster and shifting terrain,
 full source parity for chaos clone allegiance and shapeshifter form selection,
-artefact-specific identification and names, shops, runes,
+artefact-specific identification and names, runes,
 endgame, and the
 complete item and equipment system. Native C++ saves, tiles, and network
 client compatibility are outside this Go port.
+
+Shops now have ten source-backed active types, a saved player wallet, saved
+shop and stock entities, gold pickup, item-class valuation, purchases,
+shopping-list markers, and a full-terminal stock screen. The dedicated fixed
+Dungeon shop scenario and ordinary generated floor make the economy playable. Shop vault
+content in source `.des` files still needs importing into the broader vault
+pipeline. Keeper names, exact source RNG sequences, and every special price
+case still need parity review; the saved keeper seed leaves a place for that
+work without changing the ECS ownership model.
 
 Trap placement and activation are playable for all ten active trap IDs. The
 pressure plate emits a position event; vault marker listeners remain for the

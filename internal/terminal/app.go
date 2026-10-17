@@ -53,6 +53,7 @@ const (
 	ScreenEvokeWand
 	ScreenRead
 	ScreenSelection
+	ScreenShop
 )
 
 type equipmentTick struct {
@@ -122,6 +123,10 @@ type AppModel struct {
 	aimX                int
 	aimY                int
 	spellMode           string
+	shopSort            string
+	shopSelected        map[uint64]game.ShopSelection
+	shopFocus           int
+	shopConfirming      bool
 }
 
 func NewAppModel(seed uint64, savePath string) (*AppModel, error) {
@@ -270,6 +275,9 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenPlay:
 		return m.handlePlayKey(key)
 
+	case ScreenShop:
+		return m.handleShopKey(key)
+
 	case ScreenStatChoice:
 		return m.routeInput("stat_choice", key)
 
@@ -396,6 +404,9 @@ func (m *AppModel) renderCanvas() *Canvas {
 	case ScreenHelp:
 		DrawHelp(canvas, m.presentationPolicy)
 		m.drawModalNotice(canvas)
+
+	case ScreenShop:
+		m.drawShop(canvas)
 
 	case ScreenConfirm:
 		m.drawConfirm(canvas)

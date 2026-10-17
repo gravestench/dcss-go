@@ -121,6 +121,7 @@ function hud.rows(view, extras)
         view.current_aut / time.AUT_PER_TURN), colors.brown)
     write(0, 9, weapon_label(view.inventory), colors.light_grey)
     write(0, 10, "Quiver: --", colors.brown)
+    write(18, 10, "Gold: " .. (view.gold or 0), colors.brown)
 
     local statuses = {}
 

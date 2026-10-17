@@ -199,6 +199,7 @@ func newRuntimeWithHostComponents(
 		Host("core.item", stores.Items),
 		Host("core.corpse", stores.Corpses),
 		Host("core.carried_by", stores.CarriedBy),
+		Host("core.reserved_by", stores.ReservedBy),
 		Host("core.equipped", stores.Equipped),
 		Host("core.intent", stores.Intents),
 	})

@@ -129,6 +129,10 @@ func (m *AppModel) applyNavigationDecision(action string, decision map[string]an
 			m.pendingAbilityID = ""
 		}
 
+		if screen == ScreenShop {
+			m.openShop()
+		}
+
 	}
 
 	return nil

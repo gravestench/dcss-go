@@ -30,6 +30,20 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 		return m.routeInput("door", key)
 	}
 
+	if key == ">" {
+		shop, err := m.game.ShopAtPlayer("type")
+
+		if err != nil {
+			m.notice = fmt.Sprintf("Shop failed: %v", err)
+
+			return nil
+		}
+
+		return m.routeInput("play", key, map[string]any{
+			"on_shop": shop.Available,
+		})
+	}
+
 	return m.routeInput("play", key)
 }
 
@@ -40,6 +54,7 @@ var inputScreens = map[string]ScreenID{
 	"weapon":           ScreenWeapon,
 	"name":             ScreenName,
 	"play":             ScreenPlay,
+	"shop":             ScreenShop,
 	"inventory":        ScreenInventory,
 	"skills":           ScreenSkills,
 	"mutations":        ScreenMutations,
@@ -246,6 +261,18 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 	}
 
 	m.afterStep(result)
+
+	if result.Spent > 0 &&
+		m.screen == ScreenPlay &&
+		command.Kind == game.CommandMove {
+		shop, err := m.game.ShopAtPlayer("type")
+
+		if err != nil {
+			m.notice = fmt.Sprintf("Shop failed: %v", err)
+		} else if shop.Available {
+			m.openShop()
+		}
+	}
 
 	if result.View.EquipmentDelay != nil && m.screen == ScreenPlay {
 		return m.nextEquipmentTick()

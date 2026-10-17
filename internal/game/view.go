@@ -70,6 +70,7 @@ type View struct {
 	PlayerAC     int
 	PlayerEV     int
 	PlayerSH     int
+	Gold         int64
 	DefenseKnown bool
 
 	CharacterName           string
@@ -271,6 +272,18 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 
 func (g *Game) fillPlayerView(view *View) {
 	player, hasPlayer := g.stores.Players.Get(g.player)
+
+	if store := g.scripts.Components()["character.wallet"]; store != nil {
+		if state, ok := store.Get(g.player); ok {
+			gold, err := state.Get("gold")
+
+			if err != nil {
+				panic(err)
+			}
+
+			view.Gold = gold.(int64)
+		}
+	}
 
 	if health, ok := g.stores.Health.Get(g.player); ok {
 		view.PlayerHP = health.Current

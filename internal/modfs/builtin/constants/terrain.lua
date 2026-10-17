@@ -1,6 +1,7 @@
 -- Source feature IDs, shared by the typed grid and spell policies.
 local terrain = {
     DNGN_FLOOR = "DNGN_FLOOR",
+    DNGN_ENTER_SHOP = "DNGN_ENTER_SHOP",
     DNGN_ROCK_WALL = "DNGN_ROCK_WALL",
     DNGN_STONE_WALL = "DNGN_STONE_WALL",
     DNGN_CLEAR_PERMAROCK_WALL = "DNGN_CLEAR_PERMAROCK_WALL",

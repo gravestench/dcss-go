@@ -145,7 +145,7 @@ extends the game beyond the present D:1–2 slice.
    Preserve the full-terminal DCSS presentation and minimum 79×24 layout.
 7. **Remaining DCSS domains.** Complete the mutation source audit, then add
    religion, unported forms, allies,
-   shops, runes, endgame, and full branch/content coverage as
+   runes, endgame, and full branch/content coverage as
    whole Lua domain slices. Extend the Go kernel only for reusable capability
    primitives that cannot be expressed cleanly through the existing API.
 
@@ -159,6 +159,13 @@ modules for all 34 concrete source kinds. Saved Akara entities represent
 cloud cells and temporary terrain; Lua controls placement, exposure,
 avoidance, aging, and view metadata. World capabilities for sanctuary,
 wind, and terrain-destruction veto remain adjacent integration work.
+
+The shop domain follows the same ownership boundary: Lua definitions supply
+the ten active shop types, Lua policies own pricing, stock generation, and
+purchase rules, and Akara owns the wallet, shop, stock, and shopping-list
+state. Go supplies the grid entrance, save encoding, and terminal canvas.
+The next vault-content pass should feed typed `.des` shop specifications into
+this policy rather than adding a second shop implementation.
 
 ## Slice checks
 

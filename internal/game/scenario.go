@@ -26,6 +26,17 @@ func NewScenario(
 	}, weaponID, name, ordinaryMonsterScenarioID)
 }
 
+// NewShopScenario starts the fixed Dungeon fixture with a playable shop.
+func NewShopScenario(
+	seed uint64,
+	weaponID, name string,
+) (_ *Game, err error) {
+	return newScenario(seed, startChoice{
+		SpeciesID: "SP_HUMAN",
+		JobID:     "JOB_FIGHTER",
+	}, weaponID, name, shopFixtureScenarioID)
+}
+
 // NewPopulatedScenario keeps the current fixed map while selecting its
 // supported monsters from the committed Dungeon population table.
 func NewPopulatedScenario(

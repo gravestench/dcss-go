@@ -4,6 +4,10 @@ local roster = require("policy.population.roster")
 local catalog = require("policy.catalog")
 local abyss = require("policy.world.abyss")
 local vaults = require("policy.population.vaults")
+local shops = require("policy.shops.generation")
+local shop_ids = require("ids.shops")
+local item_ids = require("ids.items")
+local streams = require("constants.rng_streams")
 
 local function level_order(left, right)
     return left.id < right.id
@@ -118,6 +122,46 @@ local function fixture(ctx)
     }
 end
 
+local function shop_fixture(ctx)
+    shops.place(ctx, {
+        level_id = 1,
+        x = 3,
+        y = 2,
+        depth = 1,
+        kind_id = shop_ids.SHOP_GENERAL,
+        full_name = "General Store",
+        greed = 10,
+        count = 3,
+        use_all = true,
+        items = {
+            item_ids.WPN_CLUB,
+            item_ids.ARM_BUCKLER,
+            item_ids.POT_CURING,
+        },
+    })
+end
+
+local function generated_shop(ctx, level, excluded)
+    if level.id ~= 2 then
+        return
+    end
+
+    local cells = free_cells(ctx, level, excluded)
+
+    if #cells == 0 then
+        return
+    end
+
+    local cell = cells[ctx:random(streams.SHOP, #cells) + 1]
+
+    shops.place(ctx, {
+        level_id = level.id,
+        x = cell.x,
+        y = cell.y,
+        depth = level.id,
+    })
+end
+
 local function floor_potion(ctx, kind_id, level_id, cell)
     if not cell or cell.x == nil or cell.y == nil then
         error("missing starting floor item location for " .. kind_id)
@@ -156,8 +200,13 @@ function module.run(ctx, input)
     local counts = {}
     local materialized = {}
 
-    if scenario_id == "fixed-dungeon-rat-quokka-lizard-v2" then
+    if scenario_id == "fixed-dungeon-rat-quokka-lizard-v2" or
+        scenario_id == "fixed-dungeon-shops-v1" then
         counts = fixture(ctx)
+
+        if scenario_id == "fixed-dungeon-shops-v1" then
+            shop_fixture(ctx)
+        end
     else
         local allowed = roster.allowed(scenario_id)
         local levels = input.levels or {}
@@ -179,6 +228,7 @@ function module.run(ctx, input)
 
             if level.id ~= abyss.level_id then
                 count = populate_level(ctx, level, allowed, scenario_id)
+                generated_shop(ctx, level, exclusion_set(level))
             end
 
             counts[#counts + 1] = { id = level.id, count = count }

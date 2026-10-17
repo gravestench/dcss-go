@@ -19,6 +19,10 @@ local function location_count(location)
         count = count + 1
     end
 
+    if location.shop then
+        count = count + 1
+    end
+
     return count
 end
 
@@ -35,8 +39,13 @@ local function validate_location(location)
             type(position.y) ~= "number" then
             error("generated item has invalid position")
         end
-    elseif location.carrier == 0 or location.reservation == 0 then
+    elseif location.carrier == 0 or location.reservation == 0 or
+        location.shop == 0 then
         error("generated item location owner cannot be zero")
+    elseif location.shop and
+        (type(location.order) ~= "number" or
+        location.order < 1 or location.order % 1 ~= 0) then
+        error("generated shop stock requires a positive order")
     end
 end
 
@@ -76,9 +85,14 @@ function materialize.create(ctx, result, location)
         ctx:add(entity, component.CARRIED_BY, {
             holder = location.carrier,
         })
-    else
+    elseif location.reservation then
         ctx:add(entity, component.RESERVED_BY, {
             owner = location.reservation,
+        })
+    else
+        ctx:add(entity, component.SHOP_STOCK, {
+            shop_id = ctx:id(location.shop),
+            order = location.order,
         })
     end
 

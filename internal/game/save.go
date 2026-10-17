@@ -64,9 +64,19 @@ func validateSavedItem(record save.EntityRecord) error {
 		locations++
 	}
 
+	for _, component := range record.Dynamic {
+		if component.Schema == "shop.stock" {
+			locations++
+		}
+	}
+
+	if locations > 1 {
+		return fmt.Errorf("item %d has conflicting locations; it cannot be in both places", record.ID)
+	}
+
 	if locations != 1 || record.Actor != nil {
 		return fmt.Errorf(
-			"item %d must have exactly one position, carrier, or reservation",
+			"item %d must have exactly one position, carrier, reservation, or shop owner",
 			record.ID,
 		)
 	}

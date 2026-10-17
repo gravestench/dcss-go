@@ -36,6 +36,7 @@ local scenarios = {
     [""] = { "MONS_RAT" },
     ["fixed-dungeon-rat-quokka-v1"] = { "MONS_RAT", "MONS_QUOKKA" },
     ["fixed-dungeon-rat-quokka-lizard-v2"] = fixed,
+    ["fixed-dungeon-shops-v1"] = fixed,
     ["fixed-dungeon-population-v1"] = population,
     ["generated-dungeon-basic-v1"] = generated,
 }

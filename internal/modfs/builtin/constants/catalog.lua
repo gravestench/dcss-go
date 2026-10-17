@@ -10,6 +10,7 @@ local catalog = {
     MUTATIONS = "mutations",
     SPECIES = "species",
     SPELLS = "spells",
+    SHOPS = "shops",
     TRAPS = "traps",
     VAULTS = "vaults",
 }

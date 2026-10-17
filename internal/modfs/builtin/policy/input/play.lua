@@ -50,6 +50,15 @@ local play = {}
 
 function play.route(input)
     local key = input.key
+
+    if key == ">" and input.on_shop then
+        return {
+            action = "screen",
+            screen = "shop",
+            returnable = false,
+        }
+    end
+
     local screen = screens[key]
 
     if screen then

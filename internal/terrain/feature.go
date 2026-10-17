@@ -8,6 +8,7 @@ type ID string
 const (
 	Unseen             ID = ""
 	Floor              ID = "DNGN_FLOOR"
+	ShopEntrance       ID = "DNGN_ENTER_SHOP"
 	RockWall           ID = "DNGN_ROCK_WALL"
 	StoneWall          ID = "DNGN_STONE_WALL"
 	MetalWall          ID = "DNGN_METAL_WALL"
@@ -49,6 +50,11 @@ type Feature struct {
 var definitions = map[ID]Feature{
 	Floor: {
 		Glyph:    '.',
+		Walkable: true,
+	},
+
+	ShopEntrance: {
+		Glyph:    '∩',
 		Walkable: true,
 	},
 

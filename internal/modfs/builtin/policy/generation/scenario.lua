@@ -9,7 +9,8 @@ function module.run(ctx, input)
     local scenario_id = input.scenario_id
     local result
 
-    if scenario_id == "fixed-dungeon-rat-quokka-lizard-v2" then
+    if scenario_id == "fixed-dungeon-rat-quokka-lizard-v2" or
+        scenario_id == "fixed-dungeon-shops-v1" then
         result = fixed.generate(false)
     elseif scenario_id == "fixed-dungeon-population-v1" then
         result = fixed.generate(true)

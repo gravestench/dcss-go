@@ -142,6 +142,8 @@ function start.run_start(ctx, input)
     ctx:add(player, component.ICY_DEFENSE, { remaining_aut = 0 })
     ctx:add(player, component.SANGUINE_ARMOUR, { remaining_aut = 0 })
     ctx:add(player, "core.regeneration", {})
+    ctx:add(player, component.WALLET, {})
+    ctx:add(player, component.SHOPPING_LIST, {})
     ctx:add(player, "core.health", {
         current = profile.max_hp,
         max = profile.max_hp,

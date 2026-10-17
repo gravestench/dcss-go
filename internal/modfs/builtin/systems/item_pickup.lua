@@ -1,5 +1,8 @@
 local items = require("policy.inventory.items")
 local identification = require("policy.items.identification")
+local wallet = require("policy.shops.wallet")
+local catalog = require("policy.catalog")
+local classes = require("ids.object_classes")
 
 local system = {}
 
@@ -20,6 +23,15 @@ function system.update(ctx, actor)
         if not ctx:has(entity, "core.corpse") then
             local item = ctx:get(entity, "core.item")
             local name = identification.name(ctx, ctx:player(), entity)
+
+            if catalog.get("items", item.kind_id).class == classes.OBJ_GOLD then
+                local amount = wallet.pickup(ctx, actor, entity)
+
+                ctx:emit("pickup", "You pick up " .. amount .. " gold pieces.")
+
+                return
+            end
+
             local stack = items.carried_stack(ctx, actor, entity)
 
             if stack then
