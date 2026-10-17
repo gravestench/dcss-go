@@ -12,6 +12,9 @@ local definition = {
     stackable = false,
     explicitly_removed = false,
     identification_pool = pools.AMULET,
+    generation = {
+        mode = "none",
+    },
 }
 
 register.definition(categories.ITEMS, definition)

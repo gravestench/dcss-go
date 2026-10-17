@@ -55,6 +55,11 @@ func TestRangedEquipmentAndThrownStackSurviveSave(t *testing.T) {
 
 	equipPlayerLauncher(t, g, "WPN_SLING")
 	givePlayerProjectileItem(t, g, "MI_BOOMERANG", 2, "")
+
+	if err := g.refreshVisibility(); err != nil {
+		t.Fatal(err)
+	}
+
 	snapshot := g.Snapshot()
 	loaded, err := Restore(snapshot)
 

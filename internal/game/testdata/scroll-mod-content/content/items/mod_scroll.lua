@@ -13,6 +13,9 @@ local definition = {
         kind = "static",
     },
     explicitly_removed = false,
+    generation = {
+        mode = "none",
+    },
 }
 
 register.definition(categories.ITEMS, definition)
