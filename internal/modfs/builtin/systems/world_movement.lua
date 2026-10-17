@@ -7,6 +7,7 @@ local fastroot = require("policy.magic.effects.zaps.fastroot")
 local component = require("constants.component")
 local intent_ids = require("constants.intent")
 local acrobat = require("policy.jewellery.acrobat")
+local trap_held = require("policy.traps.held")
 
 local function escape_grasp(ctx, actor, intent)
     local grip = ctx:get(actor, component.CONSTRICTION)
@@ -62,6 +63,14 @@ function system.update(ctx, actor)
 
     if not position then
         error("moving actor " .. ctx:id(actor) .. " has no position")
+    end
+
+    if ctx:has(actor, component.TRAP_HELD) then
+        trap_held.escape(ctx, actor)
+        intent.kind = intent_ids.WAIT
+        ctx:set(actor, component.INTENT, intent)
+
+        return
     end
 
     if actor ~= ctx:player() then

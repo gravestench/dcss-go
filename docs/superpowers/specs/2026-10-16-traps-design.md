@@ -58,11 +58,11 @@ bad definition names the vault location. `no_trap_gen` prevents ambient
 placed traps for that vault, while explicit authored traps remain.
 
 The pinned source's ordinary random hazard is a separate malevolence check
-on a new player tile (`traps.cc:1075–1248`): `trap_rate_for_place` determines
-the rate, then an eligible teleport/shaft/alarm effect is selected without
-placing a persistent trap. The check occurs once per successful player move,
-after movement and before the next actor acts. Failed movement, waiting, and
-repeatedly processing the same position do not reroll it. Eligibility follows
+for newly visible cells (`traps.cc:1075–1248`, `view.cc`):
+`trap_rate_for_place` determines the rate, then an eligible
+teleport/shaft/alarm effect is selected without placing a persistent trap.
+The check runs after a player move exposes new cells. Failed movement,
+waiting, and re-seeing mapped cells do not reroll it. Eligibility follows
 branch/depth rules; on the current D:1–2 slice it cannot roll alarm.
 
 A placed trap activates when an actor actually enters its cell. The source
@@ -93,7 +93,7 @@ has one name. Trigger messages follow source wording where the effect is
 implemented; an unknown effect never becomes a silent no-op.
 
 The save codec persists trap entities, their source origins, one-shot charge
-state, and any held/mark/passages they cause. Restore rejects duplicate
+state, passage lifetime, and any held/mark effects they cause. Restore rejects duplicate
 active traps on one cell, out-of-bounds or blocked positions, unknown kinds,
 invalid charges, mismatched position fields, and dangling passage or vault
 references before play resumes. Restoring a level does not reroll placement,

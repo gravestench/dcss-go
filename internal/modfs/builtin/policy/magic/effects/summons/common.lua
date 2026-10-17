@@ -180,6 +180,10 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
     local definition = catalog.get("monsters", kind_id)
     local hp = options and options.hp or hit_points.roll(ctx, definition.average_hp_10x)
     local hostile = allies.hostile_spawn(ctx, owner, definition)
+
+    if options and options.hostile ~= nil then
+        hostile = options.hostile
+    end
     local actor = ctx:create()
 
     ctx:add(actor, component.ACTOR, {

@@ -3,6 +3,7 @@
 -- grid is built. See dungeon-feature-type.h at e60ba356.
 local features = {}
 local effects = require("constants.vault_effects")
+local trap_placement = require("policy.traps.placement")
 
 features.from_source_glyph = {
     ["#"] = "DNGN_ROCK_WALL",
@@ -62,7 +63,7 @@ features.named_vault_terrain = {
     lava = "DNGN_LAVA",
 }
 
-function features.apply_vault_terrain(cells, records)
+function features.apply_vault_terrain(cells, records, ctx, depth)
     local retained = {}
 
     for _, record in ipairs(records or {}) do
@@ -81,6 +82,18 @@ function features.apply_vault_terrain(cells, records)
                 end
             end
         elseif record.kind == effects.FEATURE and not record.overridden then
+            if trap_placement.is_trap(record) then
+                if not ctx then
+                    error("trap feature selection needs a generation context")
+                end
+
+                local kind_id, name = trap_placement.resolve(ctx, record, depth)
+
+                -- Select KFEAT alternatives while the terrain grid is built.
+                -- The saved record then carries the result into population.
+                record.identity = kind_id or name
+            end
+
             local feature = features.named_vault_terrain[record.identity]
 
             if feature then

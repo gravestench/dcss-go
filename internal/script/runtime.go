@@ -42,6 +42,7 @@ type Grid interface {
 	ActorAt(levelID, x, y int) (akara.Entity, bool)
 	StairAt(levelID, x, y int) (Stair, bool)
 	Visible(levelID, fromX, fromY, radius, targetX, targetY int) (bool, error)
+	VisibleCells(levelID, fromX, fromY, radius int) ([]VisibleCell, error)
 	RouteStep(levelID, fromX, fromY, toX, toY int, goal akara.Entity) (int, int, bool)
 	ProjectileClear(levelID, fromX, fromY, toX, toY int) bool
 	SetCell(levelID, x, y int, feature terrain.ID) error
@@ -49,6 +50,12 @@ type Grid interface {
 	MoveActors(moves []ActorMove) error
 	PlaceActor(entity akara.Entity, levelID, x, y int) error
 	RemoveActor(entity akara.Entity, levelID int) error
+}
+
+// VisibleCell is one grid coordinate in a line-of-sight result.
+type VisibleCell struct {
+	X int
+	Y int
 }
 
 // ActorMove is one destination in an atomic simultaneous grid movement.

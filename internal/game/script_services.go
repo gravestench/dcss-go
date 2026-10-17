@@ -208,6 +208,48 @@ func (grid scriptGrid) Visible(
 	return visible[targetY*level.width+targetX], nil
 }
 
+func (grid scriptGrid) VisibleCells(
+	levelID, fromX, fromY, radius int,
+) ([]script.VisibleCell, error) {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return nil, nil
+	}
+
+	blockers := grid.opaque(levelID)
+	visible, err := visibility.ComputeWithOpacity(
+		level.terrain, fromX, fromY, radius,
+		func(x, y int) bool {
+			cell := point{
+				x: x,
+				y: y,
+			}
+
+			return blockers[cell]
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	cells := make([]script.VisibleCell, 0, (2*radius+1)*(2*radius+1))
+
+	for y := max(0, fromY-radius); y <= min(len(level.terrain)-1, fromY+radius); y++ {
+		for x := max(0, fromX-radius); x <= min(level.width-1, fromX+radius); x++ {
+			if visible[y*level.width+x] {
+				cells = append(cells, script.VisibleCell{
+					X: x,
+					Y: y,
+				})
+			}
+		}
+	}
+
+	return cells, nil
+}
+
 func (grid scriptGrid) RouteStep(
 	levelID, fromX, fromY, toX, toY int,
 	goal akara.Entity,

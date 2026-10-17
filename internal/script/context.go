@@ -32,6 +32,7 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "actor_at", r.state.NewFunction(r.luaGridActorAt))
 	r.state.SetField(context, "stair_at", r.state.NewFunction(r.luaGridStairAt))
 	r.state.SetField(context, "visible", r.state.NewFunction(r.luaGridVisible))
+	r.state.SetField(context, "visible_cells", r.state.NewFunction(r.luaGridVisibleCells))
 	r.state.SetField(context, "route_step", r.state.NewFunction(r.luaGridRouteStep))
 	r.state.SetField(context, "projectile_clear", r.state.NewFunction(r.luaGridProjectileClear))
 	r.state.SetField(context, "move_actor", r.state.NewFunction(r.luaGridMoveActor))
@@ -454,6 +455,32 @@ func (r *Runtime) luaGridVisible(state *lua.LState) int {
 	}
 
 	state.Push(lua.LBool(visible))
+
+	return 1
+}
+
+func (r *Runtime) luaGridVisibleCells(state *lua.LState) int {
+	coordinates := r.gridIntegers(state, 4)
+	cells, err := r.services.Grid.VisibleCells(
+		coordinates[0], coordinates[1], coordinates[2], coordinates[3],
+	)
+
+	if err != nil {
+		state.RaiseError("grid visible cells: %v", err)
+
+		return 0
+	}
+
+	result := state.NewTable()
+
+	for _, cell := range cells {
+		point := state.NewTable()
+		state.SetField(point, "x", lua.LNumber(cell.X))
+		state.SetField(point, "y", lua.LNumber(cell.Y))
+		result.Append(point)
+	}
+
+	state.Push(result)
 
 	return 1
 }

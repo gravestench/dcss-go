@@ -380,6 +380,8 @@ func (g *Game) fillPlayerView(view *View) {
 }
 
 func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
+	trapStore := g.scripts.Components()["world.trap"]
+
 	for _, entity := range g.stores.Positions.Entities() {
 		location, _ := g.stores.Positions.Get(entity)
 
@@ -391,10 +393,13 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 		visible := g.visibleLevelID == level.ID &&
 			index < len(g.visible) &&
 			g.visible[index]
+		trapState, isTrap := trapStore.Get(entity)
+		knownTrap := isTrap && view.Cells[index].State != Unknown
 
 		if entity != g.player &&
 			!visible &&
-			!g.stores.AI.Has(entity) {
+			!g.stores.AI.Has(entity) &&
+			!knownTrap {
 			continue
 		}
 
@@ -438,6 +443,33 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 			if corpse, found := g.stores.Corpses.Get(entity); found {
 				input["corpse_monster_id"] = corpse.MonsterID
 			}
+
+		case isTrap:
+			revealed, err := trapState.Get("revealed")
+
+			if err != nil {
+				panic(err)
+			}
+
+			if !revealed.(bool) || !knownTrap {
+				continue
+			}
+
+			kind, err := trapState.Get("kind_id")
+
+			if err != nil {
+				panic(err)
+			}
+
+			kindID, role = kind.(string), "trap"
+			input["color_id"] = "LIGHTGREY"
+
+			if !visible {
+				input["color_id"] = "DARKGREY"
+			}
+
+		default:
+			continue
 		}
 
 		input["role"] = role

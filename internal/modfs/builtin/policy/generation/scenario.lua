@@ -24,7 +24,8 @@ function module.run(ctx, input)
     for _, level in ipairs(result.levels) do
         level.cells = features.decode_source_rows(level.rows)
         if level.vault_records then
-            level.vault_records = features.apply_vault_terrain(level.cells, level.vault_records)
+            level.vault_records = features.apply_vault_terrain(
+                level.cells, level.vault_records, ctx, level.id)
         end
         level.rows = nil
     end

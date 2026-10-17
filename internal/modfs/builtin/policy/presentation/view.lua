@@ -58,6 +58,11 @@ function view.entity(ctx, input)
     elseif role == "cloud" then
         name = clouds.get(kind_id).name
         glyph = string.byte("#")
+    elseif role == "trap" then
+        local trap = catalog.get("traps", kind_id)
+        name = trap.name
+        glyph = string.byte(trap.glyph)
+        color_id = input.color_id or "LIGHTGREY"
     elseif role == "item" then
         local item = catalog.get("items", kind_id)
         local entity = ctx:entity(input.item_entity_id)
@@ -129,6 +134,11 @@ function view.entity_color(input)
 
     if input.role == "monster" then
         return { fg = colors.brown }
+    end
+
+    if input.role == "trap" then
+        return { fg = input.color_id == "DARKGREY" and
+            colors.dark_grey or colors.light_grey }
     end
 
     if input.role == "item" then

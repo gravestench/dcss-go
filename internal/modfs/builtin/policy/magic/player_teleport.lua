@@ -4,6 +4,7 @@ local component = require("constants.component")
 local translocation = require("policy.scrolls.translocation")
 local vision = require("policy.character.vision")
 local zap_ids = require("policy.magic.effects.zaps.ids")
+local trap_held = require("policy.traps.held")
 
 local teleport = {}
 local MAX_ATTEMPTS = 500
@@ -57,6 +58,10 @@ function teleport.tick(ctx, player, aut)
 
     ctx:remove(player, component.PLAYER_TELEPORT)
 
+    teleport.now(ctx, player)
+end
+
+function teleport.now(ctx, player)
     local reason = translocation.restriction(ctx, player)
 
     if reason then
@@ -86,6 +91,7 @@ function teleport.tick(ctx, player, aut)
         (1 + ctx:random("teleport", 3)) * 10)
 
     if x ~= origin.x or y ~= origin.y then
+        trap_held.release(ctx, player)
         ctx:move_actor(player, origin.level_id, x, y)
     end
 

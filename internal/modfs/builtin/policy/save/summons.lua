@@ -4,6 +4,7 @@ local items = require("ids.items")
 local component = require("constants.component")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
+local traps = require("ids.traps")
 local net = require("policy.combat.net")
 local poison = require("policy.combat.monster_poison")
 local slow = require("policy.combat.monster_slow")
@@ -20,7 +21,10 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
             state.source_id == spells.SPELL_DEATH_CHANNEL or
             state.source_id == spells.SPELL_ANIMATE_DEAD or
             state.source_id == spells.SPELL_NECROTISE)
-    local permanent = permanent_spell and state.expires_aut == 0
+    local trap_source = state.source_category == categories.TRAPS and
+        state.source_id == traps.TRAP_ZOT
+    local permanent = (permanent_spell or trap_source) and
+        state.expires_aut == 0
 
     if state.owner ~= ctx:player() or state.source_id == "" or
         (not permanent and state.expires_aut <= current_aut) or
@@ -37,6 +41,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
 
     if state.source_category ~= categories.SPELLS and
         state.source_category ~= categories.MUTATIONS and
+        not trap_source and
         not item_source and not scroll_source then
         error("summon " .. ctx:id(entity) .. " has invalid origin category")
     end
@@ -82,11 +87,15 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         local marker = ctx:get(segment.gateway, component.SUMMON_GATEWAY)
         local head_actor = ctx:get(segment.head, component.ACTOR)
 
-        if state.source_id ~= spells.SPELL_MALIGN_GATEWAY or
+        if (state.source_id ~= spells.SPELL_MALIGN_GATEWAY and
+            not trap_source) or
             actor.kind_id ~= monsters.MONS_ELDRITCH_TENTACLE_SEGMENT or
             not head or head.source_id ~= state.source_id or
+            head.source_category ~= state.source_category or
             head.owner ~= state.owner or
             not marker or marker.tentacle_id ~= ctx:id(segment.head) or
+            marker.source_id ~= state.source_id or
+            marker.source_category ~= state.source_category or
             not head_actor or head_actor.kind_id ~= monsters.MONS_ELDRITCH_TENTACLE or
             state.expires_aut ~= head.expires_aut or
             segment.index < 1 or segment.index > 4 then

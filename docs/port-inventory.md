@@ -45,6 +45,8 @@ context rather than a handler API for each game domain.
 | Character | Every legal selectable species/job pair starts; Lua owns chosen or fixed weapons, starting gear, species adjustments, attributes, skills, HP/MP, spell knowledge, Djinni's future spell schedule, religion, and durable origin state; training, XP, level gains, stat choice | `policy/character`, `schemas/character_origin.lua`, `systems/character_*` |
 | Dungeon | Seeded basic-layout D:1–2, rooms, corridors, doors, paired stairs, source-sized population, fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
 | Arrival vault population | All 337 selectable source arrivals resolve authored monster and item expressions through Lua content catalogs, place Akara entities with vault origins, and retain source selection in level records; a mod can add a monster and arrival file by path | `policy/generation/vaults/specs`, `policy/population/vaults.lua`, `schemas/vault_origin.lua` |
+| Item generation | Source-backed class and subtype selection feeds floor loot, monster equipment, vault requests, and acquirement; selected generated state is committed to saves | `policy/item_generation`, `systems/item_*` |
+| Traps | Ten active source trap definitions and effects in Lua; authored vault traps become saved Akara entities; entry, held state, marks, timed passages, Zot outcomes, visibility, and mod-added trap files use one catalog | `content/traps`, `policy/traps`, `systems/world_traps.lua` |
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; item and spell capability dispatch without monster-ID handlers | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
 | Combat | Fighter melee and headbutts; generated player melee brands and Chaos Knight's forced chaos brand in Lua, including saved spectral allies with damage sharing, distortion banishment, and chaos monster effects; all seven active magical staves with source skill procs and AC/resistance routes; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
 | Items and status | Equipment, consumables, statuses, and identification | `policy/inventory`, `policy/items`, `systems/item_*` |
@@ -128,18 +130,26 @@ ported. Authored monsters and items now materialize as ECS entities; terrain,
 markers, and other unimplemented effects remain typed pending level records.
 Authored water and lava monsters convert their spawn cells to their primary
 habitat. Random arrival items use source class weights and preserve ordinary,
-depth-boosted `*`, good, and superb requests. Subtype distributions and
-artefact properties still need the full item-generation domain; current
-gear uses the ordinary item schema for enchantment and charges.
+depth-boosted `*`, good, and superb requests. The completed item-generation
+slice selects source-backed subtypes and properties for floor loot, gear,
+vault requests, and acquirement; special artefact names and identification
+remain separate work.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,
 more layouts and branches, the Abyss monster roster and shifting terrain,
 full source parity for chaos clone allegiance and shapeshifter form selection,
-artefact-specific identification and names, traps, clouds, shops, runes,
+artefact-specific identification and names, clouds, shops, runes,
 endgame, and the
 complete item and equipment system. Native C++ saves, tiles, and network
 client compatibility are outside this Go port.
+
+Trap placement and activation are playable for all ten active trap IDs. The
+pressure plate emits a position event; vault marker listeners remain for the
+broader vault-marker domain. Monster shaft avoidance and web immunity use
+the currently imported monster traits; native-branch and allegiance cases
+need the fuller monster AI domain. Malevolence uses newly seen cells on
+player movement; other visibility updates need the wider view-event pass.
 
 The mutation source audit also found Vampire references in weapon equip
 messages, unrand item effects, religious evil status, monster spell choice,

@@ -145,6 +145,9 @@ local function add_source_record(records, vault, source, x, y)
     elseif implicit.monsters[source] then
         kind = effects.MONSTER
         identity = implicit.monsters[source]
+    elseif implicit.traps[source] then
+        kind = effects.FEATURE
+        identity = implicit.traps[source]
     end
 
     if kind then
@@ -432,7 +435,8 @@ function placement.place(_, builder, vault, player)
     local explicit = {}
 
     for _, record in ipairs(intents) do
-        if (record.kind == effects.ITEM or record.kind == effects.MONSTER) and
+        if (record.kind == effects.ITEM or record.kind == effects.MONSTER or
+            record.kind == effects.FEATURE) and
             record.targets and record.targets ~= "" then
             explicit[record.kind .. ":" .. record.x .. ":" .. record.y] = true
         end

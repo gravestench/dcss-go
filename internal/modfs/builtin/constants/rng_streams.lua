@@ -2,6 +2,7 @@
 local streams = {
     ACQUIREMENT = "acquirement",
     ITEM_GENERATION = "item_generation",
+    TRAPS = "traps",
 }
 
 return streams

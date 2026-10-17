@@ -8,6 +8,7 @@ local placement = require("policy.generation.vaults.placement")
 local population = require("policy.population.vaults")
 local selection = require("policy.generation.vaults.selection")
 local terrain = require("constants.terrain")
+local trap_placement = require("policy.traps.placement")
 
 local test = {}
 
@@ -145,7 +146,10 @@ local function check_arrival(id, index)
     local world = entity_context()
     local _, outcomes = population.materialize(world, level)
 
-    harness.equal(#outcomes, expected, id .. " materialized record count")
+    local placed_traps = world:query({ component.WORLD_TRAP })
+
+    harness.equal(#outcomes, expected + #placed_traps,
+        id .. " materialized record count")
 
     local origins = {}
 
@@ -158,7 +162,10 @@ local function check_arrival(id, index)
     end
 
     for _, outcome in ipairs(outcomes) do
-        harness.truthy(outcome.no_spawn or origins[outcome.index],
+        local record = level.vault_records[outcome.index]
+
+        harness.truthy(outcome.no_spawn or origins[outcome.index] or
+            trap_placement.is_trap(record),
             id .. " selected an entity without an ECS origin")
     end
 end

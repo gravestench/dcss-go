@@ -7,6 +7,7 @@ local catalog = require("policy.catalog")
 local component = require("constants.component")
 local monster_flags = require("constants.monster_flags")
 local origin_policy = require("policy.population.origin")
+local trap_placement = require("policy.traps.placement")
 
 local vaults = {}
 
@@ -119,7 +120,19 @@ function vaults.materialize(ctx, level)
     for _, record in ipairs(level.vault_records or {}) do
         local arguments = record.arguments or {}
 
-        if arguments.kind_id and arguments.kind_id ~= "" then
+        if (record.kind == effects.FEATURE or
+            record.kind == effects.SOURCE_FEATURE) and
+            trap_placement.is_trap(record) then
+            local kind_id = trap_placement.materialize(ctx, level, record)
+
+            if kind_id then
+                materialized[#materialized + 1] = {
+                    level_id = level.id,
+                    index = record.index,
+                    kind_id = kind_id,
+                }
+            end
+        elseif arguments.kind_id and arguments.kind_id ~= "" then
             local no_spawn = false
             local gear
 

@@ -53,7 +53,9 @@ function system.update(ctx)
 
                 local definition = catalog.get("monsters", actor.kind_id)
 
-                if kills[ctx:id(entity)] then
+                local summoned = ctx:has(entity, component.SUMMON)
+
+                if kills[ctx:id(entity)] and not summoned then
                     local xp = death.experience(definition, health.max)
                     local player = ctx:player()
                     local player_pos = ctx:get(player, "core.position")
@@ -90,7 +92,8 @@ function system.update(ctx)
                     definition, position,
                     kills[ctx:id(entity)] == true)
 
-                if kills[ctx:id(entity)] and not consumed_corpse then
+                if kills[ctx:id(entity)] and not consumed_corpse and
+                    not summoned then
                     death.corpse(ctx, definition, position,
                         ctx:get(entity, component.VAULT_ORIGIN))
                 end

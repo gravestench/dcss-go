@@ -1,4 +1,3 @@
-local spells = require("ids.spells")
 local monsters = require("ids.monsters")
 local component = require("constants.component")
 local terrain_ids = require("constants.terrain")
@@ -20,7 +19,7 @@ function system.update(ctx, active)
         if state.phase == 0 and ctx:aut() >= state.expires_aut and
             not ctx:actor_at(state.level_id, state.x, state.y) then
             local tentacle = summons.spawn(ctx, state.owner,
-                spells.SPELL_MALIGN_GATEWAY, monsters.MONS_ELDRITCH_TENTACLE, 1, 1, {
+                state.source_id, monsters.MONS_ELDRITCH_TENTACLE, 1, 1, {
                     anchor = {
                         level_id = state.level_id,
                         x = state.x,
@@ -28,6 +27,8 @@ function system.update(ctx, active)
                     },
                     exact = { x = state.x, y = state.y },
                     expires_aut = ctx:aut() + 90,
+                    source_category = state.source_category,
+                    hostile = state.hostile,
                 })
 
             if tentacle then

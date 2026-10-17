@@ -28,4 +28,8 @@ implicit.monsters = {
     ["9"] = "moderate_out_of_depth_monster",
 }
 
+implicit.traps = {
+    ["^"] = "random_trap",
+}
+
 return implicit

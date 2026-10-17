@@ -125,7 +125,9 @@ func populationVaultRecords(level *Level) []any {
 		if !record.Pending ||
 			record.Overridden ||
 			(record.Kind != vault.KindItem &&
-				record.Kind != vault.KindMonster) {
+				record.Kind != vault.KindMonster &&
+				record.Kind != vault.KindFeature &&
+				record.Kind != vault.KindSourceFeature) {
 			continue
 		}
 
@@ -138,7 +140,8 @@ func populationVaultRecords(level *Level) []any {
 			}
 		}
 
-		if !selected {
+		if !selected &&
+			(record.Kind == vault.KindItem || record.Kind == vault.KindMonster) {
 			continue
 		}
 
@@ -219,7 +222,10 @@ func (g *Game) markMaterializedVaultRecords(value any) error {
 		record := &level.vaultRecords[index-1]
 
 		if !record.Pending ||
-			(record.Kind != vault.KindItem && record.Kind != vault.KindMonster) {
+			(record.Kind != vault.KindItem &&
+				record.Kind != vault.KindMonster &&
+				record.Kind != vault.KindFeature &&
+				record.Kind != vault.KindSourceFeature) {
 			return fmt.Errorf("Lua population materialized an invalid vault record")
 		}
 

@@ -1,4 +1,3 @@
-local spells = require("ids.spells")
 local monsters = require("ids.monsters")
 local component = require("constants.component")
 local intent_ids = require("constants.intent")
@@ -193,7 +192,7 @@ function tentacle.refresh(ctx, head)
 
         if wanted[position_key] then
             local segment = summons.spawn(ctx, head_state.owner,
-                spells.SPELL_MALIGN_GATEWAY, monsters.MONS_ELDRITCH_TENTACLE_SEGMENT,
+                head_state.source_id, monsters.MONS_ELDRITCH_TENTACLE_SEGMENT,
                 0, 6, {
                     anchor = {
                         level_id = base.level_id,
@@ -204,6 +203,8 @@ function tentacle.refresh(ctx, head)
                     hp = head_health.current,
                     expires_aut = head_state.expires_aut,
                     segment = true,
+                    source_category = head_state.source_category,
+                    hostile = head_state.hostile,
                 })
 
             if segment then

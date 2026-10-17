@@ -1,0 +1,7 @@
+NAME: zz_trap_test
+TAGS: arrival no_trap_gen
+WEIGHT: 100000000
+KFEAT: ^ = teleport trap
+MAP
+@^..
+ENDMAP

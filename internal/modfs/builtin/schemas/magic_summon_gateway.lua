@@ -1,4 +1,7 @@
 -- The portal marker persists through the tentacle's occupation of its cell.
+local categories = require("constants.catalog")
+local spells = require("ids.spells")
+
 local schema = {
     id = "magic.summon_gateway",
     version = 1,
@@ -12,6 +15,20 @@ local schema = {
         power = { type = "int64", default = 0 },
         phase = { type = "int64", default = 0 },
         tentacle_id = { type = "int64", default = 0 },
+        source_category = {
+            type = "string",
+            default = categories.SPELLS,
+        },
+
+        source_id = {
+            type = "string",
+            default = spells.SPELL_MALIGN_GATEWAY,
+        },
+
+        hostile = {
+            type = "bool",
+            default = false,
+        },
     },
 }
 

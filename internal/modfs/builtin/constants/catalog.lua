@@ -9,6 +9,7 @@ local catalog = {
     MUTATIONS = "mutations",
     SPECIES = "species",
     SPELLS = "spells",
+    TRAPS = "traps",
     VAULTS = "vaults",
 }
 

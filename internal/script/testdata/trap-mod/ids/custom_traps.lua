@@ -1,0 +1,3 @@
+return {
+    TRAP_TEST_CUSTOM = "TRAP_TEST_CUSTOM",
+}
