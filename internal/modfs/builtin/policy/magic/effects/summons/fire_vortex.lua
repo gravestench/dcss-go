@@ -4,7 +4,8 @@ local component = require("constants.component")
 local intent_ids = require("constants.intent")
 local death_hooks = require("policy.combat.death_hooks")
 local targets = require("policy.ai.targets")
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local summons = require("policy.magic.effects.summons.common")
 
 local vortex = {}
@@ -75,7 +76,7 @@ local function fire_cloud(ctx, entity, position)
     end
 
     -- Source: mon-death.cc:1890-1894 leaves a 2+random2(4) turn fire cloud.
-    cloud.place(ctx, "CLOUD_FIRE", state.owner, position.level_id,
+    cloud.place(ctx, cloud_ids.CLOUD_FIRE, state.owner, position.level_id,
         position.x, position.y, (2 + ctx:random("spell", 4)) * 10)
 end
 

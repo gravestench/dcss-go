@@ -272,7 +272,7 @@ func TestFlameWaveExpandsOnWaitAndStopsAtMaxRadius(t *testing.T) {
 }
 
 func cloudAtForTest(g *Game, x, y int, kind string) bool {
-	store := g.scripts.Components()["magic.cloud"]
+	store := g.scripts.Components()["world.cloud"]
 
 	for _, entity := range store.Entities() {
 		cloud, _ := store.Get(entity)
@@ -2414,7 +2414,7 @@ func TestInnerFlameMarkedDeathExplodesAndCreatesFireClouds(t *testing.T) {
 		t.Fatal("Inner Flame victim survived death processing")
 	}
 
-	if got := len(g.scripts.Components()["magic.cloud"].Entities()); got == 0 {
+	if got := len(g.scripts.Components()["world.cloud"].Entities()); got == 0 {
 		t.Fatal("Inner Flame explosion created no fire clouds")
 	}
 
@@ -2437,13 +2437,15 @@ func TestFireCloudBurnsOccupantOnItsAction(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := g.scripts.Components()["magic.cloud"].Set(entity, map[string]any{
-		"kind_id":     "CLOUD_FIRE",
-		"owner":       g.player,
-		"level_id":    int64(position.LevelID),
-		"x":           int64(position.X),
-		"y":           int64(position.Y),
-		"expires_aut": int64(1000),
+	if _, err := g.scripts.Components()["world.cloud"].Set(entity, map[string]any{
+		"kind_id":         "CLOUD_FIRE",
+		"source_actor_id": uint64(g.player),
+		"kill_category":   "KC_YOU",
+		"killer_type":     "KILL_YOU_MISSILE",
+		"level_id":        int64(position.LevelID),
+		"x":               int64(position.X),
+		"y":               int64(position.Y),
+		"decay_aut":       int64(1000),
 	}); err != nil {
 		t.Fatal(err)
 	}

@@ -1,5 +1,6 @@
 -- Source: item-use.cc:SCR_BLINKING and spl-transloc.cc:controlled_blink.
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local component = require("constants.component")
 local item_ids = require("ids.items")
 local movement = require("policy.abilities.movement")
@@ -71,7 +72,7 @@ function effect.apply(ctx, player, request)
     local x = origin.x + request.dx
     local y = origin.y + request.dy
 
-    cloud.place(ctx, zap_ids.cloud.TLOC_ENERGY, player,
+    cloud.place(ctx, cloud_ids.CLOUD_TLOC_ENERGY, player,
         origin.level_id, origin.x, origin.y,
         (1 + ctx:random("teleport", 3)) * 10)
     ctx:move_actor(player, origin.level_id, x, y)

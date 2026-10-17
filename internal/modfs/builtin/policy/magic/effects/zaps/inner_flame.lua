@@ -2,7 +2,8 @@ local component = require("constants.component")
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local spells = require("ids.spells")
 local catalog = require("policy.catalog")
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local death_hooks = require("policy.combat.death_hooks")
 local explosion = require("policy.combat.explosion")
 local explosive = require("policy.magic.effects.zaps.explosive")
@@ -105,7 +106,7 @@ function flame.on_death(ctx, monster, definition, position)
         for dx = -1, 1 do
             if (dx ~= 0 or dy ~= 0) and
                 ctx:random("spell", 5) ~= 0 then
-                cloud.place(ctx, zap_ids.cloud.FIRE, mark.source,
+                cloud.place(ctx, cloud_ids.CLOUD_FIRE, mark.source,
                     position.level_id, position.x + dx, position.y + dy,
                     10 + ctx:random("spell", 10))
             end

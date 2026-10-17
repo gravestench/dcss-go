@@ -1,5 +1,6 @@
 -- Source: item-use.cc:SCR_FOG calls big_cloud with power 50, size 8-15.
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local component = require("constants.component")
 local item_ids = require("ids.items")
 local scrolls = require("policy.scrolls")
@@ -8,10 +9,10 @@ local zap_ids = require("policy.magic.effects.zaps.ids")
 local effect = {}
 
 local smoke_kinds = {
-    zap_ids.cloud.GREY_SMOKE,
-    zap_ids.cloud.BLUE_SMOKE,
-    zap_ids.cloud.BLACK_SMOKE,
-    zap_ids.cloud.PURPLE_SMOKE,
+    cloud_ids.CLOUD_GREY_SMOKE,
+    cloud_ids.CLOUD_BLUE_SMOKE,
+    cloud_ids.CLOUD_BLACK_SMOKE,
+    cloud_ids.CLOUD_PURPLE_SMOKE,
 }
 
 local directions = {

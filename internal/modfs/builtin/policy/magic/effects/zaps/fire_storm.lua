@@ -3,7 +3,8 @@ local zap_ids = require("policy.magic.effects.zaps.ids")
 local spells = require("ids.spells")
 local monsters = require("ids.monsters")
 local terrain = require("constants.terrain")
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local explosion = require("policy.combat.explosion")
 local explosive = require("policy.magic.effects.zaps.explosive")
 local range = require("policy.magic.range")
@@ -61,7 +62,7 @@ function fire_storm.resolve(ctx, player, intent, _, power)
         local duration = 2 + math.floor((ctx:random("spell", 5) +
             ctx:random("spell", 5)) / 2)
 
-        cloud.place(ctx, zap_ids.cloud.FIRE, player,
+        cloud.place(ctx, cloud_ids.CLOUD_FIRE, player,
             origin.level_id, cell.x, cell.y, duration * 10)
 
         if ctx:cell(origin.level_id, cell.x, cell.y) == terrain.DNGN_FLOOR and

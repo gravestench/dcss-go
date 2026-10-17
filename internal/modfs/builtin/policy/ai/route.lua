@@ -1,4 +1,5 @@
 local common = require("policy.ai.common")
+local cloud_danger = require("policy.clouds.danger")
 
 local route = {}
 
@@ -30,7 +31,21 @@ local function step_intent(x, y, target, dx, dy, attack_goal)
     }
 end
 
-local function direct_intent(ctx, state, position, target, attack_goal)
+local function safe_move(ctx, entity, position, x, y)
+    if not ctx:walkable(position.level_id, x, y) or
+        ctx:actor_at(position.level_id, x, y) then
+        return false
+    end
+
+    return not cloud_danger.avoids(ctx, entity, {
+        level_id = position.level_id,
+        x = x,
+        y = y,
+    }, false)
+end
+
+local function direct_intent(ctx, entity, state, position,
+    target, attack_goal)
     local dx = sign(state.target_x - position.x)
     local dy = sign(state.target_y - position.y)
     local steps = {
@@ -55,8 +70,7 @@ local function direct_intent(ctx, state, position, target, attack_goal)
                 return { kind = 6 }
             end
 
-            if ctx:walkable(position.level_id, x, y) and
-                not ctx:actor_at(position.level_id, x, y) then
+            if safe_move(ctx, entity, position, x, y) then
                 return step_intent(x, y, target, step_x, step_y,
                     attack_goal)
             end
@@ -64,6 +78,31 @@ local function direct_intent(ctx, state, position, target, attack_goal)
     end
 
     return nil
+end
+
+local function safe_detour(ctx, entity, position, target, attack_goal)
+    local best
+    local best_distance
+
+    for dy = -1, 1 do
+        for dx = -1, 1 do
+            if dx ~= 0 or dy ~= 0 then
+                local x = position.x + dx
+                local y = position.y + dy
+                local distance = common.distance(x, y,
+                    target.x, target.y)
+
+                if safe_move(ctx, entity, position, x, y) and
+                    (not best_distance or distance < best_distance) then
+                    best = step_intent(x, y, target, dx, dy,
+                        attack_goal)
+                    best_distance = distance
+                end
+            end
+        end
+    end
+
+    return best or { kind = 6 }
 end
 
 local function goal_actor(ctx, entity, state, position, target,
@@ -93,7 +132,7 @@ function route.follow(ctx, entity, state, position, target, target_entity,
         target_entity)
 
     if ctx:visible(level_id, position.x, position.y, 7, state.target_x, state.target_y) then
-        local direct = direct_intent(ctx, state, position, target,
+        local direct = direct_intent(ctx, entity, state, position, target,
             attack_goal)
 
         if direct then
@@ -124,6 +163,11 @@ function route.follow(ctx, entity, state, position, target, target_entity,
         return {
             kind = 6,
         }
+    end
+
+    if not safe_move(ctx, entity, position, x, y) then
+        return safe_detour(ctx, entity, position, target,
+            attack_goal)
     end
 
     return step_intent(x, y, target, dx, dy, attack_goal)

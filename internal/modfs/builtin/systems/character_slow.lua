@@ -11,7 +11,7 @@ register.system({
     id = "character.slow.tick",
     scope = "active",
     query = { component.PLAYER_SLOW },
-    before = { "magic.status.miasma.tick" },
+    before = { "world.cloud.player_exposure" },
     update = system.update,
 })
 

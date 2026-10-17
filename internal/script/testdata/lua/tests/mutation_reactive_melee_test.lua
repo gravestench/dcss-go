@@ -63,6 +63,10 @@ local function battle_context(ctx, player, freeze_roll)
             return bound - 1
         end
 
+        if stream == "clouds" then
+            return 0
+        end
+
         harness.equal(stream, "melee", "reaction uses the melee RNG")
 
         if freeze_roll and bound == 11 then
@@ -120,7 +124,7 @@ function test.run(ctx)
     records.grant_acquired(ctx, player, mutations.MUT_FOUL_STENCH, 3)
     reactions.after_hit(battle, monster, definition, 1)
 
-    harness.equal(#ctx:query({ component.MIASMA_CLOUD }), 1,
+    harness.equal(#ctx:query({ component.WORLD_CLOUD }), 1,
         "a damaging hit can emit a miasma cloud")
 
     records.grant_acquired(ctx, player, mutations.MUT_EYEBALLS, 3)

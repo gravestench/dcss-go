@@ -139,7 +139,7 @@ actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,
 more layouts and branches, the Abyss monster roster and shifting terrain,
 full source parity for chaos clone allegiance and shapeshifter form selection,
-artefact-specific identification and names, clouds, shops, runes,
+artefact-specific identification and names, shops, runes,
 endgame, and the
 complete item and equipment system. Native C++ saves, tiles, and network
 client compatibility are outside this Go port.
@@ -170,8 +170,8 @@ the implemented non-artefact classes remain. Source religion conduct
 remains part of the religion domain.
 The experience potion keeps level XP separate from allocatable skill XP; its
 saved pending pool is spent on the skills screen. Lignification confirms
-before entering tree form in a live fire or cold cloud; additional cloud
-types will join that rule when their damage is ported. Potion effects are
+before entering tree form in a live fire or cold cloud; the wider cloud
+catalog now uses the same saved world state. Potion effects are
 registered by file, and a mod-added active
 potion or scroll without an effect fails during startup.
 
@@ -180,8 +180,14 @@ cloud, summon, teleport, vulnerability, acquirement-offer, and map state.
 The acquirement item picker follows the source class shuffle and guaranteed
 gold offer, but its subtype weighting, artefact generation, and god filters
 still need the wider item and religion domains. Fog uses opaque smoke in
-the map view and sight calculation; exact cloud spread and wind effects
-remain to be ported.
+the map view and sight calculation. All 34 concrete cloud definitions now
+load from committed Lua files. One saved world-cloud component owns each
+occupied cell; Lua policies handle placement, actor exposure, monster
+avoidance, field aging, and presentation. Rain and summoned terrain share
+saved temporary-terrain state. Cloud damage, statuses, source credit, acid
+corrosion, and deterministic spread have source-backed implementations.
+Wind, sanctuary, and terrain-destruction veto need their neighboring world
+systems to supply live conditions before those interactions are complete.
 
 All seven active magical staves now use one base weapon profile and Lua
 metadata in their individual item definitions. Wielded staves enhance their

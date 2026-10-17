@@ -23,7 +23,7 @@ func TestFogAndPoisonScrollsPlaceSavedClouds(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			clouds := g.scripts.Components()["magic.cloud"].Entities()
+			clouds := g.scripts.Components()["world.cloud"].Entities()
 
 			if result.Spent != 10 || len(clouds) == 0 {
 				t.Fatalf("%s placed %d clouds, spent %d aut",
@@ -40,7 +40,7 @@ func TestFogAndPoisonScrollsPlaceSavedClouds(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if got := len(restored.scripts.Components()["magic.cloud"].Entities()); got != len(clouds) {
+			if got := len(restored.scripts.Components()["world.cloud"].Entities()); got != len(clouds) {
 				t.Fatalf("restored %d clouds; want %d", got, len(clouds))
 			}
 		})

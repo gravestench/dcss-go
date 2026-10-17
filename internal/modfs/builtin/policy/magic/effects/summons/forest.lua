@@ -5,6 +5,7 @@ local terrain_ids = require("constants.terrain")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
 local terrain = require("policy.magic.effects.summons.terrain")
+local temporary_terrain = require("policy.world.temporary_terrain")
 
 local spell_id = spells.SPELL_SUMMON_FOREST
 local forest_walls = {
@@ -133,8 +134,9 @@ local function pond(ctx, player, position, expires_aut)
                             next_feature = terrain_ids.DNGN_DEEP_WATER
                         end
 
-                        terrain.temporary(ctx, player, spell_id, position.level_id,
-                            x, y, next_feature, expires_aut)
+                        temporary_terrain.place(ctx, player, spell_id,
+                            position.level_id, x, y, next_feature,
+                            expires_aut - ctx:aut())
                     end
                 end
             end
@@ -166,14 +168,16 @@ function spell_effects.resolve(ctx, player, _, _, power)
 
                 if forest_walls[feature] and
                     summons.roll(ctx, 150) < power then
-                    terrain.temporary(ctx, player, spell_id, position.level_id,
-                        x, y, terrain_ids.DNGN_TREE, expires_aut)
+                    temporary_terrain.place(ctx, player, spell_id,
+                        position.level_id, x, y, terrain_ids.DNGN_TREE,
+                        duration)
                 elseif feature == terrain_ids.DNGN_FLOOR and
                     summons.roll(ctx, 1250) < power and
                     not ctx:actor_at(position.level_id, x, y) and
                     connected_after_tree(ctx, position.level_id, x, y) then
-                    terrain.temporary(ctx, player, spell_id, position.level_id,
-                        x, y, terrain_ids.DNGN_TREE, expires_aut)
+                    temporary_terrain.place(ctx, player, spell_id,
+                        position.level_id, x, y, terrain_ids.DNGN_TREE,
+                        duration)
                 end
             end
         end

@@ -40,13 +40,15 @@ func cloudDamageWithMutation(t *testing.T, kindID, mutationID string) int {
 		t.Fatal(err)
 	}
 
-	if _, err := g.scripts.Components()["magic.cloud"].Set(cloud, map[string]any{
-		"kind_id":     kindID,
-		"owner":       g.player,
-		"level_id":    int64(position.LevelID),
-		"x":           int64(position.X),
-		"y":           int64(position.Y),
-		"expires_aut": int64(1000),
+	if _, err := g.scripts.Components()["world.cloud"].Set(cloud, map[string]any{
+		"kind_id":         kindID,
+		"source_actor_id": uint64(g.player),
+		"kill_category":   "KC_YOU",
+		"killer_type":     "KILL_YOU_MISSILE",
+		"level_id":        int64(position.LevelID),
+		"x":               int64(position.X),
+		"y":               int64(position.Y),
+		"decay_aut":       int64(1000),
 	}); err != nil {
 		t.Fatal(err)
 	}

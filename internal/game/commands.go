@@ -311,6 +311,19 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 		return StepResult{}, err
 	}
 
+	fieldLevelID := activeLevelID
+
+	if arrived, found := g.stores.Positions.Get(g.player); found {
+		fieldLevelID = arrived.LevelID
+	}
+
+	if err := g.runWorldPolicy("world.cloud_field", map[string]any{
+		"level_id":    fieldLevelID,
+		"elapsed_aut": int64(cost),
+	}); err != nil {
+		return StepResult{}, err
+	}
+
 	if err := g.refreshVisibility(); err != nil {
 		return StepResult{}, err
 	}

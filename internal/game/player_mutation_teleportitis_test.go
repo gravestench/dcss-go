@@ -57,7 +57,16 @@ func chooseTeleportitisStreams(t *testing.T, g *Game) {
 			t.Fatal(err)
 		}
 
-		if x == 3 && y == 1 {
+		trailTurns, err := probe.Intn("teleport", 3)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// A one-turn source trail can dissipate in this same field step.
+		if x == 3 &&
+			y == 1 &&
+			trailTurns > 0 {
 			g.rng.states["teleport"] = state
 
 			return
@@ -98,7 +107,7 @@ func TestTeleportitisMovesTowardMonsterAndRestores(t *testing.T) {
 		t.Fatalf("teleportitis had no source message: %+v", result.Events)
 	}
 
-	clouds := g.scripts.Components()["magic.cloud"]
+	clouds := g.scripts.Components()["world.cloud"]
 	foundTrail := false
 
 	for _, entity := range clouds.Entities() {
@@ -129,7 +138,7 @@ func TestTeleportitisMovesTowardMonsterAndRestores(t *testing.T) {
 
 	if loaded.X != position.X ||
 		loaded.Y != position.Y ||
-		len(restored.scripts.Components()["magic.cloud"].Entities()) == 0 {
+		len(restored.scripts.Components()["world.cloud"].Entities()) == 0 {
 		t.Fatal("restore lost teleport destination or translocation cloud")
 	}
 

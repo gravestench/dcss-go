@@ -1,7 +1,8 @@
 local component = require("constants.component")
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local spells = require("ids.spells")
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 
@@ -68,7 +69,7 @@ function freezing_cloud.resolve(ctx, player, intent, _, power)
 
         for _, cell in ipairs(queue) do
             if placed < count then
-                if cloud.place(ctx, zap_ids.cloud.COLD, player, level,
+                if cloud.place(ctx, cloud_ids.CLOUD_COLD, player, level,
                     cell.x, cell.y, duration(ctx, power)) then
                     placed = placed + 1
                 end

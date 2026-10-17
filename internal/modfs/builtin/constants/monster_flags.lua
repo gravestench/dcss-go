@@ -17,6 +17,7 @@ local flags = {
     UNIQUE = "M_UNIQUE",
     NO_SKELETON = "M_NO_SKELETON",
     CLARITY = "M_CLARITY",
+    FLIES = "M_FLIES",
 }
 
 return flags

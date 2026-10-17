@@ -129,7 +129,9 @@ function player_attack.damage(ctx, input)
         damage = damage + 1 + roll.melee(ctx, 10)
     end
 
-    local slaying = input.weapon_plus + (input.slay or 0)
+    local corrosion = require("policy.combat.player_corrosion")
+    local slaying = input.weapon_plus + (input.slay or 0) -
+        corrosion.penalty(ctx, ctx:player())
 
     if slaying >= 0 then
         damage = damage + roll.melee(ctx, 1 + slaying)

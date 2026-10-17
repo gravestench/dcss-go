@@ -1,7 +1,8 @@
 local component = require("constants.component")
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local spells = require("ids.spells")
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local explosion = require("policy.combat.explosion")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
@@ -30,7 +31,7 @@ function mephitic_cloud.resolve(ctx, player, intent, spell, power)
             local duration = 2 + ctx:random("spell", sides) +
                 ctx:random("spell", sides)
 
-            cloud.place(ctx, zap_ids.cloud.MEPHITIC, player,
+            cloud.place(ctx, cloud_ids.CLOUD_MEPHITIC, player,
                 origin.level_id, cell.x, cell.y, duration * 10)
         end
     end

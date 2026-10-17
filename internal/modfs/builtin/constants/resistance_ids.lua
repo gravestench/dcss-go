@@ -6,6 +6,7 @@ local resistances = {
     STEAM = "MR_RES_STEAM",
     NEGATIVE_ENERGY = "MR_RES_NEG",
     POISON = "MR_RES_POISON",
+    MIASMA = "MR_RES_MIASMA",
     PETRIFY = "MR_RES_PETRIFY",
     TORMENT = "MR_RES_TORMENT",
 }

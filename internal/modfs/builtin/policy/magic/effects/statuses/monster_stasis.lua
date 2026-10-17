@@ -203,6 +203,41 @@ function stasis.cast_petrify(ctx, player, intent, spell, power)
     save(ctx, target, current)
 end
 
+-- Cloud petrification has no spell aim or power roll. It uses the same two
+-- stages and saved monster status as a successful petrify enchantment.
+function stasis.cloud_petrify(ctx, target)
+    local actor = ctx:get(target, component.ACTOR)
+
+    if not actor then
+        return false
+    end
+
+    local definition = catalog.get("monsters", actor.kind_id)
+
+    if not can_petrify(definition) then
+        return false
+    end
+
+    local current = ensure(ctx, target)
+
+    if current.petrified_aut > 0 then
+        return false
+    end
+
+    if current.petrifying_aut > 0 then
+        current.petrifying_aut = 0
+        current.petrified_aut = duration(ctx, target,
+            definition, "petrified")
+    else
+        current.petrifying_aut = duration(ctx, target,
+            definition, "petrifying")
+    end
+
+    save(ctx, target, current)
+
+    return true
+end
+
 function stasis.hibernating(ctx, target)
     local current = state(ctx, target)
 

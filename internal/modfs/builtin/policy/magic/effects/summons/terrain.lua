@@ -1,38 +1,5 @@
-local component = require("constants.component")
 local terrain_ids = require("constants.terrain")
 local terrain = {}
-
-function terrain.temporary(ctx, owner, spell_id, level_id, x, y, feature, expires_aut)
-    local current = ctx:cell(level_id, x, y)
-
-    if not current or current == feature then
-        return false
-    end
-
-    for _, marker in ipairs(ctx:query({ component.SUMMON_TERRAIN })) do
-        local state = ctx:get(marker, component.SUMMON_TERRAIN)
-
-        if state.level_id == level_id and state.x == x and state.y == y then
-            return false
-        end
-    end
-
-    local marker = ctx:create()
-
-    ctx:add(marker, component.SUMMON_TERRAIN, {
-        owner = owner,
-        spell_id = spell_id,
-        level_id = level_id,
-        x = x,
-        y = y,
-        original_feature = current,
-        changed_feature = feature,
-        expires_aut = expires_aut,
-    })
-    ctx:set_cell(level_id, x, y, feature)
-
-    return true
-end
 
 function terrain.adjacent_solid(ctx, level_id, x, y)
     for dy = -1, 1 do

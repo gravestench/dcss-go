@@ -2,7 +2,8 @@ local component = require("constants.component")
 local items = require("ids.items")
 local potions = require("policy.potions")
 local forms = require("policy.magic.effects.forms.player")
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local zap_ids = require("policy.magic.effects.zaps.ids")
 
 local effect = {}
@@ -21,10 +22,10 @@ function effect.cloud_confirmation(ctx, player)
         return nil
     end
 
-    local state = ctx:get(entity, component.CLOUD)
+    local state = ctx:get(entity, component.WORLD_CLOUD)
 
-    if state.kind_id == zap_ids.cloud.FIRE or
-        state.kind_id == zap_ids.cloud.COLD then
+    if state.kind_id == cloud_ids.CLOUD_FIRE or
+        state.kind_id == cloud_ids.CLOUD_COLD then
         return "Really become a tree while standing in a damaging cloud?"
     end
 

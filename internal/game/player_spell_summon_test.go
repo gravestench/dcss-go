@@ -102,7 +102,7 @@ func TestSummonForestChangesTypedTerrainAndRestores(t *testing.T) {
 		t.Fatalf("Forest cast = %+v, %v", result.Events, err)
 	}
 
-	markers := g.scripts.Components()["magic.summon_terrain"]
+	markers := g.scripts.Components()["world.temporary_terrain"]
 
 	if len(markers.Entities()) == 0 {
 		t.Fatal("Forest left no timed terrain markers")
@@ -122,12 +122,12 @@ func TestSummonForestChangesTypedTerrainAndRestores(t *testing.T) {
 	defer restored.Close()
 
 	if !reflect.DeepEqual(g.levels[1].Cells(), restored.levels[1].Cells()) ||
-		len(restored.scripts.Components()["magic.summon_terrain"].Entities()) == 0 {
+		len(restored.scripts.Components()["world.temporary_terrain"].Entities()) == 0 {
 		t.Fatal("Forest terrain or markers changed across restore")
 	}
 
-	marker := restored.scripts.Components()["magic.summon_terrain"].Entities()[0]
-	markerState, _ := restored.scripts.Components()["magic.summon_terrain"].Get(marker)
+	marker := restored.scripts.Components()["world.temporary_terrain"].Entities()[0]
+	markerState, _ := restored.scripts.Components()["world.temporary_terrain"].Get(marker)
 	expiry, _ := markerState.Get("expires_aut")
 
 	restored.currentAut = Aut(expiry.(int64))

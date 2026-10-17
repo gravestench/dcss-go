@@ -1,7 +1,7 @@
 -- Monster poison belongs to the affected entity and survives save/restore.
 register.component{
     id = "projectile.poison",
-    version = 1,
+    version = 2,
     fields = {
         degree = {
             type = "int64",
@@ -20,6 +20,11 @@ register.component{
 
         source = {
             type = "entity",
+        },
+
+        player_credit = {
+            type = "bool",
+            default = false,
         },
     },
 }

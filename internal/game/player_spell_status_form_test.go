@@ -1579,8 +1579,8 @@ func TestIgnitePoisonSetsNearbyToxicBogAblaze(t *testing.T) {
 		t.Fatal("Ignite Poison spent no time")
 	}
 
-	for _, entity := range g.scripts.Components()["magic.cloud"].Entities() {
-		value, _ := g.scripts.Components()["magic.cloud"].Get(entity)
+	for _, entity := range g.scripts.Components()["world.cloud"].Entities() {
+		value, _ := g.scripts.Components()["world.cloud"].Get(entity)
 		kind, _ := value.Get("kind_id")
 
 		if kind == "CLOUD_FIRE" {
@@ -1644,7 +1644,7 @@ func TestCorpseRotAuraCreatesSavedMiasmaOnKill(t *testing.T) {
 	}
 
 	if health.Current > 0 ||
-		len(g.scripts.Components()["magic.miasma_cloud"].Entities()) == 0 {
+		len(g.scripts.Components()["world.cloud"].Entities()) == 0 {
 		playerPosition, _ := g.stores.Positions.Get(g.player)
 		ratPosition, _ := g.stores.Positions.Get(rat)
 		t.Fatalf("Corpse Rot kill did not create miasma: HP=%d player=%+v rat=%+v",
@@ -1745,12 +1745,20 @@ func TestStatueFormResistsCorpseRotMiasma(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := g.scripts.Components()["magic.miasma_cloud"].Set(marker,
+	if _, err := g.scripts.Components()["world.cloud"].Set(marker,
 		map[string]any{
-			"level_id":    int64(position.LevelID),
-			"x":           int64(position.X),
-			"y":           int64(position.Y),
-			"expires_aut": int64(100),
+			"kind_id":          "CLOUD_MIASMA",
+			"level_id":         int64(position.LevelID),
+			"x":                int64(position.X),
+			"y":                int64(position.Y),
+			"decay_aut":        int64(100),
+			"spread_rate":      int64(0),
+			"exclusion_radius": int64(0),
+			"source_actor_id":  uint64(0),
+			"kill_category":    "KC_OTHER",
+			"killer_type":      "KILL_MISC",
+			"opaque":           false,
+			"special_ints":     map[string]any{},
 		}); err != nil {
 		t.Fatal(err)
 	}
@@ -1810,7 +1818,7 @@ func TestNoxiousBogChangesTerrainAndHurtsGroundedMonster(t *testing.T) {
 
 	if result.Spent == 0 ||
 		luaIntField(t, g, "magic.area_status", "noxious_bog_aut") <= 0 ||
-		len(g.scripts.Components()["magic.summon_terrain"].Entities()) == 0 {
+		len(g.scripts.Components()["world.temporary_terrain"].Entities()) == 0 {
 		t.Fatalf("Noxious Bog did not create saved terrain: %+v", result.Events)
 	}
 
@@ -1835,7 +1843,7 @@ func TestNoxiousBogChangesTerrainAndHurtsGroundedMonster(t *testing.T) {
 
 	defer loaded.Close()
 
-	if len(loaded.scripts.Components()["magic.summon_terrain"].Entities()) == 0 {
+	if len(loaded.scripts.Components()["world.temporary_terrain"].Entities()) == 0 {
 		t.Fatal("saved Noxious Bog terrain disappeared after restore")
 	}
 }

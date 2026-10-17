@@ -12,7 +12,7 @@ func (g *Game) cloudsOnLevel(levelID int) []cloudRecord {
 		return nil
 	}
 
-	store := g.scripts.Components()["magic.cloud"]
+	store := g.scripts.Components()["world.cloud"]
 
 	if store == nil {
 		return nil
@@ -34,7 +34,7 @@ func (g *Game) cloudsOnLevel(levelID int) []cloudRecord {
 		}
 
 		if int(fields["level_id"].(int64)) != levelID ||
-			fields["expires_aut"].(int64) <= int64(g.currentAut) {
+			fields["decay_aut"].(int64) <= 0 {
 			continue
 		}
 

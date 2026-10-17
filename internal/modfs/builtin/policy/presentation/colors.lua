@@ -35,6 +35,19 @@ colors.source = {
     LIGHTMAGENTA = colors.light_magenta,
     YELLOW = colors.yellow,
     WHITE = colors.white,
+    ETC_HOLY = colors.yellow,
+    ETC_MIST = colors.light_grey,
+    ETC_MUTAGENIC = colors.magenta,
+    ETC_MAGIC = colors.light_magenta,
+    ETC_VORTEX = colors.light_cyan,
+    ETC_EARTH = colors.brown,
+    ETC_ELECTRICITY = colors.light_blue,
+    ETC_DARK = colors.dark_grey,
+    ETC_INCARNADINE = colors.red,
+    ETC_RANDOM = colors.magenta,
+    ETC_AIR = colors.light_cyan,
+    ETC_SMOKE = colors.red,
+    ETC_FIRE = colors.light_red,
 }
 
 return colors

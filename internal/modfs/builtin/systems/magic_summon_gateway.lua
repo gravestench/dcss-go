@@ -57,7 +57,7 @@ register.system({
     id = "magic.summon.gateway",
     scope = "active",
     query = {},
-    after = { "magic.summon.terrain" },
+    after = { "world.temporary_terrain" },
     before = { "actor.death" },
     update = system.update,
 })

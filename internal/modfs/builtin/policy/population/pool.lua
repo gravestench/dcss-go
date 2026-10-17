@@ -94,12 +94,12 @@ function pool.at_depth(depth, allowed, scenario_id)
     return choices, total
 end
 
-function pool.pick(ctx, choices, total)
+function pool.pick(ctx, choices, total, stream)
     if total <= 0 then
         error("Dungeon has no supported population")
     end
 
-    local choice = ctx:random("population", total)
+    local choice = ctx:random(stream or "population", total)
 
     for _, row in ipairs(choices) do
         if choice < row.weight then

@@ -1,5 +1,6 @@
 -- Source: spl-transloc.cc:you_teleport and _teleport_player.
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local component = require("constants.component")
 local translocation = require("policy.scrolls.translocation")
 local vision = require("policy.character.vision")
@@ -86,7 +87,7 @@ function teleport.now(ctx, player)
         message = "Your surroundings seem slightly different."
     end
 
-    cloud.place(ctx, zap_ids.cloud.TLOC_ENERGY, player,
+    cloud.place(ctx, cloud_ids.CLOUD_TLOC_ENERGY, player,
         origin.level_id, origin.x, origin.y,
         (1 + ctx:random("teleport", 3)) * 10)
 

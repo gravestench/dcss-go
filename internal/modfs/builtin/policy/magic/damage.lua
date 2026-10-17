@@ -295,20 +295,21 @@ end
 
 -- beam.cc:apply_AC uses beam-specific armour rules with no GDR. The
 -- caller rolls raw damage first, then applies this before resistance.
-function damage.player_armour(ctx, player, raw, ac_rule)
+function damage.player_armour(ctx, player, raw, ac_rule, stream)
     local ac = fighter.defense(ctx).ac
     local saved = 0
+    stream = stream or "spell"
 
     if ac_rule == "none" then
         return raw
     end
 
     if ac_rule == "triple" then
-        saved = ctx:random("spell", ac + 1) +
-            ctx:random("spell", ac + 1) +
-            ctx:random("spell", ac + 1)
+        saved = ctx:random(stream, ac + 1) +
+            ctx:random(stream, ac + 1) +
+            ctx:random(stream, ac + 1)
     else
-        saved = ctx:random("spell", ac + 1)
+        saved = ctx:random(stream, ac + 1)
 
         if ac_rule == "half" then
             saved = math.floor(saved / 2)

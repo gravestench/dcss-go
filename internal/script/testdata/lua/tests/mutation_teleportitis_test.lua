@@ -1,8 +1,8 @@
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local branches = require("ids.branches")
 local component = require("constants.component")
 local harness = require("tests.harness")
-local ids = require("policy.magic.effects.zaps.ids")
 local jobs = require("ids.jobs")
 local monsters = require("ids.monsters")
 local mutations = require("ids.mutations")
@@ -118,8 +118,8 @@ function test.run(ctx)
 
     harness.truthy(trail,
         "teleportitis leaves source translocation energy")
-    harness.equal(ctx:get(trail, component.CLOUD).kind_id,
-        ids.cloud.TLOC_ENERGY,
+    harness.equal(ctx:get(trail, component.WORLD_CLOUD).kind_id,
+        cloud_ids.CLOUD_TLOC_ENERGY,
         "the trail uses the source translocation cloud kind")
 
     ctx:set(player, component.POSITION, {

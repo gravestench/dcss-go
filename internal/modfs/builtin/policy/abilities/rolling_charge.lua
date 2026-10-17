@@ -2,7 +2,8 @@
 -- cell-centre ray, stops beside the first monster, then makes one melee hit.
 local abilities = require("ids.abilities")
 local actions = require("policy.combat.melee_actions")
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local component = require("constants.component")
 local flight = require("policy.combat.flight")
 local ids = require("policy.magic.effects.zaps.ids")
@@ -120,7 +121,7 @@ local function dust_trail(ctx, player, level_id, origin, plan)
     end
 
     for _, cell in ipairs(visited) do
-        cloud.place(ctx, ids.cloud.DUST, player, level_id,
+        cloud.place(ctx, cloud_ids.CLOUD_DUST, player, level_id,
             cell.x, cell.y,
             (2 + ctx:random("mutation", 3)) * 10)
     end

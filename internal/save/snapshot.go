@@ -8,7 +8,7 @@ import (
 	"dcrawl-go/internal/vault"
 )
 
-const Version = 19
+const Version = 20
 
 type Snapshot struct {
 	Version        int               `json:"version"`

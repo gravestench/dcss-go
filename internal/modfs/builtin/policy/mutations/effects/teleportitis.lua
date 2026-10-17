@@ -3,7 +3,8 @@
 -- consumes the trigger without relocating the player.
 local capabilities = require("constants.mutation_capabilities")
 local catalog = require("policy.catalog")
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local component = require("constants.component")
 local effects = require("policy.mutations.effects.registry")
 local flight = require("policy.combat.flight")
@@ -136,7 +137,7 @@ function teleportitis.tick(ctx, player, aut)
         message = "Your surroundings seem slightly different."
     end
 
-    cloud.place(ctx, ids.cloud.TLOC_ENERGY, player, origin.level_id,
+    cloud.place(ctx, cloud_ids.CLOUD_TLOC_ENERGY, player, origin.level_id,
         origin.x, origin.y,
         (1 + ctx:random("teleport", 3)) * 10)
 

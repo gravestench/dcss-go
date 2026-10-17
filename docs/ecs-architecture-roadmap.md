@@ -145,7 +145,7 @@ extends the game beyond the present D:1–2 slice.
    Preserve the full-terminal DCSS presentation and minimum 79×24 layout.
 7. **Remaining DCSS domains.** Complete the mutation source audit, then add
    religion, unported forms, allies,
-   shops, clouds, runes, endgame, and full branch/content coverage as
+   shops, runes, endgame, and full branch/content coverage as
    whole Lua domain slices. Extend the Go kernel only for reusable capability
    primitives that cannot be expressed cleanly through the existing API.
 
@@ -153,6 +153,12 @@ The trap domain now uses one Lua file per definition and effect, a saved
 Akara entity for each placed trap, and Lua systems for entry, timers, and
 malevolence. Pressure-plate marker consumers, the rest of the vault families,
 and deeper monster trait parity remain in the adjacent world domains.
+
+The cloud domain now uses discoverable Lua definitions and focused effect
+modules for all 34 concrete source kinds. Saved Akara entities represent
+cloud cells and temporary terrain; Lua controls placement, exposure,
+avoidance, aging, and view metadata. World capabilities for sanctuary,
+wind, and terrain-destruction veto remain adjacent integration work.
 
 ## Slice checks
 

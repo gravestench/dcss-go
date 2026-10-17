@@ -4,7 +4,8 @@ local component = require("constants.component")
 local catalog = require("policy.catalog")
 local damage = require("policy.magic.damage")
 local common = require("policy.magic.effects.statuses.common")
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local terrain = require("constants.terrain")
 local time = require("constants.time")
 
@@ -52,18 +53,23 @@ local function burn_monster(ctx, monster, definition, power)
 end
 
 local function burn_clouds(ctx, origin, power, player)
-    for _, entity in ipairs(ctx:query({ component.CLOUD })) do
-        local cloud = ctx:get(entity, component.CLOUD)
+    local attribution = require("constants.cloud_attribution")
+
+    for _, entity in ipairs(ctx:query({ component.WORLD_CLOUD })) do
+        local cloud = ctx:get(entity, component.WORLD_CLOUD)
 
         if cloud.level_id == origin.level_id and
-            (cloud.kind_id == "CLOUD_MEPHITIC" or
-                cloud.kind_id == "CLOUD_POISON") and
+            (cloud.kind_id == cloud_ids.CLOUD_MEPHITIC or
+                cloud.kind_id == cloud_ids.CLOUD_POISON) and
             common.visible(ctx, origin, cloud) then
-            cloud.kind_id = "CLOUD_FIRE"
-            cloud.owner = player
-            cloud.expires_aut = ctx:aut() + 30 +
+            cloud.kind_id = cloud_ids.CLOUD_FIRE
+            cloud.source_actor_id = ctx:id(player)
+            cloud.kill_category = attribution.PLAYER
+            cloud.killer_type = attribution.PLAYER_MISSILE
+            cloud.decay_aut = 30 +
                 ctx:random("spell", 20 + power)
-            ctx:set(entity, component.CLOUD, cloud)
+            cloud.opaque = false
+            ctx:set(entity, component.WORLD_CLOUD, cloud)
         end
     end
 end
@@ -80,7 +86,7 @@ local function burn_bogs(ctx, origin, power, player)
                 local bound = math.floor(power / 30)
                 local extra = bound > 0 and ctx:random("spell", bound) or 0
 
-                cloud.place(ctx, "CLOUD_FIRE", player, origin.level_id,
+                cloud.place(ctx, cloud_ids.CLOUD_FIRE, player, origin.level_id,
                     x, y, (2 + extra) * time.AUT_PER_TURN)
             end
         end

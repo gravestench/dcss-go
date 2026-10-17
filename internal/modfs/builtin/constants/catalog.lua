@@ -2,6 +2,7 @@
 local catalog = {
     ARTEFACTS = "artefacts",
     BRANCHES = "branches",
+    CLOUDS = "clouds",
     ITEMS = "items",
     JOBS = "jobs",
     MONSTER_SPELLBOOKS = "monster_spellbooks",

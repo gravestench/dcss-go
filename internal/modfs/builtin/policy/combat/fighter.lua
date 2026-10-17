@@ -20,6 +20,7 @@ local staves = require("policy.inventory.staves")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
 local acrobat = require("policy.jewellery.acrobat")
+local corrosion = require("policy.combat.player_corrosion")
 local artefact_properties = require("policy.item_generation.artefacts.properties")
 local artefact_ids = require("ids.artefact_properties")
 
@@ -313,7 +314,8 @@ function fighter.defense(ctx)
         scaled_ac = scaled_ac + 500
     end
 
-    local ac = math.max(0, math.floor(scaled_ac / 100))
+    local ac = math.max(0, math.floor(scaled_ac / 100) -
+        corrosion.penalty(ctx, player))
     local shield_class = 0
 
     if shield.ac > 0 then

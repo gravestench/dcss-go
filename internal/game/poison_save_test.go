@@ -87,7 +87,7 @@ func TestRestoreRejectsInvalidPoisonOwnershipAndValue(t *testing.T) {
 			mutate: func(snapshot *save.Snapshot) {
 				playerSaveRecord(snapshot).Poison = &ecs.Poison{
 					AmountScaled:    4000,
-					SourceMonsterID: "MONS_RAT",
+					SourceMonsterID: "MONS_NOT_REGISTERED",
 				}
 			},
 		},

@@ -4,7 +4,7 @@ local harness = require("tests.harness")
 local items = require("ids.items")
 local potions = require("policy.potions")
 local resistance = require("policy.combat.player_resistance")
-local zap_ids = require("policy.magic.effects.zaps.ids")
+local cloud_ids = require("ids.clouds")
 
 local test = {}
 
@@ -49,12 +49,12 @@ function test.run(ctx)
         x = 2,
         y = 3,
     })
-    ctx:add(cloud, component.CLOUD, {
-        kind_id = zap_ids.cloud.FIRE,
+    ctx:add(cloud, component.WORLD_CLOUD, {
+        kind_id = cloud_ids.CLOUD_FIRE,
         level_id = 1,
         x = 2,
         y = 3,
-        expires_aut = 100,
+        decay_aut = 100,
     })
 
     local clocked = setmetatable({}, { __index = ctx })

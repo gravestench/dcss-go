@@ -345,8 +345,8 @@ func TestRollingChargeMovesThenAttacks(t *testing.T) {
 
 	dust := false
 
-	for _, entity := range g.scripts.Components()["magic.cloud"].Entities() {
-		cloud, found := g.scripts.Components()["magic.cloud"].Get(entity)
+	for _, entity := range g.scripts.Components()["world.cloud"].Entities() {
+		cloud, found := g.scripts.Components()["world.cloud"].Get(entity)
 
 		if !found {
 			continue

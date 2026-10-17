@@ -373,7 +373,7 @@ function effects.apply_named(ctx, name, hit)
     error("unknown chaos effect " .. tostring(name))
 end
 
-function effects.apply(ctx, hit)
+function effects.apply(ctx, hit, stream)
     local total = 0
 
     for _, choice in ipairs(choices) do
@@ -382,7 +382,7 @@ function effects.apply(ctx, hit)
         end
     end
 
-    local draw = roll.melee(ctx, total)
+    local draw = ctx:random(stream or "melee", total)
 
     for _, choice in ipairs(choices) do
         if not choice.valid or choice.valid(ctx, hit) then

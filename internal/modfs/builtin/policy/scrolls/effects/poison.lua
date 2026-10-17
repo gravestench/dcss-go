@@ -1,5 +1,6 @@
 -- Source: spl-clouds.cc:scroll_of_poison fills open visible cells.
-local cloud = require("policy.magic.effects.zaps.cloud")
+local cloud = require("policy.clouds.placement")
+local cloud_ids = require("ids.clouds")
 local component = require("constants.component")
 local item_ids = require("ids.items")
 local scrolls = require("policy.scrolls")
@@ -47,7 +48,7 @@ function effect.apply(ctx, player)
     for _, cell in ipairs(cells) do
         local duration = (10 + ctx:random("spell", 11)) * 10
 
-        cloud.place(ctx, zap_ids.cloud.POISON, player,
+        cloud.place(ctx, cloud_ids.CLOUD_POISON, player,
             cell.level_id, cell.x, cell.y, duration)
     end
 

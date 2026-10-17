@@ -1,10 +1,4 @@
-local sources = require("constants.poison_sources")
-local poison_sources = {
-    [sources.PLAYER] = true,
-    MONS_ADDER = true,
-    MONS_GOBLIN = true,
-    MONS_KOBOLD = true,
-}
+local poison_sources = require("policy.save.poison_sources")
 
 local abyss = require("policy.world.abyss")
 local component = require("constants.component")
@@ -57,7 +51,7 @@ function module.run(ctx)
 
     if poison and (poison.amount_scaled < 1000 or
         poison.amount_scaled > 2147483647 or
-        not poison_sources[poison.source_monster_id]) then
+        not poison_sources.valid(poison.source_monster_id)) then
         error("invalid player poison")
     end
 

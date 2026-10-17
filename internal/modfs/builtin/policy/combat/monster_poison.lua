@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local roll = require("policy.combat.roll")
 local monster_health = require("policy.combat.monster_health")
+local component = require("constants.component")
 
 local poison = {}
 
@@ -37,7 +38,8 @@ local function duration(ctx, speed, degree)
     return math.max(15, raw + fuzz - low)
 end
 
-function poison.apply(ctx, monster, definition, levels, source, force)
+function poison.apply(ctx, monster, definition, levels, source, force,
+    player_credit)
     if levels <= 0 then
         return false
     end
@@ -59,12 +61,15 @@ function poison.apply(ctx, monster, definition, levels, source, force)
     local old_degree = current and current.degree or 0
     local degree = math.min(4, old_degree + levels)
     local added_aut = duration(ctx, actor.speed, levels)
+    local credited = player_credit or
+        source and ctx:has(source, component.PLAYER) or false
 
     if current then
         current.degree = degree
         current.remaining_aut = current.remaining_aut + added_aut
         current.max_aut = math.max(current.max_aut, current.remaining_aut)
         current.source = source
+        current.player_credit = credited
         ctx:set(monster, "projectile.poison", current)
     else
         ctx:add(monster, "projectile.poison", {
@@ -72,6 +77,7 @@ function poison.apply(ctx, monster, definition, levels, source, force)
             remaining_aut = added_aut,
             max_aut = added_aut,
             source = source,
+            player_credit = credited,
         })
     end
 
@@ -112,7 +118,9 @@ function poison.tick(ctx, monster)
     if damage > 0 then
         health = monster_health.damage(ctx, monster, damage, state.source)
 
-        if health.current == 0 and state.source == ctx:player() then
+        if health.current == 0 and
+            (state.player_credit or state.source and
+                ctx:has(state.source, component.PLAYER)) then
             ctx:signal("player_kill", monster)
         end
     end
@@ -148,7 +156,7 @@ function poison.validate(ctx, monster)
     end
 
     if state.degree < 1 or state.degree > 4 or state.remaining_aut < 1 or
-        state.max_aut < state.remaining_aut or state.source ~= ctx:player() then
+        state.max_aut < state.remaining_aut then
         error("monster " .. ctx:id(monster) .. " has invalid poison state")
     end
 end

@@ -4,24 +4,13 @@ local component = require("constants.component")
 local holiness = require("constants.monster_holiness")
 local flags = require("constants.monster_flags")
 local monsters = require("ids.monsters")
+local fiery = require("policy.monsters.fiery")
 local enfeeble = require("policy.magic.effects.statuses.enfeeble")
 local holy_wrath = require("policy.combat.player_brands.holy_wrath")
 local roll = require("policy.combat.roll")
 
 local chaos = {
     after_death = true,
-}
-
-local fiery = {
-    [monsters.MONS_FIRE_VORTEX] = true,
-    [monsters.MONS_FIRE_ELEMENTAL] = true,
-    [monsters.MONS_EFREET] = true,
-    [monsters.MONS_AZRAEL] = true,
-    [monsters.MONS_LAVA_SNAKE] = true,
-    [monsters.MONS_SALAMANDER] = true,
-    [monsters.MONS_SALAMANDER_MYSTIC] = true,
-    [monsters.MONS_MOLTEN_GARGOYLE] = true,
-    [monsters.MONS_ORB_OF_FIRE] = true,
 }
 
 local icy = {
@@ -62,7 +51,7 @@ local function holy(_, hit)
 end
 
 local function not_fiery(_, hit)
-    return not fiery[hit.definition.id]
+    return not fiery.is(hit.definition.id)
 end
 
 local function not_icy(_, hit)
