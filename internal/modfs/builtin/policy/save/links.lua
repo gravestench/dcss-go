@@ -1,4 +1,5 @@
 local component = require("constants.component")
+local monsters = require("ids.monsters")
 
 local links = {}
 
@@ -103,6 +104,30 @@ local function validate_player_grips(ctx)
     end
 end
 
+-- A saved vine hold must point to a living adjacent head. This catches
+-- stale handles that could otherwise trap an actor permanently on reload.
+local function validate_vine_grips(ctx)
+    for _, victim in ipairs(ctx:query({ component.MONSTER_VINE_GRIP })) do
+        local grip = ctx:get(victim, component.MONSTER_VINE_GRIP)
+        local victim_health = ctx:get(victim, component.HEALTH)
+        local victim_position = ctx:get(victim, component.POSITION)
+        local head = ctx:get(grip.by, component.MONSTER_VINE)
+        local actor = ctx:get(grip.by, component.ACTOR)
+        local health = ctx:get(grip.by, component.HEALTH)
+        local position = ctx:get(grip.by, component.POSITION)
+
+        if grip.escape_attempts < 0 or grip.escape_attempts > 1000 or
+            grip.held_aut < 0 or not victim_health or
+            victim_health.current <= 0 or not victim_position or
+            not head or not actor or
+            actor.kind_id ~= monsters.MONS_SNAPLASHER_VINE or
+            not health or health.current <= 0 or not position or
+            not adjacent(victim_position, position) then
+            error("actor has invalid snaplasher vine grip")
+        end
+    end
+end
+
 -- Water hold references must still match a live actor and reachable cell.
 local function validate_water_holds(ctx)
     local player = ctx:player()
@@ -131,6 +156,7 @@ function links.validate(ctx)
     validate_followers(ctx)
     validate_constriction(ctx)
     validate_player_grips(ctx)
+    validate_vine_grips(ctx)
     validate_water_holds(ctx)
 end
 

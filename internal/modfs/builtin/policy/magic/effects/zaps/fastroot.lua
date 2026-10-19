@@ -8,6 +8,11 @@ local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local targets = require("policy.ai.targets")
+local flags = require("constants.monster_flags")
+local form_ids = require("constants.form_ids")
+local mutations = require("ids.mutations")
+local monsters = require("ids.monsters")
+local mutation_levels = require("policy.mutations.levels")
 
 local fastroot = {}
 
@@ -39,16 +44,83 @@ local function random_round(ctx, numerator, denominator)
     return quotient
 end
 
--- Roots cannot grip insubstantial or already constrained monsters, or those standing in unsafe terrain.
-local function eligible(ctx, target, definition)
+-- Source indirect constriction requires solid ground, sight, and a body
+-- that is neither insubstantial nor already under another constriction.
+function fastroot.eligible(ctx, caster, target)
     local position = ctx:get(target, component.POSITION)
+    local origin = ctx:get(caster, component.POSITION)
+    local health = ctx:get(target, component.HEALTH)
+
+    if not position or not origin or not health or
+        health.current <= 0 or origin.level_id ~= position.level_id or
+        not ctx:visible(position.level_id,
+            origin.x, origin.y, 7,
+            position.x, position.y) then
+        return false
+    end
+
     local feature = ctx:cell(position.level_id, position.x, position.y)
 
-    return not unsafe_floor[feature] and
-        not has(definition.flags, "M_INSUBSTANTIAL") and
-        not ctx:has(target, component.CONSTRICTION) and
-        not ctx:has(target, component.MONSTER_VILE_CLUTCH) and
-        not ctx:has(target, component.GRASPING_ROOTS)
+    if unsafe_floor[feature] or
+        ctx:has(target, component.CONSTRICTION) or
+        ctx:has(target, component.PLAYER_CONSTRICTION) or
+        ctx:has(target, component.MONSTER_VILE_CLUTCH) or
+        ctx:has(target, component.GRASPING_ROOTS) then
+        return false
+    end
+
+    if ctx:has(target, component.PLAYER) then
+        local form = ctx:get(target, component.PLAYER_FORM)
+
+        if form and form.remaining_aut > 0 and
+            (form.form_id == form_ids.WISP or
+                form.form_id == form_ids.STORM) then
+            return false
+        end
+
+        return mutation_levels.effective(ctx, target,
+            mutations.MUT_SPINY) == 0
+    end
+
+    local actor = ctx:get(target, component.ACTOR)
+
+    if not actor then
+        return false
+    end
+
+    local definition = catalog.get("monsters", actor.kind_id)
+
+    return not has(definition.flags, flags.INSUBSTANTIAL) and
+        not has(definition.flags, flags.SPINY) and
+        definition.genus_id ~= monsters.MONS_JELLY
+end
+
+-- One saved root record serves player Fastroot and monster Grasping Roots.
+-- Attaching the caster handle lets later actions damage the original foe.
+function fastroot.apply(ctx, caster, target, turns, power)
+    if not fastroot.eligible(ctx, caster, target) then
+        return false
+    end
+
+    ctx:add(target, component.GRASPING_ROOTS, {
+        source = caster,
+        remaining_aut = turns * 10,
+        power = power,
+        held_aut = 0,
+        escape_attempts = 0,
+    })
+
+    if ctx:has(target, component.PLAYER) then
+        ctx:emit("warning", "The grasping roots grab you!")
+    else
+        local actor = ctx:get(target, component.ACTOR)
+        local definition = catalog.get("monsters", actor.kind_id)
+
+        ctx:emit("warning", "Grasping roots grab the " ..
+            definition.name .. ".")
+    end
+
+    return true
 end
 
 -- Reject self and unseen out-of-range aims before committing spell resources.
@@ -88,21 +160,12 @@ function fastroot.resolve(ctx, player, intent, spell, power)
             local health = ctx:get(target, component.HEALTH)
 
             if actor and health and health.current > 0 then
-                local definition = catalog.get("monsters", actor.kind_id)
-
-                if eligible(ctx, target, definition) then
+                if fastroot.eligible(ctx, player, target) then
                     local average = roll.average_two(ctx, "spell",
                         random_round(ctx, power, 10))
                     local turns = 2 + average
 
-                    ctx:add(target, component.GRASPING_ROOTS, {
-                        remaining_aut = turns * 10,
-                        power = power,
-                        held_aut = 0,
-                        escape_attempts = 0,
-                    })
-                    ctx:emit("warning", "Grasping roots grab the " ..
-                        definition.name .. ".")
+                    fastroot.apply(ctx, player, target, turns, power)
                 end
             end
         end
@@ -147,6 +210,24 @@ function fastroot.tick_monster(ctx, monster)
         return
     end
 
+    -- A root cannot keep constricting after its source dies or leaves the
+    -- victim's level. The source handle is saved, so never choose a new one.
+    if state.source then
+        local source_health = ctx:get(state.source, component.HEALTH)
+        local source_position = ctx:get(state.source,
+            component.POSITION)
+        local victim_position = ctx:get(monster, component.POSITION)
+
+        if not source_health or source_health.current <= 0 or
+            not source_position or not victim_position or
+            source_position.level_id ~= victim_position.level_id then
+            ctx:remove(monster, component.GRASPING_ROOTS)
+            ctx:emit("combat", "The grasping roots release their grip.")
+
+            return
+        end
+    end
+
     state.remaining_aut = math.max(0, state.remaining_aut - 10)
 
     if state.remaining_aut == 0 then
@@ -158,50 +239,86 @@ function fastroot.tick_monster(ctx, monster)
 end
 
 -- Each player action damages held monsters; held time ramps the roll before their armour applies.
-function fastroot.damage_player_action(ctx, player, aut)
+function fastroot.damage_owner_action(ctx, caster, aut)
     local damage = require("policy.magic.damage")
     local defense = require("policy.combat.monster_defense")
-    local origin = ctx:get(player, component.POSITION)
+    local direct = require("policy.combat.monster_direct")
+    local fighter = require("policy.combat.fighter")
+    local origin = ctx:get(caster, component.POSITION)
+    local caster_health = ctx:get(caster, component.HEALTH)
 
-    for _, monster in ipairs(ctx:query({
+    if not origin or not caster_health or caster_health.current <= 0 then
+        return
+    end
+
+    for _, victim in ipairs(ctx:query({
         component.GRASPING_ROOTS, component.POSITION, component.HEALTH,
     })) do
-        local state = ctx:get(monster, component.GRASPING_ROOTS)
-        local position = ctx:get(monster, component.POSITION)
-        local health = ctx:get(monster, component.HEALTH)
+        local state = ctx:get(victim, component.GRASPING_ROOTS)
+        local position = ctx:get(victim, component.POSITION)
+        local health = ctx:get(victim, component.HEALTH)
 
-        if health.current > 0 and position.level_id == origin.level_id and
+        if state.source == caster and health.current > 0 and
+            position.level_id == origin.level_id and
             ctx:visible(origin.level_id, origin.x, origin.y, 7,
                 position.x, position.y) then
-            local definition = catalog.get("monsters",
-                ctx:get(monster, component.ACTOR).kind_id)
-            local sides = math.max(1,
-                random_round(ctx, 25 + state.power, 10))
+            local player_caster = ctx:has(caster, component.PLAYER)
+            local sides
+
+            if player_caster then
+                sides = math.max(1,
+                    random_round(ctx, 25 + state.power, 10))
+            else
+                sides = math.max(1, roll.random_divide(ctx,
+                    40 + state.power, 20, "melee"))
+            end
+
             local base = 2 + ctx:random("melee", sides) +
                 ctx:random("melee", sides)
             local ramp = random_round(ctx,
                 base * math.min(state.held_aut, 50), 50)
-            local ac = defense.armour(ctx, monster, definition)
+            local ac
+
+            if ctx:has(victim, component.PLAYER) then
+                ac = fighter.defense(ctx).ac
+            else
+                local actor = ctx:get(victim, component.ACTOR)
+                local definition = catalog.get("monsters", actor.kind_id)
+
+                ac = defense.armour(ctx, victim, definition)
+            end
+
             local amount = math.max(0, base + ramp -
                 ctx:random("melee", 1 + math.floor(ac / 2)))
 
             if amount > 0 then
-                damage.apply(ctx, monster, amount)
+                if player_caster then
+                    damage.apply(ctx, victim, amount, caster)
+                else
+                    direct.damage(ctx, caster, victim, amount)
+                end
             end
 
-            ctx:emit("combat", "The grasping roots constrict the " ..
-                definition.name .. ".")
+            if ctx:has(victim, component.PLAYER) then
+                ctx:emit("combat", "The grasping roots constrict you.")
+            else
+                local actor = ctx:get(victim, component.ACTOR)
+                local definition = catalog.get("monsters", actor.kind_id)
+
+                ctx:emit("combat", "The grasping roots constrict the " ..
+                    definition.name .. ".")
+            end
+
             state.held_aut = state.held_aut + aut
-            ctx:set(monster, component.GRASPING_ROOTS, state)
+            ctx:set(victim, component.GRASPING_ROOTS, state)
         end
     end
 end
 
--- Only player action time drives held-root damage, preserving the spell's timing.
-function fastroot.update_player(ctx, actor, aut)
-    if actor == ctx:player() then
-        fastroot.damage_player_action(ctx, actor, aut)
-    end
+-- Each caster's elapsed action time damages only victims it personally
+-- rooted. This preserves spell attribution and prevents a global tick.
+function fastroot.update_owner(ctx, actor, aut)
+    fastroot.damage_owner_action(ctx, actor, aut)
 end
 
 registry.add(spells.SPELL_FASTROOT, {
@@ -218,14 +335,15 @@ register.system({
     update = fastroot.tick_monster,
 })
 
--- Theory of operation: Player-action root damage runs after spell attacks and before movement, using the elapsed aut.
+-- Theory of operation: Every actor action constricts only roots bearing that
+-- caster's ECS handle; the victim's own action separately ages the hold.
 register.system({
     id = "zap.grasping_roots.damage",
     scope = "active",
     query = {},
-    after = { "attack.player_spell" },
+    after = { "attack.player_spell", "attack.spell" },
     before = { "world.movement" },
-    update = fastroot.update_player,
+    update = fastroot.update_owner,
 })
 
 return fastroot

@@ -24,6 +24,11 @@ function test.run(ctx)
         current = 500,
         max = 500,
     })
+    ctx:add(giant, component.POSITION, {
+        level_id = 1,
+        x = 1,
+        y = 1,
+    })
 
     local definition = require("policy.catalog").get(
         "monsters", monsters.MONS_STONE_GIANT)
@@ -42,6 +47,7 @@ function test.run(ctx)
         "Wretched must reduce current monster AC by eight")
 
     ctx:add(giant, component.GRASPING_ROOTS, {
+        source = giant,
         remaining_aut = 20,
         power = 50,
         held_aut = 0,

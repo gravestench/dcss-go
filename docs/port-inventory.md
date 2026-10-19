@@ -205,8 +205,12 @@ client compatibility are outside this Go port.
 
 Monster Ensnare now uses the source projectile profile and the shared
 magical-web owner; a landed hit makes a durable web restraint without HP
-damage. The remaining forest and plant spellbook effects still need
-their continuing vegetation, root, and spore behavior.
+damage. Awaken Forest, Grasping Roots, Awaken Vines, Wall of Brambles, and
+Sporulate now cast from their source spellbooks. Their timed conditions,
+physical plant actors, root and vine grips, briar thorns, and spore blasts
+are ECS state and survive the Go save format. Source sanctuary suppression
+awaits the religion and sanctuary domain; no current game action creates a
+sanctuary.
 
 Shops now have ten source-backed active types, a saved player wallet, saved
 shop and stock entities, gold pickup, item-class valuation, purchases,

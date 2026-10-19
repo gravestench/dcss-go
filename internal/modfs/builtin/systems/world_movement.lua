@@ -4,6 +4,7 @@ local player_constriction = require("policy.combat.player_constriction")
 local targets = require("policy.ai.targets")
 local clutch = require("policy.magic.effects.statuses.vile_clutch")
 local fastroot = require("policy.magic.effects.zaps.fastroot")
+local vine_grip = require("policy.combat.monster_plants.vine_grip")
 local component = require("constants.component")
 local intent_ids = require("constants.intent")
 local acrobat = require("policy.jewellery.acrobat")
@@ -81,7 +82,8 @@ function system.update(ctx, actor)
     if actor ~= ctx:player() then
         if not player_constriction.escape(ctx, actor) or
             not clutch.escape(ctx, actor) or
-            not fastroot.escape(ctx, actor) then
+            not fastroot.escape(ctx, actor) or
+            not vine_grip.escape(ctx, actor) then
             intent.kind = intent_ids.WAIT
             ctx:set(actor, component.INTENT, intent)
 
@@ -106,7 +108,10 @@ function system.update(ctx, actor)
         return
     end
 
-    if actor == ctx:player() and not escape_grasp(ctx, actor, intent) then
+    if actor == ctx:player() and
+        (not fastroot.escape(ctx, actor) or
+            not vine_grip.escape(ctx, actor) or
+            not escape_grasp(ctx, actor, intent)) then
         return
     end
 

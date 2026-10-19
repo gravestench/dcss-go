@@ -25,6 +25,9 @@ local player_brands = require("policy.combat.player_brands")
 local player_staves = require("policy.combat.player_staves")
 local boons = require("policy.combat.monster_support.boons")
 local black_mark = require("policy.combat.monster_black_mark")
+local brambles = require("policy.combat.monster_plants.brambles")
+local vine_grip = require("policy.combat.monster_plants.vine_grip")
+local component = require("constants.component")
 
 local actions = {}
 
@@ -110,6 +113,14 @@ function actions.player(ctx, target, options)
     input.defender_shield = monster_defense.shield(ctx, target, defender)
 
     local outcome = melee.player(ctx, input)
+
+    brambles.thorns(ctx, ctx:player(), target,
+        outcome.kind == "block")
+
+    if ctx:get(ctx:player(), component.HEALTH).current <= 0 then
+        return
+    end
+
     local health = damage(ctx, target, outcome.damage, true)
     local message = "You miss the " .. defender.name .. "."
     local blood_drawn = false
@@ -328,6 +339,12 @@ function actions.monster(ctx, attacker)
         error("monster melee attacker lacks actor")
     end
 
+    if ctx:has(attacker, component.MONSTER_VINE) then
+        vine_grip.contact(ctx, attacker, ctx:player())
+
+        return
+    end
+
     local definition = catalog.get("monsters", actor.kind_id)
     local attack = definition.attacks[1]
     local defense = fighter.defense(ctx)
@@ -438,7 +455,17 @@ function actions.monster_target(ctx, attacker, target)
         error("monster melee requires two actors")
     end
 
+    if ctx:has(attacker, component.MONSTER_VINE) then
+        vine_grip.contact(ctx, attacker, target)
+
+        return
+    end
+
     if summon_melee.attack(ctx, attacker, target) then
+        if ctx:has(target, component.ACTOR) then
+            brambles.thorns(ctx, attacker, target, false)
+        end
+
         return
     end
 
@@ -469,6 +496,13 @@ function actions.monster_target(ctx, attacker, target)
         flavour_id = attack.flavour_id,
         weapon = weapon,
     }, defense)
+
+    brambles.thorns(ctx, attacker, target,
+        outcome.kind == "block")
+
+    if ctx:get(attacker, component.HEALTH).current <= 0 then
+        return
+    end
 
     if combat then
         combat.shield_blocks = outcome.shield_blocks

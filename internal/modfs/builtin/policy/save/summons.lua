@@ -11,6 +11,7 @@ local poison = require("policy.combat.monster_poison")
 local slow = require("policy.combat.monster_slow")
 local sticky_flame = require("policy.magic.effects.zaps.sticky_flame")
 local brands = require("constants.weapon_brands")
+local plants = require("policy.save.monster_plants")
 
 local summons = {}
 
@@ -139,6 +140,8 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     if not slow.validate(ctx, entity, definition, actor) then
         error("summon " .. ctx:id(entity) .. " has invalid speed")
     end
+
+    plants.validate(ctx, entity, actor, state, position)
 
     net.validate(ctx, entity, position)
     poison.validate(ctx, entity)

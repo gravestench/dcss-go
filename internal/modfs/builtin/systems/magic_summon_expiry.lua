@@ -2,6 +2,7 @@ local spells = require("ids.spells")
 local component = require("constants.component")
 local summons = require("policy.magic.effects.summons.common")
 local vortex = require("policy.magic.effects.summons.fire_vortex")
+local spore = require("policy.combat.monster_plants.spore")
 local visibility = require("policy.combat.monster_summons.visibility")
 local channels = require("constants.message_channels")
 
@@ -36,13 +37,17 @@ function system.update(ctx, active)
 
         local dead_vortex = state.source_id == spells.SPELL_FIRE_STORM and
             health and health.current <= 0
+        local dead_spore = state.source_id == spells.SPELL_SPORULATE and
+            health and health.current <= 0
 
-        if (entity ~= active or orphaned) and not dead_vortex and
+        if (entity ~= active or orphaned) and not dead_vortex and not dead_spore and
             (orphaned or expired or not health or health.current <= 0) then
             local position = ctx:get(entity, component.POSITION)
             local seen = visibility.player_sees(ctx, position)
 
-            if expired and state.source_id == spells.SPELL_FIRE_STORM then
+            if state.source_id == spells.SPELL_SPORULATE then
+                spore.explode(ctx, entity)
+            elseif expired and state.source_id == spells.SPELL_FIRE_STORM then
                 vortex.dissipate(ctx, entity)
             else
                 summons.expire(ctx, entity)

@@ -68,6 +68,9 @@ local definition = {
     shout_id = "S_SILENT",
     intelligence_id = "I_BRAINLESS",
     habitat_id = "HT_AMPHIBIOUS",
+    -- Source speed zero makes this a stationary obstacle. Keep the zero
+    -- explicit so the saved actor speed matches its catalog profile.
+    speed = 0,
     energy = {
         move = 10,
         swim = 10,

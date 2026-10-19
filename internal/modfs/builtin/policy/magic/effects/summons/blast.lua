@@ -60,23 +60,31 @@ function blast.hit(ctx, target, raw, resistance_id, source)
 
     if health and health.current > 0 then
         if target == ctx:player() then
-            player_health.damage(ctx, target, amount)
+            local _, dealt = player_health.damage(ctx, target, amount,
+                false, source)
 
-            return
+            return dealt
         end
 
-        health = monster_health.damage(ctx, target, amount, source)
+        local dealt
+
+        health, dealt = monster_health.damage(ctx, target, amount,
+            source)
 
         if health.current == 0 and target ~= ctx:player() and
             not ctx:has(target, component.SUMMON) then
             ctx:signal("player_kill", target)
         end
+
+        return dealt
     end
 end
 
 -- Roll area damage per target to preserve the source distribution and avoid
--- one shared hit determining every actor's outcome.
-function blast.area(ctx, source, radius, dice, sides, resistance_id)
+-- one shared hit determining every actor's outcome. A caller may react to
+-- positive post-armour damage without duplicating the explosion traversal.
+function blast.area(ctx, source, radius, dice, sides, resistance_id,
+    on_hit)
     local origin = ctx:get(source, component.POSITION)
 
     for _, target in ipairs(ctx:query({ component.POSITION, component.HEALTH })) do
@@ -92,7 +100,12 @@ function blast.area(ctx, source, radius, dice, sides, resistance_id)
                 raw = raw + 1 + summons.roll(ctx, math.max(1, sides))
             end
 
-            blast.hit(ctx, target, raw, resistance_id, source)
+            local dealt = blast.hit(ctx, target, raw,
+                resistance_id, source)
+
+            if on_hit and dealt and dealt > 0 then
+                on_hit(ctx, target, dealt)
+            end
         end
     end
 end
