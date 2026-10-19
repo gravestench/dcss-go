@@ -164,6 +164,10 @@ defenses, and auras. Elemental breath rays use natural monster HD; source
 caster exceptions for draconian cold breath and Xtahua's searing breath stay
 in their owning Lua effect modules. Fragment rays share source triple-armour
 contact handling while keeping their damage and accuracy in separate profiles.
+The four Serpent of Hell breaths compose three existing head effects per cast,
+in source order, behind one selected foe and direction. Each head keeps its
+own beam, cloud, explosion, or status rule; the composite adds no damage
+switch or mutable module state.
 All 285 monster spellbook files import their spell and slot-flag references;
 monster definitions import spellbook IDs. Each content file still declares
 its own ID, while cross-file references resolve through the effective catalog.

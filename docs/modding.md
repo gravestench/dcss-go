@@ -1177,6 +1177,15 @@ both still receive the original `foe` argument in `resolve`. Never infer the
 foe from `plan.entity`, and use `ctx:player()` only for rules that specifically
 concern the player.
 
+For a spell that runs several existing effects as one action, see
+`policy/combat/monster_serpent_breath.lua` and its four small effect files.
+The coordinator plans one target, receives the same `ctx` in `resolve`, then
+calls each head effect with an explicit plan. The selected `foe` remains the
+same handle; each head keeps its own damage and cloud logic. This is a useful
+pattern when a new spell combines existing rules: put ordering and stopping
+conditions in one policy, and leave the individual effects with their
+existing owners.
+
 The shared creator is
 `policy.magic.effects.summons.common.spawn(ctx, owner, spell_id, kind_id,
 degree, cap, options)`. It creates and places the Akara actor, saves its
