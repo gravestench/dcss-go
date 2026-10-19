@@ -1,10 +1,12 @@
 # Lua modding guide
 
 The [root README](../README.md) has the quickest launch and wizard examples.
-The Lua tree in `internal/modfs/builtin/` is editable production source. Every
-file is loaded from the embedded base plus any `--mod-dir` overlays. No C++
-importer or generated index is part of the build. Add a new file to add a
-definition; replace the same relative path to change a bundled file.
+The Lua tree in `internal/modfs/builtin/` is editable production source. Lua
+paths resolve through the embedded base plus any `--mod-dir` overlays;
+discoverable definitions and rules load at startup, while helper modules load
+when another module calls `require`. No C++ importer or generated index is
+part of the build. Add a new file to add a definition; replace the same
+relative path to change a bundled file.
 
 Start with [the feature workflow](#work-through-a-new-mod-feature) when you
 have an idea to add. Use [the `ctx` reference](#the-game-context-ctx) when
