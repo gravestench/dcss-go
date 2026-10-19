@@ -8,6 +8,7 @@ local summons = require("policy.magic.effects.summons.common")
 
 local foxfire = {}
 
+-- Preparation needs one free neighboring cell even though resolve attempts to place two foxfires.
 local function space(ctx, player)
     local origin = ctx:get(player, component.POSITION)
 
@@ -24,6 +25,7 @@ local function space(ctx, player)
     return false
 end
 
+-- Close to a visible hostile, fire once and mark finished; otherwise route toward it without occupying its cell.
 function foxfire.act(ctx, entity, origin)
     local state = ctx:get(entity, component.SUMMON_CONSTRUCT)
 
@@ -61,6 +63,7 @@ function foxfire.act(ctx, entity, origin)
     return { kind = intent_ids.MONSTER_WAIT }
 end
 
+-- Example: Foxfire rejects a cast when no nearby placement cell is available.
 -- Source: spl-summoning.cc:cast_foxfire creates two adjacent, short-lived
 -- foxfires and rejects a completely enclosed caster before spending time.
 function foxfire.prepare(ctx, player)
@@ -69,6 +72,7 @@ function foxfire.prepare(ctx, player)
     end
 end
 
+-- Try two independent placements; each successful foxfire stores power for its later automatic hit.
 function foxfire.resolve(ctx, player, _, _, power)
     local created = 0
 

@@ -1,3 +1,4 @@
+-- Example: ids.component.IOOD identifies the homing orb's persistent component.
 -- IDs specific to the zap effect family. Shared ECS IDs live in
 -- constants.component; spell, monster, and feature IDs come from catalogs.
 local ids = {

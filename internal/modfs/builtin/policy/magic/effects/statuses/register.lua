@@ -16,22 +16,28 @@ local clutch = require("policy.magic.effects.statuses.vile_clutch")
 local bog = require("policy.magic.effects.statuses.noxious_bog")
 local registrations = {}
 
+-- Route self enchantments by spell ID so shared duration storage stays in player status logic.
 function registrations.self_status(ctx, player, _, spell, power)
     statuses.cast(ctx, player, spell.id, power)
 end
 
+-- Death's Door can reject unsafe states before the common cast consumes a turn.
 function registrations.death_door_prepare(ctx, player, spell)
     return statuses.rejection(ctx, player, spell.id)
 end
 
+-- The mass resolver chooses the spell's enchantment while sharing target traversal.
 function registrations.mass_enchantment(ctx, player, _, spell, power)
     mass.cast(ctx, player, spell.id, power)
 end
 
+-- Intoxication owns its susceptibility and visibility checks, so only cast power crosses this boundary.
 function registrations.intoxicate(ctx, player, _, _, power)
     intoxication.cast(ctx, player, power)
 end
 
+-- Example: A Discord cast delegates its power and caster to the allegiance effect.
+-- Hand cast power to allegiance's area traversal while the registry owns payment and failure handling.
 function registrations.discord(ctx, player, _, _, power)
     allegiance.cast_discord(ctx, player, power)
 end

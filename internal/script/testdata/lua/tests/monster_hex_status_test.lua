@@ -1,27 +1,33 @@
+
 local component = require("constants.component")
 local harness = require("tests.harness")
 local status = require("policy.combat.monster_hexes.status")
 
 local test = {}
 
+-- Expired hex durations leave no dormant saved component.
 function test.run()
     local actor = 101
     local values = {}
     local ctx = {}
 
+    -- Read current enchantment state before and after expiry.
     function ctx:get(entity, id)
         return values[entity] and values[entity][id]
     end
 
+    -- Create the first timed hex component for the fixture actor.
     function ctx:add(entity, id, value)
         values[entity] = values[entity] or {}
         values[entity][id] = value
     end
 
+    -- Persist the decremented timer on nonexpiring ticks.
     function ctx:set(entity, id, value)
         values[entity][id] = value
     end
 
+    -- Remove the component at expiry so no dormant status remains.
     function ctx:remove(entity, id)
         values[entity][id] = nil
     end

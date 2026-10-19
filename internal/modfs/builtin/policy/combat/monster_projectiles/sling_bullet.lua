@@ -11,12 +11,15 @@ local supported_brands = {
     SPWPN_VORPAL = true,
 }
 
+-- Example: sling_bullet.validate_launcher(item) with launcher ego = 'SPWPN_FLAMING' -> validation succeeds
+-- Sling bullets require a compatible launcher rather than behaving as generic thrown stones.
 function sling_bullet.validate_launcher(item)
     if item.ego ~= "" and not supported_brands[item.ego] then
         error("unsupported monster launcher brand " .. item.ego)
     end
 end
 
+-- Combine launcher enchantment and bullet damage in the shared ranged contact roll.
 function sling_bullet.resolve_launcher(ctx, attacker, definition, defense,
     weapon, launcher, projectile)
     return ranged.shot(ctx, {

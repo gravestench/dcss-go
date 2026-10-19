@@ -14,6 +14,7 @@ local vision = require("policy.character.vision")
 
 local constriction = {}
 
+-- Read monster flags when deciding whether a body can be gripped.
 local function has_flag(flags, wanted)
     for _, flag in ipairs(flags or {}) do
         if flag == wanted then
@@ -24,6 +25,7 @@ local function has_flag(flags, wanted)
     return false
 end
 
+-- A grip requires a neighboring cell on the same level, including diagonals.
 local function adjacent(left, right)
     return left and right and left.level_id == right.level_id and
         math.abs(left.x - right.x) <= 1 and
@@ -31,10 +33,13 @@ local function adjacent(left, right)
         (left.x ~= right.x or left.y ~= right.y)
 end
 
+-- Share the grip's adjacency rule with callers that preflight attacks.
 function constriction.adjacent(left, right)
     return adjacent(left, right)
 end
 
+-- Losing constriction releases every monster held by this player, including
+-- grips not on the current level.
 function constriction.release_all(ctx, player)
     for _, monster in ipairs(ctx:query({ component.PLAYER_CONSTRICTION })) do
         local state = ctx:get(monster, component.PLAYER_CONSTRICTION)
@@ -45,6 +50,8 @@ function constriction.release_all(ctx, player)
     end
 end
 
+-- A shield or weapon consumes tentacle capacity before visibility, size, and
+-- immunity are passed to the auxiliary attack policy.
 function constriction.snapshot(ctx, target, defender, species, worn,
     arms, form_size)
     local player = ctx:player()
@@ -97,6 +104,9 @@ function constriction.snapshot(ctx, target, defender, species, worn,
     }
 end
 
+-- Example: constriction.escape(ctx, monster) with unheld monster -> true escape
+-- Repeated monster attempts accumulate against a fresh grip roll until the
+-- saved hold is removed.
 function constriction.escape(ctx, monster)
     local state = ctx:get(monster, component.PLAYER_CONSTRICTION)
 
@@ -120,6 +130,8 @@ function constriction.escape(ctx, monster)
     return false
 end
 
+-- Damage ramps with held time, rolls target armour, then scales by actual
+-- action AUT; this runs after each player action rather than initial contact.
 local function constriction_damage(ctx, monster, definition, held_aut, aut)
     local player = ctx:player()
     local current = attributes.current(ctx, player)

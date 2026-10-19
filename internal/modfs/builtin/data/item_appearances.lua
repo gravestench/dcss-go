@@ -1,8 +1,11 @@
--- Generated from a committed DCSS import. Refresh deliberately.
+-- These appearance strings are randomized onto unidentified item kinds at game creation.
+
 -- Source: crawl-ref/source/item-name.cc
 -- Source SHA-256: 33acc31b8bb3eea0029a7ac19c9acf38976d45b3cd331e40c45fa2a4ffd32310
 
 local appearances = {
+    -- Wand descriptions combine a material with an optional prefix. The
+    -- empty prefix is deliberate: not every unidentified wand is decorated.
     wand = {
         primary = {
             "iron",
@@ -40,6 +43,8 @@ local appearances = {
 
     },
 
+    -- Jewellery appearance is assigned per game, so seeing the same ring
+    -- material again is a clue without revealing its effect universally.
     ring = {
         primary = {
             "wooden",
@@ -91,6 +96,7 @@ local appearances = {
 
     },
 
+    -- Amulet looks use their own pool and cannot collide with ring looks.
     amulet = {
         primary = {
             "sapphire",
@@ -142,6 +148,8 @@ local appearances = {
 
     },
 
+    -- Staff descriptions are presentation data; the item ID still determines
+    -- combat and magic properties after identification.
     staff = {
         primary = {
             "glowing ",
@@ -165,6 +173,7 @@ local appearances = {
 
     },
 
+    -- Potion colour and texture combinations stay stable within one run.
     potion = {
         colours = {
             "blue",

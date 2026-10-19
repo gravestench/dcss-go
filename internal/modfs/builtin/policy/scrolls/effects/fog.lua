@@ -50,10 +50,12 @@ local directions = {
     },
 }
 
+-- Encode coordinates as strings to deduplicate cells during outward cloud spread.
 local function key(x, y)
     return x .. ":" .. y
 end
 
+-- Draw three spell dice for each placed cloud so duration rolls track placement order.
 local function duration(ctx)
     local turns = 3
 
@@ -64,10 +66,13 @@ local function duration(ctx)
     return turns * 10
 end
 
+-- Example: reading Fog needs no target; applying it spreads 8-15 smoke clouds around the player.
+-- Preparation returns nil, leaving colour and spread rolls until the read action commits.
 function effect.prepare()
     return nil
 end
 
+-- Fog fills eligible nearby cells from the player outward; blocked cells do not receive cloud entities.
 function effect.apply(ctx, player)
     local origin = ctx:get(player, component.POSITION)
     local kind = smoke_kinds[ctx:random("spell", #smoke_kinds) + 1]

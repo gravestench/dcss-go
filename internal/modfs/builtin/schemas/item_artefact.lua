@@ -3,6 +3,7 @@ local component = require("constants.component")
 local schema = {
     id = component.ITEM_ARTEFACT,
     version = 1,
+    -- Seed and unique ID reproduce generated identity; knowledge flags are separate from actual properties.
     fields = {
         kind = {
             type = "string",

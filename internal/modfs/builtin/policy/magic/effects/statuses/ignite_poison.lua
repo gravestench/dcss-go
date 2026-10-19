@@ -11,6 +11,7 @@ local time = require("constants.time")
 
 local ignite = {}
 
+-- Round fractional poison scaling with spell RNG before converting it to fire damage.
 local function random_divide(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -22,6 +23,8 @@ local function random_divide(ctx, numerator, denominator)
     return quotient
 end
 
+-- Example: a poisoned monster rolls fire damage from its poison degree;
+-- surviving targets lose the poison stack only when fire damage gets through.
 local function burn_monster(ctx, monster, definition, power)
     local state = ctx:get(monster, component.PROJECTILE_POISON)
 
@@ -52,6 +55,7 @@ local function burn_monster(ctx, monster, definition, power)
     end
 end
 
+-- Poison clouds become fire clouds in place, preserving their cell occupancy.
 local function burn_clouds(ctx, origin, power, player)
     local attribution = require("constants.cloud_attribution")
 
@@ -74,6 +78,7 @@ local function burn_clouds(ctx, origin, power, player)
     end
 end
 
+-- Toxic bog markers can ignite separately from clouds during the same cast.
 local function burn_bogs(ctx, origin, power, player)
     for dy = -common.LOS_RADIUS, common.LOS_RADIUS do
         for dx = -common.LOS_RADIUS, common.LOS_RADIUS do
@@ -93,6 +98,7 @@ local function burn_bogs(ctx, origin, power, player)
     end
 end
 
+-- Ignite visible poison clouds and bogs before checking poisoned actors at their current positions.
 function ignite.cast(ctx, player, _, _, power)
     local origin = ctx:get(player, component.POSITION)
     ctx:emit("spell", "You ignite the poison in your surroundings!")

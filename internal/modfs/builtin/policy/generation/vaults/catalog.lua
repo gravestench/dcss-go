@@ -1,3 +1,4 @@
+-- Example: A later mod vault follows authored source ranks when eligible records are listed.
 local categories = require("constants.catalog")
 local des = require("policy.generation.vaults.des")
 local hooks = require("policy.generation.vaults.hooks")
@@ -20,6 +21,7 @@ local shop_file_order = {
     ["shops"] = 2,
 }
 
+-- Source file and line rankings preserve the pinned DES order across virtual mod paths.
 local function source_position(family, source)
     if family == "shop" then
         local file, line = source:match(
@@ -36,6 +38,7 @@ local function source_position(family, source)
     return arrival_file_order[file] or 5, tonumber(line) or 0
 end
 
+-- Preserve source file and line order before assigning map IDs, including hooks inserted at source positions.
 local function ordered_definitions()
     local definitions = {}
     local origins = {}
@@ -52,6 +55,7 @@ local function ordered_definitions()
 
             local prior = origins[definition.id]
 
+            -- Reject duplicate vault IDs while building the catalog instead of silently replacing a map.
             if prior then
                 error(string.format("duplicate vault NAME %s in %s and %s",
                     definition.id, prior, path))
@@ -72,6 +76,7 @@ local function ordered_definitions()
         end
     end
 
+    -- Compare family, source file, then line rank so virtual path discovery cannot reorder vaults.
     table.sort(definitions, function(left, right)
         if left.family_order ~= right.family_order then
             return left.family_order < right.family_order
@@ -91,6 +96,7 @@ local function ordered_definitions()
     return definitions
 end
 
+-- Parse and cache the complete vault set once; later lookups reuse its stable ID-to-path table.
 function catalog.load()
     if loaded then
         return
@@ -116,6 +122,7 @@ function catalog.load()
     loaded = true
 end
 
+-- Lookups parse on demand but use the stable path chosen during catalog load.
 function catalog.get(id)
     catalog.load()
 

@@ -6,6 +6,7 @@ local monsters = require("ids.monsters")
 
 local paralyse = {}
 
+-- Floating Eye paralysis bypasses the ordinary enchantment saving throw.
 function paralyse.resisted(ctx, caster, defender, profile)
     local actor = ctx:get(caster, component.ACTOR)
 
@@ -16,6 +17,7 @@ function paralyse.resisted(ctx, caster, defender, profile)
     return enchantment.resisted(ctx, caster, defender, profile)
 end
 
+-- Example: paralyse.apply(ctx, caster, defender, profile) with player with zero RNG -> 20 aut paralysis
 -- Source: beam.cc:BEAM_PARALYSIS. Player duration is 2..5 turns.
 function paralyse.apply(ctx, caster, defender, profile)
     if ctx:get(defender, component.PLAYER) then

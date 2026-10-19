@@ -19,6 +19,8 @@ local water = require("policy.character.water")
 
 local teleportitis = {}
 
+-- Inspect the monster's declared flags rather than its name; stationary or
+-- neutral monsters should not count as a hostile destination incentive.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -29,10 +31,14 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Convert mutation level to the per-turn teleportitis rate consumed by the
+-- timer, leaving the scheduling decision in one tick handler.
 function teleportitis.rate(level)
     return level * 6
 end
 
+-- Reject occupied or blocked cells before terrain hazards; flight and swim
+-- capabilities can make a cell safe that is dangerous for another player.
 local function can_land(ctx, player, level_id, x, y)
     if not ctx:walkable(level_id, x, y) or
         ctx:actor_at(level_id, x, y) then
@@ -50,6 +56,8 @@ local function can_land(ctx, player, level_id, x, y)
             water.can_swim(ctx, player))
 end
 
+-- Look for a live nearby enemy at a candidate destination; teleportitis is
+-- meant to place the player in danger, not on arbitrary safe floor.
 local function hostile_near(ctx, player, level_id, x, y)
     for _, monster in ipairs(ctx:query({
         component.ACTOR,
@@ -74,6 +82,8 @@ local function hostile_near(ctx, player, level_id, x, y)
     return false
 end
 
+-- Test at most 500 cells; the first safe landing succeeds only if a hostile is visible nearby.
+-- Example: random teleport searches for a walkable landing cell near a hostile monster.
 function teleportitis.destination(ctx, player, position)
     local width, height = ctx:level_size(position.level_id)
 
@@ -95,6 +105,8 @@ function teleportitis.destination(ctx, player, position)
     return nil, nil
 end
 
+-- Advance the saved chance on elapsed aut and draw only when the mutation is
+-- active. A failed destination search still respects the source draw budget.
 function teleportitis.tick(ctx, player, aut)
     if aut <= 0 then
         return

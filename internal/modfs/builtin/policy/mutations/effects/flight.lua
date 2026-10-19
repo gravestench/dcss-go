@@ -4,10 +4,14 @@ local registry = require("policy.mutations.effects.registry")
 
 local flight = {}
 
+-- Permanent flight and Tengu flight are separate capability checks for movement policy.
+-- Example: permanent flight returns one presence flag at any positive mutation level.
 function flight.permanent(level)
     return level > 0 and 1 or 0
 end
 
+-- Mark Tengu flight as its own perk as well as generic permanent flight;
+-- species-specific rules can test this without inspecting mutation IDs.
 function flight.tengu(level)
     return level > 0 and 1 or 0
 end

@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local effects = require("policy.mutations.effects.registry")
 local mutations = require("ids.mutations")
@@ -7,11 +8,13 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Replay the same melee draws when comparing missile repulsion.
 local function scripted_rolls(expected_hit_bound)
     local draws = { 0, 6, 6, 50, 5, 0 }
     local next_draw = 0
     local ctx = {}
 
+    -- Replay pinned melee draws to compare the same dart with and without repulsion.
     function ctx.random(_, stream, bound)
         harness.equal(stream, "melee", "missile contact uses combat RNG")
 
@@ -34,6 +37,7 @@ local function scripted_rolls(expected_hit_bound)
     return ctx
 end
 
+-- Resolve a dart against a fixed defense to isolate the repulsion modifier.
 local function dart_outcome(repulsion)
     local defense = {
         ev = 6,
@@ -49,6 +53,7 @@ local function dart_outcome(repulsion)
     return ranged.poison_dart(ctx, 1, defense)
 end
 
+-- Distortion Field below level three does not repel missiles.
 function test.run(ctx)
     local player = ctx:create()
 

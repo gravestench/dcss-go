@@ -13,6 +13,8 @@ local component = require("constants.component")
 
 local hud = {}
 
+-- Match DCSS inventory letters rather than deriving labels from item names;
+-- the same index must identify a weapon in both HUD and inventory screens.
 local function letter(index)
     if index < 26 then
         return string.char(string.byte("a") + index)
@@ -21,6 +23,7 @@ local function letter(index)
     return string.char(string.byte("A") + index - 26)
 end
 
+-- Vital colors are derived from current values so the HUD follows status changes.
 local function vital_color(current, maximum, yellow_at, red_at)
     if maximum <= 0 then
         return colors.light_grey
@@ -37,6 +40,8 @@ local function vital_color(current, maximum, yellow_at, red_at)
     return colors.light_grey
 end
 
+-- Prefer the equipped weapon's current inventory letter; fall back to an
+-- explicit unarmed label so an empty slot never looks like a missing field.
 local function weapon_label(inventory)
     for index, item in ipairs(inventory) do
         if item.slot == "weapon" then
@@ -47,10 +52,15 @@ local function weapon_label(inventory)
     return "-) Unarmed"
 end
 
+-- The HUD projects live vitals and equipment labels from the current player components.
+-- Example: hud.rows(player_view, { berserk = true }) returns writes and meters
+-- without touching ECS, which lets the terminal redraw on a resize.
 function hud.rows(view, extras)
     local writes = {}
     local meters = {}
 
+    -- Keep text and meter primitives in separate lists because the terminal
+    -- renderer fills bars differently from ordinary colored characters.
     local function write(x, y, text, fg)
         writes[#writes + 1] = {
             x = x,
@@ -89,6 +99,7 @@ function hud.rows(view, extras)
         }
     end
 
+    -- Unknown defenses stay masked on the HUD even though the underlying combat values exist.
     local ac, ev, sh = "AC: --", "EV: --", "SH: --"
 
     if view.defense_known then
@@ -246,6 +257,7 @@ function hud.rows(view, extras)
         }
     end
 
+    -- Status labels wrap at 42 columns so a long condition list cannot overlap the meters above.
     local x = 0
     local y = 11
     local width = 42
@@ -263,6 +275,8 @@ function hud.rows(view, extras)
     return { writes = writes, meters = meters }
 end
 
+-- Read dynamic statuses through their owner policies before projecting the
+-- HUD. This avoids duplicating activity rules in presentation code.
 function hud.run(ctx, input)
     local player = ctx:player()
     local status = player and ctx:get(player,

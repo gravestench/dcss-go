@@ -3,6 +3,8 @@ local registry = require("policy.abilities.registry")
 
 local abilities = {}
 
+-- Ability commands delegate preparation to the ability registry before action timing begins.
+-- Example: abilities.prepare(ctx, player, { ability_id = abilities.HOP, dx = 1 }) preflights Hop.
 function abilities.prepare(ctx, player, input)
     local id = input.ability_id
     local definition = registry.get(id)

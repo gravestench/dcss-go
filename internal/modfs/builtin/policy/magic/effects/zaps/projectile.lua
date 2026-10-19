@@ -14,6 +14,9 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local projectile = { specs = {} }
 
+-- Example: to_hit(ctx, player, spec, 60) applies player zap accuracy to the
+-- profile's power-scaled base before contact rolls.
+-- Combine the profile’s capped power term with caster accuracy before any contact evasion roll.
 function projectile.to_hit(ctx, player, spec, power)
     local base = spec.hit.base +
         math.floor(power * spec.hit.numerator / spec.hit.denominator)
@@ -21,6 +24,7 @@ function projectile.to_hit(ctx, player, spec, power)
     return accuracy.zap_to_hit(ctx, player, base)
 end
 
+-- Bound-one draws are deterministic and do not perturb the spell RNG stream.
 local function random(ctx, bound)
     if bound <= 1 then
         return 0
@@ -29,6 +33,7 @@ local function random(ctx, bound)
     return ctx:random("spell", bound)
 end
 
+-- Roll each source die on the spell stream before armour and resistance adjustments.
 local function dice(ctx, count, sides)
     local total = 0
 
@@ -39,6 +44,8 @@ local function dice(ctx, count, sides)
     return total
 end
 
+-- Convert calcdice totals to whole dice with one rounding draw before any
+-- shield or evasion result can discard the projectile.
 local function damage_dice(ctx, spec, power)
     local amount = spec.damage.base +
         math.floor(power * spec.damage.numerator / spec.damage.denominator)
@@ -62,6 +69,7 @@ local function damage_dice(ctx, spec, power)
     return spec.damage.count, amount
 end
 
+-- Monster body size and effective HD alter the shield's source block score.
 local function shield_bonus(ctx, target, shield, definition)
     local size = {
         SIZE_LITTLE = 1,
@@ -88,6 +96,8 @@ local function shield_bonus(ctx, target, shield, definition)
     return math.floor((random(ctx, bound) + random(ctx, bound + 1)) / 4)
 end
 
+-- Each prior shield block raises the bypass bound quadratically; persist the
+-- new block count before the next projectile contact.
 local function blocked(ctx, target, definition, to_hit)
     local shield = equipment.monster_shield(ctx, target)
 
@@ -115,6 +125,8 @@ local function blocked(ctx, target, definition, to_hit)
     return true
 end
 
+-- Automatic hits bypass the evasion draw; ordinary zaps use two-stage evasion
+-- randomization on the spell stream.
 local function hit(ctx, spec, to_hit, evasion)
     if spec.auto_hit then
         return true
@@ -128,6 +140,7 @@ local function hit(ctx, spec, to_hit, evasion)
     return attack >= defense
 end
 
+-- Profile AC rules select none, half, normal, or triple armour rolls.
 local function armour(ctx, spec, target, definition)
     local ac = defense.armour(ctx, target, definition)
 
@@ -147,6 +160,7 @@ local function armour(ctx, spec, target, definition)
     return random(ctx, ac + 1)
 end
 
+-- Keep thirty percent of Poison Arrow damage outside poison resistance.
 local function poison_arrow_damage(raw, definition)
     -- fight.cc:resist_adjust_damage: 70% of a poison arrow is resistible.
     -- Poison is a boolean resistance, so monster rPois uses 2 + r*r.
@@ -166,6 +180,8 @@ local function poison_arrow_damage(raw, definition)
     return solid + resistible, resistance
 end
 
+-- A visible living actor behind a clear projectile path is enough to offer
+-- a zap; the later intent still chooses its exact ray.
 local function can_target(ctx, player, spell)
     local source = ctx:get(player, component.POSITION)
     local range = spell_range.for_spell(ctx, player, spell)
@@ -196,6 +212,8 @@ local function can_target(ctx, player, spell)
     return false
 end
 
+-- Trace once, then process contacts in path order; a bolt continues after a
+-- hit, while a non-beam projectile stops on block or hit.
 local function resolve(ctx, player, intent, spell, spec, power)
     local source = ctx:get(player, component.POSITION)
     local range = spec.range or spell_range.for_spell(ctx, player, spell)
@@ -217,6 +235,8 @@ local function resolve(ctx, player, intent, spell, spec, power)
 
         if target == player then
             local zap_power = math.min(power, spec.cap)
+            -- A reflected shot rolls damage before the player evasion check,
+            -- keeping the seeded spell-stream sequence stable on a miss.
             local count, sides = damage_dice(ctx, spec, zap_power)
             local raw = dice(ctx, count, sides)
 
@@ -295,14 +315,17 @@ local function resolve(ctx, player, intent, spell, spec, power)
     end
 end
 
+-- Expose the shared projectile resolver to spell-specific callers without changing its spec.
 function projectile.fire(ctx, player, intent, spell, spec, power)
     return resolve(ctx, player, intent, spell, spec, power)
 end
 
+-- Use the same range and target predicate for casting preflight as resolution.
 function projectile.can_target(ctx, player, spell)
     return can_target(ctx, player, spell)
 end
 
+-- Reject a missing spell spec before dispatching a projectile cast.
 function projectile.resolve(ctx, player, intent, spell, power)
     local spec = projectile.specs[spell.id]
 
@@ -313,6 +336,8 @@ function projectile.resolve(ctx, player, intent, spell, power)
     return resolve(ctx, player, intent, spell, spec, power)
 end
 
+-- Register a concrete zap profile (for example Magic Dart) under its spell
+-- ID so the generic resolver can use the same beam path for modded effects.
 function projectile.register(id, spec)
     projectile.specs[id] = spec
     registry.add(id, projectile)

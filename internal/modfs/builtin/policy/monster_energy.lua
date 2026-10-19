@@ -20,10 +20,14 @@ local costs = {
     [13] = "missile",
 }
 
+-- Scheduler points and costs must be integral to preserve deterministic action order.
 local function valid_integer(value)
     return type(value) == "number" and value == math.floor(value)
 end
 
+-- Example: energy.grant(ctx, { elapsed = 10 }) credits each active monster for ten aut.
+-- Credit only actors on the active level and retain fractional speed through
+-- a named RNG draw, so fast and slow monsters keep their source cadence.
 function energy.grant(ctx, input)
     local elapsed = input.elapsed
 
@@ -89,6 +93,7 @@ function energy.grant(ctx, input)
     return { points = points }
 end
 
+-- Keep the first equal-score monster in host entity order for a stable tie break.
 function energy.next_ready(input)
     local chosen = 0
     local most = energy.threshold - 1
@@ -105,6 +110,7 @@ function energy.next_ready(input)
     return { index = chosen }
 end
 
+-- The speed brand changes melee and launcher costs with the monster-energy RNG stream.
 local function speed_brand_cost(ctx, input, field, base_cost)
     if not input.actor then
         return base_cost
@@ -140,7 +146,7 @@ local function speed_brand_cost(ctx, input, field, base_cost)
         return base_cost
     end
 
-    -- monster.cc:400-411 applies speed to melee and launcher shots,
+    -- monster.cc applies speed to melee and launcher shots,
     -- but not thrown missiles. The 10-aut delay becomes random 6/7.
     local delay = ctx:random("monster_energy", 3) < 2 and 7 or 6
     local product = base_cost * delay
@@ -154,6 +160,7 @@ local function speed_brand_cost(ctx, input, field, base_cost)
     return math.max(1, cost)
 end
 
+-- Deduct the selected intent's cost after terrain, brand, and status modifiers.
 function energy.spend(ctx, input)
     if input.points < energy.threshold then
         error("monster lacks action energy")
@@ -198,6 +205,7 @@ function energy.spend(ctx, input)
     return { points = input.points - cost, cost = cost }
 end
 
+-- Adapt the scheduler's policy signature without a second readiness rule.
 function energy.next_ready_policy(_, input)
     return energy.next_ready(input)
 end

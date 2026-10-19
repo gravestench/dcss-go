@@ -53,6 +53,7 @@ local dragon_traits = {
     },
 }
 
+-- Return nil for a nonplayer owner so species-gated activity checks can use their fallback path.
 local function origin_species(ctx, owner)
     local origin = ctx:get(owner, component.PLAYER)
 
@@ -63,6 +64,7 @@ local function origin_species(ctx, owner)
     return catalog.get("species", origin.species_id)
 end
 
+-- Lich form, undead species, and bloodless Vampire state all suppress living-only mutation effects.
 local function lifeless(ctx, owner, form, species)
     if form and form.id == "lich" then
         return true
@@ -77,6 +79,7 @@ local function lifeless(ctx, owner, form, species)
     return blood ~= nil and not blood.alive
 end
 
+-- Species stasis and Abyss position suppress Teleport without deleting its recorded rank.
 local function no_teleport(ctx, owner, species)
     if species and species_traits.stasis(species) then
         return true
@@ -88,6 +91,7 @@ local function no_teleport(ctx, owner, species)
         ctx:level_branch(position.level_id) == branches.BRANCH_ABYSS
 end
 
+-- Ignore expired form components; an unknown active form is corrupt state, not a normal fallback.
 local function active_form(ctx, owner)
     local state = ctx:get(owner, component.PLAYER_FORM)
 
@@ -104,6 +108,7 @@ local function active_form(ctx, owner)
     error("unknown player mutation form " .. state.form_id)
 end
 
+-- Example: a form can suppress a base mutation level while the saved record remains intact.
 -- Source: mutation.cc:mutation_activity_level. The ordinary mutation query
 -- accepts partial activity, which retains resistance but may suppress AC.
 function activity.level(ctx, owner, mutation_id, base_level)

@@ -12,6 +12,7 @@ local targets = require("policy.ai.targets")
 
 local spire = {}
 
+-- Pick the nearest visible hostile with a clear shot so the stationary spire does not fire through cover.
 local function target(ctx, entity, origin)
     local closest = math.huge
     local chosen = nil
@@ -38,6 +39,7 @@ local function target(ctx, entity, origin)
     return chosen
 end
 
+-- Example: A spire with no hostile target waits; with a clear ray it fires at the chosen foe.
 -- Source: MST_ZAPPER -> SPELL_ELECTRICAL_BOLT and
 -- zap-data.h:dicedef_calculator<3, 3, 1, 12>.
 function spire.act(ctx, entity, origin)

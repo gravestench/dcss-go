@@ -52,6 +52,8 @@ local abjuration_duration_aut = {
     [6] = 1710,
 }
 
+-- Example: A bound of one returns zero without consuming spell RNG; larger bounds draw from that stream.
+-- Avoid consuming spell RNG for a one-outcome bound, keeping later summon rolls stable.
 function summons.roll(ctx, bound)
     if bound <= 1 then
         return 0
@@ -76,6 +78,7 @@ function summons.divide(ctx, numerator, denominator)
     return quotient
 end
 
+-- Remove bonds and carried items before deleting the actor, so no ECS references outlive the summon.
 function summons.expire(ctx, entity)
     local position = ctx:get(entity, component.POSITION)
 
@@ -102,6 +105,7 @@ function summons.expire(ctx, entity)
     ctx:destroy(entity)
 end
 
+-- Break equal expiry times by entity ID so cap eviction is reproducible after a reload.
 local function earlier_expiry(left, right)
     if left.expires_aut == right.expires_aut then
         return left.entity_id < right.entity_id
@@ -110,6 +114,7 @@ local function earlier_expiry(left, right)
     return left.expires_aut < right.expires_aut
 end
 
+-- Cap only this owner's source group; tentacle segments belong to the head and must not displace it.
 local function cap_oldest(ctx, owner, source_category, source_id, cap)
     local existing = {}
 
@@ -135,6 +140,7 @@ local function cap_oldest(ctx, owner, source_category, source_id, cap)
     end
 end
 
+-- Randomize the first adjacent cell, then scan all eight so a failed first roll does not waste a cast.
 local function open_cell(ctx, position)
     local start = summons.roll(ctx, #offsets) + 1
 

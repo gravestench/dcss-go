@@ -1,8 +1,9 @@
+-- Example: Draw the octagon obliqueness before the optional smear, preserving the source random order.
 local effects = require("constants.vault_effects")
 
 local handler = {}
 
--- Port of arrival/twisted.des:454-464. Shape first, then draw for smearing.
+-- Draw the octagon obliqueness before the optional smear, preserving the source random order.
 local function shape_octagon_isle(api)
     local oblique = api:random_range(3, 7)
 

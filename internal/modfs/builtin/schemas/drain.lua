@@ -2,6 +2,7 @@
 register.component{
     id = "status.drain",
     version = 1,
+    -- The drain amount reduces derived maximum HP until experience repays the temporary loss.
     fields = {
         amount = {
             type = "int64",

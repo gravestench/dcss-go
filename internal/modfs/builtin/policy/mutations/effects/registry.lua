@@ -16,6 +16,9 @@ for _, capability in pairs(capabilities) do
     known_capabilities[capability] = true
 end
 
+-- Example: adding a second handler for the same mutation capability fails at registration.
+-- Validate the whole handler set before storing any entry so a failed mod
+-- registration cannot leave half of a mutation's effects installed.
 function effects.add(mutation_id, handlers)
     catalog.get("mutations", mutation_id)
 
@@ -44,10 +47,15 @@ function effects.add(mutation_id, handlers)
     registered[mutation_id] = existing
 end
 
+-- Return the registered handlers directly because dispatch needs the same
+-- functions installed during mod loading, without rebuilding a lookup table.
 function effects.get(mutation_id)
     return registered[mutation_id]
 end
 
+-- Sum one numeric capability across owned mutations. The supplied level
+-- reader lets callers choose effective, base, or full levels without copying
+-- the dispatch rules or accidentally treating event handlers as numbers.
 local function sum(ctx, owner, capability, level_of, subject)
     if not known_capabilities[capability] or
         capability == capabilities.ON_CHANGE or
@@ -74,6 +82,8 @@ local function sum(ctx, owner, capability, level_of, subject)
     return total
 end
 
+-- Dispatch event effects at effective levels, so suppressed mutations do not
+-- react to combat events even while their underlying records remain present.
 function effects.trigger(ctx, owner, capability, subject)
     if not event_capabilities[capability] then
         error("unknown mutation event " .. tostring(capability))
@@ -94,6 +104,8 @@ function effects.trigger(ctx, owner, capability, subject)
     end
 end
 
+-- Most game queries use effective levels, which account for temporary
+-- suppression; the common sum helper performs the actual handler traversal.
 function effects.sum(ctx, owner, capability, subject)
     return sum(ctx, owner, capability, levels.effective, subject)
 end
@@ -104,10 +116,15 @@ function effects.base_sum(ctx, owner, capability)
     return sum(ctx, owner, capability, levels.base)
 end
 
+-- Full levels include temporary and permanent mutation contributions when a
+-- rule needs the total independent of current activity restrictions.
 function effects.full_sum(ctx, owner, capability)
     return sum(ctx, owner, capability, levels.full)
 end
 
+-- Notify the changed mutation after vitals exist. Starting mutations are
+-- recorded earlier, so dispatching their resource recalculation then would
+-- read components that character creation has not installed yet.
 function effects.changed(ctx, owner, mutation_id)
     -- Starting mutations are recorded before live resources exist. Once the
     -- player has health, changes must update derived resources immediately.
@@ -123,6 +140,9 @@ function effects.changed(ctx, owner, mutation_id)
     end
 end
 
+-- Find active mutations without any behavior provider, including providers
+-- outside this registry. Checking all providers keeps legitimate combat and
+-- ability mutations from being reported as empty definitions.
 function effects.missing()
     local missing = {}
     local abilities = require("policy.abilities.registry")
@@ -148,6 +168,8 @@ function effects.missing()
     return missing
 end
 
+-- Fail bootstrap on the first behaviorless active mutation and report its
+-- defining mod file, so authors can repair the definition before play starts.
 function effects.validate()
     local missing = effects.missing()
 

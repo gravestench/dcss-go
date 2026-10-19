@@ -39,6 +39,8 @@ end
 local spells = require("ids.spells")
 local effect = {}
 
+-- Example: A visible hostile within seven cells remains targetable despite an intervening actor.
+-- Smiting needs a visible hostile within seven cells but does not require a clear projectile ray.
 function effect.can_target(ctx, player)
     return target.visible_hostile(ctx, player, 7, false)
 end

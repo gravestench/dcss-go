@@ -13,6 +13,7 @@ local senses = require("policy.character.senses")
 
 local stab = {}
 
+-- Absent monster flags do not imply an immunity or special stab state.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -23,6 +24,7 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Only perceived visible targets get a stab opening; line of sight alone is insufficient.
 local function visible(ctx, player, target)
     local origin = ctx:get(player, component.POSITION)
     local position = ctx:get(target, component.POSITION)
@@ -38,6 +40,7 @@ local function visible(ctx, player, target)
     return senses.perceive(ctx, player, target, line_of_sight) == "visible"
 end
 
+-- Prioritize helpless states before weaker fleeing, confused, or distracted openings.
 local function condition(ctx, player, target, definition)
     if has_flag(definition, flags.STATIONARY) and
         has_flag(definition, flags.NO_EXP_GAIN) then
@@ -121,11 +124,13 @@ function stab.prepare(ctx, player, target, input)
     }
 end
 
+-- Short Blades and the mutation capability use the stronger stab damage formula.
 local function good_stab(ctx, player, input)
     return input.weapon_skill == "SK_SHORT_BLADES" or
         effects.sum(ctx, player, capabilities.GOOD_STAB) > 0
 end
 
+-- Logarithmic stepdown caps large Dexterity flat bonuses without changing small values.
 local function stepdown_bonus(value)
     if value < 10 then
         return value
@@ -134,6 +139,7 @@ local function stepdown_bonus(value)
     return math.min(30, math.floor(10 * math.log(1 + value / 10, 2)))
 end
 
+-- Apply the helplessness divisor after the good-stab bonus, then add the final extra roll.
 function stab.damage(ctx, player, input, plan, damage)
     if not plan or plan.bonus == 0 then
         return damage
@@ -158,6 +164,8 @@ function stab.damage(ctx, player, input, plan, damage)
     return damage + roll.melee(ctx, extra)
 end
 
+-- Example: stab.message(ctx, player, plan, name) with no stab bonus -> nil message
+-- Paws can replace the normal helpless message with a pounce on one melee draw.
 function stab.message(ctx, player, plan, name)
     if not plan or plan.bonus == 0 then
         return nil
@@ -183,6 +191,7 @@ function stab.message(ctx, player, plan, name)
 end
 
 effects.add(mutations.MUT_PAWS, {
+    -- Any effective Paw level enables the stronger stab formula without scaling it again.
     [capabilities.GOOD_STAB] = function(level)
         return level > 0 and 1 or 0
     end,

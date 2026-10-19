@@ -1,3 +1,5 @@
+-- Vault colour tokens are presentation choices; random selection happens during placement.
+
 -- Source: crawl-ref/source/mon-util.cc random_monster_colour.
 local colours = {
     ANY = "any",

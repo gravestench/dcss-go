@@ -23,14 +23,17 @@ local trees = {
     [terrain.DNGN_DEMONIC_TREE] = true,
 }
 
+-- Coordinate keys keep the wind graph and destination reservations independent of table identity.
 local function key(x, y)
     return x .. ":" .. y
 end
 
+-- Vortex rings use Chebyshev distance so diagonals belong to the same radius.
 local function distance(x, y, origin)
     return math.max(math.abs(x - origin.x), math.abs(y - origin.y))
 end
 
+-- Spell-stream remainder roll keeps fractional wind damage unbiased over tick lengths.
 local function random_round(ctx, numerator, denominator)
     if denominator <= 0 then
         return 0
@@ -45,6 +48,7 @@ local function random_round(ctx, numerator, denominator)
     return result
 end
 
+-- Integrate the ramped early-age curve before differencing elapsed action time.
 local function integrated_damage(age)
     if age <= 0 then
         return 0
@@ -57,6 +61,7 @@ local function integrated_damage(age)
     return age * 10 - 50
 end
 
+-- Integrating the age curve preserves the same damage across short and long elapsed ticks.
 local function ring_duration(age, elapsed, ring)
     local effective = age - math.floor(ring * ring * 7 / 5)
 
@@ -64,12 +69,14 @@ local function ring_duration(age, elapsed, ring)
         integrated_damage(effective)
 end
 
+-- Build wind reach around walls before rotating actors and applying cold damage.
 local function wind_cells(ctx, origin)
     local level = origin.level_id
     local depth = {}
     local cuts = {}
     local cells = {}
 
+    -- DFS low links mark cut cells where wind would be disconnected beyond that point.
     local function visit(x, y, current_depth, parent)
         local id = key(x, y)
         local low = current_depth
@@ -108,6 +115,7 @@ local function wind_cells(ctx, origin)
 
     local winds = {}
 
+    -- Stop propagation at cut cells while retaining the cell itself as exposed to wind.
     local function pass(x, y)
         local id = key(x, y)
 
@@ -131,6 +139,7 @@ local function wind_cells(ctx, origin)
     return winds
 end
 
+-- A square-ring angular coordinate avoids trigonometric drift when ranking rotations.
 local function angle(x, y)
     if math.abs(x) > math.abs(y) then
         return x > 0 and y / x or 4 + y / x
@@ -139,6 +148,7 @@ local function angle(x, y)
     return y > 0 and 2 - x / y or -2 - x / y
 end
 
+-- Prefer the same ring and the expected angular shift when choosing a destination.
 local function rotation_score(origin, from, to, duration)
     local ring = distance(from.x, from.y, origin)
     local dest_ring = distance(to.x, to.y, origin)
@@ -151,6 +161,7 @@ local function rotation_score(origin, from, to, duration)
         math.min(delta, math.abs(delta - 8)) * 3 / 2
 end
 
+-- Immobile species are damaged by wind but cannot be rotated around the caster.
 local function stationary(definition)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == "M_STATIONARY" then
@@ -161,6 +172,7 @@ local function stationary(definition)
     return false
 end
 
+-- The player and rooted monsters remain in place while still taking cold damage.
 local function can_move(ctx, actor)
     if actor == ctx:player() then
         return false
@@ -174,6 +186,7 @@ local function can_move(ctx, actor)
         not ctx:has(actor, component.GRASPING_ROOTS)
 end
 
+-- Twelve spell draws feed resistance and proportional armour for each exposed actor.
 local function cold_damage(ctx, actor, ring_power)
     local rolled = 0
 
@@ -202,6 +215,7 @@ local function cold_damage(ctx, actor, ring_power)
     damage.apply(ctx, actor, amount)
 end
 
+-- A destination may hold another moving victim because the final move is simultaneous.
 local function available_cell(ctx, level, actor, x, y, moving)
     if not habitat.at(ctx, actor, level, x, y) then
         return false
@@ -212,6 +226,7 @@ local function available_cell(ctx, level, actor, x, y, moving)
     return occupant == nil or moving[occupant]
 end
 
+-- Reserve each chosen cell once, then move all victims together to avoid order-dependent collisions.
 local function rotate(ctx, origin, candidates, cells)
     local moving = {}
 
@@ -255,6 +270,7 @@ local function rotate(ctx, origin, candidates, cells)
     end
 end
 
+-- Persist vortex and temporary flight durations on the player for later ticks.
 function vortex.resolve(ctx, player, _, _, power)
     local value = {
         remaining_aut = 60,
@@ -280,6 +296,8 @@ function vortex.resolve(ctx, player, _, _, power)
     ctx:emit("spell", "A great freezing vortex appears around you!")
 end
 
+-- Example: A player vortex tick ages its flight timer and then processes each wind ring.
+-- Age temporary flight first; saved cast power and elapsed age then drive wind-ring effects.
 function vortex.tick(ctx, actor, aut)
     if actor ~= ctx:player() then
         return
@@ -386,6 +404,8 @@ end
 
 registry.add(spells.SPELL_POLAR_VORTEX, vortex)
 
+-- Theory of operation: Player vortex time advances after spell attacks but before movement.
+-- This preserves cast-turn timing.
 register.system({
     id = "zap.polar_vortex.tick",
     scope = "active",

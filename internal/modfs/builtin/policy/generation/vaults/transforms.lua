@@ -1,9 +1,11 @@
+-- Example: A SUBST that changes q to floor runs before a q-keyed feature is projected.
 local directives = require("constants.vault_directives")
 local effects = require("constants.vault_effects")
 
 -- Apply DES glyph edits before keyed features bind to their final cells.
 local transforms = {}
 
+-- Preserve empty source segments so malformed substitution text can be rejected.
 local function split(text, separator)
     local parts = {}
 
@@ -14,6 +16,7 @@ local function split(text, separator)
     return parts
 end
 
+-- Parse weighted glyph alternatives before any cell consumes a random draw.
 local function candidates(specification)
     local choices = {}
 
@@ -38,6 +41,7 @@ local function candidates(specification)
     return choices
 end
 
+-- Sum parsed weights before using one layout draw to choose a replacement glyph.
 local function draw(random, specification)
     local choices = candidates(specification)
     local total = 0
@@ -61,6 +65,7 @@ local function draw(random, specification)
     end
 end
 
+-- Separate source glyphs, operation mode, and replacement text before scanning cells.
 local function assignment(text)
     local source, mode, target = text:match("^%s*(%S+)%s+([=:])%s*(.-)%s*$")
 
@@ -79,6 +84,7 @@ local function assignment(text)
     return source:gsub("%s", ""), mode, target
 end
 
+-- Each substitution scans the current matrix, so earlier substitutions affect later ones.
 local function subst(cells, argument, random)
     for _, part in ipairs(split(argument, ",")) do
         local source, mode, target = assignment(part)
@@ -101,6 +107,7 @@ local function subst(cells, argument, random)
     return true
 end
 
+-- Remove selected glyphs from the current mutable matrix without changing source rows.
 local function clear(cells, argument)
     for glyph in argument:gmatch("%S") do
         for _, row in ipairs(cells) do
@@ -115,6 +122,7 @@ local function clear(cells, argument)
     return true
 end
 
+-- One shuffle remaps the complete glyph group consistently across the map.
 local function shuffle(cells, argument, random)
     for _, group in ipairs(split(argument, ",")) do
         local original = split(group:gsub("%s", ""), "/")
@@ -176,6 +184,7 @@ local function shuffle(cells, argument, random)
     return true
 end
 
+-- NSUBST quotas apply across matching source cells rather than independently per cell.
 local function nsubst_source(cells, sources, spec, random)
     local positions = {}
 
@@ -226,6 +235,7 @@ local function nsubst_source(cells, sources, spec, random)
 
 end
 
+-- Choose a quota for one source-glyph group before editing matching cells.
 local function nsubst_one(cells, argument, random)
     local sources, _, spec = assignment(argument)
 
@@ -238,6 +248,7 @@ local function nsubst_one(cells, argument, random)
     return true
 end
 
+-- Apply comma-separated quotas in source order, stopping on an invalid group.
 local function nsubst(cells, argument, random)
     for _, part in ipairs(split(argument, ",")) do
         if not nsubst_one(cells, part, random) then
@@ -248,6 +259,7 @@ local function nsubst(cells, argument, random)
     return true
 end
 
+-- Apply keyed glyph substitutions in source operation order so later edits see earlier cell changes.
 function transforms.apply(cells, operation, random)
     if operation.kind == directives.SUBST then
         return subst(cells, operation.argument, random)
@@ -262,6 +274,7 @@ function transforms.apply(cells, operation, random)
     return false
 end
 
+-- The octagon effect cuts corners after ordinary glyph substitutions.
 local function octa_room(cells, arguments)
     local width = #cells[1]
     local height = #cells
@@ -284,6 +297,7 @@ local function octa_room(cells, arguments)
     end
 end
 
+-- Choose neighboring cells according to boxy or diagonal smear rules.
 local function adjacent_smear(cells, x, y, smear, boxy)
     local cardinal = {
         { x = 1, y = 0 },
@@ -315,6 +329,7 @@ local function adjacent_smear(cells, x, y, smear, boxy)
     return false
 end
 
+-- Repeated smear passes use newly modified cells as input to the next pass.
 local function smear_map(cells, arguments, random)
     local width = #cells[1]
     local height = #cells
@@ -344,6 +359,7 @@ local function smear_map(cells, arguments, random)
     end
 end
 
+-- Run geometric effects only after typed effect records are available.
 function transforms.apply_effect(cells, record, random)
     if record.kind == effects.OCTA_ROOM then
         octa_room(cells, record.arguments)
@@ -358,6 +374,7 @@ function transforms.apply_effect(cells, record, random)
     return false
 end
 
+-- Rotate the final matrix by quarter turns before record coordinates are projected.
 function transforms.rotate(cells, quarter_turns)
     local result = cells
 

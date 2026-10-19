@@ -1,3 +1,5 @@
+-- The turn counter stores an entity owner alongside its count across save and restore.
+
 register.component{
     id = "mod.turns",
     version = 1,

@@ -1,3 +1,5 @@
+-- All static source shop specifications parse into selectable catalog entries.
+
 local ids = require("ids.shops")
 local harness = require("tests.harness")
 local shop_spec = require("policy.generation.vaults.shop_spec")
@@ -14,6 +16,7 @@ local site = {
     vault_id = "hellmonk_bargain_basement",
 }
 
+-- A source shop line carries clearance, greed, count, and concrete stock.
 local function clearance_and_fixed_stock()
     local alternatives = shop_spec.parse(
         "general shop type:Last-Chance suffix:Deals greed:0 count:7 " ..
@@ -32,6 +35,7 @@ local function clearance_and_fixed_stock()
     harness.equal(fixed.items[2].charges, 1, "charge request")
 end
 
+-- Slash-separated shop types remain weighted alternatives in parsed specs.
 local function weighted_alternatives()
     local alternatives = shop_spec.parse(
         "antiques shop / antique weapon shop w:5 / " ..
@@ -49,6 +53,8 @@ local function weighted_alternatives()
         "antique armour ID")
 end
 
+-- Source shop names encode spaces as underscores; decode each name field
+-- before it reaches UI text, while preserving punctuation and capitalization.
 local function source_name_spacing()
     local selected = shop_spec.parse(
         "general shop name:Deep_Dragon type:CLEARANCE_SALE! " ..
@@ -59,6 +65,7 @@ local function source_name_spacing()
     harness.equal(selected.suffix, "Fine Goods", "suffix underscores")
 end
 
+-- Randart request wins when a source stock item also carries good-item flags.
 local function randart_overrides_good_item()
     local selected = shop_spec.parse(
         "armour shop ; any armour good_item randart", site)[1].items[1]
@@ -72,6 +79,8 @@ local function randart_overrides_good_item()
         "randart takes precedence over good_item")
 end
 
+-- A malformed stock count must fail at parse time with a source path, so a
+-- mod author can repair the offending DES line before generating a level.
 local function rejects_unplayable_count()
     local ok, message = pcall(shop_spec.parse,
         "general shop count:21", site)
@@ -81,6 +90,7 @@ local function rejects_unplayable_count()
         "error lacks source path")
 end
 
+-- Validate every committed DES shop line, not only synthetic examples.
 local function parses_all_static_source_shops()
     local count = 0
 
@@ -124,6 +134,8 @@ local function parses_all_static_source_shops()
     harness.truthy(count >= 50, "all static source shops parsed")
 end
 
+-- Run synthetic grammar cases and the full committed shop corpus to catch
+-- both edge-case parsing errors and drift in actual DES definitions.
 function test.run()
     clearance_and_fixed_stock()
     weighted_alternatives()

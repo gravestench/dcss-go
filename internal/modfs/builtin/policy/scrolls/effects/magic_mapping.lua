@@ -1,4 +1,4 @@
--- Source: item-use.cc:3602 and view.cc:magic_mapping(500, 100, false).
+-- Source: item-use.cc and view.cc:magic_mapping(500, 100, false).
 local branch_flags = require("constants.branch_flags")
 local catalog = require("policy.catalog")
 local component = require("constants.component")
@@ -7,6 +7,7 @@ local scrolls = require("policy.scrolls")
 
 local effect = {}
 
+-- Check the branch NO_MAP flag so a known scroll can warn before consumption.
 local function map_persistent(ctx, player)
     local position = ctx:get(player, component.POSITION)
     local branch_id = ctx:level_branch(position.level_id)
@@ -21,6 +22,7 @@ local function map_persistent(ctx, player)
     return true
 end
 
+-- Known scrolls decline in unmappable branches before issuing an action.
 function effect.prepare(ctx, player, request)
     if request.known and not map_persistent(ctx, player) then
         return {
@@ -31,6 +33,8 @@ function effect.prepare(ctx, player, request)
     return nil
 end
 
+-- Example: Magic Mapping marks every cell on the current mappable level as explored.
+-- Map every cell only in persistent-map branches; otherwise emit the transient failure message.
 function effect.apply(ctx, player)
     if not map_persistent(ctx, player) then
         ctx:emit("read", "You feel momentarily disoriented.")

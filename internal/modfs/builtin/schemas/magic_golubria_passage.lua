@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.golubria_passage",
     version = 1,
+    -- Pair ID links two passage traps while each endpoint keeps its own level and coordinates.
     fields = {
         owner = { type = "entity" },
         pair_id = { type = "int64" },

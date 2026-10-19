@@ -1,7 +1,7 @@
 local streams = require("constants.rng_streams")
 local names = {}
 
--- Source: crawl-ref/source/item-name.cc:2400-2469.
+-- Source: crawl-ref/source/item-name.cc.
 local vowels = "aeiouaeiouaeiouy  "
 local consonants = "bcdfghjklmnpqrstvwxzcdfghlmnrstlmnrst"
 local consonant_pairs = {
@@ -21,9 +21,12 @@ for char in consonants:gmatch(".") do
     consonant_lookup[char] = true
 end
 
+-- Example: seeded_random(123) keeps a randart name tied to its saved seed.
+-- Return a private LCG so cosmetic syllables reproduce without consuming item-generation draws.
 local function seeded_random(seed)
     local state = seed
 
+    -- Advance a private PRNG for each syllable so name spelling cannot perturb item rolls.
     return function(bound)
         -- A local stream keeps cosmetic syllable draws from perturbing
         -- later item-generation decisions.
@@ -33,12 +36,14 @@ local function seeded_random(seed)
     end
 end
 
+-- The seeded generator chooses letters from its current syllable set.
 local function choice(random, letters)
     local index = random(#letters) + 1
 
     return letters:sub(index, index)
 end
 
+-- Position-sensitive consonant pairs keep generated names pronounceable.
 local function consonant_pair(random, beginning, ending)
     local first = 1
     local last = 67
@@ -53,6 +58,7 @@ local function consonant_pair(random, beginning, ending)
     return consonant_pairs[first + random(last - first + 1)]
 end
 
+-- Vowel choice depends on the growing name to avoid invalid runs.
 local function next_vowel(random, name, length)
     local vowel = choice(random, vowels)
     local previous = name:sub(-1)
@@ -73,6 +79,7 @@ local function next_vowel(random, name, length)
     return vowel
 end
 
+-- Consonant choice respects boundary rules while extending the name.
 local function next_consonant(random, name, length)
     local beginning = name == "" or name:sub(-1) == " "
     local ending = #name >= length - 2
@@ -86,8 +93,9 @@ local function next_consonant(random, name, length)
     return choice(random, consonants)
 end
 
+-- Build a name fragment from the local seeded generator, independent of global RNG.
 local function word(random)
-    -- Source: crawl-ref/source/item-name.cc:2224-2396. The source uses
+    -- Source: crawl-ref/source/item-name.cc. The source uses
     -- a game-seed subgenerator; this port uses an item-local seed.
     local length = 3 + random(5)
 
@@ -150,6 +158,7 @@ local function word(random)
     return (name:gsub("(%f[%a]%a)", string.upper))
 end
 
+-- The saved artefact seed must reproduce the same name after load.
 function names.generate(ctx, definition)
     local seed = ctx:random(streams.ITEM_GENERATION, 2147483647)
     local random = seeded_random(seed)

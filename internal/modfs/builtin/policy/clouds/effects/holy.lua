@@ -9,6 +9,7 @@ local monsters = require("ids.monsters")
 
 local holy = {}
 
+-- A missing holiness list does not confer holy immunity.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -19,6 +20,7 @@ local function has(values, wanted)
     return false
 end
 
+-- Demonspawn and undead or lich forms take extra holy-cloud damage.
 local function player_vulnerable(ctx, actor)
     local identity = ctx:get(actor, component.PLAYER)
     local species = catalog.get(categories.SPECIES, identity.species_id)
@@ -29,6 +31,7 @@ local function player_vulnerable(ctx, actor)
         form and form.form_id == "lich"
 end
 
+-- Player exposure is handled by damage adjustment; monsters use holiness immunity.
 function holy.immune(ctx, actor)
     if actor == ctx:player() then
         return false
@@ -46,6 +49,8 @@ function holy.immune(ctx, actor)
         has(definition.holiness, holiness.HOLY)
 end
 
+-- Amplify holy damage only against player vulnerability or undead and demonic monster holiness.
+-- Example: a vulnerable demonic target takes the holy cloud's one-and-a-half damage adjustment.
 function holy.adjust(ctx, actor, amount)
     if actor == ctx:player() then
         if player_vulnerable(ctx, actor) then
@@ -68,6 +73,7 @@ end
 
 holy.risk_adjust = holy.adjust
 
+-- Route holy damage through elemental scaling with its own immunity and vulnerability hooks.
 function holy.apply(ctx, actor, state, elapsed_aut, _, definition)
     return elemental.apply(ctx, actor, state, elapsed_aut,
         definition, nil, {

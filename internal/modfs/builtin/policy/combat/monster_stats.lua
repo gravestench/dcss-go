@@ -2,6 +2,8 @@ local component = require("constants.component")
 
 local stats = {}
 
+-- Example: with base_hd = 5, one drain degree, and no Wretched state,
+-- stats.hit_dice(ctx, monster, definition, base_hd) -> 4 hit dice
 -- Source: mon-act.cc:monster::get_hit_dice. Draining reduces HD before
 -- wretchedness applies its temporary quarter reduction.
 function stats.hit_dice(ctx, monster, definition, base_hd)

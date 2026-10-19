@@ -11,6 +11,7 @@ local summons = require("policy.save.summons")
 local abyss = require("policy.world.abyss")
 local component = require("constants.component")
 
+-- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
     local origin = ctx:get(entity, component.BANISHMENT)
 
@@ -28,6 +29,7 @@ local function validate_banishment(ctx, entity, position)
     end
 end
 
+-- Source monster flags determine which saved states are legal.
 local function has_flag(definition, id)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == id then
@@ -38,6 +40,7 @@ local function has_flag(definition, id)
     return false
 end
 
+-- AI memory deadlines and target cells must be coherent before turns resume.
 local function validate_ai(ctx, entity, ai, position, definition, current_aut)
     local retreat_limit = math.max(2, math.floor((definition.speed or 0) / 10)) - 1
 
@@ -67,6 +70,18 @@ local function validate_ai(ctx, entity, ai, position, definition, current_aut)
     end
 end
 
+-- Authored stationary monsters omit speed; their saved actor speed is zero.
+-- Moving monsters can have a valid temporary slow recorded by its component.
+local function valid_speed(ctx, entity, definition, actor)
+    if (definition.speed or 0) == 0 then
+        return actor.speed == 0 and
+            not ctx:has(entity, component.PROJECTILE_SLOW)
+    end
+
+    return slow.validate(ctx, entity, definition, actor)
+end
+
+-- Roster monsters must match the scenario's allowed profile and starting bounds.
 local function validate_roster_monster(ctx, entity, actor, health, position,
     ai, state)
     local polymorph = ctx:get(entity, "magic.monster_polymorph")
@@ -92,7 +107,10 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
         state.live_by_level[level_id] = count
     end
 
-    if not state.allowed[roster_id] then
+    -- A chaos duplicate can copy an authored vault actor, whose kind is not
+    -- part of the ordinary scenario roster. The clone component records its
+    -- source kind; the catalog/profile checks below still validate it.
+    if not clone and not state.allowed[roster_id] then
         error("unsupported melee attacker " .. roster_id ..
             " in fixed Dungeon scenario")
     end
@@ -118,7 +136,7 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
         error("impossible fixed monster maximum HP " .. health.max)
     end
 
-    if not slow.validate(ctx, entity, definition, actor) then
+    if not valid_speed(ctx, entity, definition, actor) then
         error("fixed monster " .. actor.kind_id ..
             " has wrong speed " .. actor.speed)
     end
@@ -131,6 +149,7 @@ end
 
 local module = {}
 
+-- Vault actors are validated against authored origin overrides instead of roster limits.
 local function validate_vault_monster(ctx, entity, actor, health, position,
     ai, current_aut)
     local definition = catalog.get("monsters", actor.kind_id)
@@ -138,17 +157,11 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
     local profile_id = overrides and overrides.base_id ~= "" and
         overrides.base_id or actor.kind_id
     local profile = roster.profile(profile_id)
-    local base_speed = definition.speed or 0
-
     if health.max < profile.minimum or health.max > profile.maximum then
         error("vault monster " .. ctx:id(entity) .. " has impossible HP")
     end
 
-    if base_speed == 0 then
-        if actor.speed ~= 0 then
-            error("stationary vault monster has wrong speed")
-        end
-    elseif not slow.validate(ctx, entity, definition, actor) then
+    if not valid_speed(ctx, entity, definition, actor) then
         error("vault monster " .. actor.kind_id .. " has wrong speed")
     end
 
@@ -158,6 +171,8 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
     sticky_flame.validate(ctx, entity)
 end
 
+-- Monster save validation separates roster, vault, and banished actors because their origins differ.
+-- Example: module.run(ctx, input) rejects a banished monster left on an ordinary floor.
 function module.run(ctx, input)
     entities.validate(ctx)
     inventory.validate(ctx)
@@ -213,6 +228,7 @@ function module.run(ctx, input)
 
         local summon = ctx:get(entity, "magic.summon")
 
+        -- Summons follow owner/expiry rules; authored vault actors and roster actors have different origin checks.
         if summon then
             summons.validate(ctx, entity, actor, position, ai,
                 summon, input.current_aut)

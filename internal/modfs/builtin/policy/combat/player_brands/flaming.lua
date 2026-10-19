@@ -7,8 +7,10 @@ local brand = {
     requires_damage = true,
 }
 
+-- Example: brand.apply(ctx, hit, brands) with fire-vulnerable defender -> extra fire damage and a burn message
+-- Add fire brand damage after contact and scale it through the defender's fire resistance.
 function brand.apply(ctx, hit, brands)
-    -- Source: attack.cc:1379-1386,1618. The elemental draw follows
+    -- Source: attack.cc,1618. The elemental draw follows
     -- ordinary damage and is fully resistible.
     local raw = 1 + math.floor(roll.melee(ctx, hit.damage_done) / 2)
     local bonus = damage.monster_elemental(ctx, hit.defender,

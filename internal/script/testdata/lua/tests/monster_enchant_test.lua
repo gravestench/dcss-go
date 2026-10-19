@@ -1,9 +1,11 @@
+
 local component = require("constants.component")
 local enchant = require("policy.combat.monster_enchant")
 local harness = require("tests.harness")
 
 local test = {}
 
+-- Dispel should remove the saved enchantment.
 function test.run(ctx)
     local monster = harness.actor_with(ctx, component.MONSTER_ENCHANT, {
         blind_aut = 20,

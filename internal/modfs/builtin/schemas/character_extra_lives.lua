@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.EXTRA_LIVES,
     version = 1,
+    -- Historical max level and last award level prevent repeat Felid life grants after death and level loss.
     fields = {
         lives = {
             type = "int64",

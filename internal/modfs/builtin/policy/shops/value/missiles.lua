@@ -12,6 +12,9 @@ local multiplier = {
     [brands.FRENZY] = 20,
 }
 
+-- Example: missiles.value(kind, stack, known) returns a per-missile price with a known brand multiplier.
+-- Value one missile here and let the caller apply stack quantity; brand
+-- premiums only enter the quote once that brand is identified.
 function missiles.value(kind, item, known)
     local value = kind.missile and kind.missile.price or 0
 

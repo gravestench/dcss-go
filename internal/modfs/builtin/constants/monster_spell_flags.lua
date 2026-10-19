@@ -1,3 +1,5 @@
+-- Spell-slot flags describe when a monster can choose a spell, including emergencies.
+
 -- Source: crawl-ref/source/externs.h, mon_spell_slot_flags.
 local flags = {
     BREATH = "MON_SPELL_BREATH",

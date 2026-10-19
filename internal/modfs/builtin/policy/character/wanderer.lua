@@ -1,3 +1,4 @@
+-- Example: A Wanderer rolls a weighted gift after its starting skills are chosen.
 -- Source: ng-wanderer.cc at e60ba356. Wanderer is generated during a start;
 -- its role skills and grants cannot live in the static job catalog.
 local wanderer = {}
@@ -5,6 +6,7 @@ local gifts = require("policy.character.wanderer_gifts")
 local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
 
+-- Sort generated grants by ID to make starting skill order deterministic.
 local function grant_before(left, right)
     return left.id < right.id
 end
@@ -66,10 +68,12 @@ local flexible_skills = {
     SK_THROWING = true,
 }
 
+-- Use effective mutation level when restricting a Wanderer role choice.
 local function mutation(ctx, id)
     return mutation_levels.effective(ctx, ctx:player(), id) > 0
 end
 
+-- Role and stat draws share the character stream and consume one roll over aptitude weights.
 local function weighted(ctx, choices)
     local total = 0
 
@@ -90,6 +94,7 @@ local function weighted(ctx, choices)
     error("wanderer weighted choice exhausted")
 end
 
+-- Exclude skills unusable by this species before computing weighted role candidates.
 local function role(ctx, species, pool)
     local choices = {}
 
@@ -107,6 +112,7 @@ local function role(ctx, species, pool)
     return weighted(ctx, choices)
 end
 
+-- Innate casters may be assigned Spellcasting before the ordinary offensive pool draw.
 local function offense_role(ctx, species)
     if mutation(ctx, mutations.MUT_INNATE_CASTER) and
         ctx:random("character", 2) == 0 then
@@ -121,6 +127,7 @@ local function offense_role(ctx, species)
     return role(ctx, species, offense)
 end
 
+-- The three chosen roles bias stat gains; ties still consume the source random draw.
 local function stat_bonus(ctx, species, roles)
     local bonus = {
         strength = 0,
@@ -165,6 +172,7 @@ local function stat_bonus(ctx, species, roles)
     return bonus
 end
 
+-- Allocate the remaining starting levels after the guaranteed role grants.
 local function skills(ctx, species, roles, has_spells)
     local levels = {}
     local distinct = {}
@@ -279,6 +287,8 @@ local function skills(ctx, species, roles, has_spells)
     return grants
 end
 
+-- Resolve role skills first; their aptitude-weighted choices drive stat bonuses and starting gifts.
+-- Generate role skills before gifts so equipment and spell choices follow the rolled build.
 function wanderer.generate(ctx, species)
     local first
 

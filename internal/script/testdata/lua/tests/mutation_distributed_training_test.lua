@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local distributed = require("policy.character.distributed_training")
@@ -10,6 +11,7 @@ local species_ids = require("ids.species")
 
 local test = {}
 
+-- Useless skills raise the cost of usable skills.
 function test.run(ctx)
     local player = ctx:create()
     local gnoll = catalog.get("species", species_ids.SP_GNOLL)

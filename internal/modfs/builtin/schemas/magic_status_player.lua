@@ -3,6 +3,7 @@
 local schema = {
     id = "magic.player_status",
     version = 1,
+    -- Separate timers and phase fields let overlapping self-enchantments end without resetting one another.
     fields = {
         swift_aut = {
             type = "int64",

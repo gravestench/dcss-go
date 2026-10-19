@@ -11,6 +11,7 @@ local will = require("policy.magic.effects.zaps.will")
 local polymorph = {}
 local definitions = catalog.all("monsters")
 
+-- Absent holiness and flag lists cannot grant a catalog trait.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -21,6 +22,7 @@ local function has(values, wanted)
     return false
 end
 
+-- Polymorph keeps at least one holiness class shared with the original form.
 local function same_holiness(left, right)
     for _, value in ipairs(left or {}) do
         if has(right, value) then
@@ -31,6 +33,7 @@ local function same_holiness(left, right)
     return false
 end
 
+-- Chaos Spawn is a special exception; abominations and unliving forms resist changing.
 local function can_polymorph(definition)
     if definition.id == monsters.MONS_CHAOS_SPAWN then
         return true
@@ -46,6 +49,8 @@ local function can_polymorph(definition)
         not has(definition.flags, "M_NO_POLY_TO")
 end
 
+-- Example: An entity without an ACTOR component fails the Polymorph eligibility check.
+-- Resolve the live actor's catalog form before checking exclusions; callers may pass non-actors.
 function polymorph.can_actor(ctx, target)
     local actor = ctx:get(target, component.ACTOR)
 
@@ -56,6 +61,7 @@ function polymorph.can_actor(ctx, target)
     return can_polymorph(catalog.get("monsters", actor.kind_id))
 end
 
+-- A transformed monster must survive its current environment, with flight handled specially.
 local function same_habitat(source, target)
     local old = source.habitat_id
     local next_kind = target.habitat_id
@@ -84,6 +90,7 @@ local function same_habitat(source, target)
     return old == next_kind
 end
 
+-- Check actual terrain after catalog habitat matching so lava and deep water cannot kill the new form.
 local function feature_safe(ctx, position, definition)
     local feature = ctx:cell(position.level_id, position.x, position.y)
     local habitat = definition.habitat_id
@@ -103,6 +110,7 @@ local function feature_safe(ctx, position, definition)
     return habitat ~= "HT_LAVA" and habitat ~= "HT_WATER"
 end
 
+-- Exclude unfinished, unique, immobile, and unrelated species before weighted selection.
 local function candidate(source, target)
     if target.status ~= "defined" or not target.average_hp_10x or
         target.average_hp_10x <= 0 or not target.speed or target.speed <= 0 or
@@ -125,6 +133,7 @@ local function candidate(source, target)
     return true
 end
 
+-- Choose up to three forms without replacement, strongly preferring similar HD.
 local function weighted_candidates(ctx, source, position, stream)
     local choices = {}
 
@@ -171,6 +180,7 @@ local function weighted_candidates(ctx, source, position, stream)
     return shortlist
 end
 
+-- Polymorph drops carried gear because the new body cannot retain old equipment slots.
 local function drop_inventory(ctx, monster, position)
     for _, item in ipairs(ctx:query({ component.ITEM, component.CARRIED_BY })) do
         local carrier = ctx:get(item, component.CARRIED_BY)
@@ -190,6 +200,7 @@ local function drop_inventory(ctx, monster, position)
     end
 end
 
+-- Preserve proportional HP with source randomisation, reset energy, and remember original kind.
 local function transform(ctx, target, source, definition, stream)
     local actor = ctx:get(target, component.ACTOR)
     local health = ctx:get(target, component.HEALTH)
@@ -226,6 +237,7 @@ local function transform(ctx, target, source, definition, stream)
         " evaporates and reforms as a " .. definition.name .. "!")
 end
 
+-- Only visible living actors along clear in-range rays make the spell usable.
 local function can_target(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -253,10 +265,12 @@ local function can_target(ctx, player, spell)
     return false
 end
 
+-- Expose the shared target search to the cast registry before MP is spent.
 function polymorph.can_target(ctx, player, spell)
     return can_target(ctx, player, spell)
 end
 
+-- The first ray contact rolls will and then chooses among habitat-safe forms.
 function polymorph.cast(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,

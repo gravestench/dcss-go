@@ -8,6 +8,8 @@ local will = require("policy.magic.effects.zaps.will")
 
 local slow = {}
 
+-- Example: A visible susceptible monster on a clear ray makes Slow castable.
+-- Check range and clear visibility before prompting for a ray that could affect a living actor.
 function slow.can_target(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -37,6 +39,7 @@ function slow.can_target(ctx, player, spell)
     return false
 end
 
+-- Round two-thirds speed through the spell stream to preserve source action timing.
 local function slowed_speed(ctx, base)
     local numerator = base * 2
     local quotient = math.floor(numerator / 3)
@@ -48,7 +51,10 @@ local function slowed_speed(ctx, base)
     return quotient
 end
 
+-- Extend an existing Slow timer without overwriting the original speed needed for restoration.
 local function apply(ctx, target, definition, ench_power)
+    -- Reapplication extends the saved duration; only the first cast changes
+    -- actor speed and records the original value for restoration.
     local current = ctx:get(target, component.PROJECTILE_SLOW)
 
     if current then
@@ -70,6 +76,7 @@ local function apply(ctx, target, definition, ench_power)
     ctx:emit("spell", "The " .. definition.name .. " seems to slow down.")
 end
 
+-- Trace a beam contact and check enchant resistance before changing monster speed.
 function slow.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,

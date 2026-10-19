@@ -4,11 +4,14 @@ local monster_health = require("policy.combat.monster_health")
 
 local common = {}
 
+-- Example: Positions (1, 1) and (3, 2) are two cells apart on the square grid.
+-- Square-grid effects count diagonal and orthogonal separation by the larger axis.
 function common.distance(left, right)
     return math.max(math.abs(left.x - right.x),
         math.abs(left.y - right.y))
 end
 
+-- Collect living AI-controlled actors with positions before translocation chooses targets.
 function common.monsters(ctx, level_id)
     local found = {}
 
@@ -33,6 +36,7 @@ function common.monsters(ctx, level_id)
     return found
 end
 
+-- Read monster flags from the catalog for translocation eligibility checks.
 function common.flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -43,6 +47,7 @@ function common.flag(definition, wanted)
     return false
 end
 
+-- Translocation damage signals a player kill when monster health reaches zero.
 function common.hit(ctx, target, amount)
     if amount <= 0 then
         return

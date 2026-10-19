@@ -9,10 +9,14 @@ local spells = require("ids.spells")
 
 local damnation = {}
 
+-- A successful blast is resolved first, then costs 15% of maximum HP.
+-- Example: damnation.hp_cost(100) returns 15 HP, charged after a successful blast.
 function damnation.hp_cost(maximum)
     return math.floor((150 * maximum + 500) / 1000)
 end
 
+-- Check direction, line of sight, range, and survivable HP before a timed
+-- ability intent is accepted; failure here should cost no health.
 function damnation.prepare(ctx, player, input)
     local health = ctx:get(player, component.HEALTH)
     local position = ctx:get(player, component.POSITION)
@@ -36,6 +40,8 @@ function damnation.prepare(ctx, player, input)
     return nil
 end
 
+-- Resolve the real spell effect first, then charge HP only on a successful
+-- ability roll. This keeps failed attempts from paying the blast's cost.
 function damnation.resolve(ctx, player, intent)
     if failure.roll(ctx, player) then
         ctx:emit("mutation", "You fail to hurl damnation.")
@@ -55,12 +61,15 @@ function damnation.resolve(ctx, player, intent)
     ctx:set(player, component.HEALTH, health)
 end
 
+-- Keep the fixed range named so the menu and targeting checks both use six.
+local function damnation_range()
+    return 6
+end
+
 registry.add(abilities.HURL_DAMNATION, {
     mutation_id = mutations.MUT_HURL_DAMNATION,
     name = "Hurl Damnation",
-    range = function()
-        return 6
-    end,
+    range = damnation_range,
     prepare = damnation.prepare,
     resolve = damnation.resolve,
 })

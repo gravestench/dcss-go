@@ -3,11 +3,13 @@ local component = require("constants.component")
 local terrain_ids = require("constants.terrain")
 local summons = require("policy.magic.effects.summons.common")
 
+-- Theory of operation: The marker changes from portal to tentacle only when its cell is free after terrain aging.
 -- Source: timed-effects.cc:timeout_malign_gateways. The marker first owns a
 -- solid portal cell, then keeps it while its tentacle lives. The source also
 -- emits translocation clouds, which need the future cloud field.
 local system = {}
 
+-- Gateway lifetime and occupancy are checked after temporary terrain ages.
 function system.update(ctx, active)
     if active ~= ctx:player() then
         return

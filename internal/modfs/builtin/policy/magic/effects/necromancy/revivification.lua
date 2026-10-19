@@ -9,6 +9,7 @@ local statuses = require("policy.magic.effects.statuses.player")
 
 local revivification = {}
 
+-- Permanent undead species and active lich form both reject living-body restoration.
 local function undead(ctx, player)
     local origin = ctx:get(player, component.PLAYER)
     local species = catalog.get("species", origin.species_id)
@@ -20,6 +21,8 @@ end
 
 -- Source: spl-util.cc:casting_uselessness_reason. These abort before MP and
 -- action time are spent.
+-- Example: Revivification rejects a player at full HP before it can reduce maximum HP.
+-- Guard against full health, low maximum HP, and undead form before permanent HP loss is possible.
 function revivification.prepare(ctx, player)
     local health = ctx:get(player, component.HEALTH)
 
@@ -38,6 +41,7 @@ function revivification.prepare(ctx, player)
     return nil
 end
 
+-- Nine Bernoulli draws turn cast power into a bounded permanent HP cost.
 local function hp_loss_percent(ctx, power)
     local successes = 0
 
@@ -51,6 +55,7 @@ local function hp_loss_percent(ctx, power)
     return 6 + successes
 end
 
+-- Heal to the newly reduced maximum, then end Death's Door and apply its exit paralysis.
 function revivification.resolve(ctx, player, _, _, power)
     local health = ctx:get(player, component.HEALTH)
     local percent = hp_loss_percent(ctx, power)

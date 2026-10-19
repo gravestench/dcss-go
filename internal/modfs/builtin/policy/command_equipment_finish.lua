@@ -1,6 +1,8 @@
 local equipment = require("policy.inventory.equipment")
 local finish = {}
 
+-- Equipment completion applies the prepared change only after the delay has finished.
+-- Example: finish.run(ctx, { delay = prepared_delay }) starts the delayed equipment change.
 function finish.run(ctx, input)
     local actor = ctx:player()
 

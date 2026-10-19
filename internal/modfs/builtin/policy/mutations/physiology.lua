@@ -52,6 +52,7 @@ local demonspawn_scales = {
     mutations.MUT_SHARP_SCALES,
 }
 
+-- Treat absent species flag lists as empty when applying body restrictions.
 local function has_flag(species, wanted)
     for _, flag in ipairs(species.flags or {}) do
         if flag == wanted then
@@ -62,12 +63,14 @@ local function has_flag(species, wanted)
     return false
 end
 
+-- Distinguish an inherited body facet from the same acquired mutation rank.
 local function innate(ctx, owner, id)
     local entry = records.find(ctx, owner, id)
 
     return entry and entry.state.innate > 0 or false
 end
 
+-- Accept draconian ancestry or a saved tail mutation before allowing a Stinger grant.
 local function has_tail(ctx, owner, species)
     return species.id:find("^SP_.*DRACONIAN") ~= nil or
         levels.base(ctx, owner, mutations.MUT_CONSTRICTING_TAIL) > 0 or
@@ -76,6 +79,7 @@ local function has_tail(ctx, owner, species)
         levels.base(ctx, owner, mutations.MUT_WEAKNESS_STINGER) > 0
 end
 
+-- Only innate tail, float, paws, or tentacles remove the foot anatomy needed by Hooves.
 local function has_feet(ctx, owner)
     return not innate(ctx, owner, mutations.MUT_CONSTRICTING_TAIL) and
         not innate(ctx, owner, mutations.MUT_FLOAT) and
@@ -83,6 +87,7 @@ local function has_feet(ctx, owner)
         not innate(ctx, owner, mutations.MUT_TENTACLE_ARMS)
 end
 
+-- Reject another member of a mutually exclusive body group before a rank is recorded.
 local function body_facet_conflict(ctx, owner, id)
     for _, group in ipairs(body_facets) do
         for _, member in ipairs(group) do
@@ -99,6 +104,7 @@ local function body_facet_conflict(ctx, owner, id)
     return false
 end
 
+-- Example: a species with incompatible body facets rejects a mutation before it can be recorded.
 -- Source: mutation.cc:physiology_mutation_conflict. This checks the body
 -- before weighted selection accepts a mutation and before direct grants.
 function physiology.permitted(ctx, owner, id)

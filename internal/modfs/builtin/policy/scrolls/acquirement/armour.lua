@@ -18,12 +18,14 @@ local slots = {
     "boots",
 }
 
+-- Filter by generation mode and species wearability before a slot can enter the draw.
 local function eligible(ctx, player, species, kind)
     return kind.class == classes.OBJ_ARMOUR and kind.armour and
         kind.generation.mode ~= "none" and
         selection.wearable(ctx, player, species, kind)
 end
 
+-- A slot enters the draw only if the current species can wear at least one generated kind in it.
 local function slot(ctx, player, species)
     local rows = {}
 
@@ -49,6 +51,7 @@ local function slot(ctx, player, species)
     return selection.weighted(ctx, rows)
 end
 
+-- Warrior rolls favour AC squared; non-warriors favour low EV burden as armour skill changes.
 local function body_weight(ctx, kind, warrior)
     local base = kind.armour.acquire_weight or kind.generation.weight or 0
 
@@ -63,6 +66,7 @@ local function body_weight(ctx, kind, warrior)
     return base * inverse * inverse * inverse
 end
 
+-- Compare Armour training with Dodging and Spellcasting before preferring heavy protection.
 local function warrior(ctx)
     local light = 3 * selection.skill(ctx, skills.SK_SPELLCASTING) +
         selection.skill(ctx, skills.SK_DODGING)
@@ -78,6 +82,7 @@ local function warrior(ctx)
     return light_roll < heavy_roll
 end
 
+-- Use slot-specific weights: body armour, shields, and secondary pieces have different source curves.
 local function subtype_weight(ctx, kind, slot_id, warrior_pref)
     if slot_id == "body" then
         return body_weight(ctx, kind, warrior_pref)
@@ -118,6 +123,8 @@ local function subtype_weight(ctx, kind, slot_id, warrior_pref)
     return kind.generation.weight or 0
 end
 
+-- Example: a species unable to wear body armour samples only its usable armour slots.
+-- Choose a wearable slot before subtype weighting so body-size limits remain hard constraints.
 function armour.pick(ctx, player)
     local species = selection.species(ctx, player)
     local slot_id = slot(ctx, player, species)

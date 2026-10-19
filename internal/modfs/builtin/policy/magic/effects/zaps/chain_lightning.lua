@@ -8,10 +8,12 @@ local registry = require("policy.magic.effects.registry")
 
 local chain_lightning = {}
 
+-- Use Chebyshev distance for both initial reach and later three-cell jumps.
 local function distance(a, b)
     return math.max(math.abs(a.x - b.x), math.abs(a.y - b.y))
 end
 
+-- Skip dead, conjured, and no-threat monsters while allowing a later arc to hit the caster.
 local function worth_targeting(ctx, player, target)
     if target == player then
         return true
@@ -35,6 +37,7 @@ local function worth_targeting(ctx, player, target)
     return true
 end
 
+-- Each jump excludes already struck actors so the chain advances to a new target.
 local function candidates(ctx, player, source, radius, seen)
     local origin = ctx:get(player, component.POSITION)
     local found = {}
@@ -61,6 +64,7 @@ local function candidates(ctx, player, source, radius, seen)
     return found
 end
 
+-- Break nearest-target ties with the spell RNG stream after collecting all equal-distance actors.
 local function initial(ctx, player)
     local origin = ctx:get(player, component.POSITION)
     local found = candidates(ctx, player, origin, 7, {
@@ -87,6 +91,7 @@ local function initial(ctx, player)
     return nearest[1 + ctx:random("spell", #nearest)], nearest_distance
 end
 
+-- Cap power then stochastically round the three-die side count on the spell stream.
 local function sides(ctx, power)
     local maximum = 2 * math.min(power, 200)
     local value = math.floor(maximum / 3)
@@ -99,6 +104,7 @@ local function sides(ctx, power)
     return value
 end
 
+-- Zero sides consume no RNG; otherwise each strike rolls three independent lightning dice.
 local function roll(ctx, side)
     if side <= 0 then
         return 0
@@ -108,6 +114,7 @@ local function roll(ctx, side)
         ctx:random("spell", side) + ctx:random("spell", side)
 end
 
+-- Only half the raw arc is resistible electricity; the other half bypasses rElec.
 local function resist_monster(raw, definition)
     local resistible = math.floor(raw / 2)
 
@@ -115,6 +122,7 @@ local function resist_monster(raw, definition)
         damage.elemental(resistible, definition, "MR_RES_ELEC")
 end
 
+-- Self-hit arcs use player resistance on half the damage after player armour.
 local function resist_player(ctx, player, raw)
     local resistible = math.floor(raw / 2)
 
@@ -122,6 +130,7 @@ local function resist_player(ctx, player, raw)
         damage.player_elemental(ctx, player, resistible, "MR_RES_ELEC")
 end
 
+-- Resolve armour and half-resistible electricity separately for player and monster targets.
 local function strike(ctx, player, target, side)
     local raw = roll(ctx, side)
 
@@ -147,6 +156,8 @@ local function strike(ctx, player, target, side)
         definition.name .. "!")
 end
 
+-- Example: After striking one monster, Chain Lightning recalculates its next target from that contact.
+-- Successive strikes recalculate candidates from the latest contact point.
 function chain_lightning.resolve(ctx, player, _, _, power)
     local first, initial_range = initial(ctx, player)
 

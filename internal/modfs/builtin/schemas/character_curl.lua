@@ -5,6 +5,7 @@ local component = require("constants.component")
 local schema = {
     id = component.CURL,
     version = 1,
+    -- The active bit spans the monster response to the hit that triggered Palentonga curling.
     fields = {
         active = {
             type = "bool",

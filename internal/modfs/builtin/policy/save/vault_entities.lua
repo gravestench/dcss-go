@@ -6,6 +6,7 @@ local monster_specs = require("policy.generation.vaults.specs.monster")
 
 local vault_entities = {}
 
+-- Index saved levels by ID before checking each vault entity's origin.
 local function level_index(input)
     local levels = {}
 
@@ -16,6 +17,7 @@ local function level_index(input)
     return levels
 end
 
+-- A vault actor override must agree with the authored monster directive.
 local function validate_actor_overrides(ctx, entity, record, arguments)
     local selected
 
@@ -56,6 +58,7 @@ local function validate_actor_overrides(ctx, entity, record, arguments)
     end
 end
 
+-- A corpse left by a vault actor may have aged without losing its authored origin.
 local function decayed_authored_corpse(ctx, entity, record, arguments, item)
     if record.kind ~= effects.ITEM or
         arguments.kind_id ~= item_ids.CORPSE_BODY or
@@ -68,6 +71,7 @@ local function decayed_authored_corpse(ctx, entity, record, arguments, item)
     return corpse and corpse.monster_id == arguments.base_id
 end
 
+-- Authored entities retain the vault origin that produced them.
 local function validate_origin(ctx, entity, origin, levels, seen)
     local level = levels[origin.level_id]
     local record = level and level.vault_records[origin.record_index]
@@ -94,6 +98,7 @@ local function validate_origin(ctx, entity, origin, levels, seen)
         error("entity " .. ctx:id(entity) .. " has forged vault kind ID")
     end
 
+    -- One record can yield an actor, corpse, and gear, but their occurrence numbers must remain distinct.
     if origin.occurrence == 1 then
         if (kind_id ~= arguments.kind_id and not
             (item and decayed_authored_corpse(ctx, entity, record,
@@ -163,6 +168,8 @@ local function validate_origin(ctx, entity, origin, levels, seen)
     end
 end
 
+-- Vault entity overrides retain their originating level and authored record.
+-- Example: vault_entities.validate_vault_entities(ctx, input) checks a saved vault actor's origin.
 function vault_entities.validate_vault_entities(ctx, input)
     local levels = level_index(input)
     local seen = {}

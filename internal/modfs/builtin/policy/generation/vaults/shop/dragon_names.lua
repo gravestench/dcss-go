@@ -1,4 +1,5 @@
--- Generated from the pinned builder/shops.des dragon-depot script.
+-- Example: The dragon depot samples an authored dragon owner token for its shop name.
+-- Dragon depot draws an owner from these authored names; underscores remain part of the DES name token.
 return {
     "Apollo",
     "Argus",

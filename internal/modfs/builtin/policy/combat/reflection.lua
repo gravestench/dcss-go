@@ -6,13 +6,14 @@ local monster_health = require("policy.combat.monster_health")
 
 local reflection = {}
 
--- Source: actor.cc:276-283 and ranged-attack.cc:154-193. Only a
+-- Source: actor.cc and ranged-attack.cc. Only a
 -- successful block can reverse the current projectile toward its source.
 function reflection.active(ctx, defender)
     return ctx:has(defender, component.PLAYER) and
         effects.has(ctx, defender, capabilities.REFLECTION)
 end
 
+-- Rebuild the shooter's defense for the return path after verifying a clear trajectory.
 function reflection.return_defense(ctx, shooter, definition,
     self_missile)
     local health = ctx:get(shooter, component.HEALTH)
@@ -43,10 +44,13 @@ function reflection.return_defense(ctx, shooter, definition,
     }
 end
 
+-- Example: reflection.begin(ctx, name) with name = 'stone' -> combat message 'You reflect the stone!'
+-- Emit reflection feedback before the return attack makes its own hit roll.
 function reflection.begin(ctx, name)
     ctx:emit("combat", "You reflect the " .. name .. "!")
 end
 
+-- Resolve a new block, miss, or hit against the original shooter and credit the player.
 function reflection.return_outcome(ctx, player, shooter, definition,
     name, outcome)
     if outcome.kind == "block" then
@@ -77,6 +81,7 @@ function reflection.return_outcome(ctx, player, shooter, definition,
     return health
 end
 
+-- Apply returned brand damage with player kill credit only when it actually reaches zero HP.
 function reflection.extra_damage(ctx, player, shooter, amount)
     if amount <= 0 then
         return

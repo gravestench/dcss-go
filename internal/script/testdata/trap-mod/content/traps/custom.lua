@@ -1,3 +1,5 @@
+-- The custom echo trap enters the trap catalog with a modded id.
+
 local categories = require("constants.catalog")
 local ids = require("ids.custom_traps")
 

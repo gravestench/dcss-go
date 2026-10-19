@@ -4,6 +4,7 @@ local threat = {}
 
 -- Source: ouch.cc:_is_damage_threatening uses pre-hit HP. The second
 -- chance roll happens only when the first chance fails.
+-- Example: a small hit below the safe-percent threshold cannot trigger an emergency response.
 function threat.triggered(ctx, player, damage, level)
     local health = ctx:get(player, component.HEALTH)
 

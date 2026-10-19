@@ -5,6 +5,7 @@ local constants = require("constants.spell_range")
 
 local range = {}
 
+-- Resolve named catalog constants at evaluation time and fail on misspelled expressions.
 local function bound(expression)
     local value = tonumber(expression) or constants[expression]
 
@@ -44,6 +45,7 @@ function range.for_power(spell, spell_power)
     return math.min(scaled, constants.LOS_RADIUS)
 end
 
+-- Skip power calculation for fixed-range spells so only variable ranges depend on current enhancers.
 function range.for_spell(ctx, player, spell)
     local minimum = bound(spell.min_range_expr)
     local maximum = bound(spell.max_range_expr)
@@ -55,6 +57,8 @@ function range.for_spell(ctx, player, spell)
     return range.for_power(spell, power.cast(ctx, player, spell))
 end
 
+-- Example: a variable-range spell request returns the range for the player's current cast power.
+-- Resolve the requested spell before computing its range from current cast power.
 function range.run_policy(ctx, input)
     local spell = catalog.get("spells", input.spell_id)
 

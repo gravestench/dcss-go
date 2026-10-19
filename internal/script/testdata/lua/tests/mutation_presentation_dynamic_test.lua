@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
@@ -6,6 +7,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Combine changing Iicemail and Shield rows independent of HUD coordinates.
 local function text_of(result)
     local lines = {}
 
@@ -16,6 +18,7 @@ local function text_of(result)
     return table.concat(lines, "\n")
 end
 
+-- Condensation Shield displays source SH.
 function test.run(ctx)
     local player = ctx:create()
 

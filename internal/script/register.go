@@ -18,7 +18,6 @@ func (r *Runtime) installRegistrationAPI() {
 	r.state.SetField(register, "definition", r.state.NewFunction(r.luaRegisterDefinition))
 	r.state.SetField(register, "get", r.state.NewFunction(r.luaRegisteredDefinition))
 	r.state.SetField(register, "ids", r.state.NewFunction(r.luaRegisteredIDs))
-	r.state.SetField(register, "ordered_ids", r.state.NewFunction(r.luaRegisteredOrderedIDs))
 	r.state.SetField(register, "reference", r.state.NewFunction(r.luaRegisteredReference))
 	r.state.SetField(register, "validate_references", r.state.NewFunction(r.luaValidateDefinitionReferences))
 	r.state.SetField(register, "origin", r.state.NewFunction(r.luaRegisteredOrigin))

@@ -1,3 +1,5 @@
+-- A second Abomination definition tests duplicate id rejection within one layer.
+
 local categories = require("constants.catalog")
 
 local definition = {

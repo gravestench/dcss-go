@@ -4,6 +4,8 @@ local registry = require("policy.abilities.registry")
 
 local abilities = {}
 
+-- Collect cell writes in one format so the renderer can clip them to the
+-- actual terminal without each ability row knowing terminal dimensions.
 local function write(writes, x, y, value, color)
     writes[#writes + 1] = {
         x = x,
@@ -13,6 +15,9 @@ local function write(writes, x, y, value, color)
     }
 end
 
+-- Ability rows read the current registry state so unavailable powers are displayed consistently.
+-- Example: runtime.Policy("presentation.abilities", { height = 24 })
+-- returns writes plus the same option list the input handler indexes.
 function abilities.run(ctx, input)
     local options = registry.available(ctx, ctx:player())
     local writes = {}

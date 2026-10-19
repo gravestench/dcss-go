@@ -5,6 +5,7 @@ local ammunition = require("ids.ammunition")
 
 local ranged = {}
 
+-- Only launchers with a supported ammo class enter the ranged path.
 local function ranged_weapon(kind)
     local weapon = kind and kind.weapon
 
@@ -21,12 +22,15 @@ local function ranged_weapon(kind)
     return false
 end
 
+-- Trace the projectile corridor before AI commits to firing.
 local function clear_distant_shot(ctx, position, player)
     return not common.adjacent(position, player) and
         ctx:projectile_clear(position.level_id, position.x, position.y,
             player.x, player.y)
 end
 
+-- Prefer a wielded launcher at nonadjacent range, then reject ammo or trajectories that cannot hit.
+-- Example: ranged.choose_launcher(ctx, monster, position, player) rejects blocked distant shots.
 function ranged.choose_launcher(ctx, monster, position, player)
     if common.adjacent(position, player) then
         return nil, false
@@ -61,6 +65,7 @@ function ranged.choose_launcher(ctx, monster, position, player)
     }, true
 end
 
+-- Thrown inventory is considered only after range and line checks pass.
 function ranged.choose_throw(ctx, monster, position, player)
     if common.adjacent(position, player) then
         return nil

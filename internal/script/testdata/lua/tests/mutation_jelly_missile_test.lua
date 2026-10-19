@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local items = require("ids.items")
 local mutations = require("ids.mutations")
@@ -7,6 +8,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Healing uses random2 of half the final projectile damage.
 function test.run(ctx)
     local player = ctx:create()
 

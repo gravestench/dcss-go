@@ -1,3 +1,4 @@
+-- Example: An authored monster name ignores a removed catalog entry during resolution.
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local choice = require("policy.generation.vaults.specs.choice")
@@ -33,12 +34,14 @@ local random_item_names = {
     superb_item = true,
 }
 
+-- Exclude removed catalog entries while resolving authored names.
 local function active(definition)
     return definition.status ~= "removed" and
         definition.status ~= "enum_only" and
         not definition.explicitly_removed
 end
 
+-- Resolve authored display names through a catalog index instead of assuming IDs.
 local function name_index(category)
     local index = names_by_category[category]
 
@@ -75,6 +78,7 @@ local function name_index(category)
     return index
 end
 
+-- Reject unknown or ambiguous display names instead of guessing a catalog ID.
 local function find_name(category, name, site)
     local ids = name_index(category)[name:lower()]
 
@@ -90,12 +94,14 @@ local function find_name(category, name, site)
     return ids[1]
 end
 
+-- A DES D:N place overrides the current floor for this resolver request.
 local function source_depth(selected, depth)
     local value = selected.place and selected.place:match("^D:(%d+)$")
 
     return tonumber(value) or depth
 end
 
+-- Random corpse requests filter to species capable of leaving the requested remains.
 local function generic_corpse_species(ctx, depth, skeleton, site)
     local rows = pool.at_depth(depth)
     local eligible = {}
@@ -122,6 +128,7 @@ local function generic_corpse_species(ctx, depth, skeleton, site)
     return pool.pick(ctx, eligible, total)
 end
 
+-- Check skeleton eligibility for a named monster before materializing remains.
 local function named_corpse_species(name, skeleton, site)
     local id = find_name(categories.MONSTERS, name, site)
     local definition = catalog.get(categories.MONSTERS, id)
@@ -150,6 +157,7 @@ local function named_corpse_species(name, skeleton, site)
     choice.fail(site, name, "monster species cannot produce this corpse")
 end
 
+-- Validate source-only monster names and colour annotations before population.
 function resolve.validate_monster(selected, site)
     local name = selected.name
 
@@ -168,6 +176,7 @@ function resolve.validate_monster(selected, site)
     find_name(categories.MONSTERS, base_name or name, site)
 end
 
+-- Permit random-item tokens but require concrete names to resolve in the catalog.
 function resolve.validate_item(selected, site)
     local name = selected.name
 
@@ -187,6 +196,7 @@ function resolve.validate_item(selected, site)
     end
 end
 
+-- A unique already alive cannot be materialized from another vault record.
 local function unique_already_exists(ctx, kind_id)
     local definition = catalog.get(categories.MONSTERS, kind_id)
     local unique = false
@@ -210,6 +220,8 @@ local function unique_already_exists(ctx, kind_id)
     return false
 end
 
+-- Resolve source monster aliases and corpse forms against the live catalog at spawn time.
+-- Apply source depth and corpse special cases before returning a concrete monster ID.
 function resolve.monster(ctx, selected, depth, site)
     if selected.no_spawn then
         return { no_spawn = true }
@@ -253,6 +265,7 @@ function resolve.monster(ctx, selected, depth, site)
     }
 end
 
+-- Random stock and named items are resolved only when population owns a live context.
 function resolve.item(ctx, selected, depth, site)
     if selected.no_spawn then
         return { no_spawn = true }

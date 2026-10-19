@@ -3,6 +3,7 @@ local player_attack = require("policy.combat.player_attack")
 
 local ranged = {}
 
+-- Apply missile repulsion before the monster hit roll, then compare against EV and shield.
 local function contact(ctx, hd, weapon_hit, weapon_plus, defense)
     local hit_base = math.max(0, 18 + math.floor(hd * 3 / 2) + weapon_hit + weapon_plus)
     local modifier = defense.visible_hit_modifier or 0
@@ -24,7 +25,7 @@ local function contact(ctx, hd, weapon_hit, weapon_plus, defense)
         auto_hit = coin ~= 0
     end
 
-    -- Source: attack.cc:1256-1258. The original shooter cannot shield
+    -- Source: attack.cc. The original shooter cannot shield
     -- against its own returned thrown or launched missile.
     if defense.skip_shield then
         -- The self-directed return proceeds directly to EV.
@@ -76,6 +77,8 @@ local function contact(ctx, hd, weapon_hit, weapon_plus, defense)
     }
 end
 
+-- Example: ranged.shot(ctx, shot, defense) with shield-blocked shot -> block outcome without damage roll
+-- Separate contact from damage so a blocked missile does not consume damage RNG.
 function ranged.shot(ctx, shot, defense)
     local outcome = contact(ctx, shot.hd, shot.weapon_hit or 0,
         shot.weapon_plus or 0, defense)
@@ -97,6 +100,7 @@ function ranged.shot(ctx, shot, defense)
     return outcome
 end
 
+-- Poison Dart shares contact rules with launched missiles but rolls its own damage on hit.
 function ranged.poison_dart(ctx, hd, defense)
     local outcome = contact(ctx, hd, 0, 0, defense)
 

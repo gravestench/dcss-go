@@ -29,6 +29,9 @@ local known_value = {
     [ids.SCR_NOISE] = 10,
 }
 
+-- Example: scrolls.value(kind, nil, known) uses an unknown-scroll value until identified.
+-- Check an authored shop override first, then use the revealed type table or
+-- the generic unknown price so quotes respect identification state.
 function scrolls.value(kind, _, known)
     if kind.shop_value ~= nil then
         return kind.shop_value

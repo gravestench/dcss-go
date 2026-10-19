@@ -6,6 +6,7 @@ local flight = {}
 register.component{
     id = component.ZAP_FLIGHT,
     version = 1,
+    -- Temporary flight duration follows the affected actor through movement and save/restore.
     fields = {
         remaining_aut = {
             type = "int64",

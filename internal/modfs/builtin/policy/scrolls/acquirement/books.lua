@@ -29,6 +29,7 @@ local magic = {
     skills.SK_POISON_MAGIC,
 }
 
+-- Compare trained magic and nonmagic skills before deciding whether a manual roll is plausible.
 local function manual(ctx)
     local magic_weight = 0
     local other_weight = 0
@@ -56,6 +57,7 @@ local function manual(ctx)
         other_weight + 2 * magic_weight)
 end
 
+-- Exclude capped, forbidden, or disallowed skills before a manual names its training target.
 local function manual_skill(ctx, player)
     local rows = {}
     local species = selection.species(ctx, player)
@@ -85,6 +87,8 @@ local function manual_skill(ctx, player)
     return selection.weighted(ctx, rows)
 end
 
+-- Example: Heavy nonmagic training can turn a book offer into a manual for a trainable skill.
+-- If manual selection fails, weight themed, level, and fixed books before depth-specific fixed stock.
 function books.pick(ctx, player, depth)
     if manual(ctx) then
         local skill_id = manual_skill(ctx, player)

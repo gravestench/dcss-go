@@ -1,5 +1,9 @@
+-- A DES overlay contributes one arrival path, and mod.read returns its exact source text.
+
 local test = {}
 
+-- Find the one layered DES path and read its exact text, proving the VFS
+-- exposes vault source files without silently duplicating or rewriting them.
 function test.run()
     local paths = mod.paths("vaults/arrival", ".des")
 

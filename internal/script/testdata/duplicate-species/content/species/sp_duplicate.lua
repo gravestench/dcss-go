@@ -1,6 +1,7 @@
 local categories = require("constants.catalog")
 
--- Duplicate registrations must fail before startup completes.
+-- Re-registering bundled SP_HUMAN from a separate file must fail during
+-- catalog load before any species choice can run.
 local definition = {
     id = "SP_HUMAN",
 }

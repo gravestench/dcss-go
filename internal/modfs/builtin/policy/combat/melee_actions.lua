@@ -27,6 +27,11 @@ local chaos_status = require("policy.combat.player_brands.chaos_status")
 
 local actions = {}
 
+-- These entry points coordinate one contact. The smaller combat policies
+-- calculate hit, damage, brands and reactions; this module orders them so
+-- on-hit effects see the actual outcome and death stops later contacts.
+
+-- Read monster flags for attack-specific movement and immunity decisions.
 local function has_flag(flags, wanted)
     for _, flag in ipairs(flags or {}) do
         if flag == wanted then
@@ -37,6 +42,7 @@ local function has_flag(flags, wanted)
     return false
 end
 
+-- Vampire stab blood draw requires adjacent contact on the same level, including diagonal contact.
 local function player_adjacent_to(ctx, target)
     local player = ctx:get(ctx:player(), "core.position")
     local monster = ctx:get(target, "core.position")
@@ -46,6 +52,7 @@ local function player_adjacent_to(ctx, target)
             math.abs(player.y - monster.y)) == 1
 end
 
+-- Player kills signal only after positive dealt damage reaches zero HP; both sides use their health policy.
 local function damage(ctx, target, amount, player_kill, attacker)
     if target == ctx:player() then
         return player_health.damage(ctx, target, amount, false, attacker)
@@ -61,6 +68,7 @@ local function damage(ctx, target, amount, player_kill, attacker)
     return health
 end
 
+-- Mutation follow-ups trigger only for a living target after positive melee damage.
 local function after_player_melee_hit(ctx, target, amount, health)
     if amount <= 0 or health.current <= 0 then
         return
@@ -75,6 +83,9 @@ local function after_player_melee_hit(ctx, target, amount, health)
         mutation_capabilities.AFTER_MELEE_HIT, hit)
 end
 
+-- A player attack first builds an attack from current gear and target stats,
+-- then resolves hit and damage. Brand and mutation callbacks only run at
+-- their corresponding contact phase; this order matters for DCSS effects.
 function actions.player(ctx, target, options)
     local actor = ctx:get(target, "core.actor")
 
@@ -232,6 +243,7 @@ function actions.player(ctx, target, options)
     end
 end
 
+-- Persist block count before a later monster attack can alter shield odds.
 local function update_shield(ctx, outcome)
     local player = ctx:player()
     local state = ctx:get(player, "core.combat")
@@ -244,6 +256,7 @@ local function update_shield(ctx, outcome)
     ctx:set(player, "core.combat", state)
 end
 
+-- Batty monsters forget the target and pause before re-engaging after a melee pass.
 local function retreat_bat(ctx, attacker, definition)
     if not has_flag(definition.flags, "M_BATTY") then
         return
@@ -263,6 +276,7 @@ local function retreat_bat(ctx, attacker, definition)
     ctx:set(attacker, "core.ai", ai)
 end
 
+-- The second attack slot can start constriction only after the victim survives and is not already held.
 local function grab(ctx, attacker, definition, player_health)
     local attack = definition.attacks[2]
 
@@ -304,6 +318,10 @@ local function grab(ctx, attacker, definition, player_health)
     ctx:emit("combat", messages[outcome.kind])
 end
 
+-- Example: actions.monster(ctx, attacker) with monster adjacent to player -> melee outcome against player defense
+-- A monster attacking the player uses player defense and reaction phases.
+-- The monster-to-monster path below has different allegiance and summon
+-- handling, so it has a separate entry point.
 function actions.monster(ctx, attacker)
     local actor = ctx:get(attacker, "core.actor")
 
@@ -400,6 +418,9 @@ function actions.monster(ctx, attacker)
     player_reactions.after_attack(ctx, attacker, definition)
 end
 
+-- Confusion and allegiance can make another monster the target. Validate
+-- that relationship before resolving combat so ordinary allies cannot be
+-- attacked through this API by accident.
 function actions.monster_target(ctx, attacker, target)
     if not targets.enemy(ctx, attacker, target) and
         not confusion.active(ctx, attacker) then

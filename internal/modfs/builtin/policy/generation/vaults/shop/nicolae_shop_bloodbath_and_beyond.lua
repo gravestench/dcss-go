@@ -1,8 +1,9 @@
+-- Example: The bloodbath corpse is scheduled for decay after shop terrain and stock are placed.
 local effects = require("constants.vault_effects")
 
 local handler = {}
 
--- Port of builder/shops.des:492.
+-- The bloodbath corpse is scheduled for decay after shop terrain and stock are placed.
 local function decay_corpse(api)
     api:record(effects.DELAYED_DECAY, {
         glyph = "Z",

@@ -1,3 +1,4 @@
+-- Example: explosions.fireball supplies the Fireball blast profile registered below.
 local spells = require("ids.spells")
 local explosive = require("policy.magic.effects.zaps.explosive")
 

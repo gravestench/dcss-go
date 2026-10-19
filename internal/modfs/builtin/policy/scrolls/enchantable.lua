@@ -1,4 +1,4 @@
--- Source: item-prop.cc:1199-1232 and invent.cc:1125-1146.
+-- Source: item-prop.cc and invent.cc.
 local catalog = require("policy.catalog")
 local slots = require("constants.armour_slots")
 local classes = require("ids.object_classes")
@@ -16,6 +16,8 @@ local excluded_armour = {
     [item_ids.ARM_ORB] = true,
 }
 
+-- Example: a weapon at the +9 cap cannot gain another Enchant Weapon point.
+-- Unknown pluses remain eligible for discovery; known +9 weapons and artefacts cannot gain more.
 function enchantable.weapon(ctx, player, entity)
     if ctx:has(entity, component.ITEM_ARTEFACT) then
         return false
@@ -33,6 +35,7 @@ function enchantable.weapon(ctx, player, entity)
     return not known.pluses or item.plus < MAX_WEAPON_PLUS
 end
 
+-- Use source armour caps: body AC, barding AC, shield formula, or two for secondary slots.
 function enchantable.armour_cap(kind)
     if kind.class ~= classes.OBJ_ARMOUR or
         excluded_armour[kind.id] then
@@ -53,6 +56,7 @@ function enchantable.armour_cap(kind)
     return MAX_SECONDARY_PLUS
 end
 
+-- Exclude artefacts and zero-cap armour, then compare known pluses against the subtype cap.
 function enchantable.armour(ctx, player, entity)
     if ctx:has(entity, component.ITEM_ARTEFACT) then
         return false

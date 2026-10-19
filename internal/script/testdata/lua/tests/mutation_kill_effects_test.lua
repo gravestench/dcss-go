@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local holiness = require("constants.monster_holiness")
 local monster_flags = require("constants.monster_flags")
@@ -11,6 +12,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Seed kill effects owner components once so each branch changes only the mutation under test.
 local function player(ctx)
     local entity = ctx:create()
 
@@ -25,14 +27,17 @@ local function player(ctx)
     return entity
 end
 
+-- Keep kill-effect draws and emitted messages observable in one proxy.
 local function kill_context(ctx, draws)
     local proxy = harness.random_context(ctx, draws)
     local messages = {}
 
+    -- Capture kill effects events separately from the policy state being asserted.
     function proxy.emit(_, _, message)
         messages[#messages + 1] = message
     end
 
+    -- Return Devour and Powered-by-Death messages recorded during the kill.
     function proxy.messages()
         return messages
     end
@@ -40,6 +45,7 @@ local function kill_context(ctx, draws)
     return proxy
 end
 
+-- Devour on Kill uses the source three-roll average.
 function test.run(ctx)
     harness.equal(death.experience({
         flags = { monster_flags.NO_EXP_GAIN },
@@ -62,6 +68,7 @@ function test.run(ctx)
     effects.run(feast, eater, natural, 12)
     harness.equal(ctx:get(eater, component.HEALTH).current, 16,
         "Devour on Kill uses the source three-roll average")
+    -- The fixed draw sequence checks that a failed trigger skips all healing rolls.
     harness.equal(feast.draws_used(), 4,
         "Devour on Kill draws chance before healing")
     harness.equal(feast.messages()[1], "You feel better.",
@@ -83,6 +90,7 @@ function test.run(ctx)
         "Powered by Death gains source-random strength on a kill")
     harness.equal(ctx:get(reaper, component.POWERED_BY_DEATH).remaining_aut,
         30, "Powered by Death gets a three-turn timer")
+    -- Kill effects share a specific mutation-stream order that later rolls depend on.
     harness.equal(first.draws_used(), 3,
         "Powered by Death draws duration, chance, then increment")
 

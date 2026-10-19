@@ -2,6 +2,8 @@ local learning = require("policy.character.spell_learning")
 
 local system = {}
 
+-- Theory of operation: Only the player intent advances the memorisation delay before movement.
+-- Memorisation delay progresses after door actions and before movement.
 function system.update(ctx, actor)
     if actor ~= ctx:player() then
         return

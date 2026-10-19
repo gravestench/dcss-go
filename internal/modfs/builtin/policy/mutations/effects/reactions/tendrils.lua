@@ -11,6 +11,8 @@ local tendrils = {
     order = 50,
 }
 
+-- A disarm reaction requires line of sight at the attack's current positions;
+-- use the player's effective vision radius so darkness and species rules apply.
 local function visible(ctx, player, monster)
     local origin = ctx:get(player, component.POSITION)
     local target = ctx:get(monster, component.POSITION)
@@ -19,6 +21,8 @@ local function visible(ctx, player, monster)
         vision.radius(ctx, player), target.x, target.y)
 end
 
+-- Remove equipment links before dropping the disarmed weapon, keeping monster inventory consistent.
+-- Example: successful Tendrils disarmament removes carried and equipped links before dropping the weapon.
 function tendrils.after_attack(ctx, player, monster, definition)
     if roll.melee(ctx, 5) ~= 0 or
         roll.melee(ctx, 35) < definition.hd then

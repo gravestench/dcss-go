@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local component = require("constants.component")
 local effects = require("policy.mutations.effects.registry")
@@ -9,10 +10,12 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Read one active Icy Defence capability after changing its timer.
 local function bonus(ctx, player, capability)
     return effects.sum(ctx, player, capability)
 end
 
+-- Condensation Shield SH returns after recovery.
 function test.run(ctx)
     local player = ctx:create()
 

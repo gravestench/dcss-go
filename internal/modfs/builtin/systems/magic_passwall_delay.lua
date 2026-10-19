@@ -2,6 +2,8 @@ local passwall = require("policy.magic.effects.translocation.passwall")
 
 local system = {}
 
+-- Theory of operation: Completing passwall moves the player before ordinary movement interprets the intent.
+-- Passwall delay can finish after casting, before ordinary movement is resolved.
 function system.update(ctx, actor, aut)
     if actor == ctx:player() then
         passwall.tick(ctx, actor, aut)

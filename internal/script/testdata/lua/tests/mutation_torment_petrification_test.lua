@@ -1,3 +1,4 @@
+
 local classes = require("constants.mutation_classes")
 local component = require("constants.component")
 local forms = require("policy.magic.effects.forms.catalog")
@@ -13,6 +14,7 @@ local species = require("ids.species")
 
 local test = {}
 
+-- Seed torment petrification owner components once so each branch changes only the mutation under test.
 local function player(ctx)
     local entity = ctx:create()
 
@@ -25,6 +27,7 @@ local function player(ctx)
     return entity
 end
 
+-- Attach the spell-defined form so torment rules see its holiness state.
 local function assume_form(ctx, entity, spell_id)
     local form = forms[spell_id]
 
@@ -35,6 +38,7 @@ local function assume_form(ctx, entity, spell_id)
     })
 end
 
+-- One torment mutation level reduces damage without immunity.
 function test.run(ctx)
     local entity = player(ctx)
 
@@ -55,8 +59,10 @@ function test.run(ctx)
     records.grant_acquired(ctx, entity,
         mutations.MUT_TORMENT_RESISTANCE, 1)
 
+    -- Partial resistance changes the loss fraction while leaving torment active.
     harness.equal(resistance.torment(ctx, entity), false,
         "one torment mutation level reduces damage without immunity")
+    -- The formula is checked after the baseline half-current-HP torment calculation.
     harness.equal(resistance.torment_loss(ctx, entity, 100), 24,
         "one mutation level halves source torment loss")
 

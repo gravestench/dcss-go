@@ -8,6 +8,8 @@ local moon = {
     weight = 4,
 }
 
+-- Example: moon.valid(ctx, target) with untransformable defender -> false eligibility
+-- Moon pie checks the player form or monster shapeshift constraints before selection.
 function moon.valid(ctx, target)
     if ctx:has(target, component.PLAYER) then
         return forms.can_polymorph(ctx, target)
@@ -16,6 +18,7 @@ function moon.valid(ctx, target)
     return polymorph.can_actor(ctx, target)
 end
 
+-- Route a moon pie through player form rules or monster shapeshifting by target type.
 function moon.apply(ctx, _, target)
     if ctx:has(target, component.PLAYER) then
         forms.polymorph(ctx, target, 100)

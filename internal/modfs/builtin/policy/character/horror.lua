@@ -1,7 +1,9 @@
+-- Example: A horror penalty of two reduces spell power by the policy's centi-scale factor.
 local component = require("constants.component")
 
 local horror = {}
 
+-- Read the current horror component as a spell-power penalty without changing its threat state.
 function horror.penalty(ctx, player)
     local state = ctx:get(player, component.HORROR)
 

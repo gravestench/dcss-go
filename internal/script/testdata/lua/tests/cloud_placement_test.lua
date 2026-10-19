@@ -1,3 +1,5 @@
+-- None sentinel cannot become saved cloud.
+
 local harness = require("tests.harness")
 local component = require("constants.component")
 local ids = require("ids.clouds")
@@ -6,6 +8,8 @@ local terrain = require("content.terrain_features")
 
 local test = {}
 
+-- Keep cloud entities in a sorted local store so replacement and selector
+-- tests cannot depend on Lua table iteration order.
 local function context()
     local state = {}
     local next_entity = 100
@@ -14,6 +18,8 @@ local function context()
         draw = 0,
     }
 
+    -- Enumerate saved cloud entities so placement checks existing occupants
+    -- rather than assuming the target cell is empty.
     function context:query()
         local entities = {}
 
@@ -26,50 +32,70 @@ local function context()
         return entities
     end
 
+    -- Read the fixture's saved cloud record for overlap and merge decisions.
     function context:get(entity)
         return state[entity]
     end
 
+    -- Allocate distinct cloud IDs so the test can tell a new cloud from a
+    -- refreshed existing one.
     function context:create()
         next_entity = next_entity + 1
 
         return next_entity
     end
 
+    -- Store only the production cloud component on a new entity, checking
+    -- that placement does not write an unrelated schema.
     function context:add(entity, kind, value)
         harness.equal(kind, component.WORLD_CLOUD, "saved cloud schema")
         state[entity] = value
     end
 
+    -- Persist refreshes to an existing cloud and check the same schema as
+    -- creation, making a merge visible in saved state.
     function context:set(entity, kind, value)
         harness.equal(kind, component.WORLD_CLOUD, "saved cloud schema")
         state[entity] = value
     end
 
+    -- Remove an overwritten cloud from the fixture so replacement leaves
+    -- one occupant at the target cell.
     function context:destroy(entity)
         state[entity] = nil
     end
 
+    -- Switch between rock and open terrain without a full map, isolating the
+    -- rule that clouds cannot occupy a blocking wall.
     function context:walkable()
         return self.feature ~= terrain.vault_terrain.DNGN_ROCK_WALL
     end
 
+    -- Give placement the same feature used by walkability and terrain-based
+    -- cloud restrictions in this scenario.
     function context:cell()
         return self.feature
     end
 
+    -- Identify the fixture player when cloud ownership affects attribution.
     function context:player()
         return 1
     end
 
+    -- Preserve simple fixture IDs when production code records cloud owner
+    -- or source references.
     function context:id(entity)
         return entity
     end
 
+    -- Present a stationary occupant so placement can check actor-related
+    -- restrictions without creating a full ECS actor.
     function context:actor_at()
         return 7
     end
 
+    -- Return one chosen cloud draw while asserting the dedicated stream and
+    -- legal bound, making selector changes visible without a seed.
     function context:random(stream, bound)
         harness.equal(stream, streams.CLOUDS, "cloud selector stream")
         harness.truthy(self.draw < bound, "selector draw in range")
@@ -80,6 +106,8 @@ local function context()
     return context
 end
 
+-- Probe blocked, merged, replaced, and attributed clouds through one fixture
+-- so all cases inspect the same saved placement contract.
 function test.run()
     local placement = require("policy.clouds.placement")
     local ctx = context()
@@ -87,6 +115,8 @@ function test.run()
     harness.falsy(placement.place(ctx, ids.CLOUD_FIRE, 1, 1, 2, 2, 0),
         "zero duration cannot place")
 
+    -- A weaker clear cloud cannot evict opaque smoke, but stronger opaque
+    -- smoke replaces it in place without creating a second cell occupant.
     local first = placement.place(ctx, ids.CLOUD_BLACK_SMOKE,
         1, 1, 2, 2, 30)
     local entity, state = placement.at(ctx, 1, 2, 2)
@@ -107,6 +137,7 @@ function test.run()
     harness.truthy(ctx:get(first).opaque,
         "opaque smoke replaces opaque harmless smoke")
 
+    -- Replacing steam with fire must refresh the saved opacity cache.
     local steam = placement.place(ctx, ids.CLOUD_STEAM,
         1, 1, 6, 2, 20)
     local clear = placement.place(ctx, ids.CLOUD_FIRE,
@@ -116,6 +147,7 @@ function test.run()
     harness.falsy(ctx:get(steam).opaque,
         "opaque to clear replacement updates cached opacity")
 
+    -- Ink is terrain-gated while random smoke resolves to a concrete kind.
     ctx.feature = terrain.vault_terrain.DNGN_FLOOR
     harness.falsy(placement.place(ctx, ids.CLOUD_INK,
         1, 1, 3, 2, 20), "ink needs water")
@@ -131,6 +163,8 @@ function test.run()
     harness.equal(ctx:get(smoke).kind_id, ids.CLOUD_BLACK_SMOKE,
         "random smoke resolves once in source order")
 
+    -- Actor occupancy does not block placement; sanctuary and still winds
+    -- then apply distinct harmful-cloud and vortex exceptions.
     harness.truthy(placement.place(ctx, ids.CLOUD_DUST,
         1, 1, 7, 2, 20), "an occupied actor does not block clouds")
 
@@ -150,8 +184,11 @@ function test.run()
         1, 1, 9, 2, 20, { still_winds = true }),
         "vortex is the still winds exception")
 
+    -- Summoner allegiance is copied into cloud kill credit for later damage.
     local get = ctx.get
 
+    -- Expose a friendly summon on the target cell; placement must use its
+    -- allegiance when deciding whether a cloud can affect that occupant.
     function ctx:get(entity, kind)
         if entity == 2 and kind == component.SUMMON then
             return { hostile = false }
@@ -167,6 +204,7 @@ function test.run()
     harness.equal(credit.kill_category, "KC_FRIENDLY",
         "friendly monster cloud preserves source allegiance")
 
+    -- Selector sentinels may request a type but cannot be persisted as one.
     local okay = pcall(placement.place, ctx, "CLOUD_NONE",
         1, 1, 5, 2, 20)
 

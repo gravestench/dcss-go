@@ -7,6 +7,8 @@ local player_brands = require("policy.combat.player_brands")
 
 local test = {}
 
+-- Give each defender ten HP so brand side effects can be separated from
+-- ordinary weapon damage and death cleanup.
 local function zero_damage_target(ctx, kind_id)
     local target = ctx:create()
     local definition = catalog.get("monsters", kind_id)
@@ -23,9 +25,11 @@ local function zero_damage_target(ctx, kind_id)
     return target, definition
 end
 
+-- Fix the combat-stream poison roll while leaving ECS state live.
 local function poison_rolls(ctx)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Use melee-stream poison rolls at the proc and damage bounds separately.
     function proxy.random(_, stream, bound)
         harness.equal(stream, "melee", "poison brand uses combat RNG")
 
@@ -39,6 +43,7 @@ local function poison_rolls(ctx)
     return proxy
 end
 
+-- Compare zero-damage brand gates and named melee draws on identical target records.
 function test.run(ctx)
     local attacker = ctx:create()
     local rat, rat_definition = zero_damage_target(ctx,
@@ -60,6 +65,7 @@ function test.run(ctx)
     harness.truthy(ctx:has(rat, component.PROJECTILE_POISON),
         "venom can poison after a zero-damage contact")
 
+    -- Venom may poison after a zero-damage contact, except on immune undead.
     local undead, undead_definition = zero_damage_target(ctx,
         monsters.MONS_WIGHT)
     local immune_hit = {
@@ -93,8 +99,10 @@ function test.run(ctx)
     harness.falsy(ctx:has(undead, component.PROJECTILE_POISON),
         "a dead defender receives no venom effect")
 
+    -- Chaos self-effects cannot enchant an actor already killed by the hit.
     local dead_chaos = setmetatable({}, { __index = ctx })
 
+    -- Force Chaos to retain its self-effect weight while checking the dead-target gate.
     function dead_chaos.random(_, stream, bound)
         harness.equal(stream, "melee", "chaos chooses on the melee stream")
         harness.truthy(bound >= 41, "chaos retains the self-effect weight")

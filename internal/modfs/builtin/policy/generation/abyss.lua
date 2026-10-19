@@ -1,3 +1,4 @@
+-- Example: A new Abyss map reserves the arrival portal before scattering rock walls.
 local abyss = {}
 local world_abyss = require("policy.world.abyss")
 local branches = require("ids.branches")
@@ -7,6 +8,7 @@ local height = 70
 local portal_x = 40
 local portal_y = 35
 
+-- Keep the arrival portal clear while scattering rock; edge walls close the standalone Abyss map.
 function abyss.generate(ctx)
     local rows = {}
     local seed = ctx:random("abyss-layout", 1000000000)

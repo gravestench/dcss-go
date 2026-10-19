@@ -27,6 +27,8 @@ local spec = {
     },
 }
 
+-- Example: An aimed Fire Storm cell becomes the center of its radius and capped-power blast.
+-- Reject out-of-range, unseen, or solid aim cells before spending a Fire Storm cast.
 function fire_storm.prepare(ctx, player, spell, dx, dy)
     local origin = ctx:get(player, component.POSITION)
     local x = origin.x + dx
@@ -40,6 +42,7 @@ function fire_storm.prepare(ctx, player, spell, dx, dy)
     end
 end
 
+-- Center the storm on the requested cell and cap spell power before area and damage rolls.
 function fire_storm.resolve(ctx, player, intent, _, power)
     local origin = ctx:get(player, component.POSITION)
     local center_x = origin.x + intent.dx

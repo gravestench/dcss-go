@@ -1,3 +1,6 @@
+-- The ten active source traps have loadable effect modules; legacy projectile
+-- trap IDs and malformed mod definitions must fail catalog validation.
+
 local harness = require("tests.harness")
 
 local test = {}
@@ -27,6 +30,8 @@ local removed = {
     "TRAP_SHADOW_DORMANT",
 }
 
+-- Feed one malformed definition through the real catalog validator and check
+-- that its diagnostic names the invalid field for a mod author.
 local function expect_error(trap_catalog, needle, definition)
     local okay, message = pcall(trap_catalog.definition, definition)
 
@@ -35,6 +40,8 @@ local function expect_error(trap_catalog, needle, definition)
         "trap error must name " .. needle)
 end
 
+-- Validate all registered trap definitions and representative bad shapes,
+-- catching both missing built-ins and weakened input validation.
 function test.run()
     local loaded, trap_catalog = pcall(require, "policy.traps.catalog")
 
@@ -56,12 +63,15 @@ function test.run()
             definition.effect ~= "", "trap has an effect module")
     end
 
+    -- Removed projectile traps must not be recoverable by direct registry get.
     for _, id in ipairs(removed) do
         local okay = pcall(register.get, "traps", id)
 
         harness.falsy(okay, "removed trap remains unavailable")
     end
 
+    -- Probe distinct validation failures so diagnostics identify the bad
+    -- field or removed source ID for a modded trap.
     expect_error(trap_catalog, "name", {
         id = "TRAP_TEST",
         glyph = "^",

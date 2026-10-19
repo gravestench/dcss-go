@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local causes = require("constants.damage_causes")
 local capabilities = require("constants.mutation_capabilities")
@@ -10,10 +11,12 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Read the active Curl AC capability from the mutation effect registry.
 local function armour(ctx, player)
     return effects.full_sum(ctx, player, capabilities.AC_FULL_X100)
 end
 
+-- Curl clears before the next monster phase.
 function test.run(ctx)
     local player = ctx:create()
 

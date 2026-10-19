@@ -24,6 +24,7 @@ local difficulty = {
     340,
 }
 
+-- Truncate like C++ because negative intermediate failure terms must not round down in Lua.
 local function divide(numerator, denominator)
     -- C++ integer division truncates toward zero. Lua's floor does not.
     local quotient = numerator / denominator
@@ -35,12 +36,15 @@ local function divide(numerator, denominator)
     return math.floor(quotient)
 end
 
+-- Count triples below a threshold for the exact three-draw displayed failure rate.
 local function tetrahedral(n)
     return divide(n * (n + 1) * (n + 2), 6)
 end
 
+-- Example: armour penalty raises raw failure before wizardry reduces the result.
 -- Source: spl-cast.cc:raw_spell_fail. Power has already been computed at
 -- scale six without intelligence or the spellpower cap.
+-- Combine power, armour, intellect, and modifiers into the source game's raw failure threshold.
 function failure.raw(input)
     local level = input.spell_level
     local spell_difficulty = difficulty[level]
@@ -121,6 +125,7 @@ function failure.roll(ctx, raw)
     return divide(sum, 3) < raw
 end
 
+-- Assemble equipment, mutation, form, and skill adjustments once before deriving display probability.
 function failure.profile(ctx, player, spell)
     local character = ctx:get(player, "core.player")
     local attributes = player_attributes.current(ctx, player)
@@ -148,6 +153,7 @@ function failure.profile(ctx, player, spell)
     }
 end
 
+-- Expose the pure formula to tests and callers that already have the adjusted inputs.
 function failure.run_formula(_, input)
     local raw = failure.raw(input)
 
@@ -162,6 +168,7 @@ register.policy({
     run = failure.run_formula,
 })
 
+-- Resolve a catalog spell before computing failure from the live player's state.
 function failure.run_spell(ctx, input)
     local spell = catalog.get("spells", input.spell_id)
 

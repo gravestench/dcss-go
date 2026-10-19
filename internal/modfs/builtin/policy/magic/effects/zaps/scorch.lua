@@ -9,6 +9,7 @@ local targets = require("policy.ai.targets")
 
 local scorch = {}
 
+-- Read monster flags safely while excluding source-ineligible Scorch targets.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -19,6 +20,7 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Scorch only chooses visible, threatening, non-conjured enemies in spell range.
 local function candidates(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -51,6 +53,7 @@ local function candidates(ctx, player, spell)
     return result
 end
 
+-- Round fractional Scorch duration on the spell stream.
 local function random_round(ctx, numerator, denominator)
     local value = math.floor(numerator / denominator)
 
@@ -61,6 +64,7 @@ local function random_round(ctx, numerator, denominator)
     return value
 end
 
+-- Choose among eligible enemies with spell RNG before damage and fire-vulnerability rolls.
 function scorch.resolve(ctx, player, _, spell, power)
     local found = candidates(ctx, player, spell)
 
@@ -106,6 +110,8 @@ function scorch.resolve(ctx, player, _, spell, power)
         "'s fire resistance burns away.")
 end
 
+-- Example: Scorch ages a saved fire-vulnerability status before the monster’s next decision.
+-- The fire-vulnerability component loses elapsed duration on later turns.
 function scorch.tick(ctx, entity)
     local state = ctx:get(entity, component.FIRE_VULNERABILITY)
 
@@ -124,6 +130,7 @@ end
 
 registry.add(spells.SPELL_SCORCH, scorch)
 
+-- Theory of operation: Fire vulnerability loses one monster turn before the actor chooses its next action.
 register.system({
     id = "zap.fire_vulnerability.tick",
     scope = "active",

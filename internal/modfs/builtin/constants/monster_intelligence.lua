@@ -1,3 +1,5 @@
+-- Intelligence levels gate monster tactics and item use without a separate AI class.
+
 -- Source: mon-enum.h:mon_intel_type.
 local intelligence = {
     BRAINLESS = "I_BRAINLESS",

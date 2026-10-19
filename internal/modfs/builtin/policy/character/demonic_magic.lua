@@ -1,3 +1,4 @@
+-- Example: A successful player spell can paralyse a visible hostile rat at the mutation roll.
 -- Source: spl-cast.cc:do_demonic_magic. A successful player spell sends
 -- malevolent energy through nearby line-of-sight cells.
 local catalog = require("policy.catalog")
@@ -12,6 +13,7 @@ local will = require("policy.magic.effects.zaps.will")
 
 local demonic_magic = {}
 
+-- Filter targets by sight, range, and will before consuming a spell-triggered paralysis attempt.
 local function eligible(ctx, player, monster, origin, rank)
     if not targets.enemy(ctx, player, monster) then
         return nil
@@ -37,6 +39,7 @@ local function eligible(ctx, player, monster, origin, rank)
     return definition
 end
 
+-- Roll the spell-stream duration and extend existing paralysis without shortening it.
 local function paralyze(ctx, monster, definition)
     local duration = (2 + ctx:random("spell", 4)) * time.AUT_PER_TURN
     local current = ctx:get(monster, component.PARALYSIS)
@@ -54,6 +57,7 @@ local function paralyze(ctx, monster, definition)
     ctx:emit("spell", "The " .. definition.name .. " suddenly stops moving!")
 end
 
+-- Check eligible nearby monsters only after a successful player spell triggers the mutation.
 function demonic_magic.on_success(ctx, player, spell)
     local rank = effects.sum(ctx, player,
         capabilities.DEMONIC_MAGIC_RANK)

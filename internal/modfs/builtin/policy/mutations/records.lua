@@ -5,10 +5,12 @@ local records = {}
 local component_id = "character.mutation"
 local timer_id = "character.mutation_timer"
 
+-- Read the one XP expiry clock shared by all temporary mutation ranks.
 function records.timer(ctx, owner)
     return ctx:get(owner, timer_id)
 end
 
+-- Update an existing timer or create it on first temporary grant.
 function records.set_timer(ctx, owner, remaining_xp)
     local timer = records.timer(ctx, owner)
     local value = { remaining_xp = remaining_xp }
@@ -20,6 +22,7 @@ function records.set_timer(ctx, owner, remaining_xp)
     end
 end
 
+-- Filter mutation entities by owner so rank operations cannot borrow another actor’s record.
 function records.list(ctx, owner)
     local found = {}
 
@@ -37,6 +40,7 @@ function records.list(ctx, owner)
     return found
 end
 
+-- Sum temporary ranks across owned IDs before deciding whether the shared timer remains live.
 function records.temporary_count(ctx, owner)
     local total = 0
 
@@ -47,6 +51,7 @@ function records.temporary_count(ctx, owner)
     return total
 end
 
+-- Return the first owned record for this ID; restore validation rejects duplicate entities.
 function records.find(ctx, owner, mutation_id)
     for _, entry in ipairs(records.list(ctx, owner)) do
         if entry.state.mutation_id == mutation_id then
@@ -57,10 +62,12 @@ function records.find(ctx, owner, mutation_id)
     return nil
 end
 
+-- Require a positive integer for rank changes and temporary expiry progress.
 local function valid_count(count)
     return type(count) == "number" and count >= 1 and count % 1 == 0
 end
 
+-- Enforce the catalog cap across all rank classes before writing the single mutation entity.
 local function grant(ctx, owner, mutation_id, field, count, progress)
     if not valid_count(count) then
         error("mutation grant requires a positive integer count")
@@ -105,18 +112,23 @@ local function grant(ctx, owner, mutation_id, field, count, progress)
     end
 end
 
+-- Add inherited rank without invoking transition resistance or conflict rules.
 function records.grant_innate(ctx, owner, id, count)
     grant(ctx, owner, id, classes.INNATE, count)
 end
 
+-- Add an acquired rank through the shared cap and owner checks.
 function records.grant_acquired(ctx, owner, id, count)
     grant(ctx, owner, id, classes.ACQUIRED, count)
 end
 
+-- Example: a temporary grant increments its rank and sets expiry progress without replacing innate ranks.
+-- Store expiry progress on the owner’s shared timer after adding temporary rank.
 function records.grant_temporary(ctx, owner, id, count, progress)
     grant(ctx, owner, id, classes.TEMPORARY, count, progress)
 end
 
+-- Remove the entity at zero total rank and clear the timer after the last temporary rank.
 function records.delete(ctx, owner, mutation_id, class, count)
     if class ~= classes.INNATE and class ~= classes.ACQUIRED and
         class ~= classes.TEMPORARY then
@@ -157,6 +169,7 @@ function records.grant_starting(ctx, owner, species)
     end
 end
 
+-- Check record ownership, species innate minima, caps, and timer consistency on restore.
 function records.validate(ctx, owner, species, level)
     local seen = {}
     local expected_innate = {}

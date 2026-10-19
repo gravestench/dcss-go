@@ -1,3 +1,4 @@
+-- Example: A magic gift excludes spells the species cannot cast at the starting level.
 -- Source: ng-wanderer.cc. Magic gifts draw from the committed spell catalog.
 local spells = {}
 local player_books = require("data.player_book_spells")
@@ -17,10 +18,12 @@ local schools = {
     SK_POISON_MAGIC = "poison",
 }
 
+-- Recognize Spellcasting and schools before choosing a magic gift path.
 function spells.is_magic_skill(id)
     return id == "SK_SPELLCASTING" or schools[id] ~= nil
 end
 
+-- Check spell schools without assuming every spell lists that school.
 local function contains(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -31,6 +34,7 @@ local function contains(values, wanted)
     return false
 end
 
+-- Skip already chosen or species-forbidden spells before reservoir selection.
 local function eligible(ctx, species, spell, school, minimum, maximum, seen)
     if spell.status ~= "defined" or not player_books[spell.id] or
         not traits.start_spell_usable(ctx, ctx:player(), species,
@@ -46,6 +50,7 @@ local function eligible(ctx, species, spell, school, minimum, maximum, seen)
     return not school or contains(spell.schools, school)
 end
 
+-- Reservoir choice consumes the character stream once per eligible spell.
 local function pick(ctx, species, school, minimum, maximum, seen)
     local chosen
     local count = 0
@@ -67,6 +72,7 @@ local function pick(ctx, species, school, minimum, maximum, seen)
     return chosen
 end
 
+-- A good magic gift can form a two-spell book; weaker gifts choose an eligible single spell.
 function spells.gift(ctx, species, skill, good)
     local school = schools[skill]
     local chosen = {}

@@ -5,6 +5,8 @@ local brand = {
     after_death = true,
 }
 
+-- Example: brand.apply(ctx, hit) uses an independent electricity roll after
+-- the weapon hit, even when that hit already killed the defender.
 function brand.apply(ctx, hit)
     if roll.melee(ctx, 4) ~= 0 then
         return

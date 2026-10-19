@@ -9,6 +9,8 @@ local restrictions = require("policy.scrolls.restrictions")
 
 local read = {}
 
+-- Scroll selection and read restrictions are resolved before consuming a turn.
+-- Example: read.prepare(ctx, player, { item_id = scroll_id }) validates reading before use.
 function read.prepare(ctx, player, input)
     local rejection = restrictions.reason(ctx, player)
 

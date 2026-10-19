@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local mutations = require("ids.mutations")
@@ -8,13 +9,16 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Proxy exploration draws while preserving the player's regeneration components.
 local function predictable(ctx, player)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to explore regen fixture actor so player-only branches execute on that entity.
     function proxy.player()
         return player
     end
 
+    -- Use the final exploration draw to check per-cell regeneration without early success.
     function proxy.random(_, stream, bound)
         harness.equal(stream, "exploration", "exploration RNG stream")
 
@@ -24,6 +28,7 @@ local function predictable(ctx, player)
     return proxy
 end
 
+-- Newly seen cells restore MP one draw at a time.
 function test.run(ctx)
     local player = ctx:create()
     local steady = predictable(ctx, player)

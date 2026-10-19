@@ -10,6 +10,8 @@ local acrobat = require("policy.jewellery.acrobat")
 
 local system = {}
 
+-- Theory of operation: The operation validates ownership and slot before changing equipment and derived MP.
+-- Only a changed MAX_MP jewellery bonus needs the derived MP cap recalculated.
 local function refresh_magic(ctx, actor, before)
     local after = effects.sum(ctx, actor, capabilities.MAX_MP)
 
@@ -20,6 +22,7 @@ local function refresh_magic(ctx, actor, before)
     end
 end
 
+-- Validate ownership and target slot before removing any already worn ring.
 local function ring_on(ctx, actor, intent)
     local magic_before = effects.sum(ctx, actor, capabilities.MAX_MP)
     local entity = intent.item_id
@@ -36,6 +39,7 @@ local function ring_on(ctx, actor, intent)
 
     local previous = jewellery.in_slot(ctx, actor, slot)
 
+    -- Remove the old ring and its attunement before the replacement occupies the slot.
     if previous then
         ctx:remove(previous, "core.equipped")
         attunement.on_remove(ctx, previous)
@@ -51,6 +55,7 @@ local function ring_on(ctx, actor, intent)
         identification.name(ctx, actor, entity) .. ".")
 end
 
+-- Detaching a ring clears its attunement before resource and acrobat status refresh.
 local function ring_off(ctx, actor, intent)
     local magic_before = effects.sum(ctx, actor, capabilities.MAX_MP)
     local entity = intent.item_id
@@ -73,6 +78,7 @@ local function ring_off(ctx, actor, intent)
         identification.name(ctx, actor, entity) .. ".")
 end
 
+-- Ring and amulet changes refresh magic capacity as equipment slots change.
 function system.update(ctx, actor)
     local intent = ctx:get(actor, "core.intent")
 

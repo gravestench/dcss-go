@@ -3,6 +3,8 @@ local roll = require("policy.combat.roll")
 local player_health = require("policy.combat.player_health")
 local monster_stats = require("policy.combat.monster_stats")
 
+-- A human-intelligence caster with a necromancy slot uses full HD as skill;
+-- an empty or unrelated book falls back to fractional HD.
 local function necromancy_book(book_id)
     if book_id == "MST_NO_SPELLS" then
         return false
@@ -23,11 +25,12 @@ local function necromancy_book(book_id)
     return false
 end
 
+-- Only human-intelligence casters derive Pain skill from HD and their spellbook.
 local function skill(ctx, attacker)
     local actor = ctx:get(attacker, "core.actor")
     local definition = catalog.get("monsters", actor.kind_id)
 
-    -- monster.cc:3980-4010: only human-intelligence monsters can use
+    -- monster.cc: only human-intelligence monsters can use
     -- necromancy skill, at HD or half HD depending on known spells.
     if definition.intelligence_id ~= "I_HUMAN" then
         return 0
@@ -46,10 +49,12 @@ end
 
 local brand = {}
 
+-- Example: brand.apply(ctx, hit) rolls Pain activation and bonus damage
+-- independently, preserving both source skill draws.
 function brand.apply(ctx, hit)
     local level = skill(ctx, hit.attacker)
 
-    -- attack.cc:552-568: one_chance_in(skill + 1) prevents pain.
+    -- attack.cc: one_chance_in(skill + 1) prevents pain.
     if roll.melee(ctx, level + 1) == 0 then
         return
     end

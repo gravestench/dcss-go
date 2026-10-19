@@ -1,3 +1,5 @@
+-- A revived player loses these temporary effects while lasting character state survives.
+
 -- Source: nearby-danger.cc:revive clears temporary afflictions. Persistent
 -- character records, inventory, and skill training are deliberately absent.
 local component = require("constants.component")

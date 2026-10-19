@@ -10,6 +10,8 @@ local syllables = {
     "ZA",
 }
 
+-- Honor an explicit pool first, then use item class so unidentified descriptors stay in the right family.
+-- Example: appearances.pool(potion_kind) maps an unidentified potion to the potion descriptor pool.
 function appearances.pool(kind)
     if kind.identification_pool then
         return kind.identification_pool
@@ -47,7 +49,7 @@ function appearances.pool(kind)
     return nil
 end
 
--- Source: ng-init.cc:353-384. A plain descriptor has one uniform
+-- Source: ng-init.cc. A plain descriptor has one uniform
 -- chance plus the source's extra 50% plain-description chance.
 function appearances.weight(pool, seed)
     if pool == pools.SCROLL or pool == pools.STAFF then
@@ -70,6 +72,7 @@ function appearances.weight(pool, seed)
     return 1
 end
 
+-- Separate plain descriptors from qualified ones for weighted appearance assignment.
 function appearances.primary_count(pool)
     local descriptors = source[pool]
 
@@ -84,6 +87,7 @@ function appearances.primary_count(pool)
     return #descriptors.primary
 end
 
+-- Use each pool's real combinations so assignment never runs past available appearances.
 function appearances.capacity(pool)
     if pool == pools.SCROLL then
         return 151 * 151
@@ -102,9 +106,9 @@ function appearances.capacity(pool)
     return #descriptors.primary * #descriptors.secondary
 end
 
--- Source: item-name.cc:1635-1815. The higher seed values enable
+-- Source: item-name.cc. The higher seed values enable
 -- secondary adjectives or potion qualifiers. Scroll labels still need
--- the exact make_name generator from item-name.cc:2224.
+-- the exact make_name generator from item-name.cc.
 function appearances.name(pool, seed)
     local capacity = appearances.capacity(pool)
 

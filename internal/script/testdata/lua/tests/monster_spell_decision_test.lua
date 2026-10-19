@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local effects = require("policy.combat.monster_spells")
@@ -15,6 +16,8 @@ local monster_position = { level_id = 1, x = 5, y = 5 }
 local near_player = { level_id = 1, x = 6, y = 5 }
 local far_player = { level_id = 1, x = 7, y = 5 }
 
+-- Record spell-stream draws and a fixed target position so planner retries
+-- cannot consume extra RNG without a test failure.
 local function context(draws, silenced, player_position)
     local ctx = {
         used = 0,
@@ -22,6 +25,7 @@ local function context(draws, silenced, player_position)
         player_position = player_position or near_player,
     }
 
+    -- Supply positions, spellbook, and intent data for one monster decision turn.
     function ctx:get(entity, id)
         if id == component.POSITION then
             return entity == monster_entity and monster_position or
@@ -44,26 +48,32 @@ local function context(draws, silenced, player_position)
         return nil
     end
 
+    -- Exclude extra nearby actors so target selection depends only on the player.
     function ctx:query()
         return {}
     end
 
+    -- Leave optional monster statuses absent unless this fixture enables silence.
     function ctx:has()
         return false
     end
 
+    -- Bind the intended player entity for hostile target selection.
     function ctx:player()
         return player_entity
     end
 
+    -- Preserve the entity ID used by the selected spell plan.
     function ctx:id(entity)
         return entity
     end
 
+    -- Keep projectile paths clear so slot choice, not geometry, decides the spell.
     function ctx:projectile_clear()
         return true
     end
 
+    -- Consume scripted monster-spell draws and reject an unexpected bound.
     function ctx:random(stream, bound)
         harness.equal(stream, "monster_spell", "spell RNG stream")
         self.used = self.used + 1
@@ -79,6 +89,7 @@ local function context(draws, silenced, player_position)
     return ctx
 end
 
+-- Natural spell flags bypass silence even when ordinary speech cannot cast.
 local function natural_spell_survives_silence()
     local ctx = context({ 0 }, true)
     local intent = spell.choose(ctx, monster_entity, monster_position,
@@ -88,12 +99,15 @@ local function natural_spell_survives_silence()
         "natural Freeze survives a silence aura")
 end
 
+-- A chosen slot carries its entity target plan through the intent boundary.
 local function carries_a_selected_entity_plan()
     local original_effect = effects.effect
     local planned = 0
 
+    -- Supply a controlled effect module so the chosen spell plan can be counted.
     effects.effect = function()
         return {
+            -- Assert that planning receives the caster and saved foe, then return an entity target.
             plan = function(ctx, caster, foe)
                 harness.equal(caster, monster_entity,
                     "the source actor plans its own spell")
@@ -127,11 +141,13 @@ local function carries_a_selected_entity_plan()
         "intent retains the planned foe")
 end
 
+-- Temporarily swap one book’s slots while restoring catalog lookup after each case.
 local function with_slots(slots, check)
     local book = catalog.get("monster_spellbooks", "MST_ENDOPLASM")
     local original_get = register.get
 
     book.slots = slots
+    -- Override one spellbook ID while the slot-order helper runs its case.
     register.get = function(category, id)
         if category == "monster_spellbooks" and id == book.id then
             return book
@@ -149,6 +165,7 @@ local function with_slots(slots, check)
     end
 end
 
+-- Pin the second source slot so duplicate spell IDs retain distinct slot identity.
 local function chooses_second_slot()
     local book = catalog.get("monster_spellbooks", "MST_ENDOPLASM")
     local freeze = book.slots[1]
@@ -156,6 +173,7 @@ local function chooses_second_slot()
     with_slots({
         { spell_id = freeze.spell_id, frequency = 9, flags = freeze.flags },
         { spell_id = freeze.spell_id, frequency = 18, flags = freeze.flags },
+    -- Check the second duplicate spell slot after both slots pass eligibility.
     }, function()
         local ctx = context({ 10 })
         local intent = spell.choose(ctx, monster_entity, monster_position,
@@ -169,6 +187,7 @@ local function chooses_second_slot()
     end)
 end
 
+-- The planner retries another slot only after target validation fails.
 local function retries_only_after_bad_target()
     local freeze = catalog.get("monster_spellbooks", "MST_ENDOPLASM")
         .slots[1]
@@ -177,6 +196,7 @@ local function retries_only_after_bad_target()
         { spell_id = freeze.spell_id, frequency = 9, flags = freeze.flags },
         { spell_id = spells.SPELL_SLUG_DART, frequency = 18,
             flags = freeze.flags },
+    -- Force a first-slot targeting failure, then verify retry reaches Slug Dart.
     }, function()
         local ctx = context({ 0, 1, 10 }, false, far_player)
         local intent = spell.choose(ctx, monster_entity, monster_position,
@@ -199,6 +219,7 @@ local function retries_only_after_bad_target()
     end)
 end
 
+-- Fleeing changes slot preference without discarding the selected target.
 local function fleeing_prefers_escape_spell()
     local original_effect = effects.effect
 
@@ -208,9 +229,12 @@ local function fleeing_prefers_escape_spell()
             frequency = 18,
             flags = {},
         },
+    -- Run the escape preference case with a temporary two-slot book.
     }, function()
+        -- Offer a fixed entity-target effect so fleeing preference cannot fail on geometry.
         effects.effect = function()
             return {
+                -- Return the player entity in the planned escape target.
                 plan = function()
                     return {
                         kind = target_kind.ENTITY,
@@ -233,6 +257,7 @@ local function fleeing_prefers_escape_spell()
     effects.effect = original_effect
 end
 
+-- Duplicate spell ID retains selected source slot.
 function test.run()
     natural_spell_survives_silence()
     carries_a_selected_entity_plan()

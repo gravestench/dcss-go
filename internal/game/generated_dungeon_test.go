@@ -25,14 +25,37 @@ func newGeneratedTestGame(t *testing.T, seed uint64) *Game {
 func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 	g := newGeneratedTestGame(t, 41)
 
-	if len(g.levels) != 3 || len(g.stores.AI.Entities()) !=
-		g.levels[1].initialActors+g.levels[2].initialActors {
+	if len(g.levels) != 3 {
+		t.Fatalf("generated level count = %d, want 3", len(g.levels))
+	}
+
+	vaultOrigins := g.scripts.Components()["vault.origin"]
+
+	if vaultOrigins == nil {
+		t.Fatal("vault origin component is unavailable")
+	}
+
+	vaultActors := 0
+
+	for _, entity := range vaultOrigins.Entities() {
+		if g.stores.AI.Has(entity) {
+			vaultActors++
+		}
+	}
+
+	// The population count excludes monsters placed by the selected vault.
+	// Sorting catalog IDs can select a different vault for the same seed.
+	expectedActors := g.levels[1].initialActors +
+		g.levels[2].initialActors + vaultActors
+
+	if len(g.stores.AI.Entities()) != expectedActors {
 		t.Fatalf(
-			"generated levels or monster counts are incomplete: levels=%d actors=%d initial=%d+%d",
+			"generated levels or monster counts are incomplete: levels=%d actors=%d population=%d+%d vault=%d",
 			len(g.levels),
 			len(g.stores.AI.Entities()),
 			g.levels[1].initialActors,
 			g.levels[2].initialActors,
+			vaultActors,
 		)
 	}
 

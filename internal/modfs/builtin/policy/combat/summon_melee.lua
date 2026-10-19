@@ -63,6 +63,7 @@ local function fire_vortex_attack(ctx, summon, target, attacker)
     return true
 end
 
+-- Inherit base monster attacks for undead summons, with simulacra adding their icy contact behavior.
 local function strikes(ctx, summon, attacker, state)
     local simulacrum = ctx:get(summon, "magic.summon_simulacrum")
     local undead = ctx:get(summon, "magic.summon_undead")
@@ -99,6 +100,7 @@ local function strikes(ctx, summon, attacker, state)
     return definition.attacks, false
 end
 
+-- Example: summon_melee.attack(ctx, summon, target) with actor without Summon component -> false without an attack
 -- Called from the ordinary monster-vs-monster combat dispatch. Special
 -- derived bodies, hydra heads, and power-scaled HD use source attack dice;
 -- other allies stay on the generic monster melee path.

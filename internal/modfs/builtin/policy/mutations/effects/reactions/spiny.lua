@@ -12,6 +12,8 @@ local spiny = {
     order = 10,
 }
 
+-- Roll only for adjacent pre-contact attacks so spines can retaliate before normal hit damage.
+-- Example: Spines hurt an adjacent attacker before contact; a distant strike cannot trigger them.
 function spiny.before_contact(ctx, player, monster, definition, level)
     if not reactions.adjacent(ctx, player, monster) or
         roll.melee(ctx, 2) ~= 0 then

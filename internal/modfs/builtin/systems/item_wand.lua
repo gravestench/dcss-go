@@ -3,6 +3,8 @@ local wands = require("policy.inventory.wands")
 
 local system = {}
 
+-- Theory of operation: Only the player evoke intent spends charges, after spells and before movement.
+-- Wand resolution follows player spell handling and precedes movement.
 function system.update(ctx, actor, aut)
     if actor ~= ctx:player() then
         return

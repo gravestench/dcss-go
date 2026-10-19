@@ -1,3 +1,4 @@
+-- Example: A D:1 kobold consumes its ammunition roll but receives only early gear.
 local gear = require("policy.population.gear")
 local registry = require("policy.population.gear.registry")
 local items = require("ids.items")
@@ -15,6 +16,7 @@ local weapons = {
     items.WPN_WHIP,
 }
 
+-- Consume the early ammunition draw even when D:1 cannot receive the stronger result.
 local function ammunition(ctx, depth)
     -- The first draw happens even on D:1, before checking depth.
     if gear.draw(ctx, 10) == 0 and depth > 1 then
@@ -36,6 +38,7 @@ local function ammunition(ctx, depth)
     }
 end
 
+-- Kobold ammunition is chosen before the depth gate, preserving its D:1 RNG consumption.
 function handler.loadout(ctx, depth)
     local kind_id = weapons[gear.draw(ctx, #weapons) + 1]
 

@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.AGILITY,
     version = 1,
+    -- The evasion bonus reads this remaining aut after the potion action and across intervening monster turns.
     fields = {
         remaining_aut = {
             type = "int64",

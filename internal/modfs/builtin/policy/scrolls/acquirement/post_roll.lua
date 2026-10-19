@@ -22,6 +22,7 @@ local high_quality = {
     [brands.CHAOS] = 2,
 }
 
+-- Rank brands by source acquirement quality, with ranged Speed receiving a different score.
 local function brand_quality(ctx, brand, ranged)
     if brand == "" or brand == brands.NORMAL then
         return 0
@@ -36,6 +37,8 @@ local function brand_quality(ctx, brand, ranged)
     return high_quality[brand] or 1
 end
 
+-- Example: A non-artefact weapon with a weak brand can reroll toward a stronger acquirement brand.
+-- Leave artefacts untouched; improve ordinary weapon brands only after item generation has rolled them.
 function post_roll.adjust(ctx, rolled, depth)
     if rolled.components[component.ITEM_ARTEFACT] then
         return

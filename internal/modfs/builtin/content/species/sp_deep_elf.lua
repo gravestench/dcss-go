@@ -1,5 +1,8 @@
--- Generated from the pinned DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Deep Elf (SP_DEEP_ELF) is a selectable species with HP modifier -2 and XP
+-- factor -1.
+-- Character creation projects its innate traits into player components; later
+-- training consults aptitudes.
+
 -- Source: crawl-ref/source/dat/species/deep-elf.yaml
 
 local categories = require("constants.catalog")
@@ -26,6 +29,8 @@ local definition = {
     levelup_stats = {
         "int",
     },
+    -- Deep Elf changes training costs through these aptitudes; current skill
+    -- levels are player state.
     aptitudes = {
         SK_AIR_MAGIC = {
             allowed = true,

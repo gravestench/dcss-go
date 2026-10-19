@@ -9,6 +9,7 @@ local component = require("constants.component")
 local commands = require("policy.input.commands")
 local registry = require("policy.commands.registry")
 
+-- Prepare accepted intents before timing; explicit cancellation may still clear an active delay.
 local function prepare_raw(ctx, input)
     local player = ctx:player()
     local health = ctx:get(player, "core.health")
@@ -20,6 +21,7 @@ local function prepare_raw(ctx, input)
         }
     end
 
+    -- Involuntary states turn a requested command into a wait before dispatch can spend the chosen action.
     local petrification = ctx:get(player,
         component.PLAYER_PETRIFICATION)
 
@@ -50,6 +52,7 @@ local function prepare_raw(ctx, input)
     local kind = input.kind
     local delay = ctx:get(player, "core.equipment_delay")
 
+    -- A blood ritual owns the command slot until it finishes or receives its explicit cancel command.
     local blood_state = ctx:get(player, component.VAMPIRE)
 
     if blood_state and blood_state.ritual_remaining_aut > 0 then
@@ -121,6 +124,7 @@ local function prepare_raw(ctx, input)
         error("player " .. ctx:id(player) .. " has no position")
     end
 
+    -- Example: a legal move reaches navigation through the registry only after delay and stat gates pass.
     return registry.dispatch(kind, ctx, player, input, position, delay)
 end
 

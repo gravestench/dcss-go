@@ -9,12 +9,15 @@ local lemon = {
     weight = 10,
 }
 
+-- Example: lemon.valid(ctx, target) with monster target -> false eligibility
+-- Lemon pie can extend an existing potion restriction even if the player cannot currently drink.
 function lemon.valid(ctx, target)
     return ctx:has(target, component.PLAYER) and
         (forms.can_drink(ctx, target) or
             safety.active(ctx, target, restrictions.POTIONS))
 end
 
+-- Store a capped potion restriction duration so repeated lemon hits extend one debuff.
 function lemon.apply(ctx, _, target)
     safety.add_duration(ctx, target, restrictions.POTIONS,
         10 + ctx:random("monster_spell", 11), 50)

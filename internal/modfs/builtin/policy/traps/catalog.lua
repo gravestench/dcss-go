@@ -4,6 +4,7 @@ local removed = require("constants.trap_removed")
 
 local traps = {}
 
+-- Error reports retain the trap definition's source location for bad mod records.
 local function origin(definition)
     local okay, path = pcall(register.origin,
         categories.TRAPS, definition.id)
@@ -11,10 +12,13 @@ local function origin(definition)
     return okay and path or "trap " .. tostring(definition.id)
 end
 
+-- Reject malformed trap metadata during catalog validation.
 local function fail(definition, reason)
     error(origin(definition) .. ": " .. reason)
 end
 
+-- Trap definitions carry effect paths and charges that activation validates before use.
+-- Example: traps.definition(trap_kind) rejects invalid trigger metadata before placement.
 function traps.definition(definition)
     if type(definition.id) ~= "string" or
         not definition.id:match("^TRAP_[A-Z0-9_]+$") then
@@ -76,6 +80,7 @@ function traps.definition(definition)
     end
 end
 
+-- Validate every registered trap before vault placement references one.
 function traps.validate()
     for _, definition in ipairs(content.all(categories.TRAPS)) do
         traps.definition(definition)

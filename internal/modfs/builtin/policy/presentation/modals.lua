@@ -38,6 +38,8 @@ local item_modes = {
     },
 }
 
+-- Use one stable letter sequence across inventory and action prompts so a
+-- displayed key selects the same item after the modal changes mode.
 local function letter(index)
     if index < 26 then
         return string.char(string.byte("a") + index)
@@ -46,10 +48,15 @@ local function letter(index)
     return string.char(string.byte("A") + index - 26)
 end
 
+-- Return renderer data rather than escape codes; the terminal owns clipping
+-- when the player resizes while a modal is open.
 local function write(writes, x, y, text, fg)
     writes[#writes + 1] = { x = x, y = y, text = text, fg = fg }
 end
 
+-- Inventory modal letters are assigned to the current item rows.
+-- Group by object class for readability while retaining the original
+-- inventory index in each label, which is what input routing expects.
 local function inventory_rows(writes, inventory, height)
     write(writes, 0, 0, "Inventory: " .. #inventory .. "/52 slots", colors.white)
     local y = 2
@@ -90,6 +97,9 @@ local function inventory_rows(writes, inventory, height)
     write(writes, 0, height - 2, "Esc - Return    ? - Help", colors.brown)
 end
 
+-- Modal rows are built from the active screen state; inventory letters stay aligned with input selection.
+-- Example: modals.rows({ mode = "inventory", inventory = items, height = 24 })
+-- returns writes using the same letters that policy.input.items accepts.
 function modals.rows(input)
     local mode = input.mode
     local inventory = input.inventory or {}
@@ -192,6 +202,9 @@ function modals.rows(input)
     return { writes = writes }
 end
 
+-- The policy entrypoint returns rows for the current modal; input routing interprets the same item letters.
+-- It stays a small adapter so direct Lua callers can test row construction
+-- without supplying a game context they do not need.
 function modals.run(_, input)
     return modals.rows(input)
 end

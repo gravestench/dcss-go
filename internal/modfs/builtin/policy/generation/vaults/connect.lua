@@ -1,3 +1,4 @@
+-- Example: An isolated vault exit gets a corridor to reachable Dungeon floor.
 local connect = {}
 local effects = require("constants.vault_effects")
 local hooks = require("policy.generation.vaults.hooks")
@@ -8,11 +9,13 @@ local function key(x, y)
     return x .. ":" .. y
 end
 
+-- Distinguish cells beyond the placed map bounds from interior connector targets.
 local function outside(bounds, x, y)
     return x < bounds.x or x >= bounds.x + bounds.width or
         y < bounds.y or y >= bounds.y + bounds.height
 end
 
+-- Find the shortest map-edge escape route before searching ordinary floor.
 local function closest_edge(point, bounds)
     local candidates = {
         { distance = point.x - bounds.x, x = bounds.x - 1, y = point.y },
@@ -39,6 +42,7 @@ local function closest_edge(point, bounds)
     return chosen
 end
 
+-- Record every rock cell opened so source projection cannot restore it later.
 local function carve(builder, from, to, carved)
     local x = from.x
     local y = from.y
@@ -63,6 +67,7 @@ local function carve(builder, from, to, carved)
     end
 end
 
+-- A zero-one search prefers existing floor over newly carved rock when routing an exit.
 local function nearest_outside_floor(builder, bounds, from)
     local best
     local best_distance
@@ -90,11 +95,13 @@ local directions = {
     { x = 0, y = -1 },
 }
 
+-- Exclude the Dungeon border while finding walkable connector cells.
 local function interior(builder, x, y)
     return x > 0 and y > 0 and x < 79 and y < 69 and
         builder:cell(x, y) ~= nil
 end
 
+-- Check all required stairs against the connected walkable region after carving.
 local function reachable(builder, start)
     local seen = { [key(start.x, start.y)] = true }
     local queue = { start }
@@ -123,6 +130,7 @@ end
 
 -- A zero-one search cuts the fewest walls needed to join an isolated source
 -- stair to the already connected map. Existing walkable source cells cost zero.
+-- Find the cheapest carve from a vault exit into the already connected Dungeon floor.
 local function bridge(builder, from, connected, carved)
     local queue = { [0] = from }
     local head = 0
@@ -181,9 +189,11 @@ local function bridge(builder, from, connected, carved)
     error("arrival source exit cannot reach the surrounding Dungeon")
 end
 
+-- Run authored veto hooks after the candidate map has its final surrounding terrain.
 local function check_vetoes(placed)
     local api = {}
 
+    -- Expose authored marker coordinates to veto hooks after placement.
     function api:marker_positions(property, value)
         local found = {}
         local needle = property .. "=" .. tostring(value)
@@ -201,6 +211,7 @@ local function check_vetoes(placed)
         return #found > 0 and found or nil
     end
 
+    -- Let veto hooks verify a marker actually joins the map's exit list.
     function api:has_exit(point)
         for _, exit in ipairs(placed.exits) do
             if exit.x == point.x and exit.y == point.y then
@@ -220,6 +231,7 @@ local function check_vetoes(placed)
     end
 end
 
+-- Every source exit must join ordinary Dungeon floor before the level can be accepted.
 function connect.finish(_, builder, placed, required)
     check_vetoes(placed)
     local carved = {}

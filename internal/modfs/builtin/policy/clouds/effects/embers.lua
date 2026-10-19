@@ -6,10 +6,12 @@ local attitudes = require("constants.vault_attitude")
 local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
 local embers = {}
 
+-- Embers have no direct contact effect; expiry determines whether fire appears.
 function embers.apply()
     -- Embers smoulder until their expiry; only the resulting fire burns.
 end
 
+-- Friendly or authored allies avoid an ember that may turn into fire.
 function embers.avoid(ctx, monster)
     local summon = ctx:get(monster, component.SUMMON)
 
@@ -27,6 +29,8 @@ function embers.avoid(ctx, monster)
     return allegiance.charmed(ctx, monster)
 end
 
+-- Resolve the saved ember only on expiry; occupants can smother it before it becomes fire.
+-- Example: an occupied ember can be smothered; an empty ember becomes fire for its saved duration.
 function embers.expire(ctx, entity, state)
     local occupant = ctx:actor_at(state.level_id, state.x, state.y)
 

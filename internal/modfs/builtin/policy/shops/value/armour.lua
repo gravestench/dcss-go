@@ -37,6 +37,9 @@ local ego_value = {
     [egos.PONDEROUSNESS] = -250,
 }
 
+-- Example: armour.value(kind, item, known, artefact) adds an identified ego's price premium.
+-- Price only properties the player has identified, then add artefact value;
+-- unknown gear must not reveal its hidden enchantment through shop quotes.
 function armour.value(kind, item, known, artefact)
     local value = kind.armour and kind.armour.price or 0
 

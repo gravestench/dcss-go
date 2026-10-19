@@ -1,4 +1,4 @@
--- Source: traps.cc:729-751 and generic_shaft_dest.
+-- Source: traps.cc and generic_shaft_dest.
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local habitat = require("policy.combat.monster_habitat")
@@ -8,6 +8,7 @@ local streams = require("constants.rng_streams")
 
 local effect = {}
 
+-- A falling monster needs an unoccupied habitat cell below before the shaft collapses.
 local function landing(ctx, actor, level_id)
     local width, height = ctx:level_size(level_id)
 
@@ -28,6 +29,8 @@ local function landing(ctx, actor, level_id)
     return nil, nil
 end
 
+-- Known player shafts are safe here; eligible monsters get the separate fall roll.
+-- Example: effect.trigger(ctx, nil, player, site) leaves a known shaft intact for the player.
 function effect.trigger(ctx, _, actor, site)
     -- A known shaft is safe for the player. The separate malevolence rule
     -- handles surprise shaft effects on the player.

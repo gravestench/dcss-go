@@ -4,6 +4,7 @@ local component = require("constants.component")
 register.component({
     id = component.TEMPORARY_TERRAIN,
     version = 1,
+    -- Original and changed features remain paired until expiry restores the authored terrain cell.
     fields = {
         source_actor_id = {
             type = "uint64",

@@ -5,6 +5,8 @@ local streams = require("constants.rng_streams")
 
 local effect = {}
 
+-- Average two trap draws for drain size, then choose the affected stat on the same RNG stream.
+-- Example: effect.apply(ctx, player) drains a random stat, with an averaged trap RNG amount.
 function effect.apply(ctx, player)
     local first = ctx:random(streams.TRAPS, 5)
     local second = ctx:random(streams.TRAPS, 5)

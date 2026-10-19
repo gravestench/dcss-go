@@ -24,6 +24,9 @@ local known_value = {
     [ids.POT_DEGENERATION] = 10,
 }
 
+-- Example: potions.value(kind, nil, known) hides the type premium for an unknown potion.
+-- Use the generic unknown price until identification, preventing the quote
+-- from revealing a potion's effect before the player knows it.
 function potions.value(kind, _, known)
     if kind.shop_value ~= nil then
         return kind.shop_value

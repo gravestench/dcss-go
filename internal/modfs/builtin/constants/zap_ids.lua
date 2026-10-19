@@ -1,5 +1,5 @@
--- Generated from a committed DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Zap IDs name beam-like spell and item effects independently of the spell that invokes them.
+
 local ids = {
     ZAP_AGONY = "ZAP_AGONY",
     ZAP_AGONY_RANGE = "ZAP_AGONY_RANGE",

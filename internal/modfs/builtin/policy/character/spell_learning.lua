@@ -1,3 +1,4 @@
+-- Example: Memorising a spell reserves its levels before a later action completes the delay.
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
 local records = require("policy.character.spell_records")
@@ -44,6 +45,7 @@ end
 
 -- Source: spl-book.cc:_learn_spell_checks. This preflight is read-only so
 -- a rejected command cannot spend an action or change the spell record.
+-- Validate spell slot cost and knowledge before starting a delayed memorisation.
 function learning.cannot_begin(ctx, player, spell_id)
     if player_scope.of(spell_id) ~= "book" then
         return "You cannot memorise that spell."
@@ -105,6 +107,7 @@ end
 
 -- Source: spl-book.cc:learn_spell. The spell becomes known only when the
 -- memorisation delay finishes.
+-- Reserve the selected spell as pending while later player actions advance the delay.
 function learning.begin(ctx, player, spell_id)
     local rejection = learning.cannot_begin(ctx, player, spell_id)
 
@@ -122,6 +125,7 @@ function learning.begin(ctx, player, spell_id)
     return { started = true }
 end
 
+-- Learning completion is resolved at an intent boundary after the required uninterrupted turns.
 function learning.advance(ctx, player, intent)
     if intent.kind == 14 then
         local result = learning.begin(ctx, player, intent.spell_id)
@@ -164,6 +168,7 @@ function learning.advance(ctx, player, intent)
     ctx:emit("spell-learn", "You finish memorising " .. spell.name .. ".")
 end
 
+-- Clear the pending spell without granting it when another action breaks study.
 function learning.interrupt(ctx, player)
     local casting = ctx:get(player, "character.spellcasting")
 
@@ -181,6 +186,7 @@ end
 
 -- Source: spl-util.cc:del_spell_from_memory. Library discovery remains after
 -- the memorised slot and its assigned letter are freed.
+-- Forgetting frees spell levels and removes the learned slot, but can leave library knowledge.
 function learning.forget(ctx, player, spell_id)
     local entry = records.find(ctx, player, spell_id)
 
@@ -205,6 +211,7 @@ function learning.forget(ctx, player, spell_id)
     return { forgotten = true }
 end
 
+-- Expose total and available spell levels without duplicating the underlying calculation.
 function learning.spell_levels(ctx)
     local total, available = learning.levels(ctx, ctx:player())
 
@@ -219,6 +226,7 @@ register.policy({
     run = learning.spell_levels,
 })
 
+-- Bind the memorisation command to the current player and requested spell ID.
 function learning.begin_learning(ctx, input)
     return learning.begin(ctx, ctx:player(), input.spell_id)
 end
@@ -228,6 +236,7 @@ register.policy({
     run = learning.begin_learning,
 })
 
+-- Use the same forget rule for the input command as direct policy callers.
 function learning.forget_policy(ctx, input)
     return learning.forget(ctx, ctx:player(), input.spell_id)
 end

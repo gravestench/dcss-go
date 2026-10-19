@@ -23,6 +23,7 @@ local spec = {
     },
 }
 
+-- Hit each eligible cell at this radius before the next channeled wave is scheduled.
 local function wave(ctx, player, power, radius)
     local origin = ctx:get(player, component.POSITION)
 
@@ -40,6 +41,7 @@ local function wave(ctx, player, power, radius)
     ctx:emit("spell", "A wave of flame ripples out!")
 end
 
+-- Deal the first radius immediately, then save the channel state for later wave ticks.
 function flame_wave.resolve(ctx, player, _, _, power)
     wave(ctx, player, power, 1)
 
@@ -53,6 +55,8 @@ function flame_wave.resolve(ctx, player, _, _, power)
     })
 end
 
+-- Example: The initial radius-one wave hits now; continuation expands the saved channel radius.
+-- Derive each radius from saved channel stage so interrupted casts cannot advance an unsaved wave.
 function flame_wave.continue(ctx, player, state)
     local radius = state.stage + 1
     local spell = catalog.get("spells", spells.SPELL_FLAME_WAVE)

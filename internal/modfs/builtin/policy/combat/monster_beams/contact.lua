@@ -11,6 +11,7 @@ local reflection = require("policy.combat.reflection")
 
 local contact = {}
 
+-- Snapshot the defender before hit, block, and resistance rolls can mutate combat state.
 local function defender_snapshot(ctx, defender)
     if ctx:has(defender, component.PLAYER) then
         local snapshot = fighter.defense(ctx)
@@ -37,6 +38,8 @@ local function defender_snapshot(ctx, defender)
     }
 end
 
+-- After contact succeeds, apply the captured armour before flavor resistance;
+-- return pre- and post-armour values for hit hooks and reporting.
 local function calculate_hit(ctx, defender, profile, power, snapshot)
     local dice = calculators.damage_dice(ctx, profile, power)
     local raw = calculators.roll_damage(ctx, dice)
@@ -46,6 +49,7 @@ local function calculate_hit(ctx, defender, profile, power, snapshot)
     return dealt, dice, after_armour
 end
 
+-- Dispatch to player or monster health so death credit and reactions stay in their own domains.
 local function deliver_hit(ctx, caster, defender, amount)
     if ctx:has(defender, component.PLAYER) then
         player_health.damage(ctx, defender, amount, false, caster)
@@ -54,6 +58,8 @@ local function deliver_hit(ctx, caster, defender, amount)
     end
 end
 
+-- Example: contact.register_block(ctx, defender) with monster blocks once -> shield block count increases
+-- Shield blocks accumulate in the defender component for later bypass calculations.
 function contact.register_block(ctx, defender)
     if not ctx:has(defender, component.PLAYER) then
         monster_defense.register_block(ctx, defender)
@@ -71,6 +77,8 @@ function contact.register_block(ctx, defender)
     ctx:set(defender, component.COMBAT, combat)
 end
 
+-- Contact resolves shield, evasion, damage, and flavor hooks for one actor;
+-- the caller decides whether the ray continues or reflects.
 function contact.resolve(ctx, caster, defender, profile,
     power, to_hit, hook, incoming)
     local snapshot = defender_snapshot(ctx, defender)

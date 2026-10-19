@@ -1,3 +1,5 @@
+-- Terrain IDs are the grid vocabulary used by map rules and vault feature placement.
+
 -- Source feature IDs, shared by the typed grid and spell policies.
 local terrain = {
     DNGN_FLOOR = "DNGN_FLOOR",

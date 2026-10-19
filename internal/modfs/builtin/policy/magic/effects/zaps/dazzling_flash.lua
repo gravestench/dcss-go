@@ -7,6 +7,7 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local dazzling_flash = {}
 
+-- Check optional catalog flags without assuming every target defines a list.
 local function contains(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -17,6 +18,7 @@ local function contains(values, wanted)
     return false
 end
 
+-- Undead, nonliving, plant, and unblindable monsters are excluded before blind chance is rolled.
 local function susceptible(definition)
     return not contains(definition.flags, "M_UNBLINDABLE") and
         not contains(definition.holiness, "MH_UNDEAD") and
@@ -24,6 +26,7 @@ local function susceptible(definition)
         not contains(definition.holiness, "MH_PLANT")
 end
 
+-- Collect only eligible visible targets in spell range before rolling flash effects.
 local function targets(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -56,6 +59,7 @@ local function targets(ctx, player, spell)
     return found
 end
 
+-- Use the power-scaled denominator for each target while keeping the target snapshot fixed.
 function dazzling_flash.resolve(ctx, player, _, spell, power)
     local denominator = 150 - math.min(power, 50)
 
@@ -86,6 +90,8 @@ function dazzling_flash.resolve(ctx, player, _, spell, power)
     end
 end
 
+-- Example: A visible eligible monster in spell range enters the flash target list.
+-- Target preview uses the same susceptibility scan as the actual flash.
 function dazzling_flash.can_target(ctx, player, spell)
     return #targets(ctx, player, spell) > 0
 end

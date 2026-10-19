@@ -26,6 +26,7 @@ local form_poison = {
     tree = 1,
 }
 
+-- Example: resistance.poison(ctx, player) with Gargoyle player -> poison immunity
 -- Source: player.cc:player_res_poison and form-data.h. Only live equipment
 -- and mutations count; melded gear is excluded by equipment.worn.
 function resistance.poison(ctx, player)
@@ -84,12 +85,14 @@ function resistance.poison(ctx, player)
     return math.max(-1, value)
 end
 
+-- Combine mutation and worn artefact clarity before confusion or other mental effects apply.
 function resistance.clarity(ctx, player)
     return effects.sum(ctx, player, capabilities.CLARITY) > 0 or
         artefacts.sum_worn(ctx, player,
             artefact_properties.CLARITY) > 0
 end
 
+-- Sum willpower flags from equipped armour separately from species and mutation bonuses.
 local function armour_willpower(entry)
     local value = 0
 
@@ -151,6 +154,7 @@ function resistance.willpower(ctx, player)
     return math.max(0, value)
 end
 
+-- Check both form identity and remaining aut before granting transformation immunity.
 local function active_form(ctx, player, spell_id)
     local state = ctx:get(player, component.PLAYER_FORM)
 
@@ -175,6 +179,7 @@ function resistance.torment(ctx, player)
         (petrification and petrification.petrified_aut > 0) or false
 end
 
+-- Statue and Storm forms confer petrification immunity while their transformation is active.
 function resistance.petrification(ctx, player)
     return effects.sum(ctx, player,
         capabilities.PETRIFICATION_RESISTANCE) > 0 or

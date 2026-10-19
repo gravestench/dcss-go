@@ -1,5 +1,8 @@
--- Generated from the pinned DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Air Elementalist (JOB_AIR_ELEMENTALIST) is a character start with 2 fixed
+-- item grants in this definition.
+-- The start builder turns these grants and skills into player and inventory
+-- components; the catalog stays unchanged.
+
 -- Source: crawl-ref/source/job-data.h
 -- Starting grants: internal/content/generated/starting-gear.json
 
@@ -33,6 +36,8 @@ local definition = {
         "potion of magic",
     },
     weapon_choice = "WCHOICE_NONE",
+    -- Air Elementalist begins with these training levels before species aptitudes
+    -- affect future training.
     skills = {
         {
             id = "SK_CONJURATIONS",
@@ -56,6 +61,8 @@ local definition = {
         },
     },
     selectable = true,
+    -- These 2 grants create actual starting inventory for Air Elementalist; weapon
+    -- choice may add another item.
     starting_grants = {
         {
             kind_id = item_ids.ARM_ROBE,

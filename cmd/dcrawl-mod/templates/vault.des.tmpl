@@ -1,0 +1,12 @@
+NAME: {{.Slug}}
+TAGS: {{.Family}}
+ORIENT: float
+{{if .WithHook}}: vault.run("configure")
+{{end}}{{if eq .Family "shop"}}KFEAT: O = any shop
+{{end}}MAP
+#####
+#...#
+#.{{if eq .Family "shop"}}O{{else}}@{{end}}.#
+#...#
+#####
+ENDMAP

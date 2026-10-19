@@ -7,6 +7,8 @@ local equipment = require("policy.combat.equipment")
 
 local immunity = {}
 
+-- Cloud Mage and the Robe of Clouds bypass every cloud kind before per-element resistance.
+-- Example: Cloud Mage and a player wearing the Robe of Clouds bypass every cloud kind.
 function immunity.all(ctx, actor)
     local state = ctx:get(actor, component.ACTOR)
 

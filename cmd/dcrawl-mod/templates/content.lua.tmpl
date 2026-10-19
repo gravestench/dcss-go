@@ -1,0 +1,18 @@
+-- {{.Name}} is a {{.Category}} catalog entry.
+-- The loader discovers this file by path and registers its immutable facts.
+-- Add required fields by comparing a bundled file in this content directory.
+-- Put lasting per-entity state in components and special behavior in policy.
+
+local categories = require("constants.catalog")
+
+local definition = {
+    id = "{{.ID}}",
+    name = "{{.Name}}",
+
+    -- TODO: Add the fields required by this catalog before enabling the file.
+}
+
+-- Uncomment after the definition is complete. See docs/modding.md.
+-- register.definition(categories.{{.Category}}, definition)
+
+return definition

@@ -1,3 +1,5 @@
+-- Mutation choice names constrain random selection by source pool or deity.
+
 local choices = {
     ANY = "random",
     GOOD = "good",

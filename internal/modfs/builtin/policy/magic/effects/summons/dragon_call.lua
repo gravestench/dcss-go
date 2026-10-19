@@ -7,6 +7,8 @@ local targets = require("policy.ai.targets")
 
 local dragons = {}
 
+-- Higher spell power unlocks stronger dragon tiers, with a small fallback
+-- chance at each tier before the final fire/ice choice.
 local function dragon_type(ctx, power)
     local chance = summons.roll(ctx, math.max(1, power))
 
@@ -29,6 +31,8 @@ local function dragon_type(ctx, power)
         monsters.MONS_FIRE_DRAGON or monsters.MONS_ICE_DRAGON
 end
 
+-- Dragon Call triggers only around a visible living enemy, then samples one
+-- such position as the summon's anchor.
 local function hostile_in_sight(ctx, player)
     local origin = ctx:get(player, component.POSITION)
     local visible = {}
@@ -55,6 +59,7 @@ local function hostile_in_sight(ctx, player)
     return visible[summons.roll(ctx, #visible) + 1]
 end
 
+-- Count this player's Dragon Call summons; existing dragons increase the interval to the next arrival.
 local function count(ctx, player)
     local total = 0
 
@@ -69,6 +74,9 @@ local function count(ctx, player)
     return total
 end
 
+-- Dragon Call spends MP on each triggered summon while its component tracks the interval.
+-- Example: dragons.advance(ctx, player) at next_aut summons near a foe only
+-- if enough MP remains; later dragons lengthen the next interval.
 function dragons.advance(ctx, player)
     local state = ctx:get(player, component.SUMMON_DRAGON_CALL)
 
@@ -131,6 +139,7 @@ function dragons.resolve(ctx, player, _, _, power)
     ctx:emit("spell", "You call out to the draconic realm!")
 end
 
+-- Casting schedules future calls to advance rather than summoning at once.
 registry.add(spells.SPELL_DRAGON_CALL, {
     resolve = dragons.resolve,
 })

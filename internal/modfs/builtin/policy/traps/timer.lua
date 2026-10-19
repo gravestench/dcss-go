@@ -7,6 +7,7 @@ local vision = require("policy.character.vision")
 
 local timer = {}
 
+-- Round fractional aut with trap RNG so short actions age temporary traps over time.
 local function elapsed_turns(ctx, aut)
     local whole = math.floor(aut / 10)
     local remainder = aut % 10
@@ -18,6 +19,8 @@ local function elapsed_turns(ctx, aut)
     return whole
 end
 
+-- Turn elapsed aut into trap ticks only on the player's level, preserving per-trap timers.
+-- Example: timer.tick(ctx, player, 10) advances timed trap effects by one normal turn.
 function timer.tick(ctx, player, aut)
     if aut <= 0 then
         return

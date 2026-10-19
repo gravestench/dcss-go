@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local restrictions = require("constants.safety_restrictions")
 local hud = require("policy.presentation.hud")
@@ -10,9 +11,11 @@ local species = require("ids.species")
 
 local test = {}
 
+-- Bind agility hud player lookup to this owner while preserving live ECS component reads.
 local function player_context(ctx, player)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to agility hud fixture actor so player-only branches execute on that entity.
     function proxy.player()
         return player
     end
@@ -20,6 +23,7 @@ local function player_context(ctx, player)
     return proxy
 end
 
+-- Locate the exact rendered status token without coupling to screen coordinates.
 local function has_write(rows, expected)
     for _, write in ipairs(rows.writes) do
         if write.text == expected then
@@ -30,6 +34,7 @@ local function has_write(rows, expected)
     return false
 end
 
+-- Rage exhaustion uses the source cooldown light.
 function test.run(ctx)
     local player = ctx:create()
     local screen = player_context(ctx, player)
@@ -74,6 +79,7 @@ function test.run(ctx)
     agility.remaining_aut = 0
     ctx:set(player, component.AGILITY, agility)
 
+    -- HUD rows read the live duration component rather than a cached potion message.
     harness.falsy(has_write(hud.run(screen, { view = view }), "Agi"),
         "Agility disappears from the HUD when the duration ends")
 
@@ -102,6 +108,7 @@ function test.run(ctx)
     powered.remaining_aut = 0
     ctx:set(player, component.POWERED_BY_DEATH, powered)
 
+    -- A stack reaching zero must remove the status row on the next presentation.
     harness.falsy(has_write(hud.run(screen, { view = view }), "Regen (2)"),
         "expired Powered by Death disappears from the HUD")
 
@@ -114,6 +121,7 @@ function test.run(ctx)
     records.grant_acquired(ctx, player, mutations.MUT_CURL, 1)
     ctx:add(player, component.CURL, { active = true })
 
+    -- Curl remains visible during the monster response after the triggering hit.
     harness.truthy(has_write(hud.run(screen, { view = view }), "Curl"),
         "active Curl appears in the HUD")
 

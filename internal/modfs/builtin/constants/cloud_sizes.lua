@@ -1,3 +1,5 @@
+-- Cloud size bounds keep the variable spread calculation within source limits.
+
 -- Source: beam.cc:bolt::get_cloud_size.
 local sizes = {
     FIXED_LARGE = 10,

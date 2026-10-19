@@ -1,3 +1,4 @@
+-- Example: A sealed stair candidate is skipped before a new trail is carved.
 local corridors = require("policy.generation.corridors")
 
 local trail = {}
@@ -9,6 +10,7 @@ local cardinal = {
     { x = -1, y = 0 },
 }
 
+-- A stair candidate needs adjacent traversable space; a marker or sealed cell cannot start a trail.
 local function viable(builder, position)
     local glyph = builder:cell(position.x, position.y)
 
@@ -31,10 +33,12 @@ local function viable(builder, position)
     return false
 end
 
+-- Bound both start search and segment growth; failed trails cause the caller to retry the whole floor.
 function trail.make(builder, start)
     local position
     local found = false
 
+    -- The start search has a fixed draw budget so a crowded floor can be retried by the caller.
     for _ = 1, 201 do
         local x = start.x + builder:roll(start.width)
         local y = start.y + builder:roll(start.height)
@@ -77,6 +81,7 @@ function trail.make(builder, start)
 
             position = next_position
 
+            -- The final trail segment must satisfy the stair-placement condition before returning a pair.
             if finish == builder.corr_count - 1 and
                 builder:cell(position.x, position.y) ~= "." then
                 finish = finish - 2

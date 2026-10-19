@@ -91,7 +91,6 @@ type Runtime struct {
 	hostComponents    map[string]HostComponent
 	definitions       map[string]map[string]*lua.LTable
 	definitionOrigins map[string]map[string]string
-	definitionOrder   map[string][]string
 	definitionRefs    []definitionReference
 	definitionsReady  bool
 	choicePolicy      *lua.LFunction
@@ -154,7 +153,6 @@ func newRuntime(
 		hostComponents:    services.HostComponents,
 		definitions:       make(map[string]map[string]*lua.LTable),
 		definitionOrigins: make(map[string]map[string]string),
-		definitionOrder:   make(map[string][]string),
 		policies:          make(map[string]*lua.LFunction),
 		loaded:            make(map[string]lua.LValue),
 		loading:           make(map[string]bool),

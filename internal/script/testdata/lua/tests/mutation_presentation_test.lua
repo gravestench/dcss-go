@@ -1,3 +1,4 @@
+
 local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
 local screen = require("policy.presentation.mutations")
@@ -6,6 +7,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Join rendered mutation rows so description checks ignore write coordinates.
 local function row_text(result)
     local lines = {}
 
@@ -16,6 +18,7 @@ local function row_text(result)
     return table.concat(lines, "\n")
 end
 
+-- Mutation examine uses the source long description.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -43,6 +46,7 @@ function test.run(ctx)
     harness.truthy(horns, "innate source description")
     harness.truthy(robust, "acquired source description")
     harness.truthy(agile, "temporary source description is bracketed")
+    -- Presentation groups mutation classes without reordering saved records within each class.
     harness.truthy(horns < robust and robust < agile,
         "innate, acquired, temporary ordering")
     harness.equal(result.options[1].key, "a", "source mutation hotkey")
@@ -75,6 +79,7 @@ function test.run(ctx)
         "first page shows acquired mutation")
     harness.falsy(row_text(first_page):find("You are agile.", 1, true),
         "first page leaves room for the transient legend")
+    -- Pagination preserves the transient legend and hotkey mapping after the first page.
     harness.truthy(row_text(second_page):find("[You are agile.", 1, true),
         "second page shows transient mutation")
 

@@ -10,6 +10,9 @@ local spell_flags = require("constants.monster_spell_flags")
 
 local system = {}
 
+-- Theory of operation: The spell intent gate leaves allied constructs to their own decision system while spending spell
+-- energy.
+-- Monster spell intent is resolved before movement can change a chosen spell target.
 function system.update(ctx, caster)
     local intent = ctx:get(caster, "core.intent")
 

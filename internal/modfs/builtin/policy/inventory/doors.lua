@@ -2,15 +2,22 @@ local items = require("policy.inventory.items")
 
 local doors = {}
 
+-- Encode coordinates for the visited/exclusion sets used during a door
+-- flood fill; a string key works for both positive and negative offsets.
 local function key(x, y)
     return x .. ":" .. y
 end
 
+-- Sort a multi-cell door group before later obstacle handling so whichever
+-- cell the player targeted, the same ordered work is performed.
 local function cell_order(left, right)
     return left.x < right.x or
         (left.x == right.x and left.y < right.y)
 end
 
+-- Find orthogonally connected door cells with the same glyph. Large doors
+-- open or close as one group rather than leaving an arbitrary panel behind.
+-- Example: doors.group(ctx, level_id, x, y, "DNGN_OPEN_DOOR").
 function doors.group(ctx, level, x, y, glyph)
     if ctx:cell(level, x, y) ~= glyph then
         error("level " .. level .. " has no " .. glyph .. " door at (" .. x .. "," .. y .. ")")
@@ -41,6 +48,8 @@ function doors.group(ctx, level, x, y, glyph)
     return found
 end
 
+-- Find adjacent walkable cells outside the closing door group where floor
+-- items could be pushed; diagonal neighbors are valid destinations.
 function doors.push_targets(ctx, level, cell, excluded)
     local targets = {}
 
@@ -60,6 +69,8 @@ function doors.push_targets(ctx, level, cell, excluded)
     return targets
 end
 
+-- Exclude every panel in the same door group so an item cannot be pushed
+-- from one closing panel into another closing panel.
 function doors.excluded(group)
     local excluded = {}
 
@@ -72,6 +83,8 @@ end
 
 -- This is the free command check. Invisible monsters consume time and defer
 -- the obstruction message to the ordered door system.
+-- Item obstructions are free failures only when no push destination exists;
+-- this lets the timed system attempt a legitimate displacement later.
 function doors.close_obstruction(ctx, player, level, group)
     local excluded = doors.excluded(group)
     local origin = ctx:get(player, "core.position")
@@ -102,6 +115,9 @@ function doors.close_obstruction(ctx, player, level, group)
     return nil, false
 end
 
+-- Without a direction, one adjacent door is inferred but multiple doors require a new prompt.
+-- Example: doors.prepare(ctx, player, false, 1, 0) returns an intent and
+-- time cost only after the target door and free obstruction checks pass.
 function doors.prepare(ctx, actor, opening, dx, dy)
     local position = ctx:get(actor, "core.position")
 

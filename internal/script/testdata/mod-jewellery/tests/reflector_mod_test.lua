@@ -1,3 +1,5 @@
+-- Modded reflector returns the shot without an item-ID branch.
+
 local component = require("constants.component")
 local fixture = require("tests.fixtures.ranged_reflection")
 local harness = require("tests.harness")
@@ -8,6 +10,8 @@ local ranged_actions = require("policy.combat.ranged_actions")
 
 local test = {}
 
+-- Equip a modded reflector and fire a blocked missile to prove the ranged
+-- return effect uses registered jewellery capability rather than item ID.
 function test.run(ctx)
     local battle, player, shooter, missile = fixture.scene(ctx,
         ids.MI_STONE, false)

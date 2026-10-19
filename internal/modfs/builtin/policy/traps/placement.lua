@@ -6,11 +6,13 @@ local streams = require("constants.rng_streams")
 
 local placement = {}
 
+-- Include the vault source and glyph in errors so a bad trap token can be located.
 local function site_name(record)
     return string.format("vault %s:%d glyph %s",
         record.source_id, record.line or 0, record.source)
 end
 
+-- Match authored names against registered aliases before choosing a kind.
 local function matches(definition, name)
     if definition.name:lower() == name:lower() or
         definition.id == name or definition.source_feature == name then
@@ -26,6 +28,7 @@ local function matches(definition, name)
     return false
 end
 
+-- Resolve an explicit vault trap before random alternatives.
 local function named_trap(name, record)
     for _, definition in ipairs(catalog.all(categories.TRAPS)) do
         if matches(definition, name) then
@@ -40,6 +43,8 @@ local function named_trap(name, record)
     return nil
 end
 
+-- Recognize random and named trap directives before the vault builder instantiates a feature.
+-- Example: placement.is_trap(vault_record) distinguishes trap directives from other feature records.
 function placement.is_trap(record)
     if record.identity == "random_trap" then
         return true
@@ -63,6 +68,7 @@ function placement.is_trap(record)
     return false
 end
 
+-- Split vault alternatives while retaining the authored record for diagnostics.
 local function alternatives(expression, record)
     local choices = {}
 
@@ -87,6 +93,7 @@ local function alternatives(expression, record)
     return choices
 end
 
+-- A single authored trap spends no RNG; slash alternatives consume one weighted trap-stream draw.
 local function choose(ctx, choices)
     if #choices == 1 then
         return choices[1].id, choices[1].name
@@ -111,13 +118,14 @@ local function choose(ctx, choices)
     error("trap choice fell outside weighted table")
 end
 
+-- Fix charges when placing a chosen trap so later activation has no placement draw.
 function placement.resolve(ctx, record, depth)
     local expression = record.identity
 
     if expression == "random_trap" then
         local choices = {}
 
-        -- dungeon.cc:6275 repeatedly draws until it finds a regular trap.
+        -- dungeon.cc repeatedly draws until it finds a regular trap.
         -- The accepted distribution is uniform over this effective set.
         for _, definition in ipairs(catalog.all(categories.TRAPS)) do
             if definition.regular and
@@ -140,6 +148,7 @@ function placement.resolve(ctx, record, depth)
     return choose(ctx, alternatives(expression, record))
 end
 
+-- Materialization verifies walkability and cell uniqueness before writing a WORLD_TRAP component.
 function placement.materialize(ctx, level, record)
     if not ctx:walkable(level.id, record.x, record.y) then
         error(site_name(record) .. ": trap cell is blocked")

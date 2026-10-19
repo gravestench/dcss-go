@@ -18,6 +18,9 @@ for _, capability in pairs(capabilities) do
     known_capabilities[capability] = true
 end
 
+-- Validate the catalog record before treating it as wearable; item class
+-- alone does not tell us whether it occupies a ring or amulet slot.
+-- Example: jewellery.kind(ring_definition) == kinds.RING.
 function jewellery.kind(definition)
     if definition.class ~= classes.OBJ_JEWELLERY then
         return nil
@@ -39,6 +42,8 @@ function jewellery.kind(definition)
     return kind
 end
 
+-- Check that every effect capability has an executable magnitude, including
+-- item-plus effects only on jewellery that permits pluses.
 function jewellery.effects(definition)
     jewellery.kind(definition)
 
@@ -70,8 +75,10 @@ function jewellery.effects(definition)
     return effects
 end
 
--- Source: species.cc:507-527. A missing hand removes the first ordinary
+-- Source: species.cc. A missing hand removes the first ordinary
 -- ring slot or the last Octopode tentacle slot.
+-- Example: jewellery.ring_slots(ctx, octopode) returns the currently usable
+-- tentacle slots after the missing-hand mutation is applied.
 function jewellery.ring_slots(ctx, player)
     local identity = ctx:get(player, "core.player")
     local octopode = identity.species_id == species_ids.SP_OCTOPODE
@@ -93,6 +100,8 @@ function jewellery.ring_slots(ctx, player)
     return result
 end
 
+-- Ask the live slot list for rings, so species anatomy and mutations affect
+-- command validation as well as the display.
 function jewellery.slot_allowed(ctx, player, kind, slot)
     if kind == kinds.AMULET then
         return slot == slots.AMULET
@@ -111,6 +120,8 @@ function jewellery.slot_allowed(ctx, player, kind, slot)
     return false
 end
 
+-- Restrict slot lookup to this player's carried equipment and fail on
+-- duplicates, since two rings in one slot would corrupt effect totals.
 function jewellery.in_slot(ctx, player, slot)
     local found
 
@@ -130,6 +141,8 @@ function jewellery.in_slot(ctx, player, slot)
     return found
 end
 
+-- Reuse combat equipment's worn-item scan with only the jewellery slots this
+-- species can currently use; that keeps effect sums consistent with anatomy.
 function jewellery.worn(ctx, player)
     local combat_equipment = require("policy.combat.equipment")
     local selected = { [slots.AMULET] = true }
@@ -141,6 +154,8 @@ function jewellery.worn(ctx, player)
     return combat_equipment.worn(ctx, player, selected)
 end
 
+-- Resolve an item ID to an owned jewellery entity before any timed action is
+-- prepared; stale selection IDs must produce a free message, not a mutation.
 local function held(ctx, player, item_id)
     local entity = item_id ~= 0 and ctx:entity(item_id) or nil
     local item = entity and ctx:get(entity, "core.item")
@@ -160,6 +175,9 @@ local function held(ctx, player, item_id)
     return entity, definition
 end
 
+-- When every usable ring slot is full, return a selection prompt instead of silently replacing the first ring.
+-- Recheck transformed-form slot usability even for an explicit choice, since
+-- the player's form may have changed while the prompt was open.
 local function replacement(ctx, player, input, available)
     local forms = require("policy.magic.effects.forms.player")
     local chosen = input.target_id
@@ -201,6 +219,9 @@ local function replacement(ctx, player, input, available)
     }
 end
 
+-- Example: an amulet swap schedules removal and wear phases; an empty ring slot can be filled directly.
+-- The prepared result stores any multi-turn work as an equipment delay, so
+-- save/restore can resume a swap rather than silently finishing it.
 function jewellery.prepare_put_on(ctx, player, input)
     local forms = require("policy.magic.effects.forms.player")
     if input.cancelled then
@@ -287,6 +308,9 @@ function jewellery.prepare_put_on(ctx, player, input)
     }
 end
 
+-- Removing a ring is immediate after a short action; amulets use a persisted
+-- delay. Both routes verify current ownership and form-dependent access.
+-- Example: jewellery.prepare_remove(ctx, player, { item_id = ring_id }).
 function jewellery.prepare_remove(ctx, player, input)
     local forms = require("policy.magic.effects.forms.player")
     local entity, definition, message = held(ctx, player, input.item_id or 0)

@@ -1,3 +1,5 @@
+-- Malformed potion handler is rejected.
+
 local catalog = require("policy.catalog")
 local potions = require("policy.potions")
 local harness = require("tests.harness")
@@ -7,6 +9,8 @@ local item_classes = require("constants.item_classes")
 
 local test = {}
 
+-- Visit every active potion definition and require an effect handler, so a
+-- new content file cannot create a drinkable item with no Lua behavior.
 function test.run()
     harness.equal(type(potions.get), "function",
         "potion effects use the shared registry")

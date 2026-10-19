@@ -1,3 +1,5 @@
+-- The token supplies a new item id to the combined content registry.
+
 local categories = require("constants.catalog")
 
 local definition = {

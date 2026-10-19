@@ -11,6 +11,7 @@ local pain = {}
 pain.viable = agony.viable
 
 -- Source: zap-data.h:ZAP_PAIN and fight.cc:resist_adjust_damage.
+-- Pain shares Agony's susceptibility gate but rolls negative-energy damage instead of torment loss.
 function pain.amount(ctx, caster, defender, profile)
     local power = enchantment.caster_power(ctx, caster, profile)
     local dice = calculators.damage_dice(ctx, profile, power)
@@ -25,6 +26,8 @@ function pain.amount(ctx, caster, defender, profile)
         resistances.NEGATIVE_ENERGY)
 end
 
+-- Example: pain.apply(ctx, caster, defender, profile) with negative-energy-immune defender -> zero effective HP loss
+-- Apply negative-energy spell damage only after the hex rule's resistance check.
 function pain.apply(ctx, caster, defender, profile)
     local amount = pain.amount(ctx, caster, defender, profile)
 

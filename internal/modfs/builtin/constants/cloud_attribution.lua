@@ -1,3 +1,5 @@
+-- Cloud attribution records who caused a cloud so later damage and kill credit remain correct.
+
 -- cloud.cc:place_cloud's saved killer classification.
 return {
     PLAYER = "KC_YOU",

@@ -1,9 +1,11 @@
--- Natural monster regeneration from mon-act.cc:125-160,1724 and
--- monster.cc:2934-2942. The active floor scheduler supplies action order.
+-- Theory of operation: Living monsters heal on their active turn before poison and decision systems.
+-- Natural monster regeneration from mon-act.cc,1724 and
+-- monster.cc. The active floor scheduler supplies action order.
 
 local catalog = require("policy.catalog")
 local habitat = require("policy.combat.monster_habitat")
 
+-- Keep fractional healing deterministic through the named RNG stream instead of truncating every turn.
 local function random_divide(ctx, numerator, denominator)
     if numerator <= 0 then
         return 0
@@ -19,6 +21,7 @@ local function random_divide(ctx, numerator, denominator)
     return quotient
 end
 
+-- Test catalog flag membership before applying regeneration exceptions.
 local function has_flag(flags, wanted)
     for _, flag in ipairs(flags or {}) do
         if flag == wanted then
@@ -31,6 +34,7 @@ end
 
 local system = {}
 
+-- Monster healing is calculated before AI evaluates current HP and position.
 function system.update(ctx, entity)
     if not ctx:has(entity, "core.ai") then
         return

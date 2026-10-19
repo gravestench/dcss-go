@@ -7,6 +7,7 @@ local monsters = require("ids.monsters")
 
 local test = {}
 
+-- Keep contact hooks off a brainless target while checking the actual beam call boundary.
 function test.run()
     local caster = 101
     local brainless = 202
@@ -14,6 +15,7 @@ function test.run()
     local touched = false
     local ctx = {}
 
+    -- Expose the brainless defender kind so the contact hook takes its exception path.
     function ctx:get(actor, id)
         if actor == brainless and id == component.ACTOR then
             return {
@@ -24,10 +26,12 @@ function test.run()
         return nil
     end
 
+    -- Deny optional components to isolate the target-intelligence gate.
     function ctx:has()
         return false
     end
 
+    -- Flag any emitted contact message; a skipped hook should leave it false.
     function ctx:emit()
         touched = true
     end

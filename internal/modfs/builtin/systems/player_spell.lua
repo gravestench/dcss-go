@@ -3,6 +3,8 @@ local channel = require("policy.magic.channel")
 
 local player_spell = {}
 
+-- Theory of operation: The player spell intent commits effects before movement changes caster and target positions.
+-- Player casts resolve after monster spells and before movement changes the caster's cell.
 function player_spell.update(ctx, actor, aut)
     if actor ~= ctx:player() then
         return

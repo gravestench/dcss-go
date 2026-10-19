@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local mutations = require("ids.mutations")
@@ -10,11 +11,13 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Nimble Swimmer does not change land movement.
 function test.run(ctx)
     local player = ctx:create()
     local feature = terrain.DNGN_FLOOR
     local grid = setmetatable({}, { __index = ctx })
 
+    -- Return water fixture terrain that gates the environmental branch.
     function grid.cell()
         return feature
     end

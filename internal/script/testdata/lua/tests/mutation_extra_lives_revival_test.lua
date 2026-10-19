@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local terrain = require("constants.terrain")
 local jobs = require("ids.jobs")
@@ -11,39 +12,48 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Make revival placement deterministic and record whether relocation occurred.
 local function floor_context(ctx, player)
     local floor = setmetatable({}, { __index = ctx })
     local moved = false
 
+    -- Bind policy ownership to extra lives revival fixture actor so player-only branches execute on that entity.
     function floor.player()
         return player
     end
 
+    -- Constrain Felid revival to one cell so relocation cannot hide XP changes.
     function floor.level_size()
         return 1, 1
     end
 
+    -- Pick the first revival floor candidate so relocation is deterministic.
     function floor.random()
         return 0
     end
 
+    -- Expose extra lives revival fixture occupant at the queried cell for collision or targeting.
     function floor.actor_at()
         return player
     end
 
+    -- Return extra lives revival fixture terrain that gates the environmental branch.
     function floor.cell()
         return terrain.DNGN_FLOOR
     end
 
+    -- Record whether revival requested relocation; the getter below exposes this flag.
     function floor.move_actor()
         moved = true
     end
 
+    -- Expose whether revival invoked the relocation hook without changing the floor fixture.
     return floor, function()
         return moved
     end
 end
 
+-- Exercise Felid revival above the normal level ceiling to pin XP carryover.
 local function check_high_experience(ctx)
     local player = ctx:create()
     local felid = catalog.get("species", species.SP_FELID)
@@ -94,10 +104,12 @@ local function check_high_experience(ctx)
 
     harness.equal(progress.total_xp, xp - lost,
         "XL27 revival subtracts one source XP-level interval")
+    -- Historical XP beyond the cap affects the one-level revival deduction.
     harness.equal(progress.level, 27,
         "surplus XP can keep a revived Felid at XL27")
 end
 
+-- Revival preserves source XP progress at the new level.
 function test.run(ctx)
     local player = ctx:create()
     local felid = catalog.get("species", species.SP_FELID)
@@ -139,6 +151,7 @@ function test.run(ctx)
 
     local floor, moved = floor_context(ctx, player)
 
+    -- The lethal hit records a pending state; relocation occurs only before fresh input.
     harness.truthy(extra_lives.revive(floor, player),
         "pending Felid revival runs at the next input boundary")
 
@@ -151,6 +164,7 @@ function test.run(ctx)
         "revival preserves source XP progress at the new level")
     harness.equal(health.current, health.max,
         "revival restores the recalculated HP maximum")
+    -- The selected safe cell is applied through the grid API rather than editing coordinates.
     harness.truthy(moved(),
         "revival asks the grid to move the player to safety")
     harness.falsy(extra_lives.state(ctx, player).pending_revival,

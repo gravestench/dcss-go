@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.summon_necromancy",
     version = 1,
+    -- Death Channel and Animate Dead keep separate aura expiries; animate power belongs to the cast.
     fields = {
         death_channel_expires_aut = { type = "int64", default = 0 },
         animate_dead_expires_aut = { type = "int64", default = 0 },

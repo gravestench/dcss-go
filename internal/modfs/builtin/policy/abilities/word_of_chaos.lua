@@ -19,6 +19,8 @@ local vision = require("policy.character.vision")
 
 local chaos = {}
 
+-- Limit the word to visible enemies that can move; tentacles, conjurations,
+-- and stationary monsters would make the displacement effect incoherent.
 local function eligible(ctx, player, monster, origin)
     return not groups.tentacles[monster.actor.kind_id] and
         not common.flag(monster.definition, flags.STATIONARY) and
@@ -29,6 +31,7 @@ local function eligible(ctx, player, monster, origin)
             monster.position.x, monster.position.y)
 end
 
+-- A prompt is needed only when no eligible enemy is visible to the player.
 function chaos.confirmation_needed(ctx, player)
     local origin = ctx:get(player, component.POSITION)
 
@@ -41,11 +44,15 @@ function chaos.confirmation_needed(ctx, player)
     return true
 end
 
+-- State the no-visible-target case explicitly so a forced cast cannot look
+-- like an accidental silent failure after the player accepts it.
 function chaos.confirmation_message()
     return "You cannot see any enemies that you can affect. " ..
         "Speak a word of chaos anyway?"
 end
 
+-- Check cooldown, silence, and MP before asking for confirmation; impossible
+-- casts should return a free reason instead of opening a prompt.
 function chaos.prepare(ctx, player, input)
     local cooldown = ctx:get(player, component.ABILITY_COOLDOWNS)
 
@@ -70,6 +77,8 @@ function chaos.prepare(ctx, player, input)
     return nil
 end
 
+-- Apply the post-cast max-HP drain as an ECS status while preserving at least
+-- one max HP, so repeated casts remain savable and nonfatal by themselves.
 local function drain_player(ctx, player)
     local health = ctx:get(player, component.HEALTH)
     local old = ctx:get(player, "status.drain")
@@ -92,6 +101,8 @@ local function drain_player(ctx, player)
     ctx:emit("mutation", "You feel drained.")
 end
 
+-- Create a real net item at the monster's position before applying Held;
+-- the shared net rules then own escape and item cleanup.
 function chaos.ensnare(ctx, monster, definition)
     if not net.can_hold(definition) or ctx:has(monster, component.HELD) then
         return false
@@ -112,6 +123,7 @@ function chaos.ensnare(ctx, monster, definition)
     return net.catch(ctx, monster, net_item, definition)
 end
 
+-- The target's outcome is applied before the next visible monster is considered.
 local function affect_monster(ctx, player, monster, power)
     if teleport.no_tele(monster.actor, monster.definition,
         ctx, monster.entity) then
@@ -133,6 +145,7 @@ local function affect_monster(ctx, player, monster, power)
     end
 end
 
+-- Shuffle before applying effects so entity query order cannot favour an earlier monster under the same RNG stream.
 function chaos.shuffle(ctx, monsters)
     for index = #monsters, 2, -1 do
         local chosen = ctx:random("mutation", index) + 1
@@ -143,6 +156,9 @@ function chaos.shuffle(ctx, monsters)
     return monsters
 end
 
+-- Example: a successful Word moves each visible eligible monster, then spends MP and writes its cooldown.
+-- Resolve failure before selecting targets, then collect eligible monsters
+-- from current ECS positions so movement cannot change this cast's target set.
 function chaos.resolve(ctx, player)
     if failure.roll(ctx, player) then
         ctx:emit("mutation", "You fail to speak a word of chaos.")

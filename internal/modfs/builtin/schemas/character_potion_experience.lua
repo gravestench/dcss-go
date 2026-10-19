@@ -5,6 +5,7 @@ local component = require("constants.component")
 local schema = {
     id = component.POTION_EXPERIENCE,
     version = 1,
+    -- Level XP and bonus skill XP remain distinct, with pending skill XP awaiting the training choice.
     fields = {
         untrained_level_xp = {
             type = "int64",

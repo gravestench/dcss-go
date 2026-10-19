@@ -16,6 +16,7 @@ local offsets = {
     { -1, 1 }, { 0, 1 }, { 1, 1 },
 }
 
+-- Confused movement may step toward a foe, but never into blocked terrain or another ally.
 local function random_step(ctx, entity, origin)
     local choices = {}
 
@@ -68,6 +69,7 @@ function vortex.act(ctx, entity, origin)
     return random_step(ctx, entity, origin)
 end
 
+-- Fire Storm vortices leave a cloud on death; other vortex sources do not share that aftermath.
 local function fire_cloud(ctx, entity, position)
     local state = ctx:get(entity, component.SUMMON)
 
@@ -75,11 +77,12 @@ local function fire_cloud(ctx, entity, position)
         return
     end
 
-    -- Source: mon-death.cc:1890-1894 leaves a 2+random2(4) turn fire cloud.
+    -- Source: mon-death.cc leaves a 2+random2(4) turn fire cloud.
     cloud.place(ctx, cloud_ids.CLOUD_FIRE, state.owner, position.level_id,
         position.x, position.y, (2 + ctx:random("spell", 4)) * 10)
 end
 
+-- The death hook filters by monster kind before applying the source-specific fire cloud.
 function vortex.on_death(ctx, entity, definition, position)
     if definition.id == monsters.MONS_FIRE_VORTEX then
         fire_cloud(ctx, entity, position)
@@ -88,6 +91,8 @@ function vortex.on_death(ctx, entity, definition, position)
     return false
 end
 
+-- Example: A dissipating fire vortex leaves a fire cloud at its saved position before expiry.
+-- Leave Fire Storm's death cloud at the current cell before shared expiry removes its position.
 function vortex.dissipate(ctx, entity)
     local position = ctx:get(entity, component.POSITION)
 

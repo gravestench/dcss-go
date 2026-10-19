@@ -9,10 +9,11 @@ local monster_poison = require("policy.combat.monster_poison")
 
 local player_staves = {}
 
+-- Earth staff damage tests AC three times, so each save needs its own melee draw.
 local function armour(ctx, raw, ac, rolls)
     local saved = 0
 
-    -- Source: actor.cc:358-365 rolls AC independently three times for earth.
+    -- Source: actor.cc rolls AC independently three times for earth.
     for _ = 1, rolls do
         saved = saved + roll.armour(ctx, ac)
     end
@@ -20,6 +21,8 @@ local function armour(ctx, raw, ac, rolls)
     return math.max(0, raw - saved)
 end
 
+-- Example: player_staves.apply(ctx, hit, brands, definition, defender_ac) with dead target -> no elemental staff proc
+-- Add a magical staff's elemental proc after a landed melee hit, using its own power and AC rolls.
 function player_staves.apply(ctx, hit, brands, definition, defender_ac)
     if not definition or not definition.staff or
         hit.health.current <= 0 then
@@ -65,7 +68,7 @@ function player_staves.apply(ctx, hit, brands, definition, defender_ac)
     brands.damage(ctx, hit, bonus)
 
     if staff.poison_level and hit.health.current > 0 then
-        -- Source: melee-attack.cc:2186-2190 poisons surviving defenders
+        -- Source: melee-attack.cc poisons surviving defenders
         -- after the staff's resistible damage.
         monster_poison.apply(ctx, hit.defender, hit.definition,
             staff.poison_level, hit.attacker, false)

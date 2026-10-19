@@ -1,3 +1,4 @@
+-- Example: The evil-shop name is drawn first; non-Dungeon branches add an altar to the shop feature.
 local branches = require("ids.branches")
 local directives = require("constants.vault_directives")
 
@@ -37,7 +38,7 @@ local stock = table.concat({
     "sword_of_zonguldrok w:1",
 }, " | ")
 
--- Port of builder/shops.des:592-608.
+-- The evil-shop name is drawn first; non-Dungeon branches add an altar to the shop feature.
 local function configure_evil_shop(api)
     local name = api:random_from(names)
 

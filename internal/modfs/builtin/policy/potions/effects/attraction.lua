@@ -4,11 +4,13 @@ local component = require("constants.component")
 
 local effect = {}
 
+-- Attraction can extend an existing aura, so preflight does not reject repeated use.
 function effect.can_quaff()
     return nil
 end
 
 -- Source: potion.cc:PotionAttraction::effect.
+-- Example: drinking Attraction extends the saved pull duration when the aura is already active.
 function effect.apply(ctx, player)
     local state = ctx:get(player, component.POTION_ATTRACTION)
     local added = (20 + math.floor(ctx:random("potion", 40) / 2)) * 10

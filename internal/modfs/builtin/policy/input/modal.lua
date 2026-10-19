@@ -1,5 +1,7 @@
 local modal = {}
 
+-- Modal, help, and death screens consume input without creating a gameplay command.
+-- Example: modal.route({ key = "?" }) opens help as a returnable screen.
 function modal.route(input)
     if input.key == "esc" then
         return {
@@ -23,6 +25,8 @@ function modal.route(input)
     }
 end
 
+-- Esc returns to the screen that opened help, preserving its pending state;
+-- other unimplemented controls explain themselves instead of advancing time.
 function modal.help(input)
     if input.key == "esc" then
         return { action = "return_screen" }
@@ -34,6 +38,8 @@ function modal.help(input)
     }
 end
 
+-- Death-screen acknowledgement returns to startup without issuing any
+-- player action, because the old session has already ended.
 function modal.death(input)
     if input.key == "esc" or input.key == "enter" then
         return { action = "return_to_startup" }

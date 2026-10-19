@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local gear = require("policy.population.gear")
@@ -9,6 +10,7 @@ local registry = require("policy.population.gear.registry")
 
 local test = {}
 
+-- Choose the second gear outcome at the twelve-way goblin draw while other draws stay zero.
 local function fake_random(_, _, bound)
     if bound == 12 then
         return 1
@@ -17,8 +19,10 @@ local function fake_random(_, _, bound)
     return 0
 end
 
+-- Dispatch registration rejects a second owner and an unknown monster key.
 local function registry_rejects_duplicate_handlers()
     local added_id = monsters.MONS_RAT
+    -- Register a harmless handler twice to isolate duplicate-ID rejection.
     local handler = function()
         return nil
     end
@@ -40,6 +44,7 @@ local function registry_rejects_duplicate_handlers()
         "unhandled monster received equipment")
 end
 
+-- The Goblin handler reads its catalog gear spec instead of an embedded roll.
 local function goblin_reads_its_owned_spec()
     local definition = catalog.get(categories.MONSTERS, monsters.MONS_GOBLIN)
     local spec = definition.weapon_gear.primary
@@ -55,6 +60,7 @@ local function goblin_reads_its_owned_spec()
         },
     }
 
+    -- Return the altered goblin gear row only for Goblin, preserving all other catalog lookups.
     catalog.get = function(category, id)
         if category == categories.MONSTERS and id == monsters.MONS_GOBLIN then
             return definition
@@ -72,6 +78,7 @@ local function goblin_reads_its_owned_spec()
         "Goblin handler ignored the owned weapon spec")
 end
 
+-- Gear handler failures identify the bad rule and the missing monster in error text.
 function test.run()
     registry_rejects_duplicate_handlers()
     goblin_reads_its_owned_spec()

@@ -6,6 +6,7 @@ local roots = {}
 register.component{
     id = component.GRASPING_ROOTS,
     version = 1,
+    -- Root power, hold time, and escape attempts stay together for later constriction checks.
     fields = {
         remaining_aut = {
             type = "int64",

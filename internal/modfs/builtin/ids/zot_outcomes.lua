@@ -1,3 +1,5 @@
+-- Zot outcome IDs select the consequence of triggering a Zot trap.
+
 -- Source: traps.cc:zot_effects.
 return {
     STAT_LOSS = "stat_loss",

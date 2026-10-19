@@ -8,6 +8,7 @@ local source = require("policy.item_generation.source_roll")
 
 local accessories = {}
 
+-- Exclude nonrandom catalog kinds before either jewellery or staff weighting sees them.
 local function candidates(class_id, predicate)
     local rows = {}
 
@@ -24,8 +25,11 @@ local function candidates(class_id, predicate)
     return rows
 end
 
+-- Example: A one-in-three jewellery draw selects amulets; the other draws select rings.
+-- Draw the ring-versus-amulet branch first, then weight only subtypes in the chosen family.
 function accessories.jewellery(ctx, player)
     local amulet = source.chance(ctx, 1, 3)
+    -- Match the earlier amulet coin flip so ring and amulet weights never mix.
     local rows = candidates(classes.OBJ_JEWELLERY, function(kind)
         return (kind.jewellery.kind == jewellery_kinds.AMULET) == amulet
     end)
@@ -44,7 +48,9 @@ function accessories.jewellery(ctx, player)
     return chosen
 end
 
+-- Weight eligible staves by school training so the offer reflects the current caster build.
 function accessories.staff(ctx, player)
+    -- Keep only actual staff definitions before school-specific weighting.
     local rows = candidates(classes.OBJ_STAVES, function(kind)
         return kind.staff ~= nil
     end)

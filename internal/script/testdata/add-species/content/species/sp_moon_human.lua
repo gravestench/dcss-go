@@ -1,8 +1,9 @@
 local categories = require("constants.catalog")
 
--- Generated from the pinned DCSS import. Refresh deliberately.
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/human.yaml
+
+-- Moon Human adds a new selectable species id alongside the bundled Human.
 
 local definition = {
     id = "SP_MOON_HUMAN",

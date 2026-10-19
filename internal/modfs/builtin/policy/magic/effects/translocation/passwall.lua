@@ -22,6 +22,8 @@ local safe_destination = {
     [terrain_ids.DNGN_STONE_STAIRS_DOWN_I] = true,
 }
 
+-- Example: prepare(ctx, player, spell, 1, 0) accepts a straight rock tunnel
+-- only when a safe destination lies beyond the wall within spell range.
 local function find_path(ctx, player, spell, dx, dy)
     if dx == 0 and dy == 0 then
         return nil, "Please select a wall."
@@ -73,6 +75,7 @@ local function find_path(ctx, player, spell, dx, dy)
     return nil, "This rock feels extremely deep."
 end
 
+-- Interrupted travel removes the saved delay before another action can tick it.
 function passwall.cancel(ctx, player)
     if not ctx:has(player, component.PASSWALL_DELAY) then
         return "You are not merging with rock."
@@ -82,6 +85,7 @@ function passwall.cancel(ctx, player)
     return "Your meditation is interrupted."
 end
 
+-- A late occupant of the landing cell must be moved before the player emerges.
 local function shift_occupant(ctx, level_id, x, y)
     local occupant = ctx:actor_at(level_id, x, y)
 
@@ -108,6 +112,8 @@ local function shift_occupant(ctx, level_id, x, y)
     return false
 end
 
+-- Consume the saved delay in AUT; final landing rechecks occupancy because
+-- the world may change while the player is inside the wall.
 function passwall.tick(ctx, player, aut)
     local state = ctx:get(player, component.PASSWALL_DELAY)
 
@@ -149,6 +155,7 @@ function passwall.prepare(ctx, player, spell, dx, dy)
     return reason
 end
 
+-- Save destination and wall count; the timed tick moves the player only after passage completes.
 function passwall.resolve(ctx, player, intent, spell)
     local path = assert(find_path(ctx, player, spell,
         intent.dx, intent.dy))

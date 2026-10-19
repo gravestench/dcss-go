@@ -20,10 +20,15 @@ local no_suffix = {
     [ids.SHOP_DISTILLERY] = true,
 }
 
+-- Keep placement counts and depths integral because later bounded RNG calls
+-- and stock indices assume positive whole numbers.
 local function positive_integer(value)
     return type(value) == "number" and value > 0 and value % 1 == 0
 end
 
+-- Example: weighted(ctx, stock_rows, "weight") draws one stock row from the shop RNG stream.
+-- Sum row weights before drawing once, then subtract each row's span; this
+-- keeps authored shop probabilities independent of Lua table iteration.
 local function weighted(ctx, rows, key)
     local total = 0
 
@@ -48,6 +53,8 @@ local function weighted(ctx, rows, key)
     error("shop selection fell outside weights")
 end
 
+-- An authored shop kind wins when supplied; otherwise select from the
+-- catalog's stable ID traversal using its generation weights.
 local function shop_kind(ctx, selected)
     if selected and selected ~= ids.SHOP_RANDOM then
         return content.get(categories.SHOPS, selected)
@@ -65,6 +72,8 @@ local function shop_kind(ctx, selected)
     return content.get(categories.SHOPS, weighted(ctx, rows, "id"))
 end
 
+-- Average repeated shop-stream draws for source-style pricing and stock
+-- counts, preserving the distribution without touching world RNG streams.
 local function average(ctx, bound, count)
     local total = 0
 
@@ -75,6 +84,8 @@ local function average(ctx, bound, count)
     return math.floor(total / count)
 end
 
+-- Antique shops use a higher greed formula because their stock is not
+-- identified up front; ordinary shops use the shallower identified formula.
 local function greed(ctx, definition, depth)
     if not definition.identifies_stock then
         return 15 + average(ctx, 19, 2) + ctx:random(streams.SHOP, depth)
@@ -84,15 +95,20 @@ local function greed(ctx, definition, depth)
         ctx:random(streams.SHOP, math.max(1, math.floor(depth / 2)))
 end
 
+-- Roll item quality from shop depth, with a larger multiplier for unknown
+-- stock, while keeping every draw on the isolated shop stream.
 local function item_depth(ctx, definition, depth)
     local multiplier = definition.identifies_stock and 2 or 3
 
     return depth + ctx:random(streams.SHOP, (depth + 1) * multiplier)
 end
 
+-- Shop generation uses its own random stream so unrelated draws do not shift stock.
 local function isolated_rng(ctx)
     local scoped = setmetatable({}, { __index = ctx })
 
+    -- Item generation asks for several named streams, but stock rolls must
+    -- all spend the shop stream so unrelated gameplay cannot shift inventory.
     function scoped:random(_, bound)
         return ctx:random(streams.SHOP, bound)
     end
@@ -100,6 +116,7 @@ local function isolated_rng(ctx)
     return scoped
 end
 
+-- Book shops reduce repeat subtypes; DES stock choices bypass the shop's default class-weight draw.
 local function candidate(ctx, definition, spec, index, stocked)
     local request = {
         depth = item_depth(ctx, definition, spec.depth),
@@ -175,6 +192,7 @@ local function candidate(ctx, definition, spec, index, stocked)
     return rolled
 end
 
+-- A failed candidate retries on the isolated shop stream, with a hard cap to expose impossible catalogs.
 local function roll_stock(ctx, definition, spec, count)
     local results = {}
     local stocked = {}
@@ -202,6 +220,8 @@ local function roll_stock(ctx, definition, spec, count)
     return results
 end
 
+-- Use explicit vault names when given; otherwise combine owner, shop kind,
+-- and a coordinate-derived suffix so naming adds no extra RNG draws.
 local function shop_name(definition, spec)
     if spec.full_name and spec.full_name ~= "" then
         return spec.full_name
@@ -219,6 +239,7 @@ local function shop_name(definition, spec)
     return owner .. type_name .. (suffix ~= "" and " " .. suffix or "")
 end
 
+-- Shop stock, greed, and name rolls are made when placing a shop on a level.
 function generation.at(ctx, level_id, x, y)
     for _, entity in ipairs(ctx:query({ component.SHOP })) do
         local shop = ctx:get(entity, component.SHOP)
@@ -231,6 +252,10 @@ function generation.at(ctx, level_id, x, y)
     return nil
 end
 
+-- Validate the floor cell before any stock draws, then create the shop and
+-- each item in one placement transaction tied to its saved entity IDs.
+-- Example: generation.place(ctx, { level_id = level, x = 4, y = 6,
+--     depth = 2, kind_id = shop_ids.SHOP_GENERAL }) returns the shop entity.
 function generation.place(ctx, spec)
     if type(spec) ~= "table" or not positive_integer(spec.level_id) or
         not positive_integer(spec.depth) or

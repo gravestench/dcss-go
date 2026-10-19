@@ -36,6 +36,9 @@ local supported_weapons = {
     SK_STAVES = true,
 }
 
+-- Gate commands on combat skills the current resolver can execute; a
+-- catalogued weapon alone is not evidence that its attack path exists.
+-- Example: equipment.weapon_supported(weapon.skill_id).
 function equipment.weapon_supported(skill_id)
     return supported_weapons[skill_id] == true
 end
@@ -49,6 +52,8 @@ local armour_slots = {
     boots = true,
 }
 
+-- Convert source size IDs to ordered ranks before comparing fit ranges;
+-- lexical string comparison would put the sizes in the wrong order.
 local function rank(id)
     local value = sizes[id]
 
@@ -59,6 +64,8 @@ local function rank(id)
     return value
 end
 
+-- Species flags are an array in content, so check membership explicitly
+-- instead of treating the array as a set keyed by flag name.
 local function has_flag(species, id)
     for _, flag in ipairs(species.flags or {}) do
         if flag == id then
@@ -69,7 +76,12 @@ local function has_flag(species, id)
     return false
 end
 
+-- Combine anatomy, mutation, and armour fit rules before starting a delayed
+-- wear action. Rejecting here prevents a queued action that can never finish.
+-- Example: equipment.can_wear(ctx, player, species, helmet_definition).
 function equipment.can_wear(ctx, actor, species, kind)
+    -- Effective level includes suppression, which matters for whether the
+    -- body part currently blocks a slot.
     local function mutation_level(id)
         return mutation_levels.effective(ctx, actor, id)
     end
@@ -136,6 +148,8 @@ function equipment.can_wear(ctx, actor, species, kind)
         rank(species.size) <= rank(kind.armour.fit_max_id)
 end
 
+-- Search equipped items carried by this actor, not all items with the slot
+-- tag. Duplicate weapons indicate broken equipment state and fail loudly.
 function equipment.in_slot(ctx, actor, slot)
     local found
 
@@ -155,6 +169,8 @@ function equipment.in_slot(ctx, actor, slot)
     return found
 end
 
+-- Compare the weapon's one-hand size threshold with the current species;
+-- Quadrumanous can free a hand for weapons within its documented limit.
 function equipment.needs_second_hand(ctx, actor, kind, species)
     local weapon = staves.weapon(kind)
 
@@ -169,6 +185,8 @@ end
 
 -- A prepared result gives the command bridge a free message or an intent and
 -- cost. Species definitions come from the committed source catalog.
+-- Example: equipment.prepare_wield(ctx, player, dagger_entity_id) returns a
+-- timed wield intent only after ownership, mutation, and shield checks.
 function equipment.prepare_wield(ctx, actor, item_id)
     local current = equipment.in_slot(ctx, actor, "weapon")
     local entity = item_id ~= 0 and ctx:entity(item_id) or nil
@@ -230,6 +248,8 @@ function equipment.prepare_wield(ctx, actor, item_id)
     return { intent = { kind = 11, item_id = entity }, cost = 5 }
 end
 
+-- Return a player-facing fit reason, including horn/antenna cases and a
+-- two-hand shield conflict, while can_wear remains a simple predicate.
 function equipment.validate_fit(ctx, actor, kind)
     local player = ctx:get(actor, "core.player")
 
@@ -275,6 +295,9 @@ function equipment.validate_fit(ctx, actor, kind)
     return nil
 end
 
+-- Prepare wear or removal as a persisted multi-turn delay. Swapping armour
+-- starts by removing the old slot occupant; nothing equips during this check.
+-- Example: equipment.prepare_armour(ctx, player, mail_id, false).
 function equipment.prepare_armour(ctx, actor, item_id, taking_off)
     local entity = item_id ~= 0 and ctx:entity(item_id) or nil
     local item = entity and ctx:get(entity, "core.item")
@@ -338,6 +361,8 @@ function equipment.prepare_armour(ctx, actor, item_id, taking_off)
     }
 end
 
+-- Name completion messages from current identification state, so a newly
+-- identified item is reported consistently with the inventory screen.
 local function finish_message(ctx, entity, format)
     local name = identification.name(ctx, ctx:player(), entity)
 
@@ -345,6 +370,8 @@ local function finish_message(ctx, entity, format)
 end
 
 -- The command bridge calls this after the initial wear or removal turn.
+-- Save the delay on the actor so leaving and restoring the game preserves the
+-- phase, then report what the player has started doing.
 function equipment.start(ctx, actor, delay)
     ctx:add(actor, "core.equipment_delay", delay)
 
@@ -367,6 +394,8 @@ function equipment.start(ctx, actor, delay)
     return "You start putting on your armour."
 end
 
+-- Remove the saved delay without changing slots. A cancelled action should
+-- never equip an item merely because the player spent its first turn.
 function equipment.cancel(ctx, actor)
     local delay = ctx:get(actor, "core.equipment_delay")
 
@@ -397,6 +426,8 @@ end
 
 -- Call after each ten-aut continuation. This mutates the persisted delay and
 -- equipment relations only when a phase reaches its final turn.
+-- Recheck ring ownership and slot availability at commit time, since a
+-- delayed item may have changed before its final turn.
 function equipment.advance(ctx, actor)
     local delay = ctx:get(actor, "core.equipment_delay")
 

@@ -4,10 +4,14 @@ local registry = require("policy.mutations.effects.registry")
 
 local unskilled = {}
 
+-- Unskilled changes aptitude and triggers a training refresh when its level changes.
+-- Example: Unskilled level one adds its aptitude penalty and sanitizes training on change.
 function unskilled.aptitude_penalty(level)
     return level
 end
 
+-- Reassess training when the mutation changes because an aptitude penalty
+-- can invalidate a previously selected skill without changing its record.
 function unskilled.on_change(ctx, owner)
     require("policy.character.skill_availability").reassess(ctx, owner)
 end

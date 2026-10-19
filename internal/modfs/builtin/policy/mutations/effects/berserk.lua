@@ -9,6 +9,8 @@ local rage = require("policy.character.rage")
 
 local berserk = {}
 
+-- Check source monster flags before rolling: harmless stationary targets
+-- should not let the player farm berserk triggers without real combat.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -19,6 +21,8 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Exclude stationary no-XP targets before mutation RNG, then try rage on a valid melee attempt.
+-- Example: a melee attempt at positive Berserk mutation level tests its mutation-stream trigger.
 function berserk.on_melee_attempt(level, ctx, player, attack)
     local actor = ctx:get(attack.target, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)

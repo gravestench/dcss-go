@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.MONSTER_LOWERED_WILL,
     version = 1,
+    -- Willpower checks read this temporary monster penalty until its timer expires.
     fields = {
         remaining_aut = {
             type = "int64",

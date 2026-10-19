@@ -4,6 +4,7 @@ local availability = require("policy.character.skill_availability")
 local component = require("constants.component")
 local distributed = require("policy.character.distributed_training")
 
+-- The starting skill baseline is reconstructed for later training checks.
 local function initial_skills(origin)
     local skills = {}
 
@@ -27,6 +28,7 @@ local function initial_skills(origin)
     return skills
 end
 
+-- Replay skill baselines and spend limits before training can resume from a save.
 local function validate(ctx)
     local actor = ctx:player()
     local player = ctx:get(actor, component.PLAYER)
@@ -59,6 +61,7 @@ local function validate(ctx)
         error("invalid experience potion ledger")
     end
 
+    -- Unspent, spent, and pending skill XP must reconcile exactly with earned XP and potion bonuses.
     if available < 0 or spent < 0 or
         available + spent + pending ~= (progress.total_xp -
             level_adjustment) * 10 + bonus then
@@ -177,6 +180,8 @@ end
 
 local module = {}
 
+-- Saved training allocations are checked against initial skills and current player state.
+-- Example: module.run(ctx) reconstructs starting skills before checking spent training points.
 function module.run(ctx)
     validate(ctx)
     return {}

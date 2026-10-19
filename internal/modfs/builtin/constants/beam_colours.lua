@@ -1,5 +1,5 @@
--- Generated from a committed DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- The colour names are source beam display values, separate from damage flavour and glyph.
+
 local ids = {
     BLACK = "BLACK",
     BLUE = "BLUE",

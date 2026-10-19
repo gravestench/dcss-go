@@ -1,3 +1,4 @@
+-- Theory of operation: Ordered player-only passes apply durations, poison, and regeneration after an action.
 -- Player status rules run once after each player action. The engine provides
 -- authoritative Akara components and named RNG; this file owns the policy.
 local player_health_policy = require("policy.combat.player_health")
@@ -8,6 +9,7 @@ local attunement = require("policy.jewellery.attunement")
 
 local system = {}
 
+-- Fail on absent core status data so a partial player cannot silently skip recovery.
 local function required(ctx, entity, name)
     local component = ctx:get(entity, name)
 
@@ -18,6 +20,7 @@ local function required(ctx, entity, name)
     return component
 end
 
+-- Use the player intent to gate status work to completed actions.
 local function player_action(ctx, entity)
     local player = ctx:player()
 
@@ -34,6 +37,7 @@ local function player_action(ctx, entity)
     return true
 end
 
+-- Crossing the low-duration warning threshold makes one speed-stream draw for extra decay.
 local function decay_haste(ctx, current, aut)
     if current == 0 or aut == 0 then
         return current, nil
@@ -57,6 +61,7 @@ local function decay_haste(ctx, current, aut)
     return math.max(1, remaining), message
 end
 
+-- Duration and regeneration passes are separate registrations so each owns its turn timing.
 function system.duration(ctx, entity, aut)
     if not player_action(ctx, entity) then
         return
@@ -98,6 +103,7 @@ register.system({
     update = system.duration,
 })
 
+-- Round fractional regeneration with the dedicated stream after integer progress is counted.
 local function regeneration_count(ctx, rate, aut)
     local numerator = rate * aut
     local count = math.floor(numerator / 10)
@@ -110,6 +116,7 @@ local function regeneration_count(ctx, rate, aut)
     return count
 end
 
+-- Accumulate aut-scaled HP and MP recovery before clamping each resource to its cap.
 function system.regeneration(ctx, entity, aut)
     if not player_action(ctx, entity) then
         return
@@ -135,6 +142,7 @@ function system.regeneration(ctx, entity, aut)
             regeneration_count(ctx, hp_rate, aut)
     end
 
+    -- Powered by Death can redirect an HP recovery point into MP before HP is increased.
     while progress.hp_progress >= 100 do
         if regeneration.hp_restores_magic(ctx, entity, magic) then
             magic.current = math.min(magic.max, magic.current + 1)
@@ -158,6 +166,7 @@ function system.regeneration(ctx, entity, aut)
     ctx:set(entity, "core.health", health)
     ctx:set(entity, "core.magic", magic)
     ctx:set(entity, "core.regeneration", progress)
+    -- Resource recovery can activate regeneration jewellery, so attunement follows saved vitals.
     attunement.refresh(ctx, entity)
 end
 
@@ -193,6 +202,7 @@ local function duration_to_aut(amount)
     return maximum_aut + (amount - maximum) / maximum_rate
 end
 
+-- Round remaining aut for a duration message without changing the stored timer.
 local function aut_to_duration(remaining)
     local denominator = 5
     local minimum_rate = 100
@@ -216,6 +226,7 @@ local function aut_to_duration(remaining)
         maximum_rate * (remaining - maximum_aut)
 end
 
+-- Choose the poison damage message after the amount is known.
 local function sickness_message(damage)
     if damage > 6 then
         return "You feel extremely sick."
@@ -228,6 +239,7 @@ local function sickness_message(damage)
     return "You feel sick."
 end
 
+-- Apply poison damage and age its timer before regeneration handles the surviving player.
 function system.poison(ctx, entity, aut)
     if not player_action(ctx, entity) then
         return
@@ -246,6 +258,7 @@ function system.poison(ctx, entity, aut)
 
     local health = required(ctx, entity, "core.health")
     local before = health.current
+    -- Convert poison to its source-equivalent time before subtracting elapsed aut.
     local remaining = duration_to_aut(poison.amount_scaled) - aut
     local remaining_duration = aut_to_duration(remaining)
 
@@ -255,6 +268,7 @@ function system.poison(ctx, entity, aut)
     end
 
     local next_amount = math.modf(remaining_duration)
+    -- Poison damage is the lost whole-HP portion of the decaying scaled amount.
     local damage = math.floor(poison.amount_scaled / 1000) -
         math.modf(next_amount / 1000)
 

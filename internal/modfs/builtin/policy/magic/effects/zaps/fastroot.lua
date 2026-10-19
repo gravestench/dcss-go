@@ -17,6 +17,7 @@ local unsafe_floor = {
     [terrain.DNGN_LAVA] = true,
 }
 
+-- Absent monster flags grant no insubstantial immunity to roots.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -27,6 +28,7 @@ local function has(values, wanted)
     return false
 end
 
+-- Round grip and duration fractions on spell RNG so small power still has unbiased odds.
 local function random_round(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
 
@@ -37,6 +39,7 @@ local function random_round(ctx, numerator, denominator)
     return quotient
 end
 
+-- Roots cannot grip insubstantial or already constrained monsters, or those standing in unsafe terrain.
 local function eligible(ctx, target, definition)
     local position = ctx:get(target, component.POSITION)
     local feature = ctx:cell(position.level_id, position.x, position.y)
@@ -48,6 +51,7 @@ local function eligible(ctx, target, definition)
         not ctx:has(target, component.GRASPING_ROOTS)
 end
 
+-- Reject self and unseen out-of-range aims before committing spell resources.
 function fastroot.prepare(ctx, player, spell, dx, dy)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -63,6 +67,7 @@ function fastroot.prepare(ctx, player, spell, dx, dy)
     end
 end
 
+-- Center the radius-one roots on the first ray contact or endpoint, then hold only eligible enemies.
 function fastroot.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.to_target(ctx, origin.level_id,
@@ -104,12 +109,15 @@ function fastroot.resolve(ctx, player, intent, spell, power)
     end
 end
 
+-- The monster remains held only while its saved root timer is positive.
 function fastroot.restrained(ctx, monster)
     local state = ctx:get(monster, component.GRASPING_ROOTS)
 
     return state ~= nil and state.remaining_aut > 0
 end
 
+-- Example: A rooted monster rolls melee escape against its saved grip before movement.
+-- Escape contests the stored grip using the melee RNG stream.
 function fastroot.escape(ctx, monster)
     local state = ctx:get(monster, component.GRASPING_ROOTS)
 
@@ -131,6 +139,7 @@ function fastroot.escape(ctx, monster)
     return false
 end
 
+-- Release a root at zero before the monster's next decision.
 function fastroot.tick_monster(ctx, monster)
     local state = ctx:get(monster, component.GRASPING_ROOTS)
 
@@ -148,6 +157,7 @@ function fastroot.tick_monster(ctx, monster)
     end
 end
 
+-- Each player action damages held monsters; held time ramps the roll before their armour applies.
 function fastroot.damage_player_action(ctx, player, aut)
     local damage = require("policy.magic.damage")
     local defense = require("policy.combat.monster_defense")
@@ -187,6 +197,7 @@ function fastroot.damage_player_action(ctx, player, aut)
     end
 end
 
+-- Only player action time drives held-root damage, preserving the spell's timing.
 function fastroot.update_player(ctx, actor, aut)
     if actor == ctx:player() then
         fastroot.damage_player_action(ctx, actor, aut)
@@ -198,6 +209,7 @@ registry.add(spells.SPELL_FASTROOT, {
     resolve = fastroot.resolve,
 })
 
+-- Theory of operation: Monster root timers expire before decision so a released actor may act that turn.
 register.system({
     id = "zap.grasping_roots.decay",
     scope = "active",
@@ -206,6 +218,7 @@ register.system({
     update = fastroot.tick_monster,
 })
 
+-- Theory of operation: Player-action root damage runs after spell attacks and before movement, using the elapsed aut.
 register.system({
     id = "zap.grasping_roots.damage",
     scope = "active",

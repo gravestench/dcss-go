@@ -1,3 +1,4 @@
+-- Example: Two stair coordinates enter the flood-visit set before corridor connection.
 local grid = require("policy.generation.grid")
 local trail = require("policy.generation.trail")
 local corridors = require("policy.generation.corridors")
@@ -11,10 +12,12 @@ local starts = {
     { x = 50, width = 20, y = 10, height = 15 },
 }
 
+-- Encode stair coordinates for overlap and flood-visit sets.
 local function key(point)
     return point.x .. ":" .. point.y
 end
 
+-- Flood from the first down stair to reject layouts with any unreachable up or down stair.
 local function connected(builder, stairs)
     local start = stairs[1].down
     local visited = {
@@ -51,7 +54,9 @@ local function connected(builder, stairs)
     return true
 end
 
+-- Draw three stair trails first, then connect their down stairs and add rooms around that backbone.
 local function build(builder, depth)
+    -- Corridor length is drawn before count and intersection behavior for this layout attempt.
     builder.corr_length = 2 + builder:roll(14)
 
     if builder:one_in(100) then
@@ -79,6 +84,7 @@ local function build(builder, depth)
         local down_key = key(pair.down)
         local up_key = key(pair.up)
 
+        -- Reject overlapping stair trails before corridors can make the overlap appear connected.
         if occupied[down_key] or occupied[up_key] or down_key == up_key then
             return nil, string.format("Dungeon:%d trail %d overlaps another stair", depth, index)
         end
@@ -99,6 +105,7 @@ local function build(builder, depth)
     rooms.make(builder)
     builder:one_in(5 + depth - 1)
 
+    -- Connectivity is checked after rooms and corridors have changed the final grid.
     if not connected(builder, stairs) then
         return nil, string.format("Dungeon:%d basic layout has disconnected stairs", depth)
     end
@@ -106,6 +113,7 @@ local function build(builder, depth)
     return stairs, nil
 end
 
+-- Retry rejected layouts with the same builder stream until a connected D:1 or D:2 floor is found.
 function basic.generate(ctx, depth)
     if depth < 1 or depth > 2 then
         error("basic Dungeon layout needs depth 1 or 2 and a random source")

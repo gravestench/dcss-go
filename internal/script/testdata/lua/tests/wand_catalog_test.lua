@@ -1,3 +1,6 @@
+-- Every source wand resolves to a registered spell effect, while MP Wands and
+-- HP Casting change power and resource cost through the shared wand policy.
+
 local harness = require("tests.harness")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
@@ -11,6 +14,8 @@ local wands = require("policy.inventory.wands")
 
 local test = {}
 
+-- Require each active wand to map to a supported zap rule, so adding item
+-- content cannot create a usable-looking wand with no effect handler.
 function test.run(ctx)
     local count = 0
 

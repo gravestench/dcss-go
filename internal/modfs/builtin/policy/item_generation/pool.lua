@@ -3,6 +3,8 @@ local catalog = require("policy.catalog")
 
 local pool = {}
 
+-- Example: pool.select(ctx, classes.OBJ_ARMOUR, request, armour_policy) weights eligible armour kinds.
+-- Weighted selection consumes one generation draw across the eligible entries.
 function pool.select(ctx, class_id, request, policy)
     local rows = {}
     local total = 0

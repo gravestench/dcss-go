@@ -14,10 +14,14 @@ local directions = {
     { -1, 1 },  { 0, 1 },  { 1, 1 },
 }
 
+-- Key cells by coordinates so the cloud spread visits each map square once.
 local function key(x, y)
     return x .. ":" .. y
 end
 
+-- Example: prepare(ctx, player, spell, 3, 0) rejects a blocked target cell
+-- before a cast can place any clouds.
+-- Check reach, walkability, projectile path, and existing cloud before any cloud placement.
 function freezing_cloud.prepare(ctx, player, spell, dx, dy)
     local origin = ctx:get(player, component.POSITION)
     local x = origin.x + dx
@@ -33,6 +37,7 @@ function freezing_cloud.prepare(ctx, player, spell, dx, dy)
     end
 end
 
+-- Cloud lifetime is rolled on the spell stream for each selected cell.
 local function duration(ctx, power)
     local spread = math.floor(power / 4)
     local amount = 3
@@ -46,6 +51,8 @@ local function duration(ctx, power)
     return amount * 10
 end
 
+-- Shuffle candidate cells before placement so a capped cloud count does not
+-- favor one geometric direction around the aimed cell.
 function freezing_cloud.resolve(ctx, player, intent, _, power)
     local origin = ctx:get(player, component.POSITION)
     local level = origin.level_id

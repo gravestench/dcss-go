@@ -1,8 +1,9 @@
+-- Example: The little box delegates its shop-or-temple choice to the shared setup with this map's glyphs.
 local setup = require("policy.generation.vaults.shop.kennysheep_setup")
 
 local handler = {}
 
--- Port of builder/shops.des:283-284.
+-- The little box delegates its shop-or-temple choice to the shared setup with this map's glyphs.
 local function configure_shop_or_temple(api)
     setup.random_room(api)
     setup.shop_or_temple(api, "{}C....")

@@ -11,6 +11,9 @@ local target = require("policy.combat.monster_spell_target")
 local slug_dart = {}
 slug_dart.reflectable = true
 
+-- Slug Dart needs a clear projectile path before it can store an entity target.
+-- Example: slug_dart.plan(ctx, caster, foe) with blocked path -> nil plan
+-- Requires clear projectile travel to an entity.
 function slug_dart.plan(ctx, caster, foe)
     local caster_pos = ctx:get(caster, component.POSITION)
     local player_pos = ctx:get(foe, component.POSITION)
@@ -33,6 +36,7 @@ function slug_dart.plan(ctx, caster, foe)
     }
 end
 
+-- Resolve the saved entity and shield-block count before applying HP loss.
 function slug_dart.resolve(ctx, caster, foe, _, plan)
     local player = target.require_entity(plan, foe)
     local actor = ctx:get(caster, component.ACTOR)
@@ -46,6 +50,7 @@ function slug_dart.resolve(ctx, caster, foe, _, plan)
         error("player has no combat state")
     end
 
+    -- Persist the shield-block count before applying HP loss; later attacks use this combat state.
     combat.shield_blocks = outcome.shield_blocks
     ctx:set(player, "core.combat", combat)
     player_health_policy.damage(ctx, player, outcome.damage, false, caster)
@@ -60,6 +65,7 @@ function slug_dart.resolve(ctx, caster, foe, _, plan)
 
     ctx:emit("combat", message)
 
+    -- Only a blocked dart can rebound from an active reflection effect.
     if outcome.kind == "block" and slug_dart.reflectable and
         reflection.active(ctx, player) then
         local returned = reflection.return_defense(ctx, caster,

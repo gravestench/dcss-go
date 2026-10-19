@@ -1,4 +1,4 @@
--- Source: traps.cc:652-697. Permanent webs remain after a victim escapes.
+-- Source: traps.cc. Permanent webs remain after a victim escapes.
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local flight = require("policy.combat.flight")
@@ -7,6 +7,7 @@ local streams = require("constants.rng_streams")
 
 local effect = {}
 
+-- Species and status immunity is checked before a web writes held state.
 local function immune(ctx, actor)
     if flight.active(ctx, actor) then
         return true
@@ -28,6 +29,8 @@ local function immune(ctx, actor)
     return false
 end
 
+-- Check immunity and a pass-through roll before attaching the shared web restraint.
+-- Example: effect.trigger(ctx, nil, player) may hold a non-immune actor in the web.
 function effect.trigger(ctx, _, actor)
     if immune(ctx, actor) then
         return

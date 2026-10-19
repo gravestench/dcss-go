@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.monster_drained",
     version = 1,
+    -- Drain degree changes effective hit dice while duration controls when the monster recovers.
     fields = {
         degree = {
             type = "int64",

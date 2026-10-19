@@ -15,6 +15,8 @@ local fillings = {
     moon,
 }
 
+-- Example: pies.choose(ctx, target) with monster target -> weighted eligible filling module
+-- Choose only fillings valid for this defender, then use their weights on the monster-spell RNG stream.
 function pies.choose(ctx, target)
     local eligible = {}
     local total = 0
@@ -43,6 +45,7 @@ function pies.choose(ctx, target)
     error("Throw Pie selected outside its weighted fillings")
 end
 
+-- A pie effect is applied after contact, leaving misses and blocks without filling effects.
 function pies.apply(ctx, caster, defender, outcome)
     if outcome.damage <= 0 then
         return

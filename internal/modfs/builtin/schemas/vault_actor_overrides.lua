@@ -3,6 +3,7 @@ local component = require("constants.component")
 local schema = {
     id = component.VAULT_ACTOR_OVERRIDES,
     version = 1,
+    -- Authored variant, colour, attitude, and spell overrides travel with the spawned vault actor.
     fields = {
         base_id = {
             type = "string",

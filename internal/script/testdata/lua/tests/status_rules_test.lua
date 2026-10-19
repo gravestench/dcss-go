@@ -1,3 +1,5 @@
+-- Miasma slow should end with its saved duration.
+
 local component = require("constants.component")
 local mass = require("policy.magic.effects.statuses.mass_enchantment")
 local statuses = require("policy.magic.effects.statuses.player")
@@ -5,6 +7,8 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Advance saved monster statuses and compare their durations, so turn
+-- systems cannot silently leave expired effects active.
 function test.run(ctx)
     local monster = harness.actor_with(ctx, component.MONSTER_MASS_ENCHANT, {
         fear_aut = 20,

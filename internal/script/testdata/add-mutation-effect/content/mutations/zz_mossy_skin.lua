@@ -1,3 +1,5 @@
+-- An active Mossy Skin mutation requires a matching effect module for coverage.
+
 local categories = require("constants.catalog")
 
 local definition = {

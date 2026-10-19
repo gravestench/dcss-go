@@ -1,3 +1,5 @@
+-- Shop IDs choose authored shop type and stock behavior.
+
 -- Source: crawl-ref/source/shop-type.h (active and removed IDs).
 local shops = {
     SHOP_WEAPON = "SHOP_WEAPON",

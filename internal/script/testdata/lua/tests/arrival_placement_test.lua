@@ -1,3 +1,5 @@
+-- Source arrival placement composes helpers while preserving authored exits and keyed map overrides.
+
 local catalog = require("policy.generation.vaults.catalog")
 local grid = require("policy.generation.grid")
 local placement = require("policy.generation.vaults.placement")
@@ -11,10 +13,12 @@ local terrain_features = require("content.terrain_features")
 
 local test = {}
 
+-- Give every arrival attempt the same deterministic RNG stream for repeatability checks.
 local function seeded_context()
     local context = {}
     local next_value = 1
 
+    -- Advance a fixed 32-bit sequence so each source arrival sees reproducible draws.
     function context:random_u64()
         next_value = (next_value * 1664525 + 1013904223) % 4294967296
 
@@ -24,19 +28,23 @@ local function seeded_context()
     return context
 end
 
+-- Ignore untagged helpers even when their weight dwarfs eligible arrivals.
 local function assert_weighted_selection()
     local definitions = {
         { id = "first", tags = { arrival = true }, weight = 1 },
         { id = "helper", tags = {}, weight = 1000 },
         { id = "last", tags = { arrival = true }, weight = 3 },
     }
+    -- Select the first eligible weight bucket without drawing from the oversized helper.
     local low = { roll = function() return 0 end }
+    -- Select the last eligible bucket to prove the helper contributes no weight.
     local high = { roll = function() return 3 end }
 
     assert(selection.choose(low, definitions).id == "first")
     assert(selection.choose(high, definitions).id == "last")
 end
 
+-- Place every eligible authored arrival twice to catch nondeterministic transforms.
 local function assert_all_source_arrivals_place()
     local ids = require("ids.vaults")
     local tested = 0
@@ -62,6 +70,8 @@ local function assert_all_source_arrivals_place()
     assert(tested == 337)
 end
 
+-- Every selected arrival must leave a traversable connection to the rest of
+-- the floor after its authored transforms are applied.
 local function assert_source_exits_connect()
     local ids = selection.eligible_ids()
 
@@ -118,11 +128,13 @@ local function assert_source_exits_connect()
     end
 end
 
+-- Apply substitutions in authored order so later directives see earlier glyph changes.
 local function assert_transforms_follow_des_order()
     local cells = {
         { "?", "A", "A" },
     }
     local random = {
+        -- Choose the first substitution so authored operation order controls the output.
         roll = function() return 0 end,
     }
 
@@ -147,6 +159,7 @@ local function assert_transforms_follow_des_order()
     local grouped = { { "A", "B" } }
     local draws = 0
     local alternating = {
+        -- Alternate draws to reveal whether grouped glyphs incorrectly reroll per cell.
         roll = function(_, bound)
             draws = draws + 1
 
@@ -171,6 +184,7 @@ local function assert_transforms_follow_des_order()
     assert(table.concat(rotated[2]) == "fdb")
 end
 
+-- Repeated MONS and ITEM directives must append rather than overwrite prior choices.
 local function assert_array_directives_append_slots()
     local vault = {
         id = "array_fixture",
@@ -183,6 +197,7 @@ local function assert_array_directives_append_slots()
             { kind = directives.COLOUR, argument = "AB = green, CD = white", line = 5 },
         },
     }
+    -- Keep directive slot selection fixed while testing append order.
     local random = { roll = function() return 0 end }
     local records = operations.apply(vault, {}, random)
 
@@ -194,6 +209,7 @@ local function assert_array_directives_append_slots()
     assert(records[6].targets == "CD" and records[6].identity == "white")
 end
 
+-- Pass species and name into source hooks before resolving their emitted operations.
 local function assert_player_identity_reaches_source_hooks()
     local context = seeded_context()
     local player = {
@@ -218,13 +234,17 @@ local function assert_player_identity_reaches_source_hooks()
     assert(named > 0)
 end
 
+-- Repeated monster glyphs draw independently for each cell rather than
+-- sharing one choice for the whole vault.
 local function assert_weighted_monster_choice_is_per_cell()
+    -- Feed two controlled draws to isolate weighted monster choice per cell.
     local function choice_context()
         local context = {
             draws = { 60, 59 },
             index = 0,
         }
 
+        -- Consume exactly the two queued values to test independent monster choices.
         function context:random_u64()
             self.index = self.index + 1
 
@@ -286,6 +306,7 @@ local function assert_weighted_monster_choice_is_per_cell()
     assert(chosen[1] == "rat" and chosen[2] == "rat")
 end
 
+-- Spawn masks must follow actual occupied glyphs, not just rectangular bounds.
 local function assert_spawn_mask_respects_vault_shape()
     local generated = require("policy.generation.generated")
     local placed = {
@@ -304,6 +325,7 @@ local function assert_spawn_mask_respects_vault_shape()
     assert(excluded[1].x == 10 and excluded[2].x == 12)
 end
 
+-- A keyed directive without its glyph cannot create an out-of-map feature.
 local function assert_absent_keyed_glyph_places_nothing()
     local context = seeded_context()
     local vault = {
@@ -326,6 +348,7 @@ local function assert_absent_keyed_glyph_places_nothing()
     end
 end
 
+-- Run both helper transforms on one authored cave so neither erases the other's bounds.
 local function assert_both_helpers_compose()
     local vault = catalog.get("erik_arrival_cave_to_civilisation")
     local seen = {}
@@ -344,6 +367,7 @@ local function assert_both_helpers_compose()
 
     for _, helper_draw in ipairs({ 0, 14 }) do
         local random = {
+            -- Probe both ends of the helper's 15-way choice without changing other draws.
             roll = function(_, bound)
                 if bound == 15 then
                     return helper_draw
@@ -351,6 +375,7 @@ local function assert_both_helpers_compose()
 
                 return 0
             end,
+            -- Force optional helper branches so their combined geometry is visible.
             one_in = function() return true end,
         }
         local cells = {}
@@ -392,6 +417,7 @@ local function assert_both_helpers_compose()
     assert(seen.erik_arrival_cave_to_temple)
 end
 
+-- Retain path and line on typed intents for diagnostics after placement.
 local function assert_keyed_intent_has_source_location()
     local context = seeded_context()
     local builder = grid.new(context)
@@ -436,6 +462,7 @@ local function assert_keyed_intent_has_source_location()
     assert(found[effects.MARKER].vault_id == vault.id)
 end
 
+-- Source script transforms must preserve the expected octagon geometry.
 local function assert_source_script_shapes_map()
     local vault = catalog.get("enne_arrival_octagon_isle")
     local cells = {}
@@ -456,7 +483,9 @@ local function assert_source_script_shapes_map()
 
     local before = table.concat(original)
     local random = {
+        -- Fix script transform draws to make the source map comparison reproducible.
         roll = function() return 0 end,
+        -- Enable optional shape operations to verify they preserve octagon bounds.
         one_in = function() return true end,
     }
 
@@ -471,6 +500,7 @@ local function assert_source_script_shapes_map()
     assert(table.concat(changed) ~= before)
 end
 
+-- A placement whose hook removes the exit must be rejected before committing the map.
 local function assert_source_veto_rejects_missing_exit()
     local context = seeded_context()
     local builder = grid.new(context)
@@ -501,6 +531,7 @@ local function assert_source_veto_rejects_missing_exit()
     assert(err:find("check_exit_marker", 1, true))
 end
 
+-- Explicit keyed feature wins over the glyph's implicit terrain.
 local function assert_keyed_feature_overrides_source_glyph()
     local cells = { { "DNGN_FLOOR" } }
     local records = {
@@ -525,6 +556,7 @@ local function assert_keyed_feature_overrides_source_glyph()
     assert(#retained == 0)
 end
 
+-- Unkeyed source glyphs still produce typed item and monster records.
 local function assert_implicit_items_and_monsters_are_retained()
     local context = seeded_context()
     local placed = placement.place(context, grid.new(context), {
@@ -545,6 +577,7 @@ local function assert_implicit_items_and_monsters_are_retained()
     assert(found.monster_array_1 and found.monster_array_1.pending)
 end
 
+-- Combine helper, transform, and all-source placement cases under one deterministic test.
 function test.run()
     assert_weighted_selection()
     assert_transforms_follow_des_order()

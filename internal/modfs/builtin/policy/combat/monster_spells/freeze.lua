@@ -10,6 +10,9 @@ local target = require("policy.combat.monster_spell_target")
 
 local freeze = {}
 
+-- Freeze is adjacent-only and cannot target the caster's own cell.
+-- Example: freeze.plan(ctx, caster, foe) with nonadjacent foe -> nil plan
+-- Rejects targets outside adjacent range.
 function freeze.plan(ctx, caster, foe)
     local caster_pos = ctx:get(caster, component.POSITION)
     local player_pos = ctx:get(foe, component.POSITION)
@@ -33,6 +36,7 @@ function freeze.plan(ctx, caster, foe)
     }
 end
 
+-- Caster hit dice feed the cold roll before player cold resistance and HP damage.
 function freeze.resolve(ctx, caster, foe, _, plan)
     local player = target.require_entity(plan, foe)
     local actor = ctx:get(caster, component.ACTOR)

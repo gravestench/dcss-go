@@ -1,3 +1,4 @@
+
 local harness = require("tests.harness")
 local prospect = require("policy.ai.spell_prospect")
 local spells = require("ids.spells")
@@ -6,6 +7,7 @@ local catalog = require("policy.catalog")
 
 local test = {}
 
+-- Construct a source slot with explicit frequency and flags for weighted prospect checks.
 local function slot(spell_id, frequency, flags)
     return {
         spell_id = spell_id,
@@ -14,7 +16,9 @@ local function slot(spell_id, frequency, flags)
     }
 end
 
+-- Reject a changed frequency total even if the selected slot stays the same.
 local function roll(value, expected_bound)
+    -- Return a fixed source roll only after checking the frequency bound.
     return function(bound)
         harness.equal(bound, expected_bound, "source roll bound")
 
@@ -22,6 +26,7 @@ local function roll(value, expected_bound)
     end
 end
 
+-- Hold HP and distance fixed so source condition flags can be compared.
 local function condition(hp, max_hp, distance)
     return {
         hp = hp,
@@ -31,6 +36,8 @@ local function condition(hp, max_hp, distance)
     }
 end
 
+-- Frequency boundaries are inclusive for the first slot and ordered as
+-- authored within the spellbook, not by spell ID.
 local function source_order_and_inclusive_boundary()
     local book = {
         slots = {
@@ -59,6 +66,7 @@ local function source_order_and_inclusive_boundary()
     harness.falsy(selected, "a roll past the book's weight does not cast")
 end
 
+-- Emergency and range filtering happen before the weighted selection draw.
 local function condition_flags_do_not_consume_weight()
     local flags = require("constants.monster_spell_flags")
     local book = {
@@ -89,6 +97,7 @@ local function condition_flags_do_not_consume_weight()
         "distance four admits only the long-range slot")
 end
 
+-- Silence removes spoken spells but leaves natural attacks in the pool.
 local function silence_filters_only_source_speech_categories()
     local flags = require("constants.monster_spell_flags")
     local book = {
@@ -110,6 +119,7 @@ local function silence_filters_only_source_speech_categories()
         "silence leaves natural spells available")
     harness.equal(index, 4, "silenced speech slots consumed no weight")
 
+    -- Fail if silenced escape slots consume a preference draw they cannot use.
     selected = prospect.choose(book, silenced, function()
         error("silenced escape slots must not draw a preference roll")
     end, spell_flags.ESCAPE)
@@ -117,6 +127,7 @@ local function silence_filters_only_source_speech_categories()
     harness.falsy(selected, "silence also filters preferred spell choice")
 end
 
+-- Exercise emergency and escape preferences without changing slot frequencies.
 local function preferred_spell_flags()
     local book = {
         slots = {
@@ -139,6 +150,7 @@ local function preferred_spell_flags()
         "escape preference uses spell definition flags")
 end
 
+-- Validate every committed book shape so new catalog rows cannot bypass prospect rules.
 local function every_committed_book_has_a_valid_prospect_shape()
     local books = catalog.all("monster_spellbooks")
 
@@ -155,6 +167,7 @@ local function every_committed_book_has_a_valid_prospect_shape()
     end
 end
 
+-- Silenced escape slots must not draw a preference roll.
 function test.run()
     source_order_and_inclusive_boundary()
     condition_flags_do_not_consume_weight()

@@ -7,10 +7,13 @@ local blueberry = {
     weight = 10,
 }
 
+-- Example: blueberry.valid() with any pie target -> true eligibility
+-- Blueberry filling has no target restriction, so it remains in every pie selection pool.
 function blueberry.valid()
     return true
 end
 
+-- Blueberry silences players but stores a monster mute duration for non-player targets.
 function blueberry.apply(ctx, _, target)
     if ctx:has(target, component.PLAYER) then
         statuses.add_silence(ctx, target,

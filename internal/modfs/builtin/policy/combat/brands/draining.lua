@@ -5,6 +5,8 @@ local player_drain = require("policy.combat.player_drain")
 
 local draining = {}
 
+-- Earned XP pays down temporary drain using the pre-training skill cost so
+-- kill order cannot change the amount recovered.
 local function recover(ctx, actor, xp)
     local state = ctx:get(actor, "status.drain")
 
@@ -19,7 +21,7 @@ local function recover(ctx, actor, xp)
         error("drained player lacks training or health")
     end
 
-    -- player.cc:2404-2428: XP removes temporary HP drain using the
+    -- player.cc: XP removes temporary HP drain using the
     -- skill cost level before this kill's training step.
     local cost = formulas.skill_point_cost(training.cost_level)
     local amount = roll.random_divide(ctx, xp, 4 * cost)
@@ -44,12 +46,14 @@ end
 
 draining.recover = recover
 
+-- Example: draining.apply(ctx, hit) deals a bonus hit and lowers temporary
+-- maximum HP while preserving at least one real player HP.
 function draining.apply(ctx, hit)
     local extra = math.floor((1 + roll.melee(ctx, hit.damage_done)) / 2)
     hit.health = player_health.damage(ctx, hit.defender, extra,
         false, hit.attacker)
 
-    -- ouch.cc:378-413: drain_player(1 + damage_done) lowers temporary
+    -- ouch.cc: drain_player(1 + damage_done) lowers temporary
     -- max HP by at least one, capped so the real player retains one HP.
     hit.health = player_drain.apply(ctx, hit.defender,
         1 + hit.damage_done)

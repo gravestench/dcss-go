@@ -5,6 +5,7 @@ local component = require("constants.component")
 local schema = {
     id = component.WATER_HOLD,
     version = 1,
+    -- The engulfed actor stores its holder and accrued hold time for damage and escape checks.
     fields = {
         by = {
             type = "entity",

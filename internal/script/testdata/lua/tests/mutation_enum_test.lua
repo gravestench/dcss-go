@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local enum = require("data.mutation_enum")
@@ -6,6 +7,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Committed mutation definition appears in the source enum.
 function test.run()
     harness.equal(#enum, 196, "pinned tag-34 mutation enum size")
     harness.equal(enum[1], mutations.MUT_ANTENNAE,

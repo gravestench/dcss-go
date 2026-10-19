@@ -4,6 +4,9 @@ local guardian = require("policy.mutations.effects.damage.demonic_guardian")
 
 local cooldowns = {}
 
+-- Example: cooldowns.tick(ctx, player, 10) reduces Hop's remaining cooldown by ten aut.
+-- Advance every saved ability timer by the same elapsed aut, clamping at zero
+-- so long turns cannot leave a negative cooldown or desynchronize abilities.
 function cooldowns.tick(ctx, player, aut)
     if aut <= 0 then
         return

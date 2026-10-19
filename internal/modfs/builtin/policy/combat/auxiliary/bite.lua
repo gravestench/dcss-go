@@ -1,3 +1,6 @@
+-- The auxiliary attack registry selects Bite by mutation and order; on_hit
+-- resolves the antimagic and acidic variants after ordinary bite damage.
+
 local auxiliary = require("policy.combat.auxiliary")
 local attacks = require("constants.auxiliary_attacks")
 local component = require("constants.component")
@@ -20,16 +23,20 @@ local bite = {
     },
 }
 
+-- Auxiliary mutations use effective, form-adjusted levels instead of raw acquired rank.
 local function level(ctx, id)
     return levels.effective(ctx, ctx:player(), id)
 end
 
+-- Any of fangs, acidic bite, or antimagic bite unlocks the same auxiliary slot.
 function bite.available(ctx)
     return level(ctx, mutations.MUT_FANGS) > 0 or
         level(ctx, mutations.MUT_ACIDIC_BITE) > 0 or
         level(ctx, mutations.MUT_ANTIMAGIC_BITE) > 0
 end
 
+-- Example: bite.chance(ctx) with Antimagic Bite active -> 100 percent attempt chance
+-- Antimagic Bite always attempts contact; ordinary fangs and acid bites attempt it 40 percent of the time.
 function bite.chance(ctx)
     return level(ctx, mutations.MUT_ANTIMAGIC_BITE) > 0 and 100 or 40
 end
@@ -50,6 +57,7 @@ function bite.describe(ctx, input)
     }
 end
 
+-- Acidic bite adds resisted elemental damage only after the bite lands.
 local function acid_splash(ctx, target, definition)
     local raw = 2 + roll.melee(ctx, 4) + roll.melee(ctx, 4)
     local extra = damage.monster_elemental(ctx, target, raw,
@@ -65,7 +73,10 @@ local function acid_splash(ctx, target, definition)
     return extra
 end
 
+-- Damage and monster HD determine antimagic duration for spellcasting targets.
 local function drain_magic(ctx, target, definition, dealt)
+    -- Only spellcasting monsters receive the antimagic duration. Its roll
+    -- scales with damage and is damped by the victim's hit dice.
     if definition.spellbook_id ~= books.MST_NO_SPELLS then
         local status = ctx:get(target, component.MONSTER_ENFEEBLE)
         local next_status = status or {
@@ -88,6 +99,7 @@ local function drain_magic(ctx, target, definition, dealt)
         end
     end
 
+    -- Summons cannot refill the player's MP, even if the bite dealt damage.
     local magic = ctx:get(ctx:player(), component.MAGIC)
 
     if not magic or magic.max <= 0 or magic.current >= magic.max or
@@ -105,6 +117,7 @@ local function drain_magic(ctx, target, definition, dealt)
     end
 end
 
+-- Antimagic takes precedence over acidic splash when both bite mutations are present.
 function bite.on_hit(ctx, target, definition, result)
     if result.damage <= 0 then
         return 0

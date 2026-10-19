@@ -7,6 +7,7 @@ local messages = require("policy.mutations.messages")
 
 local conflicts = {}
 
+-- Match either side of an ordered conflict row without assuming the new mutation is first.
 local function other_id(row, mutation_id)
     if row.first == mutation_id then
         return row.second
@@ -19,6 +20,7 @@ local function other_id(row, mutation_id)
     return nil
 end
 
+-- Spend temporary rank before acquired rank and notify effects after the record changes.
 local function remove_one(ctx, owner, mutation_id)
     local entry = records.find(ctx, owner, mutation_id)
     local state = entry.state
@@ -34,6 +36,7 @@ local function remove_one(ctx, owner, mutation_id)
     messages.lost(ctx, mutation_id, previous - 1)
 end
 
+-- A forced conflict clears only removable ranks; innate levels remain as a hard boundary.
 local function remove_noninnate(ctx, owner, mutation_id)
     local entry = records.find(ctx, owner, mutation_id)
 
@@ -43,6 +46,7 @@ local function remove_noninnate(ctx, owner, mutation_id)
     end
 end
 
+-- Example: opposing mutations may trade an acquired level before a new level is granted.
 -- The source table is deliberately ordered. An ignore row can be followed
 -- by a trade row for the same pair.
 function conflicts.resolve(ctx, owner, mutation_id, class, forced)

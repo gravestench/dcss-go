@@ -1,5 +1,7 @@
--- Stable ECS component IDs shared across game policies.
+-- These are the persisted ECS component keys shared by schemas, policies, and systems.
+
 local component = {
+    -- Core identity and location are shared by movement, combat, and saves.
     CORPSE = "core.corpse",
     ACTOR = "core.actor",
     VAULT_ORIGIN = "vault.origin",
@@ -17,6 +19,8 @@ local component = {
     FOLLOWER = "core.follower",
     INTENT = "core.intent",
     ITEM = "core.item",
+    -- Inventory and shop components distinguish a catalog kind from the
+    -- particular stack, owner, stock offer, or identification state.
     WALLET = "character.wallet",
     SHOP = "world.shop",
     SHOP_STOCK = "shop.stock",
@@ -34,6 +38,8 @@ local component = {
     HELD = "projectile.held",
     CARRIED_BY = "core.carried_by",
     RESERVED_BY = "core.reserved_by",
+    -- Progression and action energy change over turns; definitions never own
+    -- these values because each actor can diverge from its starting profile.
     MAGIC = "core.magic",
     ATTRIBUTES = "core.attributes",
     SKILLS = "core.skills",
@@ -41,6 +47,8 @@ local component = {
     PROGRESSION = "core.progression",
     REGENERATION = "core.regeneration",
     MONSTER_ENERGY = "core.monster_energy",
+    -- Combat and equipment records survive across scheduler phases so later
+    -- systems can resolve deaths, lingering grips, and delayed actions.
     SPECTRAL_WEAPON = "combat.spectral_weapon",
     MONSTER_CHAOS = "combat.monster_chaos",
     CHAOS_CLONE = "combat.chaos_clone",
@@ -55,6 +63,8 @@ local component = {
     POISON = "core.poison",
     PROJECTILE_SLOW = "projectile.slow",
     PROJECTILE_POISON = "projectile.poison",
+    -- Spell status is persisted on affected entities; the Lua effect and tick
+    -- systems interpret timers rather than storing hidden globals.
     PLAYER_STATUS = "magic.player_status",
     HEX_STATUS = "magic.hex_status",
     PLAYER_FORM = "magic.player_form",
@@ -75,6 +85,8 @@ local component = {
     MONSTER_POLYMORPH = "magic.monster_polymorph",
     MONSTER_ENCHANT = "magic.monster_enchant",
     MONSTER_MASS_ENCHANT = "magic.monster_mass_enchant",
+    -- The base SUMMON record identifies ownership; specialized records hold
+    -- only the extra state required by a particular summon behavior.
     SUMMON = "magic.summon",
     TEMPORARY_TERRAIN = "world.temporary_terrain",
     SUMMON_CONSTRUCT = "magic.summon_construct",
@@ -93,6 +105,8 @@ local component = {
     GOLUBRIA_PASSAGE = "magic.golubria_passage",
     FROZEN_WALL = "magic.frozen_wall",
     FROZEN_RAMPARTS = "magic.frozen_ramparts",
+    -- Character state includes mutation levels, temporary defenses, potion
+    -- effects, and cooldowns that must continue correctly after a save.
     STAT_LOSS = "character.stat_loss",
     CORROSION = "character.corrosion",
     MUTATION = "character.mutation",
@@ -117,6 +131,7 @@ local component = {
     POTION_EXPERIENCE = "character.potion_experience",
     POWERED_BY_DEATH = "character.powered_by_death",
     EXTRA_LIVES = "character.extra_lives",
+    -- Zap components describe consequences left on targets after a beam hit.
     GRASPING_ROOTS = "zap.grasping_roots",
     STICKY_FLAME = "zap.sticky_flame",
     INNER_FLAME = "zap.inner_flame",
@@ -128,6 +143,8 @@ local component = {
     MONSTER_MUTE = "zap.monster_mute",
     ZAP_FLIGHT = "zap.flight",
     WRETCHED = "zap.wretched",
+    -- World cloud and Zot clock state belong to the level or branch, while
+    -- CHANNEL is a lasting player magic effect.
     WORLD_CLOUD = "world.cloud",
     CHANNEL = "magic.channel",
     ZOT_CLOCK = "world.zot_clock",

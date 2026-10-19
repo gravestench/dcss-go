@@ -6,6 +6,7 @@ local translocation = require("policy.scrolls.translocation")
 
 local effect = {}
 
+-- A known translocation block rejects the action early; an unknown scroll still reveals itself.
 function effect.prepare(ctx, player, request)
     local reason = translocation.restriction(ctx, player)
 
@@ -18,6 +19,8 @@ function effect.prepare(ctx, player, request)
     return nil
 end
 
+-- Example: Teleportation writes a pending travel status rather than moving the player immediately.
+-- Recheck anchoring or stasis, then schedule teleport status rather than moving immediately.
 function effect.apply(ctx, player)
     local reason = translocation.restriction(ctx, player)
 

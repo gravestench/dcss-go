@@ -5,6 +5,8 @@ local registry = require("policy.mutations.effects.registry")
 
 local experience = {}
 
+-- Expose the acquired rank as a level-cap penalty instead of rewriting progression here.
+-- Example: Inexperienced level two contributes two to the experience adjustment capability.
 function experience.inexperienced(level)
     return level
 end

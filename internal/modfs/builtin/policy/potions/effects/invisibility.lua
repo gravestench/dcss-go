@@ -5,6 +5,7 @@ local invisibility = require("policy.potions.invisibility")
 
 local effect = {}
 
+-- Backlighting prevents invisibility even if the potion could extend a timer.
 function effect.can_quaff(ctx, player)
     if invisibility.backlit(ctx, player) then
         return "Your glow prevents you from becoming invisible."
@@ -13,6 +14,7 @@ end
 
 -- Source: potion.cc:PotionInvisibility::effect. Repeated drinks add a
 -- separate zero-to-39-turn roll and total duration is capped at 100 turns.
+-- Example: a second Invisibility potion extends its saved duration rather than adding another status.
 function effect.apply(ctx, player)
     local state = ctx:get(player, component.POTION_INVISIBILITY)
     local roll = ctx:random("potion", 40) * 10

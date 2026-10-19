@@ -1,3 +1,4 @@
+-- Example: A zero-duration torment restriction allows the next torment attempt.
 local component = require("constants.component")
 local restrictions = require("constants.safety_restrictions")
 
@@ -9,16 +10,19 @@ local recovery_messages = {
     [restrictions.SCROLLS] = "You can read scrolls again.",
 }
 
+-- Look up one restriction timer; an absent component means the restriction is inactive.
 function safety.remaining(ctx, player, restriction)
     local state = ctx:get(player, component.DAMAGE_SAFETY)
 
     return state and state[restriction] or 0
 end
 
+-- Base item-use legality on the current timer rather than the original damage event.
 function safety.active(ctx, player, restriction)
     return safety.remaining(ctx, player, restriction) > 0
 end
 
+-- Add scripted restriction time without emitting the first-hit damage warning.
 function safety.add_duration(ctx, player, restriction, turns,
     maximum_turns)
     local state = ctx:get(player, component.DAMAGE_SAFETY)
@@ -43,6 +47,7 @@ end
 
 -- Source: ouch.cc:ouch increases the status by 1+random2(damage) turns,
 -- capped at 30 turns, and warns only on its first activation.
+-- Damage rolls a new restriction duration; only creation of a status emits its warning.
 function safety.apply(ctx, player, restriction, damage, warning)
     local state = ctx:get(player, component.DAMAGE_SAFETY)
     local created = not state
@@ -69,6 +74,7 @@ function safety.apply(ctx, player, restriction, damage, warning)
     end
 end
 
+-- Track each safety restriction independently so one warning can expire while another remains.
 function safety.tick(ctx, player, aut)
     if aut <= 0 then
         return

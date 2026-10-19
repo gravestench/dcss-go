@@ -1,3 +1,5 @@
+-- A custom category definition tests non-core catalog registration.
+
 local definition = {
     id = "MY_MOD_CUSTOM",
     label = "custom catalog value",

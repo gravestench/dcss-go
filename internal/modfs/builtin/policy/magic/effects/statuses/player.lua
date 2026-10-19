@@ -13,6 +13,7 @@ local player_slow = require("policy.character.slow")
 local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
 
+-- A zero bound consumes no spell RNG, preserving deterministic streams for powerless casts.
 local function roll(ctx, bound)
     if bound <= 0 then
         return 0
@@ -21,6 +22,7 @@ local function roll(ctx, bound)
     return ctx:random("spell", bound)
 end
 
+-- The first draw uses bound while later draws use bound + 1, matching source integer averaging.
 local function average(ctx, bound, count)
     if bound <= 0 then
         return 0
@@ -35,10 +37,12 @@ local function average(ctx, bound, count)
     return math.floor(total / count)
 end
 
+-- All player self-enchantments share one saved component so ticks and combat hooks see the same timers.
 local function state(ctx, player)
     return ctx:get(player, component.PLAYER_STATUS)
 end
 
+-- Construct complete zeroed state before first cast so unrelated timers survive later updates.
 local function ensure(ctx, player)
     return state(ctx, player) or {
         swift_aut = 0,
@@ -146,6 +150,7 @@ function statuses.cast(ctx, player, spell_id, power, liquid_name)
     end
 end
 
+-- Warn exactly when crossing the threshold and apply source's extra time loss once.
 local function decay(ctx, value, field, aut, warning, threshold, loss)
     local before = value[field]
 
@@ -266,6 +271,7 @@ function statuses.tick(ctx, player, aut)
     ctx:set(player, component.PLAYER_STATUS, value)
 end
 
+-- Stochastic rounding avoids bias when movement delay scales fractional aut.
 local function random_round(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -312,6 +318,7 @@ function statuses.ice_armour_bonus_x100(ctx, player, body_penalty)
     return math.max(0, 500 + value.ice_armour_power * 8 - body_penalty * 50)
 end
 
+-- Death's Door protection is keyed to remaining aut, not the saved HP floor alone.
 function statuses.death_door_active(ctx, player)
     local value = state(ctx, player)
 
@@ -334,6 +341,7 @@ function statuses.clear_death_door(ctx, player)
     return true
 end
 
+-- Regeneration is suspended while Death's Door prevents ordinary fatal damage.
 function statuses.hp_regen_allowed(ctx, player)
     return not statuses.death_door_active(ctx, player)
 end
@@ -358,12 +366,14 @@ function statuses.rejection(ctx, player, spell_id)
     return nil
 end
 
+-- Absent status means Blink is ready, so callers receive zero.
 function statuses.blink_cooldown(ctx, player)
     local value = state(ctx, player)
 
     return value and value.blink_cooldown_aut or 0
 end
 
+-- Melee hooks require an active timer before replacing their normal damage.
 function statuses.confusing_touch_active(ctx, player)
     local value = state(ctx, player)
 
@@ -390,6 +400,7 @@ function statuses.confusing_touch_damage(ctx, player, damage)
     return damage
 end
 
+-- Consume the touch on success; total immunity instead leaves only one aut and emits feedback.
 function statuses.confusing_touch_contact(ctx, player, target, definition)
     local value = state(ctx, player)
 
@@ -423,6 +434,7 @@ function statuses.portal_projectile_active(ctx, player)
         resources.cannot_pay(ctx, player, 1) == nil
 end
 
+-- Return zero after expiry so projectile hooks cannot reuse stale cast power.
 function statuses.portal_projectile_power(ctx, player)
     local value = state(ctx, player)
 
@@ -441,6 +453,7 @@ function statuses.portal_projectile_hit_bonus(ctx, player)
     return math.floor(ctx:random("melee", power + 8) / 8)
 end
 
+-- Spend one MP only when the active portal can actually redirect this shot.
 function statuses.portal_projectile_pay(ctx, player)
     if not statuses.portal_projectile_active(ctx, player) then
         return false
@@ -451,66 +464,83 @@ function statuses.portal_projectile_pay(ctx, player)
     return true
 end
 
+-- Expose the mass-enchantment fear state through the common monster status API.
 function statuses.fear_active(ctx, monster)
     return mass.fear_active(ctx, monster)
 end
 
+-- Route Anguish retaliation through the mass-enchantment rule for its source damage calculation.
 function statuses.anguish_reflect(ctx, monster, damage_dealt)
     return mass.anguish_reflect(ctx, monster, damage_dealt)
 end
 
+-- Combat asks one status facade whether Enfeeble currently suppresses sight.
 function statuses.enfeeble_blinded(ctx, monster)
     return enfeeble.blinded(ctx, monster)
 end
 
+-- Combat asks the Enfeeble rule for daze instead of interpreting saved fields.
 function statuses.enfeeble_dazed(ctx, monster)
     return enfeeble.dazed(ctx, monster)
 end
 
+-- Use Enfeeble's multiplier so melee damage changes with its active state.
 function statuses.enfeeble_melee_damage(ctx, monster, damage)
     return enfeeble.melee_damage(ctx, monster, damage)
 end
 
+-- Spell-slot logic delegates anti-magic flags to the Enfeeble rule.
 function statuses.enfeeble_antimagic(ctx, monster, slot_flags)
     return enfeeble.antimagic(ctx, monster, slot_flags)
 end
 
+-- Action scheduling reads the stasis rule's hibernation state through this facade.
 function statuses.hibernating(ctx, monster)
     return stasis.hibernating(ctx, monster)
 end
 
+-- Partial petrification is distinct from complete stasis for combat timing.
 function statuses.petrifying(ctx, monster)
     return stasis.petrifying(ctx, monster)
 end
 
+-- Complete petrification blocks actions and changes damage handling.
 function statuses.petrified(ctx, monster)
     return stasis.petrified(ctx, monster)
 end
 
+-- Waking a hit sleeper must use stasis's own state transition.
 function statuses.wake_hibernating(ctx, monster)
     return stasis.wake_hibernating(ctx, monster)
 end
 
+-- Damage against stone form uses stasis's reduction rule.
 function statuses.petrified_damage(ctx, monster, amount)
     return stasis.petrified_damage(ctx, monster, amount)
 end
 
+-- Example: A charmed monster reports allegiance through the shared status facade.
+-- Route charm checks through allegiance's timer rule so AI and combat agree on expiry.
 function statuses.charmed(ctx, monster)
     return allegiance.charmed(ctx, monster)
 end
 
+-- Allegiance owns frenzy duration and eligibility, including charm interactions.
 function statuses.frenzied(ctx, monster)
     return allegiance.frenzied(ctx, monster)
 end
 
+-- Melee asks allegiance for the frenzy damage change before applying HP loss.
 function statuses.frenzy_melee_damage(ctx, monster, damage)
     return allegiance.frenzy_melee_damage(ctx, monster, damage)
 end
 
+-- Turn scheduling uses allegiance's frenzy speed rather than a second local formula.
 function statuses.frenzy_speed(ctx, monster, base_speed)
     return allegiance.frenzy_speed(ctx, monster, base_speed)
 end
 
+-- The saved timer gates movement penalties after Intoxication.
 function statuses.vertigo_active(ctx, player)
     local value = state(ctx, player)
 
@@ -539,6 +569,7 @@ function statuses.add_vertigo(ctx, player, turns, maximum_turns)
     end
 end
 
+-- Extend Silence in aut and clamp to the caller's duration cap.
 function statuses.add_silence(ctx, player, turns, maximum_turns)
     local current = state(ctx, player)
     local value = current or ensure(ctx, player)
@@ -583,6 +614,7 @@ function statuses.death_door_damage(ctx, player, damage, fatal_exception)
     return 0
 end
 
+-- Only active Wereblood contributes the accumulated slaying bonus.
 function statuses.wereblood_slay(ctx, player)
     local value = state(ctx, player)
 
@@ -617,6 +649,7 @@ function statuses.wereblood_kill(ctx, player, gives_xp, adjacent, object_monster
     end
 end
 
+-- Combine mutation aura with the shrinking spell field using the larger radius.
 function statuses.silence_radius(ctx, player)
     local value = state(ctx, player)
     local aura = mutation_effects.sum(ctx, player,
@@ -632,6 +665,7 @@ function statuses.silence_radius(ctx, player)
     return math.max(aura, math.floor(math.sqrt(squared)))
 end
 
+-- Repeated will reduction extends to the longer duration and preserves other status fields.
 function statuses.lower_will(ctx, player, duration_aut)
     local value = ensure(ctx, player)
     value.lowered_will_aut = math.max(value.lowered_will_aut,

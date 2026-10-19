@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.area_status",
     version = 1,
+    -- Area spells keep both duration and cast power so later pulses use the original cast strength.
     fields = {
         corpse_rot_aut = {
             type = "int64",

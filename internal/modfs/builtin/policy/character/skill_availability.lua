@@ -1,3 +1,4 @@
+-- Example: A sacrificed skill is removed from training before XP is apportioned.
 local capabilities = require("constants.mutation_capabilities")
 local component = require("constants.component")
 local effects = require("policy.mutations.effects.registry")
@@ -10,11 +11,13 @@ local mutations = require("ids.mutations")
 
 local availability = {}
 
+-- Query mutation restrictions by skill ID before spending or preserving points.
 function availability.forbidden_skill(ctx, player, skill_id)
     return effects.sum(ctx, player,
         capabilities.SKILL_FORBIDDEN, skill_id) > 0
 end
 
+-- Species and mutation restrictions also apply before a learned spell can be cast.
 function availability.forbidden_spell(ctx, player, spell)
     if effects.sum(ctx, player,
         capabilities.SPELL_ID_FORBIDDEN, spell.id) > 0 then
@@ -33,6 +36,7 @@ end
 
 -- Source: skills.cc:fixup_skills discards points in a newly useless skill
 -- and disables its training. A later mutation loss does not restore them.
+-- Drop now-invalid points and training settings when a skill becomes permanently unusable.
 function availability.sanitize(ctx, player)
     local skills = ctx:get(player, component.SKILLS)
     local training = ctx:get(player, component.SKILL_TRAINING)
@@ -78,6 +82,7 @@ end
 
 -- Source: Ru's Sacrifice Skill rechecks every skill against the new
 -- aptitude, then recalculates derived HP and MP from those skill levels.
+-- After species or mutation changes, disable newly forbidden training and clear stale skill points.
 function availability.reassess(ctx, player)
     local identity = ctx:get(player, component.PLAYER)
     local skills = ctx:get(player, component.SKILLS)

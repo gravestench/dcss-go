@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local drain = require("policy.combat.monster_hexes.drain_magic")
@@ -7,6 +8,7 @@ local spells = require("ids.spells")
 
 local test = {}
 
+-- Drain Magic removes the source averaged enchantment amount.
 function test.run()
     local caster = 101
     local player = 202
@@ -28,22 +30,27 @@ function test.run()
         },
     }
 
+    -- Read caster and defender records from one store for the MP-drain calculation.
     function ctx:get(entity, id)
         return self.values[entity] and self.values[entity][id]
     end
 
+    -- Detect only stored magic components when applying Drain Magic.
     function ctx:has(entity, id)
         return self:get(entity, id) ~= nil
     end
 
+    -- Persist the reduced MP so the averaged drain can be asserted.
     function ctx:set(entity, id, value)
         self.values[entity][id] = value
     end
 
+    -- Use maximum bounded rolls for the source averaged enchantment amount.
     function ctx:random(_, bound)
         return bound - 1
     end
 
+    -- Ignore combat prose while testing the numeric MP result.
     function ctx:emit()
     end
 

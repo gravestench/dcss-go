@@ -3,6 +3,8 @@ local rage = require("policy.character.rage")
 
 local system = {}
 
+-- Theory of operation: The player guard prevents a monster action from aging the player rage timer.
+-- Rage duration changes after combat, preserving its effect through the completed attack.
 function system.update(ctx, entity, aut)
     if entity == ctx:player() then
         rage.tick(ctx, entity, aut)

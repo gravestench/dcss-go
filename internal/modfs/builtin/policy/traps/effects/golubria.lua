@@ -7,6 +7,7 @@ local streams = require("constants.rng_streams")
 
 local effect = {}
 
+-- A paired passage is usable only when its exit remains open.
 local function destination(ctx, trap, site)
     local open = {}
     local blocked = false
@@ -31,6 +32,8 @@ local function destination(ctx, trap, site)
     return open[ctx:random(streams.TRAPS, #open) + 1], false
 end
 
+-- Resolve the paired passage before movement; a blocked exit leaves the traveler at the entrance.
+-- Example: effect.trigger(ctx, passage, player, site) chooses an open paired passage destination.
 function effect.trigger(ctx, trap, actor, site)
     local to, blocked = destination(ctx, trap, site)
 

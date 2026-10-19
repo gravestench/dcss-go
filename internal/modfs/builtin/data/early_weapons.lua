@@ -1,3 +1,5 @@
+-- The early gear picker draws only from these ordinary weapon IDs.
+
 -- Weapon kinds selected by the ordinary early monster gear policy.
 local items = require("ids.items")
 

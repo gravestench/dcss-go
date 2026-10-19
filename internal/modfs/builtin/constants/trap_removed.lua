@@ -1,3 +1,5 @@
+-- Removed trap IDs are recognized as legacy source values but never spawn live traps.
+
 -- Source: traps.cc:is_removed_trap. Version-34 save IDs are not live traps.
 return {
     TRAP_DART = true,

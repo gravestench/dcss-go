@@ -10,18 +10,21 @@ local petrification = require("policy.combat.player_petrification")
 
 local chaos = {}
 
+-- Cap the player haste timer rather than stacking a second duration.
 local function haste(ctx, player)
     local state = ctx:get(player, component.DURATIONS)
     state.haste_aut = math.min(400, state.haste_aut + 100)
     ctx:set(player, component.DURATIONS, state)
 end
 
+-- Add a bounded Might duration on the existing player state.
 local function might(ctx, player)
     local state = ctx:get(player, component.DURATIONS)
     state.might_aut = math.min(800, state.might_aut + 100)
     ctx:set(player, component.DURATIONS, state)
 end
 
+-- Refresh Agility to at least ten turns without shortening a longer effect.
 local function agility(ctx, player)
     local state = ctx:get(player, component.AGILITY)
 
@@ -35,6 +38,7 @@ local function agility(ctx, player)
     end
 end
 
+-- Refresh potion invisibility to at least ten turns on chaos exposure.
 local function invisible(ctx, player)
     local state = ctx:get(player, component.POTION_INVISIBILITY)
 
@@ -48,6 +52,7 @@ local function invisible(ctx, player)
     end
 end
 
+-- Chaos paralysis extends an existing status only when its timer is shorter.
 local function paralyze(ctx, player)
     local state = ctx:get(player, component.PLAYER_PARALYSIS)
 
@@ -61,14 +66,17 @@ local function paralyze(ctx, player)
     end
 end
 
+-- Delegate slowing so resistance and duration rules stay shared.
 local function slow_player(ctx, player)
     slow.apply(ctx, player, 10)
 end
 
+-- Use the clouds stream when chaos starts berserk rage.
 local function rage_player(ctx, player)
     rage.begin(ctx, player, streams.CLOUDS)
 end
 
+-- Exclude berserk from the draw when current state forbids it.
 local function can_rage(ctx, player)
     return ctx:get(player, component.PLAYER) and
         rage.can_begin(ctx, player)
@@ -110,6 +118,7 @@ local player_effects = {
     },
 }
 
+-- Ineligible berserk is removed from the weighted table rather than consuming a result that does nothing.
 local function apply_player(ctx, actor)
     local total = 0
 
@@ -133,6 +142,7 @@ local function apply_player(ctx, actor)
     end
 end
 
+-- Monster chaos routes through the shared chaos-brand effect on a live target.
 local function apply_monster(ctx, actor)
     local state = ctx:get(actor, component.ACTOR)
     local health = ctx:get(actor, component.HEALTH)
@@ -151,6 +161,8 @@ local function apply_monster(ctx, actor)
     effects.apply(ctx, hit, streams.CLOUDS)
 end
 
+-- Spend a clouds-stream draw before selecting player or monster chaos effects, preserving exposure odds.
+-- Example: half of cloud exposures produce no enchantment; the other half uses the clouds RNG stream.
 function chaos.apply(ctx, actor)
     if ctx:random(streams.CLOUDS, 2) ~= 0 then
         return 0

@@ -6,8 +6,10 @@ local staves = require("policy.inventory.staves")
 
 local enhancement = {}
 
+-- Example: one enhancer level raises 100 centis of base spell power to 150.
 -- Source: spl-cast.cc:_apply_enhancement. School enhancers apply one at a
 -- time with integer truncation; all sources together cap at three levels.
+-- Stack matching school enhancers before power stepdown, using the same centiscale as cast power.
 function enhancement.apply(ctx, player, spell, centis)
     local levels = effects.sum(ctx, player,
         capabilities.SPELL_ENHANCER, spell)

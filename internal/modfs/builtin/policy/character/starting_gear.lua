@@ -1,3 +1,4 @@
+-- Example: Registering the same job twice fails before either loadout order can change.
 local catalog = require("policy.catalog")
 local items = require("policy.inventory.items")
 local identification = require("policy.items.identification")
@@ -15,6 +16,7 @@ local weapon_choices = require("constants.weapon_choices")
 local gear = {}
 local job_rules = {}
 
+-- Reject a second job rule at registration so loadout order is stable.
 function gear.register(job_id, rule)
     catalog.get("jobs", job_id)
 
@@ -38,6 +40,7 @@ function gear.register(job_id, rule)
     job_rules[job_id] = rule
 end
 
+-- Mutation and body restrictions are checked before a starting item can occupy equipment.
 local function can_use(ctx, player, species, kind)
     if kind.class == classes.OBJ_WEAPONS then
         return mutation_levels.effective(ctx, player,
@@ -53,6 +56,7 @@ local function can_use(ctx, player, species, kind)
     return equipment.can_wear(ctx, player, species, kind)
 end
 
+-- Replace unusable starting gifts before equipment is assigned; species restrictions apply at creation.
 local function useful_kind(ctx, player, species, kind)
     if kind.class == classes.OBJ_POTIONS and
         not potion_rules.can_drink(ctx, player) then
@@ -98,6 +102,7 @@ local function useful_kind(ctx, player, species, kind)
     return kind
 end
 
+-- Only the first legal grant for an equipment slot equips automatically.
 local function add_grant(ctx, player, species, grant, occupied)
     local kind = useful_kind(ctx, player, species,
         catalog.get("items", grant.kind_id))
@@ -143,6 +148,7 @@ local function add_grant(ctx, player, species, grant, occupied)
     end
 end
 
+-- Job grants run before the optional weapon and extra grants so occupied slots determine later fallbacks.
 function gear.give(ctx, player, species, job, weapon_id, generated)
     local grants = generated and generated.equipment or job.starting_grants
     local rule = job_rules[job.id]

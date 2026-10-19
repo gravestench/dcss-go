@@ -12,19 +12,23 @@ local offsets = {
     { -1, 1 }, { 0, 1 }, { 1, 1 },
 }
 
+-- Coordinate keys let the connector search reuse or retire existing segment cells.
 local function key(x, y)
     return x .. ":" .. y
 end
 
+-- The tentacle uses Chebyshev reach for its five-cell tether and target approach.
 local function distance(left, right)
     return math.max(math.abs(left.x - right.x),
         math.abs(left.y - right.y))
 end
 
+-- Sorting candidate steps by remaining target distance makes movement deterministic.
 local function closer_target(left, right)
     return left.distance < right.distance
 end
 
+-- Only an active gateway whose saved tentacle ID matches can anchor this head.
 local function gateway(ctx, head)
     for _, marker in ipairs(ctx:query({ component.SUMMON_GATEWAY })) do
         local state = ctx:get(marker, component.SUMMON_GATEWAY)
@@ -90,6 +94,7 @@ local function path(ctx, head, base, goal)
     return nil
 end
 
+-- Choose melee at range one; otherwise move closer only along a legal connected chain.
 function tentacle.act(ctx, head, position)
     local marker, base = gateway(ctx, head)
 
@@ -145,6 +150,7 @@ function tentacle.act(ctx, head, position)
     return { kind = intent_ids.MONSTER_WAIT }
 end
 
+-- Rebuild intermediate segments along the current path, retaining matching entities when possible.
 function tentacle.refresh(ctx, head)
     local marker, base = gateway(ctx, head)
     local position = ctx:get(head, component.POSITION)
@@ -221,6 +227,7 @@ function tentacle.refresh(ctx, head)
     end
 end
 
+-- A killed segment kills its head so a severed chain cannot keep acting.
 function tentacle.segment_death(ctx, actor)
     local segment = ctx:get(actor, component.SUMMON_SEGMENT)
     local health = ctx:get(actor, component.HEALTH)
@@ -235,6 +242,8 @@ function tentacle.segment_death(ctx, actor)
     end
 end
 
+-- Example: A tentacle segment whose head died expires during orphan cleanup.
+-- Expire segments when the head or gateway vanishes after a prior lifecycle event.
 function tentacle.clean_orphans(ctx)
     for _, actor in ipairs(ctx:query({ component.SUMMON_SEGMENT })) do
         local segment = ctx:get(actor, component.SUMMON_SEGMENT)

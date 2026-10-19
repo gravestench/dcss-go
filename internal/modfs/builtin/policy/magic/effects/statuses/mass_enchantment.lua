@@ -8,6 +8,7 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local mass = {}
 
+-- Catalog flags and holiness may be absent, which grants no matching enchantment trait.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -18,10 +19,12 @@ local function has(values, wanted)
     return false
 end
 
+-- Convert source turn durations to the monster's current action speed.
 local function scaled_speed(value, speed)
     return math.max(1, math.floor(value * 10 / speed))
 end
 
+-- Fear scales with HD while Anguish uses fixed base; both receive speed fuzz.
 local function duration(ctx, monster, definition, kind)
     local actor = ctx:get(monster, component.ACTOR)
     local speed = math.max(1, actor.speed)
@@ -45,6 +48,7 @@ local function duration(ctx, monster, definition, kind)
     return math.max(15, raw + fuzz - low)
 end
 
+-- Immobile no-threat objects and nonliving holiness cannot be frightened.
 local function can_fear(definition)
     if has(definition.flags, "M_STATIONARY") and
         has(definition.flags, "M_NO_THREAT") then
@@ -56,6 +60,7 @@ local function can_fear(definition)
         has(definition.holiness, "MH_HOLY")
 end
 
+-- Anguish needs a mind; Fear further requires a creature capable of fleeing.
 local function susceptible(definition, kind)
     if has(definition.flags, "M_STATIONARY") and
         has(definition.flags, "M_NO_THREAT") then
@@ -69,6 +74,7 @@ local function susceptible(definition, kind)
     return definition.intelligence_id ~= "I_BRAINLESS"
 end
 
+-- Skip an already active effect before the will roll, then save only a successful new timer.
 local function apply(ctx, target, definition, kind, power)
     if not susceptible(definition, kind) then
         return false
@@ -101,6 +107,7 @@ local function apply(ctx, target, definition, kind, power)
     return true
 end
 
+-- Innate fear bypasses spell willpower but uses the same saved fear duration.
 function mass.apply_innate_fear(ctx, target, definition)
     if not can_fear(definition) then
         return false
@@ -124,6 +131,7 @@ function mass.apply_innate_fear(ctx, target, definition)
     return true
 end
 
+-- Apply capped enchantment power to each living visible actor in the radius.
 function mass.cast(ctx, player, spell_id, power)
     local kind = spell_id == spells.SPELL_CAUSE_FEAR and "fear_aut" or
         spell_id == spells.SPELL_ANGUISH and "anguish_aut" or nil
@@ -161,6 +169,7 @@ function mass.cast(ctx, player, spell_id, power)
     end
 end
 
+-- AI flee decisions depend on a positive timer, not component presence alone.
 function mass.fear_active(ctx, monster)
     local current = ctx:get(monster, component.MONSTER_MASS_ENCHANT)
 
@@ -193,6 +202,8 @@ function mass.anguish_reflect(ctx, monster, damage_dealt)
     return true
 end
 
+-- Example: A monster keeps its mass-enchantment record while either fear or anguish time remains.
+-- Expire fear and anguish independently, removing the record only when both reach zero.
 function mass.tick(ctx, monster)
     local current = ctx:get(monster, component.MONSTER_MASS_ENCHANT)
 

@@ -1,0 +1,18 @@
+-- {{.Name}} owns mutable state that survives turns and saves.
+-- Systems and policies import this schema's ID instead of redeclaring fields.
+-- Change the version only with a deliberate save compatibility decision.
+
+local schema = {
+    id = "{{.ID}}",
+    version = 1,
+    fields = {
+        value = {
+            type = "int64",
+            default = 0,
+        },
+    },
+}
+
+register.component(schema)
+
+return schema

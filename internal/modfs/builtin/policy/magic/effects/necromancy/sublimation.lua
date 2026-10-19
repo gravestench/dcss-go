@@ -6,6 +6,7 @@ local vampire = require("policy.character.vampire")
 
 local sublimation = {}
 
+-- Species and transformed bodies without usable blood cannot trade HP for MP.
 local function can_bleed(ctx, player)
     local origin = ctx:get(player, "core.player")
     local species = catalog.get("species", origin.species_id)
@@ -20,11 +21,13 @@ local function can_bleed(ctx, player)
         active_form ~= "storm" and forms.can_bleed(ctx, player)
 end
 
+-- Avoid a zero-bound RNG call when the chance is certain at low spell power.
 local function chance(ctx, numerator, denominator)
     return denominator <= numerator or
         ctx:random("spell", denominator) < numerator
 end
 
+-- Stochastically round the HP floor so each cast keeps the intended average safety margin.
 local function random_divide(ctx, numerator, denominator)
     local whole = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -38,6 +41,8 @@ end
 
 -- Source: spl-util.cc:casting_uselessness_reason and spl-other.cc:
 -- cast_sublimation_of_blood. Abort conditions are checked before spending MP.
+-- Example: A player at full MP cannot sublime blood into more MP.
+-- Reject full MP, bloodless bodies, Death's Door, and critical HP before paying spell cost.
 function sublimation.prepare(ctx, player)
     local magic = ctx:get(player, "core.magic")
     local health = ctx:get(player, "core.health")
@@ -61,6 +66,7 @@ function sublimation.prepare(ctx, player)
     return nil
 end
 
+-- Convert HP to MP one point at a time, with power limiting both extra HP loss and early stopping.
 function sublimation.resolve(ctx, player, _, _, power)
     local health = ctx:get(player, "core.health")
     local magic = ctx:get(player, "core.magic")

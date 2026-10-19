@@ -4,11 +4,13 @@ local brilliance = require("policy.potions.brilliance")
 
 local effect = {}
 
+-- Brilliance can refresh its timer even if already active.
 function effect.can_quaff()
     return nil
 end
 
 -- Source: potion.cc:PotionBrilliance::effect.
+-- Example: a Brilliance potion adds a potion-stream duration to an existing Brilliance status.
 function effect.apply(ctx, player)
     local active = brilliance.active(ctx, player)
 

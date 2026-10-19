@@ -1,3 +1,5 @@
+-- A mod-added staff without rules is rejected at catalog validation.
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local harness = require("tests.harness")
@@ -70,9 +72,13 @@ local expected = {
     },
 }
 
+-- Drive the activation roll low and later damage rolls high, making staff
+-- probability and damage assertions repeatable without a seeded world.
 local function deterministic_random()
     local draws = 0
 
+    -- Use a different edge after the first draw to distinguish activation
+    -- from subsequent damage scaling in the staff rule.
     return function(_, _, bound)
         draws = draws + 1
 
@@ -84,9 +90,13 @@ local function deterministic_random()
     end
 end
 
+-- Overlay just the player lookup on a real ECS context so combat consumers
+-- use the fixture actor without copying the host API.
 local function player_context(ctx, player)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Return the created actor even when the underlying context has a
+    -- different current player for another test.
     function proxy.player()
         return player
     end
@@ -94,6 +104,8 @@ local function player_context(ctx, player)
     return proxy
 end
 
+-- Create a real carried staff entity; later tests attach EQUIPPED only when
+-- they need wielded bonuses to apply.
 local function equip(ctx, player, id)
     local entity = ctx:create()
 
@@ -111,6 +123,8 @@ local function equip(ctx, player, id)
     return entity
 end
 
+-- Maximize Evocations and each relevant school to make staff procs observable
+-- while leaving their base weapon-skill path separate.
 local function trained_skills()
     local entries = {
         {
@@ -131,6 +145,8 @@ local function trained_skills()
     return entries
 end
 
+-- Give the rat enough HP to survive every proc so damage amounts can be
+-- compared across staff types on the same defender profile.
 local function target(ctx)
     local entity = ctx:create()
     local rat = catalog.get(categories.MONSTERS, monsters.MONS_RAT)
@@ -147,9 +163,13 @@ local function target(ctx)
     return entity, rat
 end
 
+-- Recreate the deterministic activation/damage draw sequence for each staff
+-- so earlier staff tests cannot shift later outcomes.
 local function staff_random()
     local draws = 0
 
+    -- Force activation on the first call, then maximum legal later rolls to
+    -- expose each staff's damage and resistance formula.
     return function(_, _, bound)
         draws = draws + 1
 
@@ -161,6 +181,8 @@ local function staff_random()
     end
 end
 
+-- Search rendered modal rows by visible text rather than internal row IDs,
+-- proving the player can actually find staves in the terminal menu.
 local function contains_text(rows, wanted)
     for _, row in ipairs(rows.writes) do
         if row.text and row.text:find(wanted, 1, true) then
@@ -171,6 +193,8 @@ local function contains_text(rows, wanted)
     return false
 end
 
+-- Exercise input and presentation with one staff candidate, verifying the
+-- existing wield command and inventory group display include this class.
 local function check_terminal()
     local candidate = {
         id = 7,
@@ -204,6 +228,8 @@ local function check_terminal()
     }), "Magical Staves"), "inventory groups magical staves")
 end
 
+-- The catalog probe rejects a staff with no effect rule before combat can
+-- dispatch it as an ordinary weapon.
 local function check_catalog()
     for _, entry in ipairs(expected) do
         local definition = catalog.get(categories.ITEMS, entry.id)
@@ -251,6 +277,8 @@ local function check_catalog()
         "source activation and damage rolls use magic and Evocations")
 end
 
+-- Install only the character components staff rules need, so missing state
+-- dependencies become visible in this focused fixture.
 local function create_player(ctx)
     local player = ctx:create()
     local battle = player_context(ctx, player)
@@ -276,6 +304,8 @@ local function create_player(ctx)
     return battle, player
 end
 
+-- Wield every committed staff and compare melee profile, spell enhancement,
+-- resistance, meld suppression, and save validity through shared consumers.
 local function check_wielding(ctx, battle, player)
     for _, entry in ipairs(expected) do
         local entity = equip(ctx, player, entry.id)
@@ -327,6 +357,8 @@ local function check_wielding(ctx, battle, player)
     end
 end
 
+-- Staff activation rolls use Magic and Evocations after the physical melee
+-- contact, so both damage paths are asserted separately.
 local function check_melee(ctx, battle, player)
     ctx:set(player, "core.skills", {
         entries = trained_skills(),
@@ -388,6 +420,8 @@ local function check_melee(ctx, battle, player)
         "No Artifice prevents only the staff's magical damage")
 end
 
+-- Cover terminal selection, catalog rules, wielding, and magical melee procs
+-- together because a usable staff needs all four paths to agree.
 function test.run(ctx)
     check_terminal()
     check_catalog()

@@ -1,8 +1,9 @@
+-- Example: The church H cell decays into either a human or elf skeleton after the vault is built.
 local effects = require("constants.vault_effects")
 
 local handler = {}
 
--- Port of arrival/large.des:1129.
+-- The church H cell decays into either a human or elf skeleton after the vault is built.
 local function schedule_skeleton_decay(api)
     api:record(effects.DELAYED_DECAY, {
         glyph = "H",

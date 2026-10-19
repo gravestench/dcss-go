@@ -1,3 +1,4 @@
+-- Example: A mutation that raises maximum MP triggers refresh_mp to update current capacity.
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
 local component = require("constants.component")
@@ -6,6 +7,7 @@ local resources = {}
 
 -- Derived maximum MP is shared by level gains, mutation changes, and
 -- equipment changes. Current MP stays put unless the new cap is lower.
+-- Recalculate the MP ceiling after skills or mutations change, preserving current MP unless above the new cap.
 function resources.refresh_mp(ctx, player)
     local identity = ctx:get(player, component.PLAYER)
     local progress = ctx:get(player, component.PROGRESSION)

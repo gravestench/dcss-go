@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local mutations = require("ids.mutations")
@@ -8,6 +9,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Repeat one difficulty value across the nine map cells to isolate passive mapping.
 local function input(difficulty)
     local values = {}
 
@@ -25,10 +27,12 @@ local function input(difficulty)
     }
 end
 
+-- Ordinary sight does not magic-map terrain.
 function test.run(ctx)
     local player = ctx:create()
     local world = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to passive mapping fixture actor so player-only branches execute on that entity.
     function world.player()
         return player
     end

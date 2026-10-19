@@ -4,6 +4,7 @@ local component = require("constants.component")
 register.component({
     id = component.WORLD_CLOUD,
     version = 1,
+    -- Cloud coordinates, decay, spread, source, and opacity survive independently of the terrain grid.
     fields = {
         kind_id = {
             type = "string",

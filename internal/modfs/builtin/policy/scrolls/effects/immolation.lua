@@ -9,10 +9,13 @@ local will = require("policy.magic.effects.zaps.will")
 local effect = {}
 local SIGHT_RADIUS = 7
 
+-- Immolation chooses visible monsters during execution, so preparation needs no menu.
 function effect.prepare()
     return nil
 end
 
+-- Example: Immolation marks a living visible rat but skips an invulnerable monster.
+-- Mark only living, visible, finite-will monsters; report whether any mark took hold.
 function effect.apply(ctx, player)
     local origin = ctx:get(player, component.POSITION)
     local marked = false

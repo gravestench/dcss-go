@@ -3,6 +3,8 @@ local mutations = require("ids.mutations")
 local extra_lives = require("policy.character.extra_lives")
 local effects = require("policy.mutations.effects.registry")
 
+-- Register the life-count refresh on mutation change so gained or lost levels update the player immediately.
+-- Example: gaining Multilived refreshes saved life count through the mutation ON_CHANGE hook.
 effects.add(mutations.MUT_MULTILIVED, {
     [capabilities.ON_CHANGE] = extra_lives.changed,
 })

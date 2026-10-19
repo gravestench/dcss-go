@@ -9,6 +9,7 @@ local streams = require("constants.rng_streams")
 
 local danger = {}
 
+-- The same resistance and adjustment hooks used by exposure inform a monster's risk estimate.
 local function estimated_damage(ctx, monster, definition, effect)
     local source = definition.damage
     local amount = source.base
@@ -40,6 +41,7 @@ local function estimated_damage(ctx, monster, definition, effect)
     return amount
 end
 
+-- Harmless clouds can still supply an avoid hook for monster-specific behavior.
 local function risky(ctx, monster, state, careful)
     local definition = catalog.get(categories.CLOUDS, state.kind_id)
     local effect = require(definition.effect)
@@ -94,6 +96,8 @@ local function risky(ctx, monster, state, careful)
         estimated_damage(ctx, monster, definition, effect)
 end
 
+-- Monster avoidance estimates cloud harm from the same effect hooks that apply exposure.
+-- Example: a monster already in a dangerous cloud may leave it through another risky cell.
 function danger.avoids(ctx, monster, destination, careful)
     local _, destination_cloud = placement.at(ctx,
         destination.level_id, destination.x, destination.y)

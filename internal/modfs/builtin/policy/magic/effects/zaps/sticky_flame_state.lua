@@ -1,3 +1,4 @@
+-- Example: ctx:get(target, component.STICKY_FLAME) retains burn timing and source.
 -- beam.cc:napalm_monster and mon-ench.cc:ENCH_STICKY_FLAME.
 local component = require("constants.component")
 local state = {}

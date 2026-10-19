@@ -4,6 +4,8 @@ local streams = require("constants.rng_streams")
 
 local effect = {}
 
+-- Monsters rarely activate Zot, but a successful trigger still targets the player outcome table.
+-- Example: effect.trigger(ctx, nil, player) draws one Zot outcome after player activation.
 function effect.trigger(ctx, _, actor)
     if actor ~= ctx:player() then
         ctx:emit("trap", "You hear a loud \"Zot\"!")

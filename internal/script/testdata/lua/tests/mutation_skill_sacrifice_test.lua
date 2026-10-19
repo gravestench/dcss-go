@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local classes = require("constants.mutation_classes")
 local component = require("constants.component")
@@ -13,6 +14,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Training controls cannot re-enable a sacrificed skill.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -69,6 +71,7 @@ function test.run(ctx)
     local training_state = ctx:get(player, component.SKILL_TRAINING)
     local settings = training_state.settings
 
+    -- Sacrifice permanently clears saved points as well as the visible level.
     harness.equal(entries[1].points, 0,
         "sacrificed skill points are removed immediately")
     harness.equal(entries[1].level, 0,
@@ -84,6 +87,7 @@ function test.run(ctx)
     local changed = training.change(ctx, player, entries, training_state,
         human, skills.SK_DODGING, true)
 
+    -- The UI control path must enforce the same forbidden-skill rule as training.
     harness.falsy(changed,
         "training controls cannot re-enable a sacrificed skill")
 

@@ -5,6 +5,7 @@ local roll = require("policy.combat.roll")
 
 local brand = {}
 
+-- Use separate low and high spatial-damage distributions before normal resistance handling.
 local function warp(ctx, hit, brands, small)
     local raw
     local message
@@ -22,8 +23,10 @@ local function warp(ctx, hit, brands, small)
     ctx:emit("combat", message)
 end
 
+-- Example: brand.apply(ctx, hit, brands) with melee draw in banish band -> banishes the defender
+-- Choose warp damage, blink, or banishment on the melee stream after the weapon hit.
 function brand.apply(ctx, hit, brands)
-    -- Source: attack.cc:471-529. The 5% banish and 20% blink outcomes
+    -- Source: attack.cc. The 5% banish and 20% blink outcomes
     -- are real actor transitions, not damage substitutions.
     local choice = roll.melee(ctx, 100)
 

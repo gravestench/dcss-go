@@ -3,6 +3,7 @@ local statuses = require("policy.magic.effects.statuses.player")
 
 local blink = {}
 
+-- Blink uses Chebyshev distance because a diagonal step counts as one nearby cell.
 local function distance(x, y)
     return math.max(math.abs(x), math.abs(y))
 end
@@ -36,6 +37,7 @@ local function destination(ctx, position, allow_adjacent)
     return nil, nil
 end
 
+-- Round a fractional duration with the spell stream to preserve its expected value.
 local function random_divide(ctx, numerator, denominator)
     local whole = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -47,6 +49,8 @@ local function random_divide(ctx, numerator, denominator)
     return whole
 end
 
+-- Example: An active blink cooldown returns an instability error before Blink chooses a destination.
+-- Active blink cooldown rejects the cast before it spends MP or chooses a destination.
 function blink.prepare(ctx, player)
     if statuses.blink_cooldown(ctx, player) > 0 then
         return "You are still too unstable to blink."
@@ -55,6 +59,7 @@ function blink.prepare(ctx, player)
     return nil
 end
 
+-- Try distant cells first, then nearby cells; failed searches leave the actor in place.
 function blink.resolve(ctx, player, _, _, power)
     local position = ctx:get(player, "core.position")
     local x, y = destination(ctx, position, false)

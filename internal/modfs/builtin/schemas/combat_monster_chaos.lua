@@ -2,6 +2,7 @@
 local schema = {
     id = "combat.monster_chaos",
     version = 1,
+    -- Chaos haste, might, and agility timers belong to the affected monster; shifter marks its lasting variant.
     fields = {
         haste_aut = {
             type = "int64",

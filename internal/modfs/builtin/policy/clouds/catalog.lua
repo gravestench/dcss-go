@@ -4,6 +4,7 @@ local colors = require("policy.presentation.colors")
 
 local clouds = {}
 
+-- A bad cloud definition reports the winning VFS file when available.
 local function origin(definition)
     local okay, path = pcall(register.origin,
         categories.CLOUDS, definition.id)
@@ -11,15 +12,18 @@ local function origin(definition)
     return okay and path or "cloud " .. tostring(definition.id)
 end
 
+-- Stop catalog validation with the cloud's source location.
 local function fail(definition, reason)
     error(origin(definition) .. ": " .. reason)
 end
 
+-- Cloud timing and damage metadata must be integral and nonnegative.
 local function nonnegative_integer(value)
     return type(value) == "number" and
         value >= 0 and value % 1 == 0
 end
 
+-- Cloud definitions need a valid effect module and nonnegative timing fields before placement can use them.
 function clouds.definition(definition)
     if type(definition.id) ~= "string" or
         not definition.id:match("^CLOUD_[A-Z0-9_]+$") then
@@ -87,6 +91,8 @@ function clouds.definition(definition)
     end
 end
 
+-- Validate every cloud at boot, before a field tick tries to load its effect module.
+-- Example: a cloud definition naming a missing effect module fails validation before turn simulation.
 function clouds.validate()
     for _, definition in ipairs(content.all(categories.CLOUDS)) do
         clouds.definition(definition)

@@ -1,3 +1,4 @@
+
 local classes = require("constants.mutation_classes")
 local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
@@ -6,12 +7,14 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Read the saved temporary mutation XP timer after each transition.
 local function remaining(ctx, player)
     local timer = ctx:get(player, "character.mutation_timer")
 
     return timer and timer.remaining_xp or nil
 end
 
+-- Restore rejects a running timer without temporary mutations.
 function test.run(ctx)
     local player = ctx:create()
 

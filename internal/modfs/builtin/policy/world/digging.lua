@@ -15,6 +15,7 @@ local diggable = {
     [terrain.DNGN_PETRIFIED_TREE] = true,
 }
 
+-- Trace only to the first obstruction so a later wall cannot be removed through an earlier one.
 function digging.first_wall(ctx, level_id, from_x, from_y,
     aim_x, aim_y, reach)
     local ray = trajectory.trace(ctx, level_id,
@@ -31,6 +32,8 @@ function digging.first_wall(ctx, level_id, from_x, from_y,
     }
 end
 
+-- A ray may remove only catalogued diggable terrain; other obstruction ends the effect.
+-- Example: digging.can_break(terrain.DNGN_ROCK_WALL) allows Dig's ray to continue through rock.
 function digging.can_break(feature)
     return diggable[feature] == true
 end

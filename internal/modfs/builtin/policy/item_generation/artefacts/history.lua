@@ -5,6 +5,7 @@ local catalog = require("policy.catalog")
 
 local history = {}
 
+-- Unique artefact claims live in persistent history so later generation cannot repeat an already placed item.
 function history.initialise(ctx, player)
     if not ctx:has(player, component.PLAYER_UNIQUE_HISTORY) then
         ctx:add(player, component.PLAYER_UNIQUE_HISTORY, {
@@ -13,6 +14,8 @@ function history.initialise(ctx, player)
     end
 end
 
+-- Example: history.status(ctx, player, artefact_id) bars an ordinary unique from appearing again.
+-- Read the player's persisted unique ledger; missing initialization is corrupt generation state.
 function history.status(ctx, player, id)
     local state = ctx:get(player, component.PLAYER_UNIQUE_HISTORY)
 
@@ -23,6 +26,7 @@ function history.status(ctx, player, id)
     return state.status[id]
 end
 
+-- Level finds become ordinary claims; gifts and acquirement retain the nonlevel fallback status.
 function history.mark(ctx, player, id, purpose)
     local state = ctx:get(player, component.PLAYER_UNIQUE_HISTORY)
 
@@ -37,6 +41,7 @@ function history.mark(ctx, player, id, purpose)
     ctx:set(player, component.PLAYER_UNIQUE_HISTORY, state)
 end
 
+-- Clear a failed or abandoned claim so the unique can be selected later.
 function history.release(ctx, player, id)
     local state = ctx:get(player, component.PLAYER_UNIQUE_HISTORY)
 
@@ -48,6 +53,7 @@ function history.release(ctx, player, id)
     ctx:set(player, component.PLAYER_UNIQUE_HISTORY, state)
 end
 
+-- Saved unique statuses must name active artefacts and one supported claim state.
 function history.validate(state)
     if not state then
         error("player unique history is missing")

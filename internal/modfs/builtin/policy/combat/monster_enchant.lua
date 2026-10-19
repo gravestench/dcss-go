@@ -22,6 +22,7 @@ local whole_effects = {
     component.PARALYSIS,
 }
 
+-- Only positive timers count as dispellable; an empty saved record alone is inert.
 local function active_fields(state, fields)
     if not state then
         return false
@@ -36,6 +37,7 @@ local function active_fields(state, fields)
     return false
 end
 
+-- Innate confusion is species behaviour and must survive magic removal.
 local function naturally_confused(definition)
     if not definition then
         return false
@@ -50,6 +52,7 @@ local function naturally_confused(definition)
     return false
 end
 
+-- Look up the actor's current species to distinguish innate confusion from a spell effect.
 local function definition_for(ctx, monster)
     local actor = ctx:get(monster, component.ACTOR)
 
@@ -60,6 +63,7 @@ local function definition_for(ctx, monster)
     return catalog.get("monsters", actor.kind_id)
 end
 
+-- Unravelling tests active fields inside shared records without treating the whole record as magical.
 local function partial_effects(ctx, monster)
     if active_fields(ctx:get(monster, component.MONSTER_ENCHANT), {
         "blind_aut", "corrosion_aut", "invisible_aut",
@@ -85,6 +89,7 @@ local function partial_effects(ctx, monster)
         not naturally_confused(definition_for(ctx, monster))
 end
 
+-- Summons and active effects make Unravelling valid even before it chooses what to remove.
 function enchant.can_dispel(ctx, monster)
     if ctx:has(monster, component.SUMMON) or
         ctx:has(monster, component.PROJECTILE_SLOW) or
@@ -101,6 +106,7 @@ function enchant.can_dispel(ctx, monster)
     return false
 end
 
+-- Default zero timers let blind and corrosion writes preserve unrelated enchantments.
 local function state(ctx, monster)
     return ctx:get(monster, "magic.monster_enchant") or {
         blind_aut = 0,
@@ -109,6 +115,7 @@ local function state(ctx, monster)
     }
 end
 
+-- Preserve existing enchantment fields when updating one timer, creating the record only once.
 local function save(ctx, monster, value)
     if ctx:has(monster, "magic.monster_enchant") then
         ctx:set(monster, "magic.monster_enchant", value)
@@ -117,6 +124,7 @@ local function save(ctx, monster, value)
     end
 end
 
+-- Missing catalog resistance means no acid protection for corrosion checks.
 local function resistance(definition, id)
     for _, entry in ipairs(definition.resistances or {}) do
         if entry.id == id then
@@ -127,6 +135,7 @@ local function resistance(definition, id)
     return 0
 end
 
+-- Species flags gate permanent immunities before chance rolls consume combat RNG.
 local function flag(definition, id)
     for _, value in ipairs(definition.flags or {}) do
         if value == id then
@@ -137,19 +146,21 @@ local function flag(definition, id)
     return false
 end
 
+-- Combat checks a positive blind timer rather than mere record presence.
 function enchant.blinded(ctx, monster)
     local value = ctx:get(monster, "magic.monster_enchant")
 
     return value ~= nil and (value.blind_aut or 0) > 0
 end
 
+-- Armour penalties apply only while the corrosion timer remains positive.
 function enchant.corroded(ctx, monster)
     local value = ctx:get(monster, "magic.monster_enchant")
 
     return value ~= nil and (value.corrosion_aut or 0) > 0
 end
 
--- beam.cc:4629-4636 adds ENCH_BLIND once with a HD-scaled duration.
+-- beam.cc adds ENCH_BLIND once with a HD-scaled duration.
 function enchant.blind(ctx, monster, definition)
     if flag(definition, "M_UNBLINDABLE") then
         return false
@@ -290,6 +301,8 @@ function enchant.dispel(ctx, monster, definition)
     return changed
 end
 
+-- Example: enchant.tick(ctx, monster) with expired invisibility -> visible monster state
+-- Decay stored enchantment timers together so visibility, corrosion, and other effects expire consistently.
 function enchant.tick(ctx, monster)
     local value = ctx:get(monster, "magic.monster_enchant")
 

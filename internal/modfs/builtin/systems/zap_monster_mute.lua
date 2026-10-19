@@ -2,6 +2,8 @@ local component = require("constants.component")
 
 local system = {}
 
+-- Theory of operation: The mute component expires before spell-using AI chooses an action.
+-- Mute duration can clear before spell-using monster AI runs.
 function system.update(ctx, monster, aut)
     local state = ctx:get(monster, component.MONSTER_MUTE)
 

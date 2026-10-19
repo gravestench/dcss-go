@@ -1,3 +1,5 @@
+-- Character menu groups preserve source order and reject invalid metadata from definitions.
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local groups = require("constants.menu_groups")
@@ -9,6 +11,7 @@ local validation = require("content.validation")
 
 local test = {}
 
+-- Group sizes and order are menu content, rather than catalog load order.
 local function source_groups()
     local presentation = menu.presentation()
     local species_groups = presentation.species_groups
@@ -48,6 +51,7 @@ local function source_groups()
         "last mage position")
 end
 
+-- The detail pane reads species and job descriptions from live definitions.
 local function descriptions_come_from_definitions()
     local presentation = menu.presentation()
     local human = catalog.get(categories.SPECIES, species.SP_HUMAN)
@@ -63,6 +67,8 @@ local function descriptions_come_from_definitions()
         fighter.description, "Fighter menu description owner")
 end
 
+-- Corrupt menu metadata on a live definition and require validation to fail,
+-- so a mod cannot create ambiguous category ordering or empty descriptions.
 local function invalid_menu_fields_are_rejected()
     local human = catalog.get(categories.SPECIES, species.SP_HUMAN)
     local kobold = catalog.get(categories.SPECIES, species.SP_KOBOLD)
@@ -87,6 +93,7 @@ local function invalid_menu_fields_are_rejected()
         "description error does not name the rule")
 end
 
+-- Added species join the modded group without shifting bundled menu pages.
 local function added_group_member_stays_on_modded_page()
     local definitions = catalog.all(categories.SPECIES)
     local human = catalog.get(categories.SPECIES, species.SP_HUMAN)
@@ -111,6 +118,8 @@ local function added_group_member_stays_on_modded_page()
         "new group member did not reach modded page")
 end
 
+-- Check groups, descriptions, validation, and modded pages together because
+-- the character menu derives all four from the same content definitions.
 function test.run()
     source_groups()
     descriptions_come_from_definitions()

@@ -14,10 +14,14 @@ local special_names = {
     [skills.SK_LONG_BLADES] = "Long Blades",
 }
 
+-- Capitalize each generated word after removing the SK_ prefix; explicit
+-- special names below handle IDs whose display punctuation is not derivable.
 local function capitalize(word)
     return word:sub(1, 1):upper() .. word:sub(2)
 end
 
+-- Prefer named exceptions, then derive a readable fallback for mod-added
+-- skills without requiring edits to this presentation file.
 local function skill_name(id)
     if special_names[id] then
         return special_names[id]
@@ -28,6 +32,8 @@ local function skill_name(id)
     return name:gsub("%a+", capitalize)
 end
 
+-- Match the input policy's alphabetic skill keys, including its uppercase
+-- overflow after the first 26 displayed choices.
 local function letter(index)
     if index < 26 then
         return string.char(string.byte("a") + index)
@@ -36,10 +42,17 @@ local function letter(index)
     return string.char(string.byte("A") + index - 26)
 end
 
+-- Keep terminal writes as data so a resize only needs a new projection.
 local function write(writes, x, y, text, fg)
     writes[#writes + 1] = { x = x, y = y, text = text, fg = fg }
 end
 
+-- Skill rows use current training and aptitude values when the screen is redrawn.
+
+-- Skill display reads training allocations without changing them.
+-- Example: skills_policy.rows(ctx, { species_id = species, skills = records,
+--     skill_training = training, skill_percent = rates, height = 24 })
+-- renders the same letter order that the training input handler accepts.
 function skills_policy.rows(ctx, input)
     local writes = {}
     write(writes, 0, 0, "Skills", colors.white)
@@ -95,6 +108,7 @@ function skills_policy.rows(ctx, input)
         end
     end
 
+    -- Potion experience and Gnoll distributed training replace manual-training key hints on this screen.
     if (input.pending_experience or 0) > 0 then
         write(writes, 0, input.height - 4,
             "Choose skills for potion experience. Esc - Return",
@@ -123,6 +137,8 @@ function skills_policy.rows(ctx, input)
     return { writes = writes }
 end
 
+-- Adapt the reusable rows function to the registered presentation policy;
+-- neither path changes training state during a redraw.
 function skills_policy.run(ctx, input)
     return skills_policy.rows(ctx, input)
 end

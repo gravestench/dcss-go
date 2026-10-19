@@ -5,6 +5,7 @@ local effects = require("policy.inventory.jewellery_effects")
 
 local validation = {}
 
+-- Only HP or MP regeneration jewellery requires saved attunement state.
 local function attunes(definition)
     local record = definition.jewellery
     local effects = record and record.effects or {}
@@ -13,6 +14,8 @@ local function attunes(definition)
         effects[capabilities.MP_REGEN] ~= nil
 end
 
+-- Saved attunement records must still point to equipped jewellery with that capability.
+-- Example: validation.run(ctx, player) checks regeneration jewellery's attunement state.
 function validation.run(ctx, player)
     for _, entity in ipairs(ctx:query({ component.ITEM })) do
         local state = ctx:get(entity, component.JEWELLERY_ATTUNEMENT)

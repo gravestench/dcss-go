@@ -7,10 +7,13 @@ local neighbors = require("constants.adjacent_cells")
 
 local interaction = {}
 
+-- Return the fixed adjacent offsets used by fire-to-steam interactions.
 function interaction.neighbors()
     return neighbors
 end
 
+-- Check each adjacent water cell separately and preserve the fire source when steam appears.
+-- Example: each adjacent water cell has a one-in-fourteen chance to receive steam if cloud-free.
 function interaction.steam(ctx, state)
     for _, offset in ipairs(neighbors) do
         local x = state.x + offset[1]

@@ -2,6 +2,7 @@ local component = require("constants.component")
 
 local links = {}
 
+-- Constriction links require same-floor adjacency in the saved positions.
 local function adjacent(a, b)
     if a.level_id ~= b.level_id then
         return false
@@ -13,6 +14,7 @@ local function adjacent(a, b)
     return dx <= 1 and dy <= 1 and (dx ~= 0 or dy ~= 0)
 end
 
+-- Jackal band links may outlive a leader, but any living leader must be a jackal on the same floor.
 local function validate_followers(ctx)
     for _, entity in ipairs(ctx:query({ "core.follower" })) do
         local follower = ctx:get(entity, "core.follower")
@@ -41,6 +43,7 @@ local function validate_followers(ctx)
     end
 end
 
+-- Constrictor and victim links must agree after entity IDs are restored.
 local function validate_constriction(ctx)
     local player = ctx:player()
     local grip = ctx:get(player, "core.constricted")
@@ -67,6 +70,7 @@ local function validate_constriction(ctx)
     end
 end
 
+-- A player grip must point back to the monster that owns its constriction state.
 local function validate_player_grips(ctx)
     local player = ctx:player()
     local player_health = ctx:get(player, component.HEALTH)
@@ -99,6 +103,7 @@ local function validate_player_grips(ctx)
     end
 end
 
+-- Water hold references must still match a live actor and reachable cell.
 local function validate_water_holds(ctx)
     local player = ctx:player()
     local player_health = ctx:get(player, component.HEALTH)
@@ -120,6 +125,8 @@ local function validate_water_holds(ctx)
     end
 end
 
+-- Follower, constriction, grip, and water-hold links are checked from both ends.
+-- Example: links.validate(ctx) rejects a follower whose leader link is inconsistent.
 function links.validate(ctx)
     validate_followers(ctx)
     validate_constriction(ctx)

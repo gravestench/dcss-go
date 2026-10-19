@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.monster_confusion",
     version = 1,
+    -- The affected monster owns confusion duration for its own movement and action decisions.
     fields = {
         remaining_aut = {
             type = "int64",

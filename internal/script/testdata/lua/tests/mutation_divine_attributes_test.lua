@@ -1,3 +1,4 @@
+
 local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
 local formulas = require("policy.character.formulas")
@@ -7,6 +8,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Divine Attributes does not choose at XL7.
 function test.run(ctx)
     local human = ctx:create()
     local demigod = ctx:create()

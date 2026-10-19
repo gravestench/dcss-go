@@ -7,6 +7,7 @@ local registry = require("policy.magic.effects.registry")
 
 local conjure_flame = {}
 
+-- Cap power before two spell draws; store duration in aut for the later ember ignition.
 local function duration(ctx, power)
     local capped = math.min(power, 100)
     local first = math.floor(ctx:random("spell", capped) / 2)
@@ -15,6 +16,8 @@ local function duration(ctx, power)
     return math.min(5 + first + second, 23) * 10
 end
 
+-- Example: A fire cloud under the caster passes preparation; a poison cloud returns an error.
+-- Check the caster cell before payment so an incompatible existing cloud blocks the cast.
 function conjure_flame.prepare(ctx, player)
     local position = ctx:get(player, component.POSITION)
     local entity = cloud.at(ctx, position.level_id, position.x, position.y)
@@ -29,6 +32,8 @@ function conjure_flame.prepare(ctx, player)
     end
 end
 
+-- Refresh existing fire, ignite embers, or place delayed embers on the player cell.
+-- A second cast on embers ignites them immediately instead of waiting for their timer.
 function conjure_flame.resolve(ctx, player, _, _, power)
     local position = ctx:get(player, component.POSITION)
     local entity = cloud.at(ctx, position.level_id, position.x, position.y)

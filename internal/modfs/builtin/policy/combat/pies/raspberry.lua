@@ -8,10 +8,13 @@ local raspberry = {
     weight = 10,
 }
 
+-- Example: raspberry.valid(ctx, target) with player target -> true eligibility
+-- Only players have drainable stats, so monsters are excluded from raspberry selection.
 function raspberry.valid(ctx, target)
     return ctx:has(target, component.PLAYER)
 end
 
+-- Raspberry drains each player stat independently on the monster-spell RNG stream.
 function raspberry.apply(ctx, _, target)
     for _, stat in ipairs(stats.ORDER) do
         stat_loss.drain(ctx, target, stat,

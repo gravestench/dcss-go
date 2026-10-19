@@ -2,6 +2,8 @@ local menu = require("policy.input.menu")
 
 local pregame = {}
 
+-- Keep a rejected choice on the current screen with a reason instead of
+-- changing focus or starting a game from an unsupported key.
 local function notice(text)
     return {
         action = "notice",
@@ -9,6 +11,8 @@ local function notice(text)
     }
 end
 
+-- Return a focus action rather than mutating the menu; the session then
+-- supplies the new focus to both input and presentation on the next frame.
 local function focus(index)
     return {
         action = "focus",
@@ -16,6 +20,8 @@ local function focus(index)
     }
 end
 
+-- Represent stage changes explicitly so going back can restore the intended
+-- focus without reinterpreting the old key in the destination screen.
 local function screen(name, index)
     return {
         action = "screen",
@@ -25,6 +31,8 @@ local function screen(name, index)
     }
 end
 
+-- Translate the terminal's named Space key into a printable character;
+-- other character keys can be appended directly to the name buffer.
 local function name_character(key)
     if key == "space" then
         return " "
@@ -33,6 +41,10 @@ local function name_character(key)
     return key
 end
 
+-- Pregame routes keep species, background, weapon, and name choices in session order.
+-- Startup keeps name editing and the species/job menu as separate input stages.
+-- Example: pregame.startup({ key = "enter", focus = 0, mode_count = 2 })
+-- requests a new game; the session owns the actual transition.
 function pregame.startup(input)
     local key = input.key
     local count = input.mode_count
@@ -80,6 +92,9 @@ function pregame.startup(input)
     }
 end
 
+-- Choice letters are translated against the currently displayed option list.
+-- Page offsets ensure a letter from a modded page selects that page's ID,
+-- while Enter always confirms the globally focused choice.
 local function choice_index(input)
     if input.key == "enter" then
         return input.focus + 1
@@ -94,6 +109,10 @@ local function choice_index(input)
     return nil
 end
 
+-- Return IDs from the current catalog choice list, never from screen labels;
+-- focus movement and modded pages must agree on the same stable selection.
+-- Example: pregame.choice({ key = "enter", screen = "species",
+--     ids = species_ids, focus = 0, page_start = 0, page_end = 1 }).
 function pregame.choice(input)
     local key = input.key
     local species = input.screen == "species"
@@ -147,6 +166,9 @@ function pregame.choice(input)
     return { action = "none" }
 end
 
+-- A starting weapon key is interpreted against the offered set, not against every weapon ID.
+-- Example: pregame.weapon({ key = "a", options = offered, focus = 0 })
+-- returns the chosen weapon ID only if that option is actually offered.
 function pregame.weapon(input)
     local key = input.key
     local count = #input.options
@@ -197,6 +219,8 @@ function pregame.weapon(input)
     return { action = "none" }
 end
 
+-- Keep name editing as a separate final stage, so Enter starts a game only
+-- after species, background, and starting weapon have been chosen.
 function pregame.name(input)
     local key = input.key
 

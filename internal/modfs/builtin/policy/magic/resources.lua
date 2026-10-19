@@ -14,6 +14,7 @@ function resources.spell_cost(ctx, player, level)
     return level
 end
 
+-- Djinni-style HP casting changes the resource pool but still requires both health and magic state.
 local function state(ctx, player)
     local health = ctx:get(player, "core.health")
     local magic = ctx:get(player, "core.magic")
@@ -44,6 +45,8 @@ function resources.cannot_pay(ctx, player, cost)
     return nil
 end
 
+-- Example: a Djinni cast costing three points debits HP only if more than three HP remain.
+-- Recheck affordability at payment time, then debit the HP or MP pool selected by mutation.
 function resources.pay(ctx, player, cost)
     local rejection = resources.cannot_pay(ctx, player, cost)
 
@@ -62,6 +65,7 @@ function resources.pay(ctx, player, cost)
     end
 end
 
+-- Refund the pool used for payment and clamp to its current maximum after interrupted casts.
 function resources.refund(ctx, player, cost)
     local health, magic, from_hp = state(ctx, player)
 

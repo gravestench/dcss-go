@@ -18,15 +18,18 @@ local smoke = {
     ids.CLOUD_PURPLE_SMOKE,
 }
 
+-- Ink placement is restricted to shallow or deep water.
 local function is_water(feature)
     return feature == terrain.vault_terrain.DNGN_SHALLOW_WATER or
         feature == terrain.vault_terrain.DNGN_DEEP_WATER
 end
 
+-- All cloud kinds except ink use the general walkable-cell rule.
 function placement.terrain_eligible(kind_id, feature)
     return kind_id ~= ids.CLOUD_INK or is_water(feature)
 end
 
+-- Resolve random smoke once; unresolved cloud selectors cannot become entities.
 local function resolve_kind(ctx, kind_id)
     if kind_id == selectors.RANDOM_SMOKE then
         local index = ctx:random(streams.CLOUDS, #smoke) + 1
@@ -43,6 +46,7 @@ local function resolve_kind(ctx, kind_id)
     return kind_id
 end
 
+-- Replacement honours harmless opacity, with steam and vortex exceptions.
 local function stronger(new_definition, old_definition)
     -- cloud.cc:_cloud_is_stronger preserves opaque harmless clouds unless
     -- their successor is also opaque. Steam and vortex are exceptions.
@@ -52,6 +56,7 @@ local function stronger(new_definition, old_definition)
         new_definition.id == ids.CLOUD_VORTEX
 end
 
+-- Explicit attribution wins; otherwise a charmed or friendly source credits the friendly missile category.
 local function source_credit(ctx, source_actor, options)
     if options.kill_category or options.killer_type then
         if not options.kill_category or not options.killer_type then
@@ -83,6 +88,7 @@ local function source_credit(ctx, source_actor, options)
     return attribution.OTHER, attribution.MISC
 end
 
+-- Look up an existing cloud before a second entity can occupy its cell.
 function placement.at(ctx, level_id, x, y)
     for _, entity in ipairs(ctx:query({ component.WORLD_CLOUD })) do
         local state = ctx:get(entity, component.WORLD_CLOUD)
@@ -96,6 +102,8 @@ function placement.at(ctx, level_id, x, y)
     return nil
 end
 
+-- Resolve kind, terrain, occupancy, and source metadata in one place before creating a world cloud.
+-- Example: ink may occupy water, while a competing cloud replaces an occupant only when stronger() permits it.
 function placement.place(ctx, kind_id, source_actor,
     level_id, x, y, duration_aut, options)
     if duration_aut < 1 then
@@ -169,6 +177,7 @@ function placement.place(ctx, kind_id, source_actor,
     return entity
 end
 
+-- Cloud removal must destroy the entity so occupancy and effect queries agree.
 function placement.remove(ctx, entity)
     if ctx:get(entity, component.WORLD_CLOUD) then
         ctx:destroy(entity)

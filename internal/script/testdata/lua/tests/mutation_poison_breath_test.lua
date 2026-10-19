@@ -1,3 +1,4 @@
+
 local abilities = require("ids.abilities")
 local component = require("constants.component")
 local harness = require("tests.harness")
@@ -10,6 +11,7 @@ local records = require("policy.mutations.records")
 
 local test = {}
 
+-- Check the prepared ability list by ID independent of menu order.
 local function listed(options, id)
     for _, option in ipairs(options) do
         if option.id == id then
@@ -20,6 +22,7 @@ local function listed(options, id)
     return false
 end
 
+-- Old spit action rejects after the upgrade.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -35,22 +38,27 @@ function test.run(ctx)
 
     local world = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to poison breath fixture actor so player-only branches execute on that entity.
     function world.player()
         return player
     end
 
+    -- Make poison breath sight deterministic while leaving actor positions to the ECS fixture.
     function world.visible()
         return true
     end
 
+    -- Define poison breath fixture's traversable cells for movement and targeting checks.
     function world.walkable()
         return true
     end
 
+    -- Return no occupant while preparing a clear poison-breath line.
     function world.actor_at()
         return nil
     end
 
+    -- Avoid incidental random ability choices while checking the upgraded breath menu.
     function world.random(_, _, bound)
         return bound - 1
     end
@@ -59,6 +67,7 @@ function test.run(ctx)
 
     local options = registry.available(world, player)
 
+    -- The first level exposes the spit command and its shared cooldown.
     harness.truthy(listed(options, abilities.SPIT_POISON),
         "first mutation level offers Spit Poison")
     harness.falsy(listed(options, abilities.BREATHE_POISON),
@@ -92,10 +101,12 @@ function test.run(ctx)
     records.grant_innate(world, player, mutations.MUT_SPIT_POISON, 1)
     options = registry.available(world, player)
 
+    -- Upgrading the mutation swaps ability IDs without resetting the breath timer.
     harness.falsy(listed(options, abilities.SPIT_POISON),
         "second mutation level replaces Spit Poison")
     harness.truthy(listed(options, abilities.BREATHE_POISON),
         "second mutation level offers Breathe Poison Gas")
+    -- A stale command cannot bypass the new level-two ability selection.
     harness.truthy(commands.prepare(world, player, {
         ability_id = abilities.SPIT_POISON,
         dx = 1,
@@ -133,6 +144,7 @@ function test.run(ctx)
 
     local battle = setmetatable({}, { __index = world })
 
+    -- Return the rat at the aimed cell so breath can resolve against it.
     function battle.actor_at(_, _, x, y)
         if x == 3 and y == 2 then
             return rat
@@ -141,6 +153,7 @@ function test.run(ctx)
         return nil
     end
 
+    -- Force the spell proc but use high remaining draws to isolate breath damage.
     function battle.random(_, stream, bound)
         if stream == "spell" and bound == 10 then
             return 0

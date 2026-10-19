@@ -16,6 +16,7 @@ local constrict = {
     },
 }
 
+-- A constricting auxiliary attack needs a free constriction slot and a reachable target.
 function constrict.available(ctx, input)
     local player = ctx:player()
     local tail = levels.effective(ctx, player,
@@ -33,6 +34,8 @@ function constrict.available(ctx, input)
         (input.existing_grips == 0 or input.free_tentacles > 0)
 end
 
+-- Example: constrict.describe() with Constrict selected -> grab profile with zero contact damage
+-- Constriction has one contact message; later damage happens on elapsed player actions.
 function constrict.describe()
     return {
         name = "grab",
@@ -41,6 +44,7 @@ function constrict.describe()
     }
 end
 
+-- The player-constriction component records the grip for later turn damage and escape checks.
 function constrict.on_hit(ctx, target)
     ctx:add(target, component.PLAYER_CONSTRICTION, {
         by = ctx:player(),

@@ -19,6 +19,7 @@ local spec = {
     },
 }
 
+-- Check source monster flags safely when filtering ignition blast centers.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -29,10 +30,12 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Treat actors the player does not consider enemies as friendly fire exclusions.
 local function friendly(ctx, actor, player)
     return not targets.enemy(ctx, player, actor)
 end
 
+-- Snapshot hostile visible actors before explosions can kill or move later centers.
 local function blast_sources(ctx, player, origin)
     local sources = {}
 
@@ -66,6 +69,8 @@ local function blast_sources(ctx, player, origin)
     return sources
 end
 
+-- Example: Each visible hostile monster is snapshotted as a blast source before the first explosion.
+-- Collect blast centers before applying damage so a kill cannot remove a later center from this cast.
 function ignition.resolve(ctx, player, _, _, power)
     local origin = ctx:get(player, component.POSITION)
     local sources = blast_sources(ctx, player, origin)

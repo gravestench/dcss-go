@@ -78,7 +78,7 @@ func Load(overlayDirs ...string) (Ruleset, error) {
 }
 
 // BundledFile returns the committed source at a path, before overlays.
-// Catalogs use it only for stable source order when a mod replaces a file.
+// Source population rows use it when an overlay replaces a monster file.
 func (r Ruleset) BundledFile(name string) ([]byte, bool) {
 	if !validRulesetPath(name) {
 		return nil, false

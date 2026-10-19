@@ -12,6 +12,8 @@ local stat_rings = {
     [ids.RING_INTELLIGENCE] = true,
 }
 
+-- Example: policy.eligible(nil, ring_kind, request) screens ring modes before jewellery weighting.
+-- Match the ring-or-amulet branch chosen earlier, except when an explicit kind was requested.
 function policy.eligible(_, definition, request)
     if definition.class ~= classes.OBJ_JEWELLERY then
         return false
@@ -30,10 +32,12 @@ function policy.eligible(_, definition, request)
     return request.amulet == amulet
 end
 
+-- Jewellery defaults to unit subtype weight unless a mod supplies rarity.
 function policy.weight(_, definition)
     return definition.generation.weight or 1
 end
 
+-- Choose amulet versus ring first, then draw an eligible kind within that group.
 function policy.pick(ctx, request)
     local selected = {}
 
@@ -41,14 +45,14 @@ function policy.pick(ctx, request)
         selected[key] = value
     end
 
-    -- Source: makeitem.cc:1606-1607. One quarter of jewellery is an amulet.
+    -- Source: makeitem.cc. One quarter of jewellery is an amulet.
     if selected.amulet == nil then
         selected.amulet = source.chance(ctx, 1, 4)
     end
 
     local result = pool.select(ctx, classes.OBJ_JEWELLERY, selected, policy)
 
-    -- Source: makeitem.cc:2030-2036. Slaying gets two more chances to reroll.
+    -- Source: makeitem.cc. Slaying gets two more chances to reroll.
     if result.id == ids.RING_SLAYING and not source.chance(ctx, 1, 3) then
         result = pool.select(ctx, classes.OBJ_JEWELLERY, selected, policy)
     end
@@ -56,6 +60,7 @@ function policy.pick(ctx, request)
     return result
 end
 
+-- Stat rings start with a larger plus cap than other plus-bearing jewellery.
 function policy.roll(_, definition, _, result)
     if definition.jewellery and definition.jewellery.pluses then
         result.plus = stat_rings[definition.id] and 6 or 4

@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.player_petrification",
     version = 1,
+    -- Petrifying and petrified are two saved phases with independent remaining durations.
     fields = {
         petrifying_aut = {
             type = "int64",

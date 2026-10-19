@@ -1,3 +1,4 @@
+
 local coverage = require("policy.combat.monster_spell_coverage")
 local catalog = require("policy.catalog")
 local effects = require("policy.combat.monster_spells")
@@ -8,6 +9,7 @@ local spells = require("ids.spells")
 
 local test = {}
 
+-- The active generated roster must have resolvers for every castable slot.
 local function active_roster_has_effects()
     local ids = roster.allowed("generated-dungeon-basic-v1")
     local missing = coverage.missing(ids)
@@ -16,6 +18,8 @@ local function active_roster_has_effects()
         "every active generated monster has its spell effects")
 end
 
+-- Imported beam slots count as implemented while the remaining orc effect
+-- still appears in missing coverage.
 local function imported_beam_book_is_covered()
     local missing = coverage.missing({
         [monsters.MONS_ORC_WIZARD] = true,
@@ -31,11 +35,14 @@ local function imported_beam_book_is_covered()
     end
 end
 
+-- Substitute an incomplete effect module and require coverage to report its missing resolver.
 local function malformed_effect_is_reported()
     local original = effects.effect
 
+    -- Advertise a deliberately incomplete effect module to test startup coverage.
     effects.effect = function()
         return {
+            -- Provide a plan but omit resolve so coverage names the missing method.
             plan = function()
                 return {}
             end,
@@ -55,6 +62,7 @@ local function malformed_effect_is_reported()
         "malformed effect names the missing method")
 end
 
+-- Adding a caster to the roster surfaces its missing effects with its ID.
 local function newly_admitted_monster_requires_effects()
     local sorcerer = catalog.get("monsters", monsters.MONS_ORC_SORCERER)
     local original_get = register.get
@@ -63,6 +71,7 @@ local function newly_admitted_monster_requires_effects()
         scenario_id = "generated-dungeon-basic-v1",
     }
 
+    -- Expose the newly admitted Sorcerer while all other monster IDs use the real registry.
     register.get = function(category, id)
         if category == "monsters" and id ==
             monsters.MONS_ORC_SORCERER then
@@ -82,6 +91,7 @@ local function newly_admitted_monster_requires_effects()
         1, true), "coverage error names the monster")
 end
 
+-- Generated monsters cannot carry a spellbook slot without a Lua effect module.
 function test.run()
     active_roster_has_effects()
     imported_beam_book_is_covered()

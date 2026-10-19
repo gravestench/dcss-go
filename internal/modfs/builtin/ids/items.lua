@@ -1,3 +1,5 @@
+-- Item IDs resolve the effective item catalog, including modded additions.
+
 local catalog = require("ids.catalog")
 local categories = require("constants.catalog")
 

@@ -19,10 +19,15 @@ local water = require("policy.character.water")
 
 local charge = {}
 
+-- Example: charge.range(2) sets the maximum rolling path before collision checks.
+-- Derive range directly from mutation level; path and terrain checks happen
+-- later, so this value is only the upper bound on attempted movement.
 function charge.range(level)
     return 3 + level
 end
 
+-- Inspect every traversed cell before movement; permanent flight or swim
+-- capability can make terrain safe, but landing in lava must never be assumed.
 local function safe_path(ctx, player, origin, path, last)
     local airborne = flight.permanent(ctx, player)
     local swimmer = water.can_swim(ctx, player)
@@ -42,6 +47,7 @@ local function safe_path(ctx, player, origin, path, last)
     return true
 end
 
+-- Charge stops at the first actor contact and lands one cell before it; unsafe terrain rejects the whole ray.
 function charge.plan(ctx, player, input)
     local dx = input.dx or 0
     local dy = input.dy or 0
@@ -107,12 +113,16 @@ function charge.plan(ctx, player, input)
     }
 end
 
+-- Reuse planning for free rejection messages, avoiding a second range or
+-- target rule that could disagree with actual resolution.
 function charge.prepare(ctx, player, input)
     local _, rejection = charge.plan(ctx, player, input)
 
     return rejection
 end
 
+-- Place timed dust on the rolled path using the mutation RNG stream; include
+-- the starting square so the visual trail describes the full movement.
 local function dust_trail(ctx, player, level_id, origin, plan)
     local visited = { origin }
 
@@ -127,6 +137,7 @@ local function dust_trail(ctx, player, level_id, origin, plan)
     end
 end
 
+-- The plan is rebuilt at resolution so a moved or dead target cannot be attacked from a stale destination.
 function charge.resolve(ctx, player, intent)
     local plan, rejection = charge.plan(ctx, player, intent)
 

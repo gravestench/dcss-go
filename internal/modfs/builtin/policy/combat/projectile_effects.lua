@@ -6,6 +6,9 @@ local dispersal = require("policy.combat.dispersal")
 
 local effects = {}
 
+-- Example: with poisoned dart hit,
+-- effects.missile(ctx, ego, missile, monster, defender, damage, remaining_hp) -> ego damage and poison handling
+-- Dispatch a missile ego only after base damage, preserving its remaining-HP contact context.
 function effects.missile(ctx, ego, missile, monster, defender, damage, remaining_hp)
     if missile.id == "MI_DART" then
         local power = fighter.skill(ctx, "SK_THROWING", 1)
@@ -27,7 +30,7 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
         local levels = 0
 
         if missile.id == "MI_DART" then
-            -- ranged-attack.cc:536-556: player poison darts carry duration
+            -- ranged-attack.cc: player poison darts carry duration
             -- power rather than ordinary hit-point damage.
             levels = damage
         elseif roll.melee(ctx, 4) ~= 0 then
@@ -41,7 +44,7 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
     end
 
     if ego == "curare" then
-        -- beam.cc:1862-1904 poisons, deals 2d6 asphyxiation damage, then
+        -- beam.cc poisons, deals 2d6 asphyxiation damage, then
         -- slows a surviving non-resistant monster.
         if not poison.apply(ctx, monster, defender, 2, ctx:player()) then
             return 0

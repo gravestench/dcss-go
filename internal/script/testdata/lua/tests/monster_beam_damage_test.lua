@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local damage = require("policy.combat.monster_beams.damage")
 local harness = require("tests.harness")
@@ -7,9 +8,11 @@ local spells = require("ids.spells")
 
 local test = {}
 
+-- Maximum legal rolls expose armour and resistance rounding boundaries.
 local function maximum_random()
     local ctx = { draws = 0 }
 
+    -- Count each maximum damage die to compare flavour-specific resistance after rolling.
     function ctx:random(_, bound)
         self.draws = self.draws + 1
 
@@ -19,6 +22,7 @@ local function maximum_random()
     return ctx
 end
 
+-- Bolt of Magma resists only its fifty-five-percent fire portion.
 function test.run()
     local fire = catalog.get("monster_beams", spells.SPELL_BOLT_OF_FIRE)
     local lightning = catalog.get("monster_beams",
@@ -49,6 +53,8 @@ function test.run()
     harness.equal(damage.armour(ctx, 20, 4, stunning), 16,
         "Stunning Burst uses ordinary beam armour")
 
+    -- Damnation and Dispel Undead bypass armour without consuming an armour
+    -- roll, preserving subsequent seeded beam damage.
     local before = ctx.draws
 
     harness.equal(damage.armour(ctx, 20, 4, damnation), 20,
@@ -60,6 +66,7 @@ function test.run()
     harness.equal(ctx.draws, before,
         "Dispel Undead does not roll armour")
 
+    -- Supply only the defender records used by beam damage, rejecting unrelated actor lookups.
     function ctx:get(entity, id)
         if entity ~= 101 and entity ~= 102 and
             entity ~= 103 and entity ~= 104 and entity ~= 105 then
@@ -93,14 +100,18 @@ function test.run()
         return nil
     end
 
+    -- Keep optional status components absent so resistance alone determines the result.
     function ctx:has()
         return false
     end
 
+    -- Use an unrelated player ID so monster beam calculations never take a player-only path.
     function ctx:player()
         return 999
     end
 
+    -- One defender table below supplies distinct holiness and resistances for
+    -- each beam flavor, including immunity and vulnerability cases.
     harness.equal(damage.resisted(ctx, 101, 20, fire), 4,
         "fire dragon rF2 divides Bolt of Fire damage by five")
     harness.equal(damage.resisted(ctx, 101, 20, cold), 30,
@@ -138,6 +149,7 @@ function test.run()
     harness.equal(damage.resisted(ctx, 101, 20, crystal), 30,
         "Crystal Bolt can select cold against a cold-vulnerable monster")
 
+    -- Force zero for the later stochastic damage branch after fixed-dice expectations.
     function ctx:random()
         return 0
     end

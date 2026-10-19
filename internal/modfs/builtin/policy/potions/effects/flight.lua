@@ -6,6 +6,7 @@ local component = require("constants.component")
 
 local effect = {}
 
+-- Form flight restrictions are checked before spending the potion.
 function effect.can_quaff(ctx, player)
     if forms.modifiers(ctx, player).flight ~= "forbid" then
         return nil
@@ -21,6 +22,7 @@ function effect.can_quaff(ctx, player)
 end
 
 -- Source: player.cc:fly_player and potion.cc:PotionFlight::effect.
+-- Example: another Flight potion extends the saved flight state when the player can still fly.
 function effect.apply(ctx, player)
     local airborne = flight.active(ctx, player)
     local state = ctx:get(player, component.ZAP_FLIGHT)

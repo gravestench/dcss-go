@@ -11,10 +11,13 @@ local scrolls = require("policy.scrolls")
 local effect = {}
 local SIGHT_RADIUS = 7
 
+-- Torment needs no menu because the area is centered on the reader at apply time.
 function effect.prepare()
     return nil
 end
 
+-- Example: Torment damages the reader and visible vulnerable monsters in the same read action.
+-- Compute player resistance first, then damage visible living monsters by their own torment rules.
 function effect.apply(ctx, player)
     local origin = ctx:get(player, component.POSITION)
     local health = ctx:get(player, component.HEALTH)

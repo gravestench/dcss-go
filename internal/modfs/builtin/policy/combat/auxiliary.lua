@@ -20,6 +20,7 @@ local registered = {}
 local ordered = {}
 local by_mutation = {}
 
+-- Validate and order auxiliary modules so attack order is stable across discovery.
 function auxiliary.register(attack)
     if type(attack) ~= "table" or type(attack.id) ~= "string" or
         attack.id == "" or type(attack.order) ~= "number" or
@@ -41,6 +42,7 @@ function auxiliary.register(attack)
         by_mutation[id] = true
     end
 
+    -- Equal auxiliary priorities use IDs so content discovery cannot reorder attack rolls.
     table.sort(ordered, function(left, right)
         if left.order == right.order then
             return left.id < right.id
@@ -50,14 +52,18 @@ function auxiliary.register(attack)
     end)
 end
 
+-- The registry gives a specific attack handler without reloading its Lua file.
 function auxiliary.get(id)
     return registered[id]
 end
 
+-- Coverage checks use the same mutation IDs that unlock registered attacks.
 function auxiliary.has_mutation(id)
     return by_mutation[id] == true
 end
 
+-- Example: auxiliary.all() with registered attacks -> copied list in priority order
+-- Return a copy of the ordered attack list so callers cannot mutate registry order.
 function auxiliary.all()
     local attacks = {}
 
@@ -68,6 +74,7 @@ function auxiliary.all()
     return attacks
 end
 
+-- Snapshot player stats and equipment once so every auxiliary contact sees the same attack state.
 function auxiliary.input(ctx, target, defender)
     local player = ctx:player()
     local current = attributes.current(ctx, player)
@@ -136,6 +143,7 @@ function auxiliary.input(ctx, target, defender)
     }
 end
 
+-- Apply strength, Fighting, Might, and armour in the source auxiliary damage order.
 function auxiliary.damage(ctx, input, base)
     local potential = math.floor(base *
         math.max(2, 150 + 5 * input.strength) / 2 / 100)

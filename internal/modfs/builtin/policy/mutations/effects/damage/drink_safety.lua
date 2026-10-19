@@ -8,6 +8,8 @@ local threat = require("policy.mutations.effects.damage.threat")
 
 local drink_safety = {}
 
+-- A damage event can interrupt drinking when the relevant mutation is active.
+-- Example: threatening damage activates the drink-safety mutation only after threat.triggered approves it.
 function drink_safety.on_damage(ctx, player, damage)
     local level = levels.effective(ctx, player,
         mutations.MUT_DRINK_SAFETY)

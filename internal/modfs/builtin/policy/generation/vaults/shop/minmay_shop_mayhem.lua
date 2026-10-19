@@ -1,3 +1,4 @@
+-- Example: Exclude already generated unique weapons before writing the mayhem shop inventory.
 local directives = require("constants.vault_directives")
 
 local handler = {}
@@ -13,7 +14,7 @@ local stock = table.concat({
     "wand of iceblast",
 }, " | ")
 
--- Port of builder/shops.des:950-973.
+-- Exclude already generated unique weapons before writing the mayhem shop inventory.
 local function configure_mayhem_stock(api)
     local choices = stock
 

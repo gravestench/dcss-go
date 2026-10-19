@@ -7,6 +7,8 @@ local mutations = require("policy.mutations.effects.registry")
 
 local effect = {}
 
+-- Avoid consuming Magic at full MP or with no MP capacity, when restoration cannot change state.
+-- Example: a player at full MP cannot use a potion of Magic just to consume it.
 function effect.can_quaff(ctx, player)
     local magic = common.required(ctx, player, component.MAGIC)
 

@@ -1,8 +1,10 @@
+-- Example: Haste stretches an incoming Slow timer using integer rounding.
 local component = require("constants.component")
 local time = require("constants.time")
 
 local slow = {}
 
+-- Lengthen Slow duration under Haste using source integer rounding.
 local function haste_multiply(ctx, value)
     local numerator = value * 3
     local result = math.floor(numerator / 2)
@@ -14,6 +16,7 @@ local function haste_multiply(ctx, value)
     return result
 end
 
+-- Only a positive saved timer changes the player action delay.
 function slow.active(ctx, player)
     local state = ctx:get(player, component.PLAYER_SLOW)
 
@@ -52,6 +55,7 @@ function slow.apply(ctx, player, turns)
     return true
 end
 
+-- Slow duration follows elapsed aut even when haste changes how many actions fit inside it.
 function slow.tick(ctx, player, elapsed)
     local state = ctx:get(player, component.PLAYER_SLOW)
 

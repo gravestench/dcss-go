@@ -8,6 +8,7 @@ local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local flight = {}
 
+-- Form restrictions override innate and jewelry flight when deciding permanence.
 function flight.permanent(ctx, player)
     return forms.modifiers(ctx, player).flight ~= "forbid" and
         (effects.sum(ctx, player, capabilities.PERMANENT_FLIGHT) > 0 or
@@ -15,6 +16,7 @@ function flight.permanent(ctx, player)
                 jewellery_capabilities.PERMANENT_FLIGHT))
 end
 
+-- Monster flight may come from catalog flags instead of a player status component.
 local function has_flag(flags, wanted)
     for _, flag in ipairs(flags or {}) do
         if flag == wanted then
@@ -25,6 +27,7 @@ local function has_flag(flags, wanted)
     return false
 end
 
+-- Example: flight.active(ctx, actor) with active flight form -> true while its duration lasts
 -- Flight is a projection of saved actor state, never a second position type.
 -- The player can fly through a spell duration or a form; monsters may fly
 -- innately according to the committed monster catalog.
@@ -68,6 +71,7 @@ function flight.active(ctx, actor)
     return definition ~= nil and has_flag(definition.flags, "M_FLIES")
 end
 
+-- Tengu's flight perk only applies while flight is active, regardless of its source.
 function flight.tengu_perk(ctx, player)
     return flight.active(ctx, player) and
         effects.sum(ctx, player, capabilities.TENGU_FLIGHT_PERK) > 0

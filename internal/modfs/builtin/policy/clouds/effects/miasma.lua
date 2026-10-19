@@ -26,6 +26,7 @@ local exempt_holiness = {
     [holiness.NONLIVING] = true,
 }
 
+-- Species, form, Death's Door, and mutation immunity all short-circuit poison and slow application.
 local function player_immune(ctx, actor)
     if effects.sum(ctx, actor,
         capabilities.MIASMA_IMMUNITY) > 0 or
@@ -44,6 +45,7 @@ local function player_immune(ctx, actor)
             form.form_id == "statue" or form.form_id == "storm")
 end
 
+-- Miasma immunity can come from resistance or nonliving holiness.
 local function monster_immune(definition)
     for _, resistance in ipairs(definition.resistances or {}) do
         if resistance.id == resistances.MIASMA and
@@ -61,6 +63,7 @@ local function monster_immune(definition)
     return false
 end
 
+-- Player and monster immunity use different active-state checks.
 function miasma.immune(ctx, actor)
     if actor == ctx:player() then
         return player_immune(ctx, actor)
@@ -72,6 +75,7 @@ function miasma.immune(ctx, actor)
         monster_immune(catalog.get(categories.MONSTERS, state.kind_id)) or false
 end
 
+-- Player miasma adds poison unless resistance is complete; monsters receive one poison level and possible slow.
 function miasma.afflict(ctx, actor, source, stream, player_credit)
     if miasma.immune(ctx, actor) then
         return 0
@@ -109,6 +113,8 @@ function miasma.afflict(ctx, actor, source, stream, player_credit)
     return 0
 end
 
+-- Resolve the stored source ID at contact time so poison and kill credit survive cloud persistence.
+-- Example: miasma from the player carries player kill credit into poison application.
 function miasma.apply(ctx, actor, state)
     local source
 
@@ -120,6 +126,7 @@ function miasma.apply(ctx, actor, state)
         state.kill_category == attribution.PLAYER)
 end
 
+-- Monsters path around miasma because its poison and slow effects outlast contact.
 function miasma.avoid()
     return true
 end

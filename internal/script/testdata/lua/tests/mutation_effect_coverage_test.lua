@@ -1,9 +1,11 @@
+
 local effects = require("policy.mutations.effects.registry")
 local harness = require("tests.harness")
 local mutations = require("ids.mutations")
 
 local test = {}
 
+-- Active mutation ids must have a behavior policy or an explicit passive mapping.
 function test.run()
     local missing = effects.missing()
     local absent = {}

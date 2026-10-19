@@ -4,10 +4,14 @@ local registry = require("policy.mutations.effects.registry")
 
 local movement = {}
 
+-- Fast and slow movement levels feed action cost instead of mutating speed directly.
+-- Example: Fast Movement level one returns two cost-reduction units; Slow Movement forwards its full level.
 function movement.fast_reduction(level)
     return level > 0 and level + 1 or 0
 end
 
+-- Pass Slow movement's level to the movement owner, which combines it with
+-- other speed modifiers rather than altering turn cost here.
 function movement.slow_level(level)
     return level
 end

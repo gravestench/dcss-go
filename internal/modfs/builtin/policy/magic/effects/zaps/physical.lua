@@ -1,3 +1,4 @@
+-- Example: physical.zaps[spells.SPELL_SANDBLAST] supplies the Sandblast armour rule.
 local spells = require("ids.spells")
 local projectile = require("policy.magic.effects.zaps.projectile")
 

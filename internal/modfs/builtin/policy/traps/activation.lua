@@ -4,6 +4,7 @@ local vision = require("policy.character.vision")
 
 local activation = {}
 
+-- Trap entities are keyed by level and cell; an old-floor trap cannot trigger on arrival.
 local function at(ctx, position)
     for _, entity in ipairs(ctx:query({ component.WORLD_TRAP })) do
         local state = ctx:get(entity, component.WORLD_TRAP)
@@ -17,6 +18,8 @@ local function at(ctx, position)
     return nil, nil
 end
 
+-- Ignore unchanged positions and trigger only the trap reached after movement commits.
+-- Example: activation.enter(ctx, actor, before, after) triggers a trap only after a cell change.
 function activation.enter(ctx, actor, old_position, new_position)
     if old_position.level_id == new_position.level_id and
         old_position.x == new_position.x and

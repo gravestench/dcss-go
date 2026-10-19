@@ -1,3 +1,4 @@
+-- Example: Filtering unavailable species keeps the remaining menu entries in source order.
 local source = require("data.presentation")
 local group_names = require("constants.menu_groups")
 local catalog = require("policy.catalog")
@@ -24,6 +25,7 @@ local job_layout = {
     descending = false,
 }
 
+-- Presentation rows retain their authored order even when the available catalog is filtered.
 local function choices(layout, definitions)
     local groups = {}
     local descriptions = {}
@@ -61,6 +63,7 @@ local function choices(layout, definitions)
     end
 
     for index, group in ipairs(groups) do
+        -- Keep authored group order stable when sorting rows by the configured menu field.
         table.sort(group.rows, function(left, right)
             if layout.descending then
                 return left[layout.order_field] > right[layout.order_field]
@@ -88,14 +91,17 @@ local function choices(layout, definitions)
     return groups, descriptions
 end
 
+-- Project the authored species layout against selectable catalog entries.
 function menu.species_choices(definitions)
     return choices(species_layout, definitions)
 end
 
+-- Job recommendations and legality are computed for the current species choice.
 function menu.job_choices(definitions)
     return choices(job_layout, definitions)
 end
 
+-- The character menu returns fixed display rows independently of the currently offered choices.
 function menu.presentation()
     local species_groups, species_descriptions = menu.species_choices()
     local job_groups, job_descriptions = menu.job_choices()
@@ -110,6 +116,7 @@ function menu.presentation()
     }
 end
 
+-- Return the fixed menu layout through the registered policy command.
 function menu.run_presentation()
     return menu.presentation()
 end

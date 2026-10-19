@@ -3,6 +3,8 @@ local player_health = require("policy.combat.player_health")
 
 local brand = {}
 
+-- Example: brand.apply(ctx, hit) adds one physical bonus based on the weapon
+-- hit and skips elemental resistance entirely.
 function brand.apply(ctx, hit)
     if hit.damage_done == 0 then
         return

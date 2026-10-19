@@ -9,6 +9,7 @@ local brand = {
     requires_damage = true,
 }
 
+-- Read holiness and threat flags before deciding whether blood healing is possible.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -19,6 +20,7 @@ local function has(values, wanted)
     return false
 end
 
+-- Summons and inert firewood cannot supply the attacker with life on contact.
 local function susceptible(ctx, hit)
     local definition = hit.definition
     local living = has(definition.holiness, holiness.NATURAL) or
@@ -30,6 +32,8 @@ local function susceptible(ctx, hit)
         not ctx:has(hit.defender, component.SUMMON)
 end
 
+-- Example: brand.apply(ctx, hit, brands) with attacker at full HP -> no vampiric heal
+-- Heal only a wounded attacker after a susceptible nonsummoned target takes a valid hit.
 function brand.apply(ctx, hit, brands)
     local health = ctx:get(hit.attacker, "core.health")
 
@@ -39,7 +43,7 @@ function brand.apply(ctx, hit, brands)
         return
     end
 
-    -- Source: attack.cc:1428-1469. The 2/5 veto precedes the heal draw.
+    -- Source: attack.cc. The 2/5 veto precedes the heal draw.
     if roll.melee(ctx, 5) < 2 then
         return
     end

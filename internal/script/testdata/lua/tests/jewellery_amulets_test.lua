@@ -1,3 +1,6 @@
+-- Amulet bonuses depend on attunement and action windows; these tests cover
+-- equipment transitions, mutation restrictions, and saved transient state.
+
 local attunement = require("policy.jewellery.attunement")
 local capabilities = require("constants.jewellery_capabilities")
 local component = require("constants.component")
@@ -23,6 +26,8 @@ local mutation_records = require("policy.mutations.records")
 
 local test = {}
 
+-- Advance the equipment delay through production ticks so attunement checks
+-- observe the completed amulet state rather than an artificial shortcut.
 local function finish(ctx, player, delay)
     equipment.start(ctx, player, delay)
 
@@ -31,6 +36,7 @@ local function finish(ctx, player, delay)
     end
 end
 
+-- HP regeneration attunes only at full health and loses its saved state on removal.
 local function check_hp_attunement(ctx)
     local battle, player = fixture.player(ctx)
     local amulet = fixture.carry(ctx, player, ids.AMU_REGENERATION)
@@ -101,6 +107,7 @@ local function check_hp_attunement(ctx)
     ctx:remove(amulet, component.JEWELLERY_ATTUNEMENT)
 end
 
+-- Mana regeneration has its own full-resource gate and source rate.
 local function check_mp_attunement(ctx)
     local battle, player = fixture.player(ctx)
     local amulet = fixture.carry(ctx, player, ids.AMU_MANA_REGENERATION)
@@ -130,6 +137,8 @@ local function check_mp_attunement(ctx)
         "attuned mana amulet adds source MP regeneration")
 end
 
+-- Equip the guardian spirit amulet and inspect damage sharing, which must
+-- draw from current MP only while the saved equipment link exists.
 local function check_spirit_shield(ctx)
     local battle, player = fixture.player(ctx)
     local amulet = fixture.carry(ctx, player, ids.AMU_GUARDIAN_SPIRIT)
@@ -142,6 +151,8 @@ local function check_spirit_shield(ctx)
         "removing guardian spirit disables the shield")
 end
 
+-- Compare shield class before and after the amulet is equipped so reflection
+-- contributes through the shared defense calculation.
 local function check_reflection_shield(ctx)
     local battle, player = fixture.player(ctx)
     local amulet = fixture.carry(ctx, player, ids.AMU_REFLECTION)
@@ -153,6 +164,7 @@ local function check_reflection_shield(ctx)
         "reflection amulet adds source shield points")
 end
 
+-- Mutations that disable a resource prevent a full meter from attuning its amulet.
 local function check_regeneration_restrictions(ctx)
     local battle, player = fixture.player(ctx)
     local health_amulet = fixture.carry(ctx, player, ids.AMU_REGENERATION)
@@ -212,10 +224,13 @@ local function check_regeneration_restrictions(ctx)
         "mana amulet waits for full MP after HP casting ends")
 end
 
+-- Explicit wait, channelled wait, and movement each open the acrobat EV window.
 local function check_acrobat(ctx)
     local battle, player = fixture.player(ctx)
     local amulet = fixture.carry(ctx, player, ids.AMU_ACROBAT)
 
+    -- Keep the fixture cell passable so the amulet reaction is isolated from
+    -- terrain blocking and projectile collision rules.
     function battle.cell()
         return terrain.DNGN_FLOOR
     end
@@ -276,6 +291,8 @@ local function check_acrobat(ctx)
         "no orphaned saved acrobat state remains")
 end
 
+-- Exercise amulet attunement, restrictions, and combat effects together so
+-- their bonuses follow the same equipped-item lifecycle.
 function test.run(ctx)
     check_hp_attunement(ctx)
     check_mp_attunement(ctx)

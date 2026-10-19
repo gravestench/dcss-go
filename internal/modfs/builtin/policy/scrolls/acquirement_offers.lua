@@ -32,6 +32,7 @@ local class_choices = {
     classes.OBJ_BOOKS,
 }
 
+-- Remove armour or grasp-dependent classes when mutations forbid them, then shuffle remaining classes.
 local function classes_for(ctx, player)
     local choices = {}
     local no_armour = mutation_levels.effective(ctx, player,
@@ -56,6 +57,7 @@ local function classes_for(ctx, player)
     return choices
 end
 
+-- Reject a rolled class mismatch or unusable item before reserving a menu offer.
 local function compatible(ctx, player, species, rolled, class_id)
     local kind = catalog.get("items", rolled.kind_id)
 
@@ -83,6 +85,8 @@ local subtype_picker = {
     [classes.OBJ_BOOKS] = books.pick,
 }
 
+-- Rejected offers release a claimed unique artefact before retrying, so another class may still roll it.
+-- Retry incompatible rolls and release unique artefact claims so rejected items cannot consume uniques.
 local function roll_class(ctx, player, scroll, class_id, depth)
     local choice = ctx:get(player, component.PLAYER)
     local species = catalog.get("species", choice.species_id)
@@ -135,12 +139,15 @@ local function roll_class(ctx, player, scroll, class_id, depth)
         " could not generate compatible " .. class_id)
 end
 
+-- Create the rolled item under scroll reservation; it must not appear on the floor before choice.
 local function reserve(ctx, scroll, rolled)
     return generation.create(ctx, rolled, {
         reservation = scroll,
     })
 end
 
+-- Example: reading an acquirement scroll reserves three class offers plus gold as real item entities.
+-- Generate three shuffled class offers and a gold fallback, preserving real item identities for the menu.
 function offers.generate(ctx, player, scroll)
     local position = ctx:get(player, component.POSITION)
     local state = {
@@ -172,6 +179,7 @@ function offers.generate(ctx, player, scroll)
     return state
 end
 
+-- Format the reserved entity from artefact name or quantity and pluses for a stable menu label.
 local function label(ctx, entity)
     local item = ctx:get(entity, component.ITEM)
 
@@ -195,6 +203,7 @@ local function label(ctx, entity)
     return label
 end
 
+-- Use one-based offer indices as menu IDs while retaining reserved entity IDs in state.
 function offers.options(ctx, _, state)
     local options = {}
 
@@ -208,6 +217,7 @@ function offers.options(ctx, _, state)
     return options
 end
 
+-- Release an unchosen unique claim before destroying its reserved item.
 local function retire(ctx, player, entity)
     local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
 
@@ -218,6 +228,7 @@ local function retire(ctx, player, entity)
     ctx:destroy(entity)
 end
 
+-- Destroy every unchosen offer, then unreserve and identify the selected item at the player position.
 function offers.grant(ctx, player, state, index)
     local selected = state.offer_ids[index]
     local reservation = selected and ctx:get(selected, component.RESERVED_BY)

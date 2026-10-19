@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.summon_servitor",
     version = 1,
+    -- The servitor keeps its chosen spell and rolled hit dice instead of selecting a new spell each turn.
     fields = {
         spell_id = {
             type = "string",

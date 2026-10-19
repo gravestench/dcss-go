@@ -18,6 +18,7 @@ local unsafe_floor = {
     [terrain.DNGN_LAVA] = true,
 }
 
+-- Exclude insubstantial targets before attaching a physical clutch state.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -28,6 +29,7 @@ local function has(values, wanted)
     return false
 end
 
+-- Use stochastic rounding for grip power so low cast power still scales smoothly.
 local function divide(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -39,6 +41,8 @@ local function divide(ctx, numerator, denominator)
     return quotient
 end
 
+-- Example: an eligible monster struck by Vile Clutch becomes restrained and
+-- takes increasing constriction damage after later player actions.
 local function eligible(ctx, target, definition)
     local position = ctx:get(target, component.POSITION)
     local feature = ctx:cell(position.level_id, position.x, position.y)
@@ -49,6 +53,7 @@ local function eligible(ctx, target, definition)
         not ctx:has(target, component.MONSTER_VILE_CLUTCH)
 end
 
+-- Trace the aimed ray and attach restraint only to eligible actors it contacts.
 function clutch.cast(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,
@@ -80,12 +85,14 @@ function clutch.cast(ctx, player, intent, spell, power)
     end
 end
 
+-- A zero-duration component is no longer a live restraint even before cleanup removes it.
 function clutch.restrained(ctx, monster)
     local state = ctx:get(monster, component.MONSTER_VILE_CLUTCH)
 
     return state ~= nil and state.remaining_aut > 0
 end
 
+-- Each escape attempt increases saved pressure against a fresh melee roll.
 function clutch.escape(ctx, monster)
     local state = ctx:get(monster, component.MONSTER_VILE_CLUTCH)
 
@@ -107,6 +114,7 @@ function clutch.escape(ctx, monster)
     return false
 end
 
+-- Decay restraint in aut and remove expired state before the next escape or damage check.
 function clutch.tick_monster(ctx, monster)
     local state = ctx:get(monster, component.MONSTER_VILE_CLUTCH)
 
@@ -125,6 +133,8 @@ function clutch.tick_monster(ctx, monster)
     end
 end
 
+-- Process held monsters after player actions; armour reduces each damage roll,
+-- while elapsed AUT advances the saved grip ramp for the next action.
 function clutch.damage_player_action(ctx, player, aut)
     local origin = ctx:get(player, component.POSITION)
 

@@ -1,4 +1,6 @@
 -- DCSS COLOURS uses IRGB order; the terminal owns ANSI conversion.
+-- Example: a view writes fg = colors.light_red, while a content color name
+-- uses colors.source["LIGHTRED"]. Keeping both paths here avoids mismatches.
 local colors = {
     black = 0,
     blue = 1,

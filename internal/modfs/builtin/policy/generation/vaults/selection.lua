@@ -1,12 +1,15 @@
+-- Example: An arrival vault with zero weight is excluded despite its arrival tag.
 local categories = require("constants.catalog")
 local depth = require("policy.generation.vaults.depth")
 
 local selection = {}
 
+-- Arrival selection requires both the arrival tag and positive source weight.
 local function eligible(definition)
     return definition.tags and definition.tags.arrival and definition.weight > 0
 end
 
+-- A single weighted draw selects among already eligible definitions.
 function selection.choose(random, definitions)
     local total = 0
 
@@ -35,10 +38,11 @@ function selection.choose(random, definitions)
     error("arrival vault weight selection exceeded the catalog")
 end
 
+-- Filter registered vault IDs before weighted arrival selection.
 function selection.eligible_ids()
     local result = {}
 
-    for _, id in ipairs(register.ordered_ids(categories.VAULTS)) do
+    for _, id in ipairs(register.ids(categories.VAULTS)) do
         local definition = register.get(categories.VAULTS, id)
 
         if eligible(definition) then
@@ -49,6 +53,7 @@ function selection.eligible_ids()
     return result
 end
 
+-- Load only eligible definitions in catalog order for the arrival draw.
 function selection.choose_catalog(random)
     local definitions = {}
 
@@ -59,11 +64,12 @@ function selection.choose_catalog(random)
     return selection.choose(random, definitions)
 end
 
+-- Tag selection filters branch, depth, and chance before weighting a map.
 local function candidates_for_tag(random, tag, context)
     local candidates = {}
     local total = 0
 
-    for _, id in ipairs(register.ordered_ids(categories.VAULTS)) do
+    for _, id in ipairs(register.ids(categories.VAULTS)) do
         local definition = register.get(categories.VAULTS, id)
 
         if definition.tags[tag] and definition.weight > 0 and
@@ -88,6 +94,7 @@ end
 
 -- A branch can have no eligible vaults for a tag. Callers can then continue
 -- normal level generation without consuming another weighted-choice draw.
+-- Filter by tag and depth before weighted choice; an empty pool leaves generation on its ordinary path.
 function selection.choose_tag(random, tag, context)
     local candidates, total = candidates_for_tag(random, tag, context)
 

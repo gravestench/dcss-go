@@ -39,6 +39,8 @@ local bolt = {
     element = "MR_RES_FIRE",
 }
 
+-- Example: A visible monster on one of eight rays makes Starburst targetable.
+-- Trace all eight fixed directions before offering the cast, matching the later beam geometry.
 function starburst.can_target(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -62,6 +64,7 @@ function starburst.can_target(ctx, player, spell)
     return false
 end
 
+-- Shuffle ray direction order before tracing so simultaneous beams consume RNG consistently.
 function starburst.resolve(ctx, player, _, spell, power)
     local order = {}
 

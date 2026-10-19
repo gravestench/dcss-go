@@ -2,7 +2,8 @@ local roll = require("policy.combat.roll")
 
 local drain = {}
 
--- ouch.cc:378-413: permanent max HP is untouched; XP can later recover
+-- Example: drain.apply(ctx, player, power, stream) with live player -> temporary max-HP drain component
+-- ouch.cc: permanent max HP is untouched; XP can later recover
 -- this temporary loss through the saved status.drain component.
 function drain.apply(ctx, player, power, stream)
     local health = ctx:get(player, "core.health")

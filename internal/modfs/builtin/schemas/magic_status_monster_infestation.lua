@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.monster_infestation",
     version = 1,
+    -- The infestation mark remains on its victim until expiry or death-driven spawn resolution.
     fields = {
         remaining_aut = {
             type = "int64",

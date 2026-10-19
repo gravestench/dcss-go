@@ -1,3 +1,4 @@
+-- Example: Mana Link can redirect recovery when MP is empty and HP is below maximum.
 local capabilities = require("constants.mutation_capabilities")
 local mutation_effects = require("policy.mutations.effects.registry")
 local component = require("constants.component")
@@ -45,6 +46,7 @@ end
 
 -- Source: player.cc:regeneration_is_inhibited. A nearby, visible, hostile
 -- monster stops the first level of inhibited regeneration.
+-- Nearby hostile visibility suppresses recovery where the source rule requires safety.
 local function threatening_monster_visible(ctx, player)
     local origin = ctx:get(player, component.POSITION)
 
@@ -75,6 +77,7 @@ local function threatening_monster_visible(ctx, player)
     return false
 end
 
+-- Visible threats gate natural HP recovery here after the base regeneration rate is calculated.
 function regeneration.hp_allowed(ctx, player)
     if mutation_effects.sum(ctx, player,
         capabilities.HP_REGEN_FORBIDDEN) > 0 then
@@ -91,6 +94,7 @@ end
 
 -- Source: player-reacts.cc:regen_hp diverts each HP pip to MP when Mana
 -- Link is active and a current-MP-in-max-MP chance does not succeed.
+-- Some effects redirect an HP regeneration point into MP while the magic pool is deficient.
 function regeneration.hp_restores_magic(ctx, player, magic)
     if mutation_effects.sum(ctx, player,
         capabilities.MANA_LINK) == 0 or

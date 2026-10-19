@@ -3,6 +3,7 @@ local cloud_danger = require("policy.clouds.danger")
 
 local route = {}
 
+-- Reduce target deltas to one-cell steps without changing direction.
 local function sign(value)
     if value < 0 then
         return -1
@@ -15,6 +16,7 @@ local function sign(value)
     return 0
 end
 
+-- Package an attack only when the step reaches the target actor.
 local function step_intent(x, y, target, dx, dy, attack_goal)
     if attack_goal and x == target.x and y == target.y then
         return {
@@ -31,6 +33,7 @@ local function step_intent(x, y, target, dx, dy, attack_goal)
     }
 end
 
+-- Reject habitat and occupancy violations before offering a detour.
 local function safe_move(ctx, entity, position, x, y)
     if not ctx:walkable(position.level_id, x, y) or
         ctx:actor_at(position.level_id, x, y) then
@@ -44,6 +47,7 @@ local function safe_move(ctx, entity, position, x, y)
     }, false)
 end
 
+-- Try the direct route first so open corridors avoid detour RNG.
 local function direct_intent(ctx, entity, state, position,
     target, attack_goal)
     local dx = sign(state.target_x - position.x)
@@ -80,6 +84,7 @@ local function direct_intent(ctx, entity, state, position,
     return nil
 end
 
+-- A detour is accepted only after the direct step has failed its safety checks.
 local function safe_detour(ctx, entity, position, target, attack_goal)
     local best
     local best_distance
@@ -105,6 +110,7 @@ local function safe_detour(ctx, entity, position, target, attack_goal)
     return best or { kind = 6 }
 end
 
+-- Permit pathfinding into an occupied goal only when it is the intended target or followed leader.
 local function goal_actor(ctx, entity, state, position, target,
     target_entity)
     if state.target_x == target.x and state.target_y == target.y then
@@ -121,6 +127,8 @@ local function goal_actor(ctx, entity, state, position, target,
     return nil
 end
 
+-- Movement candidates are filtered for occupancy and walkability before the AI commits to a route step.
+-- Example: route.follow(ctx, monster, state, pos, target, player) picks a safe pursuit step.
 function route.follow(ctx, entity, state, position, target, target_entity,
     attack_goal)
     if attack_goal == nil then

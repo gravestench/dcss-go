@@ -1,3 +1,4 @@
+-- Example: A heavy body armour penalty is applied after its stealth ego bonus.
 local attributes = require("policy.character.attributes")
 local armour_egos = require("constants.armour_egos")
 local armour_flags = require("constants.armour_flags")
@@ -22,6 +23,7 @@ local armour_slots = {
     boots = true,
 }
 
+-- Worn armour egos contribute before the body encumbrance deduction.
 local function armour_bonus(worn)
     local bonus = 0
 
@@ -47,6 +49,7 @@ local function armour_bonus(worn)
     return bonus
 end
 
+-- Body armour evasion and sturdiness determine the stealth encumbrance penalty.
 local function body_penalty(ctx, player)
     local body = equipment.worn(ctx, player, { body = true }).body
 
@@ -62,6 +65,7 @@ local function body_penalty(ctx, player)
     return math.floor(2 * encumbrance * encumbrance / 3)
 end
 
+-- Combine dexterity and trained Stealth before armour, water, and visibility penalties are applied.
 function stealth.score(ctx, player)
     if effects.sum(ctx, player, capabilities.STEALTH_FORBIDDEN) > 0 then
         return 0

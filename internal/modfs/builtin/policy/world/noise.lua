@@ -34,10 +34,12 @@ local statues = {
     [terrain.DNGN_ORCISH_IDOL] = true,
 }
 
+-- Use one cell key for propagation and later hearing lookup.
 local function key(x, y)
     return x .. "," .. y
 end
 
+-- Walls and doors reduce the propagated noise field before monsters compare it with their hearing state.
 local function attenuation(feature)
     if not feature or feature == terrain.DNGN_PERMAROCK_WALL or
         feature == terrain.DNGN_CLEAR_PERMAROCK_WALL then
@@ -63,6 +65,7 @@ local function attenuation(feature)
     return base_attenuation
 end
 
+-- Sharp reversals cost more intensity so sound favours straighter corridors.
 local function turn_angle(cell, dx, dy)
     if cell.dx == 0 and cell.dy == 0 then
         return 0
@@ -75,6 +78,7 @@ local function turn_angle(cell, dx, dy)
     return math.abs(cell.dx - dx) + math.abs(cell.dy - dy)
 end
 
+-- Requeue only a louder path to a cell; weaker revisits cannot improve hearing.
 local function spread(ctx, level_id, cells, queue, current)
     local cost = attenuation(ctx:cell(level_id, current.x, current.y))
 
@@ -115,6 +119,7 @@ local function spread(ctx, level_id, cells, queue, current)
     end
 end
 
+-- Dampen a visible player-side source before propagation so every listener sees one field.
 function noise.adjust(ctx, origin, loudness)
     if loudness <= 0 then
         return 0
@@ -135,6 +140,7 @@ function noise.adjust(ctx, origin, loudness)
         (loudness % 2 > ctx:random("ai", 2) and 1 or 0)
 end
 
+-- Expand intensity through terrain with a queue until no audible improvement remains.
 function noise.propagate(ctx, origin, loudness)
     local cells = {}
 
@@ -167,17 +173,20 @@ function noise.propagate(ctx, origin, loudness)
     return cells
 end
 
+-- Missing cells are inaudible, avoiding a second terrain traversal for each monster.
 function noise.at(cells, x, y)
     local cell = cells[key(x, y)]
 
     return cell and cell.intensity or 0
 end
 
+-- Shout mutations add two loudness units per effective level.
 function noise.shout_volume(ctx, player)
     return 12 + 2 * effects.sum(ctx, player,
         capabilities.SHOUT_LEVEL)
 end
 
+-- A full alert records the noise origin and a finite pursuit deadline.
 local function alert(ctx, monster, state, origin)
     state.behavior = "seek"
     state.target_x = origin.x
@@ -186,6 +195,7 @@ local function alert(ctx, monster, state, origin)
     ctx:set(monster, component.AI, state)
 end
 
+-- A wandering monster may investigate sound without changing to seek behaviour.
 local function disturb(ctx, monster, state, origin)
     if state.behavior ~= "wander" then
         return
@@ -196,6 +206,7 @@ local function disturb(ctx, monster, state, origin)
     ctx:set(monster, component.AI, state)
 end
 
+-- Apply one propagated field to live monsters, excluding its producer.
 local function heard_by_monsters(ctx, origin, cells, producer)
     local player = ctx:player()
     local player_position = ctx:get(player, component.POSITION)
@@ -239,6 +250,8 @@ local function heard_by_monsters(ctx, origin, cells, producer)
     end
 end
 
+-- Suppress sound inside Silence before propagating one field to listeners and wake-up rules.
+-- Example: a shout builds one noise field, then wakes or redirects monsters reached by that field.
 function noise.emit(ctx, origin, loudness, producer)
     local player = ctx:player()
     local player_position = ctx:get(player, component.POSITION)

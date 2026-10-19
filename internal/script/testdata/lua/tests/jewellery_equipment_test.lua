@@ -1,3 +1,6 @@
+-- Jewellery equipment shares wear intents with armour but has species-specific
+-- ring slots, multi-turn swaps, and save invariants for carried worn items.
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local classes = require("ids.object_classes")
@@ -24,6 +27,7 @@ local test = {}
 local make_player = fixture.player
 local carry = fixture.carry
 
+-- A modded plus-bearing ring must pass the same item schema as source rings.
 local function check_catalog()
     local active = 0
     local rings = 0
@@ -78,6 +82,7 @@ local function check_catalog()
     }, modded), "a mod-added enchanted ring can save its plus")
 end
 
+-- Full ring slots remove the old ring before the saved delay equips its replacement.
 local function check_commands(ctx)
     local battle, player = make_player(ctx)
     local ring = carry(ctx, player, ids.RING_PROTECTION)
@@ -217,6 +222,7 @@ local function check_commands(ctx)
         "amulet removal delay clears its equipment relation")
 end
 
+-- Missing Hand removes one usable slot for both two-ring and eight-ring species.
 local function check_species_slots(ctx)
     local human, player = make_player(ctx)
 
@@ -240,6 +246,7 @@ local function check_species_slots(ctx)
         "missing tentacle removes the eighth ring slot")
 end
 
+-- Every active jewellery definition must enter the same ECS equipment path.
 local function check_all_active_intents(ctx)
     for _, definition in ipairs(catalog.all(categories.ITEMS)) do
         if definition.class == classes.OBJ_JEWELLERY and
@@ -256,6 +263,7 @@ local function check_all_active_intents(ctx)
     end
 end
 
+-- A mutation gained during a pending swap can invalidate its target slot.
 local function check_interrupted_swap(ctx)
     local battle, player = make_player(ctx)
     local old = carry(ctx, player, ids.RING_PROTECTION)
@@ -286,6 +294,7 @@ local function check_interrupted_swap(ctx)
         "a cancelled swap clears its delay")
 end
 
+-- The terminal's P and R keys must route into the intents tested above.
 local function check_terminal()
     harness.equal(play_input.route({ key = "P" }).screen, "put_on",
         "P opens the jewellery put-on screen")
@@ -319,6 +328,8 @@ local function check_terminal()
         "R selects the generic remove command")
 end
 
+-- Run catalog, command, slot, and intent checks together because jewellery
+-- use is valid only when all four agree on equipability.
 function test.run(ctx)
     check_catalog()
     check_commands(ctx)

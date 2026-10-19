@@ -9,6 +9,8 @@ local generated_id = "generated-dungeon-basic-v1"
 
 local module = {}
 
+-- Validate scenario ownership and level monster budgets before accepting restored level data.
+-- Example: module.run(nil, { scenario_id = scenario_id, levels = levels }) checks branch ownership.
 function module.run(_, input)
     local scenario_id = input.scenario_id
     local levels = input.levels

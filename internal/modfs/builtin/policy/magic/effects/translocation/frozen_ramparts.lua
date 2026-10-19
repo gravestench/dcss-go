@@ -23,6 +23,8 @@ local walls = {
     [terrain_ids.DNGN_SLIMY_WALL] = true,
 }
 
+-- Example: ramparts.prepare(ctx, player, spell) requires reachable walls near
+-- the caster before it spends a turn creating frozen wall markers.
 local function find_walls(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -48,6 +50,8 @@ local function find_walls(ctx, player, spell)
     return found
 end
 
+-- Movement and timeout share cleanup so no frozen marker remains active after
+-- the caster leaves its original cell.
 function ramparts.end_effect(ctx, player, moved)
     for _, marker in ipairs(ctx:query({ component.FROZEN_WALL })) do
         local state = ctx:get(marker, component.FROZEN_WALL)
@@ -63,6 +67,8 @@ function ramparts.end_effect(ctx, player, moved)
         "The frozen ramparts melt away.")
 end
 
+-- A monster takes cold damage only while adjacent to one of this caster's
+-- active frozen walls.
 local function icy_neighbor(ctx, player, position)
     for _, marker in ipairs(ctx:query({ component.FROZEN_WALL })) do
         local wall = ctx:get(marker, component.FROZEN_WALL)
@@ -77,6 +83,7 @@ local function icy_neighbor(ctx, player, position)
     return false
 end
 
+-- Frozen wall markers damage adjacent monsters while the caster's rampart duration remains active.
 function ramparts.tick(ctx, actor, aut)
     local player = ctx:player()
     local state = ctx:get(player, component.FROZEN_RAMPARTS)
@@ -141,6 +148,7 @@ function ramparts.prepare(ctx, player, spell)
     end
 end
 
+-- Save the caster's origin and one duration for every wall marker so movement ends the whole effect.
 function ramparts.resolve(ctx, player, _, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local lower = 40 + power

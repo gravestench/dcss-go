@@ -1,3 +1,5 @@
+-- Fire retains source console appearance.
+
 local harness = require("tests.harness")
 local colors = require("policy.presentation.colors")
 local clouds = require("policy.presentation.clouds")
@@ -5,6 +7,7 @@ local ids = require("ids.clouds")
 
 local test = {}
 
+-- Compare catalog presentation for fire, acid, and rain to catch display metadata drift.
 function test.run()
     local fire = clouds.get(ids.CLOUD_FIRE)
     local acid = clouds.get(ids.CLOUD_ACID)

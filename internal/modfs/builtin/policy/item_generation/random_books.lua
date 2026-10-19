@@ -9,7 +9,7 @@ local names = require("policy.item_generation.artefacts.names")
 
 local random_books = {}
 
--- Source: crawl-ref/source/spl-util.h:16-30. The source iterates this
+-- Source: crawl-ref/source/spl-util.h. The source iterates this
 -- bitfield order when selecting a random discipline.
 local school_order = {
     schools.CONJURATION,
@@ -25,6 +25,7 @@ local school_order = {
     schools.AIR,
 }
 
+-- Rebuild the defined player-book pool after overlays, then sort by numeric spell ID for seeded draws.
 local function available_spells()
     local selected = {}
 
@@ -44,6 +45,7 @@ local function available_spells()
         end
     end
 
+    -- Numeric spell ID order keeps equivalent effective catalogs on the same seeded candidate sequence.
     table.sort(ordered, function(left, right)
         return left.numeric_id < right.numeric_id
     end)
@@ -51,6 +53,7 @@ local function available_spells()
     return ordered
 end
 
+-- A themed book accepts either selected discipline without counting a spell twice.
 local function has_school(spell, first, second)
     for _, school in ipairs(spell.schools or {}) do
         if school == first or school == second then
@@ -61,8 +64,9 @@ local function has_school(spell, first, second)
     return false
 end
 
+-- Fill a themed book without repeats while capping the sum of spell levels at twenty.
 local function themed_spells(ctx, request)
-    -- Source: crawl-ref/source/randbook.cc:27, 216-301.
+    -- Source: crawl-ref/source/randbook.cc, 216-301.
     local count = request.numspells or source.average(ctx, 4, 3) + 2
     local first = request.disc or
         school_order[ctx:random(streams.ITEM_GENERATION, #school_order) + 1]
@@ -102,9 +106,10 @@ local function themed_spells(ctx, request)
     return spells, first .. "/" .. second, 0
 end
 
+-- Choose one depth-scaled spell level, then remove each selected spell from its candidate pool.
 local function level_spells(ctx, request)
-    -- Source: crawl-ref/source/makeitem.cc:1451-1454 and
-    -- randbook.cc:517-641. Ordinary generated books use all player-book
+    -- Source: crawl-ref/source/makeitem.cc and
+    -- randbook.cc. Ordinary generated books use all player-book
     -- spells at the chosen level, without acquirement's known-spell filter.
     local maximum = math.min(9, math.max(1, math.floor(request.depth / 3)))
     local level = request.acquirement_level or source.between(ctx, 1,
@@ -139,6 +144,8 @@ local function level_spells(ctx, request)
     return spells, "", level
 end
 
+-- Example: random_books.roll(ctx, book_kind, request, result) stores a generated spell list.
+-- Route themed and level books to separate selectors, then persist spells and a seeded artefact name together.
 function random_books.roll(ctx, definition, request, result)
     local spells
     local theme

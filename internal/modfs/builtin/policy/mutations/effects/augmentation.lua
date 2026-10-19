@@ -7,6 +7,7 @@ local augmentation = {}
 
 -- Source: mutation.cc:augmentation_amount counts thresholds from current
 -- HP. Each tier is lost as health drops; spell and melee rules share it.
+-- Example: low HP can remove an Augmentation tier without removing the mutation record.
 function augmentation.amount(level, ctx, player)
     local health = ctx:get(player, component.HEALTH)
 

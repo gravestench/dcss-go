@@ -6,6 +6,7 @@ local quality = require("constants.vault_item_quality")
 
 local policy = {}
 
+-- Explicit gold remains requestable even when ordinary random mode is unavailable.
 function policy.eligible(_, definition, request)
     if definition.class ~= classes.OBJ_GOLD then
         return false
@@ -15,14 +16,17 @@ function policy.eligible(_, definition, request)
         request.kind_id == definition.id
 end
 
+-- Gold contributes a single candidate to its class pool.
 function policy.weight()
     return 1
 end
 
+-- Example: policy.roll(ctx, gold_kind, { purpose = purpose.ACQUIREMENT }, result) grants at least 200 gold.
+-- Resolve acquirement first, then quality, so their distinct source quantity bands never overlap.
 function policy.roll(ctx, _, request, result)
-    -- Source: crawl-ref/source/makeitem.cc:1901-1911.
+    -- Source: crawl-ref/source/makeitem.cc.
     if request.purpose == purpose.ACQUIREMENT then
-        -- Source: crawl-ref/source/acquire.cc:1246.
+        -- Source: crawl-ref/source/acquire.cc.
         result.quantity = 200 + 2 * ctx:random(streams.ITEM_GENERATION, 601)
 
         return

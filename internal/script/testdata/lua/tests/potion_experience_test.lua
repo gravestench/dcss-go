@@ -1,3 +1,5 @@
+-- Potion raises the player to the next level threshold.
+
 local harness = require("tests.harness")
 local items = require("ids.items")
 local potions = require("policy.potions")
@@ -5,6 +7,8 @@ local experience = require("policy.potions.experience")
 
 local test = {}
 
+-- Compare experience-potion adjustments across skill totals and levels,
+-- ensuring the registered potion uses the source progression formula.
 function test.run(ctx)
     harness.truthy(potions.get(items.POT_EXPERIENCE),
         "experience potion is registered")

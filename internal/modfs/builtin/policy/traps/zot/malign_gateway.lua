@@ -8,6 +8,8 @@ local terrain = require("policy.magic.effects.summons.terrain")
 
 local effect = {}
 
+-- Open a portal only at a legal gateway cell and save a marker for later expiry.
+-- Example: effect.apply(ctx, player) opens a gateway and stores its summoning marker.
 function effect.apply(ctx, player)
     local position = ctx:get(player, component.POSITION)
     local points = terrain.gateway_points(ctx, position)

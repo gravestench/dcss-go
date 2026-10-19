@@ -1,3 +1,5 @@
+-- Mod-added trap is discovered.
+
 local categories = require("constants.catalog")
 local harness = require("tests.harness")
 local ids = require("ids.custom_traps")
@@ -5,6 +7,8 @@ local trap_catalog = require("policy.traps.catalog")
 
 local test = {}
 
+-- Find the new trap through registration, validate it, and read its content
+-- to prove discovery and schema checks accept the same mod definition.
 function test.run()
     local definitions = register.ids(categories.TRAPS)
     local found = false

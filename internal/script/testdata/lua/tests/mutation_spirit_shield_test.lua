@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local armour_egos = require("constants.armour_egos")
 local damage_causes = require("constants.damage_causes")
@@ -12,6 +13,7 @@ local jewellery_fixture = require("tests.fixtures.jewellery")
 
 local test = {}
 
+-- Give Spirit Shield a controlled HP and MP budget for damage splitting.
 local function player_with_vitals(ctx, hp, mp)
     local _, player = jewellery_fixture.player(ctx)
 
@@ -27,9 +29,11 @@ local function player_with_vitals(ctx, hp, mp)
     return player
 end
 
+-- Bind spirit shield player lookup to this owner while preserving live ECS component reads.
 local function player_context(ctx, player)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to spirit shield fixture actor so player-only branches execute on that entity.
     function proxy.player()
         return player
     end
@@ -37,6 +41,7 @@ local function player_context(ctx, player)
     return proxy
 end
 
+-- Equip the amulet source separately from the mutation source of Spirit Shield.
 local function equip_guardian_spirit(ctx, player)
     local amulet = ctx:create()
 
@@ -55,6 +60,7 @@ local function equip_guardian_spirit(ctx, player)
     })
 end
 
+-- Equip armour with the spirit ego to compare source stacking.
 local function equip_spirit_armour(ctx, player)
     local robe = ctx:create()
 
@@ -73,6 +79,7 @@ local function equip_spirit_armour(ctx, player)
     })
 end
 
+-- Guardian spirit pays the MP needed to preserve one HP.
 function test.run(ctx)
     local mutated = player_with_vitals(ctx, 10, 6)
     local battle = player_context(ctx, mutated)
@@ -99,6 +106,7 @@ function test.run(ctx)
 
     local surviving = health_policy.damage(protected_battle, protected, 6)
 
+    -- Rounding favors the one-HP survival floor when enough MP can absorb the remainder.
     harness.equal(surviving.current, 1,
         "guardian spirit prevents a roundoff death when MP can cover it")
     harness.equal(ctx:get(protected, component.MAGIC).current, 2,
@@ -112,6 +120,7 @@ function test.run(ctx)
     local after_poison = health_policy.damage(poisoned_battle, poisoned,
         8, false, nil, damage_causes.POISON)
 
+    -- Damage cause gates are tested before splitting ordinary damage between HP and MP.
     harness.equal(after_poison.current, 2,
         "poison bypasses spirit shielding")
     harness.equal(ctx:get(poisoned, component.MAGIC).current, 6,

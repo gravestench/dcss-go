@@ -1,5 +1,5 @@
--- Generated from a committed DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Menu groups preserve the authored character choice grouping shown on the start screen.
+
 -- Source: crawl-ref/source/species-groups.h
 -- Source: crawl-ref/source/newgame.cc
 

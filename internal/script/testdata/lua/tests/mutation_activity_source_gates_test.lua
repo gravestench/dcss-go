@@ -1,3 +1,4 @@
+
 local branches = require("ids.branches")
 local component = require("constants.component")
 local harness = require("tests.harness")
@@ -9,6 +10,7 @@ local species = require("ids.species")
 
 local test = {}
 
+-- Seed activity source gates owner components once so each branch changes only the mutation under test.
 local function player(ctx, species_id)
     local owner = ctx:create()
 
@@ -20,6 +22,7 @@ local function player(ctx, species_id)
     return owner
 end
 
+-- Apply a timed form so suppressed mutation levels can be checked.
 local function in_form(ctx, owner, form_id)
     ctx:add(owner, component.PLAYER_FORM, {
         form_id = form_id,
@@ -28,6 +31,7 @@ local function in_form(ctx, owner, form_id)
     })
 end
 
+-- Lifeless undead cannot use Berserk mutation.
 function test.run(ctx)
     local dragon_cases = {
         {
@@ -58,6 +62,7 @@ function test.run(ctx)
         records.grant_innate(ctx, owner, case.mutation_id, 1)
         in_form(ctx, owner, "dragon")
 
+        -- A matching draconian form preserves the innate trait through transformation.
         harness.equal(levels.effective(ctx, owner, case.mutation_id), 1,
             "matching draconian trait remains active in Dragon Form")
     end
@@ -81,6 +86,7 @@ function test.run(ctx)
     local formicid = player(ctx, species.SP_FORMICID)
 
     records.grant_acquired(ctx, formicid, mutations.MUT_TELEPORT, 1)
+    -- Source suppression gates are tested independently of mutation ownership.
     harness.equal(levels.effective(ctx, formicid,
         mutations.MUT_TELEPORT), 0,
         "permanent stasis suppresses Teleportitis")
@@ -96,6 +102,7 @@ function test.run(ctx)
 
     local abyss_context = setmetatable({}, { __index = ctx })
 
+    -- Place the actor in Abyss to test branch-gated mutation activity.
     function abyss_context.level_branch()
         return branches.BRANCH_ABYSS
     end

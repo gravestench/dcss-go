@@ -7,6 +7,8 @@ local power = require("policy.combat.monster_beams.power")
 
 local mindburst = {}
 
+-- Example: mindburst.viable(ctx, nil, defender) with brainless monster -> false viability
+-- Brainless monsters cannot receive mental damage, while players remain valid targets.
 function mindburst.viable(ctx, _, defender)
     if ctx:has(defender, component.PLAYER) then
         return true
@@ -26,6 +28,7 @@ function mindburst.amount(ctx, caster, _, profile)
     return calculators.roll_damage(ctx, dice)
 end
 
+-- Roll brain-targeted damage only after viability and resistance checks succeed.
 function mindburst.apply(ctx, caster, defender, profile)
     local amount = mindburst.amount(ctx, caster, defender, profile)
 

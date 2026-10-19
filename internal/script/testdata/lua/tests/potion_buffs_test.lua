@@ -1,3 +1,5 @@
+-- Resistance expires after its saved action time.
+
 local items = require("ids.items")
 local jobs = require("ids.jobs")
 local species = require("ids.species")
@@ -15,6 +17,8 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Compare several buff potions on one ECS player to verify each effect writes
+-- the expected duration and resource state through the shared registry.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -24,6 +28,7 @@ function test.run(ctx)
         name = "Potion resistance test",
     })
 
+    -- Buff duration is stored in AUT and consumed by the normal status tick.
     local resistance = potions.get(items.POT_RESISTANCE)
 
     harness.equal(type(resistance), "table",
@@ -50,6 +55,7 @@ function test.run(ctx)
         resistance_ids.FIRE), before,
         "expiration removes live fire resistance")
 
+    -- Flight changes the live movement capability, not merely the potion flag.
     local flight_potion = potions.get(items.POT_FLIGHT)
 
     harness.equal(type(flight_potion), "table",
@@ -64,6 +70,7 @@ function test.run(ctx)
     harness.truthy(flight.active(ctx, player),
         "flight potion changes the live movement capability")
 
+    -- Brilliance reduces spell cost and raises enhancement while active.
     local brilliance = potions.get(items.POT_BRILLIANCE)
 
     harness.equal(type(brilliance), "table",
@@ -89,6 +96,7 @@ function test.run(ctx)
         max = 10,
     })
 
+    -- Ambrosia deliberately combines confusion with HP and MP recovery.
     local ambrosia = potions.get(items.POT_AMBROSIA)
 
     harness.equal(type(ambrosia), "table",

@@ -12,6 +12,8 @@ local profile = catalog.get(categories.MONSTER_BEAMS,
 
 hurl_sludge.before_damage = poison.before_damage
 
+-- Example: hurl_sludge.plan(ctx, caster, foe) with reachable aim -> saved aim for later toxic-bog placement
+-- Chooses the endpoint for a temporary toxic bog.
 function hurl_sludge.plan(ctx, caster, foe)
     return beam.plan(ctx, caster, foe, profile)
 end
@@ -33,6 +35,7 @@ function hurl_sludge.after_endpoint(ctx, caster, _, _, endpoint)
         terrain.DNGN_TOXIC_BOG, duration)
 end
 
+-- The endpoint hook leaves temporary bog only where terrain permits it.
 function hurl_sludge.resolve(ctx, caster, foe, _, plan)
     return beam.resolve(ctx, caster, foe, profile, plan, hurl_sludge)
 end

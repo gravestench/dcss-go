@@ -2,6 +2,8 @@ local catalog = require("policy.catalog")
 
 local inventory = {}
 
+-- Check carried and equipped links against each monster after load to catch dangling or foreign items.
+-- Example: inventory.validate(ctx) rejects a monster equipped with an item it does not carry.
 function inventory.validate(ctx)
     local player = ctx:player()
     local slots = {}

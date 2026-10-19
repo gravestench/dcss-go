@@ -4,6 +4,9 @@ local colors = require("policy.presentation.colors")
 
 local clouds = {}
 
+-- Cloud glyphs are projected from registered cloud definitions for the terminal view.
+-- Example: clouds.get(cloud_ids.CLOUD_FIRE) returns a color and glyph pair.
+-- The catalog check prevents a mod's unknown color from silently rendering.
 function clouds.get(kind_id)
     local definition = catalog.get(categories.CLOUDS, kind_id)
     local color_id = definition.console_color or definition.color

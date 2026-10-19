@@ -2,6 +2,9 @@ local modal = require("policy.input.modal")
 
 local mutations = {}
 
+-- The mutation screen routes navigation and close keys without changing mutation state.
+-- Example: mutations.route({ key = "pgdown", page = 0, pages = 3 }) asks for
+-- page one; the terminal then redraws from the same ECS mutation records.
 function mutations.route(input)
     local key = input.key
     local page = input.page

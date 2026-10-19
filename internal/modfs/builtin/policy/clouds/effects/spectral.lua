@@ -14,6 +14,7 @@ local summons = require("policy.magic.effects.summons.common")
 
 local spectral = {}
 
+-- Undead monsters ignore spectral damage; the player has no such blanket immunity.
 function spectral.immune(ctx, actor)
     if actor == ctx:player() then
         return false
@@ -31,6 +32,7 @@ function spectral.immune(ctx, actor)
     return false
 end
 
+-- Feed spectral damage into elemental timing with no resistance type.
 function spectral.apply(ctx, actor, state, elapsed_aut, _, definition)
     return elemental.apply(ctx, actor, state, elapsed_aut,
         definition, nil, {
@@ -47,6 +49,7 @@ local fixed_bases = {
     { id = monsters.MONS_ALLIGATOR_SNAPPING_TURTLE, weight = 2 },
 }
 
+-- Nearby summons reduce emission chance; four within two cells suppress further spawns.
 local function nearby_spectral(ctx, state)
     local count = 0
 
@@ -67,6 +70,7 @@ local function nearby_spectral(ctx, state)
     return math.min(4, count)
 end
 
+-- Draw a spectral base from fixed creatures, then the depth population fallback.
 local function base_kind(ctx, state)
     local draw = ctx:random(streams.CLOUDS, 115)
 
@@ -87,6 +91,8 @@ local function base_kind(ctx, state)
     return pool.pick(ctx, choices, total, streams.CLOUDS)
 end
 
+-- Emit only from an empty sourced cell, then scale chance by elapsed aut and nearby summons.
+-- Example: an occupied spectral-cloud cell cannot emit a spectral thing, even when its source survives.
 function spectral.before_age(ctx, state, elapsed_aut)
     if ctx:actor_at(state.level_id, state.x, state.y) or
         state.source_actor_id < 1 then

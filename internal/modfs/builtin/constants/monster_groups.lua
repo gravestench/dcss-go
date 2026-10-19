@@ -1,3 +1,5 @@
+-- Monster groups are population categories; members still have their own monster IDs.
+
 local monsters = require("ids.monsters")
 
 local groups = {}

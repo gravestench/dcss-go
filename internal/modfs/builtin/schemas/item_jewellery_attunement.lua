@@ -5,6 +5,7 @@ local component = require("constants.component")
 local schema = {
     id = component.JEWELLERY_ATTUNEMENT,
     version = 1,
+    -- The item carries its own active bit because removing and re-equipping it changes attunement.
     fields = {
         active = {
             type = "bool",

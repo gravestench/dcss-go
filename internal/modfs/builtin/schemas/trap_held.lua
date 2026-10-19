@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.TRAP_HELD,
     version = 1,
+    -- The held actor stores trap kind and net item link for escape and release logic.
     fields = {
         kind_id = {
             type = "string",

@@ -17,6 +17,7 @@ local artefact_ids = require("ids.artefact_properties")
 
 local actions = {}
 
+-- Copy the weapon profile before applying artefact properties so catalog data stays immutable.
 local function launcher_profile(ctx, launcher)
     local source = launcher.definition.weapon
     local profile = {}
@@ -35,11 +36,13 @@ local function launcher_profile(ctx, launcher)
     return profile
 end
 
+-- A monster in melee reach uses melee policy, even on a diagonal.
 local function adjacent(a, b)
     return a.level_id == b.level_id and
         math.abs(a.x - b.x) <= 1 and math.abs(a.y - b.y) <= 1
 end
 
+-- Reject invalid ranged intent before any hit or damage RNG, then snapshot player defence.
 local function target(ctx, attacker)
     local player = ctx:player()
     local actor = ctx:get(attacker, "core.actor")
@@ -64,6 +67,7 @@ local function target(ctx, attacker)
         fighter.defense(ctx), health
 end
 
+-- Persist shield block count before HP damage so repeated projectiles use current block state.
 local function apply(ctx, outcome, health, defense, attacker)
     local player = ctx:player()
     local state = ctx:get(player, "core.combat")
@@ -84,6 +88,7 @@ local function apply(ctx, outcome, health, defense, attacker)
     return updated
 end
 
+-- A shield block and zero-damage hit need distinct player-facing outcomes.
 local function hit_message(name, outcome, include_damage)
     if outcome.kind == "block" then
         return "You block the " .. name .. "."
@@ -104,6 +109,7 @@ local function hit_message(name, outcome, include_damage)
     return "The " .. name .. " hits you."
 end
 
+-- A reflectable blocked launcher shot reuses its projectile and brand against the shooter.
 local function return_launcher(ctx, attacker, launcher, definition,
     projectile, effect, outcome)
     if outcome.kind ~= "block" or not effect.reflectable or
@@ -143,6 +149,7 @@ local function return_launcher(ctx, attacker, launcher, definition,
     end
 end
 
+-- Returned missiles can poison the shooter only if the reflected target survives.
 local function return_missile(ctx, attacker, definition, kind, effect,
     name, outcome)
     if outcome.kind ~= "block" or not effect.reflectable or
@@ -170,6 +177,7 @@ local function return_missile(ctx, attacker, definition, kind, effect,
     end
 end
 
+-- Validate ammo against the equipped launcher before resolving damage and after-death brand effects.
 local function launcher_attack(ctx, attacker, launcher, definition, defense, health)
     local weapon = launcher_profile(ctx, launcher)
     local projectile = catalog.get(categories.ITEMS, weapon.ammo_id)
@@ -208,6 +216,7 @@ local function launcher_attack(ctx, attacker, launcher, definition, defense, hea
     end
 end
 
+-- Thrown stacks use their projectile effect, then reflection and poison share the landed outcome.
 local function missile_attack(ctx, attacker, missile, definition, defense, health)
     local kind = missile.definition
     local item = missile.item
@@ -238,6 +247,7 @@ local function missile_attack(ctx, attacker, missile, definition, defense, healt
     end
 end
 
+-- The weapon swap updates both equipped entities to keep the two slots mutually consistent.
 local function swap_launcher(ctx, worn)
     local alternate = worn.alternate_weapon
 
@@ -248,6 +258,8 @@ local function swap_launcher(ctx, worn)
     end
 end
 
+-- Example: actions.monster(ctx, attacker, intent) with monster with equipped Sling -> launcher shot path
+-- Monster ranged actions choose equipped launchers or thrown missiles before spending the attack.
 function actions.monster(ctx, attacker, intent)
     local definition, defense, health = target(ctx, attacker)
     local worn = equipment.worn(ctx, attacker, {

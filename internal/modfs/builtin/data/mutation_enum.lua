@@ -1,5 +1,7 @@
--- Generated from the pinned tag-34 DCSS mutation enum.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- This table keeps the source mutation enumeration as stable committed Lua data.
+
+-- Xom's raw-enum mutation path draws an index from this list, so its order is
+-- an authored rule. Ordinary weighted mutation selection uses definitions.
 -- Source: crawl-ref/source/mutation-type.h:mutation_type
 
 local mutations = require("ids.mutations")

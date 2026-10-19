@@ -4,7 +4,7 @@ local quality = require("constants.vault_item_quality")
 
 local choice = {}
 
--- Source: crawl-ref/source/makeitem.cc:1799-1810.
+-- Source: crawl-ref/source/makeitem.cc.
 local ordinary = {
     {
         class = classes.OBJ_STAVES,
@@ -48,7 +48,7 @@ local ordinary = {
     },
 }
 
--- Source: crawl-ref/source/dungeon.cc:4769-4778.
+-- Source: crawl-ref/source/dungeon.cc.
 local superb = {
     {
         class = classes.OBJ_WEAPONS,
@@ -76,6 +76,7 @@ local superb = {
     },
 }
 
+-- Draw a class from source weights on the item-generation stream.
 local function weighted(ctx, rows)
     local total = 0
 
@@ -96,6 +97,8 @@ local function weighted(ctx, rows)
     error("item class draw outside source table")
 end
 
+-- Example: choice.pick(ctx, { quality = quality.SUPERB }) draws from the superb class weights.
+-- Honor explicit class requests without RNG; ordinary draws then apply depth-specific misc and wand substitutions.
 function choice.pick(ctx, request)
     if request.class_id then
         return request.class_id
@@ -108,7 +111,7 @@ function choice.pick(ctx, request)
     local depth = request.depth
     local class_id = weighted(ctx, ordinary)
 
-    -- Source: makeitem.cc:1812-1824. The misc chance follows class choice.
+    -- Source: makeitem.cc. The misc chance follows class choice.
     if depth > 7 and ctx:random(streams.ITEM_GENERATION, 5000) < 21 + depth then
         class_id = classes.OBJ_MISCELLANY
     end

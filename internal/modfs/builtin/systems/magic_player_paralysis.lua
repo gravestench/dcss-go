@@ -1,5 +1,7 @@
 local system = {}
 
+-- Theory of operation: The player paralysis component is aged before regeneration and future intent selection.
+-- Paralysis duration is decremented between ordinary status decay and regeneration.
 function system.tick(ctx, actor, aut)
     if actor ~= ctx:player() then
         return

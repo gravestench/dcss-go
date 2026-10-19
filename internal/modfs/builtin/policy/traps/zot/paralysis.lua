@@ -4,6 +4,8 @@ local streams = require("constants.rng_streams")
 
 local effect = {}
 
+-- Keep the longer of old and new paralysis durations instead of shortening an existing trap effect.
+-- Example: effect.apply(ctx, player) extends the player's paralysis state.
 function effect.apply(ctx, player)
     local duration = (2 + ctx:random(streams.TRAPS, 4)) * 10
     local state = ctx:get(player, component.PLAYER_PARALYSIS)

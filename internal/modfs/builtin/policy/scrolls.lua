@@ -4,6 +4,8 @@ local classes = require("ids.object_classes")
 local scrolls = {}
 local effects = {}
 
+-- Scroll registration checks that the item kind can be read before exposing its effect.
+-- Example: scrolls.register("SCR_TELEPORTATION", teleport_effect) requires prepare and apply.
 function scrolls.register(id, effect)
     local kind = catalog.get("items", id)
 
@@ -24,10 +26,12 @@ function scrolls.register(id, effect)
     effects[id] = effect
 end
 
+-- Read-time dispatch uses the validated effect associated with the scroll kind.
 function scrolls.get(id)
     return effects[id]
 end
 
+-- Fail startup when an active scroll has no prepare and apply hooks.
 function scrolls.validate()
     for _, kind in ipairs(catalog.all("items")) do
         if kind.class == classes.OBJ_SCROLLS and

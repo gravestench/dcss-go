@@ -1,3 +1,5 @@
+-- Dart slug source rarity survives the move.
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local harness = require("tests.harness")
@@ -36,6 +38,8 @@ local fixed_expected = {
     monsters.MONS_ADDER,
 }
 
+-- Dungeon depth pools pin row order and total weight because seeded picks use
+-- the authored table sequence, unlike ID-sorted catalog traversal.
 local function source_pool_unchanged()
     local allowed = roster.allowed(generated_scenario)
     local first, first_total = pool.at_depth(1, allowed, generated_scenario)
@@ -55,6 +59,7 @@ local function source_pool_unchanged()
         "dart slug source rarity survives the move")
 end
 
+-- Fixed population rows have their own counts and weights at D:1 and D:2.
 local function fixed_pool_unchanged()
     local allowed = roster.allowed(fixed_scenario)
     local first, first_total = pool.at_depth(1, allowed, fixed_scenario)
@@ -71,6 +76,7 @@ local function fixed_pool_unchanged()
     end
 end
 
+-- Every population reference must resolve to an active monster definition.
 local function rows_belong_to_monsters()
     local jackal = catalog.get(categories.MONSTERS, monsters.MONS_JACKAL)
 
@@ -82,6 +88,8 @@ local function rows_belong_to_monsters()
         "second jackal row remains distinct")
 end
 
+-- Population row order is authored within a monster's roster, unlike file
+-- discovery order; duplicate row positions must fail before pool sampling.
 local function invalid_source_order_is_rejected()
     local jackal = catalog.get(categories.MONSTERS, monsters.MONS_JACKAL)
     local second = jackal.population[2]
@@ -96,6 +104,8 @@ local function invalid_source_order_is_rejected()
         "duplicate order error does not name the rule")
 end
 
+-- Reject an unknown depth curve at validation time so runtime population
+-- selection cannot apply an undefined weight formula.
 local function invalid_curve_is_rejected()
     local rat = catalog.get(categories.MONSTERS, monsters.MONS_RAT)
     local row = rat.population[1]
@@ -110,6 +120,8 @@ local function invalid_curve_is_rejected()
         "curve error does not name the rule")
 end
 
+-- Check source and fixed pools plus row validation, because every generated
+-- monster choice depends on a well-formed ordered population row set.
 function test.run()
     source_pool_unchanged()
     fixed_pool_unchanged()

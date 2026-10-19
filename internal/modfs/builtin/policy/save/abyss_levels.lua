@@ -1,5 +1,7 @@
 local abyss = {}
 
+-- Saved Abyss level records are validated before branch restoration uses them.
+-- Example: abyss.validate(level) rejects an exit outside the fixed centre portal.
 function abyss.validate(level)
     local exit = level.stairs[1]
 

@@ -2,12 +2,14 @@ local component = require("constants.component")
 
 local brilliance = {}
 
+-- Brilliance duration is extended and ticked through the same status component.
 function brilliance.active(ctx, player)
     local state = ctx:get(player, component.POTION_BRILLIANCE)
 
     return state ~= nil and state.remaining_aut > 0
 end
 
+-- Extend the existing Brilliance timer so repeat drinks do not stack components.
 function brilliance.extend(ctx, player, turns)
     local state = ctx:get(player, component.POTION_BRILLIANCE)
     local added = turns * 10
@@ -23,6 +25,8 @@ function brilliance.extend(ctx, player, turns)
     end
 end
 
+-- Consume elapsed aut from the saved status so spell bonuses end on the same action clock.
+-- Example: elapsed aut removes Brilliance when its remaining duration reaches zero.
 function brilliance.tick(ctx, player, aut)
     local state = ctx:get(player, component.POTION_BRILLIANCE)
 

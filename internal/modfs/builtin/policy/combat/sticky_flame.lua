@@ -17,6 +17,7 @@ local watery = {
     [terrain.DNGN_MANGROVE] = true,
 }
 
+-- Catalog immunity and flight checks must treat absent flag lists as empty.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -27,6 +28,7 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Missing sticky-flame resistance means no innate protection.
 local function resistance(definition, wanted)
     for _, entry in ipairs(definition.resistances or {}) do
         if entry.id == wanted then
@@ -37,8 +39,9 @@ local function resistance(definition, wanted)
     return 0
 end
 
+-- Fuzz the burn duration after converting monster speed and flame degree into aut.
 local function duration(ctx, speed, degree)
-    -- mon-ench.cc:2275,2379 gives a speed-adjusted, asymmetrically
+    -- mon-ench.cc,2379 gives a speed-adjusted, asymmetrically
     -- fuzzed duration for each added degree of ENCH_STICKY_FLAME.
     speed = math.max(1, math.min(100, speed))
 
@@ -54,6 +57,7 @@ local function duration(ctx, speed, degree)
     return math.max(15, raw + fuzz - low)
 end
 
+-- A landed hit can add flame even with zero damage; levels and duration stack up to degree four.
 function sticky.apply(ctx, source, target, definition, dealt)
     -- beam.cc:napalm_monster excludes insubstantial and sticky-flame immune
     -- monsters; the on-hit damage may be zero and still add one degree.
@@ -98,6 +102,8 @@ function sticky.apply(ctx, source, target, definition, dealt)
     return true
 end
 
+-- Example: sticky.tick(ctx, target) with dead target -> no further burn tick
+-- Burn one elapsed turn, then remove the flame when duration or target life ends.
 function sticky.tick(ctx, target)
     local state = ctx:get(target, component.STICKY_FLAME)
     local health = ctx:get(target, component.HEALTH)
@@ -111,7 +117,7 @@ function sticky.tick(ctx, target)
     local definition = catalog.get("monsters", actor.kind_id)
     local feature = ctx:cell(position.level_id, position.x, position.y)
 
-    -- terrain.cc:feat_is_watery and mon-ench.cc:1516; flying monsters
+    -- terrain.cc:feat_is_watery and mon-ench.cc; flying monsters
     -- remain above the extinguishing water surface.
     if watery[feature] and not has_flag(definition, "M_FLIES") then
         ctx:remove(target, component.STICKY_FLAME)
@@ -148,6 +154,7 @@ function sticky.tick(ctx, target)
     ctx:set(target, component.STICKY_FLAME, state)
 end
 
+-- Reject impossible saved degree, clock, or source before a burn tick uses them.
 function sticky.validate(ctx, target)
     local state = ctx:get(target, component.STICKY_FLAME)
 
@@ -159,6 +166,7 @@ function sticky.validate(ctx, target)
     end
 end
 
+-- Water, a water hold, and insubstantial forms extinguish player napalm before state writes.
 local function player_immune(ctx, target)
     if ctx:has(target, component.WATER_HOLD) then
         return true
@@ -208,6 +216,7 @@ function sticky.apply_player(ctx, source, target)
     return true
 end
 
+-- Scale resisted fire damage by elapsed aut so short actions take proportionally less burn.
 function sticky.tick_player(ctx, target, aut)
     local state = ctx:get(target, component.STICKY_FLAME)
 
@@ -240,6 +249,7 @@ function sticky.tick_player(ctx, target, aut)
     end
 end
 
+-- Dispatch the saved burn state by actor kind; player and monster clocks differ.
 function sticky.update(ctx, entity, aut)
     if ctx:has(entity, component.PLAYER) then
         sticky.tick_player(ctx, entity, aut)
@@ -248,6 +258,8 @@ function sticky.update(ctx, entity, aut)
     end
 end
 
+-- Theory of operation: The active tick dispatches player and monster burns before decisions.
+-- Each branch owns its clock.
 register.system({
     id = "zap.sticky_flame.tick",
     scope = "active",

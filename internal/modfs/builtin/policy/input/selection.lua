@@ -2,6 +2,9 @@ local menu = require("policy.input.menu")
 
 local selection = {}
 
+-- A generic selection prompt returns the chosen option to its waiting action.
+-- Example: selection.route({ key = "a", options = choices }) returns the
+-- first option's stable ID without executing the waiting command twice.
 function selection.route(input)
     if input.key == "esc" then
         return {

@@ -19,6 +19,8 @@ local equipment = {
     [classes.OBJ_STAVES] = true,
 }
 
+-- Accept either an entity handle or its ID from a terminal selection; both
+-- paths resolve to the live entity before stock validation.
 local function stock_entity(ctx, value)
     if type(value) == "number" then
         return ctx:entity(value)
@@ -27,6 +29,8 @@ local function stock_entity(ctx, value)
     return value
 end
 
+-- Require the buyer to stand on the same level and shop tile at commit, not
+-- merely to have opened the shop screen earlier.
 local function at_shop(player_position, shop)
     return player_position and
         player_position.level_id == shop.level_id and
@@ -34,6 +38,8 @@ local function at_shop(player_position, shop)
         player_position.y == shop.y
 end
 
+-- Count occupied inventory slots before transfer; stack merges may still
+-- succeed when this count is already at capacity.
 local function carried_count(ctx, player)
     local count = 0
 
@@ -48,6 +54,7 @@ local function carried_count(ctx, player)
     return count
 end
 
+-- The selected stock entity is checked again against the live shop before gold moves.
 local function validate_selection(ctx, player, shop_entity, values, expected)
     local shop = ctx:get(shop_entity, component.SHOP)
     local position = ctx:get(player, component.POSITION)
@@ -121,12 +128,15 @@ local function validate_selection(ctx, player, shop_entity, values, expected)
     return shop, selected, total
 end
 
+-- Equipment and known-stock shops reveal the purchased item's type at the
+-- purchase boundary; antique consumables retain their unknown appearance.
 local function identify(ctx, player, entity, kind, shop_kind)
     if shop_kind.identifies_stock or equipment[kind.class] then
         identification.purchase(ctx, player, entity, kind)
     end
 end
 
+-- Stack merging happens before capacity checks; a full pack can still absorb an identical purchase.
 local function transfer(ctx, player, shop, selected, acquired, outside, count)
     local entity = selected.entity
     local item = selected.item
@@ -163,6 +173,7 @@ local function transfer(ctx, player, shop, selected, acquired, outside, count)
     return count + 1
 end
 
+-- Purchase validates stock and wallet again at commit, then transfers the item.
 function purchase.buy(ctx, player, shop_entity, stock_ids, expected)
     local shop, selected, total = validate_selection(ctx,
         player, shop_entity, stock_ids, expected)
@@ -188,6 +199,9 @@ function purchase.buy(ctx, player, shop_entity, stock_ids, expected)
     }
 end
 
+-- Example: the shop command passes quoted stock signatures so a changed shelf aborts before wallet.spend.
+-- Re-read player, shop, and requested stock from ECS at command time; a menu
+-- selection may be stale after movement or another inventory mutation.
 function purchase.run(ctx, input)
     local player = ctx:player()
     local shop = ctx:entity(input.shop_id)

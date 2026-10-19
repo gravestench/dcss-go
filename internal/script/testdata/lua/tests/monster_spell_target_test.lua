@@ -1,9 +1,11 @@
+
 local harness = require("tests.harness")
 local kind = require("constants.target_kind")
 local target = require("policy.combat.monster_spell_target")
 
 local test = {}
 
+-- Zero direction component survives the intent boundary.
 function test.run()
     local plan = {
         kind = kind.ENTITY,

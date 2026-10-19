@@ -5,6 +5,8 @@ local loss = require("policy.character.stat_loss")
 
 local degeneration = {}
 
+-- Only the player can suffer stat loss; a clouds-stream roll limits how often contact drains.
+-- Example: one in four degeneration exposures chooses a stat before applying its drain.
 function degeneration.apply(ctx, actor)
     if actor ~= ctx:player() or
         ctx:random(streams.CLOUDS, 4) ~= 0 then

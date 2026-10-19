@@ -1,3 +1,7 @@
+-- The policy exposes chaos clone, haste, and banishment outcomes to the game integration harness.
+-- Example: runtime.Policy("test.chaos_clone", nil) applies the real chaos
+-- effect to a fixture monster, then the Go test inspects the resulting ECS state.
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
@@ -14,6 +18,8 @@ local monster_slow = require("policy.combat.monster_slow")
 
 local policy = {}
 
+-- Find the fixture monster through its AI component and apply the normal
+-- clone effect; this checks entity creation without manufacturing a clone here.
 function policy.run(ctx)
     local target
 
@@ -40,6 +46,8 @@ function policy.run(ctx)
     return {}
 end
 
+-- Use the same target lookup as the clone case, then ask the production chaos
+-- handler to apply haste so the test observes its saved status component.
 function policy.haste(ctx)
     local target
 
@@ -66,6 +74,8 @@ function policy.haste(ctx)
     return {}
 end
 
+-- Attach a real net before banishment to exercise cleanup of carried and
+-- placed item state when the monster leaves the level.
 function policy.banish_netted(ctx)
     local target
 
@@ -95,6 +105,8 @@ function policy.banish_netted(ctx)
     return {}
 end
 
+-- Spawn through the spell helper first so cloning a summoned actor retains
+-- the summon metadata that a direct test entity would omit.
 function policy.clone_summon(ctx)
     local player = ctx:player()
     local target = summons.spawn(ctx, player,
@@ -117,6 +129,8 @@ function policy.clone_summon(ctx)
     return {}
 end
 
+-- Choose the spectral ally and its attacker from ECS, then route damage
+-- through normal monster health so linked-weapon consequences are visible.
 function policy.damage_spectral(ctx)
     local spectral
     local attacker
@@ -138,6 +152,8 @@ function policy.damage_spectral(ctx)
     return {}
 end
 
+-- Banish a follower selected by its component, proving that travel ownership
+-- survives the transition instead of relying on a hard-coded entity ID.
 function policy.banish_follower(ctx)
     local target
 
@@ -158,6 +174,8 @@ function policy.banish_follower(ctx)
     return {}
 end
 
+-- Slow the source before cloning so the test can see whether the clone copies
+-- transient actor timing through the real effect path.
 function policy.clone_slowed(ctx)
     local target
 
@@ -185,6 +203,8 @@ function policy.clone_slowed(ctx)
     return {}
 end
 
+-- Mark the clone dead and emit the real kill signal; the test can then check
+-- reward handling without bypassing the event that normally triggers it.
 function policy.kill_clone(ctx)
     local clone
 
@@ -206,6 +226,8 @@ function policy.kill_clone(ctx)
     return {}
 end
 
+-- Equip the source with a real carried dagger before cloning. Both ownership
+-- and slot state matter, so a bare item definition would miss the bug.
 function policy.clone_geared(ctx)
     local target
 

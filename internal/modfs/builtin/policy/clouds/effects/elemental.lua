@@ -13,6 +13,7 @@ local attribution = require("constants.cloud_attribution")
 
 local elemental = {}
 
+-- Stochastic rounding keeps fractional cloud damage unbiased.
 local function rounded(ctx, numerator, denominator)
     local whole = math.floor(numerator / denominator)
 
@@ -24,6 +25,7 @@ local function rounded(ctx, numerator, denominator)
     return whole
 end
 
+-- Player-exposed clouds may add source-specific damage dice before scaling.
 function elemental.raw(ctx, definition, player, extra_random)
     local source = definition.damage
     local size = source.random + (extra_random or 0)
@@ -48,6 +50,8 @@ function elemental.raw(ctx, definition, player, extra_random)
     return base + rounded(ctx, total, trials)
 end
 
+-- Centralize armour, resistance, elapsed-time scaling, and attribution for damaging cloud families.
+-- Example: fire and cold clouds share elapsed-aut scaling, armour reduction, and kill attribution here.
 function elemental.apply(ctx, actor, state, elapsed_aut, definition,
     resistance_id, options)
     options = options or {}

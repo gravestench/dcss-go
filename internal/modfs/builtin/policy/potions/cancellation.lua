@@ -36,6 +36,7 @@ local durations = {
     },
 }
 
+-- Detect at least one purgeable timer so a no-effect drink can be rejected.
 local function active_fields(ctx, player)
     for id, fields in pairs(durations) do
         local state = ctx:get(player, id)
@@ -52,6 +53,7 @@ local function active_fields(ctx, player)
     return false
 end
 
+-- Cancellation reduces selected timed effects rather than deleting their state outright.
 local function shorten(ctx, player)
     local changed = false
 
@@ -77,6 +79,7 @@ local function shorten(ctx, player)
     return changed
 end
 
+-- Only a form that permits cancellation can be removed by this potion.
 local function form_cancellable(ctx, player)
     local state = ctx:get(player, component.PLAYER_FORM)
 
@@ -84,6 +87,7 @@ local function form_cancellable(ctx, player)
         not state.uncancellable
 end
 
+-- Reject a no-effect drink before potion consumption.
 function cancellation.available(ctx, player)
     local contamination = ctx:get(player,
         zap_ids.component.CONTAMINATION)
@@ -96,6 +100,7 @@ end
 
 -- Source: spl-goditem.cc:debuff_player. Most magical durations fall to
 -- one aut; flight retains 11 aut to allow safe landing.
+-- Example: Cancellation can shorten active buffs and reduce contamination in one potion action.
 function cancellation.purge(ctx, player)
     local changed = shorten(ctx, player)
     local form = ctx:get(player, component.PLAYER_FORM)

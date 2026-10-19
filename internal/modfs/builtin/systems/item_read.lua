@@ -5,6 +5,9 @@ local scrolls = require("policy.scrolls")
 
 local system = {}
 
+-- Theory of operation: Scroll effects use the original item record; consumption and discovery follow successful
+-- resolution.
+-- The scroll effect runs before its stack is consumed, then identification is updated.
 function system.update(ctx, actor)
     local intent = ctx:get(actor, component.INTENT)
 
@@ -44,6 +47,7 @@ function system.update(ctx, actor)
     ctx:emit("read", "As you read the " .. visible_name ..
         ", it crumbles to dust.")
 
+    -- Cancelling the selected effect still identifies and consumes the scroll.
     if not request.cancelled then
         effect.apply(ctx, player, request)
     end

@@ -10,10 +10,12 @@ local trajectory = require("policy.combat.trajectory")
 
 local mystic = {}
 
+-- Process farther targets first so knockback does not displace nearer contacts into the same lane.
 function mystic.farther(a, b)
     return a.distance > b.distance
 end
 
+-- Read optional monster flags for displacement and collision exceptions.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -24,6 +26,7 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Use a spell draw for fractional knockback distance instead of always rounding down.
 local function random_round(ctx, numerator, denominator)
     local value = math.floor(numerator / denominator)
 
@@ -34,6 +37,8 @@ local function random_round(ctx, numerator, denominator)
     return value
 end
 
+-- Gather visible actors before damage so knockback cannot reshuffle the
+-- candidate set while the blast is iterating it.
 local function targets(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -71,6 +76,8 @@ local function targets(ctx, player, spell)
     return found
 end
 
+-- Knockback depends on target weight and open cells behind the target; a
+-- collision is resolved instead of moving through another actor or wall.
 local function knockback(ctx, origin, target, position, definition, power)
     if has_flag(definition, "M_STATIONARY") or
         ctx:has(target, "projectile.held") then
@@ -122,6 +129,9 @@ local function knockback(ctx, origin, target, position, definition, power)
     end
 end
 
+-- Example: resolve(ctx, player, nil, spell, 60) hits each visible monster,
+-- then attempts forceful displacement after the damage roll.
+-- Snapshot visible targets before damage and knockback can move actors into different cells.
 function mystic.resolve(ctx, player, _, spell, power)
     local origin = ctx:get(player, component.POSITION)
 

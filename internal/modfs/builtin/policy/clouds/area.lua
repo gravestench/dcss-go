@@ -15,10 +15,12 @@ local directions = {
     { x = 1, y = 1 },
 }
 
+-- Mark each grid cell once while expanding cloud shells.
 local function key(x, y)
     return x .. ":" .. y
 end
 
+-- Cloud duration adds three power-scaled draws on the caller's RNG stream.
 local function duration(ctx, power, stream)
     local spread = math.floor(power / 4)
     local turns = 3
@@ -32,6 +34,7 @@ local function duration(ctx, power, stream)
     return turns * 10
 end
 
+-- Shuffle a shell before placement so direction order does not bias coverage.
 local function shuffle(ctx, cells, stream)
     for index = #cells, 2, -1 do
         local other = 1 + ctx:random(stream, index)
@@ -40,6 +43,7 @@ local function shuffle(ctx, cells, stream)
     end
 end
 
+-- Only walkable, empty, player-visible cells can join the next shell.
 local function cloudable(ctx, viewer, level_id, x, y)
     return ctx:walkable(level_id, x, y) and
         not placement.at(ctx, level_id, x, y) and
@@ -47,6 +51,7 @@ local function cloudable(ctx, viewer, level_id, x, y)
             spell_range.LOS_RADIUS, x, y)
 end
 
+-- Cloud expansion uses the player on the same level for source LOS checks.
 local function player_viewer(ctx, level_id)
     local viewer = ctx:get(ctx:player(), component.POSITION)
 
@@ -57,6 +62,7 @@ local function player_viewer(ctx, level_id)
     return viewer
 end
 
+-- Expand one shell without revisiting blocked or already considered cells.
 local function expand(ctx, viewer, level_id, queue, seen)
     local next_ring = {}
 
@@ -105,6 +111,7 @@ function area.candidates(ctx, level_id, x, y, count)
 end
 
 -- Source: spl-util.cc:apply_area_cloud and spl-clouds.cc:big_cloud.
+-- Example: a cloud burst walks outward from its center and places only on walkable eligible cells.
 function area.place(ctx, kind_id, caster, level_id, x, y,
     power, count, stream)
     local viewer = player_viewer(ctx, level_id)

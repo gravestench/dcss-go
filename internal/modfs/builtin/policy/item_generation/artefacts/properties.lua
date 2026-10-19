@@ -63,6 +63,7 @@ for _, slot in ipairs(slots.OCTO) do
     worn_slots[slot] = true
 end
 
+-- Property reads use saved source IDs; equipped bonuses are summed only over worn artefacts.
 function properties.of(ctx, entity)
     local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
 
@@ -95,10 +96,13 @@ function properties.of(ctx, entity)
     return result
 end
 
+-- Example: properties.value(ctx, ring, property_ids.FIRE) reads its effective artefact resistance.
+-- Missing properties read as zero so combat and display can use one lookup for random and unique artefacts.
 function properties.value(ctx, entity, id)
     return properties.of(ctx, entity)[id] or 0
 end
 
+-- Only active equipment slots contribute artefact property totals.
 function properties.sum_worn(ctx, player, id)
     local total = 0
 

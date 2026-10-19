@@ -2,6 +2,7 @@ local component = require("constants.component")
 
 local lowered_will = {}
 
+-- An expired will debuff must stop affecting spell resistance before component cleanup.
 function lowered_will.active(ctx, target)
     local status = ctx:get(target, component.MONSTER_LOWERED_WILL)
 
@@ -22,6 +23,8 @@ function lowered_will.apply(ctx, target, duration_aut)
     end
 end
 
+-- Example: A ten-aut lowered-will mark disappears at the next monster tick.
+-- Remove the debuff after ten aut of decay so later resistance checks read no stale status.
 function lowered_will.tick(ctx, target)
     local status = ctx:get(target, component.MONSTER_LOWERED_WILL)
 

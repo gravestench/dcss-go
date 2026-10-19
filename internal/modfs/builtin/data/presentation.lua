@@ -1,5 +1,5 @@
--- Generated from a committed DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Character and game-mode labels feed menus without controlling gameplay policy.
+
 -- Source: crawl-ref/source/dat/descript/backgrounds.txt
 -- SHA-256: 1263736a450652589bbeb6a4cd3d6e57a092059ff34040263af7a33333803570
 -- Source: crawl-ref/source/dat/descript/species.txt

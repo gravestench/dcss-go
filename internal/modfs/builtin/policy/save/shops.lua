@@ -8,15 +8,18 @@ local shop_spec = require("policy.generation.vaults.shop_spec")
 
 local shops = {}
 
+-- Shop locations use floor and cell coordinates to reject overlapping saved shops.
 local function cell_key(state)
     return string.format("%d:%d:%d", state.level_id, state.x, state.y)
 end
 
+-- Gold balances must be nonnegative whole values before pricing resumes.
 local function valid_balance(value)
     return type(value) == "number" and value % 1 == 0 and
         value >= 0 and value <= 9007199254740991
 end
 
+-- Bound both wallet gold and purchase count, then verify shopping-list item references.
 local function validate_wallet(ctx)
     local player = ctx:player()
     local wallet = ctx:get(player, component.WALLET)
@@ -44,6 +47,7 @@ local function validate_wallet(ctx)
     end
 end
 
+-- Generated Dungeon shops must match a nonpending authored feature cell before stock can be restored.
 local function authored_cells(input)
     local cells = {}
 
@@ -68,6 +72,7 @@ local function authored_cells(input)
     return cells
 end
 
+-- Saved shop entities must occupy distinct authored entrance cells with known kinds.
 local function validate_shops(ctx, input)
     local occupied = {}
     local authored = authored_cells(input)
@@ -95,6 +100,7 @@ local function validate_shops(ctx, input)
     end
 end
 
+-- Shop stock must resolve to saved item entities before purchases resume.
 local function validate_stock(ctx)
     local ordered = {}
 
@@ -123,6 +129,8 @@ local function validate_stock(ctx)
     end
 end
 
+-- Wallet, stock, and authored shop cells are validated together to keep purchases resumable.
+-- Example: shops.validate(ctx, input) checks that saved stock belongs to the declared shop.
 function shops.validate(ctx, input)
     input = input or {}
 

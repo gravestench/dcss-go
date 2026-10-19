@@ -1,3 +1,5 @@
+-- The modded reflector amulet exercises an existing reflection capability.
+
 local capabilities = require("constants.jewellery_capabilities")
 local categories = require("constants.catalog")
 local classes = require("ids.object_classes")

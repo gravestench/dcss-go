@@ -6,6 +6,8 @@ local summons = require("policy.magic.effects.summons.common")
 
 local effect = {}
 
+-- Emit arrival only after a hostile twister summon successfully finds a neighboring cell.
+-- Example: effect.apply(ctx, player) creates a twister only if its placement succeeds.
 function effect.apply(ctx, player)
     local creature = summons.spawn(ctx, player,
         ids.TRAP_ZOT, monsters.MONS_TWISTER, 2, 1, {

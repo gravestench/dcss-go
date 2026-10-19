@@ -10,6 +10,7 @@ local targets = require("policy.ai.targets")
 
 local maxwell = { continuation_mp = 0 }
 
+-- Check optional flags to exclude monsters that cannot be coupled.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -20,6 +21,7 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Coupling ignores conjured and harmless monsters; nearest ties are chosen with spell RNG.
 local function nearest(ctx, player, visible)
     local origin = ctx:get(player, component.POSITION)
     local found = {}
@@ -63,6 +65,7 @@ local function nearest(ctx, player, visible)
     return found[1 + ctx:random("spell", #found)]
 end
 
+-- Round the fractional charge duration with one spell draw.
 local function random_round(ctx, numerator, denominator)
     local value = math.floor(numerator / denominator)
 
@@ -73,12 +76,14 @@ local function random_round(ctx, numerator, denominator)
     return value
 end
 
+-- Prevent starting a charge without a nearby legal target.
 function maxwell.prepare(ctx, player)
     if not nearest(ctx, player, true) then
         return "There is no target for the charge."
     end
 end
 
+-- Save a power-scaled charge timer after subtracting the cast action cost.
 function maxwell.resolve(ctx, player, _, _, power, cast_aut)
     local spread = math.max(0, (200 - math.min(power, 200)) * 40)
     local rolled = spread > 0 and ctx:random("spell", spread) or 0
@@ -99,6 +104,7 @@ function maxwell.resolve(ctx, player, _, _, power, cast_aut)
     ctx:emit("spell", "You begin accumulating electric charge.")
 end
 
+-- Require saved charge state when computing the next channel action cost.
 function maxwell.continuation_cost(ctx, player, _, normal_cost)
     local state = ctx:get(player, zap_ids.component.MAXWELL)
 
@@ -109,6 +115,7 @@ function maxwell.continuation_cost(ctx, player, _, normal_cost)
     return math.max(1, math.min(normal_cost, state.remaining_aut))
 end
 
+-- Channel progress persists as MAXWELL component state until a target is vaporized or channeling ends.
 function maxwell.continue(ctx, player, _, aut)
     local state = ctx:get(player, zap_ids.component.MAXWELL)
 
@@ -142,12 +149,15 @@ function maxwell.continue(ctx, player, _, aut)
     return true, false
 end
 
+-- The death hook completes the coupling effect only for a marked monster.
 function maxwell.on_death(ctx, monster)
     local mark = ctx:get(monster, zap_ids.component.MAXWELL_VAPORIZE)
 
     return mark ~= nil and mark.active
 end
 
+-- Example: If the player stops channeling, cleanup removes the unused Maxwell charge.
+-- Clear charge only after its channel component disappears, preventing a stale discharge on later turns.
 function maxwell.cleanup(ctx, entity)
     if entity == ctx:player() and
         ctx:has(entity, zap_ids.component.MAXWELL) and
@@ -160,6 +170,7 @@ end
 registry.add(spells.SPELL_MAXWELLS_COUPLING, maxwell)
 death_hooks.add("magic.maxwell", maxwell.on_death)
 
+-- Theory of operation: After an attack, clear Maxwell charge if channel state ended before movement advances.
 register.system({
     id = "zap.maxwell.cleanup",
     scope = "active",

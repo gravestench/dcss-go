@@ -3,6 +3,8 @@ local liquefaction = require("policy.magic.effects.translocation.liquefaction")
 
 local system = {}
 
+-- Theory of operation: One pass rewrites fumbled intents before movement; another ages liquefaction after actions.
+-- Liquefaction can turn a chosen move into a fumble before movement commits it.
 function system.update_liquefaction_fumble(ctx, actor)
     if actor == ctx:player() or
         not liquefaction.floundering(ctx, actor) then
@@ -11,7 +13,7 @@ function system.update_liquefaction_fumble(ctx, actor)
 
     local intent = ctx:get(actor, component.INTENT)
 
-    -- Source: monster.cc:2597, a grounded floundering monster fumbles
+    -- Source: monster.cc, a grounded floundering monster fumbles
     -- one quarter of its melee attacks.
     if intent and intent.kind == 2 and ctx:random("melee", 4) == 0 then
         intent.kind = 6
@@ -29,6 +31,7 @@ register.system({
     update = system.update_liquefaction_fumble,
 })
 
+-- Age liquefied terrain after actions so a fumble is still charged to the current turn.
 function system.update_liquefaction_tick(ctx, actor, aut)
     if actor == ctx:player() then
         liquefaction.tick(ctx, actor, aut)

@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local mutations = require("ids.mutations")
@@ -8,9 +9,11 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Bind mana link player lookup to this owner while preserving live ECS component reads.
 local function player_context(ctx, player)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to mana link fixture actor so player-only branches execute on that entity.
     function proxy.player()
         return player
     end
@@ -18,6 +21,7 @@ local function player_context(ctx, player)
     return proxy
 end
 
+-- Seed HP and MP so Mana Link can redirect a recovery pip.
 local function player_with_regeneration(ctx, mp)
     local player = ctx:create()
 
@@ -42,6 +46,7 @@ local function player_with_regeneration(ctx, mp)
     return player
 end
 
+-- Diverted HP regeneration restores MP.
 function test.run(ctx)
     local linked = player_with_regeneration(ctx, 0)
 

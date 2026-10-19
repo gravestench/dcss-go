@@ -1,3 +1,5 @@
+-- Ability IDs connect innate and mutation-granted actions to command policy.
+
 -- Source ability-type.h names used by innate mutation abilities.
 local abilities = {
     HOP = "ABIL_HOP",

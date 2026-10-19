@@ -1,3 +1,4 @@
+
 local mutations = require("ids.mutations")
 local species = require("ids.species")
 local jobs = require("ids.jobs")
@@ -8,6 +9,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Evolution does not run before its source timer.
 function test.run(ctx)
     harness.truthy(evolution.has_mutation(mutations.MUT_EVOLUTION),
         "Evolution is owned by the periodic mutation system")
@@ -54,8 +56,12 @@ function test.run(ctx)
     harness.equal(state.mutations_gained, 1,
         "a successful periodic mutation counts toward consuming Evolution")
 
+    -- The first zero draw chooses a one-level mutation. Choose a different
+    -- eligible mutation on the second check so the test exercises two grants.
+    local second_check = harness.random_context(ctx, { 0, 2 })
+
     evolution.gain_experience(ctx, player, 9)
-    evolution.tick(ctx, player,
+    evolution.tick(second_check, player,
         state.next_check_aut - state.elapsed_aut)
 
     state = evolution.state(ctx, player)

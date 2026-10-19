@@ -1,3 +1,5 @@
+-- Every imported arrival hook must have a handler, including alternate and veto branches.
+
 local des = require("policy.generation.vaults.des")
 local directives = require("constants.vault_directives")
 local effects = require("constants.vault_effects")
@@ -6,6 +8,7 @@ local species_ids = require("ids.species")
 
 local test = {}
 
+-- Simulate DES hook calls while recording directives and checking each seeded draw.
 local function test_api(rolls, options)
     local api = {
         rolls = rolls or {},
@@ -14,6 +17,7 @@ local function test_api(rolls, options)
         records = {},
     }
 
+    -- Consume queued draws and assert each fits the handler's requested bound.
     function api:roll(bound)
         local result = table.remove(self.rolls, 1) or 0
 
@@ -22,22 +26,27 @@ local function test_api(rolls, options)
         return result
     end
 
+    -- Reuse the bounded roll so one-in branches share the same deterministic queue.
     function api:one_in(bound)
         return self:roll(bound) == 0
     end
 
+    -- Map source coin flips to a two-outcome fixture draw.
     function api:coinflip()
         return self:roll(2) == 0
     end
 
+    -- Index the authored choice list with a bounded zero-based draw.
     function api:random_from(values)
         return values[self:roll(#values) + 1]
     end
 
+    -- Convert source inclusive ranges to the fixture's bounded draw.
     function api:random_range(first, last)
         return first + self:roll(last - first + 1)
     end
 
+    -- Capture text directives in order so DES hook output can be asserted.
     function api:emit(kind, argument)
         self.emissions[#self.emissions + 1] = {
             kind = kind,
@@ -45,6 +54,7 @@ local function test_api(rolls, options)
         }
     end
 
+    -- Capture typed effect records separately from emitted DES directives.
     function api:record(kind, arguments)
         self.records[#self.records + 1] = {
             kind = kind,
@@ -52,30 +62,37 @@ local function test_api(rolls, options)
         }
     end
 
+    -- Default to Human while allowing species-specific arrival hooks to override it.
     function api:player_species()
         return self.options.species or species_ids.SP_HUMAN
     end
 
+    -- Provide the player monster name used by substitution hooks.
     function api:player_monster()
         return self.options.monster or "human"
     end
 
+    -- Give name-bearing arrival text a stable fixture value.
     function api:player_name()
         return self.options.name or "Test Hero"
     end
 
+    -- Default to pre-start hooks while allowing started-game branches.
     function api:game_started()
         return self.options.started or false
     end
 
+    -- Run actual hook bodies rather than the validation-only path.
     function api:validating()
         return false
     end
 
+    -- Expose marker coordinates for arrival hooks that place keyed features.
     function api:marker_positions()
         return self.options.markers
     end
 
+    -- Veto handlers query the fixture's exit state instead of a live level.
     function api:has_exit()
         return self.options.has_exit or false
     end
@@ -83,10 +100,12 @@ local function test_api(rolls, options)
     return api
 end
 
+-- Load the handler matching a committed vault ID to catch missing modules.
 local function handler_for(id)
     return require("policy.generation.vaults.arrival." .. id)
 end
 
+-- Parse committed arrival DES files so a newly imported hook cannot lack Lua code.
 local function assert_all_source_hooks_have_handlers()
     local owners = {}
     local veto_count = 0
@@ -114,6 +133,7 @@ local function assert_all_source_hooks_have_handlers()
 
                     local alternate = test_api()
 
+                    -- Choose the highest legal draw to exercise the nondefault hook branch.
                     function alternate:roll(bound)
                         return bound - 1
                     end
@@ -134,6 +154,7 @@ local function assert_all_source_hooks_have_handlers()
     assert(veto_count == 1)
 end
 
+-- The rare crop-circle color substitutes a different weighted glyph mix.
 local function assert_crop_circle_branch()
     local handler = handler_for(vault_ids.roderic_crop_circles_arrival_small)
     local rare = test_api({ 0 })
@@ -149,6 +170,7 @@ local function assert_crop_circle_branch()
     assert(common.emissions[1].argument == "1 = 1:100 2:10")
 end
 
+-- The water/fire arrival is vetoed only when a marker lacks a usable exit.
 local function assert_veto_uses_marker_exit()
     local handler = handler_for(vault_ids.dpeg_arrival_water_fire)
     local absent = test_api(nil, { markers = nil })
@@ -163,6 +185,7 @@ local function assert_veto_uses_marker_exit()
     assert(handler.check_exit_marker(open) == false)
 end
 
+-- Named terrain and delayed remains must retain their source arguments.
 local function assert_source_effects()
     local naming = test_api()
 
@@ -202,6 +225,7 @@ local function assert_source_effects()
         "human name:Test_Hero corpse")
 end
 
+-- Pinned low draws select concrete layouts with the expected DES directives.
 local function assert_complex_source_choices()
     local round = test_api({ 0, 0 })
 
@@ -255,6 +279,7 @@ local function assert_complex_source_choices()
     assert(octagon.records[2].arguments.iterations == 20)
 end
 
+-- Walk each temple tenant and water/fire branch instead of testing one seed.
 local function assert_complex_alternates()
     local temple_handler = handler_for(vault_ids.erik_arrival_cave_to_temple)
     local temple_first = {
@@ -301,6 +326,7 @@ local function assert_complex_alternates()
     end
 end
 
+-- Cover every imported hook plus rare substitutions, vetoes, and alternate branches.
 function test.run()
     assert_all_source_hooks_have_handlers()
     assert_crop_circle_branch()

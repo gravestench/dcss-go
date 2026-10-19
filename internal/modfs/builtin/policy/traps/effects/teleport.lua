@@ -8,6 +8,8 @@ local held = require("policy.traps.held")
 
 local effect = {}
 
+-- Player and monster teleport paths differ, so dispatch after identifying the triggering actor.
+-- Example: effect.trigger(ctx, nil, player) teleports the player immediately after entry.
 function effect.trigger(ctx, _, actor)
     if actor == ctx:player() then
         ctx:emit("trap", "You enter a teleport trap!")

@@ -13,6 +13,7 @@ local will = require("policy.magic.effects.zaps.will")
 
 local flame = {}
 
+-- Do not replace an existing mark; a second application should not restart its death trigger.
 function flame.mark(ctx, source, target)
     if ctx:has(target, component.INNER_FLAME) then
         return false
@@ -26,6 +27,7 @@ function flame.mark(ctx, source, target)
     return true
 end
 
+-- Scale blast radius and power by monster size before the delayed death explosion.
 local function profile(definition)
     -- mon-explode.cc:_setup_inner_flame_explosion.
     if definition.size_id == "SIZE_GIANT" then
@@ -37,6 +39,7 @@ local function profile(definition)
     return 1, 20
 end
 
+-- Trace to the selected monster and apply a timed mark only after the enchant succeeds.
 function flame.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local x = origin.x + intent.dx
@@ -76,6 +79,8 @@ function flame.resolve(ctx, player, intent, spell, power)
         " is filled with an inner flame.")
 end
 
+-- Example: A marked monster ages its flame timer; death consumes the mark for one explosion.
+-- Remove the saved mark at zero before monster decision; the death hook handles explosions separately.
 function flame.tick(ctx, target)
     local state = ctx:get(target, component.INNER_FLAME)
 
@@ -93,6 +98,7 @@ function flame.tick(ctx, target)
     ctx:set(target, component.INNER_FLAME, state)
 end
 
+-- Consume the saved mark once at death so one corpse cannot explode twice.
 function flame.on_death(ctx, monster, definition, position)
     local mark = ctx:get(monster, component.INNER_FLAME)
 
@@ -138,6 +144,7 @@ function flame.on_death(ctx, monster, definition, position)
     return true
 end
 
+-- Advance marked monsters on their AI turn before death cleanup reads the mark.
 function flame.update(ctx, entity)
     if ctx:has(entity, component.AI) then
         flame.tick(ctx, entity)
@@ -147,6 +154,7 @@ end
 death_hooks.add(component.INNER_FLAME, flame.on_death)
 registry.add(spells.SPELL_INNER_FLAME, flame)
 
+-- Theory of operation: Inner Flame expires before monster decision; its death hook handles explosions separately.
 register.system({
     id = "zap.inner_flame.tick",
     scope = "active",

@@ -22,6 +22,7 @@ local weapon_skills = {
     skills.SK_RANGED_WEAPONS,
 }
 
+-- Weight trained weapon skills before choosing a family for this scroll offer.
 local function chosen_skill(ctx)
     local rows = {}
 
@@ -37,6 +38,7 @@ local function chosen_skill(ctx)
     return selection.weighted(ctx, rows)
 end
 
+-- Include Unarmed Combat in the benchmark so weak weapon training does not overvalue a weapon.
 local function best_skill(ctx)
     local best = selection.skill(ctx, skills.SK_UNARMED_COMBAT)
 
@@ -47,6 +49,7 @@ local function best_skill(ctx)
     return best
 end
 
+-- Scale source weight by skill, shield use, and species fit before a subtype reaches the draw.
 local function weight(ctx, player, species, kind, best, shields)
     local weapon = kind.weapon
     local base = (weapon.acquire_weight or kind.generation.weight or 0) * 100
@@ -96,6 +99,8 @@ local function weight(ctx, player, species, kind, best, shields)
     return math.max(1, base)
 end
 
+-- Example: A trained Axes skill raises axe-family chance before shield use changes subtype weight.
+-- Choose one weighted weapon subtype after the player build and supported kinds are known.
 function weapons.pick(ctx, player)
     local skill_id = chosen_skill(ctx)
     local species = selection.species(ctx, player)

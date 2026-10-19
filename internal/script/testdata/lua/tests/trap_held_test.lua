@@ -1,3 +1,5 @@
+-- Failed escape keeps held state.
+
 local component = require("constants.component")
 local harness = require("tests.harness")
 local ids = require("ids.traps")
@@ -5,6 +7,8 @@ local held = require("policy.traps.held")
 
 local test = {}
 
+-- Apply web capture to a real entity and verify its held component, because
+-- later escape logic depends on state stored on the actor rather than trap.
 function test.run(ctx)
     local actor = ctx:create()
 

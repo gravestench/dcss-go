@@ -1,3 +1,4 @@
+-- Example: A new Wanderer receives generated skill points before its derived HP is set.
 -- Source-derived starting skill points, attributes, training, HP and MP.
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
@@ -9,6 +10,7 @@ local distributed = require("policy.character.distributed_training")
 
 local starting_profile = {}
 
+-- Break equal training-share remainders by original skill index for stable seeding.
 local function remainder_before(left, right)
     if left.value == right.value then
         return left.index < right.index
@@ -37,6 +39,7 @@ local armour_choice_jobs = {
     JOB_ABYSSAL_KNIGHT = true,
 }
 
+-- Merge species, job, chosen weapon, and Wanderer grants before allocating skill points.
 local function starting_skills(ctx, species, job, weapon_skill, generated)
     local levels = {}
     local grant_order = {}
@@ -97,6 +100,7 @@ local function starting_skills(ctx, species, job, weapon_skill, generated)
         levels.SK_ARMOUR = nil
     end
 
+    -- Innate casters consolidate magic-school grants into Spellcasting before points are priced.
     if mutation_levels.effective(ctx, ctx:player(),
         mutations.MUT_INNATE_CASTER) > 0 then
         local highest = levels.SK_SPELLCASTING or 0
@@ -176,6 +180,7 @@ local function starting_skills(ctx, species, job, weapon_skill, generated)
     return skills
 end
 
+-- Square starting points to weight the initial practice queue; stable remainder ties make its 100 slots exact.
 local function seed_queue(ctx, skills)
     local counts = {}
     local remainders = {}
@@ -203,6 +208,7 @@ local function seed_queue(ctx, skills)
         }
     end
 
+    -- Award leftover percentage slots to the smallest remainders in stable skill order.
     table.sort(order, remainder_before)
 
     local extra = 1
@@ -233,6 +239,7 @@ local function seed_queue(ctx, skills)
     return queue
 end
 
+-- Resolve minimum stats from species and job values before adding generated Wanderer bonuses.
 function starting_profile.build(ctx, species, job, weapon_skill, generated)
     if not choice.allowed(species, job) then
         error("banned character choice " .. species.id .. "/" .. job.id)
@@ -245,6 +252,7 @@ function starting_profile.build(ctx, species, job, weapon_skill, generated)
     local skills = starting_skills(ctx, species, job, weapon_skill,
         generated and generated.skills)
 
+    -- Gnoll training needs every usable skill represented before queue weights are seeded.
     if distributed.active(ctx, ctx:player()) then
         distributed.include_skills(skills, species)
     end

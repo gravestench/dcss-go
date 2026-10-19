@@ -21,6 +21,7 @@ local armour_slots = {
     boots = true,
 }
 
+-- A saved equipment slot must refer to an item the player actually carries.
 local function held_item(ctx, id, player, slot)
     local number = type(id) == "number" and id or ctx:id(id)
     local entity = number ~= 0 and
@@ -48,6 +49,7 @@ local function held_item(ctx, id, player, slot)
     return entity, item, kind
 end
 
+-- An unfinished equipment action must retain a valid item and target slot.
 local function validate_delay(ctx, player, slots)
     local delay = ctx:get(player, "core.equipment_delay")
 
@@ -146,6 +148,8 @@ local function validate_delay(ctx, player, slots)
     end
 end
 
+-- Validate item ownership, slots, and species restrictions together after loading entity references.
+-- Example: a saved helmet on a horned player fails even if the item entity and slot each look valid alone.
 local function validate(ctx)
     local player = ctx:player()
     local identity = ctx:get(player, "core.player")
@@ -242,6 +246,7 @@ end
 
 local module = {}
 
+-- Equipped slots, held items, and pending equipment delays must agree in a restored save.
 function module.run(ctx)
     validate(ctx)
     return {}

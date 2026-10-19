@@ -5,6 +5,8 @@ local item_sets = require("policy.item_generation.item_sets")
 
 local policy = {}
 
+-- Example: policy.eligible(ctx, scroll_kind, request) checks exclusions before drawing a scroll.
+-- Apply the player's saved item-set restriction only to random stock, after explicit kind handling.
 function policy.eligible(ctx, definition, request)
     if definition.class ~= classes.OBJ_SCROLLS then
         return false
@@ -18,13 +20,15 @@ function policy.eligible(ctx, definition, request)
         item_sets.allowed(ctx, ctx:player(), definition.id)
 end
 
+-- A scroll's catalog weight controls its random subtype odds.
 function policy.weight(_, definition)
-    -- Source: makeitem.cc:1358-1404. The import pins rarity weights.
+    -- Source: makeitem.cc. The import pins rarity weights.
     return definition.generation.weight or 0
 end
 
+-- A single draw reserves rare outcomes for two- and three-scroll stacks.
 function policy.roll(ctx, _, _, result)
-    -- Source: makeitem.cc:1407-1410. Two and three scroll stacks are rare.
+    -- Source: makeitem.cc. Two and three scroll stacks are rare.
     local draw = ctx:random(streams.ITEM_GENERATION, 48)
 
     if draw == 46 then

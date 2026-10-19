@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local mutations = require("ids.mutations")
@@ -8,13 +9,16 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Proxy the cold coin flip while reading the player's saved Slow component.
 local function predictable(ctx, player)
     local world = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to cold blooded fixture actor so player-only branches execute on that entity.
     function world.player()
         return player
     end
 
+    -- Win the named cold coin flip to start the saved slow duration.
     function world.random(_, stream, bound)
         harness.equal(stream, "cold", "cold exposure uses its saved stream")
         harness.equal(bound, 2, "cold exposure is a coin flip")
@@ -25,6 +29,7 @@ local function predictable(ctx, player)
     return world
 end
 
+-- Unresisted cold adds a saved eight-turn slow.
 function test.run(ctx)
     local player = ctx:create()
     local world = predictable(ctx, player)

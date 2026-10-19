@@ -1,11 +1,14 @@
+-- Example: A fresh kill adds a timed regeneration stack up to the mutation cap.
 local component = require("constants.component")
 
 local powered = {}
 
+-- Draw a fresh kill-triggered timer from the mutation stream before stacking checks.
 local function duration(ctx)
     return (2 + ctx:random("mutation", 4)) * 10
 end
 
+-- Ignore saved strength after its timer has expired.
 function powered.strength(ctx, player)
     local state = ctx:get(player, component.POWERED_BY_DEATH)
 
@@ -18,6 +21,7 @@ end
 
 -- Source: mon-death.cc gives a fresh 2-5 turn timer before testing the
 -- decreasing chance to add another strength stack.
+-- Each qualifying kill refreshes the timer before the chance to add another strength stack is tested.
 function powered.on_kill(ctx, player, _, level)
     local state = ctx:get(player, component.POWERED_BY_DEATH)
     local previous = state and state.strength or 0

@@ -12,10 +12,13 @@ local punch = {
     },
 }
 
+-- Example: punch.chance(nil, input) with input.unarmed5 = 9 -> 8 percent attempt chance
+-- Scale punch attempt chance from Unarmed Combat after offhand eligibility has been checked.
 function punch.chance(_, input)
     return 5 + math.floor(input.unarmed5 / 3)
 end
 
+-- A usable offhand is required before Punch can enter the auxiliary sequence.
 function punch.available(_, input)
     return input.punch_eligible
 end

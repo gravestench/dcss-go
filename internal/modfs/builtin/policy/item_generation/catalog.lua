@@ -3,12 +3,15 @@ local catalog = {}
 local policies = {}
 local order = {}
 
+-- Derive the class policy module once from the registered object class ID.
 local function policy_path(class_id)
     local name = class_id:lower():gsub("^obj_", "")
 
     return "policy/item_generation/classes/" .. name .. ".lua"
 end
 
+-- Example: catalog.register(classes.OBJ_GOLD, gold_policy) binds gold's eligibility and roll hooks.
+-- Reject duplicate classes and incomplete hook tables at load time so generation never falls through silently.
 function catalog.register(class_id, policy)
     if type(class_id) ~= "string" or
         not class_id:match("^OBJ_[A-Z0-9_]+$") then
@@ -30,6 +33,7 @@ function catalog.register(class_id, policy)
     order[#order + 1] = class_id
 end
 
+-- Fail an unsupported class before any subtype draw.
 function catalog.policy(class_id)
     local policy = policies[class_id]
 
@@ -40,6 +44,7 @@ function catalog.policy(class_id)
     return policy
 end
 
+-- Expose registered class IDs for generator validation.
 function catalog.classes()
     local classes = {}
 
@@ -50,6 +55,7 @@ function catalog.classes()
     return classes
 end
 
+-- Keep the module path available for diagnostics and loader registration.
 function catalog.path(class_id)
     return policy_path(class_id)
 end

@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local classes = require("constants.mutation_classes")
 local component = require("constants.component")
@@ -10,6 +11,7 @@ local transition = require("policy.mutations.transition")
 
 local test = {}
 
+-- Seed transition messages owner components once so each branch changes only the mutation under test.
 local function player(ctx)
     local owner = ctx:create()
 
@@ -21,10 +23,12 @@ local function player(ctx)
     return owner
 end
 
+-- Mutation loss emits its source level message.
 function test.run(ctx)
     local events = {}
     local world = setmetatable({}, { __index = ctx })
 
+    -- Capture transition messages events separately from the policy state being asserted.
     function world.emit(_, kind, message)
         if kind == "mutation" then
             events[#events + 1] = message

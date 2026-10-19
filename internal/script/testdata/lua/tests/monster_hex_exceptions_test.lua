@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local harness = require("tests.harness")
 local monsters = require("ids.monsters")
@@ -6,11 +7,13 @@ local strip = require("policy.combat.monster_hexes.strip_willpower")
 
 local test = {}
 
+-- Strip Willpower bypasses willpower one third of the time.
 function test.run()
     local caster = 101
     local defender = 202
     local ctx = {}
 
+    -- Return the floating-eye caster definition for Strip Willpower exception checks.
     function ctx:get(entity, id)
         if entity == caster and id == component.ACTOR then
             return {
@@ -21,6 +24,7 @@ function test.run()
         return nil
     end
 
+    -- Choose the bypass branch of the one-in-three willpower roll.
     function ctx:random(_, bound)
         return 0
     end

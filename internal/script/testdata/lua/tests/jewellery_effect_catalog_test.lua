@@ -1,3 +1,5 @@
+-- All active jewellery properties need an effect capability, including modded rings.
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local capabilities = require("constants.jewellery_capabilities")
@@ -65,9 +67,13 @@ local expected = {
 
 local test = {}
 
+-- Verify every active jewellery definition has a registered effect, catching
+-- missing Lua capability handlers before an item is equipped in play.
 function test.run()
     local count = 0
 
+    -- Every active jewellery ID must map to a supported capability rather
+    -- than relying on item-specific branches at equipment time.
     for _, definition in ipairs(catalog.all(categories.ITEMS)) do
         if definition.jewellery and not definition.explicitly_removed then
             count = count + 1
@@ -93,6 +99,8 @@ function test.run()
 
     harness.equal(count, 24, "all active jewellery effects are covered")
 
+    -- Reuse an existing capability from a modded ring, then reject an unknown
+    -- capability and a plus magnitude without plus-bearing item metadata.
     local modded = {
         id = "MOD_SUN_RING",
         class = classes.OBJ_JEWELLERY,

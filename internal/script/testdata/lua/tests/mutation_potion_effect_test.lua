@@ -1,3 +1,4 @@
+
 local item_ids = require("ids.items")
 local mutations = require("ids.mutations")
 local jobs = require("ids.jobs")
@@ -12,6 +13,7 @@ local effects = require("policy.mutations.effects.registry")
 
 local test = {}
 
+-- Place one owned potion stack before quaff validation consumes it.
 local function carried_potion(ctx, player, kind_id)
     local entity = ctx:create()
 
@@ -27,6 +29,7 @@ local function carried_potion(ctx, player, kind_id)
     return entity
 end
 
+-- No Drink rejects a potion before issuing an intent.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -88,11 +91,14 @@ function test.run(ctx)
 
     records.grant_acquired(ctx, mutable, mutations.MUT_STRONG, 1)
 
-    local mutation_draws = harness.random_context(ctx, { 0, 0, 0 })
+    -- Two distinct catalog positions let both grants succeed even though the
+    -- first selected mutation has only one level.
+    local mutation_draws = harness.random_context(ctx, { 0, 0, 2 })
     local potion_draws = { 0, 0, 0 }
     local next_potion_draw = 0
     local potion_ctx = setmetatable({}, { __index = mutation_draws })
 
+    -- Route mutation draws through their context while counting potion draws separately.
     function potion_ctx.random(_, stream, bound)
         if stream == "mutation" then
             return mutation_draws:random(stream, bound)
@@ -115,8 +121,16 @@ function test.run(ctx)
         "mutation potion draws both counts and the good-mutation coinflip")
     harness.equal(mutation_draws:draws_used(), 3,
         "mutation choices draw only after removal attempts")
-    harness.equal(records.find(ctx, mutable, mutations.MUT_STRONG).state.acquired,
-        2, "mutation potion removes two attempts then grants two levels")
+    local total_acquired = 0
+
+    for _, entry in ipairs(records.list(ctx, mutable)) do
+        total_acquired = total_acquired + entry.state.acquired
+    end
+
+    harness.equal(total_acquired, 2,
+        "mutation potion removes two attempts then grants two levels")
+    harness.falsy(records.find(ctx, mutable, mutations.MUT_STRONG),
+        "the old mutation is removed before new levels are granted")
 
     records.grant_acquired(ctx, player, mutations.MUT_NO_DRINK, 1)
 
@@ -148,6 +162,7 @@ function test.run(ctx)
     local draw = 0
     local reduced_ctx = setmetatable({}, { __index = ctx })
 
+    -- Alternate the two half-heal outcomes to check source rounding.
     function reduced_ctx.random(_, stream, bound)
         harness.equal(stream, "potion", "healing uses potion RNG")
         harness.equal(bound, 2, "half healing rounds over two outcomes")

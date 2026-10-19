@@ -1,8 +1,10 @@
+-- Example: A trail near the east edge turns inward rather than stepping beyond the grid.
 local corridors = {}
 
 local width = 80
 local height = 70
 
+-- Near-edge trail growth turns back toward the playable interior.
 local function inward(position, direction)
     if position.x < 4 then
         direction = { x = 1, y = 0 }
@@ -23,6 +25,7 @@ local function inward(position, direction)
     return direction
 end
 
+-- Bias a near-edge step inward while retaining source randomness in the interior.
 function corridors.trail_direction(builder, position, bound)
     local direction = 0
 
@@ -39,6 +42,7 @@ function corridors.trail_direction(builder, position, bound)
     return direction
 end
 
+-- Choose an axis before selecting sign so cardinal directions share the intended distribution.
 function corridors.choose_direction(builder, position)
     if builder:roll(2) == 0 then
         return {
@@ -53,6 +57,7 @@ function corridors.choose_direction(builder, position)
     }
 end
 
+-- Leave a cell beyond the segment in bounds so corridor growth can detect an existing floor safely.
 function corridors.carve_segment(builder, position, direction, length)
     for _ = 1, length do
         direction = inward(position, direction)
@@ -84,6 +89,8 @@ function corridors.carve_segment(builder, position, direction, length)
     return position, nil
 end
 
+-- Join stair anchors with an orthogonal walk, drawing axis order when both directions remain.
+-- Carve only rock between stair anchors; existing floor remains intact.
 function corridors.connect(builder, from, to)
     local position = {
         x = from.x,

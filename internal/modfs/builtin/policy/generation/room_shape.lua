@@ -1,10 +1,13 @@
+-- Example: A proposed room counts an existing door as a connection before carving.
 local shape = {}
 
+-- Count floor and door glyphs as existing routes into a proposed room.
 local function open_connection(builder, x, y)
     local glyph = builder:cell(x, y)
     return glyph == "." or glyph == "+"
 end
 
+-- Count existing openings around a candidate room before replacing its walls and interior.
 local function connections(builder, left, top, right, bottom)
     local count = 0
     local corners = 0
@@ -45,11 +48,13 @@ local function connections(builder, left, top, right, bottom)
     return count, corners
 end
 
+-- Require wall or door flanks before a side opening can become a door.
 local function solid(builder, x, y)
     local glyph = builder:cell(x, y)
     return glyph == "#" or glyph == "+"
 end
 
+-- A wall opening becomes a door only when its side cells make a plausible doorway.
 local function maybe_door(builder, x, y, flank_x, flank_y, door_level)
     if builder:cell(x, y) ~= "." or
         not solid(builder, x - flank_x, y - flank_y) or
@@ -62,9 +67,11 @@ local function maybe_door(builder, x, y, flank_x, flank_y, door_level)
     end
 end
 
+-- Reject rooms with no connection or too many doors, then carve only the accepted rectangle.
 function shape.make(builder, left, top, right, bottom, max_doors, door_level)
     local count, corners = connections(builder, left, top, right, bottom)
 
+    -- Corner openings count toward the single-door restriction before any room cells are carved.
     if max_doors == 1 and count + corners > 1 then
         return false
     end

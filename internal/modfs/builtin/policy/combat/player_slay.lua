@@ -9,6 +9,7 @@ local artefact_ids = require("ids.artefact_properties")
 
 local player_slay = {}
 
+-- Example: player_slay.total(ctx, player) with Augmentation level one -> three extra slaying before other modifiers
 -- Source: player.cc:slaying_bonus includes Wereblood and three points for
 -- each active Augmentation tier in both melee and ranged attacks.
 function player_slay.total(ctx, player)

@@ -1,5 +1,8 @@
 local selection = {}
 
+-- Scroll effects prepare their target selection before the read action consumes the item.
+-- Example: a scroll with several eligible targets opens a selection instead of choosing the first item.
+-- Known cancellation returns Okay, while empty and unknown choices follow source read semantics.
 function selection.prepare(request, kind, title, no_choices, options)
     if request.cancelled then
         if request.known then

@@ -4,6 +4,7 @@
 -- stops an ordinary missile. Shots continue past the cursor up to range.
 local trajectory = {}
 
+-- Walk grid cells to the aim point or range limit, recording blockers and actors in contact order.
 function trajectory.trace(ctx, level_id, from_x, from_y, to_x, to_y,
     range, stop_at_aim)
     local aim_x = to_x - from_x
@@ -84,6 +85,8 @@ function trajectory.trace(ctx, level_id, from_x, from_y, to_x, to_y,
     }
 end
 
+-- Example: with aim at a wall,
+-- trajectory.to_target(ctx, level_id, from_x, from_y, to_x, to_y, range) -> trace stops at selected wall
 -- Explosion targeting and displacement stop at the selected cell instead
 -- of projecting the cursor direction all the way to maximum spell range.
 function trajectory.to_target(ctx, level_id, from_x, from_y,

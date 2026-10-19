@@ -1,3 +1,5 @@
+-- Changed quote rejected before debit.
+
 local harness = require("tests.harness")
 local component = require("constants.component")
 local item_ids = require("ids.items")
@@ -6,6 +8,7 @@ local materialize = require("policy.item_generation.materialize")
 
 local test = {}
 
+-- Stable stock order lets a multi-item quote identify both selected entries.
 local function stock_item(ctx, shop, order)
     return materialize.create(ctx, {
         kind_id = item_ids.WPN_CLUB,
@@ -19,6 +22,8 @@ local function stock_item(ctx, shop, order)
     })
 end
 
+-- Run purchase and shopping-list operations on real ECS entities to verify
+-- that quoted stock, gold transfer, and ownership remain synchronized.
 function test.run(ctx)
     local purchase = require("policy.shops.purchase")
     local list = require("policy.shops.shopping_list")
@@ -55,6 +60,7 @@ function test.run(ctx)
     harness.equal(#ctx:get(player, component.SHOPPING_LIST).stock_ids,
         1, "shopping list records stock")
 
+    -- An unaffordable basket is atomic: neither item nor gold changes.
     local okay = pcall(purchase.buy, ctx, player, shop,
         { first, second })
 
@@ -78,6 +84,8 @@ function test.run(ctx)
     harness.equal(ctx:get(player, component.WALLET).gold, 15,
         "changed quote kept wallet")
 
+    -- Price equality is insufficient: a stock signature detects swapped
+    -- item identity between quoting and buying.
     local original = ctx:get(first, component.ITEM)
     local original_signature = signature.of(ctx, first)
     local original_price = pricing.quote(ctx, shop, first)
@@ -112,6 +120,7 @@ function test.run(ctx)
         purchases = 0,
     })
 
+    -- Successful purchase transfers both items and removes their list entry.
     local result = purchase.buy(ctx, player, shop,
         { first, second })
 

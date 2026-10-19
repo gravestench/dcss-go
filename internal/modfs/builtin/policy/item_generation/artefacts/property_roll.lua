@@ -6,6 +6,7 @@ local properties = require("ids.artefact_properties")
 
 local roll = {}
 
+-- Independent percentage draws shape property quality before budget allocation.
 local function binomial(ctx, trials, probability)
     local hits = 0
 
@@ -18,6 +19,7 @@ local function binomial(ctx, trials, probability)
     return hits
 end
 
+-- Stochastic rounding preserves fractional bad-property budget odds.
 local function rounded_division(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -29,8 +31,9 @@ local function rounded_division(ctx, numerator, denominator)
     return quotient
 end
 
+-- Source property quality yields separate good and bad budgets; overflow enhances selected good properties.
 local function budgets(ctx)
-    -- Source: crawl-ref/source/artefact.cc:827-854.
+    -- Source: crawl-ref/source/artefact.cc.
     local quality = math.max(1, binomial(ctx, 7, 30))
     local bad = math.min(binomial(ctx,
         1 + rounded_division(ctx, quality, 5), 30), 2)
@@ -55,6 +58,7 @@ local function budgets(ctx)
     return good, bad, enhance
 end
 
+-- Draw by current weights after incompatible or spent properties leave the pool.
 local function select_property(ctx, candidates)
     local rows = {}
 
@@ -76,6 +80,7 @@ local function select_property(ctx, candidates)
     error("selected artefact property has no declaration " .. id)
 end
 
+-- Enhancement can spend overflow budget on a selected good property without adding another slot.
 local function add_good(ctx, entry, properties_map, good, enhance)
     local current = properties_map[entry.id] or 0
 
@@ -108,6 +113,8 @@ local function add_good(ctx, entry, properties_map, good, enhance)
     return good, enhance
 end
 
+-- Example: a weapon's current brand filters incompatible property candidates before either budget is spent.
+-- Spend good and bad budgets from a shrinking candidate pool so a property is selected at most once.
 function roll.properties(ctx, definition, brand)
     local good, bad, enhance = budgets(ctx)
     local candidates = {}

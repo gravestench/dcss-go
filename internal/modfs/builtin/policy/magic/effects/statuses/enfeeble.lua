@@ -15,6 +15,7 @@ for _, book in ipairs(catalog.all("monster_spellbooks")) do
     books[book.id] = book
 end
 
+-- Missing spell flags or monster traits count as absent, preventing nil catalog lists from changing eligibility.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -25,6 +26,7 @@ local function has(values, wanted)
     return false
 end
 
+-- Only wizard or magical spellbook slots can be disrupted by Enfeeble's antimagic.
 local function spell_sensitive(definition)
     local book = books[definition.spellbook_id]
 
@@ -38,6 +40,7 @@ local function spell_sensitive(definition)
     return false
 end
 
+-- Weakness matters only if the monster has a damaging melee attack to reduce.
 local function has_attacks(definition)
     for _, attack in ipairs(definition.attacks or {}) do
         if attack.type_id ~= "AT_NONE" and attack.damage > 0 then
@@ -48,6 +51,7 @@ local function has_attacks(definition)
     return false
 end
 
+-- A new status record starts with all four timers so each effect can extend independently.
 local function status(ctx, target)
     local current = ctx:get(target, component.MONSTER_ENFEEBLE)
 
@@ -59,6 +63,7 @@ local function status(ctx, target)
     }, current ~= nil
 end
 
+-- Retain other Enfeeble timers when one duration changes, adding a record only on first use.
 local function save_status(ctx, target, value, existed)
     if existed then
         ctx:set(target, component.MONSTER_ENFEEBLE, value)
@@ -67,6 +72,7 @@ local function save_status(ctx, target, value, existed)
     end
 end
 
+-- Randomized rounding preserves fractional power without systematic duration bias.
 local function divide_randomly(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -78,6 +84,7 @@ local function divide_randomly(ctx, numerator, denominator)
     return quotient
 end
 
+-- Three spell-stream draws fuzz Enfeeble duration after power is scaled to turns.
 local function duration(ctx, power)
     local extra = divide_randomly(ctx, power, 40)
 
@@ -92,6 +99,7 @@ local function duration(ctx, power)
     return (5 + math.floor(rolled / 3)) * 10
 end
 
+-- Weakness and antimagic can land despite a resisted blind/daze roll; each timer only extends.
 local function apply(ctx, target, definition, power)
     local weak = has_attacks(definition)
     local antimagic = spell_sensitive(definition)
@@ -132,10 +140,12 @@ local function apply(ctx, target, definition, power)
     ctx:emit("spell", "The " .. definition.name .. " is enfeebled!")
 end
 
+-- Chaos and Black Mark share the spellbook test with Enfeeble itself.
 function enfeeble.antimagic_susceptible(definition)
     return spell_sensitive(definition)
 end
 
+-- Other policies query the same melee eligibility used for Enfeeble weakness.
 function enfeeble.has_attacks(definition)
     return has_attacks(definition)
 end
@@ -210,6 +220,7 @@ function enfeeble.apply_weak(ctx, target, definition, power)
     return true
 end
 
+-- Offer the spell only when a living actor is visible along a clear in-range ray.
 function enfeeble.can_target(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -237,6 +248,7 @@ function enfeeble.can_target(ctx, player, spell)
     return false
 end
 
+-- Resolve the first ray contact rather than the aimed cell, then reject dead or missing actors.
 function enfeeble.cast(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,
@@ -259,12 +271,14 @@ function enfeeble.cast(ctx, player, intent, spell, power)
     apply(ctx, contact.actor, catalog.get("monsters", actor.kind_id), power)
 end
 
+-- Sight penalties require an active blind timer, not just a saved Enfeeble record.
 function enfeeble.blinded(ctx, monster)
     local current = ctx:get(monster, component.MONSTER_ENFEEBLE)
 
     return current ~= nil and current.blind_aut > 0
 end
 
+-- An active daze has a one-in-four melee-stream chance to waste a monster action.
 function enfeeble.dazed(ctx, monster)
     local current = ctx:get(monster, component.MONSTER_ENFEEBLE)
 
@@ -280,6 +294,7 @@ function enfeeble.dazed(ctx, monster)
     return true
 end
 
+-- Weakness reduces raw melee damage to two thirds while its timer is active.
 function enfeeble.melee_damage(ctx, monster, damage)
     local current = ctx:get(monster, component.MONSTER_ENFEEBLE)
 
@@ -290,6 +305,7 @@ function enfeeble.melee_damage(ctx, monster, damage)
     return damage
 end
 
+-- Only magical or wizard slots can falter; longer antimagic duration raises the chance.
 function enfeeble.antimagic(ctx, monster, slot_flags)
     local current = ctx:get(monster, component.MONSTER_ENFEEBLE)
 
@@ -318,6 +334,8 @@ function enfeeble.apply_sap_antimagic(ctx, monster)
     save_status(ctx, monster, next_state, existed)
 end
 
+-- Example: A monster with only ten aut of blind remaining loses its Enfeeble record on the next tick.
+-- Decay all four independent timers before deleting the shared record when its last effect ends.
 function enfeeble.tick(ctx, monster)
     local current = ctx:get(monster, component.MONSTER_ENFEEBLE)
 

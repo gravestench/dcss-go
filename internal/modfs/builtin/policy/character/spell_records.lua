@@ -1,8 +1,10 @@
+-- Example: Two copies of a spell on different owners do not share a memorisation slot.
 local catalog = require("policy.catalog")
 local player_scope = require("policy.magic.player_scope")
 
 local records = {}
 
+-- Collect only spell entities owned by this player before slot or library decisions.
 function records.list(ctx, owner)
     local found = {}
 
@@ -20,6 +22,7 @@ function records.list(ctx, owner)
     return found
 end
 
+-- Find a spell within the owner-filtered list so identical spells on another actor cannot leak.
 function records.find(ctx, owner, spell_id)
     for _, entry in ipairs(records.list(ctx, owner)) do
         if entry.state.spell_id == spell_id then
@@ -30,6 +33,7 @@ function records.find(ctx, owner, spell_id)
     return nil
 end
 
+-- Choose the first unused hotkey slot rather than renumbering existing spells.
 function records.next_slot(ctx, owner, field)
     local used = {}
 
@@ -48,6 +52,7 @@ function records.next_slot(ctx, owner, field)
     error("no free " .. field .. " for a spell")
 end
 
+-- Djinni level grants consume the spell schedule committed at start instead of drawing a new spell.
 function records.grant_scheduled(ctx, owner, level)
     for _, entry in ipairs(records.list(ctx, owner)) do
         if entry.state.future_level == level and
@@ -65,10 +70,12 @@ end
 -- Starting spell knowledge is assembled before entities are created. This
 -- keeps one durable record per spell even when the job both knows it and has
 -- it in its library.
+-- Merge known, library, and future innate data before creating one record per spell.
 function records.start(ctx, owner, library, known, future)
     local by_id = {}
     local ordered = {}
 
+    -- Validate book-scope spell IDs before creating durable spell records.
     local function entry(id)
         catalog.get("spells", id)
 
@@ -132,6 +139,7 @@ function records.start(ctx, owner, library, known, future)
     ctx:add(owner, "character.spellcasting", {})
 end
 
+-- Reject duplicate records and inconsistent slot ownership during restore validation.
 function records.validate(ctx, owner)
     local casting = ctx:get(owner, "character.spellcasting")
 

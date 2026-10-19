@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local component = require("constants.component")
 local item_ids = require("ids.items")
 
+-- Corpse aging checks source monster flags while tolerating definitions without flag arrays.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -12,6 +13,8 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Re-entry ages a floor corpse from the last 200-aut boundary; a body either remains or becomes a skeleton.
+-- Example: age_corpses(ctx, { level_id = floor, elapsed = 200 }) advances corpse decay on re-entry.
 local function age_corpses(ctx, input)
     local level_id = input.level_id
     local elapsed = input.elapsed
@@ -79,6 +82,7 @@ local function age_corpses(ctx, input)
     return {}
 end
 
+-- Off-level recovery uses a bounded movement count when a remembered target remains.
 local function catchup_monsters(ctx, input)
     local turns = input.turns
     local level_id = input.level_id
@@ -112,6 +116,7 @@ local function catchup_monsters(ctx, input)
                     tostring(definition.speed))
             end
 
+            -- Fast regeneration changes off-level recovery, while the offlevel stream rounds any fractional HP.
             local rate = has_flag(definition, "M_FAST_REGEN") and 100 or 10
             local units = turns * rate
             local recovery = math.floor(units / 100)
@@ -155,5 +160,6 @@ local function catchup_monsters(ctx, input)
     return {}
 end
 
+-- The world scheduler calls these policies on level re-entry to age corpses and catch monsters up.
 register.policy({ id = "world.age_corpses", run = age_corpses })
 register.policy({ id = "world.catchup_monsters", run = catchup_monsters })

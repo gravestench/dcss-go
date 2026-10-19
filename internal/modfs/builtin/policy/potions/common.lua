@@ -1,5 +1,6 @@
 local common = {}
 
+-- Potion effects share a required-state check and a three-draw average helper.
 function common.required(ctx, entity, name)
     local value = ctx:get(entity, name)
 
@@ -10,6 +11,8 @@ function common.required(ctx, entity, name)
     return value
 end
 
+-- Average three potion-stream draws with source bounds to soften the healing roll distribution.
+-- Example: a healing potion can average three potion-stream rolls rather than use one uniform draw.
 function common.average_three(ctx, bound)
     return math.floor((ctx:random("potion", bound) +
         ctx:random("potion", bound + 1) +

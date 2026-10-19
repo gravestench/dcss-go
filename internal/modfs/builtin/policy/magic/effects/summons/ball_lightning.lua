@@ -8,6 +8,8 @@ local summons = require("policy.magic.effects.summons.common")
 
 local lightning = {}
 
+-- Example: An uncharged ball lightning explodes once and records charge one to prevent a repeat blast.
+-- Mark the construct charged before damage rolls so later actions cannot explode it twice.
 function lightning.explode(ctx, entity)
     local state = ctx:get(entity, component.SUMMON_CONSTRUCT)
 
@@ -26,6 +28,7 @@ function lightning.explode(ctx, entity)
     ctx:emit("combat", "Your ball lightning explodes!")
 end
 
+-- Explode only once within two cells of an enemy; the charge marker stops repeat blasts before expiry.
 function lightning.act(ctx, entity, origin)
     if ctx:get(entity, component.SUMMON_CONSTRUCT).charge >= 1 then
         return { kind = intent_ids.MONSTER_WAIT }

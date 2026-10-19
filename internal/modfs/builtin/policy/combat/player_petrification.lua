@@ -3,6 +3,7 @@ local resistance = require("policy.combat.player_resistance")
 
 local petrification = {}
 
+-- Example: petrification.apply(ctx, player) with petrification-immune player -> false without new state
 -- Source: player.cc:player::petrify. A second hit completes the first stage
 -- on the next status tick; a fully petrified player cannot be petrified again.
 function petrification.apply(ctx, player)

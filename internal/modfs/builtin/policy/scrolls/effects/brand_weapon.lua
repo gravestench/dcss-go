@@ -23,6 +23,7 @@ local messages = {
     [brands.SPECTRAL] = " acquires a faint afterimage.",
 }
 
+-- Exclude artefacts and kinds outside the brand pool before offering target items.
 local function eligible(ctx, _, entity)
     local item = ctx:get(entity, component.ITEM)
     local kind = catalog.get("items", item.kind_id)
@@ -31,12 +32,15 @@ local function eligible(ctx, _, entity)
         pool.eligible(kind)
 end
 
+-- Example: an artefact weapon is excluded from a Brand Weapon scroll's item list.
+-- Use the common reachable-item menu so only brandable weapons can be selected.
 function brand_weapon.prepare(ctx, player, request)
     return choice.prepare(ctx, player, request,
         "Brand which weapon?", "You have no brandable weapons.",
         eligible)
 end
 
+-- Roll a different eligible brand, persist the ego, reveal it, and emit the before-and-after names.
 function brand_weapon.apply(ctx, player, request)
     local target = choice.target(ctx, request)
     local item = ctx:get(target, component.ITEM)

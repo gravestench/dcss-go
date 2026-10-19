@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.RAGE,
     version = 1,
+    -- Berserk duration, cooldown, and peaceful-action count govern different exit and penalty rules.
     fields = {
         remaining_aut = {
             type = "int64",

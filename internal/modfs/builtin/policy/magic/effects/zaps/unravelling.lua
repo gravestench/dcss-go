@@ -13,6 +13,7 @@ local summons = require("policy.magic.effects.summons.common")
 
 local unravelling = {}
 
+-- Explosion dice are drawn only after an effect is actually dispelled.
 local function roll_damage(ctx, power)
     local sides = 3 + math.floor(math.min(power, 200) / 6)
     local amount = 0
@@ -24,6 +25,7 @@ local function roll_damage(ctx, power)
     return amount
 end
 
+-- Reject cells without a dispellable effect before prompting about a forced cast.
 function unravelling.prepare(ctx, player, spell, dx, dy, input)
     local origin = ctx:get(player, component.POSITION)
     local x = origin.x + dx
@@ -67,6 +69,7 @@ function unravelling.prepare(ctx, player, spell, dx, dy, input)
     end
 end
 
+-- A dispelled monster effect can explode; armour is applied after the damage roll.
 function unravelling.affect_monster(ctx, target, power)
     local definition, current = damage.monster(ctx, target)
 
@@ -85,6 +88,7 @@ function unravelling.affect_monster(ctx, target, power)
     end
 end
 
+-- A player caught in the burst takes armoured damage and a malmutation roll.
 function unravelling.affect_player(ctx, player, power)
     local raw = roll_damage(ctx, power)
     local amount = damage.player_armour(ctx, player, raw, "normal")
@@ -94,6 +98,9 @@ function unravelling.affect_player(ctx, player, power)
     malmutate.apply(ctx, player, spells.SPELL_VIOLENT_UNRAVELLING)
 end
 
+-- Example: resolve(ctx, player, intent, spell, 60) follows the chosen ray,
+-- dispels a contacted status, then bursts only if something was unravelled.
+-- Trace to first contact and roll burst damage only after a dispellable status is removed.
 function unravelling.resolve(ctx, player, intent, _, power)
     local origin = ctx:get(player, component.POSITION)
     local x = origin.x + intent.dx

@@ -3,6 +3,8 @@ local catalog = require("policy.catalog")
 
 local roll = {}
 
+-- Example: roll.chance(ctx, 0, 10) returns false without consuming item-generation RNG.
+-- Zero and certain chances short-circuit so trivial outcomes do not perturb later item draws.
 function roll.chance(ctx, numerator, denominator)
     if numerator <= 0 then
         return false
@@ -15,10 +17,12 @@ function roll.chance(ctx, numerator, denominator)
     return ctx:random(streams.ITEM_GENERATION, denominator) < numerator
 end
 
+-- Use an inclusive upper bound to match source item rolls.
 function roll.between(ctx, first, last)
     return first + ctx:random(streams.ITEM_GENERATION, last - first + 1)
 end
 
+-- Average independent bounded draws before class-specific quantity rules.
 function roll.average(ctx, bound, count)
     local sum = 0
 
@@ -29,10 +33,12 @@ function roll.average(ctx, bound, count)
     return math.floor(sum / count)
 end
 
+-- Resolve the chosen item ID immediately so callers receive an active definition.
 function roll.one_of(ctx, ids)
     return catalog.get("items", ids[ctx:random(streams.ITEM_GENERATION, #ids) + 1])
 end
 
+-- Preserve row order and consume one draw over the total positive weight.
 function roll.weighted_id(ctx, rows)
     local total = 0
 
@@ -57,6 +63,7 @@ function roll.weighted_id(ctx, rows)
     error("source item choice fell outside weighted table")
 end
 
+-- Resolve weighted IDs through the active item catalog after selection.
 function roll.weighted(ctx, rows)
     return catalog.get("items", roll.weighted_id(ctx, rows))
 end

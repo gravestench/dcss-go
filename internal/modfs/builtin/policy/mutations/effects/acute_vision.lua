@@ -5,6 +5,8 @@ local mutations = require("ids.mutations")
 
 local acute_vision = {}
 
+-- Convert acquired mutation levels to one visibility capability; extra ranks do not stack sight.
+-- Example: one Acute Vision level grants see invisible, while a zero-level record contributes nothing.
 function acute_vision.see_invisible(level)
     return level > 0 and 1 or 0
 end

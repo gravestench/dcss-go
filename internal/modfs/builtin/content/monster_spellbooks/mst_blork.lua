@@ -1,0 +1,56 @@
+-- MST_BLORK groups 5 DCSS monster spell slots, beginning with SPELL_CANTRIP.
+-- A monster with this book may offer its weighted slots to AI; eligibility is checked at decision time.
+-- The table does not register or cast any spell effect.
+
+local categories = require("constants.catalog")
+
+local definition = {
+    id = "MST_BLORK",
+    -- These 5 slots pair candidate spells with frequency and casting flags for the
+    -- owning monster.
+    slots = {
+        {
+            spell_id = "SPELL_CANTRIP",
+            frequency = 9,
+            flags = {
+                "MON_SPELL_WIZARD",
+            },
+        },
+
+        {
+            spell_id = "SPELL_MAGIC_DART",
+            frequency = 9,
+            flags = {
+                "MON_SPELL_WIZARD",
+            },
+        },
+
+        {
+            spell_id = "SPELL_THROW_FROST",
+            frequency = 9,
+            flags = {
+                "MON_SPELL_WIZARD",
+            },
+        },
+
+        {
+            spell_id = "SPELL_THROW_FLAME",
+            frequency = 9,
+            flags = {
+                "MON_SPELL_WIZARD",
+            },
+        },
+
+        {
+            spell_id = "SPELL_HASTE",
+            frequency = 9,
+            flags = {
+                "MON_SPELL_WIZARD",
+            },
+        },
+    },
+}
+
+register.definition(categories.MONSTER_SPELLBOOKS, definition)
+
+return definition

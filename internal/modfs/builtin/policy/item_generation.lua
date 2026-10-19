@@ -19,10 +19,12 @@ local valid_quality = {
     [quality.RANDART] = true,
 }
 
+-- Include the caller site in generation errors so a bad vault item can be located.
 local function fail(request, detail)
     error(tostring(request.site) .. ": item generation " .. detail)
 end
 
+-- Reject invalid depth, quality, and site before any item-generation draw.
 local function validate_request(request)
     if type(request) ~= "table" or
         type(request.depth) ~= "number" or
@@ -40,6 +42,7 @@ local function validate_request(request)
     end
 end
 
+-- A vault's fixed kind still passes class and generation checks before any RNG draw.
 local function fixed_definition(request)
     local okay, definition = pcall(catalog.get, "items", request.kind_id)
 
@@ -59,6 +62,7 @@ local function fixed_definition(request)
     return definition
 end
 
+-- Fixed kinds take the direct path; random requests use the class policy's picker or pool.
 local function selected_definition(ctx, class_id, request, policy)
     if request.kind_id then
         local definition = fixed_definition(request)
@@ -77,6 +81,9 @@ local function selected_definition(ctx, class_id, request, policy)
     return pool.select(ctx, class_id, request, policy)
 end
 
+-- Example: a randart request rolls a class and subtype, then requires the artefact path to succeed.
+-- Resolve the request once through class choice, subtype, and artefact policy;
+-- the returned roll stays data-only until materialization creates its entity.
 function generation.roll(ctx, request)
     validate_request(request)
 
@@ -148,6 +155,7 @@ function generation.roll(ctx, request)
     return result
 end
 
+-- Materialize a rolled result only after all generation decisions are complete.
 function generation.create(ctx, result, location)
     return materialize.create(ctx, result, location)
 end

@@ -1,3 +1,4 @@
+-- Example: ctx:get(actor, component.TELEPORT) reads the pending teleport timer.
 -- teleport.cc:ENCH_TP delayed monster teleport.
 local component = require("constants.component")
 local state = {}

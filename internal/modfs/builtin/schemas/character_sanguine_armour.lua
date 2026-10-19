@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.SANGUINE_ARMOUR,
     version = 1,
+    -- Recent damage refreshes this aut timer; armour calculations read it without owning the timer.
     fields = {
         remaining_aut = {
             type = "int64",

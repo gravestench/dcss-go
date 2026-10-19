@@ -9,6 +9,7 @@ local trajectory = require("policy.combat.trajectory")
 
 local explosive = { specs = {} }
 
+-- Use the explosion spec dice, including fixed damage, before applying target defenses.
 local function roll_damage(ctx, spec, power)
     if spec.damage.kind == "fixed" then
         local amount = 0
@@ -39,6 +40,7 @@ local function roll_damage(ctx, spec, power)
     return amount
 end
 
+-- Find the requested elemental resistance level from a monster profile.
 local function resistance(definition, wanted)
     for _, entry in ipairs(definition.resistances or {}) do
         if entry.id == wanted then
@@ -49,6 +51,8 @@ local function resistance(definition, wanted)
     return 0
 end
 
+-- Only the resistible fraction of an explosion passes through elemental
+-- resistance; the rest of the raw damage is unchanged.
 local function resist_monster(ctx, target, raw, definition, spec)
     if not spec.element then
         return raw
@@ -65,6 +69,7 @@ local function resist_monster(ctx, target, raw, definition, spec)
         damage.monster_elemental(ctx, target, resistible, spec.element)
 end
 
+-- Apply the player-specific resistance path only for elemental explosions.
 local function resist_player(ctx, player, raw, spec)
     if not spec.element then
         return raw
@@ -82,6 +87,7 @@ local function resist_player(ctx, player, raw, spec)
         damage.player_elemental(ctx, player, resistible, spec.element)
 end
 
+-- Branch player and monster damage through their own armour and resistance rules.
 local function hurt(ctx, player, target, spec, power)
     local raw = roll_damage(ctx, spec, power)
 
@@ -113,6 +119,7 @@ end
 
 explosive.hurt = hurt
 
+-- Choose an impact cell before expanding the spec radius to nearby actors.
 local function resolve(ctx, player, intent, spell, power, spec)
     local source = ctx:get(player, component.POSITION)
     local ray = trajectory.to_target(ctx, source.level_id,
@@ -135,6 +142,7 @@ local function resolve(ctx, player, intent, spell, power, spec)
     end
 end
 
+-- Fail on an unknown explosion spec rather than silently dropping a registered spell.
 function explosive.resolve(ctx, player, intent, spell, power)
     local spec = explosive.specs[spell.id]
 
@@ -145,7 +153,11 @@ function explosive.resolve(ctx, player, intent, spell, power)
     return resolve(ctx, player, intent, spell, power, spec)
 end
 
+-- Example: A registered explosion spec supplies its radius and damage dice at impact.
+-- Pair each spell ID with its blast profile and the shared resolver when the zap module loads.
 function explosive.register(id, spec)
+    -- Registration pairs spell-specific blast dice with the shared resolver
+    -- called by magic.invoke.
     explosive.specs[id] = spec
     registry.add(id, explosive)
 end

@@ -8,10 +8,12 @@ local summons = require("policy.magic.effects.summons.common")
 
 local armour = {}
 
+-- Resolve the body slot once so preparation and casting agree on which worn item animates.
 local function body_armour(ctx, player)
     return equipment.worn(ctx, player, { body = true }).body
 end
 
+-- Recover the copied armour from ECS inventory; its AC drives both source-style melee hits.
 function armour.attack_damage(ctx, creature)
     for _, item in ipairs(ctx:query({ component.ITEM, component.CARRIED_BY })) do
         local carrier = ctx:get(item, component.CARRIED_BY)
@@ -32,6 +34,7 @@ function armour.attack_damage(ctx, creature)
     error("animated armour has no defining item")
 end
 
+-- Example: Animate Armour rejects a player who is not wearing body armour.
 -- Source: spl-summoning.cc:cast_summon_armour_spirit and
 -- mon-util.cc:monster::attack: AC + AC^2 / 2 for each of two hits.
 function armour.prepare(ctx, player)
@@ -40,6 +43,7 @@ function armour.prepare(ctx, player)
     end
 end
 
+-- Give the summon its own item record so its attack survives equipment changes and save/restore.
 function armour.resolve(ctx, player, _, _, power)
     local worn = body_armour(ctx, player)
 

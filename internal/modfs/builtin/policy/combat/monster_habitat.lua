@@ -6,6 +6,7 @@ local flight = require("policy.combat.flight")
 
 local habitat = {}
 
+-- Example: habitat.at(ctx, monster, level_id, x, y) with monster over unsafe terrain -> false destination
 -- Source: mon-place.cc:monster_habitable_grid, _feat_compatible and
 -- terrain.cc:feat_has_solid_floor. Callers handle actor occupancy separately.
 function habitat.at(ctx, monster, level_id, x, y)

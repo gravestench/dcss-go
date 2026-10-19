@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local species = require("ids.species")
@@ -7,6 +8,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Source paralysis releases direct player grips.
 function test.run(ctx)
     local player = ctx:create()
     local monster = ctx:create()

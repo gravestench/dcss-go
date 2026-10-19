@@ -1,3 +1,4 @@
+-- Example: A temporary Strength drain changes current Strength without editing its base value.
 local component = require("constants.component")
 local capabilities = require("constants.mutation_capabilities")
 local stats = require("constants.stats")
@@ -11,6 +12,7 @@ local stat_capability = {
     [stats.DEXTERITY] = capabilities.DEXTERITY,
 }
 
+-- Read one stat drain independently of permanent base attributes.
 function stat_loss.amount(ctx, owner, field)
     local loss = ctx:get(owner, component.STAT_LOSS)
 
@@ -51,12 +53,14 @@ function stat_loss.drain(ctx, owner, field, amount)
     return field
 end
 
+-- Use the mutation stream to choose the drained stat before changing its recovery timer.
 function stat_loss.drain_random(ctx, owner)
     local index = ctx:random("mutation", #stats.ORDER) + 1
 
     return stat_loss.drain(ctx, owner, stats.ORDER[index], 1)
 end
 
+-- Pick among currently drained stats only when an XP recovery point comes due.
 local function choose_drained(ctx, loss)
     local chosen
     local seen = 0
@@ -74,6 +78,7 @@ local function choose_drained(ctx, loss)
     return chosen
 end
 
+-- Keep the shared XP recovery timer while any stat still has temporary loss.
 local function remaining_after(loss, recovered)
     for _, field in ipairs(stats.ORDER) do
         if loss[field] - recovered[field] > 0 then
@@ -84,6 +89,7 @@ local function remaining_after(loss, recovered)
     return false
 end
 
+-- A severely drained current stat can increase the recovered amount.
 local function raw_stat(ctx, owner, loss, field)
     local base = ctx:get(owner, component.ATTRIBUTES)
 
@@ -100,6 +106,7 @@ end
 
 -- Source: player.cc:_handle_stat_loss and _recover_stat. Skill cost comes
 -- from the same progression value used by the training system.
+-- Experience pays down drain one point at a time and may grant a larger recovery for severe stat loss.
 function stat_loss.gain_experience(ctx, owner, xp, cost_level)
     local loss = ctx:get(owner, component.STAT_LOSS)
 

@@ -7,6 +7,8 @@ local brand = {
     after_death = true,
 }
 
+-- Example: brand.apply(ctx, hit) adds cold-resisted damage only after a
+-- nonzero weapon hit, so a blocked blow cannot freeze.
 function brand.apply(ctx, hit)
     if hit.damage_done == 0 then
         return

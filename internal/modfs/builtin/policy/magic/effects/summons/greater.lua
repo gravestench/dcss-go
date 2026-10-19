@@ -8,6 +8,8 @@ local summons = require("policy.magic.effects.summons.common")
 -- Source: spl-summoning.cc:cast_summon_mana_viper.
 local spell_effects = {}
 
+-- Example: Summon Mana Viper scales the summoned viper's HD from cast power.
+-- Convert power into viper HD while the shared spawner handles placement and degree-two expiry.
 function spell_effects.resolve_summon_mana_viper(ctx, player, _, _, power)
     local creature = summons.spawn(ctx, player,
         spells.SPELL_SUMMON_MANA_VIPER, monsters.MONS_MANA_VIPER, 2, 1, {

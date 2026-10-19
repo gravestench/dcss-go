@@ -3,6 +3,7 @@
 register.component{
     id = "magic.permanent_hp_loss",
     version = 1,
+    -- This absolute loss persists through level gains instead of scaling with current maximum HP.
     fields = {
         amount = {
             type = "int64",

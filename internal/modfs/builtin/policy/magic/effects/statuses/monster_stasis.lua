@@ -10,6 +10,7 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local stasis = {}
 
+-- Missing holiness or flag lists have no innate immunity to these statuses.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -20,6 +21,7 @@ local function has(values, wanted)
     return false
 end
 
+-- An absent resistance entry means no cold or petrify protection.
 local function resistance(definition, id)
     for _, entry in ipairs(definition.resistances or {}) do
         if entry.id == id then
@@ -30,10 +32,12 @@ local function resistance(definition, id)
     return 0
 end
 
+-- Read the shared stasis record so sleep and both petrification phases stay coherent.
 local function state(ctx, target)
     return ctx:get(target, component.MONSTER_STASIS)
 end
 
+-- Initialize all phase timers before modifying one status, preserving other phases.
 local function ensure(ctx, target)
     return state(ctx, target) or {
         hibernating = false,
@@ -43,6 +47,7 @@ local function ensure(ctx, target)
     }
 end
 
+-- Update an existing record in place or attach one for a newly affected monster.
 local function save(ctx, target, value)
     if state(ctx, target) then
         ctx:set(target, component.MONSTER_STASIS, value)
@@ -51,6 +56,7 @@ local function save(ctx, target, value)
     end
 end
 
+-- Scale status length by monster speed and HD, then use source-style fuzz on the melee stream.
 local function duration(ctx, target, definition, kind)
     local actor = ctx:get(target, component.ACTOR)
     local speed = math.max(1, actor.speed)
@@ -77,6 +83,7 @@ local function duration(ctx, target, definition, kind)
     return math.max(15, raw + fuzz - low)
 end
 
+-- Cold-resistant and nonliving species cannot sleep; sleep-wary also blocks repeat hibernation.
 local function can_hibernate(ctx, target, definition)
     local current = state(ctx, target)
     local holiness = definition.holiness
@@ -91,11 +98,13 @@ local function can_hibernate(ctx, target, definition)
         current.sleep_wary_aut <= 0
 end
 
+-- Insubstantial or petrification-resistant species cannot enter either stone phase.
 local function can_petrify(definition)
     return not has(definition.flags, "M_INSUBSTANTIAL") and
         resistance(definition, "MR_RES_PETRIFY") <= 0
 end
 
+-- Scan living visible actors along clear paths before offering the spell as usable.
 local function can_target(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -123,6 +132,7 @@ local function can_target(ctx, player, spell)
     return false
 end
 
+-- The first actor hit by the traced projectile, not the clicked cell, receives the status.
 local function aimed(ctx, player, intent, spell)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,
@@ -132,10 +142,12 @@ local function aimed(ctx, player, intent, spell)
     return ray.contacts[1] and ray.contacts[1].actor or nil
 end
 
+-- Expose shared aim viability to the spell registry before paying cast resources.
 function stasis.can_target(ctx, player, spell)
     return can_target(ctx, player, spell)
 end
 
+-- Only a landed, susceptible, unresisted target gains sleep and its wary timer.
 function stasis.cast_hibernation(ctx, player, intent, spell, power)
     local target = aimed(ctx, player, intent, spell)
 
@@ -164,6 +176,7 @@ function stasis.cast_hibernation(ctx, player, intent, spell, power)
     ctx:emit("spell", "The " .. definition.name .. " looks drowsy...")
 end
 
+-- A second successful petrify advances the target immediately to the final stone phase.
 function stasis.cast_petrify(ctx, player, intent, spell, power)
     local target = aimed(ctx, player, intent, spell)
 
@@ -238,6 +251,7 @@ function stasis.cloud_petrify(ctx, target)
     return true
 end
 
+-- Action scheduling reads the saved sleep flag, independent of the wary timer.
 function stasis.hibernating(ctx, target)
     local current = state(ctx, target)
 
@@ -259,18 +273,21 @@ function stasis.sleep(ctx, target)
     return true
 end
 
+-- Partial stone state slows a target before full petrification begins.
 function stasis.petrifying(ctx, target)
     local current = state(ctx, target)
 
     return current ~= nil and current.petrifying_aut > 0
 end
 
+-- Only the final stone timer marks a fully immobilized monster.
 function stasis.petrified(ctx, target)
     local current = state(ctx, target)
 
     return current ~= nil and current.petrified_aut > 0
 end
 
+-- Damage clears sleep but retains the wary and stone timers in the shared record.
 function stasis.wake_hibernating(ctx, target)
     local current = state(ctx, target)
 
@@ -287,6 +304,7 @@ function stasis.wake_hibernating(ctx, target)
     return true
 end
 
+-- Full stone halves damage; the earlier phase reduces it to two thirds.
 function stasis.petrified_damage(ctx, target, amount)
     local current = state(ctx, target)
 
@@ -305,6 +323,8 @@ function stasis.petrified_damage(ctx, target, amount)
     return amount
 end
 
+-- Example: A petrifying monster at ten aut becomes fully petrified on the next status tick.
+-- Advance partial stone to full stone only after its timer ends; keep sleep wariness on the same clock.
 function stasis.tick(ctx, target)
     local current = state(ctx, target)
 

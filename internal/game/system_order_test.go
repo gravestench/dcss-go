@@ -50,6 +50,51 @@ func TestLuaSystemCanRunBetweenExistingGoSystems(t *testing.T) {
 	}
 }
 
+func TestUnconstrainedSystemsIgnoreRegistrationOrder(t *testing.T) {
+	noop := akara.SystemFunc(func(*akara.World, time.Duration) error {
+		return nil
+	})
+
+	for _, names := range [][]string{
+		{
+			"zeta",
+			"alpha",
+			"middle",
+		},
+
+		{
+			"middle",
+			"alpha",
+			"zeta",
+		},
+	} {
+		specs := make([]systemSpec, 0, len(names))
+
+		for _, name := range names {
+			specs = append(specs, systemSpec{
+				name:   name,
+				system: noop,
+			})
+		}
+
+		ordered, err := orderSystems(specs)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		want := []string{
+			"alpha",
+			"middle",
+			"zeta",
+		}
+
+		if !reflect.DeepEqual(systemNames(ordered), want) {
+			t.Fatalf("registration order %v gave %v; want %v", names, systemNames(ordered), want)
+		}
+	}
+}
+
 func updateLuaSystem(t *testing.T, g *Game, name string, aut time.Duration) {
 	t.Helper()
 

@@ -1,5 +1,8 @@
--- Generated from the pinned DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Delver (JOB_DELVER) is a character start with 6 fixed item grants in this
+-- definition.
+-- The start builder turns these grants and skills into player and inventory
+-- components; the catalog stays unchanged.
+
 -- Source: crawl-ref/source/job-data.h
 -- Starting grants: internal/content/generated/starting-gear.json
 
@@ -31,6 +34,8 @@ local definition = {
         "wand of digging charges:3",
     },
     weapon_choice = "WCHOICE_PLAIN",
+    -- Delver begins with these training levels before species aptitudes affect
+    -- future training.
     skills = {
         {
             id = "SK_FIGHTING",
@@ -50,6 +55,8 @@ local definition = {
         },
     },
     selectable = true,
+    -- These 6 grants create actual starting inventory for Delver; weapon choice
+    -- may add another item.
     starting_grants = {
         {
             kind_id = item_ids.ARM_LEATHER_ARMOUR,

@@ -11,6 +11,7 @@ local attribution = require("constants.cloud_attribution")
 
 local poison = {}
 
+-- Model delayed poison damage for monster cloud-avoidance decisions.
 function poison.risk_extra(ctx)
     -- cloud.cc:_mons_avoids_cloud proxies poison's later HP loss as 3d4.
     local total = 3
@@ -22,6 +23,7 @@ function poison.risk_extra(ctx)
     return total
 end
 
+-- Both player and monster poison resistance can make contact harmless.
 function poison.immune(ctx, actor)
     if actor == ctx:player() then
         return resistance.poison(ctx, actor) > 0
@@ -38,6 +40,8 @@ function poison.immune(ctx, actor)
     return monster_poison.resistance(definition) > 0
 end
 
+-- Use separate player and monster poison accumulation, retaining the cloud's saved attribution.
+-- Example: a player in poison gas accumulates poison unless the immunity check succeeds.
 function poison.apply(ctx, target, state)
     if poison.immune(ctx, target) then
         return 0

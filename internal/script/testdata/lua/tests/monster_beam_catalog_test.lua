@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local harness = require("tests.harness")
 local effects = require("policy.combat.monster_spells")
@@ -7,6 +8,7 @@ local zaps = require("constants.zap_ids")
 
 local test = {}
 
+-- Freezing Cloud keeps its source flavor.
 function test.run()
     local profiles = catalog.all("monster_beams")
 

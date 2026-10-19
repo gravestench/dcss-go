@@ -1,5 +1,5 @@
--- Generated from a committed DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Beam flavour determines the damage or status applied on contact; a spell may choose another glyph.
+
 local ids = {
     BEAM_ACID = "BEAM_ACID",
     BEAM_AGONY = "BEAM_AGONY",

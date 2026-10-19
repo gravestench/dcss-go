@@ -1,3 +1,6 @@
+-- Jewellery tests start with a human Fighter whose selected items are known;
+-- carry() creates an item-holder relation without wearing the item.
+
 local component = require("constants.component")
 local item_ids = require("ids.items")
 local jobs = require("ids.jobs")
@@ -5,6 +8,7 @@ local species = require("ids.species")
 
 local fixture = {}
 
+-- Give jewellery tests a minimal player with the same ECS components as equipment policy reads.
 function fixture.player(ctx, species_id)
     local player = ctx:create()
 
@@ -34,6 +38,7 @@ function fixture.player(ctx, species_id)
 
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Keep the fixture's player identity available through the production context API.
     function proxy.player()
         return player
     end
@@ -41,6 +46,7 @@ function fixture.player(ctx, species_id)
     return proxy, player
 end
 
+-- Create a carried item without equipping it so each test can choose the active slot.
 function fixture.carry(ctx, player, kind_id, plus)
     local entity = ctx:create()
 

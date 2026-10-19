@@ -9,12 +9,15 @@ local scrolls = require("policy.scrolls")
 
 local enchant_armour = {}
 
+-- Example: fully enchanted armour is omitted from the scroll's target choices.
+-- Filter targets through the shared cap rule before an armour choice is shown.
 function enchant_armour.prepare(ctx, player, request)
     return choice.prepare(ctx, player, request,
         "Enchant which item?", "You have no enchantable armour.",
         enchantable.armour)
 end
 
+-- Resolve the selected entity again and persist its new plus so later equipment reads it.
 function enchant_armour.apply(ctx, player, request)
     local target = choice.target(ctx, request)
     local item = ctx:get(target, component.ITEM)

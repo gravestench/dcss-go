@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local harness = require("tests.harness")
 local jobs = require("ids.jobs")
@@ -9,6 +10,7 @@ local vampire = require("policy.character.vampire")
 
 local test = {}
 
+-- Bloodless Vampires cannot sublime blood.
 function test.run(ctx)
     local player = ctx:create()
 

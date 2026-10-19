@@ -4,10 +4,12 @@ local blast = require("policy.magic.effects.summons.blast")
 local lightning = require("policy.magic.effects.summons.ball_lightning")
 local summons = require("policy.magic.effects.summons.common")
 
+-- Theory of operation: Charged constructs explode before expiry removes their component and actor.
 -- Source: mon-explode.cc. A struck, charged prism gives a weaker radius-one
 -- blast; a ball lightning also explodes on ordinary death or timeout.
 local system = {}
 
+-- Prism and ball-lightning death effects run before summon expiry and actor deletion.
 function system.update(ctx, active)
     for _, entity in ipairs(ctx:query({
         component.SUMMON,

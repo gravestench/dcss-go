@@ -1,3 +1,5 @@
+-- Equip and remove phases identify which delay rule is currently advancing.
+
 local phases = {
     WEAR = "wear",
     REMOVE = "remove",

@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.summon_battlesphere",
     version = 1,
+    -- The battlesphere stores cast power and unused charge for the next matching conjuration.
     fields = {
         power = {
             type = "int64",

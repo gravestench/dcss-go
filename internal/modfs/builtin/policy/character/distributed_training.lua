@@ -1,3 +1,4 @@
+-- Example: Gnoll training includes every allowed skill while Distributed Training is active.
 local component = require("constants.component")
 local formulas = require("policy.character.formulas")
 local availability = require("policy.character.skill_availability")
@@ -8,11 +9,13 @@ local weights = require("policy.character.training_weights")
 
 local distributed = {}
 
+-- Use the effective mutation level so form and suppression rules affect Gnoll training.
 function distributed.active(ctx, player)
     return levels.effective(ctx, player,
         mutations.MUT_DISTRIBUTED_TRAINING) > 0
 end
 
+-- Add every usable species skill before assigning initial distributed-training weights.
 function distributed.include_skills(skills, species)
     local found = {}
 
@@ -33,6 +36,7 @@ function distributed.include_skills(skills, species)
     end
 end
 
+-- Switch saved training controls only when the mutation is actually active.
 function distributed.activate(ctx, player)
     if not distributed.active(ctx, player) then
         return
@@ -72,6 +76,7 @@ function distributed.activate(ctx, player)
     ctx:set(player, component.SKILL_TRAINING, training)
 end
 
+-- Build one ordered bundle from usable skills; forbidden skills cannot dilute the split.
 local function candidates(ctx, player, skills, training, species)
     local entries = {}
     local by_id = {}
@@ -106,6 +111,7 @@ local function candidates(ctx, player, skills, training, species)
     return entries, #all, usable
 end
 
+-- Randomized cost remainders use the skill stream so fractional bundle costs stay unbiased.
 local function rounded_cost(ctx, base, total, usable)
     local product = base * total
     local whole = math.floor(product / usable)
@@ -118,6 +124,7 @@ local function rounded_cost(ctx, base, total, usable)
     return whole
 end
 
+-- Bound spending before the cost level can change, then recalculate on the next batch.
 local function maximum_batch_cost(training, count, total, usable)
     local spent = training.spent_xp
     local cost = 0
@@ -135,6 +142,7 @@ end
 
 -- Source: skills.cc:_gnoll_total_skill_cost and _train_skills. A full
 -- bundle gives one point to every usable skill in reverse source order.
+-- Advance every usable Gnoll skill in source order and charge its rounded share.
 function distributed.spend(ctx, player, skills, training, species)
     local entries, total, usable = candidates(ctx, player,
         skills, training, species)
@@ -175,6 +183,7 @@ function distributed.spend(ctx, player, skills, training, species)
     return spent
 end
 
+-- Translate bundle weights back into visible skill percentages for the training UI.
 function distributed.percent(ctx, player, skills, training)
     local scaled = weights.scaled(skills, training)
 

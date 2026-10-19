@@ -1,3 +1,5 @@
+-- Skill order fixes training traversal independently of table iteration order.
+
 -- Source: crawl-ref/source/skill-type.h. This order determines Gnoll XP
 -- spending order; mod-added skills follow the pinned skills by ID.
 local skills = require("ids.skills")
@@ -36,6 +38,9 @@ local pinned = {
     skills.SK_EVOCATIONS,
 }
 
+-- Return DCSS's pinned training order followed by mod-added skills by ID.
+-- Stable traversal matters for Gnoll XP allocation: changing file discovery
+-- order must never change which skill receives a limited XP remainder.
 function order.all()
     local result = {}
     local seen = {}

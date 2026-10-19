@@ -2,6 +2,8 @@ local common = require("policy.ai.common")
 
 local memory = {}
 
+-- Target memory is updated here before route selection consumes the remembered position.
+-- Example: memory.update(ctx, state, position, player, false) forgets a target after its deadline.
 function memory.update(ctx, state, position, player, player_visible)
     if player_visible then
         local roll = ctx:random("ai", 301)

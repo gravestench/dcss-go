@@ -6,6 +6,7 @@ local torment = require("policy.combat.torment")
 
 local agony = {}
 
+-- Skip torment-immune defenders before the hex beam spends a saving-throw roll.
 function agony.viable(ctx, _, defender)
     if ctx:has(defender, component.PLAYER) then
         return not player_resistance.torment(ctx, defender)
@@ -17,6 +18,7 @@ function agony.viable(ctx, _, defender)
     return torment.susceptible(definition)
 end
 
+-- Example: agony.amount(ctx, nil, defender) with susceptible defender at 10 HP -> nonlethal torment loss
 -- Source: beam.cc:BEAM_AGONY uses the existing torment calculation.
 function agony.amount(ctx, _, defender)
     local health = ctx:get(defender, component.HEALTH)
@@ -32,6 +34,7 @@ function agony.amount(ctx, _, defender)
     return torment.monster_loss(definition, health.current)
 end
 
+-- Convert current HP to nonlethal Torment loss, then use shared monster spell damage credit.
 function agony.apply(ctx, caster, defender, profile)
     local amount = agony.amount(ctx, caster, defender, profile)
 

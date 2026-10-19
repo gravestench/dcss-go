@@ -7,6 +7,7 @@ local mutation_effects = require("policy.mutations.effects.registry")
 
 local attunement = {}
 
+-- Regeneration jewellery attunes to the resource its effect restores.
 local function resource_id(definition)
     local effects = definition.jewellery and
         definition.jewellery.effects or {}
@@ -22,6 +23,7 @@ local function resource_id(definition)
     return nil
 end
 
+-- Mutation restrictions can block regeneration even when the resource exists.
 local function resource_available(ctx, player, id, resource)
     if id == component.HEALTH then
         return mutation_effects.sum(ctx, player,
@@ -32,6 +34,7 @@ local function resource_available(ctx, player, id, resource)
         mutation_capabilities.HP_CASTING) == 0
 end
 
+-- Attunement starts active only if its resource is both usable and full.
 local function resource_full(ctx, player, id)
     local resource = ctx:get(player, id)
 
@@ -43,6 +46,8 @@ local function resource_full(ctx, player, id)
         resource.current >= resource.max
 end
 
+-- Equipping and removing jewellery refreshes attunement against the current resource capacity.
+-- Example: attunement.on_equip(ctx, player, ring) initializes the ring's attunement resource.
 function attunement.on_equip(ctx, player, entity)
     local item = ctx:get(entity, component.ITEM)
     local definition = items.kind(item)
@@ -57,12 +62,14 @@ function attunement.on_equip(ctx, player, entity)
     })
 end
 
+-- Remove the item's attunement marker so re-equipping starts from current resources.
 function attunement.on_remove(ctx, entity)
     if ctx:has(entity, component.JEWELLERY_ATTUNEMENT) then
         ctx:remove(entity, component.JEWELLERY_ATTUNEMENT)
     end
 end
 
+-- A worn item activates at full resource and deactivates if regeneration becomes forbidden.
 function attunement.refresh(ctx, player)
     for _, entry in pairs(jewellery.worn(ctx, player)) do
         local id = resource_id(entry.definition)

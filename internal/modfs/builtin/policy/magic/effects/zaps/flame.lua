@@ -1,3 +1,4 @@
+-- Example: flame.spec supplies Throw Flame's damage and hit formula to projectile.register.
 local spells = require("ids.spells")
 local projectile = require("policy.magic.effects.zaps.projectile")
 
@@ -22,6 +23,7 @@ flame.spec = {
     element = "MR_RES_FIRE",
 }
 
+-- Throw Flame registers a short fire projectile with the shared player zap resolver.
 projectile.register(spells.SPELL_THROW_FLAME, flame.spec)
 
 return flame

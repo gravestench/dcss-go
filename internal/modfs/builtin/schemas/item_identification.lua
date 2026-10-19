@@ -3,6 +3,7 @@ local component = require("constants.component")
 local schema = {
     id = component.ITEM_IDENTIFICATION,
     version = 1,
+    -- Type, plus, and property discovery are separate, so revealing one does not identify the others.
     fields = {
         known_type = {
             type = "bool",

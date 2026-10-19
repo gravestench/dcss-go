@@ -18,6 +18,7 @@ local flammable = {
     [terrain.DNGN_DEMONIC_TREE] = terrain.DNGN_FLOOR,
 }
 
+-- Do not burn a cell already owned by temporary terrain; its expiry must still restore the original feature.
 local function temporary(ctx, level_id, x, y)
     for _, entity in ipairs(ctx:query({
         component.TEMPORARY_TERRAIN,
@@ -33,6 +34,8 @@ local function temporary(ctx, level_id, x, y)
     return false
 end
 
+-- Spread or transform adjacent terrain before aging this cloud, using cloud occupancy to avoid overlap.
+-- Example: a forest fire can spread flames to adjacent terrain before the parent cloud ages.
 function forest_fire.before_age(ctx, state)
     interaction.steam(ctx, state)
     local make_flames = ctx:random(streams.CLOUDS, 5) == 0

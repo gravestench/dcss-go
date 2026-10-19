@@ -9,6 +9,7 @@ local item_ids = require("ids.items")
 
 local death = {}
 
+-- Source monster flags gate XP and corpse handling without assuming every definition has flags.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -19,6 +20,8 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Monster XP combines health and HD with spell, speed, attack, and equipment difficulty.
+-- Example: death.experience(no_xp_monster, max_hp, legacy) returns 0 for NO_EXP_GAIN.
 function death.experience(definition, max_hp, legacy)
     if has_flag(definition, monster_flags.NO_EXP_GAIN) then
         return 0
@@ -85,6 +88,7 @@ function death.experience(definition, max_hp, legacy)
     return math.max(1, xp)
 end
 
+-- Death releases carried entities at the monster's last position before a corpse may occupy that tile.
 function death.drop_inventory(ctx, monster, position)
     for _, item in ipairs(ctx:query({ "core.carried_by" })) do
         local carrier = ctx:get(item, "core.carried_by")
@@ -101,6 +105,7 @@ function death.drop_inventory(ctx, monster, position)
     end
 end
 
+-- Corpse creation uses the dead actor's definition after inventory has been released.
 function death.corpse(ctx, definition, position, source_origin)
     if not definition.leaves_corpse or ctx:random("corpse", 2) == 1 then
         return

@@ -1,8 +1,10 @@
+-- Example: A place:9 request raises effective depth before drawing from the monster pool.
 local pool = require("policy.population.pool")
 local choice = require("policy.generation.vaults.specs.choice")
 
 local random_monsters = {}
 
+-- DES place: requests 8 and 9 bias the monster pool above the floor depth by different curves.
 local function effective_depth(request, depth)
     if request == "8" or request == "super_out_of_depth_monster" then
         return depth < 8 and depth * 2 or depth * 2 + math.min(depth - 8, 4)
@@ -15,6 +17,7 @@ local function effective_depth(request, depth)
     return depth
 end
 
+-- Use the adjusted source depth to build a live pool before one weighted draw.
 function random_monsters.pick(ctx, request, depth, site)
     local selected_depth = effective_depth(request, depth)
     local rows, total = pool.at_depth(selected_depth)

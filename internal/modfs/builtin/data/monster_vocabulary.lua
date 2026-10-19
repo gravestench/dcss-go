@@ -1,5 +1,5 @@
--- Generated from a committed DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Source monster names and colour labels support display and content interpretation.
+
 -- Source: crawl-ref/source/colour.h
 -- SHA-256: cefabc7e9cc171cc18a36be4da03bb06b56682209bbcf6ab39e7534976168141
 -- Source: crawl-ref/source/defines.h
@@ -25,6 +25,9 @@
 
 local catalog = {
     schema_version = 1,
+    -- The identity list includes removed source IDs. Keeping them recognizable
+    -- lets validators reject stale references with a specific status instead
+    -- of treating them as unknown spellings.
     identities = {
         {
             id = "MONS_ABOMINATION_LARGE",
@@ -2827,7 +2830,11 @@ local catalog = {
             status = "defined",
         },
     },
+    -- These are source enum vocabularies used to validate imported monster
+    -- facts. They are names, not behavior implementations or entity state.
     symbols = {
+        -- Attack flavour is the contact effect; attack type is the motion or
+        -- body part that delivers it. A monster attack row can reference both.
         attack_flavour = {
             "AF_ACID",
             "AF_ANTIMAGIC",
@@ -2922,6 +2929,8 @@ local catalog = {
             "AT_WEAP_ONLY",
             "NUM_ATTACK_TYPES",
         },
+        -- Class flags describe species-wide traits; per-monster flags still
+        -- live on each monster definition.
         class_flag = {
             "M_ACID_SPLASH",
             "M_ALWAYS_WAND",
@@ -2978,6 +2987,8 @@ local catalog = {
             "M_WARM_BLOOD",
             "M_WEB_IMMUNE",
         },
+        -- Colour names feed presentation while combat and AI use the other
+        -- fields of the monster definition.
         colour = {
             "BLACK",
             "BLUE",

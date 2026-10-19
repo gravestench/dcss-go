@@ -19,6 +19,7 @@ local sleepless = {
     [holiness.PLANT] = true,
 }
 
+-- Check holiness and clarity flags before an enchantment attempts to induce sleep.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -29,10 +30,14 @@ local function has(values, wanted)
     return false
 end
 
+-- Example: sleep.skip_damage() with sleep enchantment -> true to suppress direct HP damage
+-- Sleep is a state-changing enchantment; shared beam contact must not roll HP damage.
 function sleep.skip_damage()
     return true
 end
 
+-- Existing sleep or immunity time prevents refresh; undead state, Clarity,
+-- rage, and paralysis also bar the player enchantment.
 local function player_can_sleep(ctx, target)
     local state = ctx:get(target, component.PLAYER_SLEEP)
 
@@ -50,6 +55,7 @@ local function player_can_sleep(ctx, target)
         not ctx:has(target, component.PLAYER_PARALYSIS)
 end
 
+-- Five spell-stream draws average enchantment power into a duration in AUT.
 local function player_duration(ctx, power)
     local size = math.max(1, math.floor(power / 10))
     local total = 0
@@ -61,6 +67,7 @@ local function player_duration(ctx, power)
     return 10 * (5 + math.floor(total / 5))
 end
 
+-- Player sleep uses the beam's will check and stores a separate immunity window.
 local function sleep_player(ctx, caster, target, profile)
     if not player_can_sleep(ctx, target) then
         return
@@ -81,6 +88,7 @@ local function sleep_player(ctx, caster, target, profile)
     ctx:emit("combat", "You fall asleep.")
 end
 
+-- Monster biological eligibility precedes the separate willpower roll.
 local function monster_can_sleep(ctx, target, definition)
     for _, kind in ipairs(definition.holiness or {}) do
         if sleepless[kind] then
@@ -92,6 +100,7 @@ local function monster_can_sleep(ctx, target, definition)
         not stasis.hibernating(ctx, target)
 end
 
+-- Monsters need a fresh will check and hibernation state after the beam contacts them.
 local function sleep_monster(ctx, caster, target, profile)
     local actor = ctx:get(target, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)

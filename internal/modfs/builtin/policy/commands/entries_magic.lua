@@ -7,6 +7,7 @@ local spell_learning = require("policy.character.spell_learning")
 
 local entries = {}
 
+-- Magic command entries keep memorisation, casting, and mutation abilities on distinct preparation paths.
 function entries.memorise(ctx, player, input)
     local spell_id = input.spell_id
     local rejection = spell_learning.cannot_begin(ctx, player, spell_id)
@@ -26,10 +27,13 @@ function entries.memorise(ctx, player, input)
     }
 end
 
+-- Delegate cast validation to the spell command before the entry point commits action time.
+-- Example: entries.cast(ctx, player, { spell_id = spell_id }) delegates spell checks before time is spent.
 function entries.cast(ctx, player, input)
     return cast.prepare(ctx, player, input)
 end
 
+-- Ability preparation checks availability before a timed resolve intent is emitted.
 function entries.ability(ctx, player, input)
     return abilities.prepare(ctx, player, input)
 end

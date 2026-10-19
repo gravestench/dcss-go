@@ -5,6 +5,8 @@ local resistances = require("constants.resistance_ids")
 
 local corrosion = {}
 
+-- Example: corrosion.penalty(ctx, player) with expired corrosion -> 0 AC penalty
+-- Expired corrosion contributes no AC or attack penalty even before its component is removed.
 function corrosion.penalty(ctx, player)
     local state = ctx:get(player, component.CORROSION)
 
@@ -15,6 +17,7 @@ function corrosion.penalty(ctx, player)
     return 4 * state.stacks
 end
 
+-- Give acid three independent chances to corrode, increasing each chance with strength.
 local function acid_hit(ctx, strength)
     local chance = strength + 1
 
@@ -27,6 +30,7 @@ local function acid_hit(ctx, strength)
     return false
 end
 
+-- Apply corrosion only after an acid hit survives the player's acid resistance.
 function corrosion.apply(ctx, player, acid_strength)
     if not acid_hit(ctx, acid_strength) then
         return false

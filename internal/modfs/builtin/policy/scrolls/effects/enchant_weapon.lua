@@ -8,12 +8,15 @@ local scrolls = require("policy.scrolls")
 
 local enchant_weapon = {}
 
+-- Example: a weapon at its enchantment cap is not offered as a target.
+-- Build a choice only from reachable weapons whose known plus can still increase.
 function enchant_weapon.prepare(ctx, player, request)
     return choice.prepare(ctx, player, request,
         "Enchant which weapon?", "You have no enchantable weapons.",
         enchantable.weapon)
 end
 
+-- Recheck the +9 cap at apply time before changing the selected weapon.
 function enchant_weapon.apply(ctx, player, request)
     local target = choice.target(ctx, request)
     local item = ctx:get(target, component.ITEM)

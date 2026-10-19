@@ -23,6 +23,7 @@ function temporary.roll(ctx, owner)
     return math.floor(math.min(progress.level, 17) * dice / 17)
 end
 
+-- Example: two temporary mutation IDs have equal expiry chance even when one holds more ranks.
 -- Source: mutation.cc:delete_temp_mutation uses reservoir selection over
 -- mutation IDs, so each ID is equally likely even if it has several levels.
 function temporary.choose_expiring(ctx, owner)

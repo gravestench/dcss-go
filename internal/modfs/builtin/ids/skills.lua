@@ -1,3 +1,5 @@
+-- Skill IDs key aptitudes, training state, and spell/weapon calculations.
+
 -- Aptitude declarations are the authoritative list of trainable skills.
 local skills = {}
 

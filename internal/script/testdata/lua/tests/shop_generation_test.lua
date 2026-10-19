@@ -1,3 +1,5 @@
+-- Authored stock uses source item weights.
+
 local harness = require("tests.harness")
 local component = require("constants.component")
 local categories = require("constants.catalog")
@@ -10,22 +12,32 @@ local shop_spec = require("policy.generation.vaults.shop_spec")
 
 local test = {}
 
+-- The grid proxy records shop entrance terrain while stock uses real ECS
+-- entities and holder relations.
 local function grid_context(ctx, player)
     local proxy = setmetatable({}, { __index = ctx })
     local cells = {}
 
+    -- Permit positive test coordinates while still exercising the production
+    -- placement check through the same context method.
     function proxy:walkable(_, x, y)
         return x > 0 and y > 0
     end
 
+    -- Return recorded entrance terrain and default untouched cells to floor,
+    -- making a small grid sufficient for a shop placement test.
     function proxy:cell(level, x, y)
         return cells[level .. ":" .. x .. ":" .. y] or terrain.DNGN_FLOOR
     end
 
+    -- Store only changed cells so the test can verify the entrance was painted
+    -- without constructing a full dungeon level.
     function proxy:set_cell(level, x, y, feature)
         cells[level .. ":" .. x .. ":" .. y] = feature
     end
 
+    -- Expose the ECS player to stock generation, which needs its item set
+    -- state even though the map is only a proxy.
     function proxy:player()
         return player
     end
@@ -33,6 +45,8 @@ local function grid_context(ctx, player)
     return proxy
 end
 
+-- Place both fixed and source-authored shops through production generation,
+-- then inspect ECS ownership and terrain to catch partial placement.
 function test.run(ctx)
     local generation = require("policy.shops.generation")
     local player = ctx:create()
@@ -40,6 +54,7 @@ function test.run(ctx)
     item_sets.initialise(ctx, player)
 
     local grid = grid_context(ctx, player)
+    -- A fixed shop request pins type, greed, count, and one entrance cell.
     local shop = generation.place(grid, {
         level_id = 1,
         x = 3,
@@ -73,6 +88,7 @@ function test.run(ctx)
             "stock is not on floor")
     end
 
+    -- Parsed source stock keeps an authored weapon plus rather than rerolling.
     local authored = shop_spec.parse(
         "weapon shop count:1 use_all ; club plus:3",
         {
@@ -101,6 +117,7 @@ function test.run(ctx)
         "authored stock keeps its item kind")
     harness.equal(authored_stock.plus, 3, "authored enchantment applied")
 
+    -- Mixed source stock carries charges, enchantment, manuals, and uniques.
     local varied = shop_spec.parse(
         "general shop count:4 use_all ; " ..
         "wand of flame charges:11 | ring of protection plus:3 | " ..
@@ -140,8 +157,11 @@ function test.run(ctx)
     harness.truthy(ctx:has(varied_stock[4].entity,
         component.ITEM_RANDOM_BOOK), "source randbook has generated spells")
 
+    -- Weighted shop alternatives use the same placement path on a fresh grid.
     local weighted_grid = grid_context(ctx, player)
 
+    -- Force the rare branch on its exact roll bound while delegating other
+    -- draws to the real context, keeping this scenario deterministic.
     function weighted_grid:random(stream, bound)
         if bound == 11 then
             return 10
@@ -176,6 +196,8 @@ function test.run(ctx)
     harness.equal(weighted_item.kind_id, item_ids.WPN_WHIP,
         "authored stock uses source item weights")
 
+    -- A second shop cannot claim an occupied entrance; then every active
+    -- shop definition is exercised through generation.
     local okay = pcall(generation.place, grid, {
         level_id = 1,
         x = 3,

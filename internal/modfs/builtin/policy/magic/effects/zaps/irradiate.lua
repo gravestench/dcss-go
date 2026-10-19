@@ -9,6 +9,7 @@ local roll = require("policy.combat.roll")
 
 local irradiate = {}
 
+-- Missing holiness and flag lists grant no Irradiate immunity.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -19,6 +20,7 @@ local function has(values, wanted)
     return false
 end
 
+-- Undead, nonliving, and already mutable aberrations cannot gain Wretched.
 local function can_wretch(definition)
     return not has(definition.holiness, "MH_UNDEAD") and
         not has(definition.holiness, "MH_NONLIVING") and
@@ -29,6 +31,7 @@ local function can_wretch(definition)
         definition.id ~= monsters.MONS_VERY_UGLY_THING
 end
 
+-- Scale three spell draws by monster speed so Wretched lasts comparable actions.
 local function wretched_duration(ctx, target)
     local actor = ctx:get(target, component.ACTOR)
     local speed = math.max(1, actor.speed)
@@ -49,6 +52,7 @@ local function wretched_duration(ctx, target)
     return math.max(15, raw + fuzz - low)
 end
 
+-- Remainder rolls preserve fractional cast-power damage on the spell stream.
 local function random_round(ctx, numerator, denominator)
     local value = math.floor(numerator / denominator)
 
@@ -59,6 +63,7 @@ local function random_round(ctx, numerator, denominator)
     return value
 end
 
+-- Conjured monsters ignore Irradiate; others roll chunked damage before Wretched.
 local function hurt(ctx, target, power)
     local definition, health = damage.monster(ctx, target)
 
@@ -91,6 +96,7 @@ local function hurt(ctx, target, power)
     irradiate.wretch(ctx, target, definition)
 end
 
+-- Repeat exposure extends the saved Wretched timer instead of replacing it.
 function irradiate.wretch(ctx, target, definition)
     if not can_wretch(definition) then
         return false
@@ -114,6 +120,7 @@ function irradiate.wretch(ctx, target, definition)
     return true
 end
 
+-- Affect each neighbouring cell and accumulate player contamination from the cast.
 function irradiate.resolve(ctx, player, _, _, power)
     local origin = ctx:get(player, component.POSITION)
 
@@ -136,6 +143,8 @@ function irradiate.resolve(ctx, player, _, _, power)
         end
     end
 
+    -- Every cast adds contamination after the area hit; store the capped
+    -- amount for later timed dissipation.
     local state = ctx:get(player, zap_ids.component.CONTAMINATION)
     local amount = math.min(250000,
         (state and state.amount or 0) + 1250 + ctx:random("spell", 750))
@@ -148,7 +157,11 @@ function irradiate.resolve(ctx, player, _, _, power)
     end
 end
 
+-- Example: A Wretched monster loses its saved duration before choosing another action.
+-- Expire the monster's Wretched duration before its next decision.
 function irradiate.tick_wretched(ctx, entity)
+    -- Wretched duration lives on the monster component so later turns can
+    -- expire the effect after save and restore.
     local state = ctx:get(entity, zap_ids.component.WRETCHED)
 
     if not state then
@@ -164,6 +177,7 @@ function irradiate.tick_wretched(ctx, entity)
     end
 end
 
+-- Dissipate the saved player contamination by elapsed action time.
 function irradiate.tick_contamination(ctx, entity, aut)
     if entity ~= ctx:player() then
         return
@@ -196,6 +210,7 @@ registry.add(spells.SPELL_IRRADIATE, {
     resolve = irradiate.resolve,
 })
 
+-- Theory of operation: Wretched monster timers expire before their decisions, so restored state has the same duration.
 register.system({
     id = "zap.wretched.tick",
     scope = "active",
@@ -204,6 +219,7 @@ register.system({
     update = irradiate.tick_wretched,
 })
 
+-- Theory of operation: Player contamination dissipates after spell attacks and before movement using elapsed aut.
 register.system({
     id = "zap.contamination.tick",
     scope = "active",

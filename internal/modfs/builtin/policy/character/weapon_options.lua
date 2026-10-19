@@ -1,3 +1,4 @@
+-- Example: A species recommendation can upgrade one job weapon choice in the menu.
 local catalog = require("policy.catalog")
 local choice = require("policy.character_choice")
 local weapon_choices = require("constants.weapon_choices")
@@ -22,6 +23,7 @@ local upgrades = {
     WPN_FALCHION = "WPN_LONG_SWORD",
 }
 
+-- Compare a recommended skill against an optional species recommendation list.
 local function contains(values, target)
     for _, value in ipairs(values or {}) do
         if value == target then
@@ -32,6 +34,7 @@ local function contains(values, target)
     return false
 end
 
+-- Innate no-grasping changes the creation menu before a weapon is chosen.
 local function has_mutation(species, id)
     for _, mutation in ipairs(species.mutations or {}) do
         if mutation.id == id and mutation.amount > 0 then
@@ -42,6 +45,7 @@ local function has_mutation(species, id)
     return false
 end
 
+-- Good-weapon jobs substitute heavier bases before size and grasping restrictions prune options.
 local function upgrade(id, job_id, size)
     if id == "WPN_SPEAR" and job_id == "JOB_FIGHTER" and
         (size == "SIZE_TINY" or size == "SIZE_LITTLE" or size == "SIZE_SMALL") then
@@ -51,6 +55,7 @@ local function upgrade(id, job_id, size)
     return upgrades[id] or id
 end
 
+-- Character creation shows only species-legal choices, preserving the catalog order of base weapons.
 function weapons.options(species_id, job_id)
     local species = catalog.get("species", species_id)
     local job = catalog.get("jobs", job_id)
@@ -68,6 +73,7 @@ function weapons.options(species_id, job_id)
     for _, base in ipairs(bases) do
         local id = base
 
+        -- Good-weapon jobs upgrade each base before species size and hand restrictions apply.
         if job.weapon_choice == weapon_choices.GOOD then
             id = upgrade(id, job_id, species.size)
         end
@@ -100,6 +106,7 @@ function weapons.options(species_id, job_id)
     return options
 end
 
+-- Bind character-menu IDs to the same legality filter used by direct option calls.
 function weapons.run_options(_, input)
     return { options = weapons.options(input.species_id, input.job_id) }
 end

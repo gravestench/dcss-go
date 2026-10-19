@@ -1,9 +1,14 @@
+-- The probe exposes the selected generated item through a registered policy.
+-- Example: test.item_generation_overlay reports plus 4 for WPN_TEST_SPROCKET.
+
 local catalog = require("policy.catalog")
 local classes = require("ids.object_classes")
 local policies = require("policy.item_generation.catalog")
 
 local probe = {}
 
+-- Resolve the effective class policy and invoke its roll hook, proving the
+-- layered file replaced the embedded implementation for a modded weapon.
 function probe.read()
     local definition = catalog.get("items", "WPN_TEST_SPROCKET")
     local policy = policies.policy(classes.OBJ_WEAPONS)

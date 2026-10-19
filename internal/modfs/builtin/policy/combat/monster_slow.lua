@@ -3,8 +3,9 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local slow = {}
 
+-- Roll duration using pre-slow speed so a second slow does not amplify itself.
 local function duration(ctx, speed, hit_dice)
-    -- mon-ench.cc:2251,2379-2384 computes ENCH_SLOW duration before changing
+    -- mon-ench.cc,2379-2384 computes ENCH_SLOW duration before changing
     -- the monster's speed, then applies the asymmetric duration fuzz.
     local modified_speed = math.max(1,
         math.floor((hit_dice + 10) * 10 / math.max(1, speed)))
@@ -19,6 +20,7 @@ local function duration(ctx, speed, hit_dice)
     return math.max(15, raw + fuzz - low)
 end
 
+-- Save original speed once and extend aut on repeated slows without compounding the speed change.
 function slow.apply(ctx, monster, definition)
     local current = ctx:get(monster, "projectile.slow")
     local actor = ctx:get(monster, "core.actor")
@@ -33,7 +35,7 @@ function slow.apply(ctx, monster, definition)
         return
     end
 
-    -- monster.cc:4766-4776 applies haste_div(speed) for ENCH_SLOW.
+    -- monster.cc applies haste_div(speed) for ENCH_SLOW.
     actor.speed = roll.random_divide(ctx, base_speed * 2, 3)
     ctx:set(monster, "core.actor", actor)
     ctx:add(monster, "projectile.slow", {
@@ -43,6 +45,8 @@ function slow.apply(ctx, monster, definition)
     ctx:emit("combat", "The " .. definition.name .. " seems to slow down.")
 end
 
+-- Example: slow.tick(ctx, monster) with expired slow -> restored base actor speed
+-- Count down slow in aut and restore baseline speed as soon as the effect expires.
 function slow.tick(ctx, monster)
     local state = ctx:get(monster, "projectile.slow")
 
@@ -70,6 +74,7 @@ function slow.tick(ctx, monster)
     ctx:remove(monster, "projectile.slow")
 end
 
+-- Restore the saved baseline speed when slow expires or another effect dispels it.
 function slow.remove(ctx, monster)
     local state = ctx:get(monster, "projectile.slow")
 
@@ -85,6 +90,7 @@ function slow.remove(ctx, monster)
     return true
 end
 
+-- Check that stored baseline and current actor speed still agree with catalog speed bounds.
 function slow.validate(ctx, monster, definition, actor)
     local state = ctx:get(monster, "projectile.slow")
 

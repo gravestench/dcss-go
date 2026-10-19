@@ -1,8 +1,10 @@
+-- Example: A monster token's weapon annotation becomes a loadout slot before spawning.
 local choice = require("policy.generation.vaults.specs.choice")
 local attitude = require("constants.vault_attitude")
 
 local monster = {}
 
+-- Monster equipment annotations are parsed as slots before catalog lookup or spawning.
 local function equipment_slots(text, expression, site)
     if text == nil then
         return nil
@@ -29,6 +31,7 @@ local function equipment_slots(text, expression, site)
     return slots
 end
 
+-- Separate monster identity from place, depth, and equipment annotations before lookup.
 local function parse_term(text, expression, site)
     local actor, equipment = text:match("^(.-)%s*;%s*(.+)$")
 
@@ -103,6 +106,7 @@ local function parse_term(text, expression, site)
     return result
 end
 
+-- Each DES alternative occupies one slot that placement may choose later.
 function monster.parse(expression, site)
     return choice.slots(expression, site, parse_term)
 end

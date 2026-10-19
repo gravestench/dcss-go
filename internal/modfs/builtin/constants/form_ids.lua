@@ -1,3 +1,5 @@
+-- Transformation IDs select player form rules without storing a display name as state.
+
 local forms = {
     LICH = "lich",
     TREE = "tree",

@@ -1,3 +1,4 @@
+-- Example: Use player-shaped remains only after a game starts and the species can leave a body.
 local effects = require("constants.vault_effects")
 local species_ids = require("ids.species")
 
@@ -26,6 +27,7 @@ local axis_enemies = {
     "orc",
 }
 
+-- Use player-shaped remains only after a game starts and the species can leave a body.
 local function ally_remains(api, humanoid_ally)
     if not api:game_started() or corpseless_species[api:player_species()] then
         return humanoid_ally
@@ -34,7 +36,7 @@ local function ally_remains(api, humanoid_ally)
     return api:player_monster()
 end
 
--- Port of arrival/small.des:3341-3356. The humanoid roll is unconditional.
+-- Draw the humanoid ally even when player-species remains replace it; enemy selection follows.
 local function schedule_battle_remains(api)
     local humanoid_ally = api:random_from(humanoid_allies)
     local ally = ally_remains(api, humanoid_ally)

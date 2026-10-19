@@ -5,6 +5,8 @@ local item_classes = require("constants.item_classes")
 local potions = {}
 local registered = {}
 
+-- The potion registry validates item kinds before binding them to effect handlers.
+-- Example: potions.register("POT_HEAL_WOUNDS", healing_effect) requires can_quaff and apply.
 function potions.register(id, effect)
     local definition = catalog.get(categories.ITEMS, id)
 
@@ -25,10 +27,12 @@ function potions.register(id, effect)
     registered[id] = effect
 end
 
+-- The command path gets only previously validated handlers from the registry.
 function potions.get(id)
     return registered[id]
 end
 
+-- Fail startup when an active potion lacks a usable effect handler.
 function potions.validate()
     for _, definition in ipairs(catalog.all(categories.ITEMS)) do
         if definition.class == item_classes.POTIONS and

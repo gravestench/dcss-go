@@ -39,6 +39,9 @@ local fixed_value = {
     [ids.AMU_NOTHING] = 75,
 }
 
+-- Example: jewellery.value(kind, item, known, artefact) charges for known stat pluses.
+-- Separate type and plus knowledge to avoid leaking an unidentified ring's
+-- hidden modifier into its displayed shop price.
 function jewellery.value(kind, item, known, artefact)
     if not known.type then
         return 50

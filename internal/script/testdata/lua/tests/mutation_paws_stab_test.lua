@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local harness = require("tests.harness")
 local monsters = require("ids.monsters")
@@ -7,6 +8,7 @@ local stab = require("policy.combat.stab")
 
 local test = {}
 
+-- Paws use the source pounce message for helpless targets.
 function test.run(ctx)
     local player = ctx:create()
     local rat = ctx:create()
@@ -31,6 +33,7 @@ function test.run(ctx)
 
     local world = setmetatable({}, { __index = ctx })
 
+    -- Choose the low melee draw to make the paws stabbing branch observable.
     function world.random(_, stream, bound)
         harness.equal(stream, "melee", "stabbing uses the melee RNG")
         harness.truthy(bound > 0, "stabbing RNG bounds are positive")
@@ -38,6 +41,7 @@ function test.run(ctx)
         return 0
     end
 
+    -- Make paws stab sight deterministic while leaving actor positions to the ECS fixture.
     function world.visible()
         return true
     end
@@ -60,6 +64,7 @@ function test.run(ctx)
 
     local pounce = stab.prepare(world, player, rat, ordinary)
 
+    -- Paws modify a qualifying unarmed stab after helplessness sets its grade.
     harness.equal(stab.damage(world, player, ordinary, pounce, 4), 5,
         "paws give unarmed attacks the source good-stab bonus")
     harness.equal(stab.message(world, player, pounce, "rat"),
@@ -72,6 +77,7 @@ function test.run(ctx)
 
     local awake = stab.prepare(world, player, rat, ordinary)
 
+    -- A weaker helplessness state must not receive the sleeping-target grade.
     harness.equal(awake.bonus, 4,
         "petrifying enemies have a weaker stab opening")
 end

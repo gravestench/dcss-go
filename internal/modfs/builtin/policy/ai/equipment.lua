@@ -3,6 +3,8 @@ local items = require("policy.inventory.items")
 
 local equipment = {}
 
+-- AI equipment lookup accepts only the monster's item equipped in the requested slot.
+-- Example: equipment.find(ctx, monster, "weapon") checks carried equipment before a ranged action.
 function equipment.find(ctx, monster, slot_name)
     for _, item_entity in ipairs(ctx:query({ "core.equipped" })) do
         local equipped = ctx:get(item_entity, "core.equipped")

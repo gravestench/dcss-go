@@ -1,8 +1,9 @@
+-- Example: Failed one-in-four, one-in-three, and one-in-two tests each consume a fresh layout draw.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Port of arrival/twisted.des:685-699.
+-- Failed one-in-four, one-in-three, and one-in-two tests each consume a fresh layout draw.
 local function choose_pit_layout(api)
     if api:one_in(4) then
         api:emit(directives.SUBST, "Yy=w, Zz=l, Xx\"'=b")

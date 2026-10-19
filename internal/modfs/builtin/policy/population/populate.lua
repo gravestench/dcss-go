@@ -1,3 +1,4 @@
+-- Example: D:1 consumes population rolls before D:2, regardless of table iteration order.
 local factory = require("policy.population.factory")
 local pool = require("policy.population.pool")
 local roster = require("policy.population.roster")
@@ -9,10 +10,12 @@ local shop_ids = require("ids.shops")
 local item_ids = require("ids.items")
 local streams = require("constants.rng_streams")
 
+-- Visit levels by ID so shared population draws have stable order.
 local function level_order(left, right)
     return left.id < right.id
 end
 
+-- Convert authored no-spawn coordinates to a set before scanning floor cells.
 local function exclusion_set(level)
     local excluded = {}
 
@@ -23,6 +26,7 @@ local function exclusion_set(level)
     return excluded
 end
 
+-- Scan walkable floor in row-major order after vault records have occupied their cells.
 local function free_cells(ctx, level, excluded)
     local cells = {}
 
@@ -42,6 +46,7 @@ local function free_cells(ctx, level, excluded)
     return cells
 end
 
+-- Pack jackal followers near their leader without reusing a protected or occupied square.
 local function follower_cell(ctx, level, origin, excluded)
     for _ = 1, 1000 do
         local x = origin.x + ctx:random("placement", 7) - 3
@@ -58,6 +63,7 @@ local function follower_cell(ctx, level, origin, excluded)
     return nil
 end
 
+-- Draw a small band size after its leader is placed, then seek adjacent free cells.
 local function jackal_followers(ctx, level, leader, origin, excluded)
     local count = ctx:random("bands", 3) + 1
     local placed = 0
@@ -75,6 +81,8 @@ local function jackal_followers(ctx, level, leader, origin, excluded)
     return placed
 end
 
+-- Place vault materializations before ordinary monsters so blocked and protected cells affect spawn choice.
+-- Draw ordinary monsters from the depth pool only after spawn exclusions are applied.
 local function populate_level(ctx, level, allowed, scenario_id)
     if level.budget <= 0 then
         error("Dungeon:" .. level.id .. " has no population budget")
@@ -109,6 +117,7 @@ local function populate_level(ctx, level, allowed, scenario_id)
     return actors
 end
 
+-- Place fixed benchmark monsters in a known order for deterministic scenario state.
 local function fixture(ctx)
     factory.spawn(ctx, "MONS_RAT", 1, 4, 1)
     factory.spawn(ctx, "MONS_QUOKKA", 2, 14, 7)
@@ -122,6 +131,7 @@ local function fixture(ctx)
     }
 end
 
+-- Place the fixed shop after fixture monsters so its stock uses the intended stream position.
 local function shop_fixture(ctx)
     shops.place(ctx, {
         level_id = 1,
@@ -141,6 +151,7 @@ local function shop_fixture(ctx)
     })
 end
 
+-- Validate an assigned cell before creating a concrete starting potion entity.
 local function floor_potion(ctx, kind_id, level_id, cell)
     if not cell or cell.x == nil or cell.y == nil then
         error("missing starting floor item location for " .. kind_id)
@@ -163,6 +174,7 @@ local function floor_potion(ctx, kind_id, level_id, cell)
     })
 end
 
+-- Create fixed floor consumables only after monster inventory has consumed item draws.
 local function floor_items(ctx, input)
     -- Scenario potions follow every monster and its carried inventory.
     floor_potion(ctx, "POT_CURING", 1, input.curing)
@@ -172,6 +184,7 @@ end
 
 local module = {}
 
+-- Sort levels before materialization so shared population streams advance in level order.
 function module.run(ctx, input)
     local scenario_id = input.scenario_id
     roster.allowed(scenario_id)

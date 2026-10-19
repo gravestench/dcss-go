@@ -1,0 +1,31 @@
+-- Animate Skeleton (SPELL_ANIMATE_SKELETON) is a level 1 spell in necromancy.
+-- Schools, ranges, and flags are metadata; a registered effect is still required to cast it.
+
+-- Source: crawl-ref/source/spl-data.h
+
+local categories = require("constants.catalog")
+
+local definition = {
+    id = "SPELL_ANIMATE_SKELETON",
+    numeric_id = 50,
+    status = "defined",
+    name = "Animate Skeleton",
+    schools = {
+        "necromancy",
+    },
+    flags = {
+        "utility",
+        "monster",
+    },
+    level = 1,
+    power_cap = 50,
+    min_range_expr = "-1",
+    max_range_expr = "-1",
+    noise = 1,
+    effect_noise = 0,
+    tile_id = "TILEG_ANIMATE_SKELETON",
+}
+
+register.definition(categories.SPELLS, definition)
+
+return definition

@@ -5,12 +5,14 @@ local confusion = require("policy.magic.player_confusion")
 
 local effect = {}
 
+-- Ambrosia has no preflight refusal; deliberate confusion is part of its effect.
 function effect.can_quaff()
     return nil
 end
 
 -- Source: potion.cc:PotionAmbrosia::effect. Intentional confusion ignores
 -- clarity and activates the concurrent regeneration duration.
+-- Example: Ambrosia chooses a three-to-ten-turn extension, then reports whether it was already active.
 function effect.apply(ctx, player)
     local active = ambrosia.active(ctx, player)
     local turns = 3 + ctx:random("potion", 8)

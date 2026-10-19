@@ -1,6 +1,7 @@
 local categories = require("constants.catalog")
 
--- Test fixture: incomplete Lua definitions report their own path and ID.
+-- SP_INCOMPLETE deliberately omits species fields so catalog validation
+-- reports this definition's origin and ID.
 local definition = {
     id = "SP_INCOMPLETE",
     name = "Incomplete",

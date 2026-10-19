@@ -1,8 +1,9 @@
+-- Example: The abandoned market marks q for later deep dwarf skeleton decay after the map is placed.
 local effects = require("constants.vault_effects")
 
 local handler = {}
 
--- Port of arrival/small.des:3571.
+-- The abandoned market marks q for later deep dwarf skeleton decay after the map is placed.
 local function schedule_skeleton_decay(api)
     api:record(effects.DELAYED_DECAY, {
         glyph = "q",

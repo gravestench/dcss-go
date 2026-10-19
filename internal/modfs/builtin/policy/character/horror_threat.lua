@@ -1,3 +1,4 @@
+-- Example: A visible dangerous monster raises horror; a harmless summon is filtered out.
 -- Source: player-reacts.cc:_current_horror_level and _update_cowardice.
 local catalog = require("policy.catalog")
 local component = require("constants.component")
@@ -14,6 +15,7 @@ local vision = require("policy.character.vision")
 
 local threat_policy = {}
 
+-- Skip flags absent from catalog definitions when excluding nonthreatening monsters.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -24,6 +26,7 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- A visible monster contributes based on experience, distance, and the Cowardice factor.
 local function threat(ctx, player, monster, origin, sight, factor)
     if not targets.enemy(ctx, player, monster) then
         return 0
@@ -58,6 +61,7 @@ local function threat(ctx, player, monster, origin, sight, factor)
     return tension > 5 and 1 or 0
 end
 
+-- Sum only threats the player currently perceives before converting them to a horror level.
 function threat_policy.current(ctx, player)
     local origin = ctx:get(player, component.POSITION)
     local progress = ctx:get(player, component.PROGRESSION)
@@ -85,6 +89,7 @@ function threat_policy.current(ctx, player)
     return math.max(0, total - 1)
 end
 
+-- Recalculate Cowardice horror from visible monsters, then persist only the resulting status change.
 function threat_policy.update(ctx, player)
     local old = horror.penalty(ctx, player)
     local current = 0

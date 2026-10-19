@@ -1,14 +1,17 @@
+-- Example: An agility timer at zero grants no evasion, even while its component still exists.
 local component = require("constants.component")
 
 local agility = {}
 local EV_BONUS = 5
 
+-- Read the saved aut timer so an expired status cannot grant evasion.
 function agility.active(ctx, player)
     local state = ctx:get(player, component.AGILITY)
 
     return state and state.remaining_aut > 0 or false
 end
 
+-- Return the fixed source EV increase only while the duration is live.
 function agility.evasion_bonus(ctx, player)
     if agility.active(ctx, player) then
         return EV_BONUS
@@ -41,6 +44,7 @@ function agility.apply(ctx, player, power, stream)
     return "You feel agile all of a sudden."
 end
 
+-- Agility expires in aut, allowing partial-turn actions to reduce its remaining duration.
 function agility.tick(ctx, player, aut)
     if aut <= 0 then
         return

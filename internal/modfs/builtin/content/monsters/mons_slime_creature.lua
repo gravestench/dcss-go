@@ -1,0 +1,106 @@
+-- slime creature (MONS_SLIME_CREATURE) is a DCSS monster profile with 11 hit
+-- dice and speed 10.
+-- Its first melee contact is AT_HIT for 22 base damage; combat policy applies
+-- defenses and status effects.
+-- MST_NO_SPELLS supplies no AI spell slots for this profile.
+
+-- Source: crawl-ref/source/mon-data.h
+
+local categories = require("constants.catalog")
+local curves = require("constants.population_curves")
+
+local definition = {
+    id = "MONS_SLIME_CREATURE",
+    status = "defined",
+    name = "slime creature",
+    glyph = 74,
+    colour_id = "GREEN",
+    flags = {
+        "M_FAST_REGEN",
+        "M_HERD",
+        "M_WEB_IMMUNE",
+        "M_NO_SKELETON",
+        "M_UNBLINDABLE",
+    },
+    resistances = {
+        {
+            id = "MR_RES_POISON",
+            level = 1,
+        },
+    },
+    xp_modifier = 3,
+    genus_id = "MONS_JELLY",
+    species_id = "MONS_SLIME_CREATURE",
+    holiness = {
+        "MH_NATURAL",
+    },
+    willpower = 40,
+    -- slime creature offers AT_HIT as its first contact; later slots are tried by
+    -- the shared melee flow.
+    attacks = {
+        {
+            type_id = "AT_HIT",
+            flavour_id = "AF_PLAIN",
+            damage = 22,
+        },
+        {
+            type_id = "AT_NONE",
+            flavour_id = "AF_PLAIN",
+            damage = 0,
+        },
+        {
+            type_id = "AT_NONE",
+            flavour_id = "AF_PLAIN",
+            damage = 0,
+        },
+        {
+            type_id = "AT_NONE",
+            flavour_id = "AF_PLAIN",
+            damage = 0,
+        },
+    },
+    hd = 11,
+    average_hp_10x = 605,
+    ac = 1,
+    ev = 4,
+    spellbook_id = "MST_NO_SPELLS",
+    shout_id = "S_SILENT",
+    intelligence_id = "I_BRAINLESS",
+    habitat_id = "HT_AMPHIBIOUS",
+    speed = 10,
+    -- For slime creature, energy costs combine with speed 10 to determine action
+    -- cadence, not an unconditional action each turn.
+    energy = {
+        move = 10,
+        swim = 10,
+        attack = 10,
+        missile = 10,
+        spell = 10,
+        special = 10,
+        item = 10,
+        pickup_percent = 100,
+    },
+    item_use_id = "MONUSE_NOTHING",
+    size_id = "SIZE_SMALL",
+    shape_id = "MON_SHAPE_BLOB",
+    tile = {
+        id = "TILEP_MONS_PROGRAM_BUG",
+        variation_id = "TVARY_NONE",
+    },
+    corpse_tile_id = "TILE_ERROR",
+    -- Spawn rows place slime creature in depth bands beginning at 12 through 22;
+    -- they do not mutate existing actors.
+    population = {
+        {
+            source_order = 68,
+            min_depth = 12,
+            max_depth = 22,
+            rarity = 440,
+            curve = curves.FALL,
+        },
+    },
+}
+
+register.definition(categories.MONSTERS, definition)
+
+return definition

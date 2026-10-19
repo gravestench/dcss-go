@@ -1,3 +1,4 @@
+-- Example: A goblin sling choice consumes its gear roll before the melee fallback.
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local gear = require("policy.population.gear")
@@ -7,6 +8,7 @@ local monsters = require("ids.monsters")
 
 local handler = {}
 
+-- Read the goblin source gear row before applying special sling and melee handling.
 local function primary_spec()
     local definition = catalog.get(categories.MONSTERS, monsters.MONS_GOBLIN)
     local owned = definition.weapon_gear or {}
@@ -14,6 +16,7 @@ local function primary_spec()
     return owned.primary
 end
 
+-- Preserve source gear draw order while replacing preliminary plusses with final weapon quality.
 local function weapon(ctx, depth, melee_only)
     local spec = primary_spec()
 
@@ -41,6 +44,7 @@ local function weapon(ctx, depth, melee_only)
     }
 end
 
+-- Goblin ranged and melee loadouts share weapon quality draws before the final override is selected.
 function handler.loadout(ctx, depth)
     local primary = weapon(ctx, depth, false)
     local loadout = {

@@ -211,13 +211,13 @@ func TestSamePathOverlayReplacesBundledDefinition(t *testing.T) {
 		t.Fatalf("monster name = %s", got)
 	}
 
-	if origin := runtime.definitionOrigins["monsters"][id]; origin != "content/monsters/0001_mons_abomination_large.lua" {
+	if origin := runtime.definitionOrigins["monsters"][id]; origin != "content/monsters/mons_abomination_large.lua" {
 		t.Fatalf("monster origin = %q", origin)
 	}
 }
 
 func TestSamePathPopulationOverrideKeepsSourceOrder(t *testing.T) {
-	const path = "content/monsters/0495_mons_rat.lua"
+	const path = "content/monsters/mons_rat.lua"
 
 	bundled, err := modfs.Load()
 
@@ -341,7 +341,7 @@ func TestDuplicateDefinitionReportsBothPaths(t *testing.T) {
 	}
 
 	for _, path := range []string{
-		"content/monsters/0001_mons_abomination_large.lua",
+		"content/monsters/mons_abomination_large.lua",
 		"content/monsters/zz_duplicate_abomination.lua",
 	} {
 		if !strings.Contains(err.Error(), path) {
@@ -401,7 +401,7 @@ func TestEarlyIDImportChecksMissingDefinitionAfterDiscovery(t *testing.T) {
 	}
 
 	for _, wanted := range []string{
-		"content/items/0000_missing_spell.lua",
+		"content/items/missing_spell.lua",
 		"missing spells ID SPELL_NOT_REAL",
 	} {
 		if !strings.Contains(err.Error(), wanted) {
@@ -431,7 +431,7 @@ func TestSpawnableMonsterOverrideFailsAtBootWhenIncomplete(t *testing.T) {
 	}
 
 	for _, wanted := range []string{
-		"content/monsters/0495_mons_rat.lua",
+		"content/monsters/mons_rat.lua",
 		"requires energy as table",
 	} {
 		if !strings.Contains(err.Error(), wanted) {

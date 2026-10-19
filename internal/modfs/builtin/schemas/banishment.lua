@@ -2,6 +2,7 @@
 register.component{
     id = "world.banishment",
     version = 1,
+    -- The origin coordinates let return travel restore the banished actor to its prior Dungeon cell.
     fields = {
         origin_level_id = {
             type = "int64",

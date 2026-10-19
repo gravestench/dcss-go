@@ -1,8 +1,9 @@
+-- Example: Depth raises the chance of crystal plate stock; the selected armour list sets the shop feature.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Port of builder/shops.des:886-919.
+-- Depth raises the chance of crystal plate stock; the selected armour list sets the shop feature.
 local function configure_chei_stock(api)
     local plate_plus = 3 + api:roll(3) + api:roll(8)
 

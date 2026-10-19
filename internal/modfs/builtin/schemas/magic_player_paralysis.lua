@@ -2,6 +2,7 @@
 register.component{
     id = "magic.player_paralysis",
     version = 1,
+    -- Player paralysis counts aut so effects with different action lengths still expire consistently.
     fields = {
         remaining_aut = {
             type = "int64",

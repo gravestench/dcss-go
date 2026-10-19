@@ -1,3 +1,6 @@
+-- A cloud mod replaces Fire and adds Silver Haze; lookup and presentation
+-- must both use those effective definitions after overlay loading.
+
 local categories = require("constants.catalog")
 local content = require("policy.catalog")
 local harness = require("tests.harness")
@@ -6,6 +9,8 @@ local presentation = require("policy.presentation.clouds")
 
 local test = {}
 
+-- Inspect both a same-path override and a new cloud ID, then ask presentation
+-- for each to prove the effective catalog is shared across consumers.
 function test.run()
     local fire = content.get(categories.CLOUDS, ids.CLOUD_FIRE)
     local custom = content.get(categories.CLOUDS, ids.CLOUD_TEST_CUSTOM)

@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local defense = require("policy.combat.monster_beams.defense")
 local harness = require("tests.harness")
@@ -5,12 +6,14 @@ local spells = require("ids.spells")
 
 local test = {}
 
+-- Scripted rolls make shield, dodge, and repulsion order observable.
 local function context(draws)
     local ctx = {
         draws = draws,
         next_draw = 1,
     }
 
+    -- Consume scripted hit and repulsion draws in order; reject any unexpected bound.
     function ctx:random(_, bound)
         local value = self.draws[self.next_draw]
 
@@ -26,6 +29,7 @@ local function context(draws)
     return ctx
 end
 
+-- Repulsion can stop a bolt after its ordinary hit roll.
 function test.run()
     local arrow = catalog.get("monster_beams", spells.SPELL_STONE_ARROW)
     local lightning = catalog.get("monster_beams",
@@ -37,6 +41,7 @@ function test.run()
         reflects = true,
     }
 
+    -- A blocked Stone Arrow reflects, while a penetrating bolt skips shield.
     local blocked = defense.roll(context({ 0, 39, 40 }), shield, 14, arrow)
 
     harness.equal(blocked.kind, "reflect",
@@ -58,6 +63,7 @@ function test.run()
     harness.equal(missed.kind, "miss",
         "Stone Arrow can miss an evading actor")
 
+    -- Repulsion runs after ordinary hit resolution for either beam kind.
     local repelled = {
         ev = 10,
         shield_class = 0,

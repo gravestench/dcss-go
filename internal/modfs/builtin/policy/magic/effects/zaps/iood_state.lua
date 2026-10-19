@@ -1,3 +1,4 @@
+-- Example: ctx:get(orb, zap_ids.component.IOOD) reads homing velocity and target.
 -- mon-project.cc:IOOD_X/Y/VX/VY/DIST/POW and the homing foe.
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local state = {}

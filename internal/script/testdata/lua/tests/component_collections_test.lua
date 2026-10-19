@@ -1,14 +1,21 @@
+-- ECS collection fields copy Lua lists and maps across add/get/set, preserve
+-- entity handles and empty defaults, and reject sparse or mistyped values.
+
 local harness = require("tests.harness")
 local schema = require("schemas.collection_fields")
 
 local test = {}
 
+-- Run one invalid component write under pcall so later collection-shape cases
+-- still execute after the schema rejects the attempted value.
 local function rejects(action, message)
     local ok = pcall(action)
 
     harness.equal(ok, false, message)
 end
 
+-- Round-trip homogeneous lists and maps through a real component schema, then
+-- challenge sparse and wrongly typed values at the Lua/ECS boundary.
 function test.run(ctx)
     local owner = ctx:create()
     local target = ctx:create()
@@ -37,6 +44,7 @@ function test.run(ctx)
     }
 
     ctx:add(owner, schema.id, source)
+    -- Mutating the input after add must not mutate the stored component.
     source.ints[1] = 99
     source.int_map.score = 99
 
@@ -55,6 +63,7 @@ function test.run(ctx)
     harness.equal(first.float_map.ratio, 0.5, "float map survives round trip")
     harness.equal(first.string_map.label, "ready", "string map survives round trip")
 
+    -- A get result is another copy; writes require an explicit set.
     first.ints[1] = 81
     first.int_map.score = 81
 
@@ -72,14 +81,20 @@ function test.run(ctx)
     harness.equal(#replaced.ints, 0, "empty list is retained")
     harness.equal(next(replaced.int_map), nil, "empty map is retained")
 
+    -- A list with a missing numeric index must fail instead of silently
+    -- shifting values when Lua data crosses into a typed ECS field.
     rejects(function()
         ctx:set(owner, schema.id, { ints = { [1] = 1, [3] = 3 } })
     end, "sparse list is rejected")
 
+    -- Map keys are strings by schema; numeric Lua keys must not be coerced
+    -- into strings during component validation.
     rejects(function()
         ctx:set(owner, schema.id, { int_map = { [1] = 3 } })
     end, "nonstring map key is rejected")
 
+    -- Element types remain enforced inside collections, not only on the
+    -- outer table shape.
     rejects(function()
         ctx:set(owner, schema.id, { bools = { "true" } })
     end, "wrong element kind is rejected")

@@ -1,3 +1,4 @@
+-- Example: Iicemail at full strength supplies AC until a hit starts its depletion timer.
 local component = require("constants.component")
 local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
@@ -7,6 +8,7 @@ local icy_defense = {}
 
 local DEPLETION_AUT = 300
 
+-- An absent or zero depletion timer means the icy defence can contribute again.
 function icy_defense.active(ctx, player)
     local state = ctx:get(player, component.ICY_DEFENSE)
 
@@ -48,6 +50,7 @@ function icy_defense.melt(ctx, player, resistance_id)
     end
 end
 
+-- Decrement the shared depletion timer in elapsed aut; reaching zero re-enables both icy defenses.
 function icy_defense.tick(ctx, player, aut)
     if aut <= 0 then
         return

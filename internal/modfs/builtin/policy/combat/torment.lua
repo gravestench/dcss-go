@@ -4,6 +4,7 @@ local resistances = require("constants.resistance_ids")
 
 local torment = {}
 
+-- Monster holiness changes how much current HP Torment may remove.
 local function has_holiness(definition, wanted)
     for _, value in ipairs(definition.holiness or {}) do
         if value == wanted then
@@ -14,6 +15,7 @@ local function has_holiness(definition, wanted)
     return false
 end
 
+-- Read explicit torment resistance before computing the nonlethal HP loss.
 local function resistance(definition, wanted)
     for _, entry in ipairs(definition.resistances or {}) do
         if entry.id == wanted then
@@ -24,10 +26,13 @@ local function resistance(definition, wanted)
     return 0
 end
 
+-- Example: torment.susceptible(definition) with monster with torment resistance -> false susceptibility
+-- Read torment resistance before computing a current-HP loss that cannot kill outright.
 function torment.susceptible(definition)
     return resistance(definition, resistances.TORMENT) <= 0
 end
 
+-- Torment cannot kill directly; susceptible monsters lose a resistance-adjusted fraction of current HP.
 function torment.monster_loss(definition, current_hp)
     if not torment.susceptible(definition) then
         return 0

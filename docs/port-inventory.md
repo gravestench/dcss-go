@@ -23,11 +23,9 @@ Species and job files own their menu descriptions and ordering; the shared
 presentation module retains only startup modes, skill columns, and version.
 Each job file includes its fixed starting grants. Wanderer keeps an explicit
 dynamic marker; its generated equipment comes from its Lua starting rule.
-Normal launch and restore read
-neither the C++ checkout nor the generated JSON artifacts. Those JSON files
-remain source-traced inputs for deliberate import refreshes and tests.
-`scripts/export-catalog-lua.py` refreshes the per-record files and remaining
-aggregate Lua catalogs when upstream content changes.
+Normal launch and restore read neither the C++ checkout nor the generated
+JSON artifacts. Some JSON remains embedded by legacy Go catalog code and
+cross-check tests; Lua content is now edited directly.
 The player-book spell ID set is also committed as
 `data/player_book_spells.lua`; it is read at runtime without the C++ tree.
 
@@ -98,21 +96,18 @@ The import artifacts account for 43 species, 31 jobs, 700 monster rows,
 identities, 38 branches, 125 ordered Dungeon population rows inside their
 monster definitions, monster weapon loadouts, starting grants, and console
 presentation metadata. All 162 primary and 16 secondary weapon specs live in
-their owning monster Lua files. Import tools under `cmd/import*` are for reviewed
-upstream refreshes. Content coverage
+their owning monster Lua files. The initial import tools have been removed;
+content coverage
 does not imply that its behavior is playable. Monster spell selection accepts
 every committed book's slot structure, including repeated spell IDs with
 distinct flags. Live monster effects include the early roster's Freeze and
 Slug Dart, Petrify, 44 direct beam spells, and 16 targeted hex effects. Missing effects are
 reported before a monster joins a generation roster; the remaining effects
 are a prerequisite for deeper Dungeon population.
-The 11 wand-to-spell links come from the committed `wand-spells.json`
-artifact. `scripts/import_wand_spells.py` refreshes that artifact from the
-pinned `spl-book.cc`; `scripts/export-catalog-lua.py` then writes each link
-into its own wand Lua definition. Neither tool runs during normal play.
-Source appearance words are committed in `data/item_appearances.lua`;
-`scripts/import_item_appearances.py` refreshes them deliberately from
-`item-name.cc`. The runtime does not read C++ to name an item.
+The 11 wand-to-spell links are committed in their wand definitions, with a
+legacy JSON artifact retained for cross-checks. Source appearance words are
+committed in `data/item_appearances.lua`. The runtime does not read C++ to
+name an item.
 
 The pinned C++ source anchors for live behavior are `newgame.cc`,
 `ng-setup.cc`, `player.cc`, `skills.cc`, `item-use.cc`, `potion.cc`,

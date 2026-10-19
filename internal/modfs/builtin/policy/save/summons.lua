@@ -15,6 +15,7 @@ local summons = {}
 
 -- Summoned creatures belong to their caster, not the scenario's starting
 -- population. Their ownership and expiry survive a save and restore.
+-- Example: summons.validate(ctx, entity, actor, position, ai, state, now) checks summoning expiry.
 function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     local permanent_spell = state.source_category == categories.SPELLS and
         (state.source_id == spells.SPELL_SIMULACRUM or
@@ -48,6 +49,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
 
     catalog.get(state.source_category, state.source_id)
 
+    -- A spectral weapon remains bonded to an equipped item carried by its owner; stray copies fail restore.
     if spectral then
         local source = ctx:get(spectral.source_weapon, component.ITEM)
         local carrier = ctx:get(spectral.source_weapon,

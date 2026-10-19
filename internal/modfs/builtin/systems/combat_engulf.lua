@@ -3,6 +3,8 @@ local engulf = require("policy.combat.engulf")
 
 local system = {}
 
+-- Theory of operation: The pass releases invalid holds, then applies drowning before death cleanup reads HP.
+-- Engulf damage is processed after attacks and before death cleanup examines HP.
 function system.update(ctx, active)
     engulf.release_far_all(ctx)
 

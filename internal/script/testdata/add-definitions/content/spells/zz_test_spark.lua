@@ -1,3 +1,5 @@
+-- Test Spark supplies the spell id referenced by a modded item and resolver.
+
 local categories = require("constants.catalog")
 local scopes = require("constants.spell_scopes")
 

@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
 local records = require("policy.mutations.records")
@@ -7,6 +8,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Acquired High Magic increases maximum MP.
 function test.run(ctx)
     local player = ctx:create()
     local species = catalog.get("species", species_ids.SP_HUMAN)

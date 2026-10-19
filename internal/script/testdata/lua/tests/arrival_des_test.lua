@@ -1,9 +1,12 @@
+-- DES parsing preserves operation order and leading map spaces from authored arrival vaults.
+
 local des = require("policy.generation.vaults.des")
 local catalog = require("policy.generation.vaults.catalog")
 local directives = require("constants.vault_directives")
 
 local test = {}
 
+-- Embedded DES directives must retain authored order even when catalog IDs are sorted.
 local function assert_source_order(vault)
     local colour
     local hook
@@ -23,6 +26,7 @@ local function assert_source_order(vault)
     assert(colour < hook and hook < mask)
 end
 
+-- Parse every arrival vault, then probe one directive sequence and exact map whitespace.
 function test.run()
     local paths = mod.paths("vaults/arrival", ".des")
 

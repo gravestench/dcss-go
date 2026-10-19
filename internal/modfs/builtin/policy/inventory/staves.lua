@@ -6,6 +6,9 @@ local roll = require("policy.combat.roll")
 
 local staves = {}
 
+-- Reuse the ordinary staff melee profile after validating modded staff
+-- metadata; this avoids copying weapon rules into every magical staff file.
+-- Example: staves.weapon(staff_definition) returns its attack profile.
 function staves.weapon(definition)
     if definition.class ~= object_classes.OBJ_STAVES then
         if definition.class == object_classes.OBJ_WEAPONS then
@@ -48,6 +51,8 @@ function staves.weapon(definition)
     return catalog.get(categories.ITEMS, item_ids.WPN_STAFF).weapon
 end
 
+-- A staff enhances a spell only when one of that spell's schools matches
+-- the staff's declared school, so dual-school spells need no special list.
 function staves.enhances(definition, spell)
     local staff = definition.staff
 
@@ -64,6 +69,8 @@ function staves.enhances(definition, spell)
     return 0
 end
 
+-- Grant the staff's one-step resistance only for its declared element;
+-- non-staff weapons never inherit this metadata by accident.
 function staves.resistance(definition, resistance_id)
     if definition.class ~= object_classes.OBJ_STAVES or
         not definition.staff then
@@ -73,7 +80,9 @@ function staves.resistance(definition, resistance_id)
     return definition.staff.resistance_id == resistance_id and 1 or 0
 end
 
--- Source: melee-attack.cc:2015-2023. The two skill scales are deliberate.
+-- Source: melee-attack.cc. The two skill scales are deliberate.
+-- First roll determines whether the proc fires, then a separate roll sets
+-- damage. Both use the melee RNG stream to preserve combat sequencing.
 function staves.roll_damage(ctx, school100, evocations200, evocations50)
     if roll.melee(ctx, 3000) >= evocations200 + school100 then
         return 0

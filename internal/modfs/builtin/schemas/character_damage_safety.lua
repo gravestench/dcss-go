@@ -5,6 +5,7 @@ local restrictions = require("constants.safety_restrictions")
 local schema = {
     id = component.DAMAGE_SAFETY,
     version = 1,
+    -- Potion and scroll locks expire independently after damage; each restriction stores its own remaining aut.
     fields = {
         [restrictions.POTIONS] = {
             type = "int64",

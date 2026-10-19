@@ -1,8 +1,9 @@
 local ids = require("ids.artefact_properties")
 local kinds = require("constants.artefact_value_kinds")
 
--- Source: crawl-ref/source/artefact.cc:650-774. Array order matters:
+-- Source: crawl-ref/source/artefact.cc. Array order matters:
 -- source weighted selection iterates the property enum in this order.
+-- Example: property_pool[1].weight is 100 for Strength when randart properties are drawn.
 local properties = {
     {
         id = ids.STRENGTH,
@@ -89,6 +90,7 @@ local properties = {
         weight = 15,
         good = kinds.BOOLEAN,
     },
+    -- From this point, source drawbacks compete with good-only boons in the same weighted table.
     {
         id = ids.NOISE,
         weight = 30,

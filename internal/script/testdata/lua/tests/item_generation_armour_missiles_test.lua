@@ -1,3 +1,5 @@
+-- Cloak uses source ego table.
+
 local purpose = require("constants.item_generation_purpose")
 local streams = require("constants.rng_streams")
 local armour_egos = require("constants.armour_egos")
@@ -9,9 +11,13 @@ local quality = require("constants.vault_item_quality")
 
 local test = {}
 
+-- Select the first or last eligible weight slot to exercise subtype edge
+-- cases without depending on a random seed.
 local function context(last)
     local ctx = {}
 
+    -- Assert subtype rolls use the item stream and a nonempty range before
+    -- returning the boundary draw requested by the case.
     function ctx:random(stream, bound)
         harness.equal(stream, streams.ITEM_GENERATION, "item source RNG stream")
         harness.truthy(bound > 0, "positive source draw bound")
@@ -22,6 +28,8 @@ local function context(last)
     return ctx
 end
 
+-- Supply the shared generation fields so each case changes only item kind
+-- and quality, keeping ego differences attributable to subtype rules.
 local function request(kind_id, quality_id)
     return {
         kind_id = kind_id,
@@ -33,6 +41,8 @@ local function request(kind_id, quality_id)
     }
 end
 
+-- Compare cloak and scarf ego results at the same shallow depth, where their
+-- allowed subtype pools differ despite both being armour.
 local function armour_subtype_egos()
     local cloak = generation.roll(context(false),
         request(ids.ARM_CLOAK, quality.GOOD))
@@ -46,6 +56,8 @@ local function armour_subtype_egos()
     harness.equal(scarf.plus, 0, "scarf is unenchantable")
 end
 
+-- Probe both dart brand-pool boundaries so curare and poison are selected by
+-- the authored weights rather than a generic missile default.
 local function missile_subtype_brands()
     local curare = generation.roll(context(false),
         request(ids.MI_DART, quality.ORDINARY))
@@ -60,6 +72,8 @@ local function missile_subtype_brands()
     harness.equal(poisoned.quantity, 6, "maximum dart stack")
 end
 
+-- Run armour and missile subtype checks together because both depend on
+-- specialized item-generation tables selected from a common request.
 function test.run()
     armour_subtype_egos()
     missile_subtype_brands()

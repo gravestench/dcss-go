@@ -28,6 +28,8 @@ local tier_one = {
     monsters.MONS_EXECUTIONER,
 }
 
+-- Choose a demon tier on the traps stream and force hostile ownership on the spawned summon.
+-- Example: effect.apply(ctx, player) attempts a hostile greater-demon summon at a valid cell.
 function effect.apply(ctx, player)
     local tier = ctx:random(streams.TRAPS, 10) < 6 and tier_two or tier_one
     local kind_id = tier[ctx:random(streams.TRAPS, #tier) + 1]

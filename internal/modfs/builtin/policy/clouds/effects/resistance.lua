@@ -6,6 +6,8 @@ local catalog = require("policy.catalog")
 
 local resistance = {}
 
+-- Return zero for absent resistance entries so cloud immunity checks use a stable numeric level.
+-- Example: an absent monster resistance entry contributes zero to a cloud immunity check.
 function resistance.monster(ctx, actor, resistance_id)
     local state = ctx:get(actor, component.ACTOR)
 
@@ -24,6 +26,7 @@ function resistance.monster(ctx, actor, resistance_id)
     return 0
 end
 
+-- Use the shared spell resistance calculation for player cloud damage.
 function resistance.player(ctx, actor, resistance_id)
     local damage = require("policy.magic.damage")
 

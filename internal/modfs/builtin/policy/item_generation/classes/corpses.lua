@@ -4,6 +4,9 @@ local classes = require("ids.object_classes")
 
 local policy = {}
 
+-- Corpse requests bypass ordinary subtype weights because their source monster identifies the result.
+-- Example: policy.eligible(nil, corpse_kind,
+--     { kind_id = corpse_kind.id, base_id = "MONS_ORC" }) accepts a forced corpse.
 function policy.eligible(_, definition, request)
     return definition.class == classes.OBJ_CORPSES and
         definition.generation.mode == "forced" and
@@ -12,10 +15,12 @@ function policy.eligible(_, definition, request)
         request.base_id ~= ""
 end
 
+-- Forced corpse requests never enter the random weighted pool.
 function policy.weight()
     return 0
 end
 
+-- Store source monster ID and freshness on the corpse component.
 function policy.roll(ctx, _, request, result)
     result.components["core.corpse"] = {
         monster_id = request.base_id,

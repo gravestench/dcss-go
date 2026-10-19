@@ -2,12 +2,15 @@ local component = require("constants.component")
 
 local resistance = {}
 
+-- Resistance duration is stored as status and aged once per player action.
 function resistance.active(ctx, player)
     local state = ctx:get(player, component.POTION_RESISTANCE)
 
     return state ~= nil and state.remaining_aut > 0
 end
 
+-- Extend one saved resistance timer on repeat drinks so elemental checks see a single active status.
+-- Example: drinking Resistance again extends the existing status instead of duplicating it.
 function resistance.extend(ctx, player, turns)
     local state = ctx:get(player, component.POTION_RESISTANCE)
     local added = turns * 10
@@ -22,6 +25,7 @@ function resistance.extend(ctx, player, turns)
     end
 end
 
+-- Age the shared protection timer once per accepted action.
 function resistance.tick(ctx, player, aut)
     local state = ctx:get(player, component.POTION_RESISTANCE)
 

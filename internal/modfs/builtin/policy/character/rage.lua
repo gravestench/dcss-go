@@ -1,3 +1,4 @@
+-- Example: Berserk start sets the attack bonus and a timer that ends after its last attack.
 -- Source: player-act.cc:go_berserk, player.cc:player_end_berserk,
 -- and main.cc:_do_berserk_no_combat_penalty.
 local catalog = require("policy.catalog")
@@ -33,10 +34,12 @@ local noncombat_warnings = {
     [6] = "Your blood rage is quickly leaving you.",
 }
 
+-- Read the single Berserk component shared by HP scaling and action restrictions.
 local function state(ctx, player)
     return ctx:get(player, component.RAGE)
 end
 
+-- Update an existing rage component or create it on first activation.
 local function save(ctx, player, value)
     if ctx:has(player, component.RAGE) then
         ctx:set(player, component.RAGE, value)
@@ -45,12 +48,14 @@ local function save(ctx, player, value)
     end
 end
 
+-- Require positive remaining aut; cooldown alone does not count as Berserk.
 function rage.active(ctx, player)
     local value = state(ctx, player)
 
     return value ~= nil and value.remaining_aut > 0
 end
 
+-- Attack and spell callers consult this gate while Berserk is active; the status owns duration separately.
 function rage.command_restriction(ctx, player, kind)
     if forbidden_commands[kind] and rage.active(ctx, player) then
         return "You are too berserk!"
@@ -59,6 +64,7 @@ function rage.command_restriction(ctx, player, kind)
     return nil
 end
 
+-- Apply the source fifty-percent maximum-HP increase only during active rage.
 function rage.scale_hp(ctx, player, base)
     if rage.active(ctx, player) then
         return math.max(1, math.floor(base * 3 / 2))
@@ -67,6 +73,7 @@ function rage.scale_hp(ctx, player, base)
     return base
 end
 
+-- A new Berserk attempt must pass form and status gates before rolling its duration.
 function rage.can_begin(ctx, player)
     local value = state(ctx, player)
 
@@ -86,6 +93,7 @@ function rage.can_begin(ctx, player)
         effects.sum(ctx, player, capabilities.CLARITY) == 0
 end
 
+-- Persist the initial rage state before action restrictions or HP scaling read it.
 function rage.begin(ctx, player, stream)
     if not rage.can_begin(ctx, player) then
         return false
@@ -123,6 +131,7 @@ function rage.begin(ctx, player, stream)
     return true
 end
 
+-- A landed melee action resets the no-combat penalty counter.
 function rage.melee(ctx, player)
     local value = state(ctx, player)
 
@@ -135,6 +144,7 @@ function rage.melee(ctx, player)
     save(ctx, player, value)
 end
 
+-- Restore scaled vitals and start exhaustion after the rage timer ends.
 local function finish(ctx, player, value)
     local health = ctx:get(player, component.HEALTH)
     local regeneration = ctx:get(player, component.REGENERATION)
@@ -159,6 +169,7 @@ local function finish(ctx, player, value)
     ctx:emit("duration", "You are exhausted.")
 end
 
+-- Duration and cooldown advance on elapsed aut, not a fixed number of commands.
 function rage.tick(ctx, player, aut)
     local value = state(ctx, player)
 
@@ -203,6 +214,7 @@ function rage.tick(ctx, player, aut)
     end
 end
 
+-- Reject impossible saved duration and cooldown combinations at restore.
 function rage.validate(ctx, player)
     local value = state(ctx, player)
 

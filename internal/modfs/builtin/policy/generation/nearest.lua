@@ -1,3 +1,4 @@
+-- Example: A blocked start uses breadth-first search to find the nearest open floor.
 local nearest = {}
 
 local directions = {
@@ -7,10 +8,12 @@ local directions = {
     { x = 0, y = -1 },
 }
 
+-- Track BFS positions by coordinate without depending on table identity.
 local function key(point)
     return point.x .. ":" .. point.y
 end
 
+-- Treat out-of-bounds neighbors as blocked before indexing row strings.
 local function cell(rows, x, y)
     if y < 0 or y >= #rows or x < 0 or x >= #rows[1] then
         return nil
@@ -19,6 +22,7 @@ local function cell(rows, x, y)
     return rows[y + 1]:sub(x + 1, x + 1)
 end
 
+-- Breadth-first search accepts the first reachable floor outside the excluded cells.
 function nearest.open_floor(rows, start, exclude, depth)
     local queue = { start }
     local seen = {

@@ -1,3 +1,5 @@
+-- Named item sets keep generation and choice policies from copying item ID lists.
+
 local sets = {
     HEX_WANDS = "hex_wands",
     BEAM_WANDS = "beam_wands",

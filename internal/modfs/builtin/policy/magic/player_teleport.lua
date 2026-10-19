@@ -10,6 +10,8 @@ local trap_held = require("policy.traps.held")
 local teleport = {}
 local MAX_ATTEMPTS = 500
 
+-- Candidate landing cells must pass walkability and safety checks before a
+-- queued teleport can move its actor.
 local function destination(ctx, player, origin)
     local width, height = ctx:level_size(origin.level_id)
 
@@ -26,6 +28,9 @@ local function destination(ctx, player, origin)
     return nil, nil
 end
 
+-- Example: teleport.toggle(ctx, player) starts a delayed jump; calling it
+-- again while queued cancels that state instead of adding another timer.
+-- Store a 30-to-50-aut timer only on a new request; the second request removes that pending state.
 function teleport.toggle(ctx, player)
     local current = ctx:get(player, component.PLAYER_TELEPORT)
 
@@ -42,6 +47,7 @@ function teleport.toggle(ctx, player)
     ctx:emit("read", "You feel strangely unstable.")
 end
 
+-- Delayed teleport counts down in a player component and chooses its destination only when due.
 function teleport.tick(ctx, player, aut)
     local current = ctx:get(player, component.PLAYER_TELEPORT)
 
@@ -62,6 +68,8 @@ function teleport.tick(ctx, player, aut)
     teleport.now(ctx, player)
 end
 
+-- Immediate teleports reuse destination selection and leave source effects
+-- without waiting for the delayed player's timer.
 function teleport.now(ctx, player)
     local reason = translocation.restriction(ctx, player)
 
@@ -99,6 +107,7 @@ function teleport.now(ctx, player)
     ctx:emit("read", message)
 end
 
+-- Restore rejects impossible queued state before the timer resumes.
 function teleport.validate(ctx, player)
     local current = ctx:get(player, component.PLAYER_TELEPORT)
 

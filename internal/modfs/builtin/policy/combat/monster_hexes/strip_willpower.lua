@@ -7,6 +7,7 @@ local streams = require("constants.rng_streams")
 
 local strip = {}
 
+-- Vulnerability bypasses will one time in three before the usual enchantment roll.
 function strip.resisted(ctx, caster, defender, profile)
     -- Source: beam.cc:bolt::has_saving_throw ignores will one third
     -- of the time for BEAM_VULNERABILITY.
@@ -17,6 +18,7 @@ function strip.resisted(ctx, caster, defender, profile)
     return enchantment.resisted(ctx, caster, defender, profile)
 end
 
+-- Do not recast lowered will on an actor whose current debuff is still active.
 function strip.viable(ctx, _, defender)
     if ctx:has(defender, component.PLAYER) then
         local state = ctx:get(defender, component.PLAYER_STATUS)
@@ -27,6 +29,7 @@ function strip.viable(ctx, _, defender)
     return not monster_status.active(ctx, defender)
 end
 
+-- Example: strip.apply(ctx, nil, defender) with player with zero RNG -> 120 aut lowered will
 -- Source: beam.cc:BEAM_VULNERABILITY. Players receive 12..29 turns;
 -- monsters receive 20..30 turns on their own saved status clock.
 function strip.apply(ctx, _, defender)

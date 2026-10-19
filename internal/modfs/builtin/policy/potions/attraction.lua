@@ -9,10 +9,12 @@ local roll = require("policy.combat.roll")
 
 local attraction = {}
 
+-- Sort eligible monsters by distance before attraction pulls choose targets.
 local function nearest(left, right)
     return left.distance < right.distance
 end
 
+-- Exclude actors that cannot be pulled toward the player's current cell.
 local function eligible(ctx, player, center, monster)
     local distance = common.distance(center, monster.position)
 
@@ -27,6 +29,7 @@ local function eligible(ctx, player, center, monster)
         monster.position.x, monster.position.y)
 end
 
+-- Pull movement stops at occupied or blocked cells, preserving the monster's last legal position.
 local function destination(ctx, center, monster, steps)
     local position = monster.position
     local ray = trajectory.to_target(ctx, center.level_id,
@@ -86,6 +89,8 @@ function attraction.pull(ctx, player, aut)
     end
 end
 
+-- Pull while the timer is live, then subtract elapsed aut and remove the effect at zero.
+-- Example: each active attraction tick spends its saved duration and pulls eligible monsters toward the player.
 function attraction.tick(ctx, player, aut)
     local state = ctx:get(player, component.POTION_ATTRACTION)
 

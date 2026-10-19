@@ -12,6 +12,7 @@ local primal_wave = {}
 local profile = catalog.get(categories.MONSTER_BEAMS,
     spells.SPELL_PRIMAL_WAVE)
 
+-- Preserve fractional wave duration with the monster-spell stream.
 local function random_round(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
 
@@ -23,10 +24,13 @@ local function random_round(ctx, numerator, denominator)
     return quotient
 end
 
+-- Example: primal_wave.plan(ctx, caster, foe) with reachable foe -> saved aim for later shallow-water splash
+-- Targets the radius-one splash after the ray lands.
 function primal_wave.plan(ctx, caster, foe)
     return beam.plan(ctx, caster, foe, profile)
 end
 
+-- The wave push uses incoming direction from the actual contact.
 function primal_wave.after_hit(ctx, caster, defender, _, _, incoming)
     displacement.wave(ctx, caster, defender, incoming)
 end
@@ -67,6 +71,7 @@ function primal_wave.after_endpoint(ctx, caster, _, _, endpoint)
     ctx:emit("combat", "The wave splashes down.")
 end
 
+-- The hit hook creates a radius-one splash only on eligible floor or shallow water.
 function primal_wave.resolve(ctx, caster, foe, _, plan)
     return beam.resolve(ctx, caster, foe, profile, plan, primal_wave)
 end

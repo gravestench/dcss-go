@@ -10,6 +10,7 @@ local hex_status = require("policy.combat.monster_hexes.status")
 
 local cast = {}
 
+-- Check spell metadata locally before deciding whether this cast needs a target.
 local function has_flag(spell, wanted)
     for _, flag in ipairs(spell.flags or {}) do
         if flag == wanted then
@@ -20,6 +21,7 @@ local function has_flag(spell, wanted)
     return false
 end
 
+-- Only target/direction flags demand input coordinates; non-target spells reach effect preflight with zero offsets.
 local function needs_aim(spell)
     return has_flag(spell, "target") or
         has_flag(spell, "dir") or
@@ -28,6 +30,7 @@ end
 
 -- Source: spl-cast.cc:cast_a_spell and spl-util.cc:
 -- casting_uselessness_reason. A rejected choice leaves time and RNG alone.
+-- Example: cast.prepare(ctx, player, { spell_id = spells.SPELL_MAGIC_DART, dx = 1 }) checks a cast.
 function cast.prepare(ctx, player, input)
     local spell_id = input.spell_id
     local known = records.find(ctx, player, spell_id)

@@ -5,7 +5,10 @@ local player_drain = require("policy.combat.player_drain")
 
 local draining = {}
 
+-- Example: with player hit after armour,
+-- draining.before_damage(ctx, caster, defender, nil, outcome) -> temporary HP drain from post-armour amount
 -- Source: ouch.cc:check_your_resists and beam.cc:mons_adjust_flavoured.
+-- Player drain uses post-armour damage; monster drain applies only while the target is alive.
 function draining.before_damage(ctx, caster, defender, _, outcome)
     if ctx:has(defender, component.PLAYER) then
         player_drain.apply(ctx, defender, outcome.after_armour,

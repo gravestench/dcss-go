@@ -3,12 +3,14 @@ local monster_defense = require("policy.combat.monster_defense")
 local registry = require("policy.magic.effects.registry")
 local target = require("policy.magic.effects.direct.target")
 
+-- Convert the cast offset to a level cell before the no-time terrain check.
 local function cell(ctx, player, dx, dy)
     local position = ctx:get(player, "core.position")
 
     return position.level_id, position.x + dx, position.y + dy
 end
 
+-- An invalid destination fails before casting even when a target would later disappear.
 local function prepare(ctx, player, _, dx, dy)
     local level_id, x, y = cell(ctx, player, dx, dy)
 
@@ -17,6 +19,7 @@ local function prepare(ctx, player, _, dx, dy)
     end
 end
 
+-- Open adjacent air increases damage; occupied or impassable cells do not contribute.
 local function empty_neighbours(ctx, level_id, x, y)
     local count = 0
 
@@ -80,6 +83,8 @@ end
 local spells = require("ids.spells")
 local effect = {}
 
+-- Example: A visible hostile behind another actor still makes Airstrike targetable within seven cells.
+-- Airstrike can target any visible hostile in range because the air damage bypasses intervening actors.
 function effect.can_target(ctx, player)
     return target.visible_hostile(ctx, player, 7, false)
 end

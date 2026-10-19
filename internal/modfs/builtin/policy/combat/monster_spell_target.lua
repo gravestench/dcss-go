@@ -2,10 +2,13 @@ local kind = require("constants.target_kind")
 
 local target = {}
 
+-- Intent coordinates must remain integral when a planned target crosses the scheduler boundary.
 local function integer(value)
     return type(value) == "number" and value == math.floor(value)
 end
 
+-- Preserve zero components; an absent direction differs from a horizontal or
+-- vertical ray with one axis equal to zero.
 local function write_direction(intent, plan)
     if plan.dx == nil and plan.dy == nil then
         return
@@ -19,6 +22,7 @@ local function write_direction(intent, plan)
     intent.dy = plan.dy
 end
 
+-- Preserve the planned ray direction even when one axis is exactly zero.
 local function read_direction(plan, intent)
     if intent.dx ~= nil and intent.dy ~= nil then
         plan.dx = intent.dx
@@ -28,6 +32,7 @@ local function read_direction(plan, intent)
     return plan
 end
 
+-- Only entity and cell plans can cross the intent boundary; coordinates and direction must be integers.
 function target.write(intent, plan)
     if type(plan) ~= "table" then
         error("monster spell has no target plan")
@@ -63,6 +68,8 @@ function target.write(intent, plan)
     error("unknown monster spell target kind " .. tostring(plan.kind))
 end
 
+-- Example: target.read(intent) with entity intent -> restored entity target plan
+-- Rebuild a plan from the serialized intent before the spell resolver checks its target.
 function target.read(intent)
     if intent.target_kind == kind.ENTITY then
         if intent.target_entity == nil then
@@ -94,6 +101,7 @@ function target.read(intent)
         tostring(intent.target_kind))
 end
 
+-- Resolvers needing an actor reject cell plans and stale entity IDs here.
 function target.require_entity(plan, expected)
     if plan.kind ~= kind.ENTITY or plan.entity ~= expected then
         error("monster spell target differs from the selected foe")

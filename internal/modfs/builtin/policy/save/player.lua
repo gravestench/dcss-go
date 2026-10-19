@@ -15,6 +15,7 @@ local mutation_capabilities = require("constants.mutation_capabilities")
 local vampire = require("policy.character.vampire")
 local identification = require("policy.items.identification")
 
+-- Enumerating legal manual choices prevents a forged stat total from passing save validation.
 local function valid_stat_gains(deltas, manual_choices, manual_amount,
     species_gains, allowed_stats)
     local allowed = {}
@@ -45,6 +46,7 @@ local function valid_stat_gains(deltas, manual_choices, manual_amount,
     return false
 end
 
+-- Reconstruct legal species and job-derived state before accepting saved player fields.
 local function validate(ctx)
     local entity = ctx:player()
     local player = ctx:get(entity, "core.player")
@@ -89,6 +91,7 @@ local function validate(ctx)
         species.xp, maximum)
     local pending = progress.pending_stat_level
 
+    -- A pending manual stat choice is the only accepted gap between earned XL and committed XL.
     if pending == 0 then
         if progress.level ~= earned then
             error("player level " .. progress.level .. " disagrees with experience")
@@ -225,6 +228,8 @@ end
 
 local module = {}
 
+-- Stat-gain validation reconstructs legal choices from species gains and manual choices.
+-- Example: module.run(ctx) rejects stat gains that cannot arise from legal choices.
 function module.run(ctx)
     validate(ctx)
     return {}

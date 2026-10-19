@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local component = require("constants.component")
 local effects = require("policy.mutations.effects.registry")
@@ -9,6 +10,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Sanguine Armour grants no AC before activation.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -28,6 +30,7 @@ function test.run(ctx)
 
     player_health.damage(ctx, player, 7)
 
+    -- The aura activation threshold and timer are checked separately from its AC formula.
     harness.equal(ctx:get(player,
         component.SANGUINE_ARMOUR).remaining_aut, 60,
         "injury below two-thirds HP activates a 60-to-100 aut timer")
@@ -47,6 +50,7 @@ function test.run(ctx)
     ctx:set(player, component.HEALTH, health)
     sanguine.tick(ctx, player, 10)
 
+    -- Healing does not remove armour mid-reaction; it schedules expiry on the next action.
     harness.equal(ctx:get(player,
         component.SANGUINE_ARMOUR).remaining_aut, 1,
         "healing above two-thirds HP leaves a one-aut expiry")

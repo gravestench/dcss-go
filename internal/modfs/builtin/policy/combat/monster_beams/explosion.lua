@@ -4,6 +4,9 @@ local explosion_sizes = require("constants.beam_explosion")
 
 local blast = {}
 
+-- Example: with actor at blast endpoint,
+-- blast.resolve(ctx, caster, profile, trace, destination, power, to_hit, hook) -> contact outcome for that actor
+-- Expand the beam endpoint into blast cells; each occupant is resolved against the same profile.
 function blast.resolve(ctx, caster, profile, trace,
     destination, power, to_hit, hook)
     local center_x = destination.x

@@ -11,6 +11,7 @@ local mutation_enum = require("data.mutation_enum")
 
 local selection = {}
 
+-- Read declared use tags so a definition enters only the requested mutation pool.
 local function has_use(definition, wanted)
     for _, use in ipairs(definition.uses) do
         if use == wanted then
@@ -21,6 +22,7 @@ local function has_use(definition, wanted)
     return false
 end
 
+-- GOOD and BAD use authored weights; god-specific pools use unit weights.
 local function weight(definition, wanted)
     if definition.status ~= "active" or not has_use(definition, wanted) then
         return 0
@@ -33,8 +35,9 @@ local function weight(definition, wanted)
     return 1
 end
 
--- Source: mutation.cc:_get_mut_with_use. Registration order is the pinned
--- mut_data order; overlay files enter the same order by relative path.
+-- Example: a GOOD mutation draw weights active candidates, then consumes one mutation-stream roll.
+-- Source: mutation.cc:_get_mut_with_use. Weight determines probability; the
+-- catalog traverses stable IDs so file loading cannot change a seeded draw.
 function selection.weighted(ctx, wanted)
     local definitions = catalog.all("mutations")
     local total = 0
@@ -90,6 +93,7 @@ function selection.accept(ctx, owner, mutation_id, class, ignore_weight)
     return ctx:random("mutation", 10) < definition.weight + innate
 end
 
+-- Resolve ANY with a three-in-five good draw before sampling a concrete mutation.
 local function use_for_choice(ctx, choice)
     if choice == choices.ANY then
         return ctx:random("mutation", 5) < 3 and uses.GOOD or uses.BAD
@@ -156,6 +160,7 @@ function selection.choose_xom(ctx, owner)
     end
 end
 
+-- Map deletion categories to use filters; ANY intentionally accepts every acquired ID.
 local function deletion_use(choice)
     if choice == choices.ANY then
         return nil

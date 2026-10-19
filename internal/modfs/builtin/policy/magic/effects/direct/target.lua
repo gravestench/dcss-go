@@ -2,6 +2,7 @@ local targets = require("policy.ai.targets")
 
 local target = {}
 
+-- Direct-target spells can require visibility without requiring a projectile-clear path.
 function target.visible_hostile(ctx, player, reach, needs_path)
     local position = ctx:get(player, "core.position")
 
@@ -33,6 +34,9 @@ function target.visible_hostile(ctx, player, reach, needs_path)
     return false
 end
 
+-- Resolve the aimed cell against current occupancy instead of trusting a stale target entity.
+-- Example: A cast offset of (2, 0) selects the actor two cells east, unless that actor is the caster.
+-- Translate a saved cast offset into the current level cell and resolve the actor there.
 function target.at_aim(ctx, player, intent)
     local position = ctx:get(player, "core.position")
     local x = position.x + intent.dx

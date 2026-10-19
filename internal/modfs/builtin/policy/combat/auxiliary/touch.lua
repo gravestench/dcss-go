@@ -13,14 +13,17 @@ local touch = {
     scale_with_level = false,
 }
 
+-- Demonic Touch reads effective rank because forms can suppress its benefit.
 local function level(ctx)
     return levels.effective(ctx, ctx:player(), mutations.MUT_DEMONIC_TOUCH)
 end
 
+-- The touch occupies the offhand slot and requires active mutation rank.
 function touch.available(ctx, input)
     return input.offhand and level(ctx) > 0
 end
 
+-- Example: touch.describe(ctx) with Touch mutation level zero -> base damage 6
 -- Source: melee-attack.cc:AuxTouch.
 function touch.describe(ctx)
     return {
@@ -30,6 +33,7 @@ function touch.describe(ctx)
     }
 end
 
+-- Only a damaging rank-three touch can lower a nonimmune monster's will.
 function touch.on_hit(ctx, target, definition, result)
     if result.damage <= 0 or level(ctx) < 3 or
         (definition.willpower or 0) >= 5000 then

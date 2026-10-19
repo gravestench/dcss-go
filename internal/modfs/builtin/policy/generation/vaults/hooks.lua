@@ -1,14 +1,20 @@
+-- Example: A DES NAME selects a Lua hook while the DES MAP remains the placed layout.
 local directives = require("constants.vault_directives")
 
 local hooks = {}
 
+-- A .des map is still the authoritative layout. Its family and NAME choose
+-- a same-named Lua module only when a directive calls a named hook.
 local function handler_path(vault)
     return "policy.generation.vaults." .. vault.family .. "." .. vault.id
 end
 
+-- Load the named handler early so missing methods fail before mutating a level.
 function hooks.validate(vault)
     local handler
 
+    -- Validate the complete hook contract before placement. This reports a
+    -- broken mod at load time instead of only when a rare vault is selected.
     for _, operation in ipairs(vault.operations) do
         if operation.kind == directives.HOOK_RUN or
             operation.kind == directives.HOOK_VETO or
@@ -33,6 +39,7 @@ function hooks.validate(vault)
     end
 end
 
+-- Call only the method declared by the map's pinned hook reference.
 function hooks.run(vault, method, api)
     local handler = require(handler_path(vault))
     local callback = handler[method]
@@ -44,11 +51,15 @@ function hooks.run(vault, method, api)
     return callback(api)
 end
 
+-- Capture emitted directives as typed operations at the hook's source position.
 local function emit_into(operations, api)
     local emitter = {}
 
+    -- A hook can read the vault API and append typed directives, but cannot
+    -- mutate the parsed source operation list while it is being traversed.
     setmetatable(emitter, { __index = api })
 
+    -- Reject nonstring directives before their text reaches the DES operation parser.
     function emitter:emit(kind, argument)
         if type(kind) ~= "string" or type(argument) ~= "string" then
             error("vault hook must emit a directive kind and string argument")
@@ -63,6 +74,7 @@ local function emit_into(operations, api)
     return emitter
 end
 
+-- Insert hook emissions where their source directive occurred rather than appending them after the map.
 function hooks.expand(vault, api)
     local operations = {}
 

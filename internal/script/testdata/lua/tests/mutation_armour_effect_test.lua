@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local effects = require("policy.mutations.effects.registry")
 local mutations = require("ids.mutations")
@@ -6,6 +7,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Sturdy Frame removes two encumbrance per level.
 function test.run(ctx)
     local player = ctx:create()
 

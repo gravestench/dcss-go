@@ -6,6 +6,7 @@ local abyss = {}
 -- Keep branch levels outside the Dungeon depth IDs.
 abyss.level_id = 1000
 
+-- Pick a walkable Abyss cell before saving a return point or moving an actor.
 local function landing(ctx)
     for _ = 1, 200 do
         local x = ctx:random("abyss-placement", 78) + 1
@@ -20,6 +21,8 @@ local function landing(ctx)
     error("the Abyss has no open landing cell")
 end
 
+-- Save the departure cell before moving to the Abyss so the return path can restore the player.
+-- Example: abyss.banish(ctx, player) records the return location before moving the player.
 function abyss.banish(ctx, player)
     local position = ctx:get(player, "core.position")
 
@@ -60,6 +63,7 @@ function abyss.banish_monster(ctx, monster, definition)
     return true
 end
 
+-- Use the saved banishment origin when returning; the Abyss level is not the source floor.
 function abyss.escape(ctx, player)
     local return_to = ctx:get(player, component.BANISHMENT)
 

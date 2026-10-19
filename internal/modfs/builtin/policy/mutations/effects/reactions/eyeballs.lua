@@ -11,6 +11,8 @@ local eyeballs = {
     order = 40,
 }
 
+-- Check surviving adjacency and will resistance before applying confusion after the attack.
+-- Example: Eye contact can confuse an adjacent surviving attacker after its attack resolves.
 function eyeballs.after_attack(ctx, player, monster, definition, level)
     if not reactions.adjacent(ctx, player, monster) or
         roll.melee(ctx, 20) >= level or

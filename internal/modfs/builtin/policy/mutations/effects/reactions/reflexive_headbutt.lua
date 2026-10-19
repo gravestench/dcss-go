@@ -12,6 +12,8 @@ local headbutt = {
     order = 15,
 }
 
+-- Build a new auxiliary attack after a miss, using the attacker's current evasion at retaliation time.
+-- Example: Reflexive Headbutt runs after a miss and checks adjacency before its retaliatory attack.
 function headbutt.after_miss(ctx, player, monster, definition)
     if not reactions.adjacent(ctx, player, monster) then
         return

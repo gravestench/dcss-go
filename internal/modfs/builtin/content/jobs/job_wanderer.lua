@@ -1,5 +1,8 @@
--- Generated from the pinned DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Wanderer (JOB_WANDERER) is a character start with 0 fixed item grants in
+-- this definition.
+-- The start builder turns these grants and skills into player and inventory
+-- components; the catalog stays unchanged.
+
 -- Source: crawl-ref/source/job-data.h
 -- Starting grants: internal/content/generated/starting-gear.json
 

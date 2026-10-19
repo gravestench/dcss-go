@@ -17,6 +17,7 @@ local monster_health = require("policy.combat.monster_health")
 
 local projectiles = {}
 
+-- An equipped launcher supplies its own ammo kind; a thrown item is already the missile.
 local function missile_for(ctx, entity)
     local item = ctx:get(entity, "core.item")
     local kind = items.kind(item)
@@ -28,6 +29,7 @@ local function missile_for(ctx, entity)
     return kind, false, nil, item
 end
 
+-- Nets persist for holds, while stones and selected egos always mulch before stack handling.
 local function destroyed(ctx, item, kind)
     if kind.id == "MI_THROWING_NET" then
         return false
@@ -47,10 +49,13 @@ local function destroyed(ctx, item, kind)
     return rate > 0 and ctx:random("melee", rate) == 0
 end
 
+-- Merge a surviving missile with floor stock unless a caught net needs its own entity.
 local function land(ctx, item, kind, entity, position, separate)
+    -- Resolve mulch before changing stack quantities; a caught net needs a
+    -- separate floor entity so its held status can refer to that item.
     local mulched = destroyed(ctx, item, kind)
 
-    -- A surviving boomerang retraces to the thrower in throw.cc:857-866.
+    -- A surviving boomerang retraces to the thrower in throw.cc.
     if kind.id == "MI_BOOMERANG" and not mulched then
         return
     end
@@ -91,6 +96,7 @@ local function land(ctx, item, kind, entity, position, separate)
     return floor_item
 end
 
+-- Build one accuracy and damage snapshot from launcher or throwing skill before contact.
 local function attack_input(ctx, player, missile, launcher, item, target, defender)
     local attributes = player_attributes.current(ctx, player)
     local weapon = launcher and launcher.weapon or nil
@@ -126,6 +132,7 @@ local function attack_input(ctx, player, missile, launcher, item, target, defend
     return input
 end
 
+-- Nets and darts use contact only; damaging missiles apply brands after base HP loss.
 local function resolve_target(ctx, player, missile, launcher, item, target)
     local defender_actor = ctx:get(target, "core.actor")
     local defender = catalog.get("monsters", defender_actor.kind_id)
@@ -191,12 +198,15 @@ local function resolve_target(ctx, player, missile, launcher, item, target)
     return defender, caught, outcome.kind
 end
 
+-- Example: projectiles.practice(ctx, item_id) with committed launcher shot -> practice event even on a miss
+-- Train the committed shot using resolved ammo and launcher, even when the attack misses.
 function projectiles.practice(ctx, item_id)
     local entity = ctx:entity(item_id)
     local missile, _, launcher = missile_for(ctx, entity)
     practice.player_projectile(ctx, missile, launcher)
 end
 
+-- Trace normal flight or portal aim, then stop nonpenetrating missiles on hit or block.
 function projectiles.resolve(ctx, player, intent)
     local position = ctx:get(player, "core.position")
     local entity = intent.item_id
@@ -205,6 +215,8 @@ function projectiles.resolve(ctx, player, intent)
     local portal = statuses.portal_projectile_active(ctx, player)
     local impact
 
+    -- Portal Projectile skips trajectory tracing and attacks the aimed cell
+    -- directly, then pays its extra cost after the shot resolves.
     if portal then
         local x = position.x + intent.dx
         local y = position.y + intent.dy
@@ -238,6 +250,8 @@ function projectiles.resolve(ctx, player, intent)
             caught_target = contact.actor
         end
 
+        -- Javelins continue through contacts; other missiles stop on a hit
+        -- or block, but a miss lets the flight continue.
         if not penetrating and outcome ~= "miss" then
             impact.x = contact.x
             impact.y = contact.y

@@ -1,8 +1,9 @@
+-- Example: The rare roster uses a six-slot shuffle and exotic creatures; the common one shuffles seven slots.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Port of arrival/small.des:2342-2359.
+-- The rare roster uses a six-slot shuffle and exotic creatures; the common one shuffles seven slots.
 local function choose_zoo_roster(api)
     if api:one_in(10) then
         api:emit(directives.SHUFFLE, "16")

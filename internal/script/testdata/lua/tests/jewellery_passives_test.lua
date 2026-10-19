@@ -1,3 +1,5 @@
+-- Removing magical power immediately restores maximum MP.
+
 local capabilities = require("constants.jewellery_capabilities")
 local fixture = require("tests.fixtures.jewellery")
 local harness = require("tests.harness")
@@ -19,6 +21,7 @@ local fighter = require("policy.combat.fighter")
 
 local test = {}
 
+-- Signed protection pluses stack and recalculate immediately on removal.
 local function check_item_plus(ctx)
     local battle, player = fixture.player(ctx)
     local first = fixture.carry(ctx, player, ids.RING_PROTECTION, 4)
@@ -34,6 +37,7 @@ local function check_item_plus(ctx)
         "taking off a ring immediately removes its bonus")
 end
 
+-- All eight Octopode ring slots contribute once to the same passive sum.
 local function check_octopode(ctx)
     local battle, player = fixture.player(ctx, species.SP_OCTOPODE)
 
@@ -47,6 +51,7 @@ local function check_octopode(ctx)
         "all eight Octopode rings contribute once")
 end
 
+-- Maximum MP and its stored component change at equip and unequip time.
 local function check_magical_power(ctx)
     local battle, player = fixture.player(ctx)
     local ring = fixture.carry(ctx, player, ids.RING_MAGICAL_POWER)
@@ -80,6 +85,7 @@ local function check_magical_power(ctx)
         "removing magical power immediately restores maximum MP")
 end
 
+-- Attribute, slaying, AC, and EV queries read equipped pluses live.
 local function check_character_effects(ctx)
     local battle, player = fixture.player(ctx)
     local strength = fixture.carry(ctx, player, ids.RING_STRENGTH, 3)
@@ -131,6 +137,8 @@ local function check_character_effects(ctx)
         "protection ring changes live armour class")
 end
 
+-- Fire and ice rings trade opposing resistances before other jewellery adds
+-- corrosion, negative-energy, poison, and willpower protections.
 local function check_resistances(ctx)
     local battle, player = fixture.player(ctx)
     local fire = fixture.carry(ctx, player, ids.RING_FIRE)
@@ -186,6 +194,7 @@ local function check_resistances(ctx)
         source.mr + 40, "willpower ring contributes one source pip")
 end
 
+-- Passive senses and permanent flight use the same worn-item query.
 local function check_senses_and_flight(ctx)
     local battle, player = fixture.player(ctx)
     local sight = fixture.carry(ctx, player, ids.RING_SEE_INVISIBLE)
@@ -200,6 +209,8 @@ local function check_senses_and_flight(ctx)
         "flight ring feeds movement")
 end
 
+-- Exercise passive bonuses from several jewellery kinds through real ECS
+-- state, avoiding item-ID branches in the consumer tests.
 function test.run(ctx)
     check_item_plus(ctx)
     check_octopode(ctx)

@@ -3,6 +3,8 @@ local resistance = require("policy.potions.resistance")
 
 local system = {}
 
+-- Theory of operation: Resistance can expire before the next recovery and damage cycle.
+-- Resistance's remaining duration is aged before regeneration.
 function system.update(ctx, player, aut)
     if player == ctx:player() then
         resistance.tick(ctx, player, aut)

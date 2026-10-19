@@ -1,3 +1,4 @@
+-- Example: A bloodless target is filtered before a Vampire feeding action is offered.
 local component = require("constants.component")
 local levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
@@ -9,6 +10,7 @@ local vampire = {}
 local RITUAL_AUT = 50
 local AUT_PER_RITUAL_TURN = 10
 
+-- Read catalog holiness and flags safely when a target has no list.
 local function contains(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -19,6 +21,7 @@ local function contains(values, wanted)
     return false
 end
 
+-- Initialize blood state only for a vampire that lacks a saved state.
 function vampire.start(ctx, player)
     if levels.base(ctx, player, mutations.MUT_VAMPIRISM) == 0 then
         return
@@ -35,6 +38,7 @@ function vampire.start(ctx, player)
     })
 end
 
+-- Reconcile vampire state after mutations or form changes before ability checks read it.
 function vampire.changed(ctx, player)
     local has_mutation = levels.base(ctx, player,
         mutations.MUT_VAMPIRISM) > 0
@@ -59,12 +63,14 @@ function vampire.changed(ctx, player)
     end
 end
 
+-- Treat missing vampire state as alive so ordinary characters keep normal rules.
 function vampire.alive(ctx, player)
     local state = ctx:get(player, component.VAMPIRE)
 
     return not state or state.alive
 end
 
+-- Require an explicit saved exsanguinated state for bloodless restrictions.
 function vampire.bloodless(ctx, player)
     local state = ctx:get(player, component.VAMPIRE)
 
@@ -73,6 +79,7 @@ end
 
 -- Source: melee-attack.cc:_player_vampire_draws_blood. The bite and a good
 -- stab share this rule, so each contact path supplies only its trigger.
+-- Only suitable natural or cold-blooded targets feed a qualifying bite.
 function vampire.draw_blood(ctx, player, target, definition, damage)
     if not vampire.bloodless(ctx, player) or damage <= 0 or
         ctx:has(target, component.SUMMON) then
@@ -122,6 +129,7 @@ function vampire.draw_blood(ctx, player, target, definition, damage)
     return true
 end
 
+-- Starting a blood ritual records its kind and full delay before any time is spent.
 function vampire.begin(ctx, player, ability_id)
     local state = ctx:get(player, component.VAMPIRE)
 
@@ -142,6 +150,7 @@ function vampire.begin(ctx, player, ability_id)
     ctx:set(player, component.VAMPIRE, state)
 end
 
+-- A broken ritual clears pending state without applying its blood transformation.
 function vampire.interrupt(ctx, player)
     local state = ctx:get(player, component.VAMPIRE)
 
@@ -160,6 +169,7 @@ function vampire.interrupt(ctx, player)
     return message
 end
 
+-- Exsanguination and revival rituals commit their state only after the full uninterrupted delay.
 function vampire.advance(ctx, player, aut)
     local state = ctx:get(player, component.VAMPIRE)
 
@@ -203,6 +213,7 @@ function vampire.advance(ctx, player, aut)
     forms.rescale_health(ctx, player, forms.max_hp(ctx, player))
 end
 
+-- Ensure the saved blood ritual agrees with the current mutation and form.
 function vampire.validate(ctx, player)
     local has_mutation = levels.base(ctx, player,
         mutations.MUT_VAMPIRISM) > 0

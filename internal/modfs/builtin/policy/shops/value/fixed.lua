@@ -8,6 +8,9 @@ local values = {
     [classes.OBJ_RUNES] = 10000,
 }
 
+-- Example: fixed.value(staff_kind, nil, { type = false }) values an unknown staff at 120.
+-- Use class-specific fixed prices for these items because their value is not
+-- driven by the weapon or armour enchantment formulas.
 function fixed.value(kind, _, known)
     if kind.shop_value ~= nil then
         return kind.shop_value

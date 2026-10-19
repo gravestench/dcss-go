@@ -1,8 +1,9 @@
+-- Example: D:1 cannot have an up stair; later floors choose the staircase glyph by depth position.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Port of builder/shops.des:464-470.
+-- D:1 cannot have an up stair; later floors choose the staircase glyph by depth position.
 local function choose_hallway_stair(api)
     local stairs
 

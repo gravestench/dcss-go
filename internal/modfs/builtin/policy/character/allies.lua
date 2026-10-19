@@ -1,3 +1,4 @@
+-- Example: No Love rejects a summoned ally even when the monster has no flag list.
 local capabilities = require("constants.mutation_capabilities")
 local catalog = require("policy.catalog")
 local component = require("constants.component")
@@ -6,6 +7,7 @@ local flags = require("constants.monster_flags")
 
 local allies = {}
 
+-- Check catalog flags without assuming every monster definition has a flag list.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -16,12 +18,14 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Exclude temporary conjurations and avatars from the ordinary allegiance rewrite.
 local function conjured(definition)
     return has_flag(definition, flags.CONJURED) or
         has_flag(definition, flags.PROJECTILE) or
         has_flag(definition, flags.AVATAR)
 end
 
+-- Read the combined No Love capability before spawn or spell legality chooses an ally.
 function allies.forbidden(ctx, player)
     return effects.sum(ctx, player,
         capabilities.ALLIES_FORBIDDEN) > 0
@@ -37,6 +41,7 @@ end
 
 -- Source: mon-act.cc:_update_monster_attitude. Existing allies change
 -- allegiance when they next act after the player gains No Love.
+-- Recheck allegiance on the monster turn because a new Lovelessness mutation can turn existing allies hostile.
 function allies.on_monster_turn(ctx, entity)
     if not allies.forbidden(ctx, ctx:player()) then
         return false

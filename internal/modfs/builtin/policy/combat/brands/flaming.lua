@@ -5,6 +5,8 @@ local brand = {
     after_death = true,
 }
 
+-- Example: brand.apply(ctx, hit) adds a separate bonus after positive melee
+-- damage; this monster-brand path does not use fire resistance.
 function brand.apply(ctx, hit)
     if hit.damage_done == 0 then
         return

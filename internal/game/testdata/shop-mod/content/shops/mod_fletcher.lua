@@ -1,3 +1,5 @@
+-- A Fletcher shop definition tests that modded shops enter the live shop catalog.
+
 local categories = require("constants.catalog")
 local classes = require("ids.object_classes")
 

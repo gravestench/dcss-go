@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local harness = require("tests.harness")
@@ -7,6 +8,7 @@ local spells = require("ids.spells")
 
 local test = {}
 
+-- Slow applies the source minimum ten turns to a player.
 function test.run()
     local caster = 101
     local player = 202
@@ -24,14 +26,17 @@ function test.run()
         },
     }
 
+    -- Read the player Slow component after the monster hex lands.
     function ctx:get(entity, id)
         return self.values[entity] and self.values[entity][id]
     end
 
+    -- Create the first Slow timer so minimum duration can be checked.
     function ctx:add(entity, id, value)
         self.values[entity][id] = value
     end
 
+    -- Force low duration dice to expose the ten-turn floor.
     function ctx:random()
         return 0
     end

@@ -1,0 +1,18 @@
+-- {{.Name}} runs on the active actor's turn.
+-- Query membership and schedule belong here; reusable decisions belong in policy.
+-- Put any lasting changes in ECS components through ctx:set.
+
+local system = {}
+
+function system.update(ctx, actor)
+    -- TODO: Choose a query and implement the turn rule.
+end
+
+register.system({
+    id = "{{.ID}}",
+    scope = "active",
+    query = {},
+    update = system.update,
+})
+
+return system

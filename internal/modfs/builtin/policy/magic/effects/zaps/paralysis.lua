@@ -8,6 +8,7 @@ local will = require("policy.magic.effects.zaps.will")
 
 local paralysis = {}
 
+-- Check stationary and other catalog flags without assuming a flag list exists.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -18,12 +19,16 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Convert enchant power through source stepdown before storing a paralysis duration.
 local function duration(power)
     -- beam.cc:_ench_pow_to_dur: stepdown(power * BASELINE_DELAY, 70).
     local scaled = 70 * math.log(1 + power * 10 / 70) / math.log(2)
     return math.floor(scaled + 0.5)
 end
 
+-- Example: can_target(ctx, player, spell) skips prompting when no living actor
+-- is visible in spell range along a clear projectile path.
+-- Scan live visible actors along clear paths before the spell asks for a target.
 function paralysis.can_target(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -51,6 +56,7 @@ function paralysis.can_target(ctx, player, spell)
     return false
 end
 
+-- Remove the paralysis component at zero; speed consumers then see the unmodified actor.
 function paralysis.tick(ctx, target)
     local state = ctx:get(target, component.PARALYSIS)
 
@@ -68,6 +74,7 @@ function paralysis.tick(ctx, target)
     ctx:set(target, component.PARALYSIS, state)
 end
 
+-- Trace first contact, test willpower, and persist paralysis only for a susceptible target.
 function paralysis.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,
@@ -107,6 +114,8 @@ function paralysis.resolve(ctx, player, intent, spell, power)
     paralysis.apply_unresisted(ctx, target, definition, enchant_power)
 end
 
+-- The shared apply path handles monsters that reach the effect without a
+-- willpower check, extending a saved paralysis duration if needed.
 function paralysis.apply_unresisted(ctx, target, definition, enchant_power)
     local existing = ctx:get(target, component.PARALYSIS)
     local remaining = math.max(existing and existing.remaining_aut or 0,
@@ -124,6 +133,7 @@ function paralysis.apply_unresisted(ctx, target, definition, enchant_power)
     ctx:emit("spell", "The " .. definition.name .. " suddenly stops moving!")
 end
 
+-- Tick only AI actors so player paralysis remains on its separate status clock.
 function paralysis.update(ctx, entity)
     if ctx:has(entity, component.AI) then
         paralysis.tick(ctx, entity)
@@ -132,6 +142,9 @@ end
 
 registry.add(spells.SPELL_PARALYSE, paralysis)
 
+-- The scheduler decrements saved paralysis at the monster update boundary.
+-- Theory of operation: Paralysis timers decay before monster decision.
+-- An actor may act when its saved timer reaches zero.
 register.system({
     id = "zap.paralysis.tick",
     scope = "active",

@@ -11,6 +11,8 @@ local zot_clock = require("policy.world.zot_clock")
 
 local module = {}
 
+-- Player status durations and related resources are checked before turn systems resume.
+-- Example: module.run(ctx) rejects a saved Might duration above the 800-aut cap.
 function module.run(ctx)
     local player = ctx:player()
     local durations = ctx:get(player, "core.durations")
@@ -39,6 +41,7 @@ function module.run(ctx)
     local horror = ctx:get(player, component.HORROR)
     local position = ctx:get(player, "core.position")
 
+    -- Duration caps reject forged saved buffs before the timer systems resume decrementing them.
     if durations then
         if durations.might_aut < 0 or durations.might_aut > 800 then
             error("invalid player might duration")
@@ -95,6 +98,7 @@ function module.run(ctx)
         error("invalid player HP drain")
     end
 
+    -- The recovery timer is meaningful exactly while at least one stat remains drained.
     if stat_loss then
         local drained = false
 

@@ -3,14 +3,17 @@ local constriction = require("policy.combat.constriction")
 local fighter = require("policy.combat.fighter")
 local player_health_policy = require("policy.combat.player_health")
 
+-- Use king-move adjacency to release a grip when either participant has moved out of reach.
 local function adjacent(a, b)
     return a.level_id == b.level_id and
         math.abs(a.x - b.x) <= 1 and math.abs(a.y - b.y) <= 1 and
         (a.x ~= b.x or a.y ~= b.y)
 end
 
+-- Theory of operation: Invalid grips are released and surviving grips deal damage before death cleanup.
 local system = {}
 
+-- Constrictor links are checked after attacks, then damage lands before actor death cleanup.
 function system.update(ctx, active)
     local player = ctx:player()
     local grip = ctx:get(player, "core.constricted")
@@ -32,6 +35,7 @@ function system.update(ctx, active)
         return
     end
 
+    -- Any actor turn can clear a broken link; damage happens only on the constrictor's turn.
     if active ~= grip.by then
         return
     end

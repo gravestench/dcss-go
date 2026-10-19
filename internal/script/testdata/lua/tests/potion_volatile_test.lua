@@ -1,3 +1,5 @@
+-- Degeneration drains source intelligence minimum.
+
 local items = require("ids.items")
 local potions = require("policy.potions")
 local component = require("constants.component")
@@ -7,6 +9,8 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Exercise volatile stat and status effects with saved player attributes so
+-- each potion's mutation of character state is observable after application.
 function test.run(ctx)
     local player = ctx:create()
 

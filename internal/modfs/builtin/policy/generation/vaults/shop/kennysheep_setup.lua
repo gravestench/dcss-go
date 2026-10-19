@@ -1,9 +1,9 @@
+-- Example: Room substitutions run in source order: the later w, t, and q edits see the chosen door layout.
 local directives = require("constants.vault_directives")
 
 local setup = {}
 
--- Focused port of dat/dlua/vault.lua:34-94. Emission order matters because
--- each substitution sees the cells left by the preceding substitution.
+-- Room substitutions run in source order: the later w, t, and q edits see the chosen door layout.
 function setup.random_room(api)
     api:emit(directives.TAGS, "no_pool_fixup transparent")
 
@@ -48,7 +48,7 @@ function setup.random_room(api)
     end
 end
 
--- Focused port of the shop-only function in builder/shops.des:26-53.
+-- Validation substitutes a harmless B; live placement chooses shop, temple overflow, or decoration by tag.
 function setup.shop_or_temple(api, decoration)
     if api:validating() then
         api:emit(directives.SUBST, "O = B")

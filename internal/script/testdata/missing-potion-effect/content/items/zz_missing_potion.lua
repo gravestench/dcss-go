@@ -1,3 +1,5 @@
+-- A potion with no resolver probes effect coverage at load time.
+
 local categories = require("constants.catalog")
 
 local definition = {

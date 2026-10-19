@@ -1,7 +1,9 @@
+-- Example: The Beogh tenant fills the cave with orc tiers and removes competing entrance glyphs.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
+-- The Beogh tenant fills the cave with orc tiers and removes competing entrance glyphs.
 local function choose_beogh(api)
     api:emit(directives.KFEAT, "C = altar_beogh")
     api:emit(directives.SUBST, "DG = I")
@@ -10,6 +12,7 @@ local function choose_beogh(api)
     api:emit(directives.KMONS, "3 = orc warrior")
 end
 
+-- The Lugonu tenant installs an Abyss entrance alongside its altar and themed monsters.
 local function choose_lugonu(api)
     api:emit(directives.KFEAT, "C = altar_lugonu")
     api:emit(directives.KFEAT, "D = enter_abyss")
@@ -18,6 +21,7 @@ local function choose_lugonu(api)
     api:emit(directives.SUBST, "t : U'''', 23 = 0")
 end
 
+-- The Jiyva tenant replaces the entrance with open floor and jelly occupants.
 local function choose_jiyva(api)
     api:emit(directives.KFEAT, "C = altar_jiyva")
     api:emit(directives.SUBST, "D = .")
@@ -25,6 +29,7 @@ local function choose_jiyva(api)
     api:emit(directives.SUBST, "t : U'''', 23 = 0")
 end
 
+-- The ordinary cave keeps a nonaltar entrance and draws local monster alternatives.
 local function choose_ordinary(api)
     api:emit(directives.SUBST, "D = V")
     api:emit(directives.KMONS, "1 : gnoll / orc / 0 w:20")
@@ -33,7 +38,7 @@ local function choose_ordinary(api)
     api:emit(directives.SUBST, "t = T")
 end
 
--- Port of arrival/twisted.des:407-431. Exactly one nine-way draw.
+-- A single nine-way draw selects Beogh, Lugonu, Jiyva, or the ordinary cave occupants.
 local function choose_temple_tenant(api)
     local choice = api:roll(9)
 

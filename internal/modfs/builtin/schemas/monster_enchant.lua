@@ -2,6 +2,7 @@
 register.component{
     id = "magic.monster_enchant",
     version = 2,
+    -- Blindness, corrosion, and invisibility timers are owned by the affected monster and expire separately.
     fields = {
         blind_aut = {
             type = "int64",

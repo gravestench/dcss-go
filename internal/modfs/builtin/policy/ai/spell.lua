@@ -10,11 +10,13 @@ local spell_flags = require("constants.spell_flags")
 
 local spell = {}
 
+-- Spell range uses grid distance, matching diagonal targeting.
 local function distance_between(position, target)
     return math.max(math.abs(position.x - target.x),
         math.abs(position.y - target.y))
 end
 
+-- Sample silence before considering the caster's spell slots.
 local function silenced(ctx, entity, position, player)
     if ctx:has(entity, component.MONSTER_MUTE) then
         return true
@@ -29,6 +31,7 @@ local function silenced(ctx, entity, position, player)
     return radius >= 0 and distance_between(position, player) <= radius
 end
 
+-- Collect tactical flags once so slot filters see one state.
 local function condition_for(ctx, entity, position, player, fleeing)
     local health = ctx:get(entity, component.HEALTH)
 
@@ -45,8 +48,10 @@ local function condition_for(ctx, entity, position, player, fleeing)
     }
 end
 
+-- Retry only when an effect cannot plan a target; a no-spell prospect result is final for this turn.
 local function select_targetable(ctx, entity, book, condition)
-    local function random(bound)
+-- Pass the AI RNG stream into slot selection.
+local function random(bound)
         return ctx:random("monster_spell", bound)
     end
 
@@ -77,6 +82,8 @@ local function select_targetable(ctx, entity, book, condition)
     return nil
 end
 
+-- Build a cast intent only after book selection, target planning, and antimagic checks agree.
+-- Example: silence is included in prospect conditions before a book slot becomes a targetable intent.
 function spell.choose(ctx, entity, position, player, fleeing)
     local book = spellbook.for_actor(ctx, entity)
 

@@ -1,3 +1,5 @@
+-- Slot names include octopode ring positions as well as the normal ring and amulet slots.
+
 local slots = {
     LEFT = "ring_left",
     RIGHT = "ring_right",

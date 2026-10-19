@@ -4,6 +4,7 @@ local ids = require("ids.items")
 local books = {}
 
 -- Source: shopping.cc:item_value, OBJ_BOOKS.
+-- Example: books.value(manual_kind, nil, nil, nil, options) returns the manual's fixed 800 value.
 function books.value(kind, _, _, _, options)
     if kind.id == ids.BOOK_MANUAL then
         return 800

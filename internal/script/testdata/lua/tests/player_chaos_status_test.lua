@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local effects = require("constants.chaos_effects")
 local harness = require("tests.harness")
@@ -5,6 +6,7 @@ local chaos = require("policy.combat.player_brands.chaos_status")
 
 local test = {}
 
+-- Chaos might does not stack with the source frenzy bonus.
 function test.run(ctx)
     local monster = ctx:create()
 

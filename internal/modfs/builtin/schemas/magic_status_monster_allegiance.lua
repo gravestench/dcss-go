@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.monster_allegiance",
     version = 1,
+    -- Charm, frenzy, and fatigue durations coexist because changing attitude does not clear recovery.
     fields = {
         charm_aut = {
             type = "int64",

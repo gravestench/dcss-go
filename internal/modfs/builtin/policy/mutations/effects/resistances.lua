@@ -5,14 +5,17 @@ local registry = require("policy.mutations.effects.registry")
 local resistances = {}
 
 -- Source: player.cc:player::res_fire, res_cold, and res_elec.
+-- Example: Steam Resistance level two contributes four capability points.
 function resistances.level(level)
     return level
 end
 
+-- Vulnerability subtracts its mutation level from the matching resistance total.
 function resistances.vulnerability(level)
     return -level
 end
 
+-- Thin Metallic Scales grants its electricity point only at full level three.
 function resistances.metallic_scales(level)
     return level == 3 and 1 or 0
 end
@@ -22,10 +25,12 @@ function resistances.slimy_scales(level)
     return level == 3 and 1 or 0
 end
 
+-- Yellow Scales waits for full growth before adding acid resistance.
 function resistances.yellow_scales(level)
     return level == 3 and 1 or 0
 end
 
+-- Steam Resistance contributes two capability points per mutation level.
 function resistances.steam(level)
     return level * 2
 end

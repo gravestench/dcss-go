@@ -8,6 +8,8 @@ local agility = require("policy.character.agility")
 
 local powered_by_pain = {}
 
+-- Use a mutation-stream remainder draw to preserve fractional expected MP
+-- recovery while storing only integer resources.
 local function rounded_divide(ctx, numerator, denominator)
     local whole = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -19,6 +21,8 @@ local function rounded_divide(ctx, numerator, denominator)
     return whole
 end
 
+-- Consume the chance draw before the half-HP shortcut, matching the source
+-- RNG sequence even when a sufficiently large hit guarantees activation.
 local function triggered(ctx, player, damage)
     local progression = ctx:get(player, component.PROGRESSION)
     local health = ctx:get(player, component.HEALTH)
@@ -35,6 +39,8 @@ local function triggered(ctx, player, damage)
     return rolled > threshold or damage >= health.max / 2
 end
 
+-- Roll the level-scaled MP gain only below maximum, then write the resource
+-- component back so the restoration survives the current action.
 local function restore_magic(ctx, player, level)
     local magic = ctx:get(player, component.MAGIC)
 
@@ -56,6 +62,8 @@ local function restore_magic(ctx, player, level)
     ctx:emit("mutation", "You feel your power returning.")
 end
 
+-- Compare damage with the level threshold and maximum HP before choosing a mutation effect.
+-- Example: a large hit can restore MP, with its amount and effect branch drawn from the mutation stream.
 function powered_by_pain.on_damage(ctx, player, damage)
     local level = levels.effective(ctx, player,
         mutations.MUT_POWERED_BY_PAIN)

@@ -1,3 +1,4 @@
+-- Example: Djinni spell generation skips a spell already known by the starting player.
 -- Source: ng-setup.cc:_setup_innate_spells. Future Djinni spells are chosen
 -- when the character starts and saved, so leveling never rerolls them.
 local traits = require("policy.character.traits")
@@ -8,6 +9,7 @@ local innate = {}
 local minimum = { 1, 2, 2, 3, 4, 5, 6, 6, 6, 7, 7, 8, 9 }
 local maximum = { 1, 2, 3, 4, 5, 5, 6, 7, 7, 8, 8, 9, 9 }
 
+-- Keep monster-only and testing spells out of the player innate spell schedule.
 local function forbidden_flags(spell)
     for _, flag in ipairs(spell.flags or {}) do
         if flag == "monster" or flag == "testing" then
@@ -18,6 +20,7 @@ local function forbidden_flags(spell)
     return false
 end
 
+-- Commit the entire Djinni level-spell schedule at character creation so later level-ups only reveal it.
 function innate.generate(ctx, species, known)
     local seen = {}
 

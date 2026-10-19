@@ -1,3 +1,5 @@
+-- Spell schools connect spells to skill training and spellpower calculations.
+
 local schools = {
     AIR = "air",
     CONJURATION = "conjuration",

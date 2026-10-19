@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local armour_egos = require("constants.armour_egos")
 local component = require("constants.component")
@@ -15,6 +16,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Seed black mark attacker and target independently before the reaction mutates either.
 local function fixture(ctx)
     local player = ctx:create()
     local monster = ctx:create()
@@ -37,14 +39,17 @@ local function fixture(ctx)
     return player, monster
 end
 
+-- Keep Black Mark effect selection and emitted combat messages observable.
 local function battle_context(ctx, player, choice, chance)
     local battle = setmetatable({}, { __index = ctx })
     local chose = false
 
+    -- Bind policy ownership to black mark fixture actor so player-only branches execute on that entity.
     function battle.player()
         return player
     end
 
+    -- Choose the five-way proc and three-way Black Mark effect independently.
     function battle.random(_, stream, bound)
         if stream == "mutation" and bound == 5 then
             return chance or 0
@@ -61,6 +66,7 @@ local function battle_context(ctx, player, choice, chance)
     return battle
 end
 
+-- Apply one controlled melee hit so Black Mark can choose its effect.
 local function strike(ctx, player, monster, choice, chance)
     local battle = battle_context(ctx, player, choice, chance)
     local hit = {
@@ -71,6 +77,7 @@ local function strike(ctx, player, monster, choice, chance)
     effects.trigger(battle, player, capabilities.AFTER_MELEE_HIT, hit)
 end
 
+-- Equip a resistance source before testing Black Mark drain selection.
 local function equip_life_protection(ctx, monster)
     local shield = ctx:create()
 
@@ -89,6 +96,7 @@ local function equip_life_protection(ctx, monster)
     })
 end
 
+-- Undead monsters cannot be selected for Black Mark draining.
 function test.run(ctx)
     local player, monster = fixture(ctx)
 
@@ -96,6 +104,7 @@ function test.run(ctx)
 
     local status = ctx:get(monster, component.MONSTER_ENFEEBLE)
 
+    -- Force one effect branch at a time to test the weighted Black Mark choices.
     harness.truthy(status and status.antimagic_aut > 0,
         "Black Mark can disrupt a spellcasting monster")
 
@@ -126,6 +135,7 @@ function test.run(ctx)
         monster_drain.tick(ctx, drain_monster)
     end
 
+    -- Drain must recover through the monster status timer, not the player turn.
     harness.falsy(ctx:has(drain_monster, component.MONSTER_DRAINED),
         "temporary drain expires on the monster clock")
     harness.equal(monster_stats.hit_dice(ctx, drain_monster, definition),
@@ -134,6 +144,7 @@ function test.run(ctx)
 
     local undead = catalog.get("monsters", monsters.MONS_WIGHT)
 
+    -- Holiness filtering is checked after effect selection and before drain damage.
     harness.equal(monster_drain.resistance(ctx, drain_monster, undead), 3,
         "undead monsters cannot be selected for Black Mark draining")
 

@@ -10,6 +10,8 @@ local tracked = {
     component.ITEM_MANUAL,
 }
 
+-- Prefix scalar type and length so different field boundaries cannot produce
+-- the same serialized signature for a quoted stock item.
 local function scalar(value)
     local kind = type(value)
 
@@ -26,10 +28,14 @@ local function scalar(value)
     error("shop stock contains an unsupported field type " .. kind)
 end
 
+-- Sort map keys before encoding; Lua table iteration order is not a property
+-- of the item and must not change quote validation.
 local function key_order(left, right)
     return tostring(left) < tostring(right)
 end
 
+-- Recursively encode component maps in stable key order, allowing a later
+-- purchase to detect any item property changed since confirmation.
 local function encode(value)
     if type(value) ~= "table" then
         return scalar(value)
@@ -53,6 +59,9 @@ local function encode(value)
     return table.concat(parts)
 end
 
+-- Stable scalar encoding identifies a stock entry across list refreshes.
+-- Example: stock_signature.of(ctx, item_entity) is saved with a quoted offer;
+-- purchase compares it to current properties before charging gold.
 function stock_signature.of(ctx, entity)
     local parts = {}
 

@@ -4,6 +4,8 @@ local registry = require("policy.mutations.effects.registry")
 
 local immunity = {}
 
+-- Publish an on/off capability so cloud contact can short-circuit without reading mutation records.
+-- Example: Cloud Immunity level one contributes a flag; a zero-level record contributes none.
 function immunity.active(level)
     return level > 0 and 1 or 0
 end

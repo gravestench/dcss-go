@@ -1,6 +1,7 @@
 local terrain_ids = require("constants.terrain")
 local terrain = {}
 
+-- Reject edge cells and any eight-neighbor obstruction; gateway and forest placement need a clear ring.
 function terrain.adjacent_solid(ctx, level_id, x, y)
     for dy = -1, 1 do
         for dx = -1, 1 do
@@ -17,6 +18,7 @@ function terrain.adjacent_solid(ctx, level_id, x, y)
     return false
 end
 
+-- Example: Gateway placement returns only visible open cells away from adjacent solid terrain.
 -- Source: spl-summoning.cc:find_gateway_location. Forest ponds use the
 -- same suitable locations as Malign Gateway.
 function terrain.gateway_points(ctx, position)

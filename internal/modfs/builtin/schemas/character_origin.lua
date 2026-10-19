@@ -3,6 +3,7 @@
 register.component{
     id = "character.origin",
     version = 1,
+    -- Creation bonuses and initial skills remain available after the randomized starting profile is discarded.
     fields = {
         initial_skills = {
             type = "string",

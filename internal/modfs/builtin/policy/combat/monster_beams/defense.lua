@@ -4,6 +4,7 @@ local roll = require("policy.combat.roll")
 
 local defense = {}
 
+-- Missile repulsion lowers beam accuracy using different draws for beams and projectiles.
 local function repelled(ctx, snapshot, to_hit, profile)
     local reduced = to_hit
 
@@ -24,6 +25,7 @@ local function repelled(ctx, snapshot, to_hit, profile)
     return attack < evasion
 end
 
+-- Repeated shield blocks raise the bypass roll quadratically during the current combat state.
 local function player_block(ctx, snapshot, to_hit)
     local bypass = math.floor(to_hit * 130 / 100) +
         5 * (snapshot.shield_blocks or 0) ^ 2
@@ -35,6 +37,7 @@ local function player_block(ctx, snapshot, to_hit)
     return bypass_roll < shield_bonus
 end
 
+-- Example: defense.roll(ctx, snapshot, to_hit, profile) with explosion profile -> no ordinary shield-block outcome
 -- Resolve a single beam contact from the defender's current snapshot.
 -- Piercing, explosions, and automatic-hit rays skip ordinary shield blocks.
 function defense.roll(ctx, snapshot, to_hit, profile)

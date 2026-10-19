@@ -8,6 +8,7 @@ local roll = require("policy.combat.roll")
 
 local poison = {}
 
+-- Turn beam dice into a poison dose with bounded random variation for the player.
 local function player_amount(ctx, dice)
     local maximum = dice.count * dice.sides
     local base = roll.random_divide(ctx, maximum, 3, "monster_spell")
@@ -17,6 +18,7 @@ local function player_amount(ctx, dice)
     return 3 + low + ctx:random("monster_spell", high - low + 1)
 end
 
+-- Ordinary poison beams can be resisted probabilistically; poison arrows only halve the dose.
 local function poison_player(ctx, caster, defender, profile, outcome)
     local resistance = player_resistance.poison(ctx, defender)
 
@@ -41,6 +43,7 @@ local function poison_player(ctx, caster, defender, profile, outcome)
     brands.poison(ctx, amount, ctx:id(caster))
 end
 
+-- Ordinary poison and poison arrow use different monster dose probabilities.
 local function poison_monster(ctx, caster, defender, profile, outcome)
     local actor = ctx:get(defender, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)
@@ -62,6 +65,7 @@ local function poison_monster(ctx, caster, defender, profile, outcome)
     monster_poison.apply(ctx, defender, definition, stacks, caster, true)
 end
 
+-- Example: poison.before_damage(ctx, caster, defender, profile, outcome) with unsupported beam flavour -> hook error
 -- Source: beam.cc:mons_adjust_flavoured and ouch.cc:check_your_resists.
 function poison.before_damage(ctx, caster, defender, profile, outcome)
     if profile.flavour ~= flavours.BEAM_POISON and

@@ -1,3 +1,4 @@
+-- Example: D:1 and D:2 stair landings are protected while nearby vaults are placed.
 local basic = require("policy.generation.basic")
 local nearest = require("policy.generation.nearest")
 local branches = require("ids.branches")
@@ -11,9 +12,12 @@ local vault_extra = require("policy.generation.vaults.extra")
 
 local generated = {}
 
+-- The current playable world is D:1 and D:2. These messages belong to the
+-- corresponding outgoing stairs until deeper levels and exits are ported.
 local exit_unavailable = "Leaving the Dungeon is unavailable in the Go port."
 local third_unavailable = "Dungeon:3 is unavailable in the Go port."
 
+-- Each floor draws three population dice from its own depth-specific die size.
 local function monster_count(ctx, depth)
     local die_size = depth == 1 and 12 or 10
     local count = 0
@@ -25,6 +29,7 @@ local function monster_count(ctx, depth)
     return count
 end
 
+-- Separate authored up and down exits before destination landings are paired.
 local function source_stairs(placed)
     local up = {}
     local down = {}
@@ -40,6 +45,7 @@ local function source_stairs(placed)
     return up, down
 end
 
+-- Scan floor cells in row-major order so unmatched vault exits get stable landing positions.
 local function add_stair_landings(level, count, glyph, protected)
     local arrivals = {}
 
@@ -65,6 +71,7 @@ local function add_stair_landings(level, count, glyph, protected)
     error("Dungeon has too few floor cells for source vault stairs")
 end
 
+-- Append source exits without changing their order relative to ordinary stairs.
 local function add_source_stairs(placed, up, down)
     local source_up, source_down = source_stairs(placed)
 
@@ -77,6 +84,9 @@ local function add_source_stairs(placed, up, down)
     end
 end
 
+-- Source vault stairs, ordinary stairs and extra vault stairs all need a
+-- paired destination. Add landings for unmatched source exits before making
+-- links so every visible stair has a consistent travel target or explanation.
 local function stair_links(first, second, placed, first_extra,
     second_extra, first_protected, second_protected)
     local first_links = {}
@@ -205,6 +215,10 @@ local function stair_links(first, second, placed, first_extra,
     return first_links, second_links
 end
 
+-- Fixed-orientation arrivals can collide with already generated stairs.
+-- Only that placement conflict gets a new base layout; other errors reveal
+-- a broken map or rule and should fail immediately.
+-- Arrival placement precedes ordinary population so its stairs and protected cells shape D:1.
 local function place_first_level(ctx, player)
     for _ = 1, 32 do
         local first = basic.generate(ctx, 1)
@@ -224,10 +238,12 @@ local function place_first_level(ctx, player)
     error("Dungeon:1 could not fit a fixed-orientation arrival after 32 layouts")
 end
 
+-- A no-monster-generation tag masks the authored occupied cells, not the entire Dungeon.
 local function spawn_exclusions(placed, vault)
     local excluded = {}
     local points = {}
 
+    -- Deduplicate exclusion points by cell before returning spawn masks.
     local function add(x, y)
         local key = x .. ":" .. y
 
@@ -258,6 +274,7 @@ end
 
 generated.spawn_exclusions = spawn_exclusions
 
+-- Protect arrival occupancy and all stairs before attempting extra vault fits.
 local function protected_cells(level, placed)
     local cells = {}
 
@@ -277,6 +294,7 @@ local function protected_cells(level, placed)
     return cells
 end
 
+-- Keep each extra map's typed records in its placement order for population.
 local function append_vault_records(target, maps)
     for _, map in ipairs(maps) do
         for _, record in ipairs(map.records) do
@@ -285,6 +303,7 @@ local function append_vault_records(target, maps)
     end
 end
 
+-- Merge arrival and extra-vault masks so ordinary spawning respects every map.
 local function extra_exclusions(base, maps)
     local points = {}
 
@@ -303,6 +322,9 @@ local function extra_exclusions(base, maps)
     return points
 end
 
+-- Assemble the two-level world in dependency order: base maps, arrival,
+-- connection, extra vaults, stair links, then spawn budgets and placements.
+-- The returned data is materialized into saved world state by the caller.
 function generated.generate(ctx, input)
     local player = {
         species_id = input.player_species_id,
@@ -358,6 +380,7 @@ function generated.generate(ctx, input)
             },
         })
 
+    -- Append extra-vault intent after arrival records so population sees the same placement order.
     append_vault_records(placed.records, first_extra)
     first.rows = first.builder:rows()
     second.rows = second.builder:rows()
@@ -368,6 +391,7 @@ function generated.generate(ctx, input)
 
     local first_links, second_links = stair_links(first, second, placed,
         first_extra, second_extra, first_protected, second_protected)
+    -- Draw spawn budgets after all map and stair placement has consumed layout randomness.
     local first_budget = monster_count(ctx, 1)
     local second_budget = monster_count(ctx, 2)
     local entry = first.stairs[1].up
@@ -381,6 +405,7 @@ function generated.generate(ctx, input)
     end
     local second_entry = second.stairs[1].up
 
+    -- Reserve three starting potion cells after final terrain is known, excluding the first D:2 pick.
     local curing = nearest.open_floor(first.rows, entry, nil, 1)
     local heal = nearest.open_floor(second.rows, second_entry, nil, 2)
     local haste = nearest.open_floor(second.rows, second_entry, heal, 2)

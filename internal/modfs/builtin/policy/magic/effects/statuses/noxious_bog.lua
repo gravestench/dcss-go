@@ -27,6 +27,8 @@ local nonfloor = {
     [terrain_ids.DNGN_TOXIC_BOG] = true,
 }
 
+-- Example: an open floor cell within sight becomes toxic bog, while water,
+-- lava, and cells boxed in by walls remain unchanged.
 local function locations(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -67,12 +69,15 @@ local function locations(ctx, player, spell)
     return found
 end
 
+-- Abort without cost when range and terrain leave no legal bog cell.
 function bog.prepare(ctx, player, spell)
     if #locations(ctx, player, spell) == 0 then
         return "There are no places for you to create a bog."
     end
 end
 
+-- Terrain markers and the caster's area status share one rolled duration so
+-- the owner remains safe from their own newly placed bog.
 function bog.cast(ctx, player, _, spell, power)
     local cells = locations(ctx, player, spell)
     local bound = math.floor(power / 10)
@@ -104,6 +109,7 @@ function bog.cast(ctx, player, _, spell, power)
     ctx:emit("spell", "You spew toxic sludge!")
 end
 
+-- Roll four independent dice so the bog keeps the source game's damage distribution.
 local function roll_damage(ctx)
     local total = 0
 
@@ -114,6 +120,8 @@ local function roll_damage(ctx)
     return total
 end
 
+-- Only 70 percent of bog damage is poison-resistible; the remainder lands
+-- even at full poison resistance.
 local function adjusted(raw, resistance)
     local resistible = math.floor(raw * 70 / 100)
     local solid = raw - resistible
@@ -130,6 +138,8 @@ local function adjusted(raw, resistance)
     return solid + resistible
 end
 
+-- Flight and the active caster are exempt; grounded occupants take damage
+-- proportional to elapsed AUT and may acquire poison.
 function bog.tick(ctx, actor, aut)
     local position = ctx:get(actor, component.POSITION)
     local health = ctx:get(actor, component.HEALTH)

@@ -4,6 +4,7 @@ local categories = require("constants.catalog")
 local schema = {
     id = "magic.summon",
     version = 3,
+    -- Owner and source spell identify a summon; expires_aut and hostile determine its remaining allegiance.
     fields = {
         owner = {
             type = "entity",

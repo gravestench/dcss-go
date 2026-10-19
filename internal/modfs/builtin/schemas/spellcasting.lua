@@ -2,6 +2,7 @@
 register.component{
     id = "character.spellcasting",
     version = 1,
+    -- The last spell choice is separate from an unfinished memorisation delay.
     fields = {
         last_spell_id = {
             type = "string",

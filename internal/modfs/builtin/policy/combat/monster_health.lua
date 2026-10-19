@@ -6,6 +6,7 @@ local player_health = require("policy.combat.player_health")
 
 local monster_health = {}
 
+-- Damage to a spectral weapon can propagate to its owner unless the owner caused the hit.
 local function share_spectral_damage(ctx, target, source, dealt)
     if dealt < 2 or not source or
         not ctx:has(target, component.SPECTRAL_WEAPON) then
@@ -29,6 +30,7 @@ local function share_spectral_damage(ctx, target, source, dealt)
     end
 end
 
+-- Example: monster_health.damage(ctx, target, amount, source) with already dead target -> no further HP loss
 -- Shared monster HP loss lets mutation effects observe damage actually
 -- dealt after petrification, with an explicit source actor.
 function monster_health.damage(ctx, target, amount, source)

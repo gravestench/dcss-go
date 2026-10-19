@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local effects = require("policy.mutations.effects.registry")
 local harness = require("tests.harness")
@@ -6,6 +7,7 @@ local records = require("policy.mutations.records")
 
 local test = {}
 
+-- Ordinary characters may join a god.
 function test.run(ctx)
     local ordinary = ctx:create()
     local forlorn = ctx:create()

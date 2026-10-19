@@ -1,7 +1,9 @@
+-- Example: An item term with no explicit weight receives the default weight.
 local choice = require("policy.generation.vaults.specs.choice")
 
 local item = {}
 
+-- Keep a default weight while parsing optional item quantity and special flags.
 local function parse_term(text, expression, site)
     local result = {
         weight = 10,
@@ -76,6 +78,7 @@ local function parse_term(text, expression, site)
     return result
 end
 
+-- Split the outer item alternatives before parsing item names that themselves contain commas.
 function item.parse(expression, site)
     return choice.slots(expression, site, parse_term)
 end

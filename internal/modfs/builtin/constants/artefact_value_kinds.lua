@@ -1,3 +1,5 @@
+-- Artefact properties use these value shapes when a rolled property is materialized.
+
 local kinds = {
     STAT = "stat",
     RESISTANCE = "resistance",

@@ -13,10 +13,14 @@ local directions = {
     { x = 1, y = 1 },
 }
 
+-- Encode relative cells to keep only the cheapest path through the blast map.
 local function key(x, y)
     return x .. ":" .. y
 end
 
+-- Example: with radius zero on floor,
+-- explosion.cells(ctx, level_id, center_x, center_y, radius, allow_solid_center) -> center cell only
+-- Expand reachable blast cells by propagation cost so walls shield spaces behind them.
 function explosion.cells(ctx, level_id, center_x, center_y, radius,
     allow_solid_center)
     if radius < 0 or radius > 9 then
@@ -25,6 +29,7 @@ function explosion.cells(ctx, level_id, center_x, center_y, radius,
 
     local best = {}
 
+    -- Expand blast reach by cost while terrain blocks or redirects propagation.
     local function visit(dx, dy, cost)
         if math.max(math.abs(dx), math.abs(dy)) > radius or
             cost > 10 * radius then
@@ -70,6 +75,7 @@ function explosion.cells(ctx, level_id, center_x, center_y, radius,
 
     local result = {}
 
+    -- Emit reachable cells in coordinate order, independent of recursive visit order.
     local function append(dx, dy)
         if best[key(dx, dy)] then
             result[#result + 1] = {

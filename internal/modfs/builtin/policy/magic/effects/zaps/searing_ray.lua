@@ -29,6 +29,8 @@ local spec = {
     },
 }
 
+-- An ally entering the continuing ray cancels the next projectile pulse
+-- before it can damage that ally.
 local function friendly_in_ray(ctx, player, x, y, spell)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,
@@ -43,6 +45,9 @@ local function friendly_in_ray(ctx, player, x, y, spell)
     return false
 end
 
+-- Example: resolve(ctx, player, intent, spell, 60) fires the first pulse and
+-- saves direction so later actions can continue the same ray.
+-- Fire the first pulse now, then persist aim and target identity for later channel actions.
 function searing_ray.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local x = origin.x + intent.dx
@@ -63,6 +68,7 @@ function searing_ray.resolve(ctx, player, intent, spell, power)
     })
 end
 
+-- A continued ray checks friendly actors in its path before firing the next beam.
 function searing_ray.continue(ctx, player, state)
     local origin = ctx:get(player, component.POSITION)
     local spell = catalog.get("spells", spells.SPELL_SEARING_RAY)

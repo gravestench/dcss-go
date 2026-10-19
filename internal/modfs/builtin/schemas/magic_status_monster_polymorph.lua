@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.monster_polymorph",
     version = 1,
+    -- Original kind ID preserves the source monster identity across a temporary polymorph.
     fields = {
         original_kind_id = {
             type = "string",

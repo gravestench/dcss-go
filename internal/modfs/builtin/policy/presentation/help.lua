@@ -22,6 +22,10 @@ local lines = {
     "Esc - Return",
 }
 
+-- Help pages assemble command and nearby-entity rows without changing world state.
+-- Project fixed command-help text into cell writes so terminal sizing and
+-- clipping stay in the renderer rather than in this policy.
+-- Example: help.rows().writes is the help screen's ordered cell list.
 function help.rows()
     local writes = {}
 
@@ -37,6 +41,9 @@ function help.rows()
     return { writes = writes }
 end
 
+-- Nearby help rows are projected from visible actors at render time.
+-- Collapse visible entity records into a nearby summary. The caller supplies
+-- already-visible entities, so this view cannot leak unseen monster names.
 function help.nearby(input)
     local names = {}
 
@@ -62,6 +69,9 @@ function help.nearby(input)
     return { writes = writes }
 end
 
+-- Example: a new notice joins history temporarily, then only the last screen-height rows are shown.
+-- Copy history into display rows without mutating the game's message log;
+-- presentation may truncate the result for a small terminal.
 function help.messages(input)
     local history = {}
 
@@ -88,6 +98,8 @@ function help.messages(input)
     return { writes = writes }
 end
 
+-- Choose the prompt from the requested exit action so abandonment cannot
+-- accidentally inherit the safer save-and-exit wording.
 function help.confirm(input)
     local prompt = "Save game and exit? (Y/n)"
 
@@ -102,6 +114,8 @@ function help.confirm(input)
     }
 end
 
+-- Explain a blocked screen or compact status in the modal area. Keeping
+-- this diagnostic visible makes unsupported controls discoverable to players.
 function help.status(input)
     local writes = {}
 
@@ -142,18 +156,23 @@ function help.status(input)
     return { writes = writes }
 end
 
+-- Adapt the nearby formatter to the registered policy callback signature.
+-- The callback remains separate so direct Lua callers can omit context.
 function help.run_nearby(_, input)
     return help.nearby(input)
 end
 
+-- Adapt the history formatter without giving it mutable game context.
 function help.run_messages(_, input)
     return help.messages(input)
 end
 
+-- Keep the confirmation formatter pure while satisfying policy registration.
 function help.run_confirm(_, input)
     return help.confirm(input)
 end
 
+-- Route status diagnostics through the same registered presentation API.
 function help.run_status(_, input)
     return help.status(input)
 end

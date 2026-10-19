@@ -1,3 +1,5 @@
+-- Vault attitude tokens set initial monster allegiance without altering monster definitions.
+
 local attitude = {
     HOSTILE = "hostile",
     FRIENDLY = "friendly",

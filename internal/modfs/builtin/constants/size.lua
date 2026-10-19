@@ -1,3 +1,5 @@
+-- Body sizes are ordered for comparisons such as constriction and equipment fit.
+
 -- Source: body-size.h:body_size_type. Ordered for size comparisons.
 local size = {
     TINY = "SIZE_TINY",

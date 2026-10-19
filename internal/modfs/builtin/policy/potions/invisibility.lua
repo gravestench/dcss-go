@@ -7,6 +7,7 @@ local hex_status = require("policy.combat.monster_hexes.status")
 
 local invisibility = {}
 
+-- Visibility depends on backlighting as well as invisibility duration.
 function invisibility.backlit(ctx, player)
     if hex_status.backlit(ctx, player) then
         return true
@@ -26,6 +27,7 @@ function invisibility.backlit(ctx, player)
     return contamination ~= nil and contamination.amount > 5000
 end
 
+-- Read the potion timer rather than optical visibility, which other effects can change.
 function invisibility.active(ctx, player)
     local state = ctx:get(player, component.POTION_INVISIBILITY)
 
@@ -33,6 +35,8 @@ function invisibility.active(ctx, player)
         not invisibility.backlit(ctx, player)
 end
 
+-- Observer sight and contamination can reveal an invisible player; active duration alone is insufficient.
+-- Example: a high contamination glow can reveal a player despite an active invisibility potion.
 function invisibility.visible_to(ctx, player, observer)
     if not invisibility.active(ctx, player) then
         return true
@@ -56,6 +60,7 @@ function invisibility.visible_to(ctx, player, observer)
     return false
 end
 
+-- Remove the potion component only after its remaining aut reaches zero.
 function invisibility.tick(ctx, player, aut)
     local state = ctx:get(player, component.POTION_INVISIBILITY)
 

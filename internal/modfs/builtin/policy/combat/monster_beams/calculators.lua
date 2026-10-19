@@ -3,6 +3,7 @@ local roll = require("policy.combat.roll")
 
 local calculators = {}
 
+-- A catalogued AUTOMATIC_HIT sentinel bypasses the ordinary power-scaled to-hit formula.
 local function calculate_hit_rule(profile, power)
     local rule = profile.monster_tohit
 
@@ -24,6 +25,7 @@ local function calculate_hit_rule(profile, power)
     return args[1] + math.floor(power * (args[2] or 0) / (args[3] or 1))
 end
 
+-- Enchantments contact automatically; damage beams use their catalog hit expression.
 function calculators.to_hit(profile, power)
     if profile.is_enchantment then
         return accuracy.AUTOMATIC_HIT
@@ -32,6 +34,7 @@ function calculators.to_hit(profile, power)
     return calculate_hit_rule(profile, power)
 end
 
+-- Hex power follows the profile's enchantment scale rather than damage dice.
 function calculators.enchantment_power(profile, power)
     if not profile.is_enchantment then
         error("enchantment power requested for a damage beam")
@@ -44,6 +47,7 @@ function calculators.enchantment_power(profile, power)
     return calculate_hit_rule(profile, power)
 end
 
+-- Convert catalog damage formulas to dice before either contact or explosion rolls them.
 function calculators.damage_dice(ctx, profile, power)
     local rule = profile.monster_damage
 
@@ -90,6 +94,8 @@ function calculators.damage_dice(ctx, profile, power)
         tostring(rule.kind))
 end
 
+-- Example: calculators.roll_damage(ctx, dice) with dice.count = 0 -> 0 damage without RNG
+-- The already converted dice roll on the monster spell stream at contact.
 function calculators.roll_damage(ctx, dice)
     if dice.count <= 0 or dice.sides <= 0 then
         return 0

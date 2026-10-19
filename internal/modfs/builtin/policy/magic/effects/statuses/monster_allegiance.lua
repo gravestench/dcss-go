@@ -10,6 +10,7 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local allegiance = {}
 
+-- Read source flag arrays without assuming a keyed set from modded monsters.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -20,10 +21,13 @@ local function has(values, wanted)
     return false
 end
 
+-- One saved record owns charm, frenzy, and fatigue for this monster.
 local function state(ctx, target)
     return ctx:get(target, component.MONSTER_ALLEGIANCE)
 end
 
+-- Charm, frenzy, and post-frenzy fatigue share one component so a new status
+-- cannot discard the other two timers.
 local function save(ctx, target, value)
     if state(ctx, target) then
         ctx:set(target, component.MONSTER_ALLEGIANCE, value)
@@ -32,6 +36,8 @@ local function save(ctx, target, value)
     end
 end
 
+-- New allegiance records start with all timers at zero so later expiry can
+-- remove the component only when every effect has ended.
 local function ensure(ctx, target)
     return state(ctx, target) or {
         charm_aut = 0,
@@ -40,6 +46,8 @@ local function ensure(ctx, target)
     }
 end
 
+-- Scale charm by effective HD and actor speed, then fuzz the source duration
+-- on the melee stream before adding it to an existing charm.
 local function charm_duration(ctx, target, definition)
     local actor = ctx:get(target, component.ACTOR)
     local speed = math.max(1, actor.speed)
@@ -55,11 +63,14 @@ local function charm_duration(ctx, target, definition)
     return math.max(15, raw + fuzz - low)
 end
 
+-- Discord averages adjacent spell bounds to mimic the source duration roll.
 local function average_two(ctx, bound)
     return math.floor((ctx:random("spell", bound) +
         ctx:random("spell", bound + 1)) / 2)
 end
 
+-- Discord skips actors already frenzied or fatigued, nonattackers, and those
+-- unable to act; otherwise an invalid target would still consume will RNG.
 local function can_frenzy(ctx, target, definition)
     local current = state(ctx, target)
     local attack = definition.attacks and definition.attacks[1]
@@ -84,6 +95,8 @@ local function can_frenzy(ctx, target, definition)
             stasis.petrified_aut <= 0)
 end
 
+-- Charm's menu predicate requires a visible living actor and a clear
+-- projectile path before the player can commit a target direction.
 local function can_target(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -111,10 +124,13 @@ local function can_target(ctx, player, spell)
     return false
 end
 
+-- The registry calls this predicate before offering Charm at the prompt.
 function allegiance.can_target_charm(ctx, player, spell)
     return can_target(ctx, player, spell)
 end
 
+-- Example: cast_charm(ctx, player, intent, spell, 80) traces the chosen ray;
+-- the first contacted monster must fail willpower before charm time is saved.
 function allegiance.cast_charm(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,
@@ -142,6 +158,8 @@ function allegiance.cast_charm(ctx, player, intent, spell, power)
     ctx:emit("spell", "The " .. definition.name .. " is charmed.")
 end
 
+-- Discord visits each visible eligible monster once, then rolls resistance
+-- and a spell-stream frenzy duration for each accepted target.
 function allegiance.cast_discord(ctx, player, power)
     local origin = ctx:get(player, component.POSITION)
     local enchant_power = math.min(200, math.floor(power * 3 / 2))
@@ -185,18 +203,21 @@ function allegiance.cast_discord(ctx, player, power)
     end
 end
 
+-- AI allegiance changes only while the charm timer is positive.
 function allegiance.charmed(ctx, target)
     local current = state(ctx, target)
 
     return current ~= nil and current.charm_aut > 0
 end
 
+-- Combat speed and damage consult this timer, not fatigue or charm.
 function allegiance.frenzied(ctx, target)
     local current = state(ctx, target)
 
     return current ~= nil and current.frenzy_aut > 0
 end
 
+-- Frenzy multiplies melee damage by 3/2 before later armour processing.
 function allegiance.frenzy_melee_damage(ctx, target, damage)
     if allegiance.frenzied(ctx, target) then
         return math.floor(damage * 3 / 2)
@@ -205,6 +226,8 @@ function allegiance.frenzy_melee_damage(ctx, target, damage)
     return damage
 end
 
+-- Speed random rounding uses its own stream so action scheduling cannot
+-- consume a spell-duration draw.
 local function random_round(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -216,6 +239,8 @@ local function random_round(ctx, numerator, denominator)
     return quotient
 end
 
+-- Speed uses a separate random-rounding stream during frenzy and fatigue so
+-- action order does not perturb spell effects.
 function allegiance.frenzy_speed(ctx, target, base_speed)
     local current = state(ctx, target)
 
@@ -234,6 +259,8 @@ function allegiance.frenzy_speed(ctx, target, base_speed)
     return base_speed
 end
 
+-- A finished frenzy becomes 70-130 AUT of fatigue; remove shared state only
+-- after charm, frenzy, and fatigue all reach zero.
 function allegiance.tick(ctx, target)
     local current = state(ctx, target)
 

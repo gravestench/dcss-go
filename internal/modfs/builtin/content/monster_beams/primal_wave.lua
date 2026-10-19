@@ -1,7 +1,10 @@
--- Generated from a committed DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
--- spl-zap.cc:21
--- zap-data.h:549
+-- torrent of water (SPELL_PRIMAL_WAVE) defines a monster beam using
+-- zaps.ZAP_PRIMAL_WAVE with power cap 200.
+-- This is beam metadata; spell selection and a registered effect determine whether it is used.
+-- No beam state persists in this definition.
+
+-- spl-zap.cc
+-- zap-data.h
 
 local categories = require("constants.catalog")
 local zaps = require("constants.zap_ids")
@@ -16,6 +19,8 @@ local definition = {
     cap = 200,
     power_hd_factor = 12,
     natural_power = false,
+    -- torrent of water may use a source damage profile; contact policy computes
+    -- the actual roll for each target.
     monster_damage = {
         kind = "dicedef",
         args = {

@@ -1,3 +1,6 @@
+-- Vault entity expressions resolve before population; source operation order,
+-- unique-monster history, and diagnostics must survive that boundary.
+
 local directives = require("constants.vault_directives")
 local effects = require("constants.vault_effects")
 local grid = require("policy.generation.grid")
@@ -12,10 +15,12 @@ local items = require("ids.items")
 
 local test = {}
 
+    -- Give vault placement a reproducible 64-bit draw source for declaration tests.
 local function builder_context()
     local context = {}
     local next_value = 1
 
+    -- Advance a small deterministic sequence so repeated placements take the same branches.
     function context:random_u64()
         next_value = (next_value * 1664525 + 1013904223) % 4294967296
 
@@ -25,6 +30,7 @@ local function builder_context()
     return context
 end
 
+-- KMONS and ITEM glyphs become typed records while retaining the DES expression.
 local function resolved_entity_records()
     local source = {
         id = "resolved_fixture",
@@ -69,6 +75,7 @@ local function resolved_entity_records()
         "authored item quantity")
 end
 
+-- The authored "nothing" monster is a typed no-spawn outcome, not pending work.
 local function absence_is_resolved()
     local source = {
         id = "nothing_fixture",
@@ -95,6 +102,7 @@ local function absence_is_resolved()
     end
 end
 
+    -- Two KMONS declarations on one glyph must fail after the first actor wins that cell.
 local function source_slot_order_prevents_double_actor(ctx)
     local source = {
         id = "same_cell_fixture",
@@ -129,18 +137,22 @@ local function source_slot_order_prevents_double_actor(ctx)
     local occupied
     local world = setmetatable({}, { __index = ctx })
 
+    -- Resolve the first source choice so the overlap assertion tests placement order.
     function world:random()
         return 0
     end
 
+    -- Keep the target open; collision with the prior actor is the intended failure.
     function world:walkable()
         return true
     end
 
+    -- Report the first spawned actor to catch a second occupant in the same cell.
     function world:actor_at()
         return occupied
     end
 
+    -- Persist the first actor's position and occupancy for the second declaration.
     function world:place_actor(actor, level_id, x, y)
         occupied = actor
         ctx:add(actor, component.POSITION, {
@@ -162,6 +174,7 @@ local function source_slot_order_prevents_double_actor(ctx)
         monsters.MONS_RAT, "source slot order changed")
 end
 
+    -- An invalid MONS modifier must identify its DES path in the validation error.
 local function invalid_declaration_has_source_site()
     local source = {
         id = "invalid_fixture",
@@ -179,6 +192,7 @@ local function invalid_declaration_has_source_site()
         "invalid expression lacks source path")
 end
 
+    -- Repeated Sigmund declarations should produce one actor and one typed no-spawn outcome.
 local function source_unique_is_not_duplicated(ctx)
     local source = {
         id = "unique_fixture",
@@ -212,18 +226,22 @@ local function source_unique_is_not_duplicated(ctx)
 
     local world = setmetatable({}, { __index = ctx })
 
+    -- Choose the first unique candidate deterministically in the duplicate test.
     function world:random()
         return 0
     end
 
+    -- Allow both cells so unique history, not terrain, suppresses the second spawn.
     function world:walkable()
         return true
     end
 
+    -- Separate cells stay unoccupied; only unique history should veto duplication.
     function world:actor_at()
         return nil
     end
 
+    -- Store each actor's real position for materialization and provenance checks.
     function world:place_actor(actor, level_id, x, y)
         ctx:add(actor, component.POSITION, {
             level_id = level_id,
@@ -242,6 +260,7 @@ local function source_unique_is_not_duplicated(ctx)
         "duplicate unique lacks typed no-spawn result")
 end
 
+-- Each cave-to-temple helper branch must resolve tenant monsters with provenance.
 local function temple_helper_entities_resolve()
     local vault = catalog.get("erik_arrival_cave_to_civilisation")
 
@@ -249,6 +268,7 @@ local function temple_helper_entities_resolve()
         local context = builder_context()
         local builder = grid.new(context)
 
+    -- Force each temple helper branch while selecting the same outer vault path.
         function builder:roll(bound)
             if bound == 15 then
                 return 14
@@ -282,6 +302,7 @@ local function temple_helper_entities_resolve()
     end
 end
 
+    -- Cover typed resolution, no-spawn, overlap, diagnostics, uniques, and helper provenance.
 function test.run(ctx)
     resolved_entity_records()
     absence_is_resolved()

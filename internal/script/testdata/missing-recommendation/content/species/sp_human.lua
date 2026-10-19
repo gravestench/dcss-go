@@ -1,8 +1,9 @@
 local categories = require("constants.catalog")
 
--- Generated from the pinned DCSS import. Refresh deliberately.
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/human.yaml
+
+-- Missing recommendation metadata makes this Moon Human override invalid for character choice.
 
 local definition = {
     id = "SP_HUMAN",

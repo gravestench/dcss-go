@@ -1,3 +1,5 @@
+-- This monster names an unknown spellbook and must fail catalog validation.
+
 local categories = require("constants.catalog")
 
 local definition = {

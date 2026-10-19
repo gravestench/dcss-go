@@ -6,6 +6,7 @@ local effects = require("constants.vault_effects")
 
 local traps = {}
 
+-- An alarm mark duration must be bounded before timed trap systems resume.
 local function validate_mark(ctx)
     for _, entity in ipairs(ctx:query({ component.TRAP_MARK })) do
         local state = ctx:get(entity, component.TRAP_MARK)
@@ -17,6 +18,7 @@ local function validate_mark(ctx)
     end
 end
 
+-- Held-state validation ties a victim to its net or web source.
 local function validate_held(ctx, occupied)
     for _, entity in ipairs(ctx:query({ component.TRAP_HELD })) do
         local state = ctx:get(entity, component.TRAP_HELD)
@@ -57,6 +59,7 @@ local function validate_held(ctx, occupied)
     end
 end
 
+-- Authored traps keep a vault record key so a restored trap cannot migrate away from its source cell.
 local function validate_origin(state, levels)
     if state.source_record == "" then
         return
@@ -75,6 +78,8 @@ local function validate_origin(state, levels)
     end
 end
 
+-- Trap marks and held victims must refer to valid trap records after restore.
+-- Example: traps.validate(ctx, input) rejects a held player without a valid net or web source.
 function traps.validate(ctx, input)
     input = input or {}
     local occupied = {}

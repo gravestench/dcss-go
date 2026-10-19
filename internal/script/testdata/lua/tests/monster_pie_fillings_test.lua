@@ -1,12 +1,15 @@
+
 local cherry = require("policy.combat.pies.cherry")
 local component = require("constants.component")
 local harness = require("tests.harness")
 
 local test = {}
 
+-- Proxy the production context while pinning every pie roll to its minimum.
 local function lowest_roll(ctx)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Require the monster-spell stream and return zero for the low-duration case.
     function proxy:random(stream)
         harness.equal(stream, "monster_spell",
             "pie uses the monster spell RNG stream")
@@ -17,6 +20,7 @@ local function lowest_roll(ctx)
     return proxy
 end
 
+-- Cherry pie gives the player 15 turns at the low source roll.
 function test.run(ctx)
     local monster = ctx:create()
     local draws = lowest_roll(ctx)

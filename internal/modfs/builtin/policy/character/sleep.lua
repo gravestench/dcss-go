@@ -1,8 +1,10 @@
+-- Example: Awakening sets an immunity timer so the next sleep effect cannot immediately recur.
 local component = require("constants.component")
 
 local sleep = {}
 
 -- Source: player.cc:player::awaken grants three to five turns of immunity.
+-- Awakening grants immunity immediately so repeated sleep attempts cannot chain on the same turn.
 function sleep.awaken(ctx, player)
     local state = ctx:get(player, component.PLAYER_SLEEP)
 
@@ -18,6 +20,7 @@ function sleep.awaken(ctx, player)
     return true
 end
 
+-- Age both sleep and wake-immunity timers in elapsed aut after each action.
 function sleep.tick(ctx, player, aut)
     if aut <= 0 then
         return

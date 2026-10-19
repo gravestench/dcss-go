@@ -1,3 +1,5 @@
+-- Registered branch, monster, item, and spell definitions remain reachable through the catalog.
+
 local catalog = require("policy.catalog")
 local branches = require("ids.branches")
 local items = require("ids.items")
@@ -7,6 +9,8 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Read representative committed definitions across categories to catch
+-- bootstrap omissions before generation or combat needs those IDs.
 function test.run()
     local dungeon = catalog.get("branches", branches.BRANCH_DUNGEON)
     local club = catalog.get("items", items.WPN_CLUB)

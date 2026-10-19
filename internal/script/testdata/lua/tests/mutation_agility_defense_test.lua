@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local species = require("ids.species")
@@ -8,9 +9,11 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Bind agility defense player lookup to this owner while preserving live ECS component reads.
 local function player_context(ctx, player)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to agility defense fixture actor so player-only branches execute on that entity.
     function proxy.player()
         return player
     end
@@ -18,6 +21,7 @@ local function player_context(ctx, player)
     return proxy
 end
 
+-- Restore rejects a negative Agility duration.
 function test.run(ctx)
     local player = ctx:create()
     local battle = player_context(ctx, player)

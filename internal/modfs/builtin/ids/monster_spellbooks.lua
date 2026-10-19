@@ -1,3 +1,5 @@
+-- Spellbook IDs select a monster’s weighted spell slots.
+
 local catalog = require("ids.catalog")
 local categories = require("constants.catalog")
 

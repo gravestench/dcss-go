@@ -30,22 +30,27 @@ local intrinsic = {
     [ids.AMU_REFLECTION] = properties.SHIELDING,
 }
 
+-- Amulet-only properties need a base-class check before entering the random pool.
 local function amulet(definition)
     return definition.jewellery and
         definition.jewellery.kind == jewellery_kind.AMULET
 end
 
+-- Some properties cannot coexist with bases that can be freely swapped.
 local function non_swappable(definition)
     return definition.class == classes.OBJ_ARMOUR or amulet(definition)
 end
 
+-- Weapon-range checks prevent melee-only properties on launchers.
 local function ranged(definition)
     return definition.weapon and
         definition.weapon.skill_id == skills.SK_RANGED_WEAPONS
 end
 
+-- Example: rules.compatible(property_ids.FIRE, sword, values, brand) checks a randart property conflict.
+-- Prevent contradictory pairs such as Blink/no-teleport and Corrode/rCorr before a budget point is spent.
 function rules.compatible(id, definition, values, brand)
-    -- Source: crawl-ref/source/artefact.cc:529-613.
+    -- Source: crawl-ref/source/artefact.cc.
     if intrinsic[definition.id] == id then
         return false
     end
@@ -90,8 +95,9 @@ function rules.compatible(id, definition, values, brand)
     return true
 end
 
+-- A property set can be rejected as a whole when its drawback cancels its sole benefit or its base item.
 function rules.bad(definition, values, brand)
-    -- Source: crawl-ref/source/artefact.cc:1475-1629.
+    -- Source: crawl-ref/source/artefact.cc.
     local count = 0
 
     for _ in pairs(values) do

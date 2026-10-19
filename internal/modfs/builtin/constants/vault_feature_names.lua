@@ -1,3 +1,5 @@
+-- Named vault features identify decorative or special map objects beyond bare terrain.
+
 local names = {
     DEAD_TREE = "dead tree",
     GRAVESTONE = "a gravestone",

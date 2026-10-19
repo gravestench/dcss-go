@@ -2,6 +2,8 @@ local roll = require("policy.combat.roll")
 
 local brand = {}
 
+-- Example: brand.apply(ctx, hit) drains a hit player's MP by a three-roll
+-- average of damage, capped to the MP they still have.
 function brand.apply(ctx, hit)
     local magic = ctx:get(hit.defender, "core.magic")
 
@@ -9,8 +11,8 @@ function brand.apply(ctx, hit)
         return
     end
 
-    -- attack.cc:1543-1545 passes damage * 8 to BEAM_DRAIN_MAGIC.
-    -- beam.cc:3578-3585 drains random2avg(power / 8, 3) MP.
+    -- attack.cc passes damage * 8 to BEAM_DRAIN_MAGIC.
+    -- beam.cc drains random2avg(power / 8, 3) MP.
     local amount = roll.average_three(ctx, "melee", hit.damage_done)
     amount = math.min(magic.current, amount)
 

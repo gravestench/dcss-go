@@ -6,6 +6,8 @@ local classes = require("ids.object_classes")
 
 local system = {}
 
+-- Theory of operation: Floor gold becomes wallet value while item entities become carried stacks before drop handling.
+-- Pickup handles gold through the wallet and items through carried components before drop actions.
 function system.update(ctx, actor)
     local intent = ctx:get(actor, "core.intent")
 

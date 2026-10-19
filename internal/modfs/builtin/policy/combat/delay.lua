@@ -10,6 +10,8 @@ local artefact_ids = require("ids.artefact_properties")
 
 local delay = {}
 
+-- Represent source random rounding as weighted neighboring integers so all
+-- delay modifiers can be combined before the single melee-stream draw.
 local function rounded_values(numerator, denominator)
     local whole = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -24,6 +26,7 @@ local function rounded_values(numerator, denominator)
     return values
 end
 
+-- Clamp base delay by weapon speed, with Short Blades' lower five-aut cap.
 function delay.minimum_weapon(speed, skill_id)
     local minimum = math.floor(speed / 2)
 
@@ -34,16 +37,18 @@ function delay.minimum_weapon(speed, skill_id)
     return math.max(3, math.min(minimum, 7), speed - 14)
 end
 
+-- Two skill levels remove one aut until the weapon's minimum delay.
 function delay.minimum_skill(speed, skill_id)
     return 2 * (speed - delay.minimum_weapon(speed, skill_id))
 end
 
+-- Crossbow and longbow minimums override the generic weapon-speed floor.
 function delay.minimum_launcher(kind, speed)
     local weapon = kind.weapon
     local minimum = delay.minimum_weapon(speed or weapon.speed,
         weapon.skill_id)
 
-    -- fight.cc:912-960 gives crossbows a 10 aut minimum and longbows 6.
+    -- fight.cc gives crossbows a 10 aut minimum and longbows 6.
     if weapon.ammo_id == "MI_BOLT" then
         return math.max(10, minimum)
     end
@@ -55,6 +60,8 @@ function delay.minimum_launcher(kind, speed)
     return minimum
 end
 
+-- Convolve skill, shield, armour, speed brand, and action-time rounding;
+-- drawing once preserves the exact resulting AUT distribution.
 local function action_cost(ctx, time_taken, base, reduction, denominator,
     shield_penalty20, minimum, armour_penalty20, speed_brand)
     local weights = {}
@@ -105,6 +112,7 @@ local function action_cost(ctx, time_taken, base, reduction, denominator,
     error("attack delay distribution was empty")
 end
 
+-- Shields add delay from encumbrance after Shields skill reduces the cost.
 local function shield_penalty(ctx)
     local worn = equipment.worn(ctx, ctx:player(), { shield = true })
     local shield_ev = worn.shield and worn.shield.definition.armour.ev or 0
@@ -115,6 +123,8 @@ local function shield_penalty(ctx)
         2 * shield_base ^ 2 * (270 - shields10) * 20 / 100 / 270)
 end
 
+-- Example: delay.player(ctx, time_taken) with player attack action -> aut cost adjusted by weapon skill
+-- Convert one player action into elapsed aut for timed combat effects and reactions.
 function delay.player(ctx, time_taken)
     local attack = fighter.attack(ctx, { ev = 0, ac = 0 })
     local weapon10 = fighter.skill(ctx, attack.weapon_skill, 10)
@@ -138,6 +148,8 @@ function delay.player(ctx, time_taken)
         attack.using_weapon and attack.weapon_brand == brands.SPEED)
 end
 
+-- Thrown missiles and launchers use different skill reductions; launcher
+-- delay also includes body-armour encumbrance and artefact base delay.
 function delay.projectile(ctx, time_taken, item_id)
     local entity = ctx:entity(item_id)
     local item = ctx:get(entity, "core.item")

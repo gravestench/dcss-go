@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.monster_stasis",
     version = 1,
+    -- Sleep wariness and the two petrification phases continue independently of hibernation.
     fields = {
         hibernating = {
             type = "bool",

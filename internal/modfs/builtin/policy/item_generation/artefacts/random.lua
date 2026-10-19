@@ -17,8 +17,10 @@ local stat_rings = {
     [ids.RING_DEXTERITY] = true,
 }
 
+-- Example: biased_random(ctx, 5, 3) favours lower values when reducing a randart weapon's plus.
+-- Test ascending values with source chances, returning zero if no trial succeeds.
 local function biased_random(ctx, maximum, trials)
-    -- Source: crawl-ref/source/random.cc:363-369.
+    -- Source: crawl-ref/source/random.cc.
     for value = 0, maximum - 1 do
         if source.chance(ctx, trials,
             trials + maximum - 1 - value) then
@@ -29,6 +31,7 @@ local function biased_random(ctx, maximum, trials)
     return 0
 end
 
+-- Subtract three biased draws from the source base plus, then enforce a small floor.
 local function weapon_plus(ctx)
     local plus = 12
 
@@ -39,6 +42,7 @@ local function weapon_plus(ctx)
     return math.max(plus, ctx:random(streams.ITEM_GENERATION, 2))
 end
 
+-- Body and shield bases derive enchantment bounds from AC; a few bases cannot enchant.
 local function armour_maximum(definition)
     if definition.id == ids.ARM_QUICKSILVER_DRAGON_ARMOUR or
         definition.id == ids.ARM_SCARF or
@@ -57,8 +61,9 @@ local function armour_maximum(definition)
     return 2
 end
 
+-- Source armour pluses combine ordinary, bonus, and penalty draws before slot floors.
 local function armour_plus(ctx, definition)
-    -- Source: crawl-ref/source/makeitem.cc:687-717.
+    -- Source: crawl-ref/source/makeitem.cc.
     local maximum = armour_maximum(definition)
     local plus = 0
 
@@ -88,6 +93,7 @@ local function armour_plus(ctx, definition)
     return plus
 end
 
+-- Stat rings cap at six pluses; other plus-bearing jewellery caps at four.
 local function jewellery_plus(definition)
     if not definition.jewellery or
         not definition.jewellery.pluses then
@@ -97,6 +103,7 @@ local function jewellery_plus(definition)
     return stat_rings[definition.id] and 6 or 4
 end
 
+-- Choose the class-specific plus rule before assigning randart properties.
 local function base_plus(ctx, definition)
     if definition.class == classes.OBJ_WEAPONS then
         return weapon_plus(ctx)
@@ -107,6 +114,7 @@ local function base_plus(ctx, definition)
     return jewellery_plus(definition)
 end
 
+-- Store rolled properties and a cosmetic name seed together on the randart item component.
 function random.apply(ctx, definition, result, forced_brand)
     if definition.class ~= classes.OBJ_WEAPONS and
         definition.class ~= classes.OBJ_ARMOUR and

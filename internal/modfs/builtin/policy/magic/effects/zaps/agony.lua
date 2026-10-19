@@ -10,6 +10,8 @@ local torment = require("policy.combat.torment")
 
 local agony = {}
 
+-- Example: A living visible rat behind a clear ray makes Agony targetable; a wall blocks it.
+-- Scan living monsters through range, visibility, and projectile clearance before offering a cast.
 function agony.can_target(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -41,6 +43,7 @@ function agony.can_target(ctx, player, spell)
     return false
 end
 
+-- Trace the first beam contact, then apply willpower and torment resistance so Agony cannot kill outright.
 function agony.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,

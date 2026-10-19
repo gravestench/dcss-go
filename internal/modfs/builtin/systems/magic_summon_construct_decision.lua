@@ -18,6 +18,7 @@ local actions = {
     [spells.SPELL_FIRE_STORM] = vortex.act,
 }
 
+-- Choose a legal step toward the owner only when a construct has no closer spell target.
 local function follow_owner(ctx, state, position)
     local owner = ctx:get(state.owner, component.POSITION)
 
@@ -39,8 +40,10 @@ end
 
 -- Source: construct turns have their own actions; ordinary allies use
 -- monster.decision and the shared movement/combat systems.
+-- Theory of operation: A living construct without intent receives a spell-specific action before movement and combat.
 local system = {}
 
+-- Construct-specific actions are chosen before generic monster AI sees the summon.
 function system.update(ctx, entity)
     if ctx:has(entity, component.INTENT) then
         return

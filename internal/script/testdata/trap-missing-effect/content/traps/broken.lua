@@ -1,3 +1,5 @@
+-- A trap definition without an effect resolver must fail coverage.
+
 local categories = require("constants.catalog")
 
 register.definition(categories.TRAPS, {

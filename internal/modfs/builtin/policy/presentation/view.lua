@@ -10,6 +10,9 @@ local component = require("constants.component")
 
 local view = {}
 
+-- Resolve species/job names and XP progress from live character data so the
+-- HUD cannot retain a stale label after a mod changes the catalogs.
+-- Example: runtime.Policy("presentation.player", character_input).
 function view.player(ctx, input)
     local name = input.name or ""
     local species = catalog.get("species", input.species_id)
@@ -30,6 +33,9 @@ function view.player(ctx, input)
     }
 end
 
+-- Vault colour overrides belong to the live monster entity; catalog glyph and name still come from its kind.
+-- Example: runtime.Policy("presentation.entity", monster_input) uses the
+-- monster catalog for identity and the entity component for its vault tint.
 function view.entity(ctx, input)
     local role = input.role
     local kind_id = input.kind_id or ""
@@ -84,6 +90,9 @@ function view.entity(ctx, input)
     }
 end
 
+-- Inventory naming consults the player's identification state, so an unknown potion keeps its appearance label.
+-- Example: view.inventory_item(ctx, item_input) returns the currently known
+-- name and slot without revealing an unidentified item kind to the player.
 function view.inventory_item(ctx, input)
     local item = catalog.get("items", input.kind_id)
     local entity = ctx:entity(input.item_entity_id)
@@ -97,6 +106,8 @@ function view.inventory_item(ctx, input)
     }
 end
 
+-- Distinguish remembered terrain from currently seen terrain, and show
+-- detected items in green even if their underlying cell is not visible.
 function view.terrain_color(input)
     if input.detected_item then
         return { fg = colors.green }
@@ -113,11 +124,15 @@ function view.terrain_color(input)
     return { fg = colors.light_grey }
 end
 
+-- Use DCSS's ASCII glyph for an item sensed but not directly seen; this
+-- prevents the display from implying a known item identity.
 function view.detected_item()
     -- Source: viewchar.cc, CSET_ASCII item_detected.
     return { glyph = string.byte("{") }
 end
 
+-- Give an explicit vault tint first priority, then fall back by role and
+-- catalog type so unknown source colors never reach terminal ANSI output.
 function view.entity_color(input)
     local source = input.color_id and colors.source[input.color_id:upper()]
 
@@ -154,26 +169,33 @@ function view.entity_color(input)
     return { fg = colors.light_grey }
 end
 
+-- Expose player projection through the uniform registered policy signature.
 function view.run_player(ctx, input)
     return view.player(ctx, input)
 end
 
+-- Keep the registered route identical to direct entity projection.
 function view.run_entity(ctx, input)
     return view.entity(ctx, input)
 end
 
+-- Reuse identification-aware naming for the terminal's inventory adapter.
 function view.run_inventory_item(ctx, input)
     return view.inventory_item(ctx, input)
 end
 
+-- Terrain colors depend on view state alone, so the policy ignores context.
 function view.run_terrain_color(_, input)
     return view.terrain_color(input)
 end
 
+-- Entity color projection is pure after the caller supplies catalog IDs.
 function view.run_entity_color(_, input)
     return view.entity_color(input)
 end
 
+-- Convert combat defense to the half-scale shield value printed by the HUD;
+-- sharing fighter.defense keeps display and hit resolution in agreement.
 function view.run_defense(ctx)
     local defense = fighter.defense(ctx)
 

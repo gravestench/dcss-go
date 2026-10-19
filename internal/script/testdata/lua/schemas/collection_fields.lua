@@ -1,4 +1,5 @@
--- This schema belongs to the test mod and is loaded through normal mod rules.
+-- One component exercises every supported list and string-keyed map element
+-- type through ECS copy, validation, and round-trip tests.
 local schema = {
     id = "test.collections",
     version = 1,

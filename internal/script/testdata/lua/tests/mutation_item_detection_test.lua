@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local mutations = require("ids.mutations")
@@ -8,10 +9,12 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Sensing uses a square radius and excludes distant items.
 function test.run(ctx)
     local player = ctx:create()
     local world = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to item detection fixture actor so player-only branches execute on that entity.
     function world.player()
         return player
     end

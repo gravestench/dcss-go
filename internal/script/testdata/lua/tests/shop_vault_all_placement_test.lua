@@ -10,6 +10,8 @@ local quality = require("constants.vault_item_quality")
 
 local test = {}
 
+-- A full open grid gives every standalone shop map enough room; the seeded
+-- builder still checks source fit and protected-cell rules.
 local function open_builder()
     local builder = grid.new({})
     local draw = 0
@@ -20,6 +22,8 @@ local function open_builder()
         end
     end
 
+    -- Cycle deterministic draws across each bound so placing the full vault
+    -- catalog can explore candidate cells without relying on a fixed seed.
     function builder:roll(bound)
         draw = draw + 1
 
@@ -29,10 +33,14 @@ local function open_builder()
     return builder
 end
 
+-- Parse and place every committed shop vault; checking materialized records
+-- catches directives that parse successfully but lose stock during placement.
 function test.run()
     local placed_count = 0
     local stock_errors = {}
 
+    -- Parse and place every committed shop DES file, then inspect each
+    -- materialized record instead of relying on parse success alone.
     for _, path in ipairs(mod.paths("vaults/shop", ".des")) do
         local id = path:match("/([^/]+)%.des$")
         local vault = catalog.get(id)

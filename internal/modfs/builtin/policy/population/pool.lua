@@ -1,9 +1,11 @@
+-- Example: At D:3, an out-of-range row contributes no weight to the spawn draw.
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
 
 local pool = {}
 
+-- Depth ranges gate a row before its weight enters the spawn pool.
 local function weight_at_depth(row, depth)
     if depth < row.min_depth or depth > row.max_depth then
         return 0
@@ -41,6 +43,7 @@ local function weight_at_depth(row, depth)
     error("unsupported population curve " .. tostring(row.curve))
 end
 
+-- Retain catalog order and duplicate rows as separate candidates.
 local function ordered_rows(allowed, scenario_id)
     local source = {}
     local added = {}
@@ -62,6 +65,7 @@ local function ordered_rows(allowed, scenario_id)
         end
     end
 
+    -- Sort only authored nested rows by source_order before appending catalog-ordered mod rows.
     table.sort(source, function(a, b)
         return a.row.source_order < b.row.source_order
     end)
@@ -73,11 +77,12 @@ local function ordered_rows(allowed, scenario_id)
     return source
 end
 
+-- Keep duplicate catalog rows as distinct weighted entries when building the depth-specific pool.
 function pool.at_depth(depth, allowed, scenario_id)
     local choices = {}
     local total = 0
 
-    -- Source order is explicit because monster files load in ID order.
+    -- Authored nested rows retain source_order; mod rows follow stable catalog ID order.
     -- Duplicate monster IDs remain separate picker rows.
     for _, entry in ipairs(ordered_rows(allowed, scenario_id)) do
         local weight = weight_at_depth(entry.row, depth)
@@ -94,6 +99,7 @@ function pool.at_depth(depth, allowed, scenario_id)
     return choices, total
 end
 
+-- Spend one population-stream draw over the accumulated row weights.
 function pool.pick(ctx, choices, total, stream)
     if total <= 0 then
         error("Dungeon has no supported population")

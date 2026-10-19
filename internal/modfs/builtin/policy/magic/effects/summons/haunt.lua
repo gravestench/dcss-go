@@ -5,6 +5,7 @@ local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
 local targets = require("policy.ai.targets")
 
+-- Haunt's targeting gate requires a living visible enemy; empty or hidden cells cannot anchor wraiths.
 local function visible_enemy(ctx, player)
     local origin = ctx:get(player, component.POSITION)
 
@@ -26,6 +27,7 @@ local function visible_enemy(ctx, player)
     return false
 end
 
+-- Sample the source weighted wraith table on the spell RNG stream for each attempted summon.
 local function wraith(ctx)
     local roll = summons.roll(ctx, 10)
 
@@ -47,6 +49,8 @@ end
 -- Source: spl-summoning.cc:cast_haunt and pick_random_wraith.
 local spell_effects = {}
 
+-- Example: Haunt aimed at an empty cell dissipates without creating spirits.
+-- Haunt chooses wraith summons around the selected visible enemy.
 function spell_effects.resolve(ctx, player, intent, _, power)
     local origin = ctx:get(player, component.POSITION)
     local x = origin.x + intent.dx

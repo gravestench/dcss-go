@@ -4,6 +4,7 @@ local monster_drain = require("policy.combat.monster_drain")
 
 local player_brands = {}
 
+-- Map weapon brand IDs to effect modules and reject unknown catalog spellings early.
 local function effect(id)
     local brand_id = id == "" and brands.NORMAL or id
     local name = brand_id:match("^SPWPN_([A-Z_]+)$")
@@ -21,10 +22,13 @@ local function effect(id)
     return module
 end
 
+-- Example: player_brands.check(id) with invalid ego ID -> brand validation error
+-- Resolve a brand module before an item can enter the player attack path.
 function player_brands.check(id)
     effect(id)
 end
 
+-- Signal a player kill only on the live-to-dead transition, after monster health is updated.
 function player_brands.damage(ctx, hit, amount)
     local before = hit.health.current
     hit.health = monster_health.damage(ctx, hit.defender, amount, hit.attacker)
@@ -36,6 +40,7 @@ function player_brands.damage(ctx, hit, amount)
     return hit.health
 end
 
+-- Scale negative-energy brand damage by monster drain resistance before applying it.
 function player_brands.negative(ctx, hit, raw)
     local resistance = monster_drain.resistance(ctx, hit.defender,
         hit.definition)
@@ -55,6 +60,7 @@ function player_brands.negative(ctx, hit, raw)
     return raw
 end
 
+-- Dead-target and zero-damage gates are brand-specific; postmortem effects opt in through module flags.
 function player_brands.apply(ctx, id, hit)
     local module = effect(id)
 
@@ -71,6 +77,7 @@ function player_brands.apply(ctx, id, hit)
     return hit
 end
 
+-- Some brands act once per swing even when damage handling already ended the target.
 function player_brands.after_attack(ctx, id, hit)
     local module = effect(id)
 

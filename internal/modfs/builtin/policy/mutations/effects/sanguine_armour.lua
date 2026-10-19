@@ -5,6 +5,8 @@ local sanguine = require("policy.character.sanguine_armour")
 
 local effect = {}
 
+-- Sanguine armour contributes a derived defense bonus, not a worn item.
+-- Example: Sanguine Armour level two contributes 900 scaled AC only while its saved state is active.
 function effect.armour(level, ctx, player)
     if not sanguine.active(ctx, player) then
         return 0

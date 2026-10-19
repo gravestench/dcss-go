@@ -9,7 +9,7 @@ local weapon_brands = require("policy.item_generation.weapon_brands")
 
 local policy = {}
 
--- Source: crawl-ref/source/makeitem.cc:112-159. These are the source's
+-- Source: crawl-ref/source/makeitem.cc. These are the source's
 -- special, middle, and early weapon lists, in source order.
 local special = {
     ids.WPN_LAJATANG,
@@ -47,6 +47,8 @@ local early = {
     ids.WPN_SHORT_SWORD,
 }
 
+-- Example: policy.eligible(nil, sword_kind, request) requires a random sword to have positive weight.
+-- Let explicit weapon requests bypass commonness while random stock needs positive subtype weight.
 function policy.eligible(_, definition, request)
     if definition.class ~= classes.OBJ_WEAPONS then
         return false
@@ -60,11 +62,13 @@ function policy.eligible(_, definition, request)
         policy.weight(nil, definition) > 0
 end
 
+-- Prefer source commonness over generic weight for ordinary weapon draws.
 function policy.weight(_, definition)
     return definition.generation.commonness or
         definition.generation.weight or 0
 end
 
+-- Depth gates special weapon chances before the ordinary weighted pool.
 function policy.pick(ctx, request)
     local depth = request.depth
 
@@ -84,8 +88,9 @@ function policy.pick(ctx, request)
     return source.one_of(ctx, early)
 end
 
+-- Good quality grants enchantment even when no brand rolls; ordinary unbranded weapons can stay plain.
 function policy.roll(ctx, definition, request, result)
-    -- Source: crawl-ref/source/makeitem.cc:445-483.
+    -- Source: crawl-ref/source/makeitem.cc.
     local forced_good = request.quality == quality.GOOD or
         request.quality == quality.SUPERB
     local brand = weapon_brands.roll(ctx, definition, request)

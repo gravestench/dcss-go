@@ -1,9 +1,11 @@
+-- Example: electric_bolts.shock supplies the Shock projectile dice registered below.
 local spells = require("ids.spells")
 local projectile = require("policy.magic.effects.zaps.projectile")
 local bounce = require("policy.combat.beam_bounce")
 
 local electric_bolts = {}
 
+-- Shock and Lightning Bolt share electric bounce eligibility but keep distinct caps and dice.
 electric_bolts.bounceable = bounce.electric
 
 electric_bolts.shock = {

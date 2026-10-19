@@ -7,6 +7,8 @@ local menu = require("policy.character.menu")
 
 local pregame = {}
 
+-- Gather cell writes while keeping screen geometry separate from terminal
+-- escape handling; the caller can redraw after resize from the same state.
 local function write(writes, x, y, text, fg, bg)
     writes[#writes + 1] = {
         x = x,
@@ -17,6 +19,8 @@ local function write(writes, x, y, text, fg, bg)
     }
 end
 
+-- Assign displayed choices the same letters accepted by the pregame input
+-- route, including uppercase keys after the first 26 entries.
 local function letter(index)
     if index < 26 then
         return string.char(string.byte("a") + index)
@@ -25,6 +29,8 @@ local function letter(index)
     return string.char(string.byte("A") + index - 26)
 end
 
+-- Preserve group traversal when mapping menu sections to one focus index;
+-- both paging and selected descriptions must refer to that same index.
 local function flatten(groups)
     local ids = {}
 
@@ -37,6 +43,9 @@ local function flatten(groups)
     return ids
 end
 
+-- Character-creation rows reflect the current choice stage and its available options.
+-- Example: pregame.welcome({ species_id = species_id, job_id = job_id })
+-- resolves names from catalogs, so modded choices need no hard-coded label.
 function pregame.welcome(input)
     local who = input.name or ""
     local named = who ~= ""
@@ -65,6 +74,8 @@ function pregame.welcome(input)
     return "Welcome, " .. who .. "."
 end
 
+-- Keep the original two-column/three-column menu geometry explicit instead
+-- of deriving positions from labels that may change in a mod.
 local function group_position(screen, column)
     if screen == "species" then
         return 1 + (column - 1) * 26, 3
@@ -81,6 +92,8 @@ local function group_position(screen, column)
     return positions[column].x, positions[column].y
 end
 
+-- Pin built-in groups to the first page and page extra modded choices in the
+-- remaining slots. The returned offset keeps letters and focus aligned.
 local function choice_page(groups, focus, screen)
     local base_groups = screen == "species" and 3 or 5
     local page_size = screen == "species" and 27 or 25
@@ -134,6 +147,8 @@ local function choice_page(groups, focus, screen)
     return base_count + first - 1, visible
 end
 
+-- Highlight focus separately from recommendation and availability; a
+-- disabled choice must stay visibly disabled even when the cursor reaches it.
 local function choice_color(choice, focused, has_other)
     local available = choice and choice.available
     local recommended = choice and choice.restriction == "recommended"
@@ -163,6 +178,9 @@ local function choice_color(choice, focused, has_other)
     return fg, bg
 end
 
+-- Character choices are flattened before paging and letter assignment.
+-- Use the same catalog menu projection as input routing, then write only the
+-- visible groups so added mod choices do not crowd the fixed screen.
 local function choice_rows(input, writes, wraps)
     local screen = input.screen
     local species_screen = screen == "species"
@@ -231,6 +249,9 @@ local function choice_rows(input, writes, wraps)
     end
 end
 
+-- Weapon rows use the selected species so unavailable starting choices never receive a menu letter.
+-- Recompute aptitudes from that species for every shown weapon; this makes
+-- recommendation colors meaningful after the player changes species.
 local function weapon_rows(input, writes)
     local species = catalog.get("species", input.species_id)
     write(writes, 0, 0, pregame.welcome(input), colors.brown)
@@ -263,6 +284,8 @@ local function weapon_rows(input, writes)
     write(writes, 1, 13, "Bksp - Return to character menu", colors.light_grey)
 end
 
+-- Include the effective ruleset identity on the first screen so players can
+-- see immediately whether an overlay is active before creating a character.
 local function startup_rows(input, writes)
     write(writes, 0, 0,
         "Hello, welcome to Dungeon Crawl Stone Soup " .. source.source_version .. "!",
@@ -305,6 +328,9 @@ local function startup_rows(input, writes)
     write(writes, 1, 22, status .. input.rules_hash:sub(1, 12), colors.light_grey)
 end
 
+-- Dispatch from the current pregame state to one screen projection.
+-- Example: pregame.rows({ screen = "startup", focus = 0,
+--     rules_hash = hash, vanilla = true }) returns terminal writes.
 function pregame.rows(input)
     local writes = {}
     local wraps = {}
@@ -329,14 +355,20 @@ function pregame.rows(input)
     return { writes = writes, wraps = wraps }
 end
 
+-- Adapt row projection to the registered policy signature; context is not
+-- needed because the complete pregame state comes from the input snapshot.
 function pregame.run_rows(_, input)
     return pregame.rows(input)
 end
 
+-- Return one text field for callers that need the welcome line outside the
+-- full screen, avoiding a second name-composition path.
 function pregame.run_welcome(_, input)
     return { text = pregame.welcome(input) }
 end
 
+-- Expose the exact menu highlight rule to the input-side preview so focus
+-- and disabled-color behavior cannot drift from the displayed rows.
 function pregame.run_choice_color(_, input)
     local fg, bg = choice_color(input.choice, input.focused, input.has_other)
 

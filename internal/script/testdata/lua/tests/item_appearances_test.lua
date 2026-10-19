@@ -1,3 +1,5 @@
+-- Staff descriptors preserve source spacing.
+
 local appearances = require("data.item_appearances")
 local names = require("policy.items.appearances")
 local pools = require("constants.appearance_pools")
@@ -5,6 +7,8 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Pin appearance pool sizes and pairings because unidentified items rely on
+-- these committed names remaining stable across fresh games and saves.
 function test.run()
     harness.equal(#appearances.wand.primary, 12,
         "wand primary names match the pinned source")

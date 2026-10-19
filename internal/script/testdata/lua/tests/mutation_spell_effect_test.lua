@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local component = require("constants.component")
 local effects = require("policy.mutations.effects.registry")
@@ -10,6 +11,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Mutation spell power rolls stay within the named spell RNG bound.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -56,10 +58,12 @@ function test.run(ctx)
 
     local encounter = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to spell effect fixture actor so player-only branches execute on that entity.
     function encounter.player()
         return player
     end
 
+    -- Choose the first monster spell from the source 200-way selection.
     function encounter.random(_, stream, bound)
         harness.equal(stream, "monster_spell", "spell selection stream")
         harness.equal(bound, 200, "source spell roll bound")

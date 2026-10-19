@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.player_form",
     version = 1,
+    -- Form ID and appendage mask survive saves; uncancellable keeps forced forms from ordinary cancellation.
     fields = {
         form_id = {
             type = "string",

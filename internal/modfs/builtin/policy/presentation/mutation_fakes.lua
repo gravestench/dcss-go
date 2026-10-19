@@ -8,6 +8,8 @@ local colors = require("policy.presentation.colors")
 
 local fakes = {}
 
+-- Use the same row shape as real mutations so the screen can interleave
+-- species facts without teaching its renderer another record format.
 local function add(rows, text, color)
     rows[#rows + 1] = {
         text = text,
@@ -15,6 +17,8 @@ local function add(rows, text, color)
     }
 end
 
+-- Species descriptions are catalog facts, not mutable mutation components;
+-- project them each redraw so a modded species stays authoritative.
 local function species_entries(rows, species)
     for _, entry in ipairs(species.fake_mutations or {}) do
         if entry.long and entry.long ~= "" then
@@ -23,6 +27,8 @@ local function species_entries(rows, species)
     end
 end
 
+-- Derive size restrictions from current species and suppress text already
+-- explained by a real mutation, avoiding duplicate lines on the screen.
 local function body_size_entries(ctx, owner, rows, species)
     local body_size = species.size
     local weapon_text
@@ -55,6 +61,8 @@ end
 -- Source: mutation.cc:_get_fakemuts prints species facts before real mutation
 -- records. These rows describe source species capabilities already in the
 -- Lua catalog, so no separate mutable state is stored for them.
+-- Example: fakes.rows(ctx, player) returns amphibious and body-size text
+-- before policy.presentation.mutations appends acquired mutation records.
 function fakes.rows(ctx, owner)
     local choice = ctx:get(owner, component.PLAYER)
 

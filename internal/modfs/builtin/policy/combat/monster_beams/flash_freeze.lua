@@ -2,6 +2,8 @@ local component = require("constants.component")
 
 local flash_freeze = {}
 
+-- Example: flash_freeze.skip_damage(ctx, defender) with already frozen defender -> true to skip repeat base damage
+-- A second contact cannot damage or refresh a defender already encased by Flash Freeze.
 function flash_freeze.skip_damage(ctx, defender)
     return ctx:has(defender, component.FLASH_FROZEN)
 end

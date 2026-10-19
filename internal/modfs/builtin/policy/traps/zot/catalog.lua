@@ -1,4 +1,4 @@
--- Source: traps.cc:412-446. Weights are source order, not a Go switch.
+-- Source: traps.cc. Weights are source order, not a Go switch.
 local ids = require("ids.zot_outcomes")
 local streams = require("constants.rng_streams")
 
@@ -57,10 +57,13 @@ local outcomes = {
     },
 }
 
+-- Expose the fixed weighted Zot table to activation and validation.
 function catalog.outcomes()
     return outcomes
 end
 
+-- Use the traps RNG stream against explicit weights so every Zot activation selects one outcome.
+-- Example: stat loss has four slots in the 24-weight Zot table; each trigger spends one traps-stream draw.
 function catalog.choose(ctx)
     local total = 0
 
@@ -81,6 +84,7 @@ function catalog.choose(ctx)
     error("Zot draw exceeded weighted table")
 end
 
+-- Validate each module at boot so a selected outcome cannot fail only when its trap fires.
 function catalog.validate()
     local seen = {}
 

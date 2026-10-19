@@ -6,6 +6,7 @@ local jewellery = require("tests.fixtures.jewellery")
 
 local fixture = {}
 
+-- Build shooter, player, projectile, and optional gear on one ECS world so only reflection varies.
 function fixture.scene(ctx, missile_id, with_reflector, monster_id,
     with_shield)
     local base, player = jewellery.player(ctx)
@@ -67,18 +68,22 @@ function fixture.scene(ctx, missile_id, with_reflector, monster_id,
         ctx:add(buckler, component.EQUIPPED, { slot = "shield" })
     end
 
+    -- Attribute the incoming projectile to the fixture's monster shooter.
     function battle.actor()
         return shooter
     end
 
+    -- Hold all terrain as floor so blocked paths do not confound reflection.
     function battle.cell()
         return terrain.DNGN_FLOOR
     end
 
+    -- Keep trajectories clear while testing shield and return logic.
     function battle.projectile_clear()
         return true
     end
 
+    -- Record combat text for ordering assertions without terminal services.
     function battle.emit(_, kind, message)
         events[#events + 1] = {
             kind = kind,
@@ -86,10 +91,12 @@ function fixture.scene(ctx, missile_id, with_reflector, monster_id,
         }
     end
 
+    -- Expose the captured message sequence after the shot resolves.
     function battle.events()
         return events
     end
 
+    -- Capture player-kill credit from a lethal reflected projectile.
     function battle.signal(_, kind, target)
         signals[#signals + 1] = {
             kind = kind,
@@ -97,6 +104,7 @@ function fixture.scene(ctx, missile_id, with_reflector, monster_id,
         }
     end
 
+    -- Expose kill signals without querying live game systems.
     function battle.signals()
         return signals
     end
@@ -104,9 +112,11 @@ function fixture.scene(ctx, missile_id, with_reflector, monster_id,
     return battle, player, shooter, missile, amulet
 end
 
+-- Script monster-spell draws for an inbound block followed by a return hit.
 function fixture.slug_dart_block_then_return(battle)
     local draws = 0
 
+    -- Preserve Slug Dart's draw sequence so the return path is tested after the first shield contest.
     function battle.random(_, stream, bound)
         if stream ~= "monster_spell" then
             return 0
@@ -123,9 +133,11 @@ function fixture.slug_dart_block_then_return(battle)
     end
 end
 
+-- Script both inbound and returned Slug Dart shield contests.
 function fixture.slug_dart_block_twice(battle)
     local draws = 0
 
+    -- Force a second shield contest on the rebound without changing unrelated RNG streams.
     function battle.random(_, stream, bound)
         if stream ~= "monster_spell" then
             return 0
@@ -141,9 +153,11 @@ function fixture.slug_dart_block_twice(battle)
     end
 end
 
+-- Use melee-stream draws to force a block and optionally a returned hit.
 function fixture.block_then_return(battle, return_hits)
     local draws = 0
 
+    -- Pin the shield roll positions; later values control the rebound without bypassing damage draws.
     function battle.random(_, stream, bound)
         if stream ~= "melee" then
             return 0
@@ -170,6 +184,7 @@ function fixture.block_then_return(battle, return_hits)
     end
 end
 
+-- Equip the shooter to test whether self-directed reflections bypass its shield.
 function fixture.enemy_shield(ctx, shooter)
     local shield = jewellery.carry(ctx, shooter, ids.ARM_BUCKLER)
 
@@ -178,6 +193,7 @@ function fixture.enemy_shield(ctx, shooter)
     return shield
 end
 
+-- Equip a branded Sling so reflection can exercise launcher brand damage.
 function fixture.launcher(ctx, shooter, brand)
     local entity = ctx:create()
 

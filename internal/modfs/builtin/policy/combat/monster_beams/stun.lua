@@ -6,6 +6,7 @@ local resistances = require("constants.resistance_ids")
 
 local stun = {}
 
+-- Monster stasis flags prevent the one-turn stun from taking hold.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -16,6 +17,7 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- An explicit electricity resistance level changes stun eligibility.
 local function electric_resistance(definition)
     for _, entry in ipairs(definition.resistances or {}) do
         if entry.id == resistances.ELECTRICITY then
@@ -26,12 +28,14 @@ local function electric_resistance(definition)
     return 0
 end
 
+-- Store one baseline-delay stun using the defender's component type.
 local function paralyse(ctx, defender, component_id)
     ctx:add(defender, component_id, {
         remaining_aut = 10,
     })
 end
 
+-- Example: stun.after_hit(ctx, nil, defender) with electric-immune monster -> no new stun component
 -- beam.cc:BEAM_STUN_BOLT paralyzes a hit monster for one baseline delay
 -- unless it resists electricity or has stasis. Players get a coin flip
 -- with positive electrical resistance.

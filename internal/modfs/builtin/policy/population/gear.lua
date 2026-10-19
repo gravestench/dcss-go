@@ -1,3 +1,4 @@
+-- Example: A monster weapon plus roll uses the gear stream, leaving layout RNG unchanged.
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local classes = require("ids.object_classes")
@@ -8,10 +9,12 @@ local registry = require("policy.population.gear.registry")
 
 local gear = {}
 
+-- Keep all monster equipment randomness on the dedicated gear stream.
 function gear.draw(ctx, bound)
     return ctx:random("monster_gear", bound)
 end
 
+-- Use one gear-stream draw over source weights so table order stays meaningful.
 function gear.weighted(ctx, choices)
     local total = 0
 
@@ -36,6 +39,7 @@ function gear.weighted(ctx, choices)
     error("weighted monster gear failed to select")
 end
 
+-- Depth influences the range of weapon plusses before branding is considered.
 local function nice_plusses(ctx, depth)
     local plus = 0
 
@@ -51,6 +55,7 @@ local function nice_plusses(ctx, depth)
     return plus
 end
 
+-- Brand selection consumes its own weighted draw only when a quality roll reaches it.
 local function ordinary_brand(ctx, weights)
     local total = 0
 
@@ -75,6 +80,7 @@ local function ordinary_brand(ctx, weights)
     error("ordinary weapon brand table failed to select")
 end
 
+-- Monster gear quality draws plusses and brand through the gear stream after kind selection.
 function gear.quality(ctx, kind_id, depth)
     local definition = catalog.get(categories.ITEMS, kind_id)
 
@@ -110,6 +116,7 @@ function gear.quality(ctx, kind_id, depth)
     }
 end
 
+-- Species-specific handlers override the ordinary gear path without changing spawn order.
 function gear.loadout(ctx, monster_id, depth)
     local special = registry.loadout(ctx, monster_id, depth)
 

@@ -1,4 +1,9 @@
+-- Authored random traps draw uniformly from the regular IDs in catalog order;
+-- the source depth gate admits shafts on D:1 and excludes them from D:2.
+
 local harness = require("tests.harness")
+local categories = require("constants.catalog")
+local catalog = require("policy.catalog")
 local ids = require("ids.traps")
 local placement = require("policy.traps.placement")
 local streams = require("constants.rng_streams")
@@ -7,11 +12,19 @@ local terrain = require("content.terrain_features")
 
 local test = {}
 
-local function context(draw)
+-- Supply an exact trap-stream draw and optional bound assertion, making
+-- weighted selection behavior observable without depending on a seed.
+local function context(draw, expected_bound)
     local ctx = {}
 
+    -- Assert placement uses the trap stream and eligible-pool size before
+    -- returning the requested deterministic selection index.
     function ctx:random(stream, bound)
         harness.equal(stream, streams.TRAPS, "trap RNG stream")
+        if expected_bound then
+            harness.equal(bound, expected_bound,
+                "regular trap draw covers each eligible ID once")
+        end
         harness.truthy(draw >= 0 and draw < bound,
             "fixture draw stays in range")
 
@@ -21,6 +34,8 @@ local function context(draw)
     return ctx
 end
 
+-- Wrap one DES trap token with source location data so resolution failures
+-- can be tied back to the map entry that produced them.
 local function record(identity)
     return {
         identity = identity,
@@ -30,6 +45,8 @@ local function record(identity)
     }
 end
 
+-- Resolve named, random, and preselected trap instructions through the same
+-- production parser path to guard their distinct draw contracts.
 function test.run()
     harness.equal(placement.resolve(context(0),
         record("teleport trap"), 1), ids.TRAP_TELEPORT,
@@ -47,17 +64,46 @@ function test.run()
         record("teleport trap / shaft trap w:20"), 1),
         ids.TRAP_SHAFT, "weighted shaft alternative")
 
-    harness.equal(placement.resolve(context(4),
-        record("random_trap"), 1), ids.TRAP_SHAFT,
-        "D:1 authored random trap can be a shaft")
+    local regular = {
+        ids.TRAP_ALARM,
+        ids.TRAP_DISPERSAL,
+        ids.TRAP_NET,
+        ids.TRAP_SHAFT,
+        ids.TRAP_TELEPORT_PERMANENT,
+        ids.TRAP_ZOT,
+    }
+    local definitions = catalog.all(categories.TRAPS)
+    local found = {}
 
-    harness.equal(placement.resolve(context(0),
-        record("random_trap"), 2), ids.TRAP_TELEPORT_PERMANENT,
-        "D:2 authored random trap uses the regular source set")
+    for _, definition in ipairs(definitions) do
+        if definition.regular then
+            found[#found + 1] = definition.id
+        end
+    end
 
-    harness.equal(placement.resolve(context(4),
-        record("random_trap"), 2), ids.TRAP_DISPERSAL,
-        "D:2 excludes shafts when no lower floor exists")
+    harness.equal(#found, #regular, "regular source trap count")
+
+    -- Exercise every seeded draw at both depths, including the final bound.
+    for index, id in ipairs(regular) do
+        harness.equal(found[index], id, "regular traps use stable ID order")
+        harness.equal(placement.resolve(context(index - 1, #regular),
+            record("random_trap"), 1), id,
+            "D:1 draw selects each regular trap")
+    end
+
+    local depth_two = {
+        ids.TRAP_ALARM,
+        ids.TRAP_DISPERSAL,
+        ids.TRAP_NET,
+        ids.TRAP_TELEPORT_PERMANENT,
+        ids.TRAP_ZOT,
+    }
+
+    for index, id in ipairs(depth_two) do
+        harness.equal(placement.resolve(context(index - 1, #depth_two),
+            record("random_trap"), 2), id,
+            "D:2 draw excludes shafts and selects each remaining trap")
+    end
 
     harness.truthy(placement.is_trap(record("shaft trap / granite_statue")),
         "mixed feature expression can select a trap")
@@ -88,6 +134,8 @@ function test.run()
         "selected trap identity persists for population")
 
     local no_reroll = {
+        -- Preselected vault traps must retain their chosen ID; any new draw
+        -- here would change seeded placement and violate source intent.
         random = function()
             error("selected trap must not be rerolled")
         end,

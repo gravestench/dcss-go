@@ -1,3 +1,4 @@
+-- Example: ctx:get(player, zap_ids.component.MAXWELL) reads the charging timer.
 -- spl-damage.cc:COUPLING_TIME_KEY and corpse suppression on discharge.
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local state = {}

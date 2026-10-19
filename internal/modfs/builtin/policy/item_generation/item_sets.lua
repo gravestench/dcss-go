@@ -5,7 +5,7 @@ local sets = require("constants.item_sets")
 
 local item_sets = {}
 
--- Source: crawl-ref/source/item-prop.cc:728-734.
+-- Source: crawl-ref/source/item-prop.cc.
 local definitions = {
     {
         id = sets.HEX_WANDS,
@@ -38,6 +38,7 @@ local definitions = {
     },
 }
 
+-- Roll one member per set once for the player, so later generation and save validation share the same choice.
 function item_sets.initialise(ctx, player)
     if ctx:has(player, component.PLAYER_ITEM_SETS) then
         return
@@ -56,6 +57,7 @@ function item_sets.initialise(ctx, player)
     })
 end
 
+-- Read the player's saved representative so wand and concealment-scroll sets stay fixed for a run.
 function item_sets.choice(ctx, player, set_id)
     local state = ctx:get(player, component.PLAYER_ITEM_SETS)
 
@@ -66,6 +68,8 @@ function item_sets.choice(ctx, player, set_id)
     return state.choices[set_id]
 end
 
+-- Example: if beam wands chose one subtype, the other beam-wand members are excluded from later rolls.
+-- Compare a candidate with the saved per-run representative, keeping future drops consistent with the initial draw.
 function item_sets.allowed(ctx, player, kind_id)
     local state = ctx:get(player, component.PLAYER_ITEM_SETS)
 
@@ -84,6 +88,7 @@ function item_sets.allowed(ctx, player, kind_id)
     return true
 end
 
+-- Reject a saved item-set representative absent from its allowed catalog.
 function item_sets.validate(state)
     if not state then
         error("player item sets are missing")

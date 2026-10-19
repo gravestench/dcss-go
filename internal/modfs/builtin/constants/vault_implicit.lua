@@ -1,3 +1,5 @@
+-- Implicit vault tokens are defaults supplied when a DES map omits an explicit directive.
+
 local implicit = {}
 
 implicit.items = {

@@ -14,6 +14,7 @@ local unbreathing = {
     [holiness.PLANT] = true,
 }
 
+-- Example: drowning.immune(ctx, target) with undead player -> true drowning immunity
 -- fight.cc:get_resistible_fraction leaves 60% impact damage even when
 -- the defender cannot drown in the magical water.
 function drowning.immune(ctx, target)
@@ -45,6 +46,7 @@ function drowning.immune(ctx, target)
     return false
 end
 
+-- Swimming and undead targets retain only 60 percent of drowning beam damage.
 function drowning.damage(ctx, target, raw)
     if drowning.immune(ctx, target) then
         return raw - math.floor(raw * 40 / 100)

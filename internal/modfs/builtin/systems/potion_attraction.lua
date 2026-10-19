@@ -3,6 +3,8 @@ local attraction = require("policy.potions.attraction")
 
 local system = {}
 
+-- Theory of operation: The attraction status draws eligible monsters before recovery closes the action.
+-- Attraction pulls eligible monsters after duration decay and before regeneration.
 function system.update(ctx, player, aut)
     if player == ctx:player() then
         attraction.tick(ctx, player, aut)

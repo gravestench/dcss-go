@@ -4,10 +4,13 @@ local roll = require("policy.combat.roll")
 
 local melee = {}
 
+-- Example: melee.player(ctx, input) with confirmed player hit -> resolved hit and damage outcome
+-- Forward a prepared player attack to contact and damage resolution in one call.
 function melee.player(ctx, input)
     return player_attack.resolve(ctx, input)
 end
 
+-- Reflexive headbutts require horns and make their own chance roll before auxiliary damage.
 function melee.reflexive_headbutt(ctx, input)
     if not input.reflexive or input.horns == 0 then
         return { attempted = false }
@@ -24,6 +27,7 @@ function melee.reflexive_headbutt(ctx, input)
     }
 end
 
+-- Shield blocking is rolled before the auto miss and evasion checks; preserve this RNG order.
 local function contact(ctx, hd, hit, plus, defense)
     local hit_bound = 19 + math.floor(hd * 3 / 2) + hit + plus +
         (defense.visible_hit_modifier or 0)
@@ -63,12 +67,14 @@ local function contact(ctx, hd, hit, plus, defense)
     return { kind = "hit", damage = 0, shield_blocks = defense.shield_blocks }
 end
 
+-- Convert a selected monster weapon into the shared contact roll without dealing damage yet.
 function melee.monster_contact(ctx, attack, defense)
     local weapon = attack.weapon
     return contact(ctx, attack.hd, weapon and weapon.hit or 0,
         weapon and weapon.plus or 0, defense)
 end
 
+-- Damage rolls after contact use the monster's selected attack profile.
 function melee.monster_damage(ctx, attack, defense)
     local weapon = attack.weapon
 
@@ -92,6 +98,7 @@ function melee.monster_damage(ctx, attack, defense)
     return math.max(0, damage - saved)
 end
 
+-- Damage is rolled only after a hit so misses and blocks do not consume damage RNG.
 function melee.monster(ctx, attack, defense)
     local outcome = melee.monster_contact(ctx, attack, defense)
 

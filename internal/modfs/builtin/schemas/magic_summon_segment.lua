@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.summon_segment",
     version = 1,
+    -- Each tentacle connector links to its head and gateway, with index preserving segment order.
     fields = {
         head = { type = "entity" },
         gateway = { type = "entity" },

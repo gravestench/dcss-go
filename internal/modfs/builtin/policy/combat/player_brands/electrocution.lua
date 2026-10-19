@@ -6,8 +6,10 @@ local brand = {
     after_death = true,
 }
 
+-- Example: brand.apply(ctx, hit, brands) with defender with positive rElec -> no electrical burst
+-- Roll the electrical burst after contact and resist it separately from base weapon damage.
 function brand.apply(ctx, hit, brands)
-    -- Source: attack.cc:1400-1420. Any positive rElec prevents the proc.
+    -- Source: attack.cc. Any positive rElec prevents the proc.
     local probe = damage.monster_elemental(ctx, hit.defender,
         1, resistances.ELECTRICITY)
 

@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local confuse = require("policy.combat.monster_hexes.confuse")
@@ -13,6 +14,7 @@ local caster = 101
 local player = 202
 local monster = 303
 
+-- The fake world stores player and monster statuses through the same API.
 local function context()
     local ctx = {
         values = {
@@ -38,28 +40,34 @@ local function context()
         },
     }
 
+    -- Read the saved player status after Confuse and Paralyse resolve.
     function ctx:get(entity, id)
         return self.values[entity] and self.values[entity][id]
     end
 
+    -- Create newly applied control effects in the fixture store.
     function ctx:add(entity, id, value)
         self.values[entity][id] = value
     end
 
+    -- Persist timer changes on repeated control applications.
     function ctx:set(entity, id, value)
         self.values[entity][id] = value
     end
 
+    -- Choose low source rolls to expose the minimum-duration clamp.
     function ctx:random()
         return 0
     end
 
+    -- Ignore prose so only saved duration values decide the control result.
     function ctx:emit()
     end
 
     return ctx
 end
 
+-- Paralyse applies the source minimum two player turns.
 function test.run()
     local ctx = context()
     local confusion = catalog.get("monster_beams", spells.SPELL_CONFUSE)
@@ -68,6 +76,8 @@ function test.run()
     confuse.apply(ctx, caster, player, confusion)
     paralyse.apply(ctx, caster, player, paralysis)
 
+    -- Player durations have source minimums; monsters use separate saved
+    -- confusion and paralysis components.
     harness.equal(ctx:get(player, zap.PLAYER_CONFUSION).remaining_aut,
         50, "Confuse applies the source minimum five player turns")
     harness.equal(ctx:get(player, component.PLAYER_PARALYSIS).remaining_aut,

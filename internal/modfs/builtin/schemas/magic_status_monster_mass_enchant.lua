@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.monster_mass_enchant",
     version = 1,
+    -- Fear and anguish timers are independent results of area enchantment.
     fields = {
         fear_aut = {
             type = "int64",

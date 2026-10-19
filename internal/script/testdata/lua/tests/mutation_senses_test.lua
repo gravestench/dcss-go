@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local harness = require("tests.harness")
 local catalog = require("policy.catalog")
@@ -9,6 +10,7 @@ local senses = require("policy.character.senses")
 
 local test = {}
 
+-- An ordinary player cannot identify an innately invisible monster.
 function test.run(ctx)
     local player = ctx:create()
     local monster = ctx:create()
@@ -35,6 +37,7 @@ function test.run(ctx)
 
     harness.equal(senses.detect_radius(ctx, player), 2,
         "each antennae level detects monsters two cells farther")
+    -- Detection reveals position without granting the visual identity of an invisible actor.
     harness.equal(senses.perceive(ctx, player, monster, true), "detected",
         "antennae locate but do not identify an invisible monster")
 
@@ -55,6 +58,7 @@ function test.run(ctx)
 
     harness.equal(senses.perceive(ctx, player, monster, false, true),
         "detected", "antennae sense a monster behind known walls")
+    -- Known terrain gates detection output even when the monster is within radius.
     harness.equal(senses.perceive(ctx, player, monster, false, false),
         "unseen", "unexplored cells do not reveal monster positions")
 
@@ -71,6 +75,7 @@ function test.run(ctx)
 
     records.grant_acquired(ctx, player, mutations.MUT_ANTENNAE, 2)
 
+    -- The highest antennae rank crosses from detection into direct identification.
     harness.truthy(senses.see_invisible(ctx, player),
         "three antennae levels grant see invisible")
 
@@ -113,6 +118,7 @@ function test.run(ctx)
 
     local world = setmetatable({}, { __index = ctx })
 
+    -- Capture senses events separately from the policy state being asserted.
     function world.emit() end
 
     enchant.tick(world, monster)

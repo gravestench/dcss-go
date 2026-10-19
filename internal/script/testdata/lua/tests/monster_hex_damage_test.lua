@@ -1,3 +1,4 @@
+
 local agony = require("policy.combat.monster_hexes.agony")
 local catalog = require("policy.catalog")
 local component = require("constants.component")
@@ -12,9 +13,11 @@ local test = {}
 local caster = 101
 local foe = 202
 
+-- Pain damage uses the source power floor for a weak caster.
 function test.run()
     local ctx = {}
 
+    -- Return the weak caster and defender definitions used by the Pain power calculation.
     function ctx:get(entity, id)
         if id == component.ACTOR then
             return {
@@ -33,10 +36,12 @@ function test.run()
         return nil
     end
 
+    -- Keep optional defensive components absent to isolate source power flooring.
     function ctx:has()
         return false
     end
 
+    -- Use maximum damage dice to make the weak-power floor observable.
     function ctx:random(_, bound)
         return bound - 1
     end

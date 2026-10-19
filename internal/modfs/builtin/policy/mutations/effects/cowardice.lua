@@ -6,6 +6,8 @@ local registry = require("policy.mutations.effects.registry")
 
 local cowardice = {}
 
+-- Fear cleanup runs when cowardice changes, so stale fear does not outlive the mutation.
+-- Example: losing the last Cowardice level removes a saved Horror state left by that mutation.
 function cowardice.changed(ctx, player)
     if levels.effective(ctx, player, mutations.MUT_COWARDICE) == 0 and
         ctx:has(player, component.HORROR) then

@@ -3,6 +3,8 @@ local identification = require("policy.items.identification")
 
 local system = {}
 
+-- Theory of operation: The intent validates ownership before reducing a stack or clearing its carried component.
+-- Dropping transfers or splits carried stacks before later equipment actions can inspect them.
 function system.update(ctx, actor)
     local intent = ctx:get(actor, "core.intent")
 
@@ -28,6 +30,7 @@ function system.update(ctx, actor)
     local name = identification.name(ctx, ctx:player(), entity)
     local floor = items.floor_stack(ctx, position, item, entity)
 
+    -- Merge with a matching floor stack; a partial unstacked drop gets a new entity and copied knowledge.
     if floor then
         local stacked = ctx:get(floor, "core.item")
         stacked.quantity = stacked.quantity + intent.quantity

@@ -6,6 +6,7 @@ local player_slow = require("policy.character.slow")
 
 local slow = {}
 
+-- Example: slow.apply(ctx, caster, defender, profile) with player with zero RNG -> 10 turns of slow
 -- Source: beam.cc:BEAM_SLOW; players gain 10 + random2(power) turns.
 function slow.apply(ctx, caster, defender, profile)
     if ctx:get(defender, component.PLAYER) then

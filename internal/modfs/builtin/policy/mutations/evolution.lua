@@ -14,10 +14,12 @@ local handled_mutations = {
     [mutations.MUT_DEVOLUTION] = true,
 }
 
+-- Only Evolution and Devolution own the saved periodic mutation clock.
 function evolution.has_mutation(mutation_id)
     return handled_mutations[mutation_id] == true
 end
 
+-- Devolution wins if both records exist, so one timer drives at most one active policy.
 local function active_mutation(ctx, owner)
     if records.find(ctx, owner, mutations.MUT_DEVOLUTION) then
         return mutations.MUT_DEVOLUTION
@@ -30,6 +32,7 @@ local function active_mutation(ctx, owner)
     return ""
 end
 
+-- Scale the next-level XP gap by species aptitude; Devolution uses one quarter of it.
 local function threshold(ctx, owner, mutation_id)
     local progress = ctx:get(owner, "core.progression")
     local player = ctx:get(owner, "core.player")
@@ -50,10 +53,12 @@ local function threshold(ctx, owner, mutation_id)
     return gap
 end
 
+-- Read the persisted timer component; callers must tolerate a pre-start owner.
 function evolution.state(ctx, owner)
     return ctx:get(owner, component_id)
 end
 
+-- Create the timer once so mutation changes do not reset elapsed aut accidentally.
 function evolution.start(ctx, owner)
     if evolution.state(ctx, owner) then
         return
@@ -90,6 +95,7 @@ function evolution.changed(ctx, owner)
     ctx:set(owner, component_id, state)
 end
 
+-- Example: earned XP advances a saved Evolution threshold rather than rolling on every turn.
 -- Source: player.cc:apply_exp decrements only positive ATTR_EVOL_XP.
 function evolution.gain_experience(ctx, owner, amount)
     if amount < 0 or amount % 1 ~= 0 then
@@ -104,6 +110,7 @@ function evolution.gain_experience(ctx, owner, amount)
     end
 end
 
+-- Reset earned-XP threshold before rolling a mutation; two successful grants consume one source rank.
 local function check(ctx, owner)
     local state = evolution.state(ctx, owner)
     local mutation_id = state.mutation_id
@@ -169,6 +176,7 @@ function evolution.tick(ctx, owner, aut)
     check(ctx, owner)
 end
 
+-- Reject a restored timer that disagrees with owned mutation records or schedule bounds.
 function evolution.validate(ctx, owner)
     local state = evolution.state(ctx, owner)
 

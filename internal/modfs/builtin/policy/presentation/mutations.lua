@@ -16,6 +16,8 @@ local title = "Innate Abilities, Weirdness & Mutations"
 local AC_SCALE = 100
 local SH_DISPLAY_SCALE = 2
 
+-- Use DCSS's mutation-screen letters so the option key remains stable while
+-- rows are split into innate, acquired, and temporary groups.
 local function letter(index)
     if index <= 26 then
         return string.char(string.byte("a") + index - 1)
@@ -24,6 +26,8 @@ local function letter(index)
     return string.char(string.byte("A") + index - 27)
 end
 
+-- Build renderer cells instead of printing directly; the terminal can then
+-- clip or page the same mutation information at any supported size.
 local function write(writes, x, y, text, color)
     writes[#writes + 1] = {
         x = x,
@@ -33,7 +37,10 @@ local function write(writes, x, y, text, color)
     }
 end
 
-local function source_order()
+-- Preserve the authored mutation display sequence, then append mod-added IDs
+-- from the sorted catalog. This is presentation order, independent of which
+-- file was discovered or registered first.
+local function display_order()
     local ordered = {}
     local seen = {}
 
@@ -52,6 +59,8 @@ local function source_order()
     return ordered
 end
 
+-- Group actual mutation records by origin while keeping the display sequence
+-- inside each group. The screen needs innate facts ahead of temporary ones.
 local function ordered_records(ctx, owner)
     local by_id = {}
     local groups = {
@@ -64,7 +73,7 @@ local function ordered_records(ctx, owner)
         by_id[entry.state.mutation_id] = entry.state
     end
 
-    for _, id in ipairs(source_order()) do
+    for _, id in ipairs(display_order()) do
         local state = by_id[id]
 
         if state then
@@ -91,6 +100,8 @@ local function ordered_records(ctx, owner)
     return ordered
 end
 
+-- Read the definition's use tags instead of guessing from its displayed
+-- name; mods can change wording without changing its adverse classification.
 local function bad_mutation(definition)
     for _, use in ipairs(definition.uses) do
         if use == "bad" then
@@ -101,6 +112,8 @@ local function bad_mutation(definition)
     return false
 end
 
+-- Ask the registered effect for a live value rather than duplicating its
+-- combat formula in the screen; a missing effect is a broken definition.
 local function effect_value(ctx, owner, id, capability, level)
     local handlers = effects.get(id)
     local handler = handlers and handlers[capability]
@@ -115,6 +128,8 @@ end
 -- Source: mutation.cc:mutation_desc appends live values to these three
 -- deliberately unfinished `have` strings. AC uses hundredths and SH uses
 -- twice the displayed value in player.cc.
+-- Ice Mail displays the current partial AC because equipment and mutation
+-- activity can change the value after the mutation was first gained.
 local function icemail_description(ctx, owner, level, definition)
     local id = mutation_ids.MUT_ICEMAIL
     local effective = levels.effective(ctx, owner, id)
@@ -125,6 +140,8 @@ local function icemail_description(ctx, owner, level, definition)
         bonus .. ")"
 end
 
+-- Condensation Shield stores shield class at twice the printed value, so
+-- divide only after asking the live effect for its current contribution.
 local function condensation_description(ctx, owner, level, definition)
     local id = mutation_ids.MUT_CONDENSATION_SHIELD
     local effective = levels.effective(ctx, owner, id)
@@ -135,6 +152,8 @@ local function condensation_description(ctx, owner, level, definition)
         bonus .. ")"
 end
 
+-- Sanguine Armour uses its full level for the live AC figure; the acquired
+-- record level alone would understate a partially suppressed mutation.
 local function sanguine_description(ctx, owner, level, definition)
     local id = mutation_ids.MUT_SANGUINE_ARMOUR
     local full = levels.full(ctx, owner, id)
@@ -151,6 +170,8 @@ local dynamic_descriptions = {
     [mutation_ids.MUT_SANGUINE_ARMOUR] = sanguine_description,
 }
 
+-- Combine source text, activity suppression, temporary brackets, and color
+-- in one place so every mutation row tells the same story as its mechanics.
 local function description(ctx, owner, state)
     local id = state.mutation_id
     local definition = catalog.get("mutations", id)
@@ -203,6 +224,8 @@ local function description(ctx, owner, state)
     return text, color, mode
 end
 
+-- Wrap detail text on word boundaries when possible, but still split a long
+-- unbroken token so narrow terminals cannot overflow their cell canvas.
 local function wrapped_lines(text, width)
     local lines = {}
 
@@ -225,6 +248,8 @@ local function wrapped_lines(text, width)
     return lines
 end
 
+-- Resolve the selected record before paginating its description. Rejecting
+-- unknown IDs keeps a stale selection key from showing another mutation.
 local function detail_rows(ctx, owner, input, ordered)
     local selected
 
@@ -278,6 +303,9 @@ local function detail_rows(ctx, owner, input, ordered)
     }
 end
 
+-- Build the screen from current ECS records and species-derived fake rows.
+-- Example: runtime.Policy("presentation.mutations", { height = 24, page = 0 })
+-- returns writes and only the visible page's selectable mutation IDs.
 function mutations.rows(ctx, input)
     local owner = input.owner or ctx:player()
     local writes = {}
@@ -376,6 +404,8 @@ function mutations.rows(ctx, input)
     }
 end
 
+-- Keep the registered callback a thin adapter so direct screen tests and the
+-- terminal use exactly the same pagination and legend logic.
 function mutations.run(ctx, input)
     return mutations.rows(ctx, input)
 end

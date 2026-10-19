@@ -1,3 +1,5 @@
+-- Beam plans and resolution preserve contact order, status ownership, terrain effects, and reflection.
+
 local beam = require("policy.combat.monster_beams")
 local catalog = require("policy.catalog")
 local component = require("constants.component")
@@ -18,6 +20,8 @@ local foe = 202
 local next_foe = 303
 local shield_item = 404
 
+-- Optional second contacts, shields, and walls make the same deterministic
+-- world exercise beam, cloud, bounce, and reflection order.
 local function context(with_second, with_reflection, blocked_cloud_ray,
     reflected_continuation, bounce_wall)
     local values = {
@@ -105,30 +109,37 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
         next_entity = 500,
     }
 
+    -- Fix the player entity away from monster IDs so beam targeting can distinguish sides.
     function ctx:player()
         return 999
     end
 
+    -- Read the fixture component store exactly as policy context reads ECS components.
     function ctx:get(entity, id)
         return self.values[entity] and self.values[entity][id]
     end
 
+    -- Persist hit-point and status updates for later phase assertions.
     function ctx:set(entity, id, value)
         self.values[entity][id] = value
     end
 
+    -- Make newly created cloud and status components visible to subsequent resolver calls.
     function ctx:add(entity, id, value)
         self.values[entity][id] = value
     end
 
+    -- Track dispels and temporary-state cleanup in the same fixture store.
     function ctx:remove(entity, id)
         self.values[entity][id] = nil
     end
 
+    -- Gate branch behaviour on actual saved components rather than hardcoded flags.
     function ctx:has(entity, id)
         return self:get(entity, id) ~= nil
     end
 
+    -- Sort entity IDs so AoE target iteration cannot depend on Lua table order.
     function ctx:query(ids)
         local result = {}
 
@@ -152,6 +163,7 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
         return result
     end
 
+    -- Allocate distinct marker entities for clouds and temporary terrain.
     function ctx:create()
         local entity = self.next_entity
 
@@ -161,10 +173,12 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
         return entity
     end
 
+    -- Expose stable fixture entity IDs to ownership and target checks.
     function ctx:id(entity)
         return entity
     end
 
+    -- Supply a wall only in bounce cases; otherwise preserve floor terrain.
     function ctx:cell(_, x, y)
         if self.cells[x .. "," .. y] then
             return self.cells[x .. "," .. y]
@@ -177,14 +191,17 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
         return terrain.vault_terrain.DNGN_FLOOR
     end
 
+    -- Record terrain replacement so Hurl Sludge and wave assertions inspect the endpoint.
     function ctx:set_cell(_, x, y, feature)
         self.cells[x .. "," .. y] = feature
     end
 
+    -- Use a fixed action clock so cloud and status expiry values are reproducible.
     function ctx:aut()
         return 100
     end
 
+    -- Block one cloud ray only in the occlusion case while other traces stay clear.
     function ctx:projectile_clear(_, from_x, from_y, to_x, to_y)
         if blocked_cloud_ray and from_x == 4 and from_y == 1 and
             to_x == 5 and to_y == 1 then
@@ -194,14 +211,17 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
         return true
     end
 
+    -- Hold sight constant so tests isolate projectile and contact rules.
     function ctx:visible()
         return true
     end
 
+    -- Turn the configured bounce wall into nonwalkable terrain for displacement tests.
     function ctx:walkable(_, x, y)
         return not (bounce_wall and x == 5 and y == 1)
     end
 
+    -- Persist moved positions to verify Blinkbolt and knockback outcomes.
     function ctx:move_actor(entity, level_id, x, y)
         local position = self:get(entity, component.POSITION)
 
@@ -211,6 +231,7 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
         self:set(entity, component.POSITION, position)
     end
 
+    -- Expose the optional second contact and reflected continuation at authored cells.
     function ctx:actor_at(_, x, y)
         if y ~= 1 then
             return nil
@@ -233,6 +254,7 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
         return nil
     end
 
+    -- Script bounded draws to distinguish shield blocks, misses, and reflection branches.
     function ctx:random(_, bound)
         self.random_count = self.random_count + 1
 
@@ -257,6 +279,7 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
         return bound - 1
     end
 
+    -- Capture combat messages without relying on a live terminal.
     function ctx:emit(_, message)
         self.messages[#self.messages + 1] = message
     end
@@ -264,6 +287,7 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
     return ctx
 end
 
+-- Check a simple Magic Dart plan and resolved contact before compound beam cases.
 local function basic_trajectory()
     local ctx = context()
     local profile = catalog.get("monster_beams", spells.SPELL_MAGIC_DART)
@@ -312,6 +336,7 @@ local function basic_trajectory()
 
 end
 
+-- Compare contact poison with endpoint cloud placement across beam profiles.
 local function poison_and_areas()
     local poison_spells = {
         spells.SPELL_VENOM_BOLT,
@@ -438,6 +463,8 @@ local function poison_and_areas()
 
 end
 
+-- Draining, reflection, and bounce cases assert the contact sequence as well
+-- as the final damage, because each contact can consume its own RNG draw.
 local function draining_projectiles_and_bounces()
     local draining_spells = {
         spells.SPELL_BOLT_OF_DRAINING,
@@ -627,6 +654,7 @@ local function draining_projectiles_and_bounces()
 
 end
 
+-- Cover lasting effects that outlive direct damage, including terrain changes.
 local function status_and_terrain()
     local stun_ctx = context()
     local stun_health = stun_ctx:get(foe, component.HEALTH)
@@ -668,6 +696,8 @@ local function status_and_terrain()
 
 end
 
+-- Movement hooks run after a landed contact; misses must leave positions and
+-- lingering statuses unchanged.
 local function contact_timing_and_movement()
     local profile = catalog.get("monster_beams", spells.SPELL_MAGIC_DART)
     local timing_ctx = context()
@@ -675,6 +705,7 @@ local function contact_timing_and_movement()
     local phases = {}
     local timing = {}
 
+    -- Assert flavour hooks see calculated damage before HP is subtracted.
     function timing.before_damage(ctx, _, defender, _, outcome)
         phases[#phases + 1] = "flavour"
 
@@ -684,6 +715,7 @@ local function contact_timing_and_movement()
             "flavour hooks see the calculated damage")
     end
 
+    -- Assert post-hit hooks observe the already reduced defender HP.
     function timing.after_hit(ctx, _, defender)
         phases[#phases + 1] = "contact"
 
@@ -734,6 +766,7 @@ local function contact_timing_and_movement()
     local reflected_force_ctx = context(false, true)
     local original_after_hit = force_effect.after_hit
 
+    -- Intercept reflected Force Lance contact to verify its ray origin before knockback.
     force_effect.after_hit = function(ctx, source, defender,
         profile, outcome, incoming)
         harness.equal(incoming.x, 2,
@@ -839,6 +872,7 @@ local function contact_timing_and_movement()
 
     local pie_ctx = context()
 
+    -- Force the first pie filling so the status assertion is deterministic.
     function pie_ctx:random()
         return 0
     end
@@ -854,6 +888,7 @@ local function contact_timing_and_movement()
         "a blueberry pie stores the monster mute effect")
 end
 
+-- Run ray, AoE, status, and hook-order cases against isolated fixture contexts.
 function test.run()
     basic_trajectory()
     poison_and_areas()

@@ -1,5 +1,6 @@
 local commands = require("policy.input.commands")
 
+-- Vi keys and named cursor keys resolve to the same eight movement offsets.
 local directions = {
     h = {
         dx = -1,
@@ -76,9 +77,11 @@ local directions = {
 
 local input = {}
 
+-- Directional key decoding is shared by movement and targeted terminal prompts.
 function input.command(key)
     local direction = directions[key]
 
+    -- Example: `h` and `left` both become the same westward move intent.
     if direction then
         return {
             action = "step",

@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local death = require("policy.death")
 local harness = require("tests.harness")
@@ -5,6 +6,7 @@ local monsters = require("ids.monsters")
 
 local test = {}
 
+-- Sphinx counts both dangerous spells without an equipment bonus.
 function test.run()
     local basilisk = catalog.get("monsters", monsters.MONS_BASILISK)
     local sphinx = catalog.get("monsters", monsters.MONS_SPHINX)

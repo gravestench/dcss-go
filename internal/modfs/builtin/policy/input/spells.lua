@@ -4,6 +4,8 @@ local menu = require("policy.input.menu")
 
 local spells = {}
 
+-- Sort library choices by level then displayed name so letter assignments
+-- stay stable when content files are loaded in another order.
 local function memorise_before(left, right)
     local a = catalog.get("spells", left.id)
     local b = catalog.get("spells", right.id)
@@ -15,10 +17,13 @@ local function memorise_before(left, right)
     return a.name < b.name
 end
 
+-- Known spell letters are stored on the character; sorting by slot preserves
+-- the player's bindings after save/restore or catalog changes.
 local function known_before(left, right)
     return left.letter_slot < right.letter_slot
 end
 
+-- Casting lists known slots, while memorisation lists library entries without known slots.
 local function choices(input)
     local selected = {}
     local learning = input.mode == "spell_memorise"
@@ -41,6 +46,7 @@ end
 
 spells.choices = choices
 
+-- The chosen spell determines whether the next screen must collect a target.
 local function needs_aim(spell)
     for _, flag in ipairs(spell.flags or {}) do
         if flag == "target" or flag == "dir" or
@@ -52,6 +58,8 @@ local function needs_aim(spell)
     return false
 end
 
+-- Spell selection distinguishes a known spell from memorisation before asking for aim.
+-- Example: choosing Magic Dart routes to aim collection; Blink can dispatch without a target prompt.
 function spells.route(input)
     local navigation = menu.close_or_help(input)
 

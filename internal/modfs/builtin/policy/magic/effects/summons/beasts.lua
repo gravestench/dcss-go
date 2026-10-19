@@ -3,6 +3,7 @@ local monsters = require("ids.monsters")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
 
+-- A blocked summon space is silent; report arrival only after spawn places the creature.
 local function appeared(ctx, creature, message)
     if creature then
         ctx:emit("spell", message)
@@ -12,6 +13,7 @@ end
 -- Source: spl-summoning.cc:cast_summon_small_mammal.
 local spell_effects = {}
 
+-- Power shifts the species roll from bat or rat toward quokka; the shared spawner enforces the two-summon cap.
 function spell_effects.resolve_summon_small_mammal(ctx, player, _, _, power)
     local kind_id = monsters.MONS_QUOKKA
 
@@ -50,6 +52,7 @@ registry.add(spells.SPELL_CALL_CANINE_FAMILIAR, {
     resolve = spell_effects.resolve_call_canine_familiar,
 })
 
+-- Example: Call Imp rolls an imp kind and a power-scaled duration before spawning it.
 -- Source: spl-summoning.cc:_get_imp_type and cast_call_imp.
 function spell_effects.resolve_call_imp(ctx, player, _, _, power)
     local kind_id = monsters.MONS_CRIMSON_IMP

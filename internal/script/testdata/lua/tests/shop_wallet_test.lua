@@ -1,3 +1,6 @@
+-- Floor gold moves into the wallet atomically; spending tracks purchases, and
+-- overspend or integer overflow leaves both wallet and floor item unchanged.
+
 local harness = require("tests.harness")
 local component = require("constants.component")
 local item_ids = require("ids.items")
@@ -5,6 +8,8 @@ local materialize = require("policy.item_generation.materialize")
 
 local test = {}
 
+-- Materialize gold as a real floor item so pickup exercises the same ECS
+-- transfer path that updates a player's wallet during play.
 local function gold_at(ctx, quantity, x)
     return materialize.create(ctx, {
         kind_id = item_ids.OBJ_GOLD,
@@ -21,6 +26,8 @@ local function gold_at(ctx, quantity, x)
     })
 end
 
+-- Verify floor gold and purchases change the wallet through production
+-- handlers, preventing gold balance and purchase counters from drifting.
 function test.run(ctx)
     local wallet = require("policy.shops.wallet")
     local player = ctx:create()

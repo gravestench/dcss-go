@@ -8,6 +8,7 @@ local resistance = require("policy.clouds.effects.resistance")
 local storm = {}
 storm.risk_resistance = resistances.ELECTRICITY
 
+-- Both player and monster need full electricity resistance to ignore the strike.
 local function lightning_immune(ctx, actor)
     if actor == ctx:player() then
         return resistance.player(ctx, actor,
@@ -18,12 +19,15 @@ local function lightning_immune(ctx, actor)
         resistances.ELECTRICITY) >= 3
 end
 
+-- A storm is harmless only when both its lightning and rain parts cannot hurt.
 function storm.immune(ctx, actor)
     -- Fiery monsters can still take the rain half of this cloud.
     return lightning_immune(ctx, actor) and
         rain.immune(ctx, actor)
 end
 
+-- Rain contact happens first; a separate clouds-stream roll can add electrical damage.
+-- Example: storm exposure can combine rain damage with a separate clouds-stream lightning roll.
 function storm.apply(ctx, actor, state, elapsed_aut, entity, definition)
     local rain_damage = rain.apply(ctx, actor, state,
         elapsed_aut, entity, {

@@ -11,6 +11,9 @@ local dig = {}
 local profile = catalog.get(categories.MONSTER_BEAMS,
     spells.SPELL_DIG)
 
+-- Monster Dig is offered only when the ray toward its foe reaches breakable wall terrain.
+-- Example: dig.plan(ctx, caster, foe) with breakable wall toward foe -> entity plan aimed through that wall
+-- Requires a breakable wall on the foe-directed ray.
 function dig.plan(ctx, caster, foe)
     local source = ctx:get(caster, component.POSITION)
     local destination = ctx:get(foe, component.POSITION)
@@ -36,6 +39,7 @@ function dig.plan(ctx, caster, foe)
     }
 end
 
+-- Recheck direction at resolution so a moved foe cannot redirect a planned Dig ray.
 function dig.resolve(ctx, caster, foe, _, plan)
     target.require_entity(plan, foe)
 

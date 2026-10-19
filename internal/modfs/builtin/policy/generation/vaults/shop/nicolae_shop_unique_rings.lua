@@ -1,12 +1,14 @@
+-- Example: Encode the rolled plus value in the DES item token for shop stock.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
+-- Encode the rolled plus value in the DES item token for shop stock.
 local function ring(name, plus)
     return name .. " plus:" .. plus
 end
 
--- Port of builder/shops.des:1212-1232.
+-- Sample a bounded subset of named rings so the shop never offers every unique ring at once.
 local function configure_unique_rings(api)
     local count = api:roll_dice(2, 3) + 1
     local rings = {

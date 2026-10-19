@@ -70,6 +70,7 @@ local terrain_material = {
     [terrain.DNGN_CRYSTAL_WALL] = "crystal",
 }
 
+-- Read the monster material only while the target is alive and still has an actor record.
 local function monster_profile(ctx, target)
     local actor = ctx:get(target, component.ACTOR)
     local health = ctx:get(target, component.HEALTH)
@@ -99,6 +100,7 @@ local function monster_profile(ctx, target)
     return nil
 end
 
+-- Choose player material from current form and species for self-targeted destruction.
 local function player_profile(ctx, player)
     local choice = ctx:get(player, "character.choice")
     local form = ctx:get(player, component.PLAYER_FORM)
@@ -118,6 +120,7 @@ local function player_profile(ctx, player)
     return nil
 end
 
+-- Prefer an occupant material at the impact cell before checking terrain material.
 local function profile(ctx, player, level, x, y)
     local target = ctx:actor_at(level, x, y)
 
@@ -144,12 +147,15 @@ local function profile(ctx, player, level, x, y)
     return nil
 end
 
+-- Anchor the aimed coordinate to the caster position for direct-hit geometry.
 local function target_cell(ctx, player, dx, dy)
     local origin = ctx:get(player, component.POSITION)
 
     return origin, origin.x + dx, origin.y + dy
 end
 
+-- Example: An aimed stone wall passes preflight; an empty floor without material is rejected.
+-- Resolve actor material before terrain material, then reject targets with neither valid profile.
 function lrd.prepare(ctx, player, spell, dx, dy)
     local origin, x, y = target_cell(ctx, player, dx, dy)
     local reach = range.for_spell(ctx, player, spell)
@@ -161,6 +167,7 @@ function lrd.prepare(ctx, player, spell, dx, dy)
     end
 end
 
+-- Use spell-stream dice for fragments so source damage depends on material and power.
 local function roll(ctx, count, sides)
     local total = 0
 
@@ -171,6 +178,7 @@ local function roll(ctx, count, sides)
     return total
 end
 
+-- Resolve direct material damage, then splash fragments around the impacted cell.
 function lrd.resolve(ctx, player, intent, _, power)
     local origin, x, y = target_cell(ctx, player, intent.dx, intent.dy)
     local material, direct, target, hit_center =

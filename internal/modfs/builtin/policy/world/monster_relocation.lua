@@ -3,11 +3,13 @@ local net = require("policy.combat.net")
 
 local relocation = {}
 
+-- A linked actor remains adjacent only on the same floor and within one grid step.
 local function adjacent(position, level_id, x, y)
     return position and position.level_id == level_id and
         math.max(math.abs(position.x - x), math.abs(position.y - y)) <= 1
 end
 
+-- Moving a monster breaks player constraints that cannot span the new position.
 local function release_player_links(ctx, monster, level_id, x, y)
     local player = ctx:player()
     local player_position = ctx:get(player, component.POSITION)
@@ -31,6 +33,7 @@ local function release_player_links(ctx, monster, level_id, x, y)
     end
 end
 
+-- Band followers cannot retain leader links after the monster changes floors.
 local function release_band_links(ctx, monster, level_id, origin_level)
     if level_id == origin_level then
         return
@@ -49,6 +52,8 @@ local function release_band_links(ctx, monster, level_id, origin_level)
     end
 end
 
+-- Relocation releases links tied to the old cell before moving the monster.
+-- Example: relocation.move(ctx, monster, floor, x, y) drops links tied to its old floor.
 function relocation.move(ctx, monster, level_id, x, y)
     local origin = ctx:get(monster, component.POSITION)
 

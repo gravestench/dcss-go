@@ -1,3 +1,4 @@
+-- Example: A species that cannot use a starting spell is rejected before its gift is added.
 -- Starting item and spell usability derives from the species definition.
 -- Fake mutations such as Formicid stasis are gameplay rules, not HUD text.
 local mutation_levels = require("policy.mutations.levels")
@@ -8,6 +9,7 @@ local traits = {}
 
 traits.stasis = species_traits.stasis
 
+-- Starting spell legality uses species form and mutation restrictions before a spell record is granted.
 function traits.start_spell_usable(ctx, player, species, spell_id)
     if traits.stasis(species) and
         (spell_id == "SPELL_BLINK" or spell_id == "SPELL_TELEPORT_SELF" or

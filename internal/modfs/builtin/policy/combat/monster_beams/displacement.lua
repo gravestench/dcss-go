@@ -7,6 +7,7 @@ local trajectory = require("policy.combat.trajectory")
 
 local displacement = {}
 
+-- Stationary monsters ignore both pull and push even after a damaging beam contact.
 local function stationary(ctx, target)
     local actor = ctx:get(target, component.ACTOR)
 
@@ -25,6 +26,7 @@ local function stationary(ctx, target)
     return false
 end
 
+-- Monster destinations must satisfy habitat rules; the player only requires walkable terrain.
 local function habitable(ctx, target, level_id, x, y)
     if ctx:has(target, component.PLAYER) then
         return ctx:walkable(level_id, x, y)
@@ -33,6 +35,7 @@ local function habitable(ctx, target, level_id, x, y)
     return habitat.at(ctx, target, level_id, x, y)
 end
 
+-- Use species or monster corpse mass to scale collision resistance.
 local function body_weight(ctx, target)
     if ctx:has(target, component.PLAYER) then
         local player = ctx:get(target, component.PLAYER)
@@ -47,6 +50,7 @@ local function body_weight(ctx, target)
     return corpse_chunks.maximum(definition)
 end
 
+-- Preserve fractional power contribution when selecting push distance.
 local function random_round(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -153,6 +157,7 @@ local function push_steps(ctx, caster, target, steps, roll, incoming)
     return moved
 end
 
+-- Damage permits a multi-cell push, with power controlling both attempted steps and collision roll.
 function displacement.push(ctx, caster, target, damage, power, incoming)
     if damage <= 0 then
         return false
@@ -164,6 +169,7 @@ function displacement.push(ctx, caster, target, damage, power, incoming)
     return push_steps(ctx, caster, target, steps, roll, incoming)
 end
 
+-- Example: displacement.wave(ctx, caster, target, incoming) with stationary target -> false without moving target
 -- BEAM_WATER's source knockback does not require positive HP damage.
 function displacement.wave(ctx, caster, target, incoming)
     return push_steps(ctx, caster, target, 1, 17, incoming)

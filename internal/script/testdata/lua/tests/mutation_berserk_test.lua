@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local capabilities = require("constants.mutation_capabilities")
 local effects = require("policy.mutations.effects.registry")
@@ -12,6 +13,7 @@ local species = require("ids.species")
 
 local test = {}
 
+-- Rage expiry preserves current HP to source rounding.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -50,11 +52,13 @@ function test.run(ctx)
     local world = setmetatable({}, { __index = ctx })
     local messages = {}
 
+    -- Force the low rage draw while asserting each requested bound stays positive.
     function world.random(_, _, bound)
         harness.truthy(bound > 0, "rage random bounds stay positive")
         return 0
     end
 
+    -- Capture berserk events separately from the policy state being asserted.
     function world.emit(_, _, message)
         messages[#messages + 1] = message
     end
@@ -63,8 +67,10 @@ function test.run(ctx)
         "a living player can enter berserk rage")
     harness.equal(ctx:get(player, component.HEALTH).max, rage_max,
         "rage raises maximum HP by fifty percent")
+    -- Entering rage changes both current and maximum HP with source rounding.
     harness.equal(ctx:get(player, component.HEALTH).current, rage_current,
         "rage scales current HP with maximum HP")
+    -- The scripted RNG fixes the minimum duration before action penalties are exercised.
     harness.equal(ctx:get(player, component.RAGE).remaining_aut, 100,
         "minimum source rage lasts ten turns")
     harness.equal(messages[1],
@@ -77,6 +83,7 @@ function test.run(ctx)
         "a melee turn spends time without a no-combat penalty")
 
     rage.tick(world, player, 10)
+    -- Peaceful actions shorten rage separately from elapsed action time.
     harness.equal(ctx:get(player, component.RAGE).remaining_aut, 70,
         "the first noncombat turn adds ten aut of rage penalty")
 

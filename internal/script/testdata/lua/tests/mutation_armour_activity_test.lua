@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
@@ -6,6 +7,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Statue keeps partial Rugged Brown Scales benefits.
 function test.run(ctx)
     local player = ctx:create()
 

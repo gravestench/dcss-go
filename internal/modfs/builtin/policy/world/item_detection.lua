@@ -7,14 +7,18 @@ local vision = require("policy.character.vision")
 
 local detection = {}
 
+-- Jiyva's passive detection contributes its fixed radius only while the ability level is active.
+-- Example: detection.jelly_radius(1) gives Jiyva's jelly item detection a five-cell radius.
 function detection.jelly_radius(level)
     return level > 0 and 5 or 0
 end
 
+-- Strong Nose is a one-cell baseline when its mutation is active.
 function detection.nose_radius(level)
     return level > 0 and 1 or 0
 end
 
+-- Strong Nose uses sight range; jelly detection uses its own mutation strength.
 function detection.radius(ctx, sight_radius)
     local player = ctx:player()
 
@@ -25,6 +29,7 @@ function detection.radius(ctx, sight_radius)
     return effects.sum(ctx, player, capabilities.JELLY_ITEM_DETECTION)
 end
 
+-- Compute item cells from the host snapshot before writing any map knowledge.
 function detection.plan(ctx, input)
     local radius = detection.radius(ctx, input.sight_radius)
     local selected = {}
@@ -49,6 +54,7 @@ function detection.plan(ctx, input)
     return selected
 end
 
+-- Return selected item cells to the host; this policy does not write map knowledge directly.
 function detection.run(ctx, input)
     input.sight_radius = vision.radius(ctx, ctx:player())
 

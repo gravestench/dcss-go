@@ -1,3 +1,5 @@
+-- Gold is the fixed source kind.
+
 local classes = require("ids.object_classes")
 local harness = require("tests.harness")
 local ids = require("ids.items")
@@ -6,6 +8,7 @@ local requests = require("policy.generation.vaults.specs.random_items")
 
 local test = {}
 
+-- Source shorthand must preserve quality and depth until the generator picks a subtype.
 local function descriptors_preserve_source_request()
     local ordinary = requests.describe("random_item", 2)
     local star = requests.describe("*", 2)
@@ -21,6 +24,7 @@ local function descriptors_preserve_source_request()
         "gold is the fixed source kind")
 end
 
+-- Check random, starred, and fixed-gold request descriptors together.
 function test.run()
     descriptors_preserve_source_request()
 end

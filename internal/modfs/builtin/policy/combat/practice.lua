@@ -3,6 +3,7 @@ local delay = require("policy.combat.delay")
 
 local practice = {}
 
+-- Certain and impossible practice gates consume no skill RNG, preserving the stream.
 local function chance(ctx, numerator, denominator)
     if numerator <= 0 then
         return false
@@ -15,6 +16,7 @@ local function chance(ctx, numerator, denominator)
     return ctx:random("skill", denominator) < numerator
 end
 
+-- Fractional undertraining bonus gets unbiased skill-stream rounding.
 local function random_round(ctx, numerator, denominator)
     local whole = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -23,11 +25,15 @@ local function random_round(ctx, numerator, denominator)
     return whole + (roll < remainder and 1 or 0)
 end
 
+-- Practice is a signal for progression; combat does not directly mutate XP.
 local function emit(ctx, id)
     ctx:signal("practice", id)
 end
 
+-- Train more below the minimum-delay skill threshold, then still occasionally train Fighting.
 local function weapon_use(ctx, input)
+    -- Skill below the weapon's minimum delay threshold receives more
+    -- practice; each emitted event is handled by the progression system.
     local minimum = input.minimum_skill or
         delay.minimum_skill(input.weapon_speed, input.weapon_skill)
     local current = math.floor(input.weapon100 / 100)
@@ -52,6 +58,8 @@ local function weapon_use(ctx, input)
     end
 end
 
+-- Example: practice.player_hit(ctx, input) with unarmed hit -> Unarmed Combat practice event
+-- Unarmed hits train directly; wielded hits use weapon damage as the practice gate.
 function practice.player_hit(ctx, input)
     if input.unarmed then
         emit(ctx, "SK_UNARMED_COMBAT")
@@ -66,8 +74,9 @@ function practice.player_hit(ctx, input)
     weapon_use(ctx, input)
 end
 
+-- Committed throws train even on misses; launchers share weapon-delay practice logic.
 function practice.player_projectile(ctx, missile, launcher)
-    -- exercise.cc:184-199 trains on the committed shot, even when it misses.
+    -- exercise.cc trains on the committed shot, even when it misses.
     if not launcher then
         if missile.id ~= "MI_STONE" or chance(ctx, 1, 2) then
             emit(ctx, "SK_THROWING")
@@ -91,6 +100,7 @@ function practice.player_projectile(ctx, missile, launcher)
     weapon_use(ctx, input)
 end
 
+-- A blocked hit trains Shields more often than a non-blocked incoming attack.
 function practice.incoming_shield(ctx, outcome, defense)
     if defense.shield_class <= 0 then
         return
@@ -103,7 +113,10 @@ function practice.incoming_shield(ctx, outcome, defense)
     end
 end
 
+-- Armour mass suppresses Dodging, while real hits can train Armour or Fighting.
 function practice.incoming_melee(ctx, outcome, defense)
+    -- Armour mass suppresses Dodging practice, while actual hits may train
+    -- Armour or Fighting after the shield practice check.
     local armour_mass = math.max(0, 42 * math.floor(-defense.body_ev / 10) - 13)
 
     if chance(ctx, 1, 6) and not chance(ctx, armour_mass, 800) then

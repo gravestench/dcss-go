@@ -15,10 +15,12 @@ for _, id in pairs(properties) do
     random_property[id] = true
 end
 
+-- Include the item entity ID when an artefact's saved state is impossible.
 local function fail(ctx, entity, detail)
     error("artefact item " .. ctx:id(entity) .. " " .. detail)
 end
 
+-- A unique artefact's saved identity must match a known source artefact.
 local function validate_unique(ctx, entity, item, artefact, seen)
     local okay, definition = pcall(catalog.get, "artefacts",
         artefact.unique_id)
@@ -62,6 +64,7 @@ local function validate_unique(ctx, entity, item, artefact, seen)
     end
 end
 
+-- Random artefacts validate property compatibility against their current base item and brand.
 local function validate_random(ctx, entity, item, artefact)
     local definition = catalog.get("items", item.kind_id)
 
@@ -95,6 +98,8 @@ local function validate_random(ctx, entity, item, artefact)
     end
 end
 
+-- Saved unique and random artefacts must agree with their source definitions and ownership history.
+-- Example: artefacts.validate(ctx) rejects a second ordinary copy of one unique artefact.
 function artefacts.validate(ctx)
     local seen = {}
 

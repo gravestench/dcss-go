@@ -3,10 +3,12 @@ local component = require("constants.component")
 local summons = require("policy.magic.effects.summons.common")
 local vortex = require("policy.magic.effects.summons.fire_vortex")
 
+-- Theory of operation: Expired summons are torn down before ordinary death cleanup, preserving source-specific effects.
 -- Source: monster::mark_summoned and ENCH_ABJ expiry. The component belongs
 -- to the summoned actor, so its timeout and owner survive save and restore.
 local system = {}
 
+-- Summon teardown runs after constriction and before ordinary actor death cleanup.
 function system.update(ctx, active)
     local player = ctx:player()
 

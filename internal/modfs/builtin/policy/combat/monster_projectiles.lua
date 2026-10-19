@@ -1,5 +1,7 @@
 local monster_projectiles = {}
 
+-- Example: monster_projectiles.effect(kind_id) with invalid missile ID -> resolver lookup error
+-- MI_ missile ids map to dedicated projectile policies; invalid ids fail before a ranged action resolves.
 function monster_projectiles.effect(kind_id)
     local name = kind_id:match("^MI_(.+)$")
 

@@ -45,6 +45,7 @@ local negative = {
     [properties.FRAGILE] = 8,
 }
 
+-- Positive resistance grows quadratically in value; a vulnerability incurs one fixed penalty.
 local function resistance(value, base, scale, penalty)
     if value > 0 then
         return base + scale * value * value
@@ -53,6 +54,8 @@ local function resistance(value, base, scale, penalty)
     return value < 0 and -penalty or 0
 end
 
+-- A known unique artefact can carry an authored fixed price; returning nil
+-- lets ordinary artefacts continue through the calculated value path.
 function artefacts.fixed_value(artefact)
     if not artefact or artefact.kind ~= kinds.UNIQUE then
         return nil
@@ -68,6 +71,9 @@ function artefacts.fixed_value(artefact)
     return nil
 end
 
+-- Example: fire resistance adds its scaled bonus before negative properties reduce the shop valuation.
+-- Walk typed artefact properties and flags with source multipliers so the
+-- same saved roll is valued consistently across every equipment class.
 function artefacts.value(artefact)
 
     local values = artefact.properties or {}

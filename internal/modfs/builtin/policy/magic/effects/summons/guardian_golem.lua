@@ -7,6 +7,7 @@ local targets = require("policy.ai.targets")
 
 local golem = {}
 
+-- Example: A guardian bonds eligible nearby allied summons so their damage can be shared.
 -- Source: mon-abil.cc:guardian_golem_bond. Only allied monsters in LOS
 -- receive ENCH_INJURY_BOND; the player is not one of its protectees.
 function golem.bond(ctx, guardian)

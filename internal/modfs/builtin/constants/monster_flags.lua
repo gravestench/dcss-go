@@ -1,3 +1,5 @@
+-- Monster flags describe persistent species traits such as avatars and projectile bodies.
+
 local flags = {
     CONJURED = "M_CONJURED",
     PROJECTILE = "M_PROJECTILE",

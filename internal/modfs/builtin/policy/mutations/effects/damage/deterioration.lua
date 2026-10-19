@@ -8,6 +8,7 @@ local deterioration = {}
 
 -- Source: ouch.cc:_deteriorate draws the level-in-four chance before
 -- checking whether the damage exceeds one tenth of maximum HP.
+-- Example: damage exceeding one tenth of max HP can trigger Deterioration after its level-based roll.
 function deterioration.on_damage(ctx, player, damage)
     local level = levels.effective(ctx, player,
         mutations.MUT_DETERIORATION)

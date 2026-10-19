@@ -10,6 +10,7 @@ local resistance = require("policy.clouds.effects.resistance")
 local acid = {}
 acid.risk_resistance = resistances.ACID
 
+-- Acid resistance is checked before corrosion and damage are applied to the occupant.
 function acid.immune(ctx, actor)
     if actor == ctx:player() then
         return resistance.player(ctx, actor,
@@ -20,6 +21,8 @@ function acid.immune(ctx, actor)
         resistances.ACID) > 0
 end
 
+-- Immunity gates shared elemental damage; contact also applies player or monster corrosion.
+-- Example: acid exposure checks resistance before assigning cloud damage and source credit.
 function acid.apply(ctx, actor, state, elapsed_aut, _, definition)
     if acid.immune(ctx, actor) then
         return 0

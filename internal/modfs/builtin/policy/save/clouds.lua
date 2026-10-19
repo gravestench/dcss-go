@@ -31,17 +31,20 @@ for _, id in pairs(terrain_ids) do
     known_terrain[id] = true
 end
 
+-- Cloud occupancy is keyed by floor and coordinates to catch duplicate entities.
 local function cell_key(state)
     return string.format("%d:%d:%d",
         state.level_id, state.x, state.y)
 end
 
+-- Saved durations and cloud dimensions must remain integral and bounded.
 local function valid_integer(value, minimum, maximum)
     return type(value) == "number" and
         value % 1 == 0 and value >= minimum and
         (not maximum or value <= maximum)
 end
 
+-- Each cloud is checked before terrain and field cross-links are accepted.
 local function validate_cloud(ctx, entity, state, occupied)
     local id = ctx:id(entity)
     local known, definition = pcall(catalog.get,
@@ -87,6 +90,7 @@ local function validate_cloud(ctx, entity, state, occupied)
     occupied[key] = true
 end
 
+-- Temporary terrain needs a future expiry and a unique cell, or cloud cleanup could restore the wrong feature.
 local function validate_terrain(ctx, entity, state, occupied)
     local id = ctx:id(entity)
 
@@ -107,6 +111,8 @@ local function validate_terrain(ctx, entity, state, occupied)
     occupied[key] = true
 end
 
+-- Cloud records and terrain links are checked before the field can resume aging.
+-- Example: clouds.validate(ctx) rejects two clouds occupying one saved cell.
 function clouds.validate(ctx)
     local occupied_clouds = {}
     local occupied_terrain = {}

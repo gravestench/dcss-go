@@ -5,6 +5,7 @@ local component = require("constants.component")
 local schema = {
     id = component.JEWELLERY_ACROBAT,
     version = 1,
+    -- The move or wait bonus remains active through the following monster response, then the next action replaces it.
     fields = {
         active = {
             type = "bool",

@@ -24,6 +24,9 @@ local multiplier = {
     [brands.VENOM] = 12,
 }
 
+-- Example: weapons.value(kind, sword, known, artefact) prices a revealed brand and plus.
+-- Start with authored base price, then include only known brand, plus, and
+-- artefact details so shop quotes do not expose hidden weapon properties.
 function weapons.value(kind, item, known, artefact)
     local value = kind.weapon and kind.weapon.price or 0
 

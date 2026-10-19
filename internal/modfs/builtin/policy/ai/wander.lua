@@ -2,6 +2,7 @@ local common = require("policy.ai.common")
 
 local wander = {}
 
+-- A follower inherits a reachable leader target before independent wandering.
 local function choose_band_target(ctx, state, position, leader)
     local level_id = position.level_id
 
@@ -41,6 +42,8 @@ local function choose_band_target(ctx, state, position, leader)
     state.target_y = candidates[index].y
 end
 
+-- Retarget a wandering band from its leader or an occasional AI roll, avoiding a fixed stale destination.
+-- Example: wander.update(ctx, monster, state, position) keeps a band's pursuit target in sync.
 function wander.update(ctx, entity, state, position)
     local leader = common.leader_position(ctx, entity, position.level_id)
     local retarget = state.target_x == 0 and state.target_y == 0

@@ -1,5 +1,5 @@
--- Generated from a committed DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Each zap cap limits player spellpower before beam-specific scaling.
+
 -- Source: crawl-ref/source/zap-data.h
 -- SHA-256: ac1b829dc9782dea7c218d246a2698a450397d2655d806ba0518f9a15fce2198
 local catalog = {

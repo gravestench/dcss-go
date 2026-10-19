@@ -1,3 +1,5 @@
+-- Read-safety blocks scrolls without spending time.
+
 local component = require("constants.component")
 local harness = require("tests.harness")
 local restrictions = require("constants.safety_restrictions")
@@ -5,6 +7,8 @@ local reading = require("policy.scrolls.restrictions")
 
 local test = {}
 
+-- Probe both available and blocked scroll reading through the shared gate,
+-- which commands consult before consuming an inventory item.
 function test.run(ctx)
     local player = ctx:create()
 

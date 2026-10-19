@@ -4,6 +4,8 @@ local registry = require("policy.mutations.effects.registry")
 
 local equipment = {}
 
+-- Equipment restrictions are queried from current mutation levels before wear commands proceed.
+-- Example: No Armour level one blocks equipment without deleting the carried item.
 function equipment.forbidden(level)
     return level > 0 and 1 or 0
 end

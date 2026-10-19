@@ -21,6 +21,7 @@ local valid_cosmetics = {
     [cosmetics.EMBROIDERED_SHINY] = true,
 }
 
+-- A plus is shown only after type and plus knowledge, and only for enchantable classes.
 local function shows_pluses(kind, state)
     if not state.pluses or not state.type then
         return false
@@ -43,11 +44,13 @@ local function shows_pluses(kind, state)
             (kind.jewellery and kind.jewellery.pluses == true))
 end
 
+-- Removed and enum-only kinds never consume an appearance seed.
 local function active(kind)
     return kind.status ~= "removed" and kind.status ~= "enum_only" and
         not kind.explicitly_removed
 end
 
+-- Item naming requires the player's own knowledge component, not global catalog state.
 local function knowledge(ctx, player)
     local known = ctx:get(player, component.ITEM_KNOWLEDGE)
 
@@ -58,6 +61,7 @@ local function knowledge(ctx, player)
     return known
 end
 
+-- Assign appearances only to active kinds with an unidentified descriptor pool.
 local function each_identifiable()
     local definitions = {}
 
@@ -75,6 +79,7 @@ local function each_identifiable()
     return definitions
 end
 
+-- Sparse swap removal draws unique seeds without shuffling the full pool.
 local function remove_at(swaps, selected, remaining)
     local tail = remaining - 1
     local seed = swaps[selected] or selected
@@ -83,6 +88,7 @@ local function remove_at(swaps, selected, remaining)
     return seed
 end
 
+-- Plain appearances carry source weight; selected seeds are removed from the pool.
 local function weighted_draw(ctx, pool, draw)
     if not draw.plain_count then
         draw.plain_count = appearances.primary_count(pool)
@@ -114,14 +120,17 @@ local function weighted_draw(ctx, pool, draw)
     return seed
 end
 
+-- Scroll and staff pools draw unused seeds uniformly without retries.
 local function uniform_draw(ctx, draw)
     local remaining = draw.capacity - draw.count
     local selected = ctx:random("item-appearance", remaining)
     return remove_at(draw.swaps, selected, remaining)
 end
 
+-- Assign each identifiable kind a unique descriptor within its pool using the saved run RNG.
+-- Example: identification.initialize(ctx, player) assigns distinct potion appearances for this run.
 function identification.initialize(ctx, player)
-    -- Source: ng-init.cc:326-414. A sparse swap table chooses distinct
+    -- Source: ng-init.cc. A sparse swap table chooses distinct
     -- seeds without retries, including for mod-added item definitions.
     local seeds = {}
     local draws = {}
@@ -160,6 +169,7 @@ function identification.initialize(ctx, player)
     })
 end
 
+-- Merely seeing a weapon or armour type updates knowledge without revealing its enchantment or properties.
 function identification.record_seen(ctx, player, kind_ids)
     local known = knowledge(ctx, player)
     known.seen_types = known.seen_types or {}
@@ -181,6 +191,7 @@ function identification.record_seen(ctx, player, kind_ids)
     end
 end
 
+-- A known type can come from global player knowledge or this item's instance state; pluses remain separate.
 function identification.known(ctx, player, entity)
     local item = ctx:get(entity, component.ITEM)
 
@@ -201,6 +212,7 @@ function identification.known(ctx, player, entity)
     }
 end
 
+-- Learning one kind updates player knowledge shared by every item of that kind.
 function identification.reveal_type(ctx, player, entity)
     local item = ctx:get(entity, component.ITEM)
     local kind = catalog.get("items", item.kind_id)
@@ -214,6 +226,7 @@ function identification.reveal_type(ctx, player, entity)
     ctx:set(player, component.ITEM_KNOWLEDGE, known)
 end
 
+-- Instance-only knowledge records pluses and properties without revealing every kind.
 function identification.reveal_item(ctx, entity, fields)
     local state = ctx:get(entity, component.ITEM_IDENTIFICATION) or {}
 
@@ -236,6 +249,7 @@ function identification.reveal_item(ctx, entity, fields)
     end
 end
 
+-- Stacks need matching identification fields so merging does not leak hidden information.
 function identification.compatible(ctx, left, right)
     local first = ctx:get(left, component.ITEM_IDENTIFICATION) or {}
     local second = ctx:get(right, component.ITEM_IDENTIFICATION) or {}
@@ -248,6 +262,7 @@ function identification.compatible(ctx, left, right)
         (first.cosmetic or 0) == (second.cosmetic or 0)
 end
 
+-- A split stack inherits its source item's instance knowledge.
 function identification.copy(ctx, source, target)
     local state = ctx:get(source, component.ITEM_IDENTIFICATION)
 
@@ -256,6 +271,7 @@ function identification.copy(ctx, source, target)
     end
 end
 
+-- Build the visible name from player knowledge, instance flags, and artefact appearance.
 function identification.name(ctx, player, entity)
     local item = ctx:get(entity, component.ITEM)
     local kind = catalog.get("items", item.kind_id)
@@ -305,6 +321,7 @@ function identification.name(ctx, player, entity)
     return name
 end
 
+-- Saved appearance seeds must be unique and remain within their pool capacity.
 function identification.validate(ctx, player)
     local known = knowledge(ctx, player)
     local expected = {}

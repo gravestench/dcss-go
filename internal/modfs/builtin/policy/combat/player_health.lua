@@ -64,6 +64,8 @@ function health_policy.damage(ctx, player, amount, fatal_exception, attacker,
     return health, dealt
 end
 
+-- Example: health_policy.can_heal(ctx, player) with active Death's Door -> false healing permission
+-- Check active heal-blocking effects before vampiric and other combat healing writes HP.
 function health_policy.can_heal(ctx, player)
     return not statuses.death_door_active(ctx, player)
 end

@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local hex = require("policy.combat.monster_spells.hex")
@@ -11,14 +12,17 @@ local spells = require("ids.spells")
 
 local test = {}
 
+-- Script monster-spell rolls and count them so Demonic Will tests pin hex resistance order.
 local function spell_context(ctx, player, draws)
     local proxy = setmetatable({}, { __index = ctx })
     local next_draw = 0
 
+    -- Bind policy ownership to demonic will hex fixture actor so player-only branches execute on that entity.
     function proxy.player()
         return player
     end
 
+    -- Consume scripted monster-spell bounds in order so resistance cannot skip a draw.
     function proxy.random(_, stream, bound)
         next_draw = next_draw + 1
         local fixture = draws[next_draw]
@@ -32,6 +36,7 @@ local function spell_context(ctx, player, draws)
         return fixture.value
     end
 
+    -- Check how many named RNG draws the hex path consumed.
     function proxy.draws_used()
         return next_draw
     end
@@ -39,6 +44,7 @@ local function spell_context(ctx, player, draws)
     return proxy
 end
 
+-- Monster hexes step down enchantment power after dividing by three.
 function test.run(ctx)
     local player = ctx:create()
     local caster = ctx:create()
@@ -74,6 +80,7 @@ function test.run(ctx)
         "Demonic Will resists the hostile enchantment")
     harness.equal(ctx:get(caster, component.HEALTH).current, 27,
         "successful resistance lashes the caster for source damage")
+    -- A resisted hex consumes both will checks before retaliation damage.
     harness.equal(rolls.draws_used(), 4,
         "backlash follows both willpower rolls")
 
@@ -97,6 +104,7 @@ function test.run(ctx)
     harness.equal(hex.resisted(ordinary_rolls, caster, plain, profile),
         true,
         "monster hexes step down enchantment power after dividing by three")
+    -- Backlash is gated by the mutation rather than resistance alone.
     harness.equal(ctx:get(caster, component.HEALTH).current, 27,
         "ordinary resistance does not trigger Demonic Will")
 end

@@ -22,6 +22,7 @@ local throw_excluded = {
     MI_SLING_BULLET = true,
 }
 
+-- Validate ownership and weapon or missile class before tracing the shot.
 local function selected_item(ctx, player, firing, item_id)
     local entity = firing and equipment.in_slot(ctx, player, "weapon") or
         (item_id ~= 0 and ctx:entity(item_id) or nil)
@@ -62,6 +63,8 @@ local function selected_item(ctx, player, firing, item_id)
     return entity, kind, nil
 end
 
+-- Both firing and throwing use the same target checks after their item restrictions diverge.
+-- Example: projectiles.prepare(ctx, player, true, 0, 1, 0) traces a shot from the wielded launcher.
 function projectiles.prepare(ctx, player, firing, item_id, dx, dy)
     if mutation_effects.sum(ctx, player,
         mutation_capabilities.HANDHELD_USE_FORBIDDEN) > 0 then
@@ -89,6 +92,7 @@ function projectiles.prepare(ctx, player, firing, item_id, dx, dy)
         return { message = "You cannot see that target." }
     end
 
+    -- Portal Projectile bypasses ordinary trajectory blockage but still rejects solid destination terrain.
     if statuses.portal_projectile_active(ctx, player) then
         if not ctx:walkable(position.level_id, x, y) then
             return { message = "You cannot target solid terrain." }

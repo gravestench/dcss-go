@@ -19,10 +19,13 @@ local tailslap = {
     },
 }
 
+-- Tail Slap strength comes from effective mutation level after form suppression.
 local function level(ctx, id)
     return levels.effective(ctx, ctx:player(), id)
 end
 
+-- Draconian origin or an effective tail mutation enables the slap; equipped
+-- items cannot supply this auxiliary attack.
 local function has_tail(ctx)
     local player = ctx:get(ctx:player(), component.PLAYER)
 
@@ -38,11 +41,13 @@ local function has_tail(ctx)
         level(ctx, mutations.MUT_CONSTRICTING_TAIL) > 0
 end
 
+-- Draconian origin or an active tail mutation allows the slap, except a constricting tail.
 function tailslap.available(ctx)
     return has_tail(ctx) and
         level(ctx, mutations.MUT_CONSTRICTING_TAIL) == 0
 end
 
+-- Example: tailslap.describe(ctx) with no tail mutations -> base damage 6
 -- Source: melee-attack.cc:AuxTailslap.
 function tailslap.describe(ctx)
     local stinger = level(ctx, mutations.MUT_STINGER)
@@ -57,6 +62,7 @@ function tailslap.describe(ctx)
     }
 end
 
+-- The weakness stinger affects only targets with a vulnerable body.
 local function vulnerable_to_weakness(definition)
     for _, holiness in ipairs(definition.holiness or {}) do
         if holiness == holiness_ids.UNDEAD or
@@ -68,6 +74,7 @@ local function vulnerable_to_weakness(definition)
     return true
 end
 
+-- A level-three weakness stinger takes precedence over ordinary stinger poison on a damaging slap.
 function tailslap.on_hit(ctx, target, definition, result)
     if result.damage <= 0 then
         return

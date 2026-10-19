@@ -4,6 +4,7 @@ local streams = require("constants.rng_streams")
 
 local mark = {}
 
+-- A fresh alarm mark updates the existing timer instead of stacking components.
 function mark.apply(ctx, player, source_stream)
     local stream = source_stream or streams.TRAPS
     local state = ctx:get(player, component.TRAP_MARK)
@@ -23,6 +24,8 @@ function mark.apply(ctx, player, source_stream)
     ctx:emit("trap", "A sentinel's mark forms upon you.")
 end
 
+-- Decay the alarm mark on action time and remove it once duration reaches zero.
+-- Example: mark.tick(ctx, player, 10) ages the alarm mark after a player action.
 function mark.tick(ctx, player, aut)
     local state = ctx:get(player, component.TRAP_MARK)
 

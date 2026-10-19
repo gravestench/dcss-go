@@ -1,9 +1,11 @@
+-- Example: Drinking Might refreshes its duration with a power-dependent random spread.
 local component = require("constants.component")
 
 local might = {}
 
 -- Source: potion.cc:PotionMight. Power sets the added duration spread;
 -- callers choose the saved RNG stream that owns their effect.
+-- Might extends an existing duration up to the source cap instead of replacing it with a fresh roll.
 function might.apply(ctx, player, power, stream)
     local durations = ctx:get(player, component.DURATIONS)
 

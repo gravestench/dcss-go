@@ -1,3 +1,5 @@
+-- Themed book retains schools.
+
 local purpose = require("constants.item_generation_purpose")
 local streams = require("constants.rng_streams")
 local books = require("policy.item_generation.books")
@@ -11,9 +13,12 @@ local skills = require("ids.skills")
 
 local test = {}
 
+-- Zero draws make the first source school and spell entries reproducible.
 local function zero_context()
     local ctx = {}
 
+    -- Use the first book draw while asserting the named generation stream,
+    -- keeping authored spell-list assertions independent of global RNG.
     function ctx:random(stream, bound)
         harness.equal(stream, streams.ITEM_GENERATION, "book RNG stream")
         harness.truthy(bound > 0, "book draw bound")
@@ -24,6 +29,7 @@ local function zero_context()
     return ctx
 end
 
+-- Fixed spellbooks retain imported spell lists and level weights.
 local function fixed_books_use_pinned_templates()
     local definition = catalog.get("items", ids.BOOK_CANTRIPS)
 
@@ -33,6 +39,7 @@ local function fixed_books_use_pinned_templates()
         "fixed book receives spell-level weight")
 end
 
+-- Manual generation carries both its chosen skill and point budget to the item.
 local function manual_retains_skill_and_points()
     local result = generation.roll(zero_context(), {
         kind_id = ids.BOOK_MANUAL,
@@ -51,6 +58,7 @@ local function manual_retains_skill_and_points()
     harness.truthy(known.known_type, "manual preidentified")
 end
 
+-- Themed and level books resolve their generated spell lists from source data.
 local function random_books_retain_source_spell_lists()
     local theme = generation.roll(zero_context(), {
         kind_id = ids.BOOK_RANDART_THEME,
@@ -81,6 +89,8 @@ local function random_books_retain_source_spell_lists()
     end
 end
 
+-- Cover fixed books, manuals, and random books because each carries different
+-- source fields into the generated item record.
 function test.run()
     fixed_books_use_pinned_templates()
     manual_retains_skill_and_points()

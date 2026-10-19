@@ -8,6 +8,7 @@ local roll = require("policy.combat.roll")
 
 local refrigeration = {}
 
+-- Missing species flags grant no conjured or cold-blooded trait.
 local function has_flag(definition, wanted)
     for _, value in ipairs(definition.flags or {}) do
         if value == wanted then
@@ -18,6 +19,7 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- An absent cold resistance entry leaves the monster fully exposed.
 local function cold_resistance(definition)
     for _, entry in ipairs(definition.resistances or {}) do
         if entry.id == "MR_RES_COLD" then
@@ -28,6 +30,7 @@ local function cold_resistance(definition)
     return 0
 end
 
+-- Spell-stream remainder draws avoid flooring fractional die sizes.
 local function random_divide(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -39,6 +42,7 @@ local function random_divide(ctx, numerator, denominator)
     return quotient
 end
 
+-- Cap spell power before converting source's four-die maximum to die sides.
 local function base_sides(ctx, power)
     -- zap-data.h:ZAP_REFRIGERATE, calcdice<4,30,4,9>, cap 200.
     local maximum = 30 + math.floor(math.min(power, 200) * 4 / 9)
@@ -46,6 +50,7 @@ local function base_sides(ctx, power)
     return random_divide(ctx, maximum, 4)
 end
 
+-- Use a pre-damage snapshot so kills earlier in iteration do not alter chill dilution.
 local function adjacent_count(ctx, target, snapshot)
     local center = ctx:get(target, component.POSITION)
     local count = 0
@@ -63,6 +68,7 @@ local function adjacent_count(ctx, target, snapshot)
     return count
 end
 
+-- Nearby nonconjured actors divide the target's die size as source refrigeration does.
 local function chilled_sides(ctx, base, adjacent)
     -- spl-damage.cc:_ozo_adj_dam reduces die size near other actors.
     if adjacent == 1 then
@@ -74,6 +80,7 @@ local function chilled_sides(ctx, base, adjacent)
     return base
 end
 
+-- Only cold-blooded, nonresistant survivors can acquire a speed penalty.
 local function expose_cold(ctx, target, definition)
     -- monster.cc:expose_to_element(BEAM_COLD, 5) slows susceptible
     -- cold-blooded monsters on a coin flip for (5+random2(5))*10 aut.
@@ -104,6 +111,8 @@ local function expose_cold(ctx, target, definition)
     ctx:emit("spell", "The " .. definition.name .. " seems to slow down.")
 end
 
+-- Example: Ozocubu’s Refrigeration rolls cold damage for visible monsters within seven cells.
+-- Snapshot all actors before damage, then process visible victims without order-dependent adjacency.
 function refrigeration.resolve(ctx, player, _, _, power)
     local origin = ctx:get(player, component.POSITION)
     -- spl-damage.cc:_cast_los_attack_spell uses actor_near_iterator with

@@ -6,6 +6,7 @@ local attitudes = require("constants.vault_attitude")
 
 local targets = {}
 
+-- Player, friendly summon, authored attitude, and charm share one ally rule.
 local function allied(ctx, entity)
     if entity == ctx:player() then
         return true
@@ -28,12 +29,15 @@ local function allied(ctx, entity)
     return allegiance.charmed(ctx, entity)
 end
 
+-- Neutral actors are excluded before proximity can imply hostility.
 local function neutral(ctx, entity)
     local authored = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
 
     return authored and authored.attitude == attitudes.NEUTRAL
 end
 
+-- Frenzy overrides normal allegiance; neutral actors and same-side actors otherwise remain untargetable.
+-- Example: targets.enemy(ctx, monster, player) checks allegiance before choosing an attack.
 function targets.enemy(ctx, attacker, defender)
     if attacker == defender then
         return false
@@ -50,6 +54,7 @@ function targets.enemy(ctx, attacker, defender)
     return allied(ctx, attacker) ~= allied(ctx, defender)
 end
 
+-- Choose a visible enemy using the same allegiance rule as attacks.
 function targets.nearest(ctx, attacker, origin, sight)
     local chosen = nil
     local closest = sight + 1
@@ -78,6 +83,7 @@ function targets.nearest(ctx, attacker, origin, sight)
     return chosen, closest
 end
 
+-- Expose allegiance without duplicating summon and charm checks.
 function targets.allied(ctx, entity)
     return allied(ctx, entity)
 end

@@ -2,6 +2,8 @@ local teleport = require("policy.magic.player_teleport")
 
 local system = {}
 
+-- Theory of operation: A scroll-created teleport may resolve before the generic duration pass decrements it.
+-- Pending teleportation resolves after scroll reading and before status durations age.
 function system.update(ctx, actor, aut)
     if actor == ctx:player() then
         teleport.tick(ctx, actor, aut)

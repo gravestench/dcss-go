@@ -5,12 +5,15 @@ local dart = {}
 dart.show_damage = false
 dart.reflectable = true
 
+-- Example: dart.validate(item) with item.ego = 'normal' -> validation error
+-- Dart attacks validate their missile kind before poison and damage effects resolve.
 function dart.validate(item)
     if item.ego ~= "poisoned" then
         error("unsupported monster dart ego " .. item.ego)
     end
 end
 
+-- Resolve contact first; the returned poison dose applies only if the poisoned dart hits.
 function dart.resolve(ctx, attacker, definition, defense)
     local hd = monster_stats.hit_dice(ctx, attacker, definition)
     local outcome, poison = ranged.poison_dart(ctx, hd, defense)

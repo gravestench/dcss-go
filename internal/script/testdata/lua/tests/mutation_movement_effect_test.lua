@@ -1,3 +1,4 @@
+
 local movement = require("policy.character.movement")
 local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
@@ -5,6 +6,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Slow level two increases movement by forty percent.
 function test.run(ctx)
     local ordinary = ctx:create()
     local fast = ctx:create()

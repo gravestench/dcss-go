@@ -15,6 +15,8 @@ local kinds = {
     [monsters.MONS_ORB_OF_FIRE] = true,
 }
 
+-- Centralize the fiery-kind predicate used by rain and other terrain interactions.
+-- Example: fiery.is(monsters.MONS_FIRE_ELEMENTAL) lets rain evaporate around a fiery monster.
 function fiery.is(kind_id)
     return kinds[kind_id] == true
 end

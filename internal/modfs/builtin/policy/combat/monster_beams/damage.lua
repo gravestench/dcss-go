@@ -34,6 +34,7 @@ local resistible_fraction = {
     [flavours.BEAM_POISON_ARROW] = 70,
 }
 
+-- Poison beam damage uses the target's live resistance, independent of its poison status dose.
 local function poison_resisted(ctx, target, raw, profile)
     local is_player = ctx:has(target, component.PLAYER)
     local level
@@ -75,6 +76,7 @@ local function poison_resisted(ctx, target, raw, profile)
     return resistible + irresistible
 end
 
+-- Dispel Undead checks species or live form for players and holiness for monsters.
 local function undead(ctx, target)
     if ctx:has(target, component.PLAYER) then
         local identity = ctx:get(target, component.PLAYER)
@@ -100,6 +102,7 @@ local function undead(ctx, target)
     return false
 end
 
+-- Example: damage.armour(ctx, raw, ac, profile) with BEAM_DAMNATION profile -> raw damage bypasses AC
 -- Source: beam.cc:bolt::apply_AC. Beam armour does not use GDR.
 function damage.armour(ctx, raw, ac, profile)
     if raw <= 0 or profile.flavour == flavours.BEAM_DAMNATION or
@@ -116,6 +119,7 @@ function damage.armour(ctx, raw, ac, profile)
     return math.max(0, raw - saved)
 end
 
+-- Route each beam flavour through its own resistance rule after armour has been rolled.
 function damage.resisted(ctx, target, raw, profile)
     if profile.flavour == flavours.BEAM_WATER then
         return water.damage(ctx, target, raw)

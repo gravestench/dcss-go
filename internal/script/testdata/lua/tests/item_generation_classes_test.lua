@@ -1,3 +1,5 @@
+-- Class weights and depth adjustments retain their source boundaries across random draws.
+
 local streams = require("constants.rng_streams")
 local catalog = require("policy.catalog")
 local choice = require("policy.item_generation.class_choice")
@@ -8,12 +10,15 @@ local quality = require("constants.vault_item_quality")
 
 local test = {}
 
+-- Scripted rolls pin the exact class-weight boundaries under one RNG stream.
 local function draw_context(draws)
     local context = {
         draws = draws,
         index = 0,
     }
 
+    -- Replay explicit class-selection draws and validate their bounds so
+    -- weighted boundary cases cannot pass after a pool shape changes.
     function context:random(stream, bound)
         self.index = self.index + 1
         local draw = self.draws[self.index]
@@ -27,6 +32,7 @@ local function draw_context(draws)
     return context
 end
 
+-- First and last entries in ordinary and superb class tables catch fenceposts.
 local function class_weight_boundaries()
     local first = draw_context({
         {
@@ -74,6 +80,7 @@ local function class_weight_boundaries()
     }), classes.OBJ_MISCELLANY, "last superb class")
 end
 
+-- Early-game wand fallback and deep miscellaneous chance use different gates.
 local function depth_adjustments()
     local early_wand = draw_context({
         {
@@ -111,6 +118,7 @@ local function depth_adjustments()
     }), classes.OBJ_MISCELLANY, "deep misc chance")
 end
 
+-- A catalog class cannot be offered by random generation without a handler.
 local function every_random_class_has_a_policy()
     local seen = {}
 
@@ -126,6 +134,8 @@ local function every_random_class_has_a_policy()
     end
 end
 
+-- Check class weights, depth gates, and handler coverage together; a random
+-- class is only usable when all three parts agree.
 function test.run()
     class_weight_boundaries()
     depth_adjustments()

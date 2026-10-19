@@ -2,6 +2,9 @@ local menu = require("policy.input.menu")
 
 local skills = {}
 
+-- Training changes are routed from the skill screen into the session's pending choice.
+-- Example: skills.route({ key = "a", skill_ids = ordered_ids }) requests a
+-- change for the first displayed skill, subject to adjustability checks.
 function skills.route(input)
     local navigation = menu.close_or_help(input)
 

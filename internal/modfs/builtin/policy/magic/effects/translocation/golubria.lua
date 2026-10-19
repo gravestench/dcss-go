@@ -7,6 +7,7 @@ local trajectory = require("policy.combat.trajectory")
 
 local golubria = {}
 
+-- Passage endpoints need free walkable floor on the caster's current level.
 local function clear(ctx, origin, x, y)
     if ctx:cell(origin.level_id, x, y) ~= terrain_ids.DNGN_FLOOR or
         ctx:actor_at(origin.level_id, x, y) then
@@ -21,6 +22,7 @@ local function clear(ctx, origin, x, y)
     return not ray.blocked
 end
 
+-- Search nearby clear floor cells reachable from the caster before randomizing passage endpoints.
 local function candidates(ctx, origin, center)
     local found = {}
 
@@ -37,6 +39,8 @@ local function candidates(ctx, origin, center)
     return found
 end
 
+-- Save reciprocal trap markers before painting terrain; either endpoint must
+-- know its partner when an actor steps onto it later.
 local function pair(ctx, player, origin, first, second)
     local left = ctx:create()
     local right = ctx:create()
@@ -60,6 +64,8 @@ local function pair(ctx, player, origin, first, second)
         terrain_ids.DNGN_PASSAGE_OF_GOLUBRIA)
 end
 
+-- Example: golubria.trigger(ctx, actor) moves the entrant to the linked end
+-- and consumes only the entered marker, leaving the far passage usable.
 function golubria.trigger(ctx, actor)
     local position = ctx:get(actor, component.POSITION)
 
@@ -122,6 +128,8 @@ function golubria.prepare(ctx, player, _, dx, dy)
     end
 end
 
+-- Sample a far endpoint near the aim and a near endpoint around the player;
+-- failure to find a valid pair does not paint half a passage.
 function golubria.resolve(ctx, player, intent)
     local origin = ctx:get(player, component.POSITION)
     local aimed = { x = origin.x + intent.dx, y = origin.y + intent.dy }

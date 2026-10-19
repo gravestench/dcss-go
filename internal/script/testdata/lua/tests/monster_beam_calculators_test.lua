@@ -1,3 +1,4 @@
+
 local calculators = require("policy.combat.monster_beams.calculators")
 local catalog = require("policy.catalog")
 local harness = require("tests.harness")
@@ -5,10 +6,12 @@ local spells = require("ids.spells")
 
 local test = {}
 
+-- Return the highest die face so beam damage totals expose every source die.
 local function fixed_random(_, _, bound)
     return bound - 1
 end
 
+-- Rolling maximum results keeps the source dice total.
 function test.run()
     local fire = catalog.get("monster_beams", spells.SPELL_BOLT_OF_FIRE)
     local dart = catalog.get("monster_beams", spells.SPELL_MAGIC_DART)

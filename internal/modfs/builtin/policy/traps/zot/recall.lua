@@ -7,6 +7,7 @@ local vision = require("policy.character.vision")
 
 local effect = {}
 
+-- Recall searches nearby open cells before moving a monster to the player's level.
 local function landing(ctx, monster, player_position)
     for distance = 1, 3 do
         for dy = -distance, distance do
@@ -28,6 +29,8 @@ local function landing(ctx, monster, player_position)
     return nil, nil
 end
 
+-- Select monsters outside current sight before placing them near the player.
+-- Example: effect.apply(ctx, player) recalls a monster into an open cell near the player.
 function effect.apply(ctx, player)
     local origin = ctx:get(player, component.POSITION)
     local candidates = {}

@@ -5,12 +5,14 @@ local stats = require("constants.stats")
 
 local effect = {}
 
+-- Degeneration always applies its stat drains after the potion is used.
 function effect.can_quaff()
     return nil
 end
 
 -- Source: potion.cc:PotionDegeneration::effect drains each stat in enum
 -- order, with an independent one-to-three roll for each.
+-- Example: Degeneration drains one to three points from each stat on separate potion-stream draws.
 function effect.apply(ctx, player)
     for _, field in ipairs(stats.ORDER) do
         stat_loss.drain(ctx, player, field,

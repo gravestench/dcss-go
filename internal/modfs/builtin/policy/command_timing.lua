@@ -17,6 +17,8 @@ local SLOWED_AUT_PER_TURN = 15
 local HASTE_NUMERATOR = 2
 local HASTE_DENOMINATOR = 3
 
+-- Action cost is computed after command preparation so rejected no-time commands never consume energy.
+-- Example: timing.player_speed(ctx, player) feeds the next accepted command's aut cost.
 function timing.player_speed(ctx, player)
     local duration = ctx:get(player, component.DURATIONS)
 
@@ -53,6 +55,7 @@ function timing.player_speed(ctx, player)
     return time_taken
 end
 
+-- Speed and action kind meet here before the scheduler charges the player.
 function timing.action_cost(ctx, player, input, time_taken)
     local equipment_delay = ctx:get(player, component.EQUIPMENT_DELAY)
 
@@ -99,6 +102,7 @@ function timing.action_cost(ctx, player, input, time_taken)
     return time_taken
 end
 
+-- The command bridge asks for this cost only after preparation produced a time-taking intent.
 function timing.run(ctx, input)
     local player = ctx:player()
     local speed = timing.player_speed(ctx, player)

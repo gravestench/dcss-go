@@ -4,6 +4,7 @@ local fighter = require("policy.combat.fighter")
 local abyss = require("policy.world.abyss")
 local component = require("constants.component")
 
+-- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
     local form = ctx:get(ctx:player(), component.PLAYER_FORM)
 
@@ -11,6 +12,8 @@ local function rooted(ctx)
         form.remaining_aut > 0
 end
 
+-- Movement rejects rooted or blocked destinations before an action is accepted.
+-- Example: navigation.move(ctx, position, 1, 0) rejects impassable eastward terrain.
 function navigation.move(ctx, position, dx, dy)
     if dx < -1 or dx > 1 or dy < -1 or dy > 1 or (dx == 0 and dy == 0) then
         return {
@@ -34,6 +37,7 @@ function navigation.move(ctx, position, dx, dy)
         }
     end
 
+    -- Walking into a closed door becomes an open-door intent, keeping door timing in the action resolver.
     if cell == "DNGN_CLOSED_DOOR" then
         return {
             intent = {
@@ -78,6 +82,7 @@ function navigation.move(ctx, position, dx, dy)
     }
 end
 
+-- Stair travel checks the current cell's feature before switching levels.
 function navigation.stairs(ctx, position, downstairs)
     if rooted(ctx) then
         return {

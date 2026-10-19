@@ -4,16 +4,22 @@ local source = require("policy.item_generation.source_roll")
 
 local weapon_brands = {}
 
+-- Demonic bases use their own brand handling before ordinary weapon weights.
 local function is_demonic(definition)
     return definition.id:match("^WPN_DEMON_") ~= nil
 end
 
+-- Example: weapon_brands.roll(ctx, sword, request) draws an allowed brand for that weapon base.
+-- Respect an explicit ego, then draw only from the base's normalized brand table with bounded retries.
 function weapon_brands.roll(ctx, definition, request)
     if request.ego then
         return request.ego
     end
 
-    local weights = definition.weapon and definition.weapon.brand_weights or {}
+    -- Catalog `mod.null` means this weapon has no authored brand pool. It is
+    -- truthy in Lua, so normalize it before taking the length or drawing.
+    local configured = definition.weapon and definition.weapon.brand_weights
+    local weights = type(configured) == "table" and configured or {}
 
     if #weights == 0 then
         return ""
@@ -29,8 +35,8 @@ function weapon_brands.roll(ctx, definition, request)
         tries = 1
     end
 
-    -- Source: crawl-ref/source/makeitem.cc:252-278 and
-    -- item-prop.cc:1098-1108. A normal result is retried for good gear.
+    -- Source: crawl-ref/source/makeitem.cc and
+    -- item-prop.cc. A normal result is retried for good gear.
     for _ = 1, tries do
         local brand = source.weighted_id(ctx, weights)
 

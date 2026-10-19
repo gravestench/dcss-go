@@ -6,6 +6,8 @@ local effects = require("constants.vault_effects")
 
 local module = {}
 
+-- Saved XP and level progress are checked against the same progression limits used in play.
+-- Example: module.run(ctx, input) checks saved XP against the scenario's available monster rewards.
 function module.run(ctx, input)
     local player = ctx:player()
     local progress = ctx:get(player, "core.progression")

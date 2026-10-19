@@ -1,0 +1,11 @@
+-- {{.Name}} supplies the named hook in vaults/{{.Family}}/{{.Slug}}.des.
+-- The .des file owns geometry and directives; this module emits only dynamic
+-- directives using the vault API. It has no mutable module-level game state.
+
+local handler = {}
+
+function handler.configure(api)
+    -- TODO: Use api:emit for dynamic directives, or remove this hook.
+end
+
+return handler

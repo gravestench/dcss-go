@@ -8,6 +8,8 @@ local statuses = require("policy.magic.effects.statuses.player")
 
 local restrictions = {}
 
+-- Example: silence prevents reading a magic scroll before its effect or target menu runs.
+-- Check rage, confusion, and silence before an effect can open a menu or consume its scroll.
 function restrictions.reason(ctx, player)
     if rage.active(ctx, player) then
         return "You are too berserk!"

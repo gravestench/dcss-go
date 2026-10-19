@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.ICY_DEFENSE,
     version = 1,
+    -- One depletion timer covers both Icemail and Condensation Shield after fire melts their protection.
     fields = {
         remaining_aut = {
             type = "int64",

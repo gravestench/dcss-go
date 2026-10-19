@@ -7,6 +7,7 @@ local registry = require("policy.magic.effects.registry")
 
 local poisonous_vapours = {}
 
+-- Resolve the aimed adjacent cell before checking occupant and existing cloud state.
 local function target(ctx, player, dx, dy)
     local origin = ctx:get(player, component.POSITION)
     local x = origin.x + dx
@@ -15,6 +16,8 @@ local function target(ctx, player, dx, dy)
     return origin, x, y, ctx:actor_at(origin.level_id, x, y)
 end
 
+-- Example: Aimed vapours fizzle on an empty cell but poison an eligible adjacent monster.
+-- Validate the aimed cell and reject poison-resistant occupants before the cast commits.
 function poisonous_vapours.prepare(ctx, player, spell, dx, dy)
     local origin, x, y, monster = target(ctx, player, dx, dy)
     local reach = range.for_spell(ctx, player, spell)
@@ -35,6 +38,7 @@ function poisonous_vapours.prepare(ctx, player, spell, dx, dy)
     end
 end
 
+-- Fizzle without a monster target; otherwise place poison only after target checks.
 function poisonous_vapours.resolve(ctx, player, intent, _, power)
     local _, _, _, monster = target(ctx, player, intent.dx, intent.dy)
 

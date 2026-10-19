@@ -1,8 +1,9 @@
+-- Example: Before absolute depth 16, the earth shop uses its weaker marker-1 population.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Port of builder/shops.des:549-551.
+-- Before absolute depth 16, the earth shop uses its weaker marker-1 population.
 local function choose_earth_population(api)
     if api:absolute_depth() < 16 then
         api:emit(directives.SUBST, "2 = 1")

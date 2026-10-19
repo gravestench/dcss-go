@@ -9,6 +9,8 @@ local intent_ids = require("constants.intent")
 local acrobat = require("policy.jewellery.acrobat")
 local trap_held = require("policy.traps.held")
 
+-- Theory of operation: Movement first handles escape and occupied cells, then commits a legal destination.
+-- A failed constriction escape spends the movement action; a successful one costs the holder energy.
 local function escape_grasp(ctx, actor, intent)
     local grip = ctx:get(actor, component.CONSTRICTION)
 
@@ -52,6 +54,7 @@ end
 
 local system = {}
 
+-- Movement converts failed escape attempts into WAIT and updates position before melee targeting.
 function system.update(ctx, actor)
     local intent = ctx:get(actor, component.INTENT)
 
@@ -65,6 +68,7 @@ function system.update(ctx, actor)
         error("moving actor " .. ctx:id(actor) .. " has no position")
     end
 
+    -- Net escape is attempted before actor movement or occupied-cell melee conversion.
     if ctx:has(actor, component.TRAP_HELD) then
         trap_held.escape(ctx, actor)
         intent.kind = intent_ids.WAIT
@@ -73,6 +77,7 @@ function system.update(ctx, actor)
         return
     end
 
+    -- Monsters resolve their own constriction, clutch, and roots before destination checks.
     if actor ~= ctx:player() then
         if not player_constriction.escape(ctx, actor) or
             not clutch.escape(ctx, actor) or
@@ -88,6 +93,7 @@ function system.update(ctx, actor)
     local y = position.y + intent.dy
     local occupied = ctx:actor_at(position.level_id, x, y)
 
+    -- Reclassify an occupied destination before the combat system reads this intent.
     if occupied then
         if actor ~= ctx:player() and
             not targets.enemy(ctx, actor, occupied) then
@@ -104,6 +110,7 @@ function system.update(ctx, actor)
         return
     end
 
+    -- Only a free destination and completed escape reaches the position mutation.
     ctx:move_actor(actor, position.level_id, x, y)
 
     if actor == ctx:player() then

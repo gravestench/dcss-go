@@ -6,6 +6,7 @@ local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local enemy = require("policy.ai.targets")
 
+-- Keep only visible mobile enemies with an open trajectory for remote melee strikes.
 local function targets(ctx, player)
     local origin = ctx:get(player, component.POSITION)
     local found = {}
@@ -35,12 +36,15 @@ end
 -- resolves each projected strike, including weapon and auxiliary attacks.
 local spell_effects = {}
 
+-- Example: Manifold Assault rejects a cast when no visible reachable mobile enemy can be struck.
+-- Reject the cast before payment when no visible, reachable mobile enemy can receive a strike.
 function spell_effects.prepare(ctx, player)
     if #targets(ctx, player) == 0 then
         return "You can't see anything to attack."
     end
 end
 
+-- Shuffle eligible targets on the spell stream, then strike a power-scaled subset.
 function spell_effects.resolve(ctx, player, _, _, power)
     local found = targets(ctx, player)
 

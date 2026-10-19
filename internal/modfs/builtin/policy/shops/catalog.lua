@@ -11,6 +11,8 @@ local removed = {
     [ids.SHOP_RANDOM] = true,
 }
 
+-- Attach the winning source path to validation errors so a modder can find
+-- the exact overlay file that supplied a malformed shop definition.
 local function fail(definition, reason)
     local id = type(definition) == "table" and definition.id or nil
     local okay, origin = pcall(register.origin, categories.SHOPS, id)
@@ -19,10 +21,14 @@ local function fail(definition, reason)
     error(source .. ": " .. reason)
 end
 
+-- Require whole positive weights and counts; fractional weights would alter
+-- the integer draw bounds used by the shop RNG stream.
 local function positive_integer(value)
     return type(value) == "number" and value > 0 and value % 1 == 0
 end
 
+-- Shop definitions validate stock and pricing fields before generation uses them.
+-- Example: shops.definition(shop_kind) rejects a stock class with an invalid generation weight.
 function shops.definition(definition)
     if type(definition) ~= "table" or
         type(definition.id) ~= "string" or
@@ -59,6 +65,8 @@ function shops.definition(definition)
     end
 end
 
+-- Validate every effective definition at boot, before any level attempts to
+-- place a shop and before a malformed stock pool can consume seeded draws.
 function shops.validate()
     for _, definition in ipairs(content.all(categories.SHOPS)) do
         shops.definition(definition)

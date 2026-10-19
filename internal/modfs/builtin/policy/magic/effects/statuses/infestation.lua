@@ -12,6 +12,8 @@ local common = require("policy.magic.effects.statuses.common")
 
 local infestation = {}
 
+-- Example: a living XP-bearing foe marked near the selected cell can spawn a
+-- death scarab if it dies before this spell-stream duration expires.
 local function duration(ctx, power)
     local bound = math.max(1, math.floor(power / 2))
     local average = math.floor((ctx:random("spell", bound) +
@@ -20,11 +22,13 @@ local function duration(ctx, power)
     return (5 + average) * time.AUT_PER_TURN
 end
 
+-- Summons and monsters worth no XP cannot seed a scarab on death.
 local function eligible(ctx, monster, definition, health)
     return not ctx:has(monster, component.SUMMON) and
         death.experience(definition, health.max) > 0
 end
 
+-- Reject a blocked aim square before spending MP on an infestation that could mark nothing.
 function infestation.prepare(ctx, player, _, dx, dy)
     local origin = ctx:get(player, component.POSITION)
     local x, y = origin.x + dx, origin.y + dy
@@ -34,6 +38,7 @@ function infestation.prepare(ctx, player, _, dx, dy)
     end
 end
 
+-- Mark eligible live targets in the aimed area; the death hook later converts marks to scarabs.
 function infestation.cast(ctx, player, intent, _, power)
     local origin = ctx:get(player, component.POSITION)
     local x, y = origin.x + intent.dx, origin.y + intent.dy
@@ -71,6 +76,8 @@ function infestation.cast(ctx, player, intent, _, power)
     end
 end
 
+-- The death hook consumes a live mark and attempts a short-lived scarab at
+-- the corpse cell; it reports the mark even if placement fails.
 function infestation.on_death(ctx, monster, definition, position)
     local mark = ctx:get(monster, component.MONSTER_INFESTATION)
 
@@ -98,6 +105,7 @@ function infestation.on_death(ctx, monster, definition, position)
     return true
 end
 
+-- Expire marks in aut so corpses after the window no longer produce scarabs.
 function infestation.tick(ctx, monster)
     local mark = ctx:get(monster, component.MONSTER_INFESTATION)
 
@@ -115,6 +123,7 @@ function infestation.tick(ctx, monster)
     end
 end
 
+-- Register once so ordinary monster death invokes the scarab outcome.
 death_hooks.add("magic.status.infestation", infestation.on_death)
 
 return infestation

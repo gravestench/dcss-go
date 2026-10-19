@@ -5,6 +5,7 @@ local spells = require("ids.spells")
 local schema = {
     id = "magic.summon_gateway",
     version = 1,
+    -- The portal owns original terrain and tentacle link so closing it can restore the correct cell.
     fields = {
         owner = { type = "entity" },
         level_id = { type = "int64", default = 0 },

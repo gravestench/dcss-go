@@ -3,6 +3,7 @@
 register.component{
     id = "character.spell",
     version = 1,
+    -- Library, learned slot, letter slot, and future level share one authoritative player-spell record.
     fields = {
         owner = {
             type = "entity",

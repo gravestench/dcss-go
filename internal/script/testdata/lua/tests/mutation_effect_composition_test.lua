@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local mutations = require("ids.mutations")
 local registry = require("policy.mutations.effects.registry")
@@ -6,14 +7,17 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Supply a two-point-per-level HP effect for additive registry composition.
 function test.flat_bonus(level)
     return level * 2
 end
 
+-- Supply a conflicting three-point effect to exercise duplicate registration.
 function test.conflicting_bonus(level)
     return level * 3
 end
 
+-- Existing Robust percentage survives another effect module.
 function test.run(ctx)
     registry.add(mutations.MUT_ROBUST, {
         [capabilities.HP_FLAT] = test.flat_bonus,

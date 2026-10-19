@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.VAMPIRE,
     version = 1,
+    -- Blood state and an in-progress ritual are saved together so interruption and completion resume correctly.
     fields = {
         alive = {
             type = "bool",

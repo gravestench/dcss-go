@@ -10,6 +10,7 @@ local calculators = require("policy.combat.monster_beams.calculators")
 
 local hex = {}
 
+-- Caster power is stepped down by the profile before a willpower contest.
 function hex.enchantment_power(ctx, caster, profile)
     local power = beam_power.caster_power(ctx, caster, profile)
 
@@ -18,6 +19,8 @@ end
 
 -- Source: beam.cc:ench_power_stepdown and actor.cc:check_willpower.
 -- A source zap profile supplies the spell's actual monster power factor.
+-- Example: hex.resisted(ctx, caster, target, profile) with successful player will save -> resisted result
+-- Player will uses two monster-spell draws; a resisted hex may retaliate through Demonic Will.
 function hex.resisted(ctx, caster, target, profile)
     local enchant_power = hex.enchantment_power(ctx, caster, profile)
 

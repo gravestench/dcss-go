@@ -1,3 +1,5 @@
+-- Capabilities are named mutation effects inspected by the affected gameplay policies.
+
 local capabilities = {
     HP_FLAT = "hp_flat",
     HP_PERCENT = "hp_percent",

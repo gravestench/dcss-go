@@ -3,6 +3,9 @@ local registry = require("policy.abilities.registry")
 
 local confirmation = {}
 
+-- The confirmation view displays the pending ability's cost before input resolves it.
+-- Example: runtime.Policy("presentation.ability_confirmation",
+--     { ability_id = selected_id }) renders the selected ability's prompt.
 function confirmation.run(ctx, input)
     local definition = registry.get(input.ability_id)
 

@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local classes = require("constants.mutation_classes")
 local effects = require("policy.mutations.effects.registry")
@@ -13,9 +14,11 @@ local jewellery_fixture = require("tests.fixtures.jewellery")
 
 local test = {}
 
+-- Bind resistance effect player lookup to this owner while preserving live ECS component reads.
 local function player_context(ctx, owner)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to resistance effect fixture actor so player-only branches execute on that entity.
     function proxy.player()
         return owner
     end
@@ -23,6 +26,7 @@ local function player_context(ctx, owner)
     return proxy
 end
 
+-- Equip a chosen resistance ego so mutation and item levels can be compared.
 local function equip(ctx, owner, kind_id, slot, ego)
     local item = ctx:create()
 
@@ -39,6 +43,7 @@ local function equip(ctx, owner, kind_id, slot, ego)
     return item
 end
 
+-- Poison mutation levels combine before the source cap.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -81,6 +86,7 @@ function test.run(ctx)
     records.delete(ctx, player,
         mutations.MUT_THIN_METALLIC_SCALES, classes.ACQUIRED, 1)
 
+    -- Threshold effects are tested on both sides of the third-level boundary.
     harness.equal(damage.player_resistance(ctx, player,
         resistances.ELECTRICITY), 0,
         "metallic scales grant no resistance below level three")
@@ -92,11 +98,13 @@ function test.run(ctx)
     records.grant_acquired(ctx, player,
         mutations.MUT_CLARITY, 1)
 
+    -- Add mutation contributions before clamping the final poison resistance.
     harness.equal(effects.sum(ctx, player,
         capabilities.POISON_RESISTANCE), 2,
         "poison mutation levels combine before the source cap")
     harness.equal(player_resistance.poison(ctx, player), 1,
         "poison resistance is capped after mutation bonuses")
+    -- Mental protection is independent of the poison resistance cap tested above.
     harness.equal(player_resistance.clarity(ctx, player), true,
         "Clarity grants poison-independent mental protection")
 

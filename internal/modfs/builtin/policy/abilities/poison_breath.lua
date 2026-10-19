@@ -54,6 +54,7 @@ local gas_spec = {
     beam = true,
 }
 
+-- A damaging hit may add poison; complete poison resistance and the one-in-three miss gate stop it.
 function breath.poison_after_hit(ctx, player, target, definition, damage)
     if damage <= 0 or poison.resistance(definition) >= 3 or
         ctx:random("spell", 3) == 0 then
@@ -66,6 +67,8 @@ end
 spit_spec.after_hit = breath.poison_after_hit
 gas_spec.after_hit = breath.poison_after_hit
 
+-- Share cooldown, direction, and visibility checks, but take a range value
+-- because Spit and Gas have distinct projectile reach.
 local function prepare(ctx, player, input, range)
     local state = ctx:get(player, component.BREATH_COOLDOWN)
 
@@ -91,14 +94,21 @@ local function prepare(ctx, player, input, range)
     return nil
 end
 
+-- Example: breath.prepare_spit(ctx, player, { dx = 1, dy = 0 }) checks a spit before cooldown.
+-- Reuse the shared breath validation with spit range, so spit and gas share
+-- costs and cooldown gates while retaining their distinct targeting reach.
 function breath.prepare_spit(ctx, player, input)
     return prepare(ctx, player, input, spit_spec.range)
 end
 
+-- Use the gas specification's longer range while keeping the same cooldown
+-- gate as spit; the two variants share one breath timer.
 function breath.prepare_gas(ctx, player, input)
     return prepare(ctx, player, input, gas_spec.range)
 end
 
+-- Persist cooldown in aut on the player component, adding it on first use and
+-- replacing it on later uses so save/restore resumes the exact wait.
 local function start_cooldown(ctx, player, turns)
     local state = {
         remaining_aut = turns * 10,
@@ -111,6 +121,8 @@ local function start_cooldown(ctx, player, turns)
     end
 end
 
+-- Fire the short poison projectile after a successful ability roll, then
+-- begin its shorter mutation-stream cooldown only if the attack happened.
 function breath.resolve_spit(ctx, player, intent)
     if failure.roll(ctx, player, 20) then
         ctx:emit("mutation", "You fail to spit poison.")
@@ -126,6 +138,7 @@ function breath.resolve_spit(ctx, player, intent)
     start_cooldown(ctx, player, 3 + ctx:random("mutation", 5))
 end
 
+-- Gas uses the same projectile spell as spit, but its cooldown gains an extra level-dependent roll.
 function breath.resolve_gas(ctx, player, intent)
     if failure.roll(ctx, player, 30) then
         ctx:emit("mutation", "You fail to breathe poison gas.")
@@ -145,14 +158,23 @@ function breath.resolve_gas(ctx, player, intent)
     start_cooldown(ctx, player, cooldown)
 end
 
+-- Keep menu reach sourced from the same specification used by preparation.
+local function spit_range()
+    return spit_spec.range
+end
+
+-- Gas is a distinct registered ability, but its menu reach still comes from
+-- the gas projectile specification rather than a copied number.
+local function gas_range()
+    return gas_spec.range
+end
+
 registry.add(abilities.SPIT_POISON, {
     mutation_id = mutations.MUT_SPIT_POISON,
     name = "Spit Poison",
     min_level = 1,
     max_level = 1,
-    range = function()
-        return spit_spec.range
-    end,
+    range = spit_range,
     prepare = breath.prepare_spit,
     resolve = breath.resolve_spit,
 })
@@ -161,9 +183,7 @@ registry.add(abilities.BREATHE_POISON, {
     mutation_id = mutations.MUT_SPIT_POISON,
     name = "Breathe Poison Gas",
     min_level = 2,
-    range = function()
-        return gas_spec.range
-    end,
+    range = gas_range,
     prepare = breath.prepare_gas,
     resolve = breath.resolve_gas,
 })

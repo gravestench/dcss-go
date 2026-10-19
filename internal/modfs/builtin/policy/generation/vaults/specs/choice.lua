@@ -1,11 +1,14 @@
+-- Example: A DES a|b|c expression draws one alternative through reservoir selection.
 -- DES alternatives use reservoir selection, not a single weighted draw.
 -- Source: mapdef.cc mons_list::pick_monster and item_list::pick_item.
 local choice = {}
 
+-- Normalize whitespace before validating a DES alternative.
 local function trim(value)
     return value:match("^%s*(.-)%s*$")
 end
 
+-- Build an error prefix from the authored vault, line, and expression.
 local function source_site(site, expression)
     local path = site and site.path or "unknown vault"
     local line = site and site.line or 0
@@ -17,10 +20,12 @@ local function source_site(site, expression)
         path, line, vault, directive, glyph, expression)
 end
 
+-- Raise a source-located error rather than silently dropping a malformed slot.
 function choice.fail(site, expression, detail)
     error(source_site(site, expression) .. ": " .. detail, 3)
 end
 
+-- Parse each slot independently so alternatives do not cross a comma boundary.
 function choice.slots(expression, site, parse_term)
     if type(expression) ~= "string" or trim(expression) == "" then
         choice.fail(site, tostring(expression), "empty expression")
@@ -47,6 +52,7 @@ function choice.slots(expression, site, parse_term)
     return slots
 end
 
+-- Reservoir selection preserves DES alternative order while giving equal-weight entries equal chance.
 function choice.pick(random, alternatives)
     local total = 0
     local selected

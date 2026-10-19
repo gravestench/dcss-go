@@ -1,3 +1,4 @@
+-- Example: One twelve-way draw chooses a water or lava substitution; the fallback changes the central exits.
 local directives = require("constants.vault_directives")
 
 local handler = {}
@@ -11,7 +12,7 @@ local water_fire_choices = {
     "F=*:., t=1:./*:w, u=1:./*:w, v=1:./*:w",
 }
 
--- Port of arrival/twisted.des:17-33. One draw chooses the feature group.
+-- One twelve-way draw chooses a water or lava substitution; the fallback changes the central exits.
 local function choose_water_fire_layout(api)
     local choice = api:roll(12)
 
@@ -37,6 +38,7 @@ local function choose_exit_layout(api)
     end
 end
 
+-- Reject an authored stair marker that never becomes a usable exit.
 local function check_exit_marker(api)
     local markers = api:marker_positions("arrival_stairs", 1)
 

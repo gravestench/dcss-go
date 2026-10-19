@@ -15,6 +15,7 @@ local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local drain = {}
 
+-- Fold intrinsic armour's negative-energy flags into the drain resistance score.
 local function armour_resistance(definition)
     local source = definition.armour and definition.armour.flags
     local flags = type(source) == "table" and source or {}
@@ -29,6 +30,8 @@ local function armour_resistance(definition)
     return value
 end
 
+-- Only monsters allowed to use gear receive body, shield, jewellery, or
+-- staff protection against negative energy.
 local function equipped_resistance(ctx, monster, definition)
     if definition.item_use_id ~= item_use.STARTING_EQUIPMENT and
         definition.item_use_id ~= item_use.WEAPONS_ARMOUR then
@@ -67,6 +70,8 @@ local function equipped_resistance(ctx, monster, definition)
     return value
 end
 
+-- Nonliving holiness is fully immune; living resistance combines intrinsic
+-- pips with permitted equipment and caps at three.
 function drain.resistance(ctx, monster, definition)
     local types = definition.holiness or {}
     local living = #types == 0
@@ -93,6 +98,7 @@ function drain.resistance(ctx, monster, definition)
     return math.min(3, equipped_resistance(ctx, monster, definition))
 end
 
+-- Monster drain is stored as a timed component after negative-energy resistance is checked.
 function drain.apply(ctx, target, definition, source, stream)
     local resistance = drain.resistance(ctx, target, definition)
     local random_stream = stream or "mutation"
@@ -116,6 +122,8 @@ function drain.apply(ctx, target, definition, source, stream)
 
     local current = ctx:get(target, component.MONSTER_DRAINED)
     local remaining = current and current.remaining_aut or 0
+    -- Repeated drains add a degree but cap remaining time, then partial
+    -- negative resistance shortens only the new duration.
     local duration = 200 + ctx:random(random_stream, 100)
     local cap = 300 - remaining - ctx:random(random_stream, 50)
 
@@ -142,6 +150,8 @@ function drain.apply(ctx, target, definition, source, stream)
     return true
 end
 
+-- Example: drain.tick(ctx, monster) with expired drain -> drained state removed
+-- Timed drain expires on the monster clock and removes its hit-dice penalty.
 function drain.tick(ctx, monster)
     local current = ctx:get(monster, component.MONSTER_DRAINED)
 

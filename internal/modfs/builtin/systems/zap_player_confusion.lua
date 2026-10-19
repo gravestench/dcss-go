@@ -2,6 +2,8 @@ local zap_ids = require("policy.magic.effects.zaps.ids")
 
 local confusion = {}
 
+-- Theory of operation: Confusion duration is spent before regeneration and the next player action.
+-- Confusion duration is decremented after general statuses and before regeneration.
 function confusion.update(ctx, actor, aut)
     if actor ~= ctx:player() then
         return

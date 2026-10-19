@@ -1,3 +1,4 @@
+
 local allies = require("policy.character.allies")
 local availability = require("policy.character.skill_availability")
 local catalog = require("policy.catalog")
@@ -14,9 +15,11 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Bind no love allies player lookup to this owner while preserving live ECS component reads.
 local function player_context(ctx, player)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to no love allies fixture actor so player-only branches execute on that entity.
     function proxy.player()
         return player
     end
@@ -24,6 +27,7 @@ local function player_context(ctx, player)
     return proxy
 end
 
+-- Create an owned summon or hostile actor for No Love checks.
 local function monster(ctx, kind_id, owner, spell_id)
     local entity = ctx:create()
 
@@ -44,12 +48,14 @@ local function monster(ctx, kind_id, owner, spell_id)
     return entity
 end
 
+-- Read the same spell eligibility API used by the starting menu.
 local function spell_forbidden(ctx, player, id)
     local spell = catalog.get("spells", id)
 
     return availability.forbidden_spell(ctx, player, spell)
 end
 
+-- An existing ally retains attitude until its next action.
 function test.run(ctx)
     local player = ctx:create()
     local game = player_context(ctx, player)
@@ -81,6 +87,7 @@ function test.run(ctx)
     records.grant_acquired(ctx, player,
         mutations.MUT_DEMONIC_GUARDIAN, 1)
 
+    -- Establish the ordinary friendly summon before introducing the allegiance ban.
     harness.equal(levels.effective(game, player,
         mutations.MUT_DEMONIC_GUARDIAN), 1,
         "Demonic Guardian is active before No Love")
@@ -92,6 +99,7 @@ function test.run(ctx)
     harness.equal(levels.effective(game, player,
         mutations.MUT_DEMONIC_GUARDIAN), 0,
         "No Love suppresses the guardian mutation")
+    -- Spell legality and monster attitude both consult the same mutation restriction.
     harness.truthy(spell_forbidden(game, player,
         spells.SPELL_SUMMON_SMALL_MAMMAL),
         "No Love forbids Summoning spells")
@@ -118,6 +126,7 @@ function test.run(ctx)
     harness.falsy(allies.hostile_spawn(game, player,
         catalog.get("monsters", monsters.MONS_GUARDIAN_GOLEM)),
         "no-XP golem is exempt at creation")
+    -- Existing allies change at their own action boundary, not at mutation grant time.
     harness.truthy(targets.allied(game, rat),
         "an existing ally retains attitude until its next action")
 

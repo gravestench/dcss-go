@@ -2,6 +2,7 @@
 register.component{
     id = "projectile.poison",
     version = 2,
+    -- Degree and elapsed ceiling govern poison damage; source and credit preserve kill attribution.
     fields = {
         degree = {
             type = "int64",

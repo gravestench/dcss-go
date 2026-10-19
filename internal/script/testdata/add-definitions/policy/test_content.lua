@@ -1,3 +1,6 @@
+-- The content probe reads definitions only after the overlay registry is assembled.
+-- Example: test.content returns the modded moss name and its D:1 population weight.
+
 local categories = require("constants.catalog")
 local catalog = require("policy.catalog")
 local items = require("ids.items")
@@ -9,6 +12,8 @@ local pool = require("policy.population.pool")
 
 local policy = {}
 
+-- Read modded definitions after overlay loading, then return concrete fields
+-- from each catalog to prove registration and population wiring agree.
 function policy.read()
     local monster = catalog.get(categories.MONSTERS, monsters.MONS_TEST_MOSS)
     local spell = catalog.get(categories.SPELLS, spells.SPELL_TEST_SPARK)

@@ -8,6 +8,7 @@ local common = require("policy.magic.effects.statuses.common")
 
 local radiance = {}
 
+-- Initialize all area timers together so Toxic Radiance can coexist with Corpse Rot and Bog.
 local function status(ctx, player)
     return ctx:get(player, component.AREA_STATUS) or {
         corpse_rot_aut = 0,
@@ -18,6 +19,8 @@ local function status(ctx, player)
     }
 end
 
+-- Example: a nearby susceptible monster receives poison each elapsed action
+-- while the caster's saved radiance duration remains positive.
 local function emit_poison(ctx, player, power, aut)
     local origin = ctx:get(player, component.POSITION)
     local pulses = math.floor(aut / time.AUT_PER_TURN)
@@ -70,6 +73,7 @@ local function emit_poison(ctx, player, power, aut)
     end
 end
 
+-- Recasting extends area status instead of creating a second radiation source.
 function radiance.cast(ctx, player, _, _, power)
     local value = status(ctx, player)
     local before = value.toxic_radiance_aut
@@ -92,6 +96,7 @@ function radiance.cast(ctx, player, _, _, power)
     emit_poison(ctx, player, power, time.AUT_PER_TURN)
 end
 
+-- Radiance continues poisoning nearby actors from a saved area-status duration.
 function radiance.tick(ctx, player, aut)
     local value = ctx:get(player, component.AREA_STATUS)
 

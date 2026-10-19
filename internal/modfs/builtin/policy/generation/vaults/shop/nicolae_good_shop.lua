@@ -1,9 +1,10 @@
+-- Example: A good altar is emitted only outside the Dungeon branch where the base map already provides one.
 local branches = require("ids.branches")
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Port of builder/shops.des:628-630.
+-- A good altar is emitted only outside the Dungeon branch where the base map already provides one.
 local function choose_good_altar(api)
     if api:branch_id() ~= branches.BRANCH_DUNGEON then
         api:emit(directives.KFEAT,

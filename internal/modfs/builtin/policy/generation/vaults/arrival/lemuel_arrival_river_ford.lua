@@ -1,8 +1,9 @@
+-- Example: Two thirds of ford layouts replace the crossing markers with randomized shallow terrain.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Port of arrival/twisted.des:595-599.
+-- Two thirds of ford layouts replace the crossing markers with randomized shallow terrain.
 local function choose_ford(api)
     if api:roll(3) > 0 then
         api:emit(directives.SUBST, "T=x, \"=., '=.")

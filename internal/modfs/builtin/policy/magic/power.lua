@@ -25,6 +25,7 @@ local school_skills = {
     [schools.POISON] = skill_ids.SK_POISON_MAGIC,
 }
 
+-- Apply species aptitude before scaling each trained school; forbidden skills contribute zero.
 local function scaled_skill(ctx, player, skills, species, id, scale)
     local aptitude = species.aptitudes[id]
 
@@ -42,6 +43,7 @@ local function scaled_skill(ctx, player, skills, species, id, scale)
     return 0
 end
 
+-- Read the same aptitude-adjusted skill scale used by both failure and cast power.
 function power.training(ctx, player, id, scale)
     local character = ctx:get(player, "core.player")
     local skills = ctx:get(player, "core.skills")
@@ -149,6 +151,8 @@ function power.cast(ctx, player, spell)
     return result
 end
 
+-- Example: one spell request returns both its failure-scale power and capped cast power.
+-- Return both failure and cast scales for the same catalog spell and live player state.
 function power.run_policy(ctx, input)
     local spell = catalog.get("spells", input.spell_id)
 

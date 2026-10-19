@@ -1,3 +1,4 @@
+-- Example: A shop item token trims spaces before quantity and stock flags are parsed.
 local ids = require("ids.shops")
 local item_specs = require("policy.generation.vaults.specs.item")
 
@@ -17,16 +18,19 @@ local kinds = {
     ["any shop"] = ids.SHOP_RANDOM,
 }
 
+-- Strip surrounding DES whitespace before parsing shop tokens.
 local function trim(value)
     return value:match("^%s*(.-)%s*$")
 end
 
+-- Keep source site and expression in malformed shop-stock errors.
 local function fail(site, expression, detail)
     error(string.format("%s:%d: vault %s: shop %s: %s",
         site.path, site.line or 0, site.vault_id,
         expression, detail))
 end
 
+-- The outer vertical bar separates stock items without splitting commas inside an item name.
 local function stock_items(expression, site)
     local items = {}
 
@@ -47,6 +51,7 @@ local function stock_items(expression, site)
     return items
 end
 
+-- Each slash alternative owns its stock, name, count, greed, and selection weight.
 local function alternative(text, items, site)
     local kind, options = text:match("^(.- shop)%s*(.*)$")
     local id = kinds[kind]
@@ -102,12 +107,14 @@ local function alternative(text, items, site)
     return spec
 end
 
+-- Recognize only catalogued shop prefixes before interpreting a KFEAT as stock.
 function shop_spec.is_shop(expression)
     local kind = expression:match("^%s*(.- shop)")
 
     return kind ~= nil and kinds[kind] ~= nil
 end
 
+-- Validate every slash alternative before a shop can be selected from its weighted list.
 function shop_spec.parse(expression, site)
     local descriptor, stock = expression:match("^(.-)%s*;%s*(.*)$")
 
@@ -126,6 +133,8 @@ function shop_spec.parse(expression, site)
     return alternatives
 end
 
+-- Consume one weighted draw after validation has established positive candidate weights.
+-- Selection draws only after parsing has assigned a positive weight to each alternative.
 function shop_spec.choose(random, alternatives)
     local total = 0
 

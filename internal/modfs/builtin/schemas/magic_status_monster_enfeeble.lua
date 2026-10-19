@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.monster_enfeeble",
     version = 1,
+    -- Weakness, antimagic, blindness, and daze expire separately after an enfeebling cast.
     fields = {
         weak_aut = {
             type = "int64",

@@ -12,6 +12,7 @@ local uncloneable = {
     MONS_PLAYER_ILLUSION = true,
 }
 
+-- Recheck visibility, life and clone exclusions at cast time so an invalid actor is never mirrored.
 local function target_at(ctx, player, dx, dy)
     local position = ctx:get(player, component.POSITION)
     local x, y = position.x + dx, position.y + dy
@@ -37,6 +38,7 @@ local function target_at(ctx, player, dx, dy)
     return target
 end
 
+-- Read the player's skill entry explicitly; absent Evocations contributes zero to mirror resistance.
 local function evocations(ctx, player)
     local skills = ctx:get(player, "core.skills")
 
@@ -53,12 +55,15 @@ end
 -- the original monster's kind, current HP, and an abjuration duration.
 local spell_effects = {}
 
+-- Example: Phantom Mirror rejects an aimed cell with no visible cloneable monster.
+-- Check live, visible, cloneable target state before the mirror is offered as a valid cast.
 function spell_effects.prepare(ctx, player, _, dx, dy)
     if not target_at(ctx, player, dx, dy) then
         return "You can't see anything there to clone."
     end
 end
 
+-- Recheck the target, then derive clone life and HD from its current actor state and resistance.
 function spell_effects.resolve(ctx, player, intent, _, power)
     local target = target_at(ctx, player, intent.dx, intent.dy)
 

@@ -2,6 +2,8 @@ local colors = require("policy.presentation.colors")
 
 local shop = {}
 
+-- Store each row as a renderer cell write. The shop policy describes the
+-- screen but does not need to manage terminal escape sequences itself.
 local function write(writes, x, y, text, color)
     writes[#writes + 1] = {
         x = x,
@@ -11,6 +13,8 @@ local function write(writes, x, y, text, color)
     }
 end
 
+-- Color reflects both affordability and shopping-list state. An over-budget
+-- selection is red even if the item was otherwise selected successfully.
 local function item_color(item, gold, selected_total)
     if item.selected and selected_total > gold then
         return colors.light_red
@@ -25,6 +29,10 @@ local function item_color(item, gold, selected_total)
     return colors.light_grey
 end
 
+-- Shop rows bind display letters to the current stock list and quoted prices.
+-- Example: shop.rows(nil, { name = "Shop", items = stock, gold = 100,
+--     sort = "name", height = 24 })
+-- returns the visible window; `focus` controls scrolling without reordering.
 function shop.rows(_, input)
     local writes = {}
     local items = input.items or {}

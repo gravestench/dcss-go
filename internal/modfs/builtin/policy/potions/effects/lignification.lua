@@ -8,6 +8,8 @@ local zap_ids = require("policy.magic.effects.zaps.ids")
 
 local effect = {}
 
+-- Inspect the occupant cloud before tree form is written so the player can confirm a hazardous transformation.
+-- Example: tree form in a damaging cloud requests confirmation before the form is written.
 function effect.cloud_confirmation(ctx, player)
     local position = ctx:get(player, component.POSITION)
 
@@ -32,6 +34,7 @@ function effect.cloud_confirmation(ctx, player)
     return nil
 end
 
+-- Forced use bypasses the dangerous-cloud confirmation but still obeys form rejection.
 function effect.can_quaff(ctx, player, forced)
     local refusal = forms.rejection(ctx, player, items.POT_LIGNIFY)
 

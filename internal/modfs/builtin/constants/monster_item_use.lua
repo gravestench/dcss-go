@@ -1,3 +1,5 @@
+-- Item-use levels decide whether a monster can open doors or benefit from carried gear.
+
 -- Source: mon-enum.h:mon_itemuse_type. Only the equipment-capable values
 -- contribute carried item properties to monster resistances.
 local item_use = {

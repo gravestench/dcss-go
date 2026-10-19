@@ -11,6 +11,8 @@ local freeze = {
     order = 20,
 }
 
+-- Retaliate through cold resistance only while the attacker remains adjacent after its hit.
+-- Example: Passive Freeze retaliates only while the attacker is still adjacent.
 function freeze.after_hit(ctx, player, monster, definition)
     if not reactions.adjacent(ctx, player, monster) then
         return

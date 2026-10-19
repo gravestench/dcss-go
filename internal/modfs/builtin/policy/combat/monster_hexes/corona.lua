@@ -16,6 +16,7 @@ function corona.viable(ctx, _, defender)
         not ctx:has(defender, component.STICKY_FLAME)
 end
 
+-- Example: corona.apply(ctx, nil, defender) with player defender -> backlight status and combat message
 -- Corona is a light source attached to the defender. The saved duration is
 -- consumed by visibility policy, so the enchantment outlives this beam hit.
 function corona.apply(ctx, _, defender)

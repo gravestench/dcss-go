@@ -5,6 +5,7 @@ local range = require("policy.magic.range")
 
 local power = {}
 
+-- Derive beam power from the caster's live HD and the spell profile's scale.
 function power.caster_power(ctx, caster, profile)
     local actor = ctx:get(caster, component.ACTOR)
 
@@ -24,6 +25,9 @@ function power.caster_power(ctx, caster, profile)
     return math.max(profile.minimum_power or 0, scaled)
 end
 
+-- Example: with fixed-range spell profile,
+-- power.spell_range(ctx, caster, profile) -> catalog constant without HD scaling
+-- Fixed-range spells bypass power calculation, while variable-range beams use live monster HD.
 function power.spell_range(ctx, caster, profile)
     local spell = catalog.get("spells", profile.id)
 

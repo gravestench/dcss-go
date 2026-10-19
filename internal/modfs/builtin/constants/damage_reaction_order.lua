@@ -1,3 +1,5 @@
+-- Surviving HP damage triggers these reactions in source order so safety runs first.
+
 -- Source: ouch.cc:ouch runs these reactions after surviving HP damage.
 local order = {
     READ_SAFETY = 10,

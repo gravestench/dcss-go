@@ -18,6 +18,7 @@ local monster_health = require("policy.combat.monster_health")
 
 local engulf = {}
 
+-- Treat absent catalog flags and holiness lists as empty when checking engulf immunity.
 local function contains(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -28,6 +29,7 @@ local function contains(values, wanted)
     return false
 end
 
+-- Water hold breaks across levels or when either actor moves beyond one tile.
 local function adjacent(left, right)
     return left and right and left.level_id == right.level_id and
         math.abs(left.x - right.x) <= 1 and
@@ -35,6 +37,7 @@ local function adjacent(left, right)
         (left.x ~= right.x or left.y ~= right.y)
 end
 
+-- Drowning and silence need the live monster species, so a missing actor is invalid state.
 local function definition(ctx, target)
     local actor = ctx:get(target, component.ACTOR)
 
@@ -45,6 +48,7 @@ local function definition(ctx, target)
     return catalog.get(categories.MONSTERS, actor.kind_id), actor
 end
 
+-- Use transformed size when present, then fall back to the species body.
 local function player_size(ctx, player)
     local choice = ctx:get(player, component.PLAYER)
 
@@ -59,6 +63,7 @@ local function player_size(ctx, player)
     return size.rank[form_size] or size.rank[body.size_id]
 end
 
+-- The player must see and physically cover an adjacent nonspiny target before any RNG draw.
 local function eligible(ctx, player, target, monster)
     local holder = ctx:get(player, component.POSITION)
     local victim = ctx:get(target, component.POSITION)
@@ -76,6 +81,7 @@ local function eligible(ctx, player, target, monster)
         vision.radius(ctx, player), victim.x, victim.y)
 end
 
+-- Water dwellers and unliving creatures cannot be asphyxiated by an ooze hold.
 local function breathes(monster)
     if monster.habitat_id == habitats.WATER or
         monster.habitat_id == habitats.AMPHIBIOUS then
@@ -87,10 +93,13 @@ local function breathes(monster)
         not contains(monster.holiness, holiness.PLANT)
 end
 
+-- Example: engulf.capability(level) with mutation level zero -> zero grip capacity
+-- Convert mutation level to a constriction capacity shared by attack and maintenance checks.
 function engulf.capability(level)
     return level > 0 and 1 or 0
 end
 
+-- A saved water-hold component is the single source of truth for an existing grab.
 function engulf.active(ctx, target)
     return ctx:get(target, component.WATER_HOLD) ~= nil
 end
@@ -129,6 +138,7 @@ function engulf.on_player_hit(ctx, target, damage)
     return true
 end
 
+-- Movement cancels the hold before later silence or drowning effects run.
 function engulf.release_far(ctx, target)
     local state = ctx:get(target, component.WATER_HOLD)
 
@@ -148,12 +158,14 @@ function engulf.release_far(ctx, target)
     return true
 end
 
+-- Sweep every held target after movement so stale distant holds do not linger.
 function engulf.release_far_all(ctx)
     for _, target in ipairs(ctx:query({ component.WATER_HOLD })) do
         engulf.release_far(ctx, target)
     end
 end
 
+-- Only an adjacent hold on a breathing victim suppresses its spellcasting.
 function engulf.silenced(ctx, target)
     local state = ctx:get(target, component.WATER_HOLD)
 

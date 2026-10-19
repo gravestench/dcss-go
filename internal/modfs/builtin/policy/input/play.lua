@@ -48,9 +48,12 @@ local screens = {
 
 local play = {}
 
+-- The normal play screen maps keys to command IDs before command preparation runs.
+-- Example: a movement key becomes a step command, while menu keys switch input mode without advancing time.
 function play.route(input)
     local key = input.key
 
+    -- On a shop cell, the usual down-stairs key enters the shop screen.
     if key == ">" and input.on_shop then
         return {
             action = "screen",

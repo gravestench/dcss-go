@@ -89,12 +89,17 @@ local restrictions = {
     },
 }
 
+-- One predicate serves both a forbidden skill and, when present, its paired spell school.
 local function matching(subject)
+    -- Capture the one forbidden skill or school in a handler. The registry
+    -- passes the requested ID later, after the sacrifice level is known.
     return function(level, _, _, requested)
         return level > 0 and requested == subject and 1 or 0
     end
 end
 
+-- Gaining No Air Magic, for example, sanitizes any training selection made before that sacrifice.
+-- Example: gaining No Air Magic sanitizes a previously selected Air Magic training slot.
 function sacrifices.on_change(ctx, owner)
     require("policy.character.skill_availability").sanitize(ctx, owner)
 end
@@ -111,6 +116,8 @@ for _, restriction in ipairs(restrictions) do
     end
 
     if restriction.mutation == mutations.MUT_NO_STEALTH then
+        -- Stealth has a direct capability in addition to the general skill
+        -- restriction, so both stealth queries and training reject it.
         handlers[capabilities.STEALTH_FORBIDDEN] = function(level)
             return level > 0 and 1 or 0
         end

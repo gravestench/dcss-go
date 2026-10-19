@@ -3,11 +3,13 @@ local component = require("constants.component")
 local golem = require("policy.magic.effects.summons.guardian_golem")
 local targets = require("policy.ai.targets")
 
+-- Theory of operation: Observed HP loss is split with a living guardian before either actor is deleted.
 -- Source: monster::hurt splits half of incoming damage, rounded down,
 -- to the living aligned guardian. Observe at the last pre-death phase so
 -- normal attacks and constriction both pass through the persistent bond.
 local system = {}
 
+-- Guardian bond shares observed damage after attacks and constriction, before either partner dies.
 function system.update(ctx, active)
     local active_summon = ctx:get(active, component.SUMMON)
 

@@ -43,6 +43,8 @@ local function resolve(ctx, player, intent, spell, spell_power)
     ctx:emit("spell", "The magic dart hits the " .. definition.name .. ".")
 end
 
+-- Example: A hostile in current dart range behind a wall does not pass the clear-ray target check.
+-- Use the spell's current power-scaled range and a clear ray for a direct dart.
 function effect.can_target(ctx, player, spell)
     return target.visible_hostile(ctx, player,
         spell_range.for_spell(ctx, player, spell), true)

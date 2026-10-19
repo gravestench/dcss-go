@@ -2,6 +2,8 @@ local component = require("constants.component")
 local touch = require("policy.magic.effects.statuses.confusing_touch")
 local system = {}
 
+-- Theory of operation: Confusing touch is aged before monster decision can use it.
+-- Confusing-touch status is advanced before monster intent selection.
 function system.update(ctx, entity)
     if ctx:has(entity, component.AI) then
         touch.tick(ctx, entity)

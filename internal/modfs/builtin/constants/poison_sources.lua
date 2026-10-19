@@ -1,3 +1,5 @@
+-- The poison source distinguishes ordinary venom from terrain and cloud exposure.
+
 return {
     PLAYER = "player",
     MIASMA = "miasma",

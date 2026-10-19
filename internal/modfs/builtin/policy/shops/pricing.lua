@@ -27,6 +27,8 @@ local class_rules = {
     [classes.OBJ_CORPSES] = require("policy.shops.value.fixed"),
 }
 
+-- Compress very high base values before multiplying by quantity, following
+-- DCSS's price curve without letting expensive artefacts grow without bound.
 local function stepdown(value)
     -- Source: stepdown.cc:stepdown_value(value, 1000, 1000, 10000, 10000).
     if value < 1000 then
@@ -37,6 +39,9 @@ local function stepdown(value)
         math.floor(1000 * math.log(1 + value / 1000) / math.log(2)))
 end
 
+-- Dispatch valuation by class or an explicit mod rule, then account for
+-- identification and stack size. Known unique artefacts keep fixed prices.
+-- Example: pricing.item_value(kind, item, known, artefact, options).
 function pricing.item_value(kind, item, known, artefact, options)
 	local fixed = known and known.properties and
         artefacts.fixed_value(artefact)
@@ -72,6 +77,8 @@ function pricing.item_value(kind, item, known, artefact, options)
     return item.quantity * stepdown(math.max(1, value))
 end
 
+-- Build the knowledge mask from the actual buyer unless the shop identifies
+-- stock; the same physical item can therefore quote differently by shop.
 function pricing.value(ctx, item_entity, identifies_stock)
     local item = ctx:get(item_entity, component.ITEM)
 
@@ -99,6 +106,9 @@ function pricing.value(ctx, item_entity, identifies_stock)
         item, known, ctx:get(item_entity, component.ITEM_ARTEFACT), options)
 end
 
+-- Example: pricing.price(10, 100) applies shop greed to an item's 100-gold base value.
+-- Apply greed after calculating item value, using the source rounding rule so
+-- the quoted amount and wallet charge agree.
 function pricing.price(greed, value)
     if type(greed) ~= "number" or greed < 0 or greed % 1 ~= 0 or
         type(value) ~= "number" or value < 0 or value % 1 ~= 0 then
@@ -108,6 +118,8 @@ function pricing.price(greed, value)
     return math.max(1, math.floor(greed * value / 10))
 end
 
+-- Apply the shop's saved greed factor to the current item's value each time
+-- it is shown or bought, preventing stale displayed prices from persisting.
 function pricing.quote(ctx, shop_entity, item_entity)
     local shop = ctx:get(shop_entity, component.SHOP)
 

@@ -1,9 +1,10 @@
+-- Example: Depths gets a stronger scale-shop guard; early Dungeon floors use the weaker alternative.
 local branches = require("ids.branches")
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Port of builder/shops.des:1141-1148.
+-- Depths gets a stronger scale-shop guard; early Dungeon floors use the weaker alternative.
 local function choose_scale_guard(api)
     local expression
 

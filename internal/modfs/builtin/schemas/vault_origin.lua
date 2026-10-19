@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.VAULT_ORIGIN,
     version = 1,
+    -- Vault ID and record index identify the authored placement; occurrence distinguishes repeated spawns.
     fields = {
         level_id = {
             type = "int64",

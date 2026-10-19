@@ -7,6 +7,7 @@ local stock_signature = require("policy.shops.stock_signature")
 
 local presentation = {}
 
+-- Stock rows retain entity IDs and live quotes so the purchase command can revalidate the displayed offer.
 local function stock_at(ctx, shop, player)
     local entries = {}
 
@@ -35,6 +36,9 @@ local function stock_at(ctx, shop, player)
     return entries
 end
 
+-- Example: sort_price(cheap, expensive) orders the shop display by quoted price.
+-- Break equal prices with saved stock order so menu sorting is stable even
+-- when ECS query results arrive in a different order.
 local function sort_price(left, right)
     if left.price ~= right.price then
         return left.price < right.price
@@ -43,6 +47,8 @@ local function sort_price(left, right)
     return left.order < right.order
 end
 
+-- Tie equal display names by saved stock order, so changing identification
+-- state does not randomly swap two indistinguishable menu rows.
 local function sort_name(left, right)
     if left.name ~= right.name then
         return left.name < right.name
@@ -51,6 +57,8 @@ local function sort_name(left, right)
     return left.order < right.order
 end
 
+-- Group by class and subtype, then preserve saved shelf order for identical
+-- types; the letter assigned after sorting remains stable for this view.
 local function sort_type(left, right)
     if left.class_order ~= right.class_order then
         return left.class_order < right.class_order
@@ -63,6 +71,7 @@ local function sort_type(left, right)
     return left.order < right.order
 end
 
+-- Sorting is applied before letter assignment to keep input aligned with view order.
 local function sorter(mode)
     if mode == "price" then
         return sort_price
@@ -73,6 +82,8 @@ local function sorter(mode)
     return sort_type
 end
 
+-- Skip the ambiguous x/X stock letter used for examine, keeping displayed
+-- item keys distinct from the shop's control keys.
 local function letter(index)
     if index <= 25 then
         local offset = index - 1
@@ -95,6 +106,7 @@ local function letter(index)
     return ""
 end
 
+-- Stock sorting happens before letters are assigned so selection and display agree.
 function presentation.view(ctx, input)
     local player = ctx:player()
     local position = ctx:get(player, component.POSITION)

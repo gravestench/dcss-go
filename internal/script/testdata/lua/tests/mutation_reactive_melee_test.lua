@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local items = require("ids.items")
@@ -13,6 +14,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Seed reactive melee attacker and target independently before the reaction mutates either.
 local function fixture(ctx)
     local player = ctx:create()
     local monster = ctx:create()
@@ -47,13 +49,16 @@ local function fixture(ctx)
     return player, monster, catalog.get("monsters", monsters.MONS_RAT)
 end
 
+-- Separate passive freeze rolls from damage and message assertions.
 local function battle_context(ctx, player, freeze_roll)
     local battle = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to reactive melee fixture actor so player-only branches execute on that entity.
     function battle.player()
         return player
     end
 
+    -- Hold spell and skill checks high while steering the separate freeze proc.
     function battle.random(_, stream, bound)
         if stream == "spell" then
             return bound - 1
@@ -80,18 +85,22 @@ local function battle_context(ctx, player, freeze_roll)
         return 0
     end
 
+    -- Define reactive melee fixture's traversable cells for movement and targeting checks.
     function battle.walkable()
         return true
     end
 
+    -- Return reactive melee fixture terrain that gates the environmental branch.
     function battle.cell()
         return terrain.DNGN_FLOOR
     end
 
+    -- Make reactive melee sight deterministic while leaving actor positions to the ECS fixture.
     function battle.visible()
         return true
     end
 
+    -- Freeze reactive melee world time; the explicit aut argument drives every timer change.
     function battle.aut()
         return 0
     end
@@ -99,6 +108,7 @@ local function battle_context(ctx, player, freeze_roll)
     return battle
 end
 
+-- Passive freeze deals cold damage after a hit.
 function test.run(ctx)
     local player, monster, definition = fixture(ctx)
     local battle = battle_context(ctx, player, false)
@@ -110,6 +120,7 @@ function test.run(ctx)
     records.grant_acquired(ctx, player, mutations.MUT_SPINY, 3)
     reactions.before_contact(battle, monster, definition)
 
+    -- Pre-contact retaliation can kill or damage an attacker before its ordinary hit resolves.
     harness.equal(ctx:get(monster, component.HEALTH).current, 27,
         "spines strike before the monster lands its hit")
 
@@ -118,6 +129,7 @@ function test.run(ctx)
 
     reactions.after_hit(freezing, monster, definition, 1)
 
+    -- Post-contact freeze must wait until the attack has actually connected.
     harness.equal(ctx:get(monster, component.HEALTH).current, 17,
         "passive freeze deals cold damage after a hit")
 
@@ -153,6 +165,7 @@ function test.run(ctx)
 
     harness.falsy(ctx:has(weapon, component.CARRIED_BY),
         "tendrils pull the monster's weapon from its inventory")
+    -- Tendrils move the weapon out of monster inventory instead of destroying it.
     harness.truthy(ctx:has(weapon, component.POSITION),
         "disarmed weapon becomes a floor item")
 
@@ -193,6 +206,7 @@ function test.run(ctx)
         component.HEALTH).current
     local retaliation_battle = battle_context(ctx, live_player, false)
 
+    -- Force the reflexive headbutt proc, then bound its remaining melee draws.
     function retaliation_battle.random(_, stream, bound)
         harness.equal(stream, "melee",
             "reflexive headbutt uses the melee RNG")

@@ -1,5 +1,7 @@
+-- Example: A one-sided HP die adds zero without drawing from the monster HP stream.
 local hit_points = {}
 
+-- A one-sided die contributes zero without consuming the monster HP stream.
 local function draw(ctx, bound)
     if bound <= 1 then
         return 0
@@ -8,6 +10,7 @@ local function draw(ctx, bound)
     return ctx:random("monster_hp", bound)
 end
 
+-- Preserve a fractional die contribution with a separate monster HP draw instead of rounding it away.
 local function random_divide(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -19,6 +22,7 @@ local function random_divide(ctx, numerator, denominator)
     return quotient
 end
 
+-- Seven independent contributions produce the source-style HP spread, then clamp to the actor limit.
 function hit_points.roll(ctx, average)
     if average <= 0 then
         error("invalid monster average HP")

@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local causes = require("constants.damage_causes")
 local restrictions = require("constants.safety_restrictions")
@@ -13,18 +14,22 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Capture prevented-damage messages while the live HP component proves safety.
 local function battle_context(ctx, player)
     local battle = setmetatable({}, { __index = ctx })
     local messages = {}
 
+    -- Capture damage safety events separately from the policy state being asserted.
     function battle.emit(_, _, text)
         messages[#messages + 1] = text
     end
 
+    -- Return only prevented-damage messages from the battle proxy.
     function battle.messages()
         return messages
     end
 
+    -- Bind policy ownership to damage safety fixture actor so player-only branches execute on that entity.
     function battle.player()
         return player
     end
@@ -32,6 +37,7 @@ local function battle_context(ctx, player)
     return battle
 end
 
+-- Restore rejects an invalid safety duration.
 function test.run(ctx)
     local player = ctx:create()
     local battle = battle_context(ctx, player)
@@ -55,10 +61,12 @@ function test.run(ctx)
     harness.equal(messages[2],
         "You feel threatened and lose the ability to drink potions!",
         "Drink Safety rolls independently after Read Safety")
+    -- Safety checks observe the same pre-damage vitals before the hit mutates HP.
     harness.equal(ctx:get(player, component.HEALTH).current, 10,
         "both restrictions use pre-hit HP and then damage is applied")
     harness.equal(safety.remaining(ctx, player, restrictions.POTIONS), 10,
         "Drink Safety begins with one turn of restriction")
+    -- The two restrictions use separate rolls and saved timers.
     harness.equal(safety.remaining(ctx, player, restrictions.SCROLLS), 10,
         "Read Safety keeps an independent duration")
     harness.falsy(potion_rules.can_drink(ctx, player),
@@ -84,6 +92,7 @@ function test.run(ctx)
 
     safety.tick(battle, player, 10)
 
+    -- The live item command must consult expiry rather than the original damage event.
     harness.truthy(potion_rules.can_drink(ctx, player),
         "potion use returns after the restriction expires")
     harness.truthy(quaff.prepare(battle, player,
@@ -112,6 +121,7 @@ function test.run(ctx)
     local safe = ctx:create()
     local safe_battle = battle_context(ctx, safe)
 
+    -- Fail if a safe hit draws RNG; safety should reject before threat chance.
     function safe_battle.random()
         error("safe damage must not draw a threat chance")
     end

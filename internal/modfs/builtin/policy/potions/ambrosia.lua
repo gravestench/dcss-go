@@ -5,12 +5,15 @@ local potion_rules = require("policy.character.potion_rules")
 
 local ambrosia = {}
 
+-- Check saved Ambrosia duration so a repeated drink can choose the extension message.
 function ambrosia.active(ctx, player)
     local state = ctx:get(player, component.POTION_AMBROSIA)
 
     return state ~= nil and state.remaining_aut > 0
 end
 
+-- Store one accumulating timer on the player so another drink extends recovery without duplicate effects.
+-- Example: a second Ambrosia potion extends the saved duration instead of adding a second status.
 function ambrosia.extend(ctx, player, turns)
     local state = ctx:get(player, component.POTION_AMBROSIA)
     local added = turns * 10
@@ -25,6 +28,7 @@ function ambrosia.extend(ctx, player, turns)
     end
 end
 
+-- Stochastically round partial aut to preserve recovery over short actions.
 local function rounded_gain(ctx, aut)
     local numerator = aut * (3 + ctx:random("potion", 3))
     local whole = math.floor(numerator / 10)

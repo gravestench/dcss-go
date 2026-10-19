@@ -8,6 +8,7 @@ local selection = require("policy.scrolls.selection")
 
 local effect = {}
 
+-- Build choices from known spell slots only; library entries are not spells to forget.
 local function options(ctx, player)
     local found = {}
 
@@ -25,11 +26,14 @@ local function options(ctx, player)
     return found
 end
 
+-- Example: Amnesia opens a choice only for spells the player currently knows.
+-- Use the shared spell menu so known cancellation keeps the scroll action semantics.
 function effect.prepare(ctx, player, request)
     return selection.prepare(request, "spell", "Forget which spell?",
         "You have no spells to forget!", options(ctx, player))
 end
 
+-- An empty target emits the source no-op message; a chosen slot is removed by learning.forget.
 function effect.apply(ctx, player, request)
     if request.target_id == "" then
         ctx:emit("read", "You feel forgetful for a moment.")

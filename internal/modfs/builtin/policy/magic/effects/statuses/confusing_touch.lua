@@ -6,12 +6,14 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local touch = {}
 
+-- Step down high power before storing confusion duration to avoid linear late-game growth.
 local function duration(power)
     -- beam.cc:_ench_pow_to_dur uses stepdown(power * BASELINE_DELAY, 70).
     local stepped = 70 * math.log(1 + power * 10 / 70) / math.log(2)
     return math.floor(stepped + 0.5)
 end
 
+-- Check life and will resistance before creating monster confusion state.
 function touch.apply(ctx, target, definition, power)
     local health = ctx:get(target, component.HEALTH)
 
@@ -72,12 +74,15 @@ function touch.apply_innate(ctx, target, definition)
     end
 end
 
+-- Treat an expired component as inactive before the scheduler's cleanup tick.
 function touch.active(ctx, target)
     local current = ctx:get(target, component.MONSTER_CONFUSION)
 
     return current ~= nil and current.remaining_aut > 0
 end
 
+-- Example: A confusion mark with ten aut expires at the next monster tick.
+-- Decay confusion by one turn and remove the component once scheduling can no longer consult it.
 function touch.tick(ctx, target)
     local current = ctx:get(target, component.MONSTER_CONFUSION)
 

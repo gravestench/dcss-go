@@ -4,6 +4,7 @@ local items = require("policy.inventory.items")
 
 local materialize = {}
 
+-- A generated item may be floor stock, carried, reserved, or shop stock; accepting two owners would corrupt saves.
 local function location_count(location)
     local count = 0
 
@@ -26,6 +27,7 @@ local function location_count(location)
     return count
 end
 
+-- Exactly one placement mode is required; shop stock also needs a positive order.
 local function validate_location(location)
     if type(location) ~= "table" or location_count(location) ~= 1 then
         error("generated item requires exactly one location")
@@ -49,6 +51,8 @@ local function validate_location(location)
     end
 end
 
+-- Example: materialize.create(ctx, result, { level_id = floor, x = 2, y = 3 }) places a generated item.
+-- Extra components are added in sorted name order so generation stays deterministic.
 function materialize.create(ctx, result, location)
     validate_location(location)
 

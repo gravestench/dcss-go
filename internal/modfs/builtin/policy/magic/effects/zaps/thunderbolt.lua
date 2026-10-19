@@ -8,22 +8,28 @@ local trajectory = require("policy.combat.trajectory")
 
 local thunderbolt = {}
 
+-- Example: Cells at x=2 sort before x=3, with y breaking ties for deterministic damage order.
+-- Sort affected cells so damage order stays deterministic across table iteration.
 function thunderbolt.cell_order(a, b)
     return a.x < b.x or a.x == b.x and a.y < b.y
 end
 
+-- Coordinate keys deduplicate cells shared by current and previous aim rays.
 local function key(x, y)
     return x .. ":" .. y
 end
 
+-- Chebyshev range keeps diagonal aims within the same spell radius.
 local function distance(dx, dy)
     return math.max(math.abs(dx), math.abs(dy))
 end
 
+-- Cross-product ordering decides whether a cell lies inside the arc between two aims.
 local function left_of(a, b)
     return a.x * b.y > a.y * b.x
 end
 
+-- Remainder rolls preserve fractional damage after dividing power across ring cells.
 local function random_round(ctx, numerator, denominator)
     local value = math.floor(numerator / denominator)
 
@@ -34,6 +40,7 @@ local function random_round(ctx, numerator, denominator)
     return value
 end
 
+-- Reject blocked, off-map, self, or out-of-range aim before the spell is paid.
 function thunderbolt.prepare(ctx, player, spell, dx, dy)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -48,10 +55,12 @@ function thunderbolt.prepare(ctx, player, spell, dx, dy)
     end
 end
 
+-- Current and previous aim rays form the thunderbolt sweep; deduplicate cells before rolling damage.
 local function geometry(ctx, origin, aim, prev, reach)
     local zapped = {}
     local lengths = {}
 
+    -- Record each swept cell once and count its ring length for later power division.
     local function add(x, y)
         local id = key(x, y)
 
@@ -63,6 +72,7 @@ local function geometry(ctx, origin, aim, prev, reach)
         end
     end
 
+    -- Trace an aim ray through terrain before adding its visible path cells.
     local function ray(to)
         local result = trajectory.trace(ctx, origin.level_id,
             origin.x, origin.y, to.x, to.y, reach)
@@ -105,6 +115,7 @@ local function geometry(ctx, origin, aim, prev, reach)
     return zapped, lengths
 end
 
+-- Save the last aim direction on the player so the next cast can widen the arc.
 function thunderbolt.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local turn = ctx:get(player, component.PLAYER_TURN).count + 1

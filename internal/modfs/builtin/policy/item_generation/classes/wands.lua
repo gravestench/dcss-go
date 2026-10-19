@@ -19,6 +19,7 @@ local late_charges = {
     [ids.WAND_POLYMORPH] = 8,
 }
 
+-- A random wand must pass the player's saved wand-set restriction.
 function policy.eligible(ctx, definition, request)
     if definition.class ~= classes.OBJ_WANDS then
         return false
@@ -32,10 +33,12 @@ function policy.eligible(ctx, definition, request)
         item_sets.allowed(ctx, ctx:player(), definition.id)
 end
 
+-- Mod wand rarity is read from generation metadata for the extension pool.
 function policy.weight(_, definition)
     return definition.generation.weight or 0
 end
 
+-- The player's saved wand-set representatives get fixed source weights; mod wands append their own positive weights.
 function policy.pick(ctx, request)
     local player = ctx:player()
     local rows = {
@@ -84,8 +87,10 @@ function policy.pick(ctx, request)
     return source.weighted(ctx, rows)
 end
 
+-- Example: late Dungeon flame wands have a smaller charge cap than early ones, before average() rolls charges.
+-- Choose the depth- and kind-specific cap before averaging two source draws for initial charges.
 function policy.roll(ctx, definition, request, result)
-    -- Source: item-prop.cc:1433-1456; makeitem.cc:1259-1261.
+    -- Source: item-prop.cc; makeitem.cc.
     local maximum = 24
 
     if definition.id == ids.WAND_DIGGING then

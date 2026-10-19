@@ -36,12 +36,15 @@ local set_classes = {
     },
 }
 
+-- Report the exact DES file, line, and vault ID when stock syntax cannot be
+-- mapped to a supported item request; silent fallback would change content.
 local function unsupported(selected, site)
     error(string.format("%s:%d: vault %s: unsupported shop stock %s",
         site.path, site.line or 0, site.vault_id,
         selected.source))
 end
 
+-- A manual request needs a trainable skill before item generation can materialize it.
 local function manual_skill(name, site)
     local key = "SK_" .. name:upper():gsub("&", ""):gsub("[^%w]+", "_")
     local id = skills[key]
@@ -54,6 +57,7 @@ local function manual_skill(name, site)
         site.path, site.line or 0, site.vault_id, name))
 end
 
+-- DES stock accepts the displayed name, an apostrophe-free form, or the unrand ID suffix.
 local function unique_artefact(name)
     local normalized = name:lower():gsub("[^%w]+", "_")
 
@@ -74,6 +78,8 @@ local function unique_artefact(name)
     return nil
 end
 
+-- Generated stock requests exclude unsupported item types and unavailable artefacts.
+-- Example: stock_request.apply(ctx, request, selected, site) resolves a vault SHOP directive.
 function stock_request.apply(ctx, request, selected, site)
     if selected.no_spawn then
         request.no_spawn = true

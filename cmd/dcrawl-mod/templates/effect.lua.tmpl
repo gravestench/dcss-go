@@ -1,0 +1,11 @@
+-- {{.Name}} resolves one focused effect when its caller invokes it.
+-- The catalog declares facts; this module handles behavior and writes lasting
+-- state through the context rather than retaining it in Lua globals.
+
+local effect = {}
+
+function effect.resolve(ctx, source, target)
+    -- TODO: Implement the effect and register it with the matching resolver.
+end
+
+return effect

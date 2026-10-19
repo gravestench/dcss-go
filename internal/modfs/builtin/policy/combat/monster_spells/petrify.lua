@@ -9,6 +9,9 @@ local spells = require("ids.spells")
 
 local petrify = {}
 
+-- Petrifying gaze requires a clear line within seven cells before it can form an entity plan.
+-- Example: petrify.plan(ctx, caster, foe) with foe beyond clear sight -> nil plan
+-- Requires clear sight within seven cells.
 function petrify.plan(ctx, caster, foe)
     local caster_pos = ctx:get(caster, component.POSITION)
     local player_pos = ctx:get(foe, component.POSITION)
@@ -37,6 +40,7 @@ function petrify.plan(ctx, caster, foe)
     }
 end
 
+-- Innate petrification resistance precedes the ordinary hex resistance roll.
 function petrify.resolve(ctx, caster, foe, _, plan)
     local player = target.require_entity(plan, foe)
     if resistance.petrification(ctx, player) then

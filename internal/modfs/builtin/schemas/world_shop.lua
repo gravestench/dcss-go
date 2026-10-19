@@ -3,6 +3,7 @@ local component = require("constants.component")
 register.component({
     id = component.SHOP,
     version = 1,
+    -- Shop kind, location, greed, and keeper seed remain stable when a level unloads and reloads.
     fields = {
         kind_id = { type = "string", default = "" },
         level_id = { type = "int64", default = 0 },

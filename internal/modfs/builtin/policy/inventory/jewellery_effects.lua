@@ -14,12 +14,17 @@ for _, capability in pairs(capabilities) do
     known[capability] = true
 end
 
+-- Fail on a misspelled capability at the query boundary; returning zero
+-- would hide a broken item or policy registration.
 local function require_capability(capability)
     if not known[capability] then
         error("unknown jewellery capability " .. tostring(capability))
     end
 end
 
+-- Resolve item-plus magnitudes from the live item component, since two rings
+-- of one kind can carry different enchantment values.
+-- Example: effects.value(ring_item, ring_definition, capabilities.AC).
 function effects.value(item, definition, capability)
     require_capability(capability)
 
@@ -38,6 +43,9 @@ function effects.value(item, definition, capability)
     return magnitude
 end
 
+-- Sum only worn items on usable slots. Regeneration capabilities wait for
+-- attunement, preventing a newly equipped ring from acting immediately.
+-- Example: effects.sum(ctx, player, capabilities.HP_REGEN).
 function effects.sum(ctx, player, capability)
     require_capability(capability)
 
@@ -63,6 +71,8 @@ function effects.sum(ctx, player, capability)
     return total
 end
 
+-- Express boolean capabilities through the same aggregate calculation so
+-- slot and attunement rules cannot diverge between callers.
 function effects.has(ctx, player, capability)
     return effects.sum(ctx, player, capability) > 0
 end

@@ -7,6 +7,7 @@ local monster_confusion = require(
 
 local confuse = {}
 
+-- Example: confuse.apply(ctx, caster, defender, profile) with player after failed save -> 5 to 7 turns of confusion
 -- Source: beam.cc:BEAM_CONFUSION. The shared hex hook did the saving throw.
 function confuse.apply(ctx, caster, defender, profile)
     if ctx:get(defender, component.PLAYER) then

@@ -9,12 +9,15 @@ local summons = require("policy.magic.effects.summons.common")
 
 local prism = {}
 
+-- Use the same relative target coordinates during preparation and placement.
 local function cell(ctx, player, dx, dy)
     local origin = ctx:get(player, component.POSITION)
 
     return origin, origin.x + dx, origin.y + dy
 end
 
+-- Example: A new prism first crackles, then uses its saved power for the later explosion.
+-- Advance saved charge over two actions; the second action explodes and marks the prism finished.
 function prism.act(ctx, entity)
     local state = ctx:get(entity, component.SUMMON_CONSTRUCT)
 
@@ -59,6 +62,7 @@ function prism.prepare(ctx, player, spell, dx, dy)
     end
 end
 
+-- Place the delayed construct at the checked cell and persist power for its timed blast.
 function prism.resolve(ctx, player, intent, _, power)
     local origin, x, y = cell(ctx, player, intent.dx, intent.dy)
     local creature = summons.spawn(ctx, player,

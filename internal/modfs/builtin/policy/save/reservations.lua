@@ -3,6 +3,7 @@ local item_ids = require("ids.items")
 
 local reservations = {}
 
+-- Each reserved item must occur exactly once in its scroll's offer list.
 local function listed_once(state, entity, ctx)
     local count = 0
 
@@ -15,6 +16,8 @@ local function listed_once(state, entity, ctx)
     return count == 1
 end
 
+-- A reserved entity may appear only once in the saved reservation list.
+-- Example: reservations.validate(ctx) rejects an item listed twice in reservation state.
 function reservations.validate(ctx)
     for _, entity in ipairs(ctx:query({ component.RESERVED_BY })) do
         local reservation = ctx:get(entity, component.RESERVED_BY)

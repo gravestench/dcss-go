@@ -1,3 +1,5 @@
+-- A blocked shot returns through its normal hit and brand logic, with the original shooter as defender.
+
 local component = require("constants.component")
 local fixture = require("tests.fixtures.ranged_reflection")
 local harness = require("tests.harness")
@@ -13,6 +15,7 @@ local stone_effect = require("policy.combat.monster_projectiles.stone")
 
 local test = {}
 
+-- A reflected stone must resolve a new hit against the monster, leaving the player untouched.
 local function stone_bounce(ctx)
     local battle, player, shooter, missile = fixture.scene(ctx,
         ids.MI_STONE, true)
@@ -27,6 +30,7 @@ local function stone_bounce(ctx)
         "a reflected stone can hurt its original shooter")
 end
 
+-- Without the amulet, the same shield roll consumes the shot without creating a return attack.
 local function ordinary_block(ctx)
     local battle, player, shooter, missile = fixture.scene(ctx,
         ids.MI_STONE, false)
@@ -41,6 +45,7 @@ local function ordinary_block(ctx)
         "ordinary shield does not return the stone")
 end
 
+-- Equipment state at impact controls reflection; a carried but unequipped amulet has no effect.
 local function removed_reflector(ctx)
     local battle, player, shooter, missile, amulet = fixture.scene(ctx,
         ids.MI_STONE, true)
@@ -55,6 +60,7 @@ local function removed_reflector(ctx)
         "removed reflector cannot return the stone")
 end
 
+-- Reflection can supply the block itself when no physical shield is equipped.
 local function reflector_without_shield(ctx)
     local battle, player, shooter, missile = fixture.scene(ctx,
         ids.MI_STONE, true, nil, false)
@@ -68,10 +74,13 @@ local function reflector_without_shield(ctx)
         "shieldless reflector returns the stone")
 end
 
+-- Shield and reflection rolls have a fixed order; a returned beam must not
+-- reuse the original defender's block outcome.
 local function beam_shield_roll_order(ctx)
     local battle = {}
     local bounds = {}
 
+    -- Capture requested bounds to check the shield's two rolls precede the reflected-beam bypass roll.
     function battle.random(_, _, bound)
         bounds[#bounds + 1] = bound
 
@@ -99,6 +108,7 @@ local function beam_shield_roll_order(ctx)
         "reflected beam bypass rolls after shield bonus")
 end
 
+-- A disabled shooter cannot use its equipped shield against a spell reflected back at it.
 local function paralysed_shooter_cannot_block(ctx)
     local _, _, shooter = fixture.scene(ctx,
         ids.MI_STONE, true, monsters.MONS_DART_SLUG)
@@ -111,6 +121,7 @@ local function paralysed_shooter_cannot_block(ctx)
         "paralysed shooter cannot raise a shield against Slug Dart")
 end
 
+-- Reflection starts another attack roll, so a successful block need not damage the shooter.
 local function returned_stone_misses(ctx)
     local battle, player, shooter, missile = fixture.scene(ctx,
         ids.MI_STONE, true)
@@ -124,6 +135,7 @@ local function returned_stone_misses(ctx)
         "return trajectory can miss its shooter")
 end
 
+-- Returned physical missiles skip the shooter's own shield and its block counter.
 local function returned_stone_cannot_self_block(ctx)
     local battle, _, shooter, missile = fixture.scene(ctx,
         ids.MI_STONE, true)
@@ -138,6 +150,7 @@ local function returned_stone_cannot_self_block(ctx)
         "self-directed return cannot advance shield count")
 end
 
+-- A lethal return is credited to the player even though the monster launched the stone.
 local function returned_stone_kills(ctx)
     local battle, _, shooter, missile = fixture.scene(ctx,
         ids.MI_STONE, true)
@@ -163,6 +176,7 @@ local function returned_stone_kills(ctx)
         "reflected kill is attributed to the player")
 end
 
+-- Temporarily disable the projectile flag to show that shield success alone cannot return it.
 local function nonreflectable_stone(ctx)
     local battle, _, shooter, missile = fixture.scene(ctx,
         ids.MI_STONE, true)
@@ -177,6 +191,7 @@ local function nonreflectable_stone(ctx)
         "nonreflectable projectiles stop at the shield")
 end
 
+-- The poison ego follows a returned dart onto the shooter only after the new hit succeeds.
 local function reflected_dart(ctx)
     local battle, player, shooter, missile = fixture.scene(ctx,
         ids.MI_DART, true)
@@ -190,6 +205,7 @@ local function reflected_dart(ctx)
         "reflected poisoned dart poisons its shooter")
 end
 
+-- A return miss must not apply the poisoned dart's contact effect to either side.
 local function missed_dart_does_not_poison(ctx)
     local battle, player, shooter, missile = fixture.scene(ctx,
         ids.MI_DART, true)
@@ -203,6 +219,7 @@ local function missed_dart_does_not_poison(ctx)
         "a missed return cannot poison the shooter")
 end
 
+-- Preserve the sling's flaming brand when its bullet changes direction after a block.
 local function reflected_launcher(ctx)
     local battle, player, shooter = fixture.scene(ctx,
         ids.MI_SLING_BULLET, true)
@@ -228,6 +245,7 @@ local function reflected_launcher(ctx)
         "launcher brand affects the monster hit by its returned bullet")
 end
 
+-- Freezing emits a visible effect, while Vorpal still needs to carry damage through the return.
 local function other_launcher_brands(ctx)
     for _, brand in ipairs({ brands.FREEZING, brands.VORPAL }) do
         local battle, _, shooter = fixture.scene(ctx,
@@ -255,6 +273,8 @@ local function other_launcher_brands(ctx)
     end
 end
 
+-- Slug Dart's bespoke ranged path still has to use the common reflection
+-- behavior after the player's shield blocks it.
 local function reflected_slug_dart(ctx)
     local battle, player, shooter = fixture.scene(ctx, ids.MI_STONE,
         true, monsters.MONS_DART_SLUG)
@@ -269,6 +289,7 @@ local function reflected_slug_dart(ctx)
         "reflected Slug Dart can hurt its caster")
 end
 
+-- Slug Dart's return follows spell shield rules, allowing a capable original caster to block it.
 local function slug_dart_return_blocked(ctx)
     local battle, player, shooter = fixture.scene(ctx, ids.MI_STONE,
         true, monsters.MONS_DART_SLUG)
@@ -284,6 +305,7 @@ local function slug_dart_return_blocked(ctx)
         "blocked return increments its shield count")
 end
 
+-- Run the same reflection fixture through missile, launcher, and bespoke Slug Dart paths.
 function test.run(ctx)
     stone_bounce(ctx)
     ordinary_block(ctx)

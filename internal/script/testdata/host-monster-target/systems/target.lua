@@ -1,6 +1,12 @@
+-- The target system verifies that a host-generated monster target plan reaches Lua.
+-- Theory of operation: inspect the host plan as an ECS intent, then change one
+-- coordinate and write it back to verify the bridge preserves typed fields.
+
 register.system({
     id = "test.monster_target",
     query = { "core.intent" },
+    -- Assert every target field before modifying x, so a partial host-to-Lua
+    -- conversion cannot be masked by a successful write.
     update = function(ctx, entity)
         local intent = ctx:get(entity, "core.intent")
 

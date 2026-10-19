@@ -1,3 +1,5 @@
+-- Alphabet shop inventory is parsed from the pinned authored stock list.
+
 local content = require(
     "policy.generation.vaults.shop.alphabet_content")
 local items = require("policy.generation.vaults.specs.item")
@@ -7,6 +9,8 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Exercise the alphabet shop's authored stock through the parser and builder
+-- because its many glyph variants stress source item resolution.
 function test.run()
     local errors = {}
     local count = 0

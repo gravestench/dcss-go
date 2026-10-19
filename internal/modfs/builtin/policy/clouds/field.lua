@@ -8,6 +8,7 @@ local neighbors = require("constants.adjacent_cells")
 
 local field = {}
 
+-- Resolve saved source ID only if a live actor still owns the cloud.
 local function source_actor(ctx, state)
     if not state.source_actor_id or state.source_actor_id == 0 then
         return nil
@@ -16,6 +17,7 @@ local function source_actor(ctx, state)
     return ctx:entity(state.source_actor_id)
 end
 
+-- Older clouds spread less often as their remaining decay falls.
 local function spread_chance(decay_aut)
     if decay_aut > 30 then
         return 80
@@ -28,6 +30,7 @@ local function spread_chance(decay_aut)
     return 30
 end
 
+-- Each neighbor gets a clouds-stream chance, but a child receives less decay than its parent.
 local function spread(ctx, state)
     local chance = spread_chance(state.decay_aut)
     local extra_decay = 0
@@ -65,6 +68,7 @@ local function spread(ctx, state)
     return extra_decay
 end
 
+-- Reduce the spread rate by roughly a tenth with unbiased rounding.
 local function lower_spread_rate(ctx, rate)
     local reduction = math.floor(rate / 10)
     local remainder = rate % 10
@@ -77,6 +81,7 @@ local function lower_spread_rate(ctx, rate)
     return math.max(0, rate - reduction)
 end
 
+-- Effect hooks run before aging; opaque ink and player-made clouds also have location-specific expiry rules.
 local function dissipate(ctx, entity, state, elapsed_aut)
     local definition = content.get(categories.CLOUDS, state.kind_id)
     local effect = require(definition.effect)
@@ -130,6 +135,8 @@ local function dissipate(ctx, entity, state, elapsed_aut)
     ctx:set(entity, component.WORLD_CLOUD, state)
 end
 
+-- Snapshot current clouds before aging; newly spread children must wait until the next action.
+-- Example: a ten-aut turn ages only clouds present at turn start, so fresh children wait until the next turn.
 function field.advance(ctx, input)
     if input.elapsed_aut < 1 then
         return {}

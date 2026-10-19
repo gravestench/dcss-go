@@ -5,6 +5,8 @@ local levels = require("policy.mutations.levels")
 local effects = {}
 local handlers = {}
 
+-- Example: effects.add(mutation_id, handler) with duplicate mutation ID -> registration error
+-- Validate the mutation ID and reject duplicate hooks so a kill cannot run two handlers for one mutation.
 function effects.add(mutation_id, handler)
     catalog.get(categories.MUTATIONS, mutation_id)
 
@@ -15,6 +17,7 @@ function effects.add(mutation_id, handler)
     handlers[mutation_id] = handler
 end
 
+-- Let mutation coverage check whether a kill effect was registered for a catalog ID.
 function effects.has_mutation(mutation_id)
     return handlers[mutation_id] ~= nil
 end

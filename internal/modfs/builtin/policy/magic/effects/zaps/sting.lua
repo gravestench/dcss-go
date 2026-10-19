@@ -1,3 +1,4 @@
+-- Example: sting.spec supplies Sting's poison projectile profile to projectile.register.
 local spells = require("ids.spells")
 local projectile = require("policy.magic.effects.zaps.projectile")
 

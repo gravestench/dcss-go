@@ -8,6 +8,8 @@ local summons = require("policy.magic.effects.summons.common")
 -- hit_points(pow + 27, 1), then applies degree-three abjuration.
 local spell_effects = {}
 
+-- Example: Summon Cactus rolls power-scaled HP for a cactus giant and announces a successful spawn.
+-- Roll cactus HP from cast power and let the shared spawner enforce its one-summon cap.
 function spell_effects.resolve(ctx, player, _, _, power)
     local hp = hit_points.roll(ctx, (power + 27) * 10)
     local creature = summons.spawn(ctx, player,

@@ -5,12 +5,14 @@ local catalog = require("policy.catalog")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
 
+-- Read the actor at the selected offset again during resolve because the grid can change after targeting.
 local function target_at(ctx, player, dx, dy)
     local origin = ctx:get(player, component.POSITION)
 
     return ctx:actor_at(origin.level_id, origin.x + dx, origin.y + dy)
 end
 
+-- Mark only living attack-capable originals; summoned or already marked actors cannot convert twice.
 local function valid_target(ctx, player, target)
     if not target or target == player or
         ctx:has(target, component.SUMMON) or
@@ -54,12 +56,15 @@ end
 -- system because the source first freezes a living soul, then raises it.
 local spell_effects = {}
 
+-- Example: Simulacrum rejects a target that cannot carry a frozen-soul death mark.
+-- Require an unmarked living attacker before paying to freeze its soul for later death conversion.
 function spell_effects.prepare(ctx, player, _, dx, dy)
     if not valid_target(ctx, player, target_at(ctx, player, dx, dy)) then
         return "You cannot freeze that soul."
     end
 end
 
+-- Store an expiring soul mark; the death path creates the simulacrum only if the marked actor dies.
 function spell_effects.resolve(ctx, player, intent, _, power)
     local target = target_at(ctx, player, intent.dx, intent.dy)
 

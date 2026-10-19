@@ -12,6 +12,9 @@ local will = require("policy.magic.effects.zaps.will")
 -- Source: spl-transloc.cc:cast_dispersal and _disperse_monster.
 local spell_effects = {}
 
+-- Dispersal attempts to relocate nearby monsters in LOS using the cast power.
+-- Example: Dispersal attempts to move visible monsters outward while leaving the caster in place.
+-- Attempt to blink visible monsters outward, leaving failed destinations and the player in place.
 function spell_effects.resolve(ctx, player, _, spell, power)
     local center = ctx:get(player, component.POSITION)
     local radius = range.for_spell(ctx, player, spell)

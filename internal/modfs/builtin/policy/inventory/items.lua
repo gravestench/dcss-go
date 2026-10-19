@@ -17,10 +17,15 @@ for _, brand in pairs(missile_brands) do
     supported_missile_brands[brand] = true
 end
 
+-- Resolve a live item component through the catalog, keeping game behavior
+-- keyed by the stable kind ID rather than a copied item definition.
+-- Example: items.kind(ctx:get(item_entity, "core.item")).stackable.
 function items.kind(item)
     return catalog.get("items", item.kind_id)
 end
 
+-- Build singular/plural pickup text from a displayed name; splitting before
+-- " of " keeps forms such as "potions of curing" readable.
 function items.phrase(name, quantity)
     if quantity > 1 then
         local before, after = name:match("^(.-)( of .*)$")
@@ -37,6 +42,8 @@ function items.phrase(name, quantity)
     return article .. " " .. name
 end
 
+-- Reject impossible component state before it enters stacking, equipment,
+-- or save paths. Allowed egos come from the weapon and item class rules.
 function items.validate(item, kind)
     if item.quantity <= 0 or (not kind.stackable and item.quantity ~= 1) then
         error("impossible quantity")
@@ -99,6 +106,9 @@ function items.validate(item, kind)
     error("unknown ego " .. item.ego)
 end
 
+-- Decide whether pickup should spend a turn before executing it. A corpse
+-- or an unimplemented vault item yields a free explanation instead.
+-- Example: items.prepare_pickup(ctx, player, pending_label).
 function items.prepare_pickup(ctx, actor, pending_vault_item)
     local position = ctx:get(actor, "core.position")
 
@@ -127,6 +137,9 @@ function items.prepare_pickup(ctx, actor, pending_vault_item)
     return { message = "There is nothing to pick up here." }
 end
 
+-- Normalize an omitted or excessive quantity to the whole stack, but reject
+-- ownership and worn-armour conflicts before creating a timed drop intent.
+-- Example: items.prepare_drop(ctx, player, item_id, 1).
 function items.prepare_drop(ctx, actor, item_id, quantity)
     if quantity < 0 then
         return { message = "Drop quantity must be positive." }
@@ -157,6 +170,8 @@ function items.prepare_drop(ctx, actor, item_id, quantity)
     }
 end
 
+-- Compare all stack-relevant state and guard integer precision before
+-- addition; equal kinds with different enchantment or charges must not merge.
 function items.matches(left, right)
     -- Lua host component integers are exact through 2^53-1.
     return type(left.quantity) == "number" and type(right.quantity) == "number" and
@@ -166,6 +181,8 @@ function items.matches(left, right)
         left.charges == right.charges and left.ego == right.ego
 end
 
+-- Query floor items at one level and coordinate, excluding carried items
+-- whose saved position may still match a previous ground cell.
 function items.at(ctx, position)
     local found = {}
 
@@ -181,6 +198,8 @@ function items.at(ctx, position)
     return found
 end
 
+-- Merge carried stacks only when both item state and identification agree;
+-- otherwise combining them could reveal an unknown appearance implicitly.
 function items.carried_stack(ctx, actor, source)
     local item = ctx:get(source, "core.item")
 
@@ -201,6 +220,8 @@ function items.carried_stack(ctx, actor, source)
     return nil
 end
 
+-- Apply the same compatibility rule on the floor while excluding the source
+-- entity, so dropping onto itself cannot create a duplicate merge target.
 function items.floor_stack(ctx, position, item, exclude)
     if not items.kind(item).stackable then
         return nil

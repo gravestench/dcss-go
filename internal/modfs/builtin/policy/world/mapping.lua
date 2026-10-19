@@ -5,10 +5,13 @@ local effects = require("policy.mutations.effects.registry")
 
 local mapping = {}
 
+-- Preserve passive mapping level as quality so later chance thresholds scale with mutation strength.
+-- Example: mapping.quality(1) keeps the first Passive Mapping level at quality one.
 function mapping.quality(level)
     return level
 end
 
+-- Use effective mutation capability so form suppression affects passive mapping.
 function mapping.level(ctx)
     return effects.sum(ctx, ctx:player(), capabilities.PASSIVE_MAPPING)
 end
@@ -70,6 +73,7 @@ function mapping.plan(ctx, input)
     return mapped
 end
 
+-- Report effective Passive Mapping strength to the host's level mapping caller.
 function mapping.run_level(ctx)
     return { level = mapping.level(ctx) }
 end

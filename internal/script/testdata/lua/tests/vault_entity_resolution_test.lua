@@ -1,3 +1,5 @@
+-- Source formicid cannot produce a skeleton.
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local directives = require("constants.vault_directives")
@@ -22,12 +24,14 @@ local site = {
     glyph = "d",
 }
 
+-- Scripted draws let each resolver assertion control which weighted source option wins.
 local function random_context(draws)
     local ctx = {
         draws = draws or {},
         count = 0,
     }
 
+    -- Consume one scripted draw per request and reject a resolver's invalid bound.
     function ctx:random(stream, bound)
         self.count = self.count + 1
         local draw = self.draws[self.count] or 0
@@ -40,6 +44,7 @@ local function random_context(draws)
     return ctx
 end
 
+-- Named monsters, undead bases, item variants, and quantities must resolve to stable IDs.
 local function named_and_variant_identities()
     local ctx = random_context()
     local rat = monster.parse("rat", site)[1][1]
@@ -61,6 +66,8 @@ local function named_and_variant_identities()
         monster_ids.MONS_ORC, "skeleton item species")
 end
 
+-- Random vault requests inherit source depth so placement does not silently
+-- draw from an unrelated population tier.
 local function random_requests_use_source_depth()
     local ctx = random_context()
     local ordinary = monster.parse("0", site)[1][1]
@@ -97,6 +104,7 @@ local function random_requests_use_source_depth()
         item_quality.SUPERB, "superb item quality")
 end
 
+-- Generic corpse expressions must choose a species that can actually leave a corpse.
 local function generic_corpse_species()
     local ctx = random_context()
 
@@ -112,6 +120,7 @@ local function generic_corpse_species()
     end
 end
 
+-- The authored Formicid skeleton stays a typed no-spawn rather than an impossible corpse.
 local function legacy_source_skeleton_fault()
     local fault_site = {
         path = "vaults/arrival/dreamdust_arrival_sigmund_warning.des",
@@ -126,6 +135,7 @@ local function legacy_source_skeleton_fault()
         "source formicid cannot produce a skeleton")
 end
 
+-- Resolve col:any once and retain source-site diagnostics for an invalid colour.
 local function random_colour_is_selected_once()
     local ctx = random_context()
     local selected = monster.parse("rat col:any", site)[1][1]
@@ -142,6 +152,8 @@ local function random_colour_is_selected_once()
         "invalid colour error lacks the source site")
 end
 
+-- Resolve every authored static arrival name against the same registry used
+-- during level generation.
 local function every_static_arrival_name_resolves()
     local ctx = random_context()
     local checked = 0
@@ -200,31 +212,38 @@ local function every_static_arrival_name_resolves()
     harness.truthy(checked > 100, "static arrival expressions were not visited")
 end
 
+-- Run each source hook at both random extremes to cover conditional emissions.
 local function hook_api(high)
     local api = {
         emissions = {},
     }
 
+    -- Return the low or high endpoint without relying on a live vault RNG.
     function api:roll(bound)
         return high and bound - 1 or 0
     end
 
+    -- Derive one-in decisions from the same chosen endpoint as roll().
     function api:one_in(bound)
         return self:roll(bound) == 0
     end
 
+    -- Keep boolean hook branches tied to the low or high scripted roll.
     function api:coinflip()
         return self:roll(2) == 0
     end
 
+    -- Choose the first or last value to expose source hook branch differences.
     function api:random_from(values)
         return values[self:roll(#values) + 1]
     end
 
+    -- Use inclusive bounds like the vault hook API under test.
     function api:random_range(first, last)
         return first + self:roll(last - first + 1)
     end
 
+    -- Capture emitted directives for later parser and resolver checks.
     function api:emit(kind, argument)
         self.emissions[#self.emissions + 1] = {
             kind = kind,
@@ -232,33 +251,41 @@ local function hook_api(high)
         }
     end
 
+    -- Ignore marker recording because these assertions cover entity declarations.
     function api:record()
     end
 
+    -- Supply a stable species to hooks that branch on character identity.
     function api:player_species()
         return "SP_HUMAN"
     end
 
+    -- Supply the matching source monster name for player-dependent hooks.
     function api:player_monster()
         return "human"
     end
 
+    -- Keep name-dependent hook text deterministic across runs.
     function api:player_name()
         return "Test Hero"
     end
 
+    -- Exercise pregame hook paths so declarations are available before play.
     function api:game_started()
         return false
     end
 
+    -- Run ordinary declaration hooks rather than validation-only behaviour.
     function api:validating()
         return false
     end
 
+    -- No marker geometry is needed to resolve emitted entity names.
     function api:marker_positions()
         return nil
     end
 
+    -- Permit arrival hooks that require an exit to emit their declarations.
     function api:has_exit()
         return true
     end
@@ -266,6 +293,7 @@ local function hook_api(high)
     return api
 end
 
+-- Parse every hook-emitted entity declaration under both random endpoints.
 local function handler_declarations_resolve()
     local ctx = random_context()
     local owners = {}
@@ -332,6 +360,7 @@ local function handler_declarations_resolve()
     harness.equal(count, 36, "source handler owners")
 end
 
+-- Empty depth pools should error with source site; duplicate uniques should return no-spawn.
 local function missing_pool_and_unique_veto()
     local ctx = random_context()
     local random_term = monster.parse("0", site)[1][1]
@@ -344,10 +373,12 @@ local function missing_pool_and_unique_veto()
     local unique = monster.parse("Sigmund", site)[1][1]
     local first = resolve.monster(ctx, unique, 1, site)
 
+    -- Pretend the first unique already exists when resolving the second declaration.
     function ctx:query()
         return { 1 }
     end
 
+    -- Return that existing unique's kind ID for duplicate detection.
     function ctx:get()
         return { kind_id = first.kind_id }
     end
@@ -356,6 +387,7 @@ local function missing_pool_and_unique_veto()
         "duplicate source unique was spawned")
 end
 
+-- Run static, random, hook, and duplicate resolution cases from one fixture.
 function test.run()
     generic_corpse_species()
     legacy_source_skeleton_fault()

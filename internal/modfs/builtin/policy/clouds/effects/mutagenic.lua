@@ -9,6 +9,8 @@ local irradiate = require("policy.magic.effects.zaps.irradiate")
 
 local mutagenic = {}
 
+-- Player contact accumulates contamination; monster contact follows its separate wretchedness path.
+-- Example: a mutagenic cloud adds player contamination or makes a separate monster wretchedness roll.
 function mutagenic.apply(ctx, actor)
     if actor == ctx:player() then
         local state = ctx:get(actor, ids.component.CONTAMINATION)

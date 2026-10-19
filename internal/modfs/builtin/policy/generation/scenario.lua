@@ -1,3 +1,4 @@
+-- Example: A fixture scenario attaches its vault records before the population pass.
 local fixed = require("policy.generation.fixed")
 local generated = require("policy.generation.generated")
 local abyss = require("policy.generation.abyss")
@@ -5,6 +6,7 @@ local features = require("content.terrain_features")
 
 local module = {}
 
+-- Scenario IDs select fixed fixtures or basic generation; vault records are attached before population runs.
 function module.run(ctx, input)
     local scenario_id = input.scenario_id
     local result

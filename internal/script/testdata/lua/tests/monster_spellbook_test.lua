@@ -1,3 +1,4 @@
+
 local book_policy = require("policy.combat.monster_spellbook")
 local catalog = require("policy.catalog")
 local component = require("constants.component")
@@ -8,6 +9,7 @@ local vault_spells = require("constants.vault_spell_override")
 
 local test = {}
 
+-- A live actor resolves its monster book through catalog identity.
 local function source_book(ctx)
     local monster = harness.actor_with(ctx, component.ACTOR, {
         kind_id = monsters.MONS_ENDOPLASM,
@@ -32,6 +34,7 @@ local function source_book(ctx)
     return monster
 end
 
+-- Repeated spell IDs may carry different flags in separate authored slots.
 local function duplicate_ids_have_distinct_slots()
     local book = {
         slots = {
@@ -59,6 +62,7 @@ local function duplicate_ids_have_distinct_slots()
     harness.falsy(okay, "mismatched ID cannot be substituted")
 end
 
+-- Mismatched ID cannot be substituted.
 function test.run(ctx)
     local monster = source_book(ctx)
 

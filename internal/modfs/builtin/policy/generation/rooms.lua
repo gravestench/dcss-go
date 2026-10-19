@@ -1,7 +1,9 @@
+-- Example: A crowded floor stops trying rejected room rectangles after the attempt limit.
 local shape = require("policy.generation.room_shape")
 
 local rooms = {}
 
+-- Stop trying after repeated rejected rectangles so a crowded floor cannot stall generation.
 local function random_rooms(builder, count, max_doors, door_level, max_x, max_y, max_size)
     local failures = 0
     local completed = 0
@@ -25,6 +27,7 @@ local function random_rooms(builder, count, max_doors, door_level, max_x, max_y,
     end
 end
 
+-- Two independent rarity draws determine the extra room passes after the ordinary pass.
 function rooms.make(builder)
     local door_level = builder:roll(11)
     local room_size = 4 + builder:roll(5)

@@ -1,8 +1,9 @@
+-- Example: The wind-blown arrival uses p as its delayed deep dwarf skeleton marker.
 local effects = require("constants.vault_effects")
 
 local handler = {}
 
--- Port of arrival/small.des:3549.
+-- The wind-blown arrival uses p as its delayed deep dwarf skeleton marker.
 local function schedule_skeleton_decay(api)
     api:record(effects.DELAYED_DECAY, {
         glyph = "p",

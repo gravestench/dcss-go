@@ -1,5 +1,7 @@
 local shop = {}
 
+-- Resolve the displayed stock letter to its current item ID; sorted stock
+-- can move rows without changing what a selected letter means on this frame.
 local function selected(input, key)
     for _, item in ipairs(input.items or {}) do
         if item.letter == key then
@@ -10,6 +12,9 @@ local function selected(input, key)
     return nil
 end
 
+-- Shop input chooses stock and confirms purchase against the current visible shop list.
+-- Example: shop.route(nil, { key = "enter", items = stock }) requests
+-- confirmation; the purchase itself waits for a later explicit answer.
 function shop.route(_, input)
     local key = input.key
 

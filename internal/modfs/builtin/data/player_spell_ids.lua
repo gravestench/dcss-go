@@ -1,3 +1,5 @@
+-- These castable spell IDs exist outside the fixed book catalog for gifts and devices.
+
 -- Player-use IDs outside extant books in pinned DCSS.
 -- Source: crawl-ref/source/spl-book.cc:_wand_spells and
 -- _player_nonbook_spells at e60ba3568b0c26447ad36ec5c7b963eb04b2778f.

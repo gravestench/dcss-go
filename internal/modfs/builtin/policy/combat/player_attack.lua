@@ -7,6 +7,7 @@ local size = require("constants.size")
 
 local player_attack = {}
 
+-- Reconstruct monster SH from equipment and body size before testing a player strike.
 local function shield_bonus(ctx, shield)
     local body_size = size.rank[shield.size]
 
@@ -14,7 +15,7 @@ local function shield_bonus(ctx, shield)
         error("unsupported monster shield body size " .. tostring(shield.size))
     end
 
-    -- monster.cc:2996-3029 rolls monster SH from shield AC, enchantment,
+    -- monster.cc rolls monster SH from shield AC, enchantment,
     -- body size, and HD. A nonpositive result cannot block.
     local base = (shield.ac + shield.plus * 2) * 2 +
         (body_size - size.rank[size.MEDIUM]) * (shield.subtype - 14)
@@ -42,6 +43,7 @@ function player_attack.shield_contact(ctx, input, to_hit)
         would_block and input.penetrating
 end
 
+-- Preserve fractional skill contributions through a melee-stream roll.
 local function maybe_random_div(ctx, numerator, denominator)
     if numerator <= 0 then
         return 0
@@ -50,6 +52,7 @@ local function maybe_random_div(ctx, numerator, denominator)
     return math.floor(roll.melee(ctx, numerator + denominator) / denominator)
 end
 
+-- Resolve player accuracy, dodge, and shield outcomes before damage or brands can run.
 function player_attack.contact(ctx, input)
     local fighting = maybe_random_div(ctx, input.fighting100, 100)
     local weapon_skill = maybe_random_div(ctx, input.weapon100, 100)
@@ -94,6 +97,8 @@ function player_attack.contact(ctx, input)
     return { kind = "hit", damage = 0, pierced_shield = pierced_shield }
 end
 
+-- Example: player_attack.damage(ctx, input) with input.unarmed -> uses form and Unarmed Combat damage
+-- Roll weapon or unarmed potential only after contact and apply strength and Fighting before armour.
 function player_attack.damage(ctx, input)
     local potential = input.weapon_damage
 
@@ -152,6 +157,7 @@ function player_attack.damage(ctx, input)
         math.max(0, damage - saved))
 end
 
+-- Prepare stab state before contact effects, then apply damage only to a confirmed hit.
 function player_attack.resolve(ctx, input)
     local outcome = player_attack.contact(ctx, input)
 

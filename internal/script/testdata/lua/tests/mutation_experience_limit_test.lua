@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local mutations = require("ids.mutations")
@@ -11,6 +12,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Seed level and XP together so the cap is tested at an exact threshold.
 local function player_at_level(ctx, level, total_xp)
     local player = ctx:create()
 
@@ -28,6 +30,7 @@ local function player_at_level(ctx, level, total_xp)
     return player
 end
 
+-- Earned XP cannot advance past the Inexperienced cap.
 function test.run(ctx)
     local xp = formulas.experience_needed(25, 1)
     local player = player_at_level(ctx, 24, xp)
@@ -49,6 +52,7 @@ function test.run(ctx)
 
     local session = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to experience limit fixture actor so player-only branches execute on that entity.
     function session.player()
         return player
     end

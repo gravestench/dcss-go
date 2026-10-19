@@ -1,3 +1,4 @@
+-- Example: ctx:get(target, component.INNER_FLAME) retains the source of a pending explosion.
 -- beam.cc:BEAM_INNER_FLAME and mon-explode.cc:explosion_fineff.
 local component = require("constants.component")
 local state = {}

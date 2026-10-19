@@ -1,4 +1,4 @@
--- Source: attack.cc:570-745. Chaos selected as its own brand chooses one
+-- Source: attack.cc. Chaos selected as its own brand chooses one
 -- eligible monster effect by weight, then applies that effect to the actor.
 local component = require("constants.component")
 local effect_ids = require("constants.chaos_effects")
@@ -13,6 +13,11 @@ local roll = require("policy.combat.roll")
 
 local effects = {}
 
+-- Eligibility is evaluated against the struck monster before weighted
+-- selection. Unique, summoned, stationary and resistant targets therefore
+-- alter the candidate pool instead of receiving an impossible effect.
+
+-- Read catalog holiness and flags before building the valid chaos effect pool.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -23,6 +28,7 @@ local function has(values, wanted)
     return false
 end
 
+-- Chaos eligibility needs the catalogued level; absent resistance entries mean no protection.
 local function resistance(definition, wanted)
     for _, entry in ipairs(definition.resistances or {}) do
         if entry.id == wanted then
@@ -33,15 +39,18 @@ local function resistance(definition, wanted)
     return 0
 end
 
+-- Stationary no-threat monsters lack useful behaviour for a chaos transformation.
 local function firewood(hit)
     return has(hit.definition.flags, flags.STATIONARY) and
         has(hit.definition.flags, flags.NO_THREAT)
 end
 
+-- Movement effects cannot matter on stationary defenders, so remove them before the weighted draw.
 local function slowable(_, hit)
     return not has(hit.definition.flags, flags.STATIONARY)
 end
 
+-- Unliving and effectively unhexable targets cannot receive a meaningful polymorph result.
 local function polyable(_, hit)
     return not firewood(hit) and
         not has(hit.definition.holiness, holiness.UNDEAD) and
@@ -49,6 +58,7 @@ local function polyable(_, hit)
         (hit.definition.willpower or 0) < 5000
 end
 
+-- Cloning unique monsters or summon constructs would duplicate special lifecycle state.
 local function cloneable(ctx, hit)
     return not has(hit.definition.flags, flags.UNIQUE) and
         not ctx:has(hit.defender, component.SUMMON_CONSTRUCT) and
@@ -56,12 +66,14 @@ local function cloneable(ctx, hit)
         not ctx:has(hit.defender, component.SPECTRAL_WEAPON)
 end
 
+-- A chaos shifter needs a natural form and must not already be shifting.
 local function shifter(ctx, hit)
     return polyable(ctx, hit) and
         has(hit.definition.holiness, holiness.NATURAL) and
         not status.shifter_active(ctx, hit.defender)
 end
 
+-- Rage requires an actual melee attack and excludes states that cannot act or already frenzy.
 local function rageable(ctx, hit)
     local attack = hit.definition.attacks and hit.definition.attacks[1]
     local kind = hit.definition.holiness
@@ -79,11 +91,13 @@ local function rageable(ctx, hit)
             stasis.petrified_aut == 0)
 end
 
+-- Petrification needs a mobile target without innate stone resistance.
 local function petrifiable(ctx, hit)
     return slowable(ctx, hit) and
         resistance(hit.definition, resistances.PETRIFY) <= 0
 end
 
+-- Reservoir sampling picks each vacant adjacent cell equally without allocating a candidate list.
 local function free_cell(ctx, position)
     local seen = 0
     local selected
@@ -108,6 +122,7 @@ local function free_cell(ctx, position)
     return selected
 end
 
+-- A chaos clone needs independent item entities so equipping one twin cannot mutate the other.
 local function copy_inventory(ctx, source, twin)
     for _, item in ipairs(ctx:query({
         component.ITEM,
@@ -128,6 +143,7 @@ local function copy_inventory(ctx, source, twin)
     end
 end
 
+-- Clone only after a legal destination exists; preserve HP, summon state, and original roster identity.
 local function clone(ctx, hit)
     local position = ctx:get(hit.defender, component.POSITION)
     local destination = position and free_cell(ctx, position)
@@ -183,16 +199,19 @@ local function clone(ctx, hit)
     ctx:emit("combat", "The " .. hit.definition.name .. " splits in two!")
 end
 
+-- Damage already dealt is passed to polymorph so its chaos strength follows the triggering hit.
 local function transform(ctx, hit)
     polymorph.chaos(ctx, hit.defender, hit.definition,
         hit.damage_done)
 end
 
+-- Mark the monster before reshaping it so later turns continue the shifter behaviour.
 local function make_shifter(ctx, hit)
     status.make_shifter(ctx, hit.defender)
     polymorph.shapeshift(ctx, hit.defender, hit.definition)
 end
 
+-- Extend frenzy to at least 120 aut without shortening a longer existing frenzy.
 local function rage(ctx, hit)
     local value = ctx:get(hit.defender, component.MONSTER_ALLEGIANCE) or {
         charm_aut = 0,
@@ -212,21 +231,25 @@ local function rage(ctx, hit)
         " flies into a frenzy!")
 end
 
+-- Chaos Haste uses the shared enchantment duration rather than another speed state.
 local function haste(ctx, hit)
     status.apply(ctx, hit.defender, effect_ids.HASTE, 100)
     ctx:emit("combat", "The " .. hit.definition.name .. " speeds up!")
 end
 
+-- Shared chaos status storage keeps Might's expiry consistent with other temporary boons.
 local function might(ctx, hit)
     status.apply(ctx, hit.defender, effect_ids.MIGHT, 100)
     ctx:emit("combat", "The " .. hit.definition.name .. " grows stronger!")
 end
 
+-- Shared chaos status storage keeps Agility's expiry consistent with other temporary boons.
 local function agility(ctx, hit)
     status.apply(ctx, hit.defender, effect_ids.AGILITY, 100)
     ctx:emit("combat", "The " .. hit.definition.name .. " becomes agile!")
 end
 
+-- Retain any longer invisibility duration and preserve other monster enchantments.
 local function invisible(ctx, hit)
     local value = ctx:get(hit.defender, component.MONSTER_ENCHANT) or {
         blind_aut = 0,
@@ -246,6 +269,7 @@ local function invisible(ctx, hit)
         " vanishes from sight!")
 end
 
+-- An existing paralysis may be longer; Chaos must not shorten it to 50 aut.
 local function paralyze(ctx, hit)
     local value = ctx:get(hit.defender, component.PARALYSIS)
 
@@ -262,6 +286,7 @@ local function paralyze(ctx, hit)
         " suddenly stops moving!")
 end
 
+-- Advance an existing stasis record without losing sleep or petrification progress.
 local function petrify(ctx, hit)
     local value = ctx:get(hit.defender, component.MONSTER_STASIS) or {
         hibernating = false,
@@ -282,6 +307,7 @@ local function petrify(ctx, hit)
         " begins to turn to stone!")
 end
 
+-- Use the monster slow policy so resistance and duration match other slow sources.
 local function slow_monster(ctx, hit)
     slow.apply(ctx, hit.defender, hit.definition)
 end
@@ -362,6 +388,7 @@ local choices = {
     },
 }
 
+-- Named dispatch reuses the same effect body for deterministic callers and the random table.
 function effects.apply_named(ctx, name, hit)
     for _, choice in ipairs(choices) do
         if choice.name == name then
@@ -373,6 +400,10 @@ function effects.apply_named(ctx, name, hit)
     error("unknown chaos effect " .. tostring(name))
 end
 
+-- Example: with stream = 'melee',
+-- effects.apply(ctx, hit, stream) -> applies one valid monster effect and returns its name
+-- Draw once from the sum of eligible weights, then walk that same filtered
+-- list. The caller supplies a saved RNG stream so combat can be replayed.
 function effects.apply(ctx, hit, stream)
     local total = 0
 

@@ -1,3 +1,4 @@
+
 local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
 local vision = require("policy.character.vision")
@@ -5,6 +6,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Nightstalker level three cuts sight to four cells.
 function test.run(ctx)
     local player = ctx:create()
 

@@ -1,5 +1,8 @@
--- Runtime definitions stay in Lua. Import artifacts have their own offline
--- validation; these checks protect the effective modded ruleset at boot.
+-- Check the *resolved* catalog after bundled definitions and mod overlays have
+-- loaded. A file can be individually well formed yet refer to a missing spell,
+-- monster, skill, or item after an overlay replaces another definition. Boot
+-- fails with the offending definition's origin rather than deferring that
+-- mistake until the affected game rule runs.
 local validation = {}
 local categories = require("constants.catalog")
 local books = require("ids.monster_spellbooks")
@@ -20,6 +23,8 @@ local known_brands = {
     [gear_sentinels.NO_FORCED_BRAND] = true,
 }
 
+-- These sets restrict source-shaped enum fields to values implemented by the
+-- current Lua policies. An unknown value is a content error, not a new rule.
 for _, id in pairs(weapon_brands) do
     known_brands[id] = true
 end
@@ -51,12 +56,15 @@ local ordinary_skills = {
     skill_ids.SK_EARTH_MAGIC, skill_ids.SK_POISON_MAGIC, skill_ids.SK_INVOCATIONS, skill_ids.SK_EVOCATIONS,
 }
 
+-- Use the winning VFS origin so overlay errors point to the replacing file.
 local function fail(category, id, detail)
+    -- report the winning VFS layer so a mod author can edit the correct file.
     local origin = register.origin(category, id)
 
     error(origin .. ": " .. category .. " " .. id .. " " .. detail)
 end
 
+-- Reject wrong types before later policies assume a field's shape.
 local function required(category, definition, field, kind)
     local value = definition[field]
 
@@ -67,6 +75,7 @@ local function required(category, definition, field, kind)
     return value
 end
 
+-- Treat absent lists as empty; reject sparse tables that ipairs would truncate.
 local function optional_list(category, definition, field)
     local value = definition[field]
 
@@ -78,6 +87,8 @@ local function optional_list(category, definition, field)
         fail(category, definition.id, field .. " must be a list")
     end
 
+    -- Lua's length operator does not prove that a table has no holes. Verify
+    -- every key before rules use ipairs and silently skip later entries.
     local count = 0
 
     for index in pairs(value) do
@@ -95,6 +106,7 @@ local function optional_list(category, definition, field)
     return value
 end
 
+-- A present description must be nonempty so menus can show it.
 local function optional_description(category, definition)
     local description = definition.description
 
@@ -103,6 +115,7 @@ local function optional_description(category, definition)
     end
 end
 
+-- Character creation needs each species' stat and aptitude fields.
 local function validate_species(species)
     local id = species.id
 
@@ -169,6 +182,7 @@ local function validate_species(species)
     end
 end
 
+-- Validate starting grants before exposing a job on the menu.
 local function validate_job(job)
     local id = job.id
 
@@ -285,6 +299,7 @@ local function validate_job(job)
     end
 end
 
+-- Menu positions must be unique within each group for stable placement.
 function validation.menu_fields(category, definitions, labels, group_field,
     order_field)
     local allowed = {}
@@ -329,6 +344,7 @@ function validation.menu_fields(category, definitions, labels, group_field,
     end
 end
 
+-- Traverse resolved IDs after overlays, independent of file load order.
 local function registered_definitions(category)
     local definitions = {}
 
@@ -339,6 +355,7 @@ local function registered_definitions(category)
     return definitions
 end
 
+-- Early monster weapon weights must resolve to implemented brands.
 local function validate_early_brands()
     local brands = require("policy.combat.brands")
     local items = {}
@@ -367,6 +384,7 @@ local function validate_early_brands()
     end
 end
 
+-- Spawn calculations require a positive value in these fields.
 local function positive_number(category, definition, field)
     local value = required(category, definition, field, "number")
 
@@ -375,6 +393,7 @@ local function positive_number(category, definition, field)
     end
 end
 
+-- Nested source rows use source_order; mod scenario rows use scenario_id.
 local function validate_population_row(monster, row)
     local category = categories.MONSTERS
 
@@ -409,6 +428,7 @@ local function validate_population_row(monster, row)
     end
 end
 
+-- Nested source population positions must be unique across monsters.
 function validation.population_rows(monsters)
     local source_orders = {}
 
@@ -434,12 +454,14 @@ function validation.population_rows(monsters)
     end
 end
 
+-- Monster gear counts cannot be fractional or negative.
 local function nonnegative_integer(category, monster, value, field)
     if type(value) ~= "number" or value < 0 or value % 1 ~= 0 then
         fail(category, monster.id, field .. " must be a nonnegative integer")
     end
 end
 
+-- Check authored weapon choices before weighted equipment selection.
 local function weapon_choices(monster, spec, field)
     local category = categories.MONSTERS
     local owner = {
@@ -477,6 +499,7 @@ local function weapon_choices(monster, spec, field)
     end
 end
 
+-- Validate slot sentinels and choice forms before monster spawn.
 local function weapon_spec(monster, spec, slot)
     local category = categories.MONSTERS
 
@@ -511,6 +534,7 @@ local function weapon_spec(monster, spec, slot)
         "weapon gear good_chance")
 end
 
+-- Check monster gear against active items and brands.
 function validation.weapon_gear(monsters)
     for _, monster in ipairs(monsters) do
         local owned = monster.weapon_gear
@@ -535,6 +559,7 @@ function validation.weapon_gear(monsters)
     end
 end
 
+-- A defined combat profile needs positive energy costs and a primary attack.
 local function validate_defined_monster(monster)
     local category = categories.MONSTERS
 
@@ -562,6 +587,7 @@ local function validate_defined_monster(monster)
     end
 end
 
+-- Partial combat fields still require profile validation.
 local function has_combat_profile(monster)
     for _, field in ipairs({
         "energy", "attacks", "average_hp_10x", "speed", "hd",
@@ -574,12 +600,14 @@ local function has_combat_profile(monster)
     return false
 end
 
+-- Spawnable monsters need positive HP, speed, and HD.
 local function validate_spawnable_monster(monster)
     for _, field in ipairs({ "average_hp_10x", "speed", "hd" }) do
         positive_number(categories.MONSTERS, monster, field)
     end
 end
 
+-- Mutation selection needs bounded levels, legal uses, and level messages.
 local function validate_mutation(mutation)
     local category = categories.MUTATIONS
     local id = mutation.id
@@ -638,6 +666,7 @@ local function validate_mutation(mutation)
     end
 end
 
+-- Cross-check references after every overlay has replaced its definitions.
 local function validate_registered_catalogs()
     local monsters = {}
 
@@ -752,6 +781,7 @@ local function validate_registered_catalogs()
     end
 end
 
+-- Gate startup on validation of the effective catalog.
 function validation.check()
     require("ids.catalog").finalize()
 

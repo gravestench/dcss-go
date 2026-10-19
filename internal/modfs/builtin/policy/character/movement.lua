@@ -1,3 +1,4 @@
+-- Example: Slow multiplies a player step delay before the action clock consumes it.
 local capabilities = require("constants.mutation_capabilities")
 local component = require("constants.component")
 local mutation_effects = require("policy.mutations.effects.registry")
@@ -52,6 +53,7 @@ function movement.base(ctx, player)
 end
 
 -- Source: movement.cc scales movement speed by the current action time.
+-- Apply action-speed scaling after base movement modifiers to keep delay rounding in one place.
 function movement.scale(ctx, delay, time_taken)
     local numerator = math.max(6, delay) * time_taken
     local result = math.floor(numerator / 10)

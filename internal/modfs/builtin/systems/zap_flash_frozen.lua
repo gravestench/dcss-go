@@ -2,6 +2,8 @@ local component = require("constants.component")
 
 local system = {}
 
+-- Theory of operation: The frozen timer is spent before a monster’s next decision, clearing its speed penalty at zero.
+-- Flash-frozen duration can clear before the monster chooses an intent.
 function system.update(ctx, entity, aut)
     local frozen = ctx:get(entity, component.FLASH_FROZEN)
 

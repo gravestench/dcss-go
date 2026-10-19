@@ -8,6 +8,8 @@ local effects = require("policy.mutations.effects.registry")
 
 local presence = {}
 
+-- Check corrosion and, at higher rank, wretchedness independently on the damaged monster.
+-- Example: damage near a level-two Corrupting Presence can make two separate mutation-stream checks.
 function presence.after_damage(level, ctx, _, hit)
     local actor = ctx:get(hit.target, "core.actor")
 

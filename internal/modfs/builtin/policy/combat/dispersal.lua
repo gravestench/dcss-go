@@ -3,14 +3,16 @@ local hex_status = require("policy.combat.monster_hexes.status")
 
 local dispersal = {}
 
+-- Teleport candidates use Chebyshev distance to count diagonals as one step.
 local function distance(a_x, a_y, b_x, b_y)
     return math.max(math.abs(a_x - b_x), math.abs(a_y - b_y))
 end
 
+-- Bound the random search and skip duplicate offsets before trying legal landing cells.
 local function nearby_space(ctx, position)
     local visited = {}
 
-    -- teleport.cc:452-489 samples a 13-by-13 square at most 150 times.
+    -- teleport.cc samples a 13-by-13 square at most 150 times.
     for _ = 1, 150 do
         local offset_x = ctx:random("melee", 13) - 6
         local offset_y = ctx:random("melee", 13) - 6
@@ -39,6 +41,9 @@ end
 
 dispersal.nearby_space = nearby_space
 
+-- Example: with dimension-anchored monster,
+-- dispersal.blink(ctx, attacker, monster, definition) -> false without moving it
+-- Choose a safe relocation after a dispersal hit, leaving immobile targets at their current cell.
 function dispersal.blink(ctx, attacker, monster, definition)
     if hex_status.anchored(ctx, monster) then
         return false

@@ -4,6 +4,7 @@ local streams = require("constants.rng_streams")
 
 local anchor = {}
 
+-- Example: anchor.apply(ctx, nil, defender) with player with pending teleport -> teleport removed and anchor stored
 -- DCSS cancels a pending teleport when the anchor lands. Future teleport
 -- attempts consult the same saved state through translocation policy.
 function anchor.apply(ctx, _, defender)

@@ -1,3 +1,4 @@
+-- Example: A hook SUBST is inserted where its Lua block appears in the DES operation stream.
 local directives = require("constants.vault_directives")
 local effects = require("constants.vault_effects")
 local hooks = require("policy.generation.vaults.hooks")
@@ -33,6 +34,7 @@ local intent_kinds = {
     [directives.ITEM] = effects.ITEM,
 }
 
+-- Parse keyed target and mode before creating a typed declaration record.
 local function assignment(argument)
     local target, mode, value = argument:match("^%s*(%S+)%s+([=:])%s*(.-)%s*$")
 
@@ -49,6 +51,7 @@ local function assignment(argument)
     end
 end
 
+-- Keep keyed glyph declarations typed until their matching map cells are known.
 local function declaration_record(vault, operation, argument)
     local kind = intent_kinds[operation.kind]
 
@@ -81,6 +84,7 @@ local function declaration_record(vault, operation, argument)
     }
 end
 
+-- Split comma declarations without losing their shared source line.
 local function declaration_records(vault, operation)
     if operation.kind == directives.MARKER then
         return { declaration_record(vault, operation, operation.argument) }
@@ -103,6 +107,7 @@ local function declaration_records(vault, operation)
     return records
 end
 
+-- Array directives advance slot numbers in authored order across comma-separated entries.
 local function array_records(vault, operation, first_slot)
     local glyphs = operation.kind == directives.MONS and "1234567" or "defghijk"
     local records = {}
@@ -129,6 +134,7 @@ local function array_records(vault, operation, first_slot)
     return records, first_slot + #records
 end
 
+-- Resolve a helper substitute before embedding it into the source map region.
 local function helper_choice(argument, random)
     local source, choices = argument:match("^%s*(%S+)%s*:%s*(.-)%s*$")
 
@@ -171,10 +177,11 @@ local function helper_choice(argument, random)
     error("SUBVAULT tag choice exceeded its total weight")
 end
 
+-- Find a registered helper map by tag in stable catalog order.
 local function helper_for_tag(tag)
     local categories = require("constants.catalog")
 
-    for _, id in ipairs(register.ordered_ids(categories.VAULTS)) do
+    for _, id in ipairs(register.ids(categories.VAULTS)) do
         local candidate = register.get(categories.VAULTS, id)
 
         if candidate.tags[tag] then
@@ -185,6 +192,7 @@ local function helper_for_tag(tag)
     error("SUBVAULT has no helper tagged " .. tag)
 end
 
+-- Convert helper rows to mutable cells before transformations and embedding.
 local function helper_matrix(vault)
     local width = 0
     local cells = {}
@@ -206,6 +214,7 @@ local function helper_matrix(vault)
     return cells, width
 end
 
+-- Translate helper records from helper-local cells into the parent vault coordinates.
 local function localize_helper_records(records, cells, low_x, low_y)
     local located = {}
 
@@ -245,6 +254,7 @@ local function localize_helper_records(records, cells, low_x, low_y)
     return located
 end
 
+-- Resolve helper maps before glyph transformations so substitutions operate on the composed cell matrix.
 local function embed_helper(cells, source, helper, random, depth, player)
     if depth > 4 then
         error("SUBVAULT recursion exceeds four levels")
@@ -302,6 +312,7 @@ local function embed_helper(cells, source, helper, random, depth, player)
     return localize_helper_records(nested_records, helper_cells, low_x, low_y)
 end
 
+-- A missing helper fit is a source error rather than a silently skipped decoration.
 local function apply_subvault(vault, cells, operation, random, depth, player)
     local source, tag = helper_choice(operation.argument, random)
     local helper = helper_for_tag(tag)
@@ -315,11 +326,13 @@ local function apply_subvault(vault, cells, operation, random, depth, player)
     return result
 end
 
+-- Expose only controlled random, context, and emission methods to ported vault hooks.
 local function hook_api(random, events, line, player)
     local api = {}
 
     player = player or {}
 
+    -- Avoid a draw for a bound of one while exposing hook-safe layout randomness.
     function api:roll(bound)
         if bound <= 1 then
             return 0
@@ -328,27 +341,33 @@ local function hook_api(random, events, line, player)
         return random:roll(bound)
     end
 
+    -- Keep hook one-in choices on the vault layout stream.
     function api:one_in(bound)
         return random:one_in(bound)
     end
 
+    -- Use one two-way layout draw for a hook branch.
     function api:coinflip()
         return random:one_in(2)
     end
 
+    -- Index authored Lua lists from a bounded zero-based layout roll.
     function api:random_from(values)
         return values[random:roll(#values) + 1]
     end
 
+    -- Expose inclusive range draws without letting hooks choose a different stream.
     function api:random_range(first, last)
         return first + random:roll(last - first + 1)
     end
 
+    -- Certain and impossible chances must not consume a hook RNG draw.
     function api:chance(numerator, denominator)
         return numerator >= denominator or
             (numerator > 0 and self:roll(denominator) < numerator)
     end
 
+    -- Consume one layout draw per die so scripted source order remains observable.
     function api:roll_dice(count, sides)
         local total = 0
 
@@ -359,6 +378,7 @@ local function hook_api(random, events, line, player)
         return total
     end
 
+    -- Select without replacement while preserving the draw sequence of the hook.
     function api:subset(values, count)
         local remaining = {}
         local selected = {}
@@ -376,30 +396,37 @@ local function hook_api(random, events, line, player)
         return selected
     end
 
+    -- Read the placement branch captured when this hook API was built.
     function api:branch_id()
         return player.branch_id
     end
 
+    -- Read local branch depth for source branch-dependent scripts.
     function api:depth()
         return player.depth
     end
 
+    -- Use absolute depth when present, otherwise the captured local depth.
     function api:absolute_depth()
         return player.absolute_depth or player.depth
     end
 
+    -- Let depth-scaled shop hooks compare local progress to branch bottom.
     function api:depth_fraction()
         return player.depth / player.branch_bottom
     end
 
+    -- Expose the selected map tag for shop-or-temple controller decisions.
     function api:map_tag()
         return player.map_tag
     end
 
+    -- Avoid offering a unique item already created in the current run.
     function api:unique_generated(name)
         return player.unique_items and player.unique_items[name] or false
     end
 
+    -- Build one stable owner name from layout-stream syllable choices.
     function api:random_name()
         local syllables = {
             "an", "ar", "bel", "dar", "en", "far", "gil", "is",
@@ -416,6 +443,7 @@ local function hook_api(random, events, line, player)
         return name:sub(1, 1):upper() .. name:sub(2)
     end
 
+    -- Queue a typed effect record at this hook location for later placement.
     function api:record(kind, arguments)
         events[#events + 1] = {
             type = "record",
@@ -427,6 +455,7 @@ local function hook_api(random, events, line, player)
         }
     end
 
+    -- Queue a DES directive at this hook location before subsequent operations.
     function api:emit(kind, argument)
         events[#events + 1] = {
             type = "directive",
@@ -438,30 +467,37 @@ local function hook_api(random, events, line, player)
         }
     end
 
+    -- Read the starting species captured before the first level is generated.
     function api:player_species()
         return player.species_id
     end
 
+    -- Use the player monster name only when the source map requests remains.
     function api:player_monster()
         return player.monster
     end
 
+    -- Supply a stable fallback name while generating arrival grave text.
     function api:player_name()
         return player.name or "Player"
     end
 
+    -- Distinguish validation from an actual started game in arrival scripts.
     function api:game_started()
         return player.started or false
     end
 
+    -- Runtime hook expansion never uses the validation-only branch.
     function api:validating()
         return false
     end
 
+    -- The operation phase has no placed marker coordinates yet.
     function api:marker_positions()
         return nil
     end
 
+    -- Exit checks are deferred until the map has been placed and connected.
     function api:has_exit()
         return true
     end
@@ -469,6 +505,7 @@ local function hook_api(random, events, line, player)
     return api
 end
 
+-- Walk source operations in order so hook emissions and substitutions see preceding edits.
 function operations.apply(vault, cells, random, depth, player)
     depth = depth or 0
     local records = {}
@@ -477,6 +514,7 @@ function operations.apply(vault, cells, random, depth, player)
         [directives.ITEM] = 1,
     }
 
+    -- Validate one source operation, then apply terrain or queue its typed effect.
     local function apply_operation(operation)
         entity_specs.operation(vault, operation)
 

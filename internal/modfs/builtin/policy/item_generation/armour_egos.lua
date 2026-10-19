@@ -4,7 +4,7 @@ local source = require("policy.item_generation.source_roll")
 
 local armour_egos = {}
 
--- Source: crawl-ref/source/makeitem.cc:735-824. Each subtype keeps its
+-- Source: crawl-ref/source/makeitem.cc. Each subtype keeps its
 -- own source order and weights; zero-weight entries are not synthesized.
 local tables = {
     [ids.ARM_BUCKLER] = {
@@ -296,10 +296,13 @@ local no_ego = {
     [ids.ARM_QUICKSILVER_DRAGON_ARMOUR] = true,
 }
 
+-- Example: armour_egos.allowed(hide_kind) returns false for a hide on the no-ego list.
+-- Check the hard no-ego set before any subtype table can spend an ego draw.
 function armour_egos.allowed(definition)
     return not no_ego[definition.id]
 end
 
+-- A hide in no_ego spends no brand draw; other armour uses its subtype table or the body fallback.
 function armour_egos.roll(ctx, definition)
     if not armour_egos.allowed(definition) then
         return egos.NORMAL

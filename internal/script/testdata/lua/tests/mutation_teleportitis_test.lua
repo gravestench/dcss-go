@@ -1,3 +1,4 @@
+
 local cloud = require("policy.clouds.placement")
 local cloud_ids = require("ids.clouds")
 local branches = require("ids.branches")
@@ -13,6 +14,7 @@ local terrain = require("constants.terrain")
 
 local test = {}
 
+-- A destination visible from the origin uses the source message.
 function test.run(ctx)
     local player = ctx:create()
     local monster = ctx:create()
@@ -44,26 +46,32 @@ function test.run(ctx)
 
     local world = setmetatable({}, { __index = ctx })
     local messages = {}
+    -- Bind policy ownership to teleportitis fixture actor so player-only branches execute on that entity.
     function world.player()
         return player
     end
 
+    -- Give Teleportitis a twelve-cell search area for its chosen destination.
     function world.level_size()
         return 12, 12
     end
 
+    -- Keep Teleportitis in Dungeon so Abyss restrictions do not affect destination search.
     function world.level_branch()
         return branches.BRANCH_DUNGEON
     end
 
+    -- Define teleportitis fixture's traversable cells for movement and targeting checks.
     function world.walkable(_, _, x, y)
         return x >= 0 and y >= 0 and x < 12 and y < 12
     end
 
+    -- Use ordinary floor for the successful Teleportitis destination.
     function world.cell()
         return terrain.DNGN_FLOOR
     end
 
+    -- Expose teleportitis fixture occupant at the queried cell for collision or targeting.
     function world.actor_at(_, _, x, y)
         if x == 9 and y == 8 then
             return monster
@@ -72,14 +80,17 @@ function test.run(ctx)
         return nil
     end
 
+    -- Expose the destination to check the visible teleport message.
     function world.visible()
         return true
     end
 
+    -- Freeze teleportitis world time; the explicit aut argument drives every timer change.
     function world.aut()
         return 0
     end
 
+    -- Select the same teleport destination while other streams take a zero draw.
     function world.random(_, stream, bound)
         harness.truthy(bound > 0, "teleport random bounds stay positive")
 
@@ -90,6 +101,7 @@ function test.run(ctx)
         return 0
     end
 
+    -- Write the Teleportitis move into the player position component for destination checks.
     function world.move_actor(_, entity, level_id, x, y)
         ctx:set(entity, component.POSITION, {
             level_id = level_id,
@@ -98,6 +110,7 @@ function test.run(ctx)
         })
     end
 
+    -- Capture teleportitis events separately from the policy state being asserted.
     function world.emit(_, _, message)
         messages[#messages + 1] = message
     end
@@ -108,6 +121,7 @@ function test.run(ctx)
 
     harness.equal(position.x, 8,
         "teleportitis moves toward a monster at a sampled destination")
+    -- The scripted destination fixes both axes to catch accidental coordinate reuse.
     harness.equal(position.y, 8,
         "teleportitis uses the sampled y coordinate")
     harness.equal(messages[#messages],
@@ -130,11 +144,13 @@ function test.run(ctx)
 
     local quiet = setmetatable({}, { __index = world })
 
+    -- Hide the destination to check the quiet unseen-teleport branch.
     function quiet.visible()
         return false
     end
 
     teleportitis.tick(quiet, player, 10)
+    -- Threat visibility gates a sampled landing before movement or message emission.
     harness.equal(ctx:get(player, component.POSITION).x, 1,
         "a destination without a visible threat fails silently")
 
@@ -154,6 +170,7 @@ function test.run(ctx)
 
     local dangerous = setmetatable({}, { __index = world })
 
+    -- Make the selected destination lava to test unsafe-cell rejection.
     function dangerous.cell(_, _, x, y)
         if x == 8 and y == 8 then
             return terrain.DNGN_LAVA
@@ -163,6 +180,7 @@ function test.run(ctx)
     end
 
     teleportitis.tick(dangerous, player, 10)
+    -- The destination must pass terrain safety before the player position changes.
     harness.equal(ctx:get(player, component.POSITION).x, 1,
         "teleportitis refuses a hazardous landing")
 

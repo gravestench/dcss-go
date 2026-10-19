@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local monsters = require("ids.monsters")
@@ -10,6 +11,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Seed corrupting presence attacker and target independently before the reaction mutates either.
 local function fixture(ctx, monster_id)
     local player = ctx:create()
     local monster = ctx:create()
@@ -31,13 +33,16 @@ local function fixture(ctx, monster_id)
     return player, monster
 end
 
+-- Script corrosion and mutation draws at the incoming-damage boundary.
 local function damage_context(ctx, player, chance, corrosion_roll)
     local battle = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to corrupting presence fixture actor so player-only branches execute on that entity.
     function battle.player()
         return player
     end
 
+    -- Control the mutation proc separately from the melee corrosion roll.
     function battle.random(_, stream, bound)
         if stream == "mutation" and bound == 12 then
             return chance
@@ -53,6 +58,7 @@ local function damage_context(ctx, player, chance, corrosion_roll)
     return battle
 end
 
+-- First level corrodes a surviving monster after player damage.
 function test.run(ctx)
     local player, monster = fixture(ctx)
     local battle = damage_context(ctx, player, 0)
@@ -67,6 +73,7 @@ function test.run(ctx)
 
     local corrosion = ctx:get(monster, component.MONSTER_ENCHANT)
 
+    -- Corrosion is a post-damage reaction and requires a living hostile target.
     harness.truthy(corrosion and corrosion.corrosion_aut > 0,
         "first level corrodes a surviving monster after player damage")
     harness.falsy(ctx:has(monster, component.WRETCHED),
@@ -76,6 +83,7 @@ function test.run(ctx)
         mutations.MUT_CORRUPTING_PRESENCE, 1)
     damage.apply(battle, monster, 1)
 
+    -- The second mutation level adds a separate malmutation outcome.
     harness.truthy(ctx:has(monster, component.WRETCHED),
         "second level can malmutate a surviving monster")
 
@@ -100,6 +108,7 @@ function test.run(ctx)
     local _, lethal_target = fixture(ctx)
 
     damage.apply(battle, lethal_target, 30, player)
+    -- A lethal hit must skip both survivor-only effects even when the chance draw succeeds.
     harness.falsy(ctx:has(lethal_target, component.MONSTER_ENCHANT),
         "a killing hit cannot corrode the dead target")
 

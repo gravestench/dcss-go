@@ -1,3 +1,5 @@
+-- Entity specs report missing source paths instead of fabricating a definition.
+
 local harness = require("tests.harness")
 local monster = require("policy.generation.vaults.specs.monster")
 local item = require("policy.generation.vaults.specs.item")
@@ -13,6 +15,7 @@ local site = {
     glyph = "O",
 }
 
+-- Comma slots and slash alternatives retain separate monster and gear choices.
 local function parser_keeps_slots_and_equipment()
     local slots = monster.parse(
         "human / elf / orc; nothing|stone.mace / naga; nothing, vampire spells:.",
@@ -28,6 +31,7 @@ local function parser_keeps_slots_and_equipment()
     harness.equal(slots[2][1].spells[1], ".", "empty spellbook override")
 end
 
+-- "nothing" is a typed no-spawn alternative even with weighted modifiers.
 local function parser_reads_modifiers_and_no_spawn()
     local monsters = monster.parse(
         "w:30 nothing / fungus col:yellow att:neutral place:D:1 / 0",
@@ -50,12 +54,14 @@ local function parser_reads_modifiers_and_no_spawn()
     harness.equal(items[2][1].place, "D:1", "item place")
 end
 
+-- Cumulative weights determine the selected source alternative at boundaries.
 local function source_cumulative_choice_sequence()
     local draws = { 0, 0, 13 }
     local bounds = { 10, 20, 30 }
     local index = 0
     local random = {}
 
+    -- Check each cumulative source bound while returning the scripted draw.
     function random:roll(bound)
         index = index + 1
         harness.equal(bound, bounds[index], "cumulative bound")
@@ -70,6 +76,7 @@ local function source_cumulative_choice_sequence()
     harness.equal(picked.name, "bat", "last accepted cumulative draw")
 end
 
+-- Bad terms identify the originating DES line for mod authors.
 local function malformed_terms_name_the_source()
     local cases = {
         { parser = monster, expression = "rat w:0" },
@@ -88,6 +95,7 @@ local function malformed_terms_name_the_source()
     end
 end
 
+-- Cover slots, modifiers, weighted choices, and DES-site errors in the parser.
 function test.run()
     parser_keeps_slots_and_equipment()
     parser_reads_modifiers_and_no_spawn()

@@ -1,3 +1,4 @@
+-- Example: A rejected placement restores its prior map cells before retrying elsewhere.
 local catalog = require("policy.generation.vaults.catalog")
 local depth = require("policy.generation.vaults.depth")
 local hooks = require("policy.generation.vaults.hooks")
@@ -8,10 +9,12 @@ local selection = require("policy.generation.vaults.selection")
 local extra = {}
 local GENERIC_EXTRA_ROLL = 8
 
+-- Identify protected map cells by coordinate across repeated placement attempts.
 local function key(x, y)
     return x .. ":" .. y
 end
 
+-- Restore a rejected fit cell by cell before the next origin attempt.
 local function restore(builder, rows)
     for y, row in ipairs(rows) do
         for x = 1, #row do
@@ -20,6 +23,7 @@ local function restore(builder, rows)
     end
 end
 
+-- A rejected fit must leave every protected stair and arrival cell unchanged.
 local function altered_protected(builder, rows, protected)
     for position in pairs(protected) do
         local x, y = position:match("^(%d+):(%d+)$")
@@ -35,6 +39,7 @@ local function altered_protected(builder, rows, protected)
     return false
 end
 
+-- Mark only cells actually changed by the extra vault so later projection does not restore them.
 local function mark_changes(builder, rows, protected)
     for y, row in ipairs(rows) do
         for x = 1, #row do
@@ -45,6 +50,7 @@ local function mark_changes(builder, rows, protected)
     end
 end
 
+-- Retry geometric conflicts but propagate malformed vault definitions as errors.
 local function fit_failure(message)
     return message:find("conflicts with an existing stair", 1, true) or
         message:find("cannot fit without replacing", 1, true) or
@@ -53,6 +59,7 @@ end
 
 -- A failed fit restores every grid cell. The layout stream still advances,
 -- so retries are deterministic and never repeat a rejected origin forever.
+-- Reject a map fit if it alters protected stairs, restoring the builder cells before another candidate.
 function extra.place(ctx, builder, vault, context)
     local protected = context.protected
     local last_error
@@ -96,30 +103,37 @@ function extra.place(ctx, builder, vault, context)
     return nil, last_error
 end
 
+-- Give DES controllers a bounded layout RNG and placement API.
 local function controller_api(builder, context, placed)
     local api = {}
 
+    -- Draw through the current builder so controller choices share layout RNG order.
     function api:roll(bound)
         return builder:roll(bound)
     end
 
+    -- Skip draws for certain or impossible chances, matching source controller behavior.
     function api:chance(numerator, denominator)
         return numerator >= denominator or
             (numerator > 0 and self:roll(denominator) < numerator)
     end
 
+    -- Use the builder one-in primitive for controller branch choices.
     function api:one_in(bound)
         return builder:one_in(bound)
     end
 
+    -- Convert one bounded builder draw into an inclusive interval.
     function api:random_range(first, last)
         return first + self:roll(last - first + 1)
     end
 
+    -- Fall back to local depth when no absolute branch depth was supplied.
     function api:absolute_depth()
         return context.absolute_depth or context.depth
     end
 
+    -- Attempt requested tagged maps sequentially so a prior fit affects the next.
     function api:place_maps(tag, count)
         for _ = 1, count do
             local selected = selection.choose_tag(builder, tag, context)
@@ -160,6 +174,7 @@ end
 
 -- CHANCE maps are rolled independently of the weighted shop map selected
 -- by their controller. This is the source serial_shops placement sequence.
+-- Choose the controller and its tagged extras on the layout stream after arrival connection.
 function extra.generate(ctx, builder, context)
     local serial = catalog.get("serial_shops")
     local placed = {}
@@ -209,6 +224,7 @@ function extra.generate(ctx, builder, context)
     return placed, serial.id
 end
 
+-- Add a stair or arrival point to the protected-cell set before extra placement.
 function extra.protect(protected, point)
     protected[key(point.x, point.y)] = true
 end

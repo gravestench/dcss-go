@@ -1,3 +1,5 @@
+-- Holiness classifies monster nature for holy, undead, and demonic effects.
+
 local holiness = {
     NATURAL = "MH_NATURAL",
     PLANT = "MH_PLANT",

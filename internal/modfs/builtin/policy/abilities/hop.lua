@@ -10,10 +10,13 @@ local water = require("policy.character.water")
 
 local hop = {}
 
+-- Keep the landing choice in the ability policy so preview and resolution agree on range and passability.
+-- Example: hop.range(2) allows a six-cell hop before visibility and landing checks.
 function hop.range(level)
     return 2 + level * 2
 end
 
+-- Preflight rejects a held or cooling-down hop before mutation RNG or movement can occur.
 function hop.prepare(ctx, player, input)
     local cooldown = ctx:get(player, component.ABILITY_COOLDOWNS)
 
@@ -47,6 +50,7 @@ function hop.prepare(ctx, player, input)
     return nil
 end
 
+-- Destination selection uses the same visible, walkable cells that resolution can reach.
 local function destination(ctx, player, position, target_x, target_y, range)
     local chosen_x
     local chosen_y
@@ -81,6 +85,7 @@ local function destination(ctx, player, position, target_x, target_y, range)
     return chosen_x, chosen_y
 end
 
+-- A failed landing still follows the grasp escape check; a successful move writes a random cooldown.
 function hop.resolve(ctx, player, intent)
     local position = ctx:get(player, component.POSITION)
     local level = levels.effective(ctx, player, mutations.MUT_HOP)

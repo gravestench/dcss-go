@@ -6,6 +6,7 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local englaciation = {}
 
+-- Search catalog flags before attempting to slow stationary monsters.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -16,6 +17,8 @@ local function has(values, wanted)
     return false
 end
 
+-- Example: a cold-immune monster is skipped while a susceptible one receives
+-- saved Projectile Slow and a reduced actor speed.
 local function cold_resistance(definition)
     for _, resistance in ipairs(definition.resistances or {}) do
         if resistance.id == "MR_RES_COLD" then
@@ -26,6 +29,9 @@ local function cold_resistance(definition)
     return 0
 end
 
+-- Englaciation slows eligible monsters by storing projectile-slow state and adjusting actor speed.
+-- Reapplication extends an existing slow; the first application updates both
+-- speed and duration with spell-stream random rounding.
 local function apply(ctx, monster, definition, power)
     if cold_resistance(definition) > 0 or
         has(definition.flags, "M_STATIONARY") then
@@ -78,6 +84,7 @@ local function apply(ctx, monster, definition, power)
     ctx:emit("spell", "The " .. definition.name .. " seems to slow down.")
 end
 
+-- Apply the cold aura only to live visible monsters; each target checks cold immunity itself.
 function englaciation.cast(ctx, player, _, _, power)
     local origin = ctx:get(player, component.POSITION)
     ctx:emit("spell", "You radiate an aura of cold.")

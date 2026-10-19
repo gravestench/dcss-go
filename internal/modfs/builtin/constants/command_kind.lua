@@ -1,3 +1,5 @@
+-- Commands are player requests before validation; intent IDs represent the resolved action.
+
 -- Mirrors game.CommandKind. Keep command names in Lua at policy call sites.
 local command_kind = {
     MOVE = 1,

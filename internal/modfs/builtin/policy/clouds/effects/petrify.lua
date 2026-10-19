@@ -13,6 +13,7 @@ local catalog = require("policy.catalog")
 
 local petrify = {}
 
+-- Check actor-specific petrification resistance before progressing the cloud effect.
 function petrify.immune(ctx, actor)
     if actor == ctx:player() then
         return resistance.petrification(ctx, actor)
@@ -40,6 +41,8 @@ function petrify.immune(ctx, actor)
     return false
 end
 
+-- Level and immunity checks precede a saved stone status; contact itself deals no HP damage.
+-- Example: petrifying cloud exposure can start a saved petrification state after its level check.
 function petrify.apply(ctx, actor)
     if petrify.immune(ctx, actor) then
         return 0

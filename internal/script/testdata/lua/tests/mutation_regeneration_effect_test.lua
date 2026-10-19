@@ -1,3 +1,4 @@
+
 local regeneration = require("policy.character.regeneration")
 local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
@@ -7,6 +8,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Regeneration adds one source pip of 80.
 function test.run(ctx)
     local player = ctx:create()
     local base_hp, base_mp = regeneration.rates(ctx, player, 30, 4)

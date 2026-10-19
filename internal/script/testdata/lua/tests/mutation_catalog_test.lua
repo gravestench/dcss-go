@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local mutations = require("ids.mutations")
@@ -5,6 +6,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Legacy stochastic torment mutation is unavailable in new saves.
 function test.run()
     local ids = register.ids(categories.MUTATIONS)
 

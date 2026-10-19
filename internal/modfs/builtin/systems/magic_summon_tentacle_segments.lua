@@ -2,9 +2,11 @@ local spells = require("ids.spells")
 local component = require("constants.component")
 local tentacle = require("policy.magic.effects.summons.tentacle")
 
+-- Theory of operation: Head movement refreshes segment links before expiry can remove orphans.
 -- Source: mon-tentacle.cc reconnects segments after moving the head.
 local system = {}
 
+-- Tentacle segments follow their anchor after movement and before summon expiry.
 function system.update(ctx, active)
     for _, segment in ipairs(ctx:query({ component.SUMMON_SEGMENT })) do
         tentacle.segment_death(ctx, segment)

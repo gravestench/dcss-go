@@ -1,0 +1,12 @@
+-- {{.Name}} is a reusable rule invoked by a system, command, or effect.
+-- It has no turn schedule and owns no mutable module-level game state.
+-- Add focused functions here, then require this module at its call site.
+
+local policy = {}
+
+function policy.allowed(ctx, actor)
+    -- TODO: Replace the example decision with a named gameplay rule.
+    return true
+end
+
+return policy

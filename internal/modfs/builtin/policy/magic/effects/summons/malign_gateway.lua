@@ -7,6 +7,7 @@ local terrain = require("policy.magic.effects.summons.terrain")
 
 local spell_id = spells.SPELL_MALIGN_GATEWAY
 
+-- A player-owned gateway marker, even before its tentacle appears, blocks a second portal.
 local function active_gateway(ctx)
     for _, marker in ipairs(ctx:query({ component.SUMMON_GATEWAY })) do
         local state = ctx:get(marker, component.SUMMON_GATEWAY)
@@ -23,6 +24,8 @@ end
 -- find_gateway_location. A failed location check aborts before payment.
 local spell_effects = {}
 
+-- Example: An existing gateway blocks another cast before a placement cell is selected.
+-- Reject an existing player gateway or absent placement cell before the cast spends resources.
 function spell_effects.prepare(ctx, player)
     if active_gateway(ctx) then
         return "You can only sustain one malign gateway at a time."
@@ -33,6 +36,7 @@ function spell_effects.prepare(ctx, player)
     end
 end
 
+-- Save the old feature in a marker so gateway expiry can restore the exact cell after opening the portal.
 function spell_effects.resolve(ctx, player, _, _, power)
     local position = ctx:get(player, component.POSITION)
     local points = terrain.gateway_points(ctx, position)

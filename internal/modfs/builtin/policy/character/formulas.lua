@@ -1,3 +1,4 @@
+-- Example: A skill aptitude changes the rounded point cost at the next skill level.
 local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
@@ -34,10 +35,12 @@ local function float32(value)
     return lower * quantum
 end
 
+-- Round the source exponential aptitude factor to float32 before skill-point arithmetic.
 local function aptitude_factor(aptitude)
     return float32(1 / math.exp(math.log(2) * aptitude / 4))
 end
 
+-- The breakpoint terms reproduce the nonuniform DCSS point curve.
 local function historical_skill_cost(level)
     local points = 25 * level * (level + 1)
 
@@ -51,6 +54,7 @@ local function historical_skill_cost(level)
     return points
 end
 
+-- Apply the historical point curve and aptitude multiplier only for valid skill levels.
 function formulas.skill_points_needed(level, aptitude)
     if level < 0 or level > 27 then
         error("skill level " .. level .. " is outside 0..27")
@@ -65,6 +69,7 @@ function formulas.skill_points_needed(level, aptitude)
     return math.floor(float32(historical_skill_cost(level) * factor))
 end
 
+-- Locate the attained level from accumulated points under the species aptitude.
 function formulas.skill_level(points, aptitude)
     if points < 0 then
         error("negative skill points " .. points)
@@ -81,6 +86,7 @@ function formulas.skill_level(points, aptitude)
     return 0
 end
 
+-- Include progress to the next level when a derived formula asks for fractional skill.
 function formulas.scaled_skill(skill, scale, aptitude)
     formulas.skill_points_needed(1, aptitude)
 
@@ -95,6 +101,7 @@ function formulas.scaled_skill(skill, scale, aptitude)
         math.floor((skill.points - previous) * scale / (next_points - previous))
 end
 
+-- Level XP thresholds change slope at the source game breakpoints.
 local function historical_experience(level)
     if level == 1 then
         return 1
@@ -115,6 +122,7 @@ local function historical_experience(level)
     return 16675 + 5985 * offset + 4235 * offset * offset
 end
 
+-- Scale the source level threshold by species XP aptitude after validating its range.
 function formulas.experience_needed(level, xp_aptitude)
     if level < 1 or level > 128 then
         error("experience level " .. level .. " is outside 1..128")
@@ -129,6 +137,7 @@ function formulas.experience_needed(level, xp_aptitude)
     return math.floor(float32((historical_experience(level) - 1) * factor))
 end
 
+-- Walk thresholds only up to the current cap so surplus XP does not create an illegal level.
 function formulas.level_for_experience(total_xp, xp_aptitude, maximum)
     if total_xp < 0 then
         error("negative experience " .. total_xp)
@@ -146,6 +155,7 @@ function formulas.level_for_experience(total_xp, xp_aptitude, maximum)
     return level
 end
 
+-- Report progress within the current threshold interval, including capped-level behavior.
 function formulas.level_progress(total_xp, level, xp_aptitude, maximum)
     local current = formulas.experience_needed(level, xp_aptitude)
 
@@ -162,6 +172,7 @@ function formulas.level_progress(total_xp, level, xp_aptitude, maximum)
     return math.floor((total_xp - current) * 100 / (next_xp - current))
 end
 
+-- Map total spent training XP to the current per-point cost bracket.
 function formulas.skill_cost_level(spent_xp)
     if spent_xp < 0 then
         error("negative spent skill experience " .. spent_xp)
@@ -181,6 +192,7 @@ local point_costs = {
     125, 145, 170, 190, 212, 225, 240, 255, 260, 265, 265, 265, 265,
 }
 
+-- Read the source cost table only after bounding its level index.
 function formulas.skill_point_cost(level)
     if level < 1 or level > 27 then
         error("skill cost level " .. level .. " is outside 1..27")
@@ -189,6 +201,7 @@ function formulas.skill_point_cost(level)
     return point_costs[level]
 end
 
+-- Reject unavailable skills before callers try to price their points.
 function formulas.skill_aptitude(species, id)
     local aptitude = species.aptitudes[id]
 
@@ -209,6 +222,7 @@ function formulas.effective_skill_aptitude(ctx, player, species, id)
     return aptitude - penalty
 end
 
+-- Fighting contributes through two differently scaled terms before percentage modifiers.
 function formulas.max_hp(ctx, player, level, species, skills)
     if level < 1 or level > 27 then
         error("invalid HP level " .. level)
@@ -246,6 +260,7 @@ function formulas.max_hp(ctx, player, level, species, skills)
     return math.max(1, math.floor(hp * percent / 100))
 end
 
+-- Spellcasting and half Invocations compete for the skill contribution before MP bonuses apply.
 function formulas.max_mp(ctx, player, level, species, skills)
     if level < 1 or level > 27 then
         error("unsupported baseline MP inputs at XL" .. level .. " for " .. species.id)
@@ -285,6 +300,7 @@ function formulas.max_mp(ctx, player, level, species, skills)
             jewellery_capabilities.MAX_MP))
 end
 
+-- Gate manual choices to source level milestones and mutation exceptions.
 function formulas.needs_manual_stat(ctx, player, level)
     if level < 3 or level > 27 then
         return false
@@ -298,6 +314,7 @@ function formulas.needs_manual_stat(ctx, player, level)
     return level % 6 == 3
 end
 
+-- Divine Attributes grants a larger choice than the ordinary one-point increase.
 function formulas.manual_stat_amount(ctx, player)
     if mutation_effects.base_sum(ctx, player,
         mutation_capabilities.DIVINE_ATTRIBUTES) > 0 then
@@ -307,6 +324,7 @@ function formulas.manual_stat_amount(ctx, player)
     return 2
 end
 
+-- Carry fractional regeneration progress across a maximum-HP change.
 function formulas.rescale_health(health, regeneration, next_max)
     local hundredths = math.floor(
         (health.current * 100 + regeneration.hp_progress) * next_max / health.max)

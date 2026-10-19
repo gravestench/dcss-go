@@ -12,6 +12,8 @@ local stench = {
     order = 30,
 }
 
+-- Require damaging close contact before spending a melee draw on miasma retaliation.
+-- Example: a zero-damage hit leaves no miasma cloud even when Foul Stench is present.
 function stench.after_hit(ctx, player, monster, _, level, damage_done)
     if damage_done <= 0 or
         not reactions.adjacent(ctx, player, monster) or

@@ -1,3 +1,5 @@
+-- Pie filling is a named cause for contact effects and its displayed combat message.
+
 local fillings = {
     PLUM = "plum",
     LEMON = "lemon",

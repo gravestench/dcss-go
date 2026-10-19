@@ -7,6 +7,7 @@ local registry = require("policy.magic.effects.registry")
 
 local liquefaction = {}
 
+-- A cell liquefies only within the active player's area and on the player's current level.
 function liquefaction.at(ctx, level_id, x, y)
     local player = ctx:player()
     local state = ctx:get(player, component.LIQUEFACTION)
@@ -33,6 +34,7 @@ function liquefaction.at(ctx, level_id, x, y)
         common.distance(origin, { x = x, y = y }) <= radius
 end
 
+-- Monsters in affected ground flounder while the player's liquefaction status persists.
 function liquefaction.floundering(ctx, monster)
     local position = ctx:get(monster, component.POSITION)
     local actor = ctx:get(monster, component.ACTOR)
@@ -47,6 +49,8 @@ function liquefaction.floundering(ctx, monster)
     return not common.flag(definition, "M_FLIES")
 end
 
+-- Example: An aura with ten aut remaining ends after a ten-aut tick and restores solid ground.
+-- Decrement the shared aura in aut and announce once when its ground effect ends.
 function liquefaction.tick(ctx, player, aut)
     local state = ctx:get(player, component.LIQUEFACTION)
 

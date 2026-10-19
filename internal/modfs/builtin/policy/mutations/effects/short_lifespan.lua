@@ -4,6 +4,8 @@ local mutations = require("ids.mutations")
 
 local short_lifespan = {}
 
+-- Short lifespan changes the XP divisor used by experience progression.
+-- Example: Short Lifespan contributes nine to the Zot clock divisor only while present.
 function short_lifespan.extra_divisor(level)
     if level > 0 then
         return 9

@@ -4,18 +4,23 @@ local projectile = require("policy.magic.effects.zaps.projectile")
 
 local bolts = {}
 
+-- Example: An acid bolt contact adds corrosion through the shared monster enchant rule.
+-- Delegate blindness to the shared enchant rule after projectile contact has selected a monster.
 function bolts.blind(ctx, _, target, definition)
     enchant.blind(ctx, target, definition)
 end
 
+-- Apply corrosion only after the bolt has hit a monster; the enchant policy owns stacking.
 function bolts.corrode(ctx, _, target, definition)
     enchant.corrode(ctx, target, definition)
 end
 
+-- Dispel target enchantments at contact while the beam policy owns trajectory.
 function bolts.dispel(ctx, _, target, definition)
     enchant.dispel(ctx, target, definition)
 end
 
+-- Build a shared bolt profile so each elemental spell uses the same dice and beam rules.
 local function bolt(name, count, base, numerator, denominator, element, effect)
     return {
         name = name,

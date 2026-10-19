@@ -1,3 +1,5 @@
+-- Artefact property IDs are keys in saved rolled-property maps.
+
 -- Source: crawl-ref/source/artefact-prop-type.h. Source IDs are used in
 -- saved artefact property maps; display names are separate data.
 local properties = {

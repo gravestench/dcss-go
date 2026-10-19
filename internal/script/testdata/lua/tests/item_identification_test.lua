@@ -1,3 +1,5 @@
+-- Unknown saved type knowledge is rejected.
+
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local harness = require("tests.harness")
@@ -12,6 +14,7 @@ local pools = require("constants.appearance_pools")
 
 local test = {}
 
+-- Floor copies are separate entities so discovery can be checked by item type.
 local function item(ctx, id, plus, ego)
     local entity = ctx:create()
     local fields = {
@@ -27,10 +30,14 @@ local function item(ctx, id, plus, ego)
     return entity
 end
 
+-- Initialize saved identification state and verify modded pool members share
+-- the intended appearance mapping instead of drifting after registration.
 function test.run(ctx)
     local player = ctx:create()
     identification.initialize(ctx, player)
     identification.validate(ctx, player)
+    -- Modded consumables may join an existing appearance pool explicitly;
+    -- jewellery without pool metadata must fail rather than leak its true ID.
     local extension = {
         class = catalog.get("items", item_ids.POT_CURING).class,
         identification_pool = pools.POTION,
@@ -52,6 +59,8 @@ function test.run(ctx)
     harness.equal(appearances.pool(custom_amulet), pools.AMULET,
         "an explicitly classified amulet uses the amulet pool")
 
+    -- Two curing potions share an unknown name until type discovery updates
+    -- both copies, while a different potion has another appearance.
     local first = item(ctx, item_ids.POT_CURING)
     local floor_copy = item(ctx, item_ids.POT_CURING)
     local other = item(ctx, item_ids.POT_MIGHT)
@@ -70,6 +79,7 @@ function test.run(ctx)
         catalog.get("items", item_ids.POT_CURING).name,
         "discovery changes a matching floor copy")
 
+    -- Type, plus, and ego knowledge are independent for equipment copies.
     local weapon = item(ctx, item_ids.WPN_DAGGER, 3)
     local other_weapon = item(ctx, item_ids.WPN_DAGGER, 3)
     local zero_weapon = item(ctx, item_ids.WPN_DAGGER, 0)
@@ -125,6 +135,7 @@ function test.run(ctx)
         "consumables cannot hold armour or weapon cosmetics")
     ctx:remove(other, component.ITEM_IDENTIFICATION)
 
+    -- Corrupt saved appearance assignments must be rejected before display.
     local known = ctx:get(player, component.ITEM_KNOWLEDGE)
     local before = known.appearance_seeds[item_ids.POT_MIGHT]
     known.appearance_seeds[item_ids.POT_MIGHT] =

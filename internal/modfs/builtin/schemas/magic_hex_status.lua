@@ -5,6 +5,7 @@ local component = require("constants.component")
 local schema = {
     id = component.HEX_STATUS,
     version = 1,
+    -- Independent durations let overlapping hexes expire without clearing the other monster penalties.
     fields = {
         corona_aut = {
             type = "int64",

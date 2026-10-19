@@ -1,9 +1,11 @@
+
 local component = require("constants.component")
 local defense = require("policy.combat.monster_defense")
 local harness = require("tests.harness")
 
 local test = {}
 
+-- Removing Vile Clutch should restore EV.
 function test.run(ctx)
     local monster = harness.actor_with(ctx, component.MONSTER_VILE_CLUTCH, {
         remaining_aut = 20,

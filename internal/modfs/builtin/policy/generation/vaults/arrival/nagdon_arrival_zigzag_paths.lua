@@ -1,7 +1,9 @@
+-- Example: Open-path edits remove several blockers before optional gates are selected.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
+-- Open-path edits remove several blockers before optional gates are selected.
 local function choose_open_path(api)
     api:emit(directives.SUBST, "GHIJ = x")
     api:emit(directives.SUBST, '" = .')
@@ -21,6 +23,7 @@ local function choose_open_path(api)
     api:emit(directives.SUBST, "'(+ = x")
 end
 
+-- Shuffle branch markers only in the branch variant that uses them.
 local function choose_branching_zigzag(api)
     if api:coinflip() then
         api:emit(directives.SUBST, "H = x")
@@ -42,6 +45,7 @@ local function choose_branching_zigzag(api)
     end
 end
 
+-- The closed variant seals alternate markers before selecting its replacement gates.
 local function choose_closed_path(api)
     api:emit(directives.SUBST, '"[\'(& = x')
     api:emit(directives.SUBST, "+ = H")
@@ -57,7 +61,7 @@ local function choose_closed_path(api)
     choose_branching_zigzag(api)
 end
 
--- Port of arrival/twisted.des:837-876. Draws follow the source branch order.
+-- The open, branching, and closed zigzag paths retain their source branch draw order.
 local function choose_zigzag_layout(api)
     if api:one_in(3) then
         choose_open_path(api)

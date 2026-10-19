@@ -1,5 +1,8 @@
--- Generated from the pinned DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Brigand (JOB_BRIGAND) is a character start with 5 fixed item grants in this
+-- definition.
+-- The start builder turns these grants and skills into player and inventory
+-- components; the catalog stays unchanged.
+
 -- Source: crawl-ref/source/job-data.h
 -- Starting grants: internal/content/generated/starting-gear.json
 
@@ -30,6 +33,8 @@ local definition = {
         "dart ego:curare q:3",
     },
     weapon_choice = "WCHOICE_NONE",
+    -- Brigand begins with these training levels before species aptitudes affect
+    -- future training.
     skills = {
         {
             id = "SK_FIGHTING",
@@ -53,6 +58,8 @@ local definition = {
         },
     },
     selectable = true,
+    -- These 5 grants create actual starting inventory for Brigand; weapon choice
+    -- may add another item.
     starting_grants = {
         {
             kind_id = item_ids.WPN_DAGGER,

@@ -1,3 +1,6 @@
+-- All 34 concrete clouds remain present when catalog entries are ordered by ID;
+-- selector sentinels and incomplete cloud definitions remain invalid.
+
 local harness = require("tests.harness")
 local categories = require("constants.catalog")
 local content = require("policy.catalog")
@@ -6,7 +9,7 @@ local selectors = require("constants.cloud_selectors")
 
 local test = {}
 
-local source_order = {
+local concrete_ids = {
     ids.CLOUD_FIRE,
     ids.CLOUD_MEPHITIC,
     ids.CLOUD_COLD,
@@ -43,6 +46,7 @@ local source_order = {
     ids.CLOUD_DEGENERATION,
 }
 
+-- Verify validation fails for the intended missing field, not an unrelated catalog error.
 local function expect_invalid(catalog, definition, reason)
     local okay, message = pcall(catalog.definition, definition)
 
@@ -51,17 +55,37 @@ local function expect_invalid(catalog, definition, reason)
         "error must name " .. reason)
 end
 
+-- Check exact cloud membership independently of registration order, then verify source metadata.
 function test.run()
     local catalog = require("policy.clouds.catalog")
     local clouds = content.all(categories.CLOUDS)
 
     harness.equal(#clouds, 34, "pinned source concrete cloud count")
 
-    for order, expected_id in ipairs(source_order) do
-        local definition = clouds[order]
+    local expected = {}
+    local seen = {}
 
-        harness.equal(definition.id, expected_id,
-            "source order " .. order)
+    for _, id in ipairs(concrete_ids) do
+        expected[id] = true
+    end
+
+    -- Catalog ordering is by stable ID; membership is checked independently
+    -- so moving a cloud in the old source table does not change coverage.
+    local previous_id
+
+    for _, definition in ipairs(clouds) do
+        harness.truthy(expected[definition.id],
+            "unexpected concrete cloud " .. definition.id)
+        harness.falsy(seen[definition.id],
+            "duplicate concrete cloud " .. definition.id)
+
+        if previous_id then
+            harness.truthy(previous_id < definition.id,
+                "cloud catalog IDs are ascending")
+        end
+
+        seen[definition.id] = true
+        previous_id = definition.id
         harness.truthy(definition.name ~= "", "cloud has a name")
         harness.truthy(definition.color ~= "", "cloud has a color")
         harness.truthy(type(definition.opaque) == "boolean",
@@ -70,6 +94,10 @@ function test.run()
             "cloud has source damage metadata")
         harness.truthy(type(definition.spread_rate) == "number",
             "cloud has source spread rate")
+    end
+
+    for _, id in ipairs(concrete_ids) do
+        harness.truthy(seen[id], "missing concrete cloud " .. id)
     end
 
     local fire = content.get(categories.CLOUDS, ids.CLOUD_FIRE)

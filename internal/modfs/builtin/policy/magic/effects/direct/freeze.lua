@@ -36,6 +36,8 @@ end
 local spells = require("ids.spells")
 local effect = {}
 
+-- Example: A hostile next to the player makes Freeze targetable; a monster two cells away does not.
+-- Freeze has adjacent reach, so a distant visible foe cannot make the spell targetable.
 function effect.can_target(ctx, player)
     return target.visible_hostile(ctx, player, 1, false)
 end

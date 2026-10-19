@@ -2,6 +2,9 @@ local component = require("constants.component")
 
 local system = {}
 
+-- Theory of operation: Remaining aut is reduced on the player component, making later cloud contact see current
+-- corrosion.
+-- Corrosion recovery updates its component before the player's next cloud exposure.
 function system.update(ctx, actor, elapsed_aut)
     if actor ~= ctx:player() then
         return

@@ -1,8 +1,9 @@
+-- Example: Independent two-dice rolls set clearance greed and item count before the shop feature is emitted.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Port of builder/shops.des:1025-1030.
+-- Independent two-dice rolls set clearance greed and item count before the shop feature is emitted.
 local function configure_clearance_sale(api)
     local greed = api:roll_dice(9, 2) - 9
     local count = api:roll_dice(6, 2) - 5

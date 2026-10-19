@@ -1,3 +1,5 @@
+-- Potion of magic restores the source minimum ten MP.
+
 local items = require("ids.items")
 local potions = require("policy.potions")
 local component = require("constants.component")
@@ -5,6 +7,8 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Apply resource potions to an ECS player with explicit HP and MP, checking
+-- both restoration and maximum-resource caps.
 function test.run(ctx)
     local player = ctx:create()
 

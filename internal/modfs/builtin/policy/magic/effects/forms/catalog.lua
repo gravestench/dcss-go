@@ -1,3 +1,4 @@
+-- Example: forms[form_ids.WISP] supplies Wisp size and combat modifiers during transformation.
 -- Source: form-data.h:formdata and transform.cc:DEFAULT_DURATION at
 -- crawl-ref e60ba356. Names and capabilities remain source spell rules.
 local spells = require("ids.spells")

@@ -1,7 +1,9 @@
--- Generated from the pinned builder/alphashops.des Lua prelude.
+-- Example: Initial A resolves to Alliterative Accessories and samples only A stock.
+-- Alphabet shop names and stock stay keyed by initial so the selector can reserve each letter once.
 -- Edit the source-backed table deliberately when refreshing the catalog.
 local content = {}
 
+-- Each initial has a DES type and suffix token used to construct the shop name.
 content.names = {
     A = "type:Alliterative suffix:Accessories",
     B = "type:Bounteous suffix:Boutique",
@@ -31,6 +33,7 @@ content.names = {
     Z = "type:Zaibatsu suffix:Zone",
 }
 
+-- Stock names are authored per initial; the selector samples only from the chosen letter.
 content.items = {
     A = {
         "arbalest",
@@ -177,6 +180,7 @@ content.items = {
         "inescapable atlas",
         "book of iron",
     },
+    -- Short stock lists remain in the source table even when the shop selector cannot offer that letter.
     J = {
         "javelin",
     },
@@ -334,6 +338,7 @@ content.items = {
     Y = {
         "young poisoner's handbook",
     },
+    -- The generic any entry is retained as the final authored alphabet row.
     Z = {
         "any",
     },

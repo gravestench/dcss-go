@@ -1,7 +1,10 @@
--- Generated from a committed DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
--- spl-zap.cc:90
--- zap-data.h:1124
+-- agony (SPELL_AGONY_RANGE) defines a monster beam using zaps.ZAP_AGONY_RANGE
+-- with power cap 100.
+-- This is beam metadata; spell selection and a registered effect determine whether it is used.
+-- No beam state persists in this definition.
+
+-- spl-zap.cc
+-- zap-data.h
 
 local categories = require("constants.catalog")
 local zaps = require("constants.zap_ids")
@@ -16,6 +19,8 @@ local definition = {
     cap = 100,
     power_hd_factor = 18,
     natural_power = false,
+    -- agony may use a source damage profile; contact policy computes the actual
+    -- roll for each target.
     monster_damage = false,
     monster_tohit = {
         kind = "tohit",

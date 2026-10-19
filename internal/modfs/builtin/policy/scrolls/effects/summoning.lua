@@ -9,6 +9,7 @@ local summons = require("policy.magic.effects.summons.common")
 
 local effect = {}
 
+-- Filter the local monster catalog to legal shadow-creature candidates before draws.
 local function population(ctx, player)
     local position = ctx:get(player, "core.position")
     local allowed = {}
@@ -23,6 +24,7 @@ local function population(ctx, player)
     return pool.at_depth(position.level_id, allowed, "")
 end
 
+-- Known ally restrictions stop a pointless read before any summon RNG is consumed.
 function effect.prepare(ctx, player, request)
     if request.known and allies.forbidden(ctx, player) then
         return {
@@ -33,6 +35,8 @@ function effect.prepare(ctx, player, request)
     return nil
 end
 
+-- Example: Summoning rolls two to four attempts from the eligible local monster pool.
+-- Recheck No Love on execution, then choose summon attempts from the local pool.
 function effect.apply(ctx, player)
     if allies.forbidden(ctx, player) then
         ctx:emit("read", "Nothing happens.")

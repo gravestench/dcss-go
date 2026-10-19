@@ -20,12 +20,15 @@ function experience.adjusted_total(total, current, target, aptitude)
         (total - old_min) / (old_max - old_min))
 end
 
+-- Expose pending skill XP only after an Experience potion has created a choice.
 function experience.pending(ctx, player)
     local state = ctx:get(player, component.POTION_EXPERIENCE)
 
     return state and state.pending_skill_xp or 0
 end
 
+-- Update both level XP and training XP together so the drink cannot leave progression ledgers out of sync.
+-- Example: Experience writes both progression and skill-training XP ledgers in one grant.
 function experience.grant(ctx, player)
     local identity = ctx:get(player, component.PLAYER)
     local progress = ctx:get(player, component.PROGRESSION)
@@ -87,6 +90,7 @@ function experience.grant(ctx, player)
     return result
 end
 
+-- Apply the selected skill allocation against the saved pending amount.
 function experience.choose(ctx, player, id)
     local state = ctx:get(player, component.POTION_EXPERIENCE)
 
@@ -129,6 +133,7 @@ function experience.choose(ctx, player, id)
     }
 end
 
+-- Adapt the choice screen's input into the Experience policy call.
 function experience.choose_policy(ctx, input)
     return experience.choose(ctx, ctx:player(), input.id)
 end

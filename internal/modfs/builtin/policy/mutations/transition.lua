@@ -14,6 +14,7 @@ local messages = require("policy.mutations.messages")
 
 local transition = {}
 
+-- Reject an unknown rank class before any mutation record or RNG is touched.
 local function validate_class(class)
     if class ~= classes.INNATE and class ~= classes.ACQUIRED and
         class ~= classes.TEMPORARY then
@@ -21,6 +22,7 @@ local function validate_class(class)
     end
 end
 
+-- Unsafe noninnate grants can block temporary change or decompose into stat loss.
 local function unsafe_mutation(ctx, owner, class)
     if class == classes.INNATE or
         physiology.can_safely_mutate(ctx, owner) then
@@ -38,6 +40,8 @@ local function unsafe_mutation(ctx, owner, class)
     return { kind = "decomposed" }
 end
 
+-- Example: a nonforced grant may be resisted before conflict resolution changes any saved rank.
+-- Check intrinsic resistance and unsafe physiology before changing conflict or record state.
 function transition.grant(ctx, owner, mutation_id, class, forced, progress)
     validate_class(class)
 
@@ -123,6 +127,7 @@ function transition.grant_after_protection(ctx, owner, mutation_id, class,
     }
 end
 
+-- Remove one chosen rank, then refresh effects, message text, and Evolution timer.
 function transition.remove(ctx, owner, mutation_id, class)
     if class ~= classes.INNATE and class ~= classes.ACQUIRED and
         class ~= classes.TEMPORARY then
@@ -170,6 +175,7 @@ function transition.remove_random(ctx, owner, choice, forced)
     return transition.remove(ctx, owner, mutation_id, classes.ACQUIRED)
 end
 
+-- Count acquired and temporary ranks for saturation without penalizing inherited traits.
 local function noninnate_levels(ctx, owner)
     local total = 0
 
@@ -180,6 +186,7 @@ local function noninnate_levels(ctx, owner)
     return total
 end
 
+-- Above fifteen noninnate levels saturation is certain; below it uses one mutation draw.
 local function heavily_mutated(ctx, owner)
     local count = noninnate_levels(ctx, owner)
 

@@ -2,6 +2,7 @@
 local schema = {
     id = "character.mutation",
     version = 1,
+    -- One owner and mutation ID combine innate, acquired, and temporary levels without merging their sources.
     fields = {
         owner = {
             type = "entity",

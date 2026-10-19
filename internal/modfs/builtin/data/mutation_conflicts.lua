@@ -1,5 +1,6 @@
--- Generated from the pinned ordered DCSS mutation conflict table.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Conflict rows encode source mutation opposition and the outcome of gaining a level.
+
+-- Ported mutation conflict order; edit this committed table directly.
 -- Source: crawl-ref/source/mutation.cc:conflict
 
 local mutations = require("ids.mutations")

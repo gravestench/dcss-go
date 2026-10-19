@@ -6,6 +6,7 @@ local mapping = require("policy.world.mapping")
 
 local exploration = {}
 
+-- Stochastic rounding preserves fractional regeneration over many newly seen cells.
 local function random_divide(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -18,6 +19,8 @@ local function random_divide(ctx, numerator, denominator)
     return quotient
 end
 
+-- Any active level enables the fixed exploration healing rate used per newly revealed cell.
+-- Example: exploration.regeneration(1) gives the exploration regen rate used for revealed cells.
 function exploration.regeneration(level)
     return level > 0 and 1 or 0
 end
@@ -61,6 +64,7 @@ function exploration.on_seen(ctx, count)
     ctx:set(player, component.MAGIC, magic)
 end
 
+-- Plan mapping from the same reveal snapshot, then apply explore-regeneration for each new cell.
 function exploration.run(ctx, input)
     local mapped = mapping.plan(ctx, input)
     exploration.on_seen(ctx, input.count)

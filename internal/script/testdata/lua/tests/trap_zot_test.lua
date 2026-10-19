@@ -1,8 +1,12 @@
+-- Source Zot table has ten outcomes.
+
 local harness = require("tests.harness")
 local zot = require("policy.traps.zot.catalog")
 
 local test = {}
 
+-- Walk every weighted Zot outcome through the table selector, so gaps or
+-- overlaps in cumulative weights cannot hide behind random sampling.
 function test.run()
     local rows = zot.outcomes()
     local total = 0
@@ -27,6 +31,8 @@ function test.run()
         for draw = offset, offset + row.weight - 1 do
             local ctx = {}
 
+            -- Return each exact table offset while asserting the selector's
+            -- bound equals the sum of source weights.
             function ctx:random(_, bound)
                 harness.equal(bound, total, "Zot table draw bound")
 

@@ -1,3 +1,5 @@
+-- Invisibility expires after elapsed action time.
+
 local component = require("constants.component")
 local harness = require("tests.harness")
 local items = require("ids.items")
@@ -6,6 +8,8 @@ local invisibility = require("policy.potions.invisibility")
 
 local test = {}
 
+-- Apply invisibility and inspect the ECS status seen by targeting rules,
+-- rather than asserting only the potion's presentation message.
 function test.run(ctx)
     local player = ctx:create()
     local effect = potions.get(items.POT_INVISIBILITY)

@@ -31,6 +31,8 @@ local artefact_resistances = {
     [resistances.NEGATIVE_ENERGY] = artefact_properties.NEGATIVE_ENERGY,
 }
 
+-- Example: a target without health returns nil before an elemental zap reads its species.
+-- Return species and live HP together so elemental callers cannot damage a missing actor.
 function damage.monster(ctx, target)
     local actor = ctx:get(target, "core.actor")
     local health = ctx:get(target, "core.health")
@@ -42,6 +44,7 @@ function damage.monster(ctx, target)
     return catalog.get("monsters", actor.kind_id), health
 end
 
+-- Catalog entries default to zero when a monster lacks an explicit resistance.
 local function resistance_level(definition, resistance_id)
     local resistance = 0
 
@@ -76,11 +79,13 @@ local function elemental(raw, resistance, resistance_id)
     return raw
 end
 
+-- Apply monster flavour resistance using the species level rather than player modifiers.
 function damage.elemental(raw, definition, resistance_id)
     return elemental(raw, resistance_level(definition, resistance_id),
         resistance_id)
 end
 
+-- Temporary Fire Vulnerability shifts the monster's fire level before damage scaling.
 function damage.monster_elemental(ctx, target, raw, resistance_id)
     local definition = damage.monster(ctx, target)
 
@@ -119,6 +124,7 @@ local elemental_capabilities = {
         mutation_capabilities.NEGATIVE_ENERGY_RESISTANCE,
 }
 
+-- Only authored armour flags contribute special body resistance; absent flags give zero.
 local function armour_flag_level(definition, wanted)
     local armour = definition.armour
     local flags = armour and type(armour.flags) == "table" and
@@ -133,6 +139,7 @@ local function armour_flag_level(definition, wanted)
     return 0
 end
 
+-- Sum mutation, jewellery, potion, form, gear, and artefact sources before source caps.
 function damage.player_resistance(ctx, player, resistance_id)
     local capability = elemental_capabilities[resistance_id]
 
@@ -352,6 +359,7 @@ function damage.proportional_armour(ctx, raw, ac, max_damage, gdr)
     return math.max(0, raw - math.max(raw - hurt, minimum))
 end
 
+-- Player chunked AC uses current GDR to cap how much can be absorbed.
 function damage.player_proportional_armour(ctx, player, raw, max_damage)
     local defense = fighter.defense(ctx)
 
@@ -359,6 +367,7 @@ function damage.player_proportional_armour(ctx, player, raw, max_damage)
         max_damage, defense.gdr)
 end
 
+-- Monster chunked AC has no GDR floor, using species armour alone.
 function damage.monster_proportional_armour(ctx, monster, raw, max_damage)
     local definition = damage.monster(ctx, monster)
 
@@ -371,6 +380,7 @@ function damage.monster_proportional_armour(ctx, monster, raw, max_damage)
     return damage.proportional_armour(ctx, raw, ac, max_damage, 0)
 end
 
+-- Credit the player kill signal only for lethal dealt damage against a nonsummon.
 function damage.apply(ctx, target, amount, source)
     local credited_source = source or ctx:query({ component.PLAYER })[1]
     local health, dealt = monster_health.damage(ctx, target, amount,

@@ -6,6 +6,8 @@ local trajectory = require("policy.combat.trajectory")
 
 local apportation = {}
 
+-- Example: aiming at a visible floor stack pulls its top item unless a wall
+-- or terrain unsafe for the player's species blocks the ray.
 local function target(ctx, player, dx, dy)
     local origin = ctx:get(player, "core.position")
     local x = origin.x + dx
@@ -44,6 +46,7 @@ local function target(ctx, player, dx, dy)
     return item, ray, nil
 end
 
+-- Reject an invalid item ray before paying for the spell, including blocked or unsafe destinations.
 function apportation.prepare(ctx, player, _, dx, dy)
     local item, _, rejection = target(ctx, player, dx, dy)
 
@@ -58,6 +61,7 @@ function apportation.prepare(ctx, player, _, dx, dy)
     return nil
 end
 
+-- Randomly round fractional pull distance rather than biasing every cast downward.
 local function random_divide(ctx, numerator, denominator)
     local whole = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -69,6 +73,7 @@ local function random_divide(ctx, numerator, denominator)
     return whole
 end
 
+-- Stop the pulled stack before terrain that would destroy it or cannot support the item.
 local function item_survives(ctx, level_id, x, y, species)
     local feature = ctx:cell(level_id, x, y)
 
@@ -78,6 +83,7 @@ local function item_survives(ctx, level_id, x, y, species)
             species.habitat == "HT_AMPHIBIOUS")
 end
 
+-- A thrown net can hold a monster; pulling it must release the held actor.
 local function free_net(ctx, item)
     if not ctx:has(item, "projectile.net") then
         return
@@ -118,6 +124,8 @@ function apportation.resolve(ctx, player, intent, _, power)
     local x = index < 0 and origin.x or path[index + 1].x
     local y = index < 0 and origin.y or path[index + 1].y
 
+    -- Search back toward the source item when the first landing cell would
+    -- destroy it, then merge with an identical floor stack if present.
     while index < distance and
         not item_survives(ctx, origin.level_id, x, y, species) do
         index = index + 1

@@ -1,3 +1,5 @@
+-- Live authored monster coexists with its corpse.
+
 local component = require("constants.component")
 local effects = require("constants.vault_effects")
 local harness = require("tests.harness")
@@ -11,6 +13,7 @@ local origin_schema = require("schemas.vault_origin")
 
 local test = {}
 
+-- One authored orc occurrence is reused across live, corpse, and gear checks.
 local function source_record()
     return {
         kind = effects.MONSTER,
@@ -26,6 +29,7 @@ local function source_record()
     }
 end
 
+-- Restore validation compares ECS origins against these parsed vault records.
 local function level_input()
     local orc = source_record()
 
@@ -57,6 +61,7 @@ local function level_input()
     }
 end
 
+-- Use one authored occurrence key when comparing a live actor with its later corpse.
 local function origin_fields()
     return {
         level_id = 1,
@@ -69,6 +74,7 @@ local function origin_fields()
     }
 end
 
+-- Restore must accept moved origins and corpses, then reject duplicate live occurrences.
 function test.run(ctx)
     harness.equal(origin_schema.id, component.VAULT_ORIGIN,
         "test imports production origin schema")
@@ -98,6 +104,8 @@ function test.run(ctx)
     orc_origin.kind_id = monsters.MONS_ORC
     orc_origin.spawn_x = 13
 
+    -- Death preserves the authored occurrence on the corpse after the actor
+    -- disappears, allowing a legitimate restore.
     local corpse = death.corpse(ctx,
         catalog.get("monsters", monsters.MONS_ORC), {
             level_id = 1,
@@ -110,6 +118,7 @@ function test.run(ctx)
         origin_policy.CORPSE_OCCURRENCE,
         "corpse lost its authored monster origin")
 
+    -- The same occurrence cannot be both a live monster and its corpse.
     local impossible_orc = ctx:create()
 
     ctx:add(impossible_orc, component.ACTOR, {
@@ -147,6 +156,7 @@ function test.run(ctx)
 
     save.validate_vault_entities(ctx, level_input())
 
+    -- A decayed corpse still must match the source monster species.
     local forged_species = ctx:get(decayed, component.CORPSE)
 
     forged_species.monster_id = monsters.MONS_ORC
@@ -157,6 +167,7 @@ function test.run(ctx)
     harness.falsy(decay_ok, "forged decayed corpse species was accepted")
     ctx:destroy(decayed)
 
+    -- Secondary vault gear must match an item occurrence from the source.
     local gear_input = level_input()
 
     gear_input.levels[1].vault_records[1].arguments.gear_2_kind_id =
@@ -198,6 +209,7 @@ function test.run(ctx)
     harness.falsy(override_ok, "forged vault actor override was accepted")
     ctx:remove(rat, component.VAULT_ACTOR_OVERRIDES)
 
+    -- Duplicate origin occurrence IDs are rejected even on separate entities.
     local second = ctx:create()
 
     ctx:add(second, component.ACTOR, {

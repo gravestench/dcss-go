@@ -8,6 +8,7 @@ local common = require("policy.magic.effects.statuses.common")
 
 local rot = {}
 
+-- Keep fractional power scaling unbiased when deriving the active rot duration.
 local function random_divide(ctx, numerator, denominator)
     local quotient = math.floor(numerator / denominator)
     local remainder = numerator % denominator
@@ -19,6 +20,8 @@ local function random_divide(ctx, numerator, denominator)
     return quotient
 end
 
+-- Example: Casting Corpse Rot extends the saved aura duration and stores the current spell power.
+-- Refresh the shared area state without dropping Radiance or Bog timers; cap accumulated rot at 500 aut.
 function rot.cast(ctx, player, _, _, power)
     local state = ctx:get(player, component.AREA_STATUS) or {
         corpse_rot_aut = 0,
@@ -43,6 +46,7 @@ function rot.cast(ctx, player, _, _, power)
     ctx:emit("spell", "You radiate decay.")
 end
 
+-- Try an unoccupied floor cell and roll cloud duration only after placement is possible.
 local function place(ctx, origin, x, y)
     if not miasma.available(ctx, origin.level_id, x, y) then
         return false

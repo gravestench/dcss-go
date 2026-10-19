@@ -8,6 +8,7 @@ local stats = {
     D = "dex",
 }
 
+-- Delayed actions and stat choices resume from session state rather than reconstructing an earlier command.
 function session.stat(input)
     local id = stats[input.key]
 
@@ -24,6 +25,9 @@ function session.stat(input)
     }
 end
 
+-- Example: S accepts only a save confirmation; unrelated confirmation screens wait for y/Y.
+-- Interpret the key in its current confirmation context, preventing the
+-- save shortcut from accepting unrelated irreversible menu choices.
 function session.confirm(input)
     local key = input.key
 
@@ -39,6 +43,7 @@ function session.confirm(input)
     return { action = "none" }
 end
 
+-- The delay route resumes the stored equipment action after time advances.
 function session.equipment_delay(input)
     if input.key == "esc" then
         return {
@@ -68,6 +73,7 @@ function session.equipment_delay(input)
     }
 end
 
+-- Memorisation permits save and cancellation while the unfinished spell remains in session state.
 function session.memorisation_delay(input)
     if input.key == "esc" then
         return {
@@ -97,6 +103,8 @@ function session.memorisation_delay(input)
     }
 end
 
+-- Use the same save/cancel controls during a blood ritual as during other
+-- persisted delays, while leaving the unfinished ritual in session state.
 function session.vampire_delay(input)
     if input.key == "esc" then
         return {

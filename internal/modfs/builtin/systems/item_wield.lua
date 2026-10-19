@@ -4,6 +4,9 @@ local identification = require("policy.items.identification")
 
 local system = {}
 
+-- Theory of operation: The weapon slot changes after drop handling, so an item released this action is not still
+-- equipped.
+-- Wielding changes equipped components after drops have released any affected item.
 function system.update(ctx, actor)
     local intent = ctx:get(actor, "core.intent")
 

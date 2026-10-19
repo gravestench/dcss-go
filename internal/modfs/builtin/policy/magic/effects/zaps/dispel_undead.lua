@@ -8,6 +8,7 @@ local trajectory = require("policy.combat.trajectory")
 
 local dispel_undead = {}
 
+-- Look up undead holiness in the catalog list before the beam can damage a target.
 local function undead(definition)
     for _, holiness in ipairs(definition.holiness or {}) do
         if holiness == "MH_UNDEAD" then
@@ -18,6 +19,8 @@ local function undead(definition)
     return false
 end
 
+-- Example: A visible undead target on a clear ray can receive Dispel Undead damage.
+-- Require undead holiness and an unobstructed visible path before presenting the spell as targetable.
 function dispel_undead.can_target(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -50,6 +53,7 @@ function dispel_undead.can_target(ctx, player, spell)
     return false
 end
 
+-- Trace first contact and gate damage on undead holiness, leaving living monsters unaffected.
 function dispel_undead.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,

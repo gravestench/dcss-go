@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 
 local net = {}
 
+-- Read monster flags that rule out tangible, mobile targets for a net.
 local function has_flag(flags, wanted)
     for _, flag in ipairs(flags or {}) do
         if flag == wanted then
@@ -12,13 +13,16 @@ local function has_flag(flags, wanted)
     return false
 end
 
+-- Example: net.can_hold(definition) with giant monster -> false hold eligibility
+-- Exclude giant, stationary, and insubstantial monsters before creating a held state.
 function net.can_hold(definition)
-    -- traps.cc:247-286 excludes giants, stationary monsters, and ghosts.
+    -- traps.cc excludes giants, stationary monsters, and ghosts.
     return definition.size_id ~= "SIZE_GIANT" and
         not has_flag(definition.flags, "M_STATIONARY") and
         not has_flag(definition.flags, "M_INSUBSTANTIAL")
 end
 
+-- Link net and held actor together so struggle and later movement can validate both ends.
 function net.catch(ctx, monster, net_item, definition)
     if not net.can_hold(definition) or ctx:has(monster, "projectile.held") then
         return false
@@ -36,6 +40,7 @@ function net.catch(ctx, monster, net_item, definition)
     return true
 end
 
+-- A held monster spends its action damaging the net until durability allows escape.
 function net.struggle(ctx, monster, held)
     local actor = ctx:get(monster, "core.actor")
     local definition = catalog.get("monsters", actor.kind_id)
@@ -46,7 +51,7 @@ function net.struggle(ctx, monster, held)
         error("held monster has no trapping net")
     end
 
-    -- mon-act.cc:2001-2017 gives the newly caught monster one action before
+    -- mon-act.cc gives the newly caught monster one action before
     -- its first struggle. A struggle consumes the whole monster action.
     if held.newly_trapped then
         held.newly_trapped = false
@@ -68,7 +73,7 @@ function net.struggle(ctx, monster, held)
     durability.durability = durability.durability - whole
 
     if durability.durability < -7 then
-        -- NET_MIN_DURABILITY is -7 in traps.h:17.
+        -- NET_MIN_DURABILITY is -7 in traps.h.
         ctx:remove(monster, "projectile.held")
         ctx:destroy(net_item)
         ctx:emit("combat", "The net rips apart, and the " ..
@@ -80,6 +85,7 @@ function net.struggle(ctx, monster, held)
     ctx:set(net_item, "projectile.net", durability)
 end
 
+-- Release stale holds when the net or actor no longer shares a valid trapping cell.
 function net.validate(ctx, monster, position)
     local held = ctx:get(monster, "projectile.held")
 
@@ -101,6 +107,7 @@ function net.validate(ctx, monster, position)
     end
 end
 
+-- Remove both ends of a hold so freed actors cannot keep a dangling net reference.
 function net.release(ctx, monster)
     local held = ctx:get(monster, "projectile.held")
 
@@ -115,7 +122,7 @@ function net.release(ctx, monster)
         error("held monster has no trapping net")
     end
 
-    -- traps.cc:920-938 mulches a damaged net when its captive leaves it.
+    -- traps.cc mulches a damaged net when its captive leaves it.
     local damage = -durability.durability
     local mulched = damage > 0 and ctx:random("ai", 9) < damage
     ctx:remove(monster, "projectile.held")

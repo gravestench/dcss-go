@@ -1,3 +1,5 @@
+-- Armour ego names distinguish intrinsic armour properties from the item kind and enchantment.
+
 local armour_egos = {
     NORMAL = "",
     PROTECTION = "SPARM_PROTECTION",

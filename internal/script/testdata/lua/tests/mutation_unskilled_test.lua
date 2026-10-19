@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local classes = require("constants.mutation_classes")
 local component = require("constants.component")
@@ -13,6 +14,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Removing Unskilled restores skill level from preserved points.
 function test.run(ctx)
     local player = ctx:create()
     local human = catalog.get("species", species.SP_HUMAN)
@@ -71,6 +73,7 @@ function test.run(ctx)
         mutations.MUT_UNSKILLED, classes.ACQUIRED, true)
 
     harness.equal(granted.kind, "granted", "Unskilled is granted")
+    -- Saved points remain while the derived skill level changes under aptitude.
     harness.equal(ctx:get(trained, component.SKILLS).entries[1].level, 9,
         "the new aptitude immediately lowers the effective skill level")
     harness.truthy(ctx:get(trained, component.HEALTH).max < baseline_hp,
@@ -79,6 +82,7 @@ function test.run(ctx)
     transition.remove(ctx, trained, mutations.MUT_UNSKILLED,
         classes.ACQUIRED)
 
+    -- Mutation removal recalculates from points rather than refunding or retraining them.
     harness.equal(ctx:get(trained, component.SKILLS).entries[1].level, 10,
         "removing Unskilled restores skill level from preserved points")
     harness.equal(ctx:get(trained, component.HEALTH).max, baseline_hp,

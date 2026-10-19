@@ -1,3 +1,4 @@
+
 local conflicts = require("data.mutation_conflicts")
 local outcomes = require("constants.mutation_conflict_outcomes")
 local mutations = require("ids.mutations")
@@ -5,6 +6,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Conflict row order controls mutation resolution: regeneration's forced
 function test.run()
     harness.equal(#conflicts, 32, "pinned source conflict row count")
 

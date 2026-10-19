@@ -9,6 +9,7 @@ local trajectory = require("policy.combat.trajectory")
 
 local beckoning = {}
 
+-- Treat an absent flag list as empty when checking stationary monster exceptions.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -19,12 +20,15 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Tentacles are stationary in the source catalog, so one mobility flag covers their exception.
 local function movable(definition)
     -- Every source tentacle and segment is stationary in the imported
     -- catalog, so this same flag covers the source's tentacle exception.
     return not has_flag(definition, "M_STATIONARY")
 end
 
+-- Example: Beckoning pulls a mobile rat to the first open habitable cell on the beam path.
+-- Use the first ray contact, then scan from the caster for an unoccupied cell the target can inhabit.
 function beckoning.resolve(ctx, player, intent, spell)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.to_target(ctx, origin.level_id,

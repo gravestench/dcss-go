@@ -4,6 +4,8 @@ local scopes = require("constants.spell_scopes")
 
 local scope = {}
 
+-- Example: an unknown spell ID has scope NONE; a known book spell has scope BOOK.
+-- Resolve book and invoked scopes from the catalog, returning NONE for malformed or unknown IDs.
 function scope.of(id)
     if type(id) ~= "string" or id == "" then
         return scopes.NONE
@@ -30,6 +32,7 @@ function scope.of(id)
     return scopes.NONE
 end
 
+-- The registered policy returns BOOK, INVOKED, or NONE from catalog and player spell lists.
 function scope.run_policy(_, input)
     return { scope = scope.of(input.spell_id) }
 end

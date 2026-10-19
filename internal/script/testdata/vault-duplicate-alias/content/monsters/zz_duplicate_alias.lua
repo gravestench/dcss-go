@@ -1,3 +1,5 @@
+-- A duplicate vault alias in a monster definition must fail alias validation.
+
 local categories = require("constants.catalog")
 
 local definition = {

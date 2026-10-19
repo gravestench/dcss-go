@@ -1,3 +1,5 @@
+-- Monster experience receives a danger adjustment from these spell classifications.
+
 -- Source: mon-util.cc:exper_value. Dangerous spell slots add difficulty.
 local spells = require("ids.spells")
 

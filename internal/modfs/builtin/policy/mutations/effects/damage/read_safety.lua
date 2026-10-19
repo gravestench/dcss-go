@@ -8,6 +8,8 @@ local threat = require("policy.mutations.effects.damage.threat")
 
 local read_safety = {}
 
+-- A damage event can interrupt reading when the relevant mutation is active.
+-- Example: read-safety reacts to a threatening hit through the same threshold helper as drink-safety.
 function read_safety.on_damage(ctx, player, damage)
     local level = levels.effective(ctx, player,
         mutations.MUT_READ_SAFETY)

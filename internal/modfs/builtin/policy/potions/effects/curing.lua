@@ -8,6 +8,7 @@ local zap = require("policy.magic.effects.zaps.ids").component
 
 local effect = {}
 
+-- Poison or confusion makes Curing useful even when ordinary healing is blocked.
 function effect.can_quaff(ctx, player)
     if ctx:has(player, component.POISON) or
         ctx:has(player, zap.PLAYER_CONFUSION) then
@@ -24,6 +25,7 @@ function effect.can_quaff(ctx, player)
 end
 
 -- Source: potion.cc:PotionCuring::effect.
+-- Example: Curing removes poison and confusion and can restore a small amount of HP.
 function effect.apply(ctx, player)
     local health = common.required(ctx, player, component.HEALTH)
 

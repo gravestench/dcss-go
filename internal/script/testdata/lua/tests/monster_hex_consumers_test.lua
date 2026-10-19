@@ -1,3 +1,4 @@
+
 local anchor = require("policy.combat.monster_hexes.dimension_anchor")
 local component = require("constants.component")
 local corona = require("policy.combat.monster_hexes.corona")
@@ -13,9 +14,12 @@ local translocation = require("policy.scrolls.translocation")
 
 local test = {}
 
+-- Corona does not waste another cast on an already lit player.
 function test.run()
     local player = 101
     local monster = 202
+    -- One saved status store is read by teleport, visibility, poison, and
+    -- spellcasting consumers instead of testing only the hex applier.
     local values = {
         [player] = {
             [component.PLAYER] = {},
@@ -27,35 +31,43 @@ function test.run()
     }
     local ctx = {}
 
+    -- Read the shared hex status store used by movement, sight, and status consumers.
     function ctx:get(actor, id)
         return values[actor][id]
     end
 
+    -- Let consumers detect only components written by the hex policy.
     function ctx:has(actor, id)
         return self:get(actor, id) ~= nil
     end
 
+    -- Persist a new status component so later consumers see the same effect.
     function ctx:add(actor, id, value)
         values[actor][id] = value
     end
 
+    -- Overwrite a ticking status without constructing a second state store.
     function ctx:set(actor, id, value)
         values[actor][id] = value
     end
 
+    -- Delete expired hex state so a consumer cannot see a dormant effect.
     function ctx:remove(actor, id)
         values[actor][id] = nil
     end
 
+    -- Force low monster-spell draws to exercise status application branches.
     function ctx:random()
         return 0
     end
 
+    -- Suppress presentation messages while checking component behavior.
     function ctx:emit()
     end
 
     anchor.apply(ctx, monster, player)
 
+    -- Dimension Anchor cancels pending teleport and blocks new relocation.
     harness.falsy(ctx:has(player, component.PLAYER_TELEPORT),
         "Dimension Anchor cancels an already pending teleport")
     harness.truthy(translocation.restriction(ctx, player),
@@ -70,6 +82,7 @@ function test.run()
 
     corona.apply(ctx, monster, player)
 
+    -- Corona reveals invisible actors and makes a repeated cast nonviable.
     harness.truthy(invisibility.backlit(ctx, player),
         "Corona makes invisible actors visible")
     harness.falsy(corona.viable(ctx, monster, player),
@@ -82,6 +95,7 @@ function test.run()
 
     status.poison_vulnerability(ctx, monster, 100)
 
+    -- Virulence lowers partial poison resistance but preserves full immunity.
     local definition = {
         resistances = {},
         holiness = {},

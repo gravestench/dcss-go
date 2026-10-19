@@ -3,6 +3,8 @@ local identification = require("policy.items.identification")
 
 local system = {}
 
+-- Theory of operation: The item is checked and its effect applied before the consumed stack changes.
+-- Potion effects resolve after equipment changes and before terrain interactions.
 function system.update(ctx, actor)
     local intent = ctx:get(actor, "core.intent")
 

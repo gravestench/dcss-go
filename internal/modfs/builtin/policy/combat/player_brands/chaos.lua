@@ -1,4 +1,4 @@
--- Source: attack.cc:758-830,1335. Chaos rolls another melee brand first.
+-- Source: attack.cc,1335. Chaos rolls another melee brand first.
 local brands = require("constants.weapon_brands")
 local component = require("constants.component")
 local holiness = require("constants.monster_holiness")
@@ -21,6 +21,7 @@ local icy = {
     [monsters.MONS_NARGUN] = true,
 }
 
+-- Holiness and flag lists can be absent in catalog entries, so missing lists match nothing.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -31,45 +32,55 @@ local function has(values, wanted)
     return false
 end
 
+-- Drain and vampirism are reserved for living tissue or plant matter.
 local function natural_or_plant(hit)
     return has(hit.definition.holiness, holiness.NATURAL) or
         has(hit.definition.holiness, holiness.PLANT)
 end
 
+-- Venom has no biological effect on undead or nonliving defenders.
 local function living(_, hit)
     return not has(hit.definition.holiness, holiness.UNDEAD) and
         not has(hit.definition.holiness, holiness.NONLIVING)
 end
 
+-- Summoned life cannot restore HP even when its species would otherwise qualify.
 local function vampiric(ctx, hit)
     return natural_or_plant(hit) and not ctx:has(hit.defender,
         component.SUMMON)
 end
 
+-- Share Holy Wrath's holiness check so Chaos does not redefine sacred susceptibility.
 local function holy(_, hit)
     return holy_wrath.susceptible(hit.definition)
 end
 
+-- A fire-native monster should not draw a redundant flaming outcome.
 local function not_fiery(_, hit)
     return not fiery.is(hit.definition.id)
 end
 
+-- These ice-bodied monsters should not draw a redundant freezing outcome.
 local function not_icy(_, hit)
     return not icy[hit.definition.id]
 end
 
+-- Negative-energy drain requires a natural or plant target in this Chaos table.
 local function drainable(_, hit)
     return natural_or_plant(hit)
 end
 
+-- Use Enfeeble's susceptibility rule so anti-magic is not offered to immune monsters.
 local function antimagic(_, hit)
     return enfeeble.antimagic_susceptible(hit.definition)
 end
 
+-- Innate clarity removes the confusion outcome before weights are summed.
 local function confusable(_, hit)
     return not has(hit.definition.flags, flags.CLARITY)
 end
 
+-- Treat a missing predicate as universally eligible while keeping exclusions explicit.
 local function valid(ctx, hit, choice)
     return not choice.valid or choice.valid(ctx, hit)
 end
@@ -139,7 +150,11 @@ local choices = {
     },
 }
 
+-- Example: chaos.choose(ctx, hit) with defender with eligible effects -> returns one weighted brand ID
+-- Build the valid weighted effect pool from this defender before consuming the chaos draw.
 function chaos.choose(ctx, hit)
+    -- Recompute the eligible total for this defender before the weighted
+    -- draw; immunity and holiness can remove individual brand choices.
     local total = 0
 
     for _, choice in ipairs(choices) do
@@ -163,10 +178,13 @@ function chaos.choose(ctx, hit)
     error("chaos has no eligible melee effect")
 end
 
+-- A self-selected Chaos result uses monster effects; other results reuse ordinary brand code.
 function chaos.apply(ctx, hit, player_brands)
     local selected = chaos.choose(ctx, hit)
 
     if selected == brands.CHAOS then
+        -- The self-selection enters the chaos effect table only while the
+        -- defender is still alive; other choices reuse their brand module.
         if hit.health.current <= 0 then
             return
         end

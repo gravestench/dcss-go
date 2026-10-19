@@ -11,6 +11,7 @@ local intelligence = require("constants.monster_intelligence")
 
 local mephitic = {}
 
+-- Careful pathing avoids confusion exposure even when the monster is not poison-immune.
 function mephitic.avoid(ctx, actor, _, careful)
     if careful then
         return true
@@ -32,6 +33,7 @@ function mephitic.avoid(ctx, actor, _, careful)
     return ctx:random(streams.CLOUDS, 5) >= hd - 1
 end
 
+-- Poison resistance blocks mephitic confusion before any cloud RNG roll.
 function mephitic.immune(ctx, target)
     if target == ctx:player() then
         return resistance.poison(ctx, target) > 0
@@ -43,6 +45,7 @@ function mephitic.immune(ctx, target)
         catalog.get(categories.MONSTERS, actor.kind_id)) > 0
 end
 
+-- Confusion duration scales with monster speed and HD when cloud power is zero.
 local function monster_duration(ctx, target, actor, definition)
     -- mon-ench.cc:ENCH_CONFUSION falls back to its speed/HD duration when
     -- cloud.cc applies BEAM_CONFUSION with enchant power zero.
@@ -59,6 +62,8 @@ local function monster_duration(ctx, target, actor, definition)
         low + high + 1) - low)
 end
 
+-- Apply immunity and clarity gates before a level-based confusion roll on each exposure.
+-- Example: a susceptible actor can gain confusion after a mephitic-cloud exposure roll.
 function mephitic.apply(ctx, target)
     if mephitic.immune(ctx, target) then
         return 0

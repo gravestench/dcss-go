@@ -14,6 +14,7 @@ local wands = {}
 
 -- Source: spl-book.cc:spell_in_wand. Each wand definition owns its spell
 -- link; a mod can add a new wand without editing this resolver.
+-- Example: wands.spell(wand_kind_id) returns the spell ID used by zapping.
 function wands.spell(wand_id)
     local definition = catalog.get("items", wand_id)
 
@@ -25,6 +26,8 @@ function wands.spell(wand_id)
 end
 
 -- Source: evoke.cc:wand_mp_cost. Djinn spend HP, but the last HP is safe.
+-- Clamp the mutation's extra cost to currently available resources; this
+-- prevents a wand zap from spending more MP or fatal HP than the actor has.
 function wands.mp_cost(ctx, player)
     local maximum = mutation_effects.sum(ctx, player,
         capabilities.WAND_MP_COST)
@@ -46,12 +49,16 @@ end
 
 -- Source: evoke.cc:wand_power. The sevenfold skill scale is part of the
 -- source integer formula, before MP Wands multiplies the result.
+-- Example: wands.power(ctx, player, wands.mp_cost(ctx, player)).
 function wands.power(ctx, player, cost)
     local skill = power.training(ctx, player, skill_ids.SK_EVOCATIONS, 7)
 
     return math.floor((15 + math.floor(skill / 2)) * (cost + 9) / 9)
 end
 
+-- Validate ownership, charges, range, and the spell's own target policy
+-- before charging time. A rejected zap returns a free message, not an intent.
+-- Example: wands.prepare(ctx, player, wand_id, 1, 0).
 function wands.prepare(ctx, player, item_id, dx, dy)
     local entity = item_id ~= 0 and ctx:entity(item_id) or nil
     local item = entity and ctx:get(entity, "core.item")
@@ -110,6 +117,8 @@ end
 
 -- Source: evoke.cc:zap_wand. Charge loss and Evocations practice occur only
 -- after a successful effect. The item disappears when its last charge fires.
+-- Recheck the prepared item against live ECS state before paying resources;
+-- a stale intent must not fire a different wand after inventory changes.
 function wands.resolve(ctx, player, chosen, aut)
     local entity = chosen.item_id
     local item = entity and ctx:get(entity, "core.item")

@@ -8,6 +8,7 @@ local will = require("policy.magic.effects.zaps.will")
 
 local mindburst = {}
 
+-- Round the three-die side count before rolling so power changes damage smoothly.
 local function roll_damage(ctx, power)
     -- zap-data.h:ZAP_MINDBURST uses calcdice<3,15,3,4>.
     local maximum = 15 + math.floor(math.min(power, 100) * 3 / 4)
@@ -27,6 +28,8 @@ local function roll_damage(ctx, power)
     return amount
 end
 
+-- Example: Each thinking monster on the piercing ray rolls willpower before taking Mindburst damage.
+-- Walk every ray contact; only thinking survivors make a willpower check before damage dice.
 function mindburst.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,

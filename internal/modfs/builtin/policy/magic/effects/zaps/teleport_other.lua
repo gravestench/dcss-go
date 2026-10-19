@@ -22,6 +22,7 @@ local tentacles = {
     [monsters.MONS_SNAPLASHER_VINE_SEGMENT] = true,
 }
 
+-- Read optional monster flags for stationary and projectile teleport restrictions.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -32,6 +33,7 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Combine anchor status with source no-tele flags before scheduling monster travel.
 local function no_tele(actor, definition, ctx, target)
     -- monster.cc:monster::no_tele excludes stationary and projectile actors,
     -- tentacle segments, stasis, and anchored monsters.
@@ -42,6 +44,7 @@ local function no_tele(actor, definition, ctx, target)
         tentacles[actor.kind_id] == true
 end
 
+-- Sample the whole level with occupancy and habitat checks to find a legal destination.
 local function destination(ctx, target, position)
     local width, height = ctx:level_size(position.level_id)
 
@@ -63,6 +66,8 @@ end
 teleport.no_tele = no_tele
 teleport.random_destination = destination
 
+-- Example: A delayed monster teleport ticks down before AI chooses another intent.
+-- Decrement saved delay before AI, then choose a legal destination only when the timer expires.
 function teleport.tick(ctx, target)
     local state = ctx:get(target, component.TELEPORT)
 
@@ -104,6 +109,7 @@ function teleport.tick(ctx, target)
     ctx:emit("spell", "The " .. definition.name .. " disappears!")
 end
 
+-- Enchant first contact, toggling an existing teleport timer off or scheduling a new one.
 function teleport.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,
@@ -151,6 +157,7 @@ function teleport.resolve(ctx, player, intent, spell, power)
         " looks slightly unstable.")
 end
 
+-- Tick teleport status only on AI actors before their next decision.
 function teleport.update(ctx, entity)
     if ctx:has(entity, component.AI) then
         teleport.tick(ctx, entity)
@@ -159,6 +166,7 @@ end
 
 registry.add(spells.SPELL_TELEPORT_OTHER, teleport)
 
+-- Theory of operation: Only AI actors tick delayed teleport here, before they choose another action.
 register.system({
     id = "zap.teleport.tick",
     scope = "active",

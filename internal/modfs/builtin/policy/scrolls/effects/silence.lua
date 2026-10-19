@@ -7,10 +7,13 @@ local statuses = require("policy.magic.effects.statuses.player")
 local effect = {}
 local SILENCE_POWER = 30
 
+-- Silence has no target menu because its status always attaches to the reader.
 function effect.prepare()
     return nil
 end
 
+-- Example: Silence begins a saved player aura that later cast preflight can inspect.
+-- Apply fixed-power Silence through the shared status caster so later spells see its aura.
 function effect.apply(ctx, player)
     statuses.cast(ctx, player, spells.SPELL_SILENCE, SILENCE_POWER)
 end

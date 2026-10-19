@@ -31,6 +31,7 @@ local terrain_chance = {
     [terrain.DNGN_METAL_WALL] = 15,
 }
 
+-- Treat absent flag lists as empty when excluding conjured Shatter targets.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -41,6 +42,7 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Choose fragment dice from monster material rather than using one damage profile for all bodies.
 local function dice(ctx, monster, definition)
     local kind = definition.id
 
@@ -67,6 +69,7 @@ local function dice(ctx, monster, definition)
     return 3
 end
 
+-- Skip dead or conjured actors before material-specific Shatter damage is rolled.
 local function hurt(ctx, monster, power)
     local definition, health = damage.monster(ctx, monster)
 
@@ -91,6 +94,8 @@ local function hurt(ctx, monster, power)
     damage.apply(ctx, monster, amount)
 end
 
+-- Example: A crystal monster takes fragment dice based on crystal material rather than generic flesh.
+-- Walk rings outward so newly broken terrain can expose farther actors during the same cast.
 function shatter.resolve(ctx, player, _, _, power)
     local origin = ctx:get(player, component.POSITION)
     local level = origin.level_id

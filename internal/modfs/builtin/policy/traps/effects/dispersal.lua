@@ -1,4 +1,4 @@
--- Source: traps.cc:523-544. Blink visible monsters and the triggering actor.
+-- Source: traps.cc. Blink visible monsters and the triggering actor.
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local blink = require("policy.combat.dispersal")
@@ -10,6 +10,7 @@ local held = require("policy.traps.held")
 
 local effect = {}
 
+-- Find an open nearby cell with trap RNG before changing the player's position.
 local function player_blink(ctx, player)
     local position = ctx:get(player, component.POSITION)
 
@@ -27,6 +28,8 @@ local function player_blink(ctx, player)
     end
 end
 
+-- Blink eligible actors visible from the trap cell, then handle the triggering actor separately.
+-- Example: effect.trigger(ctx, nil, player, site) blinks the player and nearby actors.
 function effect.trigger(ctx, _, actor, site)
     local player = ctx:player()
     local player_position = ctx:get(player, component.POSITION)

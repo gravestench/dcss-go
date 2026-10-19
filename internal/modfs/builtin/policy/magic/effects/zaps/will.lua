@@ -3,6 +3,8 @@ local monster_stats = require("policy.combat.monster_stats")
 
 local will = {}
 
+-- Example: A monster with willpower 5000 is immune before the two spell resistance dice are rolled.
+-- Treat source sentinel willpower as an immunity gate before enchant power consumes resistance dice.
 function will.invulnerable(definition)
     return (definition.willpower or 0) >= 5000
 end

@@ -1,8 +1,9 @@
+-- Example: The graveyard h glyph becomes human skeleton remains through delayed decay.
 local effects = require("constants.vault_effects")
 
 local handler = {}
 
--- Port of arrival/simple.des:2137.
+-- The graveyard h glyph becomes human skeleton remains through delayed decay.
 local function schedule_skeleton_decay(api)
     api:record(effects.DELAYED_DECAY, {
         glyph = "h",

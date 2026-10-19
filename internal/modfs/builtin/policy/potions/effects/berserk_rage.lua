@@ -4,6 +4,8 @@ local rage = require("policy.character.rage")
 
 local effect = {}
 
+-- Check whether rage can start before the drink path consumes a potion.
+-- Example: a player unable to rage is rejected before consuming a Berserk Rage potion.
 function effect.can_quaff(ctx, player)
     if not rage.can_begin(ctx, player) then
         return "You cannot go berserk right now."

@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local classes = require("constants.mutation_classes")
 local effects = require("policy.mutations.effects.registry")
@@ -7,6 +8,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Removing Slow Reflexes immediately restores EV.
 function test.run(ctx)
     local player = ctx:create()
 

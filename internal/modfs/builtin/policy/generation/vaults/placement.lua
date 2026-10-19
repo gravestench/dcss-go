@@ -1,3 +1,4 @@
+-- Example: A vault that overlaps a protected stair tries another origin on the fixed grid.
 local glyphs = require("constants.vault_glyphs")
 local effects = require("constants.vault_effects")
 local implicit = require("constants.vault_implicit")
@@ -15,6 +16,7 @@ local placement = {}
 local width = 80
 local height = 70
 
+-- Pad source rows to a rectangular mutable matrix before rotation.
 local function matrix(rows)
     local cells = {}
     local map_width = 0
@@ -38,6 +40,7 @@ local function matrix(rows)
     return cells, map_width, #rows
 end
 
+-- A vault candidate cannot cover the level's protected stair landing even when its source glyph is transparent.
 local function protected_stair(builder, left, top, map_width, map_height)
     for y = top, top + map_height - 1 do
         for x = left, left + map_width - 1 do
@@ -52,6 +55,7 @@ local function protected_stair(builder, left, top, map_width, map_height)
     return false
 end
 
+-- Nonfloating vaults honor their side preference before random-fit attempts.
 local function preferred_origin(vault, map_width, map_height, random)
     if map_width > width - 4 or map_height > height - 4 then
         error(string.format("%s: vault %s: MAP does not fit an 80x70 level",
@@ -81,6 +85,7 @@ local function preferred_origin(vault, map_width, map_height, random)
     return left, top
 end
 
+-- Ignore transparent spaces but reject overwrites of protected authored cells.
 local function protected_cell(builder, cells, left, top, protected)
     for local_y, row in ipairs(cells) do
         for local_x, source in ipairs(row) do
@@ -101,10 +106,12 @@ local function protected_cell(builder, cells, left, top, protected)
     return false
 end
 
+-- Floating vaults retry origins against protected cells without modifying the builder.
 local function origin(vault, cells, map_width, map_height, builder, options)
     local left, top = preferred_origin(vault, map_width, map_height, builder)
     local protected = options and options.protected
 
+    -- Use either the explicit protected set or the builder stair guard for a fit.
     local function conflict(x, y)
         if protected then
             return protected_cell(builder, cells, x, y, protected)
@@ -135,6 +142,7 @@ local function origin(vault, cells, map_width, map_height, builder, options)
         vault.path, vault.id))
 end
 
+-- Convert source stair and feature glyphs only after retaining their original source identity.
 local function rendered_glyph(source)
     if glyphs.up[source] then
         return "<"
@@ -151,6 +159,7 @@ local function rendered_glyph(source)
     return "."
 end
 
+-- Implicit item and monster glyphs become typed records alongside rendered terrain.
 local function add_source_record(records, vault, source, x, y)
     local feature = glyphs.terrain[source]
 
@@ -193,6 +202,7 @@ local function add_source_record(records, vault, source, x, y)
     end
 end
 
+-- Project the matrix and collect entry and exits while preserving source-cell records.
 local function draw_map(vault, cells, builder, left, top, records)
     local entry
     local source_stair
@@ -255,9 +265,11 @@ local function draw_map(vault, cells, builder, left, top, records)
     return entry, exits, occupied
 end
 
+-- Adapt the vault layout roll to the entity-spec resolver interface.
 local function choice_context(random)
     local context = {}
 
+    -- Keep keyed entity alternatives on the same layout stream as map selection.
     function context:random(_, bound)
         return random:roll(bound)
     end
@@ -265,6 +277,7 @@ local function choice_context(random)
     return context
 end
 
+-- Resolve one DES slot at a placed cell using the vault selection stream.
 local function select_entity(record, vault, random)
     local parser = record.kind == effects.MONSTER and monster_specs or item_specs
     local resolver = record.kind == effects.MONSTER and resolve.monster or resolve.item
@@ -308,6 +321,7 @@ local function select_entity(record, vault, random)
     return record
 end
 
+-- Copy source metadata before adding projected level coordinates.
 local function copy_record(source, x, y)
     local copy = {}
 
@@ -321,6 +335,7 @@ local function copy_record(source, x, y)
     return copy
 end
 
+-- Prefer explicit target glyphs over a record's fallback glyph argument.
 local function matching_targets(record)
     if record.targets and record.targets ~= "" then
         return record.targets
@@ -333,6 +348,7 @@ local function matching_targets(record)
     return nil
 end
 
+-- Rotate record coordinates with the map so keyed effects stay on their intended glyphs.
 local function rotated_point(record, width_before, height_before, turns)
     local x = record.local_x
     local y = record.local_y
@@ -348,6 +364,7 @@ local function rotated_point(record, width_before, height_before, turns)
     return x, y
 end
 
+-- Match authored record targets to transformed cells before translating them to level positions.
 local function locate_records(source_records, cells, left, top, entry,
     width_before, height_before, turns, random, vault)
     local located = {}
@@ -436,6 +453,7 @@ local function locate_records(source_records, cells, left, top, entry,
     return located
 end
 
+-- Commit terrain only after origin, transforms, and record positions have passed validation.
 function placement.place(_, builder, vault, player, options)
     local cells, map_width, map_height = matrix(vault.rows)
     local width_before = map_width

@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local records = require("policy.mutations.records")
 local traits = require("policy.character.traits")
@@ -8,6 +9,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Human can use Portal Projectile before acquiring No Grasping.
 function test.run(ctx)
     local player = ctx:create()
     local species = catalog.get("species", species_ids.SP_HUMAN)

@@ -1,4 +1,4 @@
--- Source: traps.cc:589-650. The trap launches a floor throwing net at the
+-- Source: traps.cc. The trap launches a floor throwing net at the
 -- player; a monster has a small chance to trigger it for the player.
 local catalog = require("policy.catalog")
 local component = require("constants.component")
@@ -10,6 +10,7 @@ local streams = require("constants.rng_streams")
 
 local effect = {}
 
+-- Monster intelligence can avoid activation; the player reaches the evasion roll.
 local function triggered(ctx, actor)
     if actor == ctx:player() then
         return true
@@ -23,6 +24,7 @@ local function triggered(ctx, actor)
         ctx:random(streams.TRAPS, 3) == 0
 end
 
+-- Average two trap draws against depth so deeper nets are harder to dodge.
 local function evades(ctx, player, depth)
     local evasion = fighter.defense(ctx).ev
     local first = ctx:random(streams.TRAPS, math.max(1, 2 * evasion))
@@ -31,6 +33,8 @@ local function evades(ctx, player, depth)
     return math.floor((first + second) / 2) > 18 + depth / 2
 end
 
+-- Roll evasion before creating a net item and saved hold, avoiding orphaned restraints.
+-- Example: effect.trigger(ctx, nil, player, site) creates a net item only when evasion fails.
 function effect.trigger(ctx, _, actor, site)
     local player = ctx:player()
 

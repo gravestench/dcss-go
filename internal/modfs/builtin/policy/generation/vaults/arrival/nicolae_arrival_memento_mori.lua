@@ -1,3 +1,4 @@
+-- Example: Use generic human remains during validation or for species without a matching corpse.
 local effects = require("constants.vault_effects")
 local species_ids = require("ids.species")
 
@@ -17,6 +18,7 @@ local corpse_species = {
     [species_ids.SP_OCTOPODE] = true,
 }
 
+-- Use generic human remains during validation or for species without a matching corpse.
 local function remains_monster(api)
     if not api:game_started() or human_remains_species[api:player_species()] then
         return "human"
@@ -25,6 +27,7 @@ local function remains_monster(api)
     return api:player_monster()
 end
 
+-- Choose corpse versus skeleton from the player species before writing DES text.
 local function remains_type(api)
     if corpse_species[api:player_species()] then
         return "corpse"
@@ -33,7 +36,7 @@ local function remains_type(api)
     return "skeleton"
 end
 
--- Port of arrival/twisted.des:916-932. The source replaces spaces in names.
+-- Player name spaces become underscores so corpse specifications remain single DES tokens.
 local function schedule_named_remains(api)
     local monster = remains_monster(api)
     local name = api:player_name():gsub(" ", "_")

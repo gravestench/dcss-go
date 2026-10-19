@@ -1,3 +1,4 @@
+-- Example: A small Gladiator receives throwing gear sized for its body.
 -- Source: ng-setup.cc; throwing ammunition follows species body size.
 local gear = require("policy.character.starting_gear")
 local items = require("ids.items")
@@ -6,6 +7,7 @@ local size = require("constants.size")
 
 local rule = {}
 
+-- Body size selects the Gladiator throwing stack after the weapon choice has been settled.
 function rule.extra(species)
     local ammo
     local quantity

@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.summon_dragon_call",
     version = 1,
+    -- End and next-trigger times retain Dragon Call cadence across a save between summons.
     fields = {
         ends_aut = {
             type = "int64",

@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.PLAYER_CONSTRICTION,
     version = 1,
+    -- The constrictor link, held time, and escape attempts must progress together across turns.
     fields = {
         by = {
             type = "entity",

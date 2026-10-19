@@ -10,6 +10,7 @@ local unique = require("policy.item_generation.artefacts.unique")
 
 local artefacts = {}
 
+-- Try an eligible unique before randart fallback and retain the selected ID for duplicate handling.
 local function unique_request(ctx, definition, request, result)
     local selection = {
         depth = request.depth,
@@ -25,12 +26,14 @@ local function unique_request(ctx, definition, request, result)
     return unique.apply(ctx, chosen, request, result), chosen
 end
 
+-- A nonlevel duplicate becomes a randart while preserving its compatible brand.
 local function fallback(ctx, chosen, request, result)
     local definition, brand = unique.fallback(ctx, chosen, request, result)
 
     return random.apply(ctx, definition, result, brand)
 end
 
+-- Forced randarts skip the ordinary rarity gate; uniques are tried before the random-artefact fallback.
 local function weapon_or_armour(ctx, definition, request, result)
     local forced = request.quality == quality.RANDART
 
@@ -56,6 +59,7 @@ local function weapon_or_armour(ctx, definition, request, result)
     return random.apply(ctx, definition, result)
 end
 
+-- Jewellery uses separate unique and randart gates from weapon and armour generation.
 local function jewellery(ctx, definition, request, result)
     if request.quality ~= quality.RANDART and
         source.chance(ctx, 1, 20) and
@@ -80,6 +84,7 @@ local function jewellery(ctx, definition, request, result)
     return random.apply(ctx, definition, result)
 end
 
+-- Enhancer staff uniques are permitted only for gift or acquirement requests.
 local function staff(ctx, request, result)
     if not request.allow_uniques or
         (request.purpose ~= purpose.ACQUIREMENT and
@@ -110,6 +115,8 @@ local function staff(ctx, request, result)
     return false
 end
 
+-- Example: acquirement can route a staff through enhancer-unique selection, unlike ordinary staff generation.
+-- Gate uniqueness once, then dispatch class-specific odds and fallback handling.
 function artefacts.roll(ctx, definition, request, result)
     if not request.allow_uniques and request.quality ~= quality.RANDART then
         return false

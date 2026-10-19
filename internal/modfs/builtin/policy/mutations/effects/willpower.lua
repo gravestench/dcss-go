@@ -4,10 +4,14 @@ local registry = require("policy.mutations.effects.registry")
 
 local willpower = {}
 
+-- Strong and weak will mutation levels are kept separate for the final will formula.
+-- Example: Strong Will level two contributes +2; Weak Will level two contributes -2.
 function willpower.strong(level)
     return level
 end
 
+-- Weak-Willed contributes negative pips through the shared willpower sum,
+-- which keeps opposed mutations from needing a special case in defense.
 function willpower.weak(level)
     return -level
 end

@@ -2,12 +2,14 @@ local habitat = require("policy.combat.monster_habitat")
 
 local fear = {}
 
+-- Fear compares candidate cells by grid distance from the player.
 local function distance(x, y, player)
     return math.max(math.abs(x - player.x), math.abs(y - player.y))
 end
 
 -- The fear source is the player. Move to an open neighboring cell that
 -- increases distance from the player; pick an equally good cell with AI RNG.
+-- Example: fear.flee(ctx, monster, position, player) chooses a step away from the threat.
 function fear.flee(ctx, monster, position, player)
     local current = distance(position.x, position.y, player)
     local best = current

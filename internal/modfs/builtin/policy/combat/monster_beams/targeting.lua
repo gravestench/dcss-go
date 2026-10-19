@@ -13,6 +13,7 @@ local trajectory = require("policy.combat.trajectory")
 
 local targeting = {}
 
+-- Read cloud and other spell flags while planning the monster beam's aim.
 local function has_flag(flags, wanted)
     for _, flag in ipairs(flags or {}) do
         if flag == wanted then
@@ -23,6 +24,8 @@ local function has_flag(flags, wanted)
     return false
 end
 
+-- Example: targeting.plan(ctx, caster, foe, profile, options) with foe on another level -> nil plan
+-- Target plans are built from the beam profile before the monster commits to its cast.
 function targeting.plan(ctx, caster, foe, profile, options)
     local source = ctx:get(caster, component.POSITION)
     local destination = ctx:get(foe, component.POSITION)
@@ -45,6 +48,8 @@ function targeting.plan(ctx, caster, foe, profile, options)
 
     local trace
 
+    -- Clouds and explosions aim at a cell; ordinary beams may trace through
+    -- actors or bounce, according to their catalog profile.
     local can_bounce = bounce.for_profile(profile, options)
 
     if can_bounce and not area_target then
@@ -83,6 +88,8 @@ function targeting.plan(ctx, caster, foe, profile, options)
         return nil
     end
 
+    -- Reject casts whose eventual area would catch a friendly actor, even
+    -- when the ray itself reaches the intended enemy.
     if is_cloud then
         local max_size = options and options.cloud_max_size or
             cloud_sizes.MAX_VARIABLE

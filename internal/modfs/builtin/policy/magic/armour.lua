@@ -67,6 +67,8 @@ function armour.spell_penalty(ctx, player)
         19 * shield_penalty) / 100)
 end
 
+-- Example: the armour policy returns { penalty = 0 } for an unarmoured player with no shield.
+-- Expose the current player's combined body armour and shield spell penalty to the registry.
 function armour.run_penalty(ctx)
     return { penalty = armour.spell_penalty(ctx, ctx:player()) }
 end

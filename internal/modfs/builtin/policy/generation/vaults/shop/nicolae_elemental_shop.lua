@@ -1,3 +1,4 @@
+-- Example: Shuffle four elements once, then stock two evocables, one staff, and one book from distinct slots.
 local directives = require("constants.vault_directives")
 
 local handler = {}
@@ -23,7 +24,7 @@ local randbooks = {
     "randbook disc:earth",
 }
 
--- Port of builder/shops.des:710-727.
+-- Shuffle four elements once, then stock two evocables, one staff, and one book from distinct slots.
 local function configure_elemental_stock(api)
     local choices = { 1, 2, 3, 4 }
 

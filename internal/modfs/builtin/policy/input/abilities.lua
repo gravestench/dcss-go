@@ -3,6 +3,9 @@ local menu = require("policy.input.menu")
 
 local abilities = {}
 
+-- The ability screen translates its selection into a command; confirmation stays in a separate route.
+-- Example: abilities.route({ key = "a", options = shown_options }) returns
+-- an aim, confirmation, or immediate step for the first displayed ability.
 function abilities.route(input)
     local navigation = menu.close_or_help(input)
 
@@ -40,6 +43,8 @@ function abilities.route(input)
     }
 end
 
+-- Accept only an explicit yes; no, escape, and enter return to the ability
+-- list so an accidental key cannot spend a confirmed ability.
 function abilities.confirm(input)
     if input.key == "y" then
         return { action = "ability_confirm_accept" }

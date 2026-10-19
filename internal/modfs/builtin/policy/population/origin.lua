@@ -1,8 +1,10 @@
+-- Example: Two spawned copies receive distinct occurrences but the same placement site.
 -- Copies the placement site for each dynamic object created by one record.
 local origin = {}
 
 origin.CORPSE_OCCURRENCE = 1000
 
+-- Copy the record position and occurrence into each materialized object for source tracing.
 function origin.for_entity(source, kind_id, occurrence)
     return {
         level_id = source.level_id,

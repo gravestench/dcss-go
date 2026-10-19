@@ -10,7 +10,7 @@ local source = require("policy.item_generation.source_roll")
 
 local policy = {}
 
--- Source: crawl-ref/source/makeitem.cc:995-1079.
+-- Source: crawl-ref/source/makeitem.cc.
 local secondary = {
     {
         id = ids.ARM_BOOTS,
@@ -95,6 +95,8 @@ local early_mundane = {
     ids.ARM_RING_MAIL,
 }
 
+-- Example: policy.eligible(nil, plate_armour, request) accepts random plate armour for a class draw.
+-- Keep forced-only armour available to explicit kind requests while excluding it from random subtype draws.
 function policy.eligible(_, definition, request)
     return definition.class == classes.OBJ_ARMOUR and
         (definition.generation.mode == "random" or
@@ -102,10 +104,12 @@ function policy.eligible(_, definition, request)
             definition.generation.mode == "forced")
 end
 
+-- An active armour kind without an explicit rarity retains unit weight.
 function policy.weight(_, definition)
     return definition.generation.weight or 1
 end
 
+-- Choose source armour subtypes before extension kinds so layered mods retain their weights.
 function policy.pick(ctx, request)
     local extensions = {}
     local extension_weight = 0
@@ -156,8 +160,9 @@ function policy.pick(ctx, request)
     return source.one_of(ctx, early_mundane)
 end
 
+-- Roll ego and enchantment only after a concrete armour base is selected.
 function policy.roll(ctx, definition, request, result)
-    -- Source: crawl-ref/source/makeitem.cc:1137-1203.
+    -- Source: crawl-ref/source/makeitem.cc.
     if definition.id == ids.ARM_BOOTS and source.chance(ctx, 1, 8) then
         result.kind_id = ids.ARM_BARDING
         definition = definitions.get("items", result.kind_id)

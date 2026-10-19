@@ -1,6 +1,8 @@
--- Source dungeon_feature_type names are the runtime terrain vocabulary.
--- Glyphs are only fixed/generated map source syntax, decoded before the Go
--- grid is built. See dungeon-feature-type.h at e60ba356.
+-- Translate vault terrain into the level grid without discarding instructions
+-- that still need population or gameplay handling. DCSS feature names remain
+-- the saved vocabulary; map glyphs are only source syntax. The reduced stair
+-- variants use the same travel rule, while their vault records keep the
+-- original feature identity for later rules and save inspection.
 local features = {}
 local effects = require("constants.vault_effects")
 local trap_placement = require("policy.traps.placement")
@@ -45,6 +47,8 @@ features.vault_terrain = {
 }
 
 features.named_vault_terrain = {
+    -- KFEAT names denote explicit terrain choices, while source features
+    -- above already carry the original DNGN_* identity.
     floor = "DNGN_FLOOR",
     rock_wall = "DNGN_ROCK_WALL",
     stone_wall = "DNGN_STONE_WALL",
@@ -63,6 +67,7 @@ features.named_vault_terrain = {
     lava = "DNGN_LAVA",
 }
 
+-- Apply terrain now; retain records needed for later trap and gameplay passes.
 function features.apply_vault_terrain(cells, records, ctx, depth)
     local retained = {}
 
@@ -70,6 +75,7 @@ function features.apply_vault_terrain(cells, records, ctx, depth)
         local keep = true
 
         if record.kind == effects.SOURCE_FEATURE and record.overridden then
+            -- An explicit replacement wins over an earlier source glyph.
             keep = false
         elseif record.kind == effects.SOURCE_FEATURE then
             local feature = features.vault_terrain[record.identity]
@@ -78,6 +84,7 @@ function features.apply_vault_terrain(cells, records, ctx, depth)
                 cells[record.y + 1][record.x + 1] = feature
 
                 if feature == record.identity then
+                    -- The grid now fully represents this unchanged feature.
                     keep = false
                 end
             end
@@ -111,6 +118,7 @@ function features.apply_vault_terrain(cells, records, ctx, depth)
     return retained
 end
 
+-- Decode glyph rows while keeping diagnostics in zero-based vault coordinates.
 function features.decode_source_rows(rows)
     local cells = {}
 
@@ -122,6 +130,8 @@ function features.decode_source_rows(rows)
             local feature = features.from_source_glyph[glyph]
 
             if not feature then
+                -- Keep source coordinates zero based in diagnostics, matching
+                -- the vault record format rather than Lua's table indices.
                 error(string.format("unknown source terrain glyph %q at (%d,%d)", glyph, x - 1, y - 1))
             end
 

@@ -1,3 +1,5 @@
+-- These flags describe armour properties that resistance and stealth rules can inspect.
+
 local armour_flags = {
     RES_CORROSION = "ARMF_RES_CORR",
     RES_STEAM = "ARMF_RES_STEAM",

@@ -4,6 +4,8 @@ local player_projectiles = require("policy.combat.player_projectiles")
 
 local system = {}
 
+-- Theory of operation: The intent gate dispatches ranged and melee attacks against positions fixed by movement.
+-- Ranged intent 13 and melee intent 2 split here; movement has already resolved target positions.
 function system.update(ctx, attacker)
     local intent = ctx:get(attacker, "core.intent")
 

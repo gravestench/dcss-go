@@ -9,6 +9,7 @@ local zap_ids = require("policy.magic.effects.zaps.ids")
 local effect = {}
 local SIGHT_RADIUS = 7
 
+-- Collect visible unoccupied cells without clouds before allocating new poison clouds.
 local function open_cells(ctx, player)
     local origin = ctx:get(player, component.POSITION)
     local cells = {}
@@ -32,6 +33,7 @@ local function open_cells(ctx, player)
     return cells
 end
 
+-- A known scroll warns if no open visible cell can hold a cloud.
 function effect.prepare(ctx, player, request)
     if request.known and #open_cells(ctx, player) == 0 then
         return {
@@ -42,6 +44,8 @@ function effect.prepare(ctx, player, request)
     return nil
 end
 
+-- Example: Poison chooses open cells and a spell-stream cloud duration before placement.
+-- Draw each cloud duration on the spell stream after the candidate cells are fixed.
 function effect.apply(ctx, player)
     local cells = open_cells(ctx, player)
 

@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.summon_bond",
     version = 1,
+    -- The protected actor remembers guardian and last observed HP to detect damage for bond reactions.
     fields = {
         guardian = {
             type = "entity",

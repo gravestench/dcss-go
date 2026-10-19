@@ -1,6 +1,7 @@
 local schema = {
     id = "magic.frozen_ramparts",
     version = 1,
+    -- The wall effect retains its origin, power, and duration for later terrain and damage updates.
     fields = {
         level_id = { type = "int64" },
         origin_x = { type = "int64" },

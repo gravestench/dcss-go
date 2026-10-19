@@ -21,8 +21,7 @@ Lua owns game definitions and rules: component schemas, ECS systems, character
 creation and advancement, item use, combat effects, monster decisions, map
 generation, branch policy, commands, keymaps, and screen policy. Registered
 behavior reads and changes authoritative Akara state through a narrow host
-API. Static source content is committed as Lua modules; developer importers
-regenerate it only for intentional upstream refreshes.
+API. Ported source content is committed as Lua modules and maintained there.
 
 The bundled Lua tree is embedded in the executable. Ordered optional overlay
 folders replace matching relative paths and add new files. The effective
@@ -105,9 +104,8 @@ identity artifact remains for import validation. The next ownership work
 targets vault templates. All 178 imported monster weapon specs now live in
 their owning monster files, and active gear handlers are discoverable Lua
 modules. The generated files stay committed.
-Import tools run only during deliberate upstream refreshes. New mechanics
-must be wired through Lua discovery and generic engine capabilities, not a
-Go ID switch.
+The initial C++ import tools have been retired. New mechanics must be wired
+through Lua discovery and generic engine capabilities, not a Go ID switch.
 
 ## Conversion coverage
 

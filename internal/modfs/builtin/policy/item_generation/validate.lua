@@ -57,12 +57,14 @@ local artefact_properties = {
     sh = true,
 }
 
+-- Tie bad generation metadata to its source item ID in startup errors.
 local function fail(definition, detail)
     local origin = register.origin("items", definition.id)
 
     error(origin .. ": item " .. definition.id .. " " .. detail)
 end
 
+-- Random weights and commonness cannot be fractional or negative.
 local function nonnegative(definition, field)
     local value = definition.generation[field]
 
@@ -75,6 +77,8 @@ local function nonnegative(definition, field)
     end
 end
 
+-- Example: validation.definition(kind) rejects a random item with a negative generation weight.
+-- Validate authored generation modes, fields, rarity, and nonnegative weights before any item draw uses them.
 function validation.definition(definition)
     if type(definition.generation) ~= "table" then
         fail(definition, "has no generation metadata")
@@ -107,6 +111,7 @@ function validation.definition(definition)
     end
 end
 
+-- Probe class weight with a minimal depth request at boot, before a bad mod can fail a later item roll.
 local function validate_policy_weight(definition, policy)
     local okay, weight = pcall(policy.weight, nil, definition, {
         depth = 1,
@@ -125,6 +130,7 @@ local function validate_policy_weight(definition, policy)
     return weight
 end
 
+-- Unique artefacts need compatible base and generation metadata before selection.
 local function validate_artefact(artefact)
     local origin = register.origin("artefacts", artefact.id)
     local base
@@ -223,6 +229,7 @@ end
 
 validation.artefact = validate_artefact
 
+-- Validate effective item records after all mod overlays have loaded.
 function validation.check()
     local generated_classes = {}
     local positive_pools = {}

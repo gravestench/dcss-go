@@ -85,10 +85,15 @@ local blessed = {
     [item_ids.WPN_SACRED_SCOURGE] = true,
 }
 
+-- Scroll rebranding needs a weapon profile and excludes blessed weapons,
+-- whose special identity should not be replaced by a random ego.
+-- Example: pool.eligible(catalog.get("items", weapon_id)).
 function pool.eligible(kind)
     return kind.weapon ~= nil and not blessed[kind.id]
 end
 
+-- Ranged and melee weapons use different authored brand distributions;
+-- ammunition linkage identifies the ranged case without a name list.
 function pool.weights(kind)
     if kind.weapon.ammo_id ~= ammunition.NONE then
         return ranged
@@ -97,6 +102,8 @@ function pool.weights(kind)
     return melee
 end
 
+-- Verify a requested ego belongs to this weapon's actual reroll pool before
+-- treating it as a legal result or a candidate to exclude.
 function pool.contains(kind, id)
     if not pool.eligible(kind) then
         return false
@@ -111,6 +118,9 @@ function pool.contains(kind, id)
     return false
 end
 
+-- Rerolling excludes the old brand's weight before drawing, so a successful change cannot return itself.
+-- Example: pool.roll(ctx, sword_definition, brands.FLAMING) draws only from
+-- the remaining weighted melee entries on the item RNG stream.
 function pool.roll(ctx, kind, old)
     local options = pool.weights(kind)
     local total = 0

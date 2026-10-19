@@ -12,18 +12,21 @@ local tree_or_edge = {
     [terrain.DNGN_PETRIFIED_TREE] = true,
 }
 
+-- Example: bounce.crystal(feature_id) with tree feature -> false crystal bounce
 -- beam.cc:bolt::is_bouncy applies these rules to both monster and player
 -- rays. The trajectory service calls this only after hitting solid terrain.
 function bounce.crystal(feature_id)
     return feature_id ~= nil and not tree_or_edge[feature_id]
 end
 
+-- Electric rays cannot bounce from metal walls or grates even when crystal beams can.
 function bounce.electric(feature_id)
     return bounce.crystal(feature_id) and
         feature_id ~= terrain.DNGN_METAL_WALL and
         feature_id ~= terrain.DNGN_GRATE
 end
 
+-- A spell profile and explicit option choose which terrain reflection rule applies.
 function bounce.for_profile(profile, options)
     if options and options.bounceable == false then
         return nil

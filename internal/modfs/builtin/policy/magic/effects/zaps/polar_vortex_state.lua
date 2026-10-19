@@ -1,3 +1,4 @@
+-- Example: ctx:get(player, zap_ids.component.POLAR_VORTEX) retains cast power across ticks.
 -- spl-vortex.cc stores a 60-aut storm, its cast time, and cast power.
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local state = {}

@@ -1,3 +1,5 @@
+-- These domain names index the effective content registry after all VFS layers load.
+
 -- Registered content domains. Definition files import the domain they use.
 local catalog = {
     ARTEFACTS = "artefacts",

@@ -1,3 +1,4 @@
+-- Example: A random-item vault records a request now and resolves its item during placement.
 local classes = require("ids.object_classes")
 local ids = require("ids.items")
 local quality = require("constants.vault_item_quality")
@@ -6,6 +7,7 @@ local random_items = {}
 
 -- A vault record is selected during map generation, before an ECS context
 -- exists. Keep its source request typed until population can roll the item.
+-- Retain a typed random-item request with depth for population to resolve after map placement.
 function random_items.describe(name, depth)
     local result = {
         kind_id = classes.OBJ_RANDOM,

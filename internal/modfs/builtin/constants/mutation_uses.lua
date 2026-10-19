@@ -1,3 +1,5 @@
+-- Mutation-use pools distinguish good, bad, and deity-driven random choices.
+
 local uses = {
     GOOD = "good",
     BAD = "bad",

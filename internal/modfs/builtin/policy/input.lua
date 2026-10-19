@@ -50,6 +50,8 @@ local screens = {
 
 local terminal_input = {}
 
+-- The screen map is the terminal input registry; unknown screens fail instead of silently falling through.
+-- Example: terminal_input.run(ctx, { screen = "play", key = "h" }) routes a westward play key.
 function terminal_input.run(ctx, input)
     local route = screens[input.screen]
 

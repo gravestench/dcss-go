@@ -1,5 +1,7 @@
 local monster_spells = {}
 
+-- Example: monster_spells.effect(spell_id) with registered spell ID -> its plan/resolve effect module
+-- Return the registered monster resolver by spell ID for the cast scheduler.
 function monster_spells.effect(spell_id)
     local name = spell_id:match("^SPELL_(.+)$")
 

@@ -1,3 +1,4 @@
+-- Example: Antennae increase monster detection radius even when normal sight is unchanged.
 -- Source: player.cc:innate_sinv, player_monster_detect_radius, show.cc.
 local capabilities = require("constants.mutation_capabilities")
 local catalog = require("policy.catalog")
@@ -9,6 +10,7 @@ local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local senses = {}
 
+-- Catalog flags distinguish innate invisibility from other perception restrictions.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -19,17 +21,20 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Combine mutation and jewellery capabilities before naming an invisible target.
 function senses.see_invisible(ctx, player)
     return effects.sum(ctx, player, capabilities.SEE_INVISIBLE) > 0 or
         jewellery_effects.has(ctx, player,
             jewellery_capabilities.SEE_INVISIBLE)
 end
 
+-- Cap Antennae detection at the sight-sized source maximum.
 function senses.detect_radius(ctx, player)
     return math.min(7, effects.sum(ctx, player,
         capabilities.MONSTER_DETECTION_RADIUS))
 end
 
+-- Monster detection and ordinary sight feed one perception answer without exposing unseen details.
 function senses.perceive(ctx, player, monster, cell_visible, cell_known)
     local origin = ctx:get(player, component.POSITION)
     local position = ctx:get(monster, component.POSITION)
@@ -63,6 +68,7 @@ function senses.perceive(ctx, player, monster, cell_visible, cell_known)
     return "unseen"
 end
 
+-- Expose the current player perception result to the registered query policy.
 function senses.run_perception(ctx, input)
     return {
         mode = senses.perceive(ctx, ctx:player(), input.monster,

@@ -18,6 +18,7 @@ local forest_walls = {
     [terrain_ids.DNGN_SLIMY_WALL] = true,
 }
 
+-- Require a nearby cell with a clear surrounding ring before payment; forest growth needs open terrain.
 local function open_area(ctx, position)
     for dy = -1, 1 do
         for dx = -1, 1 do
@@ -32,6 +33,8 @@ local function open_area(ctx, position)
     return false
 end
 
+-- A candidate tree must not cut off neighboring floor cells; bounded BFS
+-- checks connectivity around the candidate without traversing through it.
 local function connected_after_tree(ctx, level_id, x, y)
     local adjacent = {}
 
@@ -81,6 +84,7 @@ local function connected_after_tree(ctx, level_id, x, y)
     return true
 end
 
+-- Extend a pond only from cardinally connected water so its later cells form one patch.
 local function watery_adjacent(ctx, level_id, x, y)
     for _, delta in ipairs({
         { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
@@ -95,6 +99,8 @@ local function watery_adjacent(ctx, level_id, x, y)
     return false
 end
 
+-- Grow a temporary pond from a gateway point; deep water avoids the caster
+-- and occupied cells so the terrain roll cannot strand an actor.
 local function pond(ctx, player, position, expires_aut)
     local points = terrain.gateway_points(ctx, position)
 
@@ -148,12 +154,15 @@ end
 -- expire independently of the dryad, matching TERRAIN_CHANGE_FORESTED.
 local spell_effects = {}
 
+-- Reject cramped casts before resolve mutates terrain or creates the dryad.
 function spell_effects.prepare(ctx, player)
     if not open_area(ctx, ctx:get(player, component.POSITION)) then
         return "There is not enough open space to summon a forest."
     end
 end
 
+-- Example: resolve(ctx, player, nil, nil, 80) places expiring trees and maybe
+-- a pond, then gives the dryad a lifetime tied to those terrain markers.
 function spell_effects.resolve(ctx, player, _, _, power)
     local position = ctx:get(player, component.POSITION)
     local duration = 120 + power +
@@ -199,6 +208,7 @@ function spell_effects.resolve(ctx, player, _, _, power)
     ctx:emit("spell", "A forested plane collides here with a resounding crunch!")
 end
 
+-- The spell registry calls prepare before the world-changing resolve path.
 registry.add(spell_id, {
     prepare = spell_effects.prepare,
 

@@ -7,6 +7,7 @@ local scrolls = require("policy.scrolls")
 
 local effect = {}
 
+-- Reuse the saved offer component so cancelling and reopening cannot reroll the scroll.
 local function saved_offers(ctx, player, scroll)
     local state = ctx:get(scroll, component.SCROLL_ACQUIREMENT)
 
@@ -20,6 +21,8 @@ local function saved_offers(ctx, player, scroll)
     return state
 end
 
+-- Example: reopening an acquirement scroll reuses its reserved offers instead of rerolling them.
+-- Reveal the scroll before opening its cancellable menu, then preserve reservations on cancellation.
 function effect.prepare(ctx, player, request)
     -- DCSS identifies acquirement before opening its cancellable menu.
     identification.reveal_type(ctx, player, request.scroll)
@@ -54,6 +57,7 @@ function effect.prepare(ctx, player, request)
     }
 end
 
+-- Validate the saved index against current reservations before granting one offer.
 function effect.apply(ctx, player, request)
     local state = ctx:get(request.scroll, component.SCROLL_ACQUIREMENT)
     local index = tonumber(request.target_id)

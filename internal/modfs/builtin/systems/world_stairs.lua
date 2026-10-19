@@ -2,6 +2,8 @@ local abyss = require("policy.world.abyss")
 
 local system = {}
 
+-- Theory of operation: Travel changes level and position before pickup examines the arrival cell.
+-- Stair travel follows monster decisions and precedes item pickup on the destination.
 function system.update(ctx, actor)
     local intent = ctx:get(actor, "core.intent")
 

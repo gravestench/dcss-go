@@ -1,3 +1,4 @@
+-- Example: Choose scale stock, then draw a mythic dragon owner for the generated depot name.
 local directives = require("constants.vault_directives")
 local dragon_names = require("policy.generation.vaults.shop.dragon_names")
 
@@ -16,7 +17,7 @@ local scales = {
     "quicksilver dragon scales",
 }
 
--- Port of builder/shops.des:1247-1288.
+-- Choose scale stock, then draw a mythic dragon owner for the generated depot name.
 local function configure_dragon_depot(api)
     local inventory = {}
 

@@ -1,3 +1,4 @@
+
 local records = require("policy.mutations.records")
 local levels = require("policy.mutations.levels")
 local transition = require("policy.mutations.transition")
@@ -8,6 +9,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Restore rejects a missing scheduled species mutation.
 function test.run(ctx)
     local player = ctx:create()
     local id = mutations.MUT_ROBUST
@@ -22,6 +24,7 @@ function test.run(ctx)
     harness.equal(entry.state.innate, 1, "innate level")
     harness.equal(entry.state.acquired, 1, "acquired level")
     harness.equal(entry.state.temporary, 1, "temporary level")
+    -- Multiple temporary mutation levels use one player XP expiry clock.
     harness.equal(records.timer(ctx, player).remaining_xp, 50,
         "shared temporary expiry progress")
     harness.equal(levels.base(ctx, player, id), 3, "base level")
@@ -38,6 +41,7 @@ function test.run(ctx)
 
     records.delete(ctx, player, id, classes.ACQUIRED, 1)
     records.delete(ctx, player, id, classes.INNATE, 1)
+    -- Removing the last class level destroys the empty mutation entity.
     harness.equal(records.find(ctx, player, id), nil,
         "zero-level record is removed")
 
@@ -62,6 +66,7 @@ function test.run(ctx)
         "future innate level is absent")
 
     transition.grant_scheduled(ctx, player, scheduled, 13)
+    -- Future innate mutations become active only at their recorded level milestone.
     harness.equal(levels.base(ctx, player, mutations.MUT_HOP), 1,
         "scheduled innate level is granted")
 

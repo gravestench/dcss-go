@@ -3,6 +3,8 @@ local sleep = require("policy.character.sleep")
 
 local system = {}
 
+-- Theory of operation: The sleep component ages after durations and before regeneration can restore resources.
+-- Sleep status is advanced after duration handling and before regeneration.
 function system.update(ctx, entity, aut)
     sleep.tick(ctx, entity, aut)
 end

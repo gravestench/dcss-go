@@ -1,3 +1,5 @@
+-- Known unrand uses fixed source value.
+
 local harness = require("tests.harness")
 local catalog = require("policy.catalog")
 local item_ids = require("ids.items")
@@ -6,6 +8,8 @@ local artefact_kinds = require("constants.artefact_kinds")
 
 local test = {}
 
+-- Construct a priced item from the same catalog definition as the game, so
+-- each assertion varies only instance state and player knowledge.
 local function value(pricing, id, fields, known)
     local kind = catalog.get("items", id)
     local item = {
@@ -19,6 +23,8 @@ local function value(pricing, id, fields, known)
     return pricing.item_value(kind, item, known or {}, nil)
 end
 
+-- Exercise pricing across known and unknown stock because identification
+-- changes the quote even when the underlying item definition is unchanged.
 function test.run()
     local pricing = require("policy.shops.pricing")
     local known = {

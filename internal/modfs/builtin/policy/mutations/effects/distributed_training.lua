@@ -5,6 +5,8 @@ local mutations = require("ids.mutations")
 
 local module = {}
 
+-- Training allocation is refreshed when distributed training changes level.
+-- Example: changing distributed training recalculates the player's selected skill training.
 function module.changed(ctx, player)
     distributed.activate(ctx, player)
 end

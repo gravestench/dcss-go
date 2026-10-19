@@ -10,6 +10,7 @@ local roll = require("policy.combat.roll")
 
 local defense = {}
 
+-- Reduce catalog EV while roots, clutch, or constriction hold the monster in place.
 function defense.evasion(ctx, monster, definition)
     local ev = definition.ev or 0
     local clutch = ctx:get(monster, component.MONSTER_VILE_CLUTCH)
@@ -25,6 +26,7 @@ function defense.evasion(ctx, monster, definition)
     return math.max(0, chaos_status.evasion(ctx, monster, ev))
 end
 
+-- Combine innate AC with equipped protection, then apply active wretchedness.
 function defense.armour(ctx, monster, definition)
     local ac = (definition.ac or 0) +
         equipment.protection_ac(ctx, monster)
@@ -37,6 +39,7 @@ function defense.armour(ctx, monster, definition)
     return math.max(0, ac)
 end
 
+-- A monster unable to respond cannot raise a shield despite wearing one.
 local function incapacitated(ctx, monster)
     local paralysis = ctx:get(monster, component.PARALYSIS)
     local stasis = ctx:get(monster, component.MONSTER_STASIS)
@@ -48,6 +51,7 @@ local function incapacitated(ctx, monster)
         ctx:has(monster, component.HELD)
 end
 
+-- Build an active shield profile only after checking control and equipment state.
 function defense.shield(ctx, monster, definition)
     if incapacitated(ctx, monster) then
         return nil
@@ -77,6 +81,8 @@ function defense.shield(ctx, monster, definition)
     }
 end
 
+-- Example: defense.register_block(ctx, monster) with one successful block -> shield_blocks increases by one
+-- Increase the monster's block count so later shield contests become harder in this exchange.
 function defense.register_block(ctx, monster)
     local combat = ctx:get(monster, component.COMBAT)
 
@@ -90,7 +96,7 @@ function defense.register_block(ctx, monster)
     return combat.shield_blocks
 end
 
--- Source: beam.cc:4785-4830 and monster.cc:2996-3029. A returning beam
+-- Source: beam.cc and monster.cc. A returning beam
 -- makes a fresh block roll against the original shooter's shield.
 function defense.beam_block(ctx, shield, to_hit)
     local body_size = size.rank[shield.size]

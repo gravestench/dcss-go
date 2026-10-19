@@ -5,6 +5,7 @@ local monster_enchant = require("policy.combat.monster_enchant")
 
 local quicksilver = {}
 
+-- Example: quicksilver.after_hit(ctx, nil, defender) with player defender -> cancellation purges player buffs
 -- beam.cc:bolt::affect_player and bolt::affect_monster call the same
 -- debuff rules as cancellation after the physical hit.
 function quicksilver.after_hit(ctx, _, defender)

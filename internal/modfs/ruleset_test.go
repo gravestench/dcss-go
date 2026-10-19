@@ -240,7 +240,7 @@ func TestSingleContentFileParticipatesInRulesetIdentity(t *testing.T) {
 	}
 
 	overlay := t.TempDir()
-	path := "content/monsters/0001_mons_abomination_large.lua"
+	path := "content/monsters/mons_abomination_large.lua"
 	data, err := bundled.ReadFile(path)
 
 	if err != nil {

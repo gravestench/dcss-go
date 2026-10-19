@@ -12,12 +12,15 @@ local miasma_breath = {}
 local profile = catalog.get(categories.MONSTER_BEAMS,
     spells.SPELL_MIASMA_BREATH)
 
+-- Example: miasma_breath.plan(ctx, caster, foe) with clear breath path -> saved aim for later miasma-cloud placement
+-- Rejects an aim if the later fixed-size miasma spread could reach an ally.
 function miasma_breath.plan(ctx, caster, foe)
     return beam.plan(ctx, caster, foe, profile, {
         cloud_max_size = cloud_sizes.FIXED_LARGE,
     })
 end
 
+-- A fully absorbed player hit cannot apply miasma; monsters use the affliction path.
 function miasma_breath.before_damage(ctx, caster, defender, _, outcome)
     if ctx:has(defender, component.PLAYER) and outcome.damage <= 0 then
         return
@@ -34,6 +37,7 @@ function miasma_breath.after_endpoint(ctx, caster, _, _, endpoint)
         "monster_spell")
 end
 
+-- Damage contacts resolve before the endpoint's ten miasma cloud cells.
 function miasma_breath.resolve(ctx, caster, foe, _, plan)
     return beam.resolve(ctx, caster, foe, profile, plan,
         miasma_breath)

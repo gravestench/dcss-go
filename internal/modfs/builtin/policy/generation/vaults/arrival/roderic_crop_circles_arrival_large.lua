@@ -1,8 +1,9 @@
+-- Example: The large crop circle has a one-in-five chance to favor glyph 2 over glyph 1.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Port of arrival/large.des:818-822.
+-- The large crop circle has a one-in-five chance to favor glyph 2 over glyph 1.
 local function choose_crop_colour(api)
     if api:one_in(5) then
         api:emit(directives.SUBST, "1 = 2:100 1:20")

@@ -3,6 +3,8 @@ local sanguine = require("policy.character.sanguine_armour")
 
 local system = {}
 
+-- Theory of operation: The armour timer follows poison damage so this turn’s injury can affect its state.
+-- Sanguine armour recovery follows poison damage in the status sequence.
 function system.update(ctx, actor, aut)
     sanguine.tick(ctx, actor, aut)
 end

@@ -2,6 +2,8 @@ local roll = require("policy.combat.roll")
 
 local brand = {}
 
+-- Example: brand.apply(ctx, hit, brands) rolls the one-in-four skip before
+-- scaling poison dose from damage, preserving melee-stream order.
 function brand.apply(ctx, hit, brands)
     if roll.melee(ctx, 4) == 0 then
         return

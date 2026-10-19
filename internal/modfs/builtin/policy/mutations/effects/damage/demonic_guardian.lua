@@ -52,6 +52,8 @@ local tiers = {
     },
 }
 
+-- Decrease the saved cooldown by elapsed aut so variable-length actions and
+-- save/restore preserve when another guardian may arrive.
 function guardian.tick(ctx, player, aut)
     local state = ctx:get(player, component.DEMONIC_GUARDIAN)
 
@@ -63,6 +65,8 @@ function guardian.tick(ctx, player, aut)
     ctx:set(player, component.DEMONIC_GUARDIAN, state)
 end
 
+-- Combine mutation level with experience-based tier drift before drawing a
+-- guardian from that tier's authored list on the summon stream.
 local function choose(ctx, player, level)
     local progression = ctx:get(player, component.PROGRESSION)
 
@@ -78,6 +82,8 @@ local function choose(ctx, player, level)
     return choices[ctx:random("mutation", #choices) + 1]
 end
 
+-- Gate on damage cause, ally ban, and cooldown before creating a defensive demon.
+-- Example: poison damage cannot call a guardian; qualifying direct damage may summon one and write cooldown.
 function guardian.on_damage(ctx, player, damage, cause)
     local level = levels.effective(ctx, player,
         mutations.MUT_DEMONIC_GUARDIAN)

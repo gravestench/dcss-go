@@ -1,3 +1,4 @@
+
 local abilities = require("ids.abilities")
 local component = require("constants.component")
 local harness = require("tests.harness")
@@ -17,33 +18,41 @@ local net = require("policy.combat.net")
 
 local test = {}
 
+-- Let innate ability policies read live ECS while map and RNG calls are scripted.
 local function world_for(ctx, player)
     local world = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to abilities fixture actor so player-only branches execute on that entity.
     function world.player()
         return player
     end
 
+    -- Define abilities fixture's traversable cells for movement and targeting checks.
     function world.walkable(_, _, x, y)
         return x >= 1 and x <= 12 and y >= 1 and y <= 12
     end
 
+    -- Give the ordinary ability fixture floor terrain.
     function world.cell()
         return terrain.DNGN_FLOOR
     end
 
+    -- Make abilities sight deterministic while leaving actor positions to the ECS fixture.
     function world.visible()
         return true
     end
 
+    -- Expose abilities fixture occupant at the queried cell for collision or targeting.
     function world.actor_at()
         return nil
     end
 
+    -- Use the highest bounded draw so ability fallback choices take their late branch.
     function world.random(_, _, bound)
         return bound - 1
     end
 
+    -- Write ability relocation into the actor position component to test the chosen square.
     function world.move_actor(_, actor, level_id, x, y)
         ctx:set(actor, component.POSITION, {
             level_id = level_id,
@@ -55,6 +64,7 @@ local function world_for(ctx, player)
     return world
 end
 
+-- Unowned innate abilities reject without spending time.
 function test.run(ctx)
     local player = ctx:create()
     ctx:add(player, component.PLAYER, {
@@ -86,6 +96,7 @@ function test.run(ctx)
         dy = 0,
     })
 
+    -- An unowned ability must fail before the action clock or cooldown changes.
     harness.truthy(unavailable.message,
         "unowned innate abilities reject without spending time")
 
@@ -121,6 +132,7 @@ function test.run(ctx)
         dx = 5,
         dy = 0,
     })
+    -- Range validation precedes the landing-cell search and its random draws.
     harness.truthy(too_far.message,
         "level-one Hop rejects a target beyond four cells")
 
@@ -136,6 +148,7 @@ function test.run(ctx)
     registry.resolve(world, player, hop.intent, 10)
 
     local landing = world:get(player, component.POSITION)
+    -- A valid Hop spends time only after its destination has been resolved.
     harness.truthy(math.abs(landing.x - 6) <= 2 and
         math.abs(landing.y - 2) <= 2,
         "Hop lands near the selected target")
@@ -188,6 +201,7 @@ function test.run(ctx)
 
     local unsafe = setmetatable({}, { __index = world })
 
+    -- Switch this cell to deep water to test an unsafe ability destination.
     function unsafe.cell()
         return terrain.DNGN_DEEP_WATER
     end
@@ -208,6 +222,7 @@ function test.run(ctx)
 
     local shuffle_world = setmetatable({}, { __index = world })
 
+    -- Force zero in the shuffle to pin the exact Word of Chaos permutation.
     function shuffle_world.random()
         return 0
     end

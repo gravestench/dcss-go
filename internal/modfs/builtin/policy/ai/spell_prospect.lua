@@ -4,6 +4,7 @@ local spell_flags = require("constants.spell_flags")
 
 local prospect = {}
 
+-- Missing slot tags cannot satisfy a tactical flag.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -14,6 +15,7 @@ local function has(values, wanted)
     return false
 end
 
+-- Silence leaves only slots flagged for silent casting.
 local function allowed_by_silence(slot, condition)
     if not condition.silenced then
         return true
@@ -25,6 +27,7 @@ local function allowed_by_silence(slot, condition)
         not has(slot.flags, flags.VOCAL)
 end
 
+-- Filter unusable slots before their weights enter the draw.
 local function eligible(slot, condition)
     if not allowed_by_silence(slot, condition) then
         return false
@@ -48,12 +51,14 @@ local function eligible(slot, condition)
     return true
 end
 
+-- Preferred requests compare spell IDs before ordinary fallback.
 local function matching_spell(slot, wanted)
     local definition = catalog.get("spells", slot.spell_id)
 
     return has(definition.flags, wanted)
 end
 
+-- Try an eligible preferred spell before the normal weighted draw.
 local function preferred_slot(book, condition, random, wanted)
     local selected = nil
     local selected_index = nil
@@ -75,6 +80,7 @@ local function preferred_slot(book, condition, random, wanted)
     return selected, selected_index
 end
 
+-- Only eligible slots contribute to the book's weighted total.
 local function normal_slot(book, condition, random)
     local remaining = random(200)
 
@@ -92,6 +98,8 @@ local function normal_slot(book, condition, random)
     return nil
 end
 
+-- Escape and preferred flags take priority before normal weighted spell slots are considered.
+-- Example: prospect.choose(book, condition, roll, preferred) filters silenced spell slots first.
 function prospect.choose(book, condition, random, preferred)
     if preferred then
         return preferred_slot(book, condition, random, preferred)

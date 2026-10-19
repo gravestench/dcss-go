@@ -5,6 +5,7 @@ local streams = require("constants.rng_streams")
 
 local held = {}
 
+-- Web hold is stored on the actor so movement can attempt escape later.
 function held.catch_web(ctx, actor)
     if ctx:has(actor, component.TRAP_HELD) then
         return false
@@ -18,6 +19,7 @@ function held.catch_web(ctx, actor)
     return true
 end
 
+-- Net hold keeps the item ID so escape can damage that exact projectile entity.
 function held.catch_net(ctx, actor, net_item)
     if ctx:has(actor, component.TRAP_HELD) then
         return false
@@ -31,6 +33,7 @@ function held.catch_net(ctx, actor, net_item)
     return true
 end
 
+-- A web struggle uses trap RNG and retains held state on a failed attempt.
 local function escape_web(ctx, actor)
     if ctx:random(streams.TRAPS, 10) < 3 then
         ctx:emit("trap", "You struggle to detach yourself from the web.")
@@ -44,6 +47,7 @@ local function escape_web(ctx, actor)
     return true
 end
 
+-- Net struggles damage the actual projectile entity; a missing net would make saved held state inconsistent.
 local function escape_net(ctx, actor, state)
     local net_item = ctx:entity(state.net_item_id)
     local durability = net_item and ctx:get(net_item, component.PROJECTILE_NET)
@@ -70,6 +74,8 @@ local function escape_net(ctx, actor, state)
     return false
 end
 
+-- Webs and nets have different escape rules; route by saved restraint kind before clearing it.
+-- Example: a web makes one trap-stream escape roll; a net instead loses 1..4 durability per attempt.
 function held.escape(ctx, actor)
     local state = ctx:get(actor, component.TRAP_HELD)
 

@@ -15,6 +15,7 @@ local forlorn_jobs = {
     JOB_MONK = true,
 }
 
+-- Treat missing restriction lists as empty for mod-added species and jobs.
 local function contains(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -25,6 +26,7 @@ local function contains(values, wanted)
     return false
 end
 
+-- Only starting mutation levels can bar a job on the character-choice screen.
 local function has_mutation(species, wanted)
     for _, mutation in ipairs(species.mutations or {}) do
         if mutation.id == wanted and mutation.level <= 1 and
@@ -38,6 +40,10 @@ end
 
 local choice = {}
 
+-- Bans represent combinations that cannot physically use a job's start,
+-- plus source-specific species restrictions. An unavailable gameplay feature
+-- is handled elsewhere, so it does not silently alter the menu's rule.
+-- Example: choice.allowed(species, job) returns false when that species cannot grasp a Hunter's weapon.
 function choice.allowed(species, job)
     if not species.selectable or not job.selectable then
         return false
@@ -58,6 +64,7 @@ function choice.allowed(species, job)
     return true
 end
 
+-- Recommendation highlights depend on whether the species or job menu was chosen first.
 function choice.policy(species, job, species_first)
     if not choice.allowed(species, job) then
         return "banned", false
@@ -65,6 +72,9 @@ function choice.policy(species, job, species_first)
 
     local recommended
 
+    -- The source menu highlights different recommendations depending on
+    -- which side the player selected first. Preserve that presentation rule
+    -- without duplicating the underlying legality check.
     if species_first then
         recommended = contains(species.recommended_jobs, job.id)
     else

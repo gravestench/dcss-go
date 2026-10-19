@@ -1,3 +1,5 @@
+-- Object class IDs distinguish item families before a concrete item kind is selected.
+
 -- Source: crawl-ref/source/object-class-type.h.
 -- Class IDs must be available while content files are still registering.
 local classes = {
@@ -23,6 +25,8 @@ local classes = {
     OBJ_DETECTED = "OBJ_DETECTED",
 }
 
+-- Accept a new, well-formed class ID when a layered mod first references it.
+-- This keeps classes extensible without permitting arbitrary misspelled keys.
 local function mod_class(_, id)
     if type(id) ~= "string" or not id:match("^OBJ_[A-Z0-9_]+$") then
         error("invalid object class ID " .. tostring(id))

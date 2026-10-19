@@ -1,3 +1,5 @@
+-- Imported shop vaults preserve serial post-placement hooks.
+
 local des = require("policy.generation.vaults.des")
 local catalog = require("policy.generation.vaults.catalog")
 local directives = require("constants.vault_directives")
@@ -5,6 +7,8 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Check every committed shop DES path against the catalog, preventing a file
+-- discovery or parser regression from silently hiding a vault.
 function test.run()
     local paths = mod.paths("vaults/shop", ".des")
 

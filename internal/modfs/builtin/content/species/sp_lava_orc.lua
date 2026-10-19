@@ -1,5 +1,7 @@
--- Generated from the pinned DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Lava Orc (SP_LAVA_ORC) is a catalogued species with HP modifier 1 and XP
+-- factor -1.
+-- Its traits and aptitudes remain catalog data, not an offered character start.
+
 -- Source: crawl-ref/source/util/species-gen/species-data-deprecated-species.txt
 
 local categories = require("constants.catalog")
@@ -24,6 +26,8 @@ local definition = {
         "int",
         "dex",
     },
+    -- Lava Orc changes training costs through these aptitudes; current skill
+    -- levels are player state.
     aptitudes = {
         SK_AIR_MAGIC = {
             allowed = true,

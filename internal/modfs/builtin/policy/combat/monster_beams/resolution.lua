@@ -11,6 +11,7 @@ local trajectory = require("policy.combat.trajectory")
 
 local resolution = {}
 
+-- Only cloud and explosion spells may resolve a saved cell plan instead of an actor target.
 local function has_flag(flags, wanted)
     for _, flag in ipairs(flags or {}) do
         if flag == wanted then
@@ -21,6 +22,9 @@ local function has_flag(flags, wanted)
     return false
 end
 
+-- Example: resolution.resolve(ctx, caster, foe, profile, plan, hook) with missing plan -> error before tracing
+-- Validate the saved plan against the live caster and foe before tracing;
+-- execution cannot silently retarget a different actor or direction.
 function resolution.resolve(ctx, caster, foe, profile, plan, hook)
     if not plan then
         error("monster beam has no target plan")
@@ -72,6 +76,8 @@ function resolution.resolve(ctx, caster, foe, profile, plan, hook)
     local remaining = reach
     local trace
 
+    -- Area plans stop at their selected cell, while bouncing beams need the
+    -- ray path and remaining range for each reflected leg.
     local can_bounce = bounce.for_profile(profile, hook)
 
     if area_target then
@@ -102,6 +108,8 @@ function resolution.resolve(ctx, caster, foe, profile, plan, hook)
         local next_trace = nil
         local stopped = false
 
+        -- A penetrating beam can continue after a hit; a blocked or reflected
+        -- contact ends this leg before the endpoint hook is called.
         for _, contact in ipairs(trace.contacts) do
             local outcome = contact_rules.resolve(ctx, caster, contact.actor,
                 profile, power, to_hit, hook, leg_source)

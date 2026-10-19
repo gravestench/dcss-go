@@ -1,3 +1,5 @@
+-- Habitat values decide which terrain a monster can enter or spawn on.
+
 local habitats = {
     WATER = "HT_WATER",
     AMPHIBIOUS = "HT_AMPHIBIOUS",

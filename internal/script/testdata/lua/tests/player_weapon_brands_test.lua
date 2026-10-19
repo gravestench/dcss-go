@@ -7,6 +7,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Pin the source brand catalog count and IDs before combat consumes those effects.
 function test.run()
     local seen = {}
     local count = 0

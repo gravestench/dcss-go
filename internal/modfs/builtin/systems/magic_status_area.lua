@@ -2,6 +2,8 @@ local component = require("constants.component")
 local radiance = require("policy.magic.effects.statuses.toxic_radiance")
 local system = {}
 
+-- Theory of operation: Radiance and area timers can emit damage or clear effects before regeneration.
+-- Area status effects can emit damage or remove effects before regeneration begins.
 function system.update(ctx, actor, aut)
     if actor ~= ctx:player() then
         return

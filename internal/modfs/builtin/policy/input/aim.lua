@@ -2,6 +2,9 @@ local directions = require("policy.input.directions")
 
 local aim = {}
 
+-- Aiming input fills the pending target request without invoking the command a second time.
+-- Example: aim.route({ key = "tab", casting = true }) cycles targets while
+-- the prepared spell and its resource cost stay owned by the pending action.
 function aim.route(input)
     if input.key == "esc" then
         if input.reading then

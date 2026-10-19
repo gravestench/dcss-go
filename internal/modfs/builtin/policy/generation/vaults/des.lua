@@ -1,3 +1,4 @@
+-- Example: A malformed MAP row reports the original DES line instead of a projected row.
 local directives = require("constants.vault_directives")
 local depth = require("policy.generation.vaults.depth")
 
@@ -13,12 +14,14 @@ for _, kind in pairs(directives) do
     end
 end
 
+-- Report parsing failures at the original DES file and line.
 local function fail(path, line, id, detail)
     local owner = id or "unnamed vault"
 
     error(string.format("%s:%d: %s: %s", path, line, owner, detail))
 end
 
+-- Join escaped source continuations before the directive parser sees their arguments.
 local function source_lines(source)
     local lines = {}
     local normalized = source:gsub("\r\n", "\n")
@@ -30,10 +33,12 @@ local function source_lines(source)
     return lines
 end
 
+-- Limit vault IDs to safe module and catalog keys.
 local function valid_id(id)
     return id and id:match("^[a-z][a-z0-9_]*$") ~= nil
 end
 
+-- Preserve authored operation order while extracting tags, orientation, and weight.
 local function add_directive(vault, kind, argument, line)
     local operation = {
         kind = kind,
@@ -50,9 +55,9 @@ local function add_directive(vault, kind, argument, line)
     elseif kind == directives.ORIENT then
         vault.orientation = argument
     elseif kind == directives.DEPTH then
-        -- Read after continuations have joined their source lines.
+        -- Defer range parsing until continued DEPTH lines form one complete rule.
     elseif kind == directives.CHANCE then
-        -- Read after continuations have joined their source lines.
+        -- Defer branch chance parsing for the same continuation boundary.
     elseif kind == directives.WEIGHT then
         local weight = tonumber(argument)
 
@@ -64,6 +69,7 @@ local function add_directive(vault, kind, argument, line)
     end
 end
 
+-- Recognize only named, ported hook stages; raw inline Lua cannot enter the runtime.
 local function add_hook(vault, text, line)
     local stage, method = text:match('^:%s*vault%.([a-z_]+)%s*%(%s*"([a-z][a-z0-9_]*)"%s*%)%s*$')
 
@@ -87,6 +93,7 @@ local function add_hook(vault, text, line)
     }
 end
 
+-- Route named hook syntax separately from ordinary DES directives.
 local function parse_declaration(vault, text, line)
     if text:sub(1, 1) == ":" then
         add_hook(vault, text, line)
@@ -107,6 +114,7 @@ local function parse_declaration(vault, text, line)
     add_directive(vault, kind, argument, line)
 end
 
+-- A continued directive retains its original source line for later error reports.
 local function append_continuation(vault, text, line)
     local operation = vault.operations[#vault.operations]
 
@@ -117,6 +125,7 @@ local function append_continuation(vault, text, line)
     operation.argument = operation.argument:gsub("\\%s*$", "") .. " " .. text:gsub("^%s+", "")
 end
 
+-- Keep source line numbers on parsed operations so later hook and validation failures name the authored site.
 function des.parse(path, source)
     local vault = {
         path = path,

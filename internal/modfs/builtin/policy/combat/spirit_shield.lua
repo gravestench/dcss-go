@@ -17,6 +17,8 @@ local armour_slots = {
     boots = true,
 }
 
+-- Example: spirit_shield.active(ctx, player) with worn spirit amulet -> true before HP-to-MP split
+-- Check equipped and innate spirit sources before redirecting damage from HP to MP.
 function spirit_shield.active(ctx, player)
     if effects.sum(ctx, player, capabilities.SPIRIT_SHIELD) > 0 then
         return true

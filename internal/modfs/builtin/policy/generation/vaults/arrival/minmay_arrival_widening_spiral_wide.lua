@@ -1,8 +1,9 @@
+-- Example: Only the rare entrance branch opens every spiral letter; otherwise each ring gets its own gap.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Port of arrival/small.des:517-526.
+-- Only the rare entrance branch opens every spiral letter; otherwise each ring gets its own gap.
 local function choose_spiral_entrance(api)
     if api:one_in(4) then
         api:emit(directives.SUBST, "ABCDEFGHJ = +")

@@ -44,7 +44,7 @@ local magic_skills = {
     skills.SK_EVOCATIONS,
 }
 
--- Source: crawl-ref/source/spl-book.cc:1137-1161.
+-- Source: crawl-ref/source/spl-book.cc.
 local level_ranges = {
     {
         first = 0,
@@ -153,6 +153,7 @@ local level_ranges = {
     },
 }
 
+-- Depth changes fixed-book weight through each contained spell's level.
 local function spell_weight(level, depth)
     local total = 0
     local selected = 0
@@ -181,6 +182,8 @@ local function spell_weight(level, depth)
     return math.floor(selected * 1000 / total)
 end
 
+-- Example: books.weight(book_kind, 10) reflects spell-level bias at dungeon depth ten.
+-- Average each contained spell's capped-depth weight; an empty book cannot enter a random draw.
 function books.weight(definition, depth)
     local spells = definition.generation.spells or {}
 
@@ -199,13 +202,14 @@ function books.weight(definition, depth)
     return math.floor(total / #spells)
 end
 
+-- Only random-book kinds need a generated spell payload in the item result.
 function books.roll(ctx, definition, request, result)
     if definition.id ~= ids.BOOK_MANUAL then
         random_books.roll(ctx, definition, request, result)
         return
     end
 
-    -- Source: crawl-ref/source/makeitem.cc:1400-1440. Removed skill IDs
+    -- Source: crawl-ref/source/makeitem.cc. Removed skill IDs
     -- are omitted, yielding the same final distribution as source rerolls.
     local skill_id = request.manual_skill_id
 

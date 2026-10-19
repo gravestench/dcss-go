@@ -2,6 +2,8 @@ local component = require("constants.component")
 
 local shopping_list = {}
 
+-- Read the one saved shopping-list component and fail if character setup
+-- omitted it; a temporary Lua table would not survive a save.
 local function state(ctx, player)
     local value = ctx:get(player, component.SHOPPING_LIST)
 
@@ -12,6 +14,7 @@ local function state(ctx, player)
     return value
 end
 
+-- The list stores stock entity IDs; toggling a new entry requires live shop stock.
 function shopping_list.contains(ctx, player, stock)
     local wanted = ctx:id(stock)
 
@@ -24,6 +27,8 @@ function shopping_list.contains(ctx, player, stock)
     return false
 end
 
+-- Remove a purchased or deleted stock entity by live ID, then write the
+-- compacted list back to ECS so stale references do not remain in saves.
 function shopping_list.remove(ctx, player, stock)
     local value = state(ctx, player)
     local wanted = ctx:id(stock)
@@ -39,6 +44,9 @@ function shopping_list.remove(ctx, player, stock)
     ctx:set(player, component.SHOPPING_LIST, value)
 end
 
+-- Example: shopping_list.toggle(ctx, player, stock) adds or removes a desired shop item.
+-- Toggle by saved stock entity, not an item kind, so two identical shop items
+-- can have separate list state and quotes.
 function shopping_list.toggle(ctx, player, stock)
     if not ctx:has(stock, component.SHOP_STOCK) then
         error("shopping list requires live shop stock")
@@ -58,6 +66,8 @@ function shopping_list.toggle(ctx, player, stock)
     return true
 end
 
+-- Revalidate that both player and stock are still in the open shop before
+-- toggling; a displayed selection may be stale after movement or purchase.
 function shopping_list.run(ctx, input)
     local shop = ctx:entity(input.shop_id)
     local stock = ctx:entity(input.stock_id)

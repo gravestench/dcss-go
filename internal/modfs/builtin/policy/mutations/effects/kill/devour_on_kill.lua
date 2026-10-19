@@ -6,6 +6,8 @@ local statuses = require("policy.magic.effects.statuses.player")
 
 local devour = {}
 
+-- Only natural and plant holiness count as food for this legacy kill effect;
+-- inspect every holiness tag because monsters can carry more than one.
 local function edible(monster)
     for _, holiness in ipairs(monster.holiness or {}) do
         if holiness == holiness_ids.NATURAL or
@@ -19,6 +21,7 @@ end
 
 -- Source: mon-death.cc grants 1+random2avg(1+XL, 3) HP on half of
 -- eligible natural or plant kills, unless Death's Door is active.
+-- Example: an edible natural kill has a one-in-two mutation-stream gate before it heals the player.
 function devour.on_kill(ctx, player, monster)
     if not edible(monster) or ctx:random("mutation", 2) ~= 0 then
         return

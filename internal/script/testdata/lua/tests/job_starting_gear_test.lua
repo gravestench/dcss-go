@@ -1,3 +1,5 @@
+-- Fighter has three fixed source grants.
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local harness = require("tests.harness")
@@ -6,6 +8,8 @@ local jobs = require("ids.jobs")
 
 local test = {}
 
+-- Check every committed job's starting gear against catalog references so
+-- character creation cannot select a job with missing equipment IDs.
 function test.run()
     local definitions = catalog.all(categories.JOBS)
 

@@ -1,5 +1,7 @@
+-- Example: Equal skill remainders use stable skill IDs when percentages must sum to 100.
 local weights = {}
 
+-- Stable skill order breaks equal fractional shares when percentages must total 100.
 local function remainder_before(left, right)
     if left.value == right.value then
         return left.index < right.index
@@ -8,6 +10,7 @@ local function remainder_before(left, right)
     return left.value < right.value
 end
 
+-- Find the saved control for a skill without relying on table position.
 function weights.setting(training, id)
     for _, setting in ipairs(training.settings) do
         if setting.id == id then
@@ -18,6 +21,7 @@ function weights.setting(training, id)
     return nil
 end
 
+-- Count recent practice occurrences when automatic weights are derived.
 local function count(queue, id)
     local result = 0
 
@@ -30,6 +34,7 @@ local function count(queue, id)
     return result
 end
 
+-- Convert recent practice or manual focus into integer percentages with stable remainder ties.
 function weights.scaled(skills, training)
     local values = {}
     local had_practice = false
@@ -57,6 +62,7 @@ function weights.scaled(skills, training)
         values[index] = weight
     end
 
+    -- Automatic mode falls back to enabled skills when the practice queue is empty.
     if not training.manual and not had_practice then
         for index, skill in ipairs(skills) do
             local setting = weights.setting(training, skill.id)
@@ -108,6 +114,7 @@ function weights.scaled(skills, training)
         table.sort(remainders, remainder_before)
 
         for _, rest in ipairs(remainders) do
+            -- Stop allocating integer remainders once the displayed percentages sum exactly to 100.
             if scaled_total == 100 then
                 break
             end
@@ -120,6 +127,7 @@ function weights.scaled(skills, training)
     return values
 end
 
+-- The skill stream consumes one draw over the final percentage total.
 function weights.choose(ctx, values)
     local total = 0
 

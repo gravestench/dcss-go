@@ -1,3 +1,4 @@
+-- Example: A fixed scenario returns its authored levels after population adds actors.
 local branches = require("ids.branches")
 
 local fixed = {}
@@ -26,6 +27,7 @@ local second_rows = {
     "#################",
 }
 
+-- The fixed scenario returns authored levels after population; it does not consume layout randomness.
 function fixed.generate(populated)
     local budget = populated and 2 or 0
 

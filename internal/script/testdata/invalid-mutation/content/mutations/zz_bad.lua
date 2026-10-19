@@ -1,3 +1,5 @@
+-- An active mutation with invalid metadata exercises mutation catalog validation.
+
 local categories = require("constants.catalog")
 
 local definition = {

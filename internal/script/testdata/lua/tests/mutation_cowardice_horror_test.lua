@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local catalog = require("policy.catalog")
 local classes = require("constants.mutation_classes")
@@ -20,6 +21,7 @@ local horror_system = require("systems.character_horror")
 
 local test = {}
 
+-- Place a visible threat with controlled HP for horror ranking.
 local function add_monster(ctx, kind_id, x, max_hp)
     local monster = ctx:create()
     local health = max_hp or 25
@@ -41,13 +43,16 @@ local function add_monster(ctx, kind_id, x, max_hp)
     return monster
 end
 
+-- Force sight for horror calculations without altering monster positions.
 local function visible_world(ctx, player)
     local world = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to cowardice horror fixture actor so player-only branches execute on that entity.
     function world.player()
         return player
     end
 
+    -- Make cowardice horror sight deterministic while leaving actor positions to the ECS fixture.
     function world.visible()
         return true
     end
@@ -55,6 +60,7 @@ local function visible_world(ctx, player)
     return world
 end
 
+-- Restore rejects horror without Cowardice.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -105,17 +111,20 @@ function test.run(ctx)
 
     records.grant_acquired(ctx, player, mutations.MUT_COWARDICE, 1)
     horror_system.update(world, player)
+    -- Threat scoring combines visible experience and excludes nonthreatening tentacle segments.
     harness.equal(horror.penalty(world, player), 5,
         "two nasty monsters give five horror levels; tentacles do not count")
     harness.equal(slay.total(world, player), -5,
         "horror removes one point of slaying per level")
     harness.equal(horror.spell_power(1000, 5), 588,
         "five horror levels reduce centi spell power before stepdown")
+    -- The cast path must read the same horror state used by slaying and presentation.
     harness.equal(power.cast(world, player, spell), 5,
         "spell casting consumes the saved horror penalty")
 
     transition.remove(world, player, mutations.MUT_COWARDICE,
         classes.ACQUIRED)
+    -- Removing the mutation invalidates cached horror immediately.
     harness.equal(horror.penalty(world, player), 0,
         "losing Cowardice clears horror before the next turn")
     records.grant_acquired(ctx, player, mutations.MUT_COWARDICE, 1)

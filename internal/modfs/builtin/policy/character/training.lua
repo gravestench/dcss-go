@@ -1,3 +1,4 @@
+-- Example: A new practice event pushes the oldest entry out of the 100-event queue.
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
 local forms = require("policy.magic.effects.forms.player")
@@ -9,6 +10,7 @@ local distributed = require("policy.character.distributed_training")
 
 local training_rules = {}
 
+-- Keep the practice queue at 100 entries while retaining newest skill events.
 local function append_recent(queue, id)
     if #queue == 100 then
         table.remove(queue, 1)
@@ -17,6 +19,7 @@ local function append_recent(queue, id)
     queue[#queue + 1] = id
 end
 
+-- Locate the saved entry before points or controls for a named skill change.
 local function find_skill(skills, id)
     for _, skill in ipairs(skills) do
         if skill.id == id then
@@ -27,6 +30,7 @@ local function find_skill(skills, id)
     return nil
 end
 
+-- Create a training control when a newly available skill lacks one.
 local function ensure_setting(skills, training, id)
     local setting = weights.setting(training, id)
 
@@ -47,6 +51,7 @@ local function ensure_setting(skills, training, id)
     return setting
 end
 
+-- Recent practice changes automatic weights before the next XP spending pass.
 function training_rules.record_practice(ctx, actor, skills, training,
     species, id)
     if availability.forbidden_skill(ctx, actor, id) then
@@ -68,6 +73,7 @@ function training_rules.record_practice(ctx, actor, skills, training,
     end
 end
 
+-- Manual training changes are validated against species and current skill availability.
 function training_rules.change(ctx, actor, skills, training, species,
     id, focus)
     if distributed.active(ctx, actor) or
@@ -92,6 +98,7 @@ function training_rules.change(ctx, actor, skills, training, species,
     return true
 end
 
+-- Reject disabled, capped, or mutation-forbidden skills before spending XP.
 local function trainable(ctx, actor, skill, training)
     local setting = weights.setting(training, skill.id)
 
@@ -99,6 +106,7 @@ local function trainable(ctx, actor, skill, training)
         not availability.forbidden_skill(ctx, actor, skill.id)
 end
 
+-- Cap one allocation by budget, level-27 points, and the current cost level.
 local function train_chunk(ctx, actor, skill, training, species, budget,
     forced)
     if (not forced and not trainable(ctx, actor, skill, training)) or
@@ -134,6 +142,7 @@ local function train_chunk(ctx, actor, skill, training, species, budget,
     return spent
 end
 
+-- Shuffle weighted candidates through the skill stream before tie resolution.
 local function shuffle(ctx, order)
     for count = #order, 2, -1 do
         local index = ctx:random("skill", count) + 1
@@ -141,6 +150,7 @@ local function shuffle(ctx, order)
     end
 end
 
+-- Stop a batch at the next skill-cost threshold to avoid pricing later XP at the old cost.
 local function batch_limit(training, cost)
     if training.cost_level == 27 then
         return training.available_xp
@@ -156,6 +166,7 @@ local function batch_limit(training, cost)
     return math.min(training.available_xp, until_next + cost - 1)
 end
 
+-- Spend each XP batch across weighted skills before recalculating costs at the next threshold.
 local function spend_batch(ctx, actor, skills, training, species)
     local cost = formulas.skill_point_cost(training.cost_level)
 
@@ -184,6 +195,7 @@ local function spend_batch(ctx, actor, skills, training, species)
 
     local remaining = batch_xp
 
+    -- If any share is too small for one point, use weighted single-point spending from the start.
     if not skip_first then
         shuffle(ctx, order)
 
@@ -242,6 +254,7 @@ local function spend_batch(ctx, actor, skills, training, species)
     return batch_xp - remaining
 end
 
+-- Fighting and Spellcasting gains can alter current HP or MP caps immediately.
 local function refresh_resources(ctx, actor, species, skills,
     points_before)
     local fighting_after = find_skill(skills, "SK_FIGHTING")
@@ -284,6 +297,7 @@ local function refresh_resources(ctx, actor, species, skills,
     end
 end
 
+-- Direct XP spending borrows available XP temporarily, then restores the shared training balance.
 function training_rules.spend_experience(ctx, actor, id, budget)
     local identity = ctx:get(actor, component.PLAYER)
     local skills_component = ctx:get(actor, component.SKILLS)
@@ -329,6 +343,7 @@ function training_rules.spend_experience(ctx, actor, id, budget)
     return spent
 end
 
+-- The scheduled training pass consumes saved available XP after death awards it.
 function training_rules.update(ctx, actor)
     local skills_component = ctx:get(actor, component.SKILLS)
     local training = ctx:get(actor, component.SKILL_TRAINING)
@@ -368,6 +383,7 @@ function training_rules.update(ctx, actor)
     refresh_resources(ctx, actor, species, skills, points_before)
 end
 
+-- Change the saved manual-mode flag through the current-player policy command.
 function training_rules.training_mode(ctx, input)
     local actor = ctx:player()
     local training = ctx:get(actor, component.SKILL_TRAINING)
@@ -387,6 +403,7 @@ register.policy({
     run = training_rules.training_mode,
 })
 
+-- Validate a requested training control against the player species and available skills.
 function training_rules.training_change(ctx, input)
     local actor = ctx:player()
     local player = ctx:get(actor, component.PLAYER)
@@ -424,6 +441,7 @@ register.policy({
     run = training_rules.training_change,
 })
 
+-- Project saved weights into UI percentages after the current practice queue is considered.
 function training_rules.training_percent(ctx, _)
     local actor = ctx:player()
     local skills = ctx:get(actor, component.SKILLS)
@@ -454,6 +472,7 @@ register.policy({
     run = training_rules.training_percent,
 })
 
+-- Disable adjustable controls while distributed training owns allocation.
 function training_rules.training_controls(ctx)
     return {
         adjustable = not distributed.active(ctx, ctx:player()),

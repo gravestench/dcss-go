@@ -10,12 +10,15 @@ local statuses = require("policy.magic.effects.statuses.player")
 
 local jelly = {}
 
+-- The mutation grants a binary absorption capability regardless of level;
+-- the projectile handler decides eligibility and rolls the actual chance.
 function jelly.capability(level)
     return level > 0 and 1 or 0
 end
 
 -- Source: beam.cc eats an eligible missile after it hits the player,
 -- then heals random2(final_dam / 2) on a coin flip.
+-- Example: an eligible incoming missile can be absorbed after a one-in-two mutation roll, restoring HP.
 function jelly.absorb(ctx, player, projectile_id, final_damage)
     if effects.sum(ctx, player, capabilities.PROJECTILE_ABSORPTION) == 0 then
         return false

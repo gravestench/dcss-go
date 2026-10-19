@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local armour_egos = require("constants.armour_egos")
 local harness = require("tests.harness")
@@ -12,13 +13,16 @@ local records = require("policy.mutations.records")
 
 local test = {}
 
+-- Pin awareness RNG while keeping the player and monster records live.
 local function player_world(ctx, player, roll)
     local world = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to stealth awareness fixture actor so player-only branches execute on that entity.
     function world.player()
         return player
     end
 
+    -- Clamp the requested AI draw to its bound while varying the awareness roll.
     function world.random(_, stream, maximum)
         harness.equal(stream, "ai", "awareness uses the AI RNG stream")
         return math.min(roll, maximum - 1)
@@ -27,6 +31,7 @@ local function player_world(ctx, player, roll)
     return world
 end
 
+-- Stealth ego adds one pip after ring mail encumbrance.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -56,6 +61,7 @@ function test.run(ctx)
         "thin skeletal structure grants a pip and raises dexterity")
 
     records.grant_acquired(world, player, mutations.MUT_GLOWING, 1)
+    -- Backlighting is applied after additive mutation and equipment stealth modifiers.
     harness.equal(stealth.score(world, player), 74,
         "Glowing reduces the final stealth score to two fifths")
 
@@ -69,6 +75,7 @@ function test.run(ctx)
     world = player_world(ctx, player, 0)
     harness.equal(awareness.detects(world, monster, state, true), true,
         "a low awareness roll detects a visible player")
+    -- Awareness cannot use a successful roll without a valid line of sight.
     harness.equal(awareness.detects(world, monster, state, false), false,
         "walls prevent visual detection")
 

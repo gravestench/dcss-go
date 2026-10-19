@@ -9,10 +9,12 @@ local monster_health = require("policy.combat.monster_health")
 
 local blast = {}
 
+-- Area and target reach use eight-direction grid distance, including diagonal cells.
 local function distance(left, right)
     return math.max(math.abs(left.x - right.x), math.abs(left.y - right.y))
 end
 
+-- Summoned constructs search visible hostile actors before choosing where to explode.
 function blast.nearest_hostile(ctx, origin, reach)
     local chosen, closest
 
@@ -34,6 +36,8 @@ function blast.nearest_hostile(ctx, origin, reach)
     return chosen, closest
 end
 
+-- Example: blast.hit(ctx, monster, 12, "MR_RES_FIRE", construct) applies
+-- elemental resistance before damage and kill attribution.
 function blast.hit(ctx, target, raw, resistance_id, source)
     local definition
     local ac = 0
@@ -70,6 +74,8 @@ function blast.hit(ctx, target, raw, resistance_id, source)
     end
 end
 
+-- Roll area damage per target to preserve the source distribution and avoid
+-- one shared hit determining every actor's outcome.
 function blast.area(ctx, source, radius, dice, sides, resistance_id)
     local origin = ctx:get(source, component.POSITION)
 
@@ -91,6 +97,7 @@ function blast.area(ctx, source, radius, dice, sides, resistance_id)
     end
 end
 
+-- Mark a construct as finished in components so turn processing and save/restore agree.
 function blast.finish(ctx, entity, marker)
     local state = ctx:get(entity, component.SUMMON_CONSTRUCT)
     local summon = ctx:get(entity, component.SUMMON)

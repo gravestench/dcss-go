@@ -4,6 +4,7 @@ local book_ids = require("ids.monster_spellbooks")
 
 local coverage = {}
 
+-- Keep book, slot, and reason together so missing resolver reports identify the broken content.
 local function add(missing, monster_id, book_id, spell_id, reason)
     missing[#missing + 1] = {
         monster_id = monster_id,
@@ -13,6 +14,7 @@ local function add(missing, monster_id, book_id, spell_id, reason)
     }
 end
 
+-- Coverage requires both plan and resolve methods for every slot in a registered monster spellbook.
 local function inspect_book(missing, monster_id, book_id)
     local okay, book = pcall(catalog.get, "monster_spellbooks", book_id)
 
@@ -39,6 +41,8 @@ local function inspect_book(missing, monster_id, book_id)
     end
 end
 
+-- Example: coverage.missing(monster_ids) with missing spell resolver -> entry identifying monster and spell
+-- Sort monster ids so missing-effect reports are stable across Lua table iteration orders.
 function coverage.missing(monster_ids)
     local ids = {}
     local missing = {}

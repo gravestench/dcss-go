@@ -1,3 +1,4 @@
+-- Theory of operation: AI commits one intent from current health and ally state; later systems execute it.
 -- Active monster decisions from ai.go. Movement and combat resolve the intent.
 local memory = require("policy.ai.memory")
 local wander = require("policy.ai.wander")
@@ -15,6 +16,7 @@ local allies = require("policy.character.allies")
 local awareness = require("policy.ai.awareness")
 local invisibility = require("policy.potions.invisibility")
 
+-- Allies follow the player when no enemy exists; they wait instead of striking their adjacent leader.
 local function choose_actor_target(ctx, entity, state, position)
     local target = targets.nearest(ctx, entity, position, 7)
     local attack_goal = target ~= nil
@@ -48,6 +50,7 @@ local function choose_actor_target(ctx, entity, state, position)
         destination, target, attack_goal)
 end
 
+-- Select intent from current ally and target state; execution remains with movement and attack systems.
 local function choose_intent(ctx, entity, state)
     local position = ctx:get(entity, "core.position")
 
@@ -70,6 +73,7 @@ local function choose_intent(ctx, entity, state)
         error("monster level " .. position.level_id .. " is missing")
     end
 
+    -- Blinding and invisibility checks precede geometric sight before memory updates.
     local player_visible = not enchant.blinded(ctx, entity) and
         not statuses.enfeeble_blinded(ctx, entity) and
         invisibility.visible_to(ctx, player_entity, entity) and ctx:visible(
@@ -93,6 +97,7 @@ local function choose_intent(ctx, entity, state)
         memory.update(ctx, state, position, player, player_detected)
     end
 
+    -- A detected player offers spells first, launcher attacks second, and thrown attacks last.
     if player_detected and not retreating then
         local intent = spell.choose(ctx, entity, position, player, false)
 
@@ -111,6 +116,7 @@ local function choose_intent(ctx, entity, state)
         end
     end
 
+    -- Wandering may create a new target; no target produces WAIT rather than a blind route step.
     if state.behavior == "wander" then
         wander.update(ctx, entity, state, position)
 
@@ -141,6 +147,7 @@ end
 
 local system = {}
 
+-- Monster AI writes an intent only after regeneration and status effects have updated its state.
 function system.update(ctx, entity)
     if not ctx:has(entity, "core.ai") then
         return
@@ -161,6 +168,7 @@ function system.update(ctx, entity)
         ctx:set(entity, "core.combat", combat)
     end
 
+    -- A surviving summon may carry an intent from its controller; other stale intents are invalid.
     if ctx:has(entity, "core.intent") then
         if ctx:has(entity, "magic.summon") then
             return
@@ -211,6 +219,7 @@ function system.update(ctx, entity)
         return
     end
 
+    -- Confusion draws both displacement axes even if the final cell forces WAIT.
     if confusion.active(ctx, entity) then
         local position = ctx:get(entity, "core.position")
         local player_position = ctx:get(ctx:player(), "core.position")
@@ -233,6 +242,7 @@ function system.update(ctx, entity)
         return
     end
 
+    -- A frightened monster still tries a fear-compatible spell before fleeing.
     if statuses.fear_active(ctx, entity) then
         local position = ctx:get(entity, "core.position")
         local player_position = ctx:get(ctx:player(), "core.position")

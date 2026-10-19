@@ -6,6 +6,7 @@ local registry = require("policy.magic.effects.registry")
 
 local sonic_wave = {}
 
+-- Round the two-die side count from capped power before rolling the sonic hit.
 local function roll_damage(ctx, power)
     -- zap-data.h:ZAP_SONIC_WAVE uses calcdice<2,5,1,5>.
     local maximum = 5 + math.floor(math.min(power, 200) / 5)
@@ -19,6 +20,8 @@ local function roll_damage(ctx, power)
         ctx:random("spell", sides)
 end
 
+-- Example: Sonic Wave damages visible nearby monsters after rolling armour for each target.
+-- Apply LOS attack damage separately to each nearby survivor; this zap has no hit roll.
 function sonic_wave.resolve(ctx, player, _, _, power)
     local origin = ctx:get(player, component.POSITION)
 

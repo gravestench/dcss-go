@@ -2,6 +2,8 @@ local component = require("constants.component")
 
 local system = {}
 
+-- Theory of operation: Expired markers restore only the feature they placed, preserving intervening map edits.
+-- Expiry restores the old feature only if the temporary feature still occupies the cell.
 function system.update(ctx, actor)
     if actor ~= ctx:player() then
         return

@@ -1,3 +1,5 @@
+-- Conflict outcomes decide whether a new mutation is blocked, ignored, or trades levels.
+
 local outcomes = {
     BLOCK_UNLESS_FORCED = -1,
     IGNORE_UNLESS_FORCED = 0,

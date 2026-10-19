@@ -5,10 +5,12 @@ local catalog = require("policy.catalog")
 local hit_points = require("policy.population.hit_points")
 local summons = require("policy.magic.effects.summons.common")
 
+-- Theory of operation: A marked corpse is cloned while its actor data still exists, before deletion.
 -- Source: mon-death.cc:_make_simulacra, before the ordinary death rule
 -- destroys the marked monster. A zero degree means no abjuration timer.
 local system = {}
 
+-- A marked dying monster creates simulacra after expiry checks and before actor deletion.
 function system.update(ctx)
     for _, entity in ipairs(ctx:query({ component.SUMMON_MARK })) do
         local mark = ctx:get(entity, component.SUMMON_MARK)

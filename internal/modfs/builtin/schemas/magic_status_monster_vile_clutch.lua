@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.monster_vile_clutch",
     version = 1,
+    -- Clutch power, held time, and escape attempts stay on the grabbed monster until release.
     fields = {
         remaining_aut = {
             type = "int64",

@@ -11,6 +11,9 @@ local vampire = require("policy.character.vampire")
 
 local ritual = {}
 
+-- Example: ritual.can_exsanguinate(ctx, player) gates Bloodless form by current player state.
+-- Require the live vampire form and no ritual in progress before offering
+-- another delayed transition, preventing duplicate exsanguination intents.
 function ritual.can_exsanguinate(ctx, player)
     local state = ctx:get(player, component.VAMPIRE)
 
@@ -18,6 +21,8 @@ function ritual.can_exsanguinate(ctx, player)
         state.ritual_remaining_aut == 0
 end
 
+-- Offer revivification only while bloodless and outside an unfinished ritual;
+-- this prevents queuing a second state transition mid-delay.
 function ritual.can_revivify(ctx, player)
     local state = ctx:get(player, component.VAMPIRE)
 
@@ -25,6 +30,8 @@ function ritual.can_revivify(ctx, player)
         state.ritual_remaining_aut == 0
 end
 
+-- Validate vampire state and ask form policy whether the current form can
+-- end before starting a delayed blood ritual.
 function ritual.prepare_exsanguinate(ctx, player)
     if not ritual.can_exsanguinate(ctx, player) then
         return "You cannot exsanguinate now."
@@ -35,6 +42,8 @@ function ritual.prepare_exsanguinate(ctx, player)
     end
 end
 
+-- Apply the same form-ending gate when returning from bloodless state, so
+-- neither ritual bypasses transformation restrictions.
 function ritual.prepare_revivify(ctx, player)
     if not ritual.can_revivify(ctx, player) then
         return "You cannot revivify now."
@@ -45,14 +54,20 @@ function ritual.prepare_revivify(ctx, player)
     end
 end
 
+-- Start the persisted ritual through vampire policy; the delay system owns
+-- completion and can resume it after a save.
 function ritual.resolve_exsanguinate(ctx, player)
     vampire.begin(ctx, player, abilities.EXSANGUINATE)
 end
 
+-- Start the reverse persisted ritual with its distinct ability ID so later
+-- ticks know which transition to complete.
 function ritual.resolve_revivify(ctx, player)
     vampire.begin(ctx, player, abilities.REVIVIFY)
 end
 
+-- Bat form belongs to bloodless vampires and cannot interrupt a ritual or
+-- redundantly recast the same active form.
 function ritual.can_become_bat(ctx, player)
     local state = ctx:get(player, component.VAMPIRE)
     local form = ctx:get(player, component.PLAYER_FORM)
@@ -62,6 +77,7 @@ function ritual.can_become_bat(ctx, player)
         (not form or form.form_id ~= "bat")
 end
 
+-- Bat Form asks for confirmation when its later two-point stat drain could reduce a stat to zero.
 function ritual.prepare_bat(ctx, player, input)
     if not ritual.can_become_bat(ctx, player) then
         return "You cannot assume Bat Form now."
@@ -86,6 +102,8 @@ function ritual.prepare_bat(ctx, player, input)
     return nil
 end
 
+-- Warn before the fixed two-point drain if any current stat is within that
+-- distance of zero; the caller can then request explicit confirmation.
 function ritual.bat_confirmation_needed(ctx, player)
     local current = attributes.current(ctx, player)
 
@@ -93,10 +111,13 @@ function ritual.bat_confirmation_needed(ctx, player)
         current.dexterity <= 2
 end
 
+-- Keep one warning string for both policy preparation and modal rendering,
+-- so the player confirms the same risk the resolver will apply.
 function ritual.bat_confirmation_message()
     return "Bat Form may drain a stat to zero. Continue?"
 end
 
+-- Failure spends no MP; success pays two MP, changes form, then drains each base stat.
 function ritual.resolve_bat(ctx, player)
     local progress = ctx:get(player, component.PROGRESSION)
     local chance = math.max(0, 45 - 2 * progress.level)

@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local flight = require("policy.combat.flight")
 local movement = require("policy.character.movement")
@@ -11,6 +12,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Seed flight effect owner components once so each branch changes only the mutation under test.
 local function player(ctx)
     local entity = ctx:create()
 
@@ -23,6 +25,7 @@ local function player(ctx)
     return entity
 end
 
+-- Big Wings does not give the Tengu speed perk.
 function test.run(ctx)
     local ordinary = player(ctx)
     local tengu = player(ctx)

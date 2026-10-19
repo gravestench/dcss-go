@@ -1,3 +1,4 @@
+-- Example: A Felid revival spends one saved life and places the player on a safe floor.
 -- Source: player.cc:will_gain_life and _felid_extra_life, ouch.cc:ouch.
 local component = require("constants.component")
 local terrain = require("constants.terrain")
@@ -12,14 +13,17 @@ local levels = require("policy.mutations.levels")
 
 local extra_lives = {}
 
+-- Read the durable life ledger shared by death, advancement, and revival paths.
 function extra_lives.state(ctx, player)
     return ctx:get(player, component.EXTRA_LIVES)
 end
 
+-- Check the effective Felid mutation before granting or spending lives.
 function extra_lives.active(ctx, player)
     return levels.effective(ctx, player, mutations.MUT_MULTILIVED) > 0
 end
 
+-- Create a life ledger once; revisiting mutation transitions must not reset deaths.
 function extra_lives.start(ctx, player)
     if not extra_lives.active(ctx, player) or
         extra_lives.state(ctx, player) then
@@ -37,6 +41,7 @@ function extra_lives.start(ctx, player)
     })
 end
 
+-- Felid life awards use historical level milestones, not just the current level after revival.
 local function can_gain_life(state, level)
     if level < state.last_life_gained - 2 then
         return false
@@ -46,6 +51,7 @@ local function can_gain_life(state, level)
         math.floor((level - 1) / 3)
 end
 
+-- Award milestones from newly attained levels while respecting the life-stock cap.
 function extra_lives.on_level(ctx, player, level)
     if not extra_lives.active(ctx, player) then
         return
@@ -86,6 +92,7 @@ function extra_lives.on_experience(ctx, player)
     end
 end
 
+-- A Felid death spends a life and schedules revival; the actual relocation waits for the input boundary.
 function extra_lives.on_lethal(ctx, player)
     local state = extra_lives.state(ctx, player)
 
@@ -103,6 +110,7 @@ function extra_lives.on_lethal(ctx, player)
     return true
 end
 
+-- Create or remove the ledger when the mutation changes, preserving valid existing state.
 function extra_lives.changed(ctx, player)
     if extra_lives.active(ctx, player) then
         extra_lives.start(ctx, player)
@@ -111,6 +119,7 @@ function extra_lives.changed(ctx, player)
     end
 end
 
+-- Score nearby actors at each candidate revival cell before choosing the safest sample.
 local function threat(ctx, player, level_id, x, y)
     local general = 0
     local highest = 0
@@ -174,6 +183,7 @@ local function safe_position(ctx, player, position)
     return best_x, best_y
 end
 
+-- Preserve fractional XP progress within the old level when revival lowers the character.
 local function lose_level(ctx, player)
     local progress = ctx:get(player, component.PROGRESSION)
 
@@ -216,6 +226,7 @@ local function lose_level(ctx, player)
     return progress
 end
 
+-- Revival removes lethal temporary states before the restored player can act.
 local function clear_afflictions(ctx, player)
     for _, id in ipairs(revivable) do
         if ctx:has(player, id) then
@@ -238,6 +249,7 @@ local function clear_afflictions(ctx, player)
     end
 end
 
+-- Recalculate HP and MP from the reduced level before ending the pending revival.
 local function restore_vitals(ctx, player, level)
     local choice = ctx:get(player, component.PLAYER)
     local species = catalog.get("species", choice.species_id)
@@ -287,10 +299,12 @@ function extra_lives.revive(ctx, player)
     return true
 end
 
+-- Apply pending revival at the current-player input boundary and report whether it ran.
 function extra_lives.revive_policy(ctx)
     return { revived = extra_lives.revive(ctx, ctx:player()) }
 end
 
+-- Check the life ledger against progression and health when restoring a saved player.
 function extra_lives.validate(ctx, player, progress, health)
     local state = extra_lives.state(ctx, player)
     local active = extra_lives.active(ctx, player)

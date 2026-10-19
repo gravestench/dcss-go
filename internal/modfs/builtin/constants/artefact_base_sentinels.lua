@@ -1,3 +1,5 @@
+-- These selectors describe an artefact base choice before an actual item kind has been resolved.
+
 -- Source: crawl-ref/source/art-data.txt and jewellery-type.h.
 -- These source selectors are not ordinary inventory item IDs.
 local sentinels = {

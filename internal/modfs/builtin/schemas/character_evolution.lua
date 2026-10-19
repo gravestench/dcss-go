@@ -3,6 +3,7 @@
 local schema = {
     id = "character.evolution",
     version = 1,
+    -- XP advances mutation growth while elapsed aut and next_check_aut preserve the periodic evolution schedule.
     fields = {
         mutation_id = { type = "string", default = "" },
         remaining_xp = { type = "int64", default = 0 },

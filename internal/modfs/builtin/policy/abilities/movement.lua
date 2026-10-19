@@ -6,6 +6,7 @@ local movement = {}
 
 -- Source: player-act.cc:attempt_escape. A movement ability spends its action
 -- even when the constrictor keeps its grip.
+-- Example: movement.escape_grasp(ctx, player, 2) gives Hop two attempts to leave a grasp.
 function movement.escape_grasp(ctx, player, attempts)
     local grip = ctx:get(player, component.CONSTRICTION)
 

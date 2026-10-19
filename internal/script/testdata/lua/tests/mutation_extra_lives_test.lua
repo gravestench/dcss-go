@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local mutations = require("ids.mutations")
@@ -10,6 +11,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- A missed threshold awards a life at the next XL after a death.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -33,6 +35,7 @@ function test.run(ctx)
         "Felids begin with no extra lives")
 
     extra_lives.on_level(ctx, player, 4)
+    -- Life milestones are awarded from attained levels, not current stock alone.
     harness.equal(extra_lives.state(ctx, player).lives, 1,
         "Felids gain their first extra life at XL4")
 
@@ -50,6 +53,7 @@ function test.run(ctx)
         "the death consumes exactly one life")
     harness.equal(spent.deaths, 1,
         "the death increments the persistent death count")
+    -- The lethal event spends a life but does not teleport the player immediately.
     harness.truthy(spent.pending_revival,
         "death remains pending until the next input boundary")
 

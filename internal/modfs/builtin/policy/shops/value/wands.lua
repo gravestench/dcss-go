@@ -18,6 +18,9 @@ local per_charge = {
     [ids.WAND_FLAME] = 7,
 }
 
+-- Example: wands.value(kind, wand, { type = true }) multiplies its per-charge price by wand.charges.
+-- Price charges separately from wand type knowledge, because a wand's saved
+-- charge count changes after use while its catalog identity does not.
 function wands.value(kind, item, known)
     if kind.shop_value ~= nil then
         return kind.shop_value * item.charges

@@ -9,15 +9,18 @@ local player_drain = require("policy.combat.player_drain")
 
 local zot = {}
 
+-- Mutation strength divides the floor credit and scales warning thresholds together.
 local function divisor(ctx, player)
     return 1 + effects.sum(ctx, player,
         capabilities.ZOT_CLOCK_EXTRA_DIVISOR)
 end
 
+-- Pair branch and level so returning to a visited floor gives no second clock credit.
 local function floor_key(branch_id, floor_id)
     return branch_id .. ":" .. floor_id
 end
 
+-- Translate remaining branch time into warning tiers before the fatal boundary.
 local function warning_for(value, scale)
     if value < 0 then
         return 0
@@ -41,6 +44,7 @@ local function warning_for(value, scale)
     return 0
 end
 
+-- Severe drain turns Zot's next touch lethal once maximum HP is at most a tenth of its undrained value.
 local function fatal_range(ctx, player)
     local health = ctx:get(player, component.HEALTH)
     local drain = ctx:get(player, "status.drain")
@@ -54,6 +58,7 @@ local function fatal_range(ctx, player)
     return health.max <= math.floor(real_max / 10)
 end
 
+-- Warnings mention death only when existing drain makes the next touch fatal.
 local function warning_message(level, fatal)
     local consequence = fatal and "perish" or "suffer"
 
@@ -73,6 +78,7 @@ local function warning_message(level, fatal)
         " is approaching. Descend or flee this branch!"
 end
 
+-- Zot's touch resets branch time after draining; a fatal threshold consumes the remaining branch clock.
 local function touch(ctx, player, state, branch_id, scale)
     if fatal_range(ctx, player) then
         local health = ctx:get(player, component.HEALTH)
@@ -103,6 +109,7 @@ local function touch(ctx, player, state, branch_id, scale)
     return false
 end
 
+-- A saved branch clock must own at least one visited floor and belong only to the player.
 function zot.validate(ctx, player)
     local state = ctx:get(player, component.ZOT_CLOCK)
 
@@ -167,6 +174,8 @@ function zot.validate(ctx, player)
     end
 end
 
+-- Return the branch's saved elapsed aut, or -1 until the player has visited that branch.
+-- Example: zot.clock(ctx, player, branches.BRANCH_DUNGEON) reads elapsed branch aut or -1 before the first visit.
 function zot.clock(ctx, player, branch_id)
     local state = ctx:get(player, component.ZOT_CLOCK)
 
@@ -177,12 +186,13 @@ function zot.clock(ctx, player, branch_id)
     return state.branch_aut[branch_id] or -1
 end
 
+-- Use the same divisor as advance so UI warnings match future branch spending.
 function zot.warning_level(ctx, player, branch_id)
     return warning_for(zot.clock(ctx, player, branch_id),
         divisor(ctx, player))
 end
 
--- zot.cc:139-205: entering a new floor restores branch time before the
+-- zot.cc: entering a new floor restores branch time before the
 -- action spends aut. Re-entering a visited floor grants no additional time.
 function zot.advance(ctx, player, branch_id, floor_id, elapsed_aut)
     if type(branch_id) ~= "string" or branch_id == "" or
@@ -245,6 +255,7 @@ function zot.advance(ctx, player, branch_id, floor_id, elapsed_aut)
     end
 end
 
+-- The Abyss does not charge branch time; other actions advance the active branch clock.
 function zot.run(ctx, input)
     if input.branch_id == branches.BRANCH_ABYSS then
         return {}

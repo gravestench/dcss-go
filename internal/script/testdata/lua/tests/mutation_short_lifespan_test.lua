@@ -1,3 +1,4 @@
+
 local branches = require("ids.branches")
 local component = require("constants.component")
 local harness = require("tests.harness")
@@ -7,6 +8,7 @@ local zot = require("policy.world.zot_clock")
 
 local test = {}
 
+-- Zot kills after drain leaves a tenth of real max HP.
 function test.run(ctx)
     local ordinary = ctx:create()
     local short = ctx:create()
@@ -41,11 +43,13 @@ function test.run(ctx)
 
     zot.advance(ctx, short, dungeon, 1, 0)
 
+    -- The clock awards time on first entry only, using saved visited-floor state.
     harness.equal(zot.clock(ctx, short, dungeon), 258010,
         "returning to a visited floor grants no time")
 
     zot.advance(ctx, short, lair, 3, 0)
 
+    -- Branch timers are independent, so travel cannot transfer unused time between them.
     harness.equal(zot.clock(ctx, short, lair), 264000,
         "a new branch owns an independent clock")
     harness.equal(zot.clock(ctx, short, dungeon), 258010,

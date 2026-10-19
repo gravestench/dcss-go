@@ -1,7 +1,9 @@
+-- Example: One four-way draw fixes the inner ring before outer-ring randomness.
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
+-- One four-way draw fixes the inner ring before outer-ring randomness.
 local function choose_first_ring(api)
     local roll = api:roll(4)
 
@@ -20,6 +22,7 @@ local function choose_first_ring(api)
     end
 end
 
+-- The separate three-way draw chooses whether B is open floor or translucent floor.
 local function choose_second_ring(api)
     if api:roll(3) == 0 then
         api:emit(directives.SUBST, "B = .")
@@ -32,7 +35,7 @@ local function choose_second_ring(api)
     api:emit(directives.SUBST, "b = x")
 end
 
--- Port of arrival/small.des:1715-1735. The second draw always follows the first.
+-- The first ring chooses walls, doors, or translucent floor before the independent outer ring draw.
 local function choose_round_layout(api)
     choose_first_ring(api)
     choose_second_ring(api)

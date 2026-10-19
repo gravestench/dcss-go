@@ -6,7 +6,7 @@ local source = require("policy.item_generation.source_roll")
 
 local weapon_brand = {}
 
--- Source: crawl-ref/source/artefact.cc:460-510.
+-- Source: crawl-ref/source/artefact.cc.
 local ranged = {
     {
         id = brands.SPEED,
@@ -103,6 +103,8 @@ local melee = {
     },
 }
 
+-- Example: weapon_brand.roll(ctx, sword) chooses a randart brand compatible with that weapon.
+-- Crossbows get extra electrocution/penetration chances after the ranged draw; demon weapons use a separate gate.
 function weapon_brand.roll(ctx, definition)
     local ranged_weapon = definition.weapon and
         definition.weapon.skill_id == skills.SK_RANGED_WEAPONS
@@ -121,6 +123,7 @@ function weapon_brand.roll(ctx, definition)
         return chosen
     end
 
+    -- Demonic bases first try their restricted pool; the general melee table remains a fallback.
     if definition.id:match("^WPN_DEMON_") and
         source.chance(ctx, 7, 9) then
         return demonic[ctx:random(streams.ITEM_GENERATION, #demonic) + 1]

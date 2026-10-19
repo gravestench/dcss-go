@@ -34,6 +34,7 @@ func (r *Runtime) luaRegisterDefinition(state *lua.LState) int {
 
 	table := state.CheckTable(2)
 	id := requiredString(state, table, "id")
+
 	entries := r.definitions[category]
 
 	if entries == nil {
@@ -62,7 +63,6 @@ func (r *Runtime) luaRegisterDefinition(state *lua.LState) int {
 
 	entries[id] = copyDefinitionTable(state, table)
 	r.definitionOrigins[category][id] = r.currentModule()
-	r.definitionOrder[category] = append(r.definitionOrder[category], id)
 
 	return 0
 }
@@ -112,27 +112,6 @@ func (r *Runtime) luaRegisteredIDs(state *lua.LState) int {
 	result := state.NewTable()
 
 	for index, id := range r.DefinitionIDs(category) {
-		result.RawSetInt(index+1, lua.LString(id))
-	}
-
-	state.Push(result)
-
-	return 1
-}
-
-func (r *Runtime) luaRegisteredOrderedIDs(state *lua.LState) int {
-	category := state.CheckString(1)
-	ids, found := r.definitionOrder[category]
-
-	if !found {
-		state.RaiseError("unknown registered content category %s", category)
-
-		return 0
-	}
-
-	result := state.NewTable()
-
-	for index, id := range ids {
 		result.RawSetInt(index+1, lua.LString(id))
 	}
 

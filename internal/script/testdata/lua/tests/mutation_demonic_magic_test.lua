@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local jobs = require("ids.jobs")
@@ -11,6 +12,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Seed demonic magic attacker and target independently before the reaction mutates either.
 local function fixture(ctx)
     local player = ctx:create()
     local rat = ctx:create()
@@ -56,19 +58,23 @@ local function fixture(ctx)
     return player, rat, no_threat
 end
 
+-- Proxy spell draws while leaving the player and hostile rat in the live ECS.
 local function predictable(ctx, player)
     local world = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to demonic magic fixture actor so player-only branches execute on that entity.
     function world.player()
         return player
     end
 
+    -- Use the highest spell draw to test Demonic Magic range gating.
     function world.random(_, stream, bound)
         harness.equal(stream, "spell", "Demonic Magic uses spell RNG")
 
         return bound - 1
     end
 
+    -- Make demonic magic sight deterministic while leaving actor positions to the ECS fixture.
     function world.visible()
         return true
     end
@@ -76,6 +82,7 @@ local function predictable(ctx, player)
     return world
 end
 
+-- One Demonic Magic level does not reach a rat two cells away.
 function test.run(ctx)
     local player, rat, no_threat = fixture(ctx)
     local world = predictable(ctx, player)
@@ -87,6 +94,7 @@ function test.run(ctx)
 
     records.grant_acquired(ctx, player, mutations.MUT_DEMONIC_MAGIC, 1)
     magic.on_success(world, player, spell)
+    -- Rank controls the target radius before any paralysis roll.
     harness.falsy(ctx:has(rat, component.PARALYSIS),
         "one Demonic Magic level does not reach a rat two cells away")
 
@@ -94,6 +102,7 @@ function test.run(ctx)
     magic.on_success(world, player, spell)
     harness.equal(ctx:get(rat, component.PARALYSIS).remaining_aut, 50,
         "two Demonic Magic levels paralyze a susceptible nearby rat")
+    -- Nearby harmless actors must not spend the spell-triggered paralysis chance.
     harness.falsy(ctx:has(no_threat, component.PARALYSIS),
         "nonthreatening monsters are excluded from Demonic Magic")
 end

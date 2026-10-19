@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local harness = require("tests.harness")
 local petrification = require("policy.combat.player_petrification")
@@ -5,6 +6,7 @@ local player_health = require("policy.combat.player_health")
 
 local test = {}
 
+-- The shared player damage path applies petrification protection.
 function test.run(ctx)
     local player = ctx:create()
 

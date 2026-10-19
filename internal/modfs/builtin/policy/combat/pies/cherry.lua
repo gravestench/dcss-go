@@ -8,6 +8,8 @@ local cherry = {
     weight = 6,
 }
 
+-- Example: cherry.valid(ctx, target) with fire-immune monster -> false eligibility
+-- Reject monsters whose fire resistance would nullify the vulnerability effect.
 function cherry.valid(ctx, target)
     if ctx:has(target, component.PLAYER) then
         return true
@@ -17,6 +19,7 @@ function cherry.valid(ctx, target)
         10, resistances.FIRE) > 0
 end
 
+-- Player fire vulnerability is capped at 500 aut; monster duration can continue stacking.
 function cherry.apply(ctx, _, target)
     local player = ctx:has(target, component.PLAYER)
     local draw = ctx:random("monster_spell", 11)

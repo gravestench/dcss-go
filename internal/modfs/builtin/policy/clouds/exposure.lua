@@ -4,6 +4,8 @@ local immunity = require("policy.clouds.immunity")
 
 local exposure = {}
 
+-- The field invokes this bridge after choosing an occupant and its registered cloud effect.
+-- Example: a harmless cloud can still run its effect hook while reporting zero damage.
 function exposure.apply(ctx, actor, cloud_entity, state, elapsed_aut)
     local definition = content.get(categories.CLOUDS, state.kind_id)
 

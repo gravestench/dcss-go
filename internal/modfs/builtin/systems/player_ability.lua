@@ -4,6 +4,8 @@ local registry = require("policy.abilities.registry")
 
 local system = {}
 
+-- Theory of operation: The chosen ability resolves after spell dispatch and before movement changes range.
+-- Ability resolution uses the prepared player intent after spell handling, before movement.
 function system.update(ctx, actor, aut)
     if actor ~= ctx:player() then
         return

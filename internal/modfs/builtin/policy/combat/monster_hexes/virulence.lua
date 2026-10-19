@@ -19,6 +19,8 @@ function virulence.viable(ctx, _, defender)
     return monster_poison.resistance(definition) < 3
 end
 
+-- Example: virulence.apply(ctx, nil, defender) with player with zero RNG -> 120 aut poison vulnerability
+-- Lower poison resistance only after the hex contact and saving throw succeed.
 function virulence.apply(ctx, _, defender)
     if ctx:has(defender, component.PLAYER) then
         local turns = 12 + ctx:random(streams.MONSTER_SPELL, 18)

@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local effects = require("policy.combat.monster_spells")
@@ -14,17 +15,22 @@ local caster = 101
 local player = 202
 local source_book = "MST_ENDOPLASM"
 
+-- The intent carries a selected slot and target; execution must reuse both
+-- without drawing or selecting a new target.
 local function context(spell_id, spell_slot, planned_kind)
     local ctx = {}
 
+    -- Bind execution to the selected player target in the saved plan.
     function ctx:player()
         return player
     end
 
+    -- Keep optional statuses absent so slot validation is isolated.
     function ctx:has()
         return false
     end
 
+    -- Return the exact caster intent and spellbook data used at the execution boundary.
     function ctx:get(entity, id)
         if entity == caster then
             if id == component.INTENT then
@@ -59,6 +65,7 @@ local function context(spell_id, spell_slot, planned_kind)
     return ctx
 end
 
+-- Wrong slot cannot borrow another spell ID.
 function test.run()
     local book = catalog.get("monster_spellbooks", source_book)
     local original_get = register.get
@@ -79,6 +86,7 @@ function test.run()
         },
     }
 
+    -- Expose the test spellbook ID while preserving production lookup for every other book.
     register.get = function(category, id)
         if category == "monster_spellbooks" and id == source_book then
             return book
@@ -87,12 +95,15 @@ function test.run()
         return original_get(category, id)
     end
 
+    -- Inject an effect whose resolver records the saved entity plan.
     effects.effect = function()
         return {
+            -- Fail if execution replans a target after intent selection.
             plan = function()
                 error("execution must not choose a second target")
             end,
 
+            -- Assert the selected player entity reaches the resolver unchanged.
             resolve = function(_, _, _, _, plan)
                 harness.equal(plan.kind, target_kind.ENTITY,
                     "entity target reaches resolver")
@@ -103,18 +114,23 @@ function test.run()
         }
     end
 
+    -- The source book has a second-slot Slug Dart; count exactly one resolver
+    -- call for an entity plan and then one for a cell plan.
     local valid = context(spells.SPELL_SLUG_DART, 2)
     local okay, problem = pcall(system.update, valid, caster)
 
     harness.truthy(okay, "second slot executes: " .. tostring(problem))
     harness.equal(resolved, 1, "selected second effect resolves once")
 
+    -- Inject a second effect to verify saved cell plans survive execution.
     effects.effect = function()
         return {
+            -- Fail if execution asks the cell spell to plan again.
             plan = function()
                 error("execution must not choose a cell target")
             end,
 
+            -- Assert the selected level and coordinates reach the cell resolver unchanged.
             resolve = function(_, _, _, _, plan)
                 harness.equal(plan.kind, target_kind.CELL,
                     "empty-cell plan reaches resolver")
@@ -134,6 +150,7 @@ function test.run()
     harness.truthy(okay, "cell plan executes: " .. tostring(problem))
     harness.equal(resolved, 2, "selected cell effect resolves once")
 
+    -- Matching the spell ID is insufficient if the chosen slot was forged.
     local forged = context(spells.SPELL_SLUG_DART, 1)
 
     okay = pcall(system.update, forged, caster)

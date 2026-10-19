@@ -1,3 +1,4 @@
+
 local causes = require("constants.damage_causes")
 local component = require("constants.component")
 local harness = require("tests.harness")
@@ -5,6 +6,7 @@ local player_health = require("policy.combat.player_health")
 
 local test = {}
 
+-- Create a sleeping player with HP so poison and direct damage can be compared.
 local function sleeping_player(ctx)
     local player = ctx:create()
 
@@ -20,6 +22,7 @@ local function sleeping_player(ctx)
     return player
 end
 
+-- Poison damage does not wake a sleeping player.
 function test.run(ctx)
     local hit = sleeping_player(ctx)
 

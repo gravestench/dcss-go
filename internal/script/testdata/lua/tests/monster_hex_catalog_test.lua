@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local effects = require("policy.combat.monster_spells")
 local harness = require("tests.harness")
@@ -24,6 +25,7 @@ local names = {
     "SAP_MAGIC",
 }
 
+-- Every source monster hex profile names a spell with plan and resolve methods.
 function test.run()
     for _, name in ipairs(names) do
         local id = spells["SPELL_" .. name]

@@ -1,4 +1,6 @@
 -- Terminal input uses the same stable IDs as game command policies.
+-- Example: a route returns { kind = commands.move }; the bridge can then
+-- dispatch the shared command ID without duplicating numeric values here.
 local kind = require("constants.command_kind")
 
 local commands = {

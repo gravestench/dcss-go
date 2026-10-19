@@ -1,3 +1,4 @@
+-- Example: A fixture roster includes its pinned IDs and scenario-tagged catalog monsters.
 local roster = {}
 local catalog = require("policy.catalog")
 local spell_coverage = require("policy.combat.monster_spell_coverage")
@@ -42,6 +43,7 @@ local scenarios = {
     ["generated-dungeon-basic-v1"] = generated,
 }
 
+-- A scenario roster starts with fixture IDs, then admits catalog monsters tagged for that same scenario.
 function roster.allowed(scenario_id)
     local ids = scenarios[scenario_id]
 
@@ -76,6 +78,7 @@ function roster.allowed(scenario_id)
     return allowed
 end
 
+-- Spawn profiles expose the catalog habitat and flags needed by placement after a roster pick.
 function roster.profile(id)
     local definition = catalog.get("monsters", id)
     local average = definition.average_hp_10x

@@ -3,6 +3,8 @@ local powered = require("policy.character.powered_by_death")
 
 local system = {}
 
+-- Theory of operation: Stack timers are spent before their regeneration bonus is sampled.
+-- Powered-by-death stacks age after duration decay, before the next regeneration pass.
 function system.update(ctx, player, aut)
     powered.tick(ctx, player, aut)
 end

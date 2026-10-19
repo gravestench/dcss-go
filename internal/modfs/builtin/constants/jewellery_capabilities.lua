@@ -1,3 +1,5 @@
+-- Capabilities tell jewellery policy which stat or resistance a piece can change.
+
 local capabilities = {
     AC = "ac",
     EV = "ev",

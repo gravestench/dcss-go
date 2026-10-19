@@ -1,3 +1,5 @@
+-- DES glyphs are map syntax decoded into terrain and placement records.
+
 local glyphs = {}
 
 -- DCSS DES glyph meanings from docs/develop/levels/syntax.txt, pinned source.

@@ -6,6 +6,7 @@ local forlorn = {}
 
 -- Source: god-prayer.cc:try_god_conversion and religion.cc:
 -- player_can_join_god. The character may have no religion at any time.
+-- Example: Forlorn level one forbids worship while leaving the existing god record intact.
 function forlorn.worship_forbidden(level)
     return level > 0 and 1 or 0
 end

@@ -1,3 +1,5 @@
+-- Fastroot should expire after its saved duration.
+
 local component = require("constants.component")
 local defense = require("policy.combat.monster_defense")
 local fastroot = require("policy.magic.effects.zaps.fastroot")
@@ -9,6 +11,8 @@ local zap_ids = require("policy.magic.effects.zaps.ids")
 
 local test = {}
 
+-- Resolve a zap against a real monster entity to verify damage, resistance,
+-- and status hooks use its saved components rather than catalog data alone.
 function test.run(ctx)
     local giant = ctx:create()
 

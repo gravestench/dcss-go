@@ -1,3 +1,5 @@
+-- An intent is the action selected for this turn after interpreting a command or AI decision.
+
 -- Mirrors the resolved ECS intent-kind contract in internal/ecs/components.go.
 local intent = {
     MOVE = 1,

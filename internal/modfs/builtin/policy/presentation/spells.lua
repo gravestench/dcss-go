@@ -4,6 +4,8 @@ local failure = require("policy.magic.failure")
 local menu = require("policy.input.menu")
 local spell_input = require("policy.input.spells")
 
+-- Keep writes as data until the terminal renders them; this shares clipping
+-- and color conversion with other selection screens.
 local function write(writes, x, y, text, color)
     writes[#writes + 1] = {
         x = x,
@@ -15,6 +17,10 @@ end
 
 local spells = {}
 
+-- Spell rows reflect memorised spells and the active prompt's selection letters.
+-- Example: runtime.Policy("presentation.spells",
+--     { mode = "spell_cast", height = 24 })
+-- projects the same choices that policy.input.spells accepts as keys.
 function spells.run(ctx, input)
     local mode = input.mode
     local learning = mode == "spell_memorise"

@@ -11,6 +11,7 @@ local monster_health = require("policy.combat.monster_health")
 
 local sphere = {}
 
+-- The owner may have one active sphere; recasting recharges that entity.
 local function active(ctx, player)
     for _, entity in ipairs(ctx:query({
         component.SUMMON,
@@ -26,6 +27,7 @@ local function active(ctx, player)
     return nil
 end
 
+-- Roll the sphere's nominal life in aut, then cap it so repeated casts cannot extend it without bound.
 local function duration(ctx, power)
     local rolled = 7 + 1 + summons.roll(ctx, math.max(1, power)) +
         1 + summons.roll(ctx, math.max(1, power))
@@ -33,10 +35,13 @@ local function duration(ctx, power)
     return math.min(rolled * 10, 500)
 end
 
+-- Keep charge rolls tied to spell power while leaving at least four shots at low power.
 local function charge(ctx, power)
     return 4 + math.floor(summons.roll(ctx, power + 10) / 10)
 end
 
+-- Pick the nearest visible hostile with a clear projectile path so a blocked
+-- shot does not spend charge on a farther actor.
 local function target(ctx, entity, origin)
     local closest = math.huge
     local chosen = nil
@@ -63,6 +68,8 @@ local function target(ctx, entity, origin)
     return chosen
 end
 
+-- Example: sphere.fire(ctx, player) after a player spell spends one charge
+-- only if its traced ray still contacts the selected hostile.
 function sphere.fire(ctx, player)
     local entity = active(ctx, player)
 
@@ -118,6 +125,8 @@ end
 
 -- Source: spl-summoning.cc:cast_battlesphere and
 -- battlesphere_damage (2d(5 + HD)).
+-- Recast caps both charge and remaining lifetime, preventing indefinite
+-- accumulation while preserving an existing sphere's ECS identity.
 function sphere.resolve(ctx, player, _, _, power)
     local existing = active(ctx, player)
 

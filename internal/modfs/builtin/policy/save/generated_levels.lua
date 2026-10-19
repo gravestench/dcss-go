@@ -1,10 +1,12 @@
 local generated = {}
 local abyss = require("policy.world.abyss")
 
+-- Convert zero-based world coordinates to Lua cell array indices.
 local function feature(level, x, y)
     return level.cells[y + 1][x + 1]
 end
 
+-- Find the reciprocal stair by cell, not merely by destination floor.
 local function stair_at(level, x, y)
     for _, stair in ipairs(level.stairs) do
         if stair.x == x and stair.y == y then
@@ -15,6 +17,7 @@ local function stair_at(level, x, y)
     return nil
 end
 
+-- Both D:1 and D:2 links must agree on cells and stair direction.
 local function reciprocal(levels, depth, link)
     local target = levels[link.to_level_id]
 
@@ -38,6 +41,8 @@ local function reciprocal(levels, depth, link)
         to_feature == "DNGN_STONE_STAIRS_DOWN_I")
 end
 
+-- Generated stair links must be reciprocal before traversal can resume.
+-- Example: generated.validate(levels, by_id) rejects a D:1 stair lacking a reciprocal D:2 link.
 function generated.validate(levels, by_id)
     if #levels ~= 3 or not by_id[1] or not by_id[2] or
         not by_id[abyss.level_id] then

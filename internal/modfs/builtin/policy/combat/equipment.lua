@@ -7,6 +7,7 @@ local artefact_ids = require("ids.artefact_properties")
 
 local equipment = {}
 
+-- Exclude non-melee weapon definitions when choosing a monster's contact weapon.
 local function has_flag(flags, wanted)
     for _, flag in ipairs(flags or {}) do
         if flag == wanted then
@@ -17,6 +18,8 @@ local function has_flag(flags, wanted)
     return false
 end
 
+-- Example: equipment.worn(ctx, holder, slots) with melded shield slot -> no active shield entry
+-- Player forms can disable equipped slots without removing their inventory entities.
 function equipment.worn(ctx, holder, slots)
     local result = {}
 
@@ -55,6 +58,7 @@ function equipment.worn(ctx, holder, slots)
     return result
 end
 
+-- Monster weapon selection reads the validated equipped-item snapshot rather than raw inventory.
 function equipment.monster_melee(ctx, monster)
     for _, entity in ipairs(ctx:query({ "core.equipped", "core.carried_by" })) do
         local carrier = ctx:get(entity, "core.carried_by")
@@ -103,6 +107,7 @@ function equipment.monster_melee(ctx, monster)
     return nil
 end
 
+-- Monster shield lookup shares the validated worn snapshot with melee gear.
 function equipment.monster_shield(ctx, monster)
     local worn = equipment.worn(ctx, monster, { shield = true })
     local shield = worn.shield
@@ -121,6 +126,7 @@ function equipment.monster_shield(ctx, monster)
     return shield
 end
 
+-- Monster AC combines active melee Protection with a corrosion penalty.
 function equipment.protection_ac(ctx, monster)
     local weapon = equipment.monster_melee(ctx, monster)
     local bonus = enchant.corroded(ctx, monster) and -8 or 0

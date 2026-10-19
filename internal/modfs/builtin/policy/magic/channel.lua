@@ -5,6 +5,7 @@ local confusion = require("policy.magic.player_confusion")
 
 local channel = {}
 
+-- Replace an existing channel state so a new cast cannot retain the previous spell's stage.
 function channel.begin(ctx, player, state)
     if ctx:has(player, "magic.channel") then
         ctx:set(player, "magic.channel", state)
@@ -13,6 +14,8 @@ function channel.begin(ctx, player, state)
     end
 end
 
+-- Example: cancelling Searing Ray removes its saved continuation before the next wait action.
+-- Remove saved continuation state so later waits cannot resume an interrupted spell.
 function channel.cancel(ctx, player)
     if ctx:has(player, "magic.channel") then
         ctx:remove(player, "magic.channel")
@@ -32,6 +35,7 @@ function channel.cast_finished(ctx, player)
     ctx:set(player, "magic.channel", state)
 end
 
+-- Recheck interruption conditions at each wait; charge MP only when a continuation fires.
 function channel.wait(ctx, player, aut)
     local state = ctx:get(player, "magic.channel")
 
@@ -68,6 +72,7 @@ function channel.wait(ctx, player, aut)
     ctx:set(player, "magic.channel", state)
 end
 
+-- Let a channel effect discount its own continuation while bounding the returned cost to a legal cast.
 function channel.cost(ctx, player, normal_cost)
     local state = ctx:get(player, "magic.channel")
 

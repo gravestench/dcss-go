@@ -12,6 +12,7 @@ local water = require("policy.character.water")
 local translocation = {}
 local SIGHT_RADIUS = 7
 
+-- Check magical anchoring before innate or form stasis so the failure reason matches source priority.
 function translocation.restriction(ctx, player)
     if hex_status.anchored(ctx, player) then
         return "You are firmly anchored to this plane."
@@ -27,6 +28,8 @@ function translocation.restriction(ctx, player)
     return nil
 end
 
+-- Example: a blink target in lava is rejected unless the player's movement state makes it safe.
+-- Reject blocked or occupied cells, then allow hazardous terrain only with flight or swimming.
 function translocation.can_land(ctx, player, level_id, x, y)
     if not ctx:walkable(level_id, x, y) or
         ctx:actor_at(level_id, x, y) then
@@ -44,6 +47,7 @@ function translocation.can_land(ctx, player, level_id, x, y)
             water.can_swim(ctx, player))
 end
 
+-- Require a nonzero visible target within sight radius after shared landing and anchoring checks.
 function translocation.can_blink(ctx, player, origin, x, y)
     if hex_status.anchored(ctx, player) then
         return false

@@ -10,6 +10,8 @@ local trajectory = require("policy.combat.trajectory")
 
 local mephitic_cloud = {}
 
+-- Example: A successful Mephitic Cloud ray leaves a noxious cloud at its impact cell.
+-- Trace the ray once, always cloud its impact center, and roll spread for the other radius-one cells.
 function mephitic_cloud.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.to_target(ctx, origin.level_id,

@@ -1,3 +1,5 @@
+-- Tree form keeps wielded weapons.
+
 local component = require("constants.component")
 local forms = require("policy.magic.effects.forms.player")
 local harness = require("tests.harness")
@@ -8,6 +10,8 @@ local cloud_ids = require("ids.clouds")
 
 local test = {}
 
+-- Transform a player with the potion and probe form restrictions, ensuring
+-- the saved lignification state affects movement and defense consumers.
 function test.run(ctx)
     local player = ctx:create()
     local effect = potions.get(items.POT_LIGNIFY)
@@ -59,6 +63,8 @@ function test.run(ctx)
 
     local clocked = setmetatable({}, { __index = ctx })
 
+    -- Freeze turn time so the cloud-confirmation case isolates form policy
+    -- from changing duration or a live clock.
     function clocked.aut()
         return 0
     end

@@ -3,13 +3,16 @@ local roll = require("policy.combat.roll")
 
 local brand = {}
 
+-- Roll Necromancy skill independently for Pain activation and bonus damage.
 local function skill(ctx)
-    -- Source: attack.cc:552-568 calls skill_rdiv independently for the
+    -- Source: attack.cc calls skill_rdiv independently for the
     -- activation and damage rolls.
     return roll.random_divide(ctx,
         fighter.skill(ctx, "SK_NECROMANCY", 256), 256)
 end
 
+-- Example: brand.apply(ctx, hit, brands) with Necromancy skill zero -> no Pain bonus damage
+-- Use independent Necromancy rolls for activation and damage before negative-energy resistance.
 function brand.apply(ctx, hit, brands)
     local level = skill(ctx)
 

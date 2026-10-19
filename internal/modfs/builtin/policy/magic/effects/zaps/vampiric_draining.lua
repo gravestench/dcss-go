@@ -8,6 +8,7 @@ local trajectory = require("policy.combat.trajectory")
 
 local vampiric_draining = {}
 
+-- Search optional holiness and flag lists while deciding whether a body has drainable life.
 local function has_value(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -18,6 +19,7 @@ local function has_value(values, wanted)
     return false
 end
 
+-- Read a monster’s explicit negative-energy resistance before HP drain.
 local function negative_resistance(definition)
     for _, entry in ipairs(definition.resistances or {}) do
         if entry.id == "MR_RES_NEG" then
@@ -28,6 +30,7 @@ local function negative_resistance(definition)
     return 0
 end
 
+-- Exclude nonliving or harmless firewood targets before life transfer.
 local function susceptible(ctx, target, definition)
     local living = has_value(definition.holiness, "MH_NATURAL") or
         has_value(definition.holiness, "MH_PLANT")
@@ -37,6 +40,8 @@ local function susceptible(ctx, target, definition)
     return living and not firewood and not ctx:has(target, component.SUMMON)
 end
 
+-- Example: A living adjacent monster makes Vampiric Draining targetable; a nonliving one does not.
+-- Exclude summons, resistant bodies, and blocked paths before offering the life-drain cast.
 function vampiric_draining.can_target(ctx, player, spell)
     local source = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -68,6 +73,7 @@ function vampiric_draining.can_target(ctx, player, spell)
     return false
 end
 
+-- Roll two source dice with a power-capped side count on the spell stream.
 local function roll_damage(ctx, power)
     -- zap-data.h:ZAP_VAMPIRIC_DRAINING: dicedef<2,6,1,14>, cap 200.
     local sides = 6 + math.floor(math.min(power, 200) / 14)
@@ -75,6 +81,7 @@ local function roll_damage(ctx, power)
     return 2 + ctx:random("spell", sides) + ctx:random("spell", sides)
 end
 
+-- Keep the source negative-energy resistance fractions when reducing raw drain.
 local function resist_damage(raw, resistance)
     -- fight.cc:resist_adjust_damage uses special negative-energy fractions.
     if resistance >= 3 then
@@ -88,6 +95,7 @@ local function resist_damage(raw, resistance)
     return raw
 end
 
+-- Trace first contact and heal the caster only from damage actually drained.
 function vampiric_draining.resolve(ctx, player, intent, spell, power)
     local source = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, source.level_id, source.x, source.y,

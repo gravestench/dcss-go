@@ -13,6 +13,7 @@ local allies = require("policy.character.allies")
 
 local necrotise = {}
 
+-- Check optional holiness or flag lists while filtering corpse and resistance cases.
 local function has_value(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
@@ -23,6 +24,7 @@ local function has_value(values, wanted)
     return false
 end
 
+-- Give nonliving and nonplant targets full negative-energy resistance.
 local function resistance(definition)
     if not has_value(definition.holiness, "MH_NATURAL") and
         not has_value(definition.holiness, "MH_PLANT") then
@@ -38,6 +40,7 @@ local function resistance(definition)
     return 0
 end
 
+-- Reject summons and unskeletonizable bodies before saving a death mark.
 local function can_skeletonize(ctx, target, definition)
     if ctx:has(target, component.SUMMON) or
         has_value(definition.flags, "M_NO_ZOMBIE") or
@@ -57,6 +60,7 @@ local function can_skeletonize(ctx, target, definition)
     return false
 end
 
+-- Apply negative resistance fractions to raw Necrotise damage.
 local function resist_damage(raw, level)
     if level >= 3 then
         return 0
@@ -69,6 +73,8 @@ local function resist_damage(raw, level)
     return raw
 end
 
+-- Example: A living marked rat can rise as an allied skeleton if its corpse remains unconsumed.
+-- Trace first contact and save a death mark only when the target can leave a usable skeleton.
 function necrotise.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
     local ray = trajectory.trace(ctx, origin.level_id, origin.x, origin.y,
@@ -116,6 +122,8 @@ function necrotise.resolve(ctx, player, intent, spell, power)
             expires_aut = ctx:aut() + 10,
         }
 
+        -- Mark before dealing lethal damage so the death hook can see the
+        -- ten-aut skeletonization window.
         if ctx:has(target, zap_ids.component.NECROTISE) then
             ctx:set(target, zap_ids.component.NECROTISE, mark)
         else
@@ -127,8 +135,11 @@ function necrotise.resolve(ctx, player, intent, spell, power)
     ctx:emit("spell", "The " .. definition.name .. " writhes in agony!")
 end
 
+-- Use an unconsumed marked corpse for a skeleton; another death effect may have claimed it.
 function necrotise.on_death(ctx, monster, definition, position,
     _, consumed_corpse)
+    -- A corpse already consumed by another death effect cannot also become
+    -- Necrotise's allied skeleton.
     local mark = ctx:get(monster, zap_ids.component.NECROTISE)
 
     if not mark or consumed_corpse or

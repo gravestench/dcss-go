@@ -6,6 +6,8 @@ local registry = require("policy.magic.effects.registry")
 
 local dig = {}
 
+-- Example: Dig opens eligible rock along the aimed ray and emits only if terrain changed.
+-- Dig traces from the player toward the aimed cell and only announces actual terrain changes.
 function dig.resolve(ctx, player, intent, spell)
     local origin = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)

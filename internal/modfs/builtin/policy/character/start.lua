@@ -1,3 +1,4 @@
+-- Example: An invalid job weapon is rejected before starting actors and items are created.
 local catalog = require("policy.catalog")
 local gear = require("policy.character.starting_gear")
 local wanderer = require("policy.character.wanderer")
@@ -39,6 +40,7 @@ local religions = {
     },
 }
 
+-- Reject an input weapon outside the job and species menu before any entity exists.
 local function validate_weapon(species, job, weapon_id)
     if job.weapon_choice == weapon_choices.NONE then
         if weapon_id ~= "" then
@@ -59,6 +61,7 @@ local function validate_weapon(species, job, weapon_id)
     error("invalid starting weapon " .. tostring(weapon_id) .. " for " .. species.id .. "/" .. job.id)
 end
 
+-- Assemble durable player components from the chosen species, job, and generated profile.
 local function starting_state(ctx, species, job, profile, generated)
     local initial = {}
 
@@ -114,6 +117,7 @@ local function starting_state(ctx, species, job, profile, generated)
     return origin, library, memorized, future
 end
 
+-- Build the player profile and inventory together before the first playable turn begins.
 function start.run_start(ctx, input)
     local player = ctx:player()
     local species = catalog.get("species", input.species_id)
@@ -166,6 +170,7 @@ register.policy({
     run = start.run_start,
 })
 
+-- Return source base action speed after validating the chosen species exists.
 function start.actor_speed(_, input)
     catalog.get("species", input.species_id)
 

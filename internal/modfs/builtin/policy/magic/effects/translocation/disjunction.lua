@@ -10,6 +10,8 @@ local disjunction = {}
 
 -- Source: spl-transloc.cc:disjunction_spell. The source repeats a trial for
 -- every aut of the player's action, with a distance-weighted blink chance.
+-- Example: A ten-aut action runs ten displacement pulses while Disjunction remains active.
+-- Run displacement chances once per elapsed aut so action speed does not change aura strength.
 function disjunction.pulse(ctx, player, aut)
     local state = ctx:get(player, component.PLAYER_STATUS)
 
@@ -53,6 +55,7 @@ function disjunction.pulse(ctx, player, aut)
     end
 end
 
+-- Extend the pulse timer with a power-dependent cap instead of stacking separate auras.
 function disjunction.resolve(ctx, player, _, _, power)
     local state = statuses.ensure(ctx, player)
 

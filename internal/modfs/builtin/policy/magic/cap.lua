@@ -3,8 +3,10 @@ local zap_caps = require("data.player_zap_caps")
 
 local cap = {}
 
+-- Example: a fixed-range spell uses its lower mapped zap cap when the spell cap is higher.
 -- Source: spl-util.cc:spell_power_cap. The first spl-zap.cc mapping is the
 -- runtime spell_to_zap choice; a variable-range spell keeps its spell cap.
+-- Apply the catalog's power cap after any named cap expression has been resolved.
 function cap.for_spell(spell)
     local spell_cap = spell.power_cap or 0
     local links = mappings[spell.id]

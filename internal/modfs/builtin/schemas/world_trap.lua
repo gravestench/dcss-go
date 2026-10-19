@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.WORLD_TRAP,
     version = 1,
+    -- Charges and reveal state belong to the trap entity, independent of the underlying terrain glyph.
     fields = {
         kind_id = {
             type = "string",

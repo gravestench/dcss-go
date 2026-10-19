@@ -7,6 +7,8 @@ local item_classes = require("constants.item_classes")
 
 local quaff = {}
 
+-- Quaff preparation checks the item and effect eligibility before the action opens.
+-- Example: quaff.prepare(ctx, player, potion_id, false) rejects an unusable carried potion.
 function quaff.prepare(ctx, player, item_id, forced)
     local entity = item_id ~= 0 and ctx:entity(item_id) or nil
     local item = entity and ctx:get(entity, "core.item")

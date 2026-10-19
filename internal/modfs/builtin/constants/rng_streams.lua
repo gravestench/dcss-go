@@ -1,3 +1,5 @@
+-- Named random streams keep one domain from perturbing another domain’s replay sequence.
+
 -- Named persisted RNG streams used by Lua policies.
 local streams = {
     ACQUIREMENT = "acquirement",

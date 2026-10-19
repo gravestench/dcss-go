@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local harness = require("tests.harness")
@@ -8,6 +9,7 @@ local vampire = require("policy.character.vampire")
 
 local test = {}
 
+-- Bloodless Vampires cannot feed on nonliving monsters.
 function test.run(ctx)
     local player = ctx:create()
     local target = ctx:create()

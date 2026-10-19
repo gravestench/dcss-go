@@ -48,6 +48,8 @@ function invoke.resolve(ctx, player, input)
     return { invoked = true }
 end
 
+-- Example: a wand invokes its spell effect at supplied power without memorisation or a spell-failure roll.
+-- Bind the registry policy to the current player before invoking a memorisation-free effect.
 function invoke.run_policy(ctx, input)
     return invoke.resolve(ctx, ctx:player(), input)
 end

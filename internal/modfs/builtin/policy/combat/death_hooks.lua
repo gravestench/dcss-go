@@ -1,6 +1,7 @@
 local hooks = {}
 local handlers = {}
 
+-- Example: hooks.add(id, callback) with duplicate hook ID -> registration error
 -- Spell modules register their own source death rules. Sorting by ID keeps
 -- simultaneous marks deterministic across loads and saved games.
 function hooks.add(id, callback)
@@ -12,6 +13,7 @@ function hooks.add(id, callback)
     handlers[id] = callback
 end
 
+-- Run death hooks in stable ID order and allow one hook to consume the corpse.
 function hooks.run(ctx, monster, definition, position, credited)
     local ids = {}
     local consumed_corpse = false

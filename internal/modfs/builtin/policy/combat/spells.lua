@@ -3,6 +3,8 @@ local monster_defense = require("policy.combat.monster_defense")
 
 local spells = {}
 
+-- Example: spells.freeze(ctx, 1) with zero RNG draws -> 1 Freeze damage
+-- Freeze bypasses AC and EV and rolls one HD-scaled damage die.
 function spells.freeze(ctx, hd)
     local sides = 3 + math.floor(6 * hd / 3)
 
@@ -10,6 +12,7 @@ function spells.freeze(ctx, hd)
     return 1 + ctx:random("monster_spell", sides)
 end
 
+-- Slug Dart uses beam shield rules before rolling its HD-scaled damage.
 function spells.slug_dart(ctx, hd, defense)
     local power = 12 * hd
     local to_hit = 14 + math.floor(power / 35)

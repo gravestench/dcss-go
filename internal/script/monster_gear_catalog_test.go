@@ -163,7 +163,7 @@ func TestBundledMonsterGearMatchesPinnedImport(t *testing.T) {
 }
 
 func TestSamePathMonsterGearOverrideChangesDefinition(t *testing.T) {
-	const path = "content/monsters/0255_mons_goblin.lua"
+	const path = "content/monsters/mons_goblin.lua"
 	const original = "id = item_ids.WPN_DAGGER,\n                    weight = 1,"
 	const replacement = "id = item_ids.WPN_DAGGER,\n                    weight = 9,"
 

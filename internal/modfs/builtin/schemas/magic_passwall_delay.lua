@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.passwall_delay",
     version = 1,
+    -- Destination and started aut are fixed at cast time; remaining aut resumes wall travel after restore.
     fields = {
         level_id = { type = "int64" },
         dest_x = { type = "int64" },

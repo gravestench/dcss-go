@@ -1,3 +1,5 @@
+-- DES directive names identify parsed source instructions kept in vault records.
+
 local directives = {
     TAGS = "TAGS",
     ORIENT = "ORIENT",

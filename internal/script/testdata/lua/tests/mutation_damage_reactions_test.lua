@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local order = require("constants.damage_reaction_order")
 local agility = require("policy.character.agility")
@@ -9,9 +10,11 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Leave pre-damage setup empty so the reaction observes only the test hit.
 function test.before_damage()
 end
 
+-- Give each damage reaction a distinct injured actor and saved health.
 local function wounded_player(ctx)
     local player = ctx:create()
 
@@ -23,6 +26,7 @@ local function wounded_player(ctx)
     return player
 end
 
+-- Might uses one duration roll after selecting the effect.
 function test.run(ctx)
     local deteriorating = wounded_player(ctx)
 
@@ -46,6 +50,7 @@ function test.run(ctx)
 
     harness.falsy(ctx:get(lightly_hit, component.STAT_LOSS),
         "damage of one tenth maximum HP cannot deteriorate a stat")
+    -- The draw order remains stable even when a hit is too small to trigger stat loss.
     harness.equal(draws.draws_used(), 1,
         "the deterioration chance is drawn before the damage threshold")
 
@@ -67,6 +72,7 @@ function test.run(ctx)
         { 0, 0, 0, 0, 0, 0 })
     local power_messages = {}
 
+    -- Collect Powered by Pain messages without relying on HP changes.
     function draws_for_pain.emit(_, _, text)
         power_messages[#power_messages + 1] = text
     end
@@ -84,6 +90,7 @@ function test.run(ctx)
 
     harness.equal(ctx:get(pained, component.MAGIC).current, 3,
         "powered by pain can restore three dice of MP")
+    -- A successful trigger consumes recovery dice only after its chance draw.
     harness.equal(draws_for_pain.draws_used(), 6,
         "powered by pain preserves trigger and restoration roll order")
     harness.equal(power_messages[2],
@@ -107,6 +114,7 @@ function test.run(ctx)
 
     harness.equal(ctx:get(mighty, component.DURATIONS).might_aut, 350,
         "powered by pain can grant source-scaled Might")
+    -- Power selection and duration must stay on their separate source draws.
     harness.equal(draws_for_might.draws_used(), 4,
         "Might uses one duration roll after selecting the effect")
 
@@ -115,6 +123,7 @@ function test.run(ctx)
         { 0, 0, 3, 0 })
     local messages = {}
 
+    -- Collect Agility reaction messages while its status component is checked separately.
     function draws_for_agility.emit(_, _, text)
         messages[#messages + 1] = text
     end

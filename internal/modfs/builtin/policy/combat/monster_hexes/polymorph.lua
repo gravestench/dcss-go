@@ -8,6 +8,8 @@ local streams = require("constants.rng_streams")
 
 local polymorph = {}
 
+-- Example: polymorph.viable(ctx, nil, defender) with untransformable monster -> false viability
+-- Reject defenders whose body or current state cannot produce a valid transformed actor.
 function polymorph.viable(ctx, _, defender)
     if ctx:has(defender, component.PLAYER) then
         return player_form.can_polymorph(ctx, defender)

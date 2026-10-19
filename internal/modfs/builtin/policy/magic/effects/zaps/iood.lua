@@ -12,6 +12,7 @@ local summons = require("policy.magic.effects.summons.common")
 
 local iood = {}
 
+-- Keep the orb's saved velocity at unit length; zero aim is rejected before launch.
 local function normalized(x, y)
     local length = math.sqrt(x * x + y * y)
 
@@ -22,6 +23,7 @@ local function normalized(x, y)
     return x / length, y / length
 end
 
+-- Stochastic spell rounding keeps short-range power loss unbiased.
 local function random_round(ctx, numerator, denominator)
     local result = math.floor(numerator / denominator)
 
@@ -32,6 +34,7 @@ local function random_round(ctx, numerator, denominator)
     return result
 end
 
+-- An Orb of Destruction fired at very short range loses power before its nine damage dice are rolled.
 local function dice(ctx, power, distance)
     local flat = 60
 
@@ -50,6 +53,7 @@ local function dice(ctx, power, distance)
     return rolled
 end
 
+-- Damage every occupied blast cell separately so each actor gets its own dice and armour roll.
 local function burst(ctx, owner, level, x, y, power, distance)
     ctx:emit("spell", "The orb of destruction explodes!")
 
@@ -78,6 +82,7 @@ local function burst(ctx, owner, level, x, y, power, distance)
     end
 end
 
+-- Stop homing when the saved entity no longer has a live positioned actor.
 local function active_target(ctx, state)
     if not state.target or ctx:id(state.target) == 0 then
         return nil
@@ -93,6 +98,7 @@ local function active_target(ctx, state)
     return nil
 end
 
+-- The orb steers from saved trajectory state rather than snapping to a moving target.
 local function curve_toward_target(ctx, state)
     local target = active_target(ctx, state)
 
@@ -117,6 +123,7 @@ local function curve_toward_target(ctx, state)
         state.vy + ay * 0.3)
 end
 
+-- Advance floating trajectory before rounding to a grid cell, preserving smooth steering.
 local function next_position(state)
     state.x = state.x + state.vx
     state.y = state.y + state.vy
@@ -125,10 +132,12 @@ local function next_position(state)
     return math.floor(state.x + 0.5), math.floor(state.y + 0.5)
 end
 
+-- Use summon expiry so orb components and ownership are cleaned up together.
 local function dismiss(ctx, orb)
     summons.expire(ctx, orb)
 end
 
+-- Curve after launch, then burst on terrain or actor collision; distant or off-map orbs dissipate.
 local function move(ctx, orb, owner, state, initial)
     local position = ctx:get(orb, component.POSITION)
     local owner_position = ctx:get(owner, component.POSITION)
@@ -167,6 +176,7 @@ local function move(ctx, orb, owner, state, initial)
     return false
 end
 
+-- Reject self aim and out-of-range offsets before cast resources are committed.
 function iood.prepare(ctx, player, spell, dx, dy)
     local reach = range.for_spell(ctx, player, spell)
 
@@ -176,6 +186,7 @@ function iood.prepare(ctx, player, spell, dx, dy)
     end
 end
 
+-- Seed a tangential launch deviation and saved target so later ticks can home deterministically.
 function iood.resolve(ctx, player, intent, _, power)
     local origin = ctx:get(player, component.POSITION)
     local vx, vy = normalized(intent.dx, intent.dy)
@@ -223,6 +234,8 @@ function iood.resolve(ctx, player, intent, _, power)
     ctx:emit("spell", "An orb of destruction launches!")
 end
 
+-- Example: An orb moves from its saved state; failed motion queues its cleanup intent.
+-- Orb movement is scheduled from its component state so it survives save/restore.
 function iood.tick(ctx, orb)
     local state = ctx:get(orb, zap_ids.component.IOOD)
 
@@ -239,6 +252,8 @@ end
 
 registry.add(spells.SPELL_IOOD, iood)
 
+-- Theory of operation: Orbs move after summon decisions and before monsters.
+-- Failed motion queues an intent for cleanup.
 register.system({
     id = "zap.iood.action",
     scope = "active",

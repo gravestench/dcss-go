@@ -4,6 +4,7 @@ local component = require("constants.component")
 local schema = {
     id = component.PLAYER_TELEPORT,
     version = 1,
+    -- Delayed teleport survives a save between the trigger and the eventual relocation.
     fields = {
         remaining_aut = {
             type = "int64",

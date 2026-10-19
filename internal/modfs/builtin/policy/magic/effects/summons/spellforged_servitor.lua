@@ -55,6 +55,7 @@ local bolts = {
     },
 }
 
+-- Walk source priority order and skip unknown or high-failure spells before choosing the servitor's bolt.
 local function chosen_spell(ctx, player)
     for _, id in ipairs(ordered) do
         local record = records.find(ctx, player, id)
@@ -71,12 +72,14 @@ local function chosen_spell(ctx, player)
     return nil
 end
 
+-- Bound the spell catalog's maximum range to the servitor's seven-cell targeting reach.
 local function range_for(id)
     local spell = catalog.get("spells", id)
 
     return math.min(7, tonumber(spell.max_range_expr) or 7)
 end
 
+-- Trace the shot before rolling hit and damage; another actor intercepting the ray prevents this cast.
 local function fire(ctx, entity, target, position, state)
     local destination = ctx:get(target, component.POSITION)
     local reach = range_for(state.spell_id)
@@ -115,6 +118,7 @@ local function fire(ctx, entity, target, position, state)
     return true
 end
 
+-- Fire at a reachable target, otherwise move toward it or follow the owner to regain a firing lane.
 function servitor.act(ctx, entity, position)
     local state = ctx:get(entity, component.SUMMON_SERVITOR)
     local target, distance = blast.nearest_hostile(ctx, position, 7)
@@ -144,6 +148,7 @@ function servitor.act(ctx, entity, position)
     return { kind = intent_ids.MONSTER_WAIT }
 end
 
+-- Example: A player with no supported known spell cannot prepare Spellforged Servitor.
 -- Source: spl-summoning.cc:player_servitor_spell chooses the first known
 -- castable spell in this priority order. Until allied area/projectile spells
 -- exist, only the three source physical bolts are accepted at preparation.
@@ -160,6 +165,7 @@ function servitor.prepare(ctx, player)
     end
 end
 
+-- Freeze the chosen spell and rolled HD in ECS state so later turns cast with the summoning result.
 function servitor.resolve(ctx, player, _, _, power)
     local id = chosen_spell(ctx, player)
     local quotient = math.floor(power / 14)

@@ -13,11 +13,13 @@ local kick = {
     },
 }
 
+-- Feet and form restrictions gate the kick before its chance or damage rolls.
 function kick.available(_, input)
     return input.hooves > 0 or input.talons > 0 or
         input.tentacle_spike > 0
 end
 
+-- Example: kick.describe(nil, input) with input.hooves = 3 -> kick profile with base damage 10
 -- Source: melee-attack.cc:AuxKick. Tentacle spikes are a kick variant.
 function kick.describe(_, input)
     if input.hooves > 0 then

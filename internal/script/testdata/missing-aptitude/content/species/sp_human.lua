@@ -1,8 +1,9 @@
 local categories = require("constants.catalog")
 
--- Generated from the pinned DCSS import. Refresh deliberately.
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 -- Source: crawl-ref/source/dat/species/human.yaml
+
+-- A removed aptitude makes this otherwise valid Human override fail species validation.
 
 local definition = {
     id = "SP_HUMAN",

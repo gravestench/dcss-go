@@ -12,6 +12,8 @@ local vision = require("policy.character.vision")
 local malevolence = {}
 local density_cache = {}
 
+-- Offer shafts only when placement allows them and alarms only below the shallowest depths.
+-- Example: malevolence.options(2, false) leaves shaft creation out of the weighted punishments.
 function malevolence.options(depth, can_shaft)
     local available = { ids.TRAP_TELEPORT }
 
@@ -26,6 +28,7 @@ function malevolence.options(depth, can_shaft)
     return available
 end
 
+-- Level density scales the chance of a surprise trap during exploration.
 local function density(ctx, level_id)
     if density_cache[level_id] then
         return density_cache[level_id]
@@ -65,6 +68,7 @@ local function density(ctx, level_id)
     return density_cache[level_id]
 end
 
+-- Count newly seen cells before deciding whether a surprise hazard can fire.
 local function new_cells(ctx, player, position)
     local radius = vision.radius(ctx, player)
     local added = 0
@@ -79,6 +83,7 @@ local function new_cells(ctx, player, position)
     return added
 end
 
+-- Surprise shafts have eligibility separate from known shaft entities.
 local function shaft(ctx, player, position)
     local level_id = position.level_id + 1
     local width, height = ctx:level_size(level_id)
@@ -102,6 +107,7 @@ local function shaft(ctx, player, position)
     return false
 end
 
+-- Choose one weighted malevolence outcome after the hazard gate passes.
 local function trigger(ctx, player, position)
     local can_shaft = ctx:level_size(position.level_id + 1) ~= nil
     local available = malevolence.options(position.level_id, can_shaft)
@@ -120,6 +126,7 @@ local function trigger(ctx, player, position)
     end
 end
 
+-- Draw only on eligible exploration progress to preserve trap RNG order.
 function malevolence.roll(ctx, player)
     local position = ctx:get(player, component.POSITION)
     local count = new_cells(ctx, player, position)

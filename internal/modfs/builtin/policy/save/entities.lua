@@ -1,5 +1,7 @@
 local entities = {}
 
+-- A saved actor must carry health, combat, and position components with valid ranges.
+-- Example: entities.validate(ctx) rejects a saved actor whose health exceeds its maximum.
 function entities.validate(ctx)
     for _, entity in ipairs(ctx:query({ "core.actor" })) do
         local actor = ctx:get(entity, "core.actor")

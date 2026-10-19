@@ -12,6 +12,9 @@ local component = require("constants.component")
 
 local system = {}
 
+-- Theory of operation: Award the player-kill signal before deleting defeated actors.
+-- This keeps XP accounting tied to the actor that died.
+-- Chaos clone XP is recorded separately; the copied actor cannot inflate the base population reward.
 local function record_clone_reward(ctx, player, monster, xp)
     if not ctx:has(monster, component.CHAOS_CLONE) then
         return
@@ -30,6 +33,9 @@ local function record_clone_reward(ctx, player, monster, xp)
     end
 end
 
+-- Consume the player_kill signal before the next phase.
+
+-- Death waits for constriction damage, then records kill rewards and drops before destroying the actor.
 function system.update(ctx)
     local kills = {}
 
@@ -55,6 +61,7 @@ function system.update(ctx)
 
                 local summoned = ctx:has(entity, component.SUMMON)
 
+                -- Only a credited, nonsummoned kill grants player XP and advances XP-driven recovery clocks.
                 if kills[ctx:id(entity)] and not summoned then
                     local xp = death.experience(definition, health.max)
                     local player = ctx:player()
@@ -85,6 +92,7 @@ function system.update(ctx)
                         adjacent, false)
                 end
 
+                -- Release trapping links before inventory drops and corpse hooks inspect the dying actor.
                 net.release(ctx, entity)
                 death.drop_inventory(ctx, entity, position)
                 ctx:remove_actor(entity, position.level_id)
@@ -92,6 +100,7 @@ function system.update(ctx)
                     definition, position,
                     kills[ctx:id(entity)] == true)
 
+                -- Death hooks may consume the body; ordinary corpse placement runs only afterward.
                 if kills[ctx:id(entity)] and not consumed_corpse and
                     not summoned then
                     death.corpse(ctx, definition, position,

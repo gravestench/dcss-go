@@ -1,9 +1,13 @@
+-- The D:2 malevolence table offers only teleport at its final boundary.
+
 local harness = require("tests.harness")
 local ids = require("ids.traps")
 local malevolence = require("policy.traps.malevolence")
 
 local test = {}
 
+-- Compare eligible malevolent outcomes across depth and visibility gates so
+-- the source table cannot offer a trap before its branch rules allow it.
 function test.run()
     local first = malevolence.options(1, true)
     local second = malevolence.options(2, false)

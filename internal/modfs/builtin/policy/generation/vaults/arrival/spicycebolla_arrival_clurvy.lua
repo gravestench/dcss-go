@@ -1,9 +1,10 @@
+-- Example: Most clurvy layouts break a pillar; rarer draws add an altar, debris, or tree-color ruin.
 local directives = require("constants.vault_directives")
 local effects = require("constants.vault_effects")
 
 local handler = {}
 
--- Port of arrival/small.des:3752-3758.
+-- Most clurvy layouts break a pillar; rarer draws add an altar, debris, or tree-color ruin.
 local function choose_broken_pillar(api)
     if not api:one_in(5) then
         return
@@ -19,12 +20,14 @@ local function choose_broken_pillar(api)
     })
 end
 
+-- The optional altar placement consumes its own one-in-five draw after pillar edits.
 local function choose_altar_spot(api)
     if api:one_in(5) then
         api:emit(directives.NSUBST, ". = 1:J / 3:K / 1:V / .")
     end
 end
 
+-- Debris placement is an independent rare substitution over remaining floor glyphs.
 local function choose_debris_spot(api)
     if api:one_in(5) then
         api:emit(directives.NSUBST, "1 = 4:4 / 1, . = 5:U / .")

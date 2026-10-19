@@ -2,6 +2,8 @@ local component = require("constants.component")
 
 local terrain = {}
 
+-- Temporary terrain records retain the old feature so expiry can restore it.
+-- Example: terrain.place(ctx, caster, kind, level_id, x, y, feature, aut) records restoration state.
 function terrain.place(ctx, source_actor, source_kind_id,
     level_id, x, y, changed_feature, duration_aut)
     local original = ctx:cell(level_id, x, y)

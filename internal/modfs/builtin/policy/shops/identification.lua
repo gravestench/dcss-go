@@ -12,6 +12,7 @@ local equipment = {
     [classes.OBJ_STAVES] = true,
 }
 
+-- Viewing stock and buying it reveal different amounts of item knowledge.
 function identification.stock(ctx, entity, kind)
     local manual = kind.id == ids.BOOK_MANUAL
     local fields = {
@@ -25,6 +26,9 @@ function identification.stock(ctx, entity, kind)
     end
 end
 
+-- Example: identification.purchase(ctx, player, stock, kind) reveals that purchased item's identity.
+-- Buying reveals the item's type to the player, then applies the shop's
+-- equipment and appearance knowledge through the normal saved item state.
 function identification.purchase(ctx, player, entity, kind)
     items.reveal_type(ctx, player, entity)
     identification.stock(ctx, entity, kind)

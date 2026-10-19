@@ -22,10 +22,12 @@ local appendages = {
     { id = "MUT_TALONS", bit = 4, level = 2 },
 }
 
+-- Appendage flags are packed into a mask so form save state can restore exact granted limbs.
 local function has_bit(mask, bit)
     return math.floor(mask / bit) % 2 == 1
 end
 
+-- Missing species flags mean no physiology exception to appendage generation.
 local function has_flag(species, flag)
     for _, value in ipairs(species.flags or {}) do
         if value == flag then
@@ -37,35 +39,42 @@ local function has_flag(species, flag)
 end
 
 -- Source: transform.cc:appendages and physiology_mutation_conflict.
+-- Existing mutation levels prevent the form from granting a duplicate limb.
+local function has_mutation(ctx, player, id)
+    return mutation_levels.base(ctx, player, id) > 0
+end
+
+-- Source physiology and acquired mutations jointly decide which appendages
+-- the form may grant; the mask is later used to undo exactly those grants.
 local function appendage_mask(ctx, player)
     local origin = ctx:get(player, component.PLAYER)
     local species = character_catalog.get("species", origin.species_id)
-    local function has(id)
-        return mutation_levels.base(ctx, player, id) > 0
-    end
-
     local mask = 0
 
-    if not has(mutations.MUT_HORNS) and not has(mutations.MUT_ANTENNAE) and
+    if not has_mutation(ctx, player, mutations.MUT_HORNS) and
+        not has_mutation(ctx, player, mutations.MUT_ANTENNAE) and
         not has_flag(species, "SPF_NO_BONES") then
         mask = mask + 1
     end
 
-    if not has(mutations.MUT_TENTACLE_SPIKE) and
-        has(mutations.MUT_TENTACLE_ARMS) then
+    if not has_mutation(ctx, player, mutations.MUT_TENTACLE_SPIKE) and
+        has_mutation(ctx, player, mutations.MUT_TENTACLE_ARMS) then
         mask = mask + 2
     end
 
-    if not has(mutations.MUT_TALONS) and not has(mutations.MUT_MERTAIL) and
-        not has(mutations.MUT_CONSTRICTING_TAIL) and
-        not has(mutations.MUT_FLOAT) and not has(mutations.MUT_PAWS) and
-        not has(mutations.MUT_TENTACLE_ARMS) then
+    if not has_mutation(ctx, player, mutations.MUT_TALONS) and
+        not has_mutation(ctx, player, mutations.MUT_MERTAIL) and
+        not has_mutation(ctx, player, mutations.MUT_CONSTRICTING_TAIL) and
+        not has_mutation(ctx, player, mutations.MUT_FLOAT) and
+        not has_mutation(ctx, player, mutations.MUT_PAWS) and
+        not has_mutation(ctx, player, mutations.MUT_TENTACLE_ARMS) then
         mask = mask + 4
     end
 
     return mask
 end
 
+-- Use the same mask on cast and expiry so only limbs this form granted receive messages.
 local function appendage_message(ctx, mask, ending)
     if has_bit(mask, 1) then
         ctx:emit(ending and "duration" or "spell", ending and
@@ -84,6 +93,7 @@ local function appendage_message(ctx, mask, ending)
     end
 end
 
+-- An expired saved form is inactive; an unknown live ID is corrupt state and must fail.
 local function record(ctx, player)
     local active = ctx:get(player, component.PLAYER_FORM)
 
@@ -100,6 +110,8 @@ local function record(ctx, player)
     error("unknown saved player form " .. active.form_id)
 end
 
+-- Example: Looking up Spider Form returns the form profile used by preparation and HP scaling.
+-- Look up a transformation profile before dry-run checks or HP scaling use its constraints.
 function forms.profile(spell_id)
     return catalog[spell_id]
 end
@@ -191,6 +203,7 @@ function forms.rejection(ctx, player, spell_id)
     return nil
 end
 
+-- Compute untransformed HP after permanent loss and drain before a form multiplier applies.
 local function base_hp(ctx, player)
     local origin = ctx:get(player, component.PLAYER)
     local progress = ctx:get(player, component.PROGRESSION)
@@ -216,6 +229,7 @@ function forms.max_hp(ctx, player)
     return forms.scale_hp(ctx, player, base_hp(ctx, player))
 end
 
+-- Apply the form's tenths multiplier to an already computed base HP value.
 function forms.scale_hp(ctx, player, untransformed_max)
     local _, profile = record(ctx, player)
     local multiplier = profile and profile.hp_tenths or 10
@@ -241,6 +255,7 @@ function forms.rescale_health(ctx, player, next_max)
     ctx:set(player, component.REGENERATION, regeneration)
 end
 
+-- Profile-specific scaling consumes spell RNG only for positive power, then clamps to the form cap.
 local function duration(ctx, profile, power)
     local turns = profile.base_turns
 
@@ -333,6 +348,7 @@ local polymorph_forms = {
     form_ids.PIG,
 }
 
+-- Undead and uncancellable forms cannot be replaced by a hostile polymorph.
 function forms.can_polymorph(ctx, player)
     local active = ctx:get(player, component.PLAYER_FORM)
     local choice = ctx:get(player, component.PLAYER)
@@ -368,6 +384,7 @@ function forms.polymorph(ctx, player, power)
     return false
 end
 
+-- Voluntary vampire Bat Form persists; other forms decay by action aut and warn near expiry.
 function forms.tick(ctx, player, aut)
     local active = ctx:get(player, component.PLAYER_FORM)
 
@@ -402,6 +419,7 @@ function forms.tick(ctx, player, aut)
     end
 end
 
+-- Remove form before rescaling HP so base-species capacity is restored.
 function forms.finish(ctx, player)
     local active = ctx:get(player, component.PLAYER_FORM)
 
@@ -423,6 +441,7 @@ function forms.finish(ctx, player)
     forms.rescale_health(ctx, player, base_hp(ctx, player))
 end
 
+-- Reject ending a form if the original body would die on the current terrain.
 function forms.end_rejection(ctx, player)
     local active = ctx:get(player, component.PLAYER_FORM)
 
@@ -651,18 +670,21 @@ function forms.move_speed(ctx, player)
     return 10
 end
 
+-- Lich Form forbids potion use even though other transformations retain drinking.
 function forms.can_drink(ctx, player)
     local _, profile = record(ctx, player)
 
     return not profile or profile.id ~= "lich"
 end
 
+-- Form stasis is a profile capability queried by effects that would move or slow the player.
 function forms.stasis(ctx, player)
     local _, profile = record(ctx, player)
 
     return profile ~= nil and profile.stasis == true
 end
 
+-- Torment uses form profile immunity rather than inferring it from appearance.
 function forms.torment_immune(ctx, player)
     local _, profile = record(ctx, player)
 

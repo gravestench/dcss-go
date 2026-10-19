@@ -1,3 +1,5 @@
+-- Damage cause distinguishes direct hits from poison, clouds, and other delayed sources.
+
 local damage_causes = {
     ORDINARY = "ordinary",
     POISON = "poison",

@@ -1,22 +1,27 @@
+-- Example: A malformed D:1- depth expression reports its DES path and source line.
 local categories = require("constants.catalog")
 
 local depth = {}
 
+-- Attach DES path, line, and vault ID to malformed depth-rule errors.
 local function fail(site, text)
     error(string.format("%s:%d: vault %s: %s",
         site.path, site.line, site.id, text))
 end
 
+-- Normalize whitespace before interpreting branch and range tokens.
 local function trim(value)
     return value:match("^%s*(.-)%s*$")
 end
 
+-- Match rules against branch abbreviations stored in the registered branch catalog.
 local function branch_name(branch_id)
     local definition = register.get(categories.BRANCHES, branch_id)
 
     return definition.abbreviation
 end
 
+-- Parse branch exclusions and bottom-of-branch markers before numeric depth ranges.
 local function depth_rule(token, site)
     local excluded = token:sub(1, 1) == "!"
 
@@ -79,6 +84,7 @@ local function depth_rule(token, site)
     }
 end
 
+-- Keep rule order from the DES line because a later exclusion may veto an inclusion.
 function depth.parse_rules(argument, site)
     local rules = {}
 
@@ -97,6 +103,7 @@ function depth.parse_rules(argument, site)
     return rules
 end
 
+-- Validate branch-qualified percentages at parse time, before weighted vault selection.
 function depth.parse_chance(argument, site)
     local percent, branches = argument:match("^(%d+)%%%s*%((.-)%)$")
     local value = tonumber(percent)
@@ -127,6 +134,7 @@ function depth.parse_chance(argument, site)
     }
 end
 
+-- A dollar depth token compares to the branch bottom, not an absolute Dungeon floor.
 local function matches(rule, name, local_depth, branch_bottom)
     if rule.branch ~= name then
         return false
@@ -140,6 +148,7 @@ local function matches(rule, name, local_depth, branch_bottom)
         (not rule.last or local_depth <= rule.last)
 end
 
+-- An excluded matching rule wins even if another range includes the same floor.
 function depth.eligible(vault, branch_id, local_depth, branch_bottom)
     if #vault.depths == 0 then
         return true
@@ -161,6 +170,7 @@ function depth.eligible(vault, branch_id, local_depth, branch_bottom)
     return included
 end
 
+-- Branch-specific CHANCE rows override the default; no matching branch means zero chance.
 function depth.chance(vault, branch_id)
     if #vault.chances == 0 then
         return 100

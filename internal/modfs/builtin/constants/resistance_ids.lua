@@ -1,3 +1,5 @@
+-- Resistance IDs index protection checks across items, species, monsters, and spells.
+
 local resistances = {
     FIRE = "MR_RES_FIRE",
     COLD = "MR_RES_COLD",

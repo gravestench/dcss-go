@@ -3,6 +3,9 @@ local menu = require("policy.input.menu")
 
 local selection = {}
 
+-- The generic selection view renders options in the same order the input route indexes them.
+-- Example: selection.run(nil, { title = "Pick one", options = choices, height = 24 })
+-- writes letters by option index, so the next key resolves the shown choice.
 function selection.run(_, input)
     local writes = {
         {

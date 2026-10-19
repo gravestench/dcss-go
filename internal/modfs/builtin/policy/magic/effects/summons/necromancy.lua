@@ -8,6 +8,7 @@ local summons = require("policy.magic.effects.summons.common")
 
 local necromancy = {}
 
+-- Supply zeroed timers for the first cast; later casts reuse the saved player aura.
 local function aura(ctx, player)
     return ctx:get(player, component.SUMMON_NECROMANCY) or {
         death_channel_expires_aut = 0,
@@ -16,10 +17,12 @@ local function aura(ctx, player)
     }
 end
 
+-- Extend remaining aura time from now and cap it, rather than resetting duration on each cast.
 local function increase(ctx, current, amount, cap)
     return ctx:aut() + math.min(cap, math.max(0, current - ctx:aut()) + amount)
 end
 
+-- Zombie conversion requires natural holiness in addition to a corpse-producing monster.
 local function natural(definition)
     for _, kind in ipairs(definition.holiness or {}) do
         if kind == "MH_NATURAL" then
@@ -30,6 +33,7 @@ local function natural(definition)
     return false
 end
 
+-- Spawn at the vacated death cell first, then nearby; retain base monster stats on the undead summon.
 function necromancy.raise(ctx, owner, spell_id, kind_id, base_kind_id, position)
     local base = catalog.get("monsters", base_kind_id)
     local hp = math.max(1, math.floor(base.average_hp_10x / 10))
@@ -101,6 +105,7 @@ function necromancy.on_death(ctx, definition, position, player_kill,
     return false
 end
 
+-- Adapt the death-hook signature while preserving kill credit and corpse consumption for the aura check.
 function necromancy.death_hook(ctx, _, definition, position, credited,
     consumed_corpse)
     return necromancy.on_death(ctx, definition, position, credited,
@@ -131,6 +136,7 @@ registry.add(spells.SPELL_DEATH_CHANNEL, {
     resolve = necromancy.resolve_death_channel,
 })
 
+-- Example: Recasting Animate Dead dismisses older permanent zombies before refreshing its aura.
 -- Source: spl-other.cc:cast_animate_dead. The aura remains active for later
 -- kills, rather than consuming existing floor corpses on cast.
 function necromancy.resolve_animate_dead(ctx, player, _, _, power)

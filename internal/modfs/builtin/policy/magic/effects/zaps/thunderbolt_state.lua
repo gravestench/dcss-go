@@ -1,3 +1,4 @@
+-- Example: ctx:get(player, zap_ids.component.THUNDERBOLT) reads prior aim and charges.
 -- spl-damage.cc:THUNDERBOLT_LAST_KEY, AIM_KEY, and CHARGES_KEY.
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local state = {}

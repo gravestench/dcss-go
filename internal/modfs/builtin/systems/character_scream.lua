@@ -1,3 +1,5 @@
+-- Theory of operation: Newly visible monsters are sampled after sight changes; only eligible encounters can trigger a
+-- shout.
 -- Source: view.cc:_maybe_trigger_shoutitis and mon-util.cc:should_shout_at_mons.
 local catalog = require("policy.catalog")
 local capabilities = require("constants.mutation_capabilities")
@@ -10,6 +12,7 @@ local vision = require("policy.character.vision")
 
 local system = {}
 
+-- Scan the source flag list because shout eligibility uses catalog tags rather than actor state.
 local function has_flag(definition, wanted)
     for _, flag in ipairs(definition.flags or {}) do
         if flag == wanted then
@@ -20,6 +23,7 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Tentacles, projectiles, conjurations, and avatars do not trigger involuntary shouting.
 local function eligible(ctx, monster)
     local actor = ctx:get(monster, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)
@@ -30,6 +34,7 @@ local function eligible(ctx, monster)
         not has_flag(definition, flags.AVATAR)
 end
 
+-- Track sight transitions on monsters so a continuously visible foe cannot prompt repeated scream rolls.
 local function newly_visible(ctx, player, origin)
     local candidates = {}
     local sight = vision.radius(ctx, player)
@@ -62,6 +67,7 @@ local function newly_visible(ctx, player, origin)
     return candidates
 end
 
+-- The scream roll sees newly visible monsters after movement and emits noise before combat.
 function system.update(ctx, player)
     local origin = ctx:get(player, component.POSITION)
 
@@ -76,6 +82,7 @@ function system.update(ctx, player)
         return
     end
 
+    -- Roll in query order and stop at the first qualifying scream; later candidates consume no RNG.
     for _, monster in ipairs(candidates) do
         if eligible(ctx, monster) and
             ctx:random("mutation", 100) < level * 6 then

@@ -10,8 +10,10 @@ local streams = require("constants.rng_streams")
 
 local cast = {}
 
+-- Example: a miscast pays MP and records the last spell before returning "fail".
 -- Source: spl-cast.cc:cast_a_spell and your_spells. Preparation already
 -- resolved all no-time aborts before the scheduler began this action.
+-- Validate and pay for a learned spell before dispatching its resolver and possible channel state.
 function cast.resolve(ctx, player, intent, aut)
     local spell_id = intent.spell_id
     local known = records.find(ctx, player, spell_id)

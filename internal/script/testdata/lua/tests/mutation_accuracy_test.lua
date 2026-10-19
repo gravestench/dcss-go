@@ -1,3 +1,4 @@
+
 local accuracy = require("policy.character.accuracy")
 local auxiliary = require("policy.combat.auxiliary")
 local attacks = require("constants.auxiliary_attacks")
@@ -10,14 +11,17 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Record each melee hit bound before comparing Missing Eye accuracy.
 local function attack_context(ctx, player, draws, bounds)
     local proxy = setmetatable({}, { __index = ctx })
     local index = 0
 
+    -- Bind policy ownership to accuracy fixture actor so player-only branches execute on that entity.
     function proxy.player()
         return player
     end
 
+    -- Record melee bounds in draw order to verify hit formula changes before inaccuracy.
     function proxy.random(_, stream, bound)
         harness.equal(stream, "melee", "player contact uses melee RNG")
         index = index + 1
@@ -36,6 +40,7 @@ local function attack_context(ctx, player, draws, bounds)
     return proxy
 end
 
+-- Assemble a baseline primary hit input before mutation accuracy changes it.
 local function main_contact(ctx, player)
     local input = {
         dexterity = 10,
@@ -52,6 +57,7 @@ local function main_contact(ctx, player)
     return outcome, bounds[1]
 end
 
+-- Assemble a secondary strike input with one selected natural attack.
 local function auxiliary_contact(ctx, player, attack_id)
     local input = {
         level = 27,
@@ -75,6 +81,7 @@ local function auxiliary_contact(ctx, player, attack_id)
     return outcome, bounds[2]
 end
 
+-- Sting uses its source hit formula before inaccuracy.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -84,6 +91,7 @@ function test.run(ctx)
         "ordinary aimed zap retains its hit value")
     harness.equal(projectile.to_hit(ctx, player, sting.spec, 10), 10,
         "Sting uses its source hit formula before inaccuracy")
+    -- Keep baseline melee and auxiliary contacts fixed before adding mutation modifiers.
     harness.equal(main_contact(ctx, player).kind, "hit",
         "ordinary main attack hits with a ten-point roll")
     harness.truthy(auxiliary_contact(ctx, player, attacks.KICK.id).hit,
@@ -101,6 +109,7 @@ function test.run(ctx)
         "aimed zap accuracy cannot become negative")
     harness.equal(projectile.to_hit(ctx, player, sting.spec, 10), 5,
         "the live Sting resolver applies Missing Eye to its hit value")
+    -- Missing Eye changes the post-roll result, while Eyeballs changes the pre-roll bound.
     harness.equal(main_contact(ctx, player).kind, "miss",
         "Missing Eye changes the main attack after its roll")
     harness.falsy(auxiliary_contact(ctx, player, attacks.KICK.id).hit,
@@ -129,6 +138,7 @@ function test.run(ctx)
 
     harness.equal(highest_bound, 29,
         "three Eyeballs levels raise the live main hit-roll bound")
+    -- The positive mutation bonus belongs to physical contact, unlike Inaccuracy on zaps.
     harness.equal(accuracy.zap_to_hit(ctx, player, 12), 7,
         "Eyeballs does not change aimed spell accuracy")
 end

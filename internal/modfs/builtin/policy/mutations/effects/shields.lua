@@ -6,6 +6,8 @@ local registry = require("policy.mutations.effects.registry")
 
 local shields = {}
 
+-- Preserve Bone Plates' first-rank base bonus before adding four shield units per later rank.
+-- Example: Bone Plates level one gives eight shield units; zero levels give none.
 function shields.bone_plates(level)
     if level == 0 then
         return 0

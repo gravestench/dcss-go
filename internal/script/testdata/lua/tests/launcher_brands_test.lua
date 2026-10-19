@@ -1,3 +1,5 @@
+-- Freezing damage uses half the source draw plus one.
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local brands = require("constants.weapon_brands")
@@ -7,9 +9,12 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- A fixed melee-stream draw pins bonus damage and catches wrong RNG bounds.
 local function fixed_roll(value)
     local ctx = {}
 
+    -- Return the fixture's exact melee draw and assert its bound, so launcher
+    -- brand proc tests do not depend on a seed or hidden RNG consumption.
     function ctx.random(_, stream, bound)
         harness.equal(stream, "melee", "launcher brands use melee RNG")
         harness.truthy(value < bound, "fixture draw fits its bound")
@@ -20,6 +25,7 @@ local function fixed_roll(value)
     return ctx
 end
 
+-- Branded launcher content must have a corresponding effect module.
 local function check_catalog()
     local count = 0
 
@@ -39,6 +45,8 @@ local function check_catalog()
         "all seven branded launcher definitions have brand modules")
 end
 
+-- Compare brand catalog coverage and a fired missile result, proving launcher
+-- effects reach the ranged attack path through registered rules.
 function test.run()
     check_catalog()
 
@@ -47,6 +55,8 @@ function test.run()
         name = "rat",
         resistances = {},
     }
+    -- Vorpal uses the whole draw; elemental brands halve it and emit a
+    -- projectile-specific hit message.
     local ctx = fixed_roll(2)
 
     harness.equal(launcher_brands.apply(ctx, brands.VORPAL,

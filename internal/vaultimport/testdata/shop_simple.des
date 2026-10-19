@@ -1,9 +1,0 @@
-NAME: test_shop
-TAGS: shop extra transparent
-DEPTH: D:4-, Depths
-CHANCE: 15% (D)
-WEIGHT: 5
-KFEAT: s = general shop greed:0 count:1 ; potion of curing
-MAP
-.s.
-ENDMAP

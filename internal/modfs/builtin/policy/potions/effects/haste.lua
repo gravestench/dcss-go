@@ -7,6 +7,8 @@ local traits = require("policy.character.species_traits")
 
 local effect = {}
 
+-- Stasis from species or current form blocks Haste before any duration is rolled.
+-- Example: stasis rejects Haste before a potion-stream duration roll.
 function effect.can_quaff(ctx, player)
     local identity = ctx:get(player, component.PLAYER)
     local species = catalog.get("species", identity.species_id)
@@ -18,6 +20,7 @@ function effect.can_quaff(ctx, player)
     end
 end
 
+-- Round the two-thirds extension with potion RNG to preserve source duration odds.
 local function rounded_two_thirds(ctx, value)
     local numerator = value * 2
     local whole = math.floor(numerator / 3)

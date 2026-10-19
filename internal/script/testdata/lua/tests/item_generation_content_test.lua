@@ -1,3 +1,6 @@
+-- Generation metadata covers every base item and unique artefact; the dummy
+-- stays excluded, and a non-plus amulet rejects an added plus property.
+
 local catalog = require("policy.catalog")
 local harness = require("tests.harness")
 local artefact_ids = require("ids.artefacts")
@@ -5,6 +8,8 @@ local validation = require("policy.item_generation.validate")
 
 local test = {}
 
+-- Walk the committed item and artefact catalogs so unsupported generation
+-- modes are reported before one is encountered during a live floor build.
 function test.run()
     local items = catalog.all("items")
     local artefacts = catalog.all("artefacts")
@@ -23,8 +28,17 @@ function test.run()
             definition.id .. " generation mode")
     end
 
-    harness.equal(artefacts[1].id, "UNRAND_DUMMY1", "dummy source order")
-    harness.equal(artefacts[1].generation.mode, "none", "dummy excluded")
+    -- The dummy is looked up by ID because catalog traversal now sorts IDs.
+    local dummy = catalog.get("artefacts", artefact_ids.UNRAND_DUMMY1)
+
+    harness.equal(dummy.generation.mode, "none", "dummy excluded")
+
+    for _, definition in ipairs(artefacts) do
+        harness.truthy(definition.generation,
+            definition.id .. " generation")
+        harness.truthy(modes[definition.generation.mode],
+            definition.id .. " generation mode")
+    end
 
     local original = catalog.get("artefacts", artefact_ids.UNRAND_CEKUGOB)
     local changed = {}

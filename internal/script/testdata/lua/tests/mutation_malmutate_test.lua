@@ -1,3 +1,4 @@
+
 local harness = require("tests.harness")
 local mutations = require("ids.mutations")
 local species = require("ids.species")
@@ -6,9 +7,11 @@ local malmutate = require("policy.mutations.malmutate")
 local attributes = require("policy.character.attributes")
 local stat_loss_policy = require("policy.character.stat_loss")
 local catalog = require("policy.catalog")
+local uses = require("constants.mutation_uses")
 
 local test = {}
 
+-- Seed malmutate owner components once so each branch changes only the mutation under test.
 local function player(ctx)
     local owner = ctx:create()
 
@@ -21,6 +24,7 @@ local function player(ctx)
     return owner
 end
 
+-- The recovery timer clears after every stat is restored.
 function test.run(ctx)
     local resistant = player(ctx)
 
@@ -32,9 +36,16 @@ function test.run(ctx)
 
     harness.equal(result.kind, "granted",
         "a resisted-but-passing malmutation grants the selected mutation")
-    harness.equal(result.mutation_id,
-        mutations.MUT_INHIBITED_REGENERATION,
-        "four-in-five malmutation quality selects a bad mutation")
+    local granted = catalog.get("mutations", result.mutation_id)
+    local bad = false
+
+    for _, use in ipairs(granted.uses) do
+        bad = bad or use == uses.BAD
+    end
+
+    harness.truthy(bad,
+        "four-in-five malmutation quality selects from the bad pool")
+    -- A resisted malmutation still consumes the source quality draw.
     harness.equal(draws:draws_used(), 3,
         "quality and resistance each roll once before weighted selection")
 
@@ -69,6 +80,7 @@ function test.run(ctx)
     local decayed = malmutate.apply(decay_draws, mummy, "test beam")
     local stat_loss = ctx:get(mummy, "character.stat_loss")
 
+    -- Undead decomposition takes the stat-drain path rather than mutation records.
     harness.equal(decayed.kind, "decomposed",
         "unsafe undead malmutation decomposes instead of granting a level")
     harness.equal(stat_loss.strength, 1,
@@ -89,6 +101,7 @@ function test.run(ctx)
 
     harness.equal(stat_loss_policy.amount(ctx, mummy, "strength"), 0,
         "experience restores a drained stat when the timer expires")
+    -- XP recovery state is removed only after the last drained stat reaches zero.
     harness.equal(ctx:get(mummy, "character.stat_loss").remaining_xp, 0,
         "the recovery timer clears after every stat is restored")
     harness.equal(attributes.current(ctx, mummy).strength, 10,

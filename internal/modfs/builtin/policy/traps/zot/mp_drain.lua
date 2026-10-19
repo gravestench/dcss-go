@@ -3,6 +3,8 @@ local component = require("constants.component")
 
 local effect = {}
 
+-- Set MP to zero through the saved magic component so later spell checks see the drain.
+-- Example: effect.apply(ctx, player) subtracts magic points without dropping below zero.
 function effect.apply(ctx, player)
     local magic = ctx:get(player, component.MAGIC)
 

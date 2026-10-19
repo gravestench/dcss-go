@@ -5,6 +5,7 @@ local stats = require("constants.stats")
 local schema = {
     id = component.STAT_LOSS,
     version = 1,
+    -- Each stat has its own drain amount, while one XP countdown governs recovery of the accumulated loss.
     fields = {
         [stats.STRENGTH] = {
             type = "int64",

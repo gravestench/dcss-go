@@ -1,3 +1,5 @@
+-- Bad Scope uses unsupported player scope metadata for spell validation.
+
 local categories = require("constants.catalog")
 
 local definition = {

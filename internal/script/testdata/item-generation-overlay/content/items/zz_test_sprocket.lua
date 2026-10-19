@@ -1,3 +1,5 @@
+-- A modded sprocket gives the item generator a new eligible weapon kind.
+
 local categories = require("constants.catalog")
 local classes = require("ids.object_classes")
 

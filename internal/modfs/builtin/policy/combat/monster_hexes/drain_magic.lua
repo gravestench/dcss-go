@@ -9,6 +9,7 @@ local streams = require("constants.rng_streams")
 
 local drain = {}
 
+-- A Ghost Moth heals from MP actually drained, not from an attempted empty-MP attack.
 local function heal_ghost_moth(ctx, caster, amount)
     local actor = ctx:get(caster, component.ACTOR)
 
@@ -26,6 +27,7 @@ local function heal_ghost_moth(ctx, caster, amount)
     end
 end
 
+-- Example: drain.apply(ctx, caster, defender, profile) with player at zero MP -> no MP drained
 -- Source: beam.cc:BEAM_DRAIN_MAGIC. Only drained MP or a monster's
 -- antimagic duration heals the ghost moth caster.
 function drain.apply(ctx, caster, defender, profile)

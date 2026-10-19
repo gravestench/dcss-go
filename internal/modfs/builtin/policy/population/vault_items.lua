@@ -1,3 +1,4 @@
+-- Example: An invalid DES item reports its source line after vault projection.
 local catalog = require("policy.catalog")
 local classes = require("ids.object_classes")
 local component = require("constants.component")
@@ -8,6 +9,7 @@ local purpose = require("constants.item_generation_purpose")
 
 local vault_items = {}
 
+-- Keep the authored DES site in resolution errors even after the level record is projected.
 local function source_site(resolved, origin)
     local site = resolved.site
 
@@ -20,6 +22,7 @@ local function source_site(resolved, origin)
         site.path, site.line, site.vault_id)
 end
 
+-- Keep random-item requests unresolved until a live population context supplies the item stream.
 local function request_from(resolved, level_id, origin)
     local request = {
         depth = resolved.generation_depth or level_id,
@@ -38,6 +41,7 @@ local function request_from(resolved, level_id, origin)
     return request
 end
 
+-- Recheck walkability and corpse suitability at materialization, then attach vault origin to the new item.
 function vault_items.create(ctx, resolved, level_id, x, y, origin)
     if not ctx:walkable(level_id, x, y) then
         error("cannot place vault item " .. tostring(resolved.kind_id))

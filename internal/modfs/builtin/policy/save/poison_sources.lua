@@ -9,6 +9,8 @@ for _, id in pairs(sources) do
     fixed[id] = true
 end
 
+-- Poison source IDs must refer to supported actor or environment origins before restore.
+-- Example: poison_sources.valid("MONS_ORC") accepts a registered monster as a poison origin.
 function poison_sources.valid(id)
     if fixed[id] then
         return true

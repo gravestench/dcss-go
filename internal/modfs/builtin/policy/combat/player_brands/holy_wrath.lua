@@ -6,8 +6,9 @@ local brand = {
     requires_damage = true,
 }
 
+-- Holy damage applies to undead and demonic foes except the profane servitor's immunity.
 local function susceptible(definition)
-    -- Source: monster.cc:3748-3760. The profane servitor is undead but
+    -- Source: monster.cc. The profane servitor is undead but
     -- has exceptional positive holy-energy resistance.
     if definition.id == monsters.MONS_PROFANE_SERVITOR then
         return false
@@ -24,8 +25,10 @@ end
 
 brand.susceptible = susceptible
 
+-- Example: brand.apply(ctx, hit, brands) with living defender -> no holy bonus roll
+-- Roll holy bonus damage only against eligible undead or demonic defenders.
 function brand.apply(ctx, hit, brands)
-    -- Source: attack.cc:1393-1397. Holy wrath has no roll on living foes.
+    -- Source: attack.cc. Holy wrath has no roll on living foes.
     if not susceptible(hit.definition) then
         return
     end

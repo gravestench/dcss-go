@@ -1,5 +1,6 @@
--- Generated from the pinned DCSS import. Refresh deliberately.
--- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
+-- Healer (JOB_HEALER) is a retained source job, unavailable in character selection.
+-- It has no fixed starting item grants; its old stats remain catalog data.
+
 -- Source: crawl-ref/source/job-data.h
 -- Starting grants: internal/content/generated/starting-gear.json
 
@@ -18,6 +19,8 @@ local definition = {
     weapon_choice = "WCHOICE_NONE",
     skills = mod.null,
     selectable = false,
+    -- These 0 grants create actual starting inventory for Healer; weapon choice
+    -- may add another item.
     starting_grants = {},
 }
 

@@ -1,3 +1,5 @@
+-- Weapon brand IDs choose on-hit effects after the ordinary weapon attack.
+
 -- Source: item-prop-enum.h:special_weapon_type.
 local brands = {
     ACID = "SPWPN_ACID",

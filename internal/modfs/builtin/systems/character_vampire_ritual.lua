@@ -4,6 +4,8 @@ local vampire = require("policy.character.vampire")
 
 local system = {}
 
+-- Theory of operation: Only WAIT actions spend ritual progress, preventing unrelated abilities from advancing the rite.
+-- Blood rituals advance only on WAIT intents, before active abilities resolve.
 function system.update(ctx, player, aut)
     local intent = ctx:get(player, component.INTENT)
 

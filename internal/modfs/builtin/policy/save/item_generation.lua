@@ -7,6 +7,7 @@ local skills = require("ids.skills")
 
 local validation = {}
 
+-- Validate the player's generation ledger before checking individual item provenance.
 local function validate_player(ctx)
     local player = ctx:player()
 
@@ -14,6 +15,7 @@ local function validate_player(ctx)
     history.validate(ctx:get(player, component.PLAYER_UNIQUE_HISTORY))
 end
 
+-- A manual's skill and 2000..3000 point budget must travel with its BOOK_MANUAL item across saves.
 local function validate_manual(ctx, entity, item)
     local manual = ctx:get(entity, component.ITEM_MANUAL)
 
@@ -33,6 +35,7 @@ local function validate_manual(ctx, entity, item)
     end
 end
 
+-- Random-book spell lists are validated before the book can be restored.
 local function validate_random_book(ctx, entity, item)
     local book = ctx:get(entity, component.ITEM_RANDOM_BOOK)
 
@@ -73,6 +76,8 @@ local function validate_random_book(ctx, entity, item)
     end
 end
 
+-- Saved generation state preserves manuals and random-book metadata for future item use.
+-- Example: validation.run(ctx) rejects a saved random book with an invalid spell payload.
 function validation.run(ctx)
     validate_player(ctx)
 

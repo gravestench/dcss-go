@@ -1,3 +1,5 @@
+-- Broken Cloud is valid content whose missing effect module should fail coverage.
+
 local categories = require("constants.catalog")
 local ids = require("ids.clouds")
 

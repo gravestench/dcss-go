@@ -1,3 +1,4 @@
+-- Example: A monster assigned an incompatible habitat cell moves to a legal nearby cell.
 local catalog = require("policy.catalog")
 local items = require("policy.inventory.items")
 local gear = require("policy.population.gear")
@@ -33,6 +34,7 @@ local function prepare_habitat(ctx, source, level_id, x, y)
     end
 end
 
+-- Validate the catalog class before attaching a carried and equipped monster item.
 local function starting_item(ctx, holder, kind_id, quantity, plus, ego, slot,
     origin, occurrence)
     local definition = catalog.get("items", kind_id)
@@ -69,6 +71,7 @@ local function starting_item(ctx, holder, kind_id, quantity, plus, ego, slot,
     return entity
 end
 
+-- Create each generated equipment entity after the monster actor exists.
 local function create_loadout(ctx, monster, loadout, origin)
     if not loadout then
         return
@@ -92,6 +95,7 @@ local function create_loadout(ctx, monster, loadout, origin)
     end
 end
 
+-- Authored vault equipment takes precedence over ordinary monster gear draws.
 local function explicit_equipment(ctx, options)
     local selected = {}
 
@@ -122,6 +126,7 @@ local function explicit_equipment(ctx, options)
     return selected
 end
 
+-- Create and equip each authored item while attaching the same vault origin as its monster.
 local function give_explicit_equipment(ctx, monster, selected, origin)
     for index, entry in ipairs(selected) do
         local entity = ctx:create()
@@ -147,6 +152,8 @@ local function give_explicit_equipment(ctx, monster, selected, origin)
     end
 end
 
+-- Create habitat terrain before placing the monster, then attach loadout and vault origin to new entities.
+-- Roll health and construct components only after the target habitat cell is prepared.
 function factory.spawn(ctx, kind_id, level_id, x, y, options)
     options = options or {}
     local definition = catalog.get("monsters", kind_id)

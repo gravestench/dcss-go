@@ -1,3 +1,5 @@
+-- Test Moss adds a spawnable monster in the generated dungeon at depths one through three.
+
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
 

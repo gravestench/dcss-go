@@ -1,3 +1,5 @@
+-- Zot clock bounds and reset periods are stored in aut for each branch.
+
 -- zot.h and zot.cc: clocks are stored in aut, separately for each branch.
 local clock = {
     MAX_AUT = 270000,

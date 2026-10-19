@@ -13,12 +13,14 @@ local health = require("policy.combat.monster_health")
 
 local rain = {}
 
+-- Resolve a monster definition before testing fiery susceptibility.
 local function monster_kind(ctx, actor)
     local state = ctx:get(actor, component.ACTOR)
 
     return state and catalog.get(categories.MONSTERS, state.kind_id) or nil
 end
 
+-- Rain harms fiery monsters but treats the player as immune to direct contact.
 function rain.immune(ctx, actor)
     if actor == ctx:player() then
         return true
@@ -29,6 +31,7 @@ function rain.immune(ctx, actor)
     return not definition or not fiery.is(definition.id)
 end
 
+-- Apply rain damage only to fiery actors, scaled by their action speed.
 function rain.apply(ctx, actor, state, _, _, definition)
     if rain.immune(ctx, actor) then
         return 0
@@ -49,6 +52,7 @@ function rain.apply(ctx, actor, state, _, _, definition)
     return amount
 end
 
+-- Fiery monsters avoid rain carefully; flying or aquatic monsters can ignore its water hazard.
 function rain.avoid(ctx, monster, state, careful)
     local definition = monster_kind(ctx, monster)
 
@@ -76,6 +80,7 @@ function rain.avoid(ctx, monster, state, careful)
     return nil
 end
 
+-- On expiry, floor can become shallow water and shallow water may deepen.
 local function changed_feature(ctx, state)
     local current = ctx:cell(state.level_id, state.x, state.y)
 
@@ -104,6 +109,8 @@ local function changed_feature(ctx, state)
     return nil
 end
 
+-- An expiry roll may turn the underlying terrain wetter; ordinary cloud aging does not do so.
+-- Example: one in five expiries can wet floor, or deepen existing shallow water on a separate draw.
 function rain.expire(ctx, _, state)
     if ctx:random(streams.CLOUDS, 5) ~= 0 then
         return false

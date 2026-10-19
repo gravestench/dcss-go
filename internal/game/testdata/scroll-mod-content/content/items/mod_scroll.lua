@@ -1,3 +1,5 @@
+-- A scroll of renewal enters the item catalog before effect registration is tested separately.
+
 local categories = require("constants.catalog")
 
 local definition = {

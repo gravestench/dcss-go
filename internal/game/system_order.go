@@ -84,11 +84,15 @@ func orderSystems(specs []systemSpec) ([]systemSpec, error) {
 	for len(ordered) < len(specs) {
 		chosen := -1
 
+		// Discovery order is a property of files, not a gameplay rule. Resolve
+		// unconstrained peers by name so a rename or overlay cannot silently
+		// change system execution and consume RNG in a different order.
 		for position := range specs {
-			if !used[position] && indegree[position] == 0 {
-				chosen = position
+			available := !used[position] && indegree[position] == 0
+			comesFirst := chosen < 0 || specs[position].name < specs[chosen].name
 
-				break
+			if available && comesFirst {
+				chosen = position
 			}
 		}
 

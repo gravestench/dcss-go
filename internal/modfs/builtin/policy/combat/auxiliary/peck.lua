@@ -10,10 +10,13 @@ local peck = {
     mutation_ids = { mutations.MUT_BEAK },
 }
 
+-- The beak mutation gates Peck; the shared auxiliary resolver handles its chance and order.
 function peck.available(ctx)
     return levels.effective(ctx, ctx:player(), mutations.MUT_BEAK) > 0
 end
 
+-- Example: peck.describe() with Peck selected -> fixed base damage 6
+-- Peck keeps a fixed message because its beak attack has no equipment variant.
 function peck.describe()
     return {
         name = "peck",

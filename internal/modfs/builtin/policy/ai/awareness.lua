@@ -5,6 +5,8 @@ local stealth = require("policy.character.stealth")
 
 local awareness = {}
 
+-- Sight only starts detection; a wandering sleeper still needs a stealth contest before waking.
+-- Example: awareness.detects(ctx, monster, state, true) checks whether sight alerts a sleeping monster.
 function awareness.detects(ctx, monster, state, player_visible)
     if not player_visible then
         return false

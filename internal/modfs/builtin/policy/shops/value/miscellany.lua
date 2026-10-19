@@ -14,6 +14,9 @@ local fixed_value = {
     [ids.MISC_LIGHTNING_ROD] = 300,
 }
 
+-- Example: miscellany.value(kind) uses the base price of a phial or other evocable.
+-- Miscellaneous evocables have no shared enchantment scale, so their authored
+-- base shop value is the entire per-item quote.
 function miscellany.value(kind)
     return kind.shop_value or fixed_value[kind.id] or 200
 end

@@ -2,6 +2,8 @@ local constriction = require("policy.combat.player_constriction")
 
 local system = {}
 
+-- Theory of operation: A player action damages held victims before death cleanup collects kills.
+-- Player-held victims take constriction damage after attacks, before death cleanup.
 function system.update(ctx, actor, aut)
     if actor == ctx:player() then
         constriction.player_action(ctx, aut)

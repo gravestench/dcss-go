@@ -11,6 +11,7 @@ local magic_damage = require("policy.magic.damage")
 local negative_energy = {}
 negative_energy.risk_resistance = resistances.NEGATIVE_ENERGY
 
+-- Full negative-energy resistance prevents both cloud damage and the later drain effect.
 function negative_energy.immune(ctx, actor)
     if actor == ctx:player() then
         return magic_damage.player_resistance(ctx, actor,
@@ -28,6 +29,8 @@ function negative_energy.immune(ctx, actor)
     return monster_drain.resistance(ctx, actor, definition) >= 3
 end
 
+-- Gate complete immunity before shared damage, then apply drain through the correct actor path.
+-- Example: complete negative-energy resistance skips this cloud's drain damage.
 function negative_energy.apply(ctx, actor, state, elapsed_aut, _, definition)
     if negative_energy.immune(ctx, actor) then
         return 0

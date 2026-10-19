@@ -1,3 +1,4 @@
+-- Example: A level gain reads the saved species choice before adding that species' attribute growth.
 local catalog = require("policy.catalog")
 local formulas = require("policy.character.formulas")
 local experience_limit = require("policy.character.experience_limit")
@@ -15,6 +16,7 @@ local stat_fields = {
     dex = "dexterity",
 }
 
+-- Read the saved player choice so level gains use the species selected at creation.
 local function selected_species(ctx, actor)
     local player = ctx:get(actor, "core.player")
 
@@ -25,6 +27,7 @@ local function selected_species(ctx, actor)
     return catalog.get("species", player.species_id)
 end
 
+-- Map the chosen stat ID to its stored field before modifying the attributes component.
 local function increase_stat(attributes, id, amount)
     local field = stat_fields[id]
 
@@ -35,6 +38,7 @@ local function increase_stat(attributes, id, amount)
     attributes[field] = attributes[field] + amount
 end
 
+-- Recompute derived HP and MP at each attained level before granting the species stat increase.
 function advancement.apply_level(ctx, actor, level, species)
     local progress = ctx:get(actor, "core.progression")
     local attributes = ctx:get(actor, "core.attributes")
@@ -101,6 +105,7 @@ function advancement.apply_level(ctx, actor, level, species)
     ctx:emit("level-up", message)
 end
 
+-- Stop at a pending manual stat choice so later levels cannot skip that input boundary.
 function advancement.advance(ctx, actor)
     local progress = ctx:get(actor, "core.progression")
 
@@ -116,6 +121,7 @@ function advancement.advance(ctx, actor)
 
     local maximum = experience_limit.max_level(ctx, actor)
 
+    -- The current mutation-adjusted cap bounds this entire level-gain pass.
     while progress.level < maximum do
         local next_level = progress.level + 1
         local needed = formulas.experience_needed(next_level, species.xp)
@@ -138,6 +144,7 @@ function advancement.advance(ctx, actor)
     extra_lives.on_experience(ctx, actor)
 end
 
+-- Accept only the pending next-level choice, then write the selected base attribute.
 function advancement.choose_stat(ctx, actor, id)
     local progress = ctx:get(actor, "core.progression")
 
@@ -168,6 +175,7 @@ function advancement.choose_stat(ctx, actor, id)
     return { chosen = true }
 end
 
+-- Bind the input command to the current player rather than trusting a caller-supplied actor.
 function advancement.choose_stat_policy(ctx, input)
     return advancement.choose_stat(ctx, ctx:player(), input.stat)
 end

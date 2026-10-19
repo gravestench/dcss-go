@@ -15,16 +15,19 @@ local fields = {
     [chaos_effects.AGILITY] = "agility_aut",
 }
 
+-- All Chaos boons and shifter state share one saved monster component.
 local function current(ctx, monster)
     return ctx:get(monster, component.MONSTER_CHAOS)
 end
 
+-- A boon affects combat only while its individual timer is positive.
 local function active(ctx, monster, field)
     local value = current(ctx, monster)
 
     return value ~= nil and value[field] > 0
 end
 
+-- Extending a boon must preserve other Chaos timers and never shorten the same boon.
 function status.apply(ctx, monster, name, duration)
     local field = fields[name]
 
@@ -48,6 +51,7 @@ function status.apply(ctx, monster, name, duration)
     end
 end
 
+-- Shifter identity persists in the same component after temporary boons expire.
 function status.make_shifter(ctx, monster)
     local value = current(ctx, monster) or {
         haste_aut = 0,
@@ -65,12 +69,15 @@ function status.make_shifter(ctx, monster)
     end
 end
 
+-- The permanent flag, not a duration, enables later spontaneous shape changes.
 function status.shifter_active(ctx, monster)
     local value = current(ctx, monster)
 
     return value ~= nil and value.shifter
 end
 
+-- Example: status.shift(ctx, monster) with paralysed shifter -> false without changing form
+-- Continue a chaos shifter's form changes on its status tick rather than on every hit.
 function status.shift(ctx, monster)
     if not status.shifter_active(ctx, monster) or
         ctx:has(monster, component.PARALYSIS) then
@@ -88,7 +95,7 @@ function status.shift(ctx, monster)
     local definition = catalog.get(categories.MONSTERS, actor.kind_id)
     local hd = monster_stats.hit_dice(ctx, monster, definition)
 
-    -- Source: mon-ench.cc:1686-1694. Ordinary shifters change on roughly
+    -- Source: mon-ench.cc. Ordinary shifters change on roughly
     -- one in three times their hit dice monster actions.
     if roll.melee(ctx, 3 * hd) ~= 0 then
         return false
@@ -97,6 +104,7 @@ function status.shift(ctx, monster)
     return polymorph.shapeshift(ctx, monster, definition)
 end
 
+-- Haste raises monster action speed while its Chaos timer remains active.
 function status.speed(ctx, monster, speed)
     if active(ctx, monster, "haste_aut") then
         return math.floor(speed * 3 / 2)
@@ -105,8 +113,9 @@ function status.speed(ctx, monster, speed)
     return speed
 end
 
+-- Might does not stack with frenzy's separate melee damage bonus.
 function status.damage(ctx, monster, amount)
-    -- Source: melee-attack.cc:3559-3560.
+    -- Source: melee-attack.cc.
     if active(ctx, monster, "might_aut") and
         not allegiance.frenzied(ctx, monster) then
         return math.floor(amount * 3 / 2)
@@ -115,8 +124,9 @@ function status.damage(ctx, monster, amount)
     return amount
 end
 
+-- Agility adds the source fixed evasion bonus only while active.
 function status.evasion(ctx, monster, amount)
-    -- Source: monster.cc:3301-3302 and defines.h:AGILITY_BONUS.
+    -- Source: monster.cc and defines.h:AGILITY_BONUS.
     if active(ctx, monster, "agility_aut") then
         return amount + 5
     end
@@ -124,6 +134,7 @@ function status.evasion(ctx, monster, amount)
     return amount
 end
 
+-- Remove the record only after all boon timers expire and no shifter flag remains.
 function status.tick(ctx, monster, aut)
     local value = current(ctx, monster)
 

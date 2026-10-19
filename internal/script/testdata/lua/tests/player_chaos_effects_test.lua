@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
@@ -9,14 +10,17 @@ local monsters = require("ids.monsters")
 
 local test = {}
 
+-- Use ordinary floor so Chaos terrain effects do not depend on map fixtures.
 local function floor_cell()
     return "DNGN_FLOOR"
 end
 
+-- Zero draws select the first chaos outcomes without relying on global RNG.
 local function zero_random()
     return 0
 end
 
+-- Chaos invisibility adds saved enchantment.
 function test.run(ctx)
     local rat = ctx:create()
     local definition = catalog.get(categories.MONSTERS, monsters.MONS_RAT)
@@ -52,6 +56,7 @@ function test.run(ctx)
         y = 1,
     })
 
+    -- Polymorph keeps the same ECS actor while replacing its monster kind.
     local proxy = setmetatable({}, { __index = ctx })
     proxy.cell = floor_cell
     proxy.random = zero_random
@@ -64,6 +69,8 @@ function test.run(ctx)
     harness.truthy(actor.kind_id ~= monsters.MONS_RAT,
         "chaos polymorph changes the defender kind")
 
+    -- A second target receives the saved status outcomes independently of
+    -- the first actor's polymorph.
     local second = ctx:create()
 
     ctx:add(second, component.ACTOR, {
@@ -103,6 +110,7 @@ function test.run(ctx)
     harness.truthy(ctx:has(second, component.MONSTER_STASIS),
         "chaos petrify adds staged petrification")
 
+    -- Chaos shapeshifters transform both on hit and on a later monster turn.
     local shifter = ctx:create()
 
     ctx:add(shifter, component.ACTOR, {

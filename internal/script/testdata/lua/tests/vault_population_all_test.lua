@@ -1,3 +1,5 @@
+-- Every selected vault population entity receives an ECS origin.
+
 local catalog = require("policy.generation.vaults.catalog")
 local component = require("constants.component")
 local effects = require("constants.vault_effects")
@@ -12,10 +14,12 @@ local trap_placement = require("policy.traps.placement")
 
 local test = {}
 
+-- Each arrival index seeds a reproducible vault placement draw sequence.
 local function random_context(seed)
     local context = {}
     local next_value = seed
 
+    -- Derive a repeatable draw sequence from the arrival index.
     function context:random_u64()
         next_value = (next_value * 1664525 + 1013904223) % 4294967296
 
@@ -25,6 +29,8 @@ local function random_context(seed)
     return context
 end
 
+-- Materialize records in a real component store with deterministic terrain
+-- and actor occupancy responses.
 local function entity_context()
     local world = {
         next_id = 0,
@@ -33,6 +39,7 @@ local function entity_context()
         cells = {},
     }
 
+    -- Allocate monotonically increasing IDs so fixture queries have stable order.
     function world:create()
         self.next_id = self.next_id + 1
         self.entities[self.next_id] = {}
@@ -40,26 +47,32 @@ local function entity_context()
         return self.next_id
     end
 
+    -- Store actual components for population materialization assertions.
     function world:add(entity, kind, value)
         self.entities[entity][kind] = value
     end
 
+    -- Read the fixture component table like the production ECS context.
     function world:get(entity, kind)
         return self.entities[entity] and self.entities[entity][kind]
     end
 
+    -- Share get() semantics when policies test component presence.
     function world:has(entity, kind)
         return self:get(entity, kind) ~= nil
     end
 
+    -- Replace a component in place for policies that update saved state.
     function world:set(entity, kind, value)
         self.entities[entity][kind] = value
     end
 
+    -- Return the fixture player that owns unique-artefact history.
     function world:player()
         return self.player_id
     end
 
+    -- Return entities having every requested component in stable ID order.
     function world:query(kinds)
         local found = {}
 
@@ -78,29 +91,35 @@ local function entity_context()
         return found
     end
 
+    -- Force first weighted choices while rejecting zero-sized source draws.
     function world:random(_, bound)
         harness.truthy(bound > 0, "invalid source random bound")
 
         return 0
     end
 
+    -- Keep fixture cells open so unresolved records, not terrain, cause failures.
     function world:walkable()
         return true
     end
 
+    -- Read terrain writes with floor and coordinate keys, defaulting to floor.
     function world:cell(level_id, x, y)
         return self.cells[level_id .. ":" .. x .. ":" .. y] or
             terrain.DNGN_FLOOR
     end
 
+    -- Remember terrain changes for later habitat and trap checks.
     function world:set_cell(level_id, x, y, feature)
         self.cells[level_id .. ":" .. x .. ":" .. y] = feature
     end
 
+    -- Expose prior actor placement so later records cannot overlap it.
     function world:actor_at(level_id, x, y)
         return self.actors[level_id .. ":" .. x .. ":" .. y]
     end
 
+    -- Write both occupancy and ECS position for materialized actors.
     function world:place_actor(entity, level_id, x, y)
         self.actors[level_id .. ":" .. x .. ":" .. y] = entity
         self:add(entity, component.POSITION, {
@@ -116,6 +135,8 @@ local function entity_context()
     return world
 end
 
+-- Every placed entity record must become either a typed outcome or an origin
+-- tracked ECS entity; authored "nothing" may resolve to no spawn.
 local function check_arrival(id, index)
     local source = catalog.get(id)
     local random = random_context(index)
@@ -170,11 +191,13 @@ local function check_arrival(id, index)
     end
 end
 
+-- Walk every selectable arrival and verify each resolved entity's origin or no-spawn outcome.
 function test.run()
     local ids = selection.eligible_ids()
 
     harness.equal(#ids, 337, "selectable source arrivals")
 
+    -- Iterate all selectable committed arrivals, including helper records.
     for index, id in ipairs(ids) do
         check_arrival(id, index)
     end

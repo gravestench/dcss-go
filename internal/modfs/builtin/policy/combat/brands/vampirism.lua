@@ -4,6 +4,8 @@ local brand = {
     after_death = true,
 }
 
+-- Example: brand.apply(ctx, hit) heals a wounded living attacker after a
+-- damaging strike, including a strike that killed the target.
 function brand.apply(ctx, hit)
     if hit.damage_done < 1 then
         return
@@ -15,7 +17,7 @@ function brand.apply(ctx, hit)
         return
     end
 
-    -- attack.cc:1428-1469: a 60% proc on a damaging living target.
+    -- attack.cc: a 60% proc on a damaging living target.
     if roll.melee(ctx, 5) < 2 then
         return
     end

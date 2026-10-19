@@ -1,9 +1,13 @@
+-- Ice Form should apply its source HP multiplier.
+
 local component = require("constants.component")
 local forms = require("policy.magic.effects.forms.player")
 local harness = require("tests.harness")
 
 local test = {}
 
+-- Compare untransformed and transformed resource calculations so form
+-- modifiers only apply while their ECS form state is present.
 function test.run(ctx)
     local player = ctx:create()
 

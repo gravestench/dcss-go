@@ -1,3 +1,5 @@
+-- Cosmetic flags affect what the player sees before identification, not the item base kind.
+
 -- Source: item-status-flag-type.h. These are physical appearance flags.
 local cosmetics = {
     NONE = 0,

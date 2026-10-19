@@ -1,3 +1,5 @@
+-- Shop vault selection respects the authored depth tag.
+
 local branches = require("ids.branches")
 local catalog = require("policy.generation.vaults.catalog")
 local depth = require("policy.generation.vaults.depth")
@@ -6,6 +8,8 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Probe both edges of authored branch ranges so a shop cannot appear one
+-- level early or after its specified destination ends.
 local function branch_ranges_and_exclusions()
     local small = catalog.get("kennysheep_mini")
 
@@ -28,6 +32,8 @@ local function branch_ranges_and_exclusions()
         "Zot:5 shop includes Zot:5")
 end
 
+-- Compare branch-specific serial chances with source rows to keep shop
+-- frequency tied to the branch rather than a global default.
 local function source_chance_rows()
     local serial = catalog.get("serial_shops")
 
@@ -39,9 +45,13 @@ local function source_chance_rows()
         100, "ordinary shop has no chance directive")
 end
 
+-- Select from weighted shop alternatives with a fixed low draw to verify
+-- stable source weights without depending on random sampling.
 local function weighted_shop_choice()
     local random = {}
 
+    -- Use the first weighted slot and assert that selection never requests
+    -- an empty range, which would make production RNG fail.
     function random:roll(bound)
         harness.truthy(bound > 0, "shop choice has a positive bound")
 
@@ -59,6 +69,8 @@ local function weighted_shop_choice()
         "selected vault is eligible at D:4")
 end
 
+-- Run range, chance, and weighted-choice cases together because each controls
+-- a separate gate before a shop vault is eligible for placement.
 function test.run()
     branch_ranges_and_exclusions()
     source_chance_rows()

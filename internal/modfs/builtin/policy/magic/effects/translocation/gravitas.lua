@@ -7,10 +7,12 @@ local net = require("policy.combat.net")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 
+-- Pull nearer monsters first so occupied cells become blockers in a deterministic order.
 local function closer_to_caster(left, right)
     return left.caster_distance < right.caster_distance
 end
 
+-- Gravitas resolves damage when pulled monsters collide instead of stacking occupants.
 local function collision(ctx, monster, other, power)
     local sides = 1 + math.floor(power / 10)
     local amount = 2 + ctx:random("spell", sides) +
@@ -32,6 +34,8 @@ local function collision(ctx, monster, other, power)
         " slams into something!")
 end
 
+-- Pull each monster toward the target cell one step at a time, stopping at an
+-- occupant and resolving collision damage instead of stacking actors.
 local function attract(ctx, monster, center, power)
     local distance = common.distance(monster.position, center)
     local strength = math.floor(((power + 100) / 20) /
@@ -79,6 +83,7 @@ end
 -- Source: spl-transloc.cc:fatal_attraction and cast_gravitas.
 local spell_effects = {}
 
+-- An impassable gravity center is rejected before paying the spell cost.
 function spell_effects.prepare(ctx, player, _, dx, dy)
     local position = ctx:get(player, component.POSITION)
 
@@ -88,6 +93,8 @@ function spell_effects.prepare(ctx, player, _, dx, dy)
     end
 end
 
+-- Example: resolve(ctx, player, intent, spell, 60) attracts actors around the
+-- selected cell; processing order keeps nearer blockers in place.
 function spell_effects.resolve(ctx, player, intent, _, power)
     local position = ctx:get(player, component.POSITION)
     local center = {

@@ -1,3 +1,5 @@
+-- Vault effect kinds preserve deferred placement instructions across save and restore.
+
 local effects = {
     DELAYED_DECAY = "delayed_decay",
     FEATURE_NAME = "feature_name",

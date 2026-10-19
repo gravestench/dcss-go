@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local harness = require("tests.harness")
@@ -11,10 +12,12 @@ local test = {}
 local caster = 101
 local foe = 202
 
+-- Sap Magic keeps its separate source power factor.
 function test.run()
     local definition = catalog.get("monsters", monsters.MONS_ORC_WIZARD)
     local ctx = {}
 
+    -- Expose the Orc Wizard caster stats used by Sap Magic power scaling.
     function ctx:get(entity, id)
         if entity == caster and id == component.ACTOR then
             return {
@@ -31,10 +34,12 @@ function test.run()
         return nil
     end
 
+    -- Deny optional status components so only spell profile power matters.
     function ctx:has()
         return false
     end
 
+    -- Choose the low roll for the source power-factor boundary.
     function ctx:random(_, bound)
         return 0
     end
@@ -61,6 +66,7 @@ function test.run()
     harness.truthy(hex.resisted(ctx, caster, foe, slow),
         "a monster can resist an ordinary source hex")
 
+    -- Choose the high roll for the alternate Sap Magic resistance boundary.
     function ctx:random(_, bound)
         return bound - 1
     end

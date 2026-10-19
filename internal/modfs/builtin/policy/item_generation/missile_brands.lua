@@ -6,6 +6,7 @@ local source = require("policy.item_generation.source_roll")
 
 local missile_brands = {}
 
+-- Depth and quality affect the chance of a branded missile stack.
 local function normal_weight(ctx, request)
     if request.quality == quality.GOOD or
         request.quality == quality.SUPERB then
@@ -17,6 +18,7 @@ local function normal_weight(ctx, request)
     return ctx:random(streams.ITEM_GENERATION, bound)
 end
 
+-- Curare becomes more likely with depth, but its denominator stays bounded above depth 27.
 local function curare_denominator(depth)
     if depth > 27 then
         return 6
@@ -29,6 +31,8 @@ local function curare_denominator(depth)
     return math.floor((364 - 7 * depth) / 25)
 end
 
+-- Example: missile_brands.roll(ctx, missile_kind, request) applies depth-sensitive Curare odds.
+-- Honor a requested ego before sampling only the dart, javelin, and boomerang source brand pools.
 function missile_brands.roll(ctx, definition, request)
     if request.ego then
         return request.ego
@@ -42,7 +46,7 @@ function missile_brands.roll(ctx, definition, request)
         return ""
     end
 
-    -- Source: crawl-ref/source/makeitem.cc:490-539. Both random weights
+    -- Source: crawl-ref/source/makeitem.cc. Both random weights
     -- are drawn before the subtype's brand choice.
     local ordinary = normal_weight(ctx, request)
     local poisoned = normal_weight(ctx, request)

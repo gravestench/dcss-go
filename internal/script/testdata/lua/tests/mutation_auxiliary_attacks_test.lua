@@ -1,3 +1,4 @@
+
 local auxiliary = require("policy.combat.auxiliary")
 local attacks = require("constants.auxiliary_attacks")
 local mutations = require("ids.mutations")
@@ -16,13 +17,16 @@ local will = require("policy.magic.effects.zaps.will")
 
 local test = {}
 
+-- Force auxiliary attack contact rolls while keeping natural-attack levels live.
 local function attack_context(ctx, player)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to auxiliary attacks fixture actor so player-only branches execute on that entity.
     function proxy.player()
         return player
     end
 
+    -- Force low melee draws so each available natural attack can trigger.
     function proxy.random(_, stream, _)
         harness.equal(stream, "melee", "auxiliary attacks use melee RNG")
 
@@ -32,6 +36,7 @@ local function attack_context(ctx, player)
     return proxy
 end
 
+-- Start each natural-attack case with identical combat and mutation levels.
 local function input()
     return {
         level = 27,
@@ -64,6 +69,7 @@ local function input()
     }
 end
 
+-- Source order keeps kick after constriction.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -78,6 +84,7 @@ function test.run(ctx)
     local battle = attack_context(ctx, player)
     local ordered = auxiliary.all()
 
+    -- A fixed auxiliary ordering determines which attacks spend RNG first.
     harness.equal(ordered[1].id, attacks.CONSTRICT.id,
         "source order starts with constriction")
     harness.equal(ordered[2].id, attacks.KICK.id,
@@ -88,10 +95,12 @@ function test.run(ctx)
         "source order keeps peck after headbutt")
     harness.equal(ordered[5].id, attacks.TAILSLAP.id,
         "source order keeps tail slap after peck")
+    -- Touch must resolve before the ordinary punch and bite opportunities.
     harness.equal(ordered[6].id, attacks.TOUCH.id,
         "source order puts touch before punch")
     harness.equal(ordered[7].id, attacks.PUNCH.id,
         "source order puts punch before bite")
+    -- Later auxiliary attacks are still considered after earlier misses.
     harness.equal(ordered[8].id, attacks.BITE.id,
         "source order keeps bite after punch")
     harness.equal(ordered[9].id, attacks.PSEUDOPODS.id,
@@ -177,6 +186,7 @@ function test.run(ctx)
 
     local stubborn = setmetatable({}, { __index = battle })
 
+    -- Force the high escape draw to keep the constrictor grip for comparison.
     function stubborn.random(_, stream, bound)
         harness.equal(stream, "melee", "escape uses melee RNG")
 
@@ -264,6 +274,7 @@ function test.run(ctx)
 
     local guarded = setmetatable({}, { __index = battle })
 
+    -- Vary shield draws by bound to isolate the auxiliary attack block path.
     function guarded.random(_, stream, bound)
         harness.equal(stream, "melee", "shield uses melee RNG")
 
@@ -306,6 +317,7 @@ function test.run(ctx)
 
     local spell = setmetatable({}, { __index = ctx })
 
+    -- Return a fixed spell resistance draw for the natural-attack will check.
     function spell.random(_, stream, _)
         harness.equal(stream, "spell", "will check uses spell RNG")
 

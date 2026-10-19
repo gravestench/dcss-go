@@ -1,3 +1,5 @@
+-- The modded warding ring exercises the shared resistance effect policy.
+
 local capabilities = require("constants.jewellery_capabilities")
 local categories = require("constants.catalog")
 local classes = require("ids.object_classes")

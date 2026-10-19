@@ -5,6 +5,8 @@ local effects = require("policy.mutations.effects.registry")
 
 local silence_aura = {}
 
+-- Publish one active radius flag; the aura owner computes its actual reach from this capability.
+-- Example: Silence Aura level one enables its radius flag rather than scaling radius by level.
 function silence_aura.radius(level)
     return level > 0 and 1 or 0
 end

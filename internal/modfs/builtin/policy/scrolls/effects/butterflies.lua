@@ -10,6 +10,7 @@ local summons = require("policy.magic.effects.summons.common")
 local effect = {}
 local RADIUS = 4
 
+-- Gather walkable unoccupied cells around the player before summon placement draws begin.
 local function open_cells(ctx, position)
     local cells = {}
 
@@ -28,6 +29,7 @@ local function open_cells(ctx, position)
     return cells
 end
 
+-- Known No Love rejection happens before spending the read action on impossible summons.
 function effect.prepare(ctx, player, request)
     if request.known and allies.forbidden(ctx, player) then
         return {
@@ -38,6 +40,8 @@ function effect.prepare(ctx, player, request)
     return nil
 end
 
+-- Example: Butterflies samples open nearby cells before attempting multiple summons.
+-- Recheck ally prohibition at apply time, then spawn only into sampled open cells.
 function effect.apply(ctx, player)
     if allies.forbidden(ctx, player) then
         ctx:emit("read", "Nothing happens.")

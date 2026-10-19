@@ -1,3 +1,4 @@
+
 local capabilities = require("constants.mutation_capabilities")
 local abilities = require("ids.abilities")
 local classes = require("constants.mutation_classes")
@@ -13,6 +14,7 @@ local vampire = require("policy.character.vampire")
 
 local test = {}
 
+-- Search the actual ability registry so blood-state tests cover menu gating.
 local function available(ctx, player, id)
     for _, option in ipairs(registry.available(ctx, player)) do
         if option.id == id then
@@ -23,6 +25,7 @@ local function available(ctx, player, id)
     return false
 end
 
+-- Partial-turn ritual saves are rejected.
 function test.run(ctx)
     local player = ctx:create()
 
@@ -55,6 +58,7 @@ function test.run(ctx)
 
     local ritual = ctx:get(player, component.VAMPIRE)
 
+    -- The blood ritual progresses in action units even when the action uses fewer aut.
     harness.equal(ritual.ritual_remaining_aut, 40,
         "a fast action advances the ritual by one source turn")
 
@@ -63,6 +67,7 @@ function test.run(ctx)
 
     local valid = pcall(vampire.validate, ctx, player)
 
+    -- Restore validation rejects an impossible ritual remainder.
     harness.falsy(valid, "partial-turn ritual saves are rejected")
     ritual.ritual_remaining_aut = 40
     ctx:set(player, component.VAMPIRE, ritual)
@@ -73,6 +78,7 @@ function test.run(ctx)
     state.alive = false
     ctx:set(player, component.VAMPIRE, state)
 
+    -- Ability availability and regeneration read the persisted vampire state after completion.
     harness.truthy(vampire.bloodless(ctx, player),
         "bloodless state is authoritative")
     harness.equal(effects.sum(ctx, player,

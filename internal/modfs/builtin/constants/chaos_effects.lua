@@ -1,3 +1,5 @@
+-- A chaos strike chooses one of these named effects before its effect policy changes state.
+
 -- Names for source chaos effect records used by player brand policy.
 local effects = {
     CLONE = "clone",

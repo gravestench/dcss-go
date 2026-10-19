@@ -81,6 +81,8 @@ local dyed = {
     [items.ARM_ANIMAL_SKIN] = true,
 }
 
+-- One source cosmetic tag uses subtype tables so armour can be embroidered, dyed, or shiny.
+-- Example: properties.cosmetic(robe_kind, cosmetics.EMBROIDERED_SHINY, "robe") uses its embroidered name.
 function properties.cosmetic(kind, cosmetic, base)
     if cosmetic == cosmetics.NONE then
         return base
@@ -110,6 +112,7 @@ function properties.cosmetic(kind, cosmetic, base)
     error("invalid cosmetic for " .. kind.id)
 end
 
+-- Weapon brands can lead the noun or follow it as "of X"; armour egos always use the suffix form.
 function properties.name(kind, ego, base)
     if ego == "" or ego == brands.NORMAL then
         return base

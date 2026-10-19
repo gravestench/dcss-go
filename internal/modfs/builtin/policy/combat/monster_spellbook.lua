@@ -5,6 +5,8 @@ local book_ids = require("ids.monster_spellbooks")
 
 local spellbook = {}
 
+-- Example: spellbook.for_actor(ctx, entity) with EMPTY_BOOK override -> no available spellbook
+-- A vault EMPTY_BOOK override suppresses casting even when the monster catalog names a spellbook.
 function spellbook.for_actor(ctx, entity)
     local actor = ctx:get(entity, component.ACTOR)
 
@@ -28,6 +30,7 @@ function spellbook.for_actor(ctx, entity)
     return catalog.get("monster_spellbooks", monster.spellbook_id)
 end
 
+-- The selected slot must still contain the requested spell when an intent is resolved.
 function spellbook.slot(book, index, spell_id)
     if type(index) ~= "number" or index < 1 or
         index ~= math.floor(index) then

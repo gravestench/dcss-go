@@ -5,6 +5,7 @@ local player_corrosion = require("policy.combat.player_corrosion")
 
 local acid = {}
 
+-- Example: acid.before_damage(ctx, nil, defender) with player defender -> attempted acid corrosion on player state
 -- beam.cc:mons_adjust_flavoured and bolt::affect_player apply corrosion
 -- after the ordinary acid hit. The status is stored on the defender.
 function acid.before_damage(ctx, _, defender)

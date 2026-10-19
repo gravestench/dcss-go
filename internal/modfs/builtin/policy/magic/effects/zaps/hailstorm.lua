@@ -7,11 +7,14 @@ local registry = require("policy.magic.effects.registry")
 
 local hailstorm = {}
 
+-- Use Chebyshev distance so diagonals and cardinals share the same ring limit.
 local function distance(source, target)
     return math.max(math.abs(target.x - source.x),
         math.abs(target.y - source.y))
 end
 
+-- Hailstorm excludes the caster's near cells and checks the annulus for a
+-- visible target before allowing the cast.
 local function in_ring(ctx, source, target, reach)
     return target.level_id == source.level_id and
         distance(source, target) > 1 and
@@ -20,6 +23,7 @@ local function in_ring(ctx, source, target, reach)
             target.x, target.y)
 end
 
+-- Require an eligible monster in the outer hail ring before allowing a known cast.
 function hailstorm.can_target(ctx, player, spell)
     local source = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)
@@ -42,6 +46,7 @@ function hailstorm.can_target(ctx, player, spell)
     return false
 end
 
+-- Random rounding sets die size before the three spell-stream damage dice.
 local function roll_damage(ctx, power)
     -- zap-data.h:ZAP_HAILSTORM uses calcdice<3,10,1,2>.
     local maximum = 10 + math.floor(math.min(power, 100) / 2)
@@ -61,6 +66,7 @@ local function roll_damage(ctx, power)
     return rolled
 end
 
+-- Leave sixty percent of ice damage outside cold resistance per the source rule.
 local function cold_damage(raw, definition)
     -- fight.cc:BEAM_ICE leaves 60% irresistible to cold resistance.
     local resistible = math.floor(raw * 40 / 100)
@@ -69,6 +75,9 @@ local function cold_damage(raw, definition)
         damage.elemental(resistible, definition, "MR_RES_COLD")
 end
 
+-- Example: resolve(ctx, player, nil, spell, 60) damages monsters in the ring
+-- after their armour and cold resistance, leaving adjacent actors untouched.
+-- Use the same outer-ring predicate as target preview, then roll each victim’s armour and partial cold resistance.
 function hailstorm.resolve(ctx, player, _, spell, power)
     local source = ctx:get(player, component.POSITION)
     local reach = range.for_spell(ctx, player, spell)

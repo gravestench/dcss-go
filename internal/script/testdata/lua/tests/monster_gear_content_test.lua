@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local harness = require("tests.harness")
@@ -8,6 +9,8 @@ local validation = require("content.validation")
 
 local test = {}
 
+-- Gear specs stay attached to their source monster, including explicit empty
+-- brand rows that differ from absent optional gear.
 local function source_rows_have_owners()
     local primary = 0
     local secondary = 0
@@ -43,6 +46,7 @@ local function source_rows_have_owners()
     harness.falsy(rat.weapon_gear, "Rat unexpectedly owns weapon gear")
 end
 
+-- Weighted weapon alternatives require a strictly positive weight.
 local function invalid_weapon_weight_is_rejected()
     local goblin = catalog.get(categories.MONSTERS, monsters.MONS_GOBLIN)
     local choice = goblin.weapon_gear.primary.weapons[1]
@@ -57,6 +61,7 @@ local function invalid_weapon_weight_is_rejected()
         "invalid weapon error omits field")
 end
 
+-- A weapon sentinel cannot be accepted as a brand ID in a gear row.
 local function invalid_brand_reference_is_rejected()
     local pikel = catalog.get(categories.MONSTERS, monsters.MONS_PIKEL)
     local choice = pikel.weapon_gear.primary.brands[1]
@@ -71,6 +76,7 @@ local function invalid_brand_reference_is_rejected()
         "invalid brand error omits rule")
 end
 
+-- Replace a valid weapon ID with a missing one and require source-site catalog validation.
 local function invalid_weapon_reference_is_rejected()
     local goblin = catalog.get(categories.MONSTERS, monsters.MONS_GOBLIN)
     local choice = goblin.weapon_gear.primary.weapons[1]
@@ -85,6 +91,7 @@ local function invalid_weapon_reference_is_rejected()
         "missing weapon error omits rule")
 end
 
+-- Catalog validation rejects monster gear that names a missing weapon definition.
 function test.run()
     source_rows_have_owners()
     invalid_weapon_weight_is_rejected()

@@ -1,3 +1,4 @@
+-- Example: An invalid keyed MONS slot fails at its DES source site before map placement.
 local directives = require("constants.vault_directives")
 local choice = require("policy.generation.vaults.specs.choice")
 local monster = require("policy.generation.vaults.specs.monster")
@@ -6,6 +7,7 @@ local resolve = require("policy.generation.vaults.specs.resolve")
 
 local validate = {}
 
+-- Parse authored MONS and ITEM text before placement so malformed keyed slots fail at their source site.
 function validate.operation(vault, operation)
     local parser
     local validate_name

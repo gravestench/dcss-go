@@ -1,3 +1,4 @@
+-- Example: A qualifying hit sets Curl for the monster phase; reset clears it afterward.
 local causes = require("constants.damage_causes")
 local component = require("constants.component")
 local mutations = require("ids.mutations")
@@ -5,6 +6,7 @@ local levels = require("policy.mutations.levels")
 
 local curl = {}
 
+-- Read the reaction bit retained across the monster phase after a qualifying hit.
 function curl.active(ctx, player)
     local state = ctx:get(player, component.CURL)
 
@@ -30,6 +32,7 @@ function curl.on_damage(ctx, player, amount, cause)
     end
 end
 
+-- Leaving the threatened damage sequence clears the temporary curl bonus.
 function curl.reset(ctx, player)
     local state = ctx:get(player, component.CURL)
 

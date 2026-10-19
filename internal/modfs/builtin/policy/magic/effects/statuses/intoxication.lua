@@ -6,6 +6,7 @@ local statuses = require("policy.magic.effects.statuses.player")
 
 local intoxication = {}
 
+-- Read the catalog's explicit poison level for intoxication's immunity and partial-resist rolls.
 local function poison_resistance(definition)
     for _, resistance in ipairs(definition.resistances or {}) do
         if resistance.id == "MR_RES_POISON" then
@@ -16,6 +17,7 @@ local function poison_resistance(definition)
     return 0
 end
 
+-- Only sapient monsters below full poison immunity can be confused by this spell.
 local function susceptible(definition)
     local intelligence = definition.intelligence_id
 
@@ -27,6 +29,7 @@ local function susceptible(definition)
     return poison_resistance(definition) < 3
 end
 
+-- Snapshot visible susceptible monsters so cast eligibility and resolution see the same target class.
 local function visible_targets(ctx, player)
     local targets = {}
     local origin = ctx:get(player, component.POSITION)
@@ -57,10 +60,13 @@ local function visible_targets(ctx, player)
     return targets
 end
 
+-- Example: One visible susceptible monster makes Intoxication targetable before its resistance roll.
+-- Use the cast path's susceptible-target scan to avoid offering a cast with no possible victims.
 function intoxication.can_target(ctx, player)
     return #visible_targets(ctx, player) > 0
 end
 
+-- Intoxication rolls against visible susceptible monsters after the player pays the casting cost.
 function intoxication.cast(ctx, player, power)
     ctx:emit("spell", "You attempt to intoxicate your foes!")
     local count = 0

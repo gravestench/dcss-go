@@ -7,6 +7,8 @@ local timer = require("policy.traps.timer")
 
 local system = {}
 
+-- Theory of operation: The post-move cell activates traps before combat; trap timers also age on non-move actions.
+-- Trap activation sees the destination after movement and can affect combat before it resolves.
 function system.update(ctx, actor, aut)
     if actor == ctx:player() then
         mark.tick(ctx, actor, aut)

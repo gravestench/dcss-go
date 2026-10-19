@@ -1,3 +1,4 @@
+
 local catalog = require("policy.catalog")
 local equipment = require("policy.inventory.equipment")
 local records = require("policy.mutations.records")
@@ -11,6 +12,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Human can wear gloves without claws.
 function test.run(ctx)
     local player = ctx:create()
     local species = catalog.get("species", species_ids.SP_HUMAN)

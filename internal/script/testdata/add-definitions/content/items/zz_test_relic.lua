@@ -1,3 +1,5 @@
+-- A unique relic in a custom item class tests catalog loading without random generation.
+
 local categories = require("constants.catalog")
 
 local definition = {

@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.summon_mark",
     version = 1,
+    -- The marked victim retains caster, expiry, and power until death can create a simulacrum.
     fields = {
         owner = {
             type = "entity",

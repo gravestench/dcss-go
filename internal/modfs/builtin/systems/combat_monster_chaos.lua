@@ -3,6 +3,8 @@ local chaos = require("policy.combat.player_brands.chaos_status")
 
 local system = {}
 
+-- Theory of operation: Chaos duration and behavioral shift are committed before AI chooses the next intent.
+-- Chaos status on monsters ticks before AI decides an intent.
 function system.update(ctx, monster)
     if ctx:has(monster, component.AI) then
         chaos.tick(ctx, monster, 10)

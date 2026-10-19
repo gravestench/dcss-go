@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local mutations = require("ids.mutations")
@@ -13,9 +14,11 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Bind spell enhancers player lookup to this owner while preserving live ECS component reads.
 local function player_context(ctx, player)
     local proxy = setmetatable({}, { __index = ctx })
 
+    -- Bind policy ownership to spell enhancers fixture actor so player-only branches execute on that entity.
     function proxy.player()
         return player
     end
@@ -23,6 +26,7 @@ local function player_context(ctx, player)
     return proxy
 end
 
+-- Seed exact school skill points before comparing mutation spell enhancers.
 local function trained_player(ctx)
     local player = ctx:create()
     local points = formulas.skill_points_needed(5, 0)
@@ -60,6 +64,7 @@ local function trained_player(ctx)
     return player
 end
 
+-- Half-health Augmentation keeps only one tier.
 function test.run(ctx)
     local player = trained_player(ctx)
     local hex = catalog.get("spells", spells.SPELL_CONFUSING_TOUCH)
@@ -81,6 +86,7 @@ function test.run(ctx)
         "Bedeviling applies one Hexes enhancement")
     harness.equal(power.cast(ctx, player, necro), 15,
         "In Touch with Death applies one Necromancy enhancement")
+    -- Enhancers are applied in sequence with source integer rounding after each step.
     harness.equal(power.cast(ctx, player, mixed), 22,
         "multi-school enhancement levels stack with each-step rounding")
 
@@ -100,6 +106,7 @@ function test.run(ctx)
     health.current = 49
     ctx:set(player, component.HEALTH, health)
 
+    -- Health thresholds are read at cast time rather than cached on mutation grant.
     harness.equal(power.cast(ctx, player, hex), 15,
         "Augmentation disappears below its first HP threshold")
 

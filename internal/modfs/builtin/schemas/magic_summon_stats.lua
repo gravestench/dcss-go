@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.summon_stats",
     version = 1,
+    -- The rolled hit-dice override remains attached to the summoned actor for derived stats.
     fields = {
         hd = {
             type = "int64",

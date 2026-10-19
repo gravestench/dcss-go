@@ -2,6 +2,7 @@ local catalog = require("policy.generation.vaults.catalog")
 
 local vaults = {}
 
+-- A saved vault ID must resolve for the floor where its placement was recorded.
 local function known(id, level_id)
     local ok = pcall(catalog.get, id)
 
@@ -11,6 +12,8 @@ local function known(id, level_id)
     end
 end
 
+-- Vault IDs in a save must still resolve against the active catalog.
+-- Example: vaults.validate(nil, input) rejects a saved vault ID missing from the scenario catalog.
 function vaults.validate(_, input)
     for _, level in ipairs(input.levels or {}) do
         if level.vault_id and level.vault_id ~= "" then

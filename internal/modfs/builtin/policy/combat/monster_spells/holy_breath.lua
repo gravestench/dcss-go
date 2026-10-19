@@ -10,6 +10,8 @@ local holy_breath = {}
 local profile = catalog.get(categories.MONSTER_BEAMS,
     spells.SPELL_HOLY_BREATH)
 
+-- Example: holy_breath.plan(ctx, caster, foe) with clear breath path -> saved aim for later holy-cloud placement
+-- Saves a safe aim; contact damage and endpoint cloud placement occur only at resolution.
 function holy_breath.plan(ctx, caster, foe)
     return beam.plan(ctx, caster, foe, profile)
 end
@@ -27,6 +29,7 @@ function holy_breath.after_endpoint(ctx, caster, _, _, endpoint)
         cloud_sizes.BASE_POWER, count, "monster_spell")
 end
 
+-- Resolve the damaging breath before placing its variable holy cloud at the endpoint.
 function holy_breath.resolve(ctx, caster, foe, _, plan)
     return beam.resolve(ctx, caster, foe, profile, plan, holy_breath)
 end

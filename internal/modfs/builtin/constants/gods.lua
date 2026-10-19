@@ -1,3 +1,5 @@
+-- God IDs identify divine sources used by gifts, abilities, and monster attitude rules.
+
 local gods = {
     NO_GOD = "GOD_NO_GOD",
     TROG = "GOD_TROG",

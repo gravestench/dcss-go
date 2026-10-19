@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local abilities = require("ids.abilities")
 local harness = require("tests.harness")
@@ -17,6 +18,7 @@ local records = require("policy.mutations.records")
 
 local test = {}
 
+-- A three-cell Rolling Charge doubles damage before armour.
 function test.run(ctx)
     local player = ctx:create()
     local monster = ctx:create()
@@ -48,22 +50,27 @@ function test.run(ctx)
 
     local world = setmetatable({}, { __index = ctx })
 
+    -- Bind the planning world to the charging player.
     function world.player()
         return player
     end
 
+    -- Make rolling charge sight deterministic while leaving actor positions to the ECS fixture.
     function world.visible()
         return true
     end
 
+    -- Allow the straight charge path across the fixture floor.
     function world.walkable()
         return true
     end
 
+    -- Return rolling charge fixture terrain that gates the environmental branch.
     function world.cell()
         return terrain.DNGN_FLOOR
     end
 
+    -- Expose rolling charge fixture occupant at the queried cell for collision or targeting.
     function world.actor_at(_, _, x, y)
         if x == 4 and y == 1 then
             return monster
@@ -79,6 +86,7 @@ function test.run(ctx)
 
     harness.equal(plan.destination.x, 3,
         "Rolling Charge stops beside the first monster")
+    -- The damage bonus uses completed steps, not the originally selected target distance.
     harness.equal(plan.distance, 2,
         "charge bonus uses distance actually travelled")
     harness.equal(plan.target, monster,
@@ -86,6 +94,7 @@ function test.run(ctx)
 
     local blocked = setmetatable({}, { __index = world })
 
+    -- Block the intermediate square to reject a charge through terrain.
     function blocked.walkable(_, _, x, y)
         return x ~= 2 or y ~= 1
     end
@@ -97,15 +106,18 @@ function test.run(ctx)
 
     harness.falsy(no_plan,
         "Rolling Charge cannot pass through a wall")
+    -- A wall rejection must happen before action time or melee damage is committed.
     harness.truthy(rejection,
         "blocked charge has a no-time explanation")
 
     local battle = setmetatable({}, { __index = ctx })
 
+    -- Bind combat timing to the same player after the plan is resolved.
     function battle.player()
         return player
     end
 
+    -- Use high melee draws so the charge damage comparison is deterministic.
     function battle.random(_, _, bound)
         return bound - 1
     end
@@ -132,6 +144,7 @@ function test.run(ctx)
         behavior = "wander",
     })
 
+    -- Commit the Rolling Charge endpoint so movement distance can be asserted.
     function world.move_actor(_, entity, level_id, x, y)
         ctx:set(entity, component.POSITION, {
             level_id = level_id,
@@ -140,19 +153,23 @@ function test.run(ctx)
         })
     end
 
+    -- Freeze rolling charge world time; the explicit aut argument drives every timer change.
     function world.aut()
         return 0
     end
 
+    -- Force the low ability draw after the mocked charge attack.
     function world.random()
         return 0
     end
 
+    -- Capture rolling charge events separately from the policy state being asserted.
     function world.emit()
     end
 
     local original_attack = melee_actions.player
 
+    -- Suppress ordinary melee so the charge noise assertion isolates the ability path.
     melee_actions.player = function()
     end
 
@@ -170,14 +187,17 @@ function test.run(ctx)
     local original_scale = player_movement.scale
     local original_delay = attack_delay.player
 
+    -- Pin base movement to 12 aut while testing Rolling Charge action cost.
     player_movement.base = function()
         return 12
     end
 
+    -- Keep scaled movement at 12 aut so attack delay controls the cost comparison.
     player_movement.scale = function()
         return 12
     end
 
+    -- Pin attack delay at 18 aut to test the slower charge cost branch.
     attack_delay.player = function()
         return 18
     end
@@ -191,6 +211,7 @@ function test.run(ctx)
     player_movement.scale = original_scale
     attack_delay.player = original_delay
 
+    -- Movement and attack share the slower weapon timing after a valid charge.
     harness.equal(cost, 18,
         "Rolling Charge keeps the slower weapon attack delay")
 end

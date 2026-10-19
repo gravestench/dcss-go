@@ -7,6 +7,7 @@ local physiology = require("policy.mutations.physiology")
 
 local effect = {}
 
+-- Physiology and current form gate mutation before any removal or addition rolls.
 function effect.can_quaff(ctx, player)
     if not physiology.can_safely_mutate(ctx, player) then
         if physiology.can_safely_mutate(ctx, player, false) then
@@ -19,6 +20,7 @@ end
 
 -- Source: potion.cc:PotionMutation::effect. Both count rolls precede the
 -- removal and addition loops; resistance can block each attempt.
+-- Example: a Mutation potion rolls separate removal and addition counts on the potion stream.
 function effect.apply(ctx, player)
     ctx:emit("quaff", "You feel extremely strange.")
 

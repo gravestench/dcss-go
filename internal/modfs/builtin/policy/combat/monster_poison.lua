@@ -6,6 +6,7 @@ local hex_status = require("policy.combat.monster_hexes.status")
 
 local poison = {}
 
+-- Treat undead and nonliving monsters as poison immune unless the catalog gives an explicit level.
 function poison.resistance(definition)
     for _, entry in ipairs(definition.resistances or {}) do
         if entry.id == "MR_RES_POISON" then
@@ -34,8 +35,9 @@ function poison.effective_resistance(ctx, monster, definition)
     return value
 end
 
+-- Scale poison duration by actor speed and degree before asymmetric random fuzzing.
 local function duration(ctx, speed, degree)
-    -- mon-ench.cc:2269,2379-2384 gives poison an actor-speed-adjusted,
+    -- mon-ench.cc,2379-2384 gives poison an actor-speed-adjusted,
     -- asymmetrically fuzzed duration. Keep its draws on the combat stream.
     speed = math.max(1, math.min(100, speed))
 
@@ -51,6 +53,7 @@ local function duration(ctx, speed, degree)
     return math.max(15, raw + fuzz - low)
 end
 
+-- Respect immunity, then merge poison degree and duration while retaining source credit.
 function poison.apply(ctx, monster, definition, levels, source, force,
     player_credit)
     if levels <= 0 then
@@ -102,6 +105,8 @@ function poison.apply(ctx, monster, definition, levels, source, force,
     return true
 end
 
+-- Example: poison.tick(ctx, monster) with expired dose -> poison state removed
+-- Apply periodic poison damage and expire the dose without losing attacker attribution.
 function poison.tick(ctx, monster)
     local state = ctx:get(monster, "projectile.poison")
 
@@ -138,7 +143,7 @@ function poison.tick(ctx, monster)
         end
     end
 
-    -- mon-ench.cc:1074-1135 decays one normal action at a time and lowers
+    -- mon-ench.cc decays one normal action at a time and lowers
     -- high poison degrees as their duration approaches zero.
     state.remaining_aut = state.remaining_aut - 10
 
@@ -161,6 +166,7 @@ function poison.tick(ctx, monster)
     ctx:set(monster, "projectile.poison", state)
 end
 
+-- Reject corrupt degree or duration state before subsequent poison ticks consume it.
 function poison.validate(ctx, monster)
     local state = ctx:get(monster, "projectile.poison")
 

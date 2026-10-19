@@ -6,6 +6,8 @@ local sticky = require("policy.combat.sticky_flame")
 
 local effect = {}
 
+-- Example: A damaging Sticky Flame hit attaches the timed burning state to its target.
+-- Only a landed projectile delegates lingering Sticky Flame to the combat status policy.
 function effect.after_hit(ctx, source, target, _, dealt)
     local actor = ctx:get(target, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)

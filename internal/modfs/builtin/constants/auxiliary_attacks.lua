@@ -1,3 +1,5 @@
+-- Auxiliary attack ordering follows the source attack sequence and leaves gaps for modded additions.
+
 -- Source: melee-attack.cc:aux_attack_types. Sparse order values leave room
 -- for a modded attack to enter between source attack types.
 local attacks = {

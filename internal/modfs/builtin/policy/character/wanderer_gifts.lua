@@ -1,3 +1,4 @@
+-- Example: A rolled potion gift records quantity and charges before the item is created.
 -- Source: ng-wanderer.cc. These are starting gifts, not a runtime item adapter.
 local catalog = require("policy.catalog")
 local equipment = require("policy.inventory.equipment")
@@ -8,6 +9,10 @@ local spells = require("policy.character.wanderer_spells")
 local potion_rules = require("policy.character.potion_rules")
 
 local gifts = {}
+
+-- DCSS Wanderer chooses a strong gift, a weaker gift and an extra consumable
+-- from its rolled training. These tables map a skill to gear, then the rules
+-- below reject gifts a species cannot use or that duplicate earlier gifts.
 
 local weapon_for_skill = {
     SK_AXES = "WPN_HAND_AXE",
@@ -35,10 +40,12 @@ local auxiliary = {
     "ARM_CLOAK",
 }
 
+-- Keep all Wanderer gift draws on the character-creation RNG stream.
 local function roll(ctx, bound)
     return ctx:random("character", bound)
 end
 
+-- Normalize optional quantity, plus, ego, and charges before item creation.
 local function grant(id, quantity, plus, ego, charges)
     return {
         kind_id = id,
@@ -49,10 +56,13 @@ local function grant(id, quantity, plus, ego, charges)
     }
 end
 
+-- Append normalized gifts in their draw order so occupied slots are resolved consistently.
 local function add(grants, id, quantity, plus, ego, charges)
     grants[#grants + 1] = grant(id, quantity, plus, ego, charges)
 end
 
+-- All gift draws use the saved character RNG stream, including weighted
+-- choices. A restored start must reproduce the same grants for the seed.
 local function weighted(ctx, options)
     local total = 0
 
@@ -73,6 +83,7 @@ local function weighted(ctx, options)
     error("wanderer gift choice exhausted")
 end
 
+-- Filter gifts the species cannot use before weighting the remaining consumables.
 local function consumable(ctx, species, good)
     local no_drink = not potion_rules.can_drink(ctx, ctx:player())
     local stasis = traits.stasis(species)
@@ -160,10 +171,12 @@ local function consumable(ctx, species, good)
     return grant(weighted(ctx, options))
 end
 
+-- Index one-based Lua lists from zero-based creation-stream draws.
 local function random_from(ctx, ids)
     return ids[roll(ctx, #ids) + 1]
 end
 
+-- Average three independent rolls to make strong evoker charges less extreme.
 local function average_sixteen(ctx)
     local total = 0
 
@@ -174,6 +187,7 @@ local function average_sixteen(ctx)
     return math.floor(total / 3)
 end
 
+-- A strong evoker gift chooses from higher-impact tools before charge calculation.
 local function good_evoker(ctx, grants)
     if roll(ctx, 3) == 0 then
         local misc = {
@@ -225,6 +239,7 @@ local function good_evoker(ctx, grants)
     add(grants, id, 1, 0, "", charges)
 end
 
+-- The weaker evoker path can give a chessboard or wand without the strong pool.
 local function decent_evoker(ctx, grants)
     if roll(ctx, 3) == 0 then
         add(grants, "MISC_XOMS_CHESSBOARD")
@@ -235,6 +250,7 @@ local function decent_evoker(ctx, grants)
     add(grants, id, 1, 0, "", 3 + roll(ctx, 5))
 end
 
+-- Pick a usable secondary armour slot not already occupied by an earlier gift.
 local function aux_armour(ctx, species, grants, plus)
     local chosen
     local seen = 0
@@ -255,6 +271,7 @@ local function aux_armour(ctx, species, grants, plus)
     end
 end
 
+-- A good weapon gift may upgrade or brand the skill's base item before slot assignment.
 local function weapon(ctx, skill, good, grants)
     if skill == "SK_THROWING" then
         if good then
@@ -282,6 +299,7 @@ local function weapon(ctx, skill, good, grants)
     add(grants, id, 1, good and not upgrade and 2 or 0, ego)
 end
 
+-- Inspect the latest granted weapon so later gifts avoid incompatible duplication.
 local function last_weapon(grants)
     for index = #grants, 1, -1 do
         local entry = grants[index]
@@ -295,6 +313,8 @@ local function last_weapon(grants)
     return nil
 end
 
+-- The strong gift follows the selected skill. Fighting delegates to a
+-- weighted weapon role because it does not identify one weapon family.
 function gifts.good(ctx, species, skill, grants, weapon_roles)
     if skill == "SK_FIGHTING" then
         skill = weighted(ctx, weapon_roles)
@@ -345,6 +365,9 @@ function gifts.good(ctx, species, skill, grants, weapon_roles)
     return skill, {}
 end
 
+-- The second gift first resolves incompatible or repeated skills. This
+-- avoids giving unusable shields or redundant equipment after the good gift.
+-- The weaker gift checks already received gear so a duplicate weapon can become a useful fallback.
 function gifts.decent(ctx, species, skill, grants, received)
     local current_weapon = last_weapon(grants)
     local weapon_kind = current_weapon and
@@ -404,6 +427,7 @@ function gifts.decent(ctx, species, skill, grants, received)
     return skill, {}
 end
 
+-- The final consumable is chosen after both equipment gifts have settled.
 function gifts.extra(ctx, species, grants)
     grants[#grants + 1] = consumable(ctx, species, roll(ctx, 2) == 0)
 end

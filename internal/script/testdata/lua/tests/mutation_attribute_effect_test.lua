@@ -1,3 +1,4 @@
+
 local attributes = require("policy.character.attributes")
 local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
@@ -5,6 +6,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Seed attribute effect owner components once so each branch changes only the mutation under test.
 local function player(ctx, mutation_id, level)
     local owner = ctx:create()
 
@@ -19,6 +21,7 @@ local function player(ctx, mutation_id, level)
     return owner
 end
 
+-- Source player strength query floors at zero.
 function test.run(ctx)
     local vectors = {
         {
@@ -91,6 +94,7 @@ function test.run(ctx)
 
     harness.equal(attributes.current(ctx, capped).strength, 125,
         "source maximum stat is 125")
+    -- Mutation modifiers belong to the derived query, leaving saved base attributes intact.
     harness.equal(ctx:get(capped, "core.attributes").strength, 120,
         "derived mutation stats do not overwrite base attributes")
 
@@ -100,6 +104,7 @@ function test.run(ctx)
     low.strength = 1
     ctx:set(drained, "core.attributes", low)
 
+    -- The derived floor is applied after all negative and positive stat modifiers.
     harness.equal(attributes.current(ctx, drained).strength, 0,
         "source player strength query floors at zero")
 end

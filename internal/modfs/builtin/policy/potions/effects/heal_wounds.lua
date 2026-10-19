@@ -7,6 +7,8 @@ local component = require("constants.component")
 
 local effect = {}
 
+-- Reject ineffective healing before consumption, including Death's Door and full HP.
+-- Example: full HP or Death's Door rejects Heal Wounds before the bottle is spent.
 function effect.can_quaff(ctx, player)
     if not potion_rules.can_heal(ctx, player) then
         return "You cannot be healed by potions."

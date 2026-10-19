@@ -3,6 +3,7 @@
 register.component{
     id = "projectile.net",
     version = 1,
+    -- Durability stays on the thrown item while the held actor links to that same net entity.
     fields = {
         durability = {
             type = "int64",

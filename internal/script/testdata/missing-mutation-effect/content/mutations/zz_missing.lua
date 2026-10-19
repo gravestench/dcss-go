@@ -1,3 +1,5 @@
+-- An active mutation without an effect module should fail behavior coverage.
+
 local categories = require("constants.catalog")
 
 local definition = {

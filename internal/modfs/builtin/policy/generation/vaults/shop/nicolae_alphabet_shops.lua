@@ -1,8 +1,10 @@
+-- Example: Only letters with enough stock for a five-item shop enter the candidate set.
 local content = require("policy.generation.vaults.shop.alphabet_content")
 local directives = require("constants.vault_directives")
 
 local handler = {}
 
+-- Only letters with enough stock for a five-item shop enter the candidate set.
 local function available_letters()
     local letters = {}
 
@@ -20,6 +22,7 @@ end
 
 local letters = available_letters()
 
+-- A rare N draw uses Nicolae; other initials transform a generated owner name.
 local function owner_name(api, letter)
     if letter == "N" and api:one_in(20) then
         return "Nicolae"
@@ -30,7 +33,7 @@ local function owner_name(api, letter)
     return letter .. random_name:sub(2)
 end
 
--- Port of builder/alphashops.des:225-238 and its pinned prelude.
+-- Pick one eligible initial, reserve its unique tag, then draw stock from that letter's catalog.
 local function configure_alphabet_shop(api)
     if api:validating() then
         return

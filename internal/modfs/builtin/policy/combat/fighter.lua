@@ -26,6 +26,8 @@ local artefact_ids = require("ids.artefact_properties")
 
 local fighter = {}
 
+-- Missing mandatory player components fail at the combat boundary instead of
+-- silently producing a zeroed attack or defense.
 local function required(ctx, entity, component)
     local value = ctx:get(entity, component)
 
@@ -36,6 +38,8 @@ local function required(ctx, entity, component)
     return value
 end
 
+-- Fractional skill progress uses the XP cost between adjacent levels after
+-- applying species aptitude and the 9/18/26 source breakpoints.
 local function cost(level, aptitude)
     local points = 25 * level * (level + 1)
 
@@ -49,12 +53,16 @@ local function cost(level, aptitude)
     return math.floor(points * 2 ^ (-aptitude / 4))
 end
 
+-- Example: with player.species_id = "SP_HUMAN", fighter.species(ctx) returns the Human catalog definition.
+-- Aptitude and body-size formulas must read the same species chosen at character creation.
 function fighter.species(ctx)
     local choice = required(ctx, ctx:player(), "core.player")
 
     return catalog.get("species", choice.species_id)
 end
 
+-- Interpolate saved XP points between adjacent aptitude-adjusted skill costs;
+-- callers choose a scale to avoid premature rounding in combat formulas.
 function fighter.skill(ctx, id, scale)
     local skills = required(ctx, ctx:player(), "core.skills")
     local species = fighter.species(ctx)
@@ -78,6 +86,8 @@ function fighter.skill(ctx, id, scale)
     return 0
 end
 
+-- Some source armour and shield formulas use whole skill levels rather than
+-- the fractional progress returned by fighter.skill.
 function fighter.skill_level(ctx, id)
     local skills = required(ctx, ctx:player(), "core.skills")
 
@@ -90,10 +100,13 @@ function fighter.skill_level(ctx, id)
     return 0
 end
 
+-- Combat reads effective levels after species and form activity gates.
 function fighter.mutation(ctx, id)
     return mutation_levels.effective(ctx, ctx:player(), id)
 end
 
+-- Build the live attack snapshot from form, skills, and worn weapon; a held
+-- launcher contributes Fighting but no melee weapon damage or brand.
 function fighter.attack(ctx, defender)
     local player = ctx:player()
     local attributes = player_attributes.current(ctx, player)
@@ -162,6 +175,8 @@ function fighter.attack(ctx, defender)
     return input
 end
 
+-- Validate equipped armour once and normalize missing slots to zero values
+-- before EV and AC formulas combine body and auxiliary pieces.
 local function armour_piece(entry)
     if not entry then
         return { ac = 0, ev = 0, plus = 0 }
@@ -178,6 +193,8 @@ local function armour_piece(entry)
     }
 end
 
+-- Derive EV, AC, and SH from the same worn snapshot so form-disabled slots
+-- cannot leak a passive bonus through another calculation.
 function fighter.defense(ctx)
     local player = ctx:player()
     local attributes = player_attributes.current(ctx, player)
@@ -212,6 +229,8 @@ function fighter.defense(ctx)
         mutation_capabilities.BODY_ENCUMBRANCE_REDUCTION)
     local body_encumbrance = math.max(0,
         math.floor(-body.ev / 10) - sturdy_reduction)
+    -- Body encumbrance penalizes dodge quadratically; auxiliary armour has a
+    -- separate linear piece penalty before the final EV rounding.
     local body_penalty = math.floor(
         2 * body_encumbrance ^ 2 * (450 - armour_skill * 10) * 100 /
         (5 * (strength + 3)) / 450
@@ -292,6 +311,8 @@ function fighter.defense(ctx)
         body_ac = body_ac - body.ac * 50
     end
 
+    -- Keep AC in hundredths until armour skill, status, form, mutation, and
+    -- jewellery terms have all been summed.
     local scaled_ac = body_ac + body.plus * 100
 
     for _, piece in ipairs(auxiliary) do

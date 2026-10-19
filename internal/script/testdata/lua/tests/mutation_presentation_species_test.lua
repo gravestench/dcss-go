@@ -1,3 +1,4 @@
+
 local component = require("constants.component")
 local jobs = require("ids.jobs")
 local mutations = require("ids.mutations")
@@ -8,6 +9,7 @@ local harness = require("tests.harness")
 
 local test = {}
 
+-- Create a species-specific owner before the presentation rows are rendered.
 local function add_player(ctx, species_id)
     local player = ctx:create()
 
@@ -20,6 +22,7 @@ local function add_player(ctx, species_id)
     return player
 end
 
+-- Combine species mutation rows so Antennae and Stasis order can be compared.
 local function text_of(result)
     local lines = {}
 
@@ -30,6 +33,7 @@ local function text_of(result)
     return table.concat(lines, "\n")
 end
 
+-- Water species without Mertail shows amphibiousness.
 function test.run(ctx)
     local formicid = add_player(ctx, species.SP_FORMICID)
 

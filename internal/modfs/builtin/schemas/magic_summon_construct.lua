@@ -2,6 +2,7 @@
 local schema = {
     id = "magic.summon_construct",
     version = 1,
+    -- Construct power and charge determine future attacks without rerolling its original cast.
     fields = {
         power = {
             type = "int64",

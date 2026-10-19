@@ -2,6 +2,8 @@ local component = require("constants.component")
 local enfeeble = require("policy.magic.effects.statuses.enfeeble")
 local system = {}
 
+-- Theory of operation: The enfeeble component is aged before AI evaluates attacks.
+-- Enfeeblement duration is updated before monster combat choices are made.
 function system.update(ctx, entity)
     if ctx:has(entity, component.AI) then
         enfeeble.tick(ctx, entity)

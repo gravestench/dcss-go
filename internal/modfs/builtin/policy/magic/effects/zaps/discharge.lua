@@ -12,6 +12,7 @@ local directions = {
     { -1, 1 },  { 0, 1 },  { 1, 1 },
 }
 
+-- Round fractional electric damage with one spell draw rather than truncating every arc.
 local function random_round(ctx, numerator, denominator)
     local value = math.floor(numerator / denominator)
 
@@ -22,6 +23,7 @@ local function random_round(ctx, numerator, denominator)
     return value
 end
 
+-- Collect adjacent occupants before random subset selection can chain to them.
 local function adjacent(ctx, position)
     local found = {}
 
@@ -38,6 +40,7 @@ local function adjacent(ctx, position)
     return found
 end
 
+-- Shuffle eligible neighbours once so a chain arc cannot favor iteration order.
 local function select(ctx, found, count)
     -- spl-util.cc:apply_random_around_square chooses a uniform subset.
     for index = #found, 2, -1 do
@@ -55,6 +58,7 @@ local function select(ctx, found, count)
     return chosen
 end
 
+-- Read explicit electric resistance before applying arc damage.
 local function resistance(definition)
     for _, entry in ipairs(definition.resistances or {}) do
         if entry.id == "MR_RES_ELEC" then
@@ -65,6 +69,7 @@ local function resistance(definition)
     return 0
 end
 
+-- Skip dead targets and return total arc damage while remaining depth bounds propagation.
 local function arc(ctx, player, target, power, remaining)
     local health = ctx:get(target, component.HEALTH)
 
@@ -119,6 +124,8 @@ local function arc(ctx, player, target, power, remaining)
     return amount
 end
 
+-- Example: Discharge shuffles adjacent actors, then chains at bounded depth from each selected target.
+-- Randomize eligible adjacent actors once before chaining so query order does not bias arc selection.
 function discharge.resolve(ctx, player, _, _, power)
     local position = ctx:get(player, component.POSITION)
     local limit = 2 + random_round(ctx, power, 20)

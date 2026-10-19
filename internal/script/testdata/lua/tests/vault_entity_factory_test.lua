@@ -1,3 +1,5 @@
+-- Vault entity creation rejects an invalid source equipment definition.
+
 local component = require("constants.component")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
@@ -24,31 +26,39 @@ local origin = {
     spawn_y = 9,
 }
 
+-- The world proxy gives vault materialization a deterministic random stream
+-- while retaining real ECS components and placement calls.
 local function world_context(ctx)
     local grid = setmetatable({}, { __index = ctx })
 
+    -- Force the first weighted choice while still catching invalid random bounds.
     function grid:random(_, bound)
         harness.truthy(bound > 0, "invalid random bound")
 
         return 0
     end
 
+    -- Keep fixture cells open so later assertions isolate actor and equipment rules.
     function grid:walkable()
         return true
     end
 
+    -- An empty world lets the factory create each test actor without collision.
     function grid:actor_at()
         return nil
     end
 
+    -- Read the mutable habitat cell to verify water-monster preparation.
     function grid:cell()
         return self.habitat_cell or terrain.DNGN_FLOOR
     end
 
+    -- Record terrain writes so the eel's deep-water conversion can be asserted.
     function grid:set_cell(_, _, _, feature)
         self.habitat_cell = feature
     end
 
+    -- Mirror the world placement call into real ECS position data.
     function grid:place_actor(entity, level_id, x, y)
         ctx:add(entity, component.POSITION, {
             level_id = level_id,
@@ -60,6 +70,7 @@ local function world_context(ctx)
     return grid
 end
 
+-- A vault actor keeps source color, attitude, spellbook, and origin fields.
 local function spawned_actor_has_source_state(ctx)
     local world = world_context(ctx)
     local actor = factory.spawn(world, monsters.MONS_HUMAN, 1, 12, 9, {
@@ -90,6 +101,7 @@ local function spawned_actor_has_source_state(ctx)
     local player = ctx:create()
     local combat = setmetatable({}, { __index = ctx })
 
+    -- Return the fixture player so neutrality and spell targeting use the real target predicate.
     function combat:player()
         return player
     end
@@ -111,6 +123,7 @@ local function spawned_actor_has_source_state(ctx)
     }), "authored empty spellbook still casts")
 end
 
+-- Authored item modifiers survive through entity creation and stacking.
 local function vault_items_keep_variant_and_quantity(ctx)
     local world = world_context(ctx)
     local stones = vault_items.create(world, {
@@ -172,6 +185,7 @@ local function vault_items_keep_variant_and_quantity(ctx)
         "source wand has usable charges")
 end
 
+-- Explicit vault equipment overrides ordinary monster gear generation.
 local function source_gear_and_explicit_equipment(ctx)
     local world = world_context(ctx)
     local edmund = factory.spawn(world, monsters.MONS_EDMUND, 1, 18, 9, {
@@ -202,6 +216,7 @@ local function source_gear_and_explicit_equipment(ctx)
     harness.equal(goblin_items, 1, "explicit equipment replaces generated gear")
 end
 
+-- Undead variants retain the source species needed for corpse and save rules.
 local function undead_uses_source_species(ctx)
     local world = world_context(ctx)
     local entity = factory.spawn(world, monsters.MONS_SKELETON, 1, 20, 9, {
@@ -216,6 +231,7 @@ local function undead_uses_source_species(ctx)
         monsters.MONS_HUMAN, "undead species retained")
 end
 
+-- Habitat preparation precedes placement of an authored water monster.
 local function water_monster_prepares_habitat(ctx)
     local world = world_context(ctx)
 
@@ -227,10 +243,12 @@ local function water_monster_prepares_habitat(ctx)
         "water monster did not prepare its authored cell")
 end
 
+-- A placement error must not leave an actor or partial equipment behind.
 local function failed_placement_is_atomic(ctx)
     local world = world_context(ctx)
     local before = #ctx:query({ component.ACTOR })
 
+    -- Reject this spawn before any actor component or equipment can be committed.
     function world:walkable()
         return false
     end
@@ -242,6 +260,7 @@ local function failed_placement_is_atomic(ctx)
     harness.equal(#ctx:query({ component.ACTOR }), before,
         "failed placement left a partial actor")
 
+    -- Reopen the cell to isolate the invalid-equipment rollback path.
     function world:walkable()
         return true
     end
@@ -260,6 +279,7 @@ local function failed_placement_is_atomic(ctx)
         "invalid equipment left a partial actor")
 end
 
+    -- Exercise factory provenance, source overrides, habitat writes, and atomic failure in one world.
 function test.run(ctx)
     spawned_actor_has_source_state(ctx)
     vault_items_keep_variant_and_quantity(ctx)
