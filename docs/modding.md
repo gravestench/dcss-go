@@ -977,6 +977,22 @@ family when a ray can hit an intervening actor or reflect. The direct helper
 only supplies target and HP services, so it does not choose your spell's
 formula, elemental resistance, or special effects.
 
+For a projectile monster spell, also add a definition at
+`content/monster_beams/<spell-name>.lua`. It supplies the source zap ID,
+damage dice, accuracy, beam flavour, and whether the ray penetrates actors.
+Its matching `policy/combat/monster_spells/<spell-name>.lua` returns the
+effect object and calls `policy.combat.monster_beams.plan` and `.resolve`.
+See `fire_breath.lua` in both directories for the smallest complete ray.
+Set `natural_power = true` when the source attack uses ordinary monster HD,
+so Aura of Brilliance does not strengthen it; magical beams use spell HD.
+For a caster-specific power exception, call
+`policy.combat.monster_beams.power.with_multiplier(profile, numerator,
+denominator)` on the effective profile. This preserves a mod's base-profile
+override and applies the fraction after calculating power. Cold Breath and
+Searing Breath show the two source examples. Use an existing beam flavour
+when its resistance and contact rules match; a genuinely new flavour needs
+a focused Lua contact rule as well as a profile.
+
 Put a player mutation in `content/mutations/<name>.lua`. The content tree
 registers it automatically, and `ids.mutations` exposes the new ID to other
 Lua files. A behavioral mutation also needs a focused file under

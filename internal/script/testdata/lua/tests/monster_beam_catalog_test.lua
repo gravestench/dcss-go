@@ -12,7 +12,7 @@ local test = {}
 function test.run()
     local profiles = catalog.all("monster_beams")
 
-    harness.equal(#profiles, 61,
+    harness.equal(#profiles, 65,
         "every source monster zap has a committed profile")
 
     for _, profile in ipairs(profiles) do

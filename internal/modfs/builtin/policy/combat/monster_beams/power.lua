@@ -14,15 +14,52 @@ function power.caster_power(ctx, caster, profile)
     end
 
     local definition = catalog.get("monsters", actor.kind_id)
-    local hit_dice = monster_stats.spell_hit_dice(ctx, caster, definition)
+    local hit_dice
 
-    -- Source mon-cast.cc:mons_power_for_hd. Spell HD adjustments belong to
-    -- the monster status domain once those enchantments are playable.
+    -- mon-cast.cc:mons_spell_is_spell makes natural breath and spit use
+    -- ordinary HD. Aura of Brilliance changes spell HD, not lung power.
+    if profile.natural_power then
+        hit_dice = monster_stats.hit_dice(ctx, caster, definition)
+    else
+        hit_dice = monster_stats.spell_hit_dice(ctx, caster, definition)
+    end
+
+    -- Source mon-cast.cc:mons_power_for_hd. Profiles supply their HD factor.
     local scaled = hit_dice * profile.power_hd_factor
+
+    -- Caster-specific source breath exceptions multiply the calculated
+    -- power, after a mod has had a chance to override the base profile.
+    if profile.power_multiplier then
+        local modifier = profile.power_multiplier
+
+        scaled = math.floor(scaled * modifier.numerator /
+            modifier.denominator)
+    end
 
     -- Pain has an exceptional source floor even for a weak caster. Keep
     -- the floor in its profile so both damage and willpower use it.
     return math.max(profile.minimum_power or 0, scaled)
+end
+
+-- Copy a fixed profile before one caster-specific source adjustment. The
+-- catalog definition remains immutable and modded HD factors still apply.
+function power.with_multiplier(profile, numerator, denominator)
+    if denominator <= 0 then
+        error("beam power multiplier needs a positive denominator")
+    end
+
+    local adjusted = {}
+
+    for key, value in pairs(profile) do
+        adjusted[key] = value
+    end
+
+    adjusted.power_multiplier = {
+        numerator = numerator,
+        denominator = denominator,
+    }
+
+    return adjusted
 end
 
 -- Example: with fixed-range spell profile,

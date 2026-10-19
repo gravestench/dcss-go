@@ -495,13 +495,17 @@ local function draining_projectiles_and_bounces()
         spells.SPELL_BOLT_OF_COLD,
         spells.SPELL_BOLT_OF_FIRE,
         spells.SPELL_BOLT_OF_MAGMA,
+        spells.SPELL_CHILLING_BREATH,
+        spells.SPELL_COLD_BREATH,
         spells.SPELL_ELECTRICAL_BOLT,
         spells.SPELL_ENERGY_BOLT,
+        spells.SPELL_FIRE_BREATH,
         spells.SPELL_IRON_SHOT,
         spells.SPELL_HOLY_BREATH,
         spells.SPELL_LEHUDIBS_CRYSTAL_SPEAR,
         spells.SPELL_LIGHTNING_BOLT,
         spells.SPELL_MAGIC_DART,
+        spells.SPELL_SEARING_BREATH,
         spells.SPELL_SPIT_LAVA,
         spells.SPELL_STONE_ARROW,
         spells.SPELL_STEAM_BALL,
@@ -523,6 +527,28 @@ local function draining_projectiles_and_bounces()
 
         harness.equal(result[1].target, foe,
             spell_id .. " contacts its selected actor")
+    end
+
+    -- Each elemental breath penetrates the first target and reaches the
+    -- second one; a copied one-target projectile rule would fail here.
+    local breath_spells = {
+        spells.SPELL_CHILLING_BREATH,
+        spells.SPELL_COLD_BREATH,
+        spells.SPELL_FIRE_BREATH,
+        spells.SPELL_SEARING_BREATH,
+    }
+
+    for _, spell_id in ipairs(breath_spells) do
+        local breath_ctx = context(true)
+        local effect = monster_spells.effect(spell_id)
+        local plan = effect.plan(breath_ctx, caster, foe)
+        local contacts = effect.resolve(breath_ctx, caster, foe,
+            nil, plan)
+
+        harness.equal(contacts[1].target, foe,
+            spell_id .. " reaches the chosen foe first")
+        harness.equal(contacts[2].target, next_foe,
+            spell_id .. " penetrates to the second actor")
     end
 
     local holy_ctx = context()
