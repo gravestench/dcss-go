@@ -16,6 +16,12 @@ function game_methods.visible()
     return true
 end
 
+-- LOS_NO_TRANS is a separate grid query in production. Rule tests without
+-- walls let it agree with their ordinary visibility result.
+function game_methods.visible_no_trans()
+    return true
+end
+
 -- Rule tests start at aut zero; the full game test verifies advancing time.
 function game_methods.aut()
     return 0
@@ -80,6 +86,15 @@ function game_methods.move_actor(game, entity, level_id, x, y)
         x = x,
         y = y,
     })
+end
+
+-- A mirror swaps two occupied cells atomically in the production grid.
+-- This sparse fixture applies both validated destinations to real ECS state.
+function game_methods.move_actors(game, moves)
+    for _, move in ipairs(moves) do
+        game_methods.move_actor(game, move.actor, move.level_id,
+            move.x, move.y)
+    end
 end
 
 -- Forward unmodified ECS, RNG, and event methods to the real test runtime.

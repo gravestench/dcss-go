@@ -54,6 +54,7 @@ context rather than a handler API for each game domain.
 | Monster flame conjurations | Marshlight, Holy Flames, and Stoke Flames create saved foxfire and inferno actors or holy cloud cells. Construct turns and the inferno death blast run through Lua ECS ownership | `policy/combat/monster_spells`, `policy/combat/monster_flames`, `policy/magic/effects/summons/foxfire.lua` |
 | Monster conjured constructs | Battlesphere, Conjure Ball Lightning, and Spellforged Servitor create saved spell actors. Monster conjurations trigger caster-owned spheres; monster servitors snapshot currently executable source-priority spells and cast through ordinary AI | `policy/combat/monster_spells`, `policy/magic/effects/summons`, `schemas/magic_summon_servitor.lua` |
 | Walking tomes and living spells | All four source tome species select their own Petrify, Crystal Spear, Smiting, or Iceblast living spell. Summons carry a saved custom slot, inherit spell HD, obey the six-actor owner cap, cast through ordinary monster AI, and disappear after one cast | `policy/combat/monster_summons/living_spells.lua`, `schemas/magic_summon_living_spell.lua`, `policy/combat/monster_spells` |
+| Monster mirror clones | Phantom Mirror and fake Mara summoning copy live monster bodies into saved Akara actors with independent gear, source HP scaling, finite summon lifetimes, and nonrecursive spell selection | `policy/combat/monster_summons/mirror.lua`, `policy/combat/clone_inventory.lua`, `schemas/magic_summon_mirror.lua` |
 | Combat | Fighter melee and headbutts; generated player melee brands and Chaos Knight's forced chaos brand in Lua, including saved spectral allies with damage sharing, distortion banishment, and chaos monster effects; all seven active magical staves with source skill procs and AC/resistance routes; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
 | Items and status | Equipment, consumables, statuses, and identification | `policy/inventory`, `policy/items`, `systems/item_*` |
 | Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
@@ -132,8 +133,10 @@ The direct-creature summon family now includes fixed, weighted, level
 population, branch, foe-centered, berserker, and elemental casts. Shadow
 Creatures currently uses the playable Dungeon population and waits for
 branch-specific rosters elsewhere; Pan's local demon allocation waits for
-the Pandemonium level owner. Constructs, clones, and terrain actors remain
-in later source spell categories.
+the Pandemonium level owner. Phantom Mirror and fake Mara summoning now
+copy live monster bodies; player and monster illusions still require the
+dedicated illusion-profile category. Other specialized actors and terrain
+effects remain in later source spell categories.
 The monster displacement family now covers all eight Blink variants and Word
 of Recall. Self and foe blinks share source-shaped landing, habitat, and
 no-tele checks; ally blinks reuse existing actors rather than creating new

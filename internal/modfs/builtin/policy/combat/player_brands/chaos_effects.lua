@@ -8,6 +8,7 @@ local holiness = require("constants.monster_holiness")
 local resistances = require("constants.resistance_ids")
 local status = require("policy.combat.player_brands.chaos_status")
 local slow = require("policy.combat.monster_slow")
+local clone_inventory = require("policy.combat.clone_inventory")
 local polymorph = require("policy.magic.effects.statuses.polymorph")
 local roll = require("policy.combat.roll")
 
@@ -122,27 +123,6 @@ local function free_cell(ctx, position)
     return selected
 end
 
--- A chaos clone needs independent item entities so equipping one twin cannot mutate the other.
-local function copy_inventory(ctx, source, twin)
-    for _, item in ipairs(ctx:query({
-        component.ITEM,
-        component.CARRIED_BY,
-        component.EQUIPPED,
-    })) do
-        local carrier = ctx:get(item, component.CARRIED_BY)
-
-        if carrier.holder == source then
-            local copy = ctx:create()
-
-            ctx:add(copy, component.ITEM,
-                ctx:get(item, component.ITEM))
-            ctx:add(copy, component.CARRIED_BY, { holder = twin })
-            ctx:add(copy, component.EQUIPPED,
-                ctx:get(item, component.EQUIPPED))
-        end
-    end
-end
-
 -- Clone only after a legal destination exists; preserve HP, summon state, and original roster identity.
 local function clone(ctx, hit)
     local position = ctx:get(hit.defender, component.POSITION)
@@ -184,6 +164,21 @@ local function clone(ctx, hit)
         if summon_stats then
             ctx:add(twin, component.SUMMON_STATS, summon_stats)
         end
+
+        -- A mirrored summon keeps its original kind and recursion guard
+        -- when Chaos makes another physical copy of that summon.
+        local mirror = ctx:get(hit.defender, component.SUMMON_MIRROR)
+
+        if mirror then
+            ctx:add(twin, component.SUMMON_MIRROR, mirror)
+
+            local polymorph = ctx:get(hit.defender,
+                component.MONSTER_POLYMORPH)
+
+            if polymorph then
+                ctx:add(twin, component.MONSTER_POLYMORPH, polymorph)
+            end
+        end
     end
 
     local old_form = ctx:get(hit.defender, component.MONSTER_POLYMORPH)
@@ -193,7 +188,7 @@ local function clone(ctx, hit)
             source.kind_id,
         created_aut = ctx:aut(),
     })
-    copy_inventory(ctx, hit.defender, twin)
+    clone_inventory.copy(ctx, hit.defender, twin)
     ctx:place_actor(twin, position.level_id,
         destination.x, destination.y)
     ctx:emit("combat", "The " .. hit.definition.name .. " splits in two!")

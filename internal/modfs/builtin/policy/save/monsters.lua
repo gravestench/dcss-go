@@ -270,6 +270,11 @@ function module.run(ctx, input)
 
         local summon = ctx:get(entity, "magic.summon")
 
+        if ctx:has(entity, component.SUMMON_MIRROR) and not summon then
+            error("mirror copy " .. ctx:id(entity) ..
+                " has no summon owner")
+        end
+
         -- Summons follow owner/expiry rules; authored vault actors and roster actors have different origin checks.
         if summon then
             summons.validate(ctx, entity, actor, position, ai,

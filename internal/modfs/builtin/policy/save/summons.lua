@@ -97,6 +97,28 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         end
     end
 
+    -- Mirror copies keep the source monster's body but have their own
+    -- summon owner and finite lifetime. The original need not remain alive.
+    local mirror = ctx:get(entity, component.SUMMON_MIRROR)
+    local polymorph = ctx:get(entity, component.MONSTER_POLYMORPH)
+    local original_kind = polymorph and polymorph.original_kind_id or
+        actor.kind_id
+    local phantom = state.source_id == spells.SPELL_PHANTOM_MIRROR
+    local fake_mara = state.source_id == spells.SPELL_FAKE_MARA_SUMMON
+
+    if mirror or phantom or fake_mara then
+        local expected_percent = fake_mara and 50 or 100
+
+        if not mirror or not (phantom or fake_mara) or
+            state.source_category ~= categories.SPELLS or
+            mirror.origin_kind_id ~= original_kind or
+            mirror.hp_percent ~= expected_percent or
+            not stats or stats.hd < 1 then
+            error("summon " .. ctx:id(entity) ..
+                " has invalid mirror state")
+        end
+    end
+
     -- A spectral weapon remains bonded to an equipped item carried by its owner; stray copies fail restore.
     if spectral then
         local source = ctx:get(spectral.source_weapon, component.ITEM)
