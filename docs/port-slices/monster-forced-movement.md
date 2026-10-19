@@ -22,7 +22,5 @@ triggers landing traps, and wakes the ally. The resolver rechecks actor
 positions when the saved
 spell intent executes, so a stale target cannot redirect a throw.
 
-Wind Blast remains a separate area displacement rule. It will need a
-cone-wide actor and cloud pass, size-scaled push distance, alternate paths,
-and collision damage; the two spells here do not introduce a partial Wind
-Blast implementation.
+Wind Blast uses a separate area displacement rule; see
+[monster-wind-blast.md](monster-wind-blast.md).
