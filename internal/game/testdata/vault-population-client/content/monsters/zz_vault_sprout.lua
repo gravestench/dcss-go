@@ -1,5 +1,5 @@
 local categories = require("constants.catalog")
-local source = require("content.monsters.0466_mons_plant")
+local source = require("content.monsters.mons_plant")
 
 -- A mod can add a spawnable catalog record without copying the source profile.
 local definition = {}
