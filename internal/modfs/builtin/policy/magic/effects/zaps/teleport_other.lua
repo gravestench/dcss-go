@@ -8,6 +8,7 @@ local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
+local hex_status = require("policy.combat.monster_hexes.status")
 
 local teleport = {}
 local tentacles = {
@@ -31,10 +32,11 @@ local function has_flag(definition, wanted)
     return false
 end
 
-local function no_tele(actor, definition)
+local function no_tele(actor, definition, ctx, target)
     -- monster.cc:monster::no_tele excludes stationary and projectile actors,
     -- tentacle segments, stasis, and anchored monsters.
-    return has_flag(definition, "M_STATIONARY") or
+    return ctx and target and hex_status.anchored(ctx, target) or
+        has_flag(definition, "M_STATIONARY") or
         has_flag(definition, "M_PROJECTILE") or
         has_flag(definition, "M_STASIS") or
         tentacles[actor.kind_id] == true
@@ -85,7 +87,7 @@ function teleport.tick(ctx, target)
 
     local definition = catalog.get("monsters", actor.kind_id)
 
-    if no_tele(actor, definition) then
+    if no_tele(actor, definition, ctx, target) then
         return
     end
 
@@ -123,7 +125,7 @@ function teleport.resolve(ctx, player, intent, spell, power)
 
     local definition = catalog.get("monsters", actor.kind_id)
 
-    if health.current <= 0 or no_tele(actor, definition) then
+    if health.current <= 0 or no_tele(actor, definition, ctx, target) then
         return
     end
 

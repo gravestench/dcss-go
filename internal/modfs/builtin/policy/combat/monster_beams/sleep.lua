@@ -66,10 +66,7 @@ local function sleep_player(ctx, caster, target, profile)
         return
     end
 
-    local actor = ctx:get(caster, component.ACTOR)
-    local definition = catalog.get("monsters", actor.kind_id)
-
-    if hex.resisted(ctx, caster, target, definition) then
+    if hex.resisted(ctx, caster, target, profile) then
         ctx:emit("combat", "You resist sleep.")
         return
     end

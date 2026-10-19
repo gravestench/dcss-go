@@ -17,7 +17,11 @@ function power.caster_power(ctx, caster, profile)
 
     -- Source mon-cast.cc:mons_power_for_hd. Spell HD adjustments belong to
     -- the monster status domain once those enchantments are playable.
-    return hit_dice * profile.power_hd_factor
+    local scaled = hit_dice * profile.power_hd_factor
+
+    -- Pain has an exceptional source floor even for a weak caster. Keep
+    -- the floor in its profile so both damage and willpower use it.
+    return math.max(profile.minimum_power or 0, scaled)
 end
 
 function power.spell_range(ctx, caster, profile)

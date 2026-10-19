@@ -308,17 +308,19 @@ end
 
 -- The shifter chaos effect transforms immediately without an enchantment
 -- resistance check; later shape changes use this same actor transition.
-function polymorph.shapeshift(ctx, target, source)
+function polymorph.shapeshift(ctx, target, source, stream)
+    local source_stream = stream or "melee"
     local position = ctx:get(target, component.POSITION)
-    local choices = weighted_candidates(ctx, source, position, "melee")
+    local choices = weighted_candidates(ctx, source, position,
+        source_stream)
 
     if #choices == 0 then
         return false
     end
 
-    local definition = choices[ctx:random("melee", #choices) + 1]
+    local definition = choices[ctx:random(source_stream, #choices) + 1]
 
-    transform(ctx, target, source, definition, "melee")
+    transform(ctx, target, source, definition, source_stream)
 
     return true
 end

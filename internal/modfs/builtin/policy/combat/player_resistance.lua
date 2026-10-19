@@ -14,6 +14,7 @@ local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
 local artefacts = require("policy.item_generation.artefacts.properties")
 local artefact_properties = require("ids.artefact_properties")
+local hex_status = require("policy.combat.monster_hexes.status")
 
 local resistance = {}
 local willpower_pip = 40
@@ -74,6 +75,10 @@ function resistance.poison(ctx, player)
 
     if form then
         value = value + (form_poison[form.form_id] or 0)
+    end
+
+    if hex_status.poison_vulnerable(ctx, player) then
+        value = value - 1
     end
 
     return math.max(-1, value)

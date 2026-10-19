@@ -104,9 +104,23 @@ function paralysis.resolve(ctx, player, intent, spell, power)
         return
     end
 
-    ctx:add(target, component.PARALYSIS, {
-        remaining_aut = duration(enchant_power),
-    })
+    paralysis.apply_unresisted(ctx, target, definition, enchant_power)
+end
+
+function paralysis.apply_unresisted(ctx, target, definition, enchant_power)
+    local existing = ctx:get(target, component.PARALYSIS)
+    local remaining = math.max(existing and existing.remaining_aut or 0,
+        duration(enchant_power))
+    local status = {
+        remaining_aut = remaining,
+    }
+
+    if existing then
+        ctx:set(target, component.PARALYSIS, status)
+    else
+        ctx:add(target, component.PARALYSIS, status)
+    end
+
     ctx:emit("spell", "The " .. definition.name .. " suddenly stops moving!")
 end
 

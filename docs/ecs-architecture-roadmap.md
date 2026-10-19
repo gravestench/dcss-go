@@ -154,11 +154,13 @@ Akara entity for each placed trap, and Lua systems for entry, timers, and
 malevolence. Pressure-plate marker consumers, the rest of the vault families,
 and deeper monster trait parity remain in the adjacent world domains.
 
-The monster beam domain now has 44 committed source profiles and one
+The monster beam domain now has 61 committed source profiles and one
 discoverable Lua effect per spell. A typed intent retains the chosen actor or
 cell, book slot, and direction; the actor-neutral Lua beam rules handle
 trajectory, shields, reflection, damage, resistance, clouds, terrain, and
-saved statuses. Monster spell coverage rejects missing effects before a
+saved statuses. Targeted hexes share that trace but apply their own
+willpower, immunity, and persistent actor rules. Monster spell coverage
+rejects missing effects before a
 monster joins the live roster. Self enchantments, summons, and other monster
 spell families still need complete rule slices before wider monster rosters
 become playable.

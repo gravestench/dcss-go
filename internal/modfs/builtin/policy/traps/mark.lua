@@ -4,12 +4,13 @@ local streams = require("constants.rng_streams")
 
 local mark = {}
 
-function mark.apply(ctx, player)
+function mark.apply(ctx, player, source_stream)
+    local stream = source_stream or streams.TRAPS
     local state = ctx:get(player, component.TRAP_MARK)
 
     if state then
         state.remaining_aut = math.min(1800,
-            state.remaining_aut + (20 + ctx:random(streams.TRAPS, 21)) * 10)
+            state.remaining_aut + (20 + ctx:random(stream, 21)) * 10)
         ctx:set(player, component.TRAP_MARK, state)
         ctx:emit("trap", "The mark upon you grows brighter.")
 
@@ -17,7 +18,7 @@ function mark.apply(ctx, player)
     end
 
     ctx:add(player, component.TRAP_MARK, {
-        remaining_aut = (25 + ctx:random(streams.TRAPS, 16)) * 10,
+        remaining_aut = (25 + ctx:random(stream, 16)) * 10,
     })
     ctx:emit("trap", "A sentinel's mark forms upon you.")
 end

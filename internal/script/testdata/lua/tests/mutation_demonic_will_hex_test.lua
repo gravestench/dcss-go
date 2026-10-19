@@ -7,6 +7,7 @@ local monsters = require("ids.monsters")
 local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
 local species = require("ids.species")
+local spells = require("ids.spells")
 
 local test = {}
 
@@ -41,8 +42,6 @@ end
 function test.run(ctx)
     local player = ctx:create()
     local caster = ctx:create()
-    local basilisk = catalog.get("monsters", monsters.MONS_BASILISK)
-
     ctx:add(player, component.PLAYER, {
         species_id = species.SP_HUMAN,
         job_id = jobs.JOB_FIGHTER,
@@ -56,6 +55,11 @@ function test.run(ctx)
         current = 30,
         max = 30,
     })
+    ctx:add(caster, component.ACTOR, {
+        kind_id = monsters.MONS_BASILISK,
+    })
+
+    local profile = catalog.get("monster_beams", spells.SPELL_PETRIFY)
 
     records.grant_innate(ctx, player, mutations.MUT_DEMONIC_WILL, 1)
 
@@ -66,7 +70,7 @@ function test.run(ctx)
         { bound = 4, value = 0 },
     })
 
-    harness.equal(hex.resisted(rolls, caster, player, basilisk), true,
+    harness.equal(hex.resisted(rolls, caster, player, profile), true,
         "Demonic Will resists the hostile enchantment")
     harness.equal(ctx:get(caster, component.HEALTH).current, 27,
         "successful resistance lashes the caster for source damage")
@@ -90,7 +94,7 @@ function test.run(ctx)
         { bound = 101, value = 45 },
     })
 
-    harness.equal(hex.resisted(ordinary_rolls, caster, plain, basilisk),
+    harness.equal(hex.resisted(ordinary_rolls, caster, plain, profile),
         true,
         "monster hexes step down enchantment power after dividing by three")
     harness.equal(ctx:get(caster, component.HEALTH).current, 27,

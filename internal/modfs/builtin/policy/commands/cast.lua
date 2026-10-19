@@ -6,6 +6,7 @@ local resources = require("policy.magic.resources")
 local statuses = require("policy.magic.effects.statuses.player")
 local confusion = require("policy.magic.player_confusion")
 local availability = require("policy.character.skill_availability")
+local hex_status = require("policy.combat.monster_hexes.status")
 
 local cast = {}
 
@@ -37,6 +38,10 @@ function cast.prepare(ctx, player, input)
 
     if confusion.active(ctx, player) then
         return { message = "You're too confused to cast spells." }
+    end
+
+    if hex_status.cannot_cast(ctx, player) then
+        return { message = "Your magic has been temporarily blocked." }
     end
 
     local spell = catalog.get("spells", spell_id)

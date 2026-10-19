@@ -23,6 +23,15 @@ function touch.apply(ctx, target, definition, power)
         return false, false
     end
 
+    touch.apply_unresisted(ctx, target, definition, power)
+
+    return true, false
+end
+
+-- The beam and melee paths share status duration after their own hit and
+-- resistance checks. This helper never performs a second saving throw.
+function touch.apply_unresisted(ctx, target, definition, power)
+
     local current = ctx:get(target, component.MONSTER_CONFUSION)
     local remaining = math.max(current and current.remaining_aut or 0,
         duration(power))
@@ -36,7 +45,6 @@ function touch.apply(ctx, target, definition, power)
 
     ctx:emit("spell", "The " .. definition.name .. " appears confused.")
 
-    return true, false
 end
 
 -- Source: spl-other.cc:_intoxicate_monsters adds ENCH_CONFUSION with an

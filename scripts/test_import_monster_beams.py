@@ -163,6 +163,25 @@ class MonsterBeamSourceTest(unittest.TestCase):
         self.assertIn("-- mon-cast.cc:", rendered)
         self.assertIn("zap_id = zaps.ZAP_FREEZING_BLAST", rendered)
 
+    def test_hex_power_factors_include_lambda_and_sap_cases(self):
+        source = """{ SPELL_CONFUSE, _hex_logic(SPELL_CONFUSE) },
+{ SPELL_AGONY, _hex_logic(SPELL_AGONY, [](const monster &caster) {
+    return ai_action::good_or_impossible(caster.is_alive());
+}, 6) },
+{ SPELL_SENTINEL_MARK, _hex_logic(SPELL_SENTINEL_MARK, nullptr, 16) },
+{ SPELL_SAP_MAGIC, {
+    _always_worthwhile, _fire_simple_beam, _zap_setup(SPELL_SAP_MAGIC),
+    MSPELL_LOGIC_NONE, 10,
+} },
+"""
+
+        factors = IMPORTER.hex_power_rules(source)
+
+        self.assertNotIn("SPELL_CONFUSE", factors)
+        self.assertEqual(factors["SPELL_AGONY"], 18)
+        self.assertEqual(factors["SPELL_SENTINEL_MARK"], 48)
+        self.assertEqual(factors["SPELL_SAP_MAGIC"], 10)
+
     def test_energy_bolt_short_name_override_is_preserved(self):
         source = MON_CAST.replace(
             "    case SPELL_FREEZING_CLOUD:",

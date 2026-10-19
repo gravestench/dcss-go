@@ -4,6 +4,9 @@ local spellbook = require("policy.combat.monster_spellbook")
 local target = require("policy.combat.monster_spell_target")
 local targets = require("policy.ai.targets")
 local intents = require("constants.intent")
+local hex_status = require("policy.combat.monster_hexes.status")
+local enfeeble = require("policy.magic.effects.statuses.enfeeble")
+local spell_flags = require("constants.monster_spell_flags")
 
 local system = {}
 
@@ -44,6 +47,16 @@ function system.update(ctx, caster)
     local plan = target.read(intent)
 
     effect.resolve(ctx, caster, player, slot, plan)
+
+    if hex_status.sapped(ctx, caster) then
+        for _, flag in ipairs(slot.flags or {}) do
+            if flag == spell_flags.WIZARD then
+                enfeeble.apply_sap_antimagic(ctx, caster)
+
+                break
+            end
+        end
+    end
 end
 
 register.system({

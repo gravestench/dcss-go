@@ -106,7 +106,9 @@ function contact.resolve(ctx, caster, defender, profile,
                 incoming)
         end
 
-        ctx:emit("combat", "The " .. profile.name .. " hits.")
+        if not hook or not hook.suppress_hit_message then
+            ctx:emit("combat", "The " .. profile.name .. " hits.")
+        end
     end
 
     return outcome

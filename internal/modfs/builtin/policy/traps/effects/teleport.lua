@@ -25,7 +25,7 @@ function effect.trigger(ctx, _, actor)
 
     local definition = catalog.get("monsters", state.kind_id)
 
-    if monster_teleport.no_tele(state, definition) then
+    if monster_teleport.no_tele(state, definition, ctx, actor) then
         return
     end
 

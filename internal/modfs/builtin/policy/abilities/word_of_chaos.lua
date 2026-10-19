@@ -113,7 +113,8 @@ function chaos.ensnare(ctx, monster, definition)
 end
 
 local function affect_monster(ctx, player, monster, power)
-    if teleport.no_tele(monster.actor, monster.definition) then
+    if teleport.no_tele(monster.actor, monster.definition,
+        ctx, monster.entity) then
         return
     end
 

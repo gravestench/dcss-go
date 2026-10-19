@@ -45,7 +45,7 @@ function effect.trigger(ctx, _, actor, site)
                 position.x, position.y) then
             local definition = catalog.get("monsters", state.kind_id)
 
-            if not teleport.no_tele(state, definition) then
+            if not teleport.no_tele(state, definition, ctx, monster) then
                 blink.blink(ctx, player, monster, definition)
             end
         end

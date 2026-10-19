@@ -5,6 +5,8 @@ local power = require("policy.magic.power")
 local records = require("policy.character.spell_records")
 local resources = require("policy.magic.resources")
 local demonic_magic = require("policy.character.demonic_magic")
+local hex_status = require("policy.combat.monster_hexes.status")
+local streams = require("constants.rng_streams")
 
 local cast = {}
 
@@ -38,6 +40,15 @@ function cast.resolve(ctx, player, intent, aut)
     effect.resolve(ctx, player, intent, spell,
         power.cast(ctx, player, spell), aut)
     demonic_magic.on_success(ctx, player, spell)
+
+    -- In DCSS, Sap Magic punishes successful casting with a short period
+    -- during which no further spell can be started.
+    if hex_status.sapped(ctx, player) then
+        local turns = 3 + ctx:random(streams.MONSTER_SPELL, 3)
+
+        hex_status.no_cast(ctx, player, turns * 10)
+        ctx:emit("spell", "Your magic is temporarily exhausted.")
+    end
 
     return "success"
 end

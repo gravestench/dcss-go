@@ -2,6 +2,7 @@
 -- Revision: e60ba3568b0c26447ad36ec5c7b963eb04b2778f
 local ids = {
     BLACK = "BLACK",
+    BLUE = "BLUE",
     BROWN = "BROWN",
     CYAN = "CYAN",
     DARKGREY = "DARKGREY",

@@ -1,28 +1,44 @@
 local resistance = require("policy.combat.player_resistance")
-local stats = require("policy.combat.monster_stats")
 local levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
 local monster_health = require("policy.combat.monster_health")
 local component = require("constants.component")
+local catalog = require("policy.catalog")
+local will = require("policy.magic.effects.zaps.will")
+local beam_power = require("policy.combat.monster_beams.power")
+local calculators = require("policy.combat.monster_beams.calculators")
 
 local hex = {}
 
--- Source: mon-cast.cc:mons_power_for_hd, beam.cc:ench_power_stepdown,
--- actor.cc:check_willpower. The two rolls intentionally use distinct bounds.
-function hex.resisted(ctx, caster, player, definition)
-    local power = stats.hit_dice(ctx, caster, definition) * 12
-    local enchant_power = math.max(1, math.floor(power / 3))
+function hex.enchantment_power(ctx, caster, profile)
+    local power = beam_power.caster_power(ctx, caster, profile)
+
+    return calculators.enchantment_power(profile, power)
+end
+
+-- Source: beam.cc:ench_power_stepdown and actor.cc:check_willpower.
+-- A source zap profile supplies the spell's actual monster power factor.
+function hex.resisted(ctx, caster, target, profile)
+    local enchant_power = hex.enchantment_power(ctx, caster, profile)
+
+    if not ctx:has(target, component.PLAYER) then
+        local actor = ctx:get(target, component.ACTOR)
+        local definition = catalog.get("monsters", actor.kind_id)
+
+        return will.resists(ctx, definition, enchant_power, target)
+    end
+
     local adjusted = math.floor(35 * math.log(1 + enchant_power / 35) /
         math.log(2) + 0.5)
-    local target = 100 + resistance.willpower(ctx, player) - adjusted
+    local threshold = 100 + resistance.willpower(ctx, target) - adjusted
     local roll = ctx:random("monster_spell", 100) +
         ctx:random("monster_spell", 101)
 
-    if target <= roll then
+    if threshold <= roll then
         return false
     end
 
-    if levels.effective(ctx, player, mutations.MUT_DEMONIC_WILL) > 0 then
+    if levels.effective(ctx, target, mutations.MUT_DEMONIC_WILL) > 0 then
         local health = ctx:get(caster, component.HEALTH)
 
         if health and health.current > 0 then
@@ -35,8 +51,10 @@ function hex.resisted(ctx, caster, player, definition)
             end
 
             local amount = 3 + ctx:random("monster_spell", 1 + rounded)
+            local actor = ctx:get(caster, component.ACTOR)
+            local definition = catalog.get("monsters", actor.kind_id)
 
-            monster_health.damage(ctx, caster, amount, player)
+            monster_health.damage(ctx, caster, amount, target)
             ctx:emit("combat", "Your will lashes out at the " ..
                 definition.name .. "!")
         end

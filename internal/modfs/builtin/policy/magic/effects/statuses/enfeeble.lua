@@ -165,6 +165,31 @@ function enfeeble.apply_antimagic(ctx, target, definition, power)
     return true
 end
 
+-- Source: beam.cc:BEAM_DRAIN_MAGIC uses enchantment power per target HD,
+-- then rolls the antimagic duration in baseline delays.
+function enfeeble.apply_drain_magic(ctx, target, definition, power)
+    if not spell_sensitive(definition) then
+        return 0
+    end
+
+    local hd = monster_stats.hit_dice(ctx, target, definition)
+    local upper = roll.random_divide(ctx, power, hd, "monster_spell")
+    local duration = roll.spell(ctx, upper + 1) * 10
+
+    if duration <= 0 then
+        return 0
+    end
+
+    local next_state, existed = status(ctx, target)
+
+    next_state.antimagic_aut = next_state.antimagic_aut + duration
+    save_status(ctx, target, next_state, existed)
+    ctx:emit("combat", "The " .. definition.name ..
+        "'s magic leaks into the air.")
+
+    return duration
+end
+
 -- Source: monster.cc:monster::weaken with power six for Black Mark.
 function enfeeble.apply_weak(ctx, target, definition, power)
     if not has_attacks(definition) then
@@ -280,6 +305,17 @@ function enfeeble.antimagic(ctx, monster, slot_flags)
     ctx:emit("monster", "The " .. definition.name .. " falters for a moment.")
 
     return true
+end
+
+-- Sap Magic feeds an existing antimagic component after a wizard cast.
+-- This uses a fixed six-turn source duration, rather than Enfeeble's
+-- power-dependent duration calculation.
+function enfeeble.apply_sap_antimagic(ctx, monster)
+    local next_state, existed = status(ctx, monster)
+
+    next_state.antimagic_aut = next_state.antimagic_aut + 60
+
+    save_status(ctx, monster, next_state, existed)
 end
 
 function enfeeble.tick(ctx, monster)

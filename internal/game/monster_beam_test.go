@@ -191,3 +191,89 @@ func TestMonsterStoneArrowBlocksWithWornAmulet(t *testing.T) {
 			spellCasts, otherBlocks)
 	}
 }
+
+func TestMonsterSapMagicOverlayPersistsAndContinues(t *testing.T) {
+	g, caster, rules := moddedEndoplasmGame(t,
+		"testdata/monster-hex-sap")
+	placePlayerInSlugLine(t, g, caster)
+
+	hexStatus := g.scripts.Components()["magic.hex_status"]
+
+	if hexStatus == nil {
+		t.Fatal("hex status schema was not registered")
+	}
+
+	castFromOverlay := false
+
+	for attempt := 0; attempt < 50; attempt++ {
+		energy, _ := g.stores.MonsterEnergy.Get(caster)
+
+		energy.Points = 80
+
+		events, err := g.runAction(caster, ecs.Intent{}, 10,
+			"monster")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for _, event := range events {
+			if strings.Contains(event.Text, "Overlay Sap Magic cast.") {
+				castFromOverlay = true
+			}
+		}
+
+		if hexStatus.Has(g.player) {
+			break
+		}
+	}
+
+	if !castFromOverlay || !hexStatus.Has(g.player) {
+		t.Fatal("real caster did not apply overlaid Sap Magic")
+	}
+
+	if err := g.scheduler.Spend(caster, ecs.Intent{
+		Kind:   g.turn.ResolvedIntent,
+		ItemID: g.turn.ResolvedItemID,
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	snapshot := g.Snapshot()
+	restored, err := RestoreWithRules(snapshot, rules, RestorePolicy{})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	if !restored.scripts.Components()["magic.hex_status"].Has(g.player) ||
+		!reflect.DeepEqual(snapshot, restored.Snapshot()) {
+		t.Fatal("Sap Magic status changed on restore")
+	}
+
+	for _, current := range []*Game{g, restored} {
+		energy, _ := current.stores.MonsterEnergy.Get(caster)
+
+		energy.Points = 80
+	}
+
+	liveEvents, err := g.runAction(caster, ecs.Intent{}, 10, "monster")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	restoredEvents, err := restored.runAction(caster, ecs.Intent{},
+		10, "monster")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(liveEvents, restoredEvents) ||
+		!reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
+		t.Fatal("hex RNG continuation diverged after restore")
+	}
+}

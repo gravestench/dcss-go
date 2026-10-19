@@ -19,7 +19,8 @@ function spell_effects.resolve(ctx, player, _, spell, power)
 
     for _, monster in ipairs(common.monsters(ctx, center.level_id)) do
         if common.distance(center, monster.position) <= radius and
-            not teleport.no_tele(monster.actor, monster.definition) then
+            not teleport.no_tele(monster.actor, monster.definition,
+                ctx, monster.entity) then
             if will.resists(ctx, monster.definition, power,
                 monster.entity) then
                 moved = blink.blink(ctx, player, monster.entity,

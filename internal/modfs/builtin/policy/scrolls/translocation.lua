@@ -3,6 +3,7 @@
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local flight = require("policy.combat.flight")
+local hex_status = require("policy.combat.monster_hexes.status")
 local forms = require("policy.magic.effects.forms.player")
 local terrain = require("constants.terrain")
 local traits = require("policy.character.traits")
@@ -12,6 +13,10 @@ local translocation = {}
 local SIGHT_RADIUS = 7
 
 function translocation.restriction(ctx, player)
+    if hex_status.anchored(ctx, player) then
+        return "You are firmly anchored to this plane."
+    end
+
     local choice = ctx:get(player, component.PLAYER)
     local species = catalog.get("species", choice.species_id)
 
@@ -40,6 +45,10 @@ function translocation.can_land(ctx, player, level_id, x, y)
 end
 
 function translocation.can_blink(ctx, player, origin, x, y)
+    if hex_status.anchored(ctx, player) then
+        return false
+    end
+
     local distance = math.max(math.abs(x - origin.x),
         math.abs(y - origin.y))
 

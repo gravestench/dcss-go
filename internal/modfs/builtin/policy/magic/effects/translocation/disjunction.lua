@@ -39,7 +39,7 @@ function disjunction.pulse(ctx, player, aut)
             local position = ctx:get(monster.entity, component.POSITION)
 
             if position and not teleport.no_tele(monster.actor,
-                monster.definition) then
+                monster.definition, ctx, monster.entity) then
                 local distance = common.distance(center, position)
                 local decay = math.max(1, (distance - 1) * (distance + 1))
                 local chance = math.floor(0.8 ^ (1 / decay) * 1000)

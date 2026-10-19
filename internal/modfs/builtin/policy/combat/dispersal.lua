@@ -1,4 +1,5 @@
 local net = require("policy.combat.net")
+local hex_status = require("policy.combat.monster_hexes.status")
 
 local dispersal = {}
 
@@ -39,6 +40,10 @@ end
 dispersal.nearby_space = nearby_space
 
 function dispersal.blink(ctx, attacker, monster, definition)
+    if hex_status.anchored(ctx, monster) then
+        return false
+    end
+
     local origin = ctx:get(monster, "core.position")
     local first = nearby_space(ctx, origin)
     local second = nearby_space(ctx, origin)

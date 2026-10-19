@@ -18,7 +18,8 @@ local function eligible(ctx, player, center, monster)
 
     if distance <= 1 or distance > 8 or
         not targets.enemy(ctx, player, monster.entity) or
-        teleport.no_tele(monster.actor, monster.definition) then
+        teleport.no_tele(monster.actor, monster.definition,
+            ctx, monster.entity) then
         return false
     end
 

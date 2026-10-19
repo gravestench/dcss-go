@@ -3,10 +3,15 @@ local mutations = require("ids.mutations")
 local levels = require("policy.mutations.levels")
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local monster_flags = require("constants.monster_flags")
+local hex_status = require("policy.combat.monster_hexes.status")
 
 local invisibility = {}
 
 function invisibility.backlit(ctx, player)
+    if hex_status.backlit(ctx, player) then
+        return true
+    end
+
     if ctx:has(player, component.STICKY_FLAME) then
         return true
     end

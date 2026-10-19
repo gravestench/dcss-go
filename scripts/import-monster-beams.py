@@ -13,6 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REVISION = "e60ba3568b0c26447ad36ec5c7b963eb04b2778f"
 SPEC = ROOT / "docs/superpowers/specs/2026-10-16-monster-beam-spells-design.md"
+HEX_SPEC = ROOT / "docs/superpowers/specs/2026-10-18-monster-hex-spells-design.md"
 OUTPUT = ROOT / "internal/modfs/builtin"
 
 SPELL_PAIR = re.compile(
@@ -48,6 +49,22 @@ SUPPORTED_FLAVOURS = {
     "BEAM_POISON",
     "BEAM_POISON_ARROW",
     "BEAM_SLEEP",
+    "BEAM_AGONY",
+    "BEAM_BANISH",
+    "BEAM_CONFUSION",
+    "BEAM_CORONA",
+    "BEAM_DIMENSION_ANCHOR",
+    "BEAM_DRAIN_MAGIC",
+    "BEAM_MINDBURST",
+    "BEAM_PAIN",
+    "BEAM_PETRIFY",
+    "BEAM_PARALYSIS",
+    "BEAM_POLYMORPH",
+    "BEAM_SAP_MAGIC",
+    "BEAM_SENTINEL_MARK",
+    "BEAM_SLOW",
+    "BEAM_VIRULENCE",
+    "BEAM_VULNERABILITY",
     "BEAM_STEAM",
     "BEAM_STUN_BOLT",
     "BEAM_WATER",
@@ -255,6 +272,10 @@ def render_profile(spell_id, zap_id, spell_line, zap,
         f"    natural_power = {lua_bool(natural)},",
     ]
 
+    if spell_id == "SPELL_PAIN":
+        # mons_power_for_hd floors Pain at 50 * ENCH_POW_FACTOR (3).
+        lines.append("    minimum_power = 150,")
+
     if override:
         lines.extend([
             f"    -- mon-cast.cc:{override['source_line']}",
@@ -360,6 +381,51 @@ def parse_power_rules(mon_cast):
     return factors, natural, default
 
 
+def hex_power_rules(mon_cast):
+    """Read explicit _hex_logic factors without matching lambda internals."""
+    factors = {}
+    calls = re.finditer(r"_hex_logic\(\s*(SPELL_[A-Z0-9_]+)", mon_cast)
+
+    for call in calls:
+        opening = mon_cast.find("(", call.start())
+        depth = 0
+        closing = None
+
+        for index in range(opening, len(mon_cast)):
+            if mon_cast[index] == "(":
+                depth += 1
+            elif mon_cast[index] == ")":
+                depth -= 1
+
+                if depth == 0:
+                    closing = index
+                    break
+
+        if closing is None:
+            raise ValueError("unterminated _hex_logic for " + call.group(1))
+
+        arguments = mon_cast[opening + 1:closing]
+        explicit = re.search(r",\s*(\d+)\s*$", arguments)
+
+        if explicit:
+            factors[call.group(1)] = int(explicit.group(1)) * 3
+
+    sap = re.search(
+        r"\{\s*SPELL_SAP_MAGIC\s*,\s*\{.*?"
+        r"_zap_setup\(SPELL_SAP_MAGIC\)\s*,\s*"
+        r"MSPELL_LOGIC_NONE\s*,\s*(\d+)\s*,",
+        mon_cast,
+        re.DOTALL,
+    )
+
+    if not sap:
+        raise ValueError("missing source Sap Magic power factor")
+
+    factors["SPELL_SAP_MAGIC"] = int(sap.group(1))
+
+    return factors
+
+
 def beam_overrides(mon_cast, spell_ids):
     start = mon_cast.find("switch (real_spell)")
 
@@ -385,6 +451,14 @@ def beam_overrides(mon_cast, spell_ids):
         ))
 
         if not assignments:
+            continue
+
+        if spell_id == "SPELL_DIMENSION_ANCHOR" and \
+                len(assignments) == 1 and \
+                assignments[0].group(1) == "flavour" and \
+                assignments[0].group(2).strip() == \
+                "BEAM_DIMENSION_ANCHOR":
+            # The setup repeats the zap's flavor, so the profile is exact.
             continue
 
         if spell_id != "SPELL_ENERGY_BOLT" or \
@@ -414,6 +488,9 @@ def render_catalog(spell_ids, links, zaps, mon_cast):
 
     if mon_cast:
         factors, natural, default = parse_power_rules(mon_cast)
+
+        if "SPELL_SAP_MAGIC" in spell_ids:
+            factors.update(hex_power_rules(mon_cast))
 
     overrides = beam_overrides(mon_cast, spell_ids) if mon_cast else {}
 
@@ -495,7 +572,18 @@ def spell_ids_from_spec():
     if len(ids) != 44 or len(set(ids)) != 44:
         raise ValueError("source beam spell appendix must list 44 unique IDs")
 
-    return set(ids)
+    hex_document = HEX_SPEC.read_text()
+    hex_appendix = hex_document.split("## Source spell IDs", 1)[1]
+    hex_listed = hex_appendix.split("```text", 1)[1].split("```", 1)[0]
+    hex_ids = re.findall(r"SPELL_[A-Z0-9_]+", hex_listed)
+
+    if len(hex_ids) != 17 or len(set(hex_ids)) != 17:
+        raise ValueError("source hex spell appendix must list 17 unique IDs")
+
+    if set(ids) & set(hex_ids):
+        raise ValueError("source hex spells overlap the earlier beam family")
+
+    return set(ids) | set(hex_ids)
 
 
 def main():
@@ -512,7 +600,7 @@ def main():
 
     write_output(files, args.output, args.check)
 
-    print("44 committed monster beam profiles " +
+    print("61 committed monster zap profiles " +
           ("verified" if args.check else "generated"))
 
 

@@ -5,6 +5,7 @@ local resistance = require("policy.combat.player_resistance")
 local catalog = require("policy.catalog")
 local target_kind = require("constants.target_kind")
 local target = require("policy.combat.monster_spell_target")
+local spells = require("ids.spells")
 
 local petrify = {}
 
@@ -38,15 +39,15 @@ end
 
 function petrify.resolve(ctx, caster, foe, _, plan)
     local player = target.require_entity(plan, foe)
-    local actor = ctx:get(caster, component.ACTOR)
-    local definition = catalog.get("monsters", actor.kind_id)
     if resistance.petrification(ctx, player) then
         ctx:emit("spell", "You are unaffected by the petrifying gaze.")
 
         return
     end
 
-    if hex.resisted(ctx, caster, player, definition) then
+    local profile = catalog.get("monster_beams", spells.SPELL_PETRIFY)
+
+    if hex.resisted(ctx, caster, player, profile) then
         ctx:emit("spell", "You resist the petrifying gaze.")
 
         return

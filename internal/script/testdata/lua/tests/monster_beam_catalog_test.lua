@@ -10,8 +10,8 @@ local test = {}
 function test.run()
     local profiles = catalog.all("monster_beams")
 
-    harness.equal(#profiles, 44,
-        "every source beam spell has a committed profile")
+    harness.equal(#profiles, 61,
+        "every source monster zap has a committed profile")
 
     for _, profile in ipairs(profiles) do
         harness.equal(spells[profile.id], profile.id,

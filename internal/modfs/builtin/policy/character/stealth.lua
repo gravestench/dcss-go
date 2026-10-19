@@ -10,6 +10,7 @@ local confusion = require("policy.magic.player_confusion")
 local statuses = require("policy.magic.effects.statuses.player")
 local water = require("policy.character.water")
 local skills = require("ids.skills")
+local hex_status = require("policy.combat.monster_hexes.status")
 
 local stealth = {}
 
@@ -95,7 +96,8 @@ function stealth.score(ctx, player)
     end
 
     -- player.cc:player_stealth applies backlighting after additive sources.
-    if effects.sum(ctx, player, capabilities.BACKLIT) > 0 then
+    if effects.sum(ctx, player, capabilities.BACKLIT) > 0 or
+        hex_status.backlit(ctx, player) then
         score = math.floor(score * 2 / 5)
     end
 

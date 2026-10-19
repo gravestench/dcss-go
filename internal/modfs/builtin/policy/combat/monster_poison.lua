@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local roll = require("policy.combat.roll")
 local monster_health = require("policy.combat.monster_health")
 local component = require("constants.component")
+local hex_status = require("policy.combat.monster_hexes.status")
 
 local poison = {}
 
@@ -19,6 +20,18 @@ function poison.resistance(definition)
     end
 
     return 0
+end
+
+-- Virulence changes effective resistance only while its saved status is
+-- active. Full poison immunity remains absolute, as in source DCSS.
+function poison.effective_resistance(ctx, monster, definition)
+    local value = poison.resistance(definition)
+
+    if value < 3 and hex_status.poison_vulnerable(ctx, monster) then
+        return value - 1
+    end
+
+    return value
 end
 
 local function duration(ctx, speed, degree)
@@ -46,7 +59,7 @@ function poison.apply(ctx, monster, definition, levels, source, force,
 
     -- mon-util.cc:monster_resists_this_poison. Forced poison can affect
     -- partially resistant monsters, while rPois 3 remains immune.
-    local resistance = poison.resistance(definition)
+    local resistance = poison.effective_resistance(ctx, monster, definition)
 
     if resistance >= 3 then
         return false
@@ -110,7 +123,7 @@ function poison.tick(ctx, monster)
         damage = damage + 1 + roll.melee(ctx, state.degree + 1)
     end
 
-    if poison.resistance(definition) < 0 then
+    if poison.effective_resistance(ctx, monster, definition) < 0 then
         damage = damage + 1 + roll.melee(ctx, state.degree)
         damage = damage + roll.melee(ctx, state.degree)
     end

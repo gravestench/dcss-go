@@ -21,8 +21,8 @@ local function imported_beam_book_is_covered()
         [monsters.MONS_ORC_WIZARD] = true,
     })
 
-    harness.equal(#missing, 2,
-        "the orc wizard still needs two non-beam effects")
+    harness.equal(#missing, 1,
+        "the orc wizard still needs its remaining non-beam effect")
 
     for _, record in ipairs(missing) do
         harness.falsy(record.spell_id == spells.SPELL_MAGIC_DART or

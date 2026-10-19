@@ -56,6 +56,7 @@ local component = {
     PROJECTILE_SLOW = "projectile.slow",
     PROJECTILE_POISON = "projectile.poison",
     PLAYER_STATUS = "magic.player_status",
+    HEX_STATUS = "magic.hex_status",
     PLAYER_FORM = "magic.player_form",
     PLAYER_PARALYSIS = "magic.player_paralysis",
     PLAYER_SLEEP = "magic.player_sleep",
