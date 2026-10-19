@@ -44,11 +44,8 @@ function test.run(ctx)
     harness.falsy(ctx:has(monster, component.MONSTER_BOONS),
         "generic monster boons expire from their ECS owner")
 
-    chaos.make_shifter(ctx, monster)
-    chaos.tick(ctx, monster, 1000)
-
-    harness.truthy(chaos.shifter_active(ctx, monster),
-        "a chaos shapeshifter remains a shapeshifter after ordinary turns")
+    -- Permanent shifter identity lives in its own owner and is covered by
+    -- monster_shapeshifter_test; this case tests timed Chaos agility only.
 end
 
 return test

@@ -1,10 +1,5 @@
 local component = require("constants.component")
 local chaos_effects = require("constants.chaos_effects")
-local catalog = require("policy.catalog")
-local categories = require("constants.catalog")
-local monster_stats = require("policy.combat.monster_stats")
-local polymorph = require("policy.magic.effects.statuses.polymorph")
-local roll = require("policy.combat.roll")
 local boons = require("policy.combat.monster_support.boons")
 
 local status = {}
@@ -13,8 +8,8 @@ local fields = {
     [chaos_effects.AGILITY] = "agility_aut",
 }
 
--- Chaos alone owns agility and permanent shifter identity; generic boons have
--- their own component because spells grant them too.
+-- Chaos owns agility; generic boons have their own component because spells
+-- grant them too. Shifter identity has its own owner for natural monsters.
 local function current(ctx, monster)
     return ctx:get(monster, component.MONSTER_CHAOS)
 end
@@ -48,7 +43,6 @@ function status.apply(ctx, monster, name, duration)
 
     local value = current(ctx, monster) or {
         agility_aut = 0,
-        shifter = false,
     }
 
     value[field] = math.max(value[field], duration)
@@ -58,57 +52,6 @@ function status.apply(ctx, monster, name, duration)
     else
         ctx:add(monster, component.MONSTER_CHAOS, value)
     end
-end
-
--- Shifter identity persists in the same component after temporary boons expire.
-function status.make_shifter(ctx, monster)
-    local value = current(ctx, monster) or {
-        agility_aut = 0,
-        shifter = false,
-    }
-
-    value.shifter = true
-
-    if current(ctx, monster) then
-        ctx:set(monster, component.MONSTER_CHAOS, value)
-    else
-        ctx:add(monster, component.MONSTER_CHAOS, value)
-    end
-end
-
--- The permanent flag, not a duration, enables later spontaneous shape changes.
-function status.shifter_active(ctx, monster)
-    local value = current(ctx, monster)
-
-    return value ~= nil and value.shifter
-end
-
--- Example: status.shift(ctx, monster) with paralysed shifter -> false without changing form
--- Continue a chaos shifter's form changes on its status tick rather than on every hit.
-function status.shift(ctx, monster)
-    if not status.shifter_active(ctx, monster) or
-        ctx:has(monster, component.PARALYSIS) then
-        return false
-    end
-
-    local stasis = ctx:get(monster, component.MONSTER_STASIS)
-
-    if stasis and (stasis.hibernating or stasis.petrifying_aut > 0 or
-        stasis.petrified_aut > 0) then
-        return false
-    end
-
-    local actor = ctx:get(monster, component.ACTOR)
-    local definition = catalog.get(categories.MONSTERS, actor.kind_id)
-    local hd = monster_stats.hit_dice(ctx, monster, definition)
-
-    -- Source: mon-ench.cc. Ordinary shifters change on roughly
-    -- one in three times their hit dice monster actions.
-    if roll.melee(ctx, 3 * hd) ~= 0 then
-        return false
-    end
-
-    return polymorph.shapeshift(ctx, monster, definition)
 end
 
 -- Agility adds the source fixed evasion bonus only while active.
@@ -121,7 +64,7 @@ function status.evasion(ctx, monster, amount)
     return amount
 end
 
--- Remove Chaos-only state after agility expires unless shifter persists.
+-- Remove Chaos-only state after its final agility turn expires.
 function status.tick(ctx, monster, aut)
     local value = current(ctx, monster)
 
@@ -133,7 +76,7 @@ function status.tick(ctx, monster, aut)
         value[field] = math.max(0, value[field] - aut)
     end
 
-    if value.agility_aut == 0 and not value.shifter then
+    if value.agility_aut == 0 then
         ctx:remove(monster, component.MONSTER_CHAOS)
     else
         ctx:set(monster, component.MONSTER_CHAOS, value)

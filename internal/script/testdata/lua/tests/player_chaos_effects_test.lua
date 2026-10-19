@@ -4,10 +4,11 @@ local categories = require("constants.catalog")
 local component = require("constants.component")
 local effect_ids = require("constants.chaos_effects")
 local effects = require("policy.combat.monster_target_brands.chaos_effects")
-local chaos_status = require("policy.combat.monster_target_brands.chaos_status")
+local shapeshifter = require("policy.monsters.shapeshifter")
 local harness = require("tests.harness")
 local monsters = require("ids.monsters")
 local fixture = require("tests.monster_ally_support_fixture")
+local shape_draw = require("tests.monster_shapeshifter_fixture")
 
 local test = {}
 
@@ -131,6 +132,9 @@ function test.run(base)
         y = 2,
     })
 
+    proxy.random = shape_draw.stable_draw(proxy,
+        monsters.MONS_RAT, 2, 2)
+
     effects.apply_named(proxy, effect_ids.SHIFTER, {
         attacker = hit.attacker,
         defender = shifter,
@@ -145,7 +149,10 @@ function test.run(base)
 
     local first_shape = ctx:get(shifter, component.ACTOR).kind_id
 
-    chaos_status.shift(proxy, shifter)
+    proxy.random = shape_draw.stable_draw(proxy, first_shape,
+        2, 2, first_shape)
+
+    shapeshifter.tick(proxy, shifter)
 
     harness.truthy(ctx:get(shifter, component.ACTOR).kind_id ~= first_shape,
         "a chaos shapeshifter can transform on a later monster turn")

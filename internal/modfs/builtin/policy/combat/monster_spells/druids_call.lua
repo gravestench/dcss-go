@@ -7,7 +7,7 @@ local holiness = require("constants.monster_holiness")
 local intelligence = require("constants.monster_intelligence")
 local monsters = require("ids.monsters")
 local self_target = require("policy.combat.monster_support.self_target")
-local shifter = require("policy.combat.monster_target_brands.chaos_status")
+local shifter = require("policy.monsters.shapeshifter")
 local stats = require("policy.combat.monster_stats")
 local stasis = require("policy.magic.effects.statuses.monster_stasis")
 local streams = require("constants.rng_streams")
@@ -51,7 +51,7 @@ local function candidates(ctx, caster)
             stats.hit_dice(ctx, target, definition) <= 20 and
             definition.habitat_id ~= habitats.WATER and
             definition.habitat_id ~= habitats.LAVA and
-            not shifter.shifter_active(ctx, target) and
+            not shifter.active(ctx, target) and
             not ctx:has(target, constructs.CALLED_BEAST) and
             not ctx:visible(origin.level_id, origin.x, origin.y,
                 7, position.x, position.y) then

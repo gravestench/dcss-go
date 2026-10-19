@@ -206,7 +206,7 @@ Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,
 more layouts and branches, the Abyss monster roster and shifting terrain,
-full source parity for chaos clone allegiance and shapeshifter form selection,
+full source parity for chaos clone allegiance and exact shapeshifter RNG order,
 artefact-specific identification and names, runes,
 endgame, and the
 complete item and equipment system. The committed monster spellbook IDs

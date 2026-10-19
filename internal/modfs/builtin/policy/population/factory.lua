@@ -11,6 +11,8 @@ local resolve = require("policy.generation.vaults.specs.resolve")
 local origin_component = require("policy.population.origin")
 local habitats = require("constants.monster_habitats")
 local terrain = require("constants.terrain")
+local monsters = require("ids.monsters")
+local shapeshifter = require("policy.monsters.shapeshifter")
 
 local factory = {}
 
@@ -219,6 +221,12 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
     end
 
     ctx:place_actor(monster, level_id, x, y)
+
+    if kind_id == monsters.MONS_SHAPESHIFTER or
+        kind_id == monsters.MONS_GLOWING_SHAPESHIFTER then
+        -- Source placement hides both base bodies behind an immediate form.
+        shapeshifter.attach(ctx, monster, kind_id)
+    end
 
     return monster
 end

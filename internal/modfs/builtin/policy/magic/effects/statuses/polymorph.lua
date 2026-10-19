@@ -7,6 +7,8 @@ local hit_points = require("policy.population.hit_points")
 local range = require("policy.magic.range")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
+local monster_stats = require("policy.combat.monster_stats")
+local streams = require("constants.rng_streams")
 
 local polymorph = {}
 local definitions = catalog.all("monsters")
@@ -111,13 +113,13 @@ local function feature_safe(ctx, position, definition)
 end
 
 -- Exclude unfinished, unique, immobile, and unrelated species before weighted selection.
-local function candidate(source, target)
+local function candidate(source, target, match_habitat)
     if target.status ~= "defined" or not target.average_hp_10x or
         target.average_hp_10x <= 0 or not target.speed or target.speed <= 0 or
         target.id == source.id or target.species_id ~= target.id or
         target.species_id == source.species_id or
         not same_holiness(source.holiness, target.holiness) or
-        not same_habitat(source, target) then
+        (match_habitat and not same_habitat(source, target)) then
         return false
     end
 
@@ -138,7 +140,7 @@ local function weighted_candidates(ctx, source, position, stream)
     local choices = {}
 
     for _, definition in ipairs(definitions) do
-        if candidate(source, definition) and
+        if candidate(source, definition, true) and
             feature_safe(ctx, position, definition) then
             local delta = math.abs(source.hd - definition.hd)
 
@@ -178,6 +180,30 @@ local function weighted_candidates(ctx, source, position, stream)
     end
 
     return shortlist
+end
+
+-- RANDOM_MONSTER only requires the destination species to live on this
+-- cell; the spell's persistent three-form set additionally matches the
+-- old habitat. A flying shifter on floor may become a ground creature.
+function polymorph.shifter_eligible(ctx, source, definition, position)
+    return candidate(source, definition, false) and
+        feature_safe(ctx, position, definition)
+end
+
+-- The source samples species uniformly for the current cell before testing
+-- whether the chosen body is a legal or suitably powered transformation.
+function polymorph.shifter_pool(ctx, position)
+    local pool = {}
+
+    for _, definition in ipairs(definitions) do
+        if definition.status == "defined" and
+            definition.species_id == definition.id and
+            feature_safe(ctx, position, definition) then
+            pool[#pool + 1] = definition
+        end
+    end
+
+    return pool
 end
 
 -- Polymorph drops carried gear because the new body cannot retain old equipment slots.
@@ -235,6 +261,53 @@ local function transform(ctx, target, source, definition, stream)
 
     ctx:emit("spell", "The " .. source.name ..
         " evaporates and reforms as a " .. definition.name .. "!")
+end
+
+-- PPT_SAME favors similar hit dice, widening asymmetrically after misses.
+local function shifter_power_fits(source_hd, target_hd, relax)
+    return target_hd >= source_hd - relax and
+        target_hd <= source_hd + math.floor(relax * 3 / 2)
+end
+
+-- Keep the actor transition shared with Polymorph, but draw source-style
+-- shifter forms without the spell's three-form weighted shortlist.
+function polymorph.random_shifter(ctx, target, source, stream)
+    local position = ctx:get(target, component.POSITION)
+
+    if not position then
+        return false
+    end
+
+    local pool = polymorph.shifter_pool(ctx, position)
+
+    if #pool == 0 then
+        return false
+    end
+
+    local source_stream = stream or streams.MONSTER_SPELL
+    local source_hd = monster_stats.hit_dice(ctx, target, source)
+    local relax = 1
+
+    for _ = 1, 1000 do
+        local chosen = pool[ctx:random(source_stream, #pool) + 1]
+
+        if ctx:random(source_stream, 200) == 0 then
+            relax = relax + 1
+
+            if relax > 50 then
+                return false
+            end
+        end
+
+        if polymorph.shifter_eligible(ctx, source, chosen, position) and
+            shifter_power_fits(source_hd, chosen.hd, relax) then
+            transform(ctx, target, source, chosen, source_stream)
+
+            return true
+        end
+    end
+
+    return false
 end
 
 -- Only visible living actors along clear in-range rays make the spell usable.

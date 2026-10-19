@@ -51,6 +51,7 @@ local component = {
     -- systems can resolve deaths, lingering grips, and delayed actions.
     SPECTRAL_WEAPON = "combat.spectral_weapon",
     MONSTER_CHAOS = "combat.monster_chaos",
+    MONSTER_SHAPESHIFTER = "combat.monster_shapeshifter",
     MONSTER_BOONS = "combat.monster_boons",
     MONSTER_BLACK_MARK = "combat.monster_black_mark",
     MONSTER_INJURY_BOND = "combat.monster_injury_bond",

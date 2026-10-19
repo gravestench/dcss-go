@@ -11,6 +11,9 @@ local slow = require("policy.combat.monster_slow")
 local clone_inventory = require("policy.combat.clone_inventory")
 local polymorph = require("policy.magic.effects.statuses.polymorph")
 local roll = require("policy.combat.roll")
+local shapeshifter = require("policy.monsters.shapeshifter")
+local monsters = require("ids.monsters")
+local streams = require("constants.rng_streams")
 
 local effects = {}
 
@@ -71,7 +74,7 @@ end
 local function shifter(ctx, hit)
     return polyable(ctx, hit) and
         has(hit.definition.holiness, holiness.NATURAL) and
-        not status.shifter_active(ctx, hit.defender)
+        not shapeshifter.active(ctx, hit.defender)
 end
 
 -- Rage requires an actual melee attack and excludes states that cannot act or already frenzy.
@@ -202,8 +205,13 @@ end
 
 -- Mark the monster before reshaping it so later turns continue the shifter behaviour.
 local function make_shifter(ctx, hit)
-    status.make_shifter(ctx, hit.defender)
-    polymorph.shapeshift(ctx, hit.defender, hit.definition)
+    local variant = monsters.MONS_SHAPESHIFTER
+
+    if ctx:random(streams.MELEE, 3) == 0 then
+        variant = monsters.MONS_GLOWING_SHAPESHIFTER
+    end
+
+    shapeshifter.attach(ctx, hit.defender, variant)
 end
 
 -- Extend frenzy to at least 120 aut without shortening a longer existing frenzy.

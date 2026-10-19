@@ -264,6 +264,32 @@ function module.run(ctx, input)
         end
     end
 
+    -- The borrowed body may change repeatedly, but the one permanent owner
+    -- must still identify a real source monster and its first lineage.
+    for _, entity in ipairs(ctx:query({
+        component.MONSTER_SHAPESHIFTER,
+    })) do
+        local shape = ctx:get(entity, component.MONSTER_SHAPESHIFTER)
+        local actor = ctx:get(entity, component.ACTOR)
+        local health = ctx:get(entity, component.HEALTH)
+        local form = ctx:get(entity, component.MONSTER_POLYMORPH)
+        local ordinary = shape.variant_id == monsters.MONS_SHAPESHIFTER
+        local glowing = shape.variant_id ==
+            monsters.MONS_GLOWING_SHAPESHIFTER
+        local source = register.get("monsters", shape.original_kind_id)
+
+        if not actor or not health or health.current <= 0 or
+            not ctx:has(entity, component.POSITION) or
+            not ctx:has(entity, component.AI) or
+            not (ordinary or glowing) or
+            shape.original_kind_id == "" or
+            not source or source.status ~= "defined" or
+            not form or form.original_kind_id ~= shape.original_kind_id then
+            error("entity " .. ctx:id(entity) ..
+                " has invalid shapeshifter identity")
+        end
+    end
+
     -- A saved chant must belong to a real monster. The active recall
     -- system queries this component directly, including non-AI owners.
     for _, owner in ipairs(ctx:query({ component.MONSTER_RECALL })) do

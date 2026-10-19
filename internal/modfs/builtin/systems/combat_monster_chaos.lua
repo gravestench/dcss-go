@@ -3,12 +3,11 @@ local chaos = require("policy.combat.monster_target_brands.chaos_status")
 
 local system = {}
 
--- Theory of operation: Chaos duration and behavioral shift are committed before AI chooses the next intent.
--- Chaos status on monsters ticks before AI decides an intent.
+-- Theory of operation: Chaos's temporary agility ages before AI chooses an
+-- intent. Permanent shape changes run in the separate shapeshifter system.
 function system.update(ctx, monster)
     if ctx:has(monster, component.AI) then
         chaos.tick(ctx, monster, 10)
-        chaos.shift(ctx, monster)
     end
 end
 
