@@ -3,6 +3,7 @@
 local channels = {
     COMBAT = "combat",
     DURATION = "duration",
+    SPELL = "spell",
 }
 
 return channels

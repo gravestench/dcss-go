@@ -6,8 +6,10 @@ local attitudes = require("constants.vault_attitude")
 
 local targets = {}
 
--- Player, friendly summon, authored attitude, and charm share one ally rule.
-local function allied(ctx, entity)
+-- A monster's underlying side comes from its summon or authored attitude.
+-- Beneficial magic compares this with the caster's current side so a charm
+-- cannot make an otherwise hostile monster a trusted recipient.
+function targets.real_allied(ctx, entity)
     if entity == ctx:player() then
         return true
     end
@@ -26,7 +28,13 @@ local function allied(ctx, entity)
         return true
     end
 
-    return allegiance.charmed(ctx, entity)
+    return false
+end
+
+-- Combat uses temporary charm as well as the actor's underlying side.
+local function allied(ctx, entity)
+    return targets.real_allied(ctx, entity) or
+        allegiance.charmed(ctx, entity)
 end
 
 -- Neutral actors are excluded before proximity can imply hostility.

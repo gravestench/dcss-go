@@ -9,10 +9,10 @@ local spells = require("ids.spells")
 
 local test = {}
 
--- These source spellbook IDs form one self-support family. Their own modules
+-- These source spellbook IDs form the self and ally support families. Their own modules
 -- must expose both phases, so content can become castable without a dispatcher
 -- accumulating a branch for every individual spell.
-local self_support_ids = {
+local support_ids = {
     spells.SPELL_MIGHT,
     spells.SPELL_INVISIBILITY,
     spells.SPELL_HASTE,
@@ -26,11 +26,15 @@ local self_support_ids = {
     spells.SPELL_WOODWEAL,
     spells.SPELL_STILL_WINDS,
     spells.SPELL_AURA_OF_BRILLIANCE,
+    spells.SPELL_HASTE_OTHER,
+    spells.SPELL_MIGHT_OTHER,
+    spells.SPELL_INVISIBILITY_OTHER,
+    spells.SPELL_HEAL_OTHER,
 }
 
 -- The source book slots cannot enter active rosters until both phases exist.
-local function self_support_has_complete_resolvers()
-    for _, spell_id in ipairs(self_support_ids) do
+local function support_has_complete_resolvers()
+    for _, spell_id in ipairs(support_ids) do
         local okay, effect = pcall(effects.effect, spell_id)
 
         harness.truthy(okay, spell_id .. " resolver loads")
@@ -125,7 +129,7 @@ end
 
 -- Generated monsters cannot carry a spellbook slot without a Lua effect module.
 function test.run()
-    self_support_has_complete_resolvers()
+    support_has_complete_resolvers()
     active_roster_has_effects()
     imported_beam_book_is_covered()
     malformed_effect_is_reported()

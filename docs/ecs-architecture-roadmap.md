@@ -161,8 +161,10 @@ willpower, immunity, and persistent actor rules. Monster spell coverage
 rejects missing effects before a monster joins the live roster. The 13
 self-support spells now use actor-owned Lua statuses for boons, healing,
 defenses, and auras. Chaos and spells share the same Haste and Might state.
-Ally-targeted support, summons, and remaining monster spell families still
-need complete rule slices before wider monster rosters become playable.
+The four ally-targeted support spells now select a genuine allied recipient
+through a beam ray and write those same saved boon, enchant, and health
+owners. Summons and remaining monster spell families still need complete
+rule slices before wider monster rosters become playable.
 
 The cloud domain now uses discoverable Lua definitions and focused effect
 modules for all 34 concrete source kinds. Saved Akara entities represent

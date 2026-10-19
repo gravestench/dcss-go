@@ -13,4 +13,12 @@ groups.tentacles = {
     [monsters.MONS_STARSPAWN_TENTACLE_SEGMENT] = true,
 }
 
+-- DCSS exempts these diagnostic monsters from its harmless-obstacle rule.
+-- A modded test scenario may therefore target them with an allied spell.
+groups.test_monsters = {
+    [monsters.MONS_TEST_SPAWNER] = true,
+    [monsters.MONS_TEST_STATUE] = true,
+    [monsters.MONS_TEST_BLOB] = true,
+}
+
 return groups

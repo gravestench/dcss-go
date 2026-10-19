@@ -1,4 +1,5 @@
 local catalog = require("policy.catalog")
+local channels = require("constants.message_channels")
 local component = require("constants.component")
 local display = require("policy.combat.monster_support.display")
 local monster_stats = require("policy.combat.monster_stats")
@@ -32,9 +33,10 @@ local function spell_hd(ctx, caster)
     return monster_stats.spell_hit_dice(ctx, caster, definition)
 end
 
--- Heal the actor's saved HP and report only an actual increase.
-local function apply(ctx, caster, amount)
-    local health = ctx:get(caster, component.HEALTH)
+-- All monster healing writes the recipient's existing health component.
+-- Keep the HP calculation separate from spell-specific visible messages.
+local function apply(ctx, target, amount)
+    local health = ctx:get(target, component.HEALTH)
 
     if not health then
         error("monster healing target has no health")
@@ -43,18 +45,23 @@ local function apply(ctx, caster, amount)
     local previous = health.current
 
     health.current = math.min(health.max, health.current + amount)
-    ctx:set(caster, component.HEALTH, health)
-
-    if health.current > previous then
-        ctx:emit("spell", "The " .. display.name(ctx, caster) ..
-            " is healed.")
-    end
+    ctx:set(target, component.HEALTH, health)
 
     return health.current - previous
 end
 
--- mon-cast.cc gives Minor Healing a two-die beam, then beam.cc adds three.
-function healing.minor(ctx, caster)
+-- Self-healing spells share their source message while the allied beam has
+-- separate full-recovery and partial-recovery wording.
+local function report_self(ctx, caster, gained)
+    if gained > 0 then
+        ctx:emit(channels.SPELL, "The " .. display.name(ctx, caster) ..
+            " is healed.")
+    end
+end
+
+-- mon-cast.cc uses the caster's Minor Healing spell HD for either recipient.
+-- The two source dice consume only the named monster spell stream.
+local function minor_amount(ctx, caster)
     local sides = math.floor(spell_hd(ctx, caster) / 2)
     local dice = 0
 
@@ -64,15 +71,47 @@ function healing.minor(ctx, caster)
         end
     end
 
-    return apply(ctx, caster, 3 + dice)
+    return 3 + dice
+end
+
+-- Self healing keeps its established message and recipient identity.
+function healing.minor(ctx, caster)
+    local gained = apply(ctx, caster, minor_amount(ctx, caster))
+
+    report_self(ctx, caster, gained)
+
+    return gained
+end
+
+-- Heal Other works for any missing HP; beam.cc distinguishes a complete
+-- recovery from partial healing in its message to the player.
+function healing.other(ctx, caster, target)
+    local gained = apply(ctx, target, minor_amount(ctx, caster))
+
+    if gained > 0 then
+        local health = ctx:get(target, component.HEALTH)
+        local suffix = " is healed somewhat."
+
+        if health.current == health.max then
+            suffix = "'s wounds heal themselves!"
+        end
+
+        ctx:emit(channels.SPELL, "The " .. display.name(ctx, target) ..
+            suffix)
+    end
+
+    return gained
 end
 
 -- Major Healing's average roll uses the source monster spell stream.
 function healing.major(ctx, caster)
     local bound = spell_hd(ctx, caster) * 10
     local amount = 50 + roll.average_two(ctx, "monster_spell", bound)
+    local gained = apply(ctx, caster, amount)
 
-    return apply(ctx, caster, amount)
+    report_self(ctx, caster, gained)
+
+    return gained
 end
 
 -- A tree feature or nearby Shambling Mangrove can anchor Woodweal.
@@ -115,8 +154,11 @@ end
 -- Woodweal's 35-point base plus HD roll occurs only after a valid cast.
 function healing.woodweal(ctx, caster)
     local amount = 35 + roll.spell(ctx, spell_hd(ctx, caster) * 3)
+    local gained = apply(ctx, caster, amount)
 
-    return apply(ctx, caster, amount)
+    report_self(ctx, caster, gained)
+
+    return gained
 end
 
 return healing
