@@ -3,6 +3,7 @@ local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
 local component = require("constants.component")
 local invisibility = require("policy.potions.invisibility")
 local attitudes = require("constants.attitude")
+local tactical = require("constants.monster_tactical")
 
 local targets = {}
 
@@ -11,6 +12,14 @@ local targets = {}
 function targets.real_attitude(ctx, entity)
     if entity == ctx:player() then
         return attitudes.FRIENDLY
+    end
+
+    -- Kirke's death makes a formerly hostile restored hog good-neutral.
+    -- This persistent source rule must win over a summoned or authored side.
+    local freed = ctx:get(entity, tactical.KIRKE_FREED)
+
+    if freed and freed.freed then
+        return attitudes.GOOD_NEUTRAL
     end
 
     local summon = ctx:get(entity, component.SUMMON)

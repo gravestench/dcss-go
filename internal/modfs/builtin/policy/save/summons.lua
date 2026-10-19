@@ -287,7 +287,13 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     elseif segment then
         local head = ctx:get(segment.head, component.SUMMON)
         local marker = ctx:get(segment.gateway, component.SUMMON_GATEWAY)
+        local portal = ctx:get(segment.gateway, constructs.PORTAL)
         local head_actor = ctx:get(segment.head, component.ACTOR)
+        local attached_portal = portal and segment.gateway == segment.head
+        local matching_marker = marker and
+            marker.tentacle_id == ctx:id(segment.head) and
+            marker.source_id == state.source_id and
+            marker.source_category == state.source_category
 
         if (state.source_id ~= spells.SPELL_MALIGN_GATEWAY and
             not trap_source) or
@@ -295,9 +301,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
             not head or head.source_id ~= state.source_id or
             head.source_category ~= state.source_category or
             head.owner ~= state.owner or
-            not marker or marker.tentacle_id ~= ctx:id(segment.head) or
-            marker.source_id ~= state.source_id or
-            marker.source_category ~= state.source_category or
+            not attached_portal and not matching_marker or
             not head_actor or head_actor.kind_id ~= monsters.MONS_ELDRITCH_TENTACLE or
             state.expires_aut ~= head.expires_aut or
             segment.index < 1 or segment.index > 4 then

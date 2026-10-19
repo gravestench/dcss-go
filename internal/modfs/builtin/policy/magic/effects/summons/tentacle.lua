@@ -3,6 +3,7 @@ local component = require("constants.component")
 local intent_ids = require("constants.intent")
 local targets = require("policy.ai.targets")
 local summons = require("policy.magic.effects.summons.common")
+local invisibility = require("policy.potions.invisibility")
 
 local constructs = require("constants.monster_construct_components")
 local habitat = require("policy.combat.monster_habitat")
@@ -31,7 +32,8 @@ local function closer_target(left, right)
     return left.distance < right.distance
 end
 
--- Only an active gateway whose saved tentacle ID matches can anchor this head.
+-- Emerged heads own their anchor after the source removes the portal marker.
+-- Attached tentacles instead anchor to their living parent.
 local function gateway(ctx, head)
     local attached = ctx:get(head, constructs.TENTACLE)
 
@@ -46,15 +48,81 @@ local function gateway(ctx, head)
         return nil, nil
     end
 
-    for _, marker in ipairs(ctx:query({ component.SUMMON_GATEWAY })) do
-        local state = ctx:get(marker, component.SUMMON_GATEWAY)
+    local portal = ctx:get(head, constructs.PORTAL)
+    local position = ctx:get(head, component.POSITION)
 
-        if state.phase == 1 and state.tentacle_id == ctx:id(head) then
-            return marker, state
-        end
+    if portal and position then
+        return head, {
+            level_id = position.level_id,
+            x = portal.anchor_x,
+            y = portal.anchor_y,
+        }
     end
 
     return nil, nil
+end
+
+-- Source mon-tentacle.cc picks an unoccupied habitable neighbor of the
+-- severed BASE_POSITION each time the head acts. Keep that moving anchor on
+-- the head, since the marker must retain the portal's original location.
+local function drift_anchor(ctx, head, base)
+    local portal = ctx:get(head, constructs.PORTAL)
+
+    if not portal or not portal.severed then
+        return base
+    end
+
+    for _, offset in ipairs(offsets) do
+        local x = base.x + offset[1]
+        local y = base.y + offset[2]
+
+        if not ctx:actor_at(base.level_id, x, y) and
+            habitat.at(ctx, head, base.level_id, x, y) then
+            portal.anchor_x = x
+            portal.anchor_y = y
+            ctx:set(head, constructs.PORTAL, portal)
+
+            return {
+                level_id = base.level_id,
+                x = x,
+                y = y,
+            }
+        end
+    end
+
+    return base
+end
+
+-- Unlike ordinary nearest-enemy AI, an attached gateway head can pursue
+-- only foes visible to both the head and the portal's anchor. This mirrors
+-- the two sight tests in mon-tentacle.cc:_collect_foe_positions.
+local function gateway_target(ctx, head, position, base)
+    local nearest
+    local closest = 8
+
+    for _, entity in ipairs(ctx:query({
+        component.ACTOR,
+        component.POSITION,
+        component.HEALTH,
+    })) do
+        local foe = ctx:get(entity, component.POSITION)
+        local health = ctx:get(entity, component.HEALTH)
+        local reach = distance(position, foe)
+
+        if health.current > 0 and foe.level_id == position.level_id and
+            reach < closest and targets.enemy(ctx, head, entity) and
+            (entity ~= ctx:player() or
+                invisibility.visible_to(ctx, entity, head)) and
+            ctx:visible(position.level_id, position.x, position.y,
+                7, foe.x, foe.y) and
+            ctx:visible_no_trans(base.level_id, base.x, base.y,
+                7, foe.x, foe.y) then
+            nearest = entity
+            closest = reach
+        end
+    end
+
+    return nearest
 end
 
 -- Source: mon-tentacle.cc:move_solo_tentacle uses a five-cell connection
@@ -111,6 +179,40 @@ local function path(ctx, head, base, goal)
     return nil
 end
 
+-- The disconnected head has no foe search in the source. Retract one step
+-- along its current chain, vacating an old connector before Go grid movement.
+local function severed_retraction(ctx, head, base, position)
+    local connection = path(ctx, head, base, position)
+    local next_cell = connection and connection[#connection - 1]
+
+    if not next_cell or
+        distance(next_cell, base) >= distance(position, base) then
+        return { kind = intent_ids.MONSTER_WAIT }
+    end
+
+    local occupant = ctx:actor_at(position.level_id,
+        next_cell.x, next_cell.y)
+    local segment = occupant and ctx:get(occupant,
+        component.SUMMON_SEGMENT)
+
+    -- C++ purges its old connector chain before moving the head. The Go
+    -- grid needs the destination vacated explicitly first.
+    if segment and segment.head == head then
+        summons.expire(ctx, occupant)
+        occupant = nil
+    end
+
+    if occupant then
+        return { kind = intent_ids.MONSTER_WAIT }
+    end
+
+    return {
+        kind = intent_ids.MONSTER_MOVE,
+        dx = next_cell.x - position.x,
+        dy = next_cell.y - position.y,
+    }
+end
+
 -- Choose melee at range one; otherwise move closer only along a legal connected chain.
 function tentacle.act(ctx, head, position)
     local marker, base = gateway(ctx, head)
@@ -120,10 +222,30 @@ function tentacle.act(ctx, head, position)
     end
 
     local attached = ctx:has(head, constructs.TENTACLE)
+    base = drift_anchor(ctx, head, base)
     local limit = attached and 12 or 5
-    local target = targets.nearest(ctx, head, attached and base or position, 7)
+    local target
+
+    if attached then
+        target = targets.nearest(ctx, head, base, 7)
+    else
+        local portal = ctx:get(head, constructs.PORTAL)
+
+        if not portal or not portal.severed then
+            target = gateway_target(ctx, head, position, base)
+        end
+    end
+
     local grip = ctx:get(ctx:player(), component.CONSTRICTION)
     local pulling = attached and grip and grip.by == head
+
+    -- The source reconnects after every anchor shift. If the new base
+    -- cannot reach the head within the tether, that head self-destructs.
+    if not attached and not path(ctx, head, base, position) then
+        summons.expire(ctx, head)
+
+        return { kind = intent_ids.MONSTER_WAIT }
+    end
 
     if attached and (not target or pulling) then
         local connection = path(ctx, head, base, position)
@@ -157,6 +279,12 @@ function tentacle.act(ctx, head, position)
 
         return { kind = intent_ids.MONSTER_WAIT }
     elseif not target then
+        local portal = ctx:get(head, constructs.PORTAL)
+
+        if portal and portal.severed then
+            return severed_retraction(ctx, head, base, position)
+        end
+
         return { kind = intent_ids.MONSTER_WAIT }
     end
 
@@ -328,7 +456,8 @@ function tentacle.clean_orphans(ctx)
 
         if not health or health.current <= 0 or
             not ctx:has(segment.gateway, component.SUMMON_GATEWAY) and
-                not ctx:has(segment.head, constructs.TENTACLE) then
+                not ctx:has(segment.head, constructs.TENTACLE) and
+                not ctx:has(segment.head, constructs.PORTAL) then
             summons.expire(ctx, actor)
         end
     end

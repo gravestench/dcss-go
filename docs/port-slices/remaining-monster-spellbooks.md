@@ -35,11 +35,18 @@ need later domain work before claiming full DCSS parity:
   and after hypothetical closure and chooses the best player push square.
   Some source perception/status modifiers and habitat-specific push rules
   remain.
-- **Porkalator:** spell-converted hogs return when Kirke dies. Original band
-  hogs and deferred restoration on unloaded floors need the band/world slice.
-- **Malign Gateway:** severed tentacles lose 20 HP per turn but do not yet
-  drift toward an anchor while writhing. The connection pathfinder is a grid
-  approximation of source constraints.
+- **Porkalator:** Kirke now arrives with a source-sized hog band. Her death
+  restores her band and spell-converted hogs across every retained level,
+  frees hostile victims, and ends player Pig Form. The Go world keeps
+  inactive floors loaded, so restoration is immediate rather than queued.
+  Source restoration also copies a larger monster snapshot, including flags
+  and enchantments; the port preserves each actor's current ECS effects and
+  inventory while restoring its identity, speed, and proportional HP.
+- **Malign Gateway:** severed heads now drift their saved anchor and keep
+  reconnecting after their portal marker expires. The marker closes when a
+  monster vacates its cell, releasing the one-gateway global limit. The
+  connector pathfinder still approximates source constrained path selection;
+  sanctuary restrictions await the religion domain.
 
 These are behavioral follow-ups, not reasons to reintroduce missing-module
 fallbacks. Each should extend its focused owner and gain a source-based

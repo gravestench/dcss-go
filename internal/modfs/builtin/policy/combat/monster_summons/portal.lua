@@ -13,7 +13,7 @@ local portal = {}
 -- mon-ench.cc gives the portal a nominal thirty-turn lifetime followed by
 -- its ordinary asymmetric enchantment fuzz. Pacification has a separate
 -- random2avg(power, 6) timer and only changes friendly allegiance.
-function portal.spawn(ctx, marker, state)
+function portal.spawn(ctx, state)
     local head = summons.spawn(ctx, state.owner, state.source_id,
         monsters.MONS_ELDRITCH_TENTACLE, 0, nil, {
             anchor = {
@@ -49,10 +49,11 @@ function portal.spawn(ctx, marker, state)
         ctx:random(streams.MONSTER_SPELL, 4)) * 10)
 
     ctx:add(head, constructs.PORTAL, {
-        marker = marker,
         remaining_aut = lifetime,
         pacified_aut = pacified,
         severed = false,
+        anchor_x = state.x,
+        anchor_y = state.y,
     })
 
     -- Source monster portals have a non-actor summoner. Their tentacle
@@ -65,10 +66,29 @@ function portal.spawn(ctx, marker, state)
     return head
 end
 
+-- Closing the portal changes allegiance and starts the source's 20 HP
+-- severed decay. Anchor drift happens on the head's next action, because
+-- mon-tentacle.cc changes BASE_POSITION during movement, not timer aging.
 function portal.tick(ctx, head, aut)
     local state = ctx:get(head, constructs.PORTAL)
     local summon = ctx:get(head, component.SUMMON)
-    local marker = ctx:get(state.marker, component.SUMMON_GATEWAY)
+
+    -- Player heads use the same persistent anchor but expire through their
+    -- ordinary summon timer. Only monster heads use this source lifetime.
+    if summon.owner == ctx:player() then
+        return
+    end
+
+    local marker
+
+    for _, entity in ipairs(ctx:query({ component.SUMMON_GATEWAY })) do
+        local gateway = ctx:get(entity, component.SUMMON_GATEWAY)
+
+        if gateway.tentacle_id == ctx:id(head) then
+            marker = gateway
+            break
+        end
+    end
 
     if state.severed then
         health.damage(ctx, head, 20)

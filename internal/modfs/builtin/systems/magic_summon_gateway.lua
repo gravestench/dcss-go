@@ -2,10 +2,12 @@ local monsters = require("ids.monsters")
 local component = require("constants.component")
 local terrain_ids = require("constants.terrain")
 local summons = require("policy.magic.effects.summons.common")
+local constructs = require("constants.monster_construct_components")
 
 -- Theory of operation: The marker changes from portal to tentacle only when its cell is free after terrain aging.
 -- Source: timed-effects.cc:timeout_malign_gateways. The marker first owns a
--- solid portal cell, then keeps its marker while the tentacle lives.
+-- solid portal cell, then drops its marker when the head leaves that cell.
+-- The head owns its anchor afterward, so it can keep moving and reconnecting.
 -- Monster portals also emit saved translocation clouds before emergence.
 local portal = require("policy.combat.monster_summons.portal")
 local cloud_area = require("policy.clouds.area")
@@ -40,7 +42,7 @@ function system.update(ctx, active)
             local tentacle
 
             if state.owner ~= ctx:player() then
-                tentacle = portal.spawn(ctx, marker, state)
+                tentacle = portal.spawn(ctx, state)
             else
                 tentacle = summons.spawn(ctx, state.owner,
                     state.source_id, monsters.MONS_ELDRITCH_TENTACLE, 1, 1, {
@@ -57,6 +59,18 @@ function system.update(ctx, active)
             end
 
             if tentacle then
+                if state.owner == ctx:player() then
+                    -- Player heads share the same saved self-owned anchor.
+                    -- Their ordinary summon expiry owns their lifetime.
+                    ctx:add(tentacle, constructs.PORTAL, {
+                        remaining_aut = 0,
+                        pacified_aut = 0,
+                        severed = false,
+                        anchor_x = state.x,
+                        anchor_y = state.y,
+                    })
+                end
+
                 state.phase = 1
                 state.tentacle_id = ctx:id(tentacle)
 
@@ -65,8 +79,14 @@ function system.update(ctx, active)
             end
         elseif state.phase == 1 then
             local tentacle = ctx:entity(state.tentacle_id)
+            local occupant = ctx:actor_at(state.level_id, state.x, state.y)
+            local monster_here = occupant and
+                not ctx:has(occupant, component.PLAYER)
 
-            if not tentacle or not ctx:has(tentacle, component.HEALTH) then
+            -- DCSS checks monster occupancy, not merely the head's life.
+            -- Once the portal cell is empty, the gateway limit is released.
+            if not tentacle or not ctx:has(tentacle, component.HEALTH) or
+                not monster_here then
                 if ctx:cell(state.level_id, state.x, state.y) ==
                     terrain_ids.DNGN_MALIGN_GATEWAY then
                     ctx:set_cell(state.level_id, state.x, state.y,

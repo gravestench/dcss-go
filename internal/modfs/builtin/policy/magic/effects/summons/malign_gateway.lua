@@ -7,25 +7,18 @@ local terrain = require("policy.magic.effects.summons.terrain")
 
 local spell_id = spells.SPELL_MALIGN_GATEWAY
 
--- A player-owned gateway marker, even before its tentacle appears, blocks a second portal.
+-- Source allows only one gateway in the dungeon, regardless of whether a
+-- player or monster opened it. A pending portal also counts toward the limit.
 local function active_gateway(ctx)
-    for _, marker in ipairs(ctx:query({ component.SUMMON_GATEWAY })) do
-        local state = ctx:get(marker, component.SUMMON_GATEWAY)
-
-        if state.owner == ctx:player() then
-            return true
-        end
-    end
-
-    return false
+    return #ctx:query({ component.SUMMON_GATEWAY }) > 0
 end
 
 -- Source: spl-summoning.cc:can_cast_malign_gateway and
 -- find_gateway_location. A failed location check aborts before payment.
 local spell_effects = {}
 
--- Example: An existing gateway blocks another cast before a placement cell is selected.
--- Reject an existing player gateway or absent placement cell before the cast spends resources.
+-- Example: A monster gateway blocks the player's cast before placement.
+-- Reject any existing gateway or absent placement cell before spending resources.
 function spell_effects.prepare(ctx, player)
     if active_gateway(ctx) then
         return "You can only sustain one malign gateway at a time."

@@ -12,6 +12,8 @@ local trap_placement = require("policy.traps.placement")
 local shop_spec = require("policy.generation.vaults.shop_spec")
 local shop_generation = require("policy.shops.generation")
 local streams = require("constants.rng_streams")
+local kirke_band = require("policy.population.kirke_band")
+local monsters = require("ids.monsters")
 
 local vaults = {}
 
@@ -157,7 +159,7 @@ local function materialize_shop(ctx, level, record)
 end
 
 -- Process typed vault records in source order so terrain, actors, items, and shops see prior effects.
-function vaults.materialize(ctx, level)
+function vaults.materialize(ctx, level, excluded)
     local actors = 0
     local materialized = {}
 
@@ -199,8 +201,12 @@ function vaults.materialize(ctx, level)
                 if duplicate_unique(ctx, arguments.kind_id) then
                     no_spawn = true
                 else
-                    factory.spawn(ctx, arguments.kind_id, level.id,
+                    local spawned = factory.spawn(ctx, arguments.kind_id, level.id,
                         record.x, record.y, monster_options(record, level))
+                    if arguments.kind_id == monsters.MONS_KIRKE then
+                        actors = actors + kirke_band.spawn(ctx, spawned,
+                            level, excluded)
+                    end
                     gear = generated_gear(ctx, level, record)
                     actors = actors + 1
                 end

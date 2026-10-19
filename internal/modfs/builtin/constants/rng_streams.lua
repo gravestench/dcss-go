@@ -3,6 +3,7 @@
 -- Named persisted RNG streams used by Lua policies.
 local streams = {
     ACQUIREMENT = "acquirement",
+    BANDS = "bands",
     CLOUDS = "clouds",
     ITEM_GENERATION = "item_generation",
     MELEE = "melee",
@@ -10,6 +11,7 @@ local streams = {
     MONSTER_SPELL = "monster_spell",
     MUTATION = "mutation",
     POTION = "potion",
+    PLACEMENT = "placement",
     SHOP = "shop",
     SPELL = "spell",
     TRAPS = "traps",

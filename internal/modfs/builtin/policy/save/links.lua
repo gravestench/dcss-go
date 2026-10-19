@@ -1,5 +1,6 @@
 local component = require("constants.component")
 local monsters = require("ids.monsters")
+local tactical = require("constants.monster_tactical")
 
 local links = {}
 
@@ -15,7 +16,8 @@ local function adjacent(a, b)
     return dx <= 1 and dy <= 1 and (dx ~= 0 or dy ~= 0)
 end
 
--- Jackal band links may outlive a leader, but any living leader must be a jackal on the same floor.
+-- Jackal and Kirke band links may outlive a leader. A living leader must
+-- still match the band type and remain on the follower's floor.
 local function validate_followers(ctx)
     for _, entity in ipairs(ctx:query({ "core.follower" })) do
         local follower = ctx:get(entity, "core.follower")
@@ -24,8 +26,15 @@ local function validate_followers(ctx)
         local position = ctx:get(entity, "core.position")
         local leader_id = ctx:id(follower.leader)
 
-        if not ai or not actor or actor.kind_id ~= "MONS_JACKAL" or
-            leader_id == 0 or leader_id == ctx:id(entity) then
+        local form = ctx:get(entity, component.MONSTER_POLYMORPH)
+        local kirke_hog = actor and
+            (actor.kind_id == monsters.MONS_HOG or
+                (form and form.original_kind_id == monsters.MONS_HOG)) and
+            ctx:has(entity, tactical.KIRKE_BAND)
+        local jackal = actor and actor.kind_id == monsters.MONS_JACKAL
+
+        if not ai or not (kirke_hog or jackal) or leader_id == 0 or
+            leader_id == ctx:id(entity) then
             error("entity " .. ctx:id(entity) .. " has an invalid band leader link")
         end
 
@@ -34,8 +43,16 @@ local function validate_followers(ctx)
         if leader then
             local leader_actor = ctx:get(leader, "core.actor")
             local leader_position = ctx:get(leader, "core.position")
+            local leader_form = ctx:get(leader,
+                component.MONSTER_POLYMORPH)
 
-            if not leader_actor or leader_actor.kind_id ~= "MONS_JACKAL" or
+            local expected = kirke_hog and monsters.MONS_KIRKE or
+                monsters.MONS_JACKAL
+            local source_kirke = kirke_hog and leader_form and
+                leader_form.original_kind_id == monsters.MONS_KIRKE
+
+            if not leader_actor or
+                (leader_actor.kind_id ~= expected and not source_kirke) or
                 not leader_position or not position or
                 leader_position.level_id ~= position.level_id then
                 error("entity " .. ctx:id(entity) .. " has an incompatible living band leader")

@@ -209,9 +209,10 @@ more layouts and branches, the Abyss monster roster and shifting terrain,
 full source parity for chaos clone allegiance and shapeshifter form selection,
 artefact-specific identification and names, runes,
 endgame, and the
-complete item and equipment system. Twenty-four spell IDs still used by
-committed monster books have no Lua effect resolver. Porkalator is among
-them and needs Kirke's death action to restore transformed monsters.
+complete item and equipment system. The committed monster spellbook IDs
+now have Lua effect resolvers. Several effects still need source parity
+follow-ups, tracked in the monster spellbook slice; Porkalator now releases
+Kirke's band and spell-transformed victims when she dies.
 Malmutate's abomination tile reroll and ugly-thing combat trait reroll need
 per-actor state; ugly-thing attack flavour, magenta damage, and resistance
 are unmodeled both at spawn and after mutation.

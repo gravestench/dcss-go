@@ -12,6 +12,8 @@ local summon_branches = require("policy.combat.monster_summons.branches")
 local abyss = require("policy.world.abyss")
 local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
+local monsters = require("ids.monsters")
+local tactical = require("constants.monster_tactical")
 
 -- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
@@ -226,6 +228,42 @@ function module.run(ctx, input)
     inventory.validate(ctx)
     links.validate(ctx)
 
+    -- Every marker needs a live monster owner, including authored monsters
+    -- whose vault origin takes precedence later in the save dispatch.
+    for _, entity in ipairs(ctx:query({ tactical.KIRKE_BAND })) do
+        local band = ctx:get(entity, tactical.KIRKE_BAND)
+        local actor = ctx:get(entity, component.ACTOR)
+        local form = ctx:get(entity, component.MONSTER_POLYMORPH)
+
+        if not band.band_member or not actor or
+            (actor.kind_id ~= monsters.MONS_HOG and
+                (not form or form.original_kind_id ~= monsters.MONS_HOG)) or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("entity " .. ctx:id(entity) ..
+                " has orphan Kirke band origin")
+        end
+    end
+
+    for _, entity in ipairs(ctx:query({ tactical.KIRKE_FREED })) do
+        local freed = ctx:get(entity, tactical.KIRKE_FREED)
+        local actor = ctx:get(entity, component.ACTOR)
+        local form = ctx:get(entity, component.MONSTER_POLYMORPH)
+        local changed_again = form and
+            form.original_kind_id == freed.original_kind_id
+
+        if not freed.freed or not actor or freed.kind_id == "" or
+            freed.original_kind_id == "" or
+            (freed.kind_id ~= actor.kind_id and not changed_again) or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("entity " .. ctx:id(entity) ..
+                " has orphan Kirke freedom origin")
+        end
+    end
+
     -- A saved chant must belong to a real monster. The active recall
     -- system queries this component directly, including non-AI owners.
     for _, owner in ipairs(ctx:query({ component.MONSTER_RECALL })) do
@@ -326,6 +364,13 @@ function module.run(ctx, input)
             validate_doom_arrival(ctx, entity, actor, health,
                 position, ai, input.current_aut)
         elseif ctx:get(entity, component.VAULT_ORIGIN) then
+            validate_vault_monster(ctx, entity, actor, health,
+                position, ai, input.current_aut)
+        -- Kirke's extra band and released actors have explicit origins, not
+        -- roster slots. The marker loop above checks their ownership; the
+        -- ordinary monster profile still checks HP, speed, and AI here.
+        elseif ctx:get(entity, tactical.KIRKE_BAND) or
+            ctx:get(entity, tactical.KIRKE_FREED) then
             validate_vault_monster(ctx, entity, actor, health,
                 position, ai, input.current_aut)
         else

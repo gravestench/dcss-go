@@ -9,6 +9,8 @@ local shops = require("policy.shops.generation")
 local shop_ids = require("ids.shops")
 local item_ids = require("ids.items")
 local streams = require("constants.rng_streams")
+local kirke_band = require("policy.population.kirke_band")
+local monsters = require("ids.monsters")
 
 -- Visit levels by ID so shared population draws have stable order.
 local function level_order(left, right)
@@ -111,6 +113,8 @@ local function populate_level(ctx, level, allowed, scenario_id)
 
         if monster_id == "MONS_JACKAL" then
             actors = actors + jackal_followers(ctx, level, leader, cell, excluded)
+        elseif monster_id == monsters.MONS_KIRKE then
+            actors = actors + kirke_band.spawn(ctx, leader, level, excluded)
         end
     end
 
@@ -211,7 +215,8 @@ function module.run(ctx, input)
                 error("Dungeon:" .. tostring(level.id) .. " has no population entry")
             end
 
-            local _, placed = vaults.materialize(ctx, level, allowed)
+            local excluded = exclusion_set(level)
+            local _, placed = vaults.materialize(ctx, level, excluded)
             local count = 0
 
             for _, record in ipairs(placed) do
