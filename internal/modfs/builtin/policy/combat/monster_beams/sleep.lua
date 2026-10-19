@@ -82,11 +82,7 @@ local function sleep_player(ctx, caster, target, profile)
     local power = beam_power.caster_power(ctx, caster, profile)
     local enchantment = calculators.enchantment_power(profile, power)
 
-    ctx:add(target, component.PLAYER_SLEEP, {
-        remaining_aut = player_duration(ctx, enchantment),
-        immunity_aut = 0,
-    })
-    ctx:emit("combat", "You fall asleep.")
+    sleep.apply_unresisted(ctx, target, enchantment)
 end
 
 -- Monster biological eligibility precedes the separate willpower roll.
@@ -99,6 +95,34 @@ local function monster_can_sleep(ctx, target, definition)
 
     return not has(definition.flags, monster_flags.CLARITY) and
         not stasis.hibernating(ctx, target)
+end
+
+-- Dream Dust has already rolled its own sleep power and does not make a
+-- second beam will contest. Share eligibility and saved sleep duration with
+-- ordinary Sleep so the two effects cannot disagree about immunity.
+function sleep.apply_unresisted(ctx, target, power)
+    if ctx:has(target, component.PLAYER) then
+        if not player_can_sleep(ctx, target) then
+            return false
+        end
+
+        ctx:add(target, component.PLAYER_SLEEP, {
+            remaining_aut = player_duration(ctx, power),
+            immunity_aut = 0,
+        })
+        ctx:emit("combat", "You fall asleep.")
+
+        return true
+    end
+
+    local actor = ctx:get(target, component.ACTOR)
+    local definition = catalog.get("monsters", actor.kind_id)
+
+    if not monster_can_sleep(ctx, target, definition) then
+        return false
+    end
+
+    return stasis.sleep(ctx, target)
 end
 
 -- Monsters need a fresh will check and hibernation state after the beam contacts them.

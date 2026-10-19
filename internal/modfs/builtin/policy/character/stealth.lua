@@ -8,7 +8,7 @@ local effects = require("policy.mutations.effects.registry")
 local equipment = require("policy.combat.equipment")
 local fighter = require("policy.combat.fighter")
 local confusion = require("policy.magic.player_confusion")
-local statuses = require("policy.magic.effects.statuses.player")
+local silence = require("policy.world.silence")
 local water = require("policy.character.water")
 local skills = require("ids.skills")
 local hex_status = require("policy.combat.monster_hexes.status")
@@ -85,7 +85,7 @@ function stealth.score(ctx, player)
 
     score = score + effects.sum(ctx, player, capabilities.STEALTH_BONUS)
 
-    if statuses.silence_radius(ctx, player) >= 0 then
+    if silence.actor(ctx, player) then
         score = score - 50
     end
 

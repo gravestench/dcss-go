@@ -114,6 +114,7 @@ func TestMonsterChainChaosBookCastAndSave(t *testing.T) {
 	placePlayerInSlugLine(t, g, caster)
 
 	energy, _ := g.stores.MonsterEnergy.Get(caster)
+
 	energy.Points = 80
 
 	if _, err := g.runAction(caster, ecs.Intent{}, 10, "monster"); err != nil {
@@ -156,18 +157,22 @@ func TestMonsterAreaSpellbookShapes(t *testing.T) {
 			name: "adjacent pulse",
 			path: "testdata/monster-area-irradiate",
 		},
+
 		{
 			name: "cone",
 			path: "testdata/monster-area-glaciate",
 		},
+
 		{
 			name: "targeted blast",
 			path: "testdata/monster-area-fire-storm",
 		},
+
 		{
 			name: "sight-wide",
 			path: "testdata/monster-area-refrigeration",
 		},
+
 		{
 			name: "fragmentable terrain",
 			path: "testdata/monster-area-lrd",
@@ -177,16 +182,20 @@ func TestMonsterAreaSpellbookShapes(t *testing.T) {
 	for _, testCase := range cases {
 		t.Run(testCase.name, func(t *testing.T) {
 			g, caster, _ := moddedEndoplasmGame(t, testCase.path)
+
 			switch testCase.name {
 			case "adjacent pulse":
 				placePlayerAdjacentToCaster(t, g, caster)
+
 			case "fragmentable terrain":
 				placePlayerByFragmentableWall(t, g, caster)
+
 			default:
 				placePlayerInSlugLine(t, g, caster)
 			}
 
 			energy, _ := g.stores.MonsterEnergy.Get(caster)
+
 			energy.Points = 80
 
 			if _, err := g.runAction(caster, ecs.Intent{}, 10, "monster"); err != nil {

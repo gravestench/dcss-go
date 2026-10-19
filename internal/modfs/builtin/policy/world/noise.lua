@@ -4,7 +4,7 @@ local component = require("constants.component")
 local effects = require("policy.mutations.effects.registry")
 local terrain = require("constants.terrain")
 local vision = require("policy.character.vision")
-local statuses = require("policy.magic.effects.statuses.player")
+local silence = require("policy.world.silence")
 
 local noise = {}
 
@@ -255,12 +255,7 @@ end
 function noise.emit(ctx, origin, loudness, producer)
     local player = ctx:player()
     local player_position = ctx:get(player, component.POSITION)
-    local silence = statuses.silence_radius(ctx, player)
-
-    if player_position and player_position.level_id == origin.level_id and
-        silence >= 0 and
-        math.max(math.abs(player_position.x - origin.x),
-            math.abs(player_position.y - origin.y)) <= silence then
+    if silence.at(ctx, origin.level_id, origin.x, origin.y) then
         return 0, false
     end
 
@@ -278,7 +273,9 @@ function noise.emit(ctx, origin, loudness, producer)
             math.abs(player_position.y - origin.y)) or math.huge
     local heard = player_position and
         player_position.level_id == origin.level_id and
-        silence < 0 and distance <= loudness or false
+        not silence.at(ctx, player_position.level_id,
+            player_position.x, player_position.y) and
+        distance <= loudness or false
 
     return adjusted, heard
 end

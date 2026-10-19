@@ -4,7 +4,7 @@ local damage_safety = require("policy.character.damage_safety")
 local engulf = require("policy.combat.engulf")
 local rage = require("policy.character.rage")
 local safety_restrictions = require("constants.safety_restrictions")
-local statuses = require("policy.magic.effects.statuses.player")
+local silence = require("policy.world.silence")
 
 local restrictions = {}
 
@@ -23,7 +23,7 @@ function restrictions.reason(ctx, player)
         return "You cannot read scrolls in your current state!"
     end
 
-    if statuses.silence_radius(ctx, player) >= 0 then
+    if silence.actor(ctx, player) then
         return "Magic scrolls do not work when you're silenced!"
     end
 

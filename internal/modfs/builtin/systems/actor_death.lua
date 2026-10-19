@@ -8,6 +8,7 @@ local stat_loss = require("policy.character.stat_loss")
 local temporary_mutations = require("policy.mutations.temporary")
 local evolution = require("policy.mutations.evolution")
 local kill_effects = require("policy.combat.player_kill_effects")
+local flay = require("policy.combat.monster_flay")
 local component = require("constants.component")
 
 local system = {}
@@ -106,6 +107,7 @@ function system.update(ctx)
                 end
 
                 -- Release trapping links before inventory drops and corpse hooks inspect the dying actor.
+                flay.release_for_ghost(ctx, entity)
                 net.release(ctx, entity)
                 death.drop_inventory(ctx, entity, position)
                 ctx:remove_actor(entity, position.level_id)

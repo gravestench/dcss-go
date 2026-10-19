@@ -4,6 +4,7 @@ local damage_causes = {
     ORDINARY = "ordinary",
     POISON = "poison",
     FLAY = "flay",
+    INJURY_BOND = "injury_bond",
     HIT = "hit",
     CLOUD = "cloud",
     REFLECTED = "reflected",

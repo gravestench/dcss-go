@@ -12,6 +12,8 @@ local test = {}
 function test.run(ctx)
     local player = ctx:create()
 
+    ctx:add(player, component.PLAYER, {})
+
     harness.equal(reading.reason(ctx, player), nil,
         "an unrestricted player can read")
 

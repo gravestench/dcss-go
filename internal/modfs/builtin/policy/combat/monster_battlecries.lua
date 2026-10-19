@@ -13,7 +13,7 @@ local roll = require("policy.combat.roll")
 local self_target = require("policy.combat.monster_support.self_target")
 local spells = require("ids.spells")
 local stasis = require("policy.magic.effects.statuses.monster_stasis")
-local statuses = require("policy.magic.effects.statuses.player")
+local silence = require("policy.world.silence")
 local senses = require("policy.character.senses")
 local targets = require("policy.ai.targets")
 local vision = require("policy.character.vision")
@@ -21,7 +21,7 @@ local vision = require("policy.character.vision")
 local cries = {}
 local sight = 7
 
--- A muted, water-held, or player-silenced monster cannot produce a vocal
+-- A muted, water-held, or silenced monster cannot produce a vocal
 -- group action, even if its spellbook offered one.
 local function silent(ctx, caster, origin)
     if ctx:has(caster, component.MONSTER_MUTE) or
@@ -29,18 +29,7 @@ local function silent(ctx, caster, origin)
         return true
     end
 
-    local player = ctx:player()
-    local position = player and ctx:get(player, component.POSITION)
-
-    if not position or position.level_id ~= origin.level_id then
-        return false
-    end
-
-    local radius = statuses.silence_radius(ctx, player)
-    local distance = math.max(math.abs(position.x - origin.x),
-        math.abs(position.y - origin.y))
-
-    return radius >= 0 and distance <= radius
+    return silence.at(ctx, origin.level_id, origin.x, origin.y)
 end
 
 -- Source battlecries require a real enemy in no-trans line of sight.

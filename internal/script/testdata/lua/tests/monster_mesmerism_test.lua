@@ -76,6 +76,26 @@ local function game_context(kind)
         return data[entity] ~= nil and data[entity][id] ~= nil
     end
 
+    -- Silence now reads all live aura sources. Match the host's component
+    -- query contract instead of suppressing that production lookup.
+    function ctx:query(required)
+        local found = {}
+
+        for _, entity in ipairs({ caster, player }) do
+            local complete = true
+
+            for _, id in ipairs(required) do
+                complete = complete and self:has(entity, id)
+            end
+
+            if complete then
+                found[#found + 1] = entity
+            end
+        end
+
+        return found
+    end
+
     -- A fresh status must not silently replace an existing component.
     function ctx:add(entity, id, value)
         harness.falsy(self:has(entity, id), "new status was absent")

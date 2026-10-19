@@ -4,6 +4,7 @@ local effects = require("policy.mutations.effects.registry")
 local statuses = require("policy.magic.effects.statuses.player")
 local player_health = require("policy.combat.player_health")
 local mirror = require("policy.combat.monster_support.injury_mirror")
+local bond = require("policy.combat.monster_injury_bond")
 local display = require("policy.combat.monster_support.display")
 local causes = require("constants.damage_causes")
 local senses = require("policy.character.senses")
@@ -53,10 +54,23 @@ function monster_health.damage(ctx, target, amount, source, cause)
     statuses.wake_hibernating(ctx, target)
     amount = statuses.petrified_damage(ctx, target, amount)
 
+    -- Source damage splits after petrification and before the protected
+    -- monster loses HP. The redirected hit has its own cause so it cannot
+    -- pass through another bond or trigger a second reflection.
+    local guardian, shared
+
+    amount, guardian, shared = bond.split(ctx, target, amount,
+        cause or causes.ORDINARY)
+
     local dealt = math.min(before, math.max(0, amount))
 
     health.current = before - dealt
     ctx:set(target, component.HEALTH, health)
+
+    if guardian then
+        monster_health.damage(ctx, guardian, shared, source,
+            causes.INJURY_BOND)
+    end
 
     share_spectral_damage(ctx, target, source, dealt)
 

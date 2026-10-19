@@ -12,7 +12,7 @@ local net = require("policy.combat.net")
 local registry = require("policy.abilities.registry")
 local roll = require("policy.combat.roll")
 local slow = require("policy.combat.monster_slow")
-local statuses = require("policy.magic.effects.statuses.player")
+local silence = require("policy.world.silence")
 local targets = require("policy.ai.targets")
 local teleport = require("policy.magic.effects.zaps.teleport_other")
 local vision = require("policy.character.vision")
@@ -60,7 +60,7 @@ function chaos.prepare(ctx, player, input)
         return "You cannot speak another word of chaos yet."
     end
 
-    if statuses.silence_radius(ctx, player) >= 0 then
+    if silence.actor(ctx, player) then
         return "You cannot speak a word of chaos while silenced."
     end
 

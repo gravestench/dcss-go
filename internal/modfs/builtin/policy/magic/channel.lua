@@ -1,6 +1,6 @@
 local effects = require("policy.magic.effects.registry")
 local resources = require("policy.magic.resources")
-local statuses = require("policy.magic.effects.statuses.player")
+local silence = require("policy.world.silence")
 local confusion = require("policy.magic.player_confusion")
 
 local channel = {}
@@ -48,7 +48,7 @@ function channel.wait(ctx, player, aut)
 
     if not effect or not effect.continue or
         confusion.active(ctx, player) or
-        statuses.silence_radius(ctx, player) >= 0 or
+        silence.actor(ctx, player) or
         resources.cannot_pay(ctx, player, continuation_mp) then
         channel.cancel(ctx, player)
 

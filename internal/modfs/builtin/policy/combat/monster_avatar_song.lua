@@ -12,7 +12,7 @@ local mesmerism = require("policy.character.player_mesmerism")
 local pull = require("policy.combat.monster_avatar_song.pull")
 local souls = require("policy.combat.monster_avatar_song.souls")
 local senses = require("policy.character.senses")
-local statuses = require("policy.magic.effects.statuses.player")
+local silence = require("policy.world.silence")
 local streams = require("constants.rng_streams")
 
 local song = {}
@@ -48,16 +48,10 @@ local function interrupted(ctx, caster, player, origin)
     local confusion = ctx:get(caster, component.MONSTER_CONFUSION)
     local stasis = ctx:get(caster, component.MONSTER_STASIS)
     local fear = ctx:get(caster, component.MONSTER_MASS_ENCHANT)
-    local listener = ctx:get(player, component.POSITION)
-    local silence = statuses.silence_radius(ctx, player)
-
     return confusion and confusion.remaining_aut > 0 or
         stasis and (stasis.hibernating or stasis.petrified_aut > 0) or
         fear and fear.fear_aut > 0 or
-        silence >= 0 and listener and
-            listener.level_id == origin.level_id and
-            math.max(math.abs(listener.x - origin.x),
-                math.abs(listener.y - origin.y)) <= silence
+        silence.at(ctx, origin.level_id, origin.x, origin.y)
 end
 
 -- The source remembers whether the player approached voluntarily after

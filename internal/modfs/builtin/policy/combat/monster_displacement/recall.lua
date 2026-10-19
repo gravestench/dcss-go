@@ -8,7 +8,7 @@ local intelligence = require("constants.monster_intelligence")
 local landing = require("policy.combat.monster_displacement.landing")
 local monsters = require("ids.monsters")
 local relocate = require("policy.combat.monster_displacement.relocate")
-local statuses = require("policy.magic.effects.statuses.player")
+local silence = require("policy.world.silence")
 local streams = require("constants.rng_streams")
 local targets = require("policy.ai.targets")
 local attitudes = require("constants.attitude")
@@ -179,13 +179,7 @@ local function interrupted(ctx, caster)
     end
 
     local origin = ctx:get(caster, component.POSITION)
-    local player = ctx:player()
-    local player_pos = player and ctx:get(player, component.POSITION)
-    local radius = player and statuses.silence_radius(ctx, player) or -1
-
-    return player_pos and player_pos.level_id == origin.level_id and
-        math.max(math.abs(player_pos.x - origin.x),
-            math.abs(player_pos.y - origin.y)) <= radius
+    return silence.at(ctx, origin.level_id, origin.x, origin.y)
 end
 
 -- Source recall randomizes its follower list, tries a nearby habitable

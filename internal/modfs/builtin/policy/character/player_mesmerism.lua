@@ -14,7 +14,7 @@ local rage = require("policy.character.rage")
 local roll = require("policy.combat.roll")
 local senses = require("policy.character.senses")
 local spells = require("ids.spells")
-local statuses = require("policy.magic.effects.statuses.player")
+local silence = require("policy.world.silence")
 local streams = require("constants.rng_streams")
 local targets = require("policy.ai.targets")
 
@@ -64,12 +64,10 @@ function mesmerism.audible(ctx, player, source)
     local stasis = ctx:get(source, component.MONSTER_STASIS)
     local allegiance = ctx:get(source, component.MONSTER_ALLEGIANCE)
     local fear = ctx:get(source, component.MONSTER_MASS_ENCHANT)
-    local silence = statuses.silence_radius(ctx, player)
-
     if not health or health.current <= 0 or
         not origin or not position or
         origin.level_id ~= position.level_id or
-        silence >= 0 or
+        silence.actor(ctx, player) or
         ctx:has(source, component.MONSTER_MUTE) or
         ctx:has(source, component.PARALYSIS) or
         confusion and confusion.remaining_aut > 0 or

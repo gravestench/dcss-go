@@ -3,7 +3,7 @@ local effects = require("policy.magic.effects.registry")
 local range = require("policy.magic.range")
 local records = require("policy.character.spell_records")
 local resources = require("policy.magic.resources")
-local statuses = require("policy.magic.effects.statuses.player")
+local silence = require("policy.world.silence")
 local confusion = require("policy.magic.player_confusion")
 local availability = require("policy.character.skill_availability")
 local hex_status = require("policy.combat.monster_hexes.status")
@@ -54,7 +54,7 @@ function cast.prepare(ctx, player, input)
         return { message = "You cannot use spells of this school." }
     end
 
-    if statuses.silence_radius(ctx, player) >= 0 then
+    if silence.actor(ctx, player) then
         return { message = "You cannot cast spells when silenced!" }
     end
 

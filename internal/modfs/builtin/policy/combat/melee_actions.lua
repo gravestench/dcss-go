@@ -24,6 +24,7 @@ local auxiliary_attacks = require("constants.auxiliary_attacks")
 local player_brands = require("policy.combat.player_brands")
 local player_staves = require("policy.combat.player_staves")
 local boons = require("policy.combat.monster_support.boons")
+local black_mark = require("policy.combat.monster_black_mark")
 
 local actions = {}
 
@@ -65,7 +66,7 @@ local function damage(ctx, target, amount, player_kill, attacker)
         ctx:signal("player_kill", target)
     end
 
-    return health
+    return health, dealt
 end
 
 -- Mutation follow-ups trigger only for a living target after positive melee damage.
@@ -394,6 +395,10 @@ function actions.monster(ctx, attacker)
         brands.apply(ctx, weapon.brand, outcome.damage, actor.kind_id, definition.name, health)
     end
 
+    if outcome.kind == "hit" and dealt > 0 then
+        black_mark.after_melee(ctx, attacker, player, dealt)
+    end
+
     if outcome.kind == "hit" and not player_reactions.after_hit(ctx,
         attacker, definition, dealt) then
         return
@@ -473,9 +478,14 @@ function actions.monster_target(ctx, attacker, target)
     local dealt = statuses.frenzy_melee_damage(ctx, attacker,
         outcome.damage)
     dealt = boons.damage(ctx, attacker, dealt)
-    local health = damage(ctx, target, dealt,
+    local health, actual_dealt = damage(ctx, target, dealt,
         targets.allied(ctx, attacker) or statuses.frenzied(ctx, attacker),
         attacker)
+
+    if outcome.kind == "hit" and actual_dealt > 0 then
+        black_mark.after_melee(ctx, attacker, target, actual_dealt)
+        health = ctx:get(target, "core.health")
+    end
 
     if outcome.kind == "hit" then
         ctx:emit("combat", "The " .. attacker_def.name .. " hits the " ..

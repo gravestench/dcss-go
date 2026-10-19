@@ -46,6 +46,7 @@ function mirror.returned(ctx, monster, dealt, source, cause)
     if dealt <= 0 or not source or source == monster or
         cause == causes.POISON or cause == causes.CLOUD or
         cause == causes.REFLECTED or
+        cause == causes.INJURY_BOND or
         not mirror.active(ctx, monster) then
         return 0
     end

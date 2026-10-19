@@ -20,6 +20,7 @@ func TestMonsterTimedAreaBookCastAndSave(t *testing.T) {
 			path:      "testdata/monster-timed-radiance",
 			component: "magic.monster_toxic_radiance",
 		},
+
 		{
 			name:      "polar vortex",
 			path:      "testdata/monster-timed-vortex",
@@ -34,6 +35,7 @@ func TestMonsterTimedAreaBookCastAndSave(t *testing.T) {
 			placePlayerInSlugLine(t, game, caster)
 
 			energy, _ := game.stores.MonsterEnergy.Get(caster)
+
 			energy.Points = 80
 
 			if _, err := game.runAction(caster, ecs.Intent{}, 10,

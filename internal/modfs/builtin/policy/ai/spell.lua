@@ -3,6 +3,7 @@ local spellbook = require("policy.combat.monster_spellbook")
 local prospect = require("policy.ai.spell_prospect")
 local target = require("policy.combat.monster_spell_target")
 local statuses = require("policy.magic.effects.statuses.player")
+local silence = require("policy.world.silence")
 local engulf = require("policy.combat.engulf")
 local component = require("constants.component")
 local intents = require("constants.intent")
@@ -27,13 +28,8 @@ local function silenced(ctx, entity, position)
         return true
     end
 
-    local player = ctx:player()
-    local player_position = player and ctx:get(player, component.POSITION)
-    local radius = player and statuses.silence_radius(ctx, player) or -1
-
-    return radius >= 0 and player_position ~= nil and
-        position.level_id == player_position.level_id and
-        distance_between(position, player_position) <= radius
+    return silence.at(ctx, position.level_id,
+        position.x, position.y)
 end
 
 -- Collect tactical flags once so slot filters see one state.
