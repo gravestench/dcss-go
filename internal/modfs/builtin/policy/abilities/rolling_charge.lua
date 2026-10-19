@@ -2,6 +2,7 @@
 -- cell-centre ray, stops beside the first monster, then makes one melee hit.
 local abilities = require("ids.abilities")
 local actions = require("policy.combat.melee_actions")
+local barbs = require("policy.combat.barbs")
 local cloud = require("policy.clouds.placement")
 local cloud_ids = require("ids.clouds")
 local component = require("constants.component")
@@ -138,7 +139,7 @@ local function dust_trail(ctx, player, level_id, origin, plan)
 end
 
 -- The plan is rebuilt at resolution so a moved or dead target cannot be attacked from a stale destination.
-function charge.resolve(ctx, player, intent)
+function charge.resolve(ctx, player, intent, elapsed_aut)
     local plan, rejection = charge.plan(ctx, player, intent)
 
     if not plan then
@@ -154,6 +155,11 @@ function charge.resolve(ctx, player, intent)
 
     ctx:move_actor(player, origin.level_id,
         plan.destination.x, plan.destination.y)
+    barbs.moved(ctx, player, elapsed_aut)
+
+    if ctx:get(player, component.HEALTH).current <= 0 then
+        return
+    end
 
     if ctx:has(player, component.WATER_HOLD) then
         ctx:remove(player, component.WATER_HOLD)

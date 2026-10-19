@@ -9,6 +9,7 @@ local component = require("constants.component")
 local intent_ids = require("constants.intent")
 local acrobat = require("policy.jewellery.acrobat")
 local trap_held = require("policy.traps.held")
+local barbs = require("policy.combat.barbs")
 
 -- Theory of operation: Movement first handles escape and occupied cells, then commits a legal destination.
 -- A failed constriction escape spends the movement action; a successful one costs the holder energy.
@@ -56,7 +57,7 @@ end
 local system = {}
 
 -- Movement converts failed escape attempts into WAIT and updates position before melee targeting.
-function system.update(ctx, actor)
+function system.update(ctx, actor, elapsed_aut)
     local intent = ctx:get(actor, component.INTENT)
 
     if not intent or intent.kind ~= intent_ids.MOVE then
@@ -117,6 +118,7 @@ function system.update(ctx, actor)
 
     -- Only a free destination and completed escape reaches the position mutation.
     ctx:move_actor(actor, position.level_id, x, y)
+    barbs.moved(ctx, actor, elapsed_aut)
 
     if actor == ctx:player() then
         acrobat.moved(ctx, actor)

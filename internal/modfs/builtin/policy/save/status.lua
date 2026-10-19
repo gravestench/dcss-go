@@ -17,6 +17,7 @@ function module.run(ctx)
     local player = ctx:player()
     local durations = ctx:get(player, "core.durations")
     local poison = ctx:get(player, "core.poison")
+    local barbs = ctx:get(player, component.BARBS)
     local regeneration = ctx:get(player, "core.regeneration")
     local drain = ctx:get(player, "status.drain")
     local stat_loss = ctx:get(player, component.STAT_LOSS)
@@ -56,6 +57,13 @@ function module.run(ctx)
         poison.amount_scaled > 2147483647 or
         not poison_sources.valid(poison.source_monster_id)) then
         error("invalid player poison")
+    end
+
+    -- A forged or expired wound cannot reach the movement damage owner.
+    if barbs and (barbs.remaining_aut < 1 or
+        barbs.remaining_aut > 200 or
+        barbs.power < 1 or barbs.power > 6) then
+        error("invalid player barbs")
     end
 
     if regeneration and (regeneration.hp_progress < 0 or

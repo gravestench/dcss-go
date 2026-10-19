@@ -1,10 +1,12 @@
 local abyss = require("policy.world.abyss")
+local barbs = require("policy.combat.barbs")
+local component = require("constants.component")
 
 local system = {}
 
 -- Theory of operation: Travel changes level and position before pickup examines the arrival cell.
 -- Stair travel follows monster decisions and precedes item pickup on the destination.
-function system.update(ctx, actor)
+function system.update(ctx, actor, elapsed_aut)
     local intent = ctx:get(actor, "core.intent")
 
     if not intent or (intent.kind ~= 4 and intent.kind ~= 5) then
@@ -38,6 +40,16 @@ function system.update(ctx, actor)
 
     if not link or link.unavailable ~= "" then
         error("stair actor " .. ctx:id(actor) .. " has no available stair link")
+    end
+
+    -- Ordinary stair travel counts as a step for player barbs before the
+    -- level transition, unlike forced banishment and teleportation.
+    if actor == ctx:player() then
+        barbs.moved(ctx, actor, elapsed_aut)
+
+        if ctx:get(actor, component.HEALTH).current <= 0 then
+            return
+        end
     end
 
     ctx:move_actor(actor, link.to_level_id, link.to_x, link.to_y)

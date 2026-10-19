@@ -25,6 +25,12 @@ end
 
 -- Monsters acquire sticky flame only after a landed hit with a known species profile.
 function sticky_flame_range.after_hit(ctx, caster, defender, _, outcome)
+    -- Player flame was already applied before damage; its ACTOR kind is
+    -- not a monster catalog ID and must not enter the monster path.
+    if ctx:has(defender, component.PLAYER) then
+        return
+    end
+
     local actor = ctx:get(defender, component.ACTOR)
 
     if not actor then

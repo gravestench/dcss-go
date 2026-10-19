@@ -1,4 +1,5 @@
 local abilities = require("ids.abilities")
+local barbs = require("policy.combat.barbs")
 local component = require("constants.component")
 local flight = require("policy.combat.flight")
 local movement = require("policy.abilities.movement")
@@ -86,7 +87,7 @@ local function destination(ctx, player, position, target_x, target_y, range)
 end
 
 -- A failed landing still follows the grasp escape check; a successful move writes a random cooldown.
-function hop.resolve(ctx, player, intent)
+function hop.resolve(ctx, player, intent, elapsed_aut)
     local position = ctx:get(player, component.POSITION)
     local level = levels.effective(ctx, player, mutations.MUT_HOP)
     local x, y = destination(ctx, player, position, position.x + intent.dx,
@@ -116,6 +117,10 @@ function hop.resolve(ctx, player, intent)
     else
         ctx:add(player, component.ABILITY_COOLDOWNS, cooldown)
     end
+
+    -- Source Hop moves the player through ordinary space and pays barbs
+    -- damage after the landing and cooldown have been committed.
+    barbs.moved(ctx, player, elapsed_aut)
 end
 
 registry.add(abilities.HOP, {
