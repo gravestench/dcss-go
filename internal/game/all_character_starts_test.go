@@ -469,12 +469,18 @@ func TestEveryLegalCharacterStartReachesDungeon(t *testing.T) {
 			}
 		}
 
-		g, startErr := NewDungeonGameWithRules(
+		// Character creation is independent of the generated floor count.
+		// Use the fixed Dungeon here so each legal pair exercises startup
+		// without rebuilding fifteen unrelated maps and populations.
+		g, startErr := newScenarioWithRules(
 			17,
-			pair.SpeciesID,
-			pair.JobID,
+			startChoice{
+				SpeciesID: pair.SpeciesID,
+				JobID:     pair.JobID,
+			},
 			weaponID,
 			"Tester",
+			ordinaryMonsterScenarioID,
 			rules,
 		)
 

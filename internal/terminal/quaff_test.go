@@ -204,7 +204,11 @@ func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 	for i := range snapshot.Entities {
 		record := &snapshot.Entities[i]
 
-		if record.Item != nil && record.Item.KindID == "POT_CURING" {
+		if record.Item != nil &&
+			record.Item.KindID == "POT_CURING" &&
+			record.Position != nil &&
+			record.Position.LevelID == 1 &&
+			record.CarriedBy == nil {
 			curing = record.Position
 
 			break
@@ -271,6 +275,7 @@ func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 	m := playingModel(t)
 	snapshot := m.game.Snapshot()
+	foundPotion := false
 
 	for i := range snapshot.Entities {
 		record := &snapshot.Entities[i]
@@ -279,10 +284,19 @@ func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 			record.Health.Current = 1
 		}
 
-		if record.Item != nil && record.Item.KindID == "POT_HEAL_WOUNDS" {
+		if !foundPotion &&
+			record.Item != nil &&
+			record.Item.KindID == "POT_HEAL_WOUNDS" &&
+			record.Position != nil &&
+			record.CarriedBy == nil {
 			record.Position = nil
 			record.CarriedBy = &ecs.CarriedBy{Holder: akara.Entity(snapshot.PlayerID)}
+			foundPotion = true
 		}
+	}
+
+	if !foundPotion {
+		t.Fatal("generated run has no floor heal wounds potion")
 	}
 
 	restored, err := game.Restore(snapshot)
