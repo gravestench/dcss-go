@@ -92,8 +92,8 @@ function test.run(ctx)
     local _, amulet_appearance = names.generate(ctx,
         catalog.get("items", item_ids.AMU_REFLECTION))
 
-    harness.equal(amulet_appearance, "non-descript amulet",
-        "unknown amulet shape does not become a ring")
+    harness.truthy(amulet_appearance:match(" amulet$") ~= nil,
+        "weighted source appearance keeps an unknown amulet's shape")
 
     ctx:add(ordinary, component.ITEM, {
         kind_id = item_ids.RING_PROTECTION,

@@ -202,14 +202,16 @@ depth-boosted `*`, good, and superb requests. The completed item-generation
 slice selects source-backed subtypes and properties for floor loot, gear,
 vault requests, and acquirement. Artefact type, plus, and property discovery
 now belongs to each item; hidden fixed names, the Octopus King exception,
-and random artefacts retain their appearance through save/restore. The
-source random-name database remains separate work.
+and random artefacts retain their appearance through save/restore. All 182
+weighted source name groups are committed as individually replaceable Lua
+definitions; generated equipment uses their class and appearance groups.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,
 more layouts and branches, the Abyss monster roster and shifting terrain,
 full source parity for chaos clone allegiance and exact shapeshifter RNG order,
-the source artefact name database and exact random-name stream, runes,
+exact random-name RNG parity, gift-origin name preference, source random-book
+titles, runes,
 endgame, and the
 complete item and equipment system. The committed monster spellbook IDs
 now have Lua effect resolvers. Several effects still need source parity
@@ -267,8 +269,9 @@ or a wand is successfully evoked. The current scroll label generator keeps
 unique deterministic labels but does not yet reproduce DCSS's exact
 `make_name` syllable algorithm or its RNG sequence. Artefact discovery now
 uses per-item knowledge and source self-identifying fixed-name rules; random
-artefacts use a non-descript fallback until the source name database is
-committed. Item-inscription UI and item naming details beyond
+equipment artefacts use the source weighted name and appearance groups.
+Random books still use the earlier title generator, and exact source RNG
+parity remains future work. Item-inscription UI and naming details beyond
 the implemented non-artefact classes remain. Source religion conduct
 remains part of the religion domain.
 The experience potion keeps level XP separate from allocatable skill XP; its

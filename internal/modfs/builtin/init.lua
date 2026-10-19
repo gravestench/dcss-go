@@ -10,6 +10,7 @@ mod.load_tree("content")
 require("content.validation").check()
 -- Catalog validation uses the winning definition from each VFS layer.
 mod.load_tree("policy")
+require("policy.item_generation.artefacts.name_catalog").validate()
 require("policy.clouds.catalog").validate()
 require("policy.shops.catalog").validate()
 require("policy.traps.catalog").validate()

@@ -159,7 +159,11 @@ function random.apply(ctx, definition, result, forced_brand)
         local rolled = properties.properties(ctx, definition, brand)
 
         if not rules.bad(definition, rolled, brand) then
-            local label, appearance, seed = names.generate(ctx, definition)
+            local label, appearance, seed = names.generate(ctx,
+                definition, {
+                    brand = brand,
+                    properties = rolled,
+                })
             local known = {}
 
             for id in pairs(rolled) do

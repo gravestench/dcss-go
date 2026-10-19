@@ -588,12 +588,25 @@ match identifies itself automatically, except when its `flags` include
 starts unidentified even if the player knows its base item kind. Its
 `item.artefact` component stores true name, appearance, and properties;
 `item.identification` stores what this player has learned about that
-physical item. Call `policy.items.identification.reveal_type(ctx, player,
-item)` or `reveal_item(ctx, item, fields)` from an effect that actually
+physical item. Call `policy.items.identification.reveal_type(ctx, player, item)`
+or `reveal_item(ctx, item, fields)` from an effect that actually
 reveals it. Do not add its base kind to the player's `known_types` map:
-that would identify other items by accident. Until the source random-name
-database is ported, generated random artefacts use a non-descript appearance
-that hides ring and amulet subtypes.
+that would identify other items by accident.
+
+Generated equipment artefacts select weighted names and unidentified
+appearances from `content/randart_names/`. Each source key has its own file,
+such as `weapon.lua` or `ring_appearance.lua`. To replace one group, copy
+that relative path into the overlay and edit its `entries`; to add a group,
+place a new Lua definition in that directory. Each entry needs a positive
+integer `weight` and a nonempty `text`. Source `@key@` references can name
+another group; player, species, branch, and god markers use current game
+facts. Keys are lowercase, including source keys that were written with
+capital letters. `@god_name@` picks only gods whose source rules allow the
+finished item's class, brand, and properties; `@xom_name@` draws from Xom's
+short name or weighted long-name list. Boot validation rejects missing
+references. The game chooses one
+cosmetic seed per artefact and saves the resulting names, so later content
+changes do not rename an existing item.
 
 The bundled `init.lua` loads `schemas/`, `content/`, `policy/`, `systems/`,
 `generation/`, and `ui/` in that order. Paths within each tree load in sorted
