@@ -46,6 +46,15 @@ local displacement_ids = {
     spells.SPELL_WORD_OF_RECALL,
 }
 
+-- These source spells select one visible actor without tracing a projectile.
+-- Each formula still belongs to its own effect file.
+local direct_strike_ids = {
+    spells.SPELL_SMITING,
+    spells.SPELL_AIRSTRIKE,
+    spells.SPELL_WATERSTRIKE,
+    spells.SPELL_RESONANCE_STRIKE,
+}
+
 -- The source book slots cannot enter active rosters until both phases exist.
 local function support_has_complete_resolvers()
     for _, spell_id in ipairs(support_ids) do
@@ -63,6 +72,20 @@ end
 -- whose book uses it can enter the active generated population.
 local function displacement_has_complete_resolvers()
     for _, spell_id in ipairs(displacement_ids) do
+        local okay, effect = pcall(effects.effect, spell_id)
+
+        harness.truthy(okay, spell_id .. " resolver loads")
+        harness.truthy(type(effect.plan) == "function",
+            spell_id .. " has a plan phase")
+        harness.truthy(type(effect.resolve) == "function",
+            spell_id .. " has a resolve phase")
+    end
+end
+
+-- Direct strikes need both phases before their source books can enter a
+-- live roster; the registry loads one named Lua file per spell.
+local function direct_strikes_have_complete_resolvers()
+    for _, spell_id in ipairs(direct_strike_ids) do
         local okay, effect = pcall(effects.effect, spell_id)
 
         harness.truthy(okay, spell_id .. " resolver loads")
@@ -170,6 +193,7 @@ end
 function test.run()
     support_has_complete_resolvers()
     displacement_has_complete_resolvers()
+    direct_strikes_have_complete_resolvers()
     active_roster_has_effects()
     imported_beam_book_is_covered()
     malformed_effect_is_reported()

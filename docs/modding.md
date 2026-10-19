@@ -912,6 +912,19 @@ a runnable three-file example: a new spell definition, one book override,
 and one focused effect. Its Go integration test launches the normal game
 with that overlay and observes the summoned ECS actor.
 
+For a spell that strikes a visible actor without a projectile, inspect
+`policy/combat/monster_spells/smiting.lua` and
+`policy/combat/monster_direct.lua`. Its `plan` receives `ctx`, caster, and
+foe, and returns a typed entity plan only when that actor is in sight and
+range. Its `resolve` checks the saved target handle, rolls on the
+`monster_spell` stream, sends attributed damage through the correct health
+owner, and emits the cast message. Airstrike, Waterstrike, and Resonance
+Strike use the same target contract but keep their different damage rules
+in their own files. Use this pattern for a new direct strike; use the beam
+family when a ray can hit an intervening actor or reflect. The direct helper
+only supplies target and HP services, so it does not choose your spell's
+formula, elemental resistance, or special effects.
+
 Put a player mutation in `content/mutations/<name>.lua`. The content tree
 registers it automatically, and `ids.mutations` exposes the new ID to other
 Lua files. A behavioral mutation also needs a focused file under

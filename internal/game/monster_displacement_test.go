@@ -18,6 +18,7 @@ func TestMonsterBlinkBookCastAndSave(t *testing.T) {
 	before, _ := g.stores.Positions.Get(caster)
 	start := *before
 	energy, _ := g.stores.MonsterEnergy.Get(caster)
+
 	energy.Points = 80
 
 	if _, err := g.runAction(caster, ecs.Intent{}, 10, "monster"); err != nil {
