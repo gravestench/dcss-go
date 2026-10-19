@@ -18,7 +18,7 @@ local function distance_between(position, target)
 end
 
 -- Sample silence before considering the caster's spell slots.
-local function silenced(ctx, entity, position, player)
+local function silenced(ctx, entity, position)
     if ctx:has(entity, component.MONSTER_MUTE) then
         return true
     end
@@ -27,13 +27,17 @@ local function silenced(ctx, entity, position, player)
         return true
     end
 
-    local radius = statuses.silence_radius(ctx, ctx:player())
+    local player = ctx:player()
+    local player_position = player and ctx:get(player, component.POSITION)
+    local radius = player and statuses.silence_radius(ctx, player) or -1
 
-    return radius >= 0 and distance_between(position, player) <= radius
+    return radius >= 0 and player_position ~= nil and
+        position.level_id == player_position.level_id and
+        distance_between(position, player_position) <= radius
 end
 
 -- Collect tactical flags once so slot filters see one state.
-local function condition_for(ctx, entity, position, player, fleeing)
+local function condition_for(ctx, entity, position, foe_position, fleeing)
     local health = ctx:get(entity, component.HEALTH)
 
     if not health then
@@ -43,14 +47,14 @@ local function condition_for(ctx, entity, position, player, fleeing)
     return {
         hp = health.current,
         max_hp = health.max,
-        distance = distance_between(position, player),
+        distance = distance_between(position, foe_position),
         fleeing = fleeing,
-        silenced = silenced(ctx, entity, position, player),
+        silenced = silenced(ctx, entity, position),
     }
 end
 
 -- Retry only when an effect cannot plan a target; a no-spell prospect result is final for this turn.
-local function select_targetable(ctx, entity, book, condition)
+local function select_targetable(ctx, entity, foe, book, condition)
     -- The prospect policy accepts a draw callback so all choices use this
     -- actor's saved monster-spell stream, including a brilliance reroll.
     local function random(bound)
@@ -85,7 +89,7 @@ local function select_targetable(ctx, entity, book, condition)
 
         local effect = effects.effect(slot.spell_id)
 
-        local plan = effect.plan(ctx, entity, ctx:player(), slot)
+        local plan = effect.plan(ctx, entity, foe, slot)
 
         if plan then
             return slot, index, plan
@@ -97,15 +101,24 @@ end
 
 -- Build a cast intent only after book selection, target planning, and antimagic checks agree.
 -- Example: silence is included in prospect conditions before a book slot becomes a targetable intent.
-function spell.choose(ctx, entity, position, player, fleeing)
+function spell.choose(ctx, entity, foe, fleeing)
     local book = spellbook.for_actor(ctx, entity)
 
     if not book then
         return nil
     end
 
-    local condition = condition_for(ctx, entity, position, player, fleeing)
-    local slot, index, plan = select_targetable(ctx, entity, book,
+    local position = ctx:get(entity, component.POSITION)
+    local foe_position = ctx:get(foe, component.POSITION)
+
+    if not position or not foe_position or
+        position.level_id ~= foe_position.level_id then
+        return nil
+    end
+
+    local condition = condition_for(ctx, entity, position, foe_position,
+        fleeing)
+    local slot, index, plan = select_targetable(ctx, entity, foe, book,
         condition)
 
     if not slot or statuses.enfeeble_antimagic(ctx, entity, slot.flags) then
@@ -116,6 +129,7 @@ function spell.choose(ctx, entity, position, player, fleeing)
         kind = intents.SPELL,
         spell_id = slot.spell_id,
         spell_slot = index,
+        foe_entity = foe,
     }
 
     return target.write(intent, plan)

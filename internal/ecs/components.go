@@ -214,6 +214,7 @@ type Intent struct {
 	Quantity      int
 	SpellID       string
 	SpellSlot     int
+	FoeEntity     akara.Entity
 	TargetKind    string
 	TargetEntity  akara.Entity
 	TargetLevelID int

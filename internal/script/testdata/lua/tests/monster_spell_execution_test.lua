@@ -17,7 +17,7 @@ local source_book = "MST_ENDOPLASM"
 
 -- The intent carries a selected slot and target; execution must reuse both
 -- without drawing or selecting a new target.
-local function context(spell_id, spell_slot, planned_kind)
+local function context(spell_id, spell_slot, planned_kind, construct)
     local ctx = {}
 
     -- Bind execution to the selected player target in the saved plan.
@@ -26,18 +26,23 @@ local function context(spell_id, spell_slot, planned_kind)
     end
 
     -- Keep optional statuses absent so slot validation is isolated.
-    function ctx:has()
-        return false
+    function ctx:has(entity, id)
+        return construct and entity == caster and id == component.SUMMON
     end
 
     -- Return the exact caster intent and spellbook data used at the execution boundary.
     function ctx:get(entity, id)
         if entity == caster then
+            if id == component.SUMMON and construct then
+                return { attitude = "friendly" }
+            end
+
             if id == component.INTENT then
                 return {
                     kind = intents.SPELL,
                     spell_id = spell_id,
                     spell_slot = spell_slot,
+                    foe_entity = player,
                     target_kind = planned_kind or target_kind.ENTITY,
                     target_entity = player,
                     target_level_id = 1,
@@ -157,6 +162,17 @@ function test.run()
 
     harness.falsy(okay, "wrong slot cannot borrow another spell ID")
     harness.equal(resolved, 2, "forged slot did not execute")
+
+    -- Construct abilities reuse the spell-speed intent number but have no
+    -- spellbook slot; their own system resolves them before this gate.
+    local construct = context(spells.SPELL_FOXFIRE, 0, nil, true)
+
+    okay, problem = pcall(system.update, construct, caster)
+
+    harness.truthy(okay,
+        "construct ability stays with its owner: " .. tostring(problem))
+    harness.equal(resolved, 2,
+        "monster spellbook resolver does not run a construct ability")
 
     register.get = original_get
     effects.effect = original_effect

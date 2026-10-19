@@ -58,7 +58,7 @@ function petrify.apply(ctx, actor)
         return 0
     end
 
-    monster_status.cloud_petrify(ctx, actor)
+    monster_status.apply_petrify(ctx, actor)
 
     return 0
 end

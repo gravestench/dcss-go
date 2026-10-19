@@ -92,8 +92,7 @@ end
 -- Natural spell flags bypass silence even when ordinary speech cannot cast.
 local function natural_spell_survives_silence()
     local ctx = context({ 0 }, true)
-    local intent = spell.choose(ctx, monster_entity, monster_position,
-        near_player, false)
+    local intent = spell.choose(ctx, monster_entity, player_entity, false)
 
     harness.equal(intent.spell_id, spells.SPELL_FREEZE,
         "natural Freeze survives a silence aura")
@@ -127,7 +126,7 @@ local function carries_a_selected_entity_plan()
 
     local ctx = context({ 0, 1 })
     local okay, intent = pcall(spell.choose, ctx, monster_entity,
-        monster_position, near_player, false)
+        player_entity, false)
 
     effects.effect = original_effect
 
@@ -176,8 +175,7 @@ local function chooses_second_slot()
     -- Check the second duplicate spell slot after both slots pass eligibility.
     }, function()
         local ctx = context({ 10 })
-        local intent = spell.choose(ctx, monster_entity, monster_position,
-            near_player, false)
+        local intent = spell.choose(ctx, monster_entity, player_entity, false)
 
         harness.equal(intent.spell_id, spells.SPELL_FREEZE,
             "second source slot spell")
@@ -199,8 +197,7 @@ local function retries_only_after_bad_target()
     -- Force a first-slot targeting failure, then verify retry reaches Slug Dart.
     }, function()
         local ctx = context({ 0, 1, 10 }, false, far_player)
-        local intent = spell.choose(ctx, monster_entity, monster_position,
-            far_player, false)
+        local intent = spell.choose(ctx, monster_entity, player_entity, false)
 
         harness.equal(intent.spell_id, spells.SPELL_SLUG_DART,
             "second attempt can choose a valid target")
@@ -210,8 +207,7 @@ local function retries_only_after_bad_target()
             "failed target uses a preference coin and second roll")
 
         ctx = context({ 199 }, false, far_player)
-        intent = spell.choose(ctx, monster_entity, monster_position,
-            far_player, false)
+        intent = spell.choose(ctx, monster_entity, player_entity, false)
 
         harness.falsy(intent, "no-spell roll does not cast")
         harness.equal(ctx.used, 1,
@@ -245,8 +241,7 @@ local function fleeing_prefers_escape_spell()
         end
 
         local ctx = context({ 0 })
-        local intent = spell.choose(ctx, monster_entity, monster_position,
-            near_player, true)
+        local intent = spell.choose(ctx, monster_entity, player_entity, true)
 
         harness.equal(intent.spell_id, spells.SPELL_BLINK,
             "fleeing chooses a source escape spell")

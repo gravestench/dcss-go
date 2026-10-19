@@ -17,7 +17,8 @@ local awareness = require("policy.ai.awareness")
 local invisibility = require("policy.potions.invisibility")
 local component = require("constants.component")
 
--- Allies follow the player when no enemy exists; they wait instead of striking their adjacent leader.
+-- Allied casters offer spells against a visible enemy before routing toward
+-- it. Frenzied and haunting hostiles retain the normal player awareness gate.
 local function choose_actor_target(ctx, entity, state, position)
     local target = targets.nearest(ctx, entity, position, 7)
     local attack_goal = target ~= nil
@@ -40,6 +41,17 @@ local function choose_actor_target(ctx, entity, state, position)
     state.target_x = destination.x
     state.target_y = destination.y
     state.memory_until_aut = ctx:aut() + 250
+
+    if attack_goal and targets.allied(ctx, entity) and
+        not statuses.frenzied(ctx, entity) and
+        ctx:visible(position.level_id,
+        position.x, position.y, 7, destination.x, destination.y) then
+        local intent = spell.choose(ctx, entity, target, false)
+
+        if intent then
+            return state, intent
+        end
+    end
 
     if not attack_goal and
         math.max(math.abs(position.x - destination.x),
@@ -74,6 +86,22 @@ local function choose_intent(ctx, entity, state)
         error("monster level " .. position.level_id .. " is missing")
     end
 
+    -- Neutral actors have no player foe. Let them wander without offering
+    -- a hostile spell, missile, or melee intent against that actor.
+    if not targets.enemy(ctx, entity, player_entity) then
+        state.behavior = "wander"
+        state.target_x = 0
+        state.target_y = 0
+        wander.update(ctx, entity, state, position)
+
+        if state.target_x == 0 and state.target_y == 0 then
+            return state, { kind = 6 }
+        end
+
+        return state, route.follow(ctx, entity, state, position, player,
+            player_entity, false)
+    end
+
     -- Blinding and invisibility checks precede geometric sight before memory updates.
     local player_visible = not enchant.blinded(ctx, entity) and
         not statuses.enfeeble_blinded(ctx, entity) and
@@ -100,7 +128,7 @@ local function choose_intent(ctx, entity, state)
 
     -- A detected player offers spells first, launcher attacks second, and thrown attacks last.
     if player_detected and not retreating then
-        local intent = spell.choose(ctx, entity, position, player, false)
+        local intent = spell.choose(ctx, entity, player_entity, false)
 
         if not intent then
             local launcher_intent, has_launcher = ranged.choose_launcher(ctx, entity, position, player)
@@ -247,11 +275,14 @@ function system.update(ctx, entity)
     if statuses.fear_active(ctx, entity) then
         local position = ctx:get(entity, "core.position")
         local player_position = ctx:get(ctx:player(), "core.position")
-        local intent = spell.choose(ctx, entity, position, player_position,
-            true)
+        local threat = targets.nearest(ctx, entity, position, 7)
+        local threat_position = threat and
+            ctx:get(threat, component.POSITION) or player_position
+        local intent = threat and
+            spell.choose(ctx, entity, threat, true)
 
         if not intent then
-            intent = fear.flee(ctx, entity, position, player_position)
+            intent = fear.flee(ctx, entity, position, threat_position)
         end
 
         ctx:add(entity, "core.intent", intent)

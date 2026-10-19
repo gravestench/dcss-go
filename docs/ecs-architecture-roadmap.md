@@ -177,10 +177,15 @@ Eight Blink effects use a shared Lua landing owner and move existing Akara
 actors through the grid service. Word of Recall uses a caster-owned Lua
 component and active system for its chant and cooldown; no Go spell branch
 or Lua module global holds its timer.
-The allied-monster decision path still needs enemy-directed spellbook
-selection before friendly summoned casters can initiate their own casts.
-Foe-centered spells carry a cell through the typed intent so target movement
-cannot redirect an already chosen cast. The current Dungeon roster supplies
+Allied monster AI now selects visible enemy actors for spellbook casts. The
+spell intent saves that foe separately from its entity, cell, or self plan;
+resolution validates the live enemy before applying an effect. Freeze,
+Petrify, and Slug Dart use the monster victim's own resistance, status, and
+defense, while offscreen and invisible outcomes stay out of player messages.
+Other spell families still need actor-target audits before every allied
+spellbook can safely cast against monsters. Foe-centered spells carry a cell
+through the typed intent so target movement cannot redirect an already
+chosen cast. The current Dungeon roster supplies
 Shadow Creatures; other branches need their own population owner, and Pan
 needs a saved local demon allocation. Constructs, clones, terrain actors,
 and remaining monster spell families still need complete rule slices before

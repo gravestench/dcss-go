@@ -7,6 +7,7 @@ local effects = require("policy.mutations.effects.registry")
 local flags = require("constants.monster_flags")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
+local vision = require("policy.character.vision")
 
 local senses = {}
 
@@ -66,6 +67,24 @@ function senses.perceive(ctx, player, monster, cell_visible, cell_known)
     end
 
     return "unseen"
+end
+
+-- Report a named actor only when both its cell and the actor itself are
+-- visible. Geometry alone can expose an invisible monster's identity.
+function senses.player_sees_actor(ctx, monster)
+    local player = ctx:player()
+    local origin = player and ctx:get(player, component.POSITION)
+    local position = ctx:get(monster, component.POSITION)
+
+    if not origin or not position or
+        origin.level_id ~= position.level_id or
+        not ctx:visible(position.level_id, origin.x, origin.y,
+            vision.radius(ctx, player),
+            position.x, position.y) then
+        return false
+    end
+
+    return senses.perceive(ctx, player, monster, true, true) == "visible"
 end
 
 -- Expose the current player perception result to the registered query policy.

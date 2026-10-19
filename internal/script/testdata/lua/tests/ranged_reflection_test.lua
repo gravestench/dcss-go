@@ -6,6 +6,7 @@ local harness = require("tests.harness")
 local ids = require("ids.items")
 local ranged_actions = require("policy.combat.ranged_actions")
 local brands = require("constants.weapon_brands")
+local armour_egos = require("constants.armour_egos")
 local slug_dart = require("policy.combat.monster_spells.slug_dart")
 local catalog = require("policy.catalog")
 local monsters = require("ids.monsters")
@@ -289,6 +290,93 @@ local function reflected_slug_dart(ctx)
         "reflected Slug Dart can hurt its caster")
 end
 
+-- A monster foe uses its own shield against Slug Dart; the nearby player
+-- has no shield and must not supply the defense snapshot for this cast.
+local function monster_blocks_slug_dart(ctx)
+    local battle, player, shooter = fixture.scene(ctx, ids.MI_STONE,
+        false, monsters.MONS_DART_SLUG, false)
+    local foe = ctx:create()
+
+    ctx:add(foe, component.ACTOR, {
+        kind_id = monsters.MONS_GOBLIN,
+        speed = 10,
+    })
+
+    ctx:add(foe, component.HEALTH, {
+        current = 40,
+        max = 40,
+    })
+
+    ctx:add(foe, component.POSITION, {
+        level_id = 1,
+        x = 2,
+        y = 1,
+    })
+
+    ctx:add(foe, component.COMBAT, { shield_blocks = 0 })
+    local shield = fixture.enemy_shield(ctx, foe)
+
+    local draws = 0
+
+    -- High shield dice and a low bypass die force the monster's block.
+    function battle.random(_, stream, bound)
+        harness.equal(stream, "monster_spell", "Slug Dart stream")
+        draws = draws + 1
+
+        if draws <= 2 then
+            return bound - 1
+        end
+
+        return 0
+    end
+
+    local plan = slug_dart.plan(battle, shooter, foe)
+
+    -- A shield block still resolves offscreen without naming the monster.
+    function battle.visible()
+        return false
+    end
+
+    slug_dart.resolve(battle, shooter, foe, nil, plan)
+
+    harness.equal(ctx:get(foe, component.HEALTH).current, 40,
+        "monster shield prevents Slug Dart damage")
+    harness.equal(ctx:get(foe, component.COMBAT).shield_blocks, 1,
+        "the monster's own shield count advances")
+    harness.equal(ctx:get(player, component.HEALTH).current, 20,
+        "the cast leaves the player untouched")
+    harness.equal(#battle.events(), 0,
+        "offscreen monster shield block emits no target message")
+
+    -- Once reflection is equipped, the same blocked shot returns toward
+    -- its source; the nearby player remains outside that exchange.
+    local shield_item = ctx:get(shield, component.ITEM)
+    shield_item.ego = armour_egos.REFLECTION
+    ctx:set(shield, component.ITEM, shield_item)
+    draws = 0
+
+    -- Restore nearby visibility for the reflected shot's message path.
+    function battle.visible()
+        return true
+    end
+
+    -- The player can see the reflecting shield but not the invisible
+    -- original caster. The rebound must not name that hidden victim.
+    ctx:add(shooter, component.MONSTER_ENCHANT, {
+        invisible_aut = 100,
+    })
+    local messages_before = #battle.events()
+
+    slug_dart.resolve(battle, shooter, foe, nil, plan)
+
+    harness.truthy(ctx:get(shooter, component.HEALTH).current < 40,
+        "monster reflection can hurt the Slug Dart caster")
+    harness.equal(ctx:get(player, component.HEALTH).current, 20,
+        "monster reflection does not credit damage to the player")
+    harness.equal(#battle.events(), messages_before + 2,
+        "reflection reports only the visible defender and rebound")
+end
+
 -- Slug Dart's return follows spell shield rules, allowing a capable original caster to block it.
 local function slug_dart_return_blocked(ctx)
     local battle, player, shooter = fixture.scene(ctx, ids.MI_STONE,
@@ -322,6 +410,7 @@ function test.run(ctx)
     reflected_launcher(ctx)
     other_launcher_brands(ctx)
     reflected_slug_dart(ctx)
+    monster_blocks_slug_dart(ctx)
     slug_dart_return_blocked(ctx)
 end
 

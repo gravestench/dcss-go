@@ -104,6 +104,18 @@ local function can_petrify(definition)
         resistance(definition, "MR_RES_PETRIFY") <= 0
 end
 
+-- Let both player and monster casts check innate immunity before their will
+-- contest, without copying the source flags into each spell resolver.
+function stasis.petrifiable(ctx, target)
+    local actor = ctx:get(target, component.ACTOR)
+
+    if not actor then
+        return false
+    end
+
+    return can_petrify(catalog.get("monsters", actor.kind_id))
+end
+
 -- Scan living visible actors along clear paths before offering the spell as usable.
 local function can_target(ctx, player, spell)
     local origin = ctx:get(player, component.POSITION)
@@ -198,27 +210,18 @@ function stasis.cast_petrify(ctx, player, intent, spell, power)
         return
     end
 
-    local current = ensure(ctx, target)
+    local phase = stasis.apply_petrify(ctx, target)
 
-    if current.petrified_aut > 0 then
-        return
-    end
-
-    if current.petrifying_aut > 0 then
-        current.petrifying_aut = 0
-        current.petrified_aut = duration(ctx, target, definition, "petrified")
+    if phase == "petrified" then
         ctx:emit("spell", "The " .. definition.name .. " stops moving altogether!")
-    else
-        current.petrifying_aut = duration(ctx, target, definition, "petrifying")
+    elseif phase == "petrifying" then
         ctx:emit("spell", "The " .. definition.name .. " is moving more slowly.")
     end
-
-    save(ctx, target, current)
 end
 
--- Cloud petrification has no spell aim or power roll. It uses the same two
--- stages and saved monster status as a successful petrify enchantment.
-function stasis.cloud_petrify(ctx, target)
+-- A successful spell or cloud exposure enters the same saved two-phase
+-- monster status. Return the phase for callers that announce a cast.
+function stasis.apply_petrify(ctx, target)
     local actor = ctx:get(target, component.ACTOR)
 
     if not actor then
@@ -228,27 +231,31 @@ function stasis.cloud_petrify(ctx, target)
     local definition = catalog.get("monsters", actor.kind_id)
 
     if not can_petrify(definition) then
-        return false
+        return nil
     end
 
     local current = ensure(ctx, target)
 
     if current.petrified_aut > 0 then
-        return false
+        return nil
     end
+
+    local phase
 
     if current.petrifying_aut > 0 then
         current.petrifying_aut = 0
         current.petrified_aut = duration(ctx, target,
             definition, "petrified")
+        phase = "petrified"
     else
         current.petrifying_aut = duration(ctx, target,
             definition, "petrifying")
+        phase = "petrifying"
     end
 
     save(ctx, target, current)
 
-    return true
+    return phase
 end
 
 -- Action scheduling reads the saved sleep flag, independent of the wary timer.

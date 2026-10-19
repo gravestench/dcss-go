@@ -46,6 +46,18 @@ function test.run(ctx)
 
     local monster = ctx:create()
 
+    ctx:add(player, component.POSITION, {
+        level_id = 1,
+        x = 1,
+        y = 1,
+    })
+
+    ctx:add(monster, component.POSITION, {
+        level_id = 1,
+        x = 2,
+        y = 1,
+    })
+
     ctx:add(monster, component.ACTOR, {
         kind_id = monsters.MONS_ORC_WIZARD,
         speed = 10,
@@ -71,8 +83,7 @@ function test.run(ctx)
         return 0
     end
 
-    harness.equal(monster_spell.choose(encounter, monster,
-        { x = 2, y = 1 }, { x = 1, y = 1 }), nil,
+    harness.equal(monster_spell.choose(encounter, monster, player, false), nil,
         "Silence Aura prevents adjacent wizard spell selection")
 end
 

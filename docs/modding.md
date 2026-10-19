@@ -867,7 +867,11 @@ can treat that actor as the goal. Choose `visible` for ordinary sight,
 `policy/combat/monster_battlecries.lua` uses `visible_no_trans`: an ally
 standing between a chief and its foe should receive the cry, not block it.
 These queries only answer geometry; damage, hostility, and action time
-belong in a policy or system.
+belong in a policy or system. `ctx:visible` says that a *cell* is in sight; it
+does not say that the player can perceive an invisible actor standing there.
+Before naming a monster in a player message, use
+`policy.character.senses.player_sees_actor`. This also keeps offscreen combat
+from leaking monster identities into the message log.
 
 ### Lua registration and VFS helpers
 
@@ -1089,6 +1093,11 @@ already chosen cast. `resolve` runs with the live game context after the
 action is committed. Put count, species, and duration draws there using
 `ctx:random` or a focused `policy/combat/monster_summons/` helper. Import
 spell, monster, component, attitude, and stream IDs at the use site.
+The spell intent stores the selected enemy as `foe_entity` independently of
+the target plan. A self spell may plan the caster, and a cloud may plan a cell;
+both still receive the original `foe` argument in `resolve`. Never infer the
+foe from `plan.entity`, and use `ctx:player()` only for rules that specifically
+concern the player.
 
 The shared creator is
 `policy.magic.effects.summons.common.spawn(ctx, owner, spell_id, kind_id,

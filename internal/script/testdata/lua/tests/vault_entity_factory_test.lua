@@ -114,13 +114,8 @@ local function spawned_actor_has_source_state(ctx)
         spells = { vault_spells.EMPTY_BOOK },
     })
 
-    harness.falsy(spell.choose(combat, mage, {
-        x = 14,
-        y = 9,
-    }, {
-        x = 15,
-        y = 9,
-    }), "authored empty spellbook still casts")
+    harness.falsy(spell.choose(combat, mage, player, false),
+        "authored empty spellbook still casts")
 end
 
 -- Authored item modifiers survive through entity creation and stacking.

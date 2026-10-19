@@ -77,11 +77,8 @@ function test.run(ctx)
         y = 1,
     })
 
-    local origin = ctx:get(caster, component.POSITION)
-    local destination = ctx:get(player, component.POSITION)
-
     harness.falsy(choice.choose(game_context(ctx, player), caster,
-        origin, destination, false),
+        player, false),
         "ordinary caster stops after its no-spell result")
 
     ctx:add(caster, component.MONSTER_EMPOWERED_SPELLS, {
@@ -89,7 +86,7 @@ function test.run(ctx)
     })
 
     harness.truthy(choice.choose(game_context(ctx, player), caster,
-        origin, destination, false),
+        player, false),
         "Brilliance grants one extra source spell prospect")
 end
 

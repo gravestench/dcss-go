@@ -4,7 +4,8 @@ local defense = require("policy.combat.monster_defense")
 local catalog = require("policy.catalog")
 local damage = require("policy.magic.damage")
 local registry = require("policy.magic.effects.registry")
-local roll = require("policy.combat.roll")
+local cold_exposure = require("policy.magic.effects.statuses.monster_cold_exposure")
+local streams = require("constants.rng_streams")
 
 local refrigeration = {}
 
@@ -17,17 +18,6 @@ local function has_flag(definition, wanted)
     end
 
     return false
-end
-
--- An absent cold resistance entry leaves the monster fully exposed.
-local function cold_resistance(definition)
-    for _, entry in ipairs(definition.resistances or {}) do
-        if entry.id == "MR_RES_COLD" then
-            return entry.level
-        end
-    end
-
-    return 0
 end
 
 -- Spell-stream remainder draws avoid flooring fractional die sizes.
@@ -78,37 +68,6 @@ local function chilled_sides(ctx, base, adjacent)
     end
 
     return base
-end
-
--- Only cold-blooded, nonresistant survivors can acquire a speed penalty.
-local function expose_cold(ctx, target, definition)
-    -- monster.cc:expose_to_element(BEAM_COLD, 5) slows susceptible
-    -- cold-blooded monsters on a coin flip for (5+random2(5))*10 aut.
-    if not has_flag(definition, "M_COLD_BLOOD") or
-        cold_resistance(definition) > 0 or
-        ctx:random("spell", 2) ~= 0 then
-        return
-    end
-
-    local remaining = (5 + ctx:random("spell", 5)) * 10
-    local slow = ctx:get(target, component.PROJECTILE_SLOW)
-
-    if slow then
-        slow.remaining_aut = slow.remaining_aut + remaining
-        ctx:set(target, component.PROJECTILE_SLOW, slow)
-        return
-    end
-
-    local actor = ctx:get(target, component.ACTOR)
-    local base_speed = actor.speed
-
-    actor.speed = roll.random_divide(ctx, base_speed * 2, 3)
-    ctx:set(target, component.ACTOR, actor)
-    ctx:add(target, component.PROJECTILE_SLOW, {
-        base_speed = base_speed,
-        remaining_aut = remaining,
-    })
-    ctx:emit("spell", "The " .. definition.name .. " seems to slow down.")
 end
 
 -- Example: Ozocubu’s Refrigeration rolls cold damage for visible monsters within seven cells.
@@ -181,7 +140,8 @@ function refrigeration.resolve(ctx, player, _, _, power)
                 definition.name .. ".")
 
             if remaining > 0 then
-                expose_cold(ctx, target, definition)
+                cold_exposure.apply(ctx, target, definition, 5,
+                    streams.SPELL)
             end
         end
     end

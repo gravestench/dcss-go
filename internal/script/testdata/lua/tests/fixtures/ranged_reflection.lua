@@ -83,6 +83,12 @@ function fixture.scene(ctx, missile_id, with_reflector, monster_id,
         return true
     end
 
+    -- The fixture's nearby combatants occupy visible cells, while the
+    -- lightweight Lua world has no generated grid for sight queries.
+    function battle.visible()
+        return true
+    end
+
     -- Record combat text for ordering assertions without terminal services.
     function battle.emit(_, kind, message)
         events[#events + 1] = {
