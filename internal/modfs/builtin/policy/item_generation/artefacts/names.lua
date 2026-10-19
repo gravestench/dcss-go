@@ -1,5 +1,24 @@
 local streams = require("constants.rng_streams")
+local classes = require("ids.object_classes")
+local pools = require("constants.appearance_pools")
+local item_appearances = require("policy.items.appearances")
 local names = {}
+
+-- The source's name database is not yet committed. Its fallback must still
+-- hide a ring or amulet subtype: an unknown artefact exposes only its shape.
+local function appearance(definition)
+    local base = definition.name
+
+    if definition.class == classes.OBJ_JEWELLERY then
+        if item_appearances.pool(definition) == pools.AMULET then
+            base = "amulet"
+        else
+            base = "ring"
+        end
+    end
+
+    return "non-descript " .. base
+end
 
 -- Source: crawl-ref/source/item-name.cc.
 local vowels = "aeiouaeiouaeiouy  "
@@ -171,7 +190,7 @@ function names.generate(ctx, definition)
         full_name = definition.name .. " \"" .. title .. "\""
     end
 
-    return full_name, definition.name, seed
+    return full_name, appearance(definition), seed
 end
 
 return names

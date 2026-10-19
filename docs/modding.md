@@ -580,6 +580,21 @@ missiles and Slug Dart to their shooter. Each projectile or spell effect
 declares whether it is reflectable; new effects can opt in using the same
 return resolver. Faith piety needs its later religion event domain.
 
+Unique artefacts are separate files under `content/artefacts/`. Set `name`
+to the true name and `appearance` to the name seen before identification;
+an empty appearance means the same text as `name`. A unique whose two names
+match identifies itself automatically, except when its `flags` include
+`artefact_flags.UNIDED` from `constants.artefact_flags`. A random artefact
+starts unidentified even if the player knows its base item kind. Its
+`item.artefact` component stores true name, appearance, and properties;
+`item.identification` stores what this player has learned about that
+physical item. Call `policy.items.identification.reveal_type(ctx, player,
+item)` or `reveal_item(ctx, item, fields)` from an effect that actually
+reveals it. Do not add its base kind to the player's `known_types` map:
+that would identify other items by accident. Until the source random-name
+database is ported, generated random artefacts use a non-descript appearance
+that hides ring and amulet subtypes.
+
 The bundled `init.lua` loads `schemas/`, `content/`, `policy/`, `systems/`,
 `generation/`, and `ui/` in that order. Paths within each tree load in sorted
 order. A new file under one of these directories is discovered automatically. Put helpers

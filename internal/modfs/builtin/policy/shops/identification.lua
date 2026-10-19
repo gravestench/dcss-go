@@ -2,6 +2,7 @@ local appearances = require("policy.items.appearances")
 local classes = require("ids.object_classes")
 local ids = require("ids.items")
 local items = require("policy.items.identification")
+local component = require("constants.component")
 
 local identification = {}
 
@@ -16,7 +17,8 @@ local equipment = {
 function identification.stock(ctx, entity, kind)
     local manual = kind.id == ids.BOOK_MANUAL
     local fields = {
-        type = appearances.pool(kind) ~= nil or manual,
+        type = ctx:has(entity, component.ITEM_ARTEFACT) or
+            appearances.pool(kind) ~= nil or manual,
         pluses = equipment[kind.class] or manual,
         properties = equipment[kind.class] or manual,
     }

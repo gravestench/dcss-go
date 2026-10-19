@@ -10,6 +10,7 @@ local artefact_ids = require("ids.artefacts")
 local classes = require("ids.object_classes")
 local item_ids = require("ids.items")
 local sentinels = require("constants.artefact_base_sentinels")
+local artefact_flags = require("constants.artefact_flags")
 
 local definition = {
     id = artefact_ids.UNRAND_OCTOPUS_KING_RING,
@@ -28,7 +29,7 @@ local definition = {
     tile_equipment = "",
     type = "",
     flags = {
-        "unided",
+        artefact_flags.UNIDED,
         "no_upgrade",
     },
     -- ring of the Octopus King properties are projected into equipment effects;

@@ -93,6 +93,30 @@ local function source_candidate_and_history()
         chosen.id, "identity stored on item")
     harness.equal(result.plus, chosen.properties.plus,
         "source enchantment retained")
+    harness.truthy(result.components[component.ITEM_ARTEFACT].known.plus,
+        "self-identifying unique begins with its plus property known")
+end
+
+-- The Octopus King's unided flag keeps even its same-name properties hidden
+-- until an explicit reveal, unlike an ordinary self-identifying unique.
+local function unided_unique_starts_with_hidden_properties()
+    local ctx = context(false)
+    local chosen = catalog.get("artefacts", ids.UNRAND_OCTOPUS_KING_RING)
+    local result = {
+        kind_id = items.RING_PROTECTION,
+        components = {},
+    }
+
+    artefacts.apply(ctx, chosen, {
+        purpose = purpose.VAULT,
+    }, result)
+
+    local known = result.components[component.ITEM_ARTEFACT].known
+
+    for name in pairs(chosen.properties) do
+        harness.falsy(known[name],
+            "unided unique keeps property hidden until identification")
+    end
 end
 
 -- A candidate may be inspected without consuming the unique; only the
@@ -407,6 +431,7 @@ end
 -- validation together because all four share the saved artefact contract.
 function test.run()
     source_candidate_and_history()
+    unided_unique_starts_with_hidden_properties()
     item_roll_uses_unique_history()
     nonlevel_unique_uses_source_fallback()
     enhancer_staff_can_roll_unique()

@@ -200,14 +200,16 @@ Authored water and lava monsters convert their spawn cells to their primary
 habitat. Random arrival items use source class weights and preserve ordinary,
 depth-boosted `*`, good, and superb requests. The completed item-generation
 slice selects source-backed subtypes and properties for floor loot, gear,
-vault requests, and acquirement; special artefact names and identification
-remain separate work.
+vault requests, and acquirement. Artefact type, plus, and property discovery
+now belongs to each item; hidden fixed names, the Octopus King exception,
+and random artefacts retain their appearance through save/restore. The
+source random-name database remains separate work.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,
 more layouts and branches, the Abyss monster roster and shifting terrain,
 full source parity for chaos clone allegiance and exact shapeshifter RNG order,
-artefact-specific identification and names, runes,
+the source artefact name database and exact random-name stream, runes,
 endgame, and the
 complete item and equipment system. The committed monster spellbook IDs
 now have Lua effect resolvers. Several effects still need source parity
@@ -263,8 +265,10 @@ The item identification policy now gives each active identifying type a
 saved, unique appearance and discovers all copies when a potion is quaffed
 or a wand is successfully evoked. The current scroll label generator keeps
 unique deterministic labels but does not yet reproduce DCSS's exact
-`make_name` syllable algorithm or its RNG sequence. Artefact exceptions,
-item-inscription UI, and item naming details beyond
+`make_name` syllable algorithm or its RNG sequence. Artefact discovery now
+uses per-item knowledge and source self-identifying fixed-name rules; random
+artefacts use a non-descript fallback until the source name database is
+committed. Item-inscription UI and item naming details beyond
 the implemented non-artefact classes remain. Source religion conduct
 remains part of the religion domain.
 The experience potion keeps level XP separate from allocatable skill XP; its

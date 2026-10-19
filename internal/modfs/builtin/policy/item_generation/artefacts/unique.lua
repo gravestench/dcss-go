@@ -8,6 +8,7 @@ local sentinels = require("constants.artefact_base_sentinels")
 local jewellery = require("constants.jewellery_kind")
 local kinds = require("constants.artefact_kinds")
 local item_ids = require("ids.items")
+local identification = require("policy.items.identification")
 local policies = require("policy.item_generation.catalog")
 local pool = require("policy.item_generation.pool")
 
@@ -93,10 +94,13 @@ function unique.apply(ctx, chosen, request, result)
     local properties = {}
     local known = {}
     local flags = {}
+    local self_identifying = identification.unique_self_identifying(chosen)
 
+    -- A same-name unique exposes its properties immediately. Keep the saved
+    -- per-property map consistent with the identification policy's display.
     for name, value in pairs(chosen.properties or {}) do
         properties[name] = value
-        known[name] = false
+        known[name] = self_identifying
     end
 
     for index, flag in ipairs(chosen.flags or {}) do

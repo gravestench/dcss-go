@@ -6,6 +6,8 @@ local properties = require("policy.items.properties")
 local item_ids = require("ids.items")
 local cosmetics = require("constants.item_cosmetics")
 local pools = require("constants.appearance_pools")
+local artefact_flags = require("constants.artefact_flags")
+local artefact_kinds = require("constants.artefact_kinds")
 
 local identification = {}
 local unenchantable_armour = {
@@ -59,6 +61,27 @@ local function knowledge(ctx, player)
     end
 
     return known
+end
+
+-- Most fixed artefacts reveal themselves by name at creation. The source
+-- keeps the Octopus King's same-name ring unidentified via its unided flag.
+-- Deriving this from content lets both generation and display agree without
+-- persisting a duplicate immutable fact.
+function identification.unique_self_identifying(definition)
+    local appearance = definition.appearance ~= "" and
+        definition.appearance or definition.name
+
+    if definition.name ~= appearance then
+        return false
+    end
+
+    for _, flag in ipairs(definition.flags or {}) do
+        if flag == artefact_flags.UNIDED then
+            return false
+        end
+    end
+
+    return true
 end
 
 -- Assign appearances only to active kinds with an unidentified descriptor pool.
@@ -203,6 +226,26 @@ function identification.known(ctx, player, entity)
     local instance = ctx:get(entity, component.ITEM_IDENTIFICATION) or {}
     local known = knowledge(ctx, player)
     local pool = appearances.pool(kind)
+    local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
+
+    if artefact then
+        local automatic = false
+
+        if artefact.kind == artefact_kinds.UNIQUE then
+            local definition = catalog.get("artefacts", artefact.unique_id)
+            automatic = identification.unique_self_identifying(definition)
+        end
+
+        -- Books are always type-known in the source, including artefact
+        -- books. Other artefacts ignore shared base-kind knowledge.
+        return {
+            type = kind.class == classes.OBJ_BOOKS or automatic or
+                instance.known_type == true,
+            pluses = automatic or instance.known_pluses == true,
+            properties = automatic or
+                instance.known_properties == true,
+        }
+    end
 
     return {
         type = not pool or known.known_types[item.kind_id] == true or
@@ -217,6 +260,14 @@ function identification.reveal_type(ctx, player, entity)
     local item = ctx:get(entity, component.ITEM)
     local kind = catalog.get("items", item.kind_id)
 
+    if ctx:has(entity, component.ITEM_ARTEFACT) then
+        identification.reveal_item(ctx, entity, {
+            type = true,
+        })
+
+        return
+    end
+
     if not appearances.pool(kind) then
         return
     end
@@ -229,6 +280,7 @@ end
 -- Instance-only knowledge records pluses and properties without revealing every kind.
 function identification.reveal_item(ctx, entity, fields)
     local state = ctx:get(entity, component.ITEM_IDENTIFICATION) or {}
+    local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
 
     if fields.type then
         state.known_type = true
@@ -246,6 +298,16 @@ function identification.reveal_item(ctx, entity, fields)
         ctx:set(entity, component.ITEM_IDENTIFICATION, state)
     else
         ctx:add(entity, component.ITEM_IDENTIFICATION, state)
+    end
+
+    if artefact and fields.properties then
+        artefact.known = artefact.known or {}
+
+        for id in pairs(artefact.properties or {}) do
+            artefact.known[id] = true
+        end
+
+        ctx:set(entity, component.ITEM_ARTEFACT, artefact)
     end
 end
 
@@ -385,7 +447,8 @@ function identification.validate(ctx, player)
         local manual = kind.id == item_ids.BOOK_MANUAL
 
         if state.known_type and not appearances.pool(kind) and
-            not manual then
+            not manual and
+            not ctx:has(entity, component.ITEM_ARTEFACT) then
             error("non-identifiable item has type knowledge")
         end
 
