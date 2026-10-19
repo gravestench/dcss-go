@@ -314,6 +314,27 @@ stay pure and need no context. This keeps dependencies visible: a function
 with `ctx` may inspect or change the current game; a function without it
 cannot silently reach into game state.
 
+`ctx` supplies **engine capabilities**, not every game rule. It can read an
+ECS component, draw from a saved random stream, ask the grid about a cell, or
+emit a message. It does not have methods such as `ctx:damage_monster()` or
+`ctx:cast_spell()`. Those rules live in focused Lua modules under `policy/`
+and `systems/`. Import the relevant policy and pass along the same `ctx`:
+
+```lua
+local combat = require("policy.combat.player_health")
+
+-- The policy owns the healing restriction; this caller only chooses when
+-- to ask it. Both functions observe the same current game invocation.
+local function can_restore_health(ctx, player)
+    return combat.can_heal(ctx, player)
+end
+```
+
+This separation is important when extending the game. Add a generic host
+capability to Go only when Lua cannot express the operation with the current
+ECS, grid, and event services. Put the actual monster, spell, item, or game
+policy in Lua, even if several content files call it.
+
 ### Follow one rule from entry to state change
 
 Suppose a mod has registered the `my_mod.turn_counter` component from the
@@ -358,6 +379,49 @@ returns a function at startup, then its caller passes the live `ctx` and
 explicit actor or target when the effect occurs. Follow that domain's
 existing effect registry to learn its `plan`, `resolve`, or `apply` arguments.
 Those method names are domain contracts, not methods on `ctx`.
+
+For example, the test overlay's `SPELL_MOSS_HELPER` resolves to
+`policy/combat/monster_spells/moss_helper.lua`. The monster spell registry
+loads that path when a spellbook selects the ID. The file returns a local
+effect object; its methods receive `ctx` when the cast actually happens:
+
+```lua
+local channels = require("constants.message_channels")
+local monsters = require("ids.monsters")
+local self_target = require("policy.combat.monster_support.self_target")
+local spells = require("ids.spells")
+local summons = require("policy.magic.effects.summons.common")
+
+local effect = {}
+
+-- Target the caster before the action is spent. The returned plan crosses
+-- the ordinary monster-spell intent boundary and reaches resolution.
+function effect.plan(ctx, caster, foe, slot)
+    return self_target.plan(caster)
+end
+
+-- Confirm the saved target before creating the actor. The shared owner
+-- attaches its components and puts it on the grid, so this effect only
+-- chooses what the spell summons and how to announce a successful cast.
+function effect.resolve(ctx, caster, foe, slot, plan)
+    self_target.require_caster(plan, caster)
+
+    local creature = summons.spawn(ctx, caster,
+        spells.SPELL_MOSS_HELPER, monsters.MONS_RAT, 2, nil)
+
+    if creature then
+        ctx:emit(channels.SPELL, "A modded rat answers the call.")
+    end
+end
+
+return effect
+```
+
+The example creates a real summon because the shared creator has the live
+`ctx`. It also needs its content definition and a spellbook slot; see the
+[three-file overlay](#add-a-monster-spell-or-summon). For a player spell,
+potion, mutation, or trap, use that domain's registry and method names instead
+of copying the monster-spell interface.
 
 A typical stateful rule reads a component, calculates a result using its
 explicit inputs and a named RNG stream if needed, writes the full component
@@ -479,8 +543,8 @@ when appropriate. A file's discovery order must never decide random draws.
 For example, a combat resolver can publish `ctx:signal(signal_ids.HIT, target)`
 and a later system can read `ctx:signals(signal_ids.HIT)`. Define `HIT` in a
 shared ID module owned by your mod and import it in both files. Give the
-consumer an explicit `after`
-dependency on the producer's system ID when their order matters. A signal
+consumer an explicit `after` dependency on the producer's system ID when
+their order matters. A signal
 does not schedule a callback on its own; it is a short-lived value for rules
 already running in the action. Use `ctx:emit` for text shown to the player,
 not as a substitute for a component or signal that another rule must read.
@@ -492,6 +556,12 @@ Name a stream for the mechanic rather than
 for the Lua file, because renaming a file must not alter a saved game's
 random sequence. `ctx:random_u64` returns two values, not one Lua integer;
 use it only when a rule needs the full draw and handles both halves.
+
+Do not draw randomness while a module loads. Startup may load files in a
+different order after an overlay is added, and there is no active game RNG
+then. Draw inside the invoked method and use stable IDs or an explicitly
+ordered local pool for ties. `pairs()` traversal order is not a gameplay
+order; sort keys before using them to choose a random index.
 
 ### Levels, terrain, visibility, and actor placement
 
@@ -592,6 +662,31 @@ it into an empty table. Check `value == mod.null` (or its type) explicitly
 before treating an optional content field as a table. Use it only where a
 definition schema permits explicit null. A missing field and an explicit
 null can mean different things, especially in source-backed content.
+
+### When a context call fails
+
+- **`ctx` is `nil`, or a method is missing:** The code may have run at
+  module load, or a read-only policy received an empty context. Move the
+  call into a live callback; pass state through `input` for read-only rules.
+- **`unknown Lua component`:** Check the imported ID and the matching
+  registration under `schemas/`.
+- **`use add` or `use set`:** The entity already has the component, or does
+  not have it yet. Check `ctx:has` and choose the matching operation.
+- **A field edit disappears:** `ctx:get` returned a detached table. Call
+  `ctx:set` with the whole edited table.
+- **An actor and the grid disagree:** A position component may have been
+  edited directly. Use `place_actor`, `move_actor`, or `remove_actor`.
+- **A result changes after save/restore:** Check for state kept in a Lua
+  module variable or randomness outside a saved named stream. Store lasting
+  state in an ECS component.
+- **A context service is unavailable:** This entry point has no game clock,
+  grid, RNG, or event service. Use an input-only policy or a live fixture.
+
+A Lua callback error discards its pending context writes and reports the
+originating Lua path or system ID. Fix the first reported error before
+interpreting missing state later in the action. When a mod changes files,
+start a new game session to load the new effective tree; the current session
+does not hot reload Lua.
 
 ## Work through a new mod feature
 
@@ -699,8 +794,11 @@ the generated Dungeon roster without editing a central list. The example
 uses the current basic monster behavior and combat rules. Invalid spawn data
 fails at startup with the content path and field name.
 Bundled population rows live in their monster files too, with a
-`source_order` preserving the authored roster order. New mod rows need only a
-`scenario_id`, depth range, rarity, and curve; they follow the source rows.
+`source_order` for the original DCSS population draw. It orders those
+*nested population rows* explicitly; it does not order Lua file loading,
+catalog definitions, systems, or tests. New mod rows need only a
+`scenario_id`, depth range, rarity, and curve. They follow the source rows
+in stable catalog ID order, regardless of their filenames or load order.
 
 A rule imports `constants.catalog`,
 `ids.monsters`, and `policy.catalog` where needed, then reads it with
@@ -725,6 +823,49 @@ separate file under `policy/magic/effects/` and call
 `ids.spells` and `policy.magic.effects.registry` there. Both files load
 automatically. Existing DCSS spell scope is supplied by the committed
 source catalog when the definition has no `player_scope` field.
+
+### Add a monster spell or summon
+
+A monster spellbook slot names a spell ID and its frequency and flags. The
+spell's content file describes cost, range, and display facts. Neither file
+contains the live effect. For `SPELL_MOSS_HELPER`, add its effect at
+`policy/combat/monster_spells/moss_helper.lua`; the monster spell registry
+finds that path from the ID without a central switch. The effect returns a
+local table with commented `plan(ctx, caster, foe, slot)` and
+`resolve(ctx, caster, foe, slot, plan)` methods, as shown in the
+[`ctx` walkthrough](#follow-one-rule-from-entry-to-state-change).
+
+`plan` runs before the cast is committed. Return `nil` when the spell cannot
+currently be used. Otherwise return a typed entity or cell target that can
+cross the intent boundary. A foe-centered summon should save the selected
+cell in the plan; re-reading a moving foe inside `resolve` would redirect an
+already chosen cast. `resolve` runs with the live game context after the
+action is committed. Put count, species, and duration draws there using
+`ctx:random` or a focused `policy/combat/monster_summons/` helper. Import
+spell, monster, component, attitude, and stream IDs at the use site.
+
+The shared creator is
+`policy.magic.effects.summons.common.spawn(ctx, owner, spell_id, kind_id,
+degree, cap, options)`. It creates and places the Akara actor, saves its
+owner, source, attitude, and expiry, then returns the new handle or `nil`
+when no cell is available. `owner` is the caster; `cap = nil` means no
+per-spell eviction. The optional table may supply an `anchor` position,
+an `exact` `{ x, y }` destination, or source-specific `hd`, `heads`,
+`hp`, `attitude`, and `expires_aut`. Give any additional lasting rule state
+its own schema and attach it to the returned handle. A mod can reuse this
+creator without replacing its file or copying actor setup code.
+
+If a new monster uses the spell, its `content/monsters/` definition names a
+spellbook, and a `content/monster_spellbooks/` file supplies the slot. The
+game accepts that monster into a playable roster only when *every* spell
+in its book has a live resolver. Test both a successful cast and a blocked
+placement; then save, restore, and take another action to catch lost owner
+state or changed RNG order. A sparse `--mod-dir` needs only the new or
+overridden files, never a copy of the whole base tree.
+The repository's `internal/game/testdata/monster-added-summon/` overlay is
+a runnable three-file example: a new spell definition, one book override,
+and one focused effect. Its Go integration test launches the normal game
+with that overlay and observes the summoned ECS actor.
 
 Put a player mutation in `content/mutations/<name>.lua`. The content tree
 registers it automatically, and `ids.mutations` exposes the new ID to other
