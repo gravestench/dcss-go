@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local death = require("policy.death")
 local death_hooks = require("policy.combat.death_hooks")
+require("policy.combat.monster_flames.inferno")
 local draining = require("policy.combat.brands.draining")
 local net = require("policy.combat.net")
 local statuses = require("policy.magic.effects.statuses.player")

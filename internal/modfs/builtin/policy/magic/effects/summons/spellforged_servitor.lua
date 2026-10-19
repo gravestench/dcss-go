@@ -121,7 +121,8 @@ end
 -- Fire at a reachable target, otherwise move toward it or follow the owner to regain a firing lane.
 function servitor.act(ctx, entity, position)
     local state = ctx:get(entity, component.SUMMON_SERVITOR)
-    local target, distance = blast.nearest_hostile(ctx, position, 7)
+    local target, distance = blast.nearest_hostile(ctx, entity,
+        position, 7)
 
     if target and distance <= range_for(state.spell_id) and
         fire(ctx, entity, target, position, state) then

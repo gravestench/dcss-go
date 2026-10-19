@@ -2,6 +2,7 @@ local component = require("constants.component")
 local catalog = require("policy.catalog")
 local damage = require("policy.magic.damage")
 local defense = require("policy.combat.monster_defense")
+local fighter = require("policy.combat.fighter")
 local player_health = require("policy.combat.player_health")
 local summons = require("policy.magic.effects.summons.common")
 local targets = require("policy.ai.targets")
@@ -15,11 +16,11 @@ local function distance(left, right)
 end
 
 -- Summoned constructs search visible hostile actors before choosing where to explode.
-function blast.nearest_hostile(ctx, origin, reach)
+function blast.nearest_hostile(ctx, source, origin, reach)
     local chosen, closest
 
     for _, entity in ipairs(ctx:query({ component.ACTOR, component.POSITION, component.HEALTH })) do
-        if targets.enemy(ctx, ctx:player(), entity) then
+        if targets.enemy(ctx, source, entity) then
             local position = ctx:get(entity, component.POSITION)
             local health = ctx:get(entity, component.HEALTH)
             local radius = distance(origin, position)
@@ -38,17 +39,27 @@ end
 
 -- Example: blast.hit(ctx, monster, 12, "MR_RES_FIRE", construct) applies
 -- elemental resistance before damage and kill attribution.
-function blast.hit(ctx, target, raw, resistance_id, source)
+function blast.hit(ctx, target, raw, resistance_id, source, stream)
     local definition
     local ac = 0
 
-    if target ~= ctx:player() then
+    if target == ctx:player() then
+        ac = fighter.defense(ctx).ac
+    else
         local actor = ctx:get(target, component.ACTOR)
         definition = catalog.get("monsters", actor.kind_id)
         ac = defense.armour(ctx, target, definition)
     end
 
-    local amount = math.max(0, raw - summons.roll(ctx, ac + 1))
+    -- The old player path did not draw RNG against zero armour. Keep that
+    -- sequence while letting monster-owned constructs use their own stream.
+    local blocked = 0
+
+    if ac > 0 then
+        blocked = ctx:random(stream or "spell", ac + 1)
+    end
+
+    local amount = math.max(0, raw - blocked)
 
     if resistance_id and definition then
         amount = damage.monster_elemental(ctx, target, amount, resistance_id)
@@ -72,7 +83,8 @@ function blast.hit(ctx, target, raw, resistance_id, source)
             source)
 
         if health.current == 0 and target ~= ctx:player() and
-            not ctx:has(target, component.SUMMON) then
+            not ctx:has(target, component.SUMMON) and
+            targets.allied(ctx, source) then
             ctx:signal("player_kill", target)
         end
 

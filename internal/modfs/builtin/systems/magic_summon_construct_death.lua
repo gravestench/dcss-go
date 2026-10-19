@@ -23,7 +23,9 @@ function system.update(ctx, active)
             summon.expires_aut > 0 and ctx:aut() >= summon.expires_aut
         local finished = (summon.source_id == spells.SPELL_FULMINANT_PRISM and
             state.charge >= 3) or
-            (summon.source_id == spells.SPELL_FOXFIRE and state.charge >= 1) or
+            ((summon.source_id == spells.SPELL_FOXFIRE or
+                summon.source_id == spells.SPELL_MARSHLIGHT) and
+                state.charge >= 1) or
             (summon.source_id == spells.SPELL_CONJURE_BALL_LIGHTNING and
                 state.charge >= 1)
 

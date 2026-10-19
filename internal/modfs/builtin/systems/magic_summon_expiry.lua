@@ -39,8 +39,11 @@ function system.update(ctx, active)
             health and health.current <= 0
         local dead_spore = state.source_id == spells.SPELL_SPORULATE and
             health and health.current <= 0
+        local dead_inferno = state.source_id == spells.SPELL_STOKE_FLAMES and
+            health and health.current <= 0
 
-        if (entity ~= active or orphaned) and not dead_vortex and not dead_spore and
+        if (entity ~= active or orphaned) and
+            not dead_vortex and not dead_spore and not dead_inferno and
             (orphaned or expired or not health or health.current <= 0) then
             local position = ctx:get(entity, component.POSITION)
             local seen = visibility.player_sees(ctx, position)

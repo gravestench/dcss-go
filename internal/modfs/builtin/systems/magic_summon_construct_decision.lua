@@ -12,6 +12,7 @@ local vortex = require("policy.magic.effects.summons.fire_vortex")
 local actions = {
     [spells.SPELL_FULMINANT_PRISM] = prism.act,
     [spells.SPELL_FOXFIRE] = foxfire.act,
+    [spells.SPELL_MARSHLIGHT] = foxfire.act,
     [spells.SPELL_CONJURE_BALL_LIGHTNING] = ball_lightning.act,
     [spells.SPELL_SPELLFORGED_SERVITOR] = servitor.act,
     [spells.SPELL_SUMMON_LIGHTNING_SPIRE] = spire.act,

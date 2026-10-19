@@ -34,7 +34,8 @@ function lightning.act(ctx, entity, origin)
         return { kind = intent_ids.MONSTER_WAIT }
     end
 
-    local target, distance = blast.nearest_hostile(ctx, origin, 7)
+    local target, distance = blast.nearest_hostile(ctx, entity,
+        origin, 7)
 
     if target and distance <= 2 then
         lightning.explode(ctx, entity)

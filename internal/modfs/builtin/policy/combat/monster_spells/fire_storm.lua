@@ -82,6 +82,12 @@ local function after_cell(ctx, caster, _, cell)
         return
     end
 
+    local health = caster and ctx:get(caster, component.HEALTH)
+
+    if not caster or health and health.current <= 0 then
+        return
+    end
+
     summons.spawn(ctx, caster, spells.SPELL_FIRE_STORM,
         monsters.MONS_FIRE_VORTEX, 1, nil, {
             exact = {
@@ -90,6 +96,10 @@ local function after_cell(ctx, caster, _, cell)
             },
         })
 end
+
+-- Creeping inferno death uses the same Fire Storm cell aftermath; export the
+-- focused operation without duplicating cloud and vortex terrain policy.
+effect.after_cell = after_cell
 
 -- Give the existing beam owners a per-cast footprint without mutating the
 -- registered catalog fact shared by every Fire Storm caster.
