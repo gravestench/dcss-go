@@ -298,6 +298,25 @@ Look at the nearest existing file and its caller before choosing an entry
 point. The same rule explains why a content definition can load correctly
 while a new mechanic still needs a resolver.
 
+Think of `ctx` as access to one running game's state, supplied only while a
+rule is being invoked. A content file describes what a thing *is* at startup;
+an effect or system uses `ctx` to decide what happens *now*. The scheduler
+passes the matching entity to a system as `entity`; `ctx:actor()` is the
+creature whose action triggered this update, and `ctx:player()` is the player
+even during a monster action. Those handles can be different. Use the
+callback's `entity` for the component the system is visiting, and choose
+`actor()` or `player()` only when the rule specifically concerns that actor.
+
+A typical stateful rule reads a component, calculates a result using its
+explicit inputs and a named RNG stream if needed, writes the full component
+back, then emits a message or transient signal. `ctx:get` returns a copy,
+so editing its fields without `ctx:set` silently loses the change. The
+engine applies staged additions, removals, movement, and terrain changes at
+the action barrier; later callbacks in that action can see their staged
+view. Persistent state belongs on components, while `ctx:signal` is only
+for communication during the current action. This is why a module-level
+Lua variable cannot stand in for a cooldown or a saved status.
+
 Use a colon for every method below: `ctx:get(actor, id)` passes `ctx` as the
 first argument. Most methods raise a Lua error for an unknown component,
 invalid handle, or invalid coordinates. A missing *valid* component or cell
