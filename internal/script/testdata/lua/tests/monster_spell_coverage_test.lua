@@ -149,26 +149,10 @@ local function malformed_effect_is_reported()
         "malformed effect names the missing method")
 end
 
--- Simulate one absent resolver so this gate remains tested as real spells
--- are ported; it must name the newly admitted caster and missing slot.
-local function newly_admitted_monster_requires_effects()
-    local sorcerer = catalog.get("monsters", monsters.MONS_ORC_SORCERER)
-    local original_get = register.get
+-- A source Dungeon caster stays in the generated roster only while all of
+-- its book slots have live resolvers. Simulate one missing slot at startup.
+local function source_roster_requires_effects()
     local original_effect = effects.effect
-
-    sorcerer.population[#sorcerer.population + 1] = {
-        scenario_id = "generated-dungeon-basic-v1",
-    }
-
-    -- Expose the newly admitted Sorcerer while all other monster IDs use the real registry.
-    register.get = function(category, id)
-        if category == "monsters" and id ==
-            monsters.MONS_ORC_SORCERER then
-            return sorcerer
-        end
-
-        return original_get(category, id)
-    end
 
     effects.effect = function(spell_id)
         if spell_id == spells.SPELL_SUMMON_DEMON then
@@ -181,12 +165,11 @@ local function newly_admitted_monster_requires_effects()
     local okay, problem = pcall(roster.allowed,
         "generated-dungeon-basic-v1")
 
-    register.get = original_get
     effects.effect = original_effect
 
-    harness.falsy(okay, "newly admitted caster needs live effects")
-    harness.truthy(tostring(problem):find(monsters.MONS_ORC_SORCERER,
-        1, true), "coverage error names the monster")
+    harness.falsy(okay, "source caster needs live effects")
+    harness.truthy(tostring(problem):find(spells.SPELL_SUMMON_DEMON,
+        1, true), "coverage error names the missing source spell")
 end
 
 -- Generated monsters cannot carry a spellbook slot without a Lua effect module.
@@ -197,7 +180,7 @@ function test.run()
     active_roster_has_effects()
     imported_beam_book_is_covered()
     malformed_effect_is_reported()
-    newly_admitted_monster_requires_effects()
+    source_roster_requires_effects()
 end
 
 return test

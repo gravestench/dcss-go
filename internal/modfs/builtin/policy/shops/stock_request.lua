@@ -7,6 +7,9 @@ local sets = require("constants.item_sets")
 local skills = require("ids.skills")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
+local armour_egos = require("constants.armour_egos")
+local weapon_brands = require("constants.weapon_brands")
+local missile_brands = require("constants.missile_brands")
 
 local stock_request = {}
 
@@ -78,6 +81,52 @@ local function unique_artefact(name)
     return nil
 end
 
+-- DES spells out short ego tokens. A physical item uses the stable ego ID
+-- from its class, so interpret the token after the base class is resolved.
+local function ego_id(request, selected, site)
+    local token = selected.ego
+
+    if token == nil then
+        return nil
+    end
+
+    if token == "none" then
+        return ""
+    end
+
+    local class_id = request.class_id
+
+    if request.kind_id then
+        class_id = catalog.get(categories.ITEMS, request.kind_id).class
+    end
+
+    local names
+
+    if class_id == classes.OBJ_WEAPONS then
+        names = weapon_brands
+    elseif class_id == classes.OBJ_ARMOUR then
+        names = armour_egos
+    elseif class_id == classes.OBJ_MISSILES then
+        names = missile_brands
+    end
+
+    if names then
+        local id = names[token:upper()]
+
+        if id then
+            return id
+        end
+
+        for _, value in pairs(names) do
+            if value == token then
+                return value
+            end
+        end
+    end
+
+    unsupported(selected, site)
+end
+
 -- Generated stock requests exclude unsupported item types and unavailable artefacts.
 -- Example: stock_request.apply(ctx, request, selected, site) resolves a vault SHOP directive.
 function stock_request.apply(ctx, request, selected, site)
@@ -142,7 +191,7 @@ function stock_request.apply(ctx, request, selected, site)
     end
 
     request.quantity = selected.quantity
-    request.ego = selected.ego
+    request.ego = ego_id(request, selected, site)
     request.plus = selected.plus
     request.charges = selected.charges
     request.mundane = selected.mundane

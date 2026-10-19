@@ -1,4 +1,4 @@
--- Example: D:1 and D:2 stair landings are protected while nearby vaults are placed.
+-- Example: authored stairs on any Dungeon floor gain paired landings nearby.
 local basic = require("policy.generation.basic")
 local nearest = require("policy.generation.nearest")
 local branches = require("ids.branches")
@@ -12,10 +12,9 @@ local vault_extra = require("policy.generation.vaults.extra")
 
 local generated = {}
 
--- The current playable world is D:1 and D:2. These messages belong to the
--- corresponding outgoing stairs until deeper levels and exits are ported.
+-- D:1's exit and D:15's onward branch still need their surrounding game flow.
 local exit_unavailable = "Leaving the Dungeon is unavailable in the Go port."
-local third_unavailable = "Dungeon:3 is unavailable in the Go port."
+local depths_unavailable = "The Depths are unavailable in the Go port."
 
 -- Each floor draws three population dice from its own depth-specific die size.
 local function monster_count(ctx, depth)
@@ -45,30 +44,57 @@ local function source_stairs(placed)
     return up, down
 end
 
--- Scan floor cells in row-major order so unmatched vault exits get stable landing positions.
+local directions = {
+    { x = 1, y = 0 },
+    { x = -1, y = 0 },
+    { x = 0, y = 1 },
+    { x = 0, y = -1 },
+}
+
+-- Search from a base stair so source-vault landings cannot appear in an
+-- isolated room. Traverse protected cells but never replace them.
 local function add_stair_landings(level, count, glyph, protected)
     local arrivals = {}
+    local start = level.stairs[1].up
+    local queue = { start }
+    local seen = { [start.x .. ":" .. start.y] = true }
+    local cursor = 1
 
-    for y = 1, 68 do
-        for x = 1, 78 do
-            if #arrivals == count then
-                level.rows = level.builder:rows()
+    while cursor <= #queue and #arrivals < count do
+        local point = queue[cursor]
+        local key = point.x .. ":" .. point.y
 
-                return arrivals
-            end
+        cursor = cursor + 1
 
-            local key = x .. ":" .. y
+        if level.builder:cell(point.x, point.y) == "." and
+            not protected[key] then
+            level.builder:set(point.x, point.y, glyph)
+            protected[key] = true
+            arrivals[#arrivals + 1] = point
+        end
 
-            if level.builder:cell(x, y) == "." and
-                not protected[key] then
-                level.builder:set(x, y, glyph)
-                protected[key] = true
-                arrivals[#arrivals + 1] = { x = x, y = y }
+        for _, direction in ipairs(directions) do
+            local x = point.x + direction.x
+            local y = point.y + direction.y
+            local next_key = x .. ":" .. y
+
+            if x > 0 and x < 79 and y > 0 and y < 69 and
+                not seen[next_key] then
+                local feature = level.builder:cell(x, y)
+
+                if feature and feature ~= "#" then
+                    seen[next_key] = true
+                    queue[#queue + 1] = { x = x, y = y }
+                end
             end
         end
     end
 
-    error("Dungeon has too few floor cells for source vault stairs")
+    if #arrivals < count then
+        error("Dungeon has too few connected floor cells for source vault stairs")
+    end
+
+    return arrivals
 end
 
 -- Append source exits without changing their order relative to ordinary stairs.
@@ -84,135 +110,78 @@ local function add_source_stairs(placed, up, down)
     end
 end
 
--- Source vault stairs, ordinary stairs and extra vault stairs all need a
--- paired destination. Add landings for unmatched source exits before making
--- links so every visible stair has a consistent travel target or explanation.
-local function stair_links(first, second, placed, first_extra,
-    second_extra, first_protected, second_protected)
-    local first_links = {}
-    local second_links = {}
-    local first_up = {}
-    local first_down = {}
-    local second_up = {}
-    local second_down = {}
+-- A link records one stair cell and its paired destination or boundary.
+local function add_link(links, point, destination, landing, unavailable)
+    links[#links + 1] = {
+        x = point.x,
+        y = point.y,
+        to_level_id = destination,
+        to_x = landing and landing.x or 0,
+        to_y = landing and landing.y or 0,
+        unavailable = unavailable or "",
+    }
+end
 
-    add_source_stairs(placed, first_up, first_down)
+-- Base trails connect by index on adjacent floors. Source vault exits get
+-- their own landing cells, preserving every authored stair in the level.
+local function stair_links(levels)
+    local bottom = #levels
 
-    for _, map in ipairs(first_extra) do
-        add_source_stairs(map, first_up, first_down)
+    for depth, level in ipairs(levels) do
+        local previous = levels[depth - 1]
+        local next_level = levels[depth + 1]
+
+        for index, pair in ipairs(level.layout.stairs) do
+            if previous then
+                local landing = previous.layout.stairs[index].down
+
+                add_link(level.links, pair.up, depth - 1, landing)
+            else
+                add_link(level.links, pair.up, 0, nil, exit_unavailable)
+            end
+
+            if next_level then
+                local landing = next_level.layout.stairs[index].up
+
+                add_link(level.links, pair.down, depth + 1, landing)
+            else
+                add_link(level.links, pair.down, 0, nil,
+                    depths_unavailable)
+            end
+        end
     end
 
-    for _, map in ipairs(second_extra) do
-        add_source_stairs(map, second_up, second_down)
+    for depth = 1, bottom - 1 do
+        local first = levels[depth]
+        local second = levels[depth + 1]
+        local arrivals = add_stair_landings(second.layout,
+            #first.source_down, "<", second.protected)
+        local departures = add_stair_landings(first.layout,
+            #second.source_up, ">", first.protected)
+
+        for index, point in ipairs(first.source_down) do
+            local landing = arrivals[index]
+
+            add_link(first.links, point, depth + 1, landing)
+            add_link(second.links, landing, depth, point)
+        end
+
+        for index, point in ipairs(second.source_up) do
+            local departure = departures[index]
+
+            add_link(first.links, departure, depth + 1, point)
+            add_link(second.links, point, depth, departure)
+        end
     end
 
-    local second_arrivals = add_stair_landings(second, #first_down,
-        "<", second_protected)
-    local first_departures = add_stair_landings(first, #second_up,
-        ">", first_protected)
-
-    for index, first_pair in ipairs(first.stairs) do
-        local second_pair = second.stairs[index]
-
-        first_links[#first_links + 1] = {
-            x = first_pair.up.x,
-            y = first_pair.up.y,
-            to_level_id = 0,
-            to_x = 0,
-            to_y = 0,
-            unavailable = exit_unavailable,
-        }
-        first_links[#first_links + 1] = {
-            x = first_pair.down.x,
-            y = first_pair.down.y,
-            to_level_id = 2,
-            to_x = second_pair.up.x,
-            to_y = second_pair.up.y,
-            unavailable = "",
-        }
-        second_links[#second_links + 1] = {
-            x = second_pair.up.x,
-            y = second_pair.up.y,
-            to_level_id = 1,
-            to_x = first_pair.down.x,
-            to_y = first_pair.down.y,
-            unavailable = "",
-        }
-        second_links[#second_links + 1] = {
-            x = second_pair.down.x,
-            y = second_pair.down.y,
-            to_level_id = 0,
-            to_x = 0,
-            to_y = 0,
-            unavailable = third_unavailable,
-        }
+    for _, point in ipairs(levels[1].source_up) do
+        add_link(levels[1].links, point, 0, nil, exit_unavailable)
     end
 
-    for _, up in ipairs(first_up) do
-        first_links[#first_links + 1] = {
-            x = up.x,
-            y = up.y,
-            to_level_id = 0,
-            to_x = 0,
-            to_y = 0,
-            unavailable = exit_unavailable,
-        }
+    for _, point in ipairs(levels[bottom].source_down) do
+        add_link(levels[bottom].links, point, 0, nil,
+            depths_unavailable)
     end
-
-    for index, down in ipairs(first_down) do
-        local arrival = second_arrivals[index]
-
-        first_links[#first_links + 1] = {
-            x = down.x,
-            y = down.y,
-            to_level_id = 2,
-            to_x = arrival.x,
-            to_y = arrival.y,
-            unavailable = "",
-        }
-        second_links[#second_links + 1] = {
-            x = arrival.x,
-            y = arrival.y,
-            to_level_id = 1,
-            to_x = down.x,
-            to_y = down.y,
-            unavailable = "",
-        }
-    end
-
-    for index, up in ipairs(second_up) do
-        local departure = first_departures[index]
-
-        first_links[#first_links + 1] = {
-            x = departure.x,
-            y = departure.y,
-            to_level_id = 2,
-            to_x = up.x,
-            to_y = up.y,
-            unavailable = "",
-        }
-        second_links[#second_links + 1] = {
-            x = up.x,
-            y = up.y,
-            to_level_id = 1,
-            to_x = departure.x,
-            to_y = departure.y,
-            unavailable = "",
-        }
-    end
-
-    for _, down in ipairs(second_down) do
-        second_links[#second_links + 1] = {
-            x = down.x,
-            y = down.y,
-            to_level_id = 0,
-            to_x = 0,
-            to_y = 0,
-            unavailable = third_unavailable,
-        }
-    end
-
-    return first_links, second_links
 end
 
 -- Fixed-orientation arrivals can collide with already generated stairs.
@@ -322,126 +291,164 @@ local function extra_exclusions(base, maps)
     return points
 end
 
--- Assemble the two-level world in dependency order: base maps, arrival,
--- connection, extra vaults, stair links, then spawn budgets and placements.
--- The returned data is materialized into saved world state by the caller.
-function generated.generate(ctx, input)
-    local player = {
-        species_id = input.player_species_id,
-        name = input.player_name,
-        started = false,
-    }
-    local first, placed, vault = place_first_level(ctx, player)
-    local second = basic.generate(ctx, 2)
+-- Keep base stairs as required points while an arrival vault connects.
+local function base_stair_points(layout)
+    local points = {}
 
-    local original_stairs = {}
-
-    for _, pair in ipairs(first.stairs) do
-        original_stairs[#original_stairs + 1] = pair.up
-        original_stairs[#original_stairs + 1] = pair.down
+    for _, pair in ipairs(layout.stairs) do
+        points[#points + 1] = pair.up
+        points[#points + 1] = pair.down
     end
 
-    vault_connect.finish(ctx, first.builder, placed, original_stairs)
-    local first_protected = protected_cells(first, placed)
-    local second_protected = protected_cells(second)
-    local first_extra = vault_extra.generate(ctx, first.builder, {
+    return points
+end
+
+-- Generate one floor before pairing its stairs with neighboring floors.
+-- The arrival only belongs to D:1; supplemental vaults use actual depth.
+local function build_floor(ctx, player, depth, bottom)
+    local layout
+    local arrival
+    local arrival_vault
+
+    if depth == 1 then
+        layout, arrival, arrival_vault = place_first_level(ctx, player)
+    else
+        layout = basic.generate(ctx, depth)
+    end
+
+    local required = base_stair_points(layout)
+
+    if arrival then
+        vault_connect.finish(ctx, layout.builder, arrival, required)
+    end
+
+    local protected = protected_cells(layout, arrival)
+    local extra, controller = vault_extra.generate(ctx, layout.builder, {
         branch_id = branches.BRANCH_DUNGEON,
-        depth = 1,
-        branch_bottom = 15,
-        absolute_depth = 1,
-        protected = first_protected,
-        required = original_stairs,
+        depth = depth,
+        branch_bottom = bottom,
+        absolute_depth = depth,
+        protected = protected,
+        required = required,
         player = {
             species_id = player.species_id,
             name = player.name,
             started = false,
             branch_id = branches.BRANCH_DUNGEON,
-            depth = 1,
-            branch_bottom = 15,
-            absolute_depth = 1,
+            depth = depth,
+            branch_bottom = bottom,
+            absolute_depth = depth,
         },
     })
-    local second_extra, second_controller =
-        vault_extra.generate(ctx, second.builder, {
-            branch_id = branches.BRANCH_DUNGEON,
-            depth = 2,
-            branch_bottom = 15,
-            absolute_depth = 2,
-            protected = second_protected,
-            required = {},
-            player = {
-                species_id = player.species_id,
-                name = player.name,
-                started = false,
-                branch_id = branches.BRANCH_DUNGEON,
-                depth = 2,
-                branch_bottom = 15,
-                absolute_depth = 2,
-            },
-        })
 
-    -- Append extra-vault intent after arrival records so population sees the same placement order.
-    append_vault_records(placed.records, first_extra)
-    first.rows = first.builder:rows()
-    second.rows = second.builder:rows()
+    local records = {}
+    local source_up = {}
+    local source_down = {}
 
-    local second_records = {}
+    if arrival then
+        append_vault_records(records, { arrival })
+        add_source_stairs(arrival, source_up, source_down)
+    end
 
-    append_vault_records(second_records, second_extra)
+    append_vault_records(records, extra)
 
-    local first_links, second_links = stair_links(first, second, placed,
-        first_extra, second_extra, first_protected, second_protected)
-    -- Draw spawn budgets after all map and stair placement has consumed layout randomness.
-    local first_budget = monster_count(ctx, 1)
-    local second_budget = monster_count(ctx, 2)
-    local entry = first.stairs[1].up
+    for _, map in ipairs(extra) do
+        add_source_stairs(map, source_up, source_down)
+    end
 
-    for _, exit in ipairs(placed.exits) do
-        if exit.source == "{" then
-            entry = exit
+    return {
+        layout = layout,
+        arrival = arrival,
+        arrival_vault = arrival_vault,
+        extra = extra,
+        controller = controller,
+        records = records,
+        protected = protected,
+        source_up = source_up,
+        source_down = source_down,
+        links = {},
+    }
+end
 
-            break
+-- An arrival's authored entry wins over the first ordinary up stair.
+local function floor_entry(floor)
+    local entry = floor.layout.stairs[1].up
+
+    if floor.arrival then
+        for _, exit in ipairs(floor.arrival.exits) do
+            if exit.source == "{" then
+                return exit
+            end
         end
     end
-    local second_entry = second.stairs[1].up
 
-    -- Reserve three starting potion cells after final terrain is known, excluding the first D:2 pick.
-    local curing = nearest.open_floor(first.rows, entry, nil, 1)
-    local heal = nearest.open_floor(second.rows, second_entry, nil, 2)
-    local haste = nearest.open_floor(second.rows, second_entry, heal, 2)
+    return entry
+end
+
+-- Project the finished builder, links, population budget, and vault intent
+-- into the level record that the Go world materializes and saves.
+local function level_record(ctx, floor, depth)
+    local arrival = floor.arrival
+    local entry = floor_entry(floor)
+    local base_exclusions
+
+    if arrival then
+        base_exclusions = spawn_exclusions(arrival, floor.arrival_vault)
+    end
+
+    return {
+        id = depth,
+        branch_id = branches.BRANCH_DUNGEON,
+        rows = floor.layout.builder:rows(),
+        stairs = floor.links,
+        entry_x = entry.x,
+        entry_y = entry.y,
+        initial_monsters = monster_count(ctx, depth),
+        vault_id = arrival and arrival.id or floor.controller,
+        vault_records = #floor.records > 0 and floor.records or nil,
+        spawn_exclusions = extra_exclusions(base_exclusions, floor.extra),
+    }
+end
+
+-- Build the entire root Dungeon from its registered branch depth. Each
+-- source population row can now enter at its own depth, and paired stair
+-- cells remain stable through saves. Other branch entrances are later work.
+function generated.generate(ctx, input)
+    local branch = register.get("branches", branches.BRANCH_DUNGEON)
+    local bottom = branch.depth
+    local player = {
+        species_id = input.player_species_id,
+        name = input.player_name,
+        started = false,
+    }
+    local floors = {}
+
+    for depth = 1, bottom do
+        floors[depth] = build_floor(ctx, player, depth, bottom)
+    end
+
+    stair_links(floors)
+
+    local levels = {}
+
+    for depth, floor in ipairs(floors) do
+        levels[depth] = level_record(ctx, floor, depth)
+    end
+
+    local entry = floor_entry(floors[1])
+    local second_entry = floor_entry(floors[2])
+
+    -- These starting consumables remain on the same floors as before.
+    local curing = nearest.open_floor(levels[1].rows, entry, nil, 1)
+    local heal = nearest.open_floor(levels[2].rows, second_entry, nil, 2)
+    local haste = nearest.open_floor(levels[2].rows, second_entry, heal, 2)
 
     curing.level_id = 1
     heal.level_id = 2
     haste.level_id = 2
 
     return {
-        levels = {
-            {
-                id = 1,
-                branch_id = branches.BRANCH_DUNGEON,
-                rows = first.rows,
-                stairs = first_links,
-                entry_x = entry.x,
-                entry_y = entry.y,
-                initial_monsters = first_budget,
-                vault_id = placed.id,
-                vault_records = placed.records,
-                spawn_exclusions = extra_exclusions(
-                    spawn_exclusions(placed, vault), first_extra),
-            },
-            {
-                id = 2,
-                branch_id = branches.BRANCH_DUNGEON,
-                rows = second.rows,
-                stairs = second_links,
-                entry_x = second_entry.x,
-                entry_y = second_entry.y,
-                initial_monsters = second_budget,
-                vault_id = #second_extra > 0 and second_controller or nil,
-                vault_records = #second_extra > 0 and second_records or nil,
-                spawn_exclusions = extra_exclusions(nil, second_extra),
-            },
-        },
+        levels = levels,
         entry = {
             x = entry.x,
             y = entry.y,
@@ -451,5 +458,4 @@ function generated.generate(ctx, input)
         haste = haste,
     }
 end
-
 return generated

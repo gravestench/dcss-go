@@ -231,7 +231,12 @@ function module.run(ctx, input)
         end
     end
 
-    floor_items(ctx, input)
+    -- Generated floors arrive in separate bounded policy calls. The fixed
+    -- starting consumables enter only after the final floor has spent its
+    -- monster and inventory draws, preserving one deterministic stream.
+    if input.finalize ~= false then
+        floor_items(ctx, input)
+    end
 
     return {
         initial_actors = counts,

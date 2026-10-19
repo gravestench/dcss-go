@@ -19,20 +19,7 @@ local population = {
     "MONS_ADDER",
 }
 
-local generated = {
-    "MONS_RAT",
-    "MONS_QUOKKA",
-    "MONS_FRILLED_LIZARD",
-    "MONS_GIANT_COCKROACH",
-    "MONS_WORM",
-    "MONS_JACKAL",
-    "MONS_ADDER",
-    "MONS_BAT",
-    "MONS_BALL_PYTHON",
-    "MONS_ENDOPLASM",
-    "MONS_DART_SLUG",
-    "MONS_HOBGOBLIN",
-}
+local generated_scenario = "generated-dungeon-basic-v1"
 
 local scenarios = {
     [""] = { "MONS_RAT" },
@@ -40,10 +27,12 @@ local scenarios = {
     ["fixed-dungeon-rat-quokka-lizard-v2"] = fixed,
     ["fixed-dungeon-shops-v1"] = fixed,
     ["fixed-dungeon-population-v1"] = population,
-    ["generated-dungeon-basic-v1"] = generated,
+    [generated_scenario] = {},
 }
 
--- A scenario roster starts with fixture IDs, then admits catalog monsters tagged for that same scenario.
+-- Fixture rosters keep their pinned actors. Generated Dungeon play admits
+-- every source population row directly from its monster definition, so a
+-- content file is sufficient to make its monster eligible at the right depth.
 function roster.allowed(scenario_id)
     local ids = scenarios[scenario_id]
 
@@ -59,7 +48,9 @@ function roster.allowed(scenario_id)
 
     for _, definition in ipairs(catalog.all("monsters")) do
         for _, row in ipairs(definition.population or {}) do
-            if row.scenario_id == scenario_id then
+            if row.scenario_id == scenario_id or
+                (scenario_id == generated_scenario and
+                    row.scenario_id == nil) then
                 allowed[definition.id] = true
             end
         end

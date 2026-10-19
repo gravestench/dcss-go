@@ -4,6 +4,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"crawl/internal/terrain"
 )
 
 func newGeneratedTestGame(t *testing.T, seed uint64) *Game {
@@ -22,11 +24,51 @@ func newGeneratedTestGame(t *testing.T, seed uint64) *Game {
 	return g
 }
 
+func TestGeneratedDungeonReachesDepthFifteen(t *testing.T) {
+	g := newGeneratedTestGame(t, 41)
+
+	if len(g.levels) != 16 {
+		t.Fatalf("generated level count = %d, want Dungeon:1-15 and Abyss", len(g.levels))
+	}
+
+	for depth := 1; depth <= 15; depth++ {
+		level := g.levels[depth]
+
+		if level == nil {
+			t.Fatalf("Dungeon:%d is missing", depth)
+		}
+
+		for _, stair := range level.StairLinks() {
+			if stair.ToLevelID > 0 &&
+				stair.ToLevelID != depth-1 &&
+				stair.ToLevelID != depth+1 {
+				t.Fatalf("Dungeon:%d has nonadjacent stair: %+v", depth, stair)
+			}
+		}
+	}
+
+	boundary := 0
+
+	for _, stair := range g.levels[15].StairLinks() {
+		if stair.Unavailable != "" {
+			boundary++
+
+			if !strings.Contains(stair.Unavailable, "Depths") {
+				t.Fatalf("Dungeon:15 boundary = %q", stair.Unavailable)
+			}
+		}
+	}
+
+	if boundary < 3 {
+		t.Fatalf("Dungeon:15 has %d Depths entrances, want at least 3", boundary)
+	}
+}
+
 func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 	g := newGeneratedTestGame(t, 41)
 
-	if len(g.levels) != 3 {
-		t.Fatalf("generated level count = %d, want 3", len(g.levels))
+	if len(g.levels) != 16 {
+		t.Fatalf("generated level count = %d, want 16", len(g.levels))
 	}
 
 	vaultOrigins := g.scripts.Components()["vault.origin"]
@@ -45,24 +87,24 @@ func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 
 	// The population count excludes monsters placed by the selected vault.
 	// Sorting catalog IDs can select a different vault for the same seed.
-	expectedActors := g.levels[1].initialActors +
-		g.levels[2].initialActors + vaultActors
+	expectedActors := vaultActors
+
+	for depth := 1; depth <= 15; depth++ {
+		expectedActors += g.levels[depth].initialActors
+	}
 
 	if len(g.stores.AI.Entities()) != expectedActors {
 		t.Fatalf(
-			"generated levels or monster counts are incomplete: levels=%d actors=%d population=%d+%d vault=%d",
+			"generated levels or monster counts are incomplete: levels=%d actors=%d expected=%d vault=%d",
 			len(g.levels),
 			len(g.stores.AI.Entities()),
-			g.levels[1].initialActors,
-			g.levels[2].initialActors,
+			expectedActors,
 			vaultActors,
 		)
 	}
 
-	for depth, level := range g.levels {
-		if depth > 2 {
-			continue
-		}
+	for depth := 1; depth <= 15; depth++ {
+		level := g.levels[depth]
 
 		if len(level.terrain) != 70 ||
 			level.width != 80 ||
@@ -75,14 +117,16 @@ func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 				t.Fatalf("Dungeon:%d has a short row", depth)
 			}
 		}
-	}
 
-	if count := g.levels[1].initialMonsters; count < 3 || count > 36 {
-		t.Fatalf("Dungeon:1 monster count = %d", count)
-	}
+		maximum := 30
 
-	if count := g.levels[2].initialMonsters; count < 3 || count > 30 {
-		t.Fatalf("Dungeon:2 monster count = %d", count)
+		if depth == 1 {
+			maximum = 36
+		}
+
+		if count := level.initialMonsters; count < 3 || count > maximum {
+			t.Fatalf("Dungeon:%d monster count = %d", depth, count)
+		}
 	}
 
 	position, _ := g.stores.Positions.Get(g.player)
@@ -183,6 +227,58 @@ func TestGeneratedDungeonStairsTravelBetweenPairedCells(t *testing.T) {
 	}
 }
 
+func TestGeneratedDungeonStairsTravelToThirdFloor(t *testing.T) {
+	g := newGeneratedTestGame(t, 19)
+
+	for depth := 1; depth <= 2; depth++ {
+		var downward StairLink
+
+		for _, link := range g.levels[depth].StairLinks() {
+			if link.ToLevelID == depth+1 {
+				downward = link
+
+				break
+			}
+		}
+
+		if downward.ToLevelID == 0 {
+			t.Fatalf("Dungeon:%d has no downward stair", depth)
+		}
+
+		if err := g.levels[depth].MoveActor(g.player, downward.X, downward.Y); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := g.refreshVisibility(); err != nil {
+			t.Fatal(err)
+		}
+
+		result, err := g.Step(Command{Kind: CommandDownstairs})
+
+		if err != nil ||
+			result.View.LevelID != depth+1 ||
+			result.View.PlayerX != downward.ToX ||
+			result.View.PlayerY != downward.ToY {
+			t.Fatalf("Dungeon:%d downward travel = %+v, %v", depth, result.View, err)
+		}
+	}
+
+	restored, err := Restore(g.Snapshot())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	result, err := restored.Step(Command{Kind: CommandUpstairs})
+
+	if err != nil ||
+		result.View.LevelID != 2 {
+		t.Fatalf("restored Dungeon:3 ascent = %+v, %v", result.View, err)
+	}
+}
+
 func TestWalkingIntoClosedDoorOpensAndSavesIt(t *testing.T) {
 	g := newStepGame(t)
 	level := g.levels[1]
@@ -255,6 +351,28 @@ func TestGeneratedDungeonRejectsInvalidSavedBoundaryAndBudget(t *testing.T) {
 
 	if _, err := Restore(snapshot); err == nil {
 		t.Fatal("accepted an unlinked generated exit")
+	}
+
+	snapshot = g.Snapshot()
+
+	for _, stair := range snapshot.Levels[0].Stairs {
+		if stair.ToLevelID != 2 {
+			continue
+		}
+
+		for index := range snapshot.Levels {
+			if snapshot.Levels[index].ID == 2 {
+				snapshot.Levels[index].Cells[stair.ToY][stair.ToX] = terrain.StairsDown
+
+				break
+			}
+		}
+
+		break
+	}
+
+	if _, err := Restore(snapshot); err == nil {
+		t.Fatal("accepted a downward stair paired with another downward stair")
 	}
 }
 

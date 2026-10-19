@@ -13,21 +13,6 @@ local test = {}
 local generated_scenario = "generated-dungeon-basic-v1"
 local fixed_scenario = "fixed-dungeon-population-v1"
 
-local expected = {
-    monsters.MONS_BAT,
-    monsters.MONS_RAT,
-    monsters.MONS_FRILLED_LIZARD,
-    monsters.MONS_BALL_PYTHON,
-    monsters.MONS_GIANT_COCKROACH,
-    monsters.MONS_HOBGOBLIN,
-    monsters.MONS_ENDOPLASM,
-    monsters.MONS_DART_SLUG,
-    monsters.MONS_QUOKKA,
-    monsters.MONS_JACKAL,
-    monsters.MONS_WORM,
-    monsters.MONS_ADDER,
-}
-
 local fixed_expected = {
     monsters.MONS_RAT,
     monsters.MONS_FRILLED_LIZARD,
@@ -38,7 +23,6 @@ local fixed_expected = {
     monsters.MONS_ADDER,
 }
 
-table.sort(expected)
 table.sort(fixed_expected)
 
 -- Source rarity remains intact even though the picker now uses stable IDs.
@@ -47,14 +31,14 @@ local function source_pool_uses_stable_ids()
     local first, first_total = pool.at_depth(1, allowed, generated_scenario)
     local second, second_total = pool.at_depth(2, allowed, generated_scenario)
 
-    harness.equal(#first, 10, "D:1 source row count")
-    harness.equal(#second, 12, "D:2 source row count")
-    harness.equal(first_total, 18118800, "D:1 source total weight")
-    harness.equal(second_total, 21898800, "D:2 source total weight")
+    harness.truthy(#first > 10 and first_total > 0,
+        "D:1 admits more than the old twelve-monster roster")
+    harness.truthy(#second > 12 and second_total > 0,
+        "D:2 admits all source rows in range")
 
-    for index, monster_id in ipairs(expected) do
-        harness.equal(second[index].id, monster_id,
-            "D:2 ID-sorted picker order at row " .. index)
+    for index = 2, #second do
+        harness.truthy(second[index - 1].id <= second[index].id,
+            "D:2 picker order follows stable monster IDs")
     end
 
     for _, row in ipairs(second) do
@@ -114,6 +98,28 @@ local function source_order_is_rejected()
         "source order error does not name the removed field")
 end
 
+-- A generated Dungeon run must draw every committed source population row.
+-- Mod authors should not have to add a monster ID to a second roster list.
+local function generated_roster_covers_source_dungeon()
+    local allowed = roster.allowed(generated_scenario)
+
+    for _, monster in ipairs(catalog.all(categories.MONSTERS)) do
+        for _, row in ipairs(monster.population or {}) do
+            if row.scenario_id == nil then
+                harness.truthy(allowed[monster.id],
+                    monster.id .. " has a source row but is not in the roster")
+            end
+        end
+    end
+
+    for depth = 1, 15 do
+        local rows, total = pool.at_depth(depth, allowed, generated_scenario)
+
+        harness.truthy(#rows > 0 and total > 0,
+            "Dungeon:" .. depth .. " has no population")
+    end
+end
+
 -- Reject an unknown depth curve at validation time so runtime population
 -- selection cannot apply an undefined weight formula.
 local function invalid_curve_is_rejected()
@@ -137,6 +143,7 @@ function test.run()
     fixed_pool_unchanged()
     rows_belong_to_monsters()
     source_order_is_rejected()
+    generated_roster_covers_source_dungeon()
     invalid_curve_is_rejected()
 end
 

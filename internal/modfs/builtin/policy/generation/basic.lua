@@ -3,6 +3,7 @@ local grid = require("policy.generation.grid")
 local trail = require("policy.generation.trail")
 local corridors = require("policy.generation.corridors")
 local rooms = require("policy.generation.rooms")
+local branches = require("ids.branches")
 
 local basic = {}
 
@@ -113,10 +114,12 @@ local function build(builder, depth)
     return stairs, nil
 end
 
--- Retry rejected layouts with the same builder stream until a connected D:1 or D:2 floor is found.
+-- Retry rejected layouts until each floor has a connected stair backbone.
 function basic.generate(ctx, depth)
-    if depth < 1 or depth > 2 then
-        error("basic Dungeon layout needs depth 1 or 2 and a random source")
+    local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
+
+    if depth < 1 or depth > bottom then
+        error("basic Dungeon layout needs a valid depth and a random source")
     end
 
     local last_error

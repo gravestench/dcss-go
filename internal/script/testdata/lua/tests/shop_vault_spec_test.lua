@@ -7,6 +7,9 @@ local catalog = require("policy.generation.vaults.catalog")
 local directives = require("constants.vault_directives")
 local stock_request = require("policy.shops.stock_request")
 local quality = require("constants.vault_item_quality")
+local armour_egos = require("constants.armour_egos")
+local weapon_brands = require("constants.weapon_brands")
+local missile_brands = require("constants.missile_brands")
 
 local test = {}
 
@@ -79,6 +82,42 @@ local function randart_overrides_good_item()
         "randart takes precedence over good_item")
 end
 
+-- DES uses short ego tokens while live items carry named class-specific IDs.
+-- Resolve them before materialization so deeper shop maps cannot fail late.
+local function stock_egos_use_item_ids()
+    local cases = {
+        {
+            stock = "any armour ego:fire_resistance",
+            expected = armour_egos.FIRE_RESISTANCE,
+        },
+        {
+            stock = "any weapon ego:flaming",
+            expected = weapon_brands.FLAMING,
+        },
+        {
+            stock = "boomerang ego:silver",
+            expected = missile_brands.SILVER,
+        },
+        {
+            stock = "plate armour ego:none",
+            expected = "",
+        },
+    }
+
+    for _, case in ipairs(cases) do
+        local selected = shop_spec.parse(
+            "general shop ; " .. case.stock, site)[1].items[1]
+        local request = stock_request.apply({}, {
+            depth = 15,
+            quality = quality.ORDINARY,
+            site = site.path,
+        }, selected, site)
+
+        harness.equal(request.ego, case.expected,
+            "stock ego for " .. case.stock)
+    end
+end
+
 -- A malformed stock count must fail at parse time with a source path, so a
 -- mod author can repair the offending DES line before generating a level.
 local function rejects_unplayable_count()
@@ -141,6 +180,7 @@ function test.run()
     weighted_alternatives()
     source_name_spacing()
     randart_overrides_good_item()
+    stock_egos_use_item_ids()
     rejects_unplayable_count()
     parses_all_static_source_shops()
 end

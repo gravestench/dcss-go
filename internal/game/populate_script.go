@@ -50,69 +50,85 @@ func (g *Game) populateFromScript(setup scenarioLevels) error {
 		})
 	}
 
-	result, err := g.scripts.Policy("world.populate", map[string]any{
-		"scenario_id": g.scenarioID,
-		"levels":      levels,
-		"curing": map[string]any{
-			"x": setup.curing.x,
-			"y": setup.curing.y,
-		},
+	// Each generated floor has its own population transaction. Keeping Lua
+	// calls bounded also makes a slow or looping mod policy fail at its own
+	// floor instead of consuming one deadline for the entire Dungeon.
+	batches := [][]any{levels}
 
-		"heal": map[string]any{
-			"x": setup.heal.x,
-			"y": setup.heal.y,
-		},
+	if g.scenarioID == generatedDungeonScenarioID {
+		batches = make([][]any, len(levels))
 
-		"haste": map[string]any{
-			"x": setup.haste.x,
-			"y": setup.haste.y,
-		},
-	})
-
-	if err != nil {
-		return err
+		for index, level := range levels {
+			batches[index] = []any{level}
+		}
 	}
 
-	if err := g.scripts.ApplyPending(); err != nil {
-		return err
-	}
+	for index, batch := range batches {
+		result, err := g.scripts.Policy("world.populate", map[string]any{
+			"scenario_id": g.scenarioID,
+			"levels":      batch,
+			"finalize":    index == len(batches)-1,
+			"curing": map[string]any{
+				"x": setup.curing.x,
+				"y": setup.curing.y,
+			},
 
-	counts, ok := result["initial_actors"].([]any)
+			"heal": map[string]any{
+				"x": setup.heal.x,
+				"y": setup.heal.y,
+			},
 
-	if !ok {
-		return fmt.Errorf("Lua population returned no actor counts")
-	}
+			"haste": map[string]any{
+				"x": setup.haste.x,
+				"y": setup.haste.y,
+			},
+		})
 
-	for _, value := range counts {
-		entry, ok := value.(map[string]any)
+		if err != nil {
+			return err
+		}
+
+		if err := g.scripts.ApplyPending(); err != nil {
+			return err
+		}
+
+		counts, ok := result["initial_actors"].([]any)
 
 		if !ok {
-			return fmt.Errorf("Lua population count has invalid type %T", value)
+			return fmt.Errorf("Lua population returned no actor counts")
 		}
 
-		id, err := decisionInteger(entry, "id")
+		for _, value := range counts {
+			entry, ok := value.(map[string]any)
 
-		if err != nil {
+			if !ok {
+				return fmt.Errorf("Lua population count has invalid type %T", value)
+			}
+
+			id, err := decisionInteger(entry, "id")
+
+			if err != nil {
+				return err
+			}
+
+			count, err := decisionInteger(entry, "count")
+
+			if err != nil {
+				return err
+			}
+
+			level := g.levels[id]
+
+			if level == nil || count < 0 {
+				return fmt.Errorf("Lua population count for invalid level %d", id)
+			}
+
+			level.initialActors = count
+		}
+
+		if err := g.markMaterializedVaultRecords(result["materialized"]); err != nil {
 			return err
 		}
-
-		count, err := decisionInteger(entry, "count")
-
-		if err != nil {
-			return err
-		}
-
-		level := g.levels[id]
-
-		if level == nil || count < 0 {
-			return fmt.Errorf("Lua population count for invalid level %d", id)
-		}
-
-		level.initialActors = count
-	}
-
-	if err := g.markMaterializedVaultRecords(result["materialized"]); err != nil {
-		return err
 	}
 
 	return nil

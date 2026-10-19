@@ -2015,7 +2015,7 @@ vault layout stream; never call `math.random` or cache random results at
 module load. The hook methods receive one ephemeral API per invocation,
 just as a gameplay rule receives an ephemeral `ctx`.
 
-The current playable D:1–2 generation supplies species and name, but no
+The current playable D:1–15 generation supplies species and name, but no
 player monster identity or unique item history. Therefore
 `api:player_monster()` is `nil`, `api:unique_generated(name)` is `false`,
 and `api:game_started()` is `false` in that path. Treat these as optional

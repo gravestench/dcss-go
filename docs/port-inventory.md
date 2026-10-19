@@ -2,8 +2,8 @@
 
 The reference is DCSS commit
 `e60ba3568b0c26447ad36ec5c7b963eb04b2778f` in
-`/Users/dylanknuth/src/crawl`. The port is a playable D:1–2 slice, not a
-complete DCSS game.
+`/Users/dylanknuth/src/crawl`. The port has a traversable basic-layout
+Dungeon through D:15, but is not a complete DCSS game.
 
 ## Where rules live
 
@@ -41,12 +41,12 @@ context rather than a handler API for each game domain.
 | Domain | Implemented now | Main Lua location |
 | --- | --- | --- |
 | Character | Every legal selectable species/job pair starts; Lua owns chosen or fixed weapons, starting gear, species adjustments, attributes, skills, HP/MP, spell knowledge, Djinni's future spell schedule, religion, and durable origin state; training, XP, level gains, stat choice | `policy/character`, `schemas/character_origin.lua`, `systems/character_*` |
-| Dungeon | Seeded basic-layout D:1–2, rooms, corridors, doors, paired stairs, source-sized population, fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
+| Dungeon | Seeded basic-layout D:1–15, rooms, corridors, doors, paired stairs, source-sized population from the committed rows in each depth range, fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
 | Arrival vault population | All 337 selectable source arrivals resolve authored monster and item expressions through Lua content catalogs, place Akara entities with vault origins, and retain source selection in level records; a mod can add a monster and arrival file by path | `policy/generation/vaults/specs`, `policy/population/vaults.lua`, `schemas/vault_origin.lua` |
 | Item generation | Source-backed class and subtype selection feeds floor loot, monster equipment, vault requests, and acquirement; selected generated state is committed to saves | `policy/item_generation`, `systems/item_*` |
-| Shops | Ten active source shop types, 70 committed source shop vault definitions, scripted shop maps, authored stock and supplemental D:1–2 placement, saved wallet and stock, gold pickup, fixed shop scenario, prices, shopping list, purchase, and terminal menu | `vaults/shop`, `policy/generation/vaults/shop`, `policy/shops`, `schemas/*shop*` |
+| Shops | Ten active source shop types, 70 committed source shop vault definitions, scripted shop maps, authored stock and supplemental D:1–15 placement, saved wallet and stock, gold pickup, fixed shop scenario, prices, shopping list, purchase, and terminal menu | `vaults/shop`, `policy/generation/vaults/shop`, `policy/shops`, `schemas/*shop*` |
 | Traps | Ten active source trap definitions and effects in Lua; authored vault traps become saved Akara entities; entry, held state, marks, timed passages, Zot outcomes, visibility, and mod-added trap files use one catalog | `content/traps`, `policy/traps`, `systems/world_traps.lua` |
-| Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; all 285 committed monster spellbooks use source-order weighted and conditional slot selection, with effect coverage required before a monster enters the live roster | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
+| Dynamic actors | All 125 committed Dungeon population rows feed the generated picker, with their source depth ranges deciding which can spawn on D:1–15; jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; all 285 committed monster spellbooks use source-order weighted and conditional slot selection, with effect coverage required before a monster enters the live roster | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
 | Monster beam, hex, and support spells | Seventy-two source-backed beam profiles, sixteen targeted hex effects, thirteen self-support effects, four ally-support effects, four Serpent of Hell composite breaths, and three life-transfer spells. Lua owns rays, resistance, healing, buffs, auras, clouds, displacement, poison, and temporary terrain; typed target plans carry the selected destination through resolution | `content/monster_beams`, `policy/combat/monster_beams`, `policy/combat/monster_hexes`, `policy/combat/monster_support`, `policy/combat/monster_spells` |
 | Monster direct summons | Thirty-nine source direct-creature effects choose species, counts, durations, and placement in their own Lua files. Akara stores caster ownership, named attitude, expiry, Invitation branch choice, Brothers count, and special summoned state; a live monster cast survives restore | `policy/combat/monster_summons`, `policy/combat/monster_spells`, `schemas/magic_*` |
 | Monster displacement and recall | Eight Blink variants use focused Lua landing, ally, and foe rules. Word of Recall stores its chant and breath cooldown on the caster, then moves eligible distant allies. Typed plans preserve target cells, and a live Blink cast survives restore | `policy/combat/monster_displacement`, `policy/combat/monster_spells`, `schemas/magic_monster_recall.lua`, `systems/magic_monster_recall.lua` |
@@ -184,8 +184,8 @@ and preserve unusual roll order.
 
 ## Remaining full-game work
 
-All legal selectable species/job combinations now enter the current D:1–2
-slice. Their starting state is Lua-owned and saved; most later species and
+All legal selectable species/job combinations now enter the basic-layout
+D:1–15 Dungeon. Their starting state is Lua-owned and saved; most later species and
 job abilities are still unavailable. The many imported monsters, spells,
 items, and branches still need behavior, generation, and UI flows.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
@@ -210,7 +210,8 @@ titles, owners, school wording, difficulty bands, and hidden appearances.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,
-more layouts and branches, the Abyss monster roster and shifting terrain,
+the source's other Dungeon layouts and branch entrances, the Abyss monster
+roster and shifting terrain,
 full source parity for chaos clone allegiance and exact shapeshifter RNG order,
 exact random-name RNG parity, gift-origin equipment name preference, runes,
 endgame, and the
@@ -237,7 +238,7 @@ Shops now have ten source-backed active types, a saved player wallet, saved
 shop and stock entities, gold pickup, item-class valuation, purchases,
 shopping-list markers, and a full-terminal stock screen. The 70 source shop
 vault definitions are committed as `.des` files, with Lua ports for their
-scripts. Eligible maps place authored shops and stock in ordinary D:1–2
+scripts. Eligible maps place authored shops and stock in ordinary D:1–15
 generation; the fixed shop scenario remains available. Supplemental maps
 retain source IDs in saves, and sparse mod overlays can add a vault or replace
 one handler. The generic secondary-vault opportunity currently uses a 1-in-8
