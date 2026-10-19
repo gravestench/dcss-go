@@ -23,6 +23,7 @@ relative path to change a bundled file.
 | Understand overlays and save compatibility | [Scaffolding](#scaffolding) and [saves and identity](#saves-and-identity) |
 | Try a complete live rule with `ctx` | [A first live mod](#a-first-live-mod) |
 | Understand a callback's arguments and available game services | [Who supplies `ctx`](#who-supplies-ctx) and [the context API](#the-game-context-ctx) |
+| Trace a callback from registration to state change | [Trace a callback](#trace-a-callback-before-using-ctx) |
 
 The [root README](../README.md) has the shortest launch and wizard examples.
 This guide explains the contracts those examples depend on. If a mechanic
@@ -629,6 +630,32 @@ and one nearby effect first. In particular, a mutation capability may put
 `level` before `ctx`; a `policy/` pathname alone does not establish an
 argument order.
 
+### Trace a callback before using `ctx`
+
+The engine installs the context methods in `internal/script/context.go`.
+That file explains what `ctx:get`, `ctx:random`, and the grid methods do,
+but it cannot tell you when your effect runs. For that, follow the Lua
+caller. For example, when adding a monster spell:
+
+1. Find a bundled spell in `policy/combat/monster_spells/` with a similar
+   target. Read its `plan` and `resolve` methods and its comments.
+2. Find the dispatcher that calls those methods. Check whether `plan` may
+   read or change state, which arguments identify the caster and foe, and
+   what shape of plan survives the intent boundary.
+3. Follow any shared policy it calls, such as a damage or summoning owner.
+   Import that policy instead of reimplementing its component invariants.
+4. Read the relevant component schema or host component definition before
+   constructing a value for `ctx:add` or `ctx:set`.
+5. Test the callback through its real dispatcher, including a refusal and a
+   successful action. A test that calls `resolve` directly cannot prove that
+   the dispatcher selects it or preserves its plan.
+
+The same trace works for items, mutations, clouds, and traps: start at a
+working neighboring effect, find the registry and caller, then inspect the
+state owner. The callback's name alone does not specify its arguments or
+return value. A `ctx` method is a low-level game operation; the domain
+caller and Lua policy establish the game rule.
+
 `ctx` is a normal function argument, never a magic global. A discovered
 `policy/` file is *loaded*, but merely returning `effect.apply` does not make
 the game call it. Connect the method to its domain registry, as the bundled
@@ -835,6 +862,22 @@ view. Persistent state belongs on components, while `ctx:signal` is only
 for communication during the current action. This is why a module-level
 Lua variable cannot stand in for a cooldown or a saved status.
 
+The context is **not** one transaction covering every kind of effect.
+Component and grid writes are queued, and reads through `ctx` see those
+queued changes immediately. If a Lua callback fails, the runtime discards
+those queued writes and any entities it created. Random draws advance a
+saved stream when called; `ctx:emit` calls the message service immediately;
+`ctx:signal` publishes to the current action's signal list. Do not assume
+that a later Lua error reverses a draw, message, or signal. Validate the
+target, required components, and destination before rolling, emitting, or
+publishing whenever the rule can still refuse to act. This is especially
+important in `plan` and `prepare` methods, which may decline an action.
+
+For example, check `ctx:has(target, components.HEALTH)` and the target's
+position first. Only after the action is accepted should `resolve` draw
+damage, write health through its owner, and announce the result. This order
+keeps a rejected attempt from consuming randomness or displaying an event.
+
 For a direct status effect, follow the gaze files as a concrete example:
 `policy/combat/monster_spells/weakening_gaze.lua` plans a visible target,
 then its `resolve` calls the player or monster status owner. The player
@@ -914,8 +957,10 @@ end
 `add`, `remove`, `destroy`, actor movement, and terrain changes are staged at
 the action barrier. Later context reads and queries in that action see the
 staged state. If a callback fails, its pending structural changes and new
-entities are discarded. Do not retain an entity handle in a Lua module global:
-module globals are neither per-game persistent state nor saved components.
+entities are discarded. This does not reverse an already drawn random value
+or a message already sent to the host. Do not retain an entity handle in a
+Lua module global: module globals are neither per-game persistent state nor
+saved components.
 Store lasting references in an `entity` field on a registered component.
 
 Use `ctx:has` when presence alone matters, and `ctx:get` when fields matter.
@@ -1110,9 +1155,10 @@ null can mean different things, especially in source-backed content.
   passed a bare ECS context. Supply a game fixture with those services or
   choose a callback that only needs the actor explicitly passed to it.
 
-A Lua callback error discards its pending context writes and reports the
-originating Lua path or system ID. Fix the first reported error before
-interpreting missing state later in the action. When a mod changes files,
+A Lua callback error discards its pending ECS and grid writes and reports the
+originating Lua path or system ID. It does not guarantee rollback for RNG,
+messages, or signals. Fix the first reported error before interpreting missing
+state later in the action. When a mod changes files,
 start a new game session to load the new effective tree; the current session
 does not hot reload Lua.
 
