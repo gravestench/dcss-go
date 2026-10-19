@@ -103,7 +103,8 @@ function drain.resistance(ctx, monster, definition)
 end
 
 -- Monster drain is stored as a timed component after negative-energy resistance is checked.
-function drain.apply(ctx, target, definition, source, stream)
+function drain.apply(ctx, target, definition, source, stream,
+    player_credit)
     local resistance = drain.resistance(ctx, target, definition)
     local random_stream = stream or "mutation"
 
@@ -119,7 +120,8 @@ function drain.apply(ctx, target, definition, source, stream)
         2 + ctx:random(random_stream, 3), source)
 
     if dealt > 0 and health.current == 0 then
-        if source and ctx:has(source, component.PLAYER) then
+        if player_credit or
+            source and ctx:has(source, component.PLAYER) then
             ctx:signal("player_kill", target)
         end
 

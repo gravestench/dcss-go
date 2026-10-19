@@ -7,20 +7,22 @@ local brand = {
     requires_damage = true,
 }
 
--- Example: brand.apply(ctx, hit, brands) with cold-vulnerable defender -> extra cold damage and a freeze message
--- Freezing uses the dealt weapon damage for its extra cold roll, then applies monster cold resistance.
+-- Example: brand.apply(ctx, hit, brands) with fire-vulnerable defender -> extra fire damage and a burn message
+-- Add fire brand damage after contact and scale it through the defender's fire resistance.
 function brand.apply(ctx, hit, brands)
-    -- Source: attack.cc,1618.
+    -- Source: attack.cc,1618. The elemental draw follows
+    -- ordinary damage and is fully resistible.
     local raw = 1 + math.floor(roll.melee(ctx, hit.damage_done) / 2)
     local bonus = damage.monster_elemental(ctx, hit.defender,
-        raw, resistances.COLD)
+        raw, resistances.FIRE)
 
     if bonus <= 0 then
         return
     end
 
     brands.damage(ctx, hit, bonus)
-    ctx:emit("combat", "Your weapon freezes the " .. hit.definition.name .. ".")
+    ctx:emit("combat", brands.subject(ctx, hit) .. " burns the " ..
+        hit.definition.name .. ".")
 end
 
 return brand

@@ -91,6 +91,7 @@ function equipment.monster_melee(ctx, monster)
                     "policy.item_generation.artefacts.properties")
 
                 return {
+                    entity = entry.entity,
                     damage = definition.weapon.damage +
                         properties.value(ctx, entry.entity,
                             artefact_ids.BASE_DAMAGE),

@@ -2,7 +2,7 @@
 local component = require("constants.component")
 local effects = require("constants.chaos_effects")
 local harness = require("tests.harness")
-local chaos = require("policy.combat.player_brands.chaos_status")
+local chaos = require("policy.combat.monster_target_brands.chaos_status")
 local boons = require("policy.combat.monster_support.boons")
 
 local test = {}

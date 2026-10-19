@@ -55,6 +55,12 @@ local function validate_player_illusion(ctx, entity, actor, state, stats)
             " has invalid player illusion profile")
     end
 
+    if profile.necromancy_skill < 0 or
+        profile.necromancy_skill > 27 then
+        error("summon " .. ctx:id(entity) ..
+            " has invalid player illusion profile")
+    end
+
     catalog.get("species", profile.species_id)
     catalog.get("jobs", profile.job_id)
 

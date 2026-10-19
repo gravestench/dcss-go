@@ -1,7 +1,7 @@
 -- These tests exercise the source spells against real ECS components. The
 -- sparse grid fixture only supplies position, occupancy, and deterministic RNG.
 local component = require("constants.component")
-local chaos_effects = require("policy.combat.player_brands.chaos_effects")
+local chaos_effects = require("policy.combat.monster_target_brands.chaos_effects")
 local chaos_ids = require("constants.chaos_effects")
 local catalog = require("policy.catalog")
 local effects = require("policy.combat.monster_spells")

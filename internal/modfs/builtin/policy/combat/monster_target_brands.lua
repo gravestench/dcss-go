@@ -1,8 +1,9 @@
 local brands = require("constants.weapon_brands")
 local monster_health = require("policy.combat.monster_health")
 local monster_drain = require("policy.combat.monster_drain")
+local component = require("constants.component")
 
-local player_brands = {}
+local target_brands = {}
 
 -- Map weapon brand IDs to effect modules and reject unknown catalog spellings early.
 local function effect(id)
@@ -10,30 +11,49 @@ local function effect(id)
     local name = brand_id:match("^SPWPN_([A-Z_]+)$")
 
     if not name then
-        error("invalid player weapon brand " .. tostring(id))
+        error("invalid monster-target weapon brand " .. tostring(id))
     end
 
-    local module = require("policy.combat.player_brands." .. name:lower())
+    local module = require("policy.combat.monster_target_brands." .. name:lower())
 
     if type(module) ~= "table" or type(module.apply) ~= "function" then
-        error("player weapon brand " .. brand_id .. " has no apply function")
+        error("monster-target weapon brand " .. brand_id ..
+            " has no apply function")
     end
 
     return module
 end
 
--- Example: player_brands.check(id) with invalid ego ID -> brand validation error
--- Resolve a brand module before an item can enter the player attack path.
-function player_brands.check(id)
+-- Validate a brand before a weapon reaches either attacker path.
+function target_brands.check(id)
     effect(id)
 end
 
--- Signal a player kill only on the live-to-dead transition, after monster health is updated.
-function player_brands.damage(ctx, hit, amount)
+-- Messages name the real wielder. A ghost without an item still has its
+-- captured brand, so describe its attack rather than inventing a weapon.
+function target_brands.subject(ctx, hit)
+    if ctx:has(hit.attacker, component.PLAYER) then
+        return "Your weapon"
+    end
+
+    local suffix = hit.weapon_entity and "'s weapon" or "'s attack"
+
+    return "The " .. hit.attacker_name .. suffix
+end
+
+-- Credit a kill only to the player or a credited ally. Hostile-on-friendly
+-- brand damage must not award experience merely because the target died.
+function target_brands.damage(ctx, hit, amount)
     local before = hit.health.current
     hit.health = monster_health.damage(ctx, hit.defender, amount, hit.attacker)
 
-    if before > 0 and hit.health.current == 0 then
+    local credit = hit.player_credit
+
+    if credit == nil then
+        credit = ctx:has(hit.attacker, component.PLAYER)
+    end
+
+    if credit and before > 0 and hit.health.current == 0 then
         ctx:signal("player_kill", hit.defender)
     end
 
@@ -41,7 +61,7 @@ function player_brands.damage(ctx, hit, amount)
 end
 
 -- Scale negative-energy brand damage by monster drain resistance before applying it.
-function player_brands.negative(ctx, hit, raw)
+function target_brands.negative(ctx, hit, raw)
     local resistance = monster_drain.resistance(ctx, hit.defender,
         hit.definition)
 
@@ -61,7 +81,7 @@ function player_brands.negative(ctx, hit, raw)
 end
 
 -- Dead-target and zero-damage gates are brand-specific; postmortem effects opt in through module flags.
-function player_brands.apply(ctx, id, hit)
+function target_brands.apply(ctx, id, hit)
     local module = effect(id)
 
     if hit.health.current <= 0 and not module.after_death then
@@ -72,13 +92,13 @@ function player_brands.apply(ctx, id, hit)
         return hit
     end
 
-    module.apply(ctx, hit, player_brands)
+    module.apply(ctx, hit, target_brands)
 
     return hit
 end
 
 -- Some brands act once per swing even when damage handling already ended the target.
-function player_brands.after_attack(ctx, id, hit)
+function target_brands.after_attack(ctx, id, hit)
     local module = effect(id)
 
     if module.after_attack then
@@ -86,4 +106,4 @@ function player_brands.after_attack(ctx, id, hit)
     end
 end
 
-return player_brands
+return target_brands

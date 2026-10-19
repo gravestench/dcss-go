@@ -4,7 +4,7 @@ local component = require("constants.component")
 
 local schema = {
     id = component.PLAYER_ILLUSION,
-    version = 1,
+    version = 2,
     fields = {
         name = {
             type = "string",
@@ -32,6 +32,11 @@ local schema = {
         },
 
         damage = {
+            type = "int64",
+            default = 0,
+        },
+
+        necromancy_skill = {
             type = "int64",
             default = 0,
         },

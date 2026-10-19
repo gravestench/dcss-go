@@ -1815,6 +1815,40 @@ rules, and run the Go/Lua tests before sharing the mod.
 
 ## Monster weapon gear
 
+### Melee brand effects
+
+Weapon brand IDs come from `constants.weapon_brands`. A brand's effect on
+a monster defender lives at
+`policy/combat/monster_target_brands/<brand-name>.lua`, such as
+`policy/combat/monster_target_brands/flaming.lua`. The same file runs when
+the attacker is the player, a monster, a summon, or a player illusion.
+The separate `policy/combat/brands/<brand-name>.lua` file handles attacks
+against the player, whose health and conditions have different owners.
+To replace one effect in a mod, copy just that relative file path into
+your mod directory. The later mod layer wins for that file.
+
+Each monster-target effect returns a local table with an `apply(ctx, hit,
+brands)` method. `hit.attacker` and `hit.defender` are ECS handles;
+`hit.definition` is the defender's current monster profile, including
+any saved illusion values; `hit.damage_done` is the ordinary strike's
+damage; `hit.health` is the defender's current health; and
+`hit.player_credit` says whether a kill belongs to the player's side.
+Use `brands.damage(ctx, hit, amount)` for extra HP loss and
+`brands.negative(ctx, hit, amount)` for resistible negative energy.
+The former updates `hit.health` and sends kill credit exactly once.
+`brands.subject(ctx, hit)` names the actual wielder in a message.
+The dispatcher calls `apply` only after a landed melee hit. A file can
+set `requires_damage = true` when zero ordinary damage suppresses it, or
+`after_death = true` when its effect may run after the physical hit kills
+the target. Keep independent rolls in source order within the effect file.
+
+For example, a mod can copy `flaming.lua` to its own matching path and
+change the fire bonus while retaining the normal player and monster melee
+callers. For a rule test in this repository, add
+`internal/script/testdata/lua/tests/<name>_test.lua`, import the production
+brand policy and a shared fixture, and avoid duplicating its component
+schema.
+
 Each imported weapon spec lives under `weapon_gear.primary` or
 `weapon_gear.secondary` in its owning `content/monsters/` file. A same-path
 override changes that monster's gear data and the effective ruleset hash.

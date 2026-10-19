@@ -157,7 +157,7 @@ local function apply_monster(ctx, actor)
         health = health,
     }
 
-    local effects = require("policy.combat.player_brands.chaos_effects")
+    local effects = require("policy.combat.monster_target_brands.chaos_effects")
     effects.apply(ctx, hit, streams.CLOUDS)
 end
 

@@ -15,7 +15,8 @@ function brand.apply(ctx, hit)
     local bonus = roll.melee(ctx, math.floor(hit.damage_done * 3 / 2))
     local levels = 6 + base + bonus
 
-    poison.apply(ctx, hit.defender, hit.definition, levels, hit.attacker)
+    poison.apply(ctx, hit.defender, hit.definition, levels,
+        hit.attacker, false, hit.player_credit)
 end
 
 return brand

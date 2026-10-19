@@ -57,7 +57,11 @@ function brand.apply(ctx, hit, brands)
 
     health.current = math.min(health.max, health.current + healed)
     ctx:set(hit.attacker, "core.health", health)
-    ctx:emit("combat", "You feel better.")
+    if ctx:has(hit.attacker, component.PLAYER) then
+        ctx:emit("combat", "You feel better.")
+    else
+        ctx:emit("combat", "The " .. hit.attacker_name .. " is healed.")
+    end
 end
 
 return brand

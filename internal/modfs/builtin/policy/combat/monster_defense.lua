@@ -6,7 +6,7 @@ local armour_egos = require("constants.armour_egos")
 local size = require("constants.size")
 local monster_stats = require("policy.combat.monster_stats")
 local monster_profile = require("policy.combat.monster_profile")
-local chaos_status = require("policy.combat.player_brands.chaos_status")
+local chaos_status = require("policy.combat.monster_target_brands.chaos_status")
 local roll = require("policy.combat.roll")
 
 local defense = {}

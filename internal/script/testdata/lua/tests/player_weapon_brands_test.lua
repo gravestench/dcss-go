@@ -1,7 +1,7 @@
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local ammunition = require("ids.ammunition")
-local player_brands = require("policy.combat.player_brands")
+local player_brands = require("policy.combat.monster_target_brands")
 local brands = require("constants.weapon_brands")
 local harness = require("tests.harness")
 

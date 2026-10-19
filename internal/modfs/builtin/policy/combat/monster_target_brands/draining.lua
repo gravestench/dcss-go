@@ -16,7 +16,8 @@ function brand.apply(ctx, hit, brands)
     local raw = math.floor((1 + roll.melee(ctx, hit.damage_done)) / 2)
     local bonus = brands.negative(ctx, hit, raw)
 
-    drain.apply(ctx, hit.defender, hit.definition, hit.attacker, "melee")
+    drain.apply(ctx, hit.defender, hit.definition, hit.attacker,
+        "melee", hit.player_credit)
     hit.health = ctx:get(hit.defender, "core.health")
 
     if hit.health.current > 0 and bonus > 0 then

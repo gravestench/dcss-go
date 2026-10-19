@@ -263,6 +263,8 @@ function illusion.capture(ctx, player)
         ac = defense.ac,
         ev = math.min(MAX_EV, defense.ev),
         damage = damage,
+        necromancy_skill = fighter.skill_level(view,
+            "SK_NECROMANCY"),
         brand_id = brand,
         holiness_id = holiness_id,
         see_invisible = senses.see_invisible(view, player),

@@ -22,7 +22,7 @@ local monster_profile = require("policy.combat.monster_profile")
 local stab = require("policy.combat.stab")
 local vampire = require("policy.character.vampire")
 local auxiliary_attacks = require("constants.auxiliary_attacks")
-local player_brands = require("policy.combat.player_brands")
+local target_brands = require("policy.combat.monster_target_brands")
 local player_staves = require("policy.combat.player_staves")
 local boons = require("policy.combat.monster_support.boons")
 local black_mark = require("policy.combat.monster_black_mark")
@@ -123,7 +123,7 @@ function actions.player(ctx, target, options)
         return
     end
 
-    local health = damage(ctx, target, outcome.damage, true)
+    local health, actual_dealt = damage(ctx, target, outcome.damage, true)
     local message = "You miss the " .. defender.name .. "."
     local blood_drawn = false
 
@@ -157,17 +157,17 @@ function actions.player(ctx, target, options)
         attacker = ctx:player(),
         defender = target,
         definition = defender,
-        damage_done = outcome.damage,
+        damage_done = actual_dealt,
         health = health,
         weapon_id = input.weapon_id,
         weapon_entity = input.weapon_entity,
     }
 
     if outcome.kind == "hit" then
-        player_brands.apply(ctx, input.weapon_brand, hit)
+        target_brands.apply(ctx, input.weapon_brand, hit)
         local weapon = input.weapon_id and catalog.get("items", input.weapon_id)
 
-        player_staves.apply(ctx, hit, player_brands, weapon,
+        player_staves.apply(ctx, hit, target_brands, weapon,
             input.defender_ac)
         health = hit.health
 
@@ -177,7 +177,7 @@ function actions.player(ctx, target, options)
         end
     end
 
-    player_brands.after_attack(ctx, input.weapon_brand, hit)
+    target_brands.after_attack(ctx, input.weapon_brand, hit)
 
     if health.current == 0 then
         return
@@ -488,7 +488,13 @@ function actions.monster_target(ctx, attacker, target)
     end
 
     local summon_stats = ctx:get(attacker, "magic.summon_stats")
-    local weapon = equipment.monster_melee(ctx, attacker)
+    local weapon = nil
+
+    -- Natural attacks cannot transmit a brand from an item merely held by
+    -- the monster. This matches the monster-against-player contact path.
+    if attack.type_id == "AT_HIT" then
+        weapon = equipment.monster_melee(ctx, attacker)
+    end
     local combat = ctx:get(target, "core.combat")
     local defense = {
         ev = monster_defense.evasion(ctx, target, target_def),
@@ -529,6 +535,27 @@ function actions.monster_target(ctx, attacker, target)
     if outcome.kind == "hit" and actual_dealt > 0 then
         black_mark.after_melee(ctx, attacker, target, actual_dealt)
         health = ctx:get(target, "core.health")
+    end
+
+    local illusion = ctx:get(attacker, component.PLAYER_ILLUSION)
+    local brand_id = weapon and weapon.brand or
+        attack.type_id == "AT_HIT" and illusion and illusion.brand_id
+
+    if outcome.kind == "hit" and brand_id then
+        local hit = {
+            attacker = attacker,
+            attacker_name = attacker_def.name,
+            defender = target,
+            definition = target_def,
+            damage_done = actual_dealt,
+            health = health,
+            weapon_entity = weapon and weapon.entity,
+            player_credit = targets.allied(ctx, attacker) or
+                statuses.frenzied(ctx, attacker),
+        }
+
+        target_brands.apply(ctx, brand_id, hit)
+        health = hit.health
     end
 
     if outcome.kind == "hit" then

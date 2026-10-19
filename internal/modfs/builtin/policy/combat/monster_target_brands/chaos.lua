@@ -6,7 +6,7 @@ local flags = require("constants.monster_flags")
 local monsters = require("ids.monsters")
 local fiery = require("policy.monsters.fiery")
 local enfeeble = require("policy.magic.effects.statuses.enfeeble")
-local holy_wrath = require("policy.combat.player_brands.holy_wrath")
+local holy_wrath = require("policy.combat.monster_target_brands.holy_wrath")
 local roll = require("policy.combat.roll")
 
 local chaos = {
@@ -179,7 +179,7 @@ function chaos.choose(ctx, hit)
 end
 
 -- A self-selected Chaos result uses monster effects; other results reuse ordinary brand code.
-function chaos.apply(ctx, hit, player_brands)
+function chaos.apply(ctx, hit, target_brands)
     local selected = chaos.choose(ctx, hit)
 
     if selected == brands.CHAOS then
@@ -189,11 +189,11 @@ function chaos.apply(ctx, hit, player_brands)
             return
         end
 
-        require("policy.combat.player_brands.chaos_effects").apply(ctx, hit)
+        require("policy.combat.monster_target_brands.chaos_effects").apply(ctx, hit)
         return
     end
 
-    player_brands.apply(ctx, selected, hit)
+    target_brands.apply(ctx, selected, hit)
 end
 
 return chaos

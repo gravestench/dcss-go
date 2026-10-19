@@ -9,6 +9,8 @@ local armour = require("policy.magic.effects.summons.animate_armour")
 local monster_health = require("policy.combat.monster_health")
 local monster_stats = require("policy.combat.monster_stats")
 local monster_profile = require("policy.combat.monster_profile")
+local target_brands = require("policy.combat.monster_target_brands")
+local targets = require("policy.ai.targets")
 
 local summon_melee = {}
 
@@ -153,9 +155,19 @@ function summon_melee.attack(ctx, summon, target)
     local combat = ctx:get(target, "core.combat")
 
     for _, strike in ipairs(attacks or {}) do
-        if health.current <= 0 then
+        local current_actor = ctx:get(target, component.ACTOR)
+
+        health = ctx:get(target, component.HEALTH)
+
+        if not current_actor or not health or
+            health.current <= 0 then
             break
         end
+
+        -- A preceding Chaos strike may have changed the target's kind.
+        -- Rebuild its read profile before resolving the next head.
+        victim_def = monster_profile.definition(ctx, target,
+            catalog.get("monsters", current_actor.kind_id))
 
         if strike and strike.type_id ~= "AT_NONE" then
             local base = strike.damage
@@ -170,13 +182,20 @@ function summon_melee.attack(ctx, summon, target)
                 base = base * blob.size
             end
 
+            -- A claw, bite, or other natural strike does not carry the
+            -- brand of an item the summon happens to hold.
+            local weapon = nil
+
+            if strike.type_id == "AT_HIT" then
+                weapon = equipment.monster_melee(ctx, summon)
+            end
             local outcome = melee.monster(ctx, {
                 attacker = summon,
                 hd = hd,
                 damage = base,
                 type_id = strike.type_id,
                 flavour_id = strike.flavour_id,
-                weapon = equipment.monster_melee(ctx, summon),
+                weapon = weapon,
             }, {
                 ev = defense.evasion(ctx, target, victim_def),
                 ac = defense.armour(ctx, target, victim_def),
@@ -205,14 +224,43 @@ function summon_melee.attack(ctx, summon, target)
                 health, dealt = monster_health.damage(ctx, target, dealt,
                     summon)
 
-                if dealt > 0 and health.current == 0 then
+                if dealt > 0 and health.current == 0 and
+                    targets.allied(ctx, summon) then
                     ctx:signal("player_kill", target)
+                end
+            end
+
+            local illusion = ctx:get(summon,
+                component.PLAYER_ILLUSION)
+            local brand_id = weapon and weapon.brand or
+                strike.type_id == "AT_HIT" and illusion and
+                illusion.brand_id
+
+            if outcome.kind == "hit" and brand_id then
+                local hit = {
+                    attacker = summon,
+                    attacker_name = attacker_def.name,
+                    defender = target,
+                    definition = victim_def,
+                    damage_done = dealt,
+                    health = health,
+                    weapon_entity = weapon and weapon.entity,
+                    player_credit = targets.allied(ctx, summon),
+                }
+
+                target_brands.apply(ctx, brand_id, hit)
+                health = hit.health
+
+                if hit.banished or hit.moved then
+                    break
                 end
             end
         end
     end
 
-    ctx:emit("combat", "Your " .. attacker_def.name ..
+    local owner = targets.allied(ctx, summon) and "Your " or "The "
+
+    ctx:emit("combat", owner .. attacker_def.name ..
         " attacks the " .. victim_def.name .. ".")
     return true
 end

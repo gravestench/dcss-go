@@ -1,5 +1,5 @@
 local boons = require("policy.combat.monster_support.boons")
-local chaos = require("policy.combat.player_brands.chaos_status")
+local chaos = require("policy.combat.monster_target_brands.chaos_status")
 local chaos_effects = require("constants.chaos_effects")
 local component = require("constants.component")
 local harness = require("tests.harness")

@@ -3,7 +3,7 @@ local catalog = require("policy.catalog")
 local component = require("constants.component")
 local harness = require("tests.harness")
 local monsters = require("ids.monsters")
-local player_brands = require("policy.combat.player_brands")
+local player_brands = require("policy.combat.monster_target_brands")
 local fixture = require("tests.monster_ally_support_fixture")
 
 local test = {}

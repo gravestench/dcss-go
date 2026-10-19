@@ -6,7 +6,7 @@ local agility = require("policy.character.agility")
 local allegiance = require(
     "policy.magic.effects.statuses.monster_allegiance")
 local chaos_effects = require("constants.chaos_effects")
-local chaos_status = require("policy.combat.player_brands.chaos_status")
+local chaos_status = require("policy.combat.monster_target_brands.chaos_status")
 local component = require("constants.component")
 local duration = require("policy.combat.monster_support.duration")
 local eligibility = require(
