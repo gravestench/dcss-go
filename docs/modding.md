@@ -1,6 +1,5 @@
 # Lua modding guide
 
-The [root README](../README.md) has the quickest launch and wizard examples.
 The Lua tree in `internal/modfs/builtin/` is editable production source. Lua
 paths resolve through the embedded base plus any `--mod-dir` overlays;
 discoverable definitions and rules load at startup, while helper modules load
@@ -8,12 +7,25 @@ when another module calls `require`. No C++ importer or generated index is
 part of the build. Add a new file to add a definition; replace the same
 relative path to change a bundled file.
 
-Start with [the feature workflow](#work-through-a-new-mod-feature) when you
-have an idea to add. Use [the `ctx` reference](#the-game-context-ctx) when
-writing a rule, and [the test section](#test-a-mod) before sharing it. The
-sections on [components](#components), [systems](#systems),
-[content](#content-files), [vaults](#vault-maps-and-lua-hooks), and
-[saves](#saves-and-identity) describe the contracts those features use.
+## Find what you need
+
+| If you want to... | Read... |
+| --- | --- |
+| Understand when Lua runs and what `ctx` means | [The five-minute mental model](#the-five-minute-mental-model) |
+| Add a monster, item, spell, or other definition | [Content files](#content-files) and [the feature workflow](#work-through-a-new-mod-feature) |
+| Keep new state on an actor | [Components](#components) and [entities and components](#entities-and-components) |
+| Make a rule run on actions | [Systems](#systems) and [the `ctx` entry-point table](#the-game-context-ctx) |
+| Implement a one-shot effect or decision | [Choose an owner](#choose-an-owner-for-a-new-feature) and [the `ctx` walkthrough](#follow-one-rule-from-entry-to-state-change) |
+| Read or change the game from Lua | [The complete `ctx` reference](#the-game-context-ctx) |
+| Add a map or generation hook | [Vault maps and Lua hooks](#vault-maps-and-lua-hooks) |
+| Check a mod or understand a failed load | [Test a mod](#test-a-mod) and [context failures](#when-a-context-call-fails) |
+| Understand overlays and save compatibility | [Scaffolding](#scaffolding) and [saves and identity](#saves-and-identity) |
+
+The [root README](../README.md) has the shortest launch and wizard examples.
+This guide explains the contracts those examples depend on. If a mechanic
+already exists, start with a nearby bundled file and follow its registration
+and caller. The examples here show how to do that; they are not a promise that
+every DCSS mechanic has already been ported.
 
 If this is your first mod, read [what `ctx` is](#ctx-in-one-minute), then
 [follow a rule from entry to state change](#follow-one-rule-from-entry-to-state-change).
@@ -34,6 +46,19 @@ streams, time, messages, and short-lived signals. There is no useful `ctx`
 while a file is loading. Do not store `ctx`, an entity handle, or changing
 game state in a module-level variable. Put lasting state in a component and
 read it with `ctx:get` each time the rule runs.
+
+Three names that often appear together mean different things:
+
+| Name | Meaning | Where it comes from |
+| --- | --- | --- |
+| `ctx` | Capabilities for the running game, such as ECS and grid access. | The engine passes it to an invoked callback; Lua callers pass it on explicitly. |
+| `entity`, `player`, `caster`, or `foe` | A handle for one live actor or item. | The callback's caller or a `ctx` query supplies it. |
+| `definition` | Fixed catalog facts shared by every instance of a kind. | A content file registers it; a policy reads it from the catalog. |
+
+For example, a monster definition may specify its kind's hit dice. Two live
+monsters of that kind have different HP components. A spell's `foe` is a
+handle for one of those actors; `ctx:get(foe, components.HEALTH)` reads that
+actor's current HP. The definition cannot answer that question.
 
 ### `ctx` in one minute
 
@@ -70,6 +95,12 @@ to run. Merely putting the file under `policy/` loads the module; it does not
 schedule `heal`. The caller supplies the same `ctx` it received, so both
 rules see the same game action. Use `ctx:player()` only when the rule means
 the player specifically; a monster can be the current actor.
+
+The `:` in `ctx:get(actor, id)` is Lua's method-call syntax. It passes `ctx`
+as the hidden first argument. `ctx.get(actor, id)` omits that argument and
+therefore calls the host method incorrectly. Domain methods such as
+`effect.heal(ctx, actor, amount)` are ordinary functions unless their module
+defines them with `:`. Copy the call style from the module's definition.
 
 Ask **who calls this function?** before adding a `ctx` parameter. A system's
 `update` gets one from the scheduler. A registered host policy gets one from
@@ -366,6 +397,41 @@ The character-menu catalog and some isolated tests run without game services;
 calling an unavailable clock, RNG, event, actor, or grid method there raises
 an error. Pass ordinary input tables to pure decisions, and exercise
 stateful rules in a runtime with those services.
+
+Read a callback from left to right:
+
+```text
+Lua file loads -> registers a definition or callback -> a game action invokes it
+    -> the caller supplies ctx and the relevant actor/target handles
+    -> the callback reads current state -> computes a result
+    -> the callback writes components or grid state -> later rules see the change
+```
+
+`ctx` does not identify *which* actor a rule should change. That comes from
+the callback's `entity`, `player`, `caster`, or `foe` argument, or from an
+explicit `ctx:query`. In a system, `entity` is the actor matched by the
+query; `ctx:actor()` is the actor whose action is underway. In a monster
+spell, `caster` and `foe` come from spell selection. Do not silently replace
+`foe` with `ctx:player()` or an allied monster may attack the player.
+
+| I need to... | Use... | Avoid... |
+| --- | --- | --- |
+| Read or change this actor's saved state | `ctx:get(actor, id)`, then `ctx:set(actor, id, changed)` | Keeping the returned table in a module variable. |
+| Attach a new condition | A registered schema and `ctx:add(actor, id, fields)` | Inventing an undeclared field on an entity. |
+| Find every actor with certain state | `ctx:query({ component_a, component_b })` | Assuming a catalog definition is a live actor. |
+| Move an actor | `ctx:move_actor(actor, level_id, x, y)` | Setting `core.position` directly. |
+| Choose randomly during an action | `ctx:random(stream_id, bound)` | `math.random` or a module-load roll. |
+| Pass a fact to a later system in this action | `ctx:signal(name, value)` and `ctx:signals(name)` | Using a signal for state that must survive a save. |
+| Show text to the player | `ctx:emit(channel, message)` | Treating a message as a state change. |
+| Read a fixed monster or spell fact | `policy.catalog.get(category, id)` | Looking for that fact on every entity instance. |
+
+The table is a route to the API, not a second set of game rules. For exact
+arguments, return values, failure cases, and staged-write behavior, use the
+method tables below. The Lua method installation lives in
+[`internal/script/context.go`](../internal/script/context.go); callback
+signatures live with their domain registrations. For example, a new spell
+effect should read its effect registry and a nearby effect file before
+assuming `resolve` has the same arguments as another domain's resolver.
 
 | Lua entry point | Who calls it | Arguments |
 | --- | --- | --- |
