@@ -113,7 +113,7 @@ the effective ruleset hash without adding a Go keymap.
 
 The import artifacts account for 43 species, 31 jobs, 700 monster rows,
 403 spell identities, 285 monster spellbooks, 408 item
-identities, 38 branches, 125 ordered Dungeon population rows inside their
+identities, 38 branches, 125 Dungeon population rows inside their
 monster definitions, monster weapon loadouts, starting grants, and console
 presentation metadata. All 162 primary and 16 secondary weapon specs live in
 their owning monster Lua files. The initial import tools have been removed;
@@ -271,8 +271,8 @@ unique deterministic labels but does not yet reproduce DCSS's exact
 `make_name` syllable algorithm or its RNG sequence. Artefact discovery now
 uses per-item knowledge and source self-identifying fixed-name rules; random
 equipment artefacts use the source weighted name and appearance groups.
-Random books still use the earlier title generator, and exact source RNG
-parity remains future work. Item-inscription UI and naming details beyond
+Random books use source title groups, though exact source RNG parity remains
+future work. Item-inscription UI and naming details beyond
 the implemented non-artefact classes remain. Source religion conduct
 remains part of the religion domain.
 The experience potion keeps level XP separate from allocatable skill XP; its

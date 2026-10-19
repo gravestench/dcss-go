@@ -85,7 +85,6 @@ local definition = {
     -- mutate existing actors.
     population = {
         {
-            source_order = 54,
             min_depth = 9,
             max_depth = 14,
             rarity = 800,

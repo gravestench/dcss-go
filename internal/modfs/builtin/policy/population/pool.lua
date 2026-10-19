@@ -43,35 +43,22 @@ local function weight_at_depth(row, depth)
     error("unsupported population curve " .. tostring(row.curve))
 end
 
--- Retain catalog order and duplicate rows as separate candidates.
+-- Catalog IDs are sorted before this traversal. Rows within one monster keep
+-- their local order, while Lua file discovery cannot change a seeded draw.
 local function ordered_rows(allowed, scenario_id)
     local source = {}
-    local added = {}
 
     for _, definition in ipairs(catalog.all(categories.MONSTERS)) do
         if not allowed or allowed[definition.id] then
             for _, row in ipairs(definition.population or {}) do
-                local entry = {
-                    id = definition.id,
-                    row = row,
-                }
-
-                if row.source_order then
-                    source[#source + 1] = entry
-                elseif row.scenario_id == scenario_id then
-                    added[#added + 1] = entry
+                if not row.scenario_id or row.scenario_id == scenario_id then
+                    source[#source + 1] = {
+                        id = definition.id,
+                        row = row,
+                    }
                 end
             end
         end
-    end
-
-    -- Sort only authored nested rows by source_order before appending catalog-ordered mod rows.
-    table.sort(source, function(a, b)
-        return a.row.source_order < b.row.source_order
-    end)
-
-    for _, entry in ipairs(added) do
-        source[#source + 1] = entry
     end
 
     return source
@@ -82,8 +69,8 @@ function pool.at_depth(depth, allowed, scenario_id)
     local choices = {}
     local total = 0
 
-    -- Authored nested rows retain source_order; mod rows follow stable catalog ID order.
-    -- Duplicate monster IDs remain separate picker rows.
+    -- Source and mod rows use the same ID order. Duplicate rows in one
+    -- monster definition remain distinct weighted picker candidates.
     for _, entry in ipairs(ordered_rows(allowed, scenario_id)) do
         local weight = weight_at_depth(entry.row, depth)
 

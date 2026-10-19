@@ -1,6 +1,6 @@
 -- Catalog traversal uses stable IDs so renaming a file does not reshuffle
--- weighted choices. A definition only carries order when that order is an
--- actual rule, such as an individual monster population row.
+-- weighted choices. Multiple rows within one definition retain their local
+-- order without adding a position shared with other content files.
 local categories = require("constants.catalog")
 local harness = require("tests.harness")
 local catalog = require("policy.catalog")

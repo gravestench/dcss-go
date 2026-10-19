@@ -1561,12 +1561,14 @@ The file is loaded automatically. Its population entry puts the monster into
 the generated Dungeon roster without editing a central list. The example
 uses the current basic monster behavior and combat rules. Invalid spawn data
 fails at startup with the content path and field name.
-Bundled population rows live in their monster files too, with a
-`source_order` for the original DCSS population draw. It orders those
-*nested population rows* explicitly; it does not order Lua file loading,
-catalog definitions, systems, or tests. New mod rows need only a
-`scenario_id`, depth range, rarity, and curve. They follow the source rows
-in stable catalog ID order, regardless of their filenames or load order.
+Bundled population rows live in their monster files too. The picker visits
+monsters in stable ID order and visits rows in their local file order. New
+mod monster needs a row with the generated Dungeon `scenario_id` to join that
+roster. A row without a scenario applies wherever its monster is already
+admitted. Every row needs a depth range, rarity, and curve. A mod monster
+joins that same ID order, regardless of its filename or load order. No
+global position number is needed; adding or replacing a monster definition
+cannot silently renumber other files' population rows.
 
 A rule imports `constants.catalog`,
 `ids.monsters`, and `policy.catalog` where needed, then reads it with
@@ -2076,9 +2078,10 @@ registration and validation errors; when contributing a rule to this repo,
 put its Lua test in that fixture tree and run
 `go test ./internal/script -run TestLuaRules`. Run
 `go test ./internal/script ./internal/game` after changing engine behavior,
-and `go test ./...` at a broader category boundary. Top-level content
-definitions need no `source_order`. Order-sensitive nested records, such as
-source population rows, document their order where that behavior is used.
+and `go test ./...` at a broader category boundary. Content definitions and
+population rows need no `source_order`. When a definition contains multiple
+ordered choices, keep that order inside the owning file and explain why it
+matters there.
 
 ## Saves and identity
 

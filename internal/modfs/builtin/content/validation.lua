@@ -393,7 +393,8 @@ local function positive_number(category, definition, field)
     end
 end
 
--- Nested source rows use source_order; mod scenario rows use scenario_id.
+-- Source rows are global; mod rows may restrict themselves to a scenario.
+-- The picker determines order from monster IDs, never imported positions.
 local function validate_population_row(monster, row)
     local category = categories.MONSTERS
 
@@ -402,13 +403,12 @@ local function validate_population_row(monster, row)
     end
 
     if row.source_order ~= nil then
-        if type(row.source_order) ~= "number" or
-            row.source_order < 1 or row.source_order % 1 ~= 0 or
-            row.scenario_id ~= nil then
-            fail(category, monster.id,
-                "population source_order must be a positive integer without scenario_id")
-        end
-    elseif type(row.scenario_id) ~= "string" or row.scenario_id == "" then
+        fail(category, monster.id,
+            "population source_order is obsolete; picker order follows monster IDs")
+    end
+
+    if row.scenario_id ~= nil and
+        (type(row.scenario_id) ~= "string" or row.scenario_id == "") then
         fail(category, monster.id,
             "population scenario_id must be nonempty text")
     end
@@ -428,28 +428,14 @@ local function validate_population_row(monster, row)
     end
 end
 
--- Nested source population positions must be unique across monsters.
+-- Validate each local row without coupling one monster file to another.
 function validation.population_rows(monsters)
-    local source_orders = {}
-
     for _, monster in ipairs(monsters) do
         local population = optional_list(categories.MONSTERS, monster,
             "population")
 
         for _, row in ipairs(population) do
             validate_population_row(monster, row)
-
-            if row.source_order then
-                local previous = source_orders[row.source_order]
-
-                if previous then
-                    fail(categories.MONSTERS, monster.id,
-                        "population source_order " .. row.source_order ..
-                        " duplicates " .. previous)
-                end
-
-                source_orders[row.source_order] = monster.id
-            end
         end
     end
 end

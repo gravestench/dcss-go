@@ -93,7 +93,6 @@ local definition = {
     -- adds a distinct deep-depth chance rather than replacing the PEAK row.
     population = {
         {
-            source_order = 46,
             min_depth = 7,
             max_depth = 11,
             rarity = 200,
@@ -101,7 +100,6 @@ local definition = {
         },
 
         {
-            source_order = 96,
             min_depth = 17,
             max_depth = 25,
             rarity = 136,

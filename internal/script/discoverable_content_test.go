@@ -216,7 +216,7 @@ func TestSamePathOverlayReplacesBundledDefinition(t *testing.T) {
 	}
 }
 
-func TestSamePathPopulationOverrideKeepsSourceOrder(t *testing.T) {
+func TestSamePathPopulationOverrideKeepsLocalRow(t *testing.T) {
 	const path = "content/monsters/mons_rat.lua"
 
 	bundled, err := modfs.Load()
@@ -281,8 +281,8 @@ func TestSamePathPopulationOverrideKeepsSourceOrder(t *testing.T) {
 		t.Fatalf("rat override row = %v", rows.RawGetInt(1))
 	}
 
-	if row.RawGetString("source_order") != lua.LNumber(2) {
-		t.Fatalf("rat override source order = %v", row.RawGetString("source_order"))
+	if row.RawGetString("source_order") != lua.LNil {
+		t.Fatalf("rat override retained source order = %v", row.RawGetString("source_order"))
 	}
 
 	if row.RawGetString("rarity") != lua.LNumber(777) {
