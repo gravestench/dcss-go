@@ -17,16 +17,33 @@ func plantTreeBesidePlayer(t *testing.T, game *Game) {
 	level := game.levels[position.LevelID]
 
 	for _, offset := range []point{
-		{x: 0, y: 1},
-		{x: 0, y: -1},
-		{x: 1, y: 0},
-		{x: -1, y: 0},
+		{
+			x: 0,
+			y: 1,
+		},
+
+		{
+			x: 0,
+			y: -1,
+		},
+
+		{
+			x: 1,
+			y: 0,
+		},
+
+		{
+			x: -1,
+			y: 0,
+		},
 	} {
 		x := position.X + offset.x
 		y := position.Y + offset.y
 
-		if y < 0 || y >= len(level.terrain) ||
-			x < 0 || x >= len(level.terrain[y]) ||
+		if y < 0 ||
+			y >= len(level.terrain) ||
+			x < 0 ||
+			x >= len(level.terrain[y]) ||
 			level.terrain[y][x] != terrain.Floor {
 			continue
 		}
@@ -60,21 +77,25 @@ func TestMonsterPlantSpellbookCastAndRestore(t *testing.T) {
 			path:      "testdata/monster-plant-roots",
 			component: "zap.grasping_roots",
 		},
+
 		{
 			name:      "sporulate",
 			path:      "testdata/monster-plant-spore",
 			component: "combat.monster_spore",
 		},
+
 		{
 			name:      "awaken forest",
 			path:      "testdata/monster-plant-forest",
 			component: "world.monster_awake_forest",
 		},
+
 		{
 			name:      "awaken vines",
 			path:      "testdata/monster-plant-vines",
 			component: "world.monster_awake_vines",
 		},
+
 		{
 			name:      "wall of brambles",
 			path:      "testdata/monster-plant-brambles",
@@ -94,6 +115,7 @@ func TestMonsterPlantSpellbookCastAndRestore(t *testing.T) {
 			}
 
 			energy, _ := game.stores.MonsterEnergy.Get(caster)
+
 			energy.Points = 80
 
 			if _, err := game.runAction(caster, ecs.Intent{}, 10,
@@ -146,6 +168,7 @@ func TestMonsterSporeContactConfusesLivingPlayer(t *testing.T) {
 	placePlayerInSlugLine(t, game, caster)
 
 	energy, _ := game.stores.MonsterEnergy.Get(caster)
+
 	energy.Points = 80
 
 	if _, err := game.runAction(caster, ecs.Intent{}, 10,
@@ -164,13 +187,18 @@ func TestMonsterSporeContactConfusesLivingPlayer(t *testing.T) {
 	placed := false
 
 	for _, offset := range []point{
-		{x: 1}, {x: -1}, {y: 1}, {y: -1},
+		{x: 1},
+		{x: -1},
+		{y: 1},
+		{y: -1},
 	} {
 		x := position.X + offset.x
 		y := position.Y + offset.y
 
-		if y < 0 || y >= len(level.terrain) ||
-			x < 0 || x >= len(level.terrain[y]) ||
+		if y < 0 ||
+			y >= len(level.terrain) ||
+			x < 0 ||
+			x >= len(level.terrain[y]) ||
 			level.terrain[y][x] != terrain.Floor {
 			continue
 		}
