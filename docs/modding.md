@@ -587,6 +587,14 @@ capability to Go only when Lua cannot express the operation with the current
 ECS, grid, and event services. Put the actual monster, spell, item, or game
 policy in Lua, even if several content files call it.
 
+`policy/combat/torment_area.lua` is a concrete example of sharing an owner.
+The Torment scroll's `apply(ctx, reader)` and Symbol of Torment's
+`resolve(ctx, caster, foe, slot, plan)` both pass their received context to
+`area.apply(ctx, source, channel)`. The area owner queries nearby actors and
+routes HP changes through the player or monster health policy. The entry
+points decide *when* the rule runs; the shared policy decides *how* it changes
+the current game. No callback stores `ctx` for the next action.
+
 ### Follow one rule from entry to state change
 
 Suppose a mod has registered the `my_mod.turn_counter` component from the

@@ -168,6 +168,9 @@ The four Serpent of Hell breaths compose three existing head effects per cast,
 in source order, behind one selected foe and direction. Each head keeps its
 own beam, cloud, explosion, or status rule; the composite adds no damage
 switch or mutable module state.
+Torment's scroll and monster Symbol now share one Lua area owner. It scans
+LOS_NO_TRANS geometry, delegates HP loss to each victim's resistance and
+health policies, and uses actor perception before naming a wounded monster.
 All 285 monster spellbook files import their spell and slot-flag references;
 monster definitions import spellbook IDs. Each content file still declares
 its own ID, while cross-file references resolve through the effective catalog.

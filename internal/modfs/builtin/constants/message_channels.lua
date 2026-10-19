@@ -4,6 +4,7 @@ local channels = {
     COMBAT = "combat",
     DURATION = "duration",
     SPELL = "spell",
+    READ = "read",
     MONSTER = "monster",
 }
 

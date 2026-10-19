@@ -70,6 +70,9 @@ still clear. The Faith piety event remains for the religion domain slice.
 The monster beam family now includes player amulet reflection and monster
 shield reflection. Armour reflection ego and further spell families remain
 for their later combat domains.
+Symbol of Torment and the Torment scroll use one actor-neutral Lua area rule.
+The monster's AI declines a cast when no vulnerable enemy is in the area or
+an allied caster would torment the player.
 Flaming, Petrifying, and Spectral Cloud now leave source-shaped ray trails;
 the first and last also place an endpoint field. Ink Cloud is a water-only
 self cast. Their cloud cells use the existing saved Lua cloud owner.
