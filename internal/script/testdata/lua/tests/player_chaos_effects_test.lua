@@ -7,6 +7,7 @@ local effects = require("policy.combat.player_brands.chaos_effects")
 local chaos_status = require("policy.combat.player_brands.chaos_status")
 local harness = require("tests.harness")
 local monsters = require("ids.monsters")
+local fixture = require("tests.monster_ally_support_fixture")
 
 local test = {}
 
@@ -21,7 +22,8 @@ local function zero_random()
 end
 
 -- Chaos invisibility adds saved enchantment.
-function test.run(ctx)
+function test.run(base)
+    local ctx = fixture.observed_context(base)
     local rat = ctx:create()
     local definition = catalog.get(categories.MONSTERS, monsters.MONS_RAT)
 

@@ -133,11 +133,15 @@ The shared summon owner preserves friendly and neutral caster allegiance.
 Allied monster AI now picks visible enemy monsters and offers its spellbook
 before routing; without a foe, it follows the player. The saved spell intent
 keeps its foe distinct from a self or cell target plan. Freeze, Petrify, and
-Slug Dart resolve against monster health, resistance, status, and defense;
+Slug Dart resolve against monster health, resistance, status, and defense.
+Shared beam and hex resolution now has live allied-caster coverage against
+enemy monsters, including a missed ray's friendly-fire planning guard;
 other spell effects still need actor-target audits. Hostile casters retain
-their player-awareness gate. Monster spell effect messages now test player
-perception before naming actors or describing offscreen terrain changes;
-invisibility messages sample sight before the enchant takes hold.
+their player-awareness gate. Direct strikes, support spells, beam contacts,
+and shared poison, drain, and enchantment messages test player perception
+before naming actors or describing offscreen terrain changes. Other event
+paths still need an audit. Invisibility messages sample sight before the
+enchantment takes hold.
 The 11 wand-to-spell links are committed in their wand definitions, with a
 legacy JSON artifact retained for cross-checks. Source appearance words are
 committed in `data/item_appearances.lua`. The runtime does not read C++ to

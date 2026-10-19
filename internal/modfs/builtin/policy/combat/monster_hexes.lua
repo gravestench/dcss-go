@@ -1,5 +1,7 @@
 local beam = require("policy.combat.monster_beams")
 local hex = require("policy.combat.monster_spells.hex")
+local component = require("constants.component")
+local senses = require("policy.character.senses")
 
 local hexes = {}
 
@@ -42,7 +44,10 @@ function hexes.resolve(ctx, caster, foe, profile, plan, rule)
         end
 
         if resisted then
-            context:emit("combat", "The enchantment is resisted.")
+            if context:has(defender, component.PLAYER) or
+                senses.player_sees_actor(context, defender) then
+                context:emit("combat", "The enchantment is resisted.")
+            end
 
             return
         end

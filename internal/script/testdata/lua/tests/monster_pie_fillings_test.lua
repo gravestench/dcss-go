@@ -2,6 +2,7 @@
 local cherry = require("policy.combat.pies.cherry")
 local component = require("constants.component")
 local harness = require("tests.harness")
+local fixture = require("tests.monster_ally_support_fixture")
 
 local test = {}
 
@@ -23,7 +24,8 @@ end
 -- Cherry pie gives the player 15 turns at the low source roll.
 function test.run(ctx)
     local monster = ctx:create()
-    local draws = lowest_roll(ctx)
+    local game = fixture.observed_context(ctx)
+    local draws = lowest_roll(game)
 
     cherry.apply(draws, nil, monster)
 
@@ -35,7 +37,7 @@ function test.run(ctx)
 
     ctx:add(player, component.PLAYER, {})
 
-    local player_draws = lowest_roll(ctx)
+    local player_draws = lowest_roll(game)
 
     cherry.apply(player_draws, nil, player)
 

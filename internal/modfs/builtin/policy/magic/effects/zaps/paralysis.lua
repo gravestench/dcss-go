@@ -5,6 +5,7 @@ local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
+local senses = require("policy.character.senses")
 
 local paralysis = {}
 
@@ -130,7 +131,10 @@ function paralysis.apply_unresisted(ctx, target, definition, enchant_power)
         ctx:add(target, component.PARALYSIS, status)
     end
 
-    ctx:emit("spell", "The " .. definition.name .. " suddenly stops moving!")
+    if senses.player_sees_actor(ctx, target) then
+        ctx:emit("spell", "The " .. definition.name ..
+            " suddenly stops moving!")
+    end
 end
 
 -- Tick only AI actors so player paralysis remains on its separate status clock.

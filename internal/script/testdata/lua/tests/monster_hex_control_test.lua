@@ -26,6 +26,11 @@ local function context()
 
             [player] = {
                 [component.PLAYER] = {},
+                [component.POSITION] = {
+                    level_id = 1,
+                    x = 7,
+                    y = 7,
+                },
             },
 
             [monster] = {
@@ -36,6 +41,11 @@ local function context()
                     current = 10,
                     maximum = 10,
                 },
+                [component.POSITION] = {
+                    level_id = 1,
+                    x = 2,
+                    y = 1,
+                },
             },
         },
     }
@@ -43,6 +53,21 @@ local function context()
     -- Read the saved player status after Confuse and Paralyse resolve.
     function ctx:get(entity, id)
         return self.values[entity] and self.values[entity][id]
+    end
+
+    -- Supply the observer while keeping this duration test offscreen.
+    function ctx:player()
+        return player
+    end
+
+    -- Mutations are absent in this isolated control-duration fixture.
+    function ctx:query()
+        return {}
+    end
+
+    -- No player message is expected from the monster-only status path.
+    function ctx:visible()
+        return false
     end
 
     -- Create newly applied control effects in the fixture store.

@@ -7,12 +7,14 @@ local monsters = require("ids.monsters")
 local energy = require("policy.monster_energy")
 local enchant = require("policy.combat.monster_enchant")
 local intent = require("constants.intent")
+local fixture = require("tests.monster_ally_support_fixture")
 
 local test = {}
 
 -- A spell and a Chaos brand grant the same saved Haste and Might state.
 -- Their consumers must not depend on which producer supplied the boon.
 function test.run(ctx)
+    local game = fixture.observed_context(ctx)
     local monster = ctx:create()
 
     ctx:add(monster, component.ACTOR, {
@@ -69,9 +71,9 @@ function test.run(ctx)
     harness.equal(attack.cost, 10,
         "Sprint leaves attack energy unchanged")
 
-    harness.truthy(enchant.can_dispel(ctx, monster),
+    harness.truthy(enchant.can_dispel(game, monster),
         "Sprint is a dispellable magical boon")
-    harness.truthy(enchant.dispel(ctx, monster, {
+    harness.truthy(enchant.dispel(game, monster, {
         name = "rat",
     }), "Unravelling strips the boon")
     harness.falsy(ctx:has(monster, component.MONSTER_BOONS),

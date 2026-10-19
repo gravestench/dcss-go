@@ -1,5 +1,6 @@
 local roll = require("policy.combat.roll")
 local monster_stats = require("policy.combat.monster_stats")
+local senses = require("policy.character.senses")
 
 local slow = {}
 
@@ -42,7 +43,10 @@ function slow.apply(ctx, monster, definition)
         base_speed = base_speed,
         remaining_aut = added_aut,
     })
-    ctx:emit("combat", "The " .. definition.name .. " seems to slow down.")
+    if senses.player_sees_actor(ctx, monster) then
+        ctx:emit("combat", "The " .. definition.name ..
+            " seems to slow down.")
+    end
 end
 
 -- Example: slow.tick(ctx, monster) with expired slow -> restored base actor speed

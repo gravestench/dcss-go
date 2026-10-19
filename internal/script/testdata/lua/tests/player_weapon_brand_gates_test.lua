@@ -4,6 +4,7 @@ local component = require("constants.component")
 local harness = require("tests.harness")
 local monsters = require("ids.monsters")
 local player_brands = require("policy.combat.player_brands")
+local fixture = require("tests.monster_ally_support_fixture")
 
 local test = {}
 
@@ -44,7 +45,8 @@ local function poison_rolls(ctx)
 end
 
 -- Compare zero-damage brand gates and named melee draws on identical target records.
-function test.run(ctx)
+function test.run(base)
+    local ctx = fixture.observed_context(base)
     local attacker = ctx:create()
     local rat, rat_definition = zero_damage_target(ctx,
         monsters.MONS_RAT)

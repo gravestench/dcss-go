@@ -10,6 +10,9 @@ local invisibility = require("policy.combat.monster_spells.invisibility")
 local target_kind = require("constants.target_kind")
 local repulsion = require("policy.combat.monster_support.repulsion")
 local flash_freeze = require("policy.combat.monster_beams.flash_freeze")
+local monster_slow = require("policy.combat.monster_slow")
+local paralysis = require("policy.magic.effects.zaps.paralysis")
+local catalog = require("policy.catalog")
 
 local test = {}
 
@@ -109,6 +112,25 @@ local function invisible_shared_effect(ctx, game, messages)
         "visible cell does not disclose invisible recipient")
 end
 
+-- Monster hexes and shared status owners must persist offscreen effects
+-- without narrating a recipient the player cannot currently identify.
+local function unseen_hex_statuses(ctx, game, messages)
+    local slowed = fixture.actor(ctx, monsters.MONS_RAT, 3, 2, 40)
+    local stopped = fixture.actor(ctx, monsters.MONS_RAT, 4, 2, 40)
+    local definition = catalog.get("monsters", monsters.MONS_RAT)
+
+    game.seen = false
+    monster_slow.apply(game, slowed, definition)
+    paralysis.apply_unresisted(game, stopped, definition, 50)
+
+    harness.truthy(ctx:has(slowed, component.PROJECTILE_SLOW),
+        "offscreen Slow remains on its recipient")
+    harness.truthy(ctx:has(stopped, component.PARALYSIS),
+        "offscreen Paralysis remains on its recipient")
+    harness.equal(#messages, 1,
+        "offscreen hex statuses add no message")
+end
+
 -- Build one production-schema world and vary only the observer's sight.
 function test.run(ctx)
     local player = ctx:create()
@@ -144,6 +166,7 @@ function test.run(ctx)
     observed_disappearance(ctx, game, messages)
     unseen_shared_effects(ctx, game, messages)
     invisible_shared_effect(ctx, game, messages)
+    unseen_hex_statuses(ctx, game, messages)
 end
 
 return test

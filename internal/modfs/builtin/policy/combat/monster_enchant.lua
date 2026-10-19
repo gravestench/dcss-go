@@ -8,6 +8,7 @@ local resistance_ids = require("constants.resistance_ids")
 local monster_stats = require("policy.combat.monster_stats")
 local mirror = require("policy.combat.monster_support.injury_mirror")
 local frenzy_health = require("policy.magic.effects.statuses.monster_frenzy_health")
+local senses = require("policy.character.senses")
 
 local enchant = {}
 
@@ -188,7 +189,9 @@ function enchant.blind(ctx, monster, definition)
         monster_stats.hit_dice(ctx, monster, definition))) * 10
     value.blind_aut = base + roll.melee(ctx, base + 1)
     save(ctx, monster, value)
-    ctx:emit("spell", "The " .. definition.name .. " is blinded.")
+    if senses.player_sees_actor(ctx, monster) then
+        ctx:emit("spell", "The " .. definition.name .. " is blinded.")
+    end
 
     return true
 end
@@ -213,7 +216,7 @@ local function apply_corrosion(ctx, monster, definition, source)
         math.max(15, raw + fuzz - low)
     save(ctx, monster, value)
 
-    if not was_corroded then
+    if not was_corroded and senses.player_sees_actor(ctx, monster) then
         ctx:emit("spell", source or
             ("The " .. definition.name .. " corrodes!"))
     end
@@ -314,7 +317,7 @@ function enchant.dispel(ctx, monster, definition)
         end
     end
 
-    if changed then
+    if changed and senses.player_sees_actor(ctx, monster) then
         ctx:emit("spell", "The " .. definition.name ..
             "'s magical effects unravel!")
     end
@@ -332,7 +335,9 @@ function enchant.tick(ctx, monster, elapsed_aut)
     end
 
     local actor = ctx:get(monster, "core.actor")
+    local definition = catalog.get("monsters", actor.kind_id)
     local changed = false
+    local became_visible = false
     elapsed_aut = elapsed_aut or 10
 
     value.blind_aut = value.blind_aut or 0
@@ -343,8 +348,9 @@ function enchant.tick(ctx, monster, elapsed_aut)
         value.blind_aut = math.max(0, value.blind_aut - elapsed_aut)
         changed = true
 
-        if value.blind_aut == 0 then
-            ctx:emit("duration", "The " .. actor.kind_id ..
+        if value.blind_aut == 0 and
+            senses.player_sees_actor(ctx, monster) then
+            ctx:emit("duration", "The " .. definition.name ..
                 " is no longer blind.")
         end
     end
@@ -354,8 +360,9 @@ function enchant.tick(ctx, monster, elapsed_aut)
             value.corrosion_aut - elapsed_aut)
         changed = true
 
-        if value.corrosion_aut == 0 then
-            ctx:emit("duration", "The " .. actor.kind_id ..
+        if value.corrosion_aut == 0 and
+            senses.player_sees_actor(ctx, monster) then
+            ctx:emit("duration", "The " .. definition.name ..
                 " is no longer covered in acid.")
         end
     end
@@ -366,8 +373,7 @@ function enchant.tick(ctx, monster, elapsed_aut)
         changed = true
 
         if value.invisible_aut == 0 then
-            ctx:emit("duration", "The " .. actor.kind_id ..
-                " becomes visible again.")
+            became_visible = true
         end
     end
 
@@ -378,6 +384,13 @@ function enchant.tick(ctx, monster, elapsed_aut)
         else
             ctx:set(monster, "magic.monster_enchant", value)
         end
+    end
+
+    -- The visibility decision belongs after the enchantment is saved: the
+    -- player can now perceive an actor that was invisible moments ago.
+    if became_visible and senses.player_sees_actor(ctx, monster) then
+        ctx:emit("duration", "The " .. definition.name ..
+            " becomes visible again.")
     end
 end
 

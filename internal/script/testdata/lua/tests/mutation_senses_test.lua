@@ -121,6 +121,16 @@ function test.run(ctx)
     -- Capture senses events separately from the policy state being asserted.
     function world.emit() end
 
+    -- Expiry messages ask who observes this actor in a live game.
+    function world.player()
+        return player
+    end
+
+    -- This test holds geometry open while varying actor invisibility.
+    function world.visible()
+        return true
+    end
+
     enchant.tick(world, monster)
     harness.equal(ctx:get(monster, component.MONSTER_ENCHANT).invisible_aut,
         10, "temporary invisibility advances on the monster clock")

@@ -4,6 +4,7 @@ local monster_health = require("policy.combat.monster_health")
 local component = require("constants.component")
 local hex_status = require("policy.combat.monster_hexes.status")
 local causes = require("constants.damage_causes")
+local senses = require("policy.character.senses")
 
 local poison = {}
 
@@ -98,7 +99,8 @@ function poison.apply(ctx, monster, definition, levels, source, force,
         })
     end
 
-    if degree > old_degree then
+    if degree > old_degree and
+        senses.player_sees_actor(ctx, monster) then
         local text = old_degree == 0 and " is poisoned." or " looks even sicker."
         ctx:emit("poison", "The " .. definition.name .. text)
     end
@@ -151,7 +153,10 @@ function poison.tick(ctx, monster)
 
     if state.remaining_aut <= 0 then
         ctx:remove(monster, "projectile.poison")
-        ctx:emit("poison", "The " .. definition.name .. " looks more healthy.")
+        if senses.player_sees_actor(ctx, monster) then
+            ctx:emit("poison", "The " .. definition.name ..
+                " looks more healthy.")
+        end
 
         return
     end

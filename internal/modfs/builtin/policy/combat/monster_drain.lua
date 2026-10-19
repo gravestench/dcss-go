@@ -12,6 +12,7 @@ local monster_health = require("policy.combat.monster_health")
 local catalog = require("policy.catalog")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
+local senses = require("policy.character.senses")
 
 local drain = {}
 
@@ -107,7 +108,9 @@ function drain.apply(ctx, target, definition, source, stream)
         return false
     end
 
-    ctx:emit("combat", "The " .. definition.name .. " is drained!")
+    if senses.player_sees_actor(ctx, target) then
+        ctx:emit("combat", "The " .. definition.name .. " is drained!")
+    end
 
     local health, dealt = monster_health.damage(ctx, target,
         2 + ctx:random(random_stream, 3), source)
@@ -173,8 +176,10 @@ function drain.tick(ctx, monster)
     if actor then
         local definition = catalog.get("monsters", actor.kind_id)
 
-        ctx:emit("monster", "The " .. definition.name ..
-            " seems less drained.")
+        if senses.player_sees_actor(ctx, monster) then
+            ctx:emit("monster", "The " .. definition.name ..
+                " seems less drained.")
+        end
     end
 end
 

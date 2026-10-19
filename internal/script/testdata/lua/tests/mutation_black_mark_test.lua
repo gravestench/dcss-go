@@ -13,6 +13,7 @@ local monster_stats = require("policy.combat.monster_stats")
 local monster_drain = require("policy.combat.monster_drain")
 local records = require("policy.mutations.records")
 local harness = require("tests.harness")
+local support_fixture = require("tests.monster_ally_support_fixture")
 
 local test = {}
 
@@ -132,7 +133,8 @@ function test.run(ctx)
         "drain lowers effective monster hit dice")
 
     for _ = 1, math.ceil(drained.remaining_aut / 10) do
-        monster_drain.tick(ctx, drain_monster)
+        monster_drain.tick(support_fixture.context(ctx, drain_player),
+            drain_monster)
     end
 
     -- Drain must recover through the monster status timer, not the player turn.
