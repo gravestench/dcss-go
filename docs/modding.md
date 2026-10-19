@@ -13,6 +13,42 @@ sections on [components](#components), [systems](#systems),
 [content](#content-files), [vaults](#vault-maps-and-lua-hooks), and
 [saves](#saves-and-identity) describe the contracts those features use.
 
+## The five-minute mental model
+
+A mod file has one of three jobs: describe a fact, store per-entity state, or
+implement a rule. A `content/` file describes a monster, item, or spell at
+startup. A `schemas/` file declares the shape of state that can change and
+survive a save. A `policy/` or `systems/` file implements behavior when the
+game invokes it. The Lua runtime discovers these files; a content definition
+does not itself execute a spell or update a status.
+
+The engine passes a live `ctx` argument to invoked rules. It is access to
+the *current game*: ECS entities and components, the level grid, saved random
+streams, time, messages, and short-lived signals. There is no useful `ctx`
+while a file is loading. Do not store `ctx`, an entity handle, or changing
+game state in a module-level variable. Put lasting state in a component and
+read it with `ctx:get` each time the rule runs.
+
+When adding a feature, follow this path:
+
+1. Find the nearest bundled example and identify who calls it. A file can
+   load successfully without its returned function ever being invoked.
+2. Add a catalog definition if the feature has an identity or fixed facts.
+   Add a schema only if an individual entity needs mutable saved state.
+3. Put the rule in a focused policy for an event or effect, or in a system
+   for work that repeats on actions. Register it with that domain's existing
+   entry point.
+4. Inside the invoked function, use the passed `ctx` to read and write live
+   state. Pass it to other policies; do not create or cache another context.
+5. Add a `_test.lua` case using the production rule and schema, then launch
+   with `--mod-dir` to check discovery and integration.
+
+The [complete `ctx` reference](#the-game-context-ctx) lists every method,
+argument, return value, and invocation limit. The
+[feature walkthrough](#work-through-a-new-mod-feature) covers file placement
+and validation. The rest of this guide gives the contracts for each kind of
+content currently supported by the game.
+
 ## Choose an owner for a new feature
 
 | Need | Place it in | Why |
@@ -297,6 +333,15 @@ callback likewise needs a host path that calls that registered policy ID.
 Look at the nearest existing file and its caller before choosing an entry
 point. The same rule explains why a content definition can load correctly
 while a new mechanic still needs a resolver.
+
+The argument name is conventional; the important part is who supplies it.
+For example, `function effect.apply(ctx, player)` receives the game context
+from the potion command, while `player` is the entity being affected. In
+`function system.update(ctx, entity, delta)`, `entity` is the entity selected
+by the system's query. Neither argument is a content definition. To get that
+entity's mutable state, call `ctx:get(entity, component_id)`; to get a
+definition's fixed facts, use the catalog. The same monster kind can have
+many live entities with different health, positions, and statuses.
 
 Think of `ctx` as access to one running game's state, supplied only while a
 rule is being invoked. A content file describes what a thing *is* at startup;
