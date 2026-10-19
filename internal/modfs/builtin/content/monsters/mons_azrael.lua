@@ -10,6 +10,7 @@
 local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local brands = require("constants.weapon_brands")
+local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
     id = "MONS_AZRAEL",
@@ -76,7 +77,7 @@ local definition = {
     average_hp_10x = 880,
     ac = 10,
     ev = 5,
-    spellbook_id = "MST_AZRAEL",
+    spellbook_id = spellbooks.MST_AZRAEL,
     shout_id = "S_SILENT",
     intelligence_id = "I_HUMAN",
     habitat_id = "HT_LAND",

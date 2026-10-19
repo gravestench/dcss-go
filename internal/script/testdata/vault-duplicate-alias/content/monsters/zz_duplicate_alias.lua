@@ -1,6 +1,7 @@
 -- A duplicate vault alias in a monster definition must fail alias validation.
 
 local categories = require("constants.catalog")
+local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
     id = "MONS_TEST_DUPLICATE_ALIAS",
@@ -8,7 +9,7 @@ local definition = {
     vault_aliases = { "rat" },
     status = "defined",
     habitat_id = "HT_LAND",
-    spellbook_id = "MST_NO_SPELLS",
+    spellbook_id = spellbooks.MST_NO_SPELLS,
     average_hp_10x = 25,
     speed = 10,
     hd = 1,

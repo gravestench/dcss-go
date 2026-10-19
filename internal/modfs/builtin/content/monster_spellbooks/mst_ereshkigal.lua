@@ -4,6 +4,8 @@
 -- The table does not register or cast any spell effect.
 
 local categories = require("constants.catalog")
+local flags = require("constants.monster_spell_flags")
+local spells = require("ids.spells")
 
 local definition = {
     id = "MST_ERESHKIGAL",
@@ -11,51 +13,51 @@ local definition = {
     -- owning monster.
     slots = {
         {
-            spell_id = "SPELL_BOLT_OF_COLD",
+            spell_id = spells.SPELL_BOLT_OF_COLD,
             frequency = 11,
             flags = {
-                "MON_SPELL_MAGICAL",
+                flags.MAGICAL,
             },
         },
 
         {
-            spell_id = "SPELL_SYMBOL_OF_TORMENT",
+            spell_id = spells.SPELL_SYMBOL_OF_TORMENT,
             frequency = 11,
             flags = {
-                "MON_SPELL_MAGICAL",
+                flags.MAGICAL,
             },
         },
 
         {
-            spell_id = "SPELL_SUMMON_TZITZIMITL",
+            spell_id = spells.SPELL_SUMMON_TZITZIMITL,
             frequency = 11,
             flags = {
-                "MON_SPELL_MAGICAL",
+                flags.MAGICAL,
             },
         },
 
         {
-            spell_id = "SPELL_PARALYSE",
+            spell_id = spells.SPELL_PARALYSE,
             frequency = 11,
             flags = {
-                "MON_SPELL_MAGICAL",
+                flags.MAGICAL,
             },
         },
 
         {
-            spell_id = "SPELL_SILENCE",
+            spell_id = spells.SPELL_SILENCE,
             frequency = 11,
             flags = {
-                "MON_SPELL_MAGICAL",
+                flags.MAGICAL,
             },
         },
 
         {
-            spell_id = "SPELL_MAJOR_HEALING",
+            spell_id = spells.SPELL_MAJOR_HEALING,
             frequency = 11,
             flags = {
-                "MON_SPELL_MAGICAL",
-                "MON_SPELL_EMERGENCY",
+                flags.MAGICAL,
+                flags.EMERGENCY,
             },
         },
     },

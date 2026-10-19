@@ -8,6 +8,7 @@
 
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
     id = "MONS_BALL_PYTHON",
@@ -51,7 +52,7 @@ local definition = {
     hd = 1,
     average_hp_10x = 35,
     ev = 11,
-    spellbook_id = "MST_NO_SPELLS",
+    spellbook_id = spellbooks.MST_NO_SPELLS,
     leaves_corpse = true,
     shout_id = "S_HISS",
     intelligence_id = "I_ANIMAL",

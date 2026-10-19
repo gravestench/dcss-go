@@ -164,6 +164,9 @@ defenses, and auras. Elemental breath rays use natural monster HD; source
 caster exceptions for draconian cold breath and Xtahua's searing breath stay
 in their owning Lua effect modules. Fragment rays share source triple-armour
 contact handling while keeping their damage and accuracy in separate profiles.
+All 285 monster spellbook files import their spell and slot-flag references;
+monster definitions import spellbook IDs. Each content file still declares
+its own ID, while cross-file references resolve through the effective catalog.
 Flaming, Petrifying, and Spectral Cloud place saved ray-cell clouds through
 the Lua cloud owner; Flaming and Spectral Cloud also place endpoint fields.
 Ink Cloud uses the same owner for its water-only self cast.

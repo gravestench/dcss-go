@@ -6,6 +6,8 @@ local harness = require("tests.harness")
 local monsters = require("ids.monsters")
 local spells = require("ids.spells")
 local vault_spells = require("constants.vault_spell_override")
+local flags = require("constants.monster_spell_flags")
+local attitudes = require("constants.attitude")
 
 local test = {}
 
@@ -41,13 +43,13 @@ local function duplicate_ids_have_distinct_slots()
             {
                 spell_id = spells.SPELL_BLINK,
                 frequency = 9,
-                flags = { "MON_SPELL_WIZARD" },
+                flags = { flags.WIZARD },
             },
 
             {
                 spell_id = spells.SPELL_BLINK,
                 frequency = 18,
-                flags = { "MON_SPELL_EMERGENCY" },
+                flags = { flags.EMERGENCY },
             },
         },
     }
@@ -70,7 +72,7 @@ function test.run(ctx)
         base_id = "",
         variant = "",
         colour = "",
-        attitude = "hostile",
+        attitude = attitudes.HOSTILE,
         spells = { vault_spells.EMPTY_BOOK },
     })
 

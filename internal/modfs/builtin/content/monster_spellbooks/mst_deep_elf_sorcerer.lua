@@ -4,6 +4,8 @@
 -- The table does not register or cast any spell effect.
 
 local categories = require("constants.catalog")
+local flags = require("constants.monster_spell_flags")
+local spells = require("ids.spells")
 
 local definition = {
     id = "MST_DEEP_ELF_SORCERER",
@@ -11,34 +13,34 @@ local definition = {
     -- owning monster.
     slots = {
         {
-            spell_id = "SPELL_CORROSIVE_BOLT",
+            spell_id = spells.SPELL_CORROSIVE_BOLT,
             frequency = 18,
             flags = {
-                "MON_SPELL_WIZARD",
+                flags.WIZARD,
             },
         },
 
         {
-            spell_id = "SPELL_BANISHMENT",
+            spell_id = spells.SPELL_BANISHMENT,
             frequency = 11,
             flags = {
-                "MON_SPELL_WIZARD",
+                flags.WIZARD,
             },
         },
 
         {
-            spell_id = "SPELL_HASTE",
+            spell_id = spells.SPELL_HASTE,
             frequency = 22,
             flags = {
-                "MON_SPELL_WIZARD",
+                flags.WIZARD,
             },
         },
 
         {
-            spell_id = "SPELL_HURL_DAMNATION",
+            spell_id = spells.SPELL_HURL_DAMNATION,
             frequency = 11,
             flags = {
-                "MON_SPELL_WIZARD",
+                flags.WIZARD,
             },
         },
     },

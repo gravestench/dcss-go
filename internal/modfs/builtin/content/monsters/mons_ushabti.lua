@@ -8,6 +8,7 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
+local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
     id = "MONS_USHABTI",
@@ -68,7 +69,7 @@ local definition = {
     average_hp_10x = 455,
     ac = 9,
     ev = 6,
-    spellbook_id = "MST_USHABTI",
+    spellbook_id = spellbooks.MST_USHABTI,
     shout_id = "S_SILENT",
     intelligence_id = "I_HUMAN",
     habitat_id = "HT_LAND",

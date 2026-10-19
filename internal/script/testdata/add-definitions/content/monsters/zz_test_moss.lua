@@ -2,13 +2,14 @@
 
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
     id = "MONS_TEST_MOSS",
     name = "test moss",
     status = "defined",
     habitat_id = "HT_LAND",
-    spellbook_id = "MST_NO_SPELLS",
+    spellbook_id = spellbooks.MST_NO_SPELLS,
     average_hp_10x = 25,
     speed = 10,
     hd = 1,

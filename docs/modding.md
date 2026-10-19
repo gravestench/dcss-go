@@ -1092,6 +1092,41 @@ local table with commented `plan(ctx, caster, foe, slot)` and
 `resolve(ctx, caster, foe, slot, plan)` methods, as shown in the
 [`ctx` walkthrough](#follow-one-rule-from-entry-to-state-change).
 
+The spellbook file declares its *own* ID and imports IDs it refers to. For
+example, `content/monster_spellbooks/mst_moss_helper.lua` can contain:
+
+```lua
+-- This book gives the moss creature one natural summon cast. The effect
+-- lives in its spell policy, so the book only decides when to offer it.
+local categories = require("constants.catalog")
+local flags = require("constants.monster_spell_flags")
+local spells = require("ids.spells")
+
+local definition = {
+    id = "MST_MOSS_HELPER",
+    slots = {
+        {
+            spell_id = spells.SPELL_MOSS_HELPER,
+            frequency = 18,
+            flags = {
+                flags.NATURAL,
+            },
+        },
+    },
+}
+
+register.definition(categories.MONSTER_SPELLBOOKS, definition)
+
+return definition
+```
+
+In the monster's own file, import `ids.monster_spellbooks` and set
+`spellbook_id = spellbooks.MST_MOSS_HELPER`. The `ids.*` modules resolve
+references against the effective bundled and overlay catalogs, so a new
+spell or book can live in a separate file without editing a central ID
+list. Unknown references fail at startup after content registration; file
+discovery order does not determine a spell choice or random draw.
+
 `plan` runs before the cast is committed. Return `nil` when the spell cannot
 currently be used. Otherwise return a typed entity or cell target that can
 cross the intent boundary. A foe-centered summon should save the selected
