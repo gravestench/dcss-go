@@ -15,6 +15,10 @@ sections on [components](#components), [systems](#systems),
 [content](#content-files), [vaults](#vault-maps-and-lua-hooks), and
 [saves](#saves-and-identity) describe the contracts those features use.
 
+If this is your first mod, read [what `ctx` is](#ctx-in-one-minute), then
+[follow a rule from entry to state change](#follow-one-rule-from-entry-to-state-change).
+Those two sections explain when Lua runs and where changing game state lives.
+
 ## The five-minute mental model
 
 A mod file has one of three jobs: describe a fact, store per-entity state, or
@@ -30,6 +34,50 @@ streams, time, messages, and short-lived signals. There is no useful `ctx`
 while a file is loading. Do not store `ctx`, an entity handle, or changing
 game state in a module-level variable. Put lasting state in a component and
 read it with `ctx:get` each time the rule runs.
+
+### `ctx` in one minute
+
+`ctx` is an argument supplied by the engine **when a game rule runs**. It is
+not a global, a monster, a component, or a definition. A Lua file normally
+loads once to register its definition or callback. The callback runs later,
+with `ctx` for the current game action. For example:
+
+```lua
+local components = require("constants.component")
+
+local effect = {}
+
+-- Read the live actor's health when the effect occurs. The returned table
+-- is a snapshot; writing it back makes the change visible to later rules.
+function effect.heal(ctx, actor, amount)
+    local health = ctx:get(actor, components.HEALTH)
+
+    if not health then
+        return false
+    end
+
+    health.current = math.min(health.max, health.current + amount)
+    ctx:set(actor, components.HEALTH, health)
+
+    return true
+end
+
+return effect
+```
+
+Another Lua rule must call `effect.heal(ctx, actor, amount)` for this helper
+to run. Merely putting the file under `policy/` loads the module; it does not
+schedule `heal`. The caller supplies the same `ctx` it received, so both
+rules see the same game action. Use `ctx:player()` only when the rule means
+the player specifically; a monster can be the current actor.
+
+Ask **who calls this function?** before adding a `ctx` parameter. A system's
+`update` gets one from the scheduler. A registered host policy gets one from
+the Go caller, possibly empty for a read-only decision. A potion, spell, or
+monster effect gets one because its Lua caller passes it along. A content or
+schema declaration gets none at load time. A vault hook gets a separate
+generation `api`. The [entry-point table](#the-game-context-ctx) and
+[method reference](#entities-and-components) show the exact contracts.
 
 When adding a feature, follow this path:
 
@@ -327,6 +375,31 @@ stateful rules in a runtime with those services.
 | A content or schema file | Startup loader | No `ctx`; register and return a definition |
 | A `.des` vault hook | Vault script bridge | A vault-specific `api`, described below |
 
+The callback signature belongs to its **domain**, while the context methods
+come from the engine. The following examples show where to inspect the
+domain contract before writing a new handler:
+
+- **Timed ECS behavior:** `systems/player_status.lua` shows how Akara's
+  scheduler calls `update(ctx, entity, delta)`.
+- **Potion effect:** `policy/potions/effects/curing.lua` shows how the quaff
+  command calls `can_quaff(ctx, player, forced)` and `apply(ctx, player)`.
+- **Player spell:** `policy/magic/effects/direct/smiting.lua` shows how the
+  spell command calls `resolve(ctx, player, intent, spell, power)`.
+- **Monster spell:** `policy/combat/monster_spells/smiting.lua` shows how AI
+  calls `plan(ctx, caster, foe, slot)` and later
+  `resolve(ctx, caster, foe, slot, plan)`.
+- **Mutation:** `policy/mutations/effects/icy_defense.lua` shows a handler
+  registered by capability. Inspect that capability's argument order.
+- **Vault hook:** `policy/generation/vaults/arrival/dpeg_arrival_water_fire.lua`
+  shows a named `.des` method called with the generation `api`.
+
+These examples live below `internal/modfs/builtin/`. A handler may ignore an
+argument, as Curing ignores `forced` or a particular system ignores `delta`.
+Do not copy one domain's method signature into another. Read its registry
+and one nearby effect first. In particular, a mutation capability may put
+`level` before `ctx`; a `policy/` pathname alone does not establish an
+argument order.
+
 `ctx` is a normal function argument, never a magic global. A discovered
 `policy/` file is *loaded*, but merely returning `effect.apply` does not make
 the game call it. Connect the method to its domain registry, as the bundled
@@ -382,6 +455,14 @@ functions during that same call. A helper that reads only its arguments can
 stay pure and need no context. This keeps dependencies visible: a function
 with `ctx` may inspect or change the current game; a function without it
 cannot silently reach into game state.
+
+If a function does not receive `ctx`, first look for the owner that invokes
+it. For example, the monster spell registry passes the live context to an
+effect's `plan` and `resolve` methods. A helper called by `resolve` receives
+that same argument explicitly. Do not reach for a module global to bridge
+the two. If the intended caller is a content definition, it has no live
+game context; move the behavior into a policy or system and connect it to
+that domain's dispatch path.
 
 `ctx` supplies **engine capabilities**, not every game rule. It can read an
 ECS component, draw from a saved random stream, ask the grid about a cell, or

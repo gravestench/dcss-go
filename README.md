@@ -51,7 +51,9 @@ same relative path; otherwise its files are added. For example, to change the
 bundled rat, put a file at `content/monsters/mons_rat.lua` in your mod
 directory. The effective file bytes identify the ruleset in saves.
 
-Read the [modding guide](docs/modding.md) for the full `ctx` API, field types,
+Start with the [modding guide's `ctx` primer](docs/modding.md#ctx-in-one-minute)
+to see when the engine passes live game state to Lua. The full
+[modding guide](docs/modding.md) covers the `ctx` methods, field types,
 content contracts, policy versus system decisions, vault hooks, testing, and
 save behavior.
 The committed Lua files are the source of truth; no C++ import or regeneration
