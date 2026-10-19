@@ -112,6 +112,13 @@ function damage.armour(ctx, raw, ac, profile)
 
     local saved = ctx:random("monster_spell", ac + 1)
 
+    if profile.flavour == flavours.BEAM_FRAG then
+        -- beam.cc:bolt::apply_AC selects ac_type::triple for fragments.
+        -- Each draw is separate so a saved RNG stream replays the same hit.
+        saved = saved + ctx:random("monster_spell", ac + 1)
+        saved = saved + ctx:random("monster_spell", ac + 1)
+    end
+
     if profile.flavour == flavours.BEAM_ELECTRICITY then
         saved = math.floor(saved / 2)
     end
@@ -125,7 +132,8 @@ function damage.resisted(ctx, target, raw, profile)
         return water.damage(ctx, target, raw)
     end
 
-    if profile.flavour == flavours.BEAM_MMISSILE then
+    if profile.flavour == flavours.BEAM_MMISSILE or
+        profile.flavour == flavours.BEAM_FRAG then
         return raw
     end
 

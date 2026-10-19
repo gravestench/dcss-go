@@ -12,7 +12,7 @@ local test = {}
 function test.run()
     local profiles = catalog.all("monster_beams")
 
-    harness.equal(#profiles, 65,
+    harness.equal(#profiles, 67,
         "every source monster zap has a committed profile")
 
     for _, profile in ipairs(profiles) do
@@ -42,6 +42,41 @@ function test.run()
         "Freezing Cloud keeps its mon-cast override")
     harness.equal(cloud.flavour, flavours.BEAM_COLD,
         "Freezing Cloud keeps its source flavor")
+
+    -- Source zap-data.h gives the metal and wooden sprays different dice,
+    -- accuracy, and glyphs. Both are piercing fragmentation rays.
+    local fragment_cases = {
+        {
+            spell_id = spells.SPELL_METAL_SPLINTERS,
+            zap_id = zaps.ZAP_METAL_SPLINTERS,
+            base_sides = 20,
+            hit_base = 19,
+        },
+
+        {
+            spell_id = spells.SPELL_SPLINTERSPRAY,
+            zap_id = zaps.ZAP_SPLINTERSPRAY,
+            base_sides = 15,
+            hit_base = 17,
+        },
+    }
+
+    for _, expected in ipairs(fragment_cases) do
+        local profile = catalog.get("monster_beams", expected.spell_id)
+
+        harness.equal(profile.zap_id, expected.zap_id,
+            expected.spell_id .. " uses the source zap")
+        harness.equal(profile.monster_damage.args[2], expected.base_sides,
+            expected.spell_id .. " uses source base sides")
+        harness.equal(profile.monster_damage.args[4], 20,
+            expected.spell_id .. " scales damage by one per 20 power")
+        harness.equal(profile.monster_tohit.args[1], expected.hit_base,
+            expected.spell_id .. " uses source hit base")
+        harness.equal(profile.flavour, flavours.BEAM_FRAG,
+            expected.spell_id .. " uses triple-armour fragments")
+        harness.truthy(profile.can_beam,
+            expected.spell_id .. " can pierce targets")
+    end
 end
 
 return test

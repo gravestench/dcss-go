@@ -152,7 +152,7 @@ Akara entity for each placed trap, and Lua systems for entry, timers, and
 malevolence. Pressure-plate marker consumers, the rest of the vault families,
 and deeper monster trait parity remain in the adjacent world domains.
 
-The monster beam domain now has 65 committed source profiles and one
+The monster beam domain now has 67 committed source profiles and one
 discoverable Lua effect per spell. A typed intent retains the chosen actor or
 cell, book slot, and direction; the actor-neutral Lua beam rules handle
 trajectory, shields, reflection, damage, resistance, clouds, terrain, and
@@ -162,8 +162,9 @@ rejects missing effects before a monster joins the live roster. The 13
 self-support spells now use actor-owned Lua statuses for boons, healing,
 defenses, and auras. Elemental breath rays use natural monster HD; source
 caster exceptions for draconian cold breath and Xtahua's searing breath stay
-in their owning Lua effect modules. Chaos and spells share the same Haste
-and Might state.
+in their owning Lua effect modules. Fragment rays share source triple-armour
+contact handling while keeping their damage and accuracy in separate profiles.
+Chaos and spells share the same Haste and Might state.
 The four ally-targeted support spells now select a genuine allied recipient
 through a beam ray and write those same saved boon, enchant, and health
 owners. The thirty-nine direct-creature monster summons now use one

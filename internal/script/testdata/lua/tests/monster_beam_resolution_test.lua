@@ -24,7 +24,7 @@ local shield_item = 404
 -- Optional second contacts, shields, and walls make the same deterministic
 -- world exercise beam, cloud, bounce, and reflection order.
 local function context(with_second, with_reflection, blocked_cloud_ray,
-    reflected_continuation, bounce_wall)
+    reflected_continuation, bounce_wall, short_range)
     local values = {
         [caster] = {
             [component.ACTOR] = {
@@ -52,7 +52,8 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
             },
             [component.POSITION] = {
                 level_id = 1,
-                x = with_reflection and 2 or bounce_wall and 3 or 4,
+                x = short_range and 2 or
+                    with_reflection and 2 or bounce_wall and 3 or 4,
                 y = 1,
             },
             [component.HEALTH] = {
@@ -79,7 +80,8 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
             },
             [component.POSITION] = {
                 level_id = 1,
-                x = reflected_continuation and 0 or 5,
+                x = short_range and 3 or
+                    reflected_continuation and 0 or 5,
                 y = 1,
             },
             [component.HEALTH] = {
@@ -242,6 +244,18 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
 
         if x == 1 then
             return caster
+        end
+
+        if short_range then
+            if x == 2 then
+                return foe
+            end
+
+            if x == 3 and with_second then
+                return next_foe
+            end
+
+            return nil
         end
 
         if x == 5 and with_second and not reflected_continuation or
@@ -505,10 +519,12 @@ local function draining_projectiles_and_bounces()
         spells.SPELL_LEHUDIBS_CRYSTAL_SPEAR,
         spells.SPELL_LIGHTNING_BOLT,
         spells.SPELL_MAGIC_DART,
+        spells.SPELL_METAL_SPLINTERS,
         spells.SPELL_SEARING_BREATH,
         spells.SPELL_SPIT_LAVA,
         spells.SPELL_STONE_ARROW,
         spells.SPELL_STEAM_BALL,
+        spells.SPELL_SPLINTERSPRAY,
         spells.SPELL_THORN_VOLLEY,
         spells.SPELL_THROW_FLAME,
         spells.SPELL_THROW_FROST,
@@ -549,6 +565,28 @@ local function draining_projectiles_and_bounces()
             spell_id .. " reaches the chosen foe first")
         harness.equal(contacts[2].target, next_foe,
             spell_id .. " penetrates to the second actor")
+    end
+
+    -- Both fragment zaps are piercing rays even though triple armour can
+    -- reduce each contact to zero damage.
+    local fragment_spells = {
+        spells.SPELL_METAL_SPLINTERS,
+        spells.SPELL_SPLINTERSPRAY,
+    }
+
+    for _, spell_id in ipairs(fragment_spells) do
+        local nearby = spell_id == spells.SPELL_SPLINTERSPRAY
+        local fragment_ctx = context(true, false, false, false, false,
+            nearby)
+        local effect = monster_spells.effect(spell_id)
+        local plan = effect.plan(fragment_ctx, caster, foe)
+        local contacts = effect.resolve(fragment_ctx, caster, foe,
+            nil, plan)
+
+        harness.equal(contacts[1].target, foe,
+            spell_id .. " reaches the selected target first")
+        harness.equal(contacts[2].target, next_foe,
+            spell_id .. " penetrates to a second actor")
     end
 
     local holy_ctx = context()

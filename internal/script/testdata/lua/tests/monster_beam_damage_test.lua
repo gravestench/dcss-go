@@ -44,6 +44,10 @@ function test.run()
     local miasma = catalog.get("monster_beams", spells.SPELL_MIASMA_BREATH)
     local stunning = catalog.get("monster_beams",
         spells.SPELL_STUNNING_BURST)
+    local metal = catalog.get("monster_beams",
+        spells.SPELL_METAL_SPLINTERS)
+    local wood = catalog.get("monster_beams",
+        spells.SPELL_SPLINTERSPRAY)
     local ctx = maximum_random()
 
     harness.equal(damage.armour(ctx, 20, 4, fire), 16,
@@ -52,6 +56,14 @@ function test.run()
         "Lightning Bolt uses half beam armour")
     harness.equal(damage.armour(ctx, 20, 4, stunning), 16,
         "Stunning Burst uses ordinary beam armour")
+    local before_frag = ctx.draws
+
+    harness.equal(damage.armour(ctx, 20, 4, metal), 8,
+        "Metal Splinters rolls armour three times")
+    harness.equal(ctx.draws - before_frag, 3,
+        "fragment armour consumes three saved draws")
+    harness.equal(damage.armour(ctx, 20, 4, wood), 8,
+        "Splinterspray uses the same triple armour rule")
 
     -- Damnation and Dispel Undead bypass armour without consuming an armour
     -- roll, preserving subsequent seeded beam damage.
@@ -118,6 +130,10 @@ function test.run()
         "fire dragon rC-1 amplifies Bolt of Cold damage")
     harness.equal(damage.resisted(ctx, 101, 20, dart), 20,
         "Magic Dart has no elemental resistance adjustment")
+    harness.equal(damage.resisted(ctx, 101, 20, metal), 20,
+        "metal fragments have no elemental resistance")
+    harness.equal(damage.resisted(ctx, 101, 20, wood), 20,
+        "wood fragments have no elemental resistance")
     harness.equal(damage.resisted(ctx, 101, 20, ice), 24,
         "Throw Icicle resists only its forty-percent cold portion")
     harness.equal(damage.resisted(ctx, 101, 20, lava), 11,
