@@ -18,8 +18,10 @@ relative path to change a bundled file.
 | Implement a one-shot effect or decision | [Choose an owner](#choose-an-owner-for-a-new-feature) and [the `ctx` walkthrough](#follow-one-rule-from-entry-to-state-change) |
 | Read or change the game from Lua | [The complete `ctx` reference](#the-game-context-ctx) |
 | Add a map or generation hook | [Vault maps and Lua hooks](#vault-maps-and-lua-hooks) |
+| Add a cloud, trap, or shop | [Clouds, traps, and shops](#clouds-traps-and-shops) |
 | Check a mod or understand a failed load | [Test a mod](#test-a-mod) and [context failures](#when-a-context-call-fails) |
 | Understand overlays and save compatibility | [Scaffolding](#scaffolding) and [saves and identity](#saves-and-identity) |
+| Try a complete live rule with `ctx` | [A first live mod](#a-first-live-mod) |
 
 The [root README](../README.md) has the shortest launch and wizard examples.
 This guide explains the contracts those examples depend on. If a mechanic
@@ -68,6 +70,55 @@ streams, time, messages, and short-lived signals. There is no useful `ctx`
 while a file is loading. Do not store `ctx`, an entity handle, or changing
 game state in a module-level variable. Put lasting state in a component and
 read it with `ctx:get` each time the rule runs.
+
+### A first live mod
+
+This one-file overlay changes an existing scroll without copying the base
+mod. Create `/path/to/my-mod/policy/scrolls/effects/torment.lua` with the
+following contents, then launch with
+`go run ./cmd/dcrawl --mod-dir=/path/to/my-mod`. The path replaces the
+bundled Torment scroll effect; the scroll command remains its caller.
+
+```lua
+local area = require("policy.combat.torment_area")
+local channels = require("constants.message_channels")
+local items = require("ids.items")
+local scrolls = require("policy.scrolls")
+
+local effect = {}
+
+-- Torment needs no extra choice prompt because it affects nearby actors.
+function effect.prepare()
+    return nil
+end
+
+-- The scroll command passes the current game and the reader here. The
+-- shared area rule applies the HP effect; this file owns only its trigger.
+-- Example: reading Torment emits the custom notice before the area effect.
+function effect.apply(ctx, reader)
+    ctx:emit(channels.READ, "The scroll calls out to the living.")
+    area.apply(ctx, reader, channels.READ)
+end
+
+scrolls.register(items.SCR_TORMENT, effect)
+
+return effect
+```
+
+At startup, the file loads and registers `effect`; no `ctx` exists yet.
+When the player reads that scroll, the scroll command calls `apply` with the
+live `ctx` and the reader's entity handle. `ctx:emit` adds the notice;
+`area.apply` receives the same context and performs the actual rule through
+the player and monster health owners. Changing the file on disk requires a
+new game session. Use a new path under `policy/scrolls/effects/` and a new
+item definition when adding a scroll rather than replacing this one.
+
+This example also shows how to inspect an unfamiliar API: open the bundled
+effect, follow its `scrolls.register` call to `policy/scrolls.lua`, then
+follow the scroll command that invokes `prepare` and `apply`. The
+`ctx` method list below tells you which engine operations are available;
+the domain's caller tells you *when* they run and what the other arguments
+mean. Both contracts matter for working content.
 
 Three names that often appear together mean different things:
 
@@ -1026,6 +1077,39 @@ If the potion also causes a timed condition, give that condition a component
 and a system that removes or updates it after the right number of aut. This
 keeps behavior in focused files and makes its state visible in saves.
 
+### Find the callback contract for your domain
+
+`ctx` provides engine operations, but it does not decide which callback is
+invoked or what `plan`, `apply`, or `trigger` should return. Check these paths
+in the bundled tree before implementing a new rule:
+
+- **Player spell:** Definition in `content/spells/`, behavior in
+  `policy/magic/effects/`. Inspect `policy.magic.effects.registry` and its
+  `resolve(ctx, player, intent, spell, power)` contract.
+- **Monster spell:** Definition in `content/spells/`, slot in
+  `content/monster_spellbooks/`, behavior in
+  `policy/combat/monster_spells/`. Inspect the monster spell registry's
+  `plan(ctx, caster, foe, slot)` and
+  `resolve(ctx, caster, foe, slot, plan)` contract.
+- **Potion or scroll:** Item definition in `content/items/`, behavior in
+  `policy/potions/effects/` or `policy/scrolls/effects/`. Inspect
+  `policy.potions` or `policy.scrolls` for the applicable methods.
+- **Cloud or trap:** Definition in `content/clouds/` or `content/traps/`;
+  the definition names its effect module. Inspect the paired effect and
+  the exposure or activation owner before writing its callback.
+- **Timed state:** Schema in `schemas/`, system in `systems/`. The Akara
+  scheduler calls `update(ctx, entity, delta)`.
+- **Vault hook:** Map in `vaults/<family>/`, named handler in
+  `policy/generation/vaults/<family>/`. The `.des` `vault.run` or
+  `vault.veto` hook receives generation `api`, not `ctx`.
+
+The paths are entry points, not a promise that every callback has identical
+arguments. For example, a scroll's `prepare` method can request input before
+`apply`, and a player spell's `intent` is different from a monster spell's
+saved `plan`. Read one nearby working effect and its dispatcher. Keep a rule
+that several definitions share in a focused policy module and have their
+individual effect files call it with the received `ctx`.
+
 ## Content files
 
 Put one definition in one file below `content/<category>/`. The recognized
@@ -1297,6 +1381,51 @@ Registering the same category and ID from two effective paths fails at
 startup and names both paths. Catalogs traverse definitions in stable ID
 order, regardless of file name or load order. A rule that needs a different
 order declares it within that rule's own data, such as population rows.
+
+## Clouds, traps, and shops
+
+These catalogs have different ways of turning fixed definitions into live
+gameplay. A definition file loads at startup; the corresponding rule runs
+later with a game `ctx` only when the game reaches that feature.
+
+For a **cloud**, add one file under `content/clouds/` and name an effect
+module in its `effect` field. `content/clouds/poison.lua` and
+`policy/clouds/effects/poison.lua` are the paired example. The definition
+owns name, color, opacity, spread, and damage metadata. The effect module
+returns an `apply` function. The cloud exposure owner calls
+`apply(ctx, actor, state, elapsed_aut, cloud_entity, definition)` when an
+actor occupies that cloud; `state` is the placed cloud's saved state, and
+`definition` is its fixed catalog entry. The effect may use `ctx` to apply
+poison or another rule and return the damage amount, or `nil` for none.
+The field and placement policies own cloud duration, location, and source
+attribution. Reuse them rather than storing those facts in a Lua global.
+
+For a **trap**, add a definition under `content/traps/` with an `effect`
+module path. `content/traps/alarm.lua` and
+`policy/traps/effects/alarm.lua` show the pair. On entry to a trap cell, the
+activation owner calls `trigger(ctx, trap, actor, site)`. Here `trap` is the
+live trap entity, `actor` is the creature that entered, and `site` is its
+saved trap state, including coordinates and charges. Return true when the
+effect consumed the trap; the activation owner destroys it. A one-shot
+definition can also consume its own charge before the effect runs. Read the
+activation policy before adding a new trap to understand visibility and
+movement timing.
+
+For a **shop**, add a definition under `content/shops/`. A normal shop type
+is data only: `content/shops/general.lua` supplies its display name,
+identification behavior, generation weight, and weighted item classes.
+The shared shop generation, stock, pricing, wallet, and purchase policies
+turn that definition into placed shops and saved inventory. Add a focused
+policy under `policy/shops/` only when the new shop needs a genuinely new
+rule; do not copy the full purchase flow into each shop type. Shop placement
+can also come from a `vaults/shop/` `.des` map and its optional hook, which
+uses the generation `api` described below, not a game `ctx`.
+
+All three categories validate their effective definitions at startup. A
+missing cloud or trap effect path fails before play; a malformed shop weight
+fails before stock generation. Import their IDs from `ids.clouds`,
+`ids.traps`, or `ids.shops` at use sites, and read the corresponding catalog
+validator if you need the exact accepted fields.
 
 ## Character definitions and choices
 
