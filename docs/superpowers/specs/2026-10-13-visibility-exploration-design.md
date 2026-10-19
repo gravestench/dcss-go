@@ -1,4 +1,4 @@
-# DCrawl Go: visibility and exploration
+# Dungeon Crawl Stone Soup Go engine: visibility and exploration
 
 Date: 2026-10-13
 

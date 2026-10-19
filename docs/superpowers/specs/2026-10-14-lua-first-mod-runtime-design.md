@@ -2,7 +2,7 @@
 
 ## Intent
 
-Make DCrawl easy to extend without editing or recompiling Go for ordinary
+Make Dungeon Crawl easy to extend without editing or recompiling Go for ordinary
 game rules. Lua is the first-class language for registering component schemas,
 ECS systems, monsters, items, spells, maps, generation, commands, and game
 policy. A complete embedded Lua tree ships with the game. A user may supply an

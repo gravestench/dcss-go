@@ -1,4 +1,4 @@
-# DCrawl Go: job catalog and character choice
+# Dungeon Crawl Stone Soup Go engine: job catalog and character choice
 
 Date: 2026-10-13
 

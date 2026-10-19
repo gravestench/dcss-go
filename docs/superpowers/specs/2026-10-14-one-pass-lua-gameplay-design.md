@@ -2,7 +2,7 @@
 
 ## Goal
 
-Convert the implemented DCrawl gameplay rules and policies into the embedded
+Convert the implemented Dungeon Crawl gameplay rules and policies into the embedded
 Lua mod tree as one integrated change. Avoid a sequence of Go/Lua domain
 bridges, duplicate handlers, and commits whose only purpose is to preserve
 compilation during migration. The branch may be broken while the conversion

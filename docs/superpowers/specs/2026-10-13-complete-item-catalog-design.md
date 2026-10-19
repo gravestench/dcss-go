@@ -1,4 +1,4 @@
-# DCrawl Go: complete base item catalog
+# Dungeon Crawl Stone Soup Go engine: complete base item catalog
 
 Date: 2026-10-13
 

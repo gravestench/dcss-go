@@ -1,4 +1,4 @@
-# DCrawl Go: Human/Fighter starting profile
+# Dungeon Crawl Stone Soup Go engine: Human/Fighter starting profile
 
 Date: 2026-10-13
 

@@ -1,4 +1,4 @@
-# DCrawl Go: source-traced species content import
+# Dungeon Crawl Stone Soup Go engine: source-traced species content import
 
 Date: 2026-10-13
 

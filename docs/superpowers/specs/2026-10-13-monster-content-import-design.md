@@ -1,4 +1,4 @@
-# DCrawl Go: source-traced monster catalog import
+# Dungeon Crawl Stone Soup Go engine: source-traced monster catalog import
 
 Date: 2026-10-13
 

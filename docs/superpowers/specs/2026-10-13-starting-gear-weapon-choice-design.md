@@ -1,4 +1,4 @@
-# DCrawl Go: starting gear and weapon choice
+# Dungeon Crawl Stone Soup Go engine: starting gear and weapon choice
 
 Date: 2026-10-13
 
