@@ -7,6 +7,7 @@ local constriction = require("policy.combat.player_constriction")
 local equipment_rules = require("policy.inventory.equipment")
 local fighter = require("policy.combat.fighter")
 local player_attack = require("policy.combat.player_attack")
+local player_weakness = require("policy.combat.player_weakness")
 local forms = require("policy.magic.effects.forms.player")
 local mutations = require("ids.mutations")
 local skills = require("ids.skills")
@@ -158,6 +159,9 @@ function auxiliary.damage(ctx, input, base)
 
     damage = damage + roll.melee(ctx,
         statuses.wereblood_slay(ctx, ctx:player()) + 1)
+
+    -- Weak scales every raw player melee hit, including natural follow-ups.
+    damage = player_weakness.melee_damage(ctx, ctx:player(), damage)
 
     return math.max(0, damage - roll.armour(ctx, input.defender_ac))
 end

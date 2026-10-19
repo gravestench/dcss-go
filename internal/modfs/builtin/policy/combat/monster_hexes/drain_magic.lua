@@ -21,18 +21,17 @@ local function heal_ghost_moth(ctx, caster, amount)
     local health = ctx:get(caster, component.HEALTH)
 
     if health then
-        health.current = math.min(health.maximum,
+        health.current = math.min(health.max,
             health.current + amount)
         ctx:set(caster, component.HEALTH, health)
     end
 end
 
--- Example: drain.apply(ctx, caster, defender, profile) with player at zero MP -> no MP drained
--- Source: beam.cc:BEAM_DRAIN_MAGIC. Only drained MP or a monster's
--- antimagic duration heals the ghost moth caster.
-function drain.apply(ctx, caster, defender, profile)
-    local power = enchantment.enchantment_power(ctx, caster, profile)
-
+-- Source: beam.cc:BEAM_DRAIN_MAGIC. Both a beam contact and a direct gaze
+-- reach this owner with an explicit enchantment power. Ghost Moths heal
+-- only from MP actually lost or monster antimagic actually applied.
+-- Example: drain.apply_power(ctx, moth, player, 80) at zero MP heals nothing.
+function drain.apply_power(ctx, caster, defender, power)
     if ctx:has(defender, component.PLAYER) then
         local magic = ctx:get(defender, component.MAGIC)
         local upper = math.floor(power / 8)
@@ -57,6 +56,14 @@ function drain.apply(ctx, caster, defender, profile)
         definition, power)
 
     heal_ghost_moth(ctx, caster, math.floor(duration / 10))
+end
+
+-- Beam profiles derive their own stepped power before using the same
+-- drain rule as a source gaze, which has no beam hit roll or profile.
+function drain.apply(ctx, caster, defender, profile)
+    local power = enchantment.enchantment_power(ctx, caster, profile)
+
+    drain.apply_power(ctx, caster, defender, power)
 end
 
 return drain

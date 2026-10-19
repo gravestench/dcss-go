@@ -26,6 +26,7 @@ local function fire_vortex_attack(ctx, summon, target, attacker)
     local victim_def = catalog.get("monsters", victim.kind_id)
     local combat = ctx:get(target, "core.combat")
     local outcome = melee.monster(ctx, {
+        attacker = summon,
         hd = monster_stats.hit_dice(ctx, summon, attacker_def),
         damage = 0,
         type_id = "AT_HIT",
@@ -165,6 +166,7 @@ function summon_melee.attack(ctx, summon, target)
             end
 
             local outcome = melee.monster(ctx, {
+                attacker = summon,
                 hd = hd,
                 damage = base,
                 type_id = strike.type_id,

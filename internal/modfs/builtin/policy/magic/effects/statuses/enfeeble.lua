@@ -7,6 +7,7 @@ local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 local monster_stats = require("policy.combat.monster_stats")
 local roll = require("policy.combat.roll")
+local streams = require("constants.rng_streams")
 
 local enfeeble = {}
 local books = {}
@@ -200,15 +201,14 @@ function enfeeble.apply_drain_magic(ctx, target, definition, power)
     return duration
 end
 
--- Source: monster.cc:monster::weaken with power six for Black Mark.
-function enfeeble.apply_weak(ctx, target, definition, power)
-    if not has_attacks(definition) then
-        return false
-    end
-
+-- Source monster::weaken stacks its timer regardless of attack shape.
+-- Black Mark checks attack viability before calling; a monster gaze does
+-- not. Both share this owner and choose the caster's saved RNG stream.
+function enfeeble.apply_weak(ctx, target, definition, power, stream)
     local next_state, existed = status(ctx, target)
     local was_weak = next_state.weak_aut > 0
-    local duration = (power + ctx:random("mutation", power + 3)) * 10
+    local duration = (power + ctx:random(stream or streams.MUTATION,
+        power + 3)) * 10
 
     next_state.weak_aut = next_state.weak_aut + duration
     save_status(ctx, target, next_state, existed)

@@ -76,6 +76,7 @@ local component = {
     HEX_STATUS = "magic.hex_status",
     PLAYER_FORM = "magic.player_form",
     PLAYER_PARALYSIS = "magic.player_paralysis",
+    PLAYER_WEAKNESS = "combat.player_weakness",
     PLAYER_SLEEP = "magic.player_sleep",
     PLAYER_PETRIFICATION = "magic.player_petrification",
     PERMANENT_HP_LOSS = "magic.permanent_hp_loss",

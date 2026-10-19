@@ -84,6 +84,26 @@ function test.run(ctx)
     local battle = attack_context(ctx, player)
     local ordered = auxiliary.all()
 
+    -- Weak applies to natural follow-up hits as well as the main strike.
+    -- Use high draws to make the pre-armour damage comparison observable.
+    local strong = attack_context(ctx, player)
+
+    function strong.random(_, _, bound)
+        return bound - 1
+    end
+
+    local ordinary_aux = auxiliary.damage(strong, input(), 10)
+
+    ctx:add(player, component.PLAYER_WEAKNESS, {
+        remaining_aut = 10,
+    })
+
+    local weak_aux = auxiliary.damage(strong, input(), 10)
+
+    harness.truthy(weak_aux < ordinary_aux,
+        "Weak reduces auxiliary melee damage before armour")
+    ctx:remove(player, component.PLAYER_WEAKNESS)
+
     -- A fixed auxiliary ordering determines which attacks spend RNG first.
     harness.equal(ordered[1].id, attacks.CONSTRICT.id,
         "source order starts with constriction")

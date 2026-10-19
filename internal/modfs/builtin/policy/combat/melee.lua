@@ -1,6 +1,7 @@
 local auxiliary = require("policy.combat.auxiliary")
 local player_attack = require("policy.combat.player_attack")
 local roll = require("policy.combat.roll")
+local enfeeble = require("policy.magic.effects.statuses.enfeeble")
 
 local melee = {}
 
@@ -94,6 +95,13 @@ function melee.monster_damage(ctx, attack, defense)
 
     local base = roll.melee(ctx, attack.damage)
     local damage = weapon_damage + 1 + base
+
+    -- Source Weak scales a monster's raw strike before the defender's AC.
+    -- `attacker` is optional for pure contact fixtures without an actor.
+    if attack.attacker then
+        damage = enfeeble.melee_damage(ctx, attack.attacker, damage)
+    end
+
     local saved = roll.gdr_armour(ctx, defense, potential)
     return math.max(0, damage - saved)
 end

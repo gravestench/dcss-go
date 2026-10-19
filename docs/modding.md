@@ -343,6 +343,28 @@ entity's mutable state, call `ctx:get(entity, component_id)`; to get a
 definition's fixed facts, use the catalog. The same monster kind can have
 many live entities with different health, positions, and statuses.
 
+When reading an unfamiliar callback, identify four things before using
+`ctx`: **who calls it**, **which entity it concerns**, **which component or
+catalog definition owns the fact**, and **whether the result must persist**.
+The answers determine the API call:
+
+| What the rule needs | Where to get or keep it |
+| --- | --- |
+| Fixed monster or item facts shared by every instance | Import its ID and call `policy.catalog.get(category, id)`. |
+| Current HP, location, equipment, or status | Read with `ctx:get`; replace the component with `ctx:set`. |
+| A new per-entity status that survives turns and saves | Declare a `schemas/` component and attach it with `ctx:add`. |
+| A fact another system needs during this action only | Publish `ctx:signal` and consume it with `ctx:signals`. |
+| Text for the player | Use `ctx:emit`; messages are presentation, not rule state. |
+| An action-time random choice | Use a named `ctx:random` stream inside the invoked callback. |
+| A terrain or movement change | Use the grid methods on `ctx`, which maintain spatial indexes. |
+
+For example, a monster content file may say its kind has 5 HD. A live
+monster has its own HP and position components. A cast first finds the live
+caster and target handles; its effect can read the caster's current position
+through `ctx:get`, get the kind's fixed spell facts from the catalog, roll
+the result with `ctx:random`, and attach a duration component to the target.
+The catalog definition never changes when one monster is wounded.
+
 Think of `ctx` as access to one running game's state, supplied only while a
 rule is being invoked. A content file describes what a thing *is* at startup;
 an effect or system uses `ctx` to decide what happens *now*. The scheduler
@@ -492,6 +514,16 @@ the action barrier; later callbacks in that action can see their staged
 view. Persistent state belongs on components, while `ctx:signal` is only
 for communication during the current action. This is why a module-level
 Lua variable cannot stand in for a cooldown or a saved status.
+
+For a direct status effect, follow the gaze files as a concrete example:
+`policy/combat/monster_spells/weakening_gaze.lua` plans a visible target,
+then its `resolve` calls the player or monster status owner. The player
+owner stores `combat.player_weakness` through `ctx:add` or `ctx:set`; its
+system ages that component using action aut. The attack policies read it
+when calculating melee damage. The spell ID comes from `ids.spells` and the
+component ID from `constants.component`; neither is retyped in each caller.
+A new effect can reuse this context and ownership pattern while keeping its
+own formula and comments in its own file.
 
 Use a colon for every method below: `ctx:get(actor, id)` passes `ctx` as the
 first argument. Most methods raise a Lua error for an unknown component,

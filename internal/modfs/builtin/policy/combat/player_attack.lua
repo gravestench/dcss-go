@@ -3,6 +3,7 @@ local forms = require("policy.magic.effects.forms.player")
 local statuses = require("policy.magic.effects.statuses.player")
 local accuracy = require("policy.character.accuracy")
 local stab = require("policy.combat.stab")
+local weakness = require("policy.combat.player_weakness")
 local size = require("constants.size")
 
 local player_attack = {}
@@ -157,6 +158,9 @@ function player_attack.damage(ctx, input)
     end
 
     damage = stab.damage(ctx, ctx:player(), input, input.stab_plan, damage)
+
+    -- Source Weak scales raw melee power before AC, including stab hits.
+    damage = weakness.melee_damage(ctx, ctx:player(), damage)
 
     local saved = roll.armour(ctx, input.defender_ac)
 

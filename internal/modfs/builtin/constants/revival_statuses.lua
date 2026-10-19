@@ -19,6 +19,7 @@ local statuses = {
     component.PLAYER_FORM,
     component.PLAYER_PARALYSIS,
     component.PLAYER_SLOW,
+    component.PLAYER_WEAKNESS,
     component.PLAYER_STATUS,
     component.POWERED_BY_DEATH,
     component.SANGUINE_ARMOUR,

@@ -287,14 +287,12 @@ local function grab(ctx, attacker, definition, player_health)
 
     local defense = fighter.defense(ctx)
     local outcome = melee.monster(ctx, {
+        attacker = attacker,
         hd = monster_stats.hit_dice(ctx, attacker, definition),
         damage = attack.damage,
         type_id = attack.type_id,
         flavour_id = attack.flavour_id,
     }, defense)
-
-    outcome.damage = statuses.enfeeble_melee_damage(ctx, attacker,
-        outcome.damage)
 
     update_shield(ctx, outcome)
     practice.incoming_melee(ctx, outcome, defense)
@@ -343,6 +341,7 @@ function actions.monster(ctx, attacker)
     end
 
     local attack_input = {
+        attacker = attacker,
         hd = monster_stats.hit_dice(ctx, attacker, definition),
         damage = attack.damage,
         type_id = attack.type_id,
@@ -457,6 +456,7 @@ function actions.monster_target(ctx, attacker, target)
         shield_blocks = combat and combat.shield_blocks or 0,
     }
     local outcome = melee.monster(ctx, {
+        attacker = attacker,
         hd = monster_stats.hit_dice(ctx, attacker, attacker_def,
             summon_stats and summon_stats.hd or nil),
         damage = attack.damage,
@@ -470,9 +470,8 @@ function actions.monster_target(ctx, attacker, target)
         ctx:set(target, "core.combat", combat)
     end
 
-    local dealt = statuses.enfeeble_melee_damage(ctx, attacker,
+    local dealt = statuses.frenzy_melee_damage(ctx, attacker,
         outcome.damage)
-    dealt = statuses.frenzy_melee_damage(ctx, attacker, dealt)
     dealt = boons.damage(ctx, attacker, dealt)
     local health = damage(ctx, target, dealt,
         targets.allied(ctx, attacker) or statuses.frenzied(ctx, attacker),
