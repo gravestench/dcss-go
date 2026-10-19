@@ -81,6 +81,7 @@ local component = {
     WATER_HOLD = "combat.water_hold",
     POISON = "core.poison",
     BARBS = "combat.barbs",
+    MONSTER_ROLLING = "combat.monster_rolling",
     PROJECTILE_SLOW = "projectile.slow",
     PROJECTILE_POISON = "projectile.poison",
     -- Spell status is persisted on affected entities; the Lua effect and tick

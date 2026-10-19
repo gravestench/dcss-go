@@ -2,6 +2,7 @@
 
 local attack_types = {
     NONE = "AT_NONE",
+    HIT = "AT_HIT",
 }
 
 return attack_types

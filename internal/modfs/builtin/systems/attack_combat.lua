@@ -1,6 +1,7 @@
 local melee = require("policy.combat.melee_actions")
 local ranged = require("policy.combat.ranged_actions")
 local player_projectiles = require("policy.combat.player_projectiles")
+local roll = require("policy.combat.monster_roll")
 
 local system = {}
 
@@ -48,6 +49,12 @@ function system.update(ctx, attacker)
         melee.monster(ctx, attacker)
     else
         melee.monster_target(ctx, attacker, target)
+    end
+
+    -- Source melee always removes ENCH_ROLLING after contact, including a
+    -- miss or shield block. The attack used the doubled damage above.
+    if attacker ~= ctx:player() then
+        roll.finish_attack(ctx, attacker)
     end
 end
 

@@ -10,6 +10,7 @@ local intent_ids = require("constants.intent")
 local acrobat = require("policy.jewellery.acrobat")
 local trap_held = require("policy.traps.held")
 local barbs = require("policy.combat.barbs")
+local roll = require("policy.combat.monster_roll")
 
 -- Theory of operation: Movement first handles escape and occupied cells, then commits a legal destination.
 -- A failed constriction escape spends the movement action; a successful one costs the holder energy.
@@ -119,6 +120,7 @@ function system.update(ctx, actor, elapsed_aut)
     -- Only a free destination and completed escape reaches the position mutation.
     ctx:move_actor(actor, position.level_id, x, y)
     barbs.moved(ctx, actor, elapsed_aut)
+    roll.moved(ctx, actor)
 
     if actor == ctx:player() then
         acrobat.moved(ctx, actor)

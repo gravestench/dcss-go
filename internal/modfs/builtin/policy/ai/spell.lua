@@ -9,6 +9,7 @@ local component = require("constants.component")
 local intents = require("constants.intent")
 local spell_flags = require("constants.spell_flags")
 local brilliance = require("policy.combat.monster_support.brilliance")
+local roll = require("policy.combat.monster_roll")
 
 local spell = {}
 
@@ -98,6 +99,12 @@ end
 -- Build a cast intent only after book selection, target planning, and antimagic checks agree.
 -- Example: silence is included in prospect conditions before a book slot becomes a targetable intent.
 function spell.choose(ctx, entity, foe, fleeing)
+    -- The source does not let a rolling boulder beetle cast again until
+    -- it uncurls after a collision, blocked step, or expired enchantment.
+    if roll.active(ctx, entity) then
+        return nil
+    end
+
     local book = spellbook.for_actor(ctx, entity)
 
     if not book then

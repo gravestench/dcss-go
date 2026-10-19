@@ -19,6 +19,8 @@ local mutation_capabilities = require("constants.mutation_capabilities")
 local rage = require("policy.character.rage")
 local monster_stats = require("policy.combat.monster_stats")
 local monster_profile = require("policy.combat.monster_profile")
+local monster_roll = require("policy.combat.monster_roll")
+local attack_types = require("constants.monster_attack_types")
 local stab = require("policy.combat.stab")
 local vampire = require("policy.character.vampire")
 local auxiliary_attacks = require("constants.auxiliary_attacks")
@@ -350,10 +352,12 @@ function actions.monster(ctx, attacker)
     local definition = monster_profile.definition(ctx, attacker,
         catalog.get("monsters", actor.kind_id))
     local attack = definition.attacks[1]
+    local attack_type = monster_roll.active(ctx, attacker) and
+        attack_types.HIT or attack.type_id
     local defense = fighter.defense(ctx)
     local weapon = nil
 
-    if attack.type_id == "AT_HIT" then
+    if attack_type == attack_types.HIT then
         weapon = equipment.monster_melee(ctx, attacker)
 
         if weapon then
@@ -364,8 +368,8 @@ function actions.monster(ctx, attacker)
     local attack_input = {
         attacker = attacker,
         hd = monster_stats.hit_dice(ctx, attacker, definition),
-        damage = attack.damage,
-        type_id = attack.type_id,
+        damage = monster_roll.attack_damage(ctx, attacker, attack.damage),
+        type_id = attack_type,
         flavour_id = attack.flavour_id,
         weapon = weapon,
     }
@@ -399,7 +403,7 @@ function actions.monster(ctx, attacker)
     elseif outcome.kind == "block" then
         message = "You block the " .. definition.name .. "'s attack."
     elseif outcome.kind == "hit" then
-        local verb = attack.type_id == "AT_HIT" and "hits" or "bites"
+        local verb = attack_type == attack_types.HIT and "hits" or "bites"
 
         if dealt == 0 then
             message = "The " .. definition.name .. " " .. verb .. " you, but does no damage."
@@ -487,12 +491,14 @@ function actions.monster_target(ctx, attacker, target)
         return
     end
 
+    local attack_type = monster_roll.active(ctx, attacker) and
+        attack_types.HIT or attack.type_id
     local summon_stats = ctx:get(attacker, "magic.summon_stats")
     local weapon = nil
 
     -- Natural attacks cannot transmit a brand from an item merely held by
     -- the monster. This matches the monster-against-player contact path.
-    if attack.type_id == "AT_HIT" then
+    if attack_type == attack_types.HIT then
         weapon = equipment.monster_melee(ctx, attacker)
     end
     local combat = ctx:get(target, "core.combat")
@@ -507,8 +513,8 @@ function actions.monster_target(ctx, attacker, target)
         attacker = attacker,
         hd = monster_stats.hit_dice(ctx, attacker, attacker_def,
             summon_stats and summon_stats.hd or nil),
-        damage = attack.damage,
-        type_id = attack.type_id,
+        damage = monster_roll.attack_damage(ctx, attacker, attack.damage),
+        type_id = attack_type,
         flavour_id = attack.flavour_id,
         weapon = weapon,
     }, defense)

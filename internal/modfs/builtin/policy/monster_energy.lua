@@ -187,6 +187,12 @@ function energy.spend(ctx, input)
         if actor and boons.swift_active(ctx, actor) then
             cost = math.max(1, cost - 3)
         end
+
+        -- A rolling boulder beetle spends five less movement energy while
+        -- its saved enchantment is active. Other action costs stay normal.
+        if actor and ctx:has(actor, component.MONSTER_ROLLING) then
+            cost = math.max(1, cost - 5)
+        end
     end
 
     if field == "attack" or field == "missile" then

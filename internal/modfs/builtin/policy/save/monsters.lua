@@ -265,6 +265,7 @@ function module.run(ctx, input)
         local position = ctx:get(entity, "core.position")
         local energy = ctx:get(entity, "core.monster_energy")
         local ai = ctx:get(entity, "core.ai")
+        local rolling = ctx:get(entity, component.MONSTER_ROLLING)
 
         if not actor or not health or not position or not energy then
             error("invalid monster entity " .. ctx:id(entity))
@@ -276,6 +277,12 @@ function module.run(ctx, input)
 
         if health.current <= 0 then
             error("saved monster " .. ctx:id(entity) .. " has no remaining HP")
+        end
+
+        if rolling and (rolling.remaining_aut < 1 or
+            rolling.remaining_aut > 150) then
+            error("monster " .. ctx:id(entity) ..
+                " has invalid rolling duration")
         end
 
         validate_banishment(ctx, entity, position)
