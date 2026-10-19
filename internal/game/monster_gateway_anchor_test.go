@@ -39,6 +39,7 @@ func TestMonsterGatewayDriftingAnchorRestores(t *testing.T) {
 	}
 
 	energy, _ := g.stores.MonsterEnergy.Get(caster)
+
 	energy.Points = 80
 
 	events, err := g.runAction(caster, ecs.Intent{}, 10, "monster")
