@@ -468,6 +468,21 @@ The example creates a real summon because the shared creator has the live
 potion, mutation, or trap, use that domain's registry and method names instead
 of copying the monster-spell interface.
 
+A group effect uses the same callback contract but queries several actors.
+See `policy/combat/monster_battlecries.lua` and its three spell files for a
+complete example. `plan(ctx, caster, foe)` inspects positions, allegiance,
+and existing boons without changing the world or drawing randomness. It
+returns a self-target plan only if a same-genus ally could benefit. Later,
+`resolve(ctx, caster, foe, slot, plan)` queries again because the action may
+have changed, rolls one duration per recipient from `ctx:random`, and writes
+the boon to each recipient through the shared boon policy. The resulting
+status belongs to the recipient's ECS component and survives save/restore.
+Its cry calls the shared noise policy, which uses `ctx:cell` and `ctx:query`
+to update listeners. A modded group effect should follow that pattern when
+one action changes several entities: keep the source rule in one focused
+policy, use `ctx` for live state, and let existing component owners apply
+their own invariants.
+
 A typical stateful rule reads a component, calculates a result using its
 explicit inputs and a named RNG stream if needed, writes the full component
 back, then emits a message or transient signal. `ctx:get` returns a copy,
@@ -624,10 +639,11 @@ destinations.
 | `ctx:walkable(level_id, x, y)` | Whether an actor can walk on the current or staged terrain. |
 | `ctx:actor_at(level_id, x, y)` | Occupying actor handle, or `nil`; includes staged moves. |
 | `ctx:stair_at(level_id, x, y)` | Link `{ to_level_id, to_x, to_y, unavailable }`, or `nil`. |
-| `ctx:visible(level_id, from_x, from_y, radius, target_x, target_y)` | Whether one target cell is visible. |
+| `ctx:visible(level_id, from_x, from_y, radius, target_x, target_y)` | Ordinary sight. |
+| `ctx:visible_no_trans(level_id, from_x, from_y, radius, target_x, target_y)` | Clear walls block; actors do not. |
 | `ctx:visible_cells(level_id, from_x, from_y, radius)` | Array of visible `{ x, y }` cells. |
 | `ctx:route_step(level_id, from_x, from_y, to_x, to_y, goal)` | `dx, dy, found`; no route gives `nil, nil, false`. |
-| `ctx:projectile_clear(level_id, from_x, from_y, to_x, to_y)` | Whether a projectile path is clear. |
+| `ctx:projectile_clear(level_id, from_x, from_y, to_x, to_y)` | Physical ray; actors block. |
 | `ctx:set_cell(level_id, x, y, terrain_id)` | Stage a terrain change. It cannot block an actor or erase a stair link. |
 | `ctx:map_cell(level_id, x, y)` | Mark an unseen cell in map memory; `true` if newly mapped, `false` if known. |
 | `ctx:place_actor(entity, level_id, x, y)` | Put an unpositioned actor on a valid, unoccupied cell. |
@@ -664,9 +680,13 @@ end
 ```
 
 `route_step` can take the target actor as its last argument so pathfinding
-can treat that actor as the goal. Visibility and projectile checks answer
-geometry questions; they do not apply damage, decide hostility, or spend
-action time. Put those game rules in a policy or system.
+can treat that actor as the goal. Choose `visible` for ordinary sight,
+`visible_no_trans` for a rule that cannot see through clear walls, and
+`projectile_clear` for a bolt that actors can intercept. For example,
+`policy/combat/monster_battlecries.lua` uses `visible_no_trans`: an ally
+standing between a chief and its foe should receive the cry, not block it.
+These queries only answer geometry; damage, hostility, and action time
+belong in a policy or system.
 
 ### Lua registration and VFS helpers
 

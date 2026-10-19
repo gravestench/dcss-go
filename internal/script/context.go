@@ -32,6 +32,7 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "actor_at", r.state.NewFunction(r.luaGridActorAt))
 	r.state.SetField(context, "stair_at", r.state.NewFunction(r.luaGridStairAt))
 	r.state.SetField(context, "visible", r.state.NewFunction(r.luaGridVisible))
+	r.state.SetField(context, "visible_no_trans", r.state.NewFunction(r.luaGridVisibleNoTrans))
 	r.state.SetField(context, "visible_cells", r.state.NewFunction(r.luaGridVisibleCells))
 	r.state.SetField(context, "route_step", r.state.NewFunction(r.luaGridRouteStep))
 	r.state.SetField(context, "projectile_clear", r.state.NewFunction(r.luaGridProjectileClear))
@@ -450,6 +451,26 @@ func (r *Runtime) luaGridVisible(state *lua.LState) int {
 
 	if err != nil {
 		state.RaiseError("grid visibility: %v", err)
+
+		return 0
+	}
+
+	state.Push(lua.LBool(visible))
+
+	return 1
+}
+
+// No-trans sight blocks transparent walls while retaining ordinary sight
+// through actors, so Lua cries and support spells need no projectile ray.
+func (r *Runtime) luaGridVisibleNoTrans(state *lua.LState) int {
+	coordinates := r.gridIntegers(state, 6)
+	visible, err := r.services.Grid.VisibleNoTrans(
+		coordinates[0], coordinates[1], coordinates[2],
+		coordinates[3], coordinates[4], coordinates[5],
+	)
+
+	if err != nil {
+		state.RaiseError("grid no-trans visibility: %v", err)
 
 		return 0
 	}

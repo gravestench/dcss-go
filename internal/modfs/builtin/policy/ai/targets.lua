@@ -44,6 +44,20 @@ local function allied_attitude(value)
         value == attitudes.FELLOW_SLIME
 end
 
+-- Source mons_atts_aligned groups Friendly with Good Neutral, while other
+-- attitudes align only with their own kind. A beneficial area effect uses
+-- this relation rather than the broader enemy/nonenemy decision.
+function targets.aligned(ctx, first, second)
+    local a = targets.attitude(ctx, first)
+    local b = targets.attitude(ctx, second)
+    local peaceful_a = a == attitudes.FRIENDLY or
+        a == attitudes.GOOD_NEUTRAL
+    local peaceful_b = b == attitudes.FRIENDLY or
+        b == attitudes.GOOD_NEUTRAL
+
+    return peaceful_a and peaceful_b or a == b
+end
+
 -- Beneficial magic compares the caster's temporary side with the target's
 -- real side, so a newly charmed foe is not a trusted recipient.
 function targets.real_allied(ctx, entity)

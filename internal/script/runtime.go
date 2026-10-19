@@ -42,6 +42,7 @@ type Grid interface {
 	ActorAt(levelID, x, y int) (akara.Entity, bool)
 	StairAt(levelID, x, y int) (Stair, bool)
 	Visible(levelID, fromX, fromY, radius, targetX, targetY int) (bool, error)
+	VisibleNoTrans(levelID, fromX, fromY, radius, targetX, targetY int) (bool, error)
 	VisibleCells(levelID, fromX, fromY, radius int) ([]VisibleCell, error)
 	RouteStep(levelID, fromX, fromY, toX, toY int, goal akara.Entity) (int, int, bool)
 	ProjectileClear(levelID, fromX, fromY, toX, toY int) bool

@@ -2,7 +2,6 @@
 -- caster's side adjacent to its foe. Other creatures give no bonus die.
 local catalog = require("policy.catalog")
 local component = require("constants.component")
-local attitudes = require("constants.attitude")
 local direct = require("policy.combat.monster_direct")
 local holiness = require("constants.monster_holiness")
 local monster_stats = require("policy.combat.monster_stats")
@@ -11,17 +10,6 @@ local spells = require("ids.spells")
 local targets = require("policy.ai.targets")
 
 local effect = {}
-
--- Source mons_atts_aligned treats Friendly and Good Neutral as one
--- nonattacking side; other attitudes align only with an exact peer.
-local function aligned(first, second)
-    local first_peaceful = first == attitudes.FRIENDLY or
-        first == attitudes.GOOD_NEUTRAL
-    local second_peaceful = second == attitudes.FRIENDLY or
-        second == attitudes.GOOD_NEUTRAL
-
-    return first_peaceful and second_peaceful or first == second
-end
 
 -- Use the catalog's holiness instead of guessing constructs from names.
 local function nonliving(definition)
@@ -37,7 +25,6 @@ end
 -- Only aligned, nonliving actors next to the victim power the strike.
 local function nearby_constructs(ctx, caster, position)
     local count = 0
-    local side = targets.attitude(ctx, caster)
 
     for dy = -1, 1 do
         for dx = -1, 1 do
@@ -45,8 +32,7 @@ local function nearby_constructs(ctx, caster, position)
                 local actor = ctx:actor_at(position.level_id,
                     position.x + dx, position.y + dy)
 
-                if actor and aligned(side,
-                    targets.attitude(ctx, actor)) then
+                if actor and targets.aligned(ctx, caster, actor) then
                     local state = ctx:get(actor, component.ACTOR)
                     local definition = state and
                         catalog.get("monsters", state.kind_id)

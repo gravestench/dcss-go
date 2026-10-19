@@ -261,7 +261,7 @@ function noise.emit(ctx, origin, loudness, producer)
         silence >= 0 and
         math.max(math.abs(player_position.x - origin.x),
             math.abs(player_position.y - origin.y)) <= silence then
-        return 0
+        return 0, false
     end
 
     local adjusted = noise.adjust(ctx, origin, loudness)
@@ -271,7 +271,16 @@ function noise.emit(ctx, origin, loudness, producer)
         heard_by_monsters(ctx, origin, cells, producer)
     end
 
-    return adjusted
+    -- Source noisy() answers immediate player hearing by distance and
+    -- Silence, independently of the deferred terrain-attenuated AI field.
+    local distance = player_position and
+        math.max(math.abs(player_position.x - origin.x),
+            math.abs(player_position.y - origin.y)) or math.huge
+    local heard = player_position and
+        player_position.level_id == origin.level_id and
+        silence < 0 and distance <= loudness or false
+
+    return adjusted, heard
 end
 
 return noise

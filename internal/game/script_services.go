@@ -208,6 +208,42 @@ func (grid scriptGrid) Visible(
 	return visible[targetY*level.width+targetX], nil
 }
 
+// No-trans sight follows the source's wall and closed-door rule. Clear
+// walls obstruct cries, while creatures between endpoints do not.
+func (grid scriptGrid) VisibleNoTrans(
+	levelID, fromX, fromY, radius, targetX, targetY int,
+) (bool, error) {
+	level := grid.levels[levelID]
+
+	if level == nil || !level.inBounds(targetX, targetY) {
+		return false, nil
+	}
+
+	blockers := grid.opaque(levelID)
+	visible, err := visibility.ComputeWithOpacity(
+		level.terrain, fromX, fromY, radius,
+		func(x, y int) bool {
+			cell := point{
+				x: x,
+				y: y,
+			}
+
+			feature := level.terrain[y][x]
+
+			return blockers[cell] ||
+				feature == terrain.ClearRockWall ||
+				feature == terrain.ClearStoneWall ||
+				feature == terrain.ClearPermaRockWall
+		},
+	)
+
+	if err != nil {
+		return false, err
+	}
+
+	return visible[targetY*level.width+targetX], nil
+}
+
 func (grid scriptGrid) VisibleCells(
 	levelID, fromX, fromY, radius int,
 ) ([]script.VisibleCell, error) {
