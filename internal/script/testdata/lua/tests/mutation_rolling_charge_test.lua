@@ -32,6 +32,12 @@ function test.run(ctx)
         x = 1,
         y = 1,
     })
+    -- A real player always has health; charge checks survival after movement
+    -- before applying its attack, so the focused fixture needs that owner.
+    ctx:add(player, component.HEALTH, {
+        current = 100,
+        max = 100,
+    })
     ctx:add(monster, component.ACTOR, {
         kind_id = monsters.MONS_RAT,
         speed = 10,
