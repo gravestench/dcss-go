@@ -9,6 +9,7 @@ local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 local hex_status = require("policy.combat.monster_hexes.status")
+local streams = require("constants.rng_streams")
 
 local teleport = {}
 local tentacles = {
@@ -109,6 +110,40 @@ function teleport.tick(ctx, target)
     ctx:emit("spell", "The " .. definition.name .. " disappears!")
 end
 
+-- Beam enchantments and Teleport Other share the delayed monster timer.
+-- Chaos skips monster willpower but still respects no-tele and stasis.
+function teleport.schedule(ctx, target, stream)
+    local actor = ctx:get(target, component.ACTOR)
+    local health = ctx:get(target, component.HEALTH)
+
+    if not actor or not health or health.current <= 0 then
+        return false
+    end
+
+    local definition = catalog.get("monsters", actor.kind_id)
+
+    if no_tele(actor, definition, ctx, target) then
+        return false
+    end
+
+    if ctx:has(target, component.TELEPORT) then
+        ctx:remove(target, component.TELEPORT)
+        ctx:emit("spell", "The " .. definition.name ..
+            " seems more stable.")
+
+        return true
+    end
+
+    ctx:add(target, component.TELEPORT, {
+        remaining_aut = 20 +
+            ctx:random(stream or streams.SPELL, 11),
+    })
+    ctx:emit("spell", "The " .. definition.name ..
+        " looks slightly unstable.")
+
+    return true
+end
+
 -- Enchant first contact, toggling an existing teleport timer off or scheduling a new one.
 function teleport.resolve(ctx, player, intent, spell, power)
     local origin = ctx:get(player, component.POSITION)
@@ -143,18 +178,7 @@ function teleport.resolve(ctx, player, intent, spell, power)
         return
     end
 
-    if ctx:has(target, component.TELEPORT) then
-        ctx:remove(target, component.TELEPORT)
-        ctx:emit("spell", "The " .. definition.name ..
-            " seems more stable.")
-        return
-    end
-
-    ctx:add(target, component.TELEPORT, {
-        remaining_aut = 20 + ctx:random("spell", 11),
-    })
-    ctx:emit("spell", "The " .. definition.name ..
-        " looks slightly unstable.")
+    teleport.schedule(ctx, target)
 end
 
 -- Tick teleport status only on AI actors before their next decision.

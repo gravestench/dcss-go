@@ -8,6 +8,7 @@ local streams = {
     MELEE = "melee",
     MONSTER_SPELL = "monster_spell",
     MUTATION = "mutation",
+    POTION = "potion",
     SHOP = "shop",
     SPELL = "spell",
     TRAPS = "traps",

@@ -45,7 +45,8 @@ end
 -- return pre- and post-armour values for hit hooks and reporting.
 local function calculate_hit(ctx, defender, profile, power, snapshot)
     local dice = calculators.damage_dice(ctx, profile, power)
-    local raw = calculators.roll_damage(ctx, dice)
+    local raw = calculators.roll_damage(ctx, dice,
+        profile.rng_stream)
     local after_armour = damage.armour(ctx, raw, snapshot.ac, profile)
     local dealt = damage.resisted(ctx, defender, after_armour, profile)
 

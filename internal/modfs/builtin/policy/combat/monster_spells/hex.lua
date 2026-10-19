@@ -12,7 +12,13 @@ local senses = require("policy.character.senses")
 local hex = {}
 
 -- Caster power is stepped down by the profile before a willpower contest.
-function hex.enchantment_power(ctx, caster, profile)
+function hex.enchantment_power(ctx, caster, profile, arc_power)
+    -- A chained beam has already lost power on earlier jumps. Its current
+    -- power is authoritative; recalculating caster HD would reset it.
+    if arc_power ~= nil then
+        return math.min(profile.cap or arc_power, arc_power)
+    end
+
     local power = beam_power.caster_power(ctx, caster, profile)
 
     return math.min(profile.cap or power,
@@ -23,8 +29,9 @@ end
 -- A source zap profile supplies the spell's actual monster power factor.
 -- Example: hex.resisted(ctx, caster, target, profile) with successful player will save -> resisted result
 -- Player will uses two monster-spell draws; a resisted hex may retaliate through Demonic Will.
-function hex.resisted(ctx, caster, target, profile)
-    local enchant_power = hex.enchantment_power(ctx, caster, profile)
+function hex.resisted(ctx, caster, target, profile, arc_power)
+    local enchant_power = hex.enchantment_power(ctx, caster,
+        profile, arc_power)
 
     if not ctx:has(target, component.PLAYER) then
         local actor = ctx:get(target, component.ACTOR)

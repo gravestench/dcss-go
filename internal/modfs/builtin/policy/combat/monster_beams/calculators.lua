@@ -1,5 +1,6 @@
 local accuracy = require("constants.beam_accuracy")
 local roll = require("policy.combat.roll")
+local streams = require("constants.rng_streams")
 
 local calculators = {}
 
@@ -96,7 +97,7 @@ end
 
 -- Example: calculators.roll_damage(ctx, dice) with dice.count = 0 -> 0 damage without RNG
 -- The already converted dice roll on the monster spell stream at contact.
-function calculators.roll_damage(ctx, dice)
+function calculators.roll_damage(ctx, dice, stream)
     if dice.count <= 0 or dice.sides <= 0 then
         return 0
     end
@@ -104,7 +105,8 @@ function calculators.roll_damage(ctx, dice)
     local total = dice.count
 
     for _ = 1, dice.count do
-        total = total + roll.spell(ctx, dice.sides)
+        total = total + roll.draw(ctx,
+            stream or streams.MONSTER_SPELL, dice.sides)
     end
 
     return total

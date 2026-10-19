@@ -47,10 +47,13 @@ function test.run()
         level_id = 1,
         x = 4,
         y = 5,
+        radius = 3,
     }))
 
     harness.equal(anchored.entity, 7,
         "a foe-centered cell plan retains its original foe")
+    harness.equal(anchored.radius, 3,
+        "a source blast radius survives the intent boundary")
 end
 
 return test

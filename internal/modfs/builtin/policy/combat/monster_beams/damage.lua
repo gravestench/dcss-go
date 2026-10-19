@@ -13,6 +13,7 @@ local resistances = require("constants.resistance_ids")
 local monsters = require("ids.monsters")
 local undead_states = require("constants.undead_states")
 local water = require("policy.combat.monster_beams.water")
+local streams = require("constants.rng_streams")
 
 local damage = {}
 
@@ -22,6 +23,7 @@ local elemental_resistance = {
     [flavours.BEAM_ICE] = resistances.COLD,
     [flavours.BEAM_LAVA] = resistances.FIRE,
     [flavours.BEAM_ELECTRICITY] = resistances.ELECTRICITY,
+    [flavours.BEAM_THUNDER] = resistances.ELECTRICITY,
     [flavours.BEAM_STUN_BOLT] = resistances.ELECTRICITY,
     [flavours.BEAM_ACID] = resistances.ACID,
     [flavours.BEAM_STEAM] = resistances.STEAM,
@@ -32,6 +34,7 @@ local elemental_resistance = {
 local resistible_fraction = {
     [flavours.BEAM_ICE] = 40,
     [flavours.BEAM_LAVA] = 55,
+    [flavours.BEAM_THUNDER] = 50,
     [flavours.BEAM_POISON_ARROW] = 70,
 }
 
@@ -112,16 +115,18 @@ function damage.armour(ctx, raw, ac, profile)
         return raw
     end
 
-    local saved = ctx:random("monster_spell", ac + 1)
+    local stream = profile.rng_stream or streams.MONSTER_SPELL
+    local saved = ctx:random(stream, ac + 1)
 
     if profile.flavour == flavours.BEAM_FRAG then
         -- beam.cc:bolt::apply_AC selects ac_type::triple for fragments.
         -- Each draw is separate so a saved RNG stream replays the same hit.
-        saved = saved + ctx:random("monster_spell", ac + 1)
-        saved = saved + ctx:random("monster_spell", ac + 1)
+        saved = saved + ctx:random(stream, ac + 1)
+        saved = saved + ctx:random(stream, ac + 1)
     end
 
-    if profile.flavour == flavours.BEAM_ELECTRICITY then
+    if profile.flavour == flavours.BEAM_ELECTRICITY or
+        profile.flavour == flavours.BEAM_THUNDER then
         saved = math.floor(saved / 2)
     end
 
@@ -141,6 +146,7 @@ function damage.resisted(ctx, target, raw, profile)
     end
 
     if profile.flavour == flavours.BEAM_MMISSILE or
+        profile.flavour == flavours.BEAM_AIR or
         profile.flavour == flavours.BEAM_FRAG or
         profile.flavour == flavours.BEAM_PETRIFYING_CLOUD then
         return raw

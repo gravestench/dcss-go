@@ -15,9 +15,9 @@ end
 -- Source: potion.cc:PotionInvisibility::effect. Repeated drinks add a
 -- separate zero-to-39-turn roll and total duration is capped at 100 turns.
 -- Example: a second Invisibility potion extends its saved duration rather than adding another status.
-function effect.apply(ctx, player)
+function effect.apply(ctx, player, stream)
     local state = ctx:get(player, component.POTION_INVISIBILITY)
-    local roll = ctx:random("potion", 40) * 10
+    local roll = ctx:random(stream or "potion", 40) * 10
 
     if state then
         state.remaining_aut = math.min(1000,

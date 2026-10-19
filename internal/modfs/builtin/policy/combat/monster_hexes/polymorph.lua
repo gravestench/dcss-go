@@ -19,9 +19,10 @@ function polymorph.viable(ctx, _, defender)
 end
 
 -- Source: beam.cc:BEAM_POLYMORPH. The common hook already checked will.
-function polymorph.apply(ctx, caster, defender, profile)
+function polymorph.apply(ctx, caster, defender, profile, arc_power)
     if ctx:has(defender, component.PLAYER) then
-        local power = enchantment.enchantment_power(ctx, caster, profile)
+        local power = enchantment.enchantment_power(ctx, caster,
+            profile, arc_power)
 
         player_form.polymorph(ctx, defender, power)
 

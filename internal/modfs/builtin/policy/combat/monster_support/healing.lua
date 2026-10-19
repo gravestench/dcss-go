@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local channels = require("constants.message_channels")
 local component = require("constants.component")
 local display = require("policy.combat.monster_support.display")
+local calculators = require("policy.combat.monster_beams.calculators")
 local monster_stats = require("policy.combat.monster_stats")
 local roll = require("policy.combat.roll")
 local senses = require("policy.character.senses")
@@ -99,6 +100,22 @@ function healing.other(ctx, caster, target)
 
         ctx:emit(channels.SPELL, "The " .. display.name(ctx, target) ..
             suffix)
+    end
+
+    return gained
+end
+
+-- A Chaos healing flavour uses its current arc's three dice, then adds
+-- three points before applying the result to a monster's health owner.
+function healing.beam(ctx, caster, target, profile, power)
+    local dice = calculators.damage_dice(ctx, profile, power)
+    local amount = 3 + calculators.roll_damage(ctx, dice,
+        profile.rng_stream)
+    local gained = apply(ctx, target, amount)
+
+    if gained > 0 and senses.player_sees_actor(ctx, target) then
+        ctx:emit(channels.SPELL, "The " .. display.name(ctx, target) ..
+            " is healed.")
     end
 
     return gained

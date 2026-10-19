@@ -19,7 +19,7 @@ end
 
 -- Example: paralyse.apply(ctx, caster, defender, profile) with player with zero RNG -> 20 aut paralysis
 -- Source: beam.cc:BEAM_PARALYSIS. Player duration is 2..5 turns.
-function paralyse.apply(ctx, caster, defender, profile)
+function paralyse.apply(ctx, caster, defender, profile, arc_power)
     if ctx:get(defender, component.PLAYER) then
         local turns = 2 + ctx:random("monster_spell", 4)
         local existing = ctx:get(defender, component.PLAYER_PARALYSIS)
@@ -42,7 +42,8 @@ function paralyse.apply(ctx, caster, defender, profile)
 
     local actor = ctx:get(defender, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)
-    local power = enchantment.enchantment_power(ctx, caster, profile)
+    local power = enchantment.enchantment_power(ctx, caster,
+        profile, arc_power)
 
     monster_paralysis.apply_unresisted(ctx, defender, definition, power)
 end

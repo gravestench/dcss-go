@@ -8,9 +8,10 @@ local slow = {}
 
 -- Example: slow.apply(ctx, caster, defender, profile) with player with zero RNG -> 10 turns of slow
 -- Source: beam.cc:BEAM_SLOW; players gain 10 + random2(power) turns.
-function slow.apply(ctx, caster, defender, profile)
+function slow.apply(ctx, caster, defender, profile, arc_power)
     if ctx:get(defender, component.PLAYER) then
-        local power = enchantment.enchantment_power(ctx, caster, profile)
+        local power = enchantment.enchantment_power(ctx, caster,
+            profile, arc_power)
         local turns = 10 + ctx:random("monster_spell", power)
 
         player_slow.apply(ctx, defender, turns)

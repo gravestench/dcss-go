@@ -9,7 +9,7 @@ local confuse = {}
 
 -- Example: confuse.apply(ctx, caster, defender, profile) with player after failed save -> 5 to 7 turns of confusion
 -- Source: beam.cc:BEAM_CONFUSION. The shared hex hook did the saving throw.
-function confuse.apply(ctx, caster, defender, profile)
+function confuse.apply(ctx, caster, defender, profile, arc_power)
     if ctx:get(defender, component.PLAYER) then
         local turns = 5 + ctx:random("monster_spell", 3)
 
@@ -20,7 +20,8 @@ function confuse.apply(ctx, caster, defender, profile)
 
     local actor = ctx:get(defender, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)
-    local power = enchantment.enchantment_power(ctx, caster, profile)
+    local power = enchantment.enchantment_power(ctx, caster,
+        profile, arc_power)
 
     monster_confusion.apply_unresisted(ctx, defender, definition, power)
 end

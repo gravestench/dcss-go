@@ -31,7 +31,7 @@ end
 -- Example: teleport.toggle(ctx, player) starts a delayed jump; calling it
 -- again while queued cancels that state instead of adding another timer.
 -- Store a 30-to-50-aut timer only on a new request; the second request removes that pending state.
-function teleport.toggle(ctx, player)
+function teleport.toggle(ctx, player, stream)
     local current = ctx:get(player, component.PLAYER_TELEPORT)
 
     if current and current.remaining_aut > 0 then
@@ -42,7 +42,7 @@ function teleport.toggle(ctx, player)
     end
 
     ctx:add(player, component.PLAYER_TELEPORT, {
-        remaining_aut = (3 + ctx:random("teleport", 3)) * 10,
+        remaining_aut = (3 + ctx:random(stream or "teleport", 3)) * 10,
     })
     ctx:emit("read", "You feel strangely unstable.")
 end

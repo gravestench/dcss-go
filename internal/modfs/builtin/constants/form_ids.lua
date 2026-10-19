@@ -4,6 +4,7 @@ local forms = {
     LICH = "lich",
     TREE = "tree",
     ICE_BEAST = "ice_beast",
+    STATUE = "statue",
     WISP = "wisp",
     STORM = "storm",
     BAT = "bat",

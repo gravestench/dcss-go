@@ -117,7 +117,8 @@ function targeting.plan(ctx, caster, foe, profile, options)
     if profile.is_explosion then
         local cells = explosion.cells(ctx, source.level_id,
             destination.x, destination.y,
-            explosion_sizes.DEFAULT_RADIUS)
+            profile.explosion_radius or
+                explosion_sizes.DEFAULT_RADIUS)
 
         for _, cell in ipairs(cells) do
             local actor = ctx:actor_at(source.level_id, cell.x, cell.y)

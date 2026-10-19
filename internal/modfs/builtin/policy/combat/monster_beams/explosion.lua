@@ -1,4 +1,5 @@
 local contact = require("policy.combat.monster_beams.contact")
+local component = require("constants.component")
 local explosion = require("policy.combat.explosion")
 local explosion_sizes = require("constants.beam_explosion")
 
@@ -21,16 +22,31 @@ function blast.resolve(ctx, caster, profile, trace,
     end
 
     local cells = explosion.cells(ctx, destination.level_id,
-        center_x, center_y, explosion_sizes.DEFAULT_RADIUS)
+        center_x, center_y,
+        profile.explosion_radius or explosion_sizes.DEFAULT_RADIUS)
     local outcomes = {}
 
     for _, cell in ipairs(cells) do
         local defender = ctx:actor_at(destination.level_id,
             cell.x, cell.y)
 
-        if defender then
+        local health = defender and ctx:get(defender, component.HEALTH)
+
+        -- A consumed Seracfall simulacrum still has an ECS record until
+        -- the death phase, but it is no longer a blast recipient.
+        if health and health.current > 0 then
             outcomes[#outcomes + 1] = contact.resolve(ctx, caster,
                 defender, profile, power, to_hit, hook)
+        end
+
+        -- Fire Storm and other source blasts may affect the cell itself
+        -- after contact, even when no actor stood there to be damaged.
+        if hook and hook.after_cell then
+            hook.after_cell(ctx, caster, profile, {
+                level_id = destination.level_id,
+                x = cell.x,
+                y = cell.y,
+            })
         end
     end
 

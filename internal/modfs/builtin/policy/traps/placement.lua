@@ -3,6 +3,7 @@ local categories = require("constants.catalog")
 local component = require("constants.component")
 local ids = require("ids.traps")
 local streams = require("constants.rng_streams")
+local sources = require("constants.trap_sources")
 
 local placement = {}
 
@@ -197,6 +198,61 @@ function placement.materialize(ctx, level, record)
     })
 
     return kind_id
+end
+
+-- Ensnare replaces any trap already under its victim, as source
+-- place_specific_trap does. Its source marker lets release remove only this
+-- temporary web rather than a permanent vault web.
+function placement.temporary_web(ctx, level_id, x, y)
+    for _, entity in ipairs(ctx:query({ component.WORLD_TRAP })) do
+        local trap = ctx:get(entity, component.WORLD_TRAP)
+
+        if trap.level_id == level_id and trap.x == x and trap.y == y then
+            ctx:destroy(entity)
+
+            break
+        end
+    end
+
+    local entity = ctx:create()
+
+    ctx:add(entity, component.POSITION, {
+        level_id = level_id,
+        x = x,
+        y = y,
+    })
+    ctx:add(entity, component.WORLD_TRAP, {
+        kind_id = ids.TRAP_WEB,
+        level_id = level_id,
+        x = x,
+        y = y,
+        charges = 0,
+        revealed = true,
+        source_record = sources.CHAOS_ENSNARE,
+    })
+
+    return true
+end
+
+-- Remove the disposable web when its held actor escapes or teleports.
+function placement.clear_temporary_web(ctx, actor)
+    local position = ctx:get(actor, component.POSITION)
+
+    if not position then
+        return
+    end
+
+    for _, entity in ipairs(ctx:query({ component.WORLD_TRAP })) do
+        local trap = ctx:get(entity, component.WORLD_TRAP)
+
+        if trap.source_record == sources.CHAOS_ENSNARE and
+            trap.level_id == position.level_id and
+            trap.x == position.x and trap.y == position.y then
+            ctx:destroy(entity)
+
+            return
+        end
+    end
 end
 
 return placement

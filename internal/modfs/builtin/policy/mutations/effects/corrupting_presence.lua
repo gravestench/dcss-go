@@ -3,7 +3,7 @@ local capabilities = require("constants.mutation_capabilities")
 local mutations = require("ids.mutations")
 local catalog = require("policy.catalog")
 local enchant = require("policy.combat.monster_enchant")
-local irradiate = require("policy.magic.effects.zaps.irradiate")
+local irradiate = require("policy.combat.monster_area.irradiate")
 local effects = require("policy.mutations.effects.registry")
 
 local presence = {}

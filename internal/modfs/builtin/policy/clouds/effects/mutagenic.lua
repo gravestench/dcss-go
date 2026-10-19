@@ -5,7 +5,7 @@ local streams = require("constants.rng_streams")
 local ids = require("policy.magic.effects.zaps.ids")
 local component = require("constants.component")
 local catalog = require("policy.catalog")
-local irradiate = require("policy.magic.effects.zaps.irradiate")
+local irradiate = require("policy.combat.monster_area.irradiate")
 
 local mutagenic = {}
 

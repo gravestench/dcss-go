@@ -207,21 +207,23 @@ const (
 )
 
 type Intent struct {
-	Kind          IntentKind
-	DX            int
-	DY            int
-	ItemID        akara.Entity
-	Quantity      int
-	SpellID       string
-	SpellSlot     int
-	FoeEntity     akara.Entity
-	TargetKind    string
-	TargetEntity  akara.Entity
-	TargetLevelID int
-	TargetX       int
-	TargetY       int
-	AbilityID     string
-	TargetID      string
-	Cancelled     bool
-	Forced        bool
+	Kind            IntentKind
+	DX              int
+	DY              int
+	ItemID          akara.Entity
+	Quantity        int
+	SpellID         string
+	SpellSlot       int
+	FoeEntity       akara.Entity
+	TargetKind      string
+	TargetEntity    akara.Entity
+	TargetLevelID   int
+	TargetX         int
+	TargetY         int
+	TargetRadius    int
+	TargetRadiusSet bool
+	AbilityID       string
+	TargetID        string
+	Cancelled       bool
+	Forced          bool
 }

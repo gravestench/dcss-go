@@ -68,6 +68,18 @@ function target.write(intent, plan)
             intent.target_entity = plan.entity
         end
 
+        -- A rolled blast size must survive the action intent boundary.
+        -- The explicit presence bit distinguishes radius zero from absent.
+        if plan.radius ~= nil then
+            if not integer(plan.radius) or plan.radius < 0 or
+                plan.radius > 9 then
+                error("monster spell cell plan has invalid radius")
+            end
+
+            intent.target_radius = plan.radius
+            intent.target_radius_set = true
+        end
+
         return intent
     end
 
@@ -95,13 +107,19 @@ function target.read(intent)
             error("monster spell intent has invalid cell target")
         end
 
-        return read_direction({
+        local result = read_direction({
             kind = kind.CELL,
             entity = intent.target_entity,
             level_id = intent.target_level_id,
             x = intent.target_x,
             y = intent.target_y,
         }, intent)
+
+        if intent.target_radius_set then
+            result.radius = intent.target_radius
+        end
+
+        return result
     end
 
     error("unknown monster spell intent target " ..

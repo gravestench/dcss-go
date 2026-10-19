@@ -26,9 +26,9 @@ function effect.can_quaff(ctx, player)
 end
 
 -- Source: potion.cc:PotionHealWounds::effect.
-function effect.apply(ctx, player)
+function effect.apply(ctx, player, stream)
     local health = common.required(ctx, player, component.HEALTH)
-    local amount = 10 + common.average_three(ctx, 28)
+    local amount = 10 + common.average_three(ctx, 28, stream)
 
     health.current = math.min(health.max,
         health.current + potion_rules.scale_healing(ctx, player, amount))

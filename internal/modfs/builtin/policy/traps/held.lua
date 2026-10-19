@@ -2,6 +2,8 @@
 local component = require("constants.component")
 local ids = require("ids.traps")
 local streams = require("constants.rng_streams")
+local placement = require("policy.traps.placement")
+local terrain = require("constants.terrain")
 
 local held = {}
 
@@ -35,13 +37,20 @@ end
 
 -- A web struggle uses trap RNG and retains held state on a failed attempt.
 local function escape_web(ctx, actor)
-    if ctx:random(streams.TRAPS, 10) < 3 then
+    local position = ctx:get(actor, component.POSITION)
+    local unsupported = position and ctx:cell(position.level_id,
+        position.x, position.y) ~= terrain.DNGN_FLOOR
+
+    -- Ensnare cannot leave a physical web on water, doors, or portals.
+    -- Source releases that web after one attempt instead of rolling escape.
+    if not unsupported and ctx:random(streams.TRAPS, 10) < 3 then
         ctx:emit("trap", "You struggle to detach yourself from the web.")
 
         return false
     end
 
     ctx:remove(actor, component.TRAP_HELD)
+    placement.clear_temporary_web(ctx, actor)
     ctx:emit("trap", "You disentangle yourself.")
 
     return true
@@ -108,6 +117,10 @@ function held.release(ctx, actor)
         if item then
             ctx:remove(item, component.PROJECTILE_NET)
         end
+    end
+
+    if state.kind_id == ids.TRAP_WEB then
+        placement.clear_temporary_web(ctx, actor)
     end
 
     ctx:remove(actor, component.TRAP_HELD)

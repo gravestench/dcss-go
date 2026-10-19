@@ -3,6 +3,8 @@ local component = require("constants.component")
 local ids = require("ids.traps")
 local item_ids = require("ids.items")
 local effects = require("constants.vault_effects")
+local sources = require("constants.trap_sources")
+local terrain = require("constants.terrain")
 
 local traps = {}
 
@@ -33,8 +35,12 @@ local function validate_held(ctx, occupied)
                 position.level_id, position.x, position.y)
             local trap = occupied[cell]
 
-            if state.net_item_id ~= 0 or not trap or
-                trap.kind_id ~= ids.TRAP_WEB then
+            local unsupported = ctx:cell(position.level_id,
+                position.x, position.y) ~= terrain.DNGN_FLOOR
+
+            if state.net_item_id ~= 0 or
+                (not trap and not unsupported) or
+                (trap and trap.kind_id ~= ids.TRAP_WEB) then
                 error("web restraint has no matching web")
             end
         elseif state.kind_id == ids.TRAP_NET then
@@ -62,6 +68,16 @@ end
 -- Authored traps keep a vault record key so a restored trap cannot migrate away from its source cell.
 local function validate_origin(state, levels)
     if state.source_record == "" then
+        return
+    end
+
+    -- The spell creates this web during play, so it has no vault record.
+    -- Every other nonempty source must still resolve to authored content.
+    if state.source_record == sources.CHAOS_ENSNARE then
+        if state.kind_id ~= ids.TRAP_WEB then
+            error("invalid Chaos Ensnare trap kind")
+        end
+
         return
     end
 

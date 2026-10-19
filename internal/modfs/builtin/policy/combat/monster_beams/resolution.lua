@@ -99,7 +99,16 @@ function resolution.resolve(ctx, caster, foe, profile, plan, hook)
     -- ray path and remaining range for each reflected leg.
     local can_bounce = bounce.for_profile(profile, hook)
 
-    if area_target then
+    if profile.direct_explosion then
+        -- Source direct explosions are placed at the selected cell even
+        -- when an actor or clear wall lies along the intervening ray.
+        trace = {
+            contacts = {},
+            x = destination.x,
+            y = destination.y,
+            path = {},
+        }
+    elseif area_target then
         trace = trajectory.to_target(ctx, source.level_id,
             source.x, source.y, destination.x, destination.y, remaining)
     elseif can_bounce then
