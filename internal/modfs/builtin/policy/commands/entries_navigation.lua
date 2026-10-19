@@ -1,10 +1,13 @@
 local commands = require("policy.input.commands")
 local confusion = require("policy.magic.player_confusion")
+local fear = require("policy.character.player_fear")
 local doors = require("policy.inventory.doors")
 local items = require("policy.inventory.items")
 local navigation = require("policy.commands.navigation")
 local registry = require("policy.commands.registry")
 local intent = require("constants.intent")
+local streams = require("constants.rng_streams")
+local display = require("policy.combat.monster_support.display")
 
 local entries = {}
 
@@ -16,6 +19,40 @@ function entries.move(ctx, player, input, position)
 
     if lost then
         return registry.wait("You're too confused to move!")
+    end
+
+    -- Fear and mesmerism do not constrain a confused step. An ordinary
+    -- threatened step is refused before spending aut; attacking a feared
+    -- neighbor can instead flinch on the melee stream.
+    if not confusion.active(ctx, player) then
+        local destination = {
+            level_id = position.level_id,
+            x = position.x + dx,
+            y = position.y + dy,
+        }
+        local target = ctx:actor_at(destination.level_id,
+            destination.x, destination.y)
+
+        if target and fear.afraid_of(ctx, player, target) and
+            ctx:random(streams.MELEE, 3) == 0 then
+            return {
+                message = "You attempt to attack the " ..
+                    display.name(ctx, target) ..
+                    ", but flinch away in fear!",
+            }
+        end
+
+        if not target then
+            local source = fear.blocked(ctx, player,
+                position, destination)
+
+            if source then
+                return {
+                    message = "You cannot move closer to the " ..
+                        display.name(ctx, source) .. "!",
+                }
+            end
+        end
     end
 
     return navigation.move(ctx, position, dx, dy)

@@ -8,14 +8,13 @@ local component = require("constants.component")
 local flags = require("constants.monster_flags")
 local form_ids = require("constants.form_ids")
 local holiness = require("constants.monster_holiness")
+local player_holiness = require("policy.character.holiness")
 local monster_drain = require("policy.combat.monster_drain")
 local monster_health = require("policy.combat.monster_health")
 local player_health = require("policy.combat.player_health")
 local damage = require("policy.magic.damage")
 local resistances = require("constants.resistance_ids")
 local species_ids = require("ids.species")
-local undead = require("constants.undead_states")
-local vampire = require("policy.character.vampire")
 
 local transfer = {}
 
@@ -34,26 +33,7 @@ end
 -- Player holiness changes with species blood state and Lich Form. A
 -- semi-undead vampire is drainable only while its live blood state is alive.
 local function player_living(ctx, player)
-    local identity = ctx:get(player, component.PLAYER)
-    local species = catalog.get(categories.SPECIES, identity.species_id)
-    local form = ctx:get(player, component.PLAYER_FORM)
-    local petrification = ctx:get(player,
-        component.PLAYER_PETRIFICATION)
-
-    if identity.species_id == species_ids.SP_GARGOYLE or
-        identity.species_id == species_ids.SP_DJINNI or
-        form and (form.form_id == form_ids.LICH or
-            form.form_id == form_ids.WISP or
-            form.form_id == form_ids.STORM) or
-        petrification and petrification.petrified_aut > 0 then
-        return false
-    end
-
-    if species.undead_type == undead.SEMI_UNDEAD then
-        return vampire.alive(ctx, player)
-    end
-
-    return species.undead_type == undead.ALIVE
+    return player_holiness.natural(ctx, player)
 end
 
 -- Source actor holiness makes Gargoyles, Djinn, and petrified actors

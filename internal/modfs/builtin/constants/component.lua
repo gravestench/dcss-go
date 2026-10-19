@@ -78,6 +78,7 @@ local component = {
     PLAYER_PARALYSIS = "magic.player_paralysis",
     PLAYER_WEAKNESS = "combat.player_weakness",
     PLAYER_SLEEP = "magic.player_sleep",
+    PLAYER_FEAR = "character.player_fear",
     PLAYER_PETRIFICATION = "magic.player_petrification",
     PERMANENT_HP_LOSS = "magic.permanent_hp_loss",
     AREA_STATUS = "magic.area_status",

@@ -149,6 +149,12 @@ and shared poison, drain, and enchantment messages test player perception
 before naming actors or describing offscreen terrain changes. Other event
 paths still need an audit. Invisibility messages sample sight before the
 enchantment takes hold.
+Monster Cause Fear and Mass Confusion now select unaligned actors across
+unobstructed sight, test each victim's will, and write fear or confusion to
+the victim's saved ECS state. Player fear retains its source monsters and
+blocks approach or sometimes a melee attempt until the sources or timer
+expire. This area-mind category does not yet cover Mesmerise, Siren Song,
+or Avatar Song; those require persistent attention and song movement rules.
 The 11 wand-to-spell links are committed in their wand definitions, with a
 legacy JSON artifact retained for cross-checks. Source appearance words are
 committed in `data/item_appearances.lua`. The runtime does not read C++ to

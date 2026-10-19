@@ -153,6 +153,19 @@ function test.run(ctx)
     harness.truthy(has_write(hud.run(screen, { view = view }), "Horr(-5)"),
         "Cowardice horror displays its current slaying penalty")
 
+    ctx:add(player, component.PLAYER_FEAR, {
+        remaining_aut = 70,
+        sources = {},
+    })
+
+    harness.truthy(has_write(hud.run(screen, { view = view }), "Fear"),
+        "active monster fear appears in the HUD")
+
+    ctx:remove(player, component.PLAYER_FEAR)
+
+    harness.falsy(has_write(hud.run(screen, { view = view }), "Fear"),
+        "ended monster fear disappears from the HUD")
+
     ctx:add(player, component.RAGE, {
         remaining_aut = 90,
         cooldown_aut = 0,

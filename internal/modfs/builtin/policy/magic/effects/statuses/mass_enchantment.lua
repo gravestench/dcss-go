@@ -5,6 +5,8 @@ local catalog = require("policy.catalog")
 local roll = require("policy.combat.roll")
 local will = require("policy.magic.effects.zaps.will")
 local monster_stats = require("policy.combat.monster_stats")
+local senses = require("policy.character.senses")
+local streams = require("constants.rng_streams")
 
 local mass = {}
 
@@ -75,7 +77,7 @@ local function susceptible(definition, kind)
 end
 
 -- Skip an already active effect before the will roll, then save only a successful new timer.
-local function apply(ctx, target, definition, kind, power)
+local function apply(ctx, target, definition, kind, power, stream)
     if not susceptible(definition, kind) then
         return false
     end
@@ -86,8 +88,11 @@ local function apply(ctx, target, definition, kind, power)
         return false
     end
 
-    if will.resists(ctx, definition, power, target) then
-        ctx:emit("spell", "The " .. definition.name .. " resists.")
+    if will.resists(ctx, definition, power, target, stream) then
+        if not stream or senses.player_sees_actor(ctx, target) then
+            ctx:emit("spell", "The " .. definition.name .. " resists.")
+        end
+
         return true
     end
 
@@ -100,11 +105,20 @@ local function apply(ctx, target, definition, kind, power)
         ctx:add(target, component.MONSTER_MASS_ENCHANT, next_state)
     end
 
-    ctx:emit("spell", "The " .. definition.name ..
-        (kind == "fear_aut" and " looks frightened!" or
-            " is haunted by guilt!"))
+    if not stream or senses.player_sees_actor(ctx, target) then
+        ctx:emit("spell", "The " .. definition.name ..
+            (kind == "fear_aut" and " looks frightened!" or
+                " is haunted by guilt!"))
+    end
 
     return true
+end
+
+-- Monster Cause Fear uses the same saved retreat status as the player
+-- spell, but its will contest draws from the monster spell stream.
+function mass.apply_monster_fear(ctx, target, definition, power)
+    return apply(ctx, target, definition, "fear_aut", power,
+        streams.MONSTER_SPELL)
 end
 
 -- Innate fear bypasses spell willpower but uses the same saved fear duration.

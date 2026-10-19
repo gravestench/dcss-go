@@ -15,7 +15,8 @@ local hex = {}
 function hex.enchantment_power(ctx, caster, profile)
     local power = beam_power.caster_power(ctx, caster, profile)
 
-    return calculators.enchantment_power(profile, power)
+    return math.min(profile.cap or power,
+        calculators.enchantment_power(profile, power))
 end
 
 -- Source: beam.cc:ench_power_stepdown and actor.cc:check_willpower.

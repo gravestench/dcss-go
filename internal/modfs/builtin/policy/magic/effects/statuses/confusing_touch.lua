@@ -3,6 +3,7 @@ local component = require("constants.component")
 local will = require("policy.magic.effects.zaps.will")
 local roll = require("policy.combat.roll")
 local monster_stats = require("policy.combat.monster_stats")
+local senses = require("policy.character.senses")
 
 local touch = {}
 
@@ -47,6 +48,27 @@ function touch.apply_unresisted(ctx, target, definition, power)
 
     ctx:emit("spell", "The " .. definition.name .. " appears confused.")
 
+end
+
+-- Monster Mass Confusion supplies an explicit five-to-seven-turn duration
+-- after its own will contest. It must not feed that duration through the
+-- beam power stepdown used by Confusing Touch.
+function touch.apply_turns(ctx, target, definition, turns)
+    local current = ctx:get(target, component.MONSTER_CONFUSION)
+    local remaining = math.max(current and current.remaining_aut or 0,
+        turns * 10)
+    local next_state = { remaining_aut = remaining }
+
+    if current then
+        ctx:set(target, component.MONSTER_CONFUSION, next_state)
+    else
+        ctx:add(target, component.MONSTER_CONFUSION, next_state)
+    end
+
+    if senses.player_sees_actor(ctx, target) then
+        ctx:emit("spell", "The " .. definition.name ..
+            " appears confused.")
+    end
 end
 
 -- Source: spl-other.cc:_intoxicate_monsters adds ENCH_CONFUSION with an

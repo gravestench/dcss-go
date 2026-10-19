@@ -198,6 +198,15 @@ function hud.rows(view, extras)
         }
     end
 
+    -- The source HUD uses a red Fear light while a fearmonger constrains
+    -- approach. The status owner decides activity; presentation only names it.
+    if extras.afraid then
+        statuses[#statuses + 1] = {
+            label = "Fear",
+            color = colors.red,
+        }
+    end
+
     if view.poison_amount_scaled > 0 then
         statuses[#statuses + 1] = {
             label = "Poisoned",
@@ -282,6 +291,7 @@ function hud.run(ctx, input)
     local status = player and ctx:get(player,
         component.PLAYER_PETRIFICATION)
     local rage_state = player and ctx:get(player, component.RAGE)
+    local fear_state = player and ctx:get(player, component.PLAYER_FEAR)
     local vampire_state = player and ctx:get(player, component.VAMPIRE)
     local extras = {
         berserk = player and rage.active(ctx, player) or false,
@@ -297,6 +307,7 @@ function hud.run(ctx, input)
             flight.permanent(ctx, player) or false,
         curled = player and curl.active(ctx, player) or false,
         horror = player and horror.penalty(ctx, player) or 0,
+        afraid = fear_state and fear_state.remaining_aut > 0 or false,
         petrifying = status and status.petrifying_aut > 0 or false,
         petrified = status and status.petrified_aut > 0 or false,
         vampire_alive = vampire_state and vampire_state.alive or false,
