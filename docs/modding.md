@@ -31,6 +31,28 @@ If this is your first mod, read [what `ctx` is](#ctx-in-one-minute), then
 [follow a rule from entry to state change](#follow-one-rule-from-entry-to-state-change).
 Those two sections explain when Lua runs and where changing game state lives.
 
+### A mod file's path to the game
+
+The path and the caller determine whether a file *describes* content or
+*runs* a rule. This is the first question to answer when a new file loads
+successfully but seems to do nothing:
+
+| File | What loading it does | What makes its behavior run |
+| --- | --- | --- |
+| `content/monsters/moss.lua` | Registers fixed facts for a monster kind. | Population or another rule creates a live monster using that definition. |
+| `schemas/moss_spores.lua` | Registers a saved component shape. | A rule attaches that component to an entity with `ctx:add`. |
+| `systems/moss_growth.lua` | Registers a query and `update` callback. | The scheduler calls it during an action for matching entities. |
+| `policy/potions/effects/moss_tonic.lua` | Loads a module that registers an effect. | The potion command selects its item ID and invokes the registered methods. |
+| `policy/combat/monster_spells/moss_breath.lua` | Makes a named effect module available. | A spellbook selects its spell ID; the monster spell registry requires that module. |
+| `vaults/arrival/moss_room.des` | Registers authored geometry and directives. | Level generation selects the map and runs any named Lua hooks with a vault `api`. |
+
+The system, effect, and vault examples have callbacks. Only while a callback
+runs does it receive a live `ctx` or vault `api`. The engine creates
+the game context; your mod neither constructs nor registers it. A definition
+may need no new behavior file at all when existing rules already understand
+its fields. When it needs a new effect, connect that effect through its
+domain's registry and check the exact callback signature there.
+
 ## The five-minute mental model
 
 A mod file has one of three jobs: describe a fact, store per-entity state, or
@@ -66,6 +88,20 @@ actor's current HP. The definition cannot answer that question.
 not a global, a monster, a component, or a definition. A Lua file normally
 loads once to register its definition or callback. The callback runs later,
 with `ctx` for the current game action. For example:
+
+```text
+game action -> engine or domain caller -> your callback(ctx, actor, ...)
+                                      -> ctx:get / ctx:random / ctx:move_actor
+                                      -> later rules observe the staged change
+```
+
+The domain caller supplies the other arguments. A system gets its matching
+`entity` and elapsed `delta`; a monster spell gets `caster`, `foe`, `slot`,
+and its saved target plan. `ctx` supplies capabilities, while these arguments
+identify what this particular invocation is about. Calling `ctx:player()`
+inside every effect would accidentally turn monster and ally effects into
+player effects. Read the [entry-point table](#the-game-context-ctx) and the
+nearest working handler before writing a new callback.
 
 ```lua
 local components = require("constants.component")
