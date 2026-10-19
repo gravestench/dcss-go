@@ -62,17 +62,20 @@ function test.run(ctx)
         state.frequencies[3],
         "the last slot retains its own frequency")
 
-    -- A Lich knows Orb of Destruction, but its monster effect has not been
-    -- ported yet. Its servitor must never choose a missing Lua module.
+    -- A Lich's Orb of Destruction is now castable by the shared homing orb
+    -- owner, so its servitor inherits both that spell and Bolt of Cold.
     local lich = fixture.actor(ctx, monsters.MONS_LICH, 5, 8, 30)
     local lich_servitor = servitor.spawn_monster(game, lich, 126)
     local lich_book = spellbook.for_actor(game, lich_servitor)
 
-    harness.equal(#lich_book.slots, 1,
-        "servitor keeps only castable inherited slots")
+    harness.equal(#lich_book.slots, 2,
+        "servitor keeps both castable inherited slots")
     harness.equal(lich_book.slots[1].spell_id,
+        spells.SPELL_IOOD,
+        "the source priority gives the Lich's orb first place")
+    harness.equal(lich_book.slots[2].spell_id,
         spells.SPELL_BOLT_OF_COLD,
-        "Lich servitor still inherits its supported cold bolt")
+        "the supported cold bolt follows the orb")
 end
 
 return test

@@ -10,11 +10,14 @@ local mirror = require("policy.combat.monster_support.injury_mirror")
 local frenzy_health = require("policy.magic.effects.statuses.monster_frenzy_health")
 local senses = require("policy.character.senses")
 
+local constructs = require("constants.monster_construct_components")
+
 local enchant = {}
 
 -- spl-goditem.h: dispellable_enchantments. Only currently modeled effects
 -- appear here. Summons are valid Unravelling targets without being a buff.
 local whole_effects = {
+    constructs.RESISTANCE,
     component.MONSTER_ENFEEBLE,
     component.MONSTER_INFESTATION,
     component.MONSTER_MASS_ENCHANT,

@@ -5,6 +5,7 @@ local vortex = require("policy.magic.effects.summons.fire_vortex")
 local spore = require("policy.combat.monster_plants.spore")
 local visibility = require("policy.combat.monster_summons.visibility")
 local channels = require("constants.message_channels")
+local zap_ids = require("policy.magic.effects.zaps.ids")
 
 -- Theory of operation: Expired summons are torn down before ordinary death cleanup, preserving source-specific effects.
 -- Source: monster::mark_summoned and ENCH_ABJ expiry. The component belongs
@@ -29,6 +30,19 @@ function system.update(ctx, active)
         end
 
         local owner_health = ctx:get(state.owner, component.HEALTH)
+        local dead_owner = state.owner ~= player and
+            (not owner_health or owner_health.current <= 0)
+
+        -- The source monster orb keeps flying when its caster dies. The
+        -- dead actor is about to be removed, so let this independent
+        -- projectile own its remaining finite lifetime and saved link.
+        if state.source_id == spells.SPELL_IOOD and
+            ctx:has(entity, zap_ids.component.IOOD) and dead_owner then
+            state.owner = entity
+            ctx:set(entity, component.SUMMON, state)
+            owner_health = health
+        end
+
         local orphaned = state.owner ~= player and
             (not ctx:has(state.owner, component.ACTOR) or
                 not owner_health or owner_health.current <= 0)

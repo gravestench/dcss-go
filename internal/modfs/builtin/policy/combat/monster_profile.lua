@@ -2,12 +2,41 @@
 -- exception: the saved actor owns a ghost snapshot made when Mara cast.
 local component = require("constants.component")
 
+local constructs = require("constants.monster_construct_components")
+
+local resistance = require("policy.combat.monster_summons.resistance")
+
 local profile = {}
 
 -- Project saved per-actor values into the same read shape as a catalog
 -- monster. Consumers use their ordinary combat rules after this one read.
 function profile.definition(ctx, entity, definition)
+    definition = resistance.project(ctx, entity, definition)
+
     local ghost = ctx:get(entity, component.PLAYER_ILLUSION)
+
+    local weapon = ctx:get(entity, constructs.DANCING_WEAPON)
+
+    if weapon then
+        local result = {}
+
+        for key, value in pairs(definition) do
+            result[key] = value
+        end
+
+        result.speed = weapon.speed
+        result.ac = weapon.ac
+        result.ev = weapon.ev
+        result.attacks = {
+            {
+                type_id = "AT_HIT",
+                flavour_id = "AF_PLAIN",
+                damage = weapon.damage,
+            },
+        }
+
+        definition = result
+    end
 
     if not ghost then
         return definition

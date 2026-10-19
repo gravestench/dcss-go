@@ -33,8 +33,14 @@ const (
 	Lava               ID = "DNGN_LAVA"
 	ClosedDoor         ID = "DNGN_CLOSED_DOOR"
 	OpenDoor           ID = "DNGN_OPEN_DOOR"
+	ClosedClearDoor    ID = "DNGN_CLOSED_CLEAR_DOOR"
+	OpenClearDoor      ID = "DNGN_OPEN_CLEAR_DOOR"
+	SealedDoor         ID = "DNGN_SEALED_DOOR"
+	SealedClearDoor    ID = "DNGN_SEALED_CLEAR_DOOR"
 	StairsUp           ID = "DNGN_STONE_STAIRS_UP_I"
 	StairsDown         ID = "DNGN_STONE_STAIRS_DOWN_I"
+	SealedStairsUp     ID = "DNGN_SEALED_STAIRS_UP"
+	SealedStairsDown   ID = "DNGN_SEALED_STAIRS_DOWN"
 	MalignGateway      ID = "DNGN_MALIGN_GATEWAY"
 	PassageOfGolubria  ID = "DNGN_PASSAGE_OF_GOLUBRIA"
 )
@@ -170,6 +176,19 @@ var definitions = map[ID]Feature{
 		Walkable: true,
 	},
 
+	ClosedClearDoor: {Glyph: '+'},
+
+	OpenClearDoor: {
+		Glyph:    '\'',
+		Walkable: true,
+	},
+
+	SealedDoor: {
+		Glyph:  '+',
+		Opaque: true,
+	},
+	SealedClearDoor: {Glyph: '+'},
+
 	StairsUp: {
 		Glyph:    '<',
 		Walkable: true,
@@ -179,6 +198,17 @@ var definitions = map[ID]Feature{
 		Glyph:    '>',
 		Walkable: true,
 	},
+
+	SealedStairsUp: {
+		Glyph:    '<',
+		Walkable: true,
+	},
+
+	SealedStairsDown: {
+		Glyph:    '>',
+		Walkable: true,
+	},
+
 	MalignGateway: {Glyph: 'w'},
 	PassageOfGolubria: {
 		Glyph:    '^',
@@ -222,4 +252,11 @@ func Glyph(id ID) rune {
 
 func IsStair(id ID) bool {
 	return id == StairsUp || id == StairsDown
+}
+
+// Sealed stairs retain their travel link while suppressing ordinary stair use.
+func IsLinkedStair(id ID) bool {
+	return IsStair(id) ||
+		id == SealedStairsUp ||
+		id == SealedStairsDown
 }

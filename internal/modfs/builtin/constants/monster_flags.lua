@@ -23,6 +23,7 @@ local flags = {
     NO_GEN_DERIVED = "M_NO_GEN_DERIVED",
     CLARITY = "M_CLARITY",
     FLIES = "M_FLIES",
+    PREFER_RANGED = "M_PREFER_RANGED",
 }
 
 return flags

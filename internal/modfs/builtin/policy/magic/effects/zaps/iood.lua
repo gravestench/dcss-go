@@ -8,6 +8,7 @@ local explosion = require("policy.combat.explosion")
 local health = require("policy.combat.player_health")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
+local rng_streams = require("constants.rng_streams")
 local summons = require("policy.magic.effects.summons.common")
 
 local iood = {}
@@ -24,10 +25,10 @@ local function normalized(x, y)
 end
 
 -- Stochastic spell rounding keeps short-range power loss unbiased.
-local function random_round(ctx, numerator, denominator)
+local function random_round(ctx, numerator, denominator, stream)
     local result = math.floor(numerator / denominator)
 
-    if ctx:random("spell", denominator) < numerator % denominator then
+    if ctx:random(stream, denominator) < numerator % denominator then
         result = result + 1
     end
 
@@ -35,47 +36,48 @@ local function random_round(ctx, numerator, denominator)
 end
 
 -- An Orb of Destruction fired at very short range loses power before its nine damage dice are rolled.
-local function dice(ctx, power, distance)
+local function dice(ctx, power, distance, stream)
     local flat = 60
 
     if distance < 4 then
-        power = random_round(ctx, power * distance * 3, 10)
-        flat = random_round(ctx, flat * distance * 3, 10)
+        power = random_round(ctx, power * distance * 3, 10, stream)
+        flat = random_round(ctx, flat * distance * 3, 10, stream)
     end
 
-    local sides = math.max(1, random_round(ctx, flat + power, 12))
+    local sides = math.max(1, random_round(ctx, flat + power, 12, stream))
     local rolled = 0
 
     for _ = 1, 9 do
-        rolled = rolled + 1 + ctx:random("spell", sides)
+        rolled = rolled + 1 + ctx:random(stream, sides)
     end
 
     return rolled
 end
 
 -- Damage every occupied blast cell separately so each actor gets its own dice and armour roll.
-local function burst(ctx, owner, level, x, y, power, distance)
+local function burst(ctx, owner, level, x, y, power, distance, stream)
     ctx:emit("spell", "The orb of destruction explodes!")
 
     for _, cell in ipairs(explosion.cells(ctx, level, x, y, 1)) do
         local victim = ctx:actor_at(level, cell.x, cell.y)
 
         if victim then
-            local raw = dice(ctx, power, distance)
+            local raw = dice(ctx, power, distance, stream)
 
-            if victim == owner then
-                local amount = damage.player_armour(ctx, owner, raw)
+            if ctx:has(victim, component.PLAYER) then
+                local amount = damage.player_armour(ctx, victim, raw,
+                    nil, stream)
 
-                health.damage(ctx, owner, amount)
+                health.damage(ctx, victim, amount, false, owner)
             else
                 local definition, current = damage.monster(ctx, victim)
 
                 if definition and current.current > 0 then
                     local ac = defense.armour(ctx, victim, definition)
                     local amount = math.max(0, raw -
-                        ctx:random("spell", ac + 1))
+                        ctx:random(stream, ac + 1))
 
-                    damage.apply(ctx, victim, amount)
+                    damage.apply(ctx, victim, amount, owner)
                 end
             end
         end
@@ -137,6 +139,16 @@ local function dismiss(ctx, orb)
     summons.expire(ctx, orb)
 end
 
+-- An orb keeps only its owner in the summon component. The owner kind is
+-- stable across save/restore, so the stream needs no duplicate saved field.
+local function owner_stream(ctx, owner)
+    if ctx:has(owner, component.PLAYER) then
+        return rng_streams.SPELL
+    end
+
+    return rng_streams.MONSTER_SPELL
+end
+
 -- Curve after launch, then burst on terrain or actor collision; distant or off-map orbs dissipate.
 local function move(ctx, orb, owner, state, initial)
     local position = ctx:get(orb, component.POSITION)
@@ -148,10 +160,14 @@ local function move(ctx, orb, owner, state, initial)
 
     local x, y = next_position(state)
 
-    if not ctx:cell(position.level_id, x, y) or
-        not owner_position or
+    local flawed = ctx:has(owner, component.PLAYER)
+    local too_far = flawed and (not owner_position or
         math.max(math.abs(owner_position.x - x),
-            math.abs(owner_position.y - y)) > 7 then
+            math.abs(owner_position.y - y)) > 7)
+
+    -- Source monster orbs lack the flawed-player-orb distance limit.
+    -- Their trajectory can continue even after the caster moves away.
+    if not ctx:cell(position.level_id, x, y) or too_far then
         dismiss(ctx, orb)
         return true
     end
@@ -166,7 +182,7 @@ local function move(ctx, orb, owner, state, initial)
     if not ctx:walkable(position.level_id, x, y) or victim then
         dismiss(ctx, orb)
         burst(ctx, owner, position.level_id, x, y,
-            state.power, state.distance)
+            state.power, state.distance, owner_stream(ctx, owner))
         return true
     end
 
@@ -186,13 +202,14 @@ function iood.prepare(ctx, player, spell, dx, dy)
     end
 end
 
--- Seed a tangential launch deviation and saved target so later ticks can home deterministically.
-function iood.resolve(ctx, player, intent, _, power)
-    local origin = ctx:get(player, component.POSITION)
-    local vx, vy = normalized(intent.dx, intent.dy)
-    local tangent = (ctx:random("spell", 31) - 15) * 0.019 *
+-- Both player and monster casts use one trajectory and blast owner. Only
+-- their aim, source and RNG stream differ; this avoids divergent IOOD rules.
+function iood.launch(ctx, caster, dx, dy, power, target, stream)
+    local origin = ctx:get(caster, component.POSITION)
+    local vx, vy = normalized(dx, dy)
+    local tangent = (ctx:random(stream, 31) - 15) * 0.019 *
         75 / math.max(10, power)
-    local off = ctx:random("spell", 2) == 0 and -0.25 or 0.25
+    local off = ctx:random(stream, 2) == 0 and -0.25 or 0.25
     local state = {
         x = origin.x + vy * off,
         y = origin.y - vx * off,
@@ -200,8 +217,8 @@ function iood.resolve(ctx, player, intent, _, power)
         vy = vy - vx * tangent,
         distance = 0,
         power = power,
-        target = ctx:actor_at(origin.level_id,
-            origin.x + intent.dx, origin.y + intent.dy),
+        target = target or ctx:actor_at(origin.level_id,
+            origin.x + dx, origin.y + dy),
     }
 
     state.vx, state.vy = normalized(state.vx, state.vy)
@@ -214,12 +231,12 @@ function iood.resolve(ctx, player, intent, _, power)
 
     if not ctx:walkable(origin.level_id, x, y) or
         ctx:actor_at(origin.level_id, x, y) then
-        burst(ctx, player, origin.level_id, x, y,
-            state.power, state.distance)
+        burst(ctx, caster, origin.level_id, x, y,
+            state.power, state.distance, stream)
         return
     end
 
-    local orb = summons.spawn(ctx, player, spells.SPELL_IOOD,
+    local orb = summons.spawn(ctx, caster, spells.SPELL_IOOD,
         monsters.MONS_ORB_OF_DESTRUCTION, 0, 999, {
             anchor = origin,
             exact = { x = x, y = y },
@@ -232,6 +249,13 @@ function iood.resolve(ctx, player, intent, _, power)
 
     ctx:add(orb, zap_ids.component.IOOD, state)
     ctx:emit("spell", "An orb of destruction launches!")
+end
+
+-- Player aim is a relative offset; the monster owner supplies its selected
+-- foe explicitly so a moving target remains the saved homing entity.
+function iood.resolve(ctx, player, intent, _, power)
+    return iood.launch(ctx, player, intent.dx, intent.dy, power,
+        nil, rng_streams.SPELL)
 end
 
 -- Example: An orb moves from its saved state; failed motion queues its cleanup intent.

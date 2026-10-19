@@ -5,6 +5,9 @@ local flavours = require("constants.beam_flavours")
 local monster_poison = require("policy.combat.monster_poison")
 local player_resistance = require("policy.combat.player_resistance")
 local roll = require("policy.combat.roll")
+local spells = require("ids.spells")
+local venom = require("policy.combat.monster_tactical.concentrate_venom")
+local curare = require("policy.combat.monster_tactical.curare")
 
 local poison = {}
 
@@ -75,6 +78,18 @@ function poison.before_damage(ctx, caster, defender, profile, outcome)
     if profile.flavour ~= flavours.BEAM_POISON and
         profile.flavour ~= flavours.BEAM_POISON_ARROW then
         error("poison beam hook received " .. tostring(profile.flavour))
+    end
+
+    -- Source Spit Poison alone converts to curare while its caster carries
+    -- Concentrate Venom. Monster contact still uses the usual two-in-three proc.
+    if profile.id == spells.SPELL_SPIT_POISON and
+        venom.active(ctx, caster) then
+        if ctx:has(defender, component.PLAYER) or
+            ctx:random("monster_spell", 3) ~= 0 then
+            curare.apply(ctx, caster, defender)
+        end
+
+        return
     end
 
     if ctx:has(defender, component.PLAYER) then

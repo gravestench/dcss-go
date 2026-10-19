@@ -339,4 +339,13 @@ function polymorph.shapeshift(ctx, target, source, stream)
     return true
 end
 
+-- Porkalator selects its fixed holiness-matched hog rather than a weighted
+-- polymorph candidate; keep the same HP, inventory, and original-kind transition.
+function polymorph.fixed(ctx, target, definition, stream)
+    local actor = ctx:get(target, component.ACTOR)
+    local source = catalog.get("monsters", actor.kind_id)
+
+    transform(ctx, target, source, definition, stream or "monster_spell")
+end
+
 return polymorph

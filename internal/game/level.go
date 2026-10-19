@@ -97,7 +97,7 @@ func NewLevel(id int, cells [][]terrain.ID, positions *akara.Store[ecs.Position]
 
 func (l *Level) AddStairLink(link StairLink) error {
 	if !l.inBounds(link.X, link.Y) ||
-		!terrain.IsStair(l.terrain[link.Y][link.X]) {
+		!terrain.IsLinkedStair(l.terrain[link.Y][link.X]) {
 		return fmt.Errorf("level %d has invalid stair link at (%d,%d)", l.ID, link.X, link.Y)
 	}
 
@@ -201,7 +201,7 @@ func validateStairLinks(levels map[int]*Level) error {
 
 		for y, row := range level.terrain {
 			for x := range row {
-				if !terrain.IsStair(row[x]) {
+				if !terrain.IsLinkedStair(row[x]) {
 					continue
 				}
 
@@ -433,7 +433,7 @@ func (l *Level) SetCell(x, y int, feature terrain.ID) error {
 	_, linked := l.StairAt(x, y)
 
 	if linked &&
-		!terrain.IsStair(feature) {
+		!terrain.IsLinkedStair(feature) {
 		return fmt.Errorf("terrain would remove stair link at (%d,%d)", x, y)
 	}
 

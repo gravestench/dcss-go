@@ -384,6 +384,22 @@ function forms.polymorph(ctx, player, power)
     return false
 end
 
+-- beam.cc:BEAM_PORKALATOR forces Pig Form and forbids voluntary cancellation.
+function forms.porkalator(ctx, player, power)
+    if not forms.can_polymorph(ctx, player) or
+        forms.rejection(ctx, player, form_ids.PIG) then
+        return false
+    end
+
+    forms.cast(ctx, player, form_ids.PIG, power)
+    local active = ctx:get(player, component.PLAYER_FORM)
+
+    active.uncancellable = true
+    ctx:set(player, component.PLAYER_FORM, active)
+
+    return true
+end
+
 -- Voluntary vampire Bat Form persists; other forms decay by action aut and warn near expiry.
 function forms.tick(ctx, player, aut)
     local active = ctx:get(player, component.PLAYER_FORM)

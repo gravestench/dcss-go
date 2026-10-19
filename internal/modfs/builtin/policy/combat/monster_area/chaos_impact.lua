@@ -55,10 +55,10 @@ local damage_hooks = {
 
 -- Copy the immutable catalog profile because each contact has an
 -- independent chaos flavour and the next arc can use another one.
-local function with_flavour(flavour, enchantment)
+local function with_flavour(flavour, enchantment, source_profile)
     local profile = {}
 
-    for key, value in pairs(base) do
+    for key, value in pairs(source_profile or base) do
         profile[key] = value
     end
 
@@ -113,6 +113,30 @@ local function enchantment_policy(flavour)
     return nil
 end
 
+-- Chaos Breath and Chain of Chaos share the source's per-cell flavour
+-- distribution, then use their own zap dice and hit chance on actor contact.
+function impact.contact(ctx, caster, actor, power, to_hit, source_profile,
+    flavour)
+    flavour = flavour or pool.choose(ctx, streams.MONSTER_SPELL)
+    local policy = enchantment_policy(flavour)
+
+    if policy then
+        local profile = with_flavour(flavour, true, source_profile)
+
+        return contact.resolve(ctx, caster, actor, profile, power,
+            to_hit, enchantment_hook(policy, flavour, power, profile))
+    end
+
+    if not plain_damage[flavour] then
+        error("chaos contact has no effect policy for " ..
+            tostring(flavour))
+    end
+
+    return contact.resolve(ctx, caster, actor,
+        with_flavour(flavour, false, source_profile), power, to_hit,
+        damage_hooks[flavour])
+end
+
 -- Return a visual hit without rolling flavour or damage when the chain
 -- comes back to its own caster. The source also halves visual dice, but
 -- those dice cannot affect game state in this monster spell.
@@ -138,26 +162,8 @@ function impact.apply(ctx, caster, source, target, power, visual)
         local actor = ctx:actor_at(source.level_id, cell.x, cell.y)
 
         if actor then
-            local policy = enchantment_policy(flavour)
-
-            if policy then
-                local profile = with_flavour(flavour, true)
-
-                return contact.resolve(ctx, caster, actor,
-                    profile, power,
-                    accuracy.AUTOMATIC_HIT,
-                    enchantment_hook(policy, flavour, power, profile))
-            end
-
-            if not plain_damage[flavour] then
-                error("chain chaos contact has no effect policy for " ..
-                    tostring(flavour))
-            end
-
-            return contact.resolve(ctx, caster, actor,
-                with_flavour(flavour), power,
-                accuracy.AUTOMATIC_HIT,
-                damage_hooks[flavour])
+            return impact.contact(ctx, caster, actor, power,
+                accuracy.AUTOMATIC_HIT, base, flavour)
         end
     end
 

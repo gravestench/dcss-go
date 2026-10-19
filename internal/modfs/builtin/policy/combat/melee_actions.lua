@@ -20,6 +20,7 @@ local rage = require("policy.character.rage")
 local monster_stats = require("policy.combat.monster_stats")
 local monster_profile = require("policy.combat.monster_profile")
 local monster_roll = require("policy.combat.monster_roll")
+local roll = require("policy.combat.roll")
 local attack_types = require("constants.monster_attack_types")
 local stab = require("policy.combat.stab")
 local vampire = require("policy.character.vampire")
@@ -441,10 +442,30 @@ function actions.monster(ctx, attacker)
 
     retreat_bat(ctx, attacker, definition)
 
-    if outcome.kind == "hit" and attack.flavour_id == "AF_POISON" then
-        brands.poison_bite(ctx,
-            monster_stats.hit_dice(ctx, attacker, definition),
-            actor.kind_id)
+    if outcome.kind == "hit" and (attack.flavour_id == "AF_POISON" or
+        attack.flavour_id == "AF_POISON_STRONG" or
+        attack.flavour_id == "AF_REACH_STING") then
+        local venom = require("policy.combat.monster_tactical.concentrate_venom")
+        local dice = monster_stats.hit_dice(ctx, attacker, definition)
+
+        if venom.active(ctx, attacker) then
+            -- melee-attack.cc gates all three poison flavours at one in
+            -- three before Concentrate Venom changes the dose to curare.
+            if roll.melee(ctx, 3) == 0 then
+                require("policy.combat.monster_tactical.curare")
+                    .apply(ctx, attacker, player, "melee")
+            end
+        elseif attack.flavour_id == "AF_POISON_STRONG" then
+            if roll.melee(ctx, 3) == 0 then
+                local low = math.floor(dice * 11 / 3)
+                local high = math.floor(dice * 13 / 2)
+
+                brands.poison(ctx, low + roll.melee(ctx, high - low + 1),
+                    actor.kind_id)
+            end
+        else
+            brands.poison_bite(ctx, dice, actor.kind_id)
+        end
     end
 
     grab(ctx, attacker, definition, ctx:get(player, "core.health"))

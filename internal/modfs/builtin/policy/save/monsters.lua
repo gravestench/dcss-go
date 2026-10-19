@@ -11,6 +11,7 @@ local summons = require("policy.save.summons")
 local summon_branches = require("policy.combat.monster_summons.branches")
 local abyss = require("policy.world.abyss")
 local component = require("constants.component")
+local doom_howl = require("policy.combat.monster_doom_howl.ids")
 
 -- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
@@ -201,6 +202,23 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
     sticky_flame.validate(ctx, entity)
 end
 
+-- Doom Howl arrivals are permanent creatures created during play. Their
+-- explicit saved origin admits them outside the fixed starting roster,
+-- while the ordinary monster profile and AI invariants still apply.
+local function validate_doom_arrival(ctx, entity, actor, health, position,
+    ai, current_aut)
+    local origin = ctx:get(entity, doom_howl.ARRIVAL)
+
+    if not doom_howl.beast(actor.kind_id) or
+        origin.created_aut < 0 or origin.created_aut > current_aut then
+        error("monster " .. ctx:id(entity) ..
+            " has invalid Doom Howl arrival origin")
+    end
+
+    validate_vault_monster(ctx, entity, actor, health, position,
+        ai, current_aut)
+end
+
 -- Monster save validation separates roster, vault, and banished actors because their origins differ.
 -- Example: module.run(ctx, input) rejects a banished monster left on an ordinary floor.
 function module.run(ctx, input)
@@ -304,6 +322,9 @@ function module.run(ctx, input)
         if summon then
             summons.validate(ctx, entity, actor, position, ai,
                 summon, input.current_aut)
+        elseif ctx:get(entity, doom_howl.ARRIVAL) then
+            validate_doom_arrival(ctx, entity, actor, health,
+                position, ai, input.current_aut)
         elseif ctx:get(entity, component.VAULT_ORIGIN) then
             validate_vault_monster(ctx, entity, actor, health,
                 position, ai, input.current_aut)

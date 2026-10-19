@@ -9,6 +9,9 @@ local spire = require("policy.magic.effects.summons.lightning_spire")
 local tentacle = require("policy.magic.effects.summons.tentacle")
 local vortex = require("policy.magic.effects.summons.fire_vortex")
 
+local attached = require("policy.combat.monster_summons.attached_tentacles")
+local constructs = require("constants.monster_construct_components")
+
 local actions = {
     [spells.SPELL_FULMINANT_PRISM] = prism.act,
     [spells.SPELL_FOXFIRE] = foxfire.act,
@@ -63,6 +66,8 @@ function system.update(ctx, entity)
 
     if ctx:has(entity, component.SUMMON_SEGMENT) then
         intent = { kind = intent_ids.MONSTER_WAIT }
+    elseif state.source_id == spells.SPELL_CREATE_TENTACLES then
+        intent = attached.attack(ctx, entity, position)
     elseif state.source_id == spells.SPELL_MALIGN_GATEWAY then
         intent = tentacle.act(ctx, entity, position)
     elseif state.source_id == spells.SPELL_SPELLFORGED_SERVITOR and
@@ -74,6 +79,15 @@ function system.update(ctx, entity)
         intent = action(ctx, entity, position)
     elseif state.source_id == spells.SPELL_BATTLESPHERE then
         intent = follow_owner(ctx, state, position)
+    end
+
+    if not ctx:has(entity, component.SUMMON) then
+        return
+    end
+
+    if ctx:has(entity, constructs.TENTACLE) and
+        intent and intent.kind == intent_ids.MONSTER_MOVE then
+        intent = { kind = intent_ids.MONSTER_WAIT }
     end
 
     if intent then

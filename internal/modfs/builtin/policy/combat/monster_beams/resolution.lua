@@ -135,12 +135,42 @@ function resolution.resolve(ctx, caster, foe, profile, plan, hook)
     while trace do
         local next_trace = nil
         local stopped = false
+        local next_cell = 1
+
+        -- Source chaos rays redraw their effect on empty floor as well as
+        -- actor cells, but stop drawing as soon as the live ray stops.
+        local function sample_through(x, y)
+            if not hook or not hook.cell then
+                return
+            end
+
+            while next_cell <= #trace.path do
+                local cell = trace.path[next_cell]
+
+                hook.cell(ctx, caster, profile, cell)
+                next_cell = next_cell + 1
+
+                if cell.x == x and cell.y == y then
+                    break
+                end
+            end
+        end
 
         -- A penetrating beam can continue after a hit; a blocked or reflected
         -- contact ends this leg before the endpoint hook is called.
         for _, contact in ipairs(trace.contacts) do
-            local outcome = contact_rules.resolve(ctx, caster, contact.actor,
-                profile, power, to_hit, hook, leg_source)
+            sample_through(contact.x, contact.y)
+            local outcome
+
+            -- Chaos beams draw a new flavour before armour and resistance;
+            -- their hook owns that contact while this resolver keeps ray stops.
+            if hook and hook.contact then
+                outcome = hook.contact(ctx, caster, contact.actor,
+                    profile, power, to_hit, leg_source)
+            else
+                outcome = contact_rules.resolve(ctx, caster, contact.actor,
+                    profile, power, to_hit, hook, leg_source)
+            end
             outcomes[#outcomes + 1] = outcome
 
             if outcome.kind == "hit" then
@@ -190,6 +220,14 @@ function resolution.resolve(ctx, caster, foe, profile, plan, hook)
                     contact.x, contact.y)
                 stopped = true
                 break
+            end
+        end
+
+        if not stopped and hook and hook.cell then
+            while next_cell <= #trace.path do
+                hook.cell(ctx, caster, profile,
+                    trace.path[next_cell])
+                next_cell = next_cell + 1
             end
         end
 

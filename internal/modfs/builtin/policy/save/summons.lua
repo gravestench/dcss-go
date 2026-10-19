@@ -16,6 +16,9 @@ local living_spells = require("policy.combat.monster_summons.living_spells")
 local resistance_ids = require("constants.resistance_ids")
 local holiness = require("constants.monster_holiness")
 
+local constructs = require("constants.monster_construct_components")
+local monster_profile = require("policy.combat.monster_profile")
+
 local summons = {}
 
 local valid_attitudes = {
@@ -134,7 +137,11 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
             state.source_id == spells.SPELL_DEATH_CHANNEL or
             state.source_id == spells.SPELL_ANIMATE_DEAD or
             state.source_id == spells.SPELL_BIND_SOULS or
-            state.source_id == spells.SPELL_NECROTISE)
+            state.source_id == spells.SPELL_NECROTISE or
+            state.source_id == spells.SPELL_CREATE_TENTACLES or
+            state.source_id == spells.SPELL_MALIGN_GATEWAY and
+                (ctx:has(entity, constructs.PORTAL) or
+                    ctx:has(entity, component.SUMMON_SEGMENT)))
     local trap_source = state.source_category == categories.TRAPS and
         state.source_id == traps.TRAP_ZOT
     local permanent = (permanent_spell or trap_source) and
@@ -262,7 +269,22 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
 
     local segment = ctx:get(entity, component.SUMMON_SEGMENT)
 
-    if segment then
+    if segment and state.source_id == spells.SPELL_CREATE_TENTACLES then
+        local link = ctx:get(segment.head, constructs.TENTACLE)
+        local head = ctx:get(segment.head, component.SUMMON)
+        local head_actor = ctx:get(segment.head, component.ACTOR)
+        local expected = head_actor and
+            head_actor.kind_id == monsters.MONS_KRAKEN_TENTACLE and
+            monsters.MONS_KRAKEN_TENTACLE_SEGMENT or
+            monsters.MONS_STARSPAWN_TENTACLE_SEGMENT
+
+        if not link or link.parent ~= segment.gateway or
+            not head or head.owner ~= state.owner or
+            actor.kind_id ~= expected or segment.index < 1 or
+            segment.index > 11 or state.expires_aut ~= 0 then
+            error("summon has an invalid attached tentacle link")
+        end
+    elseif segment then
         local head = ctx:get(segment.head, component.SUMMON)
         local marker = ctx:get(segment.gateway, component.SUMMON_GATEWAY)
         local head_actor = ctx:get(segment.head, component.ACTOR)
@@ -284,6 +306,8 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     end
 
     local definition = catalog.get("monsters", actor.kind_id)
+
+    definition = monster_profile.definition(ctx, entity, definition)
 
     if not slow.validate(ctx, entity, definition, actor) then
         error("summon " .. ctx:id(entity) .. " has invalid speed")

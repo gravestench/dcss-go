@@ -14,6 +14,7 @@ local classes = require("constants.item_classes")
 local categories = require("constants.catalog")
 local artefact_properties = require("policy.item_generation.artefacts.properties")
 local artefact_ids = require("ids.artefact_properties")
+local monster_flags = require("constants.monster_flags")
 
 local actions = {}
 
@@ -42,29 +43,45 @@ local function adjacent(a, b)
         math.abs(a.x - b.x) <= 1 and math.abs(a.y - b.y) <= 1
 end
 
+-- Source specialist archers may shoot at adjacent actors. Portal delivery
+-- keeps this exception when the ordinary projectile corridor is skipped.
+local function prefers_ranged(definition)
+    for _, flag in ipairs(definition.flags or {}) do
+        if flag == monster_flags.PREFER_RANGED then
+            return true
+        end
+    end
+
+    return false
+end
+
 -- Reject invalid ranged intent before any hit or damage RNG, then snapshot player defence.
-local function target(ctx, attacker)
+local function target(ctx, attacker, options)
     local player = ctx:player()
     local actor = ctx:get(attacker, "core.actor")
     local attack_pos = ctx:get(attacker, "core.position")
     local player_pos = ctx:get(player, "core.position")
     local attack_health = ctx:get(attacker, "core.health")
     local health = ctx:get(player, "core.health")
+    local definition = actor and catalog.get(categories.MONSTERS,
+        actor.kind_id)
+    local close = attack_pos and player_pos and adjacent(attack_pos,
+        player_pos)
 
     if not actor or not attack_pos or not player_pos or not attack_health or
         not health or attack_health.current <= 0 or health.current <= 0 or
         attack_pos.level_id ~= player_pos.level_id or
-        adjacent(attack_pos, player_pos) then
+        (close and not prefers_ranged(definition)) then
         error("monster cannot shoot distant or dead player")
     end
 
-    if not ctx:projectile_clear(attack_pos.level_id, attack_pos.x, attack_pos.y,
-        player_pos.x, player_pos.y) then
+    if not (options and options.portal) and
+        not ctx:projectile_clear(attack_pos.level_id,
+            attack_pos.x, attack_pos.y, player_pos.x, player_pos.y) then
         error("monster has no clear shot")
     end
 
-    return catalog.get(categories.MONSTERS, actor.kind_id),
-        fighter.defense(ctx), health
+    return definition, fighter.defense(ctx), health
 end
 
 -- Persist shield block count before HP damage so repeated projectiles use current block state.
@@ -260,8 +277,8 @@ end
 
 -- Example: actions.monster(ctx, attacker, intent) with monster with equipped Sling -> launcher shot path
 -- Monster ranged actions choose equipped launchers or thrown missiles before spending the attack.
-function actions.monster(ctx, attacker, intent)
-    local definition, defense, health = target(ctx, attacker)
+function actions.monster(ctx, attacker, intent, options)
+    local definition, defense, health = target(ctx, attacker, options)
     local worn = equipment.worn(ctx, attacker, {
         weapon = true,
         alternate_weapon = true,

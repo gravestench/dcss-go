@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local roster = require("policy.population.roster")
 local component = require("constants.component")
+local doom_howl = require("policy.combat.monster_doom_howl.ids")
 
 -- Corpse validation reads source monster flags without requiring every record to list them.
 local function flag(definition, wanted)
@@ -30,6 +31,7 @@ function module.run(ctx, input)
         local item = ctx:get(entity, "core.item")
         local position = ctx:get(entity, "core.position")
         local origin = ctx:get(entity, component.VAULT_ORIGIN)
+        local arrival = ctx:get(entity, doom_howl.ARRIVAL)
 
         if not item or not position or ctx:has(entity, "core.carried_by") or
             ctx:has(entity, "core.equipped") or item.quantity ~= 1 or
@@ -38,7 +40,15 @@ function module.run(ctx, input)
             error("item " .. ctx:id(entity) .. " has invalid ordinary monster corpse state")
         end
 
-        if not allowed[corpse.monster_id] and not origin then
+        if arrival and (not doom_howl.beast(corpse.monster_id) or
+            arrival.created_aut < 0 or
+            arrival.created_aut > input.current_aut) then
+            error("item " .. ctx:id(entity) ..
+                " has invalid Doom Howl corpse origin")
+        end
+
+        if not allowed[corpse.monster_id] and not origin and
+            not arrival then
             error("fixed Dungeon save has unsupported corpse " .. corpse.monster_id)
         end
 

@@ -4,6 +4,9 @@ local intent_ids = require("constants.intent")
 local targets = require("policy.ai.targets")
 local summons = require("policy.magic.effects.summons.common")
 
+local constructs = require("constants.monster_construct_components")
+local habitat = require("policy.combat.monster_habitat")
+
 local tentacle = {}
 
 local offsets = {
@@ -30,6 +33,19 @@ end
 
 -- Only an active gateway whose saved tentacle ID matches can anchor this head.
 local function gateway(ctx, head)
+    local attached = ctx:get(head, constructs.TENTACLE)
+
+    if attached then
+        local position = ctx:get(attached.parent, component.POSITION)
+        local health = ctx:get(attached.parent, component.HEALTH)
+
+        if position and health and health.current > 0 then
+            return attached.parent, position
+        end
+
+        return nil, nil
+    end
+
     for _, marker in ipairs(ctx:query({ component.SUMMON_GATEWAY })) do
         local state = ctx:get(marker, component.SUMMON_GATEWAY)
 
@@ -45,6 +61,7 @@ end
 -- limit for eldritch tentacles. Search traversable connector cells first,
 -- allowing this head's existing segments to occupy the old chain.
 local function path(ctx, head, base, goal)
+    local limit = ctx:has(head, constructs.TENTACLE) and 12 or 5
     local start = { x = base.x, y = base.y }
     local queue = { start }
     local visited = { [key(start.x, start.y)] = true }
@@ -69,7 +86,7 @@ local function path(ctx, head, base, goal)
             return result
         end
 
-        if steps[cell_key] < 5 then
+        if steps[cell_key] < limit then
             for _, offset in ipairs(offsets) do
                 local x = cell.x + offset[1]
                 local y = cell.y + offset[2]
@@ -81,7 +98,7 @@ local function path(ctx, head, base, goal)
                     (segment and segment.head == head)
 
                 if not visited[next_key] and open and
-                    ctx:walkable(base.level_id, x, y) then
+                    habitat.at(ctx, head, base.level_id, x, y) then
                     visited[next_key] = true
                     previous[next_key] = cell
                     steps[next_key] = steps[cell_key] + 1
@@ -102,13 +119,49 @@ function tentacle.act(ctx, head, position)
         return { kind = intent_ids.MONSTER_WAIT }
     end
 
-    local target, range = targets.nearest(ctx, head, position, 7)
+    local attached = ctx:has(head, constructs.TENTACLE)
+    local limit = attached and 12 or 5
+    local target = targets.nearest(ctx, head, attached and base or position, 7)
+    local grip = ctx:get(ctx:player(), component.CONSTRICTION)
+    local pulling = attached and grip and grip.by == head
 
-    if not target then
+    if attached and (not target or pulling) then
+        local connection = path(ctx, head, base, position)
+
+        if not target and distance(position, base) == 1 then
+            summons.expire(ctx, head)
+
+            return { kind = intent_ids.MONSTER_WAIT }
+        end
+
+        local next_cell = connection and connection[#connection - 1]
+
+        if next_cell and distance(next_cell, base) > 0 then
+            local occupant = ctx:actor_at(position.level_id,
+                next_cell.x, next_cell.y)
+            local segment = occupant and ctx:get(occupant, component.SUMMON_SEGMENT)
+
+            if segment and segment.head == head then
+                summons.expire(ctx, occupant)
+                occupant = nil
+            end
+
+            if not occupant then
+                return {
+                    kind = intent_ids.MONSTER_MOVE,
+                    dx = next_cell.x - position.x,
+                    dy = next_cell.y - position.y,
+                }
+            end
+        end
+
+        return { kind = intent_ids.MONSTER_WAIT }
+    elseif not target then
         return { kind = intent_ids.MONSTER_WAIT }
     end
 
     local destination = ctx:get(target, component.POSITION)
+    local range = distance(position, destination)
 
     if range == 1 then
         return {
@@ -125,8 +178,8 @@ function tentacle.act(ctx, head, position)
         local y = position.y + offset[2]
         local next_position = { x = x, y = y }
 
-        if distance(next_position, base) <= 5 and
-            ctx:walkable(position.level_id, x, y) and
+        if distance(next_position, base) <= limit and
+            habitat.at(ctx, head, position.level_id, x, y) and
             not ctx:actor_at(position.level_id, x, y) and
             path(ctx, head, base, next_position) then
             candidates[#candidates + 1] = {
@@ -161,6 +214,19 @@ function tentacle.refresh(ctx, head)
         return
     end
 
+    -- mon-tentacle.cc:_purge_connectors transfers the least surviving
+    -- connector HP to the head before rebuilding the chain.
+    for _, segment in ipairs(ctx:query({ component.SUMMON_SEGMENT })) do
+        local link = ctx:get(segment, component.SUMMON_SEGMENT)
+        local health = ctx:get(segment, component.HEALTH)
+
+        if link.head == head and health then
+            head_health.current = math.min(head_health.current, health.current)
+        end
+    end
+
+    ctx:set(head, component.HEALTH, head_health)
+
     local connection = path(ctx, head, base, position)
 
     if not connection then
@@ -184,6 +250,10 @@ function tentacle.refresh(ctx, head)
             if position_key and wanted[position_key] then
                 segment.index = wanted[position_key]
                 ctx:set(actor, component.SUMMON_SEGMENT, segment)
+                ctx:set(actor, component.HEALTH, {
+                    current = head_health.current,
+                    max = head_health.max,
+                })
                 wanted[position_key] = nil
             else
                 summons.expire(ctx, actor)
@@ -192,13 +262,20 @@ function tentacle.refresh(ctx, head)
     end
 
     local head_state = ctx:get(head, component.SUMMON)
+    local actor = ctx:get(head, component.ACTOR)
+    local segment_kinds = {
+        [monsters.MONS_KRAKEN_TENTACLE] = monsters.MONS_KRAKEN_TENTACLE_SEGMENT,
+        [monsters.MONS_STARSPAWN_TENTACLE] = monsters.MONS_STARSPAWN_TENTACLE_SEGMENT,
+    }
+    local segment_kind = segment_kinds[actor.kind_id] or
+        monsters.MONS_ELDRITCH_TENTACLE_SEGMENT
     for index = 2, #connection - 1 do
         local cell = connection[index]
         local position_key = key(cell.x, cell.y)
 
         if wanted[position_key] then
             local segment = summons.spawn(ctx, head_state.owner,
-                head_state.source_id, monsters.MONS_ELDRITCH_TENTACLE_SEGMENT,
+                head_state.source_id, segment_kind,
                 0, 6, {
                     anchor = {
                         level_id = base.level_id,
@@ -250,7 +327,8 @@ function tentacle.clean_orphans(ctx)
         local health = ctx:get(segment.head, component.HEALTH)
 
         if not health or health.current <= 0 or
-            not ctx:has(segment.gateway, component.SUMMON_GATEWAY) then
+            not ctx:has(segment.gateway, component.SUMMON_GATEWAY) and
+                not ctx:has(segment.head, constructs.TENTACLE) then
             summons.expire(ctx, actor)
         end
     end

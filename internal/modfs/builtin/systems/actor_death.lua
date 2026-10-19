@@ -12,6 +12,8 @@ local evolution = require("policy.mutations.evolution")
 local kill_effects = require("policy.combat.player_kill_effects")
 local flay = require("policy.combat.monster_flay")
 local component = require("constants.component")
+local doom_howl = require("policy.combat.monster_doom_howl.ids")
+local zap_ids = require("policy.magic.effects.zaps.ids")
 
 local system = {}
 
@@ -28,24 +30,38 @@ local function clear_haunting(ctx, victim)
     end
 end
 
+-- An orb can outlive a monster it was homing toward. Keep the saved
+-- trajectory but drop the dead entity handle before that actor is removed.
+local function clear_orb_targets(ctx, victim)
+    for _, orb in ipairs(ctx:query({ zap_ids.component.IOOD })) do
+        local state = ctx:get(orb, zap_ids.component.IOOD)
+
+        if state.target == victim then
+            state.target = nil
+            ctx:set(orb, zap_ids.component.IOOD, state)
+        end
+    end
+end
+
 -- Theory of operation: Award the player-kill signal before deleting defeated actors.
 -- This keeps XP accounting tied to the actor that died.
--- Chaos clone XP is recorded separately; the copied actor cannot inflate the base population reward.
-local function record_clone_reward(ctx, player, monster, xp)
-    if not ctx:has(monster, component.CHAOS_CLONE) then
+-- Clones and Doom arrivals can grant XP without occupying an initial roster
+-- slot. Record only credited XP so restore can bound progression correctly.
+local function record_extra_reward(ctx, player, monster, marker, reward_id, xp)
+    if not ctx:has(monster, marker) then
         return
     end
 
-    local rewards = ctx:get(player, component.CHAOS_CLONE_REWARDS) or {
+    local rewards = ctx:get(player, reward_id) or {
         earned_xp = 0,
     }
 
     rewards.earned_xp = rewards.earned_xp + xp
 
-    if ctx:has(player, component.CHAOS_CLONE_REWARDS) then
-        ctx:set(player, component.CHAOS_CLONE_REWARDS, rewards)
+    if ctx:has(player, reward_id) then
+        ctx:set(player, reward_id, rewards)
     else
-        ctx:add(player, component.CHAOS_CLONE_REWARDS, rewards)
+        ctx:add(player, reward_id, rewards)
     end
 end
 
@@ -93,7 +109,11 @@ function system.update(ctx)
                     training.available_xp = training.available_xp + 10 * xp
                     ctx:set(player, "core.progression", progress)
                     ctx:set(player, "core.skill_training", training)
-                    record_clone_reward(ctx, player, entity, xp)
+                    record_extra_reward(ctx, player, entity,
+                        component.CHAOS_CLONE,
+                        component.CHAOS_CLONE_REWARDS, xp)
+                    record_extra_reward(ctx, player, entity,
+                        doom_howl.ARRIVAL, doom_howl.REWARDS, xp)
 
                     temporary_mutations.gain_experience(ctx, player, xp)
                     evolution.gain_experience(ctx, player, xp)
@@ -120,11 +140,19 @@ function system.update(ctx)
                 -- Death hooks may consume the body; ordinary corpse placement runs only afterward.
                 if kills[ctx:id(entity)] and not consumed_corpse and
                     not summoned then
-                    death.corpse(ctx, definition, position,
+                    local corpse = death.corpse(ctx, definition, position,
                         ctx:get(entity, component.VAULT_ORIGIN))
+                    local arrival = ctx:get(entity, doom_howl.ARRIVAL)
+
+                    if corpse and arrival then
+                        ctx:add(corpse, doom_howl.ARRIVAL, {
+                            created_aut = arrival.created_aut,
+                        })
+                    end
                 end
 
                 clear_haunting(ctx, entity)
+                clear_orb_targets(ctx, entity)
                 ctx:destroy(entity)
                 ctx:emit("death", "The " .. definition.name .. " dies.")
             end

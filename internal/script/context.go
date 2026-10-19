@@ -338,7 +338,7 @@ func (r *Runtime) luaGridSetCell(state *lua.LState) int {
 	}
 
 	if _, linked := r.services.Grid.StairAt(levelID, x, y); linked &&
-		!terrain.IsStair(feature) {
+		!terrain.IsLinkedStair(feature) {
 		state.RaiseError("terrain would remove a stair link")
 
 		return 0

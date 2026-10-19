@@ -1,6 +1,8 @@
 -- Beam flavour determines the damage or status applied on contact; a spell may choose another glyph.
 
 local ids = {
+    BEAM_RESISTANCE = "BEAM_RESISTANCE",
+    BEAM_INNER_FLAME = "BEAM_INNER_FLAME",
     BEAM_ACID = "BEAM_ACID",
     BEAM_AIR = "BEAM_AIR",
     BEAM_AGONY = "BEAM_AGONY",
@@ -45,6 +47,7 @@ local ids = {
     BEAM_POISON = "BEAM_POISON",
     BEAM_POISON_ARROW = "BEAM_POISON_ARROW",
     BEAM_POLYMORPH = "BEAM_POLYMORPH",
+    BEAM_PORKALATOR = "BEAM_PORKALATOR",
     BEAM_SAP_MAGIC = "BEAM_SAP_MAGIC",
     BEAM_SENTINEL_MARK = "BEAM_SENTINEL_MARK",
     BEAM_SLEEP = "BEAM_SLEEP",
