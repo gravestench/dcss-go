@@ -152,7 +152,7 @@ Akara entity for each placed trap, and Lua systems for entry, timers, and
 malevolence. Pressure-plate marker consumers, the rest of the vault families,
 and deeper monster trait parity remain in the adjacent world domains.
 
-The monster beam domain now has 70 committed source profiles and one
+The monster beam domain now has 71 committed source profiles and one
 discoverable Lua effect per spell. A typed intent retains the chosen actor or
 cell, book slot, and direction; the actor-neutral Lua beam rules handle
 trajectory, shields, reflection, damage, resistance, clouds, terrain, and
@@ -171,6 +171,9 @@ switch or mutable module state.
 Torment's scroll and monster Symbol now share one Lua area owner. It scans
 LOS_NO_TRANS geometry, delegates HP loss to each victim's resistance and
 health policies, and uses actor perception before naming a wounded monster.
+The three monster life-transfer spells share susceptibility, negative-energy
+resistance, and health owners. Each spell keeps its own target geometry and
+heal recipients. The shared owner never stores state across casts.
 All 285 monster spellbook files import their spell and slot-flag references;
 monster definitions import spellbook IDs. Each content file still declares
 its own ID, while cross-file references resolve through the effective catalog.

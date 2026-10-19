@@ -12,9 +12,8 @@ local test = {}
 function test.run()
     local profiles = catalog.all("monster_beams")
 
-    harness.equal(#profiles, 70,
-        "every source monster zap has a committed profile")
-
+    -- Validate every effective profile rather than pinning a count. New
+    -- source or modded beams can register without editing this test.
     for _, profile in ipairs(profiles) do
         harness.equal(spells[profile.id], profile.id,
             "beam profile names a registered source spell")

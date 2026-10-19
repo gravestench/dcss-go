@@ -4,6 +4,7 @@ local component = require("constants.component")
 local form_ids = require("constants.form_ids")
 local holy = require("policy.clouds.effects.holy")
 local magic_damage = require("policy.magic.damage")
+local life_transfer = require("policy.combat.life_transfer")
 local miasma = require("policy.clouds.effects.miasma")
 local holiness = require("constants.monster_holiness")
 local monster_poison = require("policy.combat.monster_poison")
@@ -106,6 +107,7 @@ end
 -- Source: beam.cc:bolt::apply_AC. Beam armour does not use GDR.
 function damage.armour(ctx, raw, ac, profile)
     if raw <= 0 or profile.flavour == flavours.BEAM_DAMNATION or
+        profile.flavour == flavours.BEAM_MALIGN_OFFERING or
         profile.flavour == flavours.BEAM_DISPEL_UNDEAD then
         return raw
     end
@@ -128,6 +130,12 @@ end
 
 -- Route each beam flavour through its own resistance rule after armour has been rolled.
 function damage.resisted(ctx, target, raw, profile)
+    if profile.flavour == flavours.BEAM_MALIGN_OFFERING then
+        return life_transfer.resisted(raw,
+            life_transfer.resistance(ctx, target),
+            not ctx:has(target, component.PLAYER))
+    end
+
     if profile.flavour == flavours.BEAM_WATER then
         return water.damage(ctx, target, raw)
     end
