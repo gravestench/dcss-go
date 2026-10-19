@@ -249,7 +249,9 @@ retain source IDs in saves, and sparse mod overlays can add a vault or replace
 one handler. The generic secondary-vault opportunity currently uses a 1-in-8
 roll while other vault families are unported; source DCSS draws from its full
 secondary-vault pool instead. Deeper branch placement needs the corresponding
-branch generator.
+branch generator. The rare `bzr_entry` request has no imported bazaar entry
+maps yet; an empty eligible tag pool leaves that slot available for an
+ordinary shop instead of aborting the floor.
 Keeper names, exact source RNG sequences, and every special price case still
 need parity review; the saved keeper seed leaves a place for that work without
 changing the ECS ownership model.

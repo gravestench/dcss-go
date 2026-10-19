@@ -12,6 +12,17 @@ import (
 	"crawl/internal/vault"
 )
 
+func TestGeneratedDungeonOptionalBazaarTagWithoutCatalog(t *testing.T) {
+	g, err := NewDungeonGame(23, "SP_HUMAN", "JOB_FIGHTER",
+		"WPN_RAPIER", "Tester")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer g.Close()
+}
+
 func TestGeneratedShopVaultsMaterializeAndRestore(t *testing.T) {
 	found := false
 	foundWithoutShop := false

@@ -133,13 +133,17 @@ local function controller_api(builder, context, placed)
         return context.absolute_depth or context.depth
     end
 
-    -- Attempt requested tagged maps sequentially so a prior fit affects the next.
+    -- Attempt requested tagged maps sequentially so a prior fit affects the
+    -- next. A tag with no candidates at this depth places nothing; the
+    -- caller can keep that slot for another map family.
     function api:place_maps(tag, count)
+        local placed_count = 0
+
         for _ = 1, count do
             local selected = selection.choose_tag(builder, tag, context)
 
             if not selected then
-                error("no eligible source vault for tag " .. tag)
+                return placed_count
             end
 
             local vault = catalog.get(selected.id)
@@ -166,7 +170,10 @@ local function controller_api(builder, context, placed)
 
             placed[#placed + 1] = map
             context.used[vault.id] = true
+            placed_count = placed_count + 1
         end
+
+        return placed_count
     end
 
     return api
