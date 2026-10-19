@@ -22,6 +22,7 @@ relative path to change a bundled file.
 | Check a mod or understand a failed load | [Test a mod](#test-a-mod) and [context failures](#when-a-context-call-fails) |
 | Understand overlays and save compatibility | [Scaffolding](#scaffolding) and [saves and identity](#saves-and-identity) |
 | Try a complete live rule with `ctx` | [A first live mod](#a-first-live-mod) |
+| Add saved behavior | [A new `ctx` example](#a-complete-new-ctx-example) |
 | Understand a callback's arguments and available game services | [Who supplies `ctx`](#who-supplies-ctx) and [the context API](#the-game-context-ctx) |
 | Trace a callback from registration to state change | [Trace a callback](#trace-a-callback-before-using-ctx) |
 
@@ -134,6 +135,123 @@ For example, a monster definition may specify its kind's hit dice. Two live
 monsters of that kind have different HP components. A spell's `foe` is a
 handle for one of those actors; `ctx:get(foe, components.HEALTH)` reads that
 actor's current HP. The definition cannot answer that question.
+
+### A complete new `ctx` example
+
+The scroll example replaces an existing rule. This example adds a rule to a
+sparse mod directory without replacing any bundled file. It records elapsed
+player action time in a saved ECS component and displays a notice after each
+50 aut. Create these three files under `/path/to/my-mod/`:
+
+```text
+my_mod/constants/component.lua
+schemas/step_notice.lua
+systems/step_notice.lua
+```
+
+The ID module gives the schema and the system one shared component name. It is a helper
+module: `require` loads it when a discovered file imports it.
+
+```lua
+-- my_mod/constants/component.lua
+-- One name identifies the saved timer wherever the mod reads or writes it.
+local component = {
+    STEP_NOTICE = "my_mod.step_notice",
+}
+
+return component
+```
+
+The schema describes the state that each player instance can save. Loading
+this file registers the shape; it does not create a component on its own.
+
+```lua
+-- schemas/step_notice.lua
+local components = require("my_mod.constants.component")
+
+-- Keep the elapsed time on the player so saves preserve the partial interval.
+local schema = {
+    id = components.STEP_NOTICE,
+    version = 1,
+    fields = {
+        elapsed_aut = {
+            type = "int64",
+            default = 0,
+        },
+    },
+}
+
+register.component(schema)
+
+return schema
+```
+
+The system registers its callback while loading. The scheduler later calls
+`system.update(ctx, entity, delta)` with the current game, the active actor,
+and that actor's elapsed action time. An empty query is intentional: the
+system has to see the player once *before* its component exists.
+
+```lua
+-- systems/step_notice.lua
+local channels = require("constants.message_channels")
+local components = require("my_mod.constants.component")
+
+local NOTICE_INTERVAL_AUT = 50
+local system = {}
+
+-- Theory of operation: only player actions advance this saved timer. The
+-- scheduler supplies action time in aut; a component holds the remainder so
+-- loading a save does not restart the interval. Monsters cannot advance it.
+-- Example: 40 saved aut plus a 10-aut move emits one notice and stores zero.
+function system.update(ctx, entity, delta)
+    if entity ~= ctx:player() then
+        return
+    end
+
+    local timer = ctx:get(entity, components.STEP_NOTICE)
+    local previous = timer and timer.elapsed_aut or 0
+    local total = previous + delta
+    local crossed_interval = total >= NOTICE_INTERVAL_AUT
+    local next_timer = {
+        elapsed_aut = total % NOTICE_INTERVAL_AUT,
+    }
+
+    if timer then
+        ctx:set(entity, components.STEP_NOTICE, next_timer)
+    else
+        ctx:add(entity, components.STEP_NOTICE, next_timer)
+    end
+
+    if crossed_interval then
+        ctx:emit(channels.DURATION, "You feel the passage of time.")
+    end
+end
+
+register.system({
+    id = "my_mod.step_notice_system",
+    scope = "active",
+    query = {},
+    update = system.update,
+})
+
+return system
+```
+
+Launch with `go run ./cmd/dcrawl --mod-dir=/path/to/my-mod` and take player
+actions totaling 50 aut. The notice appears once on the action that crosses
+the interval. A single action longer than one interval still emits one
+notice, while the saved timer keeps the remainder. This is a simple policy
+choice for the example; a different rule may need to process every interval.
+
+Here `register.component` and `register.system` run at startup, when there
+is no game `ctx`. The registered `update` function runs later. The `entity`
+argument identifies the actor being updated; `ctx:player()` identifies the
+player even on a monster action. `ctx:get` returns a detached component
+table, so the callback uses `ctx:set` or `ctx:add` to save its result.
+`ctx:emit` displays the notice but does not store the timer. Removing the mod
+changes the ruleset identity and leaves a save containing a component whose
+schema is absent; see [Saves and identity](#saves-and-identity) before
+reopening that save without the mod.
 
 ### `ctx` in one minute
 
