@@ -7,6 +7,7 @@ local engulf = require("policy.combat.engulf")
 local component = require("constants.component")
 local intents = require("constants.intent")
 local spell_flags = require("constants.spell_flags")
+local brilliance = require("policy.combat.monster_support.brilliance")
 
 local spell = {}
 
@@ -50,10 +51,13 @@ end
 
 -- Retry only when an effect cannot plan a target; a no-spell prospect result is final for this turn.
 local function select_targetable(ctx, entity, book, condition)
--- Pass the AI RNG stream into slot selection.
-local function random(bound)
+    -- The prospect policy accepts a draw callback so all choices use this
+    -- actor's saved monster-spell stream, including a brilliance reroll.
+    local function random(bound)
         return ctx:random("monster_spell", bound)
     end
+
+    local reroll = brilliance.empowered(ctx, entity)
 
     for attempt = 1, 2 do
         local preference = nil
@@ -64,6 +68,15 @@ local function random(bound)
 
         local slot, index = prospect.choose(book, condition, random,
             preference)
+
+        -- mon-cast.cc grants an empowered caster one extra prospect when
+        -- the 200-point draw selected no spell. A target failure still uses
+        -- the ordinary second attempt below.
+        if not slot and reroll then
+            slot, index = prospect.choose(book, condition, random,
+                preference)
+            reroll = false
+        end
 
         -- Source does not retry when the 200-point roll chose no spell.
         if not slot then

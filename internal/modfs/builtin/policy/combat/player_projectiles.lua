@@ -10,6 +10,7 @@ local roll = require("policy.combat.roll")
 local trajectory = require("policy.combat.trajectory")
 local statuses = require("policy.magic.effects.statuses.player")
 local monster_defense = require("policy.combat.monster_defense")
+local repulsion = require("policy.combat.monster_support.repulsion")
 local player_attributes = require("policy.character.attributes")
 local vision = require("policy.character.vision")
 local player_slay = require("policy.combat.player_slay")
@@ -123,6 +124,7 @@ local function attack_input(ctx, player, missile, launcher, item, target, defend
         slay = player_slay.total(ctx, player),
         weapon_plus = weapon and item.plus or 0,
         defender_ev = monster_defense.evasion(ctx, target, defender),
+        missile_repulsion = repulsion.active(ctx, target),
         defender_ac = monster_defense.armour(ctx, target, defender),
         defender_shield = monster_defense.shield(ctx, target, defender),
         penetrating = missile.id == "MI_JAVELIN",

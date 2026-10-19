@@ -6,6 +6,7 @@ local damage_causes = {
     FLAY = "flay",
     HIT = "hit",
     CLOUD = "cloud",
+    REFLECTED = "reflected",
 }
 
 return damage_causes

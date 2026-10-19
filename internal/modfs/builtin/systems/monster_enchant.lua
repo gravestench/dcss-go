@@ -4,9 +4,9 @@ local system = {}
 
 -- Theory of operation: Enchant timers are aged after slow and before AI reads their effect.
 -- Monster enchantments age after slow and before the next AI decision.
-function system.update(ctx, entity)
+function system.update(ctx, entity, elapsed_aut)
     if ctx:has(entity, "core.ai") then
-        enchant.tick(ctx, entity)
+        enchant.tick(ctx, entity, elapsed_aut)
     end
 end
 

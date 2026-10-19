@@ -118,7 +118,7 @@ function elemental.apply(ctx, actor, state, elapsed_aut, definition,
             end
 
             local after = monster_health.damage(ctx, actor,
-                amount, source)
+                amount, source, causes.CLOUD)
 
             -- Saved credit outlives the source actor. The source ID is only
             -- needed for live-actor reactions to damage.

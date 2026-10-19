@@ -4,6 +4,7 @@
 
 local catalog = require("policy.catalog")
 local habitat = require("policy.combat.monster_habitat")
+local hand = require("policy.combat.monster_support.trogs_hand")
 
 -- Keep fractional healing deterministic through the named RNG stream instead of truncating every turn.
 local function random_divide(ctx, numerator, denominator)
@@ -58,7 +59,8 @@ function system.update(ctx, entity)
 
     local definition = catalog.get("monsters", actor.kind_id)
 
-    if has_flag(definition.flags, "M_NO_REGEN") then
+    if has_flag(definition.flags, "M_NO_REGEN") and
+        not hand.active(ctx, entity) then
         return
     end
 
@@ -71,7 +73,8 @@ function system.update(ctx, entity)
 
     if actor.kind_id == "MONS_PARGHIT" then
         health.current = math.min(health.max, health.current + 27)
-    elseif has_flag(definition.flags, "M_FAST_REGEN") then
+    elseif has_flag(definition.flags, "M_FAST_REGEN") or
+        hand.active(ctx, entity) then
         health.current = health.current + 1
     elseif definition.hd >= 1 and definition.hd <= 2 then
         if ctx:random("monster_regen", 25) == 0 then

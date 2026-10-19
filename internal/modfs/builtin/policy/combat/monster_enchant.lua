@@ -6,6 +6,8 @@ local monster_flags = require("constants.monster_flags")
 local monsters = require("ids.monsters")
 local resistance_ids = require("constants.resistance_ids")
 local monster_stats = require("policy.combat.monster_stats")
+local mirror = require("policy.combat.monster_support.injury_mirror")
+local frenzy_health = require("policy.magic.effects.statuses.monster_frenzy_health")
 
 local enchant = {}
 
@@ -15,6 +17,12 @@ local whole_effects = {
     component.MONSTER_ENFEEBLE,
     component.MONSTER_INFESTATION,
     component.MONSTER_MASS_ENCHANT,
+    component.MONSTER_BOONS,
+    component.MONSTER_TROGS_HAND,
+    component.MONSTER_REPULSION,
+    component.MONSTER_STILL_WINDS,
+    component.MONSTER_BRILLIANCE_AURA,
+    component.MONSTER_EMPOWERED_SPELLS,
     component.STICKY_FLAME,
     component.INNER_FLAME,
     component.FIRE_VULNERABILITY,
@@ -68,6 +76,10 @@ local function partial_effects(ctx, monster)
     if active_fields(ctx:get(monster, component.MONSTER_ENCHANT), {
         "blind_aut", "corrosion_aut", "invisible_aut",
     }) then
+        return true
+    end
+
+    if mirror.active(ctx, monster) then
         return true
     end
 
@@ -239,6 +251,10 @@ end
 -- spell effects contribute their own saved ECS conditions here.
 function enchant.dispel(ctx, monster, definition)
     local changed = slow.remove(ctx, monster)
+
+    if mirror.dispel(ctx, monster) then
+        changed = true
+    end
     local value = ctx:get(monster, component.MONSTER_ENCHANT)
 
     if value and ((value.blind_aut or 0) > 0 or
@@ -252,6 +268,11 @@ function enchant.dispel(ctx, monster, definition)
 
     if allegiance and (allegiance.charm_aut > 0 or
         allegiance.frenzy_aut > 0) then
+        if allegiance.berserk_hp then
+            frenzy_health.scale(ctx, monster, 2, 3)
+            allegiance.berserk_hp = false
+        end
+
         allegiance.charm_aut = 0
         allegiance.frenzy_aut = 0
 
@@ -303,7 +324,7 @@ end
 
 -- Example: enchant.tick(ctx, monster) with expired invisibility -> visible monster state
 -- Decay stored enchantment timers together so visibility, corrosion, and other effects expire consistently.
-function enchant.tick(ctx, monster)
+function enchant.tick(ctx, monster, elapsed_aut)
     local value = ctx:get(monster, "magic.monster_enchant")
 
     if not value then
@@ -312,13 +333,14 @@ function enchant.tick(ctx, monster)
 
     local actor = ctx:get(monster, "core.actor")
     local changed = false
+    elapsed_aut = elapsed_aut or 10
 
     value.blind_aut = value.blind_aut or 0
     value.corrosion_aut = value.corrosion_aut or 0
     value.invisible_aut = value.invisible_aut or 0
 
     if value.blind_aut > 0 then
-        value.blind_aut = math.max(0, value.blind_aut - 10)
+        value.blind_aut = math.max(0, value.blind_aut - elapsed_aut)
         changed = true
 
         if value.blind_aut == 0 then
@@ -328,7 +350,8 @@ function enchant.tick(ctx, monster)
     end
 
     if value.corrosion_aut > 0 then
-        value.corrosion_aut = math.max(0, value.corrosion_aut - 10)
+        value.corrosion_aut = math.max(0,
+            value.corrosion_aut - elapsed_aut)
         changed = true
 
         if value.corrosion_aut == 0 then
@@ -338,7 +361,8 @@ function enchant.tick(ctx, monster)
     end
 
     if value.invisible_aut > 0 then
-        value.invisible_aut = math.max(0, value.invisible_aut - 10)
+        value.invisible_aut = math.max(0,
+            value.invisible_aut - elapsed_aut)
         changed = true
 
         if value.invisible_aut == 0 then

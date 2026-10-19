@@ -7,6 +7,11 @@ local roll = require("policy.combat.roll")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 local monster_stats = require("policy.combat.monster_stats")
+local monster_slow = require("policy.combat.monster_slow")
+local mass = require("policy.magic.effects.statuses.mass_enchantment")
+local frenzy_health = require("policy.magic.effects.statuses.monster_frenzy_health")
+local holiness = require("constants.monster_holiness")
+local monster_flags = require("constants.monster_flags")
 
 local allegiance = {}
 
@@ -43,6 +48,7 @@ local function ensure(ctx, target)
         charm_aut = 0,
         frenzy_aut = 0,
         fatigue_aut = 0,
+        berserk_hp = false,
     }
 end
 
@@ -93,6 +99,63 @@ local function can_frenzy(ctx, target, definition)
     return not ctx:has(target, component.PARALYSIS) and
         (not stasis or stasis.petrifying_aut <= 0 and
             stasis.petrified_aut <= 0)
+end
+
+-- monster::needs_berserk(false) filters physical incapacity, Teleport,
+-- and distant foes before the AI spends its Rage spell slot. The spell
+-- resolver checks its separate Haste owner before calling this predicate.
+function allegiance.needs_berserk(ctx, target, foe)
+    if not foe then
+        return false
+    end
+
+    local actor = ctx:get(target, component.ACTOR)
+    local definition = actor and catalog.get("monsters", actor.kind_id)
+
+    if not definition or not can_frenzy(ctx, target, definition) or
+        ctx:has(target, component.TELEPORT) or
+        has(definition.flags, monster_flags.STASIS) then
+        return false
+    end
+
+    local living = has(definition.holiness, holiness.NATURAL) or
+        has(definition.holiness, holiness.DEMONIC) or
+        has(definition.holiness, holiness.HOLY)
+    local origin = ctx:get(target, component.POSITION)
+    local destination = ctx:get(foe, component.POSITION)
+
+    if not living or not origin or not destination or
+        origin.level_id ~= destination.level_id then
+        return false
+    end
+
+    return math.max(math.abs(origin.x - destination.x),
+        math.abs(origin.y - destination.y)) <= 3
+end
+
+-- Intentional Berserker Rage uses the existing saved frenzy/fatigue owner.
+-- The source enchant's 16 + random2avg(13, 2) turns are spent on later actions.
+function allegiance.start_berserk(ctx, target)
+    local current = ensure(ctx, target)
+
+    if current.frenzy_aut > 0 then
+        error("monster is already frenzied")
+    end
+
+    monster_slow.remove(ctx, target)
+    mass.clear_fear(ctx, target)
+    frenzy_health.scale(ctx, target, 3, 2)
+
+    current.frenzy_aut = (16 +
+        roll.average_two(ctx, "monster_spell", 13)) * 10
+    current.fatigue_aut = 0
+    current.berserk_hp = true
+    save(ctx, target, current)
+
+    local actor = ctx:get(target, component.ACTOR)
+    local definition = catalog.get("monsters", actor.kind_id)
+
+    ctx:emit("spell", "The " .. definition.name .. " goes berserk!")
 end
 
 -- Charm's menu predicate requires a visible living actor and a clear
@@ -189,6 +252,7 @@ function allegiance.cast_discord(ctx, player, power)
                         local lasting = (16 + average_two(ctx, 13)) * 10
                         value.frenzy_aut = lasting
                         value.fatigue_aut = 0
+                        value.berserk_hp = false
                         save(ctx, target, value)
                         ctx:emit("spell", "The " .. definition.name ..
                             " flies into a frenzy!")
@@ -261,19 +325,27 @@ end
 
 -- A finished frenzy becomes 70-130 AUT of fatigue; remove shared state only
 -- after charm, frenzy, and fatigue all reach zero.
-function allegiance.tick(ctx, target)
+function allegiance.tick(ctx, target, elapsed_aut)
     local current = state(ctx, target)
 
     if not current then
         return
     end
 
-    current.charm_aut = math.max(0, current.charm_aut - 10)
+    elapsed_aut = elapsed_aut or 10
+    current.charm_aut = math.max(0,
+        current.charm_aut - elapsed_aut)
 
     if current.frenzy_aut > 0 then
-        current.frenzy_aut = math.max(0, current.frenzy_aut - 10)
+        current.frenzy_aut = math.max(0,
+            current.frenzy_aut - elapsed_aut)
 
         if current.frenzy_aut == 0 then
+            if current.berserk_hp then
+                frenzy_health.scale(ctx, target, 2, 3)
+                current.berserk_hp = false
+            end
+
             current.fatigue_aut = 70 + ctx:random("spell", 61)
             local actor = ctx:get(target, component.ACTOR)
             local definition = catalog.get("monsters", actor.kind_id)
@@ -281,7 +353,8 @@ function allegiance.tick(ctx, target)
                 " is no longer in an insane frenzy.")
         end
     elseif current.fatigue_aut > 0 then
-        current.fatigue_aut = math.max(0, current.fatigue_aut - 10)
+        current.fatigue_aut = math.max(0,
+            current.fatigue_aut - elapsed_aut)
     end
 
     if current.charm_aut > 0 or current.frenzy_aut > 0 or

@@ -1,5 +1,6 @@
 local component = require("constants.component")
 local monster_stats = require("policy.combat.monster_stats")
+local hand = require("policy.combat.monster_support.trogs_hand")
 
 local will = {}
 
@@ -27,6 +28,8 @@ function will.resists(ctx, definition, enchant_power, target)
     end
 
     if target then
+        resistance = resistance + hand.will_bonus(ctx, target)
+
         local lowered = ctx:get(target, component.MONSTER_LOWERED_WILL)
 
         if lowered and lowered.remaining_aut > 0 then

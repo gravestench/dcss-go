@@ -4,9 +4,9 @@ local system = {}
 
 -- Theory of operation: Expired allegiance is removed before AI chooses friend or foe.
 -- Temporary allegiance expires before AI chooses a target for the monster.
-function system.update(ctx, entity)
+function system.update(ctx, entity, elapsed_aut)
     if ctx:has(entity, component.AI) then
-        allegiance.tick(ctx, entity)
+        allegiance.tick(ctx, entity, elapsed_aut)
     end
 end
 

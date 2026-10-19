@@ -22,7 +22,11 @@ local function fixture()
     local ctx = {}
 
     -- Placement sees every cloud entity already created in the fixture.
-    function ctx:query()
+    function ctx:query(required)
+        if required[1] ~= component.WORLD_CLOUD then
+            return {}
+        end
+
         local entities = {}
 
         for entity in pairs(states) do

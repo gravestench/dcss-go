@@ -3,6 +3,9 @@ local capabilities = require("constants.mutation_capabilities")
 local effects = require("policy.mutations.effects.registry")
 local statuses = require("policy.magic.effects.statuses.player")
 local player_health = require("policy.combat.player_health")
+local mirror = require("policy.combat.monster_support.injury_mirror")
+local display = require("policy.combat.monster_support.display")
+local causes = require("constants.damage_causes")
 
 local monster_health = {}
 
@@ -33,7 +36,7 @@ end
 -- Example: monster_health.damage(ctx, target, amount, source) with already dead target -> no further HP loss
 -- Shared monster HP loss lets mutation effects observe damage actually
 -- dealt after petrification, with an explicit source actor.
-function monster_health.damage(ctx, target, amount, source)
+function monster_health.damage(ctx, target, amount, source, cause)
     local health = ctx:get(target, component.HEALTH)
 
     if not health then
@@ -64,6 +67,21 @@ function monster_health.damage(ctx, target, amount, source)
         }
 
         effects.trigger(ctx, source, capabilities.AFTER_MONSTER_DAMAGE, hit)
+    end
+
+    local returned = mirror.returned(ctx, target, dealt, source,
+        cause or causes.ORDINARY)
+
+    if returned > 0 then
+        ctx:emit("combat", "The " .. display.name(ctx, target) ..
+            " mirrors the damage!")
+
+        if ctx:has(source, component.PLAYER) then
+            player_health.damage(ctx, source, returned, false, target)
+        else
+            monster_health.damage(ctx, source, returned, target,
+                causes.REFLECTED)
+        end
     end
 
     return health, dealt

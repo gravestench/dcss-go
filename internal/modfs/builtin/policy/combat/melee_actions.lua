@@ -23,7 +23,7 @@ local vampire = require("policy.character.vampire")
 local auxiliary_attacks = require("constants.auxiliary_attacks")
 local player_brands = require("policy.combat.player_brands")
 local player_staves = require("policy.combat.player_staves")
-local chaos_status = require("policy.combat.player_brands.chaos_status")
+local boons = require("policy.combat.monster_support.boons")
 
 local actions = {}
 
@@ -362,7 +362,7 @@ function actions.monster(ctx, attacker)
         outcome.damage = melee.monster_damage(ctx, attack_input, defense)
         outcome.damage = statuses.frenzy_melee_damage(ctx, attacker,
             outcome.damage)
-        outcome.damage = chaos_status.damage(ctx, attacker, outcome.damage)
+        outcome.damage = boons.damage(ctx, attacker, outcome.damage)
     end
 
     local player = ctx:player()
@@ -473,7 +473,7 @@ function actions.monster_target(ctx, attacker, target)
     local dealt = statuses.enfeeble_melee_damage(ctx, attacker,
         outcome.damage)
     dealt = statuses.frenzy_melee_damage(ctx, attacker, dealt)
-    dealt = chaos_status.damage(ctx, attacker, dealt)
+    dealt = boons.damage(ctx, attacker, dealt)
     local health = damage(ctx, target, dealt,
         targets.allied(ctx, attacker) or statuses.frenzied(ctx, attacker),
         attacker)

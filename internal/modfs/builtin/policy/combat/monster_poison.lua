@@ -3,6 +3,7 @@ local roll = require("policy.combat.roll")
 local monster_health = require("policy.combat.monster_health")
 local component = require("constants.component")
 local hex_status = require("policy.combat.monster_hexes.status")
+local causes = require("constants.damage_causes")
 
 local poison = {}
 
@@ -134,7 +135,8 @@ function poison.tick(ctx, monster)
     end
 
     if damage > 0 then
-        health = monster_health.damage(ctx, monster, damage, state.source)
+        health = monster_health.damage(ctx, monster, damage, state.source,
+            causes.POISON)
 
         if health.current == 0 and
             (state.player_credit or state.source and

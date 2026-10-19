@@ -4,31 +4,42 @@ local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local monster_stats = require("policy.combat.monster_stats")
 local polymorph = require("policy.magic.effects.statuses.polymorph")
-local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
 local roll = require("policy.combat.roll")
+local boons = require("policy.combat.monster_support.boons")
 
 local status = {}
 
 local fields = {
-    [chaos_effects.HASTE] = "haste_aut",
-    [chaos_effects.MIGHT] = "might_aut",
     [chaos_effects.AGILITY] = "agility_aut",
 }
 
--- All Chaos boons and shifter state share one saved monster component.
+-- Chaos alone owns agility and permanent shifter identity; generic boons have
+-- their own component because spells grant them too.
 local function current(ctx, monster)
     return ctx:get(monster, component.MONSTER_CHAOS)
 end
 
--- A boon affects combat only while its individual timer is positive.
+-- Chaos agility affects combat only while its timer is positive.
 local function active(ctx, monster, field)
     local value = current(ctx, monster)
 
     return value ~= nil and value[field] > 0
 end
 
--- Extending a boon must preserve other Chaos timers and never shorten the same boon.
+-- Delegate generic boons to their owner; keep Chaos-only agility local.
 function status.apply(ctx, monster, name, duration)
+    if name == chaos_effects.HASTE then
+        boons.haste(ctx, monster, duration)
+
+        return
+    end
+
+    if name == chaos_effects.MIGHT then
+        boons.might(ctx, monster, duration)
+
+        return
+    end
+
     local field = fields[name]
 
     if not field then
@@ -36,8 +47,6 @@ function status.apply(ctx, monster, name, duration)
     end
 
     local value = current(ctx, monster) or {
-        haste_aut = 0,
-        might_aut = 0,
         agility_aut = 0,
         shifter = false,
     }
@@ -54,8 +63,6 @@ end
 -- Shifter identity persists in the same component after temporary boons expire.
 function status.make_shifter(ctx, monster)
     local value = current(ctx, monster) or {
-        haste_aut = 0,
-        might_aut = 0,
         agility_aut = 0,
         shifter = false,
     }
@@ -104,26 +111,6 @@ function status.shift(ctx, monster)
     return polymorph.shapeshift(ctx, monster, definition)
 end
 
--- Haste raises monster action speed while its Chaos timer remains active.
-function status.speed(ctx, monster, speed)
-    if active(ctx, monster, "haste_aut") then
-        return math.floor(speed * 3 / 2)
-    end
-
-    return speed
-end
-
--- Might does not stack with frenzy's separate melee damage bonus.
-function status.damage(ctx, monster, amount)
-    -- Source: melee-attack.cc.
-    if active(ctx, monster, "might_aut") and
-        not allegiance.frenzied(ctx, monster) then
-        return math.floor(amount * 3 / 2)
-    end
-
-    return amount
-end
-
 -- Agility adds the source fixed evasion bonus only while active.
 function status.evasion(ctx, monster, amount)
     -- Source: monster.cc and defines.h:AGILITY_BONUS.
@@ -134,7 +121,7 @@ function status.evasion(ctx, monster, amount)
     return amount
 end
 
--- Remove the record only after all boon timers expire and no shifter flag remains.
+-- Remove Chaos-only state after agility expires unless shifter persists.
 function status.tick(ctx, monster, aut)
     local value = current(ctx, monster)
 
@@ -146,8 +133,7 @@ function status.tick(ctx, monster, aut)
         value[field] = math.max(0, value[field] - aut)
     end
 
-    if value.haste_aut == 0 and value.might_aut == 0 and
-        value.agility_aut == 0 and not value.shifter then
+    if value.agility_aut == 0 and not value.shifter then
         ctx:remove(monster, component.MONSTER_CHAOS)
     else
         ctx:set(monster, component.MONSTER_CHAOS, value)

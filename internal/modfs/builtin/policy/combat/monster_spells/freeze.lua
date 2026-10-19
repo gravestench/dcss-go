@@ -43,7 +43,7 @@ function freeze.resolve(ctx, caster, foe, _, plan)
     local definition = catalog.get("monsters", actor.kind_id)
     local damage = magic_damage.player_elemental(ctx, player,
         spells.freeze(ctx,
-            monster_stats.hit_dice(ctx, caster, definition)),
+            monster_stats.spell_hit_dice(ctx, caster, definition)),
         resistances.COLD)
     player_health_policy.damage(ctx, player, damage, false, caster)
     ctx:emit("combat", "You are frozen.")

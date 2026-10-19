@@ -45,7 +45,7 @@ function test.run(ctx)
 
     effects.apply_named(ctx, effect_ids.HASTE, hit)
 
-    local status = ctx:get(rat, component.MONSTER_CHAOS)
+    local status = ctx:get(rat, component.MONSTER_BOONS)
 
     harness.truthy(status and status.haste_aut > 0,
         "chaos haste changes the defender's saved actor state")

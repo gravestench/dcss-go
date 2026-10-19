@@ -5,6 +5,7 @@ local damage = require("policy.combat.monster_beams.damage")
 local defense = require("policy.combat.monster_beams.defense")
 local fighter = require("policy.combat.fighter")
 local monster_defense = require("policy.combat.monster_defense")
+local repulsion = require("policy.combat.monster_support.repulsion")
 local monster_health = require("policy.combat.monster_health")
 local player_health = require("policy.combat.player_health")
 local reflection = require("policy.combat.reflection")
@@ -32,6 +33,7 @@ local function defender_snapshot(ctx, defender)
 
     return {
         ev = monster_defense.evasion(ctx, defender, definition),
+        missile_repulsion = repulsion.active(ctx, defender),
         ac = monster_defense.armour(ctx, defender, definition),
         monster_shield = shield,
         reflects = shield and shield.reflects or false,

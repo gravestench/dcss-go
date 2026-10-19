@@ -20,7 +20,15 @@ local function context()
 
     -- Enumerate saved cloud entities so placement checks existing occupants
     -- rather than assuming the target cell is empty.
-    function context:query()
+    function context:query(required)
+        if required[1] == component.MONSTER_STILL_WINDS then
+            return self.wind and { 99 } or {}
+        end
+
+        if required[1] ~= component.WORLD_CLOUD then
+            return {}
+        end
+
         local entities = {}
 
         for entity in pairs(state) do
@@ -33,7 +41,21 @@ local function context()
     end
 
     -- Read the fixture's saved cloud record for overlap and merge decisions.
-    function context:get(entity)
+    function context:get(entity, kind)
+        if entity == 99 then
+            if kind == component.MONSTER_STILL_WINDS then
+                return { remaining_aut = 30 }
+            end
+
+            if kind == component.POSITION then
+                return { level_id = 1, x = 1, y = 1 }
+            end
+
+            if kind == component.HEALTH then
+                return { current = 1, max = 1 }
+            end
+        end
+
         return state[entity]
     end
 
@@ -176,13 +198,15 @@ function test.run()
         1, 1, 8, 2, 20, { sanctuary = true }),
         "sanctuary allows harmless clouds")
 
+    ctx.wind = true
     harness.falsy(placement.place(ctx, ids.CLOUD_FIRE,
-        1, 1, 9, 2, 20, { still_winds = true }),
+        1, 1, 9, 2, 20),
         "still winds blocks ordinary clouds")
 
     harness.truthy(placement.place(ctx, ids.CLOUD_VORTEX,
-        1, 1, 9, 2, 20, { still_winds = true }),
+        1, 1, 9, 2, 20),
         "vortex is the still winds exception")
+    ctx.wind = false
 
     -- Summoner allegiance is copied into cloud kill credit for later damage.
     local get = ctx.get

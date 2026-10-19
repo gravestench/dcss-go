@@ -20,4 +20,17 @@ function stats.hit_dice(ctx, monster, definition, base_hd)
     return hd
 end
 
+-- Aura of Brilliance empowers spells by five HD without changing melee,
+-- natural regeneration, or source monster durability.
+function stats.spell_hit_dice(ctx, monster, definition, base_hd)
+    local hd = stats.hit_dice(ctx, monster, definition, base_hd)
+    local state = ctx:get(monster, component.MONSTER_EMPOWERED_SPELLS)
+
+    if state and state.remaining_aut > 0 then
+        return hd + 5
+    end
+
+    return hd
+end
+
 return stats

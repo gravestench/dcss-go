@@ -158,10 +158,11 @@ cell, book slot, and direction; the actor-neutral Lua beam rules handle
 trajectory, shields, reflection, damage, resistance, clouds, terrain, and
 saved statuses. Targeted hexes share that trace but apply their own
 willpower, immunity, and persistent actor rules. Monster spell coverage
-rejects missing effects before a
-monster joins the live roster. Self enchantments, summons, and other monster
-spell families still need complete rule slices before wider monster rosters
-become playable.
+rejects missing effects before a monster joins the live roster. The 13
+self-support spells now use actor-owned Lua statuses for boons, healing,
+defenses, and auras. Chaos and spells share the same Haste and Might state.
+Ally-targeted support, summons, and remaining monster spell families still
+need complete rule slices before wider monster rosters become playable.
 
 The cloud domain now uses discoverable Lua definitions and focused effect
 modules for all 34 concrete source kinds. Saved Akara entities represent

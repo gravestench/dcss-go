@@ -73,6 +73,13 @@ function player_attack.contact(ctx, input)
 
     local to_hit = roll.melee(ctx, hit_base)
     to_hit = accuracy.melee_to_hit(ctx, ctx:player(), to_hit)
+
+    -- ranged-attack.cc halves post-roll projectile accuracy against Repel
+    -- Missiles. Melee callers do not set this input field.
+    if input.missile_repulsion then
+        to_hit = to_hit - math.floor((hit_base + 1) / 2)
+    end
+
     local auto_chance = roll.melee(ctx, 100)
     local auto_miss = false
     local auto_hit = false

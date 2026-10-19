@@ -14,7 +14,7 @@ function power.caster_power(ctx, caster, profile)
     end
 
     local definition = catalog.get("monsters", actor.kind_id)
-    local hit_dice = monster_stats.hit_dice(ctx, caster, definition)
+    local hit_dice = monster_stats.spell_hit_dice(ctx, caster, definition)
 
     -- Source mon-cast.cc:mons_power_for_hd. Spell HD adjustments belong to
     -- the monster status domain once those enchantments are playable.

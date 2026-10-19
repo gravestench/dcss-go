@@ -8,6 +8,7 @@ local selectors = require("constants.cloud_selectors")
 local terrain = require("content.terrain_features")
 local attitudes = require("constants.vault_attitude")
 local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
+local wind = require("policy.combat.monster_support.still_winds")
 
 local placement = {}
 
@@ -128,7 +129,7 @@ function placement.place(ctx, kind_id, source_actor,
         return nil
     end
 
-    if options.still_winds and
+    if wind.active_level(ctx, level_id) and
         kind_id ~= ids.CLOUD_VORTEX and
         kind_id ~= ids.CLOUD_INK then
         return nil

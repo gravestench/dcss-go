@@ -79,7 +79,7 @@ func TestChaosMonsterHasteSurvivesSave(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !g.scripts.Components()["combat.monster_chaos"].Has(rat) {
+	if !g.scripts.Components()["combat.monster_boons"].Has(rat) {
 		t.Fatal("chaos haste did not attach to the monster")
 	}
 
@@ -91,7 +91,7 @@ func TestChaosMonsterHasteSurvivesSave(t *testing.T) {
 
 	defer loaded.Close()
 
-	if !loaded.scripts.Components()["combat.monster_chaos"].Has(rat) {
+	if !loaded.scripts.Components()["combat.monster_boons"].Has(rat) {
 		t.Fatal("restore lost chaos haste")
 	}
 }

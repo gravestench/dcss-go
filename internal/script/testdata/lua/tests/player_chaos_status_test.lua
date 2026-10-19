@@ -3,6 +3,7 @@ local component = require("constants.component")
 local effects = require("constants.chaos_effects")
 local harness = require("tests.harness")
 local chaos = require("policy.combat.player_brands.chaos_status")
+local boons = require("policy.combat.monster_support.boons")
 
 local test = {}
 
@@ -19,9 +20,9 @@ function test.run(ctx)
     chaos.apply(ctx, monster, effects.MIGHT, 50)
     chaos.apply(ctx, monster, effects.AGILITY, 50)
 
-    harness.equal(chaos.speed(ctx, monster, 10), 15,
+    harness.equal(boons.speed(ctx, monster, 10), 15,
         "chaos haste increases monster speed")
-    harness.equal(chaos.damage(ctx, monster, 10), 15,
+    harness.equal(boons.damage(ctx, monster, 10), 15,
         "chaos might increases monster melee damage")
     harness.equal(chaos.evasion(ctx, monster, 5), 10,
         "chaos agility increases monster evasion")
@@ -32,13 +33,16 @@ function test.run(ctx)
         fatigue_aut = 0,
     })
 
-    harness.equal(chaos.damage(ctx, monster, 15), 15,
+    harness.equal(boons.damage(ctx, monster, 15), 15,
         "chaos might does not stack with the source frenzy bonus")
 
     chaos.tick(ctx, monster, 50)
+    boons.tick(ctx, monster, 50)
 
     harness.falsy(ctx:has(monster, component.MONSTER_CHAOS),
         "chaos monster buffs expire from their ECS owner")
+    harness.falsy(ctx:has(monster, component.MONSTER_BOONS),
+        "generic monster boons expire from their ECS owner")
 
     chaos.make_shifter(ctx, monster)
     chaos.tick(ctx, monster, 1000)

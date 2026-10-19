@@ -5,7 +5,7 @@ local statuses = require("policy.magic.effects.statuses.player")
 local ammunition = require("ids.ammunition")
 local component = require("constants.component")
 local brands = require("constants.weapon_brands")
-local chaos_status = require("policy.combat.player_brands.chaos_status")
+local boons = require("policy.combat.monster_support.boons")
 
 local energy = {}
 
@@ -50,7 +50,7 @@ function energy.grant(ctx, input)
 
             if actor then
                 speed = statuses.frenzy_speed(ctx, actor, speed)
-                speed = chaos_status.speed(ctx, actor, speed)
+                speed = boons.speed(ctx, actor, speed)
             end
 
             if not valid_integer(speed) or speed < 0 then
@@ -177,6 +177,16 @@ function energy.spend(ctx, input)
 
     if not valid_integer(cost) or cost <= 0 then
         error("monster action " .. input.intent .. " has invalid energy cost " .. tostring(cost))
+    end
+
+    if field == "move" and input.actor then
+        local actor = ctx:entity(input.actor)
+
+        -- monster.cc:action_energy subtracts three only from movement.
+        -- Preserve the source floor even for a naturally quick monster.
+        if actor and boons.swift_active(ctx, actor) then
+            cost = math.max(1, cost - 3)
+        end
     end
 
     if field == "attack" or field == "missile" then

@@ -43,7 +43,7 @@ function slug_dart.resolve(ctx, caster, foe, _, plan)
     local definition = catalog.get("monsters", actor.kind_id)
     local defense = fighter.defense(ctx)
     local outcome = spells.slug_dart(ctx,
-        monster_stats.hit_dice(ctx, caster, definition), defense)
+        monster_stats.spell_hit_dice(ctx, caster, definition), defense)
     local combat = ctx:get(player, "core.combat")
 
     if not combat then
@@ -75,7 +75,7 @@ function slug_dart.resolve(ctx, caster, foe, _, plan)
             reflection.begin(ctx, "slug dart")
 
             local rebound = spells.slug_dart(ctx,
-                monster_stats.hit_dice(ctx, caster, definition), returned)
+                monster_stats.spell_hit_dice(ctx, caster, definition), returned)
 
             reflection.return_outcome(ctx, player, caster, definition,
                 "slug dart", rebound)

@@ -9,6 +9,38 @@ local spells = require("ids.spells")
 
 local test = {}
 
+-- These source spellbook IDs form one self-support family. Their own modules
+-- must expose both phases, so content can become castable without a dispatcher
+-- accumulating a branch for every individual spell.
+local self_support_ids = {
+    spells.SPELL_MIGHT,
+    spells.SPELL_INVISIBILITY,
+    spells.SPELL_HASTE,
+    spells.SPELL_MINOR_HEALING,
+    spells.SPELL_MAJOR_HEALING,
+    spells.SPELL_REPEL_MISSILES,
+    spells.SPELL_BERSERKER_RAGE,
+    spells.SPELL_SPRINT,
+    spells.SPELL_TROGS_HAND,
+    spells.SPELL_INJURY_MIRROR,
+    spells.SPELL_WOODWEAL,
+    spells.SPELL_STILL_WINDS,
+    spells.SPELL_AURA_OF_BRILLIANCE,
+}
+
+-- The source book slots cannot enter active rosters until both phases exist.
+local function self_support_has_complete_resolvers()
+    for _, spell_id in ipairs(self_support_ids) do
+        local okay, effect = pcall(effects.effect, spell_id)
+
+        harness.truthy(okay, spell_id .. " resolver loads")
+        harness.truthy(type(effect.plan) == "function",
+            spell_id .. " has a plan phase")
+        harness.truthy(type(effect.resolve) == "function",
+            spell_id .. " has a resolve phase")
+    end
+end
+
 -- The active generated roster must have resolvers for every castable slot.
 local function active_roster_has_effects()
     local ids = roster.allowed("generated-dungeon-basic-v1")
@@ -18,15 +50,15 @@ local function active_roster_has_effects()
         "every active generated monster has its spell effects")
 end
 
--- Imported beam slots count as implemented while the remaining orc effect
--- still appears in missing coverage.
+-- The Orc Wizard's source book is complete once its self-support effect
+-- joins the already implemented beam slots.
 local function imported_beam_book_is_covered()
     local missing = coverage.missing({
         [monsters.MONS_ORC_WIZARD] = true,
     })
 
-    harness.equal(#missing, 1,
-        "the orc wizard still needs its remaining non-beam effect")
+    harness.equal(#missing, 0,
+        "the orc wizard has every committed book resolver")
 
     for _, record in ipairs(missing) do
         harness.falsy(record.spell_id == spells.SPELL_MAGIC_DART or
@@ -93,6 +125,7 @@ end
 
 -- Generated monsters cannot carry a spellbook slot without a Lua effect module.
 function test.run()
+    self_support_has_complete_resolvers()
     active_roster_has_effects()
     imported_beam_book_is_covered()
     malformed_effect_is_reported()

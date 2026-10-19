@@ -221,4 +221,23 @@ function mass.tick(ctx, monster)
     end
 end
 
+-- Berserker Rage shakes off fear without discarding an independent Anguish.
+function mass.clear_fear(ctx, monster)
+    local current = ctx:get(monster, component.MONSTER_MASS_ENCHANT)
+
+    if not current or current.fear_aut == 0 then
+        return false
+    end
+
+    current.fear_aut = 0
+
+    if current.anguish_aut == 0 then
+        ctx:remove(monster, component.MONSTER_MASS_ENCHANT)
+    else
+        ctx:set(monster, component.MONSTER_MASS_ENCHANT, current)
+    end
+
+    return true
+end
+
 return mass
