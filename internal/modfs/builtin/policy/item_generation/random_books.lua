@@ -64,6 +64,30 @@ local function has_school(spell, first, second)
     return false
 end
 
+-- The source makes an unused discipline match the one represented by the
+-- selected spells, so the saved theme and title describe the actual book.
+local function represented_schools(spells, first, second)
+    local has_first = false
+    local has_second = false
+
+    for _, spell_id in ipairs(spells) do
+        local spell = catalog.get("spells", spell_id)
+
+        has_first = has_first or has_school(spell, first, first)
+        has_second = has_second or has_school(spell, second, second)
+    end
+
+    if has_first ~= has_second then
+        if has_first then
+            second = first
+        else
+            first = second
+        end
+    end
+
+    return first, second
+end
+
 -- Fill a themed book without repeats while capping the sum of spell levels at twenty.
 local function themed_spells(ctx, request)
     -- Source: crawl-ref/source/randbook.cc, 216-301.
@@ -103,7 +127,9 @@ local function themed_spells(ctx, request)
         error("themed book has no eligible player spells")
     end
 
-    return spells, first .. "/" .. second, 0
+    first, second = represented_schools(spells, first, second)
+
+    return spells, first .. "/" .. second, 0, first, second
 end
 
 -- Choose one depth-scaled spell level, then remove each selected spell from its candidate pool.
@@ -150,9 +176,11 @@ function random_books.roll(ctx, definition, request, result)
     local spells
     local theme
     local level
+    local first
+    local second
 
     if definition.id == ids.BOOK_RANDART_THEME then
-        spells, theme, level = themed_spells(ctx, request)
+        spells, theme, level, first, second = themed_spells(ctx, request)
     elseif definition.id == ids.BOOK_RANDART_LEVEL then
         spells, theme, level = level_spells(ctx, request)
     else
@@ -165,8 +193,16 @@ function random_books.roll(ctx, definition, request, result)
         level = level,
     }
 
-    local title, appearance, seed = names.generate(ctx, {
-        name = "book",
+    local title, appearance, seed = names.generate(ctx, definition, {
+        book = {
+            spells = spells,
+            first = first,
+            second = second,
+            level = level,
+            owner = request.owner,
+            subject = request.subject,
+            god_id = request.god_id,
+        },
     })
 
     result.components[component.ITEM_ARTEFACT] = {

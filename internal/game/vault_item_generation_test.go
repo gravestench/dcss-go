@@ -8,6 +8,45 @@ import (
 	"crawl/internal/vault"
 )
 
+// Read the live book that the vault generator actually materialized. The
+// names are saved ECS values, so restoring the game must retain both strings.
+func generatedVaultBookNames(t *testing.T, game *Game) (string, string) {
+	t.Helper()
+
+	for _, entity := range game.world.Entities() {
+		item, found := game.stores.Items.Get(entity)
+
+		if !found || item.KindID != "BOOK_RANDART_THEME" {
+			continue
+		}
+
+		artefacts := game.scripts.Components()["item.artefact"]
+		state, found := artefacts.Get(entity)
+
+		if !found {
+			t.Fatal("generated random book has no artefact state")
+		}
+
+		title, err := state.Get("name")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		appearance, err := state.Get("appearance")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		return title.(string), appearance.(string)
+	}
+
+	t.Fatal("arrival vault did not generate its themed book")
+
+	return "", ""
+}
+
 func TestVaultItemGenerationUsesRolledRecords(t *testing.T) {
 	rules, err := modfs.Load("testdata/vault-item-generation")
 
@@ -68,6 +107,18 @@ func TestVaultItemGenerationUsesRolledRecords(t *testing.T) {
 		t.Fatalf("generated %d vault items, gold=%t", items, gold)
 	}
 
+	title, appearance := generatedVaultBookNames(t, game)
+
+	if strings.HasPrefix(title, "book ") || strings.Contains(title, "@") {
+		t.Fatalf("generated book title = %q", title)
+	}
+
+	if !strings.HasSuffix(appearance, " book") ||
+		strings.Contains(appearance, "non-descript") ||
+		strings.Contains(appearance, "@") {
+		t.Fatalf("generated book appearance = %q", appearance)
+	}
+
 	loaded, err := RestoreWithRules(game.Snapshot(), rules, RestorePolicy{})
 
 	if err != nil {
@@ -75,6 +126,13 @@ func TestVaultItemGenerationUsesRolledRecords(t *testing.T) {
 	}
 
 	defer loaded.Close()
+
+	restoredTitle, restoredAppearance := generatedVaultBookNames(t, loaded)
+
+	if restoredTitle != title || restoredAppearance != appearance {
+		t.Fatalf("restored book names = %q / %q, want %q / %q",
+			restoredTitle, restoredAppearance, title, appearance)
+	}
 
 	if loaded.levels[1].VaultID() != level.VaultID() {
 		t.Fatal("generated vault identity changed on restore")

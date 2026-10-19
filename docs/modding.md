@@ -608,6 +608,18 @@ references. The game chooses one
 cosmetic seed per artefact and saves the resulting names, so later content
 changes do not rename an existing item.
 
+Generated random spellbooks also use this catalog. A themed book draws its
+book noun and school wording from `book_name` and the school groups. A
+single-level book draws from the starting, easy, moderate, or difficult
+`level book` group. Owner-specific groups can name an author, and
+`@level@` inserts the spelled-out spell level. `book appearance` supplies
+the description seen before identification. A future gift or authored-vault
+policy can pass `owner`, `subject`, or `god_id` in an item-generation request.
+An empty owner or subject triggers the ordinary random choice; a supplied
+subject may contain the same `@marker@` references as catalog phrases.
+Replace one group file in an overlay to alter its phrases without changing the Go
+engine or other name groups.
+
 The bundled `init.lua` loads `schemas/`, `content/`, `policy/`, `systems/`,
 `generation/`, and `ui/` in that order. Paths within each tree load in sorted
 order. A new file under one of these directories is discovered automatically. Put helpers

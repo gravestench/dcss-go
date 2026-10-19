@@ -205,13 +205,14 @@ now belongs to each item; hidden fixed names, the Octopus King exception,
 and random artefacts retain their appearance through save/restore. All 182
 weighted source name groups are committed as individually replaceable Lua
 definitions; generated equipment uses their class and appearance groups.
+Themed and single-level random books now use the source book groups for
+titles, owners, school wording, difficulty bands, and hidden appearances.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,
 more layouts and branches, the Abyss monster roster and shifting terrain,
 full source parity for chaos clone allegiance and exact shapeshifter RNG order,
-exact random-name RNG parity, gift-origin name preference, source random-book
-titles, runes,
+exact random-name RNG parity, gift-origin equipment name preference, runes,
 endgame, and the
 complete item and equipment system. The committed monster spellbook IDs
 now have Lua effect resolvers. Several effects still need source parity

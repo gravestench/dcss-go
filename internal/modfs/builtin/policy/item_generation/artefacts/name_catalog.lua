@@ -77,6 +77,36 @@ local function replace(random, marker, replacements, state)
     return replacement
 end
 
+-- Source book subjects can be supplied outside the weighted catalog. Route
+-- them through the same bounded marker expansion as catalog phrases.
+local function expand_phrase(random, phrase, replacements, state)
+    local output = ""
+    local next_position = 1
+
+    while true do
+        local first, last, marker = phrase:find("@([^@]+)@", next_position)
+
+        if not first then
+            break
+        end
+
+        output = output .. phrase:sub(next_position, first - 1) ..
+            replace(random, marker, replacements or {}, state)
+        next_position = last + 1
+    end
+
+    return output .. phrase:sub(next_position)
+end
+
+-- Expand a caller-supplied title fragment using the same known marker and
+-- nested-group rules as a selected source phrase.
+function name_catalog.expand(random, phrase, replacements)
+    return expand_phrase(random, phrase, replacements or {}, {
+        depth = 0,
+        replacements = 0,
+    })
+end
+
 -- Expand weighted source entries with bounded recursion. The source text DB
 -- permits unresolved markers for C++ substitutions; Lua requires those facts
 -- explicitly so mods cannot accidentally ship an @token@ to the game UI.
@@ -98,24 +128,12 @@ function name_catalog.draw(random, key, replacements, state)
     end
 
     local phrase = choose(random, definition)
-    local output = ""
-    local next_position = 1
-
-    while true do
-        local first, last, marker = phrase:find("@([^@]+)@", next_position)
-
-        if not first then
-            break
-        end
-
-        output = output .. phrase:sub(next_position, first - 1) ..
-            replace(random, marker, replacements or {}, state)
-        next_position = last + 1
-    end
+    local expanded = expand_phrase(random, phrase,
+        replacements or {}, state)
 
     state.depth = state.depth - 1
 
-    return output .. phrase:sub(next_position)
+    return expanded
 end
 
 -- Validate every effective group, including mod additions, before any item

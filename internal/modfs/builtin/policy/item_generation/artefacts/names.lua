@@ -10,6 +10,7 @@ local markers = require("constants.randart_name_markers")
 local groups = require("constants.randart_name_groups")
 local name_gods = require("policy.item_generation.artefacts.name_gods")
 local name_catalog = require("policy.item_generation.artefacts.name_catalog")
+local book_names = require("policy.item_generation.random_book_names")
 local names = {}
 
 -- Source naming uses an equipment class for both its true-name database and
@@ -40,6 +41,10 @@ local function name_groups(definition)
         end
 
         return groups.JEWELLERY, groups.RING, groups.RING
+    end
+
+    if definition.class == classes.OBJ_BOOKS then
+        return nil, groups.BOOK, groups.BOOK
     end
 
     return nil, nil, definition.name
@@ -308,8 +313,13 @@ function names.generate(ctx, definition, details)
         properties = details.properties,
         resolve = resolve_marker,
     }
-    local full_name = group and
-        source_database_name(random, definition, group, facts)
+    local full_name
+
+    if details.book then
+        full_name = book_names.title(random, word, details.book, facts)
+    elseif group then
+        full_name = source_database_name(random, definition, group, facts)
+    end
 
     if not full_name then
         local title = word(random)

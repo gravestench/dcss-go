@@ -1,7 +1,7 @@
 NAME: zz_item_generation
 TAGS: arrival
 WEIGHT: 100000000
-KITEM: d = random_item
+KITEM: d = book of Fixed Theme disc:fire
 KITEM: e = good_item
 KITEM: f = random_gold q:17
 MAP
