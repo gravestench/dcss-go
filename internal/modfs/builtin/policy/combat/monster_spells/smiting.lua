@@ -3,6 +3,8 @@
 local direct = require("policy.combat.monster_direct")
 local roll = require("policy.combat.roll")
 local spells = require("ids.spells")
+local component = require("constants.component")
+local senses = require("policy.character.senses")
 
 local effect = {}
 
@@ -19,7 +21,12 @@ function effect.resolve(ctx, caster, foe, _, plan)
     local amount = 7 + roll.average_two(ctx, "monster_spell", 11)
 
     direct.damage(ctx, caster, foe, amount)
-    ctx:emit("spell", "Divine power smites the target!")
+
+    -- A remote direct strike changes HP without reporting an unseen foe.
+    if ctx:has(foe, component.PLAYER) or
+        senses.player_sees_actor(ctx, foe) then
+        ctx:emit("spell", "Divine power smites the target!")
+    end
 end
 
 return effect

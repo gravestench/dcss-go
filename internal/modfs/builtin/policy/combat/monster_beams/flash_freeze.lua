@@ -1,4 +1,5 @@
 local component = require("constants.component")
+local senses = require("policy.character.senses")
 
 local flash_freeze = {}
 
@@ -25,7 +26,9 @@ function flash_freeze.after_hit(ctx, _, defender)
 
         duration = math.max(1,
             math.floor(300 / math.max(1, actor.speed)))
-        ctx:emit("combat", "The monster is flash-frozen.")
+        if senses.player_sees_actor(ctx, defender) then
+            ctx:emit("combat", "The monster is flash-frozen.")
+        end
     end
 
     ctx:add(defender, component.FLASH_FROZEN, {

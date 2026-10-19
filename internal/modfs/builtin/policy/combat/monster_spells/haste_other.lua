@@ -5,6 +5,7 @@ local duration = require("policy.combat.monster_support.duration")
 local eligibility = require("policy.combat.monster_support.boon_eligibility")
 local channels = require("constants.message_channels")
 local spells = require("ids.spells")
+local senses = require("policy.character.senses")
 
 local haste_other = {}
 
@@ -29,8 +30,12 @@ function haste_other.resolve(ctx, caster, _, _, plan)
     end
 
     boons.haste(ctx, target, duration.beneficial(ctx, target))
-    ctx:emit(channels.SPELL, "The " .. display.name(ctx, target) ..
-        " seems to speed up.")
+
+    -- The recipient's saved speed boon does not reveal an unseen ally.
+    if senses.player_sees_actor(ctx, target) then
+        ctx:emit(channels.SPELL, "The " .. display.name(ctx, target) ..
+            " seems to speed up.")
+    end
 end
 
 return haste_other

@@ -8,6 +8,7 @@ local monster_stats = require("policy.combat.monster_stats")
 local roll = require("policy.combat.roll")
 local spells = require("ids.spells")
 local targets = require("policy.ai.targets")
+local senses = require("policy.character.senses")
 
 local effect = {}
 
@@ -71,7 +72,12 @@ function effect.resolve(ctx, caster, foe, _, plan)
     end
 
     direct.damage(ctx, caster, foe, direct.armour(ctx, foe, raw))
-    ctx:emit("spell", "A blast of power from the earth strikes the target!")
+
+    -- The earth pulse can damage another monster beyond player sight.
+    if ctx:has(foe, component.PLAYER) or
+        senses.player_sees_actor(ctx, foe) then
+        ctx:emit("spell", "A blast of power from the earth strikes the target!")
+    end
 end
 
 return effect

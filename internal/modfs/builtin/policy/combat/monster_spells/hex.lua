@@ -7,6 +7,7 @@ local catalog = require("policy.catalog")
 local will = require("policy.magic.effects.zaps.will")
 local beam_power = require("policy.combat.monster_beams.power")
 local calculators = require("policy.combat.monster_beams.calculators")
+local senses = require("policy.character.senses")
 
 local hex = {}
 
@@ -59,8 +60,15 @@ function hex.resisted(ctx, caster, target, profile)
             local definition = catalog.get("monsters", actor.kind_id)
 
             monster_health.damage(ctx, caster, amount, target)
-            ctx:emit("combat", "Your will lashes out at the " ..
-                definition.name .. "!")
+
+            -- The player feels the backlash, but an invisible caster must
+            -- not be named merely because its hex was resisted.
+            if senses.player_sees_actor(ctx, caster) then
+                ctx:emit("combat", "Your will lashes out at the " ..
+                    definition.name .. "!")
+            else
+                ctx:emit("combat", "Your will lashes out at something!")
+            end
         end
     end
 

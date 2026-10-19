@@ -8,6 +8,7 @@ local channels = require("constants.message_channels")
 local streams = require("constants.rng_streams")
 local self_target = require("policy.combat.monster_support.self_target")
 local terrain = require("constants.terrain")
+local senses = require("policy.character.senses")
 
 local ink_cloud = {}
 
@@ -59,8 +60,11 @@ function ink_cloud.resolve(ctx, caster, _, _, plan)
         position.level_id, position.x, position.y,
         FIELD_POWER, FIELD_CELLS, streams.MONSTER_SPELL)
 
-    ctx:emit(channels.SPELL,
-        "A massive cloud of ink spreads through the water!")
+    -- The saved cloud exists even when its source water is outside sight.
+    if senses.player_sees_cell(ctx, position) then
+        ctx:emit(channels.SPELL,
+            "A massive cloud of ink spreads through the water!")
+    end
 end
 
 return ink_cloud

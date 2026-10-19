@@ -2,6 +2,7 @@ local component = require("constants.component")
 local damage = require("policy.magic.damage")
 local fillings = require("constants.pie_fillings")
 local resistances = require("constants.resistance_ids")
+local senses = require("policy.character.senses")
 
 local cherry = {
     id = fillings.CHERRY,
@@ -42,7 +43,7 @@ function cherry.apply(ctx, _, target)
 
     if player then
         ctx:emit("combat", "Cherry flames burn away your fire resistance!")
-    else
+    elseif senses.player_sees_actor(ctx, target) then
         ctx:emit("combat", "The monster looks more vulnerable to fire.")
     end
 end

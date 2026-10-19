@@ -40,9 +40,11 @@ end
 
 -- A destroyed wall makes the next obstructing cell visible to the same
 -- trajectory. Re-tracing preserves its grid tie breaks without cloning it.
+-- Return removed cells so callers can describe only destruction in view.
 function digging.ray(ctx, level_id, from_x, from_y,
     aim_x, aim_y, reach)
     local changed = 0
+    local removed = {}
 
     for _ = 1, reach do
         local wall = digging.first_wall(ctx, level_id,
@@ -54,9 +56,14 @@ function digging.ray(ctx, level_id, from_x, from_y,
 
         ctx:set_cell(level_id, wall.x, wall.y, terrain.DNGN_FLOOR)
         changed = changed + 1
+        removed[#removed + 1] = {
+            level_id = level_id,
+            x = wall.x,
+            y = wall.y,
+        }
     end
 
-    return changed
+    return changed, removed
 end
 
 return digging

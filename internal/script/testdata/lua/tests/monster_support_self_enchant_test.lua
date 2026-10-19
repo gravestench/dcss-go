@@ -34,7 +34,7 @@ function test.run(ctx)
     harness.equal(haste_plan.entity, caster,
         "Haste chooses the caster")
 
-    haste.resolve(ctx, caster, nil, nil, haste_plan)
+    haste.resolve(game, caster, nil, nil, haste_plan)
 
     harness.truthy(boons.hasted(ctx, caster),
         "Haste creates active actor-owned state")
@@ -46,7 +46,7 @@ function test.run(ctx)
     local might = effects.effect(spells.SPELL_MIGHT)
     local might_plan = might.plan(game, caster)
 
-    might.resolve(ctx, caster, nil, nil, might_plan)
+    might.resolve(game, caster, nil, nil, might_plan)
 
     harness.equal(boons.damage(ctx, caster, 10), 15,
         "Might changes melee damage")
@@ -56,7 +56,7 @@ function test.run(ctx)
     local invisible = effects.effect(spells.SPELL_INVISIBILITY)
     local invis_plan = invisible.plan(game, caster)
 
-    invisible.resolve(ctx, caster, nil, nil, invis_plan)
+    invisible.resolve(game, caster, nil, nil, invis_plan)
 
     local enchant = ctx:get(caster, component.MONSTER_ENCHANT)
 
@@ -66,9 +66,9 @@ function test.run(ctx)
         "Invisibility does not recast while active")
 
     local sprint = effects.effect(spells.SPELL_SPRINT)
-    local sprint_plan = sprint.plan(ctx, caster)
+    local sprint_plan = sprint.plan(game, caster)
 
-    sprint.resolve(ctx, caster, nil, nil, sprint_plan)
+    sprint.resolve(game, caster, nil, nil, sprint_plan)
 
     harness.truthy(boons.swift_active(ctx, caster),
         "Sprint creates movement-only Swift state")

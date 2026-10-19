@@ -9,6 +9,7 @@ local repulsion = require("policy.combat.monster_support.repulsion")
 local monster_health = require("policy.combat.monster_health")
 local player_health = require("policy.combat.player_health")
 local reflection = require("policy.combat.reflection")
+local senses = require("policy.character.senses")
 
 local contact = {}
 
@@ -116,7 +117,9 @@ function contact.resolve(ctx, caster, defender, profile,
                 incoming)
         end
 
-        if not hook or not hook.suppress_hit_message then
+        if (not hook or not hook.suppress_hit_message) and
+            (ctx:has(defender, component.PLAYER) or
+                senses.player_sees_actor(ctx, defender)) then
             ctx:emit("combat", "The " .. profile.name .. " hits.")
         end
     end

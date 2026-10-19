@@ -4,6 +4,7 @@ local display = require("policy.combat.monster_support.display")
 local flags = require("constants.monster_spell_flags")
 local spellbook = require("policy.combat.monster_spellbook")
 local targets = require("policy.ai.targets")
+local senses = require("policy.character.senses")
 
 local brilliance = {}
 
@@ -139,8 +140,10 @@ function brilliance.cast(ctx, caster)
     })
 
     brilliance.pulse(ctx, caster)
-    ctx:emit("spell", "The " .. display.name(ctx, caster) ..
-        " begins emitting a brilliant aura!")
+    if senses.player_sees_actor(ctx, caster) then
+        ctx:emit("spell", "The " .. display.name(ctx, caster) ..
+            " begins emitting a brilliant aura!")
+    end
 end
 
 -- Each actor ages only its own aura and recipient status. A still-active

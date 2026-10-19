@@ -11,6 +11,7 @@ local player_confusion = require("policy.magic.player_confusion")
 local player_resistance = require("policy.combat.player_resistance")
 local spells = require("ids.spells")
 local streams = require("constants.rng_streams")
+local senses = require("policy.character.senses")
 
 local effect = {}
 local profile = {
@@ -44,7 +45,11 @@ function effect.resolve(ctx, caster, foe, _, plan)
     gazes.require(ctx, caster, foe, plan)
 
     if hex.resisted(ctx, caster, foe, profile) then
-        ctx:emit(channels.SPELL, "The confusion gaze is resisted.")
+        -- An unseen monster's will contest should not appear in the log.
+        if ctx:has(foe, component.PLAYER) or
+            senses.player_sees_actor(ctx, foe) then
+            ctx:emit(channels.SPELL, "The confusion gaze is resisted.")
+        end
 
         return
     end

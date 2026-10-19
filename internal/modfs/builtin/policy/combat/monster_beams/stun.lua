@@ -3,6 +3,7 @@ local component = require("constants.component")
 local magic_damage = require("policy.magic.damage")
 local monster_flags = require("constants.monster_flags")
 local resistances = require("constants.resistance_ids")
+local senses = require("policy.character.senses")
 
 local stun = {}
 
@@ -76,7 +77,9 @@ function stun.after_hit(ctx, _, defender)
     end
 
     paralyse(ctx, defender, component.PARALYSIS)
-    ctx:emit("combat", "The " .. definition.name .. " is paralysed.")
+    if senses.player_sees_actor(ctx, defender) then
+        ctx:emit("combat", "The " .. definition.name .. " is paralysed.")
+    end
 end
 
 return stun

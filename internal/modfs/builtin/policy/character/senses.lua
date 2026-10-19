@@ -69,12 +69,11 @@ function senses.perceive(ctx, player, monster, cell_visible, cell_known)
     return "unseen"
 end
 
--- Report a named actor only when both its cell and the actor itself are
--- visible. Geometry alone can expose an invisible monster's identity.
-function senses.player_sees_actor(ctx, monster)
+-- Use the player's current sight radius when deciding whether a world cell
+-- can contribute a message; Nightstalker can shorten the ordinary range.
+function senses.player_sees_cell(ctx, position)
     local player = ctx:player()
     local origin = player and ctx:get(player, component.POSITION)
-    local position = ctx:get(monster, component.POSITION)
 
     if not origin or not position or
         origin.level_id ~= position.level_id or
@@ -83,6 +82,20 @@ function senses.player_sees_actor(ctx, monster)
             position.x, position.y) then
         return false
     end
+
+    return true
+end
+
+-- Report a named actor only when both its cell and the actor itself are
+-- visible. Geometry alone can expose an invisible monster's identity.
+function senses.player_sees_actor(ctx, monster)
+    local position = ctx:get(monster, component.POSITION)
+
+    if not senses.player_sees_cell(ctx, position) then
+        return false
+    end
+
+    local player = ctx:player()
 
     return senses.perceive(ctx, player, monster, true, true) == "visible"
 end

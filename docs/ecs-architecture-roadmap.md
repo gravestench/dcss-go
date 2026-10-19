@@ -183,7 +183,9 @@ resolution validates the live enemy before applying an effect. Freeze,
 Petrify, and Slug Dart use the monster victim's own resistance, status, and
 defense, while offscreen and invisible outcomes stay out of player messages.
 Other spell families still need actor-target audits before every allied
-spellbook can safely cast against monsters. Foe-centered spells carry a cell
+spellbook can safely cast against monsters. Effect messages use the player's
+actual sight and actor perception, including Nightstalker and invisibility,
+while offscreen effects still change their saved state. Foe-centered spells carry a cell
 through the typed intent so target movement cannot redirect an already
 chosen cast. The current Dungeon roster supplies
 Shadow Creatures; other branches need their own population owner, and Pan

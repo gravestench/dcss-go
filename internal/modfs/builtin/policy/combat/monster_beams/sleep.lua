@@ -10,6 +10,7 @@ local rage = require("policy.character.rage")
 local stasis = require("policy.magic.effects.statuses.monster_stasis")
 local undead_states = require("constants.undead_states")
 local will = require("policy.magic.effects.zaps.will")
+local senses = require("policy.character.senses")
 
 local sleep = {}
 
@@ -117,7 +118,9 @@ local function sleep_monster(ctx, caster, target, profile)
     end
 
     stasis.sleep(ctx, target)
-    ctx:emit("combat", "The " .. definition.name .. " falls asleep!")
+    if senses.player_sees_actor(ctx, target) then
+        ctx:emit("combat", "The " .. definition.name .. " falls asleep!")
+    end
 end
 
 -- beam.cc:BEAM_SLEEP is an enchantment: no HP roll, with willpower and

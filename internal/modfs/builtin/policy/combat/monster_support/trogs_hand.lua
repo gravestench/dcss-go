@@ -3,6 +3,7 @@ local component = require("constants.component")
 local display = require("policy.combat.monster_support.display")
 local monster_stats = require("policy.combat.monster_stats")
 local roll = require("policy.combat.roll")
+local senses = require("policy.character.senses")
 
 local hand = {}
 
@@ -35,8 +36,10 @@ function hand.invoke(ctx, monster)
         remaining_aut = 10 * math.min(turns, 100),
     })
 
-    ctx:emit("spell", "The " .. display.name(ctx, monster) ..
-        " invokes Trog's protection!")
+    if senses.player_sees_actor(ctx, monster) then
+        ctx:emit("spell", "The " .. display.name(ctx, monster) ..
+            " invokes Trog's protection!")
+    end
 end
 
 -- Age the invocation once per actor action and drop both protections at zero.

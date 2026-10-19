@@ -6,6 +6,7 @@ local digging = require("policy.world.digging")
 local spells = require("ids.spells")
 local target_kind = require("constants.target_kind")
 local target = require("policy.combat.monster_spell_target")
+local senses = require("policy.character.senses")
 
 local dig = {}
 local profile = catalog.get(categories.MONSTER_BEAMS,
@@ -54,11 +55,20 @@ function dig.resolve(ctx, caster, foe, _, plan)
     end
 
     local reach = beam_power.spell_range(ctx, caster, profile)
-    local changed = digging.ray(ctx, source.level_id,
+    local changed, removed = digging.ray(ctx, source.level_id,
         source.x, source.y, destination.x, destination.y, reach)
 
-    if changed > 0 then
-        ctx:emit("spell", "Some rock shatters into small pieces.")
+    if changed == 0 then
+        return
+    end
+
+    -- A hidden caster can still break a visible wall. Describe the rock
+    -- only if at least one removed wall was in the player's view.
+    for _, cell in ipairs(removed) do
+        if senses.player_sees_cell(ctx, cell) then
+            ctx:emit("spell", "Some rock shatters into small pieces.")
+            return
+        end
     end
 end
 

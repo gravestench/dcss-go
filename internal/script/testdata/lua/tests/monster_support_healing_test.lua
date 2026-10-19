@@ -4,6 +4,7 @@ local harness = require("tests.harness")
 local monsters = require("ids.monsters")
 local spells = require("ids.spells")
 local terrain = require("constants.terrain")
+local fixture = require("tests.monster_ally_support_fixture")
 
 local test = {}
 
@@ -53,29 +54,30 @@ end
 -- Each heal uses source eligibility and clamps HP through the owned health
 -- component. A cast at too much HP must never be planned.
 function test.run(ctx)
+    local game = fixture.observed_context(ctx)
     local minor_caster = caster(ctx)
     local minor = effects.effect(spells.SPELL_MINOR_HEALING)
-    local minor_plan = minor.plan(ctx, minor_caster)
+    local minor_plan = minor.plan(game, minor_caster)
 
-    minor.resolve(ctx, minor_caster, nil, nil, minor_plan)
+    minor.resolve(game, minor_caster, nil, nil, minor_plan)
 
     harness.equal(ctx:get(minor_caster, component.HEALTH).current, 25,
         "Minor Healing adds three plus its two minimum dice")
 
     local major_caster = caster(ctx)
     local major = effects.effect(spells.SPELL_MAJOR_HEALING)
-    local major_plan = major.plan(ctx, major_caster)
+    local major_plan = major.plan(game, major_caster)
 
-    major.resolve(ctx, major_caster, nil, nil, major_plan)
+    major.resolve(game, major_caster, nil, nil, major_plan)
 
     harness.equal(ctx:get(major_caster, component.HEALTH).current, 70,
         "Major Healing adds fifty plus the source average roll")
-    harness.falsy(major.plan(ctx, major_caster),
+    harness.falsy(major.plan(game, major_caster),
         "a monster over half HP does not choose Major Healing")
 
     local wood_caster = caster(ctx)
-    local no_tree = wooded_context(ctx, false)
-    local with_tree = wooded_context(ctx, true)
+    local no_tree = wooded_context(game, false)
+    local with_tree = wooded_context(game, true)
     local woodweal = effects.effect(spells.SPELL_WOODWEAL)
 
     harness.falsy(woodweal.plan(no_tree, wood_caster),

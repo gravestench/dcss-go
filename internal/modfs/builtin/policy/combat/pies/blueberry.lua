@@ -1,6 +1,7 @@
 local component = require("constants.component")
 local fillings = require("constants.pie_fillings")
 local statuses = require("policy.magic.effects.statuses.player")
+local senses = require("policy.character.senses")
 
 local blueberry = {
     id = fillings.BLUEBERRY,
@@ -35,7 +36,9 @@ function blueberry.apply(ctx, _, target)
         })
     end
 
-    ctx:emit("combat", "The monster loses the ability to speak.")
+    if senses.player_sees_actor(ctx, target) then
+        ctx:emit("combat", "The monster loses the ability to speak.")
+    end
 end
 
 return blueberry

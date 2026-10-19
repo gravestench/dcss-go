@@ -5,6 +5,7 @@ local duration = require("policy.combat.monster_support.duration")
 local eligibility = require("policy.combat.monster_support.boon_eligibility")
 local channels = require("constants.message_channels")
 local spells = require("ids.spells")
+local senses = require("policy.character.senses")
 
 local might_other = {}
 
@@ -29,8 +30,12 @@ function might_other.resolve(ctx, caster, _, _, plan)
     end
 
     boons.might(ctx, target, duration.beneficial(ctx, target))
-    ctx:emit(channels.SPELL, "The " .. display.name(ctx, target) ..
-        " seems to grow stronger.")
+
+    -- A buffed ally may stand outside the player's sight.
+    if senses.player_sees_actor(ctx, target) then
+        ctx:emit(channels.SPELL, "The " .. display.name(ctx, target) ..
+            " seems to grow stronger.")
+    end
 end
 
 return might_other

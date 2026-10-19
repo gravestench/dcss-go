@@ -4,6 +4,8 @@ local lemon = require("policy.combat.pies.lemon")
 local moon = require("policy.combat.pies.moon")
 local plum = require("policy.combat.pies.plum")
 local raspberry = require("policy.combat.pies.raspberry")
+local component = require("constants.component")
+local senses = require("policy.character.senses")
 
 local pies = {}
 local fillings = {
@@ -53,7 +55,10 @@ function pies.apply(ctx, caster, defender, outcome)
 
     local filling = pies.choose(ctx, defender)
 
-    ctx:emit("combat", filling.id .. "!")
+    if ctx:has(defender, component.PLAYER) or
+        senses.player_sees_actor(ctx, defender) then
+        ctx:emit("combat", filling.id .. "!")
+    end
     filling.apply(ctx, caster, defender)
 end
 

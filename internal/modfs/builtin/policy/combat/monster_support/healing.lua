@@ -4,6 +4,7 @@ local component = require("constants.component")
 local display = require("policy.combat.monster_support.display")
 local monster_stats = require("policy.combat.monster_stats")
 local roll = require("policy.combat.roll")
+local senses = require("policy.character.senses")
 local terrain = require("constants.terrain")
 local monsters = require("ids.monsters")
 
@@ -53,7 +54,7 @@ end
 -- Self-healing spells share their source message while the allied beam has
 -- separate full-recovery and partial-recovery wording.
 local function report_self(ctx, caster, gained)
-    if gained > 0 then
+    if gained > 0 and senses.player_sees_actor(ctx, caster) then
         ctx:emit(channels.SPELL, "The " .. display.name(ctx, caster) ..
             " is healed.")
     end
@@ -88,7 +89,7 @@ end
 function healing.other(ctx, caster, target)
     local gained = apply(ctx, target, minor_amount(ctx, caster))
 
-    if gained > 0 then
+    if gained > 0 and senses.player_sees_actor(ctx, target) then
         local health = ctx:get(target, component.HEALTH)
         local suffix = " is healed somewhat."
 

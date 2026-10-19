@@ -99,6 +99,20 @@ function fixture.context(ctx, player)
     })
 end
 
+-- Give focused rule tests a real observer so message visibility uses the
+-- same player lookup and position contract as the game session.
+function fixture.observed_context(ctx)
+    local player = ctx:create()
+
+    ctx:add(player, component.POSITION, {
+        level_id = 1,
+        x = 7,
+        y = 7,
+    })
+
+    return fixture.context(ctx, player)
+end
+
 -- Create only the components the spell targeting and status owners read.
 function fixture.actor(ctx, kind_id, x, y, health)
     local entity = ctx:create()

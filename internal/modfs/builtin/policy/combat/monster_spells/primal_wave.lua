@@ -7,6 +7,7 @@ local explosion = require("policy.combat.explosion")
 local spells = require("ids.spells")
 local temporary_terrain = require("policy.world.temporary_terrain")
 local terrain = require("constants.terrain")
+local senses = require("policy.character.senses")
 
 local primal_wave = {}
 local profile = catalog.get(categories.MONSTER_BEAMS,
@@ -68,7 +69,10 @@ function primal_wave.after_endpoint(ctx, caster, _, _, endpoint)
         end
     end
 
-    ctx:emit("combat", "The wave splashes down.")
+    -- Terrain changes persist offscreen; describe only a visible endpoint.
+    if senses.player_sees_cell(ctx, endpoint) then
+        ctx:emit("combat", "The wave splashes down.")
+    end
 end
 
 -- The hit hook creates a radius-one splash only on eligible floor or shallow water.

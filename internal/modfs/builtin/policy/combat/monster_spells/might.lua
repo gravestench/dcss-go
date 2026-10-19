@@ -4,6 +4,7 @@ local display = require("policy.combat.monster_support.display")
 local duration = require("policy.combat.monster_support.duration")
 local self_target = require("policy.combat.monster_support.self_target")
 local channels = require("constants.message_channels")
+local senses = require("policy.character.senses")
 
 local might = {}
 
@@ -23,8 +24,12 @@ function might.resolve(ctx, caster, _, _, plan)
     self_target.require_caster(plan, caster)
 
     boons.might(ctx, caster, duration.beneficial(ctx, caster))
-    ctx:emit(channels.SPELL, "The " .. display.name(ctx, caster) ..
-        " seems to grow stronger.")
+
+    -- Boon state is observable only if the actor itself is perceived.
+    if senses.player_sees_actor(ctx, caster) then
+        ctx:emit(channels.SPELL, "The " .. display.name(ctx, caster) ..
+            " seems to grow stronger.")
+    end
 end
 
 return might

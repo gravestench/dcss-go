@@ -6,6 +6,7 @@ local direct = require("policy.combat.monster_direct")
 local monster_stats = require("policy.combat.monster_stats")
 local roll = require("policy.combat.roll")
 local spells = require("ids.spells")
+local senses = require("policy.character.senses")
 
 local effect = {}
 
@@ -54,7 +55,12 @@ function effect.resolve(ctx, caster, foe, _, plan)
         roll.average_two(ctx, "monster_spell", sides)
 
     direct.damage(ctx, caster, foe, direct.armour(ctx, foe, raw))
-    ctx:emit("spell", "The air twists around and strikes the target!")
+
+    -- The hit belongs to the foe even when the caster acts out of view.
+    if ctx:has(foe, component.PLAYER) or
+        senses.player_sees_actor(ctx, foe) then
+        ctx:emit("spell", "The air twists around and strikes the target!")
+    end
 end
 
 return effect

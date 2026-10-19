@@ -4,12 +4,14 @@ local hand = require("policy.combat.monster_support.trogs_hand")
 local harness = require("tests.harness")
 local monsters = require("ids.monsters")
 local spells = require("ids.spells")
+local fixture = require("tests.monster_ally_support_fixture")
 
 local test = {}
 
 -- The invocation grants one saved duration for both regeneration and strong
 -- will; expiry must remove both effects in the same actor action.
 function test.run(ctx)
+    local game = fixture.observed_context(ctx)
     local caster = ctx:create()
 
     ctx:add(caster, component.ACTOR, {
@@ -18,11 +20,11 @@ function test.run(ctx)
     })
 
     local effect = effects.effect(spells.SPELL_TROGS_HAND)
-    local plan = effect.plan(ctx, caster)
+    local plan = effect.plan(game, caster)
 
     harness.truthy(plan, "Trog's Hand can be invoked while absent")
 
-    effect.resolve(ctx, caster, nil, nil, plan)
+    effect.resolve(game, caster, nil, nil, plan)
 
     harness.truthy(hand.active(ctx, caster),
         "Trog's Hand persists as actor-owned state")

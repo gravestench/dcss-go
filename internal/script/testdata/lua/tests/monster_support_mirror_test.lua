@@ -5,6 +5,7 @@ local mirror = require("policy.combat.monster_support.injury_mirror")
 local monster_health = require("policy.combat.monster_health")
 local monsters = require("ids.monsters")
 local spells = require("ids.spells")
+local fixture = require("tests.monster_ally_support_fixture")
 
 local test = {}
 
@@ -46,7 +47,7 @@ end
 -- Injury Mirror reflects two thirds of direct HP loss once, then respects
 -- its separate absolute recast clock after the aura expires.
 function test.run(ctx)
-    local game = timed_context(ctx)
+    local game = timed_context(fixture.observed_context(ctx))
     local caster = monster(ctx)
     local attacker = monster(ctx)
     local effect = effects.effect(spells.SPELL_INJURY_MIRROR)

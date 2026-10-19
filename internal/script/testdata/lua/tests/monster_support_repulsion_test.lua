@@ -5,6 +5,7 @@ local monsters = require("ids.monsters")
 local player_attack = require("policy.combat.player_attack")
 local repulsion = require("policy.combat.monster_support.repulsion")
 local spells = require("ids.spells")
+local fixture = require("tests.monster_ally_support_fixture")
 
 local test = {}
 
@@ -33,6 +34,13 @@ end
 function test.run(ctx)
     local monster = ctx:create()
     local player = ctx:create()
+    local game = fixture.context(ctx, player)
+
+    ctx:add(player, component.POSITION, {
+        level_id = 1,
+        x = 7,
+        y = 7,
+    })
 
     ctx:add(monster, component.ACTOR, {
         kind_id = monsters.MONS_ORC_SORCERER,
@@ -40,9 +48,9 @@ function test.run(ctx)
     })
 
     local effect = effects.effect(spells.SPELL_REPEL_MISSILES)
-    local plan = effect.plan(ctx, monster)
+    local plan = effect.plan(game, monster)
 
-    effect.resolve(ctx, monster, player, nil, plan)
+    effect.resolve(game, monster, player, nil, plan)
 
     harness.truthy(repulsion.active(ctx, monster),
         "Repel Missiles is saved on its caster")

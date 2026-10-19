@@ -6,6 +6,7 @@ local player_health = require("policy.combat.player_health")
 local mirror = require("policy.combat.monster_support.injury_mirror")
 local display = require("policy.combat.monster_support.display")
 local causes = require("constants.damage_causes")
+local senses = require("policy.character.senses")
 
 local monster_health = {}
 
@@ -73,8 +74,10 @@ function monster_health.damage(ctx, target, amount, source, cause)
         cause or causes.ORDINARY)
 
     if returned > 0 then
-        ctx:emit("combat", "The " .. display.name(ctx, target) ..
-            " mirrors the damage!")
+        if senses.player_sees_actor(ctx, target) then
+            ctx:emit("combat", "The " .. display.name(ctx, target) ..
+                " mirrors the damage!")
+        end
 
         if ctx:has(source, component.PLAYER) then
             player_health.damage(ctx, source, returned, false, target)

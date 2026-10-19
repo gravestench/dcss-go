@@ -712,8 +712,8 @@ shared catalog fact, not an entity's mutable state.
 
 | Call | Result and use |
 | --- | --- |
-| `ctx:player()` | Player handle, or `nil` when there is no player. |
-| `ctx:actor()` | Handle of the actor taking the current action, or `nil`. This can be a monster. |
+| `ctx:player()` | Player handle; `nil` if the service has no entity; error if the service is absent. |
+| `ctx:actor()` | Acting creature handle; `nil` if the service has no entity; error if the service is absent. |
 | `ctx:create()` | A new live entity handle. Add its components before using it as an actor. |
 | `ctx:destroy(entity)` | Queue the entity's destruction. Subsequent context reads treat it as gone. |
 | `ctx:id(entity)` | Numeric ID for display or external lookup; do not use it as a component's `entity` value. |
@@ -871,7 +871,10 @@ belong in a policy or system. `ctx:visible` says that a *cell* is in sight; it
 does not say that the player can perceive an invisible actor standing there.
 Before naming a monster in a player message, use
 `policy.character.senses.player_sees_actor`. This also keeps offscreen combat
-from leaking monster identities into the message log.
+from leaking monster identities into the message log. For terrain, clouds,
+and other visible world events, use `senses.player_sees_cell(ctx, position)`.
+Sample actor sight *before* granting invisibility when the message describes
+a creature visibly disappearing.
 
 ### Lua registration and VFS helpers
 
@@ -931,6 +934,10 @@ null can mean different things, especially in source-backed content.
   state in an ECS component.
 - **A context service is unavailable:** This entry point has no game clock,
   grid, RNG, or event service. Use an input-only policy or a live fixture.
+- **`player entity is unavailable` or `active actor is unavailable`:** The
+  callback has no corresponding host service, often because an isolated test
+  passed a bare ECS context. Supply a game fixture with those services or
+  choose a callback that only needs the actor explicitly passed to it.
 
 A Lua callback error discards its pending context writes and reports the
 originating Lua path or system ID. Fix the first reported error before

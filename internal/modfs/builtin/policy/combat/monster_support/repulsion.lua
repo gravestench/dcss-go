@@ -1,5 +1,6 @@
 local component = require("constants.component")
 local display = require("policy.combat.monster_support.display")
+local senses = require("policy.character.senses")
 
 local repulsion = {}
 
@@ -20,8 +21,10 @@ function repulsion.apply(ctx, monster)
         active = true,
     })
 
-    ctx:emit("spell", "The " .. display.name(ctx, monster) ..
-        " begins repelling missiles!")
+    if senses.player_sees_actor(ctx, monster) then
+        ctx:emit("spell", "The " .. display.name(ctx, monster) ..
+            " begins repelling missiles!")
+    end
 
     return true
 end

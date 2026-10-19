@@ -2,6 +2,7 @@ local causes = require("constants.damage_causes")
 local component = require("constants.component")
 local display = require("policy.combat.monster_support.display")
 local roll = require("policy.combat.roll")
+local senses = require("policy.character.senses")
 
 local mirror = {}
 
@@ -33,8 +34,10 @@ function mirror.cast(ctx, monster)
         ctx:add(monster, component.MONSTER_INJURY_MIRROR, state)
     end
 
-    ctx:emit("spell", "The " .. display.name(ctx, monster) ..
-        " fills with unholy mirror energy.")
+    if senses.player_sees_actor(ctx, monster) then
+        ctx:emit("spell", "The " .. display.name(ctx, monster) ..
+            " fills with unholy mirror energy.")
+    end
 end
 
 -- Poison, clouds, and already returned damage never trigger a mirror.

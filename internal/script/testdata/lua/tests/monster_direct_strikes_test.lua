@@ -17,6 +17,13 @@ local construct = 303
 -- allied nonliving actor. A zero RNG draw exposes each formula's minimum.
 local function context()
     local values = {
+        [999] = {
+            [component.POSITION] = {
+                level_id = 1,
+                x = 6,
+                y = 6,
+            },
+        },
         [caster] = {
             [component.ACTOR] = {
                 kind_id = monsters.MONS_ORC_WIZARD,
@@ -69,7 +76,7 @@ local function context()
         sight = true,
     }
 
-    -- The player is outside this isolated monster-on-monster encounter.
+    -- The observer sees this encounter and receives its visible messages.
     function ctx:player()
         return 999
     end

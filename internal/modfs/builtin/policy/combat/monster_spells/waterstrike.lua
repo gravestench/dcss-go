@@ -8,6 +8,7 @@ local monster_stats = require("policy.combat.monster_stats")
 local roll = require("policy.combat.roll")
 local spells = require("ids.spells")
 local water = require("policy.combat.monster_beams.water")
+local senses = require("policy.character.senses")
 
 local effect = {}
 
@@ -36,8 +37,12 @@ function effect.resolve(ctx, caster, foe, _, plan)
     direct.damage(ctx, caster, foe, amount)
     local motion = flight.active(ctx, foe) and "rises up" or "swirls"
 
-    ctx:emit("spell", "The water " .. motion ..
-        " and strikes the target!")
+    -- Water motion only enters the log when its victim is observable.
+    if ctx:has(foe, component.PLAYER) or
+        senses.player_sees_actor(ctx, foe) then
+        ctx:emit("spell", "The water " .. motion ..
+            " and strikes the target!")
+    end
 end
 
 return effect
