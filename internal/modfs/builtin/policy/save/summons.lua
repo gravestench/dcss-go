@@ -13,6 +13,8 @@ local sticky_flame = require("policy.magic.effects.zaps.sticky_flame")
 local brands = require("constants.weapon_brands")
 local plants = require("policy.save.monster_plants")
 local living_spells = require("policy.combat.monster_summons.living_spells")
+local resistance_ids = require("constants.resistance_ids")
+local holiness = require("constants.monster_holiness")
 
 local summons = {}
 
@@ -23,6 +25,99 @@ local valid_attitudes = {
     [attitudes.GOOD_NEUTRAL] = true,
     [attitudes.FELLOW_SLIME] = true,
 }
+
+-- Validate the complete saved ghost snapshot before AI or combat reads it.
+-- The source player can move or change gear after creation, so no field is
+-- reconstructed from that player's present state during restore.
+local function validate_player_illusion(ctx, entity, actor, state, stats)
+    local profile = ctx:get(entity, component.PLAYER_ILLUSION)
+    local illusion_source = state.source_id ==
+        spells.SPELL_SUMMON_ILLUSION
+
+    local ghost_actor = actor.kind_id == monsters.MONS_PLAYER_ILLUSION
+
+    if not profile and not ghost_actor then
+        return
+    end
+
+    local health = ctx:get(entity, component.HEALTH)
+
+    if not profile or not illusion_source or
+        state.source_category ~= categories.SPELLS or
+        not ghost_actor or
+        not stats or stats.hd < 1 or stats.hd > 27 or
+        not health or health.max < 1 or health.max > 400 or
+        profile.species_id == "" or
+        profile.job_id == "" or profile.ac < 0 or
+        profile.ev < 0 or profile.ev > 60 or
+        profile.damage < 0 or profile.damage > 50 then
+        error("summon " .. ctx:id(entity) ..
+            " has invalid player illusion profile")
+    end
+
+    catalog.get("species", profile.species_id)
+    catalog.get("jobs", profile.job_id)
+
+    local valid_brand = false
+
+    for _, id in pairs(brands) do
+        valid_brand = valid_brand or id == profile.brand_id
+    end
+
+    if not valid_brand then
+        error("player illusion has invalid ghost weapon brand")
+    end
+
+    if profile.holiness_id ~= holiness.NATURAL and
+        profile.holiness_id ~= holiness.UNDEAD and
+        profile.holiness_id ~= holiness.NONLIVING and
+        profile.holiness_id ~= holiness.DEMONIC then
+        error("player illusion has invalid holiness")
+    end
+
+    local allowed_resistances = {}
+
+    for _, id in pairs(resistance_ids) do
+        allowed_resistances[id] = true
+    end
+
+    for id, level in pairs(profile.resistances) do
+        if not allowed_resistances[id] or level < -3 or level > 3 then
+            error("player illusion has invalid resistance")
+        end
+    end
+
+    if #profile.spell_ids ~= #profile.frequencies then
+        error("player illusion has mismatched spell slots")
+    end
+
+    local frequency = #profile.spell_ids > 0 and
+        math.floor((stats.hd + 50) / #profile.spell_ids) or 0
+    local seen = {}
+
+    for index, id in ipairs(profile.spell_ids) do
+        if seen[id] or profile.frequencies[index] ~= frequency then
+            error("player illusion has invalid ghost spell weights")
+        end
+
+        seen[id] = true
+        catalog.get("spells", id)
+    end
+
+    local copies = 0
+
+    for _, other in ipairs(ctx:query({ component.PLAYER_ILLUSION })) do
+        local candidate = ctx:get(other, component.PLAYER_ILLUSION)
+
+        if candidate.name == profile.name then
+            copies = copies + 1
+        end
+    end
+
+    if copies > 1 then
+        error("duplicate player illusion of " .. profile.name)
+    end
+end
 
 -- Summoned creatures belong to their caster, not the scenario's starting
 -- population. Their ownership and expiry survive a save and restore.
@@ -87,6 +182,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         spells.SPELL_CONJURE_LIVING_SPELLS
     local living_actor = actor.kind_id == monsters.MONS_LIVING_SPELL
     local stats = ctx:get(entity, component.SUMMON_STATS)
+    validate_player_illusion(ctx, entity, actor, state, stats)
 
     if living_source or living_actor or living then
         if not living_source or not living_actor or not living or
@@ -105,13 +201,18 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         actor.kind_id
     local phantom = state.source_id == spells.SPELL_PHANTOM_MIRROR
     local fake_mara = state.source_id == spells.SPELL_FAKE_MARA_SUMMON
+    local monster_illusion = state.source_id ==
+        spells.SPELL_SUMMON_ILLUSION and
+        actor.kind_id ~= monsters.MONS_PLAYER_ILLUSION
 
-    if mirror or phantom or fake_mara then
+    if mirror or phantom or fake_mara or monster_illusion then
         local expected_percent = fake_mara and 50 or 100
 
-        if not mirror or not (phantom or fake_mara) or
+        if not mirror or
+            not (phantom or fake_mara or monster_illusion) or
             state.source_category ~= categories.SPELLS or
             mirror.origin_kind_id ~= original_kind or
+            mirror.origin_entity_id == "" or
             mirror.hp_percent ~= expected_percent or
             not stats or stats.hd < 1 then
             error("summon " .. ctx:id(entity) ..

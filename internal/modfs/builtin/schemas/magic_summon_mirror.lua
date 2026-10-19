@@ -2,9 +2,15 @@
 -- them. Their original may die before a save is restored.
 local schema = {
     id = "magic.summon_mirror",
-    version = 1,
+    version = 2,
     fields = {
         origin_kind_id = {
+            type = "string",
+            default = "",
+        },
+
+        -- Stable source identity prevents repeated cloning of one monster.
+        origin_entity_id = {
             type = "string",
             default = "",
         },

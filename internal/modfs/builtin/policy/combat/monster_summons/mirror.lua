@@ -7,6 +7,7 @@ local clone_inventory = require("policy.combat.clone_inventory")
 local component = require("constants.component")
 local flags = require("constants.monster_flags")
 local monster_stats = require("policy.combat.monster_stats")
+local monsters = require("ids.monsters")
 local net = require("policy.combat.net")
 local spells = require("ids.spells")
 local streams = require("constants.rng_streams")
@@ -16,6 +17,16 @@ local trap_held = require("policy.traps.held")
 
 local mirror = {}
 local SIGHT_RADIUS = 7
+local tentacles = {
+    [monsters.MONS_KRAKEN_TENTACLE] = true,
+    [monsters.MONS_KRAKEN_TENTACLE_SEGMENT] = true,
+    [monsters.MONS_ELDRITCH_TENTACLE] = true,
+    [monsters.MONS_ELDRITCH_TENTACLE_SEGMENT] = true,
+    [monsters.MONS_MNOLEG_TENTACLE] = true,
+    [monsters.MONS_MNOLEG_TENTACLE_SEGMENT] = true,
+    [monsters.MONS_STARSPAWN_TENTACLE] = true,
+    [monsters.MONS_STARSPAWN_TENTACLE_SEGMENT] = true,
+}
 
 -- Statuses tied to the body can continue on the copied body. Restraints,
 -- external marks, AI references, and world lifecycle tags cannot: copying
@@ -69,6 +80,45 @@ function mirror.eligible_ally(ctx, caster, target)
     return not has_flag(definition, flags.STATIONARY) and
         not has_flag(definition, flags.CONJURED) and
         not has_flag(definition, flags.UNIQUE)
+end
+
+-- Summon Illusion clones its enemy, unlike Phantom Mirror's allied source.
+-- One live copy per source is identified by the original ECS handle, not
+-- merely by monster kind: two orcs may each have their own illusion.
+function mirror.eligible_illusion(ctx, source)
+    if ctx:has(source, component.PLAYER) or
+        ctx:has(source, component.SUMMON_MIRROR) or
+        ctx:has(source, component.PLAYER_ILLUSION) then
+        return false
+    end
+
+    local actor = ctx:get(source, component.ACTOR)
+    local health = ctx:get(source, component.HEALTH)
+
+    if not actor or not health or health.current <= 0 or
+        tentacles[actor.kind_id] then
+        return false
+    end
+
+    local definition = catalog.get("monsters", actor.kind_id)
+
+    if has_flag(definition, flags.CONJURED) then
+        return false
+    end
+
+    for _, entity in ipairs(ctx:query({ component.SUMMON_MIRROR })) do
+        local state = ctx:get(entity, component.SUMMON)
+        local copy = ctx:get(entity, component.SUMMON_MIRROR)
+        local life = ctx:get(entity, component.HEALTH)
+
+        if state and state.source_id == spells.SPELL_SUMMON_ILLUSION and
+            copy.origin_entity_id == tostring(ctx:id(source)) and
+            life and life.current > 0 then
+            return false
+        end
+    end
+
+    return true
 end
 
 -- Only live actors in unobstructed sight can be selected. Stable ECS query
@@ -171,7 +221,9 @@ end
 -- The shared summon owner finds an adjacent cell and assigns finite source
 -- lifetime. Only after placement succeeds do we copy current HP and items;
 -- a blocked cast never creates duplicate equipment or rolls a swap.
-function mirror.spawn(ctx, caster, source, spell_id, hp_percent, cap)
+function mirror.spawn(ctx, caster, source, spell_id, hp_percent, cap,
+    options)
+    options = options or {}
     local actor = ctx:get(source, component.ACTOR)
     local health = ctx:get(source, component.HEALTH)
     local position = ctx:get(source, component.POSITION)
@@ -187,7 +239,7 @@ function mirror.spawn(ctx, caster, source, spell_id, hp_percent, cap)
     local maximum = math.max(1,
         math.floor(health.max * hp_percent / 100))
     local twin = summons.spawn(ctx, caster, spell_id, actor.kind_id,
-        5, cap, {
+        options.duration or 5, cap, {
             anchor = position,
             attitude = targets.attitude(ctx, caster),
             hd = hd,
@@ -204,12 +256,30 @@ function mirror.spawn(ctx, caster, source, spell_id, hp_percent, cap)
     })
     ctx:add(twin, component.SUMMON_MIRROR, {
         origin_kind_id = actor.kind_id,
+        origin_entity_id = tostring(ctx:id(source)),
         hp_percent = hp_percent,
     })
 
     copy_body(ctx, source, twin)
-    untangle_original(ctx, source)
-    maybe_swap(ctx, source, twin)
+
+    if options.discard_charm then
+        local allegiance = ctx:get(twin,
+            component.MONSTER_ALLEGIANCE)
+
+        if allegiance then
+            allegiance.charm_aut = 0
+            ctx:set(twin, component.MONSTER_ALLEGIANCE,
+                allegiance)
+        end
+    end
+
+    if options.untangle ~= false then
+        untangle_original(ctx, source)
+    end
+
+    if options.swap ~= false then
+        maybe_swap(ctx, source, twin)
+    end
 
     return twin
 end

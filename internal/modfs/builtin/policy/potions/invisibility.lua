@@ -48,6 +48,12 @@ function invisibility.visible_to(ctx, player, observer)
         return false
     end
 
+    local illusion = ctx:get(observer, component.PLAYER_ILLUSION)
+
+    if illusion and illusion.see_invisible then
+        return true
+    end
+
     local catalog = require("policy.catalog")
     local definition = catalog.get("monsters", actor.kind_id)
 

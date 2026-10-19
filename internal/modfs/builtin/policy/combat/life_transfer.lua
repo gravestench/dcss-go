@@ -10,6 +10,7 @@ local form_ids = require("constants.form_ids")
 local holiness = require("constants.monster_holiness")
 local player_holiness = require("policy.character.holiness")
 local monster_drain = require("policy.combat.monster_drain")
+local monster_profile = require("policy.combat.monster_profile")
 local monster_health = require("policy.combat.monster_health")
 local player_health = require("policy.combat.player_health")
 local damage = require("policy.magic.damage")
@@ -59,7 +60,8 @@ function transfer.offering_recipient(ctx, victim)
     end
 
     local actor = ctx:get(victim, component.ACTOR)
-    local definition = catalog.get(categories.MONSTERS, actor.kind_id)
+    local definition = monster_profile.definition(ctx, victim,
+        catalog.get(categories.MONSTERS, actor.kind_id))
 
     return not contains(definition.holiness, holiness.NONLIVING)
 end
@@ -71,7 +73,8 @@ function transfer.living(ctx, victim)
     end
 
     local actor = ctx:get(victim, component.ACTOR)
-    local definition = catalog.get(categories.MONSTERS, actor.kind_id)
+    local definition = monster_profile.definition(ctx, victim,
+        catalog.get(categories.MONSTERS, actor.kind_id))
 
     return contains(definition.holiness, holiness.NATURAL) or
         contains(definition.holiness, holiness.PLANT)
@@ -91,7 +94,8 @@ function transfer.susceptible(ctx, victim)
     end
 
     local actor = ctx:get(victim, component.ACTOR)
-    local definition = catalog.get(categories.MONSTERS, actor.kind_id)
+    local definition = monster_profile.definition(ctx, victim,
+        catalog.get(categories.MONSTERS, actor.kind_id))
     local firewood = definition.speed == 0 and
         contains(definition.flags, flags.NO_THREAT)
 

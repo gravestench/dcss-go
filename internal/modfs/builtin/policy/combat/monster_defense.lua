@@ -5,6 +5,7 @@ local component = require("constants.component")
 local armour_egos = require("constants.armour_egos")
 local size = require("constants.size")
 local monster_stats = require("policy.combat.monster_stats")
+local monster_profile = require("policy.combat.monster_profile")
 local chaos_status = require("policy.combat.player_brands.chaos_status")
 local roll = require("policy.combat.roll")
 
@@ -12,6 +13,8 @@ local defense = {}
 
 -- Reduce catalog EV while roots, clutch, or constriction hold the monster in place.
 function defense.evasion(ctx, monster, definition)
+    definition = monster_profile.definition(ctx, monster, definition)
+
     local ev = definition.ev or 0
     local clutch = ctx:get(monster, component.MONSTER_VILE_CLUTCH)
     local roots = ctx:get(monster, component.GRASPING_ROOTS)
@@ -28,6 +31,8 @@ end
 
 -- Combine innate AC with equipped protection, then apply active wretchedness.
 function defense.armour(ctx, monster, definition)
+    definition = monster_profile.definition(ctx, monster, definition)
+
     local ac = (definition.ac or 0) +
         equipment.protection_ac(ctx, monster)
     local wretched = ctx:get(monster, component.WRETCHED)

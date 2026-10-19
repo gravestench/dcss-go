@@ -16,6 +16,7 @@ local brands = require("policy.combat.brands")
 local player_slow = require("policy.character.slow")
 local monster_poison = require("policy.combat.monster_poison")
 local monster_slow = require("policy.combat.monster_slow")
+local monster_profile = require("policy.combat.monster_profile")
 
 local miasma = {}
 
@@ -71,8 +72,8 @@ function miasma.immune(ctx, actor)
 
     local state = ctx:get(actor, component.ACTOR)
 
-    return state and
-        monster_immune(catalog.get(categories.MONSTERS, state.kind_id)) or false
+    return state and monster_immune(monster_profile.definition(ctx,
+        actor, catalog.get(categories.MONSTERS, state.kind_id))) or false
 end
 
 -- Player miasma adds poison unless resistance is complete; monsters receive one poison level and possible slow.
@@ -101,7 +102,8 @@ function miasma.afflict(ctx, actor, source, stream, player_credit)
     end
 
     local monster = ctx:get(actor, component.ACTOR)
-    local definition = catalog.get(categories.MONSTERS, monster.kind_id)
+    local definition = monster_profile.definition(ctx, actor,
+        catalog.get(categories.MONSTERS, monster.kind_id))
 
     monster_poison.apply(ctx, actor, definition, 1, source, false,
         player_credit)

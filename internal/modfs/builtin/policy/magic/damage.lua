@@ -4,6 +4,7 @@ local fighter = require("policy.combat.fighter")
 local forms = require("policy.magic.effects.forms.player")
 local statuses = require("policy.magic.effects.statuses.player")
 local monster_defense = require("policy.combat.monster_defense")
+local monster_profile = require("policy.combat.monster_profile")
 local mutation_capabilities = require("constants.mutation_capabilities")
 local mutation_effects = require("policy.mutations.effects.registry")
 local resistances = require("constants.resistance_ids")
@@ -41,7 +42,9 @@ function damage.monster(ctx, target)
         return nil
     end
 
-    return catalog.get("monsters", actor.kind_id), health
+    local definition = catalog.get("monsters", actor.kind_id)
+
+    return monster_profile.definition(ctx, target, definition), health
 end
 
 -- Catalog entries default to zero when a monster lacks an explicit resistance.

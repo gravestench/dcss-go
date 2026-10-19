@@ -13,6 +13,7 @@ local catalog = require("policy.catalog")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
 local senses = require("policy.character.senses")
+local monster_profile = require("policy.combat.monster_profile")
 
 local drain = {}
 
@@ -74,6 +75,8 @@ end
 -- Nonliving holiness is fully immune; living resistance combines intrinsic
 -- pips with permitted equipment and caps at three.
 function drain.resistance(ctx, monster, definition)
+    definition = monster_profile.definition(ctx, monster, definition)
+
     local types = definition.holiness or {}
     local living = #types == 0
 

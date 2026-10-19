@@ -8,6 +8,7 @@ local magic_damage = require("policy.magic.damage")
 local armour = require("policy.magic.effects.summons.animate_armour")
 local monster_health = require("policy.combat.monster_health")
 local monster_stats = require("policy.combat.monster_stats")
+local monster_profile = require("policy.combat.monster_profile")
 
 local summon_melee = {}
 
@@ -86,7 +87,8 @@ local function strikes(ctx, summon, attacker, state)
         return { strike, strike }, false
     end
 
-    local definition = catalog.get("monsters", attacker.kind_id)
+    local definition = monster_profile.definition(ctx, summon,
+        catalog.get("monsters", attacker.kind_id))
 
     if state.heads > 0 then
         local repeated = {}
@@ -125,6 +127,7 @@ function summon_melee.attack(ctx, summon, target)
         ctx:has(summon, "magic.summon_simulacrum") or
         ctx:has(summon, "magic.summon_undead") or
         attacker.kind_id == monsters.MONS_ANIMATED_ARMOUR or
+        ctx:has(summon, component.PLAYER_ILLUSION) or
         attacker.kind_id == monsters.MONS_ELDRITCH_TENTACLE
 
     if not special then
@@ -138,8 +141,10 @@ function summon_melee.attack(ctx, summon, target)
         error("summon melee target lacks actor or health")
     end
 
-    local attacker_def = catalog.get("monsters", attacker.kind_id)
-    local victim_def = catalog.get("monsters", victim.kind_id)
+    local attacker_def = monster_profile.definition(ctx, summon,
+        catalog.get("monsters", attacker.kind_id))
+    local victim_def = monster_profile.definition(ctx, target,
+        catalog.get("monsters", victim.kind_id))
     local attacks, cold_copy = strikes(ctx, summon, attacker, state)
     local hd = monster_stats.hit_dice(ctx, summon, attacker_def,
         adjusted and adjusted.hd or nil)

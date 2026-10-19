@@ -70,6 +70,7 @@ local component = {
     MONSTER_BRILLIANCE_AURA = "combat.monster_brilliance_aura",
     MONSTER_EMPOWERED_SPELLS = "combat.monster_empowered_spells",
     CHAOS_CLONE = "combat.chaos_clone",
+    PLAYER_ILLUSION = "magic.player_illusion",
     CHAOS_CLONE_REWARDS = "combat.chaos_clone_rewards",
     BANISHMENT = "world.banishment",
     DURATIONS = "core.durations",

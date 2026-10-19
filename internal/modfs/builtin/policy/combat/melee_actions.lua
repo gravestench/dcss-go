@@ -18,6 +18,7 @@ local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
 local rage = require("policy.character.rage")
 local monster_stats = require("policy.combat.monster_stats")
+local monster_profile = require("policy.combat.monster_profile")
 local stab = require("policy.combat.stab")
 local vampire = require("policy.character.vampire")
 local auxiliary_attacks = require("constants.auxiliary_attacks")
@@ -97,7 +98,8 @@ function actions.player(ctx, target, options)
         error("player melee target lacks actor")
     end
 
-    local defender = catalog.get("monsters", actor.kind_id)
+    local defender = monster_profile.definition(ctx, target,
+        catalog.get("monsters", actor.kind_id))
 
     rage.melee(ctx, ctx:player())
     mutation_effects.trigger(ctx, ctx:player(),
@@ -345,7 +347,8 @@ function actions.monster(ctx, attacker)
         return
     end
 
-    local definition = catalog.get("monsters", actor.kind_id)
+    local definition = monster_profile.definition(ctx, attacker,
+        catalog.get("monsters", actor.kind_id))
     local attack = definition.attacks[1]
     local defense = fighter.defense(ctx)
     local weapon = nil
@@ -407,9 +410,14 @@ function actions.monster(ctx, attacker)
 
     ctx:emit("combat", message)
 
-    if outcome.kind == "hit" and weapon and
-        (health.current > 0 or brands.after_death(weapon.brand)) then
-        brands.apply(ctx, weapon.brand, outcome.damage, actor.kind_id, definition.name, health)
+    local illusion = ctx:get(attacker, component.PLAYER_ILLUSION)
+    local brand_id = weapon and weapon.brand or
+        illusion and illusion.brand_id
+
+    if outcome.kind == "hit" and brand_id and
+        (health.current > 0 or brands.after_death(brand_id)) then
+        brands.apply(ctx, brand_id, outcome.damage,
+            actor.kind_id, definition.name, health)
     end
 
     if outcome.kind == "hit" and dealt > 0 then
@@ -469,8 +477,10 @@ function actions.monster_target(ctx, attacker, target)
         return
     end
 
-    local attacker_def = catalog.get("monsters", attacker_actor.kind_id)
-    local target_def = catalog.get("monsters", target_actor.kind_id)
+    local attacker_def = monster_profile.definition(ctx, attacker,
+        catalog.get("monsters", attacker_actor.kind_id))
+    local target_def = monster_profile.definition(ctx, target,
+        catalog.get("monsters", target_actor.kind_id))
     local attack = attacker_def.attacks[1]
 
     if not attack or attack.type_id == "AT_NONE" then

@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local roll = require("policy.combat.roll")
 local monster_health = require("policy.combat.monster_health")
 local component = require("constants.component")
+local monster_profile = require("policy.combat.monster_profile")
 local hex_status = require("policy.combat.monster_hexes.status")
 local causes = require("constants.damage_causes")
 local senses = require("policy.character.senses")
@@ -28,6 +29,8 @@ end
 -- Virulence changes effective resistance only while its saved status is
 -- active. Full poison immunity remains absolute, as in source DCSS.
 function poison.effective_resistance(ctx, monster, definition)
+    definition = monster_profile.definition(ctx, monster, definition)
+
     local value = poison.resistance(definition)
 
     if value < 3 and hex_status.poison_vulnerable(ctx, monster) then
@@ -124,7 +127,8 @@ function poison.tick(ctx, monster)
     end
 
     local actor = ctx:get(monster, "core.actor")
-    local definition = catalog.get("monsters", actor.kind_id)
+    local definition = monster_profile.definition(ctx, monster,
+        catalog.get("monsters", actor.kind_id))
     local damage = state.degree >= 4 and 1 or 0
 
     if roll.melee(ctx, 2) == 0 then

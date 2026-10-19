@@ -246,6 +246,19 @@ function module.run(ctx, input)
         current_aut = input.current_aut,
     }
 
+    -- A custom ghost profile may not be detached from its live actor. The
+    -- ordinary AI loop below only visits complete monsters, so catch orphan
+    -- profile entities before they could bypass summon validation.
+    for _, entity in ipairs(ctx:query({ component.PLAYER_ILLUSION })) do
+        if not ctx:has(entity, component.ACTOR) or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) or
+            not ctx:has(entity, component.SUMMON) then
+            error("orphan player illusion profile " .. ctx:id(entity))
+        end
+    end
+
     for _, entity in ipairs(ctx:query({ "core.ai" })) do
         local actor = ctx:get(entity, "core.actor")
         local health = ctx:get(entity, "core.health")
@@ -272,6 +285,11 @@ function module.run(ctx, input)
 
         if ctx:has(entity, component.SUMMON_MIRROR) and not summon then
             error("mirror copy " .. ctx:id(entity) ..
+                " has no summon owner")
+        end
+
+        if ctx:has(entity, component.PLAYER_ILLUSION) and not summon then
+            error("player illusion " .. ctx:id(entity) ..
                 " has no summon owner")
         end
 

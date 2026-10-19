@@ -39,6 +39,30 @@ function spellbook.for_actor(ctx, entity)
         }
     end
 
+    -- Player-ghost spells are picked when the illusion is created. Rebuild
+    -- only a temporary slot view so later player study cannot change it.
+    local illusion = ctx:get(entity, component.PLAYER_ILLUSION)
+
+    if illusion then
+        if #illusion.spell_ids ~= #illusion.frequencies then
+            error("player illusion spell IDs and frequencies differ")
+        end
+
+        local slots = {}
+
+        for index, id in ipairs(illusion.spell_ids) do
+            slots[index] = {
+                spell_id = id,
+                frequency = illusion.frequencies[index],
+                flags = {
+                    spell_flags.WIZARD,
+                },
+            }
+        end
+
+        return #slots > 0 and { slots = slots } or nil
+    end
+
     -- A spellforged servitor keeps the caster's eligible book on its own
     -- component. Reconstruct only the immutable slot view on each read;
     -- selection and execution still use ordinary monster spell policy.
