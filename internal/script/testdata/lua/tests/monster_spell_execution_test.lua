@@ -17,7 +17,8 @@ local source_book = "MST_ENDOPLASM"
 
 -- The intent carries a selected slot and target; execution must reuse both
 -- without drawing or selecting a new target.
-local function context(spell_id, spell_slot, planned_kind, construct)
+local function context(spell_id, spell_slot, planned_kind,
+    construct_attitude)
     local ctx = {}
 
     -- Bind execution to the selected player target in the saved plan.
@@ -27,14 +28,15 @@ local function context(spell_id, spell_slot, planned_kind, construct)
 
     -- Keep optional statuses absent so slot validation is isolated.
     function ctx:has(entity, id)
-        return construct and entity == caster and id == component.SUMMON
+        return construct_attitude and entity == caster and
+            id == component.SUMMON
     end
 
     -- Return the exact caster intent and spellbook data used at the execution boundary.
     function ctx:get(entity, id)
         if entity == caster then
-            if id == component.SUMMON and construct then
-                return { attitude = "friendly" }
+            if id == component.SUMMON and construct_attitude then
+                return { attitude = construct_attitude }
             end
 
             if id == component.INTENT then
@@ -165,7 +167,8 @@ function test.run()
 
     -- Construct abilities reuse the spell-speed intent number but have no
     -- spellbook slot; their own system resolves them before this gate.
-    local construct = context(spells.SPELL_FOXFIRE, 0, nil, true)
+    local construct = context(spells.SPELL_FOXFIRE, 0, nil,
+        "friendly")
 
     okay, problem = pcall(system.update, construct, caster)
 
@@ -173,6 +176,32 @@ function test.run()
         "construct ability stays with its owner: " .. tostring(problem))
     harness.equal(resolved, 2,
         "monster spellbook resolver does not run a construct ability")
+
+    -- Marshlight produces hostile foxfire. Its allegiance cannot turn the
+    -- same construct intent into a spellbook cast without a slot.
+    local hostile = context(spells.SPELL_MARSHLIGHT, 0, nil,
+        "hostile")
+
+    okay, problem = pcall(system.update, hostile, caster)
+
+    harness.truthy(okay,
+        "hostile construct ability stays with its owner: " ..
+            tostring(problem))
+    harness.equal(resolved, 2,
+        "hostile construct never reaches the spellbook resolver")
+
+    -- A Lua construct intent omits spell_slot entirely. The host does not
+    -- synthesize a zero field when Lua reads that component back.
+    local omitted = context(spells.SPELL_MARSHLIGHT, nil, nil,
+        "hostile")
+
+    okay, problem = pcall(system.update, omitted, caster)
+
+    harness.truthy(okay,
+        "omitted construct slot stays with its owner: " ..
+            tostring(problem))
+    harness.equal(resolved, 2,
+        "an omitted slot is not treated as a monster spellbook cast")
 
     register.get = original_get
     effects.effect = original_effect

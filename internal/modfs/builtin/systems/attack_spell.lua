@@ -23,10 +23,10 @@ function system.update(ctx, caster)
     end
 
     -- Construct abilities resolve in their own Lua decision policy.
-    -- They retain spell-speed energy without using a monster spellbook.
-    if intent.spell_slot == 0 and
-        ctx:has(caster, component.SUMMON) and
-        targets.allied(ctx, caster) then
+    -- Allegiance does not change that ownership: hostile Marshlight
+    -- foxfire also has no spellbook slot, yet spends spell-speed energy.
+    if (not intent.spell_slot or intent.spell_slot == 0) and
+        ctx:has(caster, component.SUMMON) then
         return
     end
 

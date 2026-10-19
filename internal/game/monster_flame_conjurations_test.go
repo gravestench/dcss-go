@@ -163,6 +163,46 @@ func TestMonsterMarshlightFoxfireActs(t *testing.T) {
 	}
 }
 
+// Hostile foxfire contact has no spellbook slot. The production scheduler
+// must let its construct policy own that action all the way through resolve.
+func TestMonsterMarshlightFoxfireContact(t *testing.T) {
+	game, caster, _ := moddedEndoplasmGame(t,
+		"testdata/monster-flame-marshlight")
+	placePlayerInSlugLine(t, game, caster)
+
+	energy, _ := game.stores.MonsterEnergy.Get(caster)
+
+	energy.Points = 80
+
+	if _, err := game.runAction(caster, ecs.Intent{}, 10,
+		"monster"); err != nil {
+		t.Fatal(err)
+	}
+
+	foxfires := game.scripts.Components()["magic.summon_construct"].Entities()
+
+	if len(foxfires) != 2 {
+		t.Fatalf("Marshlight made %d foxfires, want two", len(foxfires))
+	}
+
+	foxfire := foxfires[0]
+	placePlayerBesideMonster(t, game, foxfire)
+
+	if err := game.refreshVisibility(); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := game.runAction(foxfire, ecs.Intent{}, 10,
+		"monster"); err != nil {
+		t.Fatal(err)
+	}
+
+	if game.turn.ResolvedIntent != ecs.IntentSpell {
+		t.Fatalf("foxfire intent = %d, want contact ability",
+			game.turn.ResolvedIntent)
+	}
+}
+
 // A killed inferno must cross summon expiry and reach actor death in the
 // production scheduler; the focused Lua test runs those phases directly.
 func TestMonsterStokeFlamesExplodesOnDeath(t *testing.T) {
