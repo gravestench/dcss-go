@@ -1,6 +1,7 @@
 local commands = require("policy.input.commands")
 local confusion = require("policy.magic.player_confusion")
 local fear = require("policy.character.player_fear")
+local mesmerism = require("policy.character.player_mesmerism")
 local doors = require("policy.inventory.doors")
 local items = require("policy.inventory.items")
 local navigation = require("policy.commands.navigation")
@@ -43,6 +44,16 @@ function entries.move(ctx, player, input, position)
         end
 
         if not target then
+            local beholder = mesmerism.blocked(ctx, player,
+                position, destination)
+
+            if beholder then
+                return {
+                    message = "You cannot move away from the " ..
+                        display.name(ctx, beholder) .. "!",
+                }
+            end
+
             local source = fear.blocked(ctx, player,
                 position, destination)
 
@@ -59,12 +70,30 @@ function entries.move(ctx, player, input, position)
 end
 
 -- Match an upstairs link at the current cell before changing floors.
-function entries.upstairs(ctx, _, _, position)
+function entries.upstairs(ctx, player, _, position)
+    local beholder = mesmerism.any(ctx, player)
+
+    if beholder then
+        return {
+            message = "You cannot leave while mesmerised by the " ..
+                display.name(ctx, beholder) .. "!",
+        }
+    end
+
     return navigation.stairs(ctx, position, false)
 end
 
 -- Match a downstairs link at the current cell before changing floors.
-function entries.downstairs(ctx, _, _, position)
+function entries.downstairs(ctx, player, _, position)
+    local beholder = mesmerism.any(ctx, player)
+
+    if beholder then
+        return {
+            message = "You cannot leave while mesmerised by the " ..
+                display.name(ctx, beholder) .. "!",
+        }
+    end
+
     return navigation.stairs(ctx, position, true)
 end
 

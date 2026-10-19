@@ -153,8 +153,12 @@ Monster Cause Fear and Mass Confusion now select unaligned actors across
 unobstructed sight, test each victim's will, and write fear or confusion to
 the victim's saved ECS state. Player fear retains its source monsters and
 blocks approach or sometimes a melee attempt until the sources or timer
-expire. This area-mind category does not yet cover Mesmerise, Siren Song,
-or Avatar Song; those require persistent attention and song movement rules.
+expire. Mesmerise and the two siren songs now share player-owned beholder
+state: living, audible sources constrain retreat and stairs; breaking the
+last hold grants saved temporary immunity. Avatar Song keeps a separate
+caster-owned timer, attempts safe player pulls, and calls drowned souls from
+open deep water. The song rules still need live roster coverage as later
+Shoals and unique-monster population slices become playable.
 The 11 wand-to-spell links are committed in their wand definitions, with a
 legacy JSON artifact retained for cross-checks. Source appearance words are
 committed in `data/item_appearances.lua`. The runtime does not read C++ to
