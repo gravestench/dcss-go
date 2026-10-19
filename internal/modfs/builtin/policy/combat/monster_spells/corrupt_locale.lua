@@ -4,6 +4,7 @@
 local branches = require("ids.branches")
 local component = require("constants.component")
 local servants = require("policy.combat.monster_corruption_servants")
+local displacement = require("policy.combat.monster_corruption_displacement")
 local roll = require("policy.combat.roll")
 local self_target = require("policy.combat.monster_support.self_target")
 local spells = require("ids.spells")
@@ -122,8 +123,7 @@ function effect.resolve(ctx, caster, _, _, plan)
                 player.x == cell.x and player.y == cell.y
 
             if feature and not player_cell and
-                not incorruptible(feature) and
-                not resist_wall(ctx, feature) then
+                not incorruptible(feature) then
                 if feature == terrain.DNGN_FLOOR and draw < chance then
                     local changed = proto_feature(ctx)
 
@@ -136,9 +136,11 @@ function effect.resolve(ctx, caster, _, _, plan)
                         end
                     end
 
-                    -- A solid proto-feature cannot be left under a creature.
-                    if ctx:actor_at(origin.level_id, cell.x, cell.y) and
-                        changed and solid(changed) then
+                    -- Source pushes items and actors aside before placing
+                    -- a solid temporary feature; failed pushes use floor.
+                    if changed and solid(changed) and
+                        not displacement.clear(ctx, origin.level_id,
+                            cell.x, cell.y) then
                         changed = terrain.DNGN_FLOOR
                     end
 
@@ -150,10 +152,14 @@ function effect.resolve(ctx, caster, _, _, plan)
                             origin.level_id, cell.x, cell.y,
                             changed, duration)
                     end
-                elseif feature == terrain.DNGN_TREE and
-                    draw < (chance + 1000) / 2 then
-                    ctx:set_cell(origin.level_id, cell.x, cell.y,
-                        terrain.DNGN_DEMONIC_TREE)
+                elseif draw < (chance + 1000) / 2 and
+                    not resist_wall(ctx, feature) then
+                    -- Terrain colors are absent from the current view
+                    -- contract; tree corruption is the visible flavor case.
+                    if feature == terrain.DNGN_TREE then
+                        ctx:set_cell(origin.level_id, cell.x, cell.y,
+                            terrain.DNGN_DEMONIC_TREE)
+                    end
                 end
             end
         end

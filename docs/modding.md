@@ -1179,16 +1179,27 @@ entities. Import terrain IDs from `constants.terrain`. Reads of a missing
 level or cell return `nil` where noted; writes reject missing or invalid
 destinations.
 
+A Lua scenario may supply a `heightmap` on a Shoals level: an array of
+integer rows with the same dimensions as `cells`. Each value is the authored
+ground elevation, not the current water depth. The engine derives threshold
+heights from the initial terrain when this field is absent. The Shoals tide
+policy uses these values while the grid keeps the changing floor and water.
+
 | Call | Result and use |
 | --- | --- |
 | `ctx:level_size(level_id)` | `width, height`, or `nil, nil` for a missing level. |
 | `ctx:level_branch(level_id)` | Branch ID, or `nil` for a missing level. |
+| `ctx:marker_property(level_id, x, y, key)` | A placed vault marker's named string property, or `nil`. |
+| `ctx:shoals_height(level_id, x, y)` | Authored Shoals elevation, or `nil` when absent. Water changes do not alter it. |
+| `ctx:shoals_tide_clock(level_id)` | Raw height, velocity, and last update aut; three `nil` values if absent. |
+| `ctx:set_shoals_tide_clock(level_id, height, velocity, last_aut)` | Save an advanced Shoals tide clock. |
 | `ctx:cell(level_id, x, y)` | Terrain ID at the cell, or `nil` when missing. Includes staged terrain changes. |
 | `ctx:walkable(level_id, x, y)` | Whether an actor can walk on the current or staged terrain. |
 | `ctx:actor_at(level_id, x, y)` | Occupying actor handle, or `nil`; includes staged moves. |
 | `ctx:stair_at(level_id, x, y)` | Link `{ to_level_id, to_x, to_y, unavailable }`, or `nil`. |
 | `ctx:visible(level_id, from_x, from_y, radius, target_x, target_y)` | Ordinary sight. |
 | `ctx:visible_no_trans(level_id, from_x, from_y, radius, target_x, target_y)` | Clear walls block; actors do not. |
+| `ctx:visible_no_trans_with_blocked(level_id, from_x, from_y, radius, target_x, target_y, cells)` | Test sight with an array of extra `{ x, y }` opaque cells; the grid is unchanged. |
 | `ctx:visible_cells(level_id, from_x, from_y, radius)` | Array of visible `{ x, y }` cells. |
 | `ctx:route_step(level_id, from_x, from_y, to_x, to_y, goal)` | `dx, dy, found`; no route gives `nil, nil, false`. |
 | `ctx:projectile_clear(level_id, from_x, from_y, to_x, to_y)` | Physical ray; actors block. |

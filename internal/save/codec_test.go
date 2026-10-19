@@ -65,6 +65,45 @@ func TestVaultRecordCodec(t *testing.T) {
 	}
 }
 
+func TestShoalsTideRecordCodec(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "shoals.json")
+	original := Snapshot{
+		Version: Version,
+		Levels: []LevelRecord{
+			{
+				ID:       1,
+				BranchID: "BRANCH_SHOALS",
+				ShoalsTide: &ShoalsTideRecord{
+					Heights: [][]int{
+						{
+							-31,
+							12,
+							135,
+						},
+					},
+					Height:   21,
+					Velocity: -2,
+					LastAut:  100,
+				},
+			},
+		},
+	}
+
+	if err := Write(path, original); err != nil {
+		t.Fatal(err)
+	}
+
+	loaded, err := Read(path)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(original, loaded) {
+		t.Fatalf("Shoals tide changed across save: %+v", loaded.Levels[0].ShoalsTide)
+	}
+}
+
 func TestFailedWritePreservesOldSave(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "run.json")
 

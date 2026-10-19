@@ -7,6 +7,7 @@ local doors = require("policy.inventory.doors")
 local items = require("policy.inventory.items")
 local roll = require("policy.combat.roll")
 local self_target = require("policy.combat.monster_support.self_target")
+local tension = require("policy.combat.monster_seal_tension")
 local spells = require("ids.spells")
 local targets = require("policy.ai.targets")
 local temporary = require("policy.world.temporary_terrain")
@@ -101,7 +102,7 @@ function effect.plan(ctx, caster, foe)
                 end
             end
 
-            if possible then
+            if possible and tension.allows_close(ctx, player, group) then
                 return self_target.plan(caster)
             end
         end
@@ -132,20 +133,36 @@ local function close_group(ctx, level_id, group, closed_feature)
                 panel, excluded)
             local target
 
-            for _, candidate in ipairs(candidates) do
-                local key = candidate.x .. ":" .. candidate.y
+            if occupant then
+                local blocked = {}
 
-                if not destinations[key] and
-                    not ctx:actor_at(level_id, candidate.x, candidate.y) then
-                    target = candidate
-                    destinations[key] = true
-                    break
+                for key in pairs(excluded) do
+                    blocked[key] = true
+                end
+
+                for key in pairs(destinations) do
+                    blocked[key] = true
+                end
+
+                target = tension.best_push(ctx, occupant,
+                    group, panel, blocked)
+            else
+                for _, candidate in ipairs(candidates) do
+                    local key = candidate.x .. ":" .. candidate.y
+
+                    if not destinations[key] and
+                        not ctx:actor_at(level_id, candidate.x, candidate.y) then
+                        target = candidate
+                        break
+                    end
                 end
             end
 
             if not target then
                 return false
             end
+
+            destinations[target.x .. ":" .. target.y] = true
 
             moves[#moves + 1] = {
                 actor = occupant,
@@ -215,7 +232,8 @@ function effect.resolve(ctx, caster, foe, _, plan)
                     seen[panel.x .. ":" .. panel.y] = true
                 end
 
-                if close_group(ctx, origin.level_id, group, closed) then
+                if tension.allows_close(ctx, foe, group) and
+                    close_group(ctx, origin.level_id, group, closed) then
                     for _, panel in ipairs(group) do
                         if temporary.place(ctx, caster,
                             spells.SPELL_SEAL_DOORS,

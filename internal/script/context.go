@@ -24,8 +24,12 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "entity", r.state.NewFunction(r.luaEntityByID))
 	r.state.SetField(context, "id", r.state.NewFunction(r.luaEntityID))
 	r.state.SetField(context, "cell", r.state.NewFunction(r.luaGridCell))
+	r.state.SetField(context, "marker_property", r.state.NewFunction(r.luaGridMarkerProperty))
 	r.state.SetField(context, "level_size", r.state.NewFunction(r.luaGridLevelSize))
 	r.state.SetField(context, "level_branch", r.state.NewFunction(r.luaGridLevelBranch))
+	r.state.SetField(context, "shoals_height", r.state.NewFunction(r.luaGridShoalsHeight))
+	r.state.SetField(context, "shoals_tide_clock", r.state.NewFunction(r.luaGridShoalsTideClock))
+	r.state.SetField(context, "set_shoals_tide_clock", r.state.NewFunction(r.luaGridSetShoalsTideClock))
 	r.state.SetField(context, "set_cell", r.state.NewFunction(r.luaGridSetCell))
 	r.state.SetField(context, "map_cell", r.state.NewFunction(r.luaGridMapCell))
 	r.state.SetField(context, "walkable", r.state.NewFunction(r.luaGridWalkable))
@@ -33,6 +37,8 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "stair_at", r.state.NewFunction(r.luaGridStairAt))
 	r.state.SetField(context, "visible", r.state.NewFunction(r.luaGridVisible))
 	r.state.SetField(context, "visible_no_trans", r.state.NewFunction(r.luaGridVisibleNoTrans))
+	r.state.SetField(context, "visible_no_trans_with_blocked",
+		r.state.NewFunction(r.luaGridVisibleNoTransWithBlocked))
 	r.state.SetField(context, "visible_cells", r.state.NewFunction(r.luaGridVisibleCells))
 	r.state.SetField(context, "route_step", r.state.NewFunction(r.luaGridRouteStep))
 	r.state.SetField(context, "projectile_clear", r.state.NewFunction(r.luaGridProjectileClear))
@@ -275,6 +281,20 @@ func (r *Runtime) luaGridCell(state *lua.LState) int {
 	return 1
 }
 
+func (r *Runtime) luaGridMarkerProperty(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	key := state.CheckString(5)
+	value, found := r.services.Grid.MarkerProperty(levelID, x, y, key)
+
+	if !found {
+		state.Push(lua.LNil)
+	} else {
+		state.Push(lua.LString(value))
+	}
+
+	return 1
+}
+
 func (r *Runtime) luaGridLevelSize(state *lua.LState) int {
 	levelID := state.CheckInt(2)
 	width, height, found := r.services.Grid.Size(levelID)
@@ -471,6 +491,58 @@ func (r *Runtime) luaGridVisibleNoTrans(state *lua.LState) int {
 
 	if err != nil {
 		state.RaiseError("grid no-trans visibility: %v", err)
+
+		return 0
+	}
+
+	state.Push(lua.LBool(visible))
+
+	return 1
+}
+
+// Evaluate sight with temporary opaque cells without changing terrain or the
+// queued Lua writes. Seal Doors uses this to compare a closed doorway first.
+func (r *Runtime) luaGridVisibleNoTransWithBlocked(state *lua.LState) int {
+	coordinates := r.gridIntegers(state, 6)
+	points := state.CheckTable(8)
+	blocked := make([]VisibleCell, 0, points.Len())
+
+	for index := 1; index <= points.Len(); index++ {
+		point, ok := points.RawGetInt(index).(*lua.LTable)
+
+		if !ok {
+			state.RaiseError("blocked sight cell %d must be a table", index)
+
+			return 0
+		}
+
+		x, xerr := exactLuaNumber(point.RawGetString("x"))
+		y, yerr := exactLuaNumber(point.RawGetString("y"))
+
+		if xerr != nil ||
+			yerr != nil ||
+			x < -2147483648 ||
+			x > 2147483647 ||
+			y < -2147483648 ||
+			y > 2147483647 {
+			state.RaiseError("blocked sight cell %d needs integer x and y", index)
+
+			return 0
+		}
+
+		blocked = append(blocked, VisibleCell{
+			X: int(x),
+			Y: int(y),
+		})
+	}
+
+	visible, err := r.services.Grid.VisibleNoTransWithBlocked(
+		coordinates[0], coordinates[1], coordinates[2],
+		coordinates[3], coordinates[4], coordinates[5], blocked,
+	)
+
+	if err != nil {
+		state.RaiseError("grid hypothetical no-trans visibility: %v", err)
 
 		return 0
 	}

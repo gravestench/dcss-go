@@ -33,16 +33,24 @@ type Services struct {
 // terrain features, stair links, occupancy, and walkability.
 type Grid interface {
 	Cell(levelID, x, y int) (terrain.ID, bool)
+	MarkerProperty(levelID, x, y int, key string) (string, bool)
 	Remembered(levelID, x, y int) (terrain.ID, bool)
 	MapCell(levelID, x, y int) error
 	RestoreRemembered(levelID, x, y int, feature terrain.ID) error
 	Size(levelID int) (int, int, bool)
 	Branch(levelID int) (string, bool)
+	ShoalsHeight(levelID, x, y int) (int, bool)
+	ShoalsTideClock(levelID int) (height, velocity int, lastAut int64, ok bool)
+	SetShoalsTideClock(levelID, height, velocity int, lastAut int64) error
 	Walkable(levelID, x, y int) bool
 	ActorAt(levelID, x, y int) (akara.Entity, bool)
 	StairAt(levelID, x, y int) (Stair, bool)
 	Visible(levelID, fromX, fromY, radius, targetX, targetY int) (bool, error)
 	VisibleNoTrans(levelID, fromX, fromY, radius, targetX, targetY int) (bool, error)
+	VisibleNoTransWithBlocked(
+		levelID, fromX, fromY, radius, targetX, targetY int,
+		blocked []VisibleCell,
+	) (bool, error)
 	VisibleCells(levelID, fromX, fromY, radius int) ([]VisibleCell, error)
 	RouteStep(levelID, fromX, fromY, toX, toY int, goal akara.Entity) (int, int, bool)
 	ProjectileClear(levelID, fromX, fromY, toX, toY int) bool

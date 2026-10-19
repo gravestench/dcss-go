@@ -34,6 +34,13 @@ type Level struct {
 	stairs       map[point]StairLink
 	vaultID      string
 	vaultRecords []vault.Record
+
+	// Shoals heights are authored terrain elevations. The tide changes the
+	// visible feature, but never overwrites the elevation beneath it.
+	shoalsHeights [][]int
+	tideHeight    int
+	tideVelocity  int
+	tideLastAut   int64
 }
 
 type point struct {

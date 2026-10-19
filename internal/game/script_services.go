@@ -6,6 +6,7 @@ import (
 	"crawl/internal/ecs"
 	"crawl/internal/script"
 	"crawl/internal/terrain"
+	"crawl/internal/vault"
 	"crawl/internal/visibility"
 	"github.com/gravestench/akara"
 )
@@ -111,6 +112,28 @@ func (grid scriptGrid) Cell(levelID, x, y int) (terrain.ID, bool) {
 	return level.terrain[y][x], true
 }
 
+func (grid scriptGrid) MarkerProperty(levelID, x, y int, key string) (string, bool) {
+	level := grid.levels[levelID]
+
+	if level == nil || !level.inBounds(x, y) {
+		return "", false
+	}
+
+	for _, record := range level.vaultRecords {
+		if record.Kind != vault.KindMarker ||
+			record.X != x ||
+			record.Y != y {
+			continue
+		}
+
+		if value, found := record.MarkerProperty(key); found {
+			return value, true
+		}
+	}
+
+	return "", false
+}
+
 func (grid scriptGrid) Remembered(levelID, x, y int) (terrain.ID, bool) {
 	level := grid.levels[levelID]
 
@@ -213,13 +236,38 @@ func (grid scriptGrid) Visible(
 func (grid scriptGrid) VisibleNoTrans(
 	levelID, fromX, fromY, radius, targetX, targetY int,
 ) (bool, error) {
+	return grid.VisibleNoTransWithBlocked(
+		levelID, fromX, fromY, radius, targetX, targetY, nil,
+	)
+}
+
+// Hypothetical blockers allow Lua to compare a door group as closed while
+// keeping the live level and its clouds untouched during spell planning.
+func (grid scriptGrid) VisibleNoTransWithBlocked(
+	levelID, fromX, fromY, radius, targetX, targetY int,
+	blockedCells []script.VisibleCell,
+) (bool, error) {
 	level := grid.levels[levelID]
 
 	if level == nil || !level.inBounds(targetX, targetY) {
 		return false, nil
 	}
 
-	blockers := grid.opaque(levelID)
+	blockers := map[point]bool{}
+
+	if grid.opaque != nil {
+		blockers = grid.opaque(levelID)
+	}
+
+	closed := make(map[point]bool, len(blockedCells))
+
+	for _, cell := range blockedCells {
+		closed[point{
+			x: cell.X,
+			y: cell.Y,
+		}] = true
+	}
+
 	visible, err := visibility.ComputeWithOpacity(
 		level.terrain, fromX, fromY, radius,
 		func(x, y int) bool {
@@ -230,7 +278,8 @@ func (grid scriptGrid) VisibleNoTrans(
 
 			feature := level.terrain[y][x]
 
-			return blockers[cell] ||
+			return closed[cell] ||
+				blockers[cell] ||
 				feature == terrain.ClearRockWall ||
 				feature == terrain.ClearStoneWall ||
 				feature == terrain.ClearPermaRockWall

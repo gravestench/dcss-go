@@ -140,7 +140,10 @@ function effect.resolve(ctx, caster, _, _, plan)
     local seen = false
 
     local function awaken(x, y)
-        if awakenable(ctx:cell(plan.level_id, x, y)) then
+        -- Authored props_marker vetoes survive as vault records at the wall.
+        if awakenable(ctx:cell(plan.level_id, x, y)) and
+            ctx:marker_property(plan.level_id, x, y,
+                "veto_destroy") ~= "veto" then
             ctx:set_cell(plan.level_id, x, y, terrain.DNGN_FLOOR)
             changed = changed + 1
             seen = seen or senses.player_sees_cell(ctx, {

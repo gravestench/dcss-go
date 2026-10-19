@@ -118,6 +118,24 @@ func (g *Game) buildScriptScenario(
 			return scenarioLevels{}, err
 		}
 
+		if branchID == shoalsBranchID {
+			level.InitShoalsTide()
+
+			if raw, present := record["heightmap"]; present {
+				heights, heightErr := luaShoalsHeights(raw)
+
+				if heightErr != nil {
+					return scenarioLevels{}, fmt.Errorf("Lua level %d: %w", id, heightErr)
+				}
+
+				if err := level.SetShoalsHeights(heights); err != nil {
+					return scenarioLevels{}, err
+				}
+			}
+		} else if _, present := record["heightmap"]; present {
+			return scenarioLevels{}, fmt.Errorf("Lua level %d heightmap is outside Shoals", id)
+		}
+
 		level.initialMonsters, err = decisionInteger(record, "initial_monsters")
 
 		if err != nil {
@@ -238,6 +256,40 @@ func luaScenarioCells(value any) ([][]terrain.ID, error) {
 	}
 
 	return cells, nil
+}
+
+// A Shoals generator may author intermediate elevations instead of deriving
+// threshold heights from the final visible feature of each cell.
+func luaShoalsHeights(value any) ([][]int, error) {
+	rows, ok := value.([]any)
+
+	if !ok {
+		return nil, fmt.Errorf("Shoals heightmap is not a list")
+	}
+
+	heights := make([][]int, len(rows))
+
+	for y, entry := range rows {
+		row, ok := entry.([]any)
+
+		if !ok {
+			return nil, fmt.Errorf("Shoals heightmap row %d is not a list", y)
+		}
+
+		heights[y] = make([]int, len(row))
+
+		for x, value := range row {
+			height, ok := value.(int64)
+
+			if !ok {
+				return nil, fmt.Errorf("Shoals heightmap cell (%d,%d) is not an integer", x, y)
+			}
+
+			heights[y][x] = int(height)
+		}
+	}
+
+	return heights, nil
 }
 
 func luaScenarioPoint(value any) (point, error) {

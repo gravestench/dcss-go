@@ -21,18 +21,20 @@ save-link tests cover casters and targets dying before those effects finish.
 The resolvers make these spells executable, but several source behaviors
 need later domain work before claiming full DCSS parity:
 
-- **Call Tide:** Shoals heightmaps and tide velocity are not in the Go world
-  yet. The current rule floods and restores shoreline cells with a saved
-  duration; the Shoals generation and terrain slice should supply the real
-  heightmap propagation.
-- **Awaken Earth:** the current terrain owner cannot query the original
-  vault `veto_destroy` marker. Add that marker to placed vault records before
-  allowing this spell to destroy protected rock.
-- **Corrupt Locale:** terrain and Abyss servants are placed, but source
-  displacement of actors and items and cosmetic color-only effects need the
-  corresponding level and presentation rules.
-- **Seal Doors:** door and stair links seal and restore, but the source's
-  tension comparison is not yet represented in the AI selection rule.
+- **Call Tide:** a follow-up now gives Shoals levels a saved heightmap and
+  tide clock. Lua advances the source tide velocity and floods connected
+  coast cells. The current level generator derives threshold heights from
+  terrain unless a scenario supplies a smooth `heightmap`; source Shoals
+  island generation, tide immunity, and full entry catch-up remain.
+- **Awaken Earth:** a follow-up reads retained vault marker properties and
+  honors `veto_destroy="veto"` on protected rock.
+- **Corrupt Locale:** a follow-up moves floor items and mobile actors before
+  placing solid temporary terrain. Per-cell cosmetic floor and wall colors
+  still need a presentation field.
+- **Seal Doors:** a follow-up compares source-style player tension before
+  and after hypothetical closure and chooses the best player push square.
+  Some source perception/status modifiers and habitat-specific push rules
+  remain.
 - **Porkalator:** spell-converted hogs return when Kirke dies. Original band
   hogs and deferred restoration on unloaded floors need the band/world slice.
 - **Malign Gateway:** severed tentacles lose 20 HP per turn but do not yet

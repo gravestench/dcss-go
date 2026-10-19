@@ -27,6 +27,30 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 		level.initialActors = record.InitialActors
 		level.BranchID = record.BranchID
 
+		if record.ShoalsTide != nil {
+			if record.BranchID != shoalsBranchID {
+				return fmt.Errorf("level %d has Shoals tide outside Shoals", record.ID)
+			}
+
+			if err := level.SetShoalsHeights(record.ShoalsTide.Heights); err != nil {
+				return err
+			}
+
+			if record.ShoalsTide.LastAut > currentAut {
+				return fmt.Errorf("level %d Shoals tide clock is in the future", record.ID)
+			}
+
+			if err := level.SetShoalsTideClock(
+				record.ShoalsTide.Height,
+				record.ShoalsTide.Velocity,
+				record.ShoalsTide.LastAut,
+			); err != nil {
+				return err
+			}
+		} else if record.BranchID == shoalsBranchID {
+			level.InitShoalsTide()
+		}
+
 		if record.VaultID != "" {
 			if err := level.SetVaultID(record.VaultID); err != nil {
 				return err

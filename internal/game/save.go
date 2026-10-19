@@ -159,6 +159,7 @@ func (g *Game) Snapshot() save.Snapshot {
 
 			VaultID:      level.VaultID(),
 			VaultRecords: level.VaultRecords(),
+			ShoalsTide:   level.shoalsTideRecord(),
 		}
 
 		for _, link := range level.StairLinks() {

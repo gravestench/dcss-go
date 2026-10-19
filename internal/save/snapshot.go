@@ -45,18 +45,28 @@ type DynamicComponentRecord struct {
 }
 
 type LevelRecord struct {
-	ID              int            `json:"id"`
-	BranchID        string         `json:"branch_id"`
-	Cells           [][]terrain.ID `json:"cells"`
-	Known           [][]terrain.ID `json:"known"`
-	Seen            [][]bool       `json:"seen"`
-	DetectedItems   [][]bool       `json:"detected_items"`
-	Stairs          []StairRecord  `json:"stairs,omitempty"`
-	InitialMonsters int            `json:"initial_monsters,omitempty"`
-	InitialActors   int            `json:"initial_actors,omitempty"`
-	AwaySinceAut    *int64         `json:"away_since_aut,omitempty"`
-	VaultID         string         `json:"vault_id,omitempty"`
-	VaultRecords    []vault.Record `json:"vault_records,omitempty"`
+	ID              int               `json:"id"`
+	BranchID        string            `json:"branch_id"`
+	Cells           [][]terrain.ID    `json:"cells"`
+	Known           [][]terrain.ID    `json:"known"`
+	Seen            [][]bool          `json:"seen"`
+	DetectedItems   [][]bool          `json:"detected_items"`
+	Stairs          []StairRecord     `json:"stairs,omitempty"`
+	InitialMonsters int               `json:"initial_monsters,omitempty"`
+	InitialActors   int               `json:"initial_actors,omitempty"`
+	AwaySinceAut    *int64            `json:"away_since_aut,omitempty"`
+	VaultID         string            `json:"vault_id,omitempty"`
+	VaultRecords    []vault.Record    `json:"vault_records,omitempty"`
+	ShoalsTide      *ShoalsTideRecord `json:"shoals_tide,omitempty"`
+}
+
+// ShoalsTideRecord keeps the authored elevation separate from the current
+// water feature. A returning player can resume the same tide after a save.
+type ShoalsTideRecord struct {
+	Heights  [][]int `json:"heights"`
+	Height   int     `json:"height"`
+	Velocity int     `json:"velocity"`
+	LastAut  int64   `json:"last_aut"`
 }
 
 type StairRecord struct {
