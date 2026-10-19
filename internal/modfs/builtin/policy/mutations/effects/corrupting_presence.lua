@@ -3,7 +3,7 @@ local capabilities = require("constants.mutation_capabilities")
 local mutations = require("ids.mutations")
 local catalog = require("policy.catalog")
 local enchant = require("policy.combat.monster_enchant")
-local irradiate = require("policy.combat.monster_area.irradiate")
+local malmutation = require("policy.monsters.malmutation")
 local effects = require("policy.mutations.effects.registry")
 
 local presence = {}
@@ -25,7 +25,7 @@ function presence.after_damage(level, ctx, _, hit)
     end
 
     if level > 1 and ctx:random("mutation", 12) == 0 then
-        irradiate.wretch(ctx, hit.target, definition)
+        malmutation.apply(ctx, hit.target, definition, "mutation")
     end
 end
 

@@ -5,7 +5,7 @@ local streams = require("constants.rng_streams")
 local ids = require("policy.magic.effects.zaps.ids")
 local component = require("constants.component")
 local catalog = require("policy.catalog")
-local irradiate = require("policy.combat.monster_area.irradiate")
+local malmutation = require("policy.monsters.malmutation")
 
 local mutagenic = {}
 
@@ -38,7 +38,7 @@ function mutagenic.apply(ctx, actor)
 
     if state then
         local definition = catalog.get(categories.MONSTERS, state.kind_id)
-        irradiate.wretch(ctx, actor, definition)
+        malmutation.apply(ctx, actor, definition, streams.CLOUDS)
     end
 
     return 0

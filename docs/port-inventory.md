@@ -51,6 +51,7 @@ context rather than a handler API for each game domain.
 | Monster direct summons | Thirty-nine source direct-creature effects choose species, counts, durations, and placement in their own Lua files. Akara stores caster ownership, named attitude, expiry, Invitation branch choice, Brothers count, and special summoned state; a live monster cast survives restore | `policy/combat/monster_summons`, `policy/combat/monster_spells`, `schemas/magic_*` |
 | Monster displacement and recall | Eight Blink variants use focused Lua landing, ally, and foe rules. Word of Recall stores its chant and breath cooldown on the caster, then moves eligible distant allies. Typed plans preserve target cells, and a live Blink cast survives restore | `policy/combat/monster_displacement`, `policy/combat/monster_spells`, `schemas/magic_monster_recall.lua`, `systems/magic_monster_recall.lua` |
 | Monster status and enchantment spells | Nine non-ray effects cover Abjuration, Berserk Other, Black Mark, Brain Feed, Corrupting Pulse, Dream Dust, Flay, Injury Bond, and Silence. Focused ECS conditions preserve timers and actor references; shared silence rules cover overlapping auras | `policy/combat/monster_spells`, `policy/combat/monster_flay.lua`, `policy/world/silence.lua`, `schemas/*monster*`, `systems/*monster*` |
+| Monster instant afflictions | Malmutate runs as an irresistible targeted ray and changes saved player mutations or monster Wretched state. Entropic Weave directly corrodes equipment without acid damage; both effects preserve state and RNG across a live cast and restore | `policy/combat/monster_spells`, `policy/combat/monster_hexes`, `policy/monsters/malmutation.lua`, `policy/combat/player_corrosion.lua` |
 | Monster flame conjurations | Marshlight, Holy Flames, and Stoke Flames create saved foxfire and inferno actors or holy cloud cells. Construct turns and the inferno death blast run through Lua ECS ownership | `policy/combat/monster_spells`, `policy/combat/monster_flames`, `policy/magic/effects/summons/foxfire.lua` |
 | Monster conjured constructs | Battlesphere, Conjure Ball Lightning, and Spellforged Servitor create saved spell actors. Monster conjurations trigger caster-owned spheres; monster servitors snapshot currently executable source-priority spells and cast through ordinary AI | `policy/combat/monster_spells`, `policy/magic/effects/summons`, `schemas/magic_summon_servitor.lua` |
 | Walking tomes and living spells | All four source tome species select their own Petrify, Crystal Spear, Smiting, or Iceblast living spell. Summons carry a saved custom slot, inherit spell HD, obey the six-actor owner cap, cast through ordinary monster AI, and disappear after one cast | `policy/combat/monster_summons/living_spells.lua`, `schemas/magic_summon_living_spell.lua`, `policy/combat/monster_spells` |
@@ -207,7 +208,13 @@ more layouts and branches, the Abyss monster roster and shifting terrain,
 full source parity for chaos clone allegiance and shapeshifter form selection,
 artefact-specific identification and names, runes,
 endgame, and the
-complete item and equipment system. Native C++ saves, tiles, and network
+complete item and equipment system. Twenty-seven spell IDs still used by
+committed monster books have no Lua effect resolver. Porkalator is among
+them and needs Kirke's death action to restore transformed monsters.
+Malmutate's abomination tile reroll and ugly-thing combat trait reroll need
+per-actor state; ugly-thing attack flavour, magenta damage, and resistance
+are unmodeled both at spawn and after mutation.
+Native C++ saves, tiles, and network
 client compatibility are outside this Go port.
 
 Monster Ensnare now uses the source projectile profile and the shared

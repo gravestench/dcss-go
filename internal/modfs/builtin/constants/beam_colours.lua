@@ -7,6 +7,7 @@ local ids = {
     CYAN = "CYAN",
     DARKGREY = "DARKGREY",
     ETC_HOLY = "ETC_HOLY",
+    ETC_MUTAGENIC = "ETC_MUTAGENIC",
     ETC_RANDOM = "ETC_RANDOM",
     GREEN = "GREEN",
     LIGHTBLUE = "LIGHTBLUE",

@@ -3,7 +3,7 @@ local damage = require("policy.magic.damage")
 local defense = require("policy.combat.monster_defense")
 local enchant = require("policy.combat.monster_enchant")
 local explosion = require("policy.combat.explosion")
-local irradiate = require("policy.combat.monster_area.irradiate")
+local malmutation = require("policy.monsters.malmutation")
 local malmutate = require("policy.mutations.malmutate")
 local player_health = require("policy.combat.player_health")
 local range = require("policy.magic.range")
@@ -84,7 +84,7 @@ function unravelling.affect_monster(ctx, target, power)
     damage.apply(ctx, target, amount)
 
     if ctx:get(target, component.HEALTH).current > 0 then
-        irradiate.wretch(ctx, target, definition)
+        malmutation.apply(ctx, target, definition)
     end
 end
 

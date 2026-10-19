@@ -197,7 +197,8 @@ function enchant.blind(ctx, monster, definition)
 end
 
 -- mon-ench.cc gives corrosion the same duration class as slow.
-local function apply_corrosion(ctx, monster, definition, source)
+local function apply_corrosion(ctx, monster, definition, source,
+    repeat_message)
     local actor = ctx:get(monster, "core.actor")
     local modified_speed = math.max(1,
         math.floor((monster_stats.hit_dice(ctx, monster, definition) + 10) *
@@ -216,9 +217,13 @@ local function apply_corrosion(ctx, monster, definition, source)
         math.max(15, raw + fuzz - low)
     save(ctx, monster, value)
 
-    if not was_corroded and senses.player_sees_actor(ctx, monster) then
-        ctx:emit("spell", source or
-            ("The " .. definition.name .. " corrodes!"))
+    if senses.player_sees_actor(ctx, monster) then
+        if was_corroded and repeat_message then
+            ctx:emit("spell", repeat_message)
+        elseif not was_corroded then
+            ctx:emit("spell", source or
+                ("The " .. definition.name .. " corrodes!"))
+        end
     end
 
     return true
@@ -241,13 +246,21 @@ function enchant.corrode_equipment(ctx, monster, definition, source)
         return false
     end
 
-    if resistance(definition, resistance_ids.ACID) > 0 and
+    -- Equipment imports this owner for AC, so load it only at the live
+    -- resistance check after both modules have registered their methods.
+    local equipment = require("policy.combat.equipment")
+    local protected = resistance(definition, resistance_ids.ACID) > 0 or
+        equipment.monster_res_corr(ctx, monster)
+
+    if protected and
         roll.melee(ctx, 2) == 0 then
         return false
     end
 
     return apply_corrosion(ctx, monster, definition,
-        source .. " corrodes the " .. definition.name .. "!")
+        source .. " corrodes the " .. definition.name .. "!",
+        "The " .. definition.name ..
+            " seems to be corroded for longer.")
 end
 
 -- spl-goditem.cc:debuff_monster removes dispellable enchantments. Known

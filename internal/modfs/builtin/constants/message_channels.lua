@@ -2,6 +2,7 @@
 
 local channels = {
     COMBAT = "combat",
+    CLOUD = "cloud",
     DURATION = "duration",
     SPELL = "spell",
     SOUND = "sound",

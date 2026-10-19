@@ -4,6 +4,12 @@ local enchant = require("policy.combat.monster_enchant")
 local forms = require("policy.magic.effects.forms.player")
 local component = require("constants.component")
 local artefact_ids = require("ids.artefact_properties")
+local armour_egos = require("constants.armour_egos")
+local armour_flags = require("constants.armour_flags")
+local jewellery_capabilities = require("constants.jewellery_capabilities")
+local jewellery_effects = require("policy.inventory.jewellery_effects")
+local jewellery_slots = require("constants.jewellery_slots")
+local object_classes = require("ids.object_classes")
 
 local equipment = {}
 
@@ -139,6 +145,65 @@ function equipment.monster_shield(ctx, monster)
     end
 
     return shield
+end
+
+-- Source actor::res_corr includes worn rings, acid dragon body armour,
+-- artefact rCorr, and preservation ego. The monster's intrinsic rAcid is
+-- checked by its caller, so this answers only the equipped part.
+function equipment.monster_res_corr(ctx, monster)
+    local slots = {
+        weapon = true,
+        alternate_weapon = true,
+        body = true,
+        cloak = true,
+        head = true,
+        gloves = true,
+        boots = true,
+        shield = true,
+        [jewellery_slots.LEFT] = true,
+        [jewellery_slots.RIGHT] = true,
+        [jewellery_slots.AMULET] = true,
+    }
+
+    for _, slot in ipairs(jewellery_slots.OCTO) do
+        slots[slot] = true
+    end
+
+    -- The artefact property reader imports equipment for other callers.
+    -- Load it after this module has finished registering its methods.
+    local properties = require("policy.item_generation.artefacts.properties")
+
+    for slot, entry in pairs(equipment.worn(ctx, monster, slots)) do
+        if properties.value(ctx, entry.entity,
+            artefact_ids.RCORR) > 0 then
+            return true
+        end
+
+        local definition = entry.definition
+
+        if definition.class == object_classes.OBJ_JEWELLERY and
+            jewellery_effects.value(entry.item, definition,
+                jewellery_capabilities.CORROSION_RESISTANCE) > 0 then
+            return true
+        end
+
+        if definition.class == object_classes.OBJ_ARMOUR then
+            if entry.ego == armour_egos.PRESERVATION then
+                return true
+            end
+
+            if slot == "body" and definition.armour then
+                for _, flag in ipairs(definition.armour.flags or {}) do
+                    if flag.id == armour_flags.RES_CORROSION and
+                        flag.level > 0 then
+                        return true
+                    end
+                end
+            end
+        end
+    end
+
+    return false
 end
 
 -- Monster AC combines active melee Protection with a corrosion penalty.

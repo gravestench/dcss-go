@@ -220,6 +220,11 @@ function damage.player_resistance(ctx, player, resistance_id)
         end
 
         if definition.class == object_classes.OBJ_ARMOUR then
+            if resistance_id == resistances.ACID and
+                entry.ego == armour_egos.PRESERVATION then
+                value = value + 1
+            end
+
             if resistance_id == resistances.FIRE and
                 (entry.ego == armour_egos.RESISTANCE or
                     entry.ego == armour_egos.FIRE_RESISTANCE) then

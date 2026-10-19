@@ -12,9 +12,8 @@ local component = require("constants.component")
 local defense = require("policy.combat.monster_defense")
 local direct = require("policy.combat.monster_direct")
 local flags = require("constants.monster_flags")
-local holiness = require("constants.monster_holiness")
 local magic_damage = require("policy.magic.damage")
-local monsters = require("ids.monsters")
+local malmutation = require("policy.monsters.malmutation")
 local roll = require("policy.combat.roll")
 local streams = require("constants.rng_streams")
 local zap_ids = require("policy.magic.effects.zaps.ids")
@@ -35,41 +34,6 @@ local function has(values, wanted)
     return false
 end
 
--- Only ordinary living species can receive Wretched from malmutation.
--- Existing mutable aberrations and undead/nonliving species are excluded.
-local function can_wretch(definition)
-    return not has(definition.holiness, holiness.UNDEAD) and
-        not has(definition.holiness, holiness.NONLIVING) and
-        definition.id ~= monsters.MONS_CHAOS_SPAWN and
-        definition.id ~= monsters.MONS_ABOMINATION_SMALL and
-        definition.id ~= monsters.MONS_ABOMINATION_LARGE and
-        definition.id ~= monsters.MONS_UGLY_THING and
-        definition.id ~= monsters.MONS_VERY_UGLY_THING
-end
-
--- Keep the source speed scaling in aut, so a fast monster gets a duration
--- with roughly the same number of its own actions as a slow monster.
-local function wretched_duration(ctx, target, stream)
-    local actor = ctx:get(target, component.ACTOR)
-    local speed = math.max(1, actor.speed)
-    local base = 20
-
-    for _ = 1, 3 do
-        base = base + 1 + ctx:random(stream, 10)
-    end
-
-    local centiturns = math.max(2,
-        math.floor(base * 10 / math.max(1,
-            math.floor(100 / speed))))
-    local raw = centiturns *
-        roll.random_divide(ctx, 100, speed, stream)
-    local low = math.floor(raw * 60 / 100)
-    local high = math.floor(raw * 40 / 100)
-    local fuzz = roll.average_two(ctx, stream, low + high + 1)
-
-    return math.max(15, raw + fuzz - low)
-end
-
 -- Contamination is one saved player component regardless of whether a
 -- monster hit, player cast, cloud, or trap caused the increase.
 local function contaminate(ctx, player, added)
@@ -85,32 +49,6 @@ local function contaminate(ctx, player, added)
             amount = amount,
         })
     end
-end
-
--- Repeated malmutation extends the same saved timer. Clouds reuse this
--- behavior without importing a player spell registry or duplicating state.
-function irradiate.wretch(ctx, target, definition, stream)
-    if not can_wretch(definition) then
-        return false
-    end
-
-    local added = wretched_duration(ctx, target,
-        stream or streams.SPELL)
-    local state = ctx:get(target, zap_ids.component.WRETCHED)
-
-    if state then
-        state.remaining_aut = state.remaining_aut + added
-        ctx:set(target, zap_ids.component.WRETCHED, state)
-    else
-        ctx:add(target, zap_ids.component.WRETCHED, {
-            remaining_aut = added,
-        })
-    end
-
-    ctx:emit(channels.SPELL, "The " .. definition.name ..
-        " twists and deforms.")
-
-    return true
 end
 
 -- Both commands and monster AI need the same live footprint. Terrain does
@@ -211,7 +149,7 @@ local function strike(ctx, caster, target, power, stream)
         contaminate(ctx, target,
             2000 + ctx:random(stream, 1000))
     else
-        irradiate.wretch(ctx, target, definition, stream)
+        malmutation.apply(ctx, target, definition, stream)
     end
 end
 

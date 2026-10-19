@@ -5,6 +5,7 @@ local defense = require("policy.combat.monster_defense")
 local fastroot = require("policy.magic.effects.zaps.fastroot")
 local flight = require("policy.combat.flight")
 local harness = require("tests.harness")
+local monster_fixture = require("tests.monster_ally_support_fixture")
 local monsters = require("ids.monsters")
 local unravelling = require("policy.magic.effects.zaps.unravelling")
 local zap_ids = require("policy.magic.effects.zaps.ids")
@@ -14,6 +15,7 @@ local test = {}
 -- Resolve a zap against a real monster entity to verify damage, resistance,
 -- and status hooks use its saved components rather than catalog data alone.
 function test.run(ctx)
+    local game = monster_fixture.observed_context(ctx)
     local giant = ctx:create()
 
     ctx:add(giant, component.ACTOR, {
@@ -33,7 +35,7 @@ function test.run(ctx)
     local definition = require("policy.catalog").get(
         "monsters", monsters.MONS_STONE_GIANT)
 
-    unravelling.affect_monster(ctx, giant, 60)
+    unravelling.affect_monster(game, giant, 60)
 
     local current = ctx:get(giant, component.HEALTH)
     local mutation = ctx:get(giant, zap_ids.component.WRETCHED)

@@ -7,7 +7,7 @@ local channels = require("constants.message_channels")
 local choices = require("constants.mutation_choices")
 local classes = require("constants.mutation_classes")
 local component = require("constants.component")
-local irradiate = require("policy.combat.monster_area.irradiate")
+local malmutation = require("policy.monsters.malmutation")
 local self_target = require("policy.combat.monster_support.self_target")
 local streams = require("constants.rng_streams")
 local targets = require("policy.ai.targets")
@@ -67,7 +67,7 @@ local function corrupt_monsters(ctx, caster, victims)
             local actor = ctx:get(target, component.ACTOR)
             local definition = catalog.get("monsters", actor.kind_id)
 
-            irradiate.wretch(ctx, target, definition,
+            malmutation.apply(ctx, target, definition,
                 streams.MONSTER_SPELL)
         end
     end
