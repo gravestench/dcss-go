@@ -307,6 +307,58 @@ even during a monster action. Those handles can be different. Use the
 callback's `entity` for the component the system is visiting, and choose
 `actor()` or `player()` only when the rule specifically concerns that actor.
 
+The Go engine creates the context and calls Lua. A mod cannot construct a
+second game context or keep one for later. Pass the received `ctx` to helper
+functions during that same call. A helper that reads only its arguments can
+stay pure and need no context. This keeps dependencies visible: a function
+with `ctx` may inspect or change the current game; a function without it
+cannot silently reach into game state.
+
+### Follow one rule from entry to state change
+
+Suppose a mod has registered the `my_mod.turn_counter` component from the
+[Components](#components) section. Its system's `query` asks the scheduler
+for entities carrying that component. The scheduler calls `update` with a
+live context and one matching entity. The callback reads a detached snapshot,
+changes it, and writes the whole component back:
+
+```lua
+local component = require("my_mod.constants.component")
+
+local system = {}
+
+-- This counter belongs to the active actor, so the scheduler visits one
+-- matching entity per action rather than every entity in the world.
+function system.update(ctx, entity, delta)
+    local counter = ctx:get(entity, component.TURN_COUNTER)
+
+    counter.count = counter.count + 1
+    ctx:set(entity, component.TURN_COUNTER, counter)
+end
+
+register.system({
+    id = "my_mod.count_turns",
+    scope = "active",
+    query = { component.TURN_COUNTER },
+    update = system.update,
+})
+
+return system
+```
+
+The `register.system` call runs while the file loads; it only records the
+callback. The `ctx:get` and `ctx:set` calls run later, during an action.
+`delta` is available for elapsed-time rules, but this counter counts actions
+so it does not use it. For a timer, subtract `delta` from a component field
+instead of subtracting one. If the rule should visit *every* matching entity
+on each action, use `scope = "all"` and a suitable `query`.
+
+This is the same lifecycle for a focused effect: its file registers or
+returns a function at startup, then its caller passes the live `ctx` and
+explicit actor or target when the effect occurs. Follow that domain's
+existing effect registry to learn its `plan`, `resolve`, or `apply` arguments.
+Those method names are domain contracts, not methods on `ctx`.
+
 A typical stateful rule reads a component, calculates a result using its
 explicit inputs and a named RNG stream if needed, writes the full component
 back, then emits a message or transient signal. `ctx:get` returns a copy,
@@ -322,6 +374,22 @@ first argument. Most methods raise a Lua error for an unknown component,
 invalid handle, or invalid coordinates. A missing *valid* component or cell
 usually returns `nil` as described below. Errors include the calling Lua
 path or system ID, which helps find a bad mod file.
+
+| Invocation | What is safe to use |
+| --- | --- |
+| Module load and content registration | `register`, `mod`, `require`; there is no active `ctx`. |
+| Live system or mutable policy | The context methods below, when that game has the corresponding service. |
+| Read-only host policy | The `ctx` argument is an empty table. Use `input` and return a decision. |
+| Character menu or isolated rule test | Only supplied services. Other services raise errors. |
+| `.des` vault hook | The vault-specific `api`, not the game context. |
+
+Do not probe a missing service by calling it and hoping for `nil`: methods
+such as `ctx:random` and `ctx:cell` error when their host service is absent.
+Write a pure function for menu decisions, or test a stateful rule with a
+fixture that provides the game services it actually needs. The full set of
+methods is installed in `internal/script/context.go`; the table below is a
+contract for their Lua arguments and results, not permission to use every
+method at every entry point.
 
 ### Entities and components
 
@@ -374,6 +442,20 @@ entities are discarded. Do not retain an entity handle in a Lua module global:
 module globals are neither per-game persistent state nor saved components.
 Store lasting references in an `entity` field on a registered component.
 
+Use `ctx:has` when presence alone matters, and `ctx:get` when fields matter.
+An absent registered component returns `nil` from `get`; an unknown component
+ID is an error. `ctx:set` requires a present component and `ctx:add` requires
+an absent one. This catches accidental duplicate state and misspelled IDs.
+`ctx:query` matches *all* listed components, even when some were added earlier
+in the same action. It returns handles in stable entity order, so do not use
+file discovery order as a gameplay tiebreaker. Avoid scanning every entity
+with `ctx:query({})` when a component query can narrow the work.
+
+If a component contains an `entity` field, assign the handle itself, not
+`ctx:id(handle)`. `ctx:id` is useful for diagnostics; `ctx:entity(id)` looks up
+a live handle when an external numeric ID must be resolved. Check the lookup
+result because destroyed entities return `nil`.
+
 ### Time, random draws, messages, and signals
 
 | Call | Result and use |
@@ -393,6 +475,23 @@ the fact must survive turns or saves. `math.random` is unavailable; named
 streams keep replays and save/restore deterministic. Choose a stable stream
 name for a mechanic and import an existing name from `constants.rng_streams`
 when appropriate. A file's discovery order must never decide random draws.
+
+For example, a combat resolver can publish `ctx:signal(signal_ids.HIT, target)`
+and a later system can read `ctx:signals(signal_ids.HIT)`. Define `HIT` in a
+shared ID module owned by your mod and import it in both files. Give the
+consumer an explicit `after`
+dependency on the producer's system ID when their order matters. A signal
+does not schedule a callback on its own; it is a short-lived value for rules
+already running in the action. Use `ctx:emit` for text shown to the player,
+not as a substitute for a component or signal that another rule must read.
+
+`ctx:random(stream, bound)` draws zero through `bound - 1`. Add one only when
+the game rule really wants one through `bound`. To choose a Lua array index,
+use `ctx:random(stream, #list) + 1` after checking that the list is nonempty.
+Name a stream for the mechanic rather than
+for the Lua file, because renaming a file must not alter a saved game's
+random sequence. `ctx:random_u64` returns two values, not one Lua integer;
+use it only when a rule needs the full draw and handles both halves.
 
 ### Levels, terrain, visibility, and actor placement
 
@@ -428,6 +527,13 @@ occupant is also moving in the batch. Use it for swaps or rotations. Use
 `place_actor`, `move_actor`, or `remove_actor` to maintain both the position
 component and the level's spatial index. Directly setting `core.position`
 does not perform a grid move.
+
+Coordinates are zero-based: the top-left cell is `(0, 0)`, and a level of
+size `width, height` contains `x` from `0` through `width - 1` and `y` from
+`0` through `height - 1`. Read an actor's `POSITION` component to find its
+level and coordinates. Check occupancy and walkability before movement, then
+use the grid operation to keep the spatial index consistent. An item entity
+does not occupy `actor_at`; use its item and position components through ECS.
 
 ```lua
 local components = require("constants.component")
