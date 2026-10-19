@@ -96,7 +96,7 @@ end
 -- one shared hit determining every actor's outcome. A caller may react to
 -- positive post-armour damage without duplicating the explosion traversal.
 function blast.area(ctx, source, radius, dice, sides, resistance_id,
-    on_hit)
+    on_hit, stream)
     local origin = ctx:get(source, component.POSITION)
 
     for _, target in ipairs(ctx:query({ component.POSITION, component.HEALTH })) do
@@ -109,11 +109,17 @@ function blast.area(ctx, source, radius, dice, sides, resistance_id,
             local raw = 0
 
             for _ = 1, dice do
-                raw = raw + 1 + summons.roll(ctx, math.max(1, sides))
+                if stream then
+                    raw = raw + 1 + ctx:random(stream,
+                        math.max(1, sides))
+                else
+                    raw = raw + 1 + summons.roll(ctx,
+                        math.max(1, sides))
+                end
             end
 
             local dealt = blast.hit(ctx, target, raw,
-                resistance_id, source)
+                resistance_id, source, stream)
 
             if on_hit and dealt and dealt > 0 then
                 on_hit(ctx, target, dealt)

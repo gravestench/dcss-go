@@ -55,6 +55,10 @@ function system.update(ctx, caster)
 
     effect.resolve(ctx, caster, foe, slot, plan)
 
+    -- A successful monster conjuration may queue its own battlesphere.
+    -- Keep the event tied to completed book casts, never construct abilities.
+    ctx:signal("monster_spell_success", caster)
+
     if hex_status.sapped(ctx, caster) then
         for _, flag in ipairs(slot.flags or {}) do
             if flag == spell_flags.WIZARD then

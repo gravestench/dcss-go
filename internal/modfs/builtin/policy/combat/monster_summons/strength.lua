@@ -5,9 +5,10 @@ local spells = require("ids.spells")
 
 local strength = {}
 
--- mon-cast.cc:_mons_power_hd_factor gives only these direct summons a
--- non-default factor. The other direct-creature spells use twelve.
+-- mon-cast.cc:_mons_power_hd_factor gives these summon-like casts a
+-- non-default factor. Other direct-creature summons use twelve.
 local power_factors = {
+    [spells.SPELL_BATTLESPHERE] = 6,
     [spells.SPELL_MONSTROUS_MENAGERIE] = 6,
     [spells.SPELL_SUMMON_DRAGON] = 5,
     [spells.SPELL_SUMMON_HYDRA] = 5,

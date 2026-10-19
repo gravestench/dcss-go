@@ -65,6 +65,11 @@ function system.update(ctx, entity)
         intent = { kind = intent_ids.MONSTER_WAIT }
     elseif state.source_id == spells.SPELL_MALIGN_GATEWAY then
         intent = tentacle.act(ctx, entity, position)
+    elseif state.source_id == spells.SPELL_SPELLFORGED_SERVITOR and
+        state.owner ~= ctx:player() then
+        -- Monster servitors have a saved custom spellbook. Let ordinary
+        -- monster AI choose and execute those source spells.
+        return
     elseif action then
         intent = action(ctx, entity, position)
     elseif state.source_id == spells.SPELL_BATTLESPHERE then

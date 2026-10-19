@@ -10,6 +10,11 @@ local records = require("policy.character.spell_records")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
 local trajectory = require("policy.combat.trajectory")
+local roll = require("policy.combat.roll")
+local spellbook = require("policy.combat.monster_spellbook")
+local monster_effects = require("policy.combat.monster_spells")
+local streams = require("constants.rng_streams")
+local senses = require("policy.character.senses")
 
 local servitor = {}
 
@@ -29,6 +34,84 @@ local ordered = {
     spells.SPELL_MEPHITIC_CLOUD,
     spells.SPELL_STICKY_FLAME,
 }
+
+-- Monster servitors inherit every eligible spell in this fixed source
+-- priority order. The caster's current book is sampled only at creation.
+local function monster_spells(ctx, caster)
+    local book = spellbook.for_actor(ctx, caster)
+    local known = {}
+
+    for _, slot in ipairs(book and book.slots or {}) do
+        known[slot.spell_id] = true
+    end
+
+    local selected = {}
+    local levels = 0
+
+    for _, id in ipairs(ordered) do
+        if known[id] then
+            -- The source priority list is broader than the current monster
+            -- resolver set. Mod effect files become eligible automatically;
+            -- missing effects cannot enter a saved book that AI will cast.
+            local available, effect = pcall(monster_effects.effect, id)
+
+            if available and type(effect) == "table" and
+                type(effect.plan) == "function" and
+                type(effect.resolve) == "function" then
+                selected[#selected + 1] = id
+                levels = levels + catalog.get("spells", id).level
+            end
+        end
+    end
+
+    return selected, levels
+end
+
+-- Source initialization rolls one HD and HP profile, then records every
+-- weighted spell slot. The actor's later AI reads only this saved snapshot.
+function servitor.spawn_monster(ctx, caster, power)
+    local spell_ids, total_levels = monster_spells(ctx, caster)
+    local hd = 9 + roll.random_divide(ctx, power,
+        14, streams.MONSTER_SPELL)
+    local hp = 60
+
+    for _ = 1, 7 do
+        hp = hp + 1 + roll.draw(ctx, streams.MONSTER_SPELL, 5)
+    end
+
+    local frequencies = {}
+
+    for index, id in ipairs(spell_ids) do
+        local level = catalog.get("spells", id).level
+
+        frequencies[index] = math.max(1,
+            roll.random_divide(ctx, level * 67,
+                total_levels, streams.MONSTER_SPELL))
+    end
+
+    local creature = summons.spawn(ctx, caster,
+        spells.SPELL_SPELLFORGED_SERVITOR,
+        monsters.MONS_SPELLFORGED_SERVITOR, 4, 1, {
+            hp = hp,
+            hd = hd,
+        })
+
+    if creature then
+        ctx:add(creature, component.SUMMON_SERVITOR, {
+            spell_id = spell_ids[1] or "",
+            hd = hd,
+            spell_ids = spell_ids,
+            frequencies = frequencies,
+        })
+
+        if senses.player_sees_actor(ctx, caster) then
+            ctx:emit("spell",
+                "The caster summons a spellforged servitor!")
+        end
+    end
+
+    return creature
+end
 
 -- Monster-side zap-data.h damage and to-hit, with monster power HD * 12.
 local bolts = {

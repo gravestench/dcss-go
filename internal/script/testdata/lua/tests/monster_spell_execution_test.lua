@@ -19,7 +19,18 @@ local source_book = "MST_ENDOPLASM"
 -- without drawing or selecting a new target.
 local function context(spell_id, spell_slot, planned_kind,
     construct_attitude)
-    local ctx = {}
+    local ctx = {
+        cast_signals = {},
+    }
+
+    -- Completed monster book casts publish a battlesphere trigger; construct
+    -- abilities must never claim to be a fresh spellbook conjuration.
+    function ctx:signal(name, entity)
+        self.cast_signals[#self.cast_signals + 1] = {
+            name = name,
+            entity = entity,
+        }
+    end
 
     -- Bind execution to the selected player target in the saved plan.
     function ctx:player()
@@ -128,6 +139,9 @@ function test.run()
 
     harness.truthy(okay, "second slot executes: " .. tostring(problem))
     harness.equal(resolved, 1, "selected second effect resolves once")
+    harness.equal(valid.cast_signals[1].name,
+        "monster_spell_success",
+        "a completed book cast signals reactive constructs")
 
     -- Inject a second effect to verify saved cell plans survive execution.
     effects.effect = function()
@@ -189,6 +203,8 @@ function test.run()
             tostring(problem))
     harness.equal(resolved, 2,
         "hostile construct never reaches the spellbook resolver")
+    harness.equal(#hostile.cast_signals, 0,
+        "a hostile construct action emits no spell success signal")
 
     -- A Lua construct intent omits spell_slot entirely. The host does not
     -- synthesize a zero field when Lua reads that component back.
