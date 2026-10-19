@@ -59,7 +59,7 @@ function test.run()
                 y = 5,
                 charges = 0,
                 revealed = true,
-                source_record = sources.CHAOS_ENSNARE,
+                source_record = sources.MAGICAL_WEB,
             }
         end
     end

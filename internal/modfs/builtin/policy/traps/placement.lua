@@ -228,7 +228,7 @@ function placement.temporary_web(ctx, level_id, x, y)
         y = y,
         charges = 0,
         revealed = true,
-        source_record = sources.CHAOS_ENSNARE,
+        source_record = sources.MAGICAL_WEB,
     })
 
     return true
@@ -245,7 +245,7 @@ function placement.clear_temporary_web(ctx, actor)
     for _, entity in ipairs(ctx:query({ component.WORLD_TRAP })) do
         local trap = ctx:get(entity, component.WORLD_TRAP)
 
-        if trap.source_record == sources.CHAOS_ENSNARE and
+        if trap.source_record == sources.MAGICAL_WEB and
             trap.level_id == position.level_id and
             trap.x == position.x and trap.y == position.y then
             ctx:destroy(entity)

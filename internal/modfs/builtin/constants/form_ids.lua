@@ -9,6 +9,8 @@ local forms = {
     STORM = "storm",
     BAT = "bat",
     PIG = "pig",
+    SPIDER = "spider",
+    DRAGON = "dragon",
 }
 
 return forms

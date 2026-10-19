@@ -63,7 +63,7 @@ function test.run()
     harness.equal(added[component.WORLD_TRAP].value.charges, 0,
         "ordinary web charges satisfy save validation")
     harness.equal(added[component.WORLD_TRAP].value.source_record,
-        sources.CHAOS_ENSNARE,
+        sources.MAGICAL_WEB,
         "the runtime origin remains distinct from vault records")
 end
 

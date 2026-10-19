@@ -121,7 +121,7 @@ local forms = {
         can_bleed = true,
     },
     [spells.SPELL_SPIDER_FORM] = {
-        id = "spider",
+        id = form_ids.SPIDER,
         size = size.TINY,
         keeps_mutations = false,
         description = "a venomous arachnid creature",
@@ -207,7 +207,7 @@ local forms = {
         can_bleed = false,
     },
     [spells.SPELL_DRAGON_FORM] = {
-        id = "dragon",
+        id = form_ids.DRAGON,
         keeps_mutations = false,
         description = "a fearsome dragon",
         base_turns = 20,

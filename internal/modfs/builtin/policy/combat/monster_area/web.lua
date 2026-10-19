@@ -1,17 +1,19 @@
--- A chaos web sticks after beam damage has already reached the actor.
+-- A magical web sticks after beam damage has already reached the actor.
 -- It does not make the random pass-through roll used by stepping into a
 -- permanent web trap. Source: traps.cc:ensnare and beam.cc:BEAM_ENSNARE.
--- Example: ensnare.after_hit(ctx, caster, monster) gives a medium monster
+-- Example: web.after_hit(ctx, caster, monster) gives a medium monster
 -- a saved web hold and leaves a disposable trap on ordinary floor.
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local flags = require("constants.monster_flags")
+local form_ids = require("constants.form_ids")
+local forms = require("policy.magic.effects.forms.player")
 local held = require("policy.traps.held")
 local placement = require("policy.traps.placement")
 local size = require("constants.size")
 local terrain = require("constants.terrain")
 
-local ensnare = {}
+local web = {}
 
 -- Monster flags can come from either the kind or its genus catalog.
 -- This source predicate also covers insubstantial bodies.
@@ -37,9 +39,17 @@ local function eligible(ctx, defender)
 
     if ctx:has(defender, component.PLAYER) then
         local identity = ctx:get(defender, component.PLAYER)
+        local active = ctx:get(defender, component.PLAYER_FORM)
+
+        -- Source player::is_web_immune grants Spider Form immunity. Other
+        -- transformations change body size without changing species.
+        if active and active.remaining_aut > 0 and
+            active.form_id == form_ids.SPIDER then
+            return false
+        end
 
         definition = catalog.get("species", identity.species_id)
-        body_size = definition.size
+        body_size = forms.modifiers(ctx, defender).size or definition.size
     else
         local actor = ctx:get(defender, component.ACTOR)
 
@@ -57,7 +67,7 @@ end
 
 -- Hold the actor first, then leave a temporary web only on floor terrain.
 -- Non-floor terrain can still hold the actor for one escape attempt.
-function ensnare.after_hit(ctx, _, defender)
+function web.after_hit(ctx, _, defender)
     local health = ctx:get(defender, component.HEALTH)
 
     -- Beam damage has already run. A lethal hit may have removed the actor,
@@ -85,4 +95,4 @@ function ensnare.after_hit(ctx, _, defender)
     return true
 end
 
-return ensnare
+return web

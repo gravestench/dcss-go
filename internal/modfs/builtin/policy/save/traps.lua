@@ -73,9 +73,9 @@ local function validate_origin(state, levels)
 
     -- The spell creates this web during play, so it has no vault record.
     -- Every other nonempty source must still resolve to authored content.
-    if state.source_record == sources.CHAOS_ENSNARE then
+    if state.source_record == sources.MAGICAL_WEB then
         if state.kind_id ~= ids.TRAP_WEB then
-            error("invalid Chaos Ensnare trap kind")
+            error("invalid magical web trap kind")
         end
 
         return

@@ -2,7 +2,7 @@
 -- It does not use the trap's pass-through roll: a direct magical web sticks.
 local catalog = require("policy.catalog")
 local component = require("constants.component")
-local ensnare = require("policy.combat.monster_area.chaos_ensnare")
+local ensnare = require("policy.combat.monster_area.web")
 local harness = require("tests.harness")
 local held = require("policy.traps.held")
 local placement = require("policy.traps.placement")

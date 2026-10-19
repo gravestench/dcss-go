@@ -203,6 +203,11 @@ endgame, and the
 complete item and equipment system. Native C++ saves, tiles, and network
 client compatibility are outside this Go port.
 
+Monster Ensnare now uses the source projectile profile and the shared
+magical-web owner; a landed hit makes a durable web restraint without HP
+damage. The remaining forest and plant spellbook effects still need
+their continuing vegetation, root, and spore behavior.
+
 Shops now have ten source-backed active types, a saved player wallet, saved
 shop and stock entities, gold pickup, item-class valuation, purchases,
 shopping-list markers, and a full-terminal stock screen. The 70 source shop
