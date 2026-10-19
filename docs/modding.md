@@ -25,6 +25,7 @@ relative path to change a bundled file.
 | Add saved behavior | [A new `ctx` example](#a-complete-new-ctx-example) |
 | Understand a callback's arguments and available game services | [Who supplies `ctx`](#who-supplies-ctx) and [the context API](#the-game-context-ctx) |
 | Trace a callback from registration to state change | [Trace a callback](#trace-a-callback-before-using-ctx) |
+| Find the accepted fields for a content type | [Definition contracts](#definition-contracts) |
 
 The [root README](../README.md) has the shortest launch and wizard examples.
 This guide explains the contracts those examples depend on. If a mechanic
@@ -368,6 +369,25 @@ identity of the entity to affect.
 - **Named `register.policy` callback:** the Go host passes `ctx` and an input
   table. Read-only host calls pass an empty `ctx`; decide from input alone.
 - **`.des` vault hook:** it receives a separate generation `api`, not `ctx`.
+
+This table is a quick way to tell which facilities an entry point may use.
+The callback's actual arguments still come from its domain caller, as shown
+in the examples below.
+
+| Where the code runs | Live ECS and grid | Randomness and messages | What to pass to helpers |
+| --- | --- | --- | --- |
+| Content, schema, or module load | No game `ctx` | No game RNG or messages | IDs, definitions, and ordinary tables. |
+| Invoked game effect or ECS system | The supplied live `ctx` | Use `ctx:random` and `ctx:emit` | Pass the same `ctx` plus the actor or target handle. |
+| Read-only `register.policy` decision | Empty `ctx` | Unavailable | Pass the supplied `input` table; return a result table. |
+| `.des` generation hook | No game `ctx` | Use the supplied vault `api` | Pass `api` and the hook's explicit arguments. |
+| Isolated Lua test | Only services installed by its fixture | Do not assume a clock, player, grid, or event sink | Build the needed fixture or test a pure helper. |
+
+For example, a monster's `content/monsters/` file can register its attack
+data at startup. Its combat effect cannot roll or wound anything then. When
+combat invokes that effect, it supplies `ctx` and the participating live
+entities. The effect reads their components, uses a named random stream, and
+asks the health policy to apply damage. This separation is why the same
+monster definition can describe many creatures with different current HP.
 
 The first argument has the same name in many files because those files share
 engine services, **not** because their callbacks share one signature. For
@@ -1394,6 +1414,35 @@ must not consume an item or change persistent state. Read the cited command
 and an adjacent bundled effect for a domain's exact request and plan fields.
 
 ## Content files
+
+### Definition contracts
+
+The examples in this guide show the shape of common additions, but each
+category has its own accepted fields and cross-reference checks. Before
+writing a new definition, open a nearby bundled file in the same directory
+and the corresponding validator or consuming policy below. The validator
+checks required fields, ranges, and references; the Lua consumer shows how
+the game uses the accepted fields. The nearby content file shows how to name
+and import its IDs. A file that registers successfully can still need a
+separate behavior file, as described under each feature type.
+
+| Content you are adding | Bundled examples | Field and reference contract |
+| --- | --- | --- |
+| Species or job | `content/species/`, `content/jobs/` | [`species.go`](../internal/content/species.go), [`job.go`](../internal/content/job.go) |
+| Monster or spellbook | `content/monsters/`, `content/monster_spellbooks/` | [`monster.go`](../internal/content/monster.go), [`monster_spellbook.go`](../internal/content/monster_spellbook.go) |
+| Monster beam profile | `content/monster_beams/` | A nearby beam definition and `policy/combat/monster_beams.lua` for its resolution path |
+| Item, weapon, or artefact | `content/items/`, `content/artefacts/` | [`item.go`](../internal/content/item.go), the relevant Lua policy under `policy/inventory/` or `policy/item_generation/` |
+| Player spell | `content/spells/` | [`spell.go`](../internal/content/spell.go), then its effect registry under `policy/magic/effects/` |
+| Branch | `content/branches/` | [`branch.go`](../internal/content/branch.go) and the generation policy that consumes its fields |
+| Mutation | `content/mutations/` | Its nearby Lua definition and `policy/mutations/effects/registry.lua` for any new capability |
+| Cloud, trap, or shop | `content/clouds/`, `content/traps/`, `content/shops/` | Their Lua `policy/<category>/catalog.lua` and effect or stock policy |
+
+If an existing category's field is unclear, search for the field name in its
+consumer policy. That tells you whether it is display data, generation data,
+or a live rule input. For a new category owned wholly by a mod, use
+`register.definition(category, definition)` and a focused policy that reads
+it through `register.get`; registering a new catalog does not create a
+command, scheduler hook, or UI screen automatically.
 
 Put one definition in one file below `content/<category>/`. The recognized
 base categories are `species`, `jobs`, `monsters`, `spells`, `items`,
