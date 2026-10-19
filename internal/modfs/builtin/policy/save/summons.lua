@@ -133,6 +133,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         (state.source_id == spells.SPELL_SIMULACRUM or
             state.source_id == spells.SPELL_DEATH_CHANNEL or
             state.source_id == spells.SPELL_ANIMATE_DEAD or
+            state.source_id == spells.SPELL_BIND_SOULS or
             state.source_id == spells.SPELL_NECROTISE)
     local trap_source = state.source_category == categories.TRAPS and
         state.source_id == traps.TRAP_ZOT

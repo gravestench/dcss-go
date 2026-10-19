@@ -102,6 +102,7 @@ local component = {
     MONSTER_VORTEX_COOLDOWN = "magic.monster_vortex_cooldown",
     PLAYER_SLOW = "character.slow",
     MONSTER_INFESTATION = "magic.monster_infestation",
+    MONSTER_BOUND_SOUL = "magic.monster_bound_soul",
     MONSTER_VILE_CLUTCH = "magic.monster_vile_clutch",
     MONSTER_STASIS = "magic.monster_stasis",
     MONSTER_ALLEGIANCE = "magic.monster_allegiance",

@@ -3,6 +3,7 @@ local bounce = require("policy.combat.beam_bounce")
 local cloud_area = require("policy.clouds.area")
 local cloud_sizes = require("constants.cloud_sizes")
 local component = require("constants.component")
+local decision = require("policy.combat.monster_area.decision")
 local explosion = require("policy.combat.explosion")
 local explosion_sizes = require("constants.beam_explosion")
 local power = require("policy.combat.monster_beams.power")
@@ -66,9 +67,13 @@ function targeting.plan(ctx, caster, foe, profile, options)
 
     local reached = false
     local cloud_centers = {}
+    local ray_victims = {}
+    local foe_ratio = options and options.foe_ratio
 
     for _, contact in ipairs(trace.contacts) do
-        if not targets.enemy(ctx, caster, contact.actor) then
+        if foe_ratio then
+            ray_victims[#ray_victims + 1] = contact.actor
+        elseif not targets.enemy(ctx, caster, contact.actor) then
             return nil
         end
 
@@ -90,6 +95,13 @@ function targeting.plan(ctx, caster, foe, profile, options)
     end
 
     if not reached then
+        return nil
+    end
+
+    -- A few source beams deliberately tolerate friendly fire when their
+    -- weighted foe share clears a lower spell-specific threshold.
+    if foe_ratio and not decision.accept(ctx, caster,
+        ray_victims, foe_ratio) then
         return nil
     end
 

@@ -34,7 +34,8 @@ local function natural(definition)
 end
 
 -- Spawn at the vacated death cell first, then nearby; retain base monster stats on the undead summon.
-function necromancy.raise(ctx, owner, spell_id, kind_id, base_kind_id, position)
+function necromancy.raise(ctx, owner, spell_id, kind_id, base_kind_id,
+    position, attitude)
     local base = catalog.get("monsters", base_kind_id)
     local hp = math.max(1, math.floor(base.average_hp_10x / 10))
     local options = {
@@ -43,6 +44,7 @@ function necromancy.raise(ctx, owner, spell_id, kind_id, base_kind_id, position)
         hp = hp,
         hd = math.max(1, base.hd),
         expires_aut = 0,
+        attitude = attitude,
     }
     local creature = summons.spawn(ctx, owner, spell_id, kind_id, 0, 999,
         options)

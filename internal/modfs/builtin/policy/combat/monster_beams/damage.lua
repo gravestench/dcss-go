@@ -8,6 +8,7 @@ local life_transfer = require("policy.combat.life_transfer")
 local miasma = require("policy.clouds.effects.miasma")
 local holiness = require("constants.monster_holiness")
 local monster_poison = require("policy.combat.monster_poison")
+local monster_drain = require("policy.combat.monster_drain")
 local player_resistance = require("policy.combat.player_resistance")
 local resistances = require("constants.resistance_ids")
 local monsters = require("ids.monsters")
@@ -16,6 +17,32 @@ local water = require("policy.combat.monster_beams.water")
 local streams = require("constants.rng_streams")
 
 local damage = {}
+
+-- Monster negative resistance includes undead holiness and worn protection.
+-- The generic elemental catalog check only sees intrinsic numeric entries.
+local function monster_negative(ctx, target, raw)
+    local definition = magic_damage.monster(ctx, target)
+
+    if not definition then
+        error("negative-energy beam target is not a monster")
+    end
+
+    local level = monster_drain.resistance(ctx, target, definition)
+
+    if level >= 3 then
+        return 0
+    end
+
+    if level > 0 then
+        return math.floor(raw / (1 + level * level))
+    end
+
+    if level < 0 then
+        return math.floor(raw * 15 / 10)
+    end
+
+    return raw
+end
 
 local elemental_resistance = {
     [flavours.BEAM_FIRE] = resistances.FIRE,
@@ -147,6 +174,7 @@ function damage.resisted(ctx, target, raw, profile)
 
     if profile.flavour == flavours.BEAM_MMISSILE or
         profile.flavour == flavours.BEAM_AIR or
+        profile.flavour == flavours.BEAM_DEATH_RATTLE or
         profile.flavour == flavours.BEAM_FRAG or
         profile.flavour == flavours.BEAM_PETRIFYING_CLOUD then
         return raw
@@ -166,6 +194,11 @@ function damage.resisted(ctx, target, raw, profile)
 
     if profile.flavour == flavours.BEAM_MIASMA then
         return miasma.immune(ctx, target) and 0 or raw
+    end
+
+    if profile.flavour == flavours.BEAM_NEG and
+        not ctx:has(target, component.PLAYER) then
+        return monster_negative(ctx, target, raw)
     end
 
     if profile.flavour == flavours.BEAM_CRYSTAL then
