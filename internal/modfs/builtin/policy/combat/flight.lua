@@ -8,6 +8,26 @@ local jewellery_capabilities = require("constants.jewellery_capabilities")
 
 local flight = {}
 
+-- Temporary flight from a potion or vortex is a single actor-owned timer.
+-- The caster and displaced victims share this state rather than relying
+-- on the vortex module to age only its own caster.
+function flight.tick(ctx, actor, elapsed_aut)
+    local state = ctx:get(actor, component.ZAP_FLIGHT)
+
+    if not state or elapsed_aut <= 0 then
+        return
+    end
+
+    state.remaining_aut = math.max(0,
+        state.remaining_aut - elapsed_aut)
+
+    if state.remaining_aut == 0 then
+        ctx:remove(actor, component.ZAP_FLIGHT)
+    else
+        ctx:set(actor, component.ZAP_FLIGHT, state)
+    end
+end
+
 -- Form restrictions override innate and jewelry flight when deciding permanence.
 function flight.permanent(ctx, player)
     return forms.modifiers(ctx, player).flight ~= "forbid" and

@@ -2,6 +2,10 @@ local component = require("constants.component")
 local roll = require("policy.combat.roll")
 
 local duration = {}
+local streams = require("constants.rng_streams")
+local VORTEX_COOLDOWN_MIN_TURNS = 25
+local VORTEX_COOLDOWN_TURN_CHOICES = 11
+local BASELINE_DELAY = 10
 
 -- Source mon-ench.cc scales beneficial enchantments by the monster's speed,
 -- using 25 instead of HD so a high-HD caster does not get a shorter buff.
@@ -17,6 +21,18 @@ local function speed_to_duration(ctx, speed)
     local bounded = speed < 1 and 10 or math.min(100, speed)
 
     return roll.random_divide(ctx, 100, bounded, "monster_spell")
+end
+
+-- Monster Vortex damage uses the caster's speed-adjusted action time,
+-- while its enchantment duration decays on the baseline 10-aut clock.
+function duration.action_aut(ctx, monster)
+    local actor = ctx:get(monster, component.ACTOR)
+
+    if not actor then
+        error("monster action duration has no actor")
+    end
+
+    return speed_to_duration(ctx, actor.speed)
 end
 
 -- The source's asymmetric fuzz spans 40% through 140% of the raw duration.
@@ -71,6 +87,27 @@ function duration.brilliance(ctx, monster)
 
     local centiturns = math.max(2,
         math.floor(200 / modified_speed(10, actor.speed)))
+    local raw = centiturns * speed_to_duration(ctx, actor.speed)
+
+    return fuzz(ctx, raw)
+end
+
+-- Source ENCH_POLAR_VORTEX_COOLDOWN chooses 25–35 centiturns, adjusts for
+-- monster speed, then applies the same asymmetric enchantment fuzz used
+-- for other monster durations. Store the resulting aut on the caster.
+function duration.vortex_cooldown(ctx, monster)
+    local actor = ctx:get(monster, component.ACTOR)
+
+    if not actor then
+        error("vortex cooldown caster has no actor")
+    end
+
+    local turns = VORTEX_COOLDOWN_MIN_TURNS +
+        ctx:random(streams.MONSTER_SPELL,
+            VORTEX_COOLDOWN_TURN_CHOICES)
+    local centiturns = math.max(2,
+        math.floor(turns * BASELINE_DELAY /
+            modified_speed(BASELINE_DELAY, actor.speed)))
     local raw = centiturns * speed_to_duration(ctx, actor.speed)
 
     return fuzz(ctx, raw)

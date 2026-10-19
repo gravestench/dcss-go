@@ -12,6 +12,7 @@ local resistances = {
     PETRIFY = "MR_RES_PETRIFY",
     TORMENT = "MR_RES_TORMENT",
     DAMNATION = "MR_RES_DAMNATION",
+    VORTEX = "MR_RES_VORTEX",
 }
 
 return resistances

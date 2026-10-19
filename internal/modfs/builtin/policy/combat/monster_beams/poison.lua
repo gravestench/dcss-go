@@ -40,7 +40,11 @@ local function poison_player(ctx, caster, defender, profile, outcome)
         amount = amount * 2
     end
 
-    brands.poison(ctx, amount, ctx:id(caster))
+    -- Player poison saves a catalogued monster kind, not an ephemeral ECS
+    -- handle. The same source contract is used by the toxic aura.
+    local actor = ctx:get(caster, component.ACTOR)
+
+    brands.poison(ctx, amount, actor.kind_id)
 end
 
 -- Ordinary poison and poison arrow use different monster dose probabilities.

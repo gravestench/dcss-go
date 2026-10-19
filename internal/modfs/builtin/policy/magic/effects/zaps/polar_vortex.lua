@@ -4,9 +4,11 @@ local spells = require("ids.spells")
 local terrain = require("constants.terrain")
 local catalog = require("policy.catalog")
 local damage = require("policy.magic.damage")
+local direct = require("policy.combat.monster_direct")
 local habitat = require("policy.combat.monster_habitat")
-local health = require("policy.combat.player_health")
 local registry = require("policy.magic.effects.registry")
+local resistance_ids = require("constants.resistance_ids")
+local forms = require("policy.magic.effects.forms.player")
 
 local vortex = {}
 
@@ -172,10 +174,12 @@ local function stationary(definition)
     return false
 end
 
--- The player and rooted monsters remain in place while still taking cold damage.
+-- Rooted monsters remain in place while still taking cold damage. A
+-- hostile monster storm can rotate the player; source movement is not
+-- limited to monster victims.
 local function can_move(ctx, actor)
-    if actor == ctx:player() then
-        return false
+    if ctx:has(actor, component.PLAYER) then
+        return true
     end
 
     local monster = ctx:get(actor, component.ACTOR)
@@ -186,8 +190,33 @@ local function can_move(ctx, actor)
         not ctx:has(actor, component.GRASPING_ROOTS)
 end
 
--- Twelve spell draws feed resistance and proportional armour for each exposed actor.
-local function cold_damage(ctx, actor, ring_power)
+-- Source vortex resistance belongs to an actor with its own storm or a
+-- monster catalog resistance. Sharing this check keeps AI and pulses in
+-- agreement, including a player who is already controlling the winds.
+function vortex.immune(ctx, actor)
+    if ctx:has(actor, zap_ids.component.POLAR_VORTEX) then
+        return true
+    end
+
+    if ctx:has(actor, component.PLAYER) then
+        return false
+    end
+
+    local state = ctx:get(actor, component.ACTOR)
+    local definition = catalog.get("monsters", state.kind_id)
+
+    for _, entry in ipairs(definition.resistances or {}) do
+        if entry.id == resistance_ids.VORTEX and entry.level > 0 then
+            return true
+        end
+    end
+
+    return false
+end
+
+-- Twelve spell draws feed resistance and proportional armour for each
+-- exposed actor. Health ownership keeps the caster as the damage source.
+local function cold_damage(ctx, caster, actor, ring_power)
     local rolled = 0
 
     for _ = 1, 12 do
@@ -197,13 +226,13 @@ local function cold_damage(ctx, actor, ring_power)
     local raw = random_round(ctx, rolled, 15)
     local maximum = math.max(1, math.floor(12 * ring_power / 15))
 
-    if actor == ctx:player() then
+    if ctx:has(actor, component.PLAYER) then
         local adjusted = damage.player_elemental(ctx, actor, raw,
             "MR_RES_COLD")
         local amount = damage.player_proportional_armour(ctx,
             actor, adjusted, maximum)
 
-        health.damage(ctx, actor, amount)
+        direct.damage(ctx, caster, actor, amount)
         return
     end
 
@@ -212,18 +241,38 @@ local function cold_damage(ctx, actor, ring_power)
     local amount = damage.monster_proportional_armour(ctx,
         actor, adjusted, maximum)
 
-    damage.apply(ctx, actor, amount)
+    direct.damage(ctx, caster, actor, amount)
 end
 
 -- A destination may hold another moving victim because the final move is simultaneous.
 local function available_cell(ctx, level, actor, x, y, moving)
-    if not habitat.at(ctx, actor, level, x, y) then
+    local permitted = ctx:has(actor, component.PLAYER) and
+        ctx:walkable(level, x, y) or
+        habitat.at(ctx, actor, level, x, y)
+
+    if not permitted then
         return false
     end
 
     local occupant = ctx:actor_at(level, x, y)
 
     return occupant == nil or moving[occupant]
+end
+
+-- Each exposed victim receives short temporary flight before wind moves
+-- them. This is actor state so another action can age it after the storm.
+local function grant_flight(ctx, actor, duration)
+    local state = ctx:get(actor, component.ZAP_FLIGHT)
+
+    if state then
+        state.remaining_aut = math.max(state.remaining_aut,
+            duration)
+        ctx:set(actor, component.ZAP_FLIGHT, state)
+    else
+        ctx:add(actor, component.ZAP_FLIGHT, {
+            remaining_aut = duration,
+        })
+    end
 end
 
 -- Reserve each chosen cell once, then move all victims together to avoid order-dependent collisions.
@@ -270,58 +319,122 @@ local function rotate(ctx, origin, candidates, cells)
     end
 end
 
--- Persist vortex and temporary flight durations on the player for later ticks.
-function vortex.resolve(ctx, player, _, _, power)
+-- Both caster types keep the same storm shape and flight timer. Player and
+-- monster cast entry points choose their own power and messages.
+function vortex.start(ctx, actor, power)
     local value = {
         remaining_aut = 60,
         started_aut = ctx:aut(),
         power = power,
     }
 
-    if ctx:has(player, zap_ids.component.POLAR_VORTEX) then
-        ctx:set(player, zap_ids.component.POLAR_VORTEX, value)
+    if ctx:has(actor, zap_ids.component.POLAR_VORTEX) then
+        ctx:set(actor, zap_ids.component.POLAR_VORTEX, value)
     else
-        ctx:add(player, zap_ids.component.POLAR_VORTEX, value)
+        ctx:add(actor, zap_ids.component.POLAR_VORTEX, value)
     end
 
-    local flying = ctx:get(player, component.ZAP_FLIGHT)
+    grant_flight(ctx, actor, 60)
+end
 
-    if flying then
-        flying.remaining_aut = math.max(flying.remaining_aut, 60)
-        ctx:set(player, component.ZAP_FLIGHT, flying)
-    else
-        ctx:add(player, component.ZAP_FLIGHT, { remaining_aut = 60 })
-    end
+-- The player spell registry calls this contract after mana and failure
+-- handling; only the announcement is player-specific.
+function vortex.resolve(ctx, player, _, _, power)
+    vortex.start(ctx, player, power)
 
     ctx:emit("spell", "A great freezing vortex appears around you!")
 end
 
--- Example: A player vortex tick ages its flight timer and then processes each wind ring.
--- Age temporary flight first; saved cast power and elapsed age then drive wind-ring effects.
-function vortex.tick(ctx, actor, aut)
-    if actor ~= ctx:player() then
-        return
-    end
+-- Count the whole square ring, including wall-shadowed cells, because
+-- source power weakens in proportion to how much wind can reach the ring.
+local function cells_in_ring(ctx, origin, winds, ring)
+    local cells = {}
+    local open = 0
 
-    local state = ctx:get(actor, zap_ids.component.POLAR_VORTEX)
+    for dy = -ring, ring do
+        for dx = -ring, ring do
+            if math.max(math.abs(dx), math.abs(dy)) == ring then
+                local x = origin.x + dx
+                local y = origin.y + dy
 
-    local flying = ctx:get(actor, component.ZAP_FLIGHT)
+                if ctx:cell(origin.level_id, x, y) then
+                    cells[#cells + 1] = { x = x, y = y }
 
-    if flying then
-        flying.remaining_aut = math.max(0, flying.remaining_aut - aut)
-
-        if flying.remaining_aut == 0 then
-            ctx:remove(actor, component.ZAP_FLIGHT)
-        else
-            ctx:set(actor, component.ZAP_FLIGHT, flying)
+                    if winds[key(x, y)] then
+                        open = open + 1
+                    end
+                end
+            end
         end
     end
 
-    if not state then
+    return cells, open
+end
+
+-- Cold and flight require vulnerability. Displacement is independent of
+-- vortex resistance; source still rotates a cold-immune wind victim.
+local function expose_victim(ctx, caster, victim, cell,
+    duration, power, candidates)
+    local forbidden = ctx:has(victim, component.PLAYER) and
+        forms.modifiers(ctx, victim).flight == "forbid"
+
+    if forbidden then
+        return false
+    end
+
+    if not vortex.immune(ctx, victim) then
+        if can_move(ctx, victim) then
+            grant_flight(ctx, victim, 20)
+        end
+
+        cold_damage(ctx, caster, victim, power)
+    end
+
+    local health = ctx:get(victim, component.HEALTH)
+
+    if health and health.current > 0 and can_move(ctx, victim) then
+        candidates[#candidates + 1] = {
+            actor = victim,
+            position = cell,
+            ring_duration = duration,
+        }
+    end
+
+    return true
+end
+
+-- Tree falls precede actor effects in the source ring loop. A player form
+-- that forbids flight skips the whole cell, including movement reservation.
+local function affect_cell(ctx, caster, origin, winds, cell,
+    duration, power, candidates, available)
+    local feature = ctx:cell(origin.level_id, cell.x, cell.y)
+
+    if trees[feature] and ctx:random("spell", 2000) < duration then
+        ctx:set_cell(origin.level_id, cell.x, cell.y,
+            terrain.DNGN_FLOOR)
+        ctx:emit("spell", "A tree falls to the furious winds!")
+    end
+
+    if not winds[key(cell.x, cell.y)] then
         return
     end
 
-    local origin = ctx:get(actor, component.POSITION)
+    local victim = ctx:actor_at(origin.level_id, cell.x, cell.y)
+
+    if victim and not expose_victim(ctx, caster, victim, cell,
+        duration, power, candidates) then
+        return
+    end
+
+    if ctx:walkable(origin.level_id, cell.x, cell.y) then
+        available[#available + 1] = cell
+    end
+end
+
+-- Integrate one action's wind exposure across expanding rings, then move
+-- all chosen actors together so no earlier move changes a later hit.
+local function pulse(ctx, caster, state, exposure)
+    local origin = ctx:get(caster, component.POSITION)
     local winds = wind_cells(ctx, origin)
     local age = math.max(0, ctx:aut() - state.started_aut)
     local open = 0
@@ -330,27 +443,13 @@ function vortex.tick(ctx, actor, aut)
     local available = {}
 
     for ring = 1, radius do
-        local ring_cells = {}
+        local cells, ring_open = cells_in_ring(ctx,
+            origin, winds, ring)
 
-        for dy = -ring, ring do
-            for dx = -ring, ring do
-                if math.max(math.abs(dx), math.abs(dy)) == ring then
-                    local x = origin.x + dx
-                    local y = origin.y + dy
+        open = open + ring_open
+        all = all + #cells
 
-                    if ctx:cell(origin.level_id, x, y) then
-                        ring_cells[#ring_cells + 1] = { x = x, y = y }
-                        all = all + 1
-
-                        if winds[key(x, y)] then
-                            open = open + 1
-                        end
-                    end
-                end
-            end
-        end
-
-        local duration = ring_duration(age, aut, ring)
+        local duration = ring_duration(age, exposure, ring)
         local power = random_round(ctx,
             state.power * open * duration, all * 100)
 
@@ -358,47 +457,45 @@ function vortex.tick(ctx, actor, aut)
             break
         end
 
-        for _, cell in ipairs(ring_cells) do
-            local feature = ctx:cell(origin.level_id, cell.x, cell.y)
-
-            if trees[feature] and ctx:random("spell", 2000) < duration then
-                ctx:set_cell(origin.level_id, cell.x, cell.y, terrain.DNGN_FLOOR)
-                ctx:emit("spell", "A tree falls to the furious winds!")
-            end
-
-            if winds[key(cell.x, cell.y)] then
-                local victim = ctx:actor_at(origin.level_id, cell.x, cell.y)
-
-                if victim then
-                    cold_damage(ctx, victim, power)
-
-                    local current = ctx:get(victim, component.HEALTH)
-
-                    if current and current.current > 0 and
-                        can_move(ctx, victim) then
-                        candidates[#candidates + 1] = {
-                            actor = victim,
-                            position = cell,
-                            ring_duration = duration,
-                        }
-                    end
-                end
-
-                if ctx:walkable(origin.level_id, cell.x, cell.y) then
-                    available[#available + 1] = cell
-                end
-            end
+        for _, cell in ipairs(cells) do
+            affect_cell(ctx, caster, origin, winds, cell,
+                duration, power, candidates, available)
         end
     end
 
     rotate(ctx, origin, candidates, available)
+end
+
+-- Saved cast power and elapsed age drive wind-ring effects. Monster speed
+-- changes pulse exposure, but the enchantment timer follows baseline aut.
+-- Temporary flight ages in its own actor-wide system after the action.
+function vortex.tick(ctx, actor, aut, pulse_aut)
+    local state = ctx:get(actor, zap_ids.component.POLAR_VORTEX)
+
+    if not state then
+        return
+    end
+
+    pulse(ctx, actor, state, pulse_aut or aut)
     state.remaining_aut = state.remaining_aut - aut
 
     if state.remaining_aut <= 0 then
         ctx:remove(actor, zap_ids.component.POLAR_VORTEX)
-        ctx:emit("duration", "The freezing vortex dissipates.")
+        if ctx:has(actor, component.PLAYER) then
+            ctx:emit("duration", "The freezing vortex dissipates.")
+        end
+
+        return true
     else
         ctx:set(actor, zap_ids.component.POLAR_VORTEX, state)
+    end
+end
+
+-- The player tick remains after its cast. Monster enchantment ticks are
+-- scheduled before its decision in a separate monster-only system.
+function vortex.tick_player(ctx, actor, aut)
+    if ctx:has(actor, component.PLAYER) then
+        vortex.tick(ctx, actor, aut)
     end
 end
 
@@ -412,7 +509,7 @@ register.system({
     query = {},
     after = { "attack.player_spell" },
     before = { "world.movement" },
-    update = vortex.tick,
+    update = vortex.tick_player,
 })
 
 return vortex

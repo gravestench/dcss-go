@@ -1,12 +1,8 @@
 local vortex = {}
 
--- The Polar Vortex caster ignores its cloud while other actors use the normal contact policy.
--- Example: Polar Vortex protects its player caster from the matching vortex cloud.
+-- A Polar Vortex caster ignores its own cloud while other actors use the
+-- normal contact policy. The saved aura now belongs to either actor type.
 function vortex.immune(ctx, actor)
-    if actor ~= ctx:player() then
-        return false
-    end
-
     local ids = require("policy.magic.effects.zaps.ids")
 
     return ctx:has(actor, ids.component.POLAR_VORTEX)
