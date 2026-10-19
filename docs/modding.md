@@ -303,6 +303,14 @@ schedule `heal`. The caller supplies the same `ctx` it received, so both
 rules see the same game action. Use `ctx:player()` only when the rule means
 the player specifically; a monster can be the current actor.
 
+The example isolates the mechanics of `get` and `set`. A real healing
+effect must also check the recipient's rules. For player healing, inspect
+`policy/potions/effects/heal_wounds.lua`: it checks potion and Death's Door
+restrictions before changing HP. For monster healing, inspect
+`policy/combat/monster_support/healing.lua`. Use `ctx:set` directly for a
+component your rule owns, such as the saved timer in the
+[complete new-mod example](#a-complete-new-ctx-example).
+
 The `:` in `ctx:get(actor, id)` is Lua's method-call syntax. It passes `ctx`
 as the hidden first argument. `ctx.get(actor, id)` omits that argument and
 therefore calls the host method incorrectly. Domain methods such as
@@ -1071,6 +1079,11 @@ if health then
     ctx:set(player, components.HEALTH, health)
 end
 ```
+
+This shows the replacement rule, not a complete healing rule. Check the
+player or monster healing policies before changing live HP; use the same
+`get`/`set` pattern directly for state owned by your mod. Before changing a
+bundled component, find its policy owner and check what else it updates.
 
 `add`, `remove`, `destroy`, actor movement, and terrain changes are staged at
 the action barrier. Later context reads and queries in that action see the
