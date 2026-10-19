@@ -9,7 +9,7 @@ local range = require("policy.magic.range")
 local target_kind = require("constants.target_kind")
 local targets = require("policy.ai.targets")
 local trajectory = require("policy.combat.trajectory")
-local attitudes = require("constants.vault_attitude")
+local attitudes = require("constants.attitude")
 
 local ally_target = {}
 

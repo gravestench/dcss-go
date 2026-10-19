@@ -163,8 +163,17 @@ self-support spells now use actor-owned Lua statuses for boons, healing,
 defenses, and auras. Chaos and spells share the same Haste and Might state.
 The four ally-targeted support spells now select a genuine allied recipient
 through a beam ray and write those same saved boon, enchant, and health
-owners. Summons and remaining monster spell families still need complete
-rule slices before wider monster rosters become playable.
+owners. The thirty-nine direct-creature monster summons now use one
+actor-neutral Lua creator and focused spell files. Named attitude and
+caster-owned Invitation and Brothers state live in saved Akara components.
+The allied-monster decision path still needs enemy-directed spellbook
+selection before friendly summoned casters can initiate their own casts.
+Foe-centered spells carry a cell through the typed intent so target movement
+cannot redirect an already chosen cast. The current Dungeon roster supplies
+Shadow Creatures; other branches need their own population owner, and Pan
+needs a saved local demon allocation. Constructs, clones, terrain actors,
+and remaining monster spell families still need complete rule slices before
+wider monster rosters become playable.
 
 The cloud domain now uses discoverable Lua definitions and focused effect
 modules for all 34 concrete source kinds. Saved Akara entities represent

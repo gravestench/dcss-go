@@ -2,6 +2,7 @@
 
 local harness = require("tests.harness")
 local component = require("constants.component")
+local attitudes = require("constants.attitude")
 local ids = require("ids.clouds")
 local monsters = require("ids.monsters")
 
@@ -95,7 +96,7 @@ function test.run()
         end
 
         if kind == component.SUMMON then
-            return { hostile = false }
+            return { attitude = attitudes.FRIENDLY }
         end
 
         if kind == component.ACTOR then

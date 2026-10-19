@@ -18,6 +18,8 @@ local flags = {
     WARM_BLOOD = "M_WARM_BLOOD",
     UNIQUE = "M_UNIQUE",
     NO_SKELETON = "M_NO_SKELETON",
+    NO_ZOMBIE = "M_NO_ZOMBIE",
+    NO_GEN_DERIVED = "M_NO_GEN_DERIVED",
     CLARITY = "M_CLARITY",
     FLIES = "M_FLIES",
 }

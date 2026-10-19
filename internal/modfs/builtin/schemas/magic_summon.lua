@@ -1,10 +1,12 @@
--- Player summons keep their origin and timeout through save and restore.
+-- Every caster's summoned actor keeps its source, real attitude, and timeout
+-- through save and restore. Charm changes temporary behavior elsewhere.
 local categories = require("constants.catalog")
+local attitude = require("constants.attitude")
 
 local schema = {
     id = "magic.summon",
-    version = 3,
-    -- Owner and source spell identify a summon; expires_aut and hostile determine its remaining allegiance.
+    version = 4,
+    -- Source and owner identify a summon. Real attitude survives charm.
     fields = {
         owner = {
             type = "entity",
@@ -30,9 +32,9 @@ local schema = {
             default = 0,
         },
 
-        hostile = {
-            type = "bool",
-            default = false,
+        attitude = {
+            type = "string",
+            default = attitude.FRIENDLY,
         },
     },
 }

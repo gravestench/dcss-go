@@ -118,7 +118,9 @@ function summon_melee.attack(ctx, summon, target)
     end
 
     local adjusted = ctx:get(summon, component.SUMMON_STATS)
+    local blob = ctx:get(summon, component.SUMMON_BLOB)
     local special = state.heads > 0 or adjusted ~= nil or
+        blob ~= nil or
         ctx:has(summon, "magic.summon_simulacrum") or
         ctx:has(summon, "magic.summon_undead") or
         attacker.kind_id == monsters.MONS_ANIMATED_ARMOUR or
@@ -154,6 +156,12 @@ function summon_melee.attack(ctx, summon, target)
 
             if copied then
                 base = math.max(1, math.floor(4 * base / 5))
+            end
+
+            -- A merged slime strikes with all of its constituent bodies.
+            -- The size is saved on the actor, so restore keeps this damage.
+            if blob then
+                base = base * blob.size
             end
 
             local outcome = melee.monster(ctx, {

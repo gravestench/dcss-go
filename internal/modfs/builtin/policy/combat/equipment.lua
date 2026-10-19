@@ -66,7 +66,7 @@ function equipment.monster_melee(ctx, monster)
 
         if carrier.holder == monster and slot.slot ~= "weapon" and
             slot.slot ~= "alternate_weapon" and slot.slot ~= "missile" and
-            slot.slot ~= "shield" then
+            slot.slot ~= "shield" and slot.slot ~= "body" then
             error("monster has unsupported equipment slot " .. slot.slot)
         end
     end
@@ -107,6 +107,20 @@ function equipment.monster_melee(ctx, monster)
     return nil
 end
 
+-- Spectral orcs wear their original armour. Read it through the same
+-- validated equipment view used for their weapons and shields.
+function equipment.monster_body(ctx, monster)
+    local body = equipment.worn(ctx, monster, { body = true }).body
+
+    if body and (body.definition.class ~= "OBJ_ARMOUR" or
+        not body.definition.armour or
+        body.definition.armour.slot_id ~= "EQ_BODY_ARMOUR") then
+        error("monster has non-armour in body slot")
+    end
+
+    return body
+end
+
 -- Monster shield lookup shares the validated worn snapshot with melee gear.
 function equipment.monster_shield(ctx, monster)
     local worn = equipment.worn(ctx, monster, { shield = true })
@@ -129,7 +143,12 @@ end
 -- Monster AC combines active melee Protection with a corrosion penalty.
 function equipment.protection_ac(ctx, monster)
     local weapon = equipment.monster_melee(ctx, monster)
+    local body = equipment.monster_body(ctx, monster)
     local bonus = enchant.corroded(ctx, monster) and -8 or 0
+
+    if body then
+        bonus = bonus + body.definition.armour.ac + body.item.plus
+    end
 
     if weapon and weapon.brand == "SPWPN_PROTECTION" then
         bonus = bonus + 5

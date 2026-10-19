@@ -2,8 +2,7 @@ local categories = require("constants.catalog")
 local component = require("constants.component")
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local cloud_ids = require("ids.clouds")
-local attitudes = require("constants.vault_attitude")
-local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
+local targets = require("policy.ai.targets")
 local embers = {}
 
 -- Embers have no direct contact effect; expiry determines whether fire appears.
@@ -13,20 +12,7 @@ end
 
 -- Friendly or authored allies avoid an ember that may turn into fire.
 function embers.avoid(ctx, monster)
-    local summon = ctx:get(monster, component.SUMMON)
-
-    if summon and not summon.hostile then
-        return true
-    end
-
-    local authored = ctx:get(monster,
-        component.VAULT_ACTOR_OVERRIDES)
-
-    if authored and authored.attitude == attitudes.FRIENDLY then
-        return true
-    end
-
-    return allegiance.charmed(ctx, monster)
+    return targets.allied(ctx, monster)
 end
 
 -- Resolve the saved ember only on expiry; occupants can smother it before it becomes fire.

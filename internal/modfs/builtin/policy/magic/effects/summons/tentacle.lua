@@ -210,7 +210,7 @@ function tentacle.refresh(ctx, head)
                     expires_aut = head_state.expires_aut,
                     segment = true,
                     source_category = head_state.source_category,
-                    hostile = head_state.hostile,
+                    attitude = head_state.attitude,
                 })
 
             if segment then

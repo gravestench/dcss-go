@@ -1,10 +1,11 @@
 -- The portal marker persists through the tentacle's occupation of its cell.
 local categories = require("constants.catalog")
+local attitude = require("constants.attitude")
 local spells = require("ids.spells")
 
 local schema = {
     id = "magic.summon_gateway",
-    version = 1,
+    version = 2,
     -- The portal owns original terrain and tentacle link so closing it can restore the correct cell.
     fields = {
         owner = { type = "entity" },
@@ -26,9 +27,9 @@ local schema = {
             default = spells.SPELL_MALIGN_GATEWAY,
         },
 
-        hostile = {
-            type = "bool",
-            default = false,
+        attitude = {
+            type = "string",
+            default = attitude.FRIENDLY,
         },
     },
 }

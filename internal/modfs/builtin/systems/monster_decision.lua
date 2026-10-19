@@ -15,6 +15,7 @@ local statuses = require("policy.magic.effects.statuses.player")
 local allies = require("policy.character.allies")
 local awareness = require("policy.ai.awareness")
 local invisibility = require("policy.potions.invisibility")
+local component = require("constants.component")
 
 -- Allies follow the player when no enemy exists; they wait instead of striking their adjacent leader.
 local function choose_actor_target(ctx, entity, state, position)
@@ -258,7 +259,11 @@ function system.update(ctx, entity)
         return
     end
 
-    if targets.allied(ctx, entity) or statuses.frenzied(ctx, entity) then
+    -- Haunt binds a hostile wraith to its victim even when that victim is
+    -- another monster or has left sight. The shared route owner still
+    -- decides whether it can move or strike the destination.
+    if targets.allied(ctx, entity) or statuses.frenzied(ctx, entity) or
+        ctx:has(entity, component.SUMMON_HAUNTING) then
         local next_state, intent = choose_actor_target(ctx, entity,
             state, ctx:get(entity, "core.position"))
 

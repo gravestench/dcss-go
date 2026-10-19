@@ -2,6 +2,22 @@ local component = require("constants.component")
 
 local stats = {}
 
+-- A derived undead body keeps its source creature's HD on the entity. The
+-- generic zombie and skeleton catalog entries deliberately have no fixed HD.
+function stats.base_hit_dice(ctx, monster, definition)
+    local derived = ctx:get(monster, component.SUMMON_STATS)
+
+    if derived then
+        return derived.hd
+    end
+
+    if not definition.hd then
+        error("monster has no fixed or derived hit dice " .. definition.id)
+    end
+
+    return definition.hd
+end
+
 -- Example: with base_hd = 5, one drain degree, and no Wretched state,
 -- stats.hit_dice(ctx, monster, definition, base_hd) -> 4 hit dice
 -- Source: mon-act.cc:monster::get_hit_dice. Draining reduces HD before
@@ -10,7 +26,8 @@ function stats.hit_dice(ctx, monster, definition, base_hd)
     local drained = ctx:get(monster, component.MONSTER_DRAINED)
     local degree = drained and drained.remaining_aut > 0 and
         drained.degree or 0
-    local hd = math.max(1, (base_hd or definition.hd) - degree)
+    local hd = math.max(1, (base_hd or
+        stats.base_hit_dice(ctx, monster, definition)) - degree)
     local wretched = ctx:get(monster, component.WRETCHED)
 
     if wretched and wretched.remaining_aut > 0 then

@@ -33,7 +33,8 @@ func nearbyEndoplasmAlly(
 	for _, entity := range g.stores.AI.Entities() {
 		candidate, placed := g.stores.Positions.Get(entity)
 
-		if entity != caster && placed &&
+		if entity != caster &&
+			placed &&
 			candidate.LevelID == position.LevelID &&
 			!g.scripts.Components()["vault.origin"].Has(entity) {
 			ally = entity
@@ -142,6 +143,7 @@ func TestMonsterAllyHasteEffectOverlay(t *testing.T) {
 	energy, _ := g.stores.MonsterEnergy.Get(caster)
 
 	energy.Points = 80
+
 	events, err := g.runAction(caster, ecs.Intent{}, 10, "monster")
 
 	if err != nil {

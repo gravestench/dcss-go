@@ -1,6 +1,6 @@
 -- Example: A monster token's weapon annotation becomes a loadout slot before spawning.
 local choice = require("policy.generation.vaults.specs.choice")
-local attitude = require("constants.vault_attitude")
+local attitude = require("constants.attitude")
 
 local monster = {}
 

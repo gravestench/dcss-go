@@ -45,6 +45,11 @@ The implementation audit must compare this list with source
 The current player summon effects provide reusable creation, population,
 and expiry behavior; their player-specific formulas must not be reused for
 a different monster formula merely because a spell ID is shared.
+Pan's source demon choice can use a level-local allocation list. That
+allocation has no saved level owner in the current playable branches, so
+Pan monster casters must remain gated until the Pandemonium branch slice
+provides it. The direct-summon effects use source global demon tiers in
+the branches currently playable.
 
 Constructs, clones, and terrain actors have additional owners and form a
 later contiguous category: battlesphere, ball lightning, living spells,
@@ -113,6 +118,9 @@ Aura of Brilliance state. A spell calling for raw hit dice or spellpower
 uses that explicit calculation. All count, duration, and weighted picker
 draws use named monster-spell RNG. Every resolver comments its source
 formula and why its target, cap, or placement differs from the shared case.
+Equipment selection for derived spectral orcs uses the existing
+`monster_gear` stream because the gear owner, rather than the spell picker,
+chooses weapons, armour, and quality.
 
 ## Save, validation, and visibility
 

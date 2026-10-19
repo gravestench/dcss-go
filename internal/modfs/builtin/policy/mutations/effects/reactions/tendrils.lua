@@ -5,6 +5,7 @@ local reactions = require("policy.combat.player_reactions")
 local equipment = require("policy.combat.equipment")
 local roll = require("policy.combat.roll")
 local vision = require("policy.character.vision")
+local monster_stats = require("policy.combat.monster_stats")
 
 local tendrils = {
     id = mutations.MUT_TENDRILS,
@@ -25,7 +26,8 @@ end
 -- Example: successful Tendrils disarmament removes carried and equipped links before dropping the weapon.
 function tendrils.after_attack(ctx, player, monster, definition)
     if roll.melee(ctx, 5) ~= 0 or
-        roll.melee(ctx, 35) < definition.hd then
+        roll.melee(ctx, 35) <
+            monster_stats.hit_dice(ctx, monster, definition) then
         return
     end
 

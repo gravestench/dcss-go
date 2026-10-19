@@ -1,5 +1,6 @@
 -- Source: traps.cc:zot_effects[9], find_gateway_location.
 local categories = require("constants.catalog")
+local attitude = require("constants.attitude")
 local component = require("constants.component")
 local ids = require("ids.traps")
 local streams = require("constants.rng_streams")
@@ -33,7 +34,7 @@ function effect.apply(ctx, player)
         tentacle_id = 0,
         source_category = categories.TRAPS,
         source_id = ids.TRAP_ZOT,
-        hostile = true,
+        attitude = attitude.HOSTILE,
     })
     ctx:set_cell(position.level_id, point.x, point.y,
         terrain_ids.DNGN_MALIGN_GATEWAY)

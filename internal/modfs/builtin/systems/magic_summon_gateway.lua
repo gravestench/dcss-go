@@ -30,7 +30,7 @@ function system.update(ctx, active)
                     exact = { x = state.x, y = state.y },
                     expires_aut = ctx:aut() + 90,
                     source_category = state.source_category,
-                    hostile = state.hostile,
+                    attitude = state.attitude,
                 })
 
             if tentacle then

@@ -74,13 +74,13 @@ func TestSummoningScrollsCreateOwnedSavedAllies(t *testing.T) {
 				state, _ := store.Get(entity)
 				owner, _ := state.Get("owner")
 				source, _ := state.Get("source_id")
-				hostile, _ := state.Get("hostile")
+				attitude, _ := state.Get("attitude")
 
 				if owner != g.player ||
 					source != kind ||
-					hostile != false {
-					t.Fatalf("%s summon state: owner=%v source=%v hostile=%v",
-						kind, owner, source, hostile)
+					attitude != "friendly" {
+					t.Fatalf("%s summon state: owner=%v source=%v attitude=%v",
+						kind, owner, source, attitude)
 				}
 			}
 

@@ -44,14 +44,14 @@ func TestNoLoveTurnsExistingSummonHostileAndRestores(t *testing.T) {
 		t.Fatal("summon lost its allegiance state")
 	}
 
-	hostile, err := before.Get("hostile")
+	attitude, err := before.Get("attitude")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if hostile != false {
-		t.Fatalf("ordinary summon started hostile: %v", hostile)
+	if attitude != "friendly" {
+		t.Fatalf("ordinary summon started with attitude %v", attitude)
 	}
 
 	addSkillSacrificeForTest(t, g, "MUT_NO_LOVE")
@@ -89,9 +89,9 @@ func TestNoLoveTurnsExistingSummonHostileAndRestores(t *testing.T) {
 	}
 
 	stillAllied, _ := store.Get(ally)
-	hostile, _ = stillAllied.Get("hostile")
+	attitude, _ = stillAllied.Get("attitude")
 
-	if hostile != false {
+	if attitude != "friendly" {
 		t.Fatal("existing ally changed before its next monster action")
 	}
 
@@ -99,13 +99,13 @@ func TestNoLoveTurnsExistingSummonHostileAndRestores(t *testing.T) {
 	updateLuaSystem(t, g, "monster.decision", 10)
 
 	changed, _ := store.Get(ally)
-	hostile, err = changed.Get("hostile")
+	attitude, err = changed.Get("attitude")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if hostile != true {
+	if attitude != "hostile" {
 		t.Fatal("No Love did not turn the acting summon hostile")
 	}
 
@@ -123,13 +123,13 @@ func TestNoLoveTurnsExistingSummonHostileAndRestores(t *testing.T) {
 		t.Fatal("hostile summon was lost on restore")
 	}
 
-	hostile, err = saved.Get("hostile")
+	attitude, err = saved.Get("attitude")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if hostile != true {
+	if attitude != "hostile" {
 		t.Fatal("hostile allegiance was lost on restore")
 	}
 }

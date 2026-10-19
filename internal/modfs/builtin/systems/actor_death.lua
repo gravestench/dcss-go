@@ -12,6 +12,19 @@ local component = require("constants.component")
 
 local system = {}
 
+-- A Haunt target may die after summon expiry ran earlier in this action.
+-- Clear saved victim handles before deleting the actor so restore never
+-- receives a reference to an entity that the death phase destroyed.
+local function clear_haunting(ctx, victim)
+    for _, summon in ipairs(ctx:query({ component.SUMMON_HAUNTING })) do
+        local state = ctx:get(summon, component.SUMMON_HAUNTING)
+
+        if state.target == victim then
+            ctx:remove(summon, component.SUMMON_HAUNTING)
+        end
+    end
+end
+
 -- Theory of operation: Award the player-kill signal before deleting defeated actors.
 -- This keeps XP accounting tied to the actor that died.
 -- Chaos clone XP is recorded separately; the copied actor cannot inflate the base population reward.
@@ -107,6 +120,7 @@ function system.update(ctx)
                         ctx:get(entity, component.VAULT_ORIGIN))
                 end
 
+                clear_haunting(ctx, entity)
                 ctx:destroy(entity)
                 ctx:emit("death", "The " .. definition.name .. " dies.")
             end

@@ -40,6 +40,17 @@ function test.run()
         "selected beam direction survives the intent boundary")
     harness.equal(restored.dy, 0,
         "zero direction component survives the intent boundary")
+
+    local anchored = target.read(target.write({}, {
+        kind = kind.CELL,
+        entity = 7,
+        level_id = 1,
+        x = 4,
+        y = 5,
+    }))
+
+    harness.equal(anchored.entity, 7,
+        "a foe-centered cell plan retains its original foe")
 end
 
 return test

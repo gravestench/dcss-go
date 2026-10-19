@@ -1,10 +1,15 @@
 local component = require("constants.component")
-local terrain_ids = require("constants.terrain")
 local catalog = require("policy.catalog")
 local energy = require("policy.monster_energy")
 local hit_points = require("policy.population.hit_points")
 local allies = require("policy.character.allies")
 local categories = require("constants.catalog")
+local attitudes = require("constants.attitude")
+local streams = require("constants.rng_streams")
+local habitat = require("policy.combat.monster_habitat")
+local monster_duration = require("policy.combat.monster_summons.duration")
+local visibility = require("policy.combat.monster_summons.visibility")
+local channels = require("constants.message_channels")
 
 local summons = {}
 
@@ -141,15 +146,15 @@ local function cap_oldest(ctx, owner, source_category, source_id, cap)
 end
 
 -- Randomize the first adjacent cell, then scan all eight so a failed first roll does not waste a cast.
-local function open_cell(ctx, position)
-    local start = summons.roll(ctx, #offsets) + 1
+local function open_cell(ctx, position, kind_id, stream)
+    local start = ctx:random(stream, #offsets) + 1
 
     for index = 0, #offsets - 1 do
         local offset = offsets[(start + index - 1) % #offsets + 1]
         local x = position.x + offset.dx
         local y = position.y + offset.dy
 
-        if ctx:walkable(position.level_id, x, y) and
+        if habitat.kind_at(ctx, kind_id, position.level_id, x, y) and
             not ctx:actor_at(position.level_id, x, y) then
             return x, y
         end
@@ -158,9 +163,8 @@ local function open_cell(ctx, position)
     return nil, nil
 end
 
--- Source: spl-summoning.cc:_summon_data and mon-ench.cc:ENCH_ABJ.
--- The source applies broad random fuzz to these nominal durations; this
--- runtime preserves the source degree's nominal aut until that RNG exists.
+-- Player-owned spells retain their established nominal duration; monster
+-- casts use the source ENCH_ABJ speed and fuzz rule in monster_duration.
 function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
     local origin = options and options.anchor or ctx:get(owner, component.POSITION)
     local x, y
@@ -168,28 +172,46 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
     if options and options.exact then
         x, y = options.exact.x, options.exact.y
 
-        if (not ctx:walkable(origin.level_id, x, y) and
-            ctx:cell(origin.level_id, x, y) ~= terrain_ids.DNGN_MALIGN_GATEWAY) or
+        if not habitat.kind_at(ctx, kind_id, origin.level_id, x, y) or
             ctx:actor_at(origin.level_id, x, y) then
             return nil
         end
     else
-        x, y = open_cell(ctx, origin)
+        local stream = owner == ctx:player() and "spell" or
+            streams.MONSTER_SPELL
+
+        x, y = open_cell(ctx, origin, kind_id, stream)
     end
 
     if not x then
-        ctx:emit("spell", "Nothing happens.")
+        if owner == ctx:player() or
+            visibility.player_sees(ctx, origin) then
+            ctx:emit(channels.SPELL, "Nothing happens.")
+        end
 
         return nil
     end
 
     local definition = catalog.get("monsters", kind_id)
     local hp = options and options.hp or hit_points.roll(ctx, definition.average_hp_10x)
-    local hostile = allies.hostile_spawn(ctx, owner, definition)
+    local attitude = allies.summoned_attitude(ctx, owner, definition)
+    local expires_aut = options and options.expires_aut
 
-    if options and options.hostile ~= nil then
-        hostile = options.hostile
+    if not expires_aut then
+        if degree == 0 then
+            expires_aut = 0
+        elseif owner == ctx:player() then
+            expires_aut = ctx:aut() + abjuration_duration_aut[degree]
+        else
+            expires_aut = ctx:aut() + monster_duration.abjuration(ctx,
+                degree, definition.speed)
+        end
     end
+
+    if options and options.attitude then
+        attitude = options.attitude
+    end
+
     local actor = ctx:create()
 
     ctx:add(actor, component.ACTOR, {
@@ -212,24 +234,23 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
         owner = owner,
         source_category = source_category,
         source_id = source_id,
-        expires_aut = options and options.expires_aut or
-            (degree == 0 and 0 or ctx:aut() +
-                abjuration_duration_aut[degree]),
+        expires_aut = expires_aut,
         heads = options and options.heads or 0,
-        hostile = hostile,
+        attitude = attitude,
     })
 
     if options and options.hd then
         ctx:add(actor, component.SUMMON_STATS, { hd = options.hd })
     end
+
     ctx:place_actor(actor, origin.level_id, x, y)
 
-    if hostile then
-        ctx:emit("monster", "The " .. definition.name ..
+    if attitude == attitudes.HOSTILE and owner == ctx:player() then
+        ctx:emit(channels.MONSTER, "The " .. definition.name ..
             " feels only hate for you!")
     end
 
-    if not (options and options.segment) then
+    if cap and not (options and options.segment) then
         cap_oldest(ctx, owner, source_category, source_id, cap)
     end
 

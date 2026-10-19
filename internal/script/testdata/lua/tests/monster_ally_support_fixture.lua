@@ -1,4 +1,6 @@
 local component = require("constants.component")
+local branches = require("ids.branches")
+local terrain = require("constants.terrain")
 
 local fixture = {}
 local game_methods = {}
@@ -14,10 +16,27 @@ function game_methods.visible()
     return true
 end
 
+-- Rule tests start at aut zero; the full game test verifies advancing time.
+function game_methods.aut()
+    return 0
+end
+
+-- The current playable generator and these rule tests use Dungeon floors.
+-- Shadow Creatures asks the grid for that branch before choosing a roster.
+function game_methods.level_branch()
+    return branches.BRANCH_DUNGEON
+end
+
 -- A sparse wall map is enough to exercise production beam geometry while
 -- ECS components stay in the actual test world.
 function game_methods.walkable(game, _, x, y)
     return not game.walls[x .. ":" .. y]
+end
+
+-- A small terrain override lets habitat tests distinguish a passable water
+-- cell from ordinary floor without copying the production grid service.
+function game_methods.cell(game, _, x, y)
+    return game.cells[x .. ":" .. y] or terrain.DNGN_FLOOR
 end
 
 -- Ray tracing observes all positioned actors, including ineligible ones
@@ -38,6 +57,21 @@ function game_methods.actor_at(game, level_id, x, y)
     return nil
 end
 
+-- A successful placement writes the same POSITION component that the
+-- production grid service owns; this fixture has no physical level grid.
+function game_methods.place_actor(game, entity, level_id, x, y)
+    game.base:add(entity, component.POSITION, {
+        level_id = level_id,
+        x = x,
+        y = y,
+    })
+end
+
+-- Summon expiry removes spatial occupancy before destroying the entity.
+function game_methods.remove_actor(game, entity)
+    game.base:remove(entity, component.POSITION)
+end
+
 -- Forward unmodified ECS, RNG, and event methods to the real test runtime.
 local function lookup(game, key)
     return game_methods[key] or game.base[key]
@@ -49,6 +83,7 @@ function fixture.context(ctx, player)
         base = ctx,
         player_entity = player,
         walls = {},
+        cells = {},
     }, {
         __index = lookup,
     })

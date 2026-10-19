@@ -1,5 +1,5 @@
--- Vault attitude tokens set initial monster allegiance without altering monster definitions.
-
+-- A monster's real attitude is saved; charm changes only its temporary
+-- attitude. These names are shared by vaults, summons, and combat policy.
 local attitude = {
     HOSTILE = "hostile",
     FRIENDLY = "friendly",

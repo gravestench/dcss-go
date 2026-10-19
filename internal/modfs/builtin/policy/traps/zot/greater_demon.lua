@@ -1,5 +1,6 @@
 -- Source: mon-place.cc:random_demon_by_tier(1/2) and traps.cc:zot_effects.
 local categories = require("constants.catalog")
+local attitude = require("constants.attitude")
 local ids = require("ids.traps")
 local monsters = require("ids.monsters")
 local streams = require("constants.rng_streams")
@@ -35,7 +36,7 @@ function effect.apply(ctx, player)
     local kind_id = tier[ctx:random(streams.TRAPS, #tier) + 1]
     local creature = summons.spawn(ctx, player,
         ids.TRAP_ZOT, kind_id, 0, 1, {
-            hostile = true,
+            attitude = attitude.HOSTILE,
             source_category = categories.TRAPS,
         })
 

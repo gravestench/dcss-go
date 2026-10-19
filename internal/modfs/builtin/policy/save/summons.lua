@@ -4,6 +4,7 @@ local items = require("ids.items")
 local component = require("constants.component")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
+local attitudes = require("constants.attitude")
 local traps = require("ids.traps")
 local net = require("policy.combat.net")
 local poison = require("policy.combat.monster_poison")
@@ -12,6 +13,14 @@ local sticky_flame = require("policy.magic.effects.zaps.sticky_flame")
 local brands = require("constants.weapon_brands")
 
 local summons = {}
+
+local valid_attitudes = {
+    [attitudes.HOSTILE] = true,
+    [attitudes.FRIENDLY] = true,
+    [attitudes.NEUTRAL] = true,
+    [attitudes.GOOD_NEUTRAL] = true,
+    [attitudes.FELLOW_SLIME] = true,
+}
 
 -- Summoned creatures belong to their caster, not the scenario's starting
 -- population. Their ownership and expiry survive a save and restore.
@@ -27,7 +36,10 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     local permanent = (permanent_spell or trap_source) and
         state.expires_aut == 0
 
-    if state.owner ~= ctx:player() or state.source_id == "" or
+    local owner_actor = ctx:get(state.owner, component.ACTOR)
+
+    if not owner_actor or not valid_attitudes[state.attitude] or
+        state.source_id == "" or
         (not permanent and state.expires_aut <= current_aut) or
         state.heads < 0 then
         error("summon " .. ctx:id(entity) .. " has invalid ownership or expiry")
@@ -48,6 +60,23 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     end
 
     catalog.get(state.source_category, state.source_id)
+
+    local blob = ctx:get(entity, component.SUMMON_BLOB)
+
+    if blob and (state.source_id ~= spells.SPELL_PLANEREND or
+        actor.kind_id ~= monsters.MONS_SLIME_CREATURE or
+        blob.size ~= 5) then
+        error("summon " .. ctx:id(entity) ..
+            " has invalid Planerend slime size")
+    end
+
+    local haunting = ctx:get(entity, component.SUMMON_HAUNTING)
+
+    if haunting and (state.source_id ~= spells.SPELL_HAUNT or
+        not ctx:has(haunting.target, component.ACTOR)) then
+        error("summon " .. ctx:id(entity) ..
+            " has invalid Haunt target or origin")
+    end
 
     -- A spectral weapon remains bonded to an equipped item carried by its owner; stray copies fail restore.
     if spectral then

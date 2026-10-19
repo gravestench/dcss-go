@@ -45,6 +45,11 @@ function inventory.validate(ctx)
                     kind.armour.slot_id ~= "EQ_SHIELD" then
                     error("item " .. ctx:id(entity) .. " is not a monster shield")
                 end
+            elseif slot == "body" then
+                if kind.class ~= "OBJ_ARMOUR" or not kind.armour or
+                    kind.armour.slot_id ~= "EQ_BODY_ARMOUR" then
+                    error("item " .. ctx:id(entity) .. " is not monster body armour")
+                end
             else
                 error("item " .. ctx:id(entity) .. " has unsupported monster slot " .. tostring(slot))
             end

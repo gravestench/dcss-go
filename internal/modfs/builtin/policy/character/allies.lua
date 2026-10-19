@@ -4,6 +4,8 @@ local catalog = require("policy.catalog")
 local component = require("constants.component")
 local effects = require("policy.mutations.effects.registry")
 local flags = require("constants.monster_flags")
+local attitude = require("constants.attitude")
+local targets = require("policy.ai.targets")
 
 local allies = {}
 
@@ -25,18 +27,29 @@ local function conjured(definition)
         has_flag(definition, flags.AVATAR)
 end
 
--- Read the combined No Love capability before spawn or spell legality chooses an ally.
+-- Read the combined No Love capability before spawn or spell legality
+-- chooses an ally.
 function allies.forbidden(ctx, player)
     return effects.sum(ctx, player,
         capabilities.ALLIES_FORBIDDEN) > 0
 end
 
--- Source: mon-place.cc:mons_can_hate and check_lovelessness. Summons with
--- no XP, including conjured creatures, keep their ordinary allegiance.
-function allies.hostile_spawn(ctx, player, definition)
-    return allies.forbidden(ctx, player) and
+-- Source SAME_ATTITUDE copies a monster caster's current side. The player's
+-- No Love mutation is a separate rule for player-owned ordinary summons.
+function allies.summoned_attitude(ctx, owner, definition)
+    if owner ~= ctx:player() then
+        return targets.attitude(ctx, owner)
+    end
+
+    -- Source mon-place.cc excludes conjurations and no-XP creatures from
+    -- the player's No Love allegiance rewrite.
+    if allies.forbidden(ctx, owner) and
         not conjured(definition) and
-        not has_flag(definition, flags.NO_EXP_GAIN)
+        not has_flag(definition, flags.NO_EXP_GAIN) then
+        return attitude.HOSTILE
+    end
+
+    return attitude.FRIENDLY
 end
 
 -- Source: mon-act.cc:_update_monster_attitude. Existing allies change
@@ -62,8 +75,9 @@ function allies.on_monster_turn(ctx, entity)
     local changed = false
     local summon = ctx:get(entity, component.SUMMON)
 
-    if summon and not summon.hostile then
-        summon.hostile = true
+    if summon and summon.owner == ctx:player() and
+        summon.attitude ~= attitude.HOSTILE then
+        summon.attitude = attitude.HOSTILE
         ctx:set(entity, component.SUMMON, summon)
         changed = true
     end

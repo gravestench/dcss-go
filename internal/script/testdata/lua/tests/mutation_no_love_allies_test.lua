@@ -1,5 +1,6 @@
 
 local allies = require("policy.character.allies")
+local attitude = require("constants.attitude")
 local availability = require("policy.character.skill_availability")
 local catalog = require("policy.catalog")
 local component = require("constants.component")
@@ -77,8 +78,9 @@ function test.run(ctx)
         "ordinary summons are allied")
     harness.truthy(targets.allied(game, charmed),
         "charmed monsters are allied")
-    harness.falsy(allies.hostile_spawn(game, player,
+    harness.equal(allies.summoned_attitude(game, player,
         catalog.get("monsters", monsters.MONS_RAT)),
+        attitude.FRIENDLY,
         "ordinary player summons a friendly rat")
     harness.falsy(spell_forbidden(game, player,
         spells.SPELL_ANIMATE_DEAD),
@@ -117,14 +119,17 @@ function test.run(ctx)
 
     harness.falsy(spell_forbidden(game, player, spells.SPELL_STING),
         "No Love leaves unrelated spells available")
-    harness.truthy(allies.hostile_spawn(game, player,
+    harness.equal(allies.summoned_attitude(game, player,
         catalog.get("monsters", monsters.MONS_RAT)),
+        attitude.HOSTILE,
         "No Love makes a new XP-granting summon hostile")
-    harness.falsy(allies.hostile_spawn(game, player,
+    harness.equal(allies.summoned_attitude(game, player,
         catalog.get("monsters", monsters.MONS_FOXFIRE)),
+        attitude.FRIENDLY,
         "conjured foxfire remains exempt")
-    harness.falsy(allies.hostile_spawn(game, player,
+    harness.equal(allies.summoned_attitude(game, player,
         catalog.get("monsters", monsters.MONS_GUARDIAN_GOLEM)),
+        attitude.FRIENDLY,
         "no-XP golem is exempt at creation")
     -- Existing allies change at their own action boundary, not at mutation grant time.
     harness.truthy(targets.allied(game, rat),

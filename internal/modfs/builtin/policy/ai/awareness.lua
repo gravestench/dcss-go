@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local component = require("constants.component")
 local intelligence = require("constants.monster_intelligence")
 local stealth = require("policy.character.stealth")
+local monster_stats = require("policy.combat.monster_stats")
 
 local awareness = {}
 
@@ -34,7 +35,8 @@ function awareness.detects(ctx, monster, state, player_visible)
     -- shout.cc:check_awaken tests (10 + intelligence*4 + HD + 1)
     -- against the player's stealth score each time a wandering monster
     -- sees the player.
-    local perception = math.max(4, 10 + rank * 4 + definition.hd)
+    local perception = math.max(4, 10 + rank * 4 +
+        monster_stats.hit_dice(ctx, monster, definition))
 
     return ctx:random("ai", score) < perception + 1
 end

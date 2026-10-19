@@ -62,6 +62,12 @@ function target.write(intent, plan)
         intent.target_x = plan.x
         intent.target_y = plan.y
 
+        -- Some cell effects also need the original victim. Keep the cell
+        -- authoritative for placement and this handle only for binding.
+        if plan.entity then
+            intent.target_entity = plan.entity
+        end
+
         return intent
     end
 
@@ -91,6 +97,7 @@ function target.read(intent)
 
         return read_direction({
             kind = kind.CELL,
+            entity = intent.target_entity,
             level_id = intent.target_level_id,
             x = intent.target_x,
             y = intent.target_y,

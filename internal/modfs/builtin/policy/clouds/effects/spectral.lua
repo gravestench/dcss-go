@@ -1,6 +1,7 @@
 -- cloud.cc:CLOUD_SPECTRAL deals non-elemental damage; field aging may
 -- create a spectral thing when its source remains alive.
 local categories = require("constants.catalog")
+local attitude = require("constants.attitude")
 local elemental = require("policy.clouds.effects.elemental")
 local component = require("constants.component")
 local catalog = require("policy.catalog")
@@ -126,7 +127,8 @@ function spectral.before_age(ctx, state, elapsed_aut)
                 x = state.x,
                 y = state.y,
             },
-            hostile = state.kill_category == attribution.OTHER,
+            attitude = state.kill_category == attribution.OTHER and
+                attitude.HOSTILE or attitude.FRIENDLY,
             hp = math.max(1, math.floor(base.average_hp_10x / 10)),
             hd = math.max(1, base.hd),
         })

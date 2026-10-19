@@ -8,6 +8,7 @@ local poison = require("policy.combat.monster_poison")
 local slow = require("policy.combat.monster_slow")
 local sticky_flame = require("policy.magic.effects.zaps.sticky_flame")
 local summons = require("policy.save.summons")
+local summon_branches = require("policy.combat.monster_summons.branches")
 local abyss = require("policy.world.abyss")
 local component = require("constants.component")
 
@@ -149,6 +150,24 @@ end
 
 local module = {}
 
+-- A caster's spell-specific choices survive reload, so reject impossible
+-- branch names and attempt counts before its next AI decision uses them.
+local function validate_summon_cast_state(ctx, entity)
+    local invitation = ctx:get(entity, component.MONSTER_INVITATION)
+    local brothers = ctx:get(entity, component.MONSTER_BROTHERS)
+
+    if invitation and
+        not summon_branches.valid_invitation(invitation.branch_id) then
+        error("monster " .. ctx:id(entity) ..
+            " has invalid Invitation branch")
+    end
+
+    if brothers and (brothers.count < 0 or brothers.count > 2) then
+        error("monster " .. ctx:id(entity) ..
+            " has invalid Brothers in Arms count")
+    end
+end
+
 -- Vault actors are validated against authored origin overrides instead of roster limits.
 local function validate_vault_monster(ctx, entity, actor, health, position,
     ai, current_aut)
@@ -225,6 +244,7 @@ function module.run(ctx, input)
         end
 
         validate_banishment(ctx, entity, position)
+        validate_summon_cast_state(ctx, entity)
 
         local summon = ctx:get(entity, "magic.summon")
 

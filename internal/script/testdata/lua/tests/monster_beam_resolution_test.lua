@@ -3,6 +3,7 @@
 local beam = require("policy.combat.monster_beams")
 local catalog = require("policy.catalog")
 local component = require("constants.component")
+local attitudes = require("constants.attitude")
 local terrain = require("content.terrain_features")
 local terrain_ids = require("constants.terrain")
 local cloud_ids = require("ids.clouds")
@@ -39,7 +40,9 @@ local function context(with_second, with_reflection, blocked_cloud_ray,
                 current = 20,
                 maximum = 20,
             },
-            [component.SUMMON] = { hostile = false },
+            [component.SUMMON] = {
+                attitude = attitudes.FRIENDLY,
+            },
         },
         [foe] = {
             [component.ACTOR] = {

@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local constriction = require("policy.combat.constriction")
+local monster_stats = require("policy.combat.monster_stats")
 
 local movement = {}
 
@@ -24,7 +25,8 @@ function movement.escape_grasp(ctx, player, attempts)
     grip.escape_attempts = grip.escape_attempts + attempts
     ctx:set(player, component.CONSTRICTION, grip)
 
-    if not constriction.escape(ctx, grip.escape_attempts, definition.hd) then
+    if not constriction.escape(ctx, grip.escape_attempts,
+        monster_stats.hit_dice(ctx, grip.by, definition)) then
         ctx:emit("mutation", "You cannot escape the " ..
             definition.name .. "'s grasp.")
         return false

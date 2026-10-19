@@ -98,10 +98,12 @@ local function malformed_effect_is_reported()
         "malformed effect names the missing method")
 end
 
--- Adding a caster to the roster surfaces its missing effects with its ID.
+-- Simulate one absent resolver so this gate remains tested as real spells
+-- are ported; it must name the newly admitted caster and missing slot.
 local function newly_admitted_monster_requires_effects()
     local sorcerer = catalog.get("monsters", monsters.MONS_ORC_SORCERER)
     local original_get = register.get
+    local original_effect = effects.effect
 
     sorcerer.population[#sorcerer.population + 1] = {
         scenario_id = "generated-dungeon-basic-v1",
@@ -117,10 +119,19 @@ local function newly_admitted_monster_requires_effects()
         return original_get(category, id)
     end
 
+    effects.effect = function(spell_id)
+        if spell_id == spells.SPELL_SUMMON_DEMON then
+            error("simulated missing summon effect")
+        end
+
+        return original_effect(spell_id)
+    end
+
     local okay, problem = pcall(roster.allowed,
         "generated-dungeon-basic-v1")
 
     register.get = original_get
+    effects.effect = original_effect
 
     harness.falsy(okay, "newly admitted caster needs live effects")
     harness.truthy(tostring(problem):find(monsters.MONS_ORC_SORCERER,

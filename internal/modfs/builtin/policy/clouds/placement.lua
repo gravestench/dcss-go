@@ -6,8 +6,7 @@ local content = require("policy.catalog")
 local ids = require("ids.clouds")
 local selectors = require("constants.cloud_selectors")
 local terrain = require("content.terrain_features")
-local attitudes = require("constants.vault_attitude")
-local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
+local targets = require("policy.ai.targets")
 local wind = require("policy.combat.monster_support.still_winds")
 
 local placement = {}
@@ -72,14 +71,7 @@ local function source_credit(ctx, source_actor, options)
     end
 
     if source_actor then
-        local summon = ctx:get(source_actor, component.SUMMON)
-        local authored = ctx:get(source_actor,
-            component.VAULT_ACTOR_OVERRIDES)
-        local friendly = summon and not summon.hostile or
-            authored and authored.attitude == attitudes.FRIENDLY or
-            allegiance.charmed(ctx, source_actor)
-
-        if friendly then
+        if targets.allied(ctx, source_actor) then
             return attribution.FRIENDLY, attribution.MONSTER_MISSILE
         end
 

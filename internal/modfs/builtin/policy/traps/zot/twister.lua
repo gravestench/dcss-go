@@ -1,5 +1,6 @@
 -- Source: traps.cc:zot_effects[10].
 local categories = require("constants.catalog")
+local attitude = require("constants.attitude")
 local ids = require("ids.traps")
 local monsters = require("ids.monsters")
 local summons = require("policy.magic.effects.summons.common")
@@ -11,7 +12,7 @@ local effect = {}
 function effect.apply(ctx, player)
     local creature = summons.spawn(ctx, player,
         ids.TRAP_ZOT, monsters.MONS_TWISTER, 2, 1, {
-            hostile = true,
+            attitude = attitude.HOSTILE,
             source_category = categories.TRAPS,
         })
 

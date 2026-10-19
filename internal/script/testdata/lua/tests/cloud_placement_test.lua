@@ -2,6 +2,7 @@
 
 local harness = require("tests.harness")
 local component = require("constants.component")
+local attitudes = require("constants.attitude")
 local ids = require("ids.clouds")
 local streams = require("constants.rng_streams")
 local terrain = require("content.terrain_features")
@@ -215,7 +216,7 @@ function test.run()
     -- allegiance when deciding whether a cloud can affect that occupant.
     function ctx:get(entity, kind)
         if entity == 2 and kind == component.SUMMON then
-            return { hostile = false }
+            return { attitude = attitudes.FRIENDLY }
         end
 
         return get(self, entity, kind)

@@ -4,7 +4,7 @@ local harness = require("tests.harness")
 local fixture = require("tests.monster_ally_support_fixture")
 local monsters = require("ids.monsters")
 local spells = require("ids.spells")
-local attitudes = require("constants.vault_attitude")
+local attitudes = require("constants.attitude")
 
 local test = {}
 
