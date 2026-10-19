@@ -1076,6 +1076,18 @@ Searing Breath show the two source examples. Use an existing beam flavour
 when its resistance and contact rules match; a genuinely new flavour needs
 a focused Lua contact rule as well as a profile.
 
+For a ray that also leaves clouds, give its spell definition the `cloud`
+flag and implement an `after_endpoint(ctx, caster, profile, plan, endpoint)`
+method on the returned effect object. The beam owner calls it after contact
+resolution. `endpoint` contains `level_id`, `x`, `y`, and a `path` array of
+traversed `{ x, y }` cells. A landed cloud ray stops at the first actor it
+hits, even if its beam profile says `can_beam = true`; the endpoint and path
+already reflect that stop. Use `policy.clouds.placement` for individual path
+cells and `policy.clouds.area` for an endpoint field. Both write saved ECS
+clouds with source attribution. `flaming_cloud.lua` under
+`policy/combat/monster_spells/` demonstrates both operations; its matching
+beam profile and spell definition show the other two files needed.
+
 Put a player mutation in `content/mutations/<name>.lua`. The content tree
 registers it automatically, and `ids.mutations` exposes the new ID to other
 Lua files. A behavioral mutation also needs a focused file under

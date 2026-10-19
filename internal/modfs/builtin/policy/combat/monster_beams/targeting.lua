@@ -65,10 +65,15 @@ function targeting.plan(ctx, caster, foe, profile, options)
     end
 
     local reached = false
+    local cloud_centers = {}
 
     for _, contact in ipairs(trace.contacts) do
         if not targets.enemy(ctx, caster, contact.actor) then
             return nil
+        end
+
+        if is_cloud then
+            cloud_centers[#cloud_centers + 1] = contact
         end
 
         if contact.actor == foe then
@@ -88,19 +93,23 @@ function targeting.plan(ctx, caster, foe, profile, options)
         return nil
     end
 
-    -- Reject casts whose eventual area would catch a friendly actor, even
-    -- when the ray itself reaches the intended enemy.
+    -- A cloud ray can stop at any actor it hits. Protect allies around all
+    -- possible contact centers, not only around the intended distant foe.
     if is_cloud then
         local max_size = options and options.cloud_max_size or
             cloud_sizes.MAX_VARIABLE
-        local possible = cloud_area.candidates(ctx, source.level_id,
-            destination.x, destination.y, max_size)
 
-        for _, cell in ipairs(possible) do
-            local actor = ctx:actor_at(source.level_id, cell.x, cell.y)
+        for _, center in ipairs(cloud_centers) do
+            local possible = cloud_area.candidates(ctx, source.level_id,
+                center.x, center.y, max_size)
 
-            if actor and not targets.enemy(ctx, caster, actor) then
-                return nil
+            for _, cell in ipairs(possible) do
+                local actor = ctx:actor_at(source.level_id,
+                    cell.x, cell.y)
+
+                if actor and not targets.enemy(ctx, caster, actor) then
+                    return nil
+                end
             end
         end
     end

@@ -12,7 +12,7 @@ local test = {}
 function test.run()
     local profiles = catalog.all("monster_beams")
 
-    harness.equal(#profiles, 67,
+    harness.equal(#profiles, 70,
         "every source monster zap has a committed profile")
 
     for _, profile in ipairs(profiles) do
@@ -77,6 +77,34 @@ function test.run()
         harness.truthy(profile.can_beam,
             expected.spell_id .. " can pierce targets")
     end
+
+    local flame = catalog.get("monster_beams",
+        spells.SPELL_FLAMING_CLOUD)
+    local dust = catalog.get("monster_beams",
+        spells.SPELL_PETRIFYING_CLOUD)
+
+    harness.equal(flame.zap_id, zaps.ZAP_FLAMING_CLOUD,
+        "Flaming Cloud uses its source zap")
+    harness.truthy(flame.natural_power and flame.can_beam,
+        "Flaming Cloud is a natural penetrating breath")
+    harness.equal(flame.monster_damage.args[4], 8,
+        "Flaming Cloud has source 1d(power/8) damage")
+    harness.equal(dust.zap_id, zaps.ZAP_PETRIFYING_CLOUD,
+        "Petrifying Cloud uses its source zap")
+    harness.equal(dust.monster_damage.args[1], 2,
+        "Petrifying Cloud rolls two damage dice")
+    harness.equal(dust.monster_damage.args[2], 6,
+        "Petrifying Cloud uses fixed six-sided dice")
+    harness.equal(dust.flavour, flavours.BEAM_PETRIFYING_CLOUD,
+        "Petrifying Cloud has a distinct cloud-trail flavour")
+
+    local spectral = catalog.get("monster_beams",
+        spells.SPELL_SPECTRAL_CLOUD)
+
+    harness.equal(spectral.monster_damage.args[1], 0,
+        "Spectral Cloud's ray does no direct damage")
+    harness.truthy(spectral.can_beam,
+        "Spectral Cloud pierces before leaving mist")
 end
 
 return test

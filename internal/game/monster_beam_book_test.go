@@ -6,7 +6,48 @@ import (
 	"testing"
 
 	"dcrawl-go/internal/ecs"
+
+	"github.com/gravestench/akara"
 )
+
+// A cloud's possible area must stay clear of its caster, so use the full
+// five-cell spell range instead of the nearer bolt fixture positions.
+func placePlayerInCloudLine(t *testing.T, g *Game, caster akara.Entity) {
+	t.Helper()
+
+	position, _ := g.stores.Positions.Get(caster)
+	level := g.levels[position.LevelID]
+
+	for _, delta := range []point{
+		{x: 1},
+		{x: -1},
+		{y: 1},
+		{y: -1},
+	} {
+		x := position.X + delta.x*5
+		y := position.Y + delta.y*5
+
+		if !level.ClearProjectilePath(position.X, position.Y, x, y) {
+			continue
+		}
+
+		if _, occupied := level.ActorAt(x, y); occupied {
+			continue
+		}
+
+		if err := level.MoveActor(g.player, x, y); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := g.refreshVisibility(); err != nil {
+			t.Fatal(err)
+		}
+
+		return
+	}
+
+	t.Fatal("could not place player outside the cloud caster's field")
+}
 
 // A source-shaped beam must pass through the real monster decision, beam
 // contact, and saved turn state before replay continues.
@@ -14,11 +55,18 @@ func assertMonsterBeamBookCastAndSave(
 	t *testing.T,
 	overlay string,
 	contactText string,
+	expectedCloud string,
 ) {
 	t.Helper()
 
 	g, caster, rules := moddedEndoplasmGame(t, overlay)
-	placePlayerInSlugLine(t, g, caster)
+
+	if expectedCloud == "" {
+		placePlayerInSlugLine(t, g, caster)
+	} else {
+		placePlayerInCloudLine(t, g, caster)
+	}
+
 	energy, _ := g.stores.MonsterEnergy.Get(caster)
 
 	energy.Points = 80
@@ -47,6 +95,25 @@ func assertMonsterBeamBookCastAndSave(
 			contactText, events)
 	}
 
+	if expectedCloud != "" {
+		store := g.scripts.Components()["world.cloud"]
+		foundCloud := false
+
+		for _, entity := range store.Entities() {
+			cloud, _ := store.Get(entity)
+			kind, _ := cloud.Get("kind_id")
+
+			if kind == expectedCloud {
+				foundCloud = true
+				break
+			}
+		}
+
+		if !foundCloud {
+			t.Fatalf("monster beam left no %s cloud", expectedCloud)
+		}
+	}
+
 	if err := g.scheduler.Spend(caster, ecs.Intent{
 		Kind: g.turn.ResolvedIntent,
 	}); err != nil {
@@ -73,10 +140,16 @@ func assertMonsterBeamBookCastAndSave(
 // save path while their Lua profiles choose different contact policies.
 func TestMonsterFireBreathBookCastAndSave(t *testing.T) {
 	assertMonsterBeamBookCastAndSave(t,
-		"testdata/monster-elemental-breaths", "blast of flame")
+		"testdata/monster-elemental-breaths", "blast of flame", "")
 }
 
 func TestMonsterMetalSplintersBookCastAndSave(t *testing.T) {
 	assertMonsterBeamBookCastAndSave(t,
-		"testdata/monster-fragment-rays", "spray of metal splinters")
+		"testdata/monster-fragment-rays", "spray of metal splinters", "")
+}
+
+// Flaming Cloud must produce a saved fire field through a live monster cast.
+func TestMonsterFlamingCloudBookCastAndSave(t *testing.T) {
+	assertMonsterBeamBookCastAndSave(t,
+		"testdata/monster-cloud-casts", "blast of flame", "CLOUD_FIRE")
 }

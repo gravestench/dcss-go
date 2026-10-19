@@ -11,6 +11,22 @@ local trajectory = require("policy.combat.trajectory")
 
 local resolution = {}
 
+-- A stopped cloud trail includes the contact cell but never the cells
+-- beyond it, even though trajectory tracing found them before hit rolls.
+local function path_through(path, x, y)
+    local prefix = {}
+
+    for _, cell in ipairs(path) do
+        prefix[#prefix + 1] = cell
+
+        if cell.x == x and cell.y == y then
+            break
+        end
+    end
+
+    return prefix
+end
+
 -- Only cloud and explosion spells may resolve a saved cell plan instead of an actor target.
 local function has_flag(flags, wanted)
     for _, flag in ipairs(flags or {}) do
@@ -38,12 +54,15 @@ function resolution.resolve(ctx, caster, foe, profile, plan, hook)
 
     local destination
     local area_target = plan.kind == target_kind.CELL
+    local is_cloud = false
 
     if area_target then
         local spell = catalog.get("spells", profile.id)
 
+        is_cloud = has_flag(spell.flags, spell_flags.CLOUD)
+
         if not profile.is_explosion and
-            not has_flag(spell.flags, spell_flags.CLOUD) then
+            not is_cloud then
             error("non-area monster beam received a cell plan")
         end
 
@@ -116,9 +135,13 @@ function resolution.resolve(ctx, caster, foe, profile, plan, hook)
             outcomes[#outcomes + 1] = outcome
 
             if outcome.kind == "hit" then
-                if not profile.can_beam then
+                -- Source beam.cc stops a big-cloud ray on a landed actor
+                -- even when its zap profile is marked as piercing.
+                if not profile.can_beam or is_cloud then
                     endpoint.x = contact.x
                     endpoint.y = contact.y
+                    endpoint.path = path_through(trace.path,
+                        contact.x, contact.y)
                     stopped = true
                     break
                 end
@@ -154,6 +177,8 @@ function resolution.resolve(ctx, caster, foe, profile, plan, hook)
                 contact_rules.register_block(ctx, contact.actor)
                 endpoint.x = contact.x
                 endpoint.y = contact.y
+                endpoint.path = path_through(trace.path,
+                    contact.x, contact.y)
                 stopped = true
                 break
             end

@@ -133,7 +133,8 @@ function damage.resisted(ctx, target, raw, profile)
     end
 
     if profile.flavour == flavours.BEAM_MMISSILE or
-        profile.flavour == flavours.BEAM_FRAG then
+        profile.flavour == flavours.BEAM_FRAG or
+        profile.flavour == flavours.BEAM_PETRIFYING_CLOUD then
         return raw
     end
 

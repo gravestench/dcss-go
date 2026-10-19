@@ -955,6 +955,218 @@ local function contact_timing_and_movement()
         "a blueberry pie stores the monster mute effect")
 end
 
+-- Cloud casts must leave the source-shaped field in live ECS cloud entities,
+-- not only announce a hit. The field then survives through the cloud owner.
+local function remaining_cloud_casts()
+    local flame_ctx = context()
+    local flame = monster_spells.effect(spells.SPELL_FLAMING_CLOUD)
+    local flame_plan = flame.plan(flame_ctx, caster, foe)
+
+    harness.truthy(flame_plan,
+        "Flaming Cloud chooses a reachable cloud center")
+
+    flame.resolve(flame_ctx, caster, foe, nil, flame_plan)
+
+    local fire_at_center = false
+    local fire_on_ray = false
+
+    for _, entity in ipairs(flame_ctx:query({ component.WORLD_CLOUD })) do
+        local state = flame_ctx:get(entity, component.WORLD_CLOUD)
+
+        if state.kind_id == cloud_ids.CLOUD_FIRE then
+            if state.x == 4 and state.y == 1 then
+                fire_at_center = true
+            end
+
+            if state.x == 2 and state.y == 1 then
+                fire_on_ray = true
+            end
+        end
+    end
+
+    harness.truthy(fire_at_center,
+        "Flaming Cloud leaves a broad fire field at its endpoint")
+    harness.truthy(fire_on_ray,
+        "Flaming Cloud leaves fire on traversed cells")
+
+    local dust_ctx = context()
+    local dust = monster_spells.effect(spells.SPELL_PETRIFYING_CLOUD)
+    local dust_plan = dust.plan(dust_ctx, caster, foe)
+    local contacts = dust.resolve(dust_ctx, caster, foe,
+        nil, dust_plan)
+
+    harness.equal(contacts[1].target, foe,
+        "Petrifying Cloud's ray contacts its selected foe")
+
+    local dust_on_ray = false
+
+    for _, entity in ipairs(dust_ctx:query({ component.WORLD_CLOUD })) do
+        local state = dust_ctx:get(entity, component.WORLD_CLOUD)
+
+        if state.kind_id == cloud_ids.CLOUD_PETRIFY and
+            state.x == 2 and state.y == 1 then
+            dust_on_ray = true
+        end
+    end
+
+    harness.truthy(dust_on_ray,
+        "Petrifying Cloud leaves calcifying dust on its ray")
+
+    local spectral_ctx = context()
+    local spectral = monster_spells.effect(spells.SPELL_SPECTRAL_CLOUD)
+    local spectral_plan = spectral.plan(spectral_ctx, caster, foe)
+
+    spectral.resolve(spectral_ctx, caster, foe, nil, spectral_plan)
+
+    local spectral_at_center = false
+    local spectral_on_ray = false
+
+    for _, entity in ipairs(spectral_ctx:query({ component.WORLD_CLOUD })) do
+        local state = spectral_ctx:get(entity, component.WORLD_CLOUD)
+
+        if state.kind_id == cloud_ids.CLOUD_SPECTRAL then
+            if state.x == 4 and state.y == 1 then
+                spectral_at_center = true
+            end
+
+            if state.x == 2 and state.y == 1 then
+                spectral_on_ray = true
+            end
+        end
+    end
+
+    harness.truthy(spectral_at_center,
+        "Spectral Cloud leaves a mist field at its endpoint")
+    harness.truthy(spectral_on_ray,
+        "Spectral Cloud leaves mist along its trajectory")
+
+    for _, spell_id in ipairs({
+        spells.SPELL_FLAMING_CLOUD,
+        spells.SPELL_SPECTRAL_CLOUD,
+    }) do
+        local crossing_ctx = context(true)
+        local crossing = monster_spells.effect(spell_id)
+        local original_endpoint = crossing.after_endpoint
+        local reached_x = nil
+        local last_path_x = nil
+
+        -- Force the ordinary accuracy roll high so this case exercises
+        -- stop-on-hit rather than the valid miss-and-continue branch.
+        function crossing_ctx:random(_, bound)
+            return bound - 1
+        end
+
+        -- Capture the field center and trail end while still running the
+        -- production hook. A cloud must stop at a landed nearer actor.
+        crossing.after_endpoint = function(ctx, source, profile, plan,
+            endpoint)
+            reached_x = endpoint.x
+            last_path_x = endpoint.path[#endpoint.path].x
+
+            return original_endpoint(ctx, source, profile, plan,
+                endpoint)
+        end
+
+        local crossing_plan = crossing.plan(crossing_ctx,
+            caster, next_foe)
+
+        harness.truthy(crossing_plan,
+            spell_id .. " can target an enemy behind another enemy")
+
+        local outcomes = crossing.resolve(crossing_ctx, caster,
+            next_foe, nil, crossing_plan)
+
+        crossing.after_endpoint = original_endpoint
+
+        harness.equal(outcomes[1].kind, "hit",
+            spell_id .. " lands on the nearer enemy")
+        harness.equal(#outcomes, 1,
+            spell_id .. " stops after that contact")
+        harness.equal(reached_x, 4,
+            spell_id .. " centers its field at the first hit")
+        harness.equal(last_path_x, 4,
+            spell_id .. " seeds no trail beyond the first hit")
+    end
+
+    local unsafe_ctx = context(true)
+    local ally = 606
+
+    unsafe_ctx.values[ally] = {
+        [component.ACTOR] = {
+            kind_id = monsters.MONS_ORC_WIZARD,
+            speed = 10,
+        },
+        [component.POSITION] = {
+            level_id = 1,
+            x = 2,
+            y = 2,
+        },
+        [component.SUMMON] = {
+            attitude = attitudes.FRIENDLY,
+        },
+    }
+
+    local original_actor_at = unsafe_ctx.actor_at
+
+    -- The ally is close to the nearer contact but outside the field around
+    -- the selected distant foe; planning must protect both possible centers.
+    function unsafe_ctx:actor_at(level_id, x, y)
+        if x == 2 and y == 2 then
+            return ally
+        end
+
+        return original_actor_at(self, level_id, x, y)
+    end
+
+    local unsafe_flame = monster_spells.effect(spells.SPELL_FLAMING_CLOUD)
+
+    harness.falsy(unsafe_flame.plan(unsafe_ctx, caster, next_foe),
+        "Flaming Cloud avoids allies near an intervening hit")
+
+    local ink_ctx = context()
+    local ink = monster_spells.effect(spells.SPELL_INK_CLOUD)
+
+    harness.falsy(ink.plan(ink_ctx, caster, foe),
+        "Ink Cloud cannot be cast from dry dungeon floor")
+
+    -- Make a finite pond so the source's thirty-cell spread has a boundary.
+    function ink_ctx:cell(_, x, y)
+        if x >= 0 and x <= 3 and y >= 0 and y <= 3 then
+            return terrain_ids.DNGN_SHALLOW_WATER
+        end
+
+        return terrain_ids.DNGN_FLOOR
+    end
+
+    function ink_ctx:walkable(_, x, y)
+        return x >= 0 and x <= 8 and y >= 0 and y <= 8
+    end
+
+    local ink_plan = ink.plan(ink_ctx, caster, foe)
+
+    harness.truthy(ink_plan,
+        "Ink Cloud can be prepared while standing in water")
+
+    ink.resolve(ink_ctx, caster, foe, nil, ink_plan)
+
+    local ink_count = 0
+
+    for _, entity in ipairs(ink_ctx:query({ component.WORLD_CLOUD })) do
+        local state = ink_ctx:get(entity, component.WORLD_CLOUD)
+
+        harness.equal(state.kind_id, cloud_ids.CLOUD_INK,
+            "Ink Cloud creates only ink")
+        harness.truthy(ink_ctx:cell(state.level_id, state.x, state.y) ==
+            terrain_ids.DNGN_SHALLOW_WATER,
+            "ink occupies only water cells")
+
+        ink_count = ink_count + 1
+    end
+
+    harness.truthy(ink_count > 1,
+        "Ink Cloud spreads beyond the caster within the pond")
+end
+
 -- Run ray, AoE, status, and hook-order cases against isolated fixture contexts.
 function test.run()
     basic_trajectory()
@@ -962,6 +1174,7 @@ function test.run()
     draining_projectiles_and_bounces()
     status_and_terrain()
     contact_timing_and_movement()
+    remaining_cloud_casts()
 end
 
 return test
