@@ -1,4 +1,4 @@
-module dcrawl-go
+module crawl
 
 go 1.25.0
 

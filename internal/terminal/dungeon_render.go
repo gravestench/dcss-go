@@ -1,6 +1,6 @@
 package terminal
 
-import "dcrawl-go/internal/game"
+import "crawl/internal/game"
 
 // dungeonRenderer projects the read-only level view into the map pane.
 type dungeonRenderer struct {

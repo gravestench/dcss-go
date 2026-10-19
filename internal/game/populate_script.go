@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"dcrawl-go/internal/vault"
+	"crawl/internal/vault"
 )
 
 const vaultCorpseOccurrence = 1000

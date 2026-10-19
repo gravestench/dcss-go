@@ -3,7 +3,7 @@ package game
 import (
 	"testing"
 
-	"dcrawl-go/internal/character"
+	"crawl/internal/character"
 )
 
 func TestBlinkMovesPlayerAndRejectsCooldown(t *testing.T) {

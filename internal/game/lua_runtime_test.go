@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/save"
+	"crawl/internal/ecs"
+	"crawl/internal/modfs"
+	"crawl/internal/save"
 )
 
 func TestFailedLuaActionDoesNotMoveActorOrChangeHealth(t *testing.T) {

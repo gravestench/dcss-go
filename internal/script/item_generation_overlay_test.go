@@ -3,7 +3,7 @@ package script
 import (
 	"testing"
 
-	"dcrawl-go/internal/modfs"
+	"crawl/internal/modfs"
 	"github.com/gravestench/akara"
 )
 

@@ -3,7 +3,7 @@ package game
 import (
 	"fmt"
 
-	"dcrawl-go/internal/visibility"
+	"crawl/internal/visibility"
 )
 
 // refreshVisibility updates only the current player's derived sight and the

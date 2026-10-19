@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/terrain"
 )
 
 func TestFogAndPoisonScrollsPlaceSavedClouds(t *testing.T) {

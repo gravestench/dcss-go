@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/modfs"
+	"crawl/internal/modfs"
 )
 
 func TestUnskilledReassessesAndRestoresCharacter(t *testing.T) {

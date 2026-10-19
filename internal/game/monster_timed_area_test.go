@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 )
 
 // A real monster action must reach each Lua aura and leave its caster-owned

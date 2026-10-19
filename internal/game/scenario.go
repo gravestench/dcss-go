@@ -3,10 +3,10 @@ package game
 import (
 	"fmt"
 
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/script"
+	"crawl/internal/character"
+	"crawl/internal/ecs"
+	"crawl/internal/modfs"
+	"crawl/internal/script"
 	"github.com/gravestench/akara"
 )
 

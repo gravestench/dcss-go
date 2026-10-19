@@ -6,10 +6,10 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/save"
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/ecs"
+	"crawl/internal/modfs"
+	"crawl/internal/save"
+	"crawl/internal/terrain"
 	"github.com/gravestench/akara"
 )
 

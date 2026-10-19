@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/save"
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/save"
+	"crawl/internal/terrain"
 )
 
 func TestNewRunSightAndOcclusion(t *testing.T) {

@@ -6,14 +6,14 @@ import (
 	"os"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/game"
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/terminal"
+	"crawl/internal/game"
+	"crawl/internal/modfs"
+	"crawl/internal/terminal"
 )
 
 func run() error {
 	seed := flag.Uint64("seed", 1, "deterministic scenario seed")
-	savePath := flag.String("save", "dcrawl-save.json", "save file path")
+	savePath := flag.String("save", "crawl-save.json", "save file path")
 	var modDirectories modDirs
 	flag.Var(&modDirectories, "mod-dir", "ordered Lua mod directory (repeatable)")
 	allowMismatch := flag.Bool(

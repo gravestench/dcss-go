@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/script"
+	"crawl/internal/script"
 )
 
 func TestFocusedEnterChoosesSpeciesBackgroundAndWeapon(t *testing.T) {

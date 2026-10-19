@@ -3,7 +3,7 @@ package game
 import (
 	"testing"
 
-	"dcrawl-go/internal/modfs"
+	"crawl/internal/modfs"
 )
 
 func TestEverySourceTrapEffectHandlesPlayerEntry(t *testing.T) {

@@ -3,7 +3,7 @@ package game
 import (
 	"testing"
 
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/terrain"
 )
 
 func TestSightMutationsChangeVisibleTerrainRadius(t *testing.T) {

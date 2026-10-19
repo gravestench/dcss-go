@@ -5,8 +5,8 @@ import (
 	"slices"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/save"
+	"crawl/internal/ecs"
+	"crawl/internal/save"
 )
 
 func TestNewScenarioStartingGear(t *testing.T) {

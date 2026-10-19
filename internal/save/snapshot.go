@@ -3,9 +3,9 @@ package save
 import (
 	"encoding/json"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/terrain"
-	"dcrawl-go/internal/vault"
+	"crawl/internal/ecs"
+	"crawl/internal/terrain"
+	"crawl/internal/vault"
 )
 
 const Version = 21

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 	"github.com/gravestench/akara"
 )
 

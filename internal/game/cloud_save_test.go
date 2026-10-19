@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/terrain"
 )
 
 func TestCloudAndCorrosionSaveWithDeadSource(t *testing.T) {

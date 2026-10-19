@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"dcrawl-go/internal/modfs"
+	"crawl/internal/modfs"
 	"github.com/gravestench/akara"
 )
 

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/modfs"
+	"crawl/internal/modfs"
 )
 
 func TestSparseScrollModRequiresEffectAndCanRead(t *testing.T) {

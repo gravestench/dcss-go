@@ -3,7 +3,7 @@ package game
 import (
 	"testing"
 
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 )
 
 func cloudDamageWithMutation(t *testing.T, kindID, mutationID string) int {

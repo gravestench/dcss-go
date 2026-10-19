@@ -1,7 +1,7 @@
 package ecs
 
 import (
-	"dcrawl-go/internal/character"
+	"crawl/internal/character"
 	"github.com/gravestench/akara"
 )
 

@@ -6,7 +6,7 @@ import (
 	"math"
 	"sort"
 
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/terrain"
 )
 
 const maxRadius = 8

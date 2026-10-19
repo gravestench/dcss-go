@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/content"
+	"crawl/internal/content"
 	"github.com/gravestench/akara"
 )
 

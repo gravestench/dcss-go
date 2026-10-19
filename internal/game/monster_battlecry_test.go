@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/ecs"
+	"crawl/internal/terrain"
 )
 
 // Clear walls admit ordinary sight but interrupt source no-trans cries.

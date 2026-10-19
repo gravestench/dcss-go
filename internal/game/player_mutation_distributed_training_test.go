@@ -3,7 +3,7 @@ package game
 import (
 	"testing"
 
-	"dcrawl-go/internal/save"
+	"crawl/internal/save"
 )
 
 func TestGnollDistributedTrainingStartsAndSpendsTogether(t *testing.T) {

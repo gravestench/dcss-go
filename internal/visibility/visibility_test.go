@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/terrain"
 )
 
 func featureRows(rows []string) [][]terrain.ID {

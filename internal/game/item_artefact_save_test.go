@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 )
 
 func TestItemArtefactSave(t *testing.T) {

@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/vault"
+	"crawl/internal/modfs"
+	"crawl/internal/vault"
 )
 
 func newForcedOctagonGame(t *testing.T) (*Game, modfs.Ruleset) {

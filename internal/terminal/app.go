@@ -6,10 +6,10 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/game"
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/save"
-	"dcrawl-go/internal/script"
+	"crawl/internal/game"
+	"crawl/internal/modfs"
+	"crawl/internal/save"
+	"crawl/internal/script"
 	"github.com/gravestench/akara"
 )
 

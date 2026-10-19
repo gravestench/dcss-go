@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 )
 
 func TestTwelveAutRapierBumpGrantsOneRatAction(t *testing.T) {

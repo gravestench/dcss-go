@@ -3,7 +3,7 @@ package game
 import (
 	"fmt"
 
-	"dcrawl-go/internal/save"
+	"crawl/internal/save"
 	"github.com/gravestench/akara"
 )
 

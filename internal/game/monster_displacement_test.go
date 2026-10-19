@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 )
 
 // A real monster spell choice must move its Akara actor through the Lua

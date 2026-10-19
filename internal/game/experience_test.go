@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/save"
+	"crawl/internal/save"
 )
 
 func TestPlayerRatKillAwardsOneExperienceOnlyOnce(t *testing.T) {

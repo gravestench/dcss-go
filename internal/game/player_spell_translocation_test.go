@@ -3,8 +3,8 @@ package game
 import (
 	"testing"
 
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/character"
+	"crawl/internal/terrain"
 )
 
 func grantTranslocationForTest(t *testing.T, g *Game, spellID string) {

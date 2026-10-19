@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/game"
+	"crawl/internal/game"
 )
 
 func playView(t *testing.T) game.View {

@@ -9,7 +9,7 @@ import (
 func TestRepeatedModDirFlag(t *testing.T) {
 	var dirs modDirs
 
-	flags := flag.NewFlagSet("dcrawl", flag.ContinueOnError)
+	flags := flag.NewFlagSet("crawl", flag.ContinueOnError)
 	flags.Var(&dirs, "mod-dir", "ordered Lua mod directory")
 
 	arguments := []string{

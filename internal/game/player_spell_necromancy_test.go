@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/character"
+	"crawl/internal/character"
 )
 
 func TestSublimationRejectsFullMagicWithoutTime(t *testing.T) {

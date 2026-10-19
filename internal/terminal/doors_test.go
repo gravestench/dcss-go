@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/game"
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/game"
+	"crawl/internal/terrain"
 )
 
 func doorModel(t *testing.T, cells map[[2]int]byte) *AppModel {

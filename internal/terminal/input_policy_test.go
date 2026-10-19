@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"dcrawl-go/internal/game"
-	"dcrawl-go/internal/modfs"
+	"crawl/internal/game"
+	"crawl/internal/modfs"
 )
 
 func TestLuaPlayKeyOverrideChangesBindingAndRulesetHash(t *testing.T) {

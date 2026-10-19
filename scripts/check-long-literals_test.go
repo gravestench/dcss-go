@@ -97,7 +97,7 @@ func TestLongCompositeLiteralGrouping(t *testing.T) {
 			name: "imported project struct",
 			source: strings.NewReplacer(
 				"package example\n\n",
-				"package example\n\nimport \"dcrawl-go/internal/content\"\n\n",
+				"package example\n\nimport \"crawl/internal/content\"\n\n",
 				"Input{",
 				"content.SpellDef{",
 			).Replace(longLiteralSource),

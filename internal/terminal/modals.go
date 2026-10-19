@@ -1,6 +1,6 @@
 package terminal
 
-import "dcrawl-go/internal/game"
+import "crawl/internal/game"
 
 func fullRegion(canvas *Canvas) Region {
 	return Region{

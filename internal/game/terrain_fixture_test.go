@@ -1,6 +1,6 @@
 package game
 
-import "dcrawl-go/internal/terrain"
+import "crawl/internal/terrain"
 
 func fixtureFeature(glyph byte) terrain.ID {
 	switch glyph {

@@ -1,8 +1,8 @@
 package game
 
 import (
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/save"
+	"crawl/internal/ecs"
+	"crawl/internal/save"
 	"github.com/gravestench/akara"
 	"reflect"
 	"strings"

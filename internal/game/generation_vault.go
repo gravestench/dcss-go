@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sort"
 
-	"dcrawl-go/internal/terrain"
-	"dcrawl-go/internal/vault"
+	"crawl/internal/terrain"
+	"crawl/internal/vault"
 )
 
 var implementedTerrainAliases = map[string]bool{

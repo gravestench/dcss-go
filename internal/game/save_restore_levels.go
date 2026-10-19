@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"dcrawl-go/internal/save"
+	"crawl/internal/save"
 )
 
 func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error {

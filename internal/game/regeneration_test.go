@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/save"
+	"crawl/internal/ecs"
+	"crawl/internal/save"
 )
 
 func moveRatToOtherFloor(t *testing.T, g *Game) {

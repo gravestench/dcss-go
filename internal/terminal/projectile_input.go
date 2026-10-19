@@ -1,7 +1,7 @@
 package terminal
 
 import (
-	"dcrawl-go/internal/game"
+	"crawl/internal/game"
 )
 
 func (m *AppModel) startAim(kind game.CommandKind, itemID uint64) {

@@ -6,7 +6,7 @@ import (
 	"math"
 	"time"
 
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/terrain"
 
 	"github.com/gravestench/akara"
 	lua "github.com/yuin/gopher-lua"

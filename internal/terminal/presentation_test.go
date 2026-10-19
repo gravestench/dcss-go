@@ -3,7 +3,7 @@ package terminal
 import (
 	"testing"
 
-	"dcrawl-go/internal/game"
+	"crawl/internal/game"
 )
 
 func testPresentationPolicy(t *testing.T) presentationPolicy {

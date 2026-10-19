@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 )
 
 // A real monster action must use the Lua direct-strike effect, persist its

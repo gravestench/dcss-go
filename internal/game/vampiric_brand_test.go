@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 )
 
 func TestVampiricBrandHealsWoundedMonsterOnHumanHit(t *testing.T) {

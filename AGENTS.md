@@ -1,4 +1,4 @@
-# DCrawl Go development
+# Dungeon Crawl Stone Soup Go engine development
 
 Keep the port faithful to the pinned DCSS source and make its behavior easy
 for a human reader to follow.

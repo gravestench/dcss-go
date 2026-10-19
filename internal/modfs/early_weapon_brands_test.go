@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/content"
-	"dcrawl-go/internal/modfs"
+	"crawl/internal/content"
+	"crawl/internal/modfs"
 )
 
 // Every positive-weight early weapon brand must have a Lua effect module.

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/save"
+	"crawl/internal/save"
 )
 
 func TestTakeOffAndWearArmourMenusKeepInventoryLetters(t *testing.T) {

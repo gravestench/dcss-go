@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/save"
+	"crawl/internal/save"
 )
 
 func (m *AppModel) routeConfirmationInput(key string) tea.Cmd {

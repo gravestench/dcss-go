@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/game"
+	"crawl/internal/game"
 )
 
 func TestVampireAbilityMenuRunsBloodRitual(t *testing.T) {

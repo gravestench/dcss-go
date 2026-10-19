@@ -3,7 +3,7 @@ package script
 import (
 	"fmt"
 
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/terrain"
 	"github.com/gravestench/akara"
 )
 

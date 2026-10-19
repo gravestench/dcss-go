@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"dcrawl-go/internal/modfs"
+	"crawl/internal/modfs"
 	"github.com/gravestench/akara"
 )
 

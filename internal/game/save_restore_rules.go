@@ -3,8 +3,8 @@ package game
 import (
 	"fmt"
 
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/save"
+	"crawl/internal/character"
+	"crawl/internal/save"
 )
 
 func (g *Game) validateSavedPlayer(

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 )
 
 func TestLuaPoisonMatchesSourceRateRegions(t *testing.T) {

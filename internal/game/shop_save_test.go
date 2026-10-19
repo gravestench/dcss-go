@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/ecs"
+	"crawl/internal/modfs"
+	"crawl/internal/terrain"
 	"github.com/gravestench/akara"
 )
 

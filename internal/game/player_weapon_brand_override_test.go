@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/modfs"
+	"crawl/internal/modfs"
 )
 
 func TestPlayerBrandSamePathOverlayChangesRulesetAndHit(t *testing.T) {

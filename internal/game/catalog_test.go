@@ -3,7 +3,7 @@ package game
 import (
 	"testing"
 
-	"dcrawl-go/internal/content"
+	"crawl/internal/content"
 )
 
 func testCatalog(t *testing.T) content.Catalog {

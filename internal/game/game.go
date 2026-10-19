@@ -1,9 +1,9 @@
 package game
 
 import (
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/script"
+	"crawl/internal/ecs"
+	"crawl/internal/modfs"
+	"crawl/internal/script"
 	"github.com/gravestench/akara"
 )
 

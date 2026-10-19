@@ -2,7 +2,7 @@ package terminal
 
 import (
 	"charm.land/bubbletea/v2"
-	"dcrawl-go/internal/game"
+	"crawl/internal/game"
 )
 
 func selectionOptions(request *game.SelectionRequest) []any {

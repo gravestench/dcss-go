@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/save"
+	"crawl/internal/save"
 )
 
 func TestPlayerNameSurvivesGoSaveAndRestore(t *testing.T) {

@@ -2,7 +2,7 @@ package terminal
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/character"
+	"crawl/internal/character"
 )
 
 func (m *AppModel) routePregameInput(screen, key string) tea.Cmd {

@@ -4,9 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/character"
+	"crawl/internal/ecs"
+	"crawl/internal/terrain"
 	"github.com/gravestench/akara"
 )
 

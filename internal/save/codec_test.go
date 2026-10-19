@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/vault"
+	"crawl/internal/vault"
 )
 
 func TestRejectUnsupportedVersion(t *testing.T) {

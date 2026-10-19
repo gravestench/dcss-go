@@ -3,7 +3,7 @@ package terminal
 import (
 	"fmt"
 
-	"dcrawl-go/internal/game"
+	"crawl/internal/game"
 	"github.com/mattn/go-runewidth"
 )
 

@@ -3,8 +3,8 @@ package game
 import (
 	"testing"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/save"
+	"crawl/internal/ecs"
+	"crawl/internal/save"
 )
 
 func TestPoisonLivesOnPlayerAndSurvivesSnapshot(t *testing.T) {

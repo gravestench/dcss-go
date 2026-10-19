@@ -80,7 +80,7 @@ func checkFile(path string) (int, error) {
 		importPath, err := strconv.Unquote(imported.Path.Value)
 
 		if err != nil ||
-			!strings.HasPrefix(importPath, "dcrawl-go/") {
+			!strings.HasPrefix(importPath, "crawl/") {
 			continue
 		}
 
@@ -96,7 +96,7 @@ func checkFile(path string) (int, error) {
 			return 0, err
 		}
 
-		importDir := filepath.Join(root, strings.TrimPrefix(importPath, "dcrawl-go/"))
+		importDir := filepath.Join(root, strings.TrimPrefix(importPath, "crawl/"))
 
 		importedTypes[alias], err = declaredTypes(importDir)
 

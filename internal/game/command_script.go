@@ -3,8 +3,8 @@ package game
 import (
 	"fmt"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/vault"
+	"crawl/internal/ecs"
+	"crawl/internal/vault"
 	"github.com/gravestench/akara"
 )
 

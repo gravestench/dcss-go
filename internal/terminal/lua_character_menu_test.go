@@ -3,8 +3,8 @@ package terminal
 import (
 	"testing"
 
-	"dcrawl-go/internal/game"
-	"dcrawl-go/internal/modfs"
+	"crawl/internal/game"
+	"crawl/internal/modfs"
 )
 
 func TestAddedLuaSpeciesAppearsOnModdedMenuPage(t *testing.T) {

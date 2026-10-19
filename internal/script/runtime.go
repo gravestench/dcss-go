@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/modfs"
+	"crawl/internal/terrain"
 	"github.com/gravestench/akara"
 	lua "github.com/yuin/gopher-lua"
 )

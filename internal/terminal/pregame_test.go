@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/game"
-	"dcrawl-go/internal/save"
+	"crawl/internal/game"
+	"crawl/internal/save"
 )
 
 func pregameModel(t *testing.T) *AppModel {

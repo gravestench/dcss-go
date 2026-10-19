@@ -3,7 +3,7 @@ package terminal
 import (
 	"strings"
 
-	"dcrawl-go/internal/script"
+	"crawl/internal/script"
 	"github.com/mattn/go-runewidth"
 )
 

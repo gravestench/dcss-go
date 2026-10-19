@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 )
 
 func newStepGame(t *testing.T) *Game {

@@ -80,7 +80,7 @@ read it with `ctx:get` each time the rule runs.
 This one-file overlay changes an existing scroll without copying the base
 mod. Create `/path/to/my-mod/policy/scrolls/effects/torment.lua` with the
 following contents, then launch with
-`go run ./cmd/dcrawl --mod-dir=/path/to/my-mod`. The path replaces the
+`go run ./cmd/crawl --mod-dir=/path/to/my-mod`. The path replaces the
 bundled Torment scroll effect; the scroll command remains its caller.
 
 ```lua
@@ -238,7 +238,7 @@ register.system({
 return system
 ```
 
-Launch with `go run ./cmd/dcrawl --mod-dir=/path/to/my-mod` and take player
+Launch with `go run ./cmd/crawl --mod-dir=/path/to/my-mod` and take player
 actions totaling 50 aut. The notice appears once on the action that crosses
 the interval. A single action longer than one interval still emits one
 notice, while the saved timer keeps the remainder. This is a simple policy
@@ -478,10 +478,10 @@ production schemas and rules instead of copying them into fixtures.
 ## Scaffolding
 
 ```sh
-go run ./cmd/dcrawl-mod --mod-dir=/path/to/my-mod --kind=weapon --name="moss blade"
-go run ./cmd/dcrawl-mod --mod-dir=/path/to/my-mod --kind=system --name="moss growth" --namespace=moss
-go run ./cmd/dcrawl-mod --mod-dir=/path/to/my-mod --kind=vault --name="moss room" --with-hook
-go run ./cmd/dcrawl-mod --mod-dir=/path/to/my-mod --kind=vault --name="moss shop" --family=shop
+go run ./cmd/crawl-mod --mod-dir=/path/to/my-mod --kind=weapon --name="moss blade"
+go run ./cmd/crawl-mod --mod-dir=/path/to/my-mod --kind=system --name="moss growth" --namespace=moss
+go run ./cmd/crawl-mod --mod-dir=/path/to/my-mod --kind=vault --name="moss room" --with-hook
+go run ./cmd/crawl-mod --mod-dir=/path/to/my-mod --kind=vault --name="moss shop" --family=shop
 ```
 
 Kinds are `artefact`, `branch`, `cloud`, `item`, `weapon`, `unique-item`, `job`,
@@ -499,11 +499,11 @@ starters register a harmless update callback so you can add a query and rule.
 For an effect, wire its `resolve` method into the relevant registry. The
 wizard only creates files; it does not pretend an unfinished mechanic is live.
 
-DCrawl embeds its Lua rules under `internal/modfs/builtin/`. Add one or more
+Dungeon Crawl Stone Soup embeds its Lua rules under `internal/modfs/builtin/`. Add one or more
 mod directories by repeating `--mod-dir` in the order they should apply:
 
 ```text
-dcrawl --mod-dir=/path/to/extra-monsters --mod-dir=/path/to/spell-changes
+crawl --mod-dir=/path/to/extra-monsters --mod-dir=/path/to/spell-changes
 ```
 
 For example, the first directory can contain only
@@ -1330,7 +1330,7 @@ does not hot reload Lua.
    message, and RNG constants from the matching `constants/` or `ids/`
    module. An extra content definition with an ID appears through the
    catalog-backed `ids.*` module once content loading has finished.
-4. Launch with `go run ./cmd/dcrawl --mod-dir=/path/to/my-mod`. Startup
+4. Launch with `go run ./cmd/crawl --mod-dir=/path/to/my-mod`. Startup
    checks duplicate IDs, schema types, cross-references, missing effect
    handlers, and system dependencies. Read the reported effective path and
    field name; fix that one file, then start a new session to reload it.
@@ -1986,7 +1986,7 @@ return test
 The repository's `TestLuaRules` runner discovers these files in its own
 `internal/script/testdata/lua/tests/` fixture tree. It does not currently
 discover arbitrary external mod directories. For an external mod, first
-launch `go run ./cmd/dcrawl --mod-dir=/path/to/my-mod` to catch startup
+launch `go run ./cmd/crawl --mod-dir=/path/to/my-mod` to catch startup
 registration and validation errors; when contributing a rule to this repo,
 put its Lua test in that fixture tree and run
 `go test ./internal/script -run TestLuaRules`. Run

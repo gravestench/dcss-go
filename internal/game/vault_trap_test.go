@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/vault"
+	"crawl/internal/ecs"
+	"crawl/internal/modfs"
+	"crawl/internal/vault"
 )
 
 func TestArrivalTrapMaterializesAsSavedEntity(t *testing.T) {

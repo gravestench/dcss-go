@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/game"
+	"crawl/internal/character"
+	"crawl/internal/game"
 )
 
 func TestInventoryPageSourceCategoriesAndLetters(t *testing.T) {

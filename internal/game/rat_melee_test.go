@@ -1,7 +1,7 @@
 package game
 
 import (
-	"dcrawl-go/internal/save"
+	"crawl/internal/save"
 	"fmt"
 	"reflect"
 	"strings"

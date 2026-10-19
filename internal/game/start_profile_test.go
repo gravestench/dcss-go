@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/character"
+	"crawl/internal/character"
 )
 
 func TestScenarioInstallsStartingProfile(t *testing.T) {

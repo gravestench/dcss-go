@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/game"
+	"crawl/internal/game"
 )
 
 func playingModel(t *testing.T) *AppModel {

@@ -1,7 +1,7 @@
 package game
 
 import (
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 	"fmt"
 	"github.com/gravestench/akara"
 	"strings"

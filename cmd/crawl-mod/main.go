@@ -1,4 +1,4 @@
-// dcrawl-mod creates sparse Lua mod files in the same paths the game loads.
+// crawl-mod creates sparse Lua mod files in the same paths the game loads.
 package main
 
 import (
@@ -451,7 +451,7 @@ func checkParents(root, path string) error {
 }
 
 func run(args []string, input io.Reader, output io.Writer) error {
-	flags := flag.NewFlagSet("dcrawl-mod", flag.ContinueOnError)
+	flags := flag.NewFlagSet("crawl-mod", flag.ContinueOnError)
 	flags.SetOutput(output)
 	opts := options{}
 	flags.StringVar(&opts.modDir, "mod-dir", "", "directory for the new sparse mod")

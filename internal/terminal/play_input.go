@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	tea "charm.land/bubbletea/v2"
-	"dcrawl-go/internal/game"
+	"crawl/internal/game"
 )
 
 func (m *AppModel) handlePlayKey(key string) tea.Cmd {

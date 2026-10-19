@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"slices"
 
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/save"
+	"crawl/internal/modfs"
+	"crawl/internal/save"
 	"github.com/gravestench/akara"
 )
 

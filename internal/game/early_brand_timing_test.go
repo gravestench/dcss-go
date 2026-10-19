@@ -3,7 +3,7 @@ package game
 import (
 	"testing"
 
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/ecs"
 )
 
 func TestSpeedBrandReducesMonsterMeleeEnergyCost(t *testing.T) {

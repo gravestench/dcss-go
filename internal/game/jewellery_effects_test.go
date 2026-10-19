@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/save"
+	"crawl/internal/save"
 )
 
 func savedActiveComponent(snapshot save.Snapshot, entityID uint64,

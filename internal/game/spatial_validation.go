@@ -1,6 +1,6 @@
 package game
 
-import "dcrawl-go/internal/ecs"
+import "crawl/internal/ecs"
 
 func adjacentActors(a, b ecs.Position) bool {
 	if a.LevelID != b.LevelID {

@@ -1,10 +1,10 @@
 package game
 
 import (
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/terrain"
-	"dcrawl-go/internal/vault"
+	"crawl/internal/character"
+	"crawl/internal/ecs"
+	"crawl/internal/terrain"
+	"crawl/internal/vault"
 	"fmt"
 )
 

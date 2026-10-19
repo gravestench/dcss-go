@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/terrain"
-	"dcrawl-go/internal/vault"
+	"crawl/internal/modfs"
+	"crawl/internal/terrain"
+	"crawl/internal/vault"
 )
 
 func TestGeneratedShopVaultsMaterializeAndRestore(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"dcrawl-go/internal/modfs"
+	"crawl/internal/modfs"
 	"github.com/gravestench/akara"
 	lua "github.com/yuin/gopher-lua"
 )

@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/ecs"
+	"crawl/internal/character"
+	"crawl/internal/ecs"
 )
 
 func TestApportationPullsVisibleGroundItem(t *testing.T) {

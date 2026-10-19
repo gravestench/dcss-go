@@ -1,6 +1,6 @@
 package terminal
 
-import "dcrawl-go/internal/game"
+import "crawl/internal/game"
 
 func writeClipped(canvas *Canvas, x, y, width int, value string, fg Color) {
 	clippedWrite(canvas, x, y, width, value, fg, Black)

@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/save"
+	"crawl/internal/ecs"
+	"crawl/internal/save"
 	"github.com/gravestench/akara"
 )
 

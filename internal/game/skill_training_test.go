@@ -1,9 +1,9 @@
 package game
 
 import (
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/save"
+	"crawl/internal/character"
+	"crawl/internal/ecs"
+	"crawl/internal/save"
 	"reflect"
 	"testing"
 )

@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/vault"
+	"crawl/internal/modfs"
+	"crawl/internal/vault"
 )
 
 func TestVaultItemGenerationUsesRolledRecords(t *testing.T) {

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/script"
+	"crawl/internal/modfs"
+	"crawl/internal/script"
 	"github.com/gravestench/akara"
 )
 

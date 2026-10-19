@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"sort"
 
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/modfs"
-	"dcrawl-go/internal/save"
-	"dcrawl-go/internal/script"
+	"crawl/internal/character"
+	"crawl/internal/ecs"
+	"crawl/internal/modfs"
+	"crawl/internal/save"
+	"crawl/internal/script"
 	"github.com/gravestench/akara"
 )
 

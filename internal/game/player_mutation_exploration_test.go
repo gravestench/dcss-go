@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/terrain"
 )
 
 func TestExploreRegenHealsOnlyWhenTerrainIsFirstSeen(t *testing.T) {

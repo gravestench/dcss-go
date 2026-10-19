@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sort"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/terrain"
-	"dcrawl-go/internal/vault"
+	"crawl/internal/ecs"
+	"crawl/internal/terrain"
+	"crawl/internal/vault"
 	"github.com/gravestench/akara"
 )
 

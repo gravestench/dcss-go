@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"dcrawl-go/internal/character"
-	"dcrawl-go/internal/game"
-	"dcrawl-go/internal/script"
+	"crawl/internal/character"
+	"crawl/internal/game"
+	"crawl/internal/script"
 	"github.com/mattn/go-runewidth"
 )
 

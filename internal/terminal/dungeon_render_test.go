@@ -3,7 +3,7 @@ package terminal
 import (
 	"testing"
 
-	"dcrawl-go/internal/game"
+	"crawl/internal/game"
 )
 
 func TestDrawDungeonKeepsPlayerAboveFloorItems(t *testing.T) {

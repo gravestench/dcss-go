@@ -3,8 +3,8 @@ package game
 import (
 	"testing"
 
-	"dcrawl-go/internal/ecs"
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/ecs"
+	"crawl/internal/terrain"
 )
 
 func TestNimbleSwimmerChangesWaterMovementAndEvasion(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"dcrawl-go/internal/terrain"
+	"crawl/internal/terrain"
 )
 
 func TestJellyGrowthDetectsHiddenFloorItemUntilActuallySeen(t *testing.T) {
