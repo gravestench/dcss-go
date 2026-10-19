@@ -231,10 +231,10 @@ function module.run(ctx, input)
         end
     end
 
-    -- Generated floors arrive in separate bounded policy calls. The fixed
-    -- starting consumables enter only after the final floor has spent its
-    -- monster and inventory draws, preserving one deterministic stream.
-    if input.finalize ~= false then
+    -- Fixed starting consumables belong to initial setup. A newly entered
+    -- Dungeon floor uses the live RNG state but must not duplicate those
+    -- items when its own population policy runs.
+    if input.place_starting_items then
         floor_items(ctx, input)
     end
 

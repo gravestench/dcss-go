@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"crawl/internal/save"
 	"crawl/internal/terrain"
 )
 
@@ -61,6 +62,130 @@ func TestGeneratedDungeonReachesDepthFifteen(t *testing.T) {
 
 	if boundary < 3 {
 		t.Fatalf("Dungeon:15 has %d Depths entrances, want at least 3", boundary)
+	}
+}
+
+func TestGeneratedDungeonPopulatesOnFirstEntry(t *testing.T) {
+	g := newGeneratedTestGame(t, 41)
+
+	if g.levels[1].initialActors == 0 {
+		t.Fatal("Dungeon:1 did not populate at startup")
+	}
+
+	for depth := 2; depth <= 15; depth++ {
+		if g.levels[depth].initialActors != 0 {
+			t.Fatalf("Dungeon:%d populated before first entry", depth)
+		}
+	}
+
+	before := g.Snapshot()
+	restored, err := Restore(before)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	for _, run := range []*Game{g, restored} {
+		var down StairLink
+
+		for _, link := range run.levels[1].StairLinks() {
+			if link.ToLevelID == 2 {
+				down = link
+
+				break
+			}
+		}
+
+		if down.ToLevelID == 0 {
+			t.Fatal("Dungeon:1 has no downward stair")
+		}
+
+		if err := run.levels[1].MoveActor(run.player, down.X, down.Y); err != nil {
+			t.Fatal(err)
+		}
+
+		if _, err := run.Step(Command{Kind: CommandDownstairs}); err != nil {
+			t.Fatal(err)
+		}
+
+		if run.levels[2].initialActors == 0 ||
+			run.levels[3].initialActors != 0 {
+			t.Fatal("first descent did not populate exactly Dungeon:2")
+		}
+	}
+
+	if !reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
+		t.Fatal("first-entry population changed across save/restore")
+	}
+
+	count := g.levels[2].initialActors
+
+	if _, err := g.Step(Command{Kind: CommandUpstairs}); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
+		t.Fatal(err)
+	}
+
+	if g.levels[2].initialActors != count {
+		t.Fatal("return to Dungeon:2 repeated initial population")
+	}
+}
+
+func TestGeneratedDungeonFirstEntryThroughEveryDepth(t *testing.T) {
+	g := newGeneratedTestGame(t, 41)
+
+	for depth := 1; depth < 15; depth++ {
+		var down StairLink
+
+		for _, link := range g.levels[depth].StairLinks() {
+			if link.ToLevelID != depth+1 {
+				continue
+			}
+
+			if actor, occupied := g.levels[depth].ActorAt(link.X, link.Y); occupied &&
+				actor != g.player {
+				continue
+			}
+
+			down = link
+
+			break
+		}
+
+		if down.ToLevelID == 0 {
+			t.Fatalf("Dungeon:%d has no open downward stair", depth)
+		}
+
+		if err := g.levels[depth].MoveActor(g.player, down.X, down.Y); err != nil {
+			t.Fatal(err)
+		}
+
+		result, err := g.Step(Command{Kind: CommandDownstairs})
+
+		if err != nil ||
+			result.View.LevelID != depth+1 {
+			t.Fatalf("Dungeon:%d first descent = %+v, %v", depth, result.View, err)
+		}
+
+		if g.levels[depth+1].initialActors == 0 {
+			t.Fatalf("Dungeon:%d remained unpopulated after entry", depth+1)
+		}
+	}
+
+	restored, err := Restore(g.Snapshot())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	if !reflect.DeepEqual(g.Snapshot(), restored.Snapshot()) {
+		t.Fatal("populated Dungeon changed after restoring at D:15")
 	}
 }
 
@@ -373,6 +498,36 @@ func TestGeneratedDungeonRejectsInvalidSavedBoundaryAndBudget(t *testing.T) {
 
 	if _, err := Restore(snapshot); err == nil {
 		t.Fatal("accepted a downward stair paired with another downward stair")
+	}
+
+	snapshot = g.Snapshot()
+	snapshot.Levels[1].SpawnExclusions = append(
+		snapshot.Levels[1].SpawnExclusions,
+		save.PointRecord{
+			X: 80,
+			Y: 1,
+		},
+	)
+
+	if _, err := Restore(snapshot); err == nil {
+		t.Fatal("accepted an out-of-bounds saved spawn exclusion")
+	}
+
+	snapshot = g.Snapshot()
+	snapshot.Levels[1].SpawnExclusions = append(
+		snapshot.Levels[1].SpawnExclusions,
+		save.PointRecord{
+			X: 1,
+			Y: 1,
+		},
+		save.PointRecord{
+			X: 1,
+			Y: 1,
+		},
+	)
+
+	if _, err := Restore(snapshot); err == nil {
+		t.Fatal("accepted duplicate saved spawn exclusions")
 	}
 }
 

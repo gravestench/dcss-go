@@ -114,6 +114,8 @@ func (g *Game) buildScriptScenario(
 			}
 		}
 
+		level.spawnExclusions = append([]point(nil), exclusions[id]...)
+
 		if err := loadLuaVault(level, record); err != nil {
 			return scenarioLevels{}, err
 		}

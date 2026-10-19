@@ -25,6 +25,7 @@ type Level struct {
 	// Population choices may generate bands with multiple actors.
 	initialMonsters int
 	initialActors   int
+	spawnExclusions []point
 
 	positions *akara.Store[ecs.Position]
 	actors    map[point]akara.Entity

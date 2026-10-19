@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"crawl/internal/ecs"
 	"crawl/internal/vault"
 )
 
@@ -12,6 +13,12 @@ const vaultCorpseOccurrence = 1000
 // populateFromScript gives the effective Lua ruleset the established level
 // grids. The policy creates actors and floor items through the shared ECS API.
 func (g *Game) populateFromScript(setup scenarioLevels) error {
+	if g.scenarioID == generatedDungeonScenarioID {
+		return g.runPopulation([]any{
+			populationLevelRecord(g.levels[1], setup.entry),
+		}, &setup)
+	}
+
 	ids := make([]int, 0, len(g.levels))
 
 	for id := range g.levels {
@@ -22,113 +29,158 @@ func (g *Game) populateFromScript(setup scenarioLevels) error {
 	levels := make([]any, 0, len(ids))
 
 	for _, id := range ids {
-		level := g.levels[id]
 		entry, found := setup.populationEntries[id]
 
 		if !found {
 			return fmt.Errorf("level %d has no population entry", id)
 		}
 
-		excluded := make([]any, 0, len(setup.spawnExclusions[id]))
+		levels = append(levels, populationLevelRecord(g.levels[id], entry))
+	}
 
-		for _, cell := range setup.spawnExclusions[id] {
-			excluded = append(excluded, map[string]any{
-				"x": cell.x,
-				"y": cell.y,
-			})
-		}
+	return g.runPopulation(levels, &setup)
+}
 
-		levels = append(levels, map[string]any{
-			"id":               id,
-			"entry_x":          entry.x,
-			"entry_y":          entry.y,
-			"budget":           level.initialMonsters,
-			"width":            level.width,
-			"height":           len(level.terrain),
-			"vault_records":    populationVaultRecords(level),
-			"spawn_exclusions": excluded,
+// Populate a generated floor only when the player first approaches its
+// paired stair. Terrain exists already, but monsters and authored entities
+// wait for this entry so live RNG draws can affect the new level.
+func (g *Game) populateGeneratedLevel(id int, entry point) error {
+	if g.scenarioID != generatedDungeonScenarioID || id == 1 {
+		return nil
+	}
+
+	level := g.levels[id]
+
+	if level == nil {
+		return fmt.Errorf("missing generated Dungeon level %d", id)
+	}
+
+	if level.initialMonsters == 0 || level.initialActors != 0 {
+		return nil
+	}
+
+	return g.runPopulation([]any{populationLevelRecord(level, entry)}, nil)
+}
+
+// Command preparation has already checked the stair and its availability.
+// Populate before the move so a vault actor cannot claim the player's
+// destination cell after the player arrives there.
+func (g *Game) populateStairDestination(
+	intent ecs.IntentKind,
+	position *ecs.Position,
+) error {
+	if intent != ecs.IntentUpstairs && intent != ecs.IntentDownstairs {
+		return nil
+	}
+
+	link, found := g.levels[position.LevelID].StairAt(position.X, position.Y)
+
+	if !found || link.Unavailable != "" {
+		return nil
+	}
+
+	return g.populateGeneratedLevel(link.ToLevelID, point{
+		x: link.ToX,
+		y: link.ToY,
+	})
+}
+
+// Carry the authored no-spawn mask with the level, including through saves.
+// The actual entry point is supplied by the stair chosen on first visit.
+func populationLevelRecord(level *Level, entry point) map[string]any {
+	excluded := make([]any, 0, len(level.spawnExclusions))
+
+	for _, cell := range level.spawnExclusions {
+		excluded = append(excluded, map[string]any{
+			"x": cell.x,
+			"y": cell.y,
 		})
 	}
 
-	// Each generated floor has its own population transaction. Keeping Lua
-	// calls bounded also makes a slow or looping mod policy fail at its own
-	// floor instead of consuming one deadline for the entire Dungeon.
-	batches := [][]any{levels}
+	return map[string]any{
+		"id":               level.ID,
+		"entry_x":          entry.x,
+		"entry_y":          entry.y,
+		"budget":           level.initialMonsters,
+		"width":            level.width,
+		"height":           len(level.terrain),
+		"vault_records":    populationVaultRecords(level),
+		"spawn_exclusions": excluded,
+	}
+}
 
-	if g.scenarioID == generatedDungeonScenarioID {
-		batches = make([][]any, len(levels))
+// One policy call is one population transaction. Only initial setup places
+// the fixed starting consumables; later floors consume the current RNG state.
+func (g *Game) runPopulation(levels []any, setup *scenarioLevels) error {
+	input := map[string]any{
+		"scenario_id":          g.scenarioID,
+		"levels":               levels,
+		"place_starting_items": setup != nil,
+	}
 
-		for index, level := range levels {
-			batches[index] = []any{level}
+	if setup != nil {
+		input["curing"] = map[string]any{
+			"x": setup.curing.x,
+			"y": setup.curing.y,
+		}
+
+		input["heal"] = map[string]any{
+			"x": setup.heal.x,
+			"y": setup.heal.y,
+		}
+
+		input["haste"] = map[string]any{
+			"x": setup.haste.x,
+			"y": setup.haste.y,
 		}
 	}
 
-	for index, batch := range batches {
-		result, err := g.scripts.Policy("world.populate", map[string]any{
-			"scenario_id": g.scenarioID,
-			"levels":      batch,
-			"finalize":    index == len(batches)-1,
-			"curing": map[string]any{
-				"x": setup.curing.x,
-				"y": setup.curing.y,
-			},
+	result, err := g.scripts.Policy("world.populate", input)
 
-			"heal": map[string]any{
-				"x": setup.heal.x,
-				"y": setup.heal.y,
-			},
+	if err != nil {
+		return err
+	}
 
-			"haste": map[string]any{
-				"x": setup.haste.x,
-				"y": setup.haste.y,
-			},
-		})
+	if err := g.scripts.ApplyPending(); err != nil {
+		return err
+	}
+
+	counts, ok := result["initial_actors"].([]any)
+
+	if !ok || len(counts) != len(levels) {
+		return fmt.Errorf("Lua population returned invalid actor counts")
+	}
+
+	for _, value := range counts {
+		entry, ok := value.(map[string]any)
+
+		if !ok {
+			return fmt.Errorf("Lua population count has invalid type %T", value)
+		}
+
+		id, err := decisionInteger(entry, "id")
 
 		if err != nil {
 			return err
 		}
 
-		if err := g.scripts.ApplyPending(); err != nil {
+		count, err := decisionInteger(entry, "count")
+
+		if err != nil {
 			return err
 		}
 
-		counts, ok := result["initial_actors"].([]any)
+		level := g.levels[id]
 
-		if !ok {
-			return fmt.Errorf("Lua population returned no actor counts")
+		if level == nil || count < 0 {
+			return fmt.Errorf("Lua population count for invalid level %d", id)
 		}
 
-		for _, value := range counts {
-			entry, ok := value.(map[string]any)
+		level.initialActors = count
+	}
 
-			if !ok {
-				return fmt.Errorf("Lua population count has invalid type %T", value)
-			}
-
-			id, err := decisionInteger(entry, "id")
-
-			if err != nil {
-				return err
-			}
-
-			count, err := decisionInteger(entry, "count")
-
-			if err != nil {
-				return err
-			}
-
-			level := g.levels[id]
-
-			if level == nil || count < 0 {
-				return fmt.Errorf("Lua population count for invalid level %d", id)
-			}
-
-			level.initialActors = count
-		}
-
-		if err := g.markMaterializedVaultRecords(result["materialized"]); err != nil {
-			return err
-		}
+	if err := g.markMaterializedVaultRecords(result["materialized"]); err != nil {
+		return err
 	}
 
 	return nil

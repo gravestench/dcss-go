@@ -47,7 +47,9 @@ func TestGeneratedShopVaultsMaterializeAndRestore(t *testing.T) {
 					}
 				}
 
-				if record.Pending && reason == "" {
+				if level.initialActors != 0 &&
+					record.Pending &&
+					reason == "" {
 					t.Fatalf("seed %d: pending feature %s has no reason",
 						seed, record.Identity)
 				}

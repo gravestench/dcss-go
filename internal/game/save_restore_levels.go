@@ -27,6 +27,22 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 		level.initialActors = record.InitialActors
 		level.BranchID = record.BranchID
 
+		excluded := make(map[point]bool, len(record.SpawnExclusions))
+
+		for _, saved := range record.SpawnExclusions {
+			cell := point{
+				x: saved.X,
+				y: saved.Y,
+			}
+
+			if !level.inBounds(cell.x, cell.y) || excluded[cell] {
+				return fmt.Errorf("level %d has invalid spawn exclusion", record.ID)
+			}
+
+			excluded[cell] = true
+			level.spawnExclusions = append(level.spawnExclusions, cell)
+		}
+
 		if record.ShoalsTide != nil {
 			if record.BranchID != shoalsBranchID {
 				return fmt.Errorf("level %d has Shoals tide outside Shoals", record.ID)

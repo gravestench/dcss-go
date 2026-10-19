@@ -54,10 +54,17 @@ type LevelRecord struct {
 	Stairs          []StairRecord     `json:"stairs,omitempty"`
 	InitialMonsters int               `json:"initial_monsters,omitempty"`
 	InitialActors   int               `json:"initial_actors,omitempty"`
+	SpawnExclusions []PointRecord     `json:"spawn_exclusions,omitempty"`
 	AwaySinceAut    *int64            `json:"away_since_aut,omitempty"`
 	VaultID         string            `json:"vault_id,omitempty"`
 	VaultRecords    []vault.Record    `json:"vault_records,omitempty"`
 	ShoalsTide      *ShoalsTideRecord `json:"shoals_tide,omitempty"`
+}
+
+// PointRecord preserves level-local generation masks across save and load.
+type PointRecord struct {
+	X int `json:"x"`
+	Y int `json:"y"`
 }
 
 // ShoalsTideRecord keeps the authored elevation separate from the current

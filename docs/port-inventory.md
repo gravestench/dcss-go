@@ -41,7 +41,7 @@ context rather than a handler API for each game domain.
 | Domain | Implemented now | Main Lua location |
 | --- | --- | --- |
 | Character | Every legal selectable species/job pair starts; Lua owns chosen or fixed weapons, starting gear, species adjustments, attributes, skills, HP/MP, spell knowledge, Djinni's future spell schedule, religion, and durable origin state; training, XP, level gains, stat choice | `policy/character`, `schemas/character_origin.lua`, `systems/character_*` |
-| Dungeon | Seeded basic-layout D:1–15, rooms, corridors, doors, paired stairs, source-sized population from the committed rows in each depth range, fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
+| Dungeon | Seeded basic-layout D:1–15 terrain and paired stairs; D:1 populates at launch, later floors materialize source-depth monsters and vault entities on first entry; fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
 | Arrival vault population | All 337 selectable source arrivals resolve authored monster and item expressions through Lua content catalogs, place Akara entities with vault origins, and retain source selection in level records; a mod can add a monster and arrival file by path | `policy/generation/vaults/specs`, `policy/population/vaults.lua`, `schemas/vault_origin.lua` |
 | Item generation | Source-backed class and subtype selection feeds floor loot, monster equipment, vault requests, and acquirement; selected generated state is committed to saves | `policy/item_generation`, `systems/item_*` |
 | Shops | Ten active source shop types, 70 committed source shop vault definitions, scripted shop maps, authored stock and supplemental D:1–15 placement, saved wallet and stock, gold pickup, fixed shop scenario, prices, shopping list, purchase, and terminal menu | `vaults/shop`, `policy/generation/vaults/shop`, `policy/shops`, `schemas/*shop*` |
@@ -188,6 +188,11 @@ All legal selectable species/job combinations now enter the basic-layout
 D:1–15 Dungeon. Their starting state is Lua-owned and saved; most later species and
 job abilities are still unavailable. The many imported monsters, spells,
 items, and branches still need behavior, generation, and UI flows.
+Dungeon terrain and paired stairs are built at launch; ordinary monsters,
+authored vault entities, and shops on D:2–15 materialize on first entry.
+Pending population and its no-spawn mask survive the Go save format. Terrain
+itself still needs an entry-time generator when topology and branch travel
+can establish reciprocal links without prebuilding every floor.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition

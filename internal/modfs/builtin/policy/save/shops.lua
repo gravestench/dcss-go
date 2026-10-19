@@ -47,9 +47,11 @@ local function validate_wallet(ctx)
     end
 end
 
--- Generated Dungeon shops must match a nonpending authored feature cell before stock can be restored.
+-- A new floor may still have pending shop records. Once populated, each
+-- authored shop entrance must have exactly one saved shop entity.
 local function authored_cells(input)
     local cells = {}
+    local seen = {}
 
     for _, level in ipairs(input.levels or {}) do
         for _, record in ipairs(level.vault_records or {}) do
@@ -59,12 +61,17 @@ local function authored_cells(input)
                 local key = string.format("%d:%d:%d",
                     level.id, record.x, record.y)
 
-                if cells[key] or record.pending then
-                    error("authored shop record has duplicate or pending cell " ..
-                        key)
+                if seen[key] or
+                    (record.pending and level.initial_actors ~= 0) or
+                    (not record.pending and level.initial_actors == 0) then
+                    error("authored shop record has invalid population state " .. key)
                 end
 
-                cells[key] = true
+                seen[key] = true
+
+                if not record.pending then
+                    cells[key] = true
+                end
             end
         end
     end

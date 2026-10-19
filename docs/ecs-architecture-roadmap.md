@@ -34,7 +34,8 @@ opt-in or migration on restore.
 
 The playable Go slice includes every legal selectable species/job start, a
 source-shaped terminal,
-D:1-2 terrain and population, Akara actors/items/status, basic melee,
+D:1–15 paired terrain with population on first entry, Akara actors/items/status,
+basic melee,
 projectile and spell intents, equipment, training, XP, and Go saves. Source
 content is committed as Lua gameplay data and source-traced JSON import
 artifacts. No normal build uses the C++ checkout. Implemented gameplay rules
@@ -111,7 +112,7 @@ through Lua discovery and generic engine capabilities, not a Go ID switch.
 
 The implemented parts of categories 2–6 moved in one sweep. These categories
 are an audit checklist for future work, not adapter milestones. Category 7
-extends the game beyond the present D:1–2 slice.
+extends the game beyond the present basic-layout Dungeon slice.
 
 1. **Mod runtime foundation.** Embed the Lua tree, resolve one overlay by
    relative path, hash the effective files, bootstrap a per-game Lua VM,

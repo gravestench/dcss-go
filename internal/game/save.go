@@ -162,6 +162,14 @@ func (g *Game) Snapshot() save.Snapshot {
 			ShoalsTide:   level.shoalsTideRecord(),
 		}
 
+		for _, cell := range level.spawnExclusions {
+			record.SpawnExclusions = append(record.SpawnExclusions,
+				save.PointRecord{
+					X: cell.x,
+					Y: cell.y,
+				})
+		}
+
 		for _, link := range level.StairLinks() {
 			record.Stairs = append(record.Stairs, save.StairRecord{
 				X:           link.X,

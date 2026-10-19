@@ -18,20 +18,22 @@ func (g *Game) vaultValidationLevels() []any {
 
 		for _, record := range level.vaultRecords {
 			records = append(records, map[string]any{
-				"kind":      string(record.Kind),
-				"source_id": record.SourceID,
-				"identity":  record.Identity,
-				"x":         record.X,
-				"y":         record.Y,
-				"pending":   record.Pending,
-				"arguments": vaultRecordArguments(record),
+				"kind":       string(record.Kind),
+				"source_id":  record.SourceID,
+				"identity":   record.Identity,
+				"x":          record.X,
+				"y":          record.Y,
+				"pending":    record.Pending,
+				"overridden": record.Overridden,
+				"arguments":  vaultRecordArguments(record),
 			})
 		}
 
 		levels = append(levels, map[string]any{
-			"id":            level.ID,
-			"vault_id":      level.VaultID(),
-			"vault_records": records,
+			"id":             level.ID,
+			"vault_id":       level.VaultID(),
+			"initial_actors": level.initialActors,
+			"vault_records":  records,
 		})
 	}
 

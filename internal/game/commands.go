@@ -100,6 +100,10 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		return prepared.response, nil
 	}
 
+	if err := g.populateStairDestination(prepared.intent.Kind, position); err != nil {
+		return StepResult{}, err
+	}
+
 	for _, event := range prepared.response.Events {
 		g.messages = append(g.messages, event.Text)
 	}
