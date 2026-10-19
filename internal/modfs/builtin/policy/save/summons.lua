@@ -12,6 +12,7 @@ local slow = require("policy.combat.monster_slow")
 local sticky_flame = require("policy.magic.effects.zaps.sticky_flame")
 local brands = require("constants.weapon_brands")
 local plants = require("policy.save.monster_plants")
+local living_spells = require("policy.combat.monster_summons.living_spells")
 
 local summons = {}
 
@@ -77,6 +78,23 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         not ctx:has(haunting.target, component.ACTOR)) then
         error("summon " .. ctx:id(entity) ..
             " has invalid Haunt target or origin")
+    end
+
+    -- A living spell must keep both its source identity and the custom
+    -- one-shot slot. The tome may die or change before this save is loaded.
+    local living = ctx:get(entity, component.SUMMON_LIVING_SPELL)
+    local living_source = state.source_id ==
+        spells.SPELL_CONJURE_LIVING_SPELLS
+    local living_actor = actor.kind_id == monsters.MONS_LIVING_SPELL
+    local stats = ctx:get(entity, component.SUMMON_STATS)
+
+    if living_source or living_actor or living then
+        if not living_source or not living_actor or not living or
+            not living_spells.valid_spell(living.spell_id) or
+            not stats or stats.hd < 1 then
+            error("summon " .. ctx:id(entity) ..
+                " has invalid living spell state")
+        end
     end
 
     -- A spectral weapon remains bonded to an equipped item carried by its owner; stray copies fail restore.

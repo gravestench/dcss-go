@@ -3,6 +3,7 @@ local catalog = require("policy.catalog")
 local energy = require("policy.monster_energy")
 local hit_points = require("policy.population.hit_points")
 local allies = require("policy.character.allies")
+local targets = require("policy.ai.targets")
 local categories = require("constants.catalog")
 local attitudes = require("constants.attitude")
 local streams = require("constants.rng_streams")
@@ -120,8 +121,10 @@ local function earlier_expiry(left, right)
 end
 
 -- Cap only this owner's source group; tentacle segments belong to the head and must not displace it.
-local function cap_oldest(ctx, owner, source_category, source_id, cap)
+local function cap_oldest(ctx, owner, source_category, source_id, cap,
+    created)
     local existing = {}
+    local total = 0
 
     for _, entity in ipairs(ctx:query({ component.SUMMON })) do
         local state = ctx:get(entity, component.SUMMON)
@@ -129,18 +132,26 @@ local function cap_oldest(ctx, owner, source_category, source_id, cap)
         if not ctx:has(entity, component.SUMMON_SEGMENT) and
             state.owner == owner and
             state.source_category == source_category and
-            state.source_id == source_id then
-            existing[#existing + 1] = {
-                entity = entity,
-                entity_id = ctx:id(entity),
-                expires_aut = state.expires_aut,
-            }
+            state.source_id == source_id and
+            targets.aligned(ctx, owner, entity) then
+            total = total + 1
+
+            -- Source summon capping counts the new actor but chooses an
+            -- older actor for eviction, even if the new duration is shorter.
+            if entity ~= created then
+                existing[#existing + 1] = {
+                    entity = entity,
+                    entity_id = ctx:id(entity),
+                    expires_aut = state.expires_aut,
+                }
+            end
         end
     end
 
     table.sort(existing, earlier_expiry)
 
-    for index = 1, math.max(0, #existing - cap) do
+    for index = 1, math.min(#existing,
+        math.max(0, total - cap)) do
         summons.expire(ctx, existing[index].entity)
     end
 end
@@ -251,7 +262,7 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
     end
 
     if cap and not (options and options.segment) then
-        cap_oldest(ctx, owner, source_category, source_id, cap)
+        cap_oldest(ctx, owner, source_category, source_id, cap, actor)
     end
 
     return actor

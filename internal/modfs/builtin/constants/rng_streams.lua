@@ -6,6 +6,7 @@ local streams = {
     CLOUDS = "clouds",
     ITEM_GENERATION = "item_generation",
     MELEE = "melee",
+    MONSTER_HP = "monster_hp",
     MONSTER_SPELL = "monster_spell",
     MUTATION = "mutation",
     POTION = "potion",

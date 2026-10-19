@@ -68,6 +68,13 @@ function system.update(ctx, caster)
             end
         end
     end
+
+    -- In the source, a living spell is dismissed after its completed book
+    -- cast. Let the ordinary death phase remove the saved ECS actor.
+    if ctx:has(caster, component.SUMMON_LIVING_SPELL) then
+        caster_health.current = 0
+        ctx:set(caster, component.HEALTH, caster_health)
+    end
 end
 
 register.system({

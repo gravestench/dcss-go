@@ -141,6 +141,18 @@ function test.run()
         "Fireball plans a blast cell")
     harness.falsy(beam.plan(context(nil, nil, true), caster, foe,
         fireball), "Fireball avoids an ally in its blast radius")
+
+    -- Frostbound living spells use the same area safety rules as other
+    -- monster blasts, while their source Iceblast profile has radius one.
+    local iceblast = catalog.get("monster_beams",
+        spells.SPELL_ICEBLAST)
+    local ice_plan = beam.plan(context(), caster, foe, iceblast)
+
+    harness.equal(ice_plan.kind, target_kind.CELL,
+        "Iceblast plans a blast cell")
+    harness.falsy(beam.plan(context(nil, nil, true), caster,
+        foe, iceblast),
+        "Iceblast refuses an ally in its radius-one blast")
 end
 
 return test

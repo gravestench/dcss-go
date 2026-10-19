@@ -129,6 +129,7 @@ local component = {
     SUMMON_BLOB = "magic.summon_blob",
     SUMMON_HAUNTING = "magic.summon_haunting",
     SUMMON_SERVITOR = "magic.summon_servitor",
+    SUMMON_LIVING_SPELL = "magic.summon_living_spell",
     LIQUEFACTION = "magic.liquefaction",
     PASSWALL_DELAY = "magic.passwall_delay",
     GOLUBRIA_PASSAGE = "magic.golubria_passage",

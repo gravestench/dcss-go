@@ -18,9 +18,13 @@ local source_book = "MST_ENDOPLASM"
 -- The intent carries a selected slot and target; execution must reuse both
 -- without drawing or selecting a new target.
 local function context(spell_id, spell_slot, planned_kind,
-    construct_attitude)
+    construct_attitude, living_spell)
     local ctx = {
         cast_signals = {},
+        health = {
+            current = 10,
+            max = 10,
+        },
     }
 
     -- Completed monster book casts publish a battlesphere trigger; construct
@@ -39,13 +43,29 @@ local function context(spell_id, spell_slot, planned_kind,
 
     -- Keep optional statuses absent so slot validation is isolated.
     function ctx:has(entity, id)
-        return construct_attitude and entity == caster and
-            id == component.SUMMON
+        if entity ~= caster then
+            return false
+        end
+
+        return construct_attitude and id == component.SUMMON or
+            living_spell and id == component.SUMMON_LIVING_SPELL
+    end
+
+    -- A completed living-spell cast changes its health through the same
+    -- component setter used by the production ECS context.
+    function ctx:set(entity, id, value)
+        if entity == caster and id == component.HEALTH then
+            self.health = value
+        end
     end
 
     -- Return the exact caster intent and spellbook data used at the execution boundary.
     function ctx:get(entity, id)
         if entity == caster then
+            if id == component.SUMMON_LIVING_SPELL and living_spell then
+                return { spell_id = spell_id }
+            end
+
             if id == component.SUMMON and construct_attitude then
                 return { attitude = construct_attitude }
             end
@@ -74,7 +94,7 @@ local function context(spell_id, spell_slot, planned_kind,
         end
 
         if id == component.HEALTH then
-            return { current = 10, max = 10 }
+            return self.health
         end
 
         return nil
@@ -218,6 +238,30 @@ function test.run()
             tostring(problem))
     harness.equal(resolved, 2,
         "an omitted slot is not treated as a monster spellbook cast")
+
+    -- A living spell uses its saved custom book, then dismisses only after
+    -- the resolver has completed. Its tome may already be gone.
+    effects.effect = function()
+        return {
+            resolve = function(_, actor)
+                harness.equal(actor, caster,
+                    "the living actor casts its own spell")
+                resolved = resolved + 1
+            end,
+        }
+    end
+
+    local living = context(spells.SPELL_SMITING, 1,
+        target_kind.ENTITY, nil, true)
+
+    okay, problem = pcall(system.update, living, caster)
+
+    harness.truthy(okay,
+        "living spell executes saved slot: " .. tostring(problem))
+    harness.equal(resolved, 3,
+        "living spell uses the ordinary book resolver")
+    harness.equal(living.health.current, 0,
+        "living spell dies after its completed cast")
 
     register.get = original_get
     effects.effect = original_effect

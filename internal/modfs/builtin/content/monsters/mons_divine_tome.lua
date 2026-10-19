@@ -9,6 +9,7 @@
 
 local categories = require("constants.catalog")
 local spellbooks = require("ids.monster_spellbooks")
+local spells = require("ids.spells")
 
 local definition = {
     id = "MONS_DIVINE_TOME",
@@ -52,6 +53,8 @@ local definition = {
     ac = 10,
     ev = 5,
     spellbook_id = spellbooks.MST_WALKING_TOME,
+    -- The conjured actor carries this spell after it leaves the tome.
+    living_spell_id = spells.SPELL_SMITING,
     shout_id = "S_RUSTLE",
     intelligence_id = "I_BRAINLESS",
     habitat_id = "HT_LAND",

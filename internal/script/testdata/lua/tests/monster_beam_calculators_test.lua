@@ -31,6 +31,17 @@ function test.run()
     harness.equal(calculators.roll_damage(random, dice), 54,
         "rolling maximum results keeps the source dice total")
 
+    local iceblast = catalog.get("monster_beams",
+        spells.SPELL_ICEBLAST)
+    local ice_dice = calculators.damage_dice(random, iceblast, 120)
+
+    harness.equal(ice_dice.count, 3,
+        "source Iceblast uses three cold dice")
+    harness.equal(ice_dice.sides, 16,
+        "Iceblast adds one side per twelve spell power")
+    harness.equal(calculators.to_hit(iceblast, 120), 40,
+        "Iceblast uses source fixed explosion accuracy")
+
     local sleep = catalog.get("monster_beams", spells.SPELL_SLEEP)
 
     harness.equal(calculators.damage_dice(random, sleep, 120).count, 0,

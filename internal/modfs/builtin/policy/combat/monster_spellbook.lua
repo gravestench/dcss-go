@@ -21,6 +21,24 @@ function spellbook.for_actor(ctx, entity)
         return nil
     end
 
+    -- Source living spells carry one custom slot at frequency 200. The
+    -- component survives save/restore; the original tome need not survive.
+    local living = ctx:get(entity, component.SUMMON_LIVING_SPELL)
+
+    if living then
+        return {
+            slots = {
+                {
+                    spell_id = living.spell_id,
+                    frequency = 200,
+                    flags = {
+                        spell_flags.MAGICAL,
+                    },
+                },
+            },
+        }
+    end
+
     -- A spellforged servitor keeps the caster's eligible book on its own
     -- component. Reconstruct only the immutable slot view on each read;
     -- selection and execution still use ordinary monster spell policy.

@@ -16,7 +16,14 @@ func moddedEndoplasmGame(
 ) (*Game, akara.Entity, modfs.Ruleset) {
 	t.Helper()
 
-	rules, err := modfs.Load(path)
+	var rules modfs.Ruleset
+	var err error
+
+	if path == "" {
+		rules, err = modfs.Load()
+	} else {
+		rules, err = modfs.Load(path)
+	}
 
 	if err != nil {
 		t.Fatal(err)

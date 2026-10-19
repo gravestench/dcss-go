@@ -1,4 +1,6 @@
 -- Example: A one-sided HP die adds zero without drawing from the monster HP stream.
+local streams = require("constants.rng_streams")
+
 local hit_points = {}
 
 -- A one-sided die contributes zero without consuming the monster HP stream.
@@ -7,7 +9,7 @@ local function draw(ctx, bound)
         return 0
     end
 
-    return ctx:random("monster_hp", bound)
+    return ctx:random(streams.MONSTER_HP, bound)
 end
 
 -- Preserve a fractional die contribution with a separate monster HP draw instead of rounding it away.
