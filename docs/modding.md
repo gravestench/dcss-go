@@ -22,6 +22,7 @@ relative path to change a bundled file.
 | Check a mod or understand a failed load | [Test a mod](#test-a-mod) and [context failures](#when-a-context-call-fails) |
 | Understand overlays and save compatibility | [Scaffolding](#scaffolding) and [saves and identity](#saves-and-identity) |
 | Try a complete live rule with `ctx` | [A first live mod](#a-first-live-mod) |
+| Understand a callback's arguments and available game services | [Who supplies `ctx`](#who-supplies-ctx) and [the context API](#the-game-context-ctx) |
 
 The [root README](../README.md) has the shortest launch and wizard examples.
 This guide explains the contracts those examples depend on. If a mechanic
@@ -216,6 +217,81 @@ argument, return value, and invocation limit. The
 [feature walkthrough](#work-through-a-new-mod-feature) covers file placement
 and validation. The rest of this guide gives the contracts for each kind of
 content currently supported by the game.
+
+### Who supplies `ctx`
+
+You never import `ctx`, register it, or construct it. The Go runtime supplies
+the live context when it invokes a Lua entry point. That entry point
+may pass the same argument to focused Lua policies. The context is a set of
+operations on the *current game*, not a table containing the current monster,
+spell, or target. Those arrive as separate arguments. This is why a helper's
+signature often begins with `ctx, actor`: it needs both game access and the
+identity of the entity to affect.
+
+- **File load or content registration:** no `ctx` exists. Use definition
+  tables and imported IDs.
+- **ECS system:** the scheduler passes `ctx, entity, delta`. `entity` matched
+  the query; `delta` is the action's elapsed aut.
+- **Potion, scroll, or player spell:** the command passes `ctx` plus the item
+  user or caster and its domain-specific request, intent, definition, or power.
+- **Monster spell:** spell selection passes `ctx`, caster, selected foe, and
+  spellbook slot; resolution also receives the saved target plan.
+- **Cloud or trap:** the exposure or activation owner passes `ctx`, the
+  affected actor, and live cloud or trap state.
+- **Named `register.policy` callback:** the Go host passes `ctx` and an input
+  table. Read-only host calls pass an empty `ctx`; decide from input alone.
+- **`.des` vault hook:** it receives a separate generation `api`, not `ctx`.
+
+The first argument has the same name in many files because those files share
+engine services, **not** because their callbacks share one signature. For
+example, a system's `entity` is selected by its component query. A monster
+spell's `foe` is selected by its AI. `ctx:actor()` reports whose action is
+underway; it does not replace either argument. `ctx:player()` reports the
+player even during a monster action. If a rule concerns the given target,
+use that target handle rather than fetching the player.
+
+An ordinary helper gets `ctx` only because its caller passes it along:
+
+```lua
+local ward = require("policy.my_mod.ward")
+
+local effect = {}
+
+-- The command owns *when* the effect occurs. The ward policy owns *how*
+-- its status changes, so another spell or item can reuse the same rule.
+function effect.apply(ctx, reader)
+    ward.grant(ctx, reader, 30)
+end
+
+return effect
+```
+
+The `30` here is a duration in aut, supplied by this example's caller. The
+helper must receive `reader` explicitly; `ctx` alone cannot tell it which
+entity the scroll was read by. This example is only the method body: a real
+scroll effect also needs `prepare`, an item definition or existing item ID,
+and `scrolls.register`, as in [the live overlay](#a-first-live-mod).
+
+Inside a callback, ask what kind of fact you need before choosing a method:
+
+1. **Fixed facts about a kind** come from a catalog definition, using an ID
+   imported from `ids.*`; `ctx` is not needed to read them.
+2. **Changing facts about one live entity** come from `ctx:get(entity, id)`.
+   Change the detached result and replace it with `ctx:set`, or use `ctx:add`
+   when the component is absent. A saved condition needs a registered schema.
+3. **Spatial facts** come from the level methods on `ctx`. Read the actor's
+   position component for `level_id`, `x`, and `y`; check terrain and
+   occupancy, then use `ctx:move_actor` or another grid operation.
+4. **A choice made during play** uses `ctx:random` with a named stream. A
+   definition or file-load expression cannot draw from the game's RNG.
+5. **A one-action notification** uses `ctx:emit` for player text or
+   `ctx:signal` for another rule. Neither stores a lasting condition.
+
+The detailed method tables below state the parameters and return values.
+If a helper calls another helper, pass the current `ctx` through unchanged.
+Never keep it in a module variable for a later turn. The context's component
+and grid writes are staged during the action; later rules see the staged
+view, and the runtime applies structural changes at the action barrier.
 
 ## Choose an owner for a new feature
 
@@ -1109,6 +1185,36 @@ arguments. For example, a scroll's `prepare` method can request input before
 saved `plan`. Read one nearby working effect and its dispatcher. Keep a rule
 that several definitions share in a focused policy module and have their
 individual effect files call it with the received `ctx`.
+
+The common effect contracts currently used by those dispatchers are:
+
+- **Potion:** `can_quaff(ctx, player, forced)` may return a refusal string
+  and then a confirmation string. If it accepts, `apply(ctx, player)` runs
+  during action resolution.
+- **Scroll:** `prepare(ctx, player, request)` returns `nil` to proceed or a
+  decision table to stop or prompt. `apply(ctx, player, request)` runs during
+  action resolution.
+- **Player spell:** optional `prepare(ctx, player, spell, dx, dy, input)` may
+  reject the cast. `resolve(ctx, player, intent, spell, power, aut)` applies
+  the committed cast.
+- **Monster spell:** `plan(ctx, caster, foe, slot)` returns `nil` to decline
+  or an entity or cell plan saved with the intent. Then
+  `resolve(ctx, caster, foe, slot, plan)` applies the committed cast.
+- **Cloud exposure:** `apply(ctx, actor, state, elapsed_aut, cloud_entity,
+  definition)` returns damage dealt, or `nil`/`0` for no damage.
+- **Trap activation:** `trigger(ctx, trap_entity, actor, trap_state)` returns
+  true to consume the trap; false or `nil` leaves it for the charge rule.
+- **Timed system:** `update(ctx, entity, delta)` updates or removes the
+  queried component; the scheduler does not use a return value.
+
+The names after `ctx` are not interchangeable. For a cloud, `state` is the
+live cloud component, while `definition` is the fixed catalog entry. For a
+trap, `trap_entity` is the trap's ECS handle and `actor` is whoever entered
+its cell. For a monster spell, `plan` is a saved target choice; recompute
+eligibility during `resolve`, but do not silently aim at a different foe.
+Potion and scroll checks run before the action is committed, so a refusal
+must not consume an item or change persistent state. Read the cited command
+and an adjacent bundled effect for a domain's exact request and plan fields.
 
 ## Content files
 
