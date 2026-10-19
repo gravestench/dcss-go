@@ -1105,6 +1105,113 @@ and `constants.vault_directives` for the supported operations. The Lua module
 is for the hook's decision, not a second copy of the map. The wizard's
 `--kind=vault --with-hook` creates the matching pair.
 
+The hook receives **`api`, not the game `ctx`**. It runs while a level is
+being generated, before the ECS actors for that level exist. Read only the
+captured branch, depth, character, and map facts offered below. Put a
+random choice in the hook, but keep the vault's authored geometry and
+ordinary placement directives in its `.des` file. Every hook method is
+named in the `.des` file and assigned to the returned `handler` table:
+
+For example, this shortened map excerpt reserves `?` for one passage.
+An actual arrival vault also needs its required stairs and exits.
+`SUBST` changes every occurrence of its source glyph, so use a dedicated
+placeholder instead of a common terrain glyph such as `x`:
+
+```text
+NAME:    moss_passage
+TAGS:    arrival
+: vault.run("choose_passage")
+MAP
+xxxxxxx
+x..?..x
+xxxxxxx
+ENDMAP
+```
+
+```lua
+local directives = require("constants.vault_directives")
+
+local handler = {}
+
+-- Choose whether this reserved passage is open or has a door.
+-- The emitted directive takes effect at this hook's place in the .des file.
+local function choose_passage(api)
+    if api:one_in(2) then
+        api:emit(directives.SUBST, "? = .")
+    else
+        api:emit(directives.SUBST, "? = +")
+    end
+end
+
+handler.choose_passage = choose_passage
+
+return handler
+```
+
+Put `: vault.run("choose_passage")` in the `.des` declaration block, usually
+before `MAP`, after any directives it depends on. Put the Lua handler at
+`policy/generation/vaults/<family>/<NAME>.lua`; the map's family and `NAME`
+select that module. No hook method is invoked merely because its Lua file
+loads. `api:emit` inserts a typed DES directive at the hook's source
+position; subsequent operations see that change. `api:record` instead
+creates a typed placement record that can survive into level and save data.
+Import record kinds from `constants.vault_effects` and inspect a bundled
+handler such as `giann_forest_graveyard.lua` for its argument shape.
+
+| `vault.run` hook call | Result |
+| --- | --- |
+| `api:roll(bound)` | Integer from `0` to `bound - 1` on the vault layout stream. |
+| `api:one_in(bound)` | Boolean one-in-`bound` chance. |
+| `api:coinflip()` | Boolean half chance. |
+| `api:random_from(values)` | One element of a nonempty Lua array. |
+| `api:random_range(first, last)` | Inclusive integer range. |
+| `api:chance(numerator, denominator)` | Boolean fractional chance; certain or impossible cases use no draw. |
+| `api:roll_dice(count, sides)` | Sum of `count` independent dice with `sides` faces. |
+| `api:subset(values, count)` | `count` array elements selected without replacement. |
+| `api:branch_id()`, `api:depth()` | Captured branch ID and local depth, when supplied. |
+| `api:absolute_depth()` | Captured absolute depth, or local depth if supplied. |
+| `api:depth_fraction()` | Local depth divided by branch bottom; requires both facts. |
+| `api:map_tag()` | Captured placement tag, when supplied. |
+| `api:player_species()`, `api:player_monster()` | Starting species ID and optional player monster identity. |
+| `api:player_name()` | Character name, or `Player` if unavailable. |
+| `api:game_started()`, `api:validating()` | Captured started and validation flags. Both are currently false. |
+| `api:unique_generated(name)` | Whether supplied unique item history contains this name. |
+| `api:random_name()` | Generated name from the layout stream. |
+| `api:emit(directive, argument)` | Queue a DES directive; import its kind from `constants.vault_directives`. |
+| `api:record(kind, arguments)` | Queue a typed placement effect; import its kind from `constants.vault_effects`. |
+
+Use positive random bounds, nonempty arrays for `random_from`, and a
+`subset` count no greater than the array length. Hook randomness uses the
+vault layout stream; never call `math.random` or cache random results at
+module load. The hook methods receive one ephemeral API per invocation,
+just as a gameplay rule receives an ephemeral `ctx`.
+
+The current playable D:1–2 generation supplies species and name, but no
+player monster identity or unique item history. Therefore
+`api:player_monster()` is `nil`, `api:unique_generated(name)` is `false`,
+and `api:game_started()` is `false` in that path. Treat these as optional
+facts until a game mode supplies them explicitly. Arrival hooks also lack
+captured branch, depth, branch bottom, and map tag: their branch/depth/tag
+readers return `nil`, while `api:depth_fraction()` raises an error. Extra
+vault and shop hooks receive branch and depth facts; a tagged child shop
+also receives its selected map tag. Use a fact only in the hook family
+that supplies it.
+
+For source maps that use `: vault.veto("method")`, the named method runs
+after placement. Returning true currently raises a placement error and
+aborts generation; the selector does not retry another vault. Its API has
+`api:marker_positions(property, value)`, returning `{ x, y }` points whose
+raw marker identity contains `property=value`, or `nil`. This is a substring
+search, not parsed property equality. `api:has_exit(point)` reports whether
+the point is one of the placed exits. During the earlier generation hook,
+those two calls are placeholders: marker positions do not exist yet, and
+exit checks are deferred. Use them in veto methods, as
+`dpeg_arrival_water_fire.lua` does. The special `serial_shops` controller
+also receives `api:place_maps(tag, count)` to request extra vaults; that
+method is not part of ordinary arrival or shop hooks. The parser accepts
+named `vault.post_place` lines, but ordinary hooks do not execute that
+stage yet, so use `vault.run` or `vault.veto` for live behavior.
+
 ## Test a mod
 
 Use a file ending in `_test.lua` under `tests/`. Import production modules
