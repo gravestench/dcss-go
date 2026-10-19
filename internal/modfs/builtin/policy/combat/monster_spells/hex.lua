@@ -28,7 +28,8 @@ function hex.resisted(ctx, caster, target, profile)
         local actor = ctx:get(target, component.ACTOR)
         local definition = catalog.get("monsters", actor.kind_id)
 
-        return will.resists(ctx, definition, enchant_power, target)
+        return will.resists(ctx, definition, enchant_power, target,
+            profile.rng_stream)
     end
 
     local adjusted = math.floor(35 * math.log(1 + enchant_power / 35) /

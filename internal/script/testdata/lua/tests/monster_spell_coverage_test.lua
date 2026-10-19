@@ -32,9 +32,37 @@ local support_ids = {
     spells.SPELL_HEAL_OTHER,
 }
 
+-- All source displacement slots need individual effect files so a later
+-- monster roster can enable an entire book without a Go spell dispatcher.
+local displacement_ids = {
+    spells.SPELL_BLINK,
+    spells.SPELL_BLINK_RANGE,
+    spells.SPELL_BLINK_AWAY,
+    spells.SPELL_BLINK_CLOSE,
+    spells.SPELL_BLINK_OTHER,
+    spells.SPELL_BLINK_OTHER_CLOSE,
+    spells.SPELL_BLINK_ALLIES_AWAY,
+    spells.SPELL_BLINK_ALLIES_ENCIRCLE,
+    spells.SPELL_WORD_OF_RECALL,
+}
+
 -- The source book slots cannot enter active rosters until both phases exist.
 local function support_has_complete_resolvers()
     for _, spell_id in ipairs(support_ids) do
+        local okay, effect = pcall(effects.effect, spell_id)
+
+        harness.truthy(okay, spell_id .. " resolver loads")
+        harness.truthy(type(effect.plan) == "function",
+            spell_id .. " has a plan phase")
+        harness.truthy(type(effect.resolve) == "function",
+            spell_id .. " has a resolve phase")
+    end
+end
+
+-- A missing displacement resolver must fail coverage before a monster
+-- whose book uses it can enter the active generated population.
+local function displacement_has_complete_resolvers()
+    for _, spell_id in ipairs(displacement_ids) do
         local okay, effect = pcall(effects.effect, spell_id)
 
         harness.truthy(okay, spell_id .. " resolver loads")
@@ -141,6 +169,7 @@ end
 -- Generated monsters cannot carry a spellbook slot without a Lua effect module.
 function test.run()
     support_has_complete_resolvers()
+    displacement_has_complete_resolvers()
     active_roster_has_effects()
     imported_beam_book_is_covered()
     malformed_effect_is_reported()

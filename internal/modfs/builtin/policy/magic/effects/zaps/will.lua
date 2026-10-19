@@ -11,7 +11,9 @@ function will.invulnerable(definition)
 end
 
 -- Source: actor.cc:check_willpower and beam.cc:ench_power_stepdown.
-function will.resists(ctx, definition, enchant_power, target)
+-- Monster casts pass their saved stream; player spells retain the ordinary
+-- spell stream when the optional argument is absent.
+function will.resists(ctx, definition, enchant_power, target, stream)
     local resistance = definition.willpower or 0
 
     if will.invulnerable(definition) then
@@ -40,7 +42,9 @@ function will.resists(ctx, definition, enchant_power, target)
     local stepped = math.floor(35 *
         math.log(1 + enchant_power / 35) / math.log(2) + 0.5)
     local threshold = 100 + resistance - stepped
-    local roll = ctx:random("spell", 100) + ctx:random("spell", 101)
+    local chosen_stream = stream or "spell"
+    local roll = ctx:random(chosen_stream, 100) +
+        ctx:random(chosen_stream, 101)
 
     return threshold - roll > 0
 end

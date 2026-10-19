@@ -155,6 +155,7 @@ local module = {}
 local function validate_summon_cast_state(ctx, entity)
     local invitation = ctx:get(entity, component.MONSTER_INVITATION)
     local brothers = ctx:get(entity, component.MONSTER_BROTHERS)
+    local recall = ctx:get(entity, component.MONSTER_RECALL)
 
     if invitation and
         not summon_branches.valid_invitation(invitation.branch_id) then
@@ -165,6 +166,16 @@ local function validate_summon_cast_state(ctx, entity)
     if brothers and (brothers.count < 0 or brothers.count > 2) then
         error("monster " .. ctx:id(entity) ..
             " has invalid Brothers in Arms count")
+    end
+
+    -- A chant and its cooldown are distinct phases; impossible timers
+    -- would otherwise resume a spell at the wrong action after loading.
+    if recall and (not recall.foe or
+        recall.chant_aut < 0 or recall.chant_aut > 30 or
+        recall.breath_aut < 0 or recall.breath_aut > 120 or
+        (recall.chant_aut > 0 and recall.breath_aut > 0)) then
+        error("monster " .. ctx:id(entity) ..
+            " has invalid Word of Recall state")
     end
 end
 
@@ -196,6 +207,17 @@ function module.run(ctx, input)
     entities.validate(ctx)
     inventory.validate(ctx)
     links.validate(ctx)
+
+    -- A saved chant must belong to a real monster. The active recall
+    -- system queries this component directly, including non-AI owners.
+    for _, owner in ipairs(ctx:query({ component.MONSTER_RECALL })) do
+        if owner == ctx:player() or
+            not ctx:has(owner, component.AI) or
+            not ctx:has(owner, component.ACTOR) or
+            not ctx:has(owner, component.POSITION) then
+            error("invalid Word of Recall owner " .. ctx:id(owner))
+        end
+    end
 
     local allowed = roster.allowed(input.scenario_id)
     local fixed = input.scenario_id ~= "fixed-dungeon-population-v1" and

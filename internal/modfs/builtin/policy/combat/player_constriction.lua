@@ -107,14 +107,14 @@ end
 -- Example: constriction.escape(ctx, monster) with unheld monster -> true escape
 -- Repeated monster attempts accumulate against a fresh grip roll until the
 -- saved hold is removed.
-function constriction.escape(ctx, monster)
+function constriction.escape(ctx, monster, attempts)
     local state = ctx:get(monster, component.PLAYER_CONSTRICTION)
 
     if not state then
         return true
     end
 
-    state.escape_attempts = state.escape_attempts + 1
+    state.escape_attempts = state.escape_attempts + (attempts or 1)
     local progress = ctx:get(state.by, component.PROGRESSION)
     local grip = 1 + roll.melee(ctx, 3 + progress.level)
 

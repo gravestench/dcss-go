@@ -49,6 +49,7 @@ context rather than a handler API for each game domain.
 | Dynamic actors | Twelve ordinary early monsters, jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; all 285 committed monster spellbooks use source-order weighted and conditional slot selection, with effect coverage required before a monster enters the live roster | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
 | Monster beam, hex, and support spells | Sixty-one source-backed zap profiles, sixteen targeted hex effects, thirteen self-support effects, and four ally-support effects. Lua owns rays, resistance, healing, buffs, auras, clouds, displacement, poison, and temporary terrain; typed target plans carry the selected destination through resolution | `content/monster_beams`, `policy/combat/monster_beams`, `policy/combat/monster_hexes`, `policy/combat/monster_support`, `policy/combat/monster_spells` |
 | Monster direct summons | Thirty-nine source direct-creature effects choose species, counts, durations, and placement in their own Lua files. Akara stores caster ownership, named attitude, expiry, Invitation branch choice, Brothers count, and special summoned state; a live monster cast survives restore | `policy/combat/monster_summons`, `policy/combat/monster_spells`, `schemas/magic_*` |
+| Monster displacement and recall | Eight Blink variants use focused Lua landing, ally, and foe rules. Word of Recall stores its chant and breath cooldown on the caster, then moves eligible distant allies. Typed plans preserve target cells, and a live Blink cast survives restore | `policy/combat/monster_displacement`, `policy/combat/monster_spells`, `schemas/magic_monster_recall.lua`, `systems/magic_monster_recall.lua` |
 | Combat | Fighter melee and headbutts; generated player melee brands and Chaos Knight's forced chaos brand in Lua, including saved spectral allies with damage sharing, distortion banishment, and chaos monster effects; all seven active magical staves with source skill procs and AC/resistance routes; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, all generated early weapon brands in Lua effect modules, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
 | Items and status | Equipment, consumables, statuses, and identification | `policy/inventory`, `policy/items`, `systems/item_*` |
 | Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
@@ -114,6 +115,12 @@ Creatures currently uses the playable Dungeon population and waits for
 branch-specific rosters elsewhere; Pan's local demon allocation waits for
 the Pandemonium level owner. Constructs, clones, and terrain actors remain
 in later source spell categories.
+The monster displacement family now covers all eight Blink variants and Word
+of Recall. Self and foe blinks share source-shaped landing, habitat, and
+no-tele checks; ally blinks reuse existing actors rather than creating new
+ones. Recall's chant and cooldown are saved on the caster and are interrupted
+by silence or incapacitation. The live spellbook test moves a monster and
+restores its position and RNG state.
 The shared summon owner preserves friendly and neutral caster allegiance.
 Allied monster AI still follows the player instead of selecting arbitrary
 spellbook casts against enemy monsters; allied spell targeting remains an

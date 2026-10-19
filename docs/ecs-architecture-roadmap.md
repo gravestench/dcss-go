@@ -166,6 +166,10 @@ through a beam ray and write those same saved boon, enchant, and health
 owners. The thirty-nine direct-creature monster summons now use one
 actor-neutral Lua creator and focused spell files. Named attitude and
 caster-owned Invitation and Brothers state live in saved Akara components.
+Eight Blink effects use a shared Lua landing owner and move existing Akara
+actors through the grid service. Word of Recall uses a caster-owned Lua
+component and active system for its chant and cooldown; no Go spell branch
+or Lua module global holds its timer.
 The allied-monster decision path still needs enemy-directed spellbook
 selection before friendly summoned casters can initiate their own casts.
 Foe-centered spells carry a cell through the typed intent so target movement

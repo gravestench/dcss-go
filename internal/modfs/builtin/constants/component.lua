@@ -92,6 +92,7 @@ local component = {
     MONSTER_POLYMORPH = "magic.monster_polymorph",
     MONSTER_ENCHANT = "magic.monster_enchant",
     MONSTER_MASS_ENCHANT = "magic.monster_mass_enchant",
+    MONSTER_RECALL = "magic.monster_recall",
     -- The base SUMMON record identifies ownership; specialized records hold
     -- only the extra state required by a particular summon behavior.
     SUMMON = "magic.summon",

@@ -72,6 +72,16 @@ function game_methods.remove_actor(game, entity)
     game.base:remove(entity, component.POSITION)
 end
 
+-- Relocation tests keep the production POSITION schema and expose the
+-- same movement result without requiring a generated level grid.
+function game_methods.move_actor(game, entity, level_id, x, y)
+    game.base:set(entity, component.POSITION, {
+        level_id = level_id,
+        x = x,
+        y = y,
+    })
+end
+
 -- Forward unmodified ECS, RNG, and event methods to the real test runtime.
 local function lookup(game, key)
     return game_methods[key] or game.base[key]
