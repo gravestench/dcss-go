@@ -15,6 +15,9 @@ features.from_source_glyph = {
     ["'"] = "DNGN_OPEN_DOOR",
     ["<"] = "DNGN_STONE_STAIRS_UP_I",
     [">"] = "DNGN_STONE_STAIRS_DOWN_I",
+    -- Source KFEAT resolves this layout-only placeholder through a typed
+    -- feature record after the base grid is decoded.
+    L = "DNGN_ROCK_WALL",
 }
 
 -- Some source stair and hatch variants share the current kernel's travel
@@ -35,6 +38,8 @@ features.vault_terrain = {
     DNGN_SHALLOW_WATER = "DNGN_SHALLOW_WATER",
     DNGN_DEEP_WATER = "DNGN_DEEP_WATER",
     DNGN_LAVA = "DNGN_LAVA",
+    DNGN_OPEN_SEA = "DNGN_OPEN_SEA",
+    DNGN_LAVA_SEA = "DNGN_LAVA_SEA",
     DNGN_STONE_STAIRS_UP_I = "DNGN_STONE_STAIRS_UP_I",
     DNGN_STONE_STAIRS_UP_II = "DNGN_STONE_STAIRS_UP_I",
     DNGN_STONE_STAIRS_UP_III = "DNGN_STONE_STAIRS_UP_I",
