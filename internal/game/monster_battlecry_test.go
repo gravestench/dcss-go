@@ -59,6 +59,27 @@ func TestMonsterBattlecryBookCastAndSave(t *testing.T) {
 	casterPos, _ := g.stores.Positions.Get(caster)
 	playerPos, _ := g.stores.Positions.Get(g.player)
 	level := g.levels[casterPos.LevelID]
+	stepX := 0
+	stepY := 0
+
+	if playerPos.X > casterPos.X {
+		stepX = 1
+	} else if playerPos.X < casterPos.X {
+		stepX = -1
+	}
+
+	if playerPos.Y > casterPos.Y {
+		stepY = 1
+	} else if playerPos.Y < casterPos.Y {
+		stepY = -1
+	}
+
+	// The ally helper finds any adjacent free cell. Move that ally onto the
+	// already clear shot so this case actually checks a cry through a body.
+	if err := level.MoveActor(ally,
+		casterPos.X+stepX, casterPos.Y+stepY); err != nil {
+		t.Fatal(err)
+	}
 
 	if level.ClearProjectilePath(casterPos.X, casterPos.Y,
 		playerPos.X, playerPos.Y) {
