@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_grids.des:251
+# Named Lua hooks port the source script; the .des map stays authoritative.
+# The source gives this layout zero Dungeon weight.
+NAME:   layout_layered_grid
+DEPTH:  D, Depths, Crypt, Lair
+WEIGHT: 0
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand no_pool_fixup layout_type_passages
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_layered_grid")

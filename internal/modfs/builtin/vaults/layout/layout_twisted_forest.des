@@ -1,0 +1,11 @@
+# Source: crawl-ref/source/dat/des/builder/layout_forest.des:18
+# Named Lua hooks port the source script; the .des map stays authoritative.
+# The source gives this layout zero Dungeon weight.
+NAME:   layout_twisted_forest
+DEPTH:  D:1, Forest
+# TAG_MAJOR_VERSION == 34
+# Remove Forest weighting on version bump
+WEIGHT: 0 (D), 100 (Forest)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_forest
+: vault.run("layout_twisted_forest")

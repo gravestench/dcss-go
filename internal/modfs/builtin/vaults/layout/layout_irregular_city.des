@@ -1,0 +1,11 @@
+# Source: crawl-ref/source/dat/des/builder/layout_city.des:234
+# Named Lua hooks port the source script; the .des map stays authoritative.
+NAME:   layout_irregular_city
+DEPTH:  D:9-, Pan
+WEIGHT: 15 (D), 10 (Pan)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_city
+TAGS:   no_rotate no_hmirror no_vmirror
+: vault.run("layout_irregular_city")
+MAP
+ENDMAP

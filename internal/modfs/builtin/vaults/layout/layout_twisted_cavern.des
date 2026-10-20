@@ -1,0 +1,9 @@
+# Source: crawl-ref/source/dat/des/builder/layout_delve.des:18
+# Named Lua hooks port the source script; the .des map stays authoritative.
+# The source gives this layout zero Dungeon weight.
+NAME: layout_twisted_cavern
+DEPTH: D:4-, Depths
+WEIGHT: 0
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_narrow_caves
+: vault.run("layout_twisted_cavern")

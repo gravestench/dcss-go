@@ -1,0 +1,12 @@
+# Source: crawl-ref/source/dat/des/builder/layout_caves.des:20
+# Named Lua hooks port the source script; the .des map stays authoritative.
+NAME:   layout_layer_cave
+DEPTH:  D:4-, Lair, Snake
+WEIGHT: 5, 15 (Snake)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_narrow_caves
+: vault.run("layout_layer_cave")
+# Enforce minimum floor size - otherwise we get very tiny floors sometimes
+: vault.validate("layout_layer_cave")
+MAP
+ENDMAP

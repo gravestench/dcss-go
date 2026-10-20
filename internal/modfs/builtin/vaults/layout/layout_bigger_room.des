@@ -1,0 +1,11 @@
+# Source: crawl-ref/source/dat/des/builder/layout_cc.des:31
+# Named Lua hooks port the source script; the .des map stays authoritative.
+# The source gives this layout zero Dungeon weight.
+NAME:   layout_bigger_room
+DEPTH:  D:9-, Lair, !Lair:$
+WEIGHT: 0
+ORIENT: encompass
+TAGS:   overwritable layout no_primary_vault allow_dup unrand layout_type_open
+: vault.run("layout_bigger_room")
+MAP
+ENDMAP

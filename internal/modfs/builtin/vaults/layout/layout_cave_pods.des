@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_caves.des:291
+# Named Lua hooks port the source script; the .des map stays authoritative.
+NAME:   layout_cave_pods
+DEPTH:  D:4-, Lair, Snake, Spider
+WEIGHT: 5, 15 (Lair)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_open_caves
+: vault.run("layout_cave_pods")
+MAP
+ENDMAP

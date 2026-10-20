@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_cellular.des:238
+# Named Lua hooks port the source script; the .des map stays authoritative.
+NAME:   layout_gridville
+DEPTH:  D:4-, Depths, Zot, Dis, Pan
+WEIGHT: 10 (D), 10 (Depths), 5 (Zot), 15 (Dis), 10 (Pan)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_passages
+: vault.run("layout_gridville")
+MAP
+ENDMAP

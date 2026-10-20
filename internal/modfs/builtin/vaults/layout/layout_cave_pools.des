@@ -1,0 +1,11 @@
+# Source: crawl-ref/source/dat/des/builder/layout_pools.des:101
+# Named Lua hooks port the source script; the .des map stays authoritative.
+NAME:   layout_cave_pools
+DEPTH:  D:4-, Depths
+WEIGHT: 10, 15 (Depths)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_open_caves
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_cave_pools")
+MAP
+ENDMAP

@@ -1,0 +1,11 @@
+# Source: crawl-ref/source/dat/des/builder/layout_loops.des:1327
+# Named Lua hooks port the source script; the .des map stays authoritative.
+NAME:   layout_loops_cross
+DEPTH:  D, Elf
+WEIGHT: 5 (D), 10 (Elf)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_corridors
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_loops_cross")
+MAP
+ENDMAP

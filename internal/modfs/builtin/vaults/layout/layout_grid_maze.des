@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_grids.des:406
+# Named Lua hooks port the source script; the .des map stays authoritative.
+NAME:   layout_grid_maze
+DEPTH:  D:9-, Snake, Tar
+WEIGHT: 5 (D), 10 (Snake), 20 (Tar)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_passages
+: vault.run("layout_grid_maze")
+MAP
+ENDMAP

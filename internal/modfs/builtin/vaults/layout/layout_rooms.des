@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout.des:440
+# Named Lua hooks port the source script; the .des map stays authoritative.
+NAME:   layout_rooms
+DEPTH:  D, Elf, Snake, Crypt, Pan
+WEIGHT: 15 (D), 10 (Elf), 15 (Snake), 10 (Crypt), 10 (Pan)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_rooms
+: vault.run("layout_rooms")
+MAP
+ENDMAP

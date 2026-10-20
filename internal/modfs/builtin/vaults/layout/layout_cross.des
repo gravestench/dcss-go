@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout.des:161
+# Named Lua hooks port the source script; the .des map stays authoritative.
+NAME:   layout_cross
+DEPTH:  D:9-, Depths, Pan
+WEIGHT: 2
+ORIENT: encompass
+TAGS:   overwritable layout unrand uniq_open_layout layout_type_open
+: vault.run("layout_cross")
+MAP
+ENDMAP

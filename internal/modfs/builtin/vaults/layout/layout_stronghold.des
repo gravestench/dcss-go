@@ -1,0 +1,8 @@
+# Source: crawl-ref/source/dat/des/builder/layout_city.des:45
+# Named Lua hooks port the source script; the .des map stays authoritative.
+NAME:   layout_stronghold
+DEPTH:  D:9-, Pan
+WEIGHT: 10
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_city
+: vault.run("layout_stronghold")

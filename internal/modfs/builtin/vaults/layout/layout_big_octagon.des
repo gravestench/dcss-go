@@ -1,0 +1,13 @@
+# Source: crawl-ref/source/dat/des/builder/layout.des:238
+# Named Lua hooks port the source script; the .des map stays authoritative.
+NAME:   layout_big_octagon
+DEPTH:  D:9-, Depths, Pan
+WEIGHT: 3
+ORIENT: encompass
+TAGS:   overwritable layout unrand no_primary_vault layout_type_open
+TAGS:   uniq_open_layout
+: vault.run("layout_big_octagon")
+# Enforce minimum floor size - otherwise we get very tiny floors sometimes
+: vault.validate("layout_big_octagon")
+MAP
+ENDMAP
