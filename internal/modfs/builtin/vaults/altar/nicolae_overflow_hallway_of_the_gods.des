@@ -32,6 +32,7 @@ TAGS:    temple_overflow_generic_11 temple_overflow_generic_10 \
 # source:     subst("DEFHJK : B")
 # source:   end
 # source: }}
+: vault.run("arrange_altars")
 SUBST:   D : GGTTUt, E : GGTTUt, F : GGTTUt, H : GGTTUt, J : GGTTUt, K : GGTTUt
 MAP
 ccccccccccc

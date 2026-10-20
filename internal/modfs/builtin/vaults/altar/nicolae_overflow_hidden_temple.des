@@ -28,6 +28,7 @@ TAGS: temple_overflow_generic_5 temple_overflow_generic_4 temple_overflow_generi
 # source:     subst("abcde = B")
 # source:   end
 # source: }}
+: vault.run("arrange_altars")
 SUBST: } = })]
 MAP
  xxxxxxxxxxxxx

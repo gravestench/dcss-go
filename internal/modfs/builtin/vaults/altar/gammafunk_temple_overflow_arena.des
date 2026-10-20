@@ -16,6 +16,7 @@ WEIGHT: 1
 # source:     subst("B = a")
 # source:   end
 # source: }}
+: vault.run("arrange_altars")
 SUBST: a = |*%$ .:80, 0 = 09., h = B, i : x., j : x., x : bcvx
 NSUBST: R = R / .
 MARKER: P = lua:transp_loc("temple_overflow_arena_entry")

@@ -215,6 +215,10 @@ their MAP rows match the source exactly. They load through a dedicated catalog
 and stay out of ordinary extra-vault selection until the remaining per-map
 Lua hooks, source monster expressions, and scheduled overflow rules are
 ported. The original script text remains beside each map as comments.
+The repeated terrain names and one unconditional corpse-decay effect now
+have named Lua hooks. All eight generic overflow maps with count-dependent
+geometry now read a local altar-count setting; placement tests verify their
+source layouts retain exactly the requested number of altar cells.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition

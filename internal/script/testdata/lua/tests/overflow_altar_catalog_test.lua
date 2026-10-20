@@ -2,6 +2,7 @@
 -- effective DES file. The ordinary extra-vault catalog excludes this family
 -- until its scheduled god assignment chooses a specific map.
 local catalog = require("policy.generation.altar.catalog")
+local branches = require("ids.branches")
 local directives = require("constants.vault_directives")
 local effects = require("constants.vault_effects")
 local features = require("constants.vault_features")
@@ -9,6 +10,8 @@ local harness = require("tests.harness")
 local hooks = require("policy.generation.vaults.hooks")
 local names = require("constants.vault_feature_names")
 local ordinary = require("policy.generation.vaults.catalog")
+local operations = require("policy.generation.vaults.operations")
+local settings = require("constants.vault_settings")
 
 local test = {}
 
@@ -97,6 +100,164 @@ local function assert_dancefloor_decay()
     harness.equal(records[1].arguments.alternatives, "random corpse")
 end
 
+-- Run count-driven source blocks using the same local setting future floor
+-- placement must provide. This also proves every DES points to its Lua file.
+local function arrangement_for(id, selected)
+    local definition = catalog.get(id)
+    local emissions = {}
+    local api = {}
+    local found = false
+
+    function api:setting(key)
+        harness.equal(key, settings.OVERFLOW_ALTAR_COUNT)
+
+        return selected
+    end
+
+    function api:emit(kind, argument)
+        emissions[#emissions + 1] = {
+            kind = kind,
+            argument = argument,
+        }
+    end
+
+    for _, operation in ipairs(definition.operations) do
+        if operation.kind == directives.HOOK_RUN and
+            operation.argument == "arrange_altars" then
+            hooks.run(definition, operation.argument, api)
+            found = true
+        end
+    end
+
+    harness.truthy(found, id .. " has its source count hook")
+
+    return emissions
+end
+
+-- Exercise every count-bearing map at its limits and check cases whose
+-- source substitutions depend on both count and directive order.
+local function assert_count_arrangements()
+    local ranges = {
+        { "minitemple", 2, 14 },
+        { "chequers_temple_overflow_minitemple", 3, 5 },
+        { "chequers_temple_overflow_statue_of_worship", 2, 4 },
+        { "gammafunk_temple_overflow_arena", 1, 3 },
+        { "grunt_temple_overflow_open", 1, 8 },
+        { "nicolae_overflow_hallway_of_the_gods", 5, 11 },
+        { "nicolae_overflow_hidden_temple", 1, 5 },
+        { "nicolae_overflows_in_rows", 9, 15 },
+    }
+
+    for _, entry in ipairs(ranges) do
+        for selected = entry[2], entry[3] do
+            arrangement_for(entry[1], selected)
+        end
+
+        local valid = pcall(arrangement_for, entry[1], nil)
+
+        harness.falsy(valid, entry[1] .. " rejects an absent count")
+    end
+
+    local mini = arrangement_for("minitemple", 9)
+
+    harness.equal(mini[1].kind, directives.NSUBST)
+    harness.equal(mini[1].argument, "B : 9:B / *:x")
+
+    local statue = arrangement_for(
+        "chequers_temple_overflow_statue_of_worship", 2)
+
+    harness.equal(statue[1].argument, "C = .")
+    harness.equal(statue[2].argument, "B = 2:B / *:.")
+
+    local open = arrangement_for("grunt_temple_overflow_open", 8)
+
+    harness.equal(#open, 1)
+    harness.equal(open[1].argument, "defghijk = B")
+
+    local hall = arrangement_for(
+        "nicolae_overflow_hallway_of_the_gods", 7)
+
+    harness.equal(hall[1].kind, directives.SHUFFLE)
+    harness.equal(hall[1].argument, "EFHJK")
+    harness.equal(hall[2].argument, "DEFH : B")
+
+    local hidden = arrangement_for("nicolae_overflow_hidden_temple", 3)
+
+    harness.equal(hidden[1].argument, "ae/bd")
+    harness.equal(hidden[2].argument, "cbd = B")
+    harness.equal(hidden[3].argument, "ae = G")
+
+    local rows = arrangement_for("nicolae_overflows_in_rows", 12)
+
+    harness.equal(rows[1].argument, "T=.")
+    harness.equal(rows[#rows].argument, "Z=E")
+end
+
+-- Parsing hooks alone would miss a malformed emitted SUBST or SHUFFLE.
+-- Apply each count map to a fresh copy of its real DES rows at both ends
+-- of its capacity and verify that an altar glyph survives each layout.
+local function assert_count_maps_apply()
+    local ranges = {
+        { "minitemple", 2, 14 },
+        { "chequers_temple_overflow_minitemple", 3, 5 },
+        { "chequers_temple_overflow_statue_of_worship", 2, 4 },
+        { "gammafunk_temple_overflow_arena", 1, 3 },
+        { "grunt_temple_overflow_open", 2, 8 },
+        { "nicolae_overflow_hallway_of_the_gods", 5, 11 },
+        { "nicolae_overflow_hidden_temple", 1, 5 },
+        { "nicolae_overflows_in_rows", 9, 15 },
+    }
+    local random = {}
+
+    function random:roll()
+        return 0
+    end
+
+    function random:one_in()
+        return true
+    end
+
+    for _, entry in ipairs(ranges) do
+        local definition = catalog.get(entry[1])
+
+        for _, selected in ipairs({ entry[2], entry[3] }) do
+            local cells = {}
+
+            for y, row in ipairs(definition.rows) do
+                cells[y] = {}
+
+                for x = 1, #row do
+                    cells[y][x] = row:sub(x, x)
+                end
+            end
+
+            local player = {
+                branch_id = branches.BRANCH_DUNGEON,
+                depth = 3,
+                absolute_depth = 3,
+                settings = {
+                    [settings.OVERFLOW_ALTAR_COUNT] = selected,
+                },
+            }
+
+            operations.apply(definition, cells, random, 3, player)
+
+            local altars = 0
+
+            for _, row in ipairs(cells) do
+                for _, glyph in ipairs(row) do
+                    if glyph == "B" then
+                        altars = altars + 1
+                    end
+                end
+            end
+
+            harness.equal(altars, selected,
+                entry[1] .. " keeps exactly its scheduled altar count")
+        end
+    end
+end
+
 -- Parsing the full family catches broken directives and missing named hooks
 -- at startup rather than only when a rare altar map is selected.
 function test.run()
@@ -129,6 +290,8 @@ function test.run()
 
     assert_feature_names()
     assert_dancefloor_decay()
+    assert_count_arrangements()
+    assert_count_maps_apply()
 end
 
 return test

@@ -38,6 +38,7 @@ TAGS:    temple_overflow_generic_15 temple_overflow_generic_14 \
 # source:     subst("Z=E")
 # source:   end
 # source: }}
+: vault.run("arrange_altars")
 SUBST:   DF : B
 SHUFFLE: GT
 MAP

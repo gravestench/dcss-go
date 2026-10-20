@@ -12,6 +12,7 @@ TAGS:  transparent
 # source:   end
 # source:   nsubst("O = " .. altarcount .. ":B / *:l")
 # source: }}
+: vault.run("arrange_altars")
 KFEAT: l = altar_ecumenical
 MAP
         @

@@ -40,6 +40,7 @@ SHUFFLE: defghijk / efghijkd
 # source:     subst("defghijk = B")
 # source:   end
 # source: }}
+: vault.run("arrange_altars")
 SUBST: G = G T V:1 U:1 t:1
 MAP
    ...

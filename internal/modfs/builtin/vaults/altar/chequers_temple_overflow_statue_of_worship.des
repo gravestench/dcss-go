@@ -16,6 +16,7 @@ TAGS:   temple_overflow_generic_4 transparent
 # source:   end
 # source:   nsubst("B = " .. altarcount .. ":B / *:.")
 # source: }}
+: vault.run("arrange_altars")
 MAP
 .....
 ..C..

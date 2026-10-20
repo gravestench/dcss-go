@@ -2050,9 +2050,14 @@ The grid owns the walkable `_` feature, while
 The source Dungeon overflow maps live under `vaults/altar/`. The dedicated
 `policy.generation.altar.catalog` discovers added or replaced `.des` files
 through the same layered path rules. These maps are currently cataloged but
-not selected in live generation: their source Lua and scheduled god placement
-are still being ported. A mod can add or replace a map now, but should not
-expect it to appear on a floor until that generation pass is complete.
+not selected in live generation: remaining source Lua and scheduled god
+placement are still being ported. The eight generic maps with variable
+altars already use a `: vault.run("arrange_altars")` hook. Import
+`constants.vault_settings` in the Lua file and read
+`api:setting(settings.OVERFLOW_ALTAR_COUNT)`, supplied by
+the future overflow scheduler, and must leave exactly that many `B` altar
+cells. A mod can add or replace a map now, but should not expect it to
+appear on a floor until the generation pass is complete.
 
 The `builder/arena_*.des` family illustrates maps reserved for another game
 mode. Each definition keeps its original `MAP` rows and `arena_*` tag, but
