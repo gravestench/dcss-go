@@ -38,6 +38,7 @@ local random_monster_names = {
 local random_item_names = {
     [item_requests.ANY_WEAPON] = true,
     [item_requests.ANY_BOOK] = true,
+    [item_requests.ANY_SCROLL] = true,
     ["any"] = true,
     ["any potion"] = true,
     ["any wand"] = true,
@@ -470,8 +471,8 @@ function resolve.item(ctx, selected, depth, site)
     local kind_id
     local class_id
     local base_id
-    local quality = item_quality.ORDINARY
-    local generation_depth = source_depth(selected, depth)
+    local quality = selected.quality or item_quality.ORDINARY
+    local generation_depth = selected.level or source_depth(selected, depth)
     local request
 
     if name == "randbook" or name == "any randbook" then
@@ -482,8 +483,8 @@ function resolve.item(ctx, selected, depth, site)
 
         kind_id = described.kind_id
         class_id = described.class_id
-        quality = described.quality
-        generation_depth = described.depth
+        quality = selected.quality or described.quality
+        generation_depth = selected.level or described.depth
     elseif name == "corpse" or name == "skeleton" then
         variant = name
         kind_id = name == "corpse" and item_ids.CORPSE_BODY or item_ids.CORPSE_SKELETON
@@ -515,6 +516,7 @@ function resolve.item(ctx, selected, depth, site)
         disc = selected.disc,
         numspells = selected.numspells,
         slevels = selected.slevels,
+        spells = selected.spells,
         owner = selected.owner and selected.owner:gsub("_", " "),
         plus = selected.plus,
         ego = item_ego(selected, kind_id, class_id, site),

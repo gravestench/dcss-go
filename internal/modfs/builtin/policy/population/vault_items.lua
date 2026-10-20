@@ -36,6 +36,7 @@ local function request_from(resolved, level_id, origin)
         disc = resolved.disc,
         numspells = resolved.numspells,
         slevels = resolved.slevels,
+        included_spells = resolved.spells,
         owner = resolved.owner,
         plus = resolved.plus,
         ego = resolved.ego,

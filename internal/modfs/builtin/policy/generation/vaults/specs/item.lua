@@ -1,5 +1,8 @@
 -- Example: An item term with no explicit weight receives the default weight.
 local choice = require("policy.generation.vaults.specs.choice")
+local levels = require("constants.vault_item_levels")
+local quality = require("constants.vault_item_quality")
+local spell_ids = require("ids.spells")
 
 local item = {}
 
@@ -36,6 +39,37 @@ local function parse_term(text, expression, site)
             end
 
             result.place = value
+        elseif key == "level" then
+            local level = tonumber(value)
+
+            if not level or level % 1 ~= 0 then
+                choice.fail(site, expression, "invalid item level " .. token)
+            end
+
+            if level == levels.STAR then
+                result.quality = quality.STAR
+            elseif level > 0 then
+                result.level = level
+            else
+                choice.fail(site, expression, "unsupported item level " .. token)
+            end
+        elseif key == "spells" then
+            if value == "" then
+                choice.fail(site, expression, "empty item spell list")
+            end
+
+            result.spells = {}
+
+            for name in (value .. "&"):gmatch("(.-)&") do
+                local key_name = "SPELL_" .. name:upper():gsub("[^A-Z0-9]+", "_")
+                local id = spell_ids[key_name]
+
+                if not id then
+                    choice.fail(site, expression, "unknown item spell " .. name)
+                end
+
+                result.spells[#result.spells + 1] = id
+            end
         elseif key == "ego" or key == "disc" or key == "owner" then
             if value == "" then
                 choice.fail(site, expression, "empty item " .. key)

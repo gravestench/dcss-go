@@ -100,6 +100,7 @@ local function item_selection(record)
         disc = arguments.disc ~= "" and arguments.disc or nil,
         numspells = arguments.numspells ~= 0 and arguments.numspells or nil,
         slevels = arguments.slevels ~= 0 and arguments.slevels or nil,
+        spells = selected.spells,
         owner = arguments.owner ~= "" and arguments.owner or nil,
         plus = arguments.has_plus and arguments.plus or nil,
         ego = arguments.has_ego and arguments.ego or nil,

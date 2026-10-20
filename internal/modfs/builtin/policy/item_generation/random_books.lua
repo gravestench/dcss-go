@@ -101,8 +101,28 @@ local function themed_spells(ctx, request)
     local levels = 0
     local level_budget = request.slevels or 20
     local available = available_spells()
+    local eligible = {}
 
-    for _ = 1, count do
+    for _, spell in ipairs(available) do
+        eligible[spell.id] = spell
+    end
+
+    -- DES spells: names mandatory contents. Reserve them before random
+    -- theme draws; the authored spell can lie outside the chosen school.
+    for _, id in ipairs(request.included_spells or {}) do
+        local spell = eligible[id]
+
+        if not spell or used[id] or #spells >= count or
+            levels + spell.level > level_budget then
+            error("invalid mandatory themed-book spell " .. tostring(id))
+        end
+
+        spells[#spells + 1] = id
+        used[id] = true
+        levels = levels + spell.level
+    end
+
+    for _ = #spells + 1, count do
         local candidates = {}
 
         for _, spell in ipairs(available) do

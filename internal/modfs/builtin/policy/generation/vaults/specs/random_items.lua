@@ -20,6 +20,8 @@ function random_items.describe(name, depth)
         result.class_id = classes.OBJ_WEAPONS
     elseif name == requests.ANY_BOOK then
         result.class_id = classes.OBJ_BOOKS
+    elseif name == requests.ANY_SCROLL then
+        result.class_id = classes.OBJ_SCROLLS
     elseif name == "any potion" then
         result.class_id = classes.OBJ_POTIONS
     elseif name == "any wand" then
