@@ -14,6 +14,7 @@ local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local monsters = require("ids.monsters")
 local tactical = require("constants.monster_tactical")
+local band_members = require("policy.population.band_members")
 
 -- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
@@ -313,6 +314,46 @@ function module.run(ctx, input)
         end
     end
 
+    -- The delayed Pikel action removes these marked lemures. Its origin
+    -- must not be forged onto a different live monster in a save file.
+    for _, entity in ipairs(ctx:query({ component.PIKEL_BAND })) do
+        local marker = ctx:get(entity, component.PIKEL_BAND)
+        local actor = ctx:get(entity, component.ACTOR)
+        local form = ctx:get(entity, component.MONSTER_POLYMORPH)
+        local source_kind = form and form.original_kind_id or
+            actor and actor.kind_id
+
+        if not marker.band_member or
+            source_kind ~= monsters.MONS_LEMURE or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("entity " .. ctx:id(entity) ..
+                " has invalid Pikel band origin")
+        end
+    end
+
+    -- A band member can outlive its leader and lose the live follower
+    -- link. Its durable origin still identifies a legitimate catalog
+    -- member so restore does not misclassify it as an ambient spawn.
+    for _, entity in ipairs(ctx:query({ component.BAND_ORIGIN })) do
+        local origin = ctx:get(entity, component.BAND_ORIGIN)
+        local actor = ctx:get(entity, component.ACTOR)
+        local form = ctx:get(entity, component.MONSTER_POLYMORPH)
+        local source_kind = form and form.original_kind_id or
+            actor and actor.kind_id
+        local leader = catalog.get("monsters", origin.leader_kind_id)
+
+        if not actor or origin.member_kind_id ~= source_kind or
+            not band_members.allowed(leader.band, source_kind) or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("entity " .. ctx:id(entity) ..
+                " has invalid band origin")
+        end
+    end
+
     -- The borrowed body may change repeatedly, but the one permanent owner
     -- must still identify a real source monster and its first lineage.
     for _, entity in ipairs(ctx:query({
@@ -447,6 +488,7 @@ function module.run(ctx, input)
         elseif ctx:get(entity, component.UNIQUE_REVIVAL) or
             ctx:get(entity, component.UNIQUE_REPLACEMENT) or
             ctx:get(entity, component.BENNU_REVIVAL) or
+            ctx:get(entity, component.BAND_ORIGIN) or
             ctx:get(entity, tactical.KIRKE_BAND) or
             ctx:get(entity, tactical.KIRKE_FREED) then
             validate_vault_monster(ctx, entity, actor, health,

@@ -7,6 +7,7 @@ require("policy.combat.monster_death_explosions.bennu")
 require("policy.combat.monster_death_explosions.constructs")
 require("policy.combat.monster_death_explosions.horror")
 require("policy.combat.monster_death_explosions.husk")
+require("policy.combat.monster_tactical.pikel")
 require("policy.combat.unique_revival.boris")
 require("policy.combat.unique_revival.natasha")
 local draining = require("policy.combat.brands.draining")
@@ -22,6 +23,18 @@ local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local zap_ids = require("policy.magic.effects.zaps.ids")
 
 local system = {}
+
+-- Ordinary bands survive their leader. Remove entity references before
+-- the leader is deleted so AI and saves never point at a dead actor.
+local function release_band_links(ctx, leader)
+    for _, entity in ipairs(ctx:query({ component.FOLLOWER })) do
+        local follower = ctx:get(entity, component.FOLLOWER)
+
+        if entity == leader or follower.leader == leader then
+            ctx:remove(entity, component.FOLLOWER)
+        end
+    end
+end
 
 -- A Haunt target may die after summon expiry ran earlier in this action.
 -- Clear saved victim handles before deleting the actor so restore never
@@ -84,7 +97,7 @@ function system.update(ctx)
     for _, entity in ipairs(ctx:query({ "core.health" })) do
         local health = ctx:get(entity, "core.health")
 
-        if health.current <= 0 then
+        if health and health.current <= 0 then
             if entity == ctx:player() then
                 ctx:emit("death", "You die.")
             else
@@ -100,7 +113,8 @@ function system.update(ctx)
                 local summoned = ctx:has(entity, component.SUMMON)
 
                 -- Only a credited, nonsummoned kill grants player XP and advances XP-driven recovery clocks.
-                if kills[ctx:id(entity)] and not summoned then
+                if kills[ctx:id(entity)] and not summoned and
+                    not ctx:has(entity, component.PIKEL_BAND) then
                     local xp = death.experience(definition, health.max)
                     local player = ctx:player()
                     local player_pos = ctx:get(player, "core.position")
@@ -138,6 +152,7 @@ function system.update(ctx)
                 flay.release_for_ghost(ctx, entity)
                 net.release(ctx, entity)
                 local dropped = death.drop_inventory(ctx, entity, position)
+                release_band_links(ctx, entity)
                 ctx:remove_actor(entity, position.level_id)
                 local consumed_corpse = death_hooks.run(ctx, entity,
                     definition, position,
@@ -145,7 +160,8 @@ function system.update(ctx)
 
                 -- Death hooks may consume the body; ordinary corpse placement runs only afterward.
                 if kills[ctx:id(entity)] and not consumed_corpse and
-                    not summoned then
+                    not summoned and
+                    not ctx:has(entity, component.PIKEL_BAND) then
                     local corpse = death.corpse(ctx, definition, position,
                         ctx:get(entity, component.VAULT_ORIGIN))
                     local arrival = ctx:get(entity, doom_howl.ARRIVAL)

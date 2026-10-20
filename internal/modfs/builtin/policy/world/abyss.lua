@@ -1,5 +1,6 @@
 local relocation = require("policy.world.monster_relocation")
 local component = require("constants.component")
+local pikel = require("policy.combat.monster_tactical.pikel")
 
 local abyss = {}
 
@@ -57,6 +58,7 @@ function abyss.banish_monster(ctx, monster, definition)
         origin_y = position.y,
     })
     relocation.move(ctx, monster, abyss.level_id, x, y)
+    pikel.depart(ctx, monster, definition)
     ctx:emit("banishment", "The " .. definition.name ..
         " is cast into the Abyss!")
 

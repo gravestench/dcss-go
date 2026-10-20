@@ -95,6 +95,7 @@ local function restore_band_hog(ctx, target)
 
     restore_body(ctx, target, human.id, human.speed, maximum, "")
     ctx:remove(target, component.FOLLOWER)
+    ctx:remove(target, component.BAND_ORIGIN)
     ctx:remove(target, tactical.KIRKE_BAND)
 end
 

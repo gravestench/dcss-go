@@ -81,6 +81,10 @@ local function spell_hogs(ctx)
     ctx:add(jackal, component.FOLLOWER, {
         leader = jackal_leader,
     })
+    ctx:add(jackal, component.BAND_ORIGIN, {
+        leader_kind_id = monsters.MONS_JACKAL,
+        member_kind_id = monsters.MONS_JACKAL,
+    })
     ctx:add(jackal, component.AI, {
         behavior = "wander",
     })
@@ -144,6 +148,8 @@ local function original_band(ctx)
             "Kirke's band hog returns to human form across levels")
         harness.falsy(ctx:has(hog, tactical.KIRKE_BAND),
             "restoration consumes band origin")
+        harness.falsy(ctx:has(hog, component.BAND_ORIGIN),
+            "restored human retains the old hog band origin")
         harness.falsy(ctx:has(hog, component.FOLLOWER),
             "human no longer follows its dead band leader")
         harness.equal(targets.real_attitude(band_game, hog),

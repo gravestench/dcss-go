@@ -2264,6 +2264,18 @@ checks before allowing the extra actor outside the level's roster budget.
 Modded death effects should keep the source actor's final position as an
 explicit hook argument because the actor has left the occupancy grid.
 
+Monster definitions may declare a `band` with `min`, `max`, and `slots`.
+`policy.population.bands` creates the followers and attaches `core.follower`
+links plus a durable `monster.band_origin` with the leader and member kinds.
+The link ends on leader death or cross-floor movement; the origin remains
+so save validation can recognize the surviving actor. Validation checks
+members against the leader definition instead of a second monster list.
+A band can also name an `origin_component` when later rules must
+distinguish its members from ordinary monsters of the same kind.
+Pikel's lemures use `monster.pikel_band`: his death or banishment dismisses
+marked members across loaded floors, while unrelated lemures remain. An
+ordinary leader's death removes its followers' links and leaves them alive.
+
 Generated levels save `vault_ids` in successful placement order, including
 an arrival, an empty-map controller, and any child maps it placed. The
 single `vault_id` still names the level's primary map for existing level

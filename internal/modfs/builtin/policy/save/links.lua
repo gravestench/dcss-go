@@ -1,6 +1,7 @@
 local component = require("constants.component")
-local monsters = require("ids.monsters")
-local tactical = require("constants.monster_tactical")
+local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
+local members = require("policy.population.band_members")
 
 local links = {}
 
@@ -16,47 +17,43 @@ local function adjacent(a, b)
     return dx <= 1 and dy <= 1 and (dx ~= 0 or dy ~= 0)
 end
 
--- Jackal and Kirke band links may outlive a leader. A living leader must
--- still match the band type and remain on the follower's floor.
+-- A band link is valid only while its live leader and member share a
+-- floor. Leader death and cross-floor movement remove the link first.
 local function validate_followers(ctx)
-    for _, entity in ipairs(ctx:query({ "core.follower" })) do
-        local follower = ctx:get(entity, "core.follower")
-        local actor = ctx:get(entity, "core.actor")
-        local ai = ctx:get(entity, "core.ai")
-        local position = ctx:get(entity, "core.position")
-        local leader_id = ctx:id(follower.leader)
+    for _, entity in ipairs(ctx:query({ component.FOLLOWER })) do
+        local follower = ctx:get(entity, component.FOLLOWER)
+        local actor = ctx:get(entity, component.ACTOR)
+        local ai = ctx:get(entity, component.AI)
+        local position = ctx:get(entity, component.POSITION)
+        local leader = follower.leader
+        local leader_actor = ctx:get(leader, component.ACTOR)
+        local leader_health = ctx:get(leader, component.HEALTH)
+        local leader_position = ctx:get(leader, component.POSITION)
 
-        local form = ctx:get(entity, component.MONSTER_POLYMORPH)
-        local kirke_hog = actor and
-            (actor.kind_id == monsters.MONS_HOG or
-                (form and form.original_kind_id == monsters.MONS_HOG)) and
-            ctx:has(entity, tactical.KIRKE_BAND)
-        local jackal = actor and actor.kind_id == monsters.MONS_JACKAL
-
-        if not ai or not (kirke_hog or jackal) or leader_id == 0 or
-            leader_id == ctx:id(entity) then
+        if not actor or not ai or not position or
+            leader == entity or not leader_actor or
+            not leader_health or leader_health.current <= 0 or
+            not leader_position or
+            leader_position.level_id ~= position.level_id then
             error("entity " .. ctx:id(entity) .. " has an invalid band leader link")
         end
 
-        local leader = ctx:entity(leader_id)
+        local leader_form = ctx:get(leader, component.MONSTER_POLYMORPH)
+        local leader_kind = leader_form and leader_form.original_kind_id or
+            leader_actor.kind_id
+        local definition = catalog.get(categories.MONSTERS, leader_kind)
+        local profile = definition.band
+        local form = ctx:get(entity, component.MONSTER_POLYMORPH)
+        local member_kind = form and form.original_kind_id or actor.kind_id
+        local origin = ctx:get(entity, component.BAND_ORIGIN)
 
-        if leader then
-            local leader_actor = ctx:get(leader, "core.actor")
-            local leader_position = ctx:get(leader, "core.position")
-            local leader_form = ctx:get(leader,
-                component.MONSTER_POLYMORPH)
-
-            local expected = kirke_hog and monsters.MONS_KIRKE or
-                monsters.MONS_JACKAL
-            local source_kirke = kirke_hog and leader_form and
-                leader_form.original_kind_id == monsters.MONS_KIRKE
-
-            if not leader_actor or
-                (leader_actor.kind_id ~= expected and not source_kirke) or
-                not leader_position or not position or
-                leader_position.level_id ~= position.level_id then
-                error("entity " .. ctx:id(entity) .. " has an incompatible living band leader")
-            end
+        if not origin or origin.leader_kind_id ~= leader_kind or
+            origin.member_kind_id ~= member_kind or
+            not members.allowed(profile, member_kind) or
+            (profile.origin_component and
+                not ctx:has(entity, profile.origin_component)) then
+            error("entity " .. ctx:id(entity) ..
+                " has an incompatible band member")
         end
     end
 end

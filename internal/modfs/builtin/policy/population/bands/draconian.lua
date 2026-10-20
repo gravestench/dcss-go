@@ -32,6 +32,20 @@ local classed = {
     monsters.MONS_DRACONIAN_SCORCHER,
 }
 
+-- Save validation consults the same two source pools as placement. A
+-- mod can alter either pool here without editing a central ID switch.
+function policy.allows(kind_id)
+    for _, pool in ipairs({ species, classed }) do
+        for _, candidate in ipairs(pool) do
+            if candidate == kind_id then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
 -- The authored Tiamat vault occurs only in Zot, which always satisfies the
 -- source's absolute-depth threshold for the classed draw.
 function policy.choose(ctx)

@@ -96,6 +96,10 @@ function bands.spawn(ctx, leader, level, excluded)
             ctx:add(follower, component.FOLLOWER, {
                 leader = leader,
             })
+            ctx:add(follower, component.BAND_ORIGIN, {
+                leader_kind_id = actor.kind_id,
+                member_kind_id = kind_id,
+            })
 
             if profile.origin_component then
                 ctx:add(follower, profile.origin_component, {

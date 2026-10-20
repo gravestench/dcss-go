@@ -6,6 +6,7 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
+local component = require("constants.component")
 local item_ids = require("ids.items")
 local brands = require("constants.weapon_brands")
 local spellbooks = require("ids.monster_spellbooks")
@@ -19,6 +20,7 @@ local definition = {
     band = {
         min = 4,
         max = 5,
+        origin_component = component.PIKEL_BAND,
         slots = {
             {
                 monsters.MONS_LEMURE,

@@ -8,7 +8,7 @@ import (
 	"crawl/internal/vault"
 )
 
-const Version = 28
+const Version = 29
 
 type Snapshot struct {
 	Version        int               `json:"version"`
