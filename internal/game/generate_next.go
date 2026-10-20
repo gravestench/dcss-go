@@ -55,19 +55,23 @@ func liveParentRecord(parent *Level) map[string]any {
 
 	for _, link := range parent.StairLinks() {
 		stairs = append(stairs, map[string]any{
-			"x":       link.X,
-			"y":       link.Y,
-			"pending": link.Pending,
+			"x":                link.X,
+			"y":                link.Y,
+			"pending":          link.Pending,
+			"to_level_id":      link.ToLevelID,
+			"target_branch_id": link.TargetBranchID,
 		})
 	}
 
 	return map[string]any{
-		"id":        parent.ID,
-		"width":     parent.width,
-		"height":    len(parent.terrain),
-		"seen":      seen,
-		"protected": protected,
-		"stairs":    stairs,
+		"id":          parent.ID,
+		"branch_id":   parent.BranchID,
+		"local_depth": parent.ID,
+		"width":       parent.width,
+		"height":      len(parent.terrain),
+		"seen":        seen,
+		"protected":   protected,
+		"stairs":      stairs,
 	}
 }
 
@@ -172,7 +176,9 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 	}
 
 	result, err := g.scripts.Policy("world.generate_next_floor", map[string]any{
-		"depth":             depth,
+		"branch_id":         parent.BranchID,
+		"local_depth":       depth,
+		"level_id":          depth,
 		"player_species_id": player.SpeciesID,
 		"player_name":       player.Name,
 		"from_x":            selected.X,

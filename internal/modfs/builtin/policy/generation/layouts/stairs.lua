@@ -146,8 +146,8 @@ end
 -- Complete one region before moving to the next, so an up/down pair never
 -- spans a solid wall. Global serials keep new source stair glyph variants
 -- distinct across otherwise disconnected cave bubbles.
-local function complete_region(builder, region, count, serials)
-    local missing = count * 2 - #region.up - #region.down
+local function complete_region(builder, region, up_count, down_count, serials)
+    local missing = up_count + down_count - #region.up - #region.down
 
     if #region.floor < missing then
         error("layout has too few connected floor cells for stairs")
@@ -155,7 +155,7 @@ local function complete_region(builder, region, count, serials)
 
     table.sort(region.floor, before)
 
-    while #region.up < count do
+    while #region.up < up_count do
         local point = take_floor(builder, region)
         local glyph = new_up[(serials.up % #new_up) + 1]
 
@@ -164,7 +164,7 @@ local function complete_region(builder, region, count, serials)
         serials.up = serials.up + 1
     end
 
-    while #region.down < count do
+    while #region.down < down_count do
         local point = take_floor(builder, region)
         local glyph = new_down[(serials.down % #new_down) + 1]
 
@@ -178,7 +178,7 @@ local function complete_region(builder, region, count, serials)
 
     local pairs = {}
 
-    for index = 1, count do
+    for index = 1, math.max(#region.up, #region.down) do
         pairs[index] = {
             up = region.up[index],
             down = region.down[index],
@@ -188,24 +188,32 @@ local function complete_region(builder, region, count, serials)
     return pairs
 end
 
--- Return ordinary up/down pairs after filling missing endpoints in each
--- authored region. Three pairs remain the minimum for a normal floor;
--- extra pairs belong to the first region, which owns the first authored up.
-function stairs.complete(builder)
+-- Each profile states the minimum exits the branch needs in addition to
+-- authored exits. Terminal floors request no new down exits, while a
+-- branch entry requests only one return exit to its parent.
+function stairs.complete(builder, profile)
+    profile = profile or { up = 3, down = 3 }
     local regions = selected_regions(builder)
 
     if #regions == 0 then
         error("layout has no playable floor for stairs")
     end
 
-    local count = 0
+    local up_count = 0
+    local down_count = 0
     local serials = {
         up = 0,
         down = 0,
     }
 
     for _, region in ipairs(regions) do
-        count = count + math.max(1, #region.up, #region.down)
+        -- Ordinary floors pair every authored exit within its region.
+        -- A branch entry or bottom uses only the exits actually required.
+        local paired = math.max(1, #region.up, #region.down)
+
+        up_count = up_count + (profile.up >= 3 and paired or #region.up)
+        down_count = down_count +
+            (profile.down >= 3 and paired or #region.down)
         serials.up = serials.up + #region.up
         serials.down = serials.down + #region.down
     end
@@ -213,14 +221,18 @@ function stairs.complete(builder)
     local pairs = {}
 
     for index, region in ipairs(regions) do
-        local needed = math.max(1, #region.up, #region.down)
+        local paired = math.max(1, #region.up, #region.down)
+        local needed_up = profile.up >= 3 and paired or #region.up
+        local needed_down = profile.down >= 3 and paired or #region.down
 
         if index == 1 then
-            needed = needed + math.max(0, 3 - count)
+            needed_up = needed_up + math.max(0, profile.up - up_count)
+            needed_down = needed_down + math.max(0,
+                profile.down - down_count)
         end
 
         for _, pair in ipairs(complete_region(builder,
-            region, needed, serials)) do
+            region, needed_up, needed_down, serials)) do
             pairs[#pairs + 1] = pair
         end
     end

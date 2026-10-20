@@ -3,6 +3,7 @@
 -- patch instead of replaying or replacing the older floor.
 local branches = require("ids.branches")
 local terrain = require("constants.terrain")
+local branch_levels = require("policy.generation.branch_levels")
 
 local stairs = {}
 
@@ -52,7 +53,11 @@ local function exits(floor, upward)
     local points = {}
 
     for _, pair in ipairs(floor.layout.stairs) do
-        points[#points + 1] = upward and pair.up or pair.down
+        local point = upward and pair.up or pair.down
+
+        if point then
+            points[#points + 1] = point
+        end
     end
 
     local authored = upward and floor.source_up or floor.source_down
@@ -87,7 +92,8 @@ function stairs.first(floor)
         floor.links[#floor.links + 1] = {
             x = point.x,
             y = point.y,
-            to_level_id = floor.depth + 1,
+            to_level_id = branch_levels.id(floor.branch_id,
+                floor.depth + 1),
             to_x = 0,
             to_y = 0,
             pending = true,
@@ -214,9 +220,17 @@ end
 -- this action's entry; the remaining links are equally durable for return.
 function stairs.pair(ctx, parent, child, selected)
     local parent_down = {}
+    local branch_entry = child.depth == 1 and
+        child.branch_id ~= branches.BRANCH_DUNGEON
 
     for _, link in ipairs(parent.stairs) do
-        if link.pending then
+        local chosen_entry = branch_entry and
+            link.target_branch_id == child.branch_id and
+            link.x == selected.x and link.y == selected.y
+        local same_child = not branch_entry and link.pending and
+            link.to_level_id == child.id
+
+        if chosen_entry or same_child then
             parent_down[#parent_down + 1] = {
                 x = link.x,
                 y = link.y,
@@ -228,7 +242,7 @@ function stairs.pair(ctx, parent, child, selected)
     table.sort(parent_down, before)
 
     if #parent_down == 0 then
-        error("parent Dungeon floor has no pending down stairs")
+        error("parent floor has no stair to the chosen branch floor")
     end
 
     local child_up = exits(child, true)
@@ -238,7 +252,7 @@ function stairs.pair(ctx, parent, child, selected)
             #parent_down - #child_up)) do
             child_up[#child_up + 1] = point
         end
-    elseif #child_up > #parent_down then
+    elseif #child_up > #parent_down and not branch_entry then
         for _, point in ipairs(parent_departures(ctx, parent,
             parent_down[1], #child_up - #parent_down)) do
             parent_down[#parent_down + 1] = {
@@ -277,11 +291,30 @@ function stairs.pair(ctx, parent, child, selected)
         end
     end
 
+    -- Source maps can author more up exits than the single scheduled
+    -- parent entrance. Keep their glyphs visible without fabricating
+    -- extra parent entrances or false reciprocal links.
+    if branch_entry then
+        for index = #parent_down + 1, #child_up do
+            local point = child_up[index]
+
+            child.links[#child.links + 1] = {
+                x = point.x,
+                y = point.y,
+                to_level_id = 0,
+                to_x = 0,
+                to_y = 0,
+                unavailable = "This stair has no matching branch entrance.",
+            }
+        end
+    end
+
     if not entry then
         error("selected Dungeon stair is not a pending parent exit")
     end
 
-    local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
+    local branch = register.get("branches", child.branch_id)
+    local bottom = branch.depth
 
     for _, point in ipairs(exits(child, false)) do
         local boundary = child.depth == bottom
@@ -289,11 +322,15 @@ function stairs.pair(ctx, parent, child, selected)
         child.links[#child.links + 1] = {
             x = point.x,
             y = point.y,
-            to_level_id = boundary and 0 or child.depth + 1,
+            to_level_id = boundary and 0 or branch_levels.id(
+                child.branch_id, child.depth + 1),
             to_x = 0,
             to_y = 0,
             pending = not boundary,
-            unavailable = boundary and depths_unavailable or "",
+            unavailable = boundary and
+                (child.branch_id == branches.BRANCH_DUNGEON and
+                    depths_unavailable or
+                    "There are no deeper floors in " .. branch.long_name .. ".") or "",
         }
     end
 

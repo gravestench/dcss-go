@@ -90,6 +90,17 @@ function test.run()
         "Diamond Mine uses one source room radius")
     harness.truthy(mine.room_count > 0,
         "Diamond Mine places weighted lattice rooms")
+
+    local bottom = catalog.execute(context_for(1010),
+        catalog.get("layout_regular_city"), branches.BRANCH_LAIR, 5, {
+            up = 3,
+            down = 0,
+        })
+
+    for _, pair in ipairs(bottom.stairs) do
+        harness.falsy(pair.down,
+            "branch bottom must not invent a deeper stair")
+    end
 end
 
 return test

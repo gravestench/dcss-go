@@ -229,7 +229,7 @@ end
 -- Execute a procedural hook or place an authored MAP. A source validator
 -- may reject a random shape; bounded retries consume new draws without
 -- changing layout identity. The postpass adds missing connected stairs.
-function catalog.execute(ctx, definition, branch_id, local_depth)
+function catalog.execute(ctx, definition, branch_id, local_depth, profile)
     local run, validate = methods(definition)
     local branch = register.get(categories.BRANCHES, branch_id)
     local api = {
@@ -258,7 +258,7 @@ function catalog.execute(ctx, definition, branch_id, local_depth)
         end
 
         if not validate or hooks.run(definition, validate, result) then
-            result.stairs = stairs.complete(result.builder)
+            result.stairs = stairs.complete(result.builder, profile)
             result.rows = result.builder:rows()
             result.id = definition.id
 

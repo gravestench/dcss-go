@@ -30,7 +30,9 @@ local function validate_request(request)
         type(request.depth) ~= "number" or
         request.depth < 1 or
         request.depth % 1 ~= 0 then
-        error("item generation requires a positive integer depth")
+        error("item generation requires a positive integer depth at " ..
+            tostring(request and request.site) .. ": " ..
+            tostring(request and request.depth))
     end
 
     if not valid_quality[request.quality] then

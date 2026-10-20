@@ -5,6 +5,8 @@ local grid = require("policy.generation.grid")
 local harness = require("tests.harness")
 local stairs = require("policy.generation.generated_stairs")
 local terrain = require("constants.terrain")
+local branches = require("ids.branches")
+local branch_levels = require("policy.generation.branch_levels")
 
 local test = {}
 
@@ -42,6 +44,8 @@ local function floor(depth)
     end
 
     return {
+        id = depth,
+        branch_id = branches.BRANCH_DUNGEON,
         depth = depth,
         layout = {
             builder = builder,
@@ -177,12 +181,56 @@ local function extra_child_up_gets_safe_parent_departure()
         "wall remains unchanged")
 end
 
+-- One scheduled entrance must resolve only that parent cell. A source
+-- layout can contain several up glyphs, but those cannot invent a second
+-- Dungeon entrance that was never chosen in the saved branch schedule.
+local function branch_entry_uses_one_parent_entrance()
+    local parent = floor(8)
+    local child = floor(1)
+    local entrance = { x = 60, y = 30 }
+
+    child.branch_id = branches.BRANCH_LAIR
+    child.id = branch_levels.id(child.branch_id, 1)
+    parent.layout.builder:set(entrance.x, entrance.y, ">")
+    stairs.first(parent)
+    parent.links[#parent.links + 1] = {
+        x = entrance.x,
+        y = entrance.y,
+        target_branch_id = branches.BRANCH_LAIR,
+        to_level_id = 0,
+        pending = false,
+    }
+
+    local patches, entry = stairs.pair(parent_context(parent), {
+        id = parent.id,
+        width = 80,
+        height = 70,
+        seen = {},
+        stairs = parent.links,
+    }, child, entrance)
+
+    harness.equal(#patches, 1, "one parent branch entrance")
+    harness.equal(patches[1].x, entrance.x, "selected entrance patched")
+    harness.equal(patches[1].to_x, entry.x, "exact branch landing")
+
+    local returns = 0
+
+    for _, link in ipairs(child.links) do
+        if link.to_level_id == parent.id then
+            returns = returns + 1
+        end
+    end
+
+    harness.equal(returns, 1, "one reciprocal return")
+end
+
 -- Run each pairing shape against one owner, so additions cannot regress
 -- ordinary or source-vault stairs independently.
 function test.run()
     first_floor_has_pending_downstairs()
     extra_parent_down_gets_child_landing()
     extra_child_up_gets_safe_parent_departure()
+    branch_entry_uses_one_parent_entrance()
 end
 
 return test

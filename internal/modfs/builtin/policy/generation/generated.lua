@@ -13,6 +13,7 @@ local vault_glyphs = require("constants.vault_glyphs")
 local vault_effects = require("constants.vault_effects")
 local vault_extra = require("policy.generation.vaults.extra")
 local branch_schedule = require("policy.generation.branch_schedule")
+local branch_levels = require("policy.generation.branch_levels")
 
 local generated = {}
 
@@ -24,8 +25,16 @@ local entrance_directions = {
 }
 
 -- Each floor draws three population dice from its own depth-specific die size.
-local function monster_count(ctx, depth)
-    local die_size = depth == 1 and 12 or 10
+local function monster_count(ctx, branch_id, depth)
+    local branch = register.get("branches", branch_id)
+    local die_size = tonumber(branch.mon_die_size_expr)
+
+    if not die_size then
+        -- Source Dungeon generation uses its own deeper-floor die. Other
+        -- branches use the source default of twelve sides per die.
+        die_size = branch_id == branches.BRANCH_DUNGEON and
+            depth > 1 and 10 or 12
+    end
     local count = 0
 
     for _ = 1, 3 do
@@ -166,8 +175,13 @@ local function protected_cells(level, placed)
     end
 
     for _, pair in ipairs(level.stairs) do
-        vault_extra.protect(cells, pair.up)
-        vault_extra.protect(cells, pair.down)
+        if pair.up then
+            vault_extra.protect(cells, pair.up)
+        end
+
+        if pair.down then
+            vault_extra.protect(cells, pair.down)
+        end
     end
 
     if placed then
@@ -210,8 +224,13 @@ local function base_stair_points(layout)
     local points = {}
 
     for _, pair in ipairs(layout.stairs) do
-        points[#points + 1] = pair.up
-        points[#points + 1] = pair.down
+        if pair.up then
+            points[#points + 1] = pair.up
+        end
+
+        if pair.down then
+            points[#points + 1] = pair.down
+        end
     end
 
     return points
@@ -259,10 +278,9 @@ end
 -- ordinary linked-stair feature. Travel becomes available with the shared
 -- branch installer; until then the player gets a named unavailable reason.
 local function place_branch_entrances(builder, layout, protected,
-    chosen, depth)
+    chosen, branch_id, depth)
     local links = {}
-    local entries = branch_schedule.entries(chosen,
-        branches.BRANCH_DUNGEON, depth)
+    local entries = branch_schedule.entries(chosen, branch_id, depth)
     local start = layout.stairs[1].up
 
     for _, entry in ipairs(entries) do
@@ -289,21 +307,35 @@ end
 
 -- Generate one floor before pairing its stairs with neighboring floors.
 -- The arrival only belongs to D:1; supplemental vaults use actual depth.
-local function build_floor(ctx, player, depth, bottom, prior_vault_ids,
+local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
     chosen_schedule)
+    local branch = register.get("branches", branch_id)
+    local bottom = branch.depth
+    local absolute_depth = branch.absolute_depth + depth - 1
+
+    -- Source Dungeon stores zero as its branch offset, while item and
+    -- monster generation use one-based absolute depth on D:1.
+    if branch_id == branches.BRANCH_DUNGEON then
+        absolute_depth = depth
+    end
+    local profile = {
+        up = branch_id ~= branches.BRANCH_DUNGEON and depth == 1 and 1 or 3,
+        down = (branch_id == branches.BRANCH_DUNGEON or
+            depth < bottom) and 3 or 0,
+    }
     local layout
     local arrival
     local arrival_vault
 
-    if depth == 1 then
+    if branch_id == branches.BRANCH_DUNGEON and depth == 1 then
         layout, arrival, arrival_vault = place_first_level(ctx, player)
     else
         local random = grid.new(ctx)
         local definition = layouts.choose(random,
-            branches.BRANCH_DUNGEON, depth, bottom)
+            branch_id, depth, bottom)
 
         layout = layouts.execute(ctx, definition,
-            branches.BRANCH_DUNGEON, depth)
+            branch_id, depth, profile)
     end
 
     local required = base_stair_points(layout)
@@ -314,15 +346,15 @@ local function build_floor(ctx, player, depth, bottom, prior_vault_ids,
 
     local protected = protected_cells(layout, arrival)
     local branch_links = place_branch_entrances(layout.builder,
-        layout, protected, chosen_schedule, depth)
+        layout, protected, chosen_schedule, branch_id, depth)
     local extra, controller, extra_ids = vault_extra.generate(
         ctx,
         layout.builder,
         {
-            branch_id = branches.BRANCH_DUNGEON,
+            branch_id = branch_id,
             depth = depth,
             branch_bottom = bottom,
-            absolute_depth = depth,
+            absolute_depth = absolute_depth,
             layout_family = layout_family(layout),
             prior_vault_ids = prior_vault_ids,
             arrival_vault = arrival_vault,
@@ -332,10 +364,10 @@ local function build_floor(ctx, player, depth, bottom, prior_vault_ids,
                 species_id = player.species_id,
                 name = player.name,
                 started = player.started or false,
-                branch_id = branches.BRANCH_DUNGEON,
+                branch_id = branch_id,
                 depth = depth,
                 branch_bottom = bottom,
-                absolute_depth = depth,
+                absolute_depth = absolute_depth,
                 layout_family = layout_family(layout),
             },
         }
@@ -361,6 +393,8 @@ local function build_floor(ctx, player, depth, bottom, prior_vault_ids,
     end
 
     return {
+        id = branch_levels.id(branch_id, depth),
+        branch_id = branch_id,
         depth = depth,
         layout = layout,
         arrival = arrival,
@@ -393,7 +427,7 @@ end
 
 -- Project the finished builder, links, population budget, and vault intent
 -- into the level record that the Go world materializes and saves.
-local function level_record(ctx, floor, depth)
+local function level_record(ctx, floor)
     local arrival = floor.arrival
     local entry = floor_entry(floor)
     local base_exclusions
@@ -403,13 +437,14 @@ local function level_record(ctx, floor, depth)
     end
 
     return {
-        id = depth,
-        branch_id = branches.BRANCH_DUNGEON,
+        id = floor.id,
+        branch_id = floor.branch_id,
+        local_depth = floor.depth,
         rows = floor.layout.builder:rows(),
         stairs = floor.links,
         entry_x = entry.x,
         entry_y = entry.y,
-        initial_monsters = monster_count(ctx, depth),
+        initial_monsters = monster_count(ctx, floor.branch_id, floor.depth),
         vault_id = arrival and arrival.id or floor.controller,
         vault_ids = floor.vault_ids,
         vault_records = #floor.records > 0 and floor.records or nil,
@@ -432,17 +467,17 @@ end
 -- preselecting D:2 terrain, vaults, monster budget, or destination cells.
 function generated.first(ctx, input)
     local schedule = branch_schedule.choose(ctx)
-    local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
     local player = {
         species_id = input.player_species_id,
         name = input.player_name,
         started = false,
     }
-    local floor = build_floor(ctx, player, 1, bottom, {}, schedule)
+    local floor = build_floor(ctx, player,
+        branches.BRANCH_DUNGEON, 1, {}, schedule)
 
     live_stairs.first(floor)
 
-    local level = level_record(ctx, floor, 1)
+    local level = level_record(ctx, floor)
     local entry = floor_entry(floor)
     local curing = nearest.open_floor(level.rows, entry, nil, 1)
 
@@ -463,12 +498,27 @@ end
 -- layout and vault draws happen after the player's previous actions.
 function generated.next(ctx, input)
     branch_schedule.validate(input.branch_schedule)
-    local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
-    local depth = input.depth
+    local branch_id = input.branch_id
+    local depth = input.local_depth
+    local branch = register.get("branches", branch_id)
+    local bottom = branch.depth
     local parent = input.parent
+    local level_id = branch_levels.id(branch_id, depth)
 
-    if depth < 2 or depth > bottom or parent.id ~= depth - 1 then
-        error("next Dungeon floor needs its contiguous parent")
+    if input.level_id ~= level_id or depth > bottom then
+        error("next floor has invalid branch depth or ID")
+    end
+
+    if depth == 1 then
+        local entry = input.branch_schedule.entries[branch_id]
+
+        if not entry or parent.branch_id ~= entry.parent_id or
+            parent.local_depth ~= entry.parent_depth then
+            error("branch entry does not match its scheduled parent")
+        end
+    elseif parent.branch_id ~= branch_id or
+        parent.local_depth ~= depth - 1 then
+        error("next branch floor needs its contiguous parent")
     end
 
     local player = {
@@ -476,19 +526,19 @@ function generated.next(ctx, input)
         name = input.player_name,
         started = true,
     }
-    local floor = build_floor(ctx, player, depth, bottom,
+    local floor = build_floor(ctx, player, branch_id, depth,
         input.prior_vault_ids, input.branch_schedule)
     local patches, entry = live_stairs.pair(ctx, parent, floor, {
         x = input.from_x,
         y = input.from_y,
     })
-    local level = level_record(ctx, floor, depth)
+    local level = level_record(ctx, floor)
     local items = {}
 
     level.entry_x = entry.x
     level.entry_y = entry.y
 
-    if depth == 2 then
+    if branch_id == branches.BRANCH_DUNGEON and depth == 2 then
         local base_entry = floor_entry(floor)
         local heal = nearest.open_floor(level.rows, base_entry, nil, 2)
         local haste = nearest.open_floor(level.rows, base_entry, heal, 2)

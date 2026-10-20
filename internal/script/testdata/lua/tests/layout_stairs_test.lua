@@ -112,12 +112,34 @@ local function preserves_separate_stair_bubbles()
     end
 end
 
+-- A terminal branch floor keeps authored down exits as map facts, but the
+-- engine must not manufacture a deeper level beyond the source branch depth.
+local function branch_bottom_does_not_add_downstairs()
+    local builder = grid.new(random_context())
+
+    for y = 10, 25 do
+        for x = 10, 30 do
+            builder:set(x, y, ".")
+        end
+    end
+
+    local pairs = stairs.complete(builder, {
+        up = 1,
+        down = 0,
+    })
+
+    harness.equal(#pairs, 1, "one branch return stair")
+    harness.truthy(pairs[1].up, "branch return stair exists")
+    harness.falsy(pairs[1].down, "no invented down stair")
+end
+
 -- Run both successful construction paths and the bounded failure case.
 function test.run()
     fills_missing_stairs()
     preserves_authored_stairs()
     rejects_insufficient_floor()
     preserves_separate_stair_bubbles()
+    branch_bottom_does_not_add_downstairs()
 end
 
 return test
