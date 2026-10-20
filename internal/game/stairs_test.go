@@ -125,6 +125,91 @@ func TestRestoreRejectsInvalidStairDestination(t *testing.T) {
 	}
 }
 
+func TestPendingStairResolvesToExactLanding(t *testing.T) {
+	g := newStepGame(t)
+	level := g.levels[1]
+
+	if err := level.SetCell(3, 3, fixtureFeature('>')); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := level.AddStairLink(StairLink{
+		X:         3,
+		Y:         3,
+		ToLevelID: 3,
+		Pending:   true,
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := level.ResolveStairLink(3, 3, 4, 5); err != nil {
+		t.Fatal(err)
+	}
+
+	link, found := level.StairAt(3, 3)
+
+	if !found ||
+		link.Pending ||
+		link.ToX != 4 ||
+		link.ToY != 5 {
+		t.Fatalf("resolved link = %+v, found %t", link, found)
+	}
+
+	if err := level.ResolveStairLink(3, 3, 6, 7); err == nil {
+		t.Fatal("resolved a stair link twice")
+	}
+}
+
+func TestPendingStairRejectsConflictingDestinationState(t *testing.T) {
+	for _, testCase := range []struct {
+		name string
+		link StairLink
+	}{
+		{
+			name: "no target level",
+			link: StairLink{
+				Pending: true,
+			},
+		},
+
+		{
+			name: "unavailable message",
+			link: StairLink{
+				Pending:     true,
+				ToLevelID:   2,
+				Unavailable: "blocked",
+			},
+		},
+
+		{
+			name: "destination coordinate",
+			link: StairLink{
+				Pending:   true,
+				ToLevelID: 2,
+				ToX:       1,
+			},
+		},
+	} {
+		t.Run(testCase.name, func(t *testing.T) {
+			g := newStepGame(t)
+			level := g.levels[1]
+
+			if err := level.SetCell(3, 3, fixtureFeature('>')); err != nil {
+				t.Fatal(err)
+			}
+
+			link := testCase.link
+
+			link.X = 3
+			link.Y = 3
+
+			if err := level.AddStairLink(link); err == nil {
+				t.Fatalf("accepted invalid pending stair %+v", link)
+			}
+		})
+	}
+}
+
 func TestFixedScenarioRestoreRejectsForgedUnavailableStair(t *testing.T) {
 	g := newStepGame(t)
 	snapshot := g.Snapshot()

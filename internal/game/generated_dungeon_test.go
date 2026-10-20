@@ -25,6 +25,267 @@ func newGeneratedTestGame(t *testing.T, seed uint64) *Game {
 	return g
 }
 
+// Model a saved frontier while the constructor still builds the full map.
+// The generated save policy must accept only this contiguous Dungeon prefix.
+func pendingDungeonPrefixSnapshot(t *testing.T) (save.Snapshot, save.Snapshot) {
+	t.Helper()
+	g := newGeneratedTestGame(t, 41)
+	full := g.Snapshot()
+
+	prefix := full
+
+	prefix.Levels = nil
+	prefix.Entities = nil
+
+	kept := map[int]bool{}
+
+	for _, level := range full.Levels {
+		if level.ID != 1 && level.BranchID == g.levels[1].BranchID {
+			continue
+		}
+
+		if level.ID == 1 {
+			level.Stairs = append([]save.StairRecord(nil), level.Stairs...)
+
+			for index := range level.Stairs {
+				stair := &level.Stairs[index]
+
+				if stair.ToLevelID == 2 {
+					stair.ToX = 0
+					stair.ToY = 0
+					stair.Pending = true
+				}
+			}
+		}
+
+		prefix.Levels = append(prefix.Levels, level)
+		kept[level.ID] = true
+	}
+
+	for _, entity := range full.Entities {
+		if entity.Position == nil || kept[entity.Position.LevelID] {
+			prefix.Entities = append(prefix.Entities, entity)
+		}
+	}
+
+	return prefix, full
+}
+
+func TestGeneratedSaveAcceptsPendingDungeonFrontier(t *testing.T) {
+	prefix, _ := pendingDungeonPrefixSnapshot(t)
+	loaded, err := Restore(prefix)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer loaded.Close()
+
+	if !reflect.DeepEqual(prefix, loaded.Snapshot()) {
+		t.Fatal("pending Dungeon frontier changed across restore")
+	}
+}
+
+func TestGeneratedSaveRejectsInvalidPendingDungeonFrontier(t *testing.T) {
+	for _, testCase := range []struct {
+		name   string
+		mutate func(*save.Snapshot, save.Snapshot)
+	}{
+		{
+			name: "missing middle floor",
+			mutate: func(prefix *save.Snapshot, full save.Snapshot) {
+				prefix.Levels = append(prefix.Levels, full.Levels[2])
+			},
+		},
+
+		{
+			name: "resolved stair to missing floor",
+			mutate: func(prefix *save.Snapshot, _ save.Snapshot) {
+				for index := range prefix.Levels[0].Stairs {
+					stair := &prefix.Levels[0].Stairs[index]
+
+					if stair.Pending {
+						stair.Pending = false
+						stair.ToX = 1
+						stair.ToY = 1
+
+						return
+					}
+				}
+			},
+		},
+
+		{
+			name: "pending stair to existing floor",
+			mutate: func(prefix *save.Snapshot, full save.Snapshot) {
+				prefix.Levels = full.Levels
+				prefix.Entities = full.Entities
+
+				for index := range prefix.Levels[0].Stairs {
+					stair := &prefix.Levels[0].Stairs[index]
+
+					if stair.ToLevelID == 2 {
+						stair.Pending = true
+						stair.ToX = 0
+						stair.ToY = 0
+
+						return
+					}
+				}
+			},
+		},
+
+		{
+			name: "pending stair skips a floor",
+			mutate: func(prefix *save.Snapshot, _ save.Snapshot) {
+				for index := range prefix.Levels[0].Stairs {
+					stair := &prefix.Levels[0].Stairs[index]
+
+					if stair.Pending {
+						stair.ToLevelID = 3
+
+						return
+					}
+				}
+			},
+		},
+
+		{
+			name: "pending stair has a destination coordinate",
+			mutate: func(prefix *save.Snapshot, _ save.Snapshot) {
+				for index := range prefix.Levels[0].Stairs {
+					stair := &prefix.Levels[0].Stairs[index]
+
+					if stair.Pending {
+						stair.ToX = 1
+
+						return
+					}
+				}
+			},
+		},
+	} {
+		t.Run(testCase.name, func(t *testing.T) {
+			prefix, full := pendingDungeonPrefixSnapshot(t)
+			testCase.mutate(&prefix, full)
+
+			if loaded, err := Restore(prefix); err == nil {
+				loaded.Close()
+				t.Fatal("accepted invalid generated Dungeon frontier")
+			}
+		})
+	}
+}
+
+func TestNextFloorLuaPolicyPairsLiveParentStairs(t *testing.T) {
+	g := newGeneratedTestGame(t, 41)
+	parent := g.levels[1]
+	stairs := []any{}
+	var selected StairLink
+
+	for _, link := range parent.StairLinks() {
+		if link.ToLevelID != 2 {
+			continue
+		}
+
+		stairs = append(stairs, map[string]any{
+			"x":       link.X,
+			"y":       link.Y,
+			"pending": true,
+		})
+
+		if selected.ToLevelID == 0 {
+			selected = link
+		}
+	}
+
+	if selected.ToLevelID == 0 {
+		t.Fatal("D:1 has no downward stair")
+	}
+
+	result, err := g.scripts.Policy("world.generate_next_floor", map[string]any{
+		"depth":             2,
+		"player_species_id": "SP_HUMAN",
+		"player_name":       "Tester",
+		"from_x":            selected.X,
+		"from_y":            selected.Y,
+		"parent": map[string]any{
+			"id":     1,
+			"width":  parent.width,
+			"height": len(parent.terrain),
+			"seen":   []any{},
+			"stairs": stairs,
+		},
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	level, ok := result["level"].(map[string]any)
+
+	if !ok {
+		t.Fatal("next-floor policy returned no level")
+	}
+
+	cells, ok := level["cells"].([]any)
+
+	if !ok || len(cells) != 70 {
+		t.Fatalf("D:2 cell rows = %d", len(cells))
+	}
+
+	patches, ok := result["parent_links"].([]any)
+
+	if !ok || len(patches) < len(stairs) {
+		t.Fatalf("parent links = %d, want at least %d", len(patches), len(stairs))
+	}
+
+	entry, err := luaScenarioPoint(result["entry"])
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feature, err := luaScenarioCells(cells)
+
+	if err != nil ||
+		feature[entry.y][entry.x] != terrain.StairsUp {
+		t.Fatalf("selected D:1 stair lands at %+v: %v", entry, err)
+	}
+}
+
+func TestFirstFloorLuaPolicyLeavesFutureDungeonUngenerated(t *testing.T) {
+	g := newGeneratedTestGame(t, 41)
+	result, err := g.scripts.Policy("world.generate_first_floor", map[string]any{
+		"player_species_id": "SP_HUMAN",
+		"player_name":       "Tester",
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	levels, ok := result["levels"].([]any)
+
+	if !ok || len(levels) != 2 {
+		t.Fatalf("startup policy returned %d levels, want D:1 and Abyss",
+			len(levels))
+	}
+
+	first, ok := levels[0].(map[string]any)
+
+	if !ok || first["id"] != int64(1) {
+		t.Fatalf("first generated level = %+v", levels[0])
+	}
+
+	items, ok := result["starting_items"].([]any)
+
+	if !ok || len(items) != 1 {
+		t.Fatalf("first-floor starting items = %d, want curing only",
+			len(items))
+	}
+}
+
 func TestGeneratedDungeonReachesDepthFifteen(t *testing.T) {
 	g := newGeneratedTestGame(t, 41)
 

@@ -57,6 +57,7 @@ type StairLink struct {
 	ToLevelID   int
 	ToX         int
 	ToY         int
+	Pending     bool
 	Unavailable string
 }
 
@@ -103,22 +104,32 @@ func NewLevel(id int, cells [][]terrain.ID, positions *akara.Store[ecs.Position]
 	}, nil
 }
 
+func validStairDestination(link StairLink) bool {
+	if link.Pending {
+		return link.Unavailable == "" &&
+			link.ToLevelID > 0 &&
+			link.ToX == 0 &&
+			link.ToY == 0
+	}
+
+	if link.Unavailable != "" {
+		return link.ToLevelID == 0 &&
+			link.ToX == 0 &&
+			link.ToY == 0
+	}
+
+	return link.ToLevelID > 0 &&
+		link.ToX >= 0 &&
+		link.ToY >= 0
+}
+
 func (l *Level) AddStairLink(link StairLink) error {
 	if !l.inBounds(link.X, link.Y) ||
 		!terrain.IsLinkedStair(l.terrain[link.Y][link.X]) {
 		return fmt.Errorf("level %d has invalid stair link at (%d,%d)", l.ID, link.X, link.Y)
 	}
 
-	boundary := link.Unavailable != ""
-
-	if boundary &&
-		(link.ToLevelID != 0 ||
-			link.ToX != 0 ||
-			link.ToY != 0) ||
-		!boundary &&
-			(link.ToLevelID <= 0 ||
-				link.ToX < 0 ||
-				link.ToY < 0) {
+	if !validStairDestination(link) {
 		return fmt.Errorf("level %d has invalid stair destination at (%d,%d)", l.ID, link.X, link.Y)
 	}
 
@@ -131,6 +142,31 @@ func (l *Level) AddStairLink(link StairLink) error {
 		return fmt.Errorf("level %d has duplicate stair link at (%d,%d)", l.ID, link.X, link.Y)
 	}
 
+	l.stairs[location] = link
+
+	return nil
+}
+
+// Resolve a frontier stair exactly once when its destination floor is built.
+// The world validates the reciprocal landing after both levels are present.
+func (l *Level) ResolveStairLink(x, y, toX, toY int) error {
+	location := point{
+		x: x,
+		y: y,
+	}
+
+	link, found := l.stairs[location]
+
+	if !found ||
+		!link.Pending ||
+		toX < 0 ||
+		toY < 0 {
+		return fmt.Errorf("level %d cannot resolve stair at (%d,%d)", l.ID, x, y)
+	}
+
+	link.ToX = toX
+	link.ToY = toY
+	link.Pending = false
 	l.stairs[location] = link
 
 	return nil
@@ -221,6 +257,15 @@ func validateStairLinks(levels map[int]*Level) error {
 
 		for _, link := range level.StairLinks() {
 			if link.Unavailable != "" {
+				continue
+			}
+
+			if link.Pending {
+				if link.ToLevelID != id+1 || levels[link.ToLevelID] != nil {
+					return fmt.Errorf("level %d has invalid pending stair at (%d,%d)",
+						id, link.X, link.Y)
+				}
+
 				continue
 			}
 

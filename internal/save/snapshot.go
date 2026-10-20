@@ -8,7 +8,7 @@ import (
 	"crawl/internal/vault"
 )
 
-const Version = 21
+const Version = 22
 
 type Snapshot struct {
 	Version        int               `json:"version"`
@@ -82,6 +82,7 @@ type StairRecord struct {
 	ToLevelID   int    `json:"to_level_id"`
 	ToX         int    `json:"to_x"`
 	ToY         int    `json:"to_y"`
+	Pending     bool   `json:"pending,omitempty"`
 	Unavailable string `json:"unavailable,omitempty"`
 }
 

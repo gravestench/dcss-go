@@ -1,7 +1,9 @@
 -- Example: authored stairs on any Dungeon floor gain paired landings nearby.
 local basic = require("policy.generation.basic")
+local item_ids = require("ids.items")
 local nearest = require("policy.generation.nearest")
 local branches = require("ids.branches")
+local live_stairs = require("policy.generation.generated_stairs")
 local vault_catalog = require("policy.generation.vaults.catalog")
 local vault_selection = require("policy.generation.vaults.selection")
 local vault_placement = require("policy.generation.vaults.placement")
@@ -333,7 +335,7 @@ local function build_floor(ctx, player, depth, bottom)
         player = {
             species_id = player.species_id,
             name = player.name,
-            started = false,
+            started = player.started or false,
             branch_id = branches.BRANCH_DUNGEON,
             depth = depth,
             branch_bottom = bottom,
@@ -357,6 +359,7 @@ local function build_floor(ctx, player, depth, bottom)
     end
 
     return {
+        depth = depth,
         layout = layout,
         arrival = arrival,
         arrival_vault = arrival_vault,
@@ -407,6 +410,95 @@ local function level_record(ctx, floor, depth)
         vault_id = arrival and arrival.id or floor.controller,
         vault_records = #floor.records > 0 and floor.records or nil,
         spawn_exclusions = extra_exclusions(base_exclusions, floor.extra),
+    }
+end
+
+-- Carry item identities from Lua generation to Lua population. Go forwards
+-- these intents without knowing which potion belongs on which floor.
+local function starting_item(kind_id, level_id, cell)
+    return {
+        kind_id = kind_id,
+        level_id = level_id,
+        x = cell.x,
+        y = cell.y,
+    }
+end
+
+-- Build only the floor visible at launch. Its down links name D:2 without
+-- preselecting D:2 terrain, vaults, monster budget, or destination cells.
+function generated.first(ctx, input)
+    local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
+    local player = {
+        species_id = input.player_species_id,
+        name = input.player_name,
+        started = false,
+    }
+    local floor = build_floor(ctx, player, 1, bottom)
+
+    live_stairs.first(floor)
+
+    local level = level_record(ctx, floor, 1)
+    local entry = floor_entry(floor)
+    local curing = nearest.open_floor(level.rows, entry, nil, 1)
+
+    return {
+        levels = { level },
+        entry = {
+            x = entry.x,
+            y = entry.y,
+        },
+        starting_items = {
+            starting_item(item_ids.POT_CURING, 1, curing),
+        },
+    }
+end
+
+-- The current parent grid determines safe extra departures. All new-floor
+-- layout and vault draws happen after the player's previous actions.
+function generated.next(ctx, input)
+    local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
+    local depth = input.depth
+    local parent = input.parent
+
+    if depth < 2 or depth > bottom or parent.id ~= depth - 1 then
+        error("next Dungeon floor needs its contiguous parent")
+    end
+
+    local player = {
+        species_id = input.player_species_id,
+        name = input.player_name,
+        started = true,
+    }
+    local floor = build_floor(ctx, player, depth, bottom)
+    local patches, entry = live_stairs.pair(ctx, parent, floor, {
+        x = input.from_x,
+        y = input.from_y,
+    })
+    local level = level_record(ctx, floor, depth)
+    local items = {}
+
+    level.entry_x = entry.x
+    level.entry_y = entry.y
+
+    if depth == 2 then
+        local base_entry = floor_entry(floor)
+        local heal = nearest.open_floor(level.rows, base_entry, nil, 2)
+        local haste = nearest.open_floor(level.rows, base_entry, heal, 2)
+
+        items[#items + 1] = starting_item(
+            item_ids.POT_HEAL_WOUNDS, depth, heal)
+        items[#items + 1] = starting_item(
+            item_ids.POT_HASTE, depth, haste)
+    end
+
+    return {
+        level = level,
+        parent_links = patches,
+        entry = {
+            x = entry.x,
+            y = entry.y,
+        },
+        starting_items = items,
     }
 end
 

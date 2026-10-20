@@ -58,17 +58,18 @@ local function reciprocal(levels, depth, link, upward)
     return up_features[target_feature]
 end
 
--- Every generated Dungeon floor and each visible stair must survive restore.
--- Boundary exits explain the unavailable next branch; internal links pair
--- exact cells on adjacent floors in both directions.
+-- Only floors the player has reached exist in a fresh generated save. Every
+-- earlier stair is paired; the current frontier alone may point to a floor
+-- that will be built on first entry. Fully built saves remain valid too.
 function generated.validate(levels, by_id)
     local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
+    local floors = #levels - 1
 
-    if #levels ~= bottom + 1 or not by_id[abyss.level_id] then
-        error("generated Dungeon save needs all Dungeon floors and the Abyss")
+    if floors < 1 or floors > bottom or not by_id[abyss.level_id] then
+        error("generated Dungeon save needs a Dungeon prefix and the Abyss")
     end
 
-    for depth = 1, bottom do
+    for depth = 1, floors do
         local level = by_id[depth]
 
         if not level or #level.cells ~= 70 or
@@ -109,6 +110,13 @@ function generated.validate(levels, by_id)
                 if link.unavailable == "" or link.to_level_id ~= 0 then
                     error("generated Dungeon:" .. depth ..
                         " has an invalid boundary exit")
+                end
+            elseif link.pending then
+                if not downward or depth ~= floors or
+                    link.to_level_id ~= depth + 1 or
+                    link.to_x ~= 0 or link.to_y ~= 0 then
+                    error("generated Dungeon:" .. depth ..
+                        " has an invalid pending stair")
                 end
             elseif not reciprocal(by_id, depth, link, upward) then
                 error("generated Dungeon:" .. depth ..

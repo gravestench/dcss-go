@@ -98,6 +98,7 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 				ToLevelID:   savedLink.ToLevelID,
 				ToX:         savedLink.ToX,
 				ToY:         savedLink.ToY,
+				Pending:     savedLink.Pending,
 				Unavailable: savedLink.Unavailable,
 			}); linkErr != nil {
 				return linkErr
@@ -154,6 +155,7 @@ func scenarioLevelPolicyRecords(levels map[int]*Level) []any {
 				"to_level_id": link.ToLevelID,
 				"to_x":        link.ToX,
 				"to_y":        link.ToY,
+				"pending":     link.Pending,
 				"unavailable": link.Unavailable,
 			})
 		}

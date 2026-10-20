@@ -177,6 +177,7 @@ func (g *Game) Snapshot() save.Snapshot {
 				ToLevelID:   link.ToLevelID,
 				ToX:         link.ToX,
 				ToY:         link.ToY,
+				Pending:     link.Pending,
 				Unavailable: link.Unavailable,
 			})
 		}

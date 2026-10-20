@@ -352,12 +352,23 @@ func luaScenarioStair(value any) (StairLink, error) {
 		return StairLink{}, fmt.Errorf("stair availability is not text")
 	}
 
+	pending := false
+
+	if raw, present := record["pending"]; present {
+		pending, ok = raw.(bool)
+
+		if !ok {
+			return StairLink{}, fmt.Errorf("stair pending state is not a boolean")
+		}
+	}
+
 	return StairLink{
 		X:           numbers[0],
 		Y:           numbers[1],
 		ToLevelID:   numbers[2],
 		ToX:         numbers[3],
 		ToY:         numbers[4],
+		Pending:     pending,
 		Unavailable: unavailable,
 	}, nil
 }
