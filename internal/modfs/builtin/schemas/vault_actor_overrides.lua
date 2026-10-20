@@ -2,7 +2,7 @@ local component = require("constants.component")
 
 local schema = {
     id = component.VAULT_ACTOR_OVERRIDES,
-    version = 3,
+    version = 4,
     -- Authored variant, colour, attitude, and spell overrides travel with the spawned vault actor.
     fields = {
         base_id = {
@@ -46,6 +46,30 @@ local schema = {
         hit_dice = {
             type = "int64",
             default = 0,
+        },
+
+        -- Source naming is per entity. An adjective combines with the
+        -- species, while a plain custom name replaces it in messages.
+        custom_name = {
+            type = "string",
+            default = "",
+        },
+
+        name_adjective = {
+            type = "bool",
+            default = false,
+        },
+
+        -- DES dbname: is an internal identity hint; tile: is kept for a
+        -- graphical client without affecting the terminal glyph.
+        database_name = {
+            type = "string",
+            default = "",
+        },
+
+        tile = {
+            type = "string",
+            default = "",
         },
     },
 }

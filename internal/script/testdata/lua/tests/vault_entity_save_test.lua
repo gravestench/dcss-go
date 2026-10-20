@@ -257,6 +257,32 @@ function test.run(ctx)
         "forged source hit dice were accepted")
     ctx:remove(rat, component.VAULT_ACTOR_OVERRIDES)
 
+    -- An authored adjective, database alias, and tile must still agree with
+    -- the placed record when a game is restored after the actor has moved.
+    local identity_input = level_input()
+    local identity = identity_input.levels[1].vault_records[1].arguments
+
+    identity.custom_name = "charred"
+    identity.name_adjective = true
+    identity.database_name = "vehumet rat"
+    identity.tile = "mons_statue_mage"
+    ctx:add(rat, component.VAULT_ACTOR_OVERRIDES, {
+        custom_name = identity.custom_name,
+        name_adjective = identity.name_adjective,
+        database_name = identity.database_name,
+        tile = identity.tile,
+    })
+    save.validate_vault_entities(ctx, identity_input)
+
+    local forged_identity = ctx:get(rat, component.VAULT_ACTOR_OVERRIDES)
+
+    forged_identity.custom_name = "frost-covered"
+    ctx:set(rat, component.VAULT_ACTOR_OVERRIDES, forged_identity)
+
+    harness.falsy(pcall(save.validate_vault_entities, ctx, identity_input),
+        "forged source name was accepted")
+    ctx:remove(rat, component.VAULT_ACTOR_OVERRIDES)
+
     -- Duplicate origin occurrence IDs are rejected even on separate entities.
     local second = ctx:create()
 

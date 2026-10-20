@@ -80,6 +80,12 @@ local function monster_options(record, level)
         equipment = selected.equipment,
         hp = arguments.hp ~= 0 and arguments.hp or nil,
         hd = arguments.hd ~= 0 and arguments.hd or nil,
+        custom_name = arguments.custom_name ~= "" and
+            arguments.custom_name or nil,
+        name_adjective = arguments.name_adjective or false,
+        database_name = arguments.database_name ~= "" and
+            arguments.database_name or nil,
+        tile = arguments.tile ~= "" and arguments.tile or nil,
     }
 end
 

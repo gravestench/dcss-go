@@ -13,6 +13,7 @@ local component = require("constants.component")
 local monsters = require("ids.monsters")
 local items = require("ids.items")
 local branches = require("ids.branches")
+local display = require("policy.combat.monster_support.display")
 
 local test = {}
 
@@ -355,6 +356,74 @@ local function source_monster_slot_falls_back(ctx)
         "source fallback resolved the wrong monster")
 end
 
+-- Carry a complete DES monster request through placement, population, and
+-- ECS presentation. This catches any lost field between the parsed record
+-- and factory options even when each side passes its own unit tests.
+local function authored_identity_materializes(ctx)
+    local source = {
+        id = "authored_identity_fixture",
+        path = "vaults/altar/authored_identity_fixture.des",
+        rows = { "@1" },
+        orientation = "centre",
+        operations = {
+            {
+                kind = directives.MONS,
+                argument = "rat name:charred name_adjective hp:12 hd:3",
+                line = 4,
+            },
+        },
+    }
+    local builder = builder_context()
+    local placed = placement.place(builder, grid.new(builder), source)
+    local records = {}
+
+    for _, record in ipairs(placed.records) do
+        if record.kind == effects.MONSTER then
+            record.index = #records + 1
+            record.source_id = source.id
+            records[#records + 1] = record
+        end
+    end
+
+    local world = world_context(ctx)
+    local spawned
+
+    function world:random()
+        return 0
+    end
+
+    function world:walkable()
+        return true
+    end
+
+    function world:actor_at()
+        return nil
+    end
+
+    function world:place_actor(actor, level_id, x, y)
+        spawned = actor
+        ctx:add(actor, component.POSITION, {
+            level_id = level_id,
+            x = x,
+            y = y,
+        })
+    end
+
+    materializer.materialize(world, {
+        id = 1,
+        vault_records = records,
+    })
+
+    harness.truthy(spawned, "authored actor did not materialize")
+    harness.equal(display.name(world, spawned), "charred rat",
+        "authored name survives population")
+    harness.equal(ctx:get(spawned, component.HEALTH).max, 12,
+        "authored HP survives population")
+    harness.equal(ctx:get(spawned,
+        component.VAULT_ACTOR_OVERRIDES).hit_dice, 3,
+        "authored HD survives population")
+end
+
 -- Each cave-to-temple helper branch must resolve tenant monsters with provenance.
 local function temple_helper_entities_resolve()
     local vault = catalog.get("erik_arrival_cave_to_civilisation")
@@ -410,6 +479,7 @@ function test.run(ctx)
     invalid_declaration_has_source_site()
     source_unique_is_not_duplicated(ctx)
     source_monster_slot_falls_back(ctx)
+    authored_identity_materializes(ctx)
     temple_helper_entities_resolve()
 end
 

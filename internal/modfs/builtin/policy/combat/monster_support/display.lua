@@ -14,8 +14,18 @@ function display.name(ctx, monster)
     end
 
     local definition = catalog.get("monsters", actor.kind_id)
+    local base_name = slime_blob.name(ctx, monster, definition.name)
+    local authored = ctx:get(monster, component.VAULT_ACTOR_OVERRIDES)
 
-    return slime_blob.name(ctx, monster, definition.name)
+    if authored and authored.custom_name ~= "" then
+        if authored.name_adjective then
+            return authored.custom_name .. " " .. base_name
+        end
+
+        return authored.custom_name
+    end
+
+    return base_name
 end
 
 return display

@@ -21,6 +21,7 @@ local hit_points = require("policy.population.hit_points")
 local slime_blob = require("policy.monsters.slime_blob")
 local display = require("policy.combat.monster_support.display")
 local monster_stats = require("policy.combat.monster_stats")
+local presentation = require("policy.presentation.view")
 
 local test = {}
 
@@ -157,6 +158,34 @@ local function fixed_source_vitals(ctx)
     harness.equal(monster_stats.base_hit_dice(world, actor,
         catalog.get(categories.MONSTERS, monsters.MONS_RAT)), 3,
         "combat reads authored hit dice")
+end
+
+-- Source name: plus name_adjective changes every presentation of the actor,
+-- while dbname: remains a database alias and tile: remains art metadata.
+local function authored_actor_identity(ctx)
+    local world = world_context(ctx)
+    local actor = factory.spawn(world, monsters.MONS_RAT, 1, 36, 10, {
+        origin = origin,
+        custom_name = "charred",
+        name_adjective = true,
+        database_name = "vehumet rat",
+        tile = "mons_statue_mage",
+    })
+    local overrides = ctx:get(actor, component.VAULT_ACTOR_OVERRIDES)
+    local presented = presentation.entity(world, {
+        role = "monster",
+        kind_id = monsters.MONS_RAT,
+        monster_entity_id = ctx:id(actor),
+    })
+
+    harness.equal(display.name(world, actor), "charred rat",
+        "messages use the authored adjective")
+    harness.equal(presented.name, "charred rat",
+        "terminal presentation uses the authored adjective")
+    harness.equal(overrides.database_name, "vehumet rat",
+        "database alias stays with actor")
+    harness.equal(overrides.tile, "mons_statue_mage",
+        "tile hint stays with actor")
 end
 
 -- Authored item modifiers survive through entity creation and stacking.
@@ -479,6 +508,7 @@ end
 function test.run(ctx)
     spawned_actor_has_source_state(ctx)
     fixed_source_vitals(ctx)
+    authored_actor_identity(ctx)
     vault_items_keep_variant_and_quantity(ctx)
     source_gear_and_explicit_equipment(ctx)
     trog_guard_keeps_source_gear(ctx)
