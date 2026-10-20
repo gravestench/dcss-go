@@ -1,6 +1,7 @@
 -- Serial controllers place related DES maps through one bounded Lua API.
 local catalog = require("policy.generation.vaults.catalog")
 local selection = require("policy.generation.vaults.selection")
+local categories = require("constants.catalog")
 
 local controller = {}
 local MAX_CHILD_MAPS = 1000
@@ -32,6 +33,20 @@ end
 -- fact, with its current local depth as the Dungeon fallback.
 function controller.absolute_depth(api)
     return api.context.absolute_depth or api.context.depth
+end
+
+-- Source map_by_tag asks whether a named pool exists before consuming a
+-- conditional draw. Keep this read-only so mod layers can add that pool.
+function controller.has_tag(_, tag)
+    for _, id in ipairs(register.ids(categories.VAULTS)) do
+        local definition = register.get(categories.VAULTS, id)
+
+        if definition.tags[tag] then
+            return true
+        end
+    end
+
+    return false
 end
 
 -- Keep the tag request separate from its parent so a child hook sees its
@@ -102,6 +117,7 @@ function controller.new(builder, context, placed, place)
     api.one_in = controller.one_in
     api.random_range = controller.random_range
     api.absolute_depth = controller.absolute_depth
+    api.has_tag = controller.has_tag
     api.place_maps = controller.place_maps
 
     return api

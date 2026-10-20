@@ -1,0 +1,17 @@
+# serial_ice_b forms a glass-divided fog pocket in the serial ice pool.
+# Its source MAP and substitutions stay here; the shared Lua setup chooses
+# branch-specific monsters and fog at the authored hook position.
+NAME:   serial_ice_b
+TAGS:   allow_dup luniq vaults_empty serial_ice extra mini_float transparent
+WEIGHT: 2
+SUBST:  ! = ....!
+: vault.run("ice_setup.configure")
+MAP
+-------
+-.....-
+-.x.x.-
+-..!..-
+-.x.x.-
+-.....-
+-------
+ENDMAP

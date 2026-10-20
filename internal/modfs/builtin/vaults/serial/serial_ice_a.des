@@ -1,0 +1,14 @@
+# serial_ice_a forms a compact iced arch in the serial ice pool.
+# Its source MAP and substitutions stay here; the shared Lua setup chooses
+# branch-specific monsters and fog at the authored hook position.
+NAME:   serial_ice_a
+TAGS: serial_ice extra mini_float transparent
+WEIGHT: 2
+: vault.run("ice_setup.configure")
+MAP
+-----
+-...-
+-.A.-
+-...-
+-----
+ENDMAP

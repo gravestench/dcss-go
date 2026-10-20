@@ -12,6 +12,9 @@ local tags = {
     SERIAL_CO_WINDOW_RARE = "serial_co_window_rare",
     SERIAL_GLASS = "serial_glass",
     SERIAL_SIGILS = "serial_sigils",
+    SERIAL_ICE = "serial_ice",
+    CHANCE_ICECAVE = "chance_icecave",
+    UNIQ_ICECV = "uniq_icecv",
 }
 
 return tags

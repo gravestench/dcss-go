@@ -283,7 +283,12 @@ sigils family adds a rare
 Depths, Elf, and Crypt controller with fourteen weighted stone shapes. Its
 source helper's common tags and three surface rules are carried by each
 committed map; branch generation will activate these maps when those floors
-are ported. The builder and serial count is now 236 of 600.
+are ported. The sixteen-map ice family adds a Dungeon/Cocytus controller
+and fifteen weighted pieces. One named Lua module applies the source's
+branch-specific monster pools, ice surface rules, and typed fog markers.
+The controller can request an Ice Cave entrance when a mod adds the source
+`uniq_icecv` pool; without that pool it consumes no cave coinflip. The
+builder and serial count is now 252 of 600.
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
 `uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those

@@ -1,0 +1,8 @@
+# The rare ice controller covers deep Dungeon and Cocytus floors. Child maps
+# use an independent tag, and a qualifying Dungeon floor can also request
+# a separate Ice Cave entrance when that content exists in the mod catalog.
+NAME: serial_ice
+DEPTH: D:8-, Coc
+TAGS: extra luniq_serial allow_dup nolayout_encompass
+CHANCE: 1% (D), 3% (Coc)
+: vault.post_place("place_ice")

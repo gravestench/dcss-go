@@ -5,18 +5,23 @@ local hooks = {}
 
 -- A .des map is still the authoritative layout. Its family and NAME choose
 -- a same-named Lua module only when a directive calls a named hook.
-local function handler_path(vault)
+local function handler_path(vault, method)
+    local module_name, callback_name = method:match(
+        "^([a-z][a-z0-9_]*)%.([a-z][a-z0-9_]*)$")
+
+    module_name = module_name or vault.id
+    callback_name = callback_name or method
+
     if vault.family == "layout" then
-        return "policy.generation.layouts." .. vault.id
+        return "policy.generation.layouts." .. module_name, callback_name
     end
 
-    return "policy.generation.vaults." .. vault.family .. "." .. vault.id
+    return "policy.generation.vaults." .. vault.family .. "." ..
+        module_name, callback_name
 end
 
 -- Load the named handler early so missing methods fail before mutating a level.
 function hooks.validate(vault)
-    local handler
-
     -- Validate the complete hook contract before placement. This reports a
     -- broken mod at load time instead of only when a rare vault is selected.
     for _, operation in ipairs(vault.operations) do
@@ -24,21 +29,18 @@ function hooks.validate(vault)
             operation.kind == directives.HOOK_VALIDATE or
             operation.kind == directives.HOOK_VETO or
             operation.kind == directives.HOOK_POST_PLACE then
-            if handler == nil then
-                local ok, loaded = pcall(require, handler_path(vault))
+            local path, callback = handler_path(vault, operation.argument)
+            local ok, handler = pcall(require, path)
 
-                if not ok then
-                    error(string.format("%s:%d: vault %s: handler %s method %s: %s",
-                        vault.path, operation.line, vault.id, handler_path(vault),
-                        operation.argument, loaded))
-                end
-
-                handler = loaded
+            if not ok then
+                error(string.format("%s:%d: vault %s: handler %s method %s: %s",
+                    vault.path, operation.line, vault.id, path,
+                    callback, handler))
             end
 
-            if type(handler[operation.argument]) ~= "function" then
+            if type(handler[callback]) ~= "function" then
                 error(string.format("%s:%d: vault %s: missing Lua handler method %s",
-                    vault.path, operation.line, vault.id, operation.argument))
+                    vault.path, operation.line, vault.id, callback))
             end
         end
     end
@@ -46,11 +48,12 @@ end
 
 -- Call only the method declared by the map's pinned hook reference.
 function hooks.run(vault, method, api)
-    local handler = require(handler_path(vault))
-    local callback = handler[method]
+    local path, callback_name = handler_path(vault, method)
+    local handler = require(path)
+    local callback = handler[callback_name]
 
     if type(callback) ~= "function" then
-        error(string.format("vault %s has no Lua handler method %s", vault.id, method))
+        error(string.format("vault %s has no Lua handler method %s", vault.id, callback_name))
     end
 
     return callback(api)

@@ -2039,6 +2039,19 @@ file. The Lua controller stays small: it picks four to six weighted shapes
 by the `serial_sigils` tag. Branch and depth restrictions remain visible in
 the map file, and the selector filters them before drawing.
 
+The ice family shows a shared Lua hook for behavior that changes by branch.
+Each `.des` child calls `: vault.run("ice_setup.configure")` at the exact
+point where its source setup applies. The module
+`policy/generation/vaults/serial/ice_setup.lua` exposes the `configure`
+function, so fifteen maps use one implementation without fifteen forwarding
+files. A dotted hook name always resolves a module in the same policy
+directory as its map; an undotted name still resolves a method on the
+map's own module. The loader validates named methods when it loads the
+catalog, so a typo fails with the map's path and line before a game starts.
+The ice controller's `has_tag` check lets a layered mod add Ice Cave entry
+maps later without changing this base Lua file or consuming a cave chance
+draw while the pool is absent.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls

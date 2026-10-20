@@ -88,12 +88,19 @@ end
 
 -- Recognize only named, ported hook stages; raw inline Lua cannot enter the runtime.
 local function add_hook(vault, text, line)
-    local stage, method = text:match('^:%s*vault%.([a-z_]+)%s*%(%s*"([a-z][a-z0-9_]*)"%s*%)%s*$')
+    local stage, method = text:match('^:%s*vault%.([a-z_]+)%s*%(%s*"([a-z][a-z0-9_%.]*)"%s*%)%s*$')
 
     if stage ~= "run" and stage ~= "validate" and
         stage ~= "veto" and
         stage ~= "post_place" then
         fail(vault.path, line, vault.id, "unported inline Lua or malformed vault hook")
+    end
+
+    -- A shared family module can serve several maps directly. Keep its
+    -- name local to this directory, with exactly one method segment.
+    if not method:match("^[a-z][a-z0-9_]*$") and
+        not method:match("^[a-z][a-z0-9_]*%.[a-z][a-z0-9_]*$") then
+        fail(vault.path, line, vault.id, "malformed named vault hook")
     end
 
     local kind = directives.HOOK_VETO
