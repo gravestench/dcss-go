@@ -387,6 +387,7 @@ local function select_entities(record, vault, random, depth)
         arguments.selected_expression = selected.source
         arguments.no_spawn = resolved.no_spawn or false
         arguments.kind_id = resolved.kind_id or ""
+        arguments.class_id = resolved.class_id or ""
         arguments.base_id = resolved.base_id or ""
         arguments.blob_size = resolved.blob_size or 1
         arguments.band = resolved.band or false

@@ -1,0 +1,27 @@
+# Source: crawl-ref/source/dat/des/builder/arena.des
+NAME: arena_pillarred
+TAGS: arena_pillarred
+MARKER: A = feat: stone_stairs_up_i
+MARKER: B = feat: stone_stairs_down_i
+MARKER: O = feat: escape_hatch_up
+SUBST: A = ., B = ., O = G
+ORIENT: encompass
+MAP
+XXXXXXXXXXXXXXXXX
+X...............X
+X.G...G.B.G...G.X
+X...............X
+X...G...G...G...X
+X...............X
+X.G...G...G...G.X
+X...............X
+X...G...O...G...X
+X...............X
+X.G...G...G...G.X
+X...............X
+X...G...G...G...X
+X...............X
+X.G...G.A.G...G.X
+X...............X
+XXXXXXXXXXXXXXXXX
+ENDMAP

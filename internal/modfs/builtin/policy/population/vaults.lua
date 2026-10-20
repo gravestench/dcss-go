@@ -88,6 +88,8 @@ local function item_selection(record)
 
     return {
         kind_id = arguments.kind_id,
+        class_id = arguments.class_id ~= "" and
+            arguments.class_id or nil,
         base_id = arguments.base_id ~= "" and arguments.base_id or nil,
         variant = arguments.variant,
         quantity = selected.quantity,

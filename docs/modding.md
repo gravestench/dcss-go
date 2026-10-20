@@ -1964,6 +1964,15 @@ an engine edit; put its named hook at the matching
 `policy/generation/vaults/<family>/<name>.lua` path. Layout maps use the
 separate `vaults/layout/` catalog because they carve the base floor.
 
+The `builder/arena_*.des` family illustrates maps reserved for another game
+mode. Each definition keeps its original `MAP` rows and `arena_*` tag, but
+has no Dungeon `DEPTH` rule. `arena_items` and `arena_smoke` call the shared
+`policy/generation/vaults/builder/arena.lua` palette hook. A hook may emit
+`COLOUR`, `RTILE`, and `FTILE` directives to record cell styles. `ITEM: any`,
+`ITEM: any potion`, and `ITEM: any wand` request an ordinary random item,
+optionally constrained to a class. The arena game mode has not been ported
+yet, so these maps are registered without entering Dungeon's random pool.
+
 Omitting `ORIENT` makes a map a floating **minivault**, as in DCSS. An
 explicit `ORIENT: float` makes it a regular vault instead. Give an ordinary
 minivault a `DEPTH` rule and positive `WEIGHT` to enter the weighted depth

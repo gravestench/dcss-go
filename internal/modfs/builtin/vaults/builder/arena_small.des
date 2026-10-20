@@ -1,0 +1,29 @@
+# Source: crawl-ref/source/dat/des/builder/arena.des
+NAME: arena_small
+TAGS: arena_small
+MARKER: A = feat: stone_stairs_up_i
+MARKER: B = feat: stone_stairs_down_i
+MARKER: O = feat: escape_hatch_up
+SUBST: A = ., B = ., O = .
+ORIENT: encompass
+MAP
+XXXXXXXXXXXXXXXXX
+XvvvvvvvvvvvvvvvX
+XvvvvvvvvvvvvvvvX
+XvvvvvvvvvvvvvvvX
+Xvvvvvv.B.vvvvvvX
+Xvvvv.......vvvvX
+Xvvvv.......vvvvX
+Xvvv.........vvvX
+Xvvv....O....vvvX
+Xvvv.........vvvX
+Xvvvv.......vvvvX
+Xvvvv.......vvvvX
+Xvvvvvv.A.vvvvvvX
+XvvvvvvvvvvvvvvvX
+XvvvvvvvvvvvvvvvX
+XvvvvvvvvvvvvvvvX
+XXXXXXXXXXXXXXXXX
+ENDMAP
+
+# for fine-tuning interactions

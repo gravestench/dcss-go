@@ -28,6 +28,7 @@ local function request_from(resolved, level_id, origin)
     local request = {
         depth = resolved.generation_depth or level_id,
         quality = resolved.quality or quality.ORDINARY,
+        class_id = resolved.class_id,
         allow_uniques = resolved.allow_uniques ~= false,
         purpose = purpose.VAULT,
         quantity = resolved.quantity,

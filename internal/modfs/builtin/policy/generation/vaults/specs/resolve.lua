@@ -28,6 +28,9 @@ local random_monster_names = {
 }
 
 local random_item_names = {
+    ["any"] = true,
+    ["any potion"] = true,
+    ["any wand"] = true,
     ["$"] = true,
     ["%"] = true,
     ["*"] = true,
@@ -400,6 +403,7 @@ function resolve.item(ctx, selected, depth, site)
     local base_name = name:match("^(.-) corpse$") or name:match("^(.-) skeleton$")
     local variant = name:match(" (corpse)$") or name:match(" (skeleton)$")
     local kind_id
+    local class_id
     local base_id
     local quality = item_quality.ORDINARY
     local generation_depth = source_depth(selected, depth)
@@ -412,6 +416,7 @@ function resolve.item(ctx, selected, depth, site)
         local described = random_items.describe(name, generation_depth)
 
         kind_id = described.kind_id
+        class_id = described.class_id
         quality = described.quality
         generation_depth = described.depth
     elseif name == "corpse" or name == "skeleton" then
@@ -435,6 +440,7 @@ function resolve.item(ctx, selected, depth, site)
 
     return {
         kind_id = kind_id,
+        class_id = class_id,
         base_id = base_id,
         variant = variant,
         quantity = selected.quantity,

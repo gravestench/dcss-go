@@ -1,0 +1,30 @@
+# Source: crawl-ref/source/dat/des/builder/arena.des
+NAME: arena_metal
+TAGS: arena_metal
+MARKER: A = feat: stone_stairs_up_i
+MARKER: B = feat: stone_stairs_down_i
+MARKER: O = feat: escape_hatch_up
+SUBST: A = ., B = ., O = .
+ORIENT: encompass
+MAP
+XXXXXXXXXXXXXXXXXXX
+XvvvvvvvvvvvvvvvvvX
+Xv...............vX
+Xv.......B.......vX
+Xv...............vX
+Xv...............vX
+Xv...............vX
+Xv...............vX
+Xv...............vX
+Xv.......O.......vX
+Xv...............vX
+Xv...............vX
+Xv...............vX
+Xv...............vX
+Xv...............vX
+Xv.......A.......vX
+Xv...............vX
+XvvvvvvvvvvvvvvvvvX
+XXXXXXXXXXXXXXXXXXX
+ENDMAP
+# Especially for immobile monsters... all locations are in LOS of each other

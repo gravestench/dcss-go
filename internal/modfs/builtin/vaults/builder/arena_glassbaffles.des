@@ -1,0 +1,27 @@
+# Source: crawl-ref/source/dat/des/builder/arena.des
+NAME: arena_glassbaffles
+TAGS: arena_glassbaffles
+MARKER: A = feat: stone_stairs_up_i
+MARKER: B = feat: stone_stairs_down_i
+MARKER: O = feat: escape_hatch_up
+SUBST: A = ., B = ., O = o
+ORIENT: encompass
+MAP
+ooooooooooooooooo
+o...o...B...o...o
+o.o.o.o.o.o.o.o.o
+o.......o.......o
+o.ooooo.o.ooooo.o
+o.......o.......o
+o.o.o.o.o.o.o.o.o
+o...o.......o...o
+ooo.o.ooOoo.o.ooo
+o...o.......o...o
+o.o.o.o.o.o.o.o.o
+o.......o.......o
+o.ooooo.o.ooooo.o
+o.......o.......o
+o.o.o.o.o.o.o.o.o
+o...o...A...o...o
+ooooooooooooooooo
+ENDMAP

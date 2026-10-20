@@ -15,7 +15,11 @@ function random_items.describe(name, depth)
         depth = depth,
     }
 
-    if name == "$" or name == "random_gold" then
+    if name == "any potion" then
+        result.class_id = classes.OBJ_POTIONS
+    elseif name == "any wand" then
+        result.class_id = classes.OBJ_WANDS
+    elseif name == "$" or name == "random_gold" then
         result.kind_id = ids.OBJ_GOLD
     elseif name == "*" or name == "star_item" then
         result.quality = quality.STAR
@@ -24,7 +28,7 @@ function random_items.describe(name, depth)
         result.quality = quality.GOOD
     elseif name == "|" or name == "superb_item" then
         result.quality = quality.SUPERB
-    elseif name ~= "%" and name ~= "random_item" then
+    elseif name ~= "%" and name ~= "random_item" and name ~= "any" then
         error("unknown random vault item request " .. tostring(name))
     end
 

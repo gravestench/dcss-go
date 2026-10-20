@@ -1,0 +1,27 @@
+# Source: crawl-ref/source/dat/des/builder/arena.des
+NAME: arena_lattice
+TAGS: arena_lattice
+MARKER: A = feat: stone_stairs_up_i
+MARKER: B = feat: stone_stairs_down_i
+MARKER: O = feat: escape_hatch_up
+SUBST: A = ., B = ., O = X
+ORIENT: encompass
+MAP
+XXXXXXXXXXXXXXXXX
+X...............X
+X.X...X.B.X...X.X
+X...............X
+X...X...X...X...X
+X...............X
+X.X...X...X...X.X
+X...............X
+X...X...O...X...X
+X...............X
+X.X...X...X...X.X
+X...............X
+X...X...X...X...X
+X...............X
+X.X...X.A.X...X.X
+X...............X
+XXXXXXXXXXXXXXXXX
+ENDMAP

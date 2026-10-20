@@ -1,0 +1,27 @@
+# Source: crawl-ref/source/dat/des/builder/arena.des
+NAME: arena_river
+TAGS: arena_river no_pool_fixup
+MARKER: A = feat: stone_stairs_up_i
+MARKER: B = feat: stone_stairs_down_i
+MARKER: O = feat: escape_hatch_up
+SUBST: A = ., B = ., O = w
+ORIENT: encompass
+MAP
+XXXXXXXXXXXXXXXXX
+X...............X
+X.......B.......X
+X...............X
+X...............X
+Xw..............X
+Xww.............X
+Xwww....wwwww...X
+X.wwwwwwOwwwwww.X
+X...wwwww....wwwX
+X.............wwX
+X..............wX
+X...............X
+X...............X
+X.......A.......X
+X...............X
+XXXXXXXXXXXXXXXXX
+ENDMAP

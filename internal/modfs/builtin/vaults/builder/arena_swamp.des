@@ -1,0 +1,29 @@
+# Source: crawl-ref/source/dat/des/builder/arena.des
+NAME: arena_swamp
+TAGS: arena_swamp
+MARKER: A = feat: stone_stairs_up_i
+MARKER: B = feat: stone_stairs_down_i
+MARKER: O = feat: escape_hatch_up
+SUBST: A = ., B = ., O = x
+SUBST: . = w:30 W .:5
+SUBST: x = W .:5
+ORIENT: encompass
+MAP
+XXXXXXXXXXXXXXXXX
+X........xx.....X
+X.......B..x....X
+X..........x....X
+X..........x....X
+X..........x....X
+X.........x.....X
+X........x......X
+X.......O.......X
+X......x........X
+X.....x.........X
+X....x..........X
+X....x..........X
+X....x..........X
+X....x..A.......X
+X.....xx........X
+XXXXXXXXXXXXXXXXX
+ENDMAP

@@ -1,0 +1,27 @@
+# Source: crawl-ref/source/dat/des/builder/arena.des
+NAME: arena_narrow
+TAGS: arena_narrow
+MARKER: A = feat: stone_stairs_up_i
+MARKER: B = feat: stone_stairs_down_i
+MARKER: O = feat: escape_hatch_up
+SUBST: A = ., B = ., O = .
+ORIENT: encompass
+MAP
+XXXXXXXXXXXXXXXXX
+XXXXXX.....XXXXXX
+XXXXXX..B..XXXXXX
+XXXXXX.....XXXXXX
+XXXXXX.....XXXXXX
+XXXXXX.....XXXXXX
+XXXXXX.....XXXXXX
+XXXXXX.....XXXXXX
+XXXXXX..O..XXXXXX
+XXXXXX.....XXXXXX
+XXXXXX.....XXXXXX
+XXXXXX.....XXXXXX
+XXXXXX.....XXXXXX
+XXXXXX.....XXXXXX
+XXXXXX..A..XXXXXX
+XXXXXX.....XXXXXX
+XXXXXXXXXXXXXXXXX
+ENDMAP
