@@ -9,11 +9,35 @@ the source `.des` map language and move its embedded script behavior into
 readable Lua modules. D:1–15 continue to generate on first entry.
 
 The pinned source audit found 21 layout definitions with a `D` depth rule in
-`dat/des/builder/layout*.des`. Sixteen have positive Dungeon weight; five
+`dat/des/builder/layout*.des`. Seventeen have positive Dungeon weight; four
 are disabled by a zero Dungeon weight. Import all 21 as individually
 replaceable `.des` files, register the disabled definitions, and select only
 positive-weight definitions at eligible depths. The importer is a one-time
 development tool and is not required for a normal build or kept in the repo.
+
+| Source layout | Dungeon depth | Weight |
+| --- | --- | ---: |
+| `layout_basic` | D:1–15 | 35 |
+| `layout_rooms` | D:1–15 | 15 |
+| `layout_loops_ring` | D:1–15 | 15 |
+| `layout_loops_cross` | D:1–15 | 5 |
+| `layout_loops_corners` | D:1–15 | 5 |
+| `layout_layered_grid` | D:1–15 | 0 |
+| `layout_twisted_forest` | D:1 | 0 |
+| `layout_layer_cave` | D:4–15 | 5 |
+| `layout_cave_pods` | D:4–15 | 5 |
+| `layout_gridville` | D:4–15 | 10 |
+| `layout_twisted_cavern` | D:4–15 | 0 |
+| `layout_cave_pools` | D:4–15 | 10 |
+| `layout_cross` | D:9–15 | 2 |
+| `layout_big_octagon` | D:9–15 | 3 |
+| `layout_roguey` | D:9–15 | 25 |
+| `layout_bigger_room` | D:9–15 | 0 |
+| `layout_stronghold` | D:9–15 | 10 |
+| `layout_irregular_city` | D:9–15 | 15 |
+| `layout_small_grid` | D:9–15 | 5 |
+| `layout_long_grid` | D:9–15 | 10 |
+| `layout_grid_maze` | D:9–15 | 5 |
 
 This slice covers Dungeon layouts. Branch-specific layout eligibility and
 branch terrain belong to the branch-generation domain. Primary vaults beyond
