@@ -78,6 +78,8 @@ local function monster_options(record, level)
         god_id = arguments.god_id ~= "" and arguments.god_id or nil,
         spells = selected.spells,
         equipment = selected.equipment,
+        hp = arguments.hp ~= 0 and arguments.hp or nil,
+        hd = arguments.hd ~= 0 and arguments.hd or nil,
     }
 end
 

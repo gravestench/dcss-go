@@ -5,6 +5,12 @@ local stats = {}
 -- A derived undead body keeps its source creature's HD on the entity. The
 -- generic zombie and skeleton catalog entries deliberately have no fixed HD.
 function stats.base_hit_dice(ctx, monster, definition)
+    local authored = ctx:get(monster, component.VAULT_ACTOR_OVERRIDES)
+
+    if authored and authored.hit_dice > 0 then
+        return authored.hit_dice
+    end
+
     local derived = ctx:get(monster, component.SUMMON_STATS)
 
     if derived then

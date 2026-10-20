@@ -38,6 +38,7 @@ local function validate_actor_overrides(ctx, entity, record, arguments)
         (arguments.colour or "") ~= "" or
         (arguments.attitude or "") ~= "" or
         (arguments.god_id or "") ~= "" or #spells > 0
+        or (arguments.hp or 0) > 0 or (arguments.hd or 0) > 0
     local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
 
     if not expected and not overrides then
@@ -51,6 +52,8 @@ local function validate_actor_overrides(ctx, entity, record, arguments)
         overrides.attitude ~= ((arguments.attitude or "") ~= "" and
             arguments.attitude or "hostile") or
         overrides.god_id ~= (arguments.god_id or "") or
+        overrides.fixed_hp ~= (arguments.hp or 0) or
+        overrides.hit_dice ~= (arguments.hd or 0) or
         #overrides.spells ~= #spells then
         error("entity " .. ctx:id(entity) .. " has forged vault actor overrides")
     end

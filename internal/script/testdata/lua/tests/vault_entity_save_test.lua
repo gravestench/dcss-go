@@ -235,6 +235,28 @@ function test.run(ctx)
     harness.falsy(god_ok, "forged vault actor god was accepted")
     ctx:remove(rat, component.VAULT_ACTOR_OVERRIDES)
 
+    -- Source-fixed HP and HD are both part of the actor's origin contract.
+    -- A restore must not accept a changed ECS value with the same DES record.
+    local vitals_input = level_input()
+    local vitals = vitals_input.levels[1].vault_records[1].arguments
+
+    vitals.hp = 12
+    vitals.hd = 3
+    ctx:add(rat, component.VAULT_ACTOR_OVERRIDES, {
+        fixed_hp = 12,
+        hit_dice = 3,
+    })
+    save.validate_vault_entities(ctx, vitals_input)
+
+    local forged_vitals = ctx:get(rat, component.VAULT_ACTOR_OVERRIDES)
+
+    forged_vitals.hit_dice = 4
+    ctx:set(rat, component.VAULT_ACTOR_OVERRIDES, forged_vitals)
+
+    harness.falsy(pcall(save.validate_vault_entities, ctx, vitals_input),
+        "forged source hit dice were accepted")
+    ctx:remove(rat, component.VAULT_ACTOR_OVERRIDES)
+
     -- Duplicate origin occurrence IDs are rejected even on separate entities.
     local second = ctx:create()
 

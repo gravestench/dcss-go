@@ -20,6 +20,7 @@ local terrain = require("constants.terrain")
 local hit_points = require("policy.population.hit_points")
 local slime_blob = require("policy.monsters.slime_blob")
 local display = require("policy.combat.monster_support.display")
+local monster_stats = require("policy.combat.monster_stats")
 
 local test = {}
 
@@ -136,6 +137,26 @@ local function spawned_actor_has_source_state(ctx)
 
     harness.falsy(spell.choose(combat, mage, player, false),
         "authored empty spellbook still casts")
+end
+
+-- A DES hp:/hd: pair changes the live actor, rather than merely decorating
+-- its saved vault record. Use a rat so HP 12 exceeds its ordinary profile.
+local function fixed_source_vitals(ctx)
+    local world = world_context(ctx)
+    local actor = factory.spawn(world, monsters.MONS_RAT, 1, 35, 10, {
+        origin = origin,
+        hp = 12,
+        hd = 3,
+    })
+    local overrides = ctx:get(actor, component.VAULT_ACTOR_OVERRIDES)
+
+    harness.equal(ctx:get(actor, component.HEALTH).max, 12,
+        "source fixed hit points")
+    harness.equal(overrides.fixed_hp, 12, "fixed HP saved on actor")
+    harness.equal(overrides.hit_dice, 3, "source HD saved on actor")
+    harness.equal(monster_stats.base_hit_dice(world, actor,
+        catalog.get(categories.MONSTERS, monsters.MONS_RAT)), 3,
+        "combat reads authored hit dice")
 end
 
 -- Authored item modifiers survive through entity creation and stacking.
@@ -457,6 +478,7 @@ end
 -- failure in one world.
 function test.run(ctx)
     spawned_actor_has_source_state(ctx)
+    fixed_source_vitals(ctx)
     vault_items_keep_variant_and_quantity(ctx)
     source_gear_and_explicit_equipment(ctx)
     trog_guard_keeps_source_gear(ctx)

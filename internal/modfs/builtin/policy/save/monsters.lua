@@ -195,7 +195,16 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
     local profile_id = overrides and overrides.base_id ~= "" and
         overrides.base_id or actor.kind_id
     local profile = roster.profile(profile_id)
-    if health.max < profile.minimum or health.max > profile.maximum then
+    local fixed_hp = overrides and overrides.fixed_hp or 0
+    local blob = ctx:get(entity, component.SLIME_BLOB)
+    local blob_size = blob and blob.size or 1
+    local invalid_health = fixed_hp > 0 and
+        health.max ~= fixed_hp * blob_size or
+        fixed_hp == 0 and
+        (health.max < profile.minimum * blob_size or
+            health.max > profile.maximum * blob_size)
+
+    if invalid_health then
         error("vault monster " .. ctx:id(entity) .. " has impossible HP")
     end
 

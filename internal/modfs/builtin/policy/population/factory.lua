@@ -275,6 +275,17 @@ end
 -- Roll health and construct components only after the target habitat cell is prepared.
 function factory.spawn(ctx, kind_id, level_id, x, y, options)
     options = options or {}
+
+    if options.hp and (options.hp < 1 or options.hp > 10000 or
+        options.hp % 1 ~= 0) then
+        error("invalid authored monster HP " .. tostring(options.hp))
+    end
+
+    if options.hd and (options.hd < 1 or options.hd > 100 or
+        options.hd % 1 ~= 0) then
+        error("invalid authored monster HD " .. tostring(options.hd))
+    end
+
     local definition = catalog.get("monsters", kind_id)
     local source = definition
 
@@ -298,7 +309,7 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
     end
 
     local profile = roster.profile(source.id)
-    local hp = hit_points.roll(ctx, source.average_hp_10x)
+    local hp = options.hp or hit_points.roll(ctx, source.average_hp_10x)
     local blob_size = options.blob_size or 1
 
     if blob_size ~= 1 and
@@ -307,7 +318,7 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         error("invalid slime creature size " .. blob_size)
     end
 
-    if hp < profile.minimum or hp > profile.maximum then
+    if not options.hp and (hp < profile.minimum or hp > profile.maximum) then
         error("invalid " .. kind_id .. " HP " .. hp)
     end
 
@@ -350,7 +361,7 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
     end
 
     if options.base_id or options.colour or options.attitude or
-        options.god_id or options.spells then
+        options.god_id or options.spells or options.hp or options.hd then
         ctx:add(monster, component.VAULT_ACTOR_OVERRIDES, {
             base_id = options.base_id or "",
             variant = options.variant or "",
@@ -358,6 +369,8 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
             attitude = options.attitude or "hostile",
             god_id = options.god_id or "",
             spells = options.spells or {},
+            fixed_hp = options.hp or 0,
+            hit_dice = options.hd or 0,
         })
     end
 
