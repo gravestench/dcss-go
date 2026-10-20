@@ -1,0 +1,8 @@
+# The ruined-city controller appears only on open Dungeon or Depths layouts.
+# Its Lua post-place hook selects portal, pillar, fancy, and simple pools.
+NAME: serial_column_ruins
+TAGS: allow_dup extra luniq_serial
+TAGS: layout_open layout_open_caves layout_city
+DEPTH: D, Depths
+CHANCE: 3%
+: vault.post_place("place_column_ruins")

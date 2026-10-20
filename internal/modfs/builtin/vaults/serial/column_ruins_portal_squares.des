@@ -1,0 +1,24 @@
+# Portal squares is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_portal_squares
+TAGS:    serial_column_ruins_portal luniq_column_ruins_portal
+WEIGHT:  4
+: vault.run("column_ruins_setup.portal_squares")
+: vault.run("column_ruins_setup.portal")
+: vault.run("column_ruins_setup.configure")
+# This command must be after init_column_ruins() or the floor
+#  tiles on ? change to floor_rough_brown.
+SUBST:   ? = G
+MAP
+.N.MNMNM.N.
+NrNqMqMqNrN
+.NLLLKLLLN.
+MqLKJJJKLqM
+NMLJp_pJLMN
+MqKJ_P_JKqM
+NMLJp_pJLMN
+MqLKJJJKLqM
+.NLLLKLLLN.
+NrNqMqMqNrN
+.N.MNMNM.N.
+ENDMAP

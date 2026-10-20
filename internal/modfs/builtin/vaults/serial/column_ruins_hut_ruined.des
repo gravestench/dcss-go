@@ -1,0 +1,21 @@
+# Hut ruined is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_hut_ruined
+TAGS:    serial_column_ruins_fancy
+TAGS:    allow_dup transparent
+WEIGHT:  15
+NSUBST:  x = 6:x / 2:_ / *=xx_
+: vault.run("column_ruins_setup.hut")
+: vault.run("column_ruins_setup.configure")
+MAP
+..NNMNN..
+.MLKKKLM.
+NLxxxxxLN
+NKxJJJxKN
+MJxJJJxJM
+MKxJJJxKM
+NLxx_xxLN
+NLKKJKKLN
+.NMLLLMN.
+...NNN...
+ENDMAP

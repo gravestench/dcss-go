@@ -1,0 +1,20 @@
+# Open medium water is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_open_medium_water
+TAGS:    serial_column_ruins_simple
+TAGS:    allow_dup transparent
+WEIGHT:  1
+: vault.run("column_ruins_setup.water_lava")
+SUBST:   T : TG__
+SUBST:   T = TTUVVV
+: vault.run("column_ruins_setup.configure")
+MAP
+ NMMMN
+NLwwwLN
+MwwwJLM
+wwwTJKM
+wwwJJLM
+wwwKLLN
+wwwMMN
+ ww
+ENDMAP

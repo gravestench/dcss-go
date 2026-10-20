@@ -236,6 +236,13 @@ end
 -- Every source exit must join ordinary Dungeon floor before the level can be accepted.
 function connect.finish(_, builder, placed, required)
     check_vetoes(placed)
+
+    -- Decorative no_exits maps can be fully solid and have no route to
+    -- connect. Their terrain is already placed on the shared grid.
+    if placed.tags and placed.tags.no_exits then
+        return placed
+    end
+
     local carved = {}
     local connectors = {}
 

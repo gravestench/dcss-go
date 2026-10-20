@@ -1,0 +1,9 @@
+# Pillar 1 is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_pillar_1
+TAGS:    serial_column_ruins_pillar allow_dup overwritable no_exits
+WEIGHT:  10
+: vault.run("column_ruins_setup.configure")
+MAP
+G
+ENDMAP

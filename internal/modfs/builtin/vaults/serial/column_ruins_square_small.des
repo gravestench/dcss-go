@@ -1,0 +1,16 @@
+# Square small is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_square_small
+TAGS:    serial_column_ruins_fancy
+TAGS:    allow_dup transparent
+WEIGHT:  5
+SUBST:   T : TG____
+SUBST:   T = TTUVVV
+: vault.run("column_ruins_setup.configure")
+MAP
+qLrLq
+LMJML
+rJTJr
+LMJML
+qLrLq
+ENDMAP

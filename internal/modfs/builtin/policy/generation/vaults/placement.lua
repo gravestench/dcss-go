@@ -274,12 +274,18 @@ local function draw_map(vault, cells, builder, left, top, records,
 
     entry = source_stair or entry or floor
 
+    -- A source no_exits decoration may be entirely solid. Its first cell
+    -- anchors typed records, but it must never become a corridor target.
+    if not entry and vault.tags.no_exits then
+        entry = occupied[1]
+    end
+
     if not entry then
         error(string.format("%s: vault %s: MAP has no traversable entry",
             vault.path, vault.id))
     end
 
-    if #exits == 0 then
+    if #exits == 0 and not vault.tags.no_exits then
         exits[1] = {
             x = entry.x,
             y = entry.y,
@@ -586,6 +592,7 @@ function placement.place(_, builder, vault, player, options)
         id = vault.id,
         family = vault.family,
         path = vault.path,
+        tags = vault.tags,
         entry = entry,
         exits = exits,
         occupied = occupied,

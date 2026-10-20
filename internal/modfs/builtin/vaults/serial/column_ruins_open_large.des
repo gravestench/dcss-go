@@ -1,0 +1,20 @@
+# Open large is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_open_large
+TAGS:    serial_column_ruins_simple
+TAGS:    allow_dup transparent
+WEIGHT:  5
+SUBST:   T : TG_
+SUBST:   T = TTUVVV
+: vault.run("column_ruins_setup.configure")
+MAP
+  NNMNN
+ NMLKLMN
+NMKJJJKMN
+NLJ___JLN
+MKJ_T_JKM
+NLJ___JLN
+NMKJJJKMN
+ NMLKLMN
+  NNMNN
+ENDMAP

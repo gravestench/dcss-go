@@ -1,0 +1,18 @@
+# Circle small is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_circle_small
+TAGS:    serial_column_ruins_fancy
+TAGS:    allow_dup transparent
+WEIGHT:  3
+SUBST:   T : TG____
+SUBST:   T = TTUVVV
+: vault.run("column_ruins_setup.configure")
+MAP
+  qLq
+ KLKLK
+qLJ_JLq
+LK_T_KL
+qLJ_JLq
+ KLKLK
+  qLq
+ENDMAP

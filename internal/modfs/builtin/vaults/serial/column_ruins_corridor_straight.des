@@ -1,0 +1,12 @@
+# Corridor straight is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_corridor_straight
+TAGS:    serial_column_ruins_simple
+TAGS:    allow_dup transparent
+WEIGHT:  10
+: vault.run("column_ruins_setup.configure")
+MAP
+MNrKpJpKrNM
+@NMLKKKLMN@
+MNrKpJpKrNM
+ENDMAP

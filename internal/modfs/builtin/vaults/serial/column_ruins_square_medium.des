@@ -1,0 +1,18 @@
+# Square medium is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_square_medium
+TAGS:    serial_column_ruins_fancy
+TAGS:    allow_dup transparent
+WEIGHT:  8
+SUBST:   T : TG__
+SUBST:   T = TTUVVV
+: vault.run("column_ruins_setup.configure")
+MAP
+pKrMrKp
+KMLNLMK
+rLJKJLr
+MNKTKMM
+rLJKJLr
+KMLNLMK
+pKrMrKp
+ENDMAP

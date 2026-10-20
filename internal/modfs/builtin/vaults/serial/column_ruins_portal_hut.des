@@ -1,0 +1,20 @@
+# Portal hut is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_portal_hut
+TAGS:    serial_column_ruins_portal luniq_column_ruins_portal
+WEIGHT:  2
+: vault.run("column_ruins_setup.hut")
+: vault.run("column_ruins_setup.portal")
+: vault.run("column_ruins_setup.configure")
+MAP
+..NNMNN..
+.MLKKKLM.
+NLxxxxxLN
+NKx---xKN
+MJx-O-xJM
+MKx---xKM
+NLxx+xxLN
+NLKJ_JKLN
+.NMLLLMN.
+...NNN...
+ENDMAP

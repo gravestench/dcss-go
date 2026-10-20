@@ -1,0 +1,29 @@
+# Portal island is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_portal_island
+TAGS:    serial_column_ruins_portal luniq_column_ruins_portal
+WEIGHT:  1
+SHUFFLE: ?!
+SUBST:   ! : -
+: vault.run("column_ruins_setup.portal")
+: vault.run("column_ruins_setup.configure")
+# This command must be after init_column_ruins() or the floor
+#  tiles on ? change to floor_rough_brown.
+SUBST:   ? = G
+MAP
+    NNNMNNN
+  NNMMLLLMMNN
+ NMMLlllllLMMN
+ NMlllllllllMN
+NMLlll!?!lllLMN
+NMlll?---?lllMN
+NLll!-----!llLN
+MLll?--O--?llLM
+NLll!-----!llLN
+NMlll?---?lllMN
+NMLlll!?!lllLMN
+ NMlllllllllMN
+ NMMLlllllLMMN
+  NNMMLLLMMNN
+    NNNMNNN
+ENDMAP

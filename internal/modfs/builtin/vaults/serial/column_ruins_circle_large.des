@@ -1,0 +1,23 @@
+# Circle large is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_circle_large
+TAGS:    serial_column_ruins_fancy
+TAGS:    allow_dup transparent
+WEIGHT:  2
+SUBST:   Z : JJT
+SUBST:   T : TG_
+SUBST:   T = TTUVVV
+: vault.run("column_ruins_setup.configure")
+MAP
+   qKrKq
+ rLMLLLMLr
+ LMLKKKLML
+qMLKJZJKLMq
+KLKJ___JKLK
+rLKZ_T_ZKLr
+KLKJ___JKLK
+qMLKJZJKLMq
+ LMLKKKLML
+ rLMLLLMLr
+   qKrKq
+ENDMAP

@@ -1,0 +1,23 @@
+# Square huge is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_square_huge
+TAGS:    serial_column_ruins_fancy
+TAGS:    allow_dup transparent
+WEIGHT:  2
+SUBST:   Z : KKT
+SUBST:   T : TTGG_
+SUBST:   T = TTUVVV
+: vault.run("column_ruins_setup.configure")
+MAP
+pKqLrMrLqKp
+KLLMMNMMLLK
+qLKKLLLKKLq
+LMKJJZJJKML
+rMLJ___JLMr
+MNLZ_T_ZLNM
+rMLJ___JLMr
+LMKJJZJJLML
+qLKKLLLKKLq
+KLLMMNMMLLK
+pKqLrMrLqKp
+ENDMAP

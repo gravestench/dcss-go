@@ -18,6 +18,10 @@ local tags = {
     UNIQ_ICECV = "uniq_icecv",
     SERIAL_FOREST = "serial_forest",
     SERIAL_RESEARCH = "serial_research",
+    COLUMN_RUINS_PILLAR = "serial_column_ruins_pillar",
+    COLUMN_RUINS_PORTAL = "serial_column_ruins_portal",
+    COLUMN_RUINS_FANCY = "serial_column_ruins_fancy",
+    COLUMN_RUINS_SIMPLE = "serial_column_ruins_simple",
 }
 
 return tags

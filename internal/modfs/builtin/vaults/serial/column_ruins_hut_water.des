@@ -1,0 +1,23 @@
+# Hut water is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_hut_water
+TAGS:    serial_column_ruins_fancy
+TAGS:    allow_dup transparent
+WEIGHT:  5
+SUBST:   z = ww_
+SUBST:   y = W__
+: vault.run("column_ruins_setup.water_lava")
+: vault.run("column_ruins_setup.hut")
+: vault.run("column_ruins_setup.configure")
+MAP
+..NNMNN..
+.MLKKKLM.
+NLxxxxxLN
+NKxwwwxKN
+MJxwwwxJM
+MKxzyzxKM
+NLxx+xxLN
+NLKJ_JKLN
+.NMLLLMN.
+...NNN...
+ENDMAP

@@ -2,6 +2,7 @@
 local catalog = require("policy.generation.vaults.catalog")
 local selection = require("policy.generation.vaults.selection")
 local categories = require("constants.catalog")
+local effects = require("constants.vault_effects")
 
 local controller = {}
 local MAX_CHILD_MAPS = 1000
@@ -102,14 +103,41 @@ function controller.place_maps(api, tag, count)
     return placed_count
 end
 
+-- Preserve source whole-level tile choices as a saved, typed controller
+-- record. The ASCII client has no tile surface, while a future tiles client
+-- can read the same level data without rerunning the source hook.
+function controller.level_tiles(api, floor_tile, rock_tile)
+    api.placed[#api.placed + 1] = {
+        id = api.controller_id,
+        occupied = {},
+        exits = {},
+        records = {
+            {
+                kind = effects.GENERATION_RULE,
+                identity = "level_tiles",
+                source_id = api.controller_id,
+                vault_id = api.controller_id,
+                x = 0,
+                y = 0,
+                pending = false,
+                arguments = {
+                    floor_tile = floor_tile,
+                    rock_tile = rock_tile,
+                },
+            },
+        },
+    }
+end
+
 -- Bind one ephemeral controller object to its builder, level facts, and
 -- already placed maps. Source-specific policy remains in its own Lua file.
-function controller.new(builder, context, placed, place)
+function controller.new(builder, context, placed, place, controller_id)
     local api = {
         builder = builder,
         context = context,
         placed = placed,
         place = place,
+        controller_id = controller_id,
     }
 
     api.roll = controller.roll
@@ -119,6 +147,7 @@ function controller.new(builder, context, placed, place)
     api.absolute_depth = controller.absolute_depth
     api.has_tag = controller.has_tag
     api.place_maps = controller.place_maps
+    api.level_tiles = controller.level_tiles
 
     return api
 end

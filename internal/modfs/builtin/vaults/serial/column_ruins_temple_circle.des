@@ -1,0 +1,21 @@
+# Temple circle is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_temple_circle
+TAGS:    serial_column_ruins_fancy luniq_column_ruins_temple
+TAGS:    transparent
+WEIGHT:  5
+SHUFFLE: GI
+SUBST:   G = p
+SUBST:   I = L
+: vault.run("column_ruins_setup.configure")
+MAP
+  NNMNN
+ NMIGIMN
+NMGKKKGMN
+NIKJ_JKIN
+MGK_B_KGM
+NIKJ_JKIN
+NMGKKKGMN
+ NMIGIMN
+  NNMNN
+ENDMAP

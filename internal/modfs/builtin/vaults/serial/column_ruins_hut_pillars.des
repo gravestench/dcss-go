@@ -1,0 +1,24 @@
+# Hut pillars is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_hut_pillars
+TAGS:    serial_column_ruins_fancy luniq
+TAGS:    allow_dup transparent
+WEIGHT:  10
+SUBST:   0 = 0:40 9:10 $:15 %:5 *:1 T:9 _:20
+SUBST:   T = TTUVVV
+: vault.run("column_ruins_setup.hut")
+: vault.run("column_ruins_setup.configure")
+MAP
+.NMMLLLMMN.
+NLKKJJJKKLN
+MLKxxxxxKLM
+MKJx___xJKM
+LJ_x_0_x_JL
+MJ_x___x_JM
+MKJxx+xxJKM
+rLp_G_G_pLr
+MLKJ___JKLM
+sMrKqJqKrMs
+NMMMLLLMMMN
+..NNsMsNN..
+ENDMAP

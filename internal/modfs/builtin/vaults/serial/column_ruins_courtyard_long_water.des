@@ -1,0 +1,17 @@
+# Courtyard long water is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_courtyard_long_water
+TAGS:    serial_column_ruins_fancy
+TAGS:    allow_dup
+WEIGHT:  1
+: vault.run("column_ruins_setup.water_mix")
+: vault.run("column_ruins_setup.configure")
+MAP
+pKrwsLqKp
+KLwwwLLLK
+qKwwwwMKq
+KLwwwwLLK
+pKrwwwrKp
+   wwww
+    ww
+ENDMAP

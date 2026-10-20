@@ -1,0 +1,20 @@
+# Temple hall is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_temple_hall
+TAGS:    serial_column_ruins_fancy luniq_column_ruins_temple
+WEIGHT:  3
+: vault.run("column_ruins_setup.configure")
+MAP
+G_p_G
+_JJJ_
+pJBJp
+JJKJJ
+qKKKq
+KKLKK
+rLLLr
+LLMLL
+sMMMs
+MMNMM
+NNNNN
+@@@@@
+ENDMAP

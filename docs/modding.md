@@ -2085,6 +2085,16 @@ slots create both a `randbook disc:<school> numspells:<count>` and a
 instance's type as known. A new themed room can reuse a method for an
 existing school; a new school method belongs in the shared setup file.
 
+The column ruins family demonstrates decorative serial pieces and
+whole-level presentation. Its `serial_column_ruins.des` controller requests
+pillar, portal, fancy, and simple tags from one named Lua post-place method.
+The rare pillar mode calls `api:level_tiles(floor_tile, rock_tile)`, which
+stores the selected tile names as a typed level record for save and later
+rendering. A solid decorative child may declare `no_exits`; placement then
+keeps its source terrain without making an artificial corridor. Each child
+still needs only one `.des` file and a call to the shared
+`column_ruins_setup.configure` hook where the original setup ran.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls

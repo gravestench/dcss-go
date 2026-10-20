@@ -1,0 +1,22 @@
+# Columns plus is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_columns_plus
+TAGS:    serial_column_ruins_simple
+TAGS:    allow_dup
+WEIGHT:  2
+: vault.run("column_ruins_setup.configure")
+MAP
+     .N.
+     NMN
+     MrM
+     MLM
+     LpL
+.NMMLKJKLMMN.
+NMrLpJGJpLrMN
+.NMMLKJKLMMN.
+     LpL
+     MLM
+     MrM
+     NMN
+     .N.
+ENDMAP

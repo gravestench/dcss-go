@@ -1,0 +1,20 @@
+# Temple hut is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_temple_hut
+TAGS:    serial_column_ruins_fancy luniq_column_ruins_temple
+TAGS:    transparent
+WEIGHT:  2
+: vault.run("column_ruins_setup.hut")
+: vault.run("column_ruins_setup.configure")
+MAP
+..NNMNN..
+.MLKKKLM.
+NLxxxxxLN
+NKx___xKN
+MJx_B_xJM
+MKx___xKM
+NLxx+xxLN
+NLKJ_JKLN
+.NMLLLMN.
+...NNN...
+ENDMAP

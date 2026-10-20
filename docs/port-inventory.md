@@ -315,7 +315,16 @@ smoke marker and delayed skeleton decay. The source's `place:Depths:$`
 monster selector is parsed and retained, but branch-specific random monster
 population still needs the Depths population slice.
 
-The builder and serial count is now 305 of 600. Forest generation exposed
+The fifty-seven-definition column ruins family adds its open-layout
+controller and all fifty-six authored pillars, portals, temples, and
+ruined-city shapes. Shared Lua setup applies the source pillar, hut,
+portal, and Depths water rules; source MAP rows stay unchanged. The rare
+controller mode stores its whole-level floor and rock tile choice as a
+typed level record. Solid `no_exits` decorations now place without
+inventing an entry corridor. Hell and Pandemonium portal gameplay still
+depends on those destination branches being implemented.
+
+The builder and serial count is now 362 of 600. Forest generation exposed
 a missing bow and crossbow missile policy; arrows and bolts now use one
 Lua launcher resolver with their catalog projectile values.
 

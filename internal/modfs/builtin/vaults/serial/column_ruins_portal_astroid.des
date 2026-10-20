@@ -1,0 +1,31 @@
+# Portal astroid is one authored shape in the ruined-city serial.
+# Its MAP geometry stays in DES; shared Lua hooks supply pillar and portal policy.
+NAME: column_ruins_portal_astroid
+TAGS:    serial_column_ruins_portal luniq_column_ruins_portal
+WEIGHT:  3
+: vault.run("column_ruins_setup.portal_astroid")
+: vault.run("column_ruins_setup.portal")
+: vault.run("column_ruins_setup.configure")
+MAP
+          @
+          N
+         NsN
+         NMN
+         MrM
+        NMLMN
+        NLqLN
+       LKKJKKL
+     NNKp_G_pKNN
+  NNMMLK_lll_KLMMNN
+@NsMrLqJGlOlGJqLrMsN@
+  NNMMLK_lll_KLMMNN
+     NNKp_G_pKNN
+       LKKJKKL
+        NLqLN
+        NMLMN
+         MrM
+         NMN
+         NsN
+          N
+          @
+ENDMAP
