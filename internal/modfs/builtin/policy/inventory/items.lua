@@ -2,7 +2,7 @@ local catalog = require("policy.catalog")
 local armour_egos = require("constants.armour_egos")
 local missile_brands = require("constants.missile_brands")
 local identification = require("policy.items.identification")
-local brand_pool = require("policy.inventory.brand_pool")
+local weapon_brands = require("policy.inventory.weapon_brand_compatibility")
 local classes = require("ids.object_classes")
 
 local items = {}
@@ -71,23 +71,8 @@ function items.validate(item, kind)
     end
 
     if kind.class == "OBJ_WEAPONS" and kind.weapon then
-        -- Chaos Knight starts with a forced chaos brand. Generation weights
-        -- describe random rolls, not every brand the source can place.
-        if item.ego == "SPWPN_CHAOS" then
+        if weapon_brands.valid(kind, item.ego) then
             return
-        end
-
-        if brand_pool.contains(kind, item.ego) then
-            return
-        end
-
-        local brands = type(kind.weapon.brand_weights) == "table" and
-            kind.weapon.brand_weights or {}
-
-        for _, brand in ipairs(brands) do
-            if brand.brand_id == item.ego and brand.weight > 0 and item.ego ~= "SPWPN_NORMAL" then
-                return
-            end
         end
     end
 
@@ -103,7 +88,7 @@ function items.validate(item, kind)
         error("incompatible ego")
     end
 
-    error("unknown ego " .. item.ego)
+    error("unknown ego " .. kind.id .. " " .. item.ego)
 end
 
 -- Decide whether pickup should spend a turn before executing it. A corpse
