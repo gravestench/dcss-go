@@ -16,6 +16,30 @@ func TestGeneratedTemplePlanSurvivesRestore(t *testing.T) {
 		t.Fatal("generated run has no saved Temple plan")
 	}
 
+	remaining := make(map[string]bool)
+
+	for _, id := range snapshot.TemplePlan.OverflowGodIDs {
+		remaining[id] = true
+	}
+
+	for _, group := range snapshot.TemplePlan.OverflowSchedule {
+		if group.Depth < 3 || group.Depth > 10 || len(group.GodIDs) == 0 {
+			t.Fatalf("invalid saved overflow group: %+v", group)
+		}
+
+		for _, id := range group.GodIDs {
+			if !remaining[id] {
+				t.Fatalf("overflow god %q missing or repeated", id)
+			}
+
+			delete(remaining, id)
+		}
+	}
+
+	if len(remaining) != 0 {
+		t.Fatalf("overflow gods lack a saved floor: %v", remaining)
+	}
+
 	restored, err := Restore(snapshot)
 
 	if err != nil {
@@ -67,5 +91,17 @@ func TestGeneratedTemplePlanRejectsTampering(t *testing.T) {
 		}
 
 		t.Fatalf("duplicate Temple god error = %v", err)
+	}
+
+	wrongDepth := g.Snapshot()
+	wrongDepth.TemplePlan.OverflowSchedule[0].Depth = 2
+
+	if restored, err := Restore(wrongDepth); err == nil ||
+		!strings.Contains(err.Error(), "Temple plan") {
+		if restored != nil {
+			_ = restored.Close()
+		}
+
+		t.Fatalf("forged overflow depth error = %v", err)
 	}
 }

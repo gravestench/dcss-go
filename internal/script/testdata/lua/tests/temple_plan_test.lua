@@ -49,6 +49,35 @@ local function draws(values)
     return context
 end
 
+-- Every overflow god belongs to one saved Dungeon placement. The schedule
+-- draws at character creation, so revisiting a floor cannot regroup gods.
+local function assert_overflow_schedule(chosen)
+    local remaining = {}
+
+    for _, id in ipairs(chosen.overflow_god_ids) do
+        remaining[id] = true
+    end
+
+    harness.truthy(type(chosen.overflow_schedule) == "table",
+        "Temple saves its Dungeon overflow schedule")
+
+    for _, group in ipairs(chosen.overflow_schedule) do
+        harness.truthy(group.depth >= 3 and group.depth <= 10,
+            "overflow depth is within the source D:3-10 band")
+        harness.truthy(#group.god_ids > 0,
+            "overflow group has at least one god")
+
+        for _, id in ipairs(group.god_ids) do
+            harness.truthy(remaining[id],
+                "overflow god is scheduled once")
+            remaining[id] = nil
+        end
+    end
+
+    harness.falsy(next(remaining),
+        "every overflow god has a scheduled map")
+end
+
 -- Selected gods must form a complete partition with no duplicates. The
 -- validator also catches a changed map, count, or effective god pool.
 function test.run()
@@ -61,6 +90,7 @@ function test.run()
     harness.falsy(catalog.main(ordinary.map_id).tags.temple_rare,
         "ordinary draw cannot select a rare map")
     plan.validate(ordinary, catalog)
+    assert_overflow_schedule(ordinary)
 
     local upper = plan.choose(draws({ 1, 1, 0, 0 }), catalog)
 
@@ -72,6 +102,7 @@ function test.run()
     harness.truthy(catalog.main(rare.map_id).tags.temple_rare,
         "one-in-one-hundred draw selects only rare maps")
     plan.validate(rare, catalog)
+    assert_overflow_schedule(rare)
 
     local empty = plan.choose(draws({ 0 }),
         only_map("ebering_the_none_and_only"))
@@ -88,6 +119,20 @@ function test.run()
         "a rare full Temple can contain the whole eligible pantheon")
     harness.equal(#complete.overflow_god_ids, 0,
         "the full Temple leaves no overflow gods")
+    harness.equal(#complete.overflow_schedule, 0,
+        "the full Temple schedules no overflow maps")
+
+    local missing = plan.choose(draws({ 0 }), catalog)
+
+    missing.overflow_schedule[1].god_ids[1] = missing.main_god_ids[1]
+    harness.falsy(pcall(plan.validate, missing, catalog),
+        "a saved schedule cannot substitute a Temple god")
+
+    local wrong_depth = plan.choose(draws({ 0 }), catalog)
+
+    wrong_depth.overflow_schedule[1].depth = 2
+    harness.falsy(pcall(plan.validate, wrong_depth, catalog),
+        "a saved overflow group must stay within D:3-10")
 
     ordinary.main_god_ids[1] = ordinary.main_god_ids[2]
     local okay = pcall(plan.validate, ordinary, catalog)

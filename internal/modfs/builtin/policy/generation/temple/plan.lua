@@ -3,6 +3,7 @@
 local gods = require("constants.gods")
 local streams = require("constants.rng_streams")
 local default_catalog = require("policy.generation.temple.catalog")
+local overflow_schedule = require("policy.generation.altar.schedule")
 
 local plan = {}
 
@@ -177,6 +178,7 @@ function plan.choose(ctx, catalog)
         altar_count = altar_count,
         main_god_ids = main,
         overflow_god_ids = overflow,
+        overflow_schedule = overflow_schedule.choose(ctx, overflow),
     }
 end
 
@@ -226,6 +228,9 @@ function plan.validate(chosen, catalog)
     for _ in pairs(expected) do
         error("Temple plan lacks an eligible god")
     end
+
+    overflow_schedule.validate(chosen.overflow_schedule,
+        chosen.overflow_god_ids)
 end
 
 -- Go calls the same Lua validator for a restored save. The effective

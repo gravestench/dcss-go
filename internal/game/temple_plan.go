@@ -16,6 +16,15 @@ func cloneTemplePlan(source *save.TemplePlanRecord) *save.TemplePlanRecord {
 	copy := *source
 	copy.MainGodIDs = append([]string(nil), source.MainGodIDs...)
 	copy.OverflowGodIDs = append([]string(nil), source.OverflowGodIDs...)
+	copy.OverflowSchedule = make([]save.OverflowGroupRecord,
+		len(source.OverflowSchedule))
+
+	for index, group := range source.OverflowSchedule {
+		copy.OverflowSchedule[index] = save.OverflowGroupRecord{
+			Depth:  group.Depth,
+			GodIDs: append([]string(nil), group.GodIDs...),
+		}
+	}
 
 	return &copy
 }
@@ -42,6 +51,45 @@ func decodeTempleGodIDs(value any, label string) ([]string, error) {
 	}
 
 	return ids, nil
+}
+
+// Decode Lua's ordered schedule without making Go responsible for god or
+// depth policy. The effective Lua validator checks those meanings next.
+func decodeOverflowSchedule(value any) ([]save.OverflowGroupRecord, error) {
+	values, err := luaScenarioList(value, "Temple overflow schedule")
+
+	if err != nil {
+		return nil, err
+	}
+
+	groups := make([]save.OverflowGroupRecord, 0, len(values))
+
+	for index, value := range values {
+		raw, ok := value.(map[string]any)
+
+		if !ok {
+			return nil, fmt.Errorf("Temple overflow group %d is invalid", index)
+		}
+
+		depth, err := decisionInteger(raw, "depth")
+
+		if err != nil {
+			return nil, fmt.Errorf("Temple overflow group %d: %w", index, err)
+		}
+
+		gods, err := decodeTempleGodIDs(raw["god_ids"], "overflow group")
+
+		if err != nil {
+			return nil, err
+		}
+
+		groups = append(groups, save.OverflowGroupRecord{
+			Depth:  depth,
+			GodIDs: gods,
+		})
+	}
+
+	return groups, nil
 }
 
 // Keep the Lua-to-Go boundary concerned with field shapes. The effective
@@ -77,22 +125,39 @@ func decodeLuaTemplePlan(value any) (*save.TemplePlanRecord, error) {
 		return nil, err
 	}
 
+	schedule, err := decodeOverflowSchedule(raw["overflow_schedule"])
+
+	if err != nil {
+		return nil, err
+	}
+
 	return &save.TemplePlanRecord{
-		MapID:          mapID,
-		AltarCount:     count,
-		MainGodIDs:     main,
-		OverflowGodIDs: overflow,
+		MapID:            mapID,
+		AltarCount:       count,
+		MainGodIDs:       main,
+		OverflowGodIDs:   overflow,
+		OverflowSchedule: schedule,
 	}, nil
 }
 
 // Reconstruct the same table shape the Lua validator and future Temple
 // generation use. Empty Go slices remain ordered empty Lua arrays.
 func luaTemplePlan(source *save.TemplePlanRecord) map[string]any {
+	schedule := make([]any, 0, len(source.OverflowSchedule))
+
+	for _, group := range source.OverflowSchedule {
+		schedule = append(schedule, map[string]any{
+			"depth":   group.Depth,
+			"god_ids": append([]string{}, group.GodIDs...),
+		})
+	}
+
 	return map[string]any{
-		"map_id":           source.MapID,
-		"altar_count":      source.AltarCount,
-		"main_god_ids":     append([]string{}, source.MainGodIDs...),
-		"overflow_god_ids": append([]string{}, source.OverflowGodIDs...),
+		"map_id":            source.MapID,
+		"altar_count":       source.AltarCount,
+		"main_god_ids":      append([]string{}, source.MainGodIDs...),
+		"overflow_god_ids":  append([]string{}, source.OverflowGodIDs...),
+		"overflow_schedule": schedule,
 	}
 }
 

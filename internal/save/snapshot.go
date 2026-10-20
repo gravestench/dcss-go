@@ -8,7 +8,7 @@ import (
 	"crawl/internal/vault"
 )
 
-const Version = 32
+const Version = 33
 
 type Snapshot struct {
 	Version        int               `json:"version"`
@@ -37,10 +37,18 @@ type Snapshot struct {
 // TemplePlanRecord fixes the authored map and god identities before the
 // player reaches Temple. Lua policy validates its meaning on restore.
 type TemplePlanRecord struct {
-	MapID          string   `json:"map_id"`
-	AltarCount     int      `json:"altar_count"`
-	MainGodIDs     []string `json:"main_god_ids"`
-	OverflowGodIDs []string `json:"overflow_god_ids"`
+	MapID            string                `json:"map_id"`
+	AltarCount       int                   `json:"altar_count"`
+	MainGodIDs       []string              `json:"main_god_ids"`
+	OverflowGodIDs   []string              `json:"overflow_god_ids"`
+	OverflowSchedule []OverflowGroupRecord `json:"overflow_schedule"`
+}
+
+// OverflowGroupRecord fixes one altar group's gods and Dungeon depth before
+// the floor is generated. Map selection remains a Lua generation decision.
+type OverflowGroupRecord struct {
+	Depth  int      `json:"depth"`
+	GodIDs []string `json:"god_ids"`
 }
 
 type BranchScheduleRecord struct {

@@ -64,7 +64,7 @@ context rather than a handler API for each game domain.
 | Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
 | Player mutations | Source definitions and Lua-owned mutation records, transitions, passive effects, abilities, and saved state; Vampire blood rituals and Bat Form are implemented; source consumers in other unported domains remain inventoried below | `content/mutations`, `policy/mutations`, `policy/abilities`, `schemas/character_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
-| Persistence | Version-29 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
+| Persistence | Version-33 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
 
 Items support pickup, drop, wielding, armour delays, and put-on/removal of all
 24 active jewellery records. All 17 active potions and 19 active scrolls have
@@ -204,8 +204,12 @@ still need parity.
 The Temple content catalog includes all 53 source Dungeon entry maps and all
 90 main maps, including 47 with source Lua ported to named hooks. A
 source-weighted map, altar count, and complete god partition are chosen at
-new-game creation and saved before Temple is visited. Live placement uses the
-selected map, assigns exact god IDs to its altar records, applies source
+new-game creation and saved before Temple is visited. Overflow gods are now
+grouped and assigned D:3–10 depths in that same saved plan, following the
+source's specialized and generic map-size weights. Their scheduled map
+placement on those Dungeon floors remains to be connected. Live Temple
+placement uses the selected map, assigns exact god IDs to its altar records,
+applies source
 open-sea or lava-sea borders, and materializes authored monsters and items
 without ambient Temple spawns. Temple altars now render with their saved god
 names, and restore rejects an altar identity that disagrees with the plan.
