@@ -1,0 +1,28 @@
+# Poison creatures and mutation potions fill this laboratory.
+# The original MAP and local declarations stay in DES; shared
+# Lua setup adds caster, substitutions, and both D items.
+NAME: hangedman_research_toxicology
+DEPTH: Depths, Vaults:1-4, Elf:1-2
+TAGS: serial_research no_monster_gen patrolling
+WEIGHT: 1
+MONS:    cane toad / black mamba, redback
+MONS:    sea snake / redback, hornet
+MONS:    mana viper / tarantella
+KMONS:   D = death drake
+KITEM:   E = potion of degeneration ident:type / \
+             potion of mutation ident:type
+COLOUR:  .012345DE = lightgreen
+FTILE:   .+n012345DE = floor_moss
+SHUFFLE: 12, 34
+: vault.run("research_setup.poison")
+MAP
+@'''@'''@
+abcd+dcba
+b1n...n2b
+c1n...n2c
+dn+...+nd
+a0nEEEn0a
+b3nn+nn4b
+c3n5D5n4c
+dcbadabcd
+ENDMAP

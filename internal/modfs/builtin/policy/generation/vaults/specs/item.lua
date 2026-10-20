@@ -42,6 +42,12 @@ local function parse_term(text, expression, site)
             end
 
             result[key] = value
+        elseif key == "ident" then
+            if value ~= "type" and value ~= "all" then
+                choice.fail(site, expression, "invalid item identification " .. value)
+            end
+
+            result.ident = value
         elseif key == "plus" or key == "charges" or
             key == "numspells" then
             local number = tonumber(value)

@@ -1,0 +1,28 @@
+# Simulacra, ice surfaces, and a statue carry the cold theme.
+# The original MAP and local declarations stay in DES; shared
+# Lua setup adds caster, substitutions, and both D items.
+NAME: hangedman_research_thermodynamics
+DEPTH: Depths, Vaults:1-4, Elf:1-2
+TAGS: serial_research no_monster_gen patrolling
+WEIGHT: 1
+TAGS:   no_pool_fixup
+MONS:   troll simulacrum / elephant simulacrum / \
+        black mamba simulacrum / naga simulacrum
+MONS:   hydra simulacrum / fire dragon simulacrum / \
+        harpy simulacrum / anaconda simulacrum
+MONS:   azure jelly
+KMONS:  4D = ice statue
+COLOUR: .01234D = white
+FTILE:  .w+01234D = floor_ice
+: vault.run("research_setup.ice")
+MAP
+@'''@'''@
+abcd+dcba
+b01w.w10b
+c2w1w1w2c
+dw.w1w.wd
+a.w.w.w.a
+bwww2wwwb
+cD3.w.34c
+dcbadabcd
+ENDMAP

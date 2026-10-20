@@ -2075,6 +2075,16 @@ forest piece needs one `.des` file with its own geometry and weight clauses.
 The catalog keeps the exact source `NAME` as the stable ID, including the
 capital `C` in `infiniplex_forest_clump_C`.
 
+The research serial shows how ten maps can share a source Lua helper without
+copying declarations into each `.des` file. Each map calls a named method of
+`policy/generation/vaults/serial/research_setup.lua` at its authored hook
+position. The method selects its spell school, then the common setup emits
+the branch-sensitive caster pool and the `KITEM` request. Its two comma
+slots create both a `randbook disc:<school> numspells:<count>` and a
+`star_item` at each D glyph. `ident:type` on a vault item marks that placed
+instance's type as known. A new themed room can reuse a method for an
+existing school; a new school method belongs in the shared setup file.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls

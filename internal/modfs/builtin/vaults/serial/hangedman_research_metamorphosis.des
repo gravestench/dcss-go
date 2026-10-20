@@ -1,0 +1,24 @@
+# Transformed creatures surround the themed book.
+# The original MAP and local declarations stay in DES; shared
+# Lua setup adds caster, substitutions, and both D items.
+NAME: hangedman_research_metamorphosis
+DEPTH: Depths, Vaults:1-4, Elf:1-2
+TAGS: serial_research no_monster_gen patrolling
+WEIGHT: 1
+MONS:    wolf spider, ice beast, vampire bat, hog
+KMONS:   D = fire dragon
+COLOUR:  .01234D = lightmagenta
+FTILE:   .n+01234D = floor_nerves
+SHUFFLE: 1234
+: vault.run("research_setup.transmutation")
+MAP
+@'''@'''@
+abcd+dcba
+b.n...n.b
+c1n...n2c
+d3nn.nn4d
+a.0...0.a
+b.nnnnn.b
+c.0.D.0.c
+dcbadacbd
+ENDMAP

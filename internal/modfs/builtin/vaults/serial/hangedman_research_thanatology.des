@@ -1,0 +1,28 @@
+# Smoke and delayed skeleton decay mark this necromancy room.
+# The original MAP and local declarations stay in DES; shared
+# Lua setup adds caster, substitutions, and both D items.
+NAME: hangedman_research_thanatology
+DEPTH: Depths, Vaults:1-4, Elf:1-2
+TAGS: serial_research no_monster_gen patrolling
+WEIGHT: 1
+MONS:    small abomination
+MONS:    place:Depths:$ skeleton, ghost crab, place:Depths:$ simulacrum
+KMONS:   D = bone dragon
+MARKER:  % = lua:fog_machine { cloud_type = "black smoke", pow_min = 10, \
+                pow_max = 20, delay = 40, size = 1, walk_dist = 0 }
+COLOUR:  .012345D% = w:20 lightgrey / w:5 darkgrey
+FTILE:   .+n012345D% = floor_tomb
+SHUFFLE: 1234
+: vault.run("research_setup.decay")
+: vault.run("research_setup.necromancy")
+MAP
+@'''@'''@
+abcd+dcba
+b11n.n22b
+c1.n.n.2c
+d0n...n0d
+a.n.%.n.a
+b3.n.n.4b
+c33nDn44c
+dcbadabcd
+ENDMAP

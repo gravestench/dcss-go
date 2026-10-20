@@ -75,6 +75,9 @@ local function item_selection(record)
         quality = arguments.quality,
         request = arguments.request ~= "" and arguments.request or nil,
         generation_depth = arguments.generation_depth or 1,
+        disc = arguments.disc ~= "" and arguments.disc or nil,
+        numspells = arguments.numspells ~= 0 and arguments.numspells or nil,
+        ident = arguments.ident ~= "" and arguments.ident or nil,
         site = site,
     }
 end

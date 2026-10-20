@@ -1,0 +1,24 @@
+# Mind-affecting creatures and chaos fog guard the book.
+# The original MAP and local declarations stay in DES; shared
+# Lua setup adds caster, substitutions, and both D items.
+NAME: hangedman_research_probablistics
+DEPTH: Depths, Vaults:1-4, Elf:1-2
+TAGS: serial_research no_monster_gen patrolling
+WEIGHT: 1
+MONS:   eidolon, golden eye, great orb of eyes, sphinx
+MARKER: V = lua:fog_machine { cloud_type = "seething chaos", pow_min = 3, \
+                pow_max = 10, delay = 50, size = 1, walk_dist = 1 }
+COLOUR: .01234D = blue
+FTILE:  .Vn+01234D = floor_marble
+: vault.run("research_setup.hexes")
+MAP
+@'''@'''@
+abcd+dcba
+b....n4Db
+c.V..n23c
+d....n12d
+a....n..a
+b.V..n..b
+c.....00c
+dcbadabcd
+ENDMAP

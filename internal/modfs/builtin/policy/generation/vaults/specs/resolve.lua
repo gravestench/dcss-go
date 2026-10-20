@@ -10,6 +10,7 @@ local item_ids = require("ids.items")
 local item_quality = require("constants.vault_item_quality")
 local colours = require("constants.vault_colours")
 local monster_flags = require("constants.monster_flags")
+local schools = require("constants.spell_schools")
 
 local resolve = {}
 local names_by_category = {}
@@ -34,7 +35,24 @@ local random_item_names = {
     random_item = true,
     good_item = true,
     superb_item = true,
+    star_item = true,
 }
+
+-- A themed random book must name a spell school understood by the same
+-- generator used for shop stock. Reject typos during vault catalog loading.
+local function valid_discipline(discipline)
+    if not discipline then
+        return true
+    end
+
+    for _, school in pairs(schools) do
+        if school == discipline then
+            return true
+        end
+    end
+
+    return false
+end
 
 -- Exclude removed catalog entries while resolving authored names.
 local function active(definition)
@@ -218,7 +236,8 @@ function resolve.validate_monster(selected, site)
     end
 
     local base_name = name:match("^(.-) zombie$") or
-        name:match("^(.-) skeleton$")
+        name:match("^(.-) skeleton$") or
+        name:match("^(.-) simulacrum$")
 
     find_name(categories.MONSTERS, base_name or name, site)
 end
@@ -227,7 +246,13 @@ end
 function resolve.validate_item(selected, site)
     local name = selected.name
 
+    if not valid_discipline(selected.disc) then
+        choice.fail(site, selected.source,
+            "unknown book discipline " .. selected.disc)
+    end
+
     if selected.no_spawn or random_item_names[name] or
+        name == "randbook" or name == "any randbook" or
         name:match("^item_array_[1-8]$") then
         return
     end
@@ -275,8 +300,12 @@ function resolve.monster(ctx, selected, depth, site)
     end
 
     local name = selected.name
-    local base_name = name:match("^(.-) zombie$") or name:match("^(.-) skeleton$")
-    local variant = name:match(" (zombie)$") or name:match(" (skeleton)$")
+    local base_name = name:match("^(.-) zombie$") or
+        name:match("^(.-) skeleton$") or
+        name:match("^(.-) simulacrum$")
+    local variant = name:match(" (zombie)$") or
+        name:match(" (skeleton)$") or
+        name:match(" (simulacrum)$")
     local kind_id
     local base_id
     local colour = selected.colour and selected.colour:lower()
@@ -291,7 +320,13 @@ function resolve.monster(ctx, selected, depth, site)
         -- Source mons_list::get_monster falls back to RANDOM_MONSTER.
         kind_id = random_monsters.pick(ctx, name, source_depth(selected, depth), site)
     elseif base_name then
-        kind_id = variant == "zombie" and monster_ids.MONS_ZOMBIE or monster_ids.MONS_SKELETON
+        if variant == "zombie" then
+            kind_id = monster_ids.MONS_ZOMBIE
+        elseif variant == "skeleton" then
+            kind_id = monster_ids.MONS_SKELETON
+        else
+            kind_id = monster_ids.MONS_SIMULACRUM
+        end
         base_id = find_name(categories.MONSTERS, base_name, site)
     else
         kind_id = find_name(categories.MONSTERS, name, site)
@@ -333,7 +368,9 @@ function resolve.item(ctx, selected, depth, site)
     local generation_depth = source_depth(selected, depth)
     local request
 
-    if random_item_names[name] then
+    if name == "randbook" or name == "any randbook" then
+        kind_id = item_ids.BOOK_RANDART_THEME
+    elseif random_item_names[name] then
         request = name
         local described = random_items.describe(name, generation_depth)
 
@@ -367,6 +404,9 @@ function resolve.item(ctx, selected, depth, site)
         quality = quality,
         request = request,
         generation_depth = generation_depth,
+        disc = selected.disc,
+        numspells = selected.numspells,
+        ident = selected.ident,
     }
 end
 

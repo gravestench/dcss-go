@@ -12,6 +12,7 @@ local spell = require("policy.ai.spell")
 local vault_items = require("policy.population.vault_items")
 local vault_spells = require("constants.vault_spell_override")
 local quality = require("constants.vault_item_quality")
+local schools = require("constants.spell_schools")
 local weapon_brands = require("constants.weapon_brands")
 local terrain = require("constants.terrain")
 
@@ -274,7 +275,38 @@ local function failed_placement_is_atomic(ctx)
         "invalid equipment left a partial actor")
 end
 
-    -- Exercise factory provenance, source overrides, habitat writes, and atomic failure in one world.
+-- Use the same production vault item factory for the research book and the
+-- toxicology room's identified potion. Both fields must survive generation
+-- into Akara components, not merely remain in the source record.
+local function research_items_materialize(ctx)
+    local world = world_context(ctx)
+    local book = vault_items.create(world, {
+        kind_id = items.BOOK_RANDART_THEME,
+        generation_depth = 22,
+        disc = schools.FIRE,
+        numspells = 5,
+    }, 1, 24, 10, origin)
+    local spells = ctx:get(book, component.ITEM_RANDOM_BOOK)
+
+    harness.truthy(spells and #spells.spells > 0,
+        "research book creates a spell list")
+    harness.equal(spells.theme, "fire/fire",
+        "research book retains its school")
+
+    local potion = vault_items.create(world, {
+        kind_id = items.POT_MUTATION,
+        ident = "type",
+    }, 1, 25, 10, origin)
+    local known = ctx:get(potion, component.ITEM_IDENTIFICATION)
+
+    harness.truthy(known and known.known_type,
+        "research potion is type identified")
+    harness.falsy(known.known_properties,
+        "ident:type does not reveal unrelated properties")
+end
+
+-- Exercise factory provenance, source overrides, habitat writes, and atomic
+-- failure in one world.
 function test.run(ctx)
     spawned_actor_has_source_state(ctx)
     vault_items_keep_variant_and_quantity(ctx)
@@ -282,6 +314,7 @@ function test.run(ctx)
     undead_uses_source_species(ctx)
     water_monster_prepares_habitat(ctx)
     failed_placement_is_atomic(ctx)
+    research_items_materialize(ctx)
 end
 
 return test

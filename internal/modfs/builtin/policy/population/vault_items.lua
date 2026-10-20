@@ -6,6 +6,7 @@ local generation = require("policy.item_generation")
 local origin_component = require("policy.population.origin")
 local quality = require("constants.vault_item_quality")
 local purpose = require("constants.item_generation_purpose")
+local identification = require("policy.items.identification")
 
 local vault_items = {}
 
@@ -31,6 +32,8 @@ local function request_from(resolved, level_id, origin)
         purpose = purpose.VAULT,
         quantity = resolved.quantity,
         base_id = resolved.base_id,
+        disc = resolved.disc,
+        numspells = resolved.numspells,
         site = source_site(resolved, origin),
     }
 
@@ -63,6 +66,18 @@ function vault_items.create(ctx, resolved, level_id, x, y, origin)
             y = y,
         },
     })
+
+    -- DES ident:type reveals this specific placed instance; the global
+    -- player knowledge map is unchanged until the item is examined or used.
+    if resolved.ident then
+        local all = resolved.ident == "all"
+
+        identification.reveal_item(ctx, entity, {
+            type = true,
+            pluses = all,
+            properties = all,
+        })
+    end
 
     if origin then
         ctx:add(entity, component.VAULT_ORIGIN,

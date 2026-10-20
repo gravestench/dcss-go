@@ -1,0 +1,24 @@
+# Lightning creatures surround the cyan metal wall.
+# The original MAP and local declarations stay in DES; shared
+# Lua setup adds caster, substitutions, and both D items.
+NAME: hangedman_research_electronics
+DEPTH: Depths, Vaults:1-4, Elf:1-2
+TAGS: serial_research no_monster_gen patrolling
+WEIGHT: 1
+MONS:   air elemental / raiju / sky beast
+MONS:   lightning spire, ball lightning / shock serpent
+COLOUR: .v0123D = cyan
+FTILE:  .+v0123D = floor_rough_cyan
+TILE:   v = dngn_metal_wall_cyan
+: vault.run("research_setup.air")
+MAP
+@'''@'''@
+abcd+dcba
+b3vv.vv3b
+c21v.v12c
+d.......d
+a...v...a
+b21...12b
+c3v0D0v3c
+dcbadabcd
+ENDMAP

@@ -302,7 +302,20 @@ source weight; Lair uses its separate value. One shared Lua setup applies
 vegetation, placement masks, and the branch-dependent tree density while
 each `.des` retains its authored geometry and substitutions. The source
 `infiniplex_forest_clump_C` spelling is preserved as a stable vault ID.
-The builder and serial count is now 294 of 600. Forest generation exposed
+
+The magic research family adds one rare controller and ten distinct school
+rooms for Depths, Vaults, and Elf. The original `.des` maps retain their
+creatures, terrain, markers, and local directives; one documented Lua helper
+adds branch-specific casters, shared substitutions, and a themed book plus a
+star item at the D glyph. Vault item requests now carry a book discipline and
+spell count through to the ordinary item generator, using the floor's
+absolute depth for depth-scaled quality. Source `ident:type`
+reveals the placed item's instance type. The thanatology room preserves its
+smoke marker and delayed skeleton decay. The source's `place:Depths:$`
+monster selector is parsed and retained, but branch-specific random monster
+population still needs the Depths population slice.
+
+The builder and serial count is now 305 of 600. Forest generation exposed
 a missing bow and crossbow missile policy; arrows and bolts now use one
 Lua launcher resolver with their catalog projectile values.
 

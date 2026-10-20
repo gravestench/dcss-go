@@ -1,0 +1,7 @@
+# HangedMan's rare research controller asks for four to six themed rooms.
+# The source has no MAP; its post-place request selects the child tag.
+NAME: serial_hangedman_research
+DEPTH: Depths, Vaults:1-4, Elf:1-2
+TAGS: extra luniq_serial nolayout_encompass
+CHANCE: 0.5%
+: vault.post_place("place_research")

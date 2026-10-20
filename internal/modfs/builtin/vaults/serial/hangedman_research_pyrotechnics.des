@@ -1,0 +1,24 @@
+# Molten creatures and a fire-themed book anchor the room.
+# The original MAP and local declarations stay in DES; shared
+# Lua setup adds caster, substitutions, and both D items.
+NAME: hangedman_research_pyrotechnics
+DEPTH: Depths, Vaults:1-4, Elf:1-2
+TAGS: serial_research no_monster_gen patrolling
+WEIGHT: 1
+MONS:    molten gargoyle, fire elemental, lava snake, lindwurm
+KMONS:   D = fire crab
+COLOUR:  .01234D = red
+FTILE:   .+01234D = floor_volcanic
+SHUFFLE: 34
+: vault.run("research_setup.fire")
+MAP
+@'''@'''@
+abcd+dcba
+bllll..1b
+c2..lll1c
+d2l....ld
+a.llll00a
+b...4lllb
+cl33...Dc
+dcbadabcd
+ENDMAP

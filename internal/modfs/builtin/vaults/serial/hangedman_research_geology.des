@@ -1,0 +1,24 @@
+# Stone terrain and heavy earth creatures frame the book.
+# The original MAP and local declarations stay in DES; shared
+# Lua setup adds caster, substitutions, and both D items.
+NAME: hangedman_research_geology
+DEPTH: Depths, Vaults:1-4, Elf:1-2
+TAGS: serial_research no_monster_gen patrolling
+WEIGHT: 1
+MONS:    basilisk, earth elemental, boulder beetle / catoblepas
+KMONS:   D = iron dragon
+COLOUR:  .x012345D = brown
+FTILE:   .+x012345D = floor_pebble_brown
+TILE:    x = wall_pebble_brown
+: vault.run("research_setup.earth")
+MAP
+@'''@'''@
+abcd+dcba
+b...x...b
+c0x1.1x0c
+d.2xxx2.d
+a.xxDxx.a
+b.x3.3x.b
+cx..x..xc
+dcbadabcd
+ENDMAP

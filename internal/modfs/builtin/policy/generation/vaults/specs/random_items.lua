@@ -17,7 +17,7 @@ function random_items.describe(name, depth)
 
     if name == "$" or name == "random_gold" then
         result.kind_id = ids.OBJ_GOLD
-    elseif name == "*" then
+    elseif name == "*" or name == "star_item" then
         result.quality = quality.STAR
         result.depth = 5 + depth * 2
     elseif name == "good_item" then
