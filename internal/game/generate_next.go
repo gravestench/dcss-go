@@ -179,6 +179,7 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 		"from_y":            selected.Y,
 		"parent":            liveParentRecord(parent),
 		"prior_vault_ids":   g.priorVaultIDs(),
+		"branch_schedule":   luaBranchSchedule(g.branchSchedule),
 	})
 
 	if err != nil {

@@ -2,6 +2,7 @@ local generated = {}
 local abyss = require("policy.world.abyss")
 local branches = require("ids.branches")
 local glyphs = require("constants.vault_glyphs")
+local branch_schedule = require("policy.generation.branch_schedule")
 
 local up_features = {}
 local down_features = {}
@@ -61,7 +62,8 @@ end
 -- Only floors the player has reached exist in a fresh generated save. Every
 -- earlier stair is paired; the current frontier alone may point to a floor
 -- that will be built on first entry. Fully built saves remain valid too.
-function generated.validate(levels, by_id)
+function generated.validate(levels, by_id, chosen_schedule)
+    branch_schedule.validate(chosen_schedule)
     local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
     local floors = #levels - 1
 
@@ -88,6 +90,13 @@ function generated.validate(levels, by_id)
 
         local up_count = 0
         local down_count = 0
+        local expected_entries = {}
+        local seen_entries = {}
+
+        for _, entry in ipairs(branch_schedule.entries(chosen_schedule,
+            branches.BRANCH_DUNGEON, depth)) do
+            expected_entries[entry.branch_id] = entry
+        end
 
         for _, link in ipairs(level.stairs) do
             local stair_feature = feature(level, link.x, link.y)
@@ -103,10 +112,24 @@ function generated.validate(levels, by_id)
                     " has a link on non-stair terrain")
             end
 
+            local branch_entry = link.target_branch_id and
+                link.target_branch_id ~= ""
             local boundary = (depth == 1 and upward) or
                 (depth == bottom and downward)
 
-            if boundary then
+            if branch_entry then
+                local expected = expected_entries[link.target_branch_id]
+
+                if not expected or seen_entries[link.target_branch_id] or
+                    link.source_feature ~= expected.entry_feature or
+                    not downward or link.pending or link.unavailable == "" or
+                    link.to_level_id ~= 0 or link.to_x ~= 0 or link.to_y ~= 0 then
+                    error("generated Dungeon:" .. depth ..
+                        " has an invalid branch entrance")
+                end
+
+                seen_entries[link.target_branch_id] = true
+            elseif boundary then
                 if link.unavailable == "" or link.to_level_id ~= 0 then
                     error("generated Dungeon:" .. depth ..
                         " has an invalid boundary exit")
@@ -121,6 +144,13 @@ function generated.validate(levels, by_id)
             elseif not reciprocal(by_id, depth, link, upward) then
                 error("generated Dungeon:" .. depth ..
                     " has an unpaired stair")
+            end
+        end
+
+        for branch_id in pairs(expected_entries) do
+            if not seen_entries[branch_id] then
+                error("generated Dungeon:" .. depth ..
+                    " lacks scheduled " .. branch_id .. " entrance")
             end
         end
 

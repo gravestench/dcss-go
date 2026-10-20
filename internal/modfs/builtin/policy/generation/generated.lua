@@ -12,8 +12,16 @@ local vault_connect = require("policy.generation.vaults.connect")
 local vault_glyphs = require("constants.vault_glyphs")
 local vault_effects = require("constants.vault_effects")
 local vault_extra = require("policy.generation.vaults.extra")
+local branch_schedule = require("policy.generation.branch_schedule")
 
 local generated = {}
+
+local entrance_directions = {
+    { x = 1, y = 0 },
+    { x = -1, y = 0 },
+    { x = 0, y = 1 },
+    { x = 0, y = -1 },
+}
 
 -- Each floor draws three population dice from its own depth-specific die size.
 local function monster_count(ctx, depth)
@@ -209,9 +217,80 @@ local function base_stair_points(layout)
     return points
 end
 
+-- Find connected floor away from the arrival and existing stairs. The
+-- chosen cell is marked before extra vaults run so no later map can cover
+-- the branch entrance or replace its saved source feature identity.
+local function entrance_cell(builder, start, protected)
+    local queue = { start }
+    local seen = { [start.x .. ":" .. start.y] = true }
+    local cursor = 1
+
+    while cursor <= #queue do
+        local point = queue[cursor]
+        local key = point.x .. ":" .. point.y
+        local distance = math.max(math.abs(point.x - start.x),
+            math.abs(point.y - start.y))
+
+        cursor = cursor + 1
+
+        if distance >= 5 and builder:cell(point.x, point.y) == "." and
+            not protected[key] then
+            return point
+        end
+
+        for _, direction in ipairs(entrance_directions) do
+            local x = point.x + direction.x
+            local y = point.y + direction.y
+            local neighbor = x .. ":" .. y
+            local glyph = x >= 1 and x < 79 and y >= 1 and y < 69 and
+                builder:cell(x, y)
+
+            if glyph and glyph ~= "#" and not seen[neighbor] then
+                seen[neighbor] = true
+                queue[#queue + 1] = { x = x, y = y }
+            end
+        end
+    end
+
+    error("generated floor has no connected branch entrance cell")
+end
+
+-- Store source identity on the link while the grid uses the kernel's
+-- ordinary linked-stair feature. Travel becomes available with the shared
+-- branch installer; until then the player gets a named unavailable reason.
+local function place_branch_entrances(builder, layout, protected,
+    chosen, depth)
+    local links = {}
+    local entries = branch_schedule.entries(chosen,
+        branches.BRANCH_DUNGEON, depth)
+    local start = layout.stairs[1].up
+
+    for _, entry in ipairs(entries) do
+        local point = entrance_cell(builder, start, protected)
+        local branch = register.get("branches", entry.branch_id)
+
+        builder:set(point.x, point.y, ">")
+        vault_extra.protect(protected, point)
+        links[#links + 1] = {
+            x = point.x,
+            y = point.y,
+            to_level_id = 0,
+            to_x = 0,
+            to_y = 0,
+            unavailable = "The entrance to " .. branch.long_name ..
+                " cannot be entered yet.",
+            target_branch_id = entry.branch_id,
+            source_feature = entry.entry_feature,
+        }
+    end
+
+    return links
+end
+
 -- Generate one floor before pairing its stairs with neighboring floors.
 -- The arrival only belongs to D:1; supplemental vaults use actual depth.
-local function build_floor(ctx, player, depth, bottom, prior_vault_ids)
+local function build_floor(ctx, player, depth, bottom, prior_vault_ids,
+    chosen_schedule)
     local layout
     local arrival
     local arrival_vault
@@ -234,6 +313,8 @@ local function build_floor(ctx, player, depth, bottom, prior_vault_ids)
     end
 
     local protected = protected_cells(layout, arrival)
+    local branch_links = place_branch_entrances(layout.builder,
+        layout, protected, chosen_schedule, depth)
     local extra, controller, extra_ids = vault_extra.generate(
         ctx,
         layout.builder,
@@ -291,7 +372,7 @@ local function build_floor(ctx, player, depth, bottom, prior_vault_ids)
         protected = protected,
         source_up = source_up,
         source_down = source_down,
-        links = {},
+        links = branch_links,
     }
 end
 
@@ -350,13 +431,14 @@ end
 -- Build only the floor visible at launch. Its down links name D:2 without
 -- preselecting D:2 terrain, vaults, monster budget, or destination cells.
 function generated.first(ctx, input)
+    local schedule = branch_schedule.choose(ctx)
     local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
     local player = {
         species_id = input.player_species_id,
         name = input.player_name,
         started = false,
     }
-    local floor = build_floor(ctx, player, 1, bottom, {})
+    local floor = build_floor(ctx, player, 1, bottom, {}, schedule)
 
     live_stairs.first(floor)
 
@@ -366,6 +448,7 @@ function generated.first(ctx, input)
 
     return {
         levels = { level },
+        branch_schedule = schedule,
         entry = {
             x = entry.x,
             y = entry.y,
@@ -379,6 +462,7 @@ end
 -- The current parent grid determines safe extra departures. All new-floor
 -- layout and vault draws happen after the player's previous actions.
 function generated.next(ctx, input)
+    branch_schedule.validate(input.branch_schedule)
     local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
     local depth = input.depth
     local parent = input.parent
@@ -393,7 +477,7 @@ function generated.next(ctx, input)
         started = true,
     }
     local floor = build_floor(ctx, player, depth, bottom,
-        input.prior_vault_ids)
+        input.prior_vault_ids, input.branch_schedule)
     local patches, entry = live_stairs.pair(ctx, parent, floor, {
         x = input.from_x,
         y = input.from_y,

@@ -41,6 +41,12 @@ func (g *Game) buildScriptScenario(
 		return scenarioLevels{}, err
 	}
 
+	if scenarioID == generatedDungeonScenarioID {
+		if err := g.acceptLuaBranchSchedule(result["branch_schedule"]); err != nil {
+			return scenarioLevels{}, err
+		}
+	}
+
 	records, ok := result["levels"].([]any)
 
 	if !ok || len(records) == 0 {
@@ -381,13 +387,34 @@ func luaScenarioStair(value any) (StairLink, error) {
 		}
 	}
 
+	targetBranchID := ""
+	sourceFeature := ""
+
+	if raw, present := record["target_branch_id"]; present {
+		targetBranchID, ok = raw.(string)
+
+		if !ok {
+			return StairLink{}, fmt.Errorf("stair target branch ID is not text")
+		}
+	}
+
+	if raw, present := record["source_feature"]; present {
+		sourceFeature, ok = raw.(string)
+
+		if !ok {
+			return StairLink{}, fmt.Errorf("stair source feature is not text")
+		}
+	}
+
 	return StairLink{
-		X:           numbers[0],
-		Y:           numbers[1],
-		ToLevelID:   numbers[2],
-		ToX:         numbers[3],
-		ToY:         numbers[4],
-		Pending:     pending,
-		Unavailable: unavailable,
+		X:              numbers[0],
+		Y:              numbers[1],
+		ToLevelID:      numbers[2],
+		ToX:            numbers[3],
+		ToY:            numbers[4],
+		Pending:        pending,
+		Unavailable:    unavailable,
+		TargetBranchID: targetBranchID,
+		SourceFeature:  sourceFeature,
 	}, nil
 }

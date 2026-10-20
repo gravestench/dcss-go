@@ -53,7 +53,7 @@ function module.run(_, input)
     end
 
     if scenario_id == generated_id then
-        generated.validate(levels, by_id)
+        generated.validate(levels, by_id, input.branch_schedule)
         return {}
     end
 

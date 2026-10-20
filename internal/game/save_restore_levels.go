@@ -97,13 +97,15 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 
 		for _, savedLink := range record.Stairs {
 			if linkErr := level.AddStairLink(StairLink{
-				X:           savedLink.X,
-				Y:           savedLink.Y,
-				ToLevelID:   savedLink.ToLevelID,
-				ToX:         savedLink.ToX,
-				ToY:         savedLink.ToY,
-				Pending:     savedLink.Pending,
-				Unavailable: savedLink.Unavailable,
+				X:              savedLink.X,
+				Y:              savedLink.Y,
+				ToLevelID:      savedLink.ToLevelID,
+				ToX:            savedLink.ToX,
+				ToY:            savedLink.ToY,
+				Pending:        savedLink.Pending,
+				Unavailable:    savedLink.Unavailable,
+				TargetBranchID: savedLink.TargetBranchID,
+				SourceFeature:  savedLink.SourceFeature,
 			}); linkErr != nil {
 				return linkErr
 			}
@@ -127,8 +129,9 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 	}
 
 	if _, err := g.scripts.Policy("save.validate_scenario_levels", map[string]any{
-		"scenario_id": g.scenarioID,
-		"levels":      scenarioLevelPolicyRecords(g.levels),
+		"scenario_id":     g.scenarioID,
+		"levels":          scenarioLevelPolicyRecords(g.levels),
+		"branch_schedule": branchSchedulePolicyInput(g.branchSchedule),
 	}); err != nil {
 		return err
 	}
@@ -154,13 +157,15 @@ func scenarioLevelPolicyRecords(levels map[int]*Level) []any {
 
 		for _, link := range level.StairLinks() {
 			stairs = append(stairs, map[string]any{
-				"x":           link.X,
-				"y":           link.Y,
-				"to_level_id": link.ToLevelID,
-				"to_x":        link.ToX,
-				"to_y":        link.ToY,
-				"pending":     link.Pending,
-				"unavailable": link.Unavailable,
+				"x":                link.X,
+				"y":                link.Y,
+				"to_level_id":      link.ToLevelID,
+				"to_x":             link.ToX,
+				"to_y":             link.ToY,
+				"pending":          link.Pending,
+				"unavailable":      link.Unavailable,
+				"target_branch_id": link.TargetBranchID,
+				"source_feature":   link.SourceFeature,
 			})
 		}
 

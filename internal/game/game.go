@@ -3,6 +3,7 @@ package game
 import (
 	"crawl/internal/ecs"
 	"crawl/internal/modfs"
+	"crawl/internal/save"
 	"crawl/internal/script"
 	"github.com/gravestench/akara"
 )
@@ -16,11 +17,12 @@ type Game struct {
 	rules   modfs.Ruleset
 	scripts *script.Runtime
 
-	seed       uint64
-	scenarioID string
-	rng        *RNGStreams
-	scheduler  TurnScheduler
-	currentAut Aut
+	seed           uint64
+	scenarioID     string
+	rng            *RNGStreams
+	scheduler      TurnScheduler
+	currentAut     Aut
+	branchSchedule *save.BranchScheduleRecord
 
 	turn TurnContext
 

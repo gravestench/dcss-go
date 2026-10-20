@@ -320,6 +320,7 @@ func TestNextFloorLuaPolicyPairsLiveParentStairs(t *testing.T) {
 		"player_name":       "Tester",
 		"from_x":            selected.X,
 		"from_y":            selected.Y,
+		"branch_schedule":   luaBranchSchedule(g.branchSchedule),
 		"parent": map[string]any{
 			"id":     1,
 			"width":  parent.width,

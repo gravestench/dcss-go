@@ -8,7 +8,7 @@ import (
 	"crawl/internal/vault"
 )
 
-const Version = 29
+const Version = 30
 
 type Snapshot struct {
 	Version        int               `json:"version"`
@@ -27,6 +27,22 @@ type Snapshot struct {
 	Levels   []LevelRecord  `json:"levels"`
 	Entities []EntityRecord `json:"entities"`
 	Messages []string       `json:"messages"`
+
+	// Generated runs persist their once-chosen branch graph, including
+	// entrances on parent floors that have not yet been generated.
+	BranchSchedule *BranchScheduleRecord `json:"branch_schedule,omitempty"`
+}
+
+type BranchScheduleRecord struct {
+	WaterBranchID  string              `json:"water_branch_id"`
+	PoisonBranchID string              `json:"poison_branch_id"`
+	Entries        []BranchEntryRecord `json:"entries"`
+}
+
+type BranchEntryRecord struct {
+	BranchID    string `json:"branch_id"`
+	ParentID    string `json:"parent_id"`
+	ParentDepth int    `json:"parent_depth"`
 }
 
 type RulesetFile struct {
@@ -78,13 +94,15 @@ type ShoalsTideRecord struct {
 }
 
 type StairRecord struct {
-	X           int    `json:"x"`
-	Y           int    `json:"y"`
-	ToLevelID   int    `json:"to_level_id"`
-	ToX         int    `json:"to_x"`
-	ToY         int    `json:"to_y"`
-	Pending     bool   `json:"pending,omitempty"`
-	Unavailable string `json:"unavailable,omitempty"`
+	X              int    `json:"x"`
+	Y              int    `json:"y"`
+	ToLevelID      int    `json:"to_level_id"`
+	ToX            int    `json:"to_x"`
+	ToY            int    `json:"to_y"`
+	Pending        bool   `json:"pending,omitempty"`
+	Unavailable    string `json:"unavailable,omitempty"`
+	TargetBranchID string `json:"target_branch_id,omitempty"`
+	SourceFeature  string `json:"source_feature,omitempty"`
 }
 
 type EntityRecord struct {

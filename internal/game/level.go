@@ -60,6 +60,10 @@ type StairLink struct {
 	ToY         int
 	Pending     bool
 	Unavailable string
+	// Source feature identity is carried beside the generic linked-stair grid
+	// cell until the renderer and branch travel policy use the exact feature.
+	TargetBranchID string
+	SourceFeature  string
 }
 
 func NewLevel(id int, cells [][]terrain.ID, positions *akara.Store[ecs.Position]) (*Level, error) {
@@ -132,6 +136,10 @@ func (l *Level) AddStairLink(link StairLink) error {
 
 	if !validStairDestination(link) {
 		return fmt.Errorf("level %d has invalid stair destination at (%d,%d)", l.ID, link.X, link.Y)
+	}
+
+	if (link.TargetBranchID == "") != (link.SourceFeature == "") {
+		return fmt.Errorf("level %d has incomplete branch stair identity", l.ID)
 	}
 
 	location := point{

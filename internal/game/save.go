@@ -137,11 +137,12 @@ func (g *Game) Snapshot() save.Snapshot {
 		RulesetChanges: g.rules.Changes(),
 		LuaSchemas:     g.savedLuaSchemas(),
 
-		PlayerID:   uint64(g.player),
-		CurrentAut: int64(g.currentAut),
-		Seed:       g.seed,
-		RNG:        g.rng.States(),
-		Messages:   append([]string(nil), g.messages...),
+		PlayerID:       uint64(g.player),
+		CurrentAut:     int64(g.currentAut),
+		Seed:           g.seed,
+		RNG:            g.rng.States(),
+		Messages:       append([]string(nil), g.messages...),
+		BranchSchedule: cloneBranchSchedule(g.branchSchedule),
 	}
 
 	for id, level := range g.levels {
@@ -173,13 +174,15 @@ func (g *Game) Snapshot() save.Snapshot {
 
 		for _, link := range level.StairLinks() {
 			record.Stairs = append(record.Stairs, save.StairRecord{
-				X:           link.X,
-				Y:           link.Y,
-				ToLevelID:   link.ToLevelID,
-				ToX:         link.ToX,
-				ToY:         link.ToY,
-				Pending:     link.Pending,
-				Unavailable: link.Unavailable,
+				X:              link.X,
+				Y:              link.Y,
+				ToLevelID:      link.ToLevelID,
+				ToX:            link.ToX,
+				ToY:            link.ToY,
+				Pending:        link.Pending,
+				Unavailable:    link.Unavailable,
+				TargetBranchID: link.TargetBranchID,
+				SourceFeature:  link.SourceFeature,
 			})
 		}
 
@@ -345,6 +348,18 @@ func RestoreWithRules(
 			g.scripts.Close()
 		}
 	}()
+
+	if snapshot.ScenarioID == generatedDungeonScenarioID {
+		if snapshot.BranchSchedule == nil {
+			return nil, fmt.Errorf("generated save has no branch schedule")
+		}
+
+		if err := g.acceptBranchSchedule(snapshot.BranchSchedule); err != nil {
+			return nil, err
+		}
+	} else if snapshot.BranchSchedule != nil {
+		return nil, fmt.Errorf("fixed save has an unexpected branch schedule")
+	}
 
 	if err := g.validateSavedLuaSchemas(
 		snapshot.LuaSchemas,
