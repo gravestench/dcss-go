@@ -166,6 +166,7 @@ local function save_input()
         levels = {
             {
                 id = 1,
+                branch_id = branches.BRANCH_DUNGEON,
                 initial_actors = 100,
             },
         },

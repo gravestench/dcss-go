@@ -12,6 +12,7 @@ local monsters = require("ids.monsters")
 local species = require("ids.species")
 local jobs = require("ids.jobs")
 local terrain = require("constants.terrain")
+local branches = require("ids.branches")
 
 local test = {}
 
@@ -210,6 +211,7 @@ local function generic_band(ctx, world)
         levels = {
             {
                 id = 1,
+                branch_id = branches.BRANCH_DUNGEON,
                 initial_actors = 100,
             },
         },

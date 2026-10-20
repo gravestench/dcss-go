@@ -8,6 +8,7 @@ local harness = require("tests.harness")
 local monsters = require("ids.monsters")
 local save_monsters = require("policy.save.monsters")
 local spells = require("ids.spells")
+local branches = require("ids.branches")
 
 local test = {}
 
@@ -197,6 +198,7 @@ local function bennu_once(ctx, game)
         levels = {
             {
                 id = 1,
+                branch_id = branches.BRANCH_DUNGEON,
                 initial_actors = 100,
             },
         },
