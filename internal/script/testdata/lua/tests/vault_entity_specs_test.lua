@@ -91,6 +91,53 @@ local function parser_reads_actor_overrides()
         "source database alias")
 end
 
+-- Repeated spells: tags are source alternative books; semicolons stay inside
+-- one book as distinct slots. Reject a bad slot at the authored DES site.
+local function parser_keeps_spellbooks()
+    local selected = monster.parse(
+        "rat spells:throw_flame.53.magical " ..
+        "spells:throw_frost.22.natural",
+        site
+    )[1][1]
+
+    harness.equal(#selected.spells, 2, "alternative source books")
+    harness.equal(selected.spells[1], "throw_flame.53.magical",
+        "first source book")
+    harness.equal(selected.spells[2], "throw_frost.22.natural",
+        "second source book")
+
+    local equipped = monster.parse(
+        "rat spells:throw_flame.53.magical;throw_frost.22.natural ; spear",
+        site
+    )[1][1]
+
+    harness.equal(equipped.spells[1],
+        "throw_flame.53.magical;throw_frost.22.natural",
+        "semicolon separates spell slots before gear")
+    harness.equal(equipped.equipment[1][1], "spear",
+        "equipment separator remains after spell extraction")
+
+    local random = {}
+
+    function random:random(_, bound)
+        harness.equal(bound, 2, "one source book choice")
+
+        return 1
+    end
+
+    local resolved = resolve.monster(random, selected, 4, site)
+
+    harness.equal(resolved.spells[1], selected.spells[2],
+        "source chooses the second complete book")
+
+    local okay, reason = pcall(monster.parse,
+        "rat spells:throw_flame.bad.magical", site)
+
+    harness.falsy(okay, "invalid source spell frequency accepted")
+    harness.truthy(reason:find(site.path, 1, true),
+        "spell error lacks DES source path")
+end
+
 -- Cumulative weights determine the selected source alternative at boundaries.
 local function source_cumulative_choice_sequence()
     local draws = { 0, 0, 13 }
@@ -138,6 +185,7 @@ function test.run()
     parser_reads_modifiers_and_no_spawn()
     parser_reads_patrol_and_random_request()
     parser_reads_actor_overrides()
+    parser_keeps_spellbooks()
     source_cumulative_choice_sequence()
     malformed_terms_name_the_source()
 end

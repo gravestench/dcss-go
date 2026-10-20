@@ -3,6 +3,7 @@ local choice = require("policy.generation.vaults.specs.choice")
 local attitude = require("constants.attitude")
 local gods = require("constants.gods")
 local enchantments = require("constants.vault_monster_enchantments")
+local source_spellbook = require("policy.monsters.source_spellbook")
 
 local monster = {}
 
@@ -35,16 +36,32 @@ end
 
 -- Separate monster identity from place, depth, and equipment annotations before lookup.
 local function parse_term(text, expression, site)
-    local actor, equipment = text:match("^(.-)%s*;%s*(.+)$")
+    local books = {}
+
+    -- DES extracts spells: tags before splitting the equipment semicolon.
+    -- A semicolon inside a spells: value separates slots in one book.
+    local without_spells = text:gsub("spells:(%S+)", function(value)
+        local okay, reason = pcall(source_spellbook.parse, value)
+
+        if not okay then
+            choice.fail(site, expression, tostring(reason))
+        end
+
+        books[#books + 1] = value
+
+        return ""
+    end)
+    local actor, equipment = without_spells:match("^(.-)%s*;%s*(.+)$")
 
     if not actor then
-        actor = text
+        actor = without_spells
     end
 
     local result = {
         weight = 10,
         source = text,
         equipment = equipment_slots(equipment, expression, site),
+        spells = #books > 0 and books or nil,
     }
 
     local names = {}
@@ -111,12 +128,6 @@ local function parse_term(text, expression, site)
 
             result.permanent_enchantments = result.permanent_enchantments or {}
             result.permanent_enchantments[#result.permanent_enchantments + 1] = value
-        elseif key == "spells" then
-            result.spells = {}
-
-            for spell in (value .. "|"):gmatch("(.-)|") do
-                result.spells[#result.spells + 1] = spell
-            end
         elseif key == "place" then
             local fixed_depth = value:match("^[A-Za-z]+:%d+$")
             local branch_bottom = value:match("^[A-Za-z]+:%$$")

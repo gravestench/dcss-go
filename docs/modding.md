@@ -2093,6 +2093,26 @@ named Lua hook and compare it with imported `constants.vault_tags` values.
 The fire temple's handler shows how to keep a source random fallback for
 direct map placement while binding a scheduled god to its own altar.
 
+A vault monster can carry its own spellbook without changing its species
+catalog file. For example:
+
+```text
+MONS: statue hp:12 hd:3 spells:throw_flame.53.magical
+```
+
+This places a statue with 12 HP, 3 hit dice, and one Throw Flame slot
+offered at source frequency 53. Separate slots within a `spells:` value
+with semicolons; the equipment separator is parsed
+after spell tags. Repeating `spells:` offers alternative complete books and
+chooses one at placement time. The chosen source text stays in the saved
+vault record and actor component, so restoring a game cannot redraw a
+different book. `spells:.` suppresses the species' normal spellbook. Spell
+names must resolve through `ids.spells`, and each spell needs a Lua monster
+effect with `plan` and `resolve`; an unknown name, frequency, or casting
+flag fails with the `.des` source location. The available flag names follow
+`constants.monster_spell_flags`, including `magical`, `natural`, `wizard`,
+`priest`, `vocal`, `emergency`, and range flags.
+
 The `builder/arena_*.des` family illustrates maps reserved for another game
 mode. Each definition keeps its original `MAP` rows and `arena_*` tag, but
 has no Dungeon `DEPTH` rule. `arena_items` and `arena_smoke` call the shared

@@ -283,6 +283,28 @@ function test.run(ctx)
         "forged source name was accepted")
     ctx:remove(rat, component.VAULT_ACTOR_OVERRIDES)
 
+    -- A saved random choice may pick either authored spells: book. The
+    -- selected book must still belong to the original DES alternatives.
+    local spell_input = level_input()
+    local spell_arguments = spell_input.levels[1].vault_records[1].arguments
+
+    spell_arguments.selected_expression =
+        "rat spells:throw_flame.53.magical spells:throw_frost.22.natural"
+    spell_arguments.spells = "throw_frost.22.natural"
+    ctx:add(rat, component.VAULT_ACTOR_OVERRIDES, {
+        spells = { spell_arguments.spells },
+    })
+    save.validate_vault_entities(ctx, spell_input)
+
+    spell_arguments.spells = "magic_dart.30.magical"
+    ctx:set(rat, component.VAULT_ACTOR_OVERRIDES, {
+        spells = { spell_arguments.spells },
+    })
+
+    harness.falsy(pcall(save.validate_vault_entities, ctx, spell_input),
+        "spellbook outside the source alternatives was accepted")
+    ctx:remove(rat, component.VAULT_ACTOR_OVERRIDES)
+
     -- Duplicate origin occurrence IDs are rejected even on separate entities.
     local second = ctx:create()
 

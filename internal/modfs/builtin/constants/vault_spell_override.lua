@@ -2,6 +2,8 @@
 
 local override = {
     EMPTY_BOOK = ".",
+    NONE = "none",
+    NO_SPELL = "no spell",
 }
 
 return override

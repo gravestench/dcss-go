@@ -76,7 +76,8 @@ local function monster_options(record, level)
         colour = arguments.colour ~= "" and arguments.colour or nil,
         attitude = arguments.attitude ~= "" and arguments.attitude or nil,
         god_id = arguments.god_id ~= "" and arguments.god_id or nil,
-        spells = selected.spells,
+        spells = (arguments.spells or "") ~= "" and
+            { arguments.spells } or nil,
         equipment = selected.equipment,
         hp = arguments.hp ~= 0 and arguments.hp or nil,
         hd = arguments.hd ~= 0 and arguments.hd or nil,

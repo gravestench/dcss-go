@@ -7,6 +7,7 @@ local monsters = require("ids.monsters")
 local spells = require("ids.spells")
 local vault_spells = require("constants.vault_spell_override")
 local flags = require("constants.monster_spell_flags")
+local source_spellbook = require("policy.monsters.source_spellbook")
 local attitudes = require("constants.attitude")
 
 local test = {}
@@ -64,6 +65,39 @@ local function duplicate_ids_have_distinct_slots()
     harness.falsy(okay, "mismatched ID cannot be substituted")
 end
 
+-- Source DES spells: defines a full spellbook for one vault actor. It must
+-- override a species with no native book and preserve each slot's frequency.
+local function authored_spellbook(ctx)
+    local actor = harness.actor_with(ctx, component.ACTOR, {
+        kind_id = monsters.MONS_RAT,
+        speed = 10,
+    })
+
+    ctx:add(actor, component.VAULT_ACTOR_OVERRIDES, {
+        spells = {
+            "throw_flame.53.magical;throw_frost.22.natural",
+        },
+    })
+
+    local book = book_policy.for_actor(ctx, actor)
+
+    harness.equal(#book.slots, 2, "authored spell count")
+    harness.equal(book.slots[1].spell_id, spells.SPELL_THROW_FLAME,
+        "first authored spell")
+    harness.equal(book.slots[1].frequency, 53,
+        "source spell frequency")
+    harness.equal(book.slots[1].flags[1], flags.MAGICAL,
+        "source magical flag")
+    harness.equal(book.slots[2].spell_id, spells.SPELL_THROW_FROST,
+        "second authored spell")
+    harness.equal(book.slots[2].flags[1], flags.NATURAL,
+        "source natural flag")
+    harness.falsy(source_spellbook.parse(vault_spells.NONE),
+        "source none has no spellbook")
+    harness.falsy(source_spellbook.parse("no_spell"),
+        "source no-spell alias has no spellbook")
+end
+
 -- Mismatched ID cannot be substituted.
 function test.run(ctx)
     local monster = source_book(ctx)
@@ -80,6 +114,7 @@ function test.run(ctx)
         "vault empty-book override suppresses casting")
 
     duplicate_ids_have_distinct_slots()
+    authored_spellbook(ctx)
 end
 
 return test

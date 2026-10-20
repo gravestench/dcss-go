@@ -33,7 +33,22 @@ local function validate_actor_overrides(ctx, entity, record, arguments)
         })[1][1]
     end
 
-    local spells = selected and selected.spells or {}
+    local spells = (arguments.spells or "") ~= "" and
+        { arguments.spells } or {}
+
+    if selected and selected.spells then
+        local allowed = false
+
+        for _, book in ipairs(selected.spells) do
+            allowed = allowed or book == arguments.spells
+        end
+
+        if not allowed then
+            error("entity " .. ctx:id(entity) ..
+                " has a spellbook absent from its source vault slot")
+        end
+    end
+
     local expected = (arguments.base_id or "") ~= "" or
         (arguments.colour or "") ~= "" or
         (arguments.attitude or "") ~= "" or

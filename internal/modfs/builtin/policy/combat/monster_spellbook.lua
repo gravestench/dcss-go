@@ -3,6 +3,7 @@ local component = require("constants.component")
 local vault_spells = require("constants.vault_spell_override")
 local book_ids = require("ids.monster_spellbooks")
 local spell_flags = require("constants.monster_spell_flags")
+local source_spellbook = require("policy.monsters.source_spellbook")
 
 local spellbook = {}
 
@@ -19,6 +20,10 @@ function spellbook.for_actor(ctx, entity)
 
     if overrides and overrides.spells[1] == vault_spells.EMPTY_BOOK then
         return nil
+    end
+
+    if overrides and overrides.spells[1] then
+        return source_spellbook.parse(overrides.spells[1])
     end
 
     -- Source living spells carry one custom slot at frequency 200. The

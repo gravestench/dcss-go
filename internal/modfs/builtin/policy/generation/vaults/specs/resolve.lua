@@ -19,6 +19,7 @@ local schools = require("constants.spell_schools")
 local slime_blob = require("policy.monsters.slime_blob")
 local monster_requests = require("constants.vault_monster_requests")
 local item_requests = require("constants.vault_item_requests")
+local streams = require("constants.rng_streams")
 
 local resolve = {}
 local names_by_category = {}
@@ -405,6 +406,18 @@ function resolve.monster(ctx, selected, depth, site)
         return { no_spawn = true }
     end
 
+    local selected_spells
+
+    if selected.spells then
+        local index = 1
+
+        if #selected.spells > 1 then
+            index = ctx:random(streams.PLACEMENT, #selected.spells) + 1
+        end
+
+        selected_spells = { selected.spells[index] }
+    end
+
     return {
         kind_id = kind_id,
         base_id = base_id,
@@ -414,7 +427,7 @@ function resolve.monster(ctx, selected, depth, site)
         colour = colour,
         attitude = selected.attitude,
         god_id = selected.god_id,
-        spells = selected.spells,
+        spells = selected_spells,
         equipment = selected.equipment,
         generate_awake = selected.generate_awake or false,
         patrolling = selected.patrolling or false,

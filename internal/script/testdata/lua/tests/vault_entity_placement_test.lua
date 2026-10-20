@@ -14,6 +14,8 @@ local monsters = require("ids.monsters")
 local items = require("ids.items")
 local branches = require("ids.branches")
 local display = require("policy.combat.monster_support.display")
+local monster_spellbook = require("policy.combat.monster_spellbook")
+local spell_ids = require("ids.spells")
 
 local test = {}
 
@@ -368,7 +370,8 @@ local function authored_identity_materializes(ctx)
         operations = {
             {
                 kind = directives.MONS,
-                argument = "rat name:charred name_adjective hp:12 hd:3",
+                argument = "rat name:charred name_adjective hp:12 hd:3 " ..
+                    "spells:throw_flame.53.magical",
                 line = 4,
             },
         },
@@ -422,6 +425,12 @@ local function authored_identity_materializes(ctx)
     harness.equal(ctx:get(spawned,
         component.VAULT_ACTOR_OVERRIDES).hit_dice, 3,
         "authored HD survives population")
+    local book = monster_spellbook.for_actor(world, spawned)
+
+    harness.equal(book.slots[1].spell_id, spell_ids.SPELL_THROW_FLAME,
+        "authored spell survives population")
+    harness.equal(book.slots[1].frequency, 53,
+        "authored spell frequency survives population")
 end
 
 -- Each cave-to-temple helper branch must resolve tenant monsters with provenance.
