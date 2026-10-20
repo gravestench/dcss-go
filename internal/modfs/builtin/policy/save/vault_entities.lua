@@ -252,6 +252,30 @@ function vault_entities.validate_vault_entities(ctx, input)
         validate_origin(ctx, entity, origin, levels, seen)
     end
 
+    -- A patrol may stop after charm, but an active patrol must still point
+    -- to the cell and source flag that created this authored monster.
+    for _, entity in ipairs(ctx:query({ component.MONSTER_PATROL })) do
+        local anchor = ctx:get(entity, component.MONSTER_PATROL)
+        local origin = ctx:get(entity, component.VAULT_ORIGIN)
+        local position = ctx:get(entity, component.POSITION)
+        local health = ctx:get(entity, component.HEALTH)
+        local level = origin and levels[origin.level_id]
+        local record = level and level.vault_records[origin.record_index]
+        local arguments = record and record.arguments or {}
+
+        if not ctx:has(entity, component.ACTOR) or
+            not origin or origin.occurrence ~= 1 or
+            not position or not health or health.current <= 0 or
+            not record or not arguments.patrolling or
+            anchor.level_id ~= origin.level_id or
+            anchor.x ~= origin.spawn_x or
+            anchor.y ~= origin.spawn_y or
+            position.level_id ~= anchor.level_id then
+            error("entity " .. ctx:id(entity) ..
+                " has invalid authored patrol anchor")
+        end
+    end
+
     return {}
 end
 

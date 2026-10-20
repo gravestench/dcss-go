@@ -16,6 +16,7 @@ local monsters = require("ids.monsters")
 local tactical = require("constants.monster_tactical")
 local band_members = require("policy.population.band_members")
 local branches = require("ids.branches")
+local ai_validation = require("policy.ai.validation")
 
 -- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
@@ -32,47 +33,6 @@ local function validate_banishment(ctx, entity, position)
             origin.origin_x, origin.origin_y) then
         error("monster " .. ctx:id(entity) ..
             " has invalid banishment origin")
-    end
-end
-
--- Source monster flags determine which saved states are legal.
-local function has_flag(definition, id)
-    for _, flag in ipairs(definition.flags or {}) do
-        if flag == id then
-            return true
-        end
-    end
-
-    return false
-end
-
--- AI memory deadlines and target cells must be coherent before turns resume.
-local function validate_ai(ctx, entity, ai, position, definition, current_aut)
-    local retreat_limit = math.max(2, math.floor((definition.speed or 0) / 10)) - 1
-
-    if ai.bat_retreat_actions < 0 or ai.bat_retreat_actions > retreat_limit or
-        (ai.bat_retreat_actions > 0 and
-            (not has_flag(definition, "M_BATTY") or ai.behavior ~= "wander")) then
-        error("monster " .. ctx:id(entity) .. " has invalid bat retreat state")
-    end
-
-    if ai.behavior == "chase" then
-        if ai.target_x ~= 0 or ai.target_y ~= 0 or ai.memory_until_aut ~= 0 then
-            error("legacy monster " .. ctx:id(entity) .. " has a target or memory")
-        end
-    elseif ai.behavior == "wander" then
-        if ai.memory_until_aut ~= 0 or
-            ((ai.target_x ~= 0 or ai.target_y ~= 0) and
-                not ctx:walkable(position.level_id, ai.target_x, ai.target_y)) then
-            error("wandering monster " .. ctx:id(entity) .. " has invalid target or memory")
-        end
-    elseif ai.behavior == "seek" then
-        if not ctx:walkable(position.level_id, ai.target_x, ai.target_y) or
-            ai.memory_until_aut < 0 or ai.memory_until_aut > current_aut + 550 then
-            error("monster " .. ctx:id(entity) .. " has invalid remembered target")
-        end
-    else
-        error("monster " .. ctx:id(entity) .. " has invalid behavior " .. tostring(ai.behavior))
     end
 end
 
@@ -150,7 +110,8 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
             " has wrong speed " .. actor.speed)
     end
 
-    validate_ai(ctx, entity, ai, position, definition, state.current_aut)
+    ai_validation.validate(ctx, entity, ai, position, definition,
+        state.current_aut)
     net.validate(ctx, entity, position)
     poison.validate(ctx, entity)
     sticky_flame.validate(ctx, entity)
@@ -212,7 +173,8 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
         error("vault monster " .. actor.kind_id .. " has wrong speed")
     end
 
-    validate_ai(ctx, entity, ai, position, definition, current_aut)
+    ai_validation.validate(ctx, entity, ai, position, definition,
+        current_aut)
     net.validate(ctx, entity, position)
     poison.validate(ctx, entity)
     sticky_flame.validate(ctx, entity)

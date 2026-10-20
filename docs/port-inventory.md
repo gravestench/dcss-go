@@ -104,6 +104,12 @@ consume the ambient Dungeon population budget. Source terrain and marker
 effects remain typed level records where their gameplay is still pending;
 special monster and item behavior beyond the current generic systems remains
 for later domain slices.
+Authored hostile monsters now start asleep unless their selected `MONS` term
+or vault tag says `generate_awake`; nonhostile vault actors start awake.
+Visible players test stealth to wake sleepers, while sound and injury also
+wake them. A `patrolling` monster stores its source cell in an actor-owned
+Lua component and selects idle targets near that anchor. Both AI sleep state
+and the patrol anchor survive saves with source validation.
 
 Terminal key and menu policy lives in the embedded `policy/input` Lua modules.
 The Go terminal applies their validated decisions and handles drawing, saves,
@@ -346,9 +352,8 @@ controller adds a non-flat common draw and an independent rare draw that
 is skipped in Dis. The nine tagged maps came from the separate variable
 source corpus.
 Dis-only crystal pillars and the depth-dependent unseen-horror display run
-through named Lua hooks. The source `generate_awake` modifier is preserved
-on typed monster records; current monster creation already starts actors
-awake.
+through named Lua hooks. The source `generate_awake` modifier now controls
+the initial sleep state of each selected vault monster.
 
 The forty-one-map forest family now adds its early-Dungeon/Lair controller
 and forty individually weighted shapes. D:1 and D:2 raise each child's

@@ -29,6 +29,11 @@ function test.run(ctx)
     ctx:add(minion, component.FOLLOWER, {
         leader = pikel,
     })
+    ctx:add(pikel, component.MONSTER_PATROL, {
+        level_id = 1,
+        x = 10,
+        y = 10,
+    })
 
     -- Choose the first open Abyss cell and the first smoke duration.
     function game:random(_, bound)
@@ -43,6 +48,8 @@ function test.run(ctx)
         "Pikel did not move to the Abyss")
     harness.equal(ctx:get(pikel, component.POSITION).level_id,
         abyss.level_id, "Pikel remains alive in the Abyss")
+    harness.falsy(ctx:has(pikel, component.MONSTER_PATROL),
+        "cross-level banishment clears the old vault patrol anchor")
     harness.falsy(ctx:has(minion, component.ACTOR),
         "banished Pikel retained a marked minion")
     harness.truthy(ctx:has(other, component.ACTOR),

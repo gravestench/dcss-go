@@ -19,6 +19,7 @@ local spell_ids = require("ids.spells")
 local vault_enchantments = require("policy.monsters.vault_enchantments")
 local enchantments = require("constants.vault_monster_enchantments")
 local hex_status = require("policy.combat.monster_hexes.status")
+local behaviors = require("constants.ai_behaviors")
 
 local test = {}
 
@@ -369,6 +370,10 @@ local function authored_identity_materializes(ctx)
         id = "authored_identity_fixture",
         path = "vaults/altar/authored_identity_fixture.des",
         rows = { "@1" },
+        tags = {
+            generate_awake = true,
+            patrolling = true,
+        },
         orientation = "centre",
         operations = {
             {
@@ -421,6 +426,16 @@ local function authored_identity_materializes(ctx)
     })
 
     harness.truthy(spawned, "authored actor did not materialize")
+    harness.equal(ctx:get(spawned, component.AI).behavior,
+        behaviors.WANDER,
+        "map-level awake tag did not reach the actor")
+    local anchor = ctx:get(spawned, component.MONSTER_PATROL)
+    local position = ctx:get(spawned, component.POSITION)
+
+    harness.equal(anchor.x, position.x,
+        "map-level patrol tag did not anchor the actor")
+    harness.equal(anchor.y, position.y,
+        "map-level patrol tag lost the source cell")
     harness.equal(display.name(world, spawned), "charred rat",
         "authored name survives population")
     harness.equal(ctx:get(spawned, component.HEALTH).max, 12,

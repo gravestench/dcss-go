@@ -12,6 +12,8 @@ local catalog = require("policy.catalog")
 local origin_policy = require("policy.population.origin")
 local origin_schema = require("schemas.vault_origin")
 local enchantments = require("constants.vault_monster_enchantments")
+local ai_validation = require("policy.ai.validation")
+local behaviors = require("constants.ai_behaviors")
 
 local test = {}
 
@@ -86,6 +88,10 @@ function test.run(ctx)
     ctx:add(rat, component.ACTOR, {
         kind_id = monsters.MONS_RAT,
         speed = 10,
+    })
+    ctx:add(rat, component.HEALTH, {
+        current = 5,
+        max = 5,
     })
     ctx:add(rat, component.POSITION, {
         level_id = 1,
@@ -329,6 +335,44 @@ function test.run(ctx)
     harness.falsy(pcall(save.validate_vault_entities, ctx, enchant_input),
         "forged permanent source status was accepted")
     ctx:remove(rat, component.VAULT_PERMANENT_ENCHANTMENTS)
+
+    -- A sleeping actor has no pursuit target; its authored patrol anchor
+    -- still names its original spawn cell after the actor moves away.
+    local sleeping = {
+        behavior = behaviors.SLEEP,
+        target_x = 0,
+        target_y = 0,
+        memory_until_aut = 0,
+        bat_retreat_actions = 0,
+    }
+    local rat_position = ctx:get(rat, component.POSITION)
+    local rat_definition = catalog.get("monsters", monsters.MONS_RAT)
+
+    ai_validation.validate(ctx, rat, sleeping, rat_position,
+        rat_definition, 0)
+    sleeping.target_x = 10
+    harness.falsy(pcall(ai_validation.validate, ctx, rat, sleeping,
+        rat_position, rat_definition, 0),
+        "sleeping AI retained a forged target")
+
+    local patrol_input = level_input()
+
+    patrol_input.levels[1].vault_records[1].arguments.patrolling = true
+    ctx:add(rat, component.MONSTER_PATROL, {
+        level_id = 1,
+        x = 10,
+        y = 9,
+    })
+    save.validate_vault_entities(ctx, patrol_input)
+
+    ctx:set(rat, component.MONSTER_PATROL, {
+        level_id = 1,
+        x = 11,
+        y = 9,
+    })
+    harness.falsy(pcall(save.validate_vault_entities, ctx, patrol_input),
+        "forged saved patrol anchor was accepted")
+    ctx:remove(rat, component.MONSTER_PATROL)
 
     -- Duplicate origin occurrence IDs are rejected even on separate entities.
     local second = ctx:create()

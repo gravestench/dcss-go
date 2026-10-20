@@ -10,6 +10,7 @@ local confusion = require("policy.magic.player_confusion")
 local effects = require("policy.mutations.effects.registry")
 local roll = require("policy.combat.roll")
 local senses = require("policy.character.senses")
+local behaviors = require("constants.ai_behaviors")
 
 local stab = {}
 
@@ -56,7 +57,10 @@ local function condition(ctx, player, target, definition)
     local fear = ctx:get(target, component.MONSTER_MASS_ENCHANT)
     local confused = ctx:get(target, component.MONSTER_CONFUSION)
 
-    if stasis and stasis.hibernating then
+    local ai = ctx:get(target, component.AI)
+
+    if (stasis and stasis.hibernating) or
+        (ai and ai.behavior == behaviors.SLEEP) then
         return "sleeping", 1
     end
 
@@ -80,9 +84,7 @@ local function condition(ctx, player, target, definition)
         return "confused", 4
     end
 
-    local ai = ctx:get(target, component.AI)
-
-    if ai and ai.behavior == "wander" and
+    if ai and ai.behavior == behaviors.WANDER and
         not has_flag(definition, flags.BATTY) then
         return "distracted", 4
     end

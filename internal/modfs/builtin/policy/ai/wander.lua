@@ -1,4 +1,5 @@
 local common = require("policy.ai.common")
+local patrol = require("policy.ai.patrol")
 
 local wander = {}
 
@@ -71,6 +72,10 @@ function wander.update(ctx, entity, state, position)
 
     if leader then
         choose_band_target(ctx, state, position, leader)
+        return
+    end
+
+    if patrol.target(ctx, entity, state, position) then
         return
     end
 

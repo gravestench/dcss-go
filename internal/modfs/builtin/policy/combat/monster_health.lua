@@ -8,6 +8,7 @@ local bond = require("policy.combat.monster_injury_bond")
 local display = require("policy.combat.monster_support.display")
 local causes = require("constants.damage_causes")
 local senses = require("policy.character.senses")
+local awareness = require("policy.ai.awareness")
 
 local monster_health = {}
 
@@ -66,6 +67,10 @@ function monster_health.damage(ctx, target, amount, source, cause)
 
     health.current = before - dealt
     ctx:set(target, component.HEALTH, health)
+
+    if dealt > 0 and health.current > 0 then
+        awareness.wake_from_damage(ctx, target, source)
+    end
 
     if guardian then
         monster_health.damage(ctx, guardian, shared, source,

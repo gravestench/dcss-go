@@ -23,6 +23,9 @@ local generation = require("policy.item_generation")
 local item_purpose = require("constants.item_generation_purpose")
 local item_quality = require("constants.vault_item_quality")
 local vault_enchantments = require("policy.monsters.vault_enchantments")
+local attitudes = require("constants.attitude")
+local statues = require("constants.monster_statues")
+local behaviors = require("constants.ai_behaviors")
 
 local factory = {}
 
@@ -344,13 +347,27 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         max = hp,
     })
     ctx:add(monster, "core.combat", { shield_blocks = 0 })
+    -- DES hostiles sleep unless their selected expression or map tag wakes
+    -- them. Non-vault creation retains the source's awake mgen default.
+    local sleep = options.origin and not options.generate_awake and
+        not statues[kind_id] and
+        (not options.attitude or options.attitude == attitudes.HOSTILE)
+
     ctx:add(monster, component.AI, {
-        behavior = "wander",
+        behavior = sleep and behaviors.SLEEP or behaviors.WANDER,
         target_x = 0,
         target_y = 0,
         memory_until_aut = 0,
         bat_retreat_actions = 0,
     })
+
+    if options.patrolling then
+        ctx:add(monster, component.MONSTER_PATROL, {
+            level_id = level_id,
+            x = x,
+            y = y,
+        })
+    end
 
     if blob_size > 1 then
         ctx:add(monster, component.SLIME_BLOB, { size = blob_size })

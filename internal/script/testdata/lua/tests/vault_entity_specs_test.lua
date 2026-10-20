@@ -64,6 +64,11 @@ local function parser_reads_patrol_and_random_request()
     harness.equal(selected.name, "quokka", "patrol is not part of the name")
     harness.truthy(selected.patrolling, "authored patrol intent")
 
+    local awake = monster.parse("generate_awake quokka", site)[1][1]
+
+    harness.truthy(awake.generate_awake,
+        "authored awake modifier is separate from the monster name")
+
     local random = monster.parse("random", site)[1][1]
 
     resolve.validate_monster(random, site)

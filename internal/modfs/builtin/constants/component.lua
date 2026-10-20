@@ -11,6 +11,7 @@ local component = {
     PROJECTILE_NET = "projectile.net",
     VAULT_ACTOR_OVERRIDES = "vault.actor_overrides",
     VAULT_PERMANENT_ENCHANTMENTS = "vault.permanent_enchantments",
+    MONSTER_PATROL = "world.monster_patrol",
     PLAYER = "core.player",
     PLAYER_TURN = "core.player_turn",
     POSITION = "core.position",

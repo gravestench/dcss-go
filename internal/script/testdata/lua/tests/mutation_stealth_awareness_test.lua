@@ -10,6 +10,7 @@ local species = require("ids.species")
 local awareness = require("policy.ai.awareness")
 local stealth = require("policy.character.stealth")
 local records = require("policy.mutations.records")
+local behaviors = require("constants.ai_behaviors")
 
 local test = {}
 
@@ -68,9 +69,12 @@ function test.run(ctx)
     local monster = ctx:create()
     ctx:add(monster, component.ACTOR, { kind_id = monsters.MONS_GOBLIN })
 
-    local state = { behavior = "wander" }
+    local state = { behavior = behaviors.WANDER }
     harness.equal(awareness.detects(world, monster, state, true), false,
         "a high awareness roll misses a camouflaged player")
+    state.behavior = behaviors.SLEEP
+    harness.equal(awareness.detects(world, monster, state, true), false,
+        "sleeping monsters still test player stealth")
 
     world = player_world(ctx, player, 0)
     harness.equal(awareness.detects(world, monster, state, true), true,

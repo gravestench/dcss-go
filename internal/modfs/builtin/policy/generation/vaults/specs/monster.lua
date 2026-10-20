@@ -145,8 +145,8 @@ local function parse_term(text, expression, site)
             result.name_adjective = true
         elseif token == "generate_awake" then
             -- The source modifier is separate from the monster's display
-            -- name. The current population starts actors awake by default,
-            -- but its typed intent stays on the vault record for saves.
+            -- name. It overrides the ordinary sleeping start of a hostile
+            -- vault actor when the selected expression materializes.
             result.generate_awake = true
         elseif key then
             choice.fail(site, expression, "unknown monster modifier " .. key)

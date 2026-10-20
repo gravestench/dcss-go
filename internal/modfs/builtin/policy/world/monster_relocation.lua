@@ -64,6 +64,14 @@ function relocation.move(ctx, monster, level_id, x, y)
     net.release(ctx, monster)
     release_player_links(ctx, monster, level_id, x, y)
     release_band_links(ctx, monster, level_id, origin.level_id)
+
+    -- The source clears a monster's patrol point when it leaves its floor.
+    -- Keeping the old anchor would also make the saved actor inconsistent.
+    if level_id ~= origin.level_id and
+        ctx:has(monster, component.MONSTER_PATROL) then
+        ctx:remove(monster, component.MONSTER_PATROL)
+    end
+
     ctx:move_actor(monster, level_id, x, y)
 end
 

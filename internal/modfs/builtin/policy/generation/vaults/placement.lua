@@ -401,7 +401,10 @@ local function select_entities(record, vault, random, depth)
         arguments.god_id = resolved.god_id or ""
         arguments.spells = resolved.spells and
             table.concat(resolved.spells, "|") or ""
-        arguments.generate_awake = resolved.generate_awake or false
+        arguments.vault_awake = vault.tags and
+            vault.tags.generate_awake or false
+        arguments.generate_awake = resolved.generate_awake or
+            arguments.vault_awake
         -- A source patrolling TAG applies to every actor in the map;
         -- a term-level modifier applies only to its selected alternative.
         arguments.vault_patrolling = vault.tags and

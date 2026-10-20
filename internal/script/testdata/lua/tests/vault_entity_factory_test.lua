@@ -7,6 +7,8 @@ local factory = require("policy.population.factory")
 local harness = require("tests.harness")
 local items = require("ids.items")
 local monsters = require("ids.monsters")
+local species = require("ids.species")
+local jobs = require("ids.jobs")
 local object_classes = require("ids.object_classes")
 local targets = require("policy.ai.targets")
 local spell = require("policy.ai.spell")
@@ -23,6 +25,8 @@ local display = require("policy.combat.monster_support.display")
 local monster_stats = require("policy.combat.monster_stats")
 local presentation = require("policy.presentation.view")
 local permanent = require("constants.vault_monster_enchantments")
+local attitudes = require("constants.attitude")
+local behaviors = require("constants.ai_behaviors")
 local vault_enchantments = require("policy.monsters.vault_enchantments")
 local paralysis = require("policy.magic.effects.zaps.paralysis")
 local confusion = require("policy.magic.effects.statuses.confusing_touch")
@@ -30,6 +34,10 @@ local hex_status = require("policy.combat.monster_hexes.status")
 local monster_enchant = require("policy.combat.monster_enchant")
 local monster_slow = require("policy.combat.monster_slow")
 local mute_system = require("systems.zap_monster_mute")
+local monster_health = require("policy.combat.monster_health")
+local wander = require("policy.ai.wander")
+local noise = require("policy.world.noise")
+local decision = require("systems.monster_decision")
 
 local test = {}
 
@@ -573,6 +581,145 @@ local function unique_claim_is_atomic(ctx)
         "rejected unique left no partial actor")
 end
 
+-- Source vault monsters sleep until alerted; an explicit awake flag or a
+-- nonhostile role overrides that start. Patrol anchors belong to the actor.
+local function authored_spawn_roles(ctx)
+    local world = world_context(ctx)
+
+    -- Give each actor a distinct saved source slot at its placed cell.
+    local function spawn(x, options)
+        options.origin = {
+            level_id = 1,
+            vault_id = "spawn_role_fixture",
+            record_index = x,
+            occurrence = 1,
+            spawn_x = x,
+            spawn_y = 8,
+        }
+
+        return factory.spawn(world, monsters.MONS_RAT, 1, x, 8, options)
+    end
+
+    local sleeper = spawn(31, {})
+    local awake = spawn(32, { generate_awake = true })
+    local neutral = spawn(33, { attitude = attitudes.NEUTRAL })
+    local patrol = spawn(34, { patrolling = true })
+
+    harness.equal(ctx:get(sleeper, component.AI).behavior, behaviors.SLEEP,
+        "ordinary vault monster starts asleep")
+    harness.equal(ctx:get(awake, component.AI).behavior, behaviors.WANDER,
+        "generate_awake starts the actor wandering")
+    harness.equal(ctx:get(neutral, component.AI).behavior, behaviors.WANDER,
+        "nonhostile vault monster starts awake")
+    harness.equal(ctx:get(patrol, component.AI).behavior, behaviors.SLEEP,
+        "patrolling does not silently imply awake")
+
+    local statue = factory.spawn(world, monsters.MONS_ORANGE_STATUE,
+        1, 37, 8, {
+            origin = {
+                level_id = 1,
+                vault_id = "spawn_role_fixture",
+                record_index = 37,
+                occurrence = 1,
+                spawn_x = 37,
+                spawn_y = 8,
+            },
+        })
+
+    harness.equal(ctx:get(statue, component.AI).behavior, behaviors.WANDER,
+        "source statues do not start asleep")
+
+    local anchor = ctx:get(patrol, component.MONSTER_PATROL)
+
+    harness.equal(anchor.level_id, 1, "patrol anchor level")
+    harness.equal(anchor.x, 34, "patrol anchor x")
+    harness.equal(anchor.y, 8, "patrol anchor y")
+
+    -- The regular wandering rule must pick within the patrol area even if
+    -- the monster has chased the player far away from its source cell.
+    -- The patrol test admits its source cells without requiring a grid map.
+    function world:visible()
+        return true
+    end
+
+    local state = ctx:get(patrol, component.AI)
+    local remote = {
+        level_id = 1,
+        x = 50,
+        y = 8,
+    }
+
+    state.behavior = behaviors.WANDER
+    wander.update(world, patrol, state, remote)
+    harness.truthy(math.abs(state.target_x - anchor.x) <= 7 and
+        math.abs(state.target_y - anchor.y) <= 7,
+        "patrol target drifted beyond its authored anchor")
+
+    monster_health.damage(world, sleeper, 1, world:player())
+    harness.falsy(ctx:get(sleeper, component.AI).behavior == behaviors.SLEEP,
+        "damage did not wake the authored sleeper")
+
+    local hearer = spawn(35, {})
+
+    local noise_origin = {
+        level_id = 1,
+        x = 35,
+        y = 8,
+    }
+
+    noise.emit(world, noise_origin, 1, world:player())
+    harness.equal(ctx:get(hearer, component.AI).behavior, behaviors.WANDER,
+        "audible noise did not wake the authored sleeper")
+
+    local hidden = spawn(36, {})
+
+    ctx:add(world:player(), component.POSITION, {
+        level_id = 1,
+        x = 40,
+        y = 8,
+    })
+
+    -- An unseen player must leave the sleeping actor's AI unchanged.
+    function world:visible()
+        return false
+    end
+
+    decision.update(world, hidden)
+    harness.equal(ctx:get(hidden, component.AI).behavior, behaviors.SLEEP,
+        "an unseen player woke a sleeping vault actor")
+    harness.equal(ctx:get(hidden, component.INTENT).kind, 6,
+        "sleeping actor chose an action instead of waiting")
+
+    ctx:add(world:player(), component.PLAYER, {
+        species_id = species.SP_HUMAN,
+        job_id = jobs.JOB_FIGHTER,
+    })
+    ctx:add(world:player(), component.ATTRIBUTES, {
+        strength = 10,
+        intelligence = 10,
+        dexterity = 10,
+    })
+    ctx:add(world:player(), component.SKILLS, { entries = {} })
+
+    -- This pass exercises the real stealth contest and target-memory path.
+    function world:visible()
+        return true
+    end
+
+    -- The isolated rule test has no running turn scheduler.
+    function world:aut()
+        return 0
+    end
+
+    local seen = spawn(38, {})
+
+    decision.update(world, seen)
+    harness.equal(ctx:get(seen, component.AI).behavior, behaviors.SEEK,
+        "a sighted player did not wake the sleeper into pursuit")
+    harness.truthy(ctx:has(seen, component.INTENT),
+        "woken monster produced no decision")
+end
+
 -- Exercise factory provenance, source overrides, habitat writes, and atomic
 -- failure in one world.
 function test.run(ctx)
@@ -590,6 +737,7 @@ function test.run(ctx)
     research_items_materialize(ctx)
     merged_slime_is_one_actor(ctx)
     unique_claim_is_atomic(ctx)
+    authored_spawn_roles(ctx)
 end
 
 return test

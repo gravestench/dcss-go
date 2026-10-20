@@ -218,6 +218,13 @@ function allegiance.cast_charm(ctx, player, intent, spell, power)
     local value = ensure(ctx, target)
     value.charm_aut = value.charm_aut + charm_duration(ctx, target, definition)
     save(ctx, target, value)
+
+    -- A new ally follows the player instead of keeping its authored patrol.
+    -- Source charm drops the patrol point when allegiance changes.
+    if ctx:has(target, component.MONSTER_PATROL) then
+        ctx:remove(target, component.MONSTER_PATROL)
+    end
+
     ctx:emit("spell", "The " .. definition.name .. " is charmed.")
 end
 

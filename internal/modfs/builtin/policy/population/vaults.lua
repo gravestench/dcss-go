@@ -88,6 +88,9 @@ local function monster_options(record, level)
             arguments.database_name or nil,
         tile = arguments.tile ~= "" and arguments.tile or nil,
         permanent_enchantments = selected.permanent_enchantments,
+        generate_awake = arguments.generate_awake or
+            arguments.vault_awake or false,
+        patrolling = arguments.patrolling or false,
     }
 end
 
@@ -180,6 +183,8 @@ local function fallback_monster(ctx, level, record)
             arguments.spells = resolved.spells and
                 table.concat(resolved.spells, "|") or ""
             arguments.generate_awake = resolved.generate_awake or false
+            arguments.generate_awake = arguments.generate_awake or
+                arguments.vault_awake or false
             arguments.patrolling = resolved.patrolling or
                 arguments.vault_patrolling or false
             arguments.database_name = resolved.database_name or ""

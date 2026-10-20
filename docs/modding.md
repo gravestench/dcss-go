@@ -2349,6 +2349,17 @@ dispel removes the marker along with any status it removes, so a later
 temporary application still has a normal lifetime. The actor's marker is
 saved and checked against its selected `.des` expression on restore.
 
+Vault hostiles normally start asleep. Add `generate_awake` to a `MONS:` or
+`KMONS:` term to start that actor wandering, or use `TAGS: generate_awake` to
+apply it to the whole map. Friendly and neutral actors start awake. The
+`patrolling` term or map tag gives an actor a saved anchor at its spawn cell;
+its idle AI chooses nearby cells and returns to that area after losing a foe.
+Charm retires that anchor so an ally can follow the player, and a monster
+leaving its floor loses the old anchor for the same reason.
+The player can wake a sleeper by being seen, making audible noise, or hurting
+it. These are live ECS behavior and patrol records, so a mod does not need a
+second system just to make the source modifiers work.
+
 | `vault.run` hook call | Result |
 | --- | --- |
 | `api:roll(bound)` | Integer from `0` to `bound - 1` on the vault layout stream. |

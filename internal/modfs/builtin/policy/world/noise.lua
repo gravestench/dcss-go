@@ -5,6 +5,7 @@ local effects = require("policy.mutations.effects.registry")
 local terrain = require("constants.terrain")
 local vision = require("policy.character.vision")
 local silence = require("policy.world.silence")
+local behaviors = require("constants.ai_behaviors")
 
 local noise = {}
 
@@ -188,7 +189,7 @@ end
 
 -- A full alert records the noise origin and a finite pursuit deadline.
 local function alert(ctx, monster, state, origin)
-    state.behavior = "seek"
+    state.behavior = behaviors.SEEK
     state.target_x = origin.x
     state.target_y = origin.y
     state.memory_until_aut = ctx:aut() + 250
@@ -197,10 +198,12 @@ end
 
 -- A wandering monster may investigate sound without changing to seek behaviour.
 local function disturb(ctx, monster, state, origin)
-    if state.behavior ~= "wander" then
+    if state.behavior ~= behaviors.WANDER and
+        state.behavior ~= behaviors.SLEEP then
         return
     end
 
+    state.behavior = behaviors.WANDER
     state.target_x = origin.x
     state.target_y = origin.y
     ctx:set(monster, component.AI, state)

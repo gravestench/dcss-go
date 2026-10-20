@@ -5,6 +5,7 @@ local monsters = require("ids.monsters")
 local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
 local stab = require("policy.combat.stab")
+local behaviors = require("constants.ai_behaviors")
 
 local test = {}
 
@@ -80,6 +81,17 @@ function test.run(ctx)
     -- A weaker helplessness state must not receive the sleeping-target grade.
     harness.equal(awake.bonus, 4,
         "petrifying enemies have a weaker stab opening")
+
+    ctx:add(rat, component.AI, {
+        behavior = behaviors.SLEEP,
+    })
+
+    local ordinary_sleep = stab.prepare(world, player, rat, ordinary)
+
+    harness.equal(ordinary_sleep.kind, "sleeping",
+        "ordinary sleeping AI grants a stab opening")
+    harness.equal(ordinary_sleep.bonus, 1,
+        "ordinary sleep is as helpless as magical hibernation")
 end
 
 return test

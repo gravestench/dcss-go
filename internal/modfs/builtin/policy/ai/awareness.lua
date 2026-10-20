@@ -3,6 +3,7 @@ local component = require("constants.component")
 local intelligence = require("constants.monster_intelligence")
 local stealth = require("policy.character.stealth")
 local monster_stats = require("policy.combat.monster_stats")
+local behaviors = require("constants.ai_behaviors")
 
 local awareness = {}
 
@@ -13,7 +14,8 @@ function awareness.detects(ctx, monster, state, player_visible)
         return false
     end
 
-    if state.behavior ~= "wander" then
+    if state.behavior ~= behaviors.WANDER and
+        state.behavior ~= behaviors.SLEEP then
         return true
     end
 
@@ -39,6 +41,30 @@ function awareness.detects(ctx, monster, state, player_visible)
         monster_stats.hit_dice(ctx, monster, definition))
 
     return ctx:random("ai", score) < perception + 1
+end
+
+-- Direct harm interrupts natural sleep. A known attacker gives the actor a
+-- pursuit target; otherwise it wakes without inventing a remembered foe.
+function awareness.wake_from_damage(ctx, monster, attacker)
+    local state = ctx:get(monster, component.AI)
+
+    if not state or state.behavior ~= behaviors.SLEEP then
+        return
+    end
+
+    local source = attacker and ctx:get(attacker, component.POSITION)
+    local position = ctx:get(monster, component.POSITION)
+
+    state.behavior = behaviors.WANDER
+
+    if source and position and source.level_id == position.level_id then
+        state.behavior = behaviors.SEEK
+        state.target_x = source.x
+        state.target_y = source.y
+        state.memory_until_aut = ctx:aut() + 250
+    end
+
+    ctx:set(monster, component.AI, state)
 end
 
 return awareness

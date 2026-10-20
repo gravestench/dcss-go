@@ -16,6 +16,7 @@ local allies = require("policy.character.allies")
 local awareness = require("policy.ai.awareness")
 local invisibility = require("policy.potions.invisibility")
 local component = require("constants.component")
+local behaviors = require("constants.ai_behaviors")
 
 -- Allied casters offer spells against a visible enemy before routing toward
 -- it. Frenzied and haunting hostiles retain the normal player awareness gate.
@@ -37,7 +38,7 @@ local function choose_actor_target(ctx, entity, state, position)
         return state, { kind = 6 }
     end
 
-    state.behavior = "seek"
+    state.behavior = behaviors.SEEK
     state.target_x = destination.x
     state.target_y = destination.y
     state.memory_until_aut = ctx:aut() + 250
@@ -89,7 +90,7 @@ local function choose_intent(ctx, entity, state)
     -- Neutral actors have no player foe. Let them wander without offering
     -- a hostile spell, missile, or melee intent against that actor.
     if not targets.enemy(ctx, entity, player_entity) then
-        state.behavior = "wander"
+        state.behavior = behaviors.WANDER
         state.target_x = 0
         state.target_y = 0
         wander.update(ctx, entity, state, position)
@@ -117,9 +118,20 @@ local function choose_intent(ctx, entity, state)
         player_visible)
     local retreating = state.bat_retreat_actions > 0
 
+    -- Source vault sleepers wait until sight, sound, or injury alerts them.
+    -- Convert a successful sight contest to ordinary pursuit before memory
+    -- and spell selection inspect the role.
+    if state.behavior == behaviors.SLEEP then
+        if not player_detected then
+            return state, { kind = 6 }
+        end
+
+        state.behavior = behaviors.WANDER
+    end
+
     if retreating then
         state.bat_retreat_actions = state.bat_retreat_actions - 1
-        state.behavior = "wander"
+        state.behavior = behaviors.WANDER
         state.target_x = 0
         state.target_y = 0
     else
@@ -146,7 +158,7 @@ local function choose_intent(ctx, entity, state)
     end
 
     -- Wandering may create a new target; no target produces WAIT rather than a blind route step.
-    if state.behavior == "wander" then
+    if state.behavior == behaviors.WANDER then
         wander.update(ctx, entity, state, position)
 
         if state.target_x == 0 and state.target_y == 0 then
@@ -157,10 +169,10 @@ local function choose_intent(ctx, entity, state)
     end
 
     local intent = route.follow(ctx, entity, state, position, player,
-        player_entity, state.behavior ~= "wander")
+        player_entity, state.behavior ~= behaviors.WANDER)
 
     if retreating and state.bat_retreat_actions == 0 then
-        state.behavior = "seek"
+        state.behavior = behaviors.SEEK
         state.target_x = player.x
         state.target_y = player.y
     end

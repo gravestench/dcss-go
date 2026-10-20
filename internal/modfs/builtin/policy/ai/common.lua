@@ -1,3 +1,5 @@
+local behaviors = require("constants.ai_behaviors")
+
 local ai = {}
 
 -- Shared position and memory helpers keep pursuit decisions consistent across the AI policies.
@@ -32,7 +34,7 @@ end
 
 -- Clear coordinates and deadline together so wandering cannot reuse a stale target.
 function ai.forget(state)
-    state.behavior = "wander"
+    state.behavior = behaviors.WANDER
     state.target_x = 0
     state.target_y = 0
     state.memory_until_aut = 0
