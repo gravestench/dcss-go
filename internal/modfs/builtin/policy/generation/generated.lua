@@ -18,6 +18,7 @@ local branch_levels = require("policy.generation.branch_levels")
 local temple_catalog = require("policy.generation.temple.catalog")
 local temple_entry = require("policy.generation.temple.entry")
 local temple_floor = require("policy.generation.temple.floor")
+local altar_catalog = require("policy.generation.altar.catalog")
 
 local generated = {}
 
@@ -213,7 +214,8 @@ local function extra_exclusions(base, maps)
     end
 
     for _, map in ipairs(maps) do
-        local vault = vault_catalog.get(map.id)
+        local vault = map.family == "altar" and
+            altar_catalog.get(map.id) or vault_catalog.get(map.id)
 
         for _, point in ipairs(spawn_exclusions(map, vault)) do
             points[#points + 1] = point
@@ -393,6 +395,7 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
             absolute_depth = absolute_depth,
             layout_family = layout_family(layout),
             prior_vault_ids = prior_vault_ids,
+            overflow_schedule = temple.overflow_schedule,
             arrival_vault = arrival_vault,
             protected = protected,
             required = required,

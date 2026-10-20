@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"crawl/internal/save"
 	"crawl/internal/terrain"
 	"crawl/internal/vault"
 )
@@ -227,6 +228,19 @@ func TestTempleMaterializesAuthoredMonstersWithoutAmbientSpawns(t *testing.T) {
 	g.templePlan.AltarCount = 12
 	g.templePlan.MainGodIDs = append([]string{}, allGods[:12]...)
 	g.templePlan.OverflowGodIDs = append([]string{}, allGods[12:]...)
+	g.templePlan.OverflowSchedule = make([]save.OverflowGroupRecord, 0,
+		len(g.templePlan.OverflowGodIDs))
+
+	// This fixture changes the Temple partition to exercise one authored
+	// map. Keep its unrelated overflow allocation valid and later than the
+	// Temple entrance so that floor generation stays about that map.
+	for _, id := range g.templePlan.OverflowGodIDs {
+		g.templePlan.OverflowSchedule = append(g.templePlan.OverflowSchedule,
+			save.OverflowGroupRecord{
+				Depth:  10,
+				GodIDs: []string{id},
+			})
+	}
 
 	parentDepth := 0
 

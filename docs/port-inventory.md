@@ -206,14 +206,16 @@ The Temple content catalog includes all 53 source Dungeon entry maps and all
 source-weighted map, altar count, and complete god partition are chosen at
 new-game creation and saved before Temple is visited. Overflow gods are now
 grouped and assigned D:3–10 depths in that same saved plan, following the
-source's specialized and generic map-size weights. Their scheduled map
-placement on those Dungeon floors remains to be connected. Live Temple
-placement uses the selected map, assigns exact god IDs to its altar records,
-applies source
-open-sea or lava-sea borders, and materializes authored monsters and items
+source's specialized and generic map-size weights. Dungeon generation now
+places matching source `.des` maps before ordinary extra vaults, binds both
+fixed and random altar cells to the saved gods, and preserves those identities
+through save and restore. A ten-seed D:1–10 generation sweep exercised the
+integrated path. Live Temple placement uses the selected map, assigns exact
+god IDs to its altar records, applies source open-sea or lava-sea borders,
+and materializes authored monsters and items
 without ambient Temple spawns. Temple altars now render with their saved god
 names, and restore rejects an altar identity that disagrees with the plan.
-Worship and Dungeon overflow altar placement still need gameplay passes.
+Worship and overflow map event callbacks still need gameplay passes.
 All 232 source overflow altar maps are committed as individual `.des` files;
 their MAP rows match the source exactly. They load through a dedicated catalog
 and stay out of ordinary extra-vault selection until the remaining per-map
@@ -241,7 +243,11 @@ god tag is passed as local map context rather than read from a DES global.
 Trog and Sif Muna's shared gift vault now selects all three source depth
 tiers in one Lua hook. Its authored weapon enchantment and brand, Sif book
 owner, spell count, and total spell-level budget pass through item placement
-and generation. Overflow scheduling is still pending.
+and generation.
+Forced source weapon brands now use the source's weapon compatibility rule;
+ordinary brand roll weights do not restrict authored shop stock. This allows
+the good-god shop's holy club while rejecting melee-only brands on bows and
+ranged-only brands on clubs.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition

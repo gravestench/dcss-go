@@ -11,6 +11,7 @@ local connect = require("policy.generation.vaults.connect")
 local selection = require("policy.generation.vaults.selection")
 local used = require("policy.generation.vaults.used")
 local unique_placement = require("policy.generation.vaults.unique.placement")
+local overflow_placement = require("policy.generation.altar.placement")
 
 local extra = {}
 
@@ -191,6 +192,11 @@ function extra.generate(ctx, builder, context)
 
     if context.arrival_vault then
         context.used:add(context.arrival_vault)
+    end
+
+    for _, map in ipairs(overflow_placement.place(ctx, builder,
+        context, extra.place)) do
+        placed[#placed + 1] = map
     end
 
     local primary = place_chance_stage(ctx, builder, context, placed)

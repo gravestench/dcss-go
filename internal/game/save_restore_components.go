@@ -247,6 +247,14 @@ func (g *Game) validateRestoredPlacement() error {
 			}); err != nil {
 			return err
 		}
+
+		if _, err := g.scripts.Policy("save.validate_overflow_altars",
+			map[string]any{
+				"levels":      g.vaultValidationLevels(),
+				"temple_plan": luaTemplePlan(g.templePlan),
+			}); err != nil {
+			return err
+		}
 	}
 
 	if _, err := g.scripts.Policy("save.validate_shops", map[string]any{
