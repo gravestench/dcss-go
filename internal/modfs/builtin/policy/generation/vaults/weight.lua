@@ -52,7 +52,7 @@ function weight.parse(argument, site)
             local rules = depth.parse_rules(group:sub(2, -2), site)
 
             for _, rule in ipairs(rules) do
-                if not known[rule.branch] then
+                if rule.branch ~= "*" and not known[rule.branch] then
                     fail(site, "invalid WEIGHT branch " .. rule.branch)
                 end
 

@@ -23,8 +23,9 @@ Lua, Akara ECS.
 ## Global constraints
 
 - Commit all 600 source builder/serial definitions or document an exact
-  legacy exclusion. One hundred thirty-four are now committed, including
-  the curved corridor, Core Xii hall, river, and bayou serial families.
+  legacy exclusion. One hundred forty are now committed, including the
+  dummy builder family and the curved corridor, Core Xii hall, river, and
+  bayou serial families.
   Only executable definitions may enter a live selector.
 - Preserve source `.des` map syntax and directive order. Source scripts
   become named functions in discoverable Lua modules. No inline Lua in Go
@@ -174,9 +175,10 @@ or separately maintained ID/weight table is permitted.
 `generated.lua`, `README.md`, `docs/modding.md`,
 `docs/port-inventory.md`, and `docs/ecs-architecture-roadmap.md`.
 
-- [ ] Remove `GENERIC_EXTRA_ROLL` and the shop-only stage. Use the actual
-  chance, place, and minivault pools on D:1–15. Preserve source branch
-  eligibility for later branch generation.
+- [x] Remove `GENERIC_EXTRA_ROLL` and the shop-only stage. Use source
+  CHANCE and weighted minivault pools on D:1–15.
+- [ ] Add the PLACE stage with its branch maps and complete the imported
+  pool. Preserve source branch eligibility for later branch generation.
 - [ ] Document new map, helper, controller, chance, hooks, context API,
   sparse overlays, uniqueness, and save behavior in the modding guide.
 - [ ] Run `git diff --check`, style/line checks, all Lua rule tests, and

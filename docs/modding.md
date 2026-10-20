@@ -1964,6 +1964,17 @@ an engine edit; put its named hook at the matching
 `policy/generation/vaults/<family>/<name>.lua` path. Layout maps use the
 separate `vaults/layout/` catalog because they carve the base floor.
 
+Omitting `ORIENT` makes a map a floating **minivault**, as in DCSS. An
+explicit `ORIENT: float` makes it a regular vault instead. Give an ordinary
+minivault a `DEPTH` rule and positive `WEIGHT` to enter the weighted depth
+pool. A map with no `DEPTH` stays available to a controller by tag but will
+not appear randomly on an unrelated floor. A `CHANCE` declaration selects
+through the earlier chance stage, so it is not also weighted as an ordinary
+minivault. `TAGS: extra` requests another minivault draw after selection;
+source dummy maps can end the stage without placing cells. Numeric ranges
+such as `DEPTH: 1-100` use absolute dungeon depth, while `D:4-` uses local
+branch depth.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls

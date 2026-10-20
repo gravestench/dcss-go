@@ -1,0 +1,9 @@
+# Source minivault balancer. A successful 5,000-point Dungeon CHANCE draw
+# suppresses the ordinary minivault; Vaults always suppresses it.
+NAME: primary_mini_dummy
+TAGS: dummy
+DEPTH: 1-100, Pan, !Depths:1, !Abyss, !Gauntlet
+CHANCE: 10000 (Vaults), 5000
+MAP
+x
+ENDMAP

@@ -247,9 +247,11 @@ vault definitions are committed as `.des` files, with Lua ports for their
 scripts. Eligible maps place authored shops and stock in ordinary D:1–15
 generation; the fixed shop scenario remains available. Supplemental maps
 retain source IDs in saves, and sparse mod overlays can add a vault or replace
-one handler. The generic secondary-vault opportunity currently uses a 1-in-8
-roll while most vault families are unported; source DCSS draws from its full
-secondary-vault pool instead. The five-map `serial_curves`, eleven-map
+one handler. The temporary one-in-eight shop draw has been replaced with
+source-style CHANCE maps followed by weighted depth minivaults. The six
+builder dummy maps include the Dungeon suppression chance, and an `extra`
+minivault asks for another bounded draw. The eligible pool is still partial
+until the remaining source vault families are imported. The five-map `serial_curves`, eleven-map
 `serial_corexii_hall`, fourteen-map `serial_rivers`, and thirteen-map
 `serial_bayou` families now use the general CHANCE and post-place controller
 path. Their tagged corridors, statue halls, streams, and ponds run through

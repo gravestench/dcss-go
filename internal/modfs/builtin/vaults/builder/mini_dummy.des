@@ -1,0 +1,9 @@
+# Branches outside Dungeon, Depths, Abyss, and Gauntlet can select this
+# weighted minivault dummy to leave room for other content on the floor.
+NAME: mini_dummy
+DEPTH: 1-50, !D, !Depths, !Abyss, !Gauntlet
+TAGS: dummy
+WEIGHT: 90
+MAP
+.
+ENDMAP

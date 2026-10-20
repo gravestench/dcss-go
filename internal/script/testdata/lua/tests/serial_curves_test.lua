@@ -2,7 +2,7 @@
 local branches = require("ids.branches")
 local categories = require("constants.catalog")
 local catalog = require("policy.generation.vaults.catalog")
-local chance = require("policy.generation.vaults.chance")
+local eligibility = require("policy.generation.vaults.eligibility")
 local controller = require("policy.generation.vaults.controller")
 local extra = require("policy.generation.vaults.extra")
 local grid = require("policy.generation.grid")
@@ -43,10 +43,10 @@ local function registered_source_family()
 
     harness.equal(#catalog.get(ids.serial_curves).rows, 0,
         "controller has no MAP cells")
-    harness.truthy(chance.layout_allowed(
+    harness.truthy(eligibility.layout(
         catalog.get(ids.serial_curves), "rooms"),
         "controller is eligible on rooms layouts")
-    harness.falsy(chance.layout_allowed(
+    harness.falsy(eligibility.layout(
         catalog.get(ids.serial_curves), "halls"),
         "controller does not run on unrelated layouts")
 end

@@ -1,0 +1,11 @@
+# Non-Dungeon branches need their own regular-vault dilution when their
+# source pools are small; the dummy is a selector outcome, not terrain.
+NAME: dummy_balancer_other
+DEPTH: Orc, Elf, Lair, Snake, Shoals, Swamp, Slime, Vaults, Crypt, \
+  Dis, Geh, Tar, Coc, Spider, Abyss
+TAGS: dummy
+ORIENT: float
+WEIGHT: 60
+MAP
+x
+ENDMAP

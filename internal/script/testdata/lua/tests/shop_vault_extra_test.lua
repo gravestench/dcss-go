@@ -5,12 +5,29 @@ local extra = require("policy.generation.vaults.extra")
 local grid = require("policy.generation.grid")
 local harness = require("tests.harness")
 local branches = require("ids.branches")
-local chance_units = require("constants.vault_chance")
 local categories = require("constants.catalog")
 local ids = require("ids.vaults")
 
 local test = {}
-local EXTRA_OPPORTUNITY_ROLL = 8
+
+-- Keep one policy route under test while the source vault catalog grows.
+-- The same exclusion fact is understood by chance, tag, and depth draws.
+local function exclude_except(allowed_ids)
+    local allowed = {}
+    local excluded = {}
+
+    for _, id in ipairs(allowed_ids) do
+        allowed[id] = true
+    end
+
+    for _, id in ipairs(register.ids(categories.VAULTS)) do
+        if not allowed[id] then
+            excluded[id] = true
+        end
+    end
+
+    return excluded
+end
 
 -- Build an open floor large enough for the real shop vault footprint, making
 -- protected-cell failures a placement issue rather than a size issue.
@@ -39,11 +56,11 @@ local function rejects_protected_shop_cell()
         return 0
     end
 
-    local placed = extra.place(nil, builder, catalog.get("shop"), {
+    local placed = extra.place(nil, builder, catalog.get(ids.shop), {
         protected = protected,
         required = {},
         player = {
-            map_tag = "shop",
+            map_tag = ids.shop,
         },
     })
 
@@ -68,11 +85,11 @@ local function fits_other_floor()
         return draw % bound
     end
 
-    local placed = extra.place(nil, builder, catalog.get("shop"), {
+    local placed = extra.place(nil, builder, catalog.get(ids.shop), {
         protected = protected,
         required = {},
         player = {
-            map_tag = "shop",
+            map_tag = ids.shop,
         },
     })
 
@@ -83,27 +100,23 @@ local function fits_other_floor()
         "placed shop cell becomes protected")
 end
 
--- Generic extra map selection and the serial-shop controller have separate
--- eligibility so the same shop vault is not sampled twice.
-local function generic_extra_is_independent_of_serial_chance()
+-- Source ordinary minivault selection is independent of the earlier
+-- CHANCE controller stage and can place a depth-qualified non-extra map.
+local function ordinary_minivault_is_independent_of_serial_chance()
     local builder = floor_builder()
 
-    -- Reject the serial-shop chance draw while selecting the generic extra,
-    -- so the test can distinguish the two generation routes.
-    function builder:roll(bound)
-        if bound == chance_units.ROLL then
-            return chance_units.ROLL - 1
-        end
-
+    -- Select the only allowed weighted map and its first legal origin.
+    function builder:roll()
         return 0
     end
 
-    local placed, controller = extra.generate(nil, builder, {
+    local placed, primary = extra.generate(nil, builder, {
         branch_id = branches.BRANCH_DUNGEON,
         depth = 2,
         branch_bottom = 15,
         absolute_depth = 2,
         layout_family = "halls",
+        excluded = exclude_except({ ids.serial_bayou_lake_a }),
         protected = {},
         required = {},
         player = {
@@ -114,34 +127,18 @@ local function generic_extra_is_independent_of_serial_chance()
         },
     })
 
-    harness.equal(#placed, 1, "generic extra map places without serial")
-    harness.equal(placed[1].id, controller,
-        "standalone shop map owns its source ID")
-    harness.truthy(controller ~= "serial_shops",
-        "serial controller stays outside generic pool")
+    harness.equal(#placed, 1, "ordinary minivault places without serial")
+    harness.equal(placed[1].id, primary,
+        "weighted minivault owns its source ID")
 end
 
 -- The source CHANCE roll selects the DES controller. Its named Lua hook
 -- then places a tagged child map and both IDs enter saved vault history.
 local function chance_controller_places_tagged_child()
     local builder = floor_builder()
-    local excluded = {}
-
-    -- Isolate the shop controller from newly imported CHANCE families.
-    -- The real selector still sees the complete effective catalog.
-    for _, id in ipairs(register.ids(categories.VAULTS)) do
-        local definition = register.get(categories.VAULTS, id)
-
-        if #definition.chances > 0 and id ~= ids.serial_shops then
-            excluded[id] = true
-        end
-    end
-
-    function builder:roll(bound)
-        if bound == EXTRA_OPPORTUNITY_ROLL then
-            return 1
-        end
-
+    -- With only the controller and its depthless child eligible, the
+    -- later minivault stage adds no unrelated map.
+    function builder:roll()
         return 0
     end
 
@@ -151,7 +148,7 @@ local function chance_controller_places_tagged_child()
         branch_bottom = 15,
         absolute_depth = 4,
         layout_family = "halls",
-        excluded = excluded,
+        excluded = exclude_except({ ids.serial_shops, ids.shop }),
         protected = {},
         required = {},
         player = {
@@ -171,12 +168,12 @@ local function chance_controller_places_tagged_child()
         "child map ID is saved for later uniqueness checks")
 end
 
--- Keep the rollback, retry, and generic-extra cases together because all
--- three protect authored shop terrain from duplicate or invalid placement.
+-- Keep rollback, minivault, and controller checks together because each
+-- route places authored terrain through the same geometric operation.
 function test.run()
     rejects_protected_shop_cell()
     fits_other_floor()
-    generic_extra_is_independent_of_serial_chance()
+    ordinary_minivault_is_independent_of_serial_chance()
     chance_controller_places_tagged_child()
 end
 

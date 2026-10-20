@@ -1,0 +1,11 @@
+# Source primary-vault balancer. This one-cell map is never projected: a
+# successful CHANCE draw means regular-vault selection leaves the layout alone.
+NAME: primary_dummy
+TAGS: dummy
+DEPTH: 1-100, !Zig, !Gauntlet, !Bazaar, !Trove, !Sewer, !Ossuary, \
+  !Bailey, !IceCv, !Volcano, !WizLab, !Desolation, !Arena, !Depths:2-, !Pan
+ORIENT: float
+CHANCE: 8333, 6666 (Zot), 10000 (Vaults)
+MAP
+x
+ENDMAP

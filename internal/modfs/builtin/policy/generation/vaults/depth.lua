@@ -31,6 +31,33 @@ local function depth_rule(token, site)
         token = token:sub(2)
     end
 
+    -- A bare numeric range is absolute dungeon depth across branches.
+    -- Source level_range adds one to its zero-based absolute depth; the
+    -- supplied context already uses the visible one-based value.
+    local absolute_first, absolute_last = token:match("^(%d+)%-(%d+)$")
+
+    if not absolute_first then
+        absolute_first = token:match("^(%d+)$")
+        absolute_last = absolute_first
+    end
+
+    if absolute_first or token == "*" then
+        local first = tonumber(absolute_first) or 1
+        local last = tonumber(absolute_last)
+
+        if first < 1 or (last and last < first) then
+            fail(site, "invalid DEPTH range " .. token)
+        end
+
+        return {
+            branch = "*",
+            excluded = excluded,
+            first = first,
+            last = last,
+            bottom = false,
+        }
+    end
+
     local branch, range = token:match("^([A-Za-z]+):(.+)$")
 
     if not branch then
@@ -154,7 +181,19 @@ function depth.parse_chance(argument, site)
 end
 
 -- A dollar depth token compares to the branch bottom, not an absolute Dungeon floor.
-local function matches(rule, name, local_depth, branch_bottom)
+local function matches(rule, name, local_depth, branch_bottom,
+    absolute_depth)
+    if rule.branch == "*" then
+        local current = absolute_depth
+
+        if current == nil and name == "D" then
+            current = local_depth
+        end
+
+        return current ~= nil and current >= rule.first and
+            (not rule.last or current <= rule.last)
+    end
+
     if rule.branch ~= name then
         return false
     end
@@ -173,12 +212,15 @@ end
 
 -- Weight and chance clauses share the same branch/depth range semantics as
 -- DEPTH itself, so they must not carry separate interpretations.
-function depth.matches_rule(rule, branch_id, local_depth, branch_bottom)
-    return matches(rule, branch_name(branch_id), local_depth, branch_bottom)
+function depth.matches_rule(rule, branch_id, local_depth, branch_bottom,
+    absolute_depth)
+    return matches(rule, branch_name(branch_id), local_depth,
+        branch_bottom, absolute_depth)
 end
 
 -- An excluded matching rule wins even if another range includes the same floor.
-function depth.eligible(vault, branch_id, local_depth, branch_bottom)
+function depth.eligible(vault, branch_id, local_depth, branch_bottom,
+    absolute_depth)
     if #vault.depths == 0 then
         return true
     end
@@ -187,7 +229,8 @@ function depth.eligible(vault, branch_id, local_depth, branch_bottom)
     local included = false
 
     for _, rule in ipairs(vault.depths) do
-        if matches(rule, name, local_depth, branch_bottom) then
+        if matches(rule, name, local_depth, branch_bottom,
+            absolute_depth) then
             if rule.excluded then
                 return false
             end
@@ -201,7 +244,8 @@ end
 
 -- Specific branch/depth clauses override a bare fallback regardless of
 -- declaration order. Both return source roll units, not rounded percents.
-function depth.chance(vault, branch_id, local_depth, branch_bottom)
+function depth.chance(vault, branch_id, local_depth, branch_bottom,
+    absolute_depth)
     if #vault.chances == 0 then
         return chance_units.ROLL
     end
@@ -217,7 +261,8 @@ function depth.chance(vault, branch_id, local_depth, branch_bottom)
             fallback = row.chance
         else
             for _, rule in ipairs(row.rules) do
-                if matches(rule, name, local_depth, branch_bottom) then
+                if matches(rule, name, local_depth, branch_bottom,
+                    absolute_depth) then
                     return row.chance
                 end
             end

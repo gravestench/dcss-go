@@ -206,6 +206,7 @@ function des.parse(path, source)
 
     local post_place = false
     local layout_run = false
+    local oriented = false
 
     for _, operation in ipairs(vault.operations) do
         local site = {
@@ -228,6 +229,7 @@ function des.parse(path, source)
             operation.kind == directives.HOOK_POST_PLACE
         layout_run = layout_run or
             operation.kind == directives.HOOK_RUN
+        oriented = oriented or operation.kind == directives.ORIENT
     end
 
     if in_map or continuing or
@@ -236,6 +238,12 @@ function des.parse(path, source)
         (#vault.rows == 0 and not post_place and
             not (vault.family == "layout" and layout_run)) then
         fail(path, #source_lines(source), vault.id, "incomplete DES map or directive")
+    end
+
+    -- DCSS map_def::fixup supplies the minivault flag when ORIENT was
+    -- omitted. An explicit ORIENT float is still a regular vault.
+    if not oriented then
+        vault.tags.minivault = true
     end
 
     return vault

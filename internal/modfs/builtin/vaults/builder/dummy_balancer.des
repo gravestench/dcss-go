@@ -1,0 +1,10 @@
+# D:1-11 has fewer regular vaults. This weighted dummy can win a future
+# primary-vault draw without placing its one-cell placeholder MAP.
+NAME: dummy_balancer
+DEPTH: D:1-11
+TAGS: dummy
+ORIENT: float
+WEIGHT: 100
+MAP
+x
+ENDMAP

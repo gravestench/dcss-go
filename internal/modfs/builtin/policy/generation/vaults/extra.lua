@@ -4,13 +4,13 @@ local chance = require("policy.generation.vaults.chance")
 local controller = require("policy.generation.vaults.controller")
 local directives = require("constants.vault_directives")
 local hooks = require("policy.generation.vaults.hooks")
+local minivault = require("policy.generation.vaults.minivault")
 local placement = require("policy.generation.vaults.placement")
 local connect = require("policy.generation.vaults.connect")
 local selection = require("policy.generation.vaults.selection")
 local used = require("policy.generation.vaults.used")
 
 local extra = {}
-local GENERIC_EXTRA_ROLL = 8
 
 -- Identify protected map cells by coordinate across repeated placement attempts.
 local function key(x, y)
@@ -172,39 +172,6 @@ local function place_chance_stage(ctx, builder, context, placed)
     return primary
 end
 
--- The partial catalog has shops but not the full ordinary minivault pool.
--- Keep its bounded opportunity until that corpus replaces this interim
--- draw; CHANCE definitions never enter this ordinary weighted selection.
-local function place_temporary_extra(ctx, builder, context, placed)
-    if builder:roll(GENERIC_EXTRA_ROLL) ~= 0 then
-        return nil
-    end
-
-    context.family = "shop"
-    context.exclude_chance = true
-
-    local selected = selection.choose_tag(builder, "extra", context)
-
-    context.family = nil
-    context.exclude_chance = nil
-
-    if not selected then
-        return nil
-    end
-
-    local vault = catalog.get(selected.id)
-    local map = extra.place(ctx, builder, vault, context)
-
-    if not map then
-        return nil
-    end
-
-    placed[#placed + 1] = map
-    context.used:add(vault)
-
-    return vault.id
-end
-
 -- Track arrival, chance controllers, children, and ordinary maps together
 -- so later floors can reconstruct source uniqueness from one saved ID list.
 function extra.generate(ctx, builder, context)
@@ -217,7 +184,8 @@ function extra.generate(ctx, builder, context)
     end
 
     local primary = place_chance_stage(ctx, builder, context, placed)
-    local ordinary = place_temporary_extra(ctx, builder, context, placed)
+    local ordinary = minivault.place(ctx, builder, context,
+        placed, extra.place)
 
     return placed, primary or ordinary, context.used:ids()
 end

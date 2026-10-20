@@ -1,0 +1,11 @@
+# Source extra-vault balancer for non-Dungeon branches. Its extra tag
+# enters that future branch stage, while dummy prevents any map placement.
+NAME: dummy_balancer_extra
+DEPTH: Orc, Elf, Lair, Snake, Shoals, Swamp, Slime, Vaults, Crypt, \
+  Dis, Geh, Tar, Coc, Spider, Abyss, Zot
+TAGS: dummy allow_dup extra
+ORIENT: float
+WEIGHT: 100
+MAP
+x
+ENDMAP

@@ -221,8 +221,10 @@ Focused Lua handlers port source scripts, and Lua parses authored stock into
 the existing Akara shop policy. Supplemental selection and placement use the
 same grid and source-record path as arrival vaults. Deeper branch generation
 can reuse these definitions without another shop implementation. Replace the
-temporary generic extra-vault frequency with selection from the full source
-secondary-vault pool once the remaining families are imported.
+temporary generic extra-vault frequency with source-style chance and
+weighted minivault stages. The source dummy family now controls the
+ordinary minivault draw. Import the remaining secondary-vault corpus so
+those stages select from the complete source pool.
 
 ## Slice checks
 

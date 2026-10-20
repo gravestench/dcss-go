@@ -2,6 +2,7 @@
 local categories = require("constants.catalog")
 local chance_units = require("constants.vault_chance")
 local depth = require("policy.generation.vaults.depth")
+local eligibility = require("policy.generation.vaults.eligibility")
 local selection = require("policy.generation.vaults.selection")
 
 local chance = {}
@@ -34,40 +35,12 @@ function chance.fallback_tag(definition)
     return nil
 end
 
--- Source layout_* tags admit only their named layout families, while
--- nolayout_* tags veto a family. A nil family is useful to catalog tests
--- that inspect chance syntax outside a generated floor.
-function chance.layout_allowed(definition, family)
-    if not family then
-        return true
-    end
-
-    local restricted = false
-    local accepted = false
-
-    for tag in pairs(definition.tags) do
-        local requested = tag:match("^layout_(.+)$")
-
-        if requested then
-            restricted = true
-            accepted = accepted or requested == family
-        end
-    end
-
-    return not definition.tags["nolayout_" .. family] and
-        (not restricted or accepted)
-end
-
 -- Only explicit CHANCE maps join this stage. Ordinary weighted maps and
 -- helpers have different selection paths, even if depth.eligible is true.
 local function eligible(definition, context)
     return #definition.chances > 0 and
         not definition.tags.dummy and
-        (not context.excluded or not context.excluded[definition.id]) and
-        chance.layout_allowed(definition, context.layout_family) and
-        (not context.used or context.used:allows(definition)) and
-        depth.eligible(definition, context.branch_id,
-            context.depth, context.branch_bottom)
+        eligibility.depth(definition, context)
 end
 
 -- Choose one weighted map from a chance_* family after its representative
@@ -114,7 +87,8 @@ function chance.select(random, context)
                 end
 
                 local odds = depth.chance(definition, context.branch_id,
-                    context.depth, context.branch_bottom)
+                    context.depth, context.branch_bottom,
+                    context.absolute_depth)
 
                 if odds == chance_units.ROLL or
                     (odds > 0 and random:roll(chance_units.ROLL) < odds) then

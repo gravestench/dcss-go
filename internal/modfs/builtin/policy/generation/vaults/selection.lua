@@ -2,6 +2,7 @@
 local categories = require("constants.catalog")
 local chance_units = require("constants.vault_chance")
 local depth = require("policy.generation.vaults.depth")
+local eligibility = require("policy.generation.vaults.eligibility")
 local weights = require("policy.generation.vaults.weight")
 
 local selection = {}
@@ -78,13 +79,11 @@ local function candidates_for_tag(random, tag, context)
 
         if definition.tags[tag] and map_weight > 0 and
             (not context.family or definition.family == context.family) and
-            (not context.excluded or not context.excluded[id]) and
             (not context.exclude_chance or #definition.chances == 0) and
-            (not context.used or context.used:allows(definition)) and
-            depth.eligible(definition, context.branch_id,
-                context.depth, context.branch_bottom) then
+            eligibility.tag(definition, context) then
             local odds = depth.chance(definition, context.branch_id,
-                context.depth, context.branch_bottom)
+                context.depth, context.branch_bottom,
+                context.absolute_depth)
 
             if context.ignore_chance or odds == chance_units.ROLL or
                 (odds > 0 and random:roll(chance_units.ROLL) < odds) then
