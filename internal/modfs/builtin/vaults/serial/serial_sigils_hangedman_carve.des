@@ -1,0 +1,35 @@
+# The carve sigil bends stone walls into a decorative path.
+# Shared floor and wall tiles keep every shape in the same source theme.
+# The controller draws it by tag and weight; its MAP geometry stays here.
+NAME:    serial_sigils_hangedman_carve
+DEPTH: Depths, Elf, Crypt
+TAGS: transparent extra decor serial_sigils
+WEIGHT:  3
+SHUFFLE: AB / AB / BA, ab / ab / ba
+SUBST:   a : c.., b : c., A : c., B : c.., C : cc., D : cc., E : cc.
+TILE: c = wall_stone_dark
+FTILE: . = floor_volcanic
+FTILE: c = floor_pebble_darkgray w:99 / floor_rough_red w:1
+MAP
+    ....
+    ccc....
+  .c...ccc...
+  .c......ccC
+ ..c...aa....
+ .c...a.......
+ .c.b.a.....A.
+..c.b.......A...
+.c...bb......AA..C.
+.c......ccc......c.
+.D...ccc...c.....c..
+  Ecc......c......c.
+  ....BB...c....a.c.
+     ...B.c.....a.c..
+       .B.c.b.aa...c.
+       ...c.b......c.
+        .c...bb....c.
+        .c......ccc
+        .D...ccc...
+          Ecc....
+          ....
+ENDMAP

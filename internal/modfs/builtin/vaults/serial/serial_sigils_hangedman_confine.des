@@ -1,0 +1,32 @@
+# The confine sigil bends stone walls into a decorative path.
+# Shared floor and wall tiles keep every shape in the same source theme.
+# The controller draws it by tag and weight; its MAP geometry stays here.
+NAME:    serial_sigils_hangedman_confine
+DEPTH: Depths, Elf, Crypt
+TAGS: transparent extra decor serial_sigils
+WEIGHT:  4
+SUBST:   C : cc., D : cc., E : cc., F : cc.
+TILE: c = wall_stone_dark
+FTILE: . = floor_volcanic
+FTILE: c = floor_pebble_darkgray w:99 / floor_rough_red w:1
+MAP
+  ...
+  Cc.......
+.D..cc..cc...
+.c....c...cc..
+..c.c.c.....cE
+ .c....c......
+   cc..c...cc.......
+   ..cc...c..cc..cc...
+    ......c....c...cc..
+    Fc.....c.c.c.....cF
+    ..cc...c....c......
+     ...cc..cc..c...cc..
+       .......cc...c..cc
+             ......c....c.
+             Ec.....c.c.c..
+             ..cc...c....c.
+              ...cc..cc..D.
+                .......cC
+                      ...
+ENDMAP

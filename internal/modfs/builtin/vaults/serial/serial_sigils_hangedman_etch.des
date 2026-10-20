@@ -1,0 +1,37 @@
+# The etch sigil bends stone walls into a decorative path.
+# Shared floor and wall tiles keep every shape in the same source theme.
+# The controller draws it by tag and weight; its MAP geometry stays here.
+NAME:    serial_sigils_hangedman_etch
+DEPTH: Depths, Elf, Crypt
+TAGS: transparent extra decor serial_sigils
+WEIGHT:  3
+SUBST:   C : cc., D : cc., E : ccc., F : ccc.
+TILE: c = wall_stone_dark
+FTILE: . = floor_volcanic
+FTILE: c = floor_pebble_darkgray w:99 / floor_rough_red w:1
+MAP
+           .D.
+          ..c.
+   .C.    .c..
+   .c..  ..c.
+   ..c.  .c..  ...
+    .c....c.....cD
+    ..c..c....cc..
+     .c..c..cc...
+     ..c..cc...
+  .....c.....
+  Ec....cc...
+  ..cc....cc...
+   ...cc....cc..
+     ...cc....cC
+     .....c.....
+   ...cc..c..
+ ...cc..c..c.
+..cc....c..c..
+Fc.....c....c.
+...  ..c.  .c..
+     .c..  ..c.
+    ..c.    .E.
+    .c..
+    .F.
+ENDMAP

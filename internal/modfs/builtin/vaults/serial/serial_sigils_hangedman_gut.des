@@ -1,0 +1,32 @@
+# The gut sigil bends stone walls into a decorative path.
+# Shared floor and wall tiles keep every shape in the same source theme.
+# The controller draws it by tag and weight; its MAP geometry stays here.
+NAME:    serial_sigils_hangedman_gut
+TAGS:    allow_dup transparent extra decor serial_sigils
+DEPTH:   Depths, Elf, Crypt, Abyss
+WEIGHT:  5
+SHUFFLE: AB / AB / BA, ab / ab / ba
+SUBST:   a : Ac.., A : c.., b : Bc..., B : c..., C : cc.
+TILE: c = wall_stone_dark
+FTILE: . = floor_volcanic
+FTILE: c = floor_pebble_darkgray w:99 / floor_rough_red w:1
+MAP
+.C.
+.c...
+..c.a.
+..c...
+...cc......
+.b...cc...B.
+ ......cc...
+      ...c..
+      .A.c...
+       ...c.A.
+        ..c...
+        ...cc......
+        .B...cc...b.
+         ......cc...
+              ...c..
+              .a.c..
+               ...c.
+                 .C.
+ENDMAP

@@ -1,0 +1,36 @@
+# The clutch sigil bends stone walls into a decorative path.
+# Shared floor and wall tiles keep every shape in the same source theme.
+# The controller draws it by tag and weight; its MAP geometry stays here.
+NAME:    serial_sigils_hangedman_clutch
+DEPTH: Depths, Elf, Crypt
+TAGS: transparent extra decor serial_sigils
+WEIGHT:  3
+SHUFFLE: DE
+SUBST:   a : c.., b : c.., C : cc., D : cc., E = c, F : cc.
+TILE: c = wall_stone_dark
+FTILE: . = floor_volcanic
+FTILE: c = floor_pebble_darkgray w:99 / floor_rough_red w:1
+MAP
+    .........
+  ...ccc.ccc....
+  Dcc...c...ccc...
+.E......c......ccC
+.c...a.c.c.b......C.
+..c.a..c.c..b.....c.
+ .c...c...c.......c..
+ ..c..c...c........c.
+  .c.......c.......c.
+  ..c.    .c....b..c..
+   .F.      cc...b..c.
+            ..cc....c.
+             ...cc..c.
+             .....cc..
+             ...cc..c.
+             .cc....c.
+           ......a..c.
+           Fc...a..c..
+           ..cc....c.
+            ...cc..E.
+              ...cD
+                ...
+ENDMAP

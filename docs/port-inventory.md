@@ -278,8 +278,12 @@ from a duplicate Grum to a gnoll. The twenty-nine-map window family adds its
 controller plus five small, eighteen common, and five rare glass-barrier
 pieces. All three window pools place through named tags. Its optional
 `serial_glass` request is present, but the glass pieces live in the separate
-`mini_features.des` corpus and have not yet been imported. The builder and
-serial count is now 221 of 600.
+`mini_features.des` corpus and have not yet been imported. The fifteen-map
+sigils family adds a rare
+Depths, Elf, and Crypt controller with fourteen weighted stone shapes. Its
+source helper's common tags and three surface rules are carried by each
+committed map; branch generation will activate these maps when those floors
+are ported. The builder and serial count is now 236 of 600.
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
 `uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those

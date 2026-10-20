@@ -1,0 +1,34 @@
+# The scar sigil bends stone walls into a decorative path.
+# Shared floor and wall tiles keep every shape in the same source theme.
+# The controller draws it by tag and weight; its MAP geometry stays here.
+NAME:    serial_sigils_hangedman_scar
+DEPTH: Depths, Elf, Crypt
+TAGS: transparent extra decor serial_sigils
+WEIGHT:  3
+SUBST:   C : cc., D : cc., E : cc.
+TILE: c = wall_stone_dark
+FTILE: . = floor_volcanic
+FTILE: c = floor_pebble_darkgray w:99 / floor_rough_red w:1
+MAP
+         .E.  .D.
+         .c.. .c..
+      .....c. ..c....
+     ..cc..c....c..cC
+     cc..c..c....cc..
+   .c....c..c..cc..c.
+  ..c.c.c....cc..c.c.
+  .c....c..cc..c.c...
+  .c..cc.cc..c.c...
+....cc..c....c...
+Ec......c.
+..cc...c..
+ ...cc.c..
+   ...c.cc
+......c...
+Dc...c.cc.
+..cc.c....
+ ...c.cc.
+  ..c....
+  .c.cc.
+  .C....
+ENDMAP

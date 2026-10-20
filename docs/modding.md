@@ -2032,6 +2032,13 @@ The controller also requests the separate `serial_glass` pool. That request
 currently places no maps because the source glass pieces from
 `mini_features.des` still need importing.
 
+The sigils family shows a source helper whose output is fixed for every
+child map. Each committed `.des` definition carries its own shared tags and
+three `TILE`/`FTILE` surface directives, so a new sigil needs only one map
+file. The Lua controller stays small: it picks four to six weighted shapes
+by the `serial_sigils` tag. Branch and depth restrictions remain visible in
+the map file, and the selector filters them before drawing.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls

@@ -11,6 +11,7 @@ local tags = {
     SERIAL_CO_WINDOW_COMMON = "serial_co_window_common",
     SERIAL_CO_WINDOW_RARE = "serial_co_window_rare",
     SERIAL_GLASS = "serial_glass",
+    SERIAL_SIGILS = "serial_sigils",
 }
 
 return tags

@@ -1,0 +1,27 @@
+# The shear sigil bends stone walls into a decorative path.
+# Shared floor and wall tiles keep every shape in the same source theme.
+# The controller draws it by tag and weight; its MAP geometry stays here.
+NAME:    serial_sigils_hangedman_shear
+TAGS:    allow_dup transparent extra decor serial_sigils
+WEIGHT:  5
+DEPTH:   Depths, Elf, Crypt, Abyss
+SHUFFLE: CD
+SUBST:   a : c..., b : c..., C : cc., D : c:8 .:1, E : cc., F : cc.
+TILE: c = wall_stone_dark
+FTILE: . = floor_volcanic
+FTILE: c = floor_pebble_darkgray w:99 / floor_rough_red w:1
+MAP
+            .F.
+  ...      ..c.
+  Dc...    .c...E.
+.C..cc... ..c...c..
+.c....cc...c.....c.
+..c.....cc.c..b..c..
+ .c..a.........a..c.
+ ..c..b..c.cc.....c..
+  .c.....c...cc....c.
+  ..c...c.. ...cc..D.
+   .E...c.    ...cC
+      .c..      ...
+      .F.
+ENDMAP
