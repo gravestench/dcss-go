@@ -35,6 +35,10 @@ local function request_from(resolved, level_id, origin)
         base_id = resolved.base_id,
         disc = resolved.disc,
         numspells = resolved.numspells,
+        slevels = resolved.slevels,
+        owner = resolved.owner,
+        plus = resolved.plus,
+        ego = resolved.ego,
         site = source_site(resolved, origin),
     }
 

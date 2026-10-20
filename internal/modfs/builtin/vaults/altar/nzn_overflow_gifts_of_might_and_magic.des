@@ -9,6 +9,7 @@ COLOUR:  1- = red
 COLOUR:  2' = blue
 KFEAT:   D = altar_trog
 KFEAT:   E = altar_sif_muna
+: vault.run("choose_gifts")
 # source: : local egos = {["antimagic"] = 1, ["vorpal"] = 2, ["flaming"] = 2}
 # source: : if you.absdepth() <= 3 then
 # source: {{
@@ -17,32 +18,32 @@ KFEAT:   E = altar_sif_muna
 # source:                  ["falchion"] = 1}
 # source: kitem("1 = " .. dgn.random_item_def(weapons, nil, "ego:none plus:" .. enchant))
 # source: }}
-KMONS:   1 = gnoll ; animal skin / w:2 Terence
-KMONS:   2 = white imp / w:2 Jessica
-KITEM:   2 = randbook owner:Sif_Muna numspells:1 slevels:1
+# source: KMONS:   1 = gnoll ; animal skin / w:2 Terence
+# source: KMONS:   2 = white imp / w:2 Jessica
+# source: KITEM:   2 = randbook owner:Sif_Muna numspells:1 slevels:1
 # source: : elseif you.absdepth() <= 7 then
 # source: :     if crawl.one_chance_in(5) then
-KMONS:   1 = duvessa
-KMONS:   2 = dowan
+# source: KMONS:   1 = duvessa
+# source: KMONS:   2 = dowan
 # source: :     else
-KMONS:   1 = orc warrior
-KMONS:   2 = orc wizard
+# source: KMONS:   1 = orc warrior
+# source: KMONS:   2 = orc wizard
 # source: :     end
 # source: {{
 # source: local weapons = {["trident"] = 1, ["war axe"] = 1, ["flail"] = 1,
 # source:                  ["long sword"] = 1}
 # source: kitem("1 = " .. dgn.random_item_def(weapons, egos, "plus:0"))
 # source: }}
-KITEM:   2 = randbook owner:Sif_Muna numspells:2 slevels:2
+# source: KITEM:   2 = randbook owner:Sif_Muna numspells:2 slevels:2
 # source: : else
-KMONS:   1 = troll
-KMONS:   2 = ynoxinul
+# source: KMONS:   1 = troll
+# source: KMONS:   2 = ynoxinul
 # source: {{
 # source: local weapons = {["trident"] = 1, ["war axe"] = 1, ["morningstar"] = 1,
 # source:                  ["scimitar"] = 1}
 # source: kitem("1 = " .. dgn.random_item_def(weapons, egos, "plus:0"))
 # source: }}
-KITEM:   2 = randbook owner:Sif_Muna numspells:3 slevels:4
+# source: KITEM:   2 = randbook owner:Sif_Muna numspells:3 slevels:4
 # source: : end
 MAP
      xx@@@x

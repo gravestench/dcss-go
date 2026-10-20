@@ -13,6 +13,10 @@ local ordinary = require("policy.generation.vaults.catalog")
 local operations = require("policy.generation.vaults.operations")
 local settings = require("constants.vault_settings")
 local tags = require("constants.vault_tags")
+local item_ids = require("ids.items")
+local weapon_brands = require("constants.weapon_brands")
+local item_specs = require("policy.generation.vaults.specs.item")
+local item_resolve = require("policy.generation.vaults.specs.resolve")
 
 local test = {}
 
@@ -338,6 +342,69 @@ local function assert_depth_monsters()
 
     harness.equal(deep_sif[1], "deep elf annihilator",
         "Depths chooses Sif Muna's late source guardian")
+end
+
+-- The gift vault's DES has a single hook at the original conditional. Each
+-- absolute-depth tier must yield only its own guards, one weapon, and Sif's
+-- book; an inactive source arm would leave extra records here.
+local function assert_gift_tiers()
+    local definition = catalog.get("nzn_overflow_gifts_of_might_and_magic")
+    local cases = {
+        { depth = 3, guard = "gnoll", book_spells = 1, budget = 1,
+            weapon_plus = 3, weapon_ego = "" },
+        { depth = 7, guard = "duvessa", book_spells = 2, budget = 2,
+            weapon_plus = 0, weapon_ego = weapon_brands.ANTIMAGIC },
+        { depth = 8, guard = "troll", book_spells = 3, budget = 4,
+            weapon_plus = 0, weapon_ego = weapon_brands.ANTIMAGIC },
+    }
+
+    for _, case in ipairs(cases) do
+        local player = {
+            branch_id = branches.BRANCH_DUNGEON,
+            depth = case.depth,
+            absolute_depth = case.depth,
+            branch_bottom = 15,
+        }
+        local records = operations.apply(definition, copy_rows(definition),
+            fixed_random(), case.depth, player)
+        local weapon
+        local book
+        local guards = {}
+
+        for _, record in ipairs(records) do
+            if record.kind == effects.ITEM then
+                local site = {
+                    path = definition.path,
+                    vault_id = definition.id,
+                    line = record.line,
+                    directive = record.directive,
+                    glyph = record.targets,
+                }
+                local selected = item_specs.parse(record.identity, site)[1][1]
+                local resolved = item_resolve.item({}, selected,
+                    case.depth, site)
+
+                if resolved.kind_id == item_ids.BOOK_RANDART_THEME then
+                    book = resolved
+                else
+                    weapon = resolved
+                end
+            elseif record.kind == effects.MONSTER then
+                guards[#guards + 1] = record.identity
+            end
+        end
+
+        harness.equal(#guards, 2, "one gift-tier guard pair")
+        harness.truthy(guards[1]:find("^" .. case.guard),
+            "gift tier starts with its expected guardian")
+        harness.truthy(weapon, "gift tier has Trog's weapon")
+        harness.truthy(book, "gift tier has Sif's book")
+        harness.equal(weapon.plus, case.weapon_plus)
+        harness.equal(weapon.ego or "", case.weapon_ego)
+        harness.equal(book.owner, "Sif Muna")
+        harness.equal(book.numspells, case.book_spells)
+        harness.equal(book.slevels, case.budget)
+    end
 end
 
 -- The blood cavern's sole source coin flip schedules either a corpse and
@@ -699,6 +766,7 @@ function test.run()
     assert_branch_monsters()
     assert_depth_rules()
     assert_depth_monsters()
+    assert_gift_tiers()
     assert_blood_cavern_scenes()
     assert_simple_source_scripts()
 end

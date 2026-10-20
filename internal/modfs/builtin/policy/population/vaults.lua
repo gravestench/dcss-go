@@ -99,6 +99,11 @@ local function item_selection(record)
         generation_depth = arguments.generation_depth or 1,
         disc = arguments.disc ~= "" and arguments.disc or nil,
         numspells = arguments.numspells ~= 0 and arguments.numspells or nil,
+        slevels = arguments.slevels ~= 0 and arguments.slevels or nil,
+        owner = arguments.owner ~= "" and arguments.owner or nil,
+        plus = arguments.has_plus and arguments.plus or nil,
+        ego = arguments.has_ego and arguments.ego or nil,
+        allow_uniques = arguments.allow_uniques,
         ident = arguments.ident ~= "" and arguments.ident or nil,
         tile = arguments.tile ~= "" and arguments.tile or nil,
         weapon_tile = arguments.weapon_tile ~= "" and

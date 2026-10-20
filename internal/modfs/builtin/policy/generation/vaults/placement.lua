@@ -408,6 +408,13 @@ local function select_entities(record, vault, random, depth)
         arguments.generation_depth = resolved.generation_depth or 1
         arguments.disc = resolved.disc or ""
         arguments.numspells = resolved.numspells or 0
+        arguments.slevels = resolved.slevels or 0
+        arguments.owner = resolved.owner or ""
+        arguments.plus = resolved.plus or 0
+        arguments.has_plus = resolved.plus ~= nil
+        arguments.ego = resolved.ego or ""
+        arguments.has_ego = resolved.ego ~= nil
+        arguments.allow_uniques = resolved.allow_uniques ~= false
         arguments.ident = resolved.ident or ""
         arguments.tile = resolved.tile or ""
         arguments.weapon_tile = resolved.weapon_tile or ""

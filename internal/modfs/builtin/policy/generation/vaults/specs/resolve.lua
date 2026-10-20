@@ -8,6 +8,10 @@ local pool = require("policy.population.pool")
 local monster_ids = require("ids.monsters")
 local branch_ids = require("ids.branches")
 local item_ids = require("ids.items")
+local object_classes = require("ids.object_classes")
+local weapon_brands = require("constants.weapon_brands")
+local armour_egos = require("constants.armour_egos")
+local missile_brands = require("constants.missile_brands")
 local item_quality = require("constants.vault_item_quality")
 local colours = require("constants.vault_colours")
 local monster_flags = require("constants.monster_flags")
@@ -414,6 +418,41 @@ function resolve.monster(ctx, selected, depth, site)
     }
 end
 
+-- A source ego token belongs to the selected item's class. Resolve it once
+-- before saving the vault record so later materialization cannot reinterpret
+-- a renamed modifier or silently discard an authored brand.
+local function item_ego(selected, kind_id, class_id, site)
+    if not selected.ego then
+        return nil
+    end
+
+    -- An explicit source ego:none must suppress normal generation's brand
+    -- roll. Lua's empty string is truthy, so it survives the request path.
+    if selected.ego == "none" then
+        return ""
+    end
+
+    local class = class_id or catalog.get(categories.ITEMS, kind_id).class
+    local choices
+
+    if class == object_classes.OBJ_WEAPONS then
+        choices = weapon_brands
+    elseif class == object_classes.OBJ_ARMOUR then
+        choices = armour_egos
+    elseif class == object_classes.OBJ_MISSILES then
+        choices = missile_brands
+    end
+
+    local ego = choices and choices[selected.ego:upper()]
+
+    if not ego then
+        choice.fail(site, selected.source,
+            "unknown item ego " .. selected.ego)
+    end
+
+    return ego
+end
+
 -- Random stock and named items are resolved only when population owns a live context.
 function resolve.item(ctx, selected, depth, site)
     if selected.no_spawn then
@@ -475,6 +514,11 @@ function resolve.item(ctx, selected, depth, site)
         generation_depth = generation_depth,
         disc = selected.disc,
         numspells = selected.numspells,
+        slevels = selected.slevels,
+        owner = selected.owner and selected.owner:gsub("_", " "),
+        plus = selected.plus,
+        ego = item_ego(selected, kind_id, class_id, site),
+        allow_uniques = selected.plus == nil and selected.ego == nil,
         ident = selected.ident,
         tile = selected.tile,
         weapon_tile = selected.wtile,

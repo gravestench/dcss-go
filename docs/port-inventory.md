@@ -234,6 +234,10 @@ identification state.
 The good-god palette and garden choices, Dithmenos shadow scaling, and
 Trog-or-Makhleb fire temple altar are now Lua hooks. The selected overflow
 god tag is passed as local map context rather than read from a DES global.
+Trog and Sif Muna's shared gift vault now selects all three source depth
+tiers in one Lua hook. Its authored weapon enchantment and brand, Sif book
+owner, spell count, and total spell-level budget pass through item placement
+and generation. Overflow scheduling is still pending.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition

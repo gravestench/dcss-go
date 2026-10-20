@@ -36,7 +36,7 @@ local function parse_term(text, expression, site)
             end
 
             result.place = value
-        elseif key == "ego" or key == "disc" then
+        elseif key == "ego" or key == "disc" or key == "owner" then
             if value == "" then
                 choice.fail(site, expression, "empty item " .. key)
             end
@@ -56,10 +56,14 @@ local function parse_term(text, expression, site)
 
             result.ident = value
         elseif key == "plus" or key == "charges" or
-            key == "numspells" then
+            key == "numspells" or key == "slevels" then
             local number = tonumber(value)
 
             if not number or number % 1 ~= 0 then
+                choice.fail(site, expression, "invalid item " .. key .. " " .. token)
+            end
+
+            if (key == "numspells" or key == "slevels") and number <= 0 then
                 choice.fail(site, expression, "invalid item " .. key .. " " .. token)
             end
 

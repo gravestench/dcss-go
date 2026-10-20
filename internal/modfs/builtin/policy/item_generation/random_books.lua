@@ -88,7 +88,7 @@ local function represented_schools(spells, first, second)
     return first, second
 end
 
--- Fill a themed book without repeats while capping the sum of spell levels at twenty.
+-- Fill a themed book without repeats within the authored spell-level budget.
 local function themed_spells(ctx, request)
     -- Source: crawl-ref/source/randbook.cc, 216-301.
     local count = request.numspells or source.average(ctx, 4, 3) + 2
@@ -99,6 +99,7 @@ local function themed_spells(ctx, request)
     local spells = {}
     local used = {}
     local levels = 0
+    local level_budget = request.slevels or 20
     local available = available_spells()
 
     for _ = 1, count do
@@ -107,7 +108,7 @@ local function themed_spells(ctx, request)
         for _, spell in ipairs(available) do
             if not used[spell.id] and
                 has_school(spell, first, second) and
-                levels + spell.level <= 20 then
+                levels + spell.level <= level_budget then
                 candidates[#candidates + 1] = spell
             end
         end
