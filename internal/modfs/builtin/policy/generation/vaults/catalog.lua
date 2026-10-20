@@ -1,4 +1,4 @@
--- Example: A later mod vault follows authored source ranks when eligible records are listed.
+-- Example: Renaming a DES file does not move its ID in a weighted draw.
 local categories = require("constants.catalog")
 local des = require("policy.generation.vaults.des")
 local hooks = require("policy.generation.vaults.hooks")
@@ -9,41 +9,13 @@ local loaded = false
 local paths_by_id = {}
 local parsed_by_id = {}
 
-local arrival_file_order = {
-    ["large"] = 1,
-    ["simple"] = 2,
-    ["small"] = 3,
-    ["twisted"] = 4,
-}
-
-local shop_file_order = {
-    ["alphashops"] = 1,
-    ["shops"] = 2,
-}
-
--- Source file and line rankings preserve the pinned DES order across virtual mod paths.
-local function source_position(family, source)
-    if family == "shop" then
-        local file, line = source:match(
-            "# Source: crawl%-ref/source/dat/des/builder/" ..
-            "([a-z]+)%.des:(%d+)")
-
-        return shop_file_order[file] or 3, tonumber(line) or 0
-    end
-
-    local file, line = source:match(
-        "# Source: crawl%-ref/source/dat/des/" .. family ..
-        "/([a-z]+)%.des:(%d+)")
-
-    return arrival_file_order[file] or 5, tonumber(line) or 0
-end
-
--- Preserve source file and line order before assigning map IDs, including hooks inserted at source positions.
+-- Sort effective definitions by ID. Source comments document provenance but
+-- cannot influence a seeded game when a mod renames or replaces a file.
 local function ordered_definitions()
     local definitions = {}
     local origins = {}
 
-    for family_order, family in ipairs({ "arrival", "shop" }) do
+    for _, family in ipairs({ "arrival", "shop" }) do
         for _, path in ipairs(mod.paths("vaults/" .. family, ".des")) do
             local source = mod.read(path)
             local definition = des.parse(path, source)
@@ -63,34 +35,16 @@ local function ordered_definitions()
 
             origins[definition.id] = path
 
-            local file_order, line_order = source_position(family,
-                mod.bundled(path) or source)
-
             definitions[#definitions + 1] = {
                 definition = definition,
                 path = path,
-                family_order = family_order,
-                file_order = file_order,
-                line_order = line_order,
             }
         end
     end
 
-    -- Compare family, source file, then line rank so virtual path discovery cannot reorder vaults.
+    -- Stable IDs make discovery order irrelevant to weighted selection.
     table.sort(definitions, function(left, right)
-        if left.family_order ~= right.family_order then
-            return left.family_order < right.family_order
-        end
-
-        if left.file_order ~= right.file_order then
-            return left.file_order < right.file_order
-        end
-
-        if left.line_order ~= right.line_order then
-            return left.line_order < right.line_order
-        end
-
-        return left.path < right.path
+        return left.definition.id < right.definition.id
     end)
 
     return definitions
