@@ -23,10 +23,11 @@ Lua, Akara ECS.
 ## Global constraints
 
 - Commit all 600 source builder/serial definitions or document an exact
-  legacy exclusion. One hundred seventy-nine are now committed, including
-  the dummy builder family and the curved corridor, Core Xii hall, river,
-  bayou, subway, demonic, undead, and park serial families.
-  Only executable definitions may enter a live selector.
+  legacy exclusion. Five hundred sixty-three are now committed. The 37
+  remaining definitions are two `layout_cc` maps, two cellular layouts,
+  four delve layouts, four Geoelf layouts, six hall layouts, eleven Vaults
+  layouts, and eight special rooms. Only executable definitions may enter
+  a live selector.
 - Preserve source `.des` map syntax and directive order. Source scripts
   become named functions in discoverable Lua modules. No inline Lua in Go
   and no runtime dependency on the C++ checkout.

@@ -13,6 +13,9 @@ features.from_source_glyph = {
     ["."] = "DNGN_FLOOR",
     ["+"] = "DNGN_CLOSED_DOOR",
     ["~"] = "DNGN_CLOSED_CLEAR_DOOR",
+    -- The Swamp heightmap emits this private procedural glyph. Authored
+    -- DES files keep their normal keyed-glyph semantics and may override it.
+    q = "DNGN_MANGROVE",
     ["'"] = "DNGN_OPEN_DOOR",
     ["<"] = "DNGN_STONE_STAIRS_UP_I",
     [">"] = "DNGN_STONE_STAIRS_DOWN_I",

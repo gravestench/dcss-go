@@ -367,7 +367,7 @@ spell departures omit smoke. Source-specific death wording remains part of
 the presentation parity pass. Xom and Jiyva poof variants still need
 per-monster god state from the religion domain.
 
-The builder and serial definition count is now 562 of 600. All 22 source
+The builder and serial definition count is now 563 of 600. All 22 source
 arena builder maps are committed as individual `.des` files. Their original
 MAP blocks are intact, and the two shared palette scripts are a named Lua
 hook. Arena maps have no Dungeon depth rule, so normal Dungeon generation
@@ -425,6 +425,11 @@ regions. The shared stair owner now preserves separate authored bubbles and
 adds a local return landing for each. These maps are registered for their
 source branches; ordinary branch travel and primary-vault avoidance remain
 to be integrated.
+
+The source Swamp heightmap layout is also committed. Lua scatters the
+source's depth-scaled island bumps, smooths the height field, and paints
+mangrove, floor, and shallow water. Its Swamp-only declaration is registered;
+branch travel is still required before ordinary play can select it.
 
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and

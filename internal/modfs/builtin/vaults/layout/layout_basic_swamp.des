@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_cc.des
+# Swamp's C++ heightmap builder is ported in this named Lua layout hook.
+NAME:   layout_basic_swamp
+DEPTH:  Swamp
+WEIGHT: 20
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_swamp
+: vault.run("layout_basic_swamp.generate")
+MAP
+ENDMAP
