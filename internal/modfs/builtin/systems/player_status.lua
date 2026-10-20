@@ -126,12 +126,18 @@ function system.regeneration(ctx, entity, aut)
     local magic = required(ctx, entity, "core.magic")
     local progress = required(ctx, entity, "core.regeneration")
 
-    if aut < 0 or health.max <= 0 or health.current <= 0 or
+    if aut < 0 or health.max <= 0 or health.current < 0 or
         health.current > health.max or magic.max < 0 or
         magic.current < 0 or magic.current > magic.max or
         progress.hp_progress < 0 or progress.hp_progress >= 100 or
         progress.mp_progress < 0 or progress.mp_progress >= 100 then
         error("invalid player regeneration state")
+    end
+
+    -- A death hook can kill the player earlier in this same action. The
+    -- remaining status passes must not recover HP or consume recovery RNG.
+    if health.current == 0 then
+        return
     end
 
     local hp_rate, mp_rate = regeneration.rates(ctx, entity,
