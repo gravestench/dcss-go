@@ -188,11 +188,11 @@ All legal selectable species/job combinations now enter the basic-layout
 D:1–15 Dungeon. Their starting state is Lua-owned and saved; most later species and
 job abilities are still unavailable. The many imported monsters, spells,
 items, and branches still need behavior, generation, and UI flows.
-Dungeon terrain and paired stairs are built at launch; ordinary monsters,
-authored vault entities, and shops on D:2–15 materialize on first entry.
-Pending population and its no-spawn mask survive the Go save format. Terrain
-itself still needs an entry-time generator when topology and branch travel
-can establish reciprocal links without prebuilding every floor.
+Only D:1 Dungeon terrain and population exist at launch. D:2–15 terrain,
+paired stairs, ordinary monsters, authored vault entities, and shops are
+generated from live state on first entry. The pending frontier stair,
+population state, and no-spawn mask survive the Go save format. Branch
+entrances still need generators that establish reciprocal links on entry.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition
