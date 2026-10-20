@@ -222,6 +222,10 @@ source layouts retain exactly the requested number of altar cells.
 Twelve overflow maps now choose their authored monster declarations by
 Dungeon, Depths, or Crypt branch. Named spectral monsters in these maps
 resolve to the generic spectral actor plus their base species identity.
+Ten overflow maps also run their conditional terrain, trap, or substitution
+rules from local depth and branch-bottom context. The caller must supply
+the branch bottom; a missing value is an error rather than an implicit
+assumption that a shaft is safe.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition

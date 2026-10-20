@@ -12,6 +12,7 @@ NSUBST: D = . / E
 NSUBST: t = . / ttE
 SUBST:  E = tt.
 # source: : nsubst( ". = " .. you.absdepth() .. "=1 / 1=1. / ." )
+: vault.run("scale_zombie_slots")
 KFEAT:  _ = altar_yredelemnul
 COLOUR: t = lightgrey w:5 / brown
 TILE:   t = dngn_tree_dead

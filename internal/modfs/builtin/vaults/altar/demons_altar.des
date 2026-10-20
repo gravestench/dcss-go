@@ -9,9 +9,10 @@ KFEAT:   _ = altar_makhleb
 # three slow type 5 demons (iron imp).
 # The higher demons can only come up in D:9-11.
 # source: : if you.absdepth() > 9 then
-SHUFFLE: 123
-NSUBST:  1 = 1:1 / *:.
-NSUBST:  2 = 1:2 / *:.
+: vault.run("deepen_demons")
+# source: SHUFFLE: 123
+# source: NSUBST:  1 = 1:1 / *:.
+# source: NSUBST:  2 = 1:2 / *:.
 # source: : end
 MONS:    rust devil, smoke demon, iron imp
 MAP

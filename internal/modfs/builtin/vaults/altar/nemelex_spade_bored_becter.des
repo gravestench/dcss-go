@@ -7,7 +7,8 @@ TAGS:   no_rotate no_vmirror no_monster_gen no_item_gen
 TAGS:   uniq_altar_nemelex_xobeh
 KFEAT:  _ = altar_nemelex_xobeh
 # source: :  if you.depth() ~= dgn.br_depth(you.branch()) then
-KFEAT:  a = shaft trap
+: vault.run("depth_rules.shaft_a")
+# source: KFEAT:  a = shaft trap
 # source: :  end
 NSUBST: ' = 6:a / *:.
 COLOUR: x = darkgray

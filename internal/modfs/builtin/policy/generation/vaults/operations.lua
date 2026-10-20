@@ -498,6 +498,16 @@ local function hook_api(random, events, line, player)
         return player.absolute_depth or player.depth
     end
 
+    -- Vault scripts need the branch's last local floor to suppress shafts
+    -- that would lead beyond it. The caller supplies this with the floor.
+    function api:branch_bottom()
+        if type(player.branch_bottom) ~= "number" then
+            error("vault hook needs the current branch bottom")
+        end
+
+        return player.branch_bottom
+    end
+
     -- Let depth-scaled shop hooks compare local progress to branch bottom.
     function api:depth_fraction()
         return player.depth / player.branch_bottom

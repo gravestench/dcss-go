@@ -11,8 +11,9 @@ KFEAT:   d = floor
 SUBST:   x = TTPPPPP.
 # Only make "oklob behind bushes" situation possible a bit deeper.
 # source: : if you.absdepth() > 5 then
-SHUFFLE: PQR
-SUBST:   Q = 114, R = 11124
+: vault.run("open_deep_enclosure")
+# source: SHUFFLE: PQR
+# source: SUBST:   Q = 114, R = 11124
 # source: : end
 SUBST:   P = 112
 SUBST:   z = .

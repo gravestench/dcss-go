@@ -7,7 +7,8 @@ MONS:    shapeshifter hd:1
 KFEAT:   _ = altar_xom
 NSUBST:  . = 2:1 / 1:> / * = _...
 # source: :  if you.depth() == dgn.br_depth(you.branch()) then
-SUBST:   > = <
+: vault.run("turn_bottom_stair")
+# source: SUBST:   > = <
 # source: :  end
 SUBST:   x = bmv
 KMASK:   .1 = no_trap_gen

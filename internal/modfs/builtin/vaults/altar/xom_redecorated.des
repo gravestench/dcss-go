@@ -10,9 +10,10 @@ NSUBST:  ^ = 3=^ / .
 KFEAT:   _ = altar_xom
 KFEAT:   ^ = teleport trap
 # source: :  if you.depth() == dgn.br_depth(you.branch()) then
-KFEAT:  ~ = teleport trap / alarm trap / dispersal trap
+: vault.run("choose_traps")
+# source: KFEAT:  ~ = teleport trap / alarm trap / dispersal trap
 # source: :  else
-KFEAT:  ~ = shaft trap / teleport trap / alarm trap / dispersal trap
+# source: KFEAT:  ~ = shaft trap / teleport trap / alarm trap / dispersal trap
 # source: :  end
 : vault.run("interest.apply")
 MAP

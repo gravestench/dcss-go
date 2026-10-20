@@ -338,6 +338,129 @@ local function assert_branch_monsters()
     end
 end
 
+-- Run the map's production hook with a controlled floor context. Keep the
+-- source method name in the DES file authoritative instead of importing a
+-- handler module directly into this test.
+local function depth_hook(id, method, options)
+    local definition = catalog.get(id)
+    local emissions = {}
+    local api = {}
+    local found = false
+
+    function api:depth()
+        return options.depth
+    end
+
+    function api:absolute_depth()
+        return options.absolute_depth
+    end
+
+    function api:branch_bottom()
+        return options.branch_bottom
+    end
+
+    function api:branch_id()
+        return options.branch_id
+    end
+
+    function api:emit(kind, argument)
+        emissions[#emissions + 1] = {
+            kind = kind,
+            argument = argument,
+        }
+    end
+
+    for _, operation in ipairs(definition.operations) do
+        if operation.kind == directives.HOOK_RUN and
+            operation.argument == method then
+            hooks.run(definition, method, api)
+            found = true
+        end
+    end
+
+    harness.truthy(found, id .. " retains its source-position depth hook")
+
+    return emissions
+end
+
+-- Compare both sides of each source condition, including branch bottoms.
+-- A source-only DES line left active would also be caught by the placement
+-- check below because it would add a duplicate typed declaration.
+local function assert_depth_rules()
+    local shallow = {
+        depth = 3,
+        absolute_depth = 3,
+        branch_bottom = 4,
+        branch_id = branches.BRANCH_DUNGEON,
+    }
+    local bottom = {
+        depth = 4,
+        absolute_depth = 10,
+        branch_bottom = 4,
+        branch_id = branches.BRANCH_DEPTHS,
+    }
+    local shaft_maps = {
+        { "grunt_qazlal_sundering", "depth_rules.shaft_caret" },
+        { "grunt_temple_overflow_forces_of_nature",
+            "depth_rules.shaft_caret" },
+        { "nemelex_spade_bored_becter", "depth_rules.shaft_a" },
+        { "trog_butcher_becter", "depth_rules.shaft_caret" },
+    }
+
+    for _, entry in ipairs(shaft_maps) do
+        local active = depth_hook(entry[1], entry[2], shallow)
+        local absent = depth_hook(entry[1], entry[2], bottom)
+
+        harness.equal(#active, 1, entry[1] .. " has an ordinary-floor shaft")
+        harness.equal(active[1].kind, directives.KFEAT)
+        harness.equal(active[1].argument:match("shaft trap$"), "shaft trap")
+        harness.equal(#absent, 0, entry[1] .. " omits bottom-floor shafts")
+    end
+
+    harness.equal(#depth_hook("demons_altar", "deepen_demons", shallow), 0)
+    harness.equal(#depth_hook("demons_altar", "deepen_demons", bottom), 3)
+    harness.equal(#depth_hook("tgw_fedhas", "open_deep_enclosure", shallow), 0)
+    harness.equal(#depth_hook("tgw_fedhas", "open_deep_enclosure", bottom), 2)
+
+    local copse = depth_hook(
+        "nicolae_yredelemnul_corpse_copse", "scale_zombie_slots", bottom)
+
+    harness.equal(copse[1].kind, directives.NSUBST)
+    harness.equal(copse[1].argument, ". = 10=1 / 1=1. / .")
+
+    local xom_before = depth_hook("tgw_xom", "choose_traps", shallow)
+    local xom_bottom = depth_hook("tgw_xom", "choose_traps", bottom)
+
+    harness.truthy(xom_before[1].argument:find("shaft trap", 1, true))
+    harness.falsy(xom_bottom[1].argument:find("shaft trap", 1, true))
+    harness.equal(#depth_hook("tgw_xom", "deepen_monsters", shallow), 0)
+    harness.equal(#depth_hook("tgw_xom", "deepen_monsters", bottom), 1)
+
+    local decor_before = depth_hook("xom_redecorated", "choose_traps", shallow)
+    local decor_bottom = depth_hook("xom_redecorated", "choose_traps", bottom)
+
+    harness.truthy(decor_before[1].argument:find("shaft trap", 1, true))
+    harness.falsy(decor_bottom[1].argument:find("shaft trap", 1, true))
+    harness.equal(#depth_hook("xom_shifter_show", "turn_bottom_stair", shallow), 0)
+    harness.equal(#depth_hook("xom_shifter_show", "turn_bottom_stair", bottom), 1)
+
+    local placed = operations.apply(
+        catalog.get("grunt_qazlal_sundering"),
+        copy_rows(catalog.get("grunt_qazlal_sundering")),
+        fixed_random(), shallow.depth, shallow)
+    local shafts = 0
+
+    for _, record in ipairs(placed) do
+        if record.kind == effects.FEATURE and
+            record.identity == "shaft trap" then
+            shafts = shafts + 1
+        end
+    end
+
+    harness.equal(shafts, 1,
+        "real placement emits one shaft feature before the branch bottom")
+end
+
 -- Parsing the full family catches broken directives and missing named hooks
 -- at startup rather than only when a rare altar map is selected.
 function test.run()
@@ -373,6 +496,7 @@ function test.run()
     assert_count_arrangements()
     assert_count_maps_apply()
     assert_branch_monsters()
+    assert_depth_rules()
 end
 
 return test
