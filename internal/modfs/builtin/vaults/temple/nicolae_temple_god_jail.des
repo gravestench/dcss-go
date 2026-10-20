@@ -1,0 +1,23 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    nicolae_temple_god_jail
+TAGS:    temple_altars_13
+PLACE:   Temple
+ORIENT:  encompass
+KFEAT:   m = iron_grate
+SHUFFLE: PQR
+SUBST:   PQ = m, R = +
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+v...v...v...v...v...v...v...v
+v.B.v.B.v.B.v.{.v.B.v.B.v.B.v
+v...v...v...v...v...v...v...v
+vPQRvPQRvPQRv...vRQPvRQPvRQPv
+v...........m...m...........v
+v...........+...+...........v
+v...........m...m...........v
+vPQRvPQRvPQRvm+mvRQPvRQPvRQPv
+v...v...v...v...v...v...v...v
+v.B.v.B.v.B.v.B.v.B.v.B.v.B.v
+v...v...v...v...v...v...v...v
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP

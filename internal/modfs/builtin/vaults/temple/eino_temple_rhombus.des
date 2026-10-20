@@ -1,0 +1,54 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    eino_temple_rhombus
+TAGS:    temple_altars_16
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: defghij, klmnopq, rs / rs / sr, tu / tu / ut
+SUBST:   deklrt = x, f : x.., m : x.., ghijnopqsu = .
+SUBST:   W : xx., X : xx., Y : xx., Z : xx.
+SUBST:   D : GGTTUb.., E : GGTTUb.., F : GGTTUb..
+MAP
+                    xxx       xxx
+                   xxXxx     xxYxx
+                  xx...xx   xx...xx
+                 xx..x..xx xx..x..xx
+                xx..x.x..xxx..x.x..xx
+               xx..x...x..x..x...x..xx
+              xx..x..B..x.F.x..B..x..xx
+             xx....r...x.....x...t....xx
+            xx..x.ssr.x...x...x.tuu.x..xx
+           xx..x.rss.x...x.x...x.uut.x..xx
+          xx..x...r.....x.A.x.....t...x..xx
+          xW.x..B..x...x.....x...x..B..x.Zx
+          xx..x...x...x...B...x...x...x..xx
+           xx..x.x...x.de...lk.x...x.x..xx
+            xx..x...x..fgh.onm..x...x..xx
+             xx....x....ij.qp....x....xx
+              xxE.x...B...D...B...x..xx
+             xx....x....pq.ji....x..xx
+            xx..x...x..mno.hgf..x..xx
+           xx..x.x...x.kl...ed.x..xx
+          xx..x...x...x...B...x..xx
+         xx..x.....x.{.x.....x..xx
+        xx..x...B...x...x...x..xx
+       xx..x.de...lk.x...x.x..xx
+      xx..x..fgh.onm..x...x..xx
+     xx..x....ij.qp....x....xx
+    xx..x...B...D...B...x.Exx
+   xx....x....pq.ji....x....xx
+  xx..x...x..mno.hgf..x...x..xx
+ xx..x.x...x.kl...ed.x...x.x..xx
+xx..x...x...x...B...x...x...x..xx
+xZ.x..B..x...x.....x...x..B..x.Wx
+xx..x...t.....x...x.....r...x..xx
+ xx..x.tuu.x...x.x...x.ssr.x..xx
+  xx..x.ttt.x...x...x.rss.x..xx
+   xx....t...x.....x...r....xx
+    xx..x..B..x.F.x..B..x..xx
+     xx..x...x..x..x...x..xx
+      xx..x.x..xxx..x.x..xx
+       xx..x..xx xx..x..xx
+        xx...xx   xx...xx
+         xxYxx     xxXxx
+          xxx       xxx
+ENDMAP

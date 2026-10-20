@@ -1,0 +1,18 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_junction
+TAGS:   transparent
+SUBST:  T = TV U:1, X : xc v:1 b:1
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+xxx...xxx
+xxX.T.Xxx
+xXX...XXx
+.........
+.T..O..T.
+.........
+xXX...XXx
+xxX.T.Xxx
+xxx...xxx
+ENDMAP

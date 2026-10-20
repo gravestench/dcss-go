@@ -1,0 +1,20 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_mist
+TAGS:   transparent
+KFEAT:  ! = shallow_water
+MARKER: ! = lua:fog_machine { cloud_type = "thin mist", pow_min = 1, \
+        pow_max = 3, delay = 10, start_clouds = 1, size_min = 2, \
+        size_max = 3, spread_rate = -1 }
+KMASK:  W! = no_monster_gen
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+..WWW..
+.WW!WW.
+WWWWWWW
+W!WOW!W
+WWWWWWW
+.WW!WW.
+..WWW..
+ENDMAP

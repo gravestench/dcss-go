@@ -1,0 +1,57 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    mainiacjoe_temple_bowtie_tessellation
+TAGS:    temple_altars_18
+PLACE:   Temple
+ORIENT:  encompass
+SUBST:   c : cvb
+MAP
+                        ccccc
+                        c...cccc
+                        c......c
+                        c......c
+                       cc...B..cc
+                       c........c
+                       c........c
+               ccc  cccc........cc
+            cccc+cccc.......cccc+cccc
+         cccc...c........+ccc...c...cccc
+         c......c........c......c......c
+         c......c........c......c......c
+        cc..B...cc..B...cc..B...cc..{..cc
+        c........c......c........c......c
+        c........c......c........c......c
+       cc........+ccc...c........+ccc...cc
+       c+cccc.......cccc+cccc.......cccc+cccc
+       cc...ccc+........c...ccc+........c...cccc
+        c......c........c......c........c......c
+        c......c........c......c........c......c
+       cc...B..cc...B..cc...B..cc...B..cc...B..cc
+       c........c......c........c......c........c
+       c........c......c........c......c........c
+    cccc........c...ccc+........c...ccc+........c
+ccccc.......cccc+cccc.......cccc+cccc.......ccccc
+c........+ccc...c........+ccc...c........+ccc
+c........c......c........c......c........cc
+c........c......c........c......c........c
+cc..B...cc..B...cc..B...cc..B...cc..B...cc
+ c......c........c......c........c......c
+ c......c........c......c........c......c
+ cccc...c........+ccc...c........+ccc...cc
+    cccc+cccc.......cccc+cccc.......cccc+c
+       cc...ccc+........c...ccc+........cc
+        c......c........c......c........c
+        c......c........c......c........c
+        cc..B..cc...B..cc...B..cc...B..cc
+         c......c......c........c......c
+         c......c......c........c......c
+         cccc...c...ccc+........c...cccc
+            cccc+cccc.......cccc+cccc
+               cc........+ccc  ccc
+                c........cc
+                c........c
+                cc..B...cc
+                 c......c
+                 c......c
+                 cccc...c
+                    ccccc
+ENDMAP

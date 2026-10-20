@@ -1,0 +1,42 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:   roderic_octagonal_lattice_temple
+TAGS:   temple_altars_21
+PLACE:  Temple
+ORIENT: encompass
+TAGS:   no_rotate
+SUBST:  ' : ......b
+MAP
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbb'''b'''bbbbb'''b'''bbbbb'''b'''bbbbbb
+bbbbbb'B...B'bbbbb'B...B'bbbbb'B...B'bbbbbb
+bbbbbb''...''bbbbb''...''bbbbb''...''bbbbbb
+bbbbbbbb...bbbbbbbbb...bbbbbbbbb...bbbbbbbb
+bbbbbbb..b..bbbbbbb..b..bbbbbbb..b..bbbbbbb
+b'''bbb.bbb.bbbbbbb.bbb.bbbbbbb.bbb.bbb'''b
+b'B'b...bbb...bbb...bbb...bbb...bbb...b'B'b
+b'....bbbbbbb..b..bbbbbbb..b..bbbbbbb....'b
+bb...bbbbbbbbb...bbbbbbbbb...bbbbbbbbb...bb
+b'....bbbbbbb..b..bbbbbbb..b..bbbbbbb....'b
+b'B'b...bbb...bbb...bbb...bbb...bbb...b'B'b
+b'''bbb.bbb.bbbbbbb.bbb.bbbbbbb.bbb.bbb'''b
+bbbbbbb..b..bbbbbbb..b..bbbbbbb..b..bbbbbbb
+bbbbbbbb...bbbbbbbbb...bbbbbbbbb...bbbbbbbb
+bbbbbbbbb.bbbbbbbbbb.{.bbbbbbbbbb.bbbbbbbbb
+bbbbbbbb...bbbbbbbbb...bbbbbbbbb...bbbbbbbb
+bbbbbbb..b..bbbbbbb..b..bbbbbbb..b..bbbbbbb
+bbbbbbb.bbb.bbbbbbb.bbb.bbbbbbb.bbb.bbbbbbb
+b'''bbb.bbb.bbbbbbb.bbb.bbbbbbb.bbb.bbb'''b
+b'B'b...bbb...bbb...bbb...bbb...bbb...b'B'b
+b'....bbbbbbb..b..bbbbbbb..b..bbbbbbb....'b
+bb...bbbbbbbbb...bbbbbbbbb...bbbbbbbbb...bb
+b'....bbbbbbb..b..bbbbbbb..b..bbbbbbb....'b
+b'B'b...bbb...bbb...bbb...bbb...bbb...b'B'b
+b'''bbb.bbb.bbbbbbb.bbb.bbbbbbb.bbb.bbb'''b
+bbbbbbb.bbb.bbbbbbb.bbb.bbbbbbb.bbb.bbbbbbb
+bbbbbbb..b..bbbbbbb..b..bbbbbbb..b..bbbbbbb
+bbbbbbbb...bbbbbbbbb...bbbbbbbbb...bbbbbbbb
+bbbbbb''...''bbbbb''.B.''bbbbb''...''bbbbbb
+bbbbbb'B...B'bbbbb'B...B'bbbbb'B...B'bbbbbb
+bbbbbb'''b'''bbbbb'''b'''bbbbb'''b'''bbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+ENDMAP

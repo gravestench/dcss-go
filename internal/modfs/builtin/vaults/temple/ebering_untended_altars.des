@@ -1,0 +1,49 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    ebering_untended_altars
+TAGS:    temple_rare temple_altars_12
+PLACE:   Temple
+ORIENT:  encompass
+WEIGHT:  5
+SUBST:   A : GTUVt
+NSUBST:  I = 1:I / *:O
+KFEAT:   I = altar_ignis
+KFEAT:   O = altar_ecumenical
+SUBST:   ^ = ^F.
+KFEAT:   ^ = web
+KMONS:   P = plant
+KMONS:   F = fungus
+MARKER:  L = lua:fog_machine { cloud_type = "flame", delay = 10, \
+                  pow_min = 100, pow_max = 100, size = 1, walk_dist = 0, \
+                  excl_rad = 0 }
+MARKER:  S = lua:fog_machine { cloud_type = "black smoke", delay = 50, \
+                  pow_min = 1, pow_max = 10, size = 1, walk_dist = 0, \
+                  excl_rad = 0, spread_rate = 0 }
+MAP
+            ccc
+        cccccLccccc
+       ccSccPBPccLcc
+   ccccc^I^.....PBPccccc
+   cLcPA...........A^cSc
+   ccB...............Icc
+   cP.................^c
+  ccA.................Acc
+ ccP.........A.........Pcc
+ cLB.....A.......A.....BLc
+ ccP...................Pcc
+ cc.....................cc
+ccP.....................^cc
+cLB.....A....{....A.....ISc
+ccP.....................^cc
+ cc.....................cc
+ cc^...................Pcc
+ cSI.....A.......A.....BLc
+ cc^.........A.........Pcc
+  ccA.................Acc
+   cP.................Pc
+   ccB...............Bcc
+   cLcPA...........APcLc
+   cccccPBP.....PBPccccc
+       ccLccPBPccLcc
+        cccccLccccc
+            ccc
+ENDMAP

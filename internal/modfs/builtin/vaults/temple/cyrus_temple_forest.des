@@ -1,0 +1,36 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    cyrus_temple_forest
+TAGS:    no_rotate temple_altars_10
+PLACE:   Temple
+ORIENT:  encompass
+MONS:    plant, bush
+NSUBST:  . = 10:X / 34:Y / *:.
+SUBST:   X : tXY., X = t., Y : Y., Y = 1112..
+SUBST:   - = ., " : """.
+COLOUR:  .12 = green
+COLOUR:  " : brown
+COLOUR:  ' : white
+FTILE:   T.t12 = floor_grass
+FTILE:   " = floor_dirt
+FTILE:   '{+GB = floor_vault
+MAP
+                 tttttttttttttttttttttttttttttt
+                 tttttttttttttttttttttttttttttt
+                 tt..........................tt
+                 tt.."""................"""..tt
+                 tt.."B"...""".."""....."B"..tt
+                 tt.."""..."B".."B"....."""..tt
+ccccccccccccccccccc........""".."""..........tt
+c'''G''G''G''G''G'c..........................tt
+c'''''''''''''''''+--..""".."""..""".."""....tt
+c{''''''''''''''''+----"B".."T".."T".."B"....tt
+c'''''''''''''''''+--..""".."""..""".."""....tt
+c'''G''G''G''G''G'c..........................tt
+ccccccccccccccccccc..........""".."""........tt
+                 tt.."""....."B".."B"..."""..tt
+                 tt.."B".....""".."""..."B"..tt
+                 tt.."""................"""..tt
+                 tt..........................tt
+                 tttttttttttttttttttttttttttttt
+                 tttttttttttttttttttttttttttttt
+ENDMAP

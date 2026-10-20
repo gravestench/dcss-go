@@ -1,0 +1,23 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   temple_doors_e
+TAGS:   transparent
+WEIGHT: 6
+SUBST:  ? : ?:40 T:30 U, ? = T:30 U
+SUBST:  c:cxxx
+NSUBST: X = 1:+ / * = m+
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+cccccc@cccccc
+cccccc.cccccc
+cccccc.cccccc
+ccccmmXmmcccc
+ccccm?.?mcccc
+@...X.O.X...@
+ccccm?.?mcccc
+ccccmmXmmcccc
+cccccc.cccccc
+cccccc.cccccc
+cccccc@cccccc
+ENDMAP

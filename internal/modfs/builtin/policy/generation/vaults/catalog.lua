@@ -15,11 +15,13 @@ local function ordered_definitions()
     local definitions = {}
     local origins = {}
 
-    -- The VFS discovers any new vault family without a loader edit. Layouts
-    -- use their own catalog because they carve the base grid rather than fit
-    -- as secondary or arrival maps.
+    -- The VFS discovers ordinary extra-vault families. Primary layouts and
+    -- Temple maps have dedicated selectors because they own whole floors or
+    -- a scheduled branch entrance rather than a random secondary fit.
     for _, path in ipairs(mod.paths("vaults", ".des")) do
-        if not path:match("^vaults/layout/") then
+        if not path:match("^vaults/layout/") and
+            not path:match("^vaults/temple/") and
+            not path:match("^vaults/temple_entry/") then
             local source = mod.read(path)
             local definition = des.parse(path, source)
             hooks.validate(definition)

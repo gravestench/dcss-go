@@ -1,0 +1,23 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   temple_hall
+SUBST:  ? : c:20 x v b G:5
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+ccccccccc
+c...O...c
+c.......c
+c.?...?.c
+c.......c
+c.......c
+c.?...?.c
+c.......c
+c.......c
+c.?...?.c
+c.......c
+c.......c
+c.?...?.c
+c.......c
+c@..@..@c
+ENDMAP

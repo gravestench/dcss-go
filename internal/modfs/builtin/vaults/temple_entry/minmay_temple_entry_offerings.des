@@ -1,0 +1,13 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:    minmay_temple_entry_offerings
+TAGS:    transparent
+SHUFFLE: def$
+ITEM:    any weapon, any book, gold
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+d.e
+.O.
+f.$
+ENDMAP

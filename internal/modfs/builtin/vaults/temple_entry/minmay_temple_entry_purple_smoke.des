@@ -1,0 +1,17 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_purple_smoke
+TAGS:   transparent
+WEIGHT: 5
+MARKER: O = lua:fog_machine { cloud_type = "purple smoke", pow_min = 1, \
+        pow_max = 3, delay_min = 1, delay_max = 10, start_clouds = 5,  \
+        size_min = 2, size_max = 2, spread_rate = 1 }
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+.....
+.....
+..O..
+.....
+.....
+ENDMAP

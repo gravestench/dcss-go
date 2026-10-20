@@ -1,0 +1,43 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    regret_index_temple_waves
+TAGS:    no_rotate no_pool_fixup temple_altars_15
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: {<defgh / {<defgh / <{hgfed
+SHUFFLE: def, PQRS, -' / -' / ="
+SUBST:   < = B, d : W.., e : W.ccc, fgh = c
+SUBST:   P : wc, Q : wc.., R : wc..., S : wc....
+SUBST:   - = ~, ' = ., =" = c, ~ : cccww
+MAP
+ccccccccccccccccccccccccccc
+c--~~~~~~~~~~~~~~~~.....''c
+c--~~~~~~~~~~~~~~~~.....''c
+c--~~~~~~~~~~~~.......{.''c
+c--~~~~~~~~~~......P....''c
+c--~~~~~~.......B.......''c
+c--~~~~......Q......cchcccc
+c''.......B.......ccc...''c
+c''....P......ccgcc.....''c
+c''.<.......cfc.......B.''c
+c''.....ccccc......R....''c
+c''...cec.......B.......''c
+ccccdcc......S......ccdcccc
+c''.......B.......cec...''c
+c''....R......ccccc.....''c
+c''.B.......cfc.......B.''c
+c''.....ccccc......R....''c
+c''...cgc.......B.......''c
+cccchcc......S......cchcccc
+c''.......B.......cgc...''c
+c''....R......ccccc.....''c
+c''.B.......cfc.......B.''c
+c''.....ccccc......P....''c
+c''...cec.......B.......''c
+ccccdcc......Q......~~~~--c
+c''.......B.......~~~~~~--c
+c''....P......~~~~~~~~~~--c
+c''.B.......~~~~~~~~~~~~--c
+c''.....~~~~~~~~~~~~~~~~--c
+c''...~~~~~~~~~~~~~~~~~~--c
+ccccccccccccccccccccccccccc
+ENDMAP

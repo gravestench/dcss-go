@@ -1,0 +1,24 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_water_ring
+TAGS:   no_pool_fixup transparent
+WEIGHT: 3
+SUBST:  x : xxcccvvbt
+KMASK:  W = no_monster_gen
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+.............
+.xxx.....xxx.
+.xWWWWWWWWWx.
+.xWx.....xWx.
+..W.......W..
+..W.......W..
+..W...O...W..
+..W.......W..
+..W.......W..
+.xWx.....xWx.
+.xWWWWWWWWWx.
+.xxx.....xxx.
+.............
+ENDMAP

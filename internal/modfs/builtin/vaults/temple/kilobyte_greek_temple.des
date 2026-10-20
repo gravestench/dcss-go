@@ -1,0 +1,32 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    kilobyte_greek_temple
+TAGS:    no_rotate temple_altars_21
+PLACE:   Temple
+ORIENT:  encompass
+MONS:    plant, bush
+NSUBST:  . = 15:1 / 12:2 / 2:t / *:.
+SUBST:   ' = .
+COLOUR:  " : darkgrey w:3 / white w:1 / lightgrey
+MAP
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+tttttttttttt....1111ttttttttttttttttttttttttttttttttttttttttt
+tttttttt.........1111....ttttttttttttt.........tttttttttttttt
+tttt.......................1ttttttt.......t.........ttttttttt
+tt.........2........t.........''''''.................2222tttt
+tt.....{..21...t..............''ccccccccccccccccccc...22.tttt
+ttt...........ttt.......t.....''G'c"""""""""""""""c..t..ttttt
+tttt......2...................''''c"B"B"B"B"B"B"B"ctt....tttt
+tttttt.....................t..''G'c"""""""""""""""cttt...tttt
+ttttttttt..1.....2...t........''''+"B"B"B"B"B"B"B"ctt..t...tt
+tttttttt......................''G'c"""""""""""""""c...tt..ttt
+ttttttttt...................1.''''c"B"B"B"B"B"B"B"c..ttt.tttt
+ttttttttttttttt....2....t.....''G'c"""""""""""""""c...t..tttt
+ttttttttttttttttt.............''ccccccccccccccccccc......2ttt
+tttttttttttttttttt..........t..........t......ttt......2ttttt
+ttttttttttttttttttttt................................22tttttt
+ttttttttttttttttttttttt.............t..........t....ttttttttt
+tttttttttttttttttttttttttttt............t.........ttttttttttt
+tttttttttttttttttttttttttttttttt..............ttttttttttttttt
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+ENDMAP

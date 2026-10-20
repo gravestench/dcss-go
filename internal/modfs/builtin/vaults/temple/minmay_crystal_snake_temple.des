@@ -1,0 +1,51 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    minmay_crystal_snake_temple
+TAGS:    no_rotate temple_altars_21
+PLACE:   Temple
+ORIENT:  encompass
+NSUBST:  T = 1:{ / *:T
+MAP
+              bbb   bbb   bbb
+             bb.bb bb.bb bb.bb
+            bb...bbb...bbb...bb
+            b..B.....B.....T..b
+            bb...bbb...bbb...bb
+             bb.bb bb.bb bb.bb
+        bbb   b.b   bbb   b.b
+       bb.bb bb.bb       bb.bb
+      bb...bbb...bb     bb...bb
+      b..B.....B..b     b..B..b
+      bb...bbb...bb     bb...bb
+       bb.bb bb.bb       bb.bb
+  bbb   b.b   bbb   bbb   b.b
+ bb.bb bb.bb       bb.bb bb.bb
+bb...bbb...bb     bb...bbb...bbbb
+b..B.....B..b     b..B.....B..+.bb
+bb...bbb...bb     bb...bbb...bb..bb
+ bb.bb bb.bb       bb.bb bb.bbbb..b
+  b.b   bbb   bbb   b.b   bbb  bb+b
+ bb.bb       bb.bb bb.bb       bb.bb
+bb...bb     bb...bbb...bb     bb...bb
+b..B..b     b..B.....B..b     b..T..b
+bb...bb     bb...bbb...bb     bb...bb
+ bb.bb       bb.bb bb.bb       bb.bb
+  b+bb  bbb   b.b   bbb   bbb   b.b
+  b..bbbb.bb bb.bb       bb.bb bb.bb
+  bb..bb...bbb...bb     bb...bbb...bb
+   bb.+..B.....B..b     b..B.....B..b
+    bbbb...bbb...bb     bb...bbb...bb
+       bb.bb bb.bb       bb.bb bb.bb
+        b.b   bbb   bbb   b.b   bbb
+       bb.bb       bb.bb bb.bb
+      bb...bb     bb...bbb...bb
+      b..B..b     b..B.....B..b
+      bb...bb     bb...bbb...bb
+       bb.bb       bb.bb bb.bb
+        b.b   bbb   b.b   bbb
+       bb.bb bb.bb bb.bb
+      bb...bbb...bbb...bb
+      b..T.....B.....B..b
+      bb...bbb...bbb...bb
+       bb.bb bb.bb bb.bb
+        bbb   bbb   bbb
+ENDMAP

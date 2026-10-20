@@ -1,0 +1,40 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    regret_index_temple_sphere_string
+TAGS:    no_rotate temple_altars_16
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: CD / CD / DC, EF / EF / FE, HI / HI / IH, JK / JK / KJ
+SHUFFLE: defghi, jklmno
+SUBST:   CEHJLMP = c, DFIKMOQhino = .
+SUBST:   L : cc., M : cc., N : cc., O : cc.
+SUBST:   d : GGTUVc., j : GGTUVc.
+SUBST:   e : cc., f : c., g : c.., k : cc., l : c., m : c..
+MAP
+                                        ccccccccc
+                                      ccc.......ccc
+                                    ccc...........ccc
+                                  ccc......cOc......ccc
+                                ccc.....IHc...cJK.....ccc
+    cccccccccc              ccccc.......H...B...J.......ccccc
+  ccc........ccc          ccc...........c.j...k.c...........ccc
+ccc............ccc      ccc............c...lmn...c............ccc
+c......cMc.......ccc  ccc......ccc.....O.B.o.o.B.N.....cLc......c
+c...DCc...cEF......cccc......cc...cc...c...nml...c..DCc...cEF...c
+c...C...B...E...............c.......c...c.k...j.c...C...B...E...c
+c...c.d...e.c...............c.......c...J...B...H...c.d...e.c...c
+c..c...fgh...c.............c.........c..KJc...cHI..c...fgh...c..c
+c..M.B.i.i.B.L.....cNc.....c....{....c.....cNc.....L.B.i.i.B.M..c
+c..c...hgf...c..IHc...cJK..c.........c.............c...hgf...c..c
+c...c.e...d.c...H...B...J...c.......c...............c.e...d.c...c
+c...E...B...C...c.j...k.c...c.......c...............E...B...C...c
+c...FEc...cCD..c...lmn...c...cc...cc......cccc......FEc...cCD...c
+c......cLc.....N.B.o.o.B.O.....ccc......ccc  ccc.......cMc......c
+ccc............c...nml...c............ccc      ccc............ccc
+  ccc...........c.k...j.c...........ccc          ccc........ccc
+    ccccc.......J...B...H.......ccccc              cccccccccc
+        ccc.....KJc...cHI.....ccc
+          ccc......cOc......ccc
+            ccc...........ccc
+              ccc.......ccc
+                ccccccccc
+ENDMAP

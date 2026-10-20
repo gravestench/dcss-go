@@ -1,0 +1,45 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    regret_index_temple_generic_petals
+TAGS:    no_rotate temple_altars_15
+PLACE:   Temple
+ORIENT:  encompass
+KMONS:   P = plant
+KMONS:   b = bush
+SHUFFLE: de, fg, DEFGHI
+SUBST:   d : ++., f : ++., eg = c
+SUBST:   h : ++., i : ++., j : ++., k : ++.
+SUBST:   D : Pbx.., E : Pbx..., F : Pxx...., G : Pxx.....
+SUBST:   H : Pxx......, I : Pxx......., ' : c.., " : c..
+MAP
+ccccccccccccccccccccccccccccccccc
+c........c...'''.'''...c........c
+c.D......d....'...'....f...B..E.c
+c...{....c.....'.'.....c........c
+c.......cc.............cc.....B.c
+c......cc......chc......cc......c
+c....cec......cc.cc......cgc....c
+c...cc.....cccc...cccc.....cc...c
+ccdcc....kcc.cc...cc.cci....ccfcc
+c........c...c..B..c...c........c
+c.......cc.B.cc...cc.B.cc.......c
+c.......c...I.c.F.c.G...c.......c
+c"......cccc..cc.cc..cccc......"c
+c""....ccc.ccccccccccc.ccc....""c
+c"."..cc.....ccccccc.....cc.."."c
+c...".j...B.H.ccccc.H.B...j."...c
+c"."..cc.....ccccccc.....cc.."."c
+c""....ccc.ccccccccccc.ccc....""c
+c"......cccc..cc.cc..cccc......"c
+c.......c...G.c.F.c.I...c.......c
+c.......cc.B.cc...cc.B.cc.......c
+c........c...c..B..c...c........c
+ccfcc....icc.cc...cc.cck....ccdcc
+c...cc.....cccc...cccc.....cc...c
+c....cgc......cc.cc......cec....c
+c......cc......chc......cc......c
+c.B.....cc.............cc..B..B.c
+c........c.....'.'.....c........c
+c.E..B...f....'...'....d...B..D.c
+c........c...'''.'''...c........c
+ccccccccccccccccccccccccccccccccc
+ENDMAP

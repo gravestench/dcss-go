@@ -1,0 +1,44 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    eino_temple_scatter_basement
+TAGS:    no_rotate temple_altars_16
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: CD, ab, cde, fgh, ij, klm, no, pq, rs, tu, vw, yz, @&
+SUBST:   C = B, D = ., a : x., c : x., f : x., i : x., k : x.
+SUBST:   n : x., p : x., r : x., t : x., v : x., y : x., @ : x.
+SUBST:   bdeghjlmoqsuwz& = x, ' : x., " : x., ` : x.
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxx@xxxxxxxxxxx&xxxxxxxxxxx
+xxxxvx...x...x.xyxzx.x...x...xwxxxx
+xxxvx.....x.x...xxx...x.x.....xwxxx
+xxxx....C..x..D..x..D..x..C....xxxx
+xxxt............xxx............uxxx
+xxxx...x.x....xxrxsxx....x.x...xxxx
+xnxxx.xxxxx..xpxxxxxqx..xxxxx.xxxox
+x..x...xxx....xxlxmxx....xxx...x..x
+x.x.....x.......xkx.......x.....x.x
+xx...B..x..B.....x.....B..x..B...xx
+x.......x.................x.......x
+xx.....xxx....`..'.."....xxx.....xx
+xix...xdxex...xx...xx...xgxhx...xjx
+xx.....xcx...xaxx.xxbx...xfx.....xx
+x.......x.....xx...xx.....x.......x
+x..B.......x.Bx..{..xB.x.......B..x
+x.......x.....xx...xx.....x.......x
+xx.....xfx...xbxx.xxax...xcx.....xx
+xjx...xhxgx...xx...xx...xexdx...xix
+xx.....xxx...."..'..`....xxx.....xx
+x.......x.................x.......x
+xx...B..x..B.....x.....B..x..B...xx
+x.x.....x.......xkx.......x.....x.x
+x..x...xxx....xxmxlxx....xxx...x..x
+xoxxx.xxxxx..xqxxxxxpx..xxxxx.xxxnx
+xxxx...x.x....xxsxrxx....x.x...xxxx
+xxxu............xxx............txxx
+xxxx....C..x..D..x..D..x..C....xxxx
+xxxwx.....x.x...xxx...x.x.....xvxxx
+xxxxwx...x...x.xzxyx.x...x...xvxxxx
+xxxxxxxxxxx&xxxxxxxxxxx@xxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

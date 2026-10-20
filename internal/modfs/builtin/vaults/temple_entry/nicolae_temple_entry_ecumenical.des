@@ -1,0 +1,20 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   nicolae_temple_entry_ecumenical
+TAGS:   uniq_ecumenical_altar
+WEIGHT: 1
+SUBST:  c : ct, - : p.
+KMONS:  p = plant
+KFEAT:  _ = altar_ecumenical
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+ ccccc...ccccc
+ccccc-...-ccccc
+cc---..T..---cc
+c-...........-c
+c-._..---..O.-c
+c-...-ccc-...-c
+cc---ccccc---cc
+ ccccccccccccc
+ENDMAP

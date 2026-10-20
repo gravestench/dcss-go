@@ -1,0 +1,51 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:       minmay_temple_forest_path
+TAGS:       temple_altars_12
+PLACE:      Temple
+ORIENT:     encompass
+# No plants in corners (confuses autoexplore),
+# only fringe the edge of the paths with either (no teleport closets).
+KMONS:      P = plant / bush w:1 / fungus w:1
+SUBST:      T = t:18 P:1 .:1, U = t:19 .:1
+LFLOORCOL:  green
+LFLOORTILE: floor_moss
+MAP
+tttttttttttttttttttttttttttttttttttttttttttttttttt
+ttUTTTUttttttttttttttttttttttttttttttttttttttttttt
+tUT...TTTUtttttttttUTTTUttttttttttttttttttUTTTUttt
+tT.......TTTUttUTTTT...TUttttttttttttttttUT.{.TUtt
+tT..B..T....TUUT........TttttttttttttttttT.....Ttt
+tT.....TTTTT.TT..TT..B..TttttttttttttttttT.....Ttt
+tUT...TUtttT....TUT.....TtttttttttUTTTUttT.....Ttt
+ttT.TTUttttUT.TTUUT....TUttttttttUT...TUtUT...TUtt
+ttUT.TtttttT..TttT.TTTTUttttttttUT.....TttUT.TUttt
+tttT.TUtttUT.TTttT.TttttttttttttT...B..TtttT.Ttttt
+tttUT.TttUT...TUUT.TttttttttttttUT.....TttUT.Ttttt
+tttUT.TttT.....TT..TtttttttttttttUTT..TUUTT.TUtttt
+tttT..TttT..B..TT.TUttttUTTTUtttttT..TUUT..TUttttt
+tttT.TUttT.....TT..TTUtUT...TTTTUUT.TUUT.TTUtttttt
+tttT.TUttUT...TTT....TTT........TT...TT.TUtUTTTUtt
+tttT..TtttUTTTUUT.TTT.....B..TTT...TT.T.TtUT...TUt
+tttUT.TTUtttttTT.TUtUTTT.....TtUTTTUUT.TUtT.....Tt
+tttUT...TUtUTTT.TUtttttT....TUtttttttT.TUtT..B..Tt
+tttT.....TTT...TUttttttT.TTTUttttttttUT.TTT.....Tt
+tttT..B.....TT.TtttttttT.TTTTUttUTTTUtT.T......TUt
+tttT.....TTTTT.TttttttUT.....TTTT...TUUT..TTTTTUtt
+tttT....TUtT..TUTTTTTTT..TTTT........TTT.TUttttttt
+tttT.TTTUttT.TUUT...T...TUttUTTT..B.....TUtttttttt
+tttUT..TUtUT.TtT......TTUttttttT......TTUttttttttt
+ttttUT..TTT..TtT..B..TTUtUTTUttUT...TTUttttttttttt
+tttttUT.....TTtT.......TTT..TUttUTT..Ttttttttttttt
+ttttttUTTTTTTttUT...TTT...TT.TTTUtUT.TUtttUTTTUttt
+ttttttttttttttttT.TTUtUTTTUUT...TUtUT.TTTUT...TUtt
+tttttUTTTTTTTTTTT.TtttttttttUTTT.TUTT....T.....Ttt
+ttttUT...TT....T..TttttttttttttUT.T..TTT....B..Ttt
+ttttT.......TT...TUttttttUTTTTTTT...TUtUTT.....Ttt
+ttttT..B..TTTTTTTUttttttUT...T....TTUttttUT...TUtt
+ttttT.....TtttttttttttttT......TTTUtttttttUTTTUttt
+ttttUT...TUtttttttttttttT..B..TUtttttttttttttttttt
+tttttUTTTUttttttttttttttT.....Tttttttttttttttttttt
+ttttttttttttttttttttttttUT...TUttttttttttttttttttt
+tttttttttttttttttttttttttTTTTTtttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttttttttttttt
+ENDMAP

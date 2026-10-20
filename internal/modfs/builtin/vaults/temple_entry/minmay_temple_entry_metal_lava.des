@@ -1,0 +1,15 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_metal_lava
+TAGS:   transparent
+WEIGHT: 1
+KMASK:  l = no_monster_gen
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+vvvvvvv
+vlvlvlv
+@..O..@
+vlvlvlv
+vvvvvvv
+ENDMAP

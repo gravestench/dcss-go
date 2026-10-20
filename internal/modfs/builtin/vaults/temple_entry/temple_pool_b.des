@@ -1,0 +1,29 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:    temple_pool_b
+TAGS:    no_pool_fixup no_monster_gen no_rotate transparent
+# Source chooses one of two pool/shuffle patterns here.
+: vault.run("choose_pool_pattern")
+# source conditional: SHUFFLE: XY
+# source conditional: SUBST:   X = ., ABCDEFGHIJKLMNPQY = w
+# source conditional: : else
+# source conditional: SHUFFLE: ABCD / EFGH / IJKL / MNPQ
+# source conditional: SHUFFLE: AB, EF, IJ, MN
+# source conditional: SUBST:   ACD = W, B = wW, EFGHIJKLMNPQXY = w
+# source conditional: : end
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+.................
+......wwwww......
+....wABwwwwwG....
+..wwwCwwwwFHwww..
+.wwwwwD...Ewwwww.
+.wwwwww.O.YYYYYY.
+.wwwwww...wwwwww.
+.wwwwJLwXwQwwwww.
+..wwKIwwXwMNwww..
+....wwwwXwwPw....
+......wwXww......
+.................
+ENDMAP

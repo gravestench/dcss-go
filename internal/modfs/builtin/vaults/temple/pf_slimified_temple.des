@@ -1,0 +1,26 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:      pf_slimified_temple
+TAGS:      no_rotate temple_rare temple_altars_9
+PLACE:     Temple
+ORIENT:    encompass
+WEIGHT:    5
+KFEAT:     J = altar_jiyva
+KFEAT:     S = slimy_wall
+NSUBST:    J = 9:B / *:J
+SUBST:     - = -.
+LFLOORCOL: green
+COLOUR:    - = lightgray
+FTILE:     .J = floor_slime
+MAP
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+SSSS...S...SSSSSSS.......SSSSSSS...S...SSSS
+SS...J...J...SSS...J...J...SSS...J...J...SS
+S......-......S.....---.....S......-......S
+SS....-----.......------........-----....SS
+SSS.J.---------------{---------------.J.SSS
+SS....-----........------.......-----....SS
+S......-......S.....---.....S......-......S
+SS...J...J...SSS...J...J...SSS...J...J...SS
+SSSS...S...SSSSSSS.......SSSSSSS...S...SSSS
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+ENDMAP

@@ -1,0 +1,21 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_wispy
+TAGS:   transparent
+SUBST:  c : ccccb
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+ ...
+ .c...... ....
+ ..cc..c...cc..
+  ..cc..cccccc.
+  ..ccc..cccc..
+   .ccc.......
+   ..c..O...c.
+    .......c..
+     ..cc.cc.
+     .ccccc.
+     ..ccc.
+      ....
+ENDMAP

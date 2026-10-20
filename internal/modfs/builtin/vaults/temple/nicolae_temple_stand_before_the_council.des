@@ -1,0 +1,25 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:   nicolae_temple_stand_before_the_council
+# Correct source typo: temple_altar_6 cannot match the Temple selector.
+TAGS:   temple_altars_6
+PLACE:  Temple
+ORIENT: encompass
+FTILE:  `B = floor_limestone
+COLOUR: ` = yellow
+MAP
+xxxxxxxx
+x```...xxxxx
+x`B`.......xxx
+x```.........xx
+x`B`...U......xx
+x```...........x
+x`B`...........x
+x```...U.....{.x
+x`B`...........x
+x```...........x
+x`B`...U......xx
+x```.........xx
+x`B`.......xxx
+x```...xxxxx
+xxxxxxxx
+ENDMAP

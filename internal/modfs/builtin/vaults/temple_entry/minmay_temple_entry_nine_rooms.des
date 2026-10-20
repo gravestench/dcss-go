@@ -1,0 +1,23 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_nine_rooms
+NSUBST: A = 1:O / * = T:40 VU
+NSUBST: B = 1:. / *:c, C = 1:. / *:c, D = 1:. / *:c
+NSUBST: E = 1:. / *:c, F = 1:. / *:c
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+ccBcccBcccBcc
+c...c...c...c
+B.A.D.A.E.A.B
+c...c...c...c
+ccDccc.cccEcc
+c...c...c...c
+B.A...A...A.B
+c...c...c...c
+ccCccc.cccFcc
+c...c...c...c
+B.A.C.A.F.A.B
+c...c...c...c
+ccBcccBcccBcc
+ENDMAP

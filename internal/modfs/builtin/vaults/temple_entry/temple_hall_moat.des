@@ -1,0 +1,28 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   temple_hall_moat
+TAGS:   no_pool_fixup no_monster_gen
+ORIENT: float
+WEIGHT: 1
+SUBST:  ? : v b G:5
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+   ccc
+   cOc
+cccc+cccc
+cwwG.Gwwc
+cwww.wwwc
+cw?w.w?wc
+cwww.wwwc
+cwww.wwwc
+cw?w.w?wc
+cwww.wwwc
+cwww.wwwc
+cw?w.w?wc
+cwww.wwwc
+cwww.wwwc
+cw?w.w?wc
+cwww.wwwc
+c@..@..@c
+ENDMAP

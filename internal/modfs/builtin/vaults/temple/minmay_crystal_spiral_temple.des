@@ -1,0 +1,50 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    minmay_crystal_spiral_temple
+TAGS:    temple_altars_17
+PLACE:   Temple
+ORIENT:  encompass
+MAP
+                  bbbbbbb
+                  b.....b
+                  b.....b
+                  b..{..b
+                 bb.....b
+                bb......b
+            bbbbb...bbbbbbbbbbb
+            b......bb   b.....b
+            b.....bb    b.....b
+            b..B..b     b..B..b
+           bb.....b    bb.....bb
+          bb......b   bb.......bb
+      bbbbb...bbbbbbbbb...bbb...bbbbb
+      b......bb   b......bb bb......b
+      b.....bb    b.....bb   bb.....b
+      b..B..b     b..B..b     b..B..b
+     bb.....b    bb.....b     b.....bb
+    bb......b   bb......b     b......bb
+bbbbb...bbbbbbbbb...bbbbbbbbbbbbbbb...bbbbb
+b......bb   b......bb   b.....b   bb......b
+b.....bb    b.....bb    b...B.b    bb.....b
+b..B..b     b..B..b     b.....b     b..B..b
+b.....bb    b.....bb   bb.B...b    bb.....b
+b......bb   b......bb bb......b   bb......b
+bbbbb...bbbbbbbbb...bbb...bbbbbbbbb...bbbbb
+    bb......b   bb.......bb   b......bb
+     bb.....b    bb.....bb    b.....bb
+      b..B..b     b..B..b     b..B..b
+      b.....bb    b.....b    bb.....b
+      b......bb   b.....b   bb......b
+      bbbbb...bbbbbbbbbbbbbbb...bbbbb
+          bb......b     b......bb
+           bb.....b     b.....bb
+            b..B..b     b..B..b
+            b.....bb   bb.....b
+            b......bb bb......b
+            bbbbb...bbb...bbbbb
+                bb.......bb
+                 bb...B.bb
+                  b.....b
+                  b.B...b
+                  b.....b
+                  bbbbbbb
+ENDMAP

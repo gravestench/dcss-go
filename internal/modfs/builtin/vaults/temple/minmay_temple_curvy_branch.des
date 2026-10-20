@@ -1,0 +1,48 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    minmay_temple_curvy_branch
+TAGS:    temple_altars_14
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: GT, C'D" / D"C' / C'E` / E`C'
+SUBST:   C = B, '"D = ., E` = x
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxx
+xxxxxxx.....xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.....xxxxxxx
+xxxxxxx..B..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx..B..xxxxxxx
+xxxxxxx.....xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.....xxxxxxx
+xxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxx
+xxxxxxxxx+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+xxxxxxxxx
+xx...xxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxx...xx
+x.....x........xxxxxxxxxxxxxxxxxxxxxxxxx........x.....x
+x..B..+..G........xxxxxxxxxxxxxxxxxxx........G..+..B..x
+x.....x.............xxxxxx"""xxxxxx.............x.....x
+xx...xxx.............xxxx"""""xxxx.............xxx...xx
+xxxxxxxxx+xxxx.......xxxx""D""xxxx.......xxxx+xxxxxxxxx
+xxxxxxxx...xxxxxx.....xxx"""""xxx.....xxxxxx...xxxxxxxx
+xxxxxxx.....xxxxxxx....xxx"""xxx....xxxxxxx.....xxxxxxx
+xxxxxxx..B..xxxxxxxx.....xx+xx.....xxxxxxxx..B..xxxxxxx
+xxxxxxx.....xxxxxxxx...............xxxxxxxx.....xxxxxxx
+xxxxxxxx...xxxxx'''xx....T...T....xx'''xxxxx...xxxxxxxx
+xxxxxxxxxxxxxxx'''''x.............x'''''xxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxx''C''+......{......+''C''xxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxx'''''x.............x'''''xxxxxxxxxxxxxxx
+xxxxxxxx...xxxxx'''xx....T...T....xx'''xxxxx...xxxxxxxx
+xxxxxxx.....xxxxxxxx...............xxxxxxxx.....xxxxxxx
+xxxxxxx..B..xxxxxxxx.....xx+xx.....xxxxxxxx..B..xxxxxxx
+xxxxxxx.....xxxxxxx....xxx"""xxx....xxxxxxx.....xxxxxxx
+xxxxxxxx...xxxxxx.....xxx"""""xxx.....xxxxxx...xxxxxxxx
+xxxxxxxxx+xxxx.......xxxx""D""xxxx.......xxxx+xxxxxxxxx
+xx...xxx.............xxxx"""""xxxx.............xxx...xx
+x.....x.............xxxxxx"""xxxxxx.............x.....x
+x..B..+..G........xxxxxxxxxxxxxxxxxxx........G..+..B..x
+x.....x........xxxxxxxxxxxxxxxxxxxxxxxxx........x.....x
+xx...xxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxx...xx
+xxxxxxxxx+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+xxxxxxxxx
+xxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxx
+xxxxxxx.....xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.....xxxxxxx
+xxxxxxx..B..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx..B..xxxxxxx
+xxxxxxx.....xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.....xxxxxxx
+xxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

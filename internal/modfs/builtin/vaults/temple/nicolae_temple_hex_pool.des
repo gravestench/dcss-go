@@ -1,0 +1,43 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    nicolae_temple_hex_pool
+TAGS:    no_pool_fixup temple_altars_12
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: JK, MN
+SUBST:   JMP : GTt., KNQ : GTt.
+NSUBST:  { = 1:{ / *:.
+MAP
+ccccccccccccccccccccccccccccccc
+cccccccccccccc.P.cccccccccccccc
+ccccccccccccQ.....Qcccccccccccc
+cccccccccccc.......cccccccccccc
+ccccccccccc....{....ccccccccccc
+ccccccccccc.........ccccccccccc
+ccccccccccc...B.B...ccccccccccc
+cccc.K.cc.............cc.N.cccc
+ccJ.......ww.......ww.......Mcc
+cc.......wwwww...wwwww.......cc
+c...{.B...wwwwwwwwwww...B.{...c
+cK........wwwwwwwwwww........Nc
+c...B.....wwwwwwwwwww.....B...c
+cc.......wwwwwwwwwwwww.......cc
+cc.......wwwwwwwwwwwww.......cc
+cccc...wwwwwwwwwwwwwwwww...cccc
+ccccc.wwwwwwwwwwwwwwwwwww.ccccc
+cccc...wwwwwwwwwwwwwwwww...cccc
+cc.......wwwwwwwwwwwww.......cc
+cc.......wwwwwwwwwwwww.......cc
+c...B.....wwwwwwwwwww.....B...c
+cN........wwwwwwwwwww........Qc
+c...{.B...wwwwwwwwwww...B.{...c
+cc.......wwwww...wwwww.......cc
+ccM.......ww.......ww.......Pcc
+cccc.N.cc.............cc.Q.cccc
+ccccccccccc...B.B...ccccccccccc
+ccccccccccc.........ccccccccccc
+ccccccccccc....{....ccccccccccc
+cccccccccccc.......cccccccccccc
+ccccccccccccK.....Kcccccccccccc
+cccccccccccccc.J.cccccccccccccc
+ccccccccccccccccccccccccccccccc
+ENDMAP

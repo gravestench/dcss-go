@@ -1,0 +1,23 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_waves
+TAGS:   transparent
+SUBST:  ? : ..TG
+SUBST:  c : ccccb
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+   .........
+  ..c..?..c..
+ ..cc.....cc..
+..cc..c.c..cc..
+.cc..cc.cc..cc.
+....cc...cc....
+..?....O....?..
+....cc...cc....
+.cc..cc.cc..cc.
+..cc..c.c..cc..
+ ..cc.....cc..
+  ..c..?..c..
+   .........
+ENDMAP

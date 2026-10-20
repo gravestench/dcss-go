@@ -1,0 +1,35 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:   nicolae_temple_cloud_nine
+TAGS:   temple_altars_9
+PLACE:  Temple
+ORIENT: encompass
+FTILE:  B.{ = floor_w_marble
+COLOUR: c. = white
+MARKER: { = lua:fog_machine{cloud_type = "white fluffiness", pow_max = 20, \
+             delay_min = 10, delay_max = 50, size = 1,    \
+             walk_dist = 5, start_clouds = 7}
+MARKER: B = lua:fog_machine{cloud_type = "white fluffiness", pow_max = 20, \
+             delay_min = 10, delay_max = 50, size = 1,    \
+             walk_dist = 5, start_clouds = 7}
+
+MAP
+ccccccccccccccccccc
+cccccc.......cccccc
+cccc...........cccc
+ccc.....B.......ccc
+cc..........B....cc
+cc..B............cc
+c.................c
+c..............B..c
+c.................c
+c..B.....{........c
+c.................c
+c..............B..c
+c.................c
+cc..B............cc
+cc..........B....cc
+ccc.....B.......ccc
+cccc...........cccc
+cccccc.......cccccc
+ccccccccccccccccccc
+ENDMAP

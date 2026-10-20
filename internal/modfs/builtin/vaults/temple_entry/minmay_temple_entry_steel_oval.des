@@ -1,0 +1,22 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_steel_oval
+TAGS:   transparent
+WEIGHT: 2
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+ ....vvv....
+...vv...vv...
+..v..vvv..v..
+.v..v...v..v.
+.v.v.vvv.v.v.
+v.v.v...v.v.v
+v.v.v.O.v.v.v
+v.v.v...v.v.v
+.v.v.vvv.v.v.
+.v..v...v..v.
+..v..vvv..v..
+...vv...vv...
+ ....vvv....
+ENDMAP

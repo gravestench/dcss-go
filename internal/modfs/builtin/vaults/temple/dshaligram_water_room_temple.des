@@ -1,0 +1,26 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    dshaligram_water_room_temple
+TAGS:    no_pool_fixup no_rotate temple_altars_13
+PLACE:   Temple
+ORIENT:  encompass
+MAP
+ccccccccccccccccccccccccccccccccccccccccccccccccccc
+cwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwc
+cwwwwwwwwwwww.........................wwwwwwwwwwwwc
+cwwwwwwww.................................wwwwwwwwc
+cwwwww...................G...................wwwwwc
+cwww......B.............................B......wwwc
+cwww.............B...............B.............wwwc
+cww.............................................wwc
+cww.............................................wwc
+cww...B......B...........{...........B......B...wwc
+cww.............................................wwc
+cww.............................................wwc
+cwww.............B...............B.............wwwc
+cwww......B.............................B......wwwc
+cwwwww...................B...................wwwwwc
+cwwwwwwww.................................wwwwwwwwc
+cwwwwwwwwwwww.........................wwwwwwwwwwwwc
+cwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwc
+ccccccccccccccccccccccccccccccccccccccccccccccccccc
+ENDMAP

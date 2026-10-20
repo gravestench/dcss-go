@@ -1,0 +1,15 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_overgrown
+TAGS:   transparent
+MONS:   plant, bush
+SUBST:  ? = .1, ! = ...1, 1 : 123, 2 = 2.., 3 = 12
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+!!!!!
+!???!
+!?O?!
+!???!
+!!!!!
+ENDMAP

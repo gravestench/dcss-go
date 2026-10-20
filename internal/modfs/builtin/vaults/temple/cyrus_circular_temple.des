@@ -1,0 +1,29 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    cyrus_circular_temple
+TAGS:    no_rotate temple_altars_13
+PLACE:   Temple
+ORIENT:  encompass
+SUBST:   X : xc.
+MAP
+         ccccccccccccc
+      cccc...........cccc
+    ccc........{........ccc
+   cc.....................cc
+  cc.....B...X...X...B.....cc
+ cc.........................cc
+ c.........X...B...X.........c
+cc...........................cc
+c........B...X...X...B........c
+c.............................c
+c..B...X...X...B...X...X...B..c
+c.............................c
+c........B...X...X...B........c
+cc...........................cc
+ c.........X...B...X.........c
+ cc.........................cc
+  cc.....B...X...X...B.....cc
+   cc.....................cc
+    ccc........T........ccc
+      cccc...........cccc
+         ccccccccccccc
+ENDMAP

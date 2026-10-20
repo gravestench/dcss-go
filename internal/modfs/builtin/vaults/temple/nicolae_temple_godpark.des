@@ -1,0 +1,40 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:   nicolae_temple_godpark
+TAGS:   temple_altars_8
+PLACE:  Temple
+ORIENT: encompass
+KMONS:  p = plant
+SUBST:  p = ttp
+LFLOORCOL: green
+LFLOORTILE: floor_grass
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xpppppppppppppppppppppppppppx
+xpWWWWWWWppWWWWWWWppWWWWWWWpx
+xpWT...TWWWWT...TWWWWT...TWpx
+xpW.......................Wpx
+xpW..B........B........B..Wpx
+xpW.......................Wpx
+xpWT...TWWWWT...TWWWWT...TWpx
+xpWW...WWppWW...WWppWW...WWpx
+xppW...WppppW...WppppW...Wppx
+xppW...WppppW...WppppW...Wppx
+xpWW...WWppWW...WWppWW...WWpx
+xpWT...TWWWWT...TWWWWT...TWpx
+xpW.......................Wpx
+xpW..B........{........B..Wpx
+xpW.......................Wpx
+xpWT...TWWWWT...TWWWWT...TWpx
+xpWW...WWppWW...WWppWW...WWpx
+xppW...WppppW...WppppW...Wppx
+xppW...WppppW...WppppW...Wppx
+xpWW...WWppWW...WWppWW...WWpx
+xpWT...TWWWWT...TWWWWT...TWpx
+xpW.......................Wpx
+xpW..B........B........B..Wpx
+xpW.......................Wpx
+xpWT...TWWWWT...TWWWWT...TWpx
+xpWWWWWWWppWWWWWWWppWWWWWWWpx
+xpppppppppppppppppppppppppppx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

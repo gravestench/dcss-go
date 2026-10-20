@@ -1,0 +1,17 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_oklob
+TAGS:   transparent
+WEIGHT: 1
+MONS:   plant, oklob sapling
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+....1..
+1.111.1
+.11.11.
+.1.O211
+11.1111
+.111.1.
+1..11..
+ENDMAP

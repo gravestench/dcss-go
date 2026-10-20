@@ -1,0 +1,41 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    nicolae_temple_elliptical
+TAGS:    temple_altars_16
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: G{
+NSUBST:  { = 1:{ / *:G
+SUBST:   G : GT, c : ccccvb, d : cccvbxm
+MAP
+                 ccccccccccccccc
+             ccccc.............ccccc
+          cccc..........{..........cccc
+        ccc...........................ccc
+      ccc.............dd.dd.............ccc
+     cc...............d...d...............cc
+    cc...G..............B..............G...cc
+   cc...........dd.dd.d...d.dd.dd...........cc
+  cc............d...d.dd.dd.d...d............cc
+ cc...............B...........B...............cc
+ c........dd.dd.d...d.dd.dd.d...d.dd.dd........c
+cc........d...d.dd.dd.d...d.dd.dd.d...d........cc
+c...........B...........B...........B...........c
+c...dd.dd.d...d.dd.dd.d...d.dd.dd.d...d.dd.dd...c
+c...d...d.dd.dd.d...d.dd.dd.d...d.dd.dd.d...d...c
+c.{...B...........B...........B...........B...{.c
+c...d...d.dd.dd.d...d.dd.dd.d...d.dd.dd.d...d...c
+c...dd.dd.d...d.dd.dd.d...d.dd.dd.d...d.dd.dd...c
+c...........B...........B...........B...........c
+cc........d...d.dd.dd.d...d.dd.dd.d...d........cc
+ c........dd.dd.d...d.dd.dd.d...d.dd.dd........c
+ cc...............B...........B...............cc
+  cc............d...d.dd.dd.d...d............cc
+   cc...........dd.dd.d...d.dd.dd...........cc
+    cc...G..............B..............G...cc
+     cc...............d...d...............cc
+      ccc.............dd.dd.............ccc
+        ccc...........................ccc
+          cccc..........{..........cccc
+             ccccc.............ccccc
+                 ccccccccccccccc
+ENDMAP

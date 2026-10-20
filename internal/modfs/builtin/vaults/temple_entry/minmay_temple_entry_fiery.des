@@ -1,0 +1,26 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_fiery
+SUBST:  ' : .'l, ' = .l
+SUBST:  l : l w:1
+KMASK:  l = no_monster_gen
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+xxx.@..xx
+xxl'...xx
+xxll..xxx
+xlll'.xxx
+xll'.'lxx
+xxl.'llxx
+xxx'.lxxx
+xxxx.xxxx
+xccc+cccx
+xcG...Gcx
+xc.....cx
+xc..O..cx
+xc.....cx
+xcG...Gcx
+xcccccccx
+xxxxxxxxx
+ENDMAP

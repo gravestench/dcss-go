@@ -1,0 +1,45 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:   nicolae_temple_godzebo
+TAGS:   temple_altars_12
+PLACE:  Temple
+ORIENT: encompass
+SUBST:  - = t.
+FTILE:  `cB = floor_sandstone
+COLOUR: ` = brown
+LFLOORCOL: green
+LFLOORTILE: floor_grass
+MAP
+tttttttttttttttttttttttttttttttttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttttttttttttt
+ttttttttttttttttttttttt-...-ttttttttttt-.-tttttttt
+ttttttttttttttttttttt-........-tttttt-.....-tttttt
+tttttttttttttttttttt-.......................-ttttt
+tttttttttttttttttttt.........................-tttt
+tttttttttttttttttttt........```````````.......tttt
+ttttttttttttttttttt-.......``c```c```c``......-ttt
+ttttttttttttttttttt.......```````````````......ttt
+ttttttttttttttttttt......``c```B```B```c``.....ttt
+ttttt-...-ttttttttt.....```````````````````....-tt
+ttt-.......-tttttt-.....`c```````````````c`.....tt
+ttt.........-tttt-......```````````````````.....tt
+tt-..........-tt-.......```B```B```B```B```.....tt
+tt......................```````````````````....-tt
+tt-....{................`c```````````````c`....ttt
+ttt-....................```````````````````....ttt
+tttt-...................```B```B```B```B```...-ttt
+ttttt-....-tt-..........```````````````````...tttt
+ttttttt-.-tttt..........`c```````````````c`...tttt
+tttttttttttttt-.........```````````````````...tttt
+ttttttttttttttt..........``c```B```B```c``....-ttt
+ttttttttttttttt...........```````````````......ttt
+ttttttttttttttt............``c```c```c``......-ttt
+ttttttttttttttt.............```````````.......tttt
+ttttttttttttttt-.............................-tttt
+tttttttttttttttt-...........................-ttttt
+ttttttttttttttttt-.........................-tttttt
+tttttttttttttttttttttt-..................-tttttttt
+tttttttttttttttttttttttttttt-........-tttttttttttt
+tttttttttttttttttttttttttttttttttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttttttttttttt
+ENDMAP

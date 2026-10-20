@@ -1,0 +1,37 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:   nicolae_temple_figure_eight
+TAGS:   temple_altars_13
+PLACE:  Temple
+ORIENT: encompass
+NSUBST: A = 1:{ / *:B
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+vvvvvvvvvvvvv...vvvvvvvvvvvvv...vvvvvvvvvvvvv
+vvvvvvvvvvvv.....vvvvvvvvvvv.....vvvvvvvvvvvv
+vvvvvvvvvvvv..B..vvvvvvvvvvv..B..vvvvvvvvvvvv
+vvvvv...vvvv.....vvvv...vvvv.....vvvv...vvvvv
+vvvv.....vvvv...vvvv.....vvvv...vvvv.....vvvv
+vvvv..B..vvvvv+vvvvv..A..vvvvv+vvvvv..B..vvvv
+vvvv.....vvv.....vvv.....vvv.....vvv.....vvvv
+vvvvv...+v.........v+...+v.........v+...vvvvv
+vvvvvvvvv...........vvvvv...........vvvvvvvvv
+vvvvvvvv.....vvv.....vvv.....vvv.....vvvvvvvv
+vvvvvvvv....vvvvv.....v.....vvvvv....vvvvvvvv
+vv...vv....v+...+v.........v+...+v....vv...vv
+v.....v...vv.....vv.......vv.....vv...v.....v
+v..A..+...vv..A..vvv.....vvv..A..vv...+..A..v
+v.....v...vv.....vv.......vv.....vv...v.....v
+vv...vv....v+...+v.........v+...+v....vv...vv
+vvvvvvvv....vvvvv.....v.....vvvvv....vvvvvvvv
+vvvvvvvv.....vvv.....vvv.....vvv.....vvvvvvvv
+vvvvvvvvv...........vvvvv...........vvvvvvvvv
+vvvvv...+v.........v+...+v.........v+...vvvvv
+vvvv.....vvv.....vvv.....vvv.....vvv.....vvvv
+vvvv..B..vvvvv+vvvvv..A..vvvvv+vvvvv..B..vvvv
+vvvv.....vvvv...vvvv.....vvvv...vvvv.....vvvv
+vvvvv...vvvv.....vvvv...vvvv.....vvvv...vvvvv
+vvvvvvvvvvvv..B..vvvvvvvvvvv..B..vvvvvvvvvvvv
+vvvvvvvvvvvv.....vvvvvvvvvvv.....vvvvvvvvvvvv
+vvvvvvvvvvvvv...vvvvvvvvvvvvv...vvvvvvvvvvvvv
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP

@@ -1,0 +1,39 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    dpeg_five_rooms_temple
+TAGS:    no_rotate temple_altars_18
+PLACE:   Temple
+ORIENT:  encompass
+SUBST:   X : GUT
+MAP
+                   xxxxxxxxx
+              xxxxxx.......xxxxxx
+         xxxxxx........x........xxxxxx
+      xxxx........xxxxx+xxxxx........xxxx
+     xx.....xxxxxxxxx.....xxxxxxxxx.....xx
+    xx...xxxxxxxxxx.........xxxxxxxxxx...xx
+   xx..xxxxxxxxxxx...........xxxxxxxxxxx..xx
+  xx..xxxxxxxxxxxx.....{.....xxxxxxxxxxxx..xx
+  x..xxxxxxxxxxxxx...........xxxxxxxxxxxxx..x
+ xx..xxx.....xxxxxx.........xxxxxx.....xxx..xx
+ x..+x...B.....xxxxxx.....xxxxxx.....B...x+..x
+xx..x...........xxxxxxxxxxxxxxx...........x..xx
+x..xx..B..X..B..xxxxxxxxxxxxxxx..B..X..B..xx..x
+x..xx...........xxxxxxxxxxxxxxx...........xx..x
+x..xxx.....B...xxxxxxxxxxxxxxxxx...B.....xxx..x
+x..xxxxx.....xxxxxxxxxxxxxxxxxxxxx.....xxxxx..x
+x..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx..x
+x..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx..x
+x..xxxxxxxxxx.....xxxxxxxxxxx.....xxxxxxxxxx..x
+xx..xxxxxxx...B.....xxxxxxx.....B...xxxxxxx..xx
+ x..xxxxxx.......B...xxxxx...B.......xxxxxx..x
+ xx..xxxxx..B..X.....xxxxx.....X..B..xxxxx..xx
+  x..xxxxx........B..xxxxx..B........xxxxx..x
+  xx..xxxxx....B....xxxxxxx....B....xxxxx..xx
+   xx..xxxxxx.....xxxxxxxxxxx.....xxxxxx..xx
+    xx...xxx+xxxxxxxxxxxxxxxxxxxxx+xxx...xx
+     xxx....xxxxxxxxxxxxxxxxxxxxxxx....xxx
+       xxx........xxxxxxxxxxx........xxx
+         xxxxxx........x........xxxxxx
+              xxxxxx.......xxxxxx
+                   xxxxxxxxx
+ENDMAP

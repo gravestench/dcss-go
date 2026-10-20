@@ -1,0 +1,16 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   minmay_temple_entry_drinking_statues
+TAGS:   transparent
+SUBST:  T = T:99 V:1
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+....
+.GT.
+......
+.GT.O.
+......
+.GT.
+....
+ENDMAP

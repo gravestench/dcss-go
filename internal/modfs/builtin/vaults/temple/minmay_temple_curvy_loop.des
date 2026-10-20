@@ -1,0 +1,53 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:   minmay_temple_curvy_loop
+TAGS:   no_rotate no_pool_fixup temple_altars_11
+PLACE:  Temple
+ORIENT: encompass
+MONS:   plant
+SUBST:  y : Ww, z : Ww, Y : W., Z : W.
+SUBST:  1 : 1G., X : 1..
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxwwwxxxxxxxxwwwxxxxxxxxxx
+xxxxxxxzzzWWWWWxxxxWWWWWyyyxxxxxxx
+xxxxx........ZZZxxYY.........xxxxx
+xxxx....B................{....xxxx
+xxxx............xx............xxxx
+xxx............xxxx............xxx
+xxx.........xxxxxxxxxx.........xxx
+xxx.......xxxxxxxxxxxxxx.......xxx
+xx.......xx...xxxxxx...xx.......xx
+xx.......x.....xxxx.....x.......xx
+x1.......+..B..xxxx..B..+.......Xx
+xx.......x.....xxxx.....x.......xx
+xX.......xx...xxxxxx...xx.......1x
+xx.......xxxxxxxxxxxxxxxx.......xx
+x1.......xx...xxxxxx...xx.......Xx
+xx.......x.....xxxx.....x.......xx
+xX.......+..B..xxxx..B..+.......1x
+xx.......x.....xxxx.....x.......xx
+x1.......xx...xxxxxx...xx.......Xx
+xx.......xxxxxxxxxxxxxxxx.......xx
+xX.......xx...xxxxxx...xx.......1x
+xx.......x.....xxxx.....x.......xx
+x1.......+..B..xxxx..B..+.......Xx
+xx.......x.....xxxx.....x.......xx
+xX.......xx...xxxxxx...xx.......1x
+xx.......xxxxxxxxxxxxxxxx.......xx
+x1.......xx...xxxxxx...xx.......Xx
+xx.......x.....xxxx.....x.......xx
+xX.......+..B..xxxx..B..+.......1x
+xx.......x.....xxxx.....x.......xx
+xx.......xx...xxxxxx...xx.......xx
+xxx.......xxxxxxxxxxxxxx.......xxx
+xxx.........xxxxxxxxxx.........xxx
+xxx............xxxx............xxx
+xxxx............xx............xxxx
+xxxx....B................B....xxxx
+xxxxx.........YYxxZZZ........xxxxx
+xxxxxxxyyyWWWWWxxxxWWWWWzzzxxxxxxx
+xxxxxxxxxxwwwxxxxxxxxwwwxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

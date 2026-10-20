@@ -1,0 +1,50 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    mainiacjoe_temple_cubbyholes
+TAGS:    temple_altars_20
+PLACE:   Temple
+ORIENT:  encompass
+SUBST:   x : cvb
+SUBST:   y : cvb
+MAP
+yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+y.....................................y
+y.....................................y
+y.....................................y
+y...xxx+xxxxx+xxxxx+xxxxx+xxxxx+xxx...y
+y...xx...xxx...xxx...xxx...xxx...xx...y
+y...x.....x.....x.....x.....x.....x...y
+y...x.....x.....x.....x.....x.....x...y
+y...x.....x.....x.....x.....x.....x...y
+y...x..B..x..B..x..B..x..B..x..B..x...y
+y...xx...xxx...xxx...xxx...xxx...xx...y
+y...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...y
+y...xx...xxx...xxx...xxx...xxx...xx...y
+y...x..B..x..B..x..B..x..B..x..B..x...y
+y...x.....x.....x.....x.....x.....x...y
+y...x.....x.....x.....x.....x.....x...y
+y...x.....x.....x.....x.....x.....x...y
+y...xx...xxx...xxx...xxx...xxx...xx...yyyyyyy
+y...xxx+xxxxx+xxxxx+xxxxx+xxxxx+xxx...yy....yy
+y.....................................y......y
+y.....................................+....{.y
+y.....................................y......y
+y...xxx+xxxxx+xxxxx+xxxxx+xxxxx+xxx...yy....yy
+y...xx...xxx...xxx...xxx...xxx...xx...yyyyyyy
+y...x.....x.....x.....x.....x.....x...y
+y...x.....x.....x.....x.....x.....x...y
+y...x.....x.....x.....x.....x.....x...y
+y...x..B..x..B..x..B..x..B..x..B..x...y
+y...xx...xxx...xxx...xxx...xxx...xx...y
+y...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...y
+y...xx...xxx...xxx...xxx...xxx...xx...y
+y...x..B..x..B..x..B..x..B..x..B..x...y
+y...x.....x.....x.....x.....x.....x...y
+y...x.....x.....x.....x.....x.....x...y
+y...x.....x.....x.....x.....x.....x...y
+y...xx...xxx...xxx...xxx...xxx...xx...y
+y...xxx+xxxxx+xxxxx+xxxxx+xxxxx+xxx...y
+y.....................................y
+y.....................................y
+y.....................................y
+yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+ENDMAP

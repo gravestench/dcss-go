@@ -1,0 +1,43 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    regret_index_temple_mists
+TAGS:    no_rotate no_pool_fixup temple_altars_18
+PLACE:   Temple
+ORIENT:  encompass
+KFEAT:   F = w
+SHUFFLE: HIJKLMN
+SUBST:   HIJKL = B, M : GTUtx, N : GTUtx, m : nwW, o : nwW
+SUBST:   - : wxWW, ~ : wxWW, ' : wW, " : wW, ` : wW
+MARKER:  F = lua:fog_machine { cloud_type = "thin mist", pow_min = 10, \
+         pow_max = 14, delay = 60, start_clouds = 3, size_min = 6, \
+         size_max = 8, walk_dist = 2, spread_rate = 6 }
+MAP
+    bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+ bbbbnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnbb
+ bnnnnWWWWWWWWWWWWWWWWWmmmmmWWWWWWWWWWWWWWWWWWWnnbb
+ bnFWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWFnnb
+bbnWWWWWW...WWWWWWWWWWWWWWWWWWWWWWWWWWW...WWWWWWWnb
+bnnWWWWWW.B.WWWWWWWWWWWW...WWWWWWWWWWWW.B.WWWWWWWnb
+bnWWWWWWW...WWWWW...WWWW.K.WWWW...WWWWW...WWWWWWWnb
+bnWWWWWWWWWWWWWWW.J.WWWW...WWWW.L.WWWWWWWWWWWWWWWnb
+bnWW...WWWWWWWWWW...WWWWWWWWWWW...WWWWWWWWWW...WWnb
+bnWW.B.WWW...WWWWWWWWW-WWWWW~WWWWWWWWW...WWW.B.WWnb
+bnWW...WWW.I.WWW'W'WW-WWWWWWW~WWW`W`WW.M.WWW...WWnb
+bnWWWWWWWW...WW'W'WW-WWWWWWWWW~W`W`WWW...WWWWWWWWnb
+bnoWWWWWWWWWWWWWWWWWWWWW...WWWWWWWWWWWWWWWWWWWWWonb
+bnoWW...WWWW""WW...WWWW.....WWWW...WWWWWWWW...WWonb
+bnoWW.H.WW""WWWW.N.WWWW..{..WWWW.N.WWWW""WW.H.WWonb
+bnoWW...WWWWWWWW...WWWW.....WWWW...WW""WWWW...WWonb
+bnoWWWWWWWWWWWWWWWWWWWWW...WWWWWWWWWWWWWWWWWWWWWonb
+bnWWWWWWWW...WWW`W`W~WWWWWWWWW-WW'W'WW...WWWWWWWWnb
+bnWW...WWW.M.WW`W`WWW~WWWWWWW-WW'W'WWW.I.WWW...WWnb
+bnWW.B.WWW...WWWWWWWWW~WWWWW-WWWWWWWWW...WWW.B.WWnb
+bnWW...WWWWWWWWWW...WWWWWWWWWWW...WWWWWWWWWW...WWnb
+bnWWWWWWWWWWWWWWW.L.WWWW...WWWW.J.WWWWWWWWWWWWWWWnb
+bnWWWWWWW...WWWWW...WWWW.K.WWWW...WWWWW...WWWWWWWnb
+bnWWWWWWW.B.WWWWWWWWWWWW...WWWWWWWWWWWW.B.WWWWWWnnb
+bnWWWWWWW...WWWWWWWWWWWWWWWWWWWWWWWWWWW...WWWWWWnbb
+bnnFWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWFnb
+bbnnWWWWWWWWWWWWWWWWWWWmmmmmWWWWWWWWWWWWWWWWWnnnnb
+ bbnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnbbbb
+  bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+ENDMAP

@@ -1,0 +1,39 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:   lightli_temple_of_artemis
+TAGS:   temple_altars_16
+TAGS:   no_pool_fixup
+PLACE:  Temple
+ORIENT: encompass
+KFEAT:  ~ = floor
+MARKER: d = lua:fog_machine { cloud_type = "flame", pow_min = 100, \
+                              pow_max = 100, delay = 1, start_clouds = 1, \
+                              size = 1, spread_rate = 0, excl_rad = -1 }
+COLOUR: c = white
+COLOUR: . = lightgrey
+COLOUR: ~ = green
+FTILE:  .BGd = floor_marble
+FTILE:  ~t{ = floor_grass
+TILE:   c = wall_marble
+MAP
+tttttttttttttttttttttttttttttttt
+twwwwwwwwwwwwwwwwwwwwwwwwwwwwwwt
+tw~~~~~~~~~~~~~~~~~~~~~~~~~~~~wt
+tw~c~c~c~c~c~c~c~c~c~c~c~c~c~cwt
+tw~~~~~~~~~~~~~~~~~~~~~~~~~~~~wt
+tw~c~ccccccccccccccccccccccc~cwt
+tw~~~c.................G...c~~wt
+tw~c~c.....................c~cwt
+tw~~~c.....B..B..B..B..B...c~~wt
+tw~c~cc.c...................~cwt
+tw~~~cdBG..B..B..B..B..B....~~{t
+tw~c~cc.c...................~cwt
+tw~~~c.....B..B..B..B..B...c~~wt
+tw~c~c.....................c~cwt
+tw~~~c.................G...c~~wt
+tw~c~ccccccccccccccccccccccc~cwt
+tw~~~~~~~~~~~~~~~~~~~~~~~~~~~~wt
+tw~c~c~c~c~c~c~c~c~c~c~c~c~c~cwt
+tw~~~~~~~~~~~~~~~~~~~~~~~~~~~~wt
+twwwwwwwwwwwwwwwwwwwwwwwwwwwwwwt
+tttttttttttttttttttttttttttttttt
+ENDMAP

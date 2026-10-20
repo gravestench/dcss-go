@@ -1,0 +1,36 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:    regret_index_temple_chain_breaker
+TAGS:    temple_altars_18
+TAGS:    no_rotate
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: hi, qrs / qrs / rqs / rsq, xyz / xyz / yxz / yzx, QR, YZ
+SUBST:   hqx = v, i : v.., j : vv., k : vv.
+SUBST:   r : v.., y : v.., szRZ = ., Q : v..., Y : v...
+MAP
+ccccccccccccccccccccccccccccccccccccccccccccc
+c......vBv....................vBv...........c
+c.v.v......Rv.vQ.....h...v.v......Rv.vQ.....c
+cv...v.....v...v..v.....v...v.....v...v..v..c
+c..B..vv.vv..B..vv.vj.....B..vv.vv..B..vv.vvc
+cv...v.rqs.v...v..v.....v...v.rqs.v...v..v..c
+c.v.v......Qv.vR.....i...v.v......Qv.vR.....c
+c.....Zv.vY......v.v...i.....Zv.vY......v.v.c
+c..v..v...v.zxy.v...v.....v..v...v.zxy.v...vc
+cvv.vv..B..vv.vv..B.....kv.vv..B..vv.vv..B..c
+c..v..v...v.yxz.v...v.h...v..v...v.yxz.v...vc
+c.....Yv.vZ......v.v.........Yv.vZ......v.v.c
+c.....................{.....................c
+c.v.v......Zv.vY.........v.v......Zv.vY.....c
+cv...v.yxz.v...v..v...h.v...v.yxz.v...v..v..c
+c..B..vv.vv..B..vv.vk.....B..vv.vv..B..vv.vvc
+cv...v.zxy.v...v..v.....v...v.zxy.v...v..v..c
+c.v.v......Yv.vZ.....i...v.v......Yv.vZ.....c
+c.....Rv.vQ......v.v...i.....Rv.vQ......v.v.c
+c..v..v...v.sqr.v...v.....v..v...v.sqr.v...vc
+cvv.vv..B..vv.vv..B.....jv.vv..B..vv.vv..B..c
+c..v..v...v.....v...v.....v..v...v.....v...vc
+c.....Qv.vR......v.v...h.....Qv.vR......v.v.c
+c...........vBv....................vBv......c
+ccccccccccccccccccccccccccccccccccccccccccccc
+ENDMAP

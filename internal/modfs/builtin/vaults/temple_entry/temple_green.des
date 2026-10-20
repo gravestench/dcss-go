@@ -1,0 +1,16 @@
+# Committed source Temple entry; O is its scheduled branch entrance.
+NAME:   temple_green
+TAGS:   transparent
+NSUBST: ? = 1:+ / * = +bb
+TAGS: temple_entry
+ORIENT: float
+KFEAT: O = enter_temple
+MAP
+bbbb+bbbb
+b.......b
+b.......b
+?...O...?
+b.......b
+b.......b
+bbbb?bbbb
+ENDMAP

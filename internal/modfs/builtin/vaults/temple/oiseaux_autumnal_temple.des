@@ -1,0 +1,68 @@
+# Committed source Temple map; DES directives and MAP rows remain authoritative.
+NAME:   oiseaux_autumnal_temple
+TAGS:   no_rotate no_pool_fixup temple_altars_13
+PLACE:  Temple
+ORIENT: encompass
+KFEAT:  A = w
+SUBST:  c : c-""""""", " = c-
+MARKER: A = lua:fog_machine { cloud_type = "thin mist", pow_min = 2, \
+        pow_max = 6, delay = 4, start_clouds = 1, size_min = 2, \
+        size_max = 6, spread_rate = 2 }
+COLOUR: . = brown
+COLOUR: t = red w:5 / yellow w:5 / brown
+COLOUR: ' = darkgrey
+FTILE:  t. = floor_swamp
+FTILE:  - = floor_pebble
+FTILE:  B{' = floor_pebble_brown
+TILE:   c = wall_stone_smooth
+TILE:   t = dngn_tree_yellow w:5 / dngn_tree_lightred w:5 / \
+            dngn_tree_red / dngn_tree_dead w:3
+MAP
+tttttttttttttttttttttttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttt
+ttttttttttAwwwtttttttttttttttttttttttttt
+tttttttttttttwwwtttttttttttttttttttttttt
+tttttttttttttttwwwtttttttttttttttttttttt
+ttttt.-ccccttttttwwwtttttttttttttttttttt
+ttttt.c'''cttttttttwwttttttttttttttttttt
+ttttt.c'B'ctttttttttwwtttttttttttttttttt
+tttt..c'''ttttttttttwwtttttttttttttttttt
+ttttttc-c''t..tttttwwtttttttcccctttttttt
+ttttttt...''.--tttWwwtttttttc''''ttttttt
+tttttttt..c'''c..tWwwWttttttc'B'tttttttt
+tttttt....-'B'c...WwwW..ttt.-.''''.ttttt
+ttttt......'''c..WwwW'--..t.c.'''..ttttt
+tttt........''..Wwwc'''c'......'....tttt
+tt...cc-c-...'tWwwWc'B''.....''....ttttt
+ttt..c'''c.....WwW.-''.......'''..tttttt
+ttt..c'B'''.'..WwwWt....t...-'B'-..ttttt
+tttt.c''.c......Wwwtt........''.cttttttt
+ttttttt......t..ttwttt....'.'..ttttttttt
+ttttttttttt...ttttwwttt..t.......ttttttt
+tttttttttttt..tttttwttttt..-cc'...tttttt
+ttttttttttt'.ttttttwwtttt..''c.....ttttt
+ttttttt.ccc''...ttttwwwttt'B'c......tttt
+tttttt..-'''''.ttcttttwwtt'''-.....ttttt
+ttt.....c''B''c..c'Btttwwt.....'.--.tttt
+tttt....c'''''c..c'''ttWwwW.....''c..ttt
+ttt.......'''....-cc'cttWwW.--.'B't...tt
+tt..--.....''......'''.tWwwW--..''c..ttt
+tt..c''.....'t.....'''''tWww--W..cc...tt
+tt..t'B'.....'.........'.tWw--wW.....ttt
+ttt..'''.........t.........W--wwW...tttt
+tt...c...t............t....'--WwwW...ttt
+ttttt...'...t....''....t....--tWwwW..ttt
+tttttttt..'ttt..''''.tttt.....ttWwwWtttt
+ttttttttt'.ttttt-'B''.ttttt..'ttttwttttt
+tttttttt''ttttttc'''.ttttttt'.ttttwwtttt
+ttttttt''tttttttccc-ttttttttt''ttttwwttt
+ttttttc-'ttttttttttttttttttt''tttttwwttt
+ttttttc'''ctttttttttttttttttt''''tttwwtt
+ttttttc'B'cttttttttttttttttt''''''tttwtt
+ttttttc'''c.ttttttttttttttt'''{'''tttAtt
+tttttt-cccc.tttttttttttttttt''''''tttttt
+ttttttt.....tttttttttttttttttt''tttttttt
+tttttttttt.ttttttttttttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttt
+ENDMAP
