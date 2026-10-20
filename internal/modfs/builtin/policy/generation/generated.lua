@@ -182,6 +182,23 @@ local function base_stair_points(layout)
     return points
 end
 
+-- Secondary source maps express layout compatibility as layout_* tags.
+-- Read the selected layout's declared type rather than guessing from its
+-- file name; several named layouts share one family.
+local function layout_family(layout)
+    local definition = layouts.get(layout.id)
+
+    for tag in pairs(definition.tags) do
+        local family = tag:match("^layout_type_(.+)$")
+
+        if family then
+            return family
+        end
+    end
+
+    error("layout " .. layout.id .. " has no layout_type tag")
+end
+
 -- Generate one floor before pairing its stairs with neighboring floors.
 -- The arrival only belongs to D:1; supplemental vaults use actual depth.
 local function build_floor(ctx, player, depth, bottom, prior_vault_ids)
@@ -215,6 +232,7 @@ local function build_floor(ctx, player, depth, bottom, prior_vault_ids)
             depth = depth,
             branch_bottom = bottom,
             absolute_depth = depth,
+            layout_family = layout_family(layout),
             prior_vault_ids = prior_vault_ids,
             arrival_vault = arrival_vault,
             protected = protected,

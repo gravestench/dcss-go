@@ -24,6 +24,7 @@ local function dungeon_chance_boundary()
         branch_id = branches.BRANCH_DUNGEON,
         depth = 4,
         branch_bottom = 15,
+        layout_family = "halls",
         used = used.new({}),
     }
     local selected = chance.select(random, context)
@@ -61,6 +62,7 @@ local function eligibility_before_roll()
         branch_id = branches.BRANCH_DUNGEON,
         depth = 4,
         branch_bottom = 15,
+        layout_family = "halls",
         used = same_floor,
     }), 0, "same-floor controller is excluded")
 
@@ -68,6 +70,7 @@ local function eligibility_before_roll()
         branch_id = branches.BRANCH_ZOT,
         depth = 4,
         branch_bottom = 5,
+        layout_family = "halls",
         used = used.new({}),
     }), 0, "Zot is outside the shop controller depth")
 

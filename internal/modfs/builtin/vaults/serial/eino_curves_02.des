@@ -1,0 +1,22 @@
+# Shorter version of the curved corridor; its source weight is equal to
+# the other three children, so each remains a separate tagged candidate.
+NAME: eino_curves_02
+DEPTH: D, Depths, Snake
+TAGS: transparent allow_dup extra serial_curves decor
+WEIGHT: 1
+MAP
+  @
+x...xxxxxx
+x...xxxxxx
+x...xxxxxx
+xx...xxxxx
+xx...xxxxx
+xxx...xxxx
+xxxx...xxx
+xxxxx...xx
+xxxxx...xx
+xxxxxx...x
+xxxxxx...x
+xxxxxx...x
+       @
+ENDMAP

@@ -1951,9 +1951,11 @@ Disabled zero-weight definitions remain visible but are not selected.
 
 ### Authored vaults
 
-Vault geometry remains in original `.des` syntax under `vaults/arrival/` or
-`vaults/shop/`. A map has `NAME`, tags, optional orientation and directives,
-then `MAP` and `ENDMAP`. The `.des` file is the authoritative layout. A mod
+Vault geometry remains in original `.des` syntax under `vaults/arrival/`,
+`vaults/shop/`, or `vaults/serial/`. A map has `NAME`, tags, optional
+orientation and directives, then `MAP` and `ENDMAP`. A controller with a
+post-place hook may omit MAP when it has no cells. The `.des` file is the
+authoritative layout. A mod
 may replace an existing `.des` by its exact relative path or add a new one.
 Keep terrain, item, monster, marker, and placement instructions in that map
 file so a reader can see the whole layout together.

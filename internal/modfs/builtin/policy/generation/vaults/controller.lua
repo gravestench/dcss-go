@@ -55,8 +55,9 @@ local function child_context(parent, tag)
     return child
 end
 
--- Place related maps in request order. A missing tag ends that request;
--- a malformed map still errors so the level never saves an incomplete set.
+-- Place related maps in request order. Source dgn.place_maps skips a map
+-- whose geometry cannot fit and counts only successful children. A malformed
+-- definition still errors from the shared placement path.
 function controller.place_maps(api, tag, count)
     if type(count) ~= "number" or count < 0 or
         count > MAX_CHILD_MAPS or count ~= math.floor(count) then
@@ -74,16 +75,13 @@ function controller.place_maps(api, tag, count)
         end
 
         local vault = catalog.get(selected.id)
-        local map, reason = api.place(nil, api.builder, vault, child)
+        local map = api.place(nil, api.builder, vault, child)
 
-        if not map then
-            error("cannot place vault " .. vault.id ..
-                ": " .. tostring(reason))
+        if map then
+            api.placed[#api.placed + 1] = map
+            api.context.used:add(vault)
+            placed_count = placed_count + 1
         end
-
-        api.placed[#api.placed + 1] = map
-        api.context.used:add(vault)
-        placed_count = placed_count + 1
     end
 
     return placed_count

@@ -15,7 +15,7 @@ local function ordered_definitions()
     local definitions = {}
     local origins = {}
 
-    for _, family in ipairs({ "arrival", "shop" }) do
+    for _, family in ipairs({ "arrival", "shop", "serial" }) do
         for _, path in ipairs(mod.paths("vaults/" .. family, ".des")) do
             local source = mod.read(path)
             local definition = des.parse(path, source)

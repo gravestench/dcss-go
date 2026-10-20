@@ -248,9 +248,11 @@ scripts. Eligible maps place authored shops and stock in ordinary D:1–15
 generation; the fixed shop scenario remains available. Supplemental maps
 retain source IDs in saves, and sparse mod overlays can add a vault or replace
 one handler. The generic secondary-vault opportunity currently uses a 1-in-8
-roll while other vault families are unported; source DCSS draws from its full
-secondary-vault pool instead. Deeper branch placement needs the corresponding
-branch generator. The rare `bzr_entry` request has no imported bazaar entry
+roll while most vault families are unported; source DCSS draws from its full
+secondary-vault pool instead. The five-map `serial_curves` family now uses the
+general CHANCE and post-place controller path, including its four tagged
+corridors and rooms-layout restriction. Deeper branch placement needs the
+corresponding branch generator. The rare `bzr_entry` request has no imported bazaar entry
 maps yet; an empty eligible tag pool leaves that slot available for an
 ordinary shop instead of aborting the floor.
 Generated Dungeon levels now save every successfully placed map ID, including

@@ -1,0 +1,22 @@
+# Diagonal hall snakes between two @ anchors. The source MAP rows are kept
+# intact so rotation and fit operate on the authored geometry.
+NAME: eino_curves_04
+DEPTH: D, Depths, Snake
+TAGS: transparent allow_dup extra serial_curves decor
+WEIGHT: 1
+MAP
+ xxxxxxxxxxxxxxxxxx
+ ...xxxxxxxxxxxxxxx
+@......xxxxxxxxxxxx
+ x.......xxxxxxxxxx
+ xxx......xxxxxxxxx
+ xxxxxx...xxxxxxxxx
+ xxxxxxx...xxxxxxxx
+ xxxxxxx...xxxxxxxx
+ xxxxxxxx...xxxxxxx
+ xxxxxxxx......xxxx
+ xxxxxxxxx........x
+ xxxxxxxxxxx.......@
+ xxxxxxxxxxxxxxx...
+ xxxxxxxxxxxxxxxxxx
+ENDMAP

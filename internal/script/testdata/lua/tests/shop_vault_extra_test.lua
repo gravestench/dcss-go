@@ -102,6 +102,7 @@ local function generic_extra_is_independent_of_serial_chance()
         depth = 2,
         branch_bottom = 15,
         absolute_depth = 2,
+        layout_family = "halls",
         protected = {},
         required = {},
         player = {
@@ -137,6 +138,7 @@ local function chance_controller_places_tagged_child()
         depth = 4,
         branch_bottom = 15,
         absolute_depth = 4,
+        layout_family = "halls",
         protected = {},
         required = {},
         player = {

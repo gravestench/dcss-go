@@ -1,0 +1,8 @@
+# Dungeon Crawl's curved-corridor controller has no cells of its own. Its
+# post-place Lua hook draws a small group of tagged maps on this floor.
+NAME: serial_curves
+TAGS: allow_dup extra luniq_serial decor nolayout_encompass
+TAGS: layout_rooms
+DEPTH: D, Depths, Snake
+CHANCE: 1%
+: vault.post_place("place_serial_curves")

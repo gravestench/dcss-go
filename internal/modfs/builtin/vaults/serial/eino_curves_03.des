@@ -1,0 +1,18 @@
+# Symmetric fork connects two ordinary-floor entrances through a narrow
+# center; transparent margins keep the surrounding Dungeon visible.
+NAME: eino_curves_03
+DEPTH: D, Depths, Snake
+TAGS: transparent allow_dup extra serial_curves decor
+WEIGHT: 1
+MAP
+ xxxxxxxxxxxxx
+ xxx.xxxxx.xxx
+ xx...xxx...xx
+ xx...xxx...xx
+ x..x..x..x..x
+ x.xxx.x.xxx.x
+ ..xxx...xxx..
+@.xxxxx.xxxxx.@
+ .xxxxx.xxxxx.
+ xxxxxxxxxxxxx
+ENDMAP

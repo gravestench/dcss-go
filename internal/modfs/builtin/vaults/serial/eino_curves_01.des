@@ -1,0 +1,28 @@
+# Long transparent corridor. Spaces leave the underlying Dungeon untouched,
+# while @ endpoints are connection anchors for the geometric placement pass.
+NAME: eino_curves_01
+DEPTH: D, Depths, Snake
+WEIGHT: 1
+TAGS: transparent allow_dup extra serial_curves decor
+MAP
+  @
+x...xxxxxxxxxx
+x...xxxxxxxxxx
+x...xxxxxxxxxx
+xx...xxxxxxxxx
+xx...xxxxxxxxx
+xxx...xxxxxxxx
+xxx...xxxxxxxx
+xxxx...xxxxxxx
+xxxxx...xxxxxx
+xxxxxx...xxxxx
+xxxxxxx...xxxx
+xxxxxxxx...xxx
+xxxxxxxx...xxx
+xxxxxxxxx...xx
+xxxxxxxxx...xx
+xxxxxxxxxx...x
+xxxxxxxxxx...x
+xxxxxxxxxx...x
+           @
+ENDMAP
