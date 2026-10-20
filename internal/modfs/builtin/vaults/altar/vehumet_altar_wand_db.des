@@ -1,0 +1,21 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  vehumet_altar_wand_db
+TAGS:  uniq_altar_vehumet temple_overflow_1 temple_overflow_vehumet
+TAGS:  transparent patrolling
+DEPTH: D:3-
+KFEAT: _ = altar_vehumet
+MONS:  goblin; wand of flame /\
+       hobgoblin; wand of flame /\
+       kobold; wand of flame
+: vault.run("interest.apply")
+MAP
+.......
+...x...
+...1...
+.x._.x.
+.......
+...x...
+.......
+ENDMAP
+
+# It's part of the design from the Vehumet altar tile.

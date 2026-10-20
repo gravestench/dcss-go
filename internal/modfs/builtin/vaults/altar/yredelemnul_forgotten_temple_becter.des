@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   yredelemnul_forgotten_temple_becter
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_1 temple_overflow_yredelemnul no_monster_gen no_item_gen
+TAGS:   transparent uniq_altar_yredelemnul
+KFEAT:  _ = altar_yredelemnul
+KFEAT:  . = web trap / .
+# source: : if you.in_branch("Depths") then
+KMONS:  _ = spectral juggernaut
+# source: :else
+KMONS:  _ = spectral orc
+# source: :end
+: vault.run("interest.apply")
+MAP
+xxxxxxxxx
+xcccccccx
+xc.._..cx
+xcc...ccx
+xc.....cx
+xcc...ccx
+xxcc+ccxx
+ xxx@xxx
+ENDMAP

@@ -1,0 +1,39 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:  lightli_temple_of_fire
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_1 temple_overflow_trog temple_overflow_makhleb
+KPROP: Y = no_tele_into
+KMASK: Y = no_monster_gen
+# source: {{
+# source:   local params = dgn.map_parameters()
+# source:   if params ~= nil then
+# source:     local tag = unpack(params)
+# source:     if tag ~= nil then
+# source:       if string.find(tag, "trog") ~= nil then
+# source:         kfeat('_ = altar_trog')
+# source:       elseif string.find(tag, "makhleb") ~= nil then
+# source:         kfeat('_ = altar_makhleb')
+# source:       else
+# source:         kfeat('_ = altar_trog / altar_makhleb')
+# source:       end
+# source:     else
+# source:       kfeat('_ = altar_trog / altar_makhleb')
+# source:     end
+# source:   else
+# source:     kfeat('_ = altar_trog / altar_makhleb')
+# source:   end
+# source: }}
+MAP
+llcccccc
+lccYcYccc
+lclllllcc
+lcl...lcc
+lcl...lYc
+@+.._.lcc
+lcl...lYc
+lcl...lcc
+lclllllcc
+lccYcYccc
+llcccccc
+ENDMAP

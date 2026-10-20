@@ -1,0 +1,35 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    nicolae_qazlal_style_of_elements
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_qazlal temple_overflow_1 uniq_altar_qazlal
+TAGS:    no_trap_gen no_item_gen no_monster_gen transparent decor
+SHUFFLE: faew
+KPROP:   faew = no_tele_into
+KMASK:   faew = opaque
+KMONS:   f = fire elemental
+KMONS:   a = air elemental
+KMONS:   e = earth elemental
+KMONS:   w = water elemental
+KFEAT:   _ = altar_qazlal
+KFEAT:   f = lava
+KFEAT:   w = deep_water
+MARKER:  a = lua:fog_machine { cloud_type = "thin mist", \
+                               pow_min = 100, pow_max = 100, delay = 1, \
+                               size = 1, walk_dist = 0, start_clouds = 1 }
+MARKER:  e = lua:fog_machine { cloud_type = "sparse dust", \
+                               pow_min = 100, pow_max = 100, delay = 1, \
+                               size = 1, walk_dist = 0, start_clouds = 1 }
+: vault.run("interest.apply")
+MAP
+ccc.@.ccc
+cfn...nac
+cnn...nnc
+.........
+...._....
+.........
+cnn...nnc
+cwn...nec
+ccc...ccc
+ENDMAP
+
+# general_overflow_altar cannot contain the power of Qazlal

@@ -1,0 +1,20 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   grunt_temple_overflow_diamond
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_generic_3 transparent
+SUBST:  T = T G V:1 U:1 t:1
+MAP
+      c
+     ccc
+    ccBcc
+   cc...cc
+  cccc+cccc
+ cc.c...c.cc
+ccB.+.T.+.Bcc
+ cc.c...c.cc
+  cccc+cccc
+   cc...cc
+    cc.cc
+     c.c
+      @
+ENDMAP

@@ -1,0 +1,17 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  fedhas_bush_and_centaur_altar
+TAGS:  temple_overflow_1 temple_overflow_fedhas uniq_altar_fedhas transparent
+# Centaur depth
+DEPTH: D:5-13
+KFEAT: _ = altar_fedhas
+MONS:  centaur, bush
+MAP
+    x
+ .......
+ .2222..
+ .21222.
+x.22_22.x
+ ...22..
+ .222...
+    x
+ENDMAP

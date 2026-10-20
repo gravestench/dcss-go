@@ -1,0 +1,19 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  nicolae_gozag_cash_rules_everything_around_me
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_gozag temple_overflow_1 uniq_altar_gozag \
+       no_hmirror no_vmirror no_rotate no_item_gen transparent decor
+KFEAT: _ = altar_gozag
+: vault.run("interest.apply")
+MAP
+bbb@bbb
+b....$b
+b.b.bbb
+b.._..b
+bbb.b.b
+b$....b
+bbb@bbb
+ENDMAP
+
+# No, you probably can't afford any of it.
+# You should have thought of that before being poor.

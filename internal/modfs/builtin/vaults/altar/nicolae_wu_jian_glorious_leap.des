@@ -1,0 +1,29 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nicolae_wu_jian_glorious_leap
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_wu_jian temple_overflow_1 no_trap_gen
+TAGS:   uniq_altar_wu_jian
+WEIGHT: 5
+KITEM:  I = any weapon level:-2
+KITEM:  i = any weapon
+NSUBST: i = I / i
+KFEAT:  _ = altar_wu_jian
+KMASK:  >Ii' = no_monster_gen
+KMASK:  >Ii' = no_item_gen
+KMASK:  >Ii' = opaque
+: vault.run("interest.apply")
+MAP
+xxxxxxxxxxxxxxx
+xccccccccvccccx
+xcccilll.....cx
+xcccivlll....cx
+xc>+i''ll._...+
+xcccivlll....cx
+xcccilll.....cx
+xccccccccvccccx
+xxxxxxxxxxxxxxx
+ENDMAP
+
+# Abstract representations of the moves of Wu Jian's three martial arts.
+# The green space is where you start, the red space is where you move to,
+# the statue is where the monster is.

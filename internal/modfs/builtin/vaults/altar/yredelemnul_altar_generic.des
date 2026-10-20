@@ -1,0 +1,15 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   yredelemnul_altar_generic
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_yredelemnul temple_overflow_1 temple_overflow_yredelemnul
+TAGS:   transparent decor
+KFEAT:  C = altar_yredelemnul
+KMONS:  f = withered plant
+: vault.run("interest.apply")
+MAP
+.....
+.f.f.
+..C..
+.f.f.
+.....
+ENDMAP

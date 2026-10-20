@@ -1,0 +1,20 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    jmf_multi_god_temple
+DEPTH: D:3-, Depths
+TAGS:    transparent temple_overflow_generic_2
+SHUFFLE: abc
+SUBST:   a:+, b:x, c:x
+MAP
+............
+.axxxxxxxxa.
+.x........x.
+.bT......Tb.
+.x..B..B..x.
+.cT......Tc.
+.xxxxmmxxxx.
+.xxx$$$$xxx.
+.xx0....0xx.
+..xx....xx..
+...xG..Gx...
+............
+ENDMAP

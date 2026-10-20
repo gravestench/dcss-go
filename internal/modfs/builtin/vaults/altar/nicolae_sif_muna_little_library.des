@@ -1,0 +1,23 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nicolae_sif_muna_little_library
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_sif_muna temple_overflow_1 no_trap_gen
+TAGS:   uniq_altar_sif_muna
+NSUBST: D = + / x
+KPROP:  a = no_tele_into
+KMASK:  a = no_item_gen
+KMASK:  a = no_monster_gen
+KITEM:  a = any randbook ident:all owner:Sif_Muna slevels:1
+KFEAT:  _ = altar_sif_muna
+FTILE:  a._mc+ = floor_marble
+COLOUR: a.mc+ = blue
+: vault.run("interest.apply")
+MAP
+xxxxDDDx
+xccc...D
+xcam...D
+xcam._.D
+xcam...D
+xccc...D
+xxxxDDDx
+ENDMAP

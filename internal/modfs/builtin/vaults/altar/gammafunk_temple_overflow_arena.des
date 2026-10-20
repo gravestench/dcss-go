@@ -1,0 +1,39 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME: gammafunk_temple_overflow_arena
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_generic_3 temple_overflow_generic_2
+TAGS: temple_overflow_generic_1 no_monster_gen no_trap_gen no_tele_into
+WEIGHT: 1
+# source: {{
+# source:   local altarcount = 3
+# source:   if not is_validating() then
+# source:     altarcount = tonumber(get_overflow_altar_count(_G))
+# source:   end
+# source:   if altarcount == 1 then
+# source:     subst("h = a")
+# source:   elseif altarcount == 2 then
+# source:     subst("B = a")
+# source:   end
+# source: }}
+SUBST: a = |*%$ .:80, 0 = 09., h = B, i : x., j : x., x : bcvx
+NSUBST: R = R / .
+MARKER: P = lua:transp_loc("temple_overflow_arena_entry")
+MARKER: Q = lua:transp_dest_loc("temple_overflow_arena_entry")
+MARKER: R = lua:transp_loc("temple_overflow_arena_exit")
+MARKER: S = lua:transp_dest_loc("temple_overflow_arena_exit")
+MAP
+  ...........
+ ..nnnnnnnnn..
+ .nn0..R...nn.
+ .nG.ji0ij.Gn.
+ .n..ij.ji%$n.
+..n......8*hn..
+@Pn..Q....$BnS@
+..n......9*hn..
+ .n..ij.ji%$n.
+ .nG.ji0ij.Gn.
+ .nn0..R...nn.
+ ..nnnnnnnnn..
+  ...........
+ENDMAP

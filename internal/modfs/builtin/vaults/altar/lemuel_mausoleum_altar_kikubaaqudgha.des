@@ -1,0 +1,28 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   lemuel_mausoleum_altar_kikubaaqudgha
+TAGS:   uniq_altar_kikubaaqudgha temple_overflow_1 transparent
+TAGS:   temple_overflow_kikubaaqudgha uniq_mausoleum_altar
+# slightly ood for wights, but where necrophages start
+# zombies scale with depth so we'll let it place in Crypt, too, but with an
+# interest check
+DEPTH:  D:4-10, Crypt
+# source: : if you.in_branch("Crypt") then
+MONS:   zombie, guardian mummy, skeletal warrior, ghoul
+# source: :else
+MONS:   zombie, mummy, wight, necrophage
+# source: :end
+NSUBST: ? = 1:_ / *:1
+SUBST:  1 = 1:30 2 3 4
+KFEAT:  _ = altar_kikubaaqudgha
+KMONS:  _ = human zombie
+: vault.run("interest.apply")
+MAP
+ccccccccccccccc
+c?c?c?c?c?c?ccG
+c+c+c+c+c+c+ccc
+c............+@
+c+c+c+c+c+c+ccc
+c?c?c?c?c?c?ccG
+ccccccccccccccc
+ENDMAP

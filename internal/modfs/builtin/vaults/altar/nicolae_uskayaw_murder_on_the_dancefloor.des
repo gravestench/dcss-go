@@ -1,0 +1,29 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   nicolae_uskayaw_murder_on_the_dancefloor
+DEPTH: D:3-, Depths
+# But you'd better not kill the groove.
+TAGS:   temple_overflow_uskayaw temple_overflow_1 transparent decor
+TAGS:   uniq_altar_uskayaw
+KFEAT:  _ = altar_uskayaw
+NSUBST: . = 4=D / 3=D.
+SUBST:  . = ..a, D = DDE
+# source: : dgn.delayed_decay(_G, "DE","random corpse")
+KPROP:  aE = bloody
+KFEAT:  b = .
+COLOUR: ._aDE = disco
+FTILE:  ._aDE = floor_pebble
+: vault.run("interest.apply")
+MAP
+xxxx@xxxx
+x.......x
+x.......x
+x.......x
+@..._...@
+x.......x
+x.......x
+x.......x
+xxxx@xxxx
+ENDMAP
+
+# https://www.youtube.com/watch?v=vpULWBT1WEg

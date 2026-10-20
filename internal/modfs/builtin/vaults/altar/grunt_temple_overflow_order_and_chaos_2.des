@@ -1,0 +1,34 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   grunt_temple_overflow_order_and_chaos_2
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_2 temple_overflow_makhleb temple_overflow_zin
+TAGS:   transparent
+KFEAT:  A = altar_makhleb
+KFEAT:  B = altar_zin
+MONS:   executioner / balrug / green death / cacodemon / blizzard demon
+MONS:   angel god:zin dbname:zin_angel
+SUBST:  ; = -_
+KPROP:  - = bloody / nothing
+KPROP:  12 = no_tele_into
+KMASK:  12 = opaque
+SUBST:  - = _L
+KFEAT:  L_ = floor
+KFEAT:  C = stone_wall
+KFEAT:  N = clear_stone_wall
+SUBST:  X = CL
+FTILE:  _BN2 = floor_limestone
+TILE:   C = wall_church
+COLOUR: C = white
+MAP
+    x.@.x
+  xxx...xxx
+xxxXXX+CCCxxx
+xccc--;__CCCx
+xc1nA-;_BN2Cx
+xccc--;__CCCx
+xxxXXX+CCCxxx
+  xxx...xxx
+    x.@.x
+ENDMAP
+
+# If the berserker scares you, use the escape hatch.

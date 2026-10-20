@@ -1,0 +1,19 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   gammafunk_temple_overflow_forgotten
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_generic_3 transparent
+SUBST:  p = x:50 . 1, T = V:30 T, + = +:20 .
+NSUBST: _ = 3:1 / *:_
+MONS:   plant / bush
+KMASK:  T = no_monster_gen
+TILE:   x = wall_brick_brown_vines
+FTILE:  _+T12B = floor_pebble_yellow
+MAP
+ ppppppp
+pxB_B_Bxp
+p_______p
+p___T___p
+px_____xp
+ xxx+xxx
+    @
+ENDMAP

@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    good_gods_temple_1
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_3 temple_overflow_elyvilon transparent
+TAGS:    temple_overflow_zin temple_overflow_the_shining_one
+TAGS:    no_monster_gen no_trap_gen decor
+MONS:    plant
+KFEAT:   D = altar_elyvilon
+KFEAT:   E = altar_zin
+KFEAT:   F = altar_the_shining_one
+SHUFFLE: DEF
+SUBST:   1 : GTV1
+SUBST:   X : GTt
+SUBST:   ? : t@
+MAP
+  ttttttt
+ tt.....tt
+tt...E...tt
+tt.D...F.tt
+tt...1...tt
+ tt.....tt
+  tt...tt
+   ?X@X?
+ENDMAP

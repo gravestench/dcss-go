@@ -1,0 +1,22 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  nicolae_overflow_squiral
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_generic_2 no_pool_fixup transparent
+MAP
+........wwwwwwww
+.wwwwwww.......w
+.w......cccccc.w
+.w.ccccc.....c.w
+.w.c....wwww.c.w
+.w.c.www...w.c.w
+.w.c.wB.cc.w.c.w
+.w.c.w...c.w.c.w
+c.w.c.w...c.w.c.
+c.w.c.ww.Bc.w.c.
+c.w.c...ccc.w.c.
+c.w.cccc....w.c.
+c.w.....wwwww.c.
+c.wwwwww......c.
+c.......ccccccc.
+cccccccc........
+ENDMAP

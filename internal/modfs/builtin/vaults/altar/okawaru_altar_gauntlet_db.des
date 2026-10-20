@@ -1,0 +1,26 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:  okawaru_altar_gauntlet_db
+DEPTH: D:3-, Depths
+TAGS:  uniq_altar_okawaru temple_overflow_1 temple_overflow_okawaru
+KFEAT: _ = altar_okawaru
+KPROP: 1 = no_tele_into
+# source: : if you.in_branch("Depths") then
+MONS:  spriggan defender ; flail . robe . buckler . boomerang w:3 /\
+       tengu warrior ; long sword . leather armour . buckler . boomerang
+# source: :else
+MONS:  goblin; stone q:5 / hobgoblin; stone q:5 / gnoll; stone q:5 /\
+       orc; stone q:5 / kobold; stone q:5
+# source: :end
+: vault.run("interest.apply")
+MAP
+  xxx
+xxx_xxx
+x1w.wxx
+xxw.w1x
+x1w.wxx
+xxw.w1x
+x1w.wxx
+xxw.w1x
+xxx+xxx
+ENDMAP

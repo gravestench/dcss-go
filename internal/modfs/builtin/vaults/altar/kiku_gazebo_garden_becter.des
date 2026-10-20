@@ -1,0 +1,27 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   kiku_gazebo_garden_becter
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_1 temple_overflow_kikubaaqudgha transparent decor
+TAGS:   uniq_altar_kikubaaqudgha
+KMONS:  f = withered plant
+KFEAT:  _ = altar_kikubaaqudgha
+SUBST:  ` = f....
+COLOUR: c = magenta
+COLOUR: i' = brown
+COLOUR: " = yellow
+TILE:   c = dngn_stone_wall_magenta
+FTILE:  '"_ = floor_pebble_yellow
+: vault.run("interest.apply")
+MAP
+..````
+.ccc`````
+.c'c"`````
+.c''""````
+.c'''"c````
+.c'_''cc```
+.c'''"c````
+.c''""````
+.c'c"`````
+.ccc`````
+..````
+ENDMAP

@@ -1,0 +1,23 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  nicolae_elyvilon_temple_path
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_elyvilon temple_overflow_1 decor no_pool_fixup
+TAGS:  transparent
+TAGS:  no_trap_gen uniq_altar_elyvilon
+SUBST: p = ppp....
+KMONS: p = plant
+KFEAT: _ = altar_elyvilon
+: vault.run("interest.apply")
+MAP
+  ccccc
+ ccwwwcc @ppppppppp
+ccwwUwwccppcppcppcp
+cww...wwwwwwwwwwwww
+cwU._..............@
+cww...wwwwwwwwwwwww
+ccwwUwwccppcppcppcp
+ ccwwwcc @ppppppppp
+  ccccc
+ENDMAP
+
+### Fedhas overflow altars ####################################################

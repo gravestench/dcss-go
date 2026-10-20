@@ -1,0 +1,17 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   amcnicky_altar_gilded
+DEPTH: D:3-, Depths
+TAGS:   transparent no_monster_gen temple_overflow_generic_1
+SUBST: p = . $:5
+SUBST: q = . $:2
+MAP
+.........
+.mmmmmmm.
+.mqqqqqm.
+.mqpppqm.
+.+qpBpqm.
+.mqpppqm.
+.mqqqqqm.
+.mmmmmmm.
+.........
+ENDMAP

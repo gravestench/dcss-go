@@ -1,0 +1,20 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  lemuel_tele_altar
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_generic_1 transparent decor
+SUBST: D = ^ x
+KFEAT: ^ = teleport trap
+KMASK: 'B = opaque
+MAP
+...........
+.xxxx^xxxx.
+.x'''''''x.
+.x'''''''x.
+.x'''''''x.
+.D'''B'''D.
+.x'''''''x.
+.x'''''''x.
+.x'''''''x.
+.xxxxDxxxx.
+...........
+ENDMAP

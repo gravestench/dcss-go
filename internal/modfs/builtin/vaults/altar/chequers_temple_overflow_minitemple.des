@@ -1,0 +1,28 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:  chequers_temple_overflow_minitemple
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_generic_5 temple_overflow_generic_4
+TAGS:  temple_overflow_generic_3
+TAGS:  transparent
+# source: {{
+# source:   local altarcount = get_overflow_altar_count(_G)
+# source:   if is_validating() or altarcount == nil then
+# source:     altarcount = 5
+# source:   end
+# source:   nsubst("O = " .. altarcount .. ":B / *:l")
+# source: }}
+KFEAT: l = altar_ecumenical
+MAP
+        @
+       c+c
+   ccccc.ccccc
+  cc.........cc
+ccc..ccccccc..ccc
+cO..cccO.Occc..Oc
+ccc..cc...cc..ccc
+  cc.........cc
+   cccc...cccc
+      ccOcc
+       ccc
+ENDMAP

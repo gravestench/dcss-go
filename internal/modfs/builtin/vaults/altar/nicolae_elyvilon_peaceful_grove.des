@@ -1,0 +1,22 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  nicolae_elyvilon_peaceful_grove
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_elyvilon temple_overflow_1 transparent decor
+TAGS:  uniq_altar_elyvilon
+KFEAT: _ = altar_elyvilon
+KMONS: P = bush w:20 / nothing
+KMONS: _ = patrolling butterfly att:good_neutral
+: vault.run("interest.apply")
+MAP
+ww.PtttP.ww
+wwP..P..Pww
+.PPtt.ttPP.
+P.ttP.Ptt.P
+t.tP...Pt.t
+tP..._...Pt
+t.tP...Pt.t
+P.ttP.Ptt.P
+.PPtt.ttPP.
+wwP..P..Pww
+ww.PtttP.ww
+ENDMAP

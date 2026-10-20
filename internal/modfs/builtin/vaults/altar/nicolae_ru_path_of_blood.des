@@ -1,0 +1,16 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME: nicolae_ru_path_of_blood
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_ru temple_overflow_1 uniq_altar_ru transparent decor
+TAGS: no_monster_gen
+: vault.run("interest.apply")
+KPROP: , = bloody
+KPROP: l = no_cloud_gen
+KFEAT: _ = altar_ru
+MAP
+@lcccccccccc
+l,......,llc
+@l,l,l,l,_lc
+l,......,llc
+@lcccccccccc
+ENDMAP

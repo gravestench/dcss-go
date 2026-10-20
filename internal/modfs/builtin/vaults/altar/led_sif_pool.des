@@ -1,0 +1,21 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   led_sif_pool
+DEPTH: D:3-, Depths
+TAGS:   no_item_gen no_monster_gen no_pool_fixup transparent
+TAGS:   temple_overflow_1 temple_overflow_sif_muna uniq_altar_sif_muna decor
+KFEAT:  _ = altar_sif_muna
+COLOUR: . = blue
+FTILE:  ._ = floor_marble
+: vault.run("interest.apply")
+MAP
+ xxx@xxx
+ xxx+xxx
+xxWW.WWxx
+xWWW.WWWx
+xWW...WWx
+xWW._.WWx
+xWW...WWx
+xWWWWWWWx
+xxWWWWWxx
+ xxxxxxx
+ENDMAP

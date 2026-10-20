@@ -1,0 +1,20 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   grunt_dithmenos_smoke_and_mirrors
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_dithmenos temple_overflow_1 temple_overflow_dithmenos
+TAGS:   transparent decor
+KFEAT:  C = altar_dithmenos
+KFEAT:  O = .
+MARKER: O = lua:fog_machine { cloud_type = "black smoke", \
+                              pow_min = 25, pow_max = 25, \
+                              delay = 30, size = 1, walk_dist = 0 }
+: vault.run("interest.apply")
+MAP
+  b@b
+ b.O.b
+b.b.b.b
+@O.C.O@
+b.b.b.b
+ b.O.b
+  b@b
+ENDMAP

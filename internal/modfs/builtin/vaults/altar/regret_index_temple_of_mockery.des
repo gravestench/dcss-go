@@ -1,0 +1,43 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    regret_index_temple_of_mockery
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_2 temple_overflow_xom temple_overflow_hepliaklqana
+# we place the monster on demand via a marker rather than in the builder because
+# the dependency on the player species otherwise can affect seed stability
+# source: {{
+# source:     local los_marker = TriggerableFunction:new {
+# source:       func="callback.do_species_mock",
+# source:       repeated=true,
+# source:       props = {mock_location=1}
+# source:     }
+# source:     los_marker:add_triggerer(DgnTriggerer:new {
+# source:       type="player_los"})
+# source:
+# source:     lua_marker('1', los_marker)
+# source: }}
+KMONS:   2 = spectral ugly thing
+KFEAT:   A = altar_xom
+KFEAT:   B = altar_hepliaklqana
+SHUFFLE: AB
+SUBST:   G = G...
+KPROP:   12' = no_tele_into
+KMASK:   12' = no_item_gen
+KMASK:   12' = no_trap_gen
+KMASK:   ' = no_monster_gen
+# TODO: this fog machine doesn't do much, is it supposed to spread?
+MARKER:  2 = lua:fog_machine { cloud_type = "thin mist", \
+             pow_min = 100, pow_max = 100, delay = 1, \
+             size = 1, walk_dist = 0, start_clouds = 1 }
+MAP
+cccccc
+ccb'bccccc
+cb2n1bc.+.
+c'nnnnc.c.
+cb1nA...cc
+ccbn.G.bc
+cccc..Bcc
+ c...bcc
+ c+cccc
+ c..c
+ENDMAP

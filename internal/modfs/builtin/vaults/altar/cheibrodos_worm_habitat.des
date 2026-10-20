@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   cheibrodos_worm_habitat
+TAGS:   no_item_gen no_monster_gen temple_overflow_1 transparent
+TAGS:   temple_overflow_cheibriados uniq_altar_cheibriados
+DEPTH:  D:3-
+WEIGHT: 5
+KFEAT:  _ = altar_cheibriados
+MONS:   worm
+: vault.run("interest.apply")
+MAP
+.............
+.xxxxx.xxxxx.
+.xTWWxxxWWTx.
+.xWWWWWWWWWx.
+.xWWWxWxWWWx.
+.xxWxx.xxWxx.
+..xWm._.mWx..
+.xxWxx1xxWxx.
+.xWWWxmxWWWx.
+.xWWWWWWWWWx.
+.xTWWx+xWWTx.
+.xxxxx.xxxxx.
+......@......
+ENDMAP

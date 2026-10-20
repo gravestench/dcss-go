@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   grunt_temple_overflow_gold_and_silver
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_2 temple_overflow_gozag temple_overflow_zin
+TAGS:   transparent
+KITEM:  $ = gold q:1 / gold q:2
+KFEAT:  _ = altar_gozag
+KFEAT:  O = altar_zin
+TILE:   G = dngn_golden_statue
+COLOUR: G = yellow
+TILE:   v = dngn_metal_wall_white
+COLOUR: v = white
+FTILE:  +._O$ = floor_limestone
+# source: : set_feature_name("granite_statue", "golden statue")
+# source: : set_feature_name("metal_wall", "silver wall")
+MAP
+vvvvvvvvv
+v..$$$..v
+v._.$.O.v
+v.......v
+vv.....vv
+ vvv+vvv
+ENDMAP

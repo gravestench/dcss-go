@@ -210,6 +210,11 @@ open-sea or lava-sea borders, and materializes authored monsters and items
 without ambient Temple spawns. Temple altars now render with their saved god
 names, and restore rejects an altar identity that disagrees with the plan.
 Worship and Dungeon overflow altar placement still need gameplay passes.
+All 232 source overflow altar maps are committed as individual `.des` files;
+their MAP rows match the source exactly. They load through a dedicated catalog
+and stay out of ordinary extra-vault selection until the remaining per-map
+Lua hooks, source monster expressions, and scheduled overflow rules are
+ported. The original script text remains beside each map as comments.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition

@@ -1,0 +1,20 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    okawaru_humans
+TAGS:    uniq_altar_okawaru temple_overflow_1 temple_overflow_okawaru
+TAGS:    no_monster_gen no_wall_fixup transparent
+DEPTH:   D:7-12
+COLOUR:  1 = yellow, ' = yellow, x = white
+MONS:    human ; long sword . ring mail
+FTILE:   1'xO = floor_sandstone
+RTILE:   x = wall_tomb
+KFEAT:   _ = altar_okawaru
+MAP
+.........
+.xxxxxxx.
+.x1'_'1x.
+.x'''''x.
+.x'x'x'x.
+.xGx'xGx.
+.xxx'xxx.
+....'....
+ENDMAP

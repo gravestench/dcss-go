@@ -1,0 +1,20 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME: nicolae_ru_awakened_eye
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_ru temple_overflow_1 uniq_altar_ru transparent decor
+TAGS: no_pool_fixup
+: vault.run("interest.apply")
+KFEAT: _ = altar_ru
+MAP
+    .......
+   .ccccccc.
+  .c..WWW..c.
+ .c..W...W..c.
+.c...W._.W...c.
+ .c..W...W..c.
+  .c..WWW..c.
+   .ccccccc.
+    .......
+ENDMAP
+
+# Overgrown and disused, since many pilgrims find Ru's sacrifices too onerous.

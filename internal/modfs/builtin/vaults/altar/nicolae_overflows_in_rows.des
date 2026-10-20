@@ -1,0 +1,53 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    nicolae_overflows_in_rows
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_generic_15 temple_overflow_generic_14 \
+         temple_overflow_generic_13 temple_overflow_generic_12 \
+         temple_overflow_generic_11 temple_overflow_generic_10 \
+         temple_overflow_generic_9 transparent allow_dup
+# I don't think temple_overflow_generic_15 is ever actually used, but I figured
+# I might as well include it in the layout just in case it's used in the future.
+# source: {{
+# source:   local altarcount = 1
+# source:   if is_validating() then
+# source:     altarcount = 15
+# source:   else
+# source:     altarcount = tonumber(get_overflow_altar_count(_G))
+# source:   end
+# source:   if not altarcount then
+# source:     altarcount = 9
+# source:   end
+# source:   -- altar arrangements by row. rows of 3 have G or T at the ends.
+# source:   -- 9: 3/3/3. 10: 3/4/3. 11: 4/3/4. 12: 4/4/4. 13: 4/5/4. 14: 5/4/5. 15: 5/5/5.
+# source:   if altarcount >= 13 then
+# source:     subst("T=F")
+# source:   end
+# source:   if altarcount % 2 == 0 then
+# source:     subst("T=.")
+# source:     subst("F=Z")
+# source:     subst("H=F")
+# source:     subst("Z=H")
+# source:   end
+# source:   if altarcount >= 11 then
+# source:     subst("G=D")
+# source:   end
+# source:   if altarcount >= 11 and altarcount <= 13 then
+# source:     subst("D=Z")
+# source:     subst("E=D")
+# source:     subst("Z=E")
+# source:   end
+# source: }}
+SUBST:   DF : B
+SHUFFLE: GT
+MAP
+ccccccccccccc
+c...........c
+c.GEDEDEDEG.c
+.............
+..THFHFHFHT..
+.............
+c.GEDEDEDEG.c
+c...........c
+ccccccccccccc
+ENDMAP

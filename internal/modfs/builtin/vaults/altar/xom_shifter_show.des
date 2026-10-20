@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    xom_shifter_show
+TAGS:    temple_overflow_1 temple_overflow_xom uniq_altar_xom
+DEPTH:   D:7-
+MONS:    shapeshifter hd:1
+KFEAT:   _ = altar_xom
+NSUBST:  . = 2:1 / 1:> / * = _...
+# source: :  if you.depth() == dgn.br_depth(you.branch()) then
+SUBST:   > = <
+# source: :  end
+SUBST:   x = bmv
+KMASK:   .1 = no_trap_gen
+COLOUR:  .1 = random
+FTILE:   ._<>1 = floor_pebble
+MAP
+ xxxxxxx
+ x.....x
+ m.....x
+@m.._..x
+ m.....x
+ x.....x
+ xxxxxxx
+ENDMAP

@@ -1,0 +1,19 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME: nicolae_overflow_crystal_walls
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_generic_1 transparent
+SHUFFLE: ACDE, FGHI
+SUBST: A : b, C : b., D : b., E : b., F : b, G : b., H : b., I : b.
+MAP
+AAAAA@FFFFF
+ACCCC.GGGGF
+ACDDD.HHHGF
+ACDEE.IIHGF
+ACDE...IHGF
+@....B....@
+FGHI...EDCA
+FGHII.EEDCA
+FGHHH.DDDCA
+FGGGG.CCCCA
+FFFFF@AAAAA
+ENDMAP

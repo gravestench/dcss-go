@@ -1,0 +1,33 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    grunt_temple_overflow_magic_moments
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_3 temple_overflow_kikubaaqudgha
+TAGS:    temple_overflow_sif_muna temple_overflow_vehumet
+TAGS:    no_item_gen transparent
+KFEAT:   A = altar_kikubaaqudgha
+KFEAT:   B = altar_sif_muna
+KFEAT:   C = altar_vehumet
+ITEM:    randbook owner:Kikubaaqudgha disc:necromancy spells:necrotise \
+         numspells:1
+# You already got a direct damage spell by looting the other gods' altars.
+ITEM:    randbook owner:Sif_Muna disc:transmutation numspells:1 slevels:1 / \
+         randbook owner:Sif_Muna disc:summoning numspells:1 slevels:1 / \
+         randbook owner:Sif_Muna disc:translocation numspells:1 slevels:1
+ITEM:    randbook owner:Vehumet disc:conjuration spells:magic_dart numspells:1
+SHUFFLE: AdB"C` / A'BeC` / A'B"Cf
+MAP
+     xxxxx
+    xx.B.xx
+  xxxG.".Gxxx
+ xxGxx...xxGxx
+ x...xx.xx...x
+ xAd.......`Cx
+ x...x.U.x...x
+ xGxx...xxGxx
+  xxx  @  xxx
+ENDMAP
+
+# This doesn't place multiple gods, but it can place one of two distinct
+# gods.
+# Shouldn't get uniq_altar tags because it will eat both trog and makhleb
+# while only placing one of the two.

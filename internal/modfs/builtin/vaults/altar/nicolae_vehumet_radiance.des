@@ -1,0 +1,28 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    nicolae_vehumet_radiance
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_vehumet temple_overflow_1 no_trap_gen transparent
+TAGS:    decor uniq_altar_vehumet
+SHUFFLE: DEFHJKLM / FHDELMJK, DE, JK
+SUBST:   DJ = N, EKFHLM = ., N : cb
+KFEAT:   _ = altar_vehumet
+: vault.run("interest.apply")
+MAP
+     xxxxx
+    .......
+   ..MLMLM..
+  ..LJKJKJL..
+ ..MK.HFH.KM..
+x.LJ.FDEDF.JL.x
+x.MKHE...EHKM.x
+x.LJFD._.DFJL.x
+x.MKHE...EHKM.x
+x.LJ.FDEDF.JL.x
+ ..MK.HFH.KM..
+  ..LJKJKJL..
+   ..MLMLM..
+    .......
+     xxxxx
+ENDMAP
+
+### Wu Jian overflow altars ###################################################

@@ -1,0 +1,16 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   lemuel_blue_sif_altar
+DEPTH: D:3-, Depths
+TAGS:   no_monster_gen temple_overflow_1 temple_overflow_sif_muna
+TAGS:   uniq_altar_sif_muna decor transparent
+COLOUR: . = blue
+FTILE:  . = floor_hall, C = floor_hall, @ = floor_hall, + = floor_hall
+KFEAT:  _ = altar_sif_muna
+: vault.run("interest.apply")
+MAP
+xxxxxxxxxxxxxx
+...........xxx
+@..........+_x
+...........xxx
+xxxxxxxxxxxxxx
+ENDMAP

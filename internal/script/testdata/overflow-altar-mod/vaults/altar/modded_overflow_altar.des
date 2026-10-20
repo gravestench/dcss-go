@@ -1,0 +1,8 @@
+# A mod adds one source-format altar without editing the embedded catalog.
+NAME: modded_overflow_altar
+TAGS: temple_overflow_generic_1
+ORIENT: float
+KFEAT: B = altar_ecumenical
+MAP
+B
+ENDMAP

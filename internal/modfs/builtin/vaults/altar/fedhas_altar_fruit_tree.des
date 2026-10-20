@@ -1,0 +1,30 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   fedhas_altar_fruit_tree
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas transparent
+TAGS:   no_item_gen no_rotate no_vmirror decor
+NSUBST: g = 4:f/*:.
+NSUBST: f = 4:A/*:.
+NSUBST: w = 2:4 / *:w
+KFEAT:  C = altar_fedhas
+KFEAT:  A = .
+FTILE:  .tfCA = floor_moss
+FTILE:  d = floor_hall
+COLOUR: fd = brown
+COLOUR: AC. = green
+: vault.run("interest.apply")
+MAP
+xxxxxxxxxxxxxxxxx
+xtttttttttttttttx
+xtttttttttttttttx
+xttttttgfgttttttx
+xtttttgf.fgtttttx
+xttttgf.f.fgttttx
+xtttgf..C..fgtttx
+xtttgf.f.f.fgtttx
+xttgfffffffffgttx
+xttgt.......tgttx
+xttttttdddttttttx
+xttttttdddttttttx
+xtttttdd@ddtttttx
+ENDMAP

@@ -1,0 +1,42 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:       tgw_sif
+DEPTH: D:3-, Depths
+TAGS:       no_item_gen no_monster_gen no_pool_fixup
+TAGS:       temple_overflow_1 temple_overflow_sif_muna uniq_altar_sif_muna
+KFEAT:      _ = altar_sif_muna
+# source: : if you.absdepth() <= 3 then
+MONS:       Jessica
+# source: : elseif you.absdepth() <= 6 then
+MONS:       orc wizard w:15 / Blork the orc
+# source: : elseif you.in_branch("Depths") then
+MONS:       deep elf annihilator
+# source: :else
+MONS:       orc wizard
+# source: : end
+: vault.run("interest.apply")
+NSUBST:     M = 1:1 / *:"
+SUBST:      ' : "'., ' = ''.
+COLOUR:     . = blue
+SUBST:      ' = ., " = .
+MAP
+        xx@xx
+        x...x
+        x...x
+      xxx...xxx
+     xx'''''''xx
+    xx'''...'''xx
+    x'''.www.'''x
+   xx''.wwwww.''xx
+   x''.wwM"Mww.''x
+   x''.wwM>Mww.''x
+   x''.wwMMMww.''x
+   xx''.wwwww.''xx
+    x'''.www.'''x
+    xx'''...'''xx
+     xx'''''''xx
+      xxx...xxx
+        x._.x
+        x...x
+        xxxxx
+ENDMAP

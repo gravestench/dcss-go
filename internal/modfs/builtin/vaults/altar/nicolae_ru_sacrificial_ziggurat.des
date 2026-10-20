@@ -1,0 +1,27 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME: nicolae_ru_sacrificial_ziggurat
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_ru temple_overflow_1 uniq_altar_ru transparent decor
+: vault.run("interest.apply")
+SUBST: b = B.., @ = %@@
+KPROP: B% = bloody
+SUBST: B = ., % = @
+FTILE: ' = floor_sandstone
+FTILE: .@_ = floor_limestone
+TILE: c = wall_sandstone
+KFEAT: _ = altar_ru
+MAP
+cccccc@cccccc
+c'''''b'''''c
+c'ccccbcccc'c
+c'c'''b'''c'c
+c'c'ccbcc'c'c
+c'c'cBBBc'c'c
+@bbbbB_Bbbbb@
+c'c'cBBBc'c'c
+c'c'ccbcc'c'c
+c'c'''b'''c'c
+c'ccccbcccc'c
+c'''''b'''''c
+cccccc@cccccc
+ENDMAP

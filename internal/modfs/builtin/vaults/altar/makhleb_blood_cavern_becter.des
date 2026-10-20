@@ -1,0 +1,31 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   makhleb_blood_cavern_becter
+TAGS:   uniq_altar_makhleb temple_overflow_1 temple_overflow_makhleb transparent
+# necrophage depth (contains hound too)
+DEPTH:  D:4-8
+# source: : if crawl.coinflip() then
+# source: : dgn.delayed_decay(_G, '1', 'human corpse')
+KMONS:  2 = hound
+# source: : else
+KMONS:  1 = necrophage
+KMONS:  2 = hound skeleton
+# source: : end
+KFEAT:  _ = altar_makhleb
+KPROP:  y' = bloody
+TILE:   c = wall_hall
+SUBST:  ' = .
+SUBST:  y = x
+MAP
+  @@@
+ x..'.xxx
+ xx...'yxx
+ xxxx..'yxx
+ xxxxxx.'yx
+ xxxxxxy'.x
+xxxx.'y'.xx
+xcc.12'.xx
+xcA_'.xxx
+xcc..xxx
+xxxxxx
+ENDMAP

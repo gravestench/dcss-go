@@ -1,0 +1,29 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:  grunt_dithmenos_shadows
+TAGS:  uniq_altar_dithmenos temple_overflow_1 temple_overflow_dithmenos decor
+TAGS:  transparent
+DEPTH: D:5-
+KFEAT: C = altar_dithmenos
+# source: {{
+# source:   if you.absdepth() >= 9 then
+# source:      mons("shadow")
+# source:   else
+# source:      local imp_weight = 9 - you.depth()
+# source:      if imp_weight > 0 then
+# source:          local phantom_weight = 9 - imp_weight
+# source:          mons("phantom w:" .. phantom_weight ..
+# source:               " / shadow imp w:" .. imp_weight)
+# source:      else
+# source:          mons("shadow imp")
+# source:      end
+# source:   end
+# source: }}
+: vault.run("interest.apply")
+MAP
+ccccc
+c.C.c
+c.1.c
+c...c
+cc+cc
+ENDMAP

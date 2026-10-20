@@ -1,0 +1,12 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  cheibriados_altar_1
+DEPTH: D:3-, Depths
+TAGS:  uniq_altar_cheibriados temple_overflow_1 temple_overflow_cheibriados
+TAGS:  transparent decor
+KFEAT: _ = altar_cheibriados
+: vault.run("interest.apply")
+MAP
+...
+._.
+...
+ENDMAP

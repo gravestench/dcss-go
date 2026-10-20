@@ -1,0 +1,19 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   makhleb_heckhound_becter
+TAGS:   uniq_altar_makhleb temple_overflow_1 temple_overflow_makhleb
+TAGS:   no_monster_gen transparent
+# hound depth
+DEPTH:  D:4-7
+KFEAT:  _ = altar_makhleb
+KMONS:  _ = patrolling hound
+TILE:   c = wall_hall
+SUBST:  y = xx.
+MAP
+ xxxxx
+xxcccxx
+xycAcyx
+x.._..x
+xy...yx
+ y...y
+  @@@
+ENDMAP

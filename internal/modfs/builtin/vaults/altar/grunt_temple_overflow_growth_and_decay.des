@@ -1,0 +1,19 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  grunt_temple_overflow_growth_and_decay
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_2 temple_overflow_fedhas temple_overflow_kikubaaqudgha
+TAGS:  transparent
+KFEAT: A = altar_fedhas
+KFEAT: B = altar_kikubaaqudgha
+MONS:  plant / nothing
+MONS:  withered plant / nothing
+MAP
+xxxxx
+x111xx@@
+x1A111..xxx
+x11.....22xxxx
+xxxx11.....22x
+   xxx..222B2x
+      @@xx222x
+         xxxxx
+ENDMAP

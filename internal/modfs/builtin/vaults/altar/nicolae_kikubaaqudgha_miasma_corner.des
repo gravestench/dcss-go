@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nicolae_kikubaaqudgha_miasma_corner
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_kikubaaqudgha temple_overflow_1 transparent decor
+TAGS:   uniq_altar_kikubaaqudgha
+KFEAT:  _ = altar_kikubaaqudgha
+MARKER: M = lua:fog_machine { cloud_type = "foul pestilence", pow_min = 10, \
+    pow_max = 20, delay_min = 1, delay_max = 1, size = 1, walk_dist = 0, \
+    spread_rate = 0 }
+COLOUR: c = darkgrey
+: vault.run("interest.apply")
+MAP
+    .
+ ccc.ccc
+ cM...Mc
+ c.....c
+...._....
+ c.....c
+ cM...Mc
+ ccc.ccc
+    .
+ENDMAP
+
+### Makhleb overflow altars ###################################################

@@ -1,0 +1,27 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  fedhas_ov_isle_minmay
+TAGS:  temple_overflow_1 temple_overflow_fedhas uniq_altar_fedhas no_monster_gen
+TAGS:  transparent
+DEPTH: D, !D:$
+MONS:  plant / bush w:5
+SUBST: 1 = 111t'''
+KFEAT: _ = altar_fedhas
+KMASK: _1'<> = opaque
+: vault.run("interest.apply")
+MAP
+     .....
+   ...www...
+  ..wwwwwww..
+ ..wwwwwwwww..
+ .wwwwwwwwwww.
+..wwww1<1wwww..
+.wwww11111wwww.
+.wwww11_11wwww.
+.wwww11111wwww.
+..wwww1>1wwww..
+ .wwwwwwwwwww.
+ ..wwwwwwwww..
+  ..wwwwwww..
+   ...www...
+     .....
+ENDMAP

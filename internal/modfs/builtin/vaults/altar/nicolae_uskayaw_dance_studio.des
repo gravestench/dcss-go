@@ -1,0 +1,19 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nicolae_uskayaw_dance_studio
+TAGS:   temple_overflow_uskayaw temple_overflow_1 no_monster_gen transparent
+TAGS:   patrolling uniq_altar_uskayaw
+# kobold brigand depth
+DEPTH:  D:6-11
+KMONS:  _ = kobold brigand band
+KFEAT:  _ = altar_uskayaw
+MAP
+xxxx+xxxx
+xmmm.mmmx
+xm.....mx
+xm.....mx
+xm.._..mx
+xm.....mx
+xm.....mx
+xmmmmmmmx
+xxxxxxxxx
+ENDMAP

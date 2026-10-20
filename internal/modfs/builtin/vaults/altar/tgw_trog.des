@@ -1,0 +1,33 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   tgw_trog
+DEPTH: D:3-, Depths
+TAGS:   no_item_gen no_monster_gen patrolling
+TAGS:   temple_overflow_1 temple_overflow_trog uniq_altar_trog
+KFEAT:  _ = altar_trog
+KPROP:  1 = no_tele_into
+# source: : if you.absdepth() < 16 then
+MONS:   moth of wrath, rat / worm w:5
+# source: : else
+MONS:   moth of wrath, dire elephant / boulder beetle w:5
+# source: : end
+ITEM:   any weapon
+NSUBST: M = 4:d / *:.
+SUBST:  + = +....
+KFEAT:  o = iron_grate
+: vault.run("interest.apply")
+MAP
+      xxxxxxx
+     xxxMMMxxx
+    xxMMM2MMMxx
+   xxMM22_22MMxx
+   xx.........xx
+   x....ooo....x
+   x...oo1oo...x
+   x....ooo....x
+   x...........x
+   xx.........xx
+    xx.......xx
+     xxxx+xxxx
+       xx@xx
+ENDMAP

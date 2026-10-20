@@ -1,0 +1,22 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   grunt_gozag_breadcrumbs
+DEPTH: D:3-, Depths
+TAGS:   transparent no_item_gen no_monster_gen no_trap_gen temple_overflow_1
+TAGS:   temple_overflow_gozag uniq_altar_gozag decor
+KFEAT:  _ = altar_gozag
+ITEM:   gold q:1
+KITEM:  e = gold q:1
+TILE:   G = dngn_golden_statue
+FTILE:  _-Ge = floor_limestone
+RTILE:  x = wall_sandstone
+COLOUR: xG = yellow
+# source: : set_feature_name("granite_statue", "golden statue")
+: vault.run("interest.apply")
+MAP
+        xxxxx
+.@......x-eGx
+@d.d.d.d-e-_x
+.@......x-eGx
+        xxxxx
+ENDMAP

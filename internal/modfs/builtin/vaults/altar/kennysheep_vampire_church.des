@@ -1,0 +1,42 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   kennysheep_vampire_church
+DEPTH: D:3-, Depths
+TAGS:   no_monster_gen temple_overflow_1 temple_overflow_kikubaaqudgha
+TAGS:   uniq_altar_kikubaaqudgha transparent
+# source: : if you.in_branch("Depths") then
+MONS:   vampire knight / nothing, vampire mage
+# source: :else
+MONS:   vampire bat / nothing w:7, bat skeleton / bat zombie
+# source: :end
+KFEAT:  A = altar_kikubaaqudgha
+NSUBST: . = 4:2 / 3 = 2. / *:.
+# source: {{
+# source: local trig_marker = TriggerableFunction:new {
+# source:   func="callback.vampire_church_blood",
+# source:   repeated = false
+# source: }
+# source: trig_marker:add_triggerer(DgnTriggerer:new { type = "player_move" })
+# source: lua_marker("A", trig_marker)
+# source: lua_marker("V", portal_desc { slave_name = "vampire_church_blood" })
+# source: }}
+: vault.run("interest.apply")
+MAP
+  xxxxxxxxx
+  xx.V1V.xx
+xxx..1A1..xxx
+xx.x.VdV.x.xx
+x.V.x...x.V.x
+xx.x.x.x.x.xx
+x.x.V.x.V.x.x
+xx.x.x.x.x.xx
+x.V.x.V.x.V.x
+xx.x.x.x.x.xx
+xxx.V.x.V.xxx
+xx.x.x.x.x.xx
+xx..x.V.x..xx
+xx.x.x.x.x.xx
+xxx.V.x.V.xxx
+xxxx.....xxxx
+xxxxx+++xxxxx
+ENDMAP

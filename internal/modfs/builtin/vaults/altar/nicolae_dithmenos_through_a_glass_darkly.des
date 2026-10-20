@@ -1,0 +1,23 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME: nicolae_dithmenos_through_a_glass_darkly
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_dithmenos uniq_altar_dithmenos temple_overflow_1
+TAGS: decor transparent
+COLOUR: x = magenta, m = lightmagenta
+TILE: m = dngn_transparent_wall_darkgray
+TILE: x = wall_brick_darkgray
+KFEAT: _ = altar_dithmenos
+: vault.run("interest.apply")
+MAP
+  ..xxx
+ .....xx
+...mm..xx
+..mm....x
+@.m._...x
+..mm....x
+...mm..xx
+ .....xx
+  ..xxx
+ENDMAP
+
+### Elyvilon overflow altars ##################################################

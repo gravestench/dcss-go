@@ -1,0 +1,30 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    xom_redecorated
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_1 temple_overflow_xom uniq_altar_xom decor
+SUBST:   c = ccbbbv
+NSUBST:  . = 2=^ / .
+SUBST:   . = lWwtm_~......
+NSUBST:  ^ = 3=^ / .
+KFEAT:   _ = altar_xom
+KFEAT:   ^ = teleport trap
+# source: :  if you.depth() == dgn.br_depth(you.branch()) then
+KFEAT:  ~ = teleport trap / alarm trap / dispersal trap
+# source: :  else
+KFEAT:  ~ = shaft trap / teleport trap / alarm trap / dispersal trap
+# source: :  end
+: vault.run("interest.apply")
+MAP
+      @
+   cccTccc
+  cc.....cc
+ cc.......cc
+ c.........c
+@T...._....T@
+ c.........c
+ cc.......cc
+  cc.....cc
+   cccTccc
+      @
+ENDMAP

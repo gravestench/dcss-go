@@ -1,0 +1,9 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  lemuel_crystal_altar
+DEPTH: D:3-, Depths
+TAGS:  transparent allow_dup decor temple_overflow_generic_1
+MAP
+b@b
+@B@
+b@b
+ENDMAP

@@ -1,0 +1,26 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   zin_purify
+DEPTH: D:3-, Depths
+TAGS:   no_item_gen no_monster_gen temple_overflow_1 temple_overflow_zin
+TAGS:   transparent uniq_altar_zin
+KFEAT:  _ = altar_zin
+KFEAT:  v = general shop name:Zin type:Purification suffix:Station count:1 \
+        greed:30 ; \
+        potion of curing
+COLOUR: c = white
+COLOUR: ' = white
+TILE:   c = wall_church
+FTILE:  Td'_ = floor_limestone
+SUBST:  ' = .
+: vault.run("interest.apply")
+MAP
+ .....
+..ccc..
+.ccTcc.
+..c_c..
+ .....
+...'...
+..'v'..
+ ..'..
+  ...
+ENDMAP

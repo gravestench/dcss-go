@@ -1,0 +1,31 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    demons_altar
+DEPTH:   D, Orc, !Orc:$
+TAGS:    no_monster_gen patrolling temple_overflow_1 temple_overflow_makhleb
+TAGS:    transparent layout_rooms layout_city layout_open uniq_altar_makhleb
+KFEAT:   _ = altar_makhleb
+# Either one type 3 or 4 demon (rust devil or smoke demon) or
+# three slow type 5 demons (iron imp).
+# The higher demons can only come up in D:9-11.
+# source: : if you.absdepth() > 9 then
+SHUFFLE: 123
+NSUBST:  1 = 1:1 / *:.
+NSUBST:  2 = 1:2 / *:.
+# source: : end
+MONS:    rust devil, smoke demon, iron imp
+MAP
+xxxxxxxxxxxxxxx
+x.............x
+x.ll.......ll.x
+x.ll..3_3..ll.x
+x.ll...3...ll.x
+x..ll.....ll..x
+x...lll.lll...x
+x....llGll....x
+x......l......x
+x.............x
+x.............x
+x.............x
+x.............x
+ENDMAP

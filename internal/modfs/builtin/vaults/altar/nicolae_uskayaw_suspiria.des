@@ -1,0 +1,28 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    nicolae_uskayaw_suspiria
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_uskayaw temple_overflow_1 transparent decor
+TAGS:    uniq_altar_uskayaw
+SHUFFLE: Aa, Bb
+SUBST:   D : l, E : ...l, F : l, H : .l, J : ...l, K : ...l, L : ...l
+SUBST:   M : ...l, N : .lll, O : ...l, P : ...l, Q : ...l
+KPROP:   l = no_cloud_gen
+KFEAT: _ = altar_uskayaw
+: vault.run("interest.apply")
+MAP
+xxxxxxlll..O..ll
+x.FllH.L..ll.JNl
+x.....M.ll..P.K.
+x_.lll.Q...E.D.@
+x.....M.ll..P.K.
+x.FllH.L..ll.JNl
+xxxxxxlll..O..ll
+ENDMAP
+
+
+### Vehumet overflow altars ###################################################
+
+# Rather than put the flame cloud on the altar, flames now surround the
+# altar, and the maximum delay between flames has gone away. Thus, standing
+# on the altar properly is safe, and a cautious player can time their entrance
+# to take no damage.

@@ -1,0 +1,23 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   lemuel_zombie_altar_kikubaaqudgha
+DEPTH: D:3-, Depths
+TAGS:   no_pool_fixup no_monster_gen no_trap_gen transparent
+TAGS:   temple_overflow_1 temple_overflow_kikubaaqudgha
+TAGS:   uniq_altar_kikubaaqudgha uniq_zombie_altar
+KFEAT:  _ = altar_kikubaaqudgha
+# source: : if you.in_branch("Depths") then
+MONS:   zombie w:20 / nothing w:90
+# source: :else
+MONS:   rat zombie / bat zombie / nothing w:90
+# source: :end
+: vault.run("interest.apply")
+MAP
+xxxxxxxxxxxxxxxx
+xxxxwwwwwwwwxxxx
+xxxx11111111xxxx
+@............._x
+xxxx11111111xxxx
+xxxxwwwwwwwwxxxx
+xxxxxxxxxxxxxxxx
+ENDMAP

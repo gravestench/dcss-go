@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   zin_treasury
+DEPTH: D:3-, Depths
+TAGS:   no_item_gen no_monster_gen temple_overflow_1 temple_overflow_zin
+TAGS:   uniq_altar_zin
+KFEAT:  _ = altar_zin
+KFEAT:  m = iron_grate
+KPROP:  $ = no_tele_into
+COLOUR: c = white
+TILE:   c = wall_church
+FTILE:  _.m+$ = floor_limestone
+: vault.run("interest.apply")
+MAP
+  xxxxxxx
+  xcccccx
+ xxc$$$cxx
+xxcc$$$ccxx
+xccmm$mmccx
+xcc.mmm.ccx
+xcc.._..ccx
+xxc.....cxx
+ xccc+cccx
+     @
+ENDMAP

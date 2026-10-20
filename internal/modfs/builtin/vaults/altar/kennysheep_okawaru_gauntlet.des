@@ -1,0 +1,28 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   kennysheep_okawaru_gauntlet
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_1 temple_overflow_okawaru uniq_altar_okawaru
+TAGS:   no_pool_fixup transparent
+KFEAT:  _ = altar_okawaru
+# source: : if you.in_branch("Depths") then
+KMONS:  1 = spriggan defender ; demon trident . robe . boomerang
+# source: :else
+KMONS:  1 = goblin ; spear
+# source: :end
+KPROP:  1 = no_tele_into
+KMASK:  1 = opaque
+: vault.run("interest.apply")
+MAP
+      vvvvvvv
+ .....w1w...v
+......www.G.v
+@........G_Gv
+......www.G.v
+ .....w1w...v
+      vvvvvvv
+ENDMAP
+
+### Qazlal overflow altars ####################################################
+
+# There's always a safe path to the altar.

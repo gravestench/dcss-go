@@ -1,0 +1,32 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   evilmike_ruin_ashenzari
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_ashenzari temple_overflow_1 temple_overflow_ashenzari
+TAGS:   transparent decor
+SUBST:  x = xxxxx-, - = ----.
+TILE:   x = WALL_BRICK_VINES
+FTILE:  -V_ = FLOOR_SANDSTONE
+KFEAT:  _ = altar_ashenzari
+SUBST:  - = .
+: vault.run("interest.apply")
+MAP
+      .......
+      .xx+xx.
+     ..x---x..
+   ....x---x....
+   .xxxx---xxxx.
+  ..xV-xx+xx-Vx..
+....x---------x....
+.xxxxx-------xxxxx.
+.x---x-------x---x.
+.x---+---_---+---x.
+.x---x-------x---x.
+.xxxxx-------xxxxx.
+....x---------x....
+  ..xV-xx+xx-Vx..
+   .xxxx---xxxx.
+   ....x---x....
+     ..x---x..
+      .xxxxx.
+      .......
+ENDMAP

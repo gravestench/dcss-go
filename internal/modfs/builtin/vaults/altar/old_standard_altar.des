@@ -1,0 +1,18 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    old_standard_altar
+DEPTH: D:3-, Depths
+TAGS:    transparent allow_dup decor temple_overflow_generic_1
+SHUFFLE: cvxxxx
+MAP
+...........
+.xxxx.xxxx.
+.xx.....xx.
+.x.......x.
+.x.......x.
+.....B.....
+.x.......x.
+.x.......x.
+.xx.....xx.
+.xxxx.xxxx.
+...........
+ENDMAP

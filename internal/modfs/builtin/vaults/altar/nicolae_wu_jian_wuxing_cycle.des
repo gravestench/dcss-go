@@ -1,0 +1,28 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    nicolae_wu_jian_wuxing_cycle
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_wu_jian temple_overflow_1 transparent \
+         no_pool_fixup decor uniq_altar_wu_jian
+SHUFFLE: tlcvw/lcvwt/cvwtl/vwtlc/wtlcv/tcwlv/cwlvt/wlvtc/lvtcw/vtwcl
+NSUBST:  Q = 4=@ / x
+KFEAT:   _ = altar_wu_jian
+: vault.run("interest.apply")
+MAP
+     xxQxx
+   xx.....xx
+  Q.........Q
+ x......ll...x
+ x..tt..ll...x
+x...tt........x
+x.............x
+Q......_..cc..Q
+x..ww.....cc..x
+x..ww.........x
+ x.....vv....x
+ x.....vv....x
+  Q.........Q
+   xx.....xx
+     xxQxx
+ENDMAP
+
+### Xom overflow altars #######################################################

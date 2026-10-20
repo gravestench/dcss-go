@@ -1,0 +1,37 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   grunt_temple_overflow_holy_war
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_2 temple_overflow_the_shining_one
+TAGS:   temple_overflow_yredelemnul transparent
+MONS:   angel, profane servitor
+FTILE:  A+_Kn1 = floor_limestone
+FTILE:  B-;LN2 = floor_crypt
+TILE:   c = wall_church
+TILE:   C = wall_catacombs
+KFEAT:  A = altar_the_shining_one
+KFEAT:  B = altar_yredelemnul
+KFEAT:  C = stone_wall
+KFEAT:  KL = floor
+KFEAT:  - = closed_door
+KFEAT:  N = clear_stone_wall
+KPROP:  12 = no_tele_into
+KMASK:  12 = opaque
+COLOUR: c = white
+COLOUR: C = magenta
+MARKER: K = lua:fog_machine {cloud_type = "blessed fire", \
+                             pow_min = 10, pow_max = 10, delay = 10, \
+                             size = 1, walk_dist = 0, spread_rate = 0, \
+                             excl_rad = 0 }
+MARKER: L = lua:fog_machine {cloud_type = "foul pestilence", \
+                             pow_min = 10, pow_max = 10, delay = 10, \
+                             size = 1, walk_dist = 0, spread_rate = 0, \
+                             excl_rad = 0 }
+MAP
+xxxxxxxxxxxx@xxxxxxxxxxxx
+xcccccccccc...CCCCCCCCCCx
+xcnnK_K_K_c...C;L;L;LNNCx
+xc1n_A____+...-;;;;B;N2Cx
+xcnnK_K_K_c...C;L;L;LNNCx
+xcccccccccc...CCCCCCCCCCx
+xxxxxxxxxxxx@xxxxxxxxxxxx
+ENDMAP

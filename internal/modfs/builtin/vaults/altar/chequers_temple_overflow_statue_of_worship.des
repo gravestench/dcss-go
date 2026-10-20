@@ -1,0 +1,25 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   chequers_temple_overflow_statue_of_worship
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_generic_2 temple_overflow_generic_3
+TAGS:   temple_overflow_generic_4 transparent
+# source: {{
+# source:   local altarcount = get_overflow_altar_count(_G)
+# source:   if altarcount == nil then
+# source:     altarcount = "2"
+# source:   end
+# source:   if altarcount == "2" then
+# source:     subst("C = .")
+# source:   else
+# source:     subst("C = B")
+# source:   end
+# source:   nsubst("B = " .. altarcount .. ":B / *:.")
+# source: }}
+MAP
+.....
+..C..
+.BGB.
+..C..
+.....
+ENDMAP

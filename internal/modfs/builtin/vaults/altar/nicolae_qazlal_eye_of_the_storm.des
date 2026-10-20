@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  nicolae_qazlal_eye_of_the_storm
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_qazlal temple_overflow_1 uniq_altar_qazlal
+TAGS:  no_trap_gen no_item_gen no_monster_gen decor
+KPROP: 'd = no_tele_into
+KMONS: d = diamond obelisk
+KFEAT: _ = altar_qazlal
+: vault.run("interest.apply")
+MAP
+ ccccccccccccc
+ c'''''''''''c
+ c'''''''''''c
+ c'''''''''''c
+ c'''''''''''c
+@nnnnnn''''''c
+@...._nd'''''c
+@nnnnnn''''''c
+ c'''''''''''c
+ c'''''''''''c
+ c'''''''''''c
+ c'''''''''''c
+ ccccccccccccc
+ENDMAP

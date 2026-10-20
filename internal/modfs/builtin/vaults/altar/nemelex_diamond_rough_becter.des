@@ -1,0 +1,26 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   nemelex_diamond_rough_becter
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_1 temple_overflow_nemelex_xobeh transparent decor
+TAGS:   uniq_altar_nemelex_xobeh
+KFEAT:  _ = altar_nemelex_xobeh
+COLOUR: x = lightred
+COLOUR: 'b = silver
+TILE:   x = wall_pebble_red
+TILE:   b = dngn_crystal_white
+: vault.run("interest.apply")
+# source: : set_feature_name("crystal_wall", "wall of white crystal")
+MAP
+    ...
+   ..x..
+  ..xxx..
+ ..xxbxx..
+..xxb'bxx..
+.xxb'_'bxx.
+..xxb'bxx..
+ ..x+b+x..
+  ..xxx..
+   ..x..
+    ...
+ENDMAP

@@ -1,0 +1,22 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   grunt_temple_overflow_cloverleaf
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_generic_4 transparent
+SUBST:  T : T U:1 V:1
+MAP
+ ccccc.@.ccccc
+cc...cc.cc...cc
+c.G.G.c.c.G.G.c
+c..B..c.c..B..c
+c.G...c.c...G.c
+cc...+c.c+...cc
+.ccccc...ccccc.
+@......T......@
+.ccccc...ccccc.
+cc...+c.c+...cc
+c.G...c.c...G.c
+c..B..c.c..B..c
+c.G.G.c.c.G.G.c
+cc...cc.cc...cc
+ ccccc.@.ccccc
+ENDMAP

@@ -1,0 +1,31 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   grunt_temple_overflow_bloody_war
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_2 temple_overflow_okawaru temple_overflow_trog
+TAGS:   patrolling transparent
+WEIGHT: 5
+KFEAT:  A = altar_okawaru
+KFEAT:  B = altar_trog
+KPROP:  . = bloody / nothing
+# source: : if you.absdepth() < 8 then
+MONS:   gnoll ; club | spear | nothing . potion of berserk rage / \
+        orc ; club | hand axe | short sword . \
+              leather armour | nothing . potion of berserk rage
+# source: : else
+MONS:   orc warrior ; club | hand axe | short sword . \
+                      leather armour | ring mail . \
+                      potion of berserk rage
+# source: : end
+MAP
+xxxxxxx
+xxxxxxx
+xxA.Bxx
+xx.1.xx
+xx...xx
+xx...xx
+xx...xx
+xx...xx
+xxx+xxx
+  .@<
+ENDMAP

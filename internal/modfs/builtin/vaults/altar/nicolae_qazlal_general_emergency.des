@@ -1,0 +1,28 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    nicolae_qazlal_general_emergency
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_qazlal temple_overflow_1 uniq_altar_qazlal
+TAGS:    no_monster_gen no_pool_fixup transparent decor
+SHUFFLE: xXY / xXY / xXY / abc
+SHUFFLE: XY
+SUBST:   z = w.., X = +++w., Y = xxxxw., x = wxxx, a = w, b = w, c = w
+SHUFFLE: ABCD
+SUBST:   A = >, C = 'GTU, D = '
+KFEAT:   B = altar_qazlal
+KMASK:   B>'GTU = opaque
+SHUFFLE: wll
+: vault.run("interest.apply")
+MAP
+...........z.
+.z...z.zzz...
+..zz.z.wwwz..
+..wxXYYxwwz..
+.zwwwwwwxwz..
+zwwxwABwxz...
+zwwxwCDwx..z.
+.zzxwwwwx.z..
+...xxxwxxwz..
+.z...zwwwz...
+...z..zzz....
+...........z.
+ENDMAP

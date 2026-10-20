@@ -1,0 +1,23 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   grunt_temple_overflow_forces_of_nature
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_2 temple_overflow_fedhas temple_overflow_qazlal
+TAGS:   transparent
+MONS:   fungus / plant / bush
+SUBST:  2 = 1.
+KFEAT:  _ = altar_fedhas
+KFEAT:  O = altar_qazlal
+KPROP:  12Ll = no_tele_into
+SUBST:  L = ll^.
+SUBST:  l = cll.
+# source: : if you.depth() ~= dgn.br_depth(you.branch()) then
+KFEAT:  ^ = shaft trap
+# source: : end
+MAP
+ 222.@.LLL
+21112.LlllL
+21_.....OlL
+21112.LlllL
+ 222.@.LLL
+ENDMAP

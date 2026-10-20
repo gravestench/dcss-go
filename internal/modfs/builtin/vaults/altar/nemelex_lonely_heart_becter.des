@@ -1,0 +1,28 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   nemelex_lonely_heart_becter
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_nemelex_xobeh transparent decor
+TAGS:   temple_overflow_1 temple_overflow_nemelex
+TAGS:   no_rotate no_vmirror no_monster_gen no_item_gen
+# source: : if you.in_branch("Depths") then
+MONS:   nothing w:4 / boris w:1
+# source: :else
+MONS:   nothing w:4 / jessica w:1
+# source: :end
+KFEAT:  _ = altar_nemelex_xobeh
+COLOUR: x = lightred
+TILE:   x = wall_pebble_red
+: vault.run("interest.apply")
+MAP
+  .... ....
+ ..xx...xx..
+..xxxx.xxxx..
+.xx..x+x..xx.
+.xx.......xx.
+..xx.._..xx..
+ ..xx.1.xx..
+  ..xx.xx..
+   ..xxx..
+    .....
+ENDMAP

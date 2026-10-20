@@ -1,0 +1,34 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nicolae_hepliaklqana_ecumenical_no_more
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_hepliaklqana temple_overflow_1 transparent decor
+TAGS:   uniq_altar_hepliaklqana
+WEIGHT: 5
+KMONS:  WD = plant / nothing
+NSUBST: E = - / E, H = _ / - / E, E = E / . / EEE-.., P = 4=W / WDD / D
+SUBST:  ' = '''., c = ccx
+KFEAT:  WS = W
+KFEAT:  _ = altar_hepliaklqana
+KFEAT:  - = altar_ecumenical
+FTILE:  WVD = floor_mud
+COLOUR: D = darkgrey
+FTILE:  ' = floor_w_marble
+COLOUR: ' = white
+FTILE:  _-E = floor_limestone
+COLOUR: E = yellow
+: vault.run("interest.apply")
+MAP
+xxxxx.@.xxxxx
+xxccxx+xxccxx
+xccc''.''cccx
+xcc''E'E''ccx
+xc'''''''''cx
+xc'E'PPP'E'cx
+xc'''PVP'''cx
+xc'H'PPP'H'cx
+xc'''''''''cx
+xcc''H'H''ccx
+xccc'''''cccx
+xxcccccccccxx
+xxxxxxxxxxxxx
+ENDMAP

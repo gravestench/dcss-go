@@ -1,0 +1,26 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nicolae_wu_jian_immortal_techniques
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_wu_jian temple_overflow_1 decor transparent
+TAGS:   uniq_altar_wu_jian
+KFEAT:  _ = altar_wu_jian
+KFEAT:  DE = .
+FTILE:  D = floor_pebble_lightgreen
+FTILE:  E = floor_pebble_lightred
+COLOUR: D = green
+COLOUR: E = red
+: vault.run("interest.apply")
+MAP
+cc+cccccc
+c.D.c.EEc
+c.E...DGc
+c.G.c.EEc
+ccnccc.cc
+c...c...c
+c._..EGDc
+c...c...c
+ccccccccc
+ENDMAP
+
+# The five elements, or five phases, Wood, Fire, Earth, Metal, Water,
+# in a cycle of either mutual generation or mutual overcoming.

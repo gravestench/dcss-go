@@ -1,0 +1,26 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    brannock_xom_greatest_gift
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_1 temple_overflow_xom uniq_altar_xom transparent
+WEIGHT:  2
+KFEAT:   _ = altar_xom
+MARKER:  _ = lua:portal_desc {gift="altar"}
+# source: {{
+# source:     dgn.persist.xom_gg_granted = false
+# source:
+# source:     local los_marker = TriggerableFunction:new {
+# source:       func="callback.xom_greatest_gift",
+# source:       repeated=true
+# source:     }
+# source:     los_marker:add_triggerer(DgnTriggerer:new {
+# source:       type="player_los"})
+# source:
+# source:     lua_marker('_', los_marker)
+# source: }}
+: vault.run("interest.apply")
+MAP
+...
+._.
+...
+ENDMAP

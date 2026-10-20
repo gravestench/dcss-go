@@ -1,0 +1,15 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    gammafunk_temple_overflow_wave
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_generic_2 transparent
+SUBST:   p = G:20 c:20 1 w:5 l:5
+MONS:    plant / bush
+KMASK:   Twl = no_monster_gen
+MAP
+   ccccc
+ cccpcc
+ccTB.+@
+ccTB.+@
+ cccpcc
+   ccccc
+ENDMAP

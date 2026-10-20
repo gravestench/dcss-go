@@ -1,0 +1,67 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    nzn_overflow_gifts_of_might_and_magic
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_2 temple_overflow_trog temple_overflow_sif_muna
+TAGS:    no_item_gen no_monster_gen patrolling transparent
+SHUFFLE: D1-/E2'
+COLOUR:  1- = red
+COLOUR:  2' = blue
+KFEAT:   D = altar_trog
+KFEAT:   E = altar_sif_muna
+# source: : local egos = {["antimagic"] = 1, ["vorpal"] = 2, ["flaming"] = 2}
+# source: : if you.absdepth() <= 3 then
+# source: {{
+# source: local enchant = 2 + (crawl.one_chance_in(3) and 1 or 0)
+# source: local weapons = {["spear"] = 1, ["hand axe"] = 1, ["mace"] = 1,
+# source:                  ["falchion"] = 1}
+# source: kitem("1 = " .. dgn.random_item_def(weapons, nil, "ego:none plus:" .. enchant))
+# source: }}
+KMONS:   1 = gnoll ; animal skin / w:2 Terence
+KMONS:   2 = white imp / w:2 Jessica
+KITEM:   2 = randbook owner:Sif_Muna numspells:1 slevels:1
+# source: : elseif you.absdepth() <= 7 then
+# source: :     if crawl.one_chance_in(5) then
+KMONS:   1 = duvessa
+KMONS:   2 = dowan
+# source: :     else
+KMONS:   1 = orc warrior
+KMONS:   2 = orc wizard
+# source: :     end
+# source: {{
+# source: local weapons = {["trident"] = 1, ["war axe"] = 1, ["flail"] = 1,
+# source:                  ["long sword"] = 1}
+# source: kitem("1 = " .. dgn.random_item_def(weapons, egos, "plus:0"))
+# source: }}
+KITEM:   2 = randbook owner:Sif_Muna numspells:2 slevels:2
+# source: : else
+KMONS:   1 = troll
+KMONS:   2 = ynoxinul
+# source: {{
+# source: local weapons = {["trident"] = 1, ["war axe"] = 1, ["morningstar"] = 1,
+# source:                  ["scimitar"] = 1}
+# source: kitem("1 = " .. dgn.random_item_def(weapons, egos, "plus:0"))
+# source: }}
+KITEM:   2 = randbook owner:Sif_Muna numspells:3 slevels:4
+# source: : end
+MAP
+     xx@@@x
+    xx...xx
+   xx...xxxxx
+  xx...xx-D-x
+ xx...xxx-1-x
+xx...xAx...xx
+x'2'xxx...xx
+x'E'xx...xx
+xxxxx...xx
+  xx...xx
+  x@@@xx
+ENDMAP
+
+### Variable overflow altars ##################################################
+
+# To make an overflow temple for N altars, give it the tag
+# "temple_overflow_generic_N".
+
+# The boring standard.
+# B places the altar to a guaranteed god.

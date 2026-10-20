@@ -1,0 +1,16 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    nicolae_overflow_two_pavilions
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_generic_2 no_pool_fixup transparent
+SHUFFLE: DEFH
+SUBST:   DE : wl, FH : wl
+KPROP:   l = no_cloud_gen
+MAP
+DDDDDDD@FFFFFFF
+DcccccD.FcccccF
+DcEEEcD.FcHHHcF
+DcEB.......BHcF
+DcEEEcD.FcHHHcF
+DcccccD.FcccccF
+DDDDDDD@FFFFFFF
+ENDMAP

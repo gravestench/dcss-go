@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   fedhas_altar_4
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas transparent
+TAGS:   decor
+KFEAT:  C = altar_fedhas
+FTILE:  . = floor_moss
+FTILE:  t = floor_moss
+: vault.run("interest.apply")
+MAP
+xxxxxxxxxxxxxxx
+xxxtttttttxxxxx
+xxtttttttttxxxx
+xtttt.ttttttxxx
+xtttt.C.ttttttt
+xxtttt...ttttt.
+xxtttttt......@
+xxxxttttttttt..
+xxxxxxttttttttx
+xxxxxxxtttttttx
+xxxxxxxxxxxxxxx
+ENDMAP
+
+# The oklob plant may be abusable (if so, remove it).

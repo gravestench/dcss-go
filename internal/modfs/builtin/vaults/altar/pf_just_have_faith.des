@@ -1,0 +1,23 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  pf_just_have_faith
+DEPTH: D:3-, Depths
+WEIGHT: 1
+TAGS: no_monster_gen temple_overflow_generic_1
+KMASK: $ = no_trap_gen
+KFEAT: m = lava mimic
+# We use a statue mimic to stop autoexplore before the player reaches the lava.
+KFEAT: G = granite_statue mimic
+# The gold pulls an unspoiled player next to the mimics.
+KITEM: $ = gold q:3
+MAP
+xxxxx
+xl.lx
+x.B.x
+x.$.x
+xlmlx
+xl$lx
+xlmlx
+x.$.x
+x.G.x
+..@..
+ENDMAP

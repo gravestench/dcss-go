@@ -1,0 +1,42 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   tgw_xom
+DEPTH: D:3-, Depths
+TAGS:   no_item_gen no_monster_gen temple_overflow_1 temple_overflow_xom
+TAGS:   uniq_altar_xom no_tele_into
+KFEAT:  _ = altar_xom
+MONS:   place:D:1
+MONS:   orc ; club ego:chaos | dagger ego:chaos | spear ego:chaos
+MONS:   gnoll ; club ego:chaos | dagger ego:chaos | spear ego:chaos
+MONS:   boggart ; flail ego:chaos | long sword ego:chaos | trident ego:chaos
+MONS:   rakshasa ; flail ego:chaos | long sword ego:chaos | trident ego:chaos
+# source: :  if you.depth() == dgn.br_depth(you.branch()) then
+KFEAT:  ~ = teleport trap w:20 / alarm trap w:3 / dispersal trap
+# source: :  else
+KFEAT:  ~ = shaft trap / teleport trap / alarm trap w:3 / dispersal trap
+# source: :  end
+# Previously on raw average 5.17 M glyphs.
+NSUBST: ' = _ / .
+NSUBST: . = 8=M / * = .:220 W:60 w:50 x:80 n:80 v b l % T U ~
+NSUBST: % = *% / %
+SUBST:  M : .111123M
+NSUBST: 1 = 0 / 1 / 01., 2 = 2 / 2=2. / 2...
+NSUBST: 3 = 3 / 2=3. / 3..., M = 1 / 123.
+# source: :  if you.in_branch("Depths") then
+SUBST:  2 = 4, 3 = 5
+# source: :  end
+COLOUR: . = random
+MAP
+   xxxxxx@xxxxxx
+  xx...........xx
+ xx.............xx
+xx...............xx
+x.................x
+x.................x
+x'...............'x
+x'...............'x
+xx'.............'xx
+ xx'''''''''''''xx
+  xx'''''''''''xx
+   xxxxxxxxxxxxx
+ENDMAP

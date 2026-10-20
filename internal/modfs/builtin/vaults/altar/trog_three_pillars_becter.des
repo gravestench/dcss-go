@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   trog_three_pillars_becter
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_1 temple_overflow_trog transparent decor
+TAGS:   uniq_altar_trog
+KFEAT:  _ = altar_trog
+SUBST:  y = x..
+SUBST:  z = xx.
+: vault.run("interest.apply")
+MAP
+ ..........
+.......yy..
+..yy..zxxy.
+.yxxz.xbxy.
+.yxb...xxy.
+.yxx._.....
+.......xy..
+.....zbxy..
+   ..yxxy..
+   ...yy...
+    ......
+ENDMAP
+
+### Uskayaw overflow altars ###################################################

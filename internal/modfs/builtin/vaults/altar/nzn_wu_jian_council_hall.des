@@ -1,0 +1,18 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nzn_wu_jian_council_hall
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_1 temple_overflow_wu_jian no_monster_gen no_item_gen
+TAGS:   transparent decor uniq_altar_wu_jian
+KFEAT:  _ = altar_wu_jian
+: vault.run("interest.apply")
+MAP
+    x@x
+  xxx.xxx
+ xxG...Gxx
+xx.......xx
+xG..._...Gx
+xx.......xx
+ xxG...Gxx
+  xxxGxxx
+    xxx
+ENDMAP

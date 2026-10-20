@@ -1,0 +1,23 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nzn_hepliaklqana_mist_gate
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_1 temple_overflow_hepliaklqana no_monster_gen
+TAGS:   transparent decor uniq_altar_hepliaklqana
+KFEAT:  _ = altar_hepliaklqana
+MARKER: A = lua:fog_machine { cloud_type = "grey smoke", pow_min = 20, \
+                              pow_max = 40, delay = 10, size = 1, \
+                              spread_rate = -1 }
+: vault.run("interest.apply")
+MAP
+xxxxx
+x...x
+x._.x
+x...x
+xx.xx
+ xAx
+ x.x
+  @
+ENDMAP
+
+# A long-forgotten ecumenical temple. Only Hepliaklqana clearly remains,
+# although a few forgotten altars are still around.

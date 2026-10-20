@@ -1,0 +1,22 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:     general_overflow_altar
+DEPTH: D:3-, Depths
+WEIGHT:   10
+TAGS:     no_monster_gen no_pool_fixup temple_overflow_generic_1
+SHUFFLE:  xXY / xXY / xXY / abc
+SHUFFLE:  XY
+SUBST:    X=+, Y=x, a=w, b=w, c=w
+SHUFFLE:  ABCD
+SUBST:    A=>, C='GTU, D='
+SHUFFLE:  wll
+KMASK:    . = !opaque
+MAP
+........
+.xXYYxx.
+.xwwwwx.
+.xwABwx.
+.xwCDwx.
+.xwwwwx.
+.xxxxxx.
+........
+ENDMAP

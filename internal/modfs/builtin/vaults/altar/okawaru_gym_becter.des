@@ -1,0 +1,18 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   okawaru_gym_becter
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_okawaru temple_overflow_1 temple_overflow_okawaru
+TAGS:   transparent decor
+KFEAT:  _ = altar_okawaru
+: vault.run("interest.apply")
+MAP
+   .....
+ .........
+ .vv...vv.
+..v.....v..
+....._.....
+..v.....v..
+ .vv...vv.
+ .........
+   .....
+ENDMAP

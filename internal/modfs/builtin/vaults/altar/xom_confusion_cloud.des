@@ -1,0 +1,23 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    xom_confusion_cloud
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_1 temple_overflow_xom uniq_altar_xom transparent
+KFEAT:   _ = altar_xom
+MARKER:  _ = lua:fog_machine { cloud_type = "noxious fumes", \
+               pow_min = 6, pow_max = 8, delay_min = 35, delay_max = 55, \
+               size = 3, walk_dist = 0, spread_rate= 0 }
+SUBST:   . = 1.
+SHUFFLE: wW/l.
+MONS:    random
+MAP
+  wwwww
+ ww...ww
+ w.....w
+@W.._..w
+ w.....w
+ ww...ww
+  wwwww
+ENDMAP
+
+# not guaranteed to be fully navigable, so not transparent. It would be better
+# for avoiding vetoes if this guaranteed a path somehow...

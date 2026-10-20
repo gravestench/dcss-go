@@ -1,0 +1,18 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    lemuel_doored_altar
+DEPTH: D:3-, Depths
+TAGS:    transparent decor temple_overflow_generic_1
+SHUFFLE: XY
+SUBST:   X = .
+SUBST:   Y = +
+MAP
+.........
+.xxxmxxx.
+.xxxmxxx.
+.xxxmxxx.
+.X.YBY.X.
+.xxxYxxx.
+.xxx.xxx.
+.xxxXxxx.
+.........
+ENDMAP

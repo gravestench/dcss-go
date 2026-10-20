@@ -1,0 +1,27 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   hangedman_ru_absence
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_ru temple_overflow_1 uniq_altar_ru transparent decor
+TAGS:   no_pool_fixup
+WEIGHT: 5
+KFEAT:  _ = altar_ru
+SUBST:  X : x., x : cxx, b: cbxx, + : W+++, m : mmw
+KMASK:  wW = no_monster_gen
+: vault.run("interest.apply")
+MAP
+......xxxxx......
+..x...........x..
+xxxxxx.....xxxxxx
+..x..x.....x..x..
+..x..x.XxX.x..x..
+.....+..b..+.....
+....xxbbbbbxx....
+.....+..b_.+.....
+..x..x.XxX.m..m..
+..x..x.....m..m..
+xxxxxx.....mmmmmm
+..x...........m..
+......xxxxx......
+ENDMAP
+
+### Sif Muna overflow altars ##################################################

@@ -56,6 +56,27 @@ func TestLayoutMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/layout_mod_test.lua")
 }
 
+// Overflow altar maps are discovered from layered source-format DES files.
+func TestOverflowAltarMod(t *testing.T) {
+	base, err := modfs.Load("testdata/lua")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	modded, err := modfs.Load("testdata/lua", "testdata/overflow-altar-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if base.Hash() == modded.Hash() || modded.Vanilla() {
+		t.Fatal("overflow altar overlay did not change ruleset identity")
+	}
+
+	runLuaRule(t, modded, "tests/overflow_altar_mod_test.lua")
+}
+
 func TestVaultDuplicateAlias(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/vault-duplicate-alias")
 

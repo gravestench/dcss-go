@@ -1,0 +1,18 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   fiery_altar_vehumet
+DEPTH: D:3-, Depths
+WEIGHT: 8
+TAGS:   temple_overflow_1 temple_overflow_vehumet transparent decor
+TAGS:   uniq_altar_vehumet
+MARKER: : = lua:fog_machine { cloud_type = "flame", \
+               pow_min = 6, pow_max = 8, delay_min = 55, delay_max = 75, \
+               size = 2, walk_dist = 0, spread_rate= 0 }
+KFEAT:  _ = altar_vehumet
+: vault.run("interest.apply")
+MAP
+.....
+.:.:.
+.._..
+.:.:.
+.....
+ENDMAP

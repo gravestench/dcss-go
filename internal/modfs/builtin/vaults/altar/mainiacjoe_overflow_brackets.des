@@ -1,0 +1,22 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   mainiacjoe_overflow_brackets
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_generic_1 transparent
+SUBST:  c : cnvbt
+NSUBST: w = 1:. / *:w
+SUBST:  w : wl
+KMASK:  lw = no_monster_gen
+KMASK:  w = no_pool_fixup
+MAP
+...........
+.wwwwwwwww.
+.w.......w.
+.w.ccccc.w.
+.w.c.....w.
+.w.c.B.c.w.
+.w.....c.w.
+.w.ccccc.w.
+.w.......w.
+.wwwwwwwww.
+...........
+ENDMAP

@@ -1,0 +1,15 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   fedhas_altar_1
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas
+TAGS:   transparent decor
+KFEAT:  C = altar_fedhas
+MONS:   plant
+: vault.run("interest.apply")
+MAP
+.....
+.1.1.
+..C..
+.1.1.
+.....
+ENDMAP

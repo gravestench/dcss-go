@@ -1,0 +1,28 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME: nicolae_tso_swordbearing_angel
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_the_shining_one uniq_altar_the_shining_one
+TAGS: temple_overflow_1 decor transparent
+COLOUR: . = yellow
+COLOUR: c = white
+FTILE: @._+ = floor_limestone
+TILE: c = wall_church
+KFEAT: _ = altar_the_shining_one
+: vault.run("interest.apply")
+MAP
+     xxxxx
+    xxcccxx
+    xcc.ccx
+xxxxxc._.cxxxxx
+xcccccc.ccccccx
+xc...........cx
+xcc....v....ccx
+xxcc..vvv..ccxx
+ xxcc..v..ccxx
+  xxcc.v.ccxx
+   xxc.v.cxx
+    xc.v.cx
+    xc.v.cx
+    xc...cx
+    xcc+ccx
+ENDMAP

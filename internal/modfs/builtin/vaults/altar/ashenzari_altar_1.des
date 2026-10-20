@@ -1,0 +1,14 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   ashenzari_altar_1
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_ashenzari temple_overflow_1 temple_overflow_ashenzari
+TAGS:   transparent decor
+KFEAT:  _ = altar_ashenzari
+: vault.run("interest.apply")
+MAP
+b@b
+@_@
+b@b
+ENDMAP
+
+# A ruined temple

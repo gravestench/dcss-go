@@ -1,0 +1,22 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   led_sif_book
+DEPTH:  D, Orc
+TAGS:   no_item_gen no_pool_fixup no_monster_gen
+TAGS:   temple_overflow_1 temple_overflow_sif_muna uniq_altar_sif_muna
+KPROP:  1d = no_tele_into
+KFEAT:  _ = altar_sif_muna
+KFEAT:  d = escape_hatch_down
+KITEM:  d = randbook owner:Sif_Muna numspells:1 slevels:1
+MONS:   orc wizard
+COLOUR: .@+1 = blue
+FTILE:  .@+1G_ = floor_marble
+: vault.run("interest.apply")
+MAP
+xxxxxxxxx
+xbbbbx..xx
+x1w..xG..x
+xdw..+._.@
+x1w..xG..x
+xbbbbx..xx
+xxxxxxxxx
+ENDMAP

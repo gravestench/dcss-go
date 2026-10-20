@@ -1,0 +1,21 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    nicolae_uskayaw_dance_hall
+DEPTH: D:3-, Depths
+# Either a square dance or a round dance depending on how the shuffle goes.
+TAGS:    temple_overflow_uskayaw temple_overflow_1 transparent decor
+TAGS:    uniq_altar_uskayaw
+SHUFFLE: Gg
+SUBST:   g : ., b : bvcmn
+KFEAT: _ = altar_uskayaw
+: vault.run("interest.apply")
+MAP
+xxxx.........
+x......GgG...
+x.b...g...g..
+x....G.....G.
+ ._..g.....g.
+x....G.....G.
+x.b...g...g..
+x......GgG...
+xxxx.........
+ENDMAP

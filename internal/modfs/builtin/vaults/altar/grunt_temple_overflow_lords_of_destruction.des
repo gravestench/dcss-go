@@ -1,0 +1,16 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  grunt_temple_overflow_lords_of_destruction
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_2 temple_overflow_makhleb temple_overflow_vehumet
+TAGS:  transparent
+KFEAT: A = altar_makhleb
+KFEAT: B = altar_vehumet
+MONS:  crimson imp ; wand of flame charges:1
+MAP
+ xxxxx
+xxA.Bxx
+x..1..x
+xx...xx
+ xx.xx
+  x+x
+ENDMAP

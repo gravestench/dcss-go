@@ -1,0 +1,32 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    tso_metal_star
+DEPTH: D:3-, Depths
+TAGS:    no_monster_gen no_trap_gen no_pool_fixup no_item_gen decor
+TAGS:    temple_overflow_1 temple_overflow_the_shining_one transparent
+TAGS:    uniq_altar_the_shining_one
+KFEAT:   _ = altar_the_shining_one
+SUBST:   ! : vmmTG..
+: vault.run("interest.apply")
+MAP
+          @
+          .
+         ...
+         .v.
+        ..v..
+       ..vvv..
+      ..vv.vv..
+     ..vv...vv..
+    ..vm..!..mv..
+  ...vv..!.!..vv...
+@..vvv..!._.!..vvv..@
+  ...vv..!.!..vv...
+    ..vm..!..+v..
+     ..vv...vv..
+      ..vv.vv..
+       ..vvv..
+        ..v..
+         .v.
+         ...
+          .
+          @
+ENDMAP

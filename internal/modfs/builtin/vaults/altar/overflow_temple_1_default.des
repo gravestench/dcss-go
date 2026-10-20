@@ -1,0 +1,9 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   overflow_temple_1_default
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_generic_1 allow_dup transparent
+MAP
+B
+ENDMAP
+
+# General overflow vault, can be used for all gods.

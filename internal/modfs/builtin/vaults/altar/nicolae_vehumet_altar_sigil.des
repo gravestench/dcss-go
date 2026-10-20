@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nicolae_vehumet_altar_sigil
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_vehumet temple_overflow_1 transparent decor
+TAGS:   uniq_altar_vehumet
+KFEAT:  _ = altar_vehumet
+COLOUR: . = white
+COLOUR: + = green
+COLOUR: D = lightblue
+COLOUR: E = lightgreen
+FTILE:  .DE+ = floor_pebble
+FTILE:  _ = floor_pebble_lightgreen
+: vault.run("interest.apply")
+MAP
+ bbb+bbb
+bb..E..bb
+b..DDD..b
+b.D.E.D.b
++EDE_EDE+
+b.D.E.D.b
+b..DDD..b
+bb..E..bb
+ bbb+bbb
+ENDMAP

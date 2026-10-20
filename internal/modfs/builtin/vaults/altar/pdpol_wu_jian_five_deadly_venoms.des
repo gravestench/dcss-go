@@ -1,0 +1,47 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   pdpol_wu_jian_five_deadly_venoms
+DEPTH: D:3-, Depths
+TAGS:   no_item_gen no_monster_gen temple_overflow_1 temple_overflow_wu_jian
+TAGS:   decor uniq_altar_wu_jian
+KFEAT:  _ = altar_wu_jian
+KPROP:  F = no_tele_into
+MARKER: F = lua:fog_machine { \
+            cloud_type="thin mist", size = 1, \
+            pow_max = 3, pow_min = 3, delay = 10, \
+            start_clouds = 0 }
+# source: {{
+# source:   local trig_marker = TriggerableFunction:new {
+# source:     func="callback.five_deadly_venoms",
+# source:     repeated=false,
+# source:     data={
+# source:       venoms={
+# source:         "spectral demonic crawler name:centipede name_species name_replace name_descriptor",
+# source:         "spectral black mamba",
+# source:         "spectral scorpion",
+# source:         "spectral frilled lizard",
+# source:         "spectral cane toad"
+# source:       }
+# source:     }
+# source:   }
+# source:   trig_marker:add_triggerer(DgnTriggerer:new { type = "player_move" })
+# source:   lua_marker("_", trig_marker)
+# source:   lua_marker("F", portal_desc { positions = "five_deadly_venoms" })
+# source: }}
+: vault.run("interest.apply")
+MAP
+   ccc
+   cFc
+  ccncc
+ccc...ccc
+cFn._.nFc
+cccn.nccc
+ cFc.cFc
+ ccc.ccc
+   c@c
+ENDMAP
+
+# As an enticement to join, the Wu Jian Council has placed weapons beyond lava,
+# but you can get to them if you know how to wall jump off of the metal walls.
+# You can also get to them in other ways, of course, which is why most of the
+# weapons are just plain.

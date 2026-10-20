@@ -1,0 +1,21 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   gammafunk_temple_overflow_claw
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_generic_3 transparent
+SUBST:  l : lw
+KMASK:  lw = no_monster_gen
+MAP
+  ...........
+ ..cc..c..cc..
+..cc..ccc..cc..
+.ccc..ccc..ccc.
+.ccc.ccccc.ccc.
+.ccccccGcccccc.
+.ccGB..B..BGcc.
+..ccl.....lcc..
+..ccll...llcc..
+ ..ccll.llcc..
+  ..ccl.lcc..
+   ..cc+cc..
+    ...@...
+ENDMAP

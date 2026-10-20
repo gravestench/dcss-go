@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  nicolae_hepliaklqana_hippocampus
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_hepliaklqana temple_overflow_1 transparent decor
+TAGS:  uniq_altar_hepliaklqana
+KFEAT: _ = altar_hepliaklqana
+SUBST: D = cxx, E = cx
+: vault.run("interest.apply")
+MAP
+    xxxxxxxx
+   @....xxxx
+    xxx..xxx
+xxxxxxxx.xxx
+xcccccxx..xx
+xc...cxx..xx
+xc._.cxD..xx
+xc...cxD..Dx
+xc..ccxD..Dx
+xc...EE...Dx
+xc........Dx
+xcE......DDx
+xxEEEEEDDDxx
+xxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   mainiacjoe_overflow_small_starburst
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_generic_1 transparent
+SUBST:  c : cvbtwl
+KMASK:  w = no_pool_fixup
+KMASK:  wl = no_monster_gen
+MAP
+  .........
+ ...cc.cc...
+..c..c.c..c..
+..cc.....cc..
+......B......
+..cc.....cc..
+..c..c.c..c..
+ ...cc.cc...
+  .........
+ENDMAP
+
+# This overflow altar can only place on D:3, the bottom edge of where the early-
+# game ecumenical altars place. It's supposed to count as both an overflow and
+# an ecumenical altar vault, and this seemed the easiest way to implement that.
+# The player can choose the ecumenical altar, or risk going downstairs and then
+# coming back up for the known god.

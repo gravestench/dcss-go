@@ -1,0 +1,22 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   makhleb_grotto_becter
+TAGS:   no_monster_gen temple_overflow_1 temple_overflow_makhleb
+TAGS:   uniq_altar_makhleb transparent
+# white imp depth
+DEPTH:  D:5-8
+MONS:   iron imp w:1 / shadow imp w:1 / crimson imp
+KFEAT:  _ = altar_makhleb
+TILE:   c = wall_hall
+FTILE:  A_'1 = floor_grey_dirt
+SUBST:  ' = .
+MAP
+ xxxxx
+xxcccxx
+xwcAcwx
+xww_wwx
+xww1wwx
+x.w'w.x
+xx...xx
+ xx+xx
+   @
+ENDMAP

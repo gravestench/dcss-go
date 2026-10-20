@@ -1,0 +1,18 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  mainiacjoe_overflow_alcove_3
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_generic_4 transparent
+SUBST: c : xcvb
+SUBST: p : cnvbt123wl
+MONS:  plant, bush, fungus
+KMASK: wl = no_monster_gen
+KMASK: w = no_pool_fixup
+MAP
+ccccccc
+cB.c.Bc
+c.....c
+cc.p.cc
+c..p..c
+cB...Bc
+ccc@ccc
+ENDMAP

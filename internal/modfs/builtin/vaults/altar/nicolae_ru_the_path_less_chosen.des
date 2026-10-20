@@ -1,0 +1,20 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nicolae_ru_the_path_less_chosen
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_ru temple_overflow_1 uniq_altar_ru transparent decor
+TAGS:   no_item_gen no_monster_gen
+: vault.run("interest.apply")
+KMONS:  p = plant / fungus w:3
+NSUBST: r = 3=^ / ^p / 7=p / 2:p. / ., i = ^^p. / 2=p / .
+NSUBST: D = . / xxp / x, E = . / xxp / x, F = xxp / .
+KFEAT:  _ = altar_ru
+KFEAT:  ^ = web trap
+MAP
+xxxxxxx
+xrrrrrxxxxx
+xriiirxDFEx
+xri_ir.D.E.@
+xriiirxDFEx
+xrrrrrxxxxx
+xxxxxxx
+ENDMAP

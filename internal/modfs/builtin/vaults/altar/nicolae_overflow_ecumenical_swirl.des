@@ -1,0 +1,31 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    nicolae_overflow_ecumenical_swirl
+TAGS:    temple_overflow_generic_1 transparent
+DEPTH:   D:3
+KFEAT:   _ = altar_ecumenical
+KFEAT:   ~! = T
+KFEAT:   HJ = G
+KMASK:   'B}])H~ = opaque
+KMASK:   'B}])H~ = no_monster_gen
+KMASK:   'B}])H~ = no_item_gen
+SHUFFLE: !GH/JT~
+SUBST:   } = }])
+FTILE:   '`_}])+~cnBGHT = floor_limestone
+COLOUR:  '` = yellow
+MAP
+...............
+.....cc+cc.....
+..!.cc```cc.!..
+...cc`````cc...
+..cc````ccccc..
+.cc````ncH'Hcc.
+.c`````n'''''c.
+.c``_``n''B''c.
+.c`````n'''''c.
+.ccG`Gcn''''cc.
+..ccccc''''cc..
+...cc'''''cc...
+..!.cc'}'cc.!..
+.....ccccc.....
+...............
+ENDMAP

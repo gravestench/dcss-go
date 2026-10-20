@@ -1,0 +1,27 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    nzn_wu_jian_contemplation
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_1 temple_overflow_wu_jian no_monster_gen no_item_gen
+TAGS:    no_pool_fixup transparent decor uniq_altar_wu_jian
+ITEM:    mundane spear / w:2 mundane quarterstaff / w:2 mundane trident, stone
+NSUBST:  ' = 3=e / ', " = 4=W / ', t = t / d / -
+SUBST:   ` = '
+KFEAT:   _ = altar_wu_jian
+FTILE:   e' = floor_sand
+FTILE:   td- = floor_grass
+COLOUR:  e' = yellow
+COLOUR:  d- = green
+: vault.run("interest.apply")
+MAP
+ x@x
+xx.xxxxxxxxxx
+x'`.```'``"Wx
+x```.`'``"WWx
+x'`.````"WWWx
+x`.t`'``"WWWx
+x`t_t`'`"WWWx
+x``t.'`'`"WWx
+x'`'`.``'`"Wx
+xxxxxx.xxxxxx
+     x@x
+ENDMAP

@@ -1,0 +1,27 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   fedhas_altar_decomposition
+TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas transparent
+TAGS:   no_item_gen no_monster_gen no_trap_gen
+# Necrophage depth
+DEPTH:  D:4-8
+MONS:   bush, plant, necrophage, zombie
+KFEAT:  _ = altar_fedhas
+FTILE:  '!12@ = floor_moss
+COLOUR: '!@ = green
+NSUBST: 3 = 3:3 / 3 = 3 4:25 / 3 = 4 .:25 / *:.
+KPROP:  .3 = no_tele_into
+MAP
+ xxxxxxxxx
+xx33...33xx
+x33.222.33x
+x332111233x
+x3321_1233x
+x3321'1233x
+x3.2x'x2.3x
+x3..x'x..3x
+xxxxx'xxxxx
+   xx'xx
+   x2@2x
+ENDMAP
+
+### Gozag overflow altars #####################################################

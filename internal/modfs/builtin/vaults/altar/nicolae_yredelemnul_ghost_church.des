@@ -1,0 +1,29 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nicolae_yredelemnul_ghost_church
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_yredelemnul temple_overflow_1 transparent
+TAGS:   uniq_altar_yredelemnul
+TAGS:   no_trap_gen
+WEIGHT: 5
+KPROP:  dO' = no_tele_into
+KMASK:  dO' = no_monster_gen
+NSUBST: d = * / $ / %
+KFEAT:  _ = altar_yredelemnul
+KMONS:  O = player ghost
+KMONS:  z = patrolling zombie
+: vault.run("interest.apply")
+MAP
+xxxxxxxxxxx
+xxxcccccxxx
+xxcc...ccxx
+xxcz._.zcxx
+xccc...cccx
+xc.......cx
+xc.n===n.cx
+xc.n'O'n.cx
++..ndddn..+
+xcccccccccx
+xxxxxxxxxxx
+ENDMAP
+
+### Zin overflow altars #######################################################

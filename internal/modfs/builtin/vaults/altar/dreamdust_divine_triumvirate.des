@@ -1,0 +1,40 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    dreamdust_divine_triumvirate
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_3 temple_overflow_elyvilon
+TAGS:    temple_overflow_zin temple_overflow_the_shining_one
+TAGS:    no_monster_gen no_item_gen transparent
+KFEAT:   D = altar_zin
+KFEAT:   E = altar_elyvilon
+KFEAT:   F = altar_the_shining_one
+NSUBST:  ? = 1:D / 1:E / 1:F
+TILE:    G = dngn_statue_triangle
+KFEAT:   a = granite_statue
+TILE:    a = dngn_statue_angel
+# source: : if crawl.one_chance_in(2) then
+# Silver theme
+KFEAT:   c = v
+TILE:    c = dngn_metal_wall_white
+COLOUR:  c- = white
+FTILE:   -aDEFG = floor_w_marble
+# source: : else
+# Gold theme
+TILE:    c = wall_church
+COLOUR:  c- = yellow
+FTILE:   -aDEFG = floor_limestone
+# source: : end
+MAP
+.....................
+.cccccccca-acccccccc.
+..ccccccca-accccccc..
+ ..cca---------acc..
+  ..cc---?-?---cc..
+   ..cc---G---cc..
+    ..cc--?--cc..
+     ..cc---cc..
+      ..ccacc..
+       ..ccc..
+        ..c..
+         ...
+ENDMAP

@@ -1,0 +1,27 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   elyvilon_altar_3
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_elyvilon temple_overflow_1 temple_overflow_elyvilon
+TAGS:   no_pool_fixup decor transparent
+KFEAT:  C = altar_elyvilon
+KMASK:  wW = no_monster_gen
+: vault.run("interest.apply")
+MAP
+       xxxxxxxxxxxxxxx
+      xxtttttttttttttxx
+      xtttttttttttttttx
+      tttttttt.tttttttt
+  .....ttttt.....ttttt.....
+ .......ttt.......ttt.......
+...wWw...t...wWw...t...wWw...
+..wwWww.....wwWww.....wwWww..
+@.WWtWW.....WWCWW.....WWtWW.@
+..wwWww.....wwWww.....wwWww..
+...wWw...t...wWw...t...wWw...
+ .......ttt.......ttt.......
+  .....ttttt.....ttttt.....
+      tttttttt.tttttttt
+      xtttttttttttttttx
+      xxtttttttttttttxx
+       xxxxxxxxxxxxxxx
+ENDMAP

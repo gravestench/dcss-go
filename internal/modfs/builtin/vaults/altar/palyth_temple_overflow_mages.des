@@ -1,0 +1,32 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    palyth_temple_overflow_mages
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_3 temple_overflow_sif_muna
+TAGS:    temple_overflow_kikubaaqudgha temple_overflow_vehumet
+TAGS:    no_item_gen no_monster_gen patrolling transparent
+# 3/5 chance for one altar to have a low-level randbook and extra orc wizards.
+KMONS:   xyzXYZ~ = orc wizard
+KFEAT:   xX = altar_sif_muna
+KFEAT:   yY = altar_kikubaaqudgha
+KFEAT:   zZ = altar_vehumet
+KITEM:   X = randbook owner:Sif_Muna disc:summoning numspells:1 slevels:1
+KITEM:   Y = randbook owner:Kikubaaqudgha disc:necromancy numspells:1 slevels:1
+KITEM:   Z = randbook owner:Vehumet disc:conjuration numspells:1 slevels:1
+SHUFFLE: x'y"z` / x'y"z` / X~y"z` / x'Y~z` / x'y"Z~
+SUBST:   '"` = ., ~ = ~.
+MAP
+ccccccccccccc
+c'x'c"y"c`z`c
+c'''c"""c```c
+cc+ccc+ccc+cc
+c...........c
+c....T.T....c
+cc....T....cc
+ cc..T.T..cc
+  cc.....cc
+   ccc@ccc
+ENDMAP
+
+# Xom seems to not think much of Hepliaklqana's ancestral focus,
+# and mocks the species roots of incoming pilgrims.
+# This will probably go over most players' heads, but it's neat anyway -- PF

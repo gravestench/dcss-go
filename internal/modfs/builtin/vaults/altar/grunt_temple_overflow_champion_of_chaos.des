@@ -1,0 +1,15 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  grunt_temple_overflow_champion_of_chaos
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_2 temple_overflow_makhleb temple_overflow_xom
+TAGS:  no_monster_gen transparent
+MONS:  crimson imp ; dagger ego:chaos ident:type
+KFEAT: A = altar_makhleb
+KFEAT: B = altar_xom
+MAP
+xxxxx
+xA.Bx
+x.1.x
+x...x
+xx+xx
+ENDMAP

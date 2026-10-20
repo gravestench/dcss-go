@@ -1,0 +1,25 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  grunt_temple_overflow_order_and_chaos_1
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_2 temple_overflow_xom temple_overflow_zin transparent
+KPROP: _1 = no_tele_into
+KMASK: _1 = opaque
+KMASK: _1 = no_trap_gen
+KFEAT: A = altar_xom
+KFEAT: B = altar_zin
+FTILE: n_1 = floor_limestone
+MONS:  angel god:zin dbname:zin_angel perm_ench:confusion generate_awake / \
+       angel god:zin dbname:zin_angel perm_ench:mute generate_awake w:1 / \
+       angel god:zin dbname:zin_angel perm_ench:mad generate_awake w:1 / \
+       angel god:zin dbname:zin_angel perm_ench:dumb generate_awake w:1
+MAP
+ .......
+....A....
+..nnnnn..
+..n___n..
+@.n_1_n.@
+..n___n..
+..nnnnn..
+....B....
+ .......
+ENDMAP

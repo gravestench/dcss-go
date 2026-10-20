@@ -1,0 +1,33 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    nemelex_dance_club_becter
+TAGS:    temple_overflow_1 temple_overflow_nemelex_xobeh transparent
+TAGS:    no_rotate no_vmirror no_monster_gen no_item_gen
+TAGS:    uniq_altar_nemelex_xobeh
+# orc and ogre depth
+DEPTH:   D:3-7
+# source: : if you.depth() <= 4 then
+MONS:    orc ; club
+# source: : else
+MONS:    ogre ; giant club
+# source: : end
+MONS:    endoplasm
+KFEAT:   _ = altar_nemelex_xobeh
+SHUFFLE:  12_
+COLOUR:  x = darkgray
+COLOUR:  12' = random
+TILE:    x = wall_pebble_darkgray
+MAP
+    .....
+   ..xxx..
+   .xx'xx.
+ ...x'1'x...
+..xxxx'xxxx..
+.xx''x+x''xx.
+.x'2'+.+'_'x.
+.xx'xx.xx'xx.
+..xxx.x.xxx..
+ .....x.....
+    .xxx.
+    .....
+ENDMAP

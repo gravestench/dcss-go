@@ -1,0 +1,22 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  mainiacjoe_overflow_24_doors
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_generic_1 transparent
+SUBST: c : xcvb
+MAP
+ccc+cc+cc+ccc
+c.....c.....c
+c.....c.....c
++cc+cc+cc+cc+
+c..c.....c..c
+c..c+ccc+c..c
+c..c.....c..c
++..+..B..+..+
+c..c.....c..c
+c..c+ccc+c..c
+c..c.....c..c
++cc+cc+cc+cc+
+c.....c.....c
+c.....c.....c
+ccc+cc+cc+ccc
+ENDMAP

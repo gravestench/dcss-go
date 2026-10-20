@@ -1,0 +1,56 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    grunt_temple_overflow_open
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_generic_8 temple_overflow_generic_7
+TAGS:    temple_overflow_generic_6 temple_overflow_generic_5
+TAGS:    temple_overflow_generic_4 temple_overflow_generic_3
+TAGS:    temple_overflow_generic_2
+TAGS:    transparent
+SHUFFLE: defghijk / efghijkd
+# source: {{
+# source:   local altarcount = 1
+# source:   if is_validating() then
+# source:     altarcount = 8
+# source:   else
+# source:     altarcount = get_overflow_altar_count(_G)
+# source:   end
+# source:   if altarcount == "1" then
+# source:     subst("d = B")
+# source:     subst("efghijk = .")
+# source:   elseif altarcount == "2" then
+# source:     subst("dh = B")
+# source:     subst("efgijk = .")
+# source:   elseif altarcount == "3" then
+# source:     subst("dgi = B")
+# source:     subst("efhjk = .")
+# source:   elseif altarcount == "4" then
+# source:     subst("dfhj = B")
+# source:     subst("egik = .")
+# source:   elseif altarcount == "5" then
+# source:     subst("dfgij = B")
+# source:     subst("ehk = .")
+# source:   elseif altarcount == "6" then
+# source:     subst("defhij = B")
+# source:     subst("gk = .")
+# source:   elseif altarcount == "7" then
+# source:     subst("defghij = B")
+# source:     subst("k = .")
+# source:   else
+# source:     subst("defghijk = B")
+# source:   end
+# source: }}
+SUBST: G = G T V:1 U:1 t:1
+MAP
+   ...
+ ...d...
+ .k...e.
+.........
+.j..G..f.
+.........
+ .i...g.
+ ...h...
+   ...
+ENDMAP
+
+# Formerly minivault_3; resurrected after being removed way back in late 2009.

@@ -1,0 +1,26 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   minmay_overflow_temple_star_hex
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_generic_5 transparent
+KMASK:  T = no_monster_gen
+MAP
+          ccc
+         ccBcc
+        cc...cc
+       cc.....cc
+cccccccc...G...cccccccc
+cB...................Bc
+ccc......G...G......ccc
+  ccc.............ccc
+    ccc....T....ccc
+  ccc.............ccc
+ccc......G...G......ccc
+cB...................Bc
+cccccccc...G...cccccccc
+       cc.....cc
+        cc...cc
+         cc.cc
+          c+c
+          ...
+          .@.
+ENDMAP

@@ -1,0 +1,41 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME: nicolae_tso_besieged_by_evil
+TAGS: temple_overflow_the_shining_one uniq_altar_the_shining_one
+TAGS: temple_overflow_1 patrolling transparent no_monster_gen
+# imp ranges
+DEPTH: D:3-8
+SUBST: c = ccc' s:2 z:2, + = ++'
+NSUBST: ' = 2:s / 2:z / 2:sz'' / *:'
+COLOUR: 'sz = yellow / none w:5
+COLOUR: c = white
+TILE: c = wall_sandstone
+FTILE: +'_sz = floor_sandstone / none w:5
+KMONS: s = orc skeleton / kobold skeleton / goblin skeleton / hobgoblin zombie
+KMONS: z = orc zombie / kobold zombie / goblin zombie / hobgoblin zombie
+# source: : if you.absdepth() <= 4 then
+KMONS: _ = crimson imp / white imp w:5
+# source: : else
+KMONS: _ = crimson imp / white imp / shadow imp / iron imp / quasit
+# source: : end
+KFEAT: _ = altar_the_shining_one
+MAP
+.............
+.............
+..cccc.cccc..
+..cccc+cccc..
+..cc'''''cc..
+..cc'''''cc..
+...+''_''+...
+..cc'''''cc..
+..cc'''''cc..
+..cccc+cccc..
+..cccc.cccc..
+.............
+.............
+ENDMAP
+
+### Multiple god overflow altars ###############################################
+
+# These ones are multiple overflows to specific gods;
+# they get tags temple_overflow_N and temple_overflow_<god>.

@@ -1,0 +1,26 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    slow_altar_2
+DEPTH: D:3-, Depths
+TAGS:    patrolling no_monster_gen no_item_gen transparent
+TAGS:    uniq_altar_cheibriados temple_overflow_1 temple_overflow_cheibriados
+# source: : if you.in_branch("Depths") then
+KMONS: _ = iron golem
+# source: :else
+KMONS: _ = worm / mummy / iron imp
+# source: :end
+KFEAT:   _ = altar_cheibriados
+SUBST:   x : xxxcccvb
+: vault.run("interest.apply")
+MAP
+x@@G@@x
+x.....x
+x.....x
+xx+++xx
+x.....x
+x.....x
+x.....x
+x.....x
+x.._..x
+xxxxxxx
+ENDMAP

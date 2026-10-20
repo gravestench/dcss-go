@@ -1,0 +1,17 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  mainiacjoe_overflow_six_doors_small
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_generic_1 transparent
+SUBST: c : cvbt
+SUBST: P : cnvbtwl
+KMASK: wl = no_monster_gen
+KMASK: w = no_pool_fixup
+MAP
+cccc+cccc
++.......+
+c.P...P.c
+c.P.B.P.c
+c.P...P.c
++.......+
+cccc+cccc
+ENDMAP

@@ -1,0 +1,52 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:    nicolae_overflow_hallway_of_the_gods
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_generic_11 temple_overflow_generic_10 \
+         temple_overflow_generic_9 temple_overflow_generic_8 \
+         temple_overflow_generic_7 temple_overflow_generic_6 \
+         temple_overflow_generic_5 transparent allow_dup
+# source: {{
+# source:   local altarcount = 1
+# source:   if is_validating() then
+# source:     altarcount = 11
+# source:   else
+# source:     altarcount = tonumber(get_overflow_altar_count(_G))
+# source:   end
+# source:   if altarcount == 5 then
+# source:     subst("DFJ : B")
+# source:   elseif altarcount == 6 then
+# source:     subst("EHK : B")
+# source:   elseif altarcount == 7 then
+# source:     shuffle("EFHJK")
+# source:     subst("DEFH : B")
+# source:   elseif altarcount == 8 then
+# source:     shuffle("EFHJK")
+# source:     subst("EFHJ : B")
+# source:   elseif altarcount == 9 then
+# source:     shuffle("FK")
+# source:     subst("DEFHJ : B")
+# source:   elseif altarcount == 10 then
+# source:     subst("EFHJK : B")
+# source:   else
+# source:     subst("DEFHJK : B")
+# source:   end
+# source: }}
+SUBST:   D : GGTTUt, E : GGTTUt, F : GGTTUt, H : GGTTUt, J : GGTTUt, K : GGTTUt
+MAP
+ccccccccccc
+ccc.....ccc
+cc...H...cc
+c..J...F..c
+c....c....c
+c.K.ccc.E.c
+c...cc....c
+c@@@c..D..c@@@c
+    c....cc...c
+    c.E.ccc.K.c
+    c....c....c
+    c..F...J..c
+    cc...H...cc
+    ccc.....ccc
+    ccccccccccc
+ENDMAP

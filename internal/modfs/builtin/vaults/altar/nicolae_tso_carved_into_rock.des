@@ -1,0 +1,28 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME: nicolae_tso_carved_into_rock
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_the_shining_one uniq_altar_the_shining_one
+TAGS: temple_overflow_1 transparent decor
+SUBST: X = xxx.
+COLOUR: ' = yellow
+COLOUR: c = white
+TILE: G = dngn_golden_statue
+TILE: c = wall_church
+FTILE: G'_ = floor_limestone
+KFEAT: _ = altar_the_shining_one
+: vault.run("interest.apply")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxXXXXxxxxxxxxxxxxx
+xxxxxxxXXXXXX....XXXXXXxxxxxxx
+xxxxXXX................XXXxxxx
+xxXX......................XXxx
+xX......XxX........XxX......Xx
+X.....XXxxxxcG'''GcxxxXX.....X
+.....Xxxxxxxccc'cccxxxxxX.....
+@...Xxxxxxxxxc'''cxxxxxxxX...@
+..Xxxxxxxxxxxc'_'cxxxxxxxxXX..
+XXxxxxxxxxxxxc'''cxxxxxxxxxxXX
+xxxxxxxxxxxxxcccccxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

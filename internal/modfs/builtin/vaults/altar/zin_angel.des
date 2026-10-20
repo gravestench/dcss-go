@@ -1,0 +1,26 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   zin_angel
+DEPTH: D:3-, Depths
+TAGS:   no_item_gen no_monster_gen temple_overflow_1 temple_overflow_zin decor
+TAGS:   uniq_altar_zin
+KFEAT:  _ = altar_zin
+KPROP:  1 = no_tele_into
+COLOUR: G = lightgray
+COLOUR: c = white
+TILE:   c = wall_church
+FTILE: _.G1m+ = floor_limestone
+MONS:   angel god:zin dbname:zin_angel / \
+        angel god:zin dbname:zin_angel ; any weapon level:20 ego:holy_wrath ident:type / \
+        angel god:zin dbname:zin_angel ; long sword ego:holy_wrath ident:type / \
+        angel god:zin dbname:zin_angel ; mace ego:holy_wrath ident:type
+: vault.run("interest.apply")
+MAP
+xxxxxxxxx
+xcccccccx
+xc1m.._cx
+xcmm...cx
+xc.....cx
+xcG...Gcx
+xccc+cccx
+    @
+ENDMAP

@@ -1,0 +1,24 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   cheibriados_altar_2
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_cheibriados temple_overflow_1 temple_overflow_cheibriados
+TAGS:   transparent decor
+WEIGHT: 1
+KPROP:  1 = no_tele_into
+KFEAT:  _ = altar_cheibriados
+MONS:   torpor snail
+SUBST:  1 : 1:50 2:30 3:10 4:10
+NSUBST: 4 = 1:1 / 1:2 / 1:3
+KMASK: 1234 = opaque
+: vault.run("interest.apply")
+MAP
+.......
+.mmm...
+.m1m...
+.mmmmm.
+.._m1m.
+.mmmmm.
+.m1m...
+.mmm...
+.......
+ENDMAP

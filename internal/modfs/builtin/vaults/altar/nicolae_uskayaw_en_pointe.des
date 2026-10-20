@@ -1,0 +1,30 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nicolae_uskayaw_en_pointe
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_uskayaw temple_overflow_1
+TAGS:   no_trap_gen generate_awake transparent decor uniq_altar_uskayaw
+KPROP:  'D = no_tele_into
+MONS:   dancing weapon ; mundane short sword
+MONS:   dancing weapon ; mundane falchion, dancing weapon ; mundane spear
+MONS:   dancing weapon ; mundane dagger
+NSUBST: D = 2=1 / 2=2 / 2=3 / 2=4
+KFEAT:  _ = altar_uskayaw
+KMASK:  '1234n = opaque
+KMASK:  '1234 = no_item_gen
+KMASK:  '1234 = no_monster_gen
+TILE:   n = dngn_transparent_stone_red
+TILE:   c = dngn_stone_wall_lightred
+COLOUR: n = red
+COLOUR: c = lightred
+: vault.run("interest.apply")
+MAP
+ .............
+...nnnnncccc...
+..nnD'Dnn..ccc.
+..nDn'nDnn...c.
+@.n''n'''n._.+.
+..nDn'nDnn...c.
+..nnD'Dnn..ccc.
+...nnnnncccc...
+ .............
+ENDMAP

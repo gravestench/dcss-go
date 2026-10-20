@@ -1,0 +1,21 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  mainiacjoe_overflow_swirl
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_generic_2 transparent
+SUBST: c : cvb
+MAP
+       ccccc
+       c...c
+       c.B.c
+ +cccccc...c
+ c...c.ccc.c
+ c.c.c....cc
+ c.c...cc.c
+ c.cc...c.c
+cc....c.c.c
+c.ccc.c...c
+c...cccccc+
+c.B.c
+c...c
+ccccc
+ENDMAP

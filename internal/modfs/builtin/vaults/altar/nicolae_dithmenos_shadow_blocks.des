@@ -1,0 +1,31 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME: nicolae_dithmenos_shadow_blocks
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_dithmenos temple_overflow_1 uniq_altar_dithmenos
+TAGS: decor transparent
+COLOUR: s' = magenta, c = white
+TILE: c = dngn_stone_wall_white
+TILE: s = dngn_stone_dark
+FTILE: 's_ = floor_pebble_darkgray
+KFEAT: cs = stone_wall
+KFEAT: _ = altar_dithmenos
+: vault.run("interest.apply")
+MAP
+      .....
+      ..c..
+  .....ccc.....
+  .cc..scs..cc.
+  .ccs''s''scc.
+  ..ss'''''ss..
+....'''''''''....
+..cs'''''''''sc..
+.cccs'''_'''sccc.
+..cs'''''''''sc..
+....'''''''''....
+  ..ss'''''ss..
+  .ccs''s''scc.
+  .cc..scs..cc.
+  .....ccc.....
+      ..c..
+      .....
+ENDMAP

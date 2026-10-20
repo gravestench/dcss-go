@@ -1,0 +1,28 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME: minmay_overflow_temple_star_quad
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_generic_3 transparent
+MAP
+           c
+           c
+          ccc
+          cBc
+         cc.cc
+         c...c
+        cc...cc
+        c.....c
+      ccc.....ccc
+    ccc....G....ccc
+  ccc......c......ccc
+cccB.....GcccG.....Bccc
+  ccc......c......ccc
+    ccc....G....ccc
+      ccc.....ccc
+        c.....c
+        cc...cc
+         c...c
+         cc.cc
+          c.c
+          c+c
+           @
+ENDMAP

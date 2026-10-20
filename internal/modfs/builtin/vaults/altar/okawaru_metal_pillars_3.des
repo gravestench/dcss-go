@@ -1,0 +1,17 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   okawaru_metal_pillars_3
+TAGS:   temple_overflow_1 temple_overflow_okawaru uniq_altar_okawaru
+TAGS:   transparent decor
+DEPTH:  D, Orc
+WEIGHT: 3
+KFEAT:  _ = altar_okawaru
+: vault.run("interest.apply")
+MAP
+.......
+...v...
+..v.v..
+.v._.v.
+..v.v..
+...v...
+.......
+ENDMAP

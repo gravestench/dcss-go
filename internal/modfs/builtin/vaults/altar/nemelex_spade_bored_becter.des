@@ -1,0 +1,31 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   nemelex_spade_bored_becter
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_1 temple_overflow_nemelex_xobeh transparent decor
+TAGS:   no_rotate no_vmirror no_monster_gen no_item_gen
+TAGS:   uniq_altar_nemelex_xobeh
+KFEAT:  _ = altar_nemelex_xobeh
+# source: :  if you.depth() ~= dgn.br_depth(you.branch()) then
+KFEAT:  a = shaft trap
+# source: :  end
+NSUBST: ' = 6:a / *:.
+COLOUR: x = darkgray
+TILE:   x = wall_pebble_darkgray
+: vault.run("interest.apply")
+MAP
+     .....
+    ..xxx..
+   ..xx'xx..
+  ..xx'''xx..
+ ..xx''_''xx..
+..xx'''''''xx..
+.xx'''''''''xx.
+.x'''xxxxx'''x.
+.xx'+x.x.x+'xx.
+..xxx..x..xxx..
+ .....xxx.....
+     .....
+ENDMAP
+
+### Okawaru overflow altars ###################################################

@@ -1,0 +1,42 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME: nicolae_overflow_hidden_temple
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_generic_5 temple_overflow_generic_4 temple_overflow_generic_3 \
+      temple_overflow_generic_2 temple_overflow_generic_1 no_monster_gen
+# source: {{
+# source:   local altarcount = 1
+# source:   if is_validating() then
+# source:     altarcount = 5
+# source:   else
+# source:     altarcount = get_overflow_altar_count(_G)
+# source:   end
+# source:   if altarcount == "1" then
+# source:     subst("c = B")
+# source:     subst("abde = G")
+# source:   elseif altarcount == "2" then
+# source:     subst("bd = B")
+# source:     subst("ace = G")
+# source:   elseif altarcount == "3" then
+# source:     shuffle("ae/bd")
+# source:     subst("cbd = B")
+# source:     subst("ae = G")
+# source:   elseif altarcount == "4" then
+# source:     subst("abde = B")
+# source:     subst("c = G")
+# source:   else
+# source:     subst("abcde = B")
+# source:   end
+# source: }}
+SUBST: } = })]
+MAP
+ xxxxxxxxxxxxx
+ xxxxaxxxbxxxx
+ xxG...G...Gxx
+ mm.........mm
+@m}.........cm@
+ mm.........mm
+ xxG...G...Gxx
+ xxxxexxxdxxxx
+ xxxxxxxxxxxxx
+ENDMAP

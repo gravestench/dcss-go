@@ -1,0 +1,16 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    xom_teletrap_fun
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_1 temple_overflow_xom uniq_altar_xom
+TAGS:    transparent decor
+KFEAT:   _ = altar_xom
+NSUBST:  T = . / T
+KFEAT:   T = teleport trap
+: vault.run("interest.apply")
+MAP
+.....
+.TTT.
+.T_T.
+.TTT.
+.....
+ENDMAP

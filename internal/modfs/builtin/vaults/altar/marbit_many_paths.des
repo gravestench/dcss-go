@@ -1,0 +1,17 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:    marbit_many_paths
+DEPTH: D:3-, Depths
+TAGS:    temple_overflow_generic_1 transparent
+SHUFFLE: pqr / bqr / pbr / pqb / bbr / pbb / bqb
+SUBST:   pqr = .
+NSUBST:  . = 1:0 / *:.
+FTILE:   .B0 = FLOOR_PEBBLE_GREEN
+MAP
+ xxxxxxxxx
+xx..qxq..xx
+xpqrpqrpqrxx
+@qrpqrpqrpBx
+xrpqrpqrpqxx
+xx..pxp..xx
+ xxxxxxxxx
+ENDMAP

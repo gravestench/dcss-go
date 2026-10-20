@@ -1,0 +1,22 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   trog_ov_bears_minmay
+TAGS:   temple_overflow_1 temple_overflow_trog uniq_altar_trog
+TAGS:   transparent
+# begin at bear range
+DEPTH:  D:4-
+# source: : if you.absdepth() < 10 then
+MONS:   black bear
+# source: : else
+MONS:   polar bear
+# source: : end
+MONS:   bush
+NSUBST: ' = 2:2 / 2=2. / *=.
+KFEAT:  _ = altar_trog
+MAP
+.....
+.'''.
+.1_1.
+.'''.
+.....
+ENDMAP

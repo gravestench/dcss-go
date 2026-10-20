@@ -1,0 +1,37 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   kennysheep_ying_yang
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_2 temple_overflow_elyvilon temple_overflow_yredelemnul
+TAGS:   no_monster_gen no_trap_gen no_pool_fixup patrolling transparent
+KFEAT:  A = altar_elyvilon
+KFEAT:  B = altar_yredelemnul
+KFEAT:  D = tree
+KFEAT:  '"wW = floor
+TILE:   D = dngn_tree_dead
+FTILE:  .t1ATW = floor_grass
+COLOUR: tW = white
+FTILE:  'D2BVw = floor_crypt
+COLOUR: Dw = black
+MAP
+       """""""
+     """""ccc"""
+  """""""''Dccc"""
+  "ccccccD''DDccc"
+ ""ctttttcD'''DDc""
+ "cct....tcD'''Dcc"
+ "ct.www.TtD''''Dc""
+""ct.wwwA.tD''''Dcc"
+"cct.www.TtD'''''Dc"
+"ct......tcD'''''Dc"
+"ct.....tccD'''''Dc"
+"ct.....tcD''''''Dc"
+"ct.....tDV'WWW'DDc"
+"cct....tD'BWWW'Dcc"
+""ct....tDV'WWW'Dc""
+ "cct...tcD''''Dcc"
+ ""ctt...tcDDDDDc""
+  "ccctt..tcccccc"
+  """ccct.."""""""
+    """ccc"""""
+      """""""
+ENDMAP

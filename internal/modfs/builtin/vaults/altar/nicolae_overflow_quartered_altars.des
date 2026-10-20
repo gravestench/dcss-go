@@ -1,0 +1,20 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME: nicolae_overflow_quartered_altars
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_generic_4 transparent
+SHUFFLE: fgh/ijk, pq/rs
+SUBST: pqi = ., rk = c, s = +, z : cm, j : GTt
+CLEAR: fgh
+MAP
+  ffghgff
+ @.ccccc.@
+f.qp.c.pq.f
+fcp..z..pcf
+gc..BcB..cg
+hcczccczcch
+gc..BcB..cg
+fcp..z..pcf
+f.qp.c.pq.f
+ @.ccccc.@
+  ffghgff
+ENDMAP

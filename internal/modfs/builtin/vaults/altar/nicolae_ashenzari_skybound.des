@@ -1,0 +1,21 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   nicolae_ashenzari_skybound
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_ashenzari temple_overflow_1 decor
+TAGS:   transparent uniq_altar_ashenzari
+KFEAT:  _ = altar_ashenzari
+COLOUR: m = blue
+: vault.run("interest.apply")
+MAP
+    ..@..
+   .......
+ ...mmmmm...
+..mmm...mmm..
+.mm.v._.v.mm.
+.m..v...v..m.
+mm..vv+vv..mm
+m...........m
+m    .@.    m
+ENDMAP
+
+### Cheibriados overflow altars ###############################################

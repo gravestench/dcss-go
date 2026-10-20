@@ -1,0 +1,36 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   grunt_qazlal_clouds
+DEPTH: D:3-, Depths
+TAGS:   transparent no_monster_gen no_item_gen no_trap_gen temple_overflow_1
+TAGS:   temple_overflow_qazlal uniq_altar_qazlal decor
+KFEAT:  _ = altar_qazlal
+MARKER:  L = lua:fog_machine { cloud_type = "flame", \
+                               pow_min = 5, pow_max = 7, delay_min = 55, \
+                               delay_max = 75, size = 1, walk_dist = 0, \
+                               spread_rate = 0, excl_rad = 0 }
+MARKER:  M = lua:fog_machine { cloud_type = "freezing vapour", \
+                               pow_min = 5, pow_max = 7, delay_min = 55, \
+                               delay_max = 75, size = 1, walk_dist = 0, \
+                               spread_rate = 0, excl_rad = 0 }
+MARKER:  N = lua:fog_machine { cloud_type = "sparse dust", \
+                               pow_min = 5, pow_max = 7, delay_min = 55, \
+                               delay_max = 75, size = 1, walk_dist = 0, \
+                               spread_rate = 0 }
+# not a storm cloud - it would be too noisy
+MARKER:  O = lua:fog_machine { cloud_type = "rain", \
+                               pow_min = 5, pow_max = 7, delay_min = 55, \
+                               delay_max = 75, size = 1, walk_dist = 0, \
+                               spread_rate = 0 }
+SHUFFLE: LMNO
+KPROP:   LMNO- = no_tele_into
+KFEAT:   - = .
+: vault.run("interest.apply")
+MAP
+ccc@ccc
+cL-.-Mc
+c-...-c
+@.._..@
+c-...-c
+cN-.-Oc
+ccc@ccc
+ENDMAP

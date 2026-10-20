@@ -1,0 +1,35 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   nicolae_gozag_conspicuous_consumption
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_gozag temple_overflow_1 no_pool_fixup decor
+TAGS:   transparent no_trap_gen uniq_altar_gozag
+WEIGHT: 1
+KPROP:  $ = no_tele_into
+KMASK:  $ = opaque
+KMASK:  $ = no_monster_gen
+KITEM:  $ = gold
+KFEAT:  _ = altar_gozag
+TILE:   G = dngn_golden_statue
+TILE:   n = dngn_transparent_stone_yellow
+TILE:   m = dngn_transparent_wall_yellow
+FTILE:  ._Gmn$U = floor_limestone
+COLOUR: .Gmn$U = yellow
+# source: : set_feature_name("granite_statue", "golden statue")
+MAP
+    .....
+ G...._....G
+ ...G...G...
+ ..UwwwwwU..
+..GwnmmmnwG..
+...wm$$$mw...
+._.wm$$$mw._.
+...wm$$$mw...
+..GwnmmmnwG..
+ ..UwwwwwU..
+ ...G...G...
+ G...._....G
+    .....
+ENDMAP
+
+### Hepliaklqana overflow altars #############################################

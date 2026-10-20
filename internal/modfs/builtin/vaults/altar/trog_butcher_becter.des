@@ -1,0 +1,32 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   trog_butcher_becter
+TAGS:   temple_overflow_1 temple_overflow_trog uniq_altar_trog
+TAGS:   no_monster_gen no_item_gen transparent
+DEPTH:  D, Orc, !Orc:$
+# source: : if you.absdepth() < 6 then
+MONS:   orc ; hand axe . animal skin
+MONS:   rat / frilled lizard / quokka w:20
+# source: : else
+MONS:   orc warrior ; war axe . animal skin
+MONS:   iguana / scorpion
+# source: : end
+NSUBST: ' = 3=2 / .
+SUBST:  y = x, " = .
+KPROP:  1y" = bloody
+KFEAT:  _ = altar_trog
+# source: : if you.depth() ~= dgn.br_depth(you.branch()) then
+KFEAT:  ^ = shaft trap
+# source: : end
+KFEAT:  m = iron_grate
+MAP
+  xxxxxxx
+ xx'''''xx
+xx.xxxxxxxx
+xx+xmmmx^yx
+xx.."1"""yx
+xx..._"..xx
+ xx.....xx
+  xx...xx
+     @
+ENDMAP

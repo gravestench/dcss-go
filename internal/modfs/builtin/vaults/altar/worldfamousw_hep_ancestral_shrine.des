@@ -1,0 +1,40 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   worldfamousw_hep_ancestral_shrine
+DEPTH: D:3-, Depths
+TAGS:   uniq_altar_hepliaklqana temple_overflow_hepliaklqana temple_overflow_1
+TAGS:   no_monster_gen no_item_gen no_pool_fixup transparent
+KFEAT:  _ = altar_hepliaklqana
+COLOUR: w = green
+TILE:   G = dngn_gravestone
+COLOUR: t = brown
+TILE:   t = DNGN_TREE_DEAD
+# source: {{
+# source: set_feature_name("granite_statue", "a gravestone")
+# source: set_feature_name("tree", "dead tree")
+# source: dgn.persist.hep_ancestral_shrine_reborn = false
+# source:
+# source: local los_marker = TriggerableFunction:new {
+# source:   func="callback.hep_ancestral_shrine_los",
+# source:   repeated=true
+# source: }
+# source: los_marker:add_triggerer(DgnTriggerer:new {
+# source:   type="player_los"})
+# source:
+# source: lua_marker('_', los_marker)
+# source: lua_marker("t", portal_desc { dead_tree=1 })
+# source: lua_marker("w", portal_desc { green_water=1 })
+# source: }}
+MAP
+ xxxxx
+xxwwwxx
+xwwwwwx
+xwwwwwx
+xwtGtwx
+xt...tx
+x.._..x
+xt...tx
+xxt.txx
+ xx+xx
+   @
+ENDMAP

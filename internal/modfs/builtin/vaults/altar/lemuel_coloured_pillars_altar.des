@@ -1,0 +1,14 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   lemuel_coloured_pillars_altar
+DEPTH: D:3-, Depths
+TAGS:   no_rotate decor temple_overflow_generic_1 transparent
+COLOUR: c = blue / yellow / red / cyan
+MAP
+xxxxxxxxxxxxxxxxxxxx
+...................x
+c...c...c...c...c..x
+@.................Bx
+c...c...c...c...c..x
+...................x
+xxxxxxxxxxxxxxxxxxxx
+ENDMAP

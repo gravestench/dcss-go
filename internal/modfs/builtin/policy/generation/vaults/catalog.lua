@@ -21,7 +21,8 @@ local function ordered_definitions()
     for _, path in ipairs(mod.paths("vaults", ".des")) do
         if not path:match("^vaults/layout/") and
             not path:match("^vaults/temple/") and
-            not path:match("^vaults/temple_entry/") then
+            not path:match("^vaults/temple_entry/") and
+            not path:match("^vaults/altar/") then
             local source = mod.read(path)
             local definition = des.parse(path, source)
             hooks.validate(definition)

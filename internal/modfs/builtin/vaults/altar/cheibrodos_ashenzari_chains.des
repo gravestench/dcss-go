@@ -1,0 +1,16 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  cheibrodos_ashenzari_chains
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_1
+TAGS:  temple_overflow_ashenzari uniq_altar_ashenzari transparent decor
+TAGS:  uniq_altar_ashenzari
+KFEAT: _ = altar_ashenzari
+KFEAT: m = iron_grate
+: vault.run("interest.apply")
+MAP
+.............
+.mmm.....mmm.
+.mcmmc_cmmcm.
+.mmm.....mmm.
+.............
+ENDMAP

@@ -1,0 +1,29 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME:   grunt_qazlal_sundering
+DEPTH: D:3-, Depths
+TAGS:   no_monster_gen no_item_gen no_trap_gen temple_overflow_1
+TAGS:   temple_overflow_qazlal uniq_altar_qazlal transparent
+KFEAT:  _ = altar_qazlal
+KPROP:  c = no_tele_into
+SUBST:  c = cccl^.
+SUBST:  - = ..l^
+# source: :  if you.depth() ~= dgn.br_depth(you.branch()) then
+KFEAT:  ^ = shaft trap
+# source: :  end
+KITEM:  . = nothing w:189 / stone / large rock q:1 w:1
+KFEAT:  . = .
+: vault.run("interest.apply")
+MAP
+ ----@----
+-ccc-.-ccc-
+-ccc-.-ccc-
+-ccc-.-ccc-
+-----.-----
+@...._....@
+-----.-----
+-ccc-.-ccc-
+-ccc-.-ccc-
+-ccc-.-ccc-
+ ----@----
+ENDMAP

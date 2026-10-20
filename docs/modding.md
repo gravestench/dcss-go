@@ -2047,6 +2047,13 @@ The grid owns the walkable `_` feature, while
 `policy/presentation/view.lua` names an altar from its saved god ID using
 `constants.god_names`. Worship rules are a separate domain.
 
+The source Dungeon overflow maps live under `vaults/altar/`. The dedicated
+`policy.generation.altar.catalog` discovers added or replaced `.des` files
+through the same layered path rules. These maps are currently cataloged but
+not selected in live generation: their source Lua and scheduled god placement
+are still being ported. A mod can add or replace a map now, but should not
+expect it to appear on a floor until that generation pass is complete.
+
 The `builder/arena_*.des` family illustrates maps reserved for another game
 mode. Each definition keeps its original `MAP` rows and `arena_*` tag, but
 has no Dungeon `DEPTH` rule. `arena_items` and `arena_smoke` call the shared

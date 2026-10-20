@@ -1,0 +1,29 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME: nicolae_qazlal_scattered_showers
+DEPTH: D:3-, Depths
+# The rain is localized to a 5x5 square centered on the altar.
+# There's some rain water that occasionally gets deep but it's passable.
+TAGS:   temple_overflow_qazlal temple_overflow_1 transparent decor
+TAGS:   no_trap_gen uniq_altar_qazlal
+KFEAT:  _ = altar_qazlal
+MARKER: _ = lua:fog_machine { cloud_type = "rain", pow_min = 10, \
+    pow_max = 15, delay_min = 5, delay_max = 15, size = 1, walk_dist = 2, \
+    spread_rate = 0 }
+: vault.run("interest.apply")
+MAP
+.......
+.......
+.......
+..._...
+.......
+.......
+.......
+ENDMAP
+
+
+# Ru overflow altar vaults ####################################################
+
+# A few unlucky monsters permanently afflicted with Ru's various status effects.
+# the monsters in group B should all be non-intelligent, so that TSO won't get upset
+# about attacking them while blind. it's a pain for a monster you're not allowed
+# to attack to chase you throughout the level

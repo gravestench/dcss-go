@@ -1,0 +1,31 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+# Source Lua is preserved below for the named-hook port.
+NAME: nicolae_yredelemnul_corpse_copse
+DEPTH: D:3-, Depths
+TAGS: temple_overflow_yredelemnul temple_overflow_1 no_monster_gen
+TAGS: transparent patrolling uniq_altar_yredelemnul
+# Statistically, the probability that none of the edge glyphs will end up as .
+# and the level builder won't be able to connect the vault is extremely small.
+# ...but not zero. Thus:
+MONS:   zombie
+NSUBST: D = . / E
+NSUBST: t = . / ttE
+SUBST:  E = tt.
+# source: : nsubst( ". = " .. you.absdepth() .. "=1 / 1=1. / ." )
+KFEAT:  _ = altar_yredelemnul
+COLOUR: t = lightgrey w:5 / brown
+TILE:   t = dngn_tree_dead
+# source: : set_feature_name("tree", "dead tree")
+MAP
+   DDDDD
+  DE.E.ED
+ DE.E.E.ED
+DE.ttttt.ED
+D.Et...tE.D
+DE.t._.t.ED
+D.Et...tE.D
+DE.ttttt.ED
+ DE.E.E.ED
+  DE.E.ED
+   DDDDD
+ENDMAP

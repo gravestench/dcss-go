@@ -1,0 +1,13 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  nicolae_gozag_seed_capital
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_gozag temple_overflow_1 uniq_altar_gozag decor
+TAGS:  transparent no_item_gen
+ITEM:  gold q:1 / gold q:2
+KFEAT: _ = altar_gozag
+: vault.run("interest.apply")
+MAP
+ddd
+d_d
+ddd
+ENDMAP

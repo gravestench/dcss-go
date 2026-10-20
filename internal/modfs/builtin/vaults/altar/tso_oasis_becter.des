@@ -1,0 +1,25 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:   tso_oasis_becter
+DEPTH: D:3-, Depths
+TAGS:   temple_overflow_1 temple_overflow_the_shining_one transparent
+TAGS:   no_item_gen no_monster_gen uniq_altar_the_shining_one
+KMONS:  f = plant
+SUBST:  ` = ff.
+COLOUR: . = yellow
+FTILE:  `.Tf = floor_sand
+FTILE:  _ = floor_limestone
+COLOUR: c = white
+TILE:   c = wall_church
+KFEAT:  _ = altar_the_shining_one
+: vault.run("interest.apply")
+MAP
+  ....
+ ..``....
+ .`ww`...
+ ..``..c..
+......+cc..
+..T..cc_cc.
+ .....ccc..
+   ....c..
+     ....
+ENDMAP

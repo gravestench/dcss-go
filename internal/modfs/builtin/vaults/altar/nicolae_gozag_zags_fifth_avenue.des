@@ -1,0 +1,20 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:  nicolae_gozag_zags_fifth_avenue
+DEPTH: D:3-, Depths
+TAGS:  temple_overflow_gozag temple_overflow_1 uniq_altar_gozag
+TAGS:  no_pool_fixup no_item_gen no_monster_gen decor transparent
+WEIGHT: 5
+FTILE: '_TS = floor_limestone
+KFEAT: _ = altar_gozag
+KFEAT: S = general shop name:Gozag type:Platinum suffix:Reserve count:4 \
+        greed:100 ; any weapon randart | any armour randart | any jewellery randart
+: vault.run("interest.apply")
+MAP
+wwwwwww....
+w'''''wwww.
+w'T'T''''w.
+w''S'''_''@
+w'T'T''''w.
+w'''''wwww.
+wwwwwww....
+ENDMAP

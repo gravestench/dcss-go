@@ -1,0 +1,23 @@
+# Source overflow altar map; DES geometry and directives remain authoritative.
+NAME:     tso_altar
+DEPTH: D:3-, Depths
+TAGS:     no_item_gen no_rotate decor transparent
+TAGS:     temple_overflow_1 temple_overflow_the_shining_one
+TAGS:     uniq_altar_the_shining_one
+COLOUR:   _ = yellow
+FTILE:    _A = floor_limestone
+SUBST:    _ = .
+COLOUR:   c = white
+TILE:     c = wall_church
+KFEAT:    A = altar_the_shining_one
+: vault.run("interest.apply")
+MAP
+  xxxxx
+xxxcccxxx
+xcccAcccx
+xc.___.cx
+xct._.tcx
+xc.._..cx
+xct...tcx
+xccc+cccx
+ENDMAP
