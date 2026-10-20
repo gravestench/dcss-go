@@ -23,4 +23,20 @@ function material.level(builder, api)
     end
 end
 
+-- Most source Dungeon cave themes change only tiles. The rare emerald
+-- variant also substitutes crystal wall terrain, so preserve that effect.
+function material.caves(builder, api)
+    if api.branch ~= "D" or not builder:one_in(111) then
+        return
+    end
+
+    for y = 0, grid.height - 1 do
+        for x = 0, grid.width - 1 do
+            if builder:cell(x, y) == "#" then
+                builder:set(x, y, "b")
+            end
+        end
+    end
+end
+
 return material
