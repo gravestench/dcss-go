@@ -1,0 +1,9 @@
+# A new mod layout is discovered without changing a Go or Lua ID table.
+NAME: layout_modded
+DEPTH: D
+WEIGHT: 100 (D)
+ORIENT: encompass
+TAGS: layout layout_type_rooms allow_dup
+: vault.run("layout_modded")
+MAP
+ENDMAP

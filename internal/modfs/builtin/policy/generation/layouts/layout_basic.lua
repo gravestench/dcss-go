@@ -150,4 +150,10 @@ function basic.generate(ctx, depth)
     error(string.format("Dungeon:%d layout failed after 16 attempts: %s", depth, last_error))
 end
 
+-- The DES run directive enters the same builder used by the original
+-- fixed Dungeon scenario, so its source metadata can select this layout.
+function basic.layout_basic(api)
+    return basic.generate(api.ctx, api.depth)
+end
+
 return basic

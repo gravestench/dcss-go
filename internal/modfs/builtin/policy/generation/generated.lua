@@ -1,6 +1,6 @@
 -- Example: authored stairs on any Dungeon floor gain paired landings nearby.
-local basic = require("policy.generation.layouts.layout_basic")
-local layout_stairs = require("policy.generation.layouts.stairs")
+local grid = require("policy.generation.grid")
+local layouts = require("policy.generation.layouts.catalog")
 local item_ids = require("ids.items")
 local nearest = require("policy.generation.nearest")
 local branches = require("ids.branches")
@@ -62,13 +62,16 @@ end
 -- a broken map or rule and should fail immediately.
 -- Arrival placement precedes ordinary population so its stairs and protected cells shape D:1.
 local function place_first_level(ctx, player)
+    local random = grid.new(ctx)
+    local selected = vault_selection.choose_catalog(random)
+    local vault = vault_catalog.get(selected.id)
+    local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
+
     for _ = 1, 32 do
-        local first = basic.generate(ctx, 1)
-
-        first.stairs = layout_stairs.complete(first.builder)
-
-        local selected = vault_selection.choose_catalog(first.builder)
-        local vault = vault_catalog.get(selected.id)
+        local definition = layouts.choose(random,
+            branches.BRANCH_DUNGEON, 1, bottom, vault.tags)
+        local first = layouts.execute(ctx, definition,
+            branches.BRANCH_DUNGEON, 1)
         local ok, placed = pcall(vault_placement.place, ctx, first.builder, vault, player)
 
         if ok then
@@ -189,8 +192,12 @@ local function build_floor(ctx, player, depth, bottom)
     if depth == 1 then
         layout, arrival, arrival_vault = place_first_level(ctx, player)
     else
-        layout = basic.generate(ctx, depth)
-        layout.stairs = layout_stairs.complete(layout.builder)
+        local random = grid.new(ctx)
+        local definition = layouts.choose(random,
+            branches.BRANCH_DUNGEON, depth, bottom)
+
+        layout = layouts.execute(ctx, definition,
+            branches.BRANCH_DUNGEON, depth)
     end
 
     local required = base_stair_points(layout)

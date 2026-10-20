@@ -111,7 +111,7 @@ through Lua discovery and generic engine capabilities, not a Go ID switch.
 
 The implemented parts of categories 2–6 moved in one sweep. These categories
 are an audit checklist for future work, not adapter milestones. Category 7
-extends the game beyond the present basic-layout Dungeon slice.
+extends the game beyond the present source-layout Dungeon slice.
 
 1. **Mod runtime foundation.** Embed the Lua tree, resolve one overlay by
    relative path, hash the effective files, bootstrap a per-game Lua VM,

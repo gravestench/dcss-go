@@ -7,6 +7,6 @@ ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand layout_type_narrow_caves
 : vault.run("layout_layer_cave")
 # Enforce minimum floor size - otherwise we get very tiny floors sometimes
-: vault.validate("layout_layer_cave")
+: vault.validate("validate")
 MAP
 ENDMAP

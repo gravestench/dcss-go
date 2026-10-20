@@ -157,6 +157,12 @@ local function enough_floor(builder)
     return count > minimum_floor
 end
 
+-- The named DES validator keeps the source minimum visible to the catalog.
+-- The run hook already retries small candidates before returning one.
+function layout.validate(result)
+    return enough_floor(result.builder)
+end
+
 -- Run the source DES hook. Failed source-size candidates consume their
 -- draws and retry, while a persistent failure remains an explicit error.
 function layout.layout_layer_cave(api)

@@ -1,6 +1,7 @@
 -- Example: A vault that overlaps a protected stair tries another origin on the fixed grid.
 local glyphs = require("constants.vault_glyphs")
 local effects = require("constants.vault_effects")
+local directives = require("constants.vault_directives")
 local implicit = require("constants.vault_implicit")
 local operations = require("policy.generation.vaults.operations")
 local transforms = require("policy.generation.vaults.transforms")
@@ -46,7 +47,7 @@ local function protected_stair(builder, left, top, map_width, map_height)
         for x = left, left + map_width - 1 do
             local present = builder:cell(x, y)
 
-            if present == "<" or present == ">" then
+            if glyphs.up[present] or glyphs.down[present] then
                 return true
             end
         end
@@ -95,7 +96,7 @@ local function protected_cell(builder, cells, left, top, protected)
                 local key = x .. ":" .. y
                 local present = builder:cell(x, y)
 
-                if present == "<" or present == ">" or
+                if glyphs.up[present] or glyphs.down[present] or
                     protected[key] then
                     return true
                 end
@@ -160,10 +161,10 @@ local function rendered_glyph(source)
 end
 
 -- Implicit item and monster glyphs become typed records alongside rendered terrain.
-local function add_source_record(records, vault, source, x, y)
+local function add_source_record(records, vault, source, x, y, overridden)
     local feature = glyphs.terrain[source]
 
-    if feature and source ~= "." then
+    if feature and source ~= "." and not overridden then
         records[#records + 1] = {
             kind = effects.SOURCE_FEATURE,
             identity = feature,
@@ -188,7 +189,7 @@ local function add_source_record(records, vault, source, x, y)
         identity = implicit.traps[source]
     end
 
-    if kind then
+    if kind and not overridden then
         records[#records + 1] = {
             kind = kind,
             identity = identity,
@@ -202,8 +203,29 @@ local function add_source_record(records, vault, source, x, y)
     end
 end
 
+-- Keyed feature, monster, and item declarations turn their target glyphs
+-- into placeholders. DCSS gives the cell plain floor unless KFEAT later
+-- supplies terrain; the glyph's normal wall, stair, or implicit occupant
+-- must not leak through alongside the explicit keyed record.
+local function keyed_overrides(source_records)
+    local overridden = {}
+
+    for _, record in ipairs(source_records) do
+        if record.directive == directives.KFEAT or
+            record.directive == directives.KMONS or
+            record.directive == directives.KITEM then
+            for glyph in (record.targets or ""):gmatch(".") do
+                overridden[glyph] = true
+            end
+        end
+    end
+
+    return overridden
+end
+
 -- Project the matrix and collect entry and exits while preserving source-cell records.
-local function draw_map(vault, cells, builder, left, top, records)
+local function draw_map(vault, cells, builder, left, top, records,
+    overridden)
     local entry
     local source_stair
     local exits = {}
@@ -216,12 +238,14 @@ local function draw_map(vault, cells, builder, left, top, records)
                 local x = left + local_x - 1
                 local y = top + local_y - 1
                 local point = { x = x, y = y }
+                local keyed = overridden[source]
+                local rendered = keyed and "." or rendered_glyph(source)
 
-                builder:set(x, y, rendered_glyph(source))
+                builder:set(x, y, rendered)
                 occupied[#occupied + 1] = point
-                add_source_record(records, vault, source, x, y)
+                add_source_record(records, vault, source, x, y, keyed)
 
-                if source == "{" then
+                if source == "{" and not keyed then
                     source_stair = source_stair or point
                 elseif source == "@" then
                     entry = entry or point
@@ -231,8 +255,9 @@ local function draw_map(vault, cells, builder, left, top, records)
                     local_y == 1 or local_y == #cells
                 local doorway = boundary and (source == "+" or source == "=")
 
-                if source == "@" or doorway or glyphs.up[source] or
-                    glyphs.down[source] then
+                if source == "@" or doorway or
+                    (not keyed and (glyphs.up[source] or
+                        glyphs.down[source])) then
                     exits[#exits + 1] = {
                         x = x,
                         y = y,
@@ -240,7 +265,7 @@ local function draw_map(vault, cells, builder, left, top, records)
                     }
                 end
 
-                if not floor and rendered_glyph(source) == "." then
+                if not floor and rendered == "." then
                     floor = point
                 end
             end
@@ -459,6 +484,7 @@ function placement.place(_, builder, vault, player, options)
     local width_before = map_width
     local height_before = map_height
     local source_records = operations.apply(vault, cells, builder, 0, player)
+    local overridden = keyed_overrides(source_records)
     local turns = 0
 
     if vault.orientation == "float" and
@@ -472,7 +498,8 @@ function placement.place(_, builder, vault, player, options)
     local left, top = origin(vault, cells, map_width, map_height,
         builder, options)
     local records = {}
-    local entry, exits, occupied = draw_map(vault, cells, builder, left, top, records)
+    local entry, exits, occupied = draw_map(vault, cells, builder,
+        left, top, records, overridden)
     local intents = locate_records(source_records, cells, left, top, entry,
         width_before, height_before, turns, builder, vault)
 

@@ -44,6 +44,18 @@ func TestModJewelleryRule(t *testing.T) {
 	runLuaRule(t, rules, "tests/reflector_mod_test.lua")
 }
 
+// A mod can disable one bundled DES layout and add another without changing
+// the Go loader or the Lua selector's source tables.
+func TestLayoutMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/layout-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/layout_mod_test.lua")
+}
+
 func TestVaultDuplicateAlias(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/vault-duplicate-alias")
 

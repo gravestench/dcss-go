@@ -2,8 +2,9 @@
 
 The reference is DCSS commit
 `e60ba3568b0c26447ad36ec5c7b963eb04b2778f` in
-`/Users/dylanknuth/src/crawl`. The port has a traversable basic-layout
-Dungeon through D:15, but is not a complete DCSS game.
+`/Users/dylanknuth/src/crawl`. The port has a traversable Dungeon through
+D:15 with all 17 active source Dungeon layouts, but is not a complete DCSS
+game.
 
 ## Where rules live
 
@@ -184,7 +185,7 @@ and preserve unusual roll order.
 
 ## Remaining full-game work
 
-All legal selectable species/job combinations now enter the basic-layout
+All legal selectable species/job combinations now enter the source-layout
 D:1–15 Dungeon. Their starting state is Lua-owned and saved; most later species and
 job abilities are still unavailable. The many imported monsters, spells,
 items, and branches still need behavior, generation, and UI flows.
@@ -215,7 +216,7 @@ titles, owners, school wording, difficulty bands, and hidden appearances.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,
-the source's other Dungeon layouts and branch entrances, the Abyss monster
+branch-specific layouts and entrances, the Abyss monster
 roster and shifting terrain,
 full source parity for chaos clone allegiance and exact shapeshifter RNG order,
 exact random-name RNG parity, gift-origin equipment name preference, runes,

@@ -1919,6 +1919,38 @@ yet part of the playable population.
 
 ## Vault maps and Lua hooks
 
+### Dungeon layouts
+
+The effective `vaults/layout/*.des` files are also a live catalog. All 21
+source Dungeon definitions are committed: 17 have a positive Dungeon weight,
+and four remain registered with weight zero. To add a layout, create
+`vaults/layout/<name>.des` and, for a calculated map, a same-named
+`policy/generation/layouts/<name>.lua`. The `.des` file supplies `NAME`,
+`DEPTH`, `WEIGHT`, `TAGS: layout layout_type_<family>`, and a named
+`: vault.run("<method>")` hook. Use `MAP` and `ENDMAP` even when the hook
+builds the whole grid. The hook module returns a local table with that
+method; see `layout_rooms` for an existing example.
+
+The run method receives `api.ctx`, `api.branch`, `api.depth`, and
+`api.absolute_depth`. Build the 80×70 grid with
+`policy.generation.grid.new(api.ctx)`, carve it, and return a table containing
+`builder` and `rows = builder:rows()`. The catalog calls a named
+`vault.validate` method if the `.des` file declares one, then places missing
+ordinary stairs in a connected region. A failed source validator gets up to
+eight draws of the same layout; malformed hooks fail at startup. Import the
+shared geometry helpers you use from `policy.generation.layouts` and keep
+source-specific choices in your layout module.
+
+Selection reads only effective `.des` depth and branch weight rules. It
+sorts IDs before each weighted draw, so discovery order does not change a
+seed. On D:1, arrival tags `layout_<family>` request a family and
+`nolayout_<family>` veto one; `no_primary_vault` layouts cannot accompany an
+arrival. A mod replaces a bundled layout by using the same relative `.des`
+and Lua paths, or adds a new pair without editing a central ID table.
+Disabled zero-weight definitions remain visible but are not selected.
+
+### Authored vaults
+
 Vault geometry remains in original `.des` syntax under `vaults/arrival/` or
 `vaults/shop/`. A map has `NAME`, tags, optional orientation and directives,
 then `MAP` and `ENDMAP`. The `.des` file is the authoritative layout. A mod

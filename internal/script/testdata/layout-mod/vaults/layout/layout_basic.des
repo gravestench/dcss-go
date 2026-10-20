@@ -1,0 +1,9 @@
+# Test overlay: this effective path disables basic only in the modded ruleset.
+NAME: layout_basic
+DEPTH: D
+WEIGHT: 0 (D)
+ORIENT: encompass
+TAGS: layout layout_type_rooms allow_dup
+: vault.run("layout_basic")
+MAP
+ENDMAP

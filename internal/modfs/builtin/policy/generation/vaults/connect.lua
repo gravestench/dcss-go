@@ -1,6 +1,7 @@
 -- Example: An isolated vault exit gets a corridor to reachable Dungeon floor.
 local connect = {}
 local effects = require("constants.vault_effects")
+local glyphs = require("constants.vault_glyphs")
 local hooks = require("policy.generation.vaults.hooks")
 
 -- Every source exit must reach the surrounding Dungeon. The connector marks
@@ -60,7 +61,8 @@ local function carve(builder, from, to, carved)
 
         local glyph = builder:cell(x, y)
 
-        if glyph ~= "<" and glyph ~= ">" and glyph ~= "." then
+        if not glyphs.up[glyph] and not glyphs.down[glyph] and
+            glyph ~= "." then
             builder:set(x, y, ".")
             carved[key(x, y)] = true
         end
