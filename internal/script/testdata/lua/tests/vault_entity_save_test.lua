@@ -11,6 +11,7 @@ local death = require("policy.death")
 local catalog = require("policy.catalog")
 local origin_policy = require("policy.population.origin")
 local origin_schema = require("schemas.vault_origin")
+local enchantments = require("constants.vault_monster_enchantments")
 
 local test = {}
 
@@ -304,6 +305,30 @@ function test.run(ctx)
     harness.falsy(pcall(save.validate_vault_entities, ctx, spell_input),
         "spellbook outside the source alternatives was accepted")
     ctx:remove(rat, component.VAULT_ACTOR_OVERRIDES)
+
+    -- The saved marker is actor-owned state, but its names must still come
+    -- from this actor's selected source monster expression.
+    local enchant_input = level_input()
+    local enchant_arguments = enchant_input.levels[1].vault_records[1].arguments
+
+    enchant_arguments.selected_expression = "rat perm_ench:corona"
+    enchant_arguments.permanent_enchantments = enchantments.CORONA
+    ctx:add(rat, component.VAULT_PERMANENT_ENCHANTMENTS, {
+        active = { [enchantments.CORONA] = true },
+    })
+    save.validate_vault_entities(ctx, enchant_input)
+
+    enchant_arguments.permanent_enchantments = enchantments.SLOW
+    harness.falsy(pcall(save.validate_vault_entities, ctx, enchant_input),
+        "forged permanent source tags were accepted")
+    enchant_arguments.permanent_enchantments = enchantments.CORONA
+
+    ctx:set(rat, component.VAULT_PERMANENT_ENCHANTMENTS, {
+        active = { [enchantments.SLOW] = true },
+    })
+    harness.falsy(pcall(save.validate_vault_entities, ctx, enchant_input),
+        "forged permanent source status was accepted")
+    ctx:remove(rat, component.VAULT_PERMANENT_ENCHANTMENTS)
 
     -- Duplicate origin occurrence IDs are rejected even on separate entities.
     local second = ctx:create()

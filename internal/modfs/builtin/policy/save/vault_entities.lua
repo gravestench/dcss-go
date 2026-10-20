@@ -5,6 +5,7 @@ local item_ids = require("ids.items")
 local monster_specs = require("policy.generation.vaults.specs.monster")
 local slime_blob = require("policy.monsters.slime_blob")
 local monsters = require("ids.monsters")
+local vault_enchantments = require("policy.monsters.vault_enchantments")
 
 local vault_entities = {}
 
@@ -46,6 +47,39 @@ local function validate_actor_overrides(ctx, entity, record, arguments)
         if not allowed then
             error("entity " .. ctx:id(entity) ..
                 " has a spellbook absent from its source vault slot")
+        end
+    end
+
+    -- A status can be dispelled after spawn, but restoration cannot invent
+    -- one that the selected DES monster expression never granted.
+    local permanent = ctx:get(entity,
+        component.VAULT_PERMANENT_ENCHANTMENTS)
+
+    if permanent then
+        local allowed = {}
+
+        for _, name in ipairs(selected and
+            selected.permanent_enchantments or {}) do
+            allowed[name] = true
+        end
+
+        for name, active in pairs(permanent.active) do
+            if active and not allowed[name] then
+                error("entity " .. ctx:id(entity) ..
+                    " has forged permanent vault enchantment " .. name)
+            end
+        end
+    end
+
+    if selected then
+        local source_names = selected.permanent_enchantments or {}
+
+        vault_enchantments.validate(source_names)
+
+        if (arguments.permanent_enchantments or "") ~=
+            table.concat(source_names, "|") then
+            error("entity " .. ctx:id(entity) ..
+                " has forged permanent vault source tags")
         end
     end
 

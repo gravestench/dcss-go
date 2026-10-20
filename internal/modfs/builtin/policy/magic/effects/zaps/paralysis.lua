@@ -6,6 +6,8 @@ local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 local senses = require("policy.character.senses")
+local vault_enchantments = require("policy.monsters.vault_enchantments")
+local enchantments = require("constants.vault_monster_enchantments")
 
 local paralysis = {}
 
@@ -61,7 +63,9 @@ end
 function paralysis.tick(ctx, target)
     local state = ctx:get(target, component.PARALYSIS)
 
-    if not state then
+    if not state or
+        vault_enchantments.active(ctx, target, enchantments.PARALYSIS) or
+        vault_enchantments.active(ctx, target, enchantments.DUMB) then
         return
     end
 

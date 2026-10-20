@@ -87,6 +87,7 @@ local function monster_options(record, level)
         database_name = arguments.database_name ~= "" and
             arguments.database_name or nil,
         tile = arguments.tile ~= "" and arguments.tile or nil,
+        permanent_enchantments = selected.permanent_enchantments,
     }
 end
 

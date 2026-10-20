@@ -1,4 +1,6 @@
 local component = require("constants.component")
+local vault_enchantments = require("policy.monsters.vault_enchantments")
+local enchantments = require("constants.vault_monster_enchantments")
 
 local system = {}
 
@@ -7,7 +9,8 @@ local system = {}
 function system.update(ctx, monster, aut)
     local state = ctx:get(monster, component.MONSTER_MUTE)
 
-    if not state then
+    if not state or vault_enchantments.active(ctx, monster,
+        enchantments.MUTE) then
         return
     end
 

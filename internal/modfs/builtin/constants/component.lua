@@ -10,6 +10,7 @@ local component = {
     TRAP_HELD = "trap.held",
     PROJECTILE_NET = "projectile.net",
     VAULT_ACTOR_OVERRIDES = "vault.actor_overrides",
+    VAULT_PERMANENT_ENCHANTMENTS = "vault.permanent_enchantments",
     PLAYER = "core.player",
     PLAYER_TURN = "core.player_turn",
     POSITION = "core.position",

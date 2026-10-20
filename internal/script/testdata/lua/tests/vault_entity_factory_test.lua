@@ -22,6 +22,14 @@ local slime_blob = require("policy.monsters.slime_blob")
 local display = require("policy.combat.monster_support.display")
 local monster_stats = require("policy.combat.monster_stats")
 local presentation = require("policy.presentation.view")
+local permanent = require("constants.vault_monster_enchantments")
+local vault_enchantments = require("policy.monsters.vault_enchantments")
+local paralysis = require("policy.magic.effects.zaps.paralysis")
+local confusion = require("policy.magic.effects.statuses.confusing_touch")
+local hex_status = require("policy.combat.monster_hexes.status")
+local monster_enchant = require("policy.combat.monster_enchant")
+local monster_slow = require("policy.combat.monster_slow")
+local mute_system = require("systems.zap_monster_mute")
 
 local test = {}
 
@@ -186,6 +194,68 @@ local function authored_actor_identity(ctx)
         "database alias stays with actor")
     harness.equal(overrides.tile, "mons_statue_mage",
         "tile hint stays with actor")
+end
+
+-- Permanent DES enchantments use the live status components, but their
+-- source duration must survive the ordinary ten-AUT status tick.
+local function permanent_source_enchantments(ctx)
+    local world = world_context(ctx)
+    local actor = factory.spawn(world, monsters.MONS_RAT, 1, 38, 10, {
+        origin = origin,
+        permanent_enchantments = {
+            permanent.BLIND,
+            permanent.CONFUSION,
+            permanent.CORONA,
+            permanent.DUMB,
+            permanent.MAD,
+            permanent.MUTE,
+            permanent.PARALYSIS,
+            permanent.SLOW,
+        },
+    })
+    local speed = ctx:get(actor, component.ACTOR).speed
+
+    harness.truthy(ctx:has(actor, component.PARALYSIS),
+        "permanent paralysis affects the actor")
+    harness.truthy(confusion.active(world, actor),
+        "permanent madness confuses the actor")
+    harness.truthy(hex_status.backlit(world, actor),
+        "permanent corona backlights the actor")
+    harness.truthy(monster_enchant.blinded(world, actor),
+        "permanent blindness affects vision")
+    harness.truthy(ctx:has(actor, component.MONSTER_MUTE),
+        "permanent mute affects spellcasting")
+    harness.truthy(speed < catalog.get(categories.MONSTERS,
+        monsters.MONS_RAT).speed, "permanent slow changes speed")
+
+    paralysis.tick(world, actor)
+    confusion.tick(world, actor)
+    hex_status.tick(world, actor, 10)
+    monster_enchant.tick(world, actor, 10)
+    monster_slow.tick(world, actor)
+    mute_system.update(world, actor, 10)
+
+    harness.truthy(ctx:has(actor, component.PARALYSIS),
+        "permanent paralysis expired")
+    harness.truthy(confusion.active(world, actor),
+        "permanent confusion expired")
+    harness.truthy(hex_status.backlit(world, actor),
+        "permanent corona expired")
+    harness.truthy(monster_enchant.blinded(world, actor),
+        "permanent blindness expired")
+    harness.truthy(ctx:has(actor, component.MONSTER_MUTE),
+        "permanent mute expired")
+    harness.equal(ctx:get(actor, component.ACTOR).speed, speed,
+        "permanent slow expired")
+
+    monster_enchant.dispel(world, actor,
+        catalog.get(categories.MONSTERS, monsters.MONS_RAT))
+    harness.falsy(vault_enchantments.active(world, actor, permanent.SLOW),
+        "dispel left a stale permanent slow marker")
+    harness.falsy(vault_enchantments.active(world, actor, permanent.BLIND),
+        "dispel left a stale permanent blind marker")
+    harness.falsy(vault_enchantments.active(world, actor, permanent.DUMB),
+        "dispel left a stale permanent paralysis marker")
 end
 
 -- Authored item modifiers survive through entity creation and stacking.
@@ -509,6 +579,7 @@ function test.run(ctx)
     spawned_actor_has_source_state(ctx)
     fixed_source_vitals(ctx)
     authored_actor_identity(ctx)
+    permanent_source_enchantments(ctx)
     vault_items_keep_variant_and_quantity(ctx)
     source_gear_and_explicit_equipment(ctx)
     trog_guard_keeps_source_gear(ctx)

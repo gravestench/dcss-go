@@ -1,4 +1,6 @@
 local component = require("constants.component")
+local vault_enchantments = require("policy.monsters.vault_enchantments")
+local enchantments = require("constants.vault_monster_enchantments")
 
 local status = {}
 
@@ -104,7 +106,10 @@ function status.tick(ctx, actor, elapsed)
     local remaining = false
 
     for _, field in ipairs(fields) do
-        state[field] = math.max(0, state[field] - elapsed)
+        if field ~= "corona_aut" or not
+            vault_enchantments.active(ctx, actor, enchantments.CORONA) then
+            state[field] = math.max(0, state[field] - elapsed)
+        end
         remaining = remaining or state[field] > 0
     end
 

@@ -9,6 +9,8 @@ local monster_stats = require("policy.combat.monster_stats")
 local mirror = require("policy.combat.monster_support.injury_mirror")
 local frenzy_health = require("policy.magic.effects.statuses.monster_frenzy_health")
 local senses = require("policy.character.senses")
+local vault_enchantments = require("policy.monsters.vault_enchantments")
+local vault_enchantment_ids = require("constants.vault_monster_enchantments")
 
 local constructs = require("constants.monster_construct_components")
 
@@ -280,6 +282,7 @@ function enchant.dispel(ctx, monster, definition)
         (value.corrosion_aut or 0) > 0 or
         (value.invisible_aut or 0) > 0) then
         ctx:remove(monster, component.MONSTER_ENCHANT)
+        vault_enchantments.clear(ctx, monster, vault_enchantment_ids.BLIND)
         changed = true
     end
 
@@ -323,12 +326,21 @@ function enchant.dispel(ctx, monster, definition)
     if ctx:has(monster, component.MONSTER_CONFUSION) and
         not naturally_confused(definition) then
         ctx:remove(monster, component.MONSTER_CONFUSION)
+        vault_enchantments.clear(ctx, monster,
+            vault_enchantment_ids.CONFUSION)
+        vault_enchantments.clear(ctx, monster, vault_enchantment_ids.MAD)
         changed = true
     end
 
     for _, id in ipairs(whole_effects) do
         if ctx:has(monster, id) then
             ctx:remove(monster, id)
+            if id == component.PARALYSIS then
+                vault_enchantments.clear(ctx, monster,
+                    vault_enchantment_ids.PARALYSIS)
+                vault_enchantments.clear(ctx, monster,
+                    vault_enchantment_ids.DUMB)
+            end
             changed = true
         end
     end
@@ -360,7 +372,8 @@ function enchant.tick(ctx, monster, elapsed_aut)
     value.corrosion_aut = value.corrosion_aut or 0
     value.invisible_aut = value.invisible_aut or 0
 
-    if value.blind_aut > 0 then
+    if value.blind_aut > 0 and not vault_enchantments.active(ctx,
+        monster, vault_enchantment_ids.BLIND) then
         value.blind_aut = math.max(0, value.blind_aut - elapsed_aut)
         changed = true
 

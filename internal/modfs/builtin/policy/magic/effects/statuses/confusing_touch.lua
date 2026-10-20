@@ -4,6 +4,8 @@ local will = require("policy.magic.effects.zaps.will")
 local roll = require("policy.combat.roll")
 local monster_stats = require("policy.combat.monster_stats")
 local senses = require("policy.character.senses")
+local vault_enchantments = require("policy.monsters.vault_enchantments")
+local enchantments = require("constants.vault_monster_enchantments")
 
 local touch = {}
 
@@ -108,7 +110,9 @@ end
 function touch.tick(ctx, target)
     local current = ctx:get(target, component.MONSTER_CONFUSION)
 
-    if not current then
+    if not current or
+        vault_enchantments.active(ctx, target, enchantments.CONFUSION) or
+        vault_enchantments.active(ctx, target, enchantments.MAD) then
         return
     end
 

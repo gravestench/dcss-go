@@ -1,6 +1,8 @@
 local roll = require("policy.combat.roll")
 local monster_stats = require("policy.combat.monster_stats")
 local senses = require("policy.character.senses")
+local vault_enchantments = require("policy.monsters.vault_enchantments")
+local enchantments = require("constants.vault_monster_enchantments")
 
 local slow = {}
 
@@ -54,7 +56,8 @@ end
 function slow.tick(ctx, monster)
     local state = ctx:get(monster, "projectile.slow")
 
-    if not state then
+    if not state or vault_enchantments.active(ctx, monster,
+        enchantments.SLOW) then
         return
     end
 
@@ -90,6 +93,7 @@ function slow.remove(ctx, monster)
     actor.speed = state.base_speed
     ctx:set(monster, "core.actor", actor)
     ctx:remove(monster, "projectile.slow")
+    vault_enchantments.clear(ctx, monster, enchantments.SLOW)
 
     return true
 end

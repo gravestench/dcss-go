@@ -2337,6 +2337,18 @@ creates a typed placement record that can survive into level and save data.
 Import record kinds from `constants.vault_effects` and inspect a bundled
 handler such as `giann_forest_graveyard.lua` for its argument shape.
 
+An authored monster can carry a source `perm_ench:` modifier, for example
+`MONS: rat perm_ench:corona`. The vault parser records the source name, and
+population attaches both a live ECS status and a permanent marker to that
+monster. Ordinary AI, vision, and combat rules read the live status; its
+clock skips only the authored effect. Import the names from
+`constants.vault_monster_enchantments` in Lua code. The supported source
+names are `blind`, `confusion`, `corona`, `dumb`, `mad`, `mute`, `paralysis`,
+and `slow`; `dumb` follows paralysis and `mad` follows confusion. A magical
+dispel removes the marker along with any status it removes, so a later
+temporary application still has a normal lifetime. The actor's marker is
+saved and checked against its selected `.des` expression on restore.
+
 | `vault.run` hook call | Result |
 | --- | --- |
 | `api:roll(bound)` | Integer from `0` to `bound - 1` on the vault layout stream. |

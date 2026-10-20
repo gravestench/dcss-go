@@ -22,6 +22,7 @@ local unique_history = require("policy.population.unique_history")
 local generation = require("policy.item_generation")
 local item_purpose = require("constants.item_generation_purpose")
 local item_quality = require("constants.vault_item_quality")
+local vault_enchantments = require("policy.monsters.vault_enchantments")
 
 local factory = {}
 
@@ -286,6 +287,8 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         error("invalid authored monster HD " .. tostring(options.hd))
     end
 
+    vault_enchantments.validate(options.permanent_enchantments)
+
     local definition = catalog.get("monsters", kind_id)
     local source = definition
 
@@ -378,6 +381,9 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
             tile = options.tile or "",
         })
     end
+
+    vault_enchantments.install(ctx, monster,
+        options.permanent_enchantments)
 
     if options.origin then
         prepare_habitat(ctx, source, level_id, x, y)
