@@ -43,7 +43,12 @@ func (g *Game) populateFromScript(setup scenarioLevels) error {
 
 // Populate a generated floor only when the player first approaches its
 // paired stair. The terrain and population use the live RNG state.
-func (g *Game) populateGeneratedLevel(id int, entry point, items []any) error {
+func (g *Game) populateGeneratedLevel(
+	id int,
+	entry point,
+	items []any,
+	newlyGenerated bool,
+) error {
 	if g.scenarioID != generatedDungeonScenarioID || id == 1 {
 		return nil
 	}
@@ -54,7 +59,7 @@ func (g *Game) populateGeneratedLevel(id int, entry point, items []any) error {
 		return fmt.Errorf("missing generated Dungeon level %d", id)
 	}
 
-	if level.initialMonsters == 0 || level.initialActors != 0 {
+	if !newlyGenerated {
 		return nil
 	}
 
@@ -79,6 +84,7 @@ func (g *Game) populateStairDestination(
 	}
 
 	var startingItems []any
+	newlyGenerated := link.Pending
 
 	if link.Pending {
 		if g.scenarioID != generatedDungeonScenarioID {
@@ -102,7 +108,7 @@ func (g *Game) populateStairDestination(
 	return g.populateGeneratedLevel(link.ToLevelID, point{
 		x: link.ToX,
 		y: link.ToY,
-	}, startingItems)
+	}, startingItems, newlyGenerated)
 }
 
 // Carry the authored no-spawn mask with the level, including through saves.

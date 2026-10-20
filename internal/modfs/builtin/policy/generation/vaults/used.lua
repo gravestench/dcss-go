@@ -1,5 +1,6 @@
 -- Successful map IDs reconstruct DCSS name and tag uniqueness across floors.
 local catalog = require("policy.generation.vaults.catalog")
+local temple = require("policy.generation.temple.catalog")
 
 local used = {}
 
@@ -31,6 +32,24 @@ local function remember_level(state, vault)
     end
 end
 
+-- Temple primary and entry maps are selected by their own catalogs but
+-- remain part of the same saved map history as ordinary extra vaults.
+local function prior_definition(id)
+    local okay, definition = pcall(catalog.get, id)
+
+    if okay then
+        return definition
+    end
+
+    definition = temple.main(id) or temple.entry(id)
+
+    if not definition then
+        error("unknown saved vault " .. tostring(id))
+    end
+
+    return definition
+end
+
 -- Build current-floor state from saved successful maps on earlier floors.
 -- Reading the effective catalog also reports missing IDs before a new draw.
 function used.new(prior_ids)
@@ -47,7 +66,7 @@ function used.new(prior_ids)
     state.ids = used.ids
 
     for _, id in ipairs(prior_ids or {}) do
-        remember_run(state, catalog.get(id))
+        remember_run(state, prior_definition(id))
     end
 
     return state

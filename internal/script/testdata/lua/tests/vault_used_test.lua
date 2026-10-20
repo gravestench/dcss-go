@@ -3,6 +3,7 @@ local catalog = require("policy.generation.vaults.catalog")
 local ids = require("ids.vaults")
 local used = require("policy.generation.vaults.used")
 local harness = require("tests.harness")
+local temple = require("policy.generation.temple.catalog")
 
 local test = {}
 
@@ -76,12 +77,27 @@ local function global_tag_scope()
         "run-wide tag blocks another map even with allow_dup")
 end
 
+-- A later Dungeon or branch floor must accept source Temple map IDs in
+-- its prior history even though ordinary extra-vault selection excludes
+-- the Temple directories.
+local function temple_history()
+    local main = temple.main("ebering_untended_altars")
+    local entry = temple.entry("minmay_temple_entry_ruins")
+    local state = used.new({ main.id, entry.id })
+
+    harness.falsy(state:allows(main),
+        "source Temple main name remains used")
+    harness.falsy(state:allows(entry),
+        "source Temple entry name remains used")
+end
+
 -- Keep the name and tag checks together so a save can reconstruct both
 -- forms of uniqueness from the same committed catalog IDs.
 function test.run()
     name_scopes()
     local_tag_scope()
     global_tag_scope()
+    temple_history()
 end
 
 return test

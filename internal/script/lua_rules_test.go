@@ -140,6 +140,9 @@ func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {
 	} else if name == "tests/shop_vault_all_placement_test.lua" {
 		// Each committed shop map is fitted and connected on a full grid.
 		limitDuration = 60 * time.Second
+	} else if name == "tests/temple_floor_test.lua" {
+		// Every source Temple builds and decodes a full-sized live level.
+		limitDuration = 60 * time.Second
 	}
 
 	limit, cancel := context.WithTimeout(context.Background(), limitDuration)

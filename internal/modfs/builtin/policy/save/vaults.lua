@@ -1,4 +1,5 @@
 local catalog = require("policy.generation.vaults.catalog")
+local temple = require("policy.generation.temple.catalog")
 
 local vaults = {}
 
@@ -6,7 +7,7 @@ local vaults = {}
 local function known(id, level_id)
     local ok = pcall(catalog.get, id)
 
-    if not ok then
+    if not ok and not temple.main(id) and not temple.entry(id) then
         error("level " .. level_id ..
             " references missing vault " .. tostring(id))
     end

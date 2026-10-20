@@ -202,7 +202,7 @@ function module.run(ctx, input)
                 materialized[#materialized + 1] = record
             end
 
-            if level.id ~= abyss.level_id then
+            if level.id ~= abyss.level_id and level.budget > 0 then
                 local allowed = roster.allowed(scenario_id,
                     level.branch_id or branches.BRANCH_DUNGEON)
                 count = count + populate_level(ctx, level, allowed,

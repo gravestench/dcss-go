@@ -7,6 +7,7 @@ local features = {}
 local effects = require("constants.vault_effects")
 local trap_placement = require("policy.traps.placement")
 local glyphs = require("constants.vault_glyphs")
+local fill = require("constants.vault_border_fill")
 
 features.from_source_glyph = {
     ["#"] = "DNGN_ROCK_WALL",
@@ -90,6 +91,42 @@ features.named_vault_terrain = {
     lava = "DNGN_LAVA",
 }
 
+-- BORDER_FILL is a single typed instruction for the whole map exterior.
+-- Decoding it here preserves the distinction between deep water and the
+-- source's open sea, and between ordinary lava and endless lava sea.
+local function apply_border_fill(cells, record)
+    local arguments = record.arguments or {}
+    local style = arguments.style
+    local feature
+
+    if style == fill.OPEN_SEA then
+        feature = "DNGN_OPEN_SEA"
+    elseif style == fill.ENDLESS_LAVA then
+        feature = "DNGN_LAVA_SEA"
+    else
+        error("unknown vault border fill " .. tostring(style))
+    end
+
+    local left = arguments.bounds_x
+    local top = arguments.bounds_y
+    local right = left + arguments.bounds_width
+    local bottom = top + arguments.bounds_height
+
+    for y, row in ipairs(cells) do
+        for x in ipairs(row) do
+            local world_x = x - 1
+            local world_y = y - 1
+
+            if world_x < left or world_x >= right or
+                world_y < top or world_y >= bottom then
+                row[x] = feature
+            end
+        end
+    end
+
+    record.pending = false
+end
+
 -- Apply terrain now; retain records needed for later trap and gameplay passes.
 function features.apply_vault_terrain(cells, records, ctx, depth)
     local retained = {}
@@ -131,6 +168,8 @@ function features.apply_vault_terrain(cells, records, ctx, depth)
                 record.pending = false
                 keep = false
             end
+        elseif record.kind == effects.BORDER_FILL then
+            apply_border_fill(cells, record)
         end
 
         if keep then

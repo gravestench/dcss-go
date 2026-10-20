@@ -15,6 +15,9 @@ local vault_extra = require("policy.generation.vaults.extra")
 local branch_schedule = require("policy.generation.branch_schedule")
 local temple_plan = require("policy.generation.temple.plan")
 local branch_levels = require("policy.generation.branch_levels")
+local temple_catalog = require("policy.generation.temple.catalog")
+local temple_entry = require("policy.generation.temple.entry")
+local temple_floor = require("policy.generation.temple.floor")
 
 local generated = {}
 
@@ -278,19 +281,33 @@ end
 -- Store source identity on the link while the grid uses the kernel's
 -- ordinary linked-stair feature. The branch floor is built on first entry,
 -- so its stable ID is pending while the destination coordinates are not.
-local function place_branch_entrances(builder, layout, protected,
-    chosen, branch_id, depth)
+local function place_branch_entrances(ctx, builder, layout, protected,
+    required, player, chosen, branch_id, depth, temple)
     local links = {}
+    local maps = {}
     local entries = branch_schedule.entries(chosen, branch_id, depth)
     local start = layout.stairs[1].up
 
     for _, entry in ipairs(entries) do
-        local point = entrance_cell(builder, start, protected)
+        local point
         local branch = register.get("branches", entry.branch_id)
-        local available = layouts.has_candidates(entry.branch_id, 1)
+        local is_temple = entry.branch_id == branches.BRANCH_TEMPLE
+        local available = is_temple and
+            temple_catalog.main(temple.map_id) ~= nil or
+            layouts.has_candidates(entry.branch_id, 1)
 
-        builder:set(point.x, point.y, ">")
-        vault_extra.protect(protected, point)
+        if is_temple then
+            local placed
+
+            placed, point = temple_entry.place(ctx, builder, protected,
+                required, player)
+            maps[#maps + 1] = placed
+        else
+            point = entrance_cell(builder, start, protected)
+            builder:set(point.x, point.y, ">")
+            vault_extra.protect(protected, point)
+        end
+
         links[#links + 1] = {
             x = point.x,
             y = point.y,
@@ -307,13 +324,17 @@ local function place_branch_entrances(builder, layout, protected,
         }
     end
 
-    return links
+    return links, maps
 end
 
 -- Generate one floor before pairing its stairs with neighboring floors.
 -- The arrival only belongs to D:1; supplemental vaults use actual depth.
 local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
-    chosen_schedule)
+    chosen_schedule, temple)
+    if branch_id == branches.BRANCH_TEMPLE then
+        return temple_floor.build(ctx, temple, player)
+    end
+
     local branch = register.get("branches", branch_id)
     local bottom = branch.depth
     local absolute_depth = branch.absolute_depth + depth - 1
@@ -350,8 +371,18 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
     end
 
     local protected = protected_cells(layout, arrival)
-    local branch_links = place_branch_entrances(layout.builder,
-        layout, protected, chosen_schedule, branch_id, depth)
+    local entry_player = {
+        branch_id = branch_id,
+        depth = depth,
+        branch_bottom = bottom,
+        absolute_depth = absolute_depth,
+        species_id = player.species_id,
+        name = player.name,
+        started = player.started,
+    }
+    local branch_links, entry_maps = place_branch_entrances(ctx,
+        layout.builder, layout, protected, required, entry_player,
+        chosen_schedule, branch_id, depth, temple)
     local extra, controller, extra_ids = vault_extra.generate(
         ctx,
         layout.builder,
@@ -391,7 +422,18 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
         add_source_stairs(arrival, source_up, source_down)
     end
 
+    append_vault_records(records, entry_maps)
     append_vault_records(records, extra)
+
+    local vault_ids = {}
+
+    for _, map in ipairs(entry_maps) do
+        vault_ids[#vault_ids + 1] = map.id
+    end
+
+    for _, id in ipairs(extra_ids) do
+        vault_ids[#vault_ids + 1] = id
+    end
 
     for _, map in ipairs(extra) do
         add_source_stairs(map, source_up, source_down)
@@ -406,7 +448,7 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
         arrival_vault = arrival_vault,
         extra = extra,
         controller = controller,
-        vault_ids = extra_ids,
+        vault_ids = vault_ids,
         records = records,
         protected = protected,
         source_up = source_up,
@@ -449,7 +491,8 @@ local function level_record(ctx, floor)
         stairs = floor.links,
         entry_x = entry.x,
         entry_y = entry.y,
-        initial_monsters = monster_count(ctx, floor.branch_id, floor.depth),
+        initial_monsters = floor.branch_id == branches.BRANCH_TEMPLE and
+            0 or monster_count(ctx, floor.branch_id, floor.depth),
         vault_id = arrival and arrival.id or floor.controller,
         vault_ids = floor.vault_ids,
         vault_records = #floor.records > 0 and floor.records or nil,
@@ -479,7 +522,7 @@ function generated.first(ctx, input)
         started = false,
     }
     local floor = build_floor(ctx, player,
-        branches.BRANCH_DUNGEON, 1, {}, schedule)
+        branches.BRANCH_DUNGEON, 1, {}, schedule, temple)
 
     live_stairs.first(floor)
 
@@ -535,7 +578,7 @@ function generated.next(ctx, input)
         started = true,
     }
     local floor = build_floor(ctx, player, branch_id, depth,
-        input.prior_vault_ids, input.branch_schedule)
+        input.prior_vault_ids, input.branch_schedule, input.temple_plan)
     local patches, entry = live_stairs.pair(ctx, parent, floor, {
         x = input.from_x,
         y = input.from_y,

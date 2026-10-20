@@ -196,16 +196,19 @@ population state, and no-spawn mask survive the Go save format. Scheduled
 ordinary branch entrances now use stable IDs and source branch layouts and
 population. Lair and Orc first and second floors have exercised reciprocal
 entry, save, and restore. Depths also opens from its scheduled Dungeon
-entrance. Temple and Vaults entrances remain labelled but unavailable until
-their primary layout families are ported. Other branch-specific mechanics
+entrance. Temple now opens through a source Dungeon entry vault, uses its
+saved source map and god partition, and returns through reciprocal stairs.
+Vaults entrances remain labelled but unavailable until their primary layout
+families are ported. Other branch-specific mechanics
 still need parity.
-The Temple content catalog now includes all 53 source Dungeon entry maps,
-43 main maps without map-specific Lua, and all 47 main maps with source Lua
-ported to named hooks. A source-weighted map, altar count, and complete god
-partition are now chosen at new-game creation and saved before Temple is
-visited. The maps are not yet placed in live generation; entry placement,
-travel, and altar effects remain. Border fill is stored
-as typed pending map data until Temple placement applies it.
+The Temple content catalog includes all 53 source Dungeon entry maps and all
+90 main maps, including 47 with source Lua ported to named hooks. A
+source-weighted map, altar count, and complete god partition are chosen at
+new-game creation and saved before Temple is visited. Live placement uses the
+selected map, assigns exact god IDs to its altar records, applies source
+open-sea or lava-sea borders, and materializes authored monsters and items
+without ambient Temple spawns. Altar inspection, worship, and overflow altar
+placement still need their gameplay and presentation passes.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition

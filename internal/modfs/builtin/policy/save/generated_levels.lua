@@ -5,6 +5,7 @@ local glyphs = require("constants.vault_glyphs")
 local branch_schedule = require("policy.generation.branch_schedule")
 local branch_levels = require("policy.generation.branch_levels")
 local layouts = require("policy.generation.layouts.catalog")
+local temple_catalog = require("policy.generation.temple.catalog")
 
 local up_features = {}
 local down_features = {}
@@ -72,7 +73,11 @@ local function valid_branch_entry(levels, parent, link, expected)
         return false
     end
 
-    if not layouts.has_candidates(expected.branch_id, 1) then
+    local available = expected.branch_id == branches.BRANCH_TEMPLE and
+        #temple_catalog.main_ids() > 0 or
+        layouts.has_candidates(expected.branch_id, 1)
+
+    if not available then
         return not child and not link.pending and
             link.unavailable ~= "" and link.to_level_id == 0 and
             link.to_x == 0 and link.to_y == 0

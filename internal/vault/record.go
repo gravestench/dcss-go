@@ -19,6 +19,8 @@ const (
 	KindGeneration    Kind = "generation_rule"
 	KindDelayedDecay  Kind = "delayed_decay"
 	KindFeatureName   Kind = "feature_name"
+	KindBorderFill    Kind = "border_fill"
+	KindEntryMessage  Kind = "entry_message"
 	KindOctaRoom      Kind = "octa_room"
 	KindSmearMap      Kind = "smear_map"
 	KindVeto          Kind = "veto"
@@ -37,6 +39,8 @@ var validKinds = map[Kind]bool{
 	KindGeneration:    true,
 	KindDelayedDecay:  true,
 	KindFeatureName:   true,
+	KindBorderFill:    true,
+	KindEntryMessage:  true,
 	KindOctaRoom:      true,
 	KindSmearMap:      true,
 	KindVeto:          true,
