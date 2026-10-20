@@ -96,8 +96,10 @@ end
 -- one shared hit determining every actor's outcome. A caller may react to
 -- positive post-armour damage without duplicating the explosion traversal.
 function blast.area(ctx, source, radius, dice, sides, resistance_id,
-    on_hit, stream)
-    local origin = ctx:get(source, component.POSITION)
+    on_hit, stream, death_position)
+    -- Actor death has already released grid occupancy. Its final position
+    -- is passed explicitly so an intrinsic blast still has a center.
+    local origin = death_position or ctx:get(source, component.POSITION)
 
     for _, target in ipairs(ctx:query({ component.POSITION, component.HEALTH })) do
         local position = ctx:get(target, component.POSITION)

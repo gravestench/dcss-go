@@ -35,6 +35,7 @@ local component = {
     PLAYER_UNIQUE_HISTORY = "character.unique_history",
     UNIQUE_REVIVAL = "monster.unique_revival",
     UNIQUE_REPLACEMENT = "monster.unique_replacement",
+    BENNU_REVIVAL = "monster.bennu_revival",
     PLAYER_RUNES = "character.runes",
     ITEM_ARTEFACT = "item.artefact",
     SCROLL_ACQUIREMENT = "scroll.acquirement_offers",

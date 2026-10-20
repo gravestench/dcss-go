@@ -9,6 +9,28 @@ local summons = require("policy.magic.effects.summons.common")
 
 local prism = {}
 
+-- A prism's saved charge determines both the radius and dice count.
+-- Lethal damage at charge one produces the smaller source explosion;
+-- its own second action produces the fully charged one.
+function prism.explode(ctx, entity, death_position)
+    local state = ctx:get(entity, component.SUMMON_CONSTRUCT)
+
+    if not state or state.charge < 1 or state.charge > 2 then
+        return false
+    end
+
+    local hd = math.max(1, math.floor(state.power / 10))
+    local sides = 6 + math.floor(hd * 7 / 4)
+    local dice = state.charge == 2 and 3 or 2
+
+    blast.area(ctx, entity, state.charge, dice, sides,
+        nil, nil, nil, death_position)
+    blast.finish(ctx, entity, 3)
+    ctx:emit("combat", "Your fulminant prism explodes!")
+
+    return true
+end
+
 -- Use the same relative target coordinates during preparation and placement.
 local function cell(ctx, player, dx, dy)
     local origin = ctx:get(player, component.POSITION)
@@ -31,13 +53,7 @@ function prism.act(ctx, entity)
     if state.charge == 1 then
         ctx:emit("combat", "Your fulminant prism crackles loudly.")
     else
-        local hd = math.max(1, math.floor(state.power / 10))
-        local sides = 6 + math.floor(hd * 7 / 4)
-
-        -- Source: mon-explode.cc:prism_damage, full charge at two actions.
-        blast.area(ctx, entity, 2, 3, sides)
-        blast.finish(ctx, entity, 3)
-        ctx:emit("combat", "Your fulminant prism explodes!")
+        prism.explode(ctx, entity)
     end
 
     return { kind = intent_ids.MONSTER_ABILITY, spell_id = spells.SPELL_FULMINANT_PRISM }

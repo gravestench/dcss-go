@@ -32,7 +32,7 @@ end
 
 -- Example: An uncharged ball lightning explodes once and records charge one to prevent a repeat blast.
 -- Mark the construct charged before damage rolls so later actions cannot explode it twice.
-function lightning.explode(ctx, entity)
+function lightning.explode(ctx, entity, death_position)
     local state = ctx:get(entity, component.SUMMON_CONSTRUCT)
 
     if state.charge ~= 0 then
@@ -55,7 +55,7 @@ function lightning.explode(ctx, entity)
 
     -- Source: mon-explode.cc:ball_lightning_damage and explosion radius.
     blast.area(ctx, entity, radius, 3, sides,
-        "MR_RES_ELEC", nil, stream)
+        "MR_RES_ELEC", nil, stream, death_position)
 
     if summon.owner == ctx:player() then
         ctx:emit("combat", "Your ball lightning explodes!")

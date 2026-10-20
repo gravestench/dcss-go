@@ -2254,6 +2254,16 @@ and a `monster.unique_revival` count. Her third death keeps the claim.
 These life rules live in Lua death and population policies; a new modded
 unique can add its own death hook without changing monster creation.
 
+Intrinsic monster death effects register a focused Lua death hook. The
+Ball Lightning and Fulminant Prism hooks call the same blast policy as
+their active turns, so a lethal hit and a construct timeout resolve the
+same saved charge state. Bloated Husk and Bennu use damage blasts;
+Lurking Horror invokes the shared Torment area policy. A reborn Bennu
+gets `monster.bennu_revival` with `revives = 1`, which the save validator
+checks before allowing the extra actor outside the level's roster budget.
+Modded death effects should keep the source actor's final position as an
+explicit hook argument because the actor has left the occupancy grid.
+
 Generated levels save `vault_ids` in successful placement order, including
 an arrival, an empty-map controller, and any child maps it placed. The
 single `vault_id` still names the level's primary map for existing level

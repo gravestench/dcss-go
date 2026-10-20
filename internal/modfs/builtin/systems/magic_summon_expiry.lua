@@ -6,11 +6,30 @@ local spore = require("policy.combat.monster_plants.spore")
 local visibility = require("policy.combat.monster_summons.visibility")
 local channels = require("constants.message_channels")
 local zap_ids = require("policy.magic.effects.zaps.ids")
+local monsters = require("ids.monsters")
 
 -- Theory of operation: Expired summons are torn down before ordinary death cleanup, preserving source-specific effects.
 -- Source: monster::mark_summoned and ENCH_ABJ expiry. The component belongs
 -- to the summoned actor, so its timeout and owner survive save and restore.
 local system = {}
+
+-- Source timeout kills an unspent ball lightning or charged prism rather
+-- than dismissing it. Mark it dead here; actor.death owns the one blast.
+local function pending_explosion(ctx, entity)
+    local actor = ctx:get(entity, component.ACTOR)
+    local state = ctx:get(entity, component.SUMMON_CONSTRUCT)
+
+    if not actor or not state then
+        return false
+    end
+
+    if actor.kind_id == monsters.MONS_BALL_LIGHTNING then
+        return state.charge == 0
+    end
+
+    return actor.kind_id == monsters.MONS_FULMINANT_PRISM and
+        state.charge > 0 and state.charge < 3
+end
 
 -- Summon teardown runs after constriction and before ordinary actor death cleanup.
 function system.update(ctx, active)
@@ -55,9 +74,19 @@ function system.update(ctx, active)
             health and health.current <= 0
         local dead_inferno = state.source_id == spells.SPELL_STOKE_FLAMES and
             health and health.current <= 0
+        local explosive = pending_explosion(ctx, entity)
+
+        if explosive and expired and health and health.current > 0 then
+            health.current = 0
+            ctx:set(entity, component.HEALTH, health)
+        end
+
+        local dead_explosive = explosive and health and
+            health.current <= 0
 
         if (entity ~= active or orphaned) and
             not dead_vortex and not dead_spore and not dead_inferno and
+            not dead_explosive and
             (orphaned or expired or not health or health.current <= 0) then
             local position = ctx:get(entity, component.POSITION)
             local seen = visibility.player_sees(ctx, position)

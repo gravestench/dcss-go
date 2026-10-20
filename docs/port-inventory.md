@@ -64,7 +64,7 @@ context rather than a handler API for each game domain.
 | Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
 | Player mutations | Source definitions and Lua-owned mutation records, transitions, passive effects, abilities, and saved state; Vampire blood rituals and Bat Form are implemented; source consumers in other unported domains remain inventoried below | `content/mutations`, `policy/mutations`, `policy/abilities`, `schemas/character_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
-| Persistence | Version-27 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
+| Persistence | Version-28 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
 
 Items support pickup, drop, wielding, armour delays, and put-on/removal of all
 24 active jewellery records. All 17 active potions and 19 active scrolls have
@@ -349,6 +349,13 @@ create distant replacement actors with her carried equipment and saved
 revival count; her third death is final. Live Pan level generation and
 full encounter verification remain in this domain slice.
 
+Intrinsic death effects now use the actor death phase for Ball Lightning,
+Fulminant Prism, Bloated Husk, Lurking Horror, and Bennu. Construct timeout
+reaches the same death owner as a lethal hit; a zero-charge prism stays
+quiet. Bennu's radius-two pyre precedes its one saved rebirth, and a later
+death is final. Explosion geometry and source message timing still need
+whole-game parity review alongside the remaining monster death effects.
+
 The builder and serial definition count is now 495 of 600. Forest generation exposed
 a missing bow and crossbow missile policy; arrows and bolts now use one
 Lua launcher resolver with their catalog projectile values.
@@ -356,8 +363,8 @@ Lua launcher resolver with their catalog projectile values.
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
 `uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those
-IDs. Save version 27 rejects older snapshots that lack complete map-use
-history, rune progress, or the current unique-revival schemas.
+IDs. Save version 28 rejects older snapshots that lack complete map-use
+history, rune progress, or the current revival schemas.
 Keeper names, exact source RNG sequences, and every special price case still
 need parity review; the saved keeper seed leaves a place for that work without
 changing the ECS ownership model.

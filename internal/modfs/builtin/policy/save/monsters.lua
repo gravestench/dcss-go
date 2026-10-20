@@ -296,6 +296,23 @@ function module.run(ctx, input)
         end
     end
 
+    -- Bennu's second body is outside the level's original population
+    -- budget. Only an actual saved Bennu with one rebirth may claim this
+    -- exception; a forged marker cannot introduce another monster kind.
+    for _, entity in ipairs(ctx:query({ component.BENNU_REVIVAL })) do
+        local state = ctx:get(entity, component.BENNU_REVIVAL)
+        local actor = ctx:get(entity, component.ACTOR)
+
+        if not actor or actor.kind_id ~= monsters.MONS_BENNU or
+            state.revives ~= 1 or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("entity " .. ctx:id(entity) ..
+                " has invalid Bennu revival origin")
+        end
+    end
+
     -- The borrowed body may change repeatedly, but the one permanent owner
     -- must still identify a real source monster and its first lineage.
     for _, entity in ipairs(ctx:query({
@@ -429,6 +446,7 @@ function module.run(ctx, input)
         -- ordinary monster profile still checks HP, speed, and AI here.
         elseif ctx:get(entity, component.UNIQUE_REVIVAL) or
             ctx:get(entity, component.UNIQUE_REPLACEMENT) or
+            ctx:get(entity, component.BENNU_REVIVAL) or
             ctx:get(entity, tactical.KIRKE_BAND) or
             ctx:get(entity, tactical.KIRKE_FREED) then
             validate_vault_monster(ctx, entity, actor, health,

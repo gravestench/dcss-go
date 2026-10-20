@@ -101,8 +101,8 @@ end
 -- area.apply(ctx, monster, channels.SPELL) implements Symbol of Torment.
 -- Scan live entities once, then use each health owner to apply nonlethal HP
 -- loss. Messages name only actors the player can actually perceive.
-function area.apply(ctx, caster, channel)
-    local origin = ctx:get(caster, component.POSITION)
+function area.apply(ctx, caster, channel, death_position)
+    local origin = death_position or ctx:get(caster, component.POSITION)
 
     if not origin then
         error("Torment source has no position")
