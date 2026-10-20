@@ -48,7 +48,8 @@ func TestGeneratedVaultIDsSurviveSaveAndValidate(t *testing.T) {
 		_ = invalid.Close()
 	}
 
-	if err == nil || !strings.Contains(err.Error(), "missing_vault_id") {
+	if err == nil ||
+		!strings.Contains(err.Error(), "missing_vault_id") {
 		t.Fatalf("restored unknown vault ID = %v", err)
 	}
 }
@@ -58,6 +59,7 @@ func TestGeneratedVaultIDsSurviveSaveAndValidate(t *testing.T) {
 func TestGeneratedVaultIDsRequireCurrentSaveVersion(t *testing.T) {
 	g := newGeneratedTestGame(t, 41)
 	snapshot := g.Snapshot()
+
 	snapshot.Version = 22
 
 	restored, err := Restore(snapshot)
@@ -66,7 +68,8 @@ func TestGeneratedVaultIDsRequireCurrentSaveVersion(t *testing.T) {
 		_ = restored.Close()
 	}
 
-	if err == nil || !strings.Contains(err.Error(), "unsupported save version") {
+	if err == nil ||
+		!strings.Contains(err.Error(), "unsupported save version") {
 		t.Fatalf("restored save without complete vault history: %v", err)
 	}
 }

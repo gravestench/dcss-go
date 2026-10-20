@@ -68,12 +68,14 @@ func TestItemGenerationRejectsInvalidSavedChoices(t *testing.T) {
 			field:  "status",
 			value:  json.RawMessage(`{"UNRAND_NOT_REAL":"ordinary"}`),
 		},
+
 		{
 			name:   "unknown rune",
 			schema: "character.runes",
 			field:  "collected",
 			value:  json.RawMessage(`{"WPN_DAGGER":true}`),
 		},
+
 		{
 			name:   "invalid Pan decision",
 			schema: "character.unique_history",

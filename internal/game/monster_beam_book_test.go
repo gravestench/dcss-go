@@ -37,7 +37,9 @@ func placePlayerInCloudLine(t *testing.T, g *Game, caster akara.Entity) {
 				for nearbyX := x - 6; nearbyX <= x+11; nearbyX++ {
 					actor, occupied := level.ActorAt(nearbyX, nearbyY)
 
-					if occupied && actor != caster && actor != g.player {
+					if occupied &&
+						actor != caster &&
+						actor != g.player {
 						isolated = false
 						break
 					}
