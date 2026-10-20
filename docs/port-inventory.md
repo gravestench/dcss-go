@@ -367,7 +367,7 @@ spell departures omit smoke. Source-specific death wording remains part of
 the presentation parity pass. Xom and Jiyva poof variants still need
 per-monster god state from the religion domain.
 
-The builder and serial definition count is now 543 of 600. All 22 source
+The builder and serial definition count is now 545 of 600. All 22 source
 arena builder maps are committed as individual `.des` files. Their original
 MAP blocks are intact, and the two shared palette scripts are a named Lua
 hook. Arena maps have no Dungeon depth rule, so normal Dungeon generation
@@ -384,6 +384,9 @@ The three Dis:1–6 divisions layouts now use their source weights and map
 geometry: recursive rooms, an irregular-room lattice, and overlapping boxes.
 Their procedural Lua hooks retain source statue style directives as typed
 records. Dis branch travel and its seventh-floor content remain separate work.
+The complete `layout_grids.des` family is now registered. Its remaining
+Lair Big Grid and Snake/Pan Grid Shapes maps use the shared subdivision and
+zone passes, with their source branch weights and shape choices in Lua.
 
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
