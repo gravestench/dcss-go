@@ -45,6 +45,10 @@ func (g *Game) buildScriptScenario(
 		if err := g.acceptLuaBranchSchedule(result["branch_schedule"]); err != nil {
 			return scenarioLevels{}, err
 		}
+
+		if err := g.acceptLuaTemplePlan(result["temple_plan"]); err != nil {
+			return scenarioLevels{}, err
+		}
 	}
 
 	records, ok := result["levels"].([]any)

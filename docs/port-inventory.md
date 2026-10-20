@@ -201,9 +201,10 @@ their primary layout families are ported. Other branch-specific mechanics
 still need parity.
 The Temple content catalog now includes all 53 source Dungeon entry maps,
 43 main maps without map-specific Lua, and all 47 main maps with source Lua
-ported to named hooks. These are parsed and catalog-validated but are not
-yet selected for live generation; god allocation, map placement, travel,
-and altar effects must be ported first. Border fill is stored
+ported to named hooks. A source-weighted map, altar count, and complete god
+partition are now chosen at new-game creation and saved before Temple is
+visited. The maps are not yet placed in live generation; entry placement,
+travel, and altar effects remain. Border fill is stored
 as typed pending map data until Temple placement applies it.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.

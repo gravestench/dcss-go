@@ -143,6 +143,7 @@ func (g *Game) Snapshot() save.Snapshot {
 		RNG:            g.rng.States(),
 		Messages:       append([]string(nil), g.messages...),
 		BranchSchedule: cloneBranchSchedule(g.branchSchedule),
+		TemplePlan:     cloneTemplePlan(g.templePlan),
 	}
 
 	for id, level := range g.levels {
@@ -358,8 +359,14 @@ func RestoreWithRules(
 		if err := g.acceptBranchSchedule(snapshot.BranchSchedule); err != nil {
 			return nil, err
 		}
+
+		if err := g.acceptTemplePlan(snapshot.TemplePlan); err != nil {
+			return nil, err
+		}
 	} else if snapshot.BranchSchedule != nil {
 		return nil, fmt.Errorf("fixed save has an unexpected branch schedule")
+	} else if snapshot.TemplePlan != nil {
+		return nil, fmt.Errorf("fixed save has an unexpected Temple plan")
 	}
 
 	if err := g.validateSavedLuaSchemas(

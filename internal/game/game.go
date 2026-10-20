@@ -23,6 +23,7 @@ type Game struct {
 	scheduler      TurnScheduler
 	currentAut     Aut
 	branchSchedule *save.BranchScheduleRecord
+	templePlan     *save.TemplePlanRecord
 
 	turn TurnContext
 

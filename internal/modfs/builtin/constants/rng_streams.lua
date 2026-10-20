@@ -16,6 +16,7 @@ local streams = {
     SHOP = "shop",
     SPELL = "spell",
     TRAPS = "traps",
+    TEMPLE_PLAN = "temple_plan",
 }
 
 return streams

@@ -13,6 +13,7 @@ local vault_glyphs = require("constants.vault_glyphs")
 local vault_effects = require("constants.vault_effects")
 local vault_extra = require("policy.generation.vaults.extra")
 local branch_schedule = require("policy.generation.branch_schedule")
+local temple_plan = require("policy.generation.temple.plan")
 local branch_levels = require("policy.generation.branch_levels")
 
 local generated = {}
@@ -470,6 +471,7 @@ end
 -- Build only the floor visible at launch. Its down links name D:2 without
 -- preselecting D:2 terrain, vaults, monster budget, or destination cells.
 function generated.first(ctx, input)
+    local temple = temple_plan.choose(ctx)
     local schedule = branch_schedule.choose(ctx)
     local player = {
         species_id = input.player_species_id,
@@ -488,6 +490,7 @@ function generated.first(ctx, input)
     return {
         levels = { level },
         branch_schedule = schedule,
+        temple_plan = temple,
         entry = {
             x = entry.x,
             y = entry.y,
@@ -502,6 +505,7 @@ end
 -- layout and vault draws happen after the player's previous actions.
 function generated.next(ctx, input)
     branch_schedule.validate(input.branch_schedule)
+    temple_plan.validate(input.temple_plan)
     local branch_id = input.branch_id
     local depth = input.local_depth
     local branch = register.get("branches", branch_id)
