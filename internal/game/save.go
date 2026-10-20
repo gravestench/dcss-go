@@ -147,8 +147,9 @@ func (g *Game) Snapshot() save.Snapshot {
 
 	for id, level := range g.levels {
 		record := save.LevelRecord{
-			ID:       id,
-			BranchID: level.BranchID,
+			ID:         id,
+			BranchID:   level.BranchID,
+			LocalDepth: level.LocalDepth,
 
 			Cells:         level.Cells(),
 			Known:         level.KnownCells(),

@@ -100,10 +100,11 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
         error("monster " .. ctx:id(entity) .. " has invalid chaos clone")
     end
 
+    local banishment = ctx:get(entity, component.BANISHMENT)
+    local level_id = banishment and banishment.origin_level_id or
+        position.level_id
+
     if not state.fixed and not clone then
-        local banishment = ctx:get(entity, component.BANISHMENT)
-        local level_id = banishment and banishment.origin_level_id or
-            position.level_id
         local count = (state.live_by_level[level_id] or 0) + 1
 
         if count > (state.budgets[level_id] or 0) then
@@ -116,9 +117,11 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     -- A chaos duplicate can copy an authored vault actor, whose kind is not
     -- part of the ordinary scenario roster. The clone component records its
     -- source kind; the catalog/profile checks below still validate it.
-    if not clone and not state.allowed[roster_id] then
+    local allowed = state.allowed_by_level[level_id] or state.allowed
+
+    if not clone and not allowed[roster_id] then
         error("unsupported melee attacker " .. roster_id ..
-            " in fixed Dungeon scenario")
+            " on level " .. tostring(level_id))
     end
 
     local definition = catalog.get("monsters", actor.kind_id)
@@ -398,10 +401,17 @@ function module.run(ctx, input)
     local seen = {}
     local budgets = {}
     local live_by_level = {}
+    local allowed_by_level = {}
 
     if not fixed then
         for _, level in ipairs(input.levels) do
             budgets[level.id] = level.initial_actors
+
+            if input.scenario_id == "generated-dungeon-basic-v1" and
+                level.branch_id ~= branches.BRANCH_ABYSS then
+                allowed_by_level[level.id] = roster.allowed(
+                    input.scenario_id, level.branch_id)
+            end
         end
     end
 
@@ -412,6 +422,7 @@ function module.run(ctx, input)
 
     local roster_state = {
         allowed = allowed,
+        allowed_by_level = allowed_by_level,
         fixed = fixed,
         seen = seen,
         budgets = budgets,

@@ -1504,7 +1504,6 @@ category names for mod-defined catalogs. For example,
 
 ```lua
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local habitats = require("constants.monster_habitats")
 local spellbooks = require("ids.monster_spellbooks")
 local my_ids = require("my_mod.ids")
@@ -1535,15 +1534,6 @@ local definition = {
         special = 10,
         item = 10,
     },
-    population = {
-        {
-            scenario_id = my_ids.DUNGEON_SCENARIO,
-            min_depth = 1,
-            max_depth = 3,
-            rarity = 1000,
-            curve = curves.FLAT,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)
@@ -1553,22 +1543,65 @@ return definition
 
 Here `my_mod/ids.lua` is a small module owned by the mod that returns
 `MOSS = "MY_MOD_MOSS"`, `BITE = "AT_BITE"`, `PLAIN = "AF_PLAIN"`, and
-`DUNGEON_SCENARIO = "generated-dungeon-basic-v1"`. Import it in every mod
+`MOSS_POPULATION = "MY_MOD_MOSS_POPULATION"`. Import it in every mod
 file that uses those identifiers. Existing bundled IDs come from their
 `constants.*` or `ids.*` modules instead.
 
-The file is loaded automatically. Its population entry puts the monster into
-the generated Dungeon roster without editing a central list. The example
-uses the current basic monster behavior and combat rules. Invalid spawn data
-fails at startup with the content path and field name.
-Bundled population rows live in their monster files too. The picker visits
-monsters in stable ID order and visits rows in their local file order. New
-mod monster needs a row with the generated Dungeon `scenario_id` to join that
-roster. A row without a scenario applies wherever its monster is already
-admitted. Every row needs a depth range, rarity, and curve. A mod monster
-joins that same ID order, regardless of its filename or load order. No
-global position number is needed; adding or replacing a monster definition
-cannot silently renumber other files' population rows.
+The monster file is loaded automatically. It describes the creature, while
+`content/populations/` decides where ambient generation may choose it.
+Add a separate file such as `content/populations/moss_in_lair.lua`:
+
+```lua
+local branches = require("ids.branches")
+local categories = require("constants.catalog")
+local curves = require("constants.population_curves")
+local my_ids = require("my_mod.ids")
+
+-- Lair's ambient picker reads this row at each local depth. The monster
+-- definition stays independent so vaults may also place it directly.
+local definition = {
+    id = my_ids.MOSS_POPULATION,
+    branch_id = branches.BRANCH_LAIR,
+    rows = {
+        {
+            monster_id = my_ids.MOSS,
+            min_depth = 1,
+            max_depth = 3,
+            rarity = 1000,
+            curve = curves.FLAT,
+        },
+    },
+}
+
+register.definition(categories.POPULATIONS, definition)
+
+return definition
+```
+
+The catalog combines independent population files for a branch in stable ID
+order, retaining row order inside each file. A same-path overlay replaces
+that file; a new path adds rows. `NO_MONSTER` rows consume a draw without
+creating an actor. Every row needs a local depth range, rarity, and curve;
+the startup validator checks monster IDs and spell coverage before that
+branch can spawn it. File discovery order does not affect a seed.
+
+### Add an ordinary branch
+
+An ordinary branch definition belongs in `content/branches/` and needs a
+unique numeric ID, a parent branch, an entry depth range within that parent,
+a local depth, and source entry/exit feature IDs. The per-run Lua schedule
+chooses one parent depth and stores it in the save. It places a pending
+entrance when the branch has a weighted primary layout, or a labelled
+unavailable entrance until that layout is ported. Its stable level ID is
+`numeric_id * 100 + local_depth`;
+Dungeon keeps IDs 1–15. Put ambient rows in a separate
+`content/populations/<branch>.lua` file as above. Add weighted branch layouts
+under `vaults/layout/` and named Lua carving hooks under
+`policy/generation/layouts/` when a layout needs a script. The shared
+generation policy chooses layouts, vaults, stairs, and population using the
+branch ID and local depth, then the Go world saves the connected floor.
+Portals and rootless destinations need their own travel policy; a finite
+depth range alone does not make them ordinary branches.
 
 A rule imports `constants.catalog`,
 `ids.monsters`, and `policy.catalog` where needed, then reads it with

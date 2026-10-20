@@ -36,6 +36,7 @@ function fixed.generate(populated)
             {
                 id = 1,
                 branch_id = branches.BRANCH_DUNGEON,
+                local_depth = 1,
                 rows = first_rows,
                 entry_x = 1,
                 entry_y = 1,
@@ -54,6 +55,7 @@ function fixed.generate(populated)
             {
                 id = 2,
                 branch_id = branches.BRANCH_DUNGEON,
+                local_depth = 2,
                 rows = second_rows,
                 entry_x = 1,
                 entry_y = 1,

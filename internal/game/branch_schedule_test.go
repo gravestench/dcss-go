@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"crawl/internal/save"
 	"crawl/internal/terrain"
 )
 
@@ -91,8 +92,8 @@ func TestGeneratedBranchScheduleRejectsMissingOrInvalidPair(t *testing.T) {
 	}
 }
 
-// The chosen Dungeon floor shows a labelled source entrance even before
-// branch travel becomes available. It stays at the same cell after restore.
+// The chosen Dungeon floor shows a labelled source entrance. Its pending
+// destination and cell stay fixed across a save before branch entry.
 func TestScheduledLairEntrancePersistsOnParentFloor(t *testing.T) {
 	g := newGeneratedTestGame(t, 423)
 	depth := 0
@@ -118,7 +119,8 @@ func TestScheduledLairEntrancePersistsOnParentFloor(t *testing.T) {
 	}
 
 	if entrance.SourceFeature != "DNGN_ENTER_LAIR" ||
-		entrance.Unavailable == "" || entrance.ToLevelID != 0 {
+		!entrance.Pending || entrance.Unavailable != "" ||
+		entrance.ToLevelID <= 0 {
 		t.Fatalf("Lair entrance = %+v", entrance)
 	}
 
@@ -170,5 +172,443 @@ func TestScheduledLairEntrancePersistsOnParentFloor(t *testing.T) {
 		}
 
 		t.Fatalf("forged source feature error = %v", err)
+	}
+}
+
+// Enter through the saved source-labelled link. The child is generated only
+// now and its return link must land on this exact parent cell after restore.
+func TestScheduledLairEntryAndReturnSurviveRestore(t *testing.T) {
+	g := newGeneratedTestGame(t, 423)
+	parentDepth := 0
+
+	for _, entry := range g.branchSchedule.Entries {
+		if entry.BranchID == "BRANCH_LAIR" {
+			parentDepth = entry.ParentDepth
+			break
+		}
+	}
+
+	descendGeneratedTo(t, g, parentDepth)
+	var entrance StairLink
+
+	for _, link := range g.levels[parentDepth].StairLinks() {
+		if link.TargetBranchID == "BRANCH_LAIR" {
+			entrance = link
+			break
+		}
+	}
+
+	if !entrance.Pending {
+		t.Fatal("Lair entrance is not a pending floor")
+	}
+
+	if err := g.levels[parentDepth].MoveActor(g.player,
+		entrance.X, entrance.Y); err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := g.Step(Command{Kind: CommandDownstairs})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	child := g.levels[entrance.ToLevelID]
+
+	if result.View.LevelID != entrance.ToLevelID || child == nil ||
+		child.BranchID != "BRANCH_LAIR" || child.LocalDepth != 1 {
+		t.Fatalf("Lair entry = %+v, level = %+v", result.View, child)
+	}
+
+	parentLink, found := g.levels[parentDepth].StairAt(entrance.X, entrance.Y)
+
+	if !found || parentLink.Pending {
+		t.Fatal("Lair parent entrance did not resolve")
+	}
+
+	returnLink, found := child.StairAt(parentLink.ToX, parentLink.ToY)
+
+	if !found || returnLink.ToLevelID != parentDepth ||
+		returnLink.ToX != entrance.X || returnLink.ToY != entrance.Y {
+		t.Fatalf("Lair return link = %+v", returnLink)
+	}
+
+	restored, err := Restore(g.Snapshot())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	if restored.levels[entrance.ToLevelID].LocalDepth != 1 {
+		t.Fatal("restored Lair lost its local depth")
+	}
+
+	wrongDepth := g.Snapshot()
+
+	for index := range wrongDepth.Levels {
+		if wrongDepth.Levels[index].ID == entrance.ToLevelID {
+			wrongDepth.Levels[index].LocalDepth = 2
+		}
+	}
+
+	if bad, err := Restore(wrongDepth); err == nil {
+		if bad != nil {
+			_ = bad.Close()
+		}
+
+		t.Fatal("forged Lair local depth restored")
+	}
+
+	brokenReturn := g.Snapshot()
+
+	for levelIndex := range brokenReturn.Levels {
+		level := &brokenReturn.Levels[levelIndex]
+
+		if level.ID != entrance.ToLevelID {
+			continue
+		}
+
+		for linkIndex := range level.Stairs {
+			link := &level.Stairs[linkIndex]
+
+			if link.ToLevelID == parentDepth {
+				link.ToX++
+				break
+			}
+		}
+	}
+
+	if bad, err := Restore(brokenReturn); err == nil {
+		if bad != nil {
+			_ = bad.Close()
+		}
+
+		t.Fatal("broken Lair return link restored")
+	}
+}
+
+// Each source branch uses its own local depth and stable level IDs. Building
+// the second floor must leave the other branch's scheduled frontier intact.
+func TestGeneratedLairAndOrcSecondFloors(t *testing.T) {
+	for _, branchID := range []string{"BRANCH_LAIR", "BRANCH_ORC"} {
+		t.Run(branchID, func(t *testing.T) {
+			g := newGeneratedTestGame(t, 423)
+			parentDepth := 0
+
+			for _, entry := range g.branchSchedule.Entries {
+				if entry.BranchID == branchID {
+					parentDepth = entry.ParentDepth
+					break
+				}
+			}
+
+			descendGeneratedTo(t, g, parentDepth)
+			var entrance StairLink
+
+			for _, link := range g.levels[parentDepth].StairLinks() {
+				if link.TargetBranchID == branchID {
+					entrance = link
+					break
+				}
+			}
+
+			if !entrance.Pending {
+				t.Fatal("branch entrance is not pending")
+			}
+
+			if err := g.levels[parentDepth].MoveActor(g.player,
+				entrance.X, entrance.Y); err != nil {
+				t.Fatal(err)
+			}
+
+			if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
+				t.Fatal(err)
+			}
+
+			first := g.levels[entrance.ToLevelID]
+			var next StairLink
+
+			for _, link := range first.StairLinks() {
+				if !link.Pending || link.TargetBranchID != "" {
+					continue
+				}
+
+				if _, occupied := first.ActorAt(link.X, link.Y); occupied {
+					continue
+				}
+
+				next = link
+				break
+			}
+
+			if !next.Pending {
+				t.Fatal("first branch floor has no free down stair")
+			}
+
+			if err := first.MoveActor(g.player, next.X, next.Y); err != nil {
+				t.Fatal(err)
+			}
+
+			result, err := g.Step(Command{Kind: CommandDownstairs})
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			second := g.levels[next.ToLevelID]
+
+			if second == nil || result.View.LevelID != next.ToLevelID ||
+				second.BranchID != branchID || second.LocalDepth != 2 {
+				t.Fatalf("second %s floor = %+v, view %+v",
+					branchID, second, result.View)
+			}
+
+			restored, err := Restore(g.Snapshot())
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			defer restored.Close()
+		})
+	}
+}
+
+// Source entrance selection covers more than Lair and Orc. Exercise every
+// direct Dungeon child in a fresh run so a missing branch layout or roster
+// cannot hide behind the two common branch integration examples.
+func TestScheduledDungeonBranchesOpenOnFirstEntry(t *testing.T) {
+	probe := newGeneratedTestGame(t, 423)
+	entries := append([]save.BranchEntryRecord(nil),
+		probe.branchSchedule.Entries...)
+
+	for _, entry := range entries {
+		if entry.ParentID != "BRANCH_DUNGEON" {
+			continue
+		}
+
+		t.Run(entry.BranchID, func(t *testing.T) {
+			g := newGeneratedTestGame(t, 423)
+			descendGeneratedTo(t, g, entry.ParentDepth)
+			var entrance StairLink
+
+			for _, link := range g.levels[entry.ParentDepth].StairLinks() {
+				if link.TargetBranchID == entry.BranchID {
+					entrance = link
+					break
+				}
+			}
+
+			if !entrance.Pending {
+				if !strings.Contains(entrance.Unavailable,
+					"no ported primary layout") {
+					t.Fatalf("scheduled entrance has no reason: %+v", entrance)
+				}
+
+				return
+			}
+
+			if err := g.levels[entry.ParentDepth].MoveActor(g.player,
+				entrance.X, entrance.Y); err != nil {
+				t.Fatal(err)
+			}
+
+			result, err := g.Step(Command{Kind: CommandDownstairs})
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			child := g.levels[entrance.ToLevelID]
+
+			if child == nil || result.View.LevelID != entrance.ToLevelID ||
+				child.BranchID != entry.BranchID || child.LocalDepth != 1 {
+				t.Fatalf("branch %s entry = %+v, level = %+v",
+					entry.BranchID, result.View, child)
+			}
+		})
+	}
+}
+
+// Lair's water choice is scheduled inside another generated branch. The
+// source parent depth must use Lair-local coordinates, not its numeric ID.
+func TestScheduledLairWaterChildOpens(t *testing.T) {
+	g := newGeneratedTestGame(t, 423)
+	waterID := g.branchSchedule.WaterBranchID
+	lairParent := 0
+	waterParent := 0
+
+	for _, entry := range g.branchSchedule.Entries {
+		if entry.BranchID == "BRANCH_LAIR" {
+			lairParent = entry.ParentDepth
+		}
+
+		if entry.BranchID == waterID {
+			waterParent = entry.ParentDepth
+		}
+	}
+
+	descendGeneratedTo(t, g, lairParent)
+	var lairEntrance StairLink
+
+	for _, link := range g.levels[lairParent].StairLinks() {
+		if link.TargetBranchID == "BRANCH_LAIR" {
+			lairEntrance = link
+			break
+		}
+	}
+
+	if err := g.levels[lairParent].MoveActor(g.player,
+		lairEntrance.X, lairEntrance.Y); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
+		t.Fatal(err)
+	}
+
+	level := g.levels[lairEntrance.ToLevelID]
+
+	for depth := 1; depth < waterParent; depth++ {
+		var next StairLink
+
+		for _, link := range level.StairLinks() {
+			if link.Pending && link.TargetBranchID == "" {
+				if _, occupied := level.ActorAt(link.X, link.Y); !occupied {
+					next = link
+					break
+				}
+			}
+		}
+
+		if !next.Pending {
+			t.Fatalf("Lair:%d has no free down stair", depth)
+		}
+
+		if err := level.MoveActor(g.player, next.X, next.Y); err != nil {
+			t.Fatal(err)
+		}
+
+		if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
+			t.Fatal(err)
+		}
+
+		level = g.levels[next.ToLevelID]
+
+		if level.BranchID != "BRANCH_LAIR" || level.LocalDepth != depth+1 {
+			t.Fatalf("Lair continuation = %+v", level)
+		}
+	}
+
+	var entrance StairLink
+
+	for _, link := range level.StairLinks() {
+		if link.TargetBranchID == waterID {
+			entrance = link
+			break
+		}
+	}
+
+	if entrance.Unavailable != "" {
+		t.Fatalf("selected water branch %s is unavailable: %s",
+			waterID, entrance.Unavailable)
+	}
+
+	if !entrance.Pending {
+		t.Fatal("water branch has no pending entrance")
+	}
+
+	if err := level.MoveActor(g.player, entrance.X, entrance.Y); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
+		t.Fatal(err)
+	}
+
+	child := g.levels[entrance.ToLevelID]
+
+	if child == nil || child.BranchID != waterID || child.LocalDepth != 1 {
+		t.Fatalf("water branch entry = %+v", child)
+	}
+
+	restored, err := Restore(g.Snapshot())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+}
+
+// Generating one branch must not consume or overwrite another scheduled
+// entrance on a different Dungeon floor. Both frontiers survive save/load.
+func TestIndependentLairAndOrcFrontiers(t *testing.T) {
+	g := newGeneratedTestGame(t, 423)
+	parentDepth := map[string]int{}
+
+	for _, entry := range g.branchSchedule.Entries {
+		if entry.BranchID == "BRANCH_LAIR" || entry.BranchID == "BRANCH_ORC" {
+			parentDepth[entry.BranchID] = entry.ParentDepth
+		}
+	}
+
+	firstBranch := "BRANCH_LAIR"
+	otherBranch := "BRANCH_ORC"
+
+	if parentDepth[otherBranch] > parentDepth[firstBranch] {
+		firstBranch, otherBranch = otherBranch, firstBranch
+	}
+
+	descendGeneratedTo(t, g, parentDepth[firstBranch])
+	var entered StairLink
+	var other StairLink
+
+	for _, link := range g.levels[parentDepth[firstBranch]].StairLinks() {
+		if link.TargetBranchID == firstBranch {
+			entered = link
+		}
+	}
+
+	for _, link := range g.levels[parentDepth[otherBranch]].StairLinks() {
+		if link.TargetBranchID == otherBranch {
+			other = link
+		}
+	}
+
+	if !entered.Pending || !other.Pending {
+		t.Fatalf("missing independent frontiers: %+v, %+v", entered, other)
+	}
+
+	if err := g.levels[parentDepth[firstBranch]].MoveActor(g.player,
+		entered.X, entered.Y); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
+		t.Fatal(err)
+	}
+
+	remaining, found := g.levels[parentDepth[otherBranch]].StairAt(
+		other.X, other.Y)
+
+	if !found || remaining != other {
+		t.Fatalf("other branch frontier changed: %+v", remaining)
+	}
+
+	restored, err := Restore(g.Snapshot())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+	remaining, found = restored.levels[parentDepth[otherBranch]].StairAt(
+		other.X, other.Y)
+
+	if !found || remaining != other {
+		t.Fatalf("restored other frontier changed: %+v", remaining)
 	}
 }

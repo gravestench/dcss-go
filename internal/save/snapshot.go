@@ -8,7 +8,7 @@ import (
 	"crawl/internal/vault"
 )
 
-const Version = 30
+const Version = 31
 
 type Snapshot struct {
 	Version        int               `json:"version"`
@@ -63,6 +63,7 @@ type DynamicComponentRecord struct {
 type LevelRecord struct {
 	ID              int               `json:"id"`
 	BranchID        string            `json:"branch_id"`
+	LocalDepth      int               `json:"local_depth"`
 	Cells           [][]terrain.ID    `json:"cells"`
 	Known           [][]terrain.ID    `json:"known"`
 	Seen            [][]bool          `json:"seen"`

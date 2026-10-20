@@ -300,9 +300,10 @@ func TestNextFloorLuaPolicyPairsLiveParentStairs(t *testing.T) {
 		}
 
 		stairs = append(stairs, map[string]any{
-			"x":       link.X,
-			"y":       link.Y,
-			"pending": true,
+			"x":           link.X,
+			"y":           link.Y,
+			"pending":     true,
+			"to_level_id": link.ToLevelID,
 		})
 
 		if selected.ToLevelID == 0 {
@@ -315,18 +316,22 @@ func TestNextFloorLuaPolicyPairsLiveParentStairs(t *testing.T) {
 	}
 
 	result, err := g.scripts.Policy("world.generate_next_floor", map[string]any{
-		"depth":             2,
+		"branch_id":         parent.BranchID,
+		"local_depth":       2,
+		"level_id":          2,
 		"player_species_id": "SP_HUMAN",
 		"player_name":       "Tester",
 		"from_x":            selected.X,
 		"from_y":            selected.Y,
 		"branch_schedule":   luaBranchSchedule(g.branchSchedule),
 		"parent": map[string]any{
-			"id":     1,
-			"width":  parent.width,
-			"height": len(parent.terrain),
-			"seen":   []any{},
-			"stairs": stairs,
+			"id":          1,
+			"branch_id":   parent.BranchID,
+			"local_depth": parent.LocalDepth,
+			"width":       parent.width,
+			"height":      len(parent.terrain),
+			"seen":        []any{},
+			"stairs":      stairs,
 		},
 	})
 
@@ -414,6 +419,10 @@ func TestGeneratedDungeonReachesDepthFifteen(t *testing.T) {
 		}
 
 		for _, stair := range level.StairLinks() {
+			if stair.TargetBranchID != "" {
+				continue
+			}
+
 			if stair.ToLevelID > 0 &&
 				stair.ToLevelID != depth-1 &&
 				stair.ToLevelID != depth+1 {

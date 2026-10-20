@@ -51,12 +51,14 @@ type SpellView struct {
 }
 
 type View struct {
-	LevelID  int
-	Width    int
-	Height   int
-	Cells    []CellView
-	Clouds   []EntityView
-	Entities []EntityView
+	LevelID    int
+	BranchID   string
+	LocalDepth int
+	Width      int
+	Height     int
+	Cells      []CellView
+	Clouds     []EntityView
+	Entities   []EntityView
 
 	PlayerX    int
 	PlayerY    int
@@ -125,9 +127,11 @@ func (g *Game) View() (view View) {
 
 	level := g.levels[position.LevelID]
 	view = View{
-		LevelID: position.LevelID,
-		PlayerX: position.X,
-		PlayerY: position.Y,
+		LevelID:    position.LevelID,
+		BranchID:   level.BranchID,
+		LocalDepth: level.LocalDepth,
+		PlayerX:    position.X,
+		PlayerY:    position.Y,
 
 		Width:  level.width,
 		Height: len(level.terrain),

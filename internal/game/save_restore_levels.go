@@ -13,8 +13,8 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 			return fmt.Errorf("duplicate level %d", record.ID)
 		}
 
-		if record.BranchID == "" {
-			return fmt.Errorf("level %d has no branch ID", record.ID)
+		if record.BranchID == "" || record.LocalDepth < 1 {
+			return fmt.Errorf("level %d has no branch or local depth", record.ID)
 		}
 
 		level, levelErr := NewLevel(record.ID, record.Cells, g.stores.Positions)
@@ -26,6 +26,7 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 		level.initialMonsters = record.InitialMonsters
 		level.initialActors = record.InitialActors
 		level.BranchID = record.BranchID
+		level.LocalDepth = record.LocalDepth
 
 		excluded := make(map[point]bool, len(record.SpawnExclusions))
 
@@ -172,6 +173,7 @@ func scenarioLevelPolicyRecords(levels map[int]*Level) []any {
 		records = append(records, map[string]any{
 			"id":               id,
 			"branch_id":        level.BranchID,
+			"local_depth":      level.LocalDepth,
 			"cells":            level.Cells(),
 			"stairs":           stairs,
 			"initial_monsters": level.initialMonsters,

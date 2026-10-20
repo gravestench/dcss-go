@@ -8,6 +8,7 @@ local mutations = require("ids.mutations")
 local records = require("policy.mutations.records")
 local curl = require("policy.character.curl")
 local species = require("ids.species")
+local branches = require("ids.branches")
 
 local test = {}
 
@@ -54,6 +55,8 @@ function test.run(ctx)
         experience_level = 1,
         next_level_percent = 0,
         level_id = 1,
+        branch_id = branches.BRANCH_DUNGEON,
+        local_depth = 1,
         current_aut = 0,
         inventory = {},
         might_aut = 0,
@@ -74,6 +77,14 @@ function test.run(ctx)
 
     harness.truthy(has_write(hud.run(screen, { view = view }), "Agi"),
         "Agility appears in the HUD from its Lua ECS component")
+    harness.truthy(has_write(hud.run(screen, { view = view }), "Place: D:1"),
+        "Dungeon place uses local depth")
+
+    view.branch_id = branches.BRANCH_LAIR
+    view.local_depth = 2
+
+    harness.truthy(has_write(hud.run(screen, { view = view }), "Place: Lair:2"),
+        "branch place uses the source abbreviation")
 
     local agility = ctx:get(player, component.AGILITY)
     agility.remaining_aut = 0

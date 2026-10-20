@@ -4,6 +4,7 @@
 local branches = require("ids.branches")
 local terrain = require("constants.terrain")
 local branch_levels = require("policy.generation.branch_levels")
+local glyphs = require("constants.vault_glyphs")
 
 local stairs = {}
 
@@ -51,19 +52,38 @@ end
 -- special case after the floor has been built.
 local function exits(floor, upward)
     local points = {}
+    local seen = {}
 
-    for _, pair in ipairs(floor.layout.stairs) do
-        local point = upward and pair.up or pair.down
+    -- A source map may report an authored exit already included by layout
+    -- completion. One terrain cell can own only one durable stair link.
+    local function add(point)
+        if not point then
+            return
+        end
 
-        if point then
+        local source = floor.layout.builder:cell(point.x, point.y)
+
+        if not (upward and glyphs.up[source] or
+            not upward and glyphs.down[source]) then
+            return
+        end
+
+        local position = key(point.x, point.y)
+
+        if not seen[position] then
+            seen[position] = true
             points[#points + 1] = point
         end
+    end
+
+    for _, pair in ipairs(floor.layout.stairs) do
+        add(upward and pair.up or pair.down)
     end
 
     local authored = upward and floor.source_up or floor.source_down
 
     for _, point in ipairs(authored) do
-        points[#points + 1] = point
+        add(point)
     end
 
     table.sort(points, before)

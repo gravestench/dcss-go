@@ -155,6 +155,14 @@ func (g *Game) decodeLuaLevelRecords(
 
 		level.BranchID = branchID
 
+		localDepth, err := decisionInteger(record, "local_depth")
+
+		if err != nil || localDepth < 1 {
+			return nil, nil, nil, fmt.Errorf("Lua level %d has invalid local depth", id)
+		}
+
+		level.LocalDepth = localDepth
+
 		if raw, present := record["spawn_exclusions"]; present {
 			points, ok := raw.([]any)
 

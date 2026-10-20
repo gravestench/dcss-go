@@ -187,7 +187,7 @@ end
 
 -- Filter against effective branch and depth metadata before making one
 -- weighted draw. No fallback is allowed when a mod removes all candidates.
-function catalog.choose(random, branch_id, local_depth, branch_bottom,
+local function candidates_for(branch_id, local_depth, branch_bottom,
     primary_tags)
     local candidates = {}
     local total = 0
@@ -208,6 +208,24 @@ function catalog.choose(random, branch_id, local_depth, branch_bottom,
             }
         end
     end
+
+    return candidates, total
+end
+
+-- A scheduled branch can keep its source-labelled entrance even when its
+-- primary layout family has not yet been ported. Availability is derived
+-- from the effective DES catalog, including overlays, not a branch switch.
+function catalog.has_candidates(branch_id, local_depth)
+    local branch = register.get(categories.BRANCHES, branch_id)
+    local _, total = candidates_for(branch_id, local_depth, branch.depth)
+
+    return total > 0
+end
+
+function catalog.choose(random, branch_id, local_depth, branch_bottom,
+    primary_tags)
+    local candidates, total = candidates_for(branch_id, local_depth,
+        branch_bottom, primary_tags)
 
     if total == 0 then
         error("no weighted layout for this branch, depth, and primary map")

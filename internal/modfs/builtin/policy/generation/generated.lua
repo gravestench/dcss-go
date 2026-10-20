@@ -275,8 +275,8 @@ local function entrance_cell(builder, start, protected)
 end
 
 -- Store source identity on the link while the grid uses the kernel's
--- ordinary linked-stair feature. Travel becomes available with the shared
--- branch installer; until then the player gets a named unavailable reason.
+-- ordinary linked-stair feature. The branch floor is built on first entry,
+-- so its stable ID is pending while the destination coordinates are not.
 local function place_branch_entrances(builder, layout, protected,
     chosen, branch_id, depth)
     local links = {}
@@ -286,17 +286,21 @@ local function place_branch_entrances(builder, layout, protected,
     for _, entry in ipairs(entries) do
         local point = entrance_cell(builder, start, protected)
         local branch = register.get("branches", entry.branch_id)
+        local available = layouts.has_candidates(entry.branch_id, 1)
 
         builder:set(point.x, point.y, ">")
         vault_extra.protect(protected, point)
         links[#links + 1] = {
             x = point.x,
             y = point.y,
-            to_level_id = 0,
+            to_level_id = available and
+                branch_levels.id(entry.branch_id, 1) or 0,
             to_x = 0,
             to_y = 0,
-            unavailable = "The entrance to " .. branch.long_name ..
-                " cannot be entered yet.",
+            pending = available,
+            unavailable = available and "" or
+                "The entrance to " .. branch.long_name ..
+                    " has no ported primary layout yet.",
             target_branch_id = entry.branch_id,
             source_feature = entry.entry_feature,
         }

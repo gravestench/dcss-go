@@ -82,7 +82,7 @@ func (g *Game) populateStairDestination(
 
 	if link.Pending {
 		if g.scenarioID != generatedDungeonScenarioID {
-			return fmt.Errorf("only generated Dungeon stairs may be pending")
+			return fmt.Errorf("only generated floors may have pending stairs")
 		}
 
 		var err error
@@ -117,12 +117,12 @@ func populationLevelRecord(level *Level, entry point) map[string]any {
 		})
 	}
 
-	// The current generated path is Dungeon, whose level ID equals local
-	// depth. Branch generation will store local depth separately on Level.
+	// Population uses branch-local depth; stable level IDs are only storage
+	// keys and may be far larger than their source monster-table depth.
 	return map[string]any{
 		"id":               level.ID,
 		"branch_id":        level.BranchID,
-		"local_depth":      level.ID,
+		"local_depth":      level.LocalDepth,
 		"entry_x":          entry.x,
 		"entry_y":          entry.y,
 		"budget":           level.initialMonsters,

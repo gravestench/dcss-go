@@ -20,6 +20,10 @@ function module.run(_, input)
     roster.allowed(scenario_id, branches.BRANCH_DUNGEON)
 
     for _, level in ipairs(levels) do
+        if by_id[level.id] then
+            error("duplicate saved level " .. tostring(level.id))
+        end
+
         by_id[level.id] = level
         local choices = level.initial_monsters
 
@@ -29,7 +33,20 @@ function module.run(_, input)
             end
 
             abyss.validate(level)
-        elseif scenario_id == generated_id or scenario_id == population_id then
+        elseif scenario_id == generated_id then
+            -- The branch validator below checks source ownership, depth,
+            -- and topology for every generated ordinary floor.
+            -- Branch source pools include NO_MONSTER rolls; a spent budget
+            -- can therefore create fewer actors than Dungeon's baseline.
+            local minimum = level.branch_id ==
+                branches.BRANCH_DUNGEON and choices or 0
+
+            if (level.initial_actors < minimum or
+                    level.initial_actors > 4 * choices) then
+                error("generated level " .. level.id ..
+                    " has invalid initial actor count")
+            end
+        elseif scenario_id == population_id then
             if level.branch_id ~= branches.BRANCH_DUNGEON then
                 error("Dungeon level has the wrong branch owner")
             end

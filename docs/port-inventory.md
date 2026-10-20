@@ -47,7 +47,7 @@ context rather than a handler API for each game domain.
 | Item generation | Source-backed class and subtype selection feeds floor loot, monster equipment, vault requests, and acquirement; selected generated state is committed to saves | `policy/item_generation`, `systems/item_*` |
 | Shops | Ten active source shop types, 70 committed source shop vault definitions, scripted shop maps, authored stock and supplemental D:1–15 placement, saved wallet and stock, gold pickup, fixed shop scenario, prices, shopping list, purchase, and terminal menu | `vaults/shop`, `policy/generation/vaults/shop`, `policy/shops`, `schemas/*shop*` |
 | Traps | Ten active source trap definitions and effects in Lua; authored vault traps become saved Akara entities; entry, held state, marks, timed passages, Zot outcomes, visibility, and mod-added trap files use one catalog | `content/traps`, `policy/traps`, `systems/world_traps.lua` |
-| Dynamic actors | All 125 committed Dungeon population rows feed the generated picker, with their source depth ranges deciding which can spawn on D:1–15; jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; all 285 committed monster spellbooks use source-order weighted and conditional slot selection, with effect coverage required before a monster enters the live roster | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
+| Dynamic actors | All 908 committed branch population rows feed the generated picker, with source local-depth ranges deciding which monsters can spawn; jackal bands, source HP/speed, decisions, energy, attacks, carried weapons and missiles; all 285 committed monster spellbooks use source-order weighted and conditional slot selection, with effect coverage required before a monster enters the live roster | `policy/ai`, `policy/population`, `policy/monster_energy.lua`, `systems/monster_*` |
 | Monster beam, hex, and support spells | Seventy-two source-backed beam profiles, sixteen targeted hex effects, thirteen self-support effects, four ally-support effects, four Serpent of Hell composite breaths, and three life-transfer spells. Lua owns rays, resistance, healing, buffs, auras, clouds, displacement, poison, and temporary terrain; typed target plans carry the selected destination through resolution | `content/monster_beams`, `policy/combat/monster_beams`, `policy/combat/monster_hexes`, `policy/combat/monster_support`, `policy/combat/monster_spells` |
 | Monster direct summons | Thirty-nine source direct-creature effects choose species, counts, durations, and placement in their own Lua files. Akara stores caster ownership, named attitude, expiry, Invitation branch choice, Brothers count, and special summoned state; a live monster cast survives restore | `policy/combat/monster_summons`, `policy/combat/monster_spells`, `schemas/magic_*` |
 | Monster displacement and recall | Eight Blink variants use focused Lua landing, ally, and foe rules. Word of Recall stores its chant and breath cooldown on the caster, then moves eligible distant allies. Typed plans preserve target cells, and a live Blink cast survives restore | `policy/combat/monster_displacement`, `policy/combat/monster_spells`, `schemas/magic_monster_recall.lua`, `systems/magic_monster_recall.lua` |
@@ -114,8 +114,8 @@ the effective ruleset hash without adding a Go keymap.
 
 The import artifacts account for 43 species, 31 jobs, 700 monster rows,
 403 spell identities, 285 monster spellbooks, 408 item
-identities, 38 branches, 125 Dungeon population rows inside their
-monster definitions, monster weapon loadouts, starting grants, and console
+identities, 38 branches, and 908 population rows in separate branch
+catalogs, plus monster weapon loadouts, starting grants, and console
 presentation metadata. All 162 primary and 16 secondary weapon specs live in
 their owning monster Lua files. The initial import tools have been removed;
 content coverage
@@ -192,8 +192,13 @@ items, and branches still need behavior, generation, and UI flows.
 Only D:1 Dungeon terrain and population exist at launch. D:2–15 terrain,
 paired stairs, ordinary monsters, authored vault entities, and shops are
 generated from live state on first entry. The pending frontier stair,
-population state, and no-spawn mask survive the Go save format. Branch
-entrances still need generators that establish reciprocal links on entry.
+population state, and no-spawn mask survive the Go save format. Scheduled
+ordinary branch entrances now use stable IDs and source branch layouts and
+population. Lair and Orc first and second floors have exercised reciprocal
+entry, save, and restore. Depths also opens from its scheduled Dungeon
+entrance. Temple and Vaults entrances remain labelled but unavailable until
+their primary layout families are ported. Other branch-specific mechanics
+still need parity.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition
@@ -431,12 +436,12 @@ source's depth-scaled island bumps, smooths the height field, and paints
 mangrove, floor, and shallow water. Its Swamp-only declaration is registered;
 branch travel is still required before ordinary play can select it.
 
-The next ordinary branch travel slice is specified in
+The ordinary branch travel slice is specified in
 `docs/superpowers/specs/2026-10-20-ordinary-branch-travel-design.md` and
 planned in `docs/superpowers/plans/2026-10-20-ordinary-branch-travel.md`.
-It includes source branch population catalogs because generated spawning
-still reads Dungeon depth, and generalizes saved stair frontiers beyond
-the current `id + 1` Dungeon path.
+The 38 committed population catalogs preserve 908 source rows. Go saves
+branch-local depth and arbitrary scheduled frontiers; Lua validates the
+entrance graph rather than assuming every level is Dungeon ID plus one.
 
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and

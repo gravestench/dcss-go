@@ -223,6 +223,8 @@ func hudInput(view game.View) map[string]any {
 		"experience_level":     view.ExperienceLevel,
 		"next_level_percent":   view.NextLevelPercent,
 		"level_id":             view.LevelID,
+		"branch_id":            view.BranchID,
+		"local_depth":          view.LocalDepth,
 		"current_aut":          int(view.CurrentAut),
 		"inventory":            inventoryInput(view.Inventory),
 		"might_aut":            view.MightAut,

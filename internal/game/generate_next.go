@@ -66,7 +66,7 @@ func liveParentRecord(parent *Level) map[string]any {
 	return map[string]any{
 		"id":          parent.ID,
 		"branch_id":   parent.BranchID,
-		"local_depth": parent.ID,
+		"local_depth": parent.LocalDepth,
 		"width":       parent.width,
 		"height":      len(parent.terrain),
 		"seen":        seen,
@@ -156,17 +156,39 @@ func installParentLinks(parent *Level, depth int, values []any) error {
 	return nil
 }
 
-// generateNextFloor installs one live Dungeon floor and its reciprocal stair
+// generateNextFloor installs a scheduled floor and its reciprocal stair
 // links. A malformed mod policy rolls back grid/link changes before returning.
 func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error) {
 	parent := g.levels[parentID]
-	depth := selected.ToLevelID
+	levelID := selected.ToLevelID
 
 	if parent == nil ||
 		!selected.Pending ||
-		depth != parentID+1 ||
-		g.levels[depth] != nil {
-		return nil, fmt.Errorf("invalid pending Dungeon stair")
+		levelID <= 0 ||
+		g.levels[levelID] != nil {
+		return nil, fmt.Errorf("invalid pending floor stair")
+	}
+
+	branchID := parent.BranchID
+	localDepth := parent.LocalDepth + 1
+
+	if selected.TargetBranchID != "" {
+		branchID = selected.TargetBranchID
+		localDepth = 1
+		found := false
+
+		for _, entry := range g.branchSchedule.Entries {
+			if entry.BranchID == branchID &&
+				entry.ParentID == parent.BranchID &&
+				entry.ParentDepth == parent.LocalDepth {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			return nil, fmt.Errorf("unscheduled branch entrance %s", branchID)
+		}
 	}
 
 	player, found := g.stores.Players.Get(g.player)
@@ -176,9 +198,9 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 	}
 
 	result, err := g.scripts.Policy("world.generate_next_floor", map[string]any{
-		"branch_id":         parent.BranchID,
-		"local_depth":       depth,
-		"level_id":          depth,
+		"branch_id":         branchID,
+		"local_depth":       localDepth,
+		"level_id":          levelID,
 		"player_species_id": player.SpeciesID,
 		"player_name":       player.Name,
 		"from_x":            selected.X,
@@ -198,14 +220,20 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 		return nil, fmt.Errorf("Lua next floor is not a level record")
 	}
 
-	returnedDepth, err := decisionInteger(record, "id")
+	returnedID, err := decisionInteger(record, "id")
 
 	if err != nil {
 		return nil, err
 	}
 
-	if returnedDepth != depth {
-		return nil, fmt.Errorf("Lua next floor has the wrong depth")
+	if returnedID != levelID || record["branch_id"] != branchID {
+		return nil, fmt.Errorf("Lua next floor has the wrong branch or ID")
+	}
+
+	returnedDepth, err := decisionInteger(record, "local_depth")
+
+	if err != nil || returnedDepth != localDepth {
+		return nil, fmt.Errorf("Lua next floor has the wrong local depth")
 	}
 
 	entry, err := luaScenarioPoint(result["entry"])
@@ -242,7 +270,7 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 			return
 		}
 
-		delete(g.levels, depth)
+		delete(g.levels, levelID)
 		parent.terrain = oldCells
 		parent.remembered = oldRemembered
 		parent.stairs = oldLinks
@@ -254,23 +282,23 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 		return nil, err
 	}
 
-	if g.levels[depth] == nil || len(links) != 1 {
-		return nil, fmt.Errorf("Lua next floor has the wrong depth")
+	if g.levels[levelID] == nil || len(links) != 1 {
+		return nil, fmt.Errorf("Lua next floor has the wrong ID")
 	}
 
-	for _, value := range links[depth] {
+	for _, value := range links[levelID] {
 		link, decodeErr := luaScenarioStair(value)
 
 		if decodeErr != nil {
 			return nil, decodeErr
 		}
 
-		if err := g.levels[depth].AddStairLink(link); err != nil {
+		if err := g.levels[levelID].AddStairLink(link); err != nil {
 			return nil, err
 		}
 	}
 
-	if err := installParentLinks(parent, depth, patches); err != nil {
+	if err := installParentLinks(parent, levelID, patches); err != nil {
 		return nil, err
 	}
 
@@ -287,7 +315,7 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 		return nil, err
 	}
 
-	for _, childLink := range g.levels[depth].StairLinks() {
+	for _, childLink := range g.levels[levelID].StairLinks() {
 		if childLink.ToLevelID != parentID || childLink.Pending {
 			continue
 		}
@@ -296,7 +324,7 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 
 		if !exists ||
 			back.Pending ||
-			back.ToLevelID != depth ||
+			back.ToLevelID != levelID ||
 			back.ToX != childLink.X ||
 			back.ToY != childLink.Y {
 			return nil, fmt.Errorf("Lua next floor has an unpaired up stair")

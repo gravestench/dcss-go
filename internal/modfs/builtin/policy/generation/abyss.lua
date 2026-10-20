@@ -42,6 +42,7 @@ function abyss.generate(ctx)
     return {
         id = world_abyss.level_id,
         branch_id = branches.BRANCH_ABYSS,
+        local_depth = 1,
         rows = rows,
         stairs = {
             {

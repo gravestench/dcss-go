@@ -15,6 +15,7 @@ import (
 type Level struct {
 	ID            int
 	BranchID      string
+	LocalDepth    int
 	terrain       [][]terrain.ID
 	remembered    []terrain.ID
 	seen          []bool
@@ -147,8 +148,9 @@ func (l *Level) AddStairLink(link StairLink) error {
 		y: link.Y,
 	}
 
-	if _, duplicate := l.stairs[location]; duplicate {
-		return fmt.Errorf("level %d has duplicate stair link at (%d,%d)", l.ID, link.X, link.Y)
+	if prior, duplicate := l.stairs[location]; duplicate {
+		return fmt.Errorf("level %d has duplicate stair link at (%d,%d): existing %+v, new %+v",
+			l.ID, link.X, link.Y, prior, link)
 	}
 
 	l.stairs[location] = link
@@ -288,7 +290,7 @@ func validateStairLinks(levels map[int]*Level) error {
 			}
 
 			if link.Pending {
-				if link.ToLevelID != id+1 || levels[link.ToLevelID] != nil {
+				if link.ToLevelID <= 0 || levels[link.ToLevelID] != nil {
 					return fmt.Errorf("level %d has invalid pending stair at (%d,%d)",
 						id, link.X, link.Y)
 				}
