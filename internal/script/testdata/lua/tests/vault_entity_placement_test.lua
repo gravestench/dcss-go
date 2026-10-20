@@ -16,7 +16,25 @@ local branches = require("ids.branches")
 
 local test = {}
 
-    -- Give vault placement a reproducible 64-bit draw source for declaration tests.
+-- Give materialization a real player ledger, where source uniques record
+-- their run-wide claim. The surrounding world still uses the test ECS.
+local function world_context(ctx)
+    local world = setmetatable({}, { __index = ctx })
+    local player = ctx:create()
+
+    ctx:add(player, component.PLAYER_UNIQUE_HISTORY, {
+        status = {},
+        monsters = {},
+    })
+
+    function world:player()
+        return player
+    end
+
+    return world
+end
+
+-- Give vault placement a reproducible 64-bit draw source for declaration tests.
 local function builder_context()
     local context = {}
     local next_value = 1
@@ -136,7 +154,7 @@ local function source_slot_order_prevents_double_actor(ctx)
     end
 
     local occupied
-    local world = setmetatable({}, { __index = ctx })
+    local world = world_context(ctx)
 
     -- Resolve the first source choice so the overlap assertion tests placement order.
     function world:random()
@@ -225,7 +243,7 @@ local function source_unique_is_not_duplicated(ctx)
         end
     end
 
-    local world = setmetatable({}, { __index = ctx })
+    local world = world_context(ctx)
 
     -- Choose the first unique candidate deterministically in the duplicate test.
     function world:random()
@@ -299,7 +317,7 @@ local function source_monster_slot_falls_back(ctx)
     harness.equal(records[2].arguments.monster_slots, 2,
         "source fallback slot count was lost")
 
-    local world = setmetatable({}, { __index = ctx })
+    local world = world_context(ctx)
 
     -- Both glyphs remain open; only the unique check triggers the fallback.
     function world:random()

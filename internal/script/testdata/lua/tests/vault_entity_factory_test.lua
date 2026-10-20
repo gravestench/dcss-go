@@ -34,6 +34,18 @@ local origin = {
 -- while retaining real ECS components and placement calls.
 local function world_context(ctx)
     local grid = setmetatable({}, { __index = ctx })
+    local player = ctx:create()
+
+    -- Real unique placement records its claim on the run owner. Keep the
+    -- fixture's player minimal while using the production component schema.
+    ctx:add(player, component.PLAYER_UNIQUE_HISTORY, {
+        status = {},
+        monsters = {},
+    })
+
+    function grid:player()
+        return player
+    end
 
     -- Force the first weighted choice while still catching invalid random bounds.
     function grid:random(_, bound)
@@ -332,6 +344,24 @@ local function merged_slime_is_one_actor(ctx)
         "very large slime creature", "display reads live blob size")
 end
 
+-- The run ledger must reject a second named monster before allocating
+-- another ECS actor, including after the first actor is no longer live.
+local function unique_claim_is_atomic(ctx)
+    local world = world_context(ctx)
+
+    factory.spawn(world, monsters.MONS_EDMUND, 1, 27, 10, {
+        origin = origin,
+    })
+
+    local before = #ctx:query({ component.ACTOR })
+    local ok = pcall(factory.spawn, world, monsters.MONS_EDMUND,
+        1, 28, 10, { origin = origin })
+
+    harness.falsy(ok, "second Edmund should be rejected")
+    harness.equal(#ctx:query({ component.ACTOR }), before,
+        "rejected unique left no partial actor")
+end
+
 -- Exercise factory provenance, source overrides, habitat writes, and atomic
 -- failure in one world.
 function test.run(ctx)
@@ -343,6 +373,7 @@ function test.run(ctx)
     failed_placement_is_atomic(ctx)
     research_items_materialize(ctx)
     merged_slime_is_one_actor(ctx)
+    unique_claim_is_atomic(ctx)
 end
 
 return test

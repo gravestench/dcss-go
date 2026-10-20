@@ -1,0 +1,9 @@
+# uniq_tiamat is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Tiamat band with its source branch, depth, and weight rules.
+NAME:   uniq_tiamat
+DEPTH:  Zot
+MONS: Tiamat band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

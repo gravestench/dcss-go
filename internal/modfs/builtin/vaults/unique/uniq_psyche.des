@@ -1,0 +1,9 @@
+# uniq_psyche is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Psyche with its source branch, depth, and weight rules.
+NAME:   uniq_psyche
+DEPTH:  D:8-12
+MONS: Psyche
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

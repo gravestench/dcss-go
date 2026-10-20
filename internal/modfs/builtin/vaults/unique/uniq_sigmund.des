@@ -1,0 +1,9 @@
+# uniq_sigmund is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Sigmund with its source branch, depth, and weight rules.
+NAME:   uniq_sigmund
+DEPTH:  D:2-6
+MONS: Sigmund
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

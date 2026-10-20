@@ -1,0 +1,9 @@
+# uniq_saint_roka is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Saint Roka band with its source branch, depth, and weight rules.
+NAME:   uniq_saint_roka
+DEPTH:  Orc:$, Depths, Elf:2-, Snake:2-, Vaults, Crypt
+MONS: Saint Roka band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

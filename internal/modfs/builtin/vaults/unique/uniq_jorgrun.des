@@ -1,0 +1,10 @@
+# uniq_jorgrun is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Jorgrun with its source branch, depth, and weight rules.
+NAME:   uniq_jorgrun
+DEPTH:  D:12-, Orc, Elf, !Elf:$, Snake, !Snake:$, Shoals, !Shoals:$
+DEPTH:  Spider, !Spider:$, Swamp, !Swamp:$
+MONS: Jorgrun
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

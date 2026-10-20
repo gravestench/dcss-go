@@ -2244,6 +2244,39 @@ groups stay blocked across floors. Failed placement attempts do not
 record an ID or consume a uniqueness tag. Keep these tags in the `.des`
 definition; do not copy their meaning into a separate mod registry.
 
+### Add a named unique encounter
+
+Put each encounter in its own `vaults/unique/<name>.des` file. The file's
+`NAME` must be unique in the effective catalog. A simple named monster
+uses the same source map syntax as any other vault:
+
+```text
+NAME: uniq_example
+DEPTH: D:4-7
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MONS: Example
+MAP
+1
+ENDMAP
+```
+
+The `1` is the monster slot, not a new terrain type. The
+`overwrite_floor_cell` tag asks placement to put this one-cell map on an
+existing floor. The `place_unique` tag admits it to the named-encounter
+draw after ordinary secondary vaults. Branch, depth, weight, and chance
+still come from the same `.des` rules as other vaults. A mod can replace
+one bundled definition by supplying the same relative path in a higher
+VFS layer, or add a new file with a new `NAME`.
+
+The monster definition should carry the `M_UNIQUE` flag. The player owns a
+saved `character.unique_history` component whose `monsters` map records
+kind IDs that have already appeared in the run. Once a unique has spawned,
+its claim remains after death or travel, so a later vault cannot create a
+second copy. Use a named `: vault.run` or `: vault.veto` Lua hook for
+conditional source rules; keep the map geometry and ordinary directives in
+the `.des` file. Import IDs from `ids.monsters` and other shared ID modules
+inside the hook instead of repeating names as strings.
+
 ## Test a mod
 
 Use a file ending in `_test.lua` under `tests/`. Import production modules

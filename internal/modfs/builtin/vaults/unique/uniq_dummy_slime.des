@@ -1,0 +1,9 @@
+# uniq_dummy_slime is a separate Dungeon Crawl unique-placement definition.
+# This weighted empty map dilutes unique placement in its source branch without creating an actor.
+NAME:   uniq_dummy_slime
+DEPTH:  Slime
+WEIGHT: 200
+TAGS:   place_unique dummy
+MAP
+.
+ENDMAP

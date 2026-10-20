@@ -1,0 +1,12 @@
+# uniq_margery is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Margery band with its source branch, depth, and weight rules.
+NAME:   uniq_margery
+# Higher WEIGHT to compensate for Maggie. Used objstat to calculate doubling the WEIGHT
+# would lead to numbers closest to Margery's pre-Maggie spawn rates
+WEIGHT: 20
+DEPTH:  Depths:3-, Vaults:2-, Crypt
+MONS: Margery band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

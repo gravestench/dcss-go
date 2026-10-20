@@ -1,0 +1,9 @@
+# uniq_duvessa is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Duvessa band with its source branch, depth, and weight rules.
+NAME:   uniq_duvessa
+DEPTH:  D:4-7
+MONS: Duvessa band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

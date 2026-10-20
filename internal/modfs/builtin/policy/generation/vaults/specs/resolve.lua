@@ -146,6 +146,26 @@ local function find_name(category, name, site)
 
     if #ids > 1 then
         if category == categories.MONSTERS then
+            -- A source display name can also identify another form of
+            -- the same unique. Prefer the exact species ID before asking
+            -- whether the remaining profiles are spawnable.
+            local canonical = "MONS_" .. name:upper():gsub(
+                "[^A-Z0-9]+", "_"):gsub("^_", ""):gsub("_$", "")
+
+            local exact = false
+            local same_forms = true
+
+            for _, id in ipairs(ids) do
+                exact = exact or id == canonical
+                same_forms = same_forms and
+                    (id == canonical or
+                        id:sub(1, #canonical + 1) == canonical .. "_")
+            end
+
+            if exact and same_forms then
+                return canonical
+            end
+
             local chosen = spawnable_name_match(ids)
 
             if chosen then
@@ -240,6 +260,10 @@ function resolve.validate_monster(selected, site)
         name:match("^(.-) skeleton$") or
         name:match("^(.-) simulacrum$")
 
+    if name:match(" band$") then
+        base_name = name:match("^(.-) band$")
+    end
+
     if slime_blob.size_for_name(name) then
         return
     end
@@ -312,6 +336,7 @@ function resolve.monster(ctx, selected, depth, site)
         name:match(" (skeleton)$") or
         name:match(" (simulacrum)$")
     local blob_size = slime_blob.size_for_name(name)
+    local band_name = name:match("^(.-) band$")
     local kind_id
     local base_id
     local colour = selected.colour and selected.colour:lower()
@@ -327,6 +352,8 @@ function resolve.monster(ctx, selected, depth, site)
         kind_id = random_monsters.pick(ctx, name, source_depth(selected, depth), site)
     elseif blob_size then
         kind_id = monster_ids.MONS_SLIME_CREATURE
+    elseif band_name then
+        kind_id = find_name(categories.MONSTERS, band_name, site)
     elseif base_name then
         if variant == "zombie" then
             kind_id = monster_ids.MONS_ZOMBIE
@@ -348,6 +375,7 @@ function resolve.monster(ctx, selected, depth, site)
         kind_id = kind_id,
         base_id = base_id,
         blob_size = blob_size,
+        band = band_name ~= nil,
         variant = variant,
         colour = colour,
         attitude = selected.attitude,
@@ -416,6 +444,9 @@ function resolve.item(ctx, selected, depth, site)
         disc = selected.disc,
         numspells = selected.numspells,
         ident = selected.ident,
+        tile = selected.tile,
+        weapon_tile = selected.wtile,
+        item_name = selected.itemname,
     }
 end
 

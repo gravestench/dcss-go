@@ -1,0 +1,10 @@
+# uniq_enchantress is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places the Enchantress band with its source branch, depth, and weight rules.
+NAME:   uniq_enchantress
+DEPTH:  Depths
+MONS:   the Enchantress band
+MONS: the Enchantress band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

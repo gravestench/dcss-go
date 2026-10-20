@@ -1,0 +1,9 @@
+# uniq_grum is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Grum band with its source branch, depth, and weight rules.
+NAME:   uniq_grum
+DEPTH:  D:8-11, Lair:1
+MONS: Grum band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

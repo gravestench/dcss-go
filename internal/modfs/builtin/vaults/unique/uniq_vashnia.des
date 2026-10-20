@@ -1,0 +1,10 @@
+# uniq_vashnia is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Vashnia band with its source branch, depth, and weight rules.
+NAME:   uniq_vashnia
+DEPTH:  Snake:2-
+WEIGHT: 50
+MONS: Vashnia band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

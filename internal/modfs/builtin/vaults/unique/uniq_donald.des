@@ -1,0 +1,10 @@
+# uniq_donald is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Donald with its source branch, depth, and weight rules.
+NAME:   uniq_donald
+DEPTH:  Swamp, Snake, Shoals, Spider, Slime, Vaults, !Vaults:$
+DEPTH:  Crypt, !Crypt:$, Elf, Orc:$
+MONS: Donald
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

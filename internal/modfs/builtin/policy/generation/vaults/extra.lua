@@ -10,6 +10,7 @@ local place = require("policy.generation.vaults.place")
 local connect = require("policy.generation.vaults.connect")
 local selection = require("policy.generation.vaults.selection")
 local used = require("policy.generation.vaults.used")
+local unique_placement = require("policy.generation.vaults.unique.placement")
 
 local extra = {}
 
@@ -189,6 +190,7 @@ function extra.generate(ctx, builder, context)
     local explicit = place.place(ctx, builder, context, placed, extra.place)
     local ordinary = minivault.place(ctx, builder, context,
         placed, extra.place)
+    unique_placement.place(ctx, builder, context, placed, extra.place)
 
     return placed, primary or explicit or ordinary, context.used:ids()
 end

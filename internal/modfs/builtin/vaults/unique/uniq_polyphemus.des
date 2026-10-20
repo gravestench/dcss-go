@@ -1,0 +1,10 @@
+# uniq_polyphemus is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Polyphemus band with its source branch, depth, and weight rules.
+NAME:   uniq_polyphemus
+DEPTH:  Shoals:2-
+WEIGHT: 50
+MONS: Polyphemus band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

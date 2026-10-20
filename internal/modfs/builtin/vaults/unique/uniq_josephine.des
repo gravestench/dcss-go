@@ -1,0 +1,9 @@
+# uniq_josephine is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Josephine band with its source branch, depth, and weight rules.
+NAME:   uniq_josephine
+DEPTH:  D:10-, Orc, Lair:3-, Swamp:1, Shoals:1, Snake:1, Spider:1
+MONS: Josephine band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

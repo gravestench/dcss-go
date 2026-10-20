@@ -1,0 +1,9 @@
+# uniq_edmund is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Edmund with its source branch, depth, and weight rules.
+NAME:   uniq_edmund
+DEPTH:  D:4-6
+MONS: Edmund
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

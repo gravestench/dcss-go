@@ -1,0 +1,11 @@
+# uniq_josephina is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Josephina band with its source branch, depth, and weight rules.
+NAME:   uniq_josephina
+# Higher weight to compensate for Josephine.
+WEIGHT: 15
+DEPTH:  Depths:2-, Zot:1-4, Crypt
+MONS: Josephina band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

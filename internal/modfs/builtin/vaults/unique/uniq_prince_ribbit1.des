@@ -1,0 +1,11 @@
+# uniq_prince_ribbit1 is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Prince Ribbit with its source branch, depth, and weight rules.
+NAME:   uniq_prince_ribbit1
+DEPTH:  D:5-9
+WEIGHT: 7
+TAGS:   uniq_ribbit
+MONS: Prince Ribbit
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

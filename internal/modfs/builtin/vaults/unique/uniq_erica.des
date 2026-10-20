@@ -1,0 +1,9 @@
+# uniq_erica is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Erica with its source branch, depth, and weight rules.
+NAME:   uniq_erica
+DEPTH:  D:8-11, Orc:1, Lair:1-2
+MONS: Erica
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

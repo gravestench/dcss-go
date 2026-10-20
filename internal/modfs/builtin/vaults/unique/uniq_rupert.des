@@ -1,0 +1,9 @@
+# uniq_rupert is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Rupert with its source branch, depth, and weight rules.
+NAME:   uniq_rupert
+DEPTH:  D:12-, Lair:3-, Orc:$, Snake:1, Spider:1
+MONS: Rupert
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

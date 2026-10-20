@@ -1,0 +1,11 @@
+# uniq_cerebov is a separate Dungeon Crawl unique-placement definition.
+# This authored unique map keeps its source geometry and directives for the named encounter.
+NAME:   uniq_cerebov
+DEPTH:  Pan
+CHANCE: 25%
+TAGS:   transparent extra allow_dup luniq_cerebov
+: vault.veto("pan_unique.cerebov")
+MONS: generate_awake Cerebov band
+MAP
+1
+ENDMAP

@@ -1,0 +1,10 @@
+# uniq_amaemon is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Amaemon band with its source branch, depth, and weight rules.
+NAME:   uniq_amaemon
+DEPTH:  D:8-11, Lair:1-3
+WEIGHT: 5, 15(Lair)
+MONS: Amaemon band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

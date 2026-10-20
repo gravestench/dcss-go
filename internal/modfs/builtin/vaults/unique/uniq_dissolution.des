@@ -1,0 +1,10 @@
+# uniq_dissolution is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Dissolution with its source branch, depth, and weight rules.
+NAME:   uniq_dissolution
+DEPTH:  Slime:2-
+WEIGHT: 100
+MONS: Dissolution
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

@@ -1,0 +1,11 @@
+# uniq_mnoleg is a separate Dungeon Crawl unique-placement definition.
+# This authored unique map keeps its source geometry and directives for the named encounter.
+NAME:   uniq_mnoleg
+DEPTH:  Pan
+CHANCE: 25%
+TAGS:   transparent extra allow_dup luniq_mnoleg
+: vault.veto("pan_unique.mnoleg")
+MONS: generate_awake Mnoleg band
+MAP
+1
+ENDMAP

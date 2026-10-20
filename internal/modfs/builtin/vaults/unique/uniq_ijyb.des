@@ -1,0 +1,9 @@
+# uniq_ijyb is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Ijyb with its source branch, depth, and weight rules.
+NAME:   uniq_ijyb
+DEPTH:  D:3-5
+MONS: Ijyb
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

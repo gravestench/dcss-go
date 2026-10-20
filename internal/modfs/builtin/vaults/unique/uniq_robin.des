@@ -1,0 +1,9 @@
+# uniq_robin is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Robin band with its source branch, depth, and weight rules.
+NAME:   uniq_robin
+DEPTH:  D:2-4
+MONS: Robin band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

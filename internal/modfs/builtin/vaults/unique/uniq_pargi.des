@@ -1,0 +1,10 @@
+# uniq_pargi is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Pargi with its source branch, depth, and weight rules.
+NAME:   uniq_pargi
+DEPTH:  D:3-4
+WEIGHT: 1
+MONS: Pargi
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

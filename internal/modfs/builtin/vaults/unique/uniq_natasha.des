@@ -1,0 +1,9 @@
+# uniq_natasha is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Natasha with its source branch, depth, and weight rules.
+NAME:   uniq_natasha
+DEPTH:  D:2-4
+MONS: Natasha
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

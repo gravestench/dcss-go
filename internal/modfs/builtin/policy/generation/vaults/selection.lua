@@ -99,6 +99,10 @@ local function candidates_for_tag(random, tag, context)
     return candidates, total
 end
 
+-- Unique placement needs the eligible map count before its separate
+-- one-in-five gate. Reuse this exact filter for that source stage.
+selection.candidates_for_tag = candidates_for_tag
+
 -- A branch can have no eligible vaults for a tag. Callers can then continue
 -- normal level generation without consuming another weighted-choice draw.
 -- Filter by tag and depth before weighted choice; an empty pool leaves generation on its ordinary path.

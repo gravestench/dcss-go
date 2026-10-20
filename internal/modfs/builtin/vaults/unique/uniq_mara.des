@@ -1,0 +1,10 @@
+# uniq_mara is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Mara with its source branch, depth, and weight rules.
+NAME:   uniq_mara
+DEPTH:  Depths, !Depths:$, Elf:$, Swamp:3-, Snake:3-, Shoals:3-, Spider:3-
+DEPTH:  Vaults:2-
+MONS: Mara
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

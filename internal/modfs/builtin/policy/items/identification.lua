@@ -341,6 +341,13 @@ function identification.name(ctx, player, entity)
     local state = identification.known(ctx, player, entity)
     local name = kind.name
     local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
+    local authored = ctx:get(entity, component.VAULT_ITEM_APPEARANCE)
+
+    -- DES itemname changes this instance's visible noun while the catalog
+    -- keeps the real weapon kind for damage, skill, and save validation.
+    if authored and authored.name ~= "" then
+        name = authored.name
+    end
 
     if artefact then
         local named = state.type and artefact.name or artefact.appearance

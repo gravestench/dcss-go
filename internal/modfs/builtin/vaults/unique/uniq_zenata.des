@@ -1,0 +1,9 @@
+# uniq_zenata is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Zenata with its source branch, depth, and weight rules.
+NAME:   uniq_zenata
+DEPTH:  Vaults:1-4, Elf, Crypt
+MONS: Zenata
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

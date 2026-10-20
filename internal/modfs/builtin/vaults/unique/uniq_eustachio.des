@@ -1,0 +1,9 @@
+# uniq_eustachio is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Eustachio with its source branch, depth, and weight rules.
+NAME:   uniq_eustachio
+DEPTH:  D:4-6
+MONS: Eustachio
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

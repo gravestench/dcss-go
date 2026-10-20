@@ -1,0 +1,9 @@
+# uniq_terence is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Terence with its source branch, depth, and weight rules.
+NAME:   uniq_terence
+DEPTH:  D:2-3
+MONS: Terence
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

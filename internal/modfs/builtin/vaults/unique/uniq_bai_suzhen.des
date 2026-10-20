@@ -1,0 +1,10 @@
+# uniq_bai_suzhen is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Bai Suzhen with its source branch, depth, and weight rules.
+NAME:   uniq_bai_suzhen
+DEPTH:  Depths:1-2, Elf:$, Swamp:3-, Snake:3-, Shoals:3-, Spider:3-, Vaults:2-
+DEPTH:  Crypt
+MONS: Bai Suzhen
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

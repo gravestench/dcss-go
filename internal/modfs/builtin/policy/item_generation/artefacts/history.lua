@@ -10,6 +10,7 @@ function history.initialise(ctx, player)
     if not ctx:has(player, component.PLAYER_UNIQUE_HISTORY) then
         ctx:add(player, component.PLAYER_UNIQUE_HISTORY, {
             status = {},
+            monsters = {},
         })
     end
 end

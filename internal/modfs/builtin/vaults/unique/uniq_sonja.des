@@ -1,0 +1,9 @@
+# uniq_sonja is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Sonja with its source branch, depth, and weight rules.
+NAME:   uniq_sonja
+DEPTH:  D:10-13, Orc, Lair
+MONS: Sonja
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

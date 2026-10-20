@@ -1,0 +1,9 @@
+# uniq_sojobo is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Sojobo band with its source branch, depth, and weight rules.
+NAME:   uniq_sojobo
+DEPTH:  Depths, Vaults:2-, Crypt
+MONS: Sojobo band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

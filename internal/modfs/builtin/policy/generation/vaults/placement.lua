@@ -109,8 +109,39 @@ end
 
 -- Floating vaults retry origins against protected cells without modifying the builder.
 local function origin(vault, cells, map_width, map_height, builder, options)
-    local left, top = preferred_origin(vault, map_width, map_height, builder)
     local protected = options and options.protected
+
+    -- A one-cell source `overwrite_floor_cell` map expects connected floor.
+    -- Pick from legal existing floor cells instead of opening a rock wall.
+    if vault.tags and vault.tags.overwrite_floor_cell then
+        if map_width ~= 1 or map_height ~= 1 then
+            error(vault.path .. ": overwrite_floor_cell needs one map cell")
+        end
+
+        local floors = {}
+
+        for y = 2, height - 3 do
+            for x = 2, width - 3 do
+                local key = x .. ":" .. y
+
+                if builder:cell(x, y) == "." and
+                    not (protected and protected[key]) then
+                    floors[#floors + 1] = { x = x, y = y }
+                end
+            end
+        end
+
+        if #floors == 0 then
+            error(vault.path .. ": vault " .. vault.id ..
+                ": cannot fit without replacing an existing stair")
+        end
+
+        local chosen = floors[builder:roll(#floors) + 1]
+
+        return chosen.x, chosen.y
+    end
+
+    local left, top = preferred_origin(vault, map_width, map_height, builder)
 
     -- Use either the explicit protected set or the builder stair guard for a fit.
     local function conflict(x, y)
@@ -358,6 +389,7 @@ local function select_entities(record, vault, random, depth)
         arguments.kind_id = resolved.kind_id or ""
         arguments.base_id = resolved.base_id or ""
         arguments.blob_size = resolved.blob_size or 1
+        arguments.band = resolved.band or false
         arguments.variant = resolved.variant or ""
         arguments.colour = resolved.colour or ""
         arguments.attitude = resolved.attitude or ""
@@ -371,6 +403,9 @@ local function select_entities(record, vault, random, depth)
         arguments.disc = resolved.disc or ""
         arguments.numspells = resolved.numspells or 0
         arguments.ident = resolved.ident or ""
+        arguments.tile = resolved.tile or ""
+        arguments.weapon_tile = resolved.weapon_tile or ""
+        arguments.item_name = resolved.item_name or ""
 
         current.identity = selected.name
         current.arguments = arguments

@@ -1,0 +1,9 @@
+# uniq_harold is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Harold with its source branch, depth, and weight rules.
+NAME:   uniq_harold
+DEPTH:  D:9-11, Orc:1, Lair:1-2
+MONS: Harold
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

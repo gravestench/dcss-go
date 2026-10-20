@@ -1,0 +1,11 @@
+# uniq_aizul is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Aizul with its source branch, depth, and weight rules.
+NAME:   uniq_aizul
+DEPTH:  Depths:1-2, Elf, Swamp, Snake, Shoals, Spider, Vaults, !Vaults:$
+DEPTH:  Crypt:1
+WEIGHT: 50(Snake), 10
+MONS: Aizul
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

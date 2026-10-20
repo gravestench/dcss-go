@@ -54,6 +54,7 @@ local function monster_options(record, level)
         depth = level.id,
         base_id = arguments.base_id ~= "" and arguments.base_id or nil,
         blob_size = arguments.blob_size or 1,
+        band = arguments.band or false,
         variant = arguments.variant,
         colour = arguments.colour ~= "" and arguments.colour or nil,
         attitude = arguments.attitude ~= "" and arguments.attitude or nil,
@@ -79,6 +80,11 @@ local function item_selection(record)
         disc = arguments.disc ~= "" and arguments.disc or nil,
         numspells = arguments.numspells ~= 0 and arguments.numspells or nil,
         ident = arguments.ident ~= "" and arguments.ident or nil,
+        tile = arguments.tile ~= "" and arguments.tile or nil,
+        weapon_tile = arguments.weapon_tile ~= "" and
+            arguments.weapon_tile or nil,
+        item_name = arguments.item_name ~= "" and
+            arguments.item_name or nil,
         site = site,
     }
 end
@@ -130,6 +136,7 @@ local function fallback_monster(ctx, level, record)
             arguments.kind_id = resolved.kind_id
             arguments.base_id = resolved.base_id or ""
             arguments.blob_size = resolved.blob_size or 1
+            arguments.band = resolved.band or false
             arguments.variant = resolved.variant or ""
             arguments.colour = resolved.colour or ""
             arguments.attitude = resolved.attitude or ""

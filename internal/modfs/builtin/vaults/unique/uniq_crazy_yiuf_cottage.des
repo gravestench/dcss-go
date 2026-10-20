@@ -1,0 +1,36 @@
+# uniq_crazy_yiuf_cottage is a separate Dungeon Crawl unique-placement definition.
+# This authored unique map keeps its source geometry and directives for the named encounter.
+NAME:    uniq_crazy_yiuf_cottage
+DEPTH:   D:2-7
+TAGS:    place_unique no_monster_gen no_item_gen
+MONS:    Crazy Yiuf
+MONS:    fungus / bush w:1
+ITEM:    mace tile:wpn_hammer wtile:hammer itemname:hammer
+# Randomisation 1: Some chance for a gate.
+SHUFFLE: Bb/Aa
+SUBST:   B=;, b=;
+: vault.run("cottage_gate")
+# Randomisation 2: Plants might be in the way -- Yiuf seems to be a bad
+#                  gardener. Sometimes.
+SUBST:   P:PQQ;;;; , Q=2;
+NSUBST:  P=1:t / *:2;
+# Randomisation 3: Hammers. Hammers. Hammers.
+SUBST:   ; : .:100 ;:10 d:2
+SUBST:   ; = .:10 d:2
+: vault.run("cottage_hammer")
+SUBST:   ':.......' , "=' , ':d' , '=..d
+# Randomisation 4: trees or rock
+SUBST:   t : ttx
+MAP
+ xxxxxxxxxxxxxxxx
+ xxtttttttxxtttxx
+ xxtttttttttttttx
+ BAP't'tttccccctx
+;baPP't''tc'''ctx
+@baPPtttt'=''1ctx
+;BAPttttttc''dctx
+ xxtttttttccccctx
+ xxtttttttttttttx
+ xxxxxttttttttxxx
+ xxxxxxxxxxxxxxxx
+ENDMAP

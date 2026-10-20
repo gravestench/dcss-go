@@ -1,0 +1,9 @@
+# uniq_frederick is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Frederick with its source branch, depth, and weight rules.
+NAME:   uniq_frederick
+DEPTH:  Depths:3-, Vaults:2-, Crypt
+MONS: Frederick
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

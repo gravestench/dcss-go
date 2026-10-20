@@ -1,0 +1,9 @@
+# uniq_frances is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Frances with its source branch, depth, and weight rules.
+NAME:   uniq_frances
+DEPTH:  D:12-14, Elf:1, Swamp:1-2, Snake:1-2, Shoals:1-2, Spider:1-2
+MONS: Frances
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

@@ -1,0 +1,9 @@
+# uniq_maggie is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Maggie with its source branch, depth, and weight rules.
+NAME:   uniq_maggie
+DEPTH:  D:6-10, Lair:1-2
+MONS: Maggie
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

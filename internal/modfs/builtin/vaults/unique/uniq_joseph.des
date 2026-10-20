@@ -1,0 +1,9 @@
+# uniq_joseph is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Joseph with its source branch, depth, and weight rules.
+NAME:   uniq_joseph
+DEPTH:  D:7-10, Lair:1
+MONS: Joseph
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

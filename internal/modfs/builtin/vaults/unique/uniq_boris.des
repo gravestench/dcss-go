@@ -1,0 +1,9 @@
+# uniq_boris is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Boris with its source branch, depth, and weight rules.
+NAME:   uniq_boris
+DEPTH:  Depths:3-, Vaults:2-, Crypt, Tomb
+MONS: Boris
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

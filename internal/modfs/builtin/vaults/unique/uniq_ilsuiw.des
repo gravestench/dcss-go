@@ -1,0 +1,12 @@
+# uniq_ilsuiw is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Ilsuiw band with its source branch, depth, and weight rules.
+NAME:   uniq_ilsuiw
+# Her placement on Shoals:$ is handled through the shoal_guardian tagged
+# vaults.
+DEPTH:  Shoals:2-, !Shoals:$
+WEIGHT: 50
+MONS: Ilsuiw band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

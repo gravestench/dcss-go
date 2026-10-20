@@ -1,0 +1,11 @@
+# uniq_ignacio is a separate Dungeon Crawl unique-placement definition.
+# This authored unique map keeps its source geometry and directives for the named encounter.
+NAME:   uniq_ignacio
+DEPTH:  Pan
+CHANCE: 25%
+TAGS:   transparent extra allow_dup luniq_ignacio
+: vault.veto("pan_unique.ignacio")
+MONS: Ignacio
+MAP
+1
+ENDMAP

@@ -42,6 +42,13 @@ local function parse_term(text, expression, site)
             end
 
             result[key] = value
+        elseif key == "tile" or key == "wtile" or
+            key == "itemname" then
+            if value == "" then
+                choice.fail(site, expression, "empty item " .. key)
+            end
+
+            result[key] = value
         elseif key == "ident" then
             if value ~= "type" and value ~= "all" then
                 choice.fail(site, expression, "invalid item identification " .. value)

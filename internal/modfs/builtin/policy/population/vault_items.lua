@@ -67,6 +67,14 @@ function vault_items.create(ctx, resolved, level_id, x, y, origin)
         },
     })
 
+    if resolved.item_name or resolved.tile or resolved.weapon_tile then
+        ctx:add(entity, component.VAULT_ITEM_APPEARANCE, {
+            name = resolved.item_name or "",
+            tile = resolved.tile or "",
+            weapon_tile = resolved.weapon_tile or "",
+        })
+    end
+
     -- DES ident:type reveals this specific placed instance; the global
     -- player knowledge map is unchanged until the item is examined or used.
     if resolved.ident then

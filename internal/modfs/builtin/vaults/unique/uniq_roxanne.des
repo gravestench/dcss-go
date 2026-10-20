@@ -1,0 +1,11 @@
+# uniq_roxanne is a separate Dungeon Crawl unique-placement definition.
+# This authored unique map keeps its source geometry and directives for the named encounter.
+NAME:   uniq_roxanne
+DEPTH:  D:14-, Elf, Swamp, Snake, Shoals, Spider
+TAGS:   place_unique transparent
+MONS:   Roxanne
+MAP
+...
+.1.
+...
+ENDMAP

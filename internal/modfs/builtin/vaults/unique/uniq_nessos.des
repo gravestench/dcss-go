@@ -1,0 +1,9 @@
+# uniq_nessos is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Nessos with its source branch, depth, and weight rules.
+NAME:   uniq_nessos
+DEPTH:  D:12-, Orc:$, Lair:3-
+MONS: Nessos
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

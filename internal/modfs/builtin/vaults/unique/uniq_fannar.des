@@ -1,0 +1,9 @@
+# uniq_fannar is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Fannar with its source branch, depth, and weight rules.
+NAME:   uniq_fannar
+DEPTH:  D:10-12, Orc:1, Lair:1-3
+MONS: Fannar
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

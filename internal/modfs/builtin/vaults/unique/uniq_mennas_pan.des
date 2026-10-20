@@ -1,0 +1,11 @@
+# uniq_mennas_pan is a separate Dungeon Crawl unique-placement definition.
+# This authored unique map keeps its source geometry and directives for the named encounter.
+NAME:   uniq_mennas_pan
+DEPTH:  Pan
+CHANCE: 5%
+TAGS:   transparent extra allow_dup luniq_mennas
+: vault.veto("pan_unique.mennas")
+MONS: generate_awake Mennas
+MAP
+1
+ENDMAP

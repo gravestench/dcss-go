@@ -1,0 +1,9 @@
+# uniq_kirke is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Kirke band with its source branch, depth, and weight rules.
+NAME:   uniq_kirke
+DEPTH:  D:12-, Lair:3-, Elf:1, Swamp, Snake, Shoals, Spider
+MONS: Kirke band
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

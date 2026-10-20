@@ -1,0 +1,11 @@
+# uniq_lom_lobon is a separate Dungeon Crawl unique-placement definition.
+# This authored unique map keeps its source geometry and directives for the named encounter.
+NAME:   uniq_lom_lobon
+DEPTH:  Pan
+CHANCE: 25%
+TAGS:   transparent extra allow_dup luniq_lom_lobon
+: vault.veto("pan_unique.lom_lobon")
+MONS: generate_awake Lom Lobon band
+MAP
+1
+ENDMAP

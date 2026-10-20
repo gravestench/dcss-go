@@ -1,0 +1,9 @@
+# uniq_xtahua is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Xtahua with its source branch, depth, and weight rules.
+NAME:   uniq_xtahua
+DEPTH:  Depths:3-, Vaults:2-, Crypt
+MONS: Xtahua
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

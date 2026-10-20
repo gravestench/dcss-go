@@ -13,6 +13,7 @@ local habitats = require("constants.monster_habitats")
 local terrain = require("constants.terrain")
 local monsters = require("ids.monsters")
 local shapeshifter = require("policy.monsters.shapeshifter")
+local unique_history = require("policy.population.unique_history")
 
 local factory = {}
 
@@ -169,6 +170,13 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         error("vault monster has no spawn profile " .. kind_id)
     end
 
+    -- Check run history before creating gear or an actor. A failed unique
+    -- attempt must not leave entities behind or consume another claim.
+    if unique_history.is_unique(kind_id) and
+        unique_history.seen(ctx, kind_id) then
+        error("unique monster was already generated " .. kind_id)
+    end
+
     if not ctx:walkable(level_id, x, y) or ctx:actor_at(level_id, x, y) then
         error("cannot place monster " .. kind_id)
     end
@@ -240,6 +248,8 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         -- Source placement hides both base bodies behind an immediate form.
         shapeshifter.attach(ctx, monster, kind_id)
     end
+
+    unique_history.mark(ctx, kind_id)
 
     return monster
 end

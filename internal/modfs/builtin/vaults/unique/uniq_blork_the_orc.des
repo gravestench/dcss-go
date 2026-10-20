@@ -1,0 +1,9 @@
+# uniq_blork_the_orc is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Blork the orc with its source branch, depth, and weight rules.
+NAME:   uniq_blork_the_orc
+DEPTH:  D:4-6
+MONS: Blork the orc
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP

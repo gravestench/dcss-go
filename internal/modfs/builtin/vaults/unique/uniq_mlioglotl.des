@@ -1,0 +1,9 @@
+# uniq_mlioglotl is a separate Dungeon Crawl unique-placement definition.
+# This authored unique request places Mlioglotl with its source branch, depth, and weight rules.
+NAME:   uniq_mlioglotl
+DEPTH:  Swamp, Snake, Shoals, Spider
+MONS: Mlioglotl
+TAGS: place_unique transparent overwrite_floor_cell no_exits
+MAP
+1
+ENDMAP
