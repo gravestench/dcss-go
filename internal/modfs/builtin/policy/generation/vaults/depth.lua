@@ -202,21 +202,19 @@ function depth.chance(vault, branch_id, local_depth, branch_bottom)
 
     local name = branch_name(branch_id)
     local fallback = 0
-    local specific
-
     for _, row in ipairs(vault.chances) do
         if not row.rules then
             fallback = row.chance
         else
             for _, rule in ipairs(row.rules) do
                 if matches(rule, name, local_depth, branch_bottom) then
-                    specific = row.chance
+                    return row.chance
                 end
             end
         end
     end
 
-    return specific or fallback
+    return fallback
 end
 
 return depth

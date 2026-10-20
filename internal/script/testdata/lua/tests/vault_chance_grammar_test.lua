@@ -56,6 +56,16 @@ local function ranged_decimal_chances()
         "half percent throughout Crypt")
     harness.equal(depth.chance(ranged, branches.BRANCH_DUNGEON, 4), 100,
         "fallback in Dungeon")
+
+    local overlapping = vault("overlapping_chance",
+        "1% (D:1-5), 2% (D:3-7), 3%")
+
+    harness.equal(depth.chance(overlapping, branches.BRANCH_DUNGEON, 4),
+        100, "first matching source range wins")
+    harness.equal(depth.chance(overlapping, branches.BRANCH_DUNGEON, 6),
+        200, "later range applies outside earlier range")
+    harness.equal(depth.chance(overlapping, branches.BRANCH_DUNGEON, 8),
+        300, "default applies outside every range")
 end
 
 -- No CHANCE declaration means the ordinary map is certain when a caller
