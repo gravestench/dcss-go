@@ -1,4 +1,8 @@
--- Example: Two stair coordinates enter the flood-visit set before corridor connection.
+-- Theory of operation: the source basic layout carves three separated stair
+-- trails, joins their down exits, then adds rooms to that connected backbone.
+-- The final flood check rejects a layout where room or corridor choices
+-- leave any required exit unreachable. This module owns the source-specific
+-- basic layout rules; grid and corridor helpers are shared geometry.
 local grid = require("policy.generation.grid")
 local trail = require("policy.generation.trail")
 local corridors = require("policy.generation.corridors")

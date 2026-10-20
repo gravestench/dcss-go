@@ -1,5 +1,6 @@
 -- Example: authored stairs on any Dungeon floor gain paired landings nearby.
-local basic = require("policy.generation.basic")
+local basic = require("policy.generation.layouts.layout_basic")
+local layout_stairs = require("policy.generation.layouts.stairs")
 local item_ids = require("ids.items")
 local nearest = require("policy.generation.nearest")
 local branches = require("ids.branches")
@@ -63,6 +64,9 @@ end
 local function place_first_level(ctx, player)
     for _ = 1, 32 do
         local first = basic.generate(ctx, 1)
+
+        first.stairs = layout_stairs.complete(first.builder)
+
         local selected = vault_selection.choose_catalog(first.builder)
         local vault = vault_catalog.get(selected.id)
         local ok, placed = pcall(vault_placement.place, ctx, first.builder, vault, player)
@@ -186,6 +190,7 @@ local function build_floor(ctx, player, depth, bottom)
         layout, arrival, arrival_vault = place_first_level(ctx, player)
     else
         layout = basic.generate(ctx, depth)
+        layout.stairs = layout_stairs.complete(layout.builder)
     end
 
     local required = base_stair_points(layout)

@@ -6,6 +6,9 @@ local width = 80
 local height = 70
 local uint32 = 4294967296
 
+grid.width = width
+grid.height = height
+
 -- Allocate the fixed Dungeon matrix with boundary rock before trails write cells.
 function grid.new(ctx)
     local cells = {}
