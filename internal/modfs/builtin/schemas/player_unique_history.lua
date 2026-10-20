@@ -2,7 +2,7 @@ local component = require("constants.component")
 
 local schema = {
     id = component.PLAYER_UNIQUE_HISTORY,
-    version = 3,
+    version = 4,
     -- Unique generation state persists separately from living actors so a killed unique is not selected again.
     fields = {
         status = {
@@ -17,6 +17,11 @@ local schema = {
         -- The value is a named allow/forbid state, not a transient veto draw.
         pan_states = {
             type = "map<string,string>",
+        },
+        -- Boris can be generated again after a real death. This run flag
+        -- distinguishes that permission from his first authored placement.
+        boris_killed = {
+            type = "bool",
         },
     },
 }

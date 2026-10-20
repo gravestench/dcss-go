@@ -2244,6 +2244,16 @@ Import rune item IDs from `constants.runes` and decision values from
 Rune pickup removes its floor entity and records its ID in
 `character.runes` for save/restore and future branch checks.
 
+Most named monsters keep a claimed ID for the whole run, including after
+death. Boris and Natasha are source exceptions. Boris's death records a
+saved kill flag and frees his active claim; a newly generated Depths,
+Vaults, Tomb, or Crypt floor then offers one replacement chance in six.
+Natasha's first two deaths free and immediately reclaim her ID by placing
+a new body on distant clear floor. The new actor keeps her item entities
+and a `monster.unique_revival` count. Her third death keeps the claim.
+These life rules live in Lua death and population policies; a new modded
+unique can add its own death hook without changing monster creation.
+
 Generated levels save `vault_ids` in successful placement order, including
 an arrival, an empty-map controller, and any child maps it placed. The
 single `vault_id` still names the level's primary map for existing level

@@ -3,6 +3,8 @@ local death = require("policy.death")
 local death_hooks = require("policy.combat.death_hooks")
 require("policy.combat.monster_bound_souls")
 require("policy.combat.monster_flames.inferno")
+require("policy.combat.unique_revival.boris")
+require("policy.combat.unique_revival.natasha")
 local draining = require("policy.combat.brands.draining")
 local net = require("policy.combat.net")
 local statuses = require("policy.magic.effects.statuses.player")
@@ -131,11 +133,11 @@ function system.update(ctx)
                 -- Release trapping links before inventory drops and corpse hooks inspect the dying actor.
                 flay.release_for_ghost(ctx, entity)
                 net.release(ctx, entity)
-                death.drop_inventory(ctx, entity, position)
+                local dropped = death.drop_inventory(ctx, entity, position)
                 ctx:remove_actor(entity, position.level_id)
                 local consumed_corpse = death_hooks.run(ctx, entity,
                     definition, position,
-                    kills[ctx:id(entity)] == true)
+                    kills[ctx:id(entity)] == true, dropped)
 
                 -- Death hooks may consume the body; ordinary corpse placement runs only afterward.
                 if kills[ctx:id(entity)] and not consumed_corpse and

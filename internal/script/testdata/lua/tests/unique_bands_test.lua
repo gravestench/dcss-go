@@ -20,6 +20,7 @@ local function world_context(ctx)
         status = {},
         monsters = {},
         pan_states = {},
+        boris_killed = false,
     })
 
     -- Unique follower claims use the same player owner as normal spawning.

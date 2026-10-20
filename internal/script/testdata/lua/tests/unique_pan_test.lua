@@ -26,6 +26,7 @@ local function world_context(ctx)
         status = {},
         monsters = {},
         pan_states = {},
+        boris_killed = false,
     })
     runes.initialise(world, player)
 

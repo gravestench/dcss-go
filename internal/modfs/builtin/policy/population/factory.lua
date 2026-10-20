@@ -214,7 +214,13 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         max = hp,
     })
     ctx:add(monster, "core.combat", { shield_blocks = 0 })
-    ctx:add(monster, "core.ai", { behavior = "wander" })
+    ctx:add(monster, component.AI, {
+        behavior = "wander",
+        target_x = 0,
+        target_y = 0,
+        memory_until_aut = 0,
+        bat_retreat_actions = 0,
+    })
 
     if blob_size > 1 then
         ctx:add(monster, component.SLIME_BLOB, { size = blob_size })

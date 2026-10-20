@@ -29,6 +29,7 @@ local function request(ctx)
         status = {},
         monsters = {},
         pan_states = {},
+        boris_killed = false,
     })
 
     local world = setmetatable({}, { __index = ctx })

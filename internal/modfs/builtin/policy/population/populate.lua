@@ -10,6 +10,7 @@ local shop_ids = require("ids.shops")
 local item_ids = require("ids.items")
 local streams = require("constants.rng_streams")
 local bands = require("policy.population.bands")
+local boris_replacement = require("policy.population.boris_replacement")
 
 -- Visit levels by ID so shared population draws have stable order.
 local function level_order(left, right)
@@ -188,6 +189,7 @@ function module.run(ctx, input)
 
             if level.id ~= abyss.level_id then
                 count = populate_level(ctx, level, allowed, scenario_id)
+                count = count + boris_replacement.place(ctx, level, excluded)
             end
 
             counts[#counts + 1] = { id = level.id, count = count }

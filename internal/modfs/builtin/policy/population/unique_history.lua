@@ -63,6 +63,39 @@ function history.mark(ctx, kind_id)
     ctx:set(player, component.PLAYER_UNIQUE_HISTORY, state)
 end
 
+-- Only source-backed repeatable uniques may give up an active claim. Boris
+-- also records the first kill, which enables his new-level replacement draw.
+function history.release(ctx, kind_id)
+    if kind_id ~= monsters.MONS_BORIS and
+        kind_id ~= monsters.MONS_NATASHA then
+        error("unique monster cannot be released " .. kind_id)
+    end
+
+    local player = ctx:player()
+    local state = ctx:get(player, component.PLAYER_UNIQUE_HISTORY)
+
+    if not state or not state.monsters[kind_id] then
+        error("unique monster had no active claim " .. kind_id)
+    end
+
+    state.monsters[kind_id] = nil
+
+    if kind_id == monsters.MONS_BORIS then
+        state.boris_killed = true
+    end
+
+    ctx:set(player, component.PLAYER_UNIQUE_HISTORY, state)
+end
+
+-- A replacement Boris needs both an earlier kill and no currently active
+-- Boris body, even if the old actor has been removed from the floor.
+function history.boris_killed(ctx)
+    local player = ctx:player()
+    local state = ctx:get(player, component.PLAYER_UNIQUE_HISTORY)
+
+    return state and state.boris_killed or false
+end
+
 -- Ignacio's first successful Pan chance chooses one permanent allow/forbid
 -- outcome. Reading it later consumes no RNG and survives save/restore.
 function history.pan_state(ctx, kind_id)
@@ -104,6 +137,10 @@ function history.validate(state)
 
     if not state.pan_states then
         error("player Pan unique history is missing")
+    end
+
+    if type(state.boris_killed) ~= "boolean" then
+        error("player Boris kill history is missing")
     end
 
     for kind_id, decision in pairs(state.pan_states) do

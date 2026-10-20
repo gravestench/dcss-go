@@ -14,7 +14,7 @@ function hooks.add(id, callback)
 end
 
 -- Run death hooks in stable ID order and allow one hook to consume the corpse.
-function hooks.run(ctx, monster, definition, position, credited)
+function hooks.run(ctx, monster, definition, position, credited, dropped)
     local ids = {}
     local consumed_corpse = false
 
@@ -26,7 +26,7 @@ function hooks.run(ctx, monster, definition, position, credited)
 
     for _, id in ipairs(ids) do
         if handlers[id](ctx, monster, definition, position, credited,
-            consumed_corpse) then
+            consumed_corpse, dropped) then
             consumed_corpse = true
         end
     end

@@ -264,6 +264,38 @@ function module.run(ctx, input)
         end
     end
 
+    -- These two source exceptions create actors outside the ambient roster.
+    -- Their saved origin markers must identify the matching unique body.
+    for _, entity in ipairs(ctx:query({ component.UNIQUE_REVIVAL })) do
+        local state = ctx:get(entity, component.UNIQUE_REVIVAL)
+        local actor = ctx:get(entity, component.ACTOR)
+        local form = ctx:get(entity, component.MONSTER_POLYMORPH)
+
+        if not actor or state.revives < 1 or state.revives > 2 or
+            (actor.kind_id ~= monsters.MONS_NATASHA and
+                (not form or form.original_kind_id ~= monsters.MONS_NATASHA)) or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("entity " .. ctx:id(entity) ..
+                " has invalid Natasha revival origin")
+        end
+    end
+
+    for _, entity in ipairs(ctx:query({ component.UNIQUE_REPLACEMENT })) do
+        local state = ctx:get(entity, component.UNIQUE_REPLACEMENT)
+        local actor = ctx:get(entity, component.ACTOR)
+
+        if not actor or state.kind_id ~= monsters.MONS_BORIS or
+            actor.kind_id ~= monsters.MONS_BORIS or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("entity " .. ctx:id(entity) ..
+                " has invalid Boris replacement origin")
+        end
+    end
+
     -- The borrowed body may change repeatedly, but the one permanent owner
     -- must still identify a real source monster and its first lineage.
     for _, entity in ipairs(ctx:query({
@@ -395,7 +427,9 @@ function module.run(ctx, input)
         -- Kirke's extra band and released actors have explicit origins, not
         -- roster slots. The marker loop above checks their ownership; the
         -- ordinary monster profile still checks HP, speed, and AI here.
-        elseif ctx:get(entity, tactical.KIRKE_BAND) or
+        elseif ctx:get(entity, component.UNIQUE_REVIVAL) or
+            ctx:get(entity, component.UNIQUE_REPLACEMENT) or
+            ctx:get(entity, tactical.KIRKE_BAND) or
             ctx:get(entity, tactical.KIRKE_FREED) then
             validate_vault_monster(ctx, entity, actor, health,
                 position, ai, input.current_aut)

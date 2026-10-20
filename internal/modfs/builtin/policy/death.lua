@@ -90,6 +90,8 @@ end
 
 -- Death releases carried entities at the monster's last position before a corpse may occupy that tile.
 function death.drop_inventory(ctx, monster, position)
+    local dropped = {}
+
     for _, item in ipairs(ctx:query({ "core.carried_by" })) do
         local carrier = ctx:get(item, "core.carried_by")
 
@@ -98,11 +100,20 @@ function death.drop_inventory(ctx, monster, position)
                 error("monster " .. ctx:id(monster) .. " has invalid carried item " .. ctx:id(item))
             end
 
+            local equipped = ctx:get(item, component.EQUIPPED)
+
+            dropped[#dropped + 1] = {
+                entity = item,
+                slot = equipped and equipped.slot or nil,
+            }
+
             ctx:remove(item, "core.equipped")
             ctx:remove(item, "core.carried_by")
             ctx:add(item, "core.position", position)
         end
     end
+
+    return dropped
 end
 
 -- Corpse creation uses the dead actor's definition after inventory has been released.
