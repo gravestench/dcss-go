@@ -5,6 +5,30 @@ local grid = require("policy.generation.grid")
 
 local material = {}
 
+-- A Gridville building group shares one wall material. The source strongly
+-- favors ordinary rock, with rare stone, metal, and crystal exceptions.
+function material.room(builder, branch, base)
+    if branch == "Dis" then
+        return "#"
+    end
+
+    if builder:one_in(250) then
+        return "b"
+    end
+
+    local draw = builder:roll(239)
+
+    if draw < 216 then
+        return base or "#"
+    elseif draw < 225 then
+        return "c"
+    elseif draw < 234 then
+        return "#"
+    end
+
+    return "v"
+end
+
 -- Preserve the one-in-twenty source draw and the 2:1 stone-to-metal choice.
 -- Lair, Zot, and Dis own different branch material rules.
 function material.level(builder, api)

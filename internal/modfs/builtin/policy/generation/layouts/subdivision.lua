@@ -39,20 +39,27 @@ local function split(builder, area, options, chance, depth, cells)
     local can_x = width >= 2 * options.minimum_size_x
     local can_y = height >= 2 * options.minimum_size_y
     local guaranteed = depth < options.guaranteed_divides
+    local required_x = options.maximum_size_x and width > options.maximum_size_x
+    local required_y = options.maximum_size_y and height > options.maximum_size_y
 
     if not can_x and not can_y then
         cells[#cells + 1] = area
         return
     end
 
-    if not guaranteed and builder:roll(100) >= chance then
+    if not guaranteed and not required_x and not required_y and
+        builder:roll(100) >= chance then
         cells[#cells + 1] = area
         return
     end
 
     local axis
 
-    if not can_x then
+    if required_x and can_x and not required_y then
+        axis = "x"
+    elseif required_y and can_y and not required_x then
+        axis = "y"
+    elseif not can_x then
         axis = "y"
     elseif not can_y then
         axis = "x"
@@ -71,6 +78,10 @@ local function split(builder, area, options, chance, depth, cells)
     end
 
     local next_chance = chance * options.multiplier
+
+    if (axis == "x" and required_x) or (axis == "y" and required_y) then
+        next_chance = chance
+    end
 
     if axis == "x" then
         local cut = range(builder, options.minimum_size_x, width - options.minimum_size_x)
