@@ -249,9 +249,10 @@ generation; the fixed shop scenario remains available. Supplemental maps
 retain source IDs in saves, and sparse mod overlays can add a vault or replace
 one handler. The generic secondary-vault opportunity currently uses a 1-in-8
 roll while most vault families are unported; source DCSS draws from its full
-secondary-vault pool instead. The five-map `serial_curves` family now uses the
-general CHANCE and post-place controller path, including its four tagged
-corridors and rooms-layout restriction. Deeper branch placement needs the
+secondary-vault pool instead. The five-map `serial_curves` and eleven-map
+`serial_corexii_hall` families now use the general CHANCE and post-place
+controller path. Their tagged corridors, statue halls, and rooms-layout
+restriction run through the shared selector. Deeper branch placement needs the
 corresponding branch generator. The rare `bzr_entry` request has no imported bazaar entry
 maps yet; an empty eligible tag pool leaves that slot available for an
 ordinary shop instead of aborting the floor.

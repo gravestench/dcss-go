@@ -1,0 +1,17 @@
+# Three-wide dead end with source weighted statues and a ? passage.
+# NSUBST decides whether that passage stays open.
+NAME:   corexii_hall_statues_deadend
+DEPTH:  D, Depths, Elf, Crypt, Snake
+WEIGHT: 1
+TAGS:   extra allow_dup serial_corexii_hall decor
+SUBST:  T = T:2 V:2 G:1
+NSUBST: ? = 1:% / *:.
+MAP
+xxxxxxxxxxxxx
+xGxxxGxxxGxxx
+@.......?.?xx
+@..........Tx
+@.......?.?xx
+xGxxxGxxxGxxx
+xxxxxxxxxxxxx
+ENDMAP

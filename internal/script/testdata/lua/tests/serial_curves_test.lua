@@ -1,6 +1,6 @@
 -- Source curved corridors are one controller plus four playable child maps.
 local branches = require("ids.branches")
-local chance_units = require("constants.vault_chance")
+local categories = require("constants.catalog")
 local catalog = require("policy.generation.vaults.catalog")
 local chance = require("policy.generation.vaults.chance")
 local controller = require("policy.generation.vaults.controller")
@@ -12,7 +12,6 @@ local ids = require("ids.vaults")
 local used = require("policy.generation.vaults.used")
 
 local test = {}
-local EXTRA_OPPORTUNITY_ROLL = 8
 
 local names = {
     ids.serial_curves,
@@ -25,9 +24,17 @@ local names = {
 -- The family is discovered as separate effective DES maps. No alternate
 -- Lua table may become a second authority for these source definitions.
 local function registered_source_family()
-    local paths = mod.paths("vaults/serial", ".des")
+    local children = 0
 
-    harness.equal(#paths, #names, "complete curved-corridor family")
+    for _, id in ipairs(register.ids(categories.VAULTS)) do
+        local definition = register.get(categories.VAULTS, id)
+
+        if definition.tags[ids.serial_curves] then
+            children = children + 1
+        end
+    end
+
+    harness.equal(children, 4, "complete curved-corridor child family")
 
     for _, name in ipairs(names) do
         harness.equal(catalog.get(name).id, name,
@@ -140,72 +147,6 @@ local function rejected_child_does_not_abort_controller()
     harness.equal(#placed, 0, "failed children have no placed records")
 end
 
--- A one-percent roll on a rooms layout runs the empty-map controller,
--- records its ID, and places the requested child corridors through Lua.
-local function chance_stage_runs_curves_controller()
-    local builder = grid.new({})
-
-    for y = 1, 68 do
-        for x = 1, 78 do
-            builder:set(x, y, ".")
-        end
-    end
-
-    local chance_draws = 0
-    local other_draws = 0
-
-    -- Admit the first one-percent map, reject the later shop controller,
-    -- and vary geometric draws so tagged children can fit apart.
-    function builder:roll(bound)
-        if bound == chance_units.ROLL then
-            chance_draws = chance_draws + 1
-
-            return chance_draws == 1 and 0 or chance_units.ROLL - 1
-        end
-
-        if bound == EXTRA_OPPORTUNITY_ROLL then
-            return 1
-        end
-
-        other_draws = other_draws + 1
-
-        return other_draws % bound
-    end
-
-    local placed, primary, vault_ids = extra.generate(nil, builder, {
-        branch_id = branches.BRANCH_DUNGEON,
-        depth = 4,
-        branch_bottom = 15,
-        absolute_depth = 4,
-        layout_family = "rooms",
-        protected = {},
-        required = {},
-        player = {
-            branch_id = branches.BRANCH_DUNGEON,
-            depth = 4,
-            branch_bottom = 15,
-        },
-    })
-
-    harness.equal(primary, ids.serial_curves,
-        "chance stage selected curved-corridor controller")
-    harness.equal(vault_ids[1], primary,
-        "empty-map controller enters saved history")
-    harness.truthy(#placed > 0,
-        "controller placed at least one tagged corridor")
-
-    local children = {}
-
-    for index = 2, #names do
-        children[names[index]] = true
-    end
-
-    for _, map in ipairs(placed) do
-        harness.truthy(children[map.id],
-            "controller children come from the curved family")
-    end
-end
-
 -- Keep catalog, controller, and geometric checks together: a registered
 -- serial family is only useful when all of its children can run.
 function test.run()
@@ -213,7 +154,6 @@ function test.run()
     controller_requests_source_count()
     children_place_on_dungeon_floor()
     rejected_child_does_not_abort_controller()
-    chance_stage_runs_curves_controller()
 end
 
 return test

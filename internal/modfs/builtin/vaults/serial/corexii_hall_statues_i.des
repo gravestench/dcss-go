@@ -1,0 +1,17 @@
+# Straight hall with paired statues. Source SUBST can replace the
+# keyed statue glyphs while preserving the three-wide passage.
+NAME:   corexii_hall_statues_i
+DEPTH:  D, Depths, Elf, Crypt, Snake
+WEIGHT: 2
+TAGS:   transparent extra allow_dup serial_corexii_hall decor
+SUBST:  T = T:2 V:2 G:1
+SUBST:  T = T:1 G:4, T = T V
+MAP
+xxxxxxxxxxx
+xGxxxTxxxGx
+@.........@
+@.........@
+@.........@
+xGxxxTxxxGx
+xxxxxxxxxxx
+ENDMAP

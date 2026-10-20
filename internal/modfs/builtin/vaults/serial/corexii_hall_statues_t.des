@@ -1,0 +1,23 @@
+# T junction branches from a three-wide hall.
+# Both source SUBST declarations run before geometric placement.
+NAME:   corexii_hall_statues_t
+DEPTH:  D, Depths, Elf, Crypt, Snake
+WEIGHT: 1
+TAGS:   transparent extra allow_dup serial_corexii_hall decor
+SUBST:  T = T:4 G:1, T = T V
+SUBST:  T = T:2 V:2 G:1
+MAP
+xxxxxxxxxxxxxxxxxxx
+xGxxxGxxxTxxxGxxxGx
+@.................@
+@.................@
+@.................@
+xGxxxGxx...xxGxxxGx
+xxxxxxxx...xxxxxxxx
+      xG...Gx
+      xx...xx
+      xx...xx
+      xx...xx
+      xG...Gx
+      xx@@@xx
+ENDMAP

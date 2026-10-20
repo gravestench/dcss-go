@@ -1,0 +1,13 @@
+# Short wall segment can join another Core Xii hall.
+# Its source weight and transparent tag allow rare standalone use.
+NAME:   chequers_hall_statues_wall_a
+DEPTH:  D, Depths, Elf, Crypt, Snake
+WEIGHT: 2
+TAGS:   transparent extra allow_dup serial_corexii_hall decor
+SUBST:  T = T:3 V:3 G:1 .:3
+MAP
+xxxxxxxxxxxxxxxxxxx
+xGxxxGxxxTxxxGxxxGx
+@.................@
+@.................@
+ENDMAP

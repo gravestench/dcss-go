@@ -1,0 +1,18 @@
+# U-shaped hall doubles back between the two @ openings.
+# Source statue substitutions vary the visual landmarks.
+NAME:   corexii_hall_statues_u
+DEPTH:  D, Depths, Elf, Crypt, Snake
+WEIGHT: 1
+TAGS:   transparent extra allow_dup serial_corexii_hall decor
+SUBST:  T = T:4 G:1, T = T V
+MAP
+xx@@@xxxxx@@@xx
+xG...GxxxG...Gx
+xx...xxxxx...xx
+xx...xxTxx...xx
+xx...........xx
+xG...........Gx
+xx...........xx
+xxxGxxxTxxxGxxx
+xxxxxxxxxxxxxxx
+ENDMAP

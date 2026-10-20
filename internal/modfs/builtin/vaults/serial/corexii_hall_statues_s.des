@@ -1,0 +1,20 @@
+# S-shaped hall bends between its two @ connection anchors.
+# Its keyed statue substitutions keep this variant distinct.
+NAME:   corexii_hall_statues_s
+DEPTH:  D, Depths, Elf, Crypt, Snake
+WEIGHT: 1
+TAGS:   transparent extra allow_dup serial_corexii_hall decor
+SUBST:  T = T:4 G:1, T = T V
+MAP
+xx@@@xx
+xG...Gx
+xx...xxxxxxxxxx
+xx...xxTxxxGxxx
+xx...........xx
+xG...........Gx
+xx...........xx
+xxxGxxxTxx...xx
+xxxxxxxxxx...xx
+        xG...Gx
+        xx@@@xx
+ENDMAP

@@ -1,0 +1,22 @@
+# L-shaped hall connects two ordinary Dungeon edges around statues.
+# Transparent margins leave underlying terrain unchanged.
+NAME:   corexii_hall_statues_l
+DEPTH:  D, Depths, Elf, Crypt, Snake
+WEIGHT: 2
+TAGS:   transparent extra allow_dup serial_corexii_hall decor
+SUBST:  T = T:1 G:2, T = T V
+MAP
+xx@@@xx
+xG...Gx
+xx...xx
+xx...xx
+xx...xx
+xT...Gx
+xx...xxxxxxxx
+xx...xxGxxxGx
+xx..........@
+xG..........@
+xx..........@
+xxxGxxxTxxxGx
+xxxxxxxxxxxxx
+ENDMAP

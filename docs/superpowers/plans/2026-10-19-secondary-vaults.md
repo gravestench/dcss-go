@@ -23,9 +23,9 @@ Lua, Akara ECS.
 ## Global constraints
 
 - Commit all 600 source builder/serial definitions or document an exact
-  legacy exclusion. Ninety-six are now committed, including the five-map
-  `serial_curves` family. Only executable definitions may enter a live
-  selector.
+  legacy exclusion. One hundred seven are now committed, including the
+  `serial_curves` and `serial_corexii_hall` families. Only executable
+  definitions may enter a live selector.
 - Preserve source `.des` map syntax and directive order. Source scripts
   become named functions in discoverable Lua modules. No inline Lua in Go
   and no runtime dependency on the C++ checkout.
