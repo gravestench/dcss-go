@@ -6,6 +6,7 @@
 local features = {}
 local effects = require("constants.vault_effects")
 local trap_placement = require("policy.traps.placement")
+local glyphs = require("constants.vault_glyphs")
 
 features.from_source_glyph = {
     ["#"] = "DNGN_ROCK_WALL",
@@ -45,6 +46,17 @@ features.vault_terrain = {
     DNGN_GRANITE_STATUE = "DNGN_GRANITE_STATUE",
     DNGN_ORCISH_IDOL = "DNGN_ORCISH_IDOL",
 }
+
+-- A generated layout uses the same DES glyph vocabulary as placed vaults.
+-- Resolve source variants through the kernel's current travel features so
+-- alternate stairs remain usable while the layout retains its authored map.
+for glyph, identity in pairs(glyphs.terrain) do
+    local feature = features.vault_terrain[identity]
+
+    if feature and features.from_source_glyph[glyph] == nil then
+        features.from_source_glyph[glyph] = feature
+    end
+end
 
 features.named_vault_terrain = {
     -- KFEAT names denote explicit terrain choices, while source features
