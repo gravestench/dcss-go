@@ -2067,11 +2067,17 @@ search, not parsed property equality. `api:has_exit(point)` reports whether
 the point is one of the placed exits. During the earlier generation hook,
 those two calls are placeholders: marker positions do not exist yet, and
 exit checks are deferred. Use them in veto methods, as
-`dpeg_arrival_water_fire.lua` does. The special `serial_shops` controller
-also receives `api:place_maps(tag, count)` to request extra vaults; that
-method is not part of ordinary arrival or shop hooks. The parser accepts
-named `vault.post_place` lines, but ordinary hooks do not execute that
-stage yet, so use `vault.run` or `vault.veto` for live behavior.
+`dpeg_arrival_water_fire.lua` does. A CHANCE map can declare
+`: vault.post_place("method_name")` in its `.des` file and implement that
+method in `policy/generation/vaults/<family>/<name>.lua`. The method receives
+`api:roll(bound)`, `api:chance(numerator, denominator)`, `api:one_in(bound)`,
+`api:random_range(first, last)`, `api:absolute_depth()`, and
+`api:place_maps(tag, count)`. The last method chooses and places tagged child
+maps through the same catalog and geometric path as other extras. A
+controller with an empty MAP still enters the saved vault history before its
+hook runs; this lets its name and uniqueness tags constrain later floors.
+`serial_shops` is one example, not a special dispatcher. Ordinary arrival
+and shop hooks use their own API facts and do not receive `place_maps`.
 
 Generated levels save `vault_ids` in successful placement order, including
 an arrival, an empty-map controller, and any child maps it placed. The

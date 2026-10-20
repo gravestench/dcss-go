@@ -1,11 +1,12 @@
 -- Example: A rejected placement restores its prior map cells before retrying elsewhere.
 local catalog = require("policy.generation.vaults.catalog")
-local depth = require("policy.generation.vaults.depth")
+local chance = require("policy.generation.vaults.chance")
+local controller = require("policy.generation.vaults.controller")
+local directives = require("constants.vault_directives")
 local hooks = require("policy.generation.vaults.hooks")
 local placement = require("policy.generation.vaults.placement")
 local connect = require("policy.generation.vaults.connect")
 local selection = require("policy.generation.vaults.selection")
-local chance_units = require("constants.vault_chance")
 local used = require("policy.generation.vaults.used")
 
 local extra = {}
@@ -105,142 +106,120 @@ function extra.place(ctx, builder, vault, context)
     return nil, last_error
 end
 
--- Give DES controllers a bounded layout RNG and placement API.
-local function controller_api(builder, context, placed)
-    local api = {}
+-- A successful CHANCE map may be a controller with no MAP rows. Its
+-- post-place hooks then request tagged children through the same API used
+-- by every other serial family; the DES operation names choose the hooks.
+local function place_chance_map(ctx, builder, context, placed, vault)
+    local map
 
-    -- Draw through the current builder so controller choices share layout RNG order.
-    function api:roll(bound)
-        return builder:roll(bound)
-    end
+    if #vault.rows > 0 then
+        map = extra.place(ctx, builder, vault, context)
 
-    -- Skip draws for certain or impossible chances, matching source controller behavior.
-    function api:chance(numerator, denominator)
-        return numerator >= denominator or
-            (numerator > 0 and self:roll(denominator) < numerator)
-    end
-
-    -- Use the builder one-in primitive for controller branch choices.
-    function api:one_in(bound)
-        return builder:one_in(bound)
-    end
-
-    -- Convert one bounded builder draw into an inclusive interval.
-    function api:random_range(first, last)
-        return first + self:roll(last - first + 1)
-    end
-
-    -- Fall back to local depth when no absolute branch depth was supplied.
-    function api:absolute_depth()
-        return context.absolute_depth or context.depth
-    end
-
-    -- Attempt requested tagged maps sequentially so a prior fit affects the
-    -- next. A tag with no candidates at this depth places nothing; the
-    -- caller can keep that slot for another map family.
-    function api:place_maps(tag, count)
-        local placed_count = 0
-
-        for _ = 1, count do
-            local selected = selection.choose_tag(builder, tag, context)
-
-            if not selected then
-                return placed_count
-            end
-
-            local vault = catalog.get(selected.id)
-            local child = {}
-
-            for name, value in pairs(context) do
-                child[name] = value
-            end
-
-            child.player = {}
-
-            for name, value in pairs(context.player or {}) do
-                child.player[name] = value
-            end
-
-            child.player.map_tag = tag
-
-            local map, reason = extra.place(nil, builder, vault, child)
-
-            if not map then
-                error("cannot place vault " .. vault.id ..
-                    ": " .. tostring(reason))
-            end
-
-            placed[#placed + 1] = map
-            context.used:add(vault)
-            placed_count = placed_count + 1
+        if not map then
+            return false
         end
 
-        return placed_count
+        placed[#placed + 1] = map
     end
 
-    return api
+    context.used:add(vault)
+
+    for _, operation in ipairs(vault.operations) do
+        if operation.kind == directives.HOOK_POST_PLACE then
+            local api = controller.new(builder, context, placed, extra.place)
+
+            hooks.run(vault, operation.argument, api)
+        end
+    end
+
+    return true
 end
 
--- CHANCE maps are rolled independently of the weighted shop map selected
--- by their controller. This is the source serial_shops placement sequence.
--- Choose the controller and its tagged extras on the layout stream after arrival connection.
+-- Chance maps roll before ordinary extras. A failed fit can request a
+-- source fallback_* map, while another successful CHANCE map still gets
+-- its own chance to place on the same floor.
+local function place_chance_stage(ctx, builder, context, placed)
+    local primary
+
+    for _, selected in ipairs(chance.select(builder, context)) do
+        local vault = catalog.get(selected.id)
+
+        if context.used:allows(vault) then
+            local placed_ok = place_chance_map(ctx, builder, context,
+                placed, vault)
+
+            if not placed_ok then
+                local tag = chance.fallback_tag(vault)
+                local fallback = tag and selection.choose_tag(builder,
+                    tag, context)
+
+                if fallback then
+                    local replacement = catalog.get(fallback.id)
+
+                    placed_ok = place_chance_map(ctx, builder, context,
+                        placed, replacement)
+
+                    if placed_ok then
+                        primary = primary or replacement.id
+                    end
+                end
+            else
+                primary = primary or vault.id
+            end
+        end
+    end
+
+    return primary
+end
+
+-- The partial catalog has shops but not the full ordinary minivault pool.
+-- Keep its bounded opportunity until that corpus replaces this interim
+-- draw; CHANCE definitions never enter this ordinary weighted selection.
+local function place_temporary_extra(ctx, builder, context, placed)
+    if builder:roll(GENERIC_EXTRA_ROLL) ~= 0 then
+        return nil
+    end
+
+    context.family = "shop"
+    context.exclude_chance = true
+
+    local selected = selection.choose_tag(builder, "extra", context)
+
+    context.family = nil
+    context.exclude_chance = nil
+
+    if not selected then
+        return nil
+    end
+
+    local vault = catalog.get(selected.id)
+    local map = extra.place(ctx, builder, vault, context)
+
+    if not map then
+        return nil
+    end
+
+    placed[#placed + 1] = map
+    context.used:add(vault)
+
+    return vault.id
+end
+
+-- Track arrival, chance controllers, children, and ordinary maps together
+-- so later floors can reconstruct source uniqueness from one saved ID list.
 function extra.generate(ctx, builder, context)
-    local serial = catalog.get("serial_shops")
     local placed = {}
-    local controller
 
     context.used = used.new(context.prior_vault_ids)
 
-    -- The primary arrival was placed before secondary selection. Register
-    -- it here so its name and tags constrain this floor's later maps.
     if context.arrival_vault then
         context.used:add(context.arrival_vault)
     end
 
-    context.family = "shop"
-    context.excluded = {
-        [serial.id] = true,
-    }
+    local primary = place_chance_stage(ctx, builder, context, placed)
+    local ordinary = place_temporary_extra(ctx, builder, context, placed)
 
-    local generic
-
-    -- DCSS draws from a global secondary-vault pool. Until the other
-    -- families are imported, a bounded opportunity keeps shop-only content
-    -- from occupying every generated floor.
-    if builder:roll(GENERIC_EXTRA_ROLL) == 0 then
-        generic = selection.choose_tag(builder, "extra", context)
-    end
-
-    if generic then
-        local vault = catalog.get(generic.id)
-        local map = extra.place(ctx, builder, vault, context)
-
-        if map then
-            placed[#placed + 1] = map
-            context.used:add(vault)
-            controller = vault.id
-        end
-    end
-
-    if not depth.eligible(serial, context.branch_id,
-        context.depth, context.branch_bottom) then
-        return placed, controller, context.used:ids()
-    end
-
-    local chance = depth.chance(serial, context.branch_id,
-        context.depth, context.branch_bottom)
-
-    if chance <= 0 or
-        (chance < chance_units.ROLL and
-            builder:roll(chance_units.ROLL) >= chance) then
-        return placed, controller, context.used:ids()
-    end
-
-    context.used:add(serial)
-    hooks.run(serial, "place_serial_shops",
-        controller_api(builder, context, placed))
-
-    return placed, serial.id, context.used:ids()
+    return placed, primary or ordinary, context.used:ids()
 end
 
 -- Add a stair or arrival point to the protected-cell set before extra placement.

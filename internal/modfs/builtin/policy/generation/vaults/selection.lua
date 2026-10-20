@@ -79,14 +79,15 @@ local function candidates_for_tag(random, tag, context)
         if definition.tags[tag] and map_weight > 0 and
             (not context.family or definition.family == context.family) and
             (not context.excluded or not context.excluded[id]) and
+            (not context.exclude_chance or #definition.chances == 0) and
             (not context.used or context.used:allows(definition)) and
             depth.eligible(definition, context.branch_id,
                 context.depth, context.branch_bottom) then
-            local chance = depth.chance(definition, context.branch_id,
+            local odds = depth.chance(definition, context.branch_id,
                 context.depth, context.branch_bottom)
 
-            if chance == chance_units.ROLL or
-                (chance > 0 and random:roll(chance_units.ROLL) < chance) then
+            if context.ignore_chance or odds == chance_units.ROLL or
+                (odds > 0 and random:roll(chance_units.ROLL) < odds) then
                 total = total + map_weight
                 candidates[#candidates + 1] = {
                     definition = definition,

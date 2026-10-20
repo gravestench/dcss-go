@@ -6,8 +6,10 @@ local grid = require("policy.generation.grid")
 local harness = require("tests.harness")
 local branches = require("ids.branches")
 local chance_units = require("constants.vault_chance")
+local ids = require("ids.vaults")
 
 local test = {}
+local EXTRA_OPPORTUNITY_ROLL = 8
 
 -- Build an open floor large enough for the real shop vault footprint, making
 -- protected-cell failures a placement issue rather than a size issue.
@@ -117,12 +119,50 @@ local function generic_extra_is_independent_of_serial_chance()
         "serial controller stays outside generic pool")
 end
 
+-- The source CHANCE roll selects the DES controller. Its named Lua hook
+-- then places a tagged child map and both IDs enter saved vault history.
+local function chance_controller_places_tagged_child()
+    local builder = floor_builder()
+
+    function builder:roll(bound)
+        if bound == EXTRA_OPPORTUNITY_ROLL then
+            return 1
+        end
+
+        return 0
+    end
+
+    local placed, primary, vault_ids = extra.generate(nil, builder, {
+        branch_id = branches.BRANCH_DUNGEON,
+        depth = 4,
+        branch_bottom = 15,
+        absolute_depth = 4,
+        protected = {},
+        required = {},
+        player = {
+            branch_id = branches.BRANCH_DUNGEON,
+            depth = 4,
+            absolute_depth = 4,
+            branch_bottom = 15,
+        },
+    })
+
+    harness.equal(primary, ids.serial_shops,
+        "DES CHANCE map remains the level controller")
+    harness.equal(#placed, 1, "controller hook placed one shop child")
+    harness.equal(vault_ids[1], ids.serial_shops,
+        "empty-map controller is saved before its child")
+    harness.equal(vault_ids[2], placed[1].id,
+        "child map ID is saved for later uniqueness checks")
+end
+
 -- Keep the rollback, retry, and generic-extra cases together because all
 -- three protect authored shop terrain from duplicate or invalid placement.
 function test.run()
     rejects_protected_shop_cell()
     fits_other_floor()
     generic_extra_is_independent_of_serial_chance()
+    chance_controller_places_tagged_child()
 end
 
 return test
