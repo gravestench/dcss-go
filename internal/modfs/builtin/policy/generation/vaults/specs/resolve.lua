@@ -13,13 +13,16 @@ local colours = require("constants.vault_colours")
 local monster_flags = require("constants.monster_flags")
 local schools = require("constants.spell_schools")
 local slime_blob = require("policy.monsters.slime_blob")
+local monster_requests = require("constants.vault_monster_requests")
+local item_requests = require("constants.vault_item_requests")
 
 local resolve = {}
 local names_by_category = {}
 
 local random_monster_names = {
-    ["common demon"] = true,
-    ["any common demon"] = true,
+    [monster_requests.ANY_DEMON] = true,
+    [monster_requests.COMMON_DEMON] = true,
+    [monster_requests.ANY_COMMON_DEMON] = true,
     ["0"] = true,
     ["8"] = true,
     ["9"] = true,
@@ -29,6 +32,8 @@ local random_monster_names = {
 }
 
 local random_item_names = {
+    [item_requests.ANY_WEAPON] = true,
+    [item_requests.ANY_BOOK] = true,
     ["any"] = true,
     ["any potion"] = true,
     ["any wand"] = true,

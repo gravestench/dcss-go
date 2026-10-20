@@ -2,6 +2,7 @@
 local classes = require("ids.object_classes")
 local ids = require("ids.items")
 local quality = require("constants.vault_item_quality")
+local requests = require("constants.vault_item_requests")
 
 local random_items = {}
 
@@ -15,7 +16,11 @@ function random_items.describe(name, depth)
         depth = depth,
     }
 
-    if name == "any potion" then
+    if name == requests.ANY_WEAPON then
+        result.class_id = classes.OBJ_WEAPONS
+    elseif name == requests.ANY_BOOK then
+        result.class_id = classes.OBJ_BOOKS
+    elseif name == "any potion" then
         result.class_id = classes.OBJ_POTIONS
     elseif name == "any wand" then
         result.class_id = classes.OBJ_WANDS

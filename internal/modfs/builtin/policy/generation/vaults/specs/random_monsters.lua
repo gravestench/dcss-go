@@ -1,10 +1,30 @@
 -- Example: A place:9 request raises effective depth before drawing from the monster pool.
 local pool = require("policy.population.pool")
 local choice = require("policy.generation.vaults.specs.choice")
-local monster_ids = require("ids.monsters")
 local branches = require("ids.branches")
+local tiers = require("data.demon_tiers")
+local requests = require("constants.vault_monster_requests")
 
 local random_monsters = {}
+
+-- Source summon_any_demon chooses lesser, common, or greater with equal
+-- chance, then applies the source sixty/forty split inside the latter two.
+local function any_demon(ctx)
+    local class = ctx:random("vault_monster", 3)
+    local tier
+
+    if class == 0 then
+        tier = 5
+    elseif class == 1 then
+        tier = ctx:random("vault_monster", 10) < 6 and 4 or 3
+    else
+        tier = ctx:random("vault_monster", 10) < 6 and 2 or 1
+    end
+
+    local kinds = tiers[tier]
+
+    return kinds[ctx:random("vault_monster", #kinds) + 1]
+end
 
 -- DCSS chooses class IV on six of ten outcomes, class III otherwise,
 -- then chooses uniformly among that class's six source demon species.
@@ -14,23 +34,9 @@ local function common_demon(ctx)
     local tier
 
     if ctx:random("vault_monster", 10) < 6 then
-        tier = {
-            monster_ids.MONS_ICE_DEVIL,
-            monster_ids.MONS_RUST_DEVIL,
-            monster_ids.MONS_ORANGE_DEMON,
-            monster_ids.MONS_RED_DEVIL,
-            monster_ids.MONS_CHAOS_SPAWN,
-            monster_ids.MONS_HELLWING,
-        }
+        tier = tiers[4]
     else
-        tier = {
-            monster_ids.MONS_SUN_DEMON,
-            monster_ids.MONS_SOUL_EATER,
-            monster_ids.MONS_SMOKE_DEMON,
-            monster_ids.MONS_NEQOXEC,
-            monster_ids.MONS_YNOXINUL,
-            monster_ids.MONS_SIXFIRHY,
-        }
+        tier = tiers[3]
     end
 
     return tier[ctx:random("vault_monster", #tier) + 1]
@@ -51,7 +57,12 @@ end
 
 -- Use the adjusted source depth to build a live pool before one weighted draw.
 function random_monsters.pick(ctx, request, depth, site)
-    if request == "common demon" or request == "any common demon" then
+    if request == requests.ANY_DEMON then
+        return any_demon(ctx)
+    end
+
+    if request == requests.COMMON_DEMON or
+        request == requests.ANY_COMMON_DEMON then
         return common_demon(ctx)
     end
 

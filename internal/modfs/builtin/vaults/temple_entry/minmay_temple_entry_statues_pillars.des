@@ -5,7 +5,6 @@ SUBST:  c : cccxxb
 KFEAT:  O = enter_temple
 TAGS: temple_entry
 ORIENT: float
-KFEAT: O = enter_temple
 MAP
 c.G.c
 .....

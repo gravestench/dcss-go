@@ -36,6 +36,15 @@ local intent_kinds = {
     [directives.ITEM] = effects.ITEM,
 }
 
+-- Whole-level source colours and tiles have no keyed glyph. Keep their
+-- instruction as typed generation data for the Temple installer and tiles UI.
+local level_styles = {
+    [directives.LFLOORCOL] = true,
+    [directives.LROCKCOL] = true,
+    [directives.LFLOORTILE] = true,
+    [directives.LROCKTILE] = true,
+}
+
 -- Parse keyed target and mode before creating a typed declaration record.
 local function assignment(argument)
     local target, mode, value = argument:match("^%s*(%S+)%s+([=:])%s*(.-)%s*$")
@@ -642,6 +651,18 @@ function operations.apply(vault, cells, random, depth, player)
             for _, record in ipairs(entries) do
                 records[#records + 1] = record
             end
+        elseif level_styles[operation.kind] then
+            records[#records + 1] = {
+                kind = effects.GENERATION_RULE,
+                identity = "level_style",
+                directive = operation.kind,
+                arguments = {
+                    value = operation.argument,
+                },
+                line = operation.line,
+                vault_id = vault.id,
+                pending = true,
+            }
         elseif not informational[operation.kind] then
             if not transforms.apply(cells, operation, random) then
                 for _, record in ipairs(declaration_records(vault, operation)) do

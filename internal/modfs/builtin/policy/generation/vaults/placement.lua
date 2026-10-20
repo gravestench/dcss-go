@@ -58,7 +58,11 @@ end
 
 -- Nonfloating vaults honor their side preference before random-fit attempts.
 local function preferred_origin(vault, map_width, map_height, random)
-    if map_width > width - 4 or map_height > height - 4 then
+    local whole_level = vault.orientation == "encompass"
+    local maximum_width = whole_level and width or width - 4
+    local maximum_height = whole_level and height or height - 4
+
+    if map_width > maximum_width or map_height > maximum_height then
         error(string.format("%s: vault %s: MAP does not fit an 80x70 level",
             vault.path, vault.id))
     end
