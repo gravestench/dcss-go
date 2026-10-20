@@ -302,8 +302,21 @@ local function choice_context(random)
     return context
 end
 
--- Resolve one DES slot at a placed cell using the vault selection stream.
-local function select_entity(record, vault, random)
+-- Copy a record or its scalar arguments without sharing mutable tables
+-- between item slots or cells selected by a colon assignment.
+local function copy_fields(source)
+    local copy = {}
+
+    for key, value in pairs(source) do
+        copy[key] = value
+    end
+
+    return copy
+end
+
+-- A monster's comma slots are ordered fallbacks at one cell. An item_list
+-- instead places every comma slot on that cell, each with its own choice.
+local function select_entities(record, vault, random)
     local parser = record.kind == effects.MONSTER and monster_specs or item_specs
     local resolver = record.kind == effects.MONSTER and resolve.monster or resolve.item
     local site = {
@@ -315,53 +328,81 @@ local function select_entity(record, vault, random)
     }
     local expression = record.identity
     local slots = parser.parse(expression, site)
+    local original = copy_fields(record)
+    local selected_records = {}
 
-    if #slots ~= 1 and record.kind ~= effects.MONSTER then
-        choice.fail(site, expression, "one cell has multiple item slots")
+    for slot_index, alternatives in ipairs(slots) do
+        if record.kind == effects.MONSTER and slot_index > 1 then
+            break
+        end
+
+        local selected = choice.pick(random, alternatives)
+        local resolved = resolver(choice_context(random), selected, 1, site)
+        local current = slot_index == 1 and record or copy_fields(original)
+        local arguments = copy_fields(original.arguments or {})
+
+        arguments.expression = expression
+        -- Later monster slots wait until the live population owns unique
+        -- history; item slots are all materialized at this coordinate.
+        arguments.monster_slots = record.kind == effects.MONSTER and #slots or 0
+        arguments.item_slot = record.kind == effects.ITEM and slot_index or 0
+        arguments.path = site.path
+        arguments.selected_expression = selected.source
+        arguments.no_spawn = resolved.no_spawn or false
+        arguments.kind_id = resolved.kind_id or ""
+        arguments.base_id = resolved.base_id or ""
+        arguments.variant = resolved.variant or ""
+        arguments.colour = resolved.colour or ""
+        arguments.attitude = resolved.attitude or ""
+        arguments.spells = resolved.spells and
+            table.concat(resolved.spells, "|") or ""
+        arguments.generate_awake = resolved.generate_awake or false
+        arguments.quantity = resolved.quantity or 1
+        arguments.quality = resolved.quality or ""
+        arguments.request = resolved.request or ""
+        arguments.generation_depth = resolved.generation_depth or 1
+
+        current.identity = selected.name
+        current.arguments = arguments
+        current.pending = not resolved.no_spawn
+        selected_records[#selected_records + 1] = current
     end
 
-    local selected = choice.pick(random, slots[1])
-    local resolved = resolver(choice_context(random), selected, 1, site)
-    local arguments = record.arguments or {}
-
-    arguments.expression = expression
-    -- Source MONS slots are attempted in order at population time. A unique
-    -- may have spawned since the map was laid out, so preserve later slots.
-    arguments.monster_slots = record.kind == effects.MONSTER and #slots or 0
-    arguments.path = site.path
-    arguments.selected_expression = selected.source
-    arguments.no_spawn = resolved.no_spawn or false
-    arguments.kind_id = resolved.kind_id or ""
-    arguments.base_id = resolved.base_id or ""
-    arguments.variant = resolved.variant or ""
-    arguments.colour = resolved.colour or ""
-    arguments.attitude = resolved.attitude or ""
-    arguments.spells = resolved.spells and table.concat(resolved.spells, "|") or ""
-    arguments.generate_awake = resolved.generate_awake or false
-    arguments.quantity = resolved.quantity or 1
-    arguments.quality = resolved.quality or ""
-    arguments.request = resolved.request or ""
-    arguments.generation_depth = resolved.generation_depth or 1
-
-    record.identity = selected.name
-    record.arguments = arguments
-    record.pending = not resolved.no_spawn
-
-    return record
+    return selected_records
 end
 
 -- Copy source metadata before adding projected level coordinates.
 local function copy_record(source, x, y)
-    local copy = {}
-
-    for key, value in pairs(source) do
-        copy[key] = value
-    end
+    local copy = copy_fields(source)
 
     copy.x = x
     copy.y = y
 
     return copy
+end
+
+-- Reuse a colon-assignment draw at another cell while giving each record
+-- its own arguments for later population and save mutations.
+local function reuse_entities(record, selected)
+    local copies = {}
+
+    for _, prior in ipairs(selected) do
+        local copy = copy_fields(record)
+
+        copy.identity = prior.identity
+        copy.arguments = copy_fields(prior.arguments)
+        copy.pending = prior.pending
+        copies[#copies + 1] = copy
+    end
+
+    return copies
+end
+
+-- Preserve DES item slot order when adding several records at one cell.
+local function append_entities(located, selected)
+    for _, record in ipairs(selected) do
+        located[#located + 1] = record
+    end
 end
 
 -- Prefer explicit target glyphs over a record's fallback glyph argument.
@@ -407,6 +448,7 @@ local function locate_records(source_records, cells, left, top, entry,
         if record.local_x and record.local_y then
             local x, y = rotated_point(record, width_before, height_before, turns)
             local placed = copy_record(record, left + x - 1, top + y - 1)
+            local selected = { placed }
 
             placed.local_x = nil
             placed.local_y = nil
@@ -421,21 +463,17 @@ local function locate_records(source_records, cells, left, top, entry,
                 }, ":")
 
                 if record.assignment_mode == ":" and shared_local[key] then
-                    local prior = shared_local[key]
-
-                    placed.identity = prior.identity
-                    placed.arguments = prior.arguments
-                    placed.pending = prior.pending
+                    selected = reuse_entities(placed, shared_local[key])
                 else
-                    select_entity(placed, vault, random)
+                    selected = select_entities(placed, vault, random)
 
                     if record.assignment_mode == ":" then
-                        shared_local[key] = placed
+                        shared_local[key] = selected
                     end
                 end
             end
 
-            located[#located + 1] = placed
+            append_entities(located, selected)
             count = 1
         elseif targets then
             for local_y, row in ipairs(cells) do
@@ -443,6 +481,7 @@ local function locate_records(source_records, cells, left, top, entry,
                     if glyph ~= " " and targets:find(glyph, 1, true) then
                         local placed = copy_record(record,
                             left + local_x - 1, top + local_y - 1)
+                        local selected = { placed }
 
                         placed.source = glyph
 
@@ -450,18 +489,19 @@ local function locate_records(source_records, cells, left, top, entry,
                             placed.kind == effects.MONSTER then
                             if record.assignment_mode == ":" then
                                 if not shared_selection then
-                                    shared_selection = select_entity(placed, vault, random)
+                                    shared_selection = select_entities(placed,
+                                        vault, random)
+                                    selected = shared_selection
+                                else
+                                    selected = reuse_entities(placed,
+                                        shared_selection)
                                 end
-
-                                placed.identity = shared_selection.identity
-                                placed.arguments = shared_selection.arguments
-                                placed.pending = shared_selection.pending
                             else
-                                select_entity(placed, vault, random)
+                                selected = select_entities(placed, vault, random)
                             end
                         end
 
-                        located[#located + 1] = placed
+                        append_entities(located, selected)
                         count = count + 1
                     end
                 end
@@ -529,10 +569,11 @@ function placement.place(_, builder, vault, player, options)
         if not record.implicit or not explicit[key] then
             if record.implicit and (record.kind == effects.ITEM or
                 record.kind == effects.MONSTER) then
-                select_entity(record, vault, builder)
+                append_entities(filtered,
+                    select_entities(record, vault, builder))
+            else
+                filtered[#filtered + 1] = record
             end
-
-            filtered[#filtered + 1] = record
         end
     end
 

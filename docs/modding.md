@@ -2023,6 +2023,11 @@ alternative. The original expression and selected attempt remain in the
 typed vault record so saving and debugging can explain the result. Its
 controller requests four to six pieces with the `serial_gnoll_camp` tag;
 adding another tagged `.des` file makes it eligible without editing Go code.
+For items, commas mean something different: `KITEM: D = stone q:2, potion of curing`
+places both item slots on each `D` cell. A slash inside either
+slot draws one alternative. A `:` keyed assignment shares those alternative
+choices across matching cells while each cell still owns separate item
+records and save origins.
 
 The window serial separates a collection into small, common, and rare pools.
 Its Lua controller requests a count from each pool by tag; every window piece
