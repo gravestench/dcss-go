@@ -99,6 +99,13 @@ function extra.place(ctx, builder, vault, context)
 
         restore(builder, before)
 
+        -- A source veto rejects this selected map outright. Retrying its
+        -- geometry would consume more RNG and could reroll durable state.
+        if last_error:find(": veto ", 1, true) and
+            last_error:find("rejected placement", 1, true) then
+            return nil, last_error
+        end
+
         if not fit_failure(last_error) and
             last_error ~= "connector altered protected cells" then
             error(last_error)

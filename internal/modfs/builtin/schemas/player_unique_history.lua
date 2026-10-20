@@ -2,7 +2,7 @@ local component = require("constants.component")
 
 local schema = {
     id = component.PLAYER_UNIQUE_HISTORY,
-    version = 2,
+    version = 3,
     -- Unique generation state persists separately from living actors so a killed unique is not selected again.
     fields = {
         status = {
@@ -12,6 +12,11 @@ local schema = {
         -- cannot reselect the same named creature from a different vault.
         monsters = {
             type = "map<string,bool>",
+        },
+        -- Ignacio's Pan chance/coinflip is decided once for the whole run.
+        -- The value is a named allow/forbid state, not a transient veto draw.
+        pan_states = {
+            type = "map<string,string>",
         },
     },
 }

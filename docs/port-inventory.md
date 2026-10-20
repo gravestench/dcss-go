@@ -64,7 +64,7 @@ context rather than a handler API for each game domain.
 | Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
 | Player mutations | Source definitions and Lua-owned mutation records, transitions, passive effects, abilities, and saved state; Vampire blood rituals and Bat Form are implemented; source consumers in other unported domains remain inventoried below | `content/mutations`, `policy/mutations`, `policy/abilities`, `schemas/character_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
-| Persistence | Version-25 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
+| Persistence | Version-26 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
 
 Items support pickup, drop, wielding, armour delays, and put-on/removal of all
 24 active jewellery records. All 17 active potions and 19 active scrolls have
@@ -342,8 +342,9 @@ available-map, weighted-dummy, and placement draws after secondary vaults.
 The player owns saved monster uniqueness alongside unique-item claims.
 Source unique follower bands now use per-monster Lua definitions and one
 ECS follower policy, including Kirke's transformation marker. Pan veto
-state, Boris and Natasha exceptions, and full live encounter verification
-remain in this domain slice.
+hooks now read saved rune progress and Ignacio's one-time decision; live
+Pan level generation, Boris and Natasha exceptions, and full encounter
+verification remain in this domain slice.
 
 The builder and serial definition count is now 495 of 600. Forest generation exposed
 a missing bow and crossbow missile policy; arrows and bolts now use one
@@ -352,8 +353,8 @@ Lua launcher resolver with their catalog projectile values.
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
 `uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those
-IDs. Save version 25 rejects older snapshots that lack complete map-use
-history or still use the previous unique-history and slime components.
+IDs. Save version 26 rejects older snapshots that lack complete map-use
+history, rune progress, or the current unique-history schema.
 Keeper names, exact source RNG sequences, and every special price case still
 need parity review; the saved keeper seed leaves a place for that work without
 changing the ECS ownership model.

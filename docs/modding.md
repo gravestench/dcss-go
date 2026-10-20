@@ -2212,8 +2212,9 @@ also receives its selected map tag. Use a fact only in the hook family
 that supplies it.
 
 For source maps that use `: vault.veto("method")`, the named method runs
-after placement. Returning true currently raises a placement error and
-aborts generation; the selector does not retry another vault. Its API has
+after placement. For an extra map, returning true rejects that selection
+and restores its terrain so other selections can continue. An arrival veto
+rejects the generated layout. Its API has
 `api:marker_positions(property, value)`, returning `{ x, y }` points whose
 raw marker identity contains `property=value`, or `nil`. This is a substring
 search, not parsed property equality. `api:has_exit(point)` reports whether
@@ -2231,6 +2232,17 @@ controller with an empty MAP still enters the saved vault history before its
 hook runs; this lets its name and uniqueness tags constrain later floors.
 `serial_shops` is one example, not a special dispatcher. Ordinary arrival
 and shop hooks use their own API facts and do not receive `place_maps`.
+
+Pan unique veto hooks can also call `api:unique_seen(monster_id)`,
+`api:has_rune(rune_item_id)`, `api:pan_rune_count()`,
+`api:pan_unique_state(monster_id)`,
+`api:set_pan_unique_state(monster_id, decision)`, and `api:roll(bound)`.
+The first two read saved player components. `pan_rune_count` counts the
+four Pan runes, and Ignacio's decision is stored once across later levels.
+Import rune item IDs from `constants.runes` and decision values from
+`constants.pan_unique_decision`; do not retype their strings in a hook.
+Rune pickup removes its floor entity and records its ID in
+`character.runes` for save/restore and future branch checks.
 
 Generated levels save `vault_ids` in successful placement order, including
 an arrival, an empty-map controller, and any child maps it placed. The

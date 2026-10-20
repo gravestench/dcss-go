@@ -33,6 +33,7 @@ local component = {
     ITEM_KNOWLEDGE = "character.item_knowledge",
     PLAYER_ITEM_SETS = "character.item_sets",
     PLAYER_UNIQUE_HISTORY = "character.unique_history",
+    PLAYER_RUNES = "character.runes",
     ITEM_ARTEFACT = "item.artefact",
     SCROLL_ACQUIREMENT = "scroll.acquirement_offers",
     HELD = "projectile.held",

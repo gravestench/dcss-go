@@ -3,6 +3,8 @@ local connect = {}
 local effects = require("constants.vault_effects")
 local glyphs = require("constants.vault_glyphs")
 local hooks = require("policy.generation.vaults.hooks")
+local history = require("policy.population.unique_history")
+local runes = require("policy.character.runes")
 
 -- Every source exit must reach the surrounding Dungeon. The connector marks
 -- any source terrain it carves through so projection does not restore it.
@@ -192,8 +194,40 @@ local function bridge(builder, from, connected, carved)
 end
 
 -- Run authored veto hooks after the candidate map has its final surrounding terrain.
-local function check_vetoes(placed)
+local function check_vetoes(ctx, builder, placed)
     local api = {}
+
+    -- Pan source hooks inspect saved run state after the candidate's map
+    -- fits. Their decision reads the same player components as pickup and
+    -- unique monster spawning, rather than a second vault-only ledger.
+    function api:unique_seen(kind_id)
+        return history.seen(ctx, kind_id)
+    end
+
+    -- The rune gate reads durable progress after its floor item is gone.
+    function api:has_rune(kind_id)
+        return runes.has(ctx, ctx:player(), kind_id)
+    end
+
+    -- Ignacio's chance uses the number of Pan runes only.
+    function api:pan_rune_count()
+        return runes.pan_count(ctx, ctx:player())
+    end
+
+    -- Ignacio's once-per-run coinflip is owned by player unique history.
+    function api:pan_unique_state(kind_id)
+        return history.pan_state(ctx, kind_id)
+    end
+
+    -- A successful first chance stores the decision before map placement.
+    function api:set_pan_unique_state(kind_id, decision)
+        history.set_pan_state(ctx, kind_id, decision)
+    end
+
+    -- Veto randomness stays on the current level's layout stream.
+    function api:roll(bound)
+        return builder:roll(bound)
+    end
 
     -- Expose authored marker coordinates to veto hooks after placement.
     function api:marker_positions(property, value)
@@ -234,8 +268,8 @@ local function check_vetoes(placed)
 end
 
 -- Every source exit must join ordinary Dungeon floor before the level can be accepted.
-function connect.finish(_, builder, placed, required)
-    check_vetoes(placed)
+function connect.finish(ctx, builder, placed, required)
+    check_vetoes(ctx, builder, placed)
 
     -- Decorative no_exits maps can be fully solid and have no route to
     -- connect. Their terrain is already placed on the shared grid.

@@ -41,6 +41,7 @@ local function world_context(ctx)
     ctx:add(player, component.PLAYER_UNIQUE_HISTORY, {
         status = {},
         monsters = {},
+        pan_states = {},
     })
 
     function grid:player()

@@ -5,6 +5,8 @@
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local flags = require("constants.monster_flags")
+local decisions = require("constants.pan_unique_decision")
+local monsters = require("ids.monsters")
 local history = {}
 
 -- A catalog flag determines whether a monster consumes unique history;
@@ -61,6 +63,32 @@ function history.mark(ctx, kind_id)
     ctx:set(player, component.PLAYER_UNIQUE_HISTORY, state)
 end
 
+-- Ignacio's first successful Pan chance chooses one permanent allow/forbid
+-- outcome. Reading it later consumes no RNG and survives save/restore.
+function history.pan_state(ctx, kind_id)
+    local player = ctx:player()
+    local state = ctx:get(player, component.PLAYER_UNIQUE_HISTORY)
+
+    return state and state.pan_states[kind_id] or nil
+end
+
+-- Commit the one-time Pan decision after its chance and coinflip rolls.
+function history.set_pan_state(ctx, kind_id, decision)
+    if decision ~= decisions.ALLOW and decision ~= decisions.FORBID then
+        error("invalid Pan unique decision " .. tostring(decision))
+    end
+
+    local player = ctx:player()
+    local state = ctx:get(player, component.PLAYER_UNIQUE_HISTORY)
+
+    if not state or state.pan_states[kind_id] then
+        error("Pan unique decision was already made " .. kind_id)
+    end
+
+    state.pan_states[kind_id] = decision
+    ctx:set(player, component.PLAYER_UNIQUE_HISTORY, state)
+end
+
 -- A saved ID must name a current unique profile, not an ordinary monster
 -- or arbitrary string injected into the player history map.
 function history.validate(state)
@@ -71,6 +99,18 @@ function history.validate(state)
     for kind_id, seen in pairs(state.monsters) do
         if not seen or not history.is_unique(kind_id) then
             error("invalid player monster unique history " .. kind_id)
+        end
+    end
+
+    if not state.pan_states then
+        error("player Pan unique history is missing")
+    end
+
+    for kind_id, decision in pairs(state.pan_states) do
+        if kind_id ~= monsters.MONS_IGNACIO or
+            (decision ~= decisions.ALLOW and
+                decision ~= decisions.FORBID) then
+            error("invalid player Pan unique decision " .. kind_id)
         end
     end
 end

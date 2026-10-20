@@ -28,6 +28,7 @@ local function request(ctx)
     ctx:add(player, component.PLAYER_UNIQUE_HISTORY, {
         status = {},
         monsters = {},
+        pan_states = {},
     })
 
     local world = setmetatable({}, { __index = ctx })

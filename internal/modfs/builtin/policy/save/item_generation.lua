@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local component = require("constants.component")
 local history = require("policy.item_generation.artefacts.history")
 local monster_history = require("policy.population.unique_history")
+local runes = require("policy.character.runes")
 local ids = require("ids.items")
 local item_sets = require("policy.item_generation.item_sets")
 local skills = require("ids.skills")
@@ -15,6 +16,7 @@ local function validate_player(ctx)
     item_sets.validate(ctx:get(player, component.PLAYER_ITEM_SETS))
     history.validate(ctx:get(player, component.PLAYER_UNIQUE_HISTORY))
     monster_history.validate(ctx:get(player, component.PLAYER_UNIQUE_HISTORY))
+    runes.validate(ctx:get(player, component.PLAYER_RUNES))
 end
 
 -- A manual's skill and 2000..3000 point budget must travel with its BOOK_MANUAL item across saves.

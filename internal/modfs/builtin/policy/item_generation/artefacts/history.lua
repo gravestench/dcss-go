@@ -11,6 +11,7 @@ function history.initialise(ctx, player)
         ctx:add(player, component.PLAYER_UNIQUE_HISTORY, {
             status = {},
             monsters = {},
+            pan_states = {},
         })
     end
 end

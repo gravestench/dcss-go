@@ -4,6 +4,7 @@
 -- Ignacio has a separate run-wide chance gate that is rolled only once.
 local monsters = require("ids.monsters")
 local runes = require("constants.runes")
+local decisions = require("constants.pan_unique_decision")
 local policy = {}
 
 -- A Pan Mennas map remains eligible until he has appeared anywhere in
@@ -45,20 +46,21 @@ local function ignacio(api)
         return true
     end
 
-    local state = api:pan_unique_state(monsters.MONS_IGNACIO)
+    local decision = api:pan_unique_state(monsters.MONS_IGNACIO)
 
-    if not state.rolled then
+    if not decision then
         local count = api:pan_rune_count()
 
         if api:roll(100) >= count * count then
             return true
         end
 
-        state.rolled = true
-        state.forbidden = api:roll(2) == 0
+        decision = api:roll(2) == 0 and
+            decisions.FORBID or decisions.ALLOW
+        api:set_pan_unique_state(monsters.MONS_IGNACIO, decision)
     end
 
-    return state.forbidden
+    return decision == decisions.FORBID
 end
 
 policy.mennas = mennas

@@ -3,6 +3,7 @@ local identification = require("policy.items.identification")
 local wallet = require("policy.shops.wallet")
 local catalog = require("policy.catalog")
 local classes = require("ids.object_classes")
+local runes = require("policy.character.runes")
 
 local system = {}
 
@@ -25,11 +26,22 @@ function system.update(ctx, actor)
         if not ctx:has(entity, "core.corpse") then
             local item = ctx:get(entity, "core.item")
             local name = identification.name(ctx, ctx:player(), entity)
+            local definition = catalog.get("items", item.kind_id)
 
-            if catalog.get("items", item.kind_id).class == classes.OBJ_GOLD then
+            if definition.class == classes.OBJ_GOLD then
                 local amount = wallet.pickup(ctx, actor, entity)
 
                 ctx:emit("pickup", "You pick up " .. amount .. " gold pieces.")
+
+                return
+            end
+
+            -- Source runes become permanent character progress on pickup;
+            -- their floor entity does not turn into an inventory stack.
+            if definition.class == classes.OBJ_RUNES then
+                runes.collect(ctx, actor, item.kind_id)
+                ctx:destroy(entity)
+                ctx:emit("pickup", "You pick up " .. items.phrase(name, 1) .. ".")
 
                 return
             end

@@ -19,6 +19,7 @@ local function world_context(ctx)
     ctx:add(player, component.PLAYER_UNIQUE_HISTORY, {
         status = {},
         monsters = {},
+        pan_states = {},
     })
 
     -- Unique follower claims use the same player owner as normal spawning.
