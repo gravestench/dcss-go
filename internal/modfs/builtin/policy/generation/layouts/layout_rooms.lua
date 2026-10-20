@@ -5,6 +5,7 @@
 -- Exit placement remains the responsibility of the shared stair postpass.
 local grid = require("policy.generation.grid")
 local geometry = require("policy.generation.layouts.room_geometry")
+local material = require("policy.generation.layouts.material")
 
 local layout = {}
 
@@ -118,6 +119,8 @@ end
 function layout.layout_rooms(api)
     local builder = grid.new(api.ctx)
     local accepted = carve(builder, api.branch == "Elf")
+
+    material.level(builder, api)
 
     if builder.bad_random then
         error("room layout random source failed to provide a bounded draw")

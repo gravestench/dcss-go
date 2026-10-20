@@ -5,6 +5,7 @@
 -- Source KFEAT/KMASK/KPROP choices are retained as typed level records.
 local grid = require("policy.generation.grid")
 local spotty = require("policy.generation.layouts.spotty")
+local material = require("policy.generation.layouts.material")
 local effects = require("constants.vault_effects")
 
 local layout = {}
@@ -64,24 +65,6 @@ local function window_records(builder, feature)
     return records
 end
 
--- The source level-material rarity swaps ordinary rock for stone or metal
--- after carving. This is a real feature change rather than a tile-only tint.
-local function level_material(builder, api)
-    if api.depth < 4 or api.branch == "Lair" or
-        api.branch == "Zot" or api.branch == "Dis" or
-        not builder:one_in(20) then
-        return
-    end
-
-    for y = 0, grid.height - 1 do
-        for x = 0, grid.width - 1 do
-            if builder:cell(x, y) == "#" then
-                builder:set(x, y, builder:roll(3) == 2 and "v" or "c")
-            end
-        end
-    end
-end
-
 -- Run the named DES hook. Return both the map and source feature records so
 -- later generation can place stairs before decoding terrain into the level.
 function layout.layout_cross(api)
@@ -133,7 +116,7 @@ function layout.layout_cross(api)
         spotty.carve(builder, boxy, iterations)
     end
 
-    level_material(builder, api)
+    material.level(builder, api)
 
     if builder.bad_random then
         error("cross layout random source failed to provide a bounded draw")

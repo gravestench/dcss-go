@@ -70,4 +70,38 @@ function spotty.carve(builder, boxy, iterations)
     end
 end
 
+-- Smearing grows neighboring rock into existing floor. Source octagons do
+-- this before or after pillars, then discard floor islands away from center.
+function spotty.smear(builder, iterations)
+    local attempts = 0
+    local limit = iterations * 10
+
+    for _ = 1, iterations do
+        local x
+        local y
+        local adjacent
+
+        repeat
+            attempts = attempts + 1
+
+            if attempts > limit then
+                return
+            end
+
+            x = 1 + builder:roll(grid.width - 2)
+            y = 1 + builder:roll(grid.height - 2)
+            adjacent = builder:cell(x + 1, y) == "#" or
+                builder:cell(x - 1, y) == "#" or
+                builder:cell(x, y + 1) == "#" or
+                builder:cell(x, y - 1) == "#" or
+                builder:cell(x + 1, y + 1) == "#" or
+                builder:cell(x - 1, y + 1) == "#" or
+                builder:cell(x + 1, y - 1) == "#" or
+                builder:cell(x - 1, y - 1) == "#"
+        until builder:cell(x, y) == "." and adjacent
+
+        builder:set(x, y, "#")
+    end
+end
+
 return spotty
