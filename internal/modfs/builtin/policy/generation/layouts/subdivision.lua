@@ -196,6 +196,28 @@ function subdivision.render(builder, options, paint)
     return cells
 end
 
+-- Omnigrid city and maze layouts subdivide most of the builder rather than
+-- placing one Hyper room. Their four padding draws stay source-local here.
+function subdivision.partition(builder, options, minimum_pad, maximum_pad)
+    local bounds = {
+        x1 = 1 + range(builder, minimum_pad, maximum_pad),
+        y1 = 1 + range(builder, minimum_pad, maximum_pad),
+        x2 = grid.width - 2 - range(builder, minimum_pad, maximum_pad),
+        y2 = grid.height - 2 - range(builder, minimum_pad, maximum_pad),
+    }
+    local cells = {}
+
+    split(builder, bounds, options, options.initial_chance, 0, cells)
+
+    return cells, bounds
+end
+
+-- Source random_range_real uses a real-valued uniform draw. A million
+-- fixed steps are sufficient for its subdivision chance multipliers.
+function subdivision.real(builder, first, last)
+    return first + (last - first) * builder:roll(1000000) / 1000000
+end
+
 subdivision.range = range
 
 return subdivision
