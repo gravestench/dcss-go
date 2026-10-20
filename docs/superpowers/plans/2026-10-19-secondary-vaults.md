@@ -177,8 +177,9 @@ or separately maintained ID/weight table is permitted.
 
 - [x] Remove `GENERIC_EXTRA_ROLL` and the shop-only stage. Use source
   CHANCE and weighted minivault pools on D:1–15.
-- [ ] Add the PLACE stage with its branch maps and complete the imported
-  pool. Preserve source branch eligibility for later branch generation.
+- [x] Add the PLACE parser and weighted minivault stage, preserving source
+  branch eligibility. Import its branch maps with their branch generation
+  slices; complete the remaining builder/serial pool here.
 - [ ] Document new map, helper, controller, chance, hooks, context API,
   sparse overlays, uniqueness, and save behavior in the modding guide.
 - [ ] Run `git diff --check`, style/line checks, all Lua rule tests, and

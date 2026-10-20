@@ -154,6 +154,7 @@ function des.parse(path, source)
         orientation = "float",
         weight = 10,
         depths = {},
+        places = {},
         chances = {},
         rows = {},
         operations = {},
@@ -218,6 +219,10 @@ function des.parse(path, source)
         if operation.kind == directives.DEPTH then
             for _, rule in ipairs(depth.parse_rules(operation.argument, site)) do
                 vault.depths[#vault.depths + 1] = rule
+            end
+        elseif operation.kind == directives.PLACE then
+            for _, rule in ipairs(depth.parse_rules(operation.argument, site)) do
+                vault.places[#vault.places + 1] = rule
             end
         elseif operation.kind == directives.CHANCE then
             for _, clause in ipairs(depth.parse_chance(operation.argument, site)) do

@@ -88,7 +88,8 @@ end
 
 -- Resolve source ranges against the current branch and depth. A map with no
 -- default weight is disabled outside its listed ranges.
-function weight.for_branch(vault, branch_id, local_depth, branch_bottom)
+function weight.for_branch(vault, branch_id, local_depth, branch_bottom,
+    absolute_depth)
     local rules = vault.weights
 
     if not rules then
@@ -98,7 +99,7 @@ function weight.for_branch(vault, branch_id, local_depth, branch_bottom)
     for _, range in ipairs(rules.ranges) do
         for _, rule in ipairs(range.rules) do
             if depth.matches_rule(rule, branch_id,
-                local_depth, branch_bottom) then
+                local_depth, branch_bottom, absolute_depth) then
                 return range.value
             end
         end

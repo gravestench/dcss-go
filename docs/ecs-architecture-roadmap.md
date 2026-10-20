@@ -222,7 +222,7 @@ the existing Akara shop policy. Supplemental selection and placement use the
 same grid and source-record path as arrival vaults. Deeper branch generation
 can reuse these definitions without another shop implementation. Replace the
 temporary generic extra-vault frequency with source-style chance and
-weighted minivault stages. The source dummy family now controls the
+weighted minivault stages, with a separate explicit `PLACE` attempt. The source dummy family now controls the
 ordinary minivault draw. Import the remaining secondary-vault corpus so
 those stages select from the complete source pool.
 

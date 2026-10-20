@@ -69,6 +69,7 @@ function catalog.load()
             weight = definition.weight,
             weights = definition.weights,
             depths = definition.depths,
+            places = definition.places,
             chances = definition.chances,
         }
 

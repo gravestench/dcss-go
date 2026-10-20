@@ -1975,6 +1975,17 @@ source dummy maps can end the stage without placing cells. Numeric ranges
 such as `DEPTH: 1-100` use absolute dungeon depth, while `D:4-` uses local
 branch depth.
 
+Use `PLACE: D:4` when a minivault belongs to one explicit floor rather than
+the weighted `DEPTH` pool. `PLACE: D:$` targets the bottom of the Dungeon
+branch, and comma-separated terms may include an exclusion such as
+`PLACE: Swamp, !Swamp:$`. The generator makes one weighted `PLACE` choice
+after the `CHANCE` stage and before ordinary minivault draws. It attempts
+that map once, even if it has `TAGS: extra`; a successful map joins saved
+`vault_ids` and blocks later use according to its uniqueness tags. A map
+with an explicit `ORIENT` is a regular vault and does not enter this
+minivault `PLACE` stage. Other branches' authored maps become active when
+their branch generators are ported.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls

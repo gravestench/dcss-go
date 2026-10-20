@@ -6,6 +6,7 @@ local directives = require("constants.vault_directives")
 local hooks = require("policy.generation.vaults.hooks")
 local minivault = require("policy.generation.vaults.minivault")
 local placement = require("policy.generation.vaults.placement")
+local place = require("policy.generation.vaults.place")
 local connect = require("policy.generation.vaults.connect")
 local selection = require("policy.generation.vaults.selection")
 local used = require("policy.generation.vaults.used")
@@ -184,10 +185,11 @@ function extra.generate(ctx, builder, context)
     end
 
     local primary = place_chance_stage(ctx, builder, context, placed)
+    local explicit = place.place(ctx, builder, context, placed, extra.place)
     local ordinary = minivault.place(ctx, builder, context,
         placed, extra.place)
 
-    return placed, primary or ordinary, context.used:ids()
+    return placed, primary or explicit or ordinary, context.used:ids()
 end
 
 -- Add a stair or arrival point to the protected-cell set before extra placement.

@@ -78,6 +78,20 @@ function eligibility.depth(definition, context)
     return true
 end
 
+-- PLACE is an explicit floor selector. Source map_selector checks the
+-- place, minivault class, layout, and prior use; its DEPTH and species
+-- restrictions belong to the separate random-depth selector.
+function eligibility.place(definition, context)
+    return definition.tags.minivault and
+        #definition.places > 0 and
+        depth.eligible({ depths = definition.places }, context.branch_id,
+            context.depth, context.branch_bottom,
+            context.absolute_depth) and
+        (not context.excluded or not context.excluded[definition.id]) and
+        (not context.used or context.used:allows(definition)) and
+        eligibility.layout(definition, context.layout_family)
+end
+
 -- An explicit tag may select a helper with no DEPTH. When a rule exists,
 -- however, the tag still respects its branch and depth limits.
 function eligibility.tag(definition, context)

@@ -5,6 +5,7 @@ local directives = {
     ORIENT = "ORIENT",
     WEIGHT = "WEIGHT",
     DEPTH = "DEPTH",
+    PLACE = "PLACE",
     CHANCE = "CHANCE",
     CLEAR = "CLEAR",
     SUBST = "SUBST",

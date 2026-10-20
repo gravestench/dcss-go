@@ -15,6 +15,7 @@ local informational = {
     [directives.ORIENT] = true,
     [directives.WEIGHT] = true,
     [directives.DEPTH] = true,
+    [directives.PLACE] = true,
     [directives.CHANCE] = true,
     [directives.HOOK_POST_PLACE] = true,
 }

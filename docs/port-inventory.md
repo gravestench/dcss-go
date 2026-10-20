@@ -248,7 +248,8 @@ scripts. Eligible maps place authored shops and stock in ordinary D:1–15
 generation; the fixed shop scenario remains available. Supplemental maps
 retain source IDs in saves, and sparse mod overlays can add a vault or replace
 one handler. The temporary one-in-eight shop draw has been replaced with
-source-style CHANCE maps followed by weighted depth minivaults. The six
+source-style CHANCE maps, one weighted explicit `PLACE` minivault attempt,
+then weighted depth minivaults. The six
 builder dummy maps include the Dungeon suppression chance, and an `extra`
 minivault asks for another bounded draw. The eligible pool is still partial
 until the remaining source vault families are imported. The five-map `serial_curves`, eleven-map
