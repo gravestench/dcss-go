@@ -1,0 +1,7 @@
+# Bayou controller spreads ponds and lakes as one swampy theme.
+# Its source count favors four placements and can request up to six.
+NAME:   serial_bayou
+TAGS:   allow_dup extra luniq_serial decor nolayout_encompass
+DEPTH:  D, Depths, Snake, Lair
+CHANCE: 1%
+: vault.post_place("place_serial_bayou")

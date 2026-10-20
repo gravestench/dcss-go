@@ -1,0 +1,12 @@
+# This compact stream fragment fits where the longer crossing cannot.
+# Its shallow and deep water glyphs remain source-authored terrain.
+NAME:   chequers_serial_rivers_micro_b
+TAGS:   serial_rivers allow_dup extra decor no_pool_fixup transparent
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+MAP
+     @
+xxxx...x
+xwwwwWWx
+xxxx...x
+ENDMAP

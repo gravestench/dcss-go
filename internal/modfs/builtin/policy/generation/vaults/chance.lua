@@ -63,6 +63,7 @@ end
 local function eligible(definition, context)
     return #definition.chances > 0 and
         not definition.tags.dummy and
+        (not context.excluded or not context.excluded[definition.id]) and
         chance.layout_allowed(definition, context.layout_family) and
         (not context.used or context.used:allows(definition)) and
         depth.eligible(definition, context.branch_id,
@@ -79,7 +80,6 @@ local function family_choice(random, tag, context)
     end
 
     request.family = nil
-    request.excluded = nil
     request.exclude_chance = nil
     request.ignore_chance = true
 

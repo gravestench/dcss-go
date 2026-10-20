@@ -1,0 +1,11 @@
+# A mod adds this entire family by one DES file under vaults/custom.
+# Its simple floor patch uses the same placement grammar as bundled maps.
+NAME: zz_custom_vault
+TAGS: extra allow_dup
+DEPTH: D
+WEIGHT: 3
+MAP
+@..
+...
+...
+ENDMAP

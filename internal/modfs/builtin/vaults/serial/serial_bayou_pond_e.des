@@ -1,0 +1,15 @@
+# Compact five-column pond scatters plant slots across the bank.
+# Random shallow water and vegetation preserve its small footprint.
+NAME:serial_bayou_pond_e
+#small pond
+TAGS:  coolio_serial_bayou allow_dup extra decor
+DEPTH: D, Depths, Snake, Lair
+SUBST: W = WWW1.
+SUBST: . = ..t
+KMONS: 1 = plant
+KFEAT: 1 = W
+MAP
+.WWW.
+WWWWW
+.WWW.
+ENDMAP

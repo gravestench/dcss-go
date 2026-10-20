@@ -1,0 +1,31 @@
+# Large diagonal river has a narrow central crossing and broad banks.
+# Three source substitutions shape the water and walkable path.
+NAME:   chequers_serial_rivers_large_a
+TAGS:   serial_rivers extra decor no_pool_fixup transparent
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+SUBST:  W = .:1 w:4 W, ' = .:2 W, - = W:5 .
+MAP
+  xxxxxxxx-
+ xxxxxwwwWW--
+xxxxxwwwWWwW--
+xxxwwwwwW'wWW-
+ xxxxwwwwW'wW-
+  xxxxxxx'wWW-
+        -W'W'-
+        -'W'W-
+        -W'W'-
+        -'W'W-
+        -W'W'-
+        @'W'W@
+        -W'W'-
+        -'W'W-
+        -W'W'-
+        -'W'W-
+        -W'W'xxxxxxx
+        -WwWWwxxwwwxx
+        -WWwwwwxxwwxx
+        --Wwwwwwxwxxx
+         --Wwwwwwwxx
+            xxxxxxx
+ENDMAP

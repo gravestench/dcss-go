@@ -1,0 +1,12 @@
+# A short, walled stream crosses a narrow three-wide passage.
+# KMASK prevents spawning monsters directly in its water.
+NAME:   chequers_serial_rivers_micro_a
+TAGS:   serial_rivers allow_dup extra decor no_pool_fixup transparent
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+MAP
+     @
+xxxx...xxxx
+xwwwWWWwwxx
+xxxx...xxxx
+ENDMAP

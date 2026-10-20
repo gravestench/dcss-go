@@ -1,0 +1,28 @@
+# East-oriented shoreline places a long vegetated lake edge.
+# Multiple @ anchors connect the bank to ordinary Dungeon floor.
+NAME:   serial_bayou_shore_a
+#a shore of a small lake
+TAGS:   coolio_serial_bayou extra decor transparent
+ORIENT: east
+DEPTH:  D, Depths, Snake, Lair
+SUBST:  ? = Wt
+SUBST:  V = Www
+SUBST:  W = WWW1
+SUBST:  ! = W1..
+KMONS:  1 = plant
+KFEAT:  1 = W
+MAP
+ @@      ttttxxxxxx
+@..WWWWWWWWttttxxxx
+ ..!WWWWWWWWWttttxx
+ ..!WWWWWVVVVWWtttx
+ ..!WWWWWVwwwVWWttx
+ ...!WWWVwwwwwVWttx
+ ...!WWWVwwwwwVWttx
+ ..!WWWWVwwwwwVWttx
+ ..!WWWWWVwwwVWtttx
+ ..!WWWWWVwwwVttttx
+@..WWWWWWWVVVWtttxx
+@..WWWWWWWWWWttttxx
+ @@      tttttttxxx
+ENDMAP

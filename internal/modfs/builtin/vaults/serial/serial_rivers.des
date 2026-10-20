@@ -1,0 +1,7 @@
+# Streams spread smaller water features across a level. The hook requests
+# four to six tagged rivers after this one-percent controller is selected.
+NAME:   serial_rivers
+TAGS:   allow_dup extra luniq_serial decor nolayout_encompass
+DEPTH:  D, Depths, Lair
+CHANCE: 1%
+: vault.post_place("place_serial_rivers")

@@ -1959,6 +1959,10 @@ authoritative layout. A mod
 may replace an existing `.des` by its exact relative path or add a new one.
 Keep terrain, item, monster, marker, and placement instructions in that map
 file so a reader can see the whole layout together.
+The vault catalog also discovers a new `vaults/<family>/` directory without
+an engine edit; put its named hook at the matching
+`policy/generation/vaults/<family>/<name>.lua` path. Layout maps use the
+separate `vaults/layout/` catalog because they carve the base floor.
 
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object

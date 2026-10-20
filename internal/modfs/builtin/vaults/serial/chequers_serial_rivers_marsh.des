@@ -1,0 +1,21 @@
+# A dotted marsh alternates water and open floor around several
+# connectors. Two substitutions vary the depth and vegetation.
+NAME:   chequers_serial_rivers_marsh
+TAGS:   serial_rivers allow_dup extra decor no_pool_fixup transparent
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+SUBST:  . = W., - = W. t:4 w:6
+MAP
+     @
+ -.-.-.-.
+-.-.-.-.-.
+   -.-.-.-
+-.-.-.-.-.
+.-.- -.-
+-.-.-.-.-.@
+   -.-.-.
+@.-.-.-.
+.-.-.-.
+ .-.-.-.-
+    @
+ENDMAP

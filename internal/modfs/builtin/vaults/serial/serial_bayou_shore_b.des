@@ -1,0 +1,22 @@
+# Short east-oriented pond shore can repeat on one floor.
+# Source transparent spaces leave the surrounding map untouched.
+NAME:   serial_bayou_shore_b
+#a shore of a small pond, duplicable
+TAGS:   coolio_serial_bayou allow_dup extra decor transparent
+ORIENT: east
+DEPTH:  D, Depths, Snake, Lair
+SUBST:  ? = Wt
+SUBST:  V = Www
+SUBST:  W = WWW1
+SUBST:  ! = W1..
+KMONS:  1 = plant
+KFEAT:  1 = W
+MAP
+  ???xxx
+@.!W??xx
+@.!WWW?x
+@.!WVV?x
+@.!WWW?x
+@.!W??xx
+  ???xxx
+ENDMAP

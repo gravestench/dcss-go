@@ -1,0 +1,23 @@
+# Pond with a vegetated island uses keyed plant and water rules.
+# Its substitutions vary shoreline and marsh growth.
+NAME:   serial_bayou_pond_c
+TAGS:   coolio_serial_bayou allow_dup extra decor
+DEPTH:  D, Depths, Snake, Lair
+MONS:   plant
+SUBST:  ? = WWtt2
+SUBST:  . = ..W12
+KMONS:  2 = plant
+KFEAT:  2 = W
+MAP
+       1
+    ..1W
+ .11WWWW.
+.WW????WW
+.1?tttt?W.
+1W?tttt?W1
+.W?tttt?W1
+.WW????W1.
+ .1W1W1W.
+  .....
+   .1.
+ENDMAP

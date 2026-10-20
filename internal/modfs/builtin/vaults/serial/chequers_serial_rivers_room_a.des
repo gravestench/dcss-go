@@ -1,0 +1,14 @@
+# A flooded side room is enclosed by walls and two doorways.
+# Water receives the source no-monster-generation mask.
+NAME:   chequers_serial_rivers_room_a
+TAGS:   serial_rivers allow_dup extra decor no_pool_fixup transparent
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+MAP
+xxxxxx+
+xw....x
+xw....x
+xw....x
+xwwwwwx
++xxxxxx
+ENDMAP

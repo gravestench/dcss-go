@@ -1,0 +1,24 @@
+# Cross-shaped ford supplies four @ connections over a swamp channel.
+# Plant slots and substitutions vary the water along each arm.
+NAME:  serial_bayou_crossing
+TAGS:  coolio_serial_bayou transparent
+DEPTH: D, Depths, Snake, Lair
+SUBST: ? = W1tt
+SUBST: W = WWW.
+KMONS: 1 = plant
+KFEAT: 1 = W
+MAP
+    t?@?t
+    t?W?tt
+    t?W?tt
+  ttt?W?t
+ttttt?W?ttttt
+?????WWW?????
+@WWWWWWWWWWW@
+?????WWW?????
+ttttt?W?ttttt
+  ttt?W?t t
+   tt?W?t
+    t?W?tt
+    t?@?t
+ENDMAP

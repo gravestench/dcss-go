@@ -6,6 +6,7 @@ local grid = require("policy.generation.grid")
 local harness = require("tests.harness")
 local branches = require("ids.branches")
 local chance_units = require("constants.vault_chance")
+local categories = require("constants.catalog")
 local ids = require("ids.vaults")
 
 local test = {}
@@ -124,6 +125,17 @@ end
 -- then places a tagged child map and both IDs enter saved vault history.
 local function chance_controller_places_tagged_child()
     local builder = floor_builder()
+    local excluded = {}
+
+    -- Isolate the shop controller from newly imported CHANCE families.
+    -- The real selector still sees the complete effective catalog.
+    for _, id in ipairs(register.ids(categories.VAULTS)) do
+        local definition = register.get(categories.VAULTS, id)
+
+        if #definition.chances > 0 and id ~= ids.serial_shops then
+            excluded[id] = true
+        end
+    end
 
     function builder:roll(bound)
         if bound == EXTRA_OPPORTUNITY_ROLL then
@@ -139,6 +151,7 @@ local function chance_controller_places_tagged_child()
         branch_bottom = 15,
         absolute_depth = 4,
         layout_family = "halls",
+        excluded = excluded,
         protected = {},
         required = {},
         player = {

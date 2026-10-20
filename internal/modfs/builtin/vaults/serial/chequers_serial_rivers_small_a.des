@@ -1,0 +1,14 @@
+# Irregular stream section offers two @ entries on opposite banks.
+# The source shallow-water substitution varies its ford.
+NAME:   chequers_serial_rivers_small_a
+TAGS:   serial_rivers allow_dup extra decor no_pool_fixup transparent
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+SUBST:  w = Ww
+MAP
+  w
+ www
+  wwww..w@
+@...WWwwww
+         www
+ENDMAP

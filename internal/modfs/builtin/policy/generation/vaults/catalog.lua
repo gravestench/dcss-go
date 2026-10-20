@@ -15,8 +15,11 @@ local function ordered_definitions()
     local definitions = {}
     local origins = {}
 
-    for _, family in ipairs({ "arrival", "shop", "serial" }) do
-        for _, path in ipairs(mod.paths("vaults/" .. family, ".des")) do
+    -- The VFS discovers any new vault family without a loader edit. Layouts
+    -- use their own catalog because they carve the base grid rather than fit
+    -- as secondary or arrival maps.
+    for _, path in ipairs(mod.paths("vaults", ".des")) do
+        if not path:match("^vaults/layout/") then
             local source = mod.read(path)
             local definition = des.parse(path, source)
             hooks.validate(definition)

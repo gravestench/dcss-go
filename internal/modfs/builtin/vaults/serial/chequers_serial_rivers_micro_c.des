@@ -1,0 +1,16 @@
+# A vertical stream meanders between dry floor cells.
+# SUBST randomly opens some deep-water cells before projection.
+NAME:   chequers_serial_rivers_micro_c
+TAGS:   serial_rivers allow_dup extra decor no_pool_fixup transparent
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+SUBST:  W = W:8 .
+MAP
+ W.
+.W...
+.WWW.
+.WWW.
+.WWW.
+...W.
+  .W
+ENDMAP

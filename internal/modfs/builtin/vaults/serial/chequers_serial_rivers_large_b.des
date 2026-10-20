@@ -1,0 +1,19 @@
+# A wide river braids through rock islands and cliff-like walls.
+# Its no-monster-generation tag covers the entire authored map.
+NAME:   chequers_serial_rivers_large_b
+TAGS:   serial_rivers extra decor no_pool_fixup transparent no_monster_gen
+DEPTH:  D, Depths, Lair
+MAP
+              xxxxxx
+   @..Wxx     xWWWWxx
+   xWWWWxxx   xxxWWWxxxxx
+   xxxWWWWxxxxxWWWWWWWWWxxx
+     xxxWWWWWWWWWxxxxxWWWWx
+       xxxxxWWWxxxxxxxWWxxx
+           xxxxxxxxxxxWWWx
+                xWWWWWxxxxxx
+           xxxxxxxxxxWWWWWx
+          @WWWWWWxxxxxxxWWxxx
+           xxxWWWWWWWWWWxWWWx
+             xxxxxxxxxxxxxxxx
+ENDMAP

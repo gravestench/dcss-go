@@ -2,11 +2,29 @@
 local branches = require("ids.branches")
 local catalog = require("policy.generation.vaults.catalog")
 local chance = require("policy.generation.vaults.chance")
+local chance_units = require("constants.vault_chance")
+local categories = require("constants.catalog")
 local ids = require("ids.vaults")
 local used = require("policy.generation.vaults.used")
 local harness = require("tests.harness")
 
 local test = {}
+
+-- Boundary tests isolate the shop declaration without assuming the
+-- catalog will stop growing as other serial families are imported.
+local function exclude_other_chance_maps()
+    local excluded = {}
+
+    for _, id in ipairs(register.ids(categories.VAULTS)) do
+        local definition = register.get(categories.VAULTS, id)
+
+        if #definition.chances > 0 and id ~= ids.serial_shops then
+            excluded[id] = true
+        end
+    end
+
+    return excluded
+end
 
 -- The committed serial shop controller has CHANCE: 15% (D). Its threshold
 -- uses source's 10,000-point roll and does not include ordinary shop maps.
@@ -25,6 +43,7 @@ local function dungeon_chance_boundary()
         depth = 4,
         branch_bottom = 15,
         layout_family = "halls",
+        excluded = exclude_other_chance_maps(),
         used = used.new({}),
     }
     local selected = chance.select(random, context)
@@ -32,7 +51,8 @@ local function dungeon_chance_boundary()
     harness.equal(#selected, 1, "one source chance controller succeeds")
     harness.equal(selected[1].id, ids.serial_shops,
         "selected chance map is serial shops")
-    harness.equal(draws[1], 10000, "source chance roll scale")
+    harness.equal(draws[1], chance_units.ROLL,
+        "source chance roll scale")
 
     function random:roll()
         return 1500
@@ -55,6 +75,7 @@ local function eligibility_before_roll()
     end
 
     local same_floor = used.new({})
+    local excluded = exclude_other_chance_maps()
 
     same_floor:add(catalog.get(ids.serial_shops))
 
@@ -63,6 +84,7 @@ local function eligibility_before_roll()
         depth = 4,
         branch_bottom = 15,
         layout_family = "halls",
+        excluded = excluded,
         used = same_floor,
     }), 0, "same-floor controller is excluded")
 
@@ -71,6 +93,7 @@ local function eligibility_before_roll()
         depth = 4,
         branch_bottom = 5,
         layout_family = "halls",
+        excluded = excluded,
         used = used.new({}),
     }), 0, "Zot is outside the shop controller depth")
 

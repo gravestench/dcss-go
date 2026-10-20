@@ -10,25 +10,51 @@ import (
 )
 
 func TestVaultCatalogAddsAndReplacesDESFiles(t *testing.T) {
+	bundled, err := modfs.Load()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	baseWorld := akara.NewWorld()
+	baseRuntime, err := NewCatalog(baseWorld, bundled)
+
+	if err != nil {
+		baseWorld.Close()
+		t.Fatal(err)
+	}
+
+	baseCount := len(baseRuntime.DefinitionIDs("vaults"))
+	baseRuntime.Close()
+	baseWorld.Close()
+
 	for _, test := range []struct {
 		name       string
 		overlay    string
-		wantCount  int
+		countDelta int
 		wantID     string
 		wantWeight lua.LNumber
 	}{
 		{
 			name:       "add new vault",
 			overlay:    "testdata/vault-new",
-			wantCount:  410,
+			countDelta: 1,
 			wantID:     "zz_new_arrival",
 			wantWeight: 4,
 		},
 
 		{
+			name:       "discover new vault family",
+			overlay:    "testdata/vault-custom-family",
+			countDelta: 1,
+			wantID:     "zz_custom_vault",
+			wantWeight: 3,
+		},
+
+		{
 			name:       "replace one vault",
 			overlay:    "testdata/vault-replace",
-			wantCount:  409,
+			countDelta: 0,
 			wantID:     "roderic_crop_circles_arrival_small",
 			wantWeight: 7,
 		},
@@ -51,8 +77,8 @@ func TestVaultCatalogAddsAndReplacesDESFiles(t *testing.T) {
 
 			defer runtime.Close()
 
-			if count := len(runtime.DefinitionIDs("vaults")); count != test.wantCount {
-				t.Fatalf("vault count = %d, want %d", count, test.wantCount)
+			if count := len(runtime.DefinitionIDs("vaults")); count != baseCount+test.countDelta {
+				t.Fatalf("vault count = %d, want %d", count, baseCount+test.countDelta)
 			}
 
 			definition := runtime.definitions["vaults"][test.wantID]

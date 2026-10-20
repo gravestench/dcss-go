@@ -1,0 +1,19 @@
+# This winding stream has three possible connections and forbids
+# teleports into its authored area through the source tag.
+NAME:   chequers_serial_rivers_small_b
+TAGS:   serial_rivers allow_dup extra decor no_pool_fixup transparent
+TAGS:   no_tele_into
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+MAP
+@     w
+.ww   w
+ .Ww. Www.
+.  Ww. ..wW@
+ .      ww
+  .   www
+ .  www
+w.
+ww@
+w .
+ENDMAP

@@ -1,0 +1,16 @@
+# Long channel runs through an otherwise dry hall.
+# Water substitutions make a different crossing each placement.
+NAME:   chequers_serial_rivers_small_3
+TAGS:   serial_rivers allow_dup extra decor no_pool_fixup transparent
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+SUBST:  W = .:2 w:3 W, . = . W:4
+MAP
+       ..........   xxxx
+      ............  xwwx
+xxxx@..............xxwxx
+xxxwwwWWWWWWWWWWWwwwwwx
+xwwwwwWWWWWWWWWWWwwwwxx
+xxxx..............@xxxx
+       ..........
+ENDMAP

@@ -1,0 +1,13 @@
+# Tiny shallow-water crossing bends around an open central cell.
+# The @ glyphs let the connector join nearby Dungeon floor.
+NAME:   chequers_serial_rivers_micro_d
+TAGS:   serial_rivers allow_dup extra decor no_pool_fixup transparent
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+MAP
+  @
+ www
+ w.w
+ w.w
+ w@w
+ENDMAP

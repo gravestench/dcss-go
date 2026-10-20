@@ -1,0 +1,14 @@
+# A compact pool room alternates shallow and deep water.
+# Doors at opposite sides connect it to ordinary corridors.
+NAME:   chequers_serial_rivers_room_b
+TAGS:   serial_rivers allow_dup extra decor no_pool_fixup transparent
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+MAP
+xxx+xxx
+xwwWwwx
+xwWwWwx
+xWwWwWx
+xwWwWwx
+xxx+xxx
+ENDMAP

@@ -1,0 +1,13 @@
+# Small banked stream leaves a walkable central strip.
+# Substitutions vary wet and dry cells without changing the MAP footprint.
+NAME:   chequers_serial_rivers_micro_e
+TAGS:   serial_rivers allow_dup extra decor no_pool_fixup transparent
+DEPTH:  D, Depths, Lair
+KMASK:  Ww = no_monster_gen
+SUBST:  . = W., W = W:8 .
+MAP
+wwwwwww
+ .....
+ .....
+  .@.
+ENDMAP

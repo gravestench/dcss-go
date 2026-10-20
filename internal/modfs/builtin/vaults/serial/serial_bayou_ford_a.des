@@ -1,0 +1,29 @@
+# Broad swamp channel has several walkable ford entries.
+# Keyed plant and water declarations remain attached to source glyphs.
+NAME: serial_bayou_ford_a
+#a small pond that can be forded
+TAGS:  coolio_serial_bayou transparent extra decor
+DEPTH: D, Depths, Snake, Lair
+SUBST: ? = Wt
+SUBST: V = Www
+SUBST: W = WWWW1
+SUBST: ! = W..
+KMONS: 1 = plant
+KFEAT: 1 = W
+MAP
+       ttttt
+      tttttttt
+     ??WW??WW??
+    ?tWWWWWWWWW?
+  ??tWWWWWW!!W!.@
+  ?WWW!!.!......@
+ @...............@
+  @..!!.!.!!!!!WW???
+   @?!W!!W?WWWWWWWWW?
+    ?WWWWWWWWWVWWWWWW?
+     ?WWWWWVwwwVWWWW?
+      ?WWWVVwVWWW???
+      ?WWWWWVWW?tt
+      ?WWW?WW?
+       t?ttt?
+ENDMAP

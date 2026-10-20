@@ -1,0 +1,35 @@
+# A long walkable bridge crosses deep and shallow lagoon water.
+# The dirt-floor tile declaration follows the authored path.
+NAME:  serial_bayou_lagoon_b
+#a big lagoon with a bridge thingy going through it
+TAGS:  coolio_serial_bayou
+DEPTH: D, Depths, Snake, Lair
+SUBST: ? = Wt
+SUBST: V = Www
+SUBST: W = WWWW1
+KMONS: 1 = plant
+KFEAT: 1 = W
+FTILE: . = floor_dirt
+MAP
+    ?????     ???
+   ?WWWWW?????ttt?
+  WWWWWWWttttWVWWt?
+ @WWWWWWWWWWWVwVWWW?@@??
+ @....................WW?
+ @?WWWWWWWWWVwwVWWWw.wWWW?
+   ?WWWWWWWWWVVWWWWw.wWWWW?
+    ?WWWWW???WWWWWWw.VVWWWW?
+     ?????   ?tttWWV.wVVVWWW?
+              ?tttWw.wwVVVWWW?
+               ?ttVw.wwwVVWWtt
+               ?ttWw.wwVVVVWtt
+              ?ttWWV.wVVVWttt
+             ?tttVww.WWWWWtt
+             ?WWVVww.WWWWttt
+             ?WVwwww.WWWWtt
+            ??WWWVww.WWWt?
+           ?WWWWWWVw.WWW?
+            ?WWWWWWV.WW?
+             ?WWWWW?.??
+              ?????@@@
+ENDMAP

@@ -1,0 +1,16 @@
+# Very small pond can fit where larger bayou pieces cannot.
+# Keyed plant positions follow the randomized water edge.
+NAME:   serial_bayou_pond_d
+#small pond
+TAGS:  coolio_serial_bayou allow_dup extra decor
+DEPTH:  D, Depths, Snake, Lair
+SUBST:  1 = 1W.
+SUBST:  W = WWWt
+KMONS:  1 = plant
+KFEAT:  1 = W
+MAP
+ 11
+ WWW1
+1WWW1
+ W11
+ENDMAP

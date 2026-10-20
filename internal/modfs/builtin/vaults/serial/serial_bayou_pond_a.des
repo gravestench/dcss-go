@@ -1,0 +1,19 @@
+# Small vegetated pond uses plant monster slots and random edges.
+# Source substitutions decide where water and growth appear.
+NAME:   serial_bayou_pond_a
+TAGS:   coolio_serial_bayou allow_dup extra decor
+DEPTH:  D, Depths, Snake, Lair
+MONS:   plant
+SUBST:  ? = .WW2
+SUBST:  1 = 11.t
+SUBST:  2 = t
+MAP
+    1..1..1
+   1..1??....1
+ .1..??2W?...1
+1..1?2WWWW1.1
+...??WWWW?..1
+.1.?WW2W?.11
+ ..1??W?..1
+   ..11..1
+ENDMAP

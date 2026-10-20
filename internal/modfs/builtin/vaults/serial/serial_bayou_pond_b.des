@@ -1,0 +1,18 @@
+# A deeper irregular pond surrounds a shallow center.
+# Plant slots keep vegetation tied to the authored glyphs.
+NAME:   serial_bayou_pond_b
+TAGS:   coolio_serial_bayou allow_dup extra decor
+DEPTH:  D, Depths, Snake, Lair
+MONS:   plant
+SUBST:  ? = .WW21
+SUBST:  1 = 11.t
+MAP
+  ..1..11..
+..1?W?W?WW1
+.1WW?W?W??..
+1W?WWwwwW?W1
+.WW?wwww?W?1
+1WW?WW?WW?1.
+.1WW?WW?WW..
+. 1 .1..1 .
+ENDMAP
