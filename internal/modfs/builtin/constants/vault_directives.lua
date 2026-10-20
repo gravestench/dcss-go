@@ -24,6 +24,7 @@ local directives = {
     MARKER = "MARKER",
     SUBVAULT = "SUBVAULT",
     HOOK_RUN = "HOOK_RUN",
+    HOOK_VALIDATE = "HOOK_VALIDATE",
     HOOK_VETO = "HOOK_VETO",
     HOOK_POST_PLACE = "HOOK_POST_PLACE",
 }

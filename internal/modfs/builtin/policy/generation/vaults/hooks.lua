@@ -6,6 +6,10 @@ local hooks = {}
 -- A .des map is still the authoritative layout. Its family and NAME choose
 -- a same-named Lua module only when a directive calls a named hook.
 local function handler_path(vault)
+    if vault.family == "layout" then
+        return "policy.generation.layouts." .. vault.id
+    end
+
     return "policy.generation.vaults." .. vault.family .. "." .. vault.id
 end
 
@@ -17,6 +21,7 @@ function hooks.validate(vault)
     -- broken mod at load time instead of only when a rare vault is selected.
     for _, operation in ipairs(vault.operations) do
         if operation.kind == directives.HOOK_RUN or
+            operation.kind == directives.HOOK_VALIDATE or
             operation.kind == directives.HOOK_VETO or
             operation.kind == directives.HOOK_POST_PLACE then
             if handler == nil then

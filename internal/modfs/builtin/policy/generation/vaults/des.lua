@@ -1,6 +1,7 @@
 -- Example: A malformed MAP row reports the original DES line instead of a projected row.
 local directives = require("constants.vault_directives")
 local depth = require("policy.generation.vaults.depth")
+local weight = require("policy.generation.vaults.weight")
 
 local des = {}
 
@@ -8,6 +9,7 @@ local known_directives = {}
 
 for _, kind in pairs(directives) do
     if kind ~= directives.HOOK_RUN and
+        kind ~= directives.HOOK_VALIDATE and
         kind ~= directives.HOOK_VETO and
         kind ~= directives.HOOK_POST_PLACE then
         known_directives[kind] = true
@@ -59,13 +61,22 @@ local function add_directive(vault, kind, argument, line)
     elseif kind == directives.CHANCE then
         -- Defer branch chance parsing for the same continuation boundary.
     elseif kind == directives.WEIGHT then
-        local weight = tonumber(argument)
+        local site = {
+            path = vault.path,
+            line = line,
+            id = vault.id,
+        }
+        local rules = weight.parse(argument, site)
 
-        if not weight or weight < 1 or weight % 1 ~= 0 then
-            fail(vault.path, line, vault.id, "invalid WEIGHT " .. argument)
+        if vault.family ~= "layout" and
+            (rules.default == nil or rules.default < 1 or
+                next(rules.branches) ~= nil) then
+            fail(vault.path, line, vault.id,
+                "non-layout WEIGHT needs one positive integer")
         end
 
-        vault.weight = weight
+        vault.weight = rules.default or 0
+        vault.weights = rules
     end
 end
 
@@ -73,7 +84,8 @@ end
 local function add_hook(vault, text, line)
     local stage, method = text:match('^:%s*vault%.([a-z_]+)%s*%(%s*"([a-z][a-z0-9_]*)"%s*%)%s*$')
 
-    if stage ~= "run" and stage ~= "veto" and
+    if stage ~= "run" and stage ~= "validate" and
+        stage ~= "veto" and
         stage ~= "post_place" then
         fail(vault.path, line, vault.id, "unported inline Lua or malformed vault hook")
     end
@@ -82,6 +94,8 @@ local function add_hook(vault, text, line)
 
     if stage == "run" then
         kind = directives.HOOK_RUN
+    elseif stage == "validate" then
+        kind = directives.HOOK_VALIDATE
     elseif stage == "post_place" then
         kind = directives.HOOK_POST_PLACE
     end
@@ -185,6 +199,7 @@ function des.parse(path, source)
     end
 
     local post_place = false
+    local layout_run = false
 
     for _, operation in ipairs(vault.operations) do
         local site = {
@@ -204,10 +219,14 @@ function des.parse(path, source)
 
         post_place = post_place or
             operation.kind == directives.HOOK_POST_PLACE
+        layout_run = layout_run or
+            operation.kind == directives.HOOK_RUN
     end
 
-    if in_map or continuing or not map_seen or
-        (#vault.rows == 0 and not post_place) then
+    if in_map or continuing or
+        (not map_seen and not (vault.family == "layout" and layout_run)) or
+        (#vault.rows == 0 and not post_place and
+            not (vault.family == "layout" and layout_run)) then
         fail(path, #source_lines(source), vault.id, "incomplete DES map or directive")
     end
 
