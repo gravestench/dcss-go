@@ -207,8 +207,9 @@ source-weighted map, altar count, and complete god partition are chosen at
 new-game creation and saved before Temple is visited. Live placement uses the
 selected map, assigns exact god IDs to its altar records, applies source
 open-sea or lava-sea borders, and materializes authored monsters and items
-without ambient Temple spawns. Altar inspection, worship, and overflow altar
-placement still need their gameplay and presentation passes.
+without ambient Temple spawns. Temple altars now render with their saved god
+names, and restore rejects an altar identity that disagrees with the plan.
+Worship and Dungeon overflow altar placement still need gameplay passes.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition

@@ -29,6 +29,7 @@ features.from_source_glyph = {
 -- behavior. Their original identity remains in the saved vault record.
 features.vault_terrain = {
     DNGN_FLOOR = "DNGN_FLOOR",
+    DNGN_RANDOM_ALTAR = "DNGN_RANDOM_ALTAR",
     DNGN_ROCK_WALL = "DNGN_ROCK_WALL",
     DNGN_PERMAROCK_WALL = "DNGN_PERMAROCK_WALL",
     DNGN_STONE_WALL = "DNGN_STONE_WALL",
@@ -143,7 +144,8 @@ function features.apply_vault_terrain(cells, records, ctx, depth)
             if feature then
                 cells[record.y + 1][record.x + 1] = feature
 
-                if feature == record.identity then
+                if feature == record.identity and
+                    not (record.arguments and record.arguments.god_id) then
                     -- The grid now fully represents this unchanged feature.
                     keep = false
                 end

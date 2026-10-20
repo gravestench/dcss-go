@@ -75,6 +75,15 @@ function test.run(ctx)
 
         features.apply_vault_terrain(cells, built.records, ctx, 1)
 
+        for _, record in ipairs(built.records) do
+            if record.kind == effects.SOURCE_FEATURE and
+                record.identity == "DNGN_RANDOM_ALTAR" then
+                harness.equal(cells[record.y + 1][record.x + 1],
+                    "DNGN_RANDOM_ALTAR",
+                    id .. " displays its saved altar as terrain")
+            end
+        end
+
         if border then
             local outside = cells[1][1]
 

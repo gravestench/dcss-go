@@ -7,6 +7,7 @@ local colors = require("policy.presentation.colors")
 local clouds = require("policy.presentation.clouds")
 local identification = require("policy.items.identification")
 local component = require("constants.component")
+local god_names = require("constants.god_names")
 
 local view = {}
 
@@ -131,6 +132,21 @@ function view.detected_item()
     return { glyph = string.byte("{") }
 end
 
+-- An altar's saved god ID supplies its identity; the source B glyph is
+-- generic and cannot name a deity on its own. Worship is handled elsewhere.
+function view.altar(_, input)
+    local name = god_names[input.god_id]
+
+    if not name then
+        error("unknown altar god " .. tostring(input.god_id))
+    end
+
+    return {
+        name = "an altar of " .. name,
+        glyph = string.byte("_"),
+    }
+end
+
 -- Give an explicit vault tint first priority, then fall back by role and
 -- catalog type so unknown source colors never reach terminal ANSI output.
 function view.entity_color(input)
@@ -234,6 +250,11 @@ register.policy({
 register.policy({
     id = "presentation.detected_item",
     run = view.detected_item,
+})
+
+register.policy({
+    id = "presentation.altar",
+    run = view.altar,
 })
 
 register.policy({

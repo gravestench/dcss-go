@@ -154,9 +154,7 @@ func (g *Game) View() (view View) {
 
 func (g *Game) fillVaultView(view *View, level *Level) {
 	for _, record := range level.vaultRecords {
-		if !record.Pending ||
-			record.Overridden ||
-			!vaultVisibleKind(record.Kind) {
+		if record.Overridden {
 			continue
 		}
 
@@ -166,6 +164,17 @@ func (g *Game) fillVaultView(view *View, level *Level) {
 			index < 0 ||
 			index >= len(g.visible) ||
 			!g.visible[index] {
+			continue
+		}
+
+		if record.Kind == vault.KindSourceFeature &&
+			record.Identity == string(terrain.Altar) &&
+			!record.Pending {
+			g.fillAltarView(view, record)
+			continue
+		}
+
+		if !record.Pending || !vaultVisibleKind(record.Kind) {
 			continue
 		}
 
@@ -183,6 +192,28 @@ func (g *Game) fillVaultView(view *View, level *Level) {
 			Name:   record.Identity + " (unavailable)",
 			Role:   "vault_pending",
 		})
+	}
+}
+
+// Saved Temple altar IDs name the visible source feature through Lua. The
+// generic terrain owns movement and glyph; presentation owns divine names.
+func (g *Game) fillAltarView(view *View, record vault.Record) {
+	for _, argument := range record.Arguments {
+		if argument.Name != "god_id" {
+			continue
+		}
+
+		presentation := g.mustPresentationPolicy("presentation.altar",
+			map[string]any{"god_id": argument.String})
+		view.Entities = append(view.Entities, EntityView{
+			X:      record.X,
+			Y:      record.Y,
+			Glyph:  rune(presentation["glyph"].(int64)),
+			KindID: argument.String,
+			Name:   presentation["name"].(string),
+			Role:   "altar",
+		})
+		return
 	}
 }
 

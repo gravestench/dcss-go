@@ -1,8 +1,10 @@
 package game
 
 import (
+	"strings"
 	"testing"
 
+	"crawl/internal/terrain"
 	"crawl/internal/vault"
 )
 
@@ -68,6 +70,7 @@ func TestScheduledTempleEntryUsesSavedSourceMap(t *testing.T) {
 	}
 
 	assigned := make(map[string]bool)
+	altarPoints := make(map[string][2]int)
 
 	for _, record := range child.VaultRecords() {
 		if record.Kind != vault.KindSourceFeature ||
@@ -78,6 +81,7 @@ func TestScheduledTempleEntryUsesSavedSourceMap(t *testing.T) {
 		for _, argument := range record.Arguments {
 			if argument.Name == "god_id" {
 				assigned[argument.String] = true
+				altarPoints[argument.String] = [2]int{record.X, record.Y}
 			}
 		}
 	}
@@ -90,6 +94,35 @@ func TestScheduledTempleEntryUsesSavedSourceMap(t *testing.T) {
 	for _, id := range g.templePlan.MainGodIDs {
 		if !assigned[id] {
 			t.Fatalf("Temple omitted saved god %s", id)
+		}
+
+		point := altarPoints[id]
+
+		if child.Cells()[point[1]][point[0]] != terrain.Altar {
+			t.Fatalf("Temple god %s has no altar terrain at %v", id, point)
+		}
+	}
+
+	g.visibleLevelID = child.ID
+	g.visible = make([]bool, child.width*len(child.terrain))
+
+	for index := range g.visible {
+		g.visible[index] = true
+	}
+
+	visible := View{}
+	g.fillVaultView(&visible, child)
+	shown := make(map[string]bool)
+
+	for _, entity := range visible.Entities {
+		if entity.Role == "altar" {
+			shown[entity.KindID] = entity.Name != "" && entity.Glyph == '_'
+		}
+	}
+
+	for _, id := range g.templePlan.MainGodIDs {
+		if !shown[id] {
+			t.Fatalf("Temple god %s has no named visible altar", id)
 		}
 	}
 
@@ -139,6 +172,48 @@ func TestScheduledTempleEntryUsesSavedSourceMap(t *testing.T) {
 	if reentered.View.LevelID != child.ID ||
 		restored.levels[child.ID].VaultID() != child.VaultID() {
 		t.Fatal("Temple revisit rerolled its floor")
+	}
+
+	forged := g.Snapshot()
+	changed := false
+
+	for levelIndex := range forged.Levels {
+		if forged.Levels[levelIndex].ID != child.ID {
+			continue
+		}
+
+		for recordIndex := range forged.Levels[levelIndex].VaultRecords {
+			record := &forged.Levels[levelIndex].VaultRecords[recordIndex]
+
+			if record.Identity != string(terrain.Altar) {
+				continue
+			}
+
+			for argumentIndex := range record.Arguments {
+				if record.Arguments[argumentIndex].Name == "god_id" {
+					record.Arguments[argumentIndex].String = "GOD_NO_GOD"
+					changed = true
+					break
+				}
+			}
+
+			if changed {
+				break
+			}
+		}
+	}
+
+	if !changed {
+		t.Fatal("test could not find a saved Temple altar")
+	}
+
+	if bad, err := Restore(forged); err == nil ||
+		!strings.Contains(err.Error(), "Temple altar") {
+		if bad != nil {
+			_ = bad.Close()
+		}
+
+		t.Fatalf("forged Temple altar error = %v", err)
 	}
 }
 

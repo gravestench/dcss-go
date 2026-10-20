@@ -2015,6 +2015,38 @@ an engine edit; put its named hook at the matching
 `policy/generation/vaults/<family>/<name>.lua` path. Layout maps use the
 separate `vaults/layout/` catalog because they carve the base floor.
 
+#### Temple maps and entrances
+
+Temple has two auto-discovered `.des` families with different roles. Put a
+whole-floor map in `vaults/temple/<name>.des` with `PLACE: Temple`,
+`ORIENT: encompass`, and at least one `temple_altars_N` tag. `N` is the
+number of generic `B` altars this map can receive. The source-weighted
+selector considers ordinary maps by their advertised count; add
+`temple_rare` for a special map that fixes its own count. A map may list
+multiple ordinary counts when a named Lua hook changes its layout based on
+the selected count. Keep each map's `NAME` stable: a new game saves that ID
+before the player visits Temple.
+
+Put a Dungeon entrance in `vaults/temple_entry/<name>.des` with
+`TAGS: temple_entry`, an appropriate `ORIENT`, and exactly one final
+`KFEAT: O = enter_temple`. Its `O` cell becomes the linked down stair on
+the scheduled Dungeon floor. `WEIGHT` controls the source-weighted entry
+draw; the fitter retries another entry when a map cannot connect without
+overwriting protected stairs. Both families retain authored monsters, items,
+terrain, markers, and feature records.
+
+For calculated source directives, add
+`policy/generation/vaults/temple/<name>.lua` or
+`policy/generation/vaults/temple_entry/<name>.lua` and call its named method
+from `: vault.run("method")` in the corresponding `.des`. The hook uses the
+same vault `api` described below. `api:player().settings` supplies the
+selected altar count under `constants.temple_settings.ALTAR_COUNT`.
+Temple's generic `B` altars receive stable god IDs from the saved plan;
+do not hardcode a god name into a generic altar or use a module-level draw.
+The grid owns the walkable `_` feature, while
+`policy/presentation/view.lua` names an altar from its saved god ID using
+`constants.god_names`. Worship rules are a separate domain.
+
 The `builder/arena_*.des` family illustrates maps reserved for another game
 mode. Each definition keeps its original `MAP` rows and `arena_*` tag, but
 has no Dungeon `DEPTH` rule. `arena_items` and `arena_smoke` call the shared
