@@ -1,13 +1,56 @@
 local component = require("constants.component")
+local form_ids = require("constants.form_ids")
+local beam_displacement = require(
+    "policy.combat.monster_beams.displacement")
 local fixture = require("tests.monster_ally_support_fixture")
 local harness = require("tests.harness")
 local landing = require("policy.combat.monster_displacement.landing")
 local monsters = require("ids.monsters")
+local species = require("ids.species")
 local relocate = require("policy.combat.monster_displacement.relocate")
 local effects = require("policy.combat.monster_spells")
 local spells = require("ids.spells")
 
 local test = {}
+
+-- Harpoon Shot can hit the player, whose actor kind is a game identity rather
+-- than a monster catalog key. Pulling must inspect the player component
+-- before applying the monster-only stationary flag rule.
+local function harpoon_pulls_player(ctx)
+    local caster = fixture.actor(ctx, monsters.MONS_SWAMP_WORM, 10, 10)
+    local player = fixture.actor(ctx, "player", 13, 10)
+    local game = fixture.context(ctx, player)
+
+    ctx:add(player, component.PLAYER, {
+        species_id = species.SP_HUMAN,
+    })
+
+    harness.truthy(beam_displacement.pull(game, caster, player, 5),
+        "a landed harpoon pulls the player through open floor")
+    harness.equal(ctx:get(player, component.POSITION).x, 11,
+        "the player stops adjacent to the caster")
+
+    game:move_actor(player, 1, 13, 10)
+    ctx:add(player, component.PLAYER_FORM, {
+        form_id = form_ids.TREE,
+        remaining_aut = 10,
+    })
+
+    harness.falsy(beam_displacement.pull(game, caster, player, 5),
+        "tree form resists the same harpoon pull")
+    harness.equal(ctx:get(player, component.POSITION).x, 13,
+        "rooted player retains the original cell")
+
+    ctx:remove(player, component.PLAYER_FORM)
+    game.random = function(_, _, bound)
+        return bound - 1
+    end
+
+    harness.truthy(beam_displacement.push(game, caster, player, 5, 50),
+        "a forceful beam pushes the unrooted player")
+    harness.truthy(ctx:get(player, component.POSITION).x > 13,
+        "the pushed player lands behind the original cell")
+end
 
 -- The book discovery path, not a private test registry, must find each
 -- complete spell effect when a monster selects its slot.
@@ -315,6 +358,7 @@ function test.run(ctx)
     adjacent_player_fallback(ctx, game)
     held_monster_escape(ctx, game, player)
     visible_blink_message(ctx, game, player)
+    harpoon_pulls_player(ctx)
 end
 
 return test

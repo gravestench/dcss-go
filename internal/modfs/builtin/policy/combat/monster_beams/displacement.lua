@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local component = require("constants.component")
+local form_ids = require("constants.form_ids")
 local corpse_chunks = require("policy.combat.corpse_chunks")
 local habitat = require("policy.combat.monster_habitat")
 local monster_flags = require("constants.monster_flags")
@@ -7,8 +8,17 @@ local trajectory = require("policy.combat.trajectory")
 
 local displacement = {}
 
--- Stationary monsters ignore both pull and push even after a damaging beam contact.
+-- Stationary actors ignore both pull and push after a damaging beam contact.
 local function stationary(ctx, target)
+    if ctx:has(target, component.PLAYER) then
+        local form = ctx:get(target, component.PLAYER_FORM)
+
+        -- The player's actor kind is not a monster catalog ID. Tree form is
+        -- the currently ported source condition that roots the player.
+        return form and form.form_id == form_ids.TREE and
+            form.remaining_aut > 0 or false
+    end
+
     local actor = ctx:get(target, component.ACTOR)
 
     if not actor then
