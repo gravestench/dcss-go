@@ -202,7 +202,7 @@ function extra.generate(ctx, builder, context)
     local primary = place_chance_stage(ctx, builder, context, placed)
     local explicit = place.place(ctx, builder, context, placed, extra.place)
     local ordinary = minivault.place(ctx, builder, context,
-        placed, extra.place)
+        placed, extra.place, place_chance_map)
     unique_placement.place(ctx, builder, context, placed, extra.place)
 
     return placed, primary or explicit or ordinary, context.used:ids()

@@ -197,6 +197,45 @@ local function all_extra_pool_is_bounded()
         "failed fits do not consume map IDs")
 end
 
+-- A source serial controller has no MAP rows. The ordinary minivault draw
+-- must run its hook rather than ask the terrain placer to rotate no cells.
+local function mapless_controller_runs_its_hook()
+    local context = only_named({ ids.serial_nicolae_subway })
+
+    context.depth = 12
+
+    local builder = {}
+    local placed = {}
+    local called = false
+
+    -- Choose the sole eligible controller without depending on pool size.
+    function builder:roll()
+        return 0
+    end
+
+    -- A controller has no geometry to fit through the ordinary callback.
+    local function place()
+        error("mapless controller was sent to terrain placement")
+    end
+
+    -- Model the controller runner's save and child-placement effects.
+    local function controller(_, _, selected_context, selected_placed, vault)
+        called = true
+        selected_context.used:add(vault)
+        selected_placed[#selected_placed + 1] = { id = vault.id }
+
+        return true
+    end
+
+    local primary = minivault.place(nil, builder, context, placed,
+        place, controller)
+
+    harness.truthy(called, "mapless serial controller hook was skipped")
+    harness.equal(primary, ids.serial_nicolae_subway,
+        "controller did not become the selected extra")
+    harness.equal(#placed, 1, "controller result was dropped")
+end
+
 -- The pool, draw, and compatibility checks cover the source selection
 -- contract independently of a single generated-floor seed.
 function test.run()
@@ -205,6 +244,7 @@ function test.run()
     layout_filter_is_shared()
     extra_then_regular_stops()
     all_extra_pool_is_bounded()
+    mapless_controller_runs_its_hook()
 end
 
 return test

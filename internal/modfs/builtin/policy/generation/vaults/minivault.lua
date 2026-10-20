@@ -88,7 +88,8 @@ end
 -- Place each selected map before the next draw so its name and uniqueness
 -- tags constrain later candidates. The explicit cap prevents an all-extra
 -- pool from looping indefinitely when every fit fails.
-function minivault.place(ctx, builder, context, placed, place)
+function minivault.place(ctx, builder, context, placed, place,
+    place_controller)
     local candidates = minivault.candidates(context)
     local primary
 
@@ -100,11 +101,26 @@ function minivault.place(ctx, builder, context, placed, place)
         end
 
         local vault = catalog.get(selected.id)
-        local map = place(ctx, builder, vault, context)
+        local successful = false
 
-        if map then
-            placed[#placed + 1] = map
-            context.used:add(vault)
+        if #vault.rows == 0 then
+            if not place_controller then
+                error("mapless minivault needs a controller runner")
+            end
+
+            successful = place_controller(ctx, builder, context,
+                placed, vault)
+        else
+            local map = place(ctx, builder, vault, context)
+
+            if map then
+                placed[#placed + 1] = map
+                context.used:add(vault)
+                successful = true
+            end
+        end
+
+        if successful then
             primary = primary or vault.id
         end
 
