@@ -1973,6 +1973,13 @@ has no Dungeon `DEPTH` rule. `arena_items` and `arena_smoke` call the shared
 optionally constrained to a class. The arena game mode has not been ported
 yet, so these maps are registered without entering Dungeon's random pool.
 
+`builder/dungeon_decor.des` is a controller with no MAP rows. Its source
+`CHANCE` and `DEPTH` make it eligible on deep Dungeon and Depths floors;
+its Lua `place_decor` hook asks the shared selector for one map carrying
+the `decor` tag. Add that tag to a new `.des` map to join the effective
+pool. The child map retains its own depth, weight, layout, and uniqueness
+rules, and a geometry failure does not count as a placed decoration.
+
 Omitting `ORIENT` makes a map a floating **minivault**, as in DCSS. An
 explicit `ORIENT: float` makes it a regular vault instead. Give an ordinary
 minivault a `DEPTH` rule and positive `WEIGHT` to enter the weighted depth
