@@ -1,0 +1,14 @@
+# Crystal corners identify this destination; the three named markers
+# link outward to the other stations and inward from their exits.
+NAME: nicolae_sub_station_crystal
+TAGS: transparent serial_nico_subway
+MARKER: D = lua:transp_loc("nico_stone_station")
+MARKER: E = lua:transp_dest_loc("nico_crystal_station")
+MARKER: F = lua:transp_loc("nico_metal_station")
+MAP
+cc.bb
+cD..b
+..E..
+b..Fv
+bb.vv
+ENDMAP

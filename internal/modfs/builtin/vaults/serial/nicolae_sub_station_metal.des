@@ -1,0 +1,14 @@
+# Metal corners mark the third station; retain its authored marker names
+# because destination matching depends on those exact source identities.
+NAME: nicolae_sub_station_metal
+TAGS: transparent serial_nico_subway
+MARKER: D = lua:transp_loc("nico_crystal_station")
+MARKER: E = lua:transp_dest_loc("nico_metal_station")
+MARKER: F = lua:transp_loc("nico_stone_station")
+MAP
+bb.vv
+bD..v
+..E..
+v..Fc
+vv.cc
+ENDMAP

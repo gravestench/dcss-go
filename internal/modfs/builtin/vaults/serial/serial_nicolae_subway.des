@@ -1,0 +1,6 @@
+# Source subway controller has no cells. Its Lua post-place hook requests
+# all three station maps after the source CHANCE roll succeeds.
+NAME: serial_nicolae_subway
+DEPTH: D:8-, Depths, Elf, Shoals, Snake, Zot
+TAGS: luniq_serial
+: vault.post_place("place_stations")

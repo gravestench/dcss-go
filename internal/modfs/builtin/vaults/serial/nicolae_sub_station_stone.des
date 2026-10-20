@@ -1,0 +1,14 @@
+# Stone appears in opposite corners. Transport markers preserve the
+# source's named station links so a later movement slice can activate them.
+NAME: nicolae_sub_station_stone
+TAGS: transparent serial_nico_subway
+MARKER: D = lua:transp_loc("nico_metal_station")
+MARKER: E = lua:transp_dest_loc("nico_stone_station")
+MARKER: F = lua:transp_loc("nico_crystal_station")
+MAP
+vv.cc
+vD..c
+..E..
+c..Fb
+cc.bb
+ENDMAP

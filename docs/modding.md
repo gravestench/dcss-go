@@ -1986,6 +1986,14 @@ with an explicit `ORIENT` is a regular vault and does not enter this
 minivault `PLACE` stage. Other branches' authored maps become active when
 their branch generators are ported.
 
+`serial_nicolae_subway` shows a compact controller pattern: its `.des` file
+has a `CHANCE` rule and `vault.post_place` hook, while the hook's Lua module
+requests three maps by a shared tag. Each station's `.des` file keeps its
+`MARKER` destination names beside its MAP. Add a new station by giving it
+the family tag and suitable marker destinations; the tagged selector will
+discover it without a Go dispatch case. Marker records are saved now, while
+transporter movement is a later gameplay slice.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls
