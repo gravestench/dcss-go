@@ -1,0 +1,16 @@
+# feat_on_display: An opaque glass display hides one random feature.
+# This source mini_features map also joins the glass serial by tag.
+NAME:  feat_on_display
+DEPTH: D, Depths, Elf, Crypt
+TAGS:  serial_glass_rare allow_dup transparent
+KMASK: ?TUl = opaque
+KPROP: ? = no_tele_into
+SUBST: ? = TUl
+TAGS:  no_monster_gen no_item_gen
+MAP
+.....
+.mmm.
+.m?m.
+.mmm.
+.....
+ENDMAP

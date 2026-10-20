@@ -130,6 +130,7 @@ local function fallback_monster(ctx, level, record)
             arguments.attitude = resolved.attitude or ""
             arguments.spells = resolved.spells and
                 table.concat(resolved.spells, "|") or ""
+            arguments.generate_awake = resolved.generate_awake or false
             arguments.no_spawn = false
             record.identity = selected.name
             record.pending = true

@@ -1,0 +1,19 @@
+# due_unseen_surprise: A larger glass display trades loot for danger as depth rises.
+# This source mini_features map also joins the glass serial by tag.
+NAME:   due_unseen_surprise
+DEPTH:  D, Depths, Elf, Crypt
+TAGS:   serial_glass_rare allow_dup no_wall_fixup luniq transparent
+KPROP:  ab = no_tele_into
+KMASK:  ab%* = opaque
+: vault.run("configure")
+MAP
+........@
+.........
+..mmmmm..
+..maaam..
+..mabam..
+..maaam..
+..mmmmm..
+.........
+.........
+ENDMAP

@@ -112,7 +112,14 @@ end
 -- Preserve an explicit ambiguity for items or genuinely duplicated
 -- spawnable monsters; a player-only profile cannot steal a vault name.
 local function find_name(category, name, site)
-    local ids = name_index(category)[name:lower()]
+    local names = name_index(category)
+    local ids = names[name:lower()]
+
+    -- Legacy DES sometimes writes a display name with underscores, such as
+    -- unseen_horror. Prefer an exact alias, then normalize only for lookup.
+    if not ids and name:find("_", 1, true) then
+        ids = names[name:gsub("_", " "):lower()]
+    end
 
     if not ids then
         choice.fail(site, name, "unknown " .. category .. " name")
@@ -302,6 +309,7 @@ function resolve.monster(ctx, selected, depth, site)
         attitude = selected.attitude,
         spells = selected.spells,
         equipment = selected.equipment,
+        generate_awake = selected.generate_awake or false,
     }
 end
 

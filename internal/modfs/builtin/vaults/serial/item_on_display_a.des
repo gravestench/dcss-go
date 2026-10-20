@@ -1,0 +1,17 @@
+# item_on_display_a: Glass seals a common random item from direct access.
+# This source mini_features map also joins the glass serial by tag.
+NAME:   item_on_display_a
+DEPTH:  D, Depths, Elf, Crypt
+TAGS:   serial_glass_rare allow_dup transparent
+WEIGHT: 9
+KMASK:  %* = opaque
+KPROP:  % = no_tele_into
+SUBST:  % = %%%*
+TAGS:   no_monster_gen no_item_gen
+MAP
+.....
+.mmm.
+.m%m.
+.mmm.
+.....
+ENDMAP

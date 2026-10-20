@@ -1,0 +1,8 @@
+# A one-percent glass serial adds a non-flat number of common columns and,
+# outside Dis, a smaller independent pool of rare display vaults. The
+# source keeps both pools in mini_features.des; their maps are below here.
+NAME: serial_glass
+TAGS: allow_dup extra luniq_serial decor nolayout_encompass
+DEPTH: D, Depths, Elf, Vaults, Crypt, Dis
+CHANCE: 1%
+: vault.post_place("place_glass")

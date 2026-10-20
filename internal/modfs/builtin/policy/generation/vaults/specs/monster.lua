@@ -84,6 +84,11 @@ local function parse_term(text, expression, site)
             end
 
             result.place = value
+        elseif token == "generate_awake" then
+            -- The source modifier is separate from the monster's display
+            -- name. The current population starts actors awake by default,
+            -- but its typed intent stays on the vault record for saves.
+            result.generate_awake = true
         elseif key then
             choice.fail(site, expression, "unknown monster modifier " .. key)
         else

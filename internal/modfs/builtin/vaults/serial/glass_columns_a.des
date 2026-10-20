@@ -1,0 +1,14 @@
+# glass_columns_a: Four transparent pillars interrupt a small open floor.
+# This source mini_features map also joins the glass serial by tag.
+NAME:   glass_columns_a
+DEPTH:  D, Depths, Elf, Crypt, Dis
+TAGS:   serial_glass transparent extra allow_dup decor
+: vault.run("glass_setup.dis_columns")
+WEIGHT: 5
+MAP
+.....
+.m.m.
+.....
+.m.m.
+.....
+ENDMAP

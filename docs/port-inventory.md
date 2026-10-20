@@ -277,9 +277,8 @@ cell when an earlier one cannot spawn; the kennel uses this to fall back
 from a duplicate Grum to a gnoll. The twenty-nine-map window family adds its
 controller plus five small, eighteen common, and five rare glass-barrier
 pieces. All three window pools place through named tags. Its optional
-`serial_glass` request is present, but the glass pieces live in the separate
-`mini_features.des` corpus and have not yet been imported. The fifteen-map
-sigils family adds a rare
+`serial_glass` request now draws from three common maps in the separate
+`mini_features.des` corpus. The fifteen-map sigils family adds a rare
 Depths, Elf, and Crypt controller with fourteen weighted stone shapes. Its
 source helper's common tags and three surface rules are carried by each
 committed map; branch generation will activate these maps when those floors
@@ -287,8 +286,14 @@ are ported. The sixteen-map ice family adds a Dungeon/Cocytus controller
 and fifteen weighted pieces. One named Lua module applies the source's
 branch-specific monster pools, ice surface rules, and typed fog markers.
 The controller can request an Ice Cave entrance when a mod adds the source
-`uniq_icecv` pool; without that pool it consumes no cave coinflip. The
-builder and serial count is now 252 of 600.
+`uniq_icecv` pool; without that pool it consumes no cave coinflip. The one-map `serial_glass`
+controller adds a non-flat common draw and an independent rare draw that
+is skipped in Dis. The nine tagged maps came from the separate variable
+source corpus, so the builder and serial source count is now 253 of 600.
+Dis-only crystal pillars and the depth-dependent unseen-horror display run
+through named Lua hooks. The source `generate_awake` modifier is preserved
+on typed monster records; current monster creation already starts actors
+awake.
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
 `uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those

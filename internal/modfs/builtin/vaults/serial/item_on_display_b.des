@@ -1,0 +1,17 @@
+# item_on_display_b: A rarer display changes the random item class behind glass.
+# This source mini_features map also joins the glass serial by tag.
+NAME:   item_on_display_b
+DEPTH:  D, Depths, Elf, Crypt
+TAGS:   serial_glass_rare allow_dup transparent
+WEIGHT: 1
+KMASK:  *| = opaque
+KPROP:  * = no_tele_into
+SUBST:  * = ***|
+TAGS:   no_monster_gen no_item_gen
+MAP
+.....
+.mmm.
+.m*m.
+.mmm.
+.....
+ENDMAP

@@ -1,0 +1,19 @@
+# minmay_strange_pillars: Separated glass-and-crystal pillars create a rare visual field.
+# This source mini_features map also joins the glass serial by tag.
+NAME:  minmay_strange_pillars
+TAGS:  serial_glass_rare transparent allow_dup extra decor
+DEPTH: D, Depths, Elf, Crypt, Dis
+: vault.run("glass_setup.dis_columns")
+MAP
+ ...   ...
+..m.. ..m..
+.mbm...mbm.
+..m.. ..m..
+ ...   ...
+  .     .
+ ...   ...
+..m.. ..m..
+.mbm...mbm.
+..m.. ..m..
+ ...   ...
+ENDMAP

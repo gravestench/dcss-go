@@ -1,0 +1,16 @@
+# glass_columns_b: A wider set of glass pillars shapes several parallel paths.
+# This source mini_features map also joins the glass serial by tag.
+NAME:   glass_columns_b
+DEPTH:  D, Depths, Elf, Crypt, Dis
+TAGS:   serial_glass transparent extra allow_dup decor
+: vault.run("glass_setup.dis_columns")
+WEIGHT: 3
+MAP
+.......
+.m.m.m.
+.......
+.m.m.m.
+.......
+.m.m.m.
+.......
+ENDMAP

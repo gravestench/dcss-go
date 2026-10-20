@@ -2030,7 +2030,16 @@ declares its pool and source weight in its own `.des` file. This lets a mod add
 one window shape without changing the controller or a central file list.
 The controller also requests the separate `serial_glass` pool. That request
 currently places no maps because the source glass pieces from
-`mini_features.des` still need importing.
+`mini_features.des` are now committed as individual vaults. A map may live in
+one source category while joining another controller through a shared tag.
+The glass controller requests a common pool and, outside Dis, a rare pool.
+Its three common column maps and six rare display maps all have source
+`DEPTH` declarations, so they can also enter ordinary weighted minivault
+selection. The `due_unseen_surprise` hook keeps its shallow loot case and
+deeper unseen-horror alternatives in one readable Lua file. Source monster
+specifiers such as `generate_awake` stay in typed records; adding a new
+monster case should extend that shared parser rather than make a per-map
+name special case.
 
 The sigils family shows a source helper whose output is fixed for every
 child map. Each committed `.des` definition carries its own shared tags and
