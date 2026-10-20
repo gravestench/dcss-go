@@ -199,10 +199,12 @@ entry, save, and restore. Depths also opens from its scheduled Dungeon
 entrance. Temple and Vaults entrances remain labelled but unavailable until
 their primary layout families are ported. Other branch-specific mechanics
 still need parity.
-The Temple content catalog now includes all 53 source Dungeon entry maps
-and 43 main Temple maps without map-specific Lua. These maps are parsed and
-catalog-validated but are not yet selected for live generation; the remaining 47
-scripted main maps, god allocation, and altar effects must be ported first.
+The Temple content catalog now includes all 53 source Dungeon entry maps,
+43 main maps without map-specific Lua, and 11 main maps with source Lua
+ported to named hooks. These are parsed and catalog-validated but are not
+yet selected for live generation; the remaining 36 scripted maps, god
+allocation, and altar effects must be ported first. Border fill is stored
+as typed pending map data until Temple placement applies it.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition

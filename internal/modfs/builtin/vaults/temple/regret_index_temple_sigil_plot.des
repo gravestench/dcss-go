@@ -1,0 +1,56 @@
+# Source Temple MAP; its Lua script is ported to a same-named hook.
+NAME:    regret_index_temple_sigil_plot
+TAGS:    no_cloud_gen temple_altars_21
+PLACE:   Temple
+ORIENT:  encompass
+NSUBST:  A = 1:{ / *:B
+SHUFFLE: -G / -G / ~~, CDE / CDE / LLL, CDE
+SUBST:   - = ., ~ = c, ' : VGc...., ' : VGc....
+SUBST:   CD = c, E : cll, L = l
+TILE:    c = wall_stone_dark
+: vault.run("configure")
+MAP
+lllllllllllllllDllllllllElllllllllllllllllllCllllll
+lllllllllllllllDllllllllElllllllllllllllllllCllllll
+llllllllllllllllDllllllllElllllllllllllllllClllllll
+CCllllllllllllllDllllllllElllllllllllllllllClllllll
+llCClllllllllllllDllllllllElllllllllllllllCllllllll
+llllCClllllllllllDllllllllElllllllllllllllCllllllll
+llllllCClllllllllllllllllllllllllllllllllllllllllll
+lllllllllllllllllllllllllllllllllllllllllllllllllll
+lllllllll.cc...l...c...ll...c....l.l....c.lllllllll
+llllllll....cc...A.c........c...........c..llllllDD
+llllllll......cc....c........c.....A...c...llllDDll
+llllllll........cc..c.cc...A.c.........c.A.llDDllll
+lllllllll.........cc.c..cc....c.......c....llllllll
+llllllll...A.....c...c....cc..c.......c..ccllllllll
+lllllllll........c....c.B...cc.........cc..llllllll
+llllllll........c.....c....c.........cc....llllllll
+lllllllll....B..c..B...c...c..B....cc..c...llllllll
+llllllll.......c.......c....c....cc....c..lllllllll
+llllllll....cc.c.....cc'cc..c..cc.....c...lllllllEE
+llllllll..cc..c....cc..c--cc"cc...B...c....llllEEll
+llllllllcc....c..cc....c----c........c..A..llEEllll
+llllllll.....c.cc.....c--G--c.....cc.c.....llllllll
+llllEEll..A..c........c----c....cc..c....ccllllllll
+llEEllll....c...B...cc"cc--c..cc....c..cc..llllllll
+EElllllll...c.....cc..c..cc'cc.....c.cc....llllllll
+lllllllll..c....cc....c....c.......c.......llllllll
+llllllll...c..cc....B..c...c...B..c.......lllllllll
+llllllll....cc.........c....c.....c..B.....llllllll
+llllllll..cc.........cc...B.c....c........lllllllll
+llllllllcc..c.......c..cc....c...c.........llllllll
+llllllll....c.......c....cc..c.cc......A..lllllllll
+llllDDll.A.c.........c.A...cc.c..cc........llllllll
+llDDllll...c...A.....c........c....cc......llllllll
+DDllllll..c...........c........c.A...cc....llllllll
+lllllllll.c....l.l....c...ll...c...l...cc.lllllllll
+lllllllllllllllllllllllllllllllllllllllllllllllllll
+lllllllllllllllllllllllllllllllllllllllllllCCllllll
+llllllllClllllllllllllllEllllllllDlllllllllllCCllll
+llllllllClllllllllllllllEllllllllDlllllllllllllCCll
+lllllllClllllllllllllllllEllllllllDllllllllllllllCC
+lllllllClllllllllllllllllEllllllllDllllllllllllllll
+llllllClllllllllllllllllllEllllllllDlllllllllllllll
+llllllClllllllllllllllllllEllllllllDlllllllllllllll
+ENDMAP

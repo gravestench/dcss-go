@@ -1,0 +1,63 @@
+# Source Temple MAP; its Lua script is ported to a same-named hook.
+NAME:    eino_temple_water
+TAGS:    no_pool_fixup no_rotate temple_altars_14
+PLACE:   Temple
+ORIENT:  encompass
+: vault.run("configure")
+MAP
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwww...wwwwwwwwwwwwwww
+wwwwwwwwwwwwww..B..wwwwwwwwwwwwww
+wwwwwwwwwwww.........wwwwwwwwwwww
+wwwwwwwwwwww....B....wwwwwwwwwwww
+wwwwwwwwwww..B.....B..wwwwwwwwwww
+wwwwwwwwwwww.........wwwwwwwwwwww
+wwwwwwwwwwww...www...wwwwwwwwwwww
+wwwwwwwwwww...wwwww...wwwwwwwwwww
+wwwwwwwwww...ww...ww...wwwwwwwwww
+wwwwwwwwww......B......wwwwwwwwww
+wwwwwwwww..B.........B..wwwwwwwww
+wwwwwwwwww...www.......wwwwwwwwww
+wwwwwwwwwwwwwwwww...wwwwwwwwwwwww
+wwwwwwwwwwwwwwwwww...wwwwwwwwwwww
+wwwwwwwwwwwwwwwwwww...wwwwwwwwwww
+wwwwwwwwwwwwwwwwwww...wwwwwwwwwww
+wwwwwwwwwwwwwwwwww...wwwwwwwwwwww
+wwwwwwwwwwwwwwwww...wwwwwwwwwwwww
+wwwwwwwwwww...........wwwwwwwwwww
+wwwwwwwwww..G...{...G..wwwwwwwwww
+wwwwwwwwwww...........wwwwwwwwwww
+wwwwwwwwwwwww...wwwwwwwwwwwwwwwww
+wwwwwwwwwwww...wwwwwwwwwwwwwwwwww
+wwwwwwwwwww...wwwwwwwwwwwwwwwwwww
+wwwwwwwwwww...wwwwwwwwwwwwwwwwwww
+wwwwwwwwwwww...wwwwwwwwwwwwwwwwww
+wwwwwwwwwwwww...wwwwwwwwwwwwwwwww
+wwwwwwwwww.......www...wwwwwwwwww
+wwwwwwwww..B.........B..wwwwwwwww
+wwwwwwwwww......B......wwwwwwwwww
+wwwwwwwwww...ww...ww...wwwwwwwwww
+wwwwwwwwwww...wwwww...wwwwwwwwwww
+wwwwwwwwwwww...www...wwwwwwwwwwww
+wwwwwwwwwwww.........wwwwwwwwwwww
+wwwwwwwwwwww.B.....B.wwwwwwwwwwww
+wwwwwwwwwww.....B.....wwwwwwwwwww
+wwwwwwwwwwww.........wwwwwwwwwwww
+wwwwwwwwwwwwww..B..wwwwwwwwwwwwww
+wwwwwwwwwwwwwww...wwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ENDMAP

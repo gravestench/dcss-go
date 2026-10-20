@@ -1,0 +1,46 @@
+# Source Temple MAP; its Lua script is ported to a same-named hook.
+NAME:   hellmonk_temple_beads
+TAGS:   temple_altars_6 temple_altars_7 temple_altars_8 temple_altars_9
+TAGS:   temple_altars_10
+PLACE:  Temple
+ORIENT: encompass
+SUBST:  -:c........
+: vault.run("configure")
+SUBST:  E:GG., F:G..
+MAP
+ ccccc    ccccc    ccccc
+cc...cc  cc...cc  cc...cc
+c.....cccc.....cccc.....c
+c..D........D........D..c
+c.....cccc.....cccc.....c
+cc...cccccc...cccccc...cc
+ cc.ccccccccccccccccc.cc
+  c.ccccccccccccccccc.c
+  c.ccccccccccccccccc.c
+ cc.ccccccccccccccccc.cc
+cc...cccccc...cccccc...cc
+c.....cccc.....cccc.....c
+c..D........D..cccc..D..c
+c.....cccc.....cccc.....c
+cc...cc  cc...cccccc...cc
+ ccccc    cc.cccccccc.cc
+           c.cccccccc.c
+           c.cccccccc.c
+ ccccc    cc.cccccccc.cc
+cc...cc  cc...cccccc...cc
+c.....cccc.....cccc.....c
+c..D........D..cccc..D..c
+c.....cccc.....cccc.....c
+cc...cccccc...cccccc...cc
+ cc.ccccccccccccccccc.cc
+  c.ccccccccccccccccc-c
+  c.ccccccccccccccccc-c
+ cc.cccccccccc.F.cccc-c
+cc...ccccccccE...Eccc-c
+c.....cccccc.......cc-c
+c..D...........{....--c
+c.....cccccc.......cccc
+cc...cc    ccE...Ecc
+ ccccc      cc.F.cc
+             ccccc
+ENDMAP

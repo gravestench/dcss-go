@@ -1,0 +1,52 @@
+# Source Temple MAP; its Lua script is ported to a same-named hook.
+NAME:    jpeg_temple_island
+TAGS:    no_rotate no_pool_fixup temple_altars_9
+PLACE:   Temple
+ORIENT:  encompass
+MONS:    bush, plant
+SUBST:   W = W:30 w, ~ = ':20 W
+NSUBST:  ' = 5:t / 7:1 / 4:2 / *:'
+NSUBST:  A = 1:{ / *:'
+COLOUR:  ' = green / brown w:2
+FTILE:   'A12 = floor_grass
+FTILE:   .BT = floor_vault
+: vault.run("configure")
+MAP
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwWWWWWWWWWWWWWWWWWWWwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwWW~~~~~~~~~~~~~~~~~WWwwwwwwwwwwwwww
+wwwwwwwwwwwwwWW~'''''''''''''''''~WWwwwwwwwwwwwww
+wwwwwwwwwwwwWW~'''''''''''''''''''~WWwwwwwwwwwwww
+wwwwwwwwwwwWW~'''''''''''''''''''''~WWwwwwwwwwwww
+wwwwwwwwwwWW~''''''''ccccccc''''A'''~WWwwwwwwwwww
+wwwwwwwwwWW~'''''''ccc.....ccc'''''''~WWwwwwwwwww
+wwwwwwwwWW~''''''ccc...B.....ccc''''''~WWwwwwwwww
+wwwwwwwwW~''''''cc.........B...cc''''''~Wwwwwwwww
+wwwwwwwwW~''''''+...B........B..c''''''~Wwwwwwwww
+wwwwwwwwW~''A'''+.......B.T.....c''''''~Wwwwwwwww
+wwwwwwwwW~''''''+...B........B..c''''''~Wwwwwwwww
+wwwwwwwwW~''''''cc.........B...cc''''''~Wwwwwwwww
+wwwwwwwwWW~''''''ccc...B.....ccc''''''~WWwwwwwwww
+wwwwwwwwwWW~'''''''ccc.....ccc'''''''~WWwwwwwwwww
+wwwwwwwwwwWW~''''''''ccccccc''''A'''~WWwwwwwwwwww
+wwwwwwwwwwwWW~'''''''''''''''''''''~WWwwwwwwwwwww
+wwwwwwwwwwwwWW~'''''''''''''''''''~WWwwwwwwwwwwww
+wwwwwwwwwwwwwWW~'''''''''''''''''~WWwwwwwwwwwwwww
+wwwwwwwwwwwwwwWW~~~~~~~~~~~~~~~~~WWwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwWWWWWWWWWWWWWWWWWWWwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ENDMAP

@@ -1,0 +1,44 @@
+# Source Temple MAP; its Lua script is ported to a same-named hook.
+NAME:   hellmonk_temple_divided_pantheon
+TAGS:   temple_altars_7 temple_altars_9 temple_altars_11 temple_altars_13
+TAGS:   temple_altars_15 temple_altars_17 temple_altars_19
+PLACE:  Temple
+ORIENT: encompass
+FTILE:  DRQ' = floor_infernal
+FTILE:  EJK- = floor_w_marble
+FTILE:  {SHGPBL. = floor_limestone
+COLOUR: ' = red
+COLOUR: - = white
+COLOUR: G. = yellow
+: vault.run("configure")
+MARKER:  P = lua:transp_loc("pantheon_dark_entry")
+MARKER:  Q = lua:transp_dest_loc("pantheon_dark_entry")
+MARKER:  R = lua:transp_loc("pantheon_dark_exit")
+MARKER:  S = lua:transp_dest_loc("pantheon_dark_exit")
+MARKER:  H = lua:transp_loc("pantheon_light_entry")
+MARKER:  J = lua:transp_dest_loc("pantheon_light_entry")
+MARKER:  K = lua:transp_loc("pantheon_light_exit")
+MARKER:  L = lua:transp_dest_loc("pantheon_light_exit")
+MAP
+      ccccccc
+     ccc.B.ccc
+    ccDn...nEcc
+   cc''n...n--cc
+cccc'''n...n---cccc
+ccD'''Dn...nE---Ecc
+c''''''n...n------c
+c''D'''n...n--E---c
+c''''''n...n------c
+c'''''RnS.HnJ-----c
+cD'''''nG.Gn-----Ec
+c'''''QnP.LnK-----c
+c''D'''n...n--E---c
+c''''''n...n------c
+c'''''Dn...nE-----c
+ccD''''n...n----Ecc
+cccc'''n...n---cccc
+   cc''n...n--cc
+    ccDn.{.nEcc
+     ccc...ccc
+      ccccccc
+ENDMAP

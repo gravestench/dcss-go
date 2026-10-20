@@ -1,0 +1,51 @@
+# Source Temple MAP; its Lua script is ported to a same-named hook.
+NAME:    pdpol_scorched_temple
+TAGS:    no_cloud_gen temple_rare temple_altars_12 no_pool_fixup
+PLACE:   Temple
+ORIENT:  encompass
+WEIGHT:  5
+KFEAT:   I = altar_ignis
+MARKER:  I = lua:fog_machine { cloud_type = "grey smoke", \
+             pow_max = 3, delay_min = 10, delay_max = 30, \
+             start_clouds = 0, size = 1, excl_rad = -1 }
+: vault.run("configure")
+SUBST:   ^ = ^!!
+KFEAT:   ^ = web
+SUBST:   " = -!!
+SUBST:   ' =  LL--!^
+SUBST:   L =  ll-
+SUBST:   b = bbx
+SUBST:   G = G!
+COLOUR:  - = brown
+COLOUR:  x! = red
+COLOUR:  b = lightred
+COLOUR:  AG = red
+TILE:    G = dngn_crumbled_column
+RTILE:   x = wall_volcanic
+FTILE:   AGI^! = floor_rough_red
+FTILE:   - = floor_rough_brown
+MAP
+xxxxxxxxxxxxxxcccccxx
+xxxxxxxxxxxxxcc.B.ccx
+xxxxxxxxxxxxccB.w.Bcc
+xxxxxxxxxxxxc..Www..c
+xxxxxxxxxxxxcTwwBwwTc
+xxxxxxxxxxxxc..www..c
+xxxbbbbbxxxxccB.w.Bcc
+xxbb^G^bbxxxxcc.T.ccx
+xbG^"""^Gbxxxxcc.ccxx
+bb^"'''"^bbbbbbc.cxxx
+b^"'LLL'"G^^^^Gc.cxxx
+bG"""IL'"A"""""+{cxxx
+b^"'LLL'"G^^^^Gc.cxxx
+bb^"'''"^bbbbbbc.cxxx
+xbG^"""^Gbxxxxcc.ccxx
+xxbb^G^bbxxxxcc.T.ccx
+xxxbbbbbxxxxccB.w.Bcc
+xxxxxxxxxxxxc..www..c
+xxxxxxxxxxxxcTwwBwwTc
+xxxxxxxxxxxxc..Www..c
+xxxxxxxxxxxxccB.w.Bcc
+xxxxxxxxxxxxxcc.B.ccx
+xxxxxxxxxxxxxxcccccxx
+ENDMAP

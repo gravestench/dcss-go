@@ -1,0 +1,38 @@
+# Source Temple MAP; its Lua script is ported to a same-named hook.
+NAME:    bh_familiar_temple
+TAGS:    no_rotate no_hmirror no_vmirror
+TAGS:    temple_altars_11 temple_altars_15 temple_altars_17
+PLACE:   Temple
+ORIENT:  encompass
+KFEAT:   Q : abandoned_shop
+: vault.run("configure")
+# One door tile to every room, just like-
+NSUBST:  d = 1:+ / *:c, e = 1:+ / *:c, f = 1:+ / *:c, g = 1:+ / *:c
+NSUBST:  h = 1:+ / *:c, i = 1:+ / *:c, j = 1:+ / *:c, k = 1:+ / *:c
+NSUBST:  l = 1:+ / *:c, m = 1:+ / *:c, n = 1:+ / *:c, o = 1:+ / *:c
+NSUBST:  p = 1:+ / *:c, q = 1:+ / *:c, r = 1:+ / *:c, s = 1:+ / *:c
+NSUBST:  t = 1:+ / *:c, u = 1:+ / *:c
+SHUFFLE: '"
+FTILE:   ' = floor_grass
+FTILE:   " = floor_dirt
+COLOUR:  ' = green
+COLOUR:  " = brown
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x''''''''''''''''''''''{'''''''x
+x'ccccccddccccccccccccc""ccccc'x
+x'c.B..c..c...c..B.c..e""f...c'x
+x'c....cB.c.B.c....c..e""f.B.c'x
+x'cggggcccc...c+ccccccc""f...c'x
+x'"""""cB.c...c"c.Bc..c"cccccc'x
+x'cccc"c..chhhc"c..c.Bc"i...Bc'x
+x'cB.j"ckkc""T""cllc..c"i....c'x
+x'c..j"""""""""""""cmmc"i....c'x
+x'ccccnnnc"ccccooc""""""iB...c'x
+x'cB.c...c"p..c..cqqqqcccccccc'x
+x'c..c.B.c"p.BcB.c....cB.cB..s'x
+x'c..c...c"cccc..c..B.c..c...s'x
+x'cttccccc""T"cccccccccuuccccc'x
+x''''''''''''''''''''''''''''''x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

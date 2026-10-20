@@ -3,6 +3,7 @@
 local features = {
     TREE = "tree",
     GRANITE_STATUE = "granite_statue",
+    STONE_WALL = "stone_wall",
 }
 
 return features

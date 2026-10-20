@@ -1,0 +1,64 @@
+# Source Temple MAP; its Lua script is ported to a same-named hook.
+NAME:    nicolae_temple_the_god_donut
+TAGS:    no_pool_fixup temple_altars_21
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: gG
+NSUBST:  A = 1:{ / *:B
+SUBST:   g : ...cxT, G : Gccc.
+: vault.run("configure")
+MAP
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww.g..G..g.wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwG...........Gwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwww.................wwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww.g.................g.wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwww...........A...........wwwwwwwwwwwwwww
+wwwwwwwwwwwwwwG.......................Gwwwwwwwwwwwwww
+wwwwwwwwwwwww.........B.......B.........wwwwwwwwwwwww
+wwwwwwwwwwww..............B..............wwwwwwwwwwww
+wwwwwwwwwwwwg.....B...............B.....gwwwwwwwwwwww
+wwwwwwwwwww...............................wwwwwwwwwww
+wwwwwwwwwww.............ccAcc.............wwwwwwwwwww
+wwwwwwwwwwG...........ccccccccc...........Gwwwwwwwwww
+wwwwwwwwww.....B.....ccccccccccc.....B.....wwwwwwwwww
+wwwwwwwww...........ccccccccccccc...........wwwwwwwww
+wwwwwwwwwg..........ccccccccccccc..........gwwwwwwwww
+wwwwwwwww..........ccccccccccccccc..........wwwwwwwww
+wwwwwwwww.....B....ccccccccccccccc....B.....wwwwwwwww
+wwwwwwwwwG.........AcccccccccccccA.........Gwwwwwwwww
+wwwwwwwww..........ccccccccccccccc..........wwwwwwwww
+wwwwwwwww..........ccccccccccccccc..........wwwwwwwww
+wwwwwwwwwg....B.....ccccccccccccc.....B....gwwwwwwwww
+wwwwwwwww...........ccccccccccccc...........wwwwwwwww
+wwwwwwwwww...........ccccccccccc...........wwwwwwwwww
+wwwwwwwwwwG...........ccccccccc...........Gwwwwwwwwww
+wwwwwwwwwww.....B.......ccAcc.......B.....wwwwwwwwwww
+wwwwwwwwwww...............................wwwwwwwwwww
+wwwwwwwwwwwwg...........................gwwwwwwwwwwww
+wwwwwwwwwwww........B...........B........wwwwwwwwwwww
+wwwwwwwwwwwww...........................wwwwwwwwwwwww
+wwwwwwwwwwwwwwG.........B...B.........Gwwwwwwwwwwwwww
+wwwwwwwwwwwwwww.......................wwwwwwwwwwwwwww
+wwwwwwwwwwwwwwww.g.................g.wwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwww.................wwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwG...........Gwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww.g..G..g.wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ENDMAP

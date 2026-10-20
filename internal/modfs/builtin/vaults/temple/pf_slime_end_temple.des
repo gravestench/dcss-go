@@ -1,0 +1,45 @@
+# Source Temple MAP; its Lua script is ported to a same-named hook.
+NAME:      pf_slime_end_temple
+TAGS:      temple_rare temple_altars_11
+PLACE:     Temple
+ORIENT:    encompass
+WEIGHT:    5
+NSUBST:    J = 11:B / *:J
+KFEAT:     J = altar_jiyva
+KFEAT:     S = slimy_wall
+SUBST:     " : " .:3,  " = .c, ' : ' .:3,  ' = .S
+SUBST:     - = --.
+LFLOORCOL: green
+COLOUR:    - = lightgray
+FTILE:     .JB = floor_slime
+: vault.run("configure")
+MAP
+SSSSSSSSSSSSSSSSSSSSSSSSSSSS
+SSSSSSSS''''''''''''SSSSSSSS
+SSSSSSS'............'SSSSSSS
+SSSSSS'..............'SSSSSS
+SSSSS'...""""."""""...'SSSSS
+SSSS'..."cccc.ccccc"...'SSSS
+SSS'..."ccJcc..ccJcc"...'SSS
+SS'..."cc...cc.c...cc"...'SS
+S'..."ccJ..cc..cc..Jcc"...'S
+S'.."cc....Jc.ccJ....cc"..'S
+S'.."cc....cc..cc....cc"..'S
+S'.."cccJ.c.cc.c.c.Jccc"..'S
+S'.."ccccccc....ccccccc"..'S
+S..-.c...c....J...c...c"..'S
+S.-{-.c...c....c...c......'S
+S..-.ccccccc....ccccccc"..'S
+S'.."cccJ.c.cc.c.c.Jccc"..'S
+S'.."cc....cc..cc....cc"..'S
+S'.."cc....Jc.ccJ....cc"..'S
+S'..."ccJ..cc..cc..Jcc"...'S
+SS'..."cc...cc.c...cc"...'SS
+SSS'..."ccJcc..ccJcc"...'SSS
+SSSS'..."cccc.ccccc"...'SSSS
+SSSSS'...""""."""""...'SSSSS
+SSSSSS'..............'SSSSSS
+SSSSSSS'............'SSSSSSS
+SSSSSSSS''''''''''''SSSSSSSS
+SSSSSSSSSSSSSSSSSSSSSSSSSSSS
+ENDMAP

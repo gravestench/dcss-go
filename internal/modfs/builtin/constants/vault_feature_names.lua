@@ -8,6 +8,8 @@ local names = {
     WRECKAGE = "broken wreckage",
     WARNING_STATUE = "a statue of a dreadful foe",
     BROKEN_PILLAR = "broken pillar",
+    CHESS_PIECE_STATUE = "a statue of a chess piece",
+    RUNE_CARVED_STONE_WALL = "rune-carved stone wall",
 }
 
 return names
