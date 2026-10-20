@@ -142,7 +142,8 @@ function catalog.choose(random, branch_id, local_depth, branch_bottom,
 
     for _, id in ipairs(catalog.ids()) do
         local definition = catalog.get(id)
-        local weight = weights.for_branch(definition, branch_id)
+        local weight = weights.for_branch(definition, branch_id,
+            local_depth, branch_bottom)
 
         if weight > 0 and
             depth_rules.eligible(definition, branch_id,

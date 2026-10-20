@@ -64,6 +64,7 @@ function catalog.load()
             tags = definition.tags,
             orientation = definition.orientation,
             weight = definition.weight,
+            weights = definition.weights,
             depths = definition.depths,
             chances = definition.chances,
         }

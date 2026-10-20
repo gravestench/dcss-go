@@ -2,6 +2,7 @@
 local categories = require("constants.catalog")
 local chance_units = require("constants.vault_chance")
 local depth = require("policy.generation.vaults.depth")
+local weights = require("policy.generation.vaults.weight")
 
 local selection = {}
 
@@ -72,8 +73,10 @@ local function candidates_for_tag(random, tag, context)
 
     for _, id in ipairs(register.ids(categories.VAULTS)) do
         local definition = register.get(categories.VAULTS, id)
+        local map_weight = weights.for_branch(definition, context.branch_id,
+            context.depth, context.branch_bottom)
 
-        if definition.tags[tag] and definition.weight > 0 and
+        if definition.tags[tag] and map_weight > 0 and
             (not context.family or definition.family == context.family) and
             (not context.excluded or not context.excluded[id]) and
             (not context.used or not context.used[id] or
@@ -85,8 +88,11 @@ local function candidates_for_tag(random, tag, context)
 
             if chance == chance_units.ROLL or
                 (chance > 0 and random:roll(chance_units.ROLL) < chance) then
-                total = total + definition.weight
-                candidates[#candidates + 1] = definition
+                total = total + map_weight
+                candidates[#candidates + 1] = {
+                    definition = definition,
+                    weight = map_weight,
+                }
             end
         end
     end
@@ -106,12 +112,12 @@ function selection.choose_tag(random, tag, context)
 
     local draw = random:roll(total)
 
-    for _, definition in ipairs(candidates) do
-        if draw < definition.weight then
-            return definition
+    for _, candidate in ipairs(candidates) do
+        if draw < candidate.weight then
+            return candidate.definition
         end
 
-        draw = draw - definition.weight
+        draw = draw - candidate.weight
     end
 
     error("vault tag weight selection exceeded the catalog")

@@ -163,8 +163,18 @@ local function matches(rule, name, local_depth, branch_bottom)
         return local_depth ~= nil and local_depth == branch_bottom
     end
 
+    if local_depth == nil and (rule.first or rule.last) then
+        return false
+    end
+
     return (not rule.first or local_depth >= rule.first) and
         (not rule.last or local_depth <= rule.last)
+end
+
+-- Weight and chance clauses share the same branch/depth range semantics as
+-- DEPTH itself, so they must not carry separate interpretations.
+function depth.matches_rule(rule, branch_id, local_depth, branch_bottom)
+    return matches(rule, branch_name(branch_id), local_depth, branch_bottom)
 end
 
 -- An excluded matching rule wins even if another range includes the same floor.

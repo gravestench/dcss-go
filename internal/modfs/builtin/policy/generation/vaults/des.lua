@@ -68,15 +68,21 @@ local function add_directive(vault, kind, argument, line)
         }
         local rules = weight.parse(argument, site)
 
-        if vault.family ~= "layout" and
-            (rules.default == nil or rules.default < 1 or
-                next(rules.branches) ~= nil) then
-            fail(vault.path, line, vault.id,
-                "non-layout WEIGHT needs one positive integer")
+        if not vault.weights then
+            vault.weights = {
+                ranges = {},
+            }
         end
 
-        vault.weight = rules.default or 0
-        vault.weights = rules
+        for _, range in ipairs(rules.ranges) do
+            vault.weights.ranges[#vault.weights.ranges + 1] = range
+        end
+
+        if rules.default ~= nil then
+            vault.weights.default = rules.default
+        end
+
+        vault.weight = vault.weights.default or 0
     end
 end
 

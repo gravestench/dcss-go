@@ -1,19 +1,20 @@
--- DES WEIGHT lines may have a default and branch-specific overrides. Keep
--- these rules beside the source map instead of copying them into selectors.
+-- DES WEIGHT clauses choose the first matching depth range, then the default.
 local categories = require("constants.catalog")
+local depth = require("policy.generation.vaults.depth")
+local specifiers = require("policy.generation.vaults.specifiers")
 
 local weight = {}
 
--- Include the source site because a bad mod weight must fail at catalog
--- loading, before a rare layout happens to be drawn during play.
+-- Attach the source site because malformed content must fail before a rare
+-- map reaches a live selector.
 local function fail(site, detail)
     error(string.format("%s:%d: vault %s: %s",
         site.path, site.line, site.id, detail))
 end
 
--- Resolve the names actually registered by the effective ruleset. A mod
--- branch may add a new abbreviation without changing this parser.
-local function branch_names()
+-- Reject branch typos at catalog load, while still allowing mods to add a
+-- branch through the same effective branch catalog.
+local function known_branches()
     local names = {}
 
     for _, id in ipairs(register.ids(categories.BRANCHES)) do
@@ -25,62 +26,82 @@ local function branch_names()
     return names
 end
 
--- Parse one default or one branch-qualified integer per comma-separated
--- clause. A missing default means unlisted branches have zero weight.
+-- Keep source range order: map_def's depth_ranges returns the first matching
+-- range, even when another range overlaps it later in the declaration.
 function weight.parse(argument, site)
-    local rules = {
-        branches = {},
+    local parsed = {
+        ranges = {},
     }
-    local known = branch_names()
-    local clauses = 0
+    local known = known_branches()
+    local seen = {}
 
-    for text in (argument .. ","):gmatch("(.-),") do
-        local clause = text:match("^%s*(.-)%s*$")
+    for _, clause in ipairs(specifiers.split(argument, site)) do
+        local number, group = clause:match("^%s*(%d+)%s*(%b())%s*$")
 
-        if clause ~= "" then
-            local number, branch = clause:match("^(%d+)%s*%(([A-Za-z]+)%)$")
+        if not number then
+            number = clause:match("^%s*(%d+)%s*$")
+        end
 
-            if number then
-                if not known[branch] or rules.branches[branch] ~= nil then
-                    fail(site, "invalid or repeated WEIGHT branch " .. branch)
+        if not number then
+            fail(site, "invalid WEIGHT clause " .. clause)
+        end
+
+        local value = tonumber(number)
+
+        if group then
+            local rules = depth.parse_rules(group:sub(2, -2), site)
+
+            for _, rule in ipairs(rules) do
+                if not known[rule.branch] then
+                    fail(site, "invalid WEIGHT branch " .. rule.branch)
                 end
 
-                rules.branches[branch] = tonumber(number)
-            else
-                number = clause:match("^(%d+)$")
+                local key = table.concat({
+                    rule.branch,
+                    tostring(rule.first),
+                    tostring(rule.last),
+                    tostring(rule.bottom),
+                }, ":")
 
-                if not number or rules.default ~= nil then
-                    fail(site, "invalid or repeated WEIGHT clause " .. clause)
+                if seen[key] then
+                    fail(site, "repeated WEIGHT range " .. rule.branch)
                 end
 
-                rules.default = tonumber(number)
+                seen[key] = true
             end
 
-            clauses = clauses + 1
+            parsed.ranges[#parsed.ranges + 1] = {
+                value = value,
+                rules = rules,
+            }
+        else
+            if parsed.default ~= nil then
+                fail(site, "repeated default WEIGHT")
+            end
+
+            parsed.default = value
         end
     end
 
-    if clauses == 0 then
-        fail(site, "WEIGHT has no clauses")
-    end
-
-    return rules
+    return parsed
 end
 
--- A branch clause wins over the default; otherwise an omitted default is
--- zero so a layout cannot silently appear in an unrelated branch.
-function weight.for_branch(vault, branch_id)
+-- Resolve source ranges against the current branch and depth. A map with no
+-- default weight is disabled outside its listed ranges.
+function weight.for_branch(vault, branch_id, local_depth, branch_bottom)
     local rules = vault.weights
 
     if not rules then
         return vault.weight or 0
     end
 
-    local branch = register.get(categories.BRANCHES, branch_id)
-    local specific = rules.branches[branch.abbreviation]
-
-    if specific ~= nil then
-        return specific
+    for _, range in ipairs(rules.ranges) do
+        for _, rule in ipairs(range.rules) do
+            if depth.matches_rule(rule, branch_id,
+                local_depth, branch_bottom) then
+                return range.value
+            end
+        end
     end
 
     return rules.default or 0
