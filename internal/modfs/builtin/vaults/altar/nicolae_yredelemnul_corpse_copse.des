@@ -16,6 +16,7 @@ KFEAT:  _ = altar_yredelemnul
 COLOUR: t = lightgrey w:5 / brown
 TILE:   t = dngn_tree_dead
 # source: : set_feature_name("tree", "dead tree")
+: vault.run("features.dead_tree")
 MAP
    DDDDD
   DE.E.ED

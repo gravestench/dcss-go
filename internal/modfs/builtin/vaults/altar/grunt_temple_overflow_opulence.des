@@ -12,6 +12,7 @@ FTILE:   ._GOU+ = floor_limestone
 RTILE:   x = wall_sandstone
 COLOUR:  xG = yellow
 # source: : set_feature_name("granite_statue", "golden statue")
+: vault.run("features.golden_statue")
 MAP
   xxxxxxx
  xx.....xx

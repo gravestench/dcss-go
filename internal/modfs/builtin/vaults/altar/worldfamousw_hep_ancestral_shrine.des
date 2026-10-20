@@ -12,6 +12,8 @@ TILE:   t = DNGN_TREE_DEAD
 # source: {{
 # source: set_feature_name("granite_statue", "a gravestone")
 # source: set_feature_name("tree", "dead tree")
+: vault.run("features.gravestone")
+: vault.run("features.dead_tree")
 # source: dgn.persist.hep_ancestral_shrine_reborn = false
 # source:
 # source: local los_marker = TriggerableFunction:new {

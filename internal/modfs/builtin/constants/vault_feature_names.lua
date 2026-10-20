@@ -2,6 +2,10 @@
 
 local names = {
     DEAD_TREE = "dead tree",
+    GOLDEN_STATUE = "golden statue",
+    SILVER_WALL = "silver wall",
+    WHITE_CRYSTAL_WALL = "wall of white crystal",
+    SARCOPHAGUS = "sarcophagus",
     GRAVESTONE = "a gravestone",
     ADVENTURERS_GRAVESTONE = "adventurer's gravestone",
     HIDEOUS_STATUE = "statue of a hideous four-limbed creature",

@@ -14,6 +14,8 @@ COLOUR: v = white
 FTILE:  +._O$ = floor_limestone
 # source: : set_feature_name("granite_statue", "golden statue")
 # source: : set_feature_name("metal_wall", "silver wall")
+: vault.run("features.golden_statue")
+: vault.run("features.silver_wall")
 MAP
 vvvvvvvvv
 v..$$$..v

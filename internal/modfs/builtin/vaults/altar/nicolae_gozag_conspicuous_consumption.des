@@ -16,6 +16,7 @@ TILE:   m = dngn_transparent_wall_yellow
 FTILE:  ._Gmn$U = floor_limestone
 COLOUR: .Gmn$U = yellow
 # source: : set_feature_name("granite_statue", "golden statue")
+: vault.run("features.golden_statue")
 MAP
     .....
  G...._....G

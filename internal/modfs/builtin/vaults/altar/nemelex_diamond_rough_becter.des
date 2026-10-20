@@ -11,6 +11,7 @@ TILE:   x = wall_pebble_red
 TILE:   b = dngn_crystal_white
 : vault.run("interest.apply")
 # source: : set_feature_name("crystal_wall", "wall of white crystal")
+: vault.run("features.white_crystal_wall")
 MAP
     ...
    ..x..

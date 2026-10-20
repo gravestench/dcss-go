@@ -35,6 +35,7 @@ FTILE:  -QRVDE|*$123Gcn = floor_tomb
 COLOUR: G = yellow
 COLOUR: -QR|*$123 = brown
 # source: : set_feature_name("granite_statue", "sarcophagus")
+: vault.run("features.sarcophagus")
 MAP
  ...............
  .nnnnnnnnnnnnn.

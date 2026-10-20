@@ -9,6 +9,7 @@ KFEAT:  _ = altar_uskayaw
 NSUBST: . = 4=D / 3=D.
 SUBST:  . = ..a, D = DDE
 # source: : dgn.delayed_decay(_G, "DE","random corpse")
+: vault.run("decay_dancers")
 KPROP:  aE = bloody
 KFEAT:  b = .
 COLOUR: ._aDE = disco
