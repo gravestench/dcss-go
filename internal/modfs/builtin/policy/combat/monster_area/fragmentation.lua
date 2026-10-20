@@ -76,7 +76,7 @@ local terrain_material = {
 }
 
 -- Read the monster material only while the target is alive and still has an actor record.
-local function monster_profile(ctx, target)
+function fragmentation.monster_profile(ctx, target)
     local actor = ctx:get(target, component.ACTOR)
     local health = ctx:get(target, component.HEALTH)
 
@@ -103,6 +103,13 @@ local function monster_profile(ctx, target)
     end
 
     return nil
+end
+
+-- Shatter distinguishes explicit stone, metal, and crystal bodies before
+-- checking whether a monster is insubstantial. Share LRD's source list so
+-- the two spells cannot silently disagree about those exceptional species.
+function fragmentation.explicit_monster_material(kind)
+    return monster_material[kind]
 end
 
 -- Choose player material from current form and species for self-targeted destruction.
@@ -137,7 +144,7 @@ function fragmentation.profile(ctx, level, x, y)
             return material, true, target, false
         end
     elseif target then
-        local material = monster_profile(ctx, target)
+        local material = fragmentation.monster_profile(ctx, target)
 
         if material then
             return material, true, target, false

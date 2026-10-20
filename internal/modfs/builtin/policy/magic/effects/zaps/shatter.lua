@@ -3,11 +3,9 @@ local spells = require("ids.spells")
 local monsters = require("ids.monsters")
 local terrain = require("constants.terrain")
 local defense = require("policy.combat.monster_defense")
-local catalog = require("policy.catalog")
 local damage = require("policy.magic.damage")
-local fragments = require("policy.magic.effects.zaps.lrd")
+local fragments = require("policy.combat.monster_area.fragmentation")
 local registry = require("policy.magic.effects.registry")
-local stasis = require("policy.magic.effects.statuses.monster_stasis")
 
 local shatter = {}
 
@@ -46,7 +44,7 @@ end
 local function dice(ctx, monster, definition)
     local kind = definition.id
 
-    if fragments.monster_material[kind] then
+    if fragments.explicit_monster_material(kind) then
         return 6
     end
 
@@ -54,8 +52,7 @@ local function dice(ctx, monster, definition)
         return 1
     end
 
-    if stasis.petrifying(ctx, monster) or stasis.petrified(ctx, monster) or
-        fragments.icy[kind] or fragments.skeletal[kind] then
+    if fragments.monster_profile(ctx, monster) then
         return 6
     end
 
