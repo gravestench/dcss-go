@@ -8,6 +8,7 @@ local directives = require("constants.vault_directives")
 local depth_rules = require("policy.generation.vaults.depth")
 local des = require("policy.generation.vaults.des")
 local hooks = require("policy.generation.vaults.hooks")
+local authored = require("policy.generation.layouts.authored")
 local stairs = require("policy.generation.layouts.stairs")
 local weights = require("policy.generation.vaults.weight")
 
@@ -15,8 +16,8 @@ local catalog = {}
 local definitions = {}
 local loaded = false
 
--- A layout needs exactly one run hook. The source may add a size validator,
--- which is checked before stairs alter the map's open-area measurement.
+-- A procedural layout needs one run hook; an authored MAP needs none.
+-- Source validators run before stairs alter the open-area measurement.
 local function methods(definition)
     local run
     local validate
@@ -37,8 +38,9 @@ local function methods(definition)
         end
     end
 
-    if not run then
-        error("layout " .. definition.id .. " has no run hook")
+    if not run and #definition.rows == 0 then
+        error("layout " .. definition.id ..
+            " has neither an authored MAP nor a run hook")
     end
 
     return run, validate
@@ -174,21 +176,30 @@ function catalog.choose(random, branch_id, local_depth, branch_bottom,
     error("layout weight selection exceeded the catalog")
 end
 
--- Execute only the method named by DES. A source validator may reject a
--- random shape; bounded retries consume new draws without changing layout
--- identity. The shared postpass then adds the missing connected stairs.
+-- Execute a procedural hook or place an authored MAP. A source validator
+-- may reject a random shape; bounded retries consume new draws without
+-- changing layout identity. The postpass adds missing connected stairs.
 function catalog.execute(ctx, definition, branch_id, local_depth)
     local run, validate = methods(definition)
     local branch = register.get(categories.BRANCHES, branch_id)
     local api = {
         ctx = ctx,
+        definition = definition,
+        branch_id = branch_id,
+        branch_bottom = branch.depth,
         branch = branch.abbreviation,
         depth = local_depth,
-        absolute_depth = local_depth,
+        absolute_depth = branch.absolute_depth + local_depth - 1,
     }
 
     for _ = 1, 8 do
-        local result = hooks.run(definition, run, api)
+        local result
+
+        if run then
+            result = hooks.run(definition, run, api)
+        else
+            result = authored.execute(api)
+        end
 
         if type(result) ~= "table" or not result.builder then
             error("layout " .. definition.id .. " did not return a builder")

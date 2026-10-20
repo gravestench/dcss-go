@@ -1,0 +1,29 @@
+# Source: crawl-ref/source/dat/des/builder/layout_pan_divisions.des
+NAME:    pan_division_octagon_altar
+WEIGHT:  1
+TAGS:    pan_division_octagon allow_dup unrand luniq
+SHUFFLE: pqrs
+SHUFFLE: uyz
+SUBST:   p : xxx.
+SUBST:   q : xx..
+SUBST:   u : Y...
+SUBST:   rsyz : .
+SUBST:   B : A B:5 C
+KFEAT:   A = altar_kikubaaqudgha
+KFEAT:   B = altar_makhleb
+KFEAT:   C = altar_yredelemnul
+MAP
+   ..   ..
+  s.y.z.y.s
+ ssr.....rss
+..rqqp.pqqr..
+.y.qqp.pqq.y.
+ ..pppuppp..
+ z...uBu...z
+ ..pppuppp..
+.y.qqp.pqq.y.
+..rqqp.pqqr..
+ ssr.....rss
+  s.y.z.y.s
+   ..   ..
+ENDMAP

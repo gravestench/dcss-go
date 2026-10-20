@@ -1,0 +1,30 @@
+# Source: crawl-ref/source/dat/des/builder/layout_pan_divisions.des
+NAME:    pan_division_octagon_halves
+WEIGHT:  10
+TAGS:    pan_division_octagon allow_dup unrand
+SHUFFLE: pq/rs
+SUBST:   s = z
+SUBST:   p = y
+SHUFFLE: yz
+SHUFFLE: JK/LM
+SUBST:   L = D
+SUBST:   M = E
+SHUFFLE: DE/FF/FF
+SUBST:   qyFJK = .
+SUBST:   rzDL = x
+SUBST:   EM = +
+MAP
+   .q   J.
+  ..q...J..
+ ...q...J...
+....q...K....
+rrrsz...DLMLL
+ .yyx...D...
+ ...xx+xx...
+ ...D...xyy.
+LLMLD...zsrrr
+....K...q....
+ ...J...q...
+  ..J...q..
+   .J   q.
+ENDMAP

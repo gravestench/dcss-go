@@ -367,16 +367,19 @@ spell departures omit smoke. Source-specific death wording remains part of
 the presentation parity pass. Xom and Jiyva poof variants still need
 per-monster god state from the religion domain.
 
-The builder and serial definition count is now 518 of 600. All 22 source
+The builder and serial definition count is now 540 of 600. All 22 source
 arena builder maps are committed as individual `.des` files. Their original
 MAP blocks are intact, and the two shared palette scripts are a named Lua
 hook. Arena maps have no Dungeon depth rule, so normal Dungeon generation
 does not draw them. An arena game mode and whole-level palette behavior
 remain future work. The deep Dungeon decoration controller now draws from
-the effective `decor` tagged map pool at source chance and depth. Forest
-generation exposed a missing bow and crossbow
-missile policy; arrows and bolts now use one Lua launcher resolver with
-their catalog projectile values.
+the effective `decor` tagged map pool at source chance and depth. All 22
+Pandemonium division definitions are committed: two authored layouts and
+twenty weighted helpers. Both parent layouts assemble and complete stairs
+through the production layout owner. Pan's branch flow is still pending.
+Forest generation exposed a missing bow and crossbow missile policy;
+arrows and bolts now use one Lua launcher resolver with their catalog
+projectile values.
 
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and

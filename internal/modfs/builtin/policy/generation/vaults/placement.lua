@@ -421,6 +421,7 @@ end
 local function copy_record(source, x, y)
     local copy = copy_fields(source)
 
+    copy.excluded_cells = nil
     copy.x = x
     copy.y = y
 
@@ -480,6 +481,20 @@ local function rotated_point(record, width_before, height_before, turns)
     return x, y
 end
 
+-- Parent record exclusions use source coordinates. Undo the map rotation
+-- before testing a final cell against a nested helper's owned region.
+local function original_point(x, y, width_before, height_before, turns)
+    if turns == 1 then
+        return y, height_before - x + 1
+    elseif turns == 2 then
+        return width_before - x + 1, height_before - y + 1
+    elseif turns == 3 then
+        return width_before - y + 1, x
+    end
+
+    return x, y
+end
+
 -- Match authored record targets to transformed cells before translating them to level positions.
 local function locate_records(source_records, cells, left, top, entry,
     width_before, height_before, turns, random, vault, depth)
@@ -524,7 +539,14 @@ local function locate_records(source_records, cells, left, top, entry,
         elseif targets then
             for local_y, row in ipairs(cells) do
                 for local_x, glyph in ipairs(row) do
-                    if glyph ~= " " and targets:find(glyph, 1, true) then
+                    local original_x, original_y = original_point(
+                        local_x, local_y,
+                        width_before, height_before, turns)
+                    local key = original_x .. ":" .. original_y
+
+                    if glyph ~= " " and targets:find(glyph, 1, true) and
+                        not (record.excluded_cells and
+                            record.excluded_cells[key]) then
                         local placed = copy_record(record,
                             left + local_x - 1, top + local_y - 1)
                         local selected = { placed }

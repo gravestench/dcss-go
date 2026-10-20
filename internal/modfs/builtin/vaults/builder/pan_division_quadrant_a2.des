@@ -1,0 +1,46 @@
+# Source: crawl-ref/source/dat/des/builder/layout_pan_divisions.des
+NAME:    pan_division_quadrant_a2
+WEIGHT:  10
+TAGS:    pan_division_quadrant_a allow_dup unrand
+SHUFFLE: pq / rs
+SHUFFLE: yz / uu
+SHUFFLE: DE
+SHUFFLE: FG
+SHUFFLE: HJ / KL
+SHUFFLE: MNO / PQR
+SHUFFLE: SZ
+SUBST:   pquDFHJMOS = .
+SUBST:   ryEGKNPZ = x
+SUBST:   szLQR = +
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxDxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxDDxxxxxxxxxxxxxxxxxxxxxx
+xxxxE....EExxxxxFxxxxxxxxxxxxx
+xxxx.....EExxxxFFFxxxxxxxxxxxx
+xxxD......Exxx....PMxxxxxxxxxx
+xxDD......Exx.....P.Mxxxxxxxxx
+xxxx.......+......R..MxPx......
+xxxxEE.....xx.....P.MM.Px......
+xxxxEEEE...Dxx....PMM...x.......
+xxxxxxxx+xDDxxx+xxxM....N.......
+xxxxxxxx.xxxx.....x.....Q.......
+xxxxxxx...xxx.....x.....x.......
+xxxxxx.....xx.....x.....x.........
+xxxxx.......+.....+....pxxx+xxxxxx
+xxxxxx.....KxKK...x...ppr....y....
+xxxxxxx...KKH.KLK.x..pp.s....yy...
+xxxxxxxxJxxHHHHJxxx.pp..r.....z..
+xxxxxxxxLK........xxxrsrr.....yy.
+xxxxxxxx..........s.p...r......y.
+xxxxxxZxxx........xqp...s......yy.
+xxxxxxZZ.xxx.....xx.pp..r....   y.
+xxxxxx.....x+x..xx...pp.rr
+xxxxSS.......xxxx.....ppr
+xxSSSS.........x..   ..p
+xxxxSS.....
+xxxxxx.....
+xxxxxxZZ.
+xxxxxxZx
+ENDMAP

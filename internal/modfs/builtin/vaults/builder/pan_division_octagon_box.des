@@ -1,0 +1,26 @@
+# Source: crawl-ref/source/dat/des/builder/layout_pan_divisions.des
+NAME:    pan_division_octagon_box
+WEIGHT:  10
+TAGS:    pan_division_octagon allow_dup unrand luniq
+SHUFFLE: py / rz
+SHUFFLE: pqy / uuu
+SUBST:   pq = x
+SUBST:   y = +
+SUBST:   ruz = .
+SUBST:   A : .:35 I:5 Y:10
+KFEAT:   I = exit_pandemonium
+MAP
+   ..   ..
+  .........
+ ....pyp....
+...rqqzqqr...
+...qp...pq...
+ .pq.....qp.
+ .yz..A..zy.
+ .pq.....qp.
+...qp...pq...
+...rqqzqqr...
+ ....pyp....
+  .........
+   ..   ..
+ENDMAP

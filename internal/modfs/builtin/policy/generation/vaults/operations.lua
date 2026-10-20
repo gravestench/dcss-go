@@ -280,13 +280,18 @@ local function localize_helper_records(records, cells, low_x, low_y)
         if targets and targets ~= "" then
             for y, row in ipairs(cells) do
                 for x, glyph in ipairs(row) do
-                    if glyph ~= " " and targets:find(glyph, 1, true) then
+                    local key = x .. ":" .. y
+
+                    if glyph ~= " " and targets:find(glyph, 1, true) and
+                        not (record.excluded_cells and
+                            record.excluded_cells[key]) then
                         local copy = {}
 
                         for key, value in pairs(record) do
                             copy[key] = value
                         end
 
+                        copy.excluded_cells = nil
                         copy.local_x = low_x + x - 1
                         copy.local_y = low_y + y - 1
                         copy.source = glyph
@@ -301,6 +306,7 @@ local function localize_helper_records(records, cells, low_x, low_y)
             record.local_x = low_x
             record.local_y = low_y
             record.pending = true
+            record.excluded_cells = nil
             located[#located + 1] = record
         end
     end
@@ -350,34 +356,52 @@ local function embed_helper(cells, source, helper, random, depth, player)
     end
 
     if helper_width > region_width or #helper_cells > region_height then
-        error("SUBVAULT helper " .. helper.id .. " cannot fit its source region")
+        error(string.format(
+            "SUBVAULT helper %s is %dx%d; source region is %dx%d",
+            helper.id, helper_width, #helper_cells,
+            region_width, region_height))
     end
 
     local nested_records = operations.apply(helper, helper_cells, random, depth + 1, player)
 
+    -- A helper's rectangular bounds may cross another SUBVAULT region.
+    -- Only cells carrying this source glyph belong to this helper;
+    -- masking the rest also prevents misplaced keyed effect records.
+    local claimed = {}
+
     for y, row in ipairs(helper_cells) do
         for x, glyph in ipairs(row) do
-            if glyph ~= " " then
-                cells[low_y + y - 1][low_x + x - 1] = glyph
+            local parent_y = low_y + y - 1
+            local parent_x = low_x + x - 1
+
+            if cells[parent_y][parent_x] == source and glyph ~= " " then
+                cells[parent_y][parent_x] = glyph
+                claimed[parent_x .. ":" .. parent_y] = true
+            else
+                row[x] = " "
             end
         end
     end
 
-    return localize_helper_records(nested_records, helper_cells, low_x, low_y)
+    local located = localize_helper_records(nested_records,
+        helper_cells, low_x, low_y)
+
+    return located, claimed
 end
 
 -- A missing helper fit is a source error rather than a silently skipped decoration.
 local function apply_subvault(vault, cells, operation, random, depth, player)
     local source, tag = helper_choice(operation.argument, random)
     local helper = helper_for_tag(tag, random, player)
-    local ok, result = pcall(embed_helper, cells, source, helper, random, depth, player)
+    local ok, result, claimed = pcall(embed_helper,
+        cells, source, helper, random, depth, player)
 
     if not ok then
         error(string.format("%s:%d: vault %s: SUBVAULT %s: %s",
             vault.path, operation.line or 0, vault.id, helper.id, result))
     end
 
-    return result
+    return result, claimed
 end
 
 -- Expose only controlled random, context, and emission methods to ported vault hooks.
@@ -586,7 +610,21 @@ function operations.apply(vault, cells, random, depth, player)
                 vault_id = vault.id,
             }
         elseif operation.kind == directives.SUBVAULT then
-            local nested = apply_subvault(vault, cells, operation, random, depth, player)
+            local nested, claimed = apply_subvault(vault, cells,
+                operation, random, depth, player)
+
+            -- Earlier keyed declarations belong to the parent map.
+            -- A nested helper owns the cells it replaces, including a
+            -- glyph that happens to have the same character as its parent.
+            for _, record in ipairs(records) do
+                if record.targets then
+                    record.excluded_cells = record.excluded_cells or {}
+
+                    for key in pairs(claimed) do
+                        record.excluded_cells[key] = true
+                    end
+                end
+            end
 
             for _, record in ipairs(nested) do
                 records[#records + 1] = record

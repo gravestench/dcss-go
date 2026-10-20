@@ -264,6 +264,10 @@ local function build_floor(ctx, player, depth, bottom, prior_vault_ids)
     local source_up = {}
     local source_down = {}
 
+    if layout.records then
+        append_vault_records(records, { layout })
+    end
+
     if arrival then
         append_vault_records(records, { arrival })
         add_source_stairs(arrival, source_up, source_down)

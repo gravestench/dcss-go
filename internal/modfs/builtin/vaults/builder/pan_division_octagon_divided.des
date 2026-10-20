@@ -1,0 +1,29 @@
+# Source: crawl-ref/source/dat/des/builder/layout_pan_divisions.des
+NAME:    pan_division_octagon_divided
+WEIGHT:  5
+TAGS:    pan_division_octagon allow_dup unrand
+SUBST:   Z : pyy
+SUBST:   S : xpp
+SHUFFLE: py / qz
+SUBST:   z = u
+SUBST:   u : x...
+SUBST:   y : x....
+SUBST:   p = .
+SUBST:   q = x
+SUBST:   s : r.
+SUBST:   r : x..
+MAP
+   .x   x.
+  r.+...+.r
+ rs.xx.xx.sr
+.....xqx.....
+x+x.upSpu.x+x
+ .xxpyZypxx.
+ ..qSZZZSq..
+ .xxpyZypxx.
+x+x.upSpu.x+x
+.....xqx.....
+ rs.xx.xx.sr
+  r.+...+.r
+   .x   x.
+ENDMAP

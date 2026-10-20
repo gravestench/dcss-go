@@ -49,15 +49,25 @@ local function source_catalog()
     local ids = catalog.ids()
     local active = 0
     local disabled = 0
+    local branch_only = 0
 
-    harness.equal(#ids, 21, "effective source layout count")
+    harness.equal(#ids, 23, "effective source layout count")
 
     for _, id in ipairs(ids) do
         local definition = catalog.get(id)
         local dungeon_weight = weight.for_branch(definition,
             branches.BRANCH_DUNGEON)
 
-        if dungeon_weight > 0 then
+        local dungeon = false
+
+        for level = 1, 15 do
+            dungeon = dungeon or depth.eligible(definition,
+                branches.BRANCH_DUNGEON, level, 15)
+        end
+
+        if not dungeon then
+            branch_only = branch_only + 1
+        elseif dungeon_weight > 0 then
             active = active + 1
         else
             disabled = disabled + 1
@@ -66,6 +76,7 @@ local function source_catalog()
 
     harness.equal(active, 17, "active source layouts")
     harness.equal(disabled, 4, "registered disabled layouts")
+    harness.equal(branch_only, 2, "registered Pan layouts")
 end
 
 -- Boundary depths change the candidate set while the selected result
@@ -125,20 +136,19 @@ local function execute_active_layouts()
     for _, id in ipairs(catalog.ids()) do
         local definition = catalog.get(id)
 
-        if weight.for_branch(definition, branches.BRANCH_DUNGEON) > 0 then
-            local first_depth
-            local last_depth
+        local first_depth
+        local last_depth
 
-            for level = 1, 15 do
-                if depth.eligible(definition,
-                    branches.BRANCH_DUNGEON, level, 15) then
-                    first_depth = first_depth or level
-                    last_depth = level
-                end
+        for level = 1, 15 do
+            if depth.eligible(definition,
+                branches.BRANCH_DUNGEON, level, 15) then
+                first_depth = first_depth or level
+                last_depth = level
             end
+        end
 
-            harness.truthy(first_depth, "active layout has Dungeon depth")
-
+        if first_depth and
+            weight.for_branch(definition, branches.BRANCH_DUNGEON) > 0 then
             for _, level in ipairs({ first_depth, last_depth }) do
                 local result = catalog.execute(context_for(47), definition,
                     branches.BRANCH_DUNGEON, level)

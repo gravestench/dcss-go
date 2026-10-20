@@ -107,6 +107,73 @@ local function weighted_subvault_reaches_last_helper()
         "weighted SUBVAULT can choose the final bush helper")
 end
 
+-- Select the same nested garden at each parent orientation. The source
+-- exclusions are recorded before rotation and projected afterward.
+local function rotated_park_path(turns)
+    local builder = grid.new({})
+
+    for y = 1, 68 do
+        for x = 1, 78 do
+            builder:set(x, y, ".")
+        end
+    end
+
+    -- Eight equal-weight helpers make a roll of 50 select helper six.
+    function builder:roll(bound)
+        if bound == 80 then
+            return 50
+        elseif bound == 4 then
+            return turns
+        end
+
+        return 0
+    end
+
+    return extra.place(nil, builder,
+        catalog.get(ids.serial_park_paths), {
+            branch_id = branches.BRANCH_DUNGEON,
+            depth = 4,
+            branch_bottom = 15,
+            layout_family = "open",
+            protected = {},
+            required = {},
+            player = {
+                branch_id = branches.BRANCH_DUNGEON,
+                depth = 4,
+                branch_bottom = 15,
+                layout_family = "open",
+            },
+        })
+end
+
+-- The sixth nested helper also uses glyph 1. Its fungus owns those cells;
+-- the earlier parent bush declaration cannot claim them after rotation.
+local function helper_monsters_own_their_cells()
+    for turns = 0, 3 do
+        local placed = rotated_park_path(turns)
+        local actors = {}
+        local fungi = 0
+
+        harness.truthy(placed, "rotated park path fits")
+
+        for _, record in ipairs(placed.records) do
+            if record.kind == effects.MONSTER then
+                local cell = record.x .. ":" .. record.y
+
+                harness.falsy(actors[cell],
+                    "nested helper and parent both claimed " .. cell)
+                actors[cell] = true
+
+                if record.identity == "fungus" then
+                    fungi = fungi + 1
+                end
+            end
+        end
+
+        harness.truthy(fungi > 0, "sixth park helper placed fungi")
+    end
+end
+
 -- Every active child should pass the shared geometric placement path on
 -- an open Dungeon floor. This also exercises both nested H and J helper
 -- regions and the large authored centerpiece, not just catalog parsing.
@@ -160,6 +227,7 @@ end
 function test.run()
     controller_contract()
     weighted_subvault_reaches_last_helper()
+    helper_monsters_own_their_cells()
     every_piece_places()
 end
 

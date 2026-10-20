@@ -1924,12 +1924,21 @@ yet part of the playable population.
 The effective `vaults/layout/*.des` files are also a live catalog. All 21
 source Dungeon definitions are committed: 17 have a positive Dungeon weight,
 and four remain registered with weight zero. To add a layout, create
-`vaults/layout/<name>.des` and, for a calculated map, a same-named
-`policy/generation/layouts/<name>.lua`. The `.des` file supplies `NAME`,
-`DEPTH`, `WEIGHT`, `TAGS: layout layout_type_<family>`, and a named
-`: vault.run("<method>")` hook. Use `MAP` and `ENDMAP` even when the hook
-builds the whole grid. The hook module returns a local table with that
-method; see `layout_rooms` for an existing example.
+`vaults/layout/<name>.des` with `NAME`, `DEPTH`, `WEIGHT`, and
+`TAGS: layout layout_type_<family>`. A calculated layout declares a named
+`: vault.run("<method>")` hook and a same-named module under
+`policy/generation/layouts/`. Use `MAP` and `ENDMAP` even when the hook
+builds the whole grid. The module returns a local table with that method;
+see `layout_rooms` for an example.
+
+An authored layout keeps its terrain under `MAP` and needs no run hook.
+The layout owner places it through the ordinary vault operation engine,
+then completes connected stairs. The two `layout_pan_divisions_*` maps
+show this path: they request weighted helpers by `SUBVAULT` tag, while
+each helper lives in its own `vaults/builder/*.des` file. Source cells
+outside a helper's tagged region stay with the parent, even when their
+rectangles overlap. This Pan family is executable through the layout
+catalog; the Pan game mode still needs its branch generation flow.
 
 The run method receives `api.ctx`, `api.branch`, `api.depth`, and
 `api.absolute_depth`. Build the 80×70 grid with

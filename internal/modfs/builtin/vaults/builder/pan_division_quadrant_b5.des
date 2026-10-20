@@ -1,0 +1,47 @@
+# Source: crawl-ref/source/dat/des/builder/layout_pan_divisions.des
+NAME:    pan_division_quadrant_b5
+WEIGHT:  5
+TAGS:    pan_division_quadrant_b allow_dup unrand
+NSUBST:  s = 1:s / *:r
+SHUFFLE: pq/rs
+SUBST:   u : x.
+SHUFFLE: yza
+SHUFFLE: DE/FF
+SHUFFLE: HZ
+SHUFFLE: JKL/MNO
+SHUFFLE: PQ/RS
+SUBST:   pqaDHJKPQ = .
+SUBST:   ryzFZLMR = x
+SUBST:   sENOS = +
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxx.xxx...xxx
+xxxxxxxxxxxxxyxxxxxxxxx..xx.....xx
+xxxxxxxxxxxxyyyxxxxxxxx..x.......x
+xxxxxxxxzzz.....zzzxxx...+.......x
+xxxxxxDxzz.......zzxxx...x.......x
+xxxxDDDxz.........zxx....xx.....xx
+xxDDDDDx...........xx.....xx...xx.
+DDDDDDDE...........+.......xx+xx..
+DDDDDDDx...........x......rx.....
+DDDDDDDxxxxxx+xxxxxx......sq.....
+DDDDDxxx.x.......x.xxx...rrp.....
+DDDxEx...x......Rx...x+x.r.p......
+Dxxx.....x......SP.....xxx.p......
+xx.......+.....RRQ.....R.xxxxxxxxx
+xxHH.....x.....R.P....RxPP.P..R...
+xxHHHH...x....RR.P...P+P...P.RR..
+xxHHHHHxZx....R..P.PPxR....P.R...
+xxHHHxxxxxxxx+xxxxxx.R.....QRR.
+xxHxxxxuuu......MJ.x+x.....PS..
+xxxxxxxuuu......xJ...xxx...xR..
+xxxxxxxuu.......x......xxx.x...
+xxxxxxxuu......JO........xxxxx
+xxxxxxxu.......KM.......xx....
+xxxxxxxu......JJM.......+.....
+xxxxxxx..   ..J.M......xx....
+                 ......x.....
+                     .xx...
+                     .x....
+                       ..
+ENDMAP
