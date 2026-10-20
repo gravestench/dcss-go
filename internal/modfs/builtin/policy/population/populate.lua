@@ -180,15 +180,17 @@ function module.run(ctx, input)
             end
 
             local excluded = exclusion_set(level)
-            local _, placed = vaults.materialize(ctx, level, excluded)
-            local count = 0
+            local _, placed, followers = vaults.materialize(ctx, level,
+                excluded)
+            local count = followers
 
             for _, record in ipairs(placed) do
                 materialized[#materialized + 1] = record
             end
 
             if level.id ~= abyss.level_id then
-                count = populate_level(ctx, level, allowed, scenario_id)
+                count = count + populate_level(ctx, level, allowed,
+                    scenario_id)
                 count = count + boris_replacement.place(ctx, level, excluded)
             end
 

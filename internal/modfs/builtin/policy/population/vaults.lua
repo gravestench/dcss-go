@@ -231,6 +231,7 @@ end
 -- Process typed vault records in source order so terrain, actors, items, and shops see prior effects.
 function vaults.materialize(ctx, level, excluded)
     local actors = 0
+    local followers = 0
     local materialized = {}
     local reserved = band_exclusions(level, excluded)
 
@@ -280,8 +281,10 @@ function vaults.materialize(ctx, level, excluded)
                     local spawned = factory.spawn(ctx, arguments.kind_id, level.id,
                         record.x, record.y, monster_options(record, level))
                     if arguments.band then
-                        actors = actors + bands.spawn(ctx, spawned,
-                            level, reserved)
+                        local placed = bands.spawn(ctx, spawned, level, reserved)
+
+                        actors = actors + placed
+                        followers = followers + placed
                     end
                     gear = generated_gear(ctx, level, record)
                     actors = actors + 1
@@ -305,7 +308,9 @@ function vaults.materialize(ctx, level, excluded)
         end
     end
 
-    return actors, materialized
+    -- A band follower has no authored vault record of its own. The
+    -- population budget must still include it for save and XP accounting.
+    return actors, materialized, followers
 end
 
 return vaults

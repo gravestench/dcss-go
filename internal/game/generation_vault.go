@@ -45,16 +45,16 @@ func loadLuaVault(level *Level, generated map[string]any) error {
 
 	id, hasID := generated["vault_id"].(string)
 
-	if !hasID {
-		if generated["vault_records"] != nil {
-			return fmt.Errorf("Lua level %d has vault records without an identity", level.ID)
+	if hasID {
+		if err := level.SetVaultID(id); err != nil {
+			return err
 		}
-
-		return nil
 	}
 
-	if err := level.SetVaultID(id); err != nil {
-		return err
+	// Supplemental vaults can place records even when the floor has no
+	// primary arrival vault or controller. Each record has its own source ID.
+	if generated["vault_records"] == nil {
+		return nil
 	}
 
 	entries, ok := generated["vault_records"].([]any)

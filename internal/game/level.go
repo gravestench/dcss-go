@@ -234,11 +234,9 @@ func (l *Level) VaultIDs() []string {
 	return append([]string(nil), l.vaultIDs...)
 }
 
+// AddVaultRecord accepts supplemental maps on floors with no primary vault.
+// The record's source ID identifies its author independently of vaultID.
 func (l *Level) AddVaultRecord(record vault.Record) error {
-	if l.vaultID == "" {
-		return fmt.Errorf("level %d has no vault identity", l.ID)
-	}
-
 	if err := record.Validate(l.width, len(l.terrain)); err != nil {
 		return fmt.Errorf("level %d: %w", l.ID, err)
 	}

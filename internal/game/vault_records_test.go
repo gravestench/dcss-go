@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"crawl/internal/modfs"
+	"crawl/internal/terrain"
 	"crawl/internal/vault"
 )
 
@@ -67,6 +68,40 @@ func TestVaultRecordSaveRestore(t *testing.T) {
 
 	if reflect.DeepEqual(copy, level.VaultRecords()) {
 		t.Fatal("level exposed mutable vault records")
+	}
+}
+
+func TestSupplementalVaultRecordsNeedNoPrimaryVault(t *testing.T) {
+	level := &Level{
+		ID:      5,
+		width:   1,
+		terrain: [][]terrain.ID{{terrain.Floor}},
+	}
+
+	generated := map[string]any{
+		"vault_ids": []any{"extra_shop"},
+		"vault_records": []any{
+			map[string]any{
+				"kind":     string(vault.KindItem),
+				"vault_id": "extra_shop",
+				"identity": "test_item",
+				"x":        int64(0),
+				"y":        int64(0),
+			},
+		},
+	}
+
+	if err := loadLuaVault(level, generated); err != nil {
+		t.Fatal(err)
+	}
+
+	if level.VaultID() != "" {
+		t.Fatalf("supplemental vault became primary: %q", level.VaultID())
+	}
+
+	if records := level.VaultRecords(); len(records) != 1 ||
+		records[0].SourceID != "extra_shop" {
+		t.Fatalf("supplemental vault records = %+v", records)
 	}
 }
 
