@@ -411,11 +411,11 @@ same-style walled rooms. All nine source maps in this file now have committed
 DES declarations and executable Lua hooks; branch travel remains separate.
 
 The source `layout_city.des` family is now complete. Onion City recursively
-splits and nests rooms using Elf and Pandemonium source weights, connects the
-room tree, and gives Elf transparent windows and clear doors. Its terrain
-decoder preserves the clear-door feature instead of treating it as a plain
-door. The map is registered for both branches; their travel flow is still
-pending.
+splits and nests rooms using Elf and Pandemonium source weights, opens
+eligible shared walls, and gives Elf transparent windows and clear doors.
+Its terrain decoder preserves the clear-door feature instead of treating it
+as a plain door. The map is registered for both branches; their travel flow
+is still pending.
 
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and

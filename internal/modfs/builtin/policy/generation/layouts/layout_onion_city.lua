@@ -1,8 +1,8 @@
 -- Theory of operation: Onion City divides a broad open area into nested
 -- rectangular rooms. Each room has one entrance; a source-sized chance
 -- gives it either one smaller room or two side-by-side children. The
--- branch and depth change those chances. A connection pass joins the
--- room tree, then Elf adds transparent wall windows and clear doors.
+-- branch and depth change those chances. A wall-opening pass adds nearby
+-- entrances, then Elf adds transparent wall windows and clear doors.
 local grid = require("policy.generation.grid")
 
 local layout = {}
@@ -164,47 +164,68 @@ carve_room = function(builder, bounds, settings, rooms)
         builder:chance_in(settings.divide, 100))
 end
 
--- The source's adjacent-room postpass opens many walls. Join each child to
--- the closest earlier room so all recursively split chambers share one
--- traversable city instead of leaving isolated rooms beyond the stairs.
-local function join_rooms(builder, rooms)
-    for index = 2, #rooms do
-        local room = rooms[index]
-        local nearest
-        local distance
+-- DCSS rejects a new opening if a parallel existing opening appears before
+-- the end of the wall segment. Check both directions along the segment,
+-- stopping at a corner or after the source's bounded lookahead distance.
+local function uninterrupted_wall(builder, x, y, horizontal, distance)
+    for _, direction in ipairs({ -1, 1 }) do
+        for step = 1, distance do
+            local check_x = x + (horizontal and direction * step or 0)
+            local check_y = y + (horizontal and 0 or direction * step)
+            local before = horizontal and builder:cell(check_x, check_y - 1)
+                or builder:cell(check_x - 1, check_y)
+            local after = horizontal and builder:cell(check_x, check_y + 1)
+                or builder:cell(check_x + 1, check_y)
 
-        for earlier = 1, index - 1 do
-            local other = rooms[earlier]
-            local candidate = math.abs(room.x - other.x) +
-                math.abs(room.y - other.y)
-
-            if not distance or candidate < distance then
-                nearest = other
-                distance = candidate
-            end
-        end
-
-        local x = room.x
-        local y = room.y
-
-        while x ~= nearest.x do
-            if builder:cell(x, y) == "#" then
-                builder:set(x, y, ".")
+            if before ~= "." or after ~= "." then
+                break
             end
 
-            x = x + (x < nearest.x and 1 or -1)
-        end
-
-        while y ~= nearest.y do
-            if builder:cell(x, y) == "#" then
-                builder:set(x, y, ".")
+            if builder:cell(check_x, check_y) ~= "#" then
+                return false
             end
-
-            y = y + (y < nearest.y and 1 or -1)
         end
+    end
 
-        if builder:cell(x, y) == "#" then
-            builder:set(x, y, ".")
+    return true
+end
+
+-- The source visits 200-500 randomly ordered cells and turns eligible wall
+-- cells into doors. This adds nearby passages without cutting corridors
+-- through the nested room walls or changing their one-door entrances.
+local function open_adjacent_rooms(builder)
+    local points = {}
+
+    for y = 1, grid.height - 2 do
+        for x = 1, grid.width - 2 do
+            points[#points + 1] = { x = x, y = y }
+        end
+    end
+
+    local attempts = range(builder, 200, 500)
+    local distance = range(builder, 5, 8)
+
+    for _ = 1, attempts do
+        local index = builder:roll(#points) + 1
+        local point = points[index]
+
+        points[index] = points[#points]
+        points[#points] = nil
+
+        if builder:cell(point.x, point.y) == "#" then
+            local north_south = builder:cell(point.x, point.y - 1) == "." and
+                builder:cell(point.x, point.y + 1) == "."
+            local east_west = builder:cell(point.x - 1, point.y) == "." and
+                builder:cell(point.x + 1, point.y) == "."
+
+            if (north_south and
+                uninterrupted_wall(builder, point.x, point.y,
+                    true, distance)) or
+                (east_west and
+                uninterrupted_wall(builder, point.x, point.y,
+                    false, distance)) then
+                builder:set(point.x, point.y, "+")
+            end
         end
     end
 end
@@ -272,7 +293,7 @@ function layout.layout_onion_city(api)
     }
 
     carve_room(builder, area, settings, rooms)
-    join_rooms(builder, rooms)
+    open_adjacent_rooms(builder)
 
     if api.branch == "Elf" then
         elf_windows(builder)
