@@ -7,7 +7,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -79,16 +78,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_BULLFROG",
-    -- Spawn rows place bullfrog in depth bands beginning at 6 through 9; they do
-    -- not mutate existing actors.
-    population = {
-        {
-            min_depth = 6,
-            max_depth = 9,
-            rarity = 1000,
-            curve = curves.PEAK,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

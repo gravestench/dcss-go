@@ -2,6 +2,7 @@
 local pool = require("policy.population.pool")
 local choice = require("policy.generation.vaults.specs.choice")
 local monster_ids = require("ids.monsters")
+local branches = require("ids.branches")
 
 local random_monsters = {}
 
@@ -55,7 +56,8 @@ function random_monsters.pick(ctx, request, depth, site)
     end
 
     local selected_depth = effective_depth(request, depth)
-    local rows, total = pool.at_depth(selected_depth)
+    local rows, total = pool.at_depth(branches.BRANCH_DUNGEON,
+        selected_depth)
 
     if total <= 0 then
         choice.fail(site, request, "no eligible monster at depth " .. selected_depth)

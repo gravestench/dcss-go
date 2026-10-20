@@ -6,7 +6,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -79,16 +78,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_ADDER",
-    -- Spawn rows place adder in depth bands beginning at 2 through 6; they do not
-    -- mutate existing actors.
-    population = {
-        {
-            min_depth = 2,
-            max_depth = 6,
-            rarity = 1000,
-            curve = curves.FLAT,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

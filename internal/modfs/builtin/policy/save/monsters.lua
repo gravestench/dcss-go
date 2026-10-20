@@ -15,6 +15,7 @@ local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local monsters = require("ids.monsters")
 local tactical = require("constants.monster_tactical")
 local band_members = require("policy.population.band_members")
+local branches = require("ids.branches")
 
 -- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
@@ -391,7 +392,7 @@ function module.run(ctx, input)
         end
     end
 
-    local allowed = roster.allowed(input.scenario_id)
+    local allowed = roster.allowed(input.scenario_id, branches.BRANCH_DUNGEON)
     local fixed = input.scenario_id ~= "fixed-dungeon-population-v1" and
         input.scenario_id ~= "generated-dungeon-basic-v1"
     local seen = {}

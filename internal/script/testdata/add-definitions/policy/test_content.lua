@@ -9,6 +9,7 @@ local monsters = require("ids.monsters")
 local spells = require("ids.spells")
 local roster = require("policy.population.roster")
 local pool = require("policy.population.pool")
+local branches = require("ids.branches")
 
 local policy = {}
 
@@ -19,8 +20,10 @@ function policy.read()
     local spell = catalog.get(categories.SPELLS, spells.SPELL_TEST_SPARK)
     local item = catalog.get(categories.ITEMS, items.UNRAND_TEST_RELIC)
     local token = catalog.get(categories.ITEMS, items.MY_MOD_TOKEN)
-    local allowed = roster.allowed("generated-dungeon-basic-v1")
-    local choices = pool.at_depth(1, allowed, "generated-dungeon-basic-v1")
+    local allowed = roster.allowed("generated-dungeon-basic-v1",
+        branches.BRANCH_DUNGEON)
+    local choices = pool.at_depth(branches.BRANCH_DUNGEON,
+        1, allowed, "generated-dungeon-basic-v1")
     local moss_weight = 0
 
     for _, choice in ipairs(choices) do

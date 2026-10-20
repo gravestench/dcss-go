@@ -8,7 +8,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
@@ -82,16 +81,7 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
-    -- Spawn rows place necromancer in depth bands beginning at 17 through 24; they
-    -- do not mutate existing actors.
-    population = {
-        {
-            min_depth = 17,
-            max_depth = 24,
-            rarity = 52,
-            curve = curves.SEMI,
-        },
-    },
+
     weapon_gear = {
         -- Source: crawl-ref/source/mon-gear.cc
         -- Spec: crawl-ref/source/mon-gear.cc

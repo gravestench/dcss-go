@@ -7,7 +7,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -87,16 +86,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_REDBACK",
-    -- Spawn rows place redback in depth bands beginning at 16 through 24; they do
-    -- not mutate existing actors.
-    population = {
-        {
-            min_depth = 16,
-            max_depth = 24,
-            rarity = 89,
-            curve = curves.PEAK,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

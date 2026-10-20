@@ -7,7 +7,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local item_ids = require("ids.items")
 local sentinels = require("constants.monster_gear_sentinels")
 local spellbooks = require("ids.monster_spellbooks")
@@ -83,16 +82,7 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
-    -- Spawn rows place orc warrior in depth bands beginning at 6 through 12; they
-    -- do not mutate existing actors.
-    population = {
-        {
-            min_depth = 6,
-            max_depth = 12,
-            rarity = 600,
-            curve = curves.PEAK,
-        },
-    },
+
     weapon_gear = {
         -- Source: crawl-ref/source/mon-gear.cc
         -- Spec: crawl-ref/source/mon-gear.cc

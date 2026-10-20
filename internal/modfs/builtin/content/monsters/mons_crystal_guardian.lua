@@ -8,7 +8,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -94,16 +93,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
-    -- Spawn rows place crystal guardian in depth bands beginning at 25 through 27;
-    -- they do not mutate existing actors.
-    population = {
-        {
-            min_depth = 25,
-            max_depth = 27,
-            rarity = 12,
-            curve = curves.RISE,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

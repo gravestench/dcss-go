@@ -11,6 +11,9 @@ local item_ids = require("ids.items")
 local streams = require("constants.rng_streams")
 local bands = require("policy.population.bands")
 local boris_replacement = require("policy.population.boris_replacement")
+local branches = require("ids.branches")
+local sentinels = require("constants.population_sentinels")
+local scenarios = require("constants.scenarios")
 
 -- Visit levels by ID so shared population draws have stable order.
 local function level_order(left, right)
@@ -55,7 +58,15 @@ local function populate_level(ctx, level, allowed, scenario_id)
         error("Dungeon:" .. level.id .. " has no population budget")
     end
 
-    local choices, total = pool.at_depth(level.id, allowed, scenario_id)
+    local branch_id = level.branch_id or branches.BRANCH_DUNGEON
+    local depth = level.local_depth or level.id
+
+    if scenario_id == scenarios.GENERATED_DUNGEON_BASIC and
+        (not level.branch_id or not level.local_depth) then
+        error("generated level " .. level.id ..
+            " requires explicit branch ID and local depth")
+    end
+    local choices, total = pool.at_depth(branch_id, depth, allowed, scenario_id)
 
     if total == 0 then
         error("Dungeon:" .. level.id .. " has no supported population")
@@ -72,13 +83,17 @@ local function populate_level(ctx, level, allowed, scenario_id)
         end
 
         local monster_id = pool.pick(ctx, choices, total)
-        local cell = cells[ctx:random("placement", #cells) + 1]
-        local leader = factory.spawn(ctx, monster_id, level.id, cell.x, cell.y)
-        actors = actors + 1
 
-        -- A definition with a band owns its follower count and membership.
-        -- The shared policy handles jackals and named ambient leaders alike.
-        actors = actors + bands.spawn(ctx, leader, level, excluded)
+        -- The source table can spend a roll without placing an actor.
+        if monster_id ~= sentinels.NO_MONSTER then
+            local cell = cells[ctx:random("placement", #cells) + 1]
+            local leader = factory.spawn(ctx, monster_id, level.id, cell.x, cell.y)
+            actors = actors + 1
+
+            -- A definition with a band owns its follower count and membership.
+            -- The shared policy handles jackals and named ambient leaders alike.
+            actors = actors + bands.spawn(ctx, leader, level, excluded)
+        end
     end
 
     return actors
@@ -155,7 +170,7 @@ local module = {}
 -- Sort levels before materialization so shared population streams advance in level order.
 function module.run(ctx, input)
     local scenario_id = input.scenario_id
-    roster.allowed(scenario_id)
+    roster.allowed(scenario_id, branches.BRANCH_DUNGEON)
 
     local counts = {}
     local materialized = {}
@@ -168,7 +183,6 @@ function module.run(ctx, input)
             shop_fixture(ctx)
         end
     else
-        local allowed = roster.allowed(scenario_id)
         local levels = input.levels or {}
 
         table.sort(levels, level_order)
@@ -189,6 +203,8 @@ function module.run(ctx, input)
             end
 
             if level.id ~= abyss.level_id then
+                local allowed = roster.allowed(scenario_id,
+                    level.branch_id or branches.BRANCH_DUNGEON)
                 count = count + populate_level(ctx, level, allowed,
                     scenario_id)
                 count = count + boris_replacement.place(ctx, level, excluded)

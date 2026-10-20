@@ -2,6 +2,7 @@ local catalog = require("policy.catalog")
 local roster = require("policy.population.roster")
 local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
+local branches = require("ids.branches")
 
 -- Corpse validation reads source monster flags without requiring every record to list them.
 local function flag(definition, wanted)
@@ -19,7 +20,7 @@ local module = {}
 -- Corpse entities keep their decay and source-monster fields consistent across restore.
 -- Example: module.run(ctx, { scenario_id = "generated-dungeon-basic-v1" }) validates corpse freshness.
 function module.run(ctx, input)
-    local allowed = roster.allowed(input.scenario_id)
+    local allowed = roster.allowed(input.scenario_id, branches.BRANCH_DUNGEON)
 
     if input.scenario_id == "generated-dungeon-basic-v1" then
         allowed.MONS_GOBLIN = true

@@ -8,7 +8,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
@@ -84,16 +83,7 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
-    -- Spawn rows place orc sorcerer in depth bands beginning at 21 through 27;
-    -- they do not mutate existing actors.
-    population = {
-        {
-            min_depth = 21,
-            max_depth = 27,
-            rarity = 25,
-            curve = curves.PEAK,
-        },
-    },
+
     weapon_gear = {
         -- Source: crawl-ref/source/mon-gear.cc
         -- Spec: crawl-ref/source/mon-gear.cc

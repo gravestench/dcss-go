@@ -18,6 +18,8 @@ local curves = require("constants.population_curves")
 local menu_groups = require("constants.menu_groups")
 local gear_sentinels = require("constants.monster_gear_sentinels")
 local weapon_brands = require("constants.weapon_brands")
+local population_sentinels = require("constants.population_sentinels")
+local monster_ids = require("ids.monsters")
 
 local known_brands = {
     [gear_sentinels.NO_FORCED_BRAND] = true,
@@ -393,53 +395,6 @@ local function positive_number(category, definition, field)
     end
 end
 
--- Source rows are global; mod rows may restrict themselves to a scenario.
--- The picker determines order from monster IDs, never imported positions.
-local function validate_population_row(monster, row)
-    local category = categories.MONSTERS
-
-    if type(row) ~= "table" then
-        fail(category, monster.id, "population entries must be tables")
-    end
-
-    if row.source_order ~= nil then
-        fail(category, monster.id,
-            "population source_order is obsolete; picker order follows monster IDs")
-    end
-
-    if row.scenario_id ~= nil and
-        (type(row.scenario_id) ~= "string" or row.scenario_id == "") then
-        fail(category, monster.id,
-            "population scenario_id must be nonempty text")
-    end
-
-    for _, field in ipairs({ "min_depth", "max_depth", "rarity" }) do
-        if type(row[field]) ~= "number" or row[field] % 1 ~= 0 or row[field] < 1 then
-            fail(category, monster.id, "population " .. field .. " must be a positive integer")
-        end
-    end
-
-    if row.min_depth > row.max_depth then
-        fail(category, monster.id, "population min_depth exceeds max_depth")
-    end
-
-    if not population_curves[row.curve] then
-        fail(category, monster.id, "population curve is unsupported")
-    end
-end
-
--- Validate each local row without coupling one monster file to another.
-function validation.population_rows(monsters)
-    for _, monster in ipairs(monsters) do
-        local population = optional_list(categories.MONSTERS, monster,
-            "population")
-
-        for _, row in ipairs(population) do
-            validate_population_row(monster, row)
-        end
-    end
-end
-
 -- Monster gear counts cannot be fractional or negative.
 local function nonnegative_integer(category, monster, value, field)
     if type(value) ~= "number" or value < 0 or value % 1 ~= 0 then
@@ -590,6 +545,89 @@ end
 local function validate_spawnable_monster(monster)
     for _, field in ipairs({ "average_hp_10x", "speed", "hd" }) do
         positive_number(categories.MONSTERS, monster, field)
+    end
+end
+
+-- A branch table owns local depth weights. Mods may add a separate record
+-- for that branch, but every row must resolve after all VFS layers load.
+function validation.branch_populations()
+    local category = categories.POPULATIONS
+    local base = {}
+
+    for _, id in ipairs(register.ids(category)) do
+        local definition = register.get(category, id)
+        local branch_id = required(category, definition, "branch_id", "string")
+        local found_branch = pcall(register.get, categories.BRANCHES, branch_id)
+
+        if not found_branch then
+            fail(category, id, "has missing branch_id " .. branch_id)
+        end
+
+        if id == branch_id then
+            base[branch_id] = true
+        end
+
+        if definition.source_order ~= nil then
+            fail(category, id, "source_order is obsolete")
+        end
+
+        if definition.scenario_id ~= nil and
+            (type(definition.scenario_id) ~= "string" or definition.scenario_id == "") then
+            fail(category, id, "scenario_id must be nonempty text")
+        end
+
+        required(category, definition, "rows", "table")
+        local rows = optional_list(category, definition, "rows")
+
+        for index, row in ipairs(rows) do
+            local context = "row " .. index
+
+            if type(row) ~= "table" or type(row.monster_id) ~= "string" then
+                fail(category, id, context .. " requires monster_id")
+            end
+
+            if row.source_order ~= nil then
+                fail(category, id, context .. " source_order is obsolete")
+            end
+
+            for _, field in ipairs({ "min_depth", "max_depth", "rarity" }) do
+                local value = row[field]
+
+                if type(value) ~= "number" or value % 1 ~= 0 then
+                    fail(category, id, context .. " requires integer " .. field)
+                end
+            end
+
+            if row.min_depth > row.max_depth or row.rarity <= 0 then
+                fail(category, id, context .. " has invalid depth or rarity")
+            end
+
+            if not population_curves[row.curve] then
+                fail(category, id, context .. " has unsupported curve")
+            end
+
+            if row.monster_id ~= population_sentinels.NO_MONSTER then
+                local found, monster = pcall(register.get,
+                    categories.MONSTERS, row.monster_id)
+
+                if not found or monster.status ~= "defined" then
+                    fail(category, id, context .. " has unavailable monster " ..
+                        row.monster_id)
+                end
+
+                -- Skeleton is a source body template. Placement chooses a
+                -- corpse species and supplies its HP profile at spawn time.
+                if row.monster_id ~= monster_ids.MONS_SKELETON then
+                    validate_spawnable_monster(monster)
+                end
+            end
+        end
+    end
+
+    for _, branch_id in ipairs(register.ids(categories.BRANCHES)) do
+        if not base[branch_id] then
+            error("branch " .. branch_id .. " has no base population definition")
+        end
     end
 end
 
@@ -750,7 +788,7 @@ local function validate_registered_catalogs()
         monsters[#monsters + 1] = register.get(categories.MONSTERS, id)
     end
 
-    validation.population_rows(monsters)
+    validation.branch_populations()
     validation.weapon_gear(monsters)
 
     for _, monster in ipairs(monsters) do
@@ -763,8 +801,6 @@ local function validate_registered_catalogs()
 
     for _, monster in ipairs(monsters) do
         local id = monster.id
-        local population = optional_list(categories.MONSTERS, monster, "population")
-
         if monster.status == "defined" then
             required(categories.MONSTERS, monster, "name", "string")
             required(categories.MONSTERS, monster, "habitat_id", "string")
@@ -779,15 +815,9 @@ local function validate_registered_catalogs()
                 end
             end
 
-            if #population > 0 or has_combat_profile(monster) then
+            if has_combat_profile(monster) then
                 validate_defined_monster(monster)
             end
-
-            if #population > 0 then
-                validate_spawnable_monster(monster)
-            end
-        elseif #population > 0 then
-            fail(categories.MONSTERS, id, "population requires status defined")
         end
     end
 

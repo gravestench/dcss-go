@@ -1,7 +1,6 @@
 -- Test Moss adds a spawnable monster in the generated dungeon at depths one through three.
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -28,15 +27,6 @@ local definition = {
         spell = 10,
         special = 10,
         item = 10,
-    },
-    population = {
-        {
-            scenario_id = "generated-dungeon-basic-v1",
-            min_depth = 1,
-            max_depth = 3,
-            rarity = 1000,
-            curve = curves.FLAT,
-        },
     },
 }
 

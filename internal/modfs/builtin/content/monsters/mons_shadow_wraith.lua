@@ -7,7 +7,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -82,16 +81,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
-    -- Spawn rows place shadow wraith in depth bands beginning at 16 through 24;
-    -- they do not mutate existing actors.
-    population = {
-        {
-            min_depth = 16,
-            max_depth = 24,
-            rarity = 25,
-            curve = curves.PEAK,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

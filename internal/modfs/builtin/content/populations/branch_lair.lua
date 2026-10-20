@@ -1,0 +1,272 @@
+-- BRANCH_LAIR ambient monster rows from the version-34 DCSS source table.
+-- The source may repeat a monster at another depth or curve; keep
+-- those rows separate so their weights accumulate as designed.
+-- This committed data is loaded at runtime without the C++ checkout.
+local branches = require("ids.branches")
+local categories = require("constants.catalog")
+local curves = require("constants.population_curves")
+local monsters = require("ids.monsters")
+local sentinels = require("constants.population_sentinels")
+
+local definition = {
+    id = branches.BRANCH_LAIR,
+    branch_id = branches.BRANCH_LAIR,
+    rows = {
+        {
+            monster_id = sentinels.NO_MONSTER,
+            min_depth = 0,
+            max_depth = 4,
+            rarity = 4500,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_BLACK_BEAR,
+            min_depth = -2,
+            max_depth = 4,
+            rarity = 100,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_BASILISK,
+            min_depth = -2,
+            max_depth = 6,
+            rarity = 310,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_SCORPION,
+            min_depth = -1,
+            max_depth = 3,
+            rarity = 24,
+            curve = curves.PEAK,
+        },
+        {
+            monster_id = monsters.MONS_WOLF,
+            min_depth = -1,
+            max_depth = 5,
+            rarity = 310,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_RIME_DRAKE,
+            min_depth = -1,
+            max_depth = 8,
+            rarity = 290,
+            curve = curves.PEAK,
+        },
+        {
+            monster_id = monsters.MONS_BLACK_MAMBA,
+            min_depth = -1,
+            max_depth = 10,
+            rarity = 380,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_BULLFROG,
+            min_depth = 0,
+            max_depth = 4,
+            rarity = 1000,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_WATER_MOCCASIN,
+            min_depth = 0,
+            max_depth = 5,
+            rarity = 990,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_YAK,
+            min_depth = 0,
+            max_depth = 5,
+            rarity = 565,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_WYVERN,
+            min_depth = 0,
+            max_depth = 6,
+            rarity = 340,
+            curve = curves.PEAK,
+        },
+        {
+            monster_id = monsters.MONS_BLINK_FROG,
+            min_depth = 0,
+            max_depth = 7,
+            rarity = 380,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_CANE_TOAD,
+            min_depth = 0,
+            max_depth = 5,
+            rarity = 900,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_KOMODO_DRAGON,
+            min_depth = 0,
+            max_depth = 5,
+            rarity = 615,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_HELL_RAT,
+            min_depth = 0,
+            max_depth = 7,
+            rarity = 50,
+            curve = curves.PEAK,
+        },
+        {
+            monster_id = monsters.MONS_POLAR_BEAR,
+            min_depth = 0,
+            max_depth = 7,
+            rarity = 150,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_HYDRA,
+            min_depth = 0,
+            max_depth = 10,
+            rarity = 400,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_HORNET,
+            min_depth = 1,
+            max_depth = 4,
+            rarity = 16,
+            curve = curves.PEAK,
+        },
+        {
+            monster_id = monsters.MONS_STEAM_DRAGON,
+            min_depth = 1,
+            max_depth = 4,
+            rarity = 50,
+            curve = curves.PEAK,
+        },
+        {
+            monster_id = monsters.MONS_OKLOB_PLANT,
+            min_depth = 1,
+            max_depth = 6,
+            rarity = 25,
+            curve = curves.PEAK,
+        },
+        {
+            monster_id = monsters.MONS_ELEPHANT,
+            min_depth = 1,
+            max_depth = 8,
+            rarity = 290,
+            curve = curves.PEAK,
+        },
+        {
+            monster_id = monsters.MONS_DEATH_YAK,
+            min_depth = 1,
+            max_depth = 9,
+            rarity = 210,
+            curve = curves.RISE,
+        },
+        {
+            monster_id = monsters.MONS_CATOBLEPAS,
+            min_depth = 1,
+            max_depth = 10,
+            rarity = 70,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_BOULDER_BEETLE,
+            min_depth = 1,
+            max_depth = 15,
+            rarity = 70,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_TORPOR_SNAIL,
+            min_depth = 1,
+            max_depth = 15,
+            rarity = 85,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_POLAR_BEAR,
+            min_depth = 2,
+            max_depth = 7,
+            rarity = 75,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_LINDWURM,
+            min_depth = 2,
+            max_depth = 9,
+            rarity = 50,
+            curve = curves.PEAK,
+        },
+        {
+            monster_id = monsters.MONS_DREAM_SHEEP,
+            min_depth = 3,
+            max_depth = 11,
+            rarity = 140,
+            curve = curves.SEMI,
+        },
+        {
+            monster_id = monsters.MONS_FIRE_CRAB,
+            min_depth = 3,
+            max_depth = 15,
+            rarity = 36,
+            curve = curves.RISE,
+        },
+        {
+            monster_id = monsters.MONS_CANE_TOAD,
+            min_depth = 6,
+            max_depth = 9,
+            rarity = 160,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_KOMODO_DRAGON,
+            min_depth = 6,
+            max_depth = 9,
+            rarity = 160,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_DIRE_ELEPHANT,
+            min_depth = 10,
+            max_depth = 11,
+            rarity = 32,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_ALLIGATOR,
+            min_depth = 10,
+            max_depth = 11,
+            rarity = 32,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_MANTICORE,
+            min_depth = 10,
+            max_depth = 11,
+            rarity = 32,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_ANACONDA,
+            min_depth = 10,
+            max_depth = 11,
+            rarity = 32,
+            curve = curves.FLAT,
+        },
+        {
+            monster_id = monsters.MONS_WOLF_SPIDER,
+            min_depth = 10,
+            max_depth = 11,
+            rarity = 32,
+            curve = curves.FLAT,
+        },
+    },
+}
+
+register.definition(categories.POPULATIONS, definition)
+
+return definition

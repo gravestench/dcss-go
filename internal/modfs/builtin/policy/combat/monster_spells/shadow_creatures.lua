@@ -34,8 +34,9 @@ function effect.resolve(ctx, caster, foe, slot, plan)
 
     local position = ctx:get(caster, component.POSITION)
     local scenario_id = scenarios.GENERATED_DUNGEON_BASIC
-    local allowed = roster.allowed(scenario_id)
-    local choices, total = pool.at_depth(position.level_id,
+    local allowed = roster.allowed(scenario_id, branch_ids.BRANCH_DUNGEON)
+    local choices, total = pool.at_depth(branch_ids.BRANCH_DUNGEON,
+        position.level_id,
         allowed, scenario_id)
     local hd = strength.spell_hd(ctx, caster)
     local count = 1 + roll.spell(ctx, math.floor(hd / 5) + 1)

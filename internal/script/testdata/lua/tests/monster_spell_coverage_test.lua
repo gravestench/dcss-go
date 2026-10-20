@@ -6,6 +6,7 @@ local harness = require("tests.harness")
 local monsters = require("ids.monsters")
 local roster = require("policy.population.roster")
 local spells = require("ids.spells")
+local branch_ids = require("ids.branches")
 
 local test = {}
 
@@ -98,7 +99,8 @@ end
 
 -- The active generated roster must have resolvers for every castable slot.
 local function active_roster_has_effects()
-    local ids = roster.allowed("generated-dungeon-basic-v1")
+    local ids = roster.allowed("generated-dungeon-basic-v1",
+        branch_ids.BRANCH_DUNGEON)
     local missing = coverage.missing(ids)
 
     harness.equal(#missing, 0,
@@ -163,7 +165,7 @@ local function source_roster_requires_effects()
     end
 
     local okay, problem = pcall(roster.allowed,
-        "generated-dungeon-basic-v1")
+        "generated-dungeon-basic-v1", branch_ids.BRANCH_DUNGEON)
 
     effects.effect = original_effect
 

@@ -7,7 +7,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -80,16 +79,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_KOMODO_DRAGON",
-    -- Spawn rows place komodo dragon in depth bands beginning at 10 through 13;
-    -- they do not mutate existing actors.
-    population = {
-        {
-            min_depth = 10,
-            max_depth = 13,
-            rarity = 200,
-            curve = curves.PEAK,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

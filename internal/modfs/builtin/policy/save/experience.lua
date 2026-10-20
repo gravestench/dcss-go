@@ -4,6 +4,7 @@ local roster = require("policy.population.roster")
 local component = require("constants.component")
 local effects = require("constants.vault_effects")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
+local branches = require("ids.branches")
 
 local module = {}
 
@@ -15,7 +16,7 @@ function module.run(ctx, input)
     local potion = ctx:get(player, component.POTION_EXPERIENCE)
     local clone_rewards = ctx:get(player, component.CHAOS_CLONE_REWARDS)
     local doom_rewards = ctx:get(player, doom_howl.REWARDS)
-    local allowed = roster.allowed(input.scenario_id)
+    local allowed = roster.allowed(input.scenario_id, branches.BRANCH_DUNGEON)
     local uses_population = input.scenario_id == "fixed-dungeon-population-v1" or
         input.scenario_id == "generated-dungeon-basic-v1"
     local live = {}

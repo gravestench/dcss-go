@@ -11,6 +11,7 @@ local catalog = {
     MONSTER_SPELLBOOKS = "monster_spellbooks",
     MONSTER_BEAMS = "monster_beams",
     MONSTERS = "monsters",
+    POPULATIONS = "populations",
     MUTATIONS = "mutations",
     RANDART_NAMES = "randart_names",
     SPECIES = "species",

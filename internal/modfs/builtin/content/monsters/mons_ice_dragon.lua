@@ -8,7 +8,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -96,16 +95,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_ICE_DRAGON",
-    -- Spawn rows place ice dragon in depth bands beginning at 16 through 27; they
-    -- do not mutate existing actors.
-    population = {
-        {
-            min_depth = 16,
-            max_depth = 27,
-            rarity = 92,
-            curve = curves.PEAK,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

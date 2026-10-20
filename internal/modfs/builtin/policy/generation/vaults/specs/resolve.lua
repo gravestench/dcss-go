@@ -6,6 +6,7 @@ local random_monsters = require("policy.generation.vaults.specs.random_monsters"
 local random_items = require("policy.generation.vaults.specs.random_items")
 local pool = require("policy.population.pool")
 local monster_ids = require("ids.monsters")
+local branch_ids = require("ids.branches")
 local item_ids = require("ids.items")
 local item_quality = require("constants.vault_item_quality")
 local colours = require("constants.vault_colours")
@@ -192,7 +193,7 @@ end
 
 -- Random corpse requests filter to species capable of leaving the requested remains.
 local function generic_corpse_species(ctx, depth, skeleton, site)
-    local rows = pool.at_depth(depth)
+    local rows = pool.at_depth(branch_ids.BRANCH_DUNGEON, depth)
     local eligible = {}
     local total = 0
 

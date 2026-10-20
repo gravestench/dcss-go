@@ -8,7 +8,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -80,16 +79,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
-    -- Spawn rows place boggart in depth bands beginning at 14 through 22; they do
-    -- not mutate existing actors.
-    population = {
-        {
-            min_depth = 14,
-            max_depth = 22,
-            rarity = 115,
-            curve = curves.SEMI,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

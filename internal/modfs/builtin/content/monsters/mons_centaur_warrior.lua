@@ -7,7 +7,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
@@ -84,23 +83,7 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
-    -- Spawn rows place centaur warrior in depth bands beginning at 13 through 17;
-    -- they do not mutate existing actors.
-    population = {
-        {
-            min_depth = 13,
-            max_depth = 17,
-            rarity = 925,
-            curve = curves.FLAT,
-        },
 
-        {
-            min_depth = 18,
-            max_depth = 23,
-            rarity = 925,
-            curve = curves.FALL,
-        },
-    },
     weapon_gear = {
         -- Source: crawl-ref/source/mon-gear.cc
         -- Spec: crawl-ref/source/mon-gear.cc

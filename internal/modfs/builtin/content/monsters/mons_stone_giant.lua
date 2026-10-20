@@ -7,7 +7,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -81,16 +80,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_STONE_GIANT",
-    -- Spawn rows place stone giant in depth bands beginning at 21 through 27; they
-    -- do not mutate existing actors.
-    population = {
-        {
-            min_depth = 21,
-            max_depth = 27,
-            rarity = 310,
-            curve = curves.FALL,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

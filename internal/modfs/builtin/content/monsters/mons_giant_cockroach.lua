@@ -7,7 +7,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -85,16 +84,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_GIANT_COCKROACH",
-    -- Spawn rows place giant cockroach in depth bands beginning at 1 through 4;
-    -- they do not mutate existing actors.
-    population = {
-        {
-            min_depth = 1,
-            max_depth = 4,
-            rarity = 500,
-            curve = curves.FLAT,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

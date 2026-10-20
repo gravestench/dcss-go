@@ -17,7 +17,7 @@ function module.run(_, input)
     local by_id = {}
 
     -- Save rosters and level budgets use the same recognized scenarios.
-    roster.allowed(scenario_id)
+    roster.allowed(scenario_id, branches.BRANCH_DUNGEON)
 
     for _, level in ipairs(levels) do
         by_id[level.id] = level

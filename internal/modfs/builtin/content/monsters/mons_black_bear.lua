@@ -8,7 +8,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -81,16 +80,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_BLACK_BEAR",
-    -- Spawn rows place black bear in depth bands beginning at 4 through 8; they do
-    -- not mutate existing actors.
-    population = {
-        {
-            min_depth = 4,
-            max_depth = 8,
-            rarity = 350,
-            curve = curves.PEAK,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

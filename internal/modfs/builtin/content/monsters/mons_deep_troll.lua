@@ -7,7 +7,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -84,16 +83,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_DEEP_TROLL",
-    -- Spawn rows place deep troll in depth bands beginning at 19 through 26; they
-    -- do not mutate existing actors.
-    population = {
-        {
-            min_depth = 19,
-            max_depth = 26,
-            rarity = 136,
-            curve = curves.SEMI,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

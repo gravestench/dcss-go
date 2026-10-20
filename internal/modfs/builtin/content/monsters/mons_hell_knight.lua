@@ -8,7 +8,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local item_ids = require("ids.items")
 local brands = require("constants.weapon_brands")
 local sentinels = require("constants.monster_gear_sentinels")
@@ -91,16 +90,7 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
-    -- Spawn rows place hell knight in depth bands beginning at 23 through 29; they
-    -- do not mutate existing actors.
-    population = {
-        {
-            min_depth = 23,
-            max_depth = 29,
-            rarity = 25,
-            curve = curves.PEAK,
-        },
-    },
+
     weapon_gear = {
         -- Source: crawl-ref/source/mon-gear.cc
         -- Spec: crawl-ref/source/mon-gear.cc

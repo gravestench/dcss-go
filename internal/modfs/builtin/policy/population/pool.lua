@@ -2,6 +2,7 @@
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
+local sentinels = require("constants.population_sentinels")
 
 local pool = {}
 
@@ -43,17 +44,20 @@ local function weight_at_depth(row, depth)
     error("unsupported population curve " .. tostring(row.curve))
 end
 
--- Catalog IDs are sorted before this traversal. Rows within one monster keep
--- their local order, while Lua file discovery cannot change a seeded draw.
-local function ordered_rows(allowed, scenario_id)
+-- Each branch owns its source rows. Extra population definitions can add rows
+-- with a distinct ID, so a sparse mod does not need to copy a whole branch.
+-- Definition IDs are sorted by catalog.all; file discovery cannot shift draws.
+local function ordered_rows(branch_id, allowed, scenario_id)
     local source = {}
 
-    for _, definition in ipairs(catalog.all(categories.MONSTERS)) do
-        if not allowed or allowed[definition.id] then
-            for _, row in ipairs(definition.population or {}) do
-                if not row.scenario_id or row.scenario_id == scenario_id then
+    for _, definition in ipairs(catalog.all(categories.POPULATIONS)) do
+        if definition.branch_id == branch_id and
+            (not definition.scenario_id or definition.scenario_id == scenario_id) then
+            for _, row in ipairs(definition.rows) do
+                if row.monster_id == sentinels.NO_MONSTER or
+                    not allowed or allowed[row.monster_id] then
                     source[#source + 1] = {
-                        id = definition.id,
+                        id = row.monster_id,
                         row = row,
                     }
                 end
@@ -64,14 +68,13 @@ local function ordered_rows(allowed, scenario_id)
     return source
 end
 
--- Keep duplicate catalog rows as distinct weighted entries when building the depth-specific pool.
-function pool.at_depth(depth, allowed, scenario_id)
+-- Keep duplicate source rows as separate weighted entries. Only one branch's
+-- local depth enters the formula, regardless of its opaque level ID.
+function pool.at_depth(branch_id, depth, allowed, scenario_id)
     local choices = {}
     local total = 0
 
-    -- Source and mod rows use the same ID order. Duplicate rows in one
-    -- monster definition remain distinct weighted picker candidates.
-    for _, entry in ipairs(ordered_rows(allowed, scenario_id)) do
+    for _, entry in ipairs(ordered_rows(branch_id, allowed, scenario_id)) do
         local weight = weight_at_depth(entry.row, depth)
 
         if weight > 0 then
@@ -89,7 +92,7 @@ end
 -- Spend one population-stream draw over the accumulated row weights.
 function pool.pick(ctx, choices, total, stream)
     if total <= 0 then
-        error("Dungeon has no supported population")
+        error("population pool has no supported entries")
     end
 
     local choice = ctx:random(stream or "population", total)
@@ -102,7 +105,7 @@ function pool.pick(ctx, choices, total, stream)
         choice = choice - row.weight
     end
 
-    error("Dungeon population pool failed to select")
+    error("population pool failed to select")
 end
 
 return pool

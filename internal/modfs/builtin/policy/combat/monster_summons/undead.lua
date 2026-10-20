@@ -7,6 +7,7 @@ local pool = require("policy.population.pool")
 local roster = require("policy.population.roster")
 local scenarios = require("constants.scenarios")
 local streams = require("constants.rng_streams")
+local branches = require("ids.branches")
 
 local undead = {}
 
@@ -41,7 +42,7 @@ end
 -- before deriving their HP and attacks, like source zombie_picker does.
 function undead.base(ctx, position, kind_id)
     local scenario = scenarios.GENERATED_DUNGEON_BASIC
-    local allowed = roster.allowed(scenario)
+    local allowed = roster.allowed(scenario, branches.BRANCH_DUNGEON)
 
     for id in pairs(allowed) do
         local definition = catalog.get("monsters", id)
@@ -65,7 +66,8 @@ function undead.base(ctx, position, kind_id)
         end
     end
 
-    local choices, total = pool.at_depth(position.level_id,
+    local choices, total = pool.at_depth(branches.BRANCH_DUNGEON,
+        position.level_id,
         allowed, scenario)
     local base_id = pool.pick(ctx, choices, total,
         streams.MONSTER_SPELL)

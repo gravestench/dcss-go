@@ -1,39 +1,45 @@
--- Example: A fixture roster includes its pinned IDs and scenario-tagged catalog monsters.
+-- Example: A fixed benchmark keeps its pinned actors, while generated play
+-- reads the active branch's source rows and mod additions.
 local roster = {}
 local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
+local sentinels = require("constants.population_sentinels")
 local spell_coverage = require("policy.combat.monster_spell_coverage")
+local monsters = require("ids.monsters")
+local scenario_ids = require("constants.scenarios")
 
 local fixed = {
-    "MONS_RAT",
-    "MONS_QUOKKA",
-    "MONS_FRILLED_LIZARD",
+    monsters.MONS_RAT,
+    monsters.MONS_QUOKKA,
+    monsters.MONS_FRILLED_LIZARD,
 }
 
 local population = {
-    "MONS_RAT",
-    "MONS_QUOKKA",
-    "MONS_FRILLED_LIZARD",
-    "MONS_GIANT_COCKROACH",
-    "MONS_WORM",
-    "MONS_JACKAL",
-    "MONS_ADDER",
+    monsters.MONS_RAT,
+    monsters.MONS_QUOKKA,
+    monsters.MONS_FRILLED_LIZARD,
+    monsters.MONS_GIANT_COCKROACH,
+    monsters.MONS_WORM,
+    monsters.MONS_JACKAL,
+    monsters.MONS_ADDER,
 }
-
-local generated_scenario = "generated-dungeon-basic-v1"
 
 local scenarios = {
-    [""] = { "MONS_RAT" },
-    ["fixed-dungeon-rat-quokka-v1"] = { "MONS_RAT", "MONS_QUOKKA" },
-    ["fixed-dungeon-rat-quokka-lizard-v2"] = fixed,
-    ["fixed-dungeon-shops-v1"] = fixed,
-    ["fixed-dungeon-population-v1"] = population,
-    [generated_scenario] = {},
+    [scenario_ids.FIXED_RAT] = { monsters.MONS_RAT },
+    [scenario_ids.FIXED_RAT_QUOKKA] = {
+        monsters.MONS_RAT,
+        monsters.MONS_QUOKKA,
+    },
+    [scenario_ids.FIXED_LIZARD] = fixed,
+    [scenario_ids.FIXED_SHOPS] = fixed,
+    [scenario_ids.FIXED_POPULATION] = population,
+    [scenario_ids.GENERATED_DUNGEON_BASIC] = {},
 }
 
--- Fixture rosters keep their pinned actors. Generated Dungeon play admits
--- every source population row directly from its monster definition, so a
--- content file is sufficient to make its monster eligible at the right depth.
-function roster.allowed(scenario_id)
+-- Fixed fixtures keep their pinned actors. A generated branch admits every
+-- monster in its effective population data; sparse mod rows enter the same
+-- roster without a second handwritten allowlist.
+function roster.allowed(scenario_id, branch_id)
     local ids = scenarios[scenario_id]
 
     if not ids then
@@ -46,12 +52,20 @@ function roster.allowed(scenario_id)
         allowed[id] = true
     end
 
-    for _, definition in ipairs(catalog.all("monsters")) do
-        for _, row in ipairs(definition.population or {}) do
-            if row.scenario_id == scenario_id or
-                (scenario_id == generated_scenario and
-                    row.scenario_id == nil) then
-                allowed[definition.id] = true
+    if scenario_id == scenario_ids.GENERATED_DUNGEON_BASIC then
+        if not branch_id then
+            error("generated population requires a branch ID")
+        end
+
+        for _, definition in ipairs(catalog.all(categories.POPULATIONS)) do
+            if definition.branch_id == branch_id and
+                (not definition.scenario_id or
+                    definition.scenario_id == scenario_id) then
+                for _, row in ipairs(definition.rows) do
+                    if row.monster_id ~= sentinels.NO_MONSTER then
+                        allowed[row.monster_id] = true
+                    end
+                end
             end
         end
     end
@@ -71,7 +85,7 @@ end
 
 -- Spawn profiles expose the catalog habitat and flags needed by placement after a roster pick.
 function roster.profile(id)
-    local definition = catalog.get("monsters", id)
+    local definition = catalog.get(categories.MONSTERS, id)
     local average = definition.average_hp_10x
     local variance = math.ceil(average * 33 / 100)
 

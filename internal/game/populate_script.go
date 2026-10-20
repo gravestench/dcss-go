@@ -117,8 +117,12 @@ func populationLevelRecord(level *Level, entry point) map[string]any {
 		})
 	}
 
+	// The current generated path is Dungeon, whose level ID equals local
+	// depth. Branch generation will store local depth separately on Level.
 	return map[string]any{
 		"id":               level.ID,
+		"branch_id":        level.BranchID,
+		"local_depth":      level.ID,
 		"entry_x":          entry.x,
 		"entry_y":          entry.y,
 		"budget":           level.initialMonsters,

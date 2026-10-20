@@ -7,7 +7,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -78,16 +77,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_FRILLED_LIZARD",
-    -- Spawn rows place frilled lizard in depth bands beginning at 1 through 3;
-    -- they do not mutate existing actors.
-    population = {
-        {
-            min_depth = 1,
-            max_depth = 3,
-            rarity = 640,
-            curve = curves.FLAT,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

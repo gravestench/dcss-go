@@ -6,7 +6,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
@@ -80,16 +79,7 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_OGRE",
-    -- Spawn rows place ogre in depth bands beginning at 4 through 7; they do not
-    -- mutate existing actors.
-    population = {
-        {
-            min_depth = 4,
-            max_depth = 7,
-            rarity = 500,
-            curve = curves.PEAK,
-        },
-    },
+
     weapon_gear = {
         -- Source: crawl-ref/source/mon-gear.cc
         -- Spec: crawl-ref/source/mon-gear.cc

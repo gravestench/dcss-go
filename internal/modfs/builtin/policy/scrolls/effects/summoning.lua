@@ -6,6 +6,7 @@ local item_ids = require("ids.items")
 local pool = require("policy.population.pool")
 local scrolls = require("policy.scrolls")
 local summons = require("policy.magic.effects.summons.common")
+local branches = require("ids.branches")
 
 local effect = {}
 
@@ -21,7 +22,8 @@ local function population(ctx, player)
         end
     end
 
-    return pool.at_depth(position.level_id, allowed, "")
+    return pool.at_depth(branches.BRANCH_DUNGEON,
+        position.level_id, allowed, "")
 end
 
 -- Known ally restrictions stop a pointless read before any summon RNG is consumed.

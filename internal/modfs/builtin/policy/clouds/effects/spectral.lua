@@ -83,7 +83,8 @@ local function base_kind(ctx, state)
         draw = draw - choice.weight
     end
 
-    local choices, total = pool.at_depth(state.level_id)
+    local choices, total = pool.at_depth(
+        ctx:level_branch(state.level_id), state.level_id)
 
     if total == 0 then
         return monsters.MONS_RAT

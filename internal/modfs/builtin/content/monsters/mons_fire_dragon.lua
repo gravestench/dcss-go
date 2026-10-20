@@ -8,7 +8,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -96,16 +95,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_CORPSE_FIRE_DRAGON",
-    -- Spawn rows place fire dragon in depth bands beginning at 14 through 27; they
-    -- do not mutate existing actors.
-    population = {
-        {
-            min_depth = 14,
-            max_depth = 27,
-            rarity = 192,
-            curve = curves.PEAK,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

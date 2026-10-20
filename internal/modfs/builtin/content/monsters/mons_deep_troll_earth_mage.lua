@@ -8,7 +8,6 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
-local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -84,16 +83,6 @@ local definition = {
         variation_id = "TVARY_NONE",
     },
     corpse_tile_id = "TILE_ERROR",
-    -- Spawn rows place deep troll earth mage in depth bands beginning at 22
-    -- through 30; they do not mutate existing actors.
-    population = {
-        {
-            min_depth = 22,
-            max_depth = 30,
-            rarity = 136,
-            curve = curves.SEMI,
-        },
-    },
 }
 
 register.definition(categories.MONSTERS, definition)

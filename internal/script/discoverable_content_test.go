@@ -217,7 +217,7 @@ func TestSamePathOverlayReplacesBundledDefinition(t *testing.T) {
 }
 
 func TestSamePathPopulationOverrideKeepsLocalRow(t *testing.T) {
-	const path = "content/monsters/mons_rat.lua"
+	const path = "content/populations/branch_dungeon.lua"
 
 	bundled, err := modfs.Load()
 
@@ -231,11 +231,11 @@ func TestSamePathPopulationOverrideKeepsLocalRow(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	const oldRarity = "rarity = 1000,"
-	const newRarity = "rarity = 777,"
+	const oldRarity = "monster_id = monsters.MONS_RAT,\n            min_depth = 1,\n            max_depth = 3,\n            rarity = 1000,"
+	const newRarity = "monster_id = monsters.MONS_RAT,\n            min_depth = 1,\n            max_depth = 3,\n            rarity = 777,"
 
 	if strings.Count(string(source), oldRarity) != 1 {
-		t.Fatal("rat source population row changed")
+		t.Fatal("Dungeon rat source population row changed")
 	}
 
 	root := t.TempDir()
@@ -268,17 +268,17 @@ func TestSamePathPopulationOverrideKeepsLocalRow(t *testing.T) {
 
 	defer runtime.Close()
 
-	definition := runtime.definitions["monsters"]["MONS_RAT"]
-	rows, ok := definition.RawGetString("population").(*lua.LTable)
+	definition := runtime.definitions["populations"]["BRANCH_DUNGEON"]
+	rows, ok := definition.RawGetString("rows").(*lua.LTable)
 
 	if !ok {
-		t.Fatal("population override lost rat rows")
+		t.Fatal("population override lost Dungeon rows")
 	}
 
-	row, ok := rows.RawGetInt(1).(*lua.LTable)
+	row, ok := rows.RawGetInt(2).(*lua.LTable)
 
 	if !ok {
-		t.Fatalf("rat override row = %v", rows.RawGetInt(1))
+		t.Fatalf("rat override row = %v", rows.RawGetInt(2))
 	}
 
 	if row.RawGetString("source_order") != lua.LNil {
@@ -286,7 +286,7 @@ func TestSamePathPopulationOverrideKeepsLocalRow(t *testing.T) {
 	}
 
 	if row.RawGetString("rarity") != lua.LNumber(777) {
-		t.Fatalf("rat override row = %v", rows.RawGetInt(1))
+		t.Fatalf("rat override row = %v", rows.RawGetInt(2))
 	}
 
 	if rules.Hash() == bundled.Hash() {
