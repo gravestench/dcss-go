@@ -1,0 +1,17 @@
+# Inset wet garden mixes fungus, swamp floor, and ordinary grass.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_minivault_5x5_6
+DEPTH: D
+TAGS:     serial_park_minivault allow_dup unrand
+KMONS:    1 = fungus
+SUBST:    D = ..1
+FTILE:    t. = floor_grass
+FTILE:    1 = floor_swamp
+SUBST:    1 = 111.
+MAP
+tDDDt
+DD1DD
+D111D
+DD1DD
+tDDDt
+ENDMAP

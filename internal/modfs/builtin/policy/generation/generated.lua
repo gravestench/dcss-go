@@ -57,6 +57,22 @@ local function add_source_stairs(placed, up, down)
     end
 end
 
+-- Use the selected layout's declared family for every nested vault
+-- selector. Arrival helpers and later secondary maps share this rule.
+local function layout_family(layout)
+    local definition = layouts.get(layout.id)
+
+    for tag in pairs(definition.tags) do
+        local family = tag:match("^layout_type_(.+)$")
+
+        if family then
+            return family
+        end
+    end
+
+    error("layout " .. layout.id .. " has no layout_type tag")
+end
+
 -- Fixed-orientation arrivals can collide with already generated stairs.
 -- Only that placement conflict gets a new base layout; other errors reveal
 -- a broken map or rule and should fail immediately.
@@ -72,7 +88,18 @@ local function place_first_level(ctx, player)
             branches.BRANCH_DUNGEON, 1, bottom, vault.tags)
         local first = layouts.execute(ctx, definition,
             branches.BRANCH_DUNGEON, 1)
-        local ok, placed = pcall(vault_placement.place, ctx, first.builder, vault, player)
+        local placement_player = {
+            species_id = player.species_id,
+            name = player.name,
+            started = player.started,
+            branch_id = branches.BRANCH_DUNGEON,
+            depth = 1,
+            branch_bottom = bottom,
+            absolute_depth = 1,
+            layout_family = layout_family(first),
+        }
+        local ok, placed = pcall(vault_placement.place, ctx,
+            first.builder, vault, placement_player)
 
         if ok then
             return first, placed, vault
@@ -182,23 +209,6 @@ local function base_stair_points(layout)
     return points
 end
 
--- Secondary source maps express layout compatibility as layout_* tags.
--- Read the selected layout's declared type rather than guessing from its
--- file name; several named layouts share one family.
-local function layout_family(layout)
-    local definition = layouts.get(layout.id)
-
-    for tag in pairs(definition.tags) do
-        local family = tag:match("^layout_type_(.+)$")
-
-        if family then
-            return family
-        end
-    end
-
-    error("layout " .. layout.id .. " has no layout_type tag")
-end
-
 -- Generate one floor before pairing its stairs with neighboring floors.
 -- The arrival only belongs to D:1; supplemental vaults use actual depth.
 local function build_floor(ctx, player, depth, bottom, prior_vault_ids)
@@ -245,6 +255,7 @@ local function build_floor(ctx, player, depth, bottom, prior_vault_ids)
                 depth = depth,
                 branch_bottom = bottom,
                 absolute_depth = depth,
+                layout_family = layout_family(layout),
             },
         }
     )

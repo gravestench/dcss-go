@@ -1,0 +1,23 @@
+# Compact symmetric square leaves its central five-by-five region to one nested helper.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_square3
+DEPTH: D
+TAGS:     allow_dup transparent extra decor serial_park
+ORIENT:   float
+FTILE:    D = floor_vault
+FTILE:    E = floor_grass
+SUBST:    E  = ...11t
+SUBVAULT: H : serial_park_minivault
+MAP
+  ... ...
+ .DDD.DDD.
+.DEEDDDEED.
+.DEHHHHHED.
+.DDHHHHHDD.
+ .DHHHHHD.
+.DDHHHHHDD.
+.DEHHHHHED.
+.DEEDDDEED.
+ .DDD.DDD.
+  ... ...
+ENDMAP

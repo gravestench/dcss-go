@@ -1,0 +1,26 @@
+# Square garden wraps a five-by-five nested helper in grass and stone paths.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_square1
+DEPTH: D
+TAGS:     allow_dup transparent extra decor serial_park
+ORIENT:   float
+KMONS:    1 = bush
+FTILE:    D = floor_vault
+FTILE:    Et = floor_grass
+SUBST:    E = ...11t
+SUBVAULT: H : serial_park_minivault
+MAP
+.............
+.DDDDDDDDDDD.
+.DEEEEEEEEED.
+.DEttEEEttED.
+.DEtHHHHHtED.
+.DEEHHHHHEED.
+.DEEHHHHHEED.
+.DEEHHHHHEED.
+.DEtHHHHHtED.
+.DEttEEEttED.
+.DEEEEEEEEED.
+.DDDDDDDDDDD.
+.............
+ENDMAP

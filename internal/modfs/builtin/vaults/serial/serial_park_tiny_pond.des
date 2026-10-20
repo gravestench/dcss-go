@@ -1,0 +1,17 @@
+# Tiny pond varies the single keyed centerpiece among source water and vegetation glyphs.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_tiny_pond
+DEPTH: D
+TAGS:   allow_dup transparent extra decor serial_park
+FTILE:  DG = floor_vault
+FTILE:  Et = floor_grass
+SUBST:  G = GGTV
+MAP
+  ......
+ .DDDDDD.
+.DDWWWWD.
+.DGWWWWD.
+.DDWWWWD.
+ .DDDDDD.
+  ......
+ENDMAP

@@ -1,0 +1,17 @@
+# Small tree-bordered lawn introduces a few bushes or open grass cells.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_tiny_1
+DEPTH: D
+TAGS:    allow_dup transparent extra decor serial_park
+KMONS:   1 = bush
+FTILE:   E = floor_grass
+SUBST:   E = .t1
+FTILE:   D = floor_vault
+MAP
+  ..
+ .DD.
+.DEED.
+.DEED.
+ .DD.
+  ..
+ENDMAP

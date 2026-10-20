@@ -1,0 +1,15 @@
+# Inset plant bed groups keyed plants inside a grass border.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_minivault_5x5_5
+DEPTH: D
+TAGS:     serial_park_minivault allow_dup unrand
+KMONS:    1 = plant
+FTILE:    Et1 = floor_grass
+SUBST:    1 = 11.
+MAP
+tEEEt
+E111E
+E111E
+E111E
+tEEEt
+ENDMAP

@@ -1,0 +1,15 @@
+# Inset garden arranges a keyed center within grass and alternating stone.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_minivault_5x5_1
+DEPTH: D
+TAGS:     serial_park_minivault allow_dup unrand
+FTILE:    DG = floor_vault
+SUBST:    G = TTTGGt
+FTILE:    Et = floor_grass
+MAP
+tEEEt
+EEDEE
+EDGDE
+EEDEE
+tEEEt
+ENDMAP

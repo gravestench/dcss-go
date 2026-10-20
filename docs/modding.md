@@ -1994,6 +1994,15 @@ the family tag and suitable marker destinations; the tagged selector will
 discover it without a Go dispatch case. Marker records are saved now, while
 transporter movement is a later gameplay slice.
 
+The park family demonstrates nested `.des` maps. A parent declaration such
+as `SUBVAULT: H : serial_park_minivault` reserves the `H` region for one
+tagged helper. Put each helper in its own `.des` file with the shared tag;
+the runtime filters by branch, depth, and layout and then makes a weighted
+choice in stable ID order. The parent keeps the source's placement geometry
+and receives the helper's terrain and typed effects at that region. The
+source park file's `default-depth: D` is written as `DEPTH: D` in each
+committed map because these files load independently.
+
 The demonic and undead serials demonstrate a shared Lua setup hook. Each
 child's `.des` declares its source tags and weight so the catalog can
 select it; `: vault.run("configure")` then adds depth-dependent monster

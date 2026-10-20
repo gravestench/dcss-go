@@ -1,0 +1,40 @@
+# Branching walks connect lawns, water, and a nested garden over a long footprint.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_paths
+DEPTH: D
+TAGS:     transparent extra decor serial_park
+ORIENT:   float
+KMONS:    1 = bush
+FTILE:    DF = floor_vault
+FTILE:    Et = floor_grass
+SUBST:    E  = ...11t
+SUBST:    t  : tt1
+SUBST:    F  = GT
+SUBVAULT: H : serial_park_minivault
+MAP
+            @
+ ............
+ .DDDDDDDDDD.........
+ .DttEEEEttD.DDDDDDD.
+ .DttEEEEttD.DHHHHHD.
+ .DEEEttEEED.DHHHHHD.
+ .DEEEttEEED.DHHHHHD.
+ .DDDDDDDDDD.DHHHHHD.
+@............DHHHHHD.
+ .DDDDD.DDDDDDEEEEED.
+ .DEEED.DEEEEEEEEEED.
+ .DEEED.DEEEEEEEEEED.
+ .DEED...DDDDDDDDDDD.
+ .DEED.F.............@
+ .DEED...DDDDDDD.DDD.
+ .DEEED.DEEEEEtD.DtD.
+ .DEEED.DEEEEEtD.DtD.
+ .DDDDDDDDDDDDtD.DtD.
+ .DWWWWWWWWWWDtD.DtD.
+ .DWFWWWWWWFWDtD.DtD.
+ .DWWWWWWWWWWDtD.DtD.
+ .DDDDDDDDDDDDDD.DtD.
+ ................DDD.
+               ......
+                @
+ENDMAP

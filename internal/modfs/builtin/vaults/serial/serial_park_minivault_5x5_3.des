@@ -1,0 +1,13 @@
+# Inset cross preserves the source doors and random monster feature glyphs.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_minivault_5x5_3
+DEPTH: D
+TAGS:     serial_park_minivault allow_dup unrand
+FTILE:    t = floor_grass
+MAP
+tc+ct
+cc0cc
++0%0+
+cc0cc
+tc+ct
+ENDMAP

@@ -1,0 +1,16 @@
+# Inset tree square scatters keyed bushes around a central path.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_minivault_5x5_7
+DEPTH: D
+TAGS:     serial_park_minivault allow_dup unrand
+KMONS:    1 = bush
+FTILE:    E1 = floor_grass
+FTILE:    T = floor_vault
+SUBST:    1 = 111.
+MAP
+E111E
+1EEE1
+1ETE1
+1EEE1
+E111E
+ENDMAP

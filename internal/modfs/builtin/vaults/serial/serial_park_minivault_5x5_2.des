@@ -1,0 +1,15 @@
+# Inset water garden changes its central feature through source substitutions.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_minivault_5x5_2
+DEPTH: D
+TAGS:     serial_park_minivault allow_dup unrand
+FTILE:    t = floor_grass
+FTILE:    DF = floor_vault
+SUBST:    F  = TTTTWWWGVw
+MAP
+tDWDt
+DWWWD
+WWFWW
+DWWWD
+tDWDt
+ENDMAP

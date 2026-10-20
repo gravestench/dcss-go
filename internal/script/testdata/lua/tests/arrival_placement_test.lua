@@ -1,6 +1,7 @@
 -- Source arrival placement composes helpers while preserving authored exits and keyed map overrides.
 
 local catalog = require("policy.generation.vaults.catalog")
+local branches = require("ids.branches")
 local grid = require("policy.generation.grid")
 local placement = require("policy.generation.vaults.placement")
 local selection = require("policy.generation.vaults.selection")
@@ -12,6 +13,23 @@ local connect = require("policy.generation.vaults.connect")
 local terrain_features = require("content.terrain_features")
 
 local test = {}
+
+-- Arrival tests use the same D:1 branch facts that generated.first gives
+-- placement. Nested SUBVAULT helpers need them for weighted eligibility.
+local function place_arrival(ctx, builder, vault, player, options)
+    local facts = {
+        branch_id = branches.BRANCH_DUNGEON,
+        depth = 1,
+        branch_bottom = 15,
+        absolute_depth = 1,
+    }
+
+    for name, value in pairs(player or {}) do
+        facts[name] = value
+    end
+
+    return placement.place(ctx, builder, vault, facts, options)
+end
 
 -- Give every arrival attempt the same deterministic RNG stream for repeatability checks.
 local function seeded_context()
@@ -55,8 +73,8 @@ local function assert_all_source_arrivals_place()
         local second_context = seeded_context()
         local first_builder = grid.new(first_context)
         local second_builder = grid.new(second_context)
-        local first = placement.place(first_context, first_builder, vault)
-        local second = placement.place(second_context, second_builder, vault)
+        local first = place_arrival(first_context, first_builder, vault)
+        local second = place_arrival(second_context, second_builder, vault)
 
         assert(first.entry.x >= 0 and first.entry.x < 80, id)
         assert(first.entry.y >= 0 and first.entry.y < 70, id)
@@ -85,7 +103,7 @@ local function assert_source_exits_connect()
             end
         end
 
-        local placed = placement.place(context, builder, catalog.get(id))
+        local placed = place_arrival(context, builder, catalog.get(id))
 
         connect.finish(context, builder, placed)
 
@@ -218,7 +236,7 @@ local function assert_player_identity_reaches_source_hooks()
         started = false,
     }
     local vault = catalog.get("nicolae_arrival_memento_mori")
-    local placed = placement.place(context, grid.new(context), vault, player)
+    local placed = place_arrival(context, grid.new(context), vault, player)
     local named = 0
 
     for _, record in ipairs(placed.records) do
@@ -268,7 +286,7 @@ local function assert_weighted_monster_choice_is_per_cell()
         },
     }
     local context = choice_context()
-    local placed = placement.place(context, grid.new(context), vault)
+    local placed = place_arrival(context, grid.new(context), vault)
     local chosen = {}
 
     for _, record in ipairs(placed.records) do
@@ -293,7 +311,7 @@ local function assert_weighted_monster_choice_is_per_cell()
         },
     }
     context = choice_context()
-    placed = placement.place(context, grid.new(context), shared)
+    placed = place_arrival(context, grid.new(context), shared)
     chosen = {}
 
     for _, record in ipairs(placed.records) do
@@ -341,7 +359,7 @@ local function assert_absent_keyed_glyph_places_nothing()
             },
         },
     }
-    local placed = placement.place(context, grid.new(context), vault)
+    local placed = place_arrival(context, grid.new(context), vault)
 
     for _, record in ipairs(placed.records) do
         assert(record.identity ~= "enter_abyss")
@@ -351,6 +369,12 @@ end
 -- Run both helper transforms on one authored cave so neither erases the other's bounds.
 local function assert_both_helpers_compose()
     local vault = catalog.get("erik_arrival_cave_to_civilisation")
+    local player = {
+        branch_id = branches.BRANCH_DUNGEON,
+        depth = 1,
+        branch_bottom = 15,
+        absolute_depth = 1,
+    }
     local seen = {}
     local low_x, low_y, high_x, high_y
 
@@ -388,7 +412,7 @@ local function assert_both_helpers_compose()
             end
         end
 
-        local records = operations.apply(vault, cells, random)
+        local records = operations.apply(vault, cells, random, 0, player)
 
         for _, record in ipairs(records) do
             if record.vault_id and record.vault_id ~= vault.id then
@@ -400,7 +424,8 @@ local function assert_both_helpers_compose()
 
         builder.roll = random.roll
 
-        local placed = placement.place(seeded_context(), builder, vault)
+        local placed = place_arrival(seeded_context(), builder, vault,
+            player)
 
         for _, record in ipairs(placed.records) do
             if record.vault_id and record.vault_id ~= vault.id then
@@ -444,7 +469,7 @@ local function assert_keyed_intent_has_source_location()
             },
         },
     }
-    local result = placement.place(context, builder, vault)
+    local result = place_arrival(context, builder, vault)
     local found = {}
 
     for _, record in ipairs(result.records) do
@@ -559,7 +584,7 @@ end
 -- Unkeyed source glyphs still produce typed item and monster records.
 local function assert_implicit_items_and_monsters_are_retained()
     local context = seeded_context()
-    local placed = placement.place(context, grid.new(context), {
+    local placed = place_arrival(context, grid.new(context), {
         id = "implicit_fixture",
         path = "vaults/arrival/implicit_fixture.des",
         rows = { "@0%1" },

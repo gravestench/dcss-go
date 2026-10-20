@@ -1,0 +1,28 @@
+# Four small lawns meet at a central feature whose source substitution can create an altar.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_square2
+DEPTH: D
+TAGS:   allow_dup transparent extra decor serial_park
+ORIENT: float
+KMONS:  1 = bush
+FTILE:  DF = floor_vault
+FTILE:  Et1 = floor_grass
+SUBST:  F : GGGGTTTTVC<>
+SUBST:  E = ...11t
+MAP
+ .............
+..DDDDD.DDDDD..
+.DD111D.D111DD.
+.D1EE1D.D1EE1D.
+.D1EE1D.D1EE1D.
+.D1111D.D1111D.
+.DDDDD...DDDDD.
+.......F.......
+.DDDDD...DDDDD.
+.D1111D.D1111D.
+.D1EE1D.D1EE1D.
+.D1EE1D.D1EE1D.
+.DD111D.D111DD.
+..DDDDD.DDDDD..
+ .............
+ENDMAP

@@ -1,0 +1,19 @@
+# Longer tiny lawn keeps the same bush lottery over a taller footprint.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_tiny_2
+DEPTH: D
+TAGS:    allow_dup transparent extra decor serial_park
+KMONS:   1 = bush
+FTILE:   E = floor_grass
+SUBST:   E = .t1
+FTILE:   D = floor_vault
+MAP
+  ..
+ .DD.
+.DEED.
+.DEED.
+ .DEED.
+ .DEED.
+  .DD.
+   ..
+ENDMAP

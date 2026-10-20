@@ -4,6 +4,7 @@ local effects = require("constants.vault_effects")
 local hooks = require("policy.generation.vaults.hooks")
 local transforms = require("policy.generation.vaults.transforms")
 local catalog = require("policy.generation.vaults.catalog")
+local selection = require("policy.generation.vaults.selection")
 local entity_specs = require("policy.generation.vaults.specs.validate")
 
 -- Walk declarations in source order. Hooks insert operations at their exact
@@ -214,19 +215,29 @@ local function helper_choice(argument, random)
     error("SUBVAULT tag choice exceeded its total weight")
 end
 
--- Find a registered helper map by tag in stable catalog order.
-local function helper_for_tag(tag)
-    local categories = require("constants.catalog")
-
-    for _, id in ipairs(register.ids(categories.VAULTS)) do
-        local candidate = register.get(categories.VAULTS, id)
-
-        if candidate.tags[tag] then
-            return catalog.get(id)
-        end
+-- A SUBVAULT tag selects a weighted map from the same effective catalog as
+-- other tagged child requests. Depth and branch still constrain nested
+-- helpers; file order must not silently make the first helper permanent.
+local function helper_for_tag(tag, random, player)
+    if not player or not player.branch_id then
+        error("SUBVAULT requires current branch and depth")
     end
 
-    error("SUBVAULT has no helper tagged " .. tag)
+    local selected = selection.choose_tag(random, tag, {
+        branch_id = player.branch_id,
+        depth = player.depth,
+        branch_bottom = player.branch_bottom,
+        absolute_depth = player.absolute_depth,
+        layout_family = player.layout_family,
+        player = player,
+        ignore_chance = true,
+    })
+
+    if not selected then
+        error("SUBVAULT has no eligible helper tagged " .. tag)
+    end
+
+    return catalog.get(selected.id)
 end
 
 -- Convert helper rows to mutable cells before transformations and embedding.
@@ -352,7 +363,7 @@ end
 -- A missing helper fit is a source error rather than a silently skipped decoration.
 local function apply_subvault(vault, cells, operation, random, depth, player)
     local source, tag = helper_choice(operation.argument, random)
-    local helper = helper_for_tag(tag)
+    local helper = helper_for_tag(tag, random, player)
     local ok, result = pcall(embed_helper, cells, source, helper, random, depth, player)
 
     if not ok then

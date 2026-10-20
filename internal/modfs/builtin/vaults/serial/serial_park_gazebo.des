@@ -1,0 +1,28 @@
+# Open gazebo with one inset garden, grassy margins, and an occasional source altar.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_gazebo
+DEPTH: D
+TAGS:     transparent extra decor serial_park
+ORIENT:   float
+KMONS:    1 = bush
+FTILE:    D = floor_vault
+FTILE:    Et1 = floor_grass
+SUBST:    F : GGGGTTTTVC
+SUBST:    E = ...11t
+SUBVAULT: H : serial_park_minivault
+MAP
+   ....
+  .DDDD.
+ .D111D.
+.D11ccc.........
+.D1cc.ccDDDDDDDD.
+.D1c.F.cEEEEEEED.
+.D1cc.ccEHHHHHED.
+.DEEc+cEEHHHHHED.
+.DEtD.DtEHHHHHED.
+.DEED.DEEHHHHHED.
+.DEtD.DtEHHHHHED.
+.DDDD.DEEEEEEEED.
+ .....DDDDDDDDDD.
+      ..........
+ENDMAP

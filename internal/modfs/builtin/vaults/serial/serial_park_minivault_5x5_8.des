@@ -1,0 +1,15 @@
+# Inset cross garden places bushes along four arms around a grass center.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_minivault_5x5_8
+DEPTH: D
+TAGS:     serial_park_minivault allow_dup unrand
+KMONS:    1 = bush
+FTILE:    E1 = floor_grass
+SUBST:    1 : 11t
+MAP
+11E11
+11E11
+EEEEE
+11E11
+11E11
+ENDMAP

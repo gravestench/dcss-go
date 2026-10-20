@@ -1,0 +1,43 @@
+# Large centered park with two five-by-five inset gardens and a protected crossing.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_central
+DEPTH: D
+TAGS:     transparent extra decor serial_park
+ORIENT:   centre
+KMONS:    1 = bush
+SUBST:    F : GGTTT
+FTILE:    DTG = floor_vault
+FTILE:    E1t = floor_grass
+SUBST:    E = .....11t
+SUBST:    < = ({[
+SUBVAULT: H : serial_park_minivault
+SUBVAULT: J : serial_park_minivault
+MAP
+    @       @@@
+ xxx+xxxxxxxx+xxxxxxxxxxxx
+ x.....x1111D.DtEEtttttttx
+ x.....xDDDDD.DEEEtJJJJJtx
+ x..% .+......DtEEEJJJJJE+
+ x.....xDDDDD.DEEEEJJJJJEx
+ x.....xEEEED.DtEEEJJJJJEx
+ xxxxxxxEEEED.DEEEtJJJJJtx
+ x11111EEEEED.DtEEttEEEttx
+ xEEEEEEEEEED.DEEEEEEEEEEx
+ xEEEEEEEEEED.DtEEEEDDDEEx
+ xtEtEtEtEtD...DEEED.F.DEx
+@xDDDDDDDDD..D..DDDD...DDx@
+@+..........D<D..........+@
+@xDD...DDDD..D..DDDDDDDDDx@
+ xED.F.DEEED...DtEtEtEtEtx
+ xEEDDDEEEEtD.DEEEEEEEEEEx
+ xEEEEEEEEEED.DEEEEEEEEEEx
+ xttEEEttEEtD.DEEEEE11111x
+ xtHHHHHtEEED.DEEEExxxxxxx
+ xEHHHHHEEEtD.DEEEEx.....x
+ xEHHHHHEEEED.DDDDDx.....x
+ xEHHHHHEEEtD......+..%..x
+ xtHHHHHtEEED.DDDDDx.....x
+ xttEEEttEEtD.D1111x.....x
+ xxxxxxxxxxxx+xxxxxxxx+xxx
+            @@@       @
+ENDMAP

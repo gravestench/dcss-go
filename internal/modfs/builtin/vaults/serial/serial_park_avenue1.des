@@ -1,0 +1,22 @@
+# Long open avenue repeats trees and grassy edge cells around two crossing routes.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_avenue1
+DEPTH: D
+TAGS:   allow_dup transparent extra decor serial_park
+ORIENT: float
+KMONS:  1 = bush
+FTILE:  DGF = floor_vault
+SUBST:  F  : tt.
+FTILE:  Et = floor_grass
+SUBST:  t : tt1
+MAP
+   ..................................
+   .DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD.
+....DtEFEtEtEtEFEtEtEtEtEFEtEtEtEFEtD..
+@...DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD.@
+@.....................................@
+@.DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD...@
+..DtEFEtEtEtEFEtEtEtEtEFEtEtEtEFEtD....
+ .DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD.
+ ...................................
+ENDMAP

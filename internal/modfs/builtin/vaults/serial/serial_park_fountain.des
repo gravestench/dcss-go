@@ -1,0 +1,34 @@
+# Broad water garden centers an opaque, non-teleportable source fountain.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_fountain
+DEPTH: D
+TAGS:    transparent extra decor serial_park
+ORIENT:  float
+FTILE:   DFGT = floor_vault
+FTILE:   Et = floor_grass
+KPROP:   T = no_tele_into
+KMASK:   T = opaque
+MAP
+               ......
+               .DDDDD.
+@...............DtEtD.
+@.DDDDDDDDDDDDDDDEEED.
+@.DtEtEtEtEtEtEtEtEtD.
+@.DDDDDDDDDDDDDDDEDDD.
+@...............DtD...
+ ..DDDDDDDDDDD..DED.
+ .DGWWWWWWWWWGD.DtD.
+ .DWWWWWWWWWWWD.DED.
+ .DWWWWwwwWWWWD.DtD.
+ .DWWWwwwwwWWWD.DED.
+ .DWWwwGwGwwWWD.DtD.
+ .DWWwwwTwwwWWD.DED.
+ .DWWwwGwGwwWWD.DtD.
+ .DWWWwwwwwWWWD.DED.
+ .DWWWWwwwWWWWD.DtD.
+ .DWWWWWWWWWWWD.DED.
+ .DGWWWWWWWWWGD.DtD.
+ ..DDDDDDDDDDD..DDD.
+  ..................
+             @@@@@
+ENDMAP

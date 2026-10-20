@@ -1,0 +1,16 @@
+# Inset symmetric garden varies central stone, trees, and vault floor.
+# The source file's default-depth D is explicit here because each map is loaded separately.
+NAME: serial_park_minivault_5x5_4
+DEPTH: D
+TAGS:     serial_park_minivault allow_dup unrand
+SUBST:    C : Ct
+FTILE:    Et = floor_grass
+FTILE:    CDT = floor_vault
+SUBST:    T : TTTTVVDG
+MAP
+tEEEt
+ETDTE
+EDCDE
+ETDTE
+tEEEt
+ENDMAP

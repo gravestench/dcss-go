@@ -1,0 +1,7 @@
+# Park controller spreads open, tree-filled pieces on Dungeon floors.
+# Source default-depth D is explicit because this map loads on its own.
+NAME: serial_park
+DEPTH: D
+TAGS: allow_dup extra luniq_serial decor layout_open layout_open_caves
+CHANCE: 1%
+: vault.post_place("place_park")

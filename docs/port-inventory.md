@@ -267,7 +267,10 @@ transporter movement still needs its own gameplay slice. The demonic and
 undead serials add fifteen source maps with depth-scaled monster requests,
 typed fog markers, and the undead gravestone name. Hook-attached markers
 retain their positions even when a later source substitution changes the
-underlying terrain glyph. The builder and serial catalog now contains 159
+underlying terrain glyph. The twenty-map park serial adds an open-layout
+controller, eleven placeable pieces, and eight nested garden helpers.
+`SUBVAULT` now chooses its tagged helper by source weight instead of always
+taking the first matching map. The builder and serial catalog now contains 179
 of 600 source definitions.
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
