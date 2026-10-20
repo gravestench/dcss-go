@@ -16,6 +16,18 @@ func seededPlainBiteMonster(
 ) akara.Entity {
 	t.Helper()
 
+	entity, found := findPlainBiteMonster(g, kindID, levelID)
+
+	if !found {
+		t.Fatalf("seeded D:%d has no %s", levelID, kindID)
+	}
+
+	return entity
+}
+
+func findPlainBiteMonster(g *Game, kindID string, levelID int) (
+	akara.Entity, bool,
+) {
 	for _, entity := range g.stores.AI.Entities() {
 		actor, found := g.stores.Actors.Get(entity)
 		position, located := g.stores.Positions.Get(entity)
@@ -24,13 +36,40 @@ func seededPlainBiteMonster(
 			located &&
 			actor.KindID == kindID &&
 			position.LevelID == levelID {
-			return entity
+			return entity, true
 		}
 	}
 
-	t.Fatalf("seeded D:%d has no %s", levelID, kindID)
+	return 0, false
+}
 
-	return 0
+// The catalog picker is deterministic for a given seed, but adding a monster
+// can change which seed contains a particular target. Find a suitable fixed
+// scenario so this combat test measures save, XP, and corpse behavior.
+func newSeededPlainBiteGame(
+	t *testing.T,
+	kindID string,
+	levelID int,
+) *Game {
+	t.Helper()
+
+	for seed := uint64(1); seed <= 64; seed++ {
+		g, err := NewPopulatedScenario(seed, "WPN_RAPIER", "Tester")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if _, found := findPlainBiteMonster(g, kindID, levelID); found {
+			return g
+		}
+
+		_ = g.Close()
+	}
+
+	t.Fatalf("no seeded D:%d has %s in 64 populations", levelID, kindID)
+
+	return nil
 }
 
 func placePlayerBesideMonster(t *testing.T, g *Game, target akara.Entity) (int, int) {
@@ -102,14 +141,10 @@ func TestSeededEarlyDungeonBitesSurviveSaveAndAwardXP(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			g, err := NewPopulatedScenario(1, "WPN_RAPIER", "Tester")
-
-			if err != nil {
-				t.Fatal(err)
-			}
+			g := newSeededPlainBiteGame(t, tc.kindID, tc.levelID)
 
 			defer g.Close()
-			seededPlainBiteMonster(t, g, tc.kindID, tc.levelID)
+
 			snapshot := g.Snapshot()
 			loaded, err := Restore(snapshot)
 
