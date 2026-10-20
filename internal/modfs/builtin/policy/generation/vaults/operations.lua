@@ -102,17 +102,33 @@ local function declaration_records(vault, operation)
     end
 
     local records = {}
+    local argument = operation.argument
+    local comma_target, remainder = argument:match(
+        "^(%s*,%s*[=:]%s*[^,]*)(.*)$")
 
-    for part in (operation.argument .. ","):gmatch("(.-),") do
-        local targets = assignment(part)
+    if comma_target then
+        -- A leading comma can itself be a map glyph, as in KPROP: , = bloody.
+        -- Consume that assignment before splitting later comma declarations.
+        records[1] = declaration_record(vault, operation, comma_target)
+        argument = remainder:gsub("^%s*,%s*", "")
+    end
 
-        if targets or #records == 0 then
-            records[#records + 1] = declaration_record(vault, operation, part)
-        else
-            local prior = records[#records]
+    for part in (argument .. ","):gmatch("(.-),") do
+        if part ~= "" then
+            local targets = assignment(part)
 
-            prior.identity = prior.identity .. "," .. part
+            if targets or #records == 0 then
+                records[#records + 1] = declaration_record(vault, operation, part)
+            else
+                local prior = records[#records]
+
+                prior.identity = prior.identity .. "," .. part
+            end
         end
+    end
+
+    if #records == 0 then
+        return { declaration_record(vault, operation, operation.argument) }
     end
 
     return records
