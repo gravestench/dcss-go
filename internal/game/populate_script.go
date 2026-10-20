@@ -16,7 +16,7 @@ func (g *Game) populateFromScript(setup scenarioLevels) error {
 	if g.scenarioID == generatedDungeonScenarioID {
 		return g.runPopulation([]any{
 			populationLevelRecord(g.levels[1], setup.entry),
-		}, &setup)
+		}, setup.startingItems)
 	}
 
 	ids := make([]int, 0, len(g.levels))
@@ -38,13 +38,12 @@ func (g *Game) populateFromScript(setup scenarioLevels) error {
 		levels = append(levels, populationLevelRecord(g.levels[id], entry))
 	}
 
-	return g.runPopulation(levels, &setup)
+	return g.runPopulation(levels, setup.startingItems)
 }
 
 // Populate a generated floor only when the player first approaches its
-// paired stair. Terrain exists already, but monsters and authored entities
-// wait for this entry so live RNG draws can affect the new level.
-func (g *Game) populateGeneratedLevel(id int, entry point) error {
+// paired stair. The terrain and population use the live RNG state.
+func (g *Game) populateGeneratedLevel(id int, entry point, items []any) error {
 	if g.scenarioID != generatedDungeonScenarioID || id == 1 {
 		return nil
 	}
@@ -59,12 +58,12 @@ func (g *Game) populateGeneratedLevel(id int, entry point) error {
 		return nil
 	}
 
-	return g.runPopulation([]any{populationLevelRecord(level, entry)}, nil)
+	return g.runPopulation([]any{populationLevelRecord(level, entry)}, items)
 }
 
 // Command preparation has already checked the stair and its availability.
-// Populate before the move so a vault actor cannot claim the player's
-// destination cell after the player arrives there.
+// Generate and populate before the move so a vault actor cannot claim the
+// player's destination cell after the player arrives there.
 func (g *Game) populateStairDestination(
 	intent ecs.IntentKind,
 	position *ecs.Position,
@@ -79,10 +78,31 @@ func (g *Game) populateStairDestination(
 		return nil
 	}
 
+	var startingItems []any
+
+	if link.Pending {
+		if g.scenarioID != generatedDungeonScenarioID {
+			return fmt.Errorf("only generated Dungeon stairs may be pending")
+		}
+
+		var err error
+		startingItems, err = g.generateNextFloor(position.LevelID, link)
+
+		if err != nil {
+			return err
+		}
+
+		link, found = g.levels[position.LevelID].StairAt(position.X, position.Y)
+
+		if !found || link.Pending {
+			return fmt.Errorf("generated stair did not resolve")
+		}
+	}
+
 	return g.populateGeneratedLevel(link.ToLevelID, point{
 		x: link.ToX,
 		y: link.ToY,
-	})
+	}, startingItems)
 }
 
 // Carry the authored no-spawn mask with the level, including through saves.
@@ -111,28 +131,11 @@ func populationLevelRecord(level *Level, entry point) map[string]any {
 
 // One policy call is one population transaction. Only initial setup places
 // the fixed starting consumables; later floors consume the current RNG state.
-func (g *Game) runPopulation(levels []any, setup *scenarioLevels) error {
+func (g *Game) runPopulation(levels []any, startingItems []any) error {
 	input := map[string]any{
-		"scenario_id":          g.scenarioID,
-		"levels":               levels,
-		"place_starting_items": setup != nil,
-	}
-
-	if setup != nil {
-		input["curing"] = map[string]any{
-			"x": setup.curing.x,
-			"y": setup.curing.y,
-		}
-
-		input["heal"] = map[string]any{
-			"x": setup.heal.x,
-			"y": setup.heal.y,
-		}
-
-		input["haste"] = map[string]any{
-			"x": setup.haste.x,
-			"y": setup.haste.y,
-		}
+		"scenario_id":    g.scenarioID,
+		"levels":         levels,
+		"starting_items": startingItems,
 	}
 
 	result, err := g.scripts.Policy("world.populate", input)

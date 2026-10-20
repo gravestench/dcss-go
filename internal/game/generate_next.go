@@ -1,0 +1,279 @@
+package game
+
+import (
+	"fmt"
+
+	"crawl/internal/terrain"
+)
+
+// liveParentRecord sends only facts the Lua stair policy needs. In particular,
+// exploration and authored vault cells come from the current Level, because
+// actors and terrain may have changed since this floor was first generated.
+func liveParentRecord(parent *Level) map[string]any {
+	seen := []any{}
+
+	for y, row := range parent.SeenCells() {
+		for x, visible := range row {
+			if visible {
+				seen = append(seen, map[string]any{
+					"x": x,
+					"y": y,
+				})
+			}
+		}
+	}
+
+	protected := map[string]any{}
+
+	for _, record := range parent.vaultRecords {
+		protected[fmt.Sprintf("%d:%d", record.X, record.Y)] = true
+	}
+
+	stairs := []any{}
+
+	for _, link := range parent.StairLinks() {
+		stairs = append(stairs, map[string]any{
+			"x":       link.X,
+			"y":       link.Y,
+			"pending": link.Pending,
+		})
+	}
+
+	return map[string]any{
+		"id":        parent.ID,
+		"width":     parent.width,
+		"height":    len(parent.terrain),
+		"seen":      seen,
+		"protected": protected,
+		"stairs":    stairs,
+	}
+}
+
+// installParentLinks resolves existing exits and adds safe extra departures
+// when the child's authored vault has more up stairs than its parent.
+func installParentLinks(parent *Level, depth int, values []any) error {
+	for _, value := range values {
+		patch, ok := value.(map[string]any)
+
+		if !ok {
+			return fmt.Errorf("Lua parent stair patch is not a record")
+		}
+
+		from, err := luaScenarioPoint(patch)
+
+		if err != nil {
+			return err
+		}
+
+		toX, err := decisionInteger(patch, "to_x")
+
+		if err != nil {
+			return err
+		}
+
+		toY, err := decisionInteger(patch, "to_y")
+
+		if err != nil {
+			return err
+		}
+
+		created, ok := patch["new"].(bool)
+
+		if !ok {
+			return fmt.Errorf("Lua parent stair patch has no new flag")
+		}
+
+		if !created {
+			if err := parent.ResolveStairLink(from.x, from.y, toX, toY); err != nil {
+				return err
+			}
+
+			continue
+		}
+
+		feature, ok := patch["feature"].(string)
+
+		if !ok || terrain.ID(feature) != terrain.StairsDown {
+			return fmt.Errorf("Lua parent stair patch has invalid feature")
+		}
+
+		if !parent.inBounds(from.x, from.y) ||
+			parent.terrain[from.y][from.x] != terrain.Floor {
+			return fmt.Errorf("Lua parent stair patch is not on open floor")
+		}
+
+		if _, occupied := parent.ActorAt(from.x, from.y); occupied {
+			return fmt.Errorf("Lua parent stair patch overlaps an actor")
+		}
+
+		for _, record := range parent.vaultRecords {
+			if record.X == from.x && record.Y == from.y {
+				return fmt.Errorf("Lua parent stair patch overlaps an authored vault cell")
+			}
+		}
+
+		if err := parent.SetCell(from.x, from.y, terrain.ID(feature)); err != nil {
+			return err
+		}
+
+		if err := parent.AddStairLink(StairLink{
+			X:         from.x,
+			Y:         from.y,
+			ToLevelID: depth,
+			ToX:       toX,
+			ToY:       toY,
+		}); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// generateNextFloor installs one live Dungeon floor and its reciprocal stair
+// links. A malformed mod policy rolls back grid/link changes before returning.
+func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error) {
+	parent := g.levels[parentID]
+	depth := selected.ToLevelID
+
+	if parent == nil ||
+		!selected.Pending ||
+		depth != parentID+1 ||
+		g.levels[depth] != nil {
+		return nil, fmt.Errorf("invalid pending Dungeon stair")
+	}
+
+	player, found := g.stores.Players.Get(g.player)
+
+	if !found {
+		return nil, fmt.Errorf("Dungeon player has no identity")
+	}
+
+	result, err := g.scripts.Policy("world.generate_next_floor", map[string]any{
+		"depth":             depth,
+		"player_species_id": player.SpeciesID,
+		"player_name":       player.Name,
+		"from_x":            selected.X,
+		"from_y":            selected.Y,
+		"parent":            liveParentRecord(parent),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	record, ok := result["level"].(map[string]any)
+
+	if !ok {
+		return nil, fmt.Errorf("Lua next floor is not a level record")
+	}
+
+	returnedDepth, err := decisionInteger(record, "id")
+
+	if err != nil {
+		return nil, err
+	}
+
+	if returnedDepth != depth {
+		return nil, fmt.Errorf("Lua next floor has the wrong depth")
+	}
+
+	entry, err := luaScenarioPoint(result["entry"])
+
+	if err != nil {
+		return nil, err
+	}
+
+	patches, err := luaScenarioList(result["parent_links"], "parent links")
+
+	if err != nil {
+		return nil, err
+	}
+
+	items, err := luaScenarioList(result["starting_items"], "starting items")
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Keep the old parent intact if a mod returns a malformed floor or patch.
+	oldCells := parent.Cells()
+	oldRemembered := append([]terrain.ID(nil), parent.remembered...)
+	oldLinks := make(map[point]StairLink, len(parent.stairs))
+
+	for location, link := range parent.stairs {
+		oldLinks[location] = link
+	}
+
+	installed := false
+
+	defer func() {
+		if installed {
+			return
+		}
+
+		delete(g.levels, depth)
+		parent.terrain = oldCells
+		parent.remembered = oldRemembered
+		parent.stairs = oldLinks
+	}()
+
+	_, _, links, err := g.decodeLuaLevelRecords([]any{record}, g.stores.Positions)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if g.levels[depth] == nil || len(links) != 1 {
+		return nil, fmt.Errorf("Lua next floor has the wrong depth")
+	}
+
+	for _, value := range links[depth] {
+		link, decodeErr := luaScenarioStair(value)
+
+		if decodeErr != nil {
+			return nil, decodeErr
+		}
+
+		if err := g.levels[depth].AddStairLink(link); err != nil {
+			return nil, err
+		}
+	}
+
+	if err := installParentLinks(parent, depth, patches); err != nil {
+		return nil, err
+	}
+
+	resolved, found := parent.StairAt(selected.X, selected.Y)
+
+	if !found ||
+		resolved.Pending ||
+		resolved.ToX != entry.x ||
+		resolved.ToY != entry.y {
+		return nil, fmt.Errorf("Lua next floor did not pair the selected stair")
+	}
+
+	if err := validateStairLinks(g.levels); err != nil {
+		return nil, err
+	}
+
+	for _, childLink := range g.levels[depth].StairLinks() {
+		if childLink.ToLevelID != parentID || childLink.Pending {
+			continue
+		}
+
+		back, exists := parent.StairAt(childLink.ToX, childLink.ToY)
+
+		if !exists ||
+			back.Pending ||
+			back.ToLevelID != depth ||
+			back.ToX != childLink.X ||
+			back.ToY != childLink.Y {
+			return nil, fmt.Errorf("Lua next floor has an unpaired up stair")
+		}
+	}
+
+	installed = true
+
+	return items, nil
+}

@@ -25,48 +25,159 @@ func newGeneratedTestGame(t *testing.T, seed uint64) *Game {
 	return g
 }
 
-// Model a saved frontier while the constructor still builds the full map.
-// The generated save policy must accept only this contiguous Dungeon prefix.
+// Move through real stair actions so each floor consumes the current RNG and
+// gains the same parent links and population it would receive during play.
+func descendGeneratedTo(t *testing.T, g *Game, lastDepth int) {
+	t.Helper()
+
+	for depth := 1; depth < lastDepth; depth++ {
+		level := g.levels[depth]
+		var down StairLink
+
+		for _, link := range level.StairLinks() {
+			if link.ToLevelID != depth+1 {
+				continue
+			}
+
+			if actor, occupied := level.ActorAt(link.X, link.Y); occupied &&
+				actor != g.player {
+				continue
+			}
+
+			down = link
+
+			break
+		}
+
+		if down.ToLevelID == 0 {
+			t.Fatalf("Dungeon:%d has no open downward stair", depth)
+		}
+
+		if err := level.MoveActor(g.player, down.X, down.Y); err != nil {
+			t.Fatal(err)
+		}
+
+		result, err := g.Step(Command{Kind: CommandDownstairs})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if result.View.LevelID != depth+1 {
+			t.Fatalf("Dungeon:%d descent = %+v, %v", depth, result.View, err)
+		}
+	}
+}
+
+func TestGeneratedDungeonBuildsSecondFloorOnDescent(t *testing.T) {
+	g := newGeneratedTestGame(t, 41)
+
+	if len(g.levels) != 2 || g.levels[2] != nil {
+		t.Fatalf("startup built %d levels, want D:1 and Abyss", len(g.levels))
+	}
+
+	var down StairLink
+
+	for _, link := range g.levels[1].StairLinks() {
+		if link.Pending {
+			down = link
+
+			break
+		}
+	}
+
+	if !down.Pending {
+		t.Fatal("D:1 has no pending down stair")
+	}
+
+	if err := g.levels[1].MoveActor(g.player, down.X, down.Y); err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := g.Step(Command{Kind: CommandDownstairs})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if result.View.LevelID != 2 ||
+		g.levels[2] == nil ||
+		g.levels[3] != nil {
+		t.Fatal("first descent did not build only D:2")
+	}
+}
+
+func TestGeneratedDungeonUsesLiveLayoutRandomness(t *testing.T) {
+	baseline := newGeneratedTestGame(t, 73)
+	changed := newGeneratedTestGame(t, 73)
+
+	if !reflect.DeepEqual(baseline.levels[1].Cells(), changed.levels[1].Cells()) {
+		t.Fatal("same seed changed the startup floor")
+	}
+
+	// Ordinary play may consume the layout stream before the next stair. The
+	// second floor must be built from that live state, not a startup cache.
+	for range 32 {
+		if _, err := changed.rng.Intn("layout", 1000); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	descendGeneratedTo(t, baseline, 2)
+	descendGeneratedTo(t, changed, 2)
+
+	if reflect.DeepEqual(baseline.levels[2].Cells(), changed.levels[2].Cells()) {
+		t.Fatal("D:2 ignored the live layout RNG state")
+	}
+}
+
+func TestGeneratedDungeonPlacesSecondFloorPotionsOnce(t *testing.T) {
+	g := newGeneratedTestGame(t, 41)
+	descendGeneratedTo(t, g, 2)
+
+	count := func() map[string]int {
+		items := map[string]int{}
+
+		for _, entity := range g.Snapshot().Entities {
+			if entity.Position == nil ||
+				entity.Position.LevelID != 2 ||
+				entity.Item == nil {
+				continue
+			}
+
+			items[entity.Item.KindID]++
+		}
+
+		return items
+	}
+
+	before := count()
+
+	if before["POT_HEAL_WOUNDS"] == 0 || before["POT_HASTE"] == 0 {
+		t.Fatal("D:2 is missing its starting potions")
+	}
+
+	if _, err := g.Step(Command{Kind: CommandUpstairs}); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(before, count()) {
+		t.Fatal("returning to D:2 duplicated its starting items")
+	}
+}
+
+// Keep the startup frontier and a later three-floor run for malformed-save
+// cases. The save policy must accept only a contiguous Dungeon prefix.
 func pendingDungeonPrefixSnapshot(t *testing.T) (save.Snapshot, save.Snapshot) {
 	t.Helper()
 	g := newGeneratedTestGame(t, 41)
+	prefix := g.Snapshot()
+	descendGeneratedTo(t, g, 3)
 	full := g.Snapshot()
-
-	prefix := full
-
-	prefix.Levels = nil
-	prefix.Entities = nil
-
-	kept := map[int]bool{}
-
-	for _, level := range full.Levels {
-		if level.ID != 1 && level.BranchID == g.levels[1].BranchID {
-			continue
-		}
-
-		if level.ID == 1 {
-			level.Stairs = append([]save.StairRecord(nil), level.Stairs...)
-
-			for index := range level.Stairs {
-				stair := &level.Stairs[index]
-
-				if stair.ToLevelID == 2 {
-					stair.ToX = 0
-					stair.ToY = 0
-					stair.Pending = true
-				}
-			}
-		}
-
-		prefix.Levels = append(prefix.Levels, level)
-		kept[level.ID] = true
-	}
-
-	for _, entity := range full.Entities {
-		if entity.Position == nil || kept[entity.Position.LevelID] {
-			prefix.Entities = append(prefix.Entities, entity)
-		}
-	}
 
 	return prefix, full
 }
@@ -288,6 +399,7 @@ func TestFirstFloorLuaPolicyLeavesFutureDungeonUngenerated(t *testing.T) {
 
 func TestGeneratedDungeonReachesDepthFifteen(t *testing.T) {
 	g := newGeneratedTestGame(t, 41)
+	descendGeneratedTo(t, g, 15)
 
 	if len(g.levels) != 16 {
 		t.Fatalf("generated level count = %d, want Dungeon:1-15 and Abyss", len(g.levels))
@@ -333,10 +445,8 @@ func TestGeneratedDungeonPopulatesOnFirstEntry(t *testing.T) {
 		t.Fatal("Dungeon:1 did not populate at startup")
 	}
 
-	for depth := 2; depth <= 15; depth++ {
-		if g.levels[depth].initialActors != 0 {
-			t.Fatalf("Dungeon:%d populated before first entry", depth)
-		}
+	if g.levels[2] != nil {
+		t.Fatal("Dungeon:2 exists before first entry")
 	}
 
 	before := g.Snapshot()
@@ -371,8 +481,7 @@ func TestGeneratedDungeonPopulatesOnFirstEntry(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if run.levels[2].initialActors == 0 ||
-			run.levels[3].initialActors != 0 {
+		if run.levels[2].initialActors == 0 || run.levels[3] != nil {
 			t.Fatal("first descent did not populate exactly Dungeon:2")
 		}
 	}
@@ -452,6 +561,7 @@ func TestGeneratedDungeonFirstEntryThroughEveryDepth(t *testing.T) {
 
 func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 	g := newGeneratedTestGame(t, 41)
+	descendGeneratedTo(t, g, 15)
 
 	if len(g.levels) != 16 {
 		t.Fatalf("generated level count = %d, want 16", len(g.levels))
@@ -515,14 +625,15 @@ func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 		}
 	}
 
-	position, _ := g.stores.Positions.Get(g.player)
+	entryGame := newGeneratedTestGame(t, 41)
+	position, _ := entryGame.stores.Positions.Get(entryGame.player)
 
-	if fixtureGlyph(g.levels[1].terrain[position.Y][position.X]) != '<' {
+	if fixtureGlyph(entryGame.levels[1].terrain[position.Y][position.X]) != '<' {
 		t.Fatal("player did not start on an up stair")
 	}
 
-	before := g.Snapshot()
-	result, err := g.Step(Command{Kind: CommandUpstairs})
+	before := entryGame.Snapshot()
+	result, err := entryGame.Step(Command{Kind: CommandUpstairs})
 
 	if err != nil ||
 		result.Spent != 0 ||
@@ -531,7 +642,7 @@ func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 		t.Fatalf("unported Dungeon exit = %+v, %v", result, err)
 	}
 
-	if !reflect.DeepEqual(before.RNG, g.Snapshot().RNG) {
+	if !reflect.DeepEqual(before.RNG, entryGame.Snapshot().RNG) {
 		t.Fatal("unavailable exit consumed randomness")
 	}
 }
@@ -595,11 +706,12 @@ func TestGeneratedDungeonStairsTravelBetweenPairedCells(t *testing.T) {
 	}
 
 	down, err := g.Step(Command{Kind: CommandDownstairs})
+	resolved, _ := g.levels[1].StairAt(stair.X, stair.Y)
 
 	if err != nil ||
 		down.View.LevelID != 2 ||
-		down.View.PlayerX != stair.ToX ||
-		down.View.PlayerY != stair.ToY {
+		down.View.PlayerX != resolved.ToX ||
+		down.View.PlayerY != resolved.ToY {
 		t.Fatalf("downward travel = %+v, %v", down.View, err)
 	}
 
@@ -640,11 +752,12 @@ func TestGeneratedDungeonStairsTravelToThirdFloor(t *testing.T) {
 		}
 
 		result, err := g.Step(Command{Kind: CommandDownstairs})
+		resolved, _ := g.levels[depth].StairAt(downward.X, downward.Y)
 
 		if err != nil ||
 			result.View.LevelID != depth+1 ||
-			result.View.PlayerX != downward.ToX ||
-			result.View.PlayerY != downward.ToY {
+			result.View.PlayerX != resolved.ToX ||
+			result.View.PlayerY != resolved.ToY {
 			t.Fatalf("Dungeon:%d downward travel = %+v, %v", depth, result.View, err)
 		}
 	}
@@ -739,6 +852,7 @@ func TestGeneratedDungeonRejectsInvalidSavedBoundaryAndBudget(t *testing.T) {
 		t.Fatal("accepted an unlinked generated exit")
 	}
 
+	descendGeneratedTo(t, g, 2)
 	snapshot = g.Snapshot()
 
 	for _, stair := range snapshot.Levels[0].Stairs {

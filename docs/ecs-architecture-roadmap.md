@@ -33,9 +33,8 @@ opt-in or migration on restore.
 ## Current implemented slice
 
 The playable Go slice includes every legal selectable species/job start, a
-source-shaped terminal,
-D:1–15 paired terrain with population on first entry, Akara actors/items/status,
-basic melee,
+source-shaped terminal, D:1 terrain at launch and D:2–15 terrain and
+population on first entry, Akara actors/items/status, basic melee,
 projectile and spell intents, equipment, training, XP, and Go saves. Source
 content is committed as Lua gameplay data and source-traced JSON import
 artifacts. No normal build uses the C++ checkout. Implemented gameplay rules

@@ -15,9 +15,7 @@ type scenarioLevels struct {
 	entry             point
 	populationEntries map[int]point
 	spawnExclusions   map[int][]point
-	curing            point
-	heal              point
-	haste             point
+	startingItems     []any
 }
 
 // buildScriptScenario asks the effective Lua ruleset for terrain and links.
@@ -27,7 +25,13 @@ func (g *Game) buildScriptScenario(
 	positions *akara.Store[ecs.Position],
 	speciesID, playerName string,
 ) (scenarioLevels, error) {
-	result, err := g.scripts.Policy("world.generate_scenario", map[string]any{
+	policyID := "world.generate_scenario"
+
+	if scenarioID == generatedDungeonScenarioID {
+		policyID = "world.generate_first_floor"
+	}
+
+	result, err := g.scripts.Policy(policyID, map[string]any{
 		"scenario_id":       scenarioID,
 		"player_species_id": speciesID,
 		"player_name":       playerName,
@@ -43,136 +47,10 @@ func (g *Game) buildScriptScenario(
 		return scenarioLevels{}, fmt.Errorf("Lua scenario returned no levels")
 	}
 
-	entries := make(map[int]point, len(records))
-	exclusions := make(map[int][]point, len(records))
-	links := make(map[int][]any, len(records))
+	entries, exclusions, links, err := g.decodeLuaLevelRecords(records, positions)
 
-	for _, value := range records {
-		record, ok := value.(map[string]any)
-
-		if !ok {
-			return scenarioLevels{}, fmt.Errorf("Lua level has invalid type %T", value)
-		}
-
-		id, err := decisionInteger(record, "id")
-
-		if err != nil {
-			return scenarioLevels{}, err
-		}
-
-		cells, err := luaScenarioCells(record["cells"])
-
-		if err != nil {
-			return scenarioLevels{}, fmt.Errorf("Lua level %d: %w", id, err)
-		}
-
-		level, err := NewLevel(id, cells, positions)
-
-		if err != nil {
-			return scenarioLevels{}, err
-		}
-
-		branchID, ok := record["branch_id"].(string)
-
-		if !ok || branchID == "" {
-			return scenarioLevels{}, fmt.Errorf("Lua level %d has no branch ID", id)
-		}
-
-		level.BranchID = branchID
-
-		if raw, present := record["spawn_exclusions"]; present {
-			points, ok := raw.([]any)
-
-			if empty, isTable := raw.(map[string]any); isTable && len(empty) == 0 {
-				points = []any{}
-				ok = true
-			}
-
-			if !ok {
-				return scenarioLevels{}, fmt.Errorf("Lua level %d spawn exclusions are not a list", id)
-			}
-
-			for _, value := range points {
-				cell, pointErr := luaScenarioPoint(value)
-
-				if pointErr != nil {
-					return scenarioLevels{}, fmt.Errorf(
-						"Lua level %d spawn exclusion: %w",
-						id,
-						pointErr,
-					)
-				}
-
-				if cell.x < 0 ||
-					cell.x >= level.width ||
-					cell.y < 0 ||
-					cell.y >= len(level.terrain) {
-					return scenarioLevels{}, fmt.Errorf("Lua level %d has invalid spawn exclusion", id)
-				}
-
-				exclusions[id] = append(exclusions[id], cell)
-			}
-		}
-
-		level.spawnExclusions = append([]point(nil), exclusions[id]...)
-
-		if err := loadLuaVault(level, record); err != nil {
-			return scenarioLevels{}, err
-		}
-
-		if branchID == shoalsBranchID {
-			level.InitShoalsTide()
-
-			if raw, present := record["heightmap"]; present {
-				heights, heightErr := luaShoalsHeights(raw)
-
-				if heightErr != nil {
-					return scenarioLevels{}, fmt.Errorf("Lua level %d: %w", id, heightErr)
-				}
-
-				if err := level.SetShoalsHeights(heights); err != nil {
-					return scenarioLevels{}, err
-				}
-			}
-		} else if _, present := record["heightmap"]; present {
-			return scenarioLevels{}, fmt.Errorf("Lua level %d heightmap is outside Shoals", id)
-		}
-
-		level.initialMonsters, err = decisionInteger(record, "initial_monsters")
-
-		if err != nil {
-			return scenarioLevels{}, err
-		}
-
-		entryX, err := decisionInteger(record, "entry_x")
-
-		if err != nil {
-			return scenarioLevels{}, err
-		}
-
-		entryY, err := decisionInteger(record, "entry_y")
-
-		if err != nil {
-			return scenarioLevels{}, err
-		}
-
-		if g.levels[id] != nil {
-			return scenarioLevels{}, fmt.Errorf("duplicate Lua level %d", id)
-		}
-
-		g.levels[id] = level
-		entries[id] = point{
-			x: entryX,
-			y: entryY,
-		}
-
-		stairs, ok := record["stairs"].([]any)
-
-		if !ok {
-			return scenarioLevels{}, fmt.Errorf("Lua level %d has no stair links", id)
-		}
-
-		links[id] = stairs
+	if err != nil {
+		return scenarioLevels{}, err
 	}
 
 	for id, records := range links {
@@ -199,19 +77,7 @@ func (g *Game) buildScriptScenario(
 		return scenarioLevels{}, err
 	}
 
-	curing, err := luaScenarioPoint(result["curing"])
-
-	if err != nil {
-		return scenarioLevels{}, err
-	}
-
-	heal, err := luaScenarioPoint(result["heal"])
-
-	if err != nil {
-		return scenarioLevels{}, err
-	}
-
-	haste, err := luaScenarioPoint(result["haste"])
+	startingItems, err := luaScenarioList(result["starting_items"], "starting items")
 
 	if err != nil {
 		return scenarioLevels{}, err
@@ -222,10 +88,163 @@ func (g *Game) buildScriptScenario(
 		entry:             entry,
 		populationEntries: entries,
 		spawnExclusions:   exclusions,
-		curing:            curing,
-		heal:              heal,
-		haste:             haste,
+		startingItems:     startingItems,
 	}, nil
+}
+
+// Empty Lua arrays decode as empty tables, so accept both shapes at the
+// policy boundary. Nonempty records must remain ordered arrays.
+func luaScenarioList(value any, label string) ([]any, error) {
+	if entries, ok := value.([]any); ok {
+		return entries, nil
+	}
+
+	if table, ok := value.(map[string]any); ok && len(table) == 0 {
+		return []any{}, nil
+	}
+
+	return nil, fmt.Errorf("Lua %s are not a list", label)
+}
+
+// decodeLuaLevelRecords installs grids and authored metadata before their
+// links, allowing a newly entered floor to use the same decoder as startup.
+func (g *Game) decodeLuaLevelRecords(
+	records []any,
+	positions *akara.Store[ecs.Position],
+) (map[int]point, map[int][]point, map[int][]any, error) {
+	entries := make(map[int]point, len(records))
+	exclusions := make(map[int][]point, len(records))
+	links := make(map[int][]any, len(records))
+
+	for _, value := range records {
+		record, ok := value.(map[string]any)
+
+		if !ok {
+			return nil, nil, nil, fmt.Errorf("Lua level has invalid type %T", value)
+		}
+
+		id, err := decisionInteger(record, "id")
+
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		cells, err := luaScenarioCells(record["cells"])
+
+		if err != nil {
+			return nil, nil, nil, fmt.Errorf("Lua level %d: %w", id, err)
+		}
+
+		level, err := NewLevel(id, cells, positions)
+
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		branchID, ok := record["branch_id"].(string)
+
+		if !ok || branchID == "" {
+			return nil, nil, nil, fmt.Errorf("Lua level %d has no branch ID", id)
+		}
+
+		level.BranchID = branchID
+
+		if raw, present := record["spawn_exclusions"]; present {
+			points, ok := raw.([]any)
+
+			if empty, isTable := raw.(map[string]any); isTable && len(empty) == 0 {
+				points = []any{}
+				ok = true
+			}
+
+			if !ok {
+				return nil, nil, nil, fmt.Errorf("Lua level %d spawn exclusions are not a list", id)
+			}
+
+			for _, value := range points {
+				cell, pointErr := luaScenarioPoint(value)
+
+				if pointErr != nil {
+					return nil, nil, nil, fmt.Errorf(
+						"Lua level %d spawn exclusion: %w",
+						id,
+						pointErr,
+					)
+				}
+
+				if cell.x < 0 ||
+					cell.x >= level.width ||
+					cell.y < 0 ||
+					cell.y >= len(level.terrain) {
+					return nil, nil, nil, fmt.Errorf("Lua level %d has invalid spawn exclusion", id)
+				}
+
+				exclusions[id] = append(exclusions[id], cell)
+			}
+		}
+
+		level.spawnExclusions = append([]point(nil), exclusions[id]...)
+
+		if err := loadLuaVault(level, record); err != nil {
+			return nil, nil, nil, err
+		}
+
+		if branchID == shoalsBranchID {
+			level.InitShoalsTide()
+
+			if raw, present := record["heightmap"]; present {
+				heights, heightErr := luaShoalsHeights(raw)
+
+				if heightErr != nil {
+					return nil, nil, nil, fmt.Errorf("Lua level %d: %w", id, heightErr)
+				}
+
+				if err := level.SetShoalsHeights(heights); err != nil {
+					return nil, nil, nil, err
+				}
+			}
+		} else if _, present := record["heightmap"]; present {
+			return nil, nil, nil, fmt.Errorf("Lua level %d heightmap is outside Shoals", id)
+		}
+
+		level.initialMonsters, err = decisionInteger(record, "initial_monsters")
+
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		entryX, err := decisionInteger(record, "entry_x")
+
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		entryY, err := decisionInteger(record, "entry_y")
+
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		if g.levels[id] != nil {
+			return nil, nil, nil, fmt.Errorf("duplicate Lua level %d", id)
+		}
+
+		g.levels[id] = level
+		entries[id] = point{
+			x: entryX,
+			y: entryY,
+		}
+
+		stairs, ok := record["stairs"].([]any)
+
+		if !ok {
+			return nil, nil, nil, fmt.Errorf("Lua level %d has no stair links", id)
+		}
+
+		links[id] = stairs
+	}
+
+	return entries, exclusions, links, nil
 }
 
 func luaScenarioCells(value any) ([][]terrain.ID, error) {

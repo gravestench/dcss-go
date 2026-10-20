@@ -3,6 +3,7 @@ local fixed = require("policy.generation.fixed")
 local generated = require("policy.generation.generated")
 local abyss = require("policy.generation.abyss")
 local features = require("content.terrain_features")
+local item_ids = require("ids.items")
 
 local module = {}
 
@@ -19,7 +20,8 @@ local function decode_level(ctx, level)
     level.rows = nil
 end
 
--- Scenario IDs select fixed fixtures or basic generation; vault records are attached before population runs.
+-- Fixed fixtures keep their authored maps for engine tests. Ordinary play
+-- uses first() and next() so later Dungeon layouts draw from live RNG.
 function module.run(ctx, input)
     local scenario_id = input.scenario_id
     local result
@@ -29,13 +31,36 @@ function module.run(ctx, input)
         result = fixed.generate(false)
     elseif scenario_id == "fixed-dungeon-population-v1" then
         result = fixed.generate(true)
-    elseif scenario_id == "generated-dungeon-basic-v1" then
-        result = generated.generate(ctx, input)
     else
         error(string.format("unsupported scenario ID %q", tostring(scenario_id)))
     end
 
     result.levels[#result.levels + 1] = abyss.generate(ctx)
+
+    -- The fixed benchmark retains its authored coordinates. Population
+    -- receives the same item intent format as live Dungeon generation.
+    result.starting_items = {
+        {
+            kind_id = item_ids.POT_CURING,
+            level_id = 1,
+            x = result.curing.x,
+            y = result.curing.y,
+        },
+
+        {
+            kind_id = item_ids.POT_HEAL_WOUNDS,
+            level_id = 2,
+            x = result.heal.x,
+            y = result.heal.y,
+        },
+
+        {
+            kind_id = item_ids.POT_HASTE,
+            level_id = 2,
+            x = result.haste.x,
+            y = result.haste.y,
+        },
+    }
 
     for _, level in ipairs(result.levels) do
         decode_level(ctx, level)

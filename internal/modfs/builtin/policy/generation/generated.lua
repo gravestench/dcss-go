@@ -14,10 +14,6 @@ local vault_extra = require("policy.generation.vaults.extra")
 
 local generated = {}
 
--- D:1's exit and D:15's onward branch still need their surrounding game flow.
-local exit_unavailable = "Leaving the Dungeon is unavailable in the Go port."
-local depths_unavailable = "The Depths are unavailable in the Go port."
-
 -- Each floor draws three population dice from its own depth-specific die size.
 local function monster_count(ctx, depth)
     local die_size = depth == 1 and 12 or 10
@@ -46,60 +42,8 @@ local function source_stairs(placed)
     return up, down
 end
 
-local directions = {
-    { x = 1, y = 0 },
-    { x = -1, y = 0 },
-    { x = 0, y = 1 },
-    { x = 0, y = -1 },
-}
-
--- Search from a base stair so source-vault landings cannot appear in an
--- isolated room. Traverse protected cells but never replace them.
-local function add_stair_landings(level, count, glyph, protected)
-    local arrivals = {}
-    local start = level.stairs[1].up
-    local queue = { start }
-    local seen = { [start.x .. ":" .. start.y] = true }
-    local cursor = 1
-
-    while cursor <= #queue and #arrivals < count do
-        local point = queue[cursor]
-        local key = point.x .. ":" .. point.y
-
-        cursor = cursor + 1
-
-        if level.builder:cell(point.x, point.y) == "." and
-            not protected[key] then
-            level.builder:set(point.x, point.y, glyph)
-            protected[key] = true
-            arrivals[#arrivals + 1] = point
-        end
-
-        for _, direction in ipairs(directions) do
-            local x = point.x + direction.x
-            local y = point.y + direction.y
-            local next_key = x .. ":" .. y
-
-            if x > 0 and x < 79 and y > 0 and y < 69 and
-                not seen[next_key] then
-                local feature = level.builder:cell(x, y)
-
-                if feature and feature ~= "#" then
-                    seen[next_key] = true
-                    queue[#queue + 1] = { x = x, y = y }
-                end
-            end
-        end
-    end
-
-    if #arrivals < count then
-        error("Dungeon has too few connected floor cells for source vault stairs")
-    end
-
-    return arrivals
-end
-
--- Append source exits without changing their order relative to ordinary stairs.
+-- Keep every authored exit alongside ordinary stairs so live pairing can
+-- connect it when this floor becomes the parent or child of another floor.
 local function add_source_stairs(placed, up, down)
     local source_up, source_down = source_stairs(placed)
 
@@ -109,80 +53,6 @@ local function add_source_stairs(placed, up, down)
 
     for _, point in ipairs(source_down) do
         down[#down + 1] = point
-    end
-end
-
--- A link records one stair cell and its paired destination or boundary.
-local function add_link(links, point, destination, landing, unavailable)
-    links[#links + 1] = {
-        x = point.x,
-        y = point.y,
-        to_level_id = destination,
-        to_x = landing and landing.x or 0,
-        to_y = landing and landing.y or 0,
-        unavailable = unavailable or "",
-    }
-end
-
--- Base trails connect by index on adjacent floors. Source vault exits get
--- their own landing cells, preserving every authored stair in the level.
-local function stair_links(levels)
-    local bottom = #levels
-
-    for depth, level in ipairs(levels) do
-        local previous = levels[depth - 1]
-        local next_level = levels[depth + 1]
-
-        for index, pair in ipairs(level.layout.stairs) do
-            if previous then
-                local landing = previous.layout.stairs[index].down
-
-                add_link(level.links, pair.up, depth - 1, landing)
-            else
-                add_link(level.links, pair.up, 0, nil, exit_unavailable)
-            end
-
-            if next_level then
-                local landing = next_level.layout.stairs[index].up
-
-                add_link(level.links, pair.down, depth + 1, landing)
-            else
-                add_link(level.links, pair.down, 0, nil,
-                    depths_unavailable)
-            end
-        end
-    end
-
-    for depth = 1, bottom - 1 do
-        local first = levels[depth]
-        local second = levels[depth + 1]
-        local arrivals = add_stair_landings(second.layout,
-            #first.source_down, "<", second.protected)
-        local departures = add_stair_landings(first.layout,
-            #second.source_up, ">", first.protected)
-
-        for index, point in ipairs(first.source_down) do
-            local landing = arrivals[index]
-
-            add_link(first.links, point, depth + 1, landing)
-            add_link(second.links, landing, depth, point)
-        end
-
-        for index, point in ipairs(second.source_up) do
-            local departure = departures[index]
-
-            add_link(first.links, departure, depth + 1, point)
-            add_link(second.links, point, depth, departure)
-        end
-    end
-
-    for _, point in ipairs(levels[1].source_up) do
-        add_link(levels[1].links, point, 0, nil, exit_unavailable)
-    end
-
-    for _, point in ipairs(levels[bottom].source_down) do
-        add_link(levels[bottom].links, point, 0, nil,
-            depths_unavailable)
     end
 end
 
@@ -502,52 +372,4 @@ function generated.next(ctx, input)
     }
 end
 
--- Build the entire root Dungeon from its registered branch depth. Each
--- source population row can now enter at its own depth, and paired stair
--- cells remain stable through saves. Other branch entrances are later work.
-function generated.generate(ctx, input)
-    local branch = register.get("branches", branches.BRANCH_DUNGEON)
-    local bottom = branch.depth
-    local player = {
-        species_id = input.player_species_id,
-        name = input.player_name,
-        started = false,
-    }
-    local floors = {}
-
-    for depth = 1, bottom do
-        floors[depth] = build_floor(ctx, player, depth, bottom)
-    end
-
-    stair_links(floors)
-
-    local levels = {}
-
-    for depth, floor in ipairs(floors) do
-        levels[depth] = level_record(ctx, floor, depth)
-    end
-
-    local entry = floor_entry(floors[1])
-    local second_entry = floor_entry(floors[2])
-
-    -- These starting consumables remain on the same floors as before.
-    local curing = nearest.open_floor(levels[1].rows, entry, nil, 1)
-    local heal = nearest.open_floor(levels[2].rows, second_entry, nil, 2)
-    local haste = nearest.open_floor(levels[2].rows, second_entry, heal, 2)
-
-    curing.level_id = 1
-    heal.level_id = 2
-    haste.level_id = 2
-
-    return {
-        levels = levels,
-        entry = {
-            x = entry.x,
-            y = entry.y,
-        },
-        curing = curing,
-        heal = heal,
-        haste = haste,
-    }
-end
 return generated

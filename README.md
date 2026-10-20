@@ -21,7 +21,7 @@ The architecture differs from the original implementation in these ways:
 | Concern | This engine |
 | --- | --- |
 | Live actors, items, and conditions | Akara ECS entities and saved components. |
-| Terrain and level geometry | Dense grids, including original `.des` vault layouts. |
+| Terrain and level geometry | Dense grids, including original `.des` vault layouts. D:1 exists at launch; deeper Dungeon floors are generated when their stairs are first used. |
 | Game content and policy | Committed, auto-discovered Lua files under [`internal/modfs/builtin`](internal/modfs/builtin). |
 | Modding | Sparse Lua and `.des` overlays add files or replace a bundled file at the same relative path. |
 | Terminal client | Bubble Tea and Lip Gloss render the DCSS-style interface across the available terminal area. |

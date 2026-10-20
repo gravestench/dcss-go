@@ -34,11 +34,9 @@ function module.run(_, input)
                 error("Dungeon level has the wrong branch owner")
             end
 
-            local pending = scenario_id == generated_id and
-                level.id > 1 and level.initial_actors == 0
-
-            if not pending and
-                (level.initial_actors < choices or
+            -- Generated floors are saved only after their first-entry
+            -- population transaction, so every existing floor has actors.
+            if (level.initial_actors < choices or
                     level.initial_actors > 4 * choices) then
                 error("Dungeon:" .. level.id .. " has invalid initial actor count")
             end

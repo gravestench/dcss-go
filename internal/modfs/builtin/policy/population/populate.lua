@@ -179,11 +179,12 @@ local function floor_potion(ctx, kind_id, level_id, cell)
 end
 
 -- Create fixed floor consumables only after monster inventory has consumed item draws.
-local function floor_items(ctx, input)
-    -- Scenario potions follow every monster and its carried inventory.
-    floor_potion(ctx, "POT_CURING", 1, input.curing)
-    floor_potion(ctx, "POT_HEAL_WOUNDS", 2, input.heal)
-    floor_potion(ctx, "POT_HASTE", 2, input.haste)
+local function floor_items(ctx, items)
+    -- Scenario items follow every monster and its carried inventory.
+    -- The generator names the content; this policy only creates entities.
+    for _, item in ipairs(items or {}) do
+        floor_potion(ctx, item.kind_id, item.level_id, item)
+    end
 end
 
 local module = {}
@@ -231,12 +232,7 @@ function module.run(ctx, input)
         end
     end
 
-    -- Fixed starting consumables belong to initial setup. A newly entered
-    -- Dungeon floor uses the live RNG state but must not duplicate those
-    -- items when its own population policy runs.
-    if input.place_starting_items then
-        floor_items(ctx, input)
-    end
+    floor_items(ctx, input.starting_items)
 
     return {
         initial_actors = counts,
