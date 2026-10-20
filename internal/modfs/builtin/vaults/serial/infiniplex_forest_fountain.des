@@ -1,0 +1,22 @@
+# infiniplex_forest_fountain shapes a wooded fountain pocket in the forest family.
+# D:1 and D:2 raise its selection weight; Lair has its own weight.
+# Its MAP stays authored here, while the shared Lua setup chooses trees.
+NAME:    infiniplex_forest_fountain
+TAGS:    transparent allow_dup serial_forest
+DEPTH: D:1-4, Lair
+WEIGHT: 3 (D:1), 2 (D:2), 1 (D:3-4), 3 (Lair)
+SUBST:   T = TTUV
+: vault.run("forest_setup.configure")
+MAP
+   tt!tt
+ tttt_tttt
+ tt11_11tt
+tt11___11tt
+tt1_____1tt
+!____T____!
+tt1_____1tt
+tt11___11tt
+ tt11_11tt
+ tttt_tttt
+   tt!tt
+ENDMAP

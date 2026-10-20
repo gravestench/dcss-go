@@ -16,6 +16,7 @@ local tags = {
     SERIAL_ICE = "serial_ice",
     CHANCE_ICECAVE = "chance_icecave",
     UNIQ_ICECV = "uniq_icecv",
+    SERIAL_FOREST = "serial_forest",
 }
 
 return tags

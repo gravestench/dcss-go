@@ -1,0 +1,8 @@
+# Early Dungeon and Lair layouts can grow a cluster of small forest maps.
+# The CHANCE clauses reduce the cluster's frequency across D:1-4; children
+# retain their own weights and can also enter the ordinary minivault pool.
+NAME: serial_forest
+TAGS: allow_dup extra luniq_serial nolayout_encompass
+DEPTH: D:1-4, Lair
+CHANCE: 3% (D:1), 2% (D:2), 1% (D:3-4), 1% (Lair)
+: vault.post_place("place_forest")

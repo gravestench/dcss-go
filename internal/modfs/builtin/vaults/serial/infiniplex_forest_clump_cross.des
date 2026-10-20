@@ -1,0 +1,21 @@
+# infiniplex_forest_clump_cross shapes a vegetation cluster in the forest family.
+# D:1 and D:2 raise its selection weight; Lair has its own weight.
+# Its MAP stays authored here, while the shared Lua setup chooses trees.
+NAME:    infiniplex_forest_clump_cross
+TAGS:    transparent allow_dup serial_forest
+DEPTH: D:1-4, Lair
+WEIGHT: 3 (D:1), 2 (D:2), 1 (D:3-4), 3 (Lair)
+: vault.run("forest_setup.configure")
+MAP
+    """
+   ""D""
+  ""DED""
+ """EtE"""
+"""DEtD"D""
+DEEttttEtE"
+"DDEEtDEDD"
+ """DE""""
+  ""EED""
+   "DDD"
+    """
+ENDMAP

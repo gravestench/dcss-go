@@ -286,14 +286,26 @@ are ported. The sixteen-map ice family adds a Dungeon/Cocytus controller
 and fifteen weighted pieces. One named Lua module applies the source's
 branch-specific monster pools, ice surface rules, and typed fog markers.
 The controller can request an Ice Cave entrance when a mod adds the source
-`uniq_icecv` pool; without that pool it consumes no cave coinflip. The one-map `serial_glass`
+`uniq_icecv` pool; without that pool it consumes no cave coinflip. The
+one-map `serial_glass`
 controller adds a non-flat common draw and an independent rare draw that
 is skipped in Dis. The nine tagged maps came from the separate variable
-source corpus, so the builder and serial source count is now 253 of 600.
+source corpus.
 Dis-only crystal pillars and the depth-dependent unseen-horror display run
 through named Lua hooks. The source `generate_awake` modifier is preserved
 on typed monster records; current monster creation already starts actors
 awake.
+
+The forty-one-map forest family now adds its early-Dungeon/Lair controller
+and forty individually weighted shapes. D:1 and D:2 raise each child's
+source weight; Lair uses its separate value. One shared Lua setup applies
+vegetation, placement masks, and the branch-dependent tree density while
+each `.des` retains its authored geometry and substitutions. The source
+`infiniplex_forest_clump_C` spelling is preserved as a stable vault ID.
+The builder and serial count is now 294 of 600. Forest generation exposed
+a missing bow and crossbow missile policy; arrows and bolts now use one
+Lua launcher resolver with their catalog projectile values.
+
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
 `uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those

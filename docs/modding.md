@@ -2061,6 +2061,15 @@ The ice controller's `has_tag` check lets a layered mod add Ice Cave entry
 maps later without changing this base Lua file or consuming a cave chance
 draw while the pool is absent.
 
+The forest family shows how a map can belong to a serial and still enter
+ordinary minivault selection. Each child declares `DEPTH: D:1-4, Lair`,
+the `serial_forest` tag, and four branch/depth `WEIGHT` clauses. Its
+`forest_setup.configure` hook emits the vegetation and terrain rules;
+the same authored MAP can therefore grow a denser tree mix in Lair. A new
+forest piece needs one `.des` file with its own geometry and weight clauses.
+The catalog keeps the exact source `NAME` as the stable ID, including the
+capital `C` in `infiniplex_forest_clump_C`.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls

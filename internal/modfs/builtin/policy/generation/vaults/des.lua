@@ -35,9 +35,10 @@ local function source_lines(source)
     return lines
 end
 
--- Limit vault IDs to safe module and catalog keys.
+-- Allow source IDs with interior uppercase letters while still rejecting
+-- separators and path traversal in catalog and hook module names.
 local function valid_id(id)
-    return id and id:match("^[a-z][a-z0-9_]*$") ~= nil
+    return id and id:match("^[a-z][A-Za-z0-9_]*$") ~= nil
 end
 
 -- Preserve authored operation order while extracting tags, orientation, and weight.

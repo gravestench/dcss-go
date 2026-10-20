@@ -1,0 +1,13 @@
+# infiniplex_forest_straight_3 shapes a short tree-lined crossing in the forest family.
+# D:1 and D:2 raise its selection weight; Lair has its own weight.
+# Its MAP stays authored here, while the shared Lua setup chooses trees.
+NAME:    infiniplex_forest_straight_3
+TAGS:    transparent allow_dup serial_forest
+DEPTH: D:1-4, Lair
+WEIGHT: 6 (D:1), 4 (D:2), 2 (D:3-4), 2 (Lair)
+: vault.run("forest_setup.configure")
+MAP
+ttttttttt
+@.......@
+ttttttttt
+ENDMAP

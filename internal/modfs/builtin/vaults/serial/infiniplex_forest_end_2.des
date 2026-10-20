@@ -1,0 +1,18 @@
+# infiniplex_forest_end_2 shapes a tree-backed dead end in the forest family.
+# D:1 and D:2 raise its selection weight; Lair has its own weight.
+# Its MAP stays authored here, while the shared Lua setup chooses trees.
+NAME:    infiniplex_forest_end_2
+TAGS: allow_dup serial_forest
+DEPTH: D:1-4, Lair
+WEIGHT: 9 (D:1), 6 (D:2), 3 (D:3-4), 9 (Lair)
+: vault.run("forest_setup.configure")
+MAP
+  tttt
+ ttEEtt
+tEEDDEEt
+tED""DEt
+tED"DDEt
+ttE"EEtt
+ tED_Et
+  tE!t
+ENDMAP
