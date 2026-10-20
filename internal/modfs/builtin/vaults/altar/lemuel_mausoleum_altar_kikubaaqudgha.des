@@ -8,9 +8,10 @@ TAGS:   temple_overflow_kikubaaqudgha uniq_mausoleum_altar
 # interest check
 DEPTH:  D:4-10, Crypt
 # source: : if you.in_branch("Crypt") then
-MONS:   zombie, guardian mummy, skeletal warrior, ghoul
+: vault.run("branch_monsters.mausoleum")
+# source: MONS:   zombie, guardian mummy, skeletal warrior, ghoul
 # source: :else
-MONS:   zombie, mummy, wight, necrophage
+# source: MONS:   zombie, mummy, wight, necrophage
 # source: :end
 NSUBST: ? = 1:_ / *:1
 SUBST:  1 = 1:30 2 3 4

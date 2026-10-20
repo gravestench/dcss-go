@@ -5,9 +5,10 @@ DEPTH: D:3-, Depths
 TAGS:  patrolling no_monster_gen no_item_gen transparent
 TAGS:  uniq_altar_cheibriados temple_overflow_1 temple_overflow_cheibriados
 # source: : if you.in_branch("Depths") then
-KMONS: _ = iron golem
+: vault.run("branch_monsters.cheibriados")
+# source: KMONS: _ = iron golem
 # source: :else
-KMONS: _ = worm / mummy / iron imp
+# source: KMONS: _ = worm / mummy / iron imp
 # source: :end
 KFEAT: _ = altar_cheibriados
 SUBST: x : xxxcccmnvb

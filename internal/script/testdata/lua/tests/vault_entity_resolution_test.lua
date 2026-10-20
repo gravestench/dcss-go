@@ -66,6 +66,28 @@ local function named_and_variant_identities()
         monster_ids.MONS_ORC, "skeleton item species")
 end
 
+-- A source spectral species uses the generic spectral actor with its base
+-- identity. The catalog's literal spectral thing remains its own monster.
+local function spectral_species_identity()
+    local ctx = random_context()
+    local selected = monster.parse("spectral goblin", site)[1][1]
+
+    resolve.validate_monster(selected, site)
+
+    local resolved = resolve.monster(ctx, selected, 5, site)
+
+    harness.equal(resolved.kind_id, monster_ids.MONS_SPECTRAL_THING)
+    harness.equal(resolved.base_id, monster_ids.MONS_GOBLIN)
+    harness.equal(resolved.variant, "spectral")
+
+    local literal = monster.parse("spectral thing", site)[1][1]
+    local thing = resolve.monster(ctx, literal, 5, site)
+
+    harness.equal(thing.kind_id, monster_ids.MONS_SPECTRAL_THING)
+    harness.falsy(thing.base_id,
+        "literal spectral thing is not a spectral form of another species")
+end
+
 -- Random vault requests inherit source depth so placement does not silently
 -- draw from an unrelated population tier.
 local function random_requests_use_source_depth()
@@ -393,6 +415,7 @@ function test.run()
     legacy_source_skeleton_fault()
     random_colour_is_selected_once()
     named_and_variant_identities()
+    spectral_species_identity()
     random_requests_use_source_depth()
     every_static_arrival_name_resolves()
     handler_declarations_resolve()

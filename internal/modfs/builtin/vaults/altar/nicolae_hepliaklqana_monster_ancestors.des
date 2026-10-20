@@ -6,14 +6,15 @@ TAGS:    temple_overflow_hepliaklqana temple_overflow_1 transparent
 TAGS:    uniq_altar_hepliaklqana
 TAGS:    patrolling no_monster_gen no_trap_gen
 # source: : if you.in_branch("Depths") then
-MONS:   deep troll earth mage, spectral deep troll earth mage, tengu reaver
-MONS:   spectral tengu reaver, spriggan defender, spectral spriggan defender
-MONS:   hell knight
-KMONS:  D = spectral hell knight
+: vault.run("choose_ancestors")
+# source: MONS:   deep troll earth mage, spectral deep troll earth mage, tengu reaver
+# source: MONS:   spectral tengu reaver, spriggan defender, spectral spriggan defender
+# source: MONS:   hell knight
+# source: KMONS:  D = spectral hell knight
 # source: :else
-MONS:    goblin, spectral goblin, kobold, spectral kobold, hobgoblin
-MONS:    spectral hobgoblin, orc
-KMONS:   D = spectral orc
+# source: MONS:    goblin, spectral goblin, kobold, spectral kobold, hobgoblin
+# source: MONS:    spectral hobgoblin, orc
+# source: KMONS:   D = spectral orc
 # source: :end
 SHUFFLE: 12 / 34 / 56 / 7D
 KFEAT:   _ = altar_hepliaklqana

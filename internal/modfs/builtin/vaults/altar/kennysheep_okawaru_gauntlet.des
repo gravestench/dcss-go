@@ -6,9 +6,10 @@ TAGS:   temple_overflow_1 temple_overflow_okawaru uniq_altar_okawaru
 TAGS:   no_pool_fixup transparent
 KFEAT:  _ = altar_okawaru
 # source: : if you.in_branch("Depths") then
-KMONS:  1 = spriggan defender ; demon trident . robe . boomerang
+: vault.run("choose_guard")
+# source: KMONS:  1 = spriggan defender ; demon trident . robe . boomerang
 # source: :else
-KMONS:  1 = goblin ; spear
+# source: KMONS:  1 = goblin ; spear
 # source: :end
 KPROP:  1 = no_tele_into
 KMASK:  1 = opaque

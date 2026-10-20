@@ -265,9 +265,17 @@ function resolve.validate_monster(selected, site)
         return
     end
 
+    local spectral_base = name:match("^spectral (.+)$")
     local base_name = name:match("^(.-) zombie$") or
         name:match("^(.-) skeleton$") or
         name:match("^(.-) simulacrum$")
+
+    -- Source vaults can request a spectral form of an ordinary species.
+    -- Keep literal catalog monsters such as spectral thing as themselves.
+    if not base_name and spectral_base and
+        name_index(categories.MONSTERS)[spectral_base:lower()] then
+        base_name = spectral_base
+    end
 
     if name:match(" band$") then
         base_name = name:match("^(.-) band$")
@@ -338,12 +346,21 @@ function resolve.monster(ctx, selected, depth, site)
     end
 
     local name = selected.name
+    local spectral_base = name:match("^spectral (.+)$")
     local base_name = name:match("^(.-) zombie$") or
         name:match("^(.-) skeleton$") or
         name:match("^(.-) simulacrum$")
     local variant = name:match(" (zombie)$") or
         name:match(" (skeleton)$") or
         name:match(" (simulacrum)$")
+
+    -- A named spectral form uses the generic spectral monster's behavior
+    -- while retaining its base species for rendering and future corpse rules.
+    if not base_name and spectral_base and
+        name_index(categories.MONSTERS)[spectral_base:lower()] then
+        base_name = spectral_base
+        variant = "spectral"
+    end
     local blob_size = slime_blob.size_for_name(name)
     local band_name = name:match("^(.-) band$")
     local kind_id
@@ -368,8 +385,10 @@ function resolve.monster(ctx, selected, depth, site)
             kind_id = monster_ids.MONS_ZOMBIE
         elseif variant == "skeleton" then
             kind_id = monster_ids.MONS_SKELETON
-        else
+        elseif variant == "simulacrum" then
             kind_id = monster_ids.MONS_SIMULACRUM
+        else
+            kind_id = monster_ids.MONS_SPECTRAL_THING
         end
         base_id = find_name(categories.MONSTERS, base_name, site)
     else

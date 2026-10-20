@@ -7,9 +7,10 @@ TAGS:   temple_overflow_cheibriados transparent no_monster_gen
 TAGS:   transparent
 WEIGHT: 5
 # source: : if you.in_branch("Depths") then
-KMONS: _ = iron golem
+: vault.run("branch_monsters.cheibriados")
+# source: KMONS: _ = iron golem
 # source: :else
-KMONS: _ = worm / mummy / iron imp
+# source: KMONS: _ = worm / mummy / iron imp
 # source: :end
 NSUBST: ' = 1:a / *:.
 KFEAT:  _ = altar_cheibriados

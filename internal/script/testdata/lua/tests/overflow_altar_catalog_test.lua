@@ -134,6 +134,38 @@ local function arrangement_for(id, selected)
     return emissions
 end
 
+-- Each placement test starts from the actual authored MAP rows. Reusing a
+-- mutated cell grid would hide substitutions left by a previous branch.
+local function copy_rows(definition)
+    local cells = {}
+
+    for y, row in ipairs(definition.rows) do
+        cells[y] = {}
+
+        for x = 1, #row do
+            cells[y][x] = row:sub(x, x)
+        end
+    end
+
+    return cells
+end
+
+-- The layout stream is fixed here so the test isolates hook and directive
+-- behavior from unrelated random choices in the same source vault.
+local function fixed_random()
+    local random = {}
+
+    function random:roll()
+        return 0
+    end
+
+    function random:one_in()
+        return true
+    end
+
+    return random
+end
+
 -- Exercise every count-bearing map at its limits and check cases whose
 -- source substitutions depend on both count and directive order.
 local function assert_count_arrangements()
@@ -207,29 +239,13 @@ local function assert_count_maps_apply()
         { "nicolae_overflow_hidden_temple", 1, 5 },
         { "nicolae_overflows_in_rows", 9, 15 },
     }
-    local random = {}
-
-    function random:roll()
-        return 0
-    end
-
-    function random:one_in()
-        return true
-    end
+    local random = fixed_random()
 
     for _, entry in ipairs(ranges) do
         local definition = catalog.get(entry[1])
 
         for _, selected in ipairs({ entry[2], entry[3] }) do
-            local cells = {}
-
-            for y, row in ipairs(definition.rows) do
-                cells[y] = {}
-
-                for x = 1, #row do
-                    cells[y][x] = row:sub(x, x)
-                end
-            end
+            local cells = copy_rows(definition)
 
             local player = {
                 branch_id = branches.BRANCH_DUNGEON,
@@ -255,6 +271,70 @@ local function assert_count_maps_apply()
             harness.equal(altars, selected,
                 entry[1] .. " keeps exactly its scheduled altar count")
         end
+    end
+end
+
+-- Apply each branch's real vault operations rather than checking only the
+-- hook output. This catches a forgotten active DES line from either arm.
+local function monsters_for(id, branch_id)
+    local definition = catalog.get(id)
+    local player = {
+        branch_id = branch_id,
+        depth = 5,
+        absolute_depth = 5,
+    }
+    local records = operations.apply(
+        definition, copy_rows(definition), fixed_random(), 5, player)
+    local monsters = {}
+
+    for _, record in ipairs(records) do
+        if record.kind == effects.MONSTER then
+            monsters[#monsters + 1] = record.identity
+        end
+    end
+
+    return monsters
+end
+
+-- Shared source choices appear in several maps; test every caller and both
+-- branches, including Crypt's separate mausoleum population.
+local function assert_branch_monsters()
+    local depth_maps = {
+        "slow_altar_1",
+        "slow_altar_2",
+        "chei_slow_surprise",
+        "kennysheep_okawaru_gauntlet",
+        "kennysheep_vampire_church",
+        "lemuel_zombie_altar_kikubaaqudgha",
+        "nemelex_lonely_heart_becter",
+        "nicolae_hepliaklqana_monster_ancestors",
+        "okawaru_altar_gauntlet_db",
+        "yredelemnul_forgotten_temple_becter",
+    }
+
+    for _, id in ipairs(depth_maps) do
+        local dungeon = monsters_for(id, branches.BRANCH_DUNGEON)
+        local depths = monsters_for(id, branches.BRANCH_DEPTHS)
+
+        harness.truthy(#dungeon > 0, id .. " has Dungeon monsters")
+        harness.truthy(#depths > 0, id .. " has Depths monsters")
+        harness.falsy(table.concat(dungeon, "|") == table.concat(depths, "|"),
+            id .. " changes its source population by branch")
+    end
+
+    for _, id in ipairs({
+        "lemuel_mausoleum_altar_kikubaaqudgha",
+        "lemuel_mausoleum_altar_yredelemnul",
+    }) do
+        local dungeon = monsters_for(id, branches.BRANCH_DUNGEON)
+        local crypt = monsters_for(id, branches.BRANCH_CRYPT)
+
+        harness.equal(#dungeon, 5,
+            id .. " keeps four Dungeon slots and its keyed altar zombie")
+        harness.equal(#crypt, 5,
+            id .. " keeps four Crypt slots and its keyed altar zombie")
+        harness.falsy(table.concat(dungeon, "|") == table.concat(crypt, "|"),
+            id .. " changes its source population in Crypt")
     end
 end
 
@@ -292,6 +372,7 @@ function test.run()
     assert_dancefloor_decay()
     assert_count_arrangements()
     assert_count_maps_apply()
+    assert_branch_monsters()
 end
 
 return test

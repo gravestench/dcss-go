@@ -6,11 +6,12 @@ TAGS:  uniq_altar_okawaru temple_overflow_1 temple_overflow_okawaru
 KFEAT: _ = altar_okawaru
 KPROP: 1 = no_tele_into
 # source: : if you.in_branch("Depths") then
-MONS:  spriggan defender ; flail . robe . buckler . boomerang w:3 /\
-       tengu warrior ; long sword . leather armour . buckler . boomerang
+: vault.run("choose_attacker")
+# source: MONS:  spriggan defender ; flail . robe . buckler . boomerang w:3 /\
+# source:        tengu warrior ; long sword . leather armour . buckler . boomerang
 # source: :else
-MONS:  goblin; stone q:5 / hobgoblin; stone q:5 / gnoll; stone q:5 /\
-       orc; stone q:5 / kobold; stone q:5
+# source: MONS:  goblin; stone q:5 / hobgoblin; stone q:5 / gnoll; stone q:5 /\
+# source:        orc; stone q:5 / kobold; stone q:5
 # source: :end
 : vault.run("interest.apply")
 MAP

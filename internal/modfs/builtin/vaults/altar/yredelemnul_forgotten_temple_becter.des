@@ -7,9 +7,10 @@ TAGS:   transparent uniq_altar_yredelemnul
 KFEAT:  _ = altar_yredelemnul
 KFEAT:  . = web trap / .
 # source: : if you.in_branch("Depths") then
-KMONS:  _ = spectral juggernaut
+: vault.run("choose_guard")
+# source: KMONS:  _ = spectral juggernaut
 # source: :else
-KMONS:  _ = spectral orc
+# source: KMONS:  _ = spectral orc
 # source: :end
 : vault.run("interest.apply")
 MAP

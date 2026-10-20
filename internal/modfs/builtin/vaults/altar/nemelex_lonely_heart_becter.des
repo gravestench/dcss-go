@@ -6,9 +6,10 @@ TAGS:   uniq_altar_nemelex_xobeh transparent decor
 TAGS:   temple_overflow_1 temple_overflow_nemelex
 TAGS:   no_rotate no_vmirror no_monster_gen no_item_gen
 # source: : if you.in_branch("Depths") then
-MONS:   nothing w:4 / boris w:1
+: vault.run("choose_visitor")
+# source: MONS:   nothing w:4 / boris w:1
 # source: :else
-MONS:   nothing w:4 / jessica w:1
+# source: MONS:   nothing w:4 / jessica w:1
 # source: :end
 KFEAT:  _ = altar_nemelex_xobeh
 COLOUR: x = lightred

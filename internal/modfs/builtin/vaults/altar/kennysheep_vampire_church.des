@@ -5,9 +5,10 @@ DEPTH: D:3-, Depths
 TAGS:   no_monster_gen temple_overflow_1 temple_overflow_kikubaaqudgha
 TAGS:   uniq_altar_kikubaaqudgha transparent
 # source: : if you.in_branch("Depths") then
-MONS:   vampire knight / nothing, vampire mage
+: vault.run("choose_vampires")
+# source: MONS:   vampire knight / nothing, vampire mage
 # source: :else
-MONS:   vampire bat / nothing w:7, bat skeleton / bat zombie
+# source: MONS:   vampire bat / nothing w:7, bat skeleton / bat zombie
 # source: :end
 KFEAT:  A = altar_kikubaaqudgha
 NSUBST: . = 4:2 / 3 = 2. / *:.

@@ -2058,6 +2058,11 @@ altars already use a `: vault.run("arrange_altars")` hook. Import
 the future overflow scheduler, and must leave exactly that many `B` altar
 cells. A mod can add or replace a map now, but should not expect it to
 appear on a floor until the generation pass is complete.
+For branch-dependent monster content, put a named hook at the original
+conditional position and emit only the selected `MONS` or `KMONS` directives.
+The base maps under `vaults/altar/` show this pattern; the source alternatives
+remain nearby as comments. A prefixed name such as `spectral goblin` resolves
+to the spectral actor with the goblin species recorded as its base.
 
 The `builder/arena_*.des` family illustrates maps reserved for another game
 mode. Each definition keeps its original `MAP` rows and `arena_*` tag, but

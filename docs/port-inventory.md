@@ -219,6 +219,9 @@ The repeated terrain names and one unconditional corpse-decay effect now
 have named Lua hooks. All eight generic overflow maps with count-dependent
 geometry now read a local altar-count setting; placement tests verify their
 source layouts retain exactly the requested number of altar cells.
+Twelve overflow maps now choose their authored monster declarations by
+Dungeon, Depths, or Crypt branch. Named spectral monsters in these maps
+resolve to the generic spectral actor plus their base species identity.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition
