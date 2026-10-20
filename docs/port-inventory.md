@@ -212,15 +212,15 @@ fixed and random altar cells to the saved gods, and preserves those identities
 through save and restore. A ten-seed D:1–10 generation sweep exercised the
 integrated path. Live Temple placement uses the selected map, assigns exact
 god IDs to its altar records, applies source open-sea or lava-sea borders,
-and materializes authored monsters and items
-without ambient Temple spawns. Temple altars now render with their saved god
-names, and restore rejects an altar identity that disagrees with the plan.
+and materializes authored monsters and items without ambient Temple spawns.
+Temple altars now render with their saved god names, and restore rejects an
+altar identity that disagrees with the plan.
 Worship and overflow map event callbacks still need gameplay passes.
 All 232 source overflow altar maps are committed as individual `.des` files;
 their MAP rows match the source exactly. They load through a dedicated catalog
-and stay out of ordinary extra-vault selection until the remaining per-map
-Lua hooks, source monster expressions, and scheduled overflow rules are
-ported. The original script text remains beside each map as comments.
+and are selected only for scheduled overflow groups, rather than as ordinary
+extra vaults. Remaining source map event effects still need gameplay rules.
+The original script text remains beside each map as comments.
 The repeated terrain names and one unconditional corpse-decay effect now
 have named Lua hooks. All eight generic overflow maps with count-dependent
 geometry now read a local altar-count setting; placement tests verify their

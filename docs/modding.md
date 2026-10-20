@@ -2049,15 +2049,36 @@ The grid owns the walkable `_` feature, while
 
 The source Dungeon overflow maps live under `vaults/altar/`. The dedicated
 `policy.generation.altar.catalog` discovers added or replaced `.des` files
-through the same layered path rules. These maps are currently cataloged but
-not selected in live generation: remaining source Lua and scheduled god
-placement are still being ported. The eight generic maps with variable
-altars already use a `: vault.run("arrange_altars")` hook. Import
-`constants.vault_settings` in the Lua file and read
-`api:setting(settings.OVERFLOW_ALTAR_COUNT)`, supplied by
-the future overflow scheduler, and must leave exactly that many `B` altar
-cells. A mod can add or replace a map now, but should not expect it to
-appear on a floor until the generation pass is complete.
+through the same layered path rules. At new game, the Temple plan assigns
+each god outside the main Temple to a group and a Dungeon depth from D:3–10.
+When that floor is first generated, `policy.generation.altar.placement`
+chooses an eligible source map for each group before ordinary extra vaults.
+The chosen map ID, placed records, and altar god IDs are saved. File discovery
+order does not determine the draw: the catalog sorts map IDs before applying
+the source weights and depth rules.
+
+To add a generic overflow map, give it `temple_overflow_generic_N`, where
+`N` is its supported altar count. A map can list several counts when its
+named Lua hook reshapes its `B` cells to match. For example,
+`chequers_temple_overflow_minitemple.des` supports groups of three, four, or
+five gods. A map for named gods uses `temple_overflow_N` plus one
+`temple_overflow_<god_name>` tag for each supported god. God tag names use
+lowercase display names with spaces replaced by underscores; import
+`constants.god_names` in a Lua hook instead of duplicating names there.
+The map also needs an eligible `DEPTH`, positive source weight, and terrain
+that can fit on the floor. If a scheduled group has no eligible map or cannot
+be placed, generation reports the error rather than dropping its gods.
+
+The eight generic maps with variable altars use a
+`: vault.run("arrange_altars")` hook. Import `constants.vault_settings` in
+that Lua file and read `api:setting(settings.OVERFLOW_ALTAR_COUNT)`. The hook
+must leave exactly that many `B` altar cells. The placer also accepts fixed
+`KFEAT` altars naming a scheduled god; remaining gods fill `B` cells in
+coordinate order. Do not roll a god inside the map hook. The saved plan owns
+that choice, and restore checks that each scheduled god has exactly one
+altar on the generated floor. Keep terrain and keyed content in the `.des`;
+put conditional policy in the companion Lua hook.
+
 For branch-dependent monster content, put a named hook at the original
 conditional position and emit only the selected `MONS` or `KMONS` directives.
 The base maps under `vaults/altar/` show this pattern; the source alternatives
