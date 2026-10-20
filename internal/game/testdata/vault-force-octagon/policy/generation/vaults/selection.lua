@@ -13,4 +13,10 @@ function selection.choose_catalog()
     }
 end
 
+-- This fixture isolates the forced arrival. The live generator now may
+-- request a supplemental map, so explicitly decline that separate draw.
+function selection.choose_tag()
+    return nil
+end
+
 return selection

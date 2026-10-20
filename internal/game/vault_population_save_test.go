@@ -380,6 +380,9 @@ func TestVaultPopulationLifecycle(t *testing.T) {
 				entity.CarriedBy = &ecs.CarriedBy{
 					Holder: akara.Entity(snapshot.PlayerID),
 				}
+				// The stone may have been carried in a monster equipment slot.
+				// Pickup transfers possession, not that monster's slot.
+				entity.Equipped = nil
 			}
 		}
 
