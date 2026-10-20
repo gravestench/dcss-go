@@ -5,6 +5,7 @@
 local branches = require("ids.branches")
 local categories = require("constants.catalog")
 local directives = require("constants.vault_directives")
+local effects = require("constants.vault_effects")
 local depth_rules = require("policy.generation.vaults.depth")
 local des = require("policy.generation.vaults.des")
 local hooks = require("policy.generation.vaults.hooks")
@@ -15,6 +16,55 @@ local weights = require("policy.generation.vaults.weight")
 local catalog = {}
 local definitions = {}
 local loaded = false
+
+-- Procedural hooks write glyphs after DES parsing, so keyed colour and tile
+-- declarations cannot be bound to cells until the hook finishes. Keep each
+-- matching source cell as typed level data for rendering and save/restore.
+local function procedural_styles(definition, builder)
+    local records = {}
+
+    for _, operation in ipairs(definition.operations) do
+        local kind
+
+        if operation.kind == directives.COLOUR then
+            kind = effects.COLOUR
+        elseif operation.kind == directives.TILE or
+            operation.kind == directives.FTILE or
+            operation.kind == directives.RTILE then
+            kind = effects.TILE
+        end
+
+        if kind then
+            local targets, identity = operation.argument:match(
+                "^%s*(%S+)%s*[=:]%s*(.-)%s*$")
+
+            if not targets then
+                error("layout " .. definition.id .. " has invalid style declaration")
+            end
+
+            for y = 0, builder.height - 1 do
+                for x = 0, builder.width - 1 do
+                    local source = builder:cell(x, y)
+
+                    if targets:find(source, 1, true) then
+                        records[#records + 1] = {
+                            kind = kind,
+                            directive = operation.kind,
+                            identity = identity,
+                            source = source,
+                            x = x,
+                            y = y,
+                            vault_id = definition.id,
+                            pending = true,
+                        }
+                    end
+                end
+            end
+        end
+    end
+
+    return records
+end
 
 -- A procedural layout needs one run hook; an authored MAP needs none.
 -- Source validators run before stairs alter the open-area measurement.
@@ -209,6 +259,16 @@ function catalog.execute(ctx, definition, branch_id, local_depth)
             result.stairs = stairs.complete(result.builder)
             result.rows = result.builder:rows()
             result.id = definition.id
+
+            if run then
+                local styles = procedural_styles(definition, result.builder)
+
+                result.records = result.records or {}
+
+                for _, record in ipairs(styles) do
+                    result.records[#result.records + 1] = record
+                end
+            end
 
             return result
         end

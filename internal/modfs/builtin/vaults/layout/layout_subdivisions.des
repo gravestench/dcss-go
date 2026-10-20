@@ -1,0 +1,14 @@
+# Source: crawl-ref/source/dat/des/builder/layout.des
+# The source's recursive map script lives in the named Lua hook below.
+NAME:   layout_subdivisions
+DEPTH:  Dis:1-6
+WEIGHT: 15
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_divisions
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_subdivisions")
+: vault.validate("validate")
+COLOUR: G : cyan
+TILE:   G = dngn_statue_iron_golem
+MAP
+ENDMAP

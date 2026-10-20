@@ -1,0 +1,12 @@
+# Source: crawl-ref/source/dat/des/builder/layout_overlapping_boxes.des
+# The source's overlapping-box script lives in the named Lua hook below.
+NAME:   layout_overlapping_boxes
+DEPTH:  Dis:1-6
+WEIGHT: 5
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_divisions
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_overlapping_boxes")
+: vault.validate("validate")
+MAP
+ENDMAP
