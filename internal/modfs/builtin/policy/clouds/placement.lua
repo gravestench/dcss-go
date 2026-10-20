@@ -29,12 +29,18 @@ function placement.terrain_eligible(kind_id, feature)
     return kind_id ~= ids.CLOUD_INK or is_water(feature)
 end
 
+-- Select a concrete smoke colour before a caller rolls its duration, as
+-- random_smoke_type does in source cloud.cc and mon-death.cc.
+function placement.random_smoke_kind(ctx)
+    local index = ctx:random(streams.CLOUDS, #smoke) + 1
+
+    return smoke[index]
+end
+
 -- Resolve random smoke once; unresolved cloud selectors cannot become entities.
 local function resolve_kind(ctx, kind_id)
     if kind_id == selectors.RANDOM_SMOKE then
-        local index = ctx:random(streams.CLOUDS, #smoke) + 1
-
-        return smoke[index]
+        return placement.random_smoke_kind(ctx)
     end
 
     if kind_id == selectors.NONE or

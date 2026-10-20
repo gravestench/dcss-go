@@ -11,6 +11,7 @@ local habitat = require("policy.combat.monster_habitat")
 local monster_duration = require("policy.combat.monster_summons.duration")
 local visibility = require("policy.combat.monster_summons.visibility")
 local channels = require("constants.message_channels")
+local death_clouds = require("policy.combat.monster_death_clouds")
 
 local summons = {}
 
@@ -87,6 +88,10 @@ end
 -- Remove bonds and carried items before deleting the actor, so no ECS references outlive the summon.
 function summons.expire(ctx, entity)
     local position = ctx:get(entity, component.POSITION)
+
+    -- Summon expiry bypasses actor.death, so leave its source cloud here
+    -- before removing the position that identifies the field's cell.
+    death_clouds.before_expiry(ctx, entity)
 
     for _, ally in ipairs(ctx:query({ component.SUMMON_BOND })) do
         local bond = ctx:get(ally, component.SUMMON_BOND)

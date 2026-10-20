@@ -359,6 +359,13 @@ reaches the same death owner as a lethal hit; a zero-charge prism stays
 quiet. Bennu's radius-two pyre precedes its one saved rebirth, and a later
 death is final. Explosion geometry and source message timing still need
 whole-game parity review alongside the remaining monster death effects.
+Death-cloud rules now share one Lua path for lethal deaths and summon
+teardown. Fire vortices leave fire, simulacra leave cold, and chaos spawn
+leave chaos whether or not they were summoned. Ordinary summons leave one
+randomly coloured smoke cloud; shadow, holy, mirrored, drowned-soul, and living
+spell departures omit smoke. Source-specific death wording remains part of
+the presentation parity pass. Xom and Jiyva poof variants still need
+per-monster god state from the religion domain.
 
 The builder and serial definition count is now 495 of 600. Forest generation exposed
 a missing bow and crossbow missile policy; arrows and bolts now use one

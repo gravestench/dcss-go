@@ -1,7 +1,6 @@
 local spells = require("ids.spells")
 local component = require("constants.component")
 local summons = require("policy.magic.effects.summons.common")
-local vortex = require("policy.magic.effects.summons.fire_vortex")
 local spore = require("policy.combat.monster_plants.spore")
 local visibility = require("policy.combat.monster_summons.visibility")
 local channels = require("constants.message_channels")
@@ -93,8 +92,6 @@ function system.update(ctx, active)
 
             if state.source_id == spells.SPELL_SPORULATE then
                 spore.explode(ctx, entity)
-            elseif expired and state.source_id == spells.SPELL_FIRE_STORM then
-                vortex.dissipate(ctx, entity)
             else
                 summons.expire(ctx, entity)
             end

@@ -2264,6 +2264,15 @@ checks before allowing the extra actor outside the level's roster budget.
 Modded death effects should keep the source actor's final position as an
 explicit hook argument because the actor has left the occupancy grid.
 
+Clouds left by dead fire vortices, simulacra, and chaos spawn live in
+`policy.combat.monster_death_clouds`. That policy also handles ordinary
+summon smoke and source exceptions such as shadow summons. Its `leave`
+function receives the same final position on lethal death; `before_expiry`
+runs before the shared summon owner removes a timed-out actor. If a new
+monster needs a different death cloud, add its species rule there and use
+an ID imported from `ids.clouds`. Keep the cloud in the shared placement
+owner so terrain, wind, attribution, save, and spread rules still apply.
+
 Monster definitions may declare a `band` with `min`, `max`, and `slots`.
 `policy.population.bands` creates the followers and attaches `core.follower`
 links plus a durable `monster.band_origin` with the leader and member kinds.
