@@ -431,6 +431,13 @@ source's depth-scaled island bumps, smooths the height field, and paints
 mangrove, floor, and shallow water. Its Swamp-only declaration is registered;
 branch travel is still required before ordinary play can select it.
 
+The next ordinary branch travel slice is specified in
+`docs/superpowers/specs/2026-10-20-ordinary-branch-travel-design.md` and
+planned in `docs/superpowers/plans/2026-10-20-ordinary-branch-travel.md`.
+It includes source branch population catalogs because generated spawning
+still reads Dungeon depth, and generalizes saved stair frontiers beyond
+the current `id + 1` Dungeon path.
+
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
 `uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those
