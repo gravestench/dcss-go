@@ -13,16 +13,17 @@ TILE:    G = dngn_statue_triangle
 KFEAT:   a = granite_statue
 TILE:    a = dngn_statue_angel
 # source: : if crawl.one_chance_in(2) then
+: vault.run("choose_theme")
 # Silver theme
-KFEAT:   c = v
-TILE:    c = dngn_metal_wall_white
-COLOUR:  c- = white
-FTILE:   -aDEFG = floor_w_marble
+# source: KFEAT:   c = v
+# source: TILE:    c = dngn_metal_wall_white
+# source: COLOUR:  c- = white
+# source: FTILE:   -aDEFG = floor_w_marble
 # source: : else
 # Gold theme
-TILE:    c = wall_church
-COLOUR:  c- = yellow
-FTILE:   -aDEFG = floor_limestone
+# source: TILE:    c = wall_church
+# source: COLOUR:  c- = yellow
+# source: FTILE:   -aDEFG = floor_limestone
 # source: : end
 MAP
 .....................

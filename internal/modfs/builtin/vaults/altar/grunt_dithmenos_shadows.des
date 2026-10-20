@@ -6,6 +6,7 @@ TAGS:  transparent
 DEPTH: D:5-
 KFEAT: C = altar_dithmenos
 # source: {{
+: vault.run("choose_shadows")
 # source:   if you.absdepth() >= 9 then
 # source:      mons("shadow")
 # source:   else

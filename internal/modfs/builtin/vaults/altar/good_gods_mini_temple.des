@@ -11,9 +11,10 @@ KFEAT:   D = altar_elyvilon
 KFEAT:   E = altar_zin
 KFEAT:   F = altar_the_shining_one
 # source: : if crawl.coinflip() then
-SHUFFLE: x" / t1 / wT / IJ
+: vault.run("vary_garden")
+# source: SHUFFLE: x" / t1 / wT / IJ
 # source: : else
-SUBST:   " : ..x
+# source: SUBST:   " : ..x
 # source: : end
 SUBST:   HI : x
 SUBST:   x : xcvb

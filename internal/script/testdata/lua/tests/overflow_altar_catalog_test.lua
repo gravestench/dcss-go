@@ -12,6 +12,7 @@ local names = require("constants.vault_feature_names")
 local ordinary = require("policy.generation.vaults.catalog")
 local operations = require("policy.generation.vaults.operations")
 local settings = require("constants.vault_settings")
+local tags = require("constants.vault_tags")
 
 local test = {}
 
@@ -377,6 +378,125 @@ local function assert_blood_cavern_scenes()
     harness.equal(skeleton_decay, 0, "skeleton scene has no fresh corpse")
 end
 
+-- Run one named source script using controlled local context. The helper
+-- obtains its method through the actual .des operation, so a renamed hook
+-- cannot leave this test calling an obsolete Lua function directly.
+local function simple_script(id, method, options)
+    local definition = catalog.get(id)
+    local emissions = {}
+    local api = {}
+    local found = false
+
+    function api:one_in()
+        return options.first_choice
+    end
+
+    function api:coinflip()
+        return options.first_choice
+    end
+
+    function api:depth()
+        return options.depth or 5
+    end
+
+    function api:absolute_depth()
+        return options.absolute_depth or self:depth()
+    end
+
+    function api:map_tag()
+        return options.map_tag
+    end
+
+    function api:emit(kind, argument)
+        emissions[#emissions + 1] = {
+            kind = kind,
+            argument = argument,
+        }
+    end
+
+    for _, operation in ipairs(definition.operations) do
+        if operation.kind == directives.HOOK_RUN and
+            operation.argument == method then
+            hooks.run(definition, method, api)
+            found = true
+        end
+    end
+
+    harness.truthy(found, id .. " calls its source script")
+
+    return emissions
+end
+
+-- Compare each visual or roster branch without duplicating its DES schema.
+local function assert_simple_source_scripts()
+    local silver = simple_script(
+        "dreamdust_divine_triumvirate", "choose_theme", {
+            first_choice = true,
+        })
+    local gold = simple_script(
+        "dreamdust_divine_triumvirate", "choose_theme", {
+            first_choice = false,
+        })
+
+    harness.equal(#silver, 4)
+    harness.equal(#gold, 3)
+    harness.equal(silver[2].argument, "c = dngn_metal_wall_white")
+    harness.equal(gold[1].argument, "c = wall_church")
+
+    local shuffled = simple_script(
+        "good_gods_mini_temple", "vary_garden", {
+            first_choice = true,
+        })
+    local opened = simple_script(
+        "good_gods_mini_temple", "vary_garden", {
+            first_choice = false,
+        })
+
+    harness.equal(shuffled[1].kind, directives.SHUFFLE)
+    harness.equal(opened[1].kind, directives.SUBST)
+
+    local early = simple_script("grunt_dithmenos_shadows",
+        "choose_shadows", { depth = 5, absolute_depth = 5 })
+    local late = simple_script("grunt_dithmenos_shadows",
+        "choose_shadows", { depth = 9, absolute_depth = 9 })
+
+    harness.equal(early[1].argument,
+        "phantom w:5 / shadow imp w:4")
+    harness.equal(late[1].argument, "shadow")
+
+    local trog = simple_script("lightli_temple_of_fire",
+        "choose_altar", { map_tag = tags.TEMPLE_OVERFLOW_TROG })
+    local makhleb = simple_script("lightli_temple_of_fire",
+        "choose_altar", { map_tag = tags.TEMPLE_OVERFLOW_MAKHLEB })
+    local untargeted = simple_script("lightli_temple_of_fire",
+        "choose_altar", {})
+
+    harness.equal(trog[1].argument, "_ = altar_trog")
+    harness.equal(makhleb[1].argument, "_ = altar_makhleb")
+    harness.equal(untargeted[1].argument,
+        "_ = altar_trog / altar_makhleb")
+
+    local definition = catalog.get("grunt_dithmenos_shadows")
+    local player = {
+        branch_id = branches.BRANCH_DUNGEON,
+        depth = 5,
+        absolute_depth = 5,
+        branch_bottom = 15,
+    }
+    local records = operations.apply(
+        definition, copy_rows(definition), fixed_random(), 5, player)
+    local monsters = 0
+
+    for _, record in ipairs(records) do
+        if record.kind == effects.MONSTER then
+            monsters = monsters + 1
+        end
+    end
+
+    harness.equal(monsters, 1,
+        "real placement receives one selected Dithmenos monster slot")
+end
+
 -- Shared source choices appear in several maps; test every caller and both
 -- branches, including Crypt's separate mausoleum population.
 local function assert_branch_monsters()
@@ -580,6 +700,7 @@ function test.run()
     assert_depth_rules()
     assert_depth_monsters()
     assert_blood_cavern_scenes()
+    assert_simple_source_scripts()
 end
 
 return test

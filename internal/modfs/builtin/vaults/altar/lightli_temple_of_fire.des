@@ -6,6 +6,7 @@ TAGS:  temple_overflow_1 temple_overflow_trog temple_overflow_makhleb
 KPROP: Y = no_tele_into
 KMASK: Y = no_monster_gen
 # source: {{
+: vault.run("choose_altar")
 # source:   local params = dgn.map_parameters()
 # source:   if params ~= nil then
 # source:     local tag = unpack(params)

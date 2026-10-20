@@ -231,6 +231,9 @@ Makhleb's corpse scene in Lua, including the large Trog antimagic and
 three-tier torment definitions. Source `god:` monster modifiers persist on
 the spawned actor; weighted explicit equipment retains its brand and item
 identification state.
+The good-god palette and garden choices, Dithmenos shadow scaling, and
+Trog-or-Makhleb fire temple altar are now Lua hooks. The selected overflow
+god tag is passed as local map context rather than read from a DES global.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition

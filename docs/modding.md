@@ -2067,6 +2067,10 @@ Depth-dependent monster hooks emit just the selected `MONS` or `KMONS`
 declarations at the original conditional position. A `god:trog` annotation
 on a monster becomes an actor-owned god ID; equipment options after `;` use
 their source `w:` weights, `ego:` brand, and `ident:` state when created.
+When one overflow map serves several gods, read `api:map_tag()` in its
+named Lua hook and compare it with imported `constants.vault_tags` values.
+The fire temple's handler shows how to keep a source random fallback for
+direct map placement while binding a scheduled god to its own altar.
 
 The `builder/arena_*.des` family illustrates maps reserved for another game
 mode. Each definition keeps its original `MAP` rows and `arena_*` tag, but
