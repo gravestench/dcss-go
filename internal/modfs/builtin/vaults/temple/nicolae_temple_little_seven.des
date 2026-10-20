@@ -1,0 +1,27 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:    nicolae_temple_little_seven
+TAGS:    temple_altars_7
+PLACE:   Temple
+ORIENT:  encompass
+: vault.run("configure")
+SHUFFLE: pqrs
+SUBST:   p = T, qrs = .
+MAP
+xxxxxxxxxxxxxxxxx
+xKJHFEDMLKJHFEDMx
+xL.............Lx
+xM....pqrsp....Kx
+xD...s.....q...Jx
+xE..r.......r..Hx
+xF.q.........s.Fx
+xH.p.........p.Ex
+xJ.s....{....q.Dx
+xK.r.........r.Mx
+xL.q.........s.Lx
+xM..p.......p..Kx
+xD...s.....q...Jx
+xE....rqpsr....Hx
+xF.............Fx
+xHJKLMDEFHJKLMDEx
+xxxxxxxxxxxxxxxxx
+ENDMAP

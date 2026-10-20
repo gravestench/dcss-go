@@ -13,29 +13,31 @@ local test = {}
 
 -- Read the actual named hook from DES so a renamed map method cannot leave
 -- this test exercising a stale direct function import.
-local function run_map(id, altar_count)
+local function run_map(id, altar_count, rolls)
     local definition = catalog.main(id)
     local emitted = {}
     local recorded = {}
     local api = {}
-    local method
+    local roll_index = 0
 
     harness.truthy(definition, id .. " is registered")
-
-    for _, operation in ipairs(definition.operations) do
-        if operation.kind == directives.HOOK_RUN then
-            method = operation.argument
-            break
-        end
-    end
-
-    harness.truthy(method, id .. " has a named Lua hook")
 
     function api:setting(key)
         harness.equal(key, settings.ALTAR_COUNT,
             "Temple hooks read the saved plan setting")
 
         return altar_count
+    end
+
+    function api:roll(bound)
+        roll_index = roll_index + 1
+
+        local result = rolls and rolls[roll_index] or 0
+
+        harness.truthy(result < bound,
+            id .. " source draw fits its upper bound")
+
+        return result
     end
 
     function api:emit(kind, argument)
@@ -52,7 +54,16 @@ local function run_map(id, altar_count)
         }
     end
 
-    hooks.run(definition, method, api)
+    local ran = 0
+
+    for _, operation in ipairs(definition.operations) do
+        if operation.kind == directives.HOOK_RUN then
+            hooks.run(definition, operation.argument, api)
+            ran = ran + 1
+        end
+    end
+
+    harness.truthy(ran > 0, id .. " has a named Lua hook")
 
     return emitted, recorded
 end
@@ -60,6 +71,27 @@ end
 -- Source map hooks retain the selected count and local environment. These
 -- checks catch silently dropped Lua even while Temple travel is unfinished.
 function test.run()
+    local little = run_map("nicolae_temple_little_seven", nil, { 1 })
+
+    harness.equal(little[1].argument,
+        "DEF = x, HM = G, JL = ., K = B",
+        "the second little-seven layout is reachable")
+
+    local sunken, sunken_records = run_map("chequers_temple_sunken", 9)
+
+    harness.equal(sunken[1].argument,
+        "O = 9:B / 1:O.... / *:.",
+        "sunken altars use the saved count")
+    harness.equal(sunken_records[1].kind, effects.BORDER_FILL,
+        "sunken Temple retains its sea border")
+
+    local colour = run_map("nicolae_temple_colour_theory", nil, { 4 })
+
+    harness.equal(colour[1].argument, "p' = floor_pebble_lightred",
+        "a palette choice drives matching source floor tiles")
+    harness.equal(colour[6].argument, "Rr = brown",
+        "the final region uses the same palette")
+
     local chambers = run_map("dpeg_chambers_temple", 10)
 
     harness.equal(#chambers, 2,

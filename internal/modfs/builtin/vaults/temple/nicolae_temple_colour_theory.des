@@ -1,0 +1,33 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:   nicolae_temple_colour_theory
+TAGS:   temple_altars_8
+PLACE:  Temple
+ORIENT: encompass
+KFEAT:  PQR = c
+: vault.run("configure")
+SUBST:  '` = B
+MAP
+ccccccccccccccccccccccccccccccccccccc
+cccccccPPPPPPPPPcccccQQQQQQQQQccccccc
+cccccPPPpppppppPPPcQQQqqqqqqqQQQccccc
+ccccPPpppppppppppPRQ.qqqqqqqqqqQQcccc
+cccPPpppppppp'ppppRqqqq`qqqqqqqqQQccc
+ccPPpppppppppppppprqqqqqqqqqqqqqqQQcc
+ccPpppppppppppppprrrqqqqqqqqqqqqqqQcc
+cPPpp'pppPPPPPppprrrqqqQQQQQqqq`qqQQc
+cPppppppPPcccPPprrrrrqQQcccQQqqqqqqQc
+cPpppppPPcccccPRrrrrrRQcccccQQqqqqqQc
+cPpppppPcccccccRrrrrrRcccccccQqqqqqQc
+cPpppppPcccccccRrr{rrRcccccccQqqqqqQc
+cPpppppPcccccccRrrrrrRcccccccQqqqqqQc
+cPpppppPPcccccPRrrrrrRQcccccQQqqqqqQc
+cPppppppPPcccPPprrrrrqQQcccQQqqqqqqQc
+cPPpp'pppPPPPPppprrrqqqQQQQQqqq`qqQQc
+ccPpppppppppppppprrrqqqqqqqqqqqqqqQcc
+ccPPpppppppppppppprqqqqqqqqqqqqqqQQcc
+cccPPpppppppp'ppppRqqqq`qqqqqqqqQQccc
+ccccPPpppppppppppPRQqqqqqqqqqqqQQcccc
+cccccPPPpppppppPPPcQQQqqqqqqqQQQccccc
+cccccccPPPPPPPPPcccccQQQQQQQQQccccccc
+ccccccccccccccccccccccccccccccccccccc
+ENDMAP

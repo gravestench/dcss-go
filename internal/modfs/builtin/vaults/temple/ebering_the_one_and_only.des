@@ -1,0 +1,14 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:        ebering_the_one_and_only
+TAGS:        temple_rare temple_altars_1
+PLACE:       Temple
+ORIENT:      encompass
+WEIGHT:      7
+: vault.run("configure")
+MAP
+bbbbb
+b.{.b
+b...b
+bGBGb
+bbbbb
+ENDMAP

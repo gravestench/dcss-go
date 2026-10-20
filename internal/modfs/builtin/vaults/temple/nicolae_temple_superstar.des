@@ -1,0 +1,43 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:    nicolae_temple_superstar
+TAGS:    no_pool_fixup temple_altars_6 temple_altars_7 temple_altars_8 \
+         temple_altars_14 temple_altars_15 temple_altars_16
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: DF
+: vault.run("configure")
+: vault.run("small_count")
+SUBST:   DEFHJKLM = B
+MAP
+ccccccccccccccccccccccccccccccc
+c.....ccccccccccccccccccc.....c
+c........ccccccccccccc........c
+c..L........ccccccc........F..c
+c..............c..............c
+c........M...........E........c
+cc...........................cc
+cc.............D.............cc
+cc......ww...........ww......cc
+ccc..K..wwwww.....wwwww..H..ccc
+ccc......wwwwww-wwwwww......ccc
+ccc......wwwww---wwwww......ccc
+cccc.....wwww-----wwww.....cccc
+cccc......ww-------ww......cccc
+cccc......w---------w......cccc
+ccccc..J..-----!-----..J..ccccc
+cccc......w---------w......cccc
+cccc......ww-------ww......cccc
+cccc.....wwww-----wwww.....cccc
+ccc......wwwww---wwwww......ccc
+ccc......wwwwww-wwwwww......ccc
+ccc..H..wwwww.....wwwww..K..ccc
+cc......ww...........ww......cc
+cc.............D.............cc
+cc...........................cc
+c........E...........M........c
+c..............c..............c
+c..F........ccccccc........L..c
+c........ccccccccccccc........c
+c.....ccccccccccccccccccc.....c
+ccccccccccccccccccccccccccccccc
+ENDMAP

@@ -1,0 +1,64 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:   chequers_temple_sunken
+TAGS:   temple_altars_9 temple_altars_10 temple_altars_11 temple_altars_12
+PLACE:  Temple
+ORIENT: encompass
+KFEAT:  O = altar_ecumenical
+: vault.run("place_altars")
+SUBST:  - = .W, x = .:5 Wx, G = .:20 G, z = wW
+COLOUR: -S = green
+: vault.run("fill_border")
+MAP
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwzxxxxxzwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwzxG-Gxzwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwzx-{-xzwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzzzxG-Gxzzzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxxx---xxxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxG-----Gxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxO-----Oxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxG-----Gxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxO-----Oxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxG-----Gxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxO-----Oxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxG-----Gxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxO-----Oxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxG-----Gxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxO-----Oxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxG-----Gxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxO-----Oxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzx-------xzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxG-----Gxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzxxxxxxxxxzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwzzzzzzzzzzzwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ENDMAP

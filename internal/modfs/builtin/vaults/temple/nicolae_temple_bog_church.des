@@ -1,0 +1,61 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:   nicolae_temple_bog_church
+TAGS:   temple_altars_6  temple_altars_7  temple_altars_8  temple_altars_9  \
+        temple_altars_10 temple_altars_11 temple_altars_12 temple_altars_13 \
+        temple_altars_14 temple_altars_15 temple_altars_16 temple_altars_17 \
+        temple_altars_18 temple_altars_19 temple_altars_20 temple_altars_21
+PLACE:  Temple
+ORIENT: encompass
+KFEAT:  t = mangrove
+KFEAT:  ! = w
+KFEAT:  . = . w:100 / W
+: vault.run("configure")
+SUBST: D : Ww, E : Wtw, F : Ww, H : tw, J : Ww, K : Ww, L : Wtw, M : tw, \
+       - = t., ' = W.
+LFLOORTILE: floor_swamp
+LFLOORCOL:  brown
+MARKER: ` = lua:fog_machine { pow_min = 3, pow_max = 5, delay = 25, \
+                               size = 1, walk_dist = 6 }
+MARKER: { = lua:fog_machine { pow_min = 3, pow_max = 5, delay = 25, \
+                               size = 1, walk_dist = 6 }
+MARKER: ! = lua:fog_machine { pow_min = 3, pow_max = 5, delay = 25, \
+                               size = 1, walk_dist = 6 }
+MAP
+ttttttttttttttttttttttttttttttttttttt
+ttttttttttttttttttttttttttttttttttttt
+ttttttttttMMMwwwwttttttttttttDwwwwttt
+ttttttMMMMwwwwwwwwwwwwwttttDDDwwwwwtt
+tttttMM....wwwwww!wwwwwwtt...DDDwwwtt
+tttttw'..B...wwwwwwwwww........DDDttt
+tttwwwWW....''WWwwww........`...DDttt
+ttwwwWWWWWWWWWWWW.....-..B.......tttt
+ttwww'...WWWWW'...B..--....-..B..tttt
+ttw!w..B..''...--.........-t....ttttt
+tttwww.......B.-ttt-.....tt-...Ettttt
+ttttwww..`.....-ttt-..B..ttt..EEEtttt
+tttttwww.......-----.....---..EEEEttt
+tttttLww...B...................Ettttt
+tttttLLww........B....`......B..ttttt
+ttttttLLw..t--.....--....B......FFttt
+tttttttLLL.-t-....tt.......WW..FFFFtt
+tttttttLLL.--...`.tt.B.'WWWWW'.FFFwtt
+tttttttLL.-...B..WWW...'WWWW'.FFwwwtt
+ttttttLLL.-.....''......'WW'..Fwwwwtt
+ttttttLL.`-...---..B.........wwwwtttt
+tttttLL..-....---.....`...B..wwwHtttt
+tttttL.....B.......tt.......wwwHttttt
+ttttLL..........B..t........wwHtttttt
+ttttL..B...--.....--.B...--..HHtttttt
+ttttL............tt......--.-HHtttttt
+ttttw...t-.`.B...--.''.....-t-HHttttt
+tttwww..-.t-.......'WW'.B..--.wHHtttt
+tttwww.....-t....B.'WW'...-....wwHttt
+ttww!ww..B...-t.....''.ttt..B..wwwttt
+ttwwwwww.......KKtttJJJ--..`...wwwwtt
+tttwwwwwww...KKKtttttJJJJ.....wwwwwtt
+ttttwwwwwwwKKKtttttttttJJJJJJww!wwttt
+tttttwwwwwKKtttttttttttttJJJwwwwwwttt
+tttttttwwwtttttttttttttttttttwwwttttt
+ttttttttttttttttttttttttttttttttttttt
+ttttttttttttttttttttttttttttttttttttt
+ENDMAP

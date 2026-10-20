@@ -1,0 +1,42 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:   minmay_temple_bridge_abc
+TAGS:   no_pool_fixup temple_altars_12
+PLACE:  Temple
+ORIENT: encompass
+SUBST:  A : TUV
+: vault.run("configure")
+MAP
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwww...wwwwww''''wwwwww...wwwwwwwww
+wwwwwwww.....wwww'wwww'wwww..B..wwwwwwww
+wwwwwwww.....www'wwbbww'www.....wwwwwwww
+wwwwwwww..A..www'wbbbbw'www.B.B.wwwwwwww
+wwwwwwww.....www'wwbbww'www.....wwwwwwww
+wwwwwwww.....wwww'w;;w'wwww..B..wwwwwwww
+wwwwwwww.....wwwww"ww"wwwww.....wwwwwwww
+wwwwwwww......wwww"ww"wwww...B..wwwwwwww
+wwwwwwww........-.-~~-..-.......wwwwwwww
+wwwwwwww..{......-~~~~-.....B.B.wwwwwwww
+wwwwwwww........-.-~~-..-.......wwwwwwww
+wwwwwwww......wwww"ww"wwww...B..wwwwwwww
+wwwwwwww.....wwwww"ww"wwwww.....wwwwwwww
+wwwwwwww.....wwww'w;;w'wwww..B..wwwwwwww
+wwwwwwww.....www'wwbbww'www.....wwwwwwww
+wwwwwwww..A..www'wbbbbw'www.B.B.wwwwwwww
+wwwwwwww.....www'wwbbww'www.....wwwwwwww
+wwwwwwww.....wwww'wwww'wwww..B..wwwwwwww
+wwwwwwwww...wwwwww''''wwwwww...wwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ENDMAP
