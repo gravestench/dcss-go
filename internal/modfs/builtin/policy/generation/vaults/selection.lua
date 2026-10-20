@@ -1,5 +1,6 @@
 -- Example: An arrival vault with zero weight is excluded despite its arrival tag.
 local categories = require("constants.catalog")
+local chance_units = require("constants.vault_chance")
 local depth = require("policy.generation.vaults.depth")
 
 local selection = {}
@@ -79,10 +80,11 @@ local function candidates_for_tag(random, tag, context)
                 definition.tags.allow_dup) and
             depth.eligible(definition, context.branch_id,
                 context.depth, context.branch_bottom) then
-            local chance = depth.chance(definition, context.branch_id)
+            local chance = depth.chance(definition, context.branch_id,
+                context.depth, context.branch_bottom)
 
-            if chance == 100 or
-                (chance > 0 and random:roll(100) < chance) then
+            if chance == chance_units.ROLL or
+                (chance > 0 and random:roll(chance_units.ROLL) < chance) then
                 total = total + definition.weight
                 candidates[#candidates + 1] = definition
             end

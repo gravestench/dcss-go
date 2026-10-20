@@ -37,12 +37,13 @@ end
 local function source_chance_rows()
     local serial = catalog.get("serial_shops")
 
-    harness.equal(depth.chance(serial, branches.BRANCH_DUNGEON), 15,
+    harness.equal(depth.chance(serial, branches.BRANCH_DUNGEON, 4), 1500,
         "Dungeon serial chance")
-    harness.equal(depth.chance(serial, branches.BRANCH_DEPTHS), 20,
+    harness.equal(depth.chance(serial, branches.BRANCH_DEPTHS, 2), 2000,
         "Depths serial chance")
-    harness.equal(depth.chance(catalog.get("shop"), branches.BRANCH_DUNGEON),
-        100, "ordinary shop has no chance directive")
+    harness.equal(depth.chance(catalog.get("shop"),
+        branches.BRANCH_DUNGEON, 4), 10000,
+        "ordinary shop has no chance directive")
 end
 
 -- Select from weighted shop alternatives with a fixed low draw to verify

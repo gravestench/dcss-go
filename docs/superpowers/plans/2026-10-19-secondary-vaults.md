@@ -43,8 +43,9 @@ Lua, Akara ECS.
 
 1. An omitted `DEPTH` on a helper must not make it a random Dungeon map:
    test `PLACE`/depth/tag eligibility separately in Task 2.
-2. A bare `CHANCE: 1%` and a mixed branch/depth percentage line must
-   resolve without an accidental 100% default: test both in Task 1.
+2. A bare `CHANCE: 1%`, decimal `0.5%`, raw `8333`, and a mixed
+   branch/depth percentage line must resolve on a 10,000-point roll:
+   test all forms in Task 1.
 3. A serial controller with an empty MAP still needs its post-place hook
    and saved ID: test Task 3 and Task 4.
 4. A map with no cell records must still block a later unique selection:
@@ -61,13 +62,13 @@ Lua, Akara ECS.
 `operations.lua`, `transforms.lua`, and focused parser tests under
 `internal/script/testdata/lua/tests/`.
 
-**Interfaces:** `des.parse(path, source)` returns `place`, ordered
-`depths`, `chances`, `weights`, tags, rows, and operations. `depth.chance`
+**Interfaces:** `des.parse(path, source)` returns ordered `depths`,
+`chances`, `weights`, tags, rows, and operations. `depth.chance`
 resolves bare and qualified source clauses for a branch and depth.
 `weight.for_branch` resolves nonnegative source branch weights.
 
 - [ ] Add failing `_test.lua` cases from real builder/serial declarations:
-  bare chance, branch/depth chance clauses, `PLACE`, zero and branch
+  bare chance, branch/depth chance clauses, zero and branch
   weights, continued declarations, controller with empty MAP, and every
   newly encountered directive. Include path/site diagnostics.
 - [ ] Run the focused parser tests red. Extend only the common grammar and
@@ -90,7 +91,8 @@ bounded, reversible geometric operation called by all stages.
 - [ ] Add failing Lua tests for chance independently rolling eligible
   maps, shuffled success order, source fallback tags, `PLACE` priority,
   one ordinary depth minivault, repeated `extra` draws, a bounded
-  all-extra pool, and omission of unqualified helpers from random draws.
+  all-extra pool, an empty `PLACE` pool, and omission of unqualified
+  helpers from random draws.
 - [ ] Run those tests red. Split the existing shop-specialized
   `extra.generate` into the four focused stages; route `serial_shops`
   through the same chance/controller path as all new serial maps.

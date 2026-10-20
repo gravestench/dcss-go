@@ -28,11 +28,13 @@ declared selectable until its hooks and placement effects work.
   Lua module. The `.des` file retains a named hook at that operation's
   position. Each Lua function documents why and how it works; a controller
   module builds a local object, assigns its methods, and returns it.
-- A source declaration with `PLACE` or a depth rule retains that rule. Do
-  not invent a Dungeon depth for an unqualified helper. Branch-only maps
-  register now and wait for their real branch generator.
+- A source declaration with a depth rule retains that rule. Do not invent
+  a Dungeon depth for an unqualified helper. Branch-only maps register now
+  and wait for their real branch generator. The builder/serial corpus has
+  no `PLACE` declarations; its selection stage is empty until branch and
+  portal maps are imported.
 - Extend the existing DES parser for source forms that this corpus actually
-  uses: bare and branch-qualified `CHANCE`, `PLACE`, branch-specific `WEIGHT`,
+  uses: bare and branch-qualified `CHANCE`, depth-specific `WEIGHT`,
   map geometry, and keyed terrain/entity/marker directives. Reject unknown
   forms with the effective path and declaration site. Do not interpret raw
   source Lua or silently drop an unsupported instruction.
@@ -53,11 +55,12 @@ after the primary layout and arrival are connected and before population:
    stream, then attempt each placement. A conflicting uniqueness tag or
    geometric failure may trigger its source `fallback_*` tag, when present.
    A bare chance applies to every branch allowed by `DEPTH`; a qualified
-   chance applies only to the named branches. The controller's post-place
-   hook runs only after its own map places successfully.
-2. **Place-specific minivaults.** Draw eligible `PLACE` minivaults by source
-   weight and attempt their placements. A mod-specified forced minivault, if
-   present, precedes this draw.
+   chance applies only to the named branches and depths. Source chances use
+   a 10,000-point roll: `0.5%` means 50, while raw `8333` means 83.33%.
+   The controller's post-place hook runs only after its own map places
+   successfully.
+2. **Place-specific minivaults.** Keep this stage available for future
+   `PLACE` maps. None of the current builder/serial maps use `PLACE`.
 3. **Depth minivaults.** Draw ordinary depth-eligible minivaults by weight.
    A selected `extra` minivault requests another draw, with an explicit
    finite bound for a pool containing only extras. Maps with `CHANCE` do not

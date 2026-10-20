@@ -5,6 +5,7 @@ local extra = require("policy.generation.vaults.extra")
 local grid = require("policy.generation.grid")
 local harness = require("tests.harness")
 local branches = require("ids.branches")
+local chance_units = require("constants.vault_chance")
 
 local test = {}
 
@@ -87,8 +88,8 @@ local function generic_extra_is_independent_of_serial_chance()
     -- Reject the serial-shop chance draw while selecting the generic extra,
     -- so the test can distinguish the two generation routes.
     function builder:roll(bound)
-        if bound == 100 then
-            return 99
+        if bound == chance_units.ROLL then
+            return chance_units.ROLL - 1
         end
 
         return 0

@@ -213,8 +213,9 @@ function des.parse(path, source)
                 vault.depths[#vault.depths + 1] = rule
             end
         elseif operation.kind == directives.CHANCE then
-            vault.chances[#vault.chances + 1] =
-                depth.parse_chance(operation.argument, site)
+            for _, clause in ipairs(depth.parse_chance(operation.argument, site)) do
+                vault.chances[#vault.chances + 1] = clause
+            end
         end
 
         post_place = post_place or

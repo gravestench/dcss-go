@@ -1,5 +1,7 @@
 -- Example: A malformed D:1- depth expression reports its DES path and source line.
 local categories = require("constants.catalog")
+local chance_units = require("constants.vault_chance")
+local specifiers = require("policy.generation.vaults.specifiers")
 
 local depth = {}
 
@@ -103,35 +105,52 @@ function depth.parse_rules(argument, site)
     return rules
 end
 
--- Validate branch-qualified percentages at parse time, before weighted vault selection.
-function depth.parse_chance(argument, site)
-    local percent, branches = argument:match("^(%d+)%%%s*%((.-)%)$")
-    local value = tonumber(percent)
+-- Convert source percentages and raw integers into the source's 10,000-point
+-- roll. Decimal percents such as 0.5% are exact on that scale.
+local function chance_roll(number, percent, site, argument)
+    local value = tonumber(number)
 
-    if not value or value < 0 or value > 100 then
+    if percent == "%" then
+        value = value and value * chance_units.PERCENT
+    end
+
+    if not value or value < 0 or value > chance_units.ROLL or
+        value ~= math.floor(value) then
         fail(site, "invalid CHANCE " .. argument)
     end
 
-    local names = {}
+    return value
+end
 
-    for branch in (branches .. ","):gmatch("(.-),") do
-        branch = trim(branch)
+-- Parse each top-level clause separately; commas inside a depth group are
+-- alternatives for one chance, not separate chances.
+function depth.parse_chance(argument, site)
+    local clauses = {}
 
-        if not branch:match("^[A-Za-z]+$") then
-            fail(site, "invalid CHANCE branch " .. branch)
+    for _, text in ipairs(specifiers.split(argument, site)) do
+        local number, percent, group = text:match(
+            "^%s*([%d%.]+)(%%?)%s*(%b())%s*$")
+
+        if not number then
+            number, percent = text:match("^%s*([%d%.]+)(%%?)%s*$")
         end
 
-        names[#names + 1] = branch
+        if not number then
+            fail(site, "invalid CHANCE " .. text)
+        end
+
+        local clause = {
+            chance = chance_roll(number, percent, site, text),
+        }
+
+        if group then
+            clause.rules = depth.parse_rules(group:sub(2, -2), site)
+        end
+
+        clauses[#clauses + 1] = clause
     end
 
-    if #names == 0 then
-        fail(site, "CHANCE has no branches")
-    end
-
-    return {
-        percent = value,
-        branches = names,
-    }
+    return clauses
 end
 
 -- A dollar depth token compares to the branch bottom, not an absolute Dungeon floor.
@@ -141,7 +160,7 @@ local function matches(rule, name, local_depth, branch_bottom)
     end
 
     if rule.bottom then
-        return local_depth == branch_bottom
+        return local_depth ~= nil and local_depth == branch_bottom
     end
 
     return (not rule.first or local_depth >= rule.first) and
@@ -170,23 +189,34 @@ function depth.eligible(vault, branch_id, local_depth, branch_bottom)
     return included
 end
 
--- Branch-specific CHANCE rows override the default; no matching branch means zero chance.
-function depth.chance(vault, branch_id)
+-- Specific branch/depth clauses override a bare fallback regardless of
+-- declaration order. Both return source roll units, not rounded percents.
+function depth.chance(vault, branch_id, local_depth, branch_bottom)
     if #vault.chances == 0 then
-        return 100
+        return chance_units.ROLL
+    end
+
+    if local_depth == nil then
+        error("vault CHANCE selection requires local depth")
     end
 
     local name = branch_name(branch_id)
+    local fallback = 0
+    local specific
 
     for _, row in ipairs(vault.chances) do
-        for _, branch in ipairs(row.branches) do
-            if branch == name then
-                return row.percent
+        if not row.rules then
+            fallback = row.chance
+        else
+            for _, rule in ipairs(row.rules) do
+                if matches(rule, name, local_depth, branch_bottom) then
+                    specific = row.chance
+                end
             end
         end
     end
 
-    return 0
+    return specific or fallback
 end
 
 return depth

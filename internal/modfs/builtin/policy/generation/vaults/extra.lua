@@ -5,6 +5,7 @@ local hooks = require("policy.generation.vaults.hooks")
 local placement = require("policy.generation.vaults.placement")
 local connect = require("policy.generation.vaults.connect")
 local selection = require("policy.generation.vaults.selection")
+local chance_units = require("constants.vault_chance")
 
 local extra = {}
 local GENERIC_EXTRA_ROLL = 8
@@ -218,10 +219,12 @@ function extra.generate(ctx, builder, context)
         return placed, controller
     end
 
-    local percent = depth.chance(serial, context.branch_id)
+    local chance = depth.chance(serial, context.branch_id,
+        context.depth, context.branch_bottom)
 
-    if percent <= 0 or
-        (percent < 100 and builder:roll(100) >= percent) then
+    if chance <= 0 or
+        (chance < chance_units.ROLL and
+            builder:roll(chance_units.ROLL) >= chance) then
         return placed, controller
     end
 
