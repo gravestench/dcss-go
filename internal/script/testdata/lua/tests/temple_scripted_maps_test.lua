@@ -71,6 +71,65 @@ end
 -- Source map hooks retain the selected count and local environment. These
 -- checks catch silently dropped Lua even while Temple travel is unfinished.
 function test.run()
+    -- Every scripted source map must execute at least its first legal
+    -- arrangement. The targeted checks below cover alternate branches.
+    for _, id in ipairs(catalog.main_ids()) do
+        local definition = catalog.main(id)
+        local has_hook = false
+        local first_count
+
+        for _, operation in ipairs(definition.operations) do
+            if operation.kind == directives.HOOK_RUN then
+                has_hook = true
+            end
+        end
+
+        for tag in pairs(definition.tags) do
+            local number = tag:match("^temple_altars_(%d+)$")
+            local candidate
+
+            if number then
+                candidate = tonumber(number)
+            end
+
+            if candidate and (not first_count or candidate < first_count) then
+                first_count = candidate
+            end
+        end
+
+        if has_hook then
+            run_map(id, first_count)
+        end
+    end
+
+    local circle = run_map("compressed_dpeg_circular_temple", 10,
+        { 29 })
+
+    harness.equal(circle[1].argument,
+        "C = B, E = G, DH<IJ = .",
+        "the circular Temple opens its ten-altar ring")
+    harness.equal(circle[#circle].argument, "c = red",
+        "the last centre draw creates the lava colour")
+
+    local star = run_map("hc_temple_tempest_star", 12, { 1 })
+
+    harness.equal(star[2].kind, directives.SHUFFLE,
+        "the outer-star alternative shuffles its inner points")
+
+    local panitentiary = run_map("nicolae_temple_panitentiary", 12,
+        { 5 })
+
+    harness.equal(panitentiary[1].argument,
+        "PSps = B, QRqr = U, Zz = .",
+        "the high die result chooses the third twelve-altar variant")
+
+    local ruined, ruined_records = run_map("ebering_the_none_and_only")
+
+    harness.equal(#ruined, 0,
+        "the abandoned Temple adds no dynamic DES directives")
+    harness.equal(ruined_records[3].kind, effects.ENTRY_MESSAGE,
+        "the source epilogue survives as a typed entry message")
+
     local little = run_map("nicolae_temple_little_seven", nil, { 1 })
 
     harness.equal(little[1].argument,

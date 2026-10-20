@@ -1,0 +1,59 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:    hc_temple_tempest_star
+TAGS:    no_rotate no_pool_fixup no_cloud_gen
+TAGS:     temple_altars_12 temple_altars_18
+PLACE:   Temple
+ORIENT:  encompass
+# Randomize altars versus triangles of points.
+SHUFFLE: BC, DE, FG
+# Sometimes fill in the outer star
+# and shove in all altars to the inner star.
+: vault.run("configure")
+SUBST:   y : cWwl
+MAP
+                                 xxx
+                                xxzxx
+                               xxzzzxx
+                              xxzz'zzxx
+                             xxzz'''zzxx
+                            xxzz'''''zzxx
+                           xxzz'''F'''zzxx
+                          xxzz'''''''''zzxx
+                         xxzz'''''''''''zzxx
+                        xxzz''''''y''''''zzxx
+                       xxzz''''''yyy''''''zzxx
+xxxxxxxxxxxxxxxxxxxxxxxxzz''''''yyyyy''''''zzxxxxxxxxxxxxxxxxxxxxxxxx
+xzzzzzzzzzzzzzzzzzzzzzzzz''''''yyy.yyy''''''zzzzzzzzzzzzzzzzzzzzzzzzx
+xxzz''''''''''''''''''''''''''yyy...yyy''''''''''''''''''''''''''zzxx
+ xxzz'''G''''''''''''''b'''''yyy..C..yyy'''''b''''''''''''''G'''zzxx
+  xxzz''''''''''''''''''''''yyy......Eeee''''''''''''''''''''''zzxx
+   xxzz'''''''yyyyyyyyyyeeeyyy..D...yyyyyyyyyyyyyyyyyyy'''''''zzxx
+    xxzz'''''''yyy.B.dd.E.yyy.....yyyyyyyyy..B..ddddyy'''''''zzxx
+     xxzz'''''''yyy..dD..yyyy....yyyyy..........E..yy'''''''zzxx
+      xxzz'''''''yyy......yyy....y................yy'''''''zzxx
+       xxzz'''''''yyy......yyy........yyyyyy.D...ey'''''''zzxx
+        xxzz'''''''yyyy......yyy.........yyyyyy.ee'''''''zzxx
+         xxzz''b''''yyyyyy........{........yyyyyy''''b''zzxx
+        xxzz'''''''ee.yyyyyy.........yyy......yyyy'''''''zzxx
+       xxzz'''''''ye...D.yyyyyy........yyy......yyy'''''''zzxx
+      xxzz'''''''yy................y....yyy......yyy'''''''zzxx
+     xxzz'''''''yy..E..........yyyyy....yyyy..Dd..yyy'''''''zzxx
+    xxzz'''''''yydddd..C..yyyyyyyyy.....yyy.E.dd.C.yyy'''''''zzxx
+   xxzz'''''''yyyyyyyyyyyyyyyyyyy...D..yyyeeeyyyyyyyyyy'''''''zzxx
+  xxzz''''''''''''''''''''''eeeE......yyy''''''''''''''''''''''zzxx
+ xxzz'''F''''''''''''''b'''''yyy..B..yyy'''''b''''''''''''''F'''zzxx
+xxzz''''''''''''''''''''''''''yyy...yyy''''''''''''''''''''''''''zzxx
+xzzzzzzzzzzzzzzzzzzzzzzzz''''''yyy.yyy''''''zzzzzzzzzzzzzzzzzzzzzzzzx
+xxxxxxxxxxxxxxxxxxxxxxxxzz''''''yyyyy''''''zzxxxxxxxxxxxxxxxxxxxxxxxx
+                       xxzz''''''yyy''''''zzxx
+                        xxzz''''''y''''''zzxx
+                         xxzz'''''''''''zzxx
+                          xxzz'''''''''zzxx
+                           xxzz'''G'''zzxx
+                            xxzz'''''zzxx
+                             xxzz'''zzxx
+                              xxzz'zzxx
+                               xxzzzxx
+                                xxzxx
+                                 xxx
+ENDMAP

@@ -1,0 +1,36 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:   hellmonk_temple_of_storms
+TAGS:   temple_altars_7 temple_altars_8 temple_altars_11 temple_altars_15
+TAGS:   temple_altars_19
+PLACE:  Temple
+ORIENT: encompass
+: vault.run("choose_storm")
+: vault.run("choose_altars")
+KPROP:  J' = no_tele_into
+FTILE:  J' = floor_sand
+COLOUR: J' = yellow
+MAP
+        ccccc
+     cccc.{.cccc
+    ccH.......Hcc
+   cc...........cc
+  ccE...........Ecc
+  c...............c
+ cc....nnnnnnn....cc
+ cF...nn'''''nn...Fc
+cc...nn'''''''nn...cc
+cI...n'''''''''n...Ic
+c....n'''''''''n....c
+cD...n''''J''''n...Dc
+c....n'''''''''n....c
+cI...n'''''''''n...Ic
+cc...nn'''''''nn...cc
+ cF...nn'''''nn...Fc
+ cc....nnnnnnn....cc
+  c...............c
+  ccE...........Ecc
+   cc...........cc
+    ccH.......Hcc
+     cccc.D.cccc
+        ccccc
+ENDMAP

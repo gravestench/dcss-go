@@ -45,9 +45,8 @@ local function pool_entry_pattern(draw, expected)
         "source shuffle precedes substitutions")
 end
 
--- The source file has 53 Dungeon entries and 90 main maps. This slice has
--- ported 38 of the 47 source-scripted main maps; count the effective files
--- so a missing committed definition is visible before generation uses it.
+-- The source file has 53 Dungeon entries and 90 main maps. Count the
+-- effective files so a missing definition is visible before generation.
 function test.run()
     catalog.load()
 
@@ -55,8 +54,8 @@ function test.run()
         "all Dungeon Temple entries are present")
     harness.equal(catalog.static_count(), 43,
         "all script-free main Temple maps are present")
-    harness.equal(#catalog.main_ids(), 81,
-        "all ported main maps join the Temple catalog")
+    harness.equal(#catalog.main_ids(), 90,
+        "all source main maps join the Temple catalog")
     harness.truthy(catalog.main("nicolae_temple_stand_before_the_council"),
         "the corrected six-altar map is available")
 

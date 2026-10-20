@@ -1,0 +1,61 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:    nicolae_temple_panitentiary
+TAGS:    no_pool_fixup temple_altars_6 temple_altars_9 temple_altars_12 \
+         temple_altars_15 temple_altars_18 temple_altars_21
+PLACE:   Temple
+ORIENT:  encompass
+WEIGHT:  1
+KPROP:   n1l- = no_tele_into
+KMONS:   1 = pandemonium lord
+KMONS:   - = nothing w:60 / any demon
+SUBST:   - = ----l
+SHUFFLE: PQ/SR, pq/sr
+# This was originally a {{ }} block but since you can't do multiple
+# substs in one subst() command it got super long.
+: vault.run("configure")
+FTILE:   n1l- = floor_infernal
+COLOUR:  n1- = red
+SUBST:   U = UUUUUV, V = VVVVVY
+MAP
+ccccccccccccccccccccccccccccccccccccccccc
+cccccccccc.....ccccccccccc.....cccccccccc
+cccccccccc.s.r.ccccccccccc.R.S.cccccccccc
+ccccccccc.......................ccccccccc
+ccccccccc.r.z.q...........Q.Z.R.ccccccccc
+ccccccccc.......................ccccccccc
+cccccccccc.q.p.nnnnnnnnnnn.P.Q.cccccccccc
+ccccccccc.......n-------n.......ccccccccc
+ccccccccc...n...nn-----nn...n...ccccccccc
+cccccccc....n....n--1--n....n....cccccccc
+cccccccc...nnn...nn---nn...nnn...cccccccc
+ccccccc....n-n....n---n....n-n....ccccccc
+ccccccc...nn-nn...nn-nn...nn-nn...ccccccc
+cccccc....n---n....n-n....n---n....cccccc
+cccccc...nn---nn...nnn...nn---nn...cccccc
+ccccc....n--1--n....n....n--1--n....ccccc
+ccccc...nn-----nn...n...nn-----nn...ccccc
+cc......n-------n.......n-------n......cc
+cc.R.Q.nnnnnnnnnnn.....nnnnnnnnnnn.q.r.cc
+c.......................................c
+c.S.Z.P.............{.............p.z.s.c
+c.......................................c
+cc.R.Q.nnnnnnnnnnn.....nnnnnnnnnnn.q.r.cc
+cc......n-------n.......n-------n......cc
+ccccc...nn-----nn...n...nn-----nn...ccccc
+ccccc....n--1--n....n....n--1--n....ccccc
+cccccc...nn---nn...nnn...nn---nn...cccccc
+cccccc....n---n....n-n....n---n....cccccc
+ccccccc...nn-nn...nn-nn...nn-nn...ccccccc
+ccccccc....n-n....n---n....n-n....ccccccc
+cccccccc...nnn...nn---nn...nnn...cccccccc
+cccccccc....n....n--1--n....n....cccccccc
+ccccccccc...n...nn-----nn...n...ccccccccc
+ccccccccc.......n-------n.......ccccccccc
+cccccccccc.q.p.nnnnnnnnnnn.P.Q.cccccccccc
+ccccccccc.......................ccccccccc
+ccccccccc.r.z.q...........Q.Z.R.ccccccccc
+ccccccccc.......................ccccccccc
+cccccccccc.s.r.ccccccccccc.R.S.cccccccccc
+cccccccccc.....ccccccccccc.....cccccccccc
+ccccccccccccccccccccccccccccccccccccccccc
+ENDMAP

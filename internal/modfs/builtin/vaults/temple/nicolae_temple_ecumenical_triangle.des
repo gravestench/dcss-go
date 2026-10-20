@@ -1,0 +1,38 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:    nicolae_temple_ecumenical_triangle
+TAGS:    temple_altars_6 temple_altars_7 temple_altars_8 temple_altars_9 \
+         temple_altars_10 temple_altars_11 temple_altars_12 temple_altars_13 \
+         temple_altars_14
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: DEFHJKLMNOPQRSZ/PQLRMHSNJEZOKFD/ZOSKNRFJMQDEHLP
+: vault.run("configure")
+SUBST:   a : GTU`, p : GTU`, q : GTU`, r : GTU`, s : GTU`
+NSUBST:  { = { / <
+FTILE:   {<BGTU` = floor_vault
+COLOUR:  ` = blue
+MAP
+ccccccccccccccccccccccc
+cccccccccc...cccccccccc
+ccccccccc.```.ccccccccc
+ccccccccc.`D`.ccccccccc
+ccccccccc.```.ccccccccc
+cccccccc.......cccccccc
+ccccccc.```.```.ccccccc
+ccccccc.`E`.`F`.ccccccc
+ccccccc.```.```.ccccccc
+cccccc...........cccccc
+ccccc.```.```.```.ccccc
+ccccc.`H`.`J`.`K`.ccccc
+ccccc.```.```.```.ccccc
+cccc...............cccc
+ccc.```.```.```.```.ccc
+ccc.`L`.`M`.`N`.`O`.ccc
+ccc.```.```.```.```.ccc
+cc...................cc
+c.```.```.```.```.```.c
+c.`P`.`Q`.`R`.`S`.`Z`.c
+c.```.```.```.```.```.c
+cc...................cc
+ccccccccccccccccccccccc
+ENDMAP

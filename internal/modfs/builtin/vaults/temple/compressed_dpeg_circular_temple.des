@@ -1,0 +1,46 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:    compressed_dpeg_circular_temple
+TAGS:    no_rotate no_pool_fixup
+TAGS:    temple_altars_10 temple_altars_14 temple_altars_18 temple_altars_21
+PLACE:   Temple
+ORIENT:  encompass
+KMONS:   1 = electric eel
+KMONS:   2 = lava snake
+KFEAT:   1 = deep_water
+KFEAT:   2 = lava
+SHUFFLE: CDEF
+# Altar rings and stairs, different in each setting.
+: vault.run("choose_altars")
+SUBST:   W : mvbG w:160
+# Chances for filled (1/6), absent (3/6),
+# and flooded (empty or occupied 1/12 each) center rings.
+: vault.run("choose_ring")
+NSUBST:  <[{ = 1:{ / *:.
+KPROP:   wl1 = no_tele_into
+MAP
+               ccccccccccccc
+           ccccc...........ccccc
+        cccc.........I.........cccc
+      ccc........I...D...I........ccc
+    ccc......I.B.H...H...H.B.I......ccc
+   cc........H...............H........cc
+  cc......IC......mmmmmmm......EI......cc
+ cc.......H....mmmmwwwwwmmmm....H.......cc
+ c...........mmmwwwwwwwwwwwmmm...........c
+cc.....BI...mmwwwwwTwWwTwwwwwmm...IB.....cc
+c.......H..mmwwwwwwwwwwwwwwwwwmm..H.......c
+c..........mwwwwwwwwwwwwwwwwwwwm..........c
+c.<..F.I...mwwwWwTwww[wwwTwWwwwm...I.F....c
+c..........mwwwwwwwwwwwwwwwwwwwm..........c
+c.......H..mmwwwwwwwwwwwwwwwwwmm..H.......c
+cc.....BI...mmwwwwwTwWwTwwwwwmm...IB.....cc
+ c...........mmmwwwwwwwwwwwmmm...........c
+ cc.......J....mmmmwwwwwmmmm....J.......cc
+  cc.......E......mmmmmmm......C.......cc
+   cc.......IH...............HI.......cc
+    ccc........B.H...H...H.B........ccc
+      ccc.......I....D....I.......ccc
+        cccc.......I...I.......cccc
+           ccccc...........ccccc
+               ccccccccccccc
+ENDMAP

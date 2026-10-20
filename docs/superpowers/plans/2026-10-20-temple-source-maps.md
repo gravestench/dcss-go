@@ -60,8 +60,9 @@ modules under `policy/generation/vaults/temple/` and
 
 **Interfaces:** `temple.catalog.load()` parses and validates every effective
 main and entry definition. `temple.catalog.main(id)` and
-`temple.catalog.entries()` return parsed DES definitions with source tags,
-weights, rows, and operations. The existing `vaults.hooks` dispatcher loads
+`temple.catalog.entry(id)` return parsed DES definitions with source tags,
+weights, rows, and operations; `main_ids()` and `entry_ids()` return sorted
+IDs. The existing `vaults.hooks` dispatcher loads
 same-named family hook modules; no Temple-specific hook router is needed.
 
 - [ ] Write Lua tests for 90/53 source IDs, representative map row hashes,

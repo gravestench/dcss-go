@@ -1,0 +1,50 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:   nicolae_temple_total_abyssal_victory
+TAGS:   temple_rare temple_altars_0 temple_overflow_lugonu
+PLACE:  Temple
+ORIENT: encompass
+WEIGHT: 2
+KMONS:  p = demonic plant
+KFEAT:  t = demonic_tree
+KFEAT:  _ = altar_lugonu
+KFEAT:  Z = enter_abyss
+SUBST:  - = .:120 x:60 t:20 p, x = x:120 cbv
+NSUBST: _ = 6=_ / 6=_. / 1=Z.. / .
+: vault.run("choose_blood")
+TILE:   { = dngn_exit_abyss
+: vault.run("choose_colours")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxx---xxxxxxxxxxxx
+xxx--xxxxxxxxxxxx-...-xxxxx--xxxx
+xx-..-xxxx-xxxxx-.._.-xxxx-..xxxx
+x-...-xx--.-xxxx-.....-x--...-xxx
+x-....-.....-xx-..--.........-xxx
+x-.._....--.......-----......-xxx
+xx-....----.._....---x---.._..-xx
+xxx-...----.........-----......-x
+xxxx-..--...--..._.....--..--..-x
+xxxx-..--..-xx-.....--.--...-..-x
+xxx-.......-xx-.....--...._...-xx
+xxx-.._.....--..-..._........-xxx
+xx-............-.......---...-xxx
+xx-.-.--.....-...----...--..-xxxx
+x-.-..--.._.......---..-....xxxxx
+x-.....-........{...-......-xxxxx
+xx-.._.------......-.._...-xxxxxx
+xxx-......-----....-.......-xxxxx
+xxxx-..-......---.-...-.---.-xxxx
+xxxxx---..._.....-...-.......-xxx
+xxxxxx-......----...---.._...-xxx
+xxxxxx-....---xx-._..---...--.-xx
+xxxxx-....--xx--......---.....-xx
+xxxxx-._..-------......-..._..-xx
+xxxxx-....-...........-.-......-x
+xxxx-.........---..._...----...-x
+xxxx-...._....--.......-xxxx-..-x
+xxxx-.--......----....-xxxxxx...x
+xxxx-.--...---xxxx-...-xxxxxx._.x
+xxxxx-...--xxxxxxxx---xxxxxxx...x
+xxxxxx---xxxxxxxxxxxxxxxxxxxxx-xx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

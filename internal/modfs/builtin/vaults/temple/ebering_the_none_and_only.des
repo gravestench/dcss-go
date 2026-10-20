@@ -1,0 +1,23 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:    ebering_the_none_and_only
+TAGS:    temple_rare temple_altars_0 temple_overflow_no_god
+PLACE:   Temple
+ORIENT:  encompass
+WEIGHT:  2
+NSUBST:  . = 2 = GG. / 8 = ^. / ._
+KFEAT:   ^ = web
+COLOUR:  G = white
+TILE:    G = dngn_crumbled_column
+COLOUR:  _ = brown
+FTILE:   _G = floor_rough_brown
+: vault.run("feature_names")
+: vault.run("epilogue")
+MAP
+ ccccc
+cc...cc
+c.....c
+c..{..c
+c.....c
+cc...cc
+ ccccc
+ENDMAP

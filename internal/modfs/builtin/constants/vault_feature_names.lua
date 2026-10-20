@@ -10,6 +10,7 @@ local names = {
     BROKEN_PILLAR = "broken pillar",
     CHESS_PIECE_STATUE = "a statue of a chess piece",
     RUNE_CARVED_STONE_WALL = "rune-carved stone wall",
+    DEFACED_CARVED_STONE_WALL = "defaced carved stone wall",
 }
 
 return names

@@ -4,6 +4,7 @@ local effects = {
     DELAYED_DECAY = "delayed_decay",
     FEATURE_NAME = "feature_name",
     BORDER_FILL = "border_fill",
+    ENTRY_MESSAGE = "entry_message",
     OCTA_ROOM = "octa_room",
     SMEAR_MAP = "smear_map",
     DES_DIRECTIVE = "des_directive",

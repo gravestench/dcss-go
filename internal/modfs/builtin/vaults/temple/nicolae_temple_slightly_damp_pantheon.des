@@ -1,0 +1,54 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:    nicolae_temple_slightly_damp_pantheon
+TAGS:    no_pool_fixup temple_altars_12 temple_altars_16 temple_altars_20
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: DFHJ
+: vault.run("configure")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxwwwwwxxxxwwwwwxxxxwwwwwxxxxxxxxxxx
+xxxxxxxxxxx.....xxxx.....xxxx.....xxxxxxxxxxx
+xxxwwwwwwxx.......................xxwwwwwwxxx
+xxxw.....xx..E........F........E..xx.....wxxx
+xxxw.....................................wxxx
+xxxw..D.........xxxx.....xxxx.........D..wxxx
+xxxw...........xxxxxx...xxxxxx...........wxxx
+xxxw.....xxx...xxxxxx...xxxxxx...xxx.....wxxx
+xxxxx...xxx.....xxxxx...xxxxx.....xxx...xxxxx
+xxxxx...xxw.....wxxx.....xxxw.....wxx...xxxxx
+xw......x.........x.......x.........x......wx
+xw.........................................wx
+xw..E........H........J........H........E..wx
+xw.........................................wx
+xw.....xx.........x.......x.........xx.....wx
+xxx...xxxxw.....wxxx.....xxxw.....wxxxx...xxx
+xxx...xxxxx.....xxxxx...xxxxx.....xxxxx...xxx
+xxx...xxxxxx...xxxww.....wwxxx...xxxxxx...xxx
+xxx...xxxxx.....xxww.....wwxx.....xxxxx...xxx
+xw.....xxx.......x.........x.......xxx.....wx
+xw.........................................wx
+xw..F........J........{........J........F..wx
+xw.........................................wx
+xw.....xxx.......x.........x.......xxx.....wx
+xxx...xxxxx.....xxww.....wwxx.....xxxxx...xxx
+xxx...xxxxxx...xxxww.....wwxxx...xxxxxx...xxx
+xxx...xxxxx.....xxxxx...xxxxx.....xxxxx...xxx
+xxx...xxxxw.....wxxx.....xxxw.....wxxxx...xxx
+xw.....xx.........x.......x.........xx.....wx
+xw.........................................wx
+xw..E........H........J........H........E..wx
+xw.........................................wx
+xw......x.........x.......x.........x......wx
+xxxxx...xxw.....wxxx.....xxxw.....wxx...xxxxx
+xxxxx...xxx.....xxxxx...xxxxx.....xxx...xxxxx
+xxxw.....xxx...xxxxxx...xxxxxx...xxx.....wxxx
+xxxw...........xxxxxx...xxxxxx...........wxxx
+xxxw..D.........xxxx.....xxxx.........D..wxxx
+xxxw.....................................wxxx
+xxxw.....xx..E........F........E..xx.....wxxx
+xxxwwwwwwxx.......................xxwwwwwwxxx
+xxxxxxxxxxx.....xxxx.....xxxx.....xxxxxxxxxxx
+xxxxxxxxxxxwwwwwxxxxwwwwwxxxxwwwwwxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

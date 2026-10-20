@@ -1,0 +1,32 @@
+# Source Temple MAP; source Lua is ported to same-named hooks.
+NAME:     kb_corrupted_temple
+TAGS:     no_pool_fixup temple_rare temple_altars_9
+PLACE:    Temple
+ORIENT:   encompass
+WEIGHT:   8
+KMONS:    P = demonic plant
+KFEAT:    L = altar_lugonu
+SUBST:    . = .:70 x:15 w l:5, ' = ., x = xxxcv
+: vault.run("configure")
+MAP
+       xxxxx xxxxx xxxxx
+      xx.O.xxx.'.xxx.O.xx
+      x...'.x.'...x.'...x
+      x'.V.O''.O.''O.V.'x
+      x.'...x...'.x...'.x
+      xx.O.xxx.'.xxx.O.xx
+ xxxxx xxxxxxx'..xxxxxxxxxxxxx
+xx.O.xxx.'.xxx.'.xxx.'.xxx.O.xx
+x.'...x...'...'.'.'.'...x...'.x
+x'.V.O''.O.'.'.1.'.'.O.''O.V.'x
+x...'.x.'.......'.....'.x.'...x
+xx.O.xxx.'.xxx.'.xxx.'.xxx.O.xx
+ xxxxxxxx'xxxx.'.xxxx'xxxxxxxx
+      xx.O.xxx'..xxx.O.xx
+      x.'...xx.'.xx...'.x
+      xO.V.Oxx..'xxO.V.Ox
+      x...'.xx.'.xx.'...x
+      xx.'.xxx'..xxx.'.xx
+       xxxxx xP{Px xxxxx
+             xxxxx
+ENDMAP
