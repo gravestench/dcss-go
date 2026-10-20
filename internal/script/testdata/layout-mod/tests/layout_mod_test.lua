@@ -10,7 +10,7 @@ local test = {}
 -- The overlay wins its relative path; the added definition is independent.
 -- Neither action requires an edit to the bundled layout selector.
 function test.run()
-    harness.equal(#catalog.ids(), 39, "mod adds one effective layout")
+    harness.equal(#catalog.ids(), 41, "mod adds one effective layout")
     harness.equal(weight.for_branch(catalog.get("layout_basic"),
         branches.BRANCH_DUNGEON), 0, "mod disables basic")
     harness.equal(weight.for_branch(catalog.get("layout_modded"),

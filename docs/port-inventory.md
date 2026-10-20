@@ -367,7 +367,7 @@ spell departures omit smoke. Source-specific death wording remains part of
 the presentation parity pass. Xom and Jiyva poof variants still need
 per-monster god state from the religion domain.
 
-The builder and serial definition count is now 555 of 600. All 22 source
+The builder and serial definition count is now 557 of 600. All 22 source
 arena builder maps are committed as individual `.des` files. Their original
 MAP blocks are intact, and the two shared palette scripts are a named Lua
 hook. Arena maps have no Dungeon depth rule, so normal Dungeon generation
@@ -404,6 +404,11 @@ The remaining noise-based Cave Shapes and Gehenna Lava Caves layouts are
 also registered. Cave Shapes selects one of four source silhouettes before
 adding cave-edge noise; Gehenna grades simplex noise into floor, lava, and
 rock, then uses the same stone-building owner as its canyon layouts.
+The last two `layout_caves.des` maps are now registered. Falls Marsh unwraps
+Worley noise into drips, grows mixed pools, then runs the Swamp water cleanup.
+Snake Cave Town paints one broad cave and follows it with two passes of
+same-style walled rooms. All nine source maps in this file now have committed
+DES declarations and executable Lua hooks; branch travel remains separate.
 
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and

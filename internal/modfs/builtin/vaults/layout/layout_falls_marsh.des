@@ -1,0 +1,11 @@
+# Source: crawl-ref/source/dat/des/builder/layout_caves.des
+# Polar Worley drips, source pools, and water cleanup are in named Lua hooks.
+NAME:   layout_falls_marsh
+DEPTH:  Swamp, !Swamp:$
+WEIGHT: 10
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand no_pool_fixup layout_type_swamp
+: vault.run("layout_falls_marsh.generate")
+: vault.validate("layout_falls_marsh.validate")
+MAP
+ENDMAP
