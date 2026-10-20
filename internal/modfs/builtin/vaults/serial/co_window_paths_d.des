@@ -1,0 +1,28 @@
+# co_window_paths_d is a rare window piece.
+# Parallel corridors thread around glass-wall dividers. This changes how the floor connects.
+# Its tag and WEIGHT let the controller select it without a file list.
+NAME:   co_window_paths_d
+WEIGHT: 2
+TAGS:   transparent luniq allow_dup extra serial_co_window_rare
+SUBST:  c : mmccb
+MAP
+   xxx
+   @x@
+ xx.x.xx
+ xx.x.xx
+ @x.x.x@
+x.x.x.x.x
+x.x.x.x.x
+x.m.m.m.x
+x.c.c.c.x
+x.m.m.m.x
+x.c.c.c.x
+x.m.m.m.x
+x.x.x.x.x
+x.x.x.x.x
+ @x.x.x@
+ xx.x.xx
+ xx.x.xx
+   @x@
+   xxx
+ENDMAP

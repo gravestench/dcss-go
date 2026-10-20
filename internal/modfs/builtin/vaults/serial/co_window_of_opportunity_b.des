@@ -1,0 +1,17 @@
+# co_window_of_opportunity_b is a common window piece.
+# A gap through glass connects otherwise split floor areas. This changes how the floor connects.
+# Its tag and WEIGHT let the controller select it without a file list.
+NAME:   co_window_of_opportunity_b
+WEIGHT: 3
+TAGS:   transparent allow_dup extra serial_co_window_common
+SUBST:  X:Xxm, X=xm
+MAP
+@....@
+xXmmXx
+x....x
+x.xx.x
+x.xx.x
+x@xx@x
+  xx
+  xx
+ENDMAP

@@ -1,0 +1,21 @@
+# co_window_4corner_b is a rare window piece.
+# Four angled glass barriers frame the floor junction. This changes how the floor connects.
+# Its tag and WEIGHT let the controller select it without a file list.
+NAME:   co_window_4corner_b
+WEIGHT: 3
+TAGS:   transparent allow_dup luniq extra serial_co_window_rare
+MAP
+xxxxx@xxxx@xxxxxxxx
+xxxxx.xxxx.xxxxxxxx
+@..xx....x.xxxxxxxx
+xx.xxxxx.m.xxxxxxxx
+xx.xxxxx.m.xxxxxxxx
+xx.......x........@
+xxxxmmxxxxxxxmmxxxx
+@........x.......xx
+xxxxxxxx.m.xxxxx.xx
+xxxxxxxx.m.xxxxx.xx
+xxxxxxxx.x....xx..@
+xxxxxxxx.xxxx.xxxxx
+xxxxxxxx@xxxx.xxxxx
+ENDMAP

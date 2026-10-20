@@ -2024,6 +2024,14 @@ typed vault record so saving and debugging can explain the result. Its
 controller requests four to six pieces with the `serial_gnoll_camp` tag;
 adding another tagged `.des` file makes it eligible without editing Go code.
 
+The window serial separates a collection into small, common, and rare pools.
+Its Lua controller requests a count from each pool by tag; every window piece
+declares its pool and source weight in its own `.des` file. This lets a mod add
+one window shape without changing the controller or a central file list.
+The controller also requests the separate `serial_glass` pool. That request
+currently places no maps because the source glass pieces from
+`mini_features.des` still need importing.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls

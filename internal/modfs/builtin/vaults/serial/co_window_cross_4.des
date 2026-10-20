@@ -1,0 +1,24 @@
+# co_window_cross_4 is a common window piece.
+# Intersecting corridors pass through glass-wall arms. This changes how the floor connects.
+# Its tag and WEIGHT let the controller select it without a file list.
+NAME:   co_window_cross_4
+WEIGHT: 1
+TAGS:   transparent allow_dup extra serial_co_window_common
+MAP
+xxxxxxx@@@@xxxxxxx
+xxxxxxx....xxxxxxx
+xxxxxxx....xxxxxxx
+xxxxxxx....xxxxxxx
+xxxxxxx....xxxxxxx
+xxxxxxx....xxxxxxx
+@.....m....m.....@
+@.....m....m.....@
+@.....m....m.....@
+@.....m....m.....@
+xxxxxxx....xxxxxxx
+xxxxxxx....xxxxxxx
+xxxxxxx....xxxxxxx
+xxxxxxx....xxxxxxx
+xxxxxxx....xxxxxxx
+xxxxxxx@@@@xxxxxxx
+ENDMAP

@@ -1,0 +1,22 @@
+# co_window_corner_b is a common window piece.
+# An angled glass barrier turns the traversable route. This changes how the floor connects.
+# Its tag and WEIGHT let the controller select it without a file list.
+NAME:   co_window_corner_b
+TAGS:   transparent allow_dup extra serial_co_window_common
+WEIGHT: 5
+SUBST:  X:Xxm, X=xm
+MAP
+     x
+     x
+     x
+..@..x@x
+.....x.x
+.....x.x
+@....X.x
+.....m.x
+xxxXmm.x
+x......x
+x.xxxxxx
+x.x
+x@x
+ENDMAP

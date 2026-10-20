@@ -1,0 +1,21 @@
+# co_window_unsneaky_path_e is a common window piece.
+# An exposed straight passage runs beside glass barriers. This changes how the floor connects.
+# Its tag and WEIGHT let the controller select it without a file list.
+NAME:   co_window_unsneaky_path_e
+WEIGHT: 1
+TAGS:   transparent allow_dup extra serial_co_window_common
+SUBST:  X:xm
+MAP
+xxxxxxx@@@xxxxxxx
+xxxxxxx...xxxxxxx
+xxxxxxx...xxxxxxx
+xxxxxxx...xxxxxxx
+@.....X...X.....@
+@.....m...m.....@
+@.....m...m.....@
+@.....X...X.....@
+xxxxxxx...xxxxxxx
+xxxxxxx...xxxxxxx
+xxxxxxx...xxxxxxx
+xxxxxxx@@@xxxxxxx
+ENDMAP

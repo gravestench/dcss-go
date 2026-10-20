@@ -1,0 +1,8 @@
+# Window serial splits walkable space with glass walls, creating labyrinth
+# shapes on Dungeon, Depths, Elf, and Crypt floors. The child pools are tagged
+# separately so the source's small, common, and rare counts stay independent.
+NAME: serial_co_window_serial
+TAGS: allow_dup extra luniq_serial decor nolayout_encompass
+DEPTH: D, Depths, Elf, Crypt
+CHANCE: 1%
+: vault.post_place("place_co_window_serial")

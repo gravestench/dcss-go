@@ -274,8 +274,12 @@ taking the first matching map. The thirteen-map gnoll camp adds its open-layout
 controller and twelve weighted pieces, including Grum's kennel and a guarded
 shop. Comma-separated monster slots now try later candidates at the same
 cell when an earlier one cannot spawn; the kennel uses this to fall back
-from a duplicate Grum to a gnoll. The builder and serial catalog now contains
-192 of 600 source definitions.
+from a duplicate Grum to a gnoll. The twenty-nine-map window family adds its
+controller plus five small, eighteen common, and five rare glass-barrier
+pieces. All three window pools place through named tags. Its optional
+`serial_glass` request is present, but the glass pieces live in the separate
+`mini_features.des` corpus and have not yet been imported. The builder and
+serial count is now 221 of 600.
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
 `uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those

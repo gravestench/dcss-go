@@ -1,0 +1,18 @@
+# co_window_paths_a is a small window piece.
+# Parallel corridors thread around glass-wall dividers. This changes how the floor connects.
+# Its tag and WEIGHT let the controller select it without a file list.
+NAME:   co_window_paths_a
+WEIGHT: 5
+TAGS:   transparent allow_dup extra serial_co_window_small
+SUBST:  X:Xxm, X=xm
+MAP
+  x
+  x
+x@x@x
+x.X.x
+x.m.x
+x.X.x
+x@x@x
+  x
+  x
+ENDMAP

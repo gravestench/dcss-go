@@ -1,0 +1,17 @@
+# co_window_cross_1 is a small window piece.
+# Intersecting corridors pass through glass-wall arms. This changes how the floor connects.
+# Its tag and WEIGHT let the controller select it without a file list.
+NAME:   co_window_cross_1
+WEIGHT: 1
+TAGS:   transparent allow_dup extra serial_co_window_small
+MAP
+xxxxx@xxxxx
+xxxxx.xxxxx
+xxxxx.xxxxx
+xxxxx.xxxxx
+@...m.m...@
+xxxxx.xxxxx
+xxxxx.xxxxx
+xxxxx.xxxxx
+xxxxx@xxxxx
+ENDMAP

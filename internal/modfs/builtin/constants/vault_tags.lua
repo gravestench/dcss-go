@@ -7,6 +7,10 @@ local tags = {
     SERIAL_PARK = "serial_park",
     SERIAL_PARK_MINIVAULT = "serial_park_minivault",
     SERIAL_GNOLL_CAMP = "serial_gnoll_camp",
+    SERIAL_CO_WINDOW_SMALL = "serial_co_window_small",
+    SERIAL_CO_WINDOW_COMMON = "serial_co_window_common",
+    SERIAL_CO_WINDOW_RARE = "serial_co_window_rare",
+    SERIAL_GLASS = "serial_glass",
 }
 
 return tags

@@ -1,0 +1,26 @@
+# co_window_sun is a rare window piece.
+# Radial glass arcs break up a central open pocket. This changes how the floor connects.
+# Its tag and WEIGHT let the controller select it without a file list.
+NAME:   co_window_sun
+WEIGHT: 3
+TAGS:   transparent allow_dup luniq extra serial_co_window_rare
+SUBST:  c : ccccm
+MAP
+xxxx@xxxxxxx@xxxx
+xxxx.xxxxxxx.xxxx
+xxxx..xxxxx..xxxx
+xxxcm...x...mcxxx
+@..mcxx.x.xxcm..@
+xx..xxx...xxx..xx
+xxx.xxccmccxx.xxx
+xxx...cmmmc...xxx
+xxxxx.mmcmm.xxxxx
+xxx...cmmmc...xxx
+xxx.xxccmccxx.xxx
+xx..xxx...xxx..xx
+@..mcxx.x.xxcm..@
+xxxcm...x...mcxxx
+xxxx..xxxxx..xxxx
+xxxx.xxxxxxx.xxxx
+xxxx@xxxxxxx@xxxx
+ENDMAP
