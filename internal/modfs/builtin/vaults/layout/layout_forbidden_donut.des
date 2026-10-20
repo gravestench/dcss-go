@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout.des
+# The ring, optional cross, and optional central octagon are carved by Lua.
+NAME:   layout_forbidden_donut
+DEPTH:  Depths
+WEIGHT: 5
+ORIENT: encompass
+TAGS:   overwritable layout no_primary_vault unrand layout_type_open
+: vault.run("layout_forbidden_donut.generate")
+MAP
+ENDMAP

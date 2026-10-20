@@ -367,7 +367,7 @@ spell departures omit smoke. Source-specific death wording remains part of
 the presentation parity pass. Xom and Jiyva poof variants still need
 per-monster god state from the religion domain.
 
-The builder and serial definition count is now 549 of 600. All 22 source
+The builder and serial definition count is now 550 of 600. All 22 source
 arena builder maps are committed as individual `.des` files. Their original
 MAP blocks are intact, and the two shared palette scripts are a named Lua
 hook. Arena maps have no Dungeon depth rule, so normal Dungeon generation
@@ -392,6 +392,10 @@ grows bordered pool territories and opens sampled walls. Gehenna's three
 canyon layouts share source-style lava pools, rounded stone buildings, zone
 cleanup, and optional authored up stairs. Branch travel outside Dungeon is
 still pending, so these layouts are exercised through the layout catalog.
+The last missing `layout_type_open` definition, Depths' once-per-run
+Forbidden Donut, now carves its broad ring, optional cross and central
+octagon, and source-shaped spotty or boxy smear. It also runs through the
+shared connected-stair postpass. Depths travel remains future work.
 
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and

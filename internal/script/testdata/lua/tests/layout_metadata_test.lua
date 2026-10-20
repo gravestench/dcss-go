@@ -18,7 +18,7 @@ local function imported_dungeon_layouts()
     local disabled = 0
     local branch_only = 0
 
-    harness.equal(#paths, 32, "total source layout count")
+    harness.equal(#paths, 33, "total source layout count")
 
     for _, path in ipairs(paths) do
         local layout = des.parse(path, mod.read(path))
@@ -46,7 +46,7 @@ local function imported_dungeon_layouts()
 
     harness.equal(active, 17, "active Dungeon layouts")
     harness.equal(disabled, 4, "disabled Dungeon layouts")
-    harness.equal(branch_only, 11, "branch-only source layouts")
+    harness.equal(branch_only, 12, "branch-only source layouts")
 end
 
 -- Branch clauses override a default weight but must not leak a different

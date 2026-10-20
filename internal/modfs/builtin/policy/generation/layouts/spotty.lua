@@ -70,9 +70,10 @@ function spotty.carve(builder, boxy, iterations)
     end
 end
 
--- Smearing grows neighboring rock into existing floor. Source octagons do
--- this before or after pillars, then discard floor islands away from center.
-function spotty.smear(builder, iterations)
+-- Smearing grows neighboring rock into existing floor. Boxy source maps
+-- require a cardinal rock neighbor; rounded maps also accept diagonals.
+-- Octagons use the latter behavior and discard disconnected floor later.
+function spotty.smear(builder, iterations, boxy)
     local attempts = 0
     local limit = iterations * 10
 
@@ -93,11 +94,15 @@ function spotty.smear(builder, iterations)
             adjacent = builder:cell(x + 1, y) == "#" or
                 builder:cell(x - 1, y) == "#" or
                 builder:cell(x, y + 1) == "#" or
-                builder:cell(x, y - 1) == "#" or
-                builder:cell(x + 1, y + 1) == "#" or
-                builder:cell(x - 1, y + 1) == "#" or
-                builder:cell(x + 1, y - 1) == "#" or
-                builder:cell(x - 1, y - 1) == "#"
+                builder:cell(x, y - 1) == "#"
+
+            if not boxy then
+                adjacent = adjacent or
+                    builder:cell(x + 1, y + 1) == "#" or
+                    builder:cell(x - 1, y + 1) == "#" or
+                    builder:cell(x + 1, y - 1) == "#" or
+                    builder:cell(x - 1, y - 1) == "#"
+            end
         until builder:cell(x, y) == "." and adjacent
 
         builder:set(x, y, "#")
