@@ -11,8 +11,21 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_VASHNIA",
+    -- Vashnia's three-to-six escorts are naga sharpshooters.
+    -- The source repeats this follower choice across the band.
+    band = {
+        min = 3,
+        max = 6,
+        slots = {
+            {
+                monsters.MONS_NAGA_SHARPSHOOTER,
+            },
+        },
+    },
     status = "defined",
     name = "Vashnia",
     glyph = 78,

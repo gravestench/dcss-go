@@ -10,8 +10,38 @@
 local categories = require("constants.catalog")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_GLOORX_VLOQ",
+    -- Gloorx Vloq begins with a curse skull and an executioner.
+    -- Later guards mix shadow demons, crawlers, and wraiths.
+    band = {
+        min = 5,
+        max = 8,
+        slots = {
+            {
+                monsters.MONS_CURSE_SKULL,
+            },
+            {
+                monsters.MONS_EXECUTIONER,
+            },
+            {
+                {
+                    id = monsters.MONS_SHADOW_DEMON,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_DEMONIC_CRAWLER,
+                    weight = 3,
+                },
+                {
+                    id = monsters.MONS_SHADOW_WRAITH,
+                    weight = 3,
+                },
+            },
+        },
+    },
     status = "defined",
     name = "Gloorx Vloq",
     glyph = 38,

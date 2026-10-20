@@ -10,8 +10,24 @@
 local categories = require("constants.catalog")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_POLYPHEMUS",
+    -- Polyphemus is always followed first by a catoblepas.
+    -- His remaining source slots repeat death yaks.
+    band = {
+        min = 3,
+        max = 6,
+        slots = {
+            {
+                monsters.MONS_CATOBLEPAS,
+            },
+            {
+                monsters.MONS_DEATH_YAK,
+            },
+        },
+    },
     status = "defined",
     name = "Polyphemus",
     glyph = 67,

@@ -10,8 +10,21 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_DUVESSA",
+    -- Duvessa requests Dowan as her partner, even when the range rolls two.
+    -- Run-wide uniqueness prevents a second Dowan from the repeated slot.
+    band = {
+        min = 1,
+        max = 2,
+        slots = {
+            {
+                monsters.MONS_DOWAN,
+            },
+        },
+    },
     status = "defined",
     name = "Duvessa",
     glyph = 101,

@@ -9,8 +9,7 @@ local shops = require("policy.shops.generation")
 local shop_ids = require("ids.shops")
 local item_ids = require("ids.items")
 local streams = require("constants.rng_streams")
-local kirke_band = require("policy.population.kirke_band")
-local monsters = require("ids.monsters")
+local bands = require("policy.population.bands")
 
 -- Visit levels by ID so shared population draws have stable order.
 local function level_order(left, right)
@@ -48,41 +47,6 @@ local function free_cells(ctx, level, excluded)
     return cells
 end
 
--- Pack jackal followers near their leader without reusing a protected or occupied square.
-local function follower_cell(ctx, level, origin, excluded)
-    for _ = 1, 1000 do
-        local x = origin.x + ctx:random("placement", 7) - 3
-        local y = origin.y + ctx:random("placement", 7) - 3
-
-        if ctx:walkable(level.id, x, y) and
-            not excluded[x .. ":" .. y] and
-            ctx:visible(level.id, origin.x, origin.y, 7, x, y) and
-            not ctx:actor_at(level.id, x, y) then
-            return { x = x, y = y }
-        end
-    end
-
-    return nil
-end
-
--- Draw a small band size after its leader is placed, then seek adjacent free cells.
-local function jackal_followers(ctx, level, leader, origin, excluded)
-    local count = ctx:random("bands", 3) + 1
-    local placed = 0
-
-    for _ = 1, count do
-        local cell = follower_cell(ctx, level, origin, excluded)
-
-        if cell then
-            local follower = factory.spawn(ctx, "MONS_JACKAL", level.id, cell.x, cell.y)
-            ctx:add(follower, "core.follower", { leader = leader })
-            placed = placed + 1
-        end
-    end
-
-    return placed
-end
-
 -- Place vault materializations before ordinary monsters so blocked and protected cells affect spawn choice.
 -- Draw ordinary monsters from the depth pool only after spawn exclusions are applied.
 local function populate_level(ctx, level, allowed, scenario_id)
@@ -111,11 +75,9 @@ local function populate_level(ctx, level, allowed, scenario_id)
         local leader = factory.spawn(ctx, monster_id, level.id, cell.x, cell.y)
         actors = actors + 1
 
-        if monster_id == "MONS_JACKAL" then
-            actors = actors + jackal_followers(ctx, level, leader, cell, excluded)
-        elseif monster_id == monsters.MONS_KIRKE then
-            actors = actors + kirke_band.spawn(ctx, leader, level, excluded)
-        end
+        -- A definition with a band owns its follower count and membership.
+        -- The shared policy handles jackals and named ambient leaders alike.
+        actors = actors + bands.spawn(ctx, leader, level, excluded)
     end
 
     return actors

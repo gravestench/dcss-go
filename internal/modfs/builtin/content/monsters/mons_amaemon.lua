@@ -12,8 +12,21 @@ local item_ids = require("ids.items")
 local brands = require("constants.weapon_brands")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_AMAEMON",
+    -- Amaemon commands one or two orange demons in the source band.
+    -- The one-slot list repeats if both escorts find room.
+    band = {
+        min = 1,
+        max = 2,
+        slots = {
+            {
+                monsters.MONS_ORANGE_DEMON,
+            },
+        },
+    },
     status = "defined",
     name = "Amaemon",
     glyph = 54,

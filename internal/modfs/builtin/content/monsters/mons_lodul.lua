@@ -10,8 +10,21 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_LODUL",
+    -- Lodul's source entourage is six-to-ten ordinary ogres.
+    -- The shared band policy gives each ogre its own position and follower link.
+    band = {
+        min = 6,
+        max = 10,
+        slots = {
+            {
+                monsters.MONS_OGRE,
+            },
+        },
+    },
     status = "defined",
     name = "Lodul",
     glyph = 79,

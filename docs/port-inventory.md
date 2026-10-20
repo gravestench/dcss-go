@@ -340,8 +340,10 @@ helper calls became one-cell maps with their original MONS, tags, branch,
 depth, and weight rules. A Lua stage now performs the source continuation,
 available-map, weighted-dummy, and placement draws after secondary vaults.
 The player owns saved monster uniqueness alongside unique-item claims.
-Unique follower bands, Pan veto state, Boris and Natasha exceptions, and
-full live encounter verification remain in this domain slice.
+Source unique follower bands now use per-monster Lua definitions and one
+ECS follower policy, including Kirke's transformation marker. Pan veto
+state, Boris and Natasha exceptions, and full live encounter verification
+remain in this domain slice.
 
 The builder and serial definition count is now 495 of 600. Forest generation exposed
 a missing bow and crossbow missile policy; arrows and bolts now use one

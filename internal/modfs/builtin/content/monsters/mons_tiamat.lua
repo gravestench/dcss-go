@@ -12,6 +12,13 @@ local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
     id = "MONS_TIAMAT",
+    -- Tiamat's Zot band mixes base draconian species with classed guards.
+    -- The policy owns that depth-sensitive member draw in Lua.
+    band = {
+        min = 8,
+        max = 15,
+        member_policy = "policy.population.bands.draconian",
+    },
     status = "defined",
     name = "Tiamat",
     glyph = 100,

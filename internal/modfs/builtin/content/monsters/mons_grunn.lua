@@ -10,8 +10,21 @@ local item_ids = require("ids.items")
 local brands = require("constants.weapon_brands")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_GRUNN",
+    -- Grunn leads two-to-four doom hounds.
+    -- The repeated source slot keeps the pack homogeneous.
+    band = {
+        min = 2,
+        max = 4,
+        slots = {
+            {
+                monsters.MONS_DOOM_HOUND,
+            },
+        },
+    },
     status = "defined",
     name = "Grunn",
     glyph = 103,

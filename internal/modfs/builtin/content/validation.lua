@@ -593,6 +593,96 @@ local function validate_spawnable_monster(monster)
     end
 end
 
+-- Bands live beside their leader's monster definition, so a new unique
+-- needs no central registration table. Validate every referenced follower
+-- after all mod layers have supplied their effective monster profiles.
+local function validate_band(monster)
+    local profile = monster.band
+
+    if profile == nil then
+        return
+    end
+
+    if monster.status ~= "defined" or type(profile) ~= "table" then
+        fail(categories.MONSTERS, monster.id,
+            "band requires a defined monster and table")
+    end
+
+    for _, field in ipairs({ "min", "max" }) do
+        local value = profile[field]
+
+        if type(value) ~= "number" or value < 1 or value % 1 ~= 0 then
+            fail(categories.MONSTERS, monster.id,
+                "band " .. field .. " must be a positive integer")
+        end
+    end
+
+    if profile.min > profile.max then
+        fail(categories.MONSTERS, monster.id, "band min exceeds max")
+    end
+
+    if profile.member_policy ~= nil and
+        (type(profile.member_policy) ~= "string" or
+            profile.member_policy == "") then
+        fail(categories.MONSTERS, monster.id,
+            "band member_policy must name a Lua module")
+    end
+
+    if profile.member_policy then
+        local ok, policy = pcall(require, profile.member_policy)
+
+        if not ok or type(policy.choose) ~= "function" then
+            fail(categories.MONSTERS, monster.id,
+                "band member_policy must export choose: " ..
+                    profile.member_policy)
+        end
+    end
+
+    local slots = optional_list(categories.MONSTERS, {
+        id = monster.id,
+        slots = profile.slots,
+    }, "slots")
+
+    if #slots == 0 and not profile.member_policy then
+        fail(categories.MONSTERS, monster.id, "band has no follower slots")
+    end
+
+    for _, slot in ipairs(slots) do
+        if type(slot) ~= "table" or #slot == 0 then
+            fail(categories.MONSTERS, monster.id,
+                "band slot must have follower choices")
+        end
+
+        for _, choice in ipairs(slot) do
+            local kind_id = type(choice) == "string" and choice or
+                type(choice) == "table" and choice.id
+            local weight = type(choice) == "string" and 1 or
+                type(choice) == "table" and choice.weight
+
+            if type(kind_id) ~= "string" or
+                type(weight) ~= "number" or weight < 1 or
+                weight % 1 ~= 0 then
+                fail(categories.MONSTERS, monster.id,
+                    "band has an invalid weighted follower")
+            end
+
+            local found, follower = pcall(register.get,
+                categories.MONSTERS, kind_id)
+
+            if not found or follower.status ~= "defined" then
+                fail(categories.MONSTERS, monster.id,
+                    "band has an unavailable follower " .. kind_id)
+            end
+        end
+    end
+
+    if profile.origin_component ~= nil and
+        type(profile.origin_component) ~= "string" then
+        fail(categories.MONSTERS, monster.id,
+            "band origin_component must be a component ID")
+    end
+end
+
 -- Mutation selection needs bounded levels, legal uses, and level messages.
 local function validate_mutation(mutation)
     local category = categories.MUTATIONS
@@ -662,6 +752,10 @@ local function validate_registered_catalogs()
 
     validation.population_rows(monsters)
     validation.weapon_gear(monsters)
+
+    for _, monster in ipairs(monsters) do
+        validate_band(monster)
+    end
 
     for _, id in ipairs(register.ids(categories.MUTATIONS)) do
         validate_mutation(register.get(categories.MUTATIONS, id))

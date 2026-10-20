@@ -10,8 +10,60 @@
 local categories = require("constants.catalog")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_LOM_LOBON",
+    -- Lom Lobon's band draws from spellcasters, demons, and other elites.
+    -- The source weights make rakshasas and wizards the commonest.
+    band = {
+        min = 5,
+        max = 8,
+        slots = {
+            {
+                {
+                    id = monsters.MONS_SPRIGGAN_AIR_MAGE,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_TITAN,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_LICH,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_DRACONIAN_ANNIHILATOR,
+                    weight = 2,
+                },
+                {
+                    id = monsters.MONS_DEEP_ELF_ANNIHILATOR,
+                    weight = 2,
+                },
+                {
+                    id = monsters.MONS_GLOWING_ORANGE_BRAIN,
+                    weight = 2,
+                },
+                {
+                    id = monsters.MONS_BLIZZARD_DEMON,
+                    weight = 2,
+                },
+                {
+                    id = monsters.MONS_GREEN_DEATH,
+                    weight = 2,
+                },
+                {
+                    id = monsters.MONS_RAKSHASA,
+                    weight = 4,
+                },
+                {
+                    id = monsters.MONS_WIZARD,
+                    weight = 4,
+                },
+            },
+        },
+    },
     status = "defined",
     name = "Lom Lobon",
     glyph = 38,

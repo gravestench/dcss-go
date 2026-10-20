@@ -13,8 +13,28 @@ local brands = require("constants.weapon_brands")
 local sentinels = require("constants.monster_gear_sentinels")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_MARGERY",
+    -- Margery's hell knights are more common than necromancers.
+    -- Each source follower slot draws from the same three-to-one mix.
+    band = {
+        min = 4,
+        max = 8,
+        slots = {
+            {
+                {
+                    id = monsters.MONS_HELL_KNIGHT,
+                    weight = 3,
+                },
+                {
+                    id = monsters.MONS_NECROMANCER,
+                    weight = 1,
+                },
+            },
+        },
+    },
     status = "defined",
     name = "Margery",
     glyph = 64,

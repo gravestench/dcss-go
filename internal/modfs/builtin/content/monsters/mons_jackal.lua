@@ -10,8 +10,21 @@ local categories = require("constants.catalog")
 local curves = require("constants.population_curves")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_JACKAL",
+    -- Ordinary jackals arrive in packs of one-to-four followers.
+    -- The same saved follower links and cell checks serve unique bands.
+    band = {
+        min = 1,
+        max = 4,
+        slots = {
+            {
+                monsters.MONS_JACKAL,
+            },
+        },
+    },
     status = "defined",
     name = "jackal",
     glyph = 104,

@@ -8,7 +8,7 @@ local pork = require("policy.combat.monster_hexes.porkalator")
 local death_hooks = require("policy.combat.death_hooks")
 local catalog = require("policy.catalog")
 local tactical = require("constants.monster_tactical")
-local kirke_band = require("policy.population.kirke_band")
+local bands = require("policy.population.bands")
 local links = require("policy.save.links")
 local targets = require("policy.ai.targets")
 local attitudes = require("constants.attitude")
@@ -101,7 +101,7 @@ local function original_band(ctx)
     local second_kirke = fixture.actor(ctx, monsters.MONS_KIRKE, 20, 20)
     local other_hog = fixture.actor(ctx, monsters.MONS_HOG, 22, 20)
     local band_game = fixture.context(ctx, other_hog)
-    local followers = kirke_band.spawn(band_game, second_kirke, {
+    local followers = bands.spawn(band_game, second_kirke, {
         id = 1,
         entry_x = 1,
         entry_y = 1,

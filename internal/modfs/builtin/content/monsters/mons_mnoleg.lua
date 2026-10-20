@@ -10,8 +10,43 @@
 local categories = require("constants.catalog")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_MNOLEG",
+    -- Mnoleg begins with a tentacled monstrosity.
+    -- Later slots mix more monstrosities with abominations and demons.
+    band = {
+        min = 5,
+        max = 8,
+        slots = {
+            {
+                monsters.MONS_TENTACLED_MONSTROSITY,
+            },
+            {
+                {
+                    id = monsters.MONS_TENTACLED_MONSTROSITY,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_CACODEMON,
+                    weight = 2,
+                },
+                {
+                    id = monsters.MONS_ABOMINATION_LARGE,
+                    weight = 3,
+                },
+                {
+                    id = monsters.MONS_VERY_UGLY_THING,
+                    weight = 3,
+                },
+                {
+                    id = monsters.MONS_NEQOXEC,
+                    weight = 3,
+                },
+            },
+        },
+    },
     status = "defined",
     name = "Mnoleg",
     glyph = 38,

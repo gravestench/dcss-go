@@ -10,8 +10,21 @@
 local categories = require("constants.catalog")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_PRINCE_RIBBIT",
+    -- Prince Ribbit's band contains blink frogs.
+    -- The source repeats this one member choice for two-to-five escorts.
+    band = {
+        min = 2,
+        max = 5,
+        slots = {
+            {
+                monsters.MONS_BLINK_FROG,
+            },
+        },
+    },
     status = "defined",
     name = "Prince Ribbit",
     glyph = 70,

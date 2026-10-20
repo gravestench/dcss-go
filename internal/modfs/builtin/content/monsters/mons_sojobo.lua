@@ -13,8 +13,21 @@ local brands = require("constants.weapon_brands")
 local sentinels = require("constants.monster_gear_sentinels")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_SOJOBO",
+    -- Sojobo leads two-to-three tengu reavers.
+    -- Each reaver keeps its own actor state and leader link.
+    band = {
+        min = 2,
+        max = 3,
+        slots = {
+            {
+                monsters.MONS_TENGU_REAVER,
+            },
+        },
+    },
     status = "defined",
     name = "Sojobo",
     glyph = 81,

@@ -10,8 +10,35 @@
 local categories = require("constants.catalog")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_CEREBOV",
+    -- Cerebov's first guard is a brimstone fiend.
+    -- Later guards favor sun demons and efreets over balrugs.
+    band = {
+        min = 5,
+        max = 8,
+        slots = {
+            {
+                monsters.MONS_BRIMSTONE_FIEND,
+            },
+            {
+                {
+                    id = monsters.MONS_BALRUG,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_SUN_DEMON,
+                    weight = 3,
+                },
+                {
+                    id = monsters.MONS_EFREET,
+                    weight = 3,
+                },
+            },
+        },
+    },
     status = "defined",
     name = "Cerebov",
     glyph = 38,

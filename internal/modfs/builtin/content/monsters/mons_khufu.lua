@@ -9,8 +9,28 @@
 local categories = require("constants.catalog")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_KHUFU",
+    -- Khufu's three-to-four escorts are royal or ordinary mummies.
+    -- The source gives both kinds equal weight in every slot.
+    band = {
+        min = 3,
+        max = 4,
+        slots = {
+            {
+                {
+                    id = monsters.MONS_ROYAL_MUMMY,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_MUMMY,
+                    weight = 1,
+                },
+            },
+        },
+    },
     status = "defined",
     name = "Khufu",
     glyph = 77,

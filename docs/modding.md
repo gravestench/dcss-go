@@ -2277,6 +2277,33 @@ conditional source rules; keep the map geometry and ordinary directives in
 the `.des` file. Import IDs from `ids.monsters` and other shared ID modules
 inside the hook instead of repeating names as strings.
 
+For a unique with followers, put the band on the monster's own definition:
+
+```lua
+local monsters = require("ids.monsters")
+
+band = {
+    min = 2,
+    max = 4,
+    slots = {
+        {
+            monsters.MONS_EXAMPLE_FOLLOWER,
+        },
+    },
+},
+```
+
+`min` and `max` count followers, not the leader. Each inner `slots` list is
+one follower position; the final slot repeats if the band is larger. A
+slot can have weighted choices, with each choice's `id` and `weight` on
+separate lines. The content validator checks that every
+follower names an active monster. The generic Lua band policy chooses legal
+nearby cells, creates ordinary ECS actors, and gives each a saved follower
+link. The `.des` request must say `MONS: Example band` to request the band
+for an authored vault. Ambient monster placement uses the same definition
+when it chooses that leader. Exceptional member rules can be placed in a
+named Lua `member_policy` module; Tiamat's draconians are the bundled example.
+
 ## Test a mod
 
 Use a file ending in `_test.lua` under `tests/`. Import production modules

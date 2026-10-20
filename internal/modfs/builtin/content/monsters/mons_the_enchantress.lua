@@ -11,8 +11,48 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_THE_ENCHANTRESS",
+    -- The Enchantress starts with three defenders and an air mage.
+    -- Only the later slots draw from her mixed spriggan entourage.
+    band = {
+        min = 6,
+        max = 11,
+        slots = {
+            {
+                monsters.MONS_SPRIGGAN_DEFENDER,
+            },
+            {
+                monsters.MONS_SPRIGGAN_DEFENDER,
+            },
+            {
+                monsters.MONS_SPRIGGAN_DEFENDER,
+            },
+            {
+                monsters.MONS_SPRIGGAN_AIR_MAGE,
+            },
+            {
+                {
+                    id = monsters.MONS_SPRIGGAN_AIR_MAGE,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_SPRIGGAN_BERSERKER,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_SPRIGGAN_RIDER,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_SPRIGGAN,
+                    weight = 3,
+                },
+            },
+        },
+    },
     status = "defined",
     name = "the Enchantress",
     glyph = 105,

@@ -12,8 +12,52 @@ local item_ids = require("ids.items")
 local sentinels = require("constants.monster_gear_sentinels")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_SAINT_ROKA",
+    -- Saint Roka's large escort favors orcs and orc warriors.
+    -- The lesser weights admit priests, wizards, and heavier allies.
+    band = {
+        min = 8,
+        max = 16,
+        slots = {
+            {
+                {
+                    id = monsters.MONS_ORC,
+                    weight = 12,
+                },
+                {
+                    id = monsters.MONS_ORC_WARRIOR,
+                    weight = 9,
+                },
+                {
+                    id = monsters.MONS_WARG,
+                    weight = 2,
+                },
+                {
+                    id = monsters.MONS_ORC_WIZARD,
+                    weight = 2,
+                },
+                {
+                    id = monsters.MONS_ORC_PRIEST,
+                    weight = 2,
+                },
+                {
+                    id = monsters.MONS_OGRE,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_TROLL,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_ORC_SORCERER,
+                    weight = 1,
+                },
+            },
+        },
+    },
     status = "defined",
     name = "Saint Roka",
     glyph = 111,

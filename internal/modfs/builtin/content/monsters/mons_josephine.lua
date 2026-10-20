@@ -11,8 +11,21 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_JOSEPHINE",
+    -- Josephine leads a wraith entourage in the source band.
+    -- The final slot repeats for all three-to-six followers.
+    band = {
+        min = 3,
+        max = 6,
+        slots = {
+            {
+                monsters.MONS_WRAITH,
+            },
+        },
+    },
     status = "defined",
     name = "Josephine",
     glyph = 64,

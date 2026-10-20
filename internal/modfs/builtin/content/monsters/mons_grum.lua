@@ -9,8 +9,21 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_GRUM",
+    -- Grum's wolves are independent actors that follow him.
+    -- Repeating one source slot gives the full two-to-five wolf pack.
+    band = {
+        min = 2,
+        max = 5,
+        slots = {
+            {
+                monsters.MONS_WOLF,
+            },
+        },
+    },
     status = "defined",
     name = "Grum",
     glyph = 103,

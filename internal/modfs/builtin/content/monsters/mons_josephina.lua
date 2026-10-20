@@ -10,8 +10,21 @@
 local categories = require("constants.catalog")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_JOSEPHINA",
+    -- Josephina brings four-to-six simulacra.
+    -- The source repeats this single follower kind for her whole band.
+    band = {
+        min = 4,
+        max = 6,
+        slots = {
+            {
+                monsters.MONS_SIMULACRUM,
+            },
+        },
+    },
     status = "defined",
     name = "Josephina",
     glyph = 76,

@@ -8,9 +8,24 @@
 
 local categories = require("constants.catalog")
 local spellbooks = require("ids.monster_spellbooks")
+local tactical = require("constants.monster_tactical")
+
+local monsters = require("ids.monsters")
 
 local definition = {
     id = "MONS_KIRKE",
+    -- Kirke's initial hogs remember their origin for death-time restoration.
+    -- The saved marker distinguishes them from monsters changed by her spell.
+    band = {
+        min = 3,
+        max = 8,
+        slots = {
+            {
+                monsters.MONS_HOG,
+            },
+        },
+        origin_component = tactical.KIRKE_BAND,
+    },
     status = "defined",
     name = "Kirke",
     glyph = 64,

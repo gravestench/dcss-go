@@ -12,8 +12,28 @@ local item_ids = require("ids.items")
 local brands = require("constants.weapon_brands")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_AZRAEL",
+    -- Azrael arrives with fire elementals and hell hounds.
+    -- Equal weights leave either fiery follower possible in every slot.
+    band = {
+        min = 4,
+        max = 9,
+        slots = {
+            {
+                {
+                    id = monsters.MONS_FIRE_ELEMENTAL,
+                    weight = 1,
+                },
+                {
+                    id = monsters.MONS_HELL_HOUND,
+                    weight = 1,
+                },
+            },
+        },
+    },
     status = "defined",
     name = "Azrael",
     glyph = 82,

@@ -12,8 +12,36 @@ local item_ids = require("ids.items")
 local brands = require("constants.weapon_brands")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_ILSUIW",
+    -- Ilsuiw's band draws sirens, merfolk, javeliners, and impalers.
+    -- The source weights favor sirens over the specialist escorts.
+    band = {
+        min = 3,
+        max = 6,
+        slots = {
+            {
+                {
+                    id = monsters.MONS_MERFOLK_SIREN,
+                    weight = 6,
+                },
+                {
+                    id = monsters.MONS_MERFOLK,
+                    weight = 3,
+                },
+                {
+                    id = monsters.MONS_MERFOLK_JAVELINEER,
+                    weight = 2,
+                },
+                {
+                    id = monsters.MONS_MERFOLK_IMPALER,
+                    weight = 2,
+                },
+            },
+        },
+    },
     status = "defined",
     name = "Ilsuiw",
     glyph = 109,

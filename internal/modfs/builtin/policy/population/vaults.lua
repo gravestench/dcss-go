@@ -12,12 +12,29 @@ local trap_placement = require("policy.traps.placement")
 local shop_spec = require("policy.generation.vaults.shop_spec")
 local shop_generation = require("policy.shops.generation")
 local streams = require("constants.rng_streams")
-local kirke_band = require("policy.population.kirke_band")
-local monsters = require("ids.monsters")
+local bands = require("policy.population.bands")
 local choice = require("policy.generation.vaults.specs.choice")
 local resolve = require("policy.generation.vaults.specs.resolve")
 
 local vaults = {}
+
+-- Reserve every authored monster slot before any leader creates followers.
+-- A band placed from an early record must not occupy a later vault glyph.
+local function band_exclusions(level, excluded)
+    local reserved = {}
+
+    for key, value in pairs(excluded or {}) do
+        reserved[key] = value
+    end
+
+    for _, record in ipairs(level.vault_records or {}) do
+        if record.kind == effects.MONSTER then
+            reserved[record.x .. ":" .. record.y] = true
+        end
+    end
+
+    return reserved
+end
 
 -- Transfer source path, line, and vault ID to a resolver request.
 local function source_site(record, arguments)
@@ -215,6 +232,7 @@ end
 function vaults.materialize(ctx, level, excluded)
     local actors = 0
     local materialized = {}
+    local reserved = band_exclusions(level, excluded)
 
     for _, record in ipairs(level.vault_records or {}) do
         local arguments = record.arguments or {}
@@ -261,9 +279,9 @@ function vaults.materialize(ctx, level, excluded)
                 if not no_spawn then
                     local spawned = factory.spawn(ctx, arguments.kind_id, level.id,
                         record.x, record.y, monster_options(record, level))
-                    if arguments.kind_id == monsters.MONS_KIRKE then
-                        actors = actors + kirke_band.spawn(ctx, spawned,
-                            level, excluded)
+                    if arguments.band then
+                        actors = actors + bands.spawn(ctx, spawned,
+                            level, reserved)
                     end
                     gear = generated_gear(ctx, level, record)
                     actors = actors + 1

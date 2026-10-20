@@ -10,8 +10,28 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_ROBIN",
+    -- Robin gathers goblins three times as often as hobgoblins.
+    -- Each of the ten-to-thirteen follower slots uses that same source weight.
+    band = {
+        min = 10,
+        max = 13,
+        slots = {
+            {
+                {
+                    id = monsters.MONS_GOBLIN,
+                    weight = 3,
+                },
+                {
+                    id = monsters.MONS_HOBGOBLIN,
+                    weight = 1,
+                },
+            },
+        },
+    },
     status = "defined",
     name = "Robin",
     glyph = 103,
