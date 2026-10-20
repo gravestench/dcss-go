@@ -1,0 +1,35 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:       kb_temple_of_zot
+TAGS:       no_rotate temple_altars_9 temple_altars_16
+PLACE:      Temple
+ORIENT:     encompass
+: vault.run("configure")
+LFLOORCOL:  magenta
+LROCKCOL:   lightmagenta
+LFLOORTILE: floor_tomb
+LROCKTILE:  wall_zot_magenta
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxx......xxxxxx.......xxxxxx......xxxx
+xxx....D...xxxx..DC.CD..xxxx...D....xxx
+xx..........xxx.C.....C.xxx..........xx
+xx.................B.................xx
+xxx.........xxx.C.....C.xxx.........xxx
+xx...D......xxx..DC.CD..xxx......D...xx
+xx..........xxxx.......xxxx..........xx
+xxx........xxxxxxxxxxxxxxxxx........xxx
+xxxx......xxxxxxxxxxxxxxxxxxx......xxxx
+xxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxx
+xxxx.......xxxxxxxxxxxxxxxxx.......xxxx
+xxx..............xxxxx..............xxx
+xx...........xxx...x...xxx...........xx
+xx..D........xxxx.....xxxx........D..xx
+xx...........xxxx..D..xxxx...........xx
+xx...........xxx.......xxx...........xx
+xxx.........xxxx.D...D.xxxx.........xxx
+xxxx...D...xxxx.........xxxx...D...xxxx
+xxxxx.....xxx.............xxx.....xxxxx
+xxxxxxxxxxxxxxxxxxx{xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

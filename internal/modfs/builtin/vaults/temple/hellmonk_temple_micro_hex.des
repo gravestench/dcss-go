@@ -1,0 +1,23 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:   hellmonk_temple_micro_hex
+TAGS:   temple_altars_6 temple_altars_8 temple_altars_10
+PLACE:  Temple
+ORIENT: encompass
+: vault.run("configure")
+FTILE: 'T{ = floor_frozen
+FTILE: .BG = floor_w_marble
+COLOUR: 'T{ = blue
+COLOUR: . = white
+MAP
+    ccccccc
+   ccD...Dcc
+  cc.......cc
+ ccE...'...Fcc
+cc....'''....cc
+cD...''{''...Dc
+cc....'''....cc
+ ccF...'...Ecc
+  cc.......cc
+   ccD...Dcc
+    ccccccc
+ENDMAP

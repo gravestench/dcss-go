@@ -1,0 +1,43 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:    eino_narrow_crystal_temple
+TAGS:     temple_altars_14 temple_altars_18
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: C' / D" / E` / F~ / G- / H;
+SUBST:   CDE = B, '"` = .
+: vault.run("configure")
+MAP
+       bbbbb  bbbbb  bbbbb
+       b'''b  b"""b  b```b
+       b'C'b  b"D"b  b`E`b
+       b'''bbbb"""bbbb```b
+       bbbb'bb"b"b"bb`bbbb
+          bb'.bb"bb.`bb
+          bb.bbb"bbb.bb
+bbbbb  bbbb.b'bb"bb`b.bbbb  bbbbb
+b;;;b  b...bb'bb"bb`bb...b  b~~~b
+b;H;b  b.B.bbb'b"b`bbb.B.b  b~F~b
+b;;;bbbb...bbbb...bbbb...bbbb~~~b
+bbbb;bb.bbb.bbb.B.bbb.bbb.bb~bbbb
+   bb;.bbbbb.bb...bb.bbbbb.~bb
+   bb.b;;bbbb.bb.bb.bbbb~~b.bb
+bbbb.bbbb;bbbb.b.b.bbbb~bbbb.bbbb
+b---bbbbbb...bb...bb...bbbbbb---b
+b-G-------.B....{....B.-------G-b
+b---bbbbbb...bb...bb...bbbbbb---b
+bbbb.bbbb~bbbb.b.b.bbbb;bbbb.bbbb
+   bb.b~~bbbb.bb.bb.bbbb;;b.bb
+   bb~.bbbbb.bb...bb.bbbbb.;bb
+bbbb~bb.bbb.bbb.B.bbb.bbb.bb;bbbb
+b~~~bbbb...bbbb...bbbb...bbbb;;;b
+b~F~b  b.B.bbb`b"b'bbb.B.b  b;H;b
+b~~~b  b...bb`bb"bb'bb...b  b;;;b
+bbbbb  bbbb.b`bb"bb'b.bbbb  bbbbb
+          bb.bbb"bbb.bb
+          bb`.bb"bb.'bb
+       bbbb`bb.b"b.bb'bbbb
+       b```bbbb"""bbbb'''b
+       b`E`b  b"D"b  b'C'b
+       b```b  b"""b  b'''b
+       bbbbb  bbbbb  bbbbb
+ENDMAP

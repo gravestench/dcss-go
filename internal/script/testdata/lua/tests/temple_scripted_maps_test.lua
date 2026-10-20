@@ -60,6 +60,27 @@ end
 -- Source map hooks retain the selected count and local environment. These
 -- checks catch silently dropped Lua even while Temple travel is unfinished.
 function test.run()
+    local chambers = run_map("dpeg_chambers_temple", 10)
+
+    harness.equal(#chambers, 2,
+        "ten-altar chambers shuffle before substituting")
+    harness.equal(chambers[1].kind, directives.SHUFFLE,
+        "the chamber shuffle keeps its source order")
+    harness.equal(chambers[2].argument, "CD = B, '\" = ., EF-~ = v",
+        "ten-altar chambers preserve their source walls")
+
+    local forest = run_map("hellmonk_temple_forest_ring", 8)
+
+    harness.equal(#forest, 2,
+        "eight-altar forest emits both source substitutions")
+    harness.equal(forest[2].argument, "+DFH = c",
+        "forest closes unused altar sites")
+
+    local sept = run_map("nicolae_temple_great_sept", 14)
+
+    harness.equal(sept[1].argument, "L = ., MN = !, O = B",
+        "the great sept uses its default altar arrangement")
+
     local sea, sea_records = run_map("jpeg_temple_island")
 
     harness.equal(#sea, 0, "island emits no terrain substitution")

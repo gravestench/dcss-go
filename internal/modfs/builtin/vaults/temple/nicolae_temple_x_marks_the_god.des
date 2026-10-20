@@ -1,0 +1,37 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:   nicolae_temple_x_marks_the_god
+TAGS:   no_pool_fixup
+TAGS:    temple_altars_12 temple_altars_16
+PLACE:  Temple
+ORIENT: encompass
+: vault.run("configure")
+SUBST:  C : ccccwl, c : ccccvb
+MAP
+     ccccccccccccccccc
+   ccc..hCCCCCCCCCh..ccc
+  cc.....CCCCCCCCC.....cc
+ cc......gCCCCCCCg......cc
+ c..B.....CCCCCCC.....B..c
+cc........hCCCCCh........cc
+c.....E....CCCCC....E.....c
+c......D...gCCCg...D......c
+ch......E...CCC...E......hc
+cCCg........hCh........gCCc
+cCCCCh....B..C..B....hCCCCc
+cCCCCCCg...........gCCCCCCc
+cCCCCCCCCh.......hCCCCCCCCc
+cCCCCCCCCCC..{..CCCCCCCCCCc
+cCCCCCCCCh.......hCCCCCCCCc
+cCCCCCCg...........gCCCCCCc
+cCCCCh....B..C..B....hCCCCc
+cCCg........hCh........gCCc
+ch......E...CCC...E......hc
+c......D...gCCCg...D......c
+c.....E....CCCCC....E.....c
+cc........hCCCCCh........cc
+ c..B.....CCCCCCC.....B..c
+ cc......gCCCCCCCg......cc
+  cc.....CCCCCCCCC.....cc
+   ccc..hCCCCCCCCCh..ccc
+     ccccccccccccccccc
+ENDMAP

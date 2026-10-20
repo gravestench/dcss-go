@@ -1,0 +1,66 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:    nicolae_temple_great_sept
+TAGS:    temple_altars_7 temple_altars_14
+PLACE:   Temple
+ORIENT:  encompass
+# Sadly, console doesn't have colors for orange and indigo,
+# so brown and cyan will have to do.
+KFEAT:   roygbiv = n
+KFEAT:   ' = .
+SHUFFLE: roygbiv / vroygbi / ivroygb / bivroyg / gbivroy / ygbivro / oygbivr
+: vault.run("configure")
+SUBST:   T = 't
+FTILE:   . = floor_hall, t' = floor_grass, !{B = floor_limestone
+COLOUR:  r = red, o = brown, y = yellow, g = green, b = blue, i = cyan, \
+         v = magenta, ' = green, . = blue, ! = lightgrey
+TILE:    r = dngn_transparent_stone_red, o = dngn_transparent_stone_brown, \
+         y = dngn_transparent_stone_yellow, g = dngn_transparent_stone_green, \
+         b = dngn_transparent_stone_blue, i = dngn_transparent_stone, \
+         v = dngn_transparent_stone_magenta
+KPROP:   't = no_tele_into
+MAP
+ttttttttttttttttttttttttttttttttttttttttttttt
+ttttttttttttttttttttttttttttttttttttttttttttt
+tttttttttttttttTTTTTTTTTTTTTTTttttttttttttttt
+ttttttttttttttT'''''''''''''''Ttttttttttttttt
+tttttttttttttT'''''''''''''''''Tttttttttttttt
+ttttttttttttT'''''''''''''''''''Ttttttttttttt
+tttttttTTTTTT'''''''''''''''''''TTTTTTttttttt
+ttttttT''''''''''''rrrrrrr''''''''''''Ttttttt
+tttttT''''''''''''cc.....cc''''''''''''Tttttt
+ttttT''''''''''''cc.......cc''''''''''''Ttttt
+ttttT''''''''''''c...!!!...c''''''''''''Ttttt
+ttttT''''''vvccccc..!!!!!..cccccoo''''''Ttttt
+ttttT'''''vv........!ONO!........oo'''''Ttttt
+ttttT''''vv.........!!!!!.........oo''''Ttttt
+ttttT''''v...L!!M....!!!....M!!L...o''''Ttttt
+ttttT''''c..L!!O!...........!O!!L..c''''Ttttt
+tttT'''''c..!!N!!...........!!N!!..c'''''Tttt
+ttT''''''c..!O!!L...........L!!O!..c''''''Ttt
+ttT''''''c..M!!L.............L!!M..c''''''Ttt
+ttT''''''cc.......................cc''''''Ttt
+ttT'''''cc...........!!!...........cc'''''Ttt
+ttT''''cc...........!!!!!...........cc''''Ttt
+ttT''''i..M!!L......!!{!!......L!!M..y''''Ttt
+ttT''''i..!O!!L.....!!!!!.....L!!O!..y''''Ttt
+ttT''''i..!!N!!......!!!......!!N!!..y''''Ttt
+ttT''''i..L!!O!...............!O!!L..y''''Ttt
+ttT''''i...L!!M...............M!!L...y''''Ttt
+ttT''''ii...........................yy''''Ttt
+ttT'''''cc.........................cc'''''Ttt
+ttT''''''ccccc...!!!.....!!!...ccccc''''''Ttt
+ttT''''''''''c..!!!!!...!!!!!..c''''''''''Ttt
+ttT''''''''''c..!ONO!...!ONO!..c''''''''''Ttt
+tttT'''''''''c..!!!!!...!!!!!..c'''''''''Tttt
+ttttT''''''''c...!!!.....!!!...c''''''''Ttttt
+tttttTTTT''''bb.......c.......gg''''TTTTttttt
+ttttttttT'''''bb.....ccc.....gg'''''Ttttttttt
+ttttttttT''''''bbbcccc'ccccggg''''''Ttttttttt
+ttttttttT'''''''''''''''''''''''''''Ttttttttt
+ttttttttT'''''''''''''''''''''''''''Ttttttttt
+tttttttttT'''''''''''''''''''''''''Tttttttttt
+ttttttttttT'''''''''''''''''''''''Ttttttttttt
+tttttttttttTTTTTTTTTTTTTTTTTTTTTTTttttttttttt
+ttttttttttttttttttttttttttttttttttttttttttttt
+ttttttttttttttttttttttttttttttttttttttttttttt
+ENDMAP

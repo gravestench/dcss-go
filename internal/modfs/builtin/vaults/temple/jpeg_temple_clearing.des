@@ -1,0 +1,38 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:    jpeg_temple_clearing
+TAGS:    no_rotate no_pool_fixup
+TAGS:     temple_altars_11 temple_altars_14
+PLACE:   Temple
+ORIENT:  encompass
+# Stairs, tree paths, altars, decorative pillars.
+: vault.run("configure")
+FTILE:   .{tBxGTU = floor_grass
+COLOUR:  . = green / brown w:2
+MAP
+                ttttttttt
+           ttttttttttttttttt
+         ttttttttt.....ttttttttt
+      tttttttttt.........tttttttttt
+    ttttttttt""..z.....z..""ttttttttt
+   tttttttt""tt.....(.....tt""tttttttt
+ ttttttttt"tttt...........tttt"ttttttttt
+ttttt.....tttttt....z....tttttt.....ttttt
+ttt...B.....tttttt.....tttttt.....B...ttt
+tt...........ttttttt'ttttttt...........tt
+tt.C...x..B..ttttttt'ttttttt..B..x...C.tt
+tt...........tttttt'''tttttt...........tt
+ttt..B......t'''tt''w''tt'''t......B..ttt
+tttt......tttttt'''w<w'''tttttt......tttt
+ttttt"tttttttttttt''w''tttttttttttt"ttttt
+tttttt"tttttttttttt'''tttttttttttt"tttttt
+ttttttt"tt......t''ttt''t......tt"ttttttt
+ ttttttt......T..ttttttt..T......ttttttt
+ tttttt...........ttttt...........tttttt
+  ttttt.B...U.....ttttt.....U...B.ttttt
+  ttttt...........ttttt...........ttttt
+   ttttt.....B...ttttttt...B.....ttttt
+    tttttt.....tt""ttt""tt.....tttttt
+      ttttttttttttt"""ttttttttttttt
+        ttttttttttttttttttttttttt
+               ttttttttttt
+ENDMAP

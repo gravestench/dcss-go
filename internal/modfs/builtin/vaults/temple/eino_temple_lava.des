@@ -1,0 +1,34 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:    eino_temple_lava
+TAGS:     temple_altars_10 temple_altars_14
+PLACE:   Temple
+ORIENT:  encompass
+: vault.run("configure")
+COLOUR:  c = red
+MAP
+       cccc    ccc
+      cclccccccclcc
+   ccccl.lcclccl.lcccc
+  cclll...c...c...lllcc
+  clll..C.G...G.B..lllc
+  cll.....d.B.d.....llc
+ ccl..B...d...d......lcc
+ccl.......g...g.......lcc
+cl..C...............B..lc
+ccl...................lcc
+ cccGddg.........gddGccc
+ cc...................cc
+ cl..B......{......B..lc
+ cc...................cc
+ cccGddg.........gddGccc
+ccl...................lcc
+cl..B...............C..lc
+ccl.......g...g.......lcc
+ ccl......d...d...B..lcc
+  cll.....d.B.d.....llc
+  clll..B.G...G.C..lllc
+  cclll...c...c...lllcc
+   ccccl.lcclccl.lcccc
+      cclccccccclcc
+       ccc     ccc
+ENDMAP

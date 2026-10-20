@@ -1,0 +1,31 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:   hellmonk_temple_two_chambers
+TAGS:   temple_altars_6 temple_altars_7 temple_altars_8 temple_altars_12
+TAGS:   temple_altars_15
+PLACE:  Temple
+ORIENT: encompass
+FTILE:  ;DK = floor_limestone
+FTILE:  -FJ = floor_marble
+: vault.run("configure")
+SUBST:  J:TG, K:tVGA
+MAP
+  ccccccc
+ ccD;;;Dcc
+cc;;;;;;;cc
+c;;;;;;;;;c
+cD;;;K;;;Dc
+c;;;;;;;;;c
+cc;;;;;;;cc
+ ccD;;;Dcc
+  ccc;ccc
+    c{c
+  ccc-ccc
+ ccF---Fcc
+cc-------cc
+c---------c
+cF--J-J--Fc
+c---------c
+cc-------cc
+ ccF---Fcc
+  ccccccc
+ENDMAP

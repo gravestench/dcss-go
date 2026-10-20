@@ -1,0 +1,35 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:   hellmonk_temple_forest_ring
+TAGS:   temple_altars_8 temple_altars_9 temple_altars_12 temple_altars_13
+PLACE:  Temple
+ORIENT: encompass
+NSUBST: A = 1:{ / *:AG
+NSUBST: + = 1:+ / *:c
+: vault.run("configure")
+FTILE:  .+{ABGTt = floor_grass
+COLOUR: . = green
+MAP
+   tttt         tttt
+   tE.tt       tt.Et
+   tt..tt     tt..tt
+tttttt..tt   tt..tttttt
+tEttttt..ttttt..tttttEt
+t..ttttt...A...ttttt..t
+tt..ttt........tttt..tt
+ tt..t....c+c...tt..tt
+  tt....cccDccc....tt
+   tt...cHDDDHc...tt
+    t..ccDDDDDcc..t
+    tA.+DDDFDDD+.At
+    t..ccDDDDDcc..t
+   tt...cHDDDHc...tt
+  tt....cccDccc....tt
+ tt..tt...c+c....t..tt
+tt..tttt........ttt..tt
+t..ttttt...A...ttttt..t
+tEttttt..ttttt..tttttEt
+tttttt..tt   tt..tttttt
+   tt..tt     tt..tt
+   tE.tt       tt.Et
+   tttt         tttt
+ENDMAP

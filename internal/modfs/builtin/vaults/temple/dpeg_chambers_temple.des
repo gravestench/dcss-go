@@ -1,0 +1,31 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:    dpeg_chambers_temple
+TAGS:    no_rotate temple_altars_10 temple_altars_14
+PLACE:   Temple
+ORIENT:  encompass
+: vault.run("configure")
+MAP
+         vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      vvvv.........................................vvvvv
+   vvvv....vvv'vvvvvvv"vvvvvvv.vvvvvvv-vvvvvvv~vvv....vvvv
+   v....vvvv'''''vvv"""""vvv.....vvv-----vvv~~~~~vvvv....vv
+ vvv.vvvvvv'''C'''v"""D"""v...B...v---E---v~~~F~~~vvvvvv.vvv
+vv.....vvvv'''''''v"""""""v.......v-------v~~~~~~~vvvv.....vv
+v.......vvvv'''''vvv"""""vvv.....vvv-----vvv~~~~~vvvv.......v
+v...B....vvvvv'vvvvvvv"vvvvvvv.vvvvvvv-vvvvvvv~vvvv.....B...v
+vv.....v...vvv'vvvvvvv"vvvvvvv.vvvvvvv-vvvvvvv~vvv..v......vv
+ vvv.vvvvv.........................................vvvvv.vvv
+  v..vvvv...........................................vvvv..v
+  v.vvvvv.......T.............{.............T.......vvvvv.v
+  v..vvvv...........................................vvvv..v
+ vvv.vvvvv.........................................vvvvv.vvv
+vv......v..vvv~vvvvvvv-vvvvvvv.vvvvvvv"vvvvvvv'vvv..v......vv
+v...B.....vvvv~vvvvvvv-vvvvvvv.vvvvvvv"vvvvvvv'vvvv.....B...v
+v.......vvvv~~~~~vvv-----vvv.....vvv"""""vvv'''''vvvv.......v
+vv.....vvvv~~~~~~~v-------v.......v"""""""v'''''''vvvv.....vv
+ vvv.vvvvvv~~~F~~~v---E---v...B...v"""D"""v'''C'''vvvvvv.vvv
+   v....vvvv~~~~~vvv-----vvv.....vvv"""""vvv'''''vvvv....v
+   vvvv....vvv~vvvvvvv-vvvvvvv.vvvvvvv"vvvvvvv.vvv....vvvv
+      vvvv.........................................vvvv
+         vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP

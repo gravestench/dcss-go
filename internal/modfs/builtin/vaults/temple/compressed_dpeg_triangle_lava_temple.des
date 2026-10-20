@@ -1,0 +1,55 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:   compressed_dpeg_triangle_lava_temple
+TAGS:    no_rotate
+TAGS:   temple_altars_9 temple_altars_13 temple_altars_16
+TAGS:   temple_altars_19 temple_altars_21
+PLACE:  Temple
+ORIENT: encompass
+# Completely different altar points between each setting.
+: vault.run("configure")
+SUBST:  aA = ., X : xlllllll
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xllllllllllllllllllllllllllllXlllXllllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xllllllllllllllllllllllllllllll`llllllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllllll...lllllllllllllllllllllllllllllx
+xllllllllllllllllllllllllllll..F..llllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllll.......lllllllllllllllllllllllllllx
+xllllllllllllllllllllllllll....E....llllllllllllllllllllllllllx
+xlllllllllllllllllllllllll..F..c..F..lllllllllllllllllllllllllx
+xllllllllllllllllllllllll......d......llllllllllllllllllllllllx
+xlllllllllllllllllllllll...............lllllllllllllllllllllllx
+xllllllllllllllllllllll.................llllllllllllllllllllllx
+xlllllllllllllllllllll...F.E...A...E.F...lllllllllllllllllllllx
+xllllllllllllllllllll....CD.........DC....llllllllllllllllllllx
+xlllllllllllllllllll...........F...........lllllllllllllllllllx
+xllllllllllllllllll............E............llllllllllllllllllx
+xlllllllllllllllll....F.E.............E.F....lllllllllllllllllx
+xllllllllllllllll....C.D.....D.C.D.....D.C....llllllllllllllllx
+xlllllllllllllll...........F.......F...........lllllllllllllllx
+xllllllllllllll................e................llllllllllllllx
+xlllllllllllll...FE............f............EF...lllllllllllllx
+xllllllllllll...DC........ED...a...DE........CD...llllllllllllx
+xlllllllllll.......A.....F.....A.....F.....A.......lllllllllllx
+xllllllllll.........................................llllllllllx
+xllllllXll...FE.......D........F........D.......EF...llXllllllx
+xllllllll....a........E.C......D......C.E........a....llllllllx
+xllllllll..........F........E.....E........F..........llllllllx
+xllllllXll...........................................llXllllllx
+xlllllllllllll`````````````G```````G`````````````lllllllllllllx
+xlllllllllllllllllll```````````````````````lllllllllllllllllllx
+xlllllllllllllllllllll```````````````````lllllllllllllllllllllx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

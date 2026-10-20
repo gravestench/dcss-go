@@ -1,0 +1,30 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:    eino_wide_crystal_templ
+TAGS:    no_rotate temple_altars_10 temple_altars_15
+PLACE:   Temple
+ORIENT:  encompass
+SHUFFLE: a'- / A"c, += / += / =+
+SUBST:   a = b, '- = ., c = b, + = ., = = b
+CLEAR:   A"
+: vault.run("configure")
+MAP
+            bbbbb
+         aaab...baaa
+         a''-.{.-''a
+        bb-bb...bb-bb
+        b...bb.bb...b
+        b.B.......B.b
+    bbbbb...b...b...bbbbb
+    b...bb+bb.B.bb+bb...b
+bbbbb.B.+...b...b...+.B.bbbbb
+b...b...b.T.bb=bb.T.b...b...b
+b.B....bb...........bb....B.b
+b...b...bbbbb.B.bbbbb...b...b
+bbbbb.T....bb...bb....T.bbbbb
+    b...b...bb=bb...b...b
+    bbbbb.B.......B.bbbbb
+        b...b...b...b
+        bbbbb.C.bbbbb
+            b...b
+            bbbbb
+ENDMAP

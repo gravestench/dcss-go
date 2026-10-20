@@ -1,0 +1,42 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:   minmay_temple_bridge_d
+TAGS:   no_cloud_gen temple_altars_16 temple_altars_17
+PLACE:  Temple
+ORIENT: encompass
+SUBST:  A : TUV
+: vault.run("configure")
+MAP
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+lllllllll...lll...llllllllll...lllllllll
+llllllll.....l.lll.llllllll..B..llllllll
+llllllll..A..l.lvl.llll..ll.....llllllll
+llllllll.....l.lll.lll.ll.l.B.B.llllllll
+llllllll.....ll.l.lll.lll.l.....llllllll
+llllllll.....ll.l.ll.ll..ll.B.B.llllllll
+lllllll.......l.l.ll.l.lll.......lllllll
+lllllll.........l.l.ll.l...B.B.B.lllllll
+lllllll...{..A..l.l..l.l.C.......lllllll
+lllllll.........l.ll.l.l...B.B.B.lllllll
+lllllll.......lll.l.ll.l.l.......lllllll
+llllllll.....ll..ll.ll.l.ll.B.B.llllllll
+llllllll.....l.lll.lll.l.ll.....llllllll
+llllllll.....l.ll.lll.lll.l.B.B.llllllll
+llllllll..A..ll..llll.lvl.l.....llllllll
+llllllll.....llllllll.lll.l..B..llllllll
+lllllllll...llllllllll...lll...lllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+llllllllllllllllllllllllllllllllllllllll
+ENDMAP

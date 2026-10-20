@@ -1,0 +1,37 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:   grunt_temple_mini_profane
+TAGS:   no_rotate temple_altars_9 temple_altars_11
+PLACE:  Temple
+ORIENT: encompass
+: vault.run("configure")
+MAP
+    ccc      ccccccc      ccc
+   cc.c      c.....c      c.cc
+  cc..cccccccc..G..cccccccc..cc
+ cc{..+......+.....+......+..Ccc
+cc....+......+.....+......+....cc
+c....Gcccccccc.....ccccccccG....c
+ccc++ccxccc..+..B..+..cccxcc++ccc
+  c..cccc....+c...c+....cccc..c
+  c..cc.....ccccccccc.....cc..c
+  c..c...cc++...G...++cc...c..c
+  c..c..ccc+.........+ccc..c..c
+ccc++c++ccc...cc+cc...ccc++c++ccc
+c......cccc..cc...cc..cccc......c
+c.......ccc..c.B.B.c..ccc.......c
+c.G...B.cccG.+.....+.Gccc.B...G.c
+c.......ccc..c.B.B.c..ccc.......c
+c......cccc..cc...cc..cccc......c
+ccc++c++ccc...cc+cc...ccc++c++ccc
+  c..c..ccc+.........+ccc..c..c
+  c..c...cc++...G...++cc...c..c
+  c..cc.....ccccccccc.....cc..c
+  c..cccc....+c...c+....cccc..c
+ccc++ccxccc..+..B..+..cccxcc++ccc
+c....Gcccccccc.....ccccccccG....c
+cc....+......+.....+......+....cc
+ ccC..+......+.....+......+..Bcc
+  cc..cccccccc..G..cccccccc..cc
+   cc.c      c.....c      c.cc
+    ccc      ccccccc      ccc
+ENDMAP

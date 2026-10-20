@@ -1,0 +1,37 @@
+# Source Temple MAP; its Lua count condition is ported to a named hook.
+NAME:   nicolae_temple_two_arcs
+TAGS:   no_pool_fixup temple_altars_6 temple_altars_8 temple_altars_10 \
+        temple_altars_14 temple_altars_18
+PLACE:  Temple
+ORIENT: encompass
+: vault.run("configure")
+SUBST:  Z : GU
+FTILE:  `{ = floor_vault
+COLOUR: ` = blue
+MAP
+ccccccccccccccccccccccccccccccccccc
+cc...Z...wwwwwwwwwwwwwwwww...Z...cc
+ccc.......wwwwwwwwwwwwwww.......ccc
+cccc.......wwwwwwwwwwwww.......cccc
+ccccc...D...wwwwwwwwwww...D...ccccc
+ccccc.......wwwwwwwwwww.......ccccc
+cccccc...H...wwwwwwwww...H...cccccc
+cccccc.......wwwwwwwww.......cccccc
+cccccc...E...wwwwwwwww...E...cccccc
+ccccccc.......wwwwwww.......ccccccc
+ccccccc...J...```````...J...ccccccc
+ccccccc.......```````.......ccccccc
+ccccccc...F...```{```...F...ccccccc
+ccccccc.......```````.......ccccccc
+ccccccc...J...```````...J...ccccccc
+ccccccc.......wwwwwww.......ccccccc
+cccccc...E...wwwwwwwww...E...cccccc
+cccccc.......wwwwwwwww.......cccccc
+cccccc...H...wwwwwwwww...H...cccccc
+ccccc.......wwwwwwwwwww.......ccccc
+ccccc...D...wwwwwwwwwww...D...ccccc
+cccc.......wwwwwwwwwwwww.......cccc
+ccc.......wwwwwwwwwwwwwww.......ccc
+cc...Z...wwwwwwwwwwwwwwwww...Z...cc
+ccccccccccccccccccccccccccccccccccc
+ENDMAP
