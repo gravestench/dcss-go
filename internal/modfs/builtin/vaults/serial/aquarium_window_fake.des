@@ -1,0 +1,16 @@
+# Window fake is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_window_fake
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  30
+TAGS:    serial_aquarium_window
+: vault.run("aquarium_setup.configure")
+MAP
+ xxxxxx
+ xxxxxx
+ cwxxxx
+@mwxxxx
+ cwxxxx
+ xxxxxx
+ xxxxxx
+ENDMAP

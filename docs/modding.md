@@ -2095,6 +2095,22 @@ keeps its source terrain without making an artificial corridor. Each child
 still needs only one `.des` file and a call to the shared
 `column_ruins_setup.configure` hook where the original setup ran.
 
+The aquarium family shows how one controller can share a temporary
+generation choice across many independently selectable maps. Its
+`serial_aquarium.lua` hook writes `AQUARIUM_POOL_SIZE` to the current
+generation context, and each child reads it through `api:setting` in
+`aquarium_setup.configure`. This value belongs to this level's generation;
+it is not a process global or an ECS component on a live actor. Children
+keep the source MAP and use `SUBVAULT` to place smaller bridge pieces.
+The helper weights are written beside the bridge shape as
+`aquarium_subvault_wall:3 / aquarium_subvault_window:2 / aquarium_subvault_balcony:1`.
+To add a new aquarium piece, give its `.des` file the relevant group tag,
+call the shared setup hook at the intended directive position, and keep
+any local shape decisions in a named Lua hook. The same helper selects the
+source ecology from branch and absolute depth. A merged slime's body count
+is live actor state in `monster.slime_blob`; mods should attach that
+component rather than add another monster catalog row for each size.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls

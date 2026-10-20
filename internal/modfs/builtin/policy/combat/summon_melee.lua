@@ -123,7 +123,7 @@ function summon_melee.attack(ctx, summon, target)
     end
 
     local adjusted = ctx:get(summon, component.SUMMON_STATS)
-    local blob = ctx:get(summon, component.SUMMON_BLOB)
+    local blob = ctx:get(summon, component.SLIME_BLOB)
     local special = state.heads > 0 or adjusted ~= nil or
         blob ~= nil or
         ctx:has(summon, "magic.summon_simulacrum") or

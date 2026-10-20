@@ -172,7 +172,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
 
     catalog.get(state.source_category, state.source_id)
 
-    local blob = ctx:get(entity, component.SUMMON_BLOB)
+    local blob = ctx:get(entity, component.SLIME_BLOB)
 
     if blob and (state.source_id ~= spells.SPELL_PLANEREND or
         actor.kind_id ~= monsters.MONS_SLIME_CREATURE or

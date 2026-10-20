@@ -187,6 +187,12 @@ local function helper_choice(argument, random)
         local tag, weight = part:match("^%s*(%S+)%s+w:(%d+)%s*$")
 
         if not tag then
+            -- Source SUBVAULT weights use tag:3 as well as the newer w:3
+            -- form. Both choose from the same weighted helper pool.
+            tag, weight = part:match("^%s*(%S+):(%d+)%s*$")
+        end
+
+        if not tag then
             tag = part:match("^%s*(%S+)%s*$")
             weight = 10
         end
@@ -467,6 +473,12 @@ local function hook_api(random, events, line, player)
     -- Expose the selected map tag for shop-or-temple controller decisions.
     function api:map_tag()
         return player.map_tag
+    end
+
+    -- Child maps read the controller's local choices without a process
+    -- global or a family-specific engine API.
+    function api:setting(name)
+        return player.settings and player.settings[name]
     end
 
     -- Avoid offering a unique item already created in the current run.

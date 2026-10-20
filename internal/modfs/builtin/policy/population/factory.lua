@@ -175,10 +175,19 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
 
     local profile = roster.profile(source.id)
     local hp = hit_points.roll(ctx, source.average_hp_10x)
+    local blob_size = options.blob_size or 1
+
+    if blob_size ~= 1 and
+        (kind_id ~= monsters.MONS_SLIME_CREATURE or
+            blob_size < 2 or blob_size > 5) then
+        error("invalid slime creature size " .. blob_size)
+    end
 
     if hp < profile.minimum or hp > profile.maximum then
         error("invalid " .. kind_id .. " HP " .. hp)
     end
+
+    hp = hp * blob_size
 
     local loadout
 
@@ -198,6 +207,10 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
     })
     ctx:add(monster, "core.combat", { shield_blocks = 0 })
     ctx:add(monster, "core.ai", { behavior = "wander" })
+
+    if blob_size > 1 then
+        ctx:add(monster, component.SLIME_BLOB, { size = blob_size })
+    end
     create_loadout(ctx, monster, loadout, options.origin)
     give_explicit_equipment(ctx, monster, equipment, options.origin)
 

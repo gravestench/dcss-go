@@ -15,6 +15,9 @@ local quality = require("constants.vault_item_quality")
 local schools = require("constants.spell_schools")
 local weapon_brands = require("constants.weapon_brands")
 local terrain = require("constants.terrain")
+local hit_points = require("policy.population.hit_points")
+local slime_blob = require("policy.monsters.slime_blob")
+local display = require("policy.combat.monster_support.display")
 
 local test = {}
 
@@ -305,6 +308,30 @@ local function research_items_materialize(ctx)
         "ident:type does not reveal unrelated properties")
 end
 
+-- A named DES slime becomes one ECS actor with source-sized HP, melee
+-- damage, and display. These values must agree with Planerend's slime state.
+local function merged_slime_is_one_actor(ctx)
+    local world = world_context(ctx)
+    local definition = catalog.get(categories.MONSTERS,
+        monsters.MONS_SLIME_CREATURE)
+    local base_hp = hit_points.roll(world, definition.average_hp_10x)
+    local actor = factory.spawn(world, monsters.MONS_SLIME_CREATURE,
+        14, 26, 10, {
+            origin = origin,
+            blob_size = 3,
+        })
+    local health = ctx:get(actor, component.HEALTH)
+
+    harness.equal(ctx:get(actor, component.SLIME_BLOB).size, 3,
+        "merged slime size belongs to the actor")
+    harness.equal(health.max, base_hp * 3,
+        "three slime bodies triple their health")
+    harness.equal(slime_blob.attack_damage(world, actor, 5), 15,
+        "three bodies triple natural melee damage")
+    harness.equal(display.name(world, actor),
+        "very large slime creature", "display reads live blob size")
+end
+
 -- Exercise factory provenance, source overrides, habitat writes, and atomic
 -- failure in one world.
 function test.run(ctx)
@@ -315,6 +342,7 @@ function test.run(ctx)
     water_monster_prepares_habitat(ctx)
     failed_placement_is_atomic(ctx)
     research_items_materialize(ctx)
+    merged_slime_is_one_actor(ctx)
 end
 
 return test

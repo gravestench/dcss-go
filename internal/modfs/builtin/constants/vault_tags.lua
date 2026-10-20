@@ -22,6 +22,11 @@ local tags = {
     COLUMN_RUINS_PORTAL = "serial_column_ruins_portal",
     COLUMN_RUINS_FANCY = "serial_column_ruins_fancy",
     COLUMN_RUINS_SIMPLE = "serial_column_ruins_simple",
+    AQUARIUM_BRIDGE = "serial_aquarium_bridge",
+    AQUARIUM_WINDOW = "serial_aquarium_window",
+    AQUARIUM_VIEW = "serial_aquarium_view",
+    AQUARIUM_BALCONY = "serial_aquarium_balcony",
+    AQUARIUM_POOL = "serial_aquarium_pool",
 }
 
 return tags

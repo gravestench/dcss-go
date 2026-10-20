@@ -53,6 +53,7 @@ local function monster_options(record, level)
         site = site,
         depth = level.id,
         base_id = arguments.base_id ~= "" and arguments.base_id or nil,
+        blob_size = arguments.blob_size or 1,
         variant = arguments.variant,
         colour = arguments.colour ~= "" and arguments.colour or nil,
         attitude = arguments.attitude ~= "" and arguments.attitude or nil,
@@ -128,6 +129,7 @@ local function fallback_monster(ctx, level, record)
             arguments.selected_expression = selected.source
             arguments.kind_id = resolved.kind_id
             arguments.base_id = resolved.base_id or ""
+            arguments.blob_size = resolved.blob_size or 1
             arguments.variant = resolved.variant or ""
             arguments.colour = resolved.colour or ""
             arguments.attitude = resolved.attitude or ""

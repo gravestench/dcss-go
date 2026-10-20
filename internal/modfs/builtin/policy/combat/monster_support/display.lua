@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local component = require("constants.component")
+local slime_blob = require("policy.monsters.slime_blob")
 
 local display = {}
 
@@ -14,7 +15,7 @@ function display.name(ctx, monster)
 
     local definition = catalog.get("monsters", actor.kind_id)
 
-    return definition.name
+    return slime_blob.name(ctx, monster, definition.name)
 end
 
 return display

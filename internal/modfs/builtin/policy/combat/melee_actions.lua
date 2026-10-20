@@ -4,6 +4,7 @@ local equipment = require("policy.combat.equipment")
 local auxiliary = require("policy.combat.auxiliary")
 local fighter = require("policy.combat.fighter")
 local melee = require("policy.combat.melee")
+local slime_blob = require("policy.monsters.slime_blob")
 local practice = require("policy.combat.practice")
 local player_health = require("policy.combat.player_health")
 local statuses = require("policy.magic.effects.statuses.player")
@@ -369,7 +370,8 @@ function actions.monster(ctx, attacker)
     local attack_input = {
         attacker = attacker,
         hd = monster_stats.hit_dice(ctx, attacker, definition),
-        damage = monster_roll.attack_damage(ctx, attacker, attack.damage),
+        damage = monster_roll.attack_damage(ctx, attacker,
+            slime_blob.attack_damage(ctx, attacker, attack.damage)),
         type_id = attack_type,
         flavour_id = attack.flavour_id,
         weapon = weapon,
@@ -534,7 +536,8 @@ function actions.monster_target(ctx, attacker, target)
         attacker = attacker,
         hd = monster_stats.hit_dice(ctx, attacker, attacker_def,
             summon_stats and summon_stats.hd or nil),
-        damage = monster_roll.attack_damage(ctx, attacker, attack.damage),
+        damage = monster_roll.attack_damage(ctx, attacker,
+            slime_blob.attack_damage(ctx, attacker, attack.damage)),
         type_id = attack_type,
         flavour_id = attack.flavour_id,
         weapon = weapon,

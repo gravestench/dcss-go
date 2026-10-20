@@ -1,0 +1,35 @@
+# Bridge island large is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_bridge_island_large
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  2
+TAGS:    serial_aquarium_bridge luniq_aquarium_bridge_island
+SUBVAULT: u : aquarium_subvault_large_water:4   /\
+              aquarium_subvault_large_open:3    /\
+              aquarium_subvault_large_1_pool:1  /\
+              aquarium_subvault_large_4_pools:2
+: vault.run("aquarium_bridge.island")
+: vault.run("aquarium_setup.configure")
+MAP
+          p
+ xxxxxxxpppppxxxxxxx
+ xEEEEEEpppppEEEEEEx
+ xEEEEDDpppppDDEEEEx
+ xEEwwwwwpppwwwwwEEx
+ xEEwcmmmJpJmmmcwEEx
+ xEDwm.........mwDEx
+ xEDwm.uuuuuuu.mwDEx
+ qqqwm.uuuuuuu.mwsss
+ qqqqK.uuuuuuu.Mssss
+qqqqqq.uuuuuuu.ssssss
+ qqqqK.uuuuuuu.Mssss
+ qqqwm.uuuuuuu.mwsss
+ xEDwm.uuuuuuu.mwDEx
+ xEDwm.........mwDEx
+ xEEwcmmmLrLmmmcwEEx
+ xEEwwwwwrrrwwwwwEEx
+ xEEEEDDrrrrrDDEEEEx
+ xEEEEEErrrrrEEEEEEx
+ xxxxxxxrrrrrxxxxxxx
+          r
+ENDMAP

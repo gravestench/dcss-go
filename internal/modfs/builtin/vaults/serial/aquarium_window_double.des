@@ -1,0 +1,51 @@
+# Window double is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_window_double
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  2
+TAGS:    serial_aquarium_window
+# Room entries
+NSUBST:  ! = 1:@ / *:!
+SUBST:   ! = @...
+# Window 1: pqr
+SHUFFLE: pqr/&"'
+SUBST:   & = c
+SUBST:   " = x
+SUBST:   ' = x
+SUBST:   p = m
+SUBST:   q = m
+SUBST:   r = c
+# Window 2: uyz
+SHUFFLE: uyz/&"'
+SUBST:   & = c
+SUBST:   " = x
+SUBST:   ' = x
+SUBST:   u = m
+SUBST:   y = m
+SUBST:   z = c
+# Window 3: JKL
+SHUFFLE: JKL/&"'
+SUBST:   & = c
+SUBST:   " = x
+SUBST:   ' = x
+SUBST:   J = m
+SUBST:   K = m
+SUBST:   L = c
+# Window 4: QSZ
+SHUFFLE: QSZ/&"'
+SUBST:   & = c
+SUBST:   " = x
+SUBST:   ' = x
+SUBST:   Q = m
+SUBST:   S = m
+SUBST:   Z = c
+: vault.run("aquarium_setup.configure")
+MAP
+@.......@
+xzyumpqrx
+xDwwwwwDx
+xEDDDDDEx
+xDwwwwwDx
+xZSQmJKLx
+@.......@
+ENDMAP

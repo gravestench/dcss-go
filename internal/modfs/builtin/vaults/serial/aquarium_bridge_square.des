@@ -1,0 +1,23 @@
+# Bridge square is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_bridge_square
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  40
+TAGS:    serial_aquarium_bridge
+: vault.run("aquarium_bridge.square")
+: vault.run("aquarium_setup.configure")
+MAP
+      p
+ xxxpppppxxx
+ xEEpppppEEx
+ xEDpppppDEx
+ qqqwpppwsss
+ qqqqJpMssss
+qqqqqq.ssssss
+ qqqqKrLssss
+ qqqwrrrwsss
+ xEDrrrrrDEx
+ xEErrrrrEEx
+ xxxrrrrrxxx
+      r
+ENDMAP

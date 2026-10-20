@@ -40,7 +40,7 @@ function effect.resolve(ctx, caster, foe, slot, plan)
             spells.SPELL_PLANEREND, kind, 1, nil, options)
 
         if creature and kind == monsters.MONS_SLIME_CREATURE then
-            ctx:add(creature, component.SUMMON_BLOB, {
+            ctx:add(creature, component.SLIME_BLOB, {
                 size = 5,
             })
         end

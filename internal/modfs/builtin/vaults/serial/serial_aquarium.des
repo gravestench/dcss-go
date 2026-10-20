@@ -1,0 +1,8 @@
+# The aquarium controller chooses the pool width before selecting five
+# groups of bridges, windows, views, balconies, and pools.
+NAME: serial_aquarium
+TAGS: allow_dup extra luniq_serial decor
+TAGS: layout_rooms layout_corridors
+DEPTH: D, Depths, Elf
+CHANCE: 1%
+: vault.post_place("place_aquarium")

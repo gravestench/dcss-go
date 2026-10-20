@@ -1,0 +1,15 @@
+# Subvault large water is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_subvault_large_water
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+TAGS:    aquarium_subvault_large_water no_exits unrand
+: vault.run("aquarium_setup.configure")
+MAP
+cmmmmmc
+mwwwwwm
+mwDDDwm
+mwDDDwm
+mwDDDwm
+mwwwwwm
+cmmmmmc
+ENDMAP

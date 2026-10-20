@@ -1,0 +1,23 @@
+# Bridge long joined is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_bridge_long_joined
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  10
+TAGS:    serial_aquarium_bridge luniq_aquarium_bridge_long
+: vault.run("aquarium_bridge.long_joined")
+: vault.run("aquarium_setup.configure")
+MAP
+      p     s
+ xxxpppppxsssssxxx
+ xEEpppppEsssssEEx
+ xEDpppppDsssssDEx
+ qqqwpppwwwssswyyy
+ qqqqJpNmmmPsLyyyy
+qqqqqq.....u.yyyyyy
+ qqqqKrOmmmQzMyyyy
+ qqqwrrrwwwzzzwyyy
+ xEDrrrrrDzzzzzDEx
+ xEErrrrrEzzzzzEEx
+ xxxrrrrrxzzzzzxxx
+      r     z
+ENDMAP

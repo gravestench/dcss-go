@@ -11,6 +11,7 @@ local item_quality = require("constants.vault_item_quality")
 local colours = require("constants.vault_colours")
 local monster_flags = require("constants.monster_flags")
 local schools = require("constants.spell_schools")
+local slime_blob = require("policy.monsters.slime_blob")
 
 local resolve = {}
 local names_by_category = {}
@@ -239,6 +240,10 @@ function resolve.validate_monster(selected, site)
         name:match("^(.-) skeleton$") or
         name:match("^(.-) simulacrum$")
 
+    if slime_blob.size_for_name(name) then
+        return
+    end
+
     find_name(categories.MONSTERS, base_name or name, site)
 end
 
@@ -306,6 +311,7 @@ function resolve.monster(ctx, selected, depth, site)
     local variant = name:match(" (zombie)$") or
         name:match(" (skeleton)$") or
         name:match(" (simulacrum)$")
+    local blob_size = slime_blob.size_for_name(name)
     local kind_id
     local base_id
     local colour = selected.colour and selected.colour:lower()
@@ -319,6 +325,8 @@ function resolve.monster(ctx, selected, depth, site)
     elseif name:match("^monster_array_[1-7]$") then
         -- Source mons_list::get_monster falls back to RANDOM_MONSTER.
         kind_id = random_monsters.pick(ctx, name, source_depth(selected, depth), site)
+    elseif blob_size then
+        kind_id = monster_ids.MONS_SLIME_CREATURE
     elseif base_name then
         if variant == "zombie" then
             kind_id = monster_ids.MONS_ZOMBIE
@@ -339,6 +347,7 @@ function resolve.monster(ctx, selected, depth, site)
     return {
         kind_id = kind_id,
         base_id = base_id,
+        blob_size = blob_size,
         variant = variant,
         colour = colour,
         attitude = selected.attitude,

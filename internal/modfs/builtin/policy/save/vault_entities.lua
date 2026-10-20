@@ -3,6 +3,8 @@ local effects = require("constants.vault_effects")
 local origin_policy = require("policy.population.origin")
 local item_ids = require("ids.items")
 local monster_specs = require("policy.generation.vaults.specs.monster")
+local slime_blob = require("policy.monsters.slime_blob")
+local monsters = require("ids.monsters")
 
 local vault_entities = {}
 
@@ -119,6 +121,15 @@ local function validate_origin(ctx, entity, origin, levels, seen)
 
         if actor then
             validate_actor_overrides(ctx, entity, record, arguments)
+
+            -- The selected merged body count is part of the authored
+            -- monster, so a restored actor must retain that ECS state.
+            if actor.kind_id == monsters.MONS_SLIME_CREATURE and
+                slime_blob.size(ctx, entity) ~=
+                    (arguments.blob_size or 1) then
+                error("entity " .. ctx:id(entity) ..
+                    " has forged vault slime size")
+            end
         end
     elseif origin.occurrence == origin_policy.CORPSE_OCCURRENCE then
         local corpse = ctx:get(entity, component.CORPSE)

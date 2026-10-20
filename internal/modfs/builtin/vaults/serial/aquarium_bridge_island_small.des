@@ -1,0 +1,28 @@
+# Bridge island small is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_bridge_island_small
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  10
+TAGS:    serial_aquarium_bridge luniq_aquarium_bridge_island
+SUBVAULT: u : aquarium_subvault_small_open:5 / aquarium_subvault_small_water:3
+: vault.run("aquarium_bridge.island")
+: vault.run("aquarium_setup.configure")
+MAP
+        p
+ xxxxxpppppxxxxx
+ xEEEEpppppEEEEx
+ xEEDDpppppDDEEx
+ xEDwwwpppwwwDEx
+ xEDwcmJpJmcwDEx
+ qqqwm.....mwsss
+ qqqqK.uuu.Mssss
+qqqqqq.uuu.ssssss
+ qqqqK.uuu.Mssss
+ qqqwm.....mwsss
+ xEDwcmLrLmcwDEx
+ xEDwwwrrrwwwDEx
+ xEEDDrrrrrDDEEx
+ xEEEErrrrrEEEEx
+ xxxxxrrrrrxxxxx
+        r
+ENDMAP

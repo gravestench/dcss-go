@@ -1,0 +1,17 @@
+# Balcony double 3 is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_balcony_double_3
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  3
+TAGS:    serial_aquarium_balcony luniq_aquarium_balcony_double
+: vault.run("aquarium_setup.configure")
+MAP
+xxxc@cxxxxxxxxx
+xEwm.mwEEDDDEEx
+xDwm.mwDwwwwwEx
+xDwm.mwDwcmcwDx
+xDwcmcwDwm.mwDx
+xEwwwwwDwm.mwDx
+xEEDDDEEwm.mwEx
+xxxxxxxxxc@cxxx
+ENDMAP

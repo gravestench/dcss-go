@@ -1,0 +1,26 @@
+# Bridge straight is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_bridge_straight
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  20
+TAGS:    serial_aquarium_bridge
+SUBVAULT: p : aquarium_subvault_bridge
+: vault.run("aquarium_bridge.nonbridge_q")
+SUBVAULT: r : aquarium_subvault_bridge
+: vault.run("aquarium_bridge.nonbridge_s")
+: vault.run("aquarium_setup.configure")
+MAP
+      p
+ xxxpppppxxx
+ xEEpppppEEx
+ xEDpppppDEx
+ qqqwpppwsss
+ qqqqmpmssss
+qqqqqq.ssssss
+ qqqqmrmssss
+ qqqwrrrwsss
+ xEDrrrrrDEx
+ xEErrrrrEEx
+ xxxrrrrrxxx
+      r
+ENDMAP

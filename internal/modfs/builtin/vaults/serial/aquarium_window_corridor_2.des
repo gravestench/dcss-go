@@ -1,0 +1,18 @@
+# Window corridor 2 is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_window_corridor_2
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  3
+TAGS:    serial_aquarium_window luniq_aquarium_window_big
+: vault.run("aquarium_setup.configure")
+MAP
+xxxxxxxxxxxxxxxxxxx
+xxxEEDDDEDDDEDDDEEx
+xxxEDwwwDwwwDwwwDEx
+xxxxxcmcxcmcxcmcxxx
+@.................@
+xxxcmcxcmcxcmcxxxxx
+xEDwwwDwwwDwwwDExxx
+xEEDDDEDDDEDDDEExxx
+xxxxxxxxxxxxxxxxxxx
+ENDMAP

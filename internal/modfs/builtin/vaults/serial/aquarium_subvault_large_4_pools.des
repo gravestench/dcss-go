@@ -1,0 +1,16 @@
+# Subvault large 4 pools is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_subvault_large_4_pools
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+TAGS:    aquarium_subvault_large_4_pools unrand
+SUBST:   Z : .:35 0:10 9:1 $:3 %:1
+: vault.run("aquarium_setup.configure")
+MAP
+cmc.cmc
+mwm.mwm
+cmc.cmc
+...Z...
+cmc.cmc
+mwm.mwm
+cmc.cmc
+ENDMAP

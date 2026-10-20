@@ -1,0 +1,24 @@
+# Pool side is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_pool_side
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  10
+TAGS:    serial_aquarium_pool
+NSUBST:  ! = 1:+ / *:!
+SUBST:   ! = +xxxx
+: vault.run("aquarium_setup.configure")
+MAP
+xx!xx!xxx
+xx......x
+xx......x
+xx......!
+xcmmc...x
+xxwwm...x
+xxwwm...!
+xxwwm...x
+xcmmc...x
+xx......!
+xx......x
+xx......x
+xx!xx!xxx
+ENDMAP

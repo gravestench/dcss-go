@@ -1,0 +1,35 @@
+# Window corridor 3 is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_window_corridor_3
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  5
+TAGS:    serial_aquarium_window luniq_aquarium_window_big
+# Window
+SHUFFLE: pqrs / uyuz / HHHH / JJKL
+# Case 1 - 2 windows of 1
+SUBST:   p = c
+SUBST:   q = x
+SUBST:   r = x
+SUBST:   s = x
+# Case 2 - 3 windows of 1
+SUBST:   u = c
+SUBST:   y = x
+SUBST:   z = m
+# Case 3 - long window
+SUBST:   H = m
+# Case 4 - 2 windows of 3
+SUBST:   J = m
+SUBST:   K = c
+SUBST:   L = x
+: vault.run("aquarium_setup.configure")
+MAP
+xxxxxxxxxxxxxxxxx
+xEEDDDDDDDDDDDEEx
+xEDwwwwwwwwwwwDEx
+xxxcmpqrsrqpmcxxx
+@...............@
+xxxcmpqrsrqpmcxxx
+xEDwwwwwwwwwwwDEx
+xEEDDDDDDDDDDDEEx
+xxxxxxxxxxxxxxxxx
+ENDMAP

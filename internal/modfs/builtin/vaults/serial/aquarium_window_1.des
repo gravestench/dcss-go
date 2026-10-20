@@ -1,0 +1,18 @@
+# Window 1 is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_window_1
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  25
+TAGS:    serial_aquarium_window
+: vault.run("aquarium_setup.configure")
+MAP
+@xxxx
+.xEEx
+.xDEx
+.cwDx
+.mwDx
+.cwDx
+.xDEx
+.xEEx
+@xxxx
+ENDMAP

@@ -64,7 +64,7 @@ context rather than a handler API for each game domain.
 | Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
 | Player mutations | Source definitions and Lua-owned mutation records, transitions, passive effects, abilities, and saved state; Vampire blood rituals and Bat Form are implemented; source consumers in other unported domains remain inventoried below | `content/mutations`, `policy/mutations`, `policy/abilities`, `schemas/character_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
-| Persistence | Version-21 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
+| Persistence | Version-24 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
 
 Items support pickup, drop, wielding, armour delays, and put-on/removal of all
 24 active jewellery records. All 17 active potions and 19 active scrolls have
@@ -324,15 +324,25 @@ typed level record. Solid `no_exits` decorations now place without
 inventing an entry corridor. Hell and Pandemonium portal gameplay still
 depends on those destination branches being implemented.
 
-The builder and serial count is now 362 of 600. Forest generation exposed
+The fifty-three-definition aquarium family retains the source controller
+and all fifty-two authored child maps. One Lua controller picks a shared
+pool width and requests bridge, window, view, balcony, and pool pieces in
+source order. Each child keeps its exact `.des` MAP rows and calls the
+shared ecology hook at the authored point. Nested bridge helpers use their
+original 3:2:1 weights. All nine Dungeon depth bands and Elf are placed;
+fog-machine instructions remain typed marker records until that marker
+effect runs. Source-sized slime creatures now use a shared Akara component
+for HP, natural damage, and display, including Planerend summons.
+
+The builder and serial count is now 415 of 600. Forest generation exposed
 a missing bow and crossbow missile policy; arrows and bolts now use one
 Lua launcher resolver with their catalog projectile values.
 
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
 `uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those
-IDs. Save version 23 rejects older snapshots that lack complete map-use
-history.
+IDs. Save version 24 rejects older snapshots that lack complete map-use
+history or still use the summon-only slime component.
 Keeper names, exact source RNG sequences, and every special price case still
 need parity review; the saved keeper seed leaves a place for that work without
 changing the ECS ownership model.

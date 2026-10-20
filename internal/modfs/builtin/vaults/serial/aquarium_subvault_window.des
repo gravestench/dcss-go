@@ -1,0 +1,13 @@
+# Subvault window is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_subvault_window
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+TAGS:    aquarium_subvault_window unrand
+: vault.run("aquarium_setup.configure")
+MAP
+ xDD
+ cwDw
+@mwDwm
+ cwDw
+ xDD
+ENDMAP

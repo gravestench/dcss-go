@@ -1,0 +1,17 @@
+# Balcony 1b is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_balcony_1b
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  10
+TAGS:    serial_aquarium_balcony
+: vault.run("aquarium_setup.configure")
+MAP
+xxxc@cxxx
+xEwm.mwEx
+xDwm.mwDx
+xDwm.mwDx
+xDwcmcwDx
+xEwwwwwEx
+xEEDDDEEx
+xxxxxxxxx
+ENDMAP

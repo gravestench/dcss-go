@@ -383,7 +383,7 @@ local function planerend_blob(ctx, game)
     local ordinary_hp = hit_points.roll(game, definition.average_hp_10x)
     local health = ctx:get(creature, component.HEALTH)
 
-    harness.equal(ctx:get(creature, component.SUMMON_BLOB).size, 5,
+    harness.equal(ctx:get(creature, component.SLIME_BLOB).size, 5,
         "Planerend stores the source merged size")
     harness.equal(health.max, ordinary_hp * 5,
         "Planerend merged slime has five bodies of HP")

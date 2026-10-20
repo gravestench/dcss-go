@@ -1,0 +1,23 @@
+# Window corner is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_window_corner
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  10
+TAGS:    serial_aquarium_window
+SHUFFLE: pqr/yzu
+SUBST:   p = c
+SUBST:   q = x
+SUBST:   r = x
+SUBST:   y = m
+SUBST:   z = m
+SUBST:   u = c
+: vault.run("aquarium_setup.configure")
+MAP
+@xxxxxxx
+.cwDEEx
+.mwDDEx
+.pwDDDx
+.qwwwwx
+.rqpmcx
+.......@
+ENDMAP

@@ -1,0 +1,19 @@
+# Pool corner is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_pool_corner
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  10
+TAGS:    serial_aquarium_pool
+NSUBST:  ! = 1:+ / *:!
+SUBST:   ! = +xxxx
+: vault.run("aquarium_setup.configure")
+MAP
+xxxxxxxx
+xxxxcxxx
+xxwwm..!
+xxwwm..x
+xcmmc..x
+xx.....!
+xx.....x
+xx!xx!xx
+ENDMAP

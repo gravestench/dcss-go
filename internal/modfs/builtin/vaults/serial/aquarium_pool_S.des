@@ -1,0 +1,34 @@
+# Pool s is one authored aquarium shape.
+# The MAP remains source-shaped; its Lua hook chooses local pool ecology.
+NAME: aquarium_pool_S
+TAGS: allow_dup no_pool_fixup no_monster_gen no_item_gen no_trap_gen transparent
+WEIGHT:  5
+TAGS:    serial_aquarium_pool luniq_aquarium_pool_big
+NSUBST:  ! = 1:+ / *:!
+SUBST:   ! = +xxxx
+NSUBST:  ? = 1:+ / *:?
+SUBST:   ? = +xxxx
+: vault.run("aquarium_setup.configure")
+MAP
+xx!x!x!x!xx
+xx.......xx
+xx.......xx
+xx.......xx
+xcmmmc...xx
+xxwwwm...xx
+xxwwwm...xx
+xxwwwm...xx
+xcmmmc...xx
+xx.......xx
+xx.......xx
+xx.......xx
+xx...cmmmcx
+xx...mwwwxx
+xx...mwwwxx
+xx...mwwwxx
+xx...cmmmcx
+xx.......xx
+xx.......xx
+xx.......xx
+xx?x?x?x?xx
+ENDMAP

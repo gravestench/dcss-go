@@ -1,9 +1,9 @@
 local component = require("constants.component")
 
--- Planerend creates a large slime creature. Size belongs to this summoned
--- actor rather than the shared monster catalog or the casting module.
+-- A merged slime is one actor with several bodies. Vault names and
+-- Planerend both set this size; HP, melee damage, and display read it.
 local schema = {
-    id = component.SUMMON_BLOB,
+    id = component.SLIME_BLOB,
     version = 1,
     fields = {
         size = {
