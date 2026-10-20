@@ -1,0 +1,13 @@
+# Source: crawl-ref/source/dat/des/builder/layout_city.des, layout_onion_city.
+# The named Lua hook ports its recursive room script; this DES file keeps
+# the source's branch eligibility, weight, and clear-door declaration.
+NAME:   layout_onion_city
+DEPTH:  Elf, Pan
+WEIGHT: 10 (Elf), 5 (Pan)
+ORIENT: encompass
+KFEAT:  ~ = closed_clear_door
+TAGS:   overwritable layout allow_dup unrand layout_type_city
+TAGS:   no_rotate no_hmirror no_vmirror
+: vault.run("layout_onion_city")
+MAP
+ENDMAP

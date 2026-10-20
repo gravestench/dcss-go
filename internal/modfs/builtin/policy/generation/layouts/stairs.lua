@@ -21,6 +21,7 @@ local new_down = { "}", ")", "]" }
 -- deep water cannot prove an ordinary Dungeon exit is reachable.
 local function passable(glyph)
     return glyph == "." or glyph == "W" or glyph == "+" or
+        glyph == "~" or
         glyph == "=" or glyphs.up[glyph] or glyphs.down[glyph]
 end
 

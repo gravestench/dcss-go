@@ -15,6 +15,7 @@ glyphs.terrain = {
     t = "DNGN_TREE",
     ["."] = "DNGN_FLOOR",
     ["+"] = "DNGN_CLOSED_DOOR",
+    ["~"] = "DNGN_CLOSED_CLEAR_DOOR",
     ["="] = "DNGN_RUNED_DOOR",
     W = "DNGN_SHALLOW_WATER",
     w = "DNGN_DEEP_WATER",
