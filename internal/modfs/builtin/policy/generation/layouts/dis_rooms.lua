@@ -27,11 +27,37 @@ function rooms.box(builder, x1, y1, x2, y2)
     end
 end
 
--- A candidate wall separates two floor cells along one axis. Rejecting
--- cross-shaped junctions prevents a door from erasing a structural corner.
-local function door_candidate(builder, x, y)
+-- The source walks each wall direction until the first corner. A corridor
+-- irregularity before that corner vetoes an otherwise adjacent opening.
+local function wall_clear(builder, x, y, wall, horizontal, distance)
+    for _, step in ipairs({ -1, 1 }) do
+        for offset = 1, distance do
+            local line_x = x + (horizontal and step * offset or 0)
+            local line_y = y + (horizontal and 0 or step * offset)
+            local side_x = horizontal and 0 or 1
+            local side_y = horizontal and 1 or 0
+
+            if not builder:inside({ x = line_x + side_x, y = line_y + side_y }) or
+                not builder:inside({ x = line_x - side_x, y = line_y - side_y }) or
+                builder:cell(line_x + side_x, line_y + side_y) ~= "." or
+                builder:cell(line_x - side_x, line_y - side_y) ~= "." then
+                break
+            end
+
+            if builder:cell(line_x, line_y) ~= wall then
+                return false
+            end
+        end
+    end
+
+    return true
+end
+
+-- A candidate wall separates two floor cells along one axis. The source
+-- checks north/south first, then east/west if that direction cannot open.
+local function door_candidate(builder, x, y, wall, check_distance)
     if not builder:inside({ x = x, y = y }) or
-        builder:cell(x, y) ~= "x" then
+        builder:cell(x, y) ~= wall then
         return false
     end
 
@@ -40,20 +66,25 @@ local function door_candidate(builder, x, y)
     local east = builder:cell(x + 1, y) == "."
     local west = builder:cell(x - 1, y) == "."
 
-    return (north and south and not east and not west) or
-        (east and west and not north and not south)
+    return (north and south and
+            wall_clear(builder, x, y, wall, true, check_distance)) or
+        (east and west and
+            wall_clear(builder, x, y, wall, false, check_distance))
 end
 
--- Sample each interior wall at most once. This mirrors the source's bounded
--- random room connector while avoiding repeated draws for the same cell.
-function rooms.connect(builder, minimum, maximum)
+-- Sample each interior coordinate at most once, including floor and rock.
+-- The source's min/max count limits checked points, not successful doors.
+function rooms.connect(builder, minimum, maximum, wall, replacement,
+    check_distance)
+    wall = wall or "x"
+    replacement = replacement or "+"
+    check_distance = check_distance or grid.width
+
     local candidates = {}
 
     for y = 1, grid.height - 2 do
         for x = 1, grid.width - 2 do
-            if builder:cell(x, y) == "x" then
-                candidates[#candidates + 1] = { x = x, y = y }
-            end
+            candidates[#candidates + 1] = { x = x, y = y }
         end
     end
 
@@ -67,8 +98,9 @@ function rooms.connect(builder, minimum, maximum)
         candidates[index] = candidates[#candidates]
         candidates[#candidates] = nil
 
-        if door_candidate(builder, point.x, point.y) then
-            builder:set(point.x, point.y, "+")
+        if door_candidate(builder, point.x, point.y,
+            wall, check_distance) then
+            builder:set(point.x, point.y, replacement)
         end
     end
 end

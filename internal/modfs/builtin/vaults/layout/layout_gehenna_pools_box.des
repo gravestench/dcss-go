@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_pools.des
+# The canyon and source epilogue are implemented by named Lua hooks.
+NAME:   layout_gehenna_pools_box
+DEPTH:  Geh
+WEIGHT: 10
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_open_caves
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("gehenna_pools.box")
+: vault.validate("gehenna_pools.validate")

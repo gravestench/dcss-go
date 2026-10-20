@@ -417,9 +417,13 @@ function graph.fortify(builder, edges)
     end
 end
 
--- Fill playable islands beyond the largest one with rock, matching the
--- source zonifier after edge rendering. It keeps stairs on one region later.
-function graph.keep_largest_region(builder)
+-- Fill playable islands beyond the largest one with rock. A caller may
+-- include stairs or lava in its passable set for source-specific zone passes.
+function graph.keep_largest_region(builder, passable)
+    passable = passable or {
+        ["."] = true,
+        ["+"] = true,
+    }
     local visited = {}
     local largest = {}
     local directions = {
@@ -434,7 +438,7 @@ function graph.keep_largest_region(builder)
             local first_key = y * grid.width + x
             local glyph = builder:cell(x, y)
 
-            if not visited[first_key] and (glyph == "." or glyph == "+") then
+            if not visited[first_key] and passable[glyph] then
                 local queue = { { x = x, y = y } }
                 local region = {}
                 local index = 1
@@ -454,7 +458,7 @@ function graph.keep_largest_region(builder)
 
                         if builder:inside({ x = next_x, y = next_y }) and
                             not visited[next_key] and
-                            (next_glyph == "." or next_glyph == "+") then
+                            passable[next_glyph] then
                             visited[next_key] = true
                             queue[#queue + 1] = { x = next_x, y = next_y }
                         end
@@ -478,7 +482,7 @@ function graph.keep_largest_region(builder)
         for x = 1, grid.width - 2 do
             local glyph = builder:cell(x, y)
 
-            if (glyph == "." or glyph == "+") and
+            if passable[glyph] and
                 not retained[y * grid.width + x] then
                 builder:set(x, y, "#")
             end

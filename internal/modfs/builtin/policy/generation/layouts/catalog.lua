@@ -242,7 +242,9 @@ function catalog.execute(ctx, definition, branch_id, local_depth)
         absolute_depth = branch.absolute_depth + local_depth - 1,
     }
 
-    for _ = 1, 8 do
+    -- Source layout validators can reject many draws before a connected
+    -- floor has enough open area, especially with sparse room connectors.
+    for _ = 1, 64 do
         local result
 
         if run then
@@ -274,7 +276,7 @@ function catalog.execute(ctx, definition, branch_id, local_depth)
         end
     end
 
-    error("layout " .. definition.id .. " failed source validation after 8 attempts")
+    error("layout " .. definition.id .. " failed source validation after 64 attempts")
 end
 
 return catalog

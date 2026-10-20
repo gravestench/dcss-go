@@ -205,13 +205,15 @@ end
 
 -- Paint the source result: assigned IDs use pool contents, while untouched
 -- floor and borders remain floor and forbidden cells retain their glyph.
-local function paint(builder, states, contents)
+local function paint(builder, states, contents, border_glyph)
     for y = 0, grid.height - 1 do
         for x = 0, grid.width - 1 do
             local owner = get(states, x, y)
 
             if owner > 0 then
                 builder:set(x, y, contents[owner])
+            elseif owner == border and border_glyph then
+                builder:set(x, y, border_glyph)
             elseif owner == unassigned or owner == border then
                 builder:set(x, y, ".")
             end
@@ -221,13 +223,13 @@ end
 
 -- Grow all source pools on one builder and return the seed count for tests
 -- or future generation diagnostics.
-function pools.add(builder, pool_size, contents)
+function pools.add(builder, pool_size, contents, border_glyph)
     local states, floor = initial_states(builder)
     local seeds = choose_seeds(builder, floor, pool_size)
     local selected = choose_contents(builder, #seeds, contents)
 
     grow(builder, states, seeds)
-    paint(builder, states, selected)
+    paint(builder, states, selected, border_glyph)
 
     return #seeds
 end

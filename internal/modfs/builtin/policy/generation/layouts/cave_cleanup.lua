@@ -63,10 +63,33 @@ function cleanup.remove_isolated(builder, target, percent, boxy)
     end
 end
 
--- The source's thirty-percent table accounts for each passable neighbor.
--- Collect replacements before painting so scan direction cannot bias them.
-function cleanup.widen_paths(builder, target)
-    local chance = { 0, 30, 52, 66, 76, 84, 89, 92, 95 }
+-- The source has two exact tables to preserve old seed quirks. Other
+-- percentages use an integer recurrence, not a floating-point power.
+local function widening_chances(percent)
+    if percent == 30 then
+        return { 0, 30, 52, 66, 76, 84, 89, 92, 95 }
+    elseif percent == 50 then
+        return { 0, 50, 75, 88, 94, 97, 99, 100, 100 }
+    end
+
+    local anti = 10 - math.floor(percent / 10)
+    local numerator = 10 * anti
+    local divisor = 1
+    local chances = { 0 }
+
+    for index = 2, 9 do
+        chances[index] = 100 - math.floor(numerator / divisor)
+        numerator = numerator * anti
+        divisor = divisor * 10
+    end
+
+    return chances
+end
+
+-- Collect replacements before painting so scan direction cannot bias
+-- them. The percent parameter lets Gehenna use its four source passes.
+function cleanup.widen_paths(builder, target, percent)
+    local chance = widening_chances(percent or 30)
     local offsets = neighbors(true)
     local replacements = {}
 

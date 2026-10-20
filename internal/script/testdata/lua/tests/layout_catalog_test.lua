@@ -51,7 +51,7 @@ local function source_catalog()
     local disabled = 0
     local branch_only = 0
 
-    harness.equal(#ids, 28, "effective source layout count")
+    harness.equal(#ids, 32, "effective source layout count")
 
     for _, id in ipairs(ids) do
         local definition = catalog.get(id)
@@ -76,7 +76,7 @@ local function source_catalog()
 
     harness.equal(active, 17, "active source layouts")
     harness.equal(disabled, 4, "registered disabled layouts")
-    harness.equal(branch_only, 7, "registered branch-only layouts")
+    harness.equal(branch_only, 11, "registered branch-only layouts")
 end
 
 -- Boundary depths change the candidate set while the selected result
