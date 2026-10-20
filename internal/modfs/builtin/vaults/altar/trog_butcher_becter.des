@@ -5,11 +5,12 @@ TAGS:   temple_overflow_1 temple_overflow_trog uniq_altar_trog
 TAGS:   no_monster_gen no_item_gen transparent
 DEPTH:  D, Orc, !Orc:$
 # source: : if you.absdepth() < 6 then
-MONS:   orc ; hand axe . animal skin
-MONS:   rat / frilled lizard / quokka w:20
+: vault.run("choose_butcher")
+# source: MONS:   orc ; hand axe . animal skin
+# source: MONS:   rat / frilled lizard / quokka w:20
 # source: : else
-MONS:   orc warrior ; war axe . animal skin
-MONS:   iguana / scorpion
+# source: MONS:   orc warrior ; war axe . animal skin
+# source: MONS:   iguana / scorpion
 # source: : end
 NSUBST: ' = 3=2 / .
 SUBST:  y = x, " = .

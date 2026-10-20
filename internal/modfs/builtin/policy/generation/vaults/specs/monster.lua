@@ -1,6 +1,7 @@
 -- Example: A monster token's weapon annotation becomes a loadout slot before spawning.
 local choice = require("policy.generation.vaults.specs.choice")
 local attitude = require("constants.attitude")
+local gods = require("constants.gods")
 
 local monster = {}
 
@@ -72,6 +73,14 @@ local function parse_term(text, expression, site)
             end
 
             result.attitude = value
+        elseif key == "god" then
+            local god_id = gods[value:upper()]
+
+            if not god_id then
+                choice.fail(site, expression, "unknown monster god " .. value)
+            end
+
+            result.god_id = god_id
         elseif key == "spells" then
             result.spells = {}
 

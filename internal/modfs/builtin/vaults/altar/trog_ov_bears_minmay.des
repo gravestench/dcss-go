@@ -6,9 +6,10 @@ TAGS:   transparent
 # begin at bear range
 DEPTH:  D:4-
 # source: : if you.absdepth() < 10 then
-MONS:   black bear
+: vault.run("choose_bear")
+# source: MONS:   black bear
 # source: : else
-MONS:   polar bear
+# source: MONS:   polar bear
 # source: : end
 MONS:   bush
 NSUBST: ' = 2:2 / 2=2. / *=.

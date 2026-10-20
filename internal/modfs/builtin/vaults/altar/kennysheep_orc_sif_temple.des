@@ -6,9 +6,10 @@ TAGS:   temple_overflow_1 temple_overflow_sif_muna uniq_altar_sif_muna
 DEPTH:  D, Orc
 KFEAT:  _ = altar_sif_muna
 # source: : if you.absdepth() < 6 then
-MONS:   orc wizard w:2 / nothing, orc
+: vault.run("choose_orcs")
+# source: MONS:   orc wizard w:2 / nothing, orc
 # source: : else
-MONS:   orc wizard / nothing, orc warrior
+# source: MONS:   orc wizard / nothing, orc warrior
 # source: : end
 MAP
      xxxxx

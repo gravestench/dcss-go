@@ -407,6 +407,7 @@ function resolve.monster(ctx, selected, depth, site)
         variant = variant,
         colour = colour,
         attitude = selected.attitude,
+        god_id = selected.god_id,
         spells = selected.spells,
         equipment = selected.equipment,
         generate_awake = selected.generate_awake or false,

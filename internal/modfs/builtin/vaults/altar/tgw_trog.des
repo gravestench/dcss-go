@@ -7,9 +7,10 @@ TAGS:   temple_overflow_1 temple_overflow_trog uniq_altar_trog
 KFEAT:  _ = altar_trog
 KPROP:  1 = no_tele_into
 # source: : if you.absdepth() < 16 then
-MONS:   moth of wrath, rat / worm w:5
+: vault.run("choose_beasts")
+# source: MONS:   moth of wrath, rat / worm w:5
 # source: : else
-MONS:   moth of wrath, dire elephant / boulder beetle w:5
+# source: MONS:   moth of wrath, dire elephant / boulder beetle w:5
 # source: : end
 ITEM:   any weapon
 NSUBST: M = 4:d / *:.

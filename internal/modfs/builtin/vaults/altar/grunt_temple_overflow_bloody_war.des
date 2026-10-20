@@ -9,13 +9,14 @@ KFEAT:  A = altar_okawaru
 KFEAT:  B = altar_trog
 KPROP:  . = bloody / nothing
 # source: : if you.absdepth() < 8 then
-MONS:   gnoll ; club | spear | nothing . potion of berserk rage / \
-        orc ; club | hand axe | short sword . \
-              leather armour | nothing . potion of berserk rage
+: vault.run("choose_warriors")
+# source: MONS:   gnoll ; club | spear | nothing . potion of berserk rage / \
+# source:         orc ; club | hand axe | short sword . \
+# source:               leather armour | nothing . potion of berserk rage
 # source: : else
-MONS:   orc warrior ; club | hand axe | short sword . \
-                      leather armour | ring mail . \
-                      potion of berserk rage
+# source: MONS:   orc warrior ; club | hand axe | short sword . \
+# source:                       leather armour | ring mail . \
+# source:                       potion of berserk rage
 # source: : end
 MAP
 xxxxxxx

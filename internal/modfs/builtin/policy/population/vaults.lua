@@ -75,6 +75,7 @@ local function monster_options(record, level)
         variant = arguments.variant,
         colour = arguments.colour ~= "" and arguments.colour or nil,
         attitude = arguments.attitude ~= "" and arguments.attitude or nil,
+        god_id = arguments.god_id ~= "" and arguments.god_id or nil,
         spells = selected.spells,
         equipment = selected.equipment,
     }
@@ -159,6 +160,7 @@ local function fallback_monster(ctx, level, record)
             arguments.variant = resolved.variant or ""
             arguments.colour = resolved.colour or ""
             arguments.attitude = resolved.attitude or ""
+            arguments.god_id = resolved.god_id or ""
             arguments.spells = resolved.spells and
                 table.concat(resolved.spells, "|") or ""
             arguments.generate_awake = resolved.generate_awake or false

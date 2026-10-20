@@ -7,13 +7,21 @@ local energy = require("policy.monster_energy")
 local roster = require("policy.population.roster")
 local component = require("constants.component")
 local item_specs = require("policy.generation.vaults.specs.item")
+local choice = require("policy.generation.vaults.specs.choice")
 local resolve = require("policy.generation.vaults.specs.resolve")
 local origin_component = require("policy.population.origin")
 local habitats = require("constants.monster_habitats")
 local terrain = require("constants.terrain")
 local monsters = require("ids.monsters")
+local object_classes = require("ids.object_classes")
+local weapon_brands = require("constants.weapon_brands")
+local armour_egos = require("constants.armour_egos")
+local missile_brands = require("constants.missile_brands")
 local shapeshifter = require("policy.monsters.shapeshifter")
 local unique_history = require("policy.population.unique_history")
+local generation = require("policy.item_generation")
+local item_purpose = require("constants.item_generation_purpose")
+local item_quality = require("constants.vault_item_quality")
 
 local factory = {}
 
@@ -98,31 +106,124 @@ local function create_loadout(ctx, monster, loadout, origin)
     end
 end
 
--- Authored vault equipment takes precedence over ordinary monster gear draws.
+-- Parse every source option before drawing so malformed alternatives fail
+-- even when this seed would have picked a different item.
+local function equipment_choice(ctx, slot, site)
+    local alternatives = {}
+    local random = {}
+
+    for _, expression in ipairs(slot) do
+        alternatives[#alternatives + 1] = item_specs.term(expression, site)
+    end
+
+    -- Keep item option weights on their own vault equipment stream.
+    function random:roll(bound)
+        return ctx:random("vault_equipment", bound)
+    end
+
+    return choice.pick(random, alternatives)
+end
+
+-- A source "any weapon" requests a class, not a concrete catalog item.
+-- Roll it before actor creation, then carry the result into its ECS item.
+local function roll_generic_equipment(ctx, resolved, options)
+    if resolved.kind_id ~= object_classes.OBJ_RANDOM then
+        return nil
+    end
+
+    local site = options.site and
+        (options.site.path .. ":" .. options.site.line) or
+        "vault monster equipment"
+    local rolled = generation.roll(ctx, {
+        depth = options.depth or 1,
+        quality = item_quality.ORDINARY,
+        class_id = resolved.class_id,
+        allow_uniques = false,
+        purpose = item_purpose.VAULT,
+        site = site,
+    })
+
+    resolved.kind_id = rolled.kind_id
+
+    return rolled
+end
+
+-- Translate a source ego name through its item class; item validation then
+-- rejects a legal brand that is incompatible with this particular kind.
+local function equipment_ego(parsed, definition)
+    if not parsed.ego then
+        return ""
+    end
+
+    local choices
+
+    if definition.class == object_classes.OBJ_WEAPONS then
+        choices = weapon_brands
+    elseif definition.class == object_classes.OBJ_ARMOUR then
+        choices = armour_egos
+    elseif definition.class == object_classes.OBJ_MISSILES then
+        choices = missile_brands
+    end
+
+    local ego = choices and choices[parsed.ego:upper()]
+
+    if not ego then
+        error("unknown vault equipment ego " .. parsed.ego)
+    end
+
+    return ego
+end
+
+-- Resolve one selected equipment term before allocating an actor. This
+-- prevents a bad gear spec from leaving a half-created monster in the ECS.
+local function equipment_entry(ctx, parsed, options)
+    if parsed.no_spawn then
+        return nil
+    end
+
+    local resolved = resolve.item(ctx, parsed,
+        options.depth or 1, options.site)
+    local rolled = roll_generic_equipment(ctx, resolved, options)
+    local definition = catalog.get("items", resolved.kind_id)
+    local ego = equipment_ego(parsed, definition)
+
+    if rolled and parsed.ego then
+        rolled.ego = ego
+    end
+
+    if rolled and parsed.plus then
+        rolled.plus = parsed.plus
+    end
+
+    local item = {
+        kind_id = resolved.kind_id,
+        quantity = rolled and rolled.quantity or resolved.quantity or 1,
+        plus = rolled and rolled.plus or parsed.plus or 0,
+        charges = rolled and rolled.charges or 0,
+        ego = rolled and rolled.ego or ego,
+    }
+
+    items.validate(item, definition)
+
+    return {
+        item = item,
+        class = definition.class,
+        ident = parsed.ident,
+        rolled = rolled,
+    }
+end
+
+-- Authored equipment suppresses ordinary monster gear. Resolve each source
+-- slot separately so its weights and empty option cannot cross slot bounds.
 local function explicit_equipment(ctx, options)
     local selected = {}
 
     for _, slot in ipairs(options.equipment or {}) do
-        local term = slot[ctx:random("vault_equipment", #slot) + 1]
+        local parsed = equipment_choice(ctx, slot, options.site)
+        local entry = equipment_entry(ctx, parsed, options)
 
-        if term ~= "nothing" then
-            local parsed = item_specs.parse(term, options.site)[1][1]
-            local resolved = resolve.item(ctx, parsed, options.depth or 1, options.site)
-            local definition = catalog.get("items", resolved.kind_id)
-            local item = {
-                kind_id = resolved.kind_id,
-                quantity = resolved.quantity or 1,
-                plus = 0,
-                charges = 0,
-                ego = "",
-            }
-
-            items.validate(item, definition)
-
-            selected[#selected + 1] = {
-                item = item,
-                class = definition.class,
-            }
+        if entry then
+            selected[#selected + 1] = entry
         end
     end
 
@@ -132,18 +233,33 @@ end
 -- Create and equip each authored item while attaching the same vault origin as its monster.
 local function give_explicit_equipment(ctx, monster, selected, origin)
     for index, entry in ipairs(selected) do
-        local entity = ctx:create()
+        local entity
         local slot
 
-        if entry.class == "OBJ_WEAPONS" then
+        if entry.class == object_classes.OBJ_WEAPONS then
             slot = "weapon"
-        elseif entry.class == "OBJ_MISSILES" then
+        elseif entry.class == object_classes.OBJ_MISSILES then
             slot = "missile"
         end
 
-        ctx:add(entity, component.ITEM, entry.item)
-        ctx:add(entity, component.CARRIED_BY, { holder = monster })
+        if entry.rolled then
+            entity = generation.create(ctx, entry.rolled, {
+                carrier = monster,
+            })
+        else
+            entity = ctx:create()
+            ctx:add(entity, component.ITEM, entry.item)
+            ctx:add(entity, component.CARRIED_BY, { holder = monster })
+        end
 
+        if entry.ident == "type" or entry.ident == "all" then
+            ctx:add(entity, component.ITEM_IDENTIFICATION, {
+                known_type = true,
+                known_pluses = entry.ident == "all",
+                known_properties = entry.ident == "all",
+                cosmetic = 0,
+            })
+        end
         if slot then
             ctx:add(entity, component.EQUIPPED, { slot = slot })
         end
@@ -233,12 +349,14 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
             origin_component.for_entity(options.origin, kind_id))
     end
 
-    if options.base_id or options.colour or options.attitude or options.spells then
+    if options.base_id or options.colour or options.attitude or
+        options.god_id or options.spells then
         ctx:add(monster, component.VAULT_ACTOR_OVERRIDES, {
             base_id = options.base_id or "",
             variant = options.variant or "",
             colour = options.colour or "",
             attitude = options.attitude or "hostile",
+            god_id = options.god_id or "",
             spells = options.spells or {},
         })
     end

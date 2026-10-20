@@ -276,15 +276,17 @@ end
 
 -- Apply each branch's real vault operations rather than checking only the
 -- hook output. This catches a forgotten active DES line from either arm.
-local function monsters_for(id, branch_id)
+local function monsters_for(id, branch_id, depth, absolute_depth)
     local definition = catalog.get(id)
+    depth = depth or 5
     local player = {
         branch_id = branch_id,
-        depth = 5,
-        absolute_depth = 5,
+        depth = depth,
+        absolute_depth = absolute_depth or depth,
+        branch_bottom = 15,
     }
     local records = operations.apply(
-        definition, copy_rows(definition), fixed_random(), 5, player)
+        definition, copy_rows(definition), fixed_random(), depth, player)
     local monsters = {}
 
     for _, record in ipairs(records) do
@@ -294,6 +296,85 @@ local function monsters_for(id, branch_id)
     end
 
     return monsters
+end
+
+-- Each depth-scaled map must materialize just one source roster. Running
+-- the actual operation pipeline also validates equipment and named monster
+-- expressions emitted by the larger Trog and torment handlers.
+local function assert_depth_monsters()
+    local cases = {
+        { "grunt_temple_overflow_bloody_war", 5, 8 },
+        { "kennysheep_orc_sif_temple", 5, 6 },
+        { "nemelex_dance_club_becter", 4, 5 },
+        { "nicolae_tso_besieged_by_evil", 4, 5 },
+        { "tgw_sif", 3, 5 },
+        { "tgw_trog", 5, 16 },
+        { "trog_antimagical", 5, 6 },
+        { "trog_butcher_becter", 5, 6 },
+        { "trog_ov_bears_minmay", 9, 10 },
+        { "gammafunk_temple_of_torment", 4, 8 },
+    }
+
+    for _, entry in ipairs(cases) do
+        local early = monsters_for(
+            entry[1], branches.BRANCH_DUNGEON, entry[2], entry[2])
+        local late = monsters_for(
+            entry[1], branches.BRANCH_DUNGEON, entry[3], entry[3])
+
+        harness.truthy(#early > 0, entry[1] .. " has an early roster")
+        harness.truthy(#late > 0, entry[1] .. " has a late roster")
+        harness.falsy(table.concat(early, "|") == table.concat(late, "|"),
+            entry[1] .. " changes its roster at the source threshold")
+    end
+
+    local middle = monsters_for(
+        "gammafunk_temple_of_torment", branches.BRANCH_DUNGEON, 6, 6)
+
+    harness.truthy(#middle > 0, "torment temple has a middle roster")
+
+    local deep_sif = monsters_for(
+        "tgw_sif", branches.BRANCH_DEPTHS, 2, 18)
+
+    harness.equal(deep_sif[1], "deep elf annihilator",
+        "Depths chooses Sif Muna's late source guardian")
+end
+
+-- The blood cavern's sole source coin flip schedules either a corpse and
+-- hound or a necrophage and skeleton. The two scenes must not mix.
+local function assert_blood_cavern_scenes()
+    local definition = catalog.get("makhleb_blood_cavern_becter")
+    local player = {
+        branch_id = branches.BRANCH_DUNGEON,
+        depth = 5,
+        absolute_depth = 5,
+    }
+    local corpse = operations.apply(
+        definition, copy_rows(definition), fixed_random(), 5, player)
+    local skeleton_random = fixed_random()
+
+    function skeleton_random:one_in()
+        return false
+    end
+
+    local skeleton = operations.apply(
+        definition, copy_rows(definition), skeleton_random, 5, player)
+    local corpse_decay = 0
+    local skeleton_decay = 0
+
+    for _, record in ipairs(corpse) do
+        if record.kind == effects.DELAYED_DECAY then
+            corpse_decay = corpse_decay + 1
+        end
+    end
+
+    for _, record in ipairs(skeleton) do
+        if record.kind == effects.DELAYED_DECAY then
+            skeleton_decay = skeleton_decay + 1
+        end
+    end
+
+    harness.equal(corpse_decay, 1, "corpse scene records delayed decay")
+    harness.equal(skeleton_decay, 0, "skeleton scene has no fresh corpse")
 end
 
 -- Shared source choices appear in several maps; test every caller and both
@@ -497,6 +578,8 @@ function test.run()
     assert_count_maps_apply()
     assert_branch_monsters()
     assert_depth_rules()
+    assert_depth_monsters()
+    assert_blood_cavern_scenes()
 end
 
 return test

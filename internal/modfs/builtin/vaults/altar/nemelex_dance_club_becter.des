@@ -7,9 +7,10 @@ TAGS:    uniq_altar_nemelex_xobeh
 # orc and ogre depth
 DEPTH:   D:3-7
 # source: : if you.depth() <= 4 then
-MONS:    orc ; club
+: vault.run("choose_dancer")
+# source: MONS:    orc ; club
 # source: : else
-MONS:    ogre ; giant club
+# source: MONS:    ogre ; giant club
 # source: : end
 MONS:    endoplasm
 KFEAT:   _ = altar_nemelex_xobeh

@@ -2063,6 +2063,10 @@ conditional position and emit only the selected `MONS` or `KMONS` directives.
 The base maps under `vaults/altar/` show this pattern; the source alternatives
 remain nearby as comments. A prefixed name such as `spectral goblin` resolves
 to the spectral actor with the goblin species recorded as its base.
+Depth-dependent monster hooks emit just the selected `MONS` or `KMONS`
+declarations at the original conditional position. A `god:trog` annotation
+on a monster becomes an actor-owned god ID; equipment options after `;` use
+their source `w:` weights, `ego:` brand, and `ident:` state when created.
 
 The `builder/arena_*.des` family illustrates maps reserved for another game
 mode. Each definition keeps its original `MAP` rows and `arena_*` tag, but

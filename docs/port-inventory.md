@@ -226,6 +226,11 @@ Ten overflow maps also run their conditional terrain, trap, or substitution
 rules from local depth and branch-bottom context. The caller must supply
 the branch bottom; a missing value is an error rather than an implicit
 assumption that a shaft is safe.
+Eleven more overflow maps now choose their depth-scaled monster rosters or
+Makhleb's corpse scene in Lua, including the large Trog antimagic and
+three-tier torment definitions. Source `god:` monster modifiers persist on
+the spawned actor; weighted explicit equipment retains its brand and item
+identification state.
 Wanderer's broad gift branches are in Lua, but per-run item-set choices,
 minor themed books, and exact source RNG sequence still need parity work.
 Djinni's future spell list is durable, but later innate spell acquisition

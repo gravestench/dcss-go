@@ -5,11 +5,12 @@ TAGS:   uniq_altar_makhleb temple_overflow_1 temple_overflow_makhleb transparent
 # necrophage depth (contains hound too)
 DEPTH:  D:4-8
 # source: : if crawl.coinflip() then
+: vault.run("choose_blood_scene")
 # source: : dgn.delayed_decay(_G, '1', 'human corpse')
-KMONS:  2 = hound
+# source: KMONS:  2 = hound
 # source: : else
-KMONS:  1 = necrophage
-KMONS:  2 = hound skeleton
+# source: KMONS:  1 = necrophage
+# source: KMONS:  2 = hound skeleton
 # source: : end
 KFEAT:  _ = altar_makhleb
 KPROP:  y' = bloody

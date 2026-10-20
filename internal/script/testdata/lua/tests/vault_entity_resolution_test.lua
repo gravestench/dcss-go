@@ -13,6 +13,7 @@ local monster_ids = require("ids.monsters")
 local item_ids = require("ids.items")
 local item_quality = require("constants.vault_item_quality")
 local colours = require("constants.vault_colours")
+local gods = require("constants.gods")
 
 local test = {}
 
@@ -86,6 +87,19 @@ local function spectral_species_identity()
     harness.equal(thing.kind_id, monster_ids.MONS_SPECTRAL_THING)
     harness.falsy(thing.base_id,
         "literal spectral thing is not a spectral form of another species")
+end
+
+-- DES god annotations belong to the individual selected monster, and an
+-- unknown god must fail before a pending vault record reaches population.
+local function authored_monster_god()
+    local selected = monster.parse("orc god:trog", site)[1][1]
+    local resolved = resolve.monster(random_context(), selected, 5, site)
+
+    harness.equal(resolved.god_id, gods.TROG)
+
+    local valid = pcall(monster.parse, "orc god:unknown", site)
+
+    harness.falsy(valid, "unknown source monster god was accepted")
 end
 
 -- Random vault requests inherit source depth so placement does not silently
@@ -416,6 +430,7 @@ function test.run()
     random_colour_is_selected_once()
     named_and_variant_identities()
     spectral_species_identity()
+    authored_monster_god()
     random_requests_use_source_depth()
     every_static_arrival_name_resolves()
     handler_declarations_resolve()

@@ -5,6 +5,7 @@ local effects = require("constants.vault_effects")
 local harness = require("tests.harness")
 local monsters = require("ids.monsters")
 local item_ids = require("ids.items")
+local gods = require("constants.gods")
 local save = require("policy.save.vault_entities")
 local death = require("policy.death")
 local catalog = require("policy.catalog")
@@ -207,6 +208,31 @@ function test.run(ctx)
     local override_ok = pcall(save.validate_vault_entities, ctx, level_input())
 
     harness.falsy(override_ok, "forged vault actor override was accepted")
+    ctx:remove(rat, component.VAULT_ACTOR_OVERRIDES)
+
+    -- An authored god belongs to this actor's saved component and must agree
+    -- with its source vault record after restore.
+    local god_input = level_input()
+
+    god_input.levels[1].vault_records[1].arguments.god_id = gods.TROG
+    ctx:add(rat, component.VAULT_ACTOR_OVERRIDES, {
+        base_id = "",
+        variant = "",
+        colour = "",
+        attitude = "hostile",
+        god_id = gods.TROG,
+        spells = {},
+    })
+    save.validate_vault_entities(ctx, god_input)
+
+    local forged_god = ctx:get(rat, component.VAULT_ACTOR_OVERRIDES)
+
+    forged_god.god_id = gods.ZIN
+    ctx:set(rat, component.VAULT_ACTOR_OVERRIDES, forged_god)
+
+    local god_ok = pcall(save.validate_vault_entities, ctx, god_input)
+
+    harness.falsy(god_ok, "forged vault actor god was accepted")
     ctx:remove(rat, component.VAULT_ACTOR_OVERRIDES)
 
     -- Duplicate origin occurrence IDs are rejected even on separate entities.

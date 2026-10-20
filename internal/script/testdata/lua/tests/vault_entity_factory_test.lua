@@ -7,6 +7,7 @@ local factory = require("policy.population.factory")
 local harness = require("tests.harness")
 local items = require("ids.items")
 local monsters = require("ids.monsters")
+local object_classes = require("ids.object_classes")
 local targets = require("policy.ai.targets")
 local spell = require("policy.ai.spell")
 local vault_items = require("policy.population.vault_items")
@@ -14,6 +15,7 @@ local vault_spells = require("constants.vault_spell_override")
 local quality = require("constants.vault_item_quality")
 local schools = require("constants.spell_schools")
 local weapon_brands = require("constants.weapon_brands")
+local gods = require("constants.gods")
 local terrain = require("constants.terrain")
 local hit_points = require("policy.population.hit_points")
 local slime_blob = require("policy.monsters.slime_blob")
@@ -229,6 +231,93 @@ local function source_gear_and_explicit_equipment(ctx)
     harness.equal(goblin_items, 1, "explicit equipment replaces generated gear")
 end
 
+-- A Trog guard's authored faith and identified antimagic spear must reach
+-- ECS components rather than being discarded after parsing its DES text.
+local function trog_guard_keeps_source_gear(ctx)
+    local world = world_context(ctx)
+    local guard = factory.spawn(world, monsters.MONS_ORC, 5, 29, 10, {
+        origin = origin,
+        god_id = gods.TROG,
+        equipment = {
+            { "spear ego:antimagic ident:type" },
+        },
+    })
+    local overrides = ctx:get(guard, component.VAULT_ACTOR_OVERRIDES)
+    local spear
+
+    harness.equal(overrides.god_id, gods.TROG,
+        "authored monster god survives on the actor")
+
+    for _, entity in ipairs(ctx:query({ component.CARRIED_BY })) do
+        if ctx:get(entity, component.CARRIED_BY).holder == guard then
+            spear = entity
+            break
+        end
+    end
+
+    harness.truthy(spear, "Trog guard receives its authored spear")
+    harness.equal(ctx:get(spear, component.ITEM).ego,
+        weapon_brands.ANTIMAGIC, "authored weapon brand survives")
+    harness.truthy(ctx:get(spear, component.ITEM_IDENTIFICATION).known_type,
+        "source ident:type survives on the item")
+end
+
+-- Equipment alternatives use their item weights before the winner is
+-- resolved. A generic source weapon must also become a concrete item.
+local function weighted_vault_equipment(ctx)
+    local world = world_context(ctx)
+    local bounds = {}
+
+    function world:random(stream, bound)
+        if stream == "vault_equipment" then
+            bounds[#bounds + 1] = bound
+
+            return bound - 1
+        end
+
+        return 0
+    end
+
+    local guard = factory.spawn(world, monsters.MONS_ORC, 5, 30, 10, {
+        origin = origin,
+        equipment = {
+            { "spear w:3", "club w:5" },
+        },
+    })
+    local chosen
+
+    for _, entity in ipairs(ctx:query({ component.CARRIED_BY })) do
+        if ctx:get(entity, component.CARRIED_BY).holder == guard then
+            chosen = ctx:get(entity, component.ITEM).kind_id
+            break
+        end
+    end
+
+    harness.equal(bounds[1], 3, "first equipment weight sets the bound")
+    harness.equal(bounds[2], 8, "weights accumulate across alternatives")
+    harness.equal(chosen, items.WPN_SPEAR,
+        "weighted selection keeps the chosen weapon")
+
+    local generic = factory.spawn(world, monsters.MONS_GOBLIN, 5, 31, 10, {
+        origin = origin,
+        equipment = {
+            { "any weapon" },
+        },
+    })
+    local found = false
+
+    for _, entity in ipairs(ctx:query({ component.CARRIED_BY })) do
+        if ctx:get(entity, component.CARRIED_BY).holder == generic then
+            local item = ctx:get(entity, component.ITEM)
+            local kind = catalog.get(categories.ITEMS, item.kind_id)
+
+            found = kind.class == object_classes.OBJ_WEAPONS
+        end
+    end
+
+    harness.truthy(found, "any weapon resolves before equipment creation")
+end
+
 -- Undead variants retain the source species needed for corpse and save rules.
 local function undead_uses_source_species(ctx)
     local world = world_context(ctx)
@@ -370,6 +459,8 @@ function test.run(ctx)
     spawned_actor_has_source_state(ctx)
     vault_items_keep_variant_and_quantity(ctx)
     source_gear_and_explicit_equipment(ctx)
+    trog_guard_keeps_source_gear(ctx)
+    weighted_vault_equipment(ctx)
     undead_uses_source_species(ctx)
     water_monster_prepares_habitat(ctx)
     failed_placement_is_atomic(ctx)

@@ -398,6 +398,7 @@ local function select_entities(record, vault, random, depth)
         arguments.variant = resolved.variant or ""
         arguments.colour = resolved.colour or ""
         arguments.attitude = resolved.attitude or ""
+        arguments.god_id = resolved.god_id or ""
         arguments.spells = resolved.spells and
             table.concat(resolved.spells, "|") or ""
         arguments.generate_awake = resolved.generate_awake or false
