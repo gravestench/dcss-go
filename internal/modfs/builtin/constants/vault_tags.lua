@@ -6,6 +6,7 @@ local tags = {
     SERIAL_UNDEAD = "serial_undead",
     SERIAL_PARK = "serial_park",
     SERIAL_PARK_MINIVAULT = "serial_park_minivault",
+    SERIAL_GNOLL_CAMP = "serial_gnoll_camp",
 }
 
 return tags

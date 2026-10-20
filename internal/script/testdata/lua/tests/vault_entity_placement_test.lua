@@ -12,6 +12,7 @@ local materializer = require("policy.population.vaults")
 local component = require("constants.component")
 local monsters = require("ids.monsters")
 local items = require("ids.items")
+local branches = require("ids.branches")
 
 local test = {}
 
@@ -260,6 +261,80 @@ local function source_unique_is_not_duplicated(ctx)
         "duplicate unique lacks typed no-spawn result")
 end
 
+-- A source comma list retries the same cell when an earlier unique cannot
+-- spawn. Grum's kennel uses this to place an ordinary gnoll after Grum.
+local function source_monster_slot_falls_back(ctx)
+    local source = {
+        id = "fallback_fixture",
+        path = "vaults/serial/grums_kennel.des",
+        rows = { "@12" },
+        orientation = "centre",
+        operations = {
+            {
+                kind = directives.KMONS,
+                argument = "1 = Grum",
+                line = 4,
+            },
+            {
+                kind = directives.KMONS,
+                argument = "2 = Grum, gnoll",
+                line = 5,
+            },
+        },
+    }
+    local builder = builder_context()
+    local placed = placement.place(builder, grid.new(builder), source)
+    local records = {}
+
+    for _, record in ipairs(placed.records) do
+        if record.kind == effects.MONSTER then
+            record.index = #records + 1
+            record.source_id = source.id
+            records[#records + 1] = record
+        end
+    end
+
+    harness.equal(records[2].arguments.expression, "Grum, gnoll",
+        "source fallback expression was lost")
+    harness.equal(records[2].arguments.monster_slots, 2,
+        "source fallback slot count was lost")
+
+    local world = setmetatable({}, { __index = ctx })
+
+    -- Both glyphs remain open; only the unique check triggers the fallback.
+    function world:random()
+        return 0
+    end
+
+    function world:walkable()
+        return true
+    end
+
+    function world:actor_at()
+        return nil
+    end
+
+    function world:place_actor(actor, level_id, x, y)
+        ctx:add(actor, component.POSITION, {
+            level_id = level_id,
+            x = x,
+            y = y,
+        })
+    end
+
+    local actors, outcomes = materializer.materialize(world, {
+        id = 1,
+        vault_records = records,
+    })
+
+    harness.equal(actors, 2, "source fallback did not spawn")
+    harness.falsy(outcomes[2].no_spawn, "fallback was marked absent")
+    harness.equal(records[2].arguments.selected_expression, "gnoll",
+        "source fallback selected the wrong slot")
+    harness.equal(records[2].arguments.kind_id, monsters.MONS_GNOLL,
+        "source fallback resolved the wrong monster")
+end
+
 -- Each cave-to-temple helper branch must resolve tenant monsters with provenance.
 local function temple_helper_entities_resolve()
     local vault = catalog.get("erik_arrival_cave_to_civilisation")
@@ -279,7 +354,12 @@ local function temple_helper_entities_resolve()
             return 0
         end
 
-        local placed = placement.place(context, builder, vault)
+        local placed = placement.place(context, builder, vault, {
+            branch_id = branches.BRANCH_DUNGEON,
+            depth = 1,
+            branch_bottom = 15,
+            layout_family = "open",
+        })
         local count = 0
 
         for _, record in ipairs(placed.records) do
@@ -309,6 +389,7 @@ function test.run(ctx)
     source_slot_order_prevents_double_actor(ctx)
     invalid_declaration_has_source_site()
     source_unique_is_not_duplicated(ctx)
+    source_monster_slot_falls_back(ctx)
     temple_helper_entities_resolve()
 end
 

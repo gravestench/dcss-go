@@ -1,0 +1,7 @@
+# Early Dungeon's open layouts can get a whole gnoll camp. Its child maps
+# remain tag-only after the source's default-depth reset.
+NAME: serial_gnoll_camp
+DEPTH: D:5-10
+TAGS: layout_open layout_open_caves extra luniq_serial
+CHANCE: 10%
+: vault.post_place("place_gnoll_camp")

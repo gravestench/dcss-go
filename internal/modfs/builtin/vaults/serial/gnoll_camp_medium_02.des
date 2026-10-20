@@ -1,0 +1,27 @@
+# Two-room camp puts gnoll leaders near paired supply chambers and a defended central door.
+# Source default-depth is reset here: the controller selects this map by tag only.
+NAME: gnoll_camp_medium_02
+TAGS:   serial_gnoll_camp patrolling
+WEIGHT: 8
+MONS:   gnoll
+MONS:   gnoll ; stone q:10 | boomerang q:3 | throwing net q:3
+MONS:   gnoll bouda
+MONS:   gnoll sergeant
+MONS:   jackal w:20 / hound / wolf w:1 / nothing w:5
+MAP
+...............
+...ccccccccc...
+..xxxxxxxxxxx..
+.cx>...T...>xc.
+.cx....4....xc.
+.cxxxx2.2xxxxc.
+.cx%%+.3.+55xc.
+.cx%%+...+55xc.
+.cxxxx...xxxxc.
+.cx.........xc.
+.cx2.1...1.2xc.
+.cx..1...1..xc.
+.cx.........xc.
+..xxxx...xxxx..
+...............
+ENDMAP

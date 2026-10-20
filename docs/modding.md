@@ -2015,6 +2015,15 @@ change the terrain without losing the marker. Import
 monster resolver also recognizes the source's `common demon` alias and
 draws from the two appropriate demon tiers.
 
+The gnoll camp demonstrates an ordered monster fallback in a `.des` map.
+`KMONS: 3 = Grum, gnoll` requests Grum on glyph `3`; if he cannot spawn
+because another Grum exists, the same cell gets a gnoll. Commas separate
+ordered attempts, while slashes inside an attempt select a weighted
+alternative. The original expression and selected attempt remain in the
+typed vault record so saving and debugging can explain the result. Its
+controller requests four to six pieces with the `serial_gnoll_camp` tag;
+adding another tagged `.des` file makes it eligible without editing Go code.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls

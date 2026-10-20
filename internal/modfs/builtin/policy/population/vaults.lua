@@ -14,6 +14,8 @@ local shop_generation = require("policy.shops.generation")
 local streams = require("constants.rng_streams")
 local kirke_band = require("policy.population.kirke_band")
 local monsters = require("ids.monsters")
+local choice = require("policy.generation.vaults.specs.choice")
+local resolve = require("policy.generation.vaults.specs.resolve")
 
 local vaults = {}
 
@@ -94,6 +96,44 @@ local function duplicate_unique(ctx, kind_id)
         local actor = ctx:get(entity, component.ACTOR)
 
         if actor.kind_id == kind_id then
+            return true
+        end
+    end
+
+    return false
+end
+
+-- A comma in MONS/KMONS supplies ordered fallbacks for the same cell. The
+-- first choice was drawn during map placement; later choices only draw when
+-- that choice cannot spawn, including when another vault placed its unique.
+local function fallback_monster(ctx, level, record)
+    local arguments = record.arguments
+    local site = source_site(record, arguments)
+    local slots = monster_specs.parse(arguments.expression, site)
+    local random = {}
+
+    -- Keep each alternative draw on the established vault placement stream.
+    function random:roll(bound)
+        return ctx:random(streams.PLACEMENT, bound)
+    end
+
+    for index = 2, #slots do
+        local selected = choice.pick(random, slots[index])
+        local resolved = resolve.monster(ctx, selected, level.id, site)
+
+        if not resolved.no_spawn then
+            arguments.selected_expression = selected.source
+            arguments.kind_id = resolved.kind_id
+            arguments.base_id = resolved.base_id or ""
+            arguments.variant = resolved.variant or ""
+            arguments.colour = resolved.colour or ""
+            arguments.attitude = resolved.attitude or ""
+            arguments.spells = resolved.spells and
+                table.concat(resolved.spells, "|") or ""
+            arguments.no_spawn = false
+            record.identity = selected.name
+            record.pending = true
+
             return true
         end
     end
@@ -182,7 +222,9 @@ function vaults.materialize(ctx, level, excluded)
                     kind_id = kind_id,
                 }
             end
-        elseif arguments.kind_id and arguments.kind_id ~= "" then
+        elseif (arguments.kind_id and arguments.kind_id ~= "") or
+            (record.kind == effects.MONSTER and
+                (arguments.monster_slots or 0) > 1) then
             local no_spawn = false
             local gear
 
@@ -198,9 +240,12 @@ function vaults.materialize(ctx, level, excluded)
                         arguments.path, record.line, record.source_id, record.source))
                 end
 
-                if duplicate_unique(ctx, arguments.kind_id) then
-                    no_spawn = true
-                else
+                if arguments.no_spawn or arguments.kind_id == "" or
+                    duplicate_unique(ctx, arguments.kind_id) then
+                    no_spawn = not fallback_monster(ctx, level, record)
+                end
+
+                if not no_spawn then
                     local spawned = factory.spawn(ctx, arguments.kind_id, level.id,
                         record.x, record.y, monster_options(record, level))
                     if arguments.kind_id == monsters.MONS_KIRKE then

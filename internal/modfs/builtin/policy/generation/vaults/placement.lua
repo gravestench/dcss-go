@@ -316,8 +316,8 @@ local function select_entity(record, vault, random)
     local expression = record.identity
     local slots = parser.parse(expression, site)
 
-    if #slots ~= 1 then
-        choice.fail(site, expression, "one cell has multiple entity slots")
+    if #slots ~= 1 and record.kind ~= effects.MONSTER then
+        choice.fail(site, expression, "one cell has multiple item slots")
     end
 
     local selected = choice.pick(random, slots[1])
@@ -325,6 +325,9 @@ local function select_entity(record, vault, random)
     local arguments = record.arguments or {}
 
     arguments.expression = expression
+    -- Source MONS slots are attempted in order at population time. A unique
+    -- may have spawned since the map was laid out, so preserve later slots.
+    arguments.monster_slots = record.kind == effects.MONSTER and #slots or 0
     arguments.path = site.path
     arguments.selected_expression = selected.source
     arguments.no_spawn = resolved.no_spawn or false

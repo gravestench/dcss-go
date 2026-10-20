@@ -11,6 +11,7 @@ local population = require("policy.population.vaults")
 local selection = require("policy.generation.vaults.selection")
 local terrain = require("constants.terrain")
 local trap_placement = require("policy.traps.placement")
+local branches = require("ids.branches")
 
 local test = {}
 
@@ -140,7 +141,12 @@ end
 local function check_arrival(id, index)
     local source = catalog.get(id)
     local random = random_context(index)
-    local placed = placement.place(random, grid.new(random), source)
+    local placed = placement.place(random, grid.new(random), source, {
+        branch_id = branches.BRANCH_DUNGEON,
+        depth = 1,
+        branch_bottom = 15,
+        layout_family = "open",
+    })
     local level = {
         id = 1,
         vault_records = placed.records,

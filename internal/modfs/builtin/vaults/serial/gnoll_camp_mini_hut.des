@@ -1,0 +1,18 @@
+# Small high-weight hut places a few gnolls around one open doorway.
+# Source default-depth is reset here: the controller selects this map by tag only.
+NAME: gnoll_camp_mini_hut
+TAGS:    serial_gnoll_camp patrolling allow_dup
+WEIGHT:  20
+SHUFFLE: 123
+MONS:    gnoll
+MONS:    gnoll bouda
+MONS:    gnoll sergeant
+MAP
+........
+..x++x..
+.cx..xc.
+.cx.1xc.
+..xxxx..
+...cc...
+........
+ENDMAP

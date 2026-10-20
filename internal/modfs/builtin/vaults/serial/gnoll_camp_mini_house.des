@@ -1,0 +1,23 @@
+# A tiny leader house shuffles occupants around the inner room and loot.
+# Source default-depth is reset here: the controller selects this map by tag only.
+NAME: gnoll_camp_mini_house
+TAGS:    serial_gnoll_camp patrolling allow_dup
+SHUFFLE: 23
+MONS:    gnoll
+MONS:    gnoll bouda
+MONS:    gnoll sergeant
+MONS:    hound / wolf w:2
+MAP
+...........
+...1..1....
+...........
+..xx++xxx..
+.cx....Txc.
+.cx....4xc.
+.cx...xxxc.
+.cx.2.+%xc.
+.cx...x%xc.
+..xxxxxxx..
+...ccccc...
+...........
+ENDMAP

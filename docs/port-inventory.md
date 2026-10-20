@@ -270,8 +270,12 @@ retain their positions even when a later source substitution changes the
 underlying terrain glyph. The twenty-map park serial adds an open-layout
 controller, eleven placeable pieces, and eight nested garden helpers.
 `SUBVAULT` now chooses its tagged helper by source weight instead of always
-taking the first matching map. The builder and serial catalog now contains 179
-of 600 source definitions.
+taking the first matching map. The thirteen-map gnoll camp adds its open-layout
+controller and twelve weighted pieces, including Grum's kennel and a guarded
+shop. Comma-separated monster slots now try later candidates at the same
+cell when an earlier one cannot spawn; the kennel uses this to fall back
+from a duplicate Grum to a gnoll. The builder and serial catalog now contains
+192 of 600 source definitions.
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
 `uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those

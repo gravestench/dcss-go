@@ -1,0 +1,19 @@
+# Compact fortified room centers a sergeant beside an optional gnoll guard.
+# Source default-depth is reset here: the controller selects this map by tag only.
+NAME: gnoll_camp_mini_sergeant
+TAGS:   serial_gnoll_camp patrolling
+WEIGHT: 5
+MONS:   gnoll / nothing w:2
+MONS:   gnoll sergeant
+MAP
+...............
+...ccccc.......
+..xxxxxxx...x..
+.cx...x...1.xc.
+.cx.>.x..11.xc.
+.cx...x.1...xc.
+.cx.2.+.....xc.
+..xxxxxxxxxxx..
+...ccccccccc...
+...............
+ENDMAP
