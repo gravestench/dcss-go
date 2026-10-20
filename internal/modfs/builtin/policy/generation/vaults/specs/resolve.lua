@@ -27,6 +27,7 @@ local random_monster_names = {
     [monster_requests.ANY_DEMON] = true,
     [monster_requests.COMMON_DEMON] = true,
     [monster_requests.ANY_COMMON_DEMON] = true,
+    [monster_requests.RANDOM] = true,
     ["0"] = true,
     ["8"] = true,
     ["9"] = true,
@@ -416,6 +417,14 @@ function resolve.monster(ctx, selected, depth, site)
         spells = selected.spells,
         equipment = selected.equipment,
         generate_awake = selected.generate_awake or false,
+        patrolling = selected.patrolling or false,
+        database_name = selected.database_name,
+        custom_name = selected.custom_name,
+        name_adjective = selected.name_adjective or false,
+        tile = selected.tile,
+        hp = selected.hp,
+        hd = selected.hd,
+        permanent_enchantments = selected.permanent_enchantments,
     }
 end
 

@@ -2,6 +2,7 @@
 local choice = require("policy.generation.vaults.specs.choice")
 local attitude = require("constants.attitude")
 local gods = require("constants.gods")
+local enchantments = require("constants.vault_monster_enchantments")
 
 local monster = {}
 
@@ -81,6 +82,35 @@ local function parse_term(text, expression, site)
             end
 
             result.god_id = god_id
+        elseif key == "dbname" or key == "name" or key == "tile" then
+            if value == "" then
+                choice.fail(site, expression, "empty monster " .. key)
+            end
+
+            if key == "dbname" then
+                result.database_name = value:gsub("_", " ")
+            elseif key == "name" then
+                result.custom_name = value:gsub("_", " ")
+            else
+                result.tile = value
+            end
+        elseif key == "hp" or key == "hd" then
+            local number = tonumber(value)
+
+            if not number or number % 1 ~= 0 or number < 1 or
+                (key == "hd" and number > 100) then
+                choice.fail(site, expression, "invalid monster " .. key .. " " .. value)
+            end
+
+            result[key] = number
+        elseif key == "perm_ench" then
+            if not enchantments.VALID[value] then
+                choice.fail(site, expression,
+                    "unknown permanent monster enchantment " .. value)
+            end
+
+            result.permanent_enchantments = result.permanent_enchantments or {}
+            result.permanent_enchantments[#result.permanent_enchantments + 1] = value
         elseif key == "spells" then
             result.spells = {}
 
@@ -96,6 +126,12 @@ local function parse_term(text, expression, site)
             end
 
             result.place = value
+        elseif token == "patrolling" then
+            -- A patrol is a property of the chosen actor, not a species
+            -- named "patrolling quokka". Keep the source flag on the record.
+            result.patrolling = true
+        elseif token == "name_adjective" then
+            result.name_adjective = true
         elseif token == "generate_awake" then
             -- The source modifier is separate from the monster's display
             -- name. The current population starts actors awake by default,

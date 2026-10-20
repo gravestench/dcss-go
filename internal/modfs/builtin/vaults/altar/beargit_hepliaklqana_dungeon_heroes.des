@@ -6,94 +6,95 @@ TAGS:    temple_overflow_hepliaklqana temple_overflow_1 transparent
 TAGS:    no_monster_gen patrolling no_trap_gen uniq_altar_hepliaklqana
 SHUFFLE: 123
 SHUFFLE: _-G
+: vault.run("choose_heroes")
 # source: : if you.in_branch("D") then
 # source: :     if you.depth() < 4 then
-KMONS:   1 = orc wizard; quarterstaff . robe
+# source: KMONS:   1 = orc wizard; quarterstaff . robe
 # Early for kobold brigands, but they get a wand of charming instead of darts,
 # so less threatening.
-KMONS:   2 = jessica; dagger . robe . wand of charming \
-             / kobold brigand ; dagger . wand of charming \
-             , kobold brigand ; dagger . wand of charming
-KMONS:   3 = orc ; flail . kite shield . chain mail
+# source: KMONS:   2 = jessica; dagger . robe . wand of charming \
+# source:              / kobold brigand ; dagger . wand of charming \
+# source:              , kobold brigand ; dagger . wand of charming
+# source: KMONS:   3 = orc ; flail . kite shield . chain mail
 # We generate one ancestor monster for D:3-9
-NSUBST:  123 = 2=.
+# source: NSUBST:  123 = 2=.
 # source: :     elseif you.depth() < 7 then
-KMONS:   1 = blork the orc ; quarterstaff good_item . robe \
-             / orc wizard ; quarterstaff good_item . robe \
-             , orc wizard ; quarterstaff good_item . robe
-KMONS:   2 = sigmund; halberd itemname:scythe tile:wpn_scythe wtile:scythe ego:draining . robe \
-             / kobold brigand ; dagger ego:draining . wand of charming \
-             , kobold brigand ; dagger ego:draining . wand of charming
-KMONS:   3 = edmund ; flail good_item . kite shield . chain mail \
-             / orc warrior ; flail good_item . kite shield . chain mail \
-             / gnoll sergeant ; flail good_item . kite shield . chain mail \
-             , orc warrior ; flail good_item . kite shield . chain mail \
-             / gnoll sergeant ; flail good_item . kite shield . chain mail
-NSUBST:  123 = 2=.
+# source: KMONS:   1 = blork the orc ; quarterstaff good_item . robe \
+# source:              / orc wizard ; quarterstaff good_item . robe \
+# source:              , orc wizard ; quarterstaff good_item . robe
+# source: KMONS:   2 = sigmund; halberd itemname:scythe tile:wpn_scythe wtile:scythe ego:draining . robe \
+# source:              / kobold brigand ; dagger ego:draining . wand of charming \
+# source:              , kobold brigand ; dagger ego:draining . wand of charming
+# source: KMONS:   3 = edmund ; flail good_item . kite shield . chain mail \
+# source:              / orc warrior ; flail good_item . kite shield . chain mail \
+# source:              / gnoll sergeant ; flail good_item . kite shield . chain mail \
+# source:              , orc warrior ; flail good_item . kite shield . chain mail \
+# source:              / gnoll sergeant ; flail good_item . kite shield . chain mail
+# source: NSUBST:  123 = 2=.
 # source: :     elseif you.depth() < 10 then
-MONS:    gargoyle ; quarterstaff good_item
-MONS:    kobold brigand ; dagger ego:draining good_item . wand of paralysis \
-             . dart ego:atropa \
-         / spriggan ; dagger ego:draining good_item . robe good_item . buckler \
-             . wand of paralysis \
-         / vampire ; dagger ego:draining good_item . robe good_item
-MONS:    orc warrior ; flail good_item . kite shield . chain mail good_item \
-         / gnoll sergeant ; flail good_item . kite shield . chain mail good_item
-NSUBST:  123 = 2=.
+# source: MONS:    gargoyle ; quarterstaff good_item
+# source: MONS:    kobold brigand ; dagger ego:draining good_item . wand of paralysis \
+# source:              . dart ego:atropa \
+# source:          / spriggan ; dagger ego:draining good_item . robe good_item . buckler \
+# source:              . wand of paralysis \
+# source:          / vampire ; dagger ego:draining good_item . robe good_item
+# source: MONS:    orc warrior ; flail good_item . kite shield . chain mail good_item \
+# source:          / gnoll sergeant ; flail good_item . kite shield . chain mail good_item
+# source: NSUBST:  123 = 2=.
 # source: :     elseif you.depth() < 13 then
-MONS:    gargoyle ; quarterstaff good_item \
-         / molten gargoyle w:5 ; quarterstaff good_item
-MONS:   kobold brigand ; dagger ego:draining good_item . wand of paralysis \
-             . dart ego:atropa . potion of haste \
-         / spriggan ; dagger ego:draining good_item . robe good_item . buckler \
-             . wand of paralysis . potion of haste \
-         / vampire ; dagger ego:draining good_item . robe good_item \
-             . potion of haste
-MONS:    orc warrior ; flail good_item . kite shield . chain mail good_item \
-         / gnoll sergeant ; flail good_item . kite shield \
-             . chain mail good_item \
-         / skeletal warrior ; flail good_item . kite shield \
-             . chain mail good_item
+# source: MONS:    gargoyle ; quarterstaff good_item \
+# source:          / molten gargoyle w:5 ; quarterstaff good_item
+# source: MONS:   kobold brigand ; dagger ego:draining good_item . wand of paralysis \
+# source:              . dart ego:atropa . potion of haste \
+# source:          / spriggan ; dagger ego:draining good_item . robe good_item . buckler \
+# source:              . wand of paralysis . potion of haste \
+# source:          / vampire ; dagger ego:draining good_item . robe good_item \
+# source:              . potion of haste
+# source: MONS:    orc warrior ; flail good_item . kite shield . chain mail good_item \
+# source:          / gnoll sergeant ; flail good_item . kite shield \
+# source:              . chain mail good_item \
+# source:          / skeletal warrior ; flail good_item . kite shield \
+# source:              . chain mail good_item
 # Generate two ancestor monsters for D:10-D:12
-NSUBST:  123 = 1=.
+# source: NSUBST:  123 = 1=.
 # For D:13- and Depths, we generate all three ancestor monsters.
 # source: :     else
-MONS:    ogre mage; lajatang ego:freezing . potion of haste \
-         / molten gargoyle ; lajatang ego:flaming . potion of haste
-MONS:    spriggan ; dagger ego:draining good_item . robe good_item \
-             . buckler good_item . wand of paralysis . potion of haste \
-         / vampire ; dagger ego:draining good_item . robe good_item \
-             . buckler . wand of paralysis . potion of haste
-MONS:    orc knight; broad axe ego:flaming . chain mail good_item \
-             . tower shield ego:reflection . potion of haste \
-         / tengu warrior ; broad axe ego:flaming . chain mail good_item \
-             . tower shield ego:reflection . potion of haste \
-         / naga warrior ; broad axe ego:flaming . chain mail good_item \
-             . tower shield ego:reflection . potion of haste \
-         / skeletal warrior ; broad axe ego:flaming . chain mail good_item \
-             . tower shield ego:reflection . potion of haste
+# source: MONS:    ogre mage; lajatang ego:freezing . potion of haste \
+# source:          / molten gargoyle ; lajatang ego:flaming . potion of haste
+# source: MONS:    spriggan ; dagger ego:draining good_item . robe good_item \
+# source:              . buckler good_item . wand of paralysis . potion of haste \
+# source:          / vampire ; dagger ego:draining good_item . robe good_item \
+# source:              . buckler . wand of paralysis . potion of haste
+# source: MONS:    orc knight; broad axe ego:flaming . chain mail good_item \
+# source:              . tower shield ego:reflection . potion of haste \
+# source:          / tengu warrior ; broad axe ego:flaming . chain mail good_item \
+# source:              . tower shield ego:reflection . potion of haste \
+# source:          / naga warrior ; broad axe ego:flaming . chain mail good_item \
+# source:              . tower shield ego:reflection . potion of haste \
+# source:          / skeletal warrior ; broad axe ego:flaming . chain mail good_item \
+# source:              . tower shield ego:reflection . potion of haste
 # source: :     end
 # Depths
 # source: : else
-MONS:    tengu reaver ; lajatang ego:freezing good_item \
-             | lajatang ego:freezing randart . scale mail . potion of haste \
-             . potion of haste \
-         / ancient champion ; lajatang ego:freezing good_item \
-             | lajatang ego:freezing randart . scale mail
-MONS:    vampire knight; quick blade ego:antimagic . buckler good_item \
-             . shadow dragon scales good_item . potion of haste \
-             . potion of haste \
-         / spriggan defender; quick blade ego:antimagic w:20 \
-             . robe good_item . buckler good_item . wand of paralysis \
-             . potion of haste . potion of haste
-MONS:    minotaur ; broad axe ego:speed good_item \
-             | broad axe ego:speed randart | arga w:1 . plate armour good_item \
-             . tower shield ego:reflection good_item . potion of haste \
-             . potion of haste \
-         / orc warlord ; broad axe ego:speed good_item \
-             | broad axe ego:speed randart | arga w:1 . plate armour good_item \
-             . tower shield ego:reflection good_item . potion of haste \
-             . potion of haste
+# source: MONS:    tengu reaver ; lajatang ego:freezing good_item \
+# source:              | lajatang ego:freezing randart . scale mail . potion of haste \
+# source:              . potion of haste \
+# source:          / ancient champion ; lajatang ego:freezing good_item \
+# source:              | lajatang ego:freezing randart . scale mail
+# source: MONS:    vampire knight; quick blade ego:antimagic . buckler good_item \
+# source:              . shadow dragon scales good_item . potion of haste \
+# source:              . potion of haste \
+# source:          / spriggan defender; quick blade ego:antimagic w:20 \
+# source:              . robe good_item . buckler good_item . wand of paralysis \
+# source:              . potion of haste . potion of haste
+# source: MONS:    minotaur ; broad axe ego:speed good_item \
+# source:              | broad axe ego:speed randart | arga w:1 . plate armour good_item \
+# source:              . tower shield ego:reflection good_item . potion of haste \
+# source:              . potion of haste \
+# source:          / orc warlord ; broad axe ego:speed good_item \
+# source:              | broad axe ego:speed randart | arga w:1 . plate armour good_item \
+# source:              . tower shield ego:reflection good_item . potion of haste \
+# source:              . potion of haste
 # source: : end
 KFEAT:   _ = altar_hepliaklqana
 KFEAT:   - = altar_ecumenical

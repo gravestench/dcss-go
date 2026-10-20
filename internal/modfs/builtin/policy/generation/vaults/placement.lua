@@ -402,6 +402,19 @@ local function select_entities(record, vault, random, depth)
         arguments.spells = resolved.spells and
             table.concat(resolved.spells, "|") or ""
         arguments.generate_awake = resolved.generate_awake or false
+        -- A source patrolling TAG applies to every actor in the map;
+        -- a term-level modifier applies only to its selected alternative.
+        arguments.vault_patrolling = vault.tags and
+            vault.tags.patrolling or false
+        arguments.patrolling = resolved.patrolling or
+            arguments.vault_patrolling
+        arguments.database_name = resolved.database_name or ""
+        arguments.custom_name = resolved.custom_name or ""
+        arguments.name_adjective = resolved.name_adjective or false
+        arguments.hp = resolved.hp or 0
+        arguments.hd = resolved.hd or 0
+        arguments.permanent_enchantments = resolved.permanent_enchantments and
+            table.concat(resolved.permanent_enchantments, "|") or ""
         arguments.quantity = resolved.quantity or 1
         arguments.quality = resolved.quality or ""
         arguments.request = resolved.request or ""

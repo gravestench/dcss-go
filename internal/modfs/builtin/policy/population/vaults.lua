@@ -170,6 +170,15 @@ local function fallback_monster(ctx, level, record)
             arguments.spells = resolved.spells and
                 table.concat(resolved.spells, "|") or ""
             arguments.generate_awake = resolved.generate_awake or false
+            arguments.patrolling = resolved.patrolling or
+                arguments.vault_patrolling or false
+            arguments.database_name = resolved.database_name or ""
+            arguments.custom_name = resolved.custom_name or ""
+            arguments.name_adjective = resolved.name_adjective or false
+            arguments.hp = resolved.hp or 0
+            arguments.hd = resolved.hd or 0
+            arguments.permanent_enchantments = resolved.permanent_enchantments and
+                table.concat(resolved.permanent_enchantments, "|") or ""
             arguments.no_spawn = false
             record.identity = selected.name
             record.pending = true
