@@ -30,6 +30,12 @@ local function temple_gods()
     return result
 end
 
+-- Expose the effective source pool for Temple placement and tests without
+-- declaring a second list of god IDs in either caller.
+function plan.god_ids()
+    return temple_gods()
+end
+
 -- Source ordinary counts have thick tails: the lower half takes the
 -- maximum of two nine-way draws, and the upper half takes the minimum.
 local function ordinary_count(ctx)
