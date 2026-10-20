@@ -1,0 +1,11 @@
+# Source: crawl-ref/source/dat/des/builder/layout.des, layout_regular_city.
+# The Lua hook builds the source room grid for Lair, Crypt, and Dis.
+NAME:   layout_regular_city
+DEPTH:  Lair, Crypt, !Crypt:$, Dis, !Dis:$
+WEIGHT: 10, 15 (Lair)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_city
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_regular_city")
+MAP
+ENDMAP

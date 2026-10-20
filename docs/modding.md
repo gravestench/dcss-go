@@ -1958,6 +1958,15 @@ arrival. A mod replaces a bundled layout by using the same relative `.des`
 and Lua paths, or adds a new pair without editing a central ID table.
 Disabled zero-weight definitions remain visible but are not selected.
 
+Some source layouts deliberately put stairs in separate floor regions.
+`layout_caves` is an example: its three down-stair bubbles can remain apart
+on a nonbottom Orc or Slime floor. The shared stair pass adds a return
+landing in each authored bubble and pairs stairs within that region. A mod
+layout should author its meaningful stair glyphs in its Lua builder before
+returning; the postpass preserves those glyphs and adds only missing pairs.
+For a map that must have one contiguous playable region, use the shared
+`cell_graph.keep_largest_region` operation before returning the builder.
+
 ### Authored vaults
 
 Vault geometry remains in original `.des` syntax under `vaults/arrival/`,

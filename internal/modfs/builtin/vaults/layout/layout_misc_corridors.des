@@ -1,0 +1,11 @@
+# Source: crawl-ref/source/dat/des/builder/layout.des, layout_misc_corridors.
+# This weighted branch layout starts with a chain of irregular corridors.
+NAME:   layout_misc_corridors
+DEPTH:  Lair, Snake, Crypt, Zot
+WEIGHT: 20, 5 (Lair)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_corridors
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_misc_corridors")
+MAP
+ENDMAP

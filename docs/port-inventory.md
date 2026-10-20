@@ -367,7 +367,7 @@ spell departures omit smoke. Source-specific death wording remains part of
 the presentation parity pass. Xom and Jiyva poof variants still need
 per-monster god state from the religion domain.
 
-The builder and serial definition count is now 558 of 600. All 22 source
+The builder and serial definition count is now 562 of 600. All 22 source
 arena builder maps are committed as individual `.des` files. Their original
 MAP blocks are intact, and the two shared palette scripts are a named Lua
 hook. Arena maps have no Dungeon depth rule, so normal Dungeon generation
@@ -416,6 +416,15 @@ eligible shared walls, and gives Elf transparent windows and clear doors.
 Its terrain decoder preserves the clear-door feature instead of treating it
 as a plain door. The map is registered for both branches; their travel flow
 is still pending.
+
+The remaining four `layout.des` definitions are now committed. Regular City
+places source-sized, branch-adjusted rooms; Misc Corridors joins random
+points before its spotty pass; Caves grows three authored stair bubbles;
+Diamond Mine grows weighted concentric rooms and keeps up to three Orc
+regions. The shared stair owner now preserves separate authored bubbles and
+adds a local return landing for each. These maps are registered for their
+source branches; ordinary branch travel and primary-vault avoidance remain
+to be integrated.
 
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and

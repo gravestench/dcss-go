@@ -77,13 +77,14 @@ local function region_from(builder, start, visited)
     return region
 end
 
--- Prefer the region that already contains authored stairs. When none exist,
--- use the largest playable region so the generic postpass adds the least
--- risk of sealing a floor into tiny disconnected pockets.
-local function selected_region(builder)
+-- Preserve every region that owns a source stair. A cave may deliberately
+-- distribute its down exits among separate bubbles; choosing only one
+-- would either discard source exits or make branch travel irreversible.
+-- Layouts with no authored stairs still use their largest playable region.
+local function selected_regions(builder)
     local visited = {}
     local selected
-    local authored_region
+    local authored_regions = {}
 
     for y = 1, grid.height - 2 do
         for x = 1, grid.width - 2 do
@@ -94,11 +95,7 @@ local function selected_region(builder)
                 local authored = #region.up + #region.down > 0
 
                 if authored then
-                    if authored_region then
-                        error("layout stairs occupy disconnected regions")
-                    end
-
-                    authored_region = region
+                    authored_regions[#authored_regions + 1] = region
                 end
 
                 if not selected or #region.floor > #selected.floor then
@@ -108,7 +105,19 @@ local function selected_region(builder)
         end
     end
 
-    return authored_region or selected
+    if #authored_regions > 0 then
+        table.sort(authored_regions, function(left, right)
+            if (#left.up > 0) ~= (#right.up > 0) then
+                return #left.up > 0
+            end
+
+            return #left.floor > #right.floor
+        end)
+
+        return authored_regions
+    end
+
+    return selected and { selected } or {}
 end
 
 -- Sort by map coordinates before pairing, independent of the order in
@@ -134,16 +143,10 @@ local function take_floor(builder, region)
     return point
 end
 
--- Return ordinary up/down pairs after filling only the missing endpoints.
--- Existing source stairs stay at their authored cells and remain reachable.
-function stairs.complete(builder)
-    local region = selected_region(builder)
-
-    if not region then
-        error("layout has no playable floor for stairs")
-    end
-
-    local count = math.max(3, #region.up, #region.down)
+-- Complete one region before moving to the next, so an up/down pair never
+-- spans a solid wall. Global serials keep new source stair glyph variants
+-- distinct across otherwise disconnected cave bubbles.
+local function complete_region(builder, region, count, serials)
     local missing = count * 2 - #region.up - #region.down
 
     if #region.floor < missing then
@@ -154,18 +157,20 @@ function stairs.complete(builder)
 
     while #region.up < count do
         local point = take_floor(builder, region)
-        local glyph = new_up[(#region.up % #new_up) + 1]
+        local glyph = new_up[(serials.up % #new_up) + 1]
 
         builder:set(point.x, point.y, glyph)
         region.up[#region.up + 1] = point
+        serials.up = serials.up + 1
     end
 
     while #region.down < count do
         local point = take_floor(builder, region)
-        local glyph = new_down[(#region.down % #new_down) + 1]
+        local glyph = new_down[(serials.down % #new_down) + 1]
 
         builder:set(point.x, point.y, glyph)
         region.down[#region.down + 1] = point
+        serials.down = serials.down + 1
     end
 
     table.sort(region.up, before)
@@ -178,6 +183,46 @@ function stairs.complete(builder)
             up = region.up[index],
             down = region.down[index],
         }
+    end
+
+    return pairs
+end
+
+-- Return ordinary up/down pairs after filling missing endpoints in each
+-- authored region. Three pairs remain the minimum for a normal floor;
+-- extra pairs belong to the first region, which owns the first authored up.
+function stairs.complete(builder)
+    local regions = selected_regions(builder)
+
+    if #regions == 0 then
+        error("layout has no playable floor for stairs")
+    end
+
+    local count = 0
+    local serials = {
+        up = 0,
+        down = 0,
+    }
+
+    for _, region in ipairs(regions) do
+        count = count + math.max(1, #region.up, #region.down)
+        serials.up = serials.up + #region.up
+        serials.down = serials.down + #region.down
+    end
+
+    local pairs = {}
+
+    for index, region in ipairs(regions) do
+        local needed = math.max(1, #region.up, #region.down)
+
+        if index == 1 then
+            needed = needed + math.max(0, 3 - count)
+        end
+
+        for _, pair in ipairs(complete_region(builder,
+            region, needed, serials)) do
+            pairs[#pairs + 1] = pair
+        end
     end
 
     return pairs

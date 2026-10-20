@@ -417,16 +417,16 @@ function graph.fortify(builder, edges)
     end
 end
 
--- Fill playable islands beyond the largest one with rock, or a source
--- feature such as deep water. The caller names passable terrain for its
--- source-specific zone pass; the default remains ordinary floor and doors.
-function graph.keep_largest_region(builder, passable, fill_glyph)
+-- Enumerate connected playable regions in descending size. Source cave
+-- layouts can retain several stair bubbles, while ordinary layouts later
+-- keep only the largest. Scan order breaks equal-size ties deterministically.
+function graph.regions(builder, passable)
     passable = passable or {
         ["."] = true,
         ["+"] = true,
     }
     local visited = {}
-    local largest = {}
+    local regions = {}
     local directions = {
         { x = 1, y = 0 },
         { x = -1, y = 0 },
@@ -466,29 +466,49 @@ function graph.keep_largest_region(builder, passable, fill_glyph)
                     end
                 end
 
-                if #region > #largest then
-                    largest = region
-                end
+                regions[#regions + 1] = region
             end
         end
     end
 
+    table.sort(regions, function(left, right)
+        if #left ~= #right then
+            return #left > #right
+        end
+
+        if left[1].y ~= right[1].y then
+            return left[1].y < right[1].y
+        end
+
+        return left[1].x < right[1].x
+    end)
+
+    return regions
+end
+
+-- Keep the source's largest few regions above a minimum area, replacing
+-- smaller pockets with the requested wall or water glyph. Returning each
+-- retained region lets a layout assign its own authored stair variants.
+function graph.keep_regions(builder, count, minimum, passable, fill_glyph)
     local retained = {}
 
-    for _, point in ipairs(largest) do
-        retained[point.y * grid.width + point.x] = true
-    end
-
-    for y = 1, grid.height - 2 do
-        for x = 1, grid.width - 2 do
-            local glyph = builder:cell(x, y)
-
-            if passable[glyph] and
-                not retained[y * grid.width + x] then
-                builder:set(x, y, fill_glyph or "#")
+    for index, region in ipairs(graph.regions(builder, passable)) do
+        if index <= count and #region >= minimum then
+            retained[#retained + 1] = region
+        else
+            for _, point in ipairs(region) do
+                builder:set(point.x, point.y, fill_glyph or "#")
             end
         end
     end
+
+    return retained
+end
+
+-- Most layouts intentionally keep one playable region. Preserve this
+-- focused operation for their ordinary source zone cleanup.
+function graph.keep_largest_region(builder, passable, fill_glyph)
+    return graph.keep_regions(builder, 1, 0, passable, fill_glyph)
 end
 
 return graph

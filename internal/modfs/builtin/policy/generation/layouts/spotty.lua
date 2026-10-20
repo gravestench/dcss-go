@@ -70,10 +70,12 @@ function spotty.carve(builder, boxy, iterations)
     end
 end
 
--- Smearing grows neighboring rock into existing floor. Boxy source maps
--- require a cardinal rock neighbor; rounded maps also accept diagonals.
--- Octagons use the latter behavior and discard disconnected floor later.
-function spotty.smear(builder, iterations, boxy)
+-- Smearing grows one glyph into a neighboring target glyph. Ordinary maps
+-- use rock into floor; Diamond Mine uses rock into its temporary edge
+-- marker. Boxy mode checks cardinal neighbors, rounded mode diagonals.
+function spotty.smear(builder, iterations, boxy, onto, smear)
+    onto = onto or "."
+    smear = smear or "#"
     local attempts = 0
     local limit = iterations * 10
 
@@ -91,21 +93,21 @@ function spotty.smear(builder, iterations, boxy)
 
             x = 1 + builder:roll(grid.width - 2)
             y = 1 + builder:roll(grid.height - 2)
-            adjacent = builder:cell(x + 1, y) == "#" or
-                builder:cell(x - 1, y) == "#" or
-                builder:cell(x, y + 1) == "#" or
-                builder:cell(x, y - 1) == "#"
+            adjacent = builder:cell(x + 1, y) == smear or
+                builder:cell(x - 1, y) == smear or
+                builder:cell(x, y + 1) == smear or
+                builder:cell(x, y - 1) == smear
 
             if not boxy then
                 adjacent = adjacent or
-                    builder:cell(x + 1, y + 1) == "#" or
-                    builder:cell(x - 1, y + 1) == "#" or
-                    builder:cell(x + 1, y - 1) == "#" or
-                    builder:cell(x - 1, y - 1) == "#"
+                    builder:cell(x + 1, y + 1) == smear or
+                    builder:cell(x - 1, y + 1) == smear or
+                    builder:cell(x + 1, y - 1) == smear or
+                    builder:cell(x - 1, y - 1) == smear
             end
-        until builder:cell(x, y) == "." and adjacent
+        until builder:cell(x, y) == onto and adjacent
 
-        builder:set(x, y, "#")
+        builder:set(x, y, smear)
     end
 end
 

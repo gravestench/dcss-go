@@ -82,11 +82,42 @@ local function rejects_insufficient_floor()
     harness.falsy(ok, "two floor cells cannot hold three stair pairs")
 end
 
+-- Source cave layouts deliberately place down stairs in separate bubbles.
+-- Each bubble needs a local return stair so a future branch floor can pair
+-- it with a real parent departure without tunnelling through solid rock.
+local function preserves_separate_stair_bubbles()
+    local builder = grid.new(random_context())
+    local centers = { 15, 35, 55 }
+
+    for _, center in ipairs(centers) do
+        for y = 10, 20 do
+            for x = center - 5, center + 5 do
+                builder:set(x, y, ".")
+            end
+        end
+
+        builder:set(center, 15, "}")
+    end
+
+    builder:set(16, 15, "{")
+
+    local pairs = stairs.complete(builder)
+
+    harness.equal(#pairs, 3, "one stair pair per cave bubble")
+
+    for _, pair in ipairs(pairs) do
+        harness.truthy(math.abs(pair.up.x - pair.down.x) <= 5 and
+            math.abs(pair.up.y - pair.down.y) <= 5,
+            "a cave return stair stays in its down-stair bubble")
+    end
+end
+
 -- Run both successful construction paths and the bounded failure case.
 function test.run()
     fills_missing_stairs()
     preserves_authored_stairs()
     rejects_insufficient_floor()
+    preserves_separate_stair_bubbles()
 end
 
 return test

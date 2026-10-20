@@ -1,0 +1,11 @@
+# Source: crawl-ref/source/dat/des/builder/layout.des, layout_caves.
+# The source validator rejects caverns too small to be a whole floor.
+NAME:   layout_caves
+DEPTH:  Orc, Slime
+WEIGHT: 10
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_open_caves
+: vault.run("layout_caves")
+: vault.validate("validate")
+MAP
+ENDMAP

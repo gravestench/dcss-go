@@ -1,0 +1,12 @@
+# Source: crawl-ref/source/dat/des/builder/layout.des, layout_diamond_mine.
+# Weighted diamond rooms form Orc's narrow-cave alternative.
+NAME:   layout_diamond_mine
+DEPTH:  Orc
+WEIGHT: 5
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_narrow_caves
+TAGS:   no_rotate no_hmirror no_vmirror
+: vault.run("layout_diamond_mine")
+: vault.validate("validate")
+MAP
+ENDMAP
