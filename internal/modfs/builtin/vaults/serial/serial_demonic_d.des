@@ -1,0 +1,16 @@
+# A ring of bloody ground around a central altar-like glyph, with authored local substitutions.
+# Source helper tags and weight are declared here so catalog selection sees them before the Lua hook runs.
+NAME: serial_demonic_d
+TAGS: serial_demonic extra allow_dup
+WEIGHT: 2
+SUBST:  _ = .__
+SUBST:  . = ......_
+SUBST:  A = AAAAY
+: vault.run("configure")
+MAP
+.....
+.___.
+._A_.
+.___.
+.....
+ENDMAP

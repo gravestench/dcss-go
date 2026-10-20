@@ -108,6 +108,42 @@ local function declaration_records(vault, operation)
     return records
 end
 
+-- A Lua hook can attach a marker to the cells present at this exact source
+-- position. Later SUBST statements may erase the glyph, but the marker
+-- stays bound to those cells and rotates with the finished vault.
+local function anchored_markers(cells, record)
+    local argument = record.arguments
+    local glyph = argument and argument.glyph
+
+    if type(glyph) ~= "string" or #glyph ~= 1 or
+        type(argument.identity) ~= "string" then
+        error("vault marker record needs one glyph and an identity")
+    end
+
+    local anchored = {}
+
+    for y, row in ipairs(cells) do
+        for x, source in ipairs(row) do
+            if source == glyph then
+                local marker = {}
+
+                for key, value in pairs(record) do
+                    marker[key] = value
+                end
+
+                marker.identity = argument.identity
+                marker.targets = glyph
+                marker.source = glyph
+                marker.local_x = x
+                marker.local_y = y
+                anchored[#anchored + 1] = marker
+            end
+        end
+    end
+
+    return anchored
+end
+
 -- Array directives advance slot numbers in authored order across comma-separated entries.
 local function array_records(vault, operation, first_slot)
     local glyphs = operation.kind == directives.MONS and "1234567" or "defghijk"
@@ -567,11 +603,18 @@ function operations.apply(vault, cells, random, depth, player)
                 else
                     local record = event.value
 
-                    if transforms.apply_effect(cells, record, random) then
-                        record.pending = false
-                    end
+                    if record.kind == effects.MARKER and
+                        record.arguments and record.arguments.glyph then
+                        for _, anchored in ipairs(anchored_markers(cells, record)) do
+                            records[#records + 1] = anchored
+                        end
+                    else
+                        if transforms.apply_effect(cells, record, random) then
+                            record.pending = false
+                        end
 
-                    records[#records + 1] = record
+                        records[#records + 1] = record
+                    end
                 end
             end
         else

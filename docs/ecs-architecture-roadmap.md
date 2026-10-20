@@ -223,7 +223,10 @@ same grid and source-record path as arrival vaults. Deeper branch generation
 can reuse these definitions without another shop implementation. Replace the
 temporary generic extra-vault frequency with source-style chance and
 weighted minivault stages, with a separate explicit `PLACE` attempt. The source dummy family now controls the
-ordinary minivault draw. Import the remaining secondary-vault corpus so
+ordinary minivault draw. Hook-attached markers now keep their coordinates
+through later glyph substitutions, letting serial families share a small
+Lua setup module without a Go map-ID handler. Import the remaining
+secondary-vault corpus so
 those stages select from the complete source pool.
 
 ## Slice checks

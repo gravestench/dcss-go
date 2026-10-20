@@ -1,0 +1,7 @@
+# Demonic serial uses one source chance roll, then a post-place hook
+# spreads four to ten small patches across D:4 and deeper floors.
+NAME: serial_demonic
+DEPTH: D:4-
+TAGS: extra luniq_serial nolayout_encompass
+CHANCE: 1%
+: vault.post_place("place_demonic")

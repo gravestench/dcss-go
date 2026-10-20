@@ -1,0 +1,13 @@
+# Tiny room whose haze and altered ground make a sparse demonic encounter.
+# Source helper tags and weight are declared here so catalog selection sees them before the Lua hook runs.
+NAME: serial_demonic_e
+TAGS: serial_demonic extra allow_dup
+WEIGHT: 2
+SUBST:  . = ........__ttPPY
+: vault.run("configure")
+MAP
+....
+..S.
+....
+....
+ENDMAP

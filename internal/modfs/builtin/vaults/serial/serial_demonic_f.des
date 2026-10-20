@@ -1,0 +1,16 @@
+# Water-ring variant; the inner water and fog seeds create a distinct island silhouette.
+# Source helper tags and weight are declared here so catalog selection sees them before the Lua hook runs.
+NAME: serial_demonic_f
+TAGS: serial_demonic extra allow_dup
+WEIGHT: 2
+SUBST:  . = .......__ttPP
+SUBST:  w = .wwW
+: vault.run("configure")
+MAP
+..S...
+.wwww.
+wWWWww
+.wWWW.
+.wwww.
+....S.
+ENDMAP

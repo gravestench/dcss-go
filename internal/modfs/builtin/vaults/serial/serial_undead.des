@@ -1,0 +1,7 @@
+# Undead serial begins at D:2. The controller itself has no cells;
+# the source post-place count chooses the graveyard child maps.
+NAME: serial_undead
+DEPTH: D:2-
+TAGS: extra luniq_serial nolayout_encompass
+CHANCE: 1%
+: vault.post_place("place_undead")

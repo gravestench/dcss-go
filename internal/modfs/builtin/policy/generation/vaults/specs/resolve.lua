@@ -15,6 +15,8 @@ local resolve = {}
 local names_by_category = {}
 
 local random_monster_names = {
+    ["common demon"] = true,
+    ["any common demon"] = true,
     ["0"] = true,
     ["8"] = true,
     ["9"] = true,
@@ -79,6 +81,36 @@ local function name_index(category)
 end
 
 -- Reject unknown or ambiguous display names instead of guessing a catalog ID.
+-- Source monster names can also belong to internal entities such as the
+-- player's shadow. Prefer the sole spawnable profile when that happens;
+-- retain an ambiguity error if two ordinary monsters still share a name.
+local function spawnable_name_match(ids)
+    local chosen
+
+    for _, id in ipairs(ids) do
+        local definition = catalog.get(categories.MONSTERS, id)
+        local can_spawn = true
+
+        for _, flag in ipairs(definition.flags or {}) do
+            if flag == "M_CANT_SPAWN" then
+                can_spawn = false
+            end
+        end
+
+        if can_spawn then
+            if chosen then
+                return nil
+            end
+
+            chosen = id
+        end
+    end
+
+    return chosen
+end
+
+-- Preserve an explicit ambiguity for items or genuinely duplicated
+-- spawnable monsters; a player-only profile cannot steal a vault name.
 local function find_name(category, name, site)
     local ids = name_index(category)[name:lower()]
 
@@ -87,6 +119,14 @@ local function find_name(category, name, site)
     end
 
     if #ids > 1 then
+        if category == categories.MONSTERS then
+            local chosen = spawnable_name_match(ids)
+
+            if chosen then
+                return chosen
+            end
+        end
+
         choice.fail(site, name, string.format(
             "ambiguous %s name: %s and %s", category, ids[1], ids[2]))
     end

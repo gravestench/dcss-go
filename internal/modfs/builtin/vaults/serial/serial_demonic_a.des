@@ -1,0 +1,15 @@
+# Open five-by-five demonic clearing; its center fog seed changes the otherwise bare floor.
+# Source helper tags and weight are declared here so catalog selection sees them before the Lua hook runs.
+NAME: serial_demonic_a
+TAGS: serial_demonic extra allow_dup
+WEIGHT: 2
+SUBST:  . = ...._
+KPROP:  _ = bloody
+: vault.run("configure")
+MAP
+.....
+.....
+..S..
+.....
+.....
+ENDMAP

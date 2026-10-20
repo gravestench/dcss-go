@@ -1,0 +1,13 @@
+# Tiny graveyard with smoke, grave markers, and withered vegetation.
+# Source helper tags and weight are declared here so catalog selection sees them before the Lua hook runs.
+NAME: serial_undead_e
+TAGS: serial_undead extra allow_dup
+WEIGHT: 2
+SUBST:  . = ........--__ttG
+: vault.run("configure")
+MAP
+....
+..S.
+....
+....
+ENDMAP

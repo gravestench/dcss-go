@@ -263,8 +263,12 @@ maps yet; an empty eligible tag pool leaves that slot available for an
 ordinary shop instead of aborting the floor.
 The four-map `serial_nicolae_subway` family adds its controller and three
 linked stations. Their transport markers survive as typed level records;
-transporter movement still needs its own gameplay slice. The builder and
-serial catalog now contains 144 of 600 source definitions.
+transporter movement still needs its own gameplay slice. The demonic and
+undead serials add fifteen source maps with depth-scaled monster requests,
+typed fog markers, and the undead gravestone name. Hook-attached markers
+retain their positions even when a later source substitution changes the
+underlying terrain glyph. The builder and serial catalog now contains 159
+of 600 source definitions.
 Generated Dungeon levels now save every successfully placed map ID, including
 controllers without cell records. Lua reconstructs run-wide names and
 `uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those

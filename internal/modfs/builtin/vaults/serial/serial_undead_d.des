@@ -1,0 +1,16 @@
+# Grave ring around a central gravestone; dark pebble floor distinguishes the center.
+# Source helper tags and weight are declared here so catalog selection sees them before the Lua hook runs.
+NAME: serial_undead_d
+TAGS: serial_undead extra allow_dup
+WEIGHT: 2
+SUBST:  _ = -_
+SUBST:  . = ......-_
+FTILE:  G = FLOOR_PEBBLE_DARKGRAY
+: vault.run("configure")
+MAP
+.....
+.___.
+._G_.
+.___.
+.....
+ENDMAP

@@ -1994,6 +1994,18 @@ the family tag and suitable marker destinations; the tagged selector will
 discover it without a Go dispatch case. Marker records are saved now, while
 transporter movement is a later gameplay slice.
 
+The demonic and undead serials demonstrate a shared Lua setup hook. Each
+child's `.des` declares its source tags and weight so the catalog can
+select it; `: vault.run("configure")` then adds depth-dependent monster
+requests and decorative records at the authored point in directive order.
+For source `e.lua_marker` behavior, call `api:record(effects.MARKER, {
+glyph = "S", identity = marker_text })` while `S` still exists. The engine
+captures those cell positions immediately, so a later `SUBST: S = .` can
+change the terrain without losing the marker. Import
+`constants.vault_effects` where that record is made. The shared demonic
+monster resolver also recognizes the source's `common demon` alias and
+draws from the two appropriate demon tiers.
+
 When a source vault needs a calculated directive, add
 `policy/generation/vaults/<family>/<name>.lua` with a local `handler` object
 and a named method. A `.des` line such as `: vault.run("configure")` calls

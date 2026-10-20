@@ -1,0 +1,14 @@
+# Open five-by-five graveyard clearing with a central black-smoke seed.
+# Source helper tags and weight are declared here so catalog selection sees them before the Lua hook runs.
+NAME: serial_undead_a
+TAGS: serial_undead extra allow_dup
+WEIGHT: 2
+SUBST:  . = ....-_
+: vault.run("configure")
+MAP
+.....
+.....
+..S..
+.....
+.....
+ENDMAP

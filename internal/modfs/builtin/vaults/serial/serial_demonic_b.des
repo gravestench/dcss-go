@@ -1,0 +1,13 @@
+# Small four-by-four demonic patch; trees and plants can interrupt its central haze.
+# Source helper tags and weight are declared here so catalog selection sees them before the Lua hook runs.
+NAME: serial_demonic_b
+TAGS: serial_demonic extra allow_dup
+WEIGHT: 2
+SUBST:  . = ...tP
+: vault.run("configure")
+MAP
+....
+....
+.S..
+....
+ENDMAP

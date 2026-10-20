@@ -1,0 +1,13 @@
+# Lava-pair variant; preserve the two lava cells while scattering demonic ground.
+# Source helper tags and weight are declared here so catalog selection sees them before the Lua hook runs.
+NAME: serial_demonic_g
+TAGS: serial_demonic extra allow_dup
+WEIGHT: 2
+SUBST:  . = ..__PP
+: vault.run("configure")
+MAP
+....
+.ll.
+.ll.
+...S
+ENDMAP

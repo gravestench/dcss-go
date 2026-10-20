@@ -1,0 +1,13 @@
+# Open square weighted toward altered ground and demonic vegetation.
+# Source helper tags and weight are declared here so catalog selection sees them before the Lua hook runs.
+NAME: serial_demonic_c
+TAGS: serial_demonic extra allow_dup
+WEIGHT: 2
+SUBST:  . = _.......ttPP
+: vault.run("configure")
+MAP
+....
+....
+....
+....
+ENDMAP
