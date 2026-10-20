@@ -6,47 +6,90 @@ import (
 	"testing"
 
 	"crawl/internal/ecs"
+	"crawl/internal/terrain"
 
 	"github.com/gravestench/akara"
 )
 
-// A cloud's possible area must stay clear of its caster, so use the full
-// five-cell spell range instead of the nearer bolt fixture positions.
+// Cloud targeting rejects a shot whose potential field touches an ally.
+// Find an empty area, place the caster and player five cells apart, and
+// open their ray. This keeps the test independent of random Dungeon shape
+// while retaining the real targeting, cloud placement, and save path.
 func placePlayerInCloudLine(t *testing.T, g *Game, caster akara.Entity) {
 	t.Helper()
 
 	position, _ := g.stores.Positions.Get(caster)
 	level := g.levels[position.LevelID]
 
-	for _, delta := range []point{
-		{x: 1},
-		{x: -1},
-		{y: 1},
-		{y: -1},
-	} {
-		x := position.X + delta.x*5
-		y := position.Y + delta.y*5
+	for y := 8; y < len(level.terrain)-8; y++ {
+		for x := 8; x < level.width-13; x++ {
+			if _, occupied := level.ActorAt(x, y); occupied {
+				continue
+			}
 
-		if !level.ClearProjectilePath(position.X, position.Y, x, y) {
-			continue
+			if _, occupied := level.ActorAt(x+5, y); occupied {
+				continue
+			}
+
+			isolated := true
+
+			for nearbyY := y - 6; nearbyY <= y+6 && isolated; nearbyY++ {
+				for nearbyX := x - 6; nearbyX <= x+11; nearbyX++ {
+					actor, occupied := level.ActorAt(nearbyX, nearbyY)
+
+					if occupied && actor != caster && actor != g.player {
+						isolated = false
+						break
+					}
+				}
+			}
+
+			if !isolated {
+				continue
+			}
+
+			for distance := 0; distance <= 5; distance++ {
+				if !level.Walkable(x+distance, y) {
+					if err := level.SetCell(x+distance, y, terrain.Floor); err != nil {
+						t.Fatal(err)
+					}
+				}
+			}
+
+			// Cloud planning expands whole walkable shells. Open space around
+			// the impact point so a narrow corridor cannot grow back to caster.
+			for cloudY := y - 3; cloudY <= y+3; cloudY++ {
+				for cloudX := x + 2; cloudX <= x+8; cloudX++ {
+					if !level.Walkable(cloudX, cloudY) {
+						if err := level.SetCell(cloudX, cloudY,
+							terrain.Floor); err != nil {
+							t.Fatal(err)
+						}
+					}
+				}
+			}
+
+			if err := level.MoveActor(caster, x, y); err != nil {
+				t.Fatal(err)
+			}
+
+			if err := level.MoveActor(g.player, x+5, y); err != nil {
+				t.Fatal(err)
+			}
+
+			if !level.ClearProjectilePath(x, y, x+5, y) {
+				t.Fatal("prepared cloud arena has no clear ray")
+			}
+
+			if err := g.refreshVisibility(); err != nil {
+				t.Fatal(err)
+			}
+
+			return
 		}
-
-		if _, occupied := level.ActorAt(x, y); occupied {
-			continue
-		}
-
-		if err := level.MoveActor(g.player, x, y); err != nil {
-			t.Fatal(err)
-		}
-
-		if err := g.refreshVisibility(); err != nil {
-			t.Fatal(err)
-		}
-
-		return
 	}
 
-	t.Fatal("could not place player outside the cloud caster's field")
+	t.Fatal("could not prepare an isolated cloud arena")
 }
 
 // A source-shaped beam must pass through the real monster decision, beam

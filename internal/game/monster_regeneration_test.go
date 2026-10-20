@@ -62,6 +62,8 @@ func TestRestoreRejectsZeroHPWorm(t *testing.T) {
 	}
 
 	defer g.Close()
+	// Generated D:2 is lazy; create it before the save fixture adds its worm.
+	descendGeneratedTo(t, g, 2)
 	spawnWormForTest(t, g, 2)
 
 	snapshot := g.Snapshot()

@@ -1,6 +1,7 @@
 package game
 
 import (
+	"crawl/internal/terrain"
 	"github.com/gravestench/akara"
 	"testing"
 )
@@ -67,6 +68,64 @@ func placePlayerInSlugLine(t *testing.T, g *Game, slug akara.Entity) {
 
 			if _, occupied := level.ActorAt(x, y); occupied {
 				continue
+			}
+
+			if err := level.MoveActor(g.player, x, y); err != nil {
+				t.Fatal(err)
+			}
+
+			if err := g.refreshVisibility(); err != nil {
+				t.Fatal(err)
+			}
+
+			return
+		}
+	}
+
+	// A generated layout may leave no natural three-cell shot, especially
+	// after a summoned living spell appears around a bend. Open one clear
+	// lane while keeping the real projectile and target checks under test.
+	for _, delta := range []point{
+		{x: 1},
+		{x: -1},
+		{y: 1},
+		{y: -1},
+	} {
+		for distance := 3; distance <= 5; distance++ {
+			x := position.X + delta.x*distance
+			y := position.Y + delta.y*distance
+
+			if !level.inBounds(x, y) {
+				continue
+			}
+
+			blocked := false
+
+			for step := 1; step <= distance; step++ {
+				cellX := position.X + delta.x*step
+				cellY := position.Y + delta.y*step
+				actor, occupied := level.ActorAt(cellX, cellY)
+
+				if occupied && actor != g.player {
+					blocked = true
+					break
+				}
+			}
+
+			if blocked {
+				continue
+			}
+
+			for step := 1; step <= distance; step++ {
+				cellX := position.X + delta.x*step
+				cellY := position.Y + delta.y*step
+
+				if !level.Walkable(cellX, cellY) {
+					if err := level.SetCell(cellX, cellY,
+						terrain.Floor); err != nil {
+						t.Fatal(err)
+					}
+				}
 			}
 
 			if err := level.MoveActor(g.player, x, y); err != nil {

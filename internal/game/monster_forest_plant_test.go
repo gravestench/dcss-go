@@ -6,7 +6,59 @@ import (
 
 	"crawl/internal/ecs"
 	"crawl/internal/terrain"
+	"github.com/gravestench/akara"
 )
+
+// Plant spells need a broad ring of traversable cells for vines and briars.
+// Place the caster away from the map edge, then carve the arena and put the
+// player four cells away so random Dungeon geometry cannot veto the spell.
+func openPlantArena(t *testing.T, game *Game, caster akara.Entity) {
+	t.Helper()
+
+	position, _ := game.stores.Positions.Get(caster)
+	level := game.levels[position.LevelID]
+	centerX := 0
+	centerY := 0
+
+	for y := 20; y < len(level.terrain)-20 && centerX == 0; y++ {
+		for x := 20; x < level.width-24; x++ {
+			_, casterOccupied := level.ActorAt(x, y)
+			_, playerOccupied := level.ActorAt(x+4, y)
+
+			if !casterOccupied && !playerOccupied {
+				centerX = x
+				centerY = y
+				break
+			}
+		}
+	}
+
+	if centerX == 0 {
+		t.Fatal("no open center for plant spell arena")
+	}
+
+	for y := centerY - 12; y <= centerY+12; y++ {
+		for x := centerX - 12; x <= centerX+16; x++ {
+			if !level.Walkable(x, y) {
+				if err := level.SetCell(x, y, terrain.Floor); err != nil {
+					t.Fatal(err)
+				}
+			}
+		}
+	}
+
+	if err := level.MoveActor(caster, centerX, centerY); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := level.MoveActor(game.player, centerX+4, centerY); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := game.refreshVisibility(); err != nil {
+		t.Fatal(err)
+	}
+}
 
 // Put source tree terrain beside the player, leaving the caster's direct
 // sight line open. Both forest attacks and vine placement read this grid.
@@ -107,7 +159,7 @@ func TestMonsterPlantSpellbookCastAndRestore(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			game, caster, rules := moddedEndoplasmGame(t,
 				testCase.path)
-			placePlayerInSlugLine(t, game, caster)
+			openPlantArena(t, game, caster)
 
 			if testCase.name == "awaken forest" ||
 				testCase.name == "awaken vines" {
@@ -124,8 +176,10 @@ func TestMonsterPlantSpellbookCastAndRestore(t *testing.T) {
 			}
 
 			if game.turn.ResolvedIntent != ecs.IntentSpell {
-				t.Fatalf("resolved intent = %d, want spell",
-					game.turn.ResolvedIntent)
+				casterPosition, _ := game.stores.Positions.Get(caster)
+				playerPosition, _ := game.stores.Positions.Get(game.player)
+				t.Fatalf("resolved intent = %d, want spell; caster %+v player %+v",
+					game.turn.ResolvedIntent, *casterPosition, *playerPosition)
 			}
 
 			store := game.scripts.Components()[testCase.component]

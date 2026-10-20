@@ -274,6 +274,17 @@ func TestQuaffSelectedCuringFromPickedUpInventory(t *testing.T) {
 
 func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 	m := playingModel(t)
+	// This test exercises the quaff menu. The fixed two-floor scenario has
+	// its heal wounds potion at launch; live D:2 is built only on descent.
+	fixture, err := game.NewScenario(1, "WPN_RAPIER", "Alice")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m.game.Close()
+	m.game = fixture
+
 	snapshot := m.game.Snapshot()
 	foundPotion := false
 
@@ -296,7 +307,7 @@ func TestQuaffHealWoundsInventoryLetter(t *testing.T) {
 	}
 
 	if !foundPotion {
-		t.Fatal("generated run has no floor heal wounds potion")
+		t.Fatal("fixed scenario has no floor heal wounds potion")
 	}
 
 	restored, err := game.Restore(snapshot)

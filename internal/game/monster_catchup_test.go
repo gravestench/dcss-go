@@ -13,6 +13,9 @@ func TestReturnedWormHealsAtFastRate(t *testing.T) {
 	}
 
 	defer g.Close()
+	// Ordinary Dungeon floors are built on entry. The catch-up fixture needs
+	// D:2 to exist before it can place a worm there and mark that floor away.
+	descendGeneratedTo(t, g, 2)
 	worm := spawnWormForTest(t, g, 2)
 
 	position, _ := g.stores.Positions.Get(worm)
