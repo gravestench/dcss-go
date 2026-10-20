@@ -226,6 +226,37 @@ function noise.boundary(value, first, full_start, full_end, last)
     return (last - value) / (last - full_end)
 end
 
+-- The source bar is a boundary ramp centered on one axis. Cave Shapes
+-- subtracts it from a cross or doughnut so low values become open paths.
+function noise.bar(value, position, width, inner)
+    local first = math.floor(position - width / 2)
+    local last = first + width + 1
+    local full_start = position - inner / 2
+    local full_end = position + inner / 2
+
+    return noise.boundary(value, first, full_start, full_end, last)
+end
+
+-- Source radial values turn around the map center in [0,1). A phase can
+-- rotate two opposite spokes through an otherwise closed doughnut.
+function noise.radial(x, y, center_x, center_y, phase)
+    local dx = center_x - x
+    local dy = center_y - y
+    local angle
+
+    if dy == 0 then
+        angle = dx > 0 and 270 or 90
+    else
+        angle = math.atan(dx / dy) / math.pi * 180
+
+        if dy > 0 then
+            angle = angle + 180
+        end
+    end
+
+    return ((angle + phase * 360) % 360) / 360
+end
+
 -- Snake and Spider bend both pod fields with two independent simplex
 -- offsets. The original transform scales those offsets toward map center.
 function noise.damped_distortion(builder)

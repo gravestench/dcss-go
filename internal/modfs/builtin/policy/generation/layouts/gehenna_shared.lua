@@ -219,7 +219,8 @@ end
 
 -- The source samples more buildings deeper in Gehenna. A candidate is
 -- accepted only when its cover ratio and stone separation allow a door.
-local function add_buildings(builder, fraction)
+function shared.add_buildings(builder, api)
+    local fraction = depth_fraction(api)
     local border = 4
     local maximum_size = math.floor(6 + 4 * fraction)
     local separation = subdivision.range(builder, 1,
@@ -263,7 +264,7 @@ function shared.epilogue(builder, api)
             { glyph = "l", weight = bottom * 2 },
             { glyph = ".", weight = bottom },
         })
-    local room_count = add_buildings(builder, fraction)
+    local room_count = shared.add_buildings(builder, api)
 
     cleanup.widen_paths(builder, "v", 90)
 

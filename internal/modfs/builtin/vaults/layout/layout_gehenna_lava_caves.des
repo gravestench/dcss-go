@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_caves.des
+# Simplex levels, lava, and source stone buildings are carved by Lua.
+NAME:   layout_gehenna_lava_caves
+DEPTH:  Geh
+WEIGHT: 20
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_narrow_caves
+: vault.run("layout_gehenna_lava_caves.generate")
+MAP
+ENDMAP
