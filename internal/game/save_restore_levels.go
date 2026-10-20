@@ -73,6 +73,10 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 			}
 		}
 
+		if err := level.SetVaultIDs(record.VaultIDs); err != nil {
+			return err
+		}
+
 		for _, savedVault := range record.VaultRecords {
 			if err := level.AddVaultRecord(savedVault); err != nil {
 				return err

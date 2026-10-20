@@ -20,6 +20,10 @@ function vaults.validate(_, input)
             known(level.vault_id, level.id)
         end
 
+        for _, id in ipairs(level.vault_ids or {}) do
+            known(id, level.id)
+        end
+
         for _, record in ipairs(level.vault_records or {}) do
             known(record.source_id, level.id)
         end

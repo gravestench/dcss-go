@@ -184,7 +184,7 @@ end
 
 -- Generate one floor before pairing its stairs with neighboring floors.
 -- The arrival only belongs to D:1; supplemental vaults use actual depth.
-local function build_floor(ctx, player, depth, bottom)
+local function build_floor(ctx, player, depth, bottom, prior_vault_ids)
     local layout
     local arrival
     local arrival_vault
@@ -207,23 +207,29 @@ local function build_floor(ctx, player, depth, bottom)
     end
 
     local protected = protected_cells(layout, arrival)
-    local extra, controller = vault_extra.generate(ctx, layout.builder, {
-        branch_id = branches.BRANCH_DUNGEON,
-        depth = depth,
-        branch_bottom = bottom,
-        absolute_depth = depth,
-        protected = protected,
-        required = required,
-        player = {
-            species_id = player.species_id,
-            name = player.name,
-            started = player.started or false,
+    local extra, controller, extra_ids = vault_extra.generate(
+        ctx,
+        layout.builder,
+        {
             branch_id = branches.BRANCH_DUNGEON,
             depth = depth,
             branch_bottom = bottom,
             absolute_depth = depth,
-        },
-    })
+            prior_vault_ids = prior_vault_ids,
+            arrival_vault = arrival_vault,
+            protected = protected,
+            required = required,
+            player = {
+                species_id = player.species_id,
+                name = player.name,
+                started = player.started or false,
+                branch_id = branches.BRANCH_DUNGEON,
+                depth = depth,
+                branch_bottom = bottom,
+                absolute_depth = depth,
+            },
+        }
+    )
 
     local records = {}
     local source_up = {}
@@ -247,6 +253,7 @@ local function build_floor(ctx, player, depth, bottom)
         arrival_vault = arrival_vault,
         extra = extra,
         controller = controller,
+        vault_ids = extra_ids,
         records = records,
         protected = protected,
         source_up = source_up,
@@ -290,6 +297,7 @@ local function level_record(ctx, floor, depth)
         entry_y = entry.y,
         initial_monsters = monster_count(ctx, depth),
         vault_id = arrival and arrival.id or floor.controller,
+        vault_ids = floor.vault_ids,
         vault_records = #floor.records > 0 and floor.records or nil,
         spawn_exclusions = extra_exclusions(base_exclusions, floor.extra),
     }
@@ -315,7 +323,7 @@ function generated.first(ctx, input)
         name = input.player_name,
         started = false,
     }
-    local floor = build_floor(ctx, player, 1, bottom)
+    local floor = build_floor(ctx, player, 1, bottom, {})
 
     live_stairs.first(floor)
 
@@ -351,7 +359,8 @@ function generated.next(ctx, input)
         name = input.player_name,
         started = true,
     }
-    local floor = build_floor(ctx, player, depth, bottom)
+    local floor = build_floor(ctx, player, depth, bottom,
+        input.prior_vault_ids)
     local patches, entry = live_stairs.pair(ctx, parent, floor, {
         x = input.from_x,
         y = input.from_y,

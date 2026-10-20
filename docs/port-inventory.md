@@ -253,6 +253,11 @@ secondary-vault pool instead. Deeper branch placement needs the corresponding
 branch generator. The rare `bzr_entry` request has no imported bazaar entry
 maps yet; an empty eligible tag pool leaves that slot available for an
 ordinary shop instead of aborting the floor.
+Generated Dungeon levels now save every successfully placed map ID, including
+controllers without cell records. Lua reconstructs run-wide names and
+`uniq_*` tags plus current-floor `luniq` names and `luniq_*` tags from those
+IDs. Save version 23 rejects older snapshots that lack complete map-use
+history.
 Keeper names, exact source RNG sequences, and every special price case still
 need parity review; the saved keeper seed leaves a place for that work without
 changing the ECS ownership model.

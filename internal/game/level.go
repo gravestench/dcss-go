@@ -34,6 +34,7 @@ type Level struct {
 	awaySinceAut *Aut
 	stairs       map[point]StairLink
 	vaultID      string
+	vaultIDs     []string
 	vaultRecords []vault.Record
 
 	// Shoals heights are authored terrain elevations. The tide changes the
@@ -211,6 +212,26 @@ func (l *Level) SetVaultID(id string) error {
 
 func (l *Level) VaultID() string {
 	return l.vaultID
+}
+
+// SetVaultIDs records every map that placed successfully on this level,
+// including controllers whose empty MAP generated no cell records.
+func (l *Level) SetVaultIDs(ids []string) error {
+	for _, id := range ids {
+		if id == "" {
+			return fmt.Errorf("level %d has an empty placed vault ID", l.ID)
+		}
+	}
+
+	l.vaultIDs = append([]string(nil), ids...)
+
+	return nil
+}
+
+// VaultIDs returns a copy because map-use history must survive later level
+// edits unchanged for source uniqueness and save continuation.
+func (l *Level) VaultIDs() []string {
+	return append([]string(nil), l.vaultIDs...)
 }
 
 func (l *Level) AddVaultRecord(record vault.Record) error {

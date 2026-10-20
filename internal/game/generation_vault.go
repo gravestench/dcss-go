@@ -19,6 +19,30 @@ var implementedTerrainAliases = map[string]bool{
 }
 
 func loadLuaVault(level *Level, generated map[string]any) error {
+	if raw, present := generated["vault_ids"]; present {
+		values, err := luaScenarioList(raw, "vault IDs")
+
+		if err != nil {
+			return fmt.Errorf("Lua level %d: %w", level.ID, err)
+		}
+
+		ids := make([]string, 0, len(values))
+
+		for _, value := range values {
+			id, ok := value.(string)
+
+			if !ok {
+				return fmt.Errorf("Lua level %d has a nonstring vault ID", level.ID)
+			}
+
+			ids = append(ids, id)
+		}
+
+		if err := level.SetVaultIDs(ids); err != nil {
+			return err
+		}
+	}
+
 	id, hasID := generated["vault_id"].(string)
 
 	if !hasID {

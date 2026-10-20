@@ -79,8 +79,7 @@ local function candidates_for_tag(random, tag, context)
         if definition.tags[tag] and map_weight > 0 and
             (not context.family or definition.family == context.family) and
             (not context.excluded or not context.excluded[id]) and
-            (not context.used or not context.used[id] or
-                definition.tags.allow_dup) and
+            (not context.used or context.used:allows(definition)) and
             depth.eligible(definition, context.branch_id,
                 context.depth, context.branch_bottom) then
             local chance = depth.chance(definition, context.branch_id,

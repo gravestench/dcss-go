@@ -6,6 +6,7 @@ local placement = require("policy.generation.vaults.placement")
 local connect = require("policy.generation.vaults.connect")
 local selection = require("policy.generation.vaults.selection")
 local chance_units = require("constants.vault_chance")
+local used = require("policy.generation.vaults.used")
 
 local extra = {}
 local GENERIC_EXTRA_ROLL = 8
@@ -165,12 +166,12 @@ local function controller_api(builder, context, placed)
             local map, reason = extra.place(nil, builder, vault, child)
 
             if not map then
-                error("cannot place shop vault " .. vault.id ..
+                error("cannot place vault " .. vault.id ..
                     ": " .. tostring(reason))
             end
 
             placed[#placed + 1] = map
-            context.used[vault.id] = true
+            context.used:add(vault)
             placed_count = placed_count + 1
         end
 
@@ -188,7 +189,14 @@ function extra.generate(ctx, builder, context)
     local placed = {}
     local controller
 
-    context.used = context.used or {}
+    context.used = used.new(context.prior_vault_ids)
+
+    -- The primary arrival was placed before secondary selection. Register
+    -- it here so its name and tags constrain this floor's later maps.
+    if context.arrival_vault then
+        context.used:add(context.arrival_vault)
+    end
+
     context.family = "shop"
     context.excluded = {
         [serial.id] = true,
@@ -209,14 +217,14 @@ function extra.generate(ctx, builder, context)
 
         if map then
             placed[#placed + 1] = map
-            context.used[vault.id] = true
+            context.used:add(vault)
             controller = vault.id
         end
     end
 
     if not depth.eligible(serial, context.branch_id,
         context.depth, context.branch_bottom) then
-        return placed, controller
+        return placed, controller, context.used:ids()
     end
 
     local chance = depth.chance(serial, context.branch_id,
@@ -225,13 +233,14 @@ function extra.generate(ctx, builder, context)
     if chance <= 0 or
         (chance < chance_units.ROLL and
             builder:roll(chance_units.ROLL) >= chance) then
-        return placed, controller
+        return placed, controller, context.used:ids()
     end
 
+    context.used:add(serial)
     hooks.run(serial, "place_serial_shops",
         controller_api(builder, context, placed))
 
-    return placed, serial.id
+    return placed, serial.id, context.used:ids()
 end
 
 -- Add a stair or arrival point to the protected-cell set before extra placement.

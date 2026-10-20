@@ -132,12 +132,12 @@ controllers and maps with no records. New-floor policy receives prior
 placed IDs. `used` computes run and level name/tag sets from those IDs
 and the effective catalog. Restore validates every saved map ID.
 
-- [ ] Test same-floor `luniq_*`, cross-floor `uniq_*`, `allow_dup`,
+- [x] Test same-floor `luniq_*`, cross-floor `uniq_*`, `allow_dup`,
   zero-record controllers, first-entry continuation, and missing-ID
   restore diagnostics. Run these tests red.
-- [ ] Add level serialization and Lua use-state checks without using
+- [x] Add level serialization and Lua use-state checks without using
   source paths or line ranks as identity.
-- [ ] Run the focused generation and save suites green.
+- [x] Run the focused generation and save suites green.
 
 ### Task 5: Port the entire builder and serial map categories
 

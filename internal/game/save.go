@@ -158,6 +158,7 @@ func (g *Game) Snapshot() save.Snapshot {
 			InitialActors:   level.initialActors,
 
 			VaultID:      level.VaultID(),
+			VaultIDs:     level.VaultIDs(),
 			VaultRecords: level.VaultRecords(),
 			ShoalsTide:   level.shoalsTideRecord(),
 		}

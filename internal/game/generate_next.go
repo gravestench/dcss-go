@@ -2,9 +2,31 @@ package game
 
 import (
 	"fmt"
+	"sort"
 
 	"crawl/internal/terrain"
 )
+
+// Prior successful map IDs let Lua reconstruct run-wide uniqueness without
+// saving a second copy of every source tag or consulting the C++ checkout.
+func (g *Game) priorVaultIDs() []any {
+	depths := make([]int, 0, len(g.levels))
+
+	for depth := range g.levels {
+		depths = append(depths, depth)
+	}
+
+	sort.Ints(depths)
+	ids := []any{}
+
+	for _, depth := range depths {
+		for _, id := range g.levels[depth].VaultIDs() {
+			ids = append(ids, id)
+		}
+	}
+
+	return ids
+}
 
 // liveParentRecord sends only facts the Lua stair policy needs. In particular,
 // exploration and authored vault cells come from the current Level, because
@@ -156,6 +178,7 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 		"from_x":            selected.X,
 		"from_y":            selected.Y,
 		"parent":            liveParentRecord(parent),
+		"prior_vault_ids":   g.priorVaultIDs(),
 	})
 
 	if err != nil {

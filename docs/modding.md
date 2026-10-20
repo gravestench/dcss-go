@@ -2073,6 +2073,18 @@ method is not part of ordinary arrival or shop hooks. The parser accepts
 named `vault.post_place` lines, but ordinary hooks do not execute that
 stage yet, so use `vault.run` or `vault.veto` for live behavior.
 
+Generated levels save `vault_ids` in successful placement order, including
+an arrival, an empty-map controller, and any child maps it placed. The
+single `vault_id` still names the level's primary map for existing level
+metadata and vault records. When the next floor is built, Lua reads the saved
+ID list through `policy.generation.vaults.used` and looks up tags in the
+effective catalog. A map without `allow_dup` cannot repeat during the
+run. `luniq` blocks that map again on its current floor even with
+`allow_dup`; maps sharing `luniq_*` block one another there. `uniq_*`
+groups stay blocked across floors. Failed placement attempts do not
+record an ID or consume a uniqueness tag. Keep these tags in the `.des`
+definition; do not copy their meaning into a separate mod registry.
+
 ## Test a mod
 
 Use a file ending in `_test.lua` under `tests/`. Import production modules
