@@ -417,9 +417,10 @@ function graph.fortify(builder, edges)
     end
 end
 
--- Fill playable islands beyond the largest one with rock. A caller may
--- include stairs or lava in its passable set for source-specific zone passes.
-function graph.keep_largest_region(builder, passable)
+-- Fill playable islands beyond the largest one with rock, or a source
+-- feature such as deep water. The caller names passable terrain for its
+-- source-specific zone pass; the default remains ordinary floor and doors.
+function graph.keep_largest_region(builder, passable, fill_glyph)
     passable = passable or {
         ["."] = true,
         ["+"] = true,
@@ -484,7 +485,7 @@ function graph.keep_largest_region(builder, passable)
 
             if passable[glyph] and
                 not retained[y * grid.width + x] then
-                builder:set(x, y, "#")
+                builder:set(x, y, fill_glyph or "#")
             end
         end
     end

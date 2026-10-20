@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_caves.des
+# Shallow-water channels join an irregular field of icy floor islands.
+NAME:   layout_ice_bergs
+DEPTH:  Coc
+WEIGHT: 10
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_open_caves
+: vault.run("layout_ice_bergs.generate")
+MAP
+ENDMAP

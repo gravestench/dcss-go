@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_caves.des
+# Deep water separates a central traversable Worley path from outer rock.
+NAME:   layout_cocytus_water_paths
+DEPTH:  Coc
+WEIGHT: 10
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_open_caves
+: vault.run("layout_cocytus_water_paths.generate")
+MAP
+ENDMAP

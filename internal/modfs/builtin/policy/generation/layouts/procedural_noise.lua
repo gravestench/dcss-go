@@ -212,6 +212,20 @@ function noise.distance(x, y, center_x, center_y, radius)
     return math.sqrt(dx * dx + dy * dy) / radius
 end
 
+-- The source procedural boundary map fades from zero to one and back.
+-- Cocytus uses it independently on both axes to keep water off the rim.
+function noise.boundary(value, first, full_start, full_end, last)
+    if value <= first or value >= last then
+        return 0
+    elseif value >= full_start and value <= full_end then
+        return 1
+    elseif value < full_start then
+        return (value - first) / (full_start - first)
+    end
+
+    return (last - value) / (last - full_end)
+end
+
 -- Snake and Spider bend both pod fields with two independent simplex
 -- offsets. The original transform scales those offsets toward map center.
 function noise.damped_distortion(builder)

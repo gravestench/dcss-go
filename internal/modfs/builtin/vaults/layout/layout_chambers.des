@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_caves.des
+# Two Worley fields make passages and the larger chambers they connect.
+NAME:   layout_chambers
+DEPTH:  Snake, Spider, Pan
+WEIGHT: 15 (Snake), 5 (Spider), 10 (Pan)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_open_caves
+: vault.run("layout_chambers.generate")
+MAP
+ENDMAP
