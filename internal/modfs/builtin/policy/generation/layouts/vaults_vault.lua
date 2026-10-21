@@ -2,6 +2,7 @@
 -- SHUFFLE operation moves A/B/C/D before this hook picks one prize quadrant
 -- and three ordinary ones. A rare mall draw changes all four helper pools.
 -- The etched-wall names are typed records; terrain still uses normal walls.
+local categories = require("constants.catalog")
 local directives = require("constants.vault_directives")
 local effects = require("constants.vault_effects")
 local features = require("constants.vault_features")
@@ -45,7 +46,48 @@ local function wall_names(api)
     })
 end
 
+-- A generated end floor is only valid if the composed helper tree owns
+-- four quadrants and the single collectible silver rune. Fail at generation
+-- rather than recording a broken floor that restore would later reject.
+local function require_rune(result)
+    local rune_item = require("ids.items").RUNE_VAULTS
+    local quadrant_count = 0
+    local rune_helper_count = 0
+    local rune_item_count = 0
+
+    for _, id in ipairs(result.vault_ids or {}) do
+        local helper = register.get(categories.VAULTS, id)
+
+        if helper.tags[tags.VAULTS_END_QUADRANT] or
+            helper.tags[tags.VAULTS_END_QUADRANT_PRIZE] then
+            quadrant_count = quadrant_count + 1
+        end
+
+        if helper.tags[tags.VAULTS_END_RUNE] then
+            rune_helper_count = rune_helper_count + 1
+        end
+    end
+
+    for _, record in ipairs(result.records or {}) do
+        if record.kind == effects.ITEM and record.arguments and
+            record.arguments.kind_id == rune_item then
+            rune_item_count = rune_item_count + 1
+        end
+    end
+
+    if rune_item_count ~= 1 or rune_helper_count ~= 1 then
+        error("Vaults end needs exactly one silver rune item and helper")
+    end
+
+    if quadrant_count ~= 4 then
+        error("Vaults end needs exactly four source quadrants")
+    end
+
+    return true
+end
+
 layout.choose_quadrants = choose_quadrants
 layout.wall_names = wall_names
+layout.require_rune = require_rune
 
 return layout

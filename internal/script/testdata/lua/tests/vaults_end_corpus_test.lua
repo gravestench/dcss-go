@@ -60,6 +60,8 @@ function test.run()
     harness.equal(mall, 4, "mall overlaps")
     harness.equal(room, 4, "inner room helpers")
     harness.equal(rune_helpers, 3, "rune location helpers")
+    harness.equal(vaults.get("vaults_end_rune_mimic").weight, 0,
+        "removed item mimic stays inactive")
 end
 
 return test

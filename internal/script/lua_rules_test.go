@@ -182,6 +182,9 @@ func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {
 	} else if name == "tests/vaults_primary_layouts_test.lua" {
 		// Eleven full Vaults levels each place bounded source room attempts.
 		limitDuration = 60 * time.Second
+	} else if name == "tests/vaults_end_composition_test.lua" {
+		// A seeded end-floor sweep also places every source quadrant once.
+		limitDuration = 60 * time.Second
 	} else if name == "tests/worley_cave_layouts_test.lua" {
 		// Several full grids run the source noise sampler in one Lua test.
 		limitDuration = 15 * time.Second

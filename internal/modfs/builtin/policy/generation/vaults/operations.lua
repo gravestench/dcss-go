@@ -20,6 +20,7 @@ local informational = {
     [directives.PLACE] = true,
     [directives.CHANCE] = true,
     [directives.HOOK_POST_PLACE] = true,
+    [directives.HOOK_VALIDATE] = true,
 }
 
 local intent_kinds = {

@@ -24,6 +24,7 @@ SHUFFLE:  ABCD
 SUBST:    ABCD = .
 MONS: vault guard
 : vault.run("wall_names")
+: vault.validate("require_rune")
 MAP
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

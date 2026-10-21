@@ -11,6 +11,8 @@ local definition = {
     min_depth = 13,
     max_depth = 14,
     depth = 5,
+    -- Source monster generation caps Vaults out-of-depth draws at 12.
+    ood_cap = 12,
     absolute_depth = 19,
     flags = {
         "dangerous_end",
