@@ -1,0 +1,22 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# Shuffled water and floor pockets cut through a transparent ruin.
+NAME: cheibrodos_slime_lost_civilization_3
+DEPTH: Slime, !Slime:$
+TAGS: decor transparent
+ORIENT: float
+SHUFFLE: W.
+SUBST: W = WW.
+KMASK: W = no_monster_gen
+MAP
+xxxxxxxxxxxxx
+xWWWxWWWxWWWx
+xWWWxWWWxWWWx
+xx.xxx.xxx.xx
+@...........@
+@...........@
+@...........@
+xx.xxx.xxx.xx
+xWWWxWWWxWWWx
+xWWWxWWWxWWWx
+xxxxxxxxxxxxx
+ENDMAP

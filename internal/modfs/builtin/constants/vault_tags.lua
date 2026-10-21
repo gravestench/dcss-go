@@ -2,6 +2,7 @@
 -- families without scattering literal selector strings through Lua policy.
 local tags = {
     DECOR = "decor",
+    SLIME_ENTRY = "slime_entry",
     TEMPLE_OVERFLOW_TROG = "temple_overflow_trog",
     TEMPLE_OVERFLOW_MAKHLEB = "temple_overflow_makhleb",
     SERIAL_NICO_SUBWAY = "serial_nico_subway",

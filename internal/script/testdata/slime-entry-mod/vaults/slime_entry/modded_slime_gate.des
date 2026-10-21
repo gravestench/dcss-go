@@ -1,0 +1,11 @@
+# A sparse mod adds one more weighted entrance without replacing source maps.
+# Its keyed O cell follows the same scheduled-link contract as bundled maps.
+NAME: modded_slime_gate
+TAGS: slime_entry
+WEIGHT: 7
+KFEAT: O = enter_slime_pits
+MAP
+.....
+..O..
+.....
+ENDMAP

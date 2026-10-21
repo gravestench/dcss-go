@@ -1,0 +1,22 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A floating ruin surrounds one preserved feature with fractured rooms.
+NAME: cheibrodos_slime_lost_civilization_10
+DEPTH: Slime, !Slime:$
+TAGS: decor transparent
+ORIENT: float
+SUBST: x = xxxx.
+MAP
+...............
+.xxxxxxxxxxxxx.
+.x..V..x.....x.
+.x.............
+.x.....x......@
+.x.....x.......
+.xxxxxxx.....x.
+.x.....x.....x.
+.x...........x.
+.x...........x.
+.x...........x.
+.xx...xxxxxxxx.
+....@..........
+ENDMAP

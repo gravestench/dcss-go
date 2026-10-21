@@ -3,8 +3,10 @@
 -- engine can build now. A branch that requires an end layout opens its
 -- last floor only when an effective explicit PLACE map is available.
 local categories = require("constants.catalog")
+local branches = require("ids.branches")
 local layouts = require("policy.generation.layouts.catalog")
 local end_vault = require("policy.generation.vaults.end")
+local temple = require("policy.generation.temple.catalog")
 
 local availability = {}
 
@@ -12,6 +14,13 @@ local availability = {}
 -- An authored end floor cannot silently fall back to an ordinary layout.
 function availability.can_build(branch_id, depth)
     local branch = register.get(categories.BRANCHES, branch_id)
+
+    -- Temple uses its own effective source MAP catalog rather than a
+    -- general layout. Its scheduled entrance was already source-authored;
+    -- the destination must pass this same availability gate on first use.
+    if branch_id == branches.BRANCH_TEMPLE then
+        return depth == 1 and #temple.main_ids() > 0
+    end
 
     if depth < 1 or depth > branch.depth or
         not layouts.has_candidates(branch_id, depth) then

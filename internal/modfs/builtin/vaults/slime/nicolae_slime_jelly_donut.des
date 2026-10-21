@@ -1,0 +1,27 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A floating ring places its jelly center within broken stone bands.
+NAME: nicolae_slime_jelly_donut
+DEPTH: Slime, !Slime:$
+ORIENT: float
+SHUFFLE: abcdefgh
+SUBST: a = @, b : @., c : @.., d : @..., efgh = .
+KMONS: j = jelly
+MAP
+      aaaaa
+    hh.....bb
+   h.........b
+  h...........b
+ h....x.x.x....b
+ h...x.x.x.x...b
+g...x.x.x.x.x...c
+g....x.jjj.x....c
+g...x.xjjjx.x...c
+g....x.jjj.x....c
+g...x.x.x.x.x...c
+ f...x.x.x.x...d
+ f....x.x.x....d
+  f...........d
+   f.........d
+    ff.....dd
+      eeeee
+ENDMAP

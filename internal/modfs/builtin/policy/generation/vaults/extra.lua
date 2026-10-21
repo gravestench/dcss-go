@@ -8,6 +8,7 @@ local hooks = require("policy.generation.vaults.hooks")
 local minivault = require("policy.generation.vaults.minivault")
 local placement = require("policy.generation.vaults.placement")
 local place = require("policy.generation.vaults.place")
+local regular = require("policy.generation.vaults.regular")
 local connect = require("policy.generation.vaults.connect")
 local selection = require("policy.generation.vaults.selection")
 local used = require("policy.generation.vaults.used")
@@ -215,11 +216,14 @@ function extra.generate(ctx, builder, context)
 
     local primary = place_chance_stage(ctx, builder, context, placed)
     local explicit = place.place(ctx, builder, context, placed, extra.place)
+    local branch_regular = regular.place(ctx, builder, context,
+        placed, extra.place)
     local ordinary = minivault.place(ctx, builder, context,
         placed, extra.place, place_chance_map)
     unique_placement.place(ctx, builder, context, placed, extra.place)
 
-    return placed, end_primary or primary or explicit or ordinary,
+    return placed, end_primary or primary or explicit or
+        branch_regular or ordinary,
         context.used:ids()
 end
 

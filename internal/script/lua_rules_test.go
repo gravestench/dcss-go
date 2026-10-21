@@ -111,6 +111,17 @@ func TestSlimeEndMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/slime_end_mod_test.lua")
 }
 
+// A sparse mod adds another authored Lair-to-Slime gate by DES path.
+func TestSlimeEntryMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/slime-entry-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/slime_entry_mod_test.lua")
+}
+
 // An overlay end map tests PLACE selection through the production catalog.
 func TestLayoutPlaceSelection(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/layout-place")

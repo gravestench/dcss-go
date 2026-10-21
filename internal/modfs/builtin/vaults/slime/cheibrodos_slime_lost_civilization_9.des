@@ -1,0 +1,20 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A transparent floating ruin varies its broken wall and stone pattern.
+NAME: cheibrodos_slime_lost_civilization_9
+DEPTH: Slime, !Slime:$
+TAGS: decor transparent
+ORIENT: float
+SUBST: x = xxx., G = G..
+MAP
+.............
+.xx.xx.xx.xx.
+.xxGxxGxxGxx.
+.............
+.............
+@...........@
+.............
+.............
+.xxGxxGxxGxx.
+.xx.xx.xx.xx.
+.............
+ENDMAP

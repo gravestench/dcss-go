@@ -1,0 +1,23 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# Breakable boxes deliberately expose their jelly rooms to Lair ruination.
+NAME:   minmay_slime_entry_jelly_boxes
+TAGS:   slime_entry ruin_lair
+WEIGHT: 5
+MONS:   jelly / endoplasm w:1 / nothing w:1
+KFEAT:  O = enter_slime_pits
+KFEAT:  _ = altar_jiyva / floor w:5
+MAP
+.............
+.xxxxx.xxxxx.
+.xxx1x.x11xx.
+.xx11x.xx1xx.
+.xx1x...x1xx.
+.xxxx.._.xxx.
+......O......
+.xxxx...xxxx.
+.xx1.x.x.1xx.
+.x11x.xx11xx.
+.xx1x.xxxxxx.
+.xxxxx.xxxxx.
+.............
+ENDMAP

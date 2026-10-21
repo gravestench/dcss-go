@@ -1,0 +1,19 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A northwest corner entrance hides behind slimy wall cells.
+NAME:   dpeg_slime_entry_corner
+TAGS:   slime_entry ruin_lair
+ORIENT: northwest
+WEIGHT: 5
+KFEAT:  O = enter_slime_pits
+KFEAT:  S = slimy_wall
+KFEAT:  _ = altar_jiyva / floor w:5
+MAP
+xxxxxxxxxxx
+xSSSxxxxxx
+xS...xxxx
+xS.O_..xx
+xxxxxx.xx
+xxxx....x
+xxx...xx.
+xx..
+ENDMAP

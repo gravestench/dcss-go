@@ -1,0 +1,12 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A tiny stone fragment can fit among larger Slime vaults.
+NAME: cheibrodos_slime_lost_civilization_4
+DEPTH: Slime, !Slime:$
+TAGS: decor
+MAP
+.x...x.
+.......
+x..G..x
+.......
+.x...x.
+ENDMAP

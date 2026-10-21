@@ -4,20 +4,21 @@ local component = require("constants.component")
 local terrain = require("constants.terrain")
 local transporters = require("policy.world.transporters")
 local intents = require("constants.intent")
+local landing = require("policy.world.stair_landing")
 
 local system = {}
 
 -- Theory of operation: Travel changes level and position before pickup examines the arrival cell.
 -- Stair travel follows monster decisions and precedes item pickup on the destination.
 function system.update(ctx, actor, elapsed_aut)
-    local intent = ctx:get(actor, "core.intent")
+    local intent = ctx:get(actor, component.INTENT)
 
     if not intent or (intent.kind ~= intents.UPSTAIRS and
         intent.kind ~= intents.DOWNSTAIRS) then
         return
     end
 
-    local position = ctx:get(actor, "core.position")
+    local position = ctx:get(actor, component.POSITION)
 
     if not position then
         error("stair actor " .. ctx:id(actor) .. " has no position")
@@ -67,7 +68,10 @@ function system.update(ctx, actor, elapsed_aut)
         end
     end
 
-    ctx:move_actor(actor, link.to_level_id, link.to_x, link.to_y)
+    local arrival_x, arrival_y = landing.find(ctx,
+        link.to_level_id, link.to_x, link.to_y)
+
+    ctx:move_actor(actor, link.to_level_id, arrival_x, arrival_y)
     ctx:emit("stairs", "You take the stairs.")
 end
 

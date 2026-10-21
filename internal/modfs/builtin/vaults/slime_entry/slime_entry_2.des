@@ -1,0 +1,19 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A compact stone enclosure puts early slime guardians around the branch stair.
+NAME:   slime_entry_2
+TAGS:   slime_entry
+KFEAT:  _ = altar_jiyva / floor w:5
+KPROP:  1O_ = no_tele_into
+SUBST:  1 : 111223
+NSUBST: 1 = 1 / 1. , 2 = 2 / 2... , 3 = 3 / 3....
+MONS:   jelly / endoplasm
+MONS:   acid blob / slime creature w:5
+MONS:   azure jelly
+KFEAT:  O = enter_slime_pits
+MAP
+ccccc
+c111m.
+cO1_=@
+c111m.
+ccccc
+ENDMAP

@@ -2131,6 +2131,20 @@ validator will reject the map. Override its Lua handler path too if the
 replacement needs different marker logic. A sparse override test lives in
 `internal/script/testdata/slime-end-mod/`.
 
+The other Slime maps live in two auto-discovered directories. Add a
+`vaults/slime_entry/<name>.des` file with `TAGS: slime_entry`, a positive
+`WEIGHT`, and exactly one `KFEAT: O = enter_slime_pits` for an additional
+Lair-to-Slime gate. The scheduled entrance selector sorts effective IDs,
+draws by weight, and makes that keyed `O` cell the pending branch stair;
+if no authored map fits, it retains a single-stair fallback. See
+`internal/script/testdata/slime-entry-mod/` for a sparse example.
+Put ordinary Slime maps in `vaults/slime/` with source-style
+`DEPTH: Slime, !Slime:$`. Maps without explicit `ORIENT` join the
+minivault draw; explicitly oriented maps join the branch-family regular
+draw before minivaults. Both use the same DES substitutions, entity
+records, protected-cell fitting, and save history. The final floor still
+belongs exclusively to `slime_pit`.
+
 ### Branch end vaults
 
 A branch ending that fits inside an ordinary generated floor uses an end

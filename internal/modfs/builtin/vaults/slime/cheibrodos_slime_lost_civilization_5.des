@@ -1,0 +1,22 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# Shuffled rock and floor form a symmetric ruined court.
+NAME: cheibrodos_slime_lost_civilization_5
+DEPTH: Slime, !Slime:$
+TAGS: decor
+SUBST: A=x, B=.
+SHUFFLE: AB
+MAP
+     ...
+    ..B..
+   A.BBB.A
+  AAA.B.AAA
+ ..A.....A..
+..B.......B..
+.BBB..{..BBB.
+..B.......B..
+ ..A.....A..
+  AAA.B.AAA
+   A.BBB.A
+    ..B..
+     ...
+ENDMAP

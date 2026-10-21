@@ -54,7 +54,7 @@ Slime:5, checks reciprocal stairs, kills the Royal Jelly, collects the
 rune, and round-trips saves before and after release. A sparse mod can
 replace the same map and hook path without an engine registration edit.
 
-Slime entry decorations and the other 27 non-finale definitions in the
-source `slime.des` remain a later vault-content category. The exact Jiyva
+Slime entry decorations and the other 28 non-finale definitions in the
+source `slime.des` were deferred to a separate vault-content category. The exact Jiyva
 message variant and worship effects wait for the religion domain; the
 collapse message, terrain change, and rune access are live now.

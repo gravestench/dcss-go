@@ -1,0 +1,21 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A corridor lattice surrounds two source feature cells.
+NAME: cheibrodos_slime_lost_civilization_6
+DEPTH: Slime, !Slime:$
+TAGS: decor
+SUBST: } = }G..
+MAP
+.............
+.x.x.x.x.x.x.
+..x.x.x.x.x..
+.x.........x.
+..x.......x..
+.x...}.....x.
+..x.......x..
+.x.....{...x.
+..x.......x..
+.x.........x.
+..x.x.x.x.x..
+.x.x.x.x.x.x.
+.............
+ENDMAP

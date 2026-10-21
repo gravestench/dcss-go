@@ -1,0 +1,19 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# Slimy walls and an enclosing room frame the first descent from Lair.
+NAME:  dpeg_slime_entry_enclosed
+TAGS:  slime_entry
+KFEAT: O = enter_slime_pits
+KFEAT: S = slimy_wall
+KFEAT: _ = altar_jiyva / floor w:5
+MAP
+  .....
+ .ccccc.
+.ccSSScc.
+.cS...Sc.
+.cS.O.cc.
+.cS.._.+@
+.ccScccc.
+.ccccccc.
+ .ccccc.
+  .....
+ENDMAP

@@ -1,0 +1,23 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A floating ruin keeps the source's many wall substitutions in its rooms.
+NAME: cheibrodos_slime_lost_civilization_8
+DEPTH: Slime, !Slime:$
+TAGS: decor
+ORIENT: float
+SUBST: - = xxx., " = ...x
+MAP
+@.............
+.(..----------
+.......".....-
+...".".".".".-
+.-...........-
+.-.".".".".".-
+.-.....".....-
+.-"".""xx..--x
+.-.....xV....x
+.-.".".......x
+.-........)..x
+.-.".".-.....x
+.-.....-....Vx
+.-------xxxxxx
+ENDMAP

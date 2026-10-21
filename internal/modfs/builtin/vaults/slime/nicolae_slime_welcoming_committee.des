@@ -1,0 +1,22 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A guarded tunnel opens only below Slime:1 and excludes incidental population.
+NAME: nicolae_slime_welcoming_committee
+TAGS: no_monster_gen no_item_gen no_trap_gen
+DEPTH: Slime:2-, !Slime:$
+SUBST: X = x., { = {[(
+KMONS: 1 : jelly w:20 / endoplasm / slime creature w:30 / \
+   acid blob w:5 / rockslime w:5 / quicksilver ooze w:5 /\
+   azure jelly w:5
+MAP
+      xxx
+   xxxxxxxx
+ xxxxXXX..1@
+xxxXX.....1.@
+xxX.......1..@
+xxX.{.....1...@
+xxX.......1..@
+xxxXX.....1.@
+ xxxxXXX..1@
+   xxxxxxxx
+      xxx
+ENDMAP

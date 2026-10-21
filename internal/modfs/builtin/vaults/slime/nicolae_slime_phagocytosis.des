@@ -1,0 +1,32 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# Substitutions erode the source mass around an authored slime creature.
+NAME: nicolae_slime_phagocytosis
+DEPTH: Slime, !Slime:$
+TAGS: transparent
+SUBST: a : .x, b : .x, c : .x, d : .x, e : .x, { = {[(, X = Wx, ' = ._
+NSUBST: W = 4:1 / *:W
+KMONS: 1 = slime creature
+KFEAT: 1 = W
+CLEAR: _
+MAP
+       '.......'
+      '..........'
+    '.....................'
+ '........ee...............'
+'........exxe...............'
+.......eexxxxeee.xxxxxxx.....'
+....ddxxxxxxxxxxxxxxxxxxx.....
+@..dxxxxxXXXXxxxxx.....xxx....
+@..dxxxxXWWWWXx.........xxx...
+@...ddxxXWWWW............xx...
+@.....cxXWWWW....{..x....x....
+@.....cxXWWWWXx.....xx........
+'....cxxxXXXXxxx...xxx.......'
+ ...cxxxxxxxxxxxxxxxx.......'
+ ...cxxxxabxxxxxxxxx.......
+ ....axxa..bxxxb.........'
+ .....aa....bbb.........'
+ '....................'
+  '...............'
+   ''...........''
+ENDMAP

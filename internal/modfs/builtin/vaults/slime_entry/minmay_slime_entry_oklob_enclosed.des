@@ -1,0 +1,23 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A northeast enclosure gives oklobs an approach from ruined Lair.
+NAME:   minmay_slime_entry_oklob_enclosed
+TAGS:   slime_entry ruin_lair
+ORIENT: northeast
+WEIGHT: 5
+MONS:   oklob plant / nothing w:20
+KFEAT:  O = enter_slime_pits
+KFEAT:  S = slimy_wall
+KFEAT:  _ = altar_jiyva / floor w:5
+MAP
+xxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxx......xxxxxx
+xxSSxx...........xxxx
+xxS111......xx....xxx
+xSS.11_...xxxx....xxx
+xS..O11.xxxxx....xxxx
+xSS..1xxxxxx.....xxxx
+xxSSSSxxxxx.....xxxxx
+xxxxxxxxxx.....xxxxxx
+xxxxxxxx.....xxxxxxxx
+xxxxxxx.@..xxxxxxxxxx
+ENDMAP

@@ -1,0 +1,31 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# An extra transparent tower crossing breaks a Slime floor into connected arms.
+NAME: nicolae_slime_ancient_tower_intersection
+DEPTH: Slime, !Slime:$
+WEIGHT: 2
+TAGS: extra decor transparent
+SUBST: c = ccc., X = x_, V = V..
+CLEAR: _
+MAP
+  XXXX         XXXX
+ XXxxXX       XXxxXX
+XXxxxxxx@@@@@xxxxxxXX
+Xxxxx...........xxxxX
+Xxxx.............xxxX
+XXx...............xXX
+ Xx.....ccccc.....xX
+  x....cc...cc....x
+  @...cc.....cc...@
+  @...c..V.V..c...@
+  @...c.......+...@
+  @...c..V.V..c...@
+  @...cc.....cc...@
+  x....cc...cc....x
+ Xx.....ccccc.....xX
+XXx...............xXX
+Xxxx.............xxxX
+Xxxxx...........xxxxX
+XXxxxxxx@@@@@xxxxxxXX
+ XXxxXX       XXxxXX
+  XXXX         XXXX
+ENDMAP

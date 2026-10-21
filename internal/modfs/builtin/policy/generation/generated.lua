@@ -17,7 +17,7 @@ local branch_schedule = require("policy.generation.branch_schedule")
 local temple_plan = require("policy.generation.temple.plan")
 local branch_levels = require("policy.generation.branch_levels")
 local temple_catalog = require("policy.generation.temple.catalog")
-local temple_entry = require("policy.generation.temple.entry")
+local branch_entry = require("policy.generation.vaults.branch_entry")
 local temple_floor = require("policy.generation.temple.floor")
 local altar_catalog = require("policy.generation.altar.catalog")
 local shop_spec = require("policy.generation.vaults.shop_spec")
@@ -308,13 +308,18 @@ local function place_branch_entrances(ctx, builder, layout, protected,
             temple_catalog.main(temple.map_id) ~= nil or
             availability.can_build(entry.branch_id, 1)
 
-        if is_temple then
+        if is_temple or entry.branch_id == branches.BRANCH_SLIME then
             local placed
 
-            placed, point = temple_entry.place(ctx, builder, protected,
-                required, player)
-            maps[#maps + 1] = placed
-        else
+            placed, point = branch_entry.place(ctx, builder, protected,
+                required, player, entry.branch_id)
+
+            if placed then
+                maps[#maps + 1] = placed
+            end
+        end
+
+        if not point then
             point = entrance_cell(builder, start, protected)
             builder:set(point.x, point.y, ">")
             vault_extra.protect(protected, point)
@@ -407,6 +412,7 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
                 depth == bottom and branch.end_vault_family or nil,
             end_choice = end_choice,
             layout_family = layout_family(layout),
+            branch_vault_family = branch.abbreviation:lower(),
             prior_vault_ids = prior_vault_ids,
             primary_room_ids = layout.room_ids,
             overflow_schedule = temple.overflow_schedule,

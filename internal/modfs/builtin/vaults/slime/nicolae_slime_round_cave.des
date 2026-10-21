@@ -1,0 +1,36 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A round cave varies its wall breaks and avoids incidental monster generation.
+NAME: nicolae_slime_round_cave
+DEPTH: Slime:2-, !Slime:$
+TAGS: no_monster_gen
+SHUFFLE: {}/()/[]
+NSUBST: a = X / .
+SUBST: X = x., z = x_, 0 = 0009.., 9 = 9998
+CLEAR: _
+MAP
+       zzzzzzzzzzz
+     zzzXXXXXXXXXzzz
+    zzXXX.X.X.X.XXXzz
+   zzXX...........XXzz
+  zzXX...0..0..0...XXzz
+ zzXX..0............XXzz
+ zXX.....XXX.XXX..0..XXz
+zzX..0..XXxx.xxXX.....Xzz
+zXX....XXxxX.XxxXX....XXz
+zX..0.XXxxXX.XXxxXX.9..Xz
+zXX..aXxxXX...XxxxX...XXz
+zX....XxXX.............Xz
+zXX.{.......}....9..0.XXz
+zX....XxXX.............Xz
+zXX..aXxxXX...XxxxX...XXz
+zX..0.XXxxXX.XXxxXX.9..Xz
+zXX....XXxxX.XxxXX....XXz
+zzX..0..XXxx.xxXX.....Xzz
+ zXX.....XXX.XXX..0..XXz
+ zzXX..0............XXzz
+  zzXX...0..0..0...XXzz
+   zzXX...........XXzz
+    zzXXX.X.X.X.XXXzz
+     zzzXXXXXXXXXzzz
+       zzzzzzzzzzz
+ENDMAP

@@ -1,0 +1,24 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# Two eye-guarded wings surround the branch entrance and altar.
+NAME:   minmay_slime_entry_eyes
+TAGS:   slime_entry ruin_lair
+WEIGHT: 2
+MONS:   eye of devastation, floating eye
+KFEAT:  O = enter_slime_pits
+KFEAT:  S = slimy_wall
+KFEAT:  _ = altar_jiyva / floor w:5
+MAP
+ ....   ....
+..xx..x..xx..
+.xxxx.x.xxxx.
+.xxx.....xxx.
+..x.S...S.x..
+ ...........
+ xxS.1O2.Sxx
+ ....._.....
+..x.S...S.x..
+.xxx.....xxx.
+.xxxx.x.xxxx.
+..xx..x..xx..
+ ....   ....
+ENDMAP

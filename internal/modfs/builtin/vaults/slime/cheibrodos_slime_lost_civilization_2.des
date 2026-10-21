@@ -1,0 +1,19 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A small round ruin preserves its central feature and open approach.
+NAME: cheibrodos_slime_lost_civilization_2
+DEPTH: Slime, !Slime:$
+TAGS: decor
+ORIENT: float
+MAP
+   xxxxx
+  xxxxxxx
+ xxx...xxx
+xxx.....xxx
+xx...{...xx
+xx.G...G.xx
+xx...(...xx
+xxx.....xxx
+xxxx...xxxx
+ xxx...xxx
+  xx@@@xx
+ENDMAP

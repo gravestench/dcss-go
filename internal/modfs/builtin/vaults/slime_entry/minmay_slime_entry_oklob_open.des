@@ -1,0 +1,19 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# An open garden can grow oklob guardians around the stair.
+NAME:   minmay_slime_entry_oklob_open
+TAGS:   slime_entry
+WEIGHT: 5
+NSUBST: 1 = 1:_ / *:1
+MONS:   oklob plant / nothing w:20
+KMONS:  _ = oklob plant / nothing w:20
+KFEAT:  _ = altar_jiyva / floor w:5
+KFEAT:  O = enter_slime_pits
+MAP
+ .....
+.......
+..111..
+..1O1..
+..111..
+.......
+ .....
+ENDMAP

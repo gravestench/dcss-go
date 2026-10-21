@@ -1,0 +1,12 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A small open altar cluster puts the branch stair beside a possible Jiyva altar.
+NAME:   slime_entry_1
+TAGS:   slime_entry
+WEIGHT: 40
+KFEAT:  _ = altar_jiyva / floor w:5
+KFEAT:  O = enter_slime_pits
+MAP
+....
+.O_.
+....
+ENDMAP

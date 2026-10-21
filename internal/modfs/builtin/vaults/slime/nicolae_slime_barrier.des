@@ -1,0 +1,34 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# An extra map draws a long staggered barrier across a Slime floor.
+NAME: nicolae_slime_barrier
+TAGS: transparent extra
+DEPTH: Slime, !Slime:$
+SHUFFLE: abcde
+SUBST: a = @, bcde = .
+MAP
+  aaaaa
+ .........
+ c..x.....b
+c..........b
+c..xxx..x..b
+c..........b
+ c..x.......b
+ .......x....e
+  ....x.x.x...e
+   .....x......eee
+    d.......x.....d
+     d.............d
+     d..x..xxx..x..d
+     d.............d
+      d.....x.......d
+       eee......x.....
+          e...x.x.x....
+           e....x.......
+            b.......x..c
+             b..........c
+             b..x..xxx..c
+             b..........c
+              b.....x..c
+               .........
+                  aaaaa
+ENDMAP

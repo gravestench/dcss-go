@@ -60,12 +60,55 @@ func assertSlimeReturn(t *testing.T, g *Game, end, parent *Level) {
 		t.Fatal(err)
 	}
 
+	blocker, occupied := parent.ActorAt(ascent.ToX, ascent.ToY)
 	up, err := g.Step(Command{Kind: CommandUpstairs})
 
-	if err != nil || up.View.LevelID != parent.ID ||
-		up.View.PlayerX != ascent.ToX ||
-		up.View.PlayerY != ascent.ToY {
-		t.Fatalf("Slime return = %+v, %v", up.View, err)
+	if err != nil || up.View.LevelID != parent.ID {
+		t.Fatalf("Slime return level = %d, %v",
+			up.View.LevelID, err)
+	}
+
+	if !occupied && (up.View.PlayerX != ascent.ToX ||
+		up.View.PlayerY != ascent.ToY) {
+		t.Fatalf("free return stair landed at (%d,%d), want (%d,%d)",
+			up.View.PlayerX, up.View.PlayerY,
+			ascent.ToX, ascent.ToY)
+	}
+
+	if occupied {
+		// A monster may have stepped onto the linked stair while the
+		// player was away. Move it aside only to exercise the reciprocal
+		// descent after verifying the live rule landed beside it.
+		if up.View.PlayerX == ascent.ToX &&
+			up.View.PlayerY == ascent.ToY {
+			t.Fatal("return landed on the occupied stair")
+		}
+
+		moved := false
+
+		for y := 1; y < len(parent.terrain)-1 && !moved; y++ {
+			for x := 1; x < parent.width-1; x++ {
+				if parent.Walkable(x, y) {
+					if _, taken := parent.ActorAt(x, y); !taken {
+						if err := parent.MoveActor(blocker, x, y); err != nil {
+							t.Fatal(err)
+						}
+
+						moved = true
+						break
+					}
+				}
+			}
+		}
+
+		if !moved {
+			t.Fatal("no free cell to clear the reciprocal stair")
+		}
+
+		if err := parent.MoveActor(g.player,
+			ascent.ToX, ascent.ToY); err != nil {
+			t.Fatal(err)
+		}
 	}
 
 	down, err := g.Step(Command{Kind: CommandDownstairs})
@@ -73,7 +116,9 @@ func assertSlimeReturn(t *testing.T, g *Game, end, parent *Level) {
 	if err != nil || down.View.LevelID != end.ID ||
 		down.View.PlayerX != ascent.X ||
 		down.View.PlayerY != ascent.Y {
-		t.Fatalf("Slime reciprocal descent = %+v, %v", down.View, err)
+		t.Fatalf("Slime reciprocal descent = %d:(%d,%d), %v",
+			down.View.LevelID, down.View.PlayerX,
+			down.View.PlayerY, err)
 	}
 }
 

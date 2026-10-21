@@ -1,0 +1,26 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A ruined floating chamber scatters walls and old stone features.
+NAME: cheibrodos_slime_lost_civilization_1
+DEPTH: Slime, !Slime:$
+TAGS: decor transparent ruin
+ORIENT: float
+SUBST: B = xxxW., C = W., D = VVW.
+MAP
+xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx
+xx..............@
+xx..............@
+xx..x.......x...@
+xx.....BBB......@
+xx....CCBCC....xx
+xx...BCDBDCB...xx
+xx...BBBBBBB...xx
+xx...BCDBDCB...xx
+xx....CCBCC....xx
+@......BBB.....xx
+@...x.......x..xx
+@..............xx
+@..............xx
+xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx
+ENDMAP

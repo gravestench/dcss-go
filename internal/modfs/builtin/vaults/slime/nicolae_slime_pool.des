@@ -1,0 +1,28 @@
+# Source definition: crawl-ref/source/dat/des/branches/slime.des.
+# A floating water pool adds nonteleport cells without replacing the floor layout.
+NAME: nicolae_slime_pool
+DEPTH: Slime, !Slime:$
+TAGS: transparent
+MONS: slime creature
+ORIENT: float
+SHUFFLE: abcd
+SUBST: ab : @, cd : .
+KPROP: f = no_tele_into
+SUBST: f = W'1
+KMASK: w = no_monster_gen
+KMASK: W = no_monster_gen
+MAP
+   cccc
+ ..........
+d.w.wwwf..w.
+d..wwfwwf....
+d.fwwfffwffbb
+d..fwwwfww.b
+ ...ffwwww.b
+  ..wffw...b
+  ..wfwfw.fw
+ ...ffffw.ww
+.ff.wwwwf.f
+ .....f..ff
+    aaaa..fw
+ENDMAP
