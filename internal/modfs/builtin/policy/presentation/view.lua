@@ -138,6 +138,15 @@ function view.terrain_color(input)
         return { fg = colors.dark_grey }
     end
 
+    -- A live vault callback can recolour a wall after triggering. Keep the
+    -- source colour name on the level; this policy alone maps it to IRGB.
+    local override = input.color_id and
+        colors.source[input.color_id:upper()]
+
+    if override then
+        return { fg = override }
+    end
+
     if input.glyph == "<" or input.glyph == ">" then
         return { fg = colors.yellow }
     end

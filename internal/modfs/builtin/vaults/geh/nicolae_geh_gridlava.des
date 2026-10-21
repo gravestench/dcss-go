@@ -1,0 +1,33 @@
+# nicolae_geh_gridlava is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:     nicolae_geh_gridlava
+DEPTH:    Geh
+ORIENT:   centre
+SUBVAULT: a : nico_lavagrid
+SUBVAULT: p : nico_lavagrid
+SUBVAULT: q : nico_lavagrid
+SUBVAULT: r : nico_lavagrid
+SHUFFLE:  DEFH, JKLM, NOPQ, RSZ-, !s, `y, "z, '~, syz~
+SUBST:    DJNRsyz = ., EFHKLMOPQSZ-!`"'~ = l
+NSUBST:   { = {.. / .
+MAP
+llDDllEEllFFllHHll
+llDDllEEllFFllHHll
+--..aa..!!..pp..JJ
+--..aa..!!..pp..JJ
+llaallaallppllppll
+llaallaallppllppll
+ZZ..aa..ss..pp..KK
+ZZ..aa.{ss{.pp..KK
+ll''ll~~llyyll``ll
+ll''ll~~llyyll``ll
+SS..qq.{zz{.rr..LL
+SS..qq..zz..rr..LL
+llqqllqqllrrllrrll
+llqqllqqllrrllrrll
+RR..qq..""..rr..MM
+RR..qq..""..rr..MM
+llQQllPPllOOllNNll
+llQQllPPllOOllNNll
+ENDMAP

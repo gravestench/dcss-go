@@ -1,0 +1,22 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_distal_crystal).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    nicolae_dis_distal_crystal
+TAGS:    transparent
+DEPTH:   Dis, !Dis:$
+KMONS:   1 = crystal echidna / crystal guardian
+KMONS:   2 = orange crystal statue
+SHUFFLE: DE
+SUBST:   D : 1, E : 1b, F : 112bb
+MAP
+vvv     vvv
+vbbb...bbbv
+vb.......bv
+ b.E.D.E.b
+ .........
+ ..D.F.D..
+ .........
+ b.E.D.E.b
+vb.......bv
+vbbb...bbbv
+vvv     vvv
+ENDMAP

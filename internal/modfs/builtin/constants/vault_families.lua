@@ -14,6 +14,8 @@ return {
     ELF_END = "elf_end",
     DEPTHS_ENTRY = "depths_entry",
     DEPTHS_ENCOMPASS = "depths_encompass",
+    GEH_LAVA_MAZE = "geh_lava_maze",
+    GEH = "geh",
     ZOT = "zot",
     ZOT_ENTRY = "zot_entry",
     SPIDER = "spider",

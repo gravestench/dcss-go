@@ -1,0 +1,54 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_big_iron_x).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   nicolae_dis_big_iron_x
+TAGS:   no_monster_gen
+DEPTH:  Dis:2-, !Dis:$
+ORIENT: encompass
+KMONS:  } = 8
+KFEAT:  } = }
+: vault.run("configure")
+# Source Lua: : local placement = crawl.random2( 4 )
+# Source Lua: : if placement == 1 then
+# Source Lua directive: SUBST:  D = {
+# Source Lua directive: NSUBST: EFHJKLM = 1=} / .
+# Source Lua: : elseif placement == 2 then
+# Source Lua directive: SUBST:  F = {
+# Source Lua directive: NSUBST: DJKLM = 1=} / .
+# Source Lua: : else
+# Source Lua directive: SUBST:  E = {
+# Source Lua directive: NSUBST: DHJKLM = 1=} / .
+# Source Lua: : end
+SUBST:  0 = .00, 0 = 009, 9 = 998
+TILE:   G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+vG.....Gv...G...G...+...G...v
+v.D..0.vvv....E....vvv.0..F.v
+v.....vv.vv.......vv.vv.....v
+v...0vv...vv0...0vv...vv0..Gv
+v.0.v+.....vv...v+.....vv.0.v
+v..vv.0.0...vv0vv...0.0.vv..v
+vGvv...G.....vvv.....G...vv.v
+vvv...0.9.v+vvGvvvv.9.0...v+v
+v.vv.....vv.......v+.....vv.v
+v..vv...vv.........vv...vv..v
+v...vv..+..8.vGv.8..v..+v...v
+vG..0vv.v....vvv....v.vv0..Gv
+v.....vvv..vvvvvvv..vvv.....v
+v.M...0vG..GvvvvvG..Gv0...H.v
+v.....vvv..vvvvvvv..vvv.....v
+vG..0vv.v....vvv....v.vv0..Gv
+v...v+..v..8.vGv.8..+..vv...v
+v..vv...vv.........vv...vv..v
+v.vv.....+v.......vv.....vv.v
+v+v...0.9.vvvvGvv+v.9.0...vvv
+v.vv...G.....vvv.....G...vvGv
+v..vv.0.0...vv0vv...0.0.vv..v
+v.0.vv.....+v...vv.....+v.0.v
+vG..0vv...vv0...0vv...vv0...v
+v.....vv.vv.......vv.vv.....v
+v.L..0.vvv....K....vvv.0..J.v
+v...G...+...G...G...vG.....Gv
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP

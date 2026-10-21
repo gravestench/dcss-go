@@ -1,0 +1,25 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:651
+NAME:   nicolae_coc_three_more_mouths
+TAGS:   transparent patrolling no_pool_fixup
+DEPTH:  Coc, !Coc:$
+ORIENT: centre
+KMONS:  1 = ice fiend
+MAP
+        wwwww
+    x  ..xxxww
+   xxx..xx.xxww
+    x..xx...xxw
+  .....x..1..xw
+ w.xxx......xx.
+wwxx.......xx..
+wxx........x..x
+wx..1...}....xxx
+wxx........x..x
+wwxx.......xx..
+ w.xxx......xx.
+  .....x..1..xw
+    x..xx...xxw
+   xxx..xx.xxww
+    x  ..xxxww
+        wwwww
+ENDMAP

@@ -1,0 +1,25 @@
+# Ported from the pinned DCSS hells.des map nicolae_hells_fiendish_ambush.
+NAME:    nicolae_hells_fiendish_ambush
+TAGS:    transparent no_pool_fixup
+DEPTH:   Dis:2-, Geh:2-, Coc:2-, Tar:2-
+KMONS:   1 = hell sentinel
+KMONS:   2 = brimstone fiend
+KMONS:   3 = ice fiend
+KMONS:   4 = tzitzimitl
+KFEAT:   ! = iron_grate
+SHUFFLE: 1!/2l/3w/4m
+MAP
+    .....
+   .!!!!!.
+  ..!.1.!..
+ ...........
+.mm.......ll.
+.m.........l.
+.m4...{...2l.
+.m.........l.
+.mm.......ll.
+ ...........
+  ..w.3.w..
+   .wwwww.
+    .....
+ENDMAP

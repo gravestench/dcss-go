@@ -1244,6 +1244,7 @@ policy uses these values while the grid keeps the changing floor and water.
 | `ctx:route_step(level_id, from_x, from_y, to_x, to_y, goal)` | `dx, dy, found`; no route gives `nil, nil, false`. |
 | `ctx:projectile_clear(level_id, from_x, from_y, to_x, to_y)` | Physical ray; actors block. |
 | `ctx:set_cell(level_id, x, y, terrain_id)` | Stage a terrain change. It cannot block an actor or erase a stair link. |
+| `ctx:set_cell_colour(level_id, x, y, colour_id)` | Stage a named terrain tint; the level saves it and the terminal uses it while the cell is visible. |
 | `ctx:map_cell(level_id, x, y)` | Mark an unseen cell in map memory; `true` if newly mapped, `false` if known. |
 | `ctx:place_actor(entity, level_id, x, y)` | Put an unpositioned actor on a valid, unoccupied cell. |
 | `ctx:move_actor(entity, level_id, x, y)` | Move a positioned actor to a valid, unoccupied cell. |
@@ -2043,6 +2044,16 @@ map by source weight. `vaults/hell_entry/hell_entry.des` is the one-cell
 the persistent Vestibule and remembers the outside return gate. This travel
 policy is distinct from a generation hook: a `.des` hook configures a map
 while it is built; the world policy acts when the player uses its gate.
+
+The four ordinary Hell branches discover maps in `vaults/dis/`,
+`vaults/geh/`, `vaults/coc/`, and `vaults/tar/`. They also share
+`vaults/hells/`; Gehenna's maze helpers live in `vaults/geh_lava_maze/`.
+The matching Lua generation hooks are under
+`policy/generation/vaults/<family>/<map_name>.lua`. A source map whose
+static dimensions exceed the ordinary 40×35 Hell grid remains in the
+catalog but is skipped before the weighted map draw. Travel through the
+four Vestibule gates belongs to `policy/world/hell/travel.lua`, while
+live marker callbacks belong to `policy/world/vault_trigger_callbacks/`.
 
 | DES declaration | When its Lua method runs |
 | --- | --- |
@@ -2994,6 +3005,12 @@ for one generation call, so it does not depend on file load order or a Lua
 global. A failed helper fit never claims a name or tag. The selected helper
 IDs and protected cells pass through the authored layout result for level
 population and saves.
+
+`SUBVAULT` may name several placeholder glyphs before the colon, as in
+`SUBVAULT: ErH : nico_lavamaze_diaghalf`. The engine treats those glyphs
+as one region for choosing and fitting a helper. This is how Gehenna's
+authored lava maze joins an angled set of cells into one sub-vault. A
+single-glyph declaration uses the same fitter.
 
 Use positive random bounds, nonempty arrays for `random_from`, and a
 `subset` count no greater than the array length. Hook randomness uses the

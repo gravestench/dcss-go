@@ -1,0 +1,26 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_spooky_hallway).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    nicolae_dis_spooky_hallway
+TAGS:    transparent
+DEPTH:   Dis, !Dis:$
+SHUFFLE: DE/FH/JK/LM/NO/PQ
+SUBST:   D = @, F : @vv, JLNP = v, K = }, EHMOQ0 = .009, 9 = 998
+: vault.run("shared.iron_statue_name")
+TILE:    G = dngn_statue_iron
+MAP
+vDDDvvFFFvvJJJv
+v...vv...vv...v
+v.E.vv.H.vv.K.v
+v...vv...vv...v
+vv+vvvv+vvvv+vv
+....0.....0....
+@.............@
+@.G..0.G.0..G.@
+@.............@
+....0.....0....
+vv+vvvv+vvvv+vv
+v...vv...vv...v
+v.Q.vv.O.vv.M.v
+v...vv...vv...v
+vPPPvvNNNvvLLLv
+ENDMAP

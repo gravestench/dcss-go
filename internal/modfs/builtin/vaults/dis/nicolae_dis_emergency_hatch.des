@@ -1,0 +1,21 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_emergency_hatch).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:  nicolae_dis_emergency_hatch
+TAGS:  transparent
+DEPTH: Dis, !Dis:$
+KFEAT: ! = iron_grate
+KMASK: 9>' = opaque
+SUBST: G : Gvb.
+TILE:  G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+.........
+.Gv!!!vG.
+.vv'''vv.
+.!'9'9'!.
+.!''>''!.
+.!'9'9'!.
+.vv'''vv.
+.Gv!!!vG.
+.........
+ENDMAP

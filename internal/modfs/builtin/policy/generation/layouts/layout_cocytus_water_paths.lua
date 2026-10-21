@@ -34,12 +34,12 @@ end
 -- Source boundary_map returns a ramp at both sides of a coordinate. The
 -- half-weight x and y terms suppress water and floor near the level rim.
 local function paint(builder, params)
-    for x = 1, grid.width - 2 do
-        for y = 1, grid.height - 2 do
+    for x = 1, builder.width - 2 do
+        for y = 1, builder.height - 2 do
             local x_border = noise.boundary(x, 1, params.padding,
-                grid.width - 2 - params.padding, grid.width - 2)
+                builder.width - 2 - params.padding, builder.width - 2)
             local y_border = noise.boundary(y, 1, params.padding,
-                grid.height - 2 - params.padding, grid.height - 2)
+                builder.height - 2 - params.padding, builder.height - 2)
             local value = noise.worley_at(params.field, x, y) + 1 -
                 x_border / 2 - y_border / 2
 
@@ -57,7 +57,7 @@ end
 -- The largest ordinary-floor vein is the stair-bearing route. Isolated
 -- floor pockets turn into water instead of becoming unreachable stairs.
 function layout.generate(api)
-    local builder = grid.new(api.ctx)
+    local builder = grid.new(api.ctx, api.width, api.height)
 
     paint(builder, parameters(builder, api))
     regions.keep_largest_region(builder, { ["."] = true }, "w")

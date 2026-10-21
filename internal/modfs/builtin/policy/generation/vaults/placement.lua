@@ -11,12 +11,9 @@ local monster_specs = require("policy.generation.vaults.specs.monster")
 local item_specs = require("policy.generation.vaults.specs.item")
 local resolve = require("policy.generation.vaults.specs.resolve")
 
--- Fit one source map on the established Dungeon grid, preserving the source
+-- Fit one source map on the level builder, preserving the source
 -- glyph and location of every dynamic or pending placement.
 local placement = {}
-
-local width = 80
-local height = 70
 
 -- Pad source rows to a rectangular mutable matrix before rotation.
 local function matrix(rows)
@@ -71,6 +68,9 @@ end
 
 -- Nonfloating vaults honor their side preference before random-fit attempts.
 local function preferred_origin(vault, map_width, map_height, random, options)
+    local width = random.width
+    local height = random.height
+
     -- An explicit PLACE layout is the source floor, even if its source
     -- orientation says north rather than encompass. The Hall of Zot uses
     -- all 80 columns while ordinary fixed vaults still need a margin.
@@ -81,15 +81,15 @@ local function preferred_origin(vault, map_width, map_height, random, options)
     local maximum_height = whole_level and height or height - 4
 
     if map_width > maximum_width or map_height > maximum_height then
-        error(string.format("%s: vault %s: MAP does not fit an 80x70 level",
-            vault.path, vault.id))
+        error(string.format("%s: vault %s: MAP does not fit a %dx%d level",
+            vault.path, vault.id, width, height))
     end
 
     local left = math.floor((width - map_width) / 2)
     local top = math.floor((height - map_height) / 2)
     local side = vault.orientation
 
-    -- Pan primary maps can span all 80 columns while retaining a north or
+    -- A whole-level map can span the builder while retaining a north or
     -- south source orientation. Such a map has no two-cell side margin.
     local horizontal_margin = map_width <= width - 4 and 2 or 0
     local vertical_margin = map_height <= height - 4 and 2 or 0
@@ -139,6 +139,8 @@ end
 -- Floating vaults retry origins against protected cells without modifying the builder.
 local function origin(vault, cells, map_width, map_height, builder, options)
     local protected = options and options.protected
+    local width = builder.width
+    local height = builder.height
 
     -- A procedural layout has already chosen the room's connecting wall.
     -- Check the entire candidate before drawing, so a rejected room cannot

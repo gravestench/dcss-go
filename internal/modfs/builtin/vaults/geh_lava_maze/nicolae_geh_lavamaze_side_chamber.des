@@ -1,0 +1,23 @@
+# nicolae_geh_lavamaze_side_chamber is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:    nicolae_geh_lavamaze_side_chamber
+SHUFFLE: DE
+SUBST:   D = l, E = .
+TAGS: unrand transparent nico_lavamaze_side
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "side", true )
+MAP
+            ..x..
+           x..x...
+          xx..xx...
+         xx...xxx..x
+        ...0.xxxx0.xx
+       .....xxxxx...xx
+      ...xxxxlllxx...xx
+     ...xxxxx._.xxx...xx
+    ...xxxx0.....0xx...xx
+   x.0xxxx....9....xx0.xxx
+  xx..xxxDD..lll..EE...xxxx
+ xxx......DDlllllEE...xxxxxx
+xxxxx.....xxxxxxxxxxxxxxxxxxx
+ENDMAP

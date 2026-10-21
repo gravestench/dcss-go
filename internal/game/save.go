@@ -177,6 +177,25 @@ func (g *Game) Snapshot() save.Snapshot {
 				})
 		}
 
+		for cell, colour := range level.cellColours {
+			record.CellColours = append(record.CellColours, save.CellColourRecord{
+				X:      cell.x,
+				Y:      cell.y,
+				Colour: colour,
+			})
+		}
+
+		sort.Slice(record.CellColours, func(i, j int) bool {
+			left := record.CellColours[i]
+			right := record.CellColours[j]
+
+			if left.Y != right.Y {
+				return left.Y < right.Y
+			}
+
+			return left.X < right.X
+		})
+
 		for _, link := range level.StairLinks() {
 			record.Stairs = append(record.Stairs, save.StairRecord{
 				X:         link.X,

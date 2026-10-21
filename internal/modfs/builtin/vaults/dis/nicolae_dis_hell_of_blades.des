@@ -1,0 +1,54 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_hell_of_blades).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   nicolae_dis_hell_of_blades
+TAGS:   no_monster_gen patrolling
+DEPTH:  Dis:2-, !Dis:$
+ORIENT: encompass
+KMONS:  1 = executioner
+KMONS:  2} = dancing weapon ; executioner's axe good_item ego:vorpal | \
+        bardiche good_item ego:vorpal | battleaxe good_item ego:vorpal | \
+        great sword good_item ego:vorpal | lajatang good_item ego:vorpal | \
+        triple sword good_item ego:vorpal | glaive good_item ego:vorpal
+# These monsters get items from their usual gear in mon-gear.cc, but a curated
+# list of the biggest slicing/chopping weapons in their given selection.
+# The ones with armour get the best armour on their list.
+# Balrugs and profane servitors get weapons outside their normal purview,
+# because I wanted them here but they don't normally wield blades.
+KMONS:  3 = ancient champion ; battleaxe good_item | \
+          great sword good_item . plate armour / \
+        hell knight ; battleaxe good_item | glaive good_item | \
+          great sword good_item . plate armour / \
+        reaper ; halberd itemname:scythe tile:wpn_scythe wtile:scythe \
+          good_item / \
+        war gargoyle ; lajatang good_item / \
+        fire giant ; great sword good_item ego:flaming / \
+        frost giant ; battleaxe good_item ego:freezing / \
+        balrug ; demon blade good_item / \
+        profane servitor ; demon blade good_item
+KFEAT:  } = }
+NSUBST: } = } / 1
+SUBST:  S = 12233.
+# The same floor tile/color as the Hall of Blades; an easter egg for the fans.
+# Since this is a small encompass vault, this way seemed easier than doing it
+# for each possible glyph.
+LFLOORCOL:  lightgrey
+LFLOORTILE: floor_vault
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+v....vvvvvvv.........vvvvvvv....v
+v.{...vvvvv..S..S..S..vvvvv...}.v
+v......vvv.............vvv......v
+v.....2.v.......v.......v.2.....v
+vv...3....S..S.vvv.S..S....3...vv
+vvv.2.........3.v.3.........2.vvv
+vvvv.........v.2.2.v.........vvvv
+vvvvv.S...S.vvv.1.vvv.S...S.vvvvv
+vvvv.........v.2.2.v.........vvvv
+vvv.2.........3.v.3.........2.vvv
+vv...3....S..S.vvv.S..S....3...vv
+v.....2.v.......v.......v.2.....v
+v......vvv.............vvv......v
+v.1...vvvvv..S..S..S..vvvvv...}.v
+v....vvvvvvv.........vvvvvvv....v
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP

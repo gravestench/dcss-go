@@ -1,0 +1,62 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:176
+NAME:    hangedman_snap_crack_crunch
+TAGS:    transparent no_monster_gen
+DEPTH:   Tar, !Tar:$, Zot:1-4
+ORIENT:  centre
+: vault.run("branch_monsters")
+# Source Lua: : if you.in_branch("Tar") then
+# Source Lua: KMONS:   12 = patrolling bone dragon
+# Source Lua: KMONS:   34 = patrolling tormentor
+# Source Lua: KMONS:   56 = patrolling profane servitor
+# Source Lua: KMONS:   7 = eidolon
+# Source Lua: KMONS:   8 = patrolling shadow wraith
+# Source Lua: KMONS:   AB = ancient lich / dread lich
+# Source Lua: KMONS:   CD : doom hound
+# Source Lua: KMONS:   EF : putrid mouth
+# Source Lua: KITEM:   | = nothing
+# Source Lua: : else
+# Source Lua: KMONS:   12 = patrolling lich / ancient lich / dread lich
+# Source Lua: KMONS:   34 = patrolling curse toe
+# Source Lua: KMONS:   56 = patrolling bone dragon
+# Source Lua: KMONS:   7 = death cob w:12 / zombie w:4 / skeleton w:4 / guardian mummy w:4
+# Source Lua: KMONS:   8 = patrolling death cob
+# Source Lua: KMONS:   ABCD = shadow dragon
+# Source Lua: KMONS:   EF = death drake
+# Source Lua: : end
+KMONS:   0 = soul eater
+KMONS:   Z = obsidian statue
+KFEAT:   Z = zot trap
+SHUFFLE: 1234, 12 / 34 / 56, ABCD, AB / CD / EF, {'" / {'" / }`_, {', }`, GHI
+SUBST:   { : -_ |:3, } : -_ |:2, ' : |:1 .:4, " = ., Z = Z:1 c:8
+SUBST:   G : O:20 X, H : O X:50, I = X, X : xc
+NSUBST:  - = 1:{ / 1:}, _ = 1:> / 1 = .:80 <
+NSUBST:  7 = 3:7 / 3:0 / 2 = 70
+MARKER:  O = lua:fog_machine { cloud_type = "foul pestilence", pow_min = 200, \
+                pow_max = 300, delay = 25, size = 1, walk_dist = 0, excl_rad = 0 }
+MAP
+         xxxxxxxxx
+        xxxx...7.xx.@@.
+   xxxxxxxx..cc.7xx.....
+  xxxxxxxx.AcXc..xx....@
+  xxx......cGc...x.."..@
+  xx.'....cXc....x.8....
+  xx..cc..cc..cc..x..xxx
+  xx..cXc.....cXc..xxxxxx
+ xxx...cHc..1..cXc....7.x
+xxxx....cXc.....cXc....7x
+xxx..cc..cc..cc..cc..cc.x
+xx.BcXc....{cXc.....cXc.x
+x..cIc..2..cZc..3..cIc..x
+x.cXc.....cXc{....cXcC.xx
+x.cc..cc..cc..cc..cc..xxx
+x7....cXc.....cXc....xxxx
+x.7....cXc..4..cHc...xxx
+xxxxxx..cXc.....cXc..xx
+ xxx..x..cc..cc..cc..xx
+ ....8.x....cXc....'.xx
+ @.."..x...cGc......xxx
+ @....xx..cXcD.xxxxxxxx
+ .....xx7.cc..xxxxxxxx
+  .@@.xx.7...xxxx
+       xxxxxxxxx
+ENDMAP

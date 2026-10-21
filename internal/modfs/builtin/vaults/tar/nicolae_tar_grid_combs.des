@@ -1,0 +1,21 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:836
+NAME:    nicolae_tar_grid_combs
+TAGS:    transparent
+DEPTH:   Tar
+SHUFFLE: DE
+SUBST:   D : mx, E = x, 0 = .:15 009, 9 = 998
+MAP
+...............
+.x.x.x.x...x.x.
+DxExDxExD.ExDxE
+.x.x.x.x...x.x.
+.....0...0.....
+.0..x.x.x.x..0.
+...ExDxExDxE...
+.0..x.x.x.x..0.
+.....0...0.....
+.x.x...x.x.x.x.
+ExDxE.DxExDxExD
+.x.x...x.x.x.x.
+...............
+ENDMAP

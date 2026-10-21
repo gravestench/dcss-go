@@ -1,0 +1,35 @@
+# hangedman_generic_boss_arena is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:    hangedman_generic_boss_arena
+TAGS:    no_monster_gen
+DEPTH:   Geh, !Geh:$
+ORIENT:  encompass
+MONS:    salamander tyrant, hellion, balrug, balrug
+MONS:    fire giant, searing wretch, hell hog
+KFEAT:   L = l
+SHUFFLE: dD, eE / fF / 56, 56 / 65 / 55 / 66 / 77 / '', ABC / 234 / <<<, 234 / 322
+NSUBST:  < : 1:} / 1:{ / 1:<<>
+SUBST:   ABC : v.., d : vLl, D : vvLl, eE : vvl.., fF : vvl.., v : xcv, ' = .
+KPROP:   l = no_cloud_gen
+MAP
+      xxxxxxxxxxx
+     xxcccccccccxx
+    xxcclllclllccxx
+   xxccl...2...lccxx
+  xxccl.1.....1.lccxx
+ xxccl..lllAlll..lccxx
+xxccl.<ldl...ldl<.lccxx
+xccl..lDl..f..lDl..lccx
+xcl.1ldl..E6E..ldl1.lcx
+xcl..ll..e5F5e..ll..lcx
+xcl..l...........l..lcx
+xcl...B..llDll..C...lcx
+xcl....lldldldll....lcx
+xccl3...1l.D.l1...4lccx
+xxccl......<......lccxx
+ xxccl....lll....lccxx
+  xxcclllllclllllccxx
+   xxcccccccccccccxx
+    xxxxxxxxxxxxxxx
+ENDMAP

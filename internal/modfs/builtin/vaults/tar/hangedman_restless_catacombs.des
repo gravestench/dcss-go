@@ -1,0 +1,26 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:238
+NAME:    hangedman_restless_catacombs
+TAGS:    no_monster_gen
+DEPTH:   Tar, !Tar:$
+ORIENT:  encompass
+MONS:    shadow wraith, patrolling curse skull
+MONS:    royal mummy / ancient lich / dread lich
+MONS:    spectral thing / zombie
+NSUBST:  0 = 1:{ / 1 :} / 3:33. /  *:4
+MAP
+ccccccccccccccc
+cG.c0c0c0c0c.Gc
+c.1c+c+c+c+c1.c
+ccc.........ccc
+c0+.........+0c
+ccc...x.x...ccc
+c0+..x...x..+0c
+ccc....2....ccc
+c0+..x...x..+0c
+ccc...x.x...ccc
+c0+.........+0c
+ccc.........ccc
+c.1c+c+c+c+c1.c
+cG.c0c0c0c0c.Gc
+ccccccccccccccc
+ENDMAP

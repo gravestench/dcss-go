@@ -1,0 +1,14 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_big_boring_drill).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    nicolae_dis_big_boring_drill
+TAGS:    transparent
+DEPTH:   Dis, !Dis:$
+SHUFFLE: vbn
+MAP
+..................
+.vv.b..b..b..b.vv.
+ vvbnnbnnbnnbnnvv
+ vvnnbnnbnnbnnbvv
+.vv.b..b..b..b.vv.
+..................
+ENDMAP

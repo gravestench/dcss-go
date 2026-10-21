@@ -1,0 +1,29 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_liches_on_tour).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   nicolae_dis_liches_on_tour
+TAGS:   transparent
+DEPTH:  Dis:2-, !Dis:$
+KMONS:  1 = hell sentinel
+KMONS:  2 = hellion / tormentor
+KMONS:  3 = ancient lich / dread lich
+NSUBST: M = 1=1 / 2=3 / 13
+SUBST:  N = 1223 .:5
+TILE:   G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+     vvvvv
+     N...N
+     .....
+   vvvv+vvvv
+   vM.G.G.Mv
+vN.v.......v.Nv
+v..vG.....Gv..v
+v..+...{...+..v
+v..vG.....Gv..v
+vN.v.......v.Nv
+   vM.G.G.Mv
+   vvvv+vvvv
+     .....
+     N...N
+     vvvvv
+ENDMAP

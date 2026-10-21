@@ -1,0 +1,26 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (lemuel_mystery_crypt).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   lemuel_mystery_crypt
+DEPTH: Dis, !Dis:$
+MONS:   guardian mummy w:6 / ushabti w:4 / mummy priest / royal mummy
+MONS:   ancient lich / dread lich
+NSUBST: 1:1=}> / *=1
+# occasionally all downstairs are in this vault
+COLOUR: G = cyan
+TILE: G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+xxxxxxxxxxxxxxxxxx
+xxGxxxxx1xxxx2.+1x
+xx.xxxxx.xxxx..xxx
+xx.xx1.x.x.1x..+1x
+xx.xxx+x+x+xx..xxx
+x...+.......+..+1x
++...+...G...+.Gxxx
+x...+.......+..+1x
+xx.xxx+x+x+xx..xxx
+xx.xx1.x.x.1x..+1x
+xx.xxxxx.xxxx..xxx
+xxGxxxxx1xxxx2.+1x
+xxxxxxxxxxxxxxxxxx
+ENDMAP

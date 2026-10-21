@@ -1,0 +1,25 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_scattering).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    nicolae_dis_scattering
+TAGS:    transparent allow_dup luniq
+DEPTH:   Dis, !Dis:$
+KFEAT:   ! = iron_grate
+SHUFFLE: DEFHJKLMNO
+SUBST:   DEF : v, HJ : b, K : !, L : vvvbb!, M : vvvbb!, N : vvvbb!, O : vvvbb!
+MAP
+    ...J...
+    .M...M.
+   O...H...O
+  ON.L...L.NO
+.......F.......
+.M.L.K...K.L.M.
+.......E.......
+J.H.F.EDE.F.H.J
+.......E.......
+.M.L.K...K.L.M.
+.......F.......
+  ON.L...L.NO
+   O...H...O
+    .M...M.
+    ...J...
+ENDMAP

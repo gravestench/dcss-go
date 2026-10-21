@@ -26,8 +26,12 @@ function regular.candidates(context)
             context.branch_id, context.depth,
             context.branch_bottom, context.absolute_depth)
 
-        if definition.family == context.branch_vault_family and
+        local family = definition.family == context.branch_vault_family or
+            definition.family == context.shared_vault_family
+
+        if family and
             (not context.regular_extra_only or definition.tags.extra) and
+            definition.orientation ~= "encompass" and
             not definition.tags.minivault and
             #definition.depths > 0 and #definition.chances == 0 and
             weight > 0 and eligibility.depth(definition, context) then

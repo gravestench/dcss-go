@@ -5,6 +5,9 @@ local branches = require("ids.branches")
 local terrain = require("constants.terrain")
 local levels = require("policy.generation.branch_levels")
 local vaults = require("policy.generation.vaults.catalog")
+local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
+local size = require("policy.generation.hell.size")
 
 local hell = {}
 
@@ -69,6 +72,67 @@ local function validate_gates(level, state)
     end
 end
 
+-- Every persistent child floor has one saved arrival and a consecutive
+-- path from its branch's first floor. A saved floor cannot be invented by
+-- adding a disconnected level record or omitting its arrival pointer.
+local function validate_floors(by_id, state)
+    local seen = {}
+
+    for _, floor in ipairs(state.floors or {}) do
+        local branch = catalog.get(categories.BRANCHES, floor.branch_id)
+        local id = levels.id(floor.branch_id, floor.local_depth)
+        local level = by_id[id]
+
+        if not size.is_subbranch(branch) or
+            floor.local_depth >= branch.depth or
+            floor.level_id ~= id or seen[id] or not level or
+            level.branch_id ~= floor.branch_id or
+            level.local_depth ~= floor.local_depth or
+            #level.cells ~= 35 or #level.cells[1] ~= 40 or
+            #level.stairs ~= 0 or level.initial_monsters < 3 or
+            level.initial_monsters > 18 or
+            floor.entry_x < 0 or floor.entry_x >= 40 or
+            floor.entry_y < 0 or floor.entry_y >= 35 or
+            level.cells[floor.entry_y + 1][floor.entry_x + 1] ~= branch.escape_feature then
+            error("saved Hell floor has invalid identity or geometry")
+        end
+
+        local exits = 0
+        local down = 0
+
+        for _, row in ipairs(level.cells) do
+            for _, feature in ipairs(row) do
+                if feature == branch.escape_feature then
+                    exits = exits + 1
+                elseif feature == terrain.DNGN_STONE_STAIRS_DOWN_I then
+                    down = down + 1
+                end
+            end
+        end
+
+        if exits < 1 or down ~= 1 then
+            error("saved Hell floor needs an exit and one descent")
+        end
+
+        seen[id] = true
+    end
+
+    for _, floor in ipairs(state.floors or {}) do
+        if floor.local_depth > 1 and not seen[levels.id(
+            floor.branch_id, floor.local_depth - 1)] then
+            error("saved Hell floor lacks its prior depth")
+        end
+    end
+
+    for id, level in pairs(by_id) do
+        local branch = catalog.get(categories.BRANCHES, level.branch_id)
+
+        if size.is_subbranch(branch) and not seen[id] then
+            error("saved Hell floor has no travel record")
+        end
+    end
+end
+
 -- A return record is mandatory after the first entry, while an unopened
 -- Hell run has neither a session record nor a generated Vestibule level.
 function hell.validate(by_id, state)
@@ -85,6 +149,14 @@ function hell.validate(by_id, state)
     if not state or not state.vestibule_level_id then
         if level then
             error("saved Vestibule has no Hell return state")
+        end
+
+        for _, other in pairs(by_id) do
+            local branch = catalog.get(categories.BRANCHES, other.branch_id)
+
+            if size.is_subbranch(branch) then
+                error("saved Hell floor has no Vestibule")
+            end
         end
 
         return
@@ -111,6 +183,7 @@ function hell.validate(by_id, state)
 
     validate_wings(level)
     validate_gates(level, state)
+    validate_floors(by_id, state)
 end
 
 return hell

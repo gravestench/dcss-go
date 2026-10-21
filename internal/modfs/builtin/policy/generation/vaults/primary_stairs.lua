@@ -2,13 +2,12 @@
 -- feature. The generic layout may have completed stairs or a branch entrance
 -- in its footprint. Move those provisional stairs before testing its fit.
 local glyphs = require("constants.vault_glyphs")
-local grid = require("policy.generation.grid")
 
 local primary_stairs = {}
 
 -- Match placement.preferred_origin for each fixed orientation. Transparent
 -- padding is included because placement protects the complete MAP rectangle.
-local function footprint(vault)
+local function footprint(builder, vault)
     local width = 0
 
     for _, row in ipairs(vault.rows) do
@@ -17,20 +16,20 @@ local function footprint(vault)
 
     local height = #vault.rows
 
-    local left = math.floor((grid.width - width) / 2)
-    local top = math.floor((grid.height - height) / 2)
+    local left = math.floor((builder.width - width) / 2)
+    local top = math.floor((builder.height - height) / 2)
     local side = vault.orientation
 
     if side:find("west", 1, true) then
         left = 2
     elseif side:find("east", 1, true) then
-        left = grid.width - width - 2
+        left = builder.width - width - 2
     end
 
     if side:find("north", 1, true) then
         top = 2
     elseif side:find("south", 1, true) then
-        top = grid.height - height - 2
+        top = builder.height - height - 2
     end
 
     return {
@@ -55,8 +54,8 @@ local function destination(builder, bounds, protected, original)
     local best
     local score
 
-    for y = 1, grid.height - 2 do
-        for x = 1, grid.width - 2 do
+    for y = 1, builder.height - 2 do
+        for x = 1, builder.width - 2 do
             local point = { x = x, y = y }
             local glyph = builder:cell(x, y)
 
@@ -113,7 +112,7 @@ function primary_stairs.relocate(builder, vault, context)
         return
     end
 
-    local bounds = footprint(vault)
+    local bounds = footprint(builder, vault)
     local protected = context.protected
 
     for _, point in ipairs(context.required or {}) do

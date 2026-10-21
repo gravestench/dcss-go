@@ -1,0 +1,24 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:232
+NAME:   nicolae_coc_caina
+TAGS:   transparent
+DEPTH:  Coc, !Coc:$
+ORIENT: centre
+KMONS:  1 = curse skull
+SUBST:  x = 1:5 xx.
+MAP
+     ..x.x
+   .x.......
+  ....x...x..x
+ ..x....x.....
+ x...x......x.
+.......x.x....
+x.x..x.........
+........}..x.x.
+.x...x.........
+..........x..x
+..x....x......
+x...x.....x..
+  x....x....x
+  ..x.....x.
+    ..x..
+ENDMAP

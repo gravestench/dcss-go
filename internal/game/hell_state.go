@@ -14,6 +14,8 @@ func cloneHellState(source *save.HellStateRecord) *save.HellStateRecord {
 
 	copy := *source
 
+	copy.Floors = append([]save.HellFloorRecord(nil), source.Floors...)
+
 	if source.Return != nil {
 		origin := *source.Return
 
@@ -51,6 +53,24 @@ func (g *Game) acceptHellState(source *save.HellStateRecord) error {
 		return fmt.Errorf("saved Hell entry or return site is invalid")
 	}
 
+	seen := make(map[int]bool, len(source.Floors))
+
+	for _, floor := range source.Floors {
+		level := g.levels[floor.LevelID]
+
+		if seen[floor.LevelID] ||
+			level == nil ||
+			level.BranchID != floor.BranchID ||
+			level.LocalDepth != floor.LocalDepth ||
+			floor.LocalDepth < 1 ||
+			floor.LocalDepth > 7 ||
+			!level.Walkable(floor.EntryX, floor.EntryY) {
+			return fmt.Errorf("saved Hell floor %d has invalid identity or entry", floor.LevelID)
+		}
+
+		seen[floor.LevelID] = true
+	}
+
 	g.hellState = cloneHellState(source)
 
 	return nil
@@ -68,6 +88,20 @@ func luaHellState(source *save.HellStateRecord) map[string]any {
 		"entry_x":            source.EntryX,
 		"entry_y":            source.EntryY,
 	}
+
+	floors := make([]any, 0, len(source.Floors))
+
+	for _, floor := range source.Floors {
+		floors = append(floors, map[string]any{
+			"branch_id":   floor.BranchID,
+			"local_depth": floor.LocalDepth,
+			"level_id":    floor.LevelID,
+			"entry_x":     floor.EntryX,
+			"entry_y":     floor.EntryY,
+		})
+	}
+
+	state["floors"] = floors
 
 	if source.Return != nil {
 		state["return_site"] = map[string]any{

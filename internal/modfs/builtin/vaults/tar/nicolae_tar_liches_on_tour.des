@@ -1,0 +1,26 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:993
+NAME:   nicolae_tar_liches_on_tour
+TAGS:   transparent
+DEPTH:  Tar:2-
+KMONS:  1 = tzitzimitl
+KMONS:  2 = hellion / tormentor
+KMONS:  3 = ancient lich / dread lich
+NSUBST: M = 1=1 / 2=3 / 13
+SUBST:  N = 122223
+MAP
+   ..x   x..
+ ....xx xx....
+ ..N.xxxxx.N..
+..N...xxx...N..
+....M.xxx.M....
+xxx....x....xxx
+ xxxx.....xxxx
+  xxxx.{.xxxx
+ xxxx.....xxxx
+xxx....x....xxx
+....M.xxx.M....
+..N...xxx...N..
+ ..N.xxxxx.N..
+ ....xx xx....
+   ..x   x..
+ENDMAP

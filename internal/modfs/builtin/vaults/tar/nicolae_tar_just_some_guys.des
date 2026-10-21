@@ -1,0 +1,28 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:966
+NAME:   nicolae_tar_just_some_guys
+TAGS:   transparent
+DEPTH:  Tar, !Tar:$
+KMONS:  1 = halazid warlock
+KMONS:  2 = revenant
+KMONS:  3 = spectral thing / nothing w:5
+SUBST:  S = 12
+TILE:  G = dngn_crumbled_column
+: vault.run("feature_name")
+# Source Lua: : set_feature_name("granite_statue", "broken pillar")
+MAP
+    xxxxxxx
+  xxx.x.x.xxx
+ xxxx..}..xxxx
+ xxxx.....xxxx
+xxxxx.1.1.xxxxx
+x.x.x.....x.x.x
+x.....3.3.....x
+x.2.G..S..G.2.x
+x.....3.3.....x
+x.S.G.....G.S.x
+xx....3.3....xx
+xx..G.....G..xx
+xxx...3.3...xxx
+xxxxx.....xxxxx
+xxxxxx.@.xxxxxx
+ENDMAP

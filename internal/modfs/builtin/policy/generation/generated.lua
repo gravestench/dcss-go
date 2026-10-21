@@ -20,6 +20,7 @@ local vault_primary = require("policy.generation.vaults.primary")
 local branch_schedule = require("policy.generation.branch_schedule")
 local temple_plan = require("policy.generation.temple.plan")
 local branch_levels = require("policy.generation.branch_levels")
+local hell_size = require("policy.generation.hell.size")
 local temple_catalog = require("policy.generation.temple.catalog")
 local branch_entry = require("policy.generation.vaults.branch_entry")
 local temple_floor = require("policy.generation.temple.floor")
@@ -276,7 +277,8 @@ local function entrance_cell(builder, start, protected)
             local x = point.x + direction.x
             local y = point.y + direction.y
             local neighbor = x .. ":" .. y
-            local glyph = x >= 1 and x < 79 and y >= 1 and y < 69 and
+            local glyph = x >= 1 and x < builder.width - 1 and
+                y >= 1 and y < builder.height - 1 and
                 builder:cell(x, y)
 
             if glyph and glyph ~= "#" and not seen[neighbor] then
@@ -490,11 +492,23 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
     if branch_id == branches.BRANCH_DUNGEON then
         absolute_depth = depth
     end
-    local profile = {
-        up = branch_id ~= branches.BRANCH_DUNGEON and depth == 1 and 1 or 3,
-        down = (branch_id == branches.BRANCH_DUNGEON or
-            depth < bottom) and 3 or 0,
-    }
+    local profile
+
+    if hell_size.is_subbranch(branch) then
+        -- Source Hell uses one escape arch and one descending stair on
+        -- ordinary floors. The final depth has no downward stair.
+        profile = {
+            up = 1,
+            down = depth < bottom and 1 or 0,
+        }
+    else
+        profile = {
+            up = branch_id ~= branches.BRANCH_DUNGEON and
+                depth == 1 and 1 or 3,
+            down = (branch_id == branches.BRANCH_DUNGEON or
+                depth < bottom) and 3 or 0,
+        }
+    end
     local layout
     local arrival
     local arrival_vault
@@ -516,9 +530,17 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
             absolute_depth = absolute_depth,
             prior_vault_ids = prior_vault_ids,
             branch_entries = scheduled_entries,
-            family = branch.encompass_vault_family,
+            family = branch.encompass_vault_family or
+                (hell_size.is_subbranch(branch) and
+                    branch.abbreviation:lower()),
+            families = branch.encompass_vault_families,
+            shared_family = hell_size.is_subbranch(branch) and
+                "hells" or nil,
+            tag = branch.encompass_vault_tag,
         }
-        local candidates = branch.encompass_vault_family and
+        local candidates = (branch.encompass_vault_family or
+            branch.encompass_vault_families or
+            encompass_context.shared_family) and
             vault_encompass.candidates(encompass_context) or {}
         local definition = vault_encompass.choose(random, candidates)
 
@@ -571,6 +593,8 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
             primary_choice = primary_choice,
             layout_family = layout_family(layout),
             branch_vault_family = branch.abbreviation:lower(),
+            shared_vault_family = hell_size.is_subbranch(branch) and
+                "hells" or nil,
             prior_vault_ids = prior_vault_ids,
             primary_room_ids = layout.room_ids,
             overflow_schedule = temple.overflow_schedule,
@@ -888,6 +912,42 @@ function generated.next(ctx, input)
             y = entry.y,
         },
         starting_items = items,
+    }
+end
+
+-- Hell's four branches have no scheduled parent link. Build their saved
+-- floors through the ordinary layout and secondary-vault pipeline, then
+-- leave gate semantics and stair conversion to the Hell travel policy.
+function generated.hell(ctx, input)
+    branch_schedule.validate(input.branch_schedule)
+    temple_plan.validate(input.temple_plan)
+
+    local branch_id = input.branch_id
+    local depth = input.local_depth
+    local branch = register.get("branches", branch_id)
+    local expected_id = branch_levels.id(branch_id, depth)
+
+    if not hell_size.is_subbranch(branch) or
+        input.level_id ~= expected_id or
+        not availability.can_build(branch_id, depth) then
+        error("Hell floor has invalid branch, depth, or ID")
+    end
+
+    local player = {
+        species_id = input.player_species_id,
+        name = input.player_name,
+        started = true,
+    }
+    local floor = build_floor(ctx, player, branch_id, depth,
+        input.prior_vault_ids, input.branch_schedule, input.temple_plan)
+    local level = level_record(ctx, floor)
+
+    if #level.stairs ~= 0 then
+        error("rootless Hell floor has an ordinary branch link")
+    end
+
+    return {
+        level = level,
     }
 end
 

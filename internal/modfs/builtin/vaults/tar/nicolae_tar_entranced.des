@@ -1,0 +1,26 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:736
+NAME:    nicolae_tar_entranced
+TAGS:    transparent patrolling
+DEPTH:   Tar:2-
+ORIENT:  centre
+KMONS:   1 = eidolon
+KMONS:   2 = tainted leviathan
+SHUFFLE: 12
+SUBST:   1 = 111., 2 = 2.
+MAP
+     x@@@x
+    xx...xx
+  xxx..1..xxx
+ xx2.......2xx
+ x...........x
+xx...........xx
+@.............@
+@.1....{....1.@
+@.............@
+xx...........xx
+ x...........x
+ xx2.......2xx
+  xxx..1..xxx
+    xx...xx
+     x@@@x
+ENDMAP

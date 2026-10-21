@@ -1,0 +1,38 @@
+# Ported from the pinned DCSS hells.des map nicolae_hells_titanomachy.
+NAME:   nicolae_hells_titanomachy
+TAGS:   no_monster_gen no_pool_fixup patrolling
+DEPTH:  Dis, !Dis:$, Geh, !Geh:$, Coc, !Coc:$, Tar, !Tar:$
+ORIENT: encompass
+KMONS:  }1 = titan
+KMONS:  2 = tainted leviathan / iron giant / juggernaut
+KMONS:  3 = fire giant / frost giant / stone giant
+KFEAT:  } = }
+SUBST:  ` = L., - = Lx, S = 12, Z = 23, 1 = 11., 2 = 22., 3 = 33.
+: vault.run("configure")
+MAP
+                  xxxx
+                 xx--xx               xxx
+                xx-LL-xx             xx-xx
+               xx-L``L-xx           xx-L-x
+              xx-L`ZZ`L-xx        xxx-L`Lxx
+             xx-L`3..3`L-xx      xx--L`.`-xx
+            xx-L`..`...`L-xx    xx-LL`...L-xx
+            x-L`...1`...`L-xx  xx-L``..1.`L-x
+   xxxx    xxL`..S.`.S...`L-xxxx-L`......S`Lxx
+  xx--xx  xx-`....`.......`L-xx-L`......3..`-xx
+ xx-LL-xxxx-L...Z.2`2.Z..`.`Lx-L`...Z..`2...L-xx
+xx-L``L--x-L`3.....``...`3`.`-L`.3....`L``..`L-xx
+x-L`{.`LL-L`..3...`L...`3`...L`...3..`L-LL`.}`L-x
+xx-L`..``L`....3.`L-`.`3`...``.....3`L-x--L``L-xx
+ xx-L...2`..Z...`L-xL`.`..Z.2`2.Z...L-xxxx-LL-xx
+  xx-`.3.......`L-xx-L`.......`....`-xx  xx--xx
+   xxL`S......`L-xxxx-L`...S.`.S..`Lxx    xxxx
+    x-L`.1..``L-xx  xx-L`...`1...`L-xx
+    xx-L...`LL-xx    xx-L`...`..`L-xx
+     xx-`.`L--xx      xx-L`3..3`L-xx
+      xxL`L-xxx        xx-L`ZZ`L-xx
+       x-L-xx           xx-L``L-xx
+       xx-xx             xx-LL-xx
+        xxx               xx--xx
+                           xxxx
+ENDMAP

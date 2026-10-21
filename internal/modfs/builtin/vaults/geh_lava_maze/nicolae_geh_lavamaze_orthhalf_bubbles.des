@@ -1,0 +1,27 @@
+# nicolae_geh_lavamaze_orthhalf_bubbles is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:    nicolae_geh_lavamaze_orthhalf_bubbles
+NSUBST:  _ = 8 / 2=_ / ., M = + / c, N = + / c, O = + / c
+SHUFFLE: DE, FHJ
+SUBST:   DFH = x, EJ = ., ` = lx, L = l.
+TAGS: unrand transparent nico_lavamaze_orthhalf
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "orthhalf", true )
+MAP
+xxxxxxxxxxx..       ...xxxxxxxxxx
+xxxxxx`lllL..       ....Lll`xxxxx
+xxxxx`lllL...       .....Lll`xxxx
+xxxxx`llL.0.xxxxxxxxxx.0.Llll`xxx
+xcccxx`lL.....DxxxxxE.....Lll`xxx
+cc.ccx`llL....D..0..E....Llll`xxx
+c._.cxxxxxF...D.._..EE..Lll``xxxx
+cc.ccx....FFFxx`....`x..Ll`xxxxxx
+xc+c.......FxxxxxHHHxxxJ.xxxxxxxx
+x...........llll.....lxJJJxllcccx
+.....cMc...0.........ll....lcc.cc
+.0..cc.cc........cNc....0...O._.c
+....M._.M.......cc.cc.......cO.cc
+....cc.cc..Llll.N._.N........cOcx
+x....cMc..Llllllcc.ccLLL..0....xx
+xxx.....LllllllllcccllllL.....xxx
+ENDMAP

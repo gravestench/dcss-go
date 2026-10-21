@@ -223,8 +223,8 @@ end
 local function helper_options(argument)
     local source, choices = argument:match("^%s*(%S+)%s*:%s*(.-)%s*$")
 
-    if not source or #source ~= 1 then
-        error("SUBVAULT needs one source glyph and a tag choice")
+    if not source or source == "" or not choices or choices == "" then
+        error("SUBVAULT needs source glyphs and a tag choice")
     end
 
     local options = {}
@@ -375,7 +375,8 @@ local function helper_overlap(parent, cells, source, left, top)
 
     for y, row in ipairs(cells) do
         for x, glyph in ipairs(row) do
-            if glyph ~= " " and parent[top + y - 1][left + x - 1] == source then
+            if glyph ~= " " and source:find(
+                parent[top + y - 1][left + x - 1], 1, true) then
                 count = count + 1
             end
         end
@@ -432,7 +433,7 @@ local function embed_helper(cells, source, helper, random, depth, player,
 
     for y, row in ipairs(cells) do
         for x, glyph in ipairs(row) do
-            if glyph == source then
+            if source:find(glyph, 1, true) then
                 low_x = math.min(low_x or x, x)
                 low_y = math.min(low_y or y, y)
                 high_x = math.max(high_x or x, x)
@@ -481,7 +482,7 @@ local function embed_helper(cells, source, helper, random, depth, player,
         random, depth + 1, player, state)
 
     -- A helper's rectangular bounds may cross another SUBVAULT region.
-    -- Only cells carrying this source glyph belong to this helper;
+    -- Only cells carrying one of the source glyphs belong to this helper;
     -- masking the rest also prevents misplaced keyed effect records.
     local claimed = {}
 
@@ -490,7 +491,8 @@ local function embed_helper(cells, source, helper, random, depth, player,
             local parent_y = low_y + y - 1
             local parent_x = low_x + x - 1
 
-            if cells[parent_y][parent_x] == source and glyph ~= " " then
+            if source:find(cells[parent_y][parent_x], 1, true) and
+                glyph ~= " " then
                 cells[parent_y][parent_x] = glyph
                 claimed[parent_x .. ":" .. parent_y] = true
             else
@@ -517,7 +519,7 @@ local function apply_subvault(vault, cells, operation, random, depth,
 
     for _, row in ipairs(cells) do
         for _, glyph in ipairs(row) do
-            present = present or glyph == source
+            present = present or source:find(glyph, 1, true) ~= nil
         end
     end
 
@@ -836,6 +838,7 @@ function operations.apply(vault, cells, random, depth, player, state)
         selected_tags = {},
     }
     local records = {}
+    local nested_claims = {}
     local array_slots = {
         [directives.MONS] = 1,
         [directives.ITEM] = 1,
@@ -857,17 +860,12 @@ function operations.apply(vault, cells, random, depth, player, state)
             local nested, claimed = apply_subvault(vault, cells,
                 operation, random, depth, player, state)
 
-            -- Earlier keyed declarations belong to the parent map.
-            -- A nested helper owns the cells it replaces, including a
-            -- glyph that happens to have the same character as its parent.
-            for _, record in ipairs(records) do
-                if record.targets then
-                    record.excluded_cells = record.excluded_cells or {}
-
-                    for key in pairs(claimed) do
-                        record.excluded_cells[key] = true
-                    end
-                end
+            -- The helper owns these cells even when a later parent hook
+            -- declares a keyed monster for the same glyph. Apply the mask
+            -- after all declarations, so source operation order cannot
+            -- spawn both actors on one cell.
+            for key in pairs(claimed) do
+                nested_claims[key] = true
             end
 
             for _, record in ipairs(nested) do
@@ -943,6 +941,15 @@ function operations.apply(vault, cells, random, depth, player, state)
     for _, record in ipairs(records) do
         record.vault_id = record.vault_id or vault.id
         record.path = record.path or vault.path
+
+        if record.vault_id == vault.id and record.targets and
+            next(nested_claims) then
+            record.excluded_cells = record.excluded_cells or {}
+
+            for key in pairs(nested_claims) do
+                record.excluded_cells[key] = true
+            end
+        end
     end
 
     return records, state.used:ids(), hook_values

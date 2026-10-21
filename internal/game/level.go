@@ -37,6 +37,7 @@ type Level struct {
 	vaultID      string
 	vaultIDs     []string
 	vaultRecords []vault.Record
+	cellColours  map[point]string
 
 	// Shoals heights are authored terrain elevations. The tide changes the
 	// visible feature, but never overwrites the elevation beneath it.
@@ -107,8 +108,46 @@ func NewLevel(id int, cells [][]terrain.ID, positions *akara.Store[ecs.Position]
 		positions: positions,
 		actors:    make(map[point]akara.Entity),
 
-		stairs: make(map[point]StairLink),
+		stairs:      make(map[point]StairLink),
+		cellColours: make(map[point]string),
 	}, nil
+}
+
+// CellColour returns an explicit terrain tint, if one was placed by a vault
+// or changed by a live Lua system. Terrain itself remains in the grid.
+func (l *Level) CellColour(x, y int) (string, bool) {
+	if !l.inBounds(x, y) {
+		return "", false
+	}
+
+	cell := point{
+		x: x,
+		y: y,
+	}
+
+	colour, found := l.cellColours[cell]
+
+	return colour, found
+}
+
+// SetCellColour accepts an empty ID to clear an override during rollback.
+func (l *Level) SetCellColour(x, y int, colour string) error {
+	if !l.inBounds(x, y) {
+		return fmt.Errorf("level %d has no cell at (%d,%d)", l.ID, x, y)
+	}
+
+	cell := point{
+		x: x,
+		y: y,
+	}
+
+	if colour == "" {
+		delete(l.cellColours, cell)
+	} else {
+		l.cellColours[cell] = colour
+	}
+
+	return nil
 }
 
 func validStairDestination(link StairLink) bool {
@@ -270,6 +309,16 @@ func (l *Level) VaultRecords() []vault.Record {
 }
 
 func validateStairLinks(levels map[int]*Level) error {
+	return validateStairLinksWithUnlinked(levels, nil)
+}
+
+// Rootless portal floors use visible stone stairs as command sources but
+// route through Lua policy instead of a saved reciprocal link. The caller
+// supplies their IDs from validated portal state before restore.
+func validateStairLinksWithUnlinked(
+	levels map[int]*Level,
+	unlinked map[int]bool,
+) error {
 	ids := make([]int, 0, len(levels))
 
 	for id := range levels {
@@ -284,6 +333,10 @@ func validateStairLinks(levels map[int]*Level) error {
 		for y, row := range level.terrain {
 			for x := range row {
 				if !terrain.IsLinkedStair(row[x]) {
+					continue
+				}
+
+				if unlinked[id] && row[x] == terrain.StairsDown {
 					continue
 				}
 

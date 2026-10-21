@@ -1,0 +1,27 @@
+# nicolae_geh_lavamaze_orthhalf_network is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:    nicolae_geh_lavamaze_orthhalf_network
+NSUBST:  _ = 2=_ / .
+SHUFFLE: DE, FH, JK, LM, NOP, pqrsyz/!'!'!'/'!!'!'/!''!'!
+SUBST:   DFJLNqrs' = x, EHKMOPpyz! = ., ` = x., ~ = ll0.
+TAGS: unrand transparent nico_lavamaze_orthhalf
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "orthhalf", true )
+MAP
+xxxxxPPPPPPxx       xxyyyyxxxxxxx
+`..`PPPPPPPP.       .yyyyyyyxxxxx
+.~~.PPxxxxPP.       .xxxxyyyy`..`
+.~~.NxxxxxxO.xx...qx.sssxxxyy.~~.
+`..`NN`..`OOOxppxqqxxxsssxxxx.~~.
+DDxxNN.~~.OOxxppxxqqq`..`zzzz`..`
+DDxxxx.~~.xxxppxxxxxq.~~.zzzzzxMM
+xDDxxx`..`Fxx`..`xrrr.~~.xxxxxxMM
+xDDDxxxEEFFFx.~~.rrrx`..`LLxxxxMM
+xxDDxxEExxFFx.~~.xxxxKKKxxLL`..`M
+xxDDEEExxFFxx`..`JxxKKKxxxLL.~~.x
+x`...ExxxFFxxHHxJJx`..`xxxxx.~~.x
+x.~~.xxxxFF`..`xJJJ.~~.xxxxx`._`x
+x.~~.xxxxxx.~~.xxJJ.~~.xxxxxxxxxx
+x`_.`xxxxxx.~~.xxxx`._`xxxxxxxxxx
+xxxxxxxxxxx`_.`xxxxxxxxxxxxxxxxxx
+ENDMAP

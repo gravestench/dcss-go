@@ -1,0 +1,33 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_strange_trophy_room).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   nicolae_dis_strange_trophy_room
+DEPTH: Dis, !Dis:$
+ORIENT: centre
+TAGS:   transparent extra decor
+NSUBST: a = 2:+ / v, b = 2:+ / v, c = 2:+ / v, d = 2:+ / v, e = 2:+ / v
+NSUBST: f = + / v
+SUBST:  G = GG., V = .v
+COLOUR: G = cyan
+TILE: G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+vvvavvv
+vG....a      vvdvvv
+a.....vvvv   v..G.d
+vvvv.....a   d....v
+   a..G..vvdvv...vv
+   vv....e.......v  vdv
+    a..Vvv....vvfvvvv.v
+ vvvv...e...vfv...G...d
+ a....vvv.G...V.......v
+ vvv..e..........V..vvv
+   b..v...vvcvv..v..c
+ vvv..V..Gv   c..v+vv
+ v......vvv   vv.V.c
+ b..vV..b      v...vv
+ v..+...vvvv   c.G..c
+ vvbvv..G..b   vvvvvv
+     b.....v
+     v.....v
+     vvvbvvv
+ENDMAP

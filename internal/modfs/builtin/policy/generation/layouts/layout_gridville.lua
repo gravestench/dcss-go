@@ -147,8 +147,8 @@ end
 -- Source Gridville removes many extra doors after carving, using an
 -- adjacent wall type so surviving doors remain the deliberate exceptions.
 local function trim_doors(builder)
-    for x = 1, grid.width - 2 do
-        for y = 1, grid.height - 2 do
+    for x = 1, builder.width - 2 do
+        for y = 1, builder.height - 2 do
             if builder:cell(x, y) == "+" and builder:chance_in(3, 5) then
                 local replacement = builder:cell(x + 1, y)
 
@@ -165,7 +165,7 @@ end
 -- Run the checked-in DES hook with source tile probabilities and render its
 -- typed rows for the shared Dungeon terrain decoder and stair placement.
 function layout.layout_gridville(api)
-    local builder = grid.new(api.ctx)
+    local builder = grid.new(api.ctx, api.width, api.height)
     local open = not builder:one_in(4)
     local room_materials = open and builder:one_in(3)
     local cells, bounds = subdivision.partition(builder,

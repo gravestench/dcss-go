@@ -1,0 +1,21 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:630
+NAME:    nicolae_tar_checkpoint_tarlie
+TAGS:    transparent
+DEPTH:   Tar
+ORIENT:  centre
+NSUBST:  D = 1=+, E = 1=+
+SHUFFLE: DE
+SUBST:   D = m, E = x, 0 = ..000998
+MAP
+ x........................
+xxx.....x.x.x.......x.x.x.
+ x..0..xxDxDxx..0..xxDxDxx
+xxx...xxx.x.xxx...xxx.x.xxx
+ x.....E.....E.....E.....x
+xxx.0.xxx.0.xxx.0.xxx.0.xxx
+ x.....E.....E.....E.....x
+xxx.x.xxx...xxx.x.xxx...xxx
+ xxDxDxx..0..xxDxDxx..0..x
+ .x.x.x.......x.x.x.....xxx
+ ........................x
+ENDMAP

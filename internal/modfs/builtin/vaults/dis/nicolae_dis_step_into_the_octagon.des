@@ -1,0 +1,27 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_step_into_the_octagon).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    nicolae_dis_step_into_the_octagon
+TAGS:    transparent
+DEPTH:   Dis:2-, !Dis:$
+KMONS:   1 = iron golem / iron giant / war gargoyle / ancient champion / \
+             iron dragon / juggernaut / hell sentinel
+KFEAT:   ! = iron_grate
+# Monsters can still show up on the outer edge, to spectate.
+KMASK:   1{' = no_monster_gen
+SHUFFLE: Pp/Qq
+SUBST:   P = {, Q = 1, p = +, q = v
+MAP
+   .......
+ ...!!v!!...
+ .v!!'''!!v.
+..!'''1'''!..
+.!!'1'''Q'!!.
+.!'''''''''!.
+.p'1'''''P'v.
+.!'''''''''!.
+.!!'1'''1'!!.
+..!'''1'''!..
+ .q!!'''!!v.
+ ...!!v!!...
+   .......
+ENDMAP

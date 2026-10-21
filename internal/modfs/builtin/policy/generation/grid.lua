@@ -2,16 +2,26 @@
 local grid = {}
 grid.__index = grid
 
-local width = 80
-local height = 70
+local dimensions = require("constants.level_dimensions")
+local default_width = dimensions.FULL_WIDTH
+local default_height = dimensions.FULL_HEIGHT
 local uint32 = 4294967296
 
-grid.width = width
-grid.height = height
+grid.width = default_width
+grid.height = default_height
 
--- Allocate the fixed Dungeon matrix with boundary rock before trails write cells.
-function grid.new(ctx)
+-- Allocate one level's dense matrix. Ordinary levels retain the source
+-- 80x70 extent; non-bottom Hell floors pass their source 40x35 extent.
+-- Dimensions belong to this builder, never to mutable module globals, so
+-- nested map choices cannot change another floor's geometry.
+function grid.new(ctx, requested_width, requested_height)
+    local width = requested_width or default_width
+    local height = requested_height or default_height
     local cells = {}
+
+    if width < 3 or height < 3 or width % 1 ~= 0 or height % 1 ~= 0 then
+        error("invalid generation grid dimensions")
+    end
 
     for y = 1, height do
         cells[y] = {}
@@ -24,6 +34,8 @@ function grid.new(ctx)
     return setmetatable({
         ctx = ctx,
         cells = cells,
+        width = width,
+        height = height,
         bad_random = false,
     }, grid)
 end
@@ -40,8 +52,8 @@ end
 
 -- Keep trail endpoints off the immutable outer wall.
 function grid:inside(point)
-    return point.x > 0 and point.x < width - 1 and
-        point.y > 0 and point.y < height - 1
+    return point.x > 0 and point.x < self.width - 1 and
+        point.y > 0 and point.y < self.height - 1
 end
 
 -- Translate the Go builder's bounded uint64 draw without modulo bias before layout choices consume it.
@@ -88,7 +100,7 @@ end
 function grid:rows()
     local rows = {}
 
-    for y = 1, height do
+    for y = 1, self.height do
         rows[y] = table.concat(self.cells[y])
     end
 

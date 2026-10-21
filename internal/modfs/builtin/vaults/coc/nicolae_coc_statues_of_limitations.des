@@ -1,0 +1,16 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:635
+NAME:    nicolae_coc_statues_of_limitations
+TAGS:    transparent allow_dup luniq
+DEPTH:   Coc, !Coc:$
+KMONS:   1 = ice statue
+KFEAT:   1 = W
+KFEAT:   ^ = shaft trap
+SHUFFLE: DE
+SUBST:   D : 1, E : GG1, } = }}^
+MAP
+WWWWW
+WDEDW
+WE}EW
+WDEDW
+WWWWW
+ENDMAP

@@ -27,10 +27,12 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "marker_property", r.state.NewFunction(r.luaGridMarkerProperty))
 	r.state.SetField(context, "level_size", r.state.NewFunction(r.luaGridLevelSize))
 	r.state.SetField(context, "level_branch", r.state.NewFunction(r.luaGridLevelBranch))
+	r.state.SetField(context, "level_depth", r.state.NewFunction(r.luaGridLevelDepth))
 	r.state.SetField(context, "shoals_height", r.state.NewFunction(r.luaGridShoalsHeight))
 	r.state.SetField(context, "shoals_tide_clock", r.state.NewFunction(r.luaGridShoalsTideClock))
 	r.state.SetField(context, "set_shoals_tide_clock", r.state.NewFunction(r.luaGridSetShoalsTideClock))
 	r.state.SetField(context, "set_cell", r.state.NewFunction(r.luaGridSetCell))
+	r.state.SetField(context, "set_cell_colour", r.state.NewFunction(r.luaGridSetCellColour))
 	r.state.SetField(context, "map_cell", r.state.NewFunction(r.luaGridMapCell))
 	r.state.SetField(context, "walkable", r.state.NewFunction(r.luaGridWalkable))
 	r.state.SetField(context, "actor_at", r.state.NewFunction(r.luaGridActorAt))
@@ -327,6 +329,23 @@ func (r *Runtime) luaGridLevelBranch(state *lua.LState) int {
 	return 1
 }
 
+// Lua reads the saved local branch depth from the same level record as its
+// branch ID. Hell travel needs this without decoding a numeric level ID.
+func (r *Runtime) luaGridLevelDepth(state *lua.LState) int {
+	levelID := state.CheckInt(2)
+	depth, found := r.services.Grid.Depth(levelID)
+
+	if !found {
+		state.Push(lua.LNil)
+
+		return 1
+	}
+
+	state.Push(lua.LNumber(depth))
+
+	return 1
+}
+
 func (r *Runtime) luaGridSetCell(state *lua.LState) int {
 	levelID, x, y := r.gridArgs(state)
 	feature := terrain.ID(state.CheckString(5))
@@ -376,6 +395,38 @@ func (r *Runtime) luaGridSetCell(state *lua.LState) int {
 		},
 		undo: func() error {
 			return r.services.Grid.SetCell(levelID, x, y, previous)
+		},
+	})
+
+	return 0
+}
+
+// A vault callback may recolour terrain after changing it. Stage the tint
+// with structural commands so a failed Lua turn restores the previous view.
+func (r *Runtime) luaGridSetCellColour(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	colour := state.CheckString(5)
+
+	if colour == "" {
+		state.RaiseError("cell colour cannot be empty")
+
+		return 0
+	}
+
+	if _, found := r.services.Grid.Cell(levelID, x, y); !found {
+		state.RaiseError("cannot recolour missing grid cell")
+
+		return 0
+	}
+
+	previous, _ := r.services.Grid.CellColour(levelID, x, y)
+
+	r.pending = append(r.pending, structuralCommand{
+		apply: func() error {
+			return r.services.Grid.SetCellColour(levelID, x, y, colour)
+		},
+		undo: func() error {
+			return r.services.Grid.SetCellColour(levelID, x, y, previous)
 		},
 	})
 

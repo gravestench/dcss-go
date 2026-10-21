@@ -1,0 +1,51 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_heavy_handed_symbolism).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   nicolae_dis_heavy_handed_symbolism
+TAGS:   transparent no_monster_gen
+DEPTH:  Dis, !Dis:$
+ORIENT: encompass
+KMONS:  1 = iron troll
+KMONS:  2 = iron dragon
+KMONS:  3 = iron golem
+KMONS:  4 = iron giant
+KFEAT:  ! = iron_grate
+SUBST:  1 = 11., 1 = 111223 4:5, 3 = .2334
+: vault.run("shared.iron_statue_name")
+TILE:   G = dngn_statue_iron
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv...v
+vvvvvvvvvvvvvvvvvvvvvvvvvvvv.4..}.v
+vvvvvvvvvvvvvvvvvvvvvvvvv.........v
+vvvvvvvvvvvvvvvvvvvvvv...3...vv..vv
+vvvvvvvvvvvvvvvvvvv........vvvv.4vv
+vvvvvvvvvvvvvvvv.....3...vvvvv...vv
+vvvvvvvvvvvvv..........vvvvvvv..vvv
+vvvvvvvvvv..!.1..4...vvvvvvvv...vvv
+vvvvvvv.....v......vvvvvvvvvv.3.vvv
+vvvv...1...vvv...vvvvvvvvvvv...vvvv
+v.......1.v.v.v...vvvvvvvvvv...vvvv
+v.4......1..v......vvvvvvvv....vvvv
+v..........vvv...3..vvvvvvv.3.vvvvv
+v...vvvv..v...v....vvvvvvv....vvvvv
+v.1.vvvv..v.2.v...vvv.vvvv....vvvvv
+v...vvvv..v...v..vvv...vv....vvvvvv
+v...vvvvv..vvv..vvv..3..v.4..vvvvvv
+v1.....vvv.....vvv...........vvvvvv
+v.1..1..vvv...vvv...........vvvvvvv
+v..1.....vvv.vvv..vvv..v..1.vvvvvvv
+v...vvv...vvvvv..v...v..v...vvvvvvv
+v!!!vvv.4..vvv...v.2.vvvvv!vvvvvvvv
+v...vvv...vvvvv..v...v..v..vvvvvvvv
+v..1.....vvv.vvv..vvv..v...vvvvvvvv
+v.1..1..vvv...vvv.....1...vvvvvvvvv
+v1.....vvv..4..vvv.....1..vvvvvvvvv
+v...vvvvv.......vvvvv...1.vvvvvvvvv
+v.1.vvvv...vvv...vvvv....vvvvvvvvvv
+v...vvvv.1.vvv.1.vvvv....vvvvvvvvvv
+v...vvvv...vvv...vvvv....vvvvvvvvvv
+v.........1.!.1.........vvvvvvvvvvv
+v.{...1..1..!..1...1..4.vvvvvvvvvvv
+v.......1...!...1.......vvvvvvvvvvv
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP

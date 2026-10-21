@@ -20,6 +20,7 @@ type CellView struct {
 	Glyph        rune
 	State        CellState
 	DetectedItem bool
+	ColorID      string
 }
 
 type EntityView struct {
@@ -292,9 +293,12 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 		case g.visibleLevelID == level.ID &&
 			i < len(g.visible) &&
 			g.visible[i]:
+			colour, _ := level.CellColour(i%level.width, i/level.width)
+
 			view.Cells[i] = CellView{
-				Glyph: terrain.Glyph(level.terrain[i/level.width][i%level.width]),
-				State: Visible,
+				Glyph:   terrain.Glyph(level.terrain[i/level.width][i%level.width]),
+				State:   Visible,
+				ColorID: colour,
 			}
 
 		case feature != terrain.Unseen:

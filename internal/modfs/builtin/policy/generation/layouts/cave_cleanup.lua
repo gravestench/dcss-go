@@ -43,8 +43,8 @@ end
 function cleanup.remove_isolated(builder, target, percent, boxy)
     local offsets = neighbors(boxy)
 
-    for y = 1, grid.height - 2 do
-        for x = 1, grid.width - 2 do
+    for y = 1, builder.height - 2 do
+        for x = 1, builder.width - 2 do
             if builder:cell(x, y) == target and builder:chance_in(percent, 100) then
                 local isolated = true
 
@@ -93,8 +93,8 @@ function cleanup.widen_paths(builder, target, percent)
     local offsets = neighbors(true)
     local replacements = {}
 
-    for y = 1, grid.height - 2 do
-        for x = 1, grid.width - 2 do
+    for y = 1, builder.height - 2 do
+        for x = 1, builder.width - 2 do
             if builder:cell(x, y) == target then
                 local adjacent = 0
 

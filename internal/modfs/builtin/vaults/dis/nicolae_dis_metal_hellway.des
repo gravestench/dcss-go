@@ -1,0 +1,19 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_metal_hellway).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   nicolae_dis_metal_hellway
+TAGS:   transparent
+DEPTH:  Dis, !Dis:$
+ORIENT: centre
+SUBST:  0 = .009, 9 = 998
+TILE:   G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+vvvv vv vv vvvvv vv
+......v v....G....v
+@..0.Gv vG.......Gv
+......v v.9..0....v
+  v....0..9.v v......
+  vG.......Gv vG.0..@
+  v....G....v v......
+  vv vvvvv vv vv vvvv
+ENDMAP

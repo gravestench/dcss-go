@@ -1,0 +1,31 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:705
+NAME:    nicolae_tar_entombed_in_hell
+TAGS:    transparent patrolling
+DEPTH:   Tar, !Tar:$
+ORIENT:  centre
+KFEAT:   } = }
+KMONS:   } = royal mummy
+KMONS:   1 = mummy priest
+KMONS:   2 = guardian mummy / ushabti / death scarab band / ancient champion / \
+             emperor scorpion / sphinx
+SHUFFLE: DE/FH/JK
+SUBST:   M = 12, DH = +, EFJK = x
+MAP
+            xxxx
+          xxx..x
+        xxx..2.E
+      xxx..M...x
+    xxx.D2...x+x
+  xxx...x..xxx.x
+xxx...M.xxxx.2.x
+x...1...xx.....x
+x.}.1.M.F.M....H
+x...1...xx.....x
+xxx...M.xxxx.2.x
+  xxx...x..xxx.x
+    xxx.J2...x+x
+      xxx..M...x
+        xxx..2.K
+          xxx..x
+            xxxx
+ENDMAP

@@ -18,8 +18,11 @@ local directions = {
 -- The source builder uses inclusive coordinates. Its x rock glyph is kept
 -- distinct from ordinary # so the DES terrain decoder sees the source map.
 function rooms.box(builder, x1, y1, x2, y2)
-    for y = y1, y2 do
-        for x = x1, x2 do
+    -- Source make_box clips a requested rectangle to the builder. On the
+    -- compact Dis grid, overlapping block draws can extend past a rim;
+    -- retain the requested edge positions while painting only live cells.
+    for y = math.max(0, y1), math.min(builder.height - 1, y2) do
+        for x = math.max(0, x1), math.min(builder.width - 1, x2) do
             local edge = x == x1 or x == x2 or y == y1 or y == y2
 
             builder:set(x, y, edge and "x" or ".")
@@ -78,12 +81,12 @@ function rooms.connect(builder, minimum, maximum, wall, replacement,
     check_distance)
     wall = wall or "x"
     replacement = replacement or "+"
-    check_distance = check_distance or grid.width
+    check_distance = check_distance or builder.width
 
     local candidates = {}
 
-    for y = 1, grid.height - 2 do
-        for x = 1, grid.width - 2 do
+    for y = 1, builder.height - 2 do
+        for x = 1, builder.width - 2 do
             candidates[#candidates + 1] = { x = x, y = y }
         end
     end
@@ -118,7 +121,7 @@ local function region(builder, start_x, start_y, visited)
     local cells = { { x = start_x, y = start_y } }
     local head = 1
 
-    visited[start_y * grid.width + start_x] = true
+    visited[start_y * builder.width + start_x] = true
 
     while head <= #cells do
         local point = cells[head]
@@ -127,7 +130,7 @@ local function region(builder, start_x, start_y, visited)
         for _, direction in ipairs(directions) do
             local x = point.x + direction.x
             local y = point.y + direction.y
-            local key = y * grid.width + x
+            local key = y * builder.width + x
 
             if builder:inside({ x = x, y = y }) and
                 not visited[key] and open(builder:cell(x, y)) then
@@ -147,9 +150,9 @@ function rooms.keep_largest(builder)
     local largest = {}
     local regions = {}
 
-    for y = 1, grid.height - 2 do
-        for x = 1, grid.width - 2 do
-            local key = y * grid.width + x
+    for y = 1, builder.height - 2 do
+        for x = 1, builder.width - 2 do
+            local key = y * builder.width + x
 
             if not visited[key] and open(builder:cell(x, y)) then
                 local cells = region(builder, x, y, visited)
@@ -180,8 +183,8 @@ function rooms.valid(result)
     local count = 0
     local builder = result.builder
 
-    for y = 0, grid.height - 1 do
-        for x = 0, grid.width - 1 do
+    for y = 0, builder.height - 1 do
+        for x = 0, builder.width - 1 do
             local glyph = builder:cell(x, y)
 
             if glyph == "." or glyphs.up[glyph] or glyphs.down[glyph] then
@@ -190,7 +193,7 @@ function rooms.valid(result)
         end
     end
 
-    return count > grid.width * grid.height * 0.15
+    return count > builder.width * builder.height * 0.15
 end
 
 return rooms

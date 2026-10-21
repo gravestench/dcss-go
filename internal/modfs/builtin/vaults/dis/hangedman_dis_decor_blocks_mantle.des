@@ -1,0 +1,33 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (hangedman_dis_decor_blocks_mantle).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    hangedman_dis_decor_blocks_mantle
+DEPTH: Dis, !Dis:$
+TAGS:    transparent
+ORIENT:  centre
+SHUFFLE: ABC, DEFG
+NSUBST:  > = 1 = .:13 >:7 / 1 = .:6 {:4 / *:.
+SUBST:   A : x:9 .:1, B : yy..., C = .
+SUBST:   D : xxxx., E : y.., FG = .
+SUBST:   x : v:3 G:2, y : v, - =  +v
+COLOUR: G = cyan
+TILE: G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+        vvvvv     vvvvv
+        v...v..D..v...v
+        v.>.+.....+.>.v
+        v...v..D..v...v
+    vvvvvv+vv.....vv+vvvvvv
+    v...v.............v...v
+    v.>.+.A...E.E...A.+.>.v
+    v...v.............v...v
+vvvvvv+vv....vv-vv....vv+vvvvvv
+v...v........v...v........v...v
+v.>.+.B....C.+.>.+.C....B.+.>.v
+v...v........v...v........v...v
+vv+vv....vv+vvvvvvv+vv....vv+vv
+ ......G.v...v   v...v.G......
+ F.F.....+.>.v   v.>.+.....F.F
+ ......G.v...v   v...v.G......
+         vvvvv   vvvvv
+ENDMAP

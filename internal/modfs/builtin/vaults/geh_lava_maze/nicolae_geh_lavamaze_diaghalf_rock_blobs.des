@@ -1,0 +1,42 @@
+# nicolae_geh_lavamaze_diaghalf_rock_blobs is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:    nicolae_geh_lavamaze_diaghalf_rock_blobs
+NSUBST:  _ = 2=_ / .
+SHUFFLE: DEF, HJ, KL
+SUBST:   DEHK = l, FJL = .
+TAGS: unrand transparent nico_lavamaze_diaghalf
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "diaghalf", true )
+MAP
+x
+xx
+xxx
+xxxx
+xx..x
+x....x
+x._..xx
+x.....xx
+xx..0.xxx
+xxx....xJJ
+xxx....JJ..
+xx....JJJ...
+x..0..JJJ.0..
+.......JJxxx.
+..._...xxxxxx
+x.....Hxxxxxx
+xxlllHHHxxxxx
+xxllllH..xxx.
+xxllll.............
+xxxll...0........0..
+xxx..._....xxxxx....x
+xxx.......xxxxxxx.FFxx
+xxx...0...xxxxxxxFFxxxx
+xx.......EExxxxxFFFxxxxx
+x.....lllEE.......FFxxxxx
+....lllllll.._.0....Lxx...
+..0.lllllllD.......LLLL...x
+.....llllllDD.....KKLL.._.xx
+.......ll...DDxxxKKKK.....xxx
+x...0...._...xxxxxxK......xxxx
+xx.........xxxxxxxxx.....xxxxxx
+ENDMAP

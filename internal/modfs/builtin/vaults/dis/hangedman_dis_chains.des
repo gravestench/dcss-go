@@ -1,0 +1,23 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (hangedman_dis_chains).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   hangedman_dis_chains
+DEPTH: Dis, !Dis:$
+TAGS:   transparent extra decor
+SUBST:  A : vv., B : vv., C : Gvv, D : Gvv
+COLOUR: G = cyan
+TILE: G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+      .....vv.
+   .....vvv..C
+......Av...vv.
+...vvv..vvv.....
+.vv...vA........
+D..vvv.......vv.
+.vv.......vvv..D
+........Bv...vv.
+.....vvv..vvv...
+  .vv...vB......
+  C..vvv.....
+  .vv.....
+ENDMAP

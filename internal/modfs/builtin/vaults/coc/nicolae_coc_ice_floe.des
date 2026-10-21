@@ -1,0 +1,30 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:88
+NAME:    nicolae_coc_ice_floe
+DEPTH:   Coc:2-, !Coc:$
+ORIENT:  centre
+TAGS:    transparent
+NSUBST:  D = 3:110 / *:0
+MONS:    ice fiend / shard shrike
+MAP
+      wwwwwwwww
+    wwwwwwwwwwwww
+   WwwwwxxxxxwwwwW
+  WWWw.xx...xx.wWWW
+ wwWW.....D.....WWww
+ www.D..x...x..D.www
+www....xx.D.xx....www
+wwwx..xx.....xx..xwww
+wwxxDxx...x...xxDxxww
+wwx.....4xxx......xww
+wwx.{.3.xxxxx.1.}.xww
+wwx.....4xxx......xww
+wwxxDxx...x...xxDxxww
+wwwx..xx.....xx..xwww
+www....xx.D.xx....www
+ www.D..x...x..D.www
+ wwWW.....D.....WWww
+  WWWw.xx...xx.wWWW
+  @WwwwwxxxxxwwwwW
+    wwwwwwwwwwwww
+      wwwwwwwww
+ENDMAP

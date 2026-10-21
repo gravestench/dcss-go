@@ -1,0 +1,42 @@
+# nicolae_geh_lavamaze_diaghalf_village is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:   nicolae_geh_lavamaze_diaghalf_village
+NSUBST: _ = 8 / 2=_ / ., D = + / c, E = + / c, F = + / c, H = + / c, J = + / c,\
+        K = + / c
+SUBST:  ` = lx, ~ = l.
+TAGS: unrand transparent nico_lavamaze_diaghalf
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "diaghalf", true )
+MAP
+x
+xx
+x`x
+`lll
+ll~ll
+l~.~ll
+l._..~l
+......~l
+....0..`x
+..cEEc``xx
+.Ec..ccxxxx
+cc....ccxxx.
+c..0...D.x...
+c......D.....
+cc....cc..0..
+`cc..cD......
+`~cDDc...cFc.
+~.......Fc.cF
+`..0...cc.0.cc.....
+x`~....F.._..F......
+xx`ll~.cc...cc..0...l
+xxllllllHc.ccl.....ll`
+x`..~l~~.cHcll...cFcc`x
+x..........lllllFc..cc``
+`.0..cJc....~~lcc...0cc~l
+....cc0cJ......c......K.~l
+...cc...cc.....c.._...K.0l`
+l_.c.._..J..0..cc....cc...`x
+lllcc...cc......cc..cK.._.`xx
+````cc.cJ...`x`..cKKc....`xxxx
+xxxxxccc...`xxx`......``xxxxxxx
+ENDMAP

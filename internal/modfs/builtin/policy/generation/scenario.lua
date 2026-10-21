@@ -4,6 +4,8 @@ local generated = require("policy.generation.generated")
 local abyss = require("policy.generation.abyss")
 local pan = require("policy.generation.pan.region")
 local hell_vestibule = require("policy.generation.hell.vestibule")
+local branch_catalog = require("policy.catalog")
+local categories = require("constants.catalog")
 local features = require("content.terrain_features")
 local transporters = require("policy.generation.transporters")
 local item_ids = require("ids.items")
@@ -39,6 +41,27 @@ local function fixup_pan_stairs(level)
                 row[x] = terrain.DNGN_TRANSIT_PANDEMONIUM
             end
         end
+    end
+end
+
+-- The source turns every upward stone stair on a Hell branch floor into
+-- that branch's escape feature after vault projection. These arches return
+-- directly to the Vestibule, so no ordinary parent stair link is saved.
+local function fixup_hell_stairs(level)
+    local branch = branch_catalog.get(categories.BRANCHES, level.branch_id)
+    local count = 0
+
+    for _, row in ipairs(level.cells) do
+        for x, feature in ipairs(row) do
+            if feature == terrain.DNGN_STONE_STAIRS_UP_I then
+                row[x] = branch.escape_feature
+                count = count + 1
+            end
+        end
+    end
+
+    if count == 0 then
+        error("Hell floor has no escape arch")
     end
 end
 
@@ -163,6 +186,17 @@ function module.hell_vestibule(ctx, input)
     return hell_vestibule.generate(ctx, input)
 end
 
+-- Stage one persistent Hell subbranch floor. Its source up exits become
+-- typed return arches only after keyed DES features have been projected.
+function module.hell_floor(ctx, input)
+    local result = generated.hell(ctx, input)
+
+    decode_level(ctx, result.level)
+    fixup_hell_stairs(result.level)
+
+    return result
+end
+
 register.policy({
     id = "world.generate_scenario",
     run = module.run,
@@ -186,6 +220,11 @@ register.policy({
 register.policy({
     id = "world.generate_hell_vestibule",
     run = module.hell_vestibule,
+})
+
+register.policy({
+    id = "world.generate_hell_floor",
+    run = module.hell_floor,
 })
 
 return module

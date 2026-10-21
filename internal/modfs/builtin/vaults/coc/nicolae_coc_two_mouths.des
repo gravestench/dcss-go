@@ -1,0 +1,17 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:702
+NAME:   nicolae_coc_two_mouths
+TAGS:   patrolling transparent no_pool_fixup
+DEPTH:  Coc:2-, !Coc:$
+ORIENT: centre
+SUBST:  0 = .009, 9 = 998
+MAP
+ wwwwwww             wwwwwww
+wwxxxxxww           wwxxxxxww
+wxx.0.xxww         wwxx.9.xxw
+..0....xxw         wxx....9..
+@.9..{..xw         wx..}..8.@
+..0....xxw         wxx....9..
+wxx.0.xxww         wwxx.9.xxw
+wwxxxxxww           wwxxxxxww
+ wwwwwww             wwwwwww
+ENDMAP

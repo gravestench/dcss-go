@@ -1,0 +1,30 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:433
+NAME:     nicolae_coc_icebeans_plural
+TAGS:     transparent no_pool_fixup
+DEPTH:    Coc
+ORIENT:   centre
+SUBVAULT: D : nico_icebean
+SUBVAULT: E : nico_icebean
+SUBVAULT: F : nico_icebean
+SUBVAULT: H : nico_icebean
+SHUFFLE:  JK/xw/xw/xW/xW/ww/wW/wW/WW/-W/-W
+SUBST:    JK = x, - = .
+MAP
+  .............
+ ..DDDD...EEEE..
+..DDDDDD.EEEEEE..
+.DDDDDDD.EEEEEEE.
+.DDDDDDD.EEEEEEE.
+.DDDDDD...EEEEEE.
+.DDDDD.....EEEEE.
+..DDD..KKK..EEE..
+.......KJK.......
+..HHH..KKK..FFF..
+.HHHHH.....FFFFF.
+.HHHHHH...FFFFFF.
+.HHHHHHH.FFFFFFF.
+.HHHHHHH.FFFFFFF.
+..HHHHHH.FFFFFF..
+ ..HHHH...FFFF..
+  .............
+ENDMAP

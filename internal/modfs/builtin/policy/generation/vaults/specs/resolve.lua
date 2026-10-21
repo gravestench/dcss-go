@@ -509,15 +509,22 @@ function resolve.validate_monster(selected, site)
         return
     end
 
+    -- A suffix is a derived form only when the full name is absent from
+    -- the catalog. Silent spectre is a species, not a spectre of "silent".
+    local literal = name_index(categories.MONSTERS)[name:lower()]
     local spectral_base = name:match("^spectral (.+)$")
-    local base_name = name:match("^(.-) zombie$") or
-        name:match("^(.-) skeleton$") or
-        name:match("^(.-) simulacrum$") or
-        name:match("^(.-) spectre$")
+    local base_name
+
+    if not literal then
+        base_name = name:match("^(.-) zombie$") or
+            name:match("^(.-) skeleton$") or
+            name:match("^(.-) simulacrum$") or
+            name:match("^(.-) spectre$")
+    end
 
     -- Source vaults can request a spectral form of an ordinary species.
     -- Keep literal catalog monsters such as spectral thing as themselves.
-    if not base_name and spectral_base and
+    if not literal and not base_name and spectral_base and
         name_index(categories.MONSTERS)[spectral_base:lower()] then
         base_name = spectral_base
     end
@@ -651,15 +658,21 @@ function resolve.monster(ctx, selected, depth, site)
     end
 
     local name = selected.name
+    local literal = name_index(categories.MONSTERS)[name:lower()]
     local spectral_base = name:match("^spectral (.+)$")
-    local base_name = name:match("^(.-) zombie$") or
-        name:match("^(.-) skeleton$") or
-        name:match("^(.-) simulacrum$") or
-        name:match("^(.-) spectre$")
-    local variant = name:match(" (zombie)$") or
-        name:match(" (skeleton)$") or
-        name:match(" (simulacrum)$") or
-        name:match(" (spectre)$")
+    local base_name
+    local variant
+
+    if not literal then
+        base_name = name:match("^(.-) zombie$") or
+            name:match("^(.-) skeleton$") or
+            name:match("^(.-) simulacrum$") or
+            name:match("^(.-) spectre$")
+        variant = name:match(" (zombie)$") or
+            name:match(" (skeleton)$") or
+            name:match(" (simulacrum)$") or
+            name:match(" (spectre)$")
+    end
 
     -- DCSS accepts both "spectral goblin" and "goblin spectre" for the
     -- same derived monster; downstream identity uses one variant name.
@@ -669,7 +682,7 @@ function resolve.monster(ctx, selected, depth, site)
 
     -- A named spectral form uses the generic spectral monster's behavior
     -- while retaining its base species for rendering and future corpse rules.
-    if not base_name and spectral_base and
+    if not literal and not base_name and spectral_base and
         name_index(categories.MONSTERS)[spectral_base:lower()] then
         base_name = spectral_base
         variant = "spectral"

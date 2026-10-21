@@ -1,0 +1,37 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:1043
+NAME:   nicolae_tar_ssshhh
+TAGS:   no_monster_gen
+DEPTH:  Tar, !Tar:$
+ORIENT: encompass
+KMONS:  1 = silent spectre
+KMONS:  2 = tormentor / hellion
+KMONS:  3 = eidolon / profane servitor / bone dragon / shadow wraith / \
+            putrid mouth / spectral thing
+KMONS:  } = tzitzimitl / tainted leviathan
+KFEAT:  } = }
+KMASK:  1 = no_trap_gen
+MAP
+         ccccc
+        cc.c.cc
+       cc..2..cc
+      cc...c...cc
+     cccc3ccc3cccc
+    cc.c...c...c.cc
+   cc.....ccc.....cc
+  cccc.{...c...2.cccc
+ cc.c.....ccc.....c.cc
+cc..3......c......3..cc
+c...c.c.c.ncn.c.c.c...c
+cc2cccccccc1cccccccc2cc
+c...c.c.c.ncn.c.c.c...c
+cc..3......c......3..cc
+ cc.c.....ccc.....c.cc
+  cccc.2...c...}.cccc
+   cc.....ccc.....cc
+    cc.c...c...c.cc
+     cccc3ccc3cccc
+      cc...c...cc
+       cc..2..cc
+        cc.c.cc
+         ccccc
+ENDMAP

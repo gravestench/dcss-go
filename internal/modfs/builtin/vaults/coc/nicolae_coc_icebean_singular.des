@@ -1,0 +1,16 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:417
+NAME:     nicolae_coc_icebean_singular
+TAGS:     transparent no_pool_fixup allow_dup
+DEPTH:    Coc
+SUBVAULT: D : nico_icebean
+MAP
+  ......
+ ..DDDD..
+..DDDDDD.
+.DDDDDDD.
+.DDDDDDD.
+.DDDDDD..
+.DDDDD...
+..DDD..
+ .....
+ENDMAP

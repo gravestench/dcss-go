@@ -1,0 +1,29 @@
+# nicolae_geh_lavamaze_corner_recurse is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:     nicolae_geh_lavamaze_corner_recurse
+TAGS:     allow_dup no_dump
+WEIGHT:   70
+SUBVAULT: D : nico_lavamaze_oct
+SUBVAULT: E : nico_lavamaze_oct
+CLEAR:    DE
+TAGS: unrand transparent nico_lavamaze_corner
+: vault.run("shared.setup_quiet")
+# Source Lua: : nicolae_geh_maze_setup( _G, "corner", false )
+MAP
+DDDDDDDDDDDDD
+DDDDDDDDDDDDD
+DDDDDDDDDDDDx
+DDDDDDDDDDDxxxEE
+DDDDDDDDDDxxxEEE
+DDDDDDDDDxxxEEEE
+DDDDDDDDxxxEEEEE
+DDDDDDDxxxEEEEEE
+DDDDDDxxxEEEEEEE
+DDDDDxxxEEEEEEEE
+DDDDxxxEEEEEEEEE
+DDDxxxEEEEEEEEEE
+DDxxxEEEEEEEEEEE
+DxxxEEEEEEEEEEEE
+xxxEEEEEEEEEEEEE
+xxEEEEEEEEEEEEEE
+ENDMAP

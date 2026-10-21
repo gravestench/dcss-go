@@ -1,0 +1,43 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:133
+NAME: grunt_tartarus_stairs_gauntlet_trap
+DEPTH: Tar, !Tar:$
+TAGS: generate_awake patrolling no_trap_gen
+MONS: Tzitzimitl, reaper, profane servitor, spectral thing, shadow wraith
+: vault.run("trap_markers")
+# Source Lua: {{
+# Source Lua:     dgn.persist.grunt_gauntlet_trap_triggered = false
+# Source Lua:     local trap_marker = TriggerableFunction:new {
+# Source Lua:         func = "callback.grunt_gauntlet_trap_activate",
+# Source Lua:         repeated = true}
+# Source Lua:     trap_marker:add_triggerer(DgnTriggerer:new {
+# Source Lua:         type="player_move"})
+# Source Lua:     lua_marker(':', trap_marker)
+# Source Lua:     lua_marker('H', trap_marker)
+# Source Lua:     lua_marker('-', trap_marker)
+# Source Lua:     lua_marker('1', trap_marker)
+# Source Lua:     lua_marker('e', trap_marker)
+# Source Lua:     lua_marker('}', trap_marker)
+# Source Lua:     lua_marker('d', props_marker {trap_wall=1})
+# Source Lua:     lua_marker('"', props_marker {trap_wall2=1})
+# Source Lua: }}
+SUBST: d = c
+SUBST: e = 2
+COLOUR: c = lightmagenta
+KPROP: "H-}'2 = no_tele_into
+MARKER: H = lua:fog_machine { \
+                pow_min = 10, pow_max = 10, delay = 10, \
+                size = 3, walk_dist = 1, spread_rate = 0, \
+                cloud_type = "purple smoke" }
+MAP
+cccccccccccccccccccccc.......
+c'''2'''''''''''''''cG.5.....
+cdcccccccccccccccccdcc...5...
+c--H":e:c9c8c8c0c0c0cG.4..5..
+c---":::cdcdcdcdcdcdcc3.4..5.
+c}1H":::+............+......@
+c---":::cdcdcdcdcdcdcc3.4..5.
+c--H":e:c9c8c8c0c0c0cG.4..5..
+cdcccccccccccccccccdcc...5...
+c'''2'''''''''''''''cG.5.....
+cccccccccccccccccccccc.......
+ENDMAP

@@ -87,6 +87,25 @@ func (g *Game) restoreLevels(
 			}
 		}
 
+		for _, savedColour := range record.CellColours {
+			if savedColour.Colour == "" {
+				return fmt.Errorf("level %d has an empty cell colour", record.ID)
+			}
+
+			cell := point{
+				x: savedColour.X,
+				y: savedColour.Y,
+			}
+
+			if _, duplicate := level.cellColours[cell]; duplicate {
+				return fmt.Errorf("level %d has a duplicate cell colour", record.ID)
+			}
+
+			if err := level.SetCellColour(cell.x, cell.y, savedColour.Colour); err != nil {
+				return err
+			}
+		}
+
 		if knownErr := level.LoadKnownCells(record.Known); knownErr != nil {
 			return knownErr
 		}
@@ -131,7 +150,15 @@ func (g *Game) restoreLevels(
 		}
 	}
 
-	if err := validateStairLinks(g.levels); err != nil {
+	unlinked := make(map[int]bool)
+
+	if hellState != nil {
+		for _, floor := range hellState.Floors {
+			unlinked[floor.LevelID] = true
+		}
+	}
+
+	if err := validateStairLinksWithUnlinked(g.levels, unlinked); err != nil {
 		return err
 	}
 

@@ -1,0 +1,21 @@
+-- The diagonal half recursively fits either two side helpers or one
+-- corner flanked by two octagonal helpers.
+local directives = require("constants.vault_directives")
+
+local handler = {}
+
+-- Emit the source alternative as one paired set for this selected half.
+function handler.configure(api)
+    if api:coinflip() then
+        api:emit(directives.SUBST, "q = x")
+        api:emit(directives.SUBVAULT, "DpE : nico_lavamaze_side")
+        api:emit(directives.SUBVAULT, "FrH : nico_lavamaze_side")
+    else
+        api:emit(directives.SUBST, "pr = x")
+        api:emit(directives.SUBVAULT, "D : nico_lavamaze_oct")
+        api:emit(directives.SUBVAULT, "EqF : nico_lavamaze_corner")
+        api:emit(directives.SUBVAULT, "H : nico_lavamaze_oct")
+    end
+end
+
+return handler

@@ -16,10 +16,10 @@ end
 -- Choose a source-sized Hyper room inside the level's immutable rock rim.
 -- A varied position lets extra vaults occupy other parts of the level.
 local function room_bounds(builder)
-    local width = range(builder, grid.width - 22, grid.width - 2)
-    local height = range(builder, grid.height - 22, grid.height - 2)
-    local x1 = range(builder, 1, grid.width - width - 1)
-    local y1 = range(builder, 1, grid.height - height - 1)
+    local width = range(builder, builder.width - 22, builder.width - 2)
+    local height = range(builder, builder.height - 22, builder.height - 2)
+    local x1 = range(builder, 1, builder.width - width - 1)
+    local y1 = range(builder, 1, builder.height - height - 1)
 
     return {
         x1 = x1,
@@ -213,8 +213,8 @@ function subdivision.partition(builder, options, minimum_pad, maximum_pad)
     local bounds = {
         x1 = 1 + range(builder, minimum_pad, maximum_pad),
         y1 = 1 + range(builder, minimum_pad, maximum_pad),
-        x2 = grid.width - 2 - range(builder, minimum_pad, maximum_pad),
-        y2 = grid.height - 2 - range(builder, minimum_pad, maximum_pad),
+        x2 = builder.width - 2 - range(builder, minimum_pad, maximum_pad),
+        y2 = builder.height - 2 - range(builder, minimum_pad, maximum_pad),
     }
     local cells = {}
 

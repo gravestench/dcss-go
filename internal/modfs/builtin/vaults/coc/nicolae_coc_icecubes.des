@@ -1,0 +1,22 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:477
+NAME:    nicolae_coc_icecubes
+TAGS:    transparent no_pool_fixup
+DEPTH:   Coc
+SHUFFLE: DEJ, FHM, NRS, QZa
+SUBST:   D : .W, F : .W, N : .W, Q : .W, E : .xmwW, H : .xmwW, J : .xmwW, \
+         K : .xmwW, L : .xmwW, M : .xmwW, O : .xmwW, P : .xmwW, R : .xmwW, \
+         S : .xwmW, Z : .xmwW, a : .xmwW
+MAP
+DDDEEEFFFHHH
+DDDEEEFFFHHH
+DDDEEEFFFHHH
+JJJKKKLLLMMM
+JJJKKKLLLMMM
+JJJKKKLLLMMM
+NNNOOOPPPQQQ
+NNNOOOPPPQQQ
+NNNOOOPPPQQQ
+RRRSSSZZZaaa
+RRRSSSZZZaaa
+RRRSSSZZZaaa
+ENDMAP

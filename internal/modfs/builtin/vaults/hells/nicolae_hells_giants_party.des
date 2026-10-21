@@ -1,0 +1,26 @@
+# Ported from the pinned DCSS hells.des map nicolae_hells_giants_party.
+NAME:    nicolae_hells_giants_party
+TAGS:    transparent no_pool_fixup no_monster_gen
+DEPTH:   Geh:2-, Coc:2-
+ORIENT:  centre
+KMONS:   1 = fire giant
+KMONS:   2 = frost giant
+NSUBST:  F = 4=1 / 4=2
+SHUFFLE: lw
+MAP
+.....xxxxx.....
+.lll..xxx..www.
+.lll.F.x.F.www.
+.lll.......www.
+.......l.......
+x.F..w...w..F.x
+xx...........xx
+xxx.l..{..l.xxx
+xx...........xx
+x.F..w...w..F.x
+.......l.......
+.www.......lll.
+.www.F.x.F.lll.
+.www..xxx..lll.
+.....xxxxx.....
+ENDMAP

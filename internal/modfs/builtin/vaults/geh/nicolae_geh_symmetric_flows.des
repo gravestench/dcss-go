@@ -1,0 +1,21 @@
+# nicolae_geh_symmetric_flows is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:   nicolae_geh_symmetric_flows
+TAGS:   transparent
+DEPTH:  Geh
+ORIENT: centre
+SUBST:  L = l.
+MAP
+   ....Lllll
+  @...Lllllll llllll
+ @....lllllllllL..Lll
+......LllllllL.....Lll
+xxx....LllllL.......Lll xxx
+xxlllL..LllL...LllL..Llllxx
+xxx llL.......LllllL....xxx
+     llL.....LllllllL......
+      llL..Llllllllll....@
+       llllll llllllL...@
+               llllL....
+ENDMAP

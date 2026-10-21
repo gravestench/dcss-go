@@ -44,9 +44,9 @@ local lava_passable = {
 -- All source canyons start as rock and add floor through these bands.
 function shared.fill(builder, x1, y1, x2, y2, glyph)
     for y = math.max(1, math.floor(y1)),
-        math.min(grid.height - 2, math.floor(y2)) do
+        math.min(builder.height - 2, math.floor(y2)) do
         for x = math.max(1, math.floor(x1)),
-            math.min(grid.width - 2, math.floor(x2)) do
+            math.min(builder.width - 2, math.floor(x2)) do
             builder:set(x, y, glyph)
         end
     end
@@ -56,9 +56,9 @@ end
 -- Its optional inner rock diamond can turn a broad middle into a ring.
 function shared.diamond(builder, center_x, center_y, radius, glyph)
     for y = math.max(1, center_y - radius),
-        math.min(grid.height - 2, center_y + radius) do
+        math.min(builder.height - 2, center_y + radius) do
         for x = math.max(1, center_x - radius),
-            math.min(grid.width - 2, center_x + radius) do
+            math.min(builder.width - 2, center_x + radius) do
             if math.abs(x - center_x) + math.abs(y - center_y) <= radius then
                 builder:set(x, y, glyph)
             end
@@ -114,9 +114,9 @@ end
 -- requires a separating margin so their round walls remain readable.
 local function nearby_building(builder, x1, y1, x2, y2, separation)
     for y = math.max(1, y1 - separation),
-        math.min(grid.height - 2, y2 + separation) do
+        math.min(builder.height - 2, y2 + separation) do
         for x = math.max(1, x1 - separation),
-            math.min(grid.width - 2, x2 + separation) do
+            math.min(builder.width - 2, x2 + separation) do
             if builder:cell(x, y) == "c" then
                 return true
             end
@@ -232,9 +232,9 @@ function shared.add_buildings(builder, api)
     for _ = 1, subdivision.range(builder, minimum_count, maximum_count) do
         local size = subdivision.range(builder, 4, maximum_size)
         local x1 = subdivision.range(builder, border,
-            grid.width - 1 - border - size)
+            builder.width - 1 - border - size)
         local y1 = subdivision.range(builder, border,
-            grid.height - 1 - border - size)
+            builder.height - 1 - border - size)
         local x2 = x1 + size
         local y2 = y1 + size
         local cover = cover_count(builder, x1, y1, x2, y2)
@@ -268,8 +268,8 @@ function shared.epilogue(builder, api)
 
     cleanup.widen_paths(builder, "v", 90)
 
-    for y = 1, grid.height - 2 do
-        for x = 1, grid.width - 2 do
+    for y = 1, builder.height - 2 do
+        for x = 1, builder.width - 2 do
             if builder:cell(x, y) == "v" then
                 builder:set(x, y, "#")
             end

@@ -1,0 +1,34 @@
+# nicolae_geh_lavamaze_corner_keep is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:    nicolae_geh_lavamaze_corner_keep
+NSUBST:  D = D / c, F = F / c, H = H / c, K = K / c, L = L / c, \
+         M = M / c, N = N / c, O = O / c, y = _ / 0, z = _ / 0
+: vault.run("configure")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: SUBST:   DH = c
+# Source Lua: NSUBST:  EFLM = c / +, JKNO = c / +
+# Source Lua: : else
+# Source Lua: SHUFFLE: DKNO/FHML, EJ, NO
+# Source Lua: SUBST:   EFHN = c, DJKLMO = +
+# Source Lua: : end
+TAGS: unrand transparent nico_lavamaze_corner
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "corner", true )
+MAP
+xcccc........
+cc..Fc.0.....
+c.z..F...cLLc
+c....cllcL..Lc..
+cD..Ecllc..z.L..
+.cDcc...M....L..
+...ll.y.cM..Lc..
+.y.ll....cMcc...
+...ccNc....ll.0.
+..cO..Nc.y.ll...
+..O....N...ccHc.
+..O.z..cllcJ..Hc
+..cO..Ocllc....c
+...cOOc...K..z.c
+.y......y.cK..cc
+...........ccccx
+ENDMAP

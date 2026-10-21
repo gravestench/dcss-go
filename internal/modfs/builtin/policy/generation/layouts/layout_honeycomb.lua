@@ -20,8 +20,8 @@ function layout.validate(result)
     local count = 0
     local builder = result.builder
 
-    for y = 0, grid.height - 1 do
-        for x = 0, grid.width - 1 do
+    for y = 0, builder.height - 1 do
+        for x = 0, builder.width - 1 do
             local glyph = builder:cell(x, y)
 
             if glyph == "." or glyphs.up[glyph] or glyphs.down[glyph] then
@@ -30,7 +30,7 @@ function layout.validate(result)
         end
     end
 
-    return count > grid.width * grid.height * 0.15
+    return count > builder.width * builder.height * 0.15
 end
 
 -- Snake always opens plain gaps; Depths and Tartarus weight doors twice as
@@ -46,9 +46,9 @@ end
 -- Run the source order on one shared builder: cave, room partitions,
 -- adjacent-wall openings, zone fill, then branch material policy.
 function layout.layout_honeycomb(api)
-    local builder = grid.new(api.ctx)
-    local center_x = grid.width / 2
-    local center_y = grid.height / 2
+    local builder = grid.new(api.ctx, api.width, api.height)
+    local center_x = math.floor(builder.width / 2)
+    local center_y = math.floor(builder.height / 2)
 
     geometry.circle(builder, center_x, center_y, 10)
     builder:set(center_x, center_y, ".")

@@ -3,6 +3,7 @@
 -- Entry and depth are catalog facts; generated levels and stair links are saved separately.
 
 local categories = require("constants.catalog")
+local families = require("constants.vault_families")
 
 local definition = {
     id = "BRANCH_GEHENNA",
@@ -11,6 +12,11 @@ local definition = {
     min_depth = 1,
     max_depth = 1,
     depth = 7,
+    -- The source lava maze is a whole-floor option on ordinary depths.
+    encompass_vault_families = {
+        families.GEH,
+        families.GEH_LAVA_MAZE,
+    },
     absolute_depth = 28,
     flags = {
         "no_items",

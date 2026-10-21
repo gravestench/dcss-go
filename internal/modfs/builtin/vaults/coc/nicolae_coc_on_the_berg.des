@@ -1,0 +1,54 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:582
+NAME:    nicolae_coc_on_the_berg
+TAGS:    transparent no_pool_fixup
+DEPTH:   Coc, !Coc:$
+ORIENT:  encompass
+KFEAT:   E = open_sea
+KFEAT:   ! = W
+: vault.run("border_fill")
+# Source Lua: : set_border_fill_type('open_sea')
+SHUFFLE: Qq, Or
+NSUBST:  S = { / } / !
+SUBST:   ~ = w., D : w-, F : w-, H : w-, J : w-, K : w-, L : w-, \
+         M : xxw--, N : xxw--, O : xxw--, P : xxw--, Q : xxw--, \
+         R : xxw--, p : xxw--, qr : -, - = .:40 !:1 8:1
+MARKER:  ! = lua:fog_machine { pow_max = 20, cloud_type = "freezing vapour", \
+             delay_min = 50, delay_max = 250, size = 16, start_clouds = 1, \
+             excl_rad = -1 }
+MAP
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+EwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwE
+EwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwE
+Ewwwww~...DDDwwwwwwww~....~wwwwwwwE
+Ewww~......DDDDwwww~...MM.....~wwwE
+Ewww..S.....DDDDDDD...MMMM.....~wwE
+Eww~.........DDDDD...MMMMM...S..wwE
+Eww..........DDDDDD..MMMMM......wwE
+Eww..pppp...DDDDDDD...MMM......~wwE
+EwwLppppp....DDDDD...RRR......~wwwE
+EwwLLppppp....DDD...RRRRR.....wwwwE
+EwwLLLppp...........RRRRR...FFFwwwE
+EwwwLLLLL.........qqRRRRRFFFFFFFwwE
+EwwwwLLLLL....xxxqqqqRRRFFFFFFFFwwE
+EwwwLLLLLL...xxxxxxqq...FFFFFFFFwwE
+EwwLLLL....QQxxxxxxq....FFFFFFFFwwE
+EwwL.....QQQQQxxxx......NNFFFFFFwwE
+Eww......QQQQQQ.........NNNNNFFwwwE
+EwwK..KKKKKQQxx.!.rrxxx..NNNNNFwwwE
+EwwKKKKKKKKKxxxxrrrxxxxx..NNNHwwwwE
+EwwwKKKKKKKKxxxxrrxxxxx...HHHHwwwwE
+EwwwwKKKKKKxxxxxrrxxxxx..HHHHHHwwwE
+EwwwwKKKKK..xxx..rrrxxx..HHHHHHHwwE
+EwwwwKK..............xxxOOHHHHHHwwE
+EwwwK....PP...JJJJJJ..xxOOO.HHHHwwE
+Ewww....PPPP.JJJJJJJJ.OOOOO...HwwwE
+Eww~...PPPPPJJJJJJJJJ..OOO.....~wwE
+Eww.....PPPPJJJJJJJJ...OO.......wwE
+Eww......PP..JJJJJ..........S..~wwE
+Eww..S.........JJ.............~wwwE
+Eww~....~ww~...JJJ..~www~....~wwwwE
+Ewww~..~wwww~.JJJJJwwwwwwwwwwwwwwwE
+EwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwE
+EwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwE
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+ENDMAP

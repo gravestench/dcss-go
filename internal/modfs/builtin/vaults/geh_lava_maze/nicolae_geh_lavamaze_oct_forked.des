@@ -1,0 +1,23 @@
+# nicolae_geh_lavamaze_oct_forked is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:   nicolae_geh_lavamaze_oct_forked
+NSUBST: _ = _ / .
+SUBST:  ` = xl
+TAGS: unrand transparent nico_lavamaze_oct
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "oct", true )
+MAP
+..
+...
+`..`
+`...`
+..x..0
+..xx...
+0.`xx..`
+...`xl..`
+`..`xxl.0`
+x0.l`xxx.lx
+x....`x....l
+xl.__.x..__.x
+xx`..lxl...`xx
+ENDMAP

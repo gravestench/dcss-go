@@ -1,0 +1,26 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:676
+NAME:   nicolae_coc_through_the_icewall
+TAGS:   transparent no_pool_fixup
+DEPTH:  Coc
+ORIENT: centre
+KMONS:  1 = 0 w:120 / 9 w:30 / 8
+KFEAT:  1 = W
+SUBST:  M = wx, ~ = .w, - = Wwxxx, W = W:15 1:1
+MAP
+  .......................
+ ..wW~..............~w~...
+ ~wWWw~..~wwww~.....~ww~..
+ xwWWwxMwwwwwwwMxMwwwwwwMx
+xxMWWMxxMwwwwMxxxxMwwwMxxxx
+xxxWWxxxxMwMxxx--xxxxxxxxxx
+xx-WW--xxxxxx-WWWWWWWWWW-xx
+xx-WWWW------WWWWWWWWWWW-xx
+xx-WWWWWWWWWWWWWxxxxx-WWW-x
+xxx--WWWWWWWWWWxxMwMx-WWW-x
+xxxxxxxxxxxxx--xMwwMxx-WW-x
+xxxxxMMwwwwMxxxxMwwwMxwWWxx
+ xxxwwwwwwwwMxxMwwwwMxwWWx
+ ...~ww~.~ww~~~~~ww~.ww~..
+ .........~w~........~w...
+  .......................
+ENDMAP

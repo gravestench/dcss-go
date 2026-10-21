@@ -46,6 +46,45 @@ func TestDrawDungeonKeepsPlayerAboveFloorItems(t *testing.T) {
 	}
 }
 
+// A saved vault colour belongs to the terrain cell and reaches the palette
+// through the same Lua presentation policy as other terminal colours.
+func TestDrawDungeonUsesLiveCellColour(t *testing.T) {
+	g, err := game.NewScenario(7, "WPN_RAPIER", "Presenter")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer g.Close()
+
+	canvas := NewCanvas(79, 24)
+	region := Region{
+		X: 0,
+		Y: 0,
+		W: 37,
+		H: 17,
+	}
+
+	view := game.View{
+		Width: 1,
+		Cells: []game.CellView{
+			{
+				Glyph:   '#',
+				State:   game.Visible,
+				ColorID: "lightmagenta",
+			},
+		},
+	}
+
+	drawDungeon(canvas, region, view, g.PresentationPolicy)
+
+	cell := canvas.cells[8*canvas.width+18]
+
+	if cell.fg != LightMagenta {
+		t.Fatalf("live cell tint = %d, want %d", cell.fg, LightMagenta)
+	}
+}
+
 // Source ETC_RANDOM draws from a separate UI stream on every redraw.
 // Rendering must change visible colour without advancing saved game RNG.
 func TestDrawDungeonAnimatesRandomColourWithoutGameState(t *testing.T) {

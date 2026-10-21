@@ -1,0 +1,30 @@
+# nicolae_geh_lavamaze_orthhalf_weird_bits is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:     nicolae_geh_lavamaze_orthhalf_weird_bits
+SUBVAULT: D : nico_lavamaze_oct
+SUBVAULT: E : nico_lavamaze_oct
+SHUFFLE:  FH, MNO
+NSUBST:   _ = _ / .
+SUBST:    FM = x, HNO = ., L = l., ` = lx
+CLEAR:    DE
+TAGS: unrand transparent nico_lavamaze_orthhalf
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "orthhalf", true )
+MAP
+xxxxxxxxxxxxx       .``xxxxxxxxxE
+xxxxxxxxxlL0.       ...Ll``xxxxEE
+DDDDDDDDDDDDD       ....Lll`xxEEE
+DDDDDDDDDDDDDxFFFx....0..LlxxEEEE
+DDDDDDDDDDDDxx...H......LlxxEEEEE
+DDDDDDDDDDDxx..0.HH`...LlxxEEEEEE
+DDDDDDDDDDxx_....Lxx...lxxEEEEEEE
+DDDDDDDDDxx`llxxxxx`.0.xxEEEEEEEE
+DDDDDDDDxxxxxxx`lL....xxEEEEEEEEE
+DDDDDDDxxll...xx....`xxEEEEEEEEEE
+DDDDDDxx`l_.0.M.....xxEEEEEEEEEEE
+DDDDDxxxxxx`..MM`NNNxEEEEEEEEEEEE
+DDDDxxlL.`xxO..MxN..EEEEEEEEEEEEE
+DDDxxll._...OOOOx.0.EEEEEEEEEEEEE
+DDxx`ll....0........Lllxxxxxxxxxx
+Dxxxx`lLL....LLL...Lll`xxxxxxxxxx
+ENDMAP

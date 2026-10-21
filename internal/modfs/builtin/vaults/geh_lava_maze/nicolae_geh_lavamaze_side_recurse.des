@@ -1,0 +1,26 @@
+# nicolae_geh_lavamaze_side_recurse is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:     nicolae_geh_lavamaze_side_recurse
+TAGS:     allow_dup no_dump
+WEIGHT:   70
+SUBVAULT: D : nico_lavamaze_oct
+SUBVAULT: E : nico_lavamaze_oct
+CLEAR:    DE
+TAGS: unrand transparent nico_lavamaze_side
+: vault.run("shared.setup_quiet")
+# Source Lua: : nicolae_geh_maze_setup( _G, "side", false )
+MAP
+            DDxEE
+           DDDxEEE
+          DDDDxEEEE
+         DDDDDxEEEEE
+        DDDDDDxEEEEEE
+       DDDDDDDxEEEEEEE
+      DDDDDDDDxEEEEEEEE
+     DDDDDDDDDxEEEEEEEEE
+    DDDDDDDDDDxEEEEEEEEEE
+   DDDDDDDDDDDxEEEEEEEEEEE
+  DDDDDDDDDDDDxEEEEEEEEEEEE
+ DDDDDDDDDDDDDxEEEEEEEEEEEEE
+DDDDDDDDDDDDDDxEEEEEEEEEEEEEE
+ENDMAP

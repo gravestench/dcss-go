@@ -364,9 +364,17 @@ function vaults.materialize(ctx, level, excluded)
 
             -- Skip an occupied cell or duplicate unique before spawning the requested vault actor.
             if record.kind == effects.MONSTER then
-                if ctx:actor_at(level.id, record.x, record.y) then
-                    error(string.format("%s:%d: vault %s: two actors at glyph %s",
-                        arguments.path, record.line, record.source_id, record.source))
+                local occupant = ctx:actor_at(level.id, record.x, record.y)
+
+                if occupant then
+                    local prior = ctx:get(occupant, component.VAULT_ORIGIN)
+                    local prior_index = prior and prior.record_index or "none"
+                    local prior_vault = prior and prior.vault_id or "none"
+
+                    error(string.format("%s:%d: vault %s: two actors at glyph %s (%d,%d); prior vault %s record %s, new record %s",
+                        arguments.path, record.line, record.source_id,
+                        record.source, record.x, record.y, prior_vault, prior_index,
+                        record.index))
                 end
 
                 if arguments.no_spawn or arguments.kind_id == "" or

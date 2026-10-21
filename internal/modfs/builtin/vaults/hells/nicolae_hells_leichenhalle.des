@@ -1,0 +1,18 @@
+# Ported from the pinned DCSS hells.des map nicolae_hells_leichenhalle.
+NAME:  nicolae_hells_leichenhalle
+TAGS:  transparent no_pool_fixup
+DEPTH: Dis, !Dis:$, Geh, !Geh:$, Coc, !Coc:$, Tar, !Tar:$
+KMONS: 1 = ancient lich / dread lich / nothing
+KFEAT: ! = iron_grate
+: vault.run("configure")
+MAP
+  ccccccccccc
+  c1D1D1D1D1c
+ccc.........ccc
+cF...E...E...Fc
+c}.E...E...E..+
+cF...E...E...Fc
+ccc.........ccc
+  c1D1D1D1D1c
+  ccccccccccc
+ENDMAP

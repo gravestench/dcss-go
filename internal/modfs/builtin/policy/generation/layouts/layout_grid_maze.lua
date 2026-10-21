@@ -43,7 +43,7 @@ end
 -- Run the named DES hook through the shared cell graph. Returned cells and
 -- edges make source geometry inspectable without a second Go selector.
 function layout.layout_grid_maze(api)
-    local builder = grid.new(api.ctx)
+    local builder = grid.new(api.ctx, api.width, api.height)
     local options = grid_options(builder, api.branch)
     local cells = subdivision.partition(builder, options.partition, 2, 10)
     local edges = cell_graph.edges(cells)

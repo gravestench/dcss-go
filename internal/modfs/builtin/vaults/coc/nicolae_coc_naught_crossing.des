@@ -1,0 +1,23 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:559
+NAME:    nicolae_coc_naught_crossing
+TAGS:    transparent no_pool_fixup
+DEPTH:   Coc
+ORIENT:  centre
+SHUFFLE: w.
+MAP
+..xxxwwwwwxxx..
+...wwwwwwwww...
+x.WWwwwwwwwWW.x
+xwWWWxxxxxWWWwx
+xwwW..xxx..Wwwx
+wwwx...x...xwww
+wwwxx.....xxwww
+wwwxxx...xxxwww
+wwwxx.....xxwww
+wwwx...x...xwww
+xwwW..xxx..Wwwx
+xwWWWxxxxxWWWwx
+x.WWwwwwwwwWW.x
+...wwwwwwwww...
+..xxxwwwwwxxx..
+ENDMAP

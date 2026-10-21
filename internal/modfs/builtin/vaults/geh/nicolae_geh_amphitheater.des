@@ -1,0 +1,19 @@
+# nicolae_geh_amphitheater is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME: nicolae_geh_amphitheater
+TAGS: extra decor transparent
+DEPTH: Geh, !Geh:1
+MAP
+   lllll
+ lllclclll
+ lclllllcl
+llll...lll
+lcl......@
+lll..{...@
+lcl......@
+llll...lll
+ lclllllcl
+ lllclclll
+   lllll
+ENDMAP

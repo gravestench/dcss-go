@@ -4,6 +4,7 @@
 
 local categories = require("constants.catalog")
 local families = require("constants.vault_families")
+local tags = require("constants.vault_tags")
 
 local definition = {
     id = "BRANCH_DEPTHS",
@@ -15,6 +16,7 @@ local definition = {
     -- One source encompassing map may replace the ordinary layout on a
     -- deep floor; its run-wide uniqueness tag handles later fallbacks.
     encompass_vault_family = families.DEPTHS_ENCOMPASS,
+    encompass_vault_tag = tags.UNIQ_DEPTHS_ENCOMPASS,
     absolute_depth = 22,
     flags = {
         "none",

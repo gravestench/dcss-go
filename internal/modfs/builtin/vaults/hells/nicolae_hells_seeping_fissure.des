@@ -1,0 +1,13 @@
+# Ported from the pinned DCSS hells.des map nicolae_hells_seeping_fissure.
+NAME:  nicolae_hells_seeping_fissure
+TAGS:  transparent luniq allow_dup no_monster_gen
+DEPTH: Dis, !Dis:$, Geh, !Geh:$, Coc, !Coc:$, Tar, !Tar:$
+KFEAT: ^ = shaft trap
+: vault.run("configure")
+MAP
+.....
+.....
+..^..
+.....
+.....
+ENDMAP

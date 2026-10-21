@@ -97,6 +97,18 @@ local function spectral_species_identity()
     harness.equal(thing.kind_id, monster_ids.MONS_SPECTRAL_THING)
     harness.falsy(thing.base_id,
         "literal spectral thing is not a spectral form of another species")
+
+    local silent = monster.parse("silent spectre", site)[1][1]
+
+    resolve.validate_monster(silent, site)
+
+    local silent_result = resolve.monster(ctx, silent, 5, site)
+
+    harness.equal(silent_result.kind_id, monster_ids.MONS_SILENT_SPECTRE)
+    harness.falsy(silent_result.base_id,
+        "literal silent spectre is not derived from a silent monster")
+    harness.falsy(silent_result.variant,
+        "literal silent spectre has no derived undead variant")
 end
 
 -- Source Zot places a klown-shaped salt pillar, and mapdef.cc derives a

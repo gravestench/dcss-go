@@ -1,0 +1,34 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:912
+NAME:   nicolae_tar_honey_stairs
+TAGS:   transparent
+DEPTH:  Tar
+ORIENT: centre
+NSUBST: D = 3=+ / x, E = 3=+ / x, F = 3=+ / x, H = 3=+ / x, J = + / x, \
+        K = + / x, L = + / x, M = + / x, N = + / x, O = + / x, P = + / x, \
+        Q = + / x
+: vault.run("stair_substitution")
+# Source Lua: : if you.depth() == 1 then
+# Source Lua: SUBST:  { = }
+# Source Lua: : elseif you.depth_fraction() < 1 then
+# Source Lua: SUBST:  { = {}
+# Source Lua: : end
+SUBST:  0 = 0009, 9 = 9998
+MAP
+..xNNNNNxNNNNNx..
+..+.....J.....+..
+x+x.....J.....x+x
+Q..0.xDDxEEx.0..O
+Q....D.....E....O
+Q..xDx..9..xEx..O
+Q..D.........E..O
+Q..D.........E..O
+xMMx.9..{..9.xKKx
+Q..H.........F..O
+Q..H.........F..O
+Q..xHx..9..xFx..O
+Q....H.....F....O
+Q..0.xHHxFFx.0..O
+x+x.....L.....x+x
+..+.....L.....+..
+..xPPPPPxPPPPPx..
+ENDMAP

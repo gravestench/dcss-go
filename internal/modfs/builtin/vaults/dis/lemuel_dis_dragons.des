@@ -1,0 +1,20 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (lemuel_dis_dragons).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    lemuel_dis_dragons
+DEPTH: Dis, !Dis:$
+MONS:    iron dragon / crystal echidna, iron dragon
+SHUFFLE: ]})
+SUBST:   1=1. , }=}}> , )=..> , ]=..>
+MAP
+vvvvvvv+++vvvvvvv
+v1.}.1v...v1.].1v
+v.1.1.v...v.1.1.v
+v..1..v.2.v..1..v
+v.....v...v.....v
+v.....v+++v.....v
+v...............v
+v.......1.......v
+v...............v
+v.......).......v
+vvvvvvvvvvvvvvvvv
+ENDMAP

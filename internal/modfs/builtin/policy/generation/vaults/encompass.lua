@@ -8,9 +8,32 @@ local used = require("policy.generation.vaults.used")
 local weights = require("policy.generation.vaults.weight")
 local authored = require("policy.generation.layouts.authored")
 local stairs = require("policy.generation.layouts.stairs")
-local tags = require("constants.vault_tags")
+local hell_size = require("policy.generation.hell.size")
 
 local encompass = {}
+
+-- Source encompassing maps can exceed a compact Hell floor. A failed fit
+-- removes that candidate before selection, rather than aborting generation
+-- after a weighted draw. Script-built maps have no static MAP extent here.
+local function fits_level(definition, width, height)
+    local parsed = vaults.get(definition.id)
+
+    if #parsed.rows == 0 then
+        return true
+    end
+
+    if #parsed.rows > height then
+        return false
+    end
+
+    for _, row in ipairs(parsed.rows) do
+        if #row > width then
+            return false
+        end
+    end
+
+    return true
+end
 
 -- Match one source selector stage: an explicit PLACE pool wins over the
 -- ordinary DEPTH pool. A prior `uniq_d_encompass` ID removes its whole
@@ -18,37 +41,55 @@ local encompass = {}
 function encompass.candidates(context)
     vaults.load()
 
+    local branch = register.get(categories.BRANCHES, context.branch_id)
+    local width, height = hell_size.for_branch(branch, context.depth)
+
     local history = used.new(context.prior_vault_ids)
     local placed = {}
     local ordinary = {}
+    local families = {}
+
+    if context.family then
+        families[context.family] = true
+    end
+
+    if context.shared_family then
+        families[context.shared_family] = true
+    end
+
+    for _, family in ipairs(context.families or {}) do
+        families[family] = true
+    end
 
     for _, id in ipairs(register.ids(categories.VAULTS)) do
         local definition = register.get(categories.VAULTS, id)
 
-        if definition.family == context.family and
+        if families[definition.family] and
             definition.orientation == "encompass" and
-            definition.tags[tags.UNIQ_DEPTHS_ENCOMPASS] and
+            (not context.tag or definition.tags[context.tag]) and
             history:allows(definition) then
             local weight = weights.for_branch(definition,
                 context.branch_id, context.depth,
                 context.branch_bottom, context.absolute_depth)
 
-            if weight > 0 and #definition.places > 0 and
-                depth.eligible({ depths = definition.places },
-                    context.branch_id, context.depth,
-                    context.branch_bottom, context.absolute_depth) then
-                placed[#placed + 1] = {
-                    definition = definition,
-                    weight = weight,
-                }
-            elseif weight > 0 and #definition.places == 0 and
-                depth.eligible(definition, context.branch_id,
-                    context.depth, context.branch_bottom,
-                    context.absolute_depth) then
-                ordinary[#ordinary + 1] = {
-                    definition = definition,
-                    weight = weight,
-                }
+            if weight > 0 and fits_level(definition, width, height) then
+                if #definition.places > 0 and
+                    depth.eligible({ depths = definition.places },
+                        context.branch_id, context.depth,
+                        context.branch_bottom, context.absolute_depth) then
+                    placed[#placed + 1] = {
+                        definition = definition,
+                        weight = weight,
+                    }
+                elseif #definition.places == 0 and
+                    depth.eligible(definition, context.branch_id,
+                        context.depth, context.branch_bottom,
+                        context.absolute_depth) then
+                    ordinary[#ordinary + 1] = {
+                        definition = definition,
+                        weight = weight,
+                    }
+                end
             end
         end
     end
@@ -92,6 +133,8 @@ end
 -- ordinary stairs. The source map and its tagged child records enter the
 -- level before any other vault or provisional procedural layout exists.
 function encompass.execute(ctx, definition, context, profile)
+    local branch = register.get(categories.BRANCHES, context.branch_id)
+    local width, height = hell_size.for_branch(branch, context.depth)
     local api = {
         ctx = ctx,
         definition = vaults.get(definition.id),
@@ -101,6 +144,8 @@ function encompass.execute(ctx, definition, context, profile)
         absolute_depth = context.absolute_depth,
         prior_vault_ids = context.prior_vault_ids,
         branch_entries = context.branch_entries,
+        width = width,
+        height = height,
     }
     local result = authored.execute(api)
 

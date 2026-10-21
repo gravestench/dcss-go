@@ -7,8 +7,8 @@ local grid = require("policy.generation.grid")
 -- Change only rock inside a rectangle. Later rooms can overlap a corridor
 -- without erasing a feature that a previous pass deliberately placed.
 function geometry.fill_rock(builder, room)
-    for y = math.max(1, room.y1), math.min(grid.height - 2, room.y2) do
-        for x = math.max(1, room.x1), math.min(grid.width - 2, room.x2) do
+    for y = math.max(1, room.y1), math.min(builder.height - 2, room.y2) do
+        for x = math.max(1, room.x1), math.min(builder.width - 2, room.x2) do
             if builder:cell(x, y) == "#" then
                 builder:set(x, y, ".")
             end
@@ -97,8 +97,8 @@ function geometry.circle(builder, center_x, center_y, radius)
     local top = math.ceil(center_y - radius)
     local bottom = math.floor(center_y + radius)
 
-    for y = math.max(1, top), math.min(grid.height - 2, bottom) do
-        for x = math.max(1, left), math.min(grid.width - 2, right) do
+    for y = math.max(1, top), math.min(builder.height - 2, bottom) do
+        for x = math.max(1, left), math.min(builder.width - 2, right) do
             local dx = x - center_x
             local dy = y - center_y
 

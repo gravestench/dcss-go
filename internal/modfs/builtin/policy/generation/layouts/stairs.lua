@@ -2,7 +2,6 @@
 -- all exits. The source builder then places any missing stone stairs. This
 -- Lua postpass keeps that ownership split while ensuring every saved exit
 -- belongs to one region the player can actually traverse.
-local grid = require("policy.generation.grid")
 local glyphs = require("constants.vault_glyphs")
 
 local stairs = {}
@@ -87,8 +86,8 @@ local function selected_regions(builder, include_stairless)
     local authored_regions = {}
     local all_regions = {}
 
-    for y = 1, grid.height - 2 do
-        for x = 1, grid.width - 2 do
+    for y = 1, builder.height - 2 do
+        for x = 1, builder.width - 2 do
             local point = { x = x, y = y }
 
             if not visited[key(point)] and passable(builder:cell(x, y)) then

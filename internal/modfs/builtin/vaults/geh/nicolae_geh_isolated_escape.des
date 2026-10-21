@@ -1,0 +1,27 @@
+# nicolae_geh_isolated_escape is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:    nicolae_geh_isolated_escape
+TAGS:    no_exits
+DEPTH:   Geh, !Geh:$
+KMASK:   .> = no_monster_gen
+SHUFFLE: DE
+NSUBST:  D = + / n
+SUBST:   E = c
+MAP
+          ll
+        llllll
+ llll  llllllll
+lllllllllllllll
+lllllccDcclllll
+llllcE...Ecllll
+llllc.....clll
+llllD..>..Dlll
+ lllc.....cll
+  llcE...Ecll
+   llccDccllll
+    llllllllll
+    llllllllll
+     llllllll
+       lllll
+ENDMAP

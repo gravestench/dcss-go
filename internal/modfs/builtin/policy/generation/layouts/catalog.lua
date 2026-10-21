@@ -10,6 +10,7 @@ local depth_rules = require("policy.generation.vaults.depth")
 local des = require("policy.generation.vaults.des")
 local hooks = require("policy.generation.vaults.hooks")
 local authored = require("policy.generation.layouts.authored")
+local hell_size = require("policy.generation.hell.size")
 local stairs = require("policy.generation.layouts.stairs")
 local weights = require("policy.generation.vaults.weight")
 
@@ -316,6 +317,7 @@ function catalog.execute(ctx, definition, branch_id, local_depth, profile,
     prior_vault_ids)
     local run, validate = methods(definition)
     local branch = register.get(categories.BRANCHES, branch_id)
+    local width, height = hell_size.for_branch(branch, local_depth)
     local api = {
         ctx = ctx,
         definition = definition,
@@ -324,6 +326,8 @@ function catalog.execute(ctx, definition, branch_id, local_depth, profile,
         branch = branch.abbreviation,
         depth = local_depth,
         absolute_depth = branch.absolute_depth + local_depth - 1,
+        width = width,
+        height = height,
         prior_vault_ids = prior_vault_ids,
     }
 

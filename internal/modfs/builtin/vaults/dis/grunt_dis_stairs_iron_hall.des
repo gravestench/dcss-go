@@ -1,0 +1,58 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (grunt_dis_stairs_iron_hall).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME: grunt_dis_stairs_iron_hall
+DEPTH: Dis, !Dis:$
+ORIENT: encompass
+TAGS: transparent patrolling no_monster_gen
+MONS: iron dragon / quicksilver elemental, hellion / tormentor
+MONS: iron giant
+MONS: crystal echidna / nothing, war gargoyle / nothing
+: vault.run("configure_trigger")
+# Source Lua block follows; the named hook records its generation intent.
+# Source Lua:     dgn.persist.grunt_iron_hall_animated = false
+# Source Lua:     local trap_marker = TriggerableFunction:new {
+# Source Lua:         func = "callback.grunt_iron_hall_animate",
+# Source Lua:         repeated = true}
+# Source Lua:     trap_marker:add_triggerer(DgnTriggerer:new {
+# Source Lua:         type="player_move"})
+# Source Lua:     lua_marker(':', trap_marker)
+# Source Lua:     lua_marker('1', trap_marker)
+# Source Lua:     lua_marker('2', trap_marker)
+# Source Lua:     lua_marker('d', trap_marker)
+# Source Lua:     lua_marker('e', trap_marker)
+# Source Lua:     lua_marker('f', trap_marker)
+# Source Lua:     lua_marker('}', trap_marker)
+# Source Lua:     lua_marker('G', props_marker {trap_statue=1,
+# Source Lua:                                   veto_destroy="veto"})
+# Source Lua:     set_feature_name("granite_statue", "iron statue")
+SUBST: d = 3
+SUBST: e = 4
+SUBST: f = 5
+COLOUR: G = cyan
+TILE: G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+vvG.+4Gvvv:::::}:::::vvvG4+.Gvv
+vv..+4.vv::::1::::1:::vv.4+..vv
+vv..v..vG::::::G::::::Gv..v..vv
+vv..v55vv:::G:::::G:::vv55v..vv
+vv55v..vG:2::::1::::2:Gv..v55vv
+vv55v55vv:::::::::::::vv55v55vv
+vv44v..vGf:G:::G:::G:fGv..v44vv
+vv..v44vv::::e:::e::::vv44v..vv
+vv..v..vG::::::2::::::Gv..v..vv
+vv..v55vv:3:G:::::G:d:vv55v..vv
+vv..v..vGf:::::G:::::fGv..v..vv
+vv..v55vv:f:d::e::d:f:vv55v..vv
+vv..v..vvvGvGve:evGvGvvv..v..vv
+vv..v++vvvvvvv+++vvvvvvv++v..vv
+vv..v..vGvGvGv...vGvGvGv..v..vv
+vv55v4....4...3.3...4....4v55vv
+vv55v...4...4.....4...4...v55vv
+vv44vGvGvGvGvv.3.vvGvGvGvGv44vv
+vv++vvvvvvvvvvvvvvvvvvvvvvv++vv
+vG@.G.....................G@.Gv
+v..............{..............v
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP

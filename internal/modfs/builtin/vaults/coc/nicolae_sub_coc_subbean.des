@@ -1,0 +1,14 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:463
+NAME:    nicolae_sub_coc_subbean
+TAGS:    unrand nico_icebean no_pool_fixup allow_dup
+SHUFFLE: DE/xw/xw/xW/xW/ww/wW/wW/WW/.W/.W
+SUBST:   DE = x
+MAP
+  EEEE
+ EEDDEE
+EEDDDDE
+EDDDDEE
+EDDDEE
+EEDEE
+ EEE
+ENDMAP

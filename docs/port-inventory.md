@@ -421,8 +421,12 @@ exit features now project to distinct walkable terrain IDs, preserving
 their destinations through the grid and save format. The source
 `chance_enter_hell` family selects one Depths entrance through the shared
 vault chance stage, with `hell_entry` as a failed-fit fallback. The four
-subbranch floors, their exits, bosses, and runes remain to be integrated
-before Hell is fully playable.
+subbranches now have source-backed ordinary-depth (1–6) catalogs: 36 Dis
+maps, 30 Gehenna maps, 26 Cocytus maps, 39 Tartarus maps, ten shared Hell
+maps, and 39 Gehenna lava-maze definitions. Compact 40×35 generation,
+branch gate travel, and persistent floor records are being integrated.
+Seventh-floor endings, bosses, and runes remain to be integrated before Hell
+is fully playable.
 
 The fifty-three-definition aquarium family retains the source controller
 and all fifty-two authored child maps. One Lua controller picks a shared

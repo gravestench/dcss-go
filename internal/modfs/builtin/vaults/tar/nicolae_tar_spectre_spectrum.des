@@ -1,0 +1,24 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:1019
+NAME:  nicolae_tar_spectre_spectrum
+TAGS:  transparent
+DEPTH: Tar
+KMONS: 1 = silent spectre
+KMONS: 2 = spectral thing
+SUBST: 2 = 22.
+MAP
+ x x x x x x...
+xxxxxxxxxxxxx2.
+.x.x.x.x.x.x...
+.2.2.2.2..xxx2.
+...x.......x...
+.2xxx..2..xxx2.
+...x.......x...
+.2xxx..1..xxx2.
+...x.......x...
+.2xxx..2..xxx2.
+...x.......x...
+.2xxx..2.2.2.2.
+...x.x.x.x.x.x.
+.2xxxxxxxxxxxxx
+...x x x x x x
+ENDMAP

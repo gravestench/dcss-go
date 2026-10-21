@@ -16,6 +16,8 @@ local selection = require("policy.generation.vaults.selection")
 local resolve = require("policy.generation.vaults.specs.resolve")
 local vaults = require("policy.generation.vaults.catalog")
 local monster_requests = require("constants.vault_monster_requests")
+local monster_budget = require("policy.generation.monster_budget")
+local hell_size = require("policy.generation.hell.size")
 local streams = require("constants.rng_streams")
 local vestibule = require("policy.generation.hell.vestibule")
 
@@ -241,11 +243,111 @@ local function check_generated_vestibule()
         terrain.DNGN_EXIT_HELL, "arrival uses a live return arch")
 end
 
+-- The four Hell branches use three six-sided monster dice, not the
+-- twelve-sided default used by the Vestibule and most ordinary branches.
+local function check_hell_monster_budget()
+    local hell_branches = {
+        branches.BRANCH_DIS,
+        branches.BRANCH_GEHENNA,
+        branches.BRANCH_COCYTUS,
+        branches.BRANCH_TARTARUS,
+    }
+
+    for _, branch_id in ipairs(hell_branches) do
+        local draws = 0
+        local context = {}
+
+        function context:random(stream, bound)
+            harness.equal(stream, streams.POPULATION_COUNT,
+                "Hell monster budget uses the population stream")
+            harness.equal(bound, 6,
+                "Hell monster budget has six-sided source dice")
+            draws = draws + 1
+
+            return bound - 1
+        end
+
+        harness.equal(monster_budget.roll(context, branch_id, 1), 18,
+            "Hell monster budget uses all three source dice")
+        harness.equal(draws, 3, "Hell monster budget makes three draws")
+    end
+end
+
+-- Every currently ported Hell layout must build inside the source compact
+-- extent without changing another level's builder dimensions. Exercising
+-- each actual hook catches static 80x70 assumptions below the catalog.
+local function check_compact_hell_layouts()
+    local candidates = {
+        {
+            branch_id = branches.BRANCH_DIS,
+            ids = {
+                "layout_gridville",
+                "layout_jigsaw",
+                "layout_regular_city",
+                "layout_overlapping_boxes",
+                "layout_subdivisions",
+            },
+        },
+
+        {
+            branch_id = branches.BRANCH_GEHENNA,
+            ids = {
+                "layout_gehenna_lava_caves",
+                "layout_gehenna_pools_basic",
+                "layout_gehenna_pools_box",
+                "layout_gehenna_pools_triple",
+            },
+        },
+
+        {
+            branch_id = branches.BRANCH_COCYTUS,
+            ids = {
+                "layout_cocytus_water_paths",
+                "layout_ice_bergs",
+            },
+        },
+
+        {
+            branch_id = branches.BRANCH_TARTARUS,
+            ids = {
+                "layout_grid_maze",
+                "layout_honeycomb",
+            },
+        },
+    }
+
+    for _, family in ipairs(candidates) do
+        local branch = register.get("branches", family.branch_id)
+        local width, height = hell_size.for_branch(branch, 1)
+
+        harness.equal(width, 40, "ordinary Hell builder width")
+        harness.equal(height, 35, "ordinary Hell builder height")
+
+        for index, id in ipairs(family.ids) do
+            local definition = catalog.get(id)
+            local context = context_for(3100 + index)
+            local result = catalog.execute(context, definition,
+                family.branch_id, 1, {
+                    up = 1,
+                    down = 1,
+                })
+
+            harness.equal(#result.rows, height, id .. " compact row count")
+            harness.equal(#result.rows[1], width,
+                id .. " compact column count")
+            harness.truthy(#result.stairs >= 1,
+                id .. " has a connected Hell exit pair")
+        end
+    end
+end
+
 -- The source map family is complete before generation chooses a wing.
 -- Each chosen wing must contribute its actual authored map to the result.
 function test.run()
     check_hell_entry_chance()
     check_generated_vestibule()
+    check_hell_monster_budget()
+    check_compact_hell_layouts()
     check_hell_feature_projection()
     check_undead_roster()
     harness.equal(#mod.paths("vaults/hell_entry", ".des"), 23,

@@ -1,0 +1,24 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:888
+NAME:   nicolae_tar_honey_rotating
+TAGS:   transparent
+DEPTH:  Tar
+NSUBST: D = + / x, E = + / x, F = + / x, H = + / x, J = + / x, K = + / x, \
+        L = + / x, M = + / x, N = + / x, O = + / x, P = + / x, Q = + / x
+SUBST:  0 = .009, 9 = 998
+MAP
+..x..xxxxx..x..
+.0+..+...+..+0.
+x+xEEx.0.xFFx+x
+..D......+..H..
+..D....x+x..H..
+x+x+x..N....x+x
+x...+..N......x
+x.0.xQQxOOx.0.x
+x......P..+...x
+x+x....P..x+x+x
+..M..x+x....J..
+..M..+......J..
+x+xLLx.0.xKKx+x
+.0+..+...+..+0.
+..x..xxxxx..x..
+ENDMAP

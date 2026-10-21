@@ -1,0 +1,30 @@
+# nicolae_geh_lava_lounge is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:  nicolae_geh_lava_lounge
+TAGS:  transparent
+DEPTH: Geh
+: vault.run("configure")
+# Source Lua: : if you.depth() == 1 then
+# Source Lua: SUBST: S = }G
+# Source Lua: : elseif you.depth_fraction() < 1 then
+# Source Lua: SUBST: S = {}GG
+# Source Lua: : else
+# Source Lua: SUBST: S = {G
+# Source Lua: : end
+SUBST: D = +c@l, 0 = .009, 9 = 998
+MAP
+   ccc+ccc
+ cccl...lccc
+ clll...lllc
+cclll.0.lllcc
+cllll...llllc
+c...........c
+D..0..S..0..D
+c...........c
+cllll...llllc
+cclll.0.lllcc
+ clll...lllc
+ cccl...lccc
+   cccDccc
+ENDMAP

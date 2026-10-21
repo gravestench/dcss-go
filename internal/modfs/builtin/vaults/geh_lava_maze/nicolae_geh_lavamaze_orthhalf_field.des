@@ -1,0 +1,26 @@
+# nicolae_geh_lavamaze_orthhalf_field is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:   nicolae_geh_lavamaze_orthhalf_field
+NSUBST: _ = 2=_ / 9 / .
+SUBST:  L = l.
+TAGS: unrand transparent nico_lavamaze_orthhalf
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "orthhalf", true )
+MAP
+xxxxxxxxxxxxx       ....xxxxxxxxx
+xxxxxxxxxxxxx       ..LL...LLxxxx
+xxxxxxxxxxxx.       ..LL.....Lxxx
+xxxxxxxxlllL............0......xx
+xxxxxx.lllllL.....LL.....Lll._.xx
+xx......LllL...lllllL....llll..xx
+x.._..........lllllllL...lllllxxx
+x....lll..0...Llllll......lllxxxx
+...LlllllL.....LL......0...xxxxxx
+...lllllllL.......0............xx
+.0.llllllll..LL.....LllL..Lll...x
+...LllllllL..lllL..LllllL..lll..x
+x....LlllL..L......xxllxx......_x
+xx_.......0..._...xxxxxxxxx...xxx
+xxxx............xxxxxxxxxxxxxxxxx
+xxxxxxxllLLllxxxxxxxxxxxxxxxxxxxx
+ENDMAP

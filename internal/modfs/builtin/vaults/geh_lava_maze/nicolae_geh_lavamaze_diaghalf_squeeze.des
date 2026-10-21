@@ -1,0 +1,44 @@
+# nicolae_geh_lavamaze_diaghalf_squeeze is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:     nicolae_geh_lavamaze_diaghalf_squeeze
+SUBVAULT: D : nico_lavamaze_oct
+SUBVAULT: E : nico_lavamaze_oct
+NSUBST:   _ = _ / .
+SUBST:    ' = lx...
+CLEAR:    DE
+TAGS: unrand transparent nico_lavamaze_diaghalf
+: vault.run("shared.setup_quiet")
+# Source Lua: : nicolae_geh_maze_setup( _G, "diaghalf", false )
+MAP
+x
+xx
+xxx
+xxxx
+xxxxx
+xx''''
+x'....'
+x......'
+x..xx._.x
+x'.'xxxxxx
+xx'.'''''''
+xxx'.......'
+xxxxxxxxxx...
+DDDDDDDDDDDDD
+DDDDDDDDDDDDD
+DDDDDDDDDDDDx
+DDDDDDDDDDDxx
+DDDDDDDDDDxx.
+DDDDDDDDDxx.EE....'
+DDDDDDDDxx..EEEx...'
+DDDDDDDxx..'EEEExx'.'
+DDDDDDxx..lxEEEEExx'0'
+DDDDDxx.0llxEEEEEExx'.'
+DDDDxxx'.'lxEEEEEEExx'.'
+DDDxxxlll.'xEEEEEEEExx'.'
+DDxxxlllll.xEEEEEEEEExx'.'
+Dxx_'lllll.xEEEEEEEEEExx'0'
+xxx..'lll.'xEEEEEEEEEEExx'.'
+xxxx...0.'xxEEEEEEEEEEEExx'.'
+xxxxx'..'xxxEEEEEEEEEEEEExx'_'
+xxxxxxxxxxxxEEEEEEEEEEEEEExx'xx
+ENDMAP

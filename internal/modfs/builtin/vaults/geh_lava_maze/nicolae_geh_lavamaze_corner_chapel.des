@@ -1,0 +1,26 @@
+# nicolae_geh_lavamaze_corner_chapel is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:   nicolae_geh_lavamaze_corner_chapel
+NSUBST: _ = _ / .
+SUBST:  L = l., ` = lx
+TAGS: unrand transparent nico_lavamaze_corner
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "corner", true )
+MAP
+xxxxcccxx`llL
+xxxccccc`llL.
+xxcc.c.cclL..
+xcc..c..cc..0..L
+cc...c...cc...Ll
+c_.0.+.0..+c.Lll
+cc...c.....ccll`
+xcc..c......cc`x
+x`cc.c.0..0..ccx
+`lLccc........cc
+`l.Lc+cccc+ccccc
+`l..0cc.......cc
+l.._.Lcc..0..ccx
+lL....Lcc...ccxx
+`lL.lll`cc_ccxxx
+x`ll```xxcccxxxx
+ENDMAP

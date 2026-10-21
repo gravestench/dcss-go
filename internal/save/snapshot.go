@@ -62,6 +62,17 @@ type HellStateRecord struct {
 	EntryX           int               `json:"entry_x"`
 	EntryY           int               `json:"entry_y"`
 	Return           *ReturnSiteRecord `json:"return"`
+	Floors           []HellFloorRecord `json:"floors,omitempty"`
+}
+
+// HellFloorRecord remembers the stable arrival cell on one persistent
+// subbranch floor. Its terrain, monsters, and effects live in the level save.
+type HellFloorRecord struct {
+	BranchID   string `json:"branch_id"`
+	LocalDepth int    `json:"local_depth"`
+	LevelID    int    `json:"level_id"`
+	EntryX     int    `json:"entry_x"`
+	EntryY     int    `json:"entry_y"`
 }
 
 // TemplePlanRecord fixes the authored map and god identities before the
@@ -109,22 +120,30 @@ type DynamicComponentRecord struct {
 }
 
 type LevelRecord struct {
-	ID              int               `json:"id"`
-	BranchID        string            `json:"branch_id"`
-	LocalDepth      int               `json:"local_depth"`
-	Cells           [][]terrain.ID    `json:"cells"`
-	Known           [][]terrain.ID    `json:"known"`
-	Seen            [][]bool          `json:"seen"`
-	DetectedItems   [][]bool          `json:"detected_items"`
-	Stairs          []StairRecord     `json:"stairs,omitempty"`
-	InitialMonsters int               `json:"initial_monsters,omitempty"`
-	InitialActors   int               `json:"initial_actors,omitempty"`
-	SpawnExclusions []PointRecord     `json:"spawn_exclusions,omitempty"`
-	AwaySinceAut    *int64            `json:"away_since_aut,omitempty"`
-	VaultID         string            `json:"vault_id,omitempty"`
-	VaultIDs        []string          `json:"vault_ids,omitempty"`
-	VaultRecords    []vault.Record    `json:"vault_records,omitempty"`
-	ShoalsTide      *ShoalsTideRecord `json:"shoals_tide,omitempty"`
+	ID              int                `json:"id"`
+	BranchID        string             `json:"branch_id"`
+	LocalDepth      int                `json:"local_depth"`
+	Cells           [][]terrain.ID     `json:"cells"`
+	Known           [][]terrain.ID     `json:"known"`
+	Seen            [][]bool           `json:"seen"`
+	DetectedItems   [][]bool           `json:"detected_items"`
+	Stairs          []StairRecord      `json:"stairs,omitempty"`
+	InitialMonsters int                `json:"initial_monsters,omitempty"`
+	InitialActors   int                `json:"initial_actors,omitempty"`
+	SpawnExclusions []PointRecord      `json:"spawn_exclusions,omitempty"`
+	AwaySinceAut    *int64             `json:"away_since_aut,omitempty"`
+	VaultID         string             `json:"vault_id,omitempty"`
+	VaultIDs        []string           `json:"vault_ids,omitempty"`
+	VaultRecords    []vault.Record     `json:"vault_records,omitempty"`
+	CellColours     []CellColourRecord `json:"cell_colours,omitempty"`
+	ShoalsTide      *ShoalsTideRecord  `json:"shoals_tide,omitempty"`
+}
+
+// CellColourRecord saves a live terrain tint separately from the terrain ID.
+type CellColourRecord struct {
+	X      int    `json:"x"`
+	Y      int    `json:"y"`
+	Colour string `json:"colour"`
 }
 
 // PointRecord preserves level-local generation masks across save and load.

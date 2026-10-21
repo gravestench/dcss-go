@@ -40,6 +40,7 @@ type Grid interface {
 	RestoreRemembered(levelID, x, y int, feature terrain.ID) error
 	Size(levelID int) (int, int, bool)
 	Branch(levelID int) (string, bool)
+	Depth(levelID int) (int, bool)
 	ShoalsHeight(levelID, x, y int) (int, bool)
 	ShoalsTideClock(levelID int) (height, velocity int, lastAut int64, ok bool)
 	SetShoalsTideClock(levelID, height, velocity int, lastAut int64) error
@@ -56,6 +57,8 @@ type Grid interface {
 	RouteStep(levelID, fromX, fromY, toX, toY int, goal akara.Entity) (int, int, bool)
 	ProjectileClear(levelID, fromX, fromY, toX, toY int) bool
 	SetCell(levelID, x, y int, feature terrain.ID) error
+	CellColour(levelID, x, y int) (string, bool)
+	SetCellColour(levelID, x, y int, colour string) error
 	MoveActor(entity akara.Entity, levelID, x, y int) error
 	MoveActors(moves []ActorMove) error
 	PlaceActor(entity akara.Entity, levelID, x, y int) error

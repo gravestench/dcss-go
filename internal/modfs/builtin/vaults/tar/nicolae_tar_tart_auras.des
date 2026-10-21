@@ -1,0 +1,25 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:1108
+NAME:   nicolae_tar_tart_auras
+TAGS:   transparent no_monster_gen
+DEPTH:  Tar, !Tar:$
+ORIENT: centre
+KMONS:  1} = eidolon w:15 / profane servitor / tainted leviathan / \
+             silent spectre w:5
+KFEAT:  } = }
+MAP
+       xxxxxxxxx
+ .....xx.x.x.x.xx.....
+ ....xx.........xx....
+ ...+x.x...1...x.x+...
+ ..xx...x.....x...xx..
+ .xx.....xx.xx.....xx.
+ xx.....xx...xx.....xx
+xx..1..xx..}..xx..1..xx
+ xx.....xx...xx.....xx
+ .xx.....xx.xx.....xx.
+ ..xx...x.....x...xx..
+ ...+x.x...1...x.x+...
+ ....xx.........xx....
+ .....xx.x.x.x.xx.....
+       xxxxxxxxx
+ENDMAP

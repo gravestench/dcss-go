@@ -1,0 +1,29 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:342
+NAME:   nicolae_coc_cocytus_crossing
+TAGS:   transparent no_pool_fixup
+DEPTH:  Coc
+ORIENT: centre
+NSUBST: D = 2=W / w, E = 2=W / w, F = 2=W / w, H = 2=W / w, J = 2=W / w, \
+        K = 2=W / w, L = 2=W / w, M = 2=W / w, N = 2=W / w, O = 2=W / w, \
+        P = 2=W / w, Q = 2=W / w
+SUBST:  p : x., q : x., r : wx, s : wx, y : x.
+MAP
+    wwww@@wwww
+  wwwww....wwwww
+ wwwwN..xx..Owwww
+ www.NN....OO.www
+www.y.NFFFFO.y.www
+wwNN.sNHHHHOs.OOww
+ww.NNNr....rOOO.ww
+w...DE.q..q.KJ...w
+@.x.DE..pp..KJ.x.@
+@.x.DE..pp..KJ.x.@
+w...DE.q..q.KJ...w
+ww.QQQr....rPPP.ww
+wwQQ.sQMMMMPs.PPww
+www.y.QLLLLP.y.www
+ www.QQ....PP.www
+ wwwwQ..xx..Pwwww
+  wwwww.@@.wwwww
+    wwww@@wwww
+ENDMAP

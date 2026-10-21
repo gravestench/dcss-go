@@ -105,6 +105,17 @@ func (grid scriptGrid) Branch(levelID int) (string, bool) {
 	return level.BranchID, true
 }
 
+// The level stores its own local depth; it is not inferred from its ID.
+func (grid scriptGrid) Depth(levelID int) (int, bool) {
+	level := grid.levels[levelID]
+
+	if level == nil || level.LocalDepth < 1 {
+		return 0, false
+	}
+
+	return level.LocalDepth, true
+}
+
 func (grid scriptGrid) Cell(levelID, x, y int) (terrain.ID, bool) {
 	level := grid.levels[levelID]
 
@@ -369,6 +380,26 @@ func (grid scriptGrid) SetCell(levelID, x, y int, feature terrain.ID) error {
 	}
 
 	return level.SetCell(x, y, feature)
+}
+
+func (grid scriptGrid) CellColour(levelID, x, y int) (string, bool) {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return "", false
+	}
+
+	return level.CellColour(x, y)
+}
+
+func (grid scriptGrid) SetCellColour(levelID, x, y int, colour string) error {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return fmt.Errorf("missing level %d", levelID)
+	}
+
+	return level.SetCellColour(x, y, colour)
 }
 
 func (grid scriptGrid) MoveActor(entity akara.Entity, levelID, x, y int) error {

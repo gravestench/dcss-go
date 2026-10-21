@@ -1,0 +1,28 @@
+# nicolae_geh_liches_on_tour is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:   nicolae_geh_liches_on_tour
+TAGS:   transparent
+DEPTH:  Geh:2-
+KMONS:  1 = brimstone fiend
+KMONS:  2 = hellion / tormentor
+KMONS:  3 = ancient lich / dread lich
+NSUBST: M = 2=1 / 3=2 / 3=3 / 12233..
+SUBST:  L = l.
+MAP
+.....ccccc
+.LlL.Llllccc
+.lcl..LLlllcc
+.LlLM..MLLllcc
+...M.....MLllc
+cL........MLlcc
+clL........Lllc
+clLM...{...MLlc
+cllL........Llc
+cclLM........Lc
+ cllLM.....M...
+ ccllLLM..MLlL.
+  cclllLL..lcl.
+   ccclllL.LlL.
+     ccccc.....
+ENDMAP

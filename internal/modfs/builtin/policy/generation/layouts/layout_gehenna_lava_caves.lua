@@ -87,11 +87,11 @@ end
 local function paint(builder, params, primary, distortion)
     local hard = 4
     local padded = hard + params.padding
-    local far_x = grid.width - 1 - hard
-    local far_y = grid.height - 1 - hard
+    local far_x = builder.width - 1 - hard
+    local far_y = builder.height - 1 - hard
 
-    for x = 1, grid.width - 2 do
-        for y = 1, grid.height - 2 do
+    for x = 1, builder.width - 2 do
+        for y = 1, builder.height - 2 do
             local x_border = noise.boundary(x,
                 hard, padded, far_x - params.padding, far_x)
             local y_border = noise.boundary(y,
@@ -115,7 +115,7 @@ end
 -- replaces remote floor with lava, and the second keeps the largest
 -- territory traversable by a flying actor before sealing other lava.
 function layout.generate(api)
-    local builder = grid.new(api.ctx)
+    local builder = grid.new(api.ctx, api.width, api.height)
     local params = parameters(builder, api)
     local primary, distortion = fields(builder, params.scale)
 

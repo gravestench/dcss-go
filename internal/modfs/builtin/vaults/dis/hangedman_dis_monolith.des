@@ -1,0 +1,30 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (hangedman_dis_monolith).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    hangedman_dis_monolith
+DEPTH: Dis, !Dis:$
+TAGS:    transparent layout_city
+ORIENT:  centre
+MONS:    patrolling quicksilver elemental / patrolling iron dragon / \
+         patrolling war gargoyle
+MONS:    patrolling hell sentinel
+MONS:    hellion / tormentor / ancient champion / \
+         dancing weapon w:20 ; great sword good_item | battleaxe good_item | \
+                               glaive good_item | great mace good_item
+SHUFFLE: ABa / EFc
+NSUBST:  F = 1:112 / 1:1 / 1 : }:6 >:3 .:1
+SUBST:   ABCDE = 0:19 3:1, a = +, bc = v, V : v.
+MAP
+....................
+.vv......vv......vv.
+.vv.v..v....v..v.vv.
+.vv...vv3vv3vv...vv.
+.vvv+vvvvvvvvvv+vvv.
+0vvAAAvvvvvvvvEEEvv0
+3vvvavvvvvvvvvvcvvv3
+0vvBBBvvvvvvvvFFFvv0
+.vvv+vvvvvvvvvv+vvv.
+.vv...vv3vv3vv...vv.
+.vv.v..v....v..v.vv.
+.vv......vv......vv.
+....................
+ENDMAP

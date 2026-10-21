@@ -1,0 +1,28 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:1080
+NAME:   nicolae_tar_stay_or_leave
+TAGS:   transparent
+DEPTH:  Tar, !Tar:$
+KMONS:  }1 = patrolling eidolon
+KMONS:  2 = tainted leviathan
+KFEAT:  } = }
+NSUBST: } = } / 1, 2 = 2=2 / .
+SUBST:  0 = .....0, 0 = 009, 9 = 998
+MAP
+ccccccccccccccccc
+ccccccc0c0ccccccc
+cccccc0...0cccccc
+ccccccc.}.ccccccc
+cccccc0...0cccccc
+ccccccc.c.ccccccc
+cc0c0c0...0c0c0cc
+c0.....222.......
+cc.}.c.2c2.c.1.c@
+c0.....222.......
+cc0c0c0...0c0c0cc
+ccccccc.c.ccccccc
+cccccc0...0cccccc
+ccccccc.}.ccccccc
+cccccc0...0cccccc
+ccccccc0c0ccccccc
+ccccccccccccccccc
+ENDMAP

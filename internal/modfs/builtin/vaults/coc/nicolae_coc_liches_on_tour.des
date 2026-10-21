@@ -1,0 +1,22 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:520
+NAME:   nicolae_coc_liches_on_tour
+TAGS:   transparent no_pool_fixup
+DEPTH:  Coc:2-
+KMONS:  1 = ice fiend
+KMONS:  2 = hellion / tormentor
+KMONS:  3 = ancient lich / dread lich
+NSUBST: M = 2=1 / 3=2 / 3=3 / 123..
+SUBST:  ~ = w., - = x.
+MAP
+ .........
+...~www~...
+..~wwwww~..
+.M~wwwww~M.
+..M~www~M..
+.M..~~~..M.
+x.M.....M.x
+xM.......Mx
+xxM..{..Mxx
+xxxx~~~xxxx
+ xxxxxxxxx
+ENDMAP

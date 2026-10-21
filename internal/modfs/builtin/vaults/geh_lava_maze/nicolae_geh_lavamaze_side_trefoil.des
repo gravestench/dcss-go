@@ -1,0 +1,23 @@
+# nicolae_geh_lavamaze_side_trefoil is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:   nicolae_geh_lavamaze_side_trefoil
+NSUBST: _ = _ / .
+SUBST:  - = x., L = l.
+TAGS: unrand transparent nico_lavamaze_side
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "side", true )
+MAP
+            x...-
+           xx....x
+          -..0....x
+         x._..x-..-x
+        xx-.-xxx.0.xx
+       xxxxxxxx-...xxx
+      xx....-xx...-x-.-
+     x...0.....LL.xx._.x
+    -...xx-..Llll.xx...xx
+   -.0.xxxx-..lllL-x.0.xxx
+  x-....-xxx-.Lll.....-xxxx
+ xxx-.._.xxxx-...0...-xxxxxx
+xxxxxx-.-xxxxxxxx-..-xxxxxxxx
+ENDMAP

@@ -1,0 +1,21 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:945
+NAME:   nicolae_tar_intersect_combbox
+TAGS:   transparent
+DEPTH:  Tar
+ORIENT: centre
+SUBST:  0 = .0009, 9 = 998
+MAP
+  .........
+   x.x.x.x
+. xxmx+xmxx .
+.xxx.x.x.xxx.
+..m.0...0.m..
+.xxx.....xxx.
+..+...0...+..
+.xxx.....xxx.
+..m.0...0.m..
+.xxx.x.x.xxx.
+  xxmx+xmxx .
+   x.x.x.x
+  .........
+ENDMAP

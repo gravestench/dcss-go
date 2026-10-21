@@ -1,0 +1,25 @@
+# nicolae_geh_lava_shack is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:   nicolae_geh_lava_shack
+TAGS:   transparent
+DEPTH:  Geh
+NSUBST: D = + / c, E = + / c, F = + / c, H = + / c
+SUBST:  L = l.
+MAP
+ llL.......Lll
+llll.EEEEE.llll
+lllcEE...EEclll
+Llcc.......cclL
+..D...LLL...F..
+.DD..LlllL..FF.
+.D..LlllllL..F.
+.D..LlllllL..F.
+.D..LlllllL..F.
+.DD..LlllL..FF.
+..D...LLL...F..
+Llcc.......cclL
+lllcHH...HHclll
+llll.HHHHH.llll
+ llL.......Lll
+ENDMAP

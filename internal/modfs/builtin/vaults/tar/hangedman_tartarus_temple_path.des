@@ -1,0 +1,32 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:266
+NAME:    hangedman_tartarus_temple_path
+TAGS:    transparent
+DEPTH:   Tar, !Tar:$
+ORIENT:  centre
+SHUFFLE: hH / hH / Hh, iI / iI / Ii
+SUBST:   h : cccx, H : cxGF, i : cccx, I : cxGF
+SUBST:   d = d., + = +..., { = {}., c = c:49 .:1, C = c
+MARKER:  F = lua:fog_machine { cloud_type = "foul pestilence", pow_min = 200, \
+             pow_max = 300, delay = 25, size = 1, walk_dist = 0, excl_rad = 0 }
+: vault.run("delayed_decay")
+# Source Lua: {{
+# Source Lua: dgn.delayed_decay(_G, 'd', 'base draconian corpse w:5 / ' ..
+# Source Lua:                            'base draconian skeleton / ' ..
+# Source Lua:                            'shadow dragon corpse w:5 / ' ..
+# Source Lua:                            'shadow dragon skeleton')
+# Source Lua: }}
+MAP
+ .@xxxxxxxxxxxxxxxxxxxxxxx@.
+.x..cccccccCCCCCCCccccccc..x.
+@...cd.c.dcccccccccd.c.dc...@
+x...c.....cd.....dc.....c...x
+xc..c..c..c...c...c..c..c..cx
+xc..c..h..cF..i..Fc..h..c..cx
+xc..+.dHd.+...I...+.dHd.+..cx
+xc..c..h..cF..i..Fc..h..c..cx
+xc..c..c..c...c...c..c..c..cx
+x...c.....cd..{..dc.....c...x
+@...cd.c.dcccccccccd.c.dc...@
+.x..cccccccCCCCCCCccccccc..x.
+ .@xxxxxxxxxxxxxxxxxxxxxxx@.
+ENDMAP

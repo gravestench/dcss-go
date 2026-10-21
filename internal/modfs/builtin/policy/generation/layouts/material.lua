@@ -38,8 +38,8 @@ function material.level(builder, api)
         return
     end
 
-    for y = 0, grid.height - 1 do
-        for x = 0, grid.width - 1 do
+    for y = 0, builder.height - 1 do
+        for x = 0, builder.width - 1 do
             if builder:cell(x, y) == "#" then
                 builder:set(x, y, builder:roll(3) == 2 and "v" or "c")
             end
@@ -54,8 +54,8 @@ function material.caves(builder, api)
         return
     end
 
-    for y = 0, grid.height - 1 do
-        for x = 0, grid.width - 1 do
+    for y = 0, builder.height - 1 do
+        for x = 0, builder.width - 1 do
             if builder:cell(x, y) == "#" then
                 builder:set(x, y, "b")
             end

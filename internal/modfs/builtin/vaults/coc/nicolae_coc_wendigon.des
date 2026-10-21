@@ -1,0 +1,21 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:719
+NAME:   nicolae_coc_wendigon
+TAGS:   transparent no_pool_fixup
+DEPTH:  Coc
+KMONS:  1 = simulacrum
+KMONS:  2 = wendigo
+SUBST:  ~ = Ww, M = W., S = 1., ` = wwwxx..., . = 1:6 2:2 .:50
+MAP
+  ww~WW~ww
+ ww~M..M~ww
+ww~M....M~ww
+w~M......M~w
+~M..S``S..M~
+W...`{M`...W
+W...`MM`...W
+~M..S``S..M~
+w~M......M~w
+ww~M....M~ww
+ ww~M..M~ww
+  ww~WW~ww
+ENDMAP

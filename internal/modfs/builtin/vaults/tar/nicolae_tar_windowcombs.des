@@ -1,0 +1,19 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:1133
+NAME:    nicolae_tar_windowcombs
+TAGS:    transparent
+DEPTH:   Tar
+SHUFFLE: DEFH
+SUBST:   DE : x, FH : m
+MAP
+           ..........
+           ..E.D.E.D.
+           .FHFHFHFHF
+     ........D.E.D.E.
+     ..E.D.E.D.......
+     .FHFHFHFHF.
+.......D.E.D.E..
+.E.D.E.D........
+FHFHFHFHF.
+.D.E.D.E..
+..........
+ENDMAP

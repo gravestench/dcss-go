@@ -1,0 +1,14 @@
+# gehenna_fire_generator is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:   gehenna_fire_generator
+TAGS:   extra allow_dup
+DEPTH:  Geh
+MARKER: . = lua:fog_machine { \
+            pow_max = 15, delay_min = 100, delay_max = 150, size = 1,  \
+            size_buildup_amnt = 29, size_buildup_time = 1000, \
+            cloud_type = "flame" \
+        }
+MAP
+.
+ENDMAP

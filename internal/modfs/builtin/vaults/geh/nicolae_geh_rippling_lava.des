@@ -1,0 +1,26 @@
+# nicolae_geh_rippling_lava is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:  nicolae_geh_rippling_lava
+TAGS:  transparent
+DEPTH: Geh
+SUBST: D : lc, E : lc., F : lc., H : lc., J : lc., K : lc., L : lc., M : lc.
+MAP
+      .....
+    ..lllll..
+  M.ll..H..ll.M
+  .lL.lllll.Ll.
+ .lLKl..F..lKLl.
+ .l.lJ.lll.Jl.l.
+.l.l..l.E.l..l.l.
+.l.l.l.lll.l.l.l.
+.lHlFlElDlElFlHl.
+.l.l.l.lll.l.l.l.
+.l.l..l.E.l..l.l.
+ .l.lJ.lll.Jl.l.
+ .lLKl..F..lKLl.
+  .lL.lllll.Ll.
+  M.ll..H..ll.M
+    ..lllll..
+      .....
+ENDMAP

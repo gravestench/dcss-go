@@ -1,0 +1,23 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:794
+NAME:    nicolae_tar_four_comb_rooms
+TAGS:    transparent
+DEPTH:   Tar
+SHUFFLE: DEF, HJ
+SUBST:   DH : m, EJ : x, F : xm, 0 = 000998
+MAP
+xxxxx.....xxxxx
+xJ.H...E...J.Hx
+x.0...FDF...0.x
+xH.....E.....Jx
+x.....FDF.....x
+.....0.E.0.....
+..F.F.FDF.F.F..
+.EDEDEDEDEDEDE.
+..F.F.FDF.F.F..
+.....0.E.0.....
+x.....FDF.....x
+xJ.....E.....Hx
+x.0...FDF...0.x
+xH.J...E...H.Jx
+xxxxx.....xxxxx
+ENDMAP

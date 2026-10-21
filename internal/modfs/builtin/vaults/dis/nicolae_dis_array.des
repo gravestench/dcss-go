@@ -1,0 +1,14 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_array).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   nicolae_dis_array
+TAGS:   transparent
+DEPTH:  Dis, !Dis:$
+ORIENT: centre
+NSUBST: D = + / +v / +vv / v, E = + / +v / +vv / v
+MAP
+vv+vvvDvvvDvvvDvvvDvvvDvvvDvv
+v...v...v...v...v...v...v...v
+v.0.+.0.+.9.+.8.+.9.+.0.+.0.v
+v...v...v...v...v...v...v...v
+vvEvvvEvvvEvvvEvvvEvvvEvvv+vv
+ENDMAP

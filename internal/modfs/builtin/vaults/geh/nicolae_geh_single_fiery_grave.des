@@ -1,0 +1,13 @@
+# nicolae_geh_single_fiery_grave is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:  nicolae_geh_single_fiery_grave
+DEPTH: Geh
+TAGS:  transparent extra decor allow_dup nicolae_fiery_grave
+SUBST: l : llll., C : b..., b : ccc.
+MAP
+Cbbc
+.llc
+.llc
+Cbbc
+ENDMAP

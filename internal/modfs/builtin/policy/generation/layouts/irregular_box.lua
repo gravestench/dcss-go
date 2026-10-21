@@ -13,11 +13,11 @@ local outside = "outside"
 
 -- Keep every room inside the playable grid. The C++ builder enforces the
 -- same bounds before allocating its temporary wall matrix.
-local function dimensions(options)
+local function dimensions(builder, options)
     local x1 = math.max(0, math.floor(options.x1))
     local y1 = math.max(0, math.floor(options.y1))
-    local x2 = math.min(grid.width - 1, math.floor(options.x2))
-    local y2 = math.min(grid.height - 1, math.floor(options.y2))
+    local x2 = math.min(builder.width - 1, math.floor(options.x2))
+    local y2 = math.min(builder.height - 1, math.floor(options.y2))
 
     return {
         x1 = x1,
@@ -378,7 +378,7 @@ end
 -- malformed source-like shape into a clear generation error, not a quiet
 -- rectangular substitution that could make a bad layout look successful.
 function box.carve(builder, options)
-    local bounds = dimensions(options)
+    local bounds = dimensions(builder, options)
 
     if bounds.width <= 0 or bounds.height <= 0 then
         return

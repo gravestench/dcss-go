@@ -1,0 +1,62 @@
+# hangedman_mysterious_dungeon_monster_house is a shared Hell source vault.
+# Source: crawl-ref/source/dat/des/branches/hells.des.
+NAME:    hangedman_mysterious_dungeon_monster_house
+TAGS:    no_monster_gen no_item_gen no_trap_gen no_pool_fixup allow_dup luniq
+DEPTH:   Geh:2-, !Geh:$, Coc:2-, !Coc:$, Tar:2-, !Tar:$, Dis:2-, !Dis:$
+ORIENT:  encompass
+WEIGHT:  1
+# Specific allotment of monsters, terrain, and items for this small box.
+# Monsters are in three tiers: generic undead (1), specific fodder (09),
+# bosses (2).
+# Terrain includes zot traps, and per-hell clouds, liquid, statues.
+NSUBST:  . = 2:1 / 1:0 / 2:9 / 4 = 0:3 1:1 / 1 = 9:6 / 2:1 / *:.
+NSUBST:  . = 1:^ / 1:^~ / 1:F~ / 4 = F~~ / 1:{ / 1:} / *:.
+KFEAT:   ^ = zot trap
+: vault.run("configure")
+# Source Lua: : if you.in_branch("Geh") then
+# Source Lua: MONS:    zombie / skeleton
+# Source Lua: MONS:    brimstone fiend / hellephant
+# Source Lua: MARKER:  F = lua:fog_machine {cloud_type = "flame", \
+# Source Lua:              pow_min = 8, pow_max = 10, delay = 100, \
+# Source Lua:              size_min = 1, size_max = 1, start_clouds = 1, excl_rad = 0 }
+# Source Lua: SUBST:   ~ = l
+# Source Lua: FTILE:   F = floor_volcanic
+# Source Lua: COLOUR:  F = lightred
+# Source Lua: : elseif you.in_branch("Coc") then
+# Source Lua: MONS:    simulacrum
+# Source Lua: MONS:    ice fiend / shard shrike
+# Source Lua: MARKER:  F = lua:fog_machine {cloud_type = "freezing vapour", \
+# Source Lua:              pow_min = 8, pow_max = 10, delay = 100, \
+# Source Lua:              size_min = 1, size_max = 1, start_clouds = 1, excl_rad = 0 }
+# Source Lua: SUBST:   ~ = w
+# Source Lua: FTILE:   F = floor_nerves_blue
+# Source Lua: COLOUR:  F = lightblue
+# Source Lua: : elseif you.in_branch("Tar") then
+# Source Lua: MONS:    spectral thing
+# Source Lua: MONS:    tzitzimitl / tainted leviathan
+# Source Lua: MARKER:  F = lua:fog_machine {cloud_type = "foul pestilence", \
+# Source Lua:              pow_min = 8, pow_max = 10, delay = 100, \
+# Source Lua:              size_min = 1, size_max = 1, start_clouds = 1, excl_rad = 0 }
+# Source Lua: SUBST:   ~ = G
+# Source Lua: FTILE:   F = floor_crystal_squares
+# Source Lua: COLOUR:  F = lightmagenta
+# Source Lua: : elseif you.in_branch("Dis") then
+# Source Lua: MONS:    zombie / skeleton
+# Source Lua: MONS:    hell sentinel / iron giant
+# Source Lua: SUBST:   xc = v, F~ = G
+# Source Lua: COLOUR:  G = cyan
+# Source Lua: TILE:    G = dngn_statue_iron
+# Source Lua: : set_feature_name("granite_statue", "iron statue")
+# Source Lua: : end
+KPROP:   lw = no_tele_into
+MAP
+cccccccccc
+c........c
+c........c
+c........c
+c........c
+c........c
+c........c
+c........c
+cccccccccc
+ENDMAP

@@ -1,0 +1,24 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:679
+NAME:    nicolae_tar_combstack
+TAGS:    transparent
+DEPTH:   Tar
+SHUFFLE: DE, FH
+NSUBST:  D = + / x, F = + / x
+SUBST:   EH = m
+MAP
+ x x x x x x x x
+xxxxxxxxxxxxxxxxx
+.x.x.x.x.x.x.x.x.
+....0...9...0....
+.x.x.x.x.x.x.x.x.
+xxDxExDxExDxExDxx
+ x.x.x.x.x.x.x.x
+xx..9...8...9..xx
+ x.x.x.x.x.x.x.x
+xxFxHxFxHxFxHxFxx
+.x.x.x.x.x.x.x.x.
+....0...9...0....
+.x.x.x.x.x.x.x.x.
+xxxxxxxxxxxxxxxxx
+ x x x x x x x x
+ENDMAP

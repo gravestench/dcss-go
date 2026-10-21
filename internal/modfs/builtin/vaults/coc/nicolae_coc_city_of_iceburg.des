@@ -1,0 +1,55 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:288
+NAME:   nicolae_coc_city_of_iceburg
+TAGS:   no_pool_fixup patrolling
+DEPTH:  Coc:2-, !Coc:$
+ORIENT: encompass
+KMONS:  1 = ice statue
+KFEAT:  ~ = open_sea
+KFEAT:  } = }
+: vault.run("border_fill")
+# Source Lua: : set_border_fill_type('open_sea')
+NSUBST: D = + / nccc / c, E = + / nccc / c, F = + / nccc / c, H = + / nccc /c, \
+        J = + / nccc / c, K = + / nccc / c, L = + / nccc / c, M = + / nccc /c, \
+        N = + / nccc / c, O = + / nccc / c, a = 2=n / c, p = 2=n / c, \
+        q = 2=n / c, r = 2=n / c, s = 3=n / c, y = 2=n / c, } = } / 0
+SUBST:  Q = 009.., 0 = 009, 9 = 998
+MAP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww~
+~wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww~
+~wwwwwwwwwwwwwwwcppppppcwwwwwwwwwwwww~
+~wwwwwwwwwwcccccc......cwwwwwwwwwwwww~
+~wwwwww....M....a.}.Q..+......Qwwwwww~
+~wwwwww.cLLc..}.a......cqqqqqc.wwwwww~
+~wwwww..c..L....caaaaaac.....r.wwwwww~
+~wwww...L.}cMMMMc......c...}.r.wwwwww~
+~wwww...L..L....c..Q.}.c.....r.wwwwww~
+~wwwx...c..L.Q..c......c.Q...r.wwwwww~
+~wwwx...cLLc....cKKKKKKc.....r..Qwwww~
+~wwxx..Q....!..........c++cccccc.wwww~
+~wwxxw....................J....s.wwww~
+~wxxww...cNNNc...VWWWV....J..}.s.wwww~
+~wxxww...N...N...W.1.W..Q.J....s.wwww~
+~wxxww...N.}.N...W1G1W....J....s.wwww~
+~wxxww...N...N...W.1.W...ccccccc.wwww~
+~wxxxww..cNNNc...VWWWV...H....s..wwww~
+~wxxxxx..................H..}.sQwwwww~
+~wwxxxw.Q..cDDDDDc.......H....s..wwww~
+~wwxxwwccncc.....D...Q...cHHcFcc+cwww~
+~wwxxwwc...c.Q.}.D..........F....swww~
+~wwxxwwc...D.....D..........F..}.swww~
+~wwxxwwn.}.D.....D...ccEcc..cFFsscwww~
+~wwxxxwc...cDDDDDc...c...c......wwwww~
+~wxxxxxc+ccc.........E...E.Q.xx.wwwww~
+~wx...xx............xc...cxxxxx.wwwww~
+~wx.{.xxxx....G....Gxc...cccccxxwwwww~
+~wx....xxxwwwwxx..xxxc.}.c.}.cxwwwwww~
+~wxx.....xxxxxx...xxwc...c...ywwwwwww~
+~wwxx............xxxwc+ccc...ywwwwwww~
+~wwxxxx.........xxxwww...+...ywwwwwww~
+~wwwxxxxxx...xxxxxxwwwwwwcyyycwwwwwww~
+~wwwwxxxxxxxxxxxxwwwwwwwwwwwwwwwwwwww~
+~wwwwwwwwxxxxxwwwwwwwwwwwwwwwwwwwwwww~
+~wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ENDMAP

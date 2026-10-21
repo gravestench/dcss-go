@@ -1,0 +1,25 @@
+# nicolae_geh_lava_swirls is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:   nicolae_geh_lava_swirls
+TAGS:   transparent
+DEPTH:  Geh
+ORIENT: centre
+SUBST:  l = l:16 c:3 .:1, . = .:7 0:1, 0 = 009, 9 = 998
+MAP
+  llllllll@ll
+ ll......ll.ll
+ll.llllll.ll.ll
+l.ll....ll.ll.l
+@ll.llll.ll.l.l
+ll.ll..ll.l.l.l
+l.ll.ll.l.l.l.l
+l.l.ll.{.ll.l.l
+l.l.l.l.ll.ll.l
+l.l.l.ll..ll.ll
+l.l.ll.llll.ll@
+l.ll.ll....ll.l
+ll.ll.llllll.ll
+ ll.ll......ll
+  ll@llllllll
+ENDMAP

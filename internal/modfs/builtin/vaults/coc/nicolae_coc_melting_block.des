@@ -1,0 +1,17 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:542
+NAME:  nicolae_coc_melting_block
+TAGS:  transparent allow_dup
+DEPTH: Coc
+SUBST: M = mxx, N = Wmm, O = .WW
+MAP
+..........
+.OOOOOOOO.
+.ONNNNNNO.
+.ONMMMMNO.
+.ONMxxMNO.
+.ONMxxMNO.
+.ONMMMMNO.
+.ONNNNNNO.
+.OOOOOOOO.
+..........
+ENDMAP

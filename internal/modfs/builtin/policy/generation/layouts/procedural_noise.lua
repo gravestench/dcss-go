@@ -192,9 +192,11 @@ end
 
 -- Source border fields fade inward over padding + 1 cells. Additive mode
 -- weighs x and y borders independently for Cave Pods' corner suppression.
-function noise.border(x, y, padding, additive)
-    local near_x = math.min(x, grid.width - 1 - x)
-    local near_y = math.min(y, grid.height - 1 - y)
+function noise.border(x, y, padding, additive, builder)
+    local width = builder and builder.width or grid.width
+    local height = builder and builder.height or grid.height
+    local near_x = math.min(x, width - 1 - x)
+    local near_y = math.min(y, height - 1 - y)
 
     if additive then
         return math.min(1, 2 - clamp(near_x / (padding + 1)) -

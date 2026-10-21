@@ -1,0 +1,33 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_iron_filings).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    nicolae_dis_iron_filings
+DEPTH: Dis, !Dis:$
+ORIENT:  centre
+TAGS:    transparent extra decor layout_city
+SUBST:   } = }}}{
+SHUFFLE: abcdefghijkl, mnopqrstu
+SUBST:   abcmno = v, d : .v, e : .v, f : .v, g : .v, h : .v, i : .v, j : .v, \
+         k : .v, l : .v, p : .v, q : .v, r : .v, s : .v, t : .v, u : .v
+MAP
+         ...
+       lkj.jkl
+    ...ihg.ghi...
+   ut...fe.ef...tu
+  .tsr..dc.cd..rst.
+  ..rqp..b.b..pqr..
+  ...pon.a.a.nop...
+ li...nm.v+v.mn...il
+ khfd...+v.v+...dfhk
+.jgecbavv...vvabcegj.
+.......+..}..+.......
+.jgecbavv...vvabcegj.
+ khfd...+v.v+...dfhk
+ li...nm.v+v.mn...il
+  ...pon.a.a.nop...
+  ..rqp..b.b..pqr..
+  .tsr..dc.cd..rst.
+   ut...fe.ef...tu
+    ...ihg.ghi...
+       lkj.jkl
+         ...
+ENDMAP

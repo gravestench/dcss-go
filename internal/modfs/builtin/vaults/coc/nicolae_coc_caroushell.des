@@ -1,0 +1,32 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:256
+NAME:   nicolae_coc_caroushell
+TAGS:   transparent no_pool_fixup no_monster_gen
+DEPTH:  Coc
+ORIENT: centre
+WEIGHT: 2
+KMONS:  1 = diamond obelisk
+SUBST:  ~ = w., M = w_, ` = ._
+CLEAR:  _
+MAP
+          @
+   MMM   `.`   MMM
+  MwwwM `...` MwwwM
+ Mwwwww~.....~wwwwwM
+ Mwwwwww~...~wwwwwwM
+ Mwwwwwww~.~wwwwwwwM
+  MwwwwwwwWwwwwwwwM
+   ~wwwwwwWwwwwww~
+  `.~wwwwwWwwwww~.`
+ `...~wwwwWwwww~...`
+@.....WWWW1WWWW.....@
+ `...~wwwwWwwww~...`
+  `.~wwwwwWwwwww~.`
+   ~wwwwwwWwwwwww~
+  MwwwwwwwWwwwwwwwM
+ Mwwwwwww~.~wwwwwwwM
+ Mwwwwww~...~wwwwwwM
+ Mwwwww~.....~wwwwwM
+  MwwwM `...` MwwwM
+   MMM   `.`   MMM
+          @
+ENDMAP

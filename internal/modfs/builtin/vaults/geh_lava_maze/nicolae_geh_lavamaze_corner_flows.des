@@ -1,0 +1,26 @@
+# nicolae_geh_lavamaze_corner_flows is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:   nicolae_geh_lavamaze_corner_flows
+NSUBST: _ = _ / _. / .
+SUBST:  ` = lx, - = x.
+TAGS: unrand transparent nico_lavamaze_corner
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "corner", true )
+MAP
+xx-...xxxxx-.
+x-....0xx-...
+-..ll..xx-...
+..llll.....9...-
+.0l``llll....-xx
+..lxxx`lll...xxx
+..llxxllllll..xx
+-..lx`llllll0.xx
+x-.lx`llllll..-x
+xx0lxx``l``ll..-
+x..llxxxxxx`l..-
+x-..ll`xx`xxll.0
+xx....xx.llx`l..
+xx.._.x._.llll.-
+xxx..xx....0...-
+xxxxxxxx-....--x
+ENDMAP

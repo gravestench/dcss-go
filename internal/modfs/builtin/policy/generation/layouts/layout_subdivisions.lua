@@ -101,21 +101,21 @@ end
 -- Build the source 8-cell inset before subdividing. Keeping the variant
 -- decision early preserves the source's distinct connected-room styles.
 function layout.layout_subdivisions(api)
-    local builder = grid.new(api.ctx)
-    local threshold = 9 + grid.height / 35
+    local builder = grid.new(api.ctx, api.width, api.height)
+    local threshold = 9 + builder.height / 35
     local alt = builder:chance_in(2, 3)
 
-    for y = 8, grid.height - 9 do
-        for x = 8, grid.width - 9 do
+    for y = 8, builder.height - 9 do
+        for x = 8, builder.width - 9 do
             builder:set(x, y, ".")
         end
     end
 
-    split(builder, 7, 7, grid.width - 8, grid.height - 8,
+    split(builder, 7, 7, builder.width - 8, builder.height - 8,
         true, threshold, alt)
 
     if alt then
-        local minimum = 150 + 50 * grid.height / 35
+        local minimum = 150 + 50 * builder.height / 35
 
         rooms.connect(builder, minimum,
             subdivision.range(builder, 2 * minimum, 3 * minimum))

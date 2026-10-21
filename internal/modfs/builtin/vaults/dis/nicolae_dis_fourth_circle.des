@@ -1,0 +1,22 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_fourth_circle).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:  nicolae_dis_fourth_circle
+TAGS:  transparent
+DEPTH: Dis:2-, !Dis:$
+KMONS: 1 = stone giant ; large rock . giant club good_item | \
+                                      giant spiked club good_item
+KMONS: 2 = ancient champion ; morningstar good_item | dire flail good_item | \
+                              eveningstar good_item | great mace good_item
+TILE:   G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+vvvvvvvvvvvvvvv
+vvGvvvv11111vvv
+v...vG.......Gv
+v...v.........v
+v.{.+.........+
+v...v.........v
+v...vG.......Gv
+vvGvvvv22222vvv
+vvvvvvvvvvvvvvv
+ENDMAP

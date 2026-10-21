@@ -1,0 +1,40 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:511
+NAME:    nicolae_tar_fractal_crypt
+DEPTH:   Tar, !Tar:$
+TAGS:    transparent
+ORIENT:  centre
+SHUFFLE: ae, bf, cg, dh
+SUBST:   e : ae, f : bf, g : cg, h : dh
+NSUBST:  a = + / x, b = + / x, c = + / x, d = + / x, e = + / x, f = + / x, \
+         g = + / x, h = + / x, > = 1:} / 1:>.. / .
+SUBST:   d = x, 0 = 0009.., 9 = 998, X = ..x
+KMONS:   0 = 0 / 0 band w:5
+KMONS:   9 = 9 band
+KMONS:   8 = 8 band
+MAP
+xaxxxaxaxxxaxexxxexexxxex
+h..x..x..x..x..x..x..x..b
+xX.X.XxX.X.XxX.X.XxX.X.Xx
+xxX0XxxxX0XxxxX0XxxxX0Xxx
+x..X..X..X..x..X..X..X..x
+h.Xx.....x.>x>.x.....xX.b
+xxxxX.0.XxxxxxxxX.0.Xxxxx
+h.Xx.....xxxxxxx.....xX.b
+x..X..X...XXXXX...X..X..x
+xxX0Xxxx.........xxxX0Xxx
+x..X..xxX.0...0.Xxx..X..x
+h.Xx.>xxX.......Xxx>.xX.b
+xxxxxxxxX...9...Xxxxxxxxx
+d.Xx.>xxX.......Xxx>.xX.f
+x..X..xxX.0...0.Xxx..X..x
+xxX0Xxxx.........xxxX0Xxx
+x..X..X...XXXXX...X..X..x
+d.Xx.....xxxxxxx.....xX.f
+xxxxX.0.XxxxxxxxX.0.Xxxxx
+d.Xx.....x.>x>.x.....xX.f
+x..X..X..X..x..X..X..X..x
+xxX0XxxxX0XxxxX0XxxxX0Xxx
+xX.X.XxX.X.XxX.X.XxX.X.Xx
+d.Xx..x..x..x..x..x..x..f
+xgxxxgxgxxxgxcxxxcxcxxxcx
+ENDMAP

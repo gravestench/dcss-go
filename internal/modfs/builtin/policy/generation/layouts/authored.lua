@@ -11,7 +11,7 @@ local authored = {}
 -- adds ordinary stairs afterward and keeps the map's typed effects for
 -- later population and save processing.
 function authored.execute(api)
-    local builder = grid.new(api.ctx)
+    local builder = grid.new(api.ctx, api.width, api.height)
     local player = {
         branch_id = api.branch_id,
         depth = api.depth,

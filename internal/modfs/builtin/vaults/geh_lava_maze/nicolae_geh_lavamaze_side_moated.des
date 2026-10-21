@@ -1,0 +1,21 @@
+# nicolae_geh_lavamaze_side_moated is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:  nicolae_geh_lavamaze_side_moated
+TAGS: unrand transparent nico_lavamaze_side
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "side", true )
+MAP
+            .....
+           ...0...
+          xll...llx
+         xllcc+ccllx
+        xllcc...ccllx
+       xxlcc..9..cclxx
+      xxxlc0.....0clxxx
+     xxxxlc...c...clxxxx
+    xxxxxlc0.....0clxxxxx
+   xxxxxxlcc.._..cclxxxxxx
+  xxxxxxxllcc...ccllxxxxxxx
+ xxxxxxxxxllcccccllxxxxxxxxx
+xxxxxxxxxxxlllllllxxxxxxxxxxx
+ENDMAP

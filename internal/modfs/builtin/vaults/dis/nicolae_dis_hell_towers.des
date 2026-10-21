@@ -1,0 +1,31 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_hell_towers).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    nicolae_dis_hell_towers
+DEPTH: Dis, !Dis:$
+ORIENT:  encompass
+TAGS:    no_monster_gen
+SHUFFLE: {}
+NSUBST:  a = + / v, b = + / v, c = + / v, d = + / v
+SUBST:   2 = 2., 0 = 00.
+KMONS:   12 = hell sentinel / iron giant
+MAP
+  vvvvv     vvvvv
+ vv...vv   vv...vv
+vv..0..vv vv..0..vv
+v.......vvv.......v
+v.0.2.0.+.+.0.2.0.v
+v.......vvv.......v
+vv..0..vvvvv..0..vv
+vvv...vvlllvv...vv
+  vv+vvlllllvv+vv
+   v.+..1}llvv{v
+  vv+vvlllllvv+vv
+ vv...vvlllvv...vv
+vv..0..vvvvv..0..vv
+v.......vvv.......v
+v.0.2.0.+.+.0.2.0.v
+v.......vvv.......v
+vv..0..vv vv..0..vv
+ vv...vv   vv...vv
+  vvvvvv    vvvvv
+ENDMAP

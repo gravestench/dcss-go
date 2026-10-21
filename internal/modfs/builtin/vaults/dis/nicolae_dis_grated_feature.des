@@ -1,0 +1,18 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_grated_feature).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:  nicolae_dis_grated_feature
+TAGS:  transparent allow_dup
+DEPTH: Dis, !Dis:$
+KPROP: v = no_tele_into
+KFEAT: ! = iron_grate
+KMASK: vbGl = opaque
+SUBST: v : vbGl
+: vault.run("shared.iron_statue_name")
+TILE:  G = dngn_statue_iron / dngn_statue_iron_golem
+MAP
+.....
+.!!!.
+.!v!.
+.!!!.
+.....
+ENDMAP

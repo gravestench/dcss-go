@@ -1,0 +1,30 @@
+# nicolae_geh_erupted_tower is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:   nicolae_geh_erupted_tower
+TAGS:   transparent patrolling
+DEPTH:  Geh, !Geh:$
+ORIENT: centre
+KMONS:  1} = salamander tyrant / stoker w:5
+KFEAT:  1 = l
+KFEAT:  } = }
+SUBST:  L = l., 0 = .0, 0 = 009, 9 = 998
+MAP
+  llllL..Ll..ll
+ .Ll.L.0lll.l..l
+..L.l..l...l.0lL.
+.L.0.lclcccl....L
+L.l.Lccl...lcL.Ll
+ll..cl...1.lcc.lL
+..lllc.l.ll.cl.l.
+.l..c.1.ll...cl.L
+l0..c...l}.9.lc0.
+...c..l.l....lc..
+.l.cc..lll1.ccll.
+..llcc.1l..lccL.L
+ll..clll..lcllll.
+.L...llccclc...l.
+..lL0.llL...l0L.l
+ l.L.l..l0L.lll.
+  ..ll...l...l.
+ENDMAP

@@ -62,8 +62,8 @@ function spotty.carve(builder, boxy, iterations)
                 return
             end
 
-            x = 4 + builder:roll(grid.width - 8)
-            y = 4 + builder:roll(grid.height - 8)
+            x = 4 + builder:roll(builder.width - 8)
+            y = 4 + builder:roll(builder.height - 8)
         until not surrounded(builder, x, y)
 
         patch(builder, x, y, boxy)
@@ -91,8 +91,8 @@ function spotty.smear(builder, iterations, boxy, onto, smear)
                 return
             end
 
-            x = 1 + builder:roll(grid.width - 2)
-            y = 1 + builder:roll(grid.height - 2)
+            x = 1 + builder:roll(builder.width - 2)
+            y = 1 + builder:roll(builder.height - 2)
             adjacent = builder:cell(x + 1, y) == smear or
                 builder:cell(x - 1, y) == smear or
                 builder:cell(x, y + 1) == smear or

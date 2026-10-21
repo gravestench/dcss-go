@@ -1,0 +1,29 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:651
+NAME:    nicolae_tar_combbox
+TAGS:    transparent
+DEPTH:   Tar
+: vault.run("stair_substitution")
+# Source Lua: : if you.depth() == 1 then
+# Source Lua: SUBST:   { = }
+# Source Lua: : elseif you.depth_fraction() < 1 then
+# Source Lua: SUBST:   { = {}
+# Source Lua: : end
+SHUFFLE: DEFHJ
+SUBST:   DE : x, F : m, H : xm, J : xm, 0 = .009, 9 = 998
+MAP
+  x x x x x x
+ xxxxxxxxxxxxx
+xxx.x.x.x.x.xxx
+ x.0...0...0.x
+xxx..D...D..xxx
+ x..DEx.xED..x
+xxx..F...F..xxx
+ x.0HJ.{.JH0.x
+xxx..F...F..xxx
+ x..DEFJFED..x
+xxx..D.H.D..xxx
+ x.0...0...0.x
+xxx.x.....x.xxx
+ xxxxx...xxxxx
+  x x  @  x x
+ENDMAP

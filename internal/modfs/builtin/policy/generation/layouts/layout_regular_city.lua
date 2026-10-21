@@ -62,8 +62,8 @@ end
 -- Reserve the source's eight-cell border and street field. Other vaults
 -- will later fit into this open space without replacing room walls.
 local function streets(builder)
-    for y = 8, grid.height - 9 do
-        for x = 8, grid.width - 9 do
+    for y = 8, builder.height - 9 do
+        for x = 8, builder.width - 9 do
             builder:set(x, y, ".")
         end
     end
@@ -72,9 +72,14 @@ end
 -- A room must stay inside the open field and avoid a previously painted
 -- building, door, or authored vault cell in its padded rectangle.
 local function free_site(builder, room)
-    if room.x1 < 9 or room.y1 < 9 or
-        room.x2 > grid.width - 10 or
-        room.y2 > grid.height - 10 then
+    -- The source still iterates its five-by-four lattice on compact Dis.
+    -- Columns outside the 40x35 builder are clipped to its edge, which can
+    -- reverse a room's bounds. Reject that empty rectangle before a later
+    -- entrance draw can place a door beyond the level.
+    if room.x1 >= room.x2 or room.y1 >= room.y2 or
+        room.x1 < 9 or room.y1 < 9 or
+        room.x2 > builder.width - 10 or
+        room.y2 > builder.height - 10 then
         return false
     end
 
@@ -185,9 +190,9 @@ local function building(builder, column, row, options)
     local room = {
         x1 = math.max(9, x + average(builder, options.max_inset)),
         y1 = math.max(9, y + average(builder, options.max_inset)),
-        x2 = math.min(grid.width - 10,
+        x2 = math.min(builder.width - 10,
             x + 11 - average(builder, options.max_inset)),
-        y2 = math.min(grid.height - 10,
+        y2 = math.min(builder.height - 10,
             y + 11 - average(builder, options.max_inset)),
     }
 
@@ -298,7 +303,7 @@ end
 -- Build the source's five-by-four city grid, then open its chosen room
 -- entrances after every wall has been placed.
 function layout.layout_regular_city(api)
-    local builder = grid.new(api.ctx)
+    local builder = grid.new(api.ctx, api.width, api.height)
     local options = settings(builder, api)
     local rooms = {}
 

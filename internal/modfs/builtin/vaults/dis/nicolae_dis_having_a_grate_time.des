@@ -1,0 +1,25 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_having_a_grate_time).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:  nicolae_dis_having_a_grate_time
+TAGS:  transparent
+DEPTH: Dis, !Dis:$
+KMONS: 1 = tormentor / hellion / nothing w:5
+KFEAT: ' = iron_grate
+SUBST: v : vvvb, 0 = .009, 9 = 998
+MAP
+'''.'''''''.'''
+'v'....0....'v'
+'''.'''.'''.'''
+...0'v'.'v'0...
+'.'''''.'''''.'
+'.'v'..1..'v'.'
+'.'''..'..'''.'
+'0...1'}'1...0'
+'.'''..'..'''.'
+'.'v'..1..'v'.'
+'.'''''.'''''.'
+...0'v'.'v'0...
+'''.'''.'''.'''
+'v'....0....'v'
+'''.'''''''.'''
+ENDMAP

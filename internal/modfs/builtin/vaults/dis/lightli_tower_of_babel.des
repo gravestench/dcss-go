@@ -1,0 +1,44 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (lightli_tower_of_babel).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   lightli_tower_of_babel
+DEPTH: Dis, !Dis:$
+TAGS:   no_monster_gen no_item_gen
+ORIENT: encompass
+NSUBST: > = 1:2 / *:....0>
+NSUBST: 9 = 1:8 / *:9
+KMONS:  2 = patrolling iron giant
+KFEAT:  2 = }
+TILE:   c = wall_marble
+MAP
+            vvvvv
+       vvvvvv...vvvvv
+    vvvvv...........vvvvv
+ vvvv........0.0........vvvv
+vv.........c.....c.........vv
+v..>.cc....0..c..0....cc.>..v
+v....cc.......9.......cc....v
+v......v.............v......v
+v.......v...vv.vv...v.......v
+v........vvvv...vvvv........v
+v........vvvv...vvvv........v
+v.......vvvvv...vvvvv.......v
+v..c0...vvvvvv.vvvvvv...0c..v
+v......vvvvvvv+vvvvvvv......v
+v.0....v...vv...vv...v....0.v
+v...c9......+.{.+......9c...v
+v.0....v...vv...vv...v....0.v
+v......vvvvvvv+vvvvvvv......v
+v..c0...vvvvvv.vvvvvv...0...v
+v.......vvvvv...vvvvv....c..v
+v........vvvv...vvvv........v
+v........vvvv...vvvv........v
+v.......v...vv.vv...v.......v
+v......v.............v......v
+v....cc.......9.......cc....v
+v..>.cc....0..c..0....cc.>..v
+vv.........c.....c.........vv
+ vvvv........0.0........vvvv
+    vvvvv...........vvvvv
+        vvvvv...vvvvv
+            vvvvv
+ENDMAP

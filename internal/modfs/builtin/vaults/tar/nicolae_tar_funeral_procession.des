@@ -1,0 +1,19 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/tar.des:817
+NAME:   nicolae_tar_funeral_procession
+TAGS:   transparent
+DEPTH:  Tar
+ORIENT: centre
+SUBST:  0 = .009, 9 = 998
+MAP
+ x....@....x
+xxxmmmmmmmxxx
+.x.........x.
+..0.x.9.x.0..
+.............
+@.x.0.x.0.x.@
+.............
+..0.x.9.x.0..
+.x.........x.
+xxxmmmmmmmxxx
+ x....@....x
+ENDMAP

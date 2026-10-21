@@ -434,9 +434,9 @@ function graph.regions(builder, passable)
         { x = 0, y = -1 },
     }
 
-    for y = 1, grid.height - 2 do
-        for x = 1, grid.width - 2 do
-            local first_key = y * grid.width + x
+    for y = 1, builder.height - 2 do
+        for x = 1, builder.width - 2 do
+            local first_key = y * builder.width + x
             local glyph = builder:cell(x, y)
 
             if not visited[first_key] and passable[glyph] then
@@ -454,7 +454,7 @@ function graph.regions(builder, passable)
                     for _, direction in ipairs(directions) do
                         local next_x = point.x + direction.x
                         local next_y = point.y + direction.y
-                        local next_key = next_y * grid.width + next_x
+                        local next_key = next_y * builder.width + next_x
                         local next_glyph = builder:cell(next_x, next_y)
 
                         if builder:inside({ x = next_x, y = next_y }) and

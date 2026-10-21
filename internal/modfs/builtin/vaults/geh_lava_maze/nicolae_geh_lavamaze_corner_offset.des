@@ -1,0 +1,27 @@
+# nicolae_geh_lavamaze_corner_offset is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:     nicolae_geh_lavamaze_corner_offset
+SUBVAULT: D : nico_lavamaze_oct
+SUBST:    - = lx.
+CLEAR:    D
+TAGS: unrand transparent nico_lavamaze_corner
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "corner", true )
+MAP
+xxxxxxxxxxx..
+xxxxxxxx-....
+Dxxxxxl.....-
+DDxxxll.0..-xxxx
+DDDxxll...-xxxxx
+DDDDxxl...-xxxxx
+DDDDDxx-...-xxxx
+DDDDDDxx-...-xxx
+DDDDDDDxx-.0.-xx
+DDDDDDDDxx-...-x
+DDDDDDDDDxx-...-
+DDDDDDDDDDxx-.0.
+DDDDDDDDDDDx-...
+DDDDDDDDDDDD-...
+DDDDDDDDDDDDD..-
+DDDDDDDDDDDDD.-x
+ENDMAP

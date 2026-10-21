@@ -1,0 +1,24 @@
+# Ported from the pinned DCSS hells.des map nicolae_hells_demon_pit.
+NAME:   nicolae_hells_demon_pit
+TAGS:   transparent
+DEPTH:  Dis, !Dis:$, Geh, !Geh:$, Coc, !Coc:$, Tar, !Tar:$
+ORIENT: centre
+: vault.run("configure")
+SUBST:  D = c.
+MAP
+  ...ccDD....
+ ..cc...cc.c..
+..Dc.cD2..DcD..
+.Dc2c...cc.2c..
+.c.c..D...c.cc.
+c.D..cDcDD.c.c.
+D.c.c....c..c.D
+c.2.Dc1}.2c.D2c
+.c..c....cD.c.c
+Dc....cD.c..c.D
+.cD.c...c..c.c.
+.Dc2.DccD...2c.
+..ccD..2..cDc..
+ ..D.cccDcDc..
+  ......cc...
+ENDMAP

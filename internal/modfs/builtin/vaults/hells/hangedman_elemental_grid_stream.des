@@ -1,0 +1,51 @@
+# hangedman_elemental_grid_stream is a shared Hell source vault.
+# Source: crawl-ref/source/dat/des/branches/hells.des.
+NAME:    hangedman_elemental_grid_stream
+TAGS:    transparent no_monster_gen no_pool_fixup patrolling allow_dup
+DEPTH:   Geh, Coc, Zot:1-4
+: vault.run("configure")
+# Source Lua: :  if you.in_branch("Geh") then
+# Source Lua: KMONS:   1 = brimstone fiend
+# Source Lua: KMONS:   2 = searing wretch / balrug
+# Source Lua: KMONS:   34 = fire giant / hellephant w:5
+# Source Lua: KMONS:   56 = ancient champion ; broad axe ego:flaming ident:type | \
+# Source Lua:          halberd ego:flaming ident:type w:7 | morningstar ego:flaming ident:type
+# Source Lua: KMONS:   7 = hell hog
+# Source Lua: SUBST:   w = l, W = .
+# Source Lua: KPROP:   l = no_cloud_gen
+# Source Lua: :  elseif you.in_branch("Coc") then
+# Source Lua: KMONS:   1 = ice fiend
+# Source Lua: KMONS:   2 = wendigo band / nargun
+# Source Lua: KMONS:   34 = frost giant / shard shrike w:5
+# Source Lua: KMONS:   56 = reaper ; halberd itemname:scythe tile:wpn_scythe wtile:scythe \
+# Source Lua:          ego:freezing ident:type
+# Source Lua: KMONS:   7 = simulacrum
+# Source Lua: SUBST:   l = w, W = .
+# Source Lua: :  else
+# Source Lua: KMONS:   1 = shard shrike
+# Source Lua: KMONS:   2 = seven-headed hydra simulacrum / eight-headed hydra simulacrum
+# Source Lua: KMONS:   3 = orb of fire / hellephant w:5
+# Source Lua: KMONS:   4 = draconian scorcher
+# Source Lua: KMONS:   5 = red draconian ; cloak . mace ego:freezing ident:type
+# Source Lua: KMONS:   6 = white draconian ; cloak . mace ego:flaming ident:type
+# Source Lua: KFEAT:   1 = w
+# Source Lua: KFEAT:   3 = l
+# Source Lua: NSUBST:  0 = 1:5 / 1:6
+# Source Lua: SUBST:   x : x:9 b:1, 7 = .
+# Source Lua: :  end
+SHUFFLE: {` / `}
+SUBST:   { : .:4 A:3 B:3, } : .:2 C:3, ` = .
+NSUBST:  A = 1:{ / 1:} / *:., B = 1:{ / 1:< / *:., C = 1:} / 1:> / *:.
+MAP
+xxxx@@....
+xllxxx......
+x47llxxx........xxxx
+xll0.ll..ll...xxxwwx
+x1`ww..ww..ww..ww72x
+xww5.ww{WwwW{ww.6wwx
+x47ww..ww..ww..ll`3x
+xwwxxx...ll..ll.0llx
+xxxx........xxxll72x
+        ......xxxllx
+          ....@@xxxx
+ENDMAP

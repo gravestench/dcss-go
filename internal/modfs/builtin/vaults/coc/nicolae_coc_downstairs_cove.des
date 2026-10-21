@@ -1,0 +1,19 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:371
+NAME:  nicolae_coc_downstairs_cove
+TAGS:  transparent no_pool_fixup
+DEPTH: Coc, !Coc:$
+KFEAT: @ = W
+SUBST: - = xx., ~ = ww., ! = wx., 0 = 0009, 9 = 998
+MAP
+ xxxxx@Www
+xx-....Wwww
+x-.0.~wwwww
+x..!!xwwwww
+x0xxxx~.~ww
+x..-xx.}.ww
+xx.-xx-..ww
+x-..-xx8~ww
+x-9...x.~ww
+xx--x...~ww
+ xxxxxxxxw
+ENDMAP

@@ -1,0 +1,54 @@
+# nicolae_geh_realm_of_the_lava_sea is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:    nicolae_geh_realm_of_the_lava_sea
+DEPTH:   Geh:2-, !Geh:$
+ORIENT:  encompass
+KMONS:   } = 8
+KFEAT:   ~ = endless_lava
+KFEAT:   } = }
+: vault.run("border_fill")
+# Source Lua: : set_border_fill_type('endless_lava')
+SHUFFLE: DE, FH, JK/LM, NO/PQ/RS, pq/rs, Zz/ay, '"/-_
+SUBST:   DFJNPpZ' = l, EHLRra- = ., KOQqz" = c, MSsy_ = +, ` = l., \
+         0 = 0009, 9 = 9998, ! = }.., 7 = cccccccl
+NSUBST:  } = } / 9
+MAP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~llllllllllllllllcccccllllllllllllll~
+~ll77llllllllllllc...cll77`.......ll~
+~ll77`...`lll77llc.}.cll77`.ccccc.`l~
+~lll.!.cccccl77llc...clll`..c...c.`l~
+~lll...c...c'''llcc+cc......+.}.c!`l~
+~llll`.+.}."'''''ll....`l`..c...clll~
+~llllllc...c'''''''..`llllllcc+cclll~
+~lll77lcc_cclll''''..llll77ll...llll~
+~lll77ll---llll77''..`laa77lll..77ll~
+~lllllll---llHH77ll...aaaalllll`77ll~
+~llllRRR..HHHHHHHHH...77aaallll..lll~
+~lllRRR...HHHllHHH.0.l77laaalll..lll~
+~llRRRl...ll77llll...lllllaaalcc+ccl~
+~llRR77lFFll77lllcc+cclllllaaac...cl~
+~llRR77lFFFlllllcc...cclll77aay.}.cl~
+~lllRRllllFFFllccl...lccll77lac...cl~
+~llccScclllFF..c.......c.lllllcczccl~
+~l.c...cPPP..0.+...{...+.0`llllZZZll~
+~l!+.}.QPPPP...c.......c...`l77ZZlll~
+~l.c...cllllEEEccl...lcc`...`77ZZlll~
+~llccOcclEEEEEllcc...ccll`....ZZl77l~
+~lllNNNlEEEE77lllcc+ccllll`....Zl77l~
+~l77lNNN.EEl77llll...ll77lll`..rrlll~
+~l77lNN....DDDDll`.0.ll77llll77rrrll~
+~lllllL...DDDDDDD...`lll`.`ll77lrrll~
+~llllLLL..DllDDDD...llll`!...llllrrl~
+~llllLLLll77llll`...plll`.cc+ccllrrl~
+~77llLLLll77lJJJ...ppp77l`c...crrrll~
+~77lllLLLlllJJJJ...ppp77llc.}.srrlll~
+~llllccMcclJJJll`..llpppllc...clllll~
+~llllc...cJJJlllcc+cclppplccqccl77ll~
+~ll..+.}.KJJ77llc...cllpppppplll77ll~
+~ll..c...cJl77ll+.}.+...pppp77llllll~
+~ll..cccccllllllc...c....`ll77llllll~
+~lll..!lllllllllccccclllllllllllllll~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ENDMAP

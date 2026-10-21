@@ -1,0 +1,23 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_pentagon_2).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   nicolae_dis_pentagon_2
+TAGS:   transparent
+DEPTH:  Dis:2-, !Dis:$
+ORIENT: centre
+SUBST:  0 = 009, 9 = 998
+MAP
+     vvvv+v
+ +vvvv....v
+ v......0.vv
+ v.0.......v
+ v.........vv
+vv..........v
+v...........vv
+v......{..0..+
+v.0.........vv
++..........vv
+vvv....0..vv
+  vvv....vv
+    vvv.vv
+      v+v
+ENDMAP

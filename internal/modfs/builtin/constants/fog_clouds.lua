@@ -4,9 +4,12 @@ local clouds = require("ids.clouds")
 
 return {
     ["black smoke"] = clouds.CLOUD_BLACK_SMOKE,
+    ["acidic fog"] = clouds.CLOUD_ACID,
     ["blessed fire"] = clouds.CLOUD_HOLY,
     ["blue smoke"] = clouds.CLOUD_BLUE_SMOKE,
+    ["calcifying dust"] = clouds.CLOUD_PETRIFY,
     ["flame"] = clouds.CLOUD_FIRE,
+    ["degeneration"] = clouds.CLOUD_DEGENERATION,
     ["foul pestilence"] = clouds.CLOUD_MIASMA,
     ["freezing vapour"] = clouds.CLOUD_COLD,
     ["grey smoke"] = clouds.CLOUD_GREY_SMOKE,

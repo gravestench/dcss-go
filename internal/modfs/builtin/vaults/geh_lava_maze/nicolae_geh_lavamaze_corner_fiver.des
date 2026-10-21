@@ -1,0 +1,27 @@
+# nicolae_geh_lavamaze_corner_fiver is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:    nicolae_geh_lavamaze_corner_fiver
+NSUBST:  _ = _ / .
+SHUFFLE: DE, FH, JK
+SUBST:   ` = xll..., DFJ = x, EHK = .
+TAGS: unrand transparent nico_lavamaze_corner
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "corner", true )
+MAP
+`.`xxxx``...`
+._.xxx`..`...
+`..xx`.0..``x
+x.0xx...Dxxxxx.`
+x..``...D..`x`..
+x`...`.`D._.x`..
+x`.0..`xx`..E.`.
+x`..FFFxxxxEE..`
+x.`.F..`xx`..0.`
+x..`x._.x`....`x
+x0.xx`..x``..`xx
+xJJJxxHHH..`xxxx
+x...Kx...0.`xxxx
+x._.K..`....0..`
+x`..K0..```..._.
+xxxxxxxxxxxxx`.`
+ENDMAP

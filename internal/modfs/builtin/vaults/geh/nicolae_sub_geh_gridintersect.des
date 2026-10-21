@@ -1,0 +1,14 @@
+# nicolae_sub_geh_gridintersect is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME: nicolae_sub_geh_gridintersect
+DEPTH: Geh
+TAGS: unrand transparent nico_lavagrid allow_dup
+MAP
+  ll
+  ll
+..  ..
+..  ..
+  ..
+  ..
+ENDMAP

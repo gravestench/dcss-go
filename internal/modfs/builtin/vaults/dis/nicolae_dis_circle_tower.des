@@ -1,0 +1,35 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_circle_tower).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:   nicolae_dis_circle_tower
+TAGS:   transparent
+DEPTH:  Dis, !Dis:$
+ORIENT: centre
+NSUBST: D = vvv+ / +, E = vvv+ / +, F = vvv+ / +, H = vvv+ / +, Q = + / vv+
+: vault.run("configure")
+# Source Lua: : if you.depth() == 1 then
+# Source Lua directive: SUBST:  { = }
+# Source Lua: : elseif you.depth_fraction() < 1 then
+# Source Lua directive: SUBST:  { = {}
+# Source Lua: : end
+SUBST:  0 = ...0000099, 9 = 998
+TILE:   G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+     vvvQvvv
+   vvv.....vvv
+  vvG...0...Gvv
+ vvvvvDvvvDvvvvv
+ vGvG..0v0..GvGv
+vv.v....D....v.vv
+v..H..{.v....E..v
+v..v0...v...0v..v
+Q.0vvHvvvvvEvv0.Q
+v..v0...v...0v..v
+v..H....v....E..v
+vv.v....F....v.vv
+ vGvG..0v0..GvGv
+ vvvvvFvvvFvvvvv
+  vvG...0...Gvv
+   vvv.....vvv
+     vvvQvvv
+ENDMAP

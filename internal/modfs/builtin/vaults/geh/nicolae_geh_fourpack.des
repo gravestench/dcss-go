@@ -1,0 +1,26 @@
+# nicolae_geh_fourpack is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:   nicolae_geh_fourpack
+TAGS:   transparent
+DEPTH:  Geh, !Geh:$
+KMONS:  } = 9 / 8
+KFEAT:  } = }
+NSUBST: DEON = 1=+, FHOP = 1=+, JKPQ = 1=+, LMNQ = 1=+, DEFHJKLM = 1=+, \
+        Z = + / +cc, } = }9.. / 9.
+SUBST:  DEFHJKLMNOPQ = c
+MAP
+  cEc   cFc
+ cc.cc cc.cc
+cc...ccc...cc
+D..}..O..}..H
+cc...ccc...cc
+ cc.cZlZc.cc
+  cNclllcPc
+ cc.cZlZc.cc
+cc...ccc...cc
+M..}..Q..}..J
+cc...ccc...cc
+ cc.cc cc.cc
+  cLc   cKc
+ENDMAP

@@ -1,0 +1,33 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:196
+NAME:   nicolae_coc_bergin
+TAGS:   transparent no_pool_fixup
+DEPTH:  Coc:2-
+ORIENT: centre
+KFEAT:  0 = W
+KMONS:  0 = 0 w:12 / 9 w:3 / 8 w:1
+NSUBST: { = 1={ / .
+SUBST:  M = Wwww x:5 .:1, w = w:20 x:1, W = W 0:1
+MAP
+   wwM..@..Mw  wwM.@M
+  wwwwM...MwwwwwwM..ww
+ wwwwwwMWWwwwwwwwMWMww
+wwwwwwwwMWwwwwwwwMWwww
+wwwwwwwwMWwwwwwwMWMww
+MMwMMwwwwWWMwwwMWMww
+@.WWWWMMwwWwwwMWMwww
+MMwwwMWWWWWwwwWMwwwww
+wwwwMWWwwwWWwWWMwwwMww
+ wwwMWMwwM..WWwwMMMW..
+ wwwWMwwM.{{.wwwMWWW.@
+ wwWWWwwM.{{.WWWWMwMMM
+wwMWMwMwMM..WWMMMwwwww
+MMWWwwwMwWWMMWWwwwwww
+..WMwwwwWWMwwwWMwwww
+@.MwwwwwMWwwwwMWMwww
+MMwwwwwMWWwwwwwMWWww
+wwwwwwwMWMwwwwwwMWMww
+wwwwwMMWMwwwwwwwwWWMMM
+ wwwwMWWMwwwwwwwwMWW.M
+  wwwM...MwwwwwwwwWM..
+   wM..@.Mww     wM..@
+ENDMAP

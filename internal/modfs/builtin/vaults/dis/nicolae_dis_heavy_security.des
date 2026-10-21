@@ -1,0 +1,30 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (nicolae_dis_heavy_security).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    nicolae_dis_heavy_security
+TAGS:    transparent
+DEPTH:   Dis, !Dis:$
+ORIENT:  centre
+KPROP:   ` = no_tele_into
+KMONS:   1} = hell sentinel w:20 / hellion / tormentor
+KFEAT:   ! = iron_grate
+KFEAT:   } = }
+KMASK:   ` = opaque
+SHUFFLE: LMNO, PQRSZapqrsyz
+SUBST:   MNOP = !, LQRSZapqrsyz = ., - = 1..
+MAP
+  `` `` `` ``..
+ v!!v!!v!!v!!v.
+`!..P..Q..R..L.
+`!.1P.-Q-.R1.L.
+ vzzv!!v!!vSSv.
+`!........!..M.
+`!.-......!-.M.
+ vyyv..}..vZZv.
+`!.-!.....!-.N.
+`!..!.....!..N.
+ vssv!!v!!vaav.
+`!.1r.-q-.p1.O.
+`!..r..q..p..O.
+ v!!v!!v!!v!!v.
+  `` `` `` ``..
+ENDMAP

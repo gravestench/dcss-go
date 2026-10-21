@@ -1,0 +1,30 @@
+# nicolae_geh_seventh_circle is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:   nicolae_geh_seventh_circle
+TAGS:   transparent
+DEPTH:  Geh
+ORIENT: centre
+KMONS:  1 = ancient champion ; longbow ego:flaming | arbalest ego:flaming
+KMONS:  2 = stoker
+KMONS:  3 = spectral harpy
+KFEAT:  t = demonic_tree
+KFEAT:  2 = l
+SUBST:  L = l., 1 = 11., 2 = 22l, T = tttt3, 7 = tt_
+CLEAR:  _
+MAP
+    77777777777ttt
+  77ttttttttttttTTT...
+ 7tttTTTtTTTtttTT.....
+ 7tTTT.TTT.TTtTT..1ll.
+ TTT....1...TTT...llL.
+ .....Ll2lL...1..l2L..
+...1Llllll2lL..LllL...
+...LllL..Ll2lllllL1...
+..L2l...1..Ll2lL.....
+.Lll...TTT...1....TTT
+.ll1..TTtTT.TTT.TTTt7
+.....TTtttTTTtTTTttt7
+...TTTtttttttttttt77
+    ttt77777777777
+ENDMAP

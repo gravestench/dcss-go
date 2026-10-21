@@ -1,0 +1,26 @@
+# nicolae_geh_lavamaze_corner_big_pool is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:   nicolae_geh_lavamaze_corner_big_pool
+NSUBST: _ = _ / .
+SUBST:  - = x.., L = l..
+TAGS: unrand transparent nico_lavamaze_corner
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "corner", true )
+MAP
+xxxxx__xxxxxx
+_..x-..-x.._x
+x..-.0..-..xx
+x-..LLLL..-xxx..
+x-.LllllL.-xxx..
+-.LllllllL.-x-..
+-.LllllllL.-x..0
+-0LllllllL0-x...
+-.LllllllL.-x..-
+x-.LllllL.-xx..x
+x-..LLLL..-x-..x
+xx......--xx...x
+x...----xxx.0.-x
+x.0.xxxxx-...-xx
+x-..........-xxx
+xx-.......-xxxxx
+ENDMAP

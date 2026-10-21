@@ -2,7 +2,6 @@
 local connect = {}
 local effects = require("constants.vault_effects")
 local glyphs = require("constants.vault_glyphs")
-local grid = require("policy.generation.grid")
 local hooks = require("policy.generation.vaults.hooks")
 local history = require("policy.population.unique_history")
 local runes = require("policy.character.runes")
@@ -28,7 +27,7 @@ local function outside(bounds, x, y)
 end
 
 -- Find the shortest map-edge escape route before searching ordinary floor.
-local function closest_edge(point, bounds)
+local function closest_edge(builder, point, bounds)
     local candidates = {
         { distance = point.x - bounds.x, x = bounds.x - 1, y = point.y },
         {
@@ -47,10 +46,10 @@ local function closest_edge(point, bounds)
 
     for _, candidate in ipairs(candidates) do
         -- An encompass map may touch the grid boundary. Its nearest
-        -- geometric edge can be outside the 80x70 level, so choose the
+        -- geometric edge can be outside this level, so choose the
         -- nearest edge that can actually lead to another floor cell.
-        if candidate.x > 0 and candidate.x < grid.width - 1 and
-            candidate.y > 0 and candidate.y < grid.height - 1 and
+        if candidate.x > 0 and candidate.x < builder.width - 1 and
+            candidate.y > 0 and candidate.y < builder.height - 1 and
             (not chosen or candidate.distance < chosen.distance) then
             chosen = candidate
         end
@@ -92,8 +91,8 @@ local function nearest_outside_floor(builder, bounds, from)
     local best
     local best_distance
 
-    for y = 1, 68 do
-        for x = 1, 78 do
+    for y = 1, builder.height - 2 do
+        for x = 1, builder.width - 2 do
             if outside(bounds, x, y) and builder:cell(x, y) == "." then
                 local distance = math.abs(x - from.x) + math.abs(y - from.y)
 
@@ -115,9 +114,10 @@ local directions = {
     { x = 0, y = -1 },
 }
 
--- Exclude the Dungeon border while finding walkable connector cells.
+-- Exclude the current builder's border while finding connector cells.
 local function interior(builder, x, y)
-    return x > 0 and y > 0 and x < 79 and y < 69 and
+    return x > 0 and y > 0 and x < builder.width - 1 and
+        y < builder.height - 1 and
         builder:cell(x, y) ~= nil
 end
 
@@ -312,7 +312,7 @@ function connect.finish(ctx, builder, placed, required)
     end
 
     for _, from in ipairs(connectors) do
-        local edge = closest_edge(from, placed.bounds)
+        local edge = closest_edge(builder, from, placed.bounds)
         local target = edge and nearest_outside_floor(builder,
             placed.bounds, edge)
 

@@ -1,0 +1,42 @@
+# nicolae_geh_lavamaze_diaghalf_cornered is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:    nicolae_geh_lavamaze_diaghalf_cornered
+SHUFFLE: DEF, HJK, LMNO, PQR, SZa, pq, rs, pry
+SUBST:   DEHJLPQSZpr = ., MNqs = x, F : lx, K : lx, O : lx, R : lx, a : lx, \
+         y : lx
+TAGS: unrand transparent nico_lavamaze_diaghalf
+: vault.run("shared.setup_monsters")
+# Source Lua: : nicolae_geh_maze_setup( _G, "diaghalf", true )
+MAP
+x
+xx
+xxx
+xxxx
+x...x
+x.0.xx
+x...EEE
+xDDxEEEE
+DDxxxxEEx
+DDxxxxxEEx
+xDDxxxxx...
+xDDxxxFF.0.x
+xDDxxFFF...px
+DDxxxFFxRRppp
+...xxFFxRRxp.
+.0.FFFFxRRxx.
+...FFFxxRRxx.
+xPPxxxxxRRxqq
+x...QQQ...qqqxx....
+x.0.QQQ.0.qxxxr.....
+L...xxM...xxrrrxxxssx
+LLxxxMMMyyxrrxxx...xxx
+LLxxMMMxxyyrrSSS.0.HHHx
+LLxMMMxxxx...SSS...HHHHx
+xLLMMxxNNN.0.xxxJJxxxHHHx
+x...lxNNNN...xxJJxxxxxHHxx
+l.0.llNxxxxZZxxJJxxxxxx...x
+l.....Nx...ZZxxJJxxxKKK.0.xx
+l._.0.xx.0.xxxx...xxKKK...xxx
+l.....OO...aaaa.0.KKKxxxxxxxxx
+xllllxOOxxaaaaa...KKKxxxxxxxxxx
+ENDMAP

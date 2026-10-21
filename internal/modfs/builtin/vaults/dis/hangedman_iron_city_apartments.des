@@ -1,0 +1,49 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des (hangedman_iron_city_apartments).
+# This independently loaded map keeps the source Dis ordinary-depth rule.
+NAME:    hangedman_iron_city_apartments
+DEPTH: Dis, !Dis:$
+TAGS:    no_pool_fixup no_monster_gen
+ORIENT:  encompass
+MONS:    ancient champion / war gargoyle / hellion / tormentor / \
+         crystal echidna w:2
+MONS:    ancient lich / dread lich / hell sentinel / iron giant / juggernaut
+KFEAT:   Z = zot trap
+NSUBST:  > = 1 = { / 1 = } / 2 = >:1 .:49
+# Always place at least one door per room, possibly wider or multiplied.
+# Variation provided across either half of the vault and per-room.
+NSUBST:  A = 1:+ / *:-, B = 1:+ / *:-, C = 1:+ / *:-, D = 1:+ / *:-
+NSUBST:  E = 1:+ / *:-, F = 1:+ / *:-, G = 1:+ / *:~, H = 1:+ / *:~
+NSUBST:  I = 1:+ / *:~, J = 1:+ / *:~, K = 1:+ / *:~, L = 1:+ / *:~
+NSUBST:  ! = 1 : +:1 v:9 / * : +:1 v:49
+SUBST:   - : -_, ~ : -_, - = vv+, _ = v++
+SUBST:   V = vvGwlZ...
+NSUBST:  Z = 2:Z / *:.
+# No more than two bosses per room, and always have some of each extreme.
+SHUFFLE: MNOPQRSTUWXY
+NSUBST:  M = 2 = 1:3 2:1 .:1 / * = 1:4 .:1, N = 2 = 1:3 2:1 .:1 / * = 1:4 .:1
+NSUBST:  O = 2 = 1:3 2:1 .:1 / * = 1:4 .:1, P = 2 = 1:3 2:1 .:1 / * = 1:4 .:1
+NSUBST:  Q = 2 = 1:3 2:1 .:1 / * = 1:4 .:1, R = 2 = 1:3 2:1 .:1 / * = 1:4 .:1
+NSUBST:  S = 2 = 1:3 2:1 .:1 / * = 1:4 .:1, T = 2 = 1:3 2:1 .:1 / * = 1:4 .:1
+NSUBST:  U = 1:. / 1:1 / * = 1:4 .:1, W = 2:. / 1:1 / 1 = 1:4 .:1
+NSUBST:  X = 1:2 / 1 = 1:3 2:1 .:1 / * = 1:4 .:1, Y = 2:2 / * = 1:4 .:1
+KMASK:   wl = no_monster_gen
+# : dis_statues(_G)
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+v...................................................v
+v...................................................v
+v..v..V...vvvBBBvvv...V...vvvDDDvvv...V...vvvFFFvv..v
+v..v......vN.....Nv.......vP.....Pv.......vR....Rv..v
+v..vvAAAvvv...V...vvvCCCvvv...V...vvvEEEvvv...V..v..v
+v..vM....MvN..>..NvO.....OvP..>..PvQ.....QvR..>.Rv..v
+v..v..V...vvvvvvvvv...V...vvvvvvvvv...V...vvvvvvvv..v
+v..vM.>..M!T..>..T!O..>..O!W..>..W!Q..>..Q!Y..>.Yv..v
+v..vvvvvvvv...V...vvvvvvvvv...V...vvvvvvvvv...V..v..v
+v..vS.>..SvT.....TvU..>..UvW.....WvX..>..XvY....Yv..v
+v..v..V...vvvHHHvvv...V...vvvJJJvvv...V...vvvLLLvv..v
+v..vS....Sv.......vU.....Uv.......vX.....Xv......v..v
+v..vvGGGvvv...V...vvvIIIvvv...V...vvvKKKvvv...V..v..v
+v...................................................v
+v...................................................v
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP

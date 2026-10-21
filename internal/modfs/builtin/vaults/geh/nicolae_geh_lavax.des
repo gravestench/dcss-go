@@ -1,0 +1,23 @@
+# nicolae_geh_lavax is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:    nicolae_geh_lavax
+TAGS:    transparent allow_dup
+DEPTH:   Geh
+SHUFFLE: DEFHJKLM/ccclllcl/ccclllll/cclcclll/ccllclcc/ccllclll/cclllccc/\
+         ccllllll/clccllll/clclcclc/clcllclc/clclllcc/cllclcll/cllcllcc/\
+         cllllccc/cllllllc/clllllll/lccllccc/lccllllc/lcclllll/lclcclcl/\
+         lclclclc/lclcllcl/lcllclcc/llcclcll/lllccccc/lllclccc/lllcllll/\
+         llllcccc/lllllccc/llllllcc
+SUBST:   DEHJL = l, FKM = c
+MAP
+  .....
+ ..DED..
+..FHJHF..
+.DHKLKHD.
+.EJLMLJE.
+.DHKLKHD.
+..FHJHF..
+ ..DED..
+  .....
+ENDMAP

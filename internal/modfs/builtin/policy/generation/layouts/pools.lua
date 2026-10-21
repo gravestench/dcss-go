@@ -1,8 +1,6 @@
 -- Source add_pools seeds several floor regions, expands them in random
 -- frontier order, and leaves paths where two different pools would touch.
 -- The policy operates on glyphs so Dungeon and Depths choose their contents.
-local grid = require("policy.generation.grid")
-
 local pools = {}
 
 local unassigned = -1
@@ -31,7 +29,7 @@ local adjacent = {
 -- Use zero-based coordinates against Lua's one-based arrays in only these
 -- two functions, keeping pool propagation readable below.
 local function get(states, x, y)
-    if x < 0 or x >= grid.width or y < 0 or y >= grid.height then
+    if x < 0 or x >= states.width or y < 0 or y >= states.height then
         return forbidden
     end
 
@@ -46,13 +44,16 @@ end
 -- Mark only ordinary floor as a potential pool. Walls and other features
 -- remain forbidden, so the pool pass cannot swallow a pre-existing stair.
 local function initial_states(builder)
-    local states = {}
+    local states = {
+        width = builder.width,
+        height = builder.height,
+    }
     local floor = {}
 
-    for y = 0, grid.height - 1 do
+    for y = 0, builder.height - 1 do
         states[y + 1] = {}
 
-        for x = 0, grid.width - 1 do
+        for x = 0, builder.width - 1 do
             if builder:cell(x, y) == "." then
                 set(states, x, y, unassigned)
                 floor[#floor + 1] = { x = x, y = y }
@@ -112,7 +113,8 @@ local function enqueue(states, frontier, point, first_ring)
         local state = get(states, x, y)
 
         if state == unassigned or (first_ring and state == forbidden and
-            x >= 0 and x < grid.width and y >= 0 and y < grid.height) then
+            x >= 0 and x < states.width and
+            y >= 0 and y < states.height) then
             set(states, x, y, open)
             frontier[#frontier + 1] = { x = x, y = y }
         end
@@ -206,8 +208,8 @@ end
 -- Paint the source result: assigned IDs use pool contents, while untouched
 -- floor and borders remain floor and forbidden cells retain their glyph.
 local function paint(builder, states, contents, border_glyph)
-    for y = 0, grid.height - 1 do
-        for x = 0, grid.width - 1 do
+    for y = 0, builder.height - 1 do
+        for x = 0, builder.width - 1 do
             local owner = get(states, x, y)
 
             if owner > 0 then

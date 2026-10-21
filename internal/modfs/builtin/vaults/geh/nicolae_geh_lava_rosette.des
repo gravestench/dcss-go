@@ -1,0 +1,25 @@
+# nicolae_geh_lava_rosette is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:    nicolae_geh_lava_rosette
+TAGS:    transparent
+DEPTH:   Geh
+SHUFFLE: DE
+SUBST:   D = l, E = .
+MAP
+ ...llll  ll..
+...lllllllll...
+...ll..llll....
+ll..........ll.
+lll.........lll
+ ll...DlE....ll
+ ll..ElllD...ll
+lll..lllll..lll
+ll...DlllE..ll
+ll....ElD...ll
+lll.........lll
+.ll..........ll
+....llll..ll...
+...lllllllll...
+ ..ll  llll...
+ENDMAP

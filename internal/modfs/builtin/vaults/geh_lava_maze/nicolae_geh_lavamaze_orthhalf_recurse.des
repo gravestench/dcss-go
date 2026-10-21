@@ -1,0 +1,38 @@
+# nicolae_geh_lavamaze_orthhalf_recurse is a Gehenna lava maze source vault.
+# Source: crawl-ref/source/dat/des/branches/geh_lava_maze.des.
+NAME:     nicolae_geh_lavamaze_orthhalf_recurse
+TAGS:     allow_dup no_dump
+WEIGHT:   80
+: vault.run("configure")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: SUBST:    q = x
+# Source Lua: SUBVAULT: DpE : nico_lavamaze_corner
+# Source Lua: SUBVAULT: FrH : nico_lavamaze_corner
+# Source Lua: : else
+# Source Lua: SUBST:    pr = x
+# Source Lua: SUBVAULT: D : nico_lavamaze_oct
+# Source Lua: SUBVAULT: EqF : nico_lavamaze_side
+# Source Lua: SUBVAULT: H : nico_lavamaze_oct
+# Source Lua: : end
+CLEAR:    DEFHpqr
+TAGS: unrand transparent nico_lavamaze_orthhalf
+: vault.run("shared.setup_quiet")
+# Source Lua: : nicolae_geh_maze_setup( _G, "orthhalf", false )
+MAP
+DDDDDDDDDDDDD       HHHHHHHHHHHHH
+DDDDDDDDDDDDD       HHHHHHHHHHHHH
+DDDDDDDDDDDDp       rHHHHHHHHHHHH
+DDDDDDDDDDDpppEEqFFrrrHHHHHHHHHHH
+DDDDDDDDDDpppEEEqFFFrrrHHHHHHHHHH
+DDDDDDDDDpppEEEEqFFFFrrrHHHHHHHHH
+DDDDDDDDpppEEEEEqFFFFFrrrHHHHHHHH
+DDDDDDDpppEEEEEEqFFFFFFrrrHHHHHHH
+DDDDDDpppEEEEEEEqFFFFFFFrrrHHHHHH
+DDDDDpppEEEEEEEEqFFFFFFFFrrrHHHHH
+DDDDpppEEEEEEEEEqFFFFFFFFFrrrHHHH
+DDDpppEEEEEEEEEEqFFFFFFFFFFrrrHHH
+DDpppEEEEEEEEEEEqFFFFFFFFFFFrrrHH
+DpppEEEEEEEEEEEEqFFFFFFFFFFFFrrrH
+pppEEEEEEEEEEEEEqFFFFFFFFFFFFFrrr
+ppEEEEEEEEEEEEEEqFFFFFFFFFFFFFFrr
+ENDMAP

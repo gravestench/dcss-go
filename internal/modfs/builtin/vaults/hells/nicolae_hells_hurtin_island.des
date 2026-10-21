@@ -1,0 +1,19 @@
+# Ported from the pinned DCSS hells.des map nicolae_hells_hurtin_island.
+NAME:  nicolae_hells_hurtin_island
+TAGS:  transparent no_pool_fixup
+DEPTH: Dis, !Dis:$, Geh, !Geh:$, Coc, !Coc:$, Tar, !Tar:$
+KMONS: 1> = tormentor / hellion / nothing
+KFEAT: ! = iron_grate
+KFEAT: > = >
+KMASK: 1> = opaque
+KMASK: 1> = no_monster_gen
+SUBST: l : lw!
+MAP
+.......
+.clllc.
+.l111l.
+.l1>1l.
+.l111l.
+.clllc.
+.......
+ENDMAP

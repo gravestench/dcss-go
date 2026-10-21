@@ -26,11 +26,11 @@ local function place_boxes(builder, fraction)
     local minimum = math.max(2,
         math.floor(8 + fraction * 2 - block_size))
     local maximum = math.floor(12 + fraction * 3 - block_size * 2)
-    local across_x = math.floor((grid.width - 17) / block_size)
-    local across_y = math.floor((grid.height - 17) / block_size)
-    local start_x = grid.width / 2 -
+    local across_x = math.floor((builder.width - 17) / block_size)
+    local across_y = math.floor((builder.height - 17) / block_size)
+    local start_x = math.floor(builder.width / 2) -
         math.floor(across_x * block_size / 2)
-    local start_y = grid.height / 2 -
+    local start_y = math.floor(builder.height / 2) -
         math.floor(across_y * block_size / 2)
 
     for _ = 1, 200 do
@@ -57,7 +57,7 @@ end
 -- Run the complete source geometry through the named DES hook, so branch
 -- choice and stair placement still belong to the production layout owner.
 function layout.layout_overlapping_boxes(api)
-    local builder = grid.new(api.ctx)
+    local builder = grid.new(api.ctx, api.width, api.height)
 
     place_boxes(builder, depth_fraction(api))
     rooms.connect(builder, 0, 1000)

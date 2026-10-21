@@ -1,0 +1,27 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/coc.des:390
+NAME:    nicolae_coc_hellspring
+TAGS:    transparent no_pool_fixup
+DEPTH:   Coc, !Coc:$
+ORIENT:  centre
+KMONS:   1 = elemental wellspring w:70 / nothing
+KFEAT:   1 = w
+SHUFFLE: DEFH, Pq/Qq/Rr/Ss, JKLMNOZa
+SUBST:   D = w, EFH = ., PQR = w, pqr = Ww, S = ., s = W., JKL = ., M : w., \
+         N : w., Za = w
+MAP
+  wwwJJwKKwww
+ wwwwJJwKKwwww
+ww1D.......E1ww
+wwDDD.....EEEww
+ww.DDwPPPwEE.ww
+aa..w1ppp1w..LL
+aa..SsWWWqQ..LL
+ww..SsW}WqQ..ww
+ZZ..SsWWWqQ..MM
+ZZ..w1rrr1w..MM
+ww.HHwRRRwFF.ww
+wwHHH.....FFFww
+ww1H.......F1ww
+ wwwwOOwNNwwww
+  wwwOOwNNwww
+ENDMAP

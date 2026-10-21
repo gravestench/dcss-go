@@ -3,4 +3,6 @@
 return {
     ENTER = "enter",
     RETURN = "return",
+    BRANCH_FLOOR = "branch_floor",
+    BRANCH_RETURN = "branch_return",
 }

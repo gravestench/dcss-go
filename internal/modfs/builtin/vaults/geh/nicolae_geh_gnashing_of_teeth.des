@@ -1,0 +1,21 @@
+# nicolae_geh_gnashing_of_teeth is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:    nicolae_geh_gnashing_of_teeth
+TAGS:    transparent
+DEPTH:   Geh, !Geh:$
+SHUFFLE: DE/FH, JK/LM
+SUBST:   DHJM = l, EK = x, FL = ..0, 0 = 009, 9 = 998
+MAP
+xxxxxxxxxxxxx
+KxMxKxMxKxMxK
+KlMlKlMlKlMlK
+JlLlJlLlJlLlJ
+J.L.J.L.J.L.J
+@..9..}..9..@
+D.F.D.F.D.F.D
+DlFlDlFlDlFlD
+ElHlElHlElHlE
+ExHxExHxExHxE
+xxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,62 @@
+# hangedman_elemental_corridor is a shared Hell source vault.
+# Source: crawl-ref/source/dat/des/branches/hells.des.
+NAME:    hangedman_elemental_corridor
+TAGS:    no_monster_gen no_pool_fixup allow_dup
+DEPTH:   Geh, Coc, Zot, !Geh:$, !Coc:$, !Zot:$, Abyss
+SHUFFLE: 123456, }{ / **
+: vault.run("configure")
+# Source Lua: :  if you.in_branch("Geh") then
+# Source Lua: MONS:    brimstone fiend / hellephant
+# Source Lua: MONS:    searing wretch / balrug / stoker w:5
+# Source Lua: SUBST:   w = l, f = F, %* = ., 2 = 1, 3456 = 2
+# Source Lua: :  elseif you.in_branch("Coc") then
+# Source Lua: MONS:    ice fiend / shard shrike
+# Source Lua: MONS:    wendigo band / simulacrum w:20
+# Source Lua: SUBST:   l = w, F = f, %* = ., 2 = 1, 3456 = 2
+# Source Lua: :  elseif you.in_branch("Abyss") then
+# Source Lua: MONS:    blizzard demon / frost giant / dancing weapon ; battleaxe ego:freezing ident:type w:5
+# Source Lua: MONS:    simulacrum w:12 / white draconian / water elemental w:5 / \
+# Source Lua:          white very ugly thing w:15 / ice devil w:8
+# Source Lua: MONS:    balrug / hellion / fire crab w:5 / hellephant w:5
+# Source Lua: MONS:    hell hound w:8 / red draconian / fire elemental w:5 / \
+# Source Lua:          red very ugly thing w:15 / efreet w:12
+# Source Lua: SUBST:   * = *||, {} = ***|, xc = xxxccb, 5 = 2, 6 = 4
+# Source Lua: :  else
+# Source Lua: KMONS:   123 = fire dragon
+# Source Lua: KMONS:   456 = ice dragon
+# Source Lua: KMONS:   789 = red draconian ; cloak . long sword ego:freezing ident:type
+# Source Lua: KMONS:   ABC = white draconian ; cloak . long sword ego:flaming ident:type
+# Source Lua: KMONS:   D = golden dragon
+# Source Lua: SUBST:   c : c:5 b:2 n:1
+# Source Lua: SHUFFLE: 123456 / 1784AB / 789ABC / 1D'4D'
+# Source Lua: :  end
+KFEAT:   f = deep_water
+KFEAT:   F = lava
+KPROP:   lF = no_cloud_gen
+SUBST:   % = $:2 %:5 *:2, G : G:6 c:2 b:1 .:1
+# Clearly, they commissioned the deep dwarves.
+MARKER:  f = lua:fog_machine {cloud_type = "freezing vapour", \
+             pow_min = 3, pow_max = 3, delay = 75, size_min = 2, size_max = 2, \
+             walk_dist = 1, start_clouds = 1, excl_rad = 0 }
+MARKER:  F = lua:fog_machine {cloud_type = "flame", \
+             pow_min = 3, pow_max = 3, delay = 100, size_min = 2, size_max = 2, \
+             walk_dist = 1, start_clouds = 1, excl_rad = 0 }
+MAP
+  xx+++xxx
+  xc...ccxx
+ xxc...wccxxx
+ xcc...cfcccxx
+xxcc...ccwwccxxxxxx
+xccc...ccccfccccccxx
+xccl..1cccccwcccwccxx
+xcFc...2%{%...6..wccx
+xcFc.....G.G.....cfcx
+xccl..3...%}%5...cfcx
+xxcclccclccccc4..wccx
+ xxccccccFcccc...cccx
+  xxxxxxccllcc...ccxx
+       xxcccFc...cxx
+        xxxccl...cx
+          xxcc...cx
+           xxx+++xx
+ENDMAP

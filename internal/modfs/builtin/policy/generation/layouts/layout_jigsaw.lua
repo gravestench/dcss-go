@@ -13,11 +13,11 @@ local room_separation = 2
 local edge_in = 5
 local room_in = 4
 
--- The source scales with the fixed builder height. Naming the dimensions
+-- The source scales with the active builder height. Naming the dimensions
 -- keeps every wall and door calculation tied to the same room lattice.
-local function dimensions()
-    local across = 2 * (grid.height / 35)
-    local room_size = 1 + 5 * (grid.height / 35)
+local function dimensions(builder)
+    local across = 2 * (builder.height / 35)
+    local room_size = 1 + 5 * (builder.height / 35)
     local spacing = room_size + room_separation
     local size = spacing * across + room_separation + edge_in * 2
     local first = edge_in + room_separation
@@ -36,7 +36,7 @@ end
 -- The outer irregular wall leaves a broad interior for the room lattice.
 -- It must fit strictly inside both builder dimensions, as in the source.
 local function outer_room(builder, size)
-    if size >= grid.width or size >= grid.height then
+    if size >= builder.width or size >= builder.height then
         error("Dis Jigsaw room lattice exceeds the builder")
     end
 
@@ -147,8 +147,8 @@ end
 -- Return source-shaped terrain to the catalog, which owns the later stair
 -- pass. The retained single region makes those stairs mutually reachable.
 function layout.layout_jigsaw(api)
-    local builder = grid.new(api.ctx)
-    local shape = dimensions()
+    local builder = grid.new(api.ctx, api.width, api.height)
+    local shape = dimensions(builder)
 
     outer_room(builder, shape.size)
     inner_rooms(builder, shape)

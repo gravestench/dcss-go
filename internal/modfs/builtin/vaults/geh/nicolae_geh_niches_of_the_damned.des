@@ -1,0 +1,23 @@
+# nicolae_geh_niches_of_the_damned is a Gehenna source vault.
+# Source: crawl-ref/source/dat/des/branches/geh.des.
+# Source default-depth: Geh is explicit for this separate file.
+NAME:  nicolae_geh_niches_of_the_damned
+TAGS:  transparent
+DEPTH: Geh, !Geh:$
+KMONS: 2 = stoker / searing wretch / spectral thing
+SUBST: ` = lx
+MAP
+xxxxxxxxxxxxxxx
+xxx``l``xxxxxxx
+xxxlx2xlx`xxx`x
+xxx2...2xlx`xlx
+x`x`...``2xlx2x
+xl2.......`2`.@
+x`x..}........@
+xl2.......`2`.@
+x`x`...``2xlx2x
+xxx2...2xlx`xlx
+xxxlx2xlx`xxx`x
+xxx``l``xxxxxxx
+xxxxxxxxxxxxxxx
+ENDMAP
