@@ -450,12 +450,16 @@ stat drain, drowning, web ensnare, speed drain, corrosion, weakness, and
 trample now use the ordinary saved combat owners. Trample now pushes the
 defender first and follows only after attack reactions, with source size,
 habitat, constriction, flight-expiry, Mountain Boots, trap-entry, and
-Passwall-interruption checks. The opportunity-attack scheduler has not yet
-ported the source player-moving state that suppresses its trample. Generated
+Passwall-interruption checks. An authored Hellion Island Pan rune now has a
+live test through DES placement, pickup, two transits, restore, and exit.
+Pan lord Pain brands inspect the actor's rolled spell list for Necromancy
+instead of looking up the source's dynamic `MST_GHOST` as a static book.
+The opportunity-attack scheduler has not yet ported the source
+player-moving state that suppresses its trample. Generated
 lords now save source-style names and source colour rolls; their
 names reach combat messages and both values reach the terminal entity view.
 The ETC_RANDOM terminal tint is still a fixed palette colour, so animated
-source colour cycling remains presentation work. Pan rune pickup also needs
+source colour cycling remains presentation work. Other Pan rune families need
 a full authored-map run.
 
 Intrinsic death effects now use the actor death phase for Ball Lightning,

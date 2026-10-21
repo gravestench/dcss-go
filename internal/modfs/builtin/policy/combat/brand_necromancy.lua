@@ -2,26 +2,27 @@
 -- defender type. Both monster-target and player-target Pain use this rule.
 local catalog = require("policy.catalog")
 local component = require("constants.component")
+local monster_spellbook = require("policy.combat.monster_spellbook")
 local monster_stats = require("policy.combat.monster_stats")
 local roll = require("policy.combat.roll")
+local schools = require("constants.spell_schools")
 
 local necromancy = {}
 
--- Human-intelligence casters with a Necromancy spell use full HD as skill;
--- other spellbooks receive a random half-HD effective skill.
-local function has_necromancy(book_id)
-    if not book_id or book_id == "" or
-        book_id == "MST_NO_SPELLS" then
+-- Source checks the actor's active slots, including MST_GHOST's rolled
+-- Pan lord spells, rather than looking up only a static catalog book.
+local function has_necromancy(ctx, attacker)
+    local book = monster_spellbook.for_actor(ctx, attacker)
+
+    if not book then
         return false
     end
-
-    local book = catalog.get("monster_spellbooks", book_id)
 
     for _, slot in ipairs(book.slots) do
         local spell = catalog.get("spells", slot.spell_id)
 
         for _, school in ipairs(spell.schools or {}) do
-            if school == "necromancy" then
+            if school == schools.NECROMANCY then
                 return true
             end
         end
@@ -49,7 +50,7 @@ function necromancy.monster_skill(ctx, attacker)
 
     local hd = monster_stats.hit_dice(ctx, attacker, definition)
 
-    if has_necromancy(definition.spellbook_id) then
+    if has_necromancy(ctx, attacker) then
         return hd
     end
 

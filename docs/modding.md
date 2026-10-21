@@ -3043,6 +3043,11 @@ generator supplies saved player rune facts. The count includes the demonic
 rune and the four named lord runes. The five fixed rune/lure maps also read
 `api:map_tag()`; their controller request tag decides whether O contains
 the real demonic rune or a decoy. Do not infer that choice from file order.
+For example, `lemuel_hellion_island.des` keeps its O cell and calls the
+shared fixed-rune hook. That hook emits the item declaration; normal vault
+population creates the floor entity, and normal pickup adds the item ID to
+the saved `character.runes` component. Transit removes unclaimed floor
+items with the old region while preserving collected rune progress.
 
 `policy/generation/pan/region.lua` chooses the next region from the
 effective Pan catalog. It uses the saved visit count and prior vault IDs,
@@ -3061,6 +3066,11 @@ alone does not alter an existing lord. Combat messages and the terminal
 read the saved actor name, while the saved colour overrides the catalog's
 base tint. The exceptional `ETC_RANDOM` colour is currently a fixed
 terminal tint; source-style colour cycling remains presentation work.
+Combat reads the lord's rolled spell slots through
+`policy/combat/monster_spellbook.lua`, including when a Pain brand asks
+whether those spells contain Necromancy. Its `MST_GHOST` identity has no
+static spellbook catalog row, so a mod should update the saved lord profile
+to change its spells.
 
 `policy/combat/trample.lua` owns the generated lord's physical shove and
 final follow. Its source size contest and terrain checks run during melee
@@ -3073,8 +3083,7 @@ separate and leave durable statuses to their ECS component owners.
 After DES terrain and KFEAT choices are resolved, the Pan generator
 converts source upstairs and escape hatches into transit portals, matching
 the original branch's final terrain pass. Mod maps can therefore use the
-original stair
-glyphs without creating ordinary stair links on Pan:1.
+original stair glyphs without creating ordinary stair links on Pan:1.
 
 For a new Pan map, add `vaults/pan/<name>.des` with the appropriate `DEPTH`,
 `WEIGHT`, and source group tags. If the map needs calculated directives, add

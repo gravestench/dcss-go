@@ -90,8 +90,10 @@ combat messages and terminal views. The remaining appearance gap is the
 animated `ETC_RANDOM` terminal tint. Trample now separates defender movement
 from the attacker's final follow and checks dangerous terrain, expiring
 flight, holds, traps, and Passwall. Source player-moving suppression awaits
-the opportunity-attack scheduler. Next, exercise an authored Pan rune from
-map placement through pickup, repeated
-transit, save/restore, and escape in one run. The existing tests already
-compare the complete next-region save after restore and prove that an
-uncollected rune entity is retired with its old region.
+the opportunity-attack scheduler. An authored Hellion Island rune now runs
+from its DES placement through pickup, repeated transit, restore, and exit;
+an uncollected authored rune is also retired with its old region. Pain brand
+uses the same live spellbook owner as casting for a Pan lord's dynamic
+`MST_GHOST` slots. Remaining Pan checks include the other authored rune
+families and animated colour cycling. The existing replay test also compares
+the complete next-region save after restore.
