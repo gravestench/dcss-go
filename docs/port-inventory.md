@@ -93,7 +93,8 @@ project jewellery stat, resistance, vision, flight, MP, wizardry, acrobat,
 guardian-spirit, and attuned regeneration effects from the worn ECS items.
 Blocked hostile stones, poisoned darts, sling bullets, and Slug Dart now
 return to their shooter when an amulet of reflection is worn and the shot is
-still clear. The Faith piety event remains for the religion domain slice.
+still clear. The Faith multiplier now lives in the Lua piety owner; conduct events and
+divine effects still need their religion slices.
 The monster beam family now includes player amulet reflection and monster
 shield reflection. Armour reflection ego and further spell families remain
 for their later combat domains.
@@ -297,6 +298,12 @@ weighted source name groups are committed as individually replaceable Lua
 definitions; generated equipment uses their class and appearance groups.
 Themed and single-level random books now use the source book groups for
 titles, owners, school wording, difficulty bands, and hidden appearances.
+All 26 active gods now have layered Lua definitions. The shared Lua
+eligibility rule covers species, mutation, form, and Gozag fee restrictions;
+Gozag's fee reads saved gold generated on non-Abyss floors. The piety owner
+stores changes in the player ECS component and signals rank and gift checks;
+its random draws replay after save/restore. Altar prayer, conversion, god
+conduct, abilities, gifts, passives, and wrath remain to port.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,

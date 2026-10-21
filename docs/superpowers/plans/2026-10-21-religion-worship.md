@@ -127,14 +127,14 @@ and the terminal's primitive input and display.
   signals, and never apply an unspecified god gift or passive.
 - `piety.rank(god_id, points)` and `piety.breakpoint(stars)` are pure.
 
-- [ ] Write table-driven Lua tests for all 26 active gods and each source
+- [x] Write table-driven Lua tests for all 26 active gods and each source
       restriction family, including form and wallet state that can change.
-- [ ] Write piety tests for breakpoint edges, cap, Ru, Xom, no god/Gozag,
+- [x] Write piety tests for breakpoint edges, cap, Ru, Xom, no god/Gozag,
       hysteresis, timeout, penance, and deterministic restored random state.
-- [ ] Run both focused tests and confirm failures target missing rules.
-- [ ] Implement modules using existing species, mutation, form, holiness,
+- [x] Run both focused tests and confirm failures target missing rules.
+- [x] Implement modules using existing species, mutation, form, holiness,
       and wallet owners. Keep god-specific special cases in their god files.
-- [ ] Run both focused tests.
+- [x] Run both focused tests.
 
 ### Task 4: Implement one transition path for the pantheon
 

@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local classes = require("ids.object_classes")
+local item_ids = require("ids.items")
 
 local wallet = {}
 local maximum = 9007199254740991
@@ -28,6 +29,46 @@ end
 -- Example: wallet.can_spend(ctx, player, 50) checks carried gold before a purchase.
 function wallet.can_spend(ctx, player, amount)
     return valid_amount(amount) and balance(ctx, player).gold >= amount
+end
+
+-- Source Gozag counts all accessible gold piles when a non-Abyss floor is
+-- first populated. Use floor entities, not pickup history: an unseen pile
+-- still contributes to the service fee. The population owner calls this
+-- exactly once for each newly populated floor.
+-- Example: wallet.record_level_gold(ctx, player, level_id) records 26 from
+-- two floor piles of 17 and 9 without changing the carried balance.
+function wallet.record_level_gold(ctx, player, level_id)
+    local state = balance(ctx, player)
+    local generated = 0
+
+    for _, entity in ipairs(ctx:query({
+        component.ITEM,
+        component.POSITION,
+    })) do
+        local floor = ctx:get(entity, component.POSITION)
+        local item = ctx:get(entity, component.ITEM)
+
+        if floor.level_id == level_id and
+            item.kind_id == item_ids.OBJ_GOLD and
+            not ctx:has(entity, component.CARRIED_BY) and
+            not ctx:has(entity, component.SHOP_STOCK) then
+            if not valid_amount(item.quantity) or item.quantity == 0 or
+                generated > maximum - item.quantity then
+                error("generated gold has invalid quantity")
+            end
+
+            generated = generated + item.quantity
+        end
+    end
+
+    if state.generated_gold > maximum - generated then
+        error("generated gold history would overflow")
+    end
+
+    state.generated_gold = state.generated_gold + generated
+    ctx:set(player, component.WALLET, state)
+
+    return generated
 end
 
 -- Debit gold and accumulate lifetime purchases together on the same saved

@@ -8,6 +8,27 @@ import (
 	"crawl/internal/vault"
 )
 
+// Read the saved wallet history rather than deriving Gozag's fee from the
+// player's balance; an unseen generated pile still counts before pickup.
+func generatedVaultGold(t *testing.T, game *Game) int64 {
+	t.Helper()
+
+	store := game.scripts.Components()["character.wallet"]
+	state, found := store.Get(game.player)
+
+	if !found {
+		t.Fatal("generated game has no wallet")
+	}
+
+	value, err := state.Get("generated_gold")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return value.(int64)
+}
+
 // Read the live book that the vault generator actually materialized. The
 // names are saved ECS values, so restoring the game must retain both strings.
 func generatedVaultBookNames(t *testing.T, game *Game) (string, string) {
@@ -107,6 +128,10 @@ func TestVaultItemGenerationUsesRolledRecords(t *testing.T) {
 		t.Fatalf("generated %d vault items, gold=%t", items, gold)
 	}
 
+	if got := generatedVaultGold(t, game); got != 17 {
+		t.Fatalf("generated gold history = %d, want 17", got)
+	}
+
 	title, appearance := generatedVaultBookNames(t, game)
 
 	if strings.HasPrefix(title, "book ") || strings.Contains(title, "@") {
@@ -126,6 +151,10 @@ func TestVaultItemGenerationUsesRolledRecords(t *testing.T) {
 	}
 
 	defer loaded.Close()
+
+	if got := generatedVaultGold(t, loaded); got != 17 {
+		t.Fatalf("restored generated gold history = %d, want 17", got)
+	}
 
 	restoredTitle, restoredAppearance := generatedVaultBookNames(t, loaded)
 

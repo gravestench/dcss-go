@@ -6,6 +6,7 @@ local catalog = require("policy.catalog")
 local abyss = require("policy.world.abyss")
 local vaults = require("policy.population.vaults")
 local shops = require("policy.shops.generation")
+local wallet = require("policy.shops.wallet")
 local shop_ids = require("ids.shops")
 local item_ids = require("ids.items")
 local streams = require("constants.rng_streams")
@@ -212,6 +213,12 @@ function module.run(ctx, input)
                 count = count + populate_level(ctx, level, allowed,
                     scenario_id)
                 count = count + boris_replacement.place(ctx, level, excluded)
+            end
+
+            -- Source Gozag prices conversion from placed floor gold on each
+            -- newly populated non-Abyss level, not from collected gold.
+            if level.branch_id ~= branches.BRANCH_ABYSS then
+                wallet.record_level_gold(ctx, ctx:player(), level.id)
             end
 
             counts[#counts + 1] = { id = level.id, count = count }

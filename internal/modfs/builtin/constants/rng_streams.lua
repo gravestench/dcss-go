@@ -17,6 +17,7 @@ local streams = {
     PAN_LORD = "pan_lord",
     MUTATION = "mutation",
     POTION = "potion",
+    RELIGION = "religion",
     PLACEMENT = "placement",
     POPULATION_COUNT = "population-count",
     SHOP = "shop",

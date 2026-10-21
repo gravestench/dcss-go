@@ -12,6 +12,7 @@ local definition = {
     starting_piety = 15,
     piety_mode = modes.ORDINARY,
     good = true,
+    rejects_all_forms = true,
 }
 
 register.definition(categories.GODS, definition)

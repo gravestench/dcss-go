@@ -11,6 +11,7 @@ local definition = {
     temple_eligible = true,
     starting_piety = 15,
     piety_mode = modes.NONE,
+    behavior_module = "policy.religion.gods.gozag",
 }
 
 register.definition(categories.GODS, definition)

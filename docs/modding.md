@@ -1500,6 +1500,7 @@ separate behavior file, as described under each feature type.
 | Content you are adding | Bundled examples | Field and reference contract |
 | --- | --- | --- |
 | Species or job | `content/species/`, `content/jobs/` | [`species.go`](../internal/content/species.go), [`job.go`](../internal/content/job.go) |
+| God | `content/gods/` | `content/validation.lua`, `policy/religion/eligibility.lua`, and optional `policy/religion/gods/<name>.lua` |
 | Monster or spellbook | `content/monsters/`, `content/monster_spellbooks/` | [`monster.go`](../internal/content/monster.go), [`monster_spellbook.go`](../internal/content/monster_spellbook.go) |
 | Monster beam profile | `content/monster_beams/` | A nearby beam definition and `policy/combat/monster_beams.lua` for its resolution path |
 | Item, weapon, or artefact | `content/items/`, `content/artefacts/` | [`item.go`](../internal/content/item.go), the relevant Lua policy under `policy/inventory/` or `policy/item_generation/` |
@@ -1507,6 +1508,30 @@ separate behavior file, as described under each feature type.
 | Branch | `content/branches/` | [`branch.go`](../internal/content/branch.go) and the generation policy that consumes its fields |
 | Mutation | `content/mutations/` | Its nearby Lua definition and `policy/mutations/effects/registry.lua` for any new capability |
 | Cloud, trap, or shop | `content/clouds/`, `content/traps/`, `content/shops/` | Their Lua `policy/<category>/catalog.lua` and effect or stock policy |
+
+### God eligibility and piety
+
+The god file owns fixed facts. `policy/religion/eligibility.lua` reads that
+resolved definition with the player's live species, mutations, and form.
+Call `eligibility.check(ctx, player, god_id, true)` to learn whether the
+player can join *now*; `false` ignores temporary form and fee barriers when
+asking whether joining could ever be possible. The return value is `nil`
+when allowed or a reason string when refused. A god with an exceptional
+check can name a `behavior_module`; Gozag's module demonstrates a fee check
+that reads the wallet's saved `generated_gold`, which counts floor gold when
+a non-Abyss level is first populated. Carried `gold` and `generated_gold`
+are deliberately different.
+
+`policy/religion/piety.lua` owns `gain(ctx, player, numerator, denominator,
+scale)` and `lose(ctx, player, points)`. The source order repays penance,
+handles gift timeout and upper-rank taper, then applies hysteresis and
+changes the saved `religion.worship` component. `scale` applies an equipped
+amulet of Faith before the final random division. `rank(god_id, points)`
+returns the displayed rank; `breakpoint(stars)` accepts one through six.
+The owner emits `constants.religion_signals.RANK_CHANGED` and `GIFT_CHECK`
+with the player and god IDs. Mod systems can use those signals for divine
+abilities, passives, and gifts; the current port does not yet implement
+those downstream god systems or altar prayer commands.
 
 If an existing category's field is unclear, search for the field name in its
 consumer policy. That tells you whether it is display data, generation data,
@@ -1517,7 +1542,7 @@ command, scheduler hook, or UI screen automatically.
 
 Put one definition in one file below `content/<category>/`. The recognized
 base categories are `species`, `jobs`, `monsters`, `spells`, `items`,
-`mutations`, `branches`, and `monster_spellbooks`, plus `artefacts`, `clouds`,
+`mutations`, `branches`, `gods`, and `monster_spellbooks`, plus `artefacts`, `clouds`,
 `monster_beams`, `shops`, and `traps`. The registration API accepts additional
 category names for mod-defined catalogs. For example,
 `content/monsters/my_moss.lua` can contain:

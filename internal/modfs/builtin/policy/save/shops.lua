@@ -26,7 +26,8 @@ local function validate_wallet(ctx)
     local list = ctx:get(player, component.SHOPPING_LIST)
 
     if not wallet or not valid_balance(wallet.gold) or
-        not valid_balance(wallet.purchases) then
+        not valid_balance(wallet.purchases) or
+        not valid_balance(wallet.generated_gold) then
         error("player has an invalid shop wallet")
     end
 

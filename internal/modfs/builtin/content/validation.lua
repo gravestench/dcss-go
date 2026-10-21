@@ -815,8 +815,15 @@ local function validate_god(definition)
 
     required(category, definition, "temple_eligible", "boolean")
 
+    if definition.behavior_module ~= nil and
+        (type(definition.behavior_module) ~= "string" or
+            definition.behavior_module == "") then
+        fail(category, id, "behavior_module must name a Lua module")
+    end
+
     for _, field in ipairs({
         "good", "rejects_innate_caster", "requires_orc", "requires_love",
+        "rejects_all_forms",
     }) do
         if definition[field] ~= nil and type(definition[field]) ~= "boolean" then
             fail(category, id, field .. " must be boolean")
