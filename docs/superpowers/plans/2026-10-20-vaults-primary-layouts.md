@@ -20,7 +20,8 @@ Bubble Tea terminal.
 
 ## Global constraints
 
-- Preserve the original `.des` map format; committed files are runtime
+- Preserve the source DES declarations and map syntax; named Lua hooks are
+  a port-specific extension. Committed files are runtime
   content, with no importer in the game repository or build path.
 - All executable gameplay and generation rules live in readable Lua files,
   with named helpers, why/how comments, and no source-order seed coupling.

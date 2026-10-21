@@ -17,7 +17,7 @@ C++ checkout is needed during build or play.
 
 ## Source content and discovery
 
-Commit one original-format `.des` file per source primary layout. Preserve
+Commit one source-style `.des` file per source primary layout. Preserve
 NAME, tags, weight, orientation, and map declarations. Replace executable
 source Lua lines with named `vault.run` hooks in actual Lua files. Every
 source room carrying `vaults_room`, `vaults_hard`, or `vaults_empty` is

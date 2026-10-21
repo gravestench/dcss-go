@@ -1975,6 +1975,29 @@ yet part of the playable population.
 
 ## Vault maps and Lua hooks
 
+The map declarations (`NAME`, `DEPTH`, `WEIGHT`, `TAGS`, `MAP`, and the
+placement directives) follow DCSS DES syntax. The `: vault.run(...)`,
+`: vault.veto(...)`, and related named hooks are **Crawl Go extensions**.
+Legacy DCSS allows executable Lua directly in a `.des` file; this engine
+keeps executable Lua in modules under `policy/generation/` and resolves a
+named hook to one of those modules. A source `.des` file with its original
+inline Lua cannot be dropped in unchanged. Port its script into a Lua
+module and replace that script site with the matching named hook.
+
+For example, `vaults/layout/layout_cave_pools.des` contains
+`: vault.run("layout_cave_pools")`. The DES parser records this declaration;
+there is no global `vault.run` Lua function to call yourself. When the
+layout selector chooses that map, the layout catalog invokes the hook
+resolver. Because the map is in the `layout` family, the resolver loads
+`policy/generation/layouts/layout_cave_pools.lua` and calls its exported
+`layout_cave_pools(api)` method. That method returns a grid builder and
+any typed records; the catalog then completes connected stairs.
+
+For an ordinary vault, `: vault.run("configure")` in
+`vaults/arrival/example.des` resolves to the `configure(api)` method in
+`policy/generation/vaults/arrival/example.lua`. A reference such as
+`vault.run("shared.configure")` loads `shared.lua` in the same family.
+
 ### Dungeon layouts
 
 The effective `vaults/layout/*.des` files are also a live catalog. All 21
