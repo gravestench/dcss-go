@@ -39,7 +39,7 @@ func TestPanRetirementFailureRestoresPreviousState(t *testing.T) {
 
 	health.Max = 10000
 	health.Current = 10000
-	placePanPortal(t, g, terrain.EnterPandemonium)
+	placePortalForTest(t, g, terrain.EnterPandemonium)
 
 	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 		t.Fatal(err)
@@ -47,7 +47,7 @@ func TestPanRetirementFailureRestoresPreviousState(t *testing.T) {
 
 	health.Max = originalMax
 	health.Current = originalMax
-	placePanPortal(t, g, terrain.ExitPandemonium)
+	placePortalForTest(t, g, terrain.ExitPandemonium)
 	before := g.Snapshot()
 	_, err = g.Step(Command{Kind: CommandUpstairs})
 
@@ -80,7 +80,7 @@ func TestPanGeneratedRegionRestoresWithAuthoredStairs(t *testing.T) {
 
 	health.Max = 10000
 	health.Current = 10000
-	placePanPortal(t, g, terrain.EnterPandemonium)
+	placePortalForTest(t, g, terrain.EnterPandemonium)
 
 	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 		t.Fatal(err)

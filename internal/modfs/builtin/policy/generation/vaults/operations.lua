@@ -367,6 +367,60 @@ local function localize_helper_records(records, cells, low_x, low_y)
     return located
 end
 
+-- Count helper cells that actually land on the parent's source mask. The
+-- source map_def engine tries orientation and offsets against this mask;
+-- a bounding-box-only fit can clip the one keyed branch gate in a wing.
+local function helper_overlap(parent, cells, source, left, top)
+    local count = 0
+
+    for y, row in ipairs(cells) do
+        for x, glyph in ipairs(row) do
+            if glyph ~= " " and parent[top + y - 1][left + x - 1] == source then
+                count = count + 1
+            end
+        end
+    end
+
+    return count
+end
+
+-- Fit a rotated helper anywhere inside the source glyph bounds. Keep the
+-- first maximum in fixed orientation/coordinate order so file discovery
+-- cannot change a seed and helper content is not clipped by a zero offset.
+local function fit_helper(parent, cells, helper, source, low_x, low_y,
+    region_width, region_height)
+    local best
+    local maximum_turns = helper.tags.no_rotate and 0 or 3
+
+    for turns = 0, maximum_turns do
+        local oriented = transforms.rotate(cells, turns)
+        local width = #oriented[1]
+        local height = #oriented
+
+        if width <= region_width and height <= region_height then
+            for offset_y = 0, region_height - height do
+                for offset_x = 0, region_width - width do
+                    local left = low_x + offset_x
+                    local top = low_y + offset_y
+                    local overlap = helper_overlap(parent, oriented,
+                        source, left, top)
+
+                    if not best or overlap > best.overlap then
+                        best = {
+                            cells = oriented,
+                            left = left,
+                            top = top,
+                            overlap = overlap,
+                        }
+                    end
+                end
+            end
+        end
+    end
+
+    return best
+end
+
 -- Resolve helper maps before glyph transformations so substitutions operate on the composed cell matrix.
 local function embed_helper(cells, source, helper, random, depth, player,
     state)
@@ -409,26 +463,19 @@ local function embed_helper(cells, source, helper, random, depth, player,
         end
     end
 
-    if helper_width > region_width or #helper_cells > region_height then
-        for turns = 1, 3 do
-            local rotated = transforms.rotate(helper_cells, turns)
+    local fit = fit_helper(cells, helper_cells, helper, source,
+        low_x, low_y, region_width, region_height)
 
-            if #rotated[1] <= region_width and
-                #rotated <= region_height then
-                helper_cells = rotated
-                helper_width = #rotated[1]
-
-                break
-            end
-        end
-    end
-
-    if helper_width > region_width or #helper_cells > region_height then
+    if not fit then
         error(string.format(
             "SUBVAULT helper %s is %dx%d; source region is %dx%d",
             helper.id, helper_width, #helper_cells,
             region_width, region_height))
     end
+
+    helper_cells = fit.cells
+    low_x = fit.left
+    low_y = fit.top
 
     local nested_records = operations.apply(helper, helper_cells,
         random, depth + 1, player, state)

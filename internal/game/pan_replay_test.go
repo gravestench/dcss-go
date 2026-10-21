@@ -125,7 +125,7 @@ func TestPanNamedLordRunesFromPortalThroughPickup(t *testing.T) {
 
 			health.Max = 10000
 			health.Current = health.Max
-			placePanPortal(t, g, terrain.EnterPandemonium)
+			placePortalForTest(t, g, terrain.EnterPandemonium)
 
 			if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 				t.Fatal(err)
@@ -155,13 +155,13 @@ func TestPanNextRegionDrawMatchesAfterRestore(t *testing.T) {
 
 	health.Max = 10000
 	health.Current = 10000
-	placePanPortal(t, g, terrain.EnterPandemonium)
+	placePortalForTest(t, g, terrain.EnterPandemonium)
 
 	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 		t.Fatal(err)
 	}
 
-	placePanPortal(t, g, terrain.TransitPandemonium)
+	placePortalForTest(t, g, terrain.TransitPandemonium)
 	health.Max = originalMax
 	health.Current = originalMax
 
@@ -221,7 +221,7 @@ func TestPanTransitRetiresUncollectedRune(t *testing.T) {
 
 	health.Max = 10000
 	health.Current = 10000
-	placePanPortal(t, g, terrain.EnterPandemonium)
+	placePortalForTest(t, g, terrain.EnterPandemonium)
 
 	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 		t.Fatal(err)
@@ -232,7 +232,7 @@ func TestPanTransitRetiresUncollectedRune(t *testing.T) {
 	runeEntity, _ := authoredPanRune(t, g, level,
 		"lemuel_hellion_island", "RUNE_DEMONIC")
 
-	placePanPortal(t, g, terrain.TransitPandemonium)
+	placePortalForTest(t, g, terrain.TransitPandemonium)
 
 	if _, err := g.Step(Command{Kind: CommandUpstairs}); err != nil {
 		t.Fatal(err)
@@ -269,7 +269,7 @@ func TestPanAuthoredRunePickupTransitsAndExit(t *testing.T) {
 	health.Max = 10000
 	health.Current = 10000
 
-	origin := placePanPortal(t, g, terrain.EnterPandemonium)
+	origin := placePortalForTest(t, g, terrain.EnterPandemonium)
 
 	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 		t.Fatal(err)
@@ -288,7 +288,7 @@ func TestPanAuthoredRunePickupTransitsAndExit(t *testing.T) {
 
 	for visit := 0; visit < 2; visit++ {
 		oldID := g.panState.ActiveLevelID
-		placePanPortal(t, g, terrain.TransitPandemonium)
+		placePortalForTest(t, g, terrain.TransitPandemonium)
 
 		if _, err := g.Step(Command{Kind: CommandUpstairs}); err != nil {
 			t.Fatal(err)
@@ -336,7 +336,7 @@ func TestPanAuthoredRunePickupTransitsAndExit(t *testing.T) {
 	loadedHealth.Max = 10000
 	loadedHealth.Current = 10000
 
-	placePanPortal(t, restored, terrain.ExitPandemonium)
+	placePortalForTest(t, restored, terrain.ExitPandemonium)
 
 	if _, err := restored.Step(Command{Kind: CommandUpstairs}); err != nil {
 		t.Fatal(err)

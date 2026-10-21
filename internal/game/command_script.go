@@ -31,6 +31,7 @@ func (g *Game) prepareScriptCommand(
 
 	decision, err := g.scripts.Policy("command.prepare", map[string]any{
 		"pan_state":             luaPanState(g.panState),
+		"hell_state":            luaHellState(g.hellState),
 		"pan_current_vault_ids": activePanIDs,
 		"kind":                  int(command.Kind),
 		"dx":                    command.DX,

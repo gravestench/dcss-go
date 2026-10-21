@@ -42,8 +42,10 @@ from any depth; ordinary down stairs descend within that branch. These
 features are distinct typed terrain IDs, so the client can show their
 source names and Lua can route travel without parsing vault records.
 Hell's top-level entrance is placed through the source `hell_entry` family
-on eligible Depths or late Dungeon floors; a source fallback makes at least
-one entrance available. Map selection is stable under file discovery order
+on Depths floors. The pinned source also mentions D:21- inside a legacy
+version guard; the current map declarations select Depths only. A source
+fallback keeps a one-cell gate available when a larger entrance cannot fit.
+Map selection is stable under file discovery order
 and records the same unique-vault history as other branches.
 
 The Vestibule is a required authored `PLACE: Hell` primary map. Its five

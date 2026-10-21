@@ -26,6 +26,7 @@ type Game struct {
 	branchSchedule *save.BranchScheduleRecord
 	templePlan     *save.TemplePlanRecord
 	panState       *save.PanStateRecord
+	hellState      *save.HellStateRecord
 
 	turn TurnContext
 

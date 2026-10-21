@@ -3,6 +3,7 @@
 -- prior-vault history, and the original return site. Go stages the requested
 -- level and commits this state only after generation and population succeed.
 local operations = require("constants.pan_travel")
+local domains = require("constants.portal_domains")
 local region = require("policy.generation.pan.region")
 local landing = require("policy.world.stair_landing")
 local terrain = require("constants.terrain")
@@ -57,6 +58,7 @@ local function new_region(state, active_ids, return_site, retire_id)
     }
 
     return {
+        domain = domains.PAN,
         operation = operations.NEW_REGION,
         retire_level_id = retire_id,
         history = history,
@@ -119,6 +121,7 @@ function travel.prepare(ctx, position, downstairs, state, active_ids)
         local x, y = landing.find(ctx, site.level_id, site.x, site.y)
 
         portal = {
+            domain = domains.PAN,
             operation = operations.RETURN,
             retire_level_id = position.level_id,
             destination = {
@@ -137,6 +140,7 @@ function travel.prepare(ctx, position, downstairs, state, active_ids)
         local x, y = landing.find(ctx, abyss.level_id, 40, 35)
 
         portal = {
+            domain = domains.PAN,
             operation = operations.ABYSS,
             retire_level_id = position.level_id,
             return_site = state.return_site,

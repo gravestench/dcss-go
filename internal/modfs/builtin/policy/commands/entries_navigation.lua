@@ -83,7 +83,7 @@ function entries.upstairs(ctx, player, input, position)
     end
 
     return navigation.stairs(ctx, position, false, player, input.forced,
-        input.pan_state, input.pan_current_vault_ids)
+        input.pan_state, input.pan_current_vault_ids, input.hell_state)
 end
 
 -- Match a downstairs link at the current cell before changing floors.
@@ -99,7 +99,7 @@ function entries.downstairs(ctx, player, input, position)
     end
 
     return navigation.stairs(ctx, position, true, player, input.forced,
-        input.pan_state, input.pan_current_vault_ids)
+        input.pan_state, input.pan_current_vault_ids, input.hell_state)
 end
 
 -- Select floor items before charging pickup time or changing inventory.

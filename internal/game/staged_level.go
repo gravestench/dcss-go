@@ -13,6 +13,7 @@ import (
 type stagedLevel struct {
 	game            *Game
 	levelID         int
+	authoredEntry   point
 	entry           point
 	priorEntities   map[akara.Entity]bool
 	priorComponents map[akara.Entity][]save.DynamicComponentRecord
@@ -148,7 +149,8 @@ func (g *Game) stageGeneratedLevel(
 		return nil, fmt.Errorf("staged level has unsupported stair links")
 	}
 
-	stage.entry = entries[stage.levelID]
+	stage.authoredEntry = entries[stage.levelID]
+	stage.entry = stage.authoredEntry
 
 	level := g.levels[stage.levelID]
 

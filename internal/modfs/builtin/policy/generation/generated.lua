@@ -26,7 +26,7 @@ local temple_floor = require("policy.generation.temple.floor")
 local altar_catalog = require("policy.generation.altar.catalog")
 local shop_spec = require("policy.generation.vaults.shop_spec")
 local shoals_heights = require("policy.generation.shoals_heights")
-local streams = require("constants.rng_streams")
+local monster_budget = require("policy.generation.monster_budget")
 
 local generated = {}
 
@@ -36,26 +36,6 @@ local entrance_directions = {
     { x = 0, y = 1 },
     { x = 0, y = -1 },
 }
-
--- Each floor draws three population dice from its own depth-specific die size.
-local function monster_count(ctx, branch_id, depth)
-    local branch = register.get("branches", branch_id)
-    local die_size = tonumber(branch.mon_die_size_expr)
-
-    if not die_size then
-        -- Source Dungeon generation uses its own deeper-floor die. Other
-        -- branches use the source default of twelve sides per die.
-        die_size = branch_id == branches.BRANCH_DUNGEON and
-            depth > 1 and 10 or 12
-    end
-    local count = 0
-
-    for _ = 1, 3 do
-        count = count + ctx:random(streams.POPULATION_COUNT, die_size) + 1
-    end
-
-    return count
-end
 
 -- Separate authored up and down exits before destination landings are paired.
 local function source_stairs(placed)
@@ -790,7 +770,7 @@ local function level_record(ctx, floor)
         entry_x = entry.x,
         entry_y = entry.y,
         initial_monsters = floor.branch_id == branches.BRANCH_TEMPLE and
-            0 or monster_count(ctx, floor.branch_id, floor.depth),
+            0 or monster_budget.roll(ctx, floor.branch_id, floor.depth),
         vault_id = floor.primary_vault_id or floor.layout.primary_id or
             (arrival and arrival.id or floor.controller),
         vault_ids = floor.vault_ids,

@@ -410,15 +410,19 @@ portal, and Depths water rules; source MAP rows stay unchanged. The rare
 controller mode stores its whole-level floor and rock tile choice as a
 typed level record. Solid `no_exits` decorations now place without
 inventing an entry corridor. Pan portal travel now has a live destination;
-Hell portal gameplay still needs its destination branch. The 60 maps from
+Hell's persistent Vestibule now has entry and return travel through typed
+gates, including saved return sites and nearby landing when a gate is occupied.
+The 60 maps from
 `hell.des` are now committed as 23 entrance maps, one required Vestibule
 layout, and 36 tagged wing maps. Their original geometry and directives
 place through the production DES engine; the Big Baal shop and two random
 Vestibule choices run through named Lua hooks. All ten Hell entrance and
 exit features now project to distinct walkable terrain IDs, preserving
-their destinations through the grid and save format. Gate travel, source
-branch exits, and the four subbranch map families remain to be integrated
-before Hell is playable.
+their destinations through the grid and save format. The source
+`chance_enter_hell` family selects one Depths entrance through the shared
+vault chance stage, with `hell_entry` as a failed-fit fallback. The four
+subbranch floors, their exits, bosses, and runes remain to be integrated
+before Hell is fully playable.
 
 The fifty-three-definition aquarium family retains the source controller
 and all fifty-two authored child maps. One Lua controller picks a shared

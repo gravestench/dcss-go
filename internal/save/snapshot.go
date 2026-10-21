@@ -8,7 +8,7 @@ import (
 	"crawl/internal/vault"
 )
 
-const Version = 34
+const Version = 35
 
 type Snapshot struct {
 	Version        int               `json:"version"`
@@ -34,24 +34,34 @@ type Snapshot struct {
 	BranchSchedule *BranchScheduleRecord `json:"branch_schedule,omitempty"`
 	TemplePlan     *TemplePlanRecord     `json:"temple_plan,omitempty"`
 	PanState       *PanStateRecord       `json:"pan_state,omitempty"`
+	HellState      *HellStateRecord      `json:"hell_state,omitempty"`
 }
 
 // PanStateRecord carries session history across one-region replacements.
 // VaultIDs belong to earlier regions; the active region owns its own level
 // record. Lua decides which map to draw from this saved history.
 type PanStateRecord struct {
-	RegionsSeen   int              `json:"regions_seen"`
-	VaultIDs      []string         `json:"vault_ids"`
-	ActiveLevelID int              `json:"active_level_id"`
-	Return        *PanReturnRecord `json:"return,omitempty"`
+	RegionsSeen   int               `json:"regions_seen"`
+	VaultIDs      []string          `json:"vault_ids"`
+	ActiveLevelID int               `json:"active_level_id"`
+	Return        *ReturnSiteRecord `json:"return,omitempty"`
 }
 
-// PanReturnRecord points back to the exact portal cell in the ordinary
-// world. Travel chooses a safe nearby landing if that cell later changes.
-type PanReturnRecord struct {
+// ReturnSiteRecord points back to a source portal cell. Travel chooses a
+// safe nearby landing if the cell becomes occupied or blocked.
+type ReturnSiteRecord struct {
 	LevelID int `json:"level_id"`
 	X       int `json:"x"`
 	Y       int `json:"y"`
+}
+
+// HellStateRecord preserves the authored Vestibule and most recent outside
+// gate. Reentry updates Return but never redraws the saved Vestibule floor.
+type HellStateRecord struct {
+	VestibuleLevelID int               `json:"vestibule_level_id"`
+	EntryX           int               `json:"entry_x"`
+	EntryY           int               `json:"entry_y"`
+	Return           *ReturnSiteRecord `json:"return"`
 }
 
 // TemplePlanRecord fixes the authored map and god identities before the

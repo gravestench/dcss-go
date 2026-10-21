@@ -23,16 +23,16 @@ type panPortal struct {
 	toLevelID   int
 	nextState   *save.PanStateRecord
 	stage       *stagedLevel
-	returnSite  *save.PanReturnRecord
+	returnSite  *save.ReturnSiteRecord
 }
 
-// decodePanReturn reads one saved site without interpreting which portal
-// should use it. Lua has already selected return versus Abyss semantics.
-func decodePanReturn(value any) (*save.PanReturnRecord, error) {
+// decodePortalReturn reads one saved site without interpreting which gate
+// should use it. Lua has already selected the destination semantics.
+func decodePortalReturn(value any) (*save.ReturnSiteRecord, error) {
 	record, okay := value.(map[string]any)
 
 	if !okay {
-		return nil, fmt.Errorf("Lua Pan return site is not a record")
+		return nil, fmt.Errorf("Lua portal return site is not a record")
 	}
 
 	levelID, err := decisionInteger(record, "level_id")
@@ -47,7 +47,7 @@ func decodePanReturn(value any) (*save.PanReturnRecord, error) {
 		return nil, err
 	}
 
-	return &save.PanReturnRecord{
+	return &save.ReturnSiteRecord{
 		LevelID: levelID,
 		X:       cell.x,
 		Y:       cell.y,
@@ -100,7 +100,7 @@ func decodePanNextState(value any) (*save.PanStateRecord, error) {
 	}
 
 	if value, present := record["return_site"]; present {
-		state.Return, err = decodePanReturn(value)
+		state.Return, err = decodePortalReturn(value)
 
 		if err != nil {
 			return nil, err
@@ -111,11 +111,11 @@ func decodePanNextState(value any) (*save.PanStateRecord, error) {
 }
 
 // Decode a destination cell after Lua's safe-landing policy has chosen it.
-func decodePanDestination(value any) (int, point, error) {
+func decodePortalDestination(value any) (int, point, error) {
 	record, okay := value.(map[string]any)
 
 	if !okay {
-		return 0, point{}, fmt.Errorf("Lua Pan destination is not a record")
+		return 0, point{}, fmt.Errorf("Lua portal destination is not a record")
 	}
 
 	levelID, err := decisionInteger(record, "level_id")
@@ -199,14 +199,14 @@ func (g *Game) preparePanPortal(
 
 	case panReturn, panAbyss:
 		portal.toLevelID, portal.destination, err =
-			decodePanDestination(plan["destination"])
+			decodePortalDestination(plan["destination"])
 
 		if err != nil {
 			return nil, err
 		}
 
 		if operation == panAbyss {
-			portal.returnSite, err = decodePanReturn(plan["return_site"])
+			portal.returnSite, err = decodePortalReturn(plan["return_site"])
 
 			if err != nil {
 				return nil, err

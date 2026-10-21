@@ -11,11 +11,62 @@ local catalog = require("policy.generation.layouts.catalog")
 local grid = require("policy.generation.grid")
 local harness = require("tests.harness")
 local placement = require("policy.generation.vaults.placement")
+local chance = require("policy.generation.vaults.chance")
+local selection = require("policy.generation.vaults.selection")
 local resolve = require("policy.generation.vaults.specs.resolve")
 local vaults = require("policy.generation.vaults.catalog")
 local monster_requests = require("constants.vault_monster_requests")
+local streams = require("constants.rng_streams")
+local vestibule = require("policy.generation.hell.vestibule")
 
 local test = {}
+local context_for
+
+-- The ordinary chance stage already discovers source Hell entrances by
+-- tag. Depths rolls one member of the family, while a Dungeon floor does
+-- not admit a map whose DES depth says Depths only.
+local function check_hell_entry_chance()
+    vaults.load()
+
+    local depths = {
+        branch_id = branches.BRANCH_DEPTHS,
+        depth = 1,
+        branch_bottom = 5,
+        absolute_depth = 16,
+        layout_family = "rooms",
+    }
+    local selected = chance.select(grid.new(context_for(5171)), depths)
+    local hell_count = 0
+
+    for _, definition in ipairs(selected) do
+        if definition.tags.chance_enter_hell then
+            hell_count = hell_count + 1
+        end
+    end
+
+    harness.equal(hell_count, 1,
+        "Depths chance stage selects one source Hell entrance")
+
+    local fallback = selection.choose_tag(grid.new(context_for(5172)),
+        "fallback_enter_hell", depths)
+
+    harness.equal(fallback.id, "hell_entry",
+        "source one-cell gate is available after a failed fit")
+
+    local dungeon = {
+        branch_id = branches.BRANCH_DUNGEON,
+        depth = 15,
+        branch_bottom = 15,
+        absolute_depth = 15,
+        layout_family = "rooms",
+    }
+    selected = chance.select(grid.new(context_for(5173)), dungeon)
+
+    for _, definition in ipairs(selected) do
+        harness.truthy(not definition.tags.chance_enter_hell,
+            "Depths-only Hell entrance must not appear in Dungeon")
+    end
+end
 
 local wing_tags = {
     vestibule_dis = true,
@@ -70,7 +121,7 @@ end
 
 -- Use the production grid RNG contract with a repeatable seed. The test
 -- inspects placed wings rather than reimplementing source tag selection.
-local function context_for(seed)
+context_for = function(seed)
     local state = seed
     local context = {}
 
@@ -83,6 +134,15 @@ local function context_for(seed)
         state = (state * 48271) % 2147483647
 
         return high, state
+    end
+
+    -- Zero rolls give the source three-die population budget its minimum.
+    function context:random(stream, bound)
+        harness.equal(stream, streams.POPULATION_COUNT,
+            "Vestibule population budget stream")
+        harness.truthy(bound > 0, "population die has positive sides")
+
+        return 0
     end
 
     return context
@@ -145,9 +205,47 @@ local function check_undead_roster()
         "Vestibule corpse species comes from late zombie roster")
 end
 
+-- The actual level policy must turn the authored map's source upward exits
+-- into live Hell return arches and retain all four branch entrances.
+local function check_generated_vestibule()
+    local output = vestibule.generate(context_for(2191), {
+        prior_vault_ids = {},
+    })
+    local level = output.level
+    local counts = {}
+
+    for _, row in ipairs(level.cells) do
+        for _, feature in ipairs(row) do
+            counts[feature] = (counts[feature] or 0) + 1
+        end
+    end
+
+
+    harness.equal(level.branch_id, branches.BRANCH_VESTIBULE,
+        "authored Vestibule branch")
+    harness.equal(level.vault_id, "vestibule_of_hell_subvaulted",
+        "authored encompassing map")
+    harness.equal(level.initial_monsters, 3,
+        "Vestibule starts with source three-die monster budget")
+    harness.truthy((counts[terrain.DNGN_EXIT_HELL] or 0) > 0,
+        "source up exits become Hell return arches")
+    harness.truthy((counts[terrain.DNGN_ENTER_DIS] or 0) > 0,
+        "Dis entrance survives feature projection")
+    harness.truthy((counts[terrain.DNGN_ENTER_GEHENNA] or 0) > 0,
+        "Gehenna entrance survives feature projection")
+    harness.truthy((counts[terrain.DNGN_ENTER_COCYTUS] or 0) > 0,
+        "Cocytus entrance survives feature projection")
+    harness.truthy((counts[terrain.DNGN_ENTER_TARTARUS] or 0) > 0,
+        "Tartarus entrance survives feature projection")
+    harness.equal(level.cells[level.entry_y + 1][level.entry_x + 1],
+        terrain.DNGN_EXIT_HELL, "arrival uses a live return arch")
+end
+
 -- The source map family is complete before generation chooses a wing.
 -- Each chosen wing must contribute its actual authored map to the result.
 function test.run()
+    check_hell_entry_chance()
+    check_generated_vestibule()
     check_hell_feature_projection()
     check_undead_roster()
     harness.equal(#mod.paths("vaults/hell_entry", ".des"), 23,

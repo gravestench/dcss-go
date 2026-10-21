@@ -146,6 +146,7 @@ func (g *Game) Snapshot() save.Snapshot {
 		BranchSchedule: cloneBranchSchedule(g.branchSchedule),
 		TemplePlan:     cloneTemplePlan(g.templePlan),
 		PanState:       clonePanState(g.panState),
+		HellState:      cloneHellState(g.hellState),
 	}
 
 	for id, level := range g.levels {
@@ -385,11 +386,16 @@ func RestoreWithRules(
 		return nil, err
 	}
 
-	if err := g.restoreLevels(snapshot.Levels, snapshot.CurrentAut, snapshot.PanState); err != nil {
+	if err := g.restoreLevels(snapshot.Levels, snapshot.CurrentAut,
+		snapshot.PanState, snapshot.HellState); err != nil {
 		return nil, err
 	}
 
 	if err := g.acceptPanState(snapshot.PanState); err != nil {
+		return nil, err
+	}
+
+	if err := g.acceptHellState(snapshot.HellState); err != nil {
 		return nil, err
 	}
 

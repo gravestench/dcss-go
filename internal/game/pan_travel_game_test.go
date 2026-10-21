@@ -10,7 +10,7 @@ import (
 
 // Put a source portal under the current player without deleting a linked
 // stair. Generated Pan tests can then exercise real commands and ECS actors.
-func placePanPortal(t *testing.T, g *Game, feature terrain.ID) point {
+func placePortalForTest(t *testing.T, g *Game, feature terrain.ID) point {
 	t.Helper()
 	position, found := g.stores.Positions.Get(g.player)
 
@@ -92,7 +92,7 @@ func TestPanExitFindsSafeOriginalLanding(t *testing.T) {
 	health.Max = 10000
 	health.Current = 10000
 
-	origin := placePanPortal(t, g, terrain.EnterPandemonium)
+	origin := placePortalForTest(t, g, terrain.EnterPandemonium)
 
 	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 		t.Fatal(err)
@@ -105,7 +105,7 @@ func TestPanExitFindsSafeOriginalLanding(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	placePanPortal(t, g, terrain.ExitPandemonium)
+	placePortalForTest(t, g, terrain.ExitPandemonium)
 
 	if _, err := g.Step(Command{Kind: CommandUpstairs}); err != nil {
 		t.Fatal(err)
@@ -139,14 +139,14 @@ func TestPanAbyssExitPreservesOriginalReturn(t *testing.T) {
 	health.Max = 10000
 	health.Current = 10000
 
-	origin := placePanPortal(t, g, terrain.EnterPandemonium)
+	origin := placePortalForTest(t, g, terrain.EnterPandemonium)
 
 	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 		t.Fatal(err)
 	}
 
 	oldID := g.panState.ActiveLevelID
-	placePanPortal(t, g, terrain.ExitThroughAbyss)
+	placePortalForTest(t, g, terrain.ExitThroughAbyss)
 
 	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 		t.Fatal(err)
@@ -209,7 +209,7 @@ func TestPanTwoTransitsSaveAndExit(t *testing.T) {
 	health.Max = 10000
 	health.Current = 10000
 
-	origin := placePanPortal(t, g, terrain.EnterPandemonium)
+	origin := placePortalForTest(t, g, terrain.EnterPandemonium)
 
 	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 		t.Fatal(err)
@@ -258,7 +258,7 @@ func TestPanTwoTransitsSaveAndExit(t *testing.T) {
 			t.Fatal("Pan region has no populated entity")
 		}
 
-		placePanPortal(t, g, terrain.TransitPandemonium)
+		placePortalForTest(t, g, terrain.TransitPandemonium)
 
 		result, err := g.Step(Command{Kind: CommandUpstairs})
 
@@ -297,7 +297,7 @@ func TestPanTwoTransitsSaveAndExit(t *testing.T) {
 	}
 
 	activeID := restored.panState.ActiveLevelID
-	placePanPortal(t, restored, terrain.ExitPandemonium)
+	placePortalForTest(t, restored, terrain.ExitPandemonium)
 
 	if _, err := restored.Step(Command{Kind: CommandUpstairs}); err != nil {
 		t.Fatal(err)

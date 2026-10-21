@@ -107,7 +107,7 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 		return prepared.response, nil
 	}
 
-	var portal *panPortal
+	var portal portalAction
 
 	if prepared.portal != nil {
 		// Travel changes the player, clocks, region history, and old-floor
@@ -115,8 +115,8 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 		checkpoint := g.Snapshot()
 
 		defer func() {
-			if portal != nil && portal.stage != nil {
-				err = errors.Join(err, portal.stage.rollback())
+			if portal != nil && portal.staged() != nil {
+				err = errors.Join(err, portal.staged().rollback())
 			}
 
 			if err != nil {
@@ -125,7 +125,7 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 			}
 		}()
 
-		portal, err = g.preparePanPortal(prepared.portal, position)
+		portal, err = g.preparePortal(prepared.portal, position)
 
 		if err != nil {
 			return StepResult{}, err
@@ -199,7 +199,7 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 	}
 
 	if portal != nil {
-		travelEvent, travelErr := g.commitPanPortal(portal)
+		travelEvent, travelErr := portal.commit(g)
 
 		if travelErr != nil {
 			return StepResult{}, travelErr
@@ -218,8 +218,8 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 		}
 	}
 
-	if portal != nil && portal.retireID != 0 {
-		if err := g.retireLevel(portal.retireID); err != nil {
+	if portal != nil && portal.retiredLevelID() != 0 {
+		if err := g.retireLevel(portal.retiredLevelID()); err != nil {
 			return StepResult{}, err
 		}
 	}

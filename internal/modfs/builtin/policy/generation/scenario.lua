@@ -3,6 +3,7 @@ local fixed = require("policy.generation.fixed")
 local generated = require("policy.generation.generated")
 local abyss = require("policy.generation.abyss")
 local pan = require("policy.generation.pan.region")
+local hell_vestibule = require("policy.generation.hell.vestibule")
 local features = require("content.terrain_features")
 local transporters = require("policy.generation.transporters")
 local item_ids = require("ids.items")
@@ -156,6 +157,12 @@ function module.pan(ctx, input)
     }
 end
 
+-- Hell's rootless first floor owns its source map and return arches. The
+-- generic staging kernel installs its decoded level like any other floor.
+function module.hell_vestibule(ctx, input)
+    return hell_vestibule.generate(ctx, input)
+end
+
 register.policy({
     id = "world.generate_scenario",
     run = module.run,
@@ -174,6 +181,11 @@ register.policy({
 register.policy({
     id = "world.generate_pan_region",
     run = module.pan,
+})
+
+register.policy({
+    id = "world.generate_hell_vestibule",
+    run = module.hell_vestibule,
 })
 
 return module

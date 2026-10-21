@@ -52,7 +52,7 @@ func TestRejectPanReturnWithoutActiveRegion(t *testing.T) {
 	snapshot := g.Snapshot()
 	snapshot.PanState = &save.PanStateRecord{
 		RegionsSeen: 1,
-		Return: &save.PanReturnRecord{
+		Return: &save.ReturnSiteRecord{
 			LevelID: 1,
 			X:       3,
 			Y:       3,

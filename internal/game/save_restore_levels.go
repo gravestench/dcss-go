@@ -8,7 +8,8 @@ import (
 )
 
 func (g *Game) restoreLevels(
-	records []save.LevelRecord, currentAut int64, panState *save.PanStateRecord,
+	records []save.LevelRecord, currentAut int64,
+	panState *save.PanStateRecord, hellState *save.HellStateRecord,
 ) error {
 	for _, record := range records {
 		if _, duplicate := g.levels[record.ID]; duplicate {
@@ -134,11 +135,21 @@ func (g *Game) restoreLevels(
 		return err
 	}
 
+	return g.validateScenarioLevels(panState, hellState)
+}
+
+// Validate the complete level set before restore or a newly staged portal
+// floor becomes durable. Lua owns branch-specific map and gate contracts.
+func (g *Game) validateScenarioLevels(
+	panState *save.PanStateRecord,
+	hellState *save.HellStateRecord,
+) error {
 	if _, err := g.scripts.Policy("save.validate_scenario_levels", map[string]any{
 		"scenario_id":     g.scenarioID,
 		"levels":          scenarioLevelPolicyRecords(g.levels),
 		"branch_schedule": branchSchedulePolicyInput(g.branchSchedule),
 		"pan_state":       luaPanState(panState),
+		"hell_state":      luaHellState(hellState),
 	}); err != nil {
 		return err
 	}
@@ -185,6 +196,8 @@ func scenarioLevelPolicyRecords(levels map[int]*Level) []any {
 			"stairs":           stairs,
 			"initial_monsters": level.initialMonsters,
 			"initial_actors":   level.initialActors,
+			"vault_id":         level.VaultID(),
+			"vault_ids":        level.VaultIDs(),
 		})
 	}
 

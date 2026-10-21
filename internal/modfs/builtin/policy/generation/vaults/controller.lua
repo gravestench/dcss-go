@@ -2,7 +2,9 @@
 local catalog = require("policy.generation.vaults.catalog")
 local selection = require("policy.generation.vaults.selection")
 local categories = require("constants.catalog")
+local directives = require("constants.vault_directives")
 local effects = require("constants.vault_effects")
+local hooks = require("policy.generation.vaults.hooks")
 
 local controller = {}
 local MAX_CHILD_MAPS = 1000
@@ -71,6 +73,20 @@ local function child_context(parent, tag)
     return child
 end
 
+-- A tagged child may itself be a mapless controller. Claim its source ID
+-- before invoking its hooks so its own nested draw sees level uniqueness.
+-- A child with geometry may also have post-place work after its map fits.
+local function run_child_hooks(api, child, vault, map)
+    for _, operation in ipairs(vault.operations) do
+        if operation.kind == directives.HOOK_POST_PLACE then
+            local child_api = controller.new(api.builder, child,
+                api.placed, api.place, vault.id, map)
+
+            hooks.run(vault, operation.argument, child_api)
+        end
+    end
+end
+
 -- Place related maps in request order. Optional family and ID constraints
 -- keep a composed map's eligibility aligned with its save contract. Source
 -- dgn.place_maps skips a map whose geometry cannot fit and counts only
@@ -127,11 +143,21 @@ function controller.place_maps(api, tag, count, options)
             end
 
             local vault = catalog.get(selected.id)
-            local map = api.place(nil, api.builder, vault, child)
+            local map
 
-            if map then
-                api.placed[#api.placed + 1] = map
-                api.context.used:add_map(vault, map)
+            if #vault.rows > 0 then
+                map = api.place(nil, api.builder, vault, child)
+            end
+
+            if map or #vault.rows == 0 then
+                if map then
+                    api.placed[#api.placed + 1] = map
+                    api.context.used:add_map(vault, map)
+                else
+                    api.context.used:add(vault)
+                end
+
+                run_child_hooks(api, child, vault, map)
                 placed_count = placed_count + 1
                 placed_ids[#placed_ids + 1] = vault.id
                 break

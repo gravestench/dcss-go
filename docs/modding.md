@@ -2034,6 +2034,16 @@ this repository), so a layered mod can replace a handler at the same path.
 The `.des` line declares when to call a method; the actual Lua function is
 assigned to the table returned by that module.
 
+For Hell, source entrance maps live under `vaults/hell_entry/`. They carry
+`chance_enter_hell`, `DEPTH: Depths`, and a keyed `enter_hell` feature.
+The ordinary chance stage discovers them by tag and selects one eligible
+map by source weight. `vaults/hell_entry/hell_entry.des` is the one-cell
+`fallback_enter_hell` map if a selected entrance cannot fit. The live
+`DNGN_ENTER_HELL` cell invokes `policy/world/hell/travel.lua`, which opens
+the persistent Vestibule and remembers the outside return gate. This travel
+policy is distinct from a generation hook: a `.des` hook configures a map
+while it is built; the world policy acts when the player uses its gate.
+
 | DES declaration | When its Lua method runs |
 | --- | --- |
 | `: vault.run("method")` | At that line's position among the map's directives; it may emit more typed directives. |

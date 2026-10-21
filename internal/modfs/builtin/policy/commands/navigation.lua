@@ -11,6 +11,7 @@ local runes = require("policy.character.runes")
 local endgame = require("policy.character.endgame")
 local phases = require("constants.endgame")
 local pan_travel = require("policy.world.pan.travel")
+local hell_travel = require("policy.world.hell.travel")
 
 -- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
@@ -92,7 +93,7 @@ end
 
 -- Stair travel checks the current cell's feature before switching levels.
 function navigation.stairs(ctx, position, downstairs, actor, forced,
-    pan_state, pan_current_vault_ids)
+    pan_state, pan_current_vault_ids, hell_state)
     if rooted(ctx) then
         return {
             message = "Your roots keep you in place.",
@@ -106,6 +107,12 @@ function navigation.stairs(ctx, position, downstairs, actor, forced,
     local cell = ctx:cell(position.level_id, position.x, position.y)
     local portal = pan_travel.prepare(ctx, position, downstairs,
         pan_state, pan_current_vault_ids)
+
+    if portal then
+        return portal
+    end
+
+    portal = hell_travel.prepare(ctx, position, downstairs, hell_state)
 
     if portal then
         return portal
