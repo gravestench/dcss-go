@@ -2217,6 +2217,18 @@ the other weights room, corridor, and wall tiles before painting branch
 variants. Gridlike's weighted room materials live in
 `policy/generation/layouts/gridlike_materials.lua`. Override that path to
 change the pairs, or add a separate layout to use a different tiler.
+
+The weighted delve layouts use `policy/generation/layouts/delve.lua` to
+grow winding floor from a frontier of diggable walls. Each map owns its
+parameters and finishing rules: `layout_twisted_cross.lua` gives Depths
+four distinct arms, `layout_twisted_circle.lua` reserves Zot rooms before
+carving passages, `layout_spider_delve.lua` draws Spider's neighbor and
+connection settings, and `layout_cocytus_delve.lua` keeps a dry stair route
+separate from water and teleport-restricted side floor. Their `.des` files
+declare branch weights and name the Lua methods. Put branch-specific
+carving policy in the layout module, not in the shared selector.
+`delve_shapes.lua` supplies geometric painters used by those hooks.
+
 If a procedural layout places keyed effects or monsters, return typed
 `records` beside `builder`. Gridlike's fill module shows how source plant
 glyphs become ECS monster records and how keyed terrain properties survive

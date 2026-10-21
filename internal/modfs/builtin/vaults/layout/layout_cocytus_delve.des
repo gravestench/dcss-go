@@ -1,0 +1,11 @@
+# Source: crawl-ref/source/dat/des/builder/layout_delve.des
+# A dry stair-bearing route is separated from unsafe watery side passages.
+NAME: layout_cocytus_delve
+DEPTH: Coc
+WEIGHT: 10
+ORIENT: encompass
+TAGS: overwritable layout allow_dup unrand layout_type_narrow_caves
+TAGS: no_rotate no_vmirror no_hmirror
+: vault.run("layout_cocytus_delve.generate")
+MAP
+ENDMAP

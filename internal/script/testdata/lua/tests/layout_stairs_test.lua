@@ -112,6 +112,40 @@ local function preserves_separate_stair_bubbles()
     end
 end
 
+-- DCSS can walk diagonally between two floor clusters. An authored up
+-- stair on one side and down stair on the other must be paired as one
+-- reachable region rather than getting invented local counterparts.
+local function pairs_diagonally_connected_exits()
+    local builder = grid.new(random_context())
+
+    for y = 10, 12 do
+        for x = 10, 12 do
+            builder:set(x, y, ".")
+        end
+    end
+
+    for y = 13, 15 do
+        for x = 13, 15 do
+            builder:set(x, y, ".")
+        end
+    end
+
+    builder:set(11, 11, "{")
+    builder:set(14, 14, "}")
+
+    local pairs = stairs.complete(builder)
+    local authored_pair = false
+
+    for _, pair in ipairs(pairs) do
+        if pair.up.x == 11 and pair.up.y == 11 and
+            pair.down.x == 14 and pair.down.y == 14 then
+            authored_pair = true
+        end
+    end
+
+    harness.truthy(authored_pair, "diagonal route pairs source exits")
+end
+
 -- A terminal branch floor keeps authored down exits as map facts, but the
 -- engine must not manufacture a deeper level beyond the source branch depth.
 local function branch_bottom_does_not_add_downstairs()
@@ -139,6 +173,7 @@ function test.run()
     preserves_authored_stairs()
     rejects_insufficient_floor()
     preserves_separate_stair_bubbles()
+    pairs_diagonally_connected_exits()
     branch_bottom_does_not_add_downstairs()
 end
 

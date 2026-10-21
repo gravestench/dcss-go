@@ -1,0 +1,12 @@
+# Source: crawl-ref/source/dat/des/builder/layout_delve.des
+# Four separately carved arms meet at a small stair-bearing center.
+NAME: layout_twisted_cross
+DEPTH: Depths
+WEIGHT: 5
+ORIENT: encompass
+TAGS: overwritable layout unrand layout_type_narrow_caves
+TAGS: no_rotate no_vmirror no_hmirror uniq_layout_twisted_delve
+: vault.run("layout_twisted_cross.generate")
+: vault.validate("layout_twisted_cross.validate")
+MAP
+ENDMAP

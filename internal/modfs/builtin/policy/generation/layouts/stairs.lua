@@ -6,11 +6,17 @@ local glyphs = require("constants.vault_glyphs")
 
 local stairs = {}
 
+-- DCSS travel and source map-zone checks include diagonal neighbors. The
+-- postpass must use that same topology when pairing authored stair exits.
 local directions = {
     { x = 1, y = 0 },
     { x = -1, y = 0 },
     { x = 0, y = 1 },
     { x = 0, y = -1 },
+    { x = 1, y = 1 },
+    { x = -1, y = 1 },
+    { x = 1, y = -1 },
+    { x = -1, y = -1 },
 }
 
 local new_up = { "{", "(", "[" }

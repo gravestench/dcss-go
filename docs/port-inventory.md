@@ -517,9 +517,11 @@ the presentation parity pass. Xom and Jiyva poof variants still need
 per-monster god state from the religion domain.
 
 An audit of the pinned `builder/` and `serial/` DES files finds 600 unique
-`NAME` values, of which 586 occur in the committed vault catalog. The 14
-remaining names are procedural layouts from `layout_delve`, `layout_geoelf`,
-`layout_geoelf_castle`, and `layout_halls`. The completed `layout_cc` family
+`NAME` values, of which 590 occur in the committed vault catalog. The 10
+remaining names are procedural layouts from `layout_geoelf`,
+`layout_geoelf_castle`, and `layout_halls`. The weighted `layout_delve`
+family covers the Depths cross, Zot circle, Spider galleries, and
+Cocytus dry-route/water split. The completed `layout_cc` family
 includes Chaotic City. The completed `layout_cellular` family now includes
 Cellular Growth's weighted wall islands and Gridlike's branch-specific
 rooms, corridors, keyed material fills, and plant records. Both use one

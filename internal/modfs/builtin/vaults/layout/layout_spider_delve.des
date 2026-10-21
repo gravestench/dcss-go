@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_delve.des
+# Neighbor thresholds and connection odds vary across Spider floors.
+NAME: layout_spider_delve
+DEPTH: Spider
+WEIGHT: 25
+ORIENT: encompass
+TAGS: overwritable layout allow_dup unrand layout_type_narrow_caves
+: vault.run("layout_spider_delve.generate")
+MAP
+ENDMAP

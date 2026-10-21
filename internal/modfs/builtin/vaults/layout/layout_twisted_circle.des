@@ -1,0 +1,12 @@
+# Source: crawl-ref/source/dat/des/builder/layout_delve.des
+# Round chambers and short delved passages fill a circular Zot region.
+NAME: layout_twisted_circle
+DEPTH: Zot
+WEIGHT: 10
+ORIENT: encompass
+TAGS: overwritable layout unrand allow_dup layout_type_narrow_caves
+TAGS: no_rotate no_vmirror no_hmirror
+: vault.run("layout_twisted_circle.generate")
+: vault.validate("layout_twisted_circle.validate")
+MAP
+ENDMAP

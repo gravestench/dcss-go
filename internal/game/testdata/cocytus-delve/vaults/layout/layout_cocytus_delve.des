@@ -1,0 +1,11 @@
+# Test-only eligibility override: exercise the production Cocytus hook on D:2.
+NAME: layout_cocytus_delve
+PLACE: D:2
+DEPTH: D:2
+WEIGHT: 100
+ORIENT: encompass
+TAGS: overwritable layout allow_dup unrand layout_type_narrow_caves
+TAGS: no_rotate no_vmirror no_hmirror
+: vault.run("layout_cocytus_delve.generate")
+MAP
+ENDMAP
