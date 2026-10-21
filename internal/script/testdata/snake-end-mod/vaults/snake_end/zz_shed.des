@@ -1,0 +1,12 @@
+# A modder can add a new Snake end by dropping one source-format DES file
+# into the matching family. The base branch and selector need no edits.
+NAME:   zz_shed
+PLACE:  Snake:$
+WEIGHT: 1
+ORIENT: north
+KITEM:  O = serpentine rune of Zot
+MAP
+xxxxxxx
+x@...Ox
+xxxxxxx
+ENDMAP

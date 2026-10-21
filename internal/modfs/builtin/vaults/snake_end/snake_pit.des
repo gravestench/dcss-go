@@ -1,0 +1,48 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/snake.des
+# The old pit layout concentrates naga defenders around the rune.
+NAME:   snake_pit
+TAGS:   no_rotate
+PLACE:  Snake:$
+ORIENT: southwest
+KITEM:  O = serpentine rune of Zot
+MONS:   nagaraja / salamander tyrant w:5, naga w:15 / salamander w:5
+MONS:   naga mage w:30 / naga ritualist / salamander mystic / naga sharpshooter
+MONS:   naga warrior / naga sharpshooter w:5
+SUBST:  D = c .:1, v = x .:1, 2 = 223, 4 = 4.
+NSUBST: 1 = 3:1 / *=1.., 3 = 5:3 / *=3...
+MAP
+xxxxxxxxxxxxxxxxxccc.@2cc2@.ccccxxxxxxxx
+xxxxxxxxxxxxcccccc.............ccccxxxxx
+xxxxxxxxxxccc....v.............v..cccxxx
+xxxxxxxxxcc...2..v.............v..2.cxxx
+xxxxxxxxxc....2..v....v.....v..v..33ccxx
+xxxxxxxxxc....22.v.............vv..2.cxx
+xxxxxxxxcc.......vv..v........vv..33.cxx
+xxxxxxxxc....23x3.vv....T...vvv.4444.ccx
+xxxxxxxxc.....4444.v.........v..333...cx
+xxxxxxxxc.....334v....v........x44....cx
+xxxxxxxxc......334......v.......4333..cx
+xxxxxxxcc..D...........4.4..v......D..cx
+xxxxxxxc...DD...........1.........DD..cx
+xxxxxxxc3..DD..........4.4........DD.3cx
+xxxxxxxc3..DD.......v........2....DD.3cx
+xxxxxxxc1..DD.........1...1......DD..1cx
+xxxxxxxcc..DD.....1.....1.....1.DDD..ccx
+xxxxxxxxc...DDD......3333333....DD...cxx
+xxxxxxxxc....DDDD....3333333....DD...cxx
+xxxxxxxxc.....DDDDDD...........DD....cxx
+xxxxxxxxc........DDDc...O....cDD.....cxx
+xxxxxxxxcc........Dc.DcccccDD.cD....ccxx
+xxxxxxxxxc..........DDDcccDDDD......cxxx
+xxxxxxxxxccc.....3..............3..ccxxx
+xxxxxxxxxxxcccc..13............31cccxxxx
+xxxxxxxxxxxxxxcccccc.......cccccccxxxxxx
+xxxxxxxxxxxxxxxxxxxcccccccccxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

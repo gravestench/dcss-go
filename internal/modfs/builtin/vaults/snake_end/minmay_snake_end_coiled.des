@@ -1,0 +1,59 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/snake.des
+# Coiled corridors wrap a final rune pocket.
+NAME:    minmay_snake_end_coiled
+TAGS:    no_rotate
+PLACE:   Snake:$
+ORIENT:  southwest
+KITEM:   O = serpentine rune of Zot
+MONS:    naga, naga warrior / naga sharpshooter w:5
+MONS:    naga mage w:30 / naga ritualist / naga sharpshooter \
+         / salamander mystic
+MONS:    nagaraja / salamander tyrant w:5
+SHUFFLE: ABC
+SUBST:   A = x, B : xx., C = ., c : c:20 v:5, 1 = 1., 2 = 23...
+NSUBST:  4 = 4=4 / *=432.., X = 4=x / 4=. / x..
+MAP
+xxxxxxxxxxxxxxxxxxc.@..cxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxc....cxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxcc....ccxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxc......cxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxc..1.1.cxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxc...2..cxxxccccccccxxxxxx
+xxxxxxxxxxxxcccccc......ccccc......cccxxxx
+xxxxxxxxccccc...2.......2.......1....ccccc
+xxxxxcccc.......A...4............1........
+xxxccc..........A2..X..2.........2.......@
+xxcc...............2.2..........1.........
+xxc....4.....ccccc......cccccc......cccccc
+xcc...1...ccccxxxc......cxxxxccccccccxxxxx
+xc...X.B.ccxxxxxxc..1.1.cxxxxxxxxxxxxxxxxx
+xc....4B.ccxxxxxxc...X..cxxxxxxxxxxxxxxxxx
+xcc....1..ccccxxxc...2..cxxxxxxxxxxxxxxxxx
+xxc..........ccccc......ccccccxxxxxxxxxxxx
+xxcc.........................cccccxxxxxxxx
+xxxccc.....4....C........A.......ccccxxxxx
+xxxxxcccc...1...C..4X....A..........cccxxx
+xxxxxxxxccccc........X4........1......ccxx
+xxxxxxxxxxxxcccccc......ccccc..........cxx
+xxxxxxxxxxxxxxxxxc......cxxxcccc..1....ccx
+xxxxxxxxxxxxxxxxxc..1...cxxxxxxcc.B.X...cx
+xxxxxxxxxxxxxxxxxc..X21.cxxxxxxcc.B.4...cx
+xxxxxxxxxxxxxxxxxc..1...cxxxcccc..1....ccx
+xxxxxxxxxxxxcccccc......ccccc..........cxx
+xxxxxxxxccccc........4.........4......ccxx
+xxxxxcccc.......A...1X...C...2......cccxxx
+xxxccc..........A....4...C.......ccccxxxxx
+xxcc.........................cccccxxxxxxxx
+xxc....1.2...ccccc...1..ccccccxxxxxxxxxxxx
+xcc..4....ccccxxxc..1...cxxxxxxxxxxxxxxxxx
+xc..1X.B.ccxxxxxxc...2..cxxxxxxxxxxxxxxxxx
+xc...4.B.ccxxxxxxc..1X..cxxxxxxxxxxxxxxxxx
+xcc.......ccccxxxc...1..cxxxxxxxxxxxxxxxxx
+xxc....1.2...ccccc..2...ccccccxxxxxxxxxxxx
+xxcc.................1.....4.cccccxxxxxxxx
+xxxccc........1.C...4........1...ccccxxxxx
+xxxxxcccc..4.2X4C....1......12X4....cccxxx
+xxxxxxxxccccc.1.....2........1....4..Ocxxx
+xxxxxxxxxxxxcccccccccccccccccccccccccccxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

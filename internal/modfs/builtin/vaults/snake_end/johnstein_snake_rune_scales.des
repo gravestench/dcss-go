@@ -1,0 +1,44 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/snake.des
+# Five candidate pockets reduce to one rune through NSUBST.
+NAME:   johnstein_snake_rune_scales
+PLACE:  Snake:$
+ORIENT: north
+KITEM:  O = serpentine rune of Zot
+MONS:   naga w:30 / salamander, naga warrior / naga / salamander w:5
+MONS:   naga mage w:15 / naga ritualist / naga sharpshooter /\
+        salamander mystic
+MONS:   guardian serpent w:20 / salamander mystic / naga ritualist
+MONS:   nagaraja w:20 / naga sharpshooter / salamander tyrant
+MONS:   anaconda / black mamba / mana viper / shock serpent w:5
+KMONS:  Z = Vashnia w:30 / nagaraja w:20 / salamander tyrant \
+            , nagaraja / salamander tyrant w:5
+SUBST:  1 = 1.., 2 = 2.., 3 = 33..., 6 = 6..
+NSUBST: 4 = 2:4 / *=4.., 5 = 1:ZZZ5 / 3:5 / *=5.
+NSUBST: O = 1:O / *:%.
+MAP
+cccccccccccccccccccccccccccccccccccccccc
+c4cO..4.4...OccO...44...OccO...4.4..Oc4c
+c.cc..252...cccc..5225..cccc...252..cc.c
+c1.cc.131..cc..cc..33..cc..cc..131.cc.1c
+c...cc....cc....cc....cc....cc....cc...c
+cc...cc..cc......cc..cc......cc..cc...cc
+ cc.2.c..c.2.22.2.c..c.2.22.2.c..c.2.cc
+  cc.1.1....4554........4554....1.1.cc
+   cc.2..c.3.33.3..cc..3.33.3.c..2.cc
+    cc.1.cc.......cccc.......cc.1.cc
+     cc...cc.....cc44cc.....cc...cc
+      cc...cc...cc.55.cc...cc...cc
+       cc...c..cc.3333.cc..c...cc
+        cc.....c1.1..1.1c.....cc
+         cc..................cc
+          cc....c666666c....cc
+           cc...cc6666cc...cc
+            cc..3cc66cc3..cc
+             cc..2cccc2..cc
+              cc..1cc1..cc
+               cc.1111.cc
+                cc....cc
+                 cc++cc
+                 @....@
+                   cc
+ENDMAP

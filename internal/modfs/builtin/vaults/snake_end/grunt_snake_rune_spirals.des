@@ -1,0 +1,38 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/snake.des
+# Mirrored spirals hide one real rune and one decoy prize.
+NAME:   grunt_snake_rune_spirals
+PLACE:  Snake:$
+ORIENT: centre
+KITEM:  D = serpentine rune of Zot
+# The retired rune mimic becomes the same non-rune good-item prize.
+KITEM:  E = any good_item
+MONS:   naga w:30 / salamander, naga warrior / naga sharpshooter w:5
+MONS:   naga mage w:15 / naga ritualist / naga sharpshooter /\
+        salamander mystic w:5
+MONS:   nagaraja / guardian serpent / salamander tyrant w:5, nagaraja
+SUBST:  1 = 1.., 2 = 2..., 3 = 3.
+NSUBST: O = D / 1=E, 4 = 4:4 / *=4., 5 = 6:5 / *=54.
+MAP
+        cccccccc     c.@..c       cccccccc
+     cccc..1...ccc   c....c    cccc..2...ccc
+   ccc.....2.....ccc c....c   cc.....3.....cc
+  cc.......1.......ccc....c  cc......2......cc
+  c1....ccccccc....1cc....c  c1....cccccc..51c
+ cc.51ccc..2..cc..5..c....cxcc.2.ccc....cc12.cc
+ c...cc...23...cc1........cxc.5.1c.......cc...c
+cc...c2....2....cc........cxc...cc.......4c...cc
+c...cc52..ccc..22cc....32.cxc232c......4..cc...c
+c...c...2ccccc25..cc......cxc...c.4.O.4c.2.c...c
+c232c...cc.5.cc...ccc..5..ccc...cc.....c323c...c
+c...c323c.....cc...ccc..5..ccc...cc.5.cc...c232c
+c...c.2.c4.O.4.c...cxc......cc..52ccccc2...c...c
+c...cc..4......c232cxc.23....cc22..ccc..25cc...c
+cc...c4.......cc...cxc........cc....2....2c...cc
+ c...cc.......c1.5.cxc........1cc...32...cc...c
+ cc.21cc....ccc.2.ccxc....c..5..cc..2..ccc15.cc
+  c15..cccccc....1c  c....cc1....ccccccc....1c
+  cc......2......cc  c....ccc.......1.......cc
+   cc.....3.....cc   c....c ccc.....2.....ccc
+    ccc...2..cccc    c....c   ccc...1..cccc
+      cccccccc       c..@.c     cccccccc
+ENDMAP

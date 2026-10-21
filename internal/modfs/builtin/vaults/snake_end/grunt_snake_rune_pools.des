@@ -1,0 +1,43 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/snake.des
+# One source draw changes the same pools between water and lava.
+NAME:   grunt_snake_rune_pools
+TAGS:   no_trap_gen no_monster_gen
+PLACE:  Snake:$
+ORIENT: north
+KITEM:  O = serpentine rune of zot
+# I've added a fire theme, which places salamander monsters and lava instead of
+# deep water and sea snakes. --gammafunk
+# The one-in-three source theme draw is ported to this named Lua hook.
+: vault.run("choose_theme")
+SUBST:  4 = 45, 3 = 35, 1 = 113., 2 = 2211., 5 = 5.., 6 = 66.
+MAP
+          xxxxxxxxx
+          ccccccccc
+       cccc.7w7w7.cccc
+      cc..5..www..5..cc
+      c4.www1.2.1www.4c
+   ccccw.w7ww.O.ww7w.wccc
+  cccwwwSww7w212w7wwSwwwccc
+ cc...ww.wwwww.wwwww.ww...cc
+cc......3.w7ww4ww7w.3......cc
+c..cccwww.ww7w4w7ww.wwwccc..c
+c..cxcc7w..2.5.5.2..w7ccxc..c
+c..ccxcwwwwwcccccwwwwwcxcc..c
+cc15cccww7wcc7w7ccw7wwccc51cc
+ cc34ccccwcc.w7w.ccwcccc43cc
+  c..cc.ccc4..1..4ccc.cc..c
+  c....c..5..6.6..5..c....c
+  cc.....c.3..2..3.c.....cc
+   cc..c..5.......5..c..cc
+    ccc.cc.........cc.ccc
+      ccccccc+c+cccccccc
+         ccc4...4ccc
+        cc...www...cc
+        c6c3.w7w.3c6c
+        c6c.17w72.c6c
+        c6c..w7w..c6c
+        cc...www...cc
+         ccc.....ccc
+          ccc+++ccc
+          cc.@.@.cc
+ENDMAP

@@ -10,6 +10,8 @@ local definition = {
     min_depth = 2,
     max_depth = 3,
     depth = 4,
+    end_vault_family = "snake_end",
+    end_vault_required = true,
     absolute_depth = 15,
     flags = {
         "dangerous_end",

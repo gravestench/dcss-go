@@ -2,6 +2,7 @@ local catalog = require("policy.generation.vaults.catalog")
 local layouts = require("policy.generation.layouts.catalog")
 local categories = require("constants.catalog")
 local directives = require("constants.vault_directives")
+local effects = require("constants.vault_effects")
 local hooks = require("policy.generation.vaults.hooks")
 local depth_rules = require("policy.generation.vaults.depth")
 local temple = require("policy.generation.temple.catalog")
@@ -23,6 +24,48 @@ local function known(id, level_id)
     end
 end
 
+-- The selected last-floor vault and its historical rune intent must agree.
+-- A collected rune may no longer have a floor entity, so validation reads
+-- the saved source record rather than requiring the item to remain present.
+local function validate_end_vault(level, branch)
+    local okay, selected = pcall(catalog.get, level.vault_id)
+    local label = branch.abbreviation .. " end"
+
+    if not okay or selected.family ~= branch.end_vault_family or
+        #selected.places == 0 or
+        not depth_rules.eligible({ depths = selected.places },
+            level.branch_id, level.local_depth, branch.depth) then
+        error(label .. " needs a matching end vault")
+    end
+
+    local selected_ids = {}
+
+    for _, id in ipairs(level.vault_ids or {}) do
+        selected_ids[id] = true
+    end
+
+    if not selected_ids[selected.id] then
+        error(label .. " needs its selected end vault in history")
+    end
+
+    for _, rune_id in ipairs(branch.runes or {}) do
+        local count = 0
+
+        for _, record in ipairs(level.vault_records or {}) do
+            if record.kind == effects.ITEM and record.arguments and
+                record.arguments.kind_id == rune_id and
+                selected_ids[record.source_id] then
+                count = count + 1
+            end
+        end
+
+        if count ~= 1 then
+            error(label .. " needs exactly one " .. rune_id ..
+                " source record")
+        end
+    end
+end
+
 -- Vault IDs in a save must still resolve against the active catalog.
 -- Example: vaults.validate(nil, input) rejects a saved vault ID missing from the scenario catalog.
 function vaults.validate(_, input)
@@ -40,6 +83,11 @@ function vaults.validate(_, input)
         end
 
         local branch = register.get(categories.BRANCHES, level.branch_id)
+
+        if branch.end_vault_required and
+            level.local_depth == branch.depth then
+            validate_end_vault(level, branch)
+        end
 
         if branch.end_layout_required and
             level.local_depth == branch.depth then

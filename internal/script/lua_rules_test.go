@@ -56,6 +56,17 @@ func TestLayoutMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/layout_mod_test.lua")
 }
 
+// A sparse mod adds a Snake end vault through DES discovery alone.
+func TestSnakeEndMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/snake-end-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/snake_end_mod_test.lua")
+}
+
 // An overlay end map tests PLACE selection through the production catalog.
 func TestLayoutPlaceSelection(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/layout-place")

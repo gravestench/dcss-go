@@ -1,0 +1,65 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/snake.des
+# Two routed wings lead to one guarded rune chamber.
+NAME:    snake_hunt
+TAGS:    no_rotate
+PLACE:   Snake:$
+ORIENT:  northwest
+KITEM:   O = serpentine rune of Zot
+MONS:    naga w:30 / salamander
+MONS:    nagaraja w:20 / salamander tyrant
+MONS:    guardian serpent
+MONS:    naga warrior / naga sharpshooter w:5
+MONS:    naga mage w:30 / naga ritualist / naga sharpshooter \
+         / salamander mystic
+MONS:    nagaraja / guardian serpent / salamander tyrant w:5
+SHUFFLE: 'D / "E, 'D / 'D / FH, "E / JK
+SUBST:   FHJK = x, ' = ., " = .
+SUBST:   E = D, L=xc..++, D=xc++, T : T U V .:30 b, _ : ....!x, ! = x .:2
+SUBST:   1 = 1..., 2 = 2..., 3 = 3..., 4 = 44..., 5 = 55...
+NSUBST:  . = 30 =12345..... / *:., 6 = 4:6 / *=6.
+SUBST:   - = .
+SHUFFLE: 123, 45
+NSUBST:  { = { / .
+#
+# Check that the rune survives on a path from the entrance.
+: vault.validate("connected_rune")
+#
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxx'xxxcccccxxx"xxxxxxxxxxxxx
+xxxxxxxxxxxxx'xx''''''c4O4c""""""xx"xxxxxxxx
+xxxxxxxxxxx''''''xxxx6646466xxxx""""""xxxxxx
+xxxxxxxx''''xxxxxxxx.5665665.xxxxxxxx""""xxx
+xxxxxxx''xxxx''''xxx..45554..xxx""""xxxx""xx
+xxxxxx''xxx''''''''xxx.666.xxx""""""""xxx""x
+xxxxxx'xxx''''''''''xxxcLcxxx""""""""""xxx"x
+xxxxxx''x''''''''''''xx.3.xx""""""""""""x""x
+xxxxxxx'D'''''''''''''45354"""""""""""""E"xx
+xxxxxxxxxx''''''''''xx.....xx""""""""""xxxxx
+xxxxxxxxxxx''''''''xxxxx.xxxxx""""""""xxxxxx
+xxxxxxxxxxxxx''''xxxxxx...xxxxxx""""xxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxx+xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxx!.!xxxxxx.....xxxxxx!.!xxxxxxxx
+xxxxxxxxxx!..---_xx...43335...xx_---!!!xxxxx
+xxxxxxxx!...---_x.11-4--3--5-22.x_---...!xxx
+xxxxxxx!...2---x--11---------22--x---1...!xx
+xxxxxxx!..2---_x------T...T------x_---1--!xx
+xxxxxx!...2---x--2-------------1--x---1---!x
+xxxxxx!..2----x---------{---------x----1---!
+xxxxxx!..-----x----T---(-[---T-------------@
+xxxxxx!..2----x-------ZZZZZ-------x----1---!
+xxxxxxx!.-2---_x-----------------x_---1--!xx
+xxxxxxx!.--2---_xx----T---T----xx_---1---!xx
+xxxxxxx!.--------_xx---------xx_---------!xx
+xxxxxxxx!.---------_xxx---xxx_--------..!xxx
+xxxxxxxxx!-------------x-x-------------!xxxx
+xxxxxxxxxx!!-------------------------!!xxxxx
+xxxxxxxxxxxx!!!-----3-------3-----!!!xxxxxxx
+xxxxxxxxxxxxxxx!!!!!--3-{-3--!!!!!xxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxx!!!---!!!xxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxx!@!xxxxxxxxxxxxxxxxxx
+ENDMAP

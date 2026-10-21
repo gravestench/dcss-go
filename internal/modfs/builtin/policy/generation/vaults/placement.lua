@@ -3,6 +3,7 @@ local glyphs = require("constants.vault_glyphs")
 local effects = require("constants.vault_effects")
 local directives = require("constants.vault_directives")
 local implicit = require("constants.vault_implicit")
+local hooks = require("policy.generation.vaults.hooks")
 local operations = require("policy.generation.vaults.operations")
 local transforms = require("policy.generation.vaults.transforms")
 local choice = require("policy.generation.vaults.specs.choice")
@@ -39,6 +40,18 @@ local function matrix(rows)
     end
 
     return cells, map_width, #rows
+end
+
+-- Source validators see the finished local DES cells before terrain is
+-- projected. This keeps a rejected substitution from changing the level.
+local function validate_cells(vault, cells)
+    for _, operation in ipairs(vault.operations) do
+        if operation.kind == directives.HOOK_VALIDATE and
+            not hooks.run(vault, operation.argument, { cells = cells }) then
+            error(string.format("%s: vault %s: validation rejected placement",
+                vault.path, vault.id))
+        end
+    end
 end
 
 -- A vault candidate cannot cover the level's protected stair landing even when its source glyph is transparent.
@@ -654,6 +667,9 @@ function placement.place(_, builder, vault, player, options)
     local height_before = map_height
     local source_records, helper_ids = operations.apply(vault,
         cells, builder, 0, player)
+
+    validate_cells(vault, cells)
+
     local overridden = keyed_overrides(source_records)
     local turns = 0
 

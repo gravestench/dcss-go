@@ -340,7 +340,7 @@ end
 
 -- Generate one floor before pairing its stairs with neighboring floors.
 -- The arrival only belongs to D:1; supplemental vaults use actual depth.
-local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
+local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
     chosen_schedule, temple)
     if branch_id == branches.BRANCH_TEMPLE then
         return temple_floor.build(ctx, temple, player)
@@ -402,6 +402,8 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
             depth = depth,
             branch_bottom = bottom,
             absolute_depth = absolute_depth,
+            end_vault_family = branch.end_vault_required and
+                depth == bottom and branch.end_vault_family or nil,
             layout_family = layout_family(layout),
             prior_vault_ids = prior_vault_ids,
             primary_room_ids = layout.room_ids,
@@ -474,6 +476,8 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
         arrival_vault = arrival_vault,
         extra = extra,
         controller = controller,
+        end_vault_id = branch.end_vault_required and
+            depth == bottom and controller or nil,
         vault_ids = vault_ids,
         records = records,
         protected = protected,
@@ -481,6 +485,46 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
         source_down = source_down,
         links = branch_links,
     }
+end
+
+-- A fixed end map may cover stairs completed by an otherwise valid base
+-- layout. Redraw the whole floor in that one case so no partial geometry,
+-- records, or uniqueness history escape from a rejected attempt.
+local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
+    chosen_schedule, temple)
+    local branch = register.get("branches", branch_id)
+    local required_end = branch.end_vault_required and depth == branch.depth
+
+    if not required_end then
+        return build_floor_once(ctx, player, branch_id, depth,
+            prior_vault_ids, chosen_schedule, temple)
+    end
+
+    local last_fit_error
+
+    for _ = 1, 32 do
+        local okay, result = pcall(build_floor_once, ctx, player,
+            branch_id, depth, prior_vault_ids, chosen_schedule, temple)
+
+        if okay then
+            return result
+        end
+
+        local failed_fit = tostring(result):find(
+            "end vault could not fit on base layout:", 1, true)
+        local invalid_rune = tostring(result):find(
+            "end vault rejected rune selection:", 1, true)
+
+        if not failed_fit and not invalid_rune then
+            error(result)
+        end
+
+        last_fit_error = result
+    end
+
+    error(branch.abbreviation .. ":" .. depth ..
+        " could not fit an end vault after 32 layouts: " ..
+        tostring(last_fit_error))
 end
 
 -- An arrival's authored entry wins over the first ordinary up stair.
@@ -531,7 +575,7 @@ local function level_record(ctx, floor)
         entry_y = entry.y,
         initial_monsters = floor.branch_id == branches.BRANCH_TEMPLE and
             0 or monster_count(ctx, floor.branch_id, floor.depth),
-        vault_id = floor.layout.primary_id or
+        vault_id = floor.end_vault_id or floor.layout.primary_id or
             (arrival and arrival.id or floor.controller),
         vault_ids = floor.vault_ids,
         vault_records = #floor.records > 0 and floor.records or nil,

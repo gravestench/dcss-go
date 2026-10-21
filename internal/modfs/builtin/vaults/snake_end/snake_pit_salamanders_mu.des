@@ -1,0 +1,58 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/snake.des
+# A lava hold makes salamanders the end defenders.
+NAME:   snake_pit_salamanders_mu
+TAGS:   no_monster_gen no_rotate
+PLACE:  Snake:$
+ORIENT: north
+KITEM:  O = serpentine rune of Zot
+MONS:   naga / salamander w:15
+MONS:   naga mage / naga ritualist / naga sharpshooter \
+        / salamander mystic w:30
+MONS:   naga warrior / naga sharpshooter w:5
+MONS:   nagaraja / salamander tyrant w:20, guardian serpent
+MONS:   anaconda w:20 / black mamba / shock serpent / mana viper w:15
+KMONS:  7 = salamander
+KMONS:  D = lindwurm
+KMONS:  OS = guardian serpent
+KFEAT:  7 = lava
+SUBST:  2 = 2..., 3 = 3..., 4 = 4..., D = Dll, S = SS6.
+NSUBST: l = 8=7l / *:l, . = 12 = 1.. / *:., 5 = 2:5 / *=5.., 6 = 6:6 / *=6..
+MAP
+              xxxxxx
+              cccccc
+            ccc2452ccc
+           cc..2232..cc
+          cc..llllll..cc
+          c..DllllllD..c  ccccc
+   ccccc cc.llllllllll.cccc666cc
+  cc...ccc..llllllllll..cc66666cc
+ cc.222.cc.llllllllllll.+666S666c
+ c..443..c3llllllllllll.+666O666c
+ c.4243..+5llllllllllll.+666S666c
+ c.4332..c3llllllllllll.cc66666cc
+ cc.....cc..llllllllll..ccc666cc
+ @cc...c+cc.llllllllll.ccccccccccc
+c+ccccc+..c..DllllllD..c...+.....c
+c..lllc.3.cc..llllll..cc...cl.33.c
+c.3lllcc...cc..2232..cc...ccll...c
+cc..lllcc...ccc2452ccc...cclll..cc
+ cc..lDlcc....cccccc....cclDl..cc
+  cc..lllcc.....42.....cclll..cc
+   cc..lllcc....5.....cclll..cc
+    cc..lllccc..42..ccclll..cc
+     cc...lllcccccccclll...cc
+      cc...llllllllllll...cc
+       cc..llllllllllll..cc
+        c....DllllllD....c
+        c......llll......c
+        c.2242..ll..2452.c
+        c.3222..ll..2223.c
+        c......llll......c
+        cccc+cllllllc+cccc
+         c....llllll....c
+         cc.3.llllll.3.cc
+          cc..4lDDl4..cc
+           cc..4224..cc
+            cc......cc
+             cccccccc
+ENDMAP

@@ -3,6 +3,7 @@ local catalog = require("policy.generation.vaults.catalog")
 local chance = require("policy.generation.vaults.chance")
 local controller = require("policy.generation.vaults.controller")
 local directives = require("constants.vault_directives")
+local end_vault = require("policy.generation.vaults.end")
 local hooks = require("policy.generation.vaults.hooks")
 local minivault = require("policy.generation.vaults.minivault")
 local placement = require("policy.generation.vaults.placement")
@@ -60,6 +61,7 @@ end
 local function fit_failure(message)
     return message:find("conflicts with an existing stair", 1, true) or
         message:find("cannot fit without replacing", 1, true) or
+        message:find("validation rejected placement", 1, true) or
         message:find("no ordinary Dungeon floor to connect", 1, true)
 end
 
@@ -201,6 +203,11 @@ function extra.generate(ctx, builder, context)
         context.used:add(catalog.get(id))
     end
 
+    -- An authored branch ending owns its floor before optional maps spend
+    -- draws or reserve cells. Its occupied region joins the protected set.
+    local end_primary = end_vault.place(ctx, builder, context,
+        placed, extra.place)
+
     for _, map in ipairs(overflow_placement.place(ctx, builder,
         context, extra.place)) do
         placed[#placed + 1] = map
@@ -212,7 +219,8 @@ function extra.generate(ctx, builder, context)
         placed, extra.place, place_chance_map)
     unique_placement.place(ctx, builder, context, placed, extra.place)
 
-    return placed, primary or explicit or ordinary, context.used:ids()
+    return placed, end_primary or primary or explicit or ordinary,
+        context.used:ids()
 end
 
 -- Add a stair or arrival point to the protected-cell set before extra placement.

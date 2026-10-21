@@ -2007,7 +2007,7 @@ assigned to the table returned by that module.
 | DES declaration | When its Lua method runs |
 | --- | --- |
 | `: vault.run("method")` | At that line's position among the map's directives; it may emit more typed directives. |
-| `: vault.validate("method")` | After layout build, before stairs; for end layouts, again on restore. |
+| `: vault.validate("method")` | After layout build, before stairs; for a placed vault, after DES substitutions and before terrain projection. End layouts also validate on restore. |
 | `: vault.veto("method")` | After a candidate map is placed; a true result rejects that candidate. |
 | `: vault.post_place("method")` | After a selected controller is placed; it may place tagged child maps. |
 
@@ -2100,6 +2100,40 @@ it. A same-path mod override can replace that map and its named hook. The
 save validator calls the end map's `vault.validate` hook against its saved
 helper IDs and typed records, so the hook must also check the composition a
 modder wants to preserve.
+
+
+### Branch end vaults
+
+A branch ending that fits inside an ordinary generated floor uses an end
+vault family. The Snake branch declares `end_vault_family = "snake_end"` and
+`end_vault_required = true` in `content/branches/branch_snake.lua`. Its nine
+source alternatives live under `vaults/snake_end/`. Each file keeps its own
+`NAME`, `PLACE: Snake:$`, `ORIENT`, keyed entity directives, and `MAP`.
+The end selector discovers every effective file in that family and sorts
+candidates by `NAME` before a weighted draw. It runs before optional CHANCE,
+PLACE, and minivault stages. If no positive-weight end map exists, Snake:4
+is unavailable; generation never substitutes an ordinary floor.
+
+To add an ending, create one `vaults/snake_end/<name>.des` with a unique
+`NAME`, a positive effective `WEIGHT`, `PLACE: Snake:$`, and a map with one
+real serpentine rune request. A same-path overlay replaces a bundled map;
+a new filename adds another weighted candidate. If its map needs a choice
+that DES directives cannot express, add a named hook at
+`policy/generation/vaults/snake_end/<name>.lua` and reference it from a
+`: vault.run("method")` line at the intended source position. Hook modules
+follow the local-object pattern shown below. A placed map's
+`: vault.validate("method")` receives `api.cells`, the final mutable DES
+matrix after substitutions and before it touches the level grid. Return
+`true` to accept it or `false` to reroll that map and, if needed, the base
+layout. Snake Hunt uses this to keep its entry connected to the rune.
+
+The successful end map becomes the level's primary vault ID and remains in
+`vault_ids`. Its typed rune record is historical: picking up the ECS item
+does not erase the record. Restore checks the chosen map's family and
+`PLACE` rule, its selected ID in history, and exactly one matching rune
+record. Changing a saved map's relative path or removing its definition
+changes the ruleset and cannot silently rewrite an existing floor.
+
 
 ### Authored vaults
 
