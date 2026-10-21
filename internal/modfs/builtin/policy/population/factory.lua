@@ -494,11 +494,9 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
 
     ctx:place_actor(monster, level_id, x, y)
 
-    if generated_lord then
-        -- The source installs a cloud ring when its permanent enchantment
-        -- first lands, before the lord takes an ordinary monster turn.
-        cloud_ring.surround(ctx, monster)
-    end
+    -- Species flags and generated lords install their source cloud ring at
+    -- spawn, before the monster takes an ordinary action.
+    cloud_ring.surround(ctx, monster)
 
     -- Shapeshifter's permanent enchantment picks its first body using the
     -- actual cell. Install all source statuses after placement so this

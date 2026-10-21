@@ -1,6 +1,6 @@
--- Generated lord cloud rings use the saved actor trait and the same ECS
--- cloud placement owner as spells. Source terrain and allegiance decide
--- which neighboring cells can receive a cloud.
+-- The shared cloud ring uses a generated lord's saved trait and the same
+-- ECS cloud placement owner as source-flag monsters and spells. Terrain
+-- and allegiance decide which neighboring cells receive a cloud.
 local adjacent = require("constants.adjacent_cells")
 local cloud_ids = require("ids.clouds")
 local clouds = require("policy.clouds.placement")
@@ -9,8 +9,8 @@ local fixture = require("tests.monster_ally_support_fixture")
 local harness = require("tests.harness")
 local monsters = require("ids.monsters")
 local rings = require("policy.combat.monster_cloud_ring")
-local system = require("systems.combat_pan_lord_cloud_ring")
-local traits = require("constants.pan_lord_traits")
+local ring_ids = require("constants.monster_cloud_rings")
+local system = require("systems.combat_monster_cloud_ring")
 
 local test = {}
 
@@ -18,18 +18,19 @@ local test = {}
 -- not leave a hidden string literal in this test.
 local function check_ring_kinds()
     local cases = {
-        { traits.ring_thunder, cloud_ids.CLOUD_STORM },
-        { traits.ring_flames, cloud_ids.CLOUD_FIRE },
-        { traits.ring_ice, cloud_ids.CLOUD_COLD },
-        { traits.ring_draining, cloud_ids.CLOUD_NEGATIVE_ENERGY },
-        { traits.ring_chaos, cloud_ids.CLOUD_CHAOS },
-        { traits.ring_acid, cloud_ids.CLOUD_ACID },
-        { traits.ring_miasma, cloud_ids.CLOUD_MIASMA },
-        { traits.ring_mutation, cloud_ids.CLOUD_MUTAGENIC },
+        { ring_ids.THUNDER, cloud_ids.CLOUD_STORM },
+        { ring_ids.FLAMES, cloud_ids.CLOUD_FIRE },
+        { ring_ids.ICE, cloud_ids.CLOUD_COLD },
+        { ring_ids.DRAINING, cloud_ids.CLOUD_NEGATIVE_ENERGY },
+        { ring_ids.CHAOS, cloud_ids.CLOUD_CHAOS },
+        { ring_ids.ACID, cloud_ids.CLOUD_ACID },
+        { ring_ids.MIASMA, cloud_ids.CLOUD_MIASMA },
+        { ring_ids.MUTATION, cloud_ids.CLOUD_MUTAGENIC },
+        { ring_ids.FOG, cloud_ids.CLOUD_GREY_SMOKE },
     }
 
     for _, case in ipairs(cases) do
-        harness.equal(traits.cloud_for_ring[case[1]], case[2],
+        harness.equal(ring_ids.CLOUD_FOR_RING[case[1]], case[2],
             "source ring cloud " .. case[1])
     end
 end
@@ -44,7 +45,7 @@ local function check_surround(ctx)
         monsters.MONS_PANDEMONIUM_LORD, 20, 20, 100)
 
     ctx:add(lord, component.PANDEMONIUM_LORD, {
-        ring_id = traits.ring_flames,
+        ring_id = ring_ids.FLAMES,
     })
 
     local ally = fixture.actor(ctx, monsters.MONS_RAT, 21, 20, 10)

@@ -1633,6 +1633,16 @@ support only the domain mechanics already ported, so a registered definition
 alone does not make every new behavior playable. Keep each behavior in its
 own discoverable `policy/` or `systems/` file.
 
+For a monster that continuously surrounds itself with a cloud, import
+`constants.monster_flags` in its definition and add `flags.FIRE_RING`,
+`flags.THUNDER_RING`, or `flags.MIASMA_RING` to its `flags` list. Alternatively,
+set `cloud_ring_id` to a value imported from
+`constants.monster_cloud_rings` when the monster needs another cloud type.
+`policy/combat/monster_cloud_ring.lua` resolves that immutable definition
+when the monster spawns and after each action. It places ordinary saved ECS
+clouds; do not add a separate timer or cloud list to the monster definition.
+The ring constants map the source enchantment names to cloud IDs in one place.
+
 For a player spell, set `player_scope = scopes.BOOK` or
 `player_scope = scopes.INVOKED` in its definition and import
 `constants.spell_scopes` as `scopes` in that file. Put its resolver in a

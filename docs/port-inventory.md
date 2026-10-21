@@ -472,7 +472,11 @@ transit, ordinary exit, and Abyss exit portals. Source upward stairs become
 transit portals after DES terrain resolution. The random lord owns its rolled
 body, resistances, attack form, brand, flight, spell slots, and ring choice
 in an Akara component. Its saved cloud ring now places and refreshes the
-source cloud family through the ordinary ECS cloud owner. Integrated tests
+source cloud family through the ordinary ECS cloud owner. The same policy
+reads immutable species flags for Asmodeus's flames, Bai Suzhen's storm,
+and the tainted leviathan's miasma. All three place their first clouds on
+spawn and refresh them after acting; clouds remain saved ECS entities.
+Integrated tests
 compare a restored next-region draw with uninterrupted play and verify that
 uncollected floor runes disappear with a retired region. Generated lord
 stat drain, drowning, web ensnare, speed drain, corrosion, weakness, and

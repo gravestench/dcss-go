@@ -8,6 +8,7 @@ local streams = require("constants.rng_streams")
 local names = require("policy.names.source")
 local colours = require("constants.pan_lord_colours")
 local traits = require("constants.pan_lord_traits")
+local rings = require("constants.monster_cloud_rings")
 local brands = require("constants.weapon_brands")
 local attacks = require("constants.monster_attack_types")
 
@@ -253,17 +254,17 @@ end
 -- active monster system surrounds the lord with on each later action.
 local function cloud_ring(ctx, brand, flavour)
     if brand == brands.ELECTROCUTION then
-        return traits.ring_thunder
+        return rings.THUNDER
     elseif brand == brands.FLAMING then
-        return traits.ring_flames
+        return rings.FLAMES
     elseif brand == brands.CHAOS then
-        return traits.ring_chaos
+        return rings.CHAOS
     elseif brand == brands.FREEZING then
-        return traits.ring_ice
+        return rings.ICE
     elseif flavour == traits.corrode then
-        return traits.ring_acid
+        return rings.ACID
     elseif brand == brands.DRAINING then
-        return traits.ring_draining
+        return rings.DRAINING
     end
 
     return weighted(ctx, traits.random_rings).id
@@ -381,7 +382,7 @@ function pan_lord.roll(ctx, friendly)
 
     local attack_type_id, flavour_id, brand_id = attack_roll(ctx,
         spellcaster)
-    local ring_id = traits.no_ring
+    local ring_id = rings.NONE
 
     if not friendly and not spellcaster and one_in(ctx, 7) then
         ring_id = cloud_ring(ctx, brand_id, flavour_id)

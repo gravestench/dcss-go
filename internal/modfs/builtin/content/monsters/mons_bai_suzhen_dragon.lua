@@ -8,6 +8,7 @@
 -- Source: crawl-ref/source/mon-data.h
 
 local categories = require("constants.catalog")
+local flags = require("constants.monster_flags")
 local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
@@ -23,7 +24,7 @@ local definition = {
         "M_SPEAKS",
         "M_FEMALE",
         "M_FLIES",
-        "M_THUNDER_RING",
+        flags.THUNDER_RING,
     },
     resistances = {
         {

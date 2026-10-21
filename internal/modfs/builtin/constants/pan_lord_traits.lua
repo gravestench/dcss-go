@@ -5,7 +5,7 @@ local brands = require("constants.weapon_brands")
 local attacks = require("constants.monster_attack_types")
 local flavours = require("constants.attack_flavours")
 local resistance = require("constants.resistance_ids")
-local clouds = require("ids.clouds")
+local rings = require("constants.monster_cloud_rings")
 
 local traits = {
     fire = resistance.FIRE,
@@ -23,15 +23,6 @@ local traits = {
     weakness = "AF_WEAKNESS",
     trample = "AF_TRAMPLE",
 
-    no_ring = "ENCH_NONE",
-    ring_thunder = "ENCH_RING_OF_THUNDER",
-    ring_flames = "ENCH_RING_OF_FLAMES",
-    ring_ice = "ENCH_RING_OF_ICE",
-    ring_draining = "ENCH_RING_OF_DRAINING",
-    ring_chaos = "ENCH_RING_OF_CHAOS",
-    ring_acid = "ENCH_RING_OF_ACID",
-    ring_miasma = "ENCH_RING_OF_MIASMA",
-    ring_mutation = "ENCH_RING_OF_MUTATION",
 }
 
 -- The source excludes HIT and attack types with built-in secondary effects
@@ -151,56 +142,43 @@ traits.special_attacks = {
 traits.random_rings = {
     {
         weight = 20,
-        id = traits.ring_thunder,
+        id = rings.THUNDER,
     },
 
     {
         weight = 20,
-        id = traits.ring_flames,
+        id = rings.FLAMES,
     },
 
     {
         weight = 20,
-        id = traits.ring_ice,
+        id = rings.ICE,
     },
 
     {
         weight = 10,
-        id = traits.ring_draining,
+        id = rings.DRAINING,
     },
 
     {
         weight = 5,
-        id = traits.ring_chaos,
+        id = rings.CHAOS,
     },
 
     {
         weight = 5,
-        id = traits.ring_acid,
+        id = rings.ACID,
     },
 
     {
         weight = 5,
-        id = traits.ring_miasma,
+        id = rings.MIASMA,
     },
 
     {
         weight = 5,
-        id = traits.ring_mutation,
+        id = rings.MUTATION,
     },
-}
-
--- mon-ench.cc maps one persistent enchantment to one cloud species.
--- Saving the ring ID on the lord keeps this projection stable on restore.
-traits.cloud_for_ring = {
-    [traits.ring_thunder] = clouds.CLOUD_STORM,
-    [traits.ring_flames] = clouds.CLOUD_FIRE,
-    [traits.ring_ice] = clouds.CLOUD_COLD,
-    [traits.ring_draining] = clouds.CLOUD_NEGATIVE_ENERGY,
-    [traits.ring_chaos] = clouds.CLOUD_CHAOS,
-    [traits.ring_acid] = clouds.CLOUD_ACID,
-    [traits.ring_miasma] = clouds.CLOUD_MIASMA,
-    [traits.ring_mutation] = clouds.CLOUD_MUTAGENIC,
 }
 
 -- Validation uses the same source choices as generation. A mod changing
@@ -218,7 +196,7 @@ traits.valid_brands = {
     [brands.NORMAL] = true,
 }
 traits.valid_rings = {
-    [traits.no_ring] = true,
+    [rings.NONE] = true,
 }
 
 for _, id in ipairs(traits.plain_attack_types) do

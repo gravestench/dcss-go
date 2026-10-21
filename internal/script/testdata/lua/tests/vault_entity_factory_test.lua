@@ -26,6 +26,9 @@ local monster_stats = require("policy.combat.monster_stats")
 local monster_profile = require("policy.combat.monster_profile")
 local flight = require("policy.combat.flight")
 local traits = require("constants.pan_lord_traits")
+local ring_ids = require("constants.monster_cloud_rings")
+local cloud_ids = require("ids.clouds")
+local cloud_placement = require("policy.clouds.placement")
 local brands = require("constants.weapon_brands")
 local monster_spellbook = require("policy.combat.monster_spellbook")
 local presentation = require("policy.presentation.view")
@@ -874,10 +877,24 @@ local function pandemonium_lord_owns_profile(ctx)
         "rolled attack flavour reaches combat")
     harness.equal(state.brand_id, brands.VENOM,
         "source special attack selects its weighted brand")
-    harness.equal(state.ring_id, traits.no_ring,
+    harness.equal(state.ring_id, ring_ids.NONE,
         "unrolled cloud ring remains explicitly absent")
     harness.truthy(book and #book.slots > 0,
         "generated caster has saved spells")
+end
+
+-- Spawn must create the initial ring before Asmodeus takes a turn. Later
+-- actions only refresh it, so a missing initial cloud cannot be hidden by
+-- the active monster system in a saved level.
+local function source_cloud_ring_starts_at_spawn(ctx)
+    local world = world_context(ctx)
+    local monster = factory.spawn(world,
+        monsters.MONS_ASMODEUS, 1, 70, 10)
+    local _, state = cloud_placement.at(world, 1, 70, 9)
+
+    harness.truthy(state, "Asmodeus spawned without its fire ring")
+    harness.equal(state.kind_id, cloud_ids.CLOUD_FIRE)
+    harness.equal(state.source_actor_id, ctx:id(monster))
 end
 
 -- Exercise factory provenance, source overrides, habitat writes, and atomic
@@ -903,6 +920,7 @@ function test.run(ctx)
     unique_claim_is_atomic(ctx)
     authored_spawn_roles(ctx)
     pandemonium_lord_owns_profile(ctx)
+    source_cloud_ring_starts_at_spawn(ctx)
 end
 
 return test

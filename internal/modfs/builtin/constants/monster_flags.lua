@@ -24,6 +24,9 @@ local flags = {
     CLARITY = "M_CLARITY",
     FLIES = "M_FLIES",
     PREFER_RANGED = "M_PREFER_RANGED",
+    FIRE_RING = "M_FIRE_RING",
+    THUNDER_RING = "M_THUNDER_RING",
+    MIASMA_RING = "M_MIASMA_RING",
 }
 
 return flags
